@@ -1,813 +1,1225 @@
 // تكملة تاب api: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/api/01.js (شرح حقول الدرس في أوله)
 MORE("api", [
     {
-      t: "NestJS",
-      l: 3,
-      n: "الـ framework اللي في إعلانات شغل كتير: نفس Express من تحت، بس بـ modules و DI و decorators، و validation و guards واختبارات جاهزة",
+      t: "Auth: انت مين؟",
+      l: 2,
+      n: "باسورد متخزن hash، وتوكن أو session تثبت إنك انت، وكوكيز بالإعدادات الصح",
       items: [
         {
-          cmd: "Nest: modules و DI",
-          title: "module و controller و provider: مين بيعمل إيه",
-          desc: R`NestJS مبني على Express (افتراضيًا)، بس بيفرض هيكل: كل feature ليها module، جواه controller (الـ routes) و provider/service (المنطق). والـ service مبتعملش [[new]] لحاجة: بتطلب اللي محتاجاه في الـ constructor، و Nest بيعمله ويدّيهولها (dependency injection).
+          cmd: "bcrypt",
+          title: "احفظ الباسورد بطريقة محدش يقدر يرجّعها",
+          desc: R`الباسورد عمره ما يتحفظ زي ما هو ولا مشفّر بمفتاح: بيتحفظ hash بدالة اتجاه واحد، وعند الـ login بتقارن.
 
-ده نفس «routes / controllers / services» اللي عملناه بإيدنا في Express، بس الـ framework هو اللي بيوصّل القطع ببعض. والكود TypeScript بـ decorators (درس الأنواع في تاب «TypeScript»).`,
-          example: R`// orders/orders.service.ts
-@Injectable()
-export class OrdersService {
-  constructor(private readonly db: PrismaService) {}
-  async findMine(userId: string, id: string) {
-    const order = await this.db.order.findFirst({ where: { id, userId } });
-    if (!order) throw new NotFoundException("Order not found");
-    return order;
-  }
-}
+bcrypt معمول مخصوص للباسوردات: بطيء عن قصد (الـ cost)، وبيضيف salt عشوائي لكل باسورد. cost بين 10 و 12 شائع، واختار أعلى رقم السيرفر بتاعك يستحمله (حوالي ربع ثانية للـ hash الواحد).`,
+          example: R`import bcrypt from "bcrypt";
 
-// orders/orders.controller.ts
-@Controller("orders")
-@UseGuards(AuthGuard)
-export class OrdersController {
-  constructor(private readonly orders: OrdersService) {}
-  @Get(":id")
-  findOne(@Req() req, @Param("id") id: string) {
-    return this.orders.findMine(req.user.sub, id);
-  }
-}
+const hash = await bcrypt.hash("MyS3cret!", 12);
+console.log(hash);
+// $2b$12$L1rSfyd2U5SuHcCfeeLVIu3pk8VYb8uJI3OmMcHt7J/RBXlUSq//.
 
-// orders/orders.module.ts
-@Module({ controllers: [OrdersController], providers: [OrdersService], exports: [OrdersService] })
-export class OrdersModule {}
-
-// app.module.ts
-@Module({ imports: [PrismaModule, OrdersModule] })
-export class AppModule {}`,
-          try: R`اعمل مشروع بـ [[npx @nestjs/cli new shop]] وبعدين [[npx nest g resource tasks]] (اختار REST). افتح الملفات اللي اتولدت وارسم على ورقة: مين بيستورد مين، ومين بيطلب مين في الـ constructor. وبعدين شيل [[TasksService]] من [[providers]] في الـ module وشغّل: رسالة الخطأ بتقول إيه؟`,
+console.log(await bcrypt.compare("MyS3cret!", hash));
+console.log(await bcrypt.compare("wrong", hash));
+// true
+// false`,
+          try: R`اعمل hash لنفس الباسورد مرتين واتأكد إنهم مختلفين، وإن compare بيرجّع true للاتنين. وبعدين قيس الوقت بـ [[console.time]] مع cost 10 و 12 و 14، وشوف كل زيادة ١ بتعمل إيه.`,
           flag: "script",
           deep: {
-            why: R`Express بيسيبك تنظّم زي ما انت عايز، وفي مشروع فيه ١٠ مطورين كل واحد بينظّم بطريقة، وبعد سنة الكود بقى عجينة. Nest بيدّي الفريق كله نفس الشكل: أي مطور Nest يفتح أي مشروع Nest ويعرف الحاجة فين. وعشان كده بيتطلب كتير في الشركات والإعلانات، خصوصًا في الخليج ومصر.`,
-            how: R`[[@Module]] بيعرّف حدود الـ feature: [[controllers]] بتاعته، و [[providers]] اللي بيعملها، و [[exports]] اللي بيسمح لـ modules تانية تستخدمها، و [[imports]] للـ modules اللي محتاجها. والـ provider افتراضيًا singleton: instance واحد للتطبيق كله.
+            why: "الداتابيز بتتسرّب: باك أب منسي، أو SQL injection، أو موظف. لو الباسوردات متخزنة نص، كل اليوزرز اتكشفوا، ومعظمهم بيستخدموا نفس الباسورد في الإيميل والبنك. الـ hash البطيء بيخلي الباسورد القوي شبه مستحيل يترجع، والضعيف ياخد وقت.",
+            how: R`الـ hash السريع (زي SHA-256) معمول للسرعة: كارت شاشة يجرّب مليارات الباسوردات في الثانية. bcrypt بيعيد الحسبة [[2^cost]] مرة، فـ cost 12 يعني ٤٠٩٦ دورة، وكل زيادة ١ بتضاعف الوقت. انت بتدفع ربع ثانية مرة عند الـ login، والمهاجم بيدفعها مع كل تخمينة.
 
-DI: Nest بيقرا نوع الباراميتر في الـ constructor ([[PrismaService]]) من الـ metadata اللي TypeScript بيطلّعها ([[emitDecoratorMetadata]])، ويدوّر عليه في الـ providers المتاحة للـ module ده، ويعمله لو لسه متعملش. لو مش لاقيه، بيرمي خطأ واضح وقت التشغيل: «Nest can't resolve dependencies of the OrdersService (?)». ده بيحصل غالبًا لما تنسى تضيفه في [[providers]]، أو الـ module اللي فيه مش عامل [[exports]] ليه، أو انت مش عامل [[imports]] للـ module.
+الـ salt: ١٦ بايت عشوائي بيتولد مع كل hash. فاتنين باسوردهم «123456» الـ hash بتاعهم مختلف، والمهاجم ميقدرش يستخدم جداول جاهزة (rainbow tables) ولا يكسر الكل مرة واحدة. والـ salt والـ cost محفوظين جوه النص نفسه: [[$2b$12$]] وبعدها ٢٢ حرف salt وبعدها الـ hash. عشان كده [[compare]] مش محتاج تديله salt.
 
-[[@Global()]] على module (زي PrismaModule) بيخلي الـ exports بتاعته متاحة في كل حتة من غير import. استخدمه للحاجات المشتركة بجد بس.
+[[bcrypt.hash]] الـ async بيشتغل في thread pool بتاع libuv، فالـ event loop فاضي يخدم طلبات تانية. [[hashSync]] بيوقف السيرفر كله الربع ثانية دي. و [[bcryptjs]] مكتوبة JavaScript فبتشتغل على الـ thread الرئيسي حتى الـ async بتاعها (بتقسّم الشغل بس)، فهي أبطأ وبتزاحم الطلبات.
 
-والـ exceptions: [[NotFoundException]] و [[ForbiddenException]] وأخواتهم بتتحول لرد JSON بالـ status المناسب لوحدها ([[{"statusCode":404,"message":"Order not found","error":"Not Found"}]]). و [[@Controller("orders")]] مع [[@Get(":id")]] بيعملوا [[GET /orders/:id]].
-
-النسخة الحالية (Nest 12) بقت ESM (زي [[import ... from "./orders.service.js"]] بالامتداد) ومحتاجة Node 20 أو أحدث. الـ CLI بيعمل الإعداد ده لوحده.`,
-            when: "فريق كبير، أو مشروع هيعيش سنين، أو الشركة شغالة Nest. لـ API صغير أو MVP لوحدك، Express (أو Fastify) أخف وأسرع في البداية.",
-            mistakes: R`[[new OrdersService(new PrismaService())]] بإيدك جوه controller: كده ضيّعت الـ DI والاختبار بقى صعب. و module واحد ضخم فيه كل حاجة. و circular dependency بين modules (A بيحتاج B و B بيحتاج A): الحل غالبًا module تالت أو إعادة تقسيم، مش [[forwardRef]] في كل حتة. وفي الانترفيو: «يعني إيه dependency injection وليه؟» قول: الكلاس بيطلب اللي محتاجه بدل ما يعمله، فتقدر تبدّله بـ fake في الاختبار (درس «Nest: الاختبارات»).`
+حد bcrypt: أول ٧٢ بايت بس من الباسورد بيتحسبوا والباقي بيتجاهل. و OWASP بتفضّل Argon2id للمشاريع الجديدة، و bcrypt لسه مقبول ومنتشر.`,
+            when: "أي تسجيل بباسورد. وراجع الـ cost كل كام سنة مع تطور الأجهزة: عند login ناجح، لو الـ hash القديم الـ cost بتاعه أقل، اعمله hash جديد.",
+            mistakes: R`في مشروع حقيقي كان الـ User model فيه حقل [[plainPassword]] جنب الـ hash، عشان endpoint للأدمن «يعرض الباسوردات»، وباسورد افتراضي ثابت للموظفين. ده بيلغي فايدة الـ hash تمامًا: أي تسريب يبقى كل الباسوردات. الصح: الأدمن يعمل reset ويبعت لينك، وعمره ما يشوف الباسورد. وفي مشاريع تانية كان [[bcrypt]] و [[bcryptjs]] الاتنين متسطبين: اختار واحد. وتستخدم [[md5]] أو [[sha256]] للباسوردات: سريعين زيادة عن اللزوم. وترجّع «الإيميل مش موجود» و «الباسورد غلط» كرسالتين مختلفتين، فحد يعرف مين عنده حساب.`
           },
+          teach: R`## دالتين بس: [[hash]] وقت التسجيل، و [[compare]] وقت الـ login
+
+وقت التسجيل بتاخد الباسورد وتطلع منه نص طويل (الـ hash) وتحفظ ده بس في الداتابيز. ووقت الـ login بتدّي [[compare]] الباسورد اللي اليوزر كتبه والـ hash المحفوظ، ويرجّعلك [[true]] أو [[false]]. عمرك ما بترجّع الباسورد الأصلي، ولا محتاج.
+
+اتشغّل على ويندوز 11 بـ Node 24.19 و [[bcrypt]] 6.0.0، في فولدر فيه:
+
+~~~bash
+npm init -y
+npm pkg set type=module
+npm i bcrypt
+~~~
+
+- [[npm pkg set type=module]] بيكتب [["type": "module"]] في package.json، فـ Node يقبل [[import]] و [[await]] في أول الملف (top-level await). من غيره احفظ الملف بامتداد [[.mjs]].
+
+---
+
+## ١. [[import bcrypt from "bcrypt"]]
+
+بيجيب المكتبة. [[bcrypt]] جواها كود C++ متجمّع (native addon)، فهي أسرع بكتير من [[bcryptjs]] المكتوبة JavaScript. نسخة 6 جاية بملفات جاهزة لويندوز ولينكس والماك، فالتسطيب مش محتاج compiler.
+
+---
+
+## ٢. [[await bcrypt.hash("MyS3cret!", 12)]]
+
+| الحتة | معناها |
+|---|---|
+| [["MyS3cret!"]] | الباسورد اللي اليوزر كتبه (هنا ثابت للتجربة) |
+| [[12]] | الـ **cost** (أو salt rounds): الحسبة بتتعاد [[2^12]] = ٤٠٩٦ مرة |
+| [[await]] | [[hash]] بترجّع Promise، والشغل التقيل بيحصل في thread تاني (thread pool بتاع libuv)، فالسيرفر فاضي يخدم طلبات تانية لحد ما يخلص |
+
+~~~text الناتج
+$2b$12$Cxy.ZJ6rZ006wMpTacj8/eBZII83ym6IOyYKq4Mx6d19ZWp3gTgVG
+~~~
+
+### نقرا الـ hash
+
+النص ده ٦٠ حرف، ومتقسّم بعلامة [[$]]:
+
+| الجزء | القيمة | معناه |
+|---|---|---|
+| [[2b]] | نسخة الـ algorithm | bcrypt النسخة الحالية |
+| [[12]] | الـ cost | اللي انت اديته |
+| أول ٢٢ حرف بعدها | [[Cxy.ZJ6rZ006wMpTacj8/e]] | الـ **salt**: ١٦ بايت عشوائي، مكتوبين بـ base64 مخصوص بتاع bcrypt |
+| آخر ٣١ حرف | [[BZII83ym6IOyYKq4Mx6d19ZWp3gTgVG]] | الـ hash نفسه |
+
+يعني الـ salt والـ cost محفوظين جوه النص. عشان كده عمود واحد في الداتابيز كفاية ([[passwordHash]])، و [[compare]] مش محتاج تديله salt. وتقدر تقرا الـ cost من hash قديم:
+
+~~~bash
+node -e "console.log(require('bcrypt').getRounds('\$2b\$12\$Cxy.ZJ6rZ006wMpTacj8/eBZII83ym6IOyYKq4Mx6d19ZWp3gTgVG'))"
+~~~
+
+~~~text الناتج
+12
+~~~
+
+(الـ [[\$]] عشان bash ميفتكرش [[$2b]] متغير.)
+
+---
+
+## ٣. [[console.log(hash)]]: ليه هيطلع مختلف عندك؟
+
+شغّلت نفس السطر مرتين في الـ solCode:
+
+~~~text الناتج
+$2b$12$/nhSopeDfT/ixNUBBQtwKetm/NAbQNvVC2tUidLsa2Me5f7qNAMt2
+$2b$12$epLr1ynjxqv0KRgWaMJSo.SF6n7NTd1CNGcnWhkPy6y7I3ohPkMjy
+~~~
+
+نفس الباسورد ونفس الـ cost، والناتج مختلف، لأن كل [[hash]] بيولّد salt جديد. فاتنين باسوردهم «123456» الـ hash بتاعهم مش زي بعض، وحد سرق الداتابيز ميقدرش يعرف إنهم نفس الباسورد ولا يستخدم جداول جاهزة (rainbow tables).
+
+والنتيجة المهمة: **متقارنش hash بـ hash**، ومتدوّرش بـ [[WHERE password_hash = ?]]. دوّر على اليوزر بالإيميل، وبعدين [[compare]].
+
+---
+
+## ٤. [[await bcrypt.compare("MyS3cret!", hash)]]
+
+[[compare]] بيقرا الـ salt والـ cost من الـ hash، ويعمل hash للباسورد الجديد بيهم، ويقارن النتيجة:
+
+~~~text الناتج
+true
+false
+~~~
+
+الأول [[true]] (الباسورد صح)، والتاني [["wrong"]] فـ [[false]]. ولو نسيت [[await]]:
+
+~~~text الناتج: console.log(bcrypt.compare("x", hash))
+Promise { <pending> }
+~~~
+
+و Promise دايمًا «truthy»، فـ [[if (bcrypt.compare(...))]] من غير await **أي باسورد هيعدّي**. دي غلطة بتحصل بجد.
+
+---
+
+## ٥. الـ solCode: التجربة والوقت
+
+~~~text الناتج
+false true true
+cost 10: 53.345ms
+cost 12: 211.382ms
+cost 14: 890.433ms
+~~~
+
+- [[a === b]] بـ [[false]] (salt مختلف)، و [[compare]] بـ [[true]] للاتنين.
+- [[console.time("label")]] بيبدأ ساعة باسم، و [[console.timeEnd("label")]] بيوقفها ويطبع الوقت. الاسم هنا template string: [[$__btcost $__{cost}$__bt]] بيبقى [["cost 12"]].
+- كل زيادة ١ في الـ cost بتضاعف الوقت (٥٣ ثم ٢١١ ثم ٨٩٠: تقريبًا ×٤ كل خطوتين). ١٢ هنا ربع ثانية تقريبًا: اليوزر مش هيحس بيها مرة في الـ login، والمهاجم بيدفعها مع كل تخمينة.
+
+---
+
+## ٦. حد الـ ٧٢ بايت
+
+~~~javascript
+const long = "a".repeat(72);
+const h = await bcrypt.hash(long, 4);
+console.log(await bcrypt.compare(long + "ANYTHING", h));
+~~~
+
+~~~text الناتج
+true
+~~~
+
+bcrypt بيبص على أول ٧٢ بايت بس، فأي حاجة بعدهم مش فارقة. باسورد بالطول ده نادر، بس حط [[max(72)]] في الـ validation عشان محدش يتفاجئ. (والحروف العربي بايتين في UTF-8، فالحد بالبايت مش بالحرف.)
+
+---
+
+## الخلاصة
+
+| | |
+|---|---|
+| التسجيل | [[passwordHash = await bcrypt.hash(password, 12)]] واحفظه |
+| الـ login | هات اليوزر بالإيميل، وبعدين [[await bcrypt.compare(password, user.passwordHash)]] |
+| الـ salt والـ cost | جوه الـ hash نفسه، مش محتاج عمود ليهم |
+| نفس الباسورد مرتين | hash مختلف، فمتقارنش hashes ببعض |
+| الـ cost | ١٠ لـ ١٢، وكل +١ = الوقت ×٢ |
+
+> [[await]] قبل [[compare]] مش اختياري: من غيره أي باسورد بيعدّي.`,
           lines: [
-            "الـ service بتتعلّم إنها provider ينفع يتحقن.",
-            "كلاس الـ service.",
-            "بتطلب PrismaService في الـ constructor، و Nest بيدّيهولها.",
-            "دالة: طلب اليوزر ده بالـ id ده.",
-            "دوّر بالـ id وصاحبه مع بعض (ownership).",
-            "مش موجود؟ exception بتتحول لـ 404 JSON لوحدها.",
-            "رجّعه.",
-            "قفلة.",
-            "قفلة.",
-            "controller على [[/orders]].",
-            "كل الـ routes هنا محتاجة الـ guard (درس «Nest: guards و interceptors»).",
-            "الكلاس.",
-            "بيطلب الـ service.",
-            "GET /orders/:id.",
-            "خد الـ request والـ param.",
-            "نادي الـ service بـ id اليوزر من التوكن. اللي بيرجع بيتبعت JSON.",
-            "قفلة.",
-            "قفلة.",
-            "الـ module: الـ controller والـ service، وبيصدّر الـ service لو module تاني احتاجه.",
-            "قفلة.",
-            "الـ module الرئيسي بيجمع الكل.",
-            "قفلة."
+            "مكتبة bcrypt (native وسريعة). فيه كمان [[bcryptjs]] مكتوبة JavaScript بس، وأبطأ.",
+            "اعمل hash بـ cost 12. async عشان الحسبة التقيلة متوقفش السيرفر.",
+            "اطبعه: كل مرة هيطلع مختلف حتى لنفس الباسورد، بسبب الـ salt.",
+            "قارن باسورد صح بالـ hash: true.",
+            "باسورد غلط: false."
           ],
-          sol: R`لما تشيل [[TasksService]] من [[providers]] وتشغّل، Nest بيقف وقت البداية (مش وقت أول طلب) برسالة زي: [[Nest can't resolve dependencies of the TasksController (?). Please make sure that the argument TasksService at index [0] is available in the TasksModule context.]]
+          sol: R`الـ hash بيطلع مختلف كل مرة، مثلًا [[$2b$12$FFrStIpK3ozn...]] و [[$2b$12$wsmQ3tQJrJyC...]]، و [[a === b]] بـ [[false]]، و [[compare]] بيرجّع [[true]] للاتنين. السبب: bcrypt بيولّد salt عشوائي جديد مع كل hash ويحطه جوه الـ hash نفسه (الـ 22 حرف اللي بعد [[$12$]])، فـ compare بيقراه من هناك. فمتقارنش hashes ببعض، ومتعملش [[WHERE password_hash = ?]] أبدًا.
 
-الـ [[?]] مكان الباراميتر اللي ملقاش ليه provider. والحل واحد من ٣: ضيفه في [[providers]]، أو لو هو في module تاني تأكد إن الـ module ده بيعمل [[exports]] ليه وإنك عامل [[imports]] للـ module.
+والوقت: كل زيادة ١ في الـ cost بتضاعف الوقت تقريبًا. على جهاز عادي حاجة زي [[cost 10: 67ms]] و [[cost 12: 281ms]] و [[cost 14: 1.087s]] (الأرقام عندك هتختلف، النسبة ×٤ كل خطوتين هي المهمة). 12 بيدّي حوالي ربع ثانية: مش ملحوظ في login، ومكلّف جدًا لحد بيجرّب ملايين الباسوردات.
 
-والرسم: [[AppModule]] بيستورد [[TasksModule]]، و [[TasksController]] بيطلب [[TasksService]]، والاتنين متسجّلين في [[TasksModule]].`,
-          solCode: R`npx @nestjs/cli new shop
-cd shop
-npx nest g resource tasks
-# ✔ What transport layer do you use? REST API
-npm run start:dev
-# شيل TasksService من providers في tasks.module.ts:
-# ERROR [ExceptionHandler] Nest can't resolve dependencies of the TasksController (?) ...`
-        },
-        {
-          cmd: "Nest: DTO و pipes",
-          title: "الـ body بيتفحص قبل ما يوصل للـ controller",
-          desc: R`الـ DTO بيوصف شكل الـ body اللي الـ endpoint بيقبله، والـ pipe بيفحصه قبل ما الـ controller يشتغل. لو غلط، الرد 400 برسالة واضحة والـ controller عمره ما يتنادى.
+لو القيمتين طلعوا زي بعض، يبقى بتعمل hash مرة وبتطبعه مرتين. ولو compare رجّع [[Promise { <pending> }]]، نسيت [[await]].`,
+          solCode: R`import bcrypt from "bcrypt";
 
-طريقتين: class بـ decorators من [[class-validator]] مع [[ValidationPipe]] (الأشهر في المشاريع الموجودة)، أو schema بـ Zod مع [[StandardSchemaValidationPipe]] اللي بقى جوه Nest 12 نفسه.`,
-          example: R`// الطريقة الكلاسيكية: class-validator
-export class CreateTaskDto {
-  @IsString() @MaxLength(200) title!: string;
-  @IsOptional() @IsInt() @Min(1) priority?: number;
-}
-app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }));
+const a = await bcrypt.hash("MyS3cret!", 12);
+const b = await bcrypt.hash("MyS3cret!", 12);
+console.log(a === b, await bcrypt.compare("MyS3cret!", a), await bcrypt.compare("MyS3cret!", b)); // false true true
 
-@Post()
-create(@Body() dto: CreateTaskDto) { return this.tasks.create(dto); }
-
-@Get(":id")
-findOne(@Param("id", ParseIntPipe) id: number) { return this.tasks.findOne(id); }
-
-// Zod (Nest 12): schema على الباراميتر
-export const CreateOrderSchema = z.object({ amountCents: z.number().int().positive(), note: z.string().max(200).optional() });
-export type CreateOrderDto = z.infer<typeof CreateOrderSchema>;
-app.useGlobalPipes(new StandardSchemaValidationPipe());
-
-@Post()
-create(@Req() req, @Body({ schema: CreateOrderSchema }) dto: CreateOrderDto) { return this.orders.create(req.user.sub, dto); }`,
-          try: R`ركّب [[ValidationPipe]] بالإعدادات دي، وابعت بـ curl: body صح، و body فيه حقل زيادة [[isAdmin: true]]، و body من غير title، و [[GET /tasks/abc]]. اكتب الرد بتاع كل واحد. وبعدين شيل [[forbidNonWhitelisted]] وابعت الـ isAdmin تاني: اتقبل؟ وصل للـ controller؟`,
-          flag: "script",
-          deep: {
-            why: R`نفس سبب درس [[validate(schema)]]: متصدّقش أي حاجة جاية. الفرق إن في Nest الفحص جزء من الـ framework: pipe واحد global بيحمي كل الـ endpoints، والـ DTO نفسه توثيق (و [[@nestjs/swagger]] بيقراه ويطلّع OpenAPI).`,
-            how: R`[[ValidationPipe]] بياخد الـ body (object عادي)، ويحوّله لـ instance من الـ class بـ class-transformer، ويشغّل الـ decorators بـ class-validator. عشان كده محتاج الباكدجين دول متسطّبين، ومحتاج الـ type في الباراميتر يبقى class مش interface (الـ interface بيتمسح وقت التشغيل ومفيش حاجة يفحص بيها).
-
-الإعدادات: [[whitelist: true]] بيشيل أي حقل ملوش decorator. و [[forbidNonWhitelisted: true]] بدل ما يشيله بيرفض الطلب بـ 400 «property isAdmin should not exist». ودي حماية من mass assignment: حد يبعت [[role: "ADMIN"]] والـ service تعمل [[create(dto)]]. و [[transform: true]] بيخلي [[dto]] instance حقيقي من الـ class، وبيحوّل الأنواع البسيطة لو الـ type بيقول كده. و [[ParseIntPipe]] على الـ param بيحوّل [[42]] لرقم أو يرجّع 400 «numeric string is expected». جربناها كلها على Nest 12.
-
-Zod: في Nest 12 بتحط الـ schema في [[@Body({ schema })]]، و [[StandardSchemaValidationPipe]] بيشغّله. Standard Schema معناها أي مكتبة بتطبّق نفس الواجهة (Zod و Valibot وغيرهم). الرد لـ [[amountCents: "x"]] كان 400 برسالة [[amountCents: Invalid input: expected number, received string]]. وميزتها إنك بتعرّف الشكل مرة، والنوع [[z.infer]] بيطلع منه، وممكن تشارك نفس الـ schema مع الواجهة (درس «Express + Zod» في تاب «TypeScript»). وفي نسخ Nest الأقدم كنت بتكتب pipe بنفسك أو تستخدم مكتبة زي [[nestjs-zod]].
-
-والـ pipe على مستوى: global ([[useGlobalPipes]])، أو controller، أو route، أو باراميتر واحد ([[@Param("id", ParseIntPipe)]]).`,
-            when: "global pipe من أول يوم في أي مشروع Nest. class-validator لو المشروع قايم عليه أو بتستخدم swagger بالـ decorators. Zod لو مشروع جديد وعايز نفس الـ schema في الواجهة والباك.",
-            mistakes: R`DTO كـ [[interface]] أو [[type]] مع ValidationPipe: مفيش أي فحص خالص والطلب بيعدّي. و ValidationPipe من غير [[whitelist]] فأي حقل زيادة يوصل للـ service ولـ Prisma. ونسيان [[@IsOptional()]] على حقل اختياري فيرفض لما ميتبعتش. و [[@ValidateNested()]] من غير [[@Type(() => ItemDto)]] على array من objects، فالعناصر جوه متتفحصش.`
-          },
-          lines: [
-            "DTO كـ class بـ decorators.",
-            "title: نص وأقصاه ٢٠٠.",
-            "priority: اختياري، ولو موجود رقم صحيح من ١.",
-            "قفلة.",
-            "pipe global: شيل وارفض أي حقل مش في الـ DTO، وحوّل لـ instance.",
-            "route بيقبل الـ DTO.",
-            "الـ body بيوصل هنا بعد ما اتفحص.",
-            "param بيتحوّل لرقم، أو 400 لو مش رقم.",
-            "خد الـ id كرقم.",
-            "schema بـ Zod.",
-            "النوع من الـ schema.",
-            "pipe global بيشغّل أي schema متحطوط على باراميتر.",
-            "route.",
-            "الـ schema متحطوط على الـ Body نفسه."
-          ],
-          sol: R`النتايج (جربناها على Nest 12):
-
-body صح: 201 والـ dto instance من [[CreateTaskDto]].
-
-حقل زيادة: 400 و [[message: ["property isAdmin should not exist"]]].
-
-من غير title: 400 وفيه أكتر من رسالة، منهم [[title must be a string]].
-
-[[GET /tasks/abc]]: 400 و [[Validation failed (numeric string is expected)]]، و [[/tasks/42]] بيوصل الـ id رقم مش string.
-
-من غير [[forbidNonWhitelisted]] (و [[whitelist]] لسه true): الطلب بيتقبل بـ 201، بس [[isAdmin]] بيتشال قبل ما يوصل للـ controller. لو وصل، يبقى [[whitelist]] مش متفعّل.`,
-          solCode: R`curl -s -X POST localhost:3000/tasks -H "Content-Type: application/json" -d '{"title":"x","isAdmin":true}'
-# {"message":["property isAdmin should not exist"],"error":"Bad Request","statusCode":400}
-curl -s localhost:3000/tasks/abc
-# {"message":"Validation failed (numeric string is expected)","error":"Bad Request","statusCode":400}`
-        },
-        {
-          cmd: "Nest: guards و interceptors",
-          title: "guards للـ auth والأدوار، و interceptors، و exception filters",
-          desc: R`الـ request في Nest بيعدّي على طبقات بترتيب ثابت: middleware ← guards ← interceptors (قبل) ← pipes ← الـ controller ← interceptors (بعد) ← exception filters لو حصل خطأ.
-
-الـ guard بيقرر «يدخل ولا لأ» (توكن صح؟ الـ role مسموح؟). الـ interceptor بيلف حوالين الـ handler (وقت، أو تغيير شكل الرد، أو كاش). والـ exception filter بيحوّل نوع خطأ معين لرد (مثلًا خطأ Prisma unique ← 409).`,
-          example: R`export const Roles = Reflector.createDecorator<string[]>();
-
-@Injectable()
-export class AuthGuard implements CanActivate {
-  constructor(private readonly reflector: Reflector) {}
-  canActivate(ctx: ExecutionContext): boolean {
-    const req = ctx.switchToHttp().getRequest();
-    try {
-      req.user = jwt.verify(req.headers.authorization?.replace(/^Bearer /, ""), process.env.JWT_SECRET);
-    } catch {
-      throw new UnauthorizedException();
-    }
-    const roles = this.reflector.getAllAndOverride(Roles, [ctx.getHandler(), ctx.getClass()]);
-    if (roles && !roles.includes(req.user.role)) throw new ForbiddenException();
-    return true;
-  }
-}
-
-@Delete(":id")
-@Roles(["ADMIN"])
-@HttpCode(204)
-remove(@Param("id") id: string) { return this.orders.remove(id); }
-
-@Catch(Prisma.PrismaClientKnownRequestError)
-export class PrismaErrorFilter implements ExceptionFilter {
-  catch(err: Prisma.PrismaClientKnownRequestError, host: ArgumentsHost) {
-    const res = host.switchToHttp().getResponse();
-    if (err.code === "P2002") return res.status(409).json({ statusCode: 409, error: "CONFLICT" });
-    res.status(500).json({ statusCode: 500, error: "INTERNAL" });
-  }
-}`,
-          try: R`اعمل الـ guard والـ decorator، وحطهم على controller فيه GET و DELETE. جرّب: من غير توكن، وبتوكن يوزر عادي على GET ثم DELETE، وبتوكن أدمن على DELETE. وبعدين اعمل interceptor بيطبع [[METHOD URL المدة]] وركّبه global.`,
-          flag: "script",
-          deep: {
-            why: R`في Express كل ده middleware بترتيب انت بتظبطه بإيدك، وسهل تنسى [[requireAuth]] على route. في Nest كل مسؤولية ليها نوع، والـ decorators على الـ controller بتقولك الحماية بتاعته في سطر وانت بتقرا. والـ interviewer في وظيفة Nest هيسأل عن الترتيب ده تقريبًا أكيد.`,
-            how: R`الـ guard: [[canActivate]] بيرجّع true أو false (false تبقى 403 افتراضيًا)، أو بيرمي exception بالكود اللي انت عايزه. عشان كده بنرمي [[UnauthorizedException]] للتوكن الغلط (401) و [[ForbiddenException]] للـ role (403)، والفرق مهم للواجهة (درس [[401 و 403 و 404]]). وجربنا المصفوفة دي كلها على Nest 12 بـ supertest.
-
-[[Reflector.createDecorator]] بيعمل decorator زي [[@Roles(["ADMIN"])]] بيحط metadata على الـ method، والـ guard بيقراها بـ [[getAllAndOverride]] من الـ handler الأول وبعدين الـ class. كده تقدر تحط [[@Roles]] على الـ controller كله وتغيّره لـ route واحد.
-
-[[@UseGuards(AuthGuard)]] على الـ controller أو الـ route. أو global بـ [[APP_GUARD]] provider وتعمل decorator [[@Public()]] للـ routes المفتوحة: كده الأصل إن كله محمي، واللي مفتوح لازم يتكتب صريح. ده أأمن. وفيه [[@nestjs/passport]] و [[@nestjs/jwt]] لو عايز strategies جاهزة، بس الـ guard اليدوي ده بيوضّح اللي بيحصل.
-
-الـ interceptor: [[intercept(ctx, next)]] بيرجّع [[next.handle()]] وده Observable (RxJS)، فتقدر تعمل [[pipe(tap(...))]] بعد الرد، أو [[map]] تغيّر شكله. استخدامات: logging بالمدة، أو [[{ data: ... }]] حوالين كل رد، أو [[ClassSerializerInterceptor]] اللي بيشيل الحقول المعلّمة [[@Exclude()]] (زي الباسورد).
-
-الـ filter: [[@Catch(Type)]] بيمسك النوع ده بس. خطأ Prisma [[P2002]] (unique) من غير filter بيبقى 500، ومعاه 409 بمعنى واضح. و [[P2025]] (record مش موجود في update/delete) ← 404. أي خطأ مش [[HttpException]] ومفيش filter ليه، Nest بيرجّع 500 [[Internal server error]] من غير تفاصيل، ويطبع الـ stack في اللوج.`,
-            when: "guard global للـ auth في أي مشروع Nest، و Roles للأدمن. interceptor للوج والشكل الموحد. filter لأخطاء المكتبات اللي ليها معنى HTTP (Prisma و Stripe وغيرهم).",
-            mistakes: R`التحقق من الـ role جوه كل method بـ if بدل guard. و guard بيرجّع false للتوكن الغلط فالواجهة تاخد 403 بدل 401. و [[@Roles]] من غير ما الـ guard يقراه أصلًا (الـ decorator لوحده مبيعملش حاجة). و filter بيمسك [[@Catch()]] كل حاجة ويرجّع رسالة الخطأ الأصلية للعميل، فبيسرّب تفاصيل القاعدة. وفي الانترفيو: «الفرق بين middleware و guard و interceptor؟» الـ guard عارف الـ handler اللي هيتنفّذ (ExecutionContext والـ metadata)، والـ middleware لأ.`
-          },
-          lines: [
-            "decorator للأدوار بـ Reflector.",
-            "الـ guard provider عادي.",
-            "كلاس بيطبّق CanActivate.",
-            "بيطلب الـ Reflector عشان يقرا الـ metadata.",
-            "بيتنادى قبل كل handler.",
-            "هات الـ request بتاع Express.",
-            "جرّب...",
-            "...تتحقق من التوكن وتحط اليوزر على الطلب.",
-            "لو غلط...",
-            "...401.",
-            "قفلة.",
-            "اقرا [[@Roles]] من الـ method الأول وبعدين الـ class.",
-            "فيه roles واليوزر مش منهم؟ 403.",
-            "عدّي.",
-            "قفلة.",
-            "قفلة.",
-            "route المسح.",
-            "للأدمن بس.",
-            "204 بدل 200.",
-            "الـ handler.",
-            "filter لأخطاء Prisma المعروفة بس.",
-            "كلاس الـ filter.",
-            "بيتنادى لما الخطأ ده يترمي.",
-            "رد Express.",
-            "unique اتكسر: 409.",
-            "غير كده 500 من غير تفاصيل.",
-            "قفلة.",
-            "قفلة."
-          ],
-          sol: R`المتوقع: من غير توكن 401 في الاتنين. يوزر عادي: GET لطلبه 200، و DELETE 403 (حتى على طلبه). أدمن: DELETE 204.
-
-ولو يوزر عادي عمل DELETE ورجع 204، يبقى الـ guard مش بيقرا [[Roles]]: اتأكد إنك بتقرا نفس الـ decorator اللي عملته بـ [[createDecorator]]، وإن [[@Roles]] على الـ method نفسها.
-
-والـ interceptor بيطبع سطر زي [[[HTTP] GET /orders/cm... 4ms]] بعد كل رد ناجح. (لو الـ handler رمى خطأ، الـ [[tap]] العادي مبيتناداش: استخدم [[tap({ next, error })]] أو [[finalize]] لو عايز تسجّل الأخطاء كمان.)`,
-          solCode: R`@Injectable()
-export class TimingInterceptor implements NestInterceptor {
-  private readonly logger = new Logger("HTTP");
-  intercept(ctx: ExecutionContext, next: CallHandler) {
-    const req = ctx.switchToHttp().getRequest();
-    const start = Date.now();
-    return next.handle().pipe(tap(() => this.logger.log($__bt$__{req.method} $__{req.url} $__{Date.now() - start}ms$__bt)));
-  }
-}
-// main.ts
-app.useGlobalInterceptors(new TimingInterceptor());`
-        },
-        {
-          cmd: "Nest: Prisma",
-          title: "Prisma جوه Nest: provider واحد للتطبيق كله",
-          desc: R`[[PrismaService]] كلاس بيورث من [[PrismaClient]] وعليه [[@Injectable()]]، فأي service تطلبه في الـ constructor. وبيتحط في [[PrismaModule]] عليه [[@Global()]] و [[exports]]، فمتحتاجش تعمل import ليه في كل module.
-
-ولأن الـ provider singleton، التطبيق كله بيستخدم client واحد و pool اتصالات واحد، زي [[db.js]] في Express.`,
-          example: R`// prisma.service.ts
-import { Injectable, OnModuleDestroy } from "@nestjs/common";
-import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient } from "./generated/prisma/client.js";
-
-@Injectable()
-export class PrismaService extends PrismaClient implements OnModuleDestroy {
-  constructor() {
-    super({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL! }) });
-  }
-  async onModuleDestroy() {
-    await this.$disconnect();
-  }
-}
-
-// prisma.module.ts
-@Global()
-@Module({ providers: [PrismaService], exports: [PrismaService] })
-export class PrismaModule {}
-
-// main.ts
-const app = await NestFactory.create(AppModule);
-app.enableShutdownHooks();
-await app.listen(process.env.PORT ?? 3000);`,
-          try: R`حط PrismaModule في [[AppModule]] واستخدم [[PrismaService]] في service. وبعدين اعمل endpoint بيعمل يوزر بإيميل، وابعته مرتين بنفس الإيميل: بيرجع إيه من غير الـ filter بتاع الدرس اللي فات، وبيرجع إيه معاه؟`,
-          flag: "script",
-          deep: {
-            why: R`لو كل service عملت [[new PrismaClient()]]، كل واحدة ليها pool، والقاعدة توصل للحد الأقصى من الاتصالات بسرعة. والـ DI بيخلي في الاختبار تبدّل PrismaService بـ fake من غير ما تلمس الـ service.`,
-            how: R`[[extends PrismaClient]] بيخلي كل الـ models ([[this.db.order.findMany]]) موجودة على الـ service مباشرة. و Prisma 7: الـ client بيتولّد في فولدر انت محدده ([[generated/prisma]]) وبيحتاج driver adapter ([[PrismaPg]])، والتفاصيل في تاب «SQL و Prisma».
-
-الاتصال: Prisma بيتصل لوحده مع أول query، فمش لازم [[$connect]] في [[onModuleInit]] (لو عملتها، الغلطة في الـ URL تظهر وقت البداية بدل أول طلب، ودي ميزة). و [[onModuleDestroy]] بيقفل الـ pool لما التطبيق يقفل. بس الـ hooks دي مبتتناديش على SIGTERM إلا لو [[app.enableShutdownHooks()]] في main.ts، وده اللي Docker بيبعته وقت الـ deploy.
-
-الـ transactions: [[this.db.$transaction(async (tx) => ...)]] زي Express بالظبط (درس [[$transaction]]). ولو عايز transaction تعدّي على أكتر من service، ابعت [[tx]] كباراميتر، أو استخدم مكتبة زي [[@nestjs-cls/transactional]] (مبنية على AsyncLocalStorage، درس [[AsyncLocalStorage]]).
-
-أخطاء Prisma ([[P2002]] وغيرها) مش HttpException، فمن غير filter بتبقى 500 (الدرس اللي فات).`,
-            when: "أي مشروع Nest بـ Prisma. ولو المشروع بـ TypeORM (منتشر في مشاريع Nest القديمة)، نفس الفكرة بـ [[@nestjs/typeorm]] و repositories.",
-            mistakes: R`[[new PrismaClient()]] في كل service. ونسيان [[enableShutdownHooks]] فالاتصالات متتقفلش نضيف. و PrismaModule من غير [[exports]] فالـ modules التانية مش شايفاه («can't resolve dependencies»). وإنك تحط منطق في PrismaService نفسه وتحوّله لـ service لكل حاجة.`
-          },
-          lines: [
-            "decorators و hook الإغلاق.",
-            "الـ driver adapter لـ Postgres.",
-            "الـ client المتولّد (Prisma 7).",
-            "provider ينفع يتحقن.",
-            "بيورث كل حاجة من PrismaClient.",
-            "الـ constructor.",
-            "ابني الـ client بالـ adapter ورابط القاعدة.",
-            "قفلة.",
-            "لما التطبيق يقفل...",
-            "...اقفل الـ pool.",
-            "قفلة.",
-            "قفلة.",
-            "الـ module متاح في كل حتة.",
-            "بيعمل PrismaService ويصدّره.",
-            "كلاس الـ module.",
-            "اعمل التطبيق.",
-            "خلي SIGTERM يشغّل الـ hooks (onModuleDestroy).",
-            "اسمع على البورت."
-          ],
-          sol: R`من غير filter: الطلب التاني بيرجع 500 و [[{"statusCode":500,"message":"Internal server error"}]]، واللوج فيه [[PrismaClientKnownRequestError]] كوده [[P2002]]. 500 غلط هنا، لأن ده خطأ من العميل (الإيميل مستخدم).
-
-مع [[PrismaErrorFilter]] مركّب global ([[app.useGlobalFilters(new PrismaErrorFilter())]]): 409 و [[{"statusCode":409,"error":"CONFLICT"}]].
-
-والأحسن كمان إن الـ service تتحقق وترمي [[ConflictException("Email already used")]] برسالة واضحة، والـ filter يفضل شبكة أمان لأي unique تاني نسيته.`,
-          solCode: R`@Post("users")
-create(@Body({ schema: z.object({ email: z.email() }) }) dto: { email: string }) {
-  return this.db.user.create({ data: dto });
-}
-// curl -X POST ... -d '{"email":"a@b.co"}'  → 201
-// نفس الطلب تاني بدون filter → 500
-// نفس الطلب تاني مع PrismaErrorFilter → 409 {"statusCode":409,"error":"CONFLICT"}`
-        },
-        {
-          cmd: "Nest: الاختبارات",
-          title: "testing module: unit بـ fake، و e2e بـ supertest",
-          desc: R`[[Test.createTestingModule]] بيبني نفس الـ DI بتاع التطبيق في الاختبار. للـ unit: بتدّيله الـ service وتبدّل الـ dependencies بـ [[overrideProvider(...).useValue(fake)]]. وللـ e2e: بتستورد [[AppModule]] كله، وتعمل [[createNestApplication()]]، وتبعت طلبات بـ supertest على [[app.getHttpServer()]].
-
-نفس أفكار قسم الاختبارات بالظبط: قاعدة اختبار، و TRUNCATE، ومصفوفة 401 و 403 و 404.`,
-          example: R`let app: INestApplication;
-let db: PrismaService;
-
-beforeAll(async () => {
-  const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile();
-  app = setupApp(moduleRef.createNestApplication());
-  await app.init();
-  db = moduleRef.get(PrismaService);
-});
-beforeEach(() => db.$executeRawUnsafe('TRUNCATE TABLE "Order", "User" CASCADE'));
-afterAll(() => app.close());
-
-it("404 for another user's order", async () => {
-  const [a, b] = [await db.user.create({ data: { email: "a@t.l" } }), await db.user.create({ data: { email: "b@t.l" } })];
-  const order = await db.order.create({ data: { userId: a.id, amountCents: 100 } });
-  const res = await request(app.getHttpServer()).get($__bt/api/orders/$__{order.id}$__bt).set("Authorization", $__btBearer $__{tokenFor(b)}$__bt);
-  expect(res.status).toBe(404);
-});
-
-it("unit: NotFound when the order is not mine", async () => {
-  const moduleRef = await Test.createTestingModule({ providers: [OrdersService, PrismaService] })
-    .overrideProvider(PrismaService).useValue({ order: { findFirst: async () => null } })
-    .compile();
-  await expect(moduleRef.get(OrdersService).findMine("u1", "o1")).rejects.toMatchObject({ status: 404 });
-});`,
-          try: R`اكتب e2e لـ [[POST /api/orders]]: body صح 201، و [[amountCents: "x"]] 400. وخلي بالك: لازم تستخدم نفس إعداد الـ app اللي في main.ts (الـ pipes والـ prefix)، وإلا الـ 400 هيبقى 201. وبعدين اكتب unit للـ service بـ fake PrismaService.`,
-          flag: "script",
-          deep: {
-            why: R`اختبار Nest من غير الـ testing module معناه تعمل كل الـ services بإيدك بالترتيب، وتفوّت الـ guards والـ pipes. والـ e2e هو اللي بيثبت إن كل الطبقات (guard و pipe و filter) متركّبة صح، ودي أكتر حاجة بتبوظ لما حد يعدّل main.ts.`,
-            how: R`[[createNestApplication()]] بيعمل التطبيق بس مبيعملش listen، و supertest بياخد [[app.getHttpServer()]] (نفس فكرة [[app و server]]). و [[app.init()]] لازم قبل الطلبات، و [[app.close()]] في الآخر بيشغّل [[onModuleDestroy]] ويقفل Prisma.
-
-[[setupApp(app)]]: الـ pipes والـ filters والـ prefix اللي في main.ts مش جزء من AppModule، فلو الاختبار معملهمش، هتختبر تطبيق غير اللي بيشتغل. عشان كده دالة واحدة بتعملهم، و main.ts والاختبار الاتنين بينادوها. (البديل: تسجّلهم كـ providers بـ [[APP_PIPE]] و [[APP_FILTER]] جوه الـ module، فيبقوا جزء منه.)
-
-[[overrideProvider(X).useValue(fake)]] بيبدّل الـ provider في الـ DI، و [[moduleRef.get(OrdersService)]] بيجيب الـ instance بالـ fake جواه. في الـ unit مش محتاج [[createNestApplication]] خالص.
-
-الأداة: Nest 12 نفسه بيستخدم Vitest في اختباراته، و Jest لسه منتشر جدًا في المشاريع الموجودة. مع Vitest لازم SWC (باكدج [[unplugin-swc]] في vitest.config) لأن esbuild الافتراضي مبيطلّعش decorator metadata، فالـ DI بالـ types مبيشتغلش (جربناها: من غير إعداد الـ decorators في SWC الملف مبيعملش parse أصلًا). و [[fileParallelism: false]] زي قسم الاختبارات لأن القاعدة مشتركة.`,
-            when: "e2e لكل controller (الحالة الناجحة، والـ validation، ومصفوفة الصلاحيات). unit للـ services اللي فيها منطق حقيقي (حسابات أو قرارات). ومتعملش unit لـ service بتعمل findMany وخلاص.",
-            mistakes: R`e2e من غير نفس الـ pipes اللي في main.ts، فالـ validation متختبرش. و mock للـ PrismaService في الـ e2e فبتختبر الـ mock. ونسيان [[app.close()]] فـ vitest يفضل مستني. و Vitest من غير SWC فتلاقي «Nest can't resolve dependencies» في الاختبار بس، والتطبيق شغال.`
-          },
-          lines: [
-            "التطبيق للاختبارات.",
-            "الـ Prisma للتجهيز والتنضيف.",
-            "مرة قبل الكل...",
-            "...ابني AppModule كله بالـ DI.",
-            "اعمل التطبيق بنفس إعداد main.ts (pipes و prefix و filters).",
-            "جهّزه من غير listen.",
-            "هات PrismaService من الـ DI.",
-            "قفلة.",
-            "فضّي الجداول قبل كل اختبار.",
-            "في الآخر اقفل التطبيق (و Prisma معاه).",
-            "اختبار الـ ownership.",
-            "يوزرين.",
-            "طلب بتاع A.",
-            "B يطلب طلب A.",
-            "404.",
-            "قفلة.",
-            "unit test.",
-            "module فيه الـ service والـ dependency...",
-            "...والـ dependency اتبدّلت بـ fake بيرجّع null.",
-            "ابنيه.",
-            "الـ service لازم ترمي 404.",
-            "قفلة."
-          ],
-          sol: R`المتوقع: الـ 201 و الـ 400 الاتنين بينجحوا، ورسالة الـ 400 من Zod زي [[amountCents: Invalid input: expected number, received string]]. والـ unit بينجح من غير قاعدة بيانات خالص.
-
-لو الـ 400 طلع 201، الاختبار مش بيستخدم [[setupApp]] (مفيش pipe). ولو ظهر 404 على كل الـ routes، الـ prefix [[api]] مش متظبط في الاختبار. ولو vitest قال «Expression expected» عند [[@Module]]، SWC مش متظبط للـ decorators.
-
-الإعداد اللي جربناه لـ Vitest في الكود.`,
-          solCode: R`// vitest.config.ts
-import swc from "unplugin-swc";
-import { defineConfig } from "vitest/config";
-export default defineConfig({
-  plugins: [swc.vite({ jsc: { parser: { syntax: "typescript", decorators: true }, transform: { legacyDecorator: true, decoratorMetadata: true }, target: "es2022" } })],
-  test: { env: { DATABASE_URL: "postgresql://app:app@localhost:5432/myapp_test", JWT_SECRET: "test-secret" }, fileParallelism: false },
-});
-
-// test/orders.e2e.test.ts
-it("201 then 400", async () => {
-  const u = await db.user.create({ data: { email: "a@t.l" } });
-  const auth = { Authorization: $__btBearer $__{tokenFor(u)}$__bt };
-  expect((await request(app.getHttpServer()).post("/api/orders").set(auth).send({ amountCents: 500 })).status).toBe(201);
-  expect((await request(app.getHttpServer()).post("/api/orders").set(auth).send({ amountCents: "x" })).status).toBe(400);
-});`
-        }
-      ]
-    },
-    {
-      t: "أسئلة انترفيو Backend بـ Node",
-      l: 3,
-      n: "الأسئلة اللي بتتكرر في انترفيوهات Node و Express، بإجابة تقولها بصوتك في دقيقة، والأسئلة اللي بتيجي بعدها",
-      items: [
-        {
-          cmd: "event loop و blocking",
-          title: "Node single-threaded، إزاي بيخدم آلاف الطلبات؟ (event loop)",
-          desc: R`الـ JavaScript بتاعي بيشتغل على thread واحد، بس الـ I/O (الشبكة والقاعدة والملفات) مش بيستناه: Node بيطلب العملية من نظام التشغيل أو من thread pool بتاع libuv، ويكمّل يخدم طلبات تانية، ولما النتيجة تيجي الـ callback بتاعها يدخل طابور والـ event loop ينفّذه. فطول ما كل طلب معظم وقته مستني I/O، thread واحد بيكفي آلاف الاتصالات.
-
-المشكلة الحقيقية الـ blocking: أي كود CPU طويل (loop على مليون عنصر، أو [[JSON.parse]] لملف ضخم، أو دالة Sync) بيوقّف الـ loop فكل الطلبات بتستنى. الحل: worker_threads، أو queue، أو تقسيم الشغل.`,
-          example: R`console.log("1 sync");
-setTimeout(() => console.log("timeout"), 0);
-setImmediate(() => console.log("immediate"));
-Promise.resolve().then(() => console.log("promise"));
-process.nextTick(() => console.log("nextTick"));
-console.log("2 sync");
-// CommonJS: 1 sync, 2 sync, nextTick, promise, timeout, immediate`,
-          try: R`شغّل الكود مرة كـ [[.cjs]] ومرة كـ [[.mjs]]، وقارن مكان [[nextTick]] و [[promise]]. وبعدين حط الـ setTimeout والـ setImmediate جوه callback بتاع [[fs.readFile]] وشوف مين الأول.`,
-          flag: "script",
-          deep: {
-            why: "أشهر سؤال Node على الإطلاق. بيختبر إنك فاهم ليه Node سريع في الـ I/O وضعيف في الـ CPU، وده بيأثر على كل قرار: إمتى تستخدم Sync، وإمتى worker، وإزاي تكتشف إن السيرفر «مهنّج».",
-            how: R`الترتيب: الكود الـ sync كله الأول. بعده microtasks: طابور [[process.nextTick]] وطابور الـ promises، وبيتفضّوا بالكامل بعد كل task. بعدها مراحل الـ loop: timers ([[setTimeout]] و [[setInterval]])، ثم poll (callbacks الـ I/O)، ثم check ([[setImmediate]])، ثم close callbacks.
-
-تفصيلة جربناها: في CommonJS الـ nextTick قبل الـ promise. في ESM ([[.mjs]] أو [[type: module]]) الـ promise طلع قبل الـ nextTick، لأن الموديول نفسه بيتنفّذ جوه microtask فطابور الـ promises بيتفضى الأول. والـ timeout والـ immediate في المستوى الأعلى ترتيبهم مش مضمون، بس جوه callback بتاع I/O الـ immediate دايمًا الأول.
-
-thread pool بتاع libuv (افتراضيًا ٤ threads، [[UV_THREADPOOL_SIZE]]) بيعمل fs و dns.lookup و crypto (pbkdf2 و scrypt) و zlib. الشبكة (TCP) مش بتستخدمه، بتعتمد على epoll/kqueue في النظام. عشان كده ٤ عمليات bcrypt تقيلة مع بعض ممكن تبطّأ قراية الملفات.
-
-وتكتشف الـ blocking إزاي؟ [[perf_hooks.monitorEventLoopDelay()]] بيقيس التأخير، ولو p99 فوق ١٠٠ms فيه حاجة بتوقّف. و [[node --cpu-prof]] أو clinic.js يوريك الدالة. والتفاصيل الأعمق للـ event loop في JavaScript نفسها في درس [[event loop]] في تاب «JavaScript».`,
-            when: R`أسئلة بعدها: «الفرق بين nextTick و setImmediate؟» (الأسماء معكوسة: nextTick أسرع). «إزاي تعمل حاجة تقيلة من غير ما تبلوك؟» (worker_threads أو queue، درس [[worker_threads و cluster]]). «Node multi-threaded ولا لأ؟» (الـ JS بتاعك thread واحد، و Node نفسه فيه threads للـ libuv والـ GC). «إمتى Node اختيار وحش؟»`,
-            mistakes: R`«Node multi-threaded» أو «Node single-threaded فمينفعش يعمل حاجتين مع بعض»: الاتنين غلط. و «async بيخلي الكود أسرع»: async بيخلي السيرفر فاضي لغيرك وانت مستني، مش بيسرّع الحساب نفسه. و «setTimeout(fn, 0) بيتنفّذ فورًا». و nextTick recursion بيجوّع الـ loop ومفيش I/O يتنفّذ.`
-          },
-          lines: [
-            "sync.",
-            "timer: مرحلة timers.",
-            "مرحلة check.",
-            "microtask.",
-            "طابور nextTick (microtask برضه، ليه أولوية في CommonJS).",
-            "sync."
-          ],
-          sol: R`CommonJS: [[1 sync]]، [[2 sync]]، [[nextTick]]، [[promise]]، [[timeout]]، [[immediate]].
-
-ESM: [[1 sync]]، [[2 sync]]، [[promise]]، [[nextTick]]، وبعدين الاتنين التانيين. السبب إن الـ ESM بيتنفّذ من جوه microtask، فالـ promises بتخلص الأول قبل ما Node يرجع لطابور الـ nextTick.
-
-وجوه [[readFile]]: [[immediate]] قبل [[timeout]] دايمًا، لأن بعد مرحلة الـ poll (اللي فيها callback الـ I/O) الـ loop بيروح على check (setImmediate) قبل ما يلف للـ timers تاني. وفي المستوى الأعلى ترتيب timeout و immediate ممكن يتغير من تشغيلة للتانية.`,
-          solCode: R`const { readFile } = require("node:fs");
-readFile(__filename, () => {
-  setTimeout(() => console.log("timeout in I/O"), 0);
-  setImmediate(() => console.log("immediate in I/O"));
-});
-// immediate in I/O
-// timeout in I/O`
-        },
-        {
-          cmd: "next() والترتيب",
-          title: "إزاي middleware بيشتغل في Express؟ وليه الترتيب مهم؟ (middleware order)",
-          desc: R`Express بيمشي على الـ middleware والـ routes بالترتيب اللي اتسجّلوا بيه. كل واحد يا إما يرد ويقفل الطلب، يا إما ينادي [[next()]] فالطلب يروح للي بعده، يا إما [[next(err)]] فيقفز على طول لأول error middleware (اللي ليه ٤ باراميترز).
-
-فالترتيب هو المنطق: parsing و security headers و CORS و rate limit الأول، وبعدين auth، وبعدين الـ routes، وبعدين 404، وفي الآخر الـ error handler. وأي route متسجّل قبل الـ auth مش محمي حتى لو شكله جنب routes محمية.`,
-          example: R`app.get("/a", (req, res) => res.json({ user: req.user ?? null }));
-app.use((req, res, next) => { req.user = "u1"; next(); });
-app.get("/b", (req, res) => res.json({ user: req.user }));
-app.get("/boom", async () => { throw new Error("db down"); });
-app.use((err, req, res, next) => res.status(500).json({ error: "INTERNAL" }));`,
-          try: R`شغّل المثال واطلب [[/a]] و [[/b]] و [[/boom]]. وبعدين انقل الـ error handler لأول الملف واطلب [[/boom]] تاني. إيه اللي اتغير، وليه؟`,
-          flag: "script",
-          deep: {
-            why: "بيختبر إنك فاهم Express من جوه مش حافظ أسماء. وغلطات الترتيب من أشهر أسباب الثغرات (route من غير auth) والـ bugs (req.body فاضي، CORS مش شغال).",
-            how: R`داخليًا Express عنده stack من الـ layers. كل layer ليها path و method (أو أي method في [[app.use]]). مع كل طلب بيلف عليهم بالترتيب ويشغّل اللي بيطابق. [[next()]] يعني «كمّل على الـ layer اللي بعدي». ولو ولا واحد رد، Express بيرجّع 404 الافتراضي.
-
-الـ error middleware بيتعرف بعدد الباراميترز (٤). لما حد ينادي [[next(err)]] أو يرمي خطأ، Express بيتخطى كل الـ middleware العادي ويروح لأول error middleware بعد المكان ده. وفي Express 5، لو async handler رمى أو الـ promise اترفضت، ده بيتحول لـ [[next(err)]] لوحده (درس [[async errors في Express 5]]). في Express 4 كان الطلب بيعلّق.
-
-أمثلة الترتيب اللي بتتسأل: [[express.json()]] قبل الـ routes وإلا [[req.body]] undefined. والـ webhook اللي محتاج raw body قبل [[express.json()]]. و CORS قبل الـ auth عشان الـ preflight (OPTIONS) ميترفضش بـ 401. و [[express.static]] قبل الـ auth لو الملفات عامة. والتفاصيل في درس [[ترتيب الـ middleware]].`,
-            when: R`أسئلة بعدها: «إزاي تعمل error handler مركزي؟». «إيه اللي يحصل لو middleware منسيش ينادي next ولا رد؟» (الطلب يعلّق لحد الـ timeout). «الفرق بين app.use و app.get؟». «middleware في Nest بيختلف عن guard إزاي؟» (درس «Nest: guards و interceptors»).`,
-            mistakes: R`«الترتيب مش مهم». و error handler بـ ٣ باراميترز فمش بيتنادى أبدًا. وإنك تنادي [[next()]] بعد [[res.json()]] فيحصل «Cannot set headers after they are sent». و [[res.json()]] من غير [[return]] جوه if، فالكود يكمّل ويرد مرتين.`
-          },
-          lines: [
-            "route قبل الـ middleware: مش هيشوف req.user.",
-            "middleware بيحط اليوزر ويكمّل.",
-            "route بعده: شايف req.user.",
-            "route بيرمي من async (Express 5 بيوديه للـ error handler).",
-            "error handler بـ ٤ باراميترز في الآخر."
-          ],
-          sol: R`النتيجة: [[/a]] بيرجّع [[{ user: null }]] لأنه اتسجّل قبل الـ middleware، و [[/b]] بيرجّع [[{ user: "u1" }]]، و [[/boom]] بيرجّع 500 و [[{ error: "INTERNAL" }]].
-
-لما الـ error handler يبقى أول الملف: [[/boom]] بيرجّع 500 بصفحة HTML الافتراضية بتاعة Express (فيها الـ stack في التطوير)، مش الـ JSON بتاعك. السبب إن [[next(err)]] بيدوّر على error middleware بعد مكان الخطأ، واللي فوق مش بيتشاف.`,
-          solCode: R`const r = await Promise.all(["/a", "/b", "/boom"].map((p) => request(app).get(p)));
-console.log(r[0].body, r[1].body, r[2].status, r[2].body);
-// { user: null } { user: 'u1' } 500 { error: 'INTERNAL' }`
-        },
-        {
-          cmd: "JWT ولا session",
-          title: "JWT ولا session؟ وفين تحط التوكن؟ (JWT vs sessions)",
-          desc: R`session: السيرفر بيحفظ البيانات في store (Redis)، والعميل معاه id عشوائي في كوكي httpOnly. logout والحظر فوري، بس كل طلب فيه lookup. JWT: البيانات موقّعة جوه التوكن، والسيرفر بيتحقق من التوقيع من غير ما يسأل حد. مفيش lookup، بس مفيش سحب للتوكن قبل ما يخلص.
-
-عشان كده الشكل الشائع مع JWT: access token قصير (١٠-١٥ دقيقة) و refresh token طويل في كوكي httpOnly بيتخزن ويتلغي من السيرفر. ولموقع واحد على دومين واحد، الـ session غالبًا أبسط وأأمن.`,
-          example: R`// session: الكوكي فيها id بس، والبيانات في Redis
-// Set-Cookie: sid=s%3ACzl9ycc...; Path=/; HttpOnly; Secure; SameSite=Lax
-// JWT: البيانات في التوكن نفسه، أي حد يقدر يقراها (مش مشفّرة، موقّعة بس)
-node -e 'console.log(JSON.parse(Buffer.from(process.argv[1].split(".")[1], "base64url")))' eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI3Iiwicm9sZSI6IlVTRVIiLCJleHAiOjE3OTA3MTQ3Nzd9.x`,
-          try: R`خد أي JWT من تطبيق عندك وفكّ الجزء التاني بالأمر ده. إيه البيانات اللي فيه؟ ينفع يبقى فيه إيميل أو رقم تليفون؟ وبعدين فكّر: يوزر عمل logout، والـ access token بتاعه لسه فاضله ١٠ دقايق. حد سرقه. يقدر يستخدمه؟`,
-          deep: {
-            why: "سؤال تصميم بيبان منه إنك بتفهم المقايضات مش بتردد «JWT أحدث». والإجابة الناضجة بتقول إمتى كل واحد، وإيه اللي بيضيع مع JWT، وفين تحط التوكن.",
-            how: R`النقط اللي تقولها: الـ session stateful (الحالة عند السيرفر) و JWT stateless (الحالة في التوكن). JWT مناسب لما خدمات كتير محتاجة تتحقق من غير قاعدة مشتركة، أو موبايل، أو API لطرف تالت. والـ session مناسبة لـ web app على دومين واحد.
-
-التخزين: localStorage أي script (XSS) يقدر يقراه ويبعته برّه. الكوكي الـ httpOnly محدش يقدر يقراها بـ JS، بس بتتبعت لوحدها فمحتاجة حماية CSRF ([[SameSite=Lax]] أو Strict، وتوكن CSRF للحالات الحساسة). فالشائع: refresh في كوكي httpOnly، و access في الذاكرة.
-
-سحب التوكن: مع JWT يا إما عمره قصير ومعاه refresh بيتلغي من القاعدة (rotation، درس «refresh rotation» في «تاب بناء مشروع كامل»)، يا إما blocklist بالـ [[jti]] في Redis، وده رجوع لـ lookup. و [[alg]]: حدد الخوارزمية في [[jwt.verify]] صريح عشان هجمات [[alg: none]] أو تبديل الخوارزمية.
-
-الكود في درسي [[express-session]] و [[access و refresh]].`,
-            when: R`أسئلة بعدها: «التوكن اتسرق، تعمل إيه؟». «فين تحط الـ JWT في الواجهة؟». «يعني إيه CSRF وليه SameSite بيساعد؟». «ليه الـ access قصير؟». «OAuth و JWT نفس الحاجة؟» (لأ: OAuth بروتوكول تفويض، و JWT شكل توكن).`,
-            mistakes: R`«JWT مشفّر»: هو موقّع بس، والـ payload base64 أي حد يقراه، فمتحطش فيه بيانات حساسة. و «JWT أأمن من session». و access token عمره أيام. و logout في الواجهة بس بمسح الـ localStorage والتوكن لسه شغال.`
-          },
-          lines: [
-            "فك الـ payload بتاع JWT من غير أي سر: base64url عادي. (في الـ session بقى، الكوكي فيها id موقّع بس زي السطر المتعلّق فوق.)"
-          ],
-          sol: R`الأمر بيطبع object زي [[{ sub: "7", role: "USER", exp: 1790714777 }]]. أي حد معاه التوكن يقرا ده من غير أي مفتاح، فمينفعش يبقى فيه باسورد أو بيانات حساسة. الإيميل أحيانًا بيتحط، بس الأحسن id بس.
-
-وسؤال الـ logout: أيوه، التوكن المسروق شغال لحد ما الـ [[exp]] يعدّي، لأن السيرفر مبيسألش حد وهو بيتحقق. عشان كده عمره قصير. ولو محتاج سحب فوري: blocklist للـ [[jti]] في Redis لحد الـ exp، أو [[tokenVersion]] على اليوزر بتزوده مع logout-all والتوكن بيحمله. أو session من الأول.`,
-          solCode: R`// blocklist بسيطة في Redis لحد ما التوكن يخلص
-await redis.set($__btjwt:revoked:$__{payload.jti}$__bt, "1", "EXAT", payload.exp);
-// وفي requireAuth بعد jwt.verify:
-if (await redis.exists($__btjwt:revoked:$__{payload.jti}$__bt)) return res.status(401).json({ error: "REVOKED" });`
-        },
-        {
-          cmd: "scale لـ API",
-          title: "الـ API بقى بطيء والمستخدمين زادوا ١٠ أضعاف، تعمل إيه؟ (How would you scale it?)",
-          desc: R`أبدأ بالقياس مش بالتخمين: أنهي endpoints بطيئة، والوقت رايح فين (القاعدة، ولا CPU، ولا خدمة برّه)، من اللوجات (المدة لكل طلب) و APM و [[EXPLAIN ANALYZE]].
-
-بعدين بالترتيب: صلّح الأرخص (index ناقص، و N+1، و pagination، ورد أصغر)، وبعدين كاش للي بيتقري كتير (Redis و HTTP cache)، وبعدين الشغل التقيل يطلع queue، وبعدين نسخ كتير ورا load balancer (والتطبيق لازم يبقى stateless)، وآخر حاجة القاعدة نفسها (pooler و read replicas).`,
-          example: R`EXPLAIN ANALYZE SELECT * FROM "Order" WHERE "userId" = 'u7' ORDER BY "createdAt" DESC LIMIT 20;
--- Seq Scan on "Order" (actual time=0.02..412.30 rows=20)
-CREATE INDEX CONCURRENTLY order_user_created_idx ON "Order" ("userId", "createdAt" DESC);
--- Index Scan using order_user_created_idx (actual time=0.03..0.09 rows=20)`,
-          try: R`اختار أبطأ endpoint عندك وارسم رحلة الطلب: كام query؟ كام ms لكل واحدة؟ فيه طلب لخدمة برّه؟ اكتب ٣ تحسينات بالترتيب من الأرخص للأغلى، ولكل واحد إزاي هتقيس إنه نفع.`,
-          deep: {
-            why: "سؤال system design مصغّر. الإجابة الضعيفة «Kubernetes و microservices». الإجابة القوية بتبدأ بالقياس، وبتمشي من الأرخص للأغلى، وبتعرف إن ١٠ سيرفرات على query من غير index هيضربوا القاعدة ١٠ أضعاف.",
-            how: R`النقط اللي تقولها بالترتيب:
-
-١. قيس: p50 و p95 و p99 لكل endpoint، و slow query log، و APM (Sentry أو OpenTelemetry). والـ event loop delay لو شاكك في CPU.
-
-٢. القاعدة أول مكان تبص فيه: index على أعمدة الـ WHERE والـ ORDER BY (مثال الـ EXPLAIN من ٤١٢ms لأقل من ms)، و N+1 (درس «indexes و N+1» في «تاب بناء مشروع كامل»)، و [[select]] للأعمدة المطلوبة بس، و pagination.
-
-٣. كاش: HTTP cache و CDN للعام، و Redis (cache-aside) للي بيتقري كتير وبيتغير قليل، مع خطة للمسح.
-
-٤. اطلع من الطلب: إيميلات وصور وتقارير في queue، والرد 202.
-
-٥. horizontal: نسخ ورا load balancer، والشرط stateless: sessions و rate limit و cache في Redis، والملفات في S3، والـ cron في queue scheduler، والـ sockets بـ Redis adapter.
-
-٦. القاعدة لما تبقى هي عنق الزجاجة: connection pooler (PgBouncer)، و read replicas للقراية، وبعدها partitioning. والـ sharding آخر حاجة خالص.
-
-والتفاصيل في درس «scaling path» و «scaling القاعدة» في «تاب بناء مشروع كامل».`,
-            when: R`أسئلة بعدها: «ليه الـ stateless مهم؟». «كاش invalidation إزاي؟». «read replica فيها مشكلة إيه؟» (replication lag: اليوزر يكتب وميلاقيش اللي كتبه). «vertical ولا horizontal؟». «إزاي تعرف إن التحسين نفع؟» (نفس المقاييس قبل وبعد).`,
-            mistakes: R`تبدأ بـ microservices أو Kubernetes. أو «هنكبّر السيرفر» من غير ما تعرف المشكلة. أو كاش على كل حاجة من غير خطة مسح. أو تنسى القاعدة وتكبّر الـ API بس، فالـ connections تخلص. أو ترد بكلام عام من غير أرقام: قول «p95 كان ٢ ثانية، الـ query دي كانت ١.٨ منهم».`
-          },
-          lines: [
-            "شوف الخطة والوقت الحقيقي.",
-            "بتقرا كل الجدول: ٤١٢ms.",
-            "index على الفلتر والترتيب، و CONCURRENTLY عشان ميقفلش الجدول.",
-            "بعد الـ index: أقل من ms."
-          ],
-          sol: R`مثال لإجابة كويسة على [[GET /api/orders]]:
-
-الرحلة: auth (Redis، ١ms)، و query الطلبات (٤٠٠ms، Seq Scan)، وبعدين loop بيجيب المنتج لكل طلب (٢٠ query، N+1، ٦٠ms)، وحساب الإجمالي في JS.
-
-التحسينات بالترتيب: (١) index مركّب على [[userId, createdAt]]: أقيس بـ EXPLAIN قبل وبعد. (٢) [[include]] أو [[in]] بدل الـ loop: أقيس عدد الـ queries في لوج Prisma من ٢١ لـ ٢. (٣) كاش للمنتجات لو لسه بطيء: أقيس hit rate و p95.
-
-المهم إن كل خطوة ليها رقم قبل ورقم بعد، وإنك متعدّيش للأغلى إلا لو الأرخص مكفّاش.`,
-          solCode: R`const prisma = new PrismaClient({ adapter, log: [{ emit: "event", level: "query" }] });
-let queries = 0;
-prisma.$on("query", () => queries++);
-// اطلب الـ endpoint مرة، واطبع queries قبل وبعد التحسين`
-        },
-        {
-          cmd: "idempotency",
-          title: "اليوزر داس «ادفع» مرتين، أو الشبكة عملت retry: إزاي متخصمش مرتين؟ (idempotency)",
-          desc: R`العملية idempotent لو تكرارها بيدّي نفس النتيجة زي مرة واحدة. GET و PUT و DELETE كده بطبيعتهم. POST لأ: مرتين يعني طلبين.
-
-الحل: العميل بيبعت [[Idempotency-Key]] (UUID لكل محاولة شراء)، والسيرفر بيحفظ المفتاح مع النتيجة. لو نفس المفتاح جه تاني، يرجّع نفس الرد من غير ما يعمل العملية تاني. ونفس الفكرة جوه السيرفر: unique constraint، وتحديث بشرط على الحالة، و webhooks وـ jobs بتتعالج مرة مهما اتكررت.`,
-          example: R`// الواجهة: مفتاح واحد لكل محاولة، ثابت مع أي retry
-// fetch("/api/orders", { method: "POST", headers: { "Idempotency-Key": attemptId }, body })
-model IdempotencyKey {
-  key        String   @id
-  userId     String
-  status     Int
-  response   Json
-  createdAt  DateTime @default(now())
-}
-// SQL تحت: INSERT ... ON CONFLICT (key) DO NOTHING، ولو مدخلش يبقى تكرار`,
-          try: R`اعمل [[POST /api/orders]] بيقرا [[Idempotency-Key]]: لو المفتاح موجود لنفس اليوزر رجّع الرد المحفوظ، ولو لأ اعمل الطلب واحفظ الرد. ابعت نفس الطلب ٣ مرات بنفس المفتاح بـ [[Promise.all]] (مع بعض!). كام طلب اتعمل في القاعدة؟`,
-          deep: {
-            why: "الشبكات بتقطع، والموبايل بيعيد، واليوزر بيدوس مرتين، والبوابة بتعيد الـ webhook، والـ queue بتعيد الـ job. في أي نظام فيه فلوس، التكرار مش حالة نادرة. والسؤال ده بيفرق بين حد بنى API لعب وحد بنى حاجة فيها دفع.",
-            how: R`النقط: [[Idempotency-Key]] من العميل (مش من السيرفر، عشان الـ retry يبعت نفس المفتاح). المفتاح مربوط باليوزر (مفتاح يوزر تاني ميرجّعش رد يوزرك). والحفظ لازم atomic: [[INSERT ... ON CONFLICT DO NOTHING]] أو unique على المفتاح، مش «دوّر وبعدين اعمل» (الاتنين هيدوّروا مع بعض ويلاقوه مش موجود). والطلب التاني اللي جه والأول لسه شغال يرجع 409 «in progress» أو يستنى. والمفاتيح ليها عمر (٢٤ ساعة مثلًا) وبتتمسح. ولو نفس المفتاح جه بـ body مختلف: 422.
-
-ده مفصّل في درس [[Idempotency-Key]] في تاب «APIs متقدمة». وجوه السيرفر: الـ webhook بشرط على الحالة و unique على id المعاملة (درس [[اختبار الـ webhook]])، والـ jobs idempotent (درس [[background jobs]])، ومع بوابات الدفع ابعت نفس المفتاح ليهم كمان (Stripe و Paymob بيدعموا حاجة زي كده).`,
-            when: R`أسئلة بعدها: «POST ولا PUT idempotent؟». «إزاي تمنع race condition في الحفظ؟». «at-least-once و exactly-once؟» (الـ queues بتضمن at-least-once، و exactly-once بتعمله انت بالـ idempotency). «تمسح المفاتيح إمتى؟».`,
-            mistakes: R`«بقفل الزرار في الواجهة» كحل وحيد: الـ retry بيحصل من الشبكة مش من اليوزر. و «دوّر لو موجود، وإلا اعمل» من غير unique فالتكرار المتزامن يعدّي. ومفتاح جديد مع كل retry فمفيش فايدة. ومفتاح عالمي من غير ربط باليوزر.`
-          },
-          lines: [
-            "جدول المفاتيح.",
-            "المفتاح نفسه primary key، فالتكرار مستحيل على مستوى القاعدة.",
-            "صاحب المفتاح.",
-            "الـ status اللي اترد.",
-            "الرد المحفوظ عشان يترجع زي ما هو.",
-            "وقت الإنشاء عشان المسح بعد مدة.",
-            "قفلة."
-          ],
-          sol: R`المتوقع لو التنفيذ صح: طلب واحد بس في القاعدة، والتلات ردود زي بعض (أو واحد 201 والباقيين نفس الرد المحفوظ، أو 409 «in progress» لو وصلوا والأول لسه بيتعمل).
-
-لو لقيت ٢ أو ٣ طلبات، يبقى بتعمل [[findUnique]] وبعدين [[create]]: التلاتة دوّروا مع بعض قبل ما أي واحد يكتب. الحل إنك تحجز المفتاح الأول بـ [[create]] وتسيب الـ primary key يرفض التكرار (Prisma بيرمي P2002)، وبعدين تعمل الطلب وتحدّث الصف بالرد.`,
-          solCode: R`router.post("/", requireAuth, async (req, res) => {
-  const key = req.get("Idempotency-Key");
-  if (!key) return res.status(400).json({ error: "IDEMPOTENCY_KEY_REQUIRED" });
-  try {
-    await db.idempotencyKey.create({ data: { key, userId: req.user.id, status: 0, response: {} } });
-  } catch (e) {
-    if (e.code !== "P2002") throw e;
-    const saved = await db.idempotencyKey.findUnique({ where: { key } });
-    if (saved.userId !== req.user.id) return res.status(422).json({ error: "KEY_REUSED" });
-    if (saved.status === 0) return res.status(409).json({ error: "IN_PROGRESS" });
-    return res.status(saved.status).json(saved.response);
-  }
-  const order = await ordersService.create(req.user.id, req.body);
-  await db.idempotencyKey.update({ where: { key }, data: { status: 201, response: order } });
-  res.status(201).json(order);
-});`
-        },
-        {
-          cmd: "استراتيجية الأخطاء",
-          title: "إزاي بتتعامل مع الأخطاء في API بـ Node؟ (error handling strategy)",
-          desc: R`عندي نوعين: أخطاء متوقعة (operational) زي validation أو مش موجود أو مش مسموح أو خدمة برّه واقعة، ودي بترميها كـ [[AppError]] فيها status وكود ثابت. وأخطاء bugs (undefined is not a function) ودي بتبقى 500 برسالة عامة وبتتسجّل بالـ stack وبتروح Sentry.
-
-كل ده بيتمسك في error middleware واحد في الآخر بيرجّع نفس شكل الـ JSON دايمًا. والـ process نفسها: [[unhandledRejection]] و [[uncaughtException]] بيتسجّلوا والـ process بتقفل نضيف وتتعاد (PM2 أو Docker)، مش بتكمّل في حالة مش معروفة.`,
-          example: R`export class AppError extends Error {
-  constructor(status, code, message) { super(message); this.status = status; this.code = code; }
-}
-
-app.use((err, req, res, next) => {
-  if (err instanceof AppError) return res.status(err.status).json({ error: err.code, message: err.message });
-  req.log.error({ err }, "unhandled error");
-  res.status(500).json({ error: "INTERNAL", requestId: req.id });
-});
-
-process.on("unhandledRejection", (reason) => { logger.fatal({ reason }, "unhandledRejection"); shutdown(1); });
-process.on("uncaughtException", (err) => { logger.fatal({ err }, "uncaughtException"); shutdown(1); });`,
-          try: R`في الـ API بتاعك: ارمي [[new AppError(404, "ORDER_NOT_FOUND", "...")]] من service، وارمي [[TypeError]] عادي من service تانية، وقارن الردين واللوج. وبعدين اعمل [[Promise.reject(new Error("x"))]] برّه أي route وشوف الـ process عملت إيه.`,
-          flag: "script",
-          deep: {
-            why: "API من غير استراتيجية بيرجّع أشكال أخطاء مختلفة في كل route، وأحيانًا بيسرّب stack traces ورسايل القاعدة للعميل، وأحيانًا بيبلع الخطأ فمحدش يعرف. والسؤال بيبين إنك شغّلت حاجة في الإنتاج.",
-            how: R`النقط اللي تقولها: شكل واحد للأخطاء ([[{ error: "CODE", message }]] أو [[application/problem+json]]، درس [[problem+json]] في تاب «APIs متقدمة» ودرس «شكل الأخطاء» في «تاب بناء مشروع كامل»)، والواجهة بتعتمد على الـ code مش النص.
-
-مكان الرمي: الـ validation في الـ middleware (400)، والـ service ترمي أخطاء الـ business (404 و 409 و 422)، ومحدش جوه الـ service يعمل [[res.status]]. والخطأ من مكتبة (Prisma P2002، أو 503 من البوابة) بيتحول لـ AppError في مكان واحد.
-
-Express 5 بيمسك rejections الـ async handlers لوحده (درس [[async errors في Express 5]]). والـ 500 عمره ما يرجّع [[err.message]] للعميل، بس [[requestId]] عشان تدوّر بيه في اللوج (درس [[AsyncLocalStorage]]).
-
-uncaughtException: الـ process بعدها في حالة مش معروفة (اتصال نص مفتوح، أو lock مش اتفك). الصح تسجّل، وتبطّل تقبل طلبات، وتقفل، والـ supervisor يشغّل نسخة جديدة. وفي Node الحديث الـ unhandledRejection بيقفل الـ process افتراضيًا أصلًا.
-
-والأخطاء اللي مش بتاعتك: timeouts على أي طلب لبرّه ([[AbortSignal.timeout(5000)]])، و retry بـ backoff للحاجات الـ idempotent بس، و circuit breaker لو الخدمة واقعة كتير.`,
-            when: R`أسئلة بعدها: «operational و programmer errors الفرق إيه؟». «ليه متكمّلش بعد uncaughtException؟». «إزاي تعرف إن فيه أخطاء في الإنتاج؟» (Sentry و alerts على نسبة الـ 5xx). «4xx ولا 5xx لو القاعدة وقعت؟» (503).`,
-            mistakes: R`[[try/catch]] في كل route بيرجّع [[res.status(500).json(err)]] فيسرّب كل حاجة. و [[catch (e) {}]] فاضي. و [[process.on("uncaughtException", log)]] والـ process تكمّل. ورسايل خطأ مختلفة للإيميل الغلط والباسورد الغلط في login (بتقول للمهاجم مين مسجّل).`
-          },
-          lines: [
-            "كلاس للأخطاء المتوقعة.",
-            "فيه status وكود ثابت ورسالة.",
-            "قفلة.",
-            "error handler واحد في الآخر.",
-            "خطأ متوقع: رد بالـ status والكود.",
-            "غير كده bug: سجّله بالـ stack.",
-            "ورد 500 عام ومعاه id الطلب بس.",
-            "قفلة.",
-            "promise اترفضت ومحدش مسكها: سجّل واقفل نضيف.",
-            "exception محدش مسكه: نفس الحاجة."
-          ],
-          sol: R`المتوقع: الـ AppError بيرجع 404 و [[{ error: "ORDER_NOT_FOUND", message: "..." }]] ومفيش سطر error في اللوج (أو سطر info، دي حاجة عادية). والـ TypeError بيرجع 500 و [[{ error: "INTERNAL", requestId: "..." }]] من غير أي تفاصيل، واللوج فيه سطر error بالـ stack والـ requestId نفسه.
-
-والـ rejection برّه الـ routes: سطر fatal في اللوج والـ process بتقفل بـ exit code 1، و Docker أو PM2 يشغّلها تاني. لو الـ process كمّلت عادي، يبقى الـ handler بيسجّل بس ومش بيقفل.
-
-ولو الـ 500 رجع فيه رسالة الـ TypeError أو stack، يبقى الـ handler بيبعت [[err.message]]. دي ثغرة تسريب معلومات.`,
-          solCode: R`function shutdown(code) {
-  server.close(() => process.exit(code));
-  setTimeout(() => process.exit(code), 10_000).unref();
+for (const cost of [10, 12, 14]) {
+  console.time($__btcost $__{cost}$__bt);
+  await bcrypt.hash("MyS3cret!", cost);
+  console.timeEnd($__btcost $__{cost}$__bt);
 }`
         },
         {
-          cmd: "streams في الانترفيو",
-          title: "إزاي ترفع أو تنزّل ملف ٢ جيجا في Node؟ (streams & backpressure)",
-          desc: R`مستحيل أقرا الملف كله في الذاكرة. بستخدم streams: الملف بيتقري ويتبعت حتة حتة، والذاكرة ثابتة مهما كان الحجم. وبوصّلهم بـ [[pipeline]] عشان الأخطاء والـ backpressure: لو الطرف اللي بيكتب أبطأ، القراية بتستنى بدل ما الحتت تتكوّم في الرام.
+          cmd: "jwt.sign و jwt.verify",
+          title: "توكن موقّع يثبت إنك سجّلت دخول",
+          desc: R`بعد login ناجح، السيرفر بيدّيك JWT: نص فيه بيانات (زي id اليوزر) وتوقيع بسر محدش يعرفه غير السيرفر، والواجهة بتبعته مع كل طلب في [[Authorization: Bearer ...]].
 
-وللرفع الكبير جدًا، الأحسن إن الملف ميعدّيش على السيرفر خالص: signed upload URL والمتصفح يرفع لـ S3 مباشرة، والسيرفر ياخد إشعار لما يخلص.`,
-          example: R`router.get("/files/:id/download", requireAuth, async (req, res) => {
-  const file = await filesService.getMine(req.user.id, req.params.id);
-  res.attachment(file.name);
-  res.setHeader("Content-Length", file.size);
-  await pipeline(createReadStream(file.path), res);
-});`,
-          try: R`اعمل ملف ١ جيجا ([[fallocate -l 1G big.bin]] أو [[dd]])، ونزّله مرة بـ [[res.send(await readFile(path))]] ومرة بالـ pipeline، وراقب الـ RSS بتاع السيرفر في الحالتين. وبعدين نزّله بـ curl بسرعة محدودة ([[--limit-rate 1M]]) وشوف الذاكرة بتعمل إيه مع pipeline.`,
+السيرفر بيتحقق من التوقيع من غير ما يسأل الداتابيز. والـ JWT موقّع مش مشفّر: أي حد يقدر يقرا اللي جواه، فمتحطش فيه باسورد ولا بيانات حساسة.`,
+          example: R`import jwt from "jsonwebtoken";
+import { config } from "./config.js";
+
+export function signAccessToken(user) {
+  return jwt.sign({ sub: String(user.id), role: user.role }, config.JWT_SECRET, { expiresIn: "15m" });
+}
+
+export function verifyAccessToken(token) {
+  return jwt.verify(token, config.JWT_SECRET, { algorithms: ["HS256"] });
+}
+
+// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3Iiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3OTAwMDAwMDAsImV4cCI6MTc5MDAwMDkwMH0.<signature>
+//               header                  .                         payload                                        . التوقيع`,
+          try: R`اعمل توكن وخد الجزء التاني منه (بين النقطتين) وافكّه بـ [[node -e "console.log(Buffer.from(process.argv[1], 'base64url').toString())" PAYLOAD]]. هتقرا الـ id والدور من غير أي سر. غيّر الدور لـ ADMIN ورجّع شفّره بـ [[node -e "const p = JSON.parse(Buffer.from(process.argv[1], 'base64url')); p.role = 'ADMIN'; console.log(Buffer.from(JSON.stringify(p)).toString('base64url'))" PAYLOAD]]، وحط الناتج مكان الجزء التاني وجرّب verify: [[invalid signature]] (لو غيّرت حرف في النص المشفّر نفسه، غالبًا الـ JSON هيبوظ وهتاخد SyntaxError مش invalid signature). واعمل توكن بـ [[expiresIn: "5s"]] واستنى: [[jwt expired]].`,
           flag: "script",
           deep: {
-            why: "بيختبر إنك فاهم إن الـ RAM محدودة وإن Node عنده أداة معمولة للمشكلة دي بالظبط. وبيفتح كلام عن backpressure، وده مفهوم كتير مبيعرفوهوش.",
-            how: R`النقط: ٤ أنواع streams (Readable و Writable و Duplex و Transform). الـ backpressure: [[write()]] بيرجّع false لما البافر ([[highWaterMark]]) يتملى، والمفروض تستنى [[drain]]، و pipeline بيعمل ده لوحده. و [[.pipe()]] مبيمررش الأخطاء، فـ pipeline أو [[stream.promises.pipeline]].
+            why: "HTTP مبيفتكرش: كل طلب لوحده، فلازم كل طلب يثبت صاحبه. الـ JWT بيحط الإثبات ده جوه الطلب نفسه، والسيرفر يتحقق منه بحسبة سريعة من غير lookup، وأي نسخة من السيرفر معاها السر تقدر تتحقق، فتقدر تشغّل كذا نسخة من غير session مشتركة.",
+            how: R`JWT تلات أجزاء مفصولة بنقط، كل جزء base64url: الـ header (نوع الـ algorithm)، والـ payload (الـ claims)، والتوقيع. التوقيع = HMAC-SHA256 للجزئين الأولانيين بالسر. أي تغيير في الـ payload بيخلي التوقيع مش مطابق، ومن غير السر محدش يقدر يعمل توقيع جديد.
 
-في HTTP: [[req]] Readable و [[res]] Writable. فالرفع ممكن يتقري stream (busboy، أو multer بـ diskStorage) من غير ما يتجمّع في الرام. وفي الإنتاج: حد أقصى للحجم، و signed URL للملفات الكبيرة (درس [[signed upload URL]] في «تاب بناء مشروع كامل»)، ومعالجة بعد الرفع في queue.
+الـ claims المشهورة: [[sub]] (مين)، و [[exp]] (بينتهي إمتى، بالثواني)، و [[iat]] (اتعمل إمتى)، و [[iss]] و [[aud]] (مين أصدره ولمين). [[verify]] بيتأكد من التوقيع و [[exp]] تلقائي، ومن [[iss]] و [[aud]] لو طلبتهم.
 
-والتفاصيل والتجربة بالأرقام في درس [[streams و pipeline]].`,
-            when: R`أسئلة بعدها: «يعني إيه highWaterMark؟». «إزاي تعمل Transform بتحوّل CSV لـ JSON؟». «async iterators مع streams؟» ([[for await]]). «لو اليوزر قفل الاتصال في النص؟» (pipeline بيعمل destroy للكل، فالملف بيتقفل).`,
-            mistakes: R`«بقرا الملف بـ readFile وأبعته» أو «بزوّد الرام». و [[multer.memoryStorage()]] للملفات الكبيرة. و pipe من غير error handling فملف واحد بايظ بيسيب file descriptors مفتوحة.`
+[[algorithms: ["HS256"]]] بيقفل هجوم قديم: توكن بيقول في الـ header إن الـ algorithm [[none]] أو نوع تاني عشان يخدع المكتبة. النسخ الحديثة من jsonwebtoken بتحمي من ده، بس التحديد الصريح عادة كويسة.
+
+المشكلة الأساسية: التوكن صالح لحد [[exp]] مهما حصل. اليوزر عمل logout؟ اتحظر؟ دوره اتغيّر؟ التوكن القديم لسه شغال. عشان كده الـ access token عمره قصير (١٠ لـ ١٥ دقيقة)، ومعاه refresh token (درس [[access و refresh]]).`,
+            when: R`APIs لموبايل أو لأكتر من واجهة، أو أكتر من سيرفر. لموقع واحد على نفس الدومين، الـ session بكوكي ممكن تبقى أبسط وأأمن (درس [[express-session]]).`,
+            mistakes: R`في مشروع حقيقي كان عمر الـ JWT [[3650d]]، يعني ١٠ سنين، و logout مبيلغيهوش: توكن اتسرق مرة يبقى دخول لـ ١٠ سنين. وفي مشروع تاني توكن تحميل الملفات (عمره ٣٠ يوم) كان موقّع بنفس سر الـ access token ونفس الـ issuer، فكان بيعدّي من [[verifyAccessToken]] كأنه توكن دخول. افصل بسر مختلف أو claim زي [[aud]] وتحقق منه. وتحط الدور في التوكن وتثق فيه: لو الأدمن اتشال، التوكن لسه بيقول ADMIN لحد ما ينتهي.`
           },
+          teach: R`## دالتين في ملف واحد: واحدة تعمل التوكن وواحدة تتحقق منه
+
+[[signAccessToken]] بتتنادى مرة بعد login ناجح وترجّع نص (التوكن). و [[verifyAccessToken]] بتتنادى مع كل طلب جاي (في [[requireAuth]]، الدرس الجاي) وترجّع اللي جوه التوكن، أو ترمي خطأ لو حد لعب فيه أو خلص.
+
+اتشغّل على ويندوز 11 بـ Node 24.19 و [[jsonwebtoken]] 9.0.3، مع [[config.js]] فيه سر تجربة:
+
+~~~javascript
+export const config = { JWT_SECRET: "test-secret-at-least-32-chars-long-xx" };
+~~~
+
+---
+
+## ١. الـ imports
+
+- [[import jwt from "jsonwebtoken"]]: المكتبة الأشهر لـ JWT في Node (اسمها الكامل JSON Web Token).
+- [[import { config } from "./config.js"]]: السر جاي من الـ config اللي اتحقق منه بـ zod (درس [[config.js بـ zod]])، مش مكتوب في الكود. الأقواس [[{ }]] معناها «هات الحاجة اللي اسمها config بالظبط من الملف».
+
+---
+
+## ٢. [[jwt.sign(payload, secret, options)]]
+
+~~~javascript
+jwt.sign({ sub: String(user.id), role: user.role }, config.JWT_SECRET, { expiresIn: "15m" })
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[{ sub: ..., role: ... }]] | الـ **payload**: البيانات اللي هتتحط في التوكن (اسمها claims) |
+| [[sub]] | اختصار subject: «التوكن ده عن مين». المعيار بيقول string، عشان كده [[String(user.id)]] بتحوّل [[7]] لـ [["7"]] |
+| [[role]] | الدور، claim من عندنا مش من المعيار |
+| [[config.JWT_SECRET]] | السر اللي التوقيع بيتحسب بيه. اللي معاه السر بس يقدر يعمل توكن صالح |
+| [[expiresIn: "15m"]] | ينتهي بعد ١٥ دقيقة. المكتبة بتحسب [[exp]] لوحدها. ينفع [["15m"]] و [["1h"]] و [["7d"]] أو رقم بالثواني |
+
+والـ algorithm الافتراضي [[HS256]] (HMAC مع SHA-256): نفس السر بيوقّع وبيتحقق.
+
+~~~text الناتج: signAccessToken({ id: 7, role: "USER" })
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3Iiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3OTEzNTk0ODIsImV4cCI6MTc5MTM2MDM4Mn0.VWMSUPFeqxxcipVNPAFkXv6Wid6wYGsi0j6ffN2QM7M
+~~~
+
+### التوكن تلات حتت بينهم نقطة
+
+فكّيت كل حتة بـ [[Buffer.from(part, "base64url").toString()]]:
+
+| الحتة | بعد الفك |
+|---|---|
+| الأولى (header) | [[{"alg":"HS256","typ":"JWT"}]] |
+| التانية (payload) | [[{"sub":"7","role":"USER","iat":1791359482,"exp":1791360382}]] |
+| التالتة (signature) | ٤٣ حرف: ٣٢ بايت ناتج HMAC-SHA256، مش نص يتقري |
+
+- **base64url** طريقة تكتب بيها أي بايتات كحروف وأرقام و [[-]] و [[_]]، فتتبعت في header أو URL من غير مشاكل. ده **مش تشفير**: أي حد يفكّه.
+- [[iat]] (issued at) و [[exp]] (expiration) بالثواني من ١ يناير ١٩٧٠ (Unix time). الفرق بينهم [[1791360382 - 1791359482 = 900]] ثانية = ١٥ دقيقة بالظبط.
+
+والتعليق اللي في آخر المثال نفس الشكل، بأرقام أقدم ([[iat]] [[1790000000]]).
+
+---
+
+## ٣. جرّب الـ try: افك الـ payload من الترمنال
+
+~~~bash
+node -e "console.log(Buffer.from(process.argv[1], 'base64url').toString())" eyJzdWIiOiI3Iiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3OTEzNTk0ODIsImV4cCI6MTc5MTM2MDM4Mn0
+~~~
+
+~~~text الناتج
+{"sub":"7","role":"USER","iat":1791359482,"exp":1791360382}
+~~~
+
+- [[node -e "..."]]: شغّل الكود ده على طول من غير ملف.
+- [[process.argv[1]]]: مع [[-e]]، أول كلمة بعد الكود هي [[argv[1]]] (هنا الـ payload).
+
+نفس السطر اشتغل زي ما هو في PowerShell 7 و Windows PowerShell 5.1، لأن الكود جواه مفيهوش [["]].
+
+> من غير أي سر قرينا الـ id والدور. عشان كده عمرك ما تحط باسورد أو بيانات حساسة في JWT.
+
+---
+
+## ٤. [[jwt.verify(token, secret, { algorithms: ["HS256"] })]]
+
+بيعمل ٣ حاجات بالترتيب: يحسب التوقيع من أول حتتين بالسر ويقارنه بالحتة التالتة، ويتأكد إن [[exp]] لسه مجاش، ويتأكد إن الـ [[alg]] في الـ header من القايمة اللي اديتها. لو كله تمام بيرجّع الـ payload:
+
+~~~text الناتج
+{ sub: '7', role: 'USER', iat: 1791359482, exp: 1791360382 }
+~~~
+
+ولو لأ بيرمي خطأ. جرّبت كل حالة:
+
+| الحالة | الخطأ |
+|---|---|
+| غيّرت [[role]] لـ [[ADMIN]] في الـ payload وسبت التوقيع القديم | [[JsonWebTokenError: invalid signature]] |
+| توكن اتعمل بسر تاني | [[JsonWebTokenError: invalid signature]] |
+| header بيقول [[alg: none]] ومن غير توقيع | [[JsonWebTokenError: jwt signature is required]] |
+| توكن [[expiresIn: "1s"]] واستنيت ثانيتين | [[TokenExpiredError: jwt expired]] (ومعاه [[expiredAt]]) |
+| [["abc"]] | [[JsonWebTokenError: jwt malformed]] |
+
+ليه التعديل اتكشف؟ التوقيع اتحسب على [[header.payload]] القديم. أي حرف يتغير يطلّع توقيع مختلف تمامًا، ومن غير السر محدش يقدر يحسب التوقيع الجديد.
+
+### الفرق بين [[verify]] و [[decode]]
+
+~~~text الناتج: jwt.decode(forged)
+{ sub: '7', role: 'ADMIN', iat: 1791359482, exp: 1791360382 }
+~~~
+
+[[jwt.decode]] قرا التوكن المزوّر عادي ورجّع ADMIN، لأنه بيفك base64url بس ومبيتحققش من حاجة. استخدمه للعرض أو الـ debug بس، وعمره ما يتستخدم في auth.
+
+---
+
+## الخلاصة
+
+| | |
+|---|---|
+| شكل JWT | [[header.payload.signature]]، كل حتة base64url |
+| مين يقرا الـ payload | أي حد. موقّع مش مشفّر |
+| مين يعمل توكن صالح | اللي معاه [[JWT_SECRET]] بس |
+| [[expiresIn: "15m"]] | المكتبة تحط [[exp = iat + 900]] |
+| [[verify]] | توقيع + انتهاء + algorithm، وبيرمي لو أي حاجة غلط |
+| [[decode]] | قراية بس، ممنوع في الـ auth |
+
+> التوكن صالح لحد [[exp]] مهما حصل، فخلي عمر الـ access قصير، والتجديد بالـ refresh (درس [[access و refresh]]).`,
           lines: [
-            "endpoint تنزيل ملف.",
-            "هات بيانات الملف بتاع اليوزر ده بس.",
-            "اسم الملف في Content-Disposition.",
-            "الحجم عشان المتصفح يعرض progress.",
-            "اقرا واكتب في الرد حتة حتة، والـ backpressure والإغلاق على pipeline.",
+            "مكتبة jsonwebtoken.",
+            "السر من config المتحقق منه.",
+            "اعمل توكن لليوزر.",
+            "[[sub]] (subject) هو id اليوزر كـ string، ومعاه الدور، وينتهي بعد ربع ساعة.",
+            "قفلة.",
+            "اتحقق من توكن جاي.",
+            "بيتأكد من التوقيع وإنه مش منتهي، ومبيقبلش غير الـ algorithm ده. لو أي حاجة غلط بيرمي خطأ.",
             "قفلة."
           ],
-          sol: R`المتوقع: مع [[readFile]] الـ RSS بيطلع فوق ١ جيجا وقت كل تنزيل (ولو اتنين نزّلوا مع بعض، اتنين جيجا). ومع pipeline بيفضل ثابت تقريبًا (عشرات الميجا) مهما كان حجم الملف.
+          sol: R`فك الـ payload بيطبع حاجة زي [[{"sub":"7","role":"USER","iat":1790718907,"exp":1790719807]] من غير أي سر: الـ JWT مش مشفّر، ده base64url بس. فمتحطش فيه حاجة سرية (باسورد، رقم بطاقة).
 
-ومع [[--limit-rate 1M]]: الذاكرة لسه ثابتة، لأن الـ socket بطيء فبيرجّع false، و pipeline بيوقّف القراية لحد ما البافر يفضى. من غير backpressure، القراية كانت هتخلص في ثانية والجيجا كلها تتكوّم في الرام مستنية الشبكة.`,
-          solCode: R`fallocate -l 1G big.bin
-curl -s -o /dev/null --limit-rate 1M http://localhost:3000/files/1/download -H "Authorization: Bearer $TOKEN" &
-while sleep 1; do ps -o rss= -p $(pgrep -f "node server") ; done`
+بعد ما تغيّر الدور لـ ADMIN وتحط الـ payload الجديد مكان القديم، [[jwt.verify]] بيرمي [[JsonWebTokenError: invalid signature]]، لأن التوقيع اتحسب على الـ header والـ payload القديمين بالسر، ومحدش يقدر يعمل توقيع جديد من غير السر. ده كل الأمان في JWT.
+
+والتوكن اللي [[expiresIn: "5s"]] بعد ما تستنى بيرمي [[TokenExpiredError: jwt expired]]. في requireAuth الاتنين بيتحولوا لـ 401. لو verify نجح على التوكن المعدّل، يبقى انت بتعمل [[jwt.decode]] بدل [[jwt.verify]]: decode بيقرا بس ومبيتحققش من حاجة.`
         },
         {
-          cmd: "graceful shutdown",
-          title: "إزاي تعمل deploy من غير ما طلبات تضيع؟ (graceful shutdown)",
-          desc: R`لما Docker أو Kubernetes أو PM2 عايزين يقفلوا النسخة القديمة، بيبعتوا SIGTERM، ولو مقفلتش في مدة (١٠ ثواني في Docker افتراضيًا) بيبعتوا SIGKILL.
+          cmd: "requireAuth",
+          title: "middleware يعرف مين اللي باعت الطلب",
+          desc: R`middleware بيقرا التوكن من [[Authorization: Bearer ...]] ويتحقق منه ويحط اليوزر في [[req.user]]، ولو مفيش توكن أو بايظ أو منتهي: 401.
 
-على SIGTERM: ابطّل تقبل اتصالات جديدة ([[server.close()]])، وخلّي الـ health check يرجع 503 عشان الـ load balancer يبطّل يبعتلك، وسيب الطلبات اللي شغالة تخلص، واقفل الـ workers والـ queues والقاعدة و Redis، وبعدين اخرج. ومعاه timeout: لو معلّق أكتر من كذا، اخرج بالعافية.`,
-          example: R`let shuttingDown = false;
-app.get("/health", (req, res) => res.status(shuttingDown ? 503 : 200).json({ ok: !shuttingDown }));
-
-process.on("SIGTERM", async () => {
-  shuttingDown = true;
-  logger.info("SIGTERM: draining");
-  setTimeout(() => process.exit(1), 25_000).unref();
-  server.close(async () => {
-    await Promise.allSettled([worker.close(), db.$disconnect(), redis.quit()]);
-    process.exit(0);
-  });
-});`,
-          try: R`اعمل route بياخد ٥ ثواني، وابعتله طلب، وفي النص ابعت [[kill -TERM <pid>]]. الطلب كمّل؟ وطلب جديد بعد الـ SIGTERM اتقبل؟ جرّب نفس الحاجة من غير الـ handler.`,
+أي route بعده يعرف مين اللي بيطلب من [[req.user]]، وعمره ما يثق في id جاي في الـ body أو الـ query.`,
+          example: R`export async function requireAuth(req, res, next) {
+  const header = req.get("authorization") ?? "";
+  const [scheme, token] = header.split(" ");
+  if (scheme !== "Bearer" || !token) throw new AppError(401, "Login required");
+  let payload;
+  try {
+    payload = verifyAccessToken(token);
+  } catch {
+    throw new AppError(401, "Invalid or expired token");
+  }
+  req.user = { id: Number(payload.sub), role: payload.role };
+  next();
+}`,
+          try: R`ركّبه على router المهام، وجرّب من غير header، وبتوكن بايظ، وبتوكن صح. وفي الـ controller استخدم [[req.user.id]] بدل أي id جاي من الـ body.`,
           flag: "script",
           deep: {
-            why: "كل deploy بيقفل نسخة. من غير إغلاق نضيف، كل deploy بيقطع طلبات شغالة (دفع في النص، أو رفع ملف)، ويسيب jobs نصها معمول، واتصالات قاعدة معلّقة. والسؤال بيبين إنك شغّلت تطبيق في الإنتاج مش على جهازك بس.",
-            how: R`النقط: SIGTERM مش SIGKILL (التاني مفيش handler ليه). و [[server.close()]] بيوقّف قبول اتصالات جديدة ويستنى الموجودة، بس الـ keep-alive connections ممكن تفضل مفتوحة: [[server.closeIdleConnections()]] أو خلي Node الحديث يعملها. والـ health بـ 503 قبل الإغلاق بشوية عشان الـ load balancer يلحق يشيلك.
+            why: R`كل endpoint محمي محتاج نفس الخطوات. في middleware واحد بتضمن إنها بتتعمل بنفس الطريقة في كل مكان، وإن [[req.user]] دايمًا جاي من توكن متحقق مش من حاجة المستخدم بعتها.`,
+            how: R`الـ middleware ده بيحوّل «توكن» لـ «هوية». كل اللي بعده يثق في [[req.user]] بس، عمره ما يثق في [[req.body.userId]].
 
-في Docker: [[CMD ["node", "server.js"]]] مش [[npm start]] (npm مبيوصّلش الـ signal دايمًا)، أو [[--init]]. والـ [[stop_grace_period]] أطول من الـ timeout بتاعك. وفي BullMQ [[worker.close()]] بيستنى الـ job الحالية. وفي Nest [[app.enableShutdownHooks()]].
+فيه قرار: تكتفي بالـ payload، ولا تجيب اليوزر من الداتابيز مع كل طلب؟ الـ payload بس أسرع، بس لو اليوزر اتحظر أو دوره اتغيّر، التوكن لسه شغال لحد ما ينتهي. جلب اليوزر ([[prisma.user.findUnique]] بـ [[select]] على الحقول اللي محتاجها) بيضيف query لكل طلب بس بيدّيك حالة حقيقية: [[isActive]] والدور الحالي. مشاريع كتير بتعمل ده، ولو الحمل زاد تكاشه في Redis لدقيقة.
 
-التفاصيل والكود في درس «الإغلاق النضيف» في تاب «Node و npm».`,
-            when: R`أسئلة بعدها: «الفرق بين SIGTERM و SIGKILL و SIGINT؟». «zero-downtime deploy إزاي؟» (rolling update + readiness + graceful shutdown). «websocket connections تعمل فيها إيه؟» (ابعت close للعميل عشان يعمل reconnect على نسخة تانية).`,
-            mistakes: R`[[process.exit()]] على طول في SIGTERM. أو handler من غير timeout فالـ process تعلّق لحد SIGKILL. أو [[npm start]] كـ PID 1 في Docker فالـ signal مبيوصلش. ونسيان الـ workers والـ intervals فالـ process مبتخرجش لوحدها.`
+ولو التوكن في كوكي بدل header، نفس الفكرة بس من [[req.cookies]]، وساعتها لازم حماية CSRF (sameSite على الأقل، درس [[res.cookie]]).
+
+و [[optionalAuth]] نسخة بتحط [[req.user]] لو فيه توكن سليم وتكمّل عادي لو مفيش، لصفحات بتتعرض للكل بس بتتغير شوية لو انت عامل login.`,
+            when: R`على كل router محتاج login. وخليه على مستوى الـ router ([[router.use(requireAuth)]] أو في [[app.use]]) عشان متنساش route.`,
+            mistakes: R`في [[optionalAuth]] تبلع أي خطأ وتكمّل كزائر، وده صح. بس تنسخ نفس الـ catch لـ [[requireAuth]] بالغلط، فأي توكن بايظ يعدّي. وتقرا [[req.user.id]] في route مش عليه requireAuth فيقع بـ 500. وتحط اليوزر كله من الداتابيز في [[req.user]] ومعاه الـ hash، وبعدين route يرجّع [[req.user]] في الرد.`
           },
+          teach: R`## middleware بيحوّل header لـ [[req.user]]
+
+الطلب جاي ومعاه سطر [[Authorization: Bearer eyJ...]]. الدالة دي بتقرا السطر ده، وتتحقق من التوكن بـ [[verifyAccessToken]] (الدرس اللي فات)، ولو تمام تحط [[req.user]] وتنادي [[next()]] عشان الطلب يكمّل للـ route. ولو أي حاجة غلط ترمي [[AppError]] بـ 401، والـ error handler (درس [[error middleware]]) يحوّله لرد JSON.
+
+اتشغّل على ويندوز 11 بـ Node 24.19 و Express 5.2.1، سيرفر على بورت 5845 فيه [[AppError]] و [[errorHandler]] من درس [[error middleware]]، و route تجربة بيعمل توكن.
+
+---
+
+## ١. [[export async function requireAuth(req, res, next)]]
+
+- [[export]]: عشان تستورده في الملف اللي بيركّب الـ routes.
+- [[async]]: في Express 5، لو دالة async رمت خطأ، Express بيمسكه ويوديه للـ error handler لوحده (درس [[async errors في Express 5]]). فنقدر نكتب [[throw]] عادي.
+- [[(req, res, next)]]: شكل أي middleware. [[next]] هي «كمّل للي بعدي».
+
+---
+
+## ٢. [[const header = req.get("authorization") ?? ""]]
+
+- [[req.get("authorization")]]: هات header بالاسم ده. أسماء الـ headers مش حساسة لحالة الحروف، فـ [["authorization"]] و [["Authorization"]] واحد.
+- [[??]] (nullish coalescing): لو اللي على الشمال [[undefined]] أو [[null]] خد اللي على اليمين. من غير header هيبقى [[""]] بدل [[undefined]]، فالسطر الجاي ميقعش.
+
+---
+
+## ٣. [[const [scheme, token] = header.split(" ")]]
+
+[[split(" ")]] بيقطّع النص عند كل مسافة ويرجّع array. والأقواس المربعة على الشمال (destructuring) بتاخد أول عنصرين في متغيرين:
+
+~~~text الناتج
+"Bearer eyJhbGci..."  =>  scheme = "Bearer"   token = "eyJhbGci..."
+""                    =>  scheme = ""         token = undefined
+"Bearer"              =>  scheme = "Bearer"   token = undefined
+~~~
+
+[[Bearer]] معناها «حامل»: اللي معاه التوكن ده يتعامل كصاحبه. ده الاسم المتعارف عليه للنوع ده من التوكنات.
+
+---
+
+## ٤. [[if (scheme !== "Bearer" || !token) throw new AppError(401, "Login required")]]
+
+- [[!==]]: «مش بيساوي بالظبط».
+- [[||]]: «أو». لو الكلمة الأولى مش Bearer **أو** مفيش توكن.
+- [[!token]]: [[true]] لو [[token]] فاضي أو [[undefined]].
+
+من غير header خالص:
+
+~~~bash
+curl -i localhost:5845/api/tasks
+~~~
+
+~~~text الناتج
+HTTP/1.1 401 Unauthorized
+X-Powered-By: Express
+Content-Type: application/json; charset=utf-8
+Content-Length: 26
+...
+
+{"error":"Login required"}
+~~~
+
+والمقارنة حساسة لحالة الحروف: [[bearer eyJ...]] (b صغيرة) و [[Bearer: eyJ...]] (بنقطتين) الاتنين رجّعوا نفس الـ 401، لأن [[scheme]] بقت [["bearer"]] أو [["Bearer:"]].
+
+---
+
+## ٥. [[try { ... } catch { ... }]]
+
+~~~javascript
+let payload;
+try {
+  payload = verifyAccessToken(token);
+} catch {
+  throw new AppError(401, "Invalid or expired token");
+}
+~~~
+
+- [[let payload]] برّه الـ try، عشان المتغير يفضل موجود بعدها (المتغير اللي بيتعرّف جوه [[{ }]] بيموت لما تقفل).
+- [[verifyAccessToken]] بترمي [[JsonWebTokenError]] أو [[TokenExpiredError]] (شفناهم في الدرس اللي فات).
+- [[catch]] من غير [[(err)]]: مش محتاجين نعرف السبب. كل الأسباب ليها نفس الرد، فالمهاجم ميعرفش التوكن اتكشف ليه.
+
+~~~bash
+curl -i -H "Authorization: Bearer abc" localhost:5845/api/tasks
+~~~
+
+~~~text الناتج
+HTTP/1.1 401 Unauthorized
+...
+{"error":"Invalid or expired token"}
+~~~
+
+---
+
+## ٦. [[req.user = { id: Number(payload.sub), role: payload.role }]]
+
+[[sub]] اتحط في التوكن string ([["7"]])، و [[Number()]] بيرجّعه رقم ([[7]]) عشان يطابق الـ ids في الداتابيز. و [[req]] object عادي، فأي خاصية تحطها عليه بتوصل لكل اللي بعدك في نفس الطلب. وبعدها [[next()]].
+
+---
+
+## ٧. الـ solCode: ركّبه واستخدم [[req.user.id]]
+
+~~~javascript
+app.use("/api/tasks", requireAuth, tasksRouter);
+~~~
+
+[[app.use]] بياخد أكتر من middleware ورا بعض: أي طلب يبدأ بـ [[/api/tasks]] بيعدّي على [[requireAuth]] الأول، وبعدين الـ router. فكل routes المهام محمية بسطر واحد.
+
+بعتّ POST بتوكن يوزر 7، وحطيت في الـ body [[userId: 99]] كأني بحاول أعمل مهمة باسم حد تاني:
+
+~~~bash
+curl -i -X POST localhost:5845/api/tasks -H "Authorization: Bearer $T" -H "Content-Type: application/json" -d '{"title":"x","userId":99}'
+~~~
+
+~~~text الناتج
+HTTP/1.1 201 Created
+...
+{"id":1,"title":"x","userId":7}
+~~~
+
+[[userId]] طلع [[7]] مش [[99]]، لأن الـ controller بيبعت [[req.user.id]] للـ service ([[tasksService.create(req.user.id, req.body)]]) والـ service بتحط الـ userId بنفسها. الـ [[99]] اتجاهل. ([[$T]] متغير bash فيه التوكن.)
+
+---
+
+## ٨. من ويندوز
+
+~~~powershell
+curl.exe -i http://localhost:5845/api/tasks -H "Authorization: Bearer abc"
+Invoke-RestMethod http://localhost:5845/api/tasks -Headers @{ Authorization = "Bearer $T" }
+~~~
+
+- [[curl.exe]] رجّع نفس [[HTTP/1.1 401 Unauthorized]] في PowerShell 7 و 5.1.
+- [[-Headers @{ ... }]]: [[@{ }]] جدول (hashtable) فيه اسم الـ header وقيمته. وبالتوكن الصح رجّع [[user]] فيه [[id 7]] و [[role USER]] في الاتنين.
+- من غير توكن، [[Invoke-RestMethod]] بيرمي خطأ مع أي status 4xx. في 5.1 مسكته بـ [[try { ... } catch { $_.Exception.Response.StatusCode.value__; $_.ErrorDetails.Message }]] وطلع [[401]] و [[{"error":"Login required"}]].
+
+---
+
+## الخلاصة
+
+| الحالة | الرد |
+|---|---|
+| مفيش header، أو مش [[Bearer]] بالظبط | [[401]] [[Login required]] |
+| توكن بايظ أو منتهي أو بسر تاني | [[401]] [[Invalid or expired token]] |
+| توكن سليم | [[req.user = { id, role }]] والطلب يكمّل |
+
+> أي id بتستخدمه في الـ controller جاي من [[req.user]]، مش من [[req.body]] ولا [[req.query]].`,
           lines: [
-            "flag للحالة.",
-            "الـ health يرجع 503 وانت بتقفل، فالـ load balancer يشيلك.",
-            "لما SIGTERM يوصل...",
-            "...علّم إنك بتقفل.",
-            "سجّل.",
-            "حد أقصى: لو معلّق ٢٥ ثانية اخرج بالعافية (و unref عشان ميمنعش الخروج الطبيعي).",
-            "ابطّل تقبل اتصالات جديدة، ولما الموجودة تخلص...",
-            "...اقفل الـ worker والقاعدة و Redis، حتى لو واحد فشل.",
-            "اخرج بنجاح.",
+            "async عشان أي throw يروح لـ error handler في Express 5.",
+            "اقرا الـ header، ولو مش موجود خليه نص فاضي.",
+            "افصله: كلمة Bearer والتوكن.",
+            "مش Bearer أو مفيش توكن: 401.",
+            "هنحط فيه الـ payload.",
+            "جرّب.",
+            "اتحقق من التوقيع والانتهاء.",
+            "لو فشل لأي سبب...",
+            "401 برسالة واحدة. متقولش للمهاجم السبب بالظبط.",
             "قفلة.",
+            "حط اليوزر على الطلب. [[sub]] كان string فرجّعه رقم.",
+            "كمّل.",
             "قفلة."
           ],
-          sol: R`مع الـ handler: الطلب الشغال كمّل ورجع 200 بعد الـ ٥ ثواني، وأي طلب جديد بعد الـ SIGTERM اترفض بـ connection refused (السيرفر بطّل يسمع)، والـ process خرجت بـ 0 بعد ما الطلب خلص.
+          sol: R`من غير header: [[401]] و [[{"error":"Login required"}]]. بتوكن بايظ ([[Authorization: Bearer abc]]) أو منتهي: [[401]] و [[{"error":"Invalid or expired token"}]]. بتوكن صح: الـ route بيشتغل عادي و [[req.user]] فيه [[{ id: 7, role: "USER" }]].
 
-من غير الـ handler: Node بيقفل فورًا على SIGTERM، والطلب الشغال بيقطع ([[curl: (52) Empty reply from server]]).
+في الـ controller: [[tasksService.create(req.user.id, req.body)]]، مش [[req.body.userId]]. الـ id اللي في التوكن موقّع من السيرفر فمحدش يقدر يغيّره، إنما أي حاجة في الـ body اليوزر بيكتبها بإيده.
 
-لو الـ process مخرجتش خالص مع الـ handler، يبقى فيه حاجة لسه مفتوحة (interval، أو اتصال keep-alive، أو client Redis)، والـ timeout هو اللي هيطلّعها بعد ٢٥ ثانية.`,
-          solCode: R`app.get("/slow", async (req, res) => { await new Promise((r) => setTimeout(r, 5000)); res.json({ ok: true }); });
-// ترمنال ١: node server.js
-// ترمنال ٢: curl -s localhost:3000/slow & sleep 1; kill -TERM $(pgrep -f "node server.js"); wait
-// {"ok":true}   والسيرفر خرج بعدها`
+لو التوكن الصح رجّع 401: اتأكد إنك باعت [[Bearer ]] بالمسافة (مش [[Bearer:]])، وإن نفس [[JWT_SECRET]] اللي عمل sign هو اللي بيعمل verify (مثلًا سيرفر اتعمله restart بـ secret عشوائي). ولو الطلب اتعلّق أو وقع السيرفر على Express 4، يبقى الـ throw جوه middleware async محتاج [[asyncHandler]].`,
+          solCode: R`import tasksRouter from "./routes/tasks.routes.js";
+app.use("/api/tasks", requireAuth, tasksRouter);
+
+// controllers/tasks.controller.js
+export async function create(req, res) {
+  res.status(201).json(await tasksService.create(req.user.id, req.body));
+}
+
+// curl -i localhost:3000/api/tasks                                => 401 Login required
+// curl -i -H "Authorization: Bearer abc" localhost:3000/api/tasks => 401 Invalid or expired token`
+        },
+        {
+          cmd: "res.cookie",
+          title: "كوكي المتصفح بيبعتها لوحده و JavaScript ميقدرش يقراها",
+          desc: R`[[res.cookie(name, value, options)]] بيبعت [[Set-Cookie]]، والمتصفح بيرجّعها لوحده مع كل طلب لنفس السيرفر، و [[cookie-parser]] بيقراها في [[req.cookies]].
+
+التلات إعدادات اللي مينفعش تنساهم: [[httpOnly]] (الـ JavaScript في الصفحة ميقدرش يقراها، فـ XSS ميسرقهاش)، و [[secure]] (تتبعت على HTTPS بس)، و [[sameSite]] (تتبعت مع طلبات جاية من مواقع تانية ولا لأ).`,
+          example: R`import cookieParser from "cookie-parser";
+
+app.use(cookieParser(config.COOKIE_SECRET));
+
+export const refreshCookieOptions = {
+  httpOnly: true,
+  secure: config.NODE_ENV === "production",
+  sameSite: "lax",
+  path: "/api/auth",
+  maxAge: 30 * 24 * 60 * 60 * 1000,
+};
+
+res.cookie("refresh", token, refreshCookieOptions);
+res.clearCookie("refresh", { path: "/api/auth" });`,
+          try: R`بعد login افتح DevTools، تاب Application، Cookies: شوف الأعمدة HttpOnly و Secure و SameSite. واكتب [[document.cookie]] في Console: الكوكي الـ httpOnly مش هتظهر. وجرّب [[clearCookie]] من غير الـ path وشوفها لسه موجودة.`,
+          flag: "script",
+          deep: {
+            why: "التوكن لازم يتخزن في مكان. localStorage أي JavaScript في الصفحة يقراه، فأي XSS (أو مكتبة npm مخترقة) تاخده. الكوكي الـ httpOnly الصفحة نفسها متقدرش تقراها، والمتصفح بيبعتها لوحده. بس ده بيفتح باب CSRF، وده اللي sameSite بيقفله.",
+            how: R`الرد بيبقى [[Set-Cookie: refresh=abc; Max-Age=2592000; Path=/api/auth; HttpOnly; Secure; SameSite=Lax]]. المتصفح بيحفظها ويبعتها في header الـ [[Cookie]] مع أي طلب لنفس الدومين والـ path.
+
+sameSite ليها ٣ قيم: [[strict]] مبتتبعتش خالص مع أي طلب جاي من موقع تاني (حتى لما حد يدوس لينك ليك من جوجل، فيبان إنه مش عامل login). [[lax]] بتتبعت مع التنقل العادي (لينك GET) بس مش مع POST أو fetch من موقع تاني، وده بيقفل أغلب CSRF. و [[none]] بتتبعت مع كل حاجة، ولازم معاها [[secure]]، وبتستخدم لما الواجهة على دومين مختلف تمامًا.
+
+«موقع تاني» معناها site مختلف مش origin مختلف: [[app.example.com]] و [[api.example.com]] نفس الـ site، فـ lax شغالة بينهم. بس [[myapp.vercel.app]] و [[api.myapp.com]] sites مختلفة، فمحتاج [[none]] و [[secure]]، والمتصفحات اللي بتقفل third-party cookies ممكن ترفضها. الحل الأنضف: الـ API تحت نفس الدومين ([[/api]] من ورا Nginx أو subdomain).
+
+الكوكي الموقّعة ([[signed: true]]): cookie-parser بيضيف توقيع بالسر، ولو حد عدّل القيمة، قيمتها في [[req.signedCookies]] بتبقى [[false]]. ده بيمنع التعديل مش القراية.
+
+و [[clearCookie]] لازم ياخد نفس الـ path والـ domain اللي الكوكي اتعملت بيهم، وإلا المتصفح يعتبرها كوكي تانية. وفي Express 5 بيتجاهل [[maxAge]] و [[expires]] لو بعتّهم.`,
+            when: "refresh tokens و session ids، وأي حاجة الـ JavaScript مش محتاج يقراها. وتفضيلات UI (اللغة والثيم) ممكن كوكي عادية أو localStorage.",
+            mistakes: R`في مشروع حقيقي كان الـ cookie secret ليه fallback: [[COOKIE_SECRET || "change-me"]] ومعاه warning في اللوج. لو المتغير اتنسي في الإنتاج، أي حد يقدر يوقّع كوكيز. خلي config يقع بدل الـ fallback. و [[secure: true]] على localhost بـ http في متصفح مش بيعتبر localhost آمن، فالكوكي متتحفظش وانت مش فاهم ليه. و [[sameSite: "none"]] من غير [[secure]] فالمتصفح يرفضها. والواجهة بتعمل fetch من غير [[credentials: "include"]] فالكوكي مبتتبعتش أصلًا.`
+          },
+          teach: R`## ٣ حاجات: تقرا الكوكيز، وتبعت كوكي، وتمسحها
+
+[[cookie-parser]] بيقرا الكوكيز اللي المتصفح بعتها. و [[res.cookie]] بيضيف للرد header اسمه [[Set-Cookie]] فيه الاسم والقيمة والإعدادات، والمتصفح بيحفظها ويرجّعها لوحده بعد كده. و [[res.clearCookie]] بيبعت نفس الـ header بتاريخ قديم، فالمتصفح يمسحها.
+
+اتشغّل على ويندوز 11 بـ Node 24.19 و Express 5.2.1 و cookie-parser 1.4.7، سيرفر على بورت 5846 فيه route [[POST /api/auth/login]] بيعمل [[res.cookie("refresh", "abc123", refreshCookieOptions)]]، والطلبات بـ [[curl]] من Git Bash.
+
+---
+
+## ١. [[app.use(cookieParser(config.COOKIE_SECRET))]]
+
+المتصفح بيبعت كل الكوكيز في header واحد نص: [[Cookie: refresh=abc123; theme=dark]]. [[cookieParser]] بيفكّه لـ object في [[req.cookies]]: [[{ refresh: "abc123", theme: "dark" }]].
+
+والسر اللي بتديهوله لنوع تاني اسمه **signed cookies** (تحت في ٦). من غيره [[req.cookies]] بس اللي بتشتغل.
+
+---
+
+## ٢. [[refreshCookieOptions]]: الإعدادات في object واحد
+
+ليه object منفصل؟ لأنك هتبعت نفس الكوكي من أكتر من مكان (login و refresh)، ولازم الإعدادات تبقى واحدة بالظبط، وإلا المتصفح يعتبرهم كوكيز مختلفة.
+
+| الإعداد | القيمة | معناها |
+|---|---|---|
+| [[httpOnly]] | [[true]] | الـ JavaScript في الصفحة ([[document.cookie]]) ميشوفهاش. المتصفح بس اللي بيبعتها |
+| [[secure]] | [[config.NODE_ENV === "production"]] | تتبعت على HTTPS بس. الشرط بيطلع [[true]] في الإنتاج و [[false]] على جهازك (http) |
+| [[sameSite]] | [["lax"]] | متتبعتش مع POST أو fetch جاي من موقع تاني |
+| [[path]] | [["/api/auth"]] | المتصفح يبعتها بس للعناوين اللي بتبدأ بـ [[/api/auth]] |
+| [[maxAge]] | [[30 * 24 * 60 * 60 * 1000]] | العمر بالملّي ثانية: ٣٠ يوم × ٢٤ ساعة × ٦٠ دقيقة × ٦٠ ثانية × ١٠٠٠ = [[2592000000]] |
+
+---
+
+## ٣. [[res.cookie("refresh", token, refreshCookieOptions)]]
+
+~~~bash
+curl -i -X POST localhost:5846/api/auth/login -c jar.txt
+~~~
+
+- [[-i]]: اطبع الـ headers مع الرد.
+- [[-c jar.txt]]: احفظ أي كوكي جاية في ملف (الـ cookie jar)، زي المتصفح.
+
+~~~text الناتج
+HTTP/1.1 200 OK
+Set-Cookie: refresh=abc123; Max-Age=2592000; Path=/api/auth; Expires=Fri, 06 Nov 2026 07:54:10 GMT; HttpOnly; SameSite=Lax
+~~~
+
+نقرا الـ header:
+
+- [[Max-Age=2592000]]: Express حوّل الملّي ثانية لثواني (٣٠ يوم)، لأن الـ header بالثواني.
+- [[Expires=...]]: نفس العمر كتاريخ، للمتصفحات القديمة. الوقت بـ GMT.
+- [[HttpOnly]] و [[SameSite=Lax]] موجودين، و [[Secure]] **مش موجود** لأن [[NODE_ENV]] كان development.
+
+شغّلت نفس السيرفر بـ [[NODE_ENV=production]] على بورت 5847:
+
+~~~text الناتج
+Set-Cookie: refresh=abc123; Max-Age=2592000; Path=/api/auth; Expires=Fri, 06 Nov 2026 07:54:28 GMT; HttpOnly; Secure; SameSite=Lax
+~~~
+
+ظهر [[Secure]].
+
+---
+
+## ٤. الـ path بيعمل إيه فعلًا
+
+بعتّ الـ jar لعنوانين:
+
+~~~bash
+curl localhost:5846/api/auth/whoami -b jar.txt
+curl localhost:5846/api/other -b jar.txt
+~~~
+
+~~~text الناتج
+{"cookies":{"refresh":"abc123"},"signed":{}}
+{"cookies":{}}
+~~~
+
+[[-b jar.txt]] بيبعت الكوكيز اللي في الملف زي المتصفح، و curl احترم الـ [[Path]]: الكوكي راحت لـ [[/api/auth/whoami]] بس، و [[/api/other]] موصلهوش حاجة. فالـ refresh token مش بيتبعت مع كل طلب للـ API.
+
+---
+
+## ٥. [[res.clearCookie("refresh", { path: "/api/auth" })]]
+
+~~~text الناتج: بالـ path
+Set-Cookie: refresh=; Path=/api/auth; Expires=Thu, 01 Jan 1970 00:00:00 GMT
+~~~
+
+~~~text الناتج: res.clearCookie("refresh") من غير path
+Set-Cookie: refresh=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT
+~~~
+
+المسح = نفس الاسم، قيمة فاضية، وتاريخ انتهاء فات (١ يناير ١٩٧٠). بس المتصفح بيعرف الكوكي بالاسم **و** الـ path **و** الـ domain مع بعض، فـ [[refresh]] على [[/]] غير [[refresh]] على [[/api/auth]]. النسخة اللي من غير path بتمسح كوكي مش موجودة، والأصلية بتفضل.
+
+وجرّبت أبعت [[maxAge: 1000]] لـ [[clearCookie]]: الـ header طلع بنفس [[Expires=Thu, 01 Jan 1970]]. Express 5 بيتجاهل [[maxAge]] و [[expires]] هنا.
+
+---
+
+## ٦. الكوكي الموقّعة: [[signed: true]]
+
+~~~javascript
+res.cookie("theme", "dark", { signed: true, path: "/api/auth" });
+~~~
+
+~~~text الناتج
+Set-Cookie: theme=s%3Adark.9CER6nKq5QVYOjSuM0cnkCXWougiovfbQ%2BsnaZ8gbqg; Path=/api/auth
+~~~
+
+- [[%3A]] هي [[:]] و [[%2B]] هي [[+]] بعد URL encoding. فالقيمة الحقيقية [[s:dark.9CER6n...]]: [[s:]] علامة إنها موقّعة، وبعدها القيمة [[dark]]، وبعد النقطة توقيع HMAC بالسر.
+- القيمة **مقرية** ([[dark]] باينة)، التوقيع بيمنع التعديل بس.
+
+رجّعتها زي ما هي، وبعدين غيّرت [[dark]] لـ [[light]] وسبت التوقيع:
+
+~~~text الناتج
+{"cookies":{},"signed":{"theme":"dark"}}
+{"cookies":{},"signed":{"theme":false}}
+~~~
+
+الموقّعة بتظهر في [[req.signedCookies]] مش [[req.cookies]]، والمعدّلة قيمتها [[false]].
+
+---
+
+## ٧. من ويندوز
+
+~~~powershell
+curl.exe -i -X POST http://localhost:5846/api/auth/login
+$r = Invoke-WebRequest -Method Post http://localhost:5846/api/auth/login -SessionVariable s
+$r.Headers["Set-Cookie"]
+Invoke-RestMethod http://localhost:5846/api/auth/whoami -WebSession $s
+~~~
+
+- [[curl.exe -i]] طبع نفس سطر [[Set-Cookie]].
+- [[-SessionVariable s]]: اعمل «جلسة» اسمها [[$s]] تحفظ الكوكيز (زي [[-c jar.txt]]). و [[-WebSession $s]] في الطلب الجاي تبعتها (زي [[-b]]).
+- في PowerShell 7 و 5.1 (مع [[-UseBasicParsing]] في 5.1) [[whoami]] رجّع [[{"cookies":{"refresh":"abc123"},"signed":{}}]].
+
+---
+
+## ٨. في المتصفح
+
+curl مبيطبقش [[HttpOnly]] لأنه مفيهوش JavaScript. في المتصفح: DevTools ثم Application ثم Cookies هتلاقي علامة في عمود HttpOnly، و [[document.cookie]] في الـ Console مش هيظهر فيه [[refresh]] (ده سلوك المتصفح من الـ docs، و curl مبيوريهوش).
+
+---
+
+## الخلاصة
+
+| | |
+|---|---|
+| [[cookieParser(secret)]] | [[req.cookies]] للعادية و [[req.signedCookies]] للموقّعة |
+| [[res.cookie(name, value, options)]] | بيبعت [[Set-Cookie]]، و [[maxAge]] بالملّي ثانية بيتحول [[Max-Age]] بالثواني |
+| [[httpOnly]] / [[secure]] / [[sameSite]] | JS ميقراهاش / HTTPS بس / مش مع طلبات مواقع تانية |
+| [[path]] | الكوكي بتتبعت للعناوين اللي تحته بس |
+| [[clearCookie]] | لازم نفس الـ path (والـ domain)، وإلا بيمسح كوكي تانية |
+
+> خلي الإعدادات في object واحد واستخدمه في [[res.cookie]] وفي [[clearCookie]] (بالـ path)، فميحصلش اختلاف.`,
+          lines: [
+            "cookie-parser بيقرا header الـ Cookie.",
+            "[[req.cookies]] للعادية، والسر عشان [[req.signedCookies]] (الموقّعة).",
+            "إعدادات كوكي الـ refresh في مكان واحد.",
+            "الـ JavaScript في المتصفح مش شايفها.",
+            "HTTPS بس في الإنتاج، وعلى localhost بـ http بتبقى false.",
+            "متتبعتش مع POST أو fetch جاي من مواقع تانية.",
+            "تتبعت لعناوين الـ auth بس، مش مع كل طلب.",
+            "تعيش ٣٠ يوم، بالملّي ثانية.",
+            "قفلة.",
+            "ابعتها.",
+            "امسحها، بنفس الـ path وإلا المتصفح مش هيمسحها."
+          ],
+          sol: R`في Application > Cookies هتلاقي [[refresh]] وعمود HttpOnly عليه علامة، و SameSite [[Lax]]، و Path [[/api/auth]]، و Secure فاضي على localhost (لأن [[secure]] بـ true في production بس). والـ header اللي رجع كان شكله [[Set-Cookie: refresh=...; Max-Age=2592000; Path=/api/auth; Expires=...; HttpOnly; SameSite=Lax]].
+
+[[document.cookie]] في الـ Console مش هيظهر فيه [[refresh]] خالص، لأن HttpOnly معناه إن JavaScript مايقدرش يقراها. فلو حصل XSS، الكود الخبيث مش هيقدر يسرقها.
+
+[[res.clearCookie("refresh")]] من غير path بيبعت [[Set-Cookie: refresh=; Path=/; Expires=Thu, 01 Jan 1970 ...]]. المتصفح بيعتبر [[refresh]] على [[/]] كوكي مختلفة عن [[refresh]] على [[/api/auth]]، فبيمسح حاجة مش موجودة والأصلية بتفضل. لازم نفس الـ path (والـ domain لو حاطه).`
+        },
+        {
+          cmd: "access و refresh",
+          title: "توكن قصير للطلبات وتوكن طويل يجدده",
+          desc: R`الـ access token عمره قصير وبيتبعت مع كل طلب، والـ refresh token عمره طويل ومتخزن في كوكي httpOnly، ووظيفته الوحيدة إنه يجيب access جديد.
+
+والـ refresh بيتسجّل في الداتابيز (كـ hash)، فتقدر تلغيه: logout، أو «اخرج من كل الأجهزة»، أو يوزر اتحظر. ومع كل تجديد القديم بيتلغي وييجي جديد (rotation).`,
+          example: R`router.post("/refresh", async (req, res) => {
+  const token = req.cookies.refresh;
+  if (!token) throw new AppError(401, "No refresh token");
+  const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+  const stored = await prisma.refreshToken.findUnique({ where: { tokenHash }, include: { user: true } });
+  if (!stored || stored.revokedAt || stored.expiresAt < new Date()) throw new AppError(401, "Invalid refresh token");
+  await prisma.refreshToken.update({ where: { id: stored.id }, data: { revokedAt: new Date() } });
+  const newToken = await issueRefreshToken(stored.user.id);
+  res.cookie("refresh", newToken, refreshCookieOptions);
+  res.json({ accessToken: signAccessToken(stored.user) });
+});`,
+          try: R`اعمل login وخد الـ refresh cookie، ونادي [[/refresh]] مرتين بنفس الكوكي القديمة (بـ curl و [[-b "refresh=..."]]). التانية لازم ترجع 401. وبعدين اعمل endpoint [[/logout-all]] يلغي كل refresh tokens اليوزر.`,
+          flag: "script",
+          deep: {
+            why: "عايز حاجتين عكس بعض: توكن قصير عشان لو اتسرق ضرره يبقى محدود، ويوزر مش بيعمل login كل ربع ساعة. الحل توكنين: القصير للطلبات، والطويل محمي أكتر (httpOnly ومبيتبعتش غير لـ endpoint واحد) وممكن يتلغي من الداتابيز.",
+            how: R`الرحلة: login بيرجّع access في الـ body (الواجهة تحفظه في الذاكرة، في state مش localStorage)، و refresh في كوكي httpOnly. الواجهة تبعت الـ access في [[Authorization]]. لما يرجع 401 بسبب الانتهاء، تنادي [[/refresh]] (المتصفح بيبعت الكوكي لوحده مع [[credentials: "include"]])، تاخد access جديد، وتعيد الطلب. ولو الصفحة اتعملها reload والـ access اللي في الذاكرة راح، أول حاجة تنادي [[/refresh]].
+
+الـ refresh نفسه مش لازم يبقى JWT: نص عشوائي ([[crypto.randomBytes(32).toString("base64url")]]) كفاية لأنك بتدوّر عليه في الداتابيز أصلًا. و [[issueRefreshToken]] بيولّده، ويحفظ الـ hash بتاعه وتاريخ انتهاء، ويرجّعه.
+
+الـ rotation: مع كل تجديد، القديم يتلغي وييجي جديد. لو حرامي سرق refresh واستخدمه، اليوزر الحقيقي لما يستخدم نفس التوكن هيلاقيه ملغي، ودي إشارة سرقة. التطبيقات الأدق بتلغي «العيلة» كلها ساعتها وتجبر login.
+
+تخزين الـ hash بدل التوكن: لو الداتابيز اتسربت، التوكنات مش صالحة للاستخدام. SHA-256 كفاية هنا (مش bcrypt) لأن التوكن عشوائي وطويل، مش باسورد بشري ضعيف.
+
+و [[path: "/api/auth"]] في إعدادات الكوكي بيخلي المتصفح يبعت الـ refresh للـ auth routes بس.`,
+            when: "أي API بـ JWT لواجهة ويب أو موبايل. في الموبايل الـ refresh بيتخزن في secure storage (Keychain و Keystore) بدل الكوكي.",
+            mistakes: R`في مشروع حقيقي كان الـ backend بيحط الـ refresh في كوكي httpOnly (صح)، وكمان بيرجّعه في الـ body، والواجهة بتحفظه في [[localStorage]]. كده الـ httpOnly ملهاش لازمة: أي XSS يقرا localStorage وياخد توكن عمره ٣٠ يوم. ابعته في الكوكي بس. وفي نفس المشروع endpoint الـ refresh كان بيقبل التوكن من الكوكي أو header الـ Authorization أو الـ body: كل مصدر زيادة باب زيادة. ومن غير rotation، refresh مسروق شغال لحد ما ينتهي.`
+          },
+          teach: R`## route واحد: كوكي قديمة تدخل، وكوكي جديدة و access جديد يطلعوا
+
+الواجهة بتنادي [[POST /api/auth/refresh]] لما الـ access يخلص. الـ route بيدوّر على الـ refresh اللي في الكوكي في الداتابيز، ولو سليم يلغيه ويطلّع واحد جديد (rotation)، ويرجّع access جديد.
+
+اتشغّل على ويندوز 11 بـ Node 24.19 و Express 5.2.1 و Prisma 7.10 على Postgres 16 في Docker، سيرفر على بورت 5845 فيه route login بيستخدم [[bcrypt.compare]] ويطلّع الكوكي، ويوزر تجربة [[sara@test.local]] (id 1). الجدول اللي بيتخزن فيه:
+
+~~~text prisma/schema.prisma
+model RefreshToken {
+  id        Int       @id @default(autoincrement())
+  tokenHash String    @unique
+  userId    Int
+  user      User      @relation(fields: [userId], references: [id])
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+}
+~~~
+
+- [[tokenHash String @unique]]: بنخزن الـ hash مش التوكن، و [[@unique]] بيعمل index فالبحث بيه سريع ومينفعش يتكرر.
+- [[revokedAt DateTime?]]: [[?]] يعني ممكن يبقى فاضي ([[null]]). فاضي = لسه شغال، وفيه تاريخ = اتلغى إمتى.
+
+و [[issueRefreshToken(userId)]] اللي المثال بيناديها (المثال مش بيعرضها):
+
+~~~javascript
+async function issueRefreshToken(userId) {
+  const token = crypto.randomBytes(32).toString("base64url");
+  const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+  await prisma.refreshToken.create({ data: { tokenHash, userId, expiresAt: new Date(Date.now() + 30 * 24 * 3600 * 1000) } });
+  return token;
+}
+~~~
+
+[[crypto.randomBytes(32)]]: ٣٢ بايت عشوائي آمن (من [[node:crypto]])، و [[toString("base64url")]] بيحولهم نص ٤٣ حرف ينفع في كوكي.
+
+---
+
+## ١. [[router.post("/refresh", async (req, res) => { ... })]]
+
+مفيش [[requireAuth]] هنا، لأن السبب اللي الواجهة جاية عشانه إن الـ access **انتهى**.
+
+## ٢. [[const token = req.cookies.refresh]]
+
+الكوكي اللي اتعملت في الـ login، و [[cookieParser()]] لازم يكون متركّب. لو مش موجودة: [[throw new AppError(401, "No refresh token")]].
+
+~~~bash
+curl -i -X POST localhost:5845/api/auth/refresh
+~~~
+
+~~~text الناتج
+HTTP/1.1 401 Unauthorized
+{"error":"No refresh token"}
+~~~
+
+---
+
+## ٣. [[crypto.createHash("sha256").update(token).digest("hex")]]
+
+تلات خطوات في سلسلة (كل دالة بترجّع object تكمّل عليه):
+
+| الحتة | بتعمل إيه |
+|---|---|
+| [[createHash("sha256")]] | ابدأ hash بـ algorithm SHA-256 |
+| [[.update(token)]] | حط فيه التوكن |
+| [[.digest("hex")]] | خلّص ورجّع الناتج نص hex (٦٤ حرف من [[0-9]] و [[a-f]]) |
+
+نفس التوكن دايمًا بيدّي نفس الـ hash (مفيش salt هنا)، وده اللي محتاجينه عشان ندوّر بيه. وليه SHA-256 مش bcrypt؟ لأن التوكن ٣٢ بايت عشوائي، مستحيل يتخمّن، فمش محتاج دالة بطيئة.
+
+---
+
+## ٤. [[prisma.refreshToken.findUnique({ where: { tokenHash }, include: { user: true } })]]
+
+- [[{ tokenHash }]] اختصار [[{ tokenHash: tokenHash }]].
+- [[include: { user: true }]]: هات اليوزر صاحب التوكن في نفس الطلب، فيبقى عندك [[stored.user]] (محتاجينه عشان نعمل access بالدور بتاعه).
+
+## ٥. [[if (!stored || stored.revokedAt || stored.expiresAt < new Date()) throw ...]]
+
+تلات أسباب، أي واحد فيهم = 401 بنفس الرسالة:
+
+1. [[!stored]]: مش موجود في الجدول (توكن مزيف).
+2. [[stored.revokedAt]]: فيه تاريخ، يعني اتلغى.
+3. [[stored.expiresAt < new Date()]]: تاريخ الانتهاء قبل دلوقتي.
+
+---
+
+## ٦. الـ rotation: ٣ سطور
+
+~~~javascript
+await prisma.refreshToken.update({ where: { id: stored.id }, data: { revokedAt: new Date() } });
+const newToken = await issueRefreshToken(stored.user.id);
+res.cookie("refresh", newToken, refreshCookieOptions);
+~~~
+
+الغي القديم، واعمل جديد، وابعته في الكوكي بنفس الإعدادات (درس [[res.cookie]]). وفي الآخر [[res.json({ accessToken: signAccessToken(stored.user) })]].
+
+### التجربة: نفس الكوكي مرتين
+
+عملت login بـ [[-c jar.txt]]، وخدت قيمة الكوكي، ونديت [[/refresh]] بيها مرتين بـ [[-b "refresh=..."]]:
+
+~~~text الناتج: المرة الأولى
+HTTP/1.1 200 OK
+Set-Cookie: refresh=av25E1k4S6sVIw1li7g6dhdcBeC9ptRJFGUtFaxMgjc; Max-Age=2592000; Path=/api/auth; Expires=Fri, 06 Nov 2026 07:56:14 GMT; HttpOnly; SameSite=Lax
+{"accessToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIi..."}
+~~~
+
+~~~text الناتج: المرة التانية بنفس الكوكي القديمة
+HTTP/1.1 401 Unauthorized
+{"error":"Invalid refresh token"}
+~~~
+
+وفي الجدول (بـ [[docker exec ... psql]]):
+
+~~~text الناتج
+ id |      hash16      | userId | revoked
+----+------------------+--------+---------
+  1 | 840b5b52a257616d |      1 | t
+  2 | 968ecfa95ecd7976 |      1 | f
+~~~
+
+الصف ١ (القديم) اتلغى، والصف ٢ (الجديد) شغال. والعمود فيه hash مش التوكن نفسه.
+
+> ملاحظة من التجربة: الـ access اللي رجع من الـ refresh كان **نفس** اللي رجع من الـ login حرف بحرف، لأن الاتنين اتعملوا في نفس الثانية فـ [[iat]] و [[exp]] واحد. ده طبيعي: الـ JWT بيتحسب من الـ payload والسر بس.
+
+---
+
+## ٧. الـ solCode: [[/logout-all]]
+
+~~~javascript
+const { count } = await prisma.refreshToken.updateMany({
+  where: { userId: req.user.id, revokedAt: null },
+  data: { revokedAt: new Date() },
+});
+~~~
+
+- عليه [[requireAuth]]: محتاج access سليم عشان نعرف مين.
+- [[updateMany]] بيعدّل كل الصفوف اللي بتطابق، ويرجّع [[{ count }]] (عدد اللي اتعدّل).
+- [[revokedAt: null]]: اللي لسه شغالة بس.
+
+عملت login مرتين زيادة (جهازين)، ونديت [[/logout-all]] بالـ access:
+
+~~~text الناتج
+HTTP/1.1 200 OK
+Set-Cookie: refresh=; Path=/api/auth; Expires=Thu, 01 Jan 1970 00:00:00 GMT
+{"revoked":3}
+~~~
+
+٣ = التوكن اللي فضل من التجربة اللي فاتت + ٢ login. وبعدها [[/refresh]] بكوكي جهاز تاني رجّع [[401]] [[{"error":"Invalid refresh token"}]].
+
+---
+
+## ٨. من ويندوز
+
+~~~powershell
+$r = Invoke-RestMethod -Method Post http://localhost:5845/api/auth/login -ContentType 'application/json' -Body '{"email":"sara@test.local","password":"Test-Pass-1"}' -SessionVariable s
+Invoke-RestMethod -Method Post http://localhost:5845/api/auth/refresh -WebSession $s
+~~~
+
+[[$s]] حفظ الكوكي ([[refresh]] و Path [[/api/auth]] و HttpOnly [[True]])، والـ refresh رجّع [[accessToken]] في PowerShell 7 و 5.1.
+
+---
+
+## الخلاصة
+
+| الخطوة | السطر |
+|---|---|
+| الكوكي موجودة؟ | [[req.cookies.refresh]] وإلا 401 |
+| دوّر بالـ hash | [[sha256]] ثم [[findUnique({ where: { tokenHash } })]] |
+| سليم؟ | موجود ومش ملغي ومش منتهي، وإلا 401 |
+| rotation | الغي القديم ([[revokedAt]]) واعمل جديد في الكوكي |
+| رد | access جديد في الـ body |
+| logout-all | [[updateMany]] على كل اللي [[revokedAt: null]] |
+
+> كل refresh token بيتستخدم مرة واحدة. والـ access tokens اللي طلعت قبل الـ logout بتفضل شغالة لحد [[exp]] (١٥ دقيقة).`,
+          lines: [
+            "endpoint التجديد. مش عليه requireAuth، لأن الـ access نفسه ممكن يكون انتهى.",
+            "الـ refresh جاي في كوكي (محتاج cookie-parser).",
+            "مفيش؟ 401، والواجهة توديه على login.",
+            "اعمل hash للتوكن ([[crypto]] من [[node:crypto]]). في الداتابيز بنخزن الـ hash بس، زي الباسورد.",
+            "دوّر عليه ومعاه اليوزر.",
+            "مش موجود أو ملغي أو منتهي؟ 401.",
+            "rotation: الغي القديم. كل refresh يتستخدم مرة واحدة بس.",
+            "اعمل refresh جديد واحفظ الـ hash بتاعه.",
+            "ابعته في الكوكي بنفس الإعدادات.",
+            "ورجّع access جديد في الـ body.",
+            "قفلة."
+          ],
+          sol: R`أول [[/refresh]] بالكوكي القديمة بيرجّع [[200]] و [[accessToken]] جديد و [[Set-Cookie: refresh=...]] جديدة. التاني بنفس الكوكي القديمة بيرجّع [[401]] و [[{"error":"Invalid refresh token"}]]، لأن التوكن القديم اتعلّم عليه [[revokedAt]] في أول مرة. ده الـ rotation: كل refresh token بيتستخدم مرة واحدة، فلو اتسرق واستخدمه الحرامي، اليوزر الحقيقي هياخد 401 (أو العكس) وتعرف إن فيه مشكلة.
+
+عشان تجرّب بـ curl: خد القيمة من [[curl -c jar.txt]] بعد login، وابعتها بـ [[curl -X POST -b "refresh=VALUE" localhost:3000/api/auth/refresh]]. لو أول طلب نفسه رجع 401، اتأكد إن [[cookieParser()]] متسجّل، وإن الـ path بتاع الكوكي [[/api/auth]] بيطابق الـ route.
+
+و [[/logout-all]] بيعمل [[updateMany]] على كل توكنات اليوزر اللي لسه مش ملغية، ويمسح الكوكي. بعده أي refresh من أي جهاز بيرجع 401. الـ access tokens الموجودة هتفضل شغالة لحد ما تنتهي (15 دقيقة)، ودي التمنّ بتاع JWT.`,
+          solCode: R`router.post("/logout-all", requireAuth, async (req, res) => {
+  const { count } = await prisma.refreshToken.updateMany({
+    where: { userId: req.user.id, revokedAt: null },
+    data: { revokedAt: new Date() },
+  });
+  res.clearCookie("refresh", { path: "/api/auth" });
+  res.json({ revoked: count });
+});
+// {"revoked":3}   وبعدها أي /refresh => 401`
+        },
+        {
+          cmd: "express-session",
+          title: "بديل الـ JWT: السيرفر يفتكرك",
+          desc: R`في الـ session السيرفر بيحفظ بياناتك عنده (في Redis أو الداتابيز)، ويدّيك رقم عشوائي بس (session id) في كوكي httpOnly يبعته المتصفح مع كل طلب.
+
+الفرق عن JWT: logout حقيقي (امسح الـ session وخلاص)، والكوكي مفيهاش بيانات، بس كل طلب محتاج lookup في الـ store.`,
+          example: R`import session from "express-session";
+
+app.use(session({
+  secret: config.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: { httpOnly: true, secure: true, sameSite: "lax", maxAge: 7 * 24 * 3600 * 1000 },
+}));
+
+app.post("/api/auth/login", async (req, res) => {
+  const user = await authService.checkPassword(req.body.email, req.body.password);
+  await new Promise((resolve, reject) => req.session.regenerate((err) => (err ? reject(err) : resolve())));
+  req.session.userId = user.id;
+  res.json({ id: user.id });
+});`,
+          try: R`سجّل دخول وبص على الكوكي [[connect.sid]] في DevTools: رقم بس. اعمل route [[/me]] يرجّع [[req.session.userId]]، و route [[/logout]] فيه [[req.session.destroy]]. وأعد تشغيل السيرفر: الـ sessions كلها راحت، لأن الـ store الافتراضي في الذاكرة. (على localhost بـ http خلي [[secure]] false للتجربة.)`,
+          flag: "script",
+          deep: {
+            why: "JWT مش دايمًا الإجابة. لموقع واحد على دومين واحد، الـ session أبسط: مفيش refresh flow، و logout وحظر اليوزر بيحصلوا فورًا، والكوكي فيها رقم بس.",
+            how: R`أول مرة تحط حاجة في [[req.session]]، الـ middleware بيولّد id عشوائي طويل، ويحفظ [[{ userId: 7 }]] في الـ store تحت الـ id ده، ويبعت الـ id في كوكي موقّعة بالـ secret. مع كل طلب: يقرا الكوكي، ويتحقق من التوقيع، ويجيب الـ session من الـ store ويحطها في [[req.session]]. وفي آخر الطلب لو اتغيرت يحفظها.
+
+الـ store الافتراضي [[MemoryStore]]: في ذاكرة العملية، بيضيع مع كل restart، ومبيتشاركش بين نسختين، وبيسرّب ذاكرة. للإنتاج Redis (باكدج [[connect-redis]]، والفكرة في درس [[stateless]] في تاب «Cloud و DevOps») أو الداتابيز.
+
+[[regenerate]] بعد الـ login مهم: لو مهاجم قدر يزرع session id معروف في متصفح الضحية قبل الـ login (session fixation)، من غير regenerate الضحية هتعمل login على الـ id بتاع المهاجم. وحوّلناها لـ promise عشان أي خطأ فيها يوصل للـ error handler بدل ما يضيع جوه callback.
+
+و [[secure: true]] ورا Nginx: Express شايف الطلب http (Nginx هو اللي عامل HTTPS)، فـ express-session مش هيبعت الكوكي. الحل [[app.set("trust proxy", 1)]] عشان يقرا [[X-Forwarded-Proto]].`,
+            when: "موقع واحد (SSR أو SPA) على نفس الدومين، وخصوصًا لو محتاج logout فوري أو «اطرد اليوزر ده دلوقتي». JWT أنسب للموبايل، وللخدمات اللي بتكلّم بعض، ولأكتر من سيرفر من غير store مشترك.",
+            mistakes: R`MemoryStore في الإنتاج: express-session نفسه بيطبع warning، والناس بتتجاهله. و [[saveUninitialized: true]] فكل bot بيعمل session في الـ store. وتنسى [[trust proxy]] ورا Nginx، فالكوكي الـ secure متتبعتش والـ login «مش شغال» على السيرفر بس.`
+          },
+          teach: R`## middleware بيدّي كل متصفح «درج» على السيرفر
+
+[[express-session]] بيحط على كل طلب object اسمه [[req.session]]. اللي تكتبه فيه بيتحفظ على السيرفر (في الـ store)، والمتصفح بياخد رقم الدرج بس (الـ session id) في كوكي. الطلب الجاي بنفس الكوكي بيلاقي نفس [[req.session]].
+
+اتشغّل على ويندوز 11 بـ Node 24.19 و Express 5.2.1 و express-session 1.19، سيرفر على بورت 5846. و [[authService.checkPassword]] في التجربة دالة صغيرة بترجّع [[{ id: 7 }]] للإيميل والباسورد الصح، وترمي [[AppError(401)]] لأي حاجة تانية. و [[secure]] كان [[false]] (السيرفر http على جهازي)، وجرّبت [[true]] لوحده تحت.
+
+---
+
+## ١. [[app.use(session({ ... }))]]
+
+| الإعداد | معناه |
+|---|---|
+| [[secret]] | السر اللي بيتوقّع بيه الـ id في الكوكي، فمحدش يقدر يألّف id |
+| [[resave: false]] | متحفظش الـ session في الـ store تاني في آخر كل طلب لو متغيرتش |
+| [[saveUninitialized: false]] | متعملش session ولا كوكي لزائر لسه محطّتش له حاجة |
+| [[cookie: { ... }]] | إعدادات الكوكي، نفس كلام درس [[res.cookie]]. و [[7 * 24 * 3600 * 1000]] = ٧ أيام بالملّي ثانية |
+
+أثر [[saveUninitialized: false]] باين على طول: route عادي ([[GET /visit]]) رجّع [[200]] **من غير** أي [[Set-Cookie]].
+
+---
+
+## ٢. route الـ login سطر سطر
+
+### [[const user = await authService.checkPassword(req.body.email, req.body.password)]]
+
+لو الإيميل أو الباسورد غلط بترمي، و Express 5 بيودّي الخطأ للـ error handler:
+
+~~~text الناتج: باسورد غلط
+HTTP/1.1 401 Unauthorized
+{"error":"Invalid email or password"}
+~~~
+
+ومفيش [[Set-Cookie]]، لأننا مكتبناش في الـ session حاجة.
+
+### [[await new Promise((resolve, reject) => req.session.regenerate((err) => (err ? reject(err) : resolve())))]]
+
+السطر الأطول. من جوه لبرة:
+
+1. [[req.session.regenerate(callback)]]: امسح الـ session الحالية واعمل واحدة جديدة بـ id جديد، ولما تخلص نادي الـ callback، ولو حصل خطأ ابعتهولها في [[err]].
+2. [[(err) => (err ? reject(err) : resolve())]]: الـ callback. [[? :]] (ternary) يعني «لو فيه err اعمل reject، وإلا resolve».
+3. [[new Promise((resolve, reject) => ...)]]: بيلف الـ callback ده في Promise.
+4. [[await]]: استنى لحد ما يخلص. ولو حصل reject الخطأ بيترمي هنا، فيوصل للـ error handler بدل ما يضيع جوه callback.
+
+طبعت [[req.sessionID]] قبل وبعد:
+
+~~~text الناتج
+sid before azRjv-_2UguZiDy0JXGcbCzOj1MNZ1dV after LCmX5eXw4fmL4-OivmoLozL-nKNHJssV
+~~~
+
+الـ id اتغيّر. ده اللي بيقفل session fixation: لو حد زرع id في متصفحك قبل الـ login، بعد الـ login بقى ملوش لازمة.
+
+### [[req.session.userId = user.id]]
+
+هنا بس الـ session بقى فيها حاجة، فبتتحفظ في الـ store والكوكي بتتبعت:
+
+~~~bash
+curl -i -X POST localhost:5846/api/auth/login -H "Content-Type: application/json" -d '{"email":"sara@test.local","password":"Test-Pass-1"}' -c sj.txt
+~~~
+
+~~~text الناتج
+HTTP/1.1 200 OK
+Set-Cookie: connect.sid=s%3ALCmX5eXw4fmL4-OivmoLozL-nKNHJssV.VGrjsaiq0xJPXOjkzglh2C6cnzb4%2Fj57gPMBvnSkGVI; Path=/; Expires=Wed, 14 Oct 2026 07:57:32 GMT; HttpOnly; SameSite=Lax
+{"id":7}
+~~~
+
+- [[connect.sid]] الاسم الافتراضي للكوكي (من أيام مكتبة connect القديمة).
+- [[s%3A]] = [[s:]]، وبعدها الـ id ([[LCmX5e...]]، نفس اللي اتطبع بعد regenerate)، وبعد النقطة التوقيع. نفس شكل الـ signed cookie في درس [[res.cookie]].
+- [[7]] مش موجود في الكوكي خالص. هو في ذاكرة السيرفر.
+- [[Expires]] بعد ٧ أيام من وقت التجربة.
+
+---
+
+## ٣. الـ solCode: [[/me]] و [[/logout]]
+
+~~~text الناتج
+curl localhost:5846/api/auth/me -b sj.txt
+{"userId":7}
+~~~
+
+[[/me]] بيقرا [[req.session.userId]]، ولو مش موجود [[return res.status(401).json(...)]]. الـ [[return]] عشان الدالة تقف ومتكمّلش للسطر اللي بعده.
+
+و [[/logout]]:
+
+- [[req.session.destroy(cb)]]: امسح الـ session من الـ store.
+- [[if (err) return next(err)]]: لو فشل، ابعت الخطأ للـ error handler بإيدك (ده callback مش async، فـ Express مش هيمسكه لوحده).
+- [[res.clearCookie("connect.sid")]] و [[res.sendStatus(204)]]: امسح الكوكي، ورد [[204 No Content]] (نجح ومفيش body).
+
+~~~text الناتج
+HTTP/1.1 204 No Content
+Set-Cookie: connect.sid=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT
+~~~
+
+وبعدها بعتّ **الكوكي القديمة** (كنت حافظ نسخة منها) لـ [[/me]]:
+
+~~~text الناتج
+HTTP/1.1 401 Unauthorized
+{"error":"Login required"}
+~~~
+
+الكوكي سليمة وموقّعة، بس الدرج اللي بتشاور عليه اتمسح. ده الـ logout الحقيقي اللي JWT ميقدرش يعمله.
+
+---
+
+## ٤. restart السيرفر
+
+عملت login، وقفلت السيرفر وشغّلته، وبعتّ نفس الكوكي: [[401]] [[Login required]]. الـ store الافتراضي ([[MemoryStore]]) في ذاكرة الـ process وراح معاها. وبـ [[NODE_ENV=production]] express-session طبع وهو بيقوم:
+
+~~~text الناتج
+Warning: connect.session() MemoryStore is not
+designed for a production environment, as it will leak
+memory, and will not scale past a single process.
+~~~
+
+---
+
+## ٥. [[secure: true]] على http، وورا proxy
+
+| التجربة | [[Set-Cookie]] |
+|---|---|
+| [[secure: true]] وطلب http عادي | **مفيش**، والرد [[200 {"id":7}]] عادي، فالـ login «نجح» ومفيش كوكي |
+| نفس الكلام + header [[X-Forwarded-Proto: https]] | برضه مفيش (Express مش بيصدّق الـ header) |
+| + [[app.set("trust proxy", 1)]] + نفس الـ header | ظهر، وفيه [[Secure]] |
+
+ده بالظبط اللي بيحصل ورا Nginx: Nginx عامل HTTPS ومكلّم Express بـ http، وبيبعت [[X-Forwarded-Proto: https]]. من غير [[trust proxy]]، الكوكي متتبعتش والـ login «مش شغال» على السيرفر بس.
+
+---
+
+## ٦. من ويندوز
+
+~~~powershell
+Invoke-RestMethod -Method Post http://localhost:5846/api/auth/login -ContentType 'application/json' -Body $b -SessionVariable s
+Invoke-RestMethod http://localhost:5846/api/auth/me -WebSession $s
+Invoke-WebRequest -Method Post http://localhost:5846/api/auth/logout -WebSession $s
+~~~
+
+([[$b]] فيه الـ JSON بتاع الإيميل والباسورد.) في PowerShell 7: [[{"userId":7}]]، وبعدين [[204]]، وبعدها [[/me]] رمى خطأ status [[401]].
+
+---
+
+## الخلاصة
+
+| | JWT | session |
+|---|---|---|
+| في الكوكي أو الـ header | البيانات نفسها موقّعة | id عشوائي موقّع بس |
+| البيانات فين | في التوكن | في الـ store على السيرفر |
+| logout | التوكن شغال لحد [[exp]] | [[destroy]] وخلاص |
+| كل طلب | حسبة توقيع | حسبة توقيع + lookup في الـ store |
+
+> [[regenerate]] بعد الـ login، و store حقيقي (Redis) في الإنتاج، و [[trust proxy]] لو ورا Nginx.`,
+          lines: [
+            "express-session.",
+            "ركّبه كـ middleware.",
+            "سر لتوقيع الـ session id في الكوكي.",
+            "متحفظش الـ session تاني لو متغيرتش.",
+            "متعملش session لأي زائر، بس لما تحط فيها حاجة.",
+            "إعدادات الكوكي زي أي كوكي auth.",
+            "قفلة.",
+            "login.",
+            "اتأكد من الإيميل والباسورد (بترمي 401 لو غلط).",
+            "اعمل session id جديد بعد الـ login (ضد session fixation)، ملفوف في promise عشان الخطأ يوصل للـ error handler.",
+            "احفظ id اليوزر في الـ session. بيتخزن في الـ store، مش في الكوكي.",
+            "رد.",
+            "قفلة."
+          ],
+          sol: R`الكوكي [[connect.sid]] قيمتها حاجة زي [[s%3AuFsOrqRl9dKM...FrmadjhjIE...]]: الـ session id وبعده توقيع بالـ secret. مفيش فيها userId ولا أي بيانات؛ البيانات نفسها على السيرفر في الـ store.
+
+[[/me]] بعد login بيرجّع [[{"userId":7}]]. بعد [[/logout]] ([[req.session.destroy]]) نفس الكوكي بترجّع 401، لأن الـ session اتمسحت من الـ store حتى لو المتصفح لسه باعت الـ id. ده الفرق الكبير عن JWT: الإلغاء فوري.
+
+وبعد restart السيرفر [[/me]] بيرجع 401 برضه، لأن الـ MemoryStore في ذاكرة الـ process وراح معاها. في production لازم store زي Redis ([[connect-redis]]). ولو من الأول [[/me]] رجع 401 على localhost، غالبًا [[secure: true]] على http فالمتصفح رفض يحفظ الكوكي.`,
+          solCode: R`app.get("/api/auth/me", (req, res) => {
+  if (!req.session.userId) return res.status(401).json({ error: "Login required" });
+  res.json({ userId: req.session.userId });
+});
+
+app.post("/api/auth/logout", (req, res, next) => {
+  req.session.destroy((err) => {
+    if (err) return next(err);
+    res.clearCookie("connect.sid");
+    res.sendStatus(204);
+  });
+});`
         }
       ]
     }
