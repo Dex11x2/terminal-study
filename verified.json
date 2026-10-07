@@ -2889,20 +2889,40 @@
   "date": "2026-10-07",
   "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401, linux): dotnet run di.cs + curl"
  },
+ "dotnet|Dockerfile لـ .NET": {
+  "hash": "ca668c2af1c8",
+  "date": "2026-10-07",
+  "on": "docker build (sdk:10.0 + aspnet:10.0) + docker run/exec on Docker Desktop"
+ },
  "dotnet|Func و Action": {
   "hash": "2cd0d5716f12",
   "date": "2026-10-07",
   "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401, linux): dotnet run app.cs"
+ },
+ "dotnet|GC و IDisposable": {
+  "hash": "7db1c7b4c532",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 + postgres:16-alpine (Npgsql 10.0.3)"
  },
  "dotnet|IEnumerable و yield": {
   "hash": "b31e7bb63023",
   "date": "2026-10-07",
   "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (.NET 10.0.12)"
  },
+ "dotnet|IEnumerable ولا IQueryable": {
+  "hash": "9d186d3885d6",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 + postgres:16-alpine (EF Core 10 / Npgsql 10.0.3)"
+ },
  "dotnet|ILogger": {
   "hash": "41a00f71d482",
   "date": "2026-10-07",
   "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401, linux) + postgres:16-alpine + curl"
+ },
+ "dotnet|Kestrel ورا Nginx": {
+  "hash": "2d33aa2afe5f",
+  "date": "2026-10-07",
+  "on": "docker: aspnet:10.0 app + nginx:alpine; docs: systemd unit/systemctl/journalctl"
  },
  "dotnet|LINQ": {
   "hash": "36f6938b8171",
@@ -2928,6 +2948,21 @@
   "hash": "dcc26c3c1e73",
   "date": "2026-10-07",
   "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401, linux): dotnet run app.cs"
+ },
+ "dotnet|async deadlock": {
+  "hash": "5f369166e052",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (dotnet run file.cs)"
+ },
+ "dotnet|boxing و stack و heap": {
+  "hash": "d9fc0a0602b0",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (dotnet run file.cs)"
+ },
+ "dotnet|captive dependency": {
+  "hash": "b764ba499f84",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (file-based web app, Development + Production) + postgres:16-alpine"
  },
  "dotnet|class و properties": {
   "hash": "1c85d9dc6c21",
@@ -2958,6 +2993,11 @@
   "hash": "0efa3db54544",
   "date": "2026-10-07",
   "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401, linux) + curl (Git Bash) + Invoke-RestMethod/curl.exe (pwsh 7.6); docs: default port 5000 outside Docker"
+ },
+ "dotnet|dotnet publish": {
+  "hash": "dcb4c5e6881c",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401) + ubuntu:24.04 for self-contained; docs: Native AOT, Windows PowerShell commands"
  },
  "dotnet|dotnet run app.cs": {
   "hash": "72bec86a63b1",
@@ -3003,6 +3043,11 @@
   "hash": "e8740f1ea803",
   "date": "2026-10-07",
   "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401)"
+ },
+ "dotnet|string و StringBuilder": {
+  "hash": "2fefc0079cc7",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (dotnet run file.cs)"
  },
  "dotnet|switch expression": {
   "hash": "addb0e037fe2",
