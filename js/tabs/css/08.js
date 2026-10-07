@@ -748,6 +748,128 @@ tailwind-merge v3 لـ Tailwind v4 (و v2.6 لـ v3). الألوان الجدي�
             when: "أي مكون بياخد className من برا، وأي كلاسات شرطية. ولكلاسات ثابتة في مكان واحد، string عادي كفاية.",
             mistakes: R`template literal بدل cn: [[className={$__bt$__{base} $__{className}$__bt}]] فالتعارض مش بيتحل. وترتيب معكوس ([[cn(className, defaults)]]). وتوكن حجم خط مخصص من غير extendTailwindMerge، فيضيع اللون أو الحجم من غير سبب واضح.`
           },
+          teach: R`## دالة من سطر واحد بتحل مشكلة حقيقية
+
+[[cn]] بتاخد كلاسات بأي شكل (strings، وشروط، و objects) وترجّع string واحد نضيف مفيهوش كلاسين بيتخانقوا على نفس الخاصية. جربنا كل سطر في المثال بـ Node (clsx 2.1.1 و tailwind-merge 3.7.0)، والكلاسات نفسها في صفحة Vite بـ Tailwind 4.3.3 في Chrome.
+
+---
+
+## ١. المشكلة الأول: مين يكسب في [[px-6 px-4]]؟
+
+حطينا الاتنين على نفس الـ div بترتيبين مختلفين وقرينا الـ padding:
+
+~~~text getComputedStyle في Chrome
+class="px-6 px-4"   paddingLeft = 24px
+class="px-4 px-6"   paddingLeft = 24px
+~~~
+
+في الحالتين [[px-6]] كسب (24px)، حتى لما كان الأول في الـ class. ليه؟ لأن ترتيب الكلاسات جوه [[class]] ملوش أي لازمة في CSS. لما قاعدتين ليهم نفس الـ specificity (كلاس واحد)، اللي **مكتوبة آخر في ملف الـ CSS** هي اللي بتكسب. وده ملف الـ CSS اللي Tailwind طلّعه:
+
+~~~text من الـ CSS الناتج
+.px-4{padding-inline:calc(var(--spacing) * 4)}
+.px-6{padding-inline:calc(var(--spacing) * 6)}
+~~~
+
+[[.px-6]] مكتوبة بعد [[.px-4]]، فهي اللي بتكسب دايمًا. يعني لو مكون فيه [[px-6]] افتراضي، وانت بعتله [[px-4]] من برا، طلبك هيتجاهل من غير أي error. ده بالظبط اللي [[cn]] جاية تحله.
+
+---
+
+## ٢. ملف [[lib/utils.ts]] سطر سطر
+
+### [[import { clsx, type ClassValue } from "clsx";]]
+
+- [[clsx]]: دالة من package اسمه clsx، شغلتها تجميع بس.
+- [[type ClassValue]]: كلمة [[type]] قبل الاسم معناها «ده type بتاع TypeScript مش كود»، فبيتشال خالص من الـ JavaScript الناتج. و [[ClassValue]] هو النوع اللي بيوصف «أي حاجة clsx تقبلها»: string أو رقم أو [[null]] أو [[false]] أو object أو array منهم.
+
+### [[import { twMerge } from "tailwind-merge";]]
+
+[[twMerge]] من package اسمه tailwind-merge. دي اللي فاهمة Tailwind: بتعرف إن [[px-4]] و [[px-6]] الاتنين padding أفقي، فتشيل الأولاني.
+
+### [[export function cn(...inputs: ClassValue[])]]
+
+- [[export]]: عشان أي ملف تاني يقدر يعمل [[import { cn } from "@/lib/utils"]]. و [[@]] ده اختصار لفولدر [[src]] متعرّف في إعدادات المشروع.
+- [[...inputs]]: الـ [[...]] هنا اسمها rest parameter، يعني «لمّ كل الـ arguments اللي هتيجي في array واحدة اسمها inputs». فتقدر تنادي [[cn("a")]] أو [[cn("a", "b", x)]] بأي عدد.
+- [[: ClassValue[]]]: نوع الـ array دي: كل عنصر فيها [[ClassValue]]. و [[[]]] بعد النوع معناها «array من».
+
+### [[return twMerge(clsx(inputs));]]
+
+بيتقرا من جوه لبرة:
+
+1. [[clsx(inputs)]]: يجمّع كل حاجة في string واحد ويشيل اللي قيمته false.
+2. [[twMerge(...)]]: ياخد الـ string ده ويشيل الكلاسات اللي اتغلبت.
+
+---
+
+## ٣. [[clsx]] لوحده: تجميع
+
+~~~text Node
+clsx("a", false && "b", { c: true, d: false }, ["e"])   →   "a c e"
+~~~
+
+- [[false && "b"]]: الـ [[&&]] بيرجّع اللي على الشمال لو كان false، وإلا بيرجّع اللي على اليمين. فهنا رجّع [[false]]، و clsx بيتجاهله.
+- [[{ c: true, d: false }]]: object كل key فيه كلاس، والقيمة شرطه. [[c]] قيمته true فدخل، و [[d]] لأ.
+- [[["e"]]]: array بيتفرد.
+
+## ٤. سطور الاستخدام
+
+### السطر الأول: كلاسات شرطية
+
+~~~text App.tsx
+cn("px-4 py-2", isActive && "bg-brand text-white", { "opacity-50": disabled });
+~~~
+
+| [[isActive]] و [[disabled]] | الناتج |
+|---|---|
+| الاتنين [[true]] | [[px-4 py-2 bg-brand text-white opacity-50]] |
+| الاتنين [[false]] | [[px-4 py-2]] |
+
+### السطر التاني: تعارض
+
+~~~text Node
+clsx("px-4 bg-gray-100", "px-6")   →   "px-4 bg-gray-100 px-6"
+cn("px-4 bg-gray-100", "px-6")     →   "bg-gray-100 px-6"
+~~~
+
+clsx لوحده ساب الاتنين (والمتصفح هيختار حسب ترتيب ملف الـ CSS زي ما شفنا). [[cn]] شال [[px-4]] لأن [[px-6]] جه بعده في نفس المجموعة (padding أفقي). و [[bg-gray-100]] فضل لأنه مجموعة تانية (لون خلفية).
+
+وفي الصفحة: [[cn("px-6", "px-4")]] طلّع [[class="px-4"]] و paddingLeft = **16px**. اللي جه آخر في الـ arguments كسب فعلًا، عكس الـ div اللي فوق.
+
+### السطر التالت: النمط بتاع أي مكون
+
+~~~text App.tsx
+cn("text-sm text-gray-600", className);
+~~~
+
+[[className]] هو اللي جاي من برا (prop). بيتحط **آخر حاجة** عشان يكسب:
+
+| [[className]] | الناتج |
+|---|---|
+| [["text-red-600"]] | [[text-sm text-red-600]] (اللون اتغير والحجم فضل) |
+| [["text-base"]] | [[text-gray-600 text-base]] (الحجم اتغير واللون فضل) |
+| [[undefined]] | [[text-sm text-gray-600]] |
+
+لاحظ إن twMerge عارف إن [[text-sm]] حجم و [[text-gray-600]] لون، رغم إن الاتنين بيبدأوا بـ [[text-]].
+
+---
+
+## ٥. حالات بيفهمها twMerge
+
+| النداء | الناتج | ليه |
+|---|---|---|
+| [[cn("p-2", "px-4")]] | [[p-2 px-4]] | [[px-4]] بيغطي الجنبين بس، و [[p-2]] لسه محتاجينه لفوق وتحت |
+| [[cn("px-4", "p-2")]] | [[p-2]] | [[p-2]] بيغطي كل الاتجاهات، فـ [[px-4]] ملوش لازمة |
+| [[cn("hover:bg-red-500", "bg-blue-500", "hover:bg-blue-500")]] | [[bg-blue-500 hover:bg-blue-500]] | التعارض بيتحسب لكل variant لوحده |
+| [[cn("text-hero", "text-white")]] | [[text-white]] | twMerge مش عارف [[text-hero]]، فافتكره لون وشاله |
+
+السطر الأخير هو الغلطة اللي في «أخطاء شائعة»: لو [[--text-hero]] حجم خط عملته في [[@theme]]، لازم تعرّفه لـ twMerge بـ [[extendTailwindMerge]].
+
+> في مشروع shadcn جديد (CLI 4.21.3) هتلاقي [[lib/utils.ts]] سطر واحد: [[export { cn } from "cn"]]. ده package اسمه [[cn]] من shadcn بيعمل شغل clsx و twMerge مع بعض. جربنا عليه نفس النداءات اللي في الجدول وطلّع نفس النتايج بالظبط، فكل اللي فوق ينطبق عليه.
+
+## الخلاصة
+
+- ترتيب الكلاسات في [[class]] ملوش لازمة، اللي بيكسب ترتيب القواعد في ملف الـ CSS.
+- [[clsx]] بيجمّع ويشيل الـ false، و [[twMerge]] بيشيل الكلاس اللي اتغلب في نفس المجموعة.
+- دايمًا [[cn(defaults, className)]]: اللي من برا آخر حاجة.`,
           lines: [
             R`[[clsx]]: بيجمّع strings و objects و arrays ويشيل false و null و undefined.`,
             R`[[twMerge]]: بيفهم كلاسات Tailwind ويشيل المتعارض.`,
@@ -807,6 +929,145 @@ export function Button({ className, variant, size, ...props }: ButtonProps) {
             when: "أي مكون UI ليه أشكال: Button و Badge و Alert و Input. لو المكون شكل واحد بس، cn كفاية.",
             mistakes: R`تبني كلاسات الـ variants بـ template فـ Tailwind ميشوفهاش. تنسى [[defaultVariants]] فالزرار من غير props يطلع من غير حجم. وفي مشروع حقيقي الـ Button كان لسه بـ [[forwardRef]] و [[displayName]] على React 19: شغال، بس كود زيادة ملوش لازمة.`
           },
+          teach: R`## جدول اختيارات بيتحوّل لكلاسات
+
+[[cva]] بتاخد منك الكلاسات اللي في كل الزراير، وجدول فيه كل شكل وكل حجم وكلاساته، وترجّعلك دالة: تدّيها [[{ variant, size }]] ترجّع الـ string. حطينا الكود ده بالظبط في مشروع Vite (Tailwind 4.3.3، و class-variance-authority 0.7.1، و TypeScript 6.0.3، و [[--color-brand]] متعرّف في [[@theme]])، وقسنا الزراير في Chrome.
+
+---
+
+## ١. الـ imports
+
+~~~text Button.tsx
+import type { ComponentProps } from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@/lib/utils";
+~~~
+
+- [[import type]]: السطر كله types بس، بيتشال من الـ JavaScript الناتج.
+- [[ComponentProps]]: type من React بيدّيك كل الـ props بتاعة عنصر HTML. [[ComponentProps<"button">]] = [[onClick]] و [[disabled]] و [[type]] و [[aria-label]] وكل اللي الـ [[<button>]] بياخده.
+- [[cva]]: الدالة نفسها. والاسم اختصار class-variance-authority.
+- [[VariantProps]]: type بيطلّع أسماء الـ variants وقيمها من الـ cva.
+- [[cn]]: من الدرس اللي فات.
+
+## ٢. [[cva(base, config)]]
+
+~~~text Button.tsx
+const buttonVariants = cva("inline-flex items-center justify-center gap-2 rounded-lg font-medium disabled:opacity-50", {
+~~~
+
+الـ argument الأول هو الـ **base**: كلاسات بتتحط على كل زرار مهما كان شكله:
+
+| الكلاس | يعني |
+|---|---|
+| [[inline-flex items-center justify-center]] | الأيقونة والكلام جنب بعض وفي النص |
+| [[gap-2]] | 8px بين الأيقونة والكلام |
+| [[rounded-lg]] | تدوير 8px |
+| [[font-medium]] | وزن 500 |
+| [[disabled:opacity-50]] | لو عليه [[disabled]] يبقى نص شفاف |
+
+والتاني object فيه ٣ حاجات:
+
+### [[variants]]
+
+~~~text Button.tsx
+variants: {
+  variant: { primary: "bg-brand text-white hover:bg-brand/90", outline: "border hover:bg-gray-50", ghost: "hover:bg-gray-100" },
+  size: { sm: "h-9 px-3 text-sm", md: "h-10 px-4", lg: "h-12 px-6 text-lg" },
+},
+~~~
+
+- [[variant]] و [[size]] أسامي انت اللي اخترتها، ودي هتبقى أسامي الـ props.
+- جوه كل واحد: اسم الاختيار وكلاساته. [[primary]] و [[outline]] و [[ghost]] (شفاف من غير border).
+- [[hover:bg-brand/90]]: الـ [[/90]] بعد اللون = نفس اللون بشفافية 90٪.
+- [[h-9]] و [[h-10]] و [[h-12]] = ارتفاع 36 و 40 و 48px (كل وحدة 4px).
+
+### [[compoundVariants]]
+
+~~~text Button.tsx
+compoundVariants: [{ variant: "outline", size: "lg", class: "border-2" }],
+~~~
+
+array من «تركيبات»: الكلاس [[border-2]] بيتضاف بس لو [[variant]] هو outline **و** [[size]] هو lg مع بعض.
+
+### [[defaultVariants]]
+
+~~~text Button.tsx
+defaultVariants: { variant: "primary", size: "md" },
+~~~
+
+لو اللي بيستخدم الزرار محددش، دي القيم.
+
+### بتطلّع إيه؟
+
+ناديناها وطبعنا الناتج:
+
+~~~text الناتج
+buttonVariants()
+→ inline-flex items-center justify-center gap-2 rounded-lg font-medium disabled:opacity-50 bg-brand text-white hover:bg-brand/90 h-10 px-4
+
+buttonVariants({ variant: "outline", size: "lg" })
+→ inline-flex items-center justify-center gap-2 rounded-lg font-medium disabled:opacity-50 border hover:bg-gray-50 h-12 px-6 text-lg border-2
+~~~
+
+الترتيب دايمًا: base، وبعدين كلاسات الـ variant، وبعدين الـ size، وفي الآخر الـ compound. ولاحظ إن التانية فيها [[border]] و [[border-2]] الاتنين: cva بتلزق بس، مش بتحل تعارض.
+
+---
+
+## ٣. الـ type
+
+~~~text Button.tsx
+type ButtonProps = ComponentProps<"button"> & VariantProps<typeof buttonVariants>;
+~~~
+
+من جوه لبرة:
+
+1. [[typeof buttonVariants]]: [[typeof]] هنا (في مكان type) معناها «هات الـ type بتاع المتغير ده».
+2. [[VariantProps<...>]]: يطلّع منه [[{ variant?: "primary" | "outline" | "ghost" | null; size?: "sm" | "md" | "lg" | null }]]. الـ [[?]] = اختياري، والـ [[|]] = «واحد من دول».
+3. [[&]]: بيدمج الاتنين: كل props الزرار العادية **و** variant و size.
+
+جربنا [[<Button variant="danger">]] و [[<Button size="xl">]] وشغّلنا [[tsc]]:
+
+~~~text الناتج
+error TS2322: Type '"danger"' is not assignable to type '"primary" | "outline" | "ghost" | null | undefined'.
+error TS2322: Type '"xl"' is not assignable to type '"sm" | "md" | "lg" | null | undefined'.
+~~~
+
+## ٤. المكون
+
+~~~text Button.tsx
+export function Button({ className, variant, size, ...props }: ButtonProps) {
+  return <button className={cn(buttonVariants({ variant, size }), className)} {...props} />;
+}
+~~~
+
+- [[{ className, variant, size, ...props }]]: destructuring. بيطلّع التلاتة دول بأساميهم، و [[...props]] = «كل الباقي» ([[onClick]] و [[disabled]] و [[id]]...).
+- [[buttonVariants({ variant, size })]]: الكلاسات من الجدول. و [[{ variant, size }]] اختصار [[{ variant: variant, size: size }]].
+- [[cn(..., className)]]: الـ className اللي من برا آخر حاجة عشان يكسب، و cn بتشيل المتعارض.
+- [[{...props}]]: يفرد الباقي على الـ [[<button>]] الحقيقي.
+
+## ٥. القياس في Chrome
+
+| الاستخدام | الارتفاع | padding جنب | border | حجم الخط |
+|---|---|---|---|---|
+| [[<Button>]] | 40 | 16px | 0 | 16px |
+| [[<Button variant="outline" size="lg">]] | 48 | 24px | **2px** | 18px |
+| [[<Button variant="ghost" size="sm" className="px-8">]] | 36 | **32px** | 0 | 14px |
+| [[<Button disabled>]] | 40 | 16px | 0 | 16px و opacity 0.5 |
+
+- التاني: الـ class النهائي فيه [[border-2]] بس، لأن cn شالت [[border]].
+- التالت: [[px-8]] اللي من برا شال [[px-3]] بتاع sm، فالـ padding بقى 32px.
+- الـ primary لونه [[oklch(0.55 0.2 265)]]، ووقت الـ hover بقى نفس اللون بـ [[/ 0.9]] (الشفافية).
+
+## الخلاصة
+
+| الجزء | بيعمل إيه |
+|---|---|
+| base | كلاسات كل الأشكال |
+| [[variants]] | جدول الاختيارات |
+| [[compoundVariants]] | كلاسات لتركيبة معينة |
+| [[defaultVariants]] | القيم لو محدش حدد |
+| [[VariantProps]] | الأسماء المسموحة لـ TypeScript |
+| [[cn(..., className)]] | يحل التعارض ويخلي اللي من برا يكسب |`,
           lines: [
             "نوع الـ props بتاعة أي عنصر HTML.",
             "استيراد cva والنوع.",
@@ -827,7 +1088,7 @@ export function Button({ className, variant, size, ...props }: ButtonProps) {
           sol: R`[[<Button variant="outline" size="lg">]] بيطلع زرار شفاف ليه border وارتفاعه 48px. الكلاسات اللي بيولّدها [[buttonVariants]] بالترتيب: الأساسية، وبعدين [[border hover:bg-gray-50]]، وبعدين [[h-12 px-6 text-lg]]، وفي الآخر [[border-2]] من الـ compoundVariants. و [[cn]] بيشيل [[border]] لأن [[border-2]] بيغطيه، فالـ border بيبقى 2px.
 
 [[variant="danger"]] قبل ما تضيفه: TypeScript بيعترض بالرسالة دي بالظبط:
-[[Type '"danger"' is not assignable to type '"ghost" | "outline" | "primary" | null | undefined'.]]
+[[Type '"danger"' is not assignable to type '"primary" | "outline" | "ghost" | null | undefined'.]] (ترتيب الأسماء في الرسالة ممكن يختلف حسب نسخة TypeScript)
 بعد ما تضيف [[danger]] للـ variants الخطأ بيختفي من غير ما تلمس الـ type، لأن [[VariantProps]] بيقرا الأنواع من الـ cva نفسه. والزرار بيطلع أحمر بنفس ارتفاع md لأن الـ size الافتراضي md.
 
 لو TypeScript مااعترضش على danger، غالبًا الـ props متعرّفة [[any]] أو انت شايل [[VariantProps]] من الـ type. ولو الزرار طلع من غير ستايل، يبقى الكلاسات زي [[bg-brand]] مش متعرّفة في الـ theme.`,
@@ -870,6 +1131,164 @@ git diff components/ui/button.tsx`,
             when: "مشروع React أو Next عايز مكونات جاهزة ومحترمة للـ accessibility وشكلها بتاعك. لو عايز كل حاجة جاهزة ومش هتعدّل، مكتبة تقليدية ممكن تبقى أسرع.",
             mistakes: R`تعامل [[components/ui]] كأنه node_modules متلمسوش، وتعمل wrapper فوق wrapper عشان تغيّر حاجة بسيطة: عدّل الملف نفسه، ده الهدف. أو العكس: [[add --overwrite]] بعد ما عدّلت فتضيع تعديلاتك. وتنسخ مكونات من مشروع قديم (Radix و Tailwind v3) لمشروع جديد (Base UI و v4) فالكلاسات والـ imports تتلخبط.`
           },
+          teach: R`## CLI بيكتب كود في مشروعك
+
+كل أمر في المثال بيعدّل ملفات في مشروعك: [[init]] بيجهّز، و [[add]] بينسخ مكونات. شغّلنا الأوامر دي على مشروع Vite + React + Tailwind 4.3.3 فاضي (shadcn 4.21.3، أكتوبر 2026)، ومتابعين كل تغيير بـ git. في Vite الكود بيتحط تحت [[src/]]، فـ [[components/ui]] بتبقى [[src/components/ui]].
+
+---
+
+## ١. [[npx shadcn@latest init]]
+
+- [[npx]]: بيشغّل أمر من package على npm من غير ما تسطّبه global. بينزّله في cache ويشغّله.
+- [[shadcn@latest]]: اسم الـ package، و [[@latest]] = آخر نسخة، عشان تاخد آخر registry.
+- [[init]]: الأمر الفرعي اللي بيجهّز المشروع.
+
+أول سؤال بيسأله اختيار الـ preset (الشكل العام):
+
+~~~text الناتج
+? Which preset would you like to use?
+>   Nova - Lucide / Geist
+    Vega
+    Maia
+    ...
+~~~
+
+ولو عايز من غير أسئلة: [[-p nova]]. شغّلنا [[init -p nova -y]] ([[-y]] = متسألنيش أكد) وبصينا على [[components.json]]:
+
+~~~text components.json
+"style": "base-nova",
+"rtl": false,
+~~~
+
+[[base-nova]] يعني المكونات مبنية على **Base UI**، واتسطّب [[@base-ui/react]]. ده الافتراضي الجديد.
+
+## ٢. [[npx shadcn@latest init -b radix --rtl]]
+
+- [[-b radix]]: [[-b]] اختصار [[--base]]، يعني المكتبة اللي تحت المكونات. القيم: [[base]] و [[radix]] و [[aria]].
+- [[--rtl]]: المكونات تتكتب بكلاسات logical عشان العربي.
+
+شغّلناه بـ [[-p nova -y]] وده اللي طلع:
+
+~~~text الناتج
+✔ Verifying framework. Found Vite.
+✔ Validating Tailwind CSS. Found v4.
+✔ Validating import alias.
+✔ Writing components.json.
+✔ Installing dependencies.
+✔ Created 1 file:
+  - src\lib\utils.ts
+✔ Updating src\index.css
+~~~
+
+| الملف | اتغير إزاي |
+|---|---|
+| [[components.json]] | جديد: [["style": "radix-nova"]] و [["rtl": true]] والـ aliases |
+| [[package.json]] | اتضاف [[radix-ui]] و [[class-variance-authority]] و [[lucide-react]] و [[cn]] و [[tw-animate-css]] وغيرهم |
+| [[src/lib/utils.ts]] | جديد |
+| [[src/index.css]] | اتضاف [[@theme inline]] و متغيرات الألوان في [[:root]] و [[.dark]] |
+
+وحاجة جديدة: [[src/lib/utils.ts]] طلع سطر واحد:
+
+~~~text src/lib/utils.ts
+export { cn } from "cn"
+~~~
+
+يعني الـ CLI الجديد مش بيكتب [[clsx]] و [[twMerge]] زي درس [[cn()]]، بيستخدم package اسمه [[cn]] من shadcn بيعمل نفس الشغل. جربنا عليه نفس أمثلة الدرس ده وطلّع نفس النتايج بالظبط ([[cn("px-4", "p-2")]] ← [[p-2]]). المشاريع القديمة فيها الشكل الأول، والاتنين نفس الفكرة.
+
+## ٣. [[npx shadcn@latest add button dialog dropdown-menu]]
+
+[[add]] وبعده أسامي المكونات، أي عدد:
+
+~~~text الناتج
+✔ Created 3 files:
+  - src\components\ui\button.tsx
+  - src\components\ui\dropdown-menu.tsx
+  - src\components\ui\dialog.tsx
+~~~
+
+افتح [[button.tsx]] هتلاقي اللي اتعلمته:
+
+~~~text src/components/ui/button.tsx (مختصر)
+const buttonVariants = cva("group/button inline-flex ... rounded-lg ...", {
+  variants: {
+    variant: { default: ..., outline: ..., secondary: ..., ghost: ..., destructive: ..., link: ... },
+    size: { default: "h-8 ...", xs: ..., sm: ..., lg: ..., icon: "size-8", ... },
+  },
+  defaultVariants: { variant: "default", size: "default" },
+})
+...
+className={cn(buttonVariants({ variant, size, className }))}
+~~~
+
+نفس [[cva]] بتاع الدرس اللي فات، والألوان أسامي متغيرات ([[bg-primary]] و [[text-primary-foreground]]) مش ألوان ثابتة.
+
+وأثر [[--rtl]]: عملنا [[add dropdown-menu]] في مشروع من غير [[--rtl]] وقارنّا:
+
+| من غير [[--rtl]] | بـ [[--rtl]] |
+|---|---|
+| [[ml-auto]] | [[ms-auto]] |
+| [[pl-7]] | [[ps-7]] |
+| [[pr-8]] | [[pe-8]] |
+
+## ٤. [[npx shadcn@latest add button --overwrite]]
+
+[[--overwrite]] (أو [[-o]]) = اكتب فوق الملف الموجود. جربنا: غيّرنا [[rounded-lg]] لـ [[rounded-full]] في button.tsx، و [[git diff --stat]] طلّع:
+
+~~~text الناتج قبل
+ src/components/ui/button.tsx | 2 +-
+~~~
+
+بعد [[add button --overwrite]]: الـ CLI قال [[Updated 1 file]]، و [[git diff --stat]] طلع **فاضي**. تعديلك راح.
+
+## ٥. [[cat components.json]]
+
+[[cat]] بيطبع الملف. ده ملف إعدادات shadcn، والـ CLI بيقراه في كل [[add]]:
+
+| المفتاح | يعني |
+|---|---|
+| [[style]] | المكتبة والـ preset ([[radix-nova]]) |
+| [[tailwind.css]] | ملف الـ CSS اللي هيحط فيه المتغيرات |
+| [[iconLibrary]] | [[lucide]] |
+| [[rtl]] | يكتب logical ولا لأ |
+| [[aliases]] | [[@/components/ui]] و [[@/lib/utils]]: فين يحط الملفات وإزاي يعمل import |
+
+(على ويندوز PowerShell: [[cat]] شغال كاسم تاني لـ [[Get-Content]].)
+
+## ٦. [[git diff components/ui/button.tsx]]
+
+بيوريك الفرق بين الملف دلوقتي وآخر commit: السطور اللي اتشالت بـ [[-]] واللي اتضافت بـ [[+]]. عشان كده اعمل commit **قبل** أي [[--overwrite]]، فتقدر تشوف اللي اتمسح وترجّعه.
+
+---
+
+## ٧. التدوير من مكان واحد
+
+في [[index.css]] فيه [[--radius: 0.625rem]] (10px)، و [[rounded-lg]] طالع في الـ CSS كده:
+
+~~~text من الـ CSS الناتج
+.rounded-lg{border-radius:var(--radius)}
+~~~
+
+قسنا الزراير في Chrome، وبعدين غيّرنا [[--radius]] لـ [[1rem]]:
+
+| الزرار | قبل | بعد [[--radius: 1rem]] |
+|---|---|---|
+| [[size="default"]] | 10px | 16px |
+| [[size="lg"]] | 10px | 16px |
+| [[size="sm"]] | 8px | 12px |
+
+الـ sm مكتوب فيه [[rounded-[min(var(--radius-md),12px)]]]: يعني أصغر قيمة من الاتنين، فمش بيعدّي 12px.
+
+## الخلاصة
+
+| الأمر | بيعمل إيه |
+|---|---|
+| [[init]] | [[components.json]] و [[lib/utils.ts]] والمتغيرات والـ packages |
+| [[init -b radix --rtl]] | نفسه بس Radix بدل Base UI، ومكونات logical |
+| [[add <names>]] | ينسخ كود المكونات في [[components/ui]] |
+| [[add <name> --overwrite]] | يكتب الأصلي فوق نسختك |
+
+- الكود بقى بتاعك: عدّله في الملف نفسه.
+- commit قبل أي [[--overwrite]].`,
           lines: [
             R`يجهّز المشروع: [[components.json]]، و [[cn]] في lib/utils، ومتغيرات الألوان في الـ CSS.`,
             "نفسه بس بـ Radix بدل Base UI (الافتراضي الجديد)، ومكونات logical جاهزة للعربي.",
@@ -878,9 +1297,9 @@ git diff components/ui/button.tsx`,
             "إعدادات shadcn: الـ style، والمكتبة، ومسارات الـ aliases، وملف الـ CSS.",
             "قبل ما تعمل commit، شوف الفرق بين نسختك والأصلية بعد الـ overwrite."
           ],
-          sol: R`بعد [[init]] هتلاقي [[components.json]] و [[lib/utils.ts]] فيه [[cn]] بالظبط زي درس [[cn()]]، والـ globals.css اتضاف فيه متغيرات زي [[--radius]] و [[--primary]] و [[--background]]. بعد [[add button]] هتلاقي [[components/ui/button.tsx]] جواه [[const buttonVariants = cva(...)]] وفيه variants زي [[default]] و [[destructive]] و [[outline]] و [[secondary]] و [[ghost]] و [[link]]، وأحجام زي [[default]] و [[sm]] و [[lg]] و [[icon]]، والـ component بيعمل [[cn(buttonVariants({ variant, size, className }))]]. (الأسماء بالظبط ممكن تختلف حسب الـ style اللي اخترته في init.)
+          sol: R`بعد [[init]] هتلاقي [[components.json]] و [[lib/utils.ts]] فيه [[cn]] (في المشاريع القديمة بـ clsx و twMerge زي درس [[cn()]]، والـ CLI الجديد بيكتب [[export { cn } from "cn"]] من package بنفس الشغل)، والـ globals.css اتضاف فيه متغيرات زي [[--radius]] و [[--primary]] و [[--background]]. بعد [[add button]] هتلاقي [[components/ui/button.tsx]] جواه [[const buttonVariants = cva(...)]] وفيه variants زي [[default]] و [[destructive]] و [[outline]] و [[secondary]] و [[ghost]] و [[link]]، وأحجام زي [[default]] و [[sm]] و [[lg]] و [[icon]]، والـ component بيعمل [[cn(buttonVariants({ variant, size, className }))]]. (الأسماء بالظبط ممكن تختلف حسب الـ style اللي اخترته في init.)
 
-عشان تغيّر التدوير: فيه طريقتين. الأولى في button.tsx: غيّر [[rounded-md]] في الـ string الأساسي لـ [[rounded-full]] مثلًا، وخلي بالك إن بعض الأحجام ([[sm]] و [[lg]]) ممكن تكون كاتبة [[rounded-md]] تاني جواها، فلازم تغيّرها هي كمان وإلا هتلاقي الزراير الكبيرة والصغيرة لسه زي ما هي. التانية في globals.css: غيّر [[--radius]] على [[:root]]، ودي بتغيّر كل المكونات مش الزراير بس، لأن [[rounded-md]] و [[rounded-lg]] محسوبين منه.
+عشان تغيّر التدوير: فيه طريقتين. الأولى في button.tsx: غيّر [[rounded-lg]] في الـ string الأساسي لـ [[rounded-full]] مثلًا، وخلي بالك إن بعض الأحجام ممكن تكون كاتبة تدوير تاني جواها (في style nova الـ [[sm]] و [[xs]] فيهم [[rounded-[min(var(--radius-md),12px)]]])، فلازم تغيّرها هي كمان وإلا هتلاقي الزراير الصغيرة لسه زي ما هي. التانية في globals.css: غيّر [[--radius]] على [[:root]]، ودي بتغيّر كل المكونات مش الزراير بس، لأن [[rounded-md]] و [[rounded-lg]] محسوبين منه (قستها: [[--radius: 1rem]] خلّى الزرار العادي 16px بدل 10px).
 
 بعد التعديل، [[git diff components/ui/button.tsx]] بيوريك التغيير بتاعك. ولو عملت [[add button --overwrite]] بعدين هيمسحه، ودي النقطة اللي تفرّق shadcn عن مكتبة متسطبة: الكود بتاعك وانت المسؤول عنه.`
         },
@@ -914,8 +1333,129 @@ git diff components/ui/button.tsx`,
 
 ونفس الفكرة في DropdownMenu (أسهم الكيبورد، والبحث بأول حرف، والقفل لما تضغط برا)، و Popover، و Tooltip، و Tabs، و Select. وفي موقع عربي، [[Direction.Provider]] بـ [[dir="rtl"]] بيخلي أسهم الكيبورد في القوايم تمشي في الاتجاه الصح.`,
             when: "أي مودال أو dropdown أو popover أو tabs أو tooltip. متكتبش السلوك ده بنفسك إلا لو بتتعلم. وفي مشروع shadcn هتلاقيهم متغلّفين جاهزين في components/ui.",
-            mistakes: R`تشيل [[Dialog.Title]] لأن التصميم مفيهوش عنوان، و Radix يطلّع تحذير في الكونسول: خليه وخبّيه بصريًا ([[sr-only]]). و [[asChild]] على مكون مش بيعدّي الـ props والـ ref للعنصر، فالزرار مش بيفتح حاجة. وفي مشروع حقيقي dropdown كان معمول بإيدك بـ [[mousedown]] على الـ document عشان يقفل لما تضغط برا: مفيش Escape ولا أسهم ولا إدارة focus، ودا بالظبط اللي DropdownMenu بيحله.`
+            mistakes: R`تشيل [[Dialog.Title]] لأن التصميم مفيهوش عنوان، فالـ dialog يبقى من غير اسم وقارئ الشاشة يقول «dialog» وخلاص. نسخ Radix القديمة كانت بتطلّع تحذير في الكونسول، بس radix-ui 1.7 مبقتش بتطلّعه (جربناها)، فمحدش هينبهك: خليه وخبّيه بصريًا ([[sr-only]]). و [[asChild]] على مكون مش بيعدّي الـ props والـ ref للعنصر، فالزرار مش بيفتح حاجة. وفي مشروع حقيقي dropdown كان معمول بإيدك بـ [[mousedown]] على الـ document عشان يقفل لما تضغط برا: مفيش Escape ولا أسهم ولا إدارة focus، ودا بالظبط اللي DropdownMenu بيحله.`
           },
+          teach: R`## أجزاء بتتكلم مع بعض
+
+كل [[Dialog.Something]] في المثال قطعة ليها شغلانة، والـ [[Root]] بيربطهم. انت بتحط الشكل بكلاسات Tailwind، و Radix بيحط السلوك والـ attributes. حطينا المثال في مشروع Vite ([[radix-ui]] 1.7.0، و React 19.3، و Tailwind 4.3.3) جوه صفحة [[dir="rtl"]] عرضها 800 وطولها 600، و [[onConfirm]] دالة بتعدّ مرات الضغط، وجربنا بالكيبورد والماوس في Chrome.
+
+---
+
+## ١. [[import { Dialog } from "radix-ui";]]
+
+[[radix-ui]] package واحد فيه كل الـ primitives. [[Dialog]] object جواه القطع كلها: [[Dialog.Root]] و [[Dialog.Trigger]] وهكذا. والنقطة معناها «القطعة اللي اسمها كذا جوه Dialog».
+
+## ٢. [[<Dialog.Root>]]
+
+مش بيرسم أي عنصر في الصفحة. شايل حالة «مفتوح ولا مقفول»، وبيدّيها لكل القطع اللي جواه (React context). عشان كده كل القطع لازم تبقى جواه.
+
+## ٣. [[<Dialog.Trigger>]]
+
+بيرسم [[<button>]] حقيقي. ده الـ HTML اللي طلع قبل وبعد الفتح:
+
+~~~text attributes الزرار
+مقفول:  type=button aria-haspopup=dialog aria-expanded=false data-state=closed
+مفتوح:  type=button aria-haspopup=dialog aria-expanded=true  data-state=open  aria-controls=radix-_r_0_
+~~~
+
+| الـ attribute | يعني |
+|---|---|
+| [[type=button]] | لو جوه form ميبعتوش |
+| [[aria-haspopup=dialog]] | قارئ الشاشة يقول إن الزرار بيفتح dialog |
+| [[aria-expanded]] | مفتوح ولا لأ |
+| [[data-state]] | نفس المعلومة للـ CSS: [[data-[state=open]:...]] في Tailwind |
+| [[aria-controls]] | الـ id بتاع المودال اللي بيتحكم فيه |
+
+## ٤. [[<Dialog.Portal>]]
+
+كل اللي جواه بيترسم كآخر حاجة في [[<body>]] مش مكانه في الكود. قسنا: الأب بتاع المودال طلع [[BODY]]. ليه؟ لو أي أب فوقه عليه [[overflow: hidden]] أو [[transform]]، الـ [[fixed]] ممكن يتقص أو يتحسب من الأب ده بدل الشاشة. برا كل ده مفيش مشكلة.
+
+## ٥. [[<Dialog.Overlay className="fixed inset-0 bg-black/50" />]]
+
+- [[fixed]]: ثابت على الشاشة مش بيتحرك مع الـ scroll.
+- [[inset-0]]: [[top]] و [[right]] و [[bottom]] و [[left]] كلهم 0، فبيغطي الشاشة كلها.
+- [[bg-black/50]]: أسود بشفافية 50٪. في Chrome: [[oklab(0 0 0 / 0.5)]].
+
+ضغطنا بالماوس على الخلفية برا الصندوق: المودال اتقفل.
+
+## ٦. [[<Dialog.Content className="...">]]
+
+الصندوق نفسه. الكلاسات:
+
+| الكلاس | يعني |
+|---|---|
+| [[fixed top-1/2 left-1/2]] | الركن الفوقاني الشمال في نص الشاشة |
+| [[-translate-x-1/2 -translate-y-1/2]] | ارجع نص عرضك ونص طولك، فالـ **نص** بتاعك يبقى في نص الشاشة |
+| [[w-[min(90vw,28rem)]]] | العرض الأصغر من: 90٪ من عرض الشاشة، أو 28rem (448px) |
+| [[rounded-xl bg-white p-6]] | تدوير، وأبيض، و padding 24px |
+
+القياس: الصندوق [[x=176 y=238]] وعرضه 448 وطوله 124. الشاشة 800، و 90vw = 720 أكبر من 448، فالعرض 448. و (800 − 448) ÷ 2 = 176، يعني في النص بالظبط.
+
+والـ attributes اللي Radix حطها عليه:
+
+~~~text attributes الصندوق
+role=dialog  id=radix-_r_0_  data-state=open  tabindex=-1
+aria-labelledby=radix-_r_1_  aria-describedby=radix-_r_2_
+~~~
+
+- [[role=dialog]]: قارئ الشاشة يعرف إنه dialog.
+- [[aria-labelledby]]: بيشاور على id الـ Title، فاسم الـ dialog = «متأكد؟».
+- [[aria-describedby]]: بيشاور على الـ Description.
+- [[tabindex=-1]]: يقدر ياخد focus بالكود من غير ما يدخل في ترتيب الـ Tab.
+
+## ٧. [[Dialog.Title]] و [[Dialog.Description]]
+
+الـ Title بيترسم [[<h2>]]، والـ Description [[<p>]]. ده الـ Accessibility tree اللي Chrome شايفه وهو مفتوح:
+
+~~~text الناتج
+- dialog "متأكد؟":
+  - heading "متأكد؟" [level=2]
+  - paragraph: الحذف مش هيترجع.
+  - button "أيوه امسح"
+~~~
+
+وجربنا نشيل الـ Title: بقى [[- dialog:]] من غير اسم، ومفيش أي تحذير في الـ Console (radix-ui 1.7).
+
+## ٨. [[<Dialog.Close onClick={onConfirm}>]]
+
+زرار بيقفل المودال. و [[onClick]] بتاعك بيشتغل الأول: ضغطناه، المودال اتقفل، والعداد بقى 1، والـ focus رجع لزرار «امسح».
+
+---
+
+## ٩. السلوك اللي جه ببلاش
+
+فتحنا بالكيبورد (Enter على «امسح») وقسنا:
+
+| التجربة | النتيجة |
+|---|---|
+| الـ focus بعد الفتح | زرار «أيوه امسح» (أول حاجة ينفع تاخد focus جوه) |
+| Tab خمس مرات | فضل على «أيوه امسح» كل مرة (الوحيد جوه) |
+| Shift+Tab | نفس الزرار |
+| [[#root]] (باقي الصفحة) | [[aria-hidden="true"]] و [[pointer-events: none]] |
+| الـ body | [[overflow: hidden]] و [[data-scroll-locked]] |
+| scroll بالماوس 500px | [[scrollY]] فضل 0 |
+| Escape | المودال اتشال من الصفحة، والـ focus رجع لـ «امسح»، و [[aria-expanded=false]] |
+| scroll بعد القفل | [[scrollY]] بقى 500 |
+
+- **focus trap**: الـ Tab محبوس جوه المودال.
+- [[aria-hidden]] على باقي الصفحة: قارئ الشاشة مش هيقرا اللي ورا.
+- قفل الـ scroll: الصفحة اللي ورا متتحركش.
+- رجوع الـ focus: الكيبورد يكمّل من نفس المكان.
+
+## الخلاصة
+
+| القطعة | بترسم | شغلتها |
+|---|---|---|
+| [[Root]] | ولا حاجة | الحالة |
+| [[Trigger]] | [[<button>]] | يفتح، وعليه [[aria-expanded]] |
+| [[Portal]] | ولا حاجة | يطلّع المودال لآخر الـ body |
+| [[Overlay]] | [[<div>]] | الخلفية، والضغط عليها يقفل |
+| [[Content]] | [[<div role="dialog">]] | الصندوق والـ focus trap |
+| [[Title]] / [[Description]] | [[<h2>]] / [[<p>]] | اسم ووصف الـ dialog |
+| [[Close]] | [[<button>]] | يقفل |
+
+- متشيلش الـ Title: من غيره الـ dialog ملوش اسم، ومفيش تحذير ينبهك.
+- انت بتكتب الشكل بس، والسلوك كله من Radix.`,
           lines: [
             R`الـ package الموحّد بتاع Radix (أو [[@radix-ui/react-dialog]] في المشاريع القديمة).`,
             R`الـ Root: شايل حالة مفتوح ومقفول. تقدر تتحكم فيها بـ [[open]] و [[onOpenChange]].`,
@@ -934,7 +1474,7 @@ git diff components/ui/button.tsx`,
 
 Escape: المودال بيقفل والـ focus بيرجع على زرار «امسح» نفسه، فقارئ الشاشة والكيبورد بيكمّلوا من نفس المكان.
 
-المودال المعمول بـ [[useState]] و div: Tab بيطلع من المودال على طول ويوصل لعناصر الصفحة اللي ورا (في تجربتي راح للـ body وبعدين لزرار الـ trigger ولينك تحت)، و Escape مش بيعمل أي حاجة، ولما يقفل الـ focus بيضيع على الـ body. كل ده انت كنت هتكتبه بإيدك. ولو Radix طلّع تحذير في الـ Console إن [[DialogContent]] محتاج [[DialogTitle]]، يبقى نسيت الـ Title؛ حطه ولو مخفي بـ [[VisuallyHidden]].`
+المودال المعمول بـ [[useState]] و div: Tab بيطلع من المودال على طول ويوصل لعناصر الصفحة اللي ورا (في تجربتي راح للـ body وبعدين لزرار الـ trigger ولينك تحت)، و Escape مش بيعمل أي حاجة، ولما يقفل الـ focus بيضيع على الـ body. كل ده انت كنت هتكتبه بإيدك. ولو شلت الـ Title، الـ dialog بيظهر في الـ Accessibility tree من غير اسم (نسخ Radix القديمة كانت بتطلّع تحذير في الـ Console إن [[DialogContent]] محتاج [[DialogTitle]]، و radix-ui 1.7 مبقتش بتطلّعه)؛ حطه ولو مخفي بـ [[VisuallyHidden]] أو [[sr-only]].`
         }
       ]
     },
@@ -979,6 +1519,134 @@ next-themes بيحقن [[<script>]] صغير في أول الصفحة بيتنف
             when: R`أي موقع أو داشبورد. ولو الموقع landing بسيط، [[dark:]] الافتراضي اللي بيتبع النظام ممكن يكفي من غير زرار.`,
             mistakes: R`تنسى [[suppressHydrationWarning]]. تعرض أيقونة الثيم من غير mounted فتظهر غلط وبعدين تتقلب. تكتب [[darkMode: "class"]] في tailwind.config.js في مشروع v4 ومفيش حاجة بتحصل: v4 مش بيقرا الملف ده غير بـ [[@config]]. و [[dark:]] على كل عنصر في المشروع بدل متغيرات، فأي لون جديد يتنسي في وضع من الاتنين.`
           },
+          teach: R`## كلاس على [[<html>]] بيقلب الصفحة كلها
+
+الفكرة كلها: [[dark:]] يشتغل لما يبقى فيه كلاس [[dark]] فوق، و next-themes هو اللي بيحط الكلاس ده ويشيله ويفتكره. حطينا المثال في مشروع Next.js 16.4 (Tailwind 4.3.3، و next-themes 0.4.6)، وعملنا build وفتحناه في Chrome مرة والجهاز light ومرة dark (Playwright بيحاكي إعداد النظام).
+
+---
+
+## ١. [[globals.css]]: [[@custom-variant dark (&:where(.dark, .dark *));]]
+
+- [[@custom-variant]]: أمر Tailwind v4 بيعرّف variant جديد (أو يغيّر واحد موجود). اسمه هنا [[dark]].
+- [[&]]: العنصر اللي عليه الكلاس نفسه.
+- [[:where(.dark, .dark *)]]: «العنصر لو عليه [[.dark]]، أو لو جوه حد عليه [[.dark]]». والمسافة قبل [[*]] = «جوه، في أي عمق».
+- [[:where()]] specificity بتاعها صفر، فالكلاس يفضل بوزن كلاس واحد زي أي utility.
+
+القاعدة اللي طلعت في الـ CSS:
+
+~~~text من الـ CSS الناتج
+.dark\:bg-gray-950:where(.dark,.dark *){background-color:var(--color-gray-950)}
+~~~
+
+ومن غير السطر ده، [[dark:]] في v4 بيتبع [[prefers-color-scheme]] بتاع الجهاز، والزرار مش هيأثر.
+
+## ٢. [[app/layout.tsx]]
+
+### [[import { ThemeProvider } from "next-themes";]]
+
+package بيدير الثيم: يحط الكلاس، ويحفظ الاختيار، ويقرا إعداد الجهاز.
+
+### [[<html lang="ar" dir="rtl" suppressHydrationWarning>]]
+
+[[lang]] و [[dir]] للعربي. و [[suppressHydrationWarning]] هنتكلم عنه في الخطوة ٥.
+
+### [[<body className="bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100">]]
+
+لونين لكل حاجة: [[bg-white]] و [[text-gray-900]] في العادي، و [[dark:bg-gray-950]] و [[dark:text-gray-100]] لما [[.dark]] تبقى على html.
+
+### [[<ThemeProvider ...>]]
+
+| الـ prop | يعني |
+|---|---|
+| [[attribute="class"]] | حط الثيم ككلاس على html ([[class="dark"]]). البديل [[data-theme]] |
+| [[defaultTheme="system"]] | لو المستخدم لسه مختارش، امشي على الجهاز |
+| [[enableSystem]] | اسمح بـ [[system]] كاختيار |
+| [[disableTransitionOnChange]] | وقف كل الـ transitions لحظة التبديل، عشان كل لون ميتحركش لوحده |
+
+و [[{children}]] = الصفحة نفسها.
+
+## ٣. [[theme-toggle.tsx]]
+
+الملف لازم يبدأ بـ [["use client"]] لأن الزرار فيه [[onClick]] و hook، ودول بيشتغلوا في المتصفح بس.
+
+- [[const { resolvedTheme, setTheme } = useTheme();]]: [[useTheme]] hook بيرجّع object، والـ [[{ }]] بتطلّع منه اتنين بأساميهم.
+- [[resolvedTheme]]: الثيم الفعلي، [[light]] أو [[dark]]. حتى لو الاختيار [[system]]، ده بيقولك النتيجة.
+- [[setTheme("dark")]]: يغيّر الثيم ويحفظه.
+- [[resolvedTheme === "dark" ? "light" : "dark"]]: الـ [[? :]] اسمه ternary: «لو dark خليه light، وإلا خليه dark».
+
+---
+
+## ٤. اللي حصل في المتصفح
+
+### الجهاز light، أول مرة
+
+~~~text الناتج
+html class   = "...variable light"
+html style   = "color-scheme: light;"
+localStorage theme = null
+body background    = rgb(255, 255, 255)
+~~~
+
+([[...variable]] ده كلاس الخط من درس next/font، ملوش علاقة.) ومفيش [[theme]] في localStorage لأن المستخدم لسه مختارش، فالثيم جاي من الجهاز.
+
+### ضغطنا الزرار
+
+~~~text الناتج
+html class   = "...variable dark"
+html style   = "color-scheme: dark;"
+localStorage theme = "dark"
+body background    = lab(1.90334 0.278696 -5.48866)    ← gray-950
+~~~
+
+[[color-scheme: dark]] بيقول للمتصفح يغمّق حاجاته هو كمان: الـ scrollbar وحقول الفورم.
+
+### refresh
+
+الكلاس كان [[dark]] و [[color-scheme: dark]] **قبل** ما الصفحة تخلص تحميل (قسناه لحظة [[readyState = "interactive"]]، قبل ما React يشتغل). يعني مفيش لحظة بيضا.
+
+### الجهاز dark، أول مرة
+
+فتح [[dark]] لوحده من غير ما نضغط حاجة. ضغطنا الزرار: بقى [[light]] واتحفظ، ومع إن الجهاز لسه dark الخلفية بيضا. ده بالظبط شغل [[@custom-variant]]: [[dark:]] بقى بيسمع للكلاس مش للجهاز.
+
+### إزاي مفيش وميض؟
+
+الـ HTML اللي جاي من السيرفر:
+
+~~~text الناتج
+<html lang="ar" dir="rtl" class="pW5XIG_variable">
+<body class="..."><div hidden=""></div><script>(...)("class","theme","system",null,["light","dark"],null,true,true)</script>
+~~~
+
+السيرفر مش عارف اختيارك، فبعت html **من غير** dark. بس أول حاجة في الـ body [[<script>]] صغير بيتنفّذ قبل ما أي حاجة تترسم: بيقرا [[localStorage.getItem("theme")]]، ولو مفيش أو [[system]] بيسأل [[matchMedia("(prefers-color-scheme: dark)")]]، ويحط الكلاس والـ [[color-scheme]] على html.
+
+## ٥. [[suppressHydrationWarning]]
+
+React لما بيشتغل في المتصفح (hydration) بيقارن الـ HTML اللي جه من السيرفر باللي هو كان هيرسمه. والـ script غيّر html قبله. شلنا الـ prop وشغّلنا [[next dev]] والجهاز dark:
+
+~~~text الـ Console
+A tree hydrated but some attributes of the server rendered HTML didn't match the client properties.
+  <html
+    lang="ar"
+    dir="rtl"
++   className="cairo_..._variable"
+-   className="cairo_..._variable dark"
+-   style={{color-scheme:"dark"}}
+  >
+~~~
+
+[[+]] = اللي React متوقعه، و [[-]] = اللي لقاه فعلًا. الفرق في [[className]] و [[style]] بتوع html بس، ودول متوقعين. رجّعنا الـ prop: الخطأ اختفى. وهو بيسكّت html نفسه بس، مش اللي جواه.
+
+## الخلاصة
+
+| الحتة | شغلتها |
+|---|---|
+| [[@custom-variant dark (...)]] | [[dark:]] يسمع للكلاس مش للجهاز |
+| [[attribute="class"]] | next-themes يحط [[class="dark"]] على html |
+| [[defaultTheme="system"]] + [[enableSystem]] | من غير اختيار: زي الجهاز |
+| الـ script في أول الـ body | يحط الكلاس قبل الرسم، فمفيش وميض |
+| [[localStorage.theme]] | الاختيار المحفوظ |
+| [[suppressHydrationWarning]] | يسكّت فرق html المتوقع |
+| [[resolvedTheme]] | الثيم الفعلي للزرار |`,
           lines: [
             R`[[dark:]] يشتغل لما [[.dark]] تبقى على العنصر أو أي جد ليه، بدل ما يتبع النظام.`,
             "المكتبة.",
@@ -1029,6 +1697,128 @@ next-themes بيحقن [[<script>]] صغير في أول الصفحة بيتنف
             when: "أي مشروع ممكن يبقى فيه عربي، حتى لو دلوقتي إنجليزي بس. عوّد إيدك على ms و pe من الأول، مفيش أي تكلفة.",
             mistakes: R`[[ml-2]] للمسافة بين أيقونة وكلام، وفي العربي الأيقونة تلزق في الكلام والمسافة تروح الناحية التانية (أحسن [[gap-2]] على الأب). تقلب كل الأيقونات فالساعة تلف بالعكس. و [[translate-x]] في animation أو toggle من غير [[rtl:]]. وساعات الحل المقبول [[dir="ltr"]] على العنصر ده بس، لو شكله مش مرتبط باللغة.`
           },
+          teach: R`## «البداية» و «النهاية» بدل «شمال» و «يمين»
+
+كل كلاس في المثال بيقول «من ناحية البداية» أو «من ناحية النهاية»، والمتصفح بيعرف البداية فين من [[dir]]: في [[rtl]] البداية يمين، وفي [[ltr]] شمال. حطينا المثال في صفحة Vite (Tailwind 4.3.3) جوه صندوق عرضه 600 و [[relative]]، و [[ArrowRight]] من lucide-react، وقسنا كل حاجة في Chrome مرة بـ [[dir="rtl"]] على html ومرة [[ltr]]. الأرقام تحت مكان العنصر من الطرف الشمال للصندوق (من - لـ).
+
+---
+
+## ١. الكلاسات بتطلّع إيه في CSS
+
+~~~text من الـ CSS الناتج
+.ps-4{padding-inline-start:calc(var(--spacing) * 4)}
+.pe-2{padding-inline-end:calc(var(--spacing) * 2)}
+.ms-auto{margin-inline-start:auto}
+.ml-auto{margin-left:auto}
+.text-start{text-align:start}
+.border-e{border-inline-end-style:var(--tw-border-style);border-inline-end-width:1px}
+.inset-e-2{inset-inline-end:calc(var(--spacing) * 2)}
+~~~
+
+- **inline** = اتجاه السطر (الجنبين). و **block** = فوق وتحت.
+- [[s]] = start (البداية)، و [[e]] = end (النهاية).
+- [[ml-auto]] الوحيد اللي فيه [[left]] صريحة، فمش بيتقلب.
+
+## ٢. الصف: [[<div className="flex items-center gap-3 ps-4 pe-2">]]
+
+- [[flex items-center]]: العناصر جنب بعض ومتوسّطين رأسيًا. والـ flex نفسه بيمشي مع [[dir]]: أول عنصر عند البداية.
+- [[gap-3]]: 12px بين كل عنصرين، من غير ما تحدد ناحية.
+- [[ps-4]] و [[pe-2]]: 16px من البداية و 8px من النهاية.
+
+| | [[rtl]] | [[ltr]] |
+|---|---|---|
+| [[padding-right]] | 16px | 8px |
+| [[padding-left]] | 8px | 16px |
+
+## ٣. الصورة والاسم والوقت
+
+~~~text App.tsx
+<img className="size-10 rounded-full" src="/u.jpg" alt="" />
+<p className="text-start">محمد</p>
+<span className="ms-auto">من 5 دقايق</span>
+~~~
+
+- [[size-10]]: 40×40px. و [[rounded-full]]: دايرة. و [[alt=""]]: صورة للزينة، قارئ الشاشة يتجاهلها.
+- [[text-start]]: الكلام على ناحية البداية. القيمة المحسوبة فضلت [[start]] في الحالتين، والمتصفح بيترجمها.
+- [[ms-auto]]: margin من ناحية البداية بـ [[auto]]. في الـ flex الـ [[auto]] بياكل كل المساحة الفاضية، فبيزق العنصر لآخر الصف.
+
+| العنصر | [[rtl]] | [[ltr]] |
+|---|---|---|
+| الصورة | 543 - 583 (يمين) | 17 - 57 (شمال) |
+| «محمد» | 495 - 531 | 69 - 105 |
+| الوقت بـ [[ms-auto]] | **9 - 84** (أقصى الشمال) | 516 - 591 (أقصى اليمين) |
+| الوقت بـ [[ml-auto]] | **460 - 535** (لازق في الاسم) | 516 - 591 |
+
+السطر الأخير هو الغلطة: [[ml-auto]] في [[ltr]] بيدّي نفس النتيجة بالظبط، فاللي بيجرّب بالإنجليزي بس مش هيشوف المشكلة. في [[rtl]] الـ margin الشمال زق الوقت يمين ناحية الاسم.
+
+## ٤. زرار التالي: [[rtl:-scale-x-100]]
+
+~~~text App.tsx
+<button className="inline-flex items-center gap-2">
+  التالي <ArrowRight className="size-4 rtl:-scale-x-100" />
+</button>
+~~~
+
+- [[ArrowRight]]: سهم بيشاور يمين، يعني «لقدام» في الإنجليزي.
+- [[-scale-x-100]]: [[scale-x]] = تكبير على المحور الأفقي، و [[100]] = 100٪، والسالب = اعكسه مراية.
+- [[rtl:]]: بس لما الصفحة RTL.
+
+| | [[rtl]] | [[ltr]] |
+|---|---|---|
+| [[scale]] المحسوب | [[-1 1]] (معكوس، بيشاور شمال) | [[none]] |
+
+والـ selector اللي طلع في Tailwind 4.3.3:
+
+~~~text من الـ CSS الناتج
+.rtl\:-scale-x-100:where(:is(:lang(ar),:lang(he),:lang(fa),...),[dir=rtl],[dir=rtl] *){...}
+~~~
+
+يعني [[rtl:]] بيشتغل لو العنصر جوه [[dir="rtl"]] **أو** جوه [[lang]] لغة بتتكتب من اليمين (عربي، عبري، فارسي...). عشان كده خلي [[lang]] و [[dir]] على html متفقين.
+
+## ٥. [[<aside className="border-e ps-6">]]
+
+خط فاصل على ناحية النهاية، و 24px padding من البداية:
+
+| | [[rtl]] | [[ltr]] |
+|---|---|---|
+| border شمال / يمين | 1px / 0 | 0 / 1px |
+| padding شمال / يمين | 0 / 24px | 24px / 0 |
+
+## ٦. الشارة: [[absolute top-2 inset-e-2]]
+
+- [[absolute]]: مكانها محسوب من أقرب أب [[relative]] (الصندوق).
+- [[top-2]]: 8px من فوق.
+- [[inset-e-2]]: 8px من ناحية النهاية ([[inset-inline-end]]).
+
+| | [[rtl]] | [[ltr]] |
+|---|---|---|
+| مكانها | 9 - 40 (الركن الشمال) | 560 - 591 (الركن اليمين) |
+| [[left]] المحسوب | 8px | 559.266px |
+| [[right]] المحسوب | 559.266px | 8px |
+
+## ٧. [[<span dir="ltr">+20 100 000 0000</span>]]
+
+جربنا نفس الرقم جوه سطر عربي مرتين، وقرينا ترتيب الحروف على الشاشة من الشمال لليمين:
+
+~~~text الناتج
+من غير dir:    0000 000 100 20+
+dir="ltr":     +20 100 000 0000
+~~~
+
+من غير [[dir]]، المتصفح اعتبر كل مجموعة أرقام حتة لوحدها في سطر RTL، فرتّبهم من اليمين للشمال والـ [[+]] راحت للآخر. [[dir="ltr"]] على العنصر ده بس بيخليه يتكتب شمال ليمين صح.
+
+## الخلاصة
+
+| بدل | استخدم | CSS |
+|---|---|---|
+| [[ml-*]] / [[mr-*]] | [[ms-*]] / [[me-*]] | [[margin-inline-start/end]] |
+| [[pl-*]] / [[pr-*]] | [[ps-*]] / [[pe-*]] | [[padding-inline-start/end]] |
+| [[left-*]] / [[right-*]] | [[inset-s-*]] / [[inset-e-*]] | [[inset-inline-start/end]] |
+| [[border-l]] / [[border-r]] | [[border-s]] / [[border-e]] | [[border-inline-start/end]] |
+| [[text-left]] / [[text-right]] | [[text-start]] / [[text-end]] | [[text-align: start/end]] |
+
+- الأيقونات اللي معناها اتجاه: [[rtl:-scale-x-100]].
+- جرّب دايمًا في الاتجاهين، لأن الغلط مش بيبان في [[ltr]].`,
           lines: [
             "padding من البداية 16 ومن النهاية 8. في العربي البداية يمين.",
             "الصورة.",
@@ -1081,6 +1871,126 @@ const cairo = Cairo({ subsets: ["arabic", "latin"], variable: "--font-cairo", di
             when: R`في Next دايمًا next/font. في Vite أو PHP: [[@font-face]] بملفات woff2 عندك، و [[<link rel="preload" as="font" type="font/woff2" crossorigin>]] للخط الأساسي بس.`,
             mistakes: R`في مشروع حقيقي كان globals.css بيبدأ بـ [[@import url("https://fonts.example.com/...")]] لخط لاتيني جنب خطوط next/font: request خارجي بيوقف الرسم، وكان ممكن يتنقل لـ [[next/font/local]]. وتحمّل 6 أوزان وانت بتستخدم 2. وتنسى subset الـ [[arabic]] فملف العربي ميتعملوش preload: الكلام يظهر بخط النظام الأول ويتبدّل متأخر (الملف بيتحمّل من موقعك برضه، بس بعد ما المتصفح يكتشف إنه محتاجه).`
           },
+          teach: R`## الخط بقى ملف من موقعك
+
+[[next/font]] بينزّل الخط من Google **وقت الـ build**، ويحطه جوه مشروعك، ويكتب الـ [[@font-face]] لوحده. والمستخدم بياخد الخط من سيرفرك انت. حطينا الجزء الأول في مشروع Next.js 16.4 (Tailwind 4.3.3) وعملنا build وفتحناه في Chrome، والجزء التاني ([[@font-face]] بإيدك) في صفحة Vite.
+
+---
+
+## ١. [[import { Cairo } from "next/font/google";]]
+
+كل خط في Google Fonts ليه function بنفس اسمه. ولو الاسم فيه مسافة بتبقى [[_]]: [[Noto_Kufi_Arabic]].
+
+## ٢. [[const cairo = Cairo({ ... });]]
+
+| الخيار | يعني |
+|---|---|
+| [[subsets: ["arabic", "latin"]]] | أنهي أجزاء من الخط يتعملها preload (تحت) |
+| [[variable: "--font-cairo"]] | اعمل متغير CSS بالاسم ده فيه اسم الخط |
+| [[display: "swap"]] | [[font-display: swap]]: اعرض الكلام فورًا بخط احتياطي وبدّل لما الخط يوصل |
+
+Cairo خط **variable**: ملف واحد فيه كل الأوزان، فمش محتاج [[weight]]. وده باين في الـ CSS اللي اتولّد: [[font-weight:200 1000]].
+
+## ٣. [[<html lang="ar" dir="rtl" className={cairo.variable}>]]
+
+[[cairo.variable]] اسم كلاس اتولّد وقت الـ build. في الـ HTML طلع [[class="pW5XIG_variable"]]، والـ CSS بتاعه:
+
+~~~text من الـ CSS الناتج
+.pW5XIG_variable{--font-cairo:"Cairo", "Cairo Fallback"}
+~~~
+
+يعني الكلاس ده بس بيعرّف المتغير على html، ومش بيغيّر أي خط لوحده.
+
+## ٤. [[globals.css]]: [[@theme inline]]
+
+~~~text globals.css
+@theme inline {
+  --font-sans: var(--font-cairo), system-ui, sans-serif;
+}
+~~~
+
+- [[--font-sans]] هو الخط الافتراضي في Tailwind، والـ Preflight بيحطه على [[html]]، فالموقع كله بياخده.
+- [[var(--font-cairo)]]: هات قيمة المتغير اللي next/font عمله.
+- [[system-ui, sans-serif]]: لو مفيش، خط النظام.
+- [[inline]]: Tailwind يحط القيمة نفسها مكان ما بتتستخدم بدل [[var(--font-sans)]]. في الـ CSS الناتج لقينا [[--default-font-family:var(--font-cairo), system-ui, sans-serif]]، ومفيش [[--font-sans]] خالص. ده المطلوب لما قيمة في الـ theme بتشاور على متغير تاني: المتغير يتقري في مكان الاستخدام.
+
+والنتيجة المحسوبة على الفقرة:
+
+~~~text getComputedStyle
+font-family: Cairo, "Cairo Fallback", system-ui, sans-serif
+~~~
+
+## ٥. اللي حصل وقت الـ build
+
+next/font كتب 4 [[@font-face]]. ٣ لـ Cairo، كل واحد لجزء من الحروف، وواحد للخط الاحتياطي:
+
+| الملف | الحروف ([[unicode-range]]) | preload |
+|---|---|---|
+| [[9ff27b8a0a8f3dc0-s.p....woff2]] | العربي ([[U+6??]]...) | أيوه |
+| [[d41831e24743a3c1-s.p....woff2]] | اللاتيني الأساسي ([[U+??]]...) | أيوه |
+| [[a5b03b231ce290a0-s....woff2]] | latin-ext (حروف أوروبية زيادة) | لأ |
+
+- [[unicode-range]]: المتصفح بيحمّل الملف بس لو الصفحة فيها حروف من المدى ده.
+- الـ [[.p.]] في الاسم = عليه [[<link rel="preload">]] في الـ head. اللي في [[subsets]] بس هما اللي اتعملهم preload.
+
+والخط الاحتياطي:
+
+~~~text من الـ CSS الناتج
+@font-face{font-family:Cairo Fallback;src:local(Arial);ascent-override:137.65%;descent-override:60.32%;line-gap-override:0.0%;size-adjust:94.66%}
+~~~
+
+ده Arial اللي على الجهاز ([[local(Arial)]])، بس متعدّل: [[size-adjust:94.66%]] بيصغّر حروفه، و [[ascent-override]] و [[descent-override]] بيظبطوا ارتفاع السطر، عشان مقاساته تبقى قريبة من Cairo. فلما Cairo يوصل ويتبدّل، الكلام ميتنطش.
+
+## ٦. في Chrome
+
+~~~text الـ Network (نوع font)
+/_next/static/media/9ff27b8a0a8f3dc0-s.p.40_3w74kn95bo.woff2
+/_next/static/media/d41831e24743a3c1-s.p.08tn9snzkmifr.woff2
+~~~
+
+- ملفين بس اتحمّلوا: العربي واللاتيني، لأن الصفحة فيها عربي وكلمة Hello. الـ latin-ext متحمّلش.
+- الاتنين من [[localhost]]، ومفيش ولا request لـ [[fonts.googleapis.com]] أو [[fonts.gstatic.com]].
+- في الـ head لقينا [[<link rel="preload" as="font" type="font/woff2" crossorigin>]] للملفين دول.
+- Chrome قال إن الكلام اترسم فعلًا بخط [[Cairo]] (custom).
+
+---
+
+## ٧. من غير Next: [[@font-face]] بإيدك
+
+~~~text globals.css
+@font-face {
+  font-family: "Cairo";
+  src: url("/fonts/cairo-var.woff2") format("woff2");
+  font-weight: 200 1000;
+  font-display: swap;
+}
+~~~
+
+- [[font-family: "Cairo"]]: الاسم اللي هتكتبه بعدين في [[font-family]]. انت اللي بتختاره.
+- [[src: url(...) format("woff2")]]: الملف من موقعك، و [[woff2]] أصغر صيغة خطوط.
+- [[font-weight: 200 1000]]: الملف ده بيغطي كل الأوزان من 200 لـ 1000 (variable).
+- [[font-display: swap]]: نفس الكلام اللي فوق.
+
+جربناه في صفحة Vite، وأخّرنا ملف الخط ثانيتين عمدًا:
+
+| الوقت | الخط اللي اترسم بيه الكلام | حالة الخط |
+|---|---|---|
+| 208ms | Segoe UI (خط ويندوز) | [[loading]] |
+| 2340ms | Cairo | [[loaded]] |
+
+يعني الكلام ظهر على طول بخط النظام، واتبدّل لما Cairo وصل. ده [[swap]]. بس هنا مفيش [[Cairo Fallback]] متظبط، فلو المقاسات مختلفة الكلام ممكن يتنط وقت التبديل، وده اللي next/font بيحله لوحده.
+
+## الخلاصة
+
+| | next/font | [[@font-face]] بإيدك |
+|---|---|---|
+| الملف | بينزل وقت الـ build ويتخدم من موقعك | انت بتحطه في [[public/fonts]] |
+| preload | لوحده للـ [[subsets]] | [[<link rel="preload">]] بإيدك |
+| خط احتياطي متظبط | لوحده ([[size-adjust]]) | مش موجود إلا لو كتبته |
+| الربط بـ Tailwind | [[variable]] + [[--font-sans]] | [[--font-sans: "Cairo", ...]] |
+
+- متنساش [[arabic]] في [[subsets]]، وإلا ملف العربي ميتعملوش preload.
+- مفيش [[<link>]] لـ Google Fonts ولا [[@import url(...)]].`,
           lines: [
             R`أي خط من Google Fonts كـ function (المسافة في الاسم بتبقى [[_]]).`,
             R`الـ subsets اللي هيتعملها preload (العربي واللاتيني)، والباقي بيتخدم من موقعك برضه بس مش بيتحمّل غير لو اتستخدم. ومتغير CSS اسمه [[--font-cairo]]. Cairo خط variable فمش محتاج weights.`,
@@ -1130,6 +2040,116 @@ lucide v1 (2026): شال أيقونات البراندات (GitHub وفيسبو�
             when: "أي أيقونة UI في React. و shadcn بيستخدمه افتراضيًا.",
             mistakes: R`زرار أيقونة من غير اسم: قارئ الشاشة يقول «button» وخلاص. [[<Menu />]] من غير حجم جنب كلام صغير فيبان ضخم. وفي مشروع حقيقي زرار المنيو على الموبايل كان عليه [[aria-label="Toggle menu"]] كويس، بس ناقصه [[aria-expanded]] فقارئ الشاشة مش عارف القايمة مفتوحة ولا مقفولة (درس aria).`
           },
+          teach: R`## كل أيقونة component بيرسم [[<svg>]]
+
+[[<Search />]] مش صورة بتتحمّل: ده component بيرسم [[<svg>]] جوه الصفحة نفسها. حطينا المثال في صفحة Vite ([[lucide-react]] 1.52، و Tailwind 4.3.3، و [[--color-brand]] متعرّف) وقسنا في Chrome، وزودنا زرار تالت فيه [[<Menu />]] من غير [[aria-label]] للمقارنة.
+
+---
+
+## ١. [[import { Search, Menu, ChevronLeft, LoaderCircle } from "lucide-react";]]
+
+بتستورد كل أيقونة باسمها. والأسامي PascalCase (كل كلمة أولها كابيتال) لأنها components.
+
+وده بيفرق في الحجم. عملنا build لـ ٣ صفحات صغيرة بـ Vite وقارنّا ملف الـ JavaScript:
+
+| الصفحة | حجم الـ JS |
+|---|---|
+| React بس، من غير أيقونات | 219.53 kB |
+| [[import { Search, Menu }]] | 222.99 kB |
+| [[import * as Icons]] واختيار الأيقونة بالاسم وقت التشغيل | **984.15 kB** |
+
+الاستيراد بالاسم زوّد 3.5 kB بس. لكن [[import * as Icons]] مع [[Icons[name]]] دخّل كل الأيقونات، لأن الـ bundler مش عارف وقت الـ build انت هتختار أنهي واحدة. ده اسمه tree-shaking: الـ bundler بيشيل الكود اللي محدش استخدمه، بس لازم يقدر يشوف ده من الكود.
+
+## ٢. الـ SVG اللي بيطلع
+
+ده اللي [[<Search className="size-4" />]] رسمه:
+
+~~~text الناتج
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+     class="lucide lucide-search size-4" aria-hidden="true">
+  <path d="m21 21-4.34-4.34"></path>
+  <circle cx="11" cy="11" r="8"></circle>
+</svg>
+~~~
+
+| الـ attribute | يعني |
+|---|---|
+| [[width="24" height="24"]] | الحجم الافتراضي 24px |
+| [[viewBox="0 0 24 24"]] | الرسمة مرسومة على شبكة 24×24، وبتكبر وتصغر من غير ما تبوظ |
+| [[fill="none"]] | مفيش تلوين جوه الأشكال، خطوط بس |
+| [[stroke="currentColor"]] | لون الخط = لون الكلام ([[color]]) بتاع العنصر |
+| [[stroke-width="2"]] | تخانة الخط 2 من 24 |
+| [[aria-hidden="true"]] | قارئ الشاشة يتجاهلها. lucide v1 بيحطه لوحده |
+
+و [[className]] بتاعك اتضاف جنب [[lucide lucide-search]].
+
+## ٣. الزرار الأول: أيقونة وكلام
+
+~~~text App.tsx
+<button className="inline-flex items-center gap-2 text-brand">
+  <Search className="size-4" /> بحث
+</button>
+~~~
+
+- [[inline-flex items-center gap-2]]: الأيقونة والكلمة جنب بعض، في النص رأسيًا، و 8px بينهم.
+- [[text-brand]] على الزرار: لون الكلام. والأيقونة جوه الزرار، فـ [[currentColor]] بتاعها بياخد نفس اللون.
+- [[size-4]]: 16×16. الـ CSS بيغلب [[width="24"]] اللي على الـ svg.
+
+القياس: الأيقونة 16px و [[stroke]] بتاعها [[oklch(0.55 0.2 265)]]، نفس لون الـ brand. غيّرنا [[text-brand]] لـ [[text-red-600]]: الكلام والأيقونة الاتنين بقوا [[oklch(0.577 0.245 27.325)]].
+
+## ٤. الزرار التاني: أيقونة بس
+
+~~~text App.tsx
+<button aria-label="افتح القايمة" className="md:hidden">
+  <Menu className="size-6" strokeWidth={1.5} />
+</button>
+~~~
+
+- [[aria-label]]: اسم الزرار لقارئ الشاشة، لأن مفيش كلام جواه والأيقونة [[aria-hidden]].
+- [[md:hidden]]: مستخبي من 768px وطالع. على عرض 800 الزرار كان [[display: none]]، وعلى 375 ظهر 24×24.
+- [[size-6]] = 24px. و [[strokeWidth={1.5}]] = خط أرفع من الافتراضي، وطلع على الـ svg [[stroke-width="1.5"]].
+
+الـ Accessibility tree على عرض 375:
+
+~~~text الناتج
+- button "بحث"
+- button "افتح القايمة"
+- button
+~~~
+
+التالت هو اللي زودناه من غير [[aria-label]]: [[button]] من غير اسم. قارئ الشاشة هيقول «button» وخلاص.
+
+## ٥. [[<ChevronLeft className="size-4 shrink-0 ltr:rotate-180" />]]
+
+- [[ChevronLeft]]: سهم صغير بيشاور شمال، يعني «التالي» في صفحة عربي.
+- [[shrink-0]]: في flex ميتصغرش لو الكلام اللي جنبه طويل.
+- [[ltr:rotate-180]]: في صفحة إنجليزي لفّه نص لفة فيشاور يمين.
+
+| [[lang]] و [[dir]] على html | [[rotate]] المحسوب |
+|---|---|
+| [[ar]] و [[rtl]] | [[none]] (شمال) |
+| [[en]] و [[ltr]] | [[180deg]] (يمين) |
+
+## ٦. [[<LoaderCircle className="size-4 animate-spin motion-reduce:hidden" />]]
+
+- [[animate-spin]]: animation اسمها [[spin]] مدتها 1s، بتلف على طول.
+- [[motion-reduce:hidden]]: لو المستخدم مفعّل «حركة أقل» في نظامه ([[prefers-reduced-motion: reduce]])، اخفيها.
+
+حاكينا الإعداد ده في Chrome: الأيقونة بقت [[display: none]] ومقاسها 0×0.
+
+## الخلاصة
+
+| عايز | اكتب |
+|---|---|
+| الحجم | [[size-4]] أو [[size-6]] |
+| اللون | [[text-*]] على الأيقونة أو أي أب |
+| تخانة الخط | [[strokeWidth={1.5}]] |
+| زرار أيقونة بس | [[aria-label]] على الزرار |
+| حجم bundle صغير | [[import { Name }]] مش [[import *]] |
+
+- الأيقونة [[aria-hidden]] لوحدها، فالاسم لازم ييجي من الزرار.
+- متلوّنهاش بـ [[fill-*]]: دي خطوط، لونها [[stroke]].`,
           lines: [
             "استورد الأيقونات بالاسم. اللي مش مستورد مش بيدخل الـ bundle.",
             R`زرار فيه أيقونة وكلام: اللون من [[text-brand]] بيوصل للأيقونة.`,
