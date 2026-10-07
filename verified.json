@@ -5099,6 +5099,11 @@
   "date": "2026-10-07",
   "on": "msw 3.0.2: setupServer in Vitest 5.0/jsdom; setupWorker in Vite dev, headless Chrome (Win11)"
  },
+ "react|Profiler": {
+  "hash": "f214fedc0f08",
+  "date": "2026-10-07",
+  "on": "Vite 8.3 + React 19.3 dev + build/preview, Chrome headless with CPU throttling 1x/4x; docs: DevTools Profiler UI, Performance Tracks"
+ },
  "react|RTK Query": {
   "hash": "3b3fa0b7fd97",
   "date": "2026-10-07",
@@ -5109,20 +5114,60 @@
   "date": "2026-10-07",
   "on": "Vite + React 19.3 + react-i18next 17 + Tailwind 4.3, headless Chrome (Win11)"
  },
+ "react|React Compiler": {
+  "hash": "f901d12991a4",
+  "date": "2026-10-07",
+  "on": "Vite 8.3 + @vitejs/plugin-react 6.1.2 + babel-plugin-react-compiler 1.0 (dev + build), Chrome headless; eslint-plugin-react-hooks 7.1.1; docs: Next.js reactCompiler, DevTools Memo badge"
+ },
  "react|React Router": {
   "hash": "5bc4db97ba89",
   "date": "2026-10-07",
   "on": "Vite 8.3 + React 19.3 + react-router 8.4.0, headless Chrome; docs: Nginx fallback"
+ },
+ "react|React.memo": {
+  "hash": "2b5627b9104f",
+  "date": "2026-10-07",
+  "on": "Vite 8.3 + React 19.3 dev, Chrome headless + Node Object.is; React Compiler run; docs: DevTools Why did this render"
+ },
+ "react|Recharts": {
+  "hash": "a97cf85c1f27",
+  "date": "2026-10-07",
+  "on": "Vite 8.3 + React 19.3 + Recharts 3.10, headless Chrome on Windows (rtl/ltr, 375px, without dir=ltr)"
  },
  "react|Redux Toolkit": {
   "hash": "dceba127c12b",
   "date": "2026-10-07",
   "on": "Vite 8.3 + React 19.3 + RTK 2.13 + react-redux 9.3, Chrome headless + tsx (Windows)"
  },
+ "react|SSR و hydration": {
+  "hash": "1487f294824f",
+  "date": "2026-10-07",
+  "on": "renderToString in Node 24 + hydrateRoot in headless Chrome, React 19.3; docs: Next.js View Source / disable-JS parts"
+ },
+ "react|Storybook": {
+  "hash": "d9ccdd3c0c54",
+  "date": "2026-10-07",
+  "on": "create-storybook 10.6.1 (react-vite) + @playwright/test 1.63 with Chrome on Windows; docs: npx playwright install chromium"
+ },
+ "react|TanStack Table": {
+  "hash": "371b491c1bd4",
+  "date": "2026-10-07",
+  "on": "Vite 8.3 + React 19.3 + TanStack Table 9.2.6 + React Query 5.104, headless Chrome on Windows (fake fetch with 45 rows; solCode)"
+ },
+ "react|TanStack Virtual": {
+  "hash": "9c61589c62b8",
+  "date": "2026-10-07",
+  "on": "Vite 8.3 + @tanstack/react-virtual 3.14, Chrome headless; Vitest 5 jsdom"
+ },
  "react|UI = f(state)": {
   "hash": "696d432acf06",
   "date": "2026-10-06",
   "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome; vanilla part in Node 24 + jsdom"
+ },
+ "react|URL state": {
+  "hash": "aa7a9a07f3ac",
+  "date": "2026-10-07",
+  "on": "Vite 8.3 + React 19.3 + React Router 8.4, Chrome headless"
  },
  "react|Vitest + Testing Library": {
   "hash": "711f19905d00",
@@ -5139,20 +5184,45 @@
   "date": "2026-10-07",
   "on": "Vite 8.3 + React 19.3 + Zustand 5.0.15, Chrome headless (Windows)"
  },
+ "react|batching": {
+  "hash": "e23e3ed11f18",
+  "date": "2026-10-07",
+  "on": "Vite 8.3 + React 19.3, headless Chrome on Windows (with and without StrictMode)"
+ },
  "react|children": {
   "hash": "e419e1ddf6df",
   "date": "2026-10-06",
   "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome; tsc 6.0"
+ },
+ "react|compound components": {
+  "hash": "db25b10fecea",
+  "date": "2026-10-07",
+  "on": "Vite 8.3 + React 19.3, Chrome headless; Vitest 5 + Testing Library + user-event"
  },
  "react|conditional rendering": {
   "hash": "a25a43284b5e",
   "date": "2026-10-06",
   "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome"
  },
+ "react|context ولا store": {
+  "hash": "d4b3b89a2c3d",
+  "date": "2026-10-07",
+  "on": "Vite 8.3 + React 19.3 + Zustand 5, headless Chrome (Context vs selector render-count demo); docs: example snippets"
+ },
  "react|controlled input": {
   "hash": "b3f5d32cf2a4",
   "date": "2026-10-06",
   "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome"
+ },
+ "react|controlled ولا uncontrolled API": {
+  "hash": "a2f53ea1f635",
+  "date": "2026-10-07",
+  "on": "Vitest 5 + Testing Library + user-event (React 19.3)"
+ },
+ "react|controlled ولا uncontrolled؟": {
+  "hash": "65636261e572",
+  "date": "2026-10-07",
+  "on": "Vite 8.3 + React 19.3, headless Chrome on Windows"
  },
  "react|createPortal": {
   "hash": "48398c4abda2",
@@ -5163,6 +5233,11 @@
   "hash": "34a345396a2f",
   "date": "2026-10-07",
   "on": "Vite 8.3 + React 19.3 dev, headless Chrome (delay 500 and 0)"
+ },
+ "react|dangerouslySetInnerHTML": {
+  "hash": "9b67e4b34a8e",
+  "date": "2026-10-07",
+  "on": "Vite 8.3 + React 19.3 + dompurify 3.4, Chrome headless"
  },
  "react|dependency array": {
   "hash": "89557418532e",
@@ -5183,6 +5258,11 @@
   "hash": "79f4bd314667",
   "date": "2026-10-06",
   "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome"
+ },
+ "react|form actions": {
+  "hash": "9185bdfe6c12",
+  "date": "2026-10-07",
+  "on": "Vite 8.3 + React 19.3, Chrome headless"
  },
  "react|getByRole و findBy": {
   "hash": "5984030060e5",
@@ -5208,6 +5288,11 @@
   "hash": "353f1d6b3158",
   "date": "2026-10-06",
   "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome"
+ },
+ "react|live updates": {
+  "hash": "979d397b5dda",
+  "date": "2026-10-07",
+  "on": "Vite 8.3 + React 19.3 + React Query 5.104, headless Chrome against a Node SSE server (drop/reconnect, 502); solCode test in Vitest 5 + jsdom"
  },
  "react|npm create vite": {
   "hash": "d92445373f8c",
@@ -5254,15 +5339,35 @@
   "date": "2026-10-07",
   "on": "Vite 8.3 + React 19.3 + i18next 26.4 / react-i18next 17, headless Chrome (Win11); Intl.PluralRules in Node 24"
  },
+ "react|reconciliation": {
+  "hash": "3bd639c45b31",
+  "date": "2026-10-07",
+  "on": "Vite 8.3 + React 19.3, headless Chrome on Windows"
+ },
  "react|reducer + context": {
   "hash": "89f4b1806e88",
   "date": "2026-10-07",
   "on": "Vite 8.3 + React 19.3 dev, headless Chrome (full wizard from solCode)"
  },
+ "react|ref كـ prop": {
+  "hash": "a7d0f10b0853",
+  "date": "2026-10-07",
+  "on": "Vite 8.3 + React 19.3 + react-hook-form 7.89 + zod 4.6, Chrome headless"
+ },
+ "react|render props و HOCs": {
+  "hash": "cd2e41f2af98",
+  "date": "2026-10-07",
+  "on": "Vite 8.3 + React 19.3 + React Router 8.4, Chrome headless; docs: DevTools tree names"
+ },
  "react|renderHook": {
   "hash": "a495741089b4",
   "date": "2026-10-07",
   "on": "Vitest 5.0 + jsdom + RTL 16.3 (fake timers) + TanStack Query 5.104 (Win11)"
+ },
+ "react|stale closure": {
+  "hash": "057a91db1572",
+  "date": "2026-10-07",
+  "on": "Vite 8.3 + React 19.3, headless Chrome on Windows + oxlint 1.87 react-hooks/exhaustive-deps"
  },
  "react|staleTime و gcTime": {
   "hash": "6ad771a87e49",
@@ -5298,6 +5403,11 @@
   "hash": "50ec13945b4b",
   "date": "2026-10-07",
   "on": "Vite 8.3 + React 19.3 + TanStack Query 5.104, Chrome headless (Windows); MSW 3 handler in Node"
+ },
+ "react|useLayoutEffect": {
+  "hash": "0c9a43be376a",
+  "date": "2026-10-07",
+  "on": "Vite 8.3 + React 19.3, headless Chrome on Windows with CDP CPU throttling 6x"
  },
  "react|useLocalStorage": {
   "hash": "9784e0a37456",
@@ -5339,6 +5449,11 @@
   "date": "2026-10-07",
   "on": "Vite 8.3 + React 19.3 + TanStack Query 5.104 + react-error-boundary 6.1, Chrome headless (Windows)"
  },
+ "react|useTransition و useDeferredValue": {
+  "hash": "a93106004a56",
+  "date": "2026-10-07",
+  "on": "Vite 8.3 + React 19.3 dev, Chrome headless (per-key latency measured)"
+ },
  "react|user-event": {
   "hash": "2f49855748d6",
   "date": "2026-10-07",
@@ -5358,6 +5473,16 @@
   "hash": "fb2dcebaced0",
   "date": "2026-10-07",
   "on": "Express 5.2 (tsx) + curl; Vite 8.3 + React 19.3 + RHF 7.89 + zod 4.6.5 via proxy, headless Chrome; docs: MSW handler in solCode"
+ },
+ "react|إمتى بيعيد الرسم": {
+  "hash": "de013aac5f77",
+  "date": "2026-10-07",
+  "on": "Vite 8.3 + React 19.3 dev, Chrome headless (Playwright); StrictMode and React Compiler runs; docs: React DevTools Highlight updates"
+ },
+ "react|قواعد الـ hooks": {
+  "hash": "3ca71f7400be",
+  "date": "2026-10-07",
+  "on": "Vite 8.3 + React 19.3, headless Chrome on Windows + oxlint 1.87 react-hooks/rules-of-hooks"
  },
  "react|مقدمة React والـ Components": {
   "hash": "0c85bd6c888b",
