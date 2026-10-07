@@ -2814,10 +2814,40 @@
   "date": "2026-10-07",
   "on": "Windows: Python 3.14 configparser; ubuntu:24.04 docker: PHP 8.3.6 parse_ini_file; git config"
  },
+ "files|.json": {
+  "hash": "184fd2f0a294",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker) (python3.12, jq 1.7) + windows node 24, windows pwsh 7.6/powershell 5.1"
+ },
+ "files|.jsonc": {
+  "hash": "4a5b0eec3175",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker) (jq/python) + windows npm 11.17, tsc via npx, windows pwsh 7.6/powershell 5.1"
+ },
+ "files|.jsonl": {
+  "hash": "4e37ce816439",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker) (jq 1.7, python 3.12) + windows node 24, windows pwsh 7.6/powershell 5.1"
+ },
+ "files|.log": {
+  "hash": "78ee9c00adf3",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker) + windows pwsh 7.6/powershell 5.1"
+ },
+ "files|.md": {
+  "hash": "abe1599c42e0",
+  "date": "2026-10-07",
+  "on": "rendered with marked 18.1 (npx) on windows; docs: GitHub/VS Code preview"
+ },
  "files|.toml": {
   "hash": "5f589cebcddc",
   "date": "2026-10-07",
   "on": "Windows: Python 3.14 tomllib"
+ },
+ "files|.txt": {
+  "hash": "11e5c59d1ee0",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker) + windows pwsh 7.6/powershell 5.1"
  },
  "files|.xml": {
   "hash": "997c2968dd13",
@@ -2828,6 +2858,26 @@
   "hash": "3ef2e99534b7",
   "date": "2026-10-07",
   "on": "Windows: PyYAML 6.0.3 (Python 3.14 venv), js-yaml 5.4.3 + yaml 2.9.1 (Node 24), yamllint"
+ },
+ "files|JSON غلط": {
+  "hash": "415160aa6bea",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker) (jq 1.7, python 3.12) + windows node 24, windows pwsh 7.6/powershell 5.1"
+ },
+ "files|JSON.parse": {
+  "hash": "cc9384e876b2",
+  "date": "2026-10-07",
+  "on": "windows node 24 + ubuntu-24.04 (docker) (python 3.12)"
+ },
+ "files|LF و CRLF": {
+  "hash": "c287c5e394c2",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker) + windows pwsh 7.6/powershell 5.1 (Set-Content bytes); docs: mac sed -i ''"
+ },
+ "files|UTF-8": {
+  "hash": "cca7fb17a83c",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker) + windows pwsh 7.6/powershell 5.1 + node 24"
  },
  "files|XML entities و CDATA": {
   "hash": "f776b5b0ef52",
@@ -2844,15 +2894,50 @@
   "date": "2026-10-07",
   "on": "Windows: PyYAML 6.0.3, js-yaml 5.4.3, yaml 2.9.1"
  },
+ "files|jq": {
+  "hash": "60ab5765f76f",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker) (jq 1.7, curl GitHub API) + windows pwsh 7.6/powershell 5.1; docs: winget install"
+ },
  "files|xmlns": {
   "hash": "02964ba02ade",
   "date": "2026-10-07",
   "on": "ubuntu:24.04 docker (Python 3.12, xmllint); pwsh 7.6 + PowerShell 5.1 [xml] + XmlNamespaceManager"
  },
+ "files|إظهار الامتدادات": {
+  "hash": "11aef60ab350",
+  "date": "2026-10-07",
+  "on": "windows pwsh 7.6 + powershell 5.1 (Get-ItemProperty read only); docs: Set-ItemProperty/Stop-Process, mac defaults/killall"
+ },
+ "files|افتح بـ": {
+  "hash": "009d9b56daee",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker) (xdg-mime, xdg-open headless); docs: open -a, start, code.desktop default"
+ },
+ "files|الامتداد": {
+  "hash": "c17ab950c84a",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker)"
+ },
+ "files|المحرر": {
+  "hash": "5aad895a5f5a",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker) (grep/jq/python) + windows node 24; docs: code, nano"
+ },
+ "files|الملفات المخفية": {
+  "hash": "2c247308ef29",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker) + windows pwsh 7.6/powershell 5.1 (Get-ChildItem -Force)"
+ },
  "files|مشكلة النرويج": {
   "hash": "254a988441b6",
   "date": "2026-10-07",
   "on": "Windows: PyYAML 6.0.3, js-yaml 5.4.3, yaml 2.9.1; ubuntu:24.04 docker: python3-yaml 6.0.1, yq v4.54.1; docs: GitHub Actions on: key"
+ },
+ "files|نصي ولا ثنائي": {
+  "hash": "d4ec26006fa6",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker) + windows pwsh 7.6/powershell 5.1 (Format-Hex)"
  },
  "gha|::error::": {
   "hash": "6c59ced4e17e",
