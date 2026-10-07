@@ -6434,6 +6434,21 @@
   "date": "2026-10-07",
   "on": "docker php:8.4-cli (PHP 8.4.26)"
  },
+ "php|AUTO_INCREMENT و utf8mb4": {
+  "hash": "c263a9aac8e2",
+  "date": "2026-10-07",
+  "on": "docker mysql:8.4 (8.4.11)"
+ },
+ "php|CSRF token": {
+  "hash": "308081b93fbd",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli 8.4.26 php -S + mysql:8.4; curl, curl.exe, pwsh 7.6"
+ },
+ "php|PHPMailer": {
+  "hash": "ff99556af02f",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli 8.4.26 + PHPMailer 7.1.1 + axllent/mailpit; docs: real delivery/SPF/DKIM"
+ },
  "php|POST → Redirect → GET": {
   "hash": "897dfa4be829",
   "date": "2026-10-07",
@@ -6448,6 +6463,21 @@
   "hash": "270133218226",
   "date": "2026-10-07",
   "on": "docker php:8.4-cli (PHP 8.4.26)"
+ },
+ "php|beginTransaction": {
+  "hash": "9589f67e3433",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli 8.4.26 + pdo_mysql, mysql:8.4"
+ },
+ "php|display_errors": {
+  "hash": "ffc64ebaf450",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli 8.4.26 php -S; curl (Git Bash)"
+ },
+ "php|fetch / fetchAll": {
+  "hash": "314b2423f042",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli 8.4.26 + pdo_mysql, mysql:8.4"
  },
  "php|foreach": {
   "hash": "c2ade3f307fd",
@@ -6474,20 +6504,75 @@
   "date": "2026-10-07",
   "on": "docker php:8.4-cli (PHP 8.4.26)"
  },
+ "php|json_encode": {
+  "hash": "2bb35a99de43",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli 8.4.26 php -S; curl, curl.exe, pwsh 7.6 Invoke-RestMethod"
+ },
  "php|match": {
   "hash": "436056d21fd8",
   "date": "2026-10-07",
   "on": "docker php:8.4-cli (PHP 8.4.26)"
+ },
+ "php|move_uploaded_file": {
+  "hash": "f58bc0b02f50",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli 8.4.26 php -S; curl, curl.exe, pwsh 7.6 Invoke-WebRequest -Form"
+ },
+ "php|new PDO": {
+  "hash": "303c500b2dc4",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli 8.4.26 + pdo_mysql, mysql:8.4"
+ },
+ "php|password_hash": {
+  "hash": "04a9621b5faf",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli 8.4.26"
  },
  "php|php -S": {
   "hash": "3b760fbaae30",
   "date": "2026-10-07",
   "on": "docker php:8.4-cli (PHP 8.4.26) php -S + curl from Git Bash"
  },
+ "php|prepare / execute": {
+  "hash": "326240374832",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli 8.4.26 + pdo_mysql, mysql:8.4"
+ },
+ "php|readfile": {
+  "hash": "86d547c48781",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli 8.4.26 php -S + mysql:8.4; curl (Git Bash)"
+ },
  "php|require_once": {
   "hash": "9c0f945e36f8",
   "date": "2026-10-07",
   "on": "docker php:8.4-cli (PHP 8.4.26) php -S -t public + curl"
+ },
+ "php|return config": {
+  "hash": "1f88bd276064",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli 8.4.26 php -S (+ php.ini-production), git status"
+ },
+ "php|session_destroy": {
+  "hash": "a0bc53c1007c",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli 8.4.26 php -S + mysql:8.4; curl (Git Bash)"
+ },
+ "php|session_regenerate_id": {
+  "hash": "fc1490bd9e3f",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli 8.4.26 php -S + mysql:8.4; curl, curl.exe, pwsh 7.6"
+ },
+ "php|session_start": {
+  "hash": "6260132d7b80",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli 8.4.26 php -S; curl (Git Bash), curl.exe, pwsh 7.6 and powershell 5.1 Invoke-WebRequest"
+ },
+ "php|try / catch": {
+  "hash": "8afdacbe6ad8",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli 8.4.26 php -S + mysql:8.4; curl (Git Bash)"
  },
  "php|var_dump": {
   "hash": "fadb405315dc",
