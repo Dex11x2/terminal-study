@@ -41,6 +41,151 @@ const ProductGrid = memo(function ProductGrid({ items, onAdd, onSort }: GridProp
             when: "حساب بياخد وقت ملحوظ مع بيانات كبيرة، أو props لـ [[memo]] component، أو قيمة context (عشان الـ consumers ميعيدوش الرسم على الفاضي)، أو dependency في effect.",
             mistakes: R`تلف كل حاجة في useMemo «احتياطي»: كود أصعب، وذاكرة، ومقارنات، ومفيش فايدة. و useCallback لدالة رايحة لـ [[<button>]] عادي: الزرار مش memo فمش فارق. و dependencies ناقصة فترجع قيمة قديمة. و useMemo لحاجة فيها side effect.`
           },
+          teach: R`## الفكرة: متعيدش اللي ملوش لازمة
+
+كل render بيشغّل جسم الـ component من أوله لآخره: كل حساب بيتعاد، وكل دالة بتتعمل من جديد. [[useMemo]] بيقول لـ React «افتكري نتيجة الحساب ده، ومتعيديهوش غير لو حاجة من دول اتغيرت»، و [[useCallback]] نفس الكلام بس للدالة نفسها. اتشغّل في Vite 8.3 + React 19.3 في Chrome headless، والضغط بـ Playwright. (شغّلناه من غير Strict Mode عشان كل سطر يتطبع مرة واحدة.)
+
+---
+
+## ١. الـ props والـ state
+
+~~~text ProductsPage.tsx
+function ProductsPage({ products, query }: { products: Product[]; query: string }) {
+  const [sort, setSort] = useState<'price' | 'name'>('name')
+~~~
+
+- [[{ products, query }]]: الـ props متفكوكة (destructuring)، وبعد [[:]] نوعهم في TypeScript: [[Product[]]] يعني array من المنتجات، و [[query]] نص البحث.
+- [[useState<'price' | 'name'>('name')]]: طريقة الترتيب. [[<'price' | 'name'>]] بيقول لـ TypeScript إن القيمة واحدة من الكلمتين دول بس، والبداية [[name]].
+
+## ٢. [[useMemo]]: الحساب المحفوظ
+
+~~~text ProductsPage.tsx
+const visible = useMemo(
+  () => products
+    .filter(p => p.name.toLowerCase().includes(query.toLowerCase()))
+    .sort((a, b) => (sort === 'price' ? a.price - b.price : a.name.localeCompare(b.name))),
+  [products, query, sort]
+)
+~~~
+
+[[useMemo]] بياخد حاجتين:
+
+1. **دالة من غير parameters** ([[() => ...]]) بترجّع النتيجة. React هي اللي بتناديها، مش انت.
+2. **array الـ dependencies**: كل القيم من برا اللي الدالة بتستخدمها، هنا [[products]] و [[query]] و [[sort]].
+
+جوه الدالة، من جوه لبرة:
+
+### [[.filter(...)]]
+
+- [[p.name.toLowerCase()]]: اسم المنتج بحروف صغيرة، عشان [[Mug]] و [[mug]] يبقوا زي بعض.
+- [[.includes(query.toLowerCase())]]: الاسم فيه كلمة البحث؟ لو [[query]] فاضي، [[includes('')]] دايمًا [[true]]، فكل المنتجات بتعدّي.
+- [[filter]] بترجّع **array جديدة** فيها اللي عدّى بس.
+
+### [[.sort(...)]]
+
+- [[sort]] بتاخد دالة مقارنة [[(a, b) => رقم]]: لو الرقم سالب [[a]] قبل [[b]]، لو موجب العكس.
+- [[sort === 'price' ? ... : ...]]: الـ [[? :]] (ternary) يعني «لو كذا خد الأولى، غير كده خد التانية».
+- [[a.price - b.price]]: ترتيب بالسعر من الأرخص.
+- [[a.name.localeCompare(b.name)]]: مقارنة نصوص بالترتيب الأبجدي حسب اللغة.
+- [[sort]] بتعدّل الـ array اللي اتنادت عليها في مكانها. هنا ده آمن لأنها بتتنادى على الـ array الجديدة اللي [[filter]] عملتها، مش على [[products]] الأصلية.
+
+### الـ dependencies
+
+لما الـ component يترسم تاني، React بتقارن كل dependency بقيمتها اللي فاتت بـ [[Object.is]] (مقارنة مرجع للـ objects والـ arrays، وقيمة للأرقام والنصوص). لو الـ ٣ زي ما هما، بترجّع [[visible]] القديمة بالظبط (نفس الـ array)، من غير ما تنادي الدالة.
+
+## ٣. [[useCallback]]: الدالة المحفوظة
+
+~~~text ProductsPage.tsx
+const handleAdd = useCallback((id: string) => addToCart(id), [])
+~~~
+
+- من غير [[useCallback]]، [[(id) => addToCart(id)]] بتتعمل دالة جديدة كل render. نفس الكود، بس **مرجع** جديد، و [[Object.is]] بيقول إنها مختلفة.
+- [[useCallback(fn, deps)]] بيرجّع نفس الدالة طول ما الـ deps زي ما هي. هي بالظبط [[useMemo(() => fn, deps)]].
+- الـ deps فاضية لأن الدالة مش بتستخدم أي حاجة من جوه الـ component.
+
+## ٤. [[setSort]] من غير حاجة
+
+~~~text ProductsPage.tsx
+return <ProductGrid items={visible} onAdd={handleAdd} onSort={setSort} />
+~~~
+
+دالة الـ set اللي بيرجّعها [[useState]] مرجعها ثابت من React طول عمر الـ component، فبتتبعت على طول.
+
+## ٥. [[memo]]: اللي بيستفيد من كل ده
+
+~~~text ProductsPage.tsx
+const ProductGrid = memo(function ProductGrid({ items, onAdd, onSort }: GridProps) {
+  return <Grid items={items} onAdd={onAdd} onSort={onSort} />
+})
+~~~
+
+[[memo(Component)]] بيرجّع نسخة من الـ component بتقارن الـ props الجديدة بالقديمة (كل prop بـ [[Object.is]])، ولو كلها زي ما هي **بتتخطى الـ render**. وده سبب وجود الـ useMemo والـ useCallback فوق: من غيرهم [[items]] و [[onAdd]] مرجع جديد كل مرة، فالـ memo مبيلاقيش props زي ما هي أبدًا.
+
+---
+
+## ٦. اللي حصل
+
+حطينا الصفحة في App فيه خانة البحث وزرار [[tick]] بيغيّر state ملهاش علاقة بالمنتجات، و [[console.log]] جوه دالة الـ useMemo وجوه [[ProductGrid]]. ٤ منتجات: Mug و Pen و Lamp و Map.
+
+~~~text الـ Console (Chrome)
+[log] filter+sort run 1
+[log] ProductGrid render Lamp|Map|Mug|Pen
+>> tick
+>> type m
+[log] filter+sort run 2
+[log] ProductGrid render Lamp|Map|Mug
+>> By price
+[log] filter+sort run 3
+[log] ProductGrid render Map|Mug|Lamp
+~~~
+
+| الحدث | الحساب اتعاد؟ | ProductGrid اترسم؟ | ليه |
+|---|---|---|---|
+| أول render | أيوه | أيوه | مفيش حاجة محفوظة لسه |
+| [[tick]] | لأ | لأ | الـ deps الـ ٣ زي ما هي، فـ [[visible]] نفس الـ array، و [[handleAdd]] نفس الدالة |
+| كتبنا [[m]] | أيوه | أيوه | [[query]] اتغيرت. و Lamp فيها m |
+| By price | أيوه | أيوه | [[sort]] اتغيرت: Map (20) ثم Mug (50) ثم Lamp (300) |
+
+### من غير [[useCallback]]
+
+شلنا الـ useCallback بس وسيبنا الـ useMemo، ودوسنا [[tick]] مرتين:
+
+~~~text الـ Console
+>> tick
+[log] ProductGrid render Lamp|Map|Mug|Pen
+>> tick
+[log] ProductGrid render Lamp|Map|Mug|Pen
+~~~
+
+الحساب مش بيتعاد (useMemo لسه موجود)، بس [[ProductGrid]] بيترسم مع كل tick، لأن [[onAdd]] بقت دالة جديدة. prop واحدة اتغيرت تكفي إن الـ memo يعيد الرسم.
+
+---
+
+## ٧. يستاهل ولا لأ؟ قيس
+
+قسنا الفلترة والترتيب من غير useMemo بـ [[performance.now()]] في Chrome headless، ٥ مرات لكل حجم (الأرقام بتختلف حسب الجهاز):
+
+~~~text الناتج
+20:    6.30ms  0.00ms  0.00ms  0.00ms  0.00ms
+20000: 3.90ms  3.70ms  3.00ms  2.00ms  2.10ms
+~~~
+
+- أول مرة في الـ 20 كانت بطيئة لأن المتصفح بيجهّز [[localeCompare]] أول مرة. بعدها أقل من 0.1ms: useMemo مش هتفرق.
+- الـ 20 ألف بياخدوا 2 لـ 4ms **في كل render**. docs React بتقول: لو الحساب بياخد 1ms أو أكتر، useMemo تستاهل.
+
+> useMemo مبتسرّعش أول render، هي بتوفّر الـ renders اللي بعده. ومع React Compiler (درس في المستوى التالت) الـ memoization ده بيتعمل لوحده.
+
+---
+
+## الخلاصة
+
+| | بيحفظ | بيتعاد لما | فايدته |
+|---|---|---|---|
+| [[useMemo(() => calc, deps)]] | نتيجة الحساب | dependency تتغير | حساب تقيل، أو مرجع ثابت لـ object أو array |
+| [[useCallback(fn, deps)]] | الدالة نفسها | dependency تتغير | مرجع ثابت لدالة رايحة لـ [[memo]] أو لـ effect |
+| [[memo(Component)]] | آخر render | prop تتغير بـ [[Object.is]] | يتخطى render الابن |
+
+الاتنين للأداء بس: شيلهم والكود لازم يشتغل صح برضه.`,
           lines: [
             "صفحة بتاخد المنتجات وكلمة البحث.",
             "طريقة الترتيب.",
@@ -101,6 +246,111 @@ export function useAuth() {
             when: "Theme، والمستخدم الحالي، واللغة، و feature flags، والـ state الداخلية لـ compound components (درس compound components في المستوى التالت). ومش لبيانات السيرفر (TanStack Query) ولا لـ state بتتغير كل ثانية.",
             mistakes: R`قيمة provider بتتعمل object جديد كل render. و context واحد عملاق فيه كل حاجة. وفي مشروع حقيقي كان فيه ٤ providers متداخلين (Auth و Currency و Cart و Toast)، و CartContext شايل بيانات السلة من الـ API بـ loading و error و cache يدوي: ده server state مكانه React Query. وتنسى إن الـ default بيتستخدم لما مفيش provider، فالـ bug بيبقى صامت بدل error.`
           },
+          teach: R`## الفكرة: قناة من فوق لتحت
+
+الـ context بيحط قيمة في «قناة» عند component فوق، وأي component تحته (مهما كان عمقه) يقراها على طول من غير ما الـ props تعدّي على كل مستوى. المثال بيعمل ٣ حاجات: القناة نفسها، و provider بيملاها، و hook بيقراها. اتشغّل في Vite 8.3 + React 19.3 في Chrome headless (من غير Strict Mode عشان كل سطر يتطبع مرة).
+
+---
+
+## ١. شكل القيمة والقناة
+
+~~~text AuthContext.tsx
+type Auth = { user: User | null; logout: () => void }
+const AuthContext = createContext<Auth | null>(null)
+~~~
+
+- [[type Auth]]: نوع TypeScript للي جوه القناة: المستخدم (أو [[null]] لو مش داخل)، ودالة خروج. [[() => void]] يعني دالة مش بتاخد حاجة ومش بترجّع حاجة.
+- [[createContext<Auth | null>(null)]]: بيعمل القناة. الـ [[null]] بين القوسين هو الـ **default**: القيمة اللي أي حد هياخدها لو قرا القناة ومفيش provider فوقه. اخترنا [[null]] عشان نكشف الحالة دي بعدين.
+
+## ٢. الـ provider
+
+~~~text AuthContext.tsx
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(null)
+  const value = useMemo(() => ({ user, logout: () => setUser(null) }), [user])
+  return <AuthContext value={value}>{children}</AuthContext>
+}
+~~~
+
+- [[children: ReactNode]]: أي حاجة هتتحط جوه [[<AuthProvider>...</AuthProvider>]]. [[ReactNode]] نوع «أي حاجة React تعرف ترسمها».
+- [[useState]]: الـ state الحقيقية عايشة هنا، في الـ provider.
+- [[useMemo(..., [user])]]: بيبني الـ object [[{ user, logout }]] **مرة واحدة**، ومش بيعمل واحد جديد غير لما [[user]] يتغير. ليه ده مهم؟ تحت في التجربة.
+- [[<AuthContext value={value}>]]: في React 19 الـ context نفسه بيتكتب كـ component ويبقى provider. في React 18 كانت [[<AuthContext.Provider value={value}>]] (لسه شغالة).
+
+## ٣. hook القراية
+
+~~~text AuthContext.tsx
+export function useAuth() {
+  const ctx = useContext(AuthContext)
+  if (!ctx) throw new Error('useAuth must be used inside <AuthProvider>')
+  return ctx
+}
+~~~
+
+- [[useContext(AuthContext)]]: بيطلع لفوق في الشجرة لأقرب [[<AuthContext>]] ويرجّع قيمته. مفيش؟ يرجّع الـ default ([[null]]).
+- [[if (!ctx) throw ...]]: [[!ctx]] صح لو [[ctx]] بـ [[null]]. بدل ما الـ null يعدّي ويوقع الكود بعدين في مكان بعيد، بنرمي error برسالة بتقول المشكلة بالظبط.
+- بعد السطر ده TypeScript عارف إن [[ctx]] نوعه [[Auth]] مش [[Auth | null]]، فاللي بيستخدم [[useAuth()]] مش محتاج يتأكد من null.
+
+---
+
+## ٤. اللي حصل
+
+ركّبنا [[Consumer]] بيقرا [[useAuth()]] ويطبع [[consumer render]] وفيه زرار Logout، وزرار [[tick]] جوه الـ provider بيغيّر state تانية خالص (زي ما الـ sol بيقول). وبدأنا بـ [[user]] قيمته Sara عشان يبقى فيه حد يعمل logout.
+
+### مع الـ useMemo
+
+~~~text الـ Console (Chrome)
+[log] consumer render Sara
+>> tick
+>> tick
+>> Logout
+[log] consumer render null
+~~~
+
+الـ tick مرتين: الـ provider اترسم، بس [[value]] هو نفس الـ object (لأن [[user]] متغيرش)، فـ React مش بتعيد رسم الـ Consumer. الـ Logout غيّر [[user]]، فـ [[useMemo]] عمل object جديد، والـ Consumer اترسم وعرض «Logged out».
+
+### من غير الـ useMemo
+
+بدّلناها بـ [[const value = { user, logout: () => setUser(null) }]]:
+
+~~~text الـ Console
+[log] consumer render Sara
+>> tick
+[log] consumer render Sara
+>> tick
+[log] consumer render Sara
+>> Logout
+[log] consumer render null
+~~~
+
+كل tick عمل object جديد. React بتقارن القيمة القديمة بالجديدة بـ [[Object.is]]: نفس المحتوى بس مرجع مختلف، يعني «اتغيرت»، فكل اللي بيقرا الـ context بيترسم تاني. مع consumer واحد مش فارق، مع ٥٠ فارق.
+
+> ليه الـ tick جوه الـ provider مش في App؟ لأن [[Consumer]] ابن App، فلو App اترسم، الـ Consumer هيترسم كابن عادي في الحالتين، ومش هتشوف أثر الـ context.
+
+### برا الـ provider
+
+حطينا component بينادي [[useAuth()]] من غير [[AuthProvider]] فوقه:
+
+~~~text الـ Console
+[pageerror] useAuth must be used inside <AuthProvider>
+[warning] An error occurred in the <Outside> component.
+~~~
+
+الصفحة فضيت، والرسالة بتقول بالظبط إيه الغلط وفين. من غير الـ [[throw]]، كان هيرجع [[null]] والكود يقع بعدين بـ «Cannot read properties of null».
+
+---
+
+## الخلاصة
+
+| الحتة | بتعمل إيه |
+|---|---|
+| [[createContext(default)]] | القناة، والـ default لو مفيش provider |
+| [[<Ctx value={v}>]] | بيحط [[v]] لكل اللي تحته (React 19) |
+| [[useContext(Ctx)]] | يقرا أقرب provider فوقه |
+| [[useMemo]] للقيمة | من غيرها كل render للـ provider بيعيد رسم كل الـ consumers |
+| hook بيرمي error | null صامت يتحول لرسالة واضحة |
+
+الـ context للحاجات قليلة التغيير اللي ناس كتير محتاجاها (المستخدم، والثيم، واللغة). أي تغيير في القيمة بيعيد رسم كل اللي بيقروها.`,
           lines: [
             "شكل القيمة اللي في الـ context.",
             "القناة، والـ default null عشان نعرف لو حد استخدمها برا الـ provider.",
@@ -181,6 +431,172 @@ export function checkoutReducer(state: State, action: Action): State {
             when: R`state فيها كذا حقل مرتبطين (خطوة وبيانات وأخطاء)، أو التغيير الجديد بيعتمد على القديم بقواعد (wizard، و undo/redo، وسلة فيها خصومات)، أو عايز تختبر المنطق من غير واجهة. ولو قيمة واحدة مستقلة (modal مفتوح ولا لأ)، [[useState]] أبسط.`,
             mistakes: R`تعدّل الـ state في المكان جوه الـ reducer ([[state.step++; return state]]): نفس المرجع، فالشاشة مش بتتحدث. و fetch أو [[Date.now()]] أو [[Math.random()]] جوه الـ reducer: مبقاش pure، وفي Strict Mode بيتنادى مرتين. وترجّع object جديد في حالة «مفيش تغيير» فتعمل render على الفاضي. و actions اسمها أوامر ([[setStepTo3]]) بدل أحداث ([[next]])، فالقواعد بتهرب تاني للـ handlers. وسؤال انترفيو: «useState ولا useReducer؟» الإجابة: useState مبني على reducer أصلًا، والفرق إن الـ reducer بيجمع قواعد الانتقال في مكان واحد ويتختبر لوحده.`
           },
+          teach: R`## الفكرة: الـ handler يقول «إيه اللي حصل»، والـ reducer يقرر
+
+بدل ما كل زرار يعمل [[setStep]] و [[setCity]] بإيده ويكرر القواعد، كل زرار بيبعت **حدث** (action)، ودالة واحدة اسمها reducer بتاخد الـ state الحالية والحدث وترجّع الـ state الجديدة. المثال wizard دفع من ٣ خطوات. اتشغّل في Vite 8.3 + React 19.3 في Chrome headless، والاختبار بـ Vitest 5، والـ types بـ [[tsc]] (TypeScript 6).
+
+---
+
+## ١. شكل الـ state
+
+~~~text checkout.ts
+type State = { step: 1 | 2 | 3; shipping: { city: string }; payment: 'cash' | 'card' | null }
+~~~
+
+- [[step: 1 | 2 | 3]]: الـ [[|]] في TypeScript معناها «أو»، فالخطوة رقم من التلاتة دول بس. لو حد كتب [[step: 4]] الـ type checker هيعترض.
+- [[shipping: { city: string }]]: object جوه object.
+- [[payment: 'cash' | 'card' | null]]: لسه ماختارش ([[null]]) أو واحدة من الاتنين.
+
+## ٢. الأحداث: discriminated union
+
+~~~text checkout.ts
+type Action =
+  | { type: 'setShipping'; city: string }
+  | { type: 'setPayment'; method: 'cash' | 'card' }
+  | { type: 'next' }
+  | { type: 'back' }
+  | { type: 'reset' }
+~~~
+
+كل سطر شكل حدث. الحقل المشترك [[type]] هو «المميِّز» (discriminant): لما الكود يتأكد إن [[action.type === 'setShipping']]، TypeScript بيعرف إن الـ action ده فيه [[city]]، ومش فيه [[method]]. الـ [[|]] الأولى قبل أول سطر شكل بس، عشان الأسطر تبقى متساوية.
+
+> الأحداث متسمية باللي **حصل** ([[next]]، يعني «داس التالي»)، مش بالأمر ([[setStepTo2]]). كده القاعدة «ينفع أروح ولا لأ» تفضل في الـ reducer.
+
+## ٣. القيمة الأولى
+
+~~~text checkout.ts
+export const initial: State = { step: 1, shipping: { city: '' }, payment: null }
+~~~
+
+[[: State]] بيخلي TypeScript يتأكد إن الـ object ده شكله صح. و [[export]] عشان الـ component والاختبار الاتنين يستوردوه.
+
+## ٤. الـ reducer
+
+~~~text checkout.ts
+export function checkoutReducer(state: State, action: Action): State {
+  switch (action.type) {
+~~~
+
+- بياخد [[state]] و [[action]]، والـ [[: State]] اللي بعد القوسين معناها «لازم ترجّع State».
+- [[switch (action.type)]]: يروح للـ [[case]] اللي بيساوي نوع الحدث.
+
+### [[setShipping]] و [[setPayment]]
+
+~~~text checkout.ts
+case 'setShipping': return { ...state, shipping: { city: action.city } }
+case 'setPayment': return { ...state, payment: action.method }
+~~~
+
+[[{ ...state, ... }]]: الـ [[...]] (spread) بينسخ كل خانات [[state]] في object جديد، وبعدها الخانة اللي مكتوبة تغطي على القديمة. يعني نسخة جديدة فيها تغيير واحد، والقديمة زي ما هي (درس immutable updates).
+
+### [[next]]
+
+~~~text checkout.ts
+case 'next':
+  if (state.step === 1 && !state.shipping.city) return state
+  return state.step < 3 ? { ...state, step: (state.step + 1) as State['step'] } : state
+~~~
+
+- السطر الأول القاعدة: في الخطوة ١ والمدينة فاضية ([[!'']] بـ [[true]])؟ ارجع **نفس** الـ object.
+- [[state.step < 3 ? ... : state]]: لو مش آخر خطوة زوّد، غير كده ارجع زي ما انت.
+- [[(state.step + 1) as State['step']]]: [[state.step + 1]] نوعه [[number]] عادي، و TypeScript مش عارف إنه هيفضل ١ أو ٢ أو ٣. [[as]] بيقوله «ثق فيا، ده واحد منهم». و [[State['step']]] يعني «نوع خانة step جوه State»، اللي هو [[1 | 2 | 3]].
+
+### [[back]] و [[reset]]
+
+~~~text checkout.ts
+case 'back': return state.step > 1 ? { ...state, step: (state.step - 1) as State['step'] } : state
+case 'reset': return initial
+~~~
+
+نفس فكرة [[next]] بالعكس، و [[reset]] بيرجّع القيمة الأولى.
+
+### لو نسيت case
+
+شلنا سطر [[reset]] وشغّلنا [[tsc --strict]]:
+
+~~~text tsc
+checkoutB.ts(11,64): error TS2366: Function lacks ending return statement and return type does not include 'undefined'.
+~~~
+
+يعني: فيه مسار (حدث [[reset]]) الدالة بتخلص فيه من غير [[return]]، والنوع المطلوب [[State]] مش بيقبل [[undefined]].
+
+---
+
+## ٥. جوه الـ component
+
+~~~text Checkout.tsx
+const [state, dispatch] = useReducer(checkoutReducer, initial)
+<button onClick={() => dispatch({ type: 'next' })}>Next</button>
+~~~
+
+- [[useReducer(reducer, initial)]]: بيرجّع زوج زي [[useState]]: الـ state الحالية، و [[dispatch]].
+- [[dispatch({ type: 'next' })]]: «ابعت الحدث ده». React بتنادي [[checkoutReducer(state, { type: 'next' })]] وتاخد اللي رجع كـ state جديدة.
+- [[dispatch]] مرجعها ثابت طول عمر الـ component، زي [[setState]].
+
+## ٦. اللي حصل
+
+عملنا الـ component اللي في الـ solCode (عنوان [[Step N]] وخانة City و Back و Next) و [[console.log]] في كل render:
+
+~~~text الناتج (Chrome)
+Next empty             Step 1
+Next with city         Step 2
+Next again             Step 3
+Next at 3              Step 3
+Back                   Step 2
+~~~
+
+- Next والخانة فاضية: فضلنا في ١. القاعدة اشتغلت من غير ما الزرار يعرف عنها حاجة.
+- Next في الخطوة ٣: فضلنا في ٣ ([[step < 3]] بـ [[false]]).
+
+### [[return state]] بيوفّر إيه بالظبط؟
+
+حطينا ابن [[<Child />]] بيطبع، ودوسنا Next مرتين والخانة فاضية، و Back في الخطوة ١:
+
+~~~text الـ Console
+[log] render step 1 ""
+[log] child render
+>> Next (empty)
+[log] render step 1 ""
+>> Next (empty)
+[log] render step 1 ""
+>> Back at 1
+[log] render step 1 ""
+~~~
+
+React نادت الـ component نفسه عشان تشغّل الـ reducer وتشوف النتيجة، ولما لقتها هي هي بـ [[Object.is]] **وقفت**: الابن مترسمش، والشاشة متحدثتش. لو كنا رجّعنا [[{ ...state }]] بدل [[state]]، الابن كان هيترسم كل مرة على الفاضي.
+
+## ٧. الاختبار من غير React
+
+~~~text checkout.test.ts
+it('does not move without a city', () => {
+  expect(checkoutReducer(initial, { type: 'next' })).toBe(initial)
+  const s1 = checkoutReducer(initial, { type: 'setShipping', city: 'Cairo' })
+  expect(checkoutReducer(s1, { type: 'next' }).step).toBe(2)
+  expect(initial.shipping.city).toBe('')
+})
+~~~
+
+- [[it(name, fn)]]: اختبار واحد، و [[expect(x).toBe(y)]]: بيتأكد إن [[x]] هو [[y]] بـ [[Object.is]]، يعني **نفس الـ object** مش بس نفس المحتوى.
+- السطر الأخير بيتأكد إن [[initial]] نفسه متعدلش (الـ reducer مبيغيرش في المكان).
+
+~~~text npx vitest run
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+~~~
+
+---
+
+## الخلاصة
+
+| الحتة | دورها |
+|---|---|
+| [[type Action = ... | ...]] | كل الأحداث الممكنة، و [[type]] بيميز بينهم |
+| [[reducer(state, action)]] | دالة pure: state قديمة + حدث = state جديدة |
+| [[return state]] | «مفيش تغيير»: React متحدّثش الشاشة ولا ترسم الأولاد |
+| [[{ ...state, x }]] | نسخة جديدة فيها تغيير |
+| [[dispatch(action)]] | الـ handler بيقول إيه اللي حصل وبس |
+
+الـ reducer دالة عادية: تختبرها لوحدها، ومفيهاش fetch ولا [[Math.random()]] ولا تعديل في المكان.`,
           lines: [
             "شكل الـ state: الخطوة، وعنوان الشحن، وطريقة الدفع.",
             "كل الأحداث الممكنة، وكل واحد ليه شكله (discriminated union):",
@@ -195,7 +611,7 @@ export function checkoutReducer(state: State, action: Action): State {
             "نسخة جديدة فيها المدينة الجديدة.",
             "نسخة جديدة فيها طريقة الدفع.",
             "التالي:",
-            "القاعدة في مكان واحد: مفيش مدينة؟ ارجع نفس الـ state، فمفيش render.",
+            "القاعدة في مكان واحد: مفيش مدينة؟ ارجع نفس الـ state، فـ React متحدّثش الشاشة ولا ترسم الأولاد.",
             "زوّد الخطوة لو لسه مش آخر واحدة.",
             "رجوع بنفس الفكرة.",
             "reset يرجّع القيمة الأولى.",
@@ -274,6 +690,143 @@ export const Checkout = () => <CheckoutProvider><StepTitle /><ShippingStep /></C
             when: R`wizard أو checkout من كذا خطوة، أو محرر فيه toolbar و sidebar و canvas بيشتغلوا على نفس البيانات، أو أي feature state ليها قواعد ومحتاجاها components كتير جوه جزء واحد من التطبيق.`,
             mistakes: R`context واحد فيه [[{ state, dispatch }]] من غير تفكير، فالأزرار اللي بتبعت بس بتعيد الرسم مع كل حرف. وتحط الـ provider فوق التطبيق كله وهو محتاج جوه صفحة الـ checkout بس. وتخزّن بيانات السيرفر (المنتجات والأسعار) في الـ reducer بدل React Query. وتنادي [[useCheckout()]] في component برا الـ provider فتاخد error، والحل مكان الـ provider مش إنك تشيل الـ throw.`
           },
+          teach: R`## الفكرة: الـ reducer في provider، والـ state والـ dispatch في قناتين
+
+الدرس ده بيجمع الدرسين اللي فاتوا: [[useReducer]] (قواعد التغيير في مكان واحد) جوه provider، و [[useContext]] (أي component تحت يوصل له). نفس [[checkoutReducer]] و [[initial]] و [[State]] و [[Action]] من درس useReducer. اتشغّل في Vite 8.3 + React 19.3 في Chrome headless، والكتابة والضغط بـ Playwright (من غير Strict Mode عشان كل سطر يتطبع مرة).
+
+---
+
+## ١. الـ imports
+
+~~~text CheckoutContext.tsx
+import { createContext, useContext, useReducer, type Dispatch, type ReactNode } from 'react'
+~~~
+
+[[type Dispatch]] و [[type ReactNode]] أنواع TypeScript بس. كلمة [[type]] قدامهم بتقول «ده import للـ types، امسحه وقت الـ build». [[Dispatch<Action>]] نوع دالة بتاخد [[Action]] ومبترجّعش حاجة، يعني نوع [[dispatch]].
+
+## ٢. قناتين مش واحدة
+
+~~~text CheckoutContext.tsx
+const StateCtx = createContext<State | null>(null)
+const DispatchCtx = createContext<Dispatch<Action> | null>(null)
+~~~
+
+- [[StateCtx]]: فيها الـ state، وبتتغير مع كل حرف وكل خطوة.
+- [[DispatchCtx]]: فيها [[dispatch]]، و [[dispatch]] مرجعها ثابت طول عمر الـ component، فالقيمة دي **عمرها ما بتتغير**.
+
+ليه ده فارق؟ تحت في التجربة.
+
+## ٣. الـ provider
+
+~~~text CheckoutContext.tsx
+export function CheckoutProvider({ children }: { children: ReactNode }) {
+  const [state, dispatch] = useReducer(checkoutReducer, initial)
+  return <StateCtx value={state}><DispatchCtx value={dispatch}>{children}</DispatchCtx></StateCtx>
+}
+~~~
+
+- [[useReducer]] عايش هنا، مرة واحدة للـ wizard كله.
+- الـ providers متداخلين: [[StateCtx]] برة و [[DispatchCtx]] جوه، و [[children]] جوه الاتنين، فأي component تحت يقدر يقرا من أي واحدة.
+- مش محتاجين [[useMemo]] هنا (زي درس useContext) لأن [[state]] نفسها object مبيتعملش جديد غير لما الـ reducer يرجّع واحد جديد، و [[dispatch]] ثابتة.
+
+## ٤. hooks القراية
+
+~~~text CheckoutContext.tsx
+export function useCheckout() {
+  const state = useContext(StateCtx)
+  if (!state) throw new Error('useCheckout must be used inside <CheckoutProvider>')
+  return state
+}
+export function useCheckoutDispatch() {
+  const dispatch = useContext(DispatchCtx)
+  if (!dispatch) throw new Error('useCheckoutDispatch must be used inside <CheckoutProvider>')
+  return dispatch
+}
+~~~
+
+نفس فكرة [[useAuth]]: اقرا، ولو [[null]] (مفيش provider) ارمي error واضح، وبعدها TypeScript عارف إن القيمة موجودة.
+
+## ٥. الخطوات
+
+~~~text Checkout.tsx
+function ShippingStep() {
+  const { shipping } = useCheckout()
+  const dispatch = useCheckoutDispatch()
+  return <><input aria-label="City" value={shipping.city} onChange={e => dispatch({ type: 'setShipping', city: e.target.value })} /><button onClick={() => dispatch({ type: 'next' })}>Next</button></>
+}
+~~~
+
+- [[const { shipping } = useCheckout()]]: خد [[shipping]] بس من الـ state.
+- [[<>...</>]]: Fragment، بيلم عنصرين من غير ما يزوّد [[<div>]].
+- [[aria-label="City"]]: اسم للخانة لقارئ الشاشة (وللاختبارات تلاقيها بيه).
+- [[onChange]]: كل حرف بيبعت [[setShipping]] بالقيمة الجديدة ([[e.target.value]]). الخانة controlled: قيمتها جاية من الـ state.
+- Next بيبعت [[next]] وبس. القاعدة «مينفعش من غير مدينة» في الـ reducer.
+
+~~~text Checkout.tsx
+const StepTitle = () => <h2>Step {useCheckout().step}</h2>
+export const Checkout = () => <CheckoutProvider><StepTitle /><ShippingStep /></CheckoutProvider>
+~~~
+
+- [[StepTitle]] component بسطر واحد (arrow function بترجّع JSX)، بيقرا [[step]] من نفس الـ state. مفيش props اتعدّت.
+- [[Checkout]] بيلف كل حاجة في الـ provider.
+
+---
+
+## ٦. اللي حصل
+
+شغّلنا الـ wizard الكامل من الـ solCode ([[PaymentStep]] و [[ReviewStep]] و [[BackButton]] و [[CurrentStep]] بيختار الخطوة حسب [[step]])، و [[console.log]] في [[StepTitle]] و [[BackButton]]. كتبنا Cai، و Next، واخترنا Card، و Next، و Confirm:
+
+~~~text الـ Console (Chrome)
+[log] StepTitle render 1
+[log] BackButton render
+>> type Cai
+[log] StepTitle render 1
+[log] StepTitle render 1
+[log] StepTitle render 1
+>> Next
+[log] StepTitle render 2
+>> Card
+[log] StepTitle render 2
+>> Next
+[log] StepTitle render 3
+>> Confirm
+[log] StepTitle render 1
+~~~
+
+~~~text الـ HTML في الخطوة ٣
+<h2>Step 3</h2><p>Cai · card <button>Confirm</button></p><button>Back</button>
+~~~
+
+- [[StepTitle]] بيقرا [[useCheckout()]]، فبيترسم مع **كل** تغيير في الـ state: ٣ حروف = ٣ renders، حتى لو [[step]] متغيرش. ده الثمن العادي للـ context.
+- [[BackButton]] اترسم **مرة واحدة** بس طول التجربة، لأنه بيقرا [[DispatchCtx]] بس، وقيمتها متغيرتش أبدًا.
+- بعد Confirm رجعنا [[Step 1]] والخانة فاضية: [[reset]] رجّع [[initial]].
+
+### لو حطيناهم في قناة واحدة
+
+عملنا نسخة فيها context واحد قيمته [[{ state, dispatch }]]، و [[BackButton]] بياخد [[dispatch]] منه:
+
+~~~text الـ Console
+[log] BackButton render
+>> type Cai
+[log] BackButton render
+[log] BackButton render
+[log] BackButton render
+~~~
+
+كل حرف بيعمل object جديد [[{ state, dispatch }]]، فكل اللي بيقرا القناة (حتى اللي محتاج dispatch بس) بيترسم تاني. القناتين بيحلّوا ده من غير أي [[memo]].
+
+---
+
+## الخلاصة
+
+| الحتة | بتعمل إيه |
+|---|---|
+| [[useReducer]] في الـ provider | state واحدة وقواعد واحدة للـ wizard كله |
+| [[StateCtx]] | الـ state، واللي بيقراها بيترسم مع أي تغيير فيها |
+| [[DispatchCtx]] | [[dispatch]] الثابتة، واللي بيقراها بس مبيترسمش |
+| [[useCheckout()]] و [[useCheckoutDispatch()]] | قراية آمنة بتقع برسالة واضحة برا الـ provider |
+
+لو الـ provider اتشال من الشجرة (الـ modal اتقفل مثلًا) الـ state بتروح معاه.`,
           lines: [
             "أدوات الـ context والـ reducer، والأنواع.",
             "context للـ state.",
@@ -310,6 +863,7 @@ export const Checkout = () => <CheckoutProvider><StepTitle /><ShippingStep /></C
     <fieldset>
       <label><input type="radio" name="pay" checked={payment === 'cash'} onChange={() => dispatch({ type: 'setPayment', method: 'cash' })} /> Cash</label>
       <label><input type="radio" name="pay" checked={payment === 'card'} onChange={() => dispatch({ type: 'setPayment', method: 'card' })} /> Card</label>
+      <button onClick={() => dispatch({ type: 'next' })}>Next</button>
     </fieldset>
   )
 }
@@ -366,6 +920,124 @@ function SearchPage() {
             when: "أي منطق فيه hooks اتكرر مرتين: [[useDebounce]]، و [[useLocalStorage]]، و [[useMediaQuery]]، و [[useAuth]]، و hooks بتلف TanStack Query لكل resource ([[useProducts]]).",
             mistakes: R`دالة من غير hooks اسمها [[useFormatDate]]. و hook بيرجّع object أو دالة جديدة كل مرة، وحد يحطها في dependencies فيعمل loop. و debounce بـ lodash جوه الـ component من غير [[useMemo]] أو [[useRef]]: بيتعمل debounce جديد كل render، فكل حرف بيتأخر لوحده ومفيش حاجة بتتلغي، يعني طلب لكل حرف برضه.`
           },
+          teach: R`## الفكرة: دالة اسمها [[use...]] جواها hooks
+
+الـ custom hook مش حاجة جديدة في React: دالة عادية اسمها بيبدأ بـ [[use]] وبتنادي hooks تانية ([[useState]] و [[useEffect]]). المثال [[useDebounce]]: بياخد قيمة بتتغير بسرعة (اللي بيتكتب) ويرجّع نسخة منها مبتتحدثش غير لما التغيير يقف مدة معينة. اتشغّل في Vite 8.3 + React 19.3 في Chrome headless، والكتابة بـ Playwright حرف كل 80ms (من غير Strict Mode عشان كل سطر يتطبع مرة).
+
+---
+
+## ١. التعريف
+
+~~~text useDebounce.ts
+export function useDebounce<T>(value: T, delay = 400): T {
+~~~
+
+- [[<T>]]: generic في TypeScript. [[T]] «أي نوع»، ويتحدد وقت الاستخدام: لو بعت string يرجع string، لو بعت رقم يرجع رقم.
+- [[value: T]]: القيمة اللي بتتغير بسرعة.
+- [[delay = 400]]: parameter ليه قيمة افتراضية: لو ماحددتش، 400 ميلي ثانية.
+- [[: T]] بعد القوسين: بيرجّع نفس النوع.
+
+## ٢. القيمة المتأخرة
+
+~~~text useDebounce.ts
+const [debounced, setDebounced] = useState(value)
+~~~
+
+state جوه الـ hook، بتبدأ بنفس القيمة. الـ state دي بتتسجل في الـ component اللي نادى الـ hook، يعني لو component تاني استخدم [[useDebounce]] هياخد state منفصلة خالص.
+
+## ٣. الـ effect: timer يتلغي ويتعمل من جديد
+
+~~~text useDebounce.ts
+useEffect(() => {
+  const id = setTimeout(() => setDebounced(value), delay)
+  return () => clearTimeout(id)
+}, [value, delay])
+~~~
+
+- [[setTimeout(fn, delay)]]: نادي [[fn]] بعد [[delay]] ميلي ثانية، وبيرجّع رقم ([[id]]) تقدر تلغيه بيه.
+- [[setDebounced(value)]]: لما الوقت يخلص، القيمة المتأخرة تبقى القيمة الحالية.
+- [[return () => clearTimeout(id)]]: الـ cleanup. React بتناديها **قبل** ما تشغّل الـ effect تاني، وكمان لما الـ component يتشال.
+- [[[value, delay]]]: شغّل الـ effect تاني مع أي تغيير فيهم.
+
+السيناريو مع كل حرف:
+
+1. حرف جديد، فـ [[value]] اتغيرت.
+2. React تنادي الـ cleanup القديم: الـ timer اللي فات **اتلغى** قبل ما يخلص.
+3. الـ effect يعمل timer جديد.
+4. لو الحرف اللي بعده جه قبل [[delay]]، نفس الكلام تاني. ولو المستخدم وقف، آخر timer بيخلص و [[debounced]] تتحدث.
+
+## ٤. الرجوع
+
+~~~text useDebounce.ts
+return debounced
+~~~
+
+الـ hook بيرجّع القيمة المتأخرة بس. اللي بينادي مش محتاج يعرف أي حاجة عن الـ timers.
+
+## ٥. الاستخدام
+
+~~~text SearchPage.tsx
+function SearchPage() {
+  const [q, setQ] = useState('')
+  const debouncedQ = useDebounce(q, 500)
+  return <><input value={q} onChange={e => setQ(e.target.value)} /><Results query={debouncedQ} /></>
+}
+~~~
+
+- [[q]]: اللي في الخانة دلوقتي، بيتحدث مع كل حرف (controlled input).
+- [[debouncedQ]]: نفس الكلام بس متأخر 500ms بعد آخر حرف.
+- الخانة بتاخد [[q]] (عشان الكتابة متتأخرش)، و [[Results]] بياخد [[debouncedQ]] (عشان البحث ميحصلش مع كل حرف).
+
+---
+
+## ٦. اللي حصل
+
+[[Results]] بيطبع جوه [[useEffect]] معتمد على [[query]] (زي الـ solCode)، ومعاه الوقت من أول ما الصفحة اتفتحت ([[performance.now()]]). كتبنا [[react]] حرف كل 80ms:
+
+~~~text الـ Console (Chrome، delay 500)
+[log] search "" 207ms
+>> typing react (80ms per key)
+>> done typing 1620ms
+[log] search "react" 2040ms
+~~~
+
+- [[search ""]] أول مرة: الـ effect بيشتغل بعد أول render دايمًا.
+- ٥ حروف ومفيش غير بحث واحد. آخر حرف اتكتب حوالي 1540ms (Playwright بيستنى 80ms بعده قبل ما يكمّل، فطبعنا 1620)، والبحث 2040ms: بعد آخر حرف بـ 500ms بالظبط تقريبًا.
+
+~~~text الـ HTML
+50ms بعد الكتابة:   <input value="react"><p>Results for: </p>
+750ms بعد الكتابة:  <input value="react"><p>Results for: react</p>
+~~~
+
+الخانة فيها الكلمة على طول، والنتايج لسه فاضية لحد ما الـ debounce يخلص.
+
+### بـ delay صفر
+
+~~~text الـ Console (delay 0)
+[log] search "" 213ms
+>> typing react (80ms per key)
+[log] search "r" 1248ms
+[log] search "re" 1283ms
+[log] search "rea" 1374ms
+[log] search "reac" 1467ms
+[log] search "react" 1562ms
+~~~
+
+كل timer بيخلص قبل الحرف اللي بعده (0ms أقل من 80ms)، فمفيش حاجة بتتلغي: بحث مع كل حرف.
+
+---
+
+## الخلاصة
+
+| الحتة | ليه |
+|---|---|
+| اسمه [[use...]] | eslint و React Compiler يطبّقوا قواعد الـ hooks عليه |
+| [[useState]] جواه | كل component بينادي الـ hook بياخد نسخة state خاصة بيه |
+| [[setTimeout]] في effect | التأخير |
+| الـ cleanup بـ [[clearTimeout]] | يلغي الـ timer القديم مع كل حرف، فمفيش غير آخر واحد اللي يخلص |
+| [[<T>]] | الـ hook يشتغل مع أي نوع |
+
+الـ hooks بتشارك **المنطق** بين الـ components، مش الـ state.`,
           lines: [
             "hook عام لأي نوع، و delay افتراضي 400ms.",
             "القيمة المتأخرة.",
@@ -428,6 +1100,102 @@ function SearchPage() {
             when: "تفضيلات المستخدم، ومسودات، وآخر اختيار. مش للبيانات الحساسة.",
             mistakes: R`توكن الدخول في localStorage: أي XSS يقراه، والأأمن httpOnly cookie (تاب أمان الموقع). و [[JSON.parse]] من غير try فالصفحة تقع لو القيمة بايظة. وتخزين بيانات كبيرة (localStorage بيوقف الـ main thread وهو بيكتب). والـ updater bug اللي فوق.`
           },
+          teach: R`## الفكرة: [[useState]] بيقرا ويكتب في localStorage
+
+hook شكله من برا زي [[useState]] بالظبط ([[[value, setValue]]])، بس القيمة الأولى جاية من localStorage لو موجودة، وكل تغيير بيتكتب فيه. فالقيمة بتفضل بعد الـ refresh وبعد ما تقفل المتصفح. اتشغّل في Vite 8.3 + React 19.3 في Chrome headless، والضغط والـ refresh بـ Playwright.
+
+---
+
+## ١. التعريف
+
+~~~text useLocalStorage.ts
+export function useLocalStorage<T>(key: string, initial: T) {
+~~~
+
+- [[<T>]]: generic، نوع القيمة بيتحدد من الاستخدام: [[useLocalStorage('count', 0)]] يبقى [[T]] هو [[number]].
+- [[key]]: اسم الخانة في localStorage. [[initial]]: القيمة لو مفيش حاجة متخزنة.
+
+## ٢. القراية الأولى (lazy)
+
+~~~text useLocalStorage.ts
+const [value, setValue] = useState<T>(() => {
+  try {
+    const raw = localStorage.getItem(key)
+    return raw !== null ? (JSON.parse(raw) as T) : initial
+  } catch {
+    return initial
+  }
+})
+~~~
+
+- [[useState(() => ...)]]: لما تدّي [[useState]] **دالة** بدل قيمة، React بتناديها مرة واحدة بس في أول render (lazy initializer). لو كتبت [[useState(localStorage.getItem(key))]] كانت القراية هتحصل مع كل render وتترمي.
+- [[localStorage.getItem(key)]]: بيرجّع النص المتخزن، أو [[null]] لو المفتاح مش موجود.
+- [[raw !== null ? ... : initial]]: موجود؟ حوّله. مش موجود؟ القيمة الافتراضية.
+- [[JSON.parse(raw)]]: localStorage بيخزّن **نصوص** بس، فالرقم [[3]] متخزن [["3"]]، والـ object متخزن JSON. [[JSON.parse]] بيرجّعه لأصله.
+- [[as T]]: [[JSON.parse]] بيرجّع [[any]]، والـ [[as]] بيقول لـ TypeScript يعامله كـ [[T]]. (مفيش تحقق حقيقي: لو حد كتب نوع تاني في التخزين، هيعدّي.)
+- [[try { ... } catch { ... }]]: لو [[JSON.parse]] رمى error (النص مش JSON سليم)، أو المتصفح قافل التخزين، نرجع للافتراضي بدل ما الصفحة تقع. [[catch]] من غير [[(e)]] مسموحة لو مش محتاج الـ error.
+
+## ٣. الكتابة في effect
+
+~~~text useLocalStorage.ts
+useEffect(() => {
+  try { localStorage.setItem(key, JSON.stringify(value)) } catch { /* مليان أو مقفول */ }
+}, [key, value])
+~~~
+
+- [[JSON.stringify(value)]]: القيمة لنص JSON.
+- [[localStorage.setItem]]: ممكن يرمي لو التخزين مليان (حوالي 5MB لكل موقع)، فبرضه جوه try.
+- [[[key, value]]]: اكتب كل ما القيمة أو المفتاح يتغيروا.
+
+ليه في effect ومش جوه دالة set بتاعتنا؟ عشان [[setValue]] اللي بنرجّعها هي بتاعة React نفسها، فبتقبل updater ([[c => c + 1]]) وبتتجمع صح. والـ effect بيكتب القيمة **النهائية** بعد الـ render.
+
+## ٤. الرجوع
+
+~~~text useLocalStorage.ts
+return [value, setValue] as const
+~~~
+
+[[as const]] بيخلي TypeScript يفهم الـ array دي tuple ثابت: أول عنصر [[T]] وتاني عنصر دالة set. من غيرها النوع هيبقى array كل عنصر فيها «[[T]] أو دالة»، و [[count + 1]] مش هيعدّي.
+
+---
+
+## ٥. اللي حصل
+
+[[ClickCounter]] من الـ solCode، وزودنا زرار [[+2]] بينادي [[setCount(c => c + 1)]] مرتين في نفس الضغطة. وكل خطوة بنطبع الزرار وقيمة [[localStorage.count]]:
+
+~~~text الناتج (Chrome)
+fresh                      button=0  localStorage.count="0"
+after 3 clicks             button=3  localStorage.count="3"
+after refresh              button=3  localStorage.count="3"
+after +2                   button=5  localStorage.count="5"
+set to bad json            button=5  localStorage.count="{bad json"
+after refresh              button=0  localStorage.count="0"
+~~~
+
+- **fresh**: التخزين فاضي، فالقيمة [[0]]، والـ effect كتب [["0"]] على طول.
+- **after refresh**: الـ lazy initializer قرا [["3"]] و [[JSON.parse]] رجّعه [[3]].
+- **after +2**: الزيادتين اتحسبوا (3 لـ 5)، لأن الـ updaters بتتجمع في طابور React، والـ effect كتب النتيجة النهائية مرة.
+- **bad json**: كتبنا [[{bad json]] بإيدنا. بعد الـ refresh، [[JSON.parse]] رمى:
+
+~~~text Chrome
+SyntaxError: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+~~~
+
+الـ [[catch]] مسكه ورجّع [[0]]، والـ effect كتب [["0"]] فوق القيمة البايظة، فالتخزين اتصلّح لوحده والصفحة موقعتش.
+
+---
+
+## الخلاصة
+
+| الحتة | ليه |
+|---|---|
+| [[useState(() => ...)]] | يقرا التخزين مرة واحدة بس |
+| [[JSON.parse]] / [[JSON.stringify]] | localStorage نصوص بس |
+| [[try/catch]] في الاتنين | JSON بايظ، أو تخزين مليان أو مقفول |
+| الكتابة في [[useEffect]] | الـ updaters تشتغل صح، والقيمة النهائية هي اللي تتكتب |
+| [[as const]] | النوع يبقى tuple زي [[useState]] |
+
+مش للبيانات الحساسة (توكنات الدخول): أي XSS يقدر يقرا localStorage.`,
           lines: [
             "hook عام، بياخد المفتاح والقيمة الافتراضية.",
             "القيمة الأولى بدالة، فبتتقري مرة واحدة بس.",
@@ -446,7 +1214,7 @@ function SearchPage() {
           ],
           sol: R`بعد refresh الرقم فاضل زي ما سبته، وفي Local Storage هتلاقي key [[count]] قيمته الرقم كنص JSON. بعد ما تغيرها لـ [[{bad json]] وتعمل refresh، [[JSON.parse]] بيرمي error، والـ catch بيرجّع القيمة الأولى ([[0]])، والـ effect بيكتب [[0]] فوق القيمة البايظة، فالتخزين اتصلّح لوحده.
 
-لو الصفحة وقعت بـ «SyntaxError: Unexpected token»، الـ try/catch مش حوالين الـ parse. ولو الرقم رجع صفر مع كل refresh من غير ما تبوّظ حاجة، غالبًا بتقرا في effect بعد الرسم بدل الـ lazy initializer، أو الـ key اتغير.`,
+لو الصفحة وقعت بـ [[SyntaxError: Expected property name or '}' in JSON at position 1]] (رسالة Chrome، وفي متصفحات تانية «Unexpected token»)، الـ try/catch مش حوالين الـ parse. ولو الرقم رجع صفر مع كل refresh من غير ما تبوّظ حاجة، غالبًا بتقرا في effect بعد الرسم بدل الـ lazy initializer، أو الـ key اتغير.`,
           solCode: R`function ClickCounter() {
   const [count, setCount] = useLocalStorage('count', 0)
   return <button onClick={() => setCount(c => c + 1)}>{count}</button>
@@ -494,6 +1262,124 @@ function SearchPage() {
             when: "فورم بيتقري مرة واحدة: تسجيل دخول، وتواصل، وإعدادات بتتحفظ بزرار. ورفع ملفات ([[<input type=\"file\">]] دايمًا uncontrolled).",
             mistakes: R`[[value]] و [[defaultValue]] على نفس الخانة. وتنسى [[name]] فالقيمة متوصلش. واستخدام [[e.currentTarget]] بعد await. والاعتماد على validation المتصفح بس: السيرفر لازم يتحقق تاني.`
           },
+          teach: R`## الفكرة: المتصفح يمسك القيم، وانت تقراها مرة واحدة
+
+في الـ controlled input القيمة في state وكل حرف بيعمل render. هنا العكس: الخانات **uncontrolled**، يعني القيمة عايشة في الـ DOM والمتصفح هو اللي بيمسكها، وانت بتلم الفورم كله مرة واحدة وقت الإرسال بـ [[FormData]]. اتشغّل في Vite 8.3 + React 19.3 في Chrome headless، والكتابة والضغط بـ Playwright.
+
+---
+
+## ١. الـ component ونوع [[onSend]]
+
+~~~text ContactForm.tsx
+function ContactForm({ onSend }: { onSend: (data: Record<string, string>) => Promise<void> }) {
+~~~
+
+- [[onSend]]: دالة الأب هي اللي بتبعت فعلًا (fetch مثلًا)، والفورم مالوش دعوة.
+- [[Record<string, string>]]: نوع TypeScript لـ object مفاتيحه نصوص وقيمه نصوص، زي [[{ email: '...', message: '...' }]].
+- [[Promise<void>]]: الدالة async، بترجّع promise مفيهاش قيمة. ده اللي بيخلينا نعمل [[await]] ونستنى الإرسال يخلص.
+
+## ٢. الـ handler
+
+~~~text ContactForm.tsx
+async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  e.preventDefault()
+  const form = e.currentTarget
+  await onSend(Object.fromEntries(new FormData(form)) as Record<string, string>)
+  form.reset()
+}
+~~~
+
+### [[e: FormEvent<HTMLFormElement>]]
+
+نوع حدث الإرسال في React، و [[<HTMLFormElement>]] بيقول إن العنصر اللي عليه الحدث فورم، فـ [[e.currentTarget]] نوعه [[HTMLFormElement]].
+
+### [[e.preventDefault()]]
+
+الفورم في المتصفح لما يتبعت بيعمل reload للصفحة (أو يروح لـ [[action]] بتاعه). السطر ده بيمنع ده، عشان احنا اللي هنبعت بـ JavaScript.
+
+### [[const form = e.currentTarget]]
+
+[[currentTarget]] هو العنصر اللي الـ handler متسجّل عليه (الفورم). بنحفظه في متغير **قبل** الـ [[await]]، لأن [[currentTarget]] بيرجع [[null]] أول ما الجزء المتزامن من الـ handler يخلص. أي كود بعد [[await]] بيشتغل بعدين، برا الحدث.
+
+### [[Object.fromEntries(new FormData(form))]]، من جوه لبرة
+
+1. [[new FormData(form)]]: بيلف على كل خانة في الفورم **ليها [[name]]** وياخد قيمتها الحالية من الـ DOM. النتيجة أزواج [[name, value]]: [[email]] و [[message]].
+2. [[Object.fromEntries(...)]]: بيحوّل الأزواج دي لـ object عادي: [[{ email: '...', message: '...' }]].
+3. [[as Record<string, string>]]: الـ FormData ممكن تحتوي ملفات ([[File]])، فـ TypeScript بيقول القيم [[string | File]]. احنا عارفين إن مفيش ملفات هنا، فبنقوله يعتبرها نصوص.
+
+### [[await onSend(...)]] ثم [[form.reset()]]
+
+استنى الإرسال، وبعدين [[reset()]]: دالة المتصفح بترجّع كل خانة لقيمتها الأولى ([[defaultValue]]).
+
+## ٣. الـ JSX
+
+~~~text ContactForm.tsx
+<form onSubmit={handleSubmit}>
+  <input name="email" type="email" required defaultValue="you@example.com" />
+  <textarea name="message" required minLength={10} />
+  <button>Send</button>
+</form>
+~~~
+
+- [[onSubmit]] على الفورم مش [[onClick]] على الزرار: كده الإرسال بـ Enter كمان شغال.
+- [[name]]: الاسم اللي هيظهر في البيانات. من غيره الخانة مش هتتبعت.
+- [[type="email"]] و [[required]] و [[minLength={10}]]: validation المتصفح نفسه. لو مش متحقق، المتصفح بيمنع الإرسال ويعرض رسالة، و [[onSubmit]] مبيتناديش أصلًا.
+- [[defaultValue]]: قيمة أولى بس. مفيش [[value]] ولا [[onChange]]، فـ React مبتتحكمش في الخانة بعد كده.
+- [[<button>]] جوه فورم نوعه [[submit]] من غير ما تكتب.
+
+---
+
+## ٤. اللي حصل
+
+[[onSend]] بتطبع البيانات وتستنى 100ms. طبعنا [[currentTarget]] قبل الـ await وبعده:
+
+~~~text الـ Console (Chrome)
+>> Send empty message
+validity: Please fill out this field.
+>> Send "short"
+validity: Please lengthen this text to 10 characters or more (you are currently using 5 characters).
+>> Send valid
+[log] before await, currentTarget = FORM
+[log] sent {"email":"you@example.com","message":"Hello there, I need help"}
+[log] after await, currentTarget = null
+[log] reset done
+after: email=you@example.com message=""
+~~~
+
+- أول ضغطتين: المتصفح منع الإرسال ([[handleSubmit]] متنادتش، مفيش [[sent]])، و [[validity]] رسالة Chrome نفسها.
+- الإرسال السليم: البيانات وصلت object فيه الخانتين.
+- [[currentTarget]] كان [[FORM]] قبل الـ await، وبقى [[null]] بعده. عشان كده حفظناه.
+- بعد [[reset()]]: الإيميل رجع [[you@example.com]] (الـ defaultValue) مش فاضي، والرسالة فضيت.
+
+### [[e.currentTarget.reset()]] بعد الـ await
+
+~~~text الـ Console
+[pageerror] Cannot read properties of null (reading 'reset')
+~~~
+
+والفورم مفضيش. ده الـ [[TypeError]] اللي في التجربة.
+
+### من غير [[name]] على الـ textarea
+
+~~~text الـ Console
+[log] sent {"email":"you@example.com"}
+~~~
+
+الرسالة اتكتبت و [[required]] لسه شغال، بس [[FormData]] مبتلمّش غير اللي ليه [[name]].
+
+---
+
+## الخلاصة
+
+| الحتة | بتعمل إيه |
+|---|---|
+| [[defaultValue]] | قيمة أولى، والمتصفح يمسك الباقي |
+| [[name]] | المفتاح في البيانات، ومن غيره الخانة مش بتتبعت |
+| [[e.preventDefault()]] | يمنع الـ reload |
+| [[const form = e.currentTarget]] | قبل أي [[await]]، لأنه بيبقى [[null]] بعدها |
+| [[Object.fromEntries(new FormData(form))]] | الفورم كله في object واحد |
+| [[form.reset()]] | يرجّع الخانات للـ defaultValue |
+| [[required]] و [[minLength]] و [[type="email"]] | validation المتصفح، والسيرفر لازم يتحقق تاني |`,
           lines: [
             "فورم بياخد دالة إرسال async من الأب.",
             "handler الإرسال async.",
@@ -563,6 +1449,146 @@ export function LoginForm({ onLogin }: { onLogin: (data: LoginInput) => Promise<
             when: "أي فورم فيه أكتر من ٣ خانات أو validation حقيقي: تسجيل، ودفع، وإعدادات، وفورم admin لمنتج.",
             mistakes: R`الـ validation في الفرونت بس، والـ API بيقبل أي حاجة. ونسيان [[noValidate]] فرسايل المتصفح تطلع قبل رسايلك. و [[type="number"]] من غير [[z.coerce.number()]] أو [[valueAsNumber]]، فالقيمة بتوصل string والـ schema ترفض. و onSubmit مش بترجع promise (نسيت await) فـ isSubmitting بترجع false على طول والمستخدم يدوس مرتين. و [[setError]] على اسم خانة مش موجود في الفورم، فالرسالة متظهرش في أي حتة. وتقول «إيميل مش موجود» أو «باسورد غلط» كل واحدة لوحدها في صفحة الدخول: كده بتقول للمهاجم أنهي إيميلات متسجلة، فرسالة واحدة للاتنين.`
           },
+          teach: R`## الفكرة: zod يوصف البيانات، و RHF يدير الفورم
+
+ده فورم دخول فيه ٣ أنواع رسايل: غلط في الشكل (zod بيقوله قبل أي طلب)، وغلط من السيرفر في خانة (باسورد غلط)، وغلط عام من السيرفر. والخانات uncontrolled، فمفيش render مع كل حرف. اتشغّل في Vite 8.3 + React 19.3 + react-hook-form 7.89 + zod 4.6 + @hookform/resolvers 5.9، في Chrome headless والكتابة بـ Playwright.
+
+---
+
+## ١. الـ imports
+
+~~~text LoginForm.tsx
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+~~~
+
+| الـ import | من فين | دوره |
+|---|---|---|
+| [[useForm]] | [[react-hook-form]] (RHF) | الـ hook اللي بيدير الفورم كله |
+| [[zodResolver]] | [[@hookform/resolvers/zod]] | الجسر: بيخلي RHF يستخدم schema بتاعة zod في الـ validation |
+| [[z]] | [[zod]] | كل أدوات وصف البيانات |
+
+التلاتة بيتسطبوا بـ [[npm i react-hook-form zod @hookform/resolvers]].
+
+## ٢. الـ schema والـ type
+
+~~~text LoginForm.tsx
+const schema = z.object({ email: z.email('Enter a valid email'), password: z.string().min(8, 'At least 8 characters') })
+type LoginInput = z.infer<typeof schema>
+~~~
+
+- [[z.object({...})]]: «object فيه الخانات دي».
+- [[z.email('...')]]: نص لازم يبقى إيميل صحيح، والنص بين القوسين رسالة الخطأ. (في Zod 4 بقت كده، والقديمة [[z.string().email()]] لسه شغالة بس deprecated.)
+- [[z.string().min(8, '...')]]: نص، طوله ٨ على الأقل.
+- [[typeof schema]]: نوع المتغير [[schema]] في TypeScript. و [[z.infer<...>]] بيطلّع منه نوع البيانات: [[{ email: string; password: string }]]. كده الـ type والقواعد مكتوبين مرة واحدة.
+
+## ٣. [[useForm]]
+
+~~~text LoginForm.tsx
+const { register, handleSubmit, setError, formState: { errors, isSubmitting } } = useForm<LoginInput>({ resolver: zodResolver(schema) })
+~~~
+
+- [[useForm<LoginInput>]]: الفورم ده شكل بياناته [[LoginInput]]، فـ TypeScript هيتأكد من أسماء الخانات.
+- [[resolver: zodResolver(schema)]]: الـ validation من الـ schema.
+- اللي بناخده (destructuring):
+
+| الاسم | بيعمل إيه |
+|---|---|
+| [[register]] | بيوصّل خانة بالفورم |
+| [[handleSubmit]] | بيلف دالة الإرسال بتاعتنا |
+| [[setError]] | يحط خطأ بإيدنا (من السيرفر) |
+| [[formState: { errors, isSubmitting }]] | [[errors]] رسايل كل خانة، و [[isSubmitting]] الطلب شغال ولا لأ |
+
+[[formState: { errors, isSubmitting }]] ده destructuring متداخل: خد [[formState]] ومنه خد الاتنين دول.
+
+## ٤. [[onSubmit]] وأخطاء السيرفر
+
+~~~text LoginForm.tsx
+async function onSubmit(data: LoginInput) {
+  const res = await onLogin(data)
+  if (res.status === 401) setError('password', { message: 'Wrong email or password' })
+  else if (!res.ok) setError('root.server', { message: 'Server error, try again' })
+}
+~~~
+
+- الدالة دي مش بتتنادى غير لو zod قال البيانات سليمة.
+- [[await onLogin(data)]]: الأب بيبعت ويرجّع [[Response]] (نفس اللي [[fetch]] بيرجّعه).
+- [[res.status === 401]]: 401 = Unauthorized، يعني البيانات غلط. [[setError('password', ...)]] بيحط الرسالة على خانة الباسورد، كأنها جاية من zod.
+- [[!res.ok]]: [[ok]] بـ [[true]] لو الـ status من 200 لـ 299. أي فشل تاني (500 مثلًا) يروح [[root.server]]: خطأ مش تبع خانة. [[root]] مكان RHF المخصص للأخطاء العامة، و [[server]] اسم احنا اخترناه.
+
+## ٥. الـ JSX
+
+~~~text LoginForm.tsx
+<form onSubmit={handleSubmit(onSubmit)} noValidate>
+  <input type="email" aria-label="Email" {...register('email')} />
+  <input type="password" aria-label="Password" {...register('password')} />
+  {(errors.email || errors.password) && <p role="alert">{errors.email?.message ?? errors.password?.message}</p>}
+  {errors.root?.server && <p role="alert">{errors.root.server.message}</p>}
+  <button disabled={isSubmitting}>Log in</button>
+</form>
+~~~
+
+- [[handleSubmit(onSubmit)]]: بيرجّع handler بيعمل [[preventDefault]]، ويشغّل zod، ولو فيه أخطاء يحطها في [[errors]] ويعمل focus على أول خانة غلط، ولو سليمة ينادي [[onSubmit]].
+- [[noValidate]]: يقفل رسايل المتصفح الجاهزة (اللي شفناها في الدرس اللي فات) عشان رسايلنا هي اللي تظهر.
+- [[{...register('email')}]]: [[register]] بيرجّع object فيه [[name]] و [[onChange]] و [[onBlur]] و [[ref]]، والـ [[...]] (spread) بيحطهم كلهم props على الخانة. RHF بيقرا القيمة من الـ DOM عن طريق الـ [[ref]].
+- [[A && <p>]]: لو [[A]] بـ [[true]] ارسم الـ [[<p>]]، غير كده ولا حاجة.
+- [[errors.email?.message ?? errors.password?.message]]: [[?.]] لو [[errors.email]] مش موجود رجّع [[undefined]] بدل ما تقع. و [[??]] لو اللي على الشمال [[undefined]] أو [[null]] خد اللي على اليمين. يعني رسالة الإيميل، ولو مفيش فرسالة الباسورد.
+- [[role="alert"]]: قارئ الشاشة بيقرا الرسالة أول ما تظهر.
+- [[disabled={isSubmitting}]]: الزرار مقفول طول ما [[onSubmit]] شغالة، فمحدش يدوس مرتين.
+
+---
+
+## ٦. اللي حصل
+
+[[onLogin]] بتطبع إنها اتنادت وترد بعد ثانيتين بـ 401. وفي كل خطوة طبعنا الرسايل وحالة الزرار والخانة اللي عليها الـ focus:
+
+~~~text الناتج (Chrome، 401)
+bad email + 3-char pw          alerts=["Enter a valid email"] disabled=false focus=Email
+fixed email                    alerts=["At least 8 characters"] disabled=false focus=Email
+fixed password                 alerts=[] disabled=false focus=Password
+0.3s after submit              alerts=[] disabled=true focus=null
+2.3s after submit              alerts=["Wrong email or password"] disabled=false focus=null
+typed one more char            alerts=[] disabled=false focus=Password
+~~~
+
+~~~text الـ Console
+[log] onLogin called {"email":"sara@example.com","password":"secret123"}
+~~~
+
+| الخطوة | ليه |
+|---|---|
+| إيميل [[sara]] وباسورد ٣ حروف | zod لقى الاتنين غلط، والـ JSX بيعرض أول واحدة. الـ focus راح لأول خانة غلط. و [[onLogin]] متنادتش |
+| صلّحنا الإيميل | بعد أول submit، RHF بيعيد الـ validation مع كل تغيير، فرسالة الإيميل راحت وظهرت رسالة الباسورد |
+| صلّحنا الباسورد | مفيش أخطاء |
+| بعد الإرسال بـ 0.3s | [[isSubmitting]] بـ [[true]]، الزرار مقفول |
+| بعد 2.3s | الـ 401 وصل، و [[setError]] حط الرسالة مكان رسايل zod بالظبط |
+| كتبنا حرف | الخانة اتعاد الـ validation بتاعها وطلعت سليمة، فخطأ السيرفر اتمسح لوحده |
+
+(الـ console بتاع Chrome طبّع كمان نصيحة إن خانة الباسورد يبقى عليها [[autocomplete="current-password"]]، ودي تحسين مش خطأ.)
+
+### بـ 500
+
+~~~text الناتج (Chrome، 500)
+2.3s after submit              alerts=["Server error, try again"] disabled=false focus=null
+typed one more char            alerts=["Server error, try again"] disabled=false focus=Password
+~~~
+
+خطأ الـ [[root.server]] مش تبع خانة، فالكتابة مش بتمسحه. بيتمسح مع الـ submit الجاي.
+
+---
+
+## الخلاصة
+
+| الحتة | دورها |
+|---|---|
+| [[z.object]] + [[z.infer]] | القواعد والـ type من مكان واحد |
+| [[zodResolver(schema)]] | RHF يستخدم zod |
+| [[{...register('x')}]] | يوصّل الخانة (uncontrolled عن طريق ref) |
+| [[handleSubmit(onSubmit)]] | validation الأول، و onSubmit بس لو سليم |
+| [[setError('field')]] | خطأ سيرفر تحت الخانة، بيتمسح لما المستخدم يعدّلها |
+| [[setError('root.server')]] | خطأ عام، بيتمسح مع الـ submit الجاي |
+| [[isSubmitting]] | true طول ما الـ promise بتاعة onSubmit شغالة، فلازم [[await]] |`,
           lines: [
             "hook الفورم.",
             "الجسر بين RHF و zod.",
@@ -638,7 +1664,7 @@ export function InvoiceForm({ onSave }: { onSave: (data: Invoice) => void }) {
     </form>
   )
 }`,
-          try: R`اعمل [[DatePicker]] بسيط: [[<input type="date">]] بياخد [[value?: Date]] ويرجّع [[new Date(e.target.value)]] في onChange. شغّل الفورم: امسح السطر الوحيد ودوس Save واقرا الرسايل. بعدين ضيف سطرين، واكتب في التاني [[Pen]] و [[3]]، واطبع البيانات في onSave. وأخيرًا امسح السطر الأول من سطرين مكتوبين، واتأكد إن اللي فضل ظاهر هو نفسه اللي بيتبعت.`,
+          try: R`اعمل [[DatePicker]] بسيط: [[<input type="date">]] بياخد [[value?: Date]] ويرجّع في onChange [[new Date(e.target.value)]] لو فيه قيمة و [[undefined]] لو الحقل فاضي (من غيرها مسح التاريخ بيوقّع الصفحة). شغّل الفورم: امسح السطر الوحيد ودوس Save واقرا الرسايل. بعدين ضيف سطرين، واكتب في التاني [[Pen]] و [[3]]، واطبع البيانات في onSave. وأخيرًا امسح السطر الأول من سطرين مكتوبين، واتأكد إن اللي فضل ظاهر هو نفسه اللي بيتبعت.`,
           flag: "script",
           deep: {
             why: R`الفواتير، والطلبات، والـ variants، وأسئلة الاستبيان، كلها lists جوه فورم، والمستخدم بيضيف ويمسح ويرتّب. لو عملتها بـ [[useState]] لـ array بإيدك، هتكتب منطق الإضافة والمسح والـ ids والأخطاء لكل سطر، وهتتلخبط مع RHF. وخانات المكتبات (date pickers و selects و color pickers) مبتشتغلش مع [[register]] لأنها مش [[<input>]] حقيقي.`,
@@ -654,6 +1680,175 @@ export function InvoiceForm({ onSave }: { onSave: (data: Invoice) => void }) {
             when: R`أي فورم فيه عدد متغير من العناصر (أصناف، ومرفقات، وروابط سوشيال، وأوقات عمل)، وأي خانة من مكتبة UI (shadcn Select و DatePicker و Combobox، و react-select، ومحررات النصوص).`,
             mistakes: R`[[key={index}]] بدل [[field.id]]: أي state جوه السطر (مفتوح، أو focus، أو state بتاعة picker) بتتزحلق للسطر الغلط لما تمسح من النص. و [[register]] على component من مكتبة ملوش ref ولا onChange عادي: القيمة بتفضل undefined. وتنسى [[defaultValues]] للـ array فأول render مفيش أسطر. و [[type="number"]] من غير [[valueAsNumber]]. وتستخدم [[watch()]] للفورم كله عشان تحسب الإجمالي، فكل حرف يعيد رسم كل حاجة: [[useWatch({ control, name: 'lines' })]] في component صغير للإجمالي بس أحسن.`
           },
+          teach: R`## الفكرة: list جوه الفورم، وخانة مش input عادي
+
+فاتورة: اسم عميل، وتاريخ استحقاق من «date picker»، وعدد أسطر بيزيد ويقل. [[useFieldArray]] بيدير الأسطر، و [[Controller]] بيوصّل الـ date picker بالفورم. اتشغّل في Vite 8.3 + React 19.3 + react-hook-form 7.89 + zod 4.6 في Chrome headless، والكتابة بـ Playwright، و [[DatePicker]] هو اللي في الـ solCode.
+
+---
+
+## ١. الـ schema
+
+~~~text InvoiceForm.tsx
+const schema = z.object({
+  customer: z.string().min(1, 'Required'),
+  dueDate: z.date({ error: 'Pick a date' }),
+  lines: z.array(z.object({ item: z.string().min(1, 'Required'), qty: z.number().int().positive() })).min(1, 'Add at least one line'),
+})
+type Invoice = z.infer<typeof schema>
+~~~
+
+- [[z.string().min(1, 'Required')]]: نص مش فاضي.
+- [[z.date({ error: 'Pick a date' })]]: لازم **object من نوع Date** (مش نص زي [['2026-11-01']]). [[error]] في Zod 4 رسالة أي فشل هنا: فاضي ([[undefined]]) أو Date بايظ.
+- [[z.array(z.object({...}))]]: array كل عنصر فيها object بالشكل ده. جوه: [[item]] نص مش فاضي، و [[qty]] رقم [[int()]] (صحيح) و [[positive()]] (أكبر من صفر).
+- [[.min(1, '...')]] على الـ array نفسها: عنصر واحد على الأقل.
+
+جرّبنا الـ schema لوحدها بـ [[safeParse]] على بيانات غلط، ودي الرسايل اللي طلعت (كل واحدة بالـ path بتاعها):
+
+~~~text node
+dueDate: Pick a date
+lines.0.item: Required
+lines.0.qty: Too small: expected number to be >0
+lines.1.qty: Invalid input: expected number, received NaN
+~~~
+
+الـ path [[lines.0.item]] هو نفسه الاسم اللي هنسجّل بيه الخانة تحت.
+
+## ٢. [[useForm]] و [[defaultValues]]
+
+~~~text InvoiceForm.tsx
+const { register, control, handleSubmit, formState: { errors } } = useForm<Invoice>({
+  resolver: zodResolver(schema),
+  defaultValues: { customer: '', lines: [{ item: '', qty: 1 }] },
+})
+~~~
+
+- [[control]]: الجديد هنا. object داخلي بيربط الفورم بأي hook أو component تاني من RHF ([[useFieldArray]] و [[Controller]]).
+- [[defaultValues]]: القيم الأولى. من غيرها [[lines]] هتبقى [[undefined]] ومفيش ولا سطر يترسم. و [[dueDate]] مش موجود فيها، فبيبدأ [[undefined]].
+
+## ٣. [[useFieldArray]]
+
+~~~text InvoiceForm.tsx
+const { fields, append, remove } = useFieldArray({ control, name: 'lines' })
+~~~
+
+- [[name: 'lines']]: الـ array اللي هيديرها.
+- [[fields]]: نفس عناصر [[lines]]، ومع كل واحد [[id]] بيعمله RHF ومبيتغيرش طول عمر السطر.
+- [[append(obj)]]: يضيف سطر في الآخر. [[remove(i)]]: يمسح السطر رقم [[i]]. (وفيه كمان [[move]] و [[insert]] و [[swap]].)
+
+## ٤. الخانات العادية
+
+~~~text InvoiceForm.tsx
+<input aria-label="Customer" {...register('customer')} />
+~~~
+
+نفس الدرس اللي فات.
+
+## ٥. [[Controller]] للـ date picker
+
+~~~text InvoiceForm.tsx
+<Controller control={control} name="dueDate" render={({ field }) => <DatePicker value={field.value} onChange={field.onChange} onBlur={field.onBlur} />} />
+{errors.dueDate && <p role="alert">{errors.dueDate.message}</p>}
+~~~
+
+- [[register]] بيفترض [[<input>]] حقيقي: بيحط [[ref]] ويقرا القيمة من الـ DOM، و [[onChange]] بياخد event. الـ date picker بتاع أي مكتبة بيرجّع **Date** مش event، فده مش هينفع.
+- [[Controller]] بيمسك القيمة هو، ويدّيك في [[render]] object اسمه [[field]]:
+
+| الحاجة | معناها |
+|---|---|
+| [[field.value]] | القيمة الحالية ([[Date]] أو [[undefined]]) |
+| [[field.onChange(v)]] | ادّيله القيمة الجديدة نفسها (مش event) |
+| [[field.onBlur()]] | الخانة اتسابت (عشان [[mode: 'onBlur']] و [[touched]]) |
+
+- [[render={({ field }) => ...}]]: دالة بترجّع JSX، و [[({ field })]] destructuring للـ object اللي Controller بيبعته.
+
+### الـ [[DatePicker]] من الـ solCode
+
+~~~text DatePicker.tsx
+value={value ? value.toISOString().slice(0, 10) : ''}
+onChange={e => onChange(e.target.value ? new Date(e.target.value) : undefined)}
+~~~
+
+- [[<input type="date">]] قيمته نص [[YYYY-MM-DD]]. [[toISOString()]] بيرجّع [['2026-11-01T00:00:00.000Z']]، و [[.slice(0, 10)]] أول ١٠ حروف.
+- [[new Date('2026-11-01')]]: نص لـ Date. ولو الخانة اتمسحت ([[e.target.value]] فاضي) نبعت [[undefined]]. [[new Date('')]] كان هيعمل Invalid Date، و [[toISOString()]] عليه بيرمي، وده اللي حصل لما جرّبنا النسخة القديمة ومسحنا التاريخ:
+
+~~~text الـ Console
+[pageerror] Invalid time value
+[warning] An error occurred in the <DatePicker> component.
+~~~
+
+بالنسخة الحالية: المسح يرجّع [[undefined]]، و Save يعرض [["Pick a date"]].
+
+## ٦. الأسطر
+
+~~~text InvoiceForm.tsx
+{fields.map((field, index) => (
+  <div key={field.id}>
+    <input aria-label={$__btItem $__{index + 1}$__bt} {...register($__btlines.$__{index}.item$__bt)} />
+    <input aria-label={$__btQty $__{index + 1}$__bt} type="number" {...register($__btlines.$__{index}.qty$__bt, { valueAsNumber: true })} />
+    <button type="button" onClick={() => remove(index)}>Remove</button>
+  </div>
+))}
+~~~
+
+- [[key={field.id}]]: الـ id الثابت، مش [[index]]. لما تمسح السطر الأول، التاني يبقى index صفر، بس الـ id بتاعه هو هو، فـ React عارفة إن ده نفس السطر.
+- النص بين علامتين backtick ده template literal: [[$__{index}]] جواه بيتبدل بقيمة [[index]]. فالسطر الأول اسمه [[lines.0.item]] والتاني [[lines.1.item]]: نقطة ورقم يعني «العنصر ده في الـ array».
+- [[{ valueAsNumber: true }]]: الخانة [[type="number"]] قيمتها في الـ DOM **نص** ([['3']]). الـ option ده بيخلي RHF ياخدها رقم ([[3]]) قبل zod، وإلا [[z.number()]] هيرفض.
+- [[type="button"]] على Remove: من غيره الزرار جوه فورم يبقى submit، وكل مسح يبعت الفورم.
+
+## ٧. خطأ الـ array و Add و Save
+
+~~~text InvoiceForm.tsx
+{errors.lines?.root && <p role="alert">{errors.lines.root.message}</p>}
+<button type="button" onClick={() => append({ item: '', qty: 1 })}>Add line</button>
+<button>Save</button>
+~~~
+
+- [[errors.lines?.root]]: الخطأ اللي على الـ array **كلها** (القاعدة [[min(1)]]). وأخطاء سطر بعينه في [[errors.lines?.[0]?.item]]، والمثال مش بيعرضها.
+- [[append(...)]] لازم ياخد سطر كامل بالقيم الأولى.
+
+---
+
+## ٨. اللي حصل
+
+[[onSave]] بتطبع البيانات، وطبعنا أسماء وقيم كل الـ inputs والرسايل في كل خطوة:
+
+~~~text الناتج (Chrome)
+initial inputs           ["customer=","=","lines.0.item=","lines.0.qty=1"]
+removed line, Save       ["Pick a date","Add at least one line"] focus=Customer
+two lines                ["customer=Acme","=2026-11-01","lines.0.item=Mug","lines.0.qty=1","lines.1.item=Pen","lines.1.qty=3"]
+removed first            ["customer=Acme","=2026-11-01","lines.0.item=Pen","lines.0.qty=3"]
+item empty, qty 0        [] focus=Item 1
+~~~
+
+~~~text الـ Console
+>> Save 2 lines
+[log] saved {"customer":"Acme","dueDate":"2026-11-01T00:00:00.000Z","lines":[{"item":"Mug","qty":1},{"item":"Pen","qty":3}]} dueDate instanceof Date: true
+>> Save after remove
+[log] saved {"customer":"Acme","dueDate":"2026-11-01T00:00:00.000Z","lines":[{"item":"Pen","qty":3}]} dueDate instanceof Date: true
+~~~
+
+| الخطوة | اللي حصل وليه |
+|---|---|
+| initial | خانة التاريخ ملهاش [[name]] (مش متسجلة بـ register)، والسطر الأول [[lines.0]] من الـ defaultValues |
+| مسحنا السطر و Save | رسالة التاريخ ورسالة الـ array. الـ customer فاضي برضه بس مفيش سطر بيعرض رسالته، والـ focus راح عليه لأنه أول خانة غلط |
+| سطرين | الأسماء بالـ index: [[lines.0]] و [[lines.1]] |
+| Save | [[qty]] رقم مش نص، و [[dueDate]] من نوع Date ([[instanceof Date]] بـ true). وفي الـ JSON بيظهر نص لأن [[JSON.stringify]] بيحوّل الـ Date |
+| مسحنا Mug | Pen بقى [[lines.0]] وكميته [[3]] اتنقلت معاه، والـ Save بعت سطر واحد |
+| item فاضي و qty صفر | ولا رسالة ظاهرة (المثال مش بيعرض أخطاء الأسطر)، بس الـ Save اتمنع والـ focus راح على [[Item 1]] |
+
+---
+
+## الخلاصة
+
+| الحتة | بتعمل إيه |
+|---|---|
+| [[control]] | بيربط useFieldArray و Controller بالفورم |
+| [[useFieldArray({ control, name })]] | [[fields]] للرسم، و [[append]] و [[remove]] للتعديل |
+| [[key={field.id}]] | id ثابت للسطر، مش الـ index |
+| [[lines.$__{index}.item]] | اسم خانة جوه سطر |
+| [[valueAsNumber: true]] | نص الـ number input يبقى رقم قبل zod |
+| [[Controller]] + [[field]] | لأي خانة مبتقبلش ref أو بترجّع قيمة مش event |
+| [[errors.lines.root]] | خطأ الـ array كلها، و [[errors.lines[i].x]] خطأ سطر |`,
           lines: [
             "useFieldArray للـ lists، و Controller للخانات الخاصة.",
             "الجسر مع zod.",
@@ -689,18 +1884,18 @@ export function InvoiceForm({ onSave }: { onSave: (data: Invoice) => void }) {
             "قفلة القوس.",
             "قفلة الـ component."
           ],
-          sol: R`لما تمسح السطر الوحيد وتدوس Save يظهر «Add at least one line» و «Pick a date» (والـ customer فاضي كمان). بعد ما تكمّل، onSave بتوصلها بيانات فيها سطرين [[{ item: 'Mug', qty: 1 }]] و [[{ item: 'Pen', qty: 3 }]]، والكمية رقم مش نص، و [[dueDate]] من نوع Date.
+          sol: R`لما تمسح السطر الوحيد وتدوس Save يظهر «Add at least one line» و «Pick a date» (والـ customer فاضي كمان، بس المثال مفيهوش سطر بيعرض رسالته، فهتلاقي الـ focus راح على خانته بس). بعد ما تكمّل، onSave بتوصلها بيانات فيها سطرين [[{ item: 'Mug', qty: 1 }]] و [[{ item: 'Pen', qty: 3 }]]، والكمية رقم مش نص، و [[dueDate]] من نوع Date.
 
-لما تمسح الأول من [[Mug]] و [[Pen]]، اللي يفضل ظاهر [[Pen]] واللي يتبعت سطر واحد [[{ item: 'Pen', qty: 1 }]]. ومعلومة: لو جرّبت [[key={index}]] في الفورم البسيط ده هتلاقي النتيجة نفسها، لأن RHF بيرجع يكتب القيم في الخانات بعد المسح. المشكلة بتظهر أول ما السطر يبقى component ليه state جوه (سطر مفتوح ولا مقفول، أو date picker ليه state داخلية، أو animation): الـ state دي بتتزحلق للسطر اللي بعده، زي درس key بالظبط. عشان كده الـ docs بتاعة RHF بتقول [[field.id]] دايمًا.
+لما تمسح الأول من [[Mug]] و [[Pen]]، اللي يفضل ظاهر [[Pen]] واللي يتبعت سطر واحد [[{ item: 'Pen', qty: 3 }]] (الكمية اتنقلت مع السطر). ومعلومة: لو جرّبت [[key={index}]] في الفورم البسيط ده هتلاقي النتيجة نفسها، لأن RHF بيرجع يكتب القيم في الخانات بعد المسح. المشكلة بتظهر أول ما السطر يبقى component ليه state جوه (سطر مفتوح ولا مقفول، أو date picker ليه state داخلية، أو animation): الـ state دي بتتزحلق للسطر اللي بعده، زي درس key بالظبط. عشان كده الـ docs بتاعة RHF بتقول [[field.id]] دايمًا.
 
 لو الكمية وصلت [[NaN]] أو zod قال «expected number»، ناقصك [[valueAsNumber]].`,
-          solCode: R`function DatePicker({ value, onChange, onBlur }: { value?: Date; onChange: (d: Date) => void; onBlur: () => void }) {
+          solCode: R`function DatePicker({ value, onChange, onBlur }: { value?: Date; onChange: (d?: Date) => void; onBlur: () => void }) {
   return (
     <input
       aria-label="Due date"
       type="date"
       value={value ? value.toISOString().slice(0, 10) : ''}
-      onChange={e => onChange(new Date(e.target.value))}
+      onChange={e => onChange(e.target.value ? new Date(e.target.value) : undefined)}
       onBlur={onBlur}
     />
   )
@@ -746,6 +1941,178 @@ async function onSubmit(data: SignupInput) {
             when: R`أي فورم ليه endpoint بتاعك: تسجيل، وطلب، وإعدادات. وأهم ما يكون في Next.js، لأن الـ Server Action والفورم في نفس المشروع، فمفيش عذر للتكرار.`,
             mistakes: R`validation في الفرونت بس، و API بيعمل [[db.user.create({ data: req.body })]]: أي حد يبعت [[role]] أو [[isVerified]]. والملف المشترك بيعمل import لـ Prisma أو [[process.env]] فيكسر build المتصفح أو يسرّب أسرار. والـ API بيرجّع رسالة نصية واحدة ([[Email taken]]) والفرونت مش عارف يحطها فين. و [[setError]] لأسماء مش موجودة في الفورم (السيرفر قال [[user_email]] والفورم [[email]]). وتعتمد إن أخطاء السيرفر دايمًا JSON: الـ proxy أو Nginx ممكن يرجّع HTML في 502.`
           },
+          teach: R`## الفكرة: نفس الـ schema في المتصفح وفي السيرفر
+
+المثال ٣ ملفات في صندوق واحد: الـ schema المشتركة، و route في Express بيتحقق بيها، و [[onSubmit]] في الفورم بيرجّع أخطاء السيرفر تحت خاناتها. اتشغّل كله: Express 5.2 بـ [[tsx]] على port 4797، والفورم في Vite 8.3 + React 19.3 + react-hook-form 7.89 + zod 4.6 (Vite بيعمل proxy لـ [[/api]] على الـ API)، والطلبات بـ curl وبـ Chrome headless.
+
+---
+
+## ١. الملف المشترك
+
+~~~text shared/schemas/signup.ts
+import { z } from 'zod'
+export const signupSchema = z.object({ email: z.email('Enter a valid email'), password: z.string().min(8, 'At least 8 characters') })
+export type SignupInput = z.infer<typeof signupSchema>
+~~~
+
+- نفس القواعد والرسايل اللي في درس react-hook-form، بس في ملف لوحده وعليه [[export]].
+- [[export type]]: النوع كمان بيتصدّر، فالفورم والـ API الاتنين يستخدموه.
+- الملف ده بيعمل import لـ zod بس. لو عمل import لـ Prisma أو [[process.env]]، الحاجات دي هتدخل الـ bundle بتاع المتصفح.
+
+## ٢. الـ route في السيرفر
+
+~~~text server/index.ts
+app.post('/api/signup', async (req, res) => {
+  const parsed = signupSchema.safeParse(req.body)
+  if (!parsed.success) return res.status(400).json({ fieldErrors: z.flattenError(parsed.error).fieldErrors })
+  if (await users.exists(parsed.data.email)) return res.status(409).json({ fieldErrors: { email: ['Email already registered'] } })
+  res.status(201).json(await users.create(parsed.data))
+})
+~~~
+
+### [[app.post(path, handler)]]
+
+Express: لما ييجي طلب [[POST]] على [[/api/signup]]، شغّل الدالة دي. [[req]] الطلب، و [[res]] الرد. و [[req.body]] بيبقى object لأن السيرفر فيه [[app.use(express.json())]] اللي بيحوّل الـ JSON.
+
+### [[signupSchema.safeParse(req.body)]]
+
+- [[parse]] بيرمي error لو البيانات غلط، و [[safeParse]] **مبيرميش**: بيرجّع [[{ success: true, data }]] أو [[{ success: false, error }]].
+- [[parsed.data]] بعد التنضيف: zod بيشيل أي key مش في الـ schema.
+
+### [[z.flattenError(parsed.error).fieldErrors]]
+
+الـ error بتاع zod فيه list مفصّلة من المشاكل. [[z.flattenError]] (Zod 4) بيحوّلها لـ [[{ formErrors: [], fieldErrors: { email: ['...'] } }]]: كل خانة ومعاها array رسايلها. بناخد [[fieldErrors]] ونرجّعه.
+
+### الـ status codes
+
+| الكود | معناه | هنا |
+|---|---|---|
+| 400 | Bad Request: البيانات نفسها غلط | zod رفض |
+| 409 | Conflict: البيانات سليمة بس بتتعارض مع حاجة موجودة | الإيميل متسجل، ودي قاعدة مينفعش تتعرف غير في السيرفر |
+| 201 | Created: اتعمل حاجة جديدة | المستخدم اتعمل |
+
+و [[return res.status(...).json(...)]]: الـ [[return]] بيوقف الدالة بعد الرد.
+
+في تجربتنا [[users]] object صغير في الذاكرة فيه [[taken@example.com]] من الأول، و [[create]] بيطبع اللي وصله.
+
+## ٣. الـ API بـ curl
+
+~~~bash
+curl -s -i -X POST http://localhost:4797/api/signup -H 'Content-Type: application/json' -d '{"email":"x","password":"1","role":"admin"}'
+~~~
+
+[[-X POST]] نوع الطلب، و [[-H]] header بيقول إن الـ body JSON، و [[-d]] الـ body، و [[-i]] بيطبع الـ status. اتشغّل في Git Bash على Windows:
+
+~~~text الناتج
+HTTP/1.1 400 Bad Request
+{"fieldErrors":{"email":["Enter a valid email"],"password":["At least 8 characters"]}}
+~~~
+
+مفيش كلمة عن [[role]]: zod مبيعترضش على الـ keys الزيادة، بيتجاهلها. ونفس الطلب ببيانات سليمة ومعاها [[role: "admin"]]:
+
+~~~text الناتج
+HTTP/1.1 201 Created
+{"id":"u2","email":"sara@example.com"}
+~~~
+
+~~~text log السيرفر
+create() got {"email":"sara@example.com","password":"secret123"}
+~~~
+
+[[role]] موصلش لـ [[create]] خالص. ده اللي بيحمي من mass assignment (حد يبعت [[role: 'admin']] ويتحفظ). والإيميل المتسجل:
+
+~~~text الناتج
+HTTP/1.1 409 Conflict
+{"fieldErrors":{"email":["Email already registered"]}}
+~~~
+
+نفس الشكل بالظبط اللي zod بيرجّعه، فالفرونت يتعامل معاهم بنفس الكود.
+
+---
+
+## ٤. [[onSubmit]] في الفورم
+
+~~~text SignupForm.tsx
+async function onSubmit(data: SignupInput) {
+  const res = await fetch('/api/signup', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
+  if (res.ok) return onDone()
+~~~
+
+- الدالة بتتنادى بعد ما [[zodResolver(signupSchema)]] وافق في المتصفح، يعني نفس الـ schema اتحققت مرتين.
+- [[fetch]] بنفس شكل الـ curl. [[res.ok]] بـ true لأي status من 200 لـ 299.
+
+~~~text SignupForm.tsx
+  const body: { fieldErrors?: Partial<Record<keyof SignupInput, string[]>> } = await res.json().catch(() => ({}))
+~~~
+
+من جوه لبرة:
+
+- [[keyof SignupInput]]: أسماء الخانات: [['email' | 'password']].
+- [[Record<keyof SignupInput, string[]>]]: object لكل خانة array رسايل.
+- [[Partial<...>]]: كل الخانات اختيارية (ممكن ييجي خطأ للإيميل بس).
+- [[fieldErrors?]]: الـ [[?]] يعني الحقل نفسه ممكن ميبقاش موجود.
+- [[res.json().catch(() => ({}))]]: لو الرد مش JSON (proxy رجّع HTML أو نص)، [[res.json()]] بيرمي، و [[.catch]] يرجّع object فاضي بدل ما الفورم يقع. الأقواس حوالين [[{}]] عشان الـ arrow function ترجّع object مش block فاضي.
+
+~~~text SignupForm.tsx
+  for (const [field, messages] of Object.entries(body.fieldErrors ?? {})) setError(field as keyof SignupInput, { message: messages?.[0] })
+  if (!body.fieldErrors) setError('root.server', { message: 'Something went wrong, try again' })
+}
+~~~
+
+- [[body.fieldErrors ?? {}]]: لو مفيش، object فاضي فالـ loop ميلفّش.
+- [[Object.entries(obj)]]: أزواج [[[key, value]]]، و [[for (const [field, messages] of ...)]] بيفك كل زوج.
+- [[field as keyof SignupInput]]: [[Object.entries]] بيدّي الـ key نوع [[string]]، فبنقول لـ TypeScript إنه اسم خانة.
+- [[messages?.[0]]]: أول رسالة، و [[?.]] لو الـ array مش موجودة.
+- مفيش [[fieldErrors]] خالص؟ رسالة عامة في [[root.server]].
+
+---
+
+## ٥. اللي حصل في المتصفح
+
+زودنا على الفورم [[aria-invalid={!!errors.email}]] ورسالة تحت كل خانة. [[!!]] بيحوّل أي قيمة لـ true أو false.
+
+~~~text الناتج (Chrome)
+taken email              ["Email already registered"] aria-invalid=true
+typed a char             [] aria-invalid=false
+new email                [] aria-invalid=false
+~~~
+
+~~~text الـ Console
+[net] POST /api/signup -> 409
+[error] Failed to load resource: the server responded with a status of 409 (Conflict)
+[net] POST /api/signup -> 201
+[log] signed up!
+~~~
+
+- الـ 409 رجع، والرسالة ظهرت **تحت خانة الإيميل** والخانة اتعلّمت invalid. (سطر [[error]] ده Chrome بيطبعه لأي رد 4xx، مش error في الكود.)
+- أول حرف اتكتب: الخانة اتعاد الـ validation بتاعها فالرسالة راحت.
+- إيميل جديد: 201 و [[onDone]] اتنادت.
+
+### السيرفر واقف
+
+وقفنا الـ API وبعتنا تاني:
+
+~~~text الـ Console
+[net] 502 content-type=text/plain body=""
+alerts ["Something went wrong, try again"]
+~~~
+
+الـ proxy رجّع 502 بـ body فاضي مش JSON. [[res.json()]] رمى، والـ [[.catch]] رجّع [[{}]]، فمفيش [[fieldErrors]] وظهرت الرسالة العامة.
+
+---
+
+## الخلاصة
+
+| الحتة | دورها |
+|---|---|
+| ملف schema مشترك | القواعد والرسايل والـ type مرة واحدة للاتنين |
+| [[safeParse]] في السيرفر | مبيرميش، والـ [[data]] من غير keys زيادة |
+| [[z.flattenError(e).fieldErrors]] | أخطاء لكل خانة بنفس أسماء الفورم |
+| 409 بنفس الشكل | قواعد السيرفر بتمشي في نفس الطريق |
+| [[res.json().catch(() => ({}))]] | رد مش JSON ميوقعش الفورم |
+| [[setError(field)]] لكل خانة، و [[root.server]] للباقي | كل رسالة في مكانها |
+
+الـ validation في الفرونت للـ UX، والسيرفر هو الحماية.`,
           lines: [
             "الـ schema والـ type في ملف واحد مشترك.",
             "نفس القواعد والرسايل للاتنين.",
@@ -823,6 +2190,143 @@ React Router ليه تلات أوضاع: declarative ([[<BrowserRouter>]] و [[<
             when: "أي SPA فيها أكتر من شاشة. وفي Next.js الراوتنج بالفولدرات ومش محتاج React Router (تاب Next.js).",
             mistakes: R`[[<a href="/cart">]] جوه التطبيق: reload كامل والـ state كلها بتروح. ومفيش route لـ [[*]] فالمسار الغلط يطلع صفحة فاضية (في الـ declarative mode) أو شاشة الخطأ الافتراضية «Unexpected Application Error! 404 Not Found» (في الـ data mode). وفي مشروع حقيقي كل route من ٢٥ كان مكتوب [[<MainLayout><Page /></MainLayout>]] بإيده بدل layout route واحد فيه Outlet. وخلط [[react-router-dom]] و [[react-router]] بنسخ مختلفة في نفس المشروع.`
           },
+          teach: R`## الفكرة: الـ URL هو اللي يقرر إيه اللي يترسم
+
+React Router بيبص على الـ URL ويطابقه مع list من الـ routes، ويرسم الـ components المطابقة جوه بعض. المثال: Layout ثابت فيه روابط، وتحته صفحة الرئيسية أو صفحة منتج أو 404. اتشغّل في Vite 8.3 + React 19.3 + react-router 8.4 في Chrome headless، والتنقل بـ Playwright، و Home و NotFound من الـ solCode.
+
+---
+
+## ١. الـ imports
+
+~~~text App.tsx
+import { createBrowserRouter, Link, Outlet, useParams } from 'react-router'
+import { RouterProvider } from 'react-router/dom'
+~~~
+
+| الاسم | بيعمل إيه |
+|---|---|
+| [[createBrowserRouter]] | بيعمل router من array routes، وبيستخدم الـ URL الحقيقي في المتصفح |
+| [[Link]] | رابط بيغيّر الصفحة من غير reload |
+| [[Outlet]] | المكان اللي الصفحة الابن هتترسم فيه |
+| [[useParams]] | يقرا الأجزاء المتغيرة من الـ URL ([[:id]]) |
+| [[RouterProvider]] | بيرسم الـ router. من [[react-router/dom]] لأنه خاص بـ react-dom |
+
+اتسطب بـ [[npm i react-router]]. والباكدج القديمة [[react-router-dom]] آخر نسخة ليها على npm دلوقتي 7.18.4 (شغّلنا [[npm view react-router-dom dist-tags]])، يعني مفيش منها v8.
+
+## ٢. الـ Layout
+
+~~~text App.tsx
+const Layout = () => <><nav><Link to="/">Home</Link> <Link to="/products/42">Product 42</Link></nav><Outlet /></>
+~~~
+
+- [[<Link to="/products/42">]]: بيترسم [[<a href="/products/42">]] عادي (عشان الـ right click و «فتح في تاب جديد» يشتغلوا)، بس لما تدوس عليه بيمنع الـ reload ويغيّر الـ URL بـ [[history.pushState]].
+- [[<Outlet />]]: «هنا ارسم الابن المطابق». لو الـ URL [[/products/42]]، هنا هتترسم [[Product]].
+
+## ٣. صفحة المنتج
+
+~~~text App.tsx
+function Product() {
+  const { id } = useParams()
+  return <h1>Product {id}</h1>
+}
+~~~
+
+[[useParams()]] بيرجّع object فيه كل [[:اسم]] في الـ path. الـ route [[products/:id]] والـ URL [[/products/42]]، فالنتيجة [[{ id: '42' }]]: **نص** مش رقم. لو محتاجه رقم: [[Number(id)]].
+
+## ٤. الـ routes
+
+~~~text App.tsx
+const router = createBrowserRouter([
+  { path: '/', Component: Layout, children: [
+    { index: true, Component: Home },
+    { path: 'products/:id', Component: Product },
+    { path: '*', Component: NotFound },
+  ] },
+])
+~~~
+
+- كل route object: [[path]] و [[Component]] (اسم الـ component نفسه، مش [[<Layout />]]).
+- [[children]]: routes جوه routes. الـ path بتاعهم بيتكمّل على الأب: [['products/:id']] جوه [['/']] يبقى [[/products/:id]]. والأب بيرسم الابن مكان الـ [[Outlet]].
+- [[index: true]]: الابن اللي يترسم لما الـ URL هو مسار الأب بالظبط ([[/]]).
+- [[:id]]: جزء متغير، أي حاجة مكانه تطابق.
+- [[*]]: أي حاجة ملهاش route تاني. React Router بيختار أدق route مطابق، فالترتيب في الـ array مش مهم.
+
+| الـ URL | اللي بيترسم |
+|---|---|
+| [[/]] | Layout ← Home |
+| [[/products/42]] | Layout ← Product ([[id = '42']]) |
+| [[/xyz]] | Layout ← NotFound |
+
+## ٥. التطبيق
+
+~~~text App.tsx
+export default function App() { return <RouterProvider router={router} /> }
+~~~
+
+[[router]] متعرّف **برا** الـ component، فبيتعمل مرة واحدة بس مش مع كل render.
+
+---
+
+## ٦. اللي حصل
+
+زودنا على الـ Layout زرار عداد عشان نشوف الـ state بتفضل ولا لأ، و [[console.log]] في Product.
+
+### [[/products/7]] و [[/xyz]]
+
+~~~text الـ HTML
+/products/7:  <nav><a href="/" data-discover="true">Home</a> <a href="/products/42" data-discover="true">Product 42</a> <button>count 0</button></nav><h1>Product 7</h1>
+/xyz:         <nav>...</nav><h1>Page not found</h1>
+~~~
+
+الـ [[<Link>]] اترسم [[<a>]] حقيقي ([[data-discover]] علامة بيحطها React Router). و NotFound اترسم **جوه** الـ Layout، لأن [[*]] ابن [['/']].
+
+### [[Link]]: من [[/]]، دوسنا العداد مرتين وبعدين Product 42
+
+~~~text الناتج
+<nav>...<button>count 2</button></nav><h1>Product 42</h1>
+url=/products/42 documents loaded=0
+[log] useParams id = "42" string
+~~~
+
+- صفر طلبات document: الصفحة متحمّلتش من السيرفر تاني.
+- العداد فضل 2: الـ Layout متشالش، اتبدل اللي جوه الـ Outlet بس.
+- [[id]] نوعه [[string]].
+- و Back رجّعنا لـ Home والعداد لسه 2.
+
+### [[<a href>]] بدل Link
+
+~~~text الناتج
+<nav>...<button>count 0</button></nav><h1>Product 42</h1>
+url=/products/42 documents loaded=1
+[net] document /products/42
+~~~
+
+reload كامل: طلب document جديد، وكل الـ JavaScript اتحمّل من الأول، والعداد رجع صفر.
+
+### من غير route [[*]]
+
+شلنا سطر [[*]] وفتحنا [[/xyz]]:
+
+~~~text الـ HTML
+<h2>Unexpected Application Error!</h2><h3 style="font-style: italic;">404 Not Found</h3><p>💿 Hey developer 👋</p>...
+~~~
+
+الـ data mode بيعرض شاشة الخطأ الافتراضية مكان التطبيق كله، حتى الـ Layout.
+
+> refresh على [[/products/7]] في [[vite]] أو [[vite preview]] بيشتغل لأن Vite بيرجّع [[index.html]] لأي مسار. على سيرفر حقيقي لازم تعمل نفس الـ fallback (في Nginx [[try_files $uri /index.html]])، وإلا 404 من السيرفر نفسه.
+
+---
+
+## الخلاصة
+
+| الحتة | دورها |
+|---|---|
+| [[createBrowserRouter([...])]] | الـ routes كـ data، برا الـ component |
+| [[children]] + [[<Outlet />]] | layout ثابت والصفحة بتتبدل جواه، والـ state بتاعته بتفضل |
+| [[index: true]] | الصفحة على مسار الأب بالظبط |
+| [[:id]] + [[useParams()]] | جزء متغير، وقيمته دايمًا نص |
+| [[*]] | 404 بتاعتك بدل شاشة الخطأ الافتراضية |
+| [[<Link to>]] | تنقل من غير reload، و [[<a href>]] reload كامل |`,
           lines: [
             "كل حاجة من react-router.",
             "إلا RouterProvider من react-router/dom.",
@@ -882,6 +2386,129 @@ navigate(from, { replace: true })`,
             when: "Dashboard، و checkout، وإعدادات الحساب، ولوحة الأدمن (بـ role).",
             mistakes: R`مفيش حالة loading فبيحصل flicker. ومن غير [[replace]] فالـ Back بيعمل loop. وتحمي في الفرونت بس والـ API مفتوح. وتخزين الـ JWT في localStorage: أي XSS يسرقه، والأأمن httpOnly cookie (تاب أمان الموقع). وفي مشروع حقيقي كان الـ role بيتقارن بـ [['ADMIN']] و [['admin']] الاتنين، لأن الـ backend والفرونت مش متفقين على الشكل: وحّده في مكان واحد.`
           },
+          teach: R`## الفكرة: route بيلف الصفحات ويقرر يرسمها ولا يحوّل
+
+[[RequireAuth]] component بيتحط كـ layout route فوق الصفحات المحمية. قبل ما يرسم الصفحة بيسأل ٣ أسئلة بالترتيب: لسه بنتحقق؟ داخل؟ عنده الصلاحية؟ اتشغّل في Vite 8.3 + React 19.3 + react-router 8.4 في Chrome headless، و [[useAuth]] هو اللي في الـ solCode (بيرجّع [[isLoading: true]] ثانيتين وبعدين Sara).
+
+---
+
+## ١. الـ imports
+
+~~~text RequireAuth.tsx
+import { Navigate, Outlet, useLocation } from 'react-router'
+~~~
+
+| الاسم | بيعمل إيه |
+|---|---|
+| [[Navigate]] | component أول ما يترسم بيحوّل لمسار تاني |
+| [[Outlet]] | مكان الصفحة الابن (درس React Router) |
+| [[useLocation]] | بيرجّع المكان الحالي: [[pathname]] و [[search]] و [[state]] |
+
+## ٢. التعريف والقراية
+
+~~~text RequireAuth.tsx
+export function RequireAuth({ role }: { role?: 'admin' }) {
+  const { user, isLoading } = useAuth()
+  const location = useLocation()
+~~~
+
+- [[role?: 'admin']]: prop اختيارية ([[?]])، لو اتبعتت لازم تبقى [['admin']].
+- [[useAuth()]]: حالة الدخول من أي مكان (context أو store أو query). المهم ترجّع حاجتين: [[user]] و [[isLoading]].
+- [[location.pathname]]: المسار اللي المستخدم كان رايحه، زي [[/dashboard]].
+
+## ٣. الأسئلة التلاتة
+
+~~~text RequireAuth.tsx
+if (isLoading) return <FullPageSpinner />
+if (!user) return <Navigate to="/login" replace state={{ from: location.pathname }} />
+if (role && user.role !== role) return <Navigate to="/403" replace />
+return <Outlet />
+~~~
+
+1. **[[isLoading]]**: بعد refresh التطبيق لسه ميعرفش المستخدم (بيسأل السيرفر). «لسه مش عارف» غير «مش داخل»، فبنعرض spinner ومنحكمش.
+2. **[[!user]]**: مش داخل. [[<Navigate>]] بيحوّل لـ [[/login]]:
+  - [[replace]]: بيستبدل الصفحة الحالية في الـ history بدل ما يضيف واحدة. فالـ Back من صفحة الدخول ميرجعش للمحمية (اللي هتحوّله تاني).
+  - [[state={{ from: ... }}]]: بيانات بتتبعت للصفحة الجاية من غير ما تظهر في الـ URL. الأقواس المزدوجة: الخارجية JSX، والداخلية object.
+3. **[[role && user.role !== role]]**: لو الـ route طالب role والمستخدم مش عنده، صفحة ممنوع.
+4. كله تمام: [[<Outlet />]] يرسم الصفحة المطلوبة.
+
+## ٤. في الـ routes
+
+~~~text routes.ts
+{ Component: RequireAuth, children: [{ path: 'dashboard', Component: Dashboard }] }
+~~~
+
+route **من غير [[path]]**: مش بيزوّد حاجة على الـ URL، هو بس بيلف أولاده. كل صفحة تحطها في [[children]] بقت محمية.
+
+## ٥. الرجوع بعد الدخول
+
+~~~text Login.tsx
+const from = (useLocation().state as { from?: string } | null)?.from ?? '/'
+navigate(from, { replace: true })
+~~~
+
+من جوه لبرة:
+
+- [[useLocation().state]]: الـ [[state]] اللي [[Navigate]] بعته. نوعه [[unknown]] لأن أي حد ممكن يبعت أي حاجة.
+- [[as { from?: string } | null]]: بنقول لـ TypeScript شكله المتوقع، أو [[null]] لو المستخدم فتح [[/login]] مباشرة.
+- [[?.from]]: لو [[null]] متقعش، رجّع [[undefined]].
+- [[?? '/']]: مفيش؟ الرئيسية.
+- [[navigate]] جاية من [[useNavigate()]]: تنقل من الكود. و [[replace: true]] بيشيل صفحة الدخول من الـ history، فالـ Back بعد الدخول ميرجعش لها.
+
+---
+
+## ٦. اللي حصل
+
+فتحنا [[/dashboard]] مباشرة وصوّرنا الـ URL والـ HTML على مراحل:
+
+~~~text الناتج (مع سطر isLoading)
+t=0                url=/dashboard  html=<p>Loading...</p>
+t=1s               url=/dashboard  html=<p>Loading...</p>
+t=2.5s             url=/dashboard  html=<h1>Dashboard</h1>
+~~~
+
+### من غير سطر [[isLoading]]
+
+~~~text الناتج
+t=0                url=/login  html=<h1>Login</h1><p>from=/dashboard</p><button>Log in</button>
+t=1s               url=/login  html=<h1>Login</h1><p>from=/dashboard</p><button>Log in</button>
+t=2.5s             url=/login  html=<h1>Login</h1><p>from=/dashboard</p><button>Log in</button>
+~~~
+
+أول render [[user]] لسه [[null]]، فالـ Navigate حوّل على طول. بعد ثانيتين المستخدم كان هيوصل، بس [[RequireAuth]] اتشال من الشجرة أصلًا، فمحدش رجّعنا. و [[from=/dashboard]] بيبيّن إن الـ [[state]] وصل لصفحة الدخول.
+
+### [[replace]] والـ Back
+
+فتحنا [[/]]، وبعدين رحنا [[/dashboard]] (من غير isLoading فاتحوّلنا)، ودوسنا Back:
+
+~~~text الناتج
+opened /                   url=/  history.length=3
+went to /dashboard         url=/login  history.length=4
+Back                       url=/  history.length=4
+~~~
+
+الـ history زاد خانة واحدة بس ([[/login]] خد مكان [[/dashboard]])، والـ Back رجّعنا لـ [[/]] مباشرة. من غير [[replace]] كان هيرجع لـ [[/dashboard]] اللي تحوّل تاني لـ [[/login]]: loop.
+
+### الصلاحية
+
+route [[admin]] ملفوف في [[<RequireAuth role="admin" />]]، والمستخدم role بتاعه [['user']]:
+
+~~~text الناتج
+t=2.5s             url=/403  html=<h1>Forbidden</h1>
+~~~
+
+---
+
+## الخلاصة
+
+| السؤال | لو آه | ليه |
+|---|---|---|
+| [[isLoading]]؟ | spinner | متحكمش قبل ما تعرف |
+| [[!user]]؟ | [[<Navigate to="/login" replace state>]] | التحويل، ومن غير loop، ومعاه الرجوع |
+| role مش مطابق؟ | [[<Navigate to="/403" replace />]] | ممنوع |
+| غير كده | [[<Outlet />]] | ارسم الصفحة |
+
+ده UX بس: الـ API هو اللي لازم يرفض أي طلب من غير جلسة أو صلاحية، لأن أي حد يقدر يغيّر الـ state من DevTools أو يبعت الطلب بـ curl.`,
           lines: [
             "أدوات التحويل والـ Outlet والمكان الحالي.",
             "component بيلف الصفحات المحمية، و role اختياري.",
