@@ -2874,6 +2874,81 @@
   "date": "2026-10-06",
   "on": "Docker Desktop 29.6.1 (win11, Git Bash) + pwsh 7"
  },
+ "dotnet|ASP.NET Core و Blazor": {
+  "hash": "a59a513d8b87",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401); docs: browser Network tab"
+ },
+ "dotnet|IEnumerable و yield": {
+  "hash": "b31e7bb63023",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (.NET 10.0.12)"
+ },
+ "dotnet|LINQ": {
+  "hash": "36f6938b8171",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (.NET 10.0.12)"
+ },
+ "dotnet|List و Dictionary": {
+  "hash": "550507a5b828",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (.NET 10.0.12)"
+ },
+ "dotnet|class و properties": {
+  "hash": "1c85d9dc6c21",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (.NET 10.0.12)"
+ },
+ "dotnet|dotnet --info": {
+  "hash": "25757822eb56",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401); docs: apt install (apt-cache policy only)"
+ },
+ "dotnet|dotnet new console": {
+  "hash": "6829ba5f2701",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401)"
+ },
+ "dotnet|dotnet run app.cs": {
+  "hash": "72bec86a63b1",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401)"
+ },
+ "dotnet|generics": {
+  "hash": "0be619dbe3cd",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (.NET 10.0.12)"
+ },
+ "dotnet|interface": {
+  "hash": "5422004bb58e",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (.NET 10.0.12)"
+ },
+ "dotnet|nullable reference types": {
+  "hash": "0f487b340e1a",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (.NET 10.0.12)"
+ },
+ "dotnet|record": {
+  "hash": "10215a42962c",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (.NET 10.0.12)"
+ },
+ "dotnet|sln و NuGet": {
+  "hash": "e8740f1ea803",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401)"
+ },
+ "dotnet|value و reference types": {
+  "hash": "86dd401e58d9",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (.NET 10.0.12)"
+ },
+ "dotnet|var و الأنواع الأساسية": {
+  "hash": "89facfb95c35",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (.NET 10.0.12)"
+ },
  "dsa|0/1 knapsack": {
   "hash": "3b51301da76f",
   "date": "2026-10-07",
