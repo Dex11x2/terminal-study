@@ -37,6 +37,8 @@ Docker: never run any `prune` command, even with `--filter` (build cache ignores
 Processes: stop ONLY processes you started, by the exact PID you recorded when starting them. Never stop processes by name, command-line pattern, port or window title (Stop-Process -Name, taskkill /IM, pkill, killall, Where-Object CommandLine -like ...), since that can kill the user's apps.
 Never run destructive or system-changing commands on this machine; never global Docker cleanup (`docker system/volume/image prune`). Remove only containers you created.
 
+Disk space: drive C: is small. Prefer slim images and install only the packages a lesson needs (no big `apt-get install` lists). When you finish, delete the heavy parts of your scratch subfolder (`node_modules`, `.venv`, build outputs, downloaded binaries) and remove any image you built; keep only small scripts. If a write fails with "No space left" or an I/O error, stop and report instead of retrying.
+
 ## Don't
 
 Don't rename `cmd`, don't edit other files, don't build, don't commit, don't touch `verified.json`.

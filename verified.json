@@ -2814,10 +2814,30 @@
   "date": "2026-10-07",
   "on": "ubuntu:24.04 docker (cut, BOM, file); Windows Python 3.14 csv.DictReader; pwsh 7.6 + Windows PowerShell 5.1 Import-Csv; docs: Excel behaviour"
  },
+ "files|.dockerignore": {
+  "hash": "caa08416c842",
+  "date": "2026-10-07",
+  "on": "win11 Docker 29.6, node:22-alpine + alpine:latest"
+ },
+ "files|.editorconfig": {
+  "hash": "c559eb1b652b",
+  "date": "2026-10-07",
+  "on": "win11 npx editorconfig-checker v4.0.2; docs: VS Code extension behaviour"
+ },
  "files|.env": {
   "hash": "c101a44ed3de",
   "date": "2026-10-07",
   "on": "Windows: Node 24 --env-file, dotenv 18.0.6, python-dotenv, git status in scratch repo; ubuntu:24.04 docker: bash set -a/source"
+ },
+ "files|.gitattributes": {
+  "hash": "d10756d433b7",
+  "date": "2026-10-07",
+  "on": "win11 git 2.56 (Git Bash), throwaway repo"
+ },
+ "files|.gitignore": {
+  "hash": "100549078bf3",
+  "date": "2026-10-07",
+  "on": "win11 git 2.56 (Git Bash), throwaway repo"
  },
  "files|.html": {
   "hash": "763cde09e0ae",
@@ -2869,6 +2889,11 @@
   "date": "2026-10-07",
   "on": "docker node:22-alpine (Node 22, esbuild 0.28.2, jq)"
  },
+ "files|.npmrc و .nvmrc": {
+  "hash": "1667be0fb9ca",
+  "date": "2026-10-07",
+  "on": "docker ubuntu:24.04 nvm 0.40.3 + node 22.23.3/npm 10.9.9; win11 npm 11.17"
+ },
  "files|.ps1 و .psm1": {
   "hash": "0617ad8f1fcc",
   "date": "2026-10-07",
@@ -2914,6 +2939,11 @@
   "date": "2026-10-07",
   "on": "Windows: PyYAML 6.0.3 (Python 3.14 venv), js-yaml 5.4.3 + yaml 2.9.1 (Node 24), yamllint"
  },
+ "files|Dockerfile": {
+  "hash": "e650188024c2",
+  "date": "2026-10-07",
+  "on": "win11 Docker 29.6 (desktop-linux), node:22-alpine"
+ },
  "files|JSON غلط": {
   "hash": "415160aa6bea",
   "date": "2026-10-07",
@@ -2928,6 +2958,11 @@
   "hash": "c287c5e394c2",
   "date": "2026-10-07",
   "on": "ubuntu-24.04 (docker) + windows pwsh 7.6/powershell 5.1 (Set-Content bytes); docs: mac sed -i ''"
+ },
+ "files|Makefile": {
+  "hash": "972577912d05",
+  "date": "2026-10-07",
+  "on": "docker ubuntu:24.04, GNU Make 4.3"
  },
  "files|UTF-8": {
   "hash": "cca7fb17a83c",
@@ -2949,10 +2984,35 @@
   "date": "2026-10-07",
   "on": "Windows: PyYAML 6.0.3, js-yaml 5.4.3, yaml 2.9.1"
  },
+ "files|compose.yaml": {
+  "hash": "fe143bf58893",
+  "date": "2026-10-07",
+  "on": "win11 Docker 29.6 compose (postgres:16-alpine instead of 17, port 13000)"
+ },
  "files|jq": {
   "hash": "60ab5765f76f",
   "date": "2026-10-07",
   "on": "ubuntu-24.04 (docker) (jq 1.7, curl GitHub API) + windows pwsh 7.6/powershell 5.1; docs: winget install"
+ },
+ "files|package-lock.json": {
+  "hash": "63b081bfdc82",
+  "date": "2026-10-07",
+  "on": "win11 node24/npm11.17 + git 2.56; jq 1.7 in docker ubuntu:24.04; pwsh 7"
+ },
+ "files|package.json": {
+  "hash": "8499c8713ed4",
+  "date": "2026-10-07",
+  "on": "win11 node24.19/npm11.17 (npm init/install/run/test/pkg get/view)"
+ },
+ "files|requirements.txt و pyproject.toml": {
+  "hash": "3333bd7417ef",
+  "date": "2026-10-07",
+  "on": "win11 Python 3.14.3 venv (pwsh 7 + powershell 5.1); venv creation in docker python:3.13-slim"
+ },
+ "files|tsconfig.json": {
+  "hash": "ba9d32f8cdde",
+  "date": "2026-10-07",
+  "on": "win11 node24 + typescript 7.0.2 via npx"
  },
  "files|xmlns": {
   "hash": "02964ba02ade",
@@ -7573,6 +7633,26 @@
   "hash": "a2b52e665efe",
   "date": "2026-10-05",
   "on": "ubuntu-24.04, pwsh 7.6, powershell 5.1; docs: macOS sw_vers/Darwin, winver window"
+ },
+ "symbols|!==  و  <  >  <=  >=": {
+  "hash": "625487b70695",
+  "date": "2026-10-07",
+  "on": "Node 24 on Windows 11"
+ },
+ "symbols|%VAR%  و  $env:VAR": {
+  "hash": "fccc2f6b7d4d",
+  "date": "2026-10-07",
+  "on": "cmd /c, pwsh 7.6 -NoProfile, powershell 5.1 -NoProfile on Windows 11"
+ },
+ "symbols|=  و  ==  و  ===": {
+  "hash": "c1f9a6ae7efc",
+  "date": "2026-10-07",
+  "on": "Node 24 on Windows 11"
+ },
+ "symbols|Alt+Shift": {
+  "hash": "e977c8a61788",
+  "date": "2026-10-07",
+  "on": "Node 24 on Windows 11 + ubuntu:24.04 (Docker); docs: keyboard layout shortcuts"
  },
  "ts|! (non-null)": {
   "hash": "548b6a281bb5",

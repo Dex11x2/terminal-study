@@ -57,6 +57,253 @@ MORE("files", [
             when: R`أول ملف تفتحه في أي مشروع JS: بيقولك المشروع مبني بإيه (React؟ Next؟ Express؟) وبيتشغّل إزاي ([[scripts]]).`,
             mistakes: R`تعدّل نسخة في [[package.json]] بإيدك من غير [[npm install]] فالـ lock يبقى مش متطابق و [[npm ci]] يقع. تحط أداة build في [[dependencies]] أو مكتبة بيحتاجها السيرفر في [[devDependencies]] فتختفي في الـ production ([[npm ci --omit=dev]]). تحط تعليق أو trailing comma ([[EJSONPARSE]]). وتنسى [["private": true]].`
           },
+          teach: R`## الفكرة
+
+المثال مش أمر بيتشغّل، ده ملف [[package.json]] كامل لمشروع React صغير اسمه [[gym-portal]]. هنقراه مفتاح مفتاح، ونشوف npm بيعمل إيه بكل واحد. كل الأوامر هنا اتجرّبت على ويندوز بـ Node 24.19 و npm 11.17 في فولدر تجربة.
+
+---
+
+## ١. الملف بيتعمل إزاي: [[npm init -y]]
+
+~~~powershell
+npm init -y
+~~~
+
+- [[npm]] (Node Package Manager): مدير المكتبات اللي بييجي مع Node.
+- [[init]] (initialize): اعمل مشروع جديد، يعني اكتب [[package.json]].
+- [[-y]] (yes): رد «أيوه» على كل الأسئلة بالقيم الافتراضية بدل ما يسألك سؤال سؤال.
+
+في فولدر اسمه [[gym-portal]] كتب الملف ده:
+
+~~~text package.json اللي اتعمل
+{
+  "name": "gym-portal",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
+~~~
+
+[[name]] خده من اسم الفولدر، و [[version]] بدأ من [[1.0.0]]، و [[license]] حط [[ISC]] (رخصة مفتوحة قصيرة). و [[type]] بقى [[commonjs]]: npm الحديث بيكتبه صراحة. ملف المثال بتاعنا فيه [[module]] بدله.
+
+---
+
+## ٢. المفاتيح الأولى: هوية المشروع
+
+~~~text
+  "name": "gym-portal",
+  "version": "1.4.0",
+  "private": true,
+  "type": "module",
+~~~
+
+| المفتاح | معناه |
+|---|---|
+| [["name"]] | اسم المشروع: حروف صغيرة و [[-]]، من غير مسافات (npm بيرفض الحروف الكبيرة في الاسم) |
+| [["version"]] | النسخة بصيغة semver (تحت) |
+| [["private": true]] | npm هيرفض [[npm publish]] للمشروع ده (حسب الـ docs). تطبيقك مش مكتبة، فمش عايز يتنشر على npmjs.com بالغلط |
+| [["type": "module"]] | أي ملف [[.js]] في المشروع يبقى ES module: يعني [[import]] و [[export]] بدل [[require]] (درس [[.js]] و [[.mjs]] و [[.cjs]]) |
+
+> [[true]] من غير تنصيص: ده boolean في JSON، مش نص. لو كتبت [["true"]] بين تنصيص يبقى نص.
+
+---
+
+## ٣. [["scripts"]]: أوامر بأسامي
+
+~~~text
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "test": "vitest run",
+    "lint": "eslint ."
+  },
+~~~
+
+كل مفتاح اسم، وقدامه أمر terminal عادي. [[npm run dev]] بينفّذ [[vite]]، و [[npm run build]] بينفّذ [[tsc --noEmit && vite build]]:
+
+- [[tsc --noEmit]]: افحص أنواع TypeScript ومتطلّعش ملفات.
+- [[&&]]: نفّذ اللي بعدي **بس لو** اللي قبلي نجح. فلو فيه خطأ أنواع، [[vite build]] مش هيشتغل.
+
+[[npm run]] لوحدها بتعرض كل الـ scripts. على ملف المثال طلع:
+
+~~~text الناتج
+Lifecycle scripts included in gym-portal@1.4.0:
+  test
+    vitest run
+available via $__btnpm run$__bt:
+  dev
+    vite
+  build
+    tsc --noEmit && vite build
+  lint
+    eslint .
+~~~
+
+لاحظ إن [[test]] لوحده فوق: ده اسم «محجوز» (lifecycle) زي [[start]]، فبيتشغّل بـ [[npm test]] من غير [[run]]. الباقي لازم [[npm run]].
+
+### الأوامر دي بتيجي منين؟
+
+[[vite]] و [[eslint]] مش أوامر في جهازك، دي جوه المشروع. لما بتسطّب مكتبة فيها أداة، npm بيحط ملف تشغيل في [[node_modules/.bin]]، و [[npm run]] بيضيف الفولدر ده للـ PATH وهو بينفّذ. جرّبناها: سطّبنا prettier وضفنا [["fmt": "prettier --version"]]:
+
+~~~powershell
+npm run fmt
+~~~
+
+~~~text الناتج
+> gym-portal@1.0.0 fmt
+> prettier --version
+
+3.3.3
+~~~
+
+وفي [[node_modules/.bin]] لقينا [[prettier]] و [[prettier.cmd]] و [[prettier.ps1]] (نسخة لكل shell). لكن [[prettier --version]] مباشرة في الترمنال قال [[command not found]]، لأنه مش في الـ PATH بره npm.
+
+ولو الأداة مش متسطّبة أصلًا، [[npm test]] على ملف المثال قال:
+
+~~~text الناتج على ويندوز
+> gym-portal@1.4.0 test
+> vitest run
+
+'vitest' is not recognized as an internal or external command,
+operable program or batch file.
+~~~
+
+السطرين اللي بيبدأوا بـ [[>]] npm بيطبعهم عشان تعرف بينفّذ إيه. والرسالة دي من cmd، لأن npm على ويندوز بيشغّل الـ scripts في cmd (وعلى لينكس والماك في [[sh]]).
+
+---
+
+## ٤. [["dependencies"]] و [["devDependencies"]]
+
+~~~text
+  "dependencies": {
+    "dayjs": "^1.11.13",
+    "react": "^19.0.0"
+  },
+  "devDependencies": {
+    "typescript": "~5.6.3",
+    "vite": "^6.0.0"
+  },
+~~~
+
+| المجموعة | فيها إيه | بتتضاف بـ |
+|---|---|---|
+| [[dependencies]] | اللي التطبيق محتاجه وهو شغّال: React و dayjs | [[npm install dayjs]] |
+| [[devDependencies]] | أدوات وانت بتطوّر بس: TypeScript و Vite والاختبارات | [[npm install -D vite]] ([[-D]] = [[--save-dev]]) |
+
+الفرق بيبان على السيرفر: [[npm ci --omit=dev]] بيسطّب [[dependencies]] بس. جرّبنا الاتنين على [[package.json]] اللي عملناه بـ [[npm init -y]]:
+
+~~~powershell
+npm install dayjs@1.11.13
+npm install -D prettier@3.3.3
+~~~
+
+و [[@1.11.13]] بعد الاسم معناها «النسخة دي». والملف بقى في آخره:
+
+~~~text package.json بعد التسطيب
+  "dependencies": {
+    "dayjs": "^1.11.13"
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3"
+  }
+~~~
+
+احنا طلبنا [[1.11.13]] بالظبط، وnpm كتب [[^1.11.13]]: الـ [[^]] هو الافتراضي. واتعمل كمان [[package-lock.json]] وفولدر [[node_modules]] (الدرس الجاي).
+
+ولو عايز تقرا مفتاح من غير ما تفتح الملف:
+
+~~~powershell
+npm pkg get dependencies
+~~~
+
+~~~text الناتج
+{
+  "dayjs": "^1.11.13"
+}
+~~~
+
+---
+
+## ٥. أرقام النسخ: semver و [[^]] و [[~]]
+
+semver (Semantic Versioning) يعني إن كل رقم في [[1.11.13]] ليه معنى:
+
+~~~text
+1   .  11   .  13
+MAJOR  MINOR   PATCH
+~~~
+
+| الرقم | بيزيد لما | مثال |
+|---|---|---|
+| MAJOR | تغيير ممكن يكسر كودك | [[1.11.13]] ← [[2.0.0]] |
+| MINOR | ميزة جديدة، والقديم شغال | [[1.11.13]] ← [[1.12.0]] |
+| PATCH | تصليح أخطاء بس | [[1.11.13]] ← [[1.11.14]] |
+
+والرمز قبل الرقم اسمه range: بيقول npm يقبل أنهي نسخ.
+
+| الـ range | يقبل | ميقبلش |
+|---|---|---|
+| [[^1.11.13]] | من [[1.11.13]] لحد قبل [[2.0.0]] | [[2.0.0]] و [[1.11.12]] |
+| [[^0.2.3]] (MAJOR صفر) | من [[0.2.3]] لحد قبل [[0.3.0]] | [[0.3.0]] |
+| [[~5.6.3]] | من [[5.6.3]] لحد قبل [[5.7.0]] | [[5.7.0]] |
+| [[5.6.3]] | [[5.6.3]] بس | أي حاجة تانية |
+| [[>=20]] (في [[engines]]) | 20 أو أي حاجة أكبر | 18 |
+
+ليه [[^0.x]] أضيق؟ لأن قبل [[1.0.0]] المكتبة لسه بتتغير، فـ MINOR فيها ممكن يكسر.
+
+وتقدر تسأل الـ registry «أنهي نسخ موجودة بتطابق الـ range ده؟» بـ [[npm view]]:
+
+~~~powershell
+npm view dayjs@^1.11.13 version
+npm view typescript@~5.6.3 version
+~~~
+
+~~~text الناتج (أكتوبر ٢٠٢٦)
+dayjs@1.11.13 '1.11.13'
+dayjs@1.11.14 '1.11.14'
+...
+dayjs@1.11.23 '1.11.23'
+5.6.3
+~~~
+
+يعني [[^1.11.13]] النهارده هيسطّب [[1.11.23]] لو مفيش lock file، و [[~5.6.3]] مفيش غير [[5.6.3]] لأن TypeScript نزّلت بعدها [[5.7]] على طول.
+
+> المقارنة أرقام مش حروف: [[1.10.0]] أحدث من [[1.9.0]] لأن ١٠ أكبر من ٩، مع إن النص [["1.10.0"]] لو اترتب أبجديًا بييجي قبل [["1.9.0"]]. خلي ده في بالك وانت بتحل التمرين.
+
+---
+
+## ٦. [["engines"]]
+
+~~~text
+  "engines": {
+    "node": ">=20"
+  }
+~~~
+
+بيقول المشروع محتاج Node 20 أو أحدث. npm افتراضيًا بيطبع تحذير بس لو نسختك أقدم، ومع [[engine-strict=true]] في [[.npmrc]] بيرفض يسطّب (درس [[.npmrc]]).
+
+---
+
+## الخلاصة
+
+| المفتاح | بيقول إيه |
+|---|---|
+| [[name]] و [[version]] | المشروع ده مين ونسخته كام |
+| [[private]] | ممنوع يتنشر |
+| [[type]] | [[.js]] تبقى ESM ولا CommonJS |
+| [[scripts]] | أسامي الأوامر: [[npm run x]]، و [[npm test]] و [[npm start]] من غير run |
+| [[dependencies]] | محتاجها وهو شغال |
+| [[devDependencies]] | محتاجها وانت بتطوّر بس |
+| [[engines]] | نسخة Node المطلوبة |
+
+و [[^]] = نفس الـ MAJOR، و [[~]] = نفس الـ MINOR، ومن غير رمز = النسخة دي بالظبط.`,
           lines: [
             R`[[{]] الملف كله object واحد.`,
             R`اسم المشروع: حروف صغيرة و [[-]].`,
@@ -153,6 +400,179 @@ git diff --stat`,
             when: R`دايمًا. [[npm ci]] في GitHub Actions و Dockerfile، و [[npm install]] على جهازك وانت بتضيف أو بتحدّث مكتبة. وتحديث مقصود: [[npm outdated]] تشوف الجديد، و [[npm update]] أو [[npm install x@latest]].`,
             mistakes: R`تحط [[package-lock.json]] في [[.gitignore]]. تمسحه كل ما يحصل مشكلة (بتخسر النسخ المجربة وتاخد نسخ جديدة مش مجربة). تحل conflicts فيه بإيدك. وتستخدم [[npm install]] في الـ Dockerfile بدل [[npm ci]] فالـ image يتبني بنسخ مختلفة كل مرة.`
           },
+          teach: R`## الفكرة
+
+المثال ٧ أوامر بتمشي ورا بعض: نسطّب مكتبة، نبص جوه الـ lock file، نسطّب منه تسطيب نضيف، وبعدين نبوّظ التطابق بينه وبين [[package.json]] عن قصد ونشوف npm بيعمل إيه. اتجرّب على ويندوز (Node 24.19 و npm 11.17) في فولدر تجربة فيه [[git init]]، و [[jq]] اتشغّل على أوبونتو 24.04 جوه Docker لأنه مش متسطّب على ويندوز.
+
+---
+
+## ١. [[npm install dayjs@1.11.13]]
+
+~~~powershell
+npm install dayjs@1.11.13
+~~~
+
+~~~text الناتج
+added 1 package, and audited 2 packages in 1s
+
+found 0 vulnerabilities
+~~~
+
+- [[added 1 package]]: نزّل dayjs (ملهاش مكتبات تانية بتعتمد عليها).
+- [[audited 2 packages]]: فحص الحزم ضد قاعدة الثغرات المعروفة. اتنين لأن المشروع نفسه بيتعد واحدة.
+
+الأمر ده كتب في ٣ أماكن: [[package.json]] ([["dayjs": "^1.11.13"]])، و [[node_modules/dayjs]] (الملفات نفسها)، و [[package-lock.json]]. ده الـ lock اللي اتعمل كامل:
+
+~~~text package-lock.json
+{
+  "name": "lock",
+  "version": "1.0.0",
+  "lockfileVersion": 3,
+  "requires": true,
+  "packages": {
+    "": {
+      "name": "lock",
+      "version": "1.0.0",
+      "license": "ISC",
+      "dependencies": {
+        "dayjs": "^1.11.13"
+      }
+    },
+    "node_modules/dayjs": {
+      "version": "1.11.13",
+      "resolved": "https://registry.npmjs.org/dayjs/-/dayjs-1.11.13.tgz",
+      "integrity": "sha512-oaMBel6gjolK862uaPQOVTA7q3TZhuSvuMQAAglQDOWYO9A91IrAOUJEyKVlqJlHE0vq5p5UXxzdPfMH/x6xNg==",
+      "license": "MIT"
+    }
+  }
+}
+~~~
+
+| المفتاح | معناه |
+|---|---|
+| [[lockfileVersion: 3]] | صيغة الملف. 3 هي صيغة npm 7 وأحدث |
+| [[packages]] | مفتاح لكل حاجة متسطّبة، باسم مسارها على الديسك |
+| [[""]] | المفتاح الفاضي ده المشروع نفسه، ونسخة من [[dependencies]] بتاعته |
+| [[node_modules/dayjs]] | المكتبة اللي في [[node_modules/dayjs]] |
+
+لاحظ الفرق: [[package.json]] بيقول [[^1.11.13]] (أي 1.x من دي وطالع)، والـ lock بيقول [[1.11.13]] بالظبط.
+
+---
+
+## ٢. [[jq '.packages["node_modules/dayjs"]' package-lock.json]]
+
+[[jq]] أداة بتقرا JSON وتطلع منه جزء (درس [[jq]]). نفكّ الفلتر:
+
+- [[.]]: الملف كله.
+- [[.packages]]: خد المفتاح [[packages]].
+- [[["node_modules/dayjs"]]]: وجواه المفتاح ده. بنكتبه بين أقواس وتنصيص (مش [[.node_modules/dayjs]]) لأن فيه [[/]].
+- التنصيص الفردي [[' ']] حوالين الفلتر كله عشان الـ shell ميلمسش الأقواس والتنصيص اللي جوه.
+
+~~~text الناتج (jq 1.7 على أوبونتو 24.04)
+{
+  "version": "1.11.13",
+  "resolved": "https://registry.npmjs.org/dayjs/-/dayjs-1.11.13.tgz",
+  "integrity": "sha512-oaMBel6gjolK862uaPQOVTA7q3TZhuSvuMQAAglQDOWYO9A91IrAOUJEyKVlqJlHE0vq5p5UXxzdPfMH/x6xNg==",
+  "license": "MIT"
+}
+~~~
+
+| الخانة | معناها |
+|---|---|
+| [[version]] | النسخة اللي اتسطّبت فعلًا |
+| [[resolved]] | الرابط اللي الملف المضغوط ([[.tgz]]) نزل منه |
+| [[integrity]] | بصمة (hash) للملف ده. [[sha512]] اسم الخوارزمية، والباقي البصمة مكتوبة base64 |
+| [[license]] | رخصة المكتبة |
+
+[[integrity]] هو اللي بيحميك: المرة الجاية npm هينزّل نفس الرابط ويحسب البصمة، ولو حرف واحد في الملف اتغير البصمة مش هتطابق والتسطيب يقف.
+
+ولو [[jq]] مش عندك (زي ويندوز)، Node نفسه يقرا الملف:
+
+~~~powershell
+node -p "require('./package-lock.json').packages['node_modules/dayjs'].version"
+~~~
+
+~~~text الناتج
+1.11.13
+~~~
+
+[[-p]] (print): نفّذ الكود ده واطبع نتيجته. وفي PowerShell 7 ينفع [[(Get-Content package-lock.json -Raw | ConvertFrom-Json -AsHashtable).packages['node_modules/dayjs'].version]]، بس من غير [[-AsHashtable]] بيقع بـ [[The provided JSON includes a property whose name is an empty string]] بسبب المفتاح الفاضي [[""]]. و Windows PowerShell 5.1 مفيهوش [[-AsHashtable]] أصلًا، فاستخدم سطر Node.
+
+---
+
+## ٣. [[npm ci]]: تسطيب نضيف
+
+[[ci]] من clean install (والاسم كمان على مقاس Continuous Integration، يعني السيرفرات اللي بتبني وتختبر). قبل ما نشغّله حطينا ملف زيادة [[node_modules/extra.txt]]:
+
+~~~text الناتج
+added 1 package, and audited 2 packages in 2s
+~~~
+
+وبعدها [[node_modules]] فيه [[dayjs]] بس: [[extra.txt]] اتمسح. ده لأن [[npm ci]] بيمسح [[node_modules]] كله الأول، وبعدين يسطّب اللي في الـ lock بالظبط، من غير ما يغيّر الـ lock ولا [[package.json]].
+
+---
+
+## ٤. نبوّظ التطابق: [[npm pkg set]] ثم [[npm ci]]
+
+~~~powershell
+npm pkg set dependencies.zod="^3.23.0"
+~~~
+
+[[npm pkg set]] بيكتب مفتاح في [[package.json]] وبس، والنقطة في [[dependencies.zod]] معناها «جوه [[dependencies]]، المفتاح [[zod]]». مفيش تسطيب، فالـ lock لسه مفيهوش zod. نجرّب:
+
+~~~powershell
+npm ci
+~~~
+
+~~~text الناتج (أول السطور)
+npm error code EUSAGE
+npm error
+npm error $__btnpm ci$__bt can only install packages when your package.json and package-lock.json or npm-shrinkwrap.json are in sync. Please update your lock file with $__btnpm install$__bt before continuing.
+npm error
+npm error Missing: zod@3.25.76 from lock file
+~~~
+
+- [[EUSAGE]]: غلط في طريقة الاستخدام.
+- الجملة الطويلة: الملفين مش «in sync» (متطابقين)، وروح اعمل [[npm install]].
+- [[Missing: zod@3.25.76 from lock file]]: npm سأل الـ registry عن أحدث نسخة بتطابق [[^3.23.0]] لقاها [[3.25.76]]، ومش لاقيها في الـ lock.
+
+وبعدها npm بيطبع شرح كل خيارات [[npm ci]] (حوالي ٨٠ سطر) وفي الآخر مكان ملف الـ log. ده المقصود: على سيرفر الـ CI عايزه يقع بصوت عالي بدل ما يسطّب حاجة مختلفة عن اللي اتجرّبت.
+
+---
+
+## ٥. [[npm install]] بيصلّح، و [[git diff --stat]] بيوريك
+
+~~~powershell
+npm install
+git diff --stat
+~~~
+
+~~~text الناتج
+added 1 package, and audited 3 packages in 2s
+ package-lock.json | 12 +++++++++++-
+ package.json      |  3 ++-
+ 2 files changed, 13 insertions(+), 2 deletions(-)
+~~~
+
+[[npm install]] حسب zod ونزّلها وكتبها في الـ lock. و [[git diff --stat]] بيلخّص التغييرات اللي لسه متعملهاش commit: اسم كل ملف، وعدد السطور اللي اتغيرت، و [[+]] اتضاف و [[-]] اتشال. الملفين اتغيروا مع بعض، فبيتعملهم commit مع بعض.
+
+---
+
+## جدول الخطوات
+
+| الأمر | بيلمس [[package.json]] | بيلمس الـ lock | بيلمس [[node_modules]] |
+|---|---|---|---|
+| [[npm install x]] | يضيف x | يكتب النسخة والـ hash | يضيف x |
+| [[npm ci]] | لأ | لأ (ويقع لو مش متطابق) | يمسحه ويبنيه من الأول |
+| [[npm pkg set]] | يكتب المفتاح | لأ | لأ |
+| [[npm install]] | لأ | يحدّثه عشان يطابق | يكمّل الناقص |
+
+## الخلاصة
+
+- [[package.json]] = اللي **عايزه** (ranges). الـ lock = اللي **اتسطّب فعلًا** (نسخ مضبوطة + hash).
+- الـ lock بيتعمله commit، ومحدش بيعدّله بإيده.
+- على جهازك [[npm install]]، وفي CI و Docker [[npm ci]].
+- نفس الفكرة في كل لغة: [[yarn.lock]] و [[pnpm-lock.yaml]] و [[poetry.lock]] و [[go.sum]] و [[Cargo.lock]] و [[composer.lock]].`,
           lines: [
             R`بيسطّب ويكتب النسخة في [[package.json]] والـ lock.`,
             R`الـ entry بتاع dayjs في الـ lock: النسخة والرابط والـ hash.`,
@@ -218,6 +638,151 @@ git diff --stat`,
             when: R`أي مشروع TypeScript. وعمليًا الأدوات (Vite و Next و NestJS) بتعمله لك، وانت بتعدّل فيه: [["paths"]] و [["strict"]] أكتر حاجتين.`,
             mistakes: R`تضيف [["paths"]] في tsconfig وتفتكر إنها هتشتغل وقت التشغيل: TypeScript بيفهمها للفحص بس، وأداة الـ build (Vite أو Next) لازم تعرفها كمان. تقفل [["strict"]] عشان الأخطاء تختفي. وتقرا الملف بـ [[JSON.parse]] في سكربت فيقع على التعليقات.`
           },
+          teach: R`## الفكرة
+
+المثال ملف [[tsconfig.json]] لمشروع Node مكتوب TypeScript: الكود في [[src/]]، والـ JavaScript الناتج يروح [[dist/]]. هنقرا كل مفتاح، وبعدين نشغّل [[tsc]] عليه ونشوف الناتج. اتجرّب على ويندوز بـ Node 24.19، و [[npx -p typescript tsc]] نزّل TypeScript 7.0.2 (أحدث نسخة وقت التجربة) في فولدر فيه [[package.json]] مكتوب فيه [[{"type": "module"}]] وملف [[src/index.ts]].
+
+---
+
+## ١. الهيكل: object واحد فيه ٣ مفاتيح
+
+~~~text
+{
+  "compilerOptions": { ... },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}
+~~~
+
+- [[compilerOptions]]: إعدادات الـ compiler (هو [[tsc]]، من TypeScript Compiler): يحوّل إزاي ويفحص قد إيه.
+- [[include]]: أنهي ملفات تدخل. [["src"]] يعني كل ملفات [[.ts]] جوه [[src]] وفولدراته.
+- [[exclude]]: أنهي ملفات تتشال من اللي [[include]] جابه.
+
+[[[ ]]] في JSON معناها array (ليستة)، و [[{ }]] معناها object.
+
+---
+
+## ٢. جوه [[compilerOptions]]
+
+### [["target": "ES2022"]]
+
+نسخة JavaScript اللي هتطلع. ES2022 (ECMAScript 2022) فيها حاجات زي [[class]] fields و [[await]] بره الدوال. Node 20 وأحدث فاهمها كلها، فمش محتاج تحويل لصيغة أقدم. لو حطيت [["ES5"]] الكود هيطلع أطول بكتير عشان يشتغل على متصفحات قديمة.
+
+### [["module"]] و [["moduleResolution"]]: [["NodeNext"]]
+
+- [[module]]: الـ [[import]] و [[export]] يطلعوا بأنهي شكل. [[NodeNext]] معناها «زي ما Node بيعمل»: بيبص على [["type"]] في [[package.json]]، ولأنه [["module"]] الناتج بيفضل [[import]]/[[export]] (ESM). لو كان [["commonjs"]] كان هيتحول [[require]].
+- [[moduleResolution]]: لما تكتب [[import x from "./y.js"]] يدوّر على الملف فين. ولازم يمشي مع [[module]]، فالاتنين [[NodeNext]].
+
+> مع [[NodeNext]] لازم تكتب الامتداد في الـ import: [[from "./utils.js"]] (أيوه [[.js]] حتى لو الملف [[utils.ts]])، لأن ده اللي Node هيدوّر عليه بعد التحويل.
+
+### [["strict": true]]
+
+بيشغّل كل الفحوصات الصارمة مرة واحدة: [[null]] لازم يتعامل معاه، وممنوع parameter من غير نوع. جرّبنا ملف فيه:
+
+~~~text src/loose.ts
+export function f(x) { return x; }
+~~~
+
+~~~text الناتج مع strict: true
+src/loose.ts(1,19): error TS7006: Parameter 'x' implicitly has an 'any' type.
+~~~
+
+- [[(1,19)]]: السطر ١، الحرف رقم ١٩ (مكان [[x]]).
+- [[TS7006]]: رقم الغلط، تقدر تدوّر بيه.
+- [[implicitly has an 'any' type]]: انت مكتبتش نوع، فـ TypeScript كان هيعتبره [[any]] (أي حاجة)، وده بيلغي الفحص.
+
+ومع [["strict": false]] نفس الملف عدّى من غير ولا كلمة. وفي TypeScript 7.0.2 لما شلنا سطر [[strict]] خالص الغلط ظهر برضو: [[strict]] بقى شغال افتراضيًا في النسخ الجديدة، بس اكتبه صريح عشان أي حد يقرا الملف يعرف.
+
+### [["outDir": "dist"]] و [["rootDir": "src"]]
+
+[[rootDir]] أول الكود، و [[outDir]] فين الناتج. الهيكل بيتنسخ: [[src/index.ts]] يطلع [[dist/index.js]]، و [[src/api/users.ts]] يطلع [[dist/api/users.js]].
+
+### [["esModuleInterop": true]] و [["skipLibCheck": true]]
+
+- [[esModuleInterop]]: مكتبات قديمة مكتوبة CommonJS ([[module.exports = ...]]) تقدر تعملها [[import express from "express"]] عادي.
+- [[skipLibCheck]]: متفحصش ملفات [[.d.ts]] (ملفات الأنواع) بتاعة المكتبات في [[node_modules]]. الفحص أسرع، وغلط في مكتبة مش هيوقفك.
+
+### التعليق و [["paths"]]
+
+~~~text
+    // للـ imports بـ @/ بدل ../../
+    "paths": { "@/*": ["./src/*"] }
+~~~
+
+[[//]] تعليق: مسموح هنا لأن [[tsconfig.json]] صيغته JSONC (درس [[.jsonc]])، و [[JSON.parse]] كان هيقع عليه.
+
+[[paths]] اختصار: [[@/*]] يعني أي import بيبدأ بـ [[@/]]، و [[*]] الباقي، ويتدوّر عليه في [[./src/*]]. فـ [[import { two } from "@/utils/num.js"]] يبقى [[./src/utils/num.js]]. جرّبناها: [[tsc]] عدّى من غير أخطاء، لكن [[node dist/main.js]] وقع:
+
+~~~text الناتج
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/utils' imported from C:\Users\ali\...\ts\dist\main.js
+~~~
+
+لأن [[tsc]] **مبيغيّرش** الـ import في الناتج، فـ [[dist/main.js]] لسه فيه [["@/utils/num.js"]] و Node ميعرفهاش. [[paths]] للفحص والمحرر بس، والتشغيل محتاج حد تاني يفهمها: Vite أو Next، أو [["imports"]] في [[package.json]].
+
+---
+
+## ٣. التشغيل: [[tsc]]
+
+~~~powershell
+npx -p typescript tsc
+~~~
+
+- [[npx]]: شغّل أداة من npm من غير ما تسطّبها في المشروع.
+- [[-p typescript]] (package): الحزمة اسمها [[typescript]]، والأمر اللي جواها اسمه [[tsc]]، فبنقوله الاتنين.
+- [[tsc]] من غير ملفات: «دوّر على [[tsconfig.json]] هنا واعمل اللي فيه».
+
+مع [[src/index.ts]] فيه سطر واحد:
+
+~~~text src/index.ts
+export const greet = (name: string): string => $__bthi $__{name}$__bt;
+~~~
+
+[[tsc]] مطبعش حاجة (يعني مفيش أخطاء)، واتعمل [[dist/index.js]]:
+
+~~~text dist/index.js
+export const greet = (name) => $__bthi $__{name}$__bt;
+~~~
+
+الأنواع ([[: string]]) اتشالت بس، والـ [[export]] فضل زي ما هو عشان [[NodeNext]] و [["type": "module"]].
+
+---
+
+## ٤. [[tsc --showConfig]]: الإعدادات النهائية
+
+~~~text الناتج (مختصر)
+{
+    "compilerOptions": {
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
+        "outDir": "./dist",
+        ...
+        "target": "es2022",
+        "esModuleInterop": true,
+        "moduleDetection": "force"
+    },
+    "files": [
+        "./src/index.ts"
+    ],
+    ...
+}
+~~~
+
+لاحظ ٣ حاجات: التعليق اختفى، والقيم اتكتبت بحروف صغيرة ([[nodenext]])، وظهر [["files"]] فيه كل ملف هيتعمله compile فعلًا. وظهر كمان [[moduleDetection]] مع إننا مكتبناهوش: ده إعداد اتحسب من [[NodeNext]]. ده أسرع طريقة تعرف «tsc شايف إيه بالظبط».
+
+---
+
+## الخلاصة
+
+| المفتاح | بيحدد |
+|---|---|
+| [[target]] | نسخة JavaScript الناتجة |
+| [[module]] و [[moduleResolution]] | شكل الـ imports وإزاي الملفات تتلاقى |
+| [[strict]] | قد إيه الفحص صارم |
+| [[rootDir]] و [[outDir]] | الكود فين والناتج فين |
+| [[paths]] | اختصارات imports (للفحص بس، مش للتشغيل) |
+| [[include]] و [[exclude]] | أنهي ملفات تدخل |
+
+و [[npx tsc --init]] بيعمل ملف بداية فيه إعدادات وتعليقات (في TypeScript 7.0.2 طلع ٤٤ سطر)، و [[--showConfig]] بيقولك الإعدادات النهائية.`,
           lines: [
             R`[[{]] بداية.`,
             R`كل إعدادات الـ compiler جوه المفتاح ده.`,
@@ -266,13 +831,178 @@ node -v
 cat .npmrc
 npm config get save-exact
 npm config list`,
-          try: R`في مشروع تجربة: [[echo 20 > .nvmrc]] و [[printf 'save-exact=true\nengine-strict=true\n' > .npmrc]]. لو عندك nvm نفّذ [[nvm use]]. وبعدين [[npm config get save-exact]] و [[npm config list]]، وجرّب [[npm install dayjs]] وشوف اتكتب في [[package.json]] بـ [[^]] ولا لأ.`,
+          try: R`في مشروع تجربة: [[echo 22 > .nvmrc]] و [[printf 'save-exact=true\nengine-strict=true\n' > .npmrc]]. لو عندك nvm نفّذ [[nvm use]]. وبعدين [[npm config get save-exact]] و [[npm config list]]، وجرّب [[npm install dayjs]] وشوف اتكتب في [[package.json]] بـ [[^]] ولا لأ.`,
           deep: {
             why: R`مشروع اتعمل على Node 18 ممكن يقع على Node 22 والعكس، ونسيان «المشروع ده محتاج أنهي نسخة» بيضيّع ساعات. [[.nvmrc]] بيكتب الإجابة جوه المشروع نفسه. و [[.npmrc]] بيخلي إعدادات npm الخاصة بالمشروع (registry، النسخ المضبوطة) تمشي مع الكود لكل الناس.`,
             how: R`nvm بيدوّر على [[.nvmrc]] في الفولدر الحالي وفوقه، وبيغيّر الـ PATH عشان [[node]] يشاور على النسخة دي (في الشيل الحالي بس). و npm بيقرا كل ملفات [[.npmrc]] ويدمجها (المشروع فوق اليوزر فوق الجهاز)، وبيبدّل [[$__{VAR}]] بمتغيرات البيئة.`,
             when: R`حط [[.nvmrc]] في أي مشروع Node من أول يوم. و [[.npmrc]] لما محتاج registry خاص أو إعداد لكل الفريق.`,
-            mistakes: R`تعمل commit لتوكن حقيقي في [[.npmrc]] (GitHub نفسه بيكتشفه ويبعتلك تحذير، والتوكن بيتلغي). تنسى إن [[nvm use]] بيغيّر الشيل الحالي بس، فالترمنال الجديد يرجع للنسخة الافتراضية ([[nvm alias default 20]] يحل ده). وتحط [[legacy-peer-deps=true]] وتنسى إنه بيخبّي مشاكل حقيقية.`
+            mistakes: R`تعمل commit لتوكن حقيقي في [[.npmrc]] (GitHub نفسه بيكتشفه ويبعتلك تحذير، والتوكن بيتلغي). تنسى إن [[nvm use]] بيغيّر الشيل الحالي بس، فالترمنال الجديد يرجع للنسخة الافتراضية ([[nvm alias default 22]] يحل ده). وتحط [[legacy-peer-deps=true]] وتنسى إنه بيخبّي مشاكل حقيقية.`
           },
+          teach: R`## الفكرة
+
+المثال ٦ أوامر: ٣ لـ [[.nvmrc]] (نسخة Node) و ٣ لـ [[.npmrc]] (إعدادات npm). اتجرّبوا في فولدر فيه الملفين دول:
+
+~~~text .nvmrc
+22
+~~~
+
+~~~text .npmrc
+save-exact=true
+engine-strict=true
+~~~
+
+أوامر nvm اتجرّبت على أوبونتو 24.04 جوه Docker (nvm 0.40.3)، لأن nvm أداة لينكس والماك. وأوامر npm اتجرّبت على ويندوز (npm 11.17) وعلى نفس الأوبونتو (npm 10.9).
+
+---
+
+## ١. [[cat .nvmrc]]
+
+[[cat]] بيطبع محتوى الملف (وفي PowerShell [[cat]] اسم تاني لـ [[Get-Content]]، فشغال برضو):
+
+~~~text الناتج
+22
+~~~
+
+سطر واحد، رقم النسخة. ممكن يبقى [[22]] (أحدث 22.x)، أو [[22.11.0]] بالظبط، أو [[lts/jod]] (اسم سلسلة الـ LTS، يعني Long Term Support: النسخ المدعومة لفترة طويلة). والنقطة في أول اسم الملف معناها إنه مخفي على لينكس والماك (درس الملفات المخفية).
+
+---
+
+## ٢. [[nvm use]]
+
+nvm (Node Version Manager) بيخليك تسطّب كذا نسخة Node وتنقل بينهم. [[nvm use]] من غير رقم يعني «اقرا [[.nvmrc]]». أول مرة، والنسخة مش متسطّبة:
+
+~~~text الناتج
+Found '/p/.nvmrc' with version <22>
+N/A: version "v22" is not yet installed.
+
+You need to run $__btnvm install$__bt to install and use the node version specified in $__bt.nvmrc$__bt.
+~~~
+
+[[N/A]] (not available): مش موجودة عندك. فـ [[nvm install]] (برضو من غير رقم، بيقرا نفس الملف):
+
+~~~text الناتج (آخر السطور)
+Computing checksum with sha256sum
+Checksums matched!
+Now using node v22.23.3 (npm v10.9.9)
+Creating default alias: default -> 22 (-> v22.23.3 *)
+~~~
+
+- [[Checksums matched]]: nvm نزّل Node واتأكد من البصمة بتاعته إنها مطابقة للي على موقع Node (نفس فكرة [[integrity]] في الـ lock).
+- [[v22.23.3]]: أحدث 22.x وقت التجربة، لأن الملف فيه [[22]] بس.
+- [[default alias]]: أول نسخة بتتسطّب بتبقى الافتراضية لأي ترمنال جديد.
+
+وبعدها [[nvm use]] تاني:
+
+~~~text الناتج
+Found '/p/.nvmrc' with version <22>
+Now using node v22.23.3 (npm v10.9.9)
+~~~
+
+> nvm بيغيّر الـ PATH في الترمنال ده بس. ترمنال جديد بيرجع للـ [[default]].
+
+## ٣. [[node -v]]
+
+~~~text الناتج
+v22.23.3
+~~~
+
+[[-v]] (version): اطبع النسخة. ده تأكيد إن [[nvm use]] اشتغل.
+
+### وعلى ويندوز؟
+
+nvm الأصلي مش بيشتغل على ويندوز. فيه برنامج تاني اسمه nvm-windows بأوامر شبهه بس مختلفة. والأدوات اللي بتقرا [[.nvmrc]] على ويندوز ولينكس والماك: fnm ([[fnm use]]) و Volta، وده من الـ docs بتاعتهم (مش متجرّبين هنا). و GitHub Actions بيقراه بـ [[node-version-file: .nvmrc]].
+
+---
+
+## ٤. [[cat .npmrc]]
+
+~~~text الناتج
+save-exact=true
+engine-strict=true
+~~~
+
+الصيغة [[key=value]]، سطر لكل إعداد:
+
+| الإعداد | معناه |
+|---|---|
+| [[save-exact=true]] | [[npm install x]] يكتب النسخة من غير [[^]] |
+| [[engine-strict=true]] | يرفض التسطيب لو Node مش زي [[engines]] في [[package.json]] |
+
+## ٥. [[npm config get save-exact]]
+
+[[npm config get]] بيطبع القيمة **الفعالة** لإعداد واحد، بعد ما يدمج كل ملفات [[.npmrc]]:
+
+~~~text الناتج
+true
+~~~
+
+## ٦. [[npm config list]]
+
+بيطبع كل الإعدادات اللي مش افتراضية، ومجمّعة بمصدرها. على ويندوز:
+
+~~~text الناتج
+; "builtin" config from C:\Program Files\nodejs\node_modules\npm\npmrc
+
+prefix = "C:\\Users\\ali\\AppData\\Roaming\\npm"
+
+; "project" config from C:\Users\ali\...\rc\.npmrc
+
+engine-strict = true
+save-exact = true
+save-prefix = ""
+
+; node bin location = C:\Program Files\nodejs\node.exe
+; node version = v24.19.0
+; npm local prefix = C:\Users\ali\...\rc
+; npm version = 11.17.0
+; cwd = C:\Users\ali\...\rc
+; HOME = C:\Users\ali
+; Run $__btnpm config ls -l$__bt to show all defaults.
+~~~
+
+- السطور اللي بتبدأ بـ [[;]] تعليقات (زي INI).
+- [["builtin"]]: ملف جاي مع npm نفسه، و [[prefix]] فيه مكان الأدوات اللي بتتسطّب بـ [[-g]].
+- [["project"]]: ملف المشروع بتاعنا. لو كان عندك [[~/.npmrc]] كان هيظهر قسم [["user"]] كمان.
+- [[save-prefix = ""]]: احنا مكتبناهاش! npm حسبها من [[save-exact=true]]: الـ prefix اللي بيتحط قبل النسخة (افتراضيًا [[^]]) بقى فاضي.
+- آخر جزء معلومات: نسخة Node و npm، والـ [[cwd]] (current working directory: الفولدر الحالي).
+
+---
+
+## ٧. الإعدادين بيعملوا إيه فعلًا
+
+**[[save-exact]]:** على الأوبونتو [[npm install dayjs]] وبعدين [[npm pkg get dependencies]]:
+
+~~~text الناتج
+{
+  "dayjs": "1.11.23"
+}
+~~~
+
+من غير [[^]].
+
+**[[engine-strict]]:** على ويندوز (Node 24) حطينا [["engines": { "node": ">=26" }]] وجرّبنا [[npm install dayjs]]:
+
+~~~text الناتج
+npm error code EBADENGINE
+npm error engine Unsupported engine
+npm error engine Not compatible with your version of node/npm: rc@1.0.0
+npm error notsup Not compatible with your version of node/npm: rc@1.0.0
+npm error notsup Required: {"node":">=26"}
+npm error notsup Actual:   {"node":"v24.19.0","npm":"11.17.0"}
+~~~
+
+[[EBADENGINE]] (bad engine): المطلوب [[>=26]] والموجود [[v24.19.0]]، فوقف. من غير [[engine-strict]] كان هيطبع [[npm warn EBADENGINE]] ويكمّل.
+
+---
+
+## الخلاصة
+
+| الملف | فيه | مين بيقراه |
+|---|---|---|
+| [[.nvmrc]] | نسخة Node، سطر واحد | nvm و fnm و Volta و GitHub Actions |
+| [[.npmrc]] | إعدادات npm [[key=value]] | npm (المشروع ثم [[~/.npmrc]] ثم الجهاز) |
+
+و [[npm config list]] بيقولك كل إعداد جاي منين. والتوكنات عمرها ما تتكتب في [[.npmrc]] اللي في المشروع: [[$__{NPM_TOKEN}]] بس.`,
           lines: [
             R`النسخة المطلوبة: سطر واحد.`,
             R`nvm بيقرا [[.nvmrc]] ويحوّلك لها.`,
@@ -281,8 +1011,8 @@ npm config list`,
             R`قيمة إعداد واحد.`,
             R`كل الإعدادات الفعالة ومصدرها.`
           ],
-          sol: R`[[cat .nvmrc]] ← [[20]]
-[[nvm use]] ← [[Found '/path/.nvmrc' with version <20>]] وبعدها [[Now using node v20.x.x]]، ولو النسخة مش متسطّبة: [[N/A: version "v20" is not yet installed.]] فاكتب [[nvm install]] (بيقرا نفس الملف).
+          sol: R`[[cat .nvmrc]] ← [[22]]
+[[nvm use]] ← [[Found '/path/.nvmrc' with version <22>]] وبعدها [[Now using node v22.x.x]]، ولو النسخة مش متسطّبة: [[N/A: version "v22" is not yet installed.]] فاكتب [[nvm install]] (بيقرا نفس الملف).
 [[npm config get save-exact]] ← [[true]]
 [[npm config list]] فيه قسم:
 [[; "project" config from /path/to/project/.npmrc]]
@@ -341,6 +1071,165 @@ Thumbs.db
             when: R`أول ملف تعمله في أي repo، قبل أول [[git add]]. وكل ما أداة جديدة تعمل فولدر ناتج أو cache.`,
             mistakes: R`تحط الملف في [[.gitignore]] بعد ما اتعمله commit وتستغرب إنه لسه بيتتابع ([[git rm --cached]]). تعمل ignore لـ [[package-lock.json]] (لازم يترفع). تكتب [[.vscode/]] وبعدين [[!.vscode/extensions.json]] فالاستثناء ميشتغلش. وتفتكر إن [[.gitignore]] بيحمي من الـ leaks: لو حد عمل [[git add -f]] الملف بيترفع.`
           },
+          teach: R`## الفكرة
+
+المثال ملف [[.gitignore]] جاهز لمشروع Node. هنقراه نمط نمط، وبعدين نجرّبه في repo تجربة فيه ملفات بأسامي مقصودة ونشوف Git شايف إيه ومتجاهل إيه. كل ده اتجرّب بـ Git 2.56 على ويندوز (Git Bash).
+
+---
+
+## ١. التعليقات
+
+~~~text
+# المكتبات والناتج
+~~~
+
+أي سطر بيبدأ بـ [[#]] تعليق، والسطور الفاضية ملهاش معنى. التعليقات بتتحسب في ترقيم السطور، وده هيفرق تحت في [[git check-ignore]].
+
+---
+
+## ٢. المكتبات والناتج
+
+~~~text
+node_modules/
+dist/
+*.log
+~~~
+
+| النمط | بيطابق |
+|---|---|
+| [[node_modules/]] | فولدر اسمه [[node_modules]] في **أي** مكان. الـ [[/]] في الآخر معناها «فولدر بس»، فلو فيه ملف اسمه [[node_modules]] مش هيتأثر |
+| [[dist/]] | فولدر الناتج بتاع الـ build |
+| [[*.log]] | [[*]] = أي حروف ماعدا [[/]]. فـ أي ملف آخره [[.log]] في أي فولدر |
+
+---
+
+## ٣. الأسرار والاستثناء
+
+~~~text
+.env
+.env.*
+!.env.example
+~~~
+
+- [[.env]]: الملف ده بالاسم ده.
+- [[.env.*]]: أي ملف بيبدأ بـ [[.env.]]: [[.env.local]] و [[.env.production]]، و [[.env.example]] كمان!
+- [[!.env.example]]: [[!]] يعني «ماعدا». بيرجّع [[.env.example]] تاني عشان يترفع (فيه أسامي المتغيرات من غير قيم، للفريق).
+
+Git بيمشي على الأنماط من فوق لتحت، و**آخر نمط يطابق هو اللي يكسب**. عشان كده [[!]] لازم ييجي بعد [[.env.*]]: لو جه قبله، [[.env.*]] هيطابق بعده ويتجاهل الملف تاني.
+
+---
+
+## ٤. ملفات الأنظمة والمحررات
+
+~~~text
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+/config/local.json
+~~~
+
+- [[.DS_Store]]: ملف الماك بيعمله في كل فولدر تفتحه (DS = Desktop Services).
+- [[Thumbs.db]]: ويندوز القديم بيحفظ فيه الصور المصغرة.
+- [[.vscode/*]] ثم [[!.vscode/extensions.json]]: تجاهل **محتوى** الفولدر، ماعدا ملف الإضافات المقترحة للفريق.
+- [[/config/local.json]]: [[/]] في **الأول** معناها «من أول الـ repo». فبيطابق [[config/local.json]] بس، مش [[src/config/local.json]].
+
+ليه [[.vscode/*]] مش [[.vscode/]]؟ جرّبنا نغيّرها لـ [[.vscode/]]: الفولدر كله اختفى من [[git status]] و [[extensions.json]] معاه، والاستثناء ماشتغلش. Git لما بيتجاهل فولدر مبيدخلوش أصلًا، فمبيشوفش اللي جواه عشان يستثنيه.
+
+---
+
+## ٥. التجربة: [[git status --short -uall]]
+
+في repo جديد حطينا المثال، وعملنا الملفات دي: [[app.log]] و [[.env]] و [[.env.local]] و [[.env.example]] و [[config/local.json]] و [[src/config/local.json]] و [[.vscode/settings.json]] و [[.vscode/extensions.json]] و [[node_modules/x/i.js]] و [[dist/a.js]] و [[logs.txt]].
+
+~~~bash
+git status --short -uall
+~~~
+
+- [[--short]]: سطر لكل ملف بدل الكلام الطويل.
+- [[-uall]] (untracked all): اعرض كل ملف untracked لوحده. من غيره Git بيكتب [[?? src/]] بدل الملف اللي جواه.
+
+~~~text الناتج
+?? .env.example
+?? .gitignore
+?? .vscode/extensions.json
+?? logs.txt
+?? src/config/local.json
+~~~
+
+[[??]] يعني untracked: Git شايفه ومش بيتابعه لسه. كل اللي مش في الليستة اتجاهل. لاحظ:
+
+- [[logs.txt]] ظاهر: [[*.log]] عايز الاسم **يخلص** بـ [[.log]]، و [[logs.txt]] آخره [[.txt]].
+- [[src/config/local.json]] ظاهر: بسبب [[/]] اللي في أول النمط.
+- [[.env.example]] و [[.vscode/extensions.json]] ظاهرين: الاستثناءات اشتغلت.
+
+---
+
+## ٦. مين السبب؟ [[git check-ignore -v]]
+
+~~~bash
+git check-ignore -v .env.local app.log src/config/local.json .env.example node_modules/x/i.js
+~~~
+
+[[check-ignore]] بيقولك الملفات دي متجاهلة ولا لأ، و [[-v]] (verbose) بيقول كمان السطر المسؤول:
+
+~~~text الناتج
+.gitignore:7:.env.*	.env.local
+.gitignore:4:*.log	app.log
+.gitignore:8:!.env.example	.env.example
+.gitignore:2:node_modules/	node_modules/x/i.js
+~~~
+
+اقرا كل سطر كده: [[الملف:رقم السطر:النمط]] وبعدين Tab واسم الملف اللي سألت عليه. [[*.log]] في السطر ٤ مش ٣ لأن السطر الأول تعليق.
+
+- [[src/config/local.json]] مطلعش خالص: مفيش نمط بيطابقه.
+- [[.env.example]] طلع بس النمط بيبدأ بـ [[!]]: مع [[-v]] Git بيوريك آخر نمط طابق حتى لو كان استثناء. يعني الملف **مش** متجاهل.
+
+---
+
+## ٧. الفخ: ملف اتعمله commit قبل كده
+
+عملنا commit لـ [[secret.txt]]، وبعدين ضفناه في آخر [[.gitignore]] وعدّلناه:
+
+~~~text git status --short
+ M secret.txt
+~~~
+
+[[M]] (modified): Git لسه بيتابعه عادي. و [[git check-ignore -v secret.txt]] مطبعش حاجة (exit code 1)، لأنه بيجاوب على الملفات اللي في الـ index كأنها مش متجاهلة. مع [[--no-index]] بيعترف إن النمط موجود:
+
+~~~text git check-ignore -v --no-index secret.txt
+.gitignore:15:secret.txt	secret.txt
+~~~
+
+الحل:
+
+~~~bash
+git rm --cached secret.txt
+~~~
+
+- [[rm]]: شيل الملف من Git.
+- [[--cached]]: من الـ index بس (اللي Git متابعه)، وسيب الملف على الديسك.
+
+~~~text git status --short بعدها
+D  secret.txt
+~~~
+
+[[D]] في العمود الأول: الحذف جاهز للـ commit. والملف لسه موجود عندك ([[ls secret.txt]] لقاه). وبعد الـ commit Git مش هيتابعه تاني. ولو كان فيه سر حقيقي غيّره: النسخة القديمة لسه في تاريخ Git.
+
+---
+
+## الخلاصة
+
+| الرمز | معناه |
+|---|---|
+| [[#]] | تعليق |
+| [[name/]] | فولدر بس، في أي مكان |
+| [[*]] | أي حروف ماعدا [[/]] |
+| [[**]] | أي عدد فولدرات |
+| [[/name]] | من أول الـ repo بس |
+| [[!pattern]] | استثناء، ولازم ييجي بعد |
+
+[[.gitignore]] بيأثر على الملفات اللي **مش** متابَعة بس. و [[git check-ignore -v]] بيقولك أنهي سطر هو السبب.`,
           lines: [
             R`أي فولدر اسمه [[node_modules]] في أي مكان.`,
             R`فولدر الناتج.`,
@@ -404,6 +1293,164 @@ package-lock.json -diff linguist-generated`,
             when: R`في أي مشروع فيه ناس على ويندوز وناس على لينكس أو ماك، أو فيه سكربتات [[.sh]] و Dockerfile. حطه من أول يوم.`,
             mistakes: R`تحطه في مشروع قديم من غير [[--renormalize]] فميتغيرش حاجة. تحط [[* text eol=lf]] من غير [[auto]] فـ Git يعامل الصور كنص ويبوّظها. وتنسى [[*.bat eol=crlf]] فسكربتات ويندوز تتحول LF.`
           },
+          teach: R`## الفكرة
+
+المثال ملف [[.gitattributes]] بيقول لـ Git: كل الملفات النصية LF، وسكربتات ويندوز CRLF، والصور متتلمسش. هنقراه، وبعدين نجرّبه على repo فيه ٣ ملفات متلخبطة ونشوف قبل وبعد. اتجرّب بـ Git 2.56 على ويندوز (Git Bash)، مع [[git config core.autocrlf false]] جوه الـ repo عشان إعداد الجهاز ميغطّيش على التجربة.
+
+---
+
+## ١. شكل السطر
+
+~~~text
+pattern  attribute  attribute ...
+~~~
+
+النمط زي [[.gitignore]] ([[*]] و [[*.bat]] واسم ملف)، وبعده خاصية أو أكتر بمسافات. والخاصية بتتكتب ٣ أشكال:
+
+| الشكل | معناه | مثال |
+|---|---|---|
+| [[name]] | شغّلها (set) | [[binary]] |
+| [[-name]] | اقفلها (unset) | [[-diff]] |
+| [[name=value]] | ادّيها قيمة | [[eol=lf]] |
+
+ولو ملف طابق أكتر من سطر، السطر اللي **تحت** بيكسب في الخاصية اللي اتكررت.
+
+---
+
+## ٢. السطر الأساسي: [[* text=auto eol=lf]]
+
+- [[*]]: كل الملفات.
+- [[text=auto]]: Git يخمّن لوحده الملف نصي ولا لأ (بيدوّر على byte صفر في أوله). النصي بيتخزن في الـ repo بـ LF دايمًا.
+- [[eol=lf]] (end of line): ولما يطلّع الملف على جهازك (checkout) يطلّعه بـ LF، حتى على ويندوز.
+
+## ٣. سكربتات ويندوز: [[*.bat text eol=crlf]]
+
+[[text]] من غير [[auto]] يعني «ده نصي أكيد»، و [[eol=crlf]] يطلع على الجهاز بـ CRLF (درس LF و CRLF). وده للـ [[.bat]] و [[.cmd]] و [[.ps1]]، لأن cmd ممكن يتلخبط في ملفات [[.bat]] اللي بـ LF. السطور دي تحت [[*]]، فبتغطي على [[eol=lf]] للملفات دي بس.
+
+## ٤. [[*.png binary]] و [[*.jpg binary]]
+
+[[binary]] اختصار لـ [[-text -diff -merge]]: متحوّلش نهايات سطور، ومتعرضش diff نصي، ومتحاولش تدمج نسختين. [[text=auto]] غالبًا هيعرف إن الصورة binary لوحده، بس السطر ده احتياطي.
+
+## ٥. [[package-lock.json -diff linguist-generated]]
+
+- [[-diff]]: [[git diff]] يكتب سطر واحد [[Binary files a/package-lock.json and b/package-lock.json differ]] بدل آلاف السطور (جرّبناها).
+- [[linguist-generated]]: خاصية GitHub بيقراها (مش Git): الملف متولّد، فيطويه في الـ pull request ومش يحسبه في لغات الـ repo.
+
+---
+
+## ٦. التجربة: قبل الملف
+
+عملنا ٣ ملفات واتعملهم commit من غير [[.gitattributes]]:
+
+- [[run.sh]] بـ CRLF ([[printf 'echo hi\r\n']])، يعني متلخبط.
+- [[build.bat]] بـ LF.
+- [[logo.png]]: أول bytes من ملف PNG.
+
+~~~bash
+git ls-files --eol
+~~~
+
+~~~text الناتج
+i/lf    w/lf    attr/                 	build.bat
+i/-text w/-text attr/                 	logo.png
+i/crlf  w/crlf  attr/                 	run.sh
+~~~
+
+| العمود | معناه |
+|---|---|
+| [[i/]] | index: الملف متخزن في Git إزاي |
+| [[w/]] | working tree: الملف على جهازك إزاي |
+| [[attr/]] | الخصائص اللي عليه من [[.gitattributes]] (فاضية لسه) |
+
+[[-text]] يعني Git شايفه مش نص. والمشكلة: [[i/crlf]] قدام [[run.sh]]، يعني CRLF دخل الـ repo، ولو السكربت أوله [[#!/bin/bash]]، لينكس هيرفض يشغّله بـ [[/bin/bash^M: bad interpreter]] (درس LF و CRLF).
+
+---
+
+## ٧. نحط الملف ونعيد التخزين: [[git add --renormalize .]]
+
+حطينا المثال في [[.gitattributes]]. الملفات اللي في الـ repo **مبتتغيرش لوحدها**، فلازم:
+
+~~~bash
+git add --renormalize .
+git status --short
+~~~
+
+[[--renormalize]]: أعد إضافة كل الملفات المتابَعة بالقواعد الجديدة، حتى لو محتواها على الديسك متغيرش. و [[.]] الفولدر الحالي وكل اللي تحته.
+
+~~~text الناتج
+M  run.sh
+?? .gitattributes
+~~~
+
+- [[M ]] في العمود الأول: [[run.sh]] اتغير في الـ index (اتحفظ LF). [[build.bat]] و [[logo.png]] متغيروش لأنهم كانوا صح.
+- [[?? .gitattributes]]: [[--renormalize]] بيلمس الملفات المتابعة بس، فالملف الجديد نفسه محتاج [[git add .gitattributes]] لوحده. متنساهوش، من غيره باقي الفريق مش هياخد القواعد.
+
+وبعد الـ commit:
+
+~~~text git ls-files --eol
+i/lf    w/lf    attr/text eol=crlf    	build.bat
+i/-text w/-text attr/-text            	logo.png
+i/lf    w/crlf  attr/text=auto eol=lf 	run.sh
+~~~
+
+- [[run.sh]]: [[i/lf]] الـ repo بقى سليم، بس [[w/crlf]] الملف على الديسك لسه زي ما هو: Git مبيعيدش كتابة ملفاتك وهو بيعمل add.
+- [[build.bat]]: [[attr/text eol=crlf]]، بس لسه [[w/lf]] لنفس السبب.
+
+## ٨. checkout بيطبّق القواعد
+
+مسحنا الملفين وطلّعناهم تاني من Git:
+
+~~~bash
+rm run.sh build.bat
+git checkout -- run.sh build.bat
+~~~
+
+[[--]] معناها «اللي بعدي أسامي ملفات مش أسامي branches».
+
+~~~text git ls-files --eol
+i/lf    w/crlf  attr/text eol=crlf    	build.bat
+i/lf    w/lf    attr/text=auto eol=lf 	run.sh
+~~~
+
+دلوقتي كل حاجة زي ما الملف قال: [[build.bat]] على الجهاز CRLF وفي الـ repo LF، و [[run.sh]] LF في الحتتين. و [[od -c build.bat]] (بيطبع الملف حرف حرف) أكّد إن آخر كل سطر بقى [[\r \n]].
+
+---
+
+## ٩. [[git check-attr -a]]
+
+~~~bash
+git check-attr -a run.sh build.bat logo.png
+~~~
+
+[[-a]] (all): كل الخصائص اللي على الملف ده:
+
+~~~text الناتج
+run.sh: text: auto
+run.sh: eol: lf
+build.bat: text: set
+build.bat: eol: crlf
+logo.png: binary: set
+logo.png: diff: unset
+logo.png: merge: unset
+logo.png: text: unset
+logo.png: eol: lf
+~~~
+
+[[set]] = شغّالة، و [[unset]] = مقفولة. لاحظ إن [[binary]] اتفرد لـ [[diff: unset]] و [[merge: unset]] و [[text: unset]]. و [[eol: lf]] على الصورة جاية من سطر [[*]]، بس ملهاش تأثير لأن [[text]] مقفول.
+
+---
+
+## الخلاصة
+
+| الخاصية | بتعمل إيه |
+|---|---|
+| [[text=auto]] | Git يحدد النصي، ويخزّنه LF |
+| [[eol=lf]] / [[eol=crlf]] | الملف يطلع على الجهاز بالنهاية دي |
+| [[binary]] | متلمسش: من غير تحويل ولا diff ولا merge |
+| [[-diff]] | متعرضش diff |
+| [[linguist-generated]] | GitHub يطويه |
+
+ولمشروع قديم: [[git add .gitattributes]] و [[git add --renormalize .]] ثم commit. والملفات اللي على جهازك بتتصلّح مع أول checkout أو clone جديد.`,
           lines: [
             R`[[*]] كل الملفات: Git يحدد النصي لوحده، ويطلّعه LF على كل الأجهزة.`,
             R`ملفات CMD تطلع CRLF.`,
@@ -477,6 +1524,141 @@ trim_trailing_whitespace = false`,
             when: R`في أي مشروع فيه أكتر من شخص أو أكتر من محرر، ومعاه [[.gitattributes]] (Git) و Prettier (التنسيق).`,
             mistakes: R`تحطه ومتسطّبش الإضافة في VS Code فميحصلش حاجة. تحط [[indent_style = space]] على [[Makefile]] (لازم Tab). تنسى [[root = true]] فإعدادات من فولدر فوق المشروع تتطبق. وتشيل المسافات من آخر السطور في Markdown فالـ line breaks تضيع.`
           },
+          teach: R`## الفكرة
+
+المثال ملف [[.editorconfig]] فيه قسم عام لكل الملفات، و ٣ أقسام بتغيّر حاجة واحدة لنوع ملف معين. هنقراه سطر سطر، وبعدين نفحص ملفات مخالفة بـ [[editorconfig-checker]] ونقرا رسايله. الفحص اتجرّب على ويندوز بـ [[npx editorconfig-checker]] (نزّل البرنامج نفسه نسخة 4.0.2). وسلوك المحرر نفسه (VS Code مع الإضافة) من الـ docs.
+
+---
+
+## ١. [[root = true]]
+
+~~~text
+# الملف ده في أول المشروع
+root = true
+~~~
+
+السطر الأول تعليق ([[#]] أو [[;]]). و [[root = true]] بيقول للمحرر: «وقف هنا». المحرر وهو بيفتح ملف بيدوّر على [[.editorconfig]] في فولدر الملف، وبعدين اللي فوقه، واللي فوقه... لحد ما يلاقي واحد فيه [[root = true]]. من غيره ممكن يلاقي [[.editorconfig]] قديم في [[C:\Users\ali]] مثلًا ويطبّقه على مشروعك.
+
+لاحظ إن [[root]] مكتوب بره أي قسم، فوق خالص. ده المكان الوحيد المسموح ليه.
+
+---
+
+## ٢. القسم العام [[[*]]]
+
+~~~text
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+trim_trailing_whitespace = true
+~~~
+
+الأقواس المربعة [[[ ]]] بتبدأ قسم، وجواها نمط اسم ملف. [[*]] يعني كل الملفات. وتحته [[key = value]]:
+
+| الإعداد | معناه |
+|---|---|
+| [[charset = utf-8]] | احفظ بـ UTF-8 من غير BOM (درس UTF-8) |
+| [[end_of_line = lf]] | نهاية السطر LF مش CRLF |
+| [[indent_style = space]] | زرار Tab يكتب مسافات |
+| [[indent_size = 2]] | كل مستوى مسافتين |
+| [[insert_final_newline = true]] | لازم سطر جديد في آخر الملف |
+| [[trim_trailing_whitespace = true]] | امسح المسافات اللي في آخر أي سطر وقت الحفظ |
+
+---
+
+## ٣. الأقسام اللي بتغيّر
+
+~~~text
+[*.py]
+indent_size = 4
+
+[Makefile]
+indent_style = tab
+
+[*.md]
+trim_trailing_whitespace = false
+~~~
+
+- [[[*.py]]]: ملفات Python مسافاتها ٤ (العُرف في PEP 8). باقي الإعدادات (UTF-8 و LF...) جاية من [[[*]]].
+- [[[Makefile]]]: ملف بالاسم ده بالظبط، وأوامره **لازم** Tab حقيقي (درس Makefile).
+- [[[*.md]]]: في Markdown مسافتين في آخر السطر معناهم «سطر جديد»، فممنوع تتمسح.
+
+الملف بيتقري من فوق لتحت، ولو ملف طابق كذا قسم، القسم اللي تحت بيكسب في الإعداد اللي اتكرر. فـ [[a.py]] بياخد كل [[[*]]] وبعدين [[indent_size = 4]] يغطي على 2.
+
+ولو عايز نوعين في قسم واحد: [[[*.{js,ts}]]] (الأقواس المعووجة [[{ }]] = واحد من دول).
+
+---
+
+## ٤. الفحص: [[npx editorconfig-checker]]
+
+المحرر بيطبّق الإعدادات وانت بتكتب، بس مبيصلّحش ملفات اتكتبت غلط قبل كده. [[editorconfig-checker]] بيقرا نفس الملف ويقولك مين مخالف. عملنا ٤ ملفات غلط عن قصد:
+
+| الملف | الغلط |
+|---|---|
+| [[Makefile]] | سطر الأمر داخل بـ ٤ مسافات |
+| [[a.py]] | سطر داخل بمسافتين |
+| [[b.js]] | مسافة في آخر السطر |
+| [[c.md]] | مسافتين في آخر السطر (مسموح) |
+
+~~~powershell
+npx -y editorconfig-checker
+~~~
+
+[[-y]] بيوافق على تنزيل الحزمة من غير سؤال.
+
+~~~text الناتج
+Makefile:
+	2: wrong indentation type (spaces instead of tabs)
+a.py:
+	2: wrong amount of left-padding spaces(want multiple of 4)
+b.js:
+	1: trailing whitespace
+
+3 errors found
+~~~
+
+- الرقم قبل [[:]] رقم السطر.
+- [[wrong indentation type]]: نوع الإزاحة غلط، مسافات والمفروض Tab.
+- [[left-padding spaces(want multiple of 4)]]: عدد المسافات في أول السطر لازم يتقسم على ٤.
+- [[trailing whitespace]]: مسافات في آخر السطر.
+- [[c.md]] مطلعش: قسم [[[*.md]]] اشتغل.
+
+ولما الغلط ٣، الأمر خرج بـ exit code 1، وده اللي بيخلي الـ CI يفشل.
+
+وتجربة تانية: [[d.js]] من غير سطر جديد في آخره، و [[e.py]] بـ CRLF:
+
+~~~text الناتج
+d.js:
+	wrong line endings or no final newline
+e.py:
+	not all lines have the correct end of line character
+	wrong line endings or no final newline
+
+3 errors found
+~~~
+
+دول [[insert_final_newline]] و [[end_of_line]]. ومن غير رقم سطر لأنهم عن الملف كله.
+
+---
+
+## ٥. في المحرر
+
+حسب docs موقع editorconfig.org: JetBrains و Visual Studio بيقروا الملف لوحدهم، و VS Code محتاج إضافة «EditorConfig for VS Code». بعدها لما تفتح [[a.py]] شريط الحالة تحت بيكتب [[Spaces: 4]]، وفي [[b.js]] [[Spaces: 2]]. والمحرر بيطبّق الإعدادات وانت بتكتب وتحفظ بس، مش بيعيد تنسيق الملفات القديمة.
+
+---
+
+## الخلاصة
+
+| الحاجة | فين |
+|---|---|
+| وقف الدوّير لفوق | [[root = true]] أول الملف |
+| إعدادات لكل الملفات | [[[*]]] |
+| استثناء لنوع | قسم بنمطه تحت العام |
+| فحص في CI | [[npx editorconfig-checker]] |
+
+[[.editorconfig]] = المحرر يكتب إزاي، و [[.gitattributes]] = Git يخزّن إزاي، و Prettier = الكود نفسه يتنسق إزاي.`,
           lines: [
             R`ده أول المشروع، متدوّرش فوقه.`,
             R`قسم لكل الملفات.`,
@@ -517,7 +1699,7 @@ trim_trailing_whitespace = false`,
           desc: R`[[Dockerfile]] (بالظبط كده، D كبيرة ومن غير امتداد) وصفة بتقول لـ Docker يبني image لتطبيقك خطوة خطوة: ابدأ من نظام فيه Node، انسخ الكود، سطّب المكتبات، وشغّل بالأمر ده. التفاصيل في تاب Docker.
 
 الصيغة: كل سطر [[INSTRUCTION arguments]]، والأوامر بالحروف الكبيرة بالعُرف، و [[#]] تعليق. وأهم الأوامر:
-• [[FROM node:20-alpine]]: الـ image اللي هتبدأ منه. لازم أول أمر. [[20-alpine]] اسمه tag: Node 20 على Alpine لينكس (صغير).
+• [[FROM node:22-alpine]]: الـ image اللي هتبدأ منه. لازم أول أمر. [[22-alpine]] اسمه tag: Node 22 على Alpine لينكس (صغير).
 • [[WORKDIR /app]]: الفولدر اللي هتشتغل فيه جوه الـ image (بيتعمل لو مش موجود).
 • [[COPY src dest]]: انسخ من جهازك (من الـ build context) لجوه الـ image.
 • [[RUN command]]: نفّذ أمر وقت البناء (تسطيب مكتبات، build).
@@ -531,7 +1713,7 @@ trim_trailing_whitespace = false`,
 
 وأخوات: [[Dockerfile.dev]] أو [[api.Dockerfile]] لو عندك أكتر من واحد ([[docker build -f Dockerfile.dev .]])، و [[Containerfile]] نفس الحاجة في Podman.`,
           example: R`# syntax=docker/dockerfile:1
-FROM node:20-alpine
+FROM node:22-alpine
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci --omit=dev
@@ -546,10 +1728,195 @@ CMD ["node", "server.js"]`,
             why: R`«شغال على جهازي» مشكلة قديمة: نسخة Node مختلفة، أو مكتبة نظام ناقصة. الـ Dockerfile بيكتب البيئة كلها ككود، فالـ image اللي بيتبني على جهازك هو هو اللي بيشتغل على السيرفر و CI.`,
             how: R`[[docker build .]] بيبعت الفولدر (الـ context، ماعدا اللي في [[.dockerignore]]) للـ Docker engine، اللي بينفذ الأوامر بالترتيب: كل [[RUN]] و [[COPY]] بيعمل طبقة جديدة فوق اللي قبلها. ولكل خطوة بيحسب hash لمدخلاتها، ولو موجودة في الـ cache بيستخدمها ([[CACHED]]). و [[CMD]] بيتسجل في إعدادات الـ image بس، وبيتنفذ مع [[docker run]].`,
             when: R`أي تطبيق هيترفع على سيرفر أو cloud، وأي مشروع عايز الكل يشغّله بأمر واحد.`,
-            mistakes: R`[[COPY . .]] قبل [[npm ci]] فأي تعديل يعيد التسطيب كله. من غير [[.dockerignore]] فـ [[node_modules]] بتاعة جهازك و [[.env]] يدخلوا الـ image. [[CMD node server.js]] (shell form) فـ Ctrl+C و [[docker stop]] مبيوصلوش للتطبيق (بيستنى ١٠ ثواني ويقتله). وتسمّي الملف [[dockerfile]] أو [[Dockerfile.txt]] فـ [[docker build .]] ميلاقيهوش.`
+            mistakes: R`[[COPY . .]] قبل [[npm ci]] فأي تعديل يعيد التسطيب كله. من غير [[.dockerignore]] فـ [[node_modules]] بتاعة جهازك و [[.env]] يدخلوا الـ image. [[CMD node server.js]] (shell form) فـ Ctrl+C و [[docker stop]] مبيوصلوش للتطبيق (بيستنى ١٠ ثواني ويقتله). وحتى مع الـ exec form، Node لما يبقى PID 1 بيتجاهل SIGTERM لو مفيش في الكود [[process.on("SIGTERM", ...)]]، فـ [[docker stop]] برضو بياخد ١٠ ثواني: الحل handler في الكود أو [[docker run --init]]. وتسمّي الملف [[dockerfile]] أو [[Dockerfile.txt]] فـ [[docker build .]] ميلاقيهوش.`
           },
+          teach: R`## الفكرة
+
+المثال Dockerfile لسيرفر Node صغير: ١٠ سطور، كل سطر تعليمة لـ Docker. هنقراهم بالترتيب اللي Docker بينفّذهم بيه، وبعدين نبني الـ image ونشغّلها. اتجرّب على ويندوز بـ Docker 29.6 (Docker Desktop، يعني الـ engine شغال لينكس)، في فولدر فيه [[package.json]] و [[package-lock.json]] (dayjs بس) و [[server.js]] بيرد [[ok]] على أي طلب، و [[.dockerignore]] (الدرس الجاي). الـ image اتسمّت [[teach-files04-api]] بدل [[gym-api]] واتمسحت بعد التجربة.
+
+---
+
+## ١. [[# syntax=docker/dockerfile:1]]
+
+شكله تعليق، بس ده **parser directive**: لازم يبقى أول سطر، وبيقول لـ BuildKit (اللي بيبني) استخدم أحدث صيغة Dockerfile من النسخة 1. في البناء ظهر كخطوة لوحده:
+
+~~~text
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1
+~~~
+
+يعني Docker نزّل «مترجم» الـ Dockerfile نفسه. تقدر تشيل السطر وهيشتغل بالمترجم اللي جوه Docker.
+
+## ٢. [[FROM node:22-alpine]]
+
+- [[FROM]]: ابدأ من image جاهزة. أي Dockerfile بيبدأ بيه.
+- [[node]]: اسم الـ image الرسمية على Docker Hub.
+- [[:22-alpine]]: الـ **tag** (النسخة): Node 22 مبني على Alpine Linux، توزيعة صغيرة: [[alpine:latest]] لوحدها طلعت 13MB في [[docker images]]، و [[node:22-alpine]] كلها 238MB، و image بتاعتنا 243MB (يعني الكود والمكتبات ٥ ميجا بس).
+
+## ٣. [[WORKDIR /app]]
+
+اعمل فولدر [[/app]] جوه الـ image لو مش موجود، وخلي كل اللي بعده يتنفذ فيه. زي [[cd]] بس دايم: [[CMD]] كمان هيشتغل من [[/app]].
+
+## ٤. [[COPY package*.json ./]]
+
+- [[COPY src dest]]: انسخ من جهازك لجوه الـ image.
+- [[package*.json]]: [[*]] أي حروف، فبيطابق [[package.json]] و [[package-lock.json]] الاتنين.
+- [[./]]: للفولدر الحالي جوه الـ image، يعني [[/app/]].
+
+بننسخ الملفين دول **لوحدهم الأول** عشان الـ cache (تحت).
+
+## ٥. [[RUN npm ci --omit=dev]]
+
+[[RUN]] نفّذ أمر **وقت البناء**، والنتيجة بتتحفظ في الـ image. [[npm ci]] سطّب من الـ lock بالظبط (درس [[package-lock.json]])، و [[--omit=dev]] من غير [[devDependencies]]:
+
+~~~text الناتج
+#10 [4/5] RUN npm ci --omit=dev
+#10 7.582 added 1 package, and audited 2 packages in 7s
+~~~
+
+## ٦. [[COPY . .]]
+
+انسخ كل الفولدر ([[.]] الأولى = الـ build context على جهازك) لـ [[/app]] ([[.]] التانية). «كل» هنا ماعدا اللي في [[.dockerignore]].
+
+## ٧. [[ENV NODE_ENV=production]]
+
+متغير بيئة بيفضل موجود جوه أي container من الـ image دي. مكتبات كتير (Express مثلًا) بتشتغل أسرع وبتخبي تفاصيل الأخطاء لما تلاقيه [[production]]. اتأكدنا:
+
+~~~bash
+docker run --rm teach-files04-api node -e 'console.log(process.env.NODE_ENV)'
+~~~
+
+~~~text الناتج
+production
+~~~
+
+## ٨. [[EXPOSE 3000]]
+
+توثيق بس: «التطبيق ده بيسمع على 3000». مبيفتحش أي بورت. اللي بيفتح فعلًا [[-p]] في [[docker run]].
+
+## ٩. [[USER node]]
+
+كل اللي بعده، والتطبيق نفسه، يشتغل باليوزر [[node]] (موجود جاهز في الـ image الرسمية) مش [[root]]. لو حد اخترق التطبيق، مش هيبقى root جوه الـ container.
+
+~~~text docker run --rm teach-files04-api whoami
+node
+~~~
+
+## ١٠. [[CMD ["node", "server.js"]]]
+
+الأمر اللي بيشتغل لما الـ container يقوم. ده **exec form**: JSON array، كل كلمة في تنصيص لوحدها. Docker بيشغّل [[node]] مباشرة، فـ [[node]] بيبقى PID 1 (أول process في الـ container) والإشارات بتوصله. أما [[CMD node server.js]] من غير أقواس (shell form) فبيشغّل [[/bin/sh -c "node server.js"]]، و [[sh]] هو اللي بياخد الإشارات.
+
+بس خلي بالك: حتى مع الـ exec form، Node لما يبقى PID 1 ومفيش في الكود [[process.on("SIGTERM", ...)]] بيتجاهل الإشارة. جرّبنا:
+
+~~~text
+docker stop  (من غير --init)   real 0m10.500s
+docker stop  (مع --init)       real 0m0.578s
+~~~
+
+١٠ ثواني لأن Docker بيبعت SIGTERM، ولما محدش يرد بيستنى ١٠ ثواني ويبعت SIGKILL. و [[--init]] بيحط process صغيرة (tini) هي PID 1 وتوصّل الإشارة لـ Node صح.
+
+وتقدر تشوف إن [[CMD]] و [[USER]] و [[WORKDIR]] و [[EXPOSE]] اتسجلوا في إعدادات الـ image (مش اتنفذوا وقت البناء):
+
+~~~bash
+docker image inspect teach-files04-api --format '{{.Config.Cmd}} {{.Config.User}} {{.Config.WorkingDir}} {{.Config.ExposedPorts}}'
+~~~
+
+~~~text الناتج
+[node server.js] node /app map[3000/tcp:{}]
+~~~
+
+---
+
+## ١١. البناء: [[docker build -t teach-files04-api .]]
+
+- [[build]]: ابني image.
+- [[-t]] (tag): سمّيها كده.
+- [[.]]: الـ build context، الفولدر اللي هيتبعت لـ Docker (والـ Dockerfile بيتدوّر عليه فيه).
+
+السطور المهمة من الناتج (مع [[--progress=plain]] عشان يطبع كل حاجة):
+
+~~~text الناتج
+#5 [internal] load .dockerignore
+#5 transferring context: 80B done
+#6 [internal] load build context
+#6 transferring context: 1.20kB 0.0s done
+#7 [1/5] FROM docker.io/library/node:22-alpine@sha256:0a7108bf...
+#8 [2/5] WORKDIR /app
+#9 [3/5] COPY package*.json ./
+#10 [4/5] RUN npm ci --omit=dev
+#11 [5/5] COPY . .
+#12 naming to docker.io/library/teach-files04-api:latest
+~~~
+
+- [[#5]] و [[#6]]...: رقم كل خطوة.
+- [[[1/5]]] لحد [[[5/5]]]: الخطوات اللي بتعمل طبقات (layers). ٥ بس، لأن [[ENV]] و [[EXPOSE]] و [[USER]] و [[CMD]] بيغيّروا الإعدادات من غير طبقة ملفات.
+- [[transferring context: 1.20kB]]: حجم الفولدر اللي اتبعت بعد [[.dockerignore]].
+- [[@sha256:...]]: بصمة النسخة المضبوطة من [[node:22-alpine]] اللي اتبنى عليها.
+- [[:latest]]: لو مكتبتش tag في [[-t]]، Docker بيحط [[latest]].
+
+## ١٢. التشغيل
+
+~~~bash
+docker run -d --rm -p 18080:3000 teach-files04-api
+curl http://localhost:18080
+~~~
+
+- [[-d]] (detach): في الخلفية. و [[--rm]]: امسح الـ container لما يقف.
+- [[-p 18080:3000]]: بورت 18080 على جهازك يوصل لـ 3000 جوه الـ container (استخدمنا 18080 عشان 8080 ممكن يبقى مشغول).
+
+~~~text الناتج
+ok
+~~~
+
+و [[docker logs]] على نفس الـ container طبع [[listening on 3000]].
+
+و [[docker run --rm teach-files04-api ls -a /app]] (من PowerShell أو cmd، لأن Git Bash بيحوّل [[/app]] لمسار ويندوز):
+
+~~~text الناتج
+.
+..
+.dockerignore
+node_modules
+package-lock.json
+package.json
+server.js
+~~~
+
+[[node_modules]] هنا عمله [[npm ci]] جوه الـ image. ومفيش [[.env]] ولا [[Dockerfile]] بفضل [[.dockerignore]].
+
+## ١٣. الـ cache
+
+ضفنا سطر تعليق في آخر [[server.js]] وبنينا تاني:
+
+~~~text الناتج
+#8 [2/5] WORKDIR /app
+#8 CACHED
+#9 [3/5] COPY package*.json ./
+#9 CACHED
+#10 [4/5] RUN npm ci --omit=dev
+#10 CACHED
+#11 [5/5] COPY . .
+~~~
+
+Docker لكل خطوة بيقارن مدخلاتها بالمرة اللي فاتت. [[package*.json]] متغيرش، فـ [[npm ci]] (٧ ثواني) اتاخد من الـ cache. بس [[COPY . .]] اتعاد لأن [[server.js]] اتغير. لو كنا كتبنا [[COPY . .]] قبل [[npm ci]]، أي تعديل في الكود كان هيعيد التسطيب كله.
+
+---
+
+## الخلاصة
+
+| التعليمة | وقت إيه | بتعمل إيه |
+|---|---|---|
+| [[FROM]] | البناء | الـ image اللي بنبدأ منها |
+| [[WORKDIR]] | البناء والتشغيل | الفولدر الحالي |
+| [[COPY]] | البناء | ملفات من جهازك لجوه |
+| [[RUN]] | البناء | ينفّذ أمر ويحفظ نتيجته |
+| [[ENV]] | الاتنين | متغير بيئة |
+| [[EXPOSE]] | توثيق | البورت اللي التطبيق بيسمع عليه |
+| [[USER]] | الاتنين | اليوزر اللي بيشغّل |
+| [[CMD]] | التشغيل | الأمر اللي بيقوم مع الـ container |
+
+ورتّب السطور من «نادرًا ما يتغير» لـ «بيتغير كل شوية» عشان الـ cache يشتغل.`,
           lines: [
-            R`ابدأ من image فيها Node 20 على Alpine. (السطر اللي فوق تعليق بيقول نسخة صيغة الـ Dockerfile.)`,
+            R`ابدأ من image فيها Node 22 على Alpine. (السطر اللي فوق تعليق بيقول نسخة صيغة الـ Dockerfile.)`,
             R`كل اللي جاي جوه [[/app]].`,
             R`[[package.json]] و [[package-lock.json]] بس الأول (عشان الـ cache).`,
             R`سطّب من الـ lock بالظبط من غير أدوات التطوير.`,
@@ -562,7 +1929,7 @@ CMD ["node", "server.js"]`,
           sol: R`[[docker build]] بيطبع الخطوات [[[1/5] FROM ...]] لحد [[[5/5] COPY . .]] وفي الآخر [[naming to docker.io/library/gym-api]]. و [[docker run -p 8080:3000]] بيطبع [[listening on 3000]] والمتصفح بيعرض ok.
 
 [[docker run --rm gym-api whoami]] ← [[node]]
-[[docker run --rm gym-api ls -a /app]] ← [[package.json]] و [[package-lock.json]] و [[server.js]] و [[.dockerignore]]، ومفيش [[.env]] ولا [[Dockerfile]].
+[[docker run --rm gym-api ls -a /app]] ← [[.dockerignore]] و [[node_modules]] (اللي [[npm ci]] عمله جوه الـ image) و [[package-lock.json]] و [[package.json]] و [[server.js]]، ومفيش [[.env]] ولا [[Dockerfile]].
 
 ولما تغيّر [[server.js]] بس وتبني تاني، خطوات [[WORKDIR]] و [[COPY package*.json]] و [[RUN npm ci]] بيبقى جنبها [[CACHED]]، و [[COPY . .]] بس اللي بتتعاد.`
         },
@@ -598,6 +1965,144 @@ Dockerfile`,
             when: R`مع أي Dockerfile فيه [[COPY . .]]، يعني تقريبًا دايمًا.`,
             mistakes: R`تنسى [[.env]] فالسر يدخل الـ image ويترفع على Docker Hub. تكتب [[node_modules/]] وتفتكر إنها هتتجاهل في الفولدرات الفرعية كمان (اكتب [[**/node_modules]]). وتتجاهل ملف التطبيق محتاجه فعلًا (زي [[package-lock.json]]) فـ [[npm ci]] يقع.`
           },
+          teach: R`## الفكرة
+
+المثال ٥ أنماط، كل واحد في سطر. معناهم: «لما [[docker build]] يجمع الفولدر عشان يبعته، سيب دول». هنقرا الأنماط، وبعدين نبني نفس مشروع درس [[Dockerfile]] مرة من غير الملف ومرة بيه، ونقارن. اتجرّب على ويندوز بـ Docker 29.6، والـ images اتسمّت [[teach-files04-*]] واتمسحت بعدها.
+
+---
+
+## ١. الأنماط
+
+~~~text .dockerignore
+node_modules
+.git
+.env
+*.log
+Dockerfile
+~~~
+
+| السطر | بيمنع | ليه |
+|---|---|---|
+| [[node_modules]] | مكتبات جهازك | الـ image بيسطّب مكتباته بـ [[npm ci]]، ومكتبات ويندوز أو الماك ممكن متشتغلش على لينكس |
+| [[.git]] | تاريخ Git كله | ممكن يبقى أكبر من الكود، ومش محتاجه في التشغيل |
+| [[.env]] | الأسرار | أي حد معاه الـ image يقدر يقراها |
+| [[*.log]] | أي log في أول الفولدر | زبالة، وكل تغيير فيها يكسر الـ cache |
+| [[Dockerfile]] | الوصفة نفسها | مش محتاجها جوه الـ container |
+
+فرق مهم عن [[.gitignore]]: الأنماط هنا من **أول الـ context** بس. [[node_modules]] يعني الفولدر اللي في الأول، مش [[sub/node_modules]]. جرّبناها في فولدر فيه [[node_modules/b.js]] و [[sub/node_modules/a.js]] و Dockerfile فيه [[RUN find . -type f]]:
+
+~~~text الناتج
+./.dockerignore
+./Dockerfile
+./sub/node_modules/a.js
+~~~
+
+[[b.js]] اتمنع، بس [[sub/node_modules/a.js]] دخل. عشان تمنعه في أي مكان اكتب [[**/node_modules]] ([[**]] = أي عدد فولدرات). ونفس الكلام لـ [[*.log]]: بيمنع [[app.log]] اللي في الأول بس.
+
+---
+
+## ٢. التجربة: من غير [[.dockerignore]]
+
+في مشروع الـ Dockerfile حطينا [[.env]] فيه [[SECRET=x]]، و [[app.log]]، وملف 5MB عشوائي في [[node_modules/big/blob]]:
+
+~~~bash
+head -c 5000000 /dev/urandom > node_modules/big/blob
+~~~
+
+[[head -c 5000000]] (c = bytes): خد أول ٥ مليون byte من [[/dev/urandom]]، وده «ملف» في لينكس (وفي Git Bash) بيطلّع بيانات عشوائية من غير نهاية.
+
+وبعدين غيّرنا اسم [[.dockerignore]] مؤقتًا وبنينا:
+
+~~~bash
+docker build --no-cache --progress=plain -t teach-files04-ign .
+~~~
+
+- [[--no-cache]]: ابني كل خطوة من الأول، عشان المقارنة تبقى عادلة.
+- [[--progress=plain]]: اطبع كل السطور بدل الشكل المختصر اللي بيتمسح.
+
+~~~text الناتج
+#5 [internal] load .dockerignore
+#5 transferring context: 2B done
+#8 transferring context: 5.71MB 2.1s done
+~~~
+
+- [[transferring context: 2B]] عند [[.dockerignore]]: مفيش ملف، فاتبعت ولا حاجة تقريبًا.
+- [[5.71MB 2.1s]]: الفولدر كله اتبعت للـ engine، والـ blob لوحده ٥ ميجا. في مشروع حقيقي [[node_modules]] بيبقى مئات الميجا كل build.
+
+جوه الـ image:
+
+~~~text docker run --rm teach-files04-ign ls -a /app
+.
+..
+.env
+Dockerfile
+app.log
+di.bak
+node_modules
+package-lock.json
+package.json
+server.js
+~~~
+
+كل حاجة دخلت، حتى [[di.bak]] (الملف اللي غيّرنا اسمه). و [[COPY . .]] نسخ [[node_modules]] بتاع جهازك **فوق** اللي [[npm ci]] عمله. والأخطر:
+
+~~~text docker run --rm teach-files04-ign cat .env
+SECRET=x
+~~~
+
+السر بقى جوه الـ image. والحجم: [[256MB]].
+
+---
+
+## ٣. نفس البناء مع [[.dockerignore]]
+
+~~~text الناتج
+#5 transferring context: 80B done
+#6 transferring context: 178B 0.0s done
+~~~
+
+[[80B]] حجم [[.dockerignore]] نفسه، و [[178B]] كل اللي اتبعت من المشروع (بدل 5.71MB).
+
+~~~text docker run --rm teach-files04-ign ls -a /app
+.
+..
+.dockerignore
+node_modules
+package-lock.json
+package.json
+server.js
+~~~
+
+و [[node_modules]] هنا اللي [[npm ci]] عمله جوه الـ image. والحجم بقى [[243MB]]. و [[cat .env]]:
+
+~~~text الناتج
+cat: can't open '.env': No such file or directory
+~~~
+
+---
+
+## ٤. ولو طلبته بالاسم؟
+
+Dockerfile فيه [[COPY .env /x]] و [[.env]] في [[.dockerignore]]:
+
+~~~text الناتج
+ERROR: failed to build: failed to solve: failed to compute cache key: failed to calculate checksum of ref ...: "/.env": not found
+~~~
+
+الملف المتجاهل مش موجود بالنسبة للبناء خالص، حتى لو كتبته صراحة. فلو [[npm ci]] وقع بـ [[package-lock.json not found]]، دوّر في [[.dockerignore]] الأول.
+
+---
+
+## الخلاصة
+
+| | من غير [[.dockerignore]] | معاه |
+|---|---|---|
+| الـ context اللي اتبعت | 5.71MB | 178B |
+| [[.env]] جوه الـ image | أيوه، ومقروء | لأ |
+| [[node_modules]] | بتاع جهازك فوق بتاع [[npm ci]] | بتاع [[npm ci]] بس |
+| الحجم | 256MB | 243MB |
+
+والأنماط من أول الـ context: [[**/node_modules]] لو عايزه في أي مكان.`,
           lines: [
             R`مكتبات جهازك ميدخلوش: الـ image بيسطّب بنفسه.`,
             R`تاريخ Git.`,
@@ -606,12 +2111,12 @@ Dockerfile`,
             R`الـ Dockerfile نفسه مش محتاجه جوه.`
           ],
           sol: R`من غير [[.dockerignore]]:
-[[#8 transferring context: 5.00MB 0.1s done]]
+[[#8 transferring context: 5.71MB 2.1s done]]
 و [[ls -a /app]] فيه [[.env]] و [[Dockerfile]] و [[node_modules]]. يعني السر بقى جوه الـ image، و [[docker run --rm test cat .env]] بيطبع [[SECRET=x]].
 
 مع [[.dockerignore]]:
-[[#6 transferring context: 177B done]]
-و [[ls -a /app]] فيه [[.dockerignore]] و [[package.json]] و [[package-lock.json]] و [[server.js]] بس. والـ image أصغر (في التجربة دي 193MB بدل 203MB).`
+[[#6 transferring context: 178B 0.0s done]]
+و [[ls -a /app]] فيه [[.dockerignore]] و [[package.json]] و [[package-lock.json]] و [[server.js]] بس. والـ image أصغر (في التجربة دي على node:22-alpine طلع 243MB بدل 256MB).`
         },
         {
           cmd: "compose.yaml",
@@ -668,6 +2173,229 @@ volumes:
             when: R`بيئة التطوير على جهازك (أشهر استخدام)، والسيرفرات الصغيرة (VPS) اللي عليها تطبيق كامل.`,
             mistakes: R`[[localhost]] بدل اسم الخدمة في رابط قاعدة البيانات. البورت مستخدم عندك ([[Bind for 0.0.0.0:3000 failed: port is already allocated]]): غيّر الرقم الشمال [[3001:3000]]. [[docker compose down -v]] وانت مش قاصد فتمسح الداتا. باسوردات حقيقية مكتوبة في الملف وهو في Git (حطها في [[.env]]). وتعمل [[depends_on]] من غير healthcheck فالـ api يبدأ قبل ما قاعدة البيانات تبقى جاهزة.`
           },
+          teach: R`## الفكرة
+
+المثال [[compose.yaml]] فيه خدمتين: [[api]] (بتتبني من الـ Dockerfile بتاع الدرس اللي فات) و [[db]] (PostgreSQL جاهز)، و volume واحد للداتا. هنقراه خدمة خدمة، وبعدين نشغّله ونشوف Docker بيعمل إيه بالترتيب. اتجرّب على ويندوز بـ Docker 29.6 في فولدر اسمه [[teach-files04-compose]]، مع تغييرين في نسخة التجربة بس: [[postgres:16-alpine]] بدل [[postgres:17]] (عشان دي اللي موجودة على الجهاز)، والبورت [["13000:3000"]] بدل [["3000:3000"]] (عشان 3000 ممكن يبقى مشغول). وفي الآخر [[docker compose down -v]] مسح كل حاجة.
+
+---
+
+## ١. [[services:]]
+
+~~~text
+services:
+  api:
+    ...
+  db:
+    ...
+~~~
+
+كل مفتاح تحت [[services]] خدمة، يعني container. الاسم ([[api]] و [[db]]) انت اللي بتختاره، وهو نفسه اللي الخدمات بتنادي بيه بعض على الشبكة. والإزاحة بالمسافات هي اللي بتقول مين جوه مين (درس YAML)، ومفيش Tab.
+
+---
+
+## ٢. خدمة [[api]]
+
+~~~text
+  api:
+    build: .
+    ports:
+      - "3000:3000"
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://app:secret@db:5432/gym
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[build: .]] | ابني image من الـ [[Dockerfile]] اللي في الفولدر ده ([[.]]) |
+| [[ports:]] و [[- "3000:3000"]] | [[-]] عنصر في ليستة. [[جهازك:الcontainer]]. والتنصيص عشان YAML ممكن يقرا [[xx:yy]] كرقم بالستيني (درس «مشكلة النرويج») |
+| [[env_file: .env]] | اقرا متغيرات من [[.env]] وابعتها لجوه الـ container |
+| [[environment:]] | متغيرات مكتوبة هنا مباشرة |
+| [[depends_on:]] + [[condition: service_healthy]] | متبدأش [[api]] غير لما [[db]] تبقى healthy (الـ healthcheck بتاعها نجح) |
+| [[restart: unless-stopped]] | لو وقعت قوّمها تاني، إلا لو انت اللي وقفتها |
+
+### رابط قاعدة البيانات
+
+~~~text
+postgresql://app:secret@db:5432/gym
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[postgresql://]] | نوع الاتصال |
+| [[app:secret]] | اليوزر والباسورد |
+| [[@db]] | الـ host: اسم الخدمة، مش [[localhost]] |
+| [[:5432]] | بورت PostgreSQL |
+| [[/gym]] | اسم القاعدة |
+
+ليه [[db]]؟ لأن [[localhost]] جوه container الـ api معناها الـ container ده نفسه، وPostgreSQL مش فيه. Compose بيدّي كل خدمة اسم على الشبكة. اتأكدنا من جوه الـ api:
+
+~~~bash
+docker compose exec api sh -c 'getent hosts db; echo $DATABASE_URL $LOG_LEVEL'
+~~~
+
+~~~text الناتج
+172.18.0.2        db  db
+postgresql://app:secret@db:5432/gym info
+~~~
+
+- [[exec api]]: نفّذ أمر جوه container الخدمة [[api]] وهو شغّال.
+- [[getent hosts db]]: «الاسم [[db]] بيترجم لأنهي IP؟» ← [[172.18.0.2]]، وده الـ container بتاع قاعدة البيانات.
+- [[info]] جاية من [[LOG_LEVEL=info]] اللي في [[.env]] (عن طريق [[env_file]]).
+
+---
+
+## ٣. خدمة [[db]]
+
+~~~text
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: gym
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d gym"]
+      interval: 5s
+      retries: 5
+~~~
+
+- [[image: postgres:17]]: image جاهزة من Docker Hub، مفيش build.
+- [[POSTGRES_USER]] و [[POSTGRES_PASSWORD]] و [[POSTGRES_DB]]: متغيرات الـ image دي بتفهمها (مكتوبة في صفحتها على Docker Hub): أول مرة تقوم بتعمل اليوزر والقاعدة دول.
+- [[pgdata:/var/lib/postgresql/data]]: [[اسم volume:مسار جوه الcontainer]]. PostgreSQL بيكتب الداتا في المسار ده، والـ volume بيحفظها بره الـ container، فلو الـ container اتمسح الداتا بتفضل. (ملحوظة من docs الـ image: من [[postgres:18]] المسار المقترح للـ volume بقى [[/var/lib/postgresql]].)
+- [[healthcheck:]]:
+  - [[test: ["CMD-SHELL", "..."]]]: نفّذ الأمر ده في shell جوه الـ container. [[pg_isready]] أداة جاية مع PostgreSQL بترجع 0 لو السيرفر بيقبل اتصالات، و [[-U app -d gym]] اليوزر والقاعدة.
+  - [[interval: 5s]]: افحص كل ٥ ثواني.
+  - [[retries: 5]]: ٥ مرات فشل ورا بعض = [[unhealthy]].
+
+## ٤. [[volumes:]] في الآخر
+
+~~~text
+volumes:
+  pgdata:
+~~~
+
+بره [[services]] (من غير إزاحة). بيعرّف volume اسمه [[pgdata]]، و [[:]] من غير حاجة بعدها يعني بالإعدادات الافتراضية.
+
+---
+
+## ٥. اتأكد من الملف: [[docker compose config]]
+
+~~~bash
+docker compose config --quiet && echo valid
+~~~
+
+[[--quiet]]: افحص بس من غير ما تطبع. ولو سليم يخرج بـ 0، فـ [[&&]] يطبع:
+
+~~~text الناتج
+valid
+~~~
+
+ومن غير [[--quiet]] بيطبع الملف «النهائي» بعد ما Compose يكمّله. جزء منه:
+
+~~~text الناتج
+name: teach-files04-compose
+services:
+  api:
+    build:
+      context: C:\Users\ali\...\teach-files04-compose
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql://app:secret@db:5432/gym
+      LOG_LEVEL: info
+    ports:
+      - mode: ingress
+        target: 3000
+        published: "13000"
+        protocol: tcp
+~~~
+
+لاحظ: [[name]] = اسم الفولدر (اسم المشروع)، و [[LOG_LEVEL]] من [[.env]] اتدمج مع [[environment]]، و [["13000:3000"]] اتفك لـ [[published]] (جهازك) و [[target]] (الـ container).
+
+ولما بوّظنا المسافات قبل [[image:]]:
+
+~~~text مسافة زيادة
+yaml: while parsing a block mapping at line 1, column 3: line 14, column 5: did not find expected key
+~~~
+
+~~~text مسافة ناقصة
+yaml: line 15, column 16: mapping values are not allowed in this context
+~~~
+
+[[line]] و [[column]] السطر والحرف. ومع مسافة ناقصة، السطر اللي بعد [[image:]] بقى أدخل منه، فـ YAML قراه كأنه تكملة لقيمة [[postgres:16-alpine]]، فوقع في السطر ١٥ مش ١٤.
+
+---
+
+## ٦. التشغيل: [[docker compose up -d --build]]
+
+- [[up]]: اعمل وشغّل كل حاجة.
+- [[-d]]: في الخلفية.
+- [[--build]]: ابني الـ images حتى لو موجودة.
+
+~~~text الناتج (بعد سطور البناء)
+ Image teach-files04-compose-api Built
+ Network teach-files04-compose_default Created
+ Volume teach-files04-compose_pgdata Created
+ Container teach-files04-compose-db-1 Created
+ Container teach-files04-compose-api-1 Created
+ Container teach-files04-compose-db-1 Started
+ Container teach-files04-compose-db-1 Waiting
+ Container teach-files04-compose-db-1 Healthy
+ Container teach-files04-compose-api-1 Starting
+ Container teach-files04-compose-api-1 Started
+~~~
+
+الترتيب ده هو الملف كله: image الـ api، وشبكة اسمها [[<المشروع>_default]]، والـ volume [[<المشروع>_pgdata]]، والـ db تقوم، و Compose **يستنى** ([[Waiting]]) لحد [[Healthy]]، وبعدين بس الـ api تقوم. والأسامي [[<المشروع>-<الخدمة>-1]]: الـ [[1]] رقم النسخة من الخدمة.
+
+~~~bash
+docker compose ps
+~~~
+
+~~~text الناتج
+NAME                          IMAGE                       SERVICE   STATUS                   PORTS
+teach-files04-compose-api-1   teach-files04-compose-api   api       Up Less than a second    0.0.0.0:13000->3000/tcp, [::]:13000->3000/tcp
+teach-files04-compose-db-1    postgres:16-alpine          db        Up 6 seconds (healthy)   5432/tcp
+~~~
+
+(شلنا عمودي COMMAND و CREATED عشان العرض.) [[(healthy)]] من الـ healthcheck. و [[0.0.0.0:13000->3000/tcp]] يعني البورت مفتوح على جهازك، أما [[5432/tcp]] من غير سهم يعني الـ db متاحة للخدمات التانية بس، مش لجهازك.
+
+و [[curl http://localhost:13000]] رد بـ [[ok]]، و [[docker compose logs api]]:
+
+~~~text الناتج
+api-1  | listening on 3000
+~~~
+
+## ٧. القفل: [[docker compose down -v]]
+
+~~~text الناتج (مختصر)
+ Container teach-files04-compose-api-1 Removed
+ Container teach-files04-compose-db-1 Removed
+ Volume teach-files04-compose_pgdata Removed
+ Network teach-files04-compose_default Removed
+~~~
+
+[[down]] وقّف وامسح الـ containers والشبكة. و [[-v]] امسح الـ volumes كمان، يعني **الداتا راحت**. من غير [[-v]] الـ volume بيفضل والداتا تستناك المرة الجاية.
+
+---
+
+## الخلاصة
+
+| المفتاح | بيعمل |
+|---|---|
+| [[build]] / [[image]] | ابني من Dockerfile / استخدم جاهزة |
+| [[ports]] | [["جهازك:الcontainer"]] بين تنصيص |
+| [[environment]] / [[env_file]] | متغيرات لجوه الـ container |
+| [[depends_on]] + [[service_healthy]] | استنى الخدمة التانية تبقى جاهزة |
+| [[volumes]] | الداتا تعيش بعد الـ container |
+| [[healthcheck]] | إزاي نعرف إنها جاهزة |
+
+الخدمات بتكلم بعض **باسم الخدمة**، و [[docker compose config]] أول حاجة تعملها لما حاجة متشتغلش.`,
           lines: [
             R`كل الخدمات تحت المفتاح ده.`,
             R`خدمة اسمها [[api]].`,
@@ -702,7 +2430,7 @@ volumes:
 والمتصفح بيعرض ok، و [[docker compose logs api]] فيه [[api-1  | listening on 3000]].
 
 لو البورت 3000 مستخدم عندك: [[Bind for 0.0.0.0:3000 failed: port is already allocated]]، غيّره لـ [["3001:3000"]].
-ولو بوّظت المسافات، [[docker compose config]] بيقول حاجة زي [[go-yaml load error in scanner at L15.C16: mapping values are not allowed in this context]] (مسافة زيادة قبل [[image:]]) أو [[did not find expected key]] (مسافة ناقصة)، والرقم بعد [[L]] هو السطر.`
+ولو بوّظت المسافات، [[docker compose config]] بيقول حاجة زي [[yaml: line 15, column 16: mapping values are not allowed in this context]] (مسافة ناقصة قبل [[image:]]: السطر اللي بعده بقى أدخل منه فاتقري كأنه تكملة ليه) أو [[yaml: while parsing a block mapping at line 1, column 3: line 14, column 5: did not find expected key]] (مسافة زيادة)، و [[line]] رقم السطر.`
         },
         {
           cmd: "Makefile",
@@ -742,6 +2470,169 @@ clean:
             when: R`مشاريع فيها أكتر من أداة (Docker و npm و migrations)، ومشاريع C و Go كتير، وأي مشروع عايز «أمر واحد يعمل كل حاجة».`,
             mistakes: R`مسافات بدل Tab ([[*** missing separator.  Stop.]]). تنسى [[.PHONY]] وفيه فولدر اسمه [[test]] فـ [[make test]] يقول [[is up to date]] ومينفذش. تكتب [[cd dir]] في سطر والأمر اللي بعده في سطر تاني (اكتبهم [[cd dir && cmd]]). و [[$]] في أوامر shell لازم تتكتب [[$$]] جوه Makefile.`
           },
+          teach: R`## الفكرة
+
+المثال [[Makefile]] فيه متغير واحد و ٤ أهداف (targets): [[dev]] و [[build]] و [[test]] و [[clean]]. هنقراه سطر سطر، وبعدين نشغّله بـ [[make -n]] اللي بيطبع الأوامر من غير ما ينفّذها. [[make]] مش موجود على ويندوز (ولا في Git Bash)، فكل التجارب اتعملت على أوبونتو 24.04 جوه Docker بعد [[apt-get install make]]، والنسخة GNU Make 4.3.
+
+---
+
+## ١. التعليق والمتغير
+
+~~~text
+# أوامر المشروع
+APP = gym-api
+~~~
+
+- [[#]]: تعليق.
+- [[APP = gym-api]]: متغير اسمه [[APP]] قيمته [[gym-api]]. بيتقري تحت بـ [[$(APP)]]: الـ [[$]] والأقواس معناهم «حط قيمة المتغير هنا».
+
+## ٢. [[.PHONY: dev build test clean]]
+
+[[make]] أصلًا معمول للملفات: [[build:]] عنده معناها «عشان تعمل **ملف** اسمه build، نفّذ كذا». ولو لقى ملف أو فولدر بنفس الاسم ومفيش حاجة اتغيرت، بيعتبر الشغل خلصان. جرّبنا: شلنا سطر [[.PHONY]] وعملنا فولدر اسمه [[clean]]:
+
+~~~text make clean (من غير .PHONY)
+make: 'clean' is up to date.
+~~~
+
+ومنفّذش حاجة! ومع [[.PHONY]] رجع ينفّذ [[rm -rf dist node_modules]]. فـ [[.PHONY]] (phony = مزيّف) بيقول: «الأسامي دي أوامر، مش ملفات، نفّذها دايمًا».
+
+## ٣. شكل الهدف
+
+~~~text
+dev:
+	npm run dev
+~~~
+
+- [[dev:]]: اسم الهدف، و [[:]] بعده. اللي بعد [[:]] (فاضي هنا) الأهداف اللي لازم تتعمل الأول.
+- السطر اللي تحته هو الأمر (اسمه recipe)، و**لازم** يبدأ بـ Tab حقيقي. [[cat -A Makefile]] بيوريك ده: الـ Tab بيظهر [[^I]] وآخر السطر [[$]]:
+
+~~~text الناتج (السطرين دول)
+dev:$
+^Inpm run dev$
+~~~
+
+ولما حوّلنا الـ Tab في السطر الخامس لـ ٤ مسافات:
+
+~~~text الناتج
+M2:5: *** missing separator.  Stop.
+~~~
+
+[[M2:5]] اسم الملف ورقم السطر. [[missing separator]] يعني «السطر ده مش تعريف ومش أمر»: [[make]] بيعرف الأمر من الـ Tab بس.
+
+و [[dev]] أول هدف في الملف، فـ [[make]] لوحدها بتشغّله:
+
+~~~text make -n
+npm run dev
+~~~
+
+[[-n]] (dry run): اطبع اللي هتعمله ومتنفّذوش. أحسن طريقة تجرّب بيها Makefile حد تاني كاتبه.
+
+## ٤. [[build]] والمتغير
+
+~~~text
+build:
+	docker build -t $(APP) .
+~~~
+
+[[$(APP)]] بيتبدّل قبل التنفيذ. وتقدر تغيّر المتغير من سطر الأوامر:
+
+~~~text make -n build APP=other
+docker build -t other .
+~~~
+
+القيمة اللي في الأمر بتغطي على اللي في الملف.
+
+## ٥. [[test: build]]: هدف بيعتمد على هدف
+
+~~~text
+test: build
+	docker run --rm $(APP) npm test
+~~~
+
+[[build]] بعد [[:]] معناها «اعمل [[build]] الأول». فـ:
+
+~~~text make -n test
+docker build -t gym-api .
+docker run --rm gym-api npm test
+~~~
+
+أوامر [[build]] ثم أوامر [[test]]، ولو [[build]] فشل [[make]] بيقف ومش بيكمّل.
+
+## ٦. [[clean]]
+
+~~~text
+clean:
+	rm -rf dist node_modules
+~~~
+
+[[rm -rf]]: امسح ([[-r]] الفولدرات باللي فيها، و [[-f]] من غير سؤال ومن غير غلط لو مش موجود). شغّلناه بجد على فولدرين فاضيين، و [[make]] طبع الأمر قبل ما ينفّذه:
+
+~~~text make clean
+rm -rf dist node_modules
+~~~
+
+---
+
+## ٧. حاجتين لازم تعرفهم
+
+### [[@]] بيخبّي الأمر
+
+~~~text
+hi:
+	@echo hello
+hi2:
+	echo hello
+~~~
+
+~~~text الناتج
+hello            ← make hi
+echo hello       ← make hi2
+hello
+~~~
+
+من غير [[@]]، [[make]] بيطبع الأمر وبعدين ناتجه.
+
+### كل سطر في shell لوحده
+
+~~~text
+x:
+	cd /tmp
+	pwd
+y:
+	cd /tmp && pwd
+~~~
+
+~~~text الناتج
+cd /tmp
+pwd
+/w          ← make x: الـ cd مأثرش
+cd /tmp && pwd
+/tmp        ← make y
+~~~
+
+كل سطر recipe بيتنفّذ في shell جديد، فـ [[cd]] بيموت مع السطر بتاعه. لو محتاجهم مع بعض اكتبهم في سطر واحد بـ [[&&]].
+
+### هدف مش موجود
+
+~~~text make nothing
+make: *** No rule to make target 'nothing'.  Stop.
+~~~
+
+---
+
+## الخلاصة
+
+| الحاجة | الشكل |
+|---|---|
+| متغير | [[NAME = value]] وبيتقري [[$(NAME)]] |
+| هدف | [[name: deps]] وتحته أوامر بـ **Tab** |
+| أوامر مش ملفات | [[.PHONY: ...]] |
+| الافتراضي | أول هدف في الملف |
+| تجربة آمنة | [[make -n target]] |
+| تغيير متغير | [[make build APP=other]] |
+| خبّي الأمر | [[@]] في أوله |
+
+وعلى ويندوز: WSL أو Docker، لأن [[make]] مش جاي مع ويندوز ولا Git Bash.`,
           lines: [
             R`متغير.`,
             R`الأهداف دي أوامر مش ملفات.`,
@@ -823,6 +2714,192 @@ line-length = 100`,
             when: R`[[pyproject.toml]] لأي مشروع جديد (ومع uv أو Poetry). و [[requirements.txt]] هتلاقيه في مشاريع كتير وفي Dockerfiles ([[pip install -r requirements.txt]])، وبعض المنصات بتطلبه.`,
             mistakes: R`[[pip install]] بره الـ venv فتلخبط Python بتاع النظام (والتوزيعات الجديدة بترفض: [[error: externally-managed-environment]]). [[pip freeze]] بره الـ venv فيكتب كل مكتبات الجهاز. مكتبات من غير نسخ في production. وعلى أوبونتو [[python3 -m venv]] بيقع لو [[python3-venv]] مش متسطّب: [[The virtual environment was not created successfully because ensurepip is not available]]، والحل [[sudo apt install python3-venv]].`
           },
+          teach: R`## الفكرة
+
+المثال [[pyproject.toml]] لمشروع Python اسمه [[gym-api]]: بيقول اسمه ونسخته ومكتباته، وبيعمل أمر في الترمنال اسمه [[gym-api]]، وفيه إعدادات أداة ruff. هنقراه قسم قسم (الصيغة TOML، درس [[.toml]])، وبعدين نسطّبه في virtual environment ونشغّل الأمر. اتجرّب على ويندوز بـ Python 3.14.3 (PowerShell 7 و Windows PowerShell 5.1)، وأول خطوتين (الـ venv) اتجرّبوا كمان على لينكس جوه Docker بـ Python 3.13. المشروع فيه [[src/gym_api/__init__.py]] فاضي و [[src/gym_api/main.py]] فيه دالة [[run()]] بتطبع [[gym-api شغال]].
+
+---
+
+## ١. [[[project]]]
+
+~~~text
+[project]
+name = "gym-api"
+version = "1.4.0"
+description = "API لحجز مواعيد الجيم"
+requires-python = ">=3.11"
+~~~
+
+[[[project]]] بين أقواس مربعة = قسم (table في TOML). وكل سطر تحته [[key = "value"]]، والنصوص لازم تنصيص.
+
+| المفتاح | معناه |
+|---|---|
+| [[name]] | الاسم اللي هيتسطّب بيه ([[pip show gym-api]]) |
+| [[version]] | النسخة |
+| [[description]] | سطر وصف ([[Summary]] في [[pip show]]) |
+| [[requires-python]] | أقل نسخة Python. pip بيرفض يسطّب على أقدم |
+
+## ٢. [[dependencies]]
+
+~~~text
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.32",
+]
+~~~
+
+array في TOML ([[[ ]]])، على كذا سطر، والفاصلة بعد آخر عنصر مسموحة (عكس JSON). كل عنصر نص بنفس صيغة [[requirements.txt]]:
+
+- [[fastapi>=0.115]]: fastapi نسخة 0.115 أو أحدث.
+- [[uvicorn[standard]]]: [[[standard]]] اسمها **extras**: حاجات إضافية اختيارية جوه المكتبة (هنا مكتبات أسرع للسيرفر).
+
+علامات النسخ في Python:
+
+| العلامة | معناها | زي npm |
+|---|---|---|
+| [[==1.2.3]] | بالظبط | [[1.2.3]] |
+| [[>=1.2]] | دي أو أحدث | [[>=1.2]] |
+| [[~=2.10]] | من 2.10 لحد قبل 3 | [[^2.10]] تقريبًا |
+| [[>=0.32,<1.0]] | [[,]] = «و» بين شرطين | |
+
+## ٣. [[[project.optional-dependencies]]]
+
+~~~text
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff"]
+~~~
+
+النقطة في اسم القسم معناها «جوه [[project]]». مجموعة اسمها [[dev]] مش بتتسطّب غير لما تطلبها: [[pip install -e ".[dev]"]]. زي [[devDependencies]] في npm. و [["ruff"]] من غير نسخة = أي نسخة.
+
+## ٤. [[[project.scripts]]]
+
+~~~text
+[project.scripts]
+gym-api = "gym_api.main:run"
+~~~
+
+اعمل أمر في الترمنال اسمه [[gym-api]]، ولما يتكتب ينادي:
+
+~~~text
+gym_api.main : run
+───┬─── ─┬─    ─┬─
+package  file   function
+~~~
+
+يعني الدالة [[run]] في [[gym_api/main.py]]. الاسم فيه [[_]] مش [[-]] لأن أسامي الـ modules في Python مينفعش فيها [[-]].
+
+## ٥. [[[build-system]]]
+
+~~~text
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+~~~
+
+pip نفسه مبيعرفش يبني مشروع. القسم ده بيقوله: «نزّل [[hatchling]] الأول، واستخدم الـ module اللي اسمه [[hatchling.build]] عشان تبني». و hatchling بيلاقي الكود في [[src/gym_api]] لوحده.
+
+## ٦. [[[tool.ruff]]]
+
+~~~text
+[tool.ruff]
+line-length = 100
+~~~
+
+أي أداة ليها [[[tool.اسمها]]]. ruff (linter) بيقرا القسم ده بدل ملف إعدادات لوحده: طول السطر المسموح ١٠٠ حرف بدل ٨٨.
+
+---
+
+## ٧. الـ virtual environment
+
+~~~powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+~~~
+
+- [[-m venv]]: شغّل الـ module اللي اسمه [[venv]].
+- [[.venv]]: اسم الفولدر اللي هيتعمل. جواه نسخة Python ومكتبات المشروع ده بس.
+- [[Activate.ps1]]: بيغيّر الـ PATH في الترمنال ده بحيث [[python]] و [[pip]] يبقوا اللي جوه [[.venv]].
+
+~~~text (Get-Command python).Source بعدها
+C:\Users\ali\...\py\.venv\Scripts\python.exe
+~~~
+
+ونفس الحكاية اشتغلت في Windows PowerShell 5.1. وعلى لينكس (Python 3.13 في Docker) الأمر [[python3 -m venv .venv]] ثم [[. .venv/bin/activate]] (أو [[source]])، و [[which python pip]] طبع:
+
+~~~text الناتج
+/w/.venv/bin/python
+/w/.venv/bin/pip
+~~~
+
+| | ويندوز | لينكس والماك |
+|---|---|---|
+| الأمر | [[python]] | [[python3]] |
+| التفعيل | [[.venv\Scripts\Activate.ps1]] | [[source .venv/bin/activate]] |
+| الأوامر المتسطّبة | [[.venv\Scripts\]] | [[.venv/bin/]] |
+
+---
+
+## ٨. التسطيب: [[pip install -e ".[dev]"]]
+
+- [[-e]] (editable): سطّب المشروع «بالإشارة» للفولدر، فأي تعديل في الكود يبان علطول من غير تسطيب تاني.
+- [[.]]: المشروع اللي في الفولدر الحالي.
+- [[[dev]]]: ومعاه مجموعة [[dev]].
+- التنصيص حوالين [[".[dev]"]] عشان بعض الـ shells (زي zsh) بتفهم [[[ ]]] كـ pattern.
+
+بعدها:
+
+~~~text gym-api
+gym-api شغال
+~~~
+
+~~~text pip show gym-api (أول ٣ سطور)
+Name: gym-api
+Version: 1.4.0
+Summary: API لحجز مواعيد الجيم
+~~~
+
+والأمر [[gym-api]] نفسه ملف اتعمل في [[.venv\Scripts\gym-api.exe]] (على لينكس [[.venv/bin/gym-api]]). ومجموعة [[dev]] اتسطّبت: [[ruff --version]] طبع [[ruff 0.16.10]] و [[pytest --version]] طبع [[pytest 9.1.1]].
+
+---
+
+## ٩. و [[requirements.txt]]؟
+
+في فولدر تاني [[requirements.txt]] فيه سطر واحد [[fastapi==0.115.6]]، وفي venv جديد:
+
+~~~powershell
+pip install -r requirements.txt
+pip freeze
+~~~
+
+[[-r]] (requirement file): اقرا الليستة من الملف. و [[pip freeze]] بيطبع كل اللي متسطّب في الـ venv بالنسخ بالظبط:
+
+~~~text الناتج
+annotated-types==0.8.0
+anyio==4.15.1
+fastapi==0.115.6
+idna==3.20
+pydantic==2.13.5
+pydantic_core==2.46.5
+starlette==0.41.3
+typing-inspection==0.4.4
+typing_extensions==4.16.0
+~~~
+
+طلبنا مكتبة واحدة، واتسطّب ٩: fastapi محتاجة starlette و pydantic، وهما محتاجين الباقي. [[pip freeze > requirements.txt]] بيحفظ الليستة دي كلها، وده أقرب حاجة لـ lock file في requirements. والأرقام دي وقت التجربة، هتلاقي أحدث.
+
+---
+
+## الخلاصة
+
+| القسم | زي في npm |
+|---|---|
+| [[[project]]] (name و version) | [[name]] و [[version]] |
+| [[dependencies]] | [[dependencies]] |
+| [[[project.optional-dependencies]]] [[dev]] | [[devDependencies]] |
+| [[[project.scripts]]] | [[bin]] |
+| [[[tool.xxx]]] | إعدادات الأدوات |
+
+وأي تسطيب جوه [[.venv]]، و [[.venv/]] في [[.gitignore]].`,
           lines: [
             R`بداية معلومات المشروع.`,
             R`الاسم اللي هيتسطّب بيه.`,
@@ -906,6 +2983,172 @@ line-length = 100`,
             when: R`Spring Boot (الاتنين، Maven أشهر شوية)، و Android (Gradle بس)، وأي مشروع Java أو Kotlin.`,
             mistakes: R`تحط نسخة Java في الملف مختلفة عن الـ JDK اللي عندك ([[release version 21 not supported]]). تعدّل [[build.gradle.kts]] في Android Studio ومتعملش Sync. تعمل commit لـ [[target/]] أو [[build/]]. وتنسى [[mvnw]] أو [[gradlew]] فكل واحد في الفريق يبني بنسخة مختلفة.`
           },
+          teach: R`## الفكرة
+
+المثال [[pom.xml]] لمشروع Java اسمه [[gym-api]] فيه مكتبتين: Gson (لـ JSON) و JUnit (للاختبارات). والحل فيه نفس المشروع بـ Gradle. هنقرا الملفين حتة حتة.
+
+> مفيش Java ولا Maven ولا Gradle على الجهاز اللي اتجرّب عليه، فأوامر [[mvn]] و [[gradle]] ونواتجها من docs الأدوات دي (maven.apache.org و docs.gradle.org). اللي اتجرّب فعلًا: إن [[pom.xml]] XML سليم، وقرايته بـ Python 3.14 على ويندوز (تحت).
+
+---
+
+## ١. السطور الأولى: XML و namespaces
+
+~~~text
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+~~~
+
+- [[<?xml ...?>]]: الـ declaration: نسخة XML والترميز (درس [[.xml]]).
+- [[<project>]]: الـ root، كل الملف جواه. POM = Project Object Model.
+- [[xmlns="..."]]: الـ namespace الافتراضي: كل التاجات هنا «بتاعة Maven POM 4.0.0» (درس xmlns). الرابط اسم مش صفحة لازم تفتح.
+- [[xmlns:xsi="..."]]: namespace تاني اختصاره [[xsi]] (XML Schema Instance).
+- [[xsi:schemaLocation]]: زوج «namespace ← ملف الـ schema بتاعه». المحرر (IntelliJ أو VS Code) بينزّل الـ [[.xsd]] ويكمّلك التاجات ويعلّم على الغلط.
+
+السطر طويل فاتقسم على ٣ سطور، وده عادي في XML: المسافات بين الـ attributes ملهاش معنى.
+
+## ٢. هوية المشروع (coordinates)
+
+~~~text
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.gym</groupId>
+  <artifactId>gym-api</artifactId>
+  <version>1.4.0</version>
+  <packaging>jar</packaging>
+~~~
+
+| التاج | معناه |
+|---|---|
+| [[modelVersion]] | نسخة صيغة الـ POM، دايمًا [[4.0.0]] |
+| [[groupId]] | مين عامله: دومين بالمقلوب ([[gym.com]] ← [[com.gym]]) |
+| [[artifactId]] | اسم المشروع |
+| [[version]] | نسخته |
+| [[packaging]] | الناتج: [[jar]] (Java ARchive، zip فيه الـ classes) أو [[war]] لسيرفرات الويب القديمة |
+
+التلاتة [[groupId:artifactId:version]] مع بعض اسمهم coordinates: العنوان الفريد للمشروع في أي repository. وهي نفسها الطريقة اللي بتطلب بيها أي مكتبة.
+
+## ٣. [[<properties>]]
+
+~~~text
+  <properties>
+    <maven.compiler.release>21</maven.compiler.release>
+  </properties>
+~~~
+
+إعدادات بأسامي. [[maven.compiler.release]] بيقول لـ plugin الـ compiler: اعمل compile لـ Java 21. لو الـ JDK اللي عندك أقدم من 21 البناء بيقع (الرسالة في الـ docs: [[release version 21 not supported]]).
+
+## ٤. [[<dependencies>]]
+
+~~~text
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.11.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>5.11.3</version>
+      <scope>test</scope>
+    </dependency>
+~~~
+
+كل [[<dependency>]] = مكتبة بالـ coordinates بتاعتها. و [[<scope>]]:
+
+| الـ scope | المكتبة متاحة في |
+|---|---|
+| (مش مكتوب) = [[compile]] | الكود والاختبارات والتشغيل |
+| [[test]] | [[src/test/java]] بس، ومتدخلش الناتج |
+| [[provided]] | الـ compile بس، والسيرفر هيوفّرها وقت التشغيل |
+| [[runtime]] | التشغيل بس (زي driver قاعدة بيانات) |
+
+قرينا الملف بـ Python عشان نتأكد إنه XML سليم ونطلّع الـ coordinates:
+
+~~~text الناتج (Python 3.14 على ويندوز)
+com.google.code.gson:gson:2.11.0 compile
+org.junit.jupiter:junit-jupiter:5.11.3 test
+~~~
+
+ولاحظ: عشان الـ [[xmlns]]، أي أداة بتقرا الملف لازم تدوّر على التاجات بالـ namespace ([[{http://maven.apache.org/POM/4.0.0}project]] هو اسم الـ root الحقيقي)، مش [[project]] بس.
+
+---
+
+## ٥. البناء (من الـ docs)
+
+~~~bash
+mvn package
+~~~
+
+[[mvn]] بيقرا الـ pom ويمشي على مراحل ثابتة اسمها lifecycle: [[validate]] ← [[compile]] ← [[test]] ← [[package]]. لما تطلب [[package]] كل اللي قبلها بيتعمل. أول مرة بينزّل المكتبات لـ [[~/.m2/repository]]، وفي الآخر:
+
+~~~text الناتج (من الـ docs)
+[INFO] BUILD SUCCESS
+~~~
+
+والناتج في [[target/gym-api-1.4.0.jar]]: الاسم [[artifactId-version.jar]]. والمسارات ثابتة بالعُرف (convention): الكود في [[src/main/java]]، والاختبارات في [[src/test/java]]، والناتج في [[target/]]. عشان كده الـ pom مفيهوش أي مسار.
+
+## ٦. نفس المشروع بـ Gradle (الـ solCode)
+
+~~~text build.gradle.kts
+plugins {
+    java
+    application
+}
+~~~
+
+[[plugins]]: نوع المشروع. [[java]] = مشروع Java عادي (compile و test و jar)، و [[application]] = فيه main وتقدر تشغّله بـ [[gradle run]].
+
+~~~text
+group = "com.gym"
+version = "1.4.0"
+~~~
+
+نفس [[groupId]] و [[version]]. والـ [[artifactId]] بييجي من [[rootProject.name]] في [[settings.gradle.kts]].
+
+~~~text
+java { toolchain { languageVersion = JavaLanguageVersion.of(21) } }
+~~~
+
+زي [[maven.compiler.release]]، بس أقوى: Gradle بيدوّر على JDK 21 متسطّب على الجهاز (وممكن ينزّله لوحده لو ظبطت plugin التنزيل في [[settings.gradle.kts]]، حسب الـ docs) حتى لو الـ JDK اللي شغّال بيه مختلف. والأقواس المعووجة جوه بعض = إعدادات جوه إعدادات.
+
+~~~text
+repositories { mavenCentral() }
+~~~
+
+المكتبات تتنزل منين. Maven بيستخدم Maven Central افتراضيًا، Gradle لازم تقوله.
+
+~~~text
+dependencies {
+    implementation("com.google.code.gson:gson:2.11.0")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.11.3")
+}
+~~~
+
+نفس الـ coordinates بس في نص واحد بـ [[:]]. [[implementation]] = [[compile]] في Maven، و [[testImplementation]] = [[<scope>test</scope>]].
+
+~~~text
+application { mainClass = "com.gym.App" }
+~~~
+
+الـ class اللي فيها [[main]]: [[com.gym]] الـ package و [[App]] الـ class. ده اللي [[gradle run]] بيشغّله.
+
+| Maven ([[pom.xml]]) | Gradle ([[build.gradle.kts]]) |
+|---|---|
+| [[<groupId>]] و [[<version>]] | [[group]] و [[version]] |
+| [[<artifactId>]] | [[rootProject.name]] في settings |
+| [[maven.compiler.release]] | [[java { toolchain ... }]] |
+| [[<dependency>]] | [[implementation("g:a:v")]] |
+| [[<scope>test</scope>]] | [[testImplementation]] |
+| [[mvn package]] ← [[target/]] | [[./gradlew build]] ← [[build/]] |
+
+---
+
+## الخلاصة
+
+- أي مكتبة Java ليها عنوان من ٣ حتت: [[groupId:artifactId:version]].
+- Maven: XML وطويل بس كل حاجة ليها مكان ثابت. Gradle: كود Kotlin أقصر، وهو الأساسي في Android.
+- [[target/]] و [[build/]] و [[.gradle/]] في [[.gitignore]]، والـ wrappers ([[mvnw]] و [[gradlew]]) بيتعملهم commit عشان الكل يبني بنفس النسخة.`,
           lines: [
             R`الـ declaration.`,
             R`الـ root ومعاه الـ namespace بتاع Maven (درس xmlns)...`,
@@ -997,6 +3240,154 @@ application { mainClass = "com.gym.App" }`
             when: R`كل تطبيق Android: صلاحية جديدة، أو شاشة جديدة، أو نص جديد في الواجهة.`,
             mistakes: R`تنسى [[INTERNET]] فكل طلبات الشبكة تقع بـ [[SecurityException]] أو [[Permission denied]]. تكتب [[Don't]] من غير [[\']] في strings فيقع الـ build ([[Apostrophe not preceded by \]]). تكتب النص مباشرة في الكود أو الـ layout بدل [[@string/]] (Android Studio بيحذرك [[Hardcoded string]]). وتنسى [[android:exported]] على activity فيها intent-filter فالـ build يرفض من Android 12.`
           },
+          teach: R`## الفكرة
+
+المثال [[AndroidManifest.xml]] لتطبيق فيه شاشة واحدة وصلاحية النت، والحل فيه [[strings.xml]]. هنقرا الاتنين تاج تاج.
+
+> مفيش Android SDK على الجهاز اللي اتجرّب عليه، فرسايل الـ build (AAPT2) من docs Android. اللي اتجرّب فعلًا: الملفين اتفحصوا كـ XML بـ Python 3.14 على ويندوز، واتجرّبت قواعد XML نفسها ([[&]] و [[']]).
+
+---
+
+## ١. الـ root و [[xmlns:android]]
+
+~~~text
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+~~~
+
+- [[<manifest>]]: الـ root، كل الملف جواه.
+- [[xmlns:android="..."]]: بيعرّف prefix اسمه [[android]] للـ namespace ده (درس xmlns). من غيره أي [[android:name]] تحت هيبقى غلط. والسطر ده نفسه في كل ملفات Android.
+
+## ٢. [[<uses-permission>]]
+
+~~~text
+    <uses-permission android:name="android.permission.INTERNET" />
+~~~
+
+- [[android:name]]: اسم الصلاحية الكامل. [[INTERNET]] من غيرها التطبيق ميقدرش يفتح أي اتصال شبكة.
+- [[/>]] في الآخر: تاج **self-closing**، يعني مفتوح ومقفول في نفس الوقت ومفيش حاجة جواه. زي [[<x></x>]] بالظبط.
+
+## ٣. [[<application>]]
+
+~~~text
+    <application
+        android:label="@string/app_name"
+        android:icon="@mipmap/ic_launcher"
+        android:theme="@style/Theme.Gym">
+~~~
+
+الـ attributes على كذا سطر للقراية بس، و [[>]] في الآخر بتقفل تاج **الفتح** (التاج نفسه بيتقفل تحت بـ [[</application>]]).
+
+| الـ attribute | القيمة | معناها |
+|---|---|---|
+| [[android:label]] | [[@string/app_name]] | اسم التطبيق تحت الأيقونة |
+| [[android:icon]] | [[@mipmap/ic_launcher]] | الأيقونة |
+| [[android:theme]] | [[@style/Theme.Gym]] | الألوان والشكل العام |
+
+[[@]] في أول القيمة معناها **مرجع** لـ resource: [[@string/app_name]] = النص اللي اسمه [[app_name]] في [[res/values/strings.xml]]، و [[@mipmap/ic_launcher]] = صورة في فولدرات [[res/mipmap-*]] (فيه نسخة لكل كثافة شاشة)، و [[@style/...]] في [[themes.xml]].
+
+## ٤. [[<activity>]]
+
+~~~text
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+~~~
+
+- activity = شاشة.
+- [[.MainActivity]]: الـ class اللي فيها كود الشاشة. النقطة في الأول معناها «جوه الـ package بتاع التطبيق»، فلو الـ package [[com.gym.portal]] تبقى [[com.gym.portal.MainActivity]].
+- [[android:exported="true"]]: تطبيقات تانية (زي الـ launcher اللي بيعرض الأيقونات) تقدر تفتحها. ومن Android 12 (حسب الـ docs) لازم تكتبه صراحة على أي activity فيها [[<intent-filter>]]، وإلا الـ build يرفض.
+
+## ٥. [[<intent-filter>]]
+
+~~~text
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+~~~
+
+intent = «طلب» بيتبعت للنظام («افتح كذا»). والـ filter بيقول الشاشة دي بترد على أنهي طلبات:
+
+- [[action.MAIN]]: دي نقطة البداية للتطبيق.
+- [[category.LAUNCHER]]: اعرضها في قايمة التطبيقات.
+
+الاتنين مع بعض = «الشاشة اللي بتفتح لما تدوس على الأيقونة».
+
+## ٦. القفل
+
+~~~text
+        </activity>
+    </application>
+</manifest>
+~~~
+
+كل تاج اتفتح بيتقفل بنفس الاسم وبالترتيب العكسي.
+
+---
+
+## ٧. [[strings.xml]] (الـ solCode)
+
+~~~text res/values/strings.xml
+<resources>
+    <string name="app_name">بوابة الجيم</string>
+    <string name="welcome">أهلًا يا %1$s</string>
+    <string name="note">Don\'t forget &amp; come early</string>
+    <string name="items_count">عندك %d منتج</string>
+</resources>
+~~~
+
+- [[<resources>]]: الـ root لأي ملف في [[res/values]].
+- [[name="app_name"]]: الاسم اللي الكود بيستخدمه: [[R.string.app_name]] في Kotlin، و [[@string/app_name]] في XML.
+- [[%1$s]]: مكان لقيمة: [[1]] رقم الـ argument الأول، و [[$]] فاصل، و [[s]] نص. فـ [[getString(R.string.welcome, "علي")]] ← «أهلًا يا علي». والرقم مهم في الترجمة: لو لغة تانية محتاجة ترتيب مختلف للقيم.
+- [[%d]]: رقم صحيح (d = decimal).
+- [[\']] و [[&amp;]]: الـ escaping (تحت).
+
+## ٨. ليه [[']] بتوقّع الـ build؟
+
+فيه طبقتين قواعد فوق بعض:
+
+**الطبقة الأولى: XML نفسه.** [[&]] لوحدها ممنوعة لأنها بداية entity ([[&amp;]] و [[&lt;]]، درس XML entities). جرّبنا ملف فيه [[Don't forget & come]]:
+
+~~~text الناتج (Python)
+xml.etree.ElementTree.ParseError: not well-formed (invalid token): line 2, column 38
+~~~
+
+[[column 38]] مكان الـ [[&]] بالظبط. وده الملف مش XML أصلًا.
+
+**الطبقة التانية: Android.** [[Don't forget]] من غير [[&]] XML سليم عادي، و Python قراه:
+
+~~~text الناتج
+Don't forget
+~~~
+
+بس AAPT2 (الأداة اللي بتحوّل [[res/]] وقت الـ build) عنده قواعد زيادة: [[']] لوحدها ممنوعة لأن Android بيستخدم التنصيص في تنسيق النصوص. ورسالته حسب docs Android فيها [[Apostrophe not preceded by \]]. فبتكتب [[\']]. ولاحظ إن XML مبيعرفش [[\']]، فـ Python قرا سطر الحل بالـ backslash زي ما هو:
+
+~~~text الناتج (Python على strings.xml)
+Don\'t forget &amp; come early   ← في الملف
+Don\'t forget & come early        ← اللي Python قراه
+~~~
+
+[[&amp;]] اتحولت [[&]] (شغل XML)، و [[\']] فضلت (شغل Android وقت الـ build).
+
+| الحرف | XML | Android كمان |
+|---|---|---|
+| [[&]] | [[&amp;]] | |
+| [[<]] | [[&lt;]] | |
+| [[']] | مسموح | [[\']] |
+| [["]] | مسموح جوه النص | [[\"]] |
+| [[@]] أو [[?]] في أول النص | مسموح | [[\@]] و [[\?]] (عشان ميتقريش مرجع) |
+
+والملفين الكاملين اتفحصوا بـ [[ET.parse]]، والـ root بتاعهم طلع [[manifest]] و [[resources]] من غير أخطاء.
+
+---
+
+## الخلاصة
+
+- الـ manifest = بطاقة التطبيق للنظام: الصلاحيات ([[uses-permission]])، والشاشات ([[activity]])، وأنهي شاشة بتفتح من الأيقونة ([[MAIN]] + [[LAUNCHER]]).
+- [[@type/name]] = مرجع لملف في [[res/]].
+- [[strings.xml]] = كل النصوص، ونسخة لكل لغة في [[values-ar]] وغيره.
+- [[']] ← [[\']] (Android)، و [[&]] ← [[&amp;]] (XML).`,
           lines: [
             R`الـ declaration.`,
             R`الـ root، والـ namespace اللي بيخلي [[android:]] تشتغل.`,
@@ -1064,6 +3455,164 @@ application { mainClass = "com.gym.App" }`
             when: R`أي مشروع ASP.NET Core أو C# أو Unity (Unity بيعمل الـ csproj لوحده) أو MAUI.`,
             mistakes: R`تحط connection string فيه باسورد حقيقي في [[appsettings.json]] وتعمله commit. تعدّل [[.sln]] بإيدك وتبوّظه. تعمل commit لـ [[bin/]] و [[obj/]]. وتنسى إن [[appsettings.Development.json]] مبيتقريش غير لما [[ASPNETCORE_ENVIRONMENT=Development]].`
           },
+          teach: R`## الفكرة
+
+المثال ملف [[.csproj]] لمشروع ASP.NET Core Web API، والحل فيه [[appsettings.json]]. هنقرا الاتنين سطر سطر، ونشوف إعدادات .NET بتتقري منين وبأنهي ترتيب.
+
+> مفيش .NET SDK على الجهاز اللي اتجرّب عليه، فأوامر [[dotnet]] ونواتجها من docs مايكروسوفت (learn.microsoft.com). اللي اتجرّب فعلًا: الـ [[.csproj]] اتفحص كـ XML و [[appsettings.json]] كـ JSON بـ Python 3.14 على ويندوز، والاتنين سليمين.
+
+---
+
+## ١. [[<Project Sdk="Microsoft.NET.Sdk.Web">]]
+
+~~~text
+<Project Sdk="Microsoft.NET.Sdk.Web">
+~~~
+
+- [[<Project>]]: الـ root. الملف ده في الحقيقة ملف MSBuild (أداة البناء بتاعة .NET).
+- [[Sdk="..."]]: نوع المشروع. الـ SDK ده بيجيب معاه كل الافتراضيات: إزاي يتبني، وأنهي ملفات تدخل، وإيه المكتبات الأساسية.
+
+| الـ Sdk | للمشروع |
+|---|---|
+| [[Microsoft.NET.Sdk]] | Console أو مكتبة |
+| [[Microsoft.NET.Sdk.Web]] | ASP.NET Core (API أو موقع) |
+| [[Microsoft.NET.Sdk.Worker]] | خدمة شغالة في الخلفية |
+
+ومفيش [[<?xml ...?>]] في أول الملف: الـ declaration اختياري في XML، و .NET مبيكتبوش.
+
+## ٢. [[<PropertyGroup>]]: إعدادات
+
+~~~text
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+~~~
+
+| التاج | معناه |
+|---|---|
+| [[TargetFramework]] | الكود بيتبني لأنهي .NET. [[net8.0]] = .NET 8 (نسخة LTS) |
+| [[Nullable]] | [[enable]]: الـ compiler يحذّرك لو ممكن تستخدم [[null]] من غير ما تفحصه. [[string]] مش هتقبل null، و [[string?]] تقبل |
+| [[ImplicitUsings]] | [[enable]]: الـ [[using]] الشائعة ([[System]] و [[System.Linq]]...) بتتضاف لكل ملف لوحدها |
+
+## ٣. [[<ItemGroup>]]: عناصر
+
+~~~text
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.11" />
+  </ItemGroup>
+</Project>
+~~~
+
+- [[<ItemGroup>]]: مجموعة «حاجات» (مكتبات أو ملفات).
+- [[<PackageReference>]]: مكتبة من NuGet (الـ registry بتاع .NET، زي npm). [[Include]] اسمها، و [[Version]] نسختها بالظبط.
+- [[/>]]: self-closing.
+
+ومفيش أي سطر بيقول «الملفات دي تدخل المشروع»: في الـ SDK-style projects كل ملف [[.cs]] في الفولدر وفولدراته بيدخل لوحده.
+
+السطر ده بيتكتب بالأمر (من الـ docs):
+
+~~~bash
+dotnet add package Microsoft.EntityFrameworkCore --version 8.0.11
+~~~
+
+---
+
+## ٤. [[appsettings.json]] (الـ solCode)
+
+~~~text
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+~~~
+
+[[Logging:LogLevel]]: يكتب logs قد إيه. [[Default: Information]] لكودك، و [[Microsoft.AspNetCore: Warning]] للـ framework نفسه (عشان ميغرقكش بسطر لكل request). المستويات من الأقل للأخطر: [[Trace]] و [[Debug]] و [[Information]] و [[Warning]] و [[Error]] و [[Critical]].
+
+~~~text
+  "ConnectionStrings": {
+    "Default": "Host=localhost;Database=gym;Username=app;Password=dev"
+  },
+~~~
+
+رابط قاعدة البيانات بصيغة [[key=value;key=value]] (PostgreSQL هنا). [[Password=dev]] باسورد تطوير بس، والحقيقي مكانه مش هنا (تحت).
+
+~~~text
+  "Jwt": {
+    "Issuer": "gym-api",
+    "ExpiresMinutes": 60
+  },
+  "AllowedHosts": "*"
+}
+~~~
+
+- [[Jwt]]: قسم بتاعنا احنا، .NET مبيعرفوش، والكود بيقراه.
+- [[60]] من غير تنصيص: رقم.
+- [[AllowedHosts: "*"]]: أي اسم دومين مسموح يوصل للسيرفر.
+
+قرايناه بـ Python واتأكدنا إن الـ JSON سليم:
+
+~~~text الناتج
+gym-api Host=localhost;Database=gym;Username=app;Password=dev
+~~~
+
+### إزاي الكود بيقرا القيم
+
+الأقسام المتداخلة بتتقري بـ [[:]] بينها:
+
+~~~text
+builder.Configuration["Jwt:Issuer"]                 ← "gym-api"
+builder.Configuration["ConnectionStrings:Default"]  ← "Host=localhost;..."
+~~~
+
+---
+
+## ٥. الإعدادات بتيجي منين (الترتيب)
+
+.NET بيقرا ٥ مصادر بالترتيب ده، و**الأخير يكسب** لو نفس المفتاح اتكرر (من الـ docs):
+
+| # | المصدر | إمتى |
+|---|---|---|
+| 1 | [[appsettings.json]] | دايمًا |
+| 2 | [[appsettings.Development.json]] | لو [[ASPNETCORE_ENVIRONMENT=Development]] |
+| 3 | User Secrets ([[dotnet user-secrets set]]) | على جهازك في Development بس |
+| 4 | متغيرات البيئة | دايمًا |
+| 5 | الـ command line ([[--Jwt:Issuer=x]]) | دايمًا |
+
+ومتغير البيئة مينفعش فيه [[:]] على كل الأنظمة، فبيتكتب [[__]] (شرطتين تحت):
+
+~~~text
+ConnectionStrings__Default=Host=db;Password=REAL
+~~~
+
+ده بيغطي على [[ConnectionStrings:Default]] اللي في الملف. عشان كده الباسورد الحقيقي في متغير بيئة على السيرفر، والملف فيه قيم تطوير بس.
+
+---
+
+## ٦. باقي ملفات المشروع (من الـ docs)
+
+| الملف | فيه |
+|---|---|
+| [[Program.cs]] | نقطة البداية |
+| [[Gym.Api.csproj]] | المشروع (المثال) |
+| [[Gym.sln]] | بيجمّع كذا مشروع، بيتعدّل بـ [[dotnet sln add]] |
+| [[Properties/launchSettings.json]] | البورت والـ environment على جهازك |
+| [[bin/]] و [[obj/]] | ناتج البناء، في [[.gitignore]] |
+
+[[dotnet build]] بيطلّع [[bin/Debug/net8.0/Gym.Api.dll]]: الكود متحوّل لـ IL (Intermediate Language)، و [[dotnet Gym.Api.dll]] بيشغّله.
+
+---
+
+## الخلاصة
+
+- [[.csproj]] = نوع المشروع ([[Sdk]]) + نسخة .NET + المكتبات. كل [[.cs]] بيدخل لوحده.
+- [[appsettings.json]] = إعدادات التطبيق، و [[:]] بين الأقسام في الكود، و [[__]] في متغيرات البيئة.
+- الترتيب: الملف ← ملف البيئة ← user secrets ← متغيرات البيئة ← command line، والأخير يكسب.
+- الأسرار عمرها ما تتكتب في [[appsettings.json]] اللي في Git.`,
           lines: [
             R`نوع المشروع: Web API (الـ SDK بيحدد الافتراضيات).`,
             R`مجموعة إعدادات.`,
