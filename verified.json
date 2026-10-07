@@ -9254,6 +9254,76 @@
   "date": "2026-10-06",
   "on": "docker ubuntu-24.04 curl vs nginx lab + win11 curl.exe; docs: securityheaders.com"
  },
+ "spring|JDK و JVM": {
+  "hash": "ee0b6dd3092c",
+  "date": "2026-10-07",
+  "on": "docker maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1, Linux)"
+ },
+ "spring|Java مقابل TypeScript": {
+  "hash": "6397ec9565bf",
+  "date": "2026-10-07",
+  "on": "docker maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1, Linux)"
+ },
+ "spring|String": {
+  "hash": "8a41a898528f",
+  "date": "2026-10-07",
+  "on": "docker maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1, Linux)"
+ },
+ "spring|class و constructor": {
+  "hash": "b9fe36ad4221",
+  "date": "2026-10-07",
+  "on": "docker maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1, Linux)"
+ },
+ "spring|enum": {
+  "hash": "ae1d34bb034e",
+  "date": "2026-10-07",
+  "on": "docker maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1, Linux)"
+ },
+ "spring|extends و abstract": {
+  "hash": "be2585c6c8e1",
+  "date": "2026-10-07",
+  "on": "docker maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1, Linux)"
+ },
+ "spring|interfaces": {
+  "hash": "149b53ed3107",
+  "date": "2026-10-07",
+  "on": "docker maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1, Linux)"
+ },
+ "spring|jshell": {
+  "hash": "9b190c69f7c4",
+  "date": "2026-10-07",
+  "on": "docker maven:3.9-eclipse-temurin-25 (JShell 25.0.4.1, piped input); docs: Tab completion, Ctrl+D"
+ },
+ "spring|primitives و wrappers": {
+  "hash": "055d97bd60db",
+  "date": "2026-10-07",
+  "on": "docker maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1, Linux)"
+ },
+ "spring|records": {
+  "hash": "1eb180b6a9c9",
+  "date": "2026-10-07",
+  "on": "docker maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1, Linux)"
+ },
+ "spring|sealed و pattern matching": {
+  "hash": "a3a2a45bbe26",
+  "date": "2026-10-07",
+  "on": "docker maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1, Linux)"
+ },
+ "spring|static و final": {
+  "hash": "b49b656f3e8c",
+  "date": "2026-10-07",
+  "on": "docker maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1, Linux)"
+ },
+ "spring|switch expressions": {
+  "hash": "ef1c5562c1ac",
+  "date": "2026-10-07",
+  "on": "docker maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1, Linux)"
+ },
+ "spring|var و final": {
+  "hash": "3481f6e759f0",
+  "date": "2026-10-07",
+  "on": "docker maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1, Linux)"
+ },
  "sshc|Host * والأنماط": {
   "hash": "3ebe9cb10bbd",
   "date": "2026-10-06",
