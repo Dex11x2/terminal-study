@@ -2019,6 +2019,11 @@
   "date": "2026-10-06",
   "on": "Chrome headless (playwright-core), example + solCode HTML, Windows 11"
  },
+ "data|$queryRaw": {
+  "hash": "fc3058d2067b",
+  "date": "2026-10-07",
+  "on": "Windows + Node 24, Prisma 7.10.0 (adapter-pg) on postgres:18 in Docker"
+ },
  "data|B-tree index": {
   "hash": "b40f1ac8a367",
   "date": "2026-10-07",
@@ -2029,10 +2034,20 @@
   "date": "2026-10-07",
   "on": "docker postgres:18 (psql)"
  },
+ "data|CREATE FUNCTION": {
+  "hash": "312ca3f2c28a",
+  "date": "2026-10-07",
+  "on": "Docker postgres:18 (psql)"
+ },
  "data|CREATE TABLE": {
   "hash": "fd118ddb2ab8",
   "date": "2026-10-07",
   "on": "docker postgres:18 (psql)"
+ },
+ "data|CREATE TRIGGER": {
+  "hash": "e247daa8f7ed",
+  "date": "2026-10-07",
+  "on": "Docker postgres:18 (psql)"
  },
  "data|DELETE": {
   "hash": "861467ab3f3b",
@@ -2079,6 +2094,11 @@
   "date": "2026-10-07",
   "on": "docker postgres:18 (psql)"
  },
+ "data|N+1": {
+  "hash": "4b28c91cb504",
+  "date": "2026-10-07",
+  "on": "Windows + Node 24, Prisma 7.10.0 (adapter-pg) on postgres:18 in Docker"
+ },
  "data|NULL": {
   "hash": "544f5aa71e93",
   "date": "2026-10-07",
@@ -2124,6 +2144,11 @@
   "date": "2026-10-07",
   "on": "docker postgres:18 (psql)"
  },
+ "data|VIEW و MATERIALIZED VIEW": {
+  "hash": "0e1e7ce44479",
+  "date": "2026-10-07",
+  "on": "Docker postgres:18 (psql)"
+ },
  "data|WHERE": {
   "hash": "70a05af72cb3",
   "date": "2026-10-07",
@@ -2159,6 +2184,21 @@
   "date": "2026-10-07",
   "on": "docker postgres:18 (psql)"
  },
+ "data|full-text search": {
+  "hash": "dfd5059710a2",
+  "date": "2026-10-07",
+  "on": "Docker postgres:18 (psql)"
+ },
+ "data|generated columns": {
+  "hash": "f7c937223b67",
+  "date": "2026-10-07",
+  "on": "Docker postgres:18 (psql); STORED requirement also checked on postgres:16; docs: VIRTUAL added in 18"
+ },
+ "data|include و select": {
+  "hash": "0cf2660895ae",
+  "date": "2026-10-07",
+  "on": "Windows + Node 24, Prisma 7.10.0 (adapter-pg) + tsc on postgres:18 in Docker"
+ },
  "data|isolation levels": {
   "hash": "26dfd88024a6",
   "date": "2026-10-07",
@@ -2184,6 +2224,11 @@
   "date": "2026-10-07",
   "on": "docker postgres:18 (psql)"
  },
+ "data|nested writes": {
+  "hash": "870700cb04a9",
+  "date": "2026-10-07",
+  "on": "Windows + Node 24, Prisma 7.10.0 (adapter-pg) on postgres:18 in Docker"
+ },
  "data|normalization": {
   "hash": "21363f789e3e",
   "date": "2026-10-07",
@@ -2203,6 +2248,16 @@
   "hash": "63624416e85c",
   "date": "2026-10-07",
   "on": "docker postgres:18 (psql)"
+ },
+ "data|relation filters": {
+  "hash": "b5da8709788f",
+  "date": "2026-10-07",
+  "on": "Windows + Node 24, Prisma 7.10.0 (adapter-pg) on postgres:18 in Docker"
+ },
+ "data|schema.prisma": {
+  "hash": "105c6d145a7e",
+  "date": "2026-10-07",
+  "on": "Windows + Node 24, Prisma 7.10.0 (adapter-pg) on postgres:18 in Docker"
  },
  "data|self join": {
   "hash": "2600c65e83a0",
@@ -2224,6 +2279,16 @@
   "date": "2026-10-07",
   "on": "docker postgres:18 (psql)"
  },
+ "data|إعداد Prisma 7": {
+  "hash": "e5c4ec0a7c88",
+  "date": "2026-10-07",
+  "on": "Windows + Node 24, Prisma 7.10.0 (adapter-pg) on postgres:18 in Docker"
+ },
+ "data|البحث بالعربي": {
+  "hash": "cd944e8b0606",
+  "date": "2026-10-07",
+  "on": "Docker postgres:18 (psql)"
+ },
  "data|دوال التاريخ": {
   "hash": "e31d5bd75d38",
   "date": "2026-10-07",
@@ -2233,6 +2298,11 @@
   "hash": "bddabae30936",
   "date": "2026-10-07",
   "on": "docker postgres:18 (psql)"
+ },
+ "data|علاقات Prisma": {
+  "hash": "1d5f1b033ec1",
+  "date": "2026-10-07",
+  "on": "Windows + Node 24, Prisma 7.10.0 (adapter-pg) on postgres:18 in Docker"
  },
  "data|مقدمة قواعد البيانات و SQL": {
   "hash": "9e7070bf28b6",
@@ -5513,6 +5583,136 @@
   "hash": "07dde670140b",
   "date": "2026-10-06",
   "on": "win11 pwsh-7.6 + ps-5.1"
+ },
+ "pyapi|*args و **kwargs": {
+  "hash": "308ff48c87e2",
+  "date": "2026-10-07",
+  "on": "Windows 11 Python 3.14.3 + python:3.13-slim (Docker)"
+ },
+ "pyapi|Enum": {
+  "hash": "ed0004776928",
+  "date": "2026-10-07",
+  "on": "Windows 11 Python 3.14.3 + python:3.13-slim (Docker)"
+ },
+ "pyapi|Protocol و ABC": {
+  "hash": "f514d45fe488",
+  "date": "2026-10-07",
+  "on": "Windows 11 Python 3.14.3 + python:3.13-slim (Docker, mypy 2.4.0 --strict)"
+ },
+ "pyapi|class و self": {
+  "hash": "13f96e4f0494",
+  "date": "2026-10-07",
+  "on": "Windows 11 Python 3.14.3 + python:3.13-slim (Docker)"
+ },
+ "pyapi|comprehensions": {
+  "hash": "b7d311e6bd73",
+  "date": "2026-10-07",
+  "on": "windows-11 python 3.14.3, docker python:3.13-slim"
+ },
+ "pyapi|dataclass": {
+  "hash": "9c5b9e049fe4",
+  "date": "2026-10-07",
+  "on": "Windows 11 Python 3.14.3 + python:3.13-slim (Docker)"
+ },
+ "pyapi|decorators": {
+  "hash": "157599007f1b",
+  "date": "2026-10-07",
+  "on": "Windows 11 Python 3.14.3 + python:3.13-slim (Docker)"
+ },
+ "pyapi|dict": {
+  "hash": "3fc64478483f",
+  "date": "2026-10-07",
+  "on": "windows-11 python 3.14.3, docker python:3.13-slim"
+ },
+ "pyapi|dunder methods": {
+  "hash": "bbd73cc921f2",
+  "date": "2026-10-07",
+  "on": "Windows 11 Python 3.14.3 + python:3.13-slim (Docker)"
+ },
+ "pyapi|f-strings": {
+  "hash": "d856dc1706bc",
+  "date": "2026-10-07",
+  "on": "windows-11 python 3.14.3, docker python:3.13-slim"
+ },
+ "pyapi|for و range": {
+  "hash": "ef731cb9a6dd",
+  "date": "2026-10-07",
+  "on": "windows-11 python 3.14.3, docker python:3.13-slim"
+ },
+ "pyapi|generators و yield": {
+  "hash": "83c53f103f07",
+  "date": "2026-10-07",
+  "on": "Windows 11 Python 3.14.3 + python:3.13-slim (Docker); solCode (resource) Linux only; docs: macOS ru_maxrss units"
+ },
+ "pyapi|if و elif و else": {
+  "hash": "91001047e384",
+  "date": "2026-10-07",
+  "on": "windows-11 python 3.14.3, docker python:3.13-slim"
+ },
+ "pyapi|list": {
+  "hash": "07376180e861",
+  "date": "2026-10-07",
+  "on": "windows-11 python 3.14.3, docker python:3.13-slim"
+ },
+ "pyapi|match و case": {
+  "hash": "8f038abb32d8",
+  "date": "2026-10-07",
+  "on": "windows-11 python 3.14.3, docker python:3.13-slim"
+ },
+ "pyapi|mutable و immutable": {
+  "hash": "0f3c6763860e",
+  "date": "2026-10-07",
+  "on": "windows-11 python 3.14.3, docker python:3.13-slim"
+ },
+ "pyapi|names و objects": {
+  "hash": "19b26a181951",
+  "date": "2026-10-07",
+  "on": "windows-11 python 3.14.3, docker python:3.13-slim"
+ },
+ "pyapi|scope و LEGB": {
+  "hash": "a50afa4c2dd5",
+  "date": "2026-10-07",
+  "on": "Windows 11 Python 3.14.3 + python:3.13-slim (Docker)"
+ },
+ "pyapi|set و tuple": {
+  "hash": "d4165f965c21",
+  "date": "2026-10-07",
+  "on": "windows-11 python 3.14.3, docker python:3.13-slim"
+ },
+ "pyapi|try و except": {
+  "hash": "5fad969d9221",
+  "date": "2026-10-07",
+  "on": "Windows 11 Python 3.14.3 + python:3.13-slim (Docker)"
+ },
+ "pyapi|type hints": {
+  "hash": "94d7cbc12bee",
+  "date": "2026-10-07",
+  "on": "windows-11 python 3.14.3 + mypy 2.4.0, docker python:3.13-slim"
+ },
+ "pyapi|while و break و continue": {
+  "hash": "6fa77d75a768",
+  "date": "2026-10-07",
+  "on": "windows-11 python 3.14.3 (piped input), docker python:3.13-slim"
+ },
+ "pyapi|with و context managers": {
+  "hash": "bd1a9e5bb078",
+  "date": "2026-10-07",
+  "on": "Windows 11 Python 3.14.3 + python:3.13-slim (Docker)"
+ },
+ "pyapi|الوراثة و super و MRO": {
+  "hash": "2fd9943f26a8",
+  "date": "2026-10-07",
+  "on": "Windows 11 Python 3.14.3 + python:3.13-slim (Docker)"
+ },
+ "pyapi|تمارين الأساسيات": {
+  "hash": "e56a47755401",
+  "date": "2026-10-07",
+  "on": "windows-11 python 3.14.3, docker python:3.13-slim"
+ },
+ "pyapi|مقدمة بايثون والـ print": {
+  "hash": "07943dfc1b04",
+  "date": "2026-10-07",
+  "on": "windows-11 python 3.14.3 (file + REPL), docker python:3.13-slim"
  },
  "python|# /// script": {
   "hash": "86a66969549f",

@@ -48,7 +48,7 @@ export const prisma = new PrismaClient({ adapter, log: ["query", "warn", "error"
 
 بعد [[migrate dev]] هتشوف [[Your database is now in sync with your schema]] وفولدر [[prisma/migrations/التاريخ_init/migration.sql]]. بس فولدر [[src/generated]] مش هيبقى موجود. من Prisma 7 الـ migrate مبقاش بيعمل generate لوحده، فلازم [[npx prisma generate]] وبعدها هتلاقي [[src/generated/prisma/client.ts]].
 
-الأخطاء الشائعة: لو نسيت [[import "dotenv/config"]] في ملف الـ config، الـ CLI مش هيلاقي الرابط. ولو كتبت [[npm i -D prisma]] من غير [[@7]]، ممكن تنزل نسخة 8 (وقت كتابة الدرس الـ tag [[latest]] بتاع الـ CLI كان بيشاور على 8.0.0-rc)، و 8 ليها API مختلف تمامًا. ولو استوردت [[PrismaClient]] من [[@prisma/client]] بدل الفولدر المتولّد هيقولك إن الـ client مش متولّد. ولو السكربت فيه top-level await واشتكى من [[cjs]]، يبقى ناقصك [[type=module]] في package.json.`,
+الأخطاء الشائعة: لو نسيت [[import "dotenv/config"]] في ملف الـ config، الـ CLI مش هيلاقي الرابط. ولو كتبت [[npm i -D prisma]] من غير [[@7]]، ممكن تنزل نسخة 8 (وقت كتابة الدرس الـ tag [[latest]] بتاع الـ CLI كان بيشاور على 8.0.0-rc)، و 8 ليها API مختلف تمامًا. ولو استوردت [[PrismaClient]] من [[@prisma/client]] بدل الفولدر المتولّد هيقع على طول بـ [[does not provide an export named 'PrismaClient']]، لأن الـ package ده مبقاش فيه client متولّد. ولو السكربت فيه top-level await واشتكى من [[cjs]]، يبقى ناقصك [[type=module]] في package.json.`,
           solCode: R`mkdir shop-prisma && cd shop-prisma
 npm init -y && npm pkg set type=module
 npm i -D prisma@7 tsx dotenv
@@ -74,6 +74,254 @@ npx tsx src/main.ts`,
             when: "أي مشروع Node أو Next.js جديد بـ Postgres أو MySQL أو SQLite. في مشروع قديم على Prisma 6 خد النقل خطوة خطوة بدليل الـ upgrade الرسمي. و Prisma 8 وقت كتابة الدرس لسه RC و API بتاعه مختلف تمامًا، فمتبدأش بيه مشروع حقيقي لحد ما يبقى stable ويكون فيه دليل واضح.",
             mistakes: R`[[npm i prisma]] من غير version فتنزل major مش هي اللي انت متوقعها. ناسي [[dotenv/config]]. [[prisma generate]] مش في الـ build، فالسيرفر يقوم من غير client. الـ generated في git فيحصل conflicts. [[migrate dev]] على الإنتاج (بيقترح reset ويمسح الداتا). وتعدّل ملف migration اتطبق قبل كده: Prisma بيحسب checksum لكل ملف، فهيقولك إن الـ migration اتغيرت ويطلب reset. أي تصليح بيبقى migration جديدة.`
           },
+          teach: R`## الفكرة: ٣ ملفات، وكل واحد ليه قاري مختلف
+
+المثال فيه ٣ ملفات، ومفتاح فهم Prisma 7 إنك تعرف مين بيقرا كل واحد:
+
+| الملف | مين بيقراه | فيه إيه |
+|---|---|---|
+| [[prisma.config.ts]] | الـ CLI بس ([[npx prisma ...]]) | رابط القاعدة، ومكان الـ schema والـ migrations |
+| [[prisma/schema.prisma]] | الـ CLI ([[migrate]] و [[generate]]) | الـ generator ونوع القاعدة والـ models |
+| [[src/db.ts]] | التطبيق بتاعك | الـ client اللي بتكتب بيه الـ queries |
+
+كل اللي تحت اتشغّل فعلًا على ويندوز بـ Node 24 و Prisma 7.10.0، على PostgreSQL 18 في container Docker على البورت 55905، في فولدر فاضي.
+
+---
+
+## ١. التسطيب: ليه ٦ packages؟
+
+~~~bash
+npm init -y && npm pkg set type=module
+npm i -D prisma@7 tsx dotenv
+npm i @prisma/client@7 @prisma/adapter-pg@7 pg
+~~~
+
+- [[npm init -y]]: يعمل [[package.json]] بالقيم الافتراضية من غير أسئلة ([[-y]] = yes لكل حاجة).
+- [[npm pkg set type=module]]: يكتب [[type: module]] في package.json، يعني ملفات [[.js]] و [[.ts]] تتعامل كـ ES modules ([[import]] مش [[require]]). ومن غيره الـ top-level [[await]] (await برّه أي function) مش هيشتغل.
+- [[-D]] = devDependencies، حاجات للتطوير بس:
+  - [[prisma@7]]: الـ CLI ([[init]] و [[migrate]] و [[generate]]). و [[@7]] معناها «آخر نسخة من 7». من غيرها، يوم التجربة كان الـ tag اللي اسمه [[latest]] بيشاور على [[8.0.0-rc.20]].
+  - [[tsx]]: بيشغّل ملف TypeScript على طول ([[npx tsx src/main.ts]]) من غير ما تبنيه.
+  - [[dotenv]]: بيقرا ملف [[.env]] ويحط اللي فيه في [[process.env]].
+- والتلاتة التانيين dependencies عادية لأن التطبيق محتاجهم وهو شغال:
+  - [[@prisma/client@7]]: الـ runtime اللي الكود المتولّد بيستخدمه.
+  - [[@prisma/adapter-pg@7]]: الـ driver adapter بتاع Postgres.
+  - [[pg]]: مكتبة Postgres العادية لـ Node، والـ adapter بيكلّم القاعدة بيها.
+
+~~~bash
+npx prisma --version
+~~~
+
+~~~text الناتج (جزء منه)
+prisma               : 7.10.0
+@prisma/client       : 7.10.0
+Node.js              : v24.19.0
+Query Compiler       : enabled
+~~~
+
+[[Query Compiler : enabled]] يعني الـ client بيبني الـ SQL بنفسه في TypeScript، مش الـ query engine القديم المكتوب بـ Rust. وده السبب إن الـ adapter بقى إجباري.
+
+---
+
+## ٢. [[prisma init]]
+
+~~~bash
+npx prisma init --datasource-provider postgresql --output ../src/generated/prisma
+~~~
+
+- [[--datasource-provider postgresql]]: نوع القاعدة اللي هيتكتب في الـ schema.
+- [[--output ../src/generated/prisma]]: مكان الكود المتولّد. المسار ده **نسبةً لملف الـ schema** (اللي في [[prisma/]])، فـ [[..]] بتطلع لفولدر المشروع وبعدين [[src/generated/prisma]].
+
+~~~text الناتج (جزء منه)
+Initialized Prisma in your project
+
+  prisma/
+    schema.prisma
+  prisma7.config.ts
+  .env
+  .gitignore
+~~~
+
+خد بالك: الملف اتسمّى [[prisma7.config.ts]] مش [[prisma.config.ts]] (ده اللي الـ sol بيشرح سببه). احنا غيّرنا اسمه لـ [[prisma.config.ts]] زي المثال، والـ CLI قراه عادي وكتب [[Loaded Prisma config from prisma.config.ts.]] في أول كل أمر. ونسخة 7.10 كمان بتعمل فولدرات [[.claude/skills]] و [[.agents/skills]] و [[.windsurf/skills]] (تعليمات لأدوات الـ AI)، ودول مالهمش دعوة بتشغيل Prisma.
+
+---
+
+## ٣. [[prisma.config.ts]] سطر سطر
+
+~~~ts
+import "dotenv/config";
+~~~
+
+[[import]] من غير أسماء بعده معناه «شغّل الملف ده وبس». و [[dotenv/config]] لما يشتغل بيقرا [[.env]] ويملا [[process.env]]. Prisma 7 مبقاش بيقرا [[.env]] لوحده، والملف اللي [[init]] عمله بيقولها صريحة في أوله: [[Environment variables declared in this file are NOT automatically loaded by Prisma.]]
+
+~~~ts
+import { defineConfig } from "prisma/config";
+~~~
+
+[[defineConfig]] دالة بترجّع الـ object زي ما هو. فايدتها الوحيدة الـ types: المحرر بيكمّلك أسماء الخانات وبيعلّم على الغلط.
+
+~~~ts
+export default defineConfig({
+  schema: "prisma/schema.prisma",
+  migrations: { path: "prisma/migrations" },
+  datasource: { url: process.env["DATABASE_URL"] },
+});
+~~~
+
+- [[export default]]: الـ CLI بيعمل import للملف وياخد الـ default export.
+- [[schema]]: مكان ملف الـ schema.
+- [[migrations.path]]: الفولدر اللي هتتكتب فيه ملفات الـ SQL.
+- [[datasource.url]]: رابط القاعدة اللي الـ CLI هيتوصّل بيه. و [[process.env["DATABASE_URL"]]] هو نفس [[process.env.DATABASE_URL]]، بالأقواس بس.
+
+والـ [[.env]] عندنا سطر واحد:
+
+~~~text .env
+DATABASE_URL="postgresql://postgres:pass@localhost:55905/shop"
+~~~
+
+يعني: بروتوكول postgresql، يوزر [[postgres]] وباسورد [[pass]]، على [[localhost]] بورت [[55905]]، قاعدة اسمها [[shop]].
+
+---
+
+## ٤. أول [[schema.prisma]]
+
+~~~text prisma/schema.prisma
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+datasource db {
+  provider = "postgresql"
+}
+~~~
+
+- [[generator client]]: بلوك بيقول «ولّد كود من الـ schema ده». و [[client]] مجرد اسم.
+- [[provider = "prisma-client"]]: الـ generator الجديد اللي بيكتب ملفات [[.ts]] في الـ [[output]]. القديم كان [[prisma-client-js]] وكان بيكتب جوه [[node_modules/.prisma]].
+- [[datasource db]]: نوع القاعدة. ومفيش [[url]] هنا خلاص: لو كتبته Prisma 7 هيرفض الـ schema.
+
+---
+
+## ٥. [[migrate dev]] وبعده [[generate]]
+
+ضفنا موديلين (درس schema.prisma الجاي) وشغّلنا:
+
+~~~bash
+npx prisma migrate dev --name init
+~~~
+
+~~~text الناتج
+Loaded Prisma config from prisma.config.ts.
+
+Prisma schema loaded from prisma\schema.prisma.
+Datasource "db": PostgreSQL database "shop", schema "public" at "localhost:55905"
+
+Applying migration $__bt20261007085135_init$__bt
+
+The following migration(s) have been created and applied from new schema changes:
+
+prisma\migrations/
+  └─ 20261007085135_init/
+    └─ migration.sql
+
+Your database is now in sync with your schema.
+~~~
+
+السطر التالت بيأكد إن الرابط اتقرا صح من الـ config: قاعدة [[shop]] على [[localhost:55905]]. والفولدر اسمه التاريخ والوقت ([[20261007085135]] = 2026-10-07 08:51:35) وبعده الاسم اللي ادّيته بـ [[--name]].
+
+بس [[ls src]] بعدها طلّع [[No such file or directory]]: مفيش client اتولّد. لازم:
+
+~~~bash
+npx prisma generate
+~~~
+
+~~~text الناتج
+Loaded Prisma config from prisma.config.ts.
+
+Prisma schema loaded from prisma\schema.prisma.
+✔ Generated Prisma Client (7.10.0) to .\src\generated\prisma in 35ms
+~~~
+
+(وقبلها طلّع صندوق «Update available 7.10.0 -> 8.0.0-rc.20». متسمعش كلامه في مشروع شغال: 8 major جديدة وليها API مختلف.)
+
+~~~text اللي اتعمل في src/generated/prisma
+browser.ts  client.ts  commonInputTypes.ts  enums.ts  internal/  models/  models.ts
+models/:  Order.ts  User.ts
+~~~
+
+[[client.ts]] هو اللي هتعمل منه import، و [[models/]] فيها ملف types لكل model.
+
+---
+
+## ٦. [[src/db.ts]] سطر سطر
+
+~~~ts
+import "dotenv/config";
+~~~
+
+نفس السطر تاني، بس المرة دي للتطبيق. [[prisma.config.ts]] الـ CLI بس اللي بيقراه، فالتطبيق محتاج يحمّل [[.env]] بنفسه.
+
+~~~ts
+import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaClient } from "./generated/prisma/client";
+~~~
+
+[[PrismaPg]] class الـ adapter. و [[PrismaClient]] جاي من الفولدر المتولّد ([[./]] = نسبةً لملف db.ts نفسه)، مش من [[@prisma/client]].
+
+~~~ts
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
+~~~
+
+- [[new PrismaPg({...})]]: اعمل adapter. ومن جوه بيعمل [[Pool]] من مكتبة [[pg]] (مجموعة connections بتتعاد).
+- [[connectionString]]: نفس الرابط اللي في [[.env]].
+- [[!]] في الآخر: علامة TypeScript اسمها non-null assertion. [[process.env.X]] نوعه [[string | undefined]]، والـ [[!]] معناها «أنا متأكد إنها مش undefined». مش بتعمل أي حاجة وقت التشغيل.
+
+~~~ts
+export const prisma = new PrismaClient({ adapter, log: ["query", "warn", "error"] });
+~~~
+
+- [[export const prisma]]: instance واحد، وأي ملف تاني يعمل [[import { prisma } from "./db"]].
+- [[{ adapter }]]: اختصار لـ [[{ adapter: adapter }]].
+- [[log]]: أنواع الرسايل اللي تتطبع. [[query]] = كل SQL بيتبعت، و [[warn]] و [[error]] = التحذيرات والأخطاء. وفيه كمان [[info]].
+
+جرّبناه بملف صغير:
+
+~~~ts
+// src/main.ts
+import { prisma } from "./db";
+console.log(await prisma.user.count());
+await prisma.$disconnect();
+~~~
+
+~~~bash
+npx tsx src/main.ts
+~~~
+
+~~~text الناتج
+prisma:query SELECT COUNT(*) AS "_count$_all" FROM (SELECT "public"."users"."id" FROM "public"."users" WHERE 1=1 OFFSET $1) AS "sub"
+0
+~~~
+
+السطر الأول هو [[log: ["query"]]] شغال: ده الـ SQL اللي [[count()]] اتحوّل له. [[$1]] parameter (قيمته 0 هنا)، و [[WHERE 1=1]] شرط دايمًا صح Prisma بيحطه لما مفيش فلتر. والسطر التاني النتيجة: صفر يوزرز. و [[$disconnect()]] بيقفل الـ pool عشان السكربت يخلص ويرجّعك للترمنال.
+
+---
+
+## ٧. الأخطاء اللي جربناها بإيدينا
+
+| الغلطة | اللي طلع |
+|---|---|
+| شيلنا [[import "dotenv/config"]] من الـ config وشغّلنا [[migrate status]] | [[Error: The datasource.url property is required in your Prisma config file when using prisma migrate status.]] |
+| [[import { PrismaClient } from "@prisma/client"]] في مشروع [[type=module]] | [[SyntaxError: The requested module '@prisma/client' does not provide an export named 'PrismaClient']] |
+| [[new PrismaClient()]] من غير adapter | [[PrismaClientInitializationError: PrismaClient was instantiated without any options. A driver adapter is required to connect to your database.]] |
+| [[migrate dev]] من غير [[generate]] | مفيش فولدر [[src/generated]]، فأي import منه هيقع |
+
+---
+
+## الخلاصة
+
+- [[prisma.config.ts]] للـ CLI بس، وأوله [[import "dotenv/config"]]. والتطبيق بيحمّل [[.env]] لوحده برضه.
+- الـ client بيتولّد في الـ [[output]] اللي حددته، وبتعمل import منه، مش من [[@prisma/client]].
+- [[new PrismaClient({ adapter })]] والـ adapter إجباري.
+- [[migrate dev]] وبعده [[generate]]، لأن 7 مبقاش بيولّد لوحده.
+- ثبّت [[@7]] في كل package من Prisma.`,
           lines: [
             "حمّل .env في process.env، لأن الـ config مش بيعملها لوحده.",
             "دالة الإعداد من Prisma.",
@@ -158,6 +406,221 @@ await prisma.$disconnect();`,
             when: "مع كل تغيير في الداتا: عدّل الـ schema، وشغّل migrate dev، واقرا الـ SQL، وبعدين commit للاتنين مع بعض. ولو القاعدة موجودة قبل Prisma: [[prisma db pull]] بيكتب الـ schema منها.",
             mistakes: R`[[Float]] للفلوس. [[DateTime]] من غير [[@db.Timestamptz]]. FK من غير [[@@index]]. [[onDelete: Cascade]] على علاقة فيها فلوس (مسح يوزر يمسح أوردراته وفواتيره). أسماء PascalCase من غير [[@@map]]، وبعدين تكتب SQL خام فتحتاج [["User"]] بتنصيص في كل حتة. [[@updatedAt]] وتفتكر إنه trigger في القاعدة: ده الـ client بيحطه، فالتعديل من psql مش بيحدّثه (درس CREATE TRIGGER). وفي الانترفيو: «ليه onDelete Restrict للأوردرات؟» عشان مسح يوزر بالغلط ميضيّعش تاريخ المبيعات، والأحسن soft delete.`
           },
+          teach: R`## الفكرة: كل سطر في الـ model بيبقى سطر في [[CREATE TABLE]]
+
+أسهل طريقة تفهم بيها الـ schema إنك تحطه جنب الـ SQL اللي Prisma طلّعه منه. حطينا الموديلين زي ما هما في المثال، وشغّلنا [[npx prisma migrate dev --name init]] (Prisma 7.10.0 على ويندوز، و PostgreSQL 18 في Docker)، وده الـ [[migration.sql]] اللي اتولّد:
+
+~~~sql migration.sql
+-- CreateTable
+CREATE TABLE "users" (
+    "id" UUID NOT NULL,
+    "email" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "users_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "orders" (
+    "id" SERIAL NOT NULL,
+    "user_id" UUID NOT NULL,
+    "status" TEXT NOT NULL DEFAULT 'pending',
+    "total" DECIMAL(10,2) NOT NULL DEFAULT 0,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "orders_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
+
+-- CreateIndex
+CREATE INDEX "orders_user_id_created_at_idx" ON "orders"("user_id", "created_at" DESC);
+
+-- AddForeignKey
+ALTER TABLE "orders" ADD CONSTRAINT "orders_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+~~~
+
+دلوقتي نمشي على الـ schema سطر سطر ونشاور على اللي طلع منه.
+
+---
+
+## ١. شكل السطر: اسم، نوع، attributes
+
+~~~text
+  email     String   @unique
+  ───┬───   ──┬───   ───┬───
+   الاسم    النوع    attributes (صفر أو أكتر، كل واحد أوله @)
+~~~
+
+- **الاسم** هو اللي هتكتبه في الكود: [[user.email]].
+- **النوع** نوع Prisma ([[String]] و [[Int]] و [[DateTime]] ...)، ولو بعده [[?]] يبقى العمود يقبل NULL. من غير [[?]] يبقى [[NOT NULL]]، وده سبب إن كل الأعمدة في الـ SQL فوق [[NOT NULL]].
+- **الـ attributes** بـ [[@]] بتخص العمود ده بس، وبـ [[@@]] (اتنين) بتخص الجدول كله وبتتكتب تحت.
+
+---
+
+## ٢. [[model User]]
+
+~~~text
+model User {
+~~~
+
+[[model]] = جدول. واسم الـ model بيبقى اسم الـ property في الـ client بحرف صغير: [[prisma.user]].
+
+~~~text
+  id        String   @id @default(uuid()) @db.Uuid
+~~~
+
+- [[@id]]: الـ primary key، وطلع [[CONSTRAINT "users_pkey" PRIMARY KEY ("id")]].
+- [[@default(uuid())]]: لو مكتبتش id، يتعمل uuid جديد. خد بالك إن الـ SQL ملوش DEFAULT للعمود ده: الـ uuid **الـ client هو اللي بيولّده** ويبعته في الـ INSERT. وده باين في الـ log: [[INSERT INTO "public"."users" ("id","email","name","created_at") VALUES ($1,$2,$3,$4)]].
+- [[@db.Uuid]]: نوع العمود في Postgres يبقى [[UUID]] مش [[TEXT]]. [[@db.]] معناها «النوع الـ native بتاع القاعدة بالظبط».
+
+~~~text
+  email     String   @unique
+  name      String
+~~~
+
+[[@unique]] طلّع index منفصل: [[CREATE UNIQUE INDEX "users_email_key"]]. والاسم بيتكوّن من الجدول والعمود و [[key]]. و [[name]] مفيهوش attributes، فبقى [[TEXT NOT NULL]] وبس.
+
+~~~text
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+~~~
+
+- [[@default(now())]]: طلع [[DEFAULT CURRENT_TIMESTAMP]] في القاعدة نفسها.
+- [[@map("created_at")]]: اسم العمود في القاعدة [[created_at]]، وفي الكود [[createdAt]].
+- [[@db.Timestamptz]]: [[TIMESTAMPTZ]]. من غيرها كان هيبقى [[TIMESTAMP(3)]] من غير timezone.
+
+~~~text
+  orders    Order[]
+~~~
+
+السطر ده ملوش أي أثر في [[CREATE TABLE "users"]]: دوّر عليه في الـ SQL مش هتلاقيه. [[Order[]]] يعني «list من Order»، وده الناحية التانية من العلاقة، موجود عشان تقدر تكتب [[include: { orders: true }]].
+
+~~~text
+  @@map("users")
+}
+~~~
+
+[[@@map]] (على الجدول كله): اسم الجدول في القاعدة [[users]] بدل [[User]].
+
+---
+
+## ٣. [[model Order]]
+
+~~~text
+  id        Int      @id @default(autoincrement())
+~~~
+
+[[autoincrement()]] على [[Int]] طلع [[SERIAL]]: عمود integer وراه sequence بتدّي ١ و ٢ و ٣. هنا القاعدة هي اللي بتولّد الرقم، عكس الـ uuid.
+
+~~~text
+  userId    String   @map("user_id") @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+~~~
+
+السطرين دول هما العلاقة، وكل واحد ليه دور:
+
+- [[userId]] العمود الحقيقي: [[user_id UUID NOT NULL]]. ونوعه لازم يطابق [[User.id]] بالظبط (الاتنين [[@db.Uuid]]).
+- [[user User]] مش عمود. ده الـ relation field اللي بيخليك تكتب [[include: { user: true }]].
+- [[@relation(fields: [userId], references: [id])]]: العمود [[userId]] هنا بيشاور على [[id]] هناك. ومنه طلع [[FOREIGN KEY ("user_id") REFERENCES "users"("id")]].
+- [[onDelete: Restrict]]: طلع [[ON DELETE RESTRICT]]. يعني مسح يوزر عنده أوردرات مرفوض.
+- و [[ON UPDATE CASCADE]] ده الافتراضي بتاع Prisma: لو الـ id بتاع اليوزر اتغيّر، الـ user_id في أوردراته يتغيّر معاه.
+
+~~~text
+  status    String   @default("pending")
+  total     Decimal  @default(0) @db.Decimal(10, 2)
+~~~
+
+- [[status]]: [[TEXT NOT NULL DEFAULT 'pending']].
+- [[total]]: [[DECIMAL(10,2)]]، يعني ١٠ أرقام إجمالًا منهم ٢ بعد العلامة (أكبر قيمة 99999999.99). و [[Decimal]] بيحسب بالظبط من غير أخطاء الـ float.
+
+~~~text
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("orders")
+~~~
+
+[[@@index]] على عمودين، والتاني مترتب تنازلي: طلع [[CREATE INDEX "orders_user_id_created_at_idx" ON "orders"("user_id", "created_at" DESC)]]. خد بالك إن Prisma بيكتب أسماء القاعدة ([[user_id]]) مع إنك كتبت أسماء الكود ([[userId]])، لأنه عارف الـ [[@map]].
+
+### ملخص التحويل
+
+| في الـ schema | في Postgres |
+|---|---|
+| [[String]] | [[TEXT]] |
+| [[String @db.Uuid]] | [[UUID]] |
+| [[Int @default(autoincrement())]] | [[SERIAL]] |
+| [[Decimal @db.Decimal(10, 2)]] | [[DECIMAL(10,2)]] |
+| [[DateTime @db.Timestamptz]] | [[TIMESTAMPTZ]] |
+| من غير [[?]] | [[NOT NULL]] |
+| [[@unique]] | [[CREATE UNIQUE INDEX ..._key]] |
+| [[@relation(...)]] | [[FOREIGN KEY ... _fkey]] |
+| [[Order[]]] | ولا حاجة (للكود بس) |
+
+---
+
+## ٤. الـ solCode: نجرّب الـ Restrict
+
+~~~ts
+const user = await prisma.user.create({
+  data: { email: "ali@example.com", name: "Ali", orders: { create: { total: 250 } } },
+});
+~~~
+
+[[create]] بيعمل صف، و [[data]] فيه القيم. و [[orders: { create: {...} }]] بيعمل أوردر مربوط باليوزر ده في نفس الأمر (درس nested writes). مكتبناش [[id]] ولا [[createdAt]] ولا [[status]] لأن ليهم defaults، ولا [[userId]] لأن Prisma بيحطه من اليوزر.
+
+~~~ts
+try {
+  await prisma.user.delete({ where: { id: user.id } });
+} catch (e: any) {
+  console.log(e.code);
+}
+~~~
+
+- [[delete({ where })]]: امسح صف واحد، و [[where]] لازم يكون على حقل unique.
+- [[try / catch]]: لو الأمر رمى error نمسكه بدل ما السكربت يقع.
+- [[e: any]]: بنقول لـ TypeScript «متدققش في نوع الـ error»، عشان نقدر نقرا [[e.code]].
+
+~~~text الناتج (اتشغّل بـ npx tsx src/try-delete.ts)
+prisma:query INSERT INTO "public"."users" ("id","email","name","created_at") VALUES ($1,$2,$3,$4) RETURNING "public"."users"."id"
+prisma:query INSERT INTO "public"."orders" ("user_id","status","total","created_at") VALUES ($1,$2,$3,$4) RETURNING "public"."orders"."id"
+prisma:query SELECT "public"."users"."id", "public"."users"."email", "public"."users"."name", "public"."users"."created_at" FROM "public"."users" WHERE "public"."users"."id" = $1 LIMIT $2 OFFSET $3
+prisma:query COMMIT
+prisma:error
+Invalid $__btprisma.user.delete()$__bt invocation in
+...
+Foreign key constraint violated on the constraint: $__btorders_user_id_fkey$__bt
+P2003
+~~~
+
+- أول ٤ سطور هي الـ [[create]]: INSERT لليوزر، و INSERT للأوردر، و SELECT يرجّع اليوزر، و [[COMMIT]] (الاتنين في transaction واحدة).
+- [[prisma:error]] طلع لأن الـ client معمول بـ [[log: [..., "error"]]].
+- [[P2003]] كود Prisma لـ «foreign key constraint violated». وأشهر أكواد هتقابلها: [[P2002]] (unique اتكسر) و [[P2003]] (FK) و [[P2025]] (الصف مش موجود).
+
+---
+
+## ٥. نغيّر لـ [[Cascade]] ونقرا الـ migration
+
+غيّرنا [[onDelete: Restrict]] لـ [[onDelete: Cascade]] وشغّلنا [[npx prisma migrate dev --name cascade]]:
+
+~~~sql 20261007085214_cascade/migration.sql
+-- DropForeignKey
+ALTER TABLE "orders" DROP CONSTRAINT "orders_user_id_fkey";
+
+-- AddForeignKey
+ALTER TABLE "orders" ADD CONSTRAINT "orders_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+~~~
+
+كلمة واحدة في الـ schema بقت أمرين: Postgres مفيهوش «عدّل الـ ON DELETE بتاع FK موجود»، فلازم يتشال ويتعمل تاني. ولو الجدول كبير، الـ ADD CONSTRAINT بيعدّي على كل الصفوف يتأكد منها، فاقرا الملف قبل ما تعمله commit.
+
+---
+
+## الخلاصة
+
+- كل field = عمود، إلا الـ relation fields ([[user User]] و [[orders Order[]]]): دول للكود بس.
+- الـ FK بيتكتب في الناحية اللي فيها العمود الحقيقي، بـ [[@relation(fields, references)]].
+- [[@map]] و [[@@map]] = أسماء snake_case في القاعدة، و [[@db.*]] = النوع الـ native بالظبط.
+- [[@default(uuid())]] بيتولّد في الـ client، و [[autoincrement()]] و [[now()]] في القاعدة.
+- Restrict بيرمي [[P2003]]، واقرا [[migration.sql]] بعد أي تغيير.`,
           lines: [
             "model User = جدول.",
             "id نص بيتخزن uuid، وبيتولّد لوحده.",
@@ -260,6 +723,244 @@ await prisma.$disconnect();`,
             when: "implicit: ربط بسيط مش هيحتاج أي بيانات إضافية ومش هتكتب عليه SQL خام كتير (تاجات، وفئات). explicit: أي حاجة فيها كمية، أو سعر، أو تاريخ، أو دور، أو ترتيب (بنود أوردر، واشتراك في كورس، وعضوية في فريق بدور).",
             mistakes: R`implicit لبنود الأوردر فمفيش مكان للكمية. تنسى الناحية التانية من العلاقة فالـ schema ميتعملوش validate. explicit من غير unique على الزوج، فنفس المنتج يتضاف مرتين. تكتب SQL خام على [[_ProductToTag]] وتنسى إن A و B بيتحددوا بالترتيب الأبجدي. وفي الانترفيو: «إزاي بتعمل many-to-many في قاعدة relational؟» جدول وسيط فيه FK للطرفين ومفتاح مركّب، والـ ORM بيخفيه بس هو موجود.`
           },
+          teach: R`## الفكرة: علاقتين many-to-many في نفس الـ schema، واحدة بإيدك وواحدة Prisma بيعملها
+
+في المثال فيه نوعين ربط:
+
+- **Order ⇄ Product** عن طريق [[OrderItem]]: جدول ربط انت كاتبه (explicit) لأن فيه كمية وسعر.
+- **Product ⇄ Tag**: مفيش model للربط خالص (implicit)، و Prisma بيعمل الجدول لوحده.
+
+كل اللي تحت اتشغّل بـ Prisma 7.10.0 على ويندوز، و PostgreSQL 18 في Docker، فوق موديلات User و Order من الدرس اللي فات.
+
+---
+
+## ١. [[model Product]]
+
+~~~text
+model Product {
+  id    Int         @id @default(autoincrement())
+  name  String
+  price Decimal     @db.Decimal(10, 2)
+  stock Int         @default(0)
+~~~
+
+نفس الحاجات اللي في الدرس اللي فات: id متسلسل ([[SERIAL]])، واسم، وسعر [[DECIMAL(10,2)]]، ومخزون [[INTEGER]] افتراضيًا صفر.
+
+~~~text
+  items OrderItem[]
+  tags  Tag[]
+~~~
+
+السطرين دول relation fields، مالهمش أعمدة في [[products]]:
+
+- [[items OrderItem[]]]: كل بنود الأوردرات اللي فيها المنتج ده. الناحية التانية من [[OrderItem.product]].
+- [[tags Tag[]]]: list من Tag. ولما Prisma يلاقي [[Tag[]]] هنا و [[Product[]]] في Tag، ومفيش [[@relation(fields...)]] في أي ناحية، بيفهم إنها many-to-many implicit.
+
+---
+
+## ٢. [[model OrderItem]]: جدول الربط الـ explicit
+
+~~~text
+model OrderItem {
+  orderId   Int     @map("order_id")
+  productId Int     @map("product_id")
+~~~
+
+عمودين FK: واحد للأوردر وواحد للمنتج. ونوعهم [[Int]] لأن [[Order.id]] و [[Product.id]] أرقام.
+
+~~~text
+  quantity  Int
+  unitPrice Decimal @map("unit_price") @db.Decimal(10, 2)
+~~~
+
+ودي «داتا الربط نفسه»، السبب اللي خلانا نكتب الجدول بإيدنا. [[unitPrice]] سعر الوحدة **وقت الشرا**: لو سعر المنتج اتغيّر بكرة، الأوردرات القديمة تفضل بسعرها.
+
+~~~text
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id])
+~~~
+
+علاقتين one-to-many عاديتين زي [[Order.user]] بالظبط:
+
+- [[order]]: [[orderId]] بيشاور على [[Order.id]]، و [[onDelete: Cascade]] = مسح أوردر يمسح بنوده.
+- [[product]]: من غير [[onDelete]]، فالافتراضي للعلاقة الإجبارية [[Restrict]] (هتشوفه في الـ SQL).
+
+~~~text
+  @@id([orderId, productId])
+  @@index([productId])
+  @@map("order_items")
+}
+~~~
+
+- [[@@id([orderId, productId])]]: مفيش [[@id]] على عمود لوحده، المفتاح هو الاتنين مع بعض. يعني نفس المنتج مرة واحدة بس في نفس الأوردر.
+- [[@@index([productId])]]: الـ primary key بيبدأ بـ [[order_id]]، فبيخدم «بنود أوردر ٥» بس مش «المنتج ٣ اتباع فين». ده index للسؤال التاني.
+
+---
+
+## ٣. [[model Tag]]
+
+~~~text
+model Tag {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  products Product[]
+
+  @@map("tags")
+}
+~~~
+
+[[name @unique]] مهم هنا: عشان تقدر تعمل [[connect]] و [[disconnect]] و [[connectOrCreate]] بالاسم ([[{ name: "kitchen" }]])، لازم يكون حقل unique. و [[products Product[]]] الناحية التانية من [[Product.tags]].
+
+---
+
+## ٤. لو نسيت الناحية التانية
+
+قبل ما نضيف [[items OrderItem[]]] في Order، شغّلنا [[npx prisma migrate dev --name products]]:
+
+~~~text الناتج
+Error: Prisma schema validation - (validate wasm)
+Error code: P1012
+error: Error validating field $__btorder$__bt in model $__btOrderItem$__bt: The relation field $__btorder$__bt on model $__btOrderItem$__bt is missing an opposite relation field on the model $__btOrder$__bt. Either run $__btprisma format$__bt or add it manually.
+  -->  prisma\schema.prisma:53
+~~~
+
+يعني: [[OrderItem.order]] بيشاور على Order، بس Order مفيهوش field من نوع [[OrderItem[]]]. Prisma بيطلب الناحيتين دايمًا. والرسالة بتقترح [[prisma format]]: الأمر ده بيرتّب الملف وبيضيف الناحية الناقصة لوحده.
+
+ضفنا في Order:
+
+~~~text
+  items     OrderItem[]
+~~~
+
+وشغّلنا تاني، فاتعمل [[20261007085453_products/migration.sql]].
+
+---
+
+## ٥. الـ SQL اللي طلع (المهم منه)
+
+~~~sql جدول الربط الـ explicit
+CREATE TABLE "order_items" (
+    "order_id" INTEGER NOT NULL,
+    "product_id" INTEGER NOT NULL,
+    "quantity" INTEGER NOT NULL,
+    "unit_price" DECIMAL(10,2) NOT NULL,
+
+    CONSTRAINT "order_items_pkey" PRIMARY KEY ("order_id","product_id")
+);
+CREATE INDEX "order_items_product_id_idx" ON "order_items"("product_id");
+ALTER TABLE "order_items" ADD CONSTRAINT "order_items_order_id_fkey" FOREIGN KEY ("order_id") REFERENCES "orders"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "order_items" ADD CONSTRAINT "order_items_product_id_fkey" FOREIGN KEY ("product_id") REFERENCES "products"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+~~~
+
+كل سطر في الـ model ليه مقابل: المفتاح المركّب، والـ index، و CASCADE للأوردر، و RESTRICT للمنتج (الافتراضي).
+
+~~~sql جدول الربط الـ implicit (محدش كتبه)
+CREATE TABLE "_ProductToTag" (
+    "A" INTEGER NOT NULL,
+    "B" INTEGER NOT NULL,
+
+    CONSTRAINT "_ProductToTag_AB_pkey" PRIMARY KEY ("A","B")
+);
+CREATE INDEX "_ProductToTag_B_index" ON "_ProductToTag"("B");
+ALTER TABLE "_ProductToTag" ADD CONSTRAINT "_ProductToTag_A_fkey" FOREIGN KEY ("A") REFERENCES "products"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_ProductToTag" ADD CONSTRAINT "_ProductToTag_B_fkey" FOREIGN KEY ("B") REFERENCES "tags"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+~~~
+
+- الاسم [[_ProductToTag]]: شرطة تحتية، والموديلين بالترتيب الأبجدي. ومش متأثر بـ [[@@map]].
+- [[A]] = أول موديل أبجديًا (Product)، و [[B]] = التاني (Tag).
+- نفس فكرة الـ explicit: مفتاح مركّب [[(A, B)]] و index على التاني [[B]]. بس الـ FKs الاتنين [[CASCADE]]: مسح منتج أو تاج بيمسح صفوف الربط بتاعته بس.
+
+---
+
+## ٦. الـ solCode سطر سطر
+
+~~~ts
+const tag = (name: string) => ({ where: { name }, create: { name } });
+~~~
+
+دالة صغيرة بترجّع الشكل اللي [[connectOrCreate]] عايزه: [[where]] يدوّر بيه، و [[create]] يعمل بيه لو ملقاش. و [[{ name }]] اختصار لـ [[{ name: name }]].
+
+~~~ts
+const mug = await prisma.product.create({
+  data: { name: "Mug", price: 120, stock: 15, tags: { connectOrCreate: [tag("kitchen"), tag("gift")] } },
+  include: { tags: true },
+});
+console.log(mug.tags.map((t) => t.name));
+~~~
+
+اعمل منتج، واربطه بتاجين (يتعملوا لو مش موجودين)، ورجّعه ومعاه التاجات. والـ log:
+
+~~~text الناتج
+prisma:query INSERT INTO "public"."products" ("name","price","stock") VALUES ($1,$2,$3) RETURNING "public"."products"."id"
+prisma:query SELECT "public"."tags"."id" FROM "public"."tags" WHERE ("public"."tags"."name" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query INSERT INTO "public"."tags" ("name") VALUES ($1) RETURNING "public"."tags"."id"
+prisma:query INSERT INTO "public"."_ProductToTag" ("A","B") VALUES ($1,$2) ON CONFLICT DO NOTHING
+prisma:query SELECT "public"."tags"."id" FROM "public"."tags" WHERE ("public"."tags"."name" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query INSERT INTO "public"."tags" ("name") VALUES ($1) RETURNING "public"."tags"."id"
+prisma:query INSERT INTO "public"."_ProductToTag" ("A","B") VALUES ($1,$2) ON CONFLICT DO NOTHING
+prisma:query SELECT ... FROM "public"."products" WHERE "public"."products"."id" = $1 LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."tags"."id", "public"."tags"."name", "t0"."A" AS "ProductToTag@Product" FROM "public"."tags" INNER JOIN "public"."_ProductToTag" AS "t0" ON "t0"."B" = "public"."tags"."id" WHERE (1=1 AND "t0"."A" = $1) OFFSET $2
+prisma:query COMMIT
+[ 'kitchen', 'gift' ]
+~~~
+
+اقراه كده: INSERT للمنتج. وبعدين لكل تاج: SELECT يدوّر عليه بالاسم، ملقاهوش فـ INSERT، وبعدين صف في [[_ProductToTag]] بـ [[ON CONFLICT DO NOTHING]] (لو الربط موجود متعملش error). وفي الآخر الـ include: SELECT للتاجات بـ JOIN على جدول الربط. وكله في transaction واحدة خلصت بـ [[COMMIT]].
+
+~~~ts
+await prisma.product.update({ where: { id: mug.id }, data: { tags: { disconnect: { name: "gift" } } } });
+~~~
+
+[[disconnect]] بيفك الربط بس:
+
+~~~text الناتج (السطر المهم)
+prisma:query DELETE FROM "public"."_ProductToTag" WHERE ("public"."_ProductToTag"."A" = ($1) AND "public"."_ProductToTag"."B" IN ($2))
+~~~
+
+DELETE من جدول الربط، مش من [[tags]]. وبعد السكربت، في psql:
+
+~~~text الناتج
+ A | B
+---+---
+ 1 | 1
+
+ id |  name
+----+---------
+  1 | kitchen
+  2 | gift
+~~~
+
+التاج [[gift]] لسه موجود في [[tags]]، بس مبقاش مربوط بالمنتج.
+
+~~~ts
+const kitchen = await prisma.product.findMany({
+  where: { tags: { some: { name: "kitchen" } } },
+  select: { name: true },
+});
+~~~
+
+«المنتجات اللي ليها تاج واحد على الأقل اسمه kitchen» ([[some]] متشرحة في درس relation filters):
+
+~~~text الناتج
+prisma:query SELECT "public"."products"."id", "public"."products"."name" FROM "public"."products" WHERE EXISTS(SELECT "t0"."A" FROM "public"."_ProductToTag" AS "t0" INNER JOIN "public"."tags" AS "j0" ON ("j0"."id") = ("t0"."B") WHERE ("j0"."name" = $1 AND ("public"."products"."id") = ("t0"."A") AND "t0"."A" IS NOT NULL)) OFFSET $2
+[ { name: 'Mug' } ]
+~~~
+
+استعلام واحد بـ [[EXISTS]]، و [[_ProductToTag]] مستخبي جواه.
+
+---
+
+## الخلاصة
+
+| | implicit | explicit |
+|---|---|---|
+| بتكتب | [[Tag[]]] و [[Product[]]] بس | model كامل بـ 2 FK |
+| الجدول | [[_ProductToTag]] بعمودين [[A]] و [[B]] | اسمك انت ([[order_items]]) |
+| داتا زيادة على الربط | مستحيل | أي عمود |
+| الربط والفك | [[connect]] / [[disconnect]] / [[set]] | [[create]] / [[delete]] على الـ model |
+
+- كل علاقة لازم ليها الناحيتين، وإلا [[P1012]].
+- الـ explicit بمفتاح مركّب و index على العمود التاني.
+- لو شاكك إن الربط هيحتاج عمود في يوم، ابدأ explicit.`,
           lines: [
             "model Product.",
             "id متسلسل.",
@@ -352,6 +1053,201 @@ await prisma.order.findMany({ select: { id: true }, include: { user: true } } as
             when: "select في كل endpoint بيرجّع داتا للعميل. include في الكود الداخلي (سكربتات، و jobs، و tests) لما محتاج الـ object كامل. و omit لما فيه عمود حساس لازم ميطلعش أبدًا من غير ما تعدّ باقي الأعمدة.",
             mistakes: R`[[include: { user: true }]] في رد API فالـ hash يطلع. include متداخل ٤ مستويات من غير take فيرجع ميجات. [[findMany]] من غير take على جدول بيكبر. [[JSON.stringify]] على نتيجة فيها BigInt. وتفتكر إن include بيعمل JOIN واحد، وهو في الحقيقة استعلام لكل مستوى. وفي الانترفيو: «إيه الفرق بين include و select في Prisma؟» include بيضيف علاقات فوق كل الأعمدة، و select بيحدد كل حاجة بالظبط وبيغيّر الـ type.`
           },
+          teach: R`## الفكرة: انت بتوصف شكل الـ object اللي عايزه، و Prisma بيحوّله SQL
+
+في الـ 3 استعلامات اللي في المثال، انت مش بتكتب JOIN ولا أسماء أعمدة. بتكتب object شكله زي شكل النتيجة اللي عايزها، و Prisma بيطلّع منه كام SELECT.
+
+اتشغّلوا بـ Prisma 7.10.0 على ويندوز، و PostgreSQL 18 في Docker، على داتا تجربة: ٥ يوزرز، و ١٠ أوردرات (منهم ٢ [[pending]])، و ٣ منتجات (Mug و Cap و Pan). والـ client معمول بـ [[log: ["query"]]] عشان نشوف الـ SQL.
+
+---
+
+## ١. الاستعلام الأول: [[findMany]] بـ [[select]]
+
+نفكّه حتة حتة:
+
+~~~ts
+const orders = await prisma.order.findMany({
+~~~
+
+[[prisma.order]] = جدول [[orders]]، و [[findMany]] = هات صفوف كتير (array). ومن غير أي حاجة جواه بيرجّع كل الصفوف بكل الأعمدة.
+
+~~~ts
+  where: { status: "pending" },
+  orderBy: { createdAt: "desc" },
+  take: 20,
+~~~
+
+- [[where]]: الفلتر. [[{ status: "pending" }]] = [[WHERE status = 'pending']].
+- [[orderBy]]: الترتيب، و [[desc]] = تنازلي (الأحدث الأول).
+- [[take: 20]]: أول ٢٠ بس، وبيبقى [[LIMIT]].
+
+~~~ts
+  select: {
+    id: true,
+    total: true,
+~~~
+
+[[select]] = «رجّع دول بس». كل عمود عايزه تكتبه [[: true]]. اللي مكتبتوش مش هيرجع.
+
+~~~ts
+    user: { select: { email: true } },
+~~~
+
+[[user]] هنا مش عمود، دي العلاقة. وبدل [[true]] (اللي معناها هات اليوزر كله) كتبنا select تاني جواها: من اليوزر هات الإيميل بس.
+
+~~~ts
+    items: { select: { quantity: true, product: { select: { name: true } } } },
+~~~
+
+نفس الفكرة مستويين: البنود، ومن كل بند الكمية، ومن منتج البند الاسم.
+
+### الـ SQL اللي اتبعت
+
+~~~text الناتج
+prisma:query SELECT "public"."orders"."id", "public"."orders"."total", "public"."orders"."user_id" FROM "public"."orders" WHERE "public"."orders"."status" = $1 ORDER BY "public"."orders"."created_at" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."users"."id", "public"."users"."email" FROM "public"."users" WHERE "public"."users"."id" IN ($1,$2) OFFSET $3
+prisma:query SELECT "public"."order_items"."order_id", "public"."order_items"."product_id", "public"."order_items"."quantity" FROM "public"."order_items" WHERE "public"."order_items"."order_id" IN ($1,$2) OFFSET $3
+prisma:query SELECT "public"."products"."id", "public"."products"."name" FROM "public"."products" WHERE "public"."products"."id" IN ($1) OFFSET $2
+~~~
+
+٤ استعلامات، واحد لكل مستوى:
+
+1. الأوردرات: [[id]] و [[total]] اللي طلبناهم، ومعاهم [[user_id]] اللي مطلبناهوش. Prisma محتاجه عشان يعرف كل أوردر يوزره مين.
+2. اليوزرز: [[WHERE id IN ($1,$2)]]، يعني الـ ids اللي رجعت في الخطوة ١، كلهم في استعلام واحد.
+3. البنود: [[WHERE order_id IN ($1,$2)]] لنفس الأوردرين.
+4. المنتجات: [[IN ($1)]]، منتج واحد بس لأن البنود كلها كانت لنفس المنتج.
+
+وبعدين Prisma بيركّب النتايج في JavaScript:
+
+~~~text النتيجة (JSON.stringify)
+[
+ { "id": 8, "total": "80",  "user": { "email": "mona@example.com" }, "items": [] },
+ { "id": 5, "total": "120", "user": { "email": "ali@example.com" },
+   "items": [ { "quantity": 1, "product": { "name": "Mug" } } ] }
+]
+~~~
+
+- شكل النتيجة نفس شكل الـ select بالظبط.
+- أوردر ٨ ملوش بنود فرجع [[items: []]] (array فاضية مش null).
+- [[total]] طلع [["80"]] نص. ده [[Decimal]]، و [[JSON.stringify]] بيحوّله string عشان ميضيعش دقة.
+
+---
+
+## ٢. الاستعلام التاني: [[findUnique]] بـ [[include]]
+
+~~~ts
+const order = await prisma.order.findUnique({
+  where: { id: 1 },
+  include: { user: true, items: { include: { product: true } } },
+});
+~~~
+
+- [[findUnique]]: صف واحد أو [[null]]، و [[where]] لازم يكون على حقل unique ([[id]] هنا).
+- [[include]]: «كل الأعمدة، **وكمان** العلاقات دي». [[user: true]] = اليوزر كله، و [[items: { include: { product: true } }]] = البنود، وجوا كل بند المنتج كامل.
+
+~~~text الناتج
+prisma:query SELECT "public"."orders"."id", "public"."orders"."user_id", "public"."orders"."status", "public"."orders"."total", "public"."orders"."created_at" FROM "public"."orders" WHERE ("public"."orders"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT ... "public"."order_items"."unit_price" FROM "public"."order_items" WHERE "public"."order_items"."order_id" = $1 OFFSET $2
+prisma:query SELECT "public"."users"."id", "public"."users"."email", "public"."users"."name", "public"."users"."created_at" FROM "public"."users" WHERE "public"."users"."id" = $1 OFFSET $2
+prisma:query SELECT "public"."products"."id", "public"."products"."name", "public"."products"."price", "public"."products"."stock" FROM "public"."products" WHERE "public"."products"."id" IN ($1) OFFSET $2
+~~~
+
+نفس الـ ٤ استعلامات، بس كل واحد بيجيب كل الأعمدة. والنتيجة:
+
+~~~text النتيجة
+{
+ "id": 1, "userId": "10e33f58-...", "status": "paid", "total": "450", "createdAt": "2026-07-03T10:00:00.000Z",
+ "user": { "id": "10e33f58-...", "email": "sara@example.com", "name": "Sara", "createdAt": "2026-01-05T10:00:00.000Z" },
+ "items": [ { "orderId": 1, "productId": 3, "quantity": 1, "unitPrice": "450",
+              "product": { "id": 3, "name": "Pan", "price": "450", "stock": 5 } } ]
+}
+~~~
+
+لو جدول users فيه [[passwordHash]]، كان هيبقى هنا. وده سبب القاعدة: include للكود الداخلي، select للرد على العميل.
+
+---
+
+## ٣. الاستعلام التالت: فلتر وترتيب و [[take]] على الأولاد
+
+~~~ts
+const user = await prisma.user.findUnique({
+  where: { email: "ali@example.com" },
+  include: { orders: { where: { status: "paid" }, orderBy: { createdAt: "desc" }, take: 3 } },
+});
+~~~
+
+[[orders]] هنا بدل [[true]] أخد object فيه [[where]] و [[orderBy]] و [[take]]: دول بيتطبّقوا على أوردرات اليوزر ده بس، مش على اليوزرز.
+
+~~~text الناتج
+prisma:query SELECT ... FROM "public"."users" WHERE ("public"."users"."email" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT ... FROM "public"."orders" WHERE ("public"."orders"."status" = $1 AND "public"."orders"."user_id" = $2) ORDER BY "public"."orders"."created_at" DESC LIMIT $3 OFFSET $4
+~~~
+
+الشروط بتاعتنا ([[status]] و [[ORDER BY]] و [[LIMIT]]) راحت في استعلام الأوردرات بالظبط، ومعاها [[user_id = $2]]. وعلي عنده أوردرين (واحد pending وواحد paid)، فرجع المدفوع بس:
+
+~~~text النتيجة (جزء)
+"email": "ali@example.com",
+"orders": [ { "id": 6, "status": "paid", "total": "1200", ... } ]
+~~~
+
+---
+
+## ٤. الـ solCode: الـ types والـ error
+
+~~~ts
+console.log(orders[0]?.total.toString());
+~~~
+
+- [[?.]] (optional chaining): لو [[orders[0]]] مش موجود (array فاضية) رجّع [[undefined]] بدل ما يقع.
+- [[total.toString()]]: [[total]] نوعه [[Decimal]]، و [[toString()]] بيرجّع الرقم كنص.
+
+~~~text الناتج
+120 object Decimal2
+~~~
+
+(ضفنا للتجربة [[typeof]] واسم الـ class عشان نتأكد: object من class اسمه [[Decimal2]] جوه Prisma، مش number.)
+
+ولو حاولت تقرا عمود مطلبتهوش. جربنا ملف فيه:
+
+~~~ts
+const orders = await prisma.order.findMany({ select: { id: true, total: true } });
+console.log(orders[0].status);
+~~~
+
+و [[npx tsc --noEmit]] (فحص types من غير ما يطلّع ملفات) قال:
+
+~~~text الناتج
+src/tserr.ts(3,23): error TS2339: Property 'status' does not exist on type '{ id: number; total: Decimal; }'.
+~~~
+
+الـ type اللي راجع اتبنى من الـ select نفسه: [[{ id: number; total: Decimal }]] وبس.
+
+~~~ts
+await prisma.order.findMany({ select: { id: true }, include: { user: true } } as any)
+  .catch((e) => console.log(e.message.split("\n").at(-1)));
+~~~
+
+- [[as any]]: من غيرها TypeScript هيرفض الكود أصلًا. احنا عايزين نشوف رد Prisma نفسه وقت التشغيل.
+- [[.catch(...)]]: نفس try/catch بس على الـ Promise.
+- [[split("\n").at(-1)]]: الرسالة طويلة، قسّمها سطور وهات آخر سطر ([[at(-1)]] = آخر عنصر).
+
+~~~text الناتج
+Please either use $__btinclude$__bt or $__btselect$__bt, but not both at the same time.
+~~~
+
+---
+
+## الخلاصة
+
+| | من غير حاجة | [[include]] | [[select]] |
+|---|---|---|---|
+| الأعمدة | كلها | كلها | اللي كتبتها بس |
+| العلاقات | ولا واحدة | اللي كتبتها | اللي كتبتها |
+| الـ type | كل الأعمدة | الأعمدة + العلاقات | اللي كتبته بالظبط |
+
+- كل مستوى علاقة = استعلام زيادة بـ [[IN (...)]]، مش استعلام لكل صف.
+- جوه العلاقة تقدر تحط [[where]] و [[orderBy]] و [[take]] للأولاد.
+- select في الـ API، و [[Decimal]] بيرجع object وبيتحوّل string في JSON.`,
           lines: [
             "قايمة أوردرات لصفحة الأدمن:",
             "الـ pending بس،",
@@ -421,7 +1317,7 @@ await prisma.order.update({
 
 مع المنتج اللي مش موجود هتاخد [[P2025]] (فيه سجل مطلوب للـ connect ملقاهوش)، وهتلاقي [[ROLLBACK]] في الـ log. و [[prisma.user.count()]] مش هيزيد: اليوزر والأوردر اترجعوا مع البند.
 
-والخلط بين الشكلين في نفس الـ array هيطلع validation error زي [[Argument product is missing]]. Prisma عنده شكلين للـ input: «checked» بالعلاقات ([[product: { connect }]]) و «unchecked» بالـ ids الخام ([[productId]]). الشكل بيتحدد للـ create كله، فاختار واحد والتزم بيه. والـ unchecked ([[productId]]) مش متاح لما تكون جوه nested create للأب، لأن [[orderId]] لسه مش معروف.`,
+والخلط بين الشكلين في نفس الـ array هيطلع validation error زي [[Argument product is missing]]. Prisma عنده شكلين للـ input: «checked» بالعلاقات ([[product: { connect }]]) و «unchecked» بالـ ids الخام ([[productId]]). الشكل بيتحدد للـ create كله، فاختار واحد والتزم بيه. و [[productId]] لوحده (من غير connect) شغال عادي جوه الـ nested create، بس اللي مينفعش تكتبه هناك هو [[orderId]]: هيطلع [[Unknown argument orderId]]، لأن Prisma هو اللي بيحطه من الأوردر الأب.`,
           solCode: R`import { prisma } from "./db";
 
 const before = await prisma.user.count();
@@ -455,6 +1351,226 @@ await prisma.$disconnect();`,
             when: "أي إنشاء لأب وأولاده مع بعض (أوردر وبنوده، وبوست وتاجاته، ويوزر وبروفايله)، وربط بحاجات موجودة وقت الإنشاء. أما آلاف الصفوف مرة واحدة (import أو seed) فـ createMany.",
             mistakes: R`[[await]] في loop على البنود بعد ما الأوردر يتعمل من غير transaction. خلط [[productId]] مع [[product: { connect }]]. [[connectOrCreate]] على قيمة مش unique. تفتكر إن [[deleteMany: {}]] جوه nested update بيمسح الجدول كله (لأ، أولاد الأب ده بس)، والعكس: [[prisma.orderItem.deleteMany({})]] من برّه بيمسح الجدول كله فعلًا. وتثق في السعر اللي جاي من العميل في [[unitPrice]] بدل ما تقراه من المنتج في السيرفر.`
           },
+          teach: R`## الفكرة: الـ [[data]] شكله شكل الشجرة اللي عايز تكتبها
+
+بدل ٤ أوامر ورا بعض (يوزر، وبعدين أوردر بالـ id بتاعه، وبعدين بند، وبند)، بتكتب object واحد متداخل: يوزر، جواه أوردرات، جواها بنود. و Prisma بيحوّله INSERTs بالترتيب الصح جوه transaction واحدة.
+
+اتشغّل بـ Prisma 7.10.0 على ويندوز، و PostgreSQL 18 في Docker. قبل المثال كان عندنا منتجين: Mug ([[mugId = 1]]) و Cap ([[capId = 2]]).
+
+---
+
+## ١. يوزر وأوردر وبنود في أمر واحد
+
+نفكّه من برّه لجوه:
+
+~~~ts
+const user = await prisma.user.create({
+  data: {
+    email: "ali@example.com",
+    name: "Ali",
+~~~
+
+[[create]] على اليوزر، و [[data]] أعمدته العادية.
+
+~~~ts
+    orders: {
+      create: {
+        total: 300,
+~~~
+
+[[orders]] هي الـ relation field ([[Order[]]] في الـ schema). وجواها مش قيمة، جواها **أمر**: [[create]] = اعمل أوردر جديد مربوط باليوزر ده. ومش بنكتب [[userId]]: Prisma هيحطه من اليوزر اللي لسه هيتعمل.
+
+~~~ts
+        items: {
+          create: [
+            { product: { connect: { id: mugId } }, quantity: 1, unitPrice: 120 },
+            { product: { connect: { id: capId } }, quantity: 1, unitPrice: 180 },
+          ],
+        },
+~~~
+
+مستوى تالت: بنود الأوردر. [[create]] هنا أخد **array** = اعمل كذا بند. وفي كل بند:
+
+- [[product: { connect: { id: mugId } }]]: البند لازم يشاور على منتج. [[connect]] = اربطه بمنتج **موجود** بالـ id بتاعه (حقل unique).
+- [[quantity]] و [[unitPrice]]: أعمدة البند العادية.
+- ومش بنكتب [[orderId]]: Prisma بياخده من الأوردر الأب.
+
+~~~ts
+  include: { orders: { include: { items: true } } },
+});
+~~~
+
+بعد الكتابة رجّع اليوزر ومعاه أوردراته، ومع كل أوردر بنوده.
+
+### الـ SQL بالترتيب
+
+~~~text الناتج
+prisma:query INSERT INTO "public"."users" ("id","email","name","created_at") VALUES ($1,$2,$3,$4) RETURNING "public"."users"."id"
+prisma:query INSERT INTO "public"."orders" ("user_id","status","total","created_at") VALUES ($1,$2,$3,$4) RETURNING "public"."orders"."id"
+prisma:query SELECT "public"."products"."id" FROM "public"."products" WHERE ("public"."products"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query INSERT INTO "public"."order_items" ("order_id","product_id","quantity","unit_price") VALUES ($1,$2,$3,$4) RETURNING "public"."order_items"."order_id", "public"."order_items"."product_id"
+prisma:query SELECT "public"."products"."id" FROM "public"."products" WHERE ("public"."products"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query INSERT INTO "public"."order_items" ("order_id","product_id","quantity","unit_price") VALUES ($1,$2,$3,$4) RETURNING "public"."order_items"."order_id", "public"."order_items"."product_id"
+prisma:query SELECT ... FROM "public"."users" WHERE "public"."users"."id" = $1 LIMIT $2 OFFSET $3
+prisma:query SELECT ... FROM "public"."orders" WHERE "public"."orders"."user_id" = $1 OFFSET $2
+prisma:query SELECT ... FROM "public"."order_items" WHERE "public"."order_items"."order_id" IN ($1) OFFSET $2
+prisma:query COMMIT
+~~~
+
+| السطر | بيعمل إيه |
+|---|---|
+| INSERT users ... [[RETURNING id]] | اليوزر الأول، و [[RETURNING]] بيرجّع الـ id |
+| INSERT orders | الأوردر، و [[user_id]] = الـ id اللي لسه راجع |
+| SELECT products ... id = $1 | ده الـ [[connect]]: يتأكد إن المنتج موجود |
+| INSERT order_items | البند الأول بـ [[order_id]] من الأوردر |
+| SELECT + INSERT تاني | البند التاني |
+| ٣ SELECTs | الـ [[include]]: يوزر، وأوردراته، وبنودها |
+| [[COMMIT]] | كل ده transaction واحدة. الـ BEGIN مش بيظهر في الـ log، بس الـ COMMIT بيظهر |
+
+والنتيجة (مختصرة):
+
+~~~text النتيجة
+{ id: '69c9f08f-...', email: 'ali@example.com', name: 'Ali',
+  orders: [ { id: 1, status: 'pending', total: 300,
+              items: [ { orderId: 1, productId: 2, quantity: 1, unitPrice: 180 },
+                       { orderId: 1, productId: 1, quantity: 1, unitPrice: 120 } ] } ] }
+~~~
+
+([[console.dir]] على Decimal بيطبع الـ object كله بكل دواله، فاختصرناه هنا للقيمة. و [[status]] طلع [['pending']] من الـ default.)
+
+---
+
+## ٢. [[connectOrCreate]] في update
+
+~~~ts
+await prisma.product.update({
+  where: { id: mugId },
+  data: { tags: { connectOrCreate: [{ where: { name: "gift" }, create: { name: "gift" } }] } },
+});
+~~~
+
+- [[update]]: عدّل صف واحد، و [[where]] بيحدده.
+- [[tags: { connectOrCreate: [...] }]]: لكل عنصر في الـ array: دوّر بـ [[where]]، لو لقيته اربطه، لو ملقيتوش اعمله بـ [[create]] واربطه.
+
+~~~text الناتج
+prisma:query SELECT ... FROM "public"."products" WHERE ("public"."products"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."tags"."id" FROM "public"."tags" WHERE ("public"."tags"."name" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query INSERT INTO "public"."_ProductToTag" ("A","B") VALUES ($1,$2) ON CONFLICT DO NOTHING
+prisma:query SELECT ... FROM "public"."products" WHERE "public"."products"."id" = $1 LIMIT $2 OFFSET $3
+prisma:query COMMIT
+~~~
+
+التاج [[gift]] كان موجود (من الدرس اللي فات)، فمفيش [[INSERT INTO tags]]: لقاه وربطه على طول. ولو مكانش موجود كنت هتشوف INSERT في tags قبل جدول الربط.
+
+---
+
+## ٣. «استبدل البنود»: [[deleteMany: {}]] وبعده [[create]]
+
+~~~ts
+await prisma.order.update({
+  where: { id: orderId },
+  data: { items: { deleteMany: {}, create: [{ product: { connect: { id: mugId } }, quantity: 2, unitPrice: 120 }] } },
+});
+~~~
+
+- [[deleteMany: {}]] جوه [[items]]: امسح بنود **الأوردر ده** اللي بتحقق الشرط. و [[{}]] = من غير شرط، يعني كل بنوده.
+- [[create: [...]]]: وبعدين ضيف البند الجديد.
+
+~~~text الناتج
+prisma:query SELECT ... FROM "public"."orders" WHERE ("public"."orders"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."order_items"."order_id", "public"."order_items"."product_id" FROM "public"."order_items" WHERE (1=1 AND "public"."order_items"."order_id" IN ($1)) OFFSET $2
+prisma:query DELETE FROM "public"."order_items" WHERE ("public"."order_items"."order_id" IN ($1,$2) AND "public"."order_items"."product_id" IN ($3,$4) AND 1=1)
+prisma:query SELECT "public"."products"."id" FROM "public"."products" WHERE ("public"."products"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query INSERT INTO "public"."order_items" ("order_id","product_id","quantity","unit_price") VALUES ($1,$2,$3,$4) RETURNING ...
+prisma:query COMMIT
+[ { orderId: 1, productId: 1, quantity: 2, unitPrice: 120 } ]
+~~~
+
+شوف الـ DELETE: Prisma جاب مفاتيح بنود الأوردر ده الأول، ومسح بيها هي بس. يعني مستحيل يمسح بنود أوردر تاني. وفي الآخر البند الوحيد الباقي: Mug بكمية ٢.
+
+---
+
+## ٤. الـ solCode: لو حاجة وقعت في النص
+
+~~~ts
+const before = await prisma.user.count();
+~~~
+
+عدد اليوزرز قبل التجربة.
+
+~~~ts
+try {
+  await prisma.user.create({
+    data: {
+      email: "fail@example.com",
+      name: "Fail",
+      orders: { create: { total: 100, items: { create: [{ product: { connect: { id: 999999 } }, quantity: 1, unitPrice: 100 }] } } },
+    },
+  });
+} catch (e: any) {
+  console.log(e.code);
+}
+~~~
+
+نفس شكل المثال، بس البند بيعمل [[connect]] لمنتج [[999999]] مش موجود.
+
+~~~text الناتج
+prisma:query SELECT COUNT(*) AS "_count$_all" FROM (SELECT "public"."users"."id" FROM "public"."users" WHERE 1=1 OFFSET $1) AS "sub"
+prisma:query INSERT INTO "public"."users" ("id","email","name","created_at") VALUES ($1,$2,$3,$4) RETURNING "public"."users"."id"
+prisma:query INSERT INTO "public"."orders" ("user_id","status","total","created_at") VALUES ($1,$2,$3,$4) RETURNING "public"."orders"."id"
+prisma:query SELECT "public"."products"."id" FROM "public"."products" WHERE ("public"."products"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query ROLLBACK
+...
+An operation failed because it depends on one or more records that were required but not found. No 'Product' record (needed to inline the relation on 'OrderItem' record(s)) was found for a nested connect on one-to-many relation 'OrderItemToProduct'.
+P2025
+~~~
+
+اليوزر **اتكتب** والأوردر **اتكتب**، وبعدين الـ SELECT بتاع الـ connect ملقاش المنتج، فـ Prisma عمل [[ROLLBACK]] ورمى [[P2025]] (record مطلوب ومش موجود).
+
+~~~ts
+console.log(before === (await prisma.user.count()));
+~~~
+
+~~~text الناتج
+true
+~~~
+
+العدد زي ما هو: الـ ROLLBACK رجّع اليوزر والأوردر كأنهم متعملوش.
+
+---
+
+## ٥. الشكلين: checked و unchecked
+
+جربنا بندين في نفس الـ array، واحد بـ [[productId: 2]] والتاني بـ [[product: { connect: { id: 1 } }]]:
+
+~~~text الناتج
+PrismaClientValidationError ...
+Argument $__btproduct$__bt is missing.
+~~~
+
+Prisma اختار للـ array كلها الشكل الـ checked (اللي فيه [[product]])، فالبند الأول اللي مكتوب بـ [[productId]] اتقال عليه إن [[product]] ناقص. ولما خلّينا البند بـ [[productId]] لوحده شغال عادي. أما [[orderId]] جوه الـ nested create:
+
+~~~text الناتج
+Unknown argument $__btorderId$__bt. Available options are marked with ?.
+~~~
+
+لأن ده Prisma اللي بيحطه من الأب.
+
+---
+
+## الخلاصة
+
+| جوه علاقة في [[data]] | معناه |
+|---|---|
+| [[create]] | صف جديد مربوط (object أو array) |
+| [[connect]] | اربط بصف موجود بحقل unique، ولو مش موجود [[P2025]] |
+| [[connectOrCreate]] | دوّر، واربط أو اعمل |
+| [[disconnect]] / [[set]] | فك ربط / استبدل كل الروابط |
+| [[deleteMany: {}]] | امسح أولاد الأب ده بس |
+
+- كله في transaction واحدة: يا كله يتكتب يا [[ROLLBACK]].
+- مبتكتبش الـ FK بتاع الأب أبدًا في nested create.
+- متخلطش [[productId]] و [[product: { connect }]] في نفس الـ create.`,
           lines: [
             "اعمل يوزر، وكل اللي تحت في transaction واحدة:",
             "البيانات:",
@@ -543,6 +1659,185 @@ console.log(paidCounts);`,
             when: "فلترة بوجود أو عدم وجود أولاد، وعرض عدادات («٣ أوردرات»، «١٢ طالب») جنب كل صف، وترتيب بالأكتر نشاط.",
             mistakes: R`every من غير some فتطلع يوزرز ملهمش أوردرات. تجيب الأولاد كلهم عشان تعرف [[.length]] بدل [[_count]]. [[include: { orders: true }]] وبعدين [[filter]] في JavaScript. شرط على علاقة one بـ some (هي [[is]]). ومن غير index على الـ FK، كل subquery بتقرا جدول الأوردرات كله.`
           },
+          teach: R`## الفكرة: شرط على الأب، بس الشرط نفسه في جدول الأولاد
+
+«هات اليوزرز» سهلة. «هات اليوزرز **اللي عندهم** أوردر مدفوع» شرطها مش في جدول users، في جدول orders. في SQL بتكتبها subquery بـ [[EXISTS]]، وفي Prisma بتكتب [[where]] على الـ relation field، وجواه كلمة من التلاتة: [[some]] و [[none]] و [[every]].
+
+اتشغّل بـ Prisma 7.10.0 على ويندوز، و PostgreSQL 18 في Docker، والـ client بـ [[log: ["query"]]]. الداتا:
+
+| اليوزر | أوردراته |
+|---|---|
+| sara | paid 450، paid 360، cancelled 300، paid 60 |
+| ali | pending 120، paid 1200 |
+| mona | paid 250، pending 80 |
+| omar | ولا أوردر |
+| nour | paid 99، paid 10 |
+
+---
+
+## ١. [[some]]: «ولد واحد على الأقل»
+
+~~~ts
+const buyers = await prisma.user.findMany({
+  where: { orders: { some: { status: "paid", total: { gte: 100 } } } },
+  select: { email: true },
+});
+~~~
+
+نقراها من برّه لجوه:
+
+- [[where: { orders: ... }]]: الشرط على علاقة [[orders]] بتاعة اليوزر.
+- [[some: {...}]]: فيه أوردر واحد على الأقل بيحقق اللي جوه.
+- [[status: "paid"]]: الأوردر مدفوع.
+- [[total: { gte: 100 }]]: [[gte]] = greater than or equal، يعني [[>= 100]]. وأخواتها [[gt]] و [[lt]] و [[lte]].
+- والشرطين في نفس الـ object يعني AND: **نفس الأوردر** لازم يبقى مدفوع و ١٠٠ أو أكتر.
+
+~~~text الناتج
+prisma:query SELECT "public"."users"."id", "public"."users"."email" FROM "public"."users" WHERE EXISTS(SELECT "t0"."user_id" FROM "public"."orders" AS "t0" WHERE ("t0"."status" = $1 AND "t0"."total" >= $2 AND ("public"."users"."id") = ("t0"."user_id") AND "t0"."user_id" IS NOT NULL)) OFFSET $3
+["sara@example.com","mona@example.com","ali@example.com"]
+~~~
+
+- استعلام واحد، والفلترة جوه القاعدة.
+- [[EXISTS(SELECT ...)]] = صح لو الـ subquery رجّعت صف واحد على الأقل.
+- [[("public"."users"."id") = ("t0"."user_id")]] ده اللي بيربط الـ subquery باليوزر الحالي (correlated subquery). و [[t0]] اسم مستعار للجدول.
+- nour مطلعتش: أوردراتها مدفوعة بس أكبر واحد ٩٩. و omar ملوش أوردرات.
+
+---
+
+## ٢. [[none]]: «ولا ولد»
+
+~~~ts
+const neverOrdered = await prisma.user.findMany({ where: { orders: { none: {} } } });
+~~~
+
+[[none: {}]]: مفيش ولا أوردر بيحقق [[{}]]. و [[{}]] شرط فاضي = أي أوردر. يعني «ملوش أوردرات خالص».
+
+~~~text الناتج
+prisma:query SELECT ... FROM "public"."users" WHERE NOT EXISTS(SELECT "t0"."user_id" FROM "public"."orders" AS "t0" WHERE (1=1 AND ("public"."users"."id") = ("t0"."user_id") AND "t0"."user_id" IS NOT NULL)) OFFSET $1
+["omar@gmail.com"]
+~~~
+
+نفس الشكل بس [[NOT EXISTS]]، و [[1=1]] مكان الشرط الفاضي.
+
+---
+
+## ٣. [[every]]: «كل الأولاد»، والفخ بتاعها
+
+~~~ts
+const allPaid = await prisma.user.findMany({
+  where: { orders: { some: {}, every: { status: "paid" } } },
+});
+~~~
+
+~~~text الناتج
+["nour@example.com"]
+~~~
+
+nour بس: sara عندها cancelled، و ali و mona عندهم pending.
+
+ليه [[some: {}]] جنب [[every]]؟ شغّلنا الـ solCode اللي بيعمل يوزر جديد [[new@example.com]] من غير أوردرات، وبعدين [[every]] لوحدها:
+
+~~~ts
+const everyOnly = await prisma.user.findMany({
+  where: { orders: { every: { status: "paid" } } },
+  select: { email: true },
+});
+~~~
+
+~~~text الناتج
+prisma:query SELECT "public"."users"."id", "public"."users"."email" FROM "public"."users" WHERE NOT EXISTS(SELECT "t0"."user_id" FROM "public"."orders" AS "t0" WHERE ((NOT "t0"."status" = $1) AND ("public"."users"."id") = ("t0"."user_id") AND "t0"."user_id" IS NOT NULL)) OFFSET $2
+[
+  { email: 'omar@gmail.com' },
+  { email: 'nour@example.com' },
+  { email: 'new@example.com' }
+]
+~~~
+
+اقرا الـ SQL: Prisma مش بيسأل «كل أوردراته paid؟»، بيسأل «مفيش ولا أوردر **مش** paid؟» ([[NOT EXISTS]] على [[NOT status = 'paid']]). الجملتين نفس المعنى، بس اللي ملوش أوردرات خالص أكيد «مفيش عنده أوردر مش paid»، فبيطلع. ده اسمه vacuous truth. عشان كده omar و new طلعوا. و [[some: {}]] بيضيف شرط تاني: «وعنده أوردر واحد على الأقل».
+
+---
+
+## ٤. many-to-many: نفس الكلام
+
+~~~ts
+const kitchen = await prisma.product.findMany({ where: { tags: { some: { name: "kitchen" } } } });
+~~~
+
+~~~text الناتج
+["Mug","Pan"]
+~~~
+
+في الـ log هتلاقي [[EXISTS]] بس جواه [[INNER JOIN]] بين [[_ProductToTag]] و [[tags]]، لأن الربط بيعدّي على جدول وسيط (درس علاقات Prisma).
+
+---
+
+## ٥. [[_count]]: العدد من غير الصفوف
+
+~~~ts
+const topCustomers = await prisma.user.findMany({
+  select: { email: true, _count: { select: { orders: true } } },
+  orderBy: { orders: { _count: "desc" } },
+  take: 10,
+});
+~~~
+
+- [[_count]] field خاص بيرجّع أعداد. و [[select: { orders: true }]] جواه = عدّ الأوردرات.
+- [[orderBy: { orders: { _count: "desc" } }]] = رتّب اليوزرز بعدد أوردراتهم، الأكتر الأول.
+
+~~~text الناتج
+prisma:query SELECT "public"."users"."id", "public"."users"."email", COALESCE("aggr_selection_0_Order"."_aggr_count_orders", 0) AS "_aggr_count_orders" FROM "public"."users" LEFT JOIN (SELECT "public"."orders"."user_id", COUNT(*) AS "orderby_aggregator" FROM "public"."orders" WHERE 1=1 GROUP BY "public"."orders"."user_id") AS "orderby_1_Order" ON (...) LEFT JOIN (SELECT "public"."orders"."user_id", COUNT(*) AS "_aggr_count_orders" FROM "public"."orders" WHERE 1=1 GROUP BY "public"."orders"."user_id") AS "aggr_selection_0_Order" ON (...) WHERE 1=1 ORDER BY COALESCE("orderby_1_Order"."orderby_aggregator", $1) DESC LIMIT $2 OFFSET $3
+[{"email":"sara@example.com","_count":{"orders":4}},{"email":"mona@example.com","_count":{"orders":2}},{"email":"nour@example.com","_count":{"orders":2}},{"email":"ali@example.com","_count":{"orders":2}},{"email":"omar@gmail.com","_count":{"orders":0}}]
+~~~
+
+نفكّ الـ SQL:
+
+- [[(SELECT user_id, COUNT(*) ... GROUP BY user_id)]]: جدول مؤقت فيه لكل يوزر عدد أوردراته.
+- [[LEFT JOIN]]: اربطه باليوزرز، و LEFT عشان اليوزر اللي ملوش أوردرات يفضل موجود (بـ NULL).
+- [[COALESCE(..., 0)]]: لو NULL خليه 0. عشان كده omar طلع [[0]] مش null.
+- الـ subquery متكررة مرتين: مرة للـ select ومرة للـ orderBy. ده شكل Prisma 7.10، والمهم إنه استعلام واحد مهما كان عدد اليوزرز.
+
+---
+
+## ٦. [[_count]] بشرط
+
+من الـ solCode:
+
+~~~ts
+const paidCounts = await prisma.user.findMany({
+  select: { email: true, _count: { select: { orders: { where: { status: "paid" } } } } },
+});
+~~~
+
+بدل [[orders: true]] كتبنا [[orders: { where: {...} }]] = عدّ المدفوع بس:
+
+~~~text الناتج
+prisma:query ... LEFT JOIN (SELECT "public"."orders"."user_id", COUNT(*) AS "_aggr_count_orders" FROM "public"."orders" WHERE "public"."orders"."status" = $1 GROUP BY "public"."orders"."user_id") ...
+[
+  { email: 'sara@example.com', _count: { orders: 3 } },
+  { email: 'mona@example.com', _count: { orders: 1 } },
+  { email: 'omar@gmail.com', _count: { orders: 0 } },
+  { email: 'nour@example.com', _count: { orders: 2 } },
+  { email: 'ali@example.com', _count: { orders: 1 } },
+  { email: 'new@example.com', _count: { orders: 0 } }
+]
+~~~
+
+الشرط راح جوه الـ subquery ([[WHERE status = $1]]). و sara ٣ مش ٤ لأن واحد cancelled.
+
+---
+
+## الخلاصة
+
+| في Prisma | المعنى | في SQL |
+|---|---|---|
+| [[some: {...}]] | ولد واحد على الأقل بيحقق | [[EXISTS]] |
+| [[none: {...}]] | ولا ولد بيحقق | [[NOT EXISTS]] |
+| [[every: {...}]] | مفيش ولد **مش** بيحقق | [[NOT EXISTS]] على عكس الشرط |
+| [[is]] / [[isNot]] | لعلاقة one ([[order.user]]) | |
+| [[_count]] | عدد الأولاد | [[LEFT JOIN]] على [[COUNT(*) GROUP BY]] |
+
+- [[every]] لوحدها بتطلّع الأب اللي ملوش أولاد، فحط [[some: {}]] جنبها لو ده مش قصدك.
+- كله استعلام واحد، والقاعدة هي اللي بتفلتر وبتعدّ.`,
           lines: [
             "اليوزرز اللي عندهم:",
             "أوردر واحد على الأقل مدفوع وقيمته ١٠٠ أو أكتر،",
@@ -668,6 +1963,232 @@ await prisma.$disconnect();`,
             when: "تقارير وتجميعات معقدة، و window functions و LATERAL و CTE، والأقفال، و full-text و pg_trgm، وأي استعلام الـ log بيوريك إن Prisma عامله أبطأ بكتير من اللي تكتبه بإيدك. وللـ CRUD العادي، الـ API العادي أوضح وأأمن في الـ types.",
             mistakes: R`[[$queryRawUnsafe]] بـ template literal فيه قيمة من اليوزر. [[$queryRaw("SELECT ...")]] بأقواس: دي بقت دالة عادية مش tagged template، و Prisma هيرفضها أو يعاملها غلط. [[$__{column}]] لاسم عمود فالترتيب ميشتغلش. أسماء الـ models بدل أسماء الجداول. [[JSON.stringify]] على BigInt. تثق في الـ generic type من غير ما تتأكد. و [[Prisma.raw]] على قيمة من اليوزر.`
           },
+          teach: R`## الفكرة: انت بتكتب الـ SQL، و Prisma بيفصل القيم عن النص
+
+[[$queryRaw]] بيبعت SQL انت كاتبه بإيدك. الحتة المهمة في الدرس كله هي إن القيم اللي جوه [[$__{...}]] مش بتتلزق في النص: بتتحوّل [[$1]] و [[$2]] وتتبعت لوحدها.
+
+اتشغّل بـ Prisma 7.10.0 على ويندوز، و PostgreSQL 18 في Docker، والـ client بـ [[log: ["query"]]]. وفي المثال بدّلنا [[req.query.email]] بقيمة ثابتة، و [[from]] = أول أغسطس 2026، و [[qty = 2]] و [[productId = 1]] و [[orderId = 1]].
+
+---
+
+## ١. يعني إيه tagged template؟
+
+~~~ts
+const users = await prisma.$queryRaw$__bt
+  SELECT id, email FROM users WHERE email = $__{email}
+$__bt;
+~~~
+
+- [[$queryRaw]]: الـ [[$]] في أول اسم الدالة معناه إنها مش تبع model معين (زي [[$transaction]] و [[$disconnect]]).
+- بعدها على طول backtick **من غير أقواس**. ده اسمه tagged template: JavaScript مبيركّبش النص، بيدّي الدالة حاجتين منفصلين: الأجزاء الثابتة [[["SELECT ... WHERE email = ", ""]]]، والقيم [[[email]]].
+- و Prisma بيحط مكان كل قيمة [[$1]] و [[$2]] بالترتيب، ويبعت القيم parameters.
+
+~~~text الناتج
+prisma:query
+  SELECT id, email FROM users WHERE email = $1
+
+[
+  {
+    id: '10e33f58-135f-4551-9b7a-3cf8c598ebcf',
+    email: 'sara@example.com'
+  }
+]
+~~~
+
+الـ SQL اللي وصل القاعدة فيه [[$1]] مش الإيميل. والنتيجة array من objects عادية، أسماء الخانات هي أسماء الأعمدة بالظبط. وخد بالك: هنا بنكتب [[users]] و [[email]] (أسماء القاعدة)، مش [[User]] (اسم الـ model).
+
+ولو كتبتها بأقواس [[prisma.$queryRaw("SELECT 1")]]:
+
+~~~text الناتج
+$__bt$queryRaw$__bt is a tag function, please use it like the following:
+...
+~~~
+
+---
+
+## ٢. تقرير الإيراد
+
+~~~ts
+const revenue = await prisma.$queryRaw<{ month: Date; revenue: string; orders: number }[]>$__bt
+~~~
+
+[[<...>]] بعد اسم الدالة ده generic: بتقول لـ TypeScript شكل الصفوف اللي راجعة. هو **وعد منك**، Prisma مش بيتأكد منه.
+
+~~~sql
+  SELECT date_trunc('month', created_at) AS month, sum(total)::text AS revenue, count(*)::int AS orders
+  FROM orders WHERE status = 'paid' AND created_at >= $__{from}
+  GROUP BY 1 ORDER BY 1
+~~~
+
+- [[date_trunc('month', created_at)]]: يقصّ التاريخ لأول الشهر (15 أغسطس يبقى 1 أغسطس 00:00).
+- [[sum(total)::text]]: مجموع الإجمالي، و [[::text]] تحويل لنص في Postgres.
+- [[count(*)::int]]: عدد الصفوف، متحوّل [[int]].
+- [[created_at >= $__{from}]]: [[from]] كائن Date بيتبعت parameter.
+- [[GROUP BY 1 ORDER BY 1]]: الـ 1 = أول عمود في الـ SELECT (الشهر).
+
+~~~text الناتج
+[
+  { month: 2026-08-01T00:00:00.000Z, revenue: '360.00', orders: 1 },
+  { month: 2026-09-01T00:00:00.000Z, revenue: '1619.00', orders: 5 }
+]
+~~~
+
+### ليه الـ casts؟
+
+نفس الاستعلام من غير [[::text]] و [[::int]]:
+
+~~~text الناتج
+[
+  { month: 2026-08-01T00:00:00.000Z, revenue: 360, orders: 1n },
+  { month: 2026-09-01T00:00:00.000Z, revenue: 1619, orders: 5n }
+]
+Do not know how to serialize a BigInt
+~~~
+
+- [[1n]]: الـ [[n]] في الآخر معناها JavaScript [[BigInt]]. لأن [[count(*)]] نوعه [[bigint]] في Postgres (ممكن يعدّي ٢ مليار)، و Prisma بيرجّعه BigInt عشان ميضيعش دقة.
+- و [[JSON.stringify]] مبيعرفش يحوّل BigInt، فوقع. يعني [[res.json(revenue)]] في Express هيقع بنفس الشكل.
+- [[revenue: 360]] شكله رقم، بس هو [[Decimal]] object ([[sum]] على [[numeric]] بيرجع [[numeric]]). اتأكدنا: [[r[0].revenue.constructor.name]] طلع [[Decimal2]].
+- الحل: حوّل جوه SQL. [[::int]] للعدد، و [[::text]] للفلوس عشان الرقم يوصل زي ما هو ([['360.00']]).
+
+---
+
+## ٣. [[$executeRaw]]: أمر بيعدّل
+
+~~~ts
+const changed = await prisma.$executeRaw$__bt
+  UPDATE products SET stock = stock - $__{qty} WHERE id = $__{productId} AND stock >= $__{qty}
+$__bt;
+~~~
+
+[[$executeRaw]] نفس الفكرة بس بيرجّع **رقم**: عدد الصفوف اللي اتأثرت. و [[$__{qty}]] متكررة مرتين، فاتبعتت مرتين:
+
+~~~text الناتج
+prisma:query
+  UPDATE products SET stock = stock - $1 WHERE id = $2 AND stock >= $3
+
+changed 1
+~~~
+
+وجربنا نفس الأمر بكمية 1000 (أكبر من المخزون):
+
+~~~text الناتج
+changed2 0
+~~~
+
+صفر = الشرط [[stock >= 1000]] منفعش، فمفيش صف اتعدّل. كده بتعرف إن المخزون مش كفاية من غير ما تقرا الأول (درس atomic UPDATE).
+
+---
+
+## ٤. array كـ parameter
+
+~~~ts
+const ids = [1, 2, 3];
+const some = await prisma.$queryRaw$__btSELECT name FROM products WHERE id = ANY($__{ids})$__bt;
+~~~
+
+~~~text الناتج
+prisma:query SELECT name FROM products WHERE id = ANY($1)
+[ { name: 'Mug' }, { name: 'Cap' }, { name: 'Pan' } ]
+~~~
+
+الـ array كلها اتبعتت parameter واحد [[$1]] (array في Postgres)، و [[= ANY(...)]] = «يساوي أي عنصر فيها». أبسط من [[IN]] اللي محتاج [[$1, $2, $3]].
+
+---
+
+## ٥. [[FOR UPDATE]] جوه transaction
+
+~~~ts
+await prisma.$transaction(async (tx) => {
+  await tx.$queryRaw$__btSELECT id FROM orders WHERE id = $__{orderId} FOR UPDATE$__bt;
+});
+~~~
+
+- [[$transaction(async (tx) => {...})]]: transaction تفاعلية. كل اللي بيتعمل بـ [[tx]] (مش [[prisma]]) جوه نفس الـ transaction.
+- [[FOR UPDATE]]: اقفل الصف ده لحد ما الـ transaction تخلص.
+
+~~~text الناتج
+prisma:query SELECT id FROM orders WHERE id = $1 FOR UPDATE
+[ { id: 1 } ]
+prisma:query COMMIT
+~~~
+
+الـ [[COMMIT]] جه لما الـ callback خلص، وساعتها القفل اتفك.
+
+---
+
+## ٦. الـ solCode: SQL injection بعينك
+
+~~~ts
+const email = "sara@example.com' OR '1'='1";
+~~~
+
+قيمة «خبيثة»: علامة [[']] تقفل النص، وبعدها [[OR '1'='1']] شرط دايمًا صح.
+
+~~~ts
+const safe = await prisma.$queryRaw$__btSELECT id, email FROM users WHERE email = $__{email}$__bt;
+const unsafe = await prisma.$queryRawUnsafe($__btSELECT id, email FROM users WHERE email = '$__{email}'$__bt);
+const unsafeButParam = await prisma.$queryRawUnsafe("SELECT id, email FROM users WHERE email = $1", email);
+console.log((safe as any[]).length, (unsafe as any[]).length, (unsafeButParam as any[]).length);
+~~~
+
+- [[safe]]: tagged template.
+- [[unsafe]]: [[$queryRawUnsafe]] **بأقواس**، وجواها template literal عادي. هنا JavaScript هو اللي ركّب النص قبل ما Prisma يشوفه.
+- [[unsafeButParam]]: [[$queryRawUnsafe]] برضه، بس النص فيه [[$1]] والقيمة بعده argument منفصل.
+- [[as any[]]]: النتيجة نوعها [[unknown]]، فبنقول لـ TypeScript «اعتبرها array» عشان نقرا [[length]].
+
+~~~text الناتج
+prisma:query SELECT id, email FROM users WHERE email = $1
+prisma:query SELECT id, email FROM users WHERE email = 'sara@example.com' OR '1'='1'
+prisma:query SELECT id, email FROM users WHERE email = $1
+0 6 0
+~~~
+
+السطر التاني في الـ log هو المشكلة كلها: القيمة بقت **جزء من الأمر**، والشرط بقى «الإيميل كذا **أو** 1=1»، فرجّع الـ ٦ يوزرز اللي في القاعدة. والاتنين التانيين رجّعوا 0، لأن القاعدة دوّرت على إيميل نصه حرفيًا [[sara@example.com' OR '1'='1]].
+
+~~~ts
+const rows: any[] = await prisma.$queryRaw$__btSELECT count(*) AS n FROM orders$__bt;
+try { JSON.stringify(rows); } catch (e: any) { console.log(e.message); }
+~~~
+
+~~~text الناتج
+Do not know how to serialize a BigInt
+~~~
+
+نفس مشكلة الـ count من غير cast.
+
+---
+
+## ٧. اللي مينفعش يبقى parameter
+
+جربنا اسم عمود كـ [[$__{}]]:
+
+~~~ts
+const col = "email";
+await prisma.$queryRaw$__btSELECT email FROM users ORDER BY $__{col} DESC LIMIT 2$__bt;
+~~~
+
+~~~text الناتج
+prisma:query SELECT email FROM users ORDER BY $1 DESC LIMIT 2
+[ { email: 'sara@example.com' }, { email: 'mona@example.com' } ]
+~~~
+
+مفيش error، بس الترتيب **مش** بالإيميل تنازلي (كان المفروض sara وبعدها omar). [[$1]] قيمة نصية ثابتة [['email']]، والترتيب بقيمة ثابتة مش بيرتّب حاجة. أسماء الأعمدة والجداول و ASC/DESC محتاجة [[Prisma.raw]] مع whitelist (في «إزاي بيشتغل»).
+
+---
+
+## الخلاصة
+
+| | القيم | آمن؟ | بيرجّع |
+|---|---|---|---|
+| [[$queryRaw]] + backtick | parameters لوحدها | أيوه | صفوف |
+| [[$executeRaw]] + backtick | parameters لوحدها | أيوه | عدد الصفوف |
+| [[$queryRawUnsafe(str, ...values)]] بـ [[$1]] | parameters | أيوه | صفوف |
+| [[$queryRawUnsafe]] بـ template literal فيه قيمة | ملزوقة في النص | **لأ**: SQL injection | صفوف |
+
+- tagged template = backtick من غير أقواس.
+- أسماء القاعدة ([[users]] و [[created_at]])، مش أسماء الـ models.
+- [[count(*)]] بيرجع BigInt و [[numeric]] بيرجع Decimal: حوّلهم بـ [[::int]] و [[::text]].
+- الـ generic [[<...>]] وعد منك، مش فحص.`,
           lines: [
             "قيمة جاية من اليوزر.",
             "SQL خام كـ tagged template (backtick من غير أقواس):",
@@ -802,6 +2323,160 @@ await prisma.$disconnect();`,
             when: "راجع أي loop فيه await على القاعدة، وأي دالة بتتنادي لكل عنصر في list وجواها query. والقاعدة: عدد الاستعلامات في الصفحة لازم يبقى ثابت، مش بيكبر مع عدد الصفوف.",
             mistakes: R`[[Promise.all]] على الـ loop وتفتكر إنك حليتها. include متداخل كتير من غير take فبدل N+1 عندك استعلام بيرجّع ميجات. [[findUnique]] جوه map في الـ serializer. تقيس في التطوير على ١٠ صفوف وتقول «سريع». وفي الانترفيو: «إيه هي مشكلة N+1 وإزاي بتحلها؟» عرّفها بالأرقام (استعلام للقايمة و N للتفاصيل)، وقول إزاي بتكتشفها (query log أو APM)، والحل (eager loading بـ include أو JOIN أو batching بـ IN أو DataLoader).`
           },
+          teach: R`## الفكرة: عدّ سطور [[prisma:query]]
+
+المثال فيه ٤ طرق تجيب «اليوزرز وأوردراتهم». كلهم بيرجّعوا نفس الداتا تقريبًا، والفرق الوحيد **عدد الاستعلامات**. وأسهل طريقة تشوف الفرق: [[log: ["query"]]] شغال، وتعدّ.
+
+اتشغّل بـ Prisma 7.10.0 على ويندوز، و PostgreSQL 18 في Docker على نفس الجهاز. ضفنا ٢٠٠ يوزر بـ [[createMany]] (عندهم من ٠ لـ ٣ أوردرات)، فبقى في القاعدة ٢٠٦ يوزر و ٣١٠ أوردر.
+
+---
+
+## ١. الـ loop: ده الـ N+1
+
+~~~ts
+const users = await prisma.user.findMany({ take: 100 });
+~~~
+
+الـ **1**: استعلام واحد يجيب ١٠٠ يوزر.
+
+~~~ts
+for (const u of users) {
+  const orders = await prisma.order.findMany({ where: { userId: u.id } });
+  console.log(u.email, orders.length);
+}
+~~~
+
+- [[for (const u of users)]]: لف على اليوزرز واحد واحد.
+- [[await prisma.order.findMany(...)]] جوه الـ loop: استعلام لكل يوزر. و [[await]] معناها استنى الرد قبل اللفة الجاية، فالـ ١٠٠ استعلام ورا بعض مش مع بعض.
+- ده الـ **N** (N = ١٠٠).
+
+~~~text الناتج (أول ٣ سطور طباعة)
+u40@example.com 0
+u25@example.com 1
+u62@example.com 2
+~~~
+
+والـ log:
+
+~~~text الناتج
+prisma:query SELECT "public"."users"."id", "public"."users"."email", "public"."users"."name", "public"."users"."created_at" FROM "public"."users" WHERE 1=1 ORDER BY "public"."users"."id" ASC LIMIT $1 OFFSET $2
+prisma:query SELECT ... FROM "public"."orders" WHERE "public"."orders"."user_id" = $1 OFFSET $2
+prisma:query SELECT ... FROM "public"."orders" WHERE "public"."orders"."user_id" = $1 OFFSET $2
+prisma:query SELECT ... FROM "public"."orders" WHERE "public"."orders"."user_id" = $1 OFFSET $2
+... (نفس السطر ١٠٠ مرة)
+~~~
+
+نفس الـ SELECT بالظبط بيتكرر، والفرق بس في قيمة [[$1]]. ده شكل N+1 في أي log.
+
+وحاجة جانبية: [[take]] من غير [[orderBy]] خلّى Prisma يحط [[ORDER BY id ASC]] لوحده. والـ id هنا uuid عشوائي، فده سبب إن أول يوزر طلع u40 مش u0.
+
+---
+
+## ٢. الحل الأول: [[include]]
+
+~~~ts
+const withOrders = await prisma.user.findMany({
+  take: 100,
+  include: { orders: { select: { id: true, total: true } } },
+});
+~~~
+
+نفس الـ ١٠٠ يوزر، و [[include]] بيضيف أوردرات كل واحد، ومن الأوردر [[id]] و [[total]] بس.
+
+~~~text الناتج
+prisma:query SELECT ... FROM "public"."users" WHERE 1=1 ORDER BY "public"."users"."id" ASC LIMIT $1 OFFSET $2
+prisma:query SELECT "public"."orders"."id", "public"."orders"."total", "public"."orders"."user_id" FROM "public"."orders" WHERE "public"."orders"."user_id" IN ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,...)
+~~~
+
+استعلامين بس: اليوزرز، وبعدين أوردرات الـ ١٠٠ كلهم بـ [[IN (...)]] فيها ١٠٠ id. و [[user_id]] اتطلب مع إنه مش في الـ select، عشان Prisma يوزّع الأوردرات على أصحابها. ونتيجة يوزر عنده أوردرين:
+
+~~~text الناتج
+[{"id":102,"total":"100"},{"id":103,"total":"100"}]
+~~~
+
+---
+
+## ٣. لو محتاج العدد بس: [[_count]]
+
+~~~ts
+const counts = await prisma.user.findMany({
+  take: 100,
+  select: { email: true, _count: { select: { orders: true } } },
+});
+~~~
+
+~~~text الناتج
+[{"email":"u40@example.com","_count":{"orders":0}},{"email":"u25@example.com","_count":{"orders":1}}, ...]
+~~~
+
+استعلام **واحد**: الـ count بيتحسب جوه القاعدة بـ [[LEFT JOIN]] على subquery فيها [[COUNT(*)]] و [[GROUP BY]] (اتفكّ في درس relation filters). والأوردرات نفسها مبتتنقلش خالص.
+
+---
+
+## ٤. الحل اليدوي: [[in]] و [[Map.groupBy]]
+
+~~~ts
+const userIds = users.map((u) => u.id);
+~~~
+
+[[map]] بتعمل array جديدة: من كل يوزر خد الـ id. النتيجة ١٠٠ id.
+
+~~~ts
+const orders = await prisma.order.findMany({ where: { userId: { in: userIds } } });
+~~~
+
+[[{ in: userIds }]] = [[WHERE user_id IN (...)]]: كل أوردرات الـ ١٠٠ في استعلام واحد.
+
+~~~ts
+const byUser = Map.groupBy(orders, (o) => o.userId);
+~~~
+
+[[Map.groupBy]] (موجودة من Node 21): بتقسّم الـ array لمجموعات، والمفتاح اللي الدالة بترجّعه ([[o.userId]]). النتيجة [[Map]]: لكل userId الـ array بتاعة أوردراته.
+
+~~~text الناتج (اطبعنا الأعداد)
+143 73 0 u40@example.com
+~~~
+
+يعني: ١٤٣ أوردر رجعوا، متوزعين على ٧٣ يوزر (الـ ٢٧ الباقيين ملهمش أوردرات، فمش في الـ Map). و [[byUser.get(u40)]] رجّع [[undefined]]، فلازم [[?? []]] أو [[?.length ?? 0]] لما تقرا منه.
+
+عدد سطور [[prisma:query]] في السكربت كله كان **105**: ١٠١ للـ loop، و ٢ للـ include، و ١ للـ _count، و ١ للـ in.
+
+---
+
+## ٥. الـ solCode: نقيس الوقت
+
+~~~ts
+console.time("loop");
+...
+console.timeEnd("loop");
+~~~
+
+[[console.time("اسم")]] بيبدأ ساعة، و [[console.timeEnd("نفس الاسم")]] بيوقّفها ويطبع الوقت. على ٢٠٠ يوزر:
+
+~~~text الناتج
+loop: 464.767ms
+include: 12.987ms
+count: 6.281ms
+~~~
+
+وعدد سطور [[prisma:query]]: **204** = ٢٠١ للـ loop + ٢ للـ include + ١ للـ count.
+
+اقرا الأرقام: الـ loop أبطأ ٣٥ مرة من الـ include، والقاعدة **على نفس الجهاز**، يعني كل round trip حوالي ٢ ملّي ثانية. لو القاعدة على سيرفر بعيد والـ round trip ٢٠ ملّي، الـ ٢٠١ استعلام لوحدهم يبقوا حوالي ٤ ثواني، والـ include يفضل في حدود ٤٠ ملّي.
+
+---
+
+## الخلاصة
+
+| الطريقة | عدد الاستعلامات لـ N يوزر | امتى |
+|---|---|---|
+| loop بـ [[await]] | N + 1 | أبدًا |
+| [[include]] / [[select]] للعلاقة | 2 (واحد لكل مستوى) | محتاج الأولاد نفسهم |
+| [[_count]] | 1 | محتاج العدد بس |
+| [[in]] + [[Map.groupBy]] | 2 | الداتا جاية من حتة تانية أو شكل مش مدعوم |
+| SQL بـ JOIN في [[$queryRaw]] | 1 | تقرير بشكل معقد |
+
+- علامة N+1 في الـ log: نفس الـ SELECT متكرر وبيتغيّر فيه [[$1]] بس.
+- عدد الاستعلامات في الصفحة لازم يبقى ثابت مهما زاد عدد الصفوف.`,
           lines: [
             "استعلام واحد: ١٠٠ يوزر (الـ 1).",
             "لكل يوزر:",

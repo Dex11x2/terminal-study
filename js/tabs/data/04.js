@@ -57,6 +57,270 @@ REFRESH MATERIALIZED VIEW CONCURRENTLY mv2;`,
             when: "VIEW: استعلام بيتكرر، أو عايز تدّي حد (أو أداة BI) شكل مبسّط من الداتا من غير ما يشوف الجداول. MATERIALIZED: dashboards وتقارير تقيلة، أو ليدربورد بتتحدث كل كام دقيقة، والتأخير فيها مقبول.",
             mistakes: R`تفتكر إن الـ view بيسرّع. هو بيبسّط بس، والسرعة هي سرعة الاستعلام الأصلي. materialized view ومحدش عامل له refresh، فالأرقام واقفة من أسبوع. CONCURRENTLY من غير unique index. [[SELECT *]] جوه الـ view: الأعمدة بتتحدد وقت الإنشاء، فالعمود الجديد في الجدول مش هيظهر. وفي Supabase: view عادي بيكشف صفوف محمية بـ RLS لأي حد معاه الـ publishable key.`
           },
+          teach: R`## الفكرة: استعلام ليه اسم، ونسخة محفوظة من نتيجته
+
+المثال فيه حاجتين: [[CREATE VIEW]] بيدّي اسم لاستعلام عشان تناديه كأنه جدول، و [[CREATE MATERIALIZED VIEW]] بيشغّل الاستعلام مرة ويحفظ النتيجة نفسها. هنفك الاتنين سطر سطر ونشوف الفرق بينهم في الناتج.
+
+كل الناتج تحت حقيقي: اتشغّل في psql على [[postgres:18]] جوه Docker، على متجر صغير بنفس جداول الدروس اللي فاتت: ٣ يوزرز (Ali بإيميل [[you@example.com]]، و Sara، و Omar)، و ٧ أوردرات. ده شكل الأوردرات قبل ما نبدأ:
+
+~~~text orders
+ id | user |  status   |  total  |       created_at
+----+------+-----------+---------+------------------------
+  1 | Ali  | paid      |  500.00 | 2026-08-03 10:00:00+00
+  2 | Sara | shipped   |  650.00 | 2026-08-20 18:30:00+00
+  3 | Ali  | cancelled |  120.00 | 2026-09-02 09:00:00+00
+  4 | Sara | paid      |  370.00 | 2026-09-10 14:00:00+00
+  5 | Ali  | pending   |   30.00 | 2026-10-01 16:00:00+00
+  6 | Omar | paid      | 1300.00 | 2026-10-04 11:00:00+00
+  7 | Omar | pending   |    0.00 | 2026-10-05 12:00:00+00
+~~~
+
+الأوردر ٤ فيه بندين في [[order_items]]، والأوردر ٧ مفيهوش ولا بند (سلة فاضية)، والباقي بند واحد لكل واحد.
+
+---
+
+## ١. [[CREATE VIEW order_summaries AS ...]]
+
+~~~text الأمر
+CREATE VIEW order_summaries AS
+SELECT o.id, u.email, o.status, o.total, o.created_at,
+       count(oi.product_id) AS lines
+FROM orders o
+JOIN users u ON u.id = o.user_id
+LEFT JOIN order_items oi ON oi.order_id = o.id
+GROUP BY o.id, u.email;
+~~~
+
+اقراه على جزئين:
+
+- [[CREATE VIEW order_summaries AS]]: «اعمل view اسمه [[order_summaries]]، وتعريفه هو الاستعلام اللي بعد [[AS]]». الـ view = **جدول وهمي**: ليه اسم وأعمدة، بس مفيهوش ولا صف متخزن.
+- كل اللي بعد AS استعلام SELECT عادي من دروس الـ JOIN. نفكه بترتيب التنفيذ:
+
+| الحتة | بتعمل إيه |
+|---|---|
+| [[FROM orders o]] | ابدأ من الأوردرات، و [[o]] اسم قصير (alias) للجدول |
+| [[JOIN users u ON u.id = o.user_id]] | هات صاحب كل أوردر |
+| [[LEFT JOIN order_items oi ON oi.order_id = o.id]] | وبنوده. [[LEFT]] عشان الأوردر اللي مفيهوش بنود يفضل موجود |
+| [[GROUP BY o.id, u.email]] | صف واحد لكل أوردر |
+| [[count(oi.product_id) AS lines]] | عدد البنود في كل أوردر، باسم [[lines]] |
+
+ليه [[count(oi.product_id)]] مش [[count(*)]]؟ الأوردر ٧ مفيهوش بنود، فالـ LEFT JOIN بيجيبه بصف واحد كل أعمدة [[oi]] فيه NULL. [[count(*)]] بيعد الصف ده فيطلع ١ وده غلط، و [[count(oi.product_id)]] مبيعدّش الـ NULL فيطلع صفر.
+
+وليه [[GROUP BY o.id, u.email]] بس، مع إن فيه [[o.status]] و [[o.total]] برّه أي دالة تجميع؟ لأن [[o.id]] هو الـ primary key بتاع orders، فـ Postgres عارف إن كل أعمدة orders ليها قيمة واحدة لكل id. أما [[u.email]] من جدول تاني فلازم يتكتب. جرّب تشيله:
+
+~~~text CREATE VIEW bad AS SELECT o.id, u.email, o.status FROM orders o JOIN users u ON u.id = o.user_id GROUP BY o.id;
+ERROR:  column "u.email" must appear in the GROUP BY clause or be used in an aggregate function
+~~~
+
+والرد لما الـ view يتعمل:
+
+~~~text الناتج
+CREATE VIEW
+~~~
+
+مفيش صفوف اتحسبت لسه. Postgres حفظ **نص الاستعلام** بس. وتقدر تشوفه بـ [[\d+ order_summaries]] (أمر psql، [[d]] = describe و [[+]] = تفاصيل أكتر):
+
+~~~text \d+ order_summaries (مختصر)
+                 View "public.order_summaries"
+   Column   |           Type
+------------+--------------------------
+ id         | bigint
+ email      | text
+ status     | text
+ total      | numeric(10,2)
+ created_at | timestamp with time zone
+ lines      | bigint
+View definition:
+ SELECT o.id,
+    u.email,
+    ...
+  GROUP BY o.id, u.email;
+~~~
+
+الأعمدة وأنواعها اتحددت وقت الإنشاء، و [[lines]] نوعه [[bigint]] لأن ده نوع اللي [[count]] بترجّعه.
+
+---
+
+## ٢. [[SELECT * FROM order_summaries WHERE status = 'paid' ORDER BY created_at DESC;]]
+
+هنا بنستخدم الـ view كأنه جدول بالظبط: [[SELECT *]] منه، وعليه [[WHERE]] و [[ORDER BY]]. و [[DESC]] = descending، يعني من الأحدث للأقدم.
+
+~~~text الناتج
+ id |      email       | status |  total  |       created_at       | lines
+----+------------------+--------+---------+------------------------+-------
+  6 | omar@example.com | paid   | 1300.00 | 2026-10-04 11:00:00+00 |     1
+  4 | sara@example.com | paid   |  370.00 | 2026-09-10 14:00:00+00 |     2
+  1 | you@example.com  | paid   |  500.00 | 2026-08-03 10:00:00+00 |     1
+(3 rows)
+~~~
+
+الأوردر ٤ طلع [[lines]] بـ 2 لأن فيه بندين. ولو شلت الـ WHERE، الأوردر ٧ هيطلع بـ [[lines]] صفر، وده شغل الـ LEFT JOIN.
+
+### إيه اللي حصل جوه؟
+
+Postgres مش بيحسب الـ view كله وبعدين يفلتر. هو بيحط استعلام الـ view مكان اسمه، ويدمج الـ WHERE بتاعتك جواه. [[EXPLAIN]] بيوريك الخطة:
+
+~~~text EXPLAIN SELECT * FROM order_summaries WHERE status = 'paid'; (مختصر)
+ GroupAggregate
+   Group Key: o.id, u.email
+   ->  Sort
+         ->  Hash Join
+               Hash Cond: (u.id = o.user_id)
+               ->  Seq Scan on users u
+               ->  Hash
+                     ->  Hash Right Join
+                           Hash Cond: (oi.order_id = o.id)
+                           ->  Seq Scan on order_items oi
+                           ->  Hash
+                                 ->  Seq Scan on orders o
+                                       Filter: (status = 'paid'::text)
+~~~
+
+اقرا من تحت لفوق: آخر سطر [[Filter: (status = 'paid')]] على [[orders]] نفسه، قبل أي JOIN. يعني الشرط نزل لجوه، ولو فيه index على status كان هيستخدمه. وفي نفس الوقت الخطة فيها الـ JOINs والـ GroupAggregate كلهم: كل SELECT من الـ view بيشغّل الاستعلام الأصلي من الأول. عشان كده الـ view **بيبسّط الكتابة، مش بيسرّع**.
+
+---
+
+## ٣. [[CREATE MATERIALIZED VIEW monthly_revenue AS ...]]
+
+~~~text الأمر
+CREATE MATERIALIZED VIEW monthly_revenue AS
+SELECT date_trunc('month', created_at) AS month, sum(total) AS revenue, count(*) AS orders
+FROM orders WHERE status IN ('paid', 'shipped')
+GROUP BY 1;
+~~~
+
+[[MATERIALIZED]] يعني «اتجسّد»: الاستعلام بيتنفّذ **دلوقتي**، والصفوف اللي طلعت بتتخزن على الديسك زي جدول عادي.
+
+| الحتة | بتعمل إيه |
+|---|---|
+| [[WHERE status IN ('paid', 'shipped')]] | الأوردرات اللي اتدفعت بس (المدفوع والمشحون) |
+| [[date_trunc('month', created_at)]] | بتقص الوقت لأول الشهر: [[2026-09-10 14:00]] تبقى [[2026-09-01 00:00]]. فكل أوردرات الشهر يبقى ليها نفس القيمة |
+| [[GROUP BY 1]] | جمّع بأول عمود في الـ SELECT (اللي هو [[month]]) |
+| [[sum(total) AS revenue]] | مجموع الإيراد في الشهر |
+| [[count(*) AS orders]] | عدد الأوردرات في الشهر |
+
+~~~text الناتج
+SELECT 3
+~~~
+
+لاحظ الرد: [[SELECT 3]] مش [[CREATE ...]]. يعني الاستعلام اتشغّل فعلًا وطلّع ٣ صفوف واتخزنوا (أغسطس وسبتمبر وأكتوبر).
+
+---
+
+## ٤. [[CREATE UNIQUE INDEX monthly_revenue_month_uq ON monthly_revenue (month);]]
+
+عشان الـ materialized view جدول حقيقي، تقدر تعمل عليه index زي أي جدول. والـ index ده [[UNIQUE]]: مينفعش شهرين بنفس القيمة. الاسم [[_uq]] في الآخر عرف (unique) مش شرط.
+
+~~~text الناتج
+CREATE INDEX
+~~~
+
+الـ index ده مش للسرعة هنا (٣ صفوف). هو **شرط** للـ REFRESH CONCURRENTLY اللي في الخطوة ٦.
+
+---
+
+## ٥. [[SELECT * FROM monthly_revenue ORDER BY month;]]
+
+~~~text الناتج
+         month          | revenue | orders
+------------------------+---------+--------
+ 2026-08-01 00:00:00+00 | 1150.00 |      2
+ 2026-09-01 00:00:00+00 |  370.00 |      1
+ 2026-10-01 00:00:00+00 | 1300.00 |      1
+(3 rows)
+~~~
+
+راجع الأرقام على جدول الأوردرات فوق:
+- أغسطس: ٥٠٠ (paid) + ٦٥٠ (shipped) = ١١٥٠، من أوردرين.
+- سبتمبر: ٣٧٠ بس. الأوردر ٣ (١٢٠) [[cancelled]] فاتشال بالـ WHERE.
+- أكتوبر: ١٣٠٠ بس. الأوردر ٥ و ٧ [[pending]].
+
+والقراية دي مش بتشغّل الاستعلام الأصلي خالص. [[EXPLAIN]] بيقول:
+
+~~~text EXPLAIN SELECT * FROM monthly_revenue;
+ Seq Scan on monthly_revenue  (cost=0.00..1.03 rows=3 width=48)
+~~~
+
+سطر واحد: قراية ٣ صفوف من جدول. لا JOIN ولا GROUP BY. لو الاستعلام الأصلي بيجمّع ملايين الصفوف في ٥ ثواني، القراية من هنا بتاخد أجزاء من الثانية.
+
+---
+
+## ٦. [[REFRESH MATERIALIZED VIEW CONCURRENTLY monthly_revenue;]]
+
+الثمن: النسخة المحفوظة **مبتتحدّثش لوحدها**. ضيف أوردر مدفوع جديد (ده اللي في الـ solCode):
+
+~~~text الناتج
+INSERT INTO orders (user_id, status, total) SELECT id, 'paid', 999 FROM users LIMIT 1;
+INSERT 0 1
+
+SELECT count(*) FROM order_summaries;
+ count
+-------
+     8
+
+SELECT * FROM monthly_revenue ORDER BY month DESC LIMIT 1;
+         month          | revenue | orders
+------------------------+---------+--------
+ 2026-10-01 00:00:00+00 | 1300.00 |      1
+~~~
+
+الـ view العادي شاف الأوردر الجديد على طول (٨ بدل ٧)، والـ materialized view لسه بالأرقام القديمة. دلوقتي الـ refresh:
+
+~~~text الناتج
+REFRESH MATERIALIZED VIEW CONCURRENTLY monthly_revenue;
+REFRESH MATERIALIZED VIEW
+
+SELECT * FROM monthly_revenue ORDER BY month DESC LIMIT 1;
+         month          | revenue | orders
+------------------------+---------+--------
+ 2026-10-01 00:00:00+00 | 2299.00 |      2
+~~~
+
+١٣٠٠ + ٩٩٩ = ٢٢٩٩، والعدد بقى ٢.
+
+### يعني إيه [[CONCURRENTLY]]؟
+
+| | [[REFRESH MATERIALIZED VIEW x]] | [[REFRESH MATERIALIZED VIEW CONCURRENTLY x]] |
+|---|---|---|
+| بيعمل إيه | يحسب من الأول ويبدّل الجدول كله | يحسب نسخة جديدة، يقارنها بالقديمة صف صف، ويطبّق الفرق بس |
+| القراية وقت الـ refresh | **مقفولة**: أي SELECT بيستنى لحد ما يخلص | شغالة عادي وبتشوف النسخة القديمة |
+| السرعة | أسرع | أبطأ (فيه مقارنة) |
+| الشرط | مفيش | [[UNIQUE INDEX]] على عمود أو أكتر من غير WHERE |
+
+الـ unique index هو اللي بيعرّف بيه Postgres «ده نفس الصف» وهو بيقارن القديم بالجديد. من غيره:
+
+~~~text mv2 من غير unique index
+CREATE MATERIALIZED VIEW mv2 AS SELECT status, count(*) FROM orders GROUP BY status;
+SELECT 4
+
+REFRESH MATERIALIZED VIEW CONCURRENTLY mv2;
+ERROR:  cannot refresh materialized view "public.mv2" concurrently
+HINT:  Create a unique index with no WHERE clause on one or more columns of the materialized view.
+
+REFRESH MATERIALIZED VIEW mv2;
+REFRESH MATERIALIZED VIEW
+~~~
+
+الـ HINT بيقولك الحل بالظبط، والـ refresh العادي اشتغل من غير شرط.
+
+> الـ refresh مش بيحصل لوحده أبدًا. لازم حاجة تناديه: [[pg_cron]] جوه القاعدة، أو cron على السيرفر، أو الكود بعد عملية معينة.
+
+---
+
+## الخلاصة
+
+| | VIEW | MATERIALIZED VIEW |
+|---|---|---|
+| بيخزن داتا؟ | لأ، نص الاستعلام بس | أيوه، النتيجة على الديسك |
+| الرد وقت الإنشاء | [[CREATE VIEW]] | [[SELECT عدد_الصفوف]] |
+| النتيجة | دايمًا محدّثة | قديمة لحد [[REFRESH]] |
+| السرعة | سرعة الاستعلام الأصلي | سرعة قراية جدول |
+| index عليه | لأ (بيستخدم indexes الجداول الأصلية) | أيوه |
+
+- الـ view بيبسّط، مش بيسرّع: الـ WHERE بتاعتك بتتدمج جواه، والاستعلام بيتشغّل كل مرة.
+- الـ materialized view للتقارير التقيلة اللي التأخير فيها مقبول، ومعاه جدولة refresh.
+- [[CONCURRENTLY]] = القراية مش بتقف، بشرط unique index.
+- في LEFT JOIN عدّ عمود من الجدول اليمين ([[count(oi.product_id)]]) مش [[count(*)]]، عشان الصفوف الفاضية تطلع صفر.`,
           lines: [
             "اعمل view اسمه order_summaries على الاستعلام ده:",
             "الأوردر وإيميل صاحبه وحالته وقيمته ووقته،",
@@ -160,6 +424,284 @@ UPDATE orders SET status = 'paid', updated_at = '2020-01-01' WHERE id = (SELECT 
             when: "updated_at، والـ audit logs، والـ counters اللي لازم تفضل مظبوطة، وفي Supabase: إنشاء صف في profiles لما يوزر يسجّل (trigger على auth.users، درس one-to-one). أما منطق البيزنس الكبير (إيميلات، ودفع، ومناداة APIs) مكانه الكود مش trigger.",
             mistakes: R`منطق كتير مستخبي في triggers، فمحدش فاهم ليه القيمة اتغيرت. trigger بيعدّل نفس الجدول اللي عليه فيعمل loop. AFTER وبتعدّل NEW وتستغرب مفيش حاجة حصلت. [[FOR EACH ROW]] على جدول بيتعمله bulk insert بملايين الصفوف فيبقى بطيء جدًا. [[DROP FUNCTION]] بيفشل لأن فيه trigger معتمد عليها. وفي الانترفيو: «إيه عيوب الـ triggers؟» منطق مستخبي، وصعب في الـ testing والـ debugging، وبيأثر على سرعة الكتابة.`
           },
+          teach: R`## الفكرة: دالة + «إمتى تشتغل»
+
+أي trigger في Postgres جزئين منفصلين:
+
+1. **function** بترجّع النوع الخاص [[trigger]]: ده الكود اللي هيتنفّذ.
+2. **[[CREATE TRIGGER]]**: ده بيربط الدالة بجدول، ويقول إمتى تشتغل (قبل ولا بعد، وأنهي عملية، ومرة لكل صف ولا لكل أمر).
+
+المثال بيعمل ده مرتين: trigger يحدّث [[updated_at]]، و trigger يسجّل كل تعديل في [[audit_log]].
+
+كل الناتج تحت حقيقي من psql على [[postgres:18]] جوه Docker، على نفس المتجر الصغير بتاع درس الـ VIEW (٥ منتجات و ٧ أوردرات، أولهم [[paid]] بـ ٥٠٠ وآخرهم رقم ٧ [[pending]]).
+
+---
+
+## ١. [[ALTER TABLE products ADD COLUMN updated_at timestamptz NOT NULL DEFAULT now();]]
+
+[[ALTER TABLE ... ADD COLUMN]] بيضيف عمود لجدول موجود. [[timestamptz]] لحظة زمنية بالتوقيت، و [[DEFAULT now()]] بيملا الصفوف الموجودة والجديدة بالوقت الحالي، فـ [[NOT NULL]] مش هيشتكي.
+
+~~~text الناتج
+ALTER TABLE
+
+SELECT name, price, updated_at FROM products WHERE name = 'T-shirt';
+  name   | price  |          updated_at
+---------+--------+-------------------------------
+ T-shirt | 250.00 | 2026-10-07 08:46:55.762272+00
+~~~
+
+المشكلة: الـ DEFAULT بيشتغل في INSERT بس. أي UPDATE بعد كده مش هيلمس العمود ده، إلا لو الكود افتكر يبعته. ده اللي الـ trigger هيحله.
+
+---
+
+## ٢. الدالة: [[CREATE FUNCTION set_updated_at() RETURNS trigger ...]]
+
+~~~text الأمر
+CREATE FUNCTION set_updated_at() RETURNS trigger
+LANGUAGE plpgsql AS $$
+BEGIN
+  NEW.updated_at := now();
+  RETURN NEW;
+END;
+$$;
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[set_updated_at()]] | اسم الدالة، ومن غير parameters: دوال الـ trigger بتاخد بياناتها من متغيرات جاهزة مش من arguments |
+| [[RETURNS trigger]] | نوع خاص: الدالة دي مش هتتنادى بـ SELECT، هتتنادى من trigger بس |
+| [[LANGUAGE plpgsql]] | مكتوبة بـ PL/pgSQL، لغة Postgres اللي فيها متغيرات و IF و BEGIN/END |
+| [[AS $$ ... $$]] | جسم الدالة نص، و [[$$]] علامة تنصيص بديلة عشان متحتاجش تهرّب أي [[']] جوه الكود |
+| [[BEGIN ... END;]] | بداية ونهاية الكود (مش transaction هنا، دي مجرد بلوك) |
+| [[NEW]] | متغير جاهز: الصف بالشكل اللي **هيتكتب بيه** |
+| [[:=]] | علامة التخصيص في plpgsql: «حط القيمة دي في ده» |
+| [[RETURN NEW;]] | رجّع الصف (بعد التعديل) عشان Postgres يكتبه |
+
+يعني الدالة بتقول: «قبل ما تكتب الصف، غيّر updated_at فيه للوقت الحالي، وبعدين اكتبه».
+
+~~~text الناتج
+CREATE FUNCTION
+~~~
+
+---
+
+## ٣. الربط: [[CREATE TRIGGER products_updated_at ...]]
+
+~~~text الأمر
+CREATE TRIGGER products_updated_at
+BEFORE UPDATE ON products
+FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[products_updated_at]] | اسم الـ trigger (لازم يبقى مش متكرر على نفس الجدول) |
+| [[BEFORE]] | اشتغل **قبل** ما الصف يتكتب، وده الوقت الوحيد اللي تعديل NEW فيه بيأثّر |
+| [[UPDATE ON products]] | مع أي UPDATE على جدول products |
+| [[FOR EACH ROW]] | مرة لكل صف اتعدّل (UPDATE غيّر ١٠ صفوف = ١٠ مرات) |
+| [[EXECUTE FUNCTION set_updated_at()]] | الدالة اللي هتتنفّذ |
+
+~~~text الناتج
+CREATE TRIGGER
+~~~
+
+[[\d products]] بقى بيوريك الـ trigger تحت الجدول:
+
+~~~text \d products (آخره)
+Triggers:
+    products_updated_at BEFORE UPDATE ON products FOR EACH ROW EXECUTE FUNCTION set_updated_at()
+~~~
+
+---
+
+## ٤. التجربة: [[UPDATE products SET price = 260 WHERE name = 'T-shirt' RETURNING name, price, updated_at;]]
+
+الـ UPDATE ده مش بيذكر [[updated_at]] خالص، بيغيّر السعر بس. و [[RETURNING]] بيرجّع الصف بعد ما اتكتب، فنشوف القيمة اللي اتخزنت فعلًا (استنينا ٢ ثانية قبلها عشان الفرق يبان):
+
+~~~text الناتج
+  name   | price  |          updated_at
+---------+--------+-------------------------------
+ T-shirt | 260.00 | 2026-10-07 08:46:57.777315+00
+(1 row)
+
+UPDATE 1
+~~~
+
+كان [[08:46:55]] وبقى [[08:46:57]] من غير ما حد يبعته.
+
+> [[now()]] في Postgres = وقت **بداية الـ transaction**، مش اللحظة بالظبط. جوه [[BEGIN]] واحدة، كل الصفوف اللي هتتعدّل هتاخد نفس الوقت حتى لو الـ transaction طولت. لو عايز الساعة الفعلية في كل لحظة فيه [[clock_timestamp()]].
+
+---
+
+## ٥. جدول الـ audit: [[CREATE TABLE audit_log (...)]]
+
+| العمود | ليه |
+|---|---|
+| [[id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY]] | رقم بيتولد لوحده، فالترتيب بيه = ترتيب الأحداث |
+| [[table_name text]] | أنهي جدول اتعدّل (نفس الـ log لكل الجداول) |
+| [[op text]] | العملية: [[INSERT]] أو [[UPDATE]] أو [[DELETE]] |
+| [[row_id text]] | رقم الصف. [[text]] مش bigint عشان جداول تانية ممكن الـ id بتاعها uuid |
+| [[old_data jsonb]] | الصف قبل التعديل كله |
+| [[new_data jsonb]] | الصف بعده كله |
+| [[changed_by text DEFAULT current_user]] | [[current_user]] = اسم يوزر **القاعدة** اللي عامل الاتصال |
+| [[changed_at timestamptz DEFAULT now()]] | إمتى |
+
+ليه [[jsonb]]؟ عشان أي جدول، بأي أعمدة، يتخزن في نفس العمود من غير ما الـ audit_log يعرف شكله.
+
+---
+
+## ٦. دالة الـ audit: [[audit_row()]]
+
+~~~text الأمر
+CREATE FUNCTION audit_row() RETURNS trigger
+LANGUAGE plpgsql AS $$
+BEGIN
+  INSERT INTO audit_log (table_name, op, row_id, old_data, new_data)
+  VALUES (TG_TABLE_NAME, TG_OP, COALESCE(NEW.id, OLD.id)::text,
+          CASE WHEN TG_OP <> 'INSERT' THEN to_jsonb(OLD) END,
+          CASE WHEN TG_OP <> 'DELETE' THEN to_jsonb(NEW) END);
+  RETURN NULL;
+END;
+$$;
+~~~
+
+جسم الدالة INSERT واحد في audit_log. نفك القيم الخمسة:
+
+### [[TG_TABLE_NAME]] و [[TG_OP]]
+
+متغيرات جاهزة جوه أي دالة trigger ([[TG]] = trigger): اسم الجدول اللي شغّل الـ trigger، واسم العملية كنص ([['INSERT']] أو [['UPDATE']] أو [['DELETE']]).
+
+### [[COALESCE(NEW.id, OLD.id)::text]]
+
+| العملية | [[NEW]] | [[OLD]] |
+|---|---|---|
+| INSERT | الصف الجديد | NULL |
+| UPDATE | الصف بعد التعديل | الصف قبله |
+| DELETE | NULL | الصف اللي اتمسح |
+
+[[COALESCE(a, b)]] بترجّع أول قيمة مش NULL. فـ id بييجي من NEW، ولو DELETE (NEW فاضي) بييجي من OLD. و [[::text]] تحويل النوع لنص عشان يتحط في عمود text.
+
+### [[CASE WHEN TG_OP <> 'INSERT' THEN to_jsonb(OLD) END]]
+
+[[<>]] = «لا يساوي». [[to_jsonb(OLD)]] بيحوّل الصف كله لـ JSON، كل عمود مفتاح. و CASE من غير ELSE بيرجّع NULL. يعني: الصف القديم لو العملية مش INSERT (في INSERT مفيش قديم). والسطر اللي بعده نفس الفكرة للجديد: لو مش DELETE.
+
+### [[RETURN NULL;]]
+
+الـ trigger ده هيبقى [[AFTER]]: الصف اتكتب خلاص، فالقيمة اللي بترجع ملهاش أي تأثير. العرف إنك ترجّع NULL.
+
+---
+
+## ٧. الربط: [[CREATE TRIGGER orders_audit AFTER INSERT OR UPDATE OR DELETE ON orders ...]]
+
+- [[AFTER]]: بعد ما العملية تنجح. التسجيل بييجي بعد ما نتأكد إن التعديل حصل.
+- [[INSERT OR UPDATE OR DELETE]]: trigger واحد لتلات عمليات، والدالة بتفرق بينهم بـ [[TG_OP]].
+- [[FOR EACH ROW]]: عشان محتاجين OLD و NEW لكل صف.
+
+---
+
+## ٨. اللي بيحصل في الـ «جرّب»
+
+### UPDATE و DELETE وقراية الـ log
+
+~~~text الأوامر
+UPDATE orders SET status = 'shipped' WHERE id = (SELECT min(id) FROM orders);
+DELETE FROM orders WHERE id = (SELECT max(id) FROM orders);
+~~~
+
+[[(SELECT min(id) FROM orders)]] subquery بيجيب أصغر id (الأوردر ١)، و [[max]] أكبر id (الأوردر ٧). وبعدين:
+
+~~~text الناتج
+SELECT op, row_id,
+       old_data->>'status' AS old_status,
+       new_data->>'status' AS new_status,
+       changed_by, changed_at
+FROM audit_log ORDER BY id;
+
+   op   | row_id | old_status | new_status | changed_by |          changed_at
+--------+--------+------------+------------+------------+-------------------------------
+ UPDATE | 1      | paid       | shipped    | postgres   | 2026-10-07 08:46:57.797276+00
+ DELETE | 7      | pending    |            | postgres   | 2026-10-07 08:46:57.800438+00
+(2 rows)
+~~~
+
+- [[->>]] بيطلّع قيمة مفتاح من jsonb **كنص** (درس jsonb). [[old_data->>'status']] = الحالة قبل.
+- صف الـ DELETE ملوش [[new_status]] لأن [[new_data]] اتخزن NULL.
+- [[changed_by]] = [[postgres]]: يوزر القاعدة، مش يوزر التطبيق (التفاصيل في الـ sol).
+
+وده صف الـ UPDATE كامل بـ [[\x]] (أمر psql بيعرض كل عمود في سطر):
+
+~~~text SELECT * FROM audit_log WHERE op = 'UPDATE'; (والـ uuid مختصر)
+id         | 1
+table_name | orders
+op         | UPDATE
+row_id     | 1
+old_data   | {"id": 1, "total": 500.00, "status": "paid", "user_id": "4b59aa03-...", "created_at": "2026-08-03T10:00:00+00:00"}
+new_data   | {"id": 1, "total": 500.00, "status": "shipped", "user_id": "4b59aa03-...", "created_at": "2026-08-03T10:00:00+00:00"}
+changed_by | postgres
+~~~
+
+الصف كله اتحفظ قبل وبعد، فتقدر تعرف أي عمود اتغير.
+
+### INSERT برضه بيتسجل
+
+~~~text الناتج بعد INSERT أوردر جديد
+ id |   op   | row_id | no_old
+----+--------+--------+--------
+  4 | INSERT | 8      | t
+~~~
+
+[[no_old]] هنا [[old_data IS NULL]]، و [[t]] = true: مفيش صف قديم في INSERT.
+
+### trigger الـ updated_at على orders، ومحاولة تزوير الوقت
+
+بعد ما تضيف العمود وتركّب نفس الدالة على orders (دالة واحدة، triggers كتير):
+
+~~~text الناتج
+UPDATE orders SET status = 'paid', updated_at = '2020-01-01'
+WHERE id = (SELECT min(id) FROM orders) RETURNING updated_at;
+
+          updated_at
+-------------------------------
+ 2026-10-07 08:46:57.808851+00
+~~~
+
+الـ UPDATE بعت 2020، بس الـ BEFORE trigger كتب [[now()]] فوقها في NEW قبل الكتابة. ولاحظ إن الـ UPDATE ده نفسه اتسجل في audit_log كمان: الجدول عليه trigger قبل وواحد بعد، والاتنين اشتغلوا.
+
+### trigger بيشتغل حتى لو مفيش حاجة اتغيرت
+
+~~~text الناتج
+UPDATE orders SET total = total WHERE status = 'pending';
+UPDATE 1
+~~~
+
+[[total = total]] مغيّرش أي قيمة، ومع ذلك عدد صفوف audit_log زاد واحد. لو مش عايز ده، [[CREATE TRIGGER]] بيقبل شرط [[WHEN (OLD.status IS DISTINCT FROM NEW.status)]]، فالدالة متتناداش أصلًا إلا لو الحالة اتغيرت. ([[IS DISTINCT FROM]] زي [[<>]] بس بيتعامل مع NULL صح.)
+
+### الدالة مش بتتمسح وعليها triggers
+
+~~~text DROP FUNCTION set_updated_at();
+ERROR:  cannot drop function set_updated_at() because other objects depend on it
+DETAIL:  trigger products_updated_at on table products depends on function set_updated_at()
+trigger orders_updated_at on table orders depends on function set_updated_at()
+HINT:  Use DROP ... CASCADE to drop the dependent objects too.
+~~~
+
+Postgres بيحمي الـ triggers: لازم تمسحهم الأول ([[DROP TRIGGER products_updated_at ON products]]) أو تستخدم [[CASCADE]] وانت عارف إنها هتمسحهم.
+
+---
+
+## الخلاصة
+
+| | trigger الـ updated_at | trigger الـ audit |
+|---|---|---|
+| التوقيت | [[BEFORE UPDATE]] | [[AFTER INSERT OR UPDATE OR DELETE]] |
+| بيستخدم | [[NEW]] ويعدّله | [[OLD]] و [[NEW]] و [[TG_OP]] و [[TG_TABLE_NAME]] |
+| بيرجّع | [[NEW]] (الصف اللي هيتكتب) | [[NULL]] (ملوش لازمة في AFTER) |
+| بيكتب في | نفس الصف | جدول تاني |
+
+- BEFORE = تقدر تغيّر الصف. AFTER = تتفرج عليه وتكتب في مكان تاني.
+- [[FOR EACH ROW]] عشان NEW و OLD يبقوا موجودين.
+- دالة واحدة تتركّب على جداول كتير، و [[to_jsonb(OLD)]] بيخلي الـ audit يشتغل مع أي جدول.
+- الـ trigger جزء من نفس الـ transaction: لو فشل، التعديل الأصلي بيترجع معاه.`,
           lines: [
             "ضيف عمود updated_at للمنتجات.",
             "function بترجّع trigger،",
@@ -233,7 +775,7 @@ END;
 $$;
 SELECT place_order((SELECT id FROM users LIMIT 1), 2, 3);`,
           try: R`نادي [[place_order]] على منتج مخزونه صفر (Cap بعد درس UPDATE مثلًا)، وبعدين اتأكد إن عدد الأوردرات متغيّرش. وبعدين اكتب function بـ [[LANGUAGE sql]] اسمها [[top_products(p_limit int)]] ترجّع جدول ([[RETURNS TABLE (name text, sold bigint)]]) بأكتر المنتجات مبيعًا، وناديها بـ [[SELECT * FROM top_products(3)]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: اعمل [[top_products(p_limit int)]] بـ [[LANGUAGE sql]] و [[RETURNS TABLE (name text, sold bigint)]] (مجموع الكميات من order_items)، وآخر سطر [[SELECT * FROM top_products(3);]].`,
-          sol: R`على منتج خلصان هتاخد [[ERROR: OUT_OF_STOCK]] ومعاها [[CONTEXT: PL/pgSQL function place_order(uuid,bigint,integer) line 10 at RAISE]]. و [[SELECT count(*) FROM orders]] هيطلع نفس الرقم قبل وبعد: الـ UPDATE مغيّرش ولا صف أصلًا ([[NOT FOUND]])، والـ exception وقّفت الدالة قبل الـ INSERT. ولو الغلطة حصلت بعد الـ INSERT (زي product_id مش موجود في order_items)، كل اللي حصل جوه الدالة كان هيترجع برضه، لأن الـ function جزء من transaction الأمر اللي ناداها.
+          sol: R`على منتج خلصان هتاخد [[ERROR: OUT_OF_STOCK]] ومعاها [[CONTEXT: PL/pgSQL function place_order(uuid,bigint,integer) line 10 at RAISE]]. و [[SELECT count(*) FROM orders]] هيطلع نفس الرقم قبل وبعد: الـ UPDATE مغيّرش ولا صف أصلًا ([[NOT FOUND]])، والـ exception وقّفت الدالة قبل الـ INSERT. ولو الغلطة حصلت بعد خصم المخزون (زي user_id مش موجود، فالـ INSERT في orders يفشل بـ foreign key)، كل اللي حصل جوه الدالة بيترجع برضه، والمخزون بيرجع زي ما كان، لأن الـ function جزء من transaction الأمر اللي ناداها.
 
 و [[top_products(3)]] هترجع ٣ صفوف بعمودين، زي أي جدول: تقدر تعمل عليها WHERE و JOIN. لو نسيت [[RETURNS TABLE]] وكتبت [[RETURNS bigint]] هترجع أول قيمة بس. وخلي بالك أسماء الأعمدة في [[RETURNS TABLE]] بتبقى متغيرات جوه الدالة، فلو في plpgsql عندك عمود في جدول اسمه name هتاخد [[column reference "name" is ambiguous]]. في LANGUAGE sql مفيش المشكلة دي.`,
           solCode: R`SELECT count(*) FROM orders;
@@ -270,6 +812,273 @@ SELECT * FROM top_products(3);`,
             when: "عمليات من كذا خطوة لازم تتم مع بعض (خصوصًا في Supabase)، وحسابات بتتكرر في استعلامات كتير، ودوال الـ triggers، ودوال IMMUTABLE للـ indexes (زي التطبيع في درس البحث بالعربي). أما منطق فيه مناداة APIs برّه أو إيميلات، مكانه الكود.",
             mistakes: R`parameter بنفس اسم عمود في plpgsql. [[SECURITY DEFINER]] من غير [[SET search_path]] ومن غير ما تتأكد مين بيناديها. تعليم دالة بتقرا من جدول IMMUTABLE عشان تحطها في index، فالـ index يبقى غلط لما الجدول يتغير. منطق كتير جدًا جوه القاعدة ومفيش tests ولا version control، فخليها في ملفات migrations زي أي حاجة تانية. و [[RAISE EXCEPTION]] برسالة فيها داتا حساسة بتوصل للـ client.`
           },
+          teach: R`## الفكرة: SQL باسم، و parameters، وقيمة راجعة
+
+المثال فيه دالتين: [[user_spent]] حساب بسيط بـ [[LANGUAGE sql]] (استعلام واحد)، و [[place_order]] عملية من ٣ خطوات بـ [[LANGUAGE plpgsql]] لازم تنجح كلها أو تترجع كلها. هنفك الاتنين ونشوف بيرجّعوا إيه، وإيه اللي بيحصل لما حاجة تفشل في النص.
+
+كل الناتج تحت حقيقي من psql على [[postgres:18]] جوه Docker، على نفس المتجر الصغير بتاع درس الـ VIEW. المنتجات قبل ما نبدأ:
+
+~~~text products
+ id |  name   | price  | stock
+----+---------+--------+-------
+  1 | T-shirt | 250.00 |    40
+  2 | Mug     | 120.00 |    15
+  3 | Cap     | 180.00 |     0
+  4 | Hoodie  | 650.00 |     8
+  5 | Pen     |  15.00 |   100
+~~~
+
+---
+
+## ١. [[CREATE FUNCTION user_spent(p_user_id uuid) RETURNS numeric ...]]
+
+~~~text الأمر
+CREATE FUNCTION user_spent(p_user_id uuid) RETURNS numeric
+LANGUAGE sql STABLE AS $$
+  SELECT COALESCE(sum(total), 0) FROM orders
+  WHERE user_id = p_user_id AND status IN ('paid', 'shipped');
+$$;
+~~~
+
+### رأس الدالة
+
+| الحتة | معناها |
+|---|---|
+| [[user_spent]] | اسم الدالة |
+| [[(p_user_id uuid)]] | parameter واحد اسمه [[p_user_id]] ونوعه [[uuid]]. الـ [[p_]] في الأول عرف = parameter، عشان ميتلخبطش مع عمود [[user_id]] |
+| [[RETURNS numeric]] | بترجّع رقم واحد من نوع numeric (نفس نوع الفلوس) |
+| [[LANGUAGE sql]] | الجسم استعلام SQL عادي، من غير متغيرات ولا IF |
+| [[STABLE]] | وعد لـ Postgres: «أنا بقرا بس ومش بعدّل حاجة، ونفس المدخل جوه نفس الاستعلام بيرجّع نفس النتيجة» |
+| [[AS $$ ... $$]] | جسم الدالة. [[$$]] علامة تنصيص، فالـ [['paid']] جوه مش محتاجة تهريب |
+
+### جسم الدالة
+
+- [[WHERE user_id = p_user_id]]: الأوردرات بتاعة اليوزر اللي اتبعت.
+- [[AND status IN ('paid', 'shipped')]]: المدفوع بس.
+- [[sum(total)]]: مجموعهم. لو اليوزر ملوش أوردرات خالص، [[sum]] بيرجّع **NULL** مش صفر (درس count و sum).
+- [[COALESCE(..., 0)]]: لو NULL حط صفر. فالدالة دايمًا بترجّع رقم.
+
+دالة [[LANGUAGE sql]] بترجّع نتيجة **آخر** استعلام فيها، فمش محتاج تكتب RETURN.
+
+~~~text الناتج
+CREATE FUNCTION
+~~~
+
+و [[\df user_spent]] (أمر psql: describe functions) بيوريك شكلها:
+
+~~~text \df user_spent
+ Schema |    Name    | Result data type | Argument data types | Type
+--------+------------+------------------+---------------------+------
+ public | user_spent | numeric          | p_user_id uuid      | func
+~~~
+
+---
+
+## ٢. [[SELECT email, user_spent(id) FROM users ORDER BY 2 DESC;]]
+
+الدالة بتتنادى جوه SELECT زي [[lower()]] أو [[count()]]: لكل يوزر، ابعت الـ [[id]] بتاعه. و [[ORDER BY 2]] = رتّب بالعمود التاني في الـ SELECT.
+
+~~~text الناتج
+      email       | user_spent
+------------------+------------
+ omar@example.com |    1300.00
+ sara@example.com |    1020.00
+ you@example.com  |     500.00
+(3 rows)
+~~~
+
+Sara: ٦٥٠ (shipped) + ٣٧٠ (paid) = ١٠٢٠. Ali: ٥٠٠ بس، لأن الـ ١٢٠ [[cancelled]] والـ ٣٠ [[pending]]. ويوزر مش موجود أصلًا:
+
+~~~text SELECT user_spent('00000000-0000-0000-0000-000000000000');
+ user_spent
+------------
+          0
+~~~
+
+صفر مش NULL، وده شغل الـ COALESCE.
+
+---
+
+## ٣. [[CREATE FUNCTION place_order(...)]]: رأس الدالة
+
+~~~text الأمر
+CREATE FUNCTION place_order(p_user_id uuid, p_product_id bigint, p_qty int)
+RETURNS bigint LANGUAGE plpgsql AS $$
+~~~
+
+٣ parameters: مين بيشتري، وأنهي منتج، وكام قطعة. وبترجّع [[bigint]]: رقم الأوردر الجديد. ومكتوبة بـ [[plpgsql]] لأننا محتاجين متغيرات و IF و RAISE.
+
+### [[DECLARE]]
+
+~~~text الأمر
+DECLARE
+  v_price numeric;
+  v_order_id bigint;
+~~~
+
+قبل [[BEGIN]]، بنعرّف المتغيرات اللي هنحتاجها: اسم ونوع، وكل واحد بـ [[;]]. الـ [[v_]] عرف = variable. قيمتهم في الأول NULL.
+
+---
+
+## ٤. الخطوة الأولى: خصم المخزون
+
+~~~text الأمر
+  UPDATE products SET stock = stock - p_qty
+  WHERE id = p_product_id AND stock >= p_qty
+  RETURNING price INTO v_price;
+~~~
+
+- [[SET stock = stock - p_qty]]: اخصم الكمية من القيمة الحالية.
+- [[AND stock >= p_qty]]: بس لو المخزون كفاية. ده الـ atomic UPDATE من درسه: الفحص والخصم في أمر واحد، فطلبين في نفس اللحظة مش هيبيعوا آخر قطعة مرتين.
+- [[RETURNING price INTO v_price]]: [[RETURNING]] بيرجّع عمود من الصف اللي اتعدّل، و [[INTO]] بيحطه في المتغير بدل ما يعرضه.
+
+---
+
+## ٥. [[IF NOT FOUND THEN RAISE EXCEPTION 'OUT_OF_STOCK'; END IF;]]
+
+- [[FOUND]] متغير جاهز في plpgsql: [[true]] لو آخر أمر أثّر في صف واحد على الأقل. فـ [[NOT FOUND]] = الـ UPDATE معدّلش ولا صف: يا إما المنتج خلصان، يا إما مش موجود أصلًا.
+- [[RAISE EXCEPTION 'OUT_OF_STOCK']]: وقّف الدالة فورًا وارمي error بالرسالة دي. أي حاجة حصلت قبلها في نفس الـ transaction بتترجع.
+- [[END IF;]] قفلة الـ IF.
+
+---
+
+## ٦. الخطوة التانية والتالتة: الأوردر وبنده
+
+~~~text الأمر
+  INSERT INTO orders (user_id, total) VALUES (p_user_id, v_price * p_qty)
+  RETURNING id INTO v_order_id;
+  INSERT INTO order_items (order_id, product_id, quantity, unit_price)
+  VALUES (v_order_id, p_product_id, p_qty, v_price);
+  RETURN v_order_id;
+END;
+$$;
+~~~
+
+- أوردر جديد إجماليه [[v_price * p_qty]]، و [[status]] مش مكتوب فبياخد الـ DEFAULT [['pending']].
+- [[RETURNING id INTO v_order_id]]: خد رقم الأوردر اللي اتولّد في المتغير.
+- البند بنفس رقم الأوردر، وبالسعر اللي اتقرا وقت الخصم (مش سعر ممكن يتغير بعدين).
+- [[RETURN v_order_id;]]: ده اللي الدالة بترجّعه للي ناداها.
+
+---
+
+## ٧. [[SELECT place_order((SELECT id FROM users LIMIT 1), 2, 3);]]
+
+الـ argument الأول subquery بيجيب id أي يوزر ([[LIMIT 1]] من غير ORDER BY = أي صف، مش بالضرورة «الأول»، هنا طلع Ali). والتاني منتج رقم ٢ (Mug)، والتالت ٣ قطع.
+
+~~~text الناتج
+ place_order
+-------------
+           8
+(1 row)
+~~~
+
+رجّعت رقم الأوردر الجديد. ونتأكد إن التلات خطوات حصلت:
+
+~~~text الناتج
+SELECT id, status, total FROM orders WHERE id = 8;
+ id | status  | total
+----+---------+--------
+  8 | pending | 360.00
+
+SELECT * FROM order_items WHERE order_id = 8;
+ order_id | product_id | quantity | unit_price
+----------+------------+----------+------------
+        8 |          2 |        3 |     120.00
+
+SELECT id, name, stock FROM products WHERE id = 2;
+ id | name | stock
+----+------+-------
+  2 | Mug  |    12
+~~~
+
+١٢٠ × ٣ = ٣٦٠، والمخزون ١٥ بقى ١٢.
+
+---
+
+## ٨. اللي بيحصل في الـ «جرّب»: لما حاجة تفشل
+
+### منتج خلصان
+
+~~~text الناتج
+SELECT count(*) FROM orders;   →  8
+
+SELECT place_order((SELECT id FROM users LIMIT 1), (SELECT id FROM products WHERE stock = 0 LIMIT 1), 1);
+ERROR:  OUT_OF_STOCK
+CONTEXT:  PL/pgSQL function place_order(uuid,bigint,integer) line 10 at RAISE
+
+SELECT count(*) FROM orders;   →  8
+~~~
+
+اقرا الـ [[CONTEXT]]: اسم الدالة وأنواع الـ parameters، و [[line 10]] = السطر العاشر من جسم الدالة: العد بيبدأ من باقي سطر [[$$]] نفسه (سطر ١ فاضي)، فـ [[DECLARE]] سطر ٢ و [[RAISE]] سطر ١٠. العدد فضل ٨: الـ UPDATE معدّلش حاجة، والـ RAISE وقّفها قبل أي INSERT. ونفس الـ error بالظبط لو بعت product_id مش موجود (999)، لأن الـ UPDATE برضه مش هيلاقي صف.
+
+### فشل **بعد** ما المخزون اتخصم
+
+دي التجربة اللي بتوريك قيمة الـ transaction. نبعت يوزر مش موجود: الـ UPDATE هينجح ويخصم، وبعده الـ INSERT في orders هيفشل بالـ foreign key:
+
+~~~text الناتج
+SELECT place_order('00000000-0000-0000-0000-000000000000', 2, 1);
+ERROR:  insert or update on table "orders" violates foreign key constraint "orders_user_id_fkey"
+DETAIL:  Key (user_id)=(00000000-0000-0000-0000-000000000000) is not present in table "users".
+CONTEXT:  SQL statement "INSERT INTO orders (user_id, total) VALUES (p_user_id, v_price * p_qty)
+  RETURNING id"
+PL/pgSQL function place_order(uuid,bigint,integer) line 12 at SQL statement
+
+SELECT stock FROM products WHERE id = 2;   →  12
+~~~
+
+المخزون لسه ١٢ مش ١١. الخصم اللي حصل في السطر الأول اترجع، لأن الدالة كلها جوه الـ transaction بتاعة الأمر اللي ناداها. ده بالظبط اللي مش هتاخده لو عملت التلات خطوات كـ ٣ queries منفصلة من الكود من غير transaction.
+
+### نوع غلط
+
+~~~text SELECT place_order((SELECT id FROM users LIMIT 1), 2, 'x');
+ERROR:  invalid input syntax for type integer: "x"
+~~~
+
+الـ parameters ليها أنواع، فالغلطة بتتمسك قبل ما الدالة تبدأ أصلًا.
+
+---
+
+## ٩. دالة بترجّع جدول: [[RETURNS TABLE]]
+
+الدالتين في المثال بيرجّعوا قيمة واحدة. عشان ترجّع **صفوف**، الـ return بيبقى [[RETURNS TABLE (عمود نوع, ...)]]، وبتتنادى في [[FROM]] كأنها جدول. مثال تاني غير اللي في التمرين: أوردرات يوزر بإيميله.
+
+~~~text الأمر
+CREATE FUNCTION orders_of(p_email text)
+RETURNS TABLE (order_id bigint, status text, total numeric)
+LANGUAGE sql STABLE AS $$
+  SELECT o.id, o.status, o.total
+  FROM orders o JOIN users u ON u.id = o.user_id
+  WHERE u.email = p_email
+  ORDER BY o.id;
+$$;
+~~~
+
+~~~text الناتج
+SELECT * FROM orders_of('you@example.com') WHERE status = 'paid';
+ order_id | status | total
+----------+--------+--------
+        1 | paid   | 500.00
+~~~
+
+- الأعمدة اللي في [[RETURNS TABLE]] لازم تطابق أعمدة الـ SELECT جوه بالعدد والترتيب والنوع.
+- [[SELECT * FROM orders_of(...)]] بيفرد الأعمدة، وتقدر تحط عليها WHERE و JOIN. أما [[SELECT orders_of(...)]] من غير FROM بيرجّع كل صف في خانة واحدة: [[(1,paid,500.00)]].
+
+---
+
+## الخلاصة
+
+| | [[LANGUAGE sql]] | [[LANGUAGE plpgsql]] |
+|---|---|---|
+| الجسم | استعلام (أو كام استعلام) | بلوك [[DECLARE]] / [[BEGIN]] / [[END]] |
+| بترجّع | نتيجة آخر استعلام | اللي بعد [[RETURN]] |
+| متغيرات و IF و RAISE | لأ | أيوه |
+| مثالنا | [[user_spent]] | [[place_order]] |
+
+- الـ parameters بـ [[p_]] والمتغيرات بـ [[v_]]، عشان ميتلخبطوش مع أسماء الأعمدة.
+- [[STABLE]] للي بيقرا بس، والافتراضي [[VOLATILE]] للي بيعدّل (زي place_order).
+- [[RETURNING ... INTO]] يحط نتيجة أمر في متغير، و [[FOUND]] يقولك الأمر لمس صفوف ولا لأ.
+- أي error جوه الدالة (RAISE أو constraint) بيرجّع **كل** اللي عملته، حتى الخطوات اللي نجحت قبله.
+- [[RETURNS TABLE (...)]] عشان ترجّع صفوف وتتنادى في FROM.`,
           lines: [
             "دالة بتاخد id يوزر وترجّع رقم،",
             "SQL عادي، و STABLE: بتقرا بس.",
@@ -418,6 +1227,209 @@ ALTER TABLE users ADD COLUMN age interval GENERATED ALWAYS AS (now() - created_a
             when: "قيمة بتتحسب من نفس الصف وبتتقري أو بتتفلتر كتير: إجماليات، ونصوص متطبّعة للبحث والـ unique، و tsvector، ومفاتيح من jsonb.",
             mistakes: R`تحاول تستخدم [[now()]] أو جدول تاني. تبعت قيمة للعمود في INSERT من الكود (Prisma أو غيره) فيطلع error. تضيفه على جدول فيه ملايين الصفوف في وقت الذروة. تعمل generated column لحاجة بتتحسب مرة واحدة ومش بتتفلتر بيها، فتخزن حاجة ملهاش لازمة.`
           },
+          teach: R`## الفكرة: عمود قيمته معادلة، مش داتا بتتبعت
+
+العمود العادي بيتملي باللي INSERT أو UPDATE يبعته. الـ generated column بيتملي بمعادلة من أعمدة تانية في نفس الصف، والقاعدة هي اللي بتحسبها في كل مرة الصف يتكتب. المثال بيعمل عمودين كده، ويوريك إن محدش يقدر يكتب فيهم بإيده.
+
+كل الناتج تحت حقيقي من psql على [[postgres:18]] جوه Docker، على المتجر الصغير بتاع الدروس اللي فاتت. ده [[order_items]] قبل ما نبدأ:
+
+~~~text order_items
+ order_id | product_id | quantity | unit_price
+----------+------------+----------+------------
+        1 |          2 |        2 |     120.00
+        2 |          4 |        1 |     650.00
+        3 |          2 |        1 |     120.00
+        4 |          1 |        1 |     250.00
+        4 |          2 |        1 |     120.00
+        5 |          5 |        2 |      15.00
+        6 |          4 |        2 |     650.00
+~~~
+
+---
+
+## ١. [[ALTER TABLE order_items ADD COLUMN line_total ... STORED;]]
+
+~~~text الأمر
+ALTER TABLE order_items
+  ADD COLUMN line_total numeric(12,2) GENERATED ALWAYS AS (quantity * unit_price) STORED;
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[ALTER TABLE order_items ADD COLUMN line_total]] | ضيف عمود اسمه [[line_total]] لجدول موجود |
+| [[numeric(12,2)]] | رقم بخانتين عشريتين. [[12]] مش [[10]] زي unit_price، عشان حاصل الضرب ممكن يبقى أكبر من السعر |
+| [[GENERATED ALWAYS]] | القيمة **دايمًا** بتتولد، ومحدش يكتبها |
+| [[AS (quantity * unit_price)]] | المعادلة، بين قوسين. بتشوف أعمدة نفس الصف بس |
+| [[STORED]] | القيمة بتتحسب وقت الكتابة وتتخزن على الديسك زي أي عمود |
+
+~~~text الناتج
+ALTER TABLE
+~~~
+
+الأمر ده حسب القيمة لكل الصفوف الموجودة حالًا، وده معناه إنه أعاد كتابة الجدول كله (على جدول بملايين الصفوف ده بياخد وقت وقفل، شوف الـ deep). و [[\d order_items]] بيوريك المعادلة:
+
+~~~text \d order_items (سطر العمود)
+ line_total | numeric(12,2) |  |  | generated always as ((quantity::numeric * unit_price)) stored
+~~~
+
+لاحظ [[quantity::numeric]]: الكمية [[integer]] والسعر [[numeric]]، فـ Postgres حوّل الكمية لـ numeric قبل الضرب عشان النوعين يبقوا واحد. حط التحويل ده بنفسه وكتبه في التعريف.
+
+---
+
+## ٢. [[SELECT order_id, quantity, unit_price, line_total FROM order_items ORDER BY order_id LIMIT 3;]]
+
+~~~text الناتج
+ order_id | quantity | unit_price | line_total
+----------+----------+------------+------------
+        1 |        2 |     120.00 |     240.00
+        2 |        1 |     650.00 |     650.00
+        3 |        1 |     120.00 |     120.00
+(3 rows)
+~~~
+
+٢ × ١٢٠ = ٢٤٠. القيمة موجودة من غير ما حد عمل INSERT فيها، وبتتقري زي أي عمود عادي.
+
+---
+
+## ٣. [[UPDATE order_items SET quantity = 3 WHERE order_id = 1 AND product_id = 2 RETURNING line_total;]]
+
+غيّرنا الكمية بس، و [[RETURNING]] بيرجّع line_total بعد الكتابة:
+
+~~~text الناتج
+ line_total
+------------
+     360.00
+(1 row)
+
+UPDATE 1
+~~~
+
+٣ × ١٢٠ = ٣٦٠. اتحسب تاني لوحده، لأن أي UPDATE على الصف بيعيد حساب المعادلة.
+
+---
+
+## ٤. [[UPDATE order_items SET line_total = 1;]]
+
+ده السطر اللي **مقصود يفشل**:
+
+~~~text الناتج
+ERROR:  column "line_total" can only be updated to DEFAULT
+DETAIL:  Column "line_total" is a generated column.
+~~~
+
+«العمود ده ممكن يتحدّث لـ DEFAULT بس». يعني القيمة الوحيدة المسموحة هي الكلمة [[DEFAULT]] اللي معناها «احسبه انت»:
+
+~~~text UPDATE order_items SET line_total = DEFAULT WHERE order_id = 1 RETURNING line_total;
+ line_total
+------------
+     360.00
+~~~
+
+ونفس الحماية في INSERT:
+
+~~~text INSERT INTO order_items (order_id, product_id, quantity, unit_price, line_total) VALUES (5, 1, 1, 250, 250);
+ERROR:  cannot insert a non-DEFAULT value into column "line_total"
+DETAIL:  Column "line_total" is a generated column.
+~~~
+
+حتى لو القيمة اللي بعتها صح (١ × ٢٥٠ = ٢٥٠)، اترفضت. الحل: متبعتش العمود ده خالص في INSERT.
+
+---
+
+## ٥. [[ALTER TABLE users ADD COLUMN email_domain text GENERATED ALWAYS AS (split_part(email, '@', 2)) STORED;]]
+
+نفس الفكرة بدالة نصوص. [[split_part(نص, فاصل, رقم)]] بتقطّع النص عند الفاصل وترجّع الحتة رقم كذا (العد من ١):
+
+~~~text SELECT split_part('you@example.com', '@', 1), split_part('you@example.com', '@', 2);
+ split_part | split_part
+------------+-------------
+ you        | example.com
+~~~
+
+فالعمود الجديد = اللي بعد [[@]]:
+
+~~~text SELECT email, email_domain FROM users;
+      email       | email_domain
+------------------+--------------
+ you@example.com  | example.com
+ sara@example.com | example.com
+ omar@example.com | example.com
+~~~
+
+وليه مسموح هنا؟ لأن [[split_part]] دالة **IMMUTABLE**: نفس المدخل بيرجّع نفس المخرج دايمًا. وده شرط أي معادلة في generated column (الـ try بيوريك إيه اللي بيحصل مع دالة مش كده).
+
+---
+
+## ٦. [[CREATE INDEX users_email_domain_idx ON users (email_domain);]]
+
+عشان العمود [[STORED]]، القيمة موجودة على الديسك، فتقدر تعمل عليها index عادي:
+
+~~~text الناتج
+CREATE INDEX
+~~~
+
+فاستعلام زي [[WHERE email_domain = 'example.com']] (كل يوزرز شركة معينة) يقدر يستخدم الـ index بدل ما يقطّع كل إيميل في الجدول.
+
+---
+
+## ٧. اللي بيحصل في الـ «جرّب»
+
+### إيميل متطبّع و unique
+
+~~~text الناتج
+ALTER TABLE users
+  ADD COLUMN email_normalized text GENERATED ALWAYS AS (lower(trim(email))) STORED;
+ALTER TABLE
+
+CREATE UNIQUE INDEX users_email_normalized_uq ON users (email_normalized);
+CREATE INDEX
+
+INSERT INTO users (email, name) VALUES ('  YOU@example.com', 'Copy');
+ERROR:  duplicate key value violates unique constraint "users_email_normalized_uq"
+DETAIL:  Key (email_normalized)=(you@example.com) already exists.
+~~~
+
+- [[trim]] بيشيل المسافات من الأول والآخر، و [[lower]] بيصغّر الحروف. فـ [['  YOU@example.com']] بقت [[you@example.com]].
+- الـ [[DETAIL]] بيوريك القيمة المحسوبة نفسها اللي اتكررت.
+- الـ UNIQUE اللي على [[email]] الأصلي مكانش هيمسكها، لأن النص مختلف بالحرف.
+
+### دالة مش IMMUTABLE
+
+~~~text الناتج
+ALTER TABLE users ADD COLUMN age interval GENERATED ALWAYS AS (now() - created_at) STORED;
+ERROR:  generation expression is not immutable
+~~~
+
+[[now()]] قيمتها بتتغير كل لحظة، والعمود المخزن مش هيتحسب تاني غير لما الصف يتعدّل. فـ «عمر الحساب» كان هيبقى صح يوم الإنشاء وغلط بعده. Postgres بيرفضها من الأول.
+
+---
+
+## ٨. [[STORED]] ولا [[VIRTUAL]]؟
+
+| | [[STORED]] | [[VIRTUAL]] |
+|---|---|---|
+| بيتحسب إمتى | وقت الكتابة | وقت القراية |
+| بياخد مساحة | أيوه | لأ |
+| index عليه | أيوه | لأ |
+| موجود من | Postgres 12 | Postgres 18، وبقى الافتراضي لو مكتبتش حاجة |
+
+اتجرّب على الاتنين: على Postgres 18 عمود من غير كلمة STORED اتعمل VIRTUAL، و [[CREATE INDEX]] عليه طلع [[ERROR: indexes on virtual generated columns are not supported]]. وعلى Postgres 16 نفس الأمر من غير STORED طلع [[syntax error]]. وحسب الـ release notes الـ VIRTUAL اتضاف في 18، فـ Postgres 17 (اللي في الـ lab وفي تمارين الصفحة) زي 16 في النقطة دي، فاكتب [[STORED]] دايمًا.
+
+---
+
+## الخلاصة
+
+| السطر | بيعمل إيه |
+|---|---|
+| [[GENERATED ALWAYS AS (quantity * unit_price) STORED]] | عمود محسوب من نفس الصف ومتخزن |
+| [[UPDATE ... SET quantity = 3]] | line_total بيتحسب تاني لوحده |
+| [[UPDATE ... SET line_total = 1]] | error: مسموح بـ DEFAULT بس |
+| [[split_part(email, '@', 2)]] | معادلة بدالة IMMUTABLE |
+| [[CREATE INDEX ... (email_domain)]] | index على عمود محسوب، لأنه STORED |
+
+- المعادلة تشوف أعمدة **نفس الصف** بس، وبدوال IMMUTABLE: لا [[now()]] ولا subquery ولا جدول تاني.
+- متبعتش العمود ده في INSERT ولا UPDATE، حتى لو القيمة صح.
+- لو هتعمل index أو بتشتغل على Postgres أقدم من 18: [[STORED]].`,
           lines: [
             "ضيف لـ order_items عمود:",
             "line_total = الكمية × السعر، بيتحسب ويتخزن لوحده.",
@@ -493,6 +1505,257 @@ SELECT title FROM articles WHERE search @@ websearch_to_tsquery('english', 'dock
             when: "بحث في نصوص طويلة (مقالات، وأوصاف منتجات، وتذاكر)، ولما محتاج ترتيب بالأهمية. للأسماء القصيرة والأكواد والبحث اللي لازم يستحمل أخطاء إملائية، pg_trgm أنسب، وكتير من المشاريع بتستخدم الاتنين مع بعض.",
             mistakes: R`to_tsquery على كلام اليوزر فأي علامة غريبة تطلّع error 500. لغة مختلفة في التخزين والبحث ([['english']] هنا و [['simple']] هناك) فمفيش حاجة تطابق. تحسب to_tsvector جوه WHERE من غير index فكل بحث يقرا الجدول كله. الترتيب بـ ts_rank على مليون صف طابقوا. [[ts_headline]] بيطلع HTML وبتحطه في الصفحة من غير escape.`
           },
+          teach: R`## الفكرة: النص بيتحوّل لقايمة كلمات، والبحث بيتحوّل لشرط عليها
+
+الـ full-text search في Postgres ماشي على خطوتين: النص المتخزن بيتحوّل لـ [[tsvector]] (قايمة الكلمات بعد ما ترجع لأصلها)، وكلام البحث بيتحوّل لـ [[tsquery]] (الكلمات المطلوبة ومعاها AND و OR و NOT). و [[@@]] بيقول هل الاتنين بيتطابقوا. المثال بيبني جدول مقالات فيه كل ده، وبعدين بيوريك كل حتة لوحدها.
+
+كل الناتج تحت حقيقي من psql على [[postgres:18]] جوه Docker.
+
+---
+
+## ١. [[CREATE TABLE articles (...)]] وعمود [[search]]
+
+~~~text الأمر
+CREATE TABLE articles (
+  id     bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  title  text NOT NULL,
+  body   text NOT NULL,
+  search tsvector GENERATED ALWAYS AS (
+    setweight(to_tsvector('english', title), 'A') || setweight(to_tsvector('english', body), 'B')
+  ) STORED
+);
+~~~
+
+أول ٣ أعمدة عادية. الرابع [[search]] هو المهم: نوعه [[tsvector]]، وهو generated column (الدرس اللي فات) بيتحسب لوحده من title و body. نفك المعادلة من جوه لبرة:
+
+### الخطوة ١: [[to_tsvector('english', title)]]
+
+بتاخد نص وترجّع tsvector. أول argument اسمه الـ **configuration**: قواعد أنهي لغة هتتطبق. جرّبها على عنوان المقالة الأولى:
+
+~~~text SELECT to_tsvector('english', 'Running Postgres in Docker');
+          to_tsvector
+-------------------------------
+ 'docker':4 'postgr':2 'run':1
+~~~
+
+اللي حصل للنص:
+
+| الكلمة | بقت | ليه |
+|---|---|---|
+| Running | [['run']] | **stemming**: شيل النهاية ([[ing]]) ورجّعها لأصلها |
+| Postgres | [['postgr']] | نفس القاعدة: الـ stemmer شاف [[es]] كنهاية جمع وقصها، حتى لو مش كلمة إنجليزي حقيقية |
+| in | اختفت | **stop word**: كلمة متكررة في كل نص ملهاش قيمة في البحث |
+| Docker | [['docker']] | حروف صغيرة بس |
+
+والرقم بعد [[:]] هو **مكان** الكلمة في النص الأصلي (in كانت رقم ٣، اتشالت بس الترقيم فضل). المكان ده بيستخدم في البحث عن كلمات ورا بعض.
+
+### الخطوة ٢: [[setweight(..., 'A')]]
+
+بتعلّم كل كلمة في الـ tsvector بوزن من ٤: [[A]] و [[B]] و [[C]] و [[D]] (A الأعلى):
+
+~~~text SELECT setweight(to_tsvector('english', 'Running Postgres in Docker'), 'A');
+            setweight
+----------------------------------
+ 'docker':4A 'postgr':2A 'run':1A
+~~~
+
+كلمات العنوان بوزن A، وكلمات الـ body بوزن B. فالمقالة اللي الكلمة في **عنوانها** هتطلع أعلى في الترتيب.
+
+### الخطوة ٣: [[||]]
+
+مع الـ tsvector، [[||]] بيدمج الاتنين في tsvector واحد.
+
+### الخطوة ٤: [[STORED]]
+
+النتيجة بتتحسب مرة وقت INSERT أو UPDATE وتتخزن، بدل ما تتحسب مع كل بحث. ده شكل العمود بعد ما نضيف المقالات (الخطوة ٣ تحت):
+
+~~~text SELECT id, search FROM articles ORDER BY id;
+ id | search
+----+------------------------------------------------------------------------------------
+  1 | 'backup':14B 'contain':10B 'databas':9B 'docker':4A 'postgr':2A 'run':1A,7B 'volum':12B
+  2 | 'b':11B 'b-tree':10B 'explain':2A 'get':5B 'help':14B 'index':1A,13B 'queri':4B 'report':17B 'run':16B 'slow':6B 'tree':12B
+  3 | 'contain':8B 'data':5B 'docker':1A 'keep':3B 'remov':10B 'volum':2A
+~~~
+
+لاحظ [['run':1A,7B]] في المقالة الأولى: Running في العنوان (مكان ١، وزن A)، و run في الـ body (مكان ٧، وزن B). والترقيم بيكمل من العنوان للـ body. و [[B-tree]] اتقطعت ٣ حاجات: الكلمة كلها والحتتين.
+
+---
+
+## ٢. [[CREATE INDEX articles_search_idx ON articles USING gin (search);]]
+
+[[USING gin]] نوع index غير الـ B-tree العادي. **GIN** = Generalized Inverted Index: بدل «لكل صف، الكلمات اللي فيه» (ده الـ tsvector)، بيخزن العكس: «لكل كلمة، الصفوف اللي فيها». فالبحث عن [['docker']] بيروح للكلمة على طول ويلاقي قايمة الصفوف [[1، 3]] من غير ما يلف على الجدول.
+
+---
+
+## ٣. [[INSERT INTO articles (title, body) VALUES ...]]
+
+٣ مقالات. [[id]] و [[search]] مش مكتوبين: الأول بيتولد، والتاني بيتحسب.
+
+~~~text الناتج
+INSERT 0 3
+~~~
+
+---
+
+## ٤. البحث نفسه
+
+~~~text الأمر
+SELECT id, title, ts_rank(search, q) AS rank
+FROM articles, websearch_to_tsquery('english', 'docker run') q
+WHERE search @@ q
+ORDER BY rank DESC;
+~~~
+
+### [[websearch_to_tsquery('english', 'docker run')]]
+
+بتحوّل كلام اليوزر لـ tsquery، بنفس قواعد اللغة:
+
+~~~text SELECT websearch_to_tsquery('english', 'docker run');
+ websearch_to_tsquery
+----------------------
+ 'docker' & 'run'
+~~~
+
+[[&]] = AND: الكلمتين لازم يبقوا موجودين. ولاحظ إن [[run]] عدّت على الـ stemmer هي كمان، عشان تطابق [['run']] اللي في الـ tsvector.
+
+### [[FROM articles, websearch_to_tsquery(...) q]]
+
+الدالة بترجّع قيمة واحدة، وكتابتها في FROM بفاصلة بتخليها «جدول من صف واحد» اسمه [[q]]. فائدتها إنك تستخدم [[q]] مرتين (في WHERE وفي ts_rank) من غير ما تكتب الدالة مرتين.
+
+### [[WHERE search @@ q]]
+
+[[@@]] = «الـ tsvector ده بيطابق الـ tsquery ده؟». ده الشرط اللي بيستخدم الـ GIN index. على ٣ صفوف Postgres بيفضّل يقراهم على طول، فعشان نشوف الخطة بالـ index قفلنا الـ Seq Scan مؤقتًا ([[SET enable_seqscan = off]]، للتجربة بس):
+
+~~~text EXPLAIN SELECT id FROM articles WHERE search @@ websearch_to_tsquery('english', 'docker run');
+ Bitmap Heap Scan on articles
+   Recheck Cond: (search @@ '''docker'' & ''run'''::tsquery)
+   ->  Bitmap Index Scan on articles_search_idx
+         Index Cond: (search @@ '''docker'' & ''run'''::tsquery)
+~~~
+
+### [[ts_rank(search, q) AS rank]] و [[ORDER BY rank DESC]]
+
+[[ts_rank]] بيدّي كل صف مطابق درجة: قد إيه الكلمات موجودة، وبأنهي وزن. الأوزان الافتراضية: A = 1.0، و B = 0.4، و C = 0.2، و D = 0.1.
+
+~~~text الناتج
+ id |           title            |   rank
+----+----------------------------+-----------
+  1 | Running Postgres in Docker | 0.9898499
+(1 row)
+~~~
+
+صف واحد بس، ليه؟ لأن الـ AND محتاج الكلمتين:
+
+| المقالة | docker؟ | run؟ | النتيجة |
+|---|---|---|---|
+| ١ Running Postgres in Docker | أيوه (A) | أيوه (A و B) | طابقت |
+| ٢ Indexes explained | لأ | أيوه (running) | لأ |
+| ٣ Docker volumes | أيوه (A) | لأ | لأ |
+
+والوزن بيبان لو الكلمة في عنوان مقالة وفي الـ body بتاع مقالة تانية. [[volumes]] في عنوان ٣ (وزن A) وفي الـ body بتاع ١ (وزن B):
+
+~~~text نفس الاستعلام بكلمة 'volumes'
+ id |           title            |    rank
+----+----------------------------+------------
+  3 | Docker volumes             |  0.6079271
+  1 | Running Postgres in Docker | 0.24317084
+~~~
+
+نفس الكلمة مرة واحدة في الاتنين، بس ٠.٦٠٨ × ٠.٤ (وزن B) = ٠.٢٤٣. فالمقالة اللي الكلمة في عنوانها طلعت الأول.
+
+
+---
+
+## ٥. [[SELECT to_tsvector('english', 'Running containers ran quickly');]]
+
+~~~text الناتج
+              to_tsvector
+---------------------------------------
+ 'contain':2 'quick':4 'ran':3 'run':1
+~~~
+
+running بقت run، و containers بقت contain، و quickly بقت quick. بس [[ran]] فضلت ran: الـ stemmer (اسمه Snowball) بيقص نهايات بقواعد ثابتة، مش قاموس، فميعرفش إن ran ماضي run. وقارنها بـ configuration اسمه [['simple']] (من غير stemming ولا stop words):
+
+~~~text SELECT to_tsvector('simple', 'Running containers ran quickly');
+ 'containers':2 'quickly':4 'ran':3 'running':1
+~~~
+
+عشان كده الـ configuration لازم يبقى **نفسه** في التخزين وفي البحث: لو خزنت بـ english ودوّرت بـ simple، [['running']] مش هتلاقي [['run']].
+
+---
+
+## ٦. [[SELECT websearch_to_tsquery('english', '"docker volumes" -backup or index');]]
+
+~~~text الناتج
+            websearch_to_tsquery
+--------------------------------------------
+ 'docker' <-> 'volum' & !'backup' | 'index'
+~~~
+
+| اللي اليوزر كتبه | بقى | معناه |
+|---|---|---|
+| [["docker volumes"]] بين علامتين | [['docker' <-> 'volum']] | [[<->]] = الكلمتين **ورا بعض** بالظبط (ده فايدة الأماكن في الـ tsvector) |
+| [[-backup]] | [[!'backup']] | [[!]] = NOT، المقالة متكونش فيها الكلمة |
+| [[or]] | الخط الرأسي اللي قبل [['index']] | OR |
+| الباقي | [[&]] بينهم | AND |
+
+يعني: (عبارة «docker volumes» ومن غير backup) **أو** index.
+
+---
+
+## ٧. [[SELECT ts_headline('english', body, websearch_to_tsquery('english', 'slow reports')) FROM articles WHERE id = 2;]]
+
+[[ts_headline]] بتاخد النص الأصلي (مش الـ tsvector) والـ query، وترجّع النص والكلمات المطابقة معلّمة بـ [[<b>]]:
+
+~~~text الناتج
+ Why queries get <b>slow</b> and how a B-tree index helps when running <b>reports</b>
+~~~
+
+ده للعرض في صفحة النتايج. وده HTML، فلو النص نفسه جاي من يوزرز لازم يتعمله sanitize قبل ما يتحط في الصفحة.
+
+---
+
+## ٨. اللي بيحصل في الـ «جرّب»
+
+~~~text الناتج
+-- 'running'
+           title
+----------------------------
+ Running Postgres in Docker
+ Indexes explained
+
+-- 'containers'
+ Running Postgres in Docker
+ Docker volumes
+
+-- 'docker -backups'   →   'docker' & !'backup'
+ Docker volumes
+
+SELECT to_tsquery('english', 'docker run');
+ERROR:  syntax error in tsquery: "docker run"
+~~~
+
+- [[containers]] بقت [['contain']]، فطابقت [[container]] المفرد في ١ و ٣.
+- [[-backups]] اتعملها stemming لـ [['backup']]، فاستبعدت المقالة الأولى اللي فيها backups.
+- [[to_tsquery]] محتاجة operators مكتوبة صريح ([['docker & run']])، فمسافة بين كلمتين = syntax error. عشان كده كلام اليوزر يروح لـ [[websearch_to_tsquery]] أو [[plainto_tsquery]] (اللي بيحط [[&]] بين كل الكلمات)، و [[to_tsquery]] للي انت بتكتبه في الكود، زي [[to_tsquery('english', 'dock:*')]] للـ prefix في الـ autocomplete.
+
+---
+
+## الخلاصة
+
+| الحتة | بتعمل إيه |
+|---|---|
+| [[to_tsvector('english', نص)]] | نص ← كلمات بأصلها وأماكنها، من غير stop words |
+| [[setweight(..., 'A')]] | وزن للكلمات (العنوان أعلى من الـ body) |
+| عمود [[GENERATED ... STORED]] + [[gin]] index | يتحسب مرة، والبحث يروح للكلمة على طول |
+| [[websearch_to_tsquery('english', كلام_اليوزر)]] | كلام البحث ← tsquery، ومبيرميش error |
+| [[search @@ q]] | مطابق ولا لأ (بالـ index) |
+| [[ts_rank(search, q)]] | درجة للترتيب، على الصفوف اللي طابقت بس |
+| [[ts_headline(...)]] | النص والكلمات المطابقة جوه [[<b>]] |
+
+- نفس الـ configuration ([['english']]) في التخزين والبحث، وإلا مفيش تطابق.
+- الكلمات بتتطابق بأصلها: running = run، بس ran مش run.
+- الكلمات في البحث بينها AND افتراضيًا.`,
           lines: [
             "جدول المقالات:",
             "رقم،",
@@ -575,12 +1838,341 @@ EXPLAIN ANALYZE SELECT name FROM teachers WHERE name_norm LIKE '%فاطمه%';`,
 
 الـ index [[gin (col gin_trgm_ops)]] بيخدم [[%]] و [[<%]] و [[LIKE '%x%']] و [[ILIKE]] كمان. يعني نفس الـ index بيحل مشكلة «LIKE بـ % في الأول مبيستخدمش index» من درس LIKE و ILIKE.
 
-والـ full-text بالعربي: Postgres فيه configuration [[arabic]] بيعمل stemming ([[to_tsvector('arabic', 'المدرسون')]] بتطلع [['مدرس']])، بس مبيطبّعش الهمزات والتاء المربوطة. فلو محتاجه: [[to_tsvector('arabic', ar_normalize(body))]] في العمود الـ generated، ونفس الحاجة في البحث.
+والـ full-text بالعربي: Postgres فيه configuration [[arabic]] بيعمل stemming ([[to_tsvector('arabic', 'المدرسون')]] بتطلع [['مدرس']])، وبيشيل الهمزات والتشكيل كمان، بس مش بنفس النتيجة لكل شكل للكلمة: «مصطفى» بتبقى [['مصطفي']] و «مصطفي» بتبقى [['مصطف']]، و «القاهرة» [['قاهر']] و «القاهره» [['قاهره']]، فمش بيطابقوا بعض. فلو محتاجه: [[to_tsvector('arabic', ar_normalize(body))]] في العمود الـ generated، ونفس الحاجة في البحث.
 
 و Supabase فيه pg_trgm و unaccent جاهزين، فعّلهم من Database ← Extensions.`,
             when: "أي بحث بأسماء عربي (مدرسين، وطلاب، وعملاء، ومنتجات)، وأي بحث لازم يستحمل أخطاء إملائية أو autocomplete. للنصوص الطويلة: full-text على النص المتطبّع، ومعاه pg_trgm للأسماء.",
             mistakes: R`تطبّع المتخزن وتنسى تطبّع كلام البحث (أو العكس). [[translate]] بعدد حروف مختلف أو ترتيب غلط، فالتاء المربوطة تبقى ي (حصلت وانا بكتب الدرس ده). الدالة من غير IMMUTABLE فالعمود الـ generated يرفض. threshold عالي فمفيش نتايج، أو واطي فكل حاجة تطلع. بحث بحرف أو حرفين على trigram index. و ILIKE على name الأصلي وتفتكر إنه هيلاقي «احمد» جوه «أحمد».`
           },
+          teach: R`## الفكرة: وحّد شكل الكتابة، وبعدين قارن بالتشابه
+
+المثال بيحل مشكلتين مختلفتين بأداتين:
+
+1. **نفس الاسم مكتوب بأشكال مختلفة** («أحمد» و «احمد»، «فاطمة» و «فاطمه»): دالة [[ar_normalize]] بتحوّل أي شكل لشكل واحد، وبتتطبق على المتخزن وعلى كلام البحث.
+2. **غلطة إملائية** («مصطفا» بدل «مصطفى»): extension اسمه [[pg_trgm]] بيقيس **قد إيه** نصين شبه بعض بدل «متطابقين ولا لأ».
+
+كل الناتج تحت حقيقي من psql على [[postgres:18]] جوه Docker.
+
+---
+
+## ١. [[CREATE EXTENSION IF NOT EXISTS pg_trgm;]]
+
+الـ **extension** إضافة رسمية بتيجي مع Postgres بس مش متفعّلة لوحدها. [[CREATE EXTENSION]] بيفعّلها في القاعدة دي، و [[IF NOT EXISTS]] بيخلي الأمر ميفشلش لو كانت متفعّلة قبل كده.
+
+~~~text الناتج
+CREATE EXTENSION
+~~~
+
+[[pg_trgm]] بيضيف دوال زي [[similarity]] و [[word_similarity]]، وعلامات زي [[%]] و [[<%]]، ونوع index اسمه [[gin_trgm_ops]]. هنشوفهم كلهم تحت.
+
+---
+
+## ٢. دالة التطبيع: [[ar_normalize]]
+
+~~~text الأمر
+CREATE FUNCTION ar_normalize(t text) RETURNS text
+LANGUAGE sql IMMUTABLE PARALLEL SAFE AS $$
+  SELECT translate(regexp_replace(lower(t), '[ً-ْـ]', '', 'g'), 'أإآٱةى', 'ااااهي');
+$$;
+~~~
+
+### رأس الدالة
+
+| الحتة | معناها |
+|---|---|
+| [[ar_normalize(t text) RETURNS text]] | نص داخل ونص خارج |
+| [[LANGUAGE sql]] | استعلام واحد (درس CREATE FUNCTION) |
+| [[IMMUTABLE]] | وعد: نفس المدخل بيرجّع نفس المخرج **دايمًا**، مش بس جوه استعلام واحد. ده شرط عشان الدالة تتحط في generated column أو index |
+| [[PARALLEL SAFE]] | آمنة إن Postgres يشغّلها في كذا worker في نفس الوقت لو الاستعلام اتقسم. مش شرط، بس من غيرها Postgres مش هيقسم أي استعلام بيستخدمها |
+
+### الجسم من جوه لبرة
+
+السطر فيه ٣ دوال جوه بعض، والتنفيذ من جوه:
+
+#### الخطوة ١: [[lower(t)]]
+
+بتصغّر الحروف الإنجليزي بس. العربي ملوش كابيتال، فبيعدّي زي ما هو:
+
+~~~text SELECT lower('Ahmed أحمد');
+ ahmed أحمد
+~~~
+
+موجودة عشان لو الاسم فيه إنجليزي ([[Ahmed]] و [[ahmed]] يبقوا واحد).
+
+#### الخطوة ٢: [[regexp_replace(..., '[ً-ْـ]', '', 'g')]]
+
+[[regexp_replace(نص, نمط, بديل, flags)]] بتدوّر على النمط وتبدّله. هنا البديل [['']] (نص فاضي)، يعني **امسح**. و [['g']] = global: امسح كل مرة تلاقيه، مش أول مرة بس.
+
+والنمط [[[ً-ْـ]]]: القوسين المربعين [[[ ]]] في regex معناهم «أي حرف واحد من دول». وجواهم حاجتين:
+- [[ً-ْ]]: **range** من حرف لحرف. أوله التنوين بالفتح وآخره السكون، ودول في Unicode ورا بعض: من U+064B لـ U+0652. يعني كل التشكيل: الفتحة والضمة والكسرة والتنوين والشدة والسكون.
+- [[ـ]]: حرف التطويل (U+0640) اللي في «الـــقاهرة».
+
+أرقامهم اتأكدنا منها بـ [[to_hex(ascii(...))]] (رقم الحرف بالـ hex):
+
+~~~text SELECT to_hex(ascii('ً')), to_hex(ascii('ْ')), to_hex(ascii('ـ'));
+ 64b | 652 | 640
+~~~
+
+~~~text SELECT regexp_replace('مُحَمَّد الـــقاهرة', '[ً-ْـ]', '', 'g');
+ محمد القاهرة
+~~~
+
+وليه ده مهم؟ التشكيل حروف حقيقية في النص، حتى لو عينك مش شايفاها كحروف:
+
+~~~text SELECT length('مُحَمَّد'), length('محمد');
+ 8 | 4
+~~~
+
+«مُحَمَّد» ٨ حروف: ٤ حروف وفتحة وضمة وشدة وفتحة. فمقارنتها بـ «محمد» من غير تطبيع = نصين مختلفين.
+
+#### الخطوة ٣: [[translate(..., 'أإآٱةى', 'ااااهي')]]
+
+[[translate(نص, من, إلى)]] بتبدّل حرف بحرف: أول حرف في [[من]] بيتبدّل بأول حرف في [[إلى]]، والتاني بالتاني، وهكذا:
+
+| من | إلى |
+|---|---|
+| أ | ا |
+| إ | ا |
+| آ | ا |
+| ٱ (ألف وصل) | ا |
+| ة | ه |
+| ى | ي |
+
+~~~text SELECT translate('أحمد إبراهيم مدرسة مصطفى', 'أإآٱةى', 'ااااهي');
+ احمد ابراهيم مدرسه مصطفي
+~~~
+
+خد بالك: الربط **بالمكان**، فلو عدد الحروف مختلف، الحروف الزيادة في [[من]] بتتمسح بدل ما تتبدّل:
+
+~~~text SELECT translate('abc', 'ab', 'x');
+ xc
+~~~
+
+[[a]] بقت [[x]]، و [[b]] ملهاش مقابل فاتمسحت. ده نوع الغلط اللي بيطلّع «فاطم» بدل «فاطمه» من غير أي error.
+
+~~~text الناتج
+CREATE FUNCTION
+~~~
+
+---
+
+## ٣. [[SELECT ar_normalize('مُحَمَّد أحمد إبراهيم مدرسة مصطفى الـــقاهرة');]]
+
+~~~text الناتج
+             ar_normalize
+---------------------------------------
+ محمد احمد ابراهيم مدرسه مصطفي القاهره
+~~~
+
+التشكيل والتطويل راحوا، والهمزات بقت ا، والتاء المربوطة بقت ه، والألف المقصورة بقت ي. الشكل النهائي مش «صح إملائيًا»، وده مش مهم: هو للمقارنة بس، مش للعرض.
+
+---
+
+## ٤. جدول المدرسين: [[CREATE TABLE teachers (...)]]
+
+~~~text الأمر
+CREATE TABLE teachers (
+  id        bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  name      text NOT NULL,
+  name_norm text GENERATED ALWAYS AS (ar_normalize(name)) STORED
+);
+~~~
+
+- [[name]]: الاسم زي ما اتكتب، ده اللي بيتعرض لليوزر.
+- [[name_norm]]: generated column (درس generated columns) = [[ar_normalize(name)]]، بيتحسب لوحده مع كل INSERT و UPDATE. ده اللي بندوّر فيه. ومسموح هنا بس لأن الدالة [[IMMUTABLE]].
+
+---
+
+## ٥. [[CREATE INDEX teachers_name_trgm ON teachers USING gin (name_norm gin_trgm_ops);]]
+
+- [[USING gin]]: نفس نوع الـ index بتاع الـ full-text (لكل حتة، الصفوف اللي فيها).
+- [[gin_trgm_ops]]: الـ **operator class**، يعني «الـ index ده يقطّع النص trigrams». من غيره Postgres مش هيعرف يعمل GIN على text.
+
+نفس الـ index ده بيخدم [[%]] و [[<%]] و [[LIKE '%...%']] و [[ILIKE]].
+
+---
+
+## ٦. [[INSERT INTO teachers (name) VALUES ...]]
+
+٤ أسماء فيها همزات وتشكيل وتاء مربوطة وألف مقصورة. بعد الـ INSERT:
+
+~~~text SELECT name, name_norm FROM teachers;
+      name      |   name_norm
+----------------+----------------
+ أحمد إبراهيم   | احمد ابراهيم
+ مُحَمَّد مصطفى     | محمد مصطفي
+ فاطمة الزهراء  | فاطمه الزهراء
+ أسامة عبد الله | اسامه عبد الله
+~~~
+
+(العمود بيبان مش مظبوط عند «مُحَمَّد» لأن psql بيحسب التشكيل حروف وهو بيرسم الجدول.)
+
+---
+
+## ٧. [[SELECT name FROM teachers WHERE name_norm LIKE '%' || ar_normalize('فاطمه') || '%';]]
+
+نفك الشرط:
+- [[ar_normalize('فاطمه')]]: كلام البحث بيتطبّع **بنفس الدالة**، فبقى [[فاطمه]].
+- [[||]] لزق نصوص، فالنمط النهائي [['%فاطمه%']]. و [[%]] في LIKE = أي حاجة (درس LIKE و ILIKE).
+- الشرط على [[name_norm]]، والعرض من [[name]].
+
+~~~text الناتج
+     name
+---------------
+ فاطمة الزهراء
+~~~
+
+اليوزر كتب بالهاء، والمتخزن بالتاء، والاتنين بقوا [[فاطمه]] بعد التطبيع. والعرض بالاسم الأصلي.
+
+---
+
+## ٨. البحث بغلطة إملائية: [[similarity]] و [[%]]
+
+~~~text الأمر
+SELECT name, similarity(name_norm, ar_normalize('محمد مصطفا')) AS score
+FROM teachers
+WHERE name_norm % ar_normalize('محمد مصطفا')
+ORDER BY score DESC;
+~~~
+
+### يعني إيه trigram؟
+
+[[pg_trgm]] بيقطّع النص لحتت كل واحدة **٣ حروف ورا بعض**، بعد ما يحط مسافتين قبل كل كلمة ومسافة بعدها. على كلمة إنجليزي عشان تبان:
+
+~~~text SELECT show_trgm('cat');
+ {"  c"," ca","at ",cat}
+~~~
+
+(مع العربي [[show_trgm]] بيعرض كل trigram كرقم hex، لأن الحروف العربي أكتر من byte فـ pg_trgm بيخزن الـ trigram كـ hash. الفكرة نفسها.)
+
+### [[similarity(a, b)]]
+
+= عدد الـ trigrams المشتركة ÷ عدد الـ trigrams في الاتنين من غير تكرار. من ٠ (مفيش أي حاجة مشتركة) لـ ١ (نفس النص). على أسمائنا:
+
+~~~text similarity(name_norm, 'محمد مصطفا') لكل المدرسين
+      name      | similarity
+----------------+------------
+ مُحَمَّد مصطفى     |  0.6666667
+ أحمد إبراهيم   |        0.1
+ فاطمة الزهراء  |          0
+ أسامة عبد الله |          0
+~~~
+
+ليه ٠.٦٦٧؟ [['محمد مصطفي']] فيها ١٠ trigrams، و [['محمد مصطفا']] فيها ١٠، والمشترك ٨ (كله ماعدا الحتت اللي فيها آخر حرف). فـ ٨ ÷ (١٠ + ١٠ − ٨) = ٨ ÷ ١٢ = ٠.٦٦٧.
+
+### [[a % b]]
+
+= «[[similarity(a, b)]] أكبر من أو يساوي الحد». والحد اسمه [[pg_trgm.similarity_threshold]]:
+
+~~~text SHOW pg_trgm.similarity_threshold;
+ 0.3
+~~~
+
+فالـ WHERE بتشيل أي حاجة تحت ٠.٣، وده اللي بيستخدم الـ index. والـ SELECT بيحسب الدرجة تاني للترتيب.
+
+~~~text الناتج
+    name    |   score
+------------+-----------
+ مُحَمَّد مصطفى | 0.6666667
+(1 row)
+~~~
+
+لو كتبت [[=]] بدل [[%]] مكانش هيطلع حاجة، لأن «مصطفا» مش «مصطفي».
+
+---
+
+## ٩. [[SELECT name FROM teachers WHERE name LIKE '%احمد%';]]
+
+نفس البحث على [[name]] الأصلي من غير تطبيع:
+
+~~~text الناتج
+ name
+------
+(0 rows)
+~~~
+
+المتخزن «أحمد» بهمزة، و LIKE بيقارن حرف بحرف. و [[ILIKE]] نفس النتيجة (اتجرّب: [[0 rows]])، لأنه بيتجاهل الكابيتال بس، والهمزة مش كابيتال.
+
+---
+
+## ١٠. اللي بيحصل في الـ «جرّب»
+
+### «اسامه» بطريقتين
+
+~~~text الناتج
+SELECT name FROM teachers WHERE name_norm LIKE '%' || ar_normalize('اسامه') || '%';
+      name
+----------------
+ أسامة عبد الله
+
+SELECT name, word_similarity(ar_normalize('اسامه'), name_norm) AS score
+FROM teachers WHERE ar_normalize('اسامه') <% name_norm;
+      name      | score
+----------------+-------
+ أسامة عبد الله |     1
+~~~
+
+[[word_similarity(كلمة, نص)]] بتدوّر على أقرب **جزء** من النص الطويل للكلمة، بدل ما تقارن الكلمة بالاسم كله. «اسامه» موجودة كاملة جوه «اسامه عبد الله» فالدرجة ١. و [[<%]] هو الشرط بتاعها، وحده [[pg_trgm.word_similarity_threshold]] = ٠.٦ افتراضيًا (اتجرّب بـ [[SHOW]]).
+
+### «ابراهم» (ناقصها ي)
+
+~~~text الناتج
+SELECT name FROM teachers WHERE name_norm LIKE '%' || ar_normalize('ابراهم') || '%';
+(0 rows)
+
+SELECT name FROM teachers WHERE ar_normalize('ابراهم') <% name_norm;
+     name
+--------------
+ أحمد إبراهيم
+~~~
+
+الدرجات نفسها:
+
+~~~text SELECT word_similarity('ابراهم', 'احمد ابراهيم'), similarity('ابراهم', 'احمد ابراهيم');
+ word_similarity | similarity
+-----------------+------------
+      0.71428573 | 0.35714287
+~~~
+
+[[similarity]] بيقارن بالاسم كله فالدرجة ٠.٣٦، و [[word_similarity]] بيقارن بأقرب كلمة فالدرجة ٠.٧١. عشان كده [[<%]] أنسب لما اليوزر بيكتب جزء من الاسم.
+
+### الـ index قبل وبعد (على ٥٠٠٤ صف)
+
+~~~text من غير الـ index
+ Seq Scan on teachers  (actual time=0.010..0.537 rows=1.00 loops=1)
+   Filter: (name_norm ~~ '%فاطمه%'::text)
+   Rows Removed by Filter: 5003
+ Execution Time: 0.547 ms
+~~~
+
+~~~text بالـ index
+ Bitmap Heap Scan on teachers  (actual time=0.018..0.018 rows=1.00 loops=1)
+   Recheck Cond: (name_norm ~~ '%فاطمه%'::text)
+   ->  Bitmap Index Scan on teachers_name_trgm
+         Index Cond: (name_norm ~~ '%فاطمه%'::text)
+ Execution Time: 0.032 ms
+~~~
+
+- [[~~]] هو اسم LIKE جوه Postgres.
+- من غير index: قرا الـ ٥٠٠٤ صف ورمى ٥٠٠٣ ([[Rows Removed by Filter]]).
+- بالـ index: راح للصفوف اللي فيها نفس الـ trigrams على طول، والوقت نزل من ٠.٥٥ لـ ٠.٠٣ ملي ثانية. الفرق ده بيكبر مع حجم الجدول.
+- [[Recheck Cond]]: الـ index بيرشّح صفوف «ممكن» تطابق، و Postgres بيتأكد من الشرط الحقيقي على كل واحد منهم.
+
+---
+
+## الخلاصة
+
+| الأداة | بتحل إيه | مثال |
+|---|---|---|
+| [[ar_normalize]] على المتخزن والبحث | نفس الكلمة بأشكال كتابة مختلفة | «فاطمه» تلاقي «فاطمة» |
+| [[similarity]] و [[%]] | غلطة إملائية في الاسم كله | «محمد مصطفا» تلاقي «مُحَمَّد مصطفى» |
+| [[word_similarity]] و [[<%]] | جزء من الاسم، ولو فيه غلطة | «ابراهم» تلاقي «أحمد إبراهيم» |
+| [[gin (... gin_trgm_ops)]] | السرعة | نفس الـ index للتلاتة وللـ LIKE |
+
+- نفس دالة التطبيع على الاتنين: المتخزن (generated column) وكلام البحث.
+- الدالة لازم [[IMMUTABLE]] عشان تتحط في generated column وعليها index.
+- [[translate]] بيربط الحروف بالمكان: نفس العدد في الناحيتين.
+- التطبيع بيحل اختلاف الكتابة، و pg_trgm بيحل الأخطاء، ومحتاج ٣ حروف على الأقل عشان يشتغل كويس.`,
           lines: [
             "فعّل extension الـ trigrams.",
             "دالة التطبيع: نص داخل ونص خارج،",
