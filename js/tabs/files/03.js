@@ -48,6 +48,116 @@ MORE("files", [
             when: R`أي صفحة ويب، وكمان قوالب الإيميلات، وملفات التقارير اللي بتتفتح في المتصفح، والـ [[index.html]] اللي Vite و React بيبدأوا منه.`,
             mistakes: R`تنسى [[<meta charset="utf-8">]] فالعربي يظهر ملخبط. تفتح الصفحة من [[file://]] وتستغرب إن [[fetch]] أو الـ modules مش شغالين ([[blocked by CORS policy]]): شغّل سيرفر محلي. تكتب مسار من جهازك [[C:\Users\...\logo.png]] فيشتغل عندك بس. وتحفظ الملف [[index.html.txt]] لأن الامتدادات مخفية (درس «إظهار الامتدادات»).`
           },
+          teach: R`## الفكرة
+
+المثال ده ملف [[index.html]] كامل وصغير. هنقراه سطر سطر: كل سطر بيقول للمتصفح إيه، وبعدين نفتحه بطريقتين (دبل كليك، وسيرفر محلي) ونشوف الفرق. السيرفر اتجرّب بـ Python 3.14 على ويندوز وبـ Python 3.13 في Docker (لينكس).
+
+---
+
+## ١. [[<!DOCTYPE html>]]
+
+ده مش تاج، ده إعلان (declaration) بيقول «الملف ده HTML حديث». لازم يبقى أول حاجة في الملف. من غيره المتصفح بيدخل **quirks mode**: وضع بيقلّد متصفحات التسعينات، وفيه حاجات زي حساب عرض الصناديق وارتفاع الجداول بتتحسب غلط.
+
+## ٢. [[<html lang="ar" dir="rtl">]]
+
+- [[<html>]] هو الـ **root**: كل الصفحة جواه، وبيتقفل في آخر سطر بـ [[</html>]].
+- [[lang="ar"]]: اللغة. قارئ الشاشة بينطق الكلام عربي، وجوجل بيعرف لغة الصفحة، والمتصفح بيختار خط مناسب.
+- [[dir="rtl"]] (right to left): الصفحة كلها تبدأ من اليمين. من غيره الفقرات تبقى لازقة في الشمال.
+
+التاج بيتكتب [[<اسم خاصية="قيمة">]]، والحاجات اللي جواه زي [[lang]] اسمها **attributes**.
+
+## ٣. الـ [[<head>]]: معلومات مش بتظهر
+
+~~~text الأسطر من ٣ لـ ٨
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>بوابة الجيم</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[<meta charset="utf-8">]] | الملف متخزن UTF-8 (درس UTF-8). لازم يبقى في أول ١٠٢٤ byte من الملف، عشان كده بيتحط أول حاجة في الـ head |
+| [[<meta name="viewport" ...>]] | الموبايل افتراضيًا بيرسم الصفحة كأنها شاشة عرضها حوالي 980px ويصغّرها. [[width=device-width]] = اعرض الصفحة بعرض الموبايل الحقيقي، و [[initial-scale=1]] = من غير تصغير ولا تكبير |
+| [[<title>]] | الاسم اللي بيظهر في التاب وفي نتايج جوجل والـ bookmarks |
+| [[<link rel="stylesheet" href="style.css">]] | [[rel]] (relation) = الملف ده إيه بالنسبة للصفحة: stylesheet يعني تنسيق. [[href]] (hypertext reference) = مكانه. [[style.css]] من غير [[/]] يعني «جنب ملف الـ HTML» |
+
+و [[<meta>]] و [[<link>]] مبيتقفلوش: دول **void elements**، ملهمش محتوى جواهم.
+
+## ٤. الـ [[<body>]]: اللي بيظهر
+
+- [[<h1>]] (heading 1): العنوان الرئيسي، وفيه لحد [[<h6>]].
+- [[<p class="intro">]]: [[p]] = paragraph (فقرة). و [[class]] اسم بنحطه عشان الـ CSS أو الـ JS يلاقوا العنصر ده ([[.intro]] في درس [[.css]]).
+- [[<a href="/book">من هنا</a>]]: [[a]] = anchor (لينك). [[href="/book"]] بيبدأ بـ [[/]] يعني «من أول الموقع»: [[http://localhost:8000/book]].
+- [[<img src="logo.png" alt="لوجو الجيم">]]: [[src]] (source) مكان الصورة، و [[alt]] (alternative) النص اللي يظهر لو الصورة مظهرتش، وقارئ الشاشة بيقراه. و [[<img>]] void زي [[<meta>]].
+- [[<script src="app.js" defer>$__lt/script>]]: ملف JavaScript. [[defer]] = نزّله دلوقتي بس متنفذوش غير لما الصفحة كلها تتبني. ده بيخلي الكود يلاقي العناصر، ومبيوقفش رسم الصفحة. و [[<script>]] **لازم** يتقفل حتى لو فاضي.
+
+## ٥. الطريقة الأولى: دبل كليك
+
+الرابط فوق بيبقى حاجة زي:
+
+~~~text شريط العنوان
+file:///C:/Users/ali/lab/site/index.html
+~~~
+
+[[file://]] معناها «ملف من الديسك» مش من سيرفر. الصفحة بتظهر، والصورة والـ CSS لو موجودين جنبها بيتحمّلوا. بس المتصفح بيعامل [[file://]] بحذر: [[fetch("data.json")]] و [[<script type="module">]] بيترفضوا برسالة [[blocked by CORS policy]].
+
+## ٦. الطريقة الصح: سيرفر محلي
+
+~~~bash
+python3 -m http.server 8000
+~~~
+
+- [[python3]] (على ويندوز [[python]] أو [[py]]).
+- [[-m]] (module): شغّل module جاهز جوه Python بدل ملف بتاعك.
+- [[http.server]]: سيرفر ملفات بسيط بيعرض الفولدر الحالي.
+- [[8000]]: رقم الـ port. أي رقم فاضي فوق 1024 ينفع.
+
+على لينكس (Docker، Python 3.13):
+
+~~~text الناتج
+Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
+~~~
+
+وعلى ويندوز بـ Python 3.14 السطر بيقول [[Serving HTTP on :: port 8000 (http://[::]:8000/) ...]]. [[0.0.0.0]] و [[::]] معناهم «اسمع على كل كروت الشبكة» (الأول IPv4 والتاني IPv6)، وانت بتفتح [[http://localhost:8000]].
+
+ولما المتصفح يطلب الصفحة، السيرفر بيكتب سطر لكل طلب. ده اللي ظهر فعلًا لما طلبنا الصفحة والملفين اللي مش موجودين:
+
+~~~text ناتج السيرفر
+::1 - - [07/Oct/2026 12:31:46] "GET / HTTP/1.1" 200 -
+::1 - - [07/Oct/2026 12:31:46] code 404, message File not found
+::1 - - [07/Oct/2026 12:31:46] "GET /style.css HTTP/1.1" 404 -
+::1 - - [07/Oct/2026 12:31:46] code 404, message File not found
+::1 - - [07/Oct/2026 12:31:46] "GET /app.js HTTP/1.1" 404 -
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[::1]] | مين طلب: [[::1]] هو localhost بـ IPv6 (زي [[127.0.0.1]]) |
+| [["GET / HTTP/1.1"]] | الطلب نفسه: [[GET]] = هات، و [[/]] = الفولدر نفسه، فالسيرفر بيبعت [[index.html]] |
+| [[200]] | نجح |
+| [[404]] | مش موجود: [[style.css]] و [[app.js]] لسه معملناهمش |
+
+يعني الصفحة الواحدة = طلب للـ HTML، وبعده طلب منفصل لكل ملف هي بتشاور عليه. وفي الـ DevTools ([[F12]] ثم Console أو Network) هتشوف نفس الـ 404. ولإيقاف السيرفر: [[Ctrl+C]].
+
+---
+
+## ٧. Elements مش زي [[Ctrl+U]]
+
+| | بيعرض إيه |
+|---|---|
+| [[Ctrl+U]] (View Source) | الملف زي ما السيرفر بعته بالظبط |
+| [[F12]] ثم Elements | شجرة الـ DOM: الشكل بعد ما المتصفح قرا الملف وصلّح أخطاءه وبعد ما الـ JS غيّر فيه |
+
+لو نسيت تقفل [[</p>]] مثلًا، [[Ctrl+U]] هيوريك غلطتك، و Elements هيوريك المتصفح قفلها فين.
+
+## الخلاصة
+
+- الهيكل الثابت: [[<!DOCTYPE html>]] ثم [[<html lang dir>]] ثم [[<head>]] (charset أول حاجة، و viewport، و title، و link) ثم [[<body>]].
+- [[<meta>]] و [[<link>]] و [[<img>]] مبيتقفلوش، و [[<script>]] لازم يتقفل.
+- افتح المشاريع من سيرفر محلي ([[python3 -m http.server]]) مش بدبل كليك، وكل ملف بيتشاور عليه = طلب HTTP لوحده.`,
           lines: [
             R`HTML حديث (HTML5).`,
             R`الـ root: اللغة عربي والاتجاه من اليمين.`,
@@ -112,6 +222,100 @@ body {
             when: R`أي تنسيق لصفحة ويب. و [[.scss]] أو Tailwind لما المشروع يكبر.`,
             mistakes: R`تنسى [[;]] فالخاصية اللي بعدها تتبلع وتتجاهل من غير أي رسالة. تكتب تعليق [[//]] فيبوّظ القاعدة اللي بعده. تربط [[.scss]] مباشرة في [[<link>]] والمتصفح مبيفهموش. وتغيّر في الـ CSS ومتشوفش التغيير بسبب الـ cache: [[Ctrl+Shift+R]].`
           },
+          teach: R`## الفكرة
+
+ملف CSS عبارة عن **قواعد** ورا بعض، وكل قاعدة جزئين: «مين» (الـ selector) و «يبقى شكله إيه» (الخصائص بين [[{ }]]). المثال فيه ٤ قواعد، هنفكّهم واحدة واحدة. والتجارب اللي تحت اتعملت في Chrome 154 على ويندوز، وقرينا القيم بـ [[getComputedStyle]] (القيمة النهائية اللي المتصفح طبّقها).
+
+---
+
+## ١. القاعدة الأولى: متغير
+
+~~~text
+:root {
+  --brand: #e11d48;
+}
+~~~
+
+- [[:root]]: selector معناه «أعلى عنصر في الصفحة»، يعني [[<html>]]. أي حاجة تتعرّف هنا كل العناصر تشوفها.
+- [[--brand]]: أي اسم بيبدأ بـ [[--]] اسمه **custom property** (متغير CSS). الاسم انت اللي بتختاره.
+- [[#e11d48]]: لون بالـ hex: [[e1]] أحمر و [[1d]] أخضر و [[48]] أزرق، كل واحد من [[00]] لـ [[ff]] (يعني ٠ لـ ٢٥٥).
+- [[;]] في آخر الخاصية، و [[}]] بتقفل القاعدة.
+
+## ٢. القاعدة التانية: selector بالتاج
+
+~~~text
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+}
+~~~
+
+- [[body]] من غير نقطة ولا شباك = التاج نفسه.
+- [[margin: 0]]: المسافة اللي بره العنصر. المتصفح بيدي الـ body افتراضيًا [[8px]]، وده اللي بيعمل البرواز الأبيض حوالين الصفحة. [[0]] من غير وحدة مسموح لأن صفر هو صفر بأي وحدة.
+- [[font-family: system-ui, sans-serif]]: قايمة خطوط مفصولة بـ [[,]]. المتصفح بياخد أول واحد موجود: [[system-ui]] خط نظامك (Segoe UI على ويندوز مثلًا)، ولو مش موجود [[sans-serif]] (أي خط من غير زوايا).
+
+## ٣. القاعدة التالتة: selector مركّب
+
+~~~text
+.intro a:hover {
+  color: var(--brand);
+}
+~~~
+
+الـ selector ده بيتقري **من اليمين للشمال**:
+
+| الحتة | معناها |
+|---|---|
+| [[:hover]] | لما الماوس يبقى فوقه (اسمها pseudo-class، بتبدأ بـ [[:]]) |
+| [[a]] | لينك |
+| المسافة | «جوه»: اللينك لازم يبقى جوه... |
+| [[.intro]] | ...عنصر عليه [[class="intro"]]. النقطة = class |
+
+يعني: «أي لينك جوه عنصر الـ intro، وقت ما الماوس عليه». و [[var(--brand)]] بتقرا المتغير اللي عرّفناه فوق. جرّبناها: اللون طلع [[rgb(225, 29, 72)]]، وده نفس [[#e11d48]] بالعشري ([[e1]] = 225، و [[1d]] = 29، و [[48]] = 72).
+
+## ٤. القاعدة الرابعة: [[@media]]
+
+~~~text
+@media (max-width: 600px) {
+  h1 { font-size: 1.5rem; }
+}
+~~~
+
+- [[@media]] شرط: القواعد اللي جواه تشتغل بس لو الشرط اتحقق.
+- [[(max-width: 600px)]]: عرض الشاشة (أو شباك المتصفح) 600px أو أقل، يعني موبايل غالبًا.
+- [[1.5rem]]: [[rem]] = root em، يعني «مرة ونص حجم خط الـ [[<html>]]» (افتراضيًا 16px، فده 24px).
+- القاعدة مكتوبة في سطر واحد، وده عادي: CSS مبيفرقش معاه السطور والمسافات.
+
+---
+
+## ٥. CSS مبيقولكش إنك غلطت
+
+دي أهم حاجة في الملف ده. جرّبنا ٣ نسخ من قاعدة الـ body وقرينا اللي المتصفح فهمه:
+
+| اللي كتبناه | المتصفح خزّن إيه | الـ margin | الخط |
+|---|---|---|---|
+| [[body{margin:0;font-family:monospace}]] | [[body { margin: 0px; font-family: monospace; }]] | [[0px]] | [[monospace]] |
+| نفس السطر من غير [[;]] بعد [[margin:0]] | [[body { }]] | [[8px]] | [["Times New Roman"]] |
+| [[// note]] فوق القاعدة | القاعدة كلها اختفت | [[8px]] | [["Times New Roman"]] |
+
+- **من غير [[;]]**: المتصفح قرا [[margin: 0 font-family: monospace]] كقيمة واحدة للـ margin، وهي غلط، فرماها. والخاصيتين راحوا، فالقاعدة بقت فاضية.
+- **[[//]]**: مش تعليق في CSS. المتصفح فهم [[// note body]] كـ selector غلط، فرمى القاعدة كلها. والقاعدة اللي بعدها اشتغلت عادي.
+- وفي الحالتين **مفيش ولا رسالة في الـ Console**. المكان الوحيد اللي هتشوف فيه ده: [[F12]] ثم Elements ثم Styles، الخاصية بتبقى مشطوبة وجنبها علامة تحذير.
+
+التعليق الصح: [[/* كده */]].
+
+## الخلاصة
+
+| الرمز | معناه |
+|---|---|
+| [[body]] و [[.intro]] و [[#header]] | تاج، و class، و id |
+| مسافة بين selectors | «جوه» |
+| [[:hover]] | حالة |
+| [[--x]] و [[var(--x)]] | تعريف متغير وقرايته |
+| [[@media (...)]] | قواعد بشرط |
+| [[/* */]] | التعليق الوحيد |
+
+- CSS بيتجاهل الغلط بصمت: لو حاجة مش بتتطبق، ابدأ بـ Styles في الـ DevTools ودوّر على [[;]] ناقصة أو [[//]].`,
           lines: [
             R`[[:root]] هو الـ html نفسه: مكان المتغيرات العامة.`,
             R`متغير CSS: بيبدأ بـ [[--]].`,
@@ -170,6 +374,128 @@ grep '"type"' package.json`,
             when: R`[[.js]] مع [["type": "module"]] للمشاريع الجديدة. [[.cjs]] لملف إعدادات أداة قديمة بتطلب CommonJS. و [[.mjs]] لسكربت لوحده عايزه ESM من غير package.json.`,
             mistakes: R`تنسخ كود من مقالة قديمة فيها [[require]] في مشروع ESM. تنسى الامتداد في [[import "./utils"]] فيطلعلك [[ERR_MODULE_NOT_FOUND]]. تستخدم [[__dirname]] في ESM فيطلعلك [[__dirname is not defined]]. وتغيّر [["type"]] في package.json فكل ملفات الإعدادات القديمة ([[*.config.js]]) تقع: سمّيها [[.cjs]].`
           },
+          teach: R`## الفكرة
+
+المثال بيشغّل ٤ ملفات: اتنين صح (واحد بكل نظام) واتنين غلط عشان تشوف الرسالتين اللي هتقابلهم كتير. كله اتشغّل فعلًا بـ Node 24.19 على ويندوز (في Git Bash)، والمسارات اتختصرت لـ [[C:\Users\ali\lab\mods]].
+
+الملفات اللي جوه الفولدر:
+
+~~~text الفولدر
+math.mjs     export const add = (a, b) => a + b;
+app.mjs      import { add } from "./math.mjs";  +  console.log("mjs:", add(2, 3));
+util.cjs     module.exports = { twice: (x) => x * 2 };
+app.cjs      const { twice } = require("./util.cjs");  +  console.log("cjs:", twice(21));
+bad.mjs      const fs = require("fs");
+bad.cjs      import fs from "fs";
+package.json {"name": "w"}
+~~~
+
+---
+
+## ١. [[cat math.mjs app.mjs]]: شكل ESM
+
+[[cat]] بيطبع الملفين ورا بعض:
+
+~~~text الناتج
+export const add = (a, b) => a + b;
+import { add } from "./math.mjs";
+console.log("mjs:", add(2, 3));
+~~~
+
+- [[export]]: «الحاجة دي متاحة لأي ملف تاني». من غيرها [[add]] تفضل جوه الملف.
+- [[(a, b) => a + b]]: arrow function، دالة بتاخد [[a]] و [[b]] وترجّع مجموعهم.
+- [[import { add } from "./math.mjs"]]: هات [[add]] من الملف ده. الأقواس [[{ }]] معناها «بالاسم ده بالظبط»، و [[./]] يعني «جنبي في نفس الفولدر»، والامتداد **لازم** يتكتب.
+
+## ٢. [[node app.mjs]]
+
+~~~text الناتج
+mjs: 5
+~~~
+
+الامتداد [[.mjs]] (m = module) قال لـ Node «ده ESM» من غير ما يبص على أي حاجة تانية.
+
+## ٣. [[node app.cjs]]: شكل CommonJS
+
+~~~text الناتج
+cjs: 42
+~~~
+
+- [[module.exports = { twice: ... }]]: الحاجة اللي الملف بيطلّعها. هنا object فيه دالة اسمها [[twice]].
+- [[require("./util.cjs")]]: دالة عادية بتقرا الملف وتنفذه وترجّع الـ [[module.exports]] بتاعه.
+- [[const { twice } = ...]]: اسمها destructuring: خد خانة [[twice]] من الـ object وحطها في متغير بنفس الاسم.
+
+و [[.cjs]] (c = CommonJS) قال لـ Node «ده CommonJS».
+
+## ٤. [[node bad.mjs]]: [[require]] في ESM
+
+~~~text الناتج
+file:///C:/Users/ali/lab/mods/bad.mjs:1
+const fs = require("fs");
+           ^
+
+ReferenceError: require is not defined in ES module scope, you can use import instead
+    at file:///C:/Users/ali/lab/mods/bad.mjs:1:12
+~~~
+
+نقرا الرسالة:
+- أول سطر: الملف ورقم السطر ([[:1]]).
+- السطر نفسه، وتحته [[^]] بتشاور على المكان بالظبط.
+- [[ReferenceError]]: نوع الغلط: «استخدمت اسم مش موجود». في ESM مفيش حاجة اسمها [[require]] أصلًا.
+- [[1:12]]: سطر 1 عمود 12.
+
+## ٥. [[node bad.cjs]]: [[import]] في CommonJS
+
+~~~text الناتج
+(node:50276) Warning: Failed to load the ES module: C:\Users\ali\lab\mods\bad.cjs. Make sure to set "type": "module" in the nearest package.json file or use the .mjs extension.
+C:\Users\ali\lab\mods\bad.cjs:1
+import fs from "fs";
+^^^^^^
+
+SyntaxError: Cannot use import statement outside a module
+~~~
+
+- [[(node:50276)]]: رقم الـ process (PID)، هيختلف عندك.
+- Node 24 بيقولك الحل في الـ Warning: يا [["type": "module"]] يا [[.mjs]].
+- [[SyntaxError]]: الكود نفسه مش مفهوم في النظام ده (عكس [[ReferenceError]] اللي كان الكود مفهوم بس الاسم ناقص).
+
+## ٦. [[grep '"type"' package.json]]
+
+[[grep]] بيدوّر على سطر فيه [["type"]]. والتنصيص الواحد [[' ']] عشان الـ shell ميلمسش علامات [["]] اللي جوه. هنا مطبعش حاجة (والـ exit code كان 1 = ملقاش)، يعني المشروع **مش** معلن إنه ESM، فأي [[.js]] فيه يبقى CommonJS.
+
+---
+
+## ٧. [[.js]] من غير [[type]]: Node بيخمّن
+
+ملف [[plain.js]] فيه [[import]]، و [[package.json]] لسه [[{"name": "w"}]]:
+
+~~~text الناتج
+(node:50308) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/ali/lab/mods/plain.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to C:\Users\ali\lab\mods\package.json.
+2
+~~~
+
+اشتغل وطبع [[2]]، بس بعد ما Node جرّبه CommonJS وفشل وقراه تاني ESM (overhead = شغل زيادة). وبعد ما خلّينا [[package.json]] = [[{"name": "w", "type": "module"}]] طبع [[2]] بس من غير تحذير.
+
+## ٨. فخّين كمان جرّبناهم
+
+| الكود (في [[.mjs]]) | الناتج |
+|---|---|
+| [[console.log(__dirname)]] | [[ReferenceError: __dirname is not defined in ES module scope]] |
+| [[console.log(import.meta.dirname)]] | [[C:\Users\ali\lab\mods]] |
+| [[import { add } from "./math"]] (من غير امتداد) | [[Error [ERR_MODULE_NOT_FOUND]: Cannot find module '...\mods\math']] |
+
+## الخلاصة
+
+| | ESM | CommonJS |
+|---|---|---|
+| تطلّع | [[export]] | [[module.exports =]] |
+| تجيب | [[import ... from "./x.js"]] | [[require("./x")]] |
+| الامتداد اللي بيحسم | [[.mjs]] | [[.cjs]] |
+| [[.js]] بيبقى كده لو | [["type": "module"]] في package.json | مفيش [[type]] (أو [["commonjs"]]) |
+| فولدر الملف | [[import.meta.dirname]] | [[__dirname]] |
+
+- [[require is not defined]] = انت في ESM. [[Cannot use import statement outside a module]] = انت في CommonJS.`,
           lines: [
             R`ملف ESM فيه [[export]]، وملف بيعمل [[import]] منه.`,
             R`بيشتغل لأن الامتداد [[.mjs]] يعني ESM.`,
@@ -206,21 +532,137 @@ grep '"type"' package.json`,
 وأخوات: [[.mts]] و [[.cts]] نفس فكرة [[.mjs]] و [[.cjs]]، و [[.tsx]] لما الملف فيه JSX (الدرس الجاي).`,
           example: R`cat price.ts
 node price.ts
-npx tsc price.ts --declaration --target es2022
+npx -p typescript tsc price.ts --declaration --target es2022
 cat price.d.ts
 node wrong.ts
-npx tsc --noEmit wrong.ts`,
+npx -p typescript tsc --noEmit wrong.ts`,
           try: R`اعمل [[price.ts]] فيه:
 [[type Item = { name: string; price: number; qty: number };]]
 [[export function total(items: Item[]): number { return items.reduce((s, i) => s + i.price * i.qty, 0); }]]
 [[console.log(total([{ name: "تيشيرت", price: 250, qty: 2 }]));]]
-وشغّل المثال. واعمل [[wrong.ts]] فيه [[const n: number = "x"; console.log(n);]] وشغّله بـ node وبـ tsc. ([[npx]] هينزّل TypeScript مؤقتًا لو مش متسطّب.)`,
+وشغّل المثال. واعمل [[wrong.ts]] فيه [[const n: number = "x"; console.log(n);]] وشغّله بـ node وبـ tsc. ([[npx -p typescript]] بينزّل TypeScript مؤقتًا لو مش متسطّب. متكتبش [[npx tsc]] لوحدها في فولدر مفيهوش TypeScript: هتنزّل package قديمة اسمها [[tsc]] مش هي، وتطبعلك [[This is not the tsc command you are looking for]].)`,
           deep: {
             why: R`JavaScript مبيقولكش إنك بعت string لدالة مستنية رقم غير وانت شغّال، وساعات بيكمّل بنتيجة غلط. TypeScript بيكتشف ده وانت بتكتب. بس عشان يفضل متوافق مع كل حاجة، قرروا إن الناتج النهائي JavaScript عادي، والأنواع تتمسح.`,
             how: R`[[tsc]] بيقرا [[.ts]] ويبني صورة لكل الأنواع ويقارن، ولو فيه تعارض بيطلّع error زي [[TS2322]]. بعد كده بيمسح كل حاجة خاصة بـ TypeScript ويكتب [[.js]] (ويحوّل [[import]] لـ [[require]] لو الإعدادات قالت كده). أما Node بيمسح الأنواع بس من غير فحص، عشان كده [[wrong.ts]] اشتغل.`,
             when: R`أي مشروع حجمه معقول: Angular و NestJS وأغلب مشاريع React و Next.js. والـ [[.d.ts]] لما تستخدم مكتبة JS ومحتاج أنواعها ([[npm i -D @types/express]]).`,
             mistakes: R`تفتكر إن [[node app.ts]] أو Vite بيفحصوا الأنواع فتنشر كود فيه أخطاء: حط [[tsc --noEmit]] في الـ CI. تعدّل في ملف [[.js]] اللي [[tsc]] طلّعه بدل الـ [[.ts]] فتعديلك يتمسح في الـ build الجاي. وتعمل commit لفولدر [[dist/]] اللي فيه الناتج.`
           },
+          teach: R`## الفكرة
+
+المثال بيوريك حاجتين: إن الأنواع في TypeScript **مبتأثرش على التشغيل** (Node بيمسحها ويشغّل)، وإن اللي بيفحصها فعلًا هو [[tsc]]. اتشغّل على ويندوز بـ Node 24.19 و TypeScript 7.0.2 (اللي [[npx]] نزّلها)، و [[node price.ts]] اتجرّب كمان بـ Node 22.23 في Docker وطلّع نفس الناتج.
+
+---
+
+## ١. [[cat price.ts]]: الملف
+
+~~~text price.ts
+type Item = { name: string; price: number; qty: number };
+export function total(items: Item[]): number { return items.reduce((s, i) => s + i.price * i.qty, 0); }
+console.log(total([{ name: "تيشيرت", price: 250, qty: 2 }]));
+~~~
+
+نفكّه حتة حتة:
+
+| الحتة | معناها |
+|---|---|
+| [[type Item = { ... }]] | بنعرّف «شكل» اسمه [[Item]]: object فيه [[name]] نص و [[price]] رقم و [[qty]] رقم. ده كلام TypeScript بس، ملوش وجود في JavaScript |
+| [[items: Item[]]] | الـ [[:]] بعد اسم المتغير = نوعه. و [[Item[]]] = array من [[Item]] |
+| [[): number]] | الدالة بترجّع رقم |
+| [[items.reduce((s, i) => s + i.price * i.qty, 0)]] | [[reduce]] بتلف على العناصر وتجمّع: [[s]] المجموع لحد دلوقتي (بيبدأ بـ [[0]])، و [[i]] العنصر الحالي |
+| [[export]] | الدالة متاحة لملفات تانية |
+
+## ٢. [[node price.ts]]
+
+~~~text الناتج
+500
+~~~
+
+250 × 2 = 500. Node من 22.18 بيعمل **type stripping**: بيمسح كل حاجة TypeScript ([[type Item]] و [[: number]]...) ويشغّل الباقي كـ JavaScript. مبيفحصش أي نوع.
+
+## ٣. [[npx -p typescript tsc price.ts --declaration --target es2022]]
+
+| الحتة | معناها |
+|---|---|
+| [[npx]] | شغّل أداة من npm من غير ما تسطّبها في المشروع |
+| [[-p typescript]] | (package) الأداة جاية من package اسمها [[typescript]] |
+| [[tsc]] | TypeScript Compiler |
+| [[price.ts]] | الملف |
+| [[--declaration]] | اعمل كمان ملف [[.d.ts]] |
+| [[--target es2022]] | الـ JavaScript الناتج يبقى بنسخة ES2022 (فيفضل فيه [[=>]] وغيره من غير تحويل لشكل أقدم) |
+
+مطبعش حاجة (ونجاح [[tsc]] صامت)، و [[ls]] بعدها:
+
+~~~text الناتج
+price.d.ts
+price.js
+price.ts
+wrong.ts
+~~~
+
+و [[price.js]] هو نفس الكود من غير أنواع:
+
+~~~text price.js
+export function total(items) { return items.reduce((s, i) => s + i.price * i.qty, 0); }
+console.log(total([{ name: "تيشيرت", price: 250, qty: 2 }]));
+~~~
+
+> فخ: متكتبش [[npx tsc]] من غير [[-p typescript]] في فولدر مفيهوش TypeScript. جرّبناها: npx نزّل package تانية خالص اسمها [[tsc]]، وطبعت [[This is not the tsc command you are looking for]].
+
+## ٤. [[cat price.d.ts]]
+
+~~~text الناتج
+type Item = {
+    name: string;
+    price: number;
+    qty: number;
+};
+export declare function total(items: Item[]): number;
+export {};
+~~~
+
+- مفيش جسم للدالة: الملف ده **أنواع بس**.
+- [[declare]] = «الدالة دي موجودة في مكان تاني (في [[price.js]])، وده شكلها».
+- [[export {};]] بيأكد إن الملف module.
+
+ده بالظبط اللي جوه [[node_modules/@types/express/index.d.ts]] مثلًا: المكتبة مكتوبة JavaScript، والملف ده بيقول للمحرر الدوال بتاخد إيه وترجّع إيه.
+
+## ٥. [[node wrong.ts]]
+
+[[wrong.ts]] = [[const n: number = "x"; console.log(n);]]. بنقول [[n]] رقم وبنحط فيه نص:
+
+~~~text الناتج
+x
+~~~
+
+اشتغل عادي! Node مسح [[: number]] وشغّل [[const n = "x"]].
+
+## ٦. [[npx -p typescript tsc --noEmit wrong.ts]]
+
+[[--noEmit]] = افحص بس، متكتبش أي ملف:
+
+~~~text الناتج
+wrong.ts(1,7): error TS2322: Type 'string' is not assignable to type 'number'.
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[wrong.ts(1,7)]] | السطر 1 والعمود 7 (مكان [[n]]) |
+| [[TS2322]] | رقم الغلط: تقدر تدوّر بيه |
+| [[Type 'string' is not assignable to type 'number']] | «النص مينفعش يتحط في مكان رقم» |
+
+والـ exit code كان 1، فالـ CI يقدر يوقف لو فيه غلط أنواع.
+
+## الخلاصة
+
+| الأداة | بتفحص الأنواع؟ | بتطلّع ملفات؟ |
+|---|---|---|
+| [[node file.ts]] (22.18+) | لأ | لأ، بتشغّل علطول |
+| [[tsc]] | آه | [[.js]] (و [[.d.ts]] مع [[--declaration]]) |
+| [[tsc --noEmit]] | آه | لأ |
+| Vite و esbuild | لأ | آه |
+
+- [[.ts]] = كود بأنواع، و [[.d.ts]] = أنواع بس من غير كود.
+- الأنواع للمحرر و [[tsc]]: الكود الغلط في الأنواع ممكن يشتغل عادي، فلازم [[tsc --noEmit]] في الـ CI.`,
           lines: [
             R`ملف TypeScript فيه [[type]] وأنواع للدالة.`,
             R`Node 22.18+ بيشيل الأنواع ويشغّل: بيطبع [[500]].`,
@@ -238,7 +680,7 @@ npx tsc --noEmit wrong.ts`,
 و [[price.js]] فيه نفس الكود من غير الأنواع.
 
 [[node wrong.ts]] ← [[x]] (اشتغل عادي!)
-[[npx tsc --noEmit wrong.ts]] ← [[wrong.ts(1,7): error TS2322: Type 'string' is not assignable to type 'number'.]]
+[[npx -p typescript tsc --noEmit wrong.ts]] ← [[wrong.ts(1,7): error TS2322: Type 'string' is not assignable to type 'number'.]]
 
 ولو Node عندك أقدم من 22.18، [[node price.ts]] هيقول [[Unknown file extension ".ts"]]، واستخدم [[npx tsx price.ts]].`
         },
@@ -275,6 +717,126 @@ export default function Counter({ title }: Props) {
             when: R`[[.tsx]] في أي مشروع React أو Next.js أو React Native بـ TypeScript. و [[.vue]] لو المشروع Vue، و [[.svelte]] لو Svelte.`,
             mistakes: R`تكتب JSX في ملف [[.ts]] أو [[.js]] (في Vite لازم [[.jsx]]) فيطلعلك [[Expected ">" but found "className"]]. تكتب [[class]] بدل [[className]]. تنسى إن الـ component اسمه لازم يبدأ بحرف كبير ([[<Counter />]]) وإلا React يفتكره تاج HTML. وتحاول تفتح [[.tsx]] في المتصفح مباشرة.`
           },
+          teach: R`## الفكرة
+
+المثال ملف [[Counter.tsx]]: component في React مكتوب TypeScript وفيه JSX. هنقراه سطر سطر، وبعدين نشوف بعينينا الأداة بتحوّله لإيه، لأن ده اللي بيوضّح إن JSX مش HTML. التحويل اتعمل بـ esbuild 0.28.2 (عن طريق [[npx]]) على ويندوز.
+
+---
+
+## ١. الكود سطر سطر
+
+### [[import { useState } from "react";]]
+
+بنجيب [[useState]] من مكتبة React. ده **hook**: دالة بتدي الـ component ذاكرة بتفضل بين كل رسمة والتانية.
+
+### [[type Props = { title: string };]]
+
+نوع TypeScript: الـ component هياخد object فيه [[title]] نص. ده السبب إن الملف [[.tsx]] مش [[.jsx]].
+
+### [[export default function Counter({ title }: Props) {]]
+
+- [[export default]]: ده «الحاجة الأساسية» في الملف، والملف التاني يجيبها بـ [[import Counter from "./Counter"]] من غير [[{ }]].
+- [[Counter]] بحرف كبير: React بيفرّق بين [[<counter>]] (تاج HTML) و [[<Counter>]] (component بتاعك) بالحرف الأول.
+- [[({ title }: Props)]]: الـ props بتيجي object واحد، و [[{ title }]] بتطلّع منه [[title]] على طول (destructuring).
+
+### [[const [count, setCount] = useState(0);]]
+
+[[useState(0)]] بترجّع array فيها حاجتين، والأقواس [[[ ]]] على الشمال بتاخدهم بالترتيب: [[count]] القيمة الحالية (بتبدأ [[0]])، و [[setCount]] الدالة اللي بتغيّرها وبتخلي React يرسم تاني.
+
+### [[return ( ... );]]
+
+الـ component بيرجّع الـ JSX اللي هيترسم. القوس [[(]] بس عشان نكتب على كذا سطر من غير ما JavaScript يفتكر إن [[return]] خلصت في آخر السطر.
+
+### JSX: التاجات
+
+~~~text
+<div className="card">
+  <h2>{title}</h2>
+  <button onClick={() => setCount(count + 1)}>دوس: {count}</button>
+</div>
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[className="card"]] | الـ class بتاع CSS. مش [[class]] لأنها كلمة محجوزة في JavaScript |
+| [[{title}]] | الأقواس [[{ }]] = «هنا قيمة JavaScript»، فبيتحط النص اللي في [[title]] |
+| [[onClick={...}]] | لما حد يدوس، شغّل الدالة دي. بتاخد **دالة** مش نداء |
+| [[() => setCount(count + 1)]] | arrow function بتزوّد العدّاد واحد |
+| [[دوس: {count}]] | نص ثابت وجنبه قيمة |
+
+---
+
+## ٢. [[npx esbuild Counter.tsx --jsx=automatic]]: بيتحوّل لإيه
+
+- [[esbuild]]: أداة build سريعة (هي اللي Vite بيستخدمها جوه).
+- [[--jsx=automatic]]: حوّل JSX للشكل الحديث اللي بيجيب دوال [[jsx]] لوحده. من غير ملف [[--outfile]] الناتج بيتطبع على الشاشة:
+
+~~~text الناتج
+import { jsx, jsxs } from "react/jsx-runtime";
+import { useState } from "react";
+export default function Counter({ title }) {
+  const [count, setCount] = useState(0);
+  return /* @__PURE__ */ jsxs("div", { className: "card", children: [
+    /* @__PURE__ */ jsx("h2", { children: title }),
+    /* @__PURE__ */ jsxs("button", { onClick: () => setCount(count + 1), children: [
+      "دوس: ",
+      count
+    ] })
+  ] });
+}
+~~~
+
+نقرا الفرق:
+
+- [[type Props]] و [[: Props]] **اختفوا**: الأنواع اتمسحت.
+- كل تاج بقى نداء دالة: [[<h2>{title}</h2>]] بقى [[jsx("h2", { children: title })]]. أول argument اسم التاج، والتاني object فيه الـ props، واللي جوه التاج بقى [[children]].
+- [[jsxs]] (بـ s) لما الـ children أكتر من واحد (array).
+- السطر الأول [[import { jsx, jsxs } from "react/jsx-runtime"]] اتضاف لوحده: ده معنى [[automatic]].
+- [[/* @__PURE__ */]] تعليق للـ minifier: «لو الناتج ده مش مستخدم، امسحه عادي».
+- [["دوس: "]] هي «دوس: » مكتوبة بأكواد Unicode ([[د]] = د)، عشان الملف يبقى ASCII بس.
+
+يعني JSX = طريقة مريحة تكتب بيها نداءات [[jsx(...)]]، مش HTML حقيقي.
+
+## ٣. [[npx esbuild Counter.ts]]: نفس الكود بامتداد [[.ts]]
+
+~~~text الناتج
+X [ERROR] Expected ">" but found "className"
+
+    Counter.ts:6:9:
+      6 │     <div className="card">
+        │          ~~~~~~~~~
+        ╵          >
+
+1 error
+~~~
+
+(على لينكس والماك العلامة اللي في الأول [[✘]] بدل [[X]].) الامتداد هو اللي قال لـ esbuild يفهم JSX ولا لأ. في [[.ts]]، [[<div]] بيتقري كـ type assertion قديم ([[<Type>value]])، فبعد اسم النوع بيستنى [[>]] ولقى [[className]]. السطر 6 العمود 9 بالظبط عند [[className]].
+
+---
+
+## ٤. [[.vue]] و [[.svelte]] بنفس الفكرة
+
+ملف واحد فيه ٣ بلوكات، والأداة بتفصلهم:
+
+~~~text Counter.vue
+<template>  الـ HTML، و {{ count }} بدل {count}
+<script setup lang="ts">  الكود
+<style scoped>  CSS للـ component ده بس
+~~~
+
+والكلام ده من docs بتوع Vue و Svelte، ماتجرّبش هنا.
+
+## الخلاصة
+
+| الامتداد | فيه | بيتحوّل بـ |
+|---|---|---|
+| [[.jsx]] | JavaScript + JSX | Vite و esbuild و Babel و SWC |
+| [[.tsx]] | TypeScript + JSX | نفسهم |
+| [[.vue]] | template و script و style | Vite مع plugin Vue |
+| [[.svelte]] | script و HTML و style | Svelte compiler |
+
+- JSX في ملف [[.ts]] أو [[.js]] (في Vite) = [[Expected ">" but found ...]]. غيّر الامتداد.
+- [[className]] مش [[class]]، و [[{ }]] = قيمة JavaScript، والـ component بحرف كبير.`,
           lines: [
             R`[[import]] عادي: hook من React.`,
             R`نوع TypeScript للـ props.`,
@@ -326,6 +888,143 @@ node --enable-source-maps app.min.js`,
             when: R`كل build للـ production. وفعّل الـ source maps في أي أداة بتتابع الأخطاء (Sentry). ولو بتستخدم مكتبة من CDN، استخدم [[.min.js]] بتاعها.`,
             mistakes: R`تعدّل في ملف [[.min.js]] بإيدك (هيتمسح في الـ build الجاي، ومستحيل يتقري). تعمل commit لفولدر [[dist/]] أو [[build/]] اللي فيه الناتج (حطه في [[.gitignore]]). وتستغرب إن الـ DevTools بتعرض كود مش موجود على السيرفر: ده من [["sourcesContent"]] جوه الـ map.`
           },
+          teach: R`## الفكرة
+
+هناخد ملف JavaScript عادي، نصغّره بـ esbuild ونطلّع معاه خريطة، ونفتح الاتنين ونشوف جواهم إيه، وبعدين نرمي غلط ونقارن رسالته من غير الخريطة ومعاها. كله اتشغّل في Docker ([[node:22-alpine]]، يعني لينكس و Node 22) بـ esbuild 0.28.2.
+
+الملف الأصلي [[app.js]]:
+
+~~~text app.js
+// بيحسب إجمالي الفاتورة
+function calculateTotal(items) {
+  let total = 0;
+  for (const item of items) {
+    total += item.price * item.qty;
+  }
+  return total;
+}
+
+console.log(calculateTotal([{ price: 250, qty: 2 }]));
+~~~
+
+---
+
+## ١. [[npx esbuild app.js --minify --sourcemap --outfile=app.min.js]]
+
+| الحتة | معناها |
+|---|---|
+| [[npx esbuild]] | شغّل esbuild من npm من غير تسطيب |
+| [[app.js]] | ملف الدخول |
+| [[--minify]] | صغّر: شيل المسافات والتعليقات، وقصّر الأسامي |
+| [[--sourcemap]] | اعمل ملف [[.map]] جنب الناتج |
+| [[--outfile=app.min.js]] | اسم الناتج |
+
+~~~text الناتج
+  app.min.js      164b
+  app.min.js.map  616b
+
+⚡ Done in 15ms
+~~~
+
+[[b]] = byte.
+
+## ٢. [[ls -l app.js app.min.js app.min.js.map]]
+
+~~~text الناتج
+-rwxrwxrwx    1 root     root           238 Oct  7 09:37 app.js
+-rw-r--r--    1 root     root           164 Oct  7 09:37 app.min.js
+-rw-r--r--    1 root     root           616 Oct  7 09:37 app.min.js.map
+~~~
+
+العمود الخامس هو الحجم بالـ byte: الأصلي 238، والمتصغّر 164. الفرق هنا صغير لأن الملف أصلًا صغير، وفي مكتبة حقيقية الفرق بيبقى ٣ أو ٤ أضعاف. والخريطة أكبر من الكود نفسه، بس دي مش بتتحمّل غير لما الـ DevTools تبقى مفتوحة. (و [[rwxrwxrwx]] في [[app.js]] جاية من إن الفولدر متشارك من ويندوز، ملهاش علاقة بالدرس.)
+
+## ٣. [[cat app.min.js]]
+
+~~~text الناتج
+function calculateTotal(c){let t=0;for(const o of c)t+=o.price*o.qty;return t}console.log(calculateTotal([{price:250,qty:2}]));
+//# sourceMappingURL=app.min.js.map
+~~~
+
+اللي اتغيّر:
+- التعليق راح، والمسافات والسطور الجديدة راحت: كل الكود سطر واحد.
+- [[items]] بقت [[c]]، و [[total]] بقت [[t]]، و [[item]] بقت [[o]]. دي متغيرات **محلية** جوه الدالة، فمحدش بره بيشوفها وتغيير اسمها آمن.
+- [[calculateTotal]] **فضلت** زي ما هي: دي على مستوى الملف، و esbuild ميعرفش لو حد بره بيستخدمها.
+- الـ [[{ }]] حوالين جسم الـ [[for]] اتشالت لأنه سطر واحد.
+
+وآخر سطر [[//# sourceMappingURL=app.min.js.map]] تعليق خاص: المتصفح و Node بيقروه عشان يعرفوا مكان الخريطة.
+
+## ٤. [[jq '.sources, .version' app.min.js.map]]
+
+الخريطة ملف JSON، و [[jq]] بيطلّع منه خانتين (الـ [[,]] = اطبع ده وبعده ده):
+
+~~~text الناتج
+[
+  "app.js"
+]
+3
+~~~
+
+والملف كله (بـ [[jq -c .]]، سطر واحد) فيه:
+
+| الخانة | اللي لقيناه |
+|---|---|
+| [["version"]] | [[3]]: نسخة صيغة الـ source maps |
+| [["sources"]] | [[["app.js"]]]: الملفات الأصلية |
+| [["sourcesContent"]] | الملف الأصلي **كله** بالتعليق العربي |
+| [["names"]] | [[["items","total","item"]]]: الأسامي الأصلية للمتغيرات اللي اتغيّرت |
+| [["mappings"]] | [["AACA,SAAS,eAAeA,..."]]: الربط نفسه، مضغوط |
+
+الـ [["mappings"]] بترميز اسمه Base64 VLQ: كل حتة بين [[,]] بتقول «العمود ده في الملف الصغير = السطر كذا العمود كذا في [[app.js]]، واسمه الأصلي رقم كذا في [["names"]]».
+
+## ٥. [[node --enable-source-maps app.min.js]]
+
+~~~text الناتج
+500
+~~~
+
+لما مفيش غلط، الخيار ده ملوش أي أثر. [[--enable-source-maps]] بيخلي Node يقرا الخريطة **في رسايل الأخطاء بس**.
+
+---
+
+## ٦. التجربة المهمة: غلط في كود متصغّر
+
+حطينا [[throw new Error("boom");]] قبل [[return total]] وعملنا build تاني. من غير الخيار:
+
+~~~text node app.min.js
+/w/t/app.min.js:1
+function calculateTotal(r){let o=0;for(const t of r)o+=t.price*t.qty;throw new Error("boom")}console.log(...
+                                                                     ^
+
+Error: boom
+    at calculateTotal (/w/t/app.min.js:1:76)
+~~~
+
+[[app.min.js:1:76]] = السطر 1 العمود 76. في ملف كله سطر واحد، الرقم ده مش بيقولك حاجة.
+
+ومع الخيار:
+
+~~~text node --enable-source-maps app.min.js
+/w/t/app.js:7
+  throw new Error("boom");
+  ^
+
+Error: boom
+    at calculateTotal (/w/t/app.js:7:9)
+    at Object.<anonymous> (/w/t/app.js:11:13)
+~~~
+
+نفس الغلط، بس بيشاور على [[app.js]] السطر 7، وبيعرض السطر الأصلي بالمسافات. ده بالظبط اللي الـ DevTools و Sentry بيعملوه بالخريطة.
+
+## الخلاصة
+
+| الملف | فيه | بيتنشر للزوار؟ |
+|---|---|---|
+| [[app.js]] | الكود اللي بتكتبه | لأ |
+| [[app.min.js]] | نفس الكود متصغّر + سطر [[sourceMappingURL]] | آه |
+| [[app.min.js.map]] | JSON: الربط + الأسامي + غالبًا الكود الأصلي كله | انت اللي بتقرر (Vite: [[build.sourcemap: "hidden"]] يعملها من غير السطر) |
+
+- متعدّلش [[.min.js]] بإيدك: عدّل الأصلي واعمل build.
+- اللي معاه الـ [[.map]] معاه كودك الأصلي بالتعليقات ([["sourcesContent"]]).`,
           lines: [
             R`[[--minify]] صغّر، و [[--sourcemap]] اعمل الخريطة، و [[--outfile]] اسم الناتج.`,
             R`قارن الأحجام: الأصلي، والمتصغّر، والخريطة.`,
@@ -384,6 +1083,127 @@ chmod +x main.py
             when: R`سكربتات أتمتة، و APIs بـ FastAPI و Django، وتحليل داتا، والذكاء الاصطناعي. و [[.ipynb]] للتجارب وتحليل الداتا خطوة خطوة.`,
             mistakes: R`تعمل commit لـ [[__pycache__]] و [[.venv]]. تسمّي ملفك باسم مكتبة ([[json.py]] أو [[random.py]] أو [[requests.py]]) فـ [[import json]] يجيب ملفك انت ويطلعلك أخطاء غريبة. تخلط Tab ومسافات ([[TabError: inconsistent use of tabs and spaces in indentation]]). وتعمل commit لـ notebook فيه نتايج كبيرة وصور: امسح الـ outputs الأول.`
           },
+          teach: R`## الفكرة
+
+عندنا ملفين: [[prices.py]] فيه دالة، و [[main.py]] بيستخدمها. هنشغّل [[main.py]] ونشوف Python عمل ملف [[.pyc]] لوحده لمين وليه، وبعدين نخلّي [[main.py]] يشتغل لوحده بالـ shebang. اتشغّل على أوبونتو 24.04 في Docker (Python 3.12.3)، وجزء ويندوز في PowerShell بـ Python 3.14.
+
+~~~text prices.py
+def total(items):
+    return sum(i["price"] * i["qty"] for i in items)
+~~~
+
+- [[def]] بتعرّف دالة، و [[:]] في آخر السطر معناها «اللي جاي جسمها»، والجسم **لازم** يبقى مزحوق (indented) لجوه.
+- [[sum(... for i in items)]]: لف على كل [[i]] في [[items]]، احسب [[price * qty]]، واجمعهم.
+
+---
+
+## ١. [[cat main.py]]
+
+~~~text الناتج
+#!/usr/bin/env python3
+from prices import total
+
+if __name__ == "__main__":
+    print(total([{"price": 250, "qty": 2}]))
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[#!/usr/bin/env python3]] | الـ shebang. لـ Python هو مجرد تعليق (بيبدأ بـ [[#]])، بس لينكس بيقراه (خطوة ٥) |
+| [[from prices import total]] | دوّر على [[prices.py]] جنبي، وهات منه [[total]] |
+| [[if __name__ == "__main__":]] | [[__name__]] متغير Python بيحطه لوحده: بيبقى [["__main__"]] لو الملف ده اللي اتشغّل مباشرة، وبيبقى اسم الملف ([["main"]]) لو حد عمله import. فالسطر اللي تحته بيشتغل في الحالة الأولى بس |
+| [[print(total([...]))]] | list فيها dict واحد (منتج)، والنتيجة بتتطبع |
+
+## ٢. [[python3 main.py]]
+
+~~~text الناتج
+500
+~~~
+
+[[python3]] هو الـ interpreter: برنامج بيقرا الملف ويشغّله علطول، من غير خطوة compile منفصلة زي C.
+
+## ٣. [[ls __pycache__]]
+
+~~~text الناتج
+prices.cpython-312.pyc
+~~~
+
+فولدر [[__pycache__]] اتعمل لوحده، وفيه ملف لـ [[prices.py]] **بس**، مش لـ [[main.py]]. Python بيحفظ نسخة جاهزة (bytecode) للملفات اللي بتتعمل [[import]] بس، عشان المرة الجاية ميحللهاش من الأول. الملف اللي بتشغّله مباشرة بيتحلل كل مرة.
+
+والاسم:
+
+| الحتة | معناها |
+|---|---|
+| [[prices]] | اسم الملف الأصلي |
+| [[cpython]] | الـ interpreter: CPython هو Python العادي (فيه غيره زي PyPy) |
+| [[312]] | النسخة 3.12. على ويندوز بـ Python 3.14 طلع [[prices.cpython-314.pyc]] |
+| [[.pyc]] | Python compiled |
+
+النسخة في الاسم عشان لو عندك أكتر من Python، كل واحد يعمل ملفه وميبوّظش التاني.
+
+## ٤. [[file __pycache__/prices.cpython-312.pyc]]
+
+[[file]] بيقرا أول bytes في الملف ويقولك نوعه:
+
+~~~text الناتج
+__pycache__/prices.cpython-312.pyc: Byte-compiled Python module for CPython 3.12 or newer, timestamp-based, .py timestamp: Wed Oct  7 09:39:18 2026 UTC, .py size: 71 bytes
+~~~
+
+- [[Byte-compiled]]: bytecode، يعني binary مش نص. متفتحوش في محرر.
+- [[timestamp-based]] و [[.py timestamp]] و [[.py size: 71 bytes]]: Python كاتب في رأس الملف وقت تعديل [[prices.py]] وحجمه. وفعلًا [[wc -c prices.py]] طلّع [[71]]. المرة الجاية لو الرقمين زي ما هما يستخدم الـ pyc، ولو [[prices.py]] اتغيّر يعمله من جديد. عشان كده مسحه آمن تمامًا.
+
+## ٥. [[chmod +x main.py]] ثم [[./main.py]]
+
+قبل [[chmod]] (ملف جديد اتعمل جوه الكونتينر):
+
+~~~text الناتج
+-rw-r--r-- 1 root root 34 Oct  7 09:40 main.py
+bash: line 1: ./main.py: Permission denied
+~~~
+
+[[rw-r--r--]] مفيهاش [[x]] (execute)، فلينكس رفض، والـ exit code كان [[126]] (= لقى الملف بس مش قادر يشغّله). وبعد [[chmod +x main.py]]:
+
+~~~text الناتج
+-rwxr-xr-x 1 root root 34 Oct  7 09:40 main.py
+500
+~~~
+
+[[+x]] ضاف صلاحية التشغيل. ولما كتبنا [[./main.py]]، لينكس شاف [[#!]] في أول الملف فشغّل فعليًا [[/usr/bin/env python3 ./main.py]]. و [[env]] بيدوّر على [[python3]] في الـ PATH بدل ما نكتب مساره. التفاصيل في درس [[.sh]].
+
+## ٦. TabError
+
+ملف فيه سطر مزحوق بـ Tab وسطر بعده بـ ٨ مسافات:
+
+~~~text الناتج
+  File "/w/tabs.py", line 3
+    return x
+TabError: inconsistent use of tabs and spaces in indentation
+~~~
+
+المسافات في أول السطر جزء من اللغة في Python، فلازم البلوك كله بنفس الطريقة. خلّي المحرر يحوّل Tab لـ ٤ مسافات.
+
+---
+
+## ٧. على ويندوز
+
+~~~powershell
+python main.py
+py main.py
+~~~
+
+الاتنين طبعوا [[500]] في PowerShell. [[py]] هو Python Launcher بتاع ويندوز (بيختار أحدث نسخة متسطّبة). الـ shebang و [[chmod]] ملهمش لازمة: ويندوز بيعرف يشغّل الملف بالامتداد مش بأول سطر.
+
+| | لينكس والماك | ويندوز |
+|---|---|---|
+| تشغيل | [[python3 main.py]] | [[python main.py]] أو [[py main.py]] |
+| لوحده | [[chmod +x]] ثم [[./main.py]] | مش بالطريقة دي |
+| الكاش | [[__pycache__/*.cpython-312.pyc]] | نفسه بنسختك ([[314]]) |
+
+## الخلاصة
+
+- [[.py]] نص بتكتبه، و [[.pyc]] نسخة bytecode Python بيعملها لوحده للملفات اللي بتتعمل import، وبيعيدها لو الأصلي اتغيّر.
+- [[__pycache__/]] و [[.venv/]] في [[.gitignore]].
+- متسمّيش ملفك باسم مكتبة ([[json.py]]): [[import json]] هيجيب ملفك.`,
           lines: [
             R`الملف فيه shebang و [[import]] و [[if __name__]].`,
             R`التشغيل العادي بالـ interpreter.`,
@@ -439,6 +1259,117 @@ unzip -l hello.jar`,
             when: R`Spring Boot و Android وأنظمة الشركات الكبيرة. وعمليًا مش هتكتب [[javac]] بإيدك كتير: Maven أو Gradle بيعملوا كل ده ([[mvn package]] أو [[./gradlew build]]).`,
             mistakes: R`اسم الملف مش زي اسم الـ class ([[class Wrong is public, should be declared in a file named Wrong.java]]). تشغّل [[java Hello.class]] بالامتداد بدل [[java Hello]]. تشغّل jar اتعمل بـ Java 21 على Java 17 فيطلعلك [[UnsupportedClassVersionError]]. وتعمل commit لـ [[.class]] أو [[target/]].`
           },
+          teach: R`## الفكرة
+
+المثال بيمشي رحلة Java كاملة: ملف [[.java]] بتكتبه، يتحوّل لـ [[.class]]، يتشغّل، وبعدين يتحط في [[.jar]] ويتشغّل منه. مفيش JDK على الجهاز اللي اتكتب عليه الشرح ده، فالنواتج اللي تحت هي نواتج الدرس من JDK 21 ومطابقة لـ docs بتوع Oracle و OpenJDK (javac و java و jar)، مش من تشغيل جديد.
+
+الملف [[Hello.java]]:
+
+~~~text Hello.java
+public class Hello { public static void main(String[] args) { System.out.println("Hello من Java"); } }
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[public class Hello]] | class اسمها [[Hello]]، و [[public]] = متاحة لأي حد. ولأنها public **لازم** الملف اسمه [[Hello.java]] بالظبط |
+| [[public static void main(String[] args)]] | نقطة البداية اللي الـ JVM بتدوّر عليها: [[static]] = من غير ما تعمل object، و [[void]] = مبترجّعش حاجة، و [[String[] args]] = الـ arguments |
+| [[System.out.println(...)]] | اطبع سطر |
+
+---
+
+## ١. [[javac Hello.java]]
+
+[[javac]] = Java compiler. بيفحص الكود ويكتب [[Hello.class]]، ولو نجح مبيطبعش حاجة.
+
+## ٢. [[ls]]
+
+~~~text الناتج
+Hello.class  Hello.java
+~~~
+
+ملف [[.class]] لكل class. ده **bytecode**: تعليمات مش لمعالج Intel ولا ARM، لمعالج «وهمي» اسمه JVM (Java Virtual Machine).
+
+## ٣. [[java Hello]]
+
+~~~text الناتج
+Hello من Java
+~~~
+
+[[java]] بيشغّل الـ JVM، وبتديله **اسم الـ class** مش اسم الملف. [[java Hello.class]] غلط: هيدوّر على class اسمها [[Hello.class]] ومش هيلاقيها.
+
+## ٤. [[file Hello.class]]
+
+~~~text الناتج
+Hello.class: compiled Java class data, version 65.0
+~~~
+
+[[65]] رقم نسخة الصيغة، و 65 = Java 21 (القاعدة: رقم الـ Java + 44). وده مكتوب في أول الملف:
+
+~~~text xxd -l 8 Hello.class
+cafe babe 0000 0041
+~~~
+
+- [[cafe babe]]: أول ٤ bytes في **أي** [[.class]]. اسمها magic number، وبيه [[file]] عرف النوع (درس magic bytes).
+- [[0000]]: minor version.
+- [[0041]]: major version بالـ hex: ٤×١٦ + ١ = 65.
+
+وده سبب [[UnsupportedClassVersionError]]: JVM نسخة 17 بتفهم لحد 61 بس، فلو قرت 65 بترفض.
+
+## ٥. [[jar cfe hello.jar Hello Hello.class]]
+
+[[jar]] أداة بتعمل أرشيف. الحروف [[cfe]] options لازقة في بعض (زي [[tar]]):
+
+| الحرف | معناه | قيمته |
+|---|---|---|
+| [[c]] | create: اعمل أرشيف جديد | |
+| [[f]] | file: اسم الأرشيف | [[hello.jar]] |
+| [[e]] | entry point: الـ class اللي فيها main | [[Hello]] |
+
+والقيم بعدها بنفس ترتيب الحروف، وفي الآخر الملفات اللي تتحط جوه ([[Hello.class]]).
+
+## ٦. [[java -jar hello.jar]]
+
+~~~text الناتج
+Hello من Java
+~~~
+
+[[-jar]] = شغّل الأرشيف. الـ JVM بتفتح ملف [[META-INF/MANIFEST.MF]] اللي جوه وتقرا منه سطر [[Main-Class: Hello]] (اللي [[e]] كتبه) وتشغّلها. ده نفس اللي بيحصل مع [[java -jar app.jar]] بتاع Spring Boot.
+
+## ٧. [[unzip -l hello.jar]]
+
+الـ jar مجرد zip، فـ [[unzip]] بيفتحه، و [[-l]] (list) بيعرض اللي جواه من غير ما يفكّه:
+
+~~~text اللي جوه
+META-INF/
+META-INF/MANIFEST.MF
+Hello.class
+~~~
+
+## ٨. لما اسم الملف ميطابقش
+
+~~~text javac Hello2.java (فيه public class Wrong)
+Hello2.java:1: error: class Wrong is public, should be declared in a file named Wrong.java
+~~~
+
+[[Hello2.java:1]] = الملف والسطر، والرسالة بتقولك الحل بالظبط.
+
+---
+
+## ٩. وفين Kotlin؟
+
+[[.kt]] بيتحوّل بـ [[kotlinc]] أو Gradle لـ [[.class]] بنفس الشكل ([[cafe babe]] برضه)، فالـ JVM مش فارق معاها اتكتب بأنهي لغة. و [[.kts]] = Kotlin script، أشهره [[build.gradle.kts]].
+
+## الخلاصة
+
+~~~text
+Hello.java  --javac-->  Hello.class  --jar-->  hello.jar
+  نص              bytecode (cafe babe)       zip + MANIFEST
+                  java Hello                 java -jar hello.jar
+~~~
+
+- اسم الـ public class = اسم الملف، و [[java Hello]] من غير [[.class]].
+- رقم النسخة في الـ [[.class]] (65 = Java 21) لازم الـ JVM تبقى قدّه أو أحدث.
+- [[*.class]] و [[target/]] و [[build/]] في [[.gitignore]]. وعمليًا Maven و Gradle بيعملوا كل ده.`,
           lines: [
             R`الكود: class اسمها [[Hello]] في ملف [[Hello.java]].`,
             R`compile: بيطلّع [[Hello.class]].`,
@@ -492,6 +1423,109 @@ gcc main.c -o app2`,
             when: R`برامج الأداء العالي، والألعاب، والأنظمة المدمجة، و Qt، ومكتبات Python و Node السريعة (اللي بتتبني لما تعمل install). التفاصيل في تاب C و C++.`,
             mistakes: R`تنسى تضيف [[calc.c]] في أمر البناء ([[undefined reference to 'add']]). تحط جسم دالة في [[.h]] وتعمله include في ملفين ([[multiple definition]]). تنسى الـ include guard. وتعمل commit للـ [[.o]] والبرنامج.`
           },
+          teach: R`## الفكرة
+
+٣ ملفات C بيتحوّلوا لبرنامج على خطوتين: كل [[.c]] لوحده يبقى [[.o]]، وبعدين الـ [[.o]] يتجمّعوا في برنامج. وآخر سطر بيوريك إيه اللي بيحصل لو نسيت ملف. مفيش gcc على الجهاز اللي اتكتب عليه الشرح، فالنواتج هي نواتج الدرس من gcc 14 على لينكس x86-64، ومطابقة لـ docs بتوع GCC.
+
+الملفات:
+
+~~~text calc.h
+#ifndef CALC_H
+#define CALC_H
+int add(int a, int b);
+#endif
+~~~
+
+~~~text calc.c
+#include "calc.h"
+int add(int a, int b) { return a + b; }
+~~~
+
+~~~text main.c
+#include <stdio.h>
+#include "calc.h"
+int main(void) { printf("%d\n", add(2, 3)); return 0; }
+~~~
+
+---
+
+## ١. [[cat calc.h]]: الـ header
+
+| السطر | معناه |
+|---|---|
+| [[#ifndef CALC_H]] | «لو [[CALC_H]] **مش** متعرّف» (if not defined) كمّل، وإلا اقفز لـ [[#endif]] |
+| [[#define CALC_H]] | عرّفه دلوقتي، فالمرة الجاية الشرط اللي فوق يفشل |
+| [[int add(int a, int b);]] | **declaration**: «فيه دالة اسمها add بتاخد رقمين وترجّع [[int]]». من غير جسم، و [[;]] في الآخر |
+| [[#endif]] | نهاية الشرط |
+
+الـ ٣ سطور اللي بـ [[#]] اسمهم **include guard**: لو ملف عمل include لـ [[calc.h]] مرتين (مباشرة أو عن طريق header تاني) التعريف ميتكررش.
+
+وأي سطر بيبدأ بـ [[#]] ده للـ **preprocessor**: مرحلة قبل الـ compile بتعدّل النص نفسه. [[#include "calc.h"]] حرفيًا بتلزق محتوى الملف مكانها. [[" "]] = دوّر جنبي الأول، و [[< >]] زي [[<stdio.h>]] = ملفات النظام.
+
+## ٢. [[gcc -c calc.c]] و [[gcc -c main.c]]
+
+- [[gcc]] = GNU Compiler Collection.
+- [[-c]] = compile بس، من غير link.
+
+الناتج [[calc.o]] و [[main.o]]. الـ [[main.o]] فيه كود معالج حقيقي، بس فيه «خرم»: بينادي [[add]] ومش عارف عنوانها، لأنه شاف الـ declaration بس من [[calc.h]]. والـ compile نجح عادي لأن الـ declaration كفاية للـ compiler.
+
+## ٣. [[gcc main.o calc.o -o app]]
+
+هنا gcc بيشغّل الـ **linker** ([[ld]]): بياخد الـ [[.o]] ويسد الخروم ([[add]] لقاها في [[calc.o]]، و [[printf]] في مكتبة C)، ويكتب برنامج واحد. [[-o app]] (output) = اسم الناتج. من غيره كان هيبقى [[a.out]].
+
+## ٤. [[./app]]
+
+~~~text الناتج
+5
+~~~
+
+[[./]] لأن الفولدر الحالي مش في الـ PATH (درس [[.sh]]).
+
+## ٥. [[file calc.o app]]
+
+~~~text الناتج
+calc.o: ELF 64-bit LSB relocatable, x86-64, version 1 (SYSV), not stripped
+app:    ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, ...
+~~~
+
+| الكلمة | معناها |
+|---|---|
+| [[ELF]] | صيغة البرامج على لينكس (على ويندوز PE و [[.exe]]، وعلى الماك Mach-O) |
+| [[64-bit LSB]] | 64 بت، و LSB = little-endian (البايت الصغير الأول) |
+| [[x86-64]] | لمعالج Intel أو AMD. مش هيشتغل على ARM |
+| [[relocatable]] | [[.o]]: حتة لسه هتتجمّع، مش بتتشغّل |
+| [[executable]] | برنامج جاهز |
+| [[dynamically linked]] | بيستخدم مكتبة C الموجودة على الجهاز وقت التشغيل ([[.so]]) بدل ما ينسخها جواه |
+| [[not stripped]] | لسه فيه أسامي الدوال (مفيدة للـ debugging) |
+
+## ٦. [[gcc main.c -o app2]]: نسينا [[calc.c]]
+
+~~~text الناتج
+main.c:(.text+0xf): undefined reference to $__btadd'
+collect2: error: ld returned 1 exit status
+~~~
+
+- الـ compile لـ [[main.c]] **نجح**.
+- [[undefined reference to $__btadd']]: الـ linker ملقاش جسم [[add]] في أي ملف اتدّاله.
+- [[(.text+0xf)]]: [[.text]] جزء الكود في الملف، و [[0xf]] المكان (byte 15) اللي فيه النداء.
+- [[collect2]] و [[ld returned 1]]: الغلط من الـ linker مش من الـ compiler. لما تشوف [[ld]] دوّر على ملف أو مكتبة ناقصة في أمر البناء، مش على غلط في الكود.
+
+## الخلاصة
+
+~~~text
+calc.c --gcc -c--> calc.o ┐
+                          ├--link--> app (executable)
+main.c --gcc -c--> main.o ┘
+~~~
+
+| الامتداد | فيه |
+|---|---|
+| [[.c]] / [[.cpp]] | الكود (C / C++) |
+| [[.h]] / [[.hpp]] | declarations بس + include guard |
+| [[.o]] ([[.obj]] على ويندوز) | كود معالج ناقص (relocatable) |
+| البرنامج ([[.exe]] على ويندوز) | الناتج بعد الـ link |
+
+- غلط فيه [[ld]] = ملف ناقص في الـ link، و [[.o]] والبرنامج في [[.gitignore]].`,
           lines: [
             R`الـ header: تعريف الدالة بس من غير جسمها، وحواليه include guard.`,
             R`[[-c]] compile بس من غير link: بيطلّع [[calc.o]].`,
@@ -539,6 +1573,109 @@ cat go.sum`,
             when: R`APIs وأدوات command line وأي حاجة في عالم الـ cloud (Docker و Kubernetes نفسهم مكتوبين Go).`,
             mistakes: R`تنسى [[go mod init]] فيطلعلك [[go: cannot find main module]]. تعدّل [[go.sum]] بإيدك أو متعملهوش commit. تحط ملفين في نفس الفولدر بـ package مختلفة ([[found packages main and utils]]). وتعمل commit للبرنامج الناتج.`
           },
+          teach: R`## الفكرة
+
+المثال بيبني مشروع Go من الصفر: يعرّفه بـ [[go.mod]]، يشغّله، يبنيه برنامج، ويضيف له مكتبة فيظهر [[go.sum]]. مفيش Go على الجهاز اللي اتكتب عليه الشرح، فالنواتج هي نواتج الدرس من Go 1.25 على لينكس، ومطابقة لـ docs الرسمية (go.dev/ref/mod).
+
+الملف [[main.go]]:
+
+~~~text main.go
+package main
+
+import "fmt"
+
+func main() { fmt.Println("Hello من Go") }
+~~~
+
+- [[package main]]: كل ملف Go بيبدأ باسم الـ package بتاعته. [[main]] اسم خاص معناه «ده برنامج بيتشغّل» مش مكتبة.
+- [[import "fmt"]]: مكتبة الطباعة (format) اللي جاية مع Go.
+- [[func main()]]: البرنامج بيبدأ من هنا. [[func]] = دالة.
+
+---
+
+## ١. [[go mod init example.com/gym]]
+
+~~~text الناتج
+go: creating new go.mod: module example.com/gym
+~~~
+
+- [[mod]] = module، يعني المشروع.
+- [[example.com/gym]]: اسم المشروع. غالبًا بيبقى رابط الـ repo ([[github.com/ali/gym]]) عشان يبقى فريد في الدنيا، والـ import جوه المشروع بيبدأ بيه ([[example.com/gym/api]]).
+
+## ٢. [[cat go.mod]]
+
+~~~text الناتج
+module example.com/gym
+
+go 1.25.0
+~~~
+
+سطرين بس: اسم المشروع، وأقل نسخة Go المشروع محتاجها (الرقم بيبقى حسب نسختك).
+
+## ٣. [[go run .]]
+
+~~~text الناتج
+Hello من Go
+~~~
+
+[[.]] = الـ package اللي في الفولدر الحالي (كل ملفات [[.go]] فيه مع بعض). [[go run]] بيبني في فولدر مؤقت ويشغّل ويمسح، مفيش ملف بيفضل.
+
+## ٤. [[go build -o gym .]]
+
+نفس البناء، بس الناتج بيتحفظ: [[-o gym]] (output) = اسمه [[gym]]. على ويندوز اسمه يبقى [[gym.exe]].
+
+## ٥. [[file gym]]
+
+~~~text الناتج
+gym: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, ...
+~~~
+
+الكلمة المهمة [[statically linked]]: كل حاجة البرنامج محتاجها جواه (قارن بـ [[dynamically linked]] في درس [[.c]]). فتنسخ الملف ده لأي سيرفر لينكس x86-64 ويشتغل، حتى لو مفيش Go عليه.
+
+## ٦. [[go get github.com/google/uuid@v1.6.0]]
+
+~~~text الناتج
+go: added github.com/google/uuid v1.6.0
+~~~
+
+- [[go get]]: نزّل مكتبة وسجّلها في المشروع.
+- [[@v1.6.0]]: النسخة بالظبط. من غيرها بياخد آخر نسخة.
+
+[[go.mod]] بقى فيه سطر جديد:
+
+~~~text go.mod
+require github.com/google/uuid v1.6.0 // indirect
+~~~
+
+[[// indirect]] تعليق Go بيحطه لأن مفيش ملف في المشروع بيعمل [[import]] للمكتبة دي لسه. لو عملت import وشغّلت [[go mod tidy]] التعليق يختفي، ولو مستخدمتهاش خالص [[go mod tidy]] يشيل السطر كله.
+
+## ٧. [[cat go.sum]]
+
+~~~text الناتج
+github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
+github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[github.com/google/uuid v1.6.0]] | المكتبة ونسختها |
+| [[/go.mod]] في السطر التاني | الـ hash ده لملف [[go.mod]] بتاع المكتبة بس |
+| [[h1:]] | نوع الـ hash (SHA-256) |
+| الباقي | الـ hash نفسه بـ Base64 |
+
+لو حد غيّر كود المكتبة على GitHub، الـ hash مش هيطابق و [[go]] هيرفض يبني. عشان كده [[go.sum]] بيتعمله commit ومحدش بيعدّله بإيده.
+
+## الخلاصة
+
+| الملف | بيتعمله commit؟ | بيتعمل بـ |
+|---|---|---|
+| [[*.go]] | آه | انت |
+| [[*_test.go]] | آه | انت، و [[go test]] بيشغّله |
+| [[go.mod]] | آه | [[go mod init]] و [[go get]] و [[go mod tidy]] |
+| [[go.sum]] | آه | [[go]] لوحده |
+| البرنامج ([[gym]]) | لأ | [[go build]] |
+
+- أداة واحدة ([[go]]) بتعمل كل حاجة، والناتج ملف واحد static.`,
           lines: [
             R`بيعمل [[go.mod]] باسم المشروع.`,
             R`فيه [[module]] و [[go]] ونسخة.`,
@@ -602,6 +1739,111 @@ $items = ["تيشيرت" => 250, "مج" => 120];
             when: R`مواقع WordPress و Laravel وأي استضافة مشتركة (shared hosting) لأنها كلها بتدعم PHP جاهز.`,
             mistakes: R`تنسى [[;]] فيطلعلك [[Parse error: syntax error, unexpected end of file]]. تقفل ملف الـ class بـ [[?>]] وبعده سطر فاضي. تطبع داتا اليوزر من غير [[htmlspecialchars]]. وتحط [[.php]] على سيرفر مش متظبط فالكود (بالباسوردات اللي فيه) يتنزّل.`
           },
+          teach: R`## الفكرة
+
+الملف ده نصه PHP ونصه HTML. PHP بيمشي عليه من فوق لتحت: الـ HTML بيطلع زي ما هو، وأي حاجة بين [[<?php]] و [[?>]] بتتنفذ وناتجها بيتحط مكانها. مفيش PHP على الجهاز اللي اتكتب عليه الشرح، فالنواتج من الدرس (PHP 8.3) ومطابقة لـ docs الرسمية (php.net).
+
+---
+
+## ١. البلوك الأول: كود بس
+
+~~~text الأسطر ١ لـ ٤
+<?php
+$name = $_GET["name"] ?? "زائر";
+$items = ["تيشيرت" => 250, "مج" => 120];
+?>
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[<?php]] | من هنا كود PHP |
+| [[$name]] | متغير: في PHP كل متغير بيبدأ بـ [[$]] |
+| [[$_GET["name"]]] | array جاهزة فيها اللي بعد [[?]] في الرابط: [[?name=سارة]] يبقى [[$_GET["name"]]] = [["سارة"]] |
+| [[??]] | null coalescing: «لو اللي على الشمال مش موجود، خد اللي على اليمين». فلو مفيش [[name]] في الرابط، [[$name]] = [["زائر"]] |
+| [[["تيشيرت" => 250, ...]]] | array بمفاتيح (associative): [[=>]] بين المفتاح والقيمة. زي object في JS |
+| [[;]] | آخر كل جملة، إجباري |
+| [[?>]] | خلص الكود. اللي بعده بيتبعت للمتصفح زي ما هو |
+
+البلوك ده مطبعش حاجة، بس جهّز متغيرين.
+
+## ٢. HTML عادي
+
+[[<!DOCTYPE html>]] و [[<html lang="ar" dir="rtl">]] و [[<body>]]: PHP مبيبصلهمش، بيطبعهم حرف بحرف (درس [[.html]]).
+
+## ٣. [[<?= htmlspecialchars($name) ?>]]
+
+- [[<?=]] اختصار [[<?php echo]]: «اطبع القيمة دي هنا».
+- [[htmlspecialchars]]: بتحوّل الرموز الخطيرة لـ entities: [[<]] تبقى [[&lt;]] و [[>]] تبقى [[&gt;]] و [[&]] تبقى [[&amp;]] و [["]] تبقى [[&quot;]].
+
+ليه؟ لأن [[$name]] جاي من الرابط، يعني أي حد يكتب اللي هو عايزه. لو حد بعت [[?name=<b>hi</b>]]:
+
+| | اللي بيوصل المتصفح | بيظهر |
+|---|---|---|
+| مع [[htmlspecialchars]] | [[&lt;b&gt;hi&lt;/b&gt;]] | النص [[<b>hi</b>]] زي ما هو |
+| من غيرها | [[<b>hi</b>]] | hi بخط عريض: اليوزر حط HTML في صفحتك |
+
+والحالة التانية هي نفسها اللي بتسمح بـ [[<script>]]، يعني XSS (تاب الأمان).
+
+## ٤. الـ loop جوه HTML
+
+~~~text الأسطر ١١ لـ ١٣
+<?php foreach ($items as $item => $price): ?>
+  <li><?= $item ?>: <?= $price ?> جنيه</li>
+<?php endforeach; ?>
+~~~
+
+- [[foreach ($items as $item => $price)]]: لف على الـ array: كل لفة المفتاح في [[$item]] والقيمة في [[$price]].
+- [[:]] بدل [[{]]، و [[endforeach;]] بدل [[}]]: الشكل ده (alternative syntax) معمول مخصوص عشان يتقري وهو متقطّع بين بلوكات PHP.
+- السطر اللي في النص HTML عادي، بس بيتكرر مرة لكل منتج، وكل مرة بقيم مختلفة.
+
+## ٥. التشغيل
+
+~~~bash
+php -l index.php
+php index.php
+~~~
+
+- [[-l]] (lint): افحص الـ syntax بس من غير تشغيل:
+
+~~~text الناتج
+No syntax errors detected in index.php
+~~~
+
+- [[php index.php]]: شغّل واطبع الناتج على الشاشة. اللي بيطلع HTML نضيف مفيهوش ولا [[<?php]]:
+
+~~~text جزء من الناتج (المسافات في أول السطور مختصرة)
+  <h1>أهلًا يا زائر</h1>
+  <ul>
+      <li>تيشيرت: 250 جنيه</li>
+      <li>مج: 120 جنيه</li>
+  </ul>
+~~~
+
+«زائر» لأن من الترمنال مفيش رابط، فـ [[$_GET]] فاضية و [[??]] اشتغلت.
+
+- [[php -S localhost:8000]]: سيرفر تطوير جاهز (S = server). افتح [[http://localhost:8000/?name=سارة]] والعنوان يبقى «أهلًا يا سارة»، و [[Ctrl+U]] هيوريك الـ HTML اللي وصل بس.
+
+## ٦. لما تنسى [[;]]
+
+~~~text ملف فيه echo "hi" من غير ;
+Parse error: syntax error, unexpected end of file, expecting "," or ";" in bad.php on line 3
+~~~
+
+[[Parse error]] = PHP مقدرش يقرا الملف أصلًا، فمفيش ولا سطر اتنفذ. ورقم السطر بيشاور غالبًا على السطر **اللي بعد** الغلطة، لأن PHP مكتشفش إن الجملة خلصت غير لما وصل هناك.
+
+## الخلاصة
+
+| الرمز | معناه |
+|---|---|
+| [[<?php ... ?>]] | بلوك كود |
+| [[<?= x ?>]] | اطبع قيمة |
+| [[$x]] | متغير |
+| [[??]] | قيمة افتراضية |
+| [[=>]] | مفتاح وقيمة في array |
+| [[foreach (...):]] ... [[endforeach;]] | loop جوه HTML |
+
+- المتصفح عمره ما بيشوف كود PHP، بيشوف الناتج بس.
+- أي حاجة جاية من اليوزر تتطبع بـ [[htmlspecialchars]]، والملف اللي كله PHP متقفلوش بـ [[?>]].`,
           lines: [
             R`بداية بلوك PHP.`,
             R`[[$_GET["name"]]] من الرابط، و [[??]] قيمة افتراضية لو مش موجود.`,
@@ -655,6 +1897,92 @@ ruby hello.rb`,
             when: R`Swift لـ iOS، و Dart لـ Flutter، و Rust للأدوات السريعة والأنظمة (وأدوات JS كتير زي SWC و Turbopack مكتوبة Rust)، و Ruby لو بتشتغل في مشروع Rails.`,
             mistakes: R`تعمل commit لـ [[target/]] أو [[.dart_tool/]] أو [[build/]]. تنسى الـ lock file. وتفتح [[.xcodeproj]] كأنه ملف: هو فولدر جواه [[project.pbxproj]] (نص)، وده أكتر ملف بيعمل conflicts في Git في مشاريع iOS.`
           },
+          teach: R`## الفكرة
+
+الدرس ده مش عن لغة واحدة، عن **نمط** بيتكرر في كل اللغات: ملف كود، وأداة بتشغّله، وملف بيعرّف المشروع، و lock file، وفولدر ناتج. المثال ٤ أوامر، كل واحد بيشغّل hello في لغة. الأدوات دي مش متسطّبة على الجهاز اللي اتكتب عليه الشرح، فالنواتج من الدرس ومن docs كل لغة (swift.org و dart.dev و doc.rust-lang.org/cargo و ruby-lang.org).
+
+---
+
+## ١. [[swift hello.swift]]
+
+~~~text hello.swift
+print("Hello من Swift")
+~~~
+
+~~~text الناتج
+Hello من Swift
+~~~
+
+[[swift]] لما تدّيله ملف بيعمله compile في الذاكرة ويشغّله (زي [[go run]]). Swift مش محتاج [[main]]: أول سطر في الملف هو البداية. على الماك جاي مع Xcode، وفيه نسخ للينكس وويندوز.
+
+## ٢. [[dart run hello.dart]]
+
+~~~text hello.dart
+void main() { print("Hello من Dart"); }
+~~~
+
+~~~text الناتج
+Hello من Dart
+~~~
+
+Dart محتاج [[main]] زي Java و Go. [[void]] = مبترجّعش حاجة. و [[dart run]] بيشغّل الملف علطول. في Flutter مش بتشغّل ملف لوحده، بتشغّل المشروع كله بـ [[flutter run]].
+
+## ٣. [[cargo new app && cd app && cargo run]]
+
+ده ٣ أوامر في سطر، و [[&&]] معناها «لو اللي قبلي نجح، شغّلني». فلو [[cargo new]] فشل مش هيدخل الفولدر.
+
+- [[cargo]]: أداة Rust (زي [[go]] و [[npm]] مع بعض).
+- [[cargo new app]]: بيعمل فولدر [[app]] فيه:
+
+~~~text app/
+Cargo.toml     تعريف المشروع (TOML): الاسم والنسخة والمكتبات
+src/main.rs    fn main() { println!("Hello, world!"); }
+.gitignore     فيه /target
+~~~
+
+وبيعمل كمان git repo جديد في الفولدر.
+
+- [[cargo run]]: بيبني ويشغّل:
+
+~~~text الناتج
+   Compiling app v0.1.0 (/home/ali/app)
+    Finished $__btdev$__bt profile [unoptimized + debuginfo] target(s) in 0.50s
+     Running $__bttarget/debug/app$__bt
+Hello, world!
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[Compiling app v0.1.0]] | بيبني المشروع ([[0.1.0]] النسخة اللي في [[Cargo.toml]]) |
+| [[dev profile [unoptimized + debuginfo]]] | بناء للتطوير: سريع في البناء، بطيء شوية في التشغيل. [[cargo run --release]] العكس |
+| [[Running target/debug/app]] | مكان البرنامج الناتج: فولدر [[target/]]، وده في [[.gitignore]] |
+
+وأول ما تضيف مكتبة بيظهر [[Cargo.lock]].
+
+## ٤. [[ruby hello.rb]]
+
+[[ruby]] interpreter زي [[python3]]: بيقرا الملف وينفذه. ملف فيه [[puts "Hello من Ruby"]] بيطبع السطر ده ([[puts]] = put string، زي [[print]] بسطر جديد).
+
+---
+
+## الجدول اللي يلخّص كل اللغات
+
+| اللغة | الكود | المشروع | الـ lock | الناتج (في [[.gitignore]]) |
+|---|---|---|---|---|
+| JavaScript | [[.js]] [[.ts]] | [[package.json]] | [[package-lock.json]] | [[node_modules/]] [[dist/]] |
+| Python | [[.py]] | [[pyproject.toml]] | [[uv.lock]] أو [[poetry.lock]] | [[.venv/]] [[__pycache__/]] |
+| Go | [[.go]] | [[go.mod]] | [[go.sum]] | البرنامج |
+| Rust | [[.rs]] | [[Cargo.toml]] | [[Cargo.lock]] | [[target/]] |
+| Dart و Flutter | [[.dart]] | [[pubspec.yaml]] | [[pubspec.lock]] | [[build/]] [[.dart_tool/]] |
+| Ruby | [[.rb]] | [[Gemfile]] | [[Gemfile.lock]] | [[vendor/bundle/]] |
+| Swift | [[.swift]] | [[Package.swift]] أو [[.xcodeproj]] | [[Package.resolved]] | [[.build/]] |
+| Java و Kotlin | [[.java]] [[.kt]] | [[pom.xml]] أو [[build.gradle.kts]] | | [[target/]] [[build/]] |
+| C# | [[.cs]] | [[.csproj]] | [[packages.lock.json]] (اختياري) | [[bin/]] [[obj/]] |
+
+## الخلاصة
+
+- لغة جديدة؟ دوّر على الـ ٤ حاجات: ملف الكود، وملف المشروع، والـ lock، وفولدر الناتج.
+- ملف المشروع والـ lock بيتعملهم commit، وفولدر الناتج لأ.`,
           lines: [
             R`Swift: يبني ويشغّل ملف واحد.`,
             R`Dart: نفس الكلام.`,
@@ -709,6 +2037,140 @@ SELECT name, email FROM members ORDER BY id;`,
             when: R`migrations و seeds في أي مشروع فيه قاعدة بيانات، و backup قبل أي تغيير كبير على الـ production، ونقل داتا بين سيرفرين.`,
             mistakes: R`تشغّل migration مرتين فيطلعلك [[relation "members" already exists]] (أدوات الـ migrations بتسجل اللي اتنفذ عشان كده). تنسى [[;]] فأمرين يتلزقوا. تحط باسورد أو داتا حقيقية للعملاء في [[seed.sql]] في Git. وترفع dump حجمه جيجا على GitHub (فيه داتا العملاء كمان).`
           },
+          teach: R`## الفكرة
+
+ملف [[.sql]] = أوامر SQL ورا بعض، والقاعدة بتنفذها بالترتيب. المثال migration صغيرة: تعمل جدول، تضيف صفين، وتعرضهم. شغّلناه فعلًا على PostgreSQL 16 في Docker (كونتينر باسم خاص واتمسح بعدها)، بنفس أوامر الـ «جرّب».
+
+---
+
+## ١. التعليق: [[-- جدول الأعضاء]]
+
+[[--]] لحد آخر السطر تعليق، القاعدة بتتجاهله. (في SQL مش [[#]] ولا [[//]].)
+
+## ٢. [[CREATE TABLE members ( ... );]]
+
+~~~text
+CREATE TABLE members (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  email TEXT UNIQUE,
+  joined_at DATE DEFAULT CURRENT_DATE
+);
+~~~
+
+أمر واحد على ٦ سطور: القاعدة مش فارق معاها السطور، بتقرا لحد ما تلاقي [[;]]. وكل عمود: اسمه، ونوعه، وبعدين شروط:
+
+| العمود | النوع | الشرط | معناه |
+|---|---|---|---|
+| [[id]] | [[SERIAL]] | [[PRIMARY KEY]] | رقم بيزيد لوحده (1، 2، 3...)، ومفتاح الجدول: مش بيتكرر ومش فاضي |
+| [[name]] | [[TEXT]] | [[NOT NULL]] | نص، وإجباري |
+| [[email]] | [[TEXT]] | [[UNIQUE]] | نص، وممنوع اتنين بنفس الإيميل |
+| [[joined_at]] | [[DATE]] | [[DEFAULT CURRENT_DATE]] | تاريخ، ولو محدش حطه ياخد تاريخ النهارده |
+
+[[SERIAL]] كلمة PostgreSQL بس. في MySQL [[AUTO_INCREMENT]]، وفي SQLite [[INTEGER PRIMARY KEY AUTOINCREMENT]]: ده معنى إن كل قاعدة ليها لهجة.
+
+## ٣. [[INSERT INTO members (name, email) VALUES ...;]]
+
+~~~text
+INSERT INTO members (name, email) VALUES
+  ('سارة', 'sara@example.com'),
+  ('O''Brien', 'ob@example.com');
+~~~
+
+- [[(name, email)]]: العواميد اللي هنملاها بس. [[id]] و [[joined_at]] هياخدوا قيمهم لوحدهم.
+- كل صف بين [[( )]]، والصفوف مفصولة بـ [[,]]، و [[;]] بعد آخر صف.
+- النصوص بين [[' ']] (علامة واحدة). وعشان تكتب [[']] **جوه** نص بتكتبها مرتين: [['O''Brien']] = O'Brien.
+
+## ٤. [[SELECT name, email FROM members ORDER BY id;]]
+
+هات عمودين من الجدول، مترتبين بالـ [[id]].
+
+---
+
+## ٥. التشغيل: [[psql -U postgres -v ON_ERROR_STOP=1 -f /w/001_create_members.sql]]
+
+| الحتة | معناها |
+|---|---|
+| [[docker exec pg]] | شغّل الأمر اللي بعدي جوه الكونتينر [[pg]] |
+| [[psql]] | برنامج PostgreSQL بتاع الترمنال |
+| [[-U postgres]] | (user) ادخل باليوزر ده |
+| [[-v ON_ERROR_STOP=1]] | (variable) اقف عند أول غلط |
+| [[-f /w/...sql]] | (file) نفّذ الملف ده. [[/w]] هو فولدرك اللي ربطناه بـ [[-v "$PWD":/w]] |
+
+~~~text الناتج
+CREATE TABLE
+INSERT 0 2
+  name   |      email
+---------+------------------
+ سارة    | sara@example.com
+ O'Brien | ob@example.com
+(2 rows)
+~~~
+
+- [[CREATE TABLE]]: الأمر الأول نجح.
+- [[INSERT 0 2]]: الرقم التاني (2) عدد الصفوف اللي اتضافت. الأول (0) من زمان ودايمًا صفر.
+- الجدول: ناتج الـ [[SELECT]]، ولاحظ [[O'Brien]] اتخزنت بعلامة واحدة.
+
+## ٦. شغّلناه مرة تانية
+
+~~~text الناتج
+psql:/w/001_create_members.sql:7: ERROR:  relation "members" already exists
+~~~
+
+- [[:7:]]: الغلط في الأمر اللي بيخلص في السطر 7 (الـ [[CREATE TABLE]]).
+- [[relation]] = جدول (في كلام PostgreSQL).
+- بسبب [[ON_ERROR_STOP=1]] [[psql]] وقف هنا: الـ [[INSERT]] والـ [[SELECT]] متنفذوش، والـ exit code كان [[3]]. من غير الخيار ده [[psql]] بيطبع الغلط ويكمّل الأوامر اللي بعده، وفي migration حقيقية ده معناه إن نصها يتنفذ ونصها لأ.
+
+عشان كده أدوات الـ migrations (Prisma و Django وغيرهم) بتسجّل الملفات اللي اتنفذت في جدول خاص، وبتشغّل الجديد بس.
+
+## ٧. الـ dump: [[pg_dump -U postgres --table=members --inserts > backup.sql]]
+
+- [[pg_dump]]: بيقرا القاعدة ويكتبها أوامر SQL.
+- [[--table=members]]: الجدول ده بس.
+- [[--inserts]]: الداتا تتكتب [[INSERT]] (من غيرها بتتكتب [[COPY]]، أسرع بس أصعب في القراية).
+- [[> backup.sql]]: الناتج في ملف على جهازك (الـ [[>]] بتاع الـ shell بتاعك، مش جوه الكونتينر).
+
+أهم اللي جوه الملف (من غير التعليقات):
+
+~~~text backup.sql (مختصر)
+SET client_encoding = 'UTF8';
+...
+CREATE TABLE public.members (
+    id integer NOT NULL,
+    name text NOT NULL,
+    email text,
+    joined_at date DEFAULT CURRENT_DATE
+);
+CREATE SEQUENCE public.members_id_seq
+    AS integer
+    START WITH 1
+...
+ALTER TABLE ONLY public.members ALTER COLUMN id SET DEFAULT nextval('public.members_id_seq'::regclass);
+INSERT INTO public.members VALUES (1, 'سارة', 'sara@example.com', '2026-10-07');
+INSERT INTO public.members VALUES (2, 'O''Brien', 'ob@example.com', '2026-10-07');
+SELECT pg_catalog.setval('public.members_id_seq', 2, true);
+ALTER TABLE ONLY public.members
+    ADD CONSTRAINT members_pkey PRIMARY KEY (id);
+~~~
+
+حاجات تتعلمها من الملف ده:
+- [[SERIAL]] مش نوع حقيقي: PostgreSQL حوّله لـ [[integer]] + [[SEQUENCE]] (عدّاد) + [[DEFAULT nextval(...)]].
+- [[setval(..., 2, true)]]: العدّاد بيتظبط على 2، فأول صف جديد ياخد 3.
+- الـ [[PRIMARY KEY]] و [[UNIQUE]] اتضافوا في **الآخر** بعد الداتا، لأن ده أسرع في الملفات الكبيرة.
+- [[public.]] اسم الـ schema الافتراضي.
+- في أول الملف وآخره سطرين [[\restrict ...]] و [[\unrestrict ...]]: نسخ [[pg_dump]] الحديثة بتحطهم كحماية لما الملف يتشغّل بـ [[psql]]، و [[psql]] بيفهمهم لوحده.
+
+## الخلاصة
+
+| الرمز | معناه |
+|---|---|
+| [[;]] | نهاية الأمر (مش نهاية السطر) |
+| [[--]] و [[/* */]] | تعليق |
+| [['نص']] و [['O''Brien']] | نص، و [[']] جواه مرتين |
+| [[psql -v ON_ERROR_STOP=1 -f]] | نفّذ ملف واقف عند أول غلط |
+| [[pg_dump --inserts]] | القاعدة ← ملف [[.sql]] |
+
+- الـ migration بتتنفذ مرة واحدة بس، والـ dump فيه داتا حقيقية فمكانه مش Git.`,
           lines: [
             R`تعليق [[--]] (بيتحسب سطر هنا لأنه SQL): بيتجاهل لحد آخر السطر.`,
             R`بداية أمر عمل جدول.`,
@@ -774,6 +2236,161 @@ echo "تم: $DEST ($(du -h "$DEST" | cut -f1))"`,
             when: R`أتمتة على لينكس والماك والسيرفرات: deploy و backup و setup، والسكربتات في [[package.json]] لما تكبر، وخطوات الـ CI، و [[entrypoint.sh]] في Docker.`,
             mistakes: R`سكربت بـ CRLF ([[cannot execute: required file not found]] أو [[bad interpreter]]). تنسى [[chmod +x]] ([[Permission denied]]). تكتب [[#!/bin/sh]] وتستخدم حاجات bash. متحطش التنصيص حوالين المتغيرات ([[tar -czf $DEST $SRC]]) فأول اسم فيه مسافة يبوّظ كل حاجة. وتحط باسوردات جوه السكربت وتعمله commit.`
           },
+          teach: R`## الفكرة
+
+السكربت بياخد اسم فولدر ويعمله أرشيف مضغوط باسم فيه تاريخ النهارده. هنقراه سطر سطر، وبعدين نشغّله بالطرق اللي في الـ «جرّب» ونشوف الـ shebang و [[chmod +x]] بيعملوا إيه، ونجرّب أشهر غلطتين: CRLF و [[#!/bin/sh]]. كله اتشغّل على أوبونتو 24.04 في Docker (bash 5.2).
+
+---
+
+## ١. السكربت سطر سطر
+
+### [[#!/usr/bin/env bash]]
+
+الـ **shebang** (من hash [[#]] و bang [[!]]). لـ bash هو تعليق عادي، بس لينكس بيقراه لما تشغّل الملف مباشرة ([[./deploy.sh]]): بياخد باقي السطر ويشغّله ويدّيله اسم الملف. يعني فعليًا بيتنفذ:
+
+~~~bash
+/usr/bin/env bash ./deploy.sh data
+~~~
+
+و [[env]] برنامج بيدوّر على [[bash]] في الـ PATH. لو كتبت [[#!/bin/bash]] على طول هتشتغل على أغلب لينكس، بس على أنظمة bash فيها في مكان تاني (أو نسخة أحدث متسطّبة في مكان تاني زي Homebrew على الماك) [[env]] أضمن.
+
+### [[# بيعمل نسخة احتياطية من فولدر]]
+
+تعليق. [[#]] في أي مكان غير أول سطر = تعليق عادي.
+
+### [[set -euo pipefail]]
+
+[[set]] بيغيّر سلوك bash نفسه. الـ ٣ مع بعض اسمهم «strict mode»:
+
+| الخيار | معناه | جرّبناه |
+|---|---|---|
+| [[-e]] | أول أمر يفشل، السكربت يقف | تحت في خطوة ٤ |
+| [[-u]] | استخدام متغير مش متعرّف = غلط | [[echo "$NAME"]] طلّع [[NAME: unbound variable]] و exit 1 |
+| [[-o pipefail]] | في pipe ([[a]] بيبعت لـ [[b]])، لو [[a]] فشل الـ pipe كله يعتبر فاشل (من غيره بيتحسب نجاح [[b]] بس) | |
+
+### [[SRC="$__{1:-.}"]]
+
+- [[$1]]: أول argument بعد اسم السكربت ([[data]] في [[./deploy.sh data]]).
+- [[$__{1:-.}]]: نفس الكلام، بس لو مفيش argument خد [[.]] (الفولدر الحالي). [[:-]] = «لو فاضي أو مش موجود، استخدم ده».
+- مفيش مسافات حوالين [[=]]: [[SRC = x]] في bash معناها «شغّل أمر اسمه SRC».
+
+### [[DEST="backup-$(date +%F).tar.gz"]]
+
+- [[$(...)]]: command substitution: شغّل الأمر اللي جوه وحط ناتجه هنا.
+- [[date +%F]]: التاريخ بالشكل [[%F]] = سنة-شهر-يوم. اتشغّل وطبع [[2026-10-07]].
+- فالنتيجة [[backup-2026-10-07.tar.gz]].
+
+### [[echo "بعمل backup لـ $SRC"]]
+
+جوه [["..."]] الـ [[$SRC]] بتتبدّل بقيمتها. (جوه [['...']] مكانتش هتتبدّل.)
+
+### [[tar -czf "$DEST" "$SRC"]]
+
+[[tar]] بيعمل أرشيف: [[c]] create، و [[z]] اضغط بـ gzip، و [[f]] اسم الملف اللي جاي بعدها. والتنصيص حوالين المتغيرات عشان لو الاسم فيه مسافة يفضل argument واحد.
+
+### [[echo "تم: $DEST ($(du -h "$DEST" | cut -f1))"]]
+
+من جوه لبرة:
+
+~~~text
+du -h backup-2026-10-07.tar.gz            →  4.0K	backup-2026-10-07.tar.gz
+du -h backup-2026-10-07.tar.gz | cut -f1  →  4.0K
+~~~
+
+- [[du]] (disk usage) و [[-h]] أرقام مقروءة. [[4.0K]] مش حجم الملف بالظبط: [[du]] بيعدّ المساحة اللي واخدها على الديسك، والديسك بيدّي مساحة بالبلوكات (4K غالبًا)، فأي ملف صغير بياخد بلوك.
+- [[|]] بيبعت الناتج للأمر اللي بعده، و [[cut -f1]] بياخد أول عمود (العواميد مفصولة بـ Tab).
+
+---
+
+## ٢. التشغيل بالترتيب
+
+### [[./deploy.sh data]] قبل [[chmod]]
+
+~~~text الناتج
+-rw-r--r-- 1 root root 245 Oct  7 11:53 deploy.sh
+bash: line 13: ./deploy.sh: Permission denied
+~~~
+
+[[rw-r--r--]] مفيهاش [[x]]، فلينكس رفض يشغّله كبرنامج (exit code [[126]]).
+
+### [[bash deploy.sh data]]
+
+~~~text الناتج
+بعمل backup لـ data
+تم: backup-2026-10-07.tar.gz (4.0K)
+~~~
+
+اشتغل من غير [[x]]: انت شغّلت [[bash]] (اللي هو برنامج عنده [[x]])، و [[bash]] قرا الملف كنص. والـ shebang هنا مجرد تعليق.
+
+### [[chmod +x deploy.sh]] ثم [[./deploy.sh data]]
+
+~~~text الناتج
+-rwxr-xr-x 1 root root 245 Oct  7 11:53 deploy.sh
+بعمل backup لـ data
+تم: backup-2026-10-07.tar.gz (4.0K)
+~~~
+
+[[+x]] ضاف [[x]] للكل، ودلوقتي الـ shebang هو اللي اختار [[bash]].
+
+| الطريقة | محتاج [[x]]؟ | مين بيختار البرنامج |
+|---|---|---|
+| [[./deploy.sh]] | آه | الـ shebang |
+| [[bash deploy.sh]] | لأ | انت |
+
+### [[./deploy.sh مش-موجود]]: [[set -e]] شغّال
+
+~~~text الناتج
+بعمل backup لـ مش-موجود
+tar: \331\205\330\264-\331\205\331\210\330\254\331\210\330\257: Cannot stat: No such file or directory
+tar: Exiting with failure status due to previous errors
+~~~
+
+- [[tar]] فشل (exit code [[2]])، فـ [[set -e]] وقّف السكربت، وسطر «تم» **مطبعش**. من غير [[-e]] كان هيقول «تم» عن أرشيف ناقص.
+- الأرقام [[\331\205...]]: [[tar]] بيطبع الحروف غير الإنجليزي كأكواد bytes بالـ octal في رسايل الأخطاء. دي «مش-موجود» بـ UTF-8.
+
+---
+
+## ٣. CRLF: السكربت اتحفظ على ويندوز
+
+حوّلنا نهاية كل سطر لـ [[\r\n]] (CRLF، درس LF و CRLF):
+
+~~~text ./crlf.sh data
+/usr/bin/env: 'bash\r': No such file or directory
+/usr/bin/env: use -[v]S to pass options in shebang lines
+~~~
+
+الـ [[\r]] بقت جزء من اسم البرنامج، فـ [[env]] دوّر على برنامج اسمه [[bash\r]]. ومع [[#!/bin/bash]] على طول:
+
+~~~text الناتج
+bash: line 15: ./c2.sh: cannot execute: required file not found
+~~~
+
+bash 5.2 بيقول [[required file not found]]، والنسخ الأقدم كانت بتقول [[/bin/bash^M: bad interpreter]] ([[^M]] = [[\r]]). وحتى [[bash crlf.sh]] فشل بـ [[set: pipefail: invalid option name]] لأن الكلمة بقت [[pipefail\r]]. الحل: [[sed -i 's/\r$//' deploy.sh]] أو احفظه LF في VS Code.
+
+## ٤. [[#!/bin/sh]] مش bash
+
+~~~text الناتج
+lrwxrwxrwx 1 root root 4 Mar 31  2024 /bin/sh -> dash
+./s.sh: 2: [[: not found
+~~~
+
+على أوبونتو [[/bin/sh]] هو [[dash]]، shell أصغر مفيهوش [[[[ ]]]]. والأخطر إن السكربت **كمّل** وخرج بـ 0: الغلط بيعدّي من غير ما تاخد بالك.
+
+---
+
+## ٥. على ويندوز والماك
+
+| | لينكس | الماك | ويندوز |
+|---|---|---|---|
+| التشغيل | [[./x.sh]] بعد [[chmod +x]] | نفسه (الـ shell الافتراضي zsh، بس الـ shebang بيختار) | Git Bash أو WSL، مش PowerShell ولا CMD |
+| [[x]] في Git | بيتسجّل | بيتسجّل | ممكن يضيع: [[git update-index --chmod=+x x.sh]] |
+
+## الخلاصة
+
+- أول سطر [[#!/usr/bin/env bash]]، وتاني سطر [[set -euo pipefail]].
+- [[./x.sh]] محتاج [[chmod +x]]، و [[bash x.sh]] لأ.
+- [[required file not found]] أو [[bad interpreter]] أو [[$'\r': command not found]] = الملف CRLF.
+- حط المتغيرات بين [["..."]] دايمًا.`,
           lines: [
             R`[[set -euo pipefail]]: وقّف عند أول غلط، ومتسامحش في متغير مش معرّف.`,
             R`[[$1]] أول argument، و [[:-.]] قيمة افتراضية [[.]] لو مفيش.`,
@@ -834,6 +2451,175 @@ Get-Item $dest | Select-Object Name, Length`,
             when: R`أتمتة على ويندوز: تجهيز جهاز تطوير، و backup، وإدارة Active Directory و Azure، وسكربتات CI على runners ويندوز.`,
             mistakes: R`تحل مشكلة الـ policy بـ [[Set-ExecutionPolicy Unrestricted]] على الجهاز كله: [[RemoteSigned]] لـ [[CurrentUser]] كفاية. تشغّل سكربت من النت من غير ما تقراه. تكتب [[backup.ps1]] من غير [[.\]] فيقولك [[is not recognized]]. وتحفظ السكربت بعربي من غير BOM في Windows PowerShell 5.1 فالعربي يظهر ملخبط (PowerShell 7 مفيهوش المشكلة دي).`
           },
+          teach: R`## الفكرة
+
+نفس سكربت الـ backup بتاع درس [[.sh]] بس PowerShell: بياخد اسم فولدر ويعمله zip باسم فيه التاريخ ويعرض اسم الملف وحجمه. هنقراه سطر سطر، وبعدين نشوف الـ Execution Policy بتسمح بإيه وبترفض إيه. اتشغّل على ويندوز 11 في PowerShell 7.6 و Windows PowerShell 5.1، في فولدر فيه [[data\a.txt]]، ومن غير ما نغيّر الـ policy بتاعة الجهاز.
+
+---
+
+## ١. السكربت سطر سطر
+
+### [[# بيعمل نسخة احتياطية من فولدر]]
+
+تعليق. وفيه تعليق على كذا سطر: [[<# ... #>]].
+
+### [[param( [string]$Source = "." )]]
+
+~~~text
+param(
+    [string]$Source = "."
+)
+~~~
+
+- [[param()]]: لازم يبقى أول كود في السكربت. بيعرّف الـ arguments **بأسامي**.
+- [[[string]]]: النوع. لو حد بعت رقم يتحوّل نص.
+- [[$Source]]: اسم الـ argument. بيتبعت [[-Source data]]، و PowerShell بيكمّله بـ Tab، وبيقبل اختصاره ([[-S data]]).
+- [[= "."]]: القيمة الافتراضية (الفولدر الحالي) لو محدش بعته. زي [[$__{1:-.}]] في bash، بس بالاسم مش بالترتيب.
+
+### [[$dest = "backup-$(Get-Date -Format yyyy-MM-dd).zip"]]
+
+- [[$dest]] متغير، ومفيش مشكلة في المسافات حوالين [[=]] (عكس bash).
+- [[$(...)]] جوه [["..."]] = نفّذ ده وحط ناتجه. نفس فكرة bash.
+- [[Get-Date -Format yyyy-MM-dd]]: التاريخ بالشكل ده. [[MM]] كبيرة = الشهر، و [[mm]] صغيرة = الدقايق (غلطة مشهورة).
+
+### [[Write-Host "بعمل backup لـ $Source"]]
+
+بيطبع على الشاشة. الفرق بينه وبين إنك تكتب النص لوحده: [[Write-Host]] بيكتب للشاشة بس، مش بيطلّع object ممكن يتبعت في pipe.
+
+### [[Compress-Archive -Path $Source -DestinationPath $dest -Force]]
+
+الأوامر في PowerShell اسمها cmdlets وشكلها **Verb-Noun** (فعل-اسم). [[Compress-Archive]] = اضغط أرشيف:
+
+| الـ parameter | معناه |
+|---|---|
+| [[-Path]] | اللي هيتضغط |
+| [[-DestinationPath]] | اسم الـ zip |
+| [[-Force]] | لو الملف موجود اكتب فوقه بدل ما تطلّع غلط |
+
+### [[Get-Item $dest | Select-Object Name, Length]]
+
+- [[Get-Item]] بيرجّع **object** بيمثّل الملف، فيه خصائص كتير (الاسم والحجم والتاريخ...).
+- [[|]] بيبعت الـ object نفسه (مش نص زي bash).
+- [[Select-Object Name, Length]] بياخد خاصيتين بس. [[Length]] = الحجم بالـ byte.
+
+---
+
+## ٢. التشغيل: [[.\backup.ps1 -Source data]]
+
+~~~text الناتج (نفسه في 7.6 و 5.1)
+بعمل backup لـ data
+
+Name                  Length
+----                  ------
+backup-2026-10-07.zip    123
+~~~
+
+[[123]] byte: حجم الـ zip الحقيقي (هنا [[Get-Item]] بيقول الحجم بالظبط، مش بالبلوكات زي [[du]]).
+
+و [[.\]] لازمة. من غيرها:
+
+~~~text pwsh -c 'backup.ps1'
+backup.ps1: The term 'backup.ps1' is not recognized as a name of a cmdlet, function, script file, or executable program.
+~~~
+
+PowerShell مبيدوّرش في الفولدر الحالي لوحده، لنفس سبب الأمان اللي في لينكس.
+
+---
+
+## ٣. الـ Execution Policy
+
+### [[Get-ExecutionPolicy -List]]
+
+الـ policy ليها كذا مستوى (scope)، و PowerShell بياخد أول واحد مش [[Undefined]] من فوق لتحت. ده اللي على الجهاز ده:
+
+~~~text pwsh 7.6
+        Scope ExecutionPolicy
+        ----- ---------------
+MachinePolicy       Undefined
+   UserPolicy       Undefined
+      Process       Undefined
+  CurrentUser       Undefined
+ LocalMachine    RemoteSigned
+~~~
+
+~~~text powershell 5.1 (نفس الجهاز)
+MachinePolicy       Undefined
+   UserPolicy       Undefined
+      Process       Undefined
+  CurrentUser    RemoteSigned
+ LocalMachine       Undefined
+~~~
+
+| الـ Scope | مين بيحدده |
+|---|---|
+| [[MachinePolicy]] و [[UserPolicy]] | Group Policy بتاعة الشركة. بتكسب أي حاجة |
+| [[Process]] | الشباك ده بس، وبيروح لما تقفله ([[-ExecutionPolicy]] في سطر التشغيل) |
+| [[CurrentUser]] | انت بس |
+| [[LocalMachine]] | كل اليوزرز |
+
+لاحظ إن النسختين كل واحدة ليها إعداداتها، و [[Get-ExecutionPolicy]] من غير [[-List]] طبع [[RemoteSigned]] في الاتنين (اللي كسب).
+
+### شكل الرفض
+
+على جهاز ويندوز جديد كل المستويات [[Undefined]]، فالنتيجة [[Restricted]]: مفيش ولا سكربت يشتغل. جرّبنا ده من غير ما نلمس إعدادات الجهاز، بـ policy للـ process ده بس:
+
+~~~cmd
+powershell -NoProfile -ExecutionPolicy Restricted -File backup.ps1 -Source data
+~~~
+
+~~~text الناتج
+File C:\Users\ali\lab\ps\backup.ps1 cannot be loaded because running scripts is disabled on this system. For
+more information, see about_Execution_Policies at https:/go.microsoft.com/fwlink/?LinkID=135170.
+    + CategoryInfo          : SecurityError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : UnauthorizedAccess
+~~~
+
+- [[-ExecutionPolicy Restricted]] (أو [[Bypass]]) في سطر التشغيل = scope [[Process]] بس.
+- [[-File]]: شغّل الملف ده، واللي بعده arguments ليه.
+
+### [[RemoteSigned]] بيرفض إيه؟
+
+الملف اللي بيتنزّل من النت بيتعلّم عليه بـ stream مخفي اسمه [[Zone.Identifier]] (الـ Mark of the Web). عملنا نسخة [[dl.ps1]] وحطينا عليها العلامة دي بإيدنا:
+
+~~~powershell
+Set-Content dl.ps1 -Stream Zone.Identifier -Value "[ZoneTransfer]$__btr$__btnZoneId=3"
+.\dl.ps1 -Source data
+~~~
+
+[[ZoneId=3]] = Internet. والنتيجة:
+
+~~~text الناتج
+.\dl.ps1: File C:\Users\ali\lab\ps\dl.ps1 cannot be loaded. The file C:\Users\ali\lab\ps\dl.ps1 is not digitally signed. You cannot run this script on the current system.
+~~~
+
+وبعد [[Unblock-File dl.ps1]] (بيمسح العلامة) اشتغل عادي. يعني [[RemoteSigned]]: سكربتاتك شغالة، واللي نازل من النت محتاج توقيع أو إنك تقراه وتعمله [[Unblock-File]].
+
+| الـ policy | معناها |
+|---|---|
+| [[Restricted]] | مفيش سكربتات خالص (الافتراضي على ويندوز client) |
+| [[RemoteSigned]] | المحلي يشتغل، والنازل من النت لازم يبقى موقّع |
+| [[AllSigned]] | كله لازم يبقى موقّع |
+| [[Bypass]] | مفيش أي فحص |
+
+والحل المعتاد مرة واحدة ليوزر عادي (مش جربناه هنا عشان بيغيّر إعدادات الجهاز): [[Set-ExecutionPolicy -Scope CurrentUser RemoteSigned]].
+
+---
+
+## ٤. العربي و BOM في 5.1
+
+Windows PowerShell 5.1 بيقرا الملف اللي من غير BOM بالـ code page بتاع ويندوز (ANSI)، مش UTF-8. على الجهاز ده العربي طلع سليم، لأن ويندوز هنا متظبط على UTF-8 للنظام كله ([[[System.Text.Encoding]::Default]] طلّع [[utf-8]]، وده إعداد اختياري اسمه «Beta: Use Unicode UTF-8»). على أغلب الأجهزة الإعداد ده مقفول، والعربي هيطلع ملخبط في 5.1. احفظ السكربت **UTF-8 with BOM** لو هيشتغل على 5.1. PowerShell 7 بيقرا UTF-8 افتراضيًا.
+
+## الخلاصة
+
+| | bash | PowerShell |
+|---|---|---|
+| الـ arguments | [[$1]] و [[$__{1:-.}]] | [[param([string]$Source = ".")]] |
+| تشغيل من الفولدر | [[./x.sh]] | [[.\x.ps1]] |
+| الإذن | [[chmod +x]] | Execution Policy |
+| الـ pipe | نص | objects |
+
+- [[running scripts is disabled]] = الـ policy [[Restricted]]. الحل [[RemoteSigned]] لـ [[CurrentUser]]، مش [[Unrestricted]] للجهاز كله.
+- الدبل كليك على [[.ps1]] بيفتحه في محرر، ده مقصود.`,
           lines: [
             R`[[param(]] بيبدأ تعريف الـ arguments.`,
             R`argument اسمه [[Source]] نوعه string وقيمته الافتراضية [[.]].`,
@@ -889,6 +2675,127 @@ pause`,
             when: R`سكربت بسيط لازم يشتغل بدبل كليك على أي ويندوز، أو لما تعدّل سكربتات موجودة. لأي حاجة جديدة فيها منطق، PowerShell.`,
             mistakes: R`[[set NAME = backup]] بمسافات فالمتغير اسمه [[NAME ]] بمسافة. تنسى التنصيص حوالين مسار فيه مسافات ([[C:\Program Files]]). تكتب العربي من غير [[chcp 65001]] فيظهر [[?????]]. وتشغّل [[.bat]] أو [[.cmd]] جايلك في إيميل.`
           },
+          teach: R`## الفكرة
+
+سكربت batch بيعمل فولدر [[backup]] وينسخ فيه ملفات [[.txt]] اللي في [[data]]، ويطبع الـ argument الأول، ويستنى زرار. اتشغّل على ويندوز 11 في [[cmd /c]]، في فولدر فيه [[data\a.txt]] (المسار اتختصر لـ [[C:\lab]])، والملف محفوظ بنهايات سطور CRLF.
+
+---
+
+## ١. السكربت سطر سطر
+
+### [[@echo off]]
+
+CMD افتراضيًا بيطبع كل سطر قبل ما ينفذه (اسمها echo). [[echo off]] بيقفل ده لباقي الملف. و [[@]] قدام أي سطر = متطبعش السطر ده بالذات، فبيخفي [[echo off]] نفسها.
+
+### [[REM copies the text files into a backup folder]]
+
+[[REM]] (remark) = تعليق. وفيه [[::]] كمان، بس [[REM]] أضمن جوه البلوكات اللي بين [[( )]].
+
+### [[setlocal]]
+
+أي متغير يتعمل بعد السطر ده بيختفي لما السكربت يخلص. من غيره، لو شغّلت السكربت من شباك CMD مفتوح، [[NAME]] يفضل موجود في الشباك ده بعدها.
+
+### [[set NAME=backup]]
+
+متغير اسمه [[NAME]] قيمته [[backup]]. **من غير مسافات** حوالين [[=]]: CMD بياخد كل حرف حرفيًا. جرّبنا [[set NAME = backup]] في ملف لوحده:
+
+~~~text الناتج
+[]
+[ backup]
+~~~
+
+السطر الأول [[echo [%NAME%]]] طلع فاضي: مفيش متغير اسمه [[NAME]]. والتاني [[echo [%NAME %]]] طلع [[ backup]]: المتغير اسمه [[NAME ]] بمسافة، وقيمته [[ backup]] بمسافة.
+
+### [[if not exist "%NAME%" mkdir "%NAME%"]]
+
+- [[%NAME%]]: قراية المتغير. CMD بيبدّلها بـ [[backup]] **قبل** ما ينفذ السطر.
+- [[if not exist "x"]]: لو مفيش ملف أو فولدر بالاسم ده...
+- [[mkdir "x"]]: ...اعمله. التنصيص عشان لو الاسم فيه مسافة.
+
+### [[copy /Y data\*.txt "%NAME%\" >nul]]
+
+| الحتة | معناها |
+|---|---|
+| [[copy]] | انسخ |
+| [[/Y]] | لو الملف موجود اكتب فوقه من غير ما تسأل [[Overwrite? (Yes/No/All)]] |
+| [[data\*.txt]] | كل ملف آخره [[.txt]] في [[data]]. [[\]] فاصل المسارات في ويندوز، و [[*]] أي اسم |
+| [[>nul]] | ارمي الناتج ([[1 file(s) copied.]]). [[nul]] زي [[/dev/null]] |
+
+### [[echo Done: %NAME%]] و [[echo Arg 1 is: %1]]
+
+[[echo]] يطبع. [[%1]] أول argument بعد اسم السكربت (لحد [[%9]])، و [[%0]] اسم السكربت نفسه، و [[%*]] كلهم.
+
+### [[pause]]
+
+بيطبع [[Press any key to continue . . .]] ويستنى زرار. مهمة للدبل كليك: الشباك بيتقفل أول ما السكربت يخلص، فمن غيرها مش هتلحق تقرا.
+
+---
+
+## ٢. التشغيل: [[backup.bat hello]]
+
+(في التجربة ادّيناه [[< nul]] عشان [[pause]] متستناش زرار.)
+
+~~~text الناتج
+Done: backup
+Arg 1 is: hello
+Press any key to continue . . .
+~~~
+
+والـ exit code كان 0، وفولدر [[backup]] اتعمل وفيه [[a.txt]]. ولو بالدبل كليك، [[Arg 1 is:]] بتبقى فاضية لأن مفيش arguments.
+
+> CMD عادةً بيدوّر على [[backup.bat]] في الفولدر الحالي الأول. لو الـ environment variable اللي اسمه [[NoDefaultCurrentDirectoryInExePath]] متظبط (زي ما كان في جلسة التجربة دي) لازم تكتب [[.\backup.bat]]، وإلا هيقول [['backup.bat' is not recognized as an internal or external command]].
+
+## ٣. من غير [[@echo off]]
+
+~~~text الناتج
+C:\lab>REM copies the text files into a backup folder
+
+C:\lab>setlocal
+
+C:\lab>set NAME=backup
+
+C:\lab>if not exist "backup" mkdir "backup"
+
+C:\lab>copy /Y data\*.txt "backup\"  1>nul
+
+C:\lab>echo Done: backup
+Done: backup
+
+C:\lab>echo Arg 1 is: hello
+Arg 1 is: hello
+
+C:\lab>pause
+Press any key to continue . . .
+~~~
+
+كل سطر بيتطبع بعد التبديل: [[%NAME%]] بقت [[backup]] و [[%1]] بقت [[hello]]. وده مفيد للـ debugging: بتشوف CMD فهم السطر إزاي. ولاحظ [[>nul]] اتكتبت [[1>nul]]: [[1]] رقم الـ stdout (و [[2]] الـ stderr).
+
+## ٤. [[where npm]]
+
+~~~text الناتج
+C:\Program Files\nodejs\npm
+C:\Program Files\nodejs\npm.cmd
+~~~
+
+[[where]] زي [[which]] في لينكس. [[npm]] من غير امتداد ده سكربت لـ Git Bash، و [[npm.cmd]] هو اللي CMD و PowerShell بيشغّلوه لما تكتب [[npm]]: يعني [[.cmd]] حواليك كل يوم.
+
+## ٥. العربي و [[chcp]]
+
+CMD بيقرا الملف ويطبعه بالـ code page بتاع الشباك. على أغلب الأجهزة ده 720 أو 437 مش UTF-8، فالعربي في ملف UTF-8 بيطلع رموز غريبة. [[chcp 65001]] بيحوّل الشباك لـ UTF-8 (65001 رقم UTF-8 عند ويندوز)، و [[>nul]] بعدها بيخفي رسالة [[Active code page: 65001]]. على جهاز التجربة [[chcp]] كان أصلًا [[Active code page: 65001]] (ويندوز متظبط UTF-8 للنظام كله)، فمقدرناش نوري الشكل الملخبط هنا.
+
+## الخلاصة
+
+| الرمز | معناه |
+|---|---|
+| [[@echo off]] | متطبعش الأوامر |
+| [[REM]] / [[::]] | تعليق |
+| [[set X=y]] | متغير، من غير مسافات |
+| [[%X%]] / [[%1]] / [[%~dp0]] | قيمة متغير / أول argument / فولدر السكربت |
+| [[>nul]] | ارمي الناتج |
+| [[pause]] | استنى زرار |
+
+- الدبل كليك بيشغّل علطول من غير أي سؤال: متفتحش [[.bat]] أو [[.cmd]] جايلك من حد متعرفوش.
+- الملف يتحفظ CRLF، وللحاجات الجديدة PowerShell أحسن.`,
           lines: [
             R`متطبعش الأوامر نفسها، بس ناتجها.`,
             R`المتغيرات تفضل جوه السكربت.`,
