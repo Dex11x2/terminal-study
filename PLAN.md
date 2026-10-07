@@ -1,6 +1,6 @@
 # الخطة: وصلنا لفين وفاضل إيه
 
-آخر تحديث: ٦ أكتوبر ٢٠٢٦ (TypeScript و HTML/CSS و React و Next.js و API و SQL خلصوا؛ و Python API والملفات والرموز والقاموس خلصوا،  و apps و DSA و real و Go و .NET و PHP و Spring و Angular و React Native خلصوا؛ flutter شغال).
+آخر تحديث: ٦ أكتوبر ٢٠٢٦ (TypeScript و HTML/CSS و React و Next.js و API و SQL خلصوا؛ و Python API والملفات والرموز والقاموس خلصوا،  و apps و DSA و real و Go و .NET و PHP و Spring و Angular و React Native خلصوا؛ اتوقفنا ٧ أكتوبر في نص flutter/05 و kotlin/03-04، والشرح اللي اتكتب فيهم على الجهاز ومش مترفع).
 
 أي جلسة جديدة تقرا الملف ده الأول، وبعد أي دفعة شغل تحدّثه: تشيل اللي خلص من «الشغل الجاي» وتضيفه في «اتعمل»، وتكتب أي حاجة ناقصة اكتشفتها.
 
@@ -130,8 +130,8 @@
 | ٤٣ | `spring/01-04.js` (58) | [x] (spring اتقسم 16 ملف؛ image الـ JDK اتمسحت) |
 | ٤٤ | `angular/01-03.js` (51) | [x] (angular اتقسم) |
 | ٤٥ | `rn/01-04.js` (56) | [x] (rn اتقسم) |
-| ٤٦ | `flutter/01-05.js` (61) | [ ] |
-| ٤٧ | `kotlin/01-06.js` (56) | [ ] |
+| ٤٦ | `flutter/01-05.js` (61) | [ ] (01-04 خلصوا؛ 05 اتوقف في النص؛ images بتاعة dart و flutter لسه على الجهاز وتتمسح بعد التاب) |
+| ٤٧ | `kotlin/01-06.js` (56) | [ ] (01-02 خلصوا؛ 03-04 اتوقفوا في النص؛ 05-06 لسه؛ eclipse-temurin:21-jdk و scratchpad/kotlin-tools لسه موجودين) |
 | ٤٨ | `swift/01-05.js` (49) | [ ] (macOS مش متاح: Swift على Linux في Docker، و iOS/SwiftUI من الـ docs) |
 | ٤٩ | `cpp/01-06.js` (54) | [ ] |
 | ٥٠ | `apis/01-04.js` (44) | [ ] |
