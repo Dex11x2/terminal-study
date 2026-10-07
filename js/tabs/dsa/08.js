@@ -1,825 +1,804 @@
 // تكملة تاب dsa: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/dsa/01.js (شرح حقول الدرس في أوله)
 MORE("dsa", [
     {
-      t: "heaps و priority queues",
-      l: 3,
-      n: "أصغر (أو أكبر) عنصر في O(1) وتطلّعه في O(log n): heap بإيدك، و kth largest، و top k، و merge k lists",
+      t: "sorting",
+      l: 2,
+      n: "إزاي الـ sort بيشتغل من جوه، وإزاي تكتب comparator صح في JS",
       items: [
         {
-          cmd: "min heap (by hand)",
-          title: "JavaScript معندهاش heap جاهز، اكتب واحد بإيدك",
-          desc: R`الـ min heap: شجرة binary كاملة، كل عقدة فيها أصغر من (أو تساوي) أولادها. فالأصغر دايمًا في الـ root. بيدّيك ٣ عمليات: [[peek]] (الأصغر) في [[O(1)]]، و [[push]] و [[pop]] في [[O(log n)]].
+          cmd: "merge sort",
+          title: "رتّب array في O(n log n) مضمونة حتى في أسوأ حالة",
+          desc: R`قسّم الـ array نصين، رتّب كل نص بنفس الطريقة (recursion)، وبعدين ادمج النصين المترتبين في واحد مترتب. الدمج بمؤشرين: كل مرة خد الأصغر من أول النصين. [[O(n log n)]] دايمًا.
 
-مش محتاجين objects وأولاد: الشجرة الكاملة بتتخزّن في array عادية. العنصر في index i أولاده في [[2i + 1]] و [[2i + 2]]، وأبوه في [[(i - 1) >> 1]] (يعني قسمة على 2 وتقريب لتحت).
+ليه [[n log n]]؟ التقسيم بيعمل log n مستوى (كل مستوى الأجزاء بتتقسم نصين). وفي كل مستوى، الدمج بيلمس كل العناصر مرة: n. يعني n × log n.
 
-push: حط العنصر في آخر الـ array، وطالما أصغر من أبوه بدّلهم واطلع (sift up). pop: خد الـ root، وحط آخر عنصر مكانه، وطالما أكبر من أصغر ابن بدّلهم وانزل (sift down). الشجرة ارتفاعها [[log n]]، فكل عملية [[O(log n)]].
-
-Python عندها [[heapq]]، و Java عندها [[PriorityQueue]]، لكن JavaScript مفيهاش حاجة جاهزة. في الانترفيو اكتبه أو اسأل «ينفع أفترض إن عندي MinHeap؟». في الشغل فيه packages جاهزة، وبيئة JavaScript في LeetCode عادةً فيها [[MinPriorityQueue]] من package اسمها [[@datastructures-js/priority-queue]]، بس متعتمدش عليها في انترفيو على whiteboard أو editor عادي.
-
-الـ [[compare]] بيخلّي نفس الـ class ينفع max heap، أو heap على objects بأي مفتاح. احفظ الملف ده باسم [[min-heap.js]] جوه [[~/lab/dsa]]، لأن الدروس الجاية بتعمل له [[require]].`,
-          example: R`class MinHeap {
-  constructor(compare = (a, b) => a - b) {
-    this.data = [];
-    this.compare = compare;
-  }
-  get size() { return this.data.length; }
-  peek() { return this.data[0]; }
-  push(value) {
-    const d = this.data;
-    d.push(value);
-    let i = d.length - 1;
-    while (i > 0) {
-      const parent = (i - 1) >> 1;
-      if (this.compare(d[i], d[parent]) >= 0) break;
-      const tmp = d[i]; d[i] = d[parent]; d[parent] = tmp;
-      i = parent;
-    }
-  }
-  pop() {
-    const d = this.data;
-    if (d.length === 0) return undefined;
-    const top = d[0];
-    const last = d.pop();
-    if (d.length > 0) {
-      d[0] = last;
-      let i = 0;
-      while (true) {
-        const l = 2 * i + 1, r = l + 1;
-        let smallest = i;
-        if (l < d.length && this.compare(d[l], d[smallest]) < 0) smallest = l;
-        if (r < d.length && this.compare(d[r], d[smallest]) < 0) smallest = r;
-        if (smallest === i) break;
-        const tmp = d[i]; d[i] = d[smallest]; d[smallest] = tmp;
-        i = smallest;
-      }
-    }
-    return top;
-  }
-}
-module.exports = { MinHeap };
-if (require.main === module) {
-  const h = new MinHeap();
-  for (const x of [5, 3, 8, 1, 9, 2]) h.push(x);
-  console.log(h.peek(), h.size); // 1 6
+و merge sort stable (العناصر المتساوية بتفضل بترتيبها الأصلي) بسبب [[<=]] في الدمج. وعيبه إنه محتاج [[O(n)]] ذاكرة زيادة للدمج.`,
+          example: R`function mergeSort(a) {
+  if (a.length <= 1) return a;
+  const mid = a.length >> 1;
+  const left = mergeSort(a.slice(0, mid));
+  const right = mergeSort(a.slice(mid));
   const out = [];
-  while (h.size) out.push(h.pop());
-  console.log(out.join(" ")); // 1 2 3 5 8 9
-  const maxHeap = new MinHeap((a, b) => b - a);
-  [5, 3, 8].forEach(x => maxHeap.push(x));
-  console.log(maxHeap.pop(), new MinHeap().pop()); // 8 undefined
+  let i = 0, j = 0;
+  while (i < left.length && j < right.length) {
+    out.push(left[i] <= right[j] ? left[i++] : right[j++]);
+  }
+  return out.concat(left.slice(i), right.slice(j));
 }
-// push and pop: O(log n); peek: O(1); n pushes: O(n log n)`,
-          try: R`اختبر الـ heap بعشوائية: ضيف ١٠ آلاف رقم عشوائي، وطلّعهم كلهم، وقارن بـ [[sort]]. لازم يطلعوا متطابقين. وبعدين استخدمه كـ «task queue» بأولويات: كل مهمة [[{ name, priority }]]، والأولوية الأقل تطلع الأول، ولو أولويتين متساويتين يطلع اللي اتضاف الأول. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[TaskQueue]] فيه [[push(name, priority)]] و [[pop()]] و [[size]]، والتعادل يطلع اللي اتضاف الأول.`,
-          sol: R`الاختبار العشوائي لازم يطبع [[true]]. لو طلع false، الغلط في الغالب في [[pop]]: يا إما نسيت حالة [[d.length > 0]] بعد الـ [[pop]] (heap فيه عنصر واحد)، يا إما بتقارن بالابن الشمال بس في الـ sift down.
-
-المهام بأولويات: الـ heap مش stable، يعني عنصرين متساويين ممكن يطلعوا بأي ترتيب. عشان «اللي اتضاف الأول يطلع الأول»، ضيف عدّاد [[seq]] بيزيد مع كل push، وخلي الـ compare يقارن الأولوية الأول، ولو متساويين يقارن الـ seq. الناتج: [[deploy fix-bug write-docs lunch]] (deploy و fix-bug أولويتهم 1، و deploy اتضافت الأول).
-
-الغلطة الشائعة: تعمل [[sort]] على الـ array بعد كل push. ده [[O(n log n)]] لكل عملية بدل [[O(log n)]].`,
-          solCode: R`const { MinHeap } = require("./min-heap");
-const nums = Array.from({ length: 10000 }, () => Math.floor(Math.random() * 1e6));
-const h = new MinHeap();
-nums.forEach(x => h.push(x));
-const fromHeap = [];
-while (h.size) fromHeap.push(h.pop());
-const sorted = [...nums].sort((a, b) => a - b);
-console.log(fromHeap.every((x, i) => x === sorted[i])); // true
-let seq = 0;
-const tasks = new MinHeap((a, b) => a.priority - b.priority || a.seq - b.seq);
-const add = (name, priority) => tasks.push({ name, priority, seq: seq++ });
-add("write-docs", 2); add("deploy", 1); add("lunch", 3); add("fix-bug", 1);
-const order = [];
-while (tasks.size) order.push(tasks.pop().name);
-console.log(order.join(" ")); // deploy fix-bug write-docs lunch
-// 10k pushes + pops: O(n log n)`,
+console.log(mergeSort([5, 2, 9, 1, 5, 6])); // [1, 2, 5, 5, 6, 9]
+console.log(mergeSort([]));                 // []
+// O(n log n) time in every case, O(n) extra space; stable`,
+          try: R`اكتب دمج اتنين array مترتبين لوحده، ده سؤال انترفيو لوحده. وبعدين عدّ الـ inversions: كام زوج (i < j) العنصر الأول فيه أكبر من التاني؟ عدّل الدمج: كل ما تاخد من اليمين، زوّد العدّاد بعدد العناصر الفاضلة في الشمال. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[mergeSorted(a, b)]] و [[countInversions(a)]].`,
           flag: "script",
           deep: {
-            why: "الـ heap هو الأداة لأي «هات الأصغر/الأكبر دلوقتي، والبيانات بتتغير»: queue مهام بأولويات (BullMQ و Sidekiq بيستخدموا فكرة قريبة)، و timers في event loop، و Dijkstra، و «أعلى 10 منتجات مبيعًا» على stream بيانات. والـ sort مش بديل، لأن كل عنصر جديد هيحتاج sort من الأول.",
-            how: R`push لـ [5, 3, 8, 1]: [[[5]]]. push 3: [[[5, 3]]]، 3 أصغر من أبوها 5، بدّل: [[[3, 5]]]. push 8: [[[3, 5, 8]]]، 8 أكبر من 3، خلاص. push 1: [[[3, 5, 8, 1]]]، أبوها index 1 (قيمته 5)، بدّل: [[[3, 1, 8, 5]]]، أبوها index 0 (قيمته 3)، بدّل: [[[1, 3, 8, 5]]].
+            why: "في الشغل مش هتكتب sort بإيدك، [[Array.prototype.sort]] موجودة. بس merge sort هو أوضح مثال على divide and conquer، والانترفيو بيسأل عنه («اشرح merge sort» أو «ليه O(n log n)»). وفكرة الدمج نفسها بتتكرر: دمج linked lists، ودمج نتايج من أكتر من سيرفر، و external sort لملف أكبر من الرام.",
+            how: R`dry run على [5, 2, 9, 1]:
 
-pop: الـ top هو 1. آخر عنصر (5) يروح مكانه: [[[5, 3, 8]]]. أصغر ابن لـ 5 هو 3، بدّل: [[[3, 5, 8]]]. خلاص. رجّعنا 1، والأصغر الجديد 3 في الـ root.
+التقسيم: [5, 2] و [9, 1]. بعدين [5] و [2]، و [9] و [1]. كل واحدة عنصر واحد، مترتبة.
 
-الـ array مش مترتبة! [[[1, 3, 8, 5]]] heap صحيح. الضمان الوحيد إن كل أب أصغر من أولاده، وده كفاية عشان الـ root يبقى الأصغر.
+الدمج من تحت: [5] مع [2]: 2 أصغر، بعدين 5، يعني [2, 5]. و [9] مع [1] بتبقى [1, 9].
 
-[[module.exports]] و [[require.main === module]]: الملف ده بيصدّر الـ class عشان الدروس الجاية تستخدمه، والـ demo بتتنفذ بس لو شغّلت الملف نفسه بـ [[node min-heap.js]]، مش لما حد يعمله require.
+الدمج الأخير: [2, 5] مع [1, 9]. قارن 2 و 1، خد 1. قارن 2 و 9، خد 2. قارن 5 و 9، خد 5. الشمال خلص، ضيف 9. النتيجة [1, 2, 5, 9].
 
-بناء heap من array موجودة ممكن يتعمل في [[O(n)]] (heapify: sift down من نص الـ array لأولها)، بس الـ push واحد واحد [[O(n log n)]] كفاية في أغلب الحالات.`,
-            when: "لما محتاج الأصغر أو الأكبر أكتر من مرة، والعناصر بتدخل وتطلع. لو محتاج الأصغر مرة واحدة بس: [[Math.min]] أو loop، [[O(n)]]. لو البيانات ثابتة ومحتاجها كلها مترتبة: sort مرة. لو محتاج تدوّر على أي عنصر أو تمسحه من النص، الـ heap مش مناسب (العملية دي [[O(n)]] فيه).",
-            mistakes: R`[[Math.floor(i / 2)]] كأب بدل [[(i - 1) >> 1]] مع array بتبدأ من 0. ونسيان إن الـ heap فيه عنصر واحد في [[pop]] (تحط الـ last مكان الـ top وترجّعه تاني). والـ compare بالطرح [[a - b]] بيقع مع strings (ترجع NaN)؛ استخدم [[a.localeCompare(b)]]. وفي الانترفيو: «heap مترتب؟» لأ، والـ sift down بيقارن بأصغر ابن مش بأي ابن.`
+الـ Big-O بالتفصيل: كل مستوى من الشجرة فيه أجزاء مجموع أطوالها n، والدمج في المستوى كله [[O(n)]]. وعدد المستويات [[log₂ n]] لأن كل مستوى بيقسم نصين. المجموع [[O(n log n)]]، ومفيش حالة أسوأ: مش فارق الـ array مترتبة ولا مقلوبة.
+
+الذاكرة: [[out]] والـ [[slice]] بياخدوا [[O(n)]] في كل مستوى، بس مش كلهم عايشين في نفس الوقت. الأقصى [[O(n)]]، زائد [[O(log n)]] للـ call stack.
+
+الـ TimSort (اللي في V8 و Python) هو merge sort متطوّر: بيدوّر على أجزاء مترتبة أصلًا في البيانات ويدمجها، فعلى بيانات شبه مترتبة بيقرّب من [[O(n)]].`,
+            when: "لما محتاج ترتيب مضمون O(n log n) و stable. ولما البيانات أكبر من الرام (external sort: رتّب قطع وادمجها). ولما بتدمج مصادر مترتبة أصلًا.",
+            mistakes: R`إنك تنسى تضيف الباقي بعد الـ while، فيضيع آخر عنصر أو أكتر. وإنك تستخدم [[<]] بدل [[<=]] فيبقى مش stable. وإنك تقول space [[O(1)]]: الدمج محتاج مكان. وإنك تفتكر إن merge sort أسرع من quick sort دايمًا: عمليًا quick sort غالبًا أسرع على الـ arrays لأنه in-place وبيستغل الـ cache أحسن، مع إن worst case بتاعه أوحش.`
           },
+          teach: R`## الفكرة في جملة
+
+array فيها عنصر واحد مترتبة أصلًا. فقسّم الـ array نصين، وكل نص قسّمه نصين، لحد ما توصل لعناصر لوحدها. وبعدين ارجع لفوق وادمج كل نصين **مترتبين** في واحد مترتب. والدمج سهل: النصين مترتبين، فالأصغر في الكل لازم يكون أول واحد في الشمال أو أول واحد في اليمين، فقارن الاتنين وخد الأصغر، وكرّر.
+
+ده اسمه divide and conquer: قسّم المسألة لمسائل أصغر من نفس النوع، حلّهم، واجمع الحلول.
+
+كل الأرقام اللي تحت من تشغيل حقيقي على Node 24.19.0 على ويندوز، بعد ما ضفنا [[console.log]] يطبع كل تقسيمة وكل مقارنة في الدمج.
+
+---
+
+## ١. الكود سطر سطر
+
+~~~js
+function mergeSort(a) {
+  if (a.length <= 1) return a;
+  const mid = a.length >> 1;
+  const left = mergeSort(a.slice(0, mid));
+  const right = mergeSort(a.slice(mid));
+  const out = [];
+  let i = 0, j = 0;
+  while (i < left.length && j < right.length) {
+    out.push(left[i] <= right[j] ? left[i++] : right[j++]);
+  }
+  return out.concat(left.slice(i), right.slice(j));
+}
+~~~
+
+### [[if (a.length <= 1) return a;]]
+
+الـ base case: الحالة اللي الـ recursion بيقف عندها. فاضية أو عنصر واحد يبقى مترتبة ومفيش حاجة تتعمل. من غير السطر ده الدالة هتنادي نفسها للأبد.
+
+### [[const mid = a.length >> 1;]]
+
+[[>>]] بيزق الـ bits خانة لليمين، وده قسمة على ٢ مع تقريب لتحت: [[5 >> 1]] طلعت 2، و [[4 >> 1]] طلعت 2.
+
+### [[mergeSort(a.slice(0, mid))]] و [[mergeSort(a.slice(mid))]]
+
+[[slice(start, end)]] بترجّع **نسخة** من start لحد قبل end، ومن غير end لحد الآخر. على [1, 2, 3]: [[slice(0, 1)]] طلعت [[[ 1 ]]] و [[slice(1)]] طلعت [[[ 2, 3 ]]]. والدالة بتنادي نفسها على كل نص (recursion)، وبنثق إنها هترجّعه مترتب.
+
+### [[const out = []; let i = 0, j = 0;]]
+
+[[out]] الناتج المدموج. [[i]] مؤشر على أول عنصر لسه ماتاخدش من [[left]]، و [[j]] نفس الكلام في [[right]].
+
+### [[while (i < left.length && j < right.length)]]
+
+طول ما النصين لسه فيهم عناصر.
+
+### [[out.push(left[i] <= right[j] ? left[i++] : right[j++]);]]
+
+من جوه لبرة:
+
+1. [[left[i] <= right[j]]]: مين أصغر؟
+2. الـ ternary [[? :]]: لو الشمال أصغر أو مساوي خد [[left[i++]]]، غير كده [[right[j++]]].
+3. [[i++]] post-increment: بيرجّع [[left[i]]] بالـ i القديمة، وبعدين يقدّم المؤشر.
+4. [[out.push(...)]]: حطه في الناتج.
+
+ليه [[<=]] مش [[<]]؟ وقت التساوي بناخد من الشمال، فالعناصر المتساوية بتفضل بترتيبها الأصلي. ده اسمه **stable**.
+
+### [[return out.concat(left.slice(i), right.slice(j));]]
+
+الـ while وقف لأن نص واحد خلص. النص التاني فاضل فيه عناصر، وهي مترتبة وأكبر من كل اللي في [[out]]. [[concat]] بتلزق arrays ورا بعض في array جديدة: [[[1].concat([], [2, 3])]] طلعت [[[ 1, 2, 3 ]]]. واحد من الـ slices هيبقى فاضي دايمًا، فمش فارق مين.
+
+---
+
+## ٢. التتبع على [[[8, 3, 5, 1, 4]]]
+
+### التقسيم (نازلين)
+
+~~~text التقسيم
+[8, 3, 5, 1, 4]        mid = 2
+[8, 3]   [5, 1, 4]     mid = 1 لكل واحدة
+[8] [3]  [5] [1, 4]
+             [1] [4]
+~~~
+
+خمس نداءات وصلت للـ base case (عنصر واحد).
+
+### الدمج (طالعين)
+
+| الدمج | المقارنة | خدنا | i | j | out |
+|---|---|---|---|---|---|
+| [8] مع [3] | 8 و 3 | 3 | 0 | 1 | [3] |
+| | اليمين خلص، ضيف [8] | | | | [3, 8] |
+| [1] مع [4] | 1 و 4 | 1 | 1 | 0 | [1] |
+| | الشمال خلص، ضيف [4] | | | | [1, 4] |
+| [5] مع [1, 4] | 5 و 1 | 1 | 0 | 1 | [1] |
+| | 5 و 4 | 4 | 0 | 2 | [1, 4] |
+| | اليمين خلص، ضيف [5] | | | | [1, 4, 5] |
+| [3, 8] مع [1, 4, 5] | 3 و 1 | 1 | 0 | 1 | [1] |
+| | 3 و 4 | 3 | 1 | 1 | [1, 3] |
+| | 8 و 4 | 4 | 1 | 2 | [1, 3, 4] |
+| | 8 و 5 | 5 | 1 | 3 | [1, 3, 4, 5] |
+| | اليمين خلص، ضيف [8] | | | | [1, 3, 4, 5, 8] |
+
+في كل دمج الـ while بيوقف قبل الآخر، و [[concat]] هي اللي بتضيف الباقي. لو شلتها، الـ 8 كانت هتضيع.
+
+### الـ stability بتجربة
+
+رتّبنا بنفس الكود (بمقارنة [[k]]) objects بالترتيب: [[{k:2,n:"a"}]] و [[{k:1,n:"b"}]] و [[{k:2,n:"c"}]] و [[{k:1,n:"d"}]]. الناتج: b ثم d ثم a ثم c. الاتنين اللي k بتاعهم 1 فضلوا b قبل d زي الأصل، ونفس الكلام لـ a و c.
+
+---
+
+## ٣. الناتج الكامل للمثال
+
+~~~text الناتج (Node 24 على ويندوز)
+[ 1, 2, 5, 5, 6, 9 ]
+[]
+~~~
+
+الـ 5 المكررة طلعت مرتين جنب بعض، والفاضية رجعت من الـ base case على طول.
+
+---
+
+## ٤. الـ Big-O وليه
+
+- **عدد المستويات:** كل مستوى بيقسم الأجزاء نصين، فمن n لحد 1 محتاج [[log₂ n]] مستوى (في المثال: ٥ عناصر، ٣ مستويات).
+- **الشغل في كل مستوى:** الأجزاء في نفس المستوى مجموع أطوالها n، وكل عنصر بيتنقل لـ [[out]] مرة في الدمج: [[O(n)]].
+- المجموع n × log n، ومش فارق شكل الـ input: مترتب أو مقلوب، نفس التقسيم ونفس الدمج.
+
+| | القيمة | السبب |
+|---|---|---|
+| الوقت | [[O(n log n)]] | log n مستوى × n في كل مستوى، في كل الحالات |
+| الذاكرة | [[O(n)]] زيادة | [[out]] والـ slices، زائد [[O(log n)]] للـ call stack |
+| stable | آه | [[<=]] بتاخد من الشمال وقت التساوي |
+
+---
+
+## الخلاصة
+
+~~~text
+base case    length <= 1 ترجع زي ما هي
+قسّم         mid = length >> 1 ، و slice للنصين
+رتّب         نادي نفسك على كل نص
+ادمج         i و j، خد الأصغر (<= عشان stable)
+الباقي       concat اللي فاضل من النصين
+Big-O        O(n log n) دايمًا، و O(n) ذاكرة
+~~~`,
           lines: [
-            "الـ class بتاع الـ heap.",
-            "compare زي بتاع sort: سالب يعني a يطلع قبل b. الـ default أرقام من الصغير.",
-            "الشجرة متخزنة في array.",
-            "نحفظ الـ compare.",
-            "قفلة الـ constructor.",
-            "عدد العناصر.",
-            "الأصغر من غير ما نشيله.",
-            "إضافة عنصر.",
-            "اختصار.",
-            "حطه في آخر الـ array (آخر مكان في الشجرة).",
-            "مكانه.",
-            "sift up: طالما مش الـ root.",
-            "index الأب.",
-            "مش أصغر من أبوه: مكانه صح، وقّف.",
-            "أصغر: بدّله مع أبوه.",
-            "واطلع مكان الأب.",
-            "قفلة الـ while.",
-            "قفلة push.",
-            "طلّع الأصغر.",
-            "اختصار.",
-            "فاضي: مفيش حاجة.",
-            "الأصغر هو اللي هنرجّعه.",
-            "شيل آخر عنصر.",
-            "لو لسه فيه عناصر.",
-            "حط الأخير مكان الـ root.",
-            "sift down من الـ root.",
-            "لحد ما يلاقي مكانه.",
-            "index الابنين.",
-            "افترض إن أنا الأصغر.",
-            "الشمال أصغر؟",
-            "اليمين أصغر من الأصغر لحد دلوقتي؟",
-            "أنا أصغر من الاتنين: مكاني صح.",
-            "بدّل مع أصغر ابن.",
-            "وانزل مكانه.",
-            "قفلة الـ while.",
-            "قفلة الـ if.",
-            "رجّع الأصغر.",
-            "قفلة pop.",
-            "قفلة الـ class.",
-            "صدّر الـ class للملفات التانية.",
-            "الـ demo تشتغل بس لو الملف ده اتشغّل مباشرة.",
-            "heap جديد.",
-            "ضيف ٦ أرقام.",
-            "الأصغر 1، والعدد 6.",
-            "هنطلّعهم كلهم.",
-            "كل pop بيطلّع الأصغر اللي فاضل.",
-            "طلعوا مترتبين: ده heap sort.",
-            "max heap بنفس الكود: اعكس الـ compare.",
-            "ضيف ٣ أرقام.",
-            "الأكبر طلع الأول، و pop على heap فاضي undefined.",
-            "قفلة الـ if."
+            "بترجّع array جديدة مترتبة.",
+            "عنصر واحد أو فاضية: مترتبة أصلًا (الـ base case).",
+            "النص. [[>> 1]] قسمة على ٢ لتحت.",
+            "رتّب النص الشمال (recursion).",
+            "رتّب النص اليمين.",
+            "الناتج المدموج.",
+            "مؤشر على كل نص.",
+            "طول ما النصين فيهم عناصر.",
+            "خد الأصغر من الاتنين وقدّم مؤشره. [[<=]] بتاخد من الشمال وقت التساوي، وده اللي بيخليه stable.",
+            "قفلة.",
+            "واحد من النصين خلص، ضيف الباقي من التاني زي ما هو (مترتب أصلًا).",
+            "قفلة.",
+            "الـ 5 المكررة موجودة مرتين.",
+            "فاضية."
           ],
+          sol: R`الدمج لوحده: مؤشرين [[i]] و [[j]]، خد الأصغر كل مرة، وبعدين ضيف اللي فاضل من الاتنين. [1, 4, 9] مع [2, 3, 10, 11] تطلع [[1 2 3 4 9 10 11]]. ده [[O(n + m)]].
+
+الـ inversions: في الـ merge، لما تاخد من اليمين ([[right[j] < left[i]]])، العنصر ده أصغر من كل اللي فاضلين في الشمال، فزوّد العدّاد [[left.length - i]]. الدالة بترجّع [array مترتبة، عدد]، والعدد الكلي = الشمال + اليمين + اللي في الدمج. [2, 4, 1, 3, 5] تطلع 3، و [5, 4, 3, 2, 1] تطلع 10. [[O(n log n)]] بدل [[O(n^2)]].
+
+الغلطة المشهورة: تستخدم [[<]] بدل [[<=]] في المقارنة، فالأرقام المتساوية تتحسب inversion ([1, 2, 2] تطلع 1 بدل 0).`,
+          solCode: R`function mergeSorted(a, b) {
+  const out = [];
+  let i = 0, j = 0;
+  while (i < a.length && j < b.length) out.push(a[i] <= b[j] ? a[i++] : b[j++]);
+  while (i < a.length) out.push(a[i++]);
+  while (j < b.length) out.push(b[j++]);
+  return out;
+}
+console.log(mergeSorted([1, 4, 9], [2, 3, 10, 11]).join(" ")); // 1 2 3 4 9 10 11
+function countInversions(a) {
+  if (a.length <= 1) return [a, 0];
+  const mid = a.length >> 1;
+  const [left, cl] = countInversions(a.slice(0, mid));
+  const [right, cr] = countInversions(a.slice(mid));
+  const out = [];
+  let i = 0, j = 0, count = cl + cr;
+  while (i < left.length && j < right.length) {
+    if (left[i] <= right[j]) out.push(left[i++]);
+    else { out.push(right[j++]); count += left.length - i; }
+  }
+  return [out.concat(left.slice(i), right.slice(j)), count];
+}
+console.log(countInversions([2, 4, 1, 3, 5])[1]); // 3  (2,1) (4,1) (4,3)
+console.log(countInversions([5, 4, 3, 2, 1])[1]); // 10 (every pair: 5*4/2)
+console.log(countInversions([1, 2, 2])[1]);       // 0
+// merge: O(n + m); inversions: O(n log n) time, O(n) space (brute force over pairs = O(n^2))`,
           check: {
             lang: "js",
-            starter: R`// الـ MinHeap من درس «min heap (by hand)» جاهز هنا تستخدمه
-class MinHeap {
-  constructor(compare = (a, b) => a - b) { this.data = []; this.compare = compare; }
-  get size() { return this.data.length; }
-  peek() { return this.data[0]; }
-  push(value) {
-    const d = this.data;
-    d.push(value);
-    let i = d.length - 1;
-    while (i > 0) {
-      const p = (i - 1) >> 1;
-      if (this.compare(d[i], d[p]) >= 0) break;
-      [d[i], d[p]] = [d[p], d[i]];
-      i = p;
-    }
-  }
-  pop() {
-    const d = this.data;
-    if (d.length === 0) return undefined;
-    const top = d[0], last = d.pop();
-    if (d.length > 0) {
-      d[0] = last;
-      let i = 0;
-      while (true) {
-        const l = 2 * i + 1, r = l + 1;
-        let m = i;
-        if (l < d.length && this.compare(d[l], d[m]) < 0) m = l;
-        if (r < d.length && this.compare(d[r], d[m]) < 0) m = r;
-        if (m === i) break;
-        [d[i], d[m]] = [d[m], d[i]];
-        i = m;
-      }
-    }
-    return top;
-  }
+            starter: R`function mergeSorted(a, b) {
+  const out = [];
+  let i = 0, j = 0;
+  // خد الأصغر كل مرة، وبعدين ضيف اللي فاضل
+  return out;
 }
-class TaskQueue {
-  constructor() {
-    this.seq = 0;
-    this.heap = new MinHeap(/* قارن الأولوية، ولو متساويين قارن seq */);
-  }
-  push(name, priority) {}
-  pop() {}
-  get size() { return this.heap.size; }
+function countInversions(a) {
+  // merge sort بيرجّع [مترتبة، عدد]: لما تاخد من اليمين زوّد left.length - i
+  return 0;
 }`,
-            tests: R`test("lunch 3، deploy 1، write-docs 2، fix-bug 1 ← deploy fix-bug write-docs lunch", () => {
-  const q = new TaskQueue();
-  q.push("lunch", 3); q.push("deploy", 1); q.push("write-docs", 2); q.push("fix-bug", 1);
-  expect([q.pop(), q.pop(), q.pop(), q.pop()]).toEqual(["deploy", "fix-bug", "write-docs", "lunch"]);
-});
-test("فاضي: pop ← undefined و size ← 0", () => { const q = new TaskQueue(); expect([q.pop(), q.size]).toEqual([undefined, 0]); });
-test("size بيزيد ويقل", () => { const q = new TaskQueue(); q.push("a", 1); q.push("b", 1); q.pop(); expect(q.size).toBe(1); });
-test("20 ألف مهمة بأولويات عشوائية: نفس ناتج sort الـ stable (كل عملية O(log n))", () => {
-  let seed = 3;
-  const tasks = Array.from({ length: 20000 }, (_, i) => ({ name: "t" + i, p: (seed = (seed * 1103515245 + 12345) % 2147483648) % 10 }));
-  const q = new TaskQueue();
-  tasks.forEach(t => q.push(t.name, t.p));
-  const got = [];
-  while (q.size) got.push(q.pop());
-  expect(got).toEqual([...tasks].sort((a, b) => a.p - b.p).map(t => t.name));
-});`,
-            solution: R`// الـ MinHeap من درس «min heap (by hand)» جاهز هنا تستخدمه
-class MinHeap {
-  constructor(compare = (a, b) => a - b) { this.data = []; this.compare = compare; }
-  get size() { return this.data.length; }
-  peek() { return this.data[0]; }
-  push(value) {
-    const d = this.data;
-    d.push(value);
-    let i = d.length - 1;
-    while (i > 0) {
-      const p = (i - 1) >> 1;
-      if (this.compare(d[i], d[p]) >= 0) break;
-      [d[i], d[p]] = [d[p], d[i]];
-      i = p;
-    }
-  }
-  pop() {
-    const d = this.data;
-    if (d.length === 0) return undefined;
-    const top = d[0], last = d.pop();
-    if (d.length > 0) {
-      d[0] = last;
-      let i = 0;
-      while (true) {
-        const l = 2 * i + 1, r = l + 1;
-        let m = i;
-        if (l < d.length && this.compare(d[l], d[m]) < 0) m = l;
-        if (r < d.length && this.compare(d[r], d[m]) < 0) m = r;
-        if (m === i) break;
-        [d[i], d[m]] = [d[m], d[i]];
-        i = m;
-      }
-    }
-    return top;
-  }
+            tests: R`test("mergeSorted([1, 4, 9], [2, 3, 10, 11]) ← [1, 2, 3, 4, 9, 10, 11]", () => expect(mergeSorted([1, 4, 9], [2, 3, 10, 11])).toEqual([1, 2, 3, 4, 9, 10, 11]));
+test("واحدة فاضية: ([], [1]) ← [1]، و ([], []) ← []", () => expect([mergeSorted([], [1]), mergeSorted([], [])]).toEqual([[1], []]));
+test("countInversions([2, 4, 1, 3, 5]) ← 3", () => expect(countInversions([2, 4, 1, 3, 5])).toBe(3));
+test("[5, 4, 3, 2, 1] ← 10", () => expect(countInversions([5, 4, 3, 2, 1])).toBe(10));
+test("المتساويين مش inversion: [1, 2, 2] ← 0 (<= مش <)", () => expect(countInversions([1, 2, 2])).toBe(0));
+test("[] ← 0", () => expect(countInversions([])).toBe(0));
+test("3000 رقم نازلين ← 4498500 (O(n log n)، والـ brute force O(n^2))", () => expect(countInversions(Array.from({ length: 3000 }, (_, i) => 3000 - i))).toBe(4498500));`,
+            solution: R`function mergeSorted(a, b) {
+  const out = [];
+  let i = 0, j = 0;
+  while (i < a.length && j < b.length) out.push(a[i] <= b[j] ? a[i++] : b[j++]);
+  return out.concat(a.slice(i), b.slice(j));
 }
-class TaskQueue {
-  constructor() {
-    this.seq = 0;
-    this.heap = new MinHeap((a, b) => a.priority - b.priority || a.seq - b.seq);
-  }
-  push(name, priority) { this.heap.push({ name, priority, seq: this.seq++ }); }
-  pop() { return this.heap.pop()?.name; }
-  get size() { return this.heap.size; }
+function countInversions(a) {
+  const sort = arr => {
+    if (arr.length <= 1) return [arr, 0];
+    const mid = arr.length >> 1;
+    const [left, x] = sort(arr.slice(0, mid));
+    const [right, y] = sort(arr.slice(mid));
+    const out = [];
+    let i = 0, j = 0, count = x + y;
+    while (i < left.length && j < right.length) {
+      if (left[i] <= right[j]) out.push(left[i++]);
+      else { out.push(right[j++]); count += left.length - i; }
+    }
+    return [out.concat(left.slice(i), right.slice(j)), count];
+  };
+  return sort(a)[1];
 }`
           }
         },
         {
-          cmd: "kth largest",
-          title: "تاني أكبر رقم، أو الـ k أكبر، من غير ما ترتّب كل حاجة",
-          desc: R`الحل البديهي: رتّب تنازلي وخد العنصر [[k - 1]]. ده [[O(n log n)]] وبيشتغل، واذكره الأول في الانترفيو.
+          cmd: "quick sort",
+          title: "رتّب بإنك تختار عنصر وتحط الأصغر منه شماله والأكبر يمينه",
+          desc: R`اختار pivot، ورتّب الـ array بحيث كل الأصغر منه على شماله وكل الباقي على يمينه (partition). الـ pivot كده في مكانه النهائي. كرّر نفس الكلام على الشمال واليمين. متوسط [[O(n log n)]]، وأسوأ حالة [[O(n^2)]].
 
-الحل بالـ heap: خلّي min heap حجمه k بالظبط. عدّي على الأرقام: ضيف كل رقم، ولو الحجم عدّى k شيل الأصغر. في الآخر الـ heap فيه أكبر k أرقام، وأصغرهم (الـ root) هو الـ k أكبر.
+أسوأ حالة لما الـ pivot يطلع كل مرة أصغر أو أكبر عنصر (زي آخر عنصر في array مترتبة): التقسيم بيبقى 0 و n - 1، فـ n مستوى بدل log n. الـ pivot العشوائي بيخلي ده شبه مستحيل.
 
-ليه min heap مش max heap؟ لأنك عايز تطرد الأصغر كل مرة: أي رقم أصغر من كل الـ k اللي معاك مش ممكن يبقى من «أكبر k».
-
-الـ Big-O: [[O(n log k)]]. لو k صغير (أعلى 10 من مليون)، ده أسرع بكتير من sort، والذاكرة [[O(k)]] بدل [[O(n)]]. والأهم إنه بيشتغل على stream: الأرقام بتيجي واحد واحد ومش لازم تبقى كلها في الذاكرة.`,
-          example: R`const { MinHeap } = require("./min-heap");
-function kthLargest(nums, k) {
-  const heap = new MinHeap();
-  for (const x of nums) {
-    heap.push(x);
-    if (heap.size > k) heap.pop();
+وميزته إنه in-place: مش محتاج array جديدة، بس الـ call stack ([[O(log n)]] في المتوسط). وعيبه إنه مش stable.`,
+          example: R`const swap = (a, i, j) => { const t = a[i]; a[i] = a[j]; a[j] = t; };
+function quickSort(a, lo = 0, hi = a.length - 1) {
+  if (lo >= hi) return a;
+  swap(a, lo + Math.floor(Math.random() * (hi - lo + 1)), hi);
+  const pivot = a[hi];
+  let p = lo;
+  for (let i = lo; i < hi; i++) {
+    if (a[i] < pivot) { swap(a, i, p); p++; }
   }
-  return heap.peek();
+  swap(a, p, hi);
+  quickSort(a, lo, p - 1);
+  quickSort(a, p + 1, hi);
+  return a;
 }
-const bySort = (nums, k) => [...nums].sort((a, b) => b - a)[k - 1];
-console.log(kthLargest([3, 2, 1, 5, 6, 4], 2)); // 5
-console.log(kthLargest([3, 2, 3, 1, 2, 4, 5, 5, 6], 4)); // 4
-console.log(kthLargest([7], 1)); // 7
-console.log(bySort([3, 2, 1, 5, 6, 4], 2)); // 5
-// heap: O(n log k) time, O(k) space; sort: O(n log n) time, O(n) space`,
-          try: R`حل «Kth Largest Element in a Stream»: class اسمه [[KthLargest]] بياخد k وأرقام أولية، وفيه [[add(val)]] بتضيف رقم وترجّع الـ k أكبر لحد دلوقتي. جرّب [[new KthLargest(3, [4, 5, 8, 2])]] وبعدين [[add]] لـ 3 و 5 و 10 و 9 و 4، والمفروض يطلع 4 و 5 و 5 و 8 و 8. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[KthLargest]] (الـ MinHeap جاهز في المربع).`,
-          sol: R`الناتج: [[4 5 5 8 8]]. نفس الفكرة: heap حجمه k، والـ [[add]] بتعمل push، ولو الحجم عدّى k تعمل pop، وترجّع [[peek]]. كل add [[O(log k)]].
-
-dry run: بعد الأرقام الأولية الـ heap فيه [4, 5, 8] (2 اتطردت). add 3: دخلت وطلعت على طول، والـ root لسه 4. add 5: [4, 5, 5, 8] نطرد 4، الـ root 5. add 10: نطرد 5، والـ heap [5, 8, 10]، الـ root 5. add 9: نطرد 5، الـ root 8. add 4: تدخل وتطلع، 8.
-
-الغلطة الشائعة: تخزّن كل الأرقام في array وتعمل sort مع كل add، [[O(n log n)]] لكل add. وغلطة تانية: تنسى إن الأرقام الأولية ممكن تبقى أقل من k، فالـ [[peek]] يرجّع رقم مش هو الـ k أكبر لحد ما يتملي.`,
-          solCode: R`const { MinHeap } = require("./min-heap");
-class KthLargest {
-  constructor(k, nums) {
-    this.k = k;
-    this.heap = new MinHeap();
-    for (const x of nums) this.add(x);
-  }
-  add(val) {
-    this.heap.push(val);
-    if (this.heap.size > this.k) this.heap.pop();
-    return this.heap.peek();
-  }
-}
-const s = new KthLargest(3, [4, 5, 8, 2]);
-console.log([3, 5, 10, 9, 4].map(x => s.add(x)).join(" ")); // 4 5 5 8 8
-// add: O(log k) time; O(k) space`,
+console.log(quickSort([5, 2, 9, 1, 5, 6])); // [1, 2, 5, 5, 6, 9]
+// average O(n log n), worst O(n^2); O(log n) stack on average; in-place, not stable`,
+          try: R`شيل سطر الـ pivot العشوائي (يبقى آخر عنصر دايمًا) وجرّبها على array مترتبة فيها ٢٠ ألف عنصر: هتعمل stack overflow. وبعدين رجّع السطر وجرّبها على array كلها نفس الرقم. برضه بتقع. ليه؟`,
           flag: "script",
           deep: {
-            why: "«أعلى k» سؤال في كل dashboard: أكتر 10 منتجات مبيعًا، وأبطأ 5 endpoints، وأكتر المستخدمين نشاطًا. ولما البيانات كبيرة أو جاية كـ stream (logs و events)، مش هتقدر تعمل sort لكل حاجة كل مرة. و Kth Largest من أشهر مسائل الـ heap في الانترفيو.",
-            how: R`dry run لـ [[[3, 2, 1, 5, 6, 4]]] و k = 2: push 3: [3]. push 2: [2, 3]. push 1: [1, 2, 3]، الحجم 3 > 2، pop الأصغر (1): [2, 3]. push 5: pop 2: [3, 5]. push 6: pop 3: [5, 6]. push 4: pop 4: [5, 6]. الـ peek = 5، تاني أكبر رقم.
+            why: "أشهر sort في الانترفيو مع merge sort، والأسئلة عليه دايمًا: اشرح الـ partition، وإيه الـ worst case، وإزاي تتجنبه. وفكرة الـ partition نفسها بتحل مسائل تانية: أكبر k عنصر في متوسط O(n) (quickselect)، و «حط كل الأصفار شمال»، و Dutch national flag.",
+            how: R`dry run على [5, 2, 9, 1, 6] ونفترض الـ pivot طلع 5 (نقلناه للآخر: [6, 2, 9, 1, 5]):
 
-التكرار بيتعد: في [[[3, 2, 3, 1, 2, 4, 5, 5, 6]]] و k = 4، الترتيب التنازلي 6 5 5 4 ...، فالـ 4 أكبر هو 4. الـ 5 المكررة بتتعد مرتين. لو المطلوب «الـ k أكبر رقم مختلف»، اعمل [[new Set]] الأول.
+p = 0. i = 0 (6): مش أصغر من 5. i = 1 (2): أصغر، بدّل مع p = 0، بقت [2, 6, 9, 1, 5]، و p = 1. i = 2 (9): لأ. i = 3 (1): أصغر، بدّل مع p = 1، بقت [2, 1, 9, 6, 5]، و p = 2.
 
-فيه حل تالت: Quickselect (زي quick sort بس بتنزل في ناحية واحدة بس): [[O(n)]] في المتوسط و [[O(n^2)]] في أسوأ حالة، ومش بيشتغل على stream. اذكره في الانترفيو كـ follow-up.`,
-            when: "k صغير و n كبير، أو بيانات جاية stream: heap حجمه k. محتاج كل العناصر مترتبة: sort. سؤال واحد على array ثابتة وعايز أسرع حاجة في المتوسط: quickselect. والعكس «الـ k أصغر» بـ max heap حجمه k.",
-            mistakes: R`max heap فيه كل العناصر وتعمل pop k مرات: بيشتغل بس [[O(n + k log n)]] وذاكرة [[O(n)]]، وده مش اللي الانترفيور عايزه. وإنك تنسى إن [[sort()]] من غير compare بيرتب الأرقام كـ strings ([[[10, 9, 1].sort()]] بتدّي [[[1, 10, 9]]]). وإنك تخلط بين «k أكبر» (index k - 1 في الترتيب التنازلي) و index k.`
+بدّل الـ pivot مع p = 2: [2, 1, 5, 6, 9]. الـ 5 في مكانها النهائي، وكل اللي شمالها أصغر، وكل اللي يمينها أكبر.
+
+بعدين رتّب [2, 1] و [6, 9] بنفس الطريقة.
+
+ده اسمه Lomuto partition. فيه كمان Hoare partition (مؤشرين من الطرفين) وهو بيعمل swaps أقل.
+
+الـ Big-O: لو الـ pivot بيقسم في النص تقريبًا، الشجرة عمقها log n وكل مستوى [[O(n)]]: [[O(n log n)]]. لو بيقسم 0 و n - 1 كل مرة: n مستوى، و n + (n-1) + ... = [[O(n^2)]]، والـ recursion عمقها n فبتعمل stack overflow على array كبيرة.
+
+المشكلة مع العناصر المكررة: لو كلها نفس الرقم، ولا عنصر «أصغر من الـ pivot»، فكل partition بيدّي 0 و n - 1، حتى مع pivot عشوائي. الحل 3-way partition: أصغر، ويساوي، وأكبر، والجزء اللي يساوي مبيترتبش تاني.`,
+            when: "لما محتاج sort in-place سريع ومش فارق الـ stability. في الانترفيو: اشرحه، واعرف الـ worst case. وفي الشغل: استخدم [[sort]] الجاهزة. وفكرة الـ partition في quickselect.",
+            mistakes: R`إنك تاخد أول أو آخر عنصر pivot دايمًا: على بيانات مترتبة (حاجة شائعة جدًا) بيبقى [[O(n^2)]]. وإنك تنسى إن worst case [[O(n^2)]] وتقول «O(n log n)» وخلاص. وإنك تقول إنه stable. وإن الـ recursion ممكن توصل عمق n في الـ worst case، يعني stack overflow على array كبيرة.`
           },
+          teach: R`## الفكرة في جملة
+
+اختار عنصر اسمه **pivot**، وعدّي مرة على الجزء: كل اللي أصغر منه يروح شماله، والباقي يمينه. ده اسمه **partition**. بعدها الـ pivot بقى في مكانه النهائي بالظبط، ومش هيتحرك تاني. كرّر نفس الكلام على الشمال لوحده واليمين لوحده لحد ما الأجزاء تبقى عنصر واحد. كل ده جوه نفس الـ array (in-place).
+
+كل الأرقام اللي تحت من تشغيل حقيقي على Node 24.19.0 على ويندوز. وعشان التتبع يطلع نفس الشكل كل مرة، ثبّتنا [[Math.random]] في التجربة يرجّع 0.5 دايمًا (يعني الـ pivot هو العنصر اللي في نص الجزء). في الكود الحقيقي الاختيار عشوائي.
+
+---
+
+## ١. الكود سطر سطر
+
+~~~js
+const swap = (a, i, j) => { const t = a[i]; a[i] = a[j]; a[j] = t; };
+function quickSort(a, lo = 0, hi = a.length - 1) {
+  if (lo >= hi) return a;
+  swap(a, lo + Math.floor(Math.random() * (hi - lo + 1)), hi);
+  const pivot = a[hi];
+  let p = lo;
+  for (let i = lo; i < hi; i++) {
+    if (a[i] < pivot) { swap(a, i, p); p++; }
+  }
+  swap(a, p, hi);
+  quickSort(a, lo, p - 1);
+  quickSort(a, p + 1, hi);
+  return a;
+}
+~~~
+
+### [[swap]]
+
+بتبدّل الخانتين i و j بمتغير مؤقت [[t]] (temporary): احفظ الأول، اكتب التاني مكانه، وحط المحفوظ مكان التاني.
+
+### [[function quickSort(a, lo = 0, hi = a.length - 1)]]
+
+[[lo]] و [[hi]] حدود الجزء اللي بنرتّبه (الاتنين شاملين). [[= 0]] و [[= a.length - 1]] قيم افتراضية (default parameters): لو ناديت [[quickSort(arr)]] من غيرهم، يبقى الجزء هو الـ array كلها.
+
+### [[if (lo >= hi) return a;]]
+
+الـ base case: جزء فيه عنصر واحد (lo = hi) أو فاضي (lo > hi) مترتب أصلًا.
+
+### [[swap(a, lo + Math.floor(Math.random() * (hi - lo + 1)), hi);]]
+
+من جوه لبرة:
+
+1. [[hi - lo + 1]]: عدد العناصر في الجزء.
+2. [[Math.random()]]: رقم عشوائي من 0 لحد أقل من 1.
+3. [[Math.floor(Math.random() * عدد)]]: رقم صحيح عشوائي من 0 لـ عدد - 1.
+4. [[lo + ...]]: index عشوائي جوه الجزء.
+5. [[swap(..., hi)]]: انقل العنصر ده لآخر الجزء. كده الـ pivot دايمًا عند hi، وباقي الكود مبيفرقش معاه اتختار إزاي.
+
+### [[const pivot = a[hi]; let p = lo;]]
+
+[[p]] هو الحد: كل الخانات من lo لحد قبل p فيها عناصر **أصغر** من الـ pivot. في الأول المنطقة دي فاضية (p = lo).
+
+### الـ for والـ if
+
+[[for (let i = lo; i < hi; i++)]] بيعدّي على الجزء كله ما عدا الـ pivot نفسه. ولو [[a[i] < pivot]]: بدّله مع الخانة p (يدخل منطقة الأصغر)، وكبّر المنطقة بـ [[p++]]. الطريقة دي اسمها Lomuto partition.
+
+### [[swap(a, p, hi);]]
+
+الخانة p هي أول خانة بعد منطقة الأصغر. حط الـ pivot فيها: كل اللي شماله أصغر، وكل اللي يمينه أكبر أو يساوي. ده مكانه النهائي.
+
+### النداءين و [[return a]]
+
+رتّب [lo, p - 1] و [p + 1, hi]، والـ pivot عند p مش داخل في الاتنين. و [[return a]] بترجّع نفس الـ array، مش نسخة.
+
+---
+
+## ٢. التتبع على [[[7, 2, 9, 4, 3, 8]]]
+
+### أول partition (lo = 0، hi = 5)
+
+الـ index اللي اتختار 3 (القيمة 4)، اتبدّل مع الآخر: [7, 2, 9, 8, 3, **4**]، والـ pivot = 4.
+
+| i | a[i] | أصغر من 4؟ | p بعدها | الـ array |
+|---|---|---|---|---|
+| 0 | 7 | لأ | 0 | [7, 2, 9, 8, 3, 4] |
+| 1 | 2 | آه، بدّل مع خانة 0 | 1 | [2, 7, 9, 8, 3, 4] |
+| 2 | 9 | لأ | 1 | [2, 7, 9, 8, 3, 4] |
+| 3 | 8 | لأ | 1 | [2, 7, 9, 8, 3, 4] |
+| 4 | 3 | آه، بدّل مع خانة 1 | 2 | [2, 3, 9, 8, 7, 4] |
+| الآخر | | الـ pivot لخانة 2 | | [2, 3, **4**, 8, 7, 9] |
+
+الـ 4 خلاص في مكانها. الشمال [2, 3] واليمين [8, 7, 9].
+
+### باقي النداءات
+
+| النداء | الـ pivot | بعد الـ partition | مكان الـ pivot |
+|---|---|---|---|
+| lo = 0، hi = 1 | 3 | [2, 3, 4, 8, 7, 9] | 1 |
+| lo = 3، hi = 5 | 7 | [2, 3, 4, **7**, 9, 8] | 3 |
+| lo = 4، hi = 5 | 8 | [2, 3, 4, 7, **8**, 9] | 4 |
+
+وكل نداء تاني (زي lo = 0، hi = 0 أو lo = 2، hi = 1) وقف عند الـ base case. الناتج [[[2,3,4,7,8,9]]].
+
+### الناتج الكامل للمثال
+
+~~~text الناتج (Node 24 على ويندوز)
+[ 1, 2, 5, 5, 6, 9 ]
+~~~
+
+الترتيب صح مهما الـ pivot طلع إيه، اللي بيتغير هو عدد الخطوات بس.
+
+---
+
+## ٣. الحل (solCode): ليه بتقع، والـ 3-way partition
+
+### [[quickSortLast]] على array مترتبة
+
+نفس الكود من غير سطر الـ pivot العشوائي، فالـ pivot دايمًا آخر عنصر. على [[[0, 1, ..., 19999]]] آخر عنصر هو الأكبر دايمًا: الـ partition بيطلّع n - 1 عنصر شمال وصفر يمين. فالـ recursion بيوصل لعمق 20000.
+
+~~~text الناتج (Node 24 على ويندوز)
+sorted input: Maximum call stack size exceeded
+~~~
+
+[[try { ... } catch (e) { ... }]] بيمسك الـ error بدل ما البرنامج يقف، و [[e.message]] نص الرسالة. وجرّبنا كمان الكود الأصلي **بالـ pivot العشوائي** على [[new Array(20000).fill(7)]] ووقع بنفس الرسالة: مفيش ولا عنصر [[< pivot]]، فكل partition بيشيل عنصر واحد بس.
+
+### [[quickSort3]]: تلات مناطق بدل اتنين
+
+~~~js
+let lt = lo, i = lo + 1, gt = hi;
+while (i <= gt) {
+  if (a[i] < pivot) swap(a, lt++, i++);
+  else if (a[i] > pivot) swap(a, i, gt--);
+  else i++;
+}
+~~~
+
+الـ pivot هنا بيتحط عند lo. وتلات مؤشرات بيقسّموا الجزء:
+
+| المنطقة | المعنى |
+|---|---|
+| من lo لـ lt - 1 | أصغر من الـ pivot |
+| من lt لـ i - 1 | يساوي الـ pivot |
+| من i لـ gt | لسه ماتفحصش |
+| من gt + 1 لـ hi | أكبر من الـ pivot |
+
+- أصغر: بدّله مع أول «يساوي» (lt)، وقدّم الاتنين.
+- أكبر: بدّله مع آخر واحد ماتفحصش (gt) وصغّر gt. **i مبيتحركش**، لأن اللي جه من gt لسه ماتفحصش.
+- يساوي: سيبه وقدّم i.
+
+**التتبع على [[[5, 3, 1, 3, 4, 3]]]** (الـ pivot اللي اتختار 3، واتنقل لأول خانة: [3, 3, 1, 5, 4, 3]):
+
+| شاف | العملية | الـ array | lt | i | gt |
+|---|---|---|---|---|---|
+| | البداية | [3, 3, 1, 5, 4, 3] | 0 | 1 | 5 |
+| 3 | يساوي | [3, 3, 1, 5, 4, 3] | 0 | 2 | 5 |
+| 1 | أصغر، بدّل خانة 0 و 2 | [1, 3, 3, 5, 4, 3] | 1 | 3 | 5 |
+| 5 | أكبر، بدّل خانة 3 و 5 | [1, 3, 3, 3, 4, 5] | 1 | 3 | 4 |
+| 3 | يساوي | [1, 3, 3, 3, 4, 5] | 1 | 4 | 4 |
+| 4 | أكبر، بدّل خانة 4 مع نفسها | [1, 3, 3, 3, 4, 5] | 1 | 4 | 3 |
+
+الـ 3 التلاتة (خانة 1 لـ 3) في مكانهم ومش هيتلمسوا تاني. فاضل [1] (خانة 0) و [4, 5] (خانة 4 و 5).
+
+### ليه recursion على ناحية و loop على التانية؟
+
+~~~js
+if (lt - lo < hi - gt) { quickSort3(a, lo, lt - 1); lo = gt + 1; }
+else { quickSort3(a, gt + 1, hi); hi = lt - 1; }
+~~~
+
+الناحية **الأصغر** بتاخد نداء recursive، والأكبر بتتعمل بإن الـ [[while (lo < hi)]] يلف تاني بحدود جديدة. في التتبع: الشمال عنصر واحد (lt - lo = 1) واليمين اتنين (hi - gt = 2)، فاتنادى على [0, 0] والـ loop كمّل على [4, 5]. وبما إن كل نداء بياخد النص أو أقل، العمق [[O(log n)]] حتى في أسوأ حالة.
+
+~~~text الناتج (Node 24 على ويندوز)
+sorted input: Maximum call stack size exceeded
+20000
+19999
+1 2 5 5 6 9
+~~~
+
+الـ 20000 سبعة خلصوا في مرور واحد، والـ array المترتبة اتعملت من غير ما تقع.
+
+---
+
+## ٤. الـ Big-O وليه
+
+| | الوقت | السبب |
+|---|---|---|
+| المتوسط | [[O(n log n)]] | الـ pivot بيقسم قريب من النص: log n مستوى × n في كل مستوى |
+| الأسوأ | [[O(n^2)]] | الـ pivot دايمًا الأصغر أو الأكبر: n + (n - 1) + ... |
+| quickSort3 وكله متساوي | [[O(n)]] | مرور واحد، ومنطقة «يساوي» بتاخد الكل |
+| الذاكرة | [[O(log n)]] stack في المتوسط | in-place، الـ stack بس. والأسوأ [[O(n)]] في النسخة العادية |
+
+ومش stable: الـ swap ممكن ينقل عنصر فوق عنصر مساوي ليه.
+
+---
+
+## الخلاصة
+
+~~~text
+pivot عشوائي    انقله لآخر الجزء
+partition       p = حد منطقة الأصغر، swap كل أصغر لعنده
+مكانه النهائي   swap(a, p, hi)
+كرّر            [lo, p - 1] و [p + 1, hi]
+بيقع لما        pivot دايمًا أطرف عنصر، أو كله متساوي
+3-way           أصغر / يساوي / أكبر، والمساوي مبيتلمسش تاني
+stack           recursion على الأصغر، loop على الأكبر
+~~~`,
           lines: [
-            "الـ heap من درس «min heap (by hand)»، والملف جنب الملف ده.",
-            "الـ k أكبر رقم.",
-            "min heap.",
-            "عدّي على الأرقام.",
-            "ضيف الرقم.",
-            "لو بقوا أكتر من k، اطرد الأصغر.",
+            "تبديل عنصرين بمتغير مؤقت.",
+            "بترتّب الجزء من lo لـ hi في نفس الـ array.",
+            "جزء فيه عنصر واحد أو فاضي: خلاص.",
+            "اختار pivot عشوائي وحطه في الآخر.",
+            "قيمة الـ pivot.",
+            "p: الخانة الجاية لعنصر أصغر من الـ pivot.",
+            "عدّي على الجزء من غير الـ pivot.",
+            "أصغر من الـ pivot؟ حطه في منطقة الأصغر وكبّرها.",
             "قفلة.",
-            "الأصغر في أكبر k هو الإجابة.",
+            "حط الـ pivot بين المنطقتين: ده مكانه النهائي.",
+            "رتّب الشمال (الأصغر).",
+            "رتّب اليمين (الأكبر أو المساوي).",
+            "رجّع نفس الـ array.",
             "قفلة.",
-            "الحل البديهي للمقارنة.",
-            "تاني أكبر: 5.",
-            "رابع أكبر مع تكرار: 4.",
-            "عنصر واحد.",
-            "الـ sort بيدّي نفس الإجابة."
+            "الترتيب صح مهما الـ pivot طلع إيه."
           ],
-          check: {
-            lang: "js",
-            starter: R`// الـ MinHeap من درس «min heap (by hand)» جاهز هنا تستخدمه
-class MinHeap {
-  constructor(compare = (a, b) => a - b) { this.data = []; this.compare = compare; }
-  get size() { return this.data.length; }
-  peek() { return this.data[0]; }
-  push(value) {
-    const d = this.data;
-    d.push(value);
-    let i = d.length - 1;
-    while (i > 0) {
-      const p = (i - 1) >> 1;
-      if (this.compare(d[i], d[p]) >= 0) break;
-      [d[i], d[p]] = [d[p], d[i]];
-      i = p;
-    }
+          sol: R`مع آخر عنصر pivot و array مترتبة من ٢٠ ألف: [[Maximum call stack size exceeded]]. الـ pivot دايمًا أكبر واحد، فكل تقسيمة بتطلع n - 1 على ناحية و 0 على التانية، والعمق بيبقى n.
+
+مع الـ pivot العشوائي و array كلها 7: برضه بتقع. الشرط [[a[i] < pivot]] مش بيتحقق أبدًا مع قيم متساوية، فـ p بيفضل عند lo، وكل مرة بتشيل عنصر واحد بس. العشوائية مش بتفرق لأن كل الاختيارات نفس القيمة.
+
+الحل: 3-way partition (أصغر، ويساوي، وأكبر)، والجزء اللي يساوي الـ pivot مش بيتلمس تاني، فـ array كلها نفس الرقم بتخلص في مرور واحد [[O(n)]]. وعشان الـ stack يفضل [[O(log n)]]، اعمل recursion على الجزء الأصغر و loop على الأكبر.`,
+          solCode: R`const swap = (a, i, j) => { const t = a[i]; a[i] = a[j]; a[j] = t; };
+function quickSortLast(a, lo = 0, hi = a.length - 1) {
+  if (lo >= hi) return a;
+  const pivot = a[hi];
+  let p = lo;
+  for (let i = lo; i < hi; i++) {
+    if (a[i] < pivot) { swap(a, i, p); p++; }
   }
-  pop() {
-    const d = this.data;
-    if (d.length === 0) return undefined;
-    const top = d[0], last = d.pop();
-    if (d.length > 0) {
-      d[0] = last;
-      let i = 0;
-      while (true) {
-        const l = 2 * i + 1, r = l + 1;
-        let m = i;
-        if (l < d.length && this.compare(d[l], d[m]) < 0) m = l;
-        if (r < d.length && this.compare(d[r], d[m]) < 0) m = r;
-        if (m === i) break;
-        [d[i], d[m]] = [d[m], d[i]];
-        i = m;
-      }
-    }
-    return top;
-  }
+  swap(a, p, hi);
+  quickSortLast(a, lo, p - 1);
+  quickSortLast(a, p + 1, hi);
+  return a;
 }
-class KthLargest {
-  constructor(k, nums) {
-    this.k = k;
-    this.heap = new MinHeap();
-    // ضيف الأرقام الأولية بنفس طريقة add
-  }
-  add(val) {
-    // push، ولو الحجم عدّى k اعمل pop، ورجّع peek
-  }
-}`,
-            tests: R`test("KthLargest(3, [4, 5, 8, 2]) و add 3، 5، 10، 9، 4 ← 4 5 5 8 8", () => {
-  const kth = new KthLargest(3, [4, 5, 8, 2]);
-  expect([3, 5, 10, 9, 4].map(x => kth.add(x))).toEqual([4, 5, 5, 8, 8]);
-});
-test("الأرقام الأولية أقل من k: KthLargest(1, []) و add -3، -2، -4، 0، 4 ← -3 -2 -2 0 4", () => {
-  const kth = new KthLargest(1, []);
-  expect([-3, -2, -4, 0, 4].map(x => kth.add(x))).toEqual([-3, -2, -2, 0, 4]);
-});
-test("الـ heap حجمه k بس، مش كل الأرقام", () => {
-  const kth = new KthLargest(2, [1, 2, 3, 4, 5]);
-  kth.add(6);
-  expect(kth.heap.size).toBe(2);
-});
-test("١٠٠ ألف add و k = 10 (كل add O(log k))", () => {
-  const kth = new KthLargest(10, []);
-  let last;
-  for (let i = 0; i < 100000; i++) last = kth.add((i * 7919) % 100003);
-  const all = Array.from({ length: 100000 }, (_, i) => (i * 7919) % 100003).sort((a, b) => b - a);
-  expect(last).toBe(all[9]);
-});`,
-            solution: R`// الـ MinHeap من درس «min heap (by hand)» جاهز هنا تستخدمه
-class MinHeap {
-  constructor(compare = (a, b) => a - b) { this.data = []; this.compare = compare; }
-  get size() { return this.data.length; }
-  peek() { return this.data[0]; }
-  push(value) {
-    const d = this.data;
-    d.push(value);
-    let i = d.length - 1;
-    while (i > 0) {
-      const p = (i - 1) >> 1;
-      if (this.compare(d[i], d[p]) >= 0) break;
-      [d[i], d[p]] = [d[p], d[i]];
-      i = p;
+const sortedInput = Array.from({ length: 20_000 }, (_, i) => i);
+try { quickSortLast(sortedInput); } catch (e) { console.log("sorted input:", e.message); }
+// sorted input: Maximum call stack size exceeded
+function quickSort3(a, lo = 0, hi = a.length - 1) {
+  while (lo < hi) {
+    swap(a, lo + Math.floor(Math.random() * (hi - lo + 1)), lo);
+    const pivot = a[lo];
+    let lt = lo, i = lo + 1, gt = hi;
+    while (i <= gt) {
+      if (a[i] < pivot) swap(a, lt++, i++);
+      else if (a[i] > pivot) swap(a, i, gt--);
+      else i++;
     }
+    if (lt - lo < hi - gt) { quickSort3(a, lo, lt - 1); lo = gt + 1; }
+    else { quickSort3(a, gt + 1, hi); hi = lt - 1; }
   }
-  pop() {
-    const d = this.data;
-    if (d.length === 0) return undefined;
-    const top = d[0], last = d.pop();
-    if (d.length > 0) {
-      d[0] = last;
-      let i = 0;
-      while (true) {
-        const l = 2 * i + 1, r = l + 1;
-        let m = i;
-        if (l < d.length && this.compare(d[l], d[m]) < 0) m = l;
-        if (r < d.length && this.compare(d[r], d[m]) < 0) m = r;
-        if (m === i) break;
-        [d[i], d[m]] = [d[m], d[i]];
-        i = m;
-      }
-    }
-    return top;
-  }
+  return a;
 }
-class KthLargest {
-  constructor(k, nums) {
-    this.k = k;
-    this.heap = new MinHeap();
-    for (const x of nums) this.add(x);
-  }
-  add(val) {
-    this.heap.push(val);
-    if (this.heap.size > this.k) this.heap.pop();
-    return this.heap.peek();
-  }
-}`
-          }
+const same = new Array(20_000).fill(7);
+console.log(quickSort3(same).length);                         // 20000 (one pass: all equal to the pivot)
+console.log(quickSort3(Array.from({ length: 20_000 }, (_, i) => i))[19_999]); // 19999
+console.log(quickSort3([5, 2, 9, 1, 5, 6]).join(" "));        // 1 2 5 5 6 9
+// quickSort3: average O(n log n), O(n) when all values are equal; O(log n) stack (recurse into the smaller side, loop on the bigger)`
         },
         {
-          cmd: "top k frequent",
-          title: "أكتر k عناصر تكرارًا (Top K Frequent Elements)",
-          desc: R`خطوتين: عدّ التكرار بـ Map (زي درس «frequency count»)، وبعدين هات أعلى k حسب العدد.
+          cmd: "sort comparator",
+          title: "ليه [10, 9, 1].sort() بيطلع [1, 10, 9]؟ وإزاي ترتّب بأكتر من حاجة؟",
+          desc: R`[[sort()]] من غير comparator بيحوّل كل عنصر لـ string ويقارن حروف، فـ «10» قبل «9» لأن «1» قبل «9». للأرقام لازم [[(a, b) => a - b]]: سالب يعني a الأول، وموجب يعني b الأول، وصفر يعني متساويين.
 
-بالـ heap: نفس فكرة kth largest، بس الـ heap فيه أزواج [[[العنصر، العدد]]] والمقارنة بالعدد. [[O(n log k)]].
+للترتيب بأكتر من مفتاح: قارن بالأول، ولو متساويين (0) قارن بالتاني. [[||]] بتعمل ده في سطر، لأن 0 بتتحسب false فبتروح للمقارنة اللي بعدها.
 
-بالـ bucket sort: التكرار مستحيل يزيد عن n. فاعمل array طولها n + 1، والخانة c فيها العناصر اللي اتكررت c مرة. وامشي من آخرها لحد ما تجمّع k. [[O(n)]]، أسرع من أي sort، لأنك استغليت إن القيم (التكرارات) محدودة.
-
-والاتنين بيبدأوا بالـ Map اللي بتاخد [[O(n)]] وقت و [[O(u)]] ذاكرة (u عدد العناصر المختلفة).`,
-          example: R`const { MinHeap } = require("./min-heap");
-function countAll(nums) {
-  const count = new Map();
-  for (const x of nums) count.set(x, (count.get(x) ?? 0) + 1);
-  return count;
-}
-function topKHeap(nums, k) {
-  const heap = new MinHeap((a, b) => a[1] - b[1]);
-  for (const entry of countAll(nums)) {
-    heap.push(entry);
-    if (heap.size > k) heap.pop();
-  }
-  const out = [];
-  while (heap.size) out.push(heap.pop()[0]);
-  return out.reverse();
-}
-function topKBucket(nums, k) {
-  const buckets = Array.from({ length: nums.length + 1 }, () => []);
-  for (const [x, c] of countAll(nums)) buckets[c].push(x);
-  const out = [];
-  for (let c = nums.length; c > 0 && out.length < k; c--) out.push(...buckets[c]);
-  return out.slice(0, k);
-}
-console.log(topKHeap([1, 1, 1, 2, 2, 3], 2)); // [1, 2]
-console.log(topKBucket([1, 1, 1, 2, 2, 3], 2)); // [1, 2]
-console.log(topKHeap([4], 1), topKBucket([5, 5, 6], 1)); // [4] [5]
-// heap: O(n log k) time; bucket: O(n) time; both O(n) space`,
-          try: R`حل «Top K Frequent Words»: نفس المسألة على كلمات، بس لو كلمتين نفس التكرار، اللي أبجديًا أصغر تيجي الأول. [[["i", "love", "leetcode", "i", "love", "coding"]]] و k = 2 الإجابة [[["i", "love"]]]، و [[["the", "day", "is", "sunny", "the", "the", "the", "sunny", "is", "is"]]] و k = 4 الإجابة [[["the", "is", "sunny", "day"]]]. فكّر كويس في الـ compare بتاع الـ min heap. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[topKWords(words, k)]].`,
-          sol: R`الإجابتين: [[i love]] و [[the is sunny day]].
-
-الـ compare في الـ min heap بيحدد مين يطلع (يتطرد) الأول. عايز تطرد الأقل تكرارًا، ولو متساويين تطرد اللي أبجديًا أكبر (عشان الأصغر أبجديًا هو اللي يفضل). فـ [[(a, b) => a[1] - b[1] || b[0].localeCompare(a[0])]]. لاحظ إن الـ tie-break معكوس ([[b]] قبل [[a]]).
-
-في الآخر اعكس الناتج، لأن الـ heap بيطلّع الأضعف الأول.
-
-الحل الأبسط اللي ينفع تقوله الأول: [[[...count].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))]] وخد أول k. [[O(u log u)]]، وكفاية في أغلب الحالات، وبعدين قول «لو u كبير، heap حجمه k».
-
-الغلطة الشائعة: تكتب الـ tie-break بنفس اتجاه الـ sort العادي في الـ min heap، فيطلعلك [[day]] بدل [[sunny]] في الحالات المتساوية.`,
-          solCode: R`const { MinHeap } = require("./min-heap");
-function topKWords(words, k) {
-  const count = new Map();
-  for (const w of words) count.set(w, (count.get(w) ?? 0) + 1);
-  const heap = new MinHeap((a, b) => a[1] - b[1] || b[0].localeCompare(a[0]));
-  for (const entry of count) {
-    heap.push(entry);
-    if (heap.size > k) heap.pop();
-  }
-  const out = [];
-  while (heap.size) out.push(heap.pop()[0]);
-  return out.reverse();
-}
-console.log(topKWords(["i", "love", "leetcode", "i", "love", "coding"], 2)); // ['i', 'love']
-console.log(topKWords(["the", "day", "is", "sunny", "the", "the", "the", "sunny", "is", "is"], 4)); // ['the', 'is', 'sunny', 'day']
-// O(n + u log k) time, O(u) space (u = distinct words)`,
+و [[sort]] بتغيّر الـ array نفسها. لو عايز نسخة: [[toSorted()]] (من ES2023). ومن ES2019 المواصفات بتلزم إن [[sort]] تبقى stable، يعني العناصر المتساوية بتفضل بترتيبها الأصلي.`,
+          example: R`console.log([10, 9, 1].sort());                // [1, 10, 9]
+console.log([10, 9, 1].sort((a, b) => a - b)); // [1, 9, 10]
+console.log([10, 9, 1].sort((a, b) => b - a)); // [10, 9, 1]
+const users = [
+  { name: "Sara", age: 30 }, { name: "Ali", age: 25 }, { name: "Omar", age: 30 },
+];
+users.sort((a, b) => b.age - a.age || a.name.localeCompare(b.name));
+console.log(users.map(u => u.name)); // ["Omar", "Sara", "Ali"]
+const orig = [3, 1, 2];
+const sorted = orig.toSorted((a, b) => a - b);
+console.log(orig, sorted); // [3, 1, 2] [1, 2, 3]
+// sort is O(n log n) comparisons; V8 uses TimSort: stable, O(n) extra memory in the worst case`,
+          try: R`رتّب منتجات: المتاح الأول ([[inStock]] true)، وبعدين السعر تصاعدي، وبعدين الاسم. وبعدين جرّب comparator غلط [[(a, b) => a > b]] على [3, 1, 2]: هترجع زي ما هي من غير ترتيب. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[sortProducts(products)]] بترجّع المنتجات مترتبة: المتاح، وبعدين السعر، وبعدين الاسم.`,
           flag: "script",
           deep: {
-            why: "أكتر hashtags استخدامًا، وأكتر أخطاء بتظهر في الـ logs، وأكتر كلمات بيدوّر عليها الناس، وأكتر صفحات زيارة. «عدّ وهات الأعلى» من أكتر الحاجات اللي هتكتبها في analytics، والانترفيو بيحبها لأنها بتجمع hash map و heap مع بعض.",
-            how: R`الـ Map بعد العدّ: [[1 → 3، 2 → 2، 3 → 1]]. الـ Map في JavaScript لما تعمل عليها [[for...of]] بتطلّع أزواج [[[key, value]]]، فالـ heap بياخدها زي ما هي.
+            why: "bug مشهور جدًا في الشغل: ترتيب أسعار أو IDs أو أعمار بـ [[sort()]] من غير comparator، وتلاقي 100 قبل 20. والترتيب بأكتر من مفتاح (الحالة وبعدين التاريخ) موجود في أي جدول في أي dashboard.",
+            how: R`الـ comparator دالة بتاخد عنصرين a و b وبترجّع رقم: سالب لو a لازم ييجي الأول، وموجب لو b، و 0 لو متساويين في الترتيب. الإشارة بس اللي بتفرق، مش القيمة.
 
-heap بـ k = 2: push [1, 3]. push [2, 2]. push [3, 1]، الحجم 3، pop الأقل تكرارًا [3, 1]. الباقي [2, 2] و [1, 3]. الـ pop بيطلّعهم من الأقل للأكتر: 2 ثم 1، فبنعكس: [1, 2].
+من غير comparator، [[sort]] بتحوّل العنصرين لـ strings وتقارن UTF-16 code units. و [[undefined]] بيروح للآخر دايمًا.
 
-الـ bucket: [[buckets[3] = [1]]]، و [[buckets[2] = [2]]]، و [[buckets[1] = [3]]]. من 6 لتحت: الخانات فاضية لحد 3، ناخد 1. خانة 2، ناخد 2. بقوا k، نقف.
+الـ strings: [[a.localeCompare(b)]] بترجّع سالب أو صفر أو موجب حسب قواعد اللغة، وبتعرف ترتّب عربي وحروف بتشكيل صح. أما [[a < b ? -1 : 1]] بتقارن code units بس (Z قبل a).
 
-الـ [[slice(0, k)]] في الآخر مهم: الـ bucket الواحد ممكن يبقى فيه أكتر من عنصر، و [[push(...)]] بتضيفهم كلهم، فممكن نعدّي k.`,
-            when: "bucket sort لما القيم اللي بترتب بيها أرقام صحيحة ومحدودة (التكرار ≤ n). heap لما k صغير والبيانات كبيرة أو stream. sort عادي لما البيانات صغيرة، وده الاختيار الصح في الشغل في أغلب الأحيان لأنه أوضح. وفي الداتابيز: [[GROUP BY ... ORDER BY count DESC LIMIT k]] بيعمل ده كله.",
-            mistakes: R`[[count[x]++]] على object من غير قيمة أولية بتطلّع NaN. واستخدام object بدل Map مع أرقام: الـ keys بتتحول لـ strings، فالناتج يطلع [[["1", "2"]]] بدل [[[1, 2]]]. ونسيان الـ [[reverse]] في آخر نسخة الـ heap. ونسيان الـ [[slice]] في نسخة الـ bucket. وفي الانترفيو اسأل: لو فيه تعادل على آخر مكان، أرجّع مين؟`
+التواريخ: [[a.date - b.date]] بيشتغل مع [[Date]] objects (الطرح بيحوّلهم لأرقام). ومع strings بصيغة ISO زي 2026-09-29، [[localeCompare]] بتنفع لأن الصيغة دي بتترتب أبجديًا صح.
+
+الـ stability: V8 من إصدار 7.0 بيستخدم TimSort، وهو stable. فتقدر ترتّب بمفتاحين على مرحلتين: رتّب بالمفتاح التاني الأول، وبعدين بالأول، والمتساويين في الأول هيحافظوا على ترتيب التاني.
+
+الـ Big-O: [[O(n log n)]] مقارنة. لو الـ comparator نفسه غالي (بيحسب حاجة كل مرة)، احسبها مرة واحدة لكل عنصر قبل الـ sort ورتّب بيها.`,
+            when: "أي ترتيب لأرقام أو objects. ودايمًا [[toSorted]] أو نسخة لما الـ array جاية من state أو props في React.",
+            mistakes: R`comparator بيرجّع boolean ([[(a, b) => a > b]]): عمره ما بيرجّع سالب، والنتيجة بتبوظ (على Node 24 [3, 1, 2] بترجع زي ما هي). وإنك تنسى إن [[sort]] بتغيّر الأصلية وبترجّع نفس الـ array (مش نسخة). و [[a - b]] مع قيم فيها NaN أو strings بيبوّظ الترتيب كله.`
           },
+          teach: R`## الفكرة في جملة
+
+[[sort]] مبتعرفش إنت عايز ترتّب إزاي، فبتسألك عن كل زوج عناصر: «مين فيهم ييجي الأول؟». الإجابة دالة اسمها **comparator** بتاخد [[a]] و [[b]] وترجّع رقم: سالب يبقى a الأول، وموجب يبقى b الأول، وصفر يبقى متساويين. الإشارة بس اللي بتفرق، مش قيمة الرقم.
+
+كل الأرقام اللي تحت من تشغيل حقيقي على Node 24.19.0 على ويندوز، بعد ما ضفنا [[console.log]] جوه الـ comparator يطبع كل مقارنة.
+
+---
+
+## ١. من غير comparator: [[[10, 9, 1].sort()]]
+
+~~~js
+console.log([10, 9, 1].sort()); // [1, 10, 9]
+~~~
+
+من غير دالة، [[sort]] بتحوّل كل عنصر لـ string وتقارن حرف حرف من الشمال، زي ترتيب القاموس. [["10"]] و [["9"]]: أول حرف [["1"]] كوده 49 و [["9"]] كوده 57 (جرّبناها بـ [[charCodeAt(0)]])، فـ [["10" < "9"]] طلعت [[true]]. عشان كده 10 جت قبل 9.
+
+---
+
+## ٢. [[(a, b) => a - b]] و [[(a, b) => b - a]]
+
+~~~js
+console.log([10, 9, 1].sort((a, b) => a - b)); // [1, 9, 10]
+console.log([10, 9, 1].sort((a, b) => b - a)); // [10, 9, 1]
+~~~
+
+[[a - b]] سالب لما a أصغر، يعني الأصغر ييجي الأول: تصاعدي. و [[b - a]] العكس: تنازلي.
+
+طبعنا المقارنات اللي V8 طلبها فعلًا في الترتيب التصاعدي:
+
+| a | b | a - b | المعنى |
+|---|---|---|---|
+| 9 | 10 | -1 | 9 قبل 10 |
+| 1 | 9 | -8 | 1 قبل 9 |
+
+مقارنتين بس كفوا لـ 3 عناصر. إنت مبتتحكمش في ترتيب أو عدد المقارنات، الـ sort هو اللي بيختار، فالـ comparator لازم يرجّع إجابة صح لأي زوج.
+
+---
+
+## ٣. الترتيب بمفتاحين
+
+~~~js
+const users = [
+  { name: "Sara", age: 30 }, { name: "Ali", age: 25 }, { name: "Omar", age: 30 },
+];
+users.sort((a, b) => b.age - a.age || a.name.localeCompare(b.name));
+console.log(users.map(u => u.name)); // ["Omar", "Sara", "Ali"]
+~~~
+
+### [[b.age - a.age]]
+
+المفتاح الأول: السن تنازلي (الأكبر الأول).
+
+### [[a.name.localeCompare(b.name)]]
+
+المفتاح التاني: الاسم أبجديًا. [[localeCompare]] بترجّع رقم بنفس الاتفاق: [["Omar".localeCompare("Sara")]] طلعت -1، والعكس 1، و [["a".localeCompare("a")]] طلعت 0. وبتعرف قواعد اللغة (عربي وحروف عليها علامات)، مش بس أكواد الحروف.
+
+### [[||]] بين الاتنين
+
+[[||]] بترجّع أول قيمة مش falsy. والـ 0 falsy: [[0 || -1]] طلعت -1، و [[5 || -1]] طلعت 5. يعني: لو السن مختلف (رقم مش صفر) خلاص هو الإجابة، ولو متساوي (0) روح للاسم.
+
+### المقارنات الحقيقية
+
+| a | b | b.age - a.age | localeCompare | الناتج | المعنى |
+|---|---|---|---|---|---|
+| Ali (25) | Sara (30) | 5 | -1 | 5 | Sara قبل Ali |
+| Omar (30) | Ali (25) | -5 | 1 | -5 | Omar قبل Ali |
+| Omar (30) | Ali (25) | -5 | 1 | -5 | نفس السؤال اتسأل تاني |
+| Omar (30) | Sara (30) | 0 | -1 | -1 | السن متساوي، فالاسم: Omar قبل Sara |
+
+لاحظ إن في أول تلات صفوف قيمة [[localeCompare]] اتحسبت بس اتجاهلت (إحنا حسبناها في التجربة عشان نطبعها، أما في الكود الأصلي [[||]] مبتحسبهاش أصلًا لما الشمال مش صفر).
+
+~~~text الناتج (Node 24 على ويندوز)
+[ 'Omar', 'Sara', 'Ali' ]
+~~~
+
+### [[users.map(u => u.name)]]
+
+[[map]] بتعمل array جديدة فيها نتيجة الدالة على كل عنصر: هنا الاسم بس، عشان نطبع حاجة قصيرة.
+
+---
+
+## ٤. [[sort]] بتغيّر الأصلية، و [[toSorted]] لأ
+
+~~~js
+const orig = [3, 1, 2];
+const sorted = orig.toSorted((a, b) => a - b);
+console.log(orig, sorted); // [3, 1, 2] [1, 2, 3]
+~~~
+
+جرّبنا الاتنين:
+
+- [[x.sort(...)]]: الـ array نفسها اتغيرت، والراجع هو **نفس** الـ array ([[x === y]] طلعت [[true]]).
+- [[o.toSorted(...)]]: الأصلية فضلت [[[ 3, 1, 2 ]]]، والراجع array جديدة ([[o === s]] طلعت [[false]]). [[toSorted]] جت في ES2023.
+
+---
+
+## ٥. الناتج الكامل للمثال
+
+~~~text الناتج (Node 24 على ويندوز)
+[ 1, 10, 9 ]
+[ 1, 9, 10 ]
+[ 10, 9, 1 ]
+[ 'Omar', 'Sara', 'Ali' ]
+[ 3, 1, 2 ] [ 1, 2, 3 ]
+~~~
+
+وحاجة صغيرة: [[["b", undefined, "a"].sort()]] طلعت [[[ 'a', 'b', undefined ]]]: الـ [[undefined]] بيروح للآخر دايمًا ومبيتبعتش للـ comparator.
+
+---
+
+## ٦. الـ Big-O وليه
+
+| | القيمة | السبب |
+|---|---|---|
+| الوقت | [[O(n log n)]] مقارنة | V8 بيستخدم TimSort (merge sort متطوّر)، وكل مقارنة هنا [[O(1)]] |
+| الذاكرة | [[O(n)]] في أسوأ حالة | TimSort بيدمج بمساحة مؤقتة، و [[toSorted]] بتعمل نسخة [[O(n)]] كمان |
+| stable | آه | من ES2019 المواصفات بتلزم بيه: المتساويين بيفضلوا بترتيبهم |
+
+---
+
+## الخلاصة
+
+~~~text
+من غير comparator    بيقارن كـ strings: "10" قبل "9"
+a - b                تصاعدي، و b - a تنازلي
+الإشارة              سالب a الأول، موجب b الأول، صفر متساويين
+أكتر من مفتاح        مقارنة1 || مقارنة2 (الصفر بيعدّي للي بعده)
+strings              a.localeCompare(b)
+sort                 بتغيّر الأصلية، toSorted بترجّع نسخة
+~~~`,
           lines: [
-            "الـ heap من ملف min-heap.js.",
-            "دالة العدّ.",
-            "Map من العنصر لعدد مرات ظهوره.",
-            "عدّ كل عنصر.",
-            "رجّعها.",
+            "من غير comparator: بيقارن كـ strings، فـ «10» قبل «9».",
+            "تصاعدي: [[a - b]] سالب لما a أصغر، فـ a يبقى الأول.",
+            "تنازلي: اعكس الطرح.",
+            "array من objects.",
+            "اتنين ليهم نفس السن.",
             "قفلة.",
-            "الحل بالـ heap.",
-            "min heap على الأزواج، والمقارنة بالعدد.",
-            "كل زوج [العنصر، العدد].",
-            "ضيفه.",
-            "لو عدّينا k، اطرد الأقل تكرارًا.",
-            "قفلة.",
-            "هنجمّع الناتج.",
-            "طلّع العناصر (من الأقل للأكتر).",
-            "اعكس عشان الأكتر تكرارًا الأول.",
-            "قفلة.",
-            "الحل بالـ bucket sort.",
-            "خانة لكل تكرار ممكن من 0 لـ n.",
-            "كل عنصر في خانة عدد تكراره.",
-            "الناتج.",
-            "من أعلى تكرار لتحت، لحد ما نجمّع k.",
-            "ممكن نكون عدّينا k لو الخانة فيها أكتر من عنصر.",
-            "قفلة.",
-            "1 اتكرر ٣ مرات و 2 مرتين.",
-            "نفس الإجابة بالـ bucket.",
-            "عنصر واحد، وحالة فيها تكرار واضح."
+            "السن تنازلي، ولو متساوي (الطرح = 0) الاسم أبجديًا.",
+            "Omar و Sara عندهم 30 (بالترتيب الأبجدي)، وبعدين Ali.",
+            "array أصلية.",
+            "[[toSorted]] بترجّع نسخة مترتبة ومتلمسش الأصلية.",
+            "الأصلية زي ما هي."
           ],
+          sol: R`الـ comparator: [[(b.inStock - a.inStock) || (a.price - b.price) || a.name.localeCompare(b.name)]]. [[true - false]] بتطلع 1، فالمتاح يطلع الأول. و [[||]] بتروح للشرط اللي بعده لما اللي قبله يطلع 0 (تعادل). الناتج: [[Adapter, Keyboard, Mouse, Cable, Monitor]].
+
+[[[3, 1, 2].sort((a, b) => a > b)]] بترجع [[[3, 1, 2]]] زي ما هي. الـ comparator لازم يرجّع رقم سالب لما a قبل b، و [[a > b]] بترجع true أو false (يعني 1 أو 0)، ومفيش سالب أبدًا. فالـ sort بيفتكر إن مفيش حاجة محتاجة تتحرك. الحل [[a - b]] للأرقام، أو [[(a > b) - (a < b)]] لأي حاجة بتتقارن.
+
+الغلطة المشهورة: تجرّب الـ comparator الغلط على array مترتبة أصلًا زي [1, 2, 3]، فتلاقيها «صح» وتفتكر إنه سليم. الناتج بالصدفة، وأول array مش مترتبة هتكشفه.`,
+          solCode: R`const products = [
+  { name: "Mouse", price: 200, inStock: true },
+  { name: "Cable", price: 50, inStock: false },
+  { name: "Keyboard", price: 200, inStock: true },
+  { name: "Adapter", price: 50, inStock: true },
+  { name: "Monitor", price: 3000, inStock: false },
+];
+const sorted = products.toSorted((a, b) =>
+  (b.inStock - a.inStock) || (a.price - b.price) || a.name.localeCompare(b.name));
+console.log(sorted.map(p => p.name).join(", "));
+// Adapter, Keyboard, Mouse, Cable, Monitor
+console.log([3, 1, 2].sort((a, b) => a > b)); // [3, 1, 2]  (never negative, so nothing moves)
+console.log([3, 1, 2].sort((a, b) => (a > b) - (a < b))); // [1, 2, 3]  (returns -1, 0 or 1)
+// O(n log n) comparisons, each O(1) here; toSorted makes an O(n) copy`,
           check: {
             lang: "js",
-            starter: R`// الـ MinHeap من درس «min heap (by hand)» جاهز هنا تستخدمه
-class MinHeap {
-  constructor(compare = (a, b) => a - b) { this.data = []; this.compare = compare; }
-  get size() { return this.data.length; }
-  peek() { return this.data[0]; }
-  push(value) {
-    const d = this.data;
-    d.push(value);
-    let i = d.length - 1;
-    while (i > 0) {
-      const p = (i - 1) >> 1;
-      if (this.compare(d[i], d[p]) >= 0) break;
-      [d[i], d[p]] = [d[p], d[i]];
-      i = p;
-    }
-  }
-  pop() {
-    const d = this.data;
-    if (d.length === 0) return undefined;
-    const top = d[0], last = d.pop();
-    if (d.length > 0) {
-      d[0] = last;
-      let i = 0;
-      while (true) {
-        const l = 2 * i + 1, r = l + 1;
-        let m = i;
-        if (l < d.length && this.compare(d[l], d[m]) < 0) m = l;
-        if (r < d.length && this.compare(d[r], d[m]) < 0) m = r;
-        if (m === i) break;
-        [d[i], d[m]] = [d[m], d[i]];
-        i = m;
-      }
-    }
-    return top;
-  }
-}
-function topKWords(words, k) {
-  const count = new Map();
-  for (const w of words) count.set(w, (count.get(w) ?? 0) + 1);
-  // min heap حجمه k: يطرد الأقل تكرارًا، ولو متساويين يطرد الأكبر أبجديًا
-  return [];
+            starter: R`function sortProducts(products) {
+  return [...products].sort((a, b) => a.price - b.price);
 }`,
-            tests: R`test("i love leetcode i love coding، k = 2 ← ['i', 'love']", () => expect(topKWords(["i", "love", "leetcode", "i", "love", "coding"], 2)).toEqual(["i", "love"]));
-test("k = 4 ← ['the', 'is', 'sunny', 'day']", () => expect(topKWords(["the", "day", "is", "sunny", "the", "the", "the", "sunny", "is", "is"], 4)).toEqual(["the", "is", "sunny", "day"]));
-test("كلهم مرة واحدة ← أبجدي: ['b', 'a', 'c'] و k = 2 ← ['a', 'b']", () => expect(topKWords(["b", "a", "c"], 2)).toEqual(["a", "b"]));
-test("k = عدد الكلمات المختلفة ← كلهم", () => expect(topKWords(["x", "y", "x"], 2)).toEqual(["x", "y"]));
-test("50 ألف كلمة و k = 3 (O(n log k))", () => {
-  const words = Array.from({ length: 50000 }, (_, i) => "w" + (i % 1000 < 3 ? i % 1000 : i % 997));
-  expect(topKWords(words, 3)).toEqual(["w0", "w1", "w2"]);
-});`,
-            solution: R`// الـ MinHeap من درس «min heap (by hand)» جاهز هنا تستخدمه
-class MinHeap {
-  constructor(compare = (a, b) => a - b) { this.data = []; this.compare = compare; }
-  get size() { return this.data.length; }
-  peek() { return this.data[0]; }
-  push(value) {
-    const d = this.data;
-    d.push(value);
-    let i = d.length - 1;
-    while (i > 0) {
-      const p = (i - 1) >> 1;
-      if (this.compare(d[i], d[p]) >= 0) break;
-      [d[i], d[p]] = [d[p], d[i]];
-      i = p;
-    }
-  }
-  pop() {
-    const d = this.data;
-    if (d.length === 0) return undefined;
-    const top = d[0], last = d.pop();
-    if (d.length > 0) {
-      d[0] = last;
-      let i = 0;
-      while (true) {
-        const l = 2 * i + 1, r = l + 1;
-        let m = i;
-        if (l < d.length && this.compare(d[l], d[m]) < 0) m = l;
-        if (r < d.length && this.compare(d[r], d[m]) < 0) m = r;
-        if (m === i) break;
-        [d[i], d[m]] = [d[m], d[i]];
-        i = m;
-      }
-    }
-    return top;
-  }
-}
-function topKWords(words, k) {
-  const count = new Map();
-  for (const w of words) count.set(w, (count.get(w) ?? 0) + 1);
-  const heap = new MinHeap((a, b) => a[1] - b[1] || b[0].localeCompare(a[0]));
-  for (const entry of count) {
-    heap.push(entry);
-    if (heap.size > k) heap.pop();
-  }
-  const out = [];
-  while (heap.size) out.push(heap.pop()[0]);
-  return out.reverse();
-}`
-          }
-        },
-        {
-          cmd: "merge k sorted lists",
-          title: "ادمج k linked lists مترتبين في list واحدة مترتبة",
-          desc: R`في درس «merge (dummy head)» دمجنا اتنين. مع k lists، الحل البديهي تدمجهم واحدة واحدة: الأولى مع التانية، والناتج مع التالتة... ده [[O(N × k)]] (N مجموع العقد كلها)، لأن الناتج اللي بيكبر بيتعدّى عليه تاني كل مرة.
-
-بالـ heap: في أي لحظة، العنصر الجاي في الناتج هو أصغر واحد بين «رؤوس» الـ k lists. فحط الرؤوس في min heap. اسحب الأصغر، ضيفه للناتج، ولو ليه [[next]] حطه في الـ heap مكانه. الـ heap عمره ما بيبقى فيه أكتر من k عقدة، فكل عملية [[O(log k)]]، والإجمالي [[O(N log k)]].
-
-والـ dummy head نفس الحيلة بتاعة درس الدمج: عقدة وهمية في الأول عشان ما نعملش if لأول عنصر.`,
-          example: R`const { MinHeap } = require("./min-heap");
-const toList = arr => arr.reduceRight((next, val) => ({ val, next }), null);
-const toArray = list => { const out = []; for (let n = list; n; n = n.next) out.push(n.val); return out; };
-function mergeKLists(lists) {
-  const heap = new MinHeap((a, b) => a.val - b.val);
-  for (const head of lists) if (head) heap.push(head);
-  const dummy = { next: null };
-  let tail = dummy;
-  while (heap.size) {
-    const node = heap.pop();
-    tail.next = node;
-    tail = node;
-    if (node.next) heap.push(node.next);
-  }
-  return dummy.next;
-}
-const lists = [[1, 4, 5], [1, 3, 4], [2, 6]].map(toList);
-console.log(toArray(mergeKLists(lists)).join(" ")); // 1 1 2 3 4 4 5 6
-console.log(toArray(mergeKLists([]))); // []
-console.log(toArray(mergeKLists([null, toList([0])]))); // [0]
-// N total nodes, k lists: O(N log k) time, O(k) space for the heap`,
-          try: R`حلها من غير heap بالتقسيم (divide and conquer): ادمج الـ lists اتنين اتنين (0 مع 1، و 2 مع 3، ...)، وبعدين ادمج النواتج اتنين اتنين، لحد ما تفضل واحدة. زي merge sort بالظبط. احسب الـ Big-O. وبعدين طبّقها على حاجة حقيقية: ٣ ملفات logs كل واحد مترتب بالوقت، ادمجهم في timeline واحد. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[mergeKDivide(lists)]] بالتقسيم اتنين اتنين، والاختبارات فيها lists أرقام و lists سطور logs.`,
-          sol: R`الناتج [[1 1 2 3 4 4 5 6]] زي نسخة الـ heap.
-
-الـ Big-O: كل «جولة» بتعدّي على كل العقد مرة، [[O(N)]]، وعدد الجولات [[log k]] (كل جولة عدد الـ lists بيقل للنص)، فالإجمالي [[O(N log k)]]، نفس الـ heap، ومن غير heap خالص، وذاكرة [[O(1)]] زيادة (غير الـ array بتاعة الـ lists).
-
-الغلطة الشائعة: تدمج [[result = merge(result, lists[i])]] في loop، وده الحل البديهي [[O(N × k)]]، مش التقسيم.
-
-الـ logs: كل سطر بيبدأ بالوقت بنفس الشكل ([[HH:MM]])، فمقارنة الـ strings بـ [[<=]] بترتبهم صح، ونفس [[mergeTwo]] بتشتغل من غير تعديل. لو الوقت بصيغة تانية، قارن بـ [[Date.parse]] بدل الـ string نفسها. ونفس الفكرة (external merge sort) هي اللي بتستخدمها قواعد البيانات عشان ترتب بيانات أكبر من الـ RAM: ترتب أجزاء صغيرة وتكتبها على الديسك، وبعدين تدمجها بـ heap.`,
-          solCode: R`const toList = arr => arr.reduceRight((next, val) => ({ val, next }), null);
-const toArray = list => { const out = []; for (let n = list; n; n = n.next) out.push(n.val); return out; };
-function mergeTwo(a, b) {
-  const dummy = { next: null };
-  let tail = dummy;
-  while (a && b) {
-    if (a.val <= b.val) { tail.next = a; a = a.next; } else { tail.next = b; b = b.next; }
-    tail = tail.next;
-  }
-  tail.next = a ?? b;
-  return dummy.next;
-}
-function mergeKDivide(lists) {
-  if (lists.length === 0) return null;
-  let round = lists;
-  while (round.length > 1) {
-    const next = [];
-    for (let i = 0; i < round.length; i += 2) next.push(mergeTwo(round[i], round[i + 1] ?? null));
-    round = next;
-  }
-  return round[0];
-}
-console.log(toArray(mergeKDivide([[1, 4, 5], [1, 3, 4], [2, 6]].map(toList))).join(" ")); // 1 1 2 3 4 4 5 6
-console.log(toArray(mergeKDivide([]))); // []
-const logs = [["09:00 api up", "09:05 db slow"], ["09:01 worker start"], ["09:03 cache miss", "09:06 cache hit"]];
-console.log(toArray(mergeKDivide(logs.map(toList))).join(" | ")); // 09:00 api up | 09:01 worker start | 09:03 cache miss | 09:05 db slow | 09:06 cache hit
-// O(N log k) time, O(1) extra space besides the list of heads`,
-          flag: "script",
-          deep: {
-            why: "دمج مصادر مترتبة حاجة بتحصل في الشغل: logs من كذا سيرفر في timeline واحد، ونتايج بحث من كذا shard مترتبة بالـ score، و feed فيه posts من كذا مصدر مترتبة بالوقت. و Merge k Sorted Lists مسألة Hard مشهورة، والـ heap بيحوّلها لـ ١٠ سطور.",
-            how: R`dry run: الرؤوس في الـ heap: 1 (من الأولى) و 1 (من التانية) و 2. اسحب 1 (من الأولى)، وحط 4 مكانها: الـ heap [1، 2، 4]. اسحب 1 (التانية)، وحط 3: [2، 3، 4]. اسحب 2، وحط 6: [3، 4، 6]. وهكذا لحد ما الـ heap يفضى.
-
-ليه الـ heap فيه عقد مش أرقام؟ عشان لما نسحب عقدة نعرف [[next]] بتاعها ونحطه. والـ compare بيقارن [[a.val]].
-
-إحنا مش بنعمل عقد جديدة: بنوصّل العقد الموجودة ببعض بتغيير [[next]]. عشان كده الذاكرة الزيادة [[O(k)]] للـ heap بس. لكن ده معناه إن الـ lists الأصلية اتغيرت.
-
-[[toList]] بتبني linked list من array بـ [[reduceRight]]: بتبدأ من الآخر وكل عقدة بتشاور على اللي بعدها. و [[toArray]] العكس، عشان نطبع.`,
-            when: "k مصادر مترتبة وعايز ناتج واحد مترتب: heap بحجم k. لو المصادر arrays مش lists، احفظ في الـ heap [[[value, listIndex, elementIndex]]]. ولو k صغير (2 أو 3)، الدمج المباشر أبسط. ولو المصادر مش مترتبة أصلًا، اجمعهم واعمل sort.",
-            mistakes: R`إنك تحط null في الـ heap (list فاضية) فالـ compare يقرا [[null.val]]. وإنك تحط كل العقد في الـ heap مرة واحدة: بيشتغل بس [[O(N log N)]] وذاكرة [[O(N)]]. وإنك تنسى تحط [[node.next]] بعد ما تسحب العقدة فتضيع باقي الـ list. وفي الانترفيو: اذكر الحل البديهي وليه [[O(N × k)]]، وبعدين الـ heap، وبعدين إن التقسيم بيدّي نفس الـ Big-O من غير heap.`
-          },
-          lines: [
-            "الـ heap من ملف min-heap.js.",
-            "تحويل array لـ linked list (من الآخر للأول).",
-            "تحويل linked list لـ array عشان نطبع.",
-            "دمج k lists.",
-            "min heap على العقد، والمقارنة بالقيمة.",
-            "حط رأس كل list مش فاضية.",
-            "عقدة وهمية في أول الناتج.",
-            "آخر عقدة في الناتج.",
-            "طول ما فيه عقد.",
-            "اسحب أصغر رأس.",
-            "وصّلها بآخر الناتج.",
-            "بقت هي الآخر.",
-            "لو الـ list بتاعتها ليها باقي، حط العقدة الجاية مكانها.",
-            "قفلة.",
-            "الناتج بعد العقدة الوهمية.",
-            "قفلة.",
-            "٣ lists مترتبين.",
-            "٨ عقد مترتبة.",
-            "مفيش lists.",
-            "list فاضية (null) و list فيها عنصر."
-          ],
-          check: {
-            lang: "js",
-            starter: R`function mergeTwo(a, b) {
-  const dummy = { next: null };
-  let tail = dummy;
-  while (a && b) {
-    if (a.val <= b.val) { tail.next = a; a = a.next; } else { tail.next = b; b = b.next; }
-    tail = tail.next;
-  }
-  tail.next = a ?? b;
-  return dummy.next;
-}
-function mergeKDivide(lists) {
-  // كل جولة: ادمج [0 مع 1]، [2 مع 3]... لحد ما تفضل list واحدة
-  return null;
-}`,
-            tests: R`const toList = arr => arr.reduceRight((next, val) => ({ val, next }), null);
-const toArray = list => { const out = []; for (let n = list; n && out.length <= 100000; n = n.next) out.push(n.val); return out; };
-test("[[1, 4, 5], [1, 3, 4], [2, 6]] ← 1 1 2 3 4 4 5 6", () => expect(toArray(mergeKDivide([[1, 4, 5], [1, 3, 4], [2, 6]].map(toList)))).toEqual([1, 1, 2, 3, 4, 4, 5, 6]));
-test("[] ← null", () => expect(mergeKDivide([])).toBe(null));
-test("lists فاضية (null) في النص وعدد فردي", () => expect(toArray(mergeKDivide([null, toList([3]), null, toList([1, 2]), null])) ).toEqual([1, 2, 3]));
-test("٣ ملفات logs ← timeline واحد (مقارنة الـ strings بـ <= بتنفع مع HH:MM)", () => {
-  const logs = [["09:00 api up", "09:05 db slow"], ["09:01 worker start"], ["09:03 cache miss", "09:06 cache hit"]];
-  expect(toArray(mergeKDivide(logs.map(toList))).map(l => l.slice(0, 5))).toEqual(["09:00", "09:01", "09:03", "09:05", "09:06"]);
+            tests: R`const P = [
+  { name: "Monitor", price: 3000, inStock: false },
+  { name: "Mouse", price: 250, inStock: true },
+  { name: "Cable", price: 50, inStock: false },
+  { name: "Keyboard", price: 250, inStock: true },
+  { name: "Adapter", price: 120, inStock: true },
+];
+test("Adapter, Keyboard, Mouse, Cable, Monitor", () => expect(sortProducts(P.map(p => ({ ...p }))).map(p => p.name)).toEqual(["Adapter", "Keyboard", "Mouse", "Cable", "Monitor"]));
+test("نفس السعر ← الاسم أبجديًا (Keyboard قبل Mouse)", () => {
+  const r = sortProducts([P[1], P[3]].map(p => ({ ...p })));
+  expect(r.map(p => p.name)).toEqual(["Keyboard", "Mouse"]);
 });
-test("بتربط العقد الموجودة، مش بتعمل عقد جديدة", () => {
-  const a = toList([1]), b = toList([2]);
-  const r = mergeKDivide([a, b]);
-  expect([r === a, r.next === b]).toEqual([true, true]);
+test("المتاح قبل الأرخص: Cable (50) بعد Adapter (120)", () => {
+  const r = sortProducts([P[2], P[4]].map(p => ({ ...p }))).map(p => p.name);
+  expect(r).toEqual(["Adapter", "Cable"]);
 });
-test("500 list × 40 عقدة (O(N log k)، مش O(N × k))", () => {
-  const lists = Array.from({ length: 500 }, (_, i) => toList(Array.from({ length: 40 }, (_, j) => j * 500 + i)));
-  const r = toArray(mergeKDivide(lists));
-  expect([r.length, r.every((x, i) => x === i)]).toEqual([20000, true]);
-});`,
-            solution: R`function mergeTwo(a, b) {
-  const dummy = { next: null };
-  let tail = dummy;
-  while (a && b) {
-    if (a.val <= b.val) { tail.next = a; a = a.next; } else { tail.next = b; b = b.next; }
-    tail = tail.next;
-  }
-  tail.next = a ?? b;
-  return dummy.next;
-}
-function mergeKDivide(lists) {
-  if (lists.length === 0) return null;
-  let round = lists;
-  while (round.length > 1) {
-    const next = [];
-    for (let i = 0; i < round.length; i += 2) next.push(mergeTwo(round[i], round[i + 1] ?? null));
-    round = next;
-  }
-  return round[0];
+test("array مقلوبة كمان (مترتبة بالصدفة مش دليل)", () => expect(sortProducts(P.map(p => ({ ...p })).reverse()).map(p => p.name)).toEqual(["Adapter", "Keyboard", "Mouse", "Cable", "Monitor"]));`,
+            solution: R`function sortProducts(products) {
+  return [...products].sort((a, b) => (b.inStock - a.inStock) || (a.price - b.price) || a.name.localeCompare(b.name));
 }`
           }
         }

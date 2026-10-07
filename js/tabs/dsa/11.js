@@ -1,1101 +1,1630 @@
 // تكملة تاب dsa: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/dsa/01.js (شرح حقول الدرس في أوله)
 MORE("dsa", [
     {
-      t: "أدوات إضافية: union-find و Dijkstra و bits و LRU",
+      t: "graphs",
       l: 3,
-      n: "بتتسأل أحيانًا: مجموعات بتتدمج، وأقصر طريق بأوزان، وحيل الـ XOR، و cache بيطرد الأقدم",
+      n: "عقد وعلاقات من غير root: adjacency list، و islands، وأقصر طريق بـ BFS، و topological sort، و cycles",
       items: [
         {
-          cmd: "union-find",
-          title: "مجموعات بتتدمج مع بعض: الاتنين دول في نفس المجموعة؟ (union-find)",
-          desc: R`union-find (اسمه كمان disjoint set union أو DSU) بيدير مجموعات منفصلة وبيدّيك عمليتين:
+          cmd: "adjacency list",
+          title: "إزاي تخزّن graph في الكود، وتمشي عليه من غير ما تلف في دواير؟",
+          desc: R`الـ graph: عقد (vertices) ووصلات بينها (edges). الشجرة نوع من الـ graph، بس الـ graph العادي ممكن يبقى فيه دواير، وممكن عقدة ليها أكتر من أب، ومفيش root.
 
-[[find(x)]]: مين «رئيس» مجموعة x؟ عنصرين في نفس المجموعة لو ليهم نفس الرئيس.
+أشهر طريقة تخزّنه بيها: adjacency list، يعني Map (أو array) فيها لكل عقدة قائمة جيرانها. الذاكرة [[O(V + E)]]: عدد العقد + عدد الوصلات.
 
-[[union(a, b)]]: ادمج مجموعة a ومجموعة b.
+البديل adjacency matrix: جدول V × V فيه true لو فيه وصلة. بتسأل «فيه وصلة بين a و b؟» في [[O(1)]]، بس بتاخد [[O(V^2)]] ذاكرة حتى لو الوصلات قليلة. أغلب الـ graphs الحقيقية (أصحاب، links، dependencies) وصلاتها قليلة، فالـ list هي الاختيار الافتراضي.
 
-كل مجموعة شجرة، وكل عنصر بيشاور على أبوه في [[parent]]، والرئيس بيشاور على نفسه. عشان الشجر ميبقاش طويل، فيه تحسينين:
-
-path compression: وانت طالع من العنصر للرئيس، خلّي كل عنصر يشاور على جده (أو على الرئيس على طول)، فالمرة الجاية الطريق أقصر.
-
-union by size: لما تدمج، خلّي الشجرة الصغيرة تحت الكبيرة، مش العكس.
-
-مع الاتنين، كل عملية تقريبًا [[O(1)]] (رياضيًا [[O(α(n))]]، و α دالة بتكبر ببطء شديد لدرجة إنها أقل من 5 لأي n في الكون).
-
-الفرق عن BFS/DFS: الـ BFS بيحتاج الـ graph كله جاهز. الـ union-find بيشتغل والـ edges بتيجي واحد واحد، وبيجاوب «متوصلين؟» بعد كل edge من غير ما تعيد المشي.`,
-          example: R`class UnionFind {
-  constructor(n) {
-    this.parent = Array.from({ length: n }, (_, i) => i);
-    this.size = new Array(n).fill(1);
-    this.count = n;
+الفرق الوحيد بين DFS على شجرة وعلى graph: لازم [[Set]] للعقد اللي زرتها، وإلا هتلف في دايرة لحد ما الـ stack يخلص.`,
+          example: R`const edges = [["a", "b"], ["a", "c"], ["b", "d"], ["c", "d"], ["d", "e"]];
+function buildGraph(edges, directed = false) {
+  const g = new Map();
+  for (const [u, v] of edges) {
+    if (!g.has(u)) g.set(u, []);
+    if (!g.has(v)) g.set(v, []);
+    g.get(u).push(v);
+    if (!directed) g.get(v).push(u);
   }
-  find(x) {
-    while (this.parent[x] !== x) {
-      const up = this.parent[x]; this.parent[x] = this.parent[up];
-      x = this.parent[x];
-    }
-    return x;
-  }
-  union(a, b) {
-    let ra = this.find(a), rb = this.find(b);
-    if (ra === rb) return false;
-    if (this.size[ra] < this.size[rb]) [ra, rb] = [rb, ra];
-    this.parent[rb] = ra;
-    this.size[ra] += this.size[rb];
-    this.count--;
-    return true;
-  }
+  return g;
 }
-const uf = new UnionFind(6);
-uf.union(0, 1); uf.union(1, 2); uf.union(3, 4);
-console.log(uf.count); // 3
-console.log(uf.find(2) === uf.find(0), uf.find(3) === uf.find(5)); // true false
-console.log(uf.union(0, 2), uf.count); // false 3
-// find and union: amortized almost O(1) (inverse Ackermann) with path compression + union by size; O(n) space`,
-          try: R`حل «Redundant Connection»: عندك شجرة من n عقدة (مترقمة من 1)، واتضاف عليها edge زيادة عمل دايرة. رجّع الـ edge ده (ولو فيه أكتر من إجابة، آخر واحد في الـ input). [[[[1,2],[1,3],[2,3]]]] الإجابة [[[2,3]]]، و [[[[1,2],[2,3],[3,4],[1,4],[1,5]]]] الإجابة [[[1,4]]]. وبعدين «Number of Provinces»: matrix فيها 1 لو المدينتين متوصلين، كام مجموعة؟ اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[findRedundantConnection(edges)]] و [[findCircleNum(isConnected)]] (الـ UnionFind جاهز في المربع).`,
-          sol: R`Redundant Connection: امشي على الـ edges بالترتيب واعمل [[union]]. أول edge [[union]] بتاعه يرجّع false (الطرفين أصلًا في نفس المجموعة) هو اللي عمل الدايرة. الإجابات [[[2,3]]] و [[[1,4]]].
-
-الـ UnionFind لازم يبقى حجمه n + 1 لأن العقد بتبدأ من 1. لو عملته بحجم n، العقدة n هتبقى برّا الـ array، و [[parent[n]]] هتبقى undefined، والـ find هتلف للأبد أو ترجّع قيمة غلط.
-
-Number of Provinces: لكل [[isConnected[i][j] === 1]] مع [[j > i]]، اعمل [[union(i, j)]]، والإجابة [[uf.count]]. [[[[1,1,0],[1,1,0],[0,0,1]]]] = 2، و [[[[1,0,0],[0,1,0],[0,0,1]]]] = 3.
-
-ليه «آخر واحد في الـ input» بيطلع طبيعي؟ لأن الشجرة الأصلية + edge واحد = دايرة واحدة بالظبط، وأول edge بيقفلها وانت ماشي بالترتيب هو آخر edge منها في الـ input.`,
-          solCode: R`class UnionFind {
-  constructor(n) { this.parent = Array.from({ length: n }, (_, i) => i); this.count = n; }
-  find(x) {
-    while (this.parent[x] !== x) { this.parent[x] = this.parent[this.parent[x]]; x = this.parent[x]; }
-    return x;
-  }
-  union(a, b) {
-    const ra = this.find(a), rb = this.find(b);
-    if (ra === rb) return false;
-    this.parent[rb] = ra;
-    this.count--;
-    return true;
-  }
+function dfs(g, start, seen = new Set()) {
+  seen.add(start);
+  for (const next of g.get(start)) if (!seen.has(next)) dfs(g, next, seen);
+  return seen;
 }
-function findRedundantConnection(edges) {
-  const uf = new UnionFind(edges.length + 1);
-  for (const [a, b] of edges) if (!uf.union(a, b)) return [a, b];
-  return null;
-}
-function findCircleNum(isConnected) {
-  const uf = new UnionFind(isConnected.length);
-  isConnected.forEach((row, i) => row.forEach((v, j) => { if (v && j > i) uf.union(i, j); }));
-  return uf.count;
-}
-console.log(findRedundantConnection([[1, 2], [1, 3], [2, 3]])); // [2, 3]
-console.log(findRedundantConnection([[1, 2], [2, 3], [3, 4], [1, 4], [1, 5]])); // [1, 4]
-console.log(findCircleNum([[1, 1, 0], [1, 1, 0], [0, 0, 1]]), findCircleNum([[1, 0, 0], [0, 1, 0], [0, 0, 1]])); // 2 3
-// O(E × α(n)) time, O(n) space`,
-          flag: "script",
-          deep: {
-            why: "union-find بيحل «مين مع مين» والبيانات بتيجي تدريجيًا: دمج حسابات المستخدمين المكررة (نفس الإيميل أو التليفون)، وتجميع الصور المتشابهة، والشبكات («السيرفرين دول متوصلين بعد ما الوصلة دي اتعملت؟»). وكمان هو قلب خوارزمية Kruskal لبناء أرخص شبكة توصّل كل النقط (minimum spanning tree).",
-            how: R`في الأول كل عنصر لوحده: [[parent = [0, 1, 2, 3, 4, 5]]]، و count = 6.
-
-[[union(0, 1)]]: رئيس 0 هو 0، ورئيس 1 هو 1. الحجمين متساويين، فـ 1 تبقى تحت 0: [[parent[1] = 0]]، و count = 5.
-
-[[union(1, 2)]]: رئيس 1 هو 0 (حجمها 2)، ورئيس 2 هو 2 (حجمها 1). الصغيرة تحت الكبيرة: [[parent[2] = 0]]. count = 4.
-
-[[union(3, 4)]]: count = 3. فالمجموعات {0, 1, 2} و {3, 4} و {5}.
-
-[[union(0, 2)]]: الاتنين رئيسهم 0، فـ false ومفيش تغيير. ده بالظبط «الـ edge ده بيعمل دايرة».
-
-الـ path compression هنا اسمها path halving: السطر اللي جوه الـ while في [[find]] بيخلّي كل عنصر يشاور على جده بدل أبوه وانت طالع. سطر واحد، ومن غير recursion، وبتدّي نفس الـ Big-O تقريبًا.`,
-            when: "connected components والـ edges بتيجي واحد واحد، أو كشف دواير في undirected graph، أو Kruskal، أو «Accounts Merge». لو الـ graph ثابت ومحتاج تسأل مرة واحدة، BFS/DFS أبسط. ولو فيه «فصل» (edge بيتشال)، الـ union-find العادي مبيعرفش يعمل كده.",
-            mistakes: R`نسيان إن [[find]] لازم ترجّع الرئيس مش الأب المباشر، فتقارن [[parent[a] === parent[b]]] وده غلط. ونسيان تحسين أو التانيين، فالشجرة تبقى خط والعمليات [[O(n)]]. والعقد اللي بتبدأ من 1 (حجم n + 1). و [[union]] على العناصر نفسها بدل رؤسائها ([[parent[b] = a]])، ودي بتقطع b من مجموعتها القديمة.`
-          },
-          lines: [
-            "الـ class.",
-            "n عنصر، كل واحد لوحده في الأول.",
-            "كل عنصر أبوه نفسه (رئيس نفسه).",
-            "حجم كل مجموعة (بيتحسب عند الرئيس بس).",
-            "عدد المجموعات.",
-            "قفلة الـ constructor.",
-            "هات رئيس x.",
-            "طول ما x مش الرئيس.",
-            "path halving: خلّي x يشاور على جده.",
-            "واطلع.",
-            "قفلة.",
-            "الرئيس.",
-            "قفلة find.",
-            "ادمج مجموعة a ومجموعة b.",
-            "رئيس كل واحد.",
-            "نفس المجموعة: مفيش دمج (والـ edge ده دايرة).",
-            "خلّي ra هو الأكبر.",
-            "الصغيرة تحت الكبيرة.",
-            "حدّث الحجم.",
-            "مجموعة أقل.",
-            "اتدمجوا.",
-            "قفلة union.",
-            "قفلة الـ class.",
-            "٦ عناصر.",
-            "{0,1,2} و {3,4}.",
-            "3 مجموعات (و 5 لوحدها).",
-            "0 و 2 مع بعض، و 3 و 5 لأ.",
-            "في نفس المجموعة أصلًا: false، والعدد ثابت."
-          ],
-          check: {
-            lang: "js",
-            starter: R`class UnionFind {
-  constructor(n) {
-    this.parent = Array.from({ length: n }, (_, i) => i);
-    this.size = new Array(n).fill(1);
-    this.count = n;
-  }
-  find(x) {
-    while (this.parent[x] !== x) {
-      this.parent[x] = this.parent[this.parent[x]];
-      x = this.parent[x];
-    }
-    return x;
-  }
-  union(a, b) {
-    let ra = this.find(a), rb = this.find(b);
-    if (ra === rb) return false;
-    if (this.size[ra] < this.size[rb]) [ra, rb] = [rb, ra];
-    this.parent[rb] = ra;
-    this.size[ra] += this.size[rb];
-    this.count--;
-    return true;
-  }
-}
-function findRedundantConnection(edges) {
-  // UnionFind بحجم n + 1 (العقد من 1)، وأول union بيرجّع false هو الإجابة
-}
-function findCircleNum(isConnected) {
-  return 0;
-}`,
-            tests: R`test("[[1,2],[1,3],[2,3]] ← [2,3]", () => expect(findRedundantConnection([[1, 2], [1, 3], [2, 3]])).toEqual([2, 3]));
-test("[[1,2],[2,3],[3,4],[1,4],[1,5]] ← [1,4]", () => expect(findRedundantConnection([[1, 2], [2, 3], [3, 4], [1, 4], [1, 5]])).toEqual([1, 4]));
-test("العقدة n موجودة (حجم n + 1): [[1,2],[2,3],[3,1]] ← [3,1]", () => expect(findRedundantConnection([[1, 2], [2, 3], [3, 1]])).toEqual([3, 1]));
-test("findCircleNum: [[1,1,0],[1,1,0],[0,0,1]] ← 2", () => expect(findCircleNum([[1, 1, 0], [1, 1, 0], [0, 0, 1]])).toBe(2));
-test("كلهم لوحدهم ← 3", () => expect(findCircleNum([[1, 0, 0], [0, 1, 0], [0, 0, 1]])).toBe(3));
-test("سلسلة 20 ألف عقدة و edge زيادة في الآخر (تقريبًا O(1) لكل عملية)", () => {
-  const edges = Array.from({ length: 19999 }, (_, i) => [i + 1, i + 2]);
-  edges.push([1, 20000]);
-  expect(findRedundantConnection(edges)).toEqual([1, 20000]);
-});`,
-            solution: R`class UnionFind {
-  constructor(n) {
-    this.parent = Array.from({ length: n }, (_, i) => i);
-    this.size = new Array(n).fill(1);
-    this.count = n;
-  }
-  find(x) {
-    while (this.parent[x] !== x) {
-      this.parent[x] = this.parent[this.parent[x]];
-      x = this.parent[x];
-    }
-    return x;
-  }
-  union(a, b) {
-    let ra = this.find(a), rb = this.find(b);
-    if (ra === rb) return false;
-    if (this.size[ra] < this.size[rb]) [ra, rb] = [rb, ra];
-    this.parent[rb] = ra;
-    this.size[ra] += this.size[rb];
-    this.count--;
-    return true;
-  }
-}
-function findRedundantConnection(edges) {
-  const uf = new UnionFind(edges.length + 1);
-  for (const [a, b] of edges) if (!uf.union(a, b)) return [a, b];
-  return null;
-}
-function findCircleNum(isConnected) {
-  const n = isConnected.length, uf = new UnionFind(n);
-  for (let i = 0; i < n; i++)
-    for (let j = i + 1; j < n; j++)
-      if (isConnected[i][j] === 1) uf.union(i, j);
-  return uf.count;
-}`
-          }
-        },
-        {
-          cmd: "Dijkstra",
-          title: "أقصر طريق لما كل طريق ليه وزن مختلف (Dijkstra)",
-          desc: R`BFS بيلاقي أقصر طريق لما كل خطوة بـ 1. لو الطرق ليها أوزان (مسافات، أوقات، تكلفة)، الطريق اللي فيه خطوات أقل ممكن يبقى أطول.
-
-Dijkstra: احفظ أحسن مسافة معروفة لكل عقدة، و min heap فيه [[[المسافة، العقدة]]]. كل مرة اسحب أقرب عقدة لسه ماخلصتش (ده الـ greedy: أقرب عقدة مسافتها نهائية ومش هتتحسن). ومنها، جرّب كل جار: لو المسافة من خلالها أقل من المعروفة، حدّثها وحطها في الـ heap.
-
-ليه الأقرب مسافتها نهائية؟ لأن أي طريق تاني ليها لازم يعدّي على عقدة أبعد، والأوزان موجبة، فمش ممكن يبقى أقصر. وده سبب إن Dijkstra مبيشتغلش مع أوزان سالبة.
-
-الـ heap من درس «min heap (by hand)» ([[require("./min-heap")]]). ومفيش «decrease key»: بنحط نسخة جديدة في الـ heap، ولما نسحب نسخة قديمة (مسافتها أكبر من المعروفة) نفوّتها.`,
-          example: R`const { MinHeap } = require("./min-heap");
-function dijkstra(graph, source) {
-  const dist = new Map([[source, 0]]);
-  const heap = new MinHeap((a, b) => a[0] - b[0]);
-  heap.push([0, source]);
-  while (heap.size) {
-    const [d, u] = heap.pop();
-    if (d > dist.get(u)) continue;
-    for (const [v, w] of graph[u] ?? []) {
-      const nd = d + w;
-      if (nd < (dist.get(v) ?? Infinity)) {
-        dist.set(v, nd);
-        heap.push([nd, v]);
-      }
-    }
-  }
-  return dist;
-}
-const roads = {
-  A: [["B", 4], ["C", 1]],
-  C: [["B", 2], ["D", 5]],
-  B: [["D", 1]],
-};
-console.log(Object.fromEntries(dijkstra(roads, "A"))); // { A: 0, B: 3, C: 1, D: 4 }
-console.log(dijkstra(roads, "D").get("A")); // undefined
-// O((V + E) log V) time with a binary heap, O(V + E) space; all weights must be >= 0`,
-          try: R`حل «Network Delay Time»: n سيرفر مترقمين من 1، و times فيها [[[u, v, w]]] (رسالة من u لـ v بتاخد w)، وبتبعت من k. إمتى كل السيرفرات تستلم؟ ولو فيه سيرفر مش هيستلم أبدًا رجّع -1. [[times = [[2,1,1],[2,3,1],[3,4,1]]]] و n = 4 و k = 2 الإجابة 2. وبعدين خلّي [[dijkstra]] ترجّع الطريق نفسه من A لـ D (احفظ «جيت منين»). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[networkDelayTime(times, n, k)]] و [[path(graph, from, to)]] بترجّع نص زي [["A -> C -> B -> D (4)"]] أو null (الـ MinHeap جاهز في المربع).`,
-          sol: R`Network Delay Time: شغّل Dijkstra من k، والإجابة أكبر مسافة بين كل السيرفرات. لو عدد السيرفرات اللي وصلتلها أقل من n، الإجابة -1. للمثال: من 2 لـ 1 و 3 بـ 1، ومن 3 لـ 4 بـ 1، فالمسافات 1 و 1 و 2، والإجابة 2. ولو k = 1 في نفس المثال، 1 مبتبعتش لحد، فـ -1.
-
-الطريق: [[prev.set(v, u)]] جنب [[dist.set(v, nd)]]، وبعدين من D ارجع بالـ prev لحد A واعكس: [[A → C → B → D]] بطول 4. لاحظ إن الطريق المباشر A → B (4) أطول من A → C → B (3)، وده اللي BFS كان هيغلط فيه لأنه بيعدّ الخطوات.
-
-الغلطة الشائعة: تحط العقدة في [[seen]] لما تدخل الـ heap زي BFS. في Dijkstra، العقدة ممكن تدخل الـ heap كذا مرة بمسافات بتتحسن، والنهائية بس هي اللي بتطلع الأول.`,
-          solCode: R`const { MinHeap } = require("./min-heap");
-function shortest(graph, source) {
-  const dist = new Map([[source, 0]]), prev = new Map();
-  const heap = new MinHeap((a, b) => a[0] - b[0]);
-  heap.push([0, source]);
-  while (heap.size) {
-    const [d, u] = heap.pop();
-    if (d > dist.get(u)) continue;
-    for (const [v, w] of graph[u] ?? []) {
-      if (d + w < (dist.get(v) ?? Infinity)) { dist.set(v, d + w); prev.set(v, u); heap.push([d + w, v]); }
-    }
-  }
-  return { dist, prev };
-}
-function networkDelayTime(times, n, k) {
-  const graph = {};
-  for (const [u, v, w] of times) (graph[u] ??= []).push([v, w]);
-  const { dist } = shortest(graph, k);
-  return dist.size === n ? Math.max(...dist.values()) : -1;
-}
-function path(graph, from, to) {
-  const { dist, prev } = shortest(graph, from);
-  if (!dist.has(to)) return null;
-  const out = [to];
-  while (out[0] !== from) out.unshift(prev.get(out[0]));
-  return out.join(" -> ") + " (" + dist.get(to) + ")";
-}
-console.log(networkDelayTime([[2, 1, 1], [2, 3, 1], [3, 4, 1]], 4, 2)); // 2
-console.log(networkDelayTime([[2, 1, 1], [2, 3, 1], [3, 4, 1]], 4, 1)); // -1
-console.log(path({ A: [["B", 4], ["C", 1]], C: [["B", 2], ["D", 5]], B: [["D", 1]] }, "A", "D")); // A -> C -> B -> D (4)
-// O((V + E) log V) time, O(V + E) space`,
-          flag: "script",
-          deep: {
-            why: "Dijkstra (أو نسخ متطورة منه زي A*) ورا خرايط جوجل وتطبيقات التوصيل، وورا بروتوكولات الـ routing في الإنترنت (OSPF). وفي الانترفيو بيتسأل أقل من BFS، بس لما تيجي مسألة «أقل تكلفة» أو «أقل وقت» بأوزان، لازم تعرف إن BFS مش كفاية.",
-            how: R`dry run من A: الـ heap [[[0, A]]]. اسحب A (0): C بـ 1 و B بـ 4، الاتنين أحسن من Infinity، حطهم.
-
-اسحب C (1، الأقرب): B من خلال C = 1 + 2 = 3 < 4، حدّث B لـ 3 وحط [3, B]. D = 1 + 5 = 6، حطها.
-
-اسحب B (3): D من خلالها = 3 + 1 = 4 < 6، حدّث لـ 4.
-
-اسحب [4, B] (النسخة القديمة): 4 > 3، فوّت. اسحب D (4): ملهاش جيران. اسحب [6, D]: 6 > 4، فوّت. خلصنا: A 0، و C 1، و B 3، و D 4.
-
-الـ [[graph[u] ?? []]] عشان D مش key في الـ object (ملهاش طرق طالعة). و [[dist.get(v) ?? Infinity]] عشان العقدة اللي لسه ماوصلناهاش مش في الـ Map.
-
-من D لـ A: مفيش طرق طالعة من D أصلًا، فـ [[dist]] فيها D بس، و [[get("A")]] بترجّع undefined (مش متوصلة).`,
-            when: "أقصر طريق من مصدر واحد، والأوزان موجبة أو صفر. الأوزان كلها 1: BFS أبسط وأسرع. فيه أوزان سالبة: Bellman-Ford ([[O(V × E)]]). أقصر طريق بين كل الأزواج في graph صغير: Floyd-Warshall ([[O(V^3)]]). ولو عندك تقدير للمسافة للهدف (زي المسافة المستقيمة على الخريطة)، A* بيوصل أسرع.",
-            mistakes: R`استخدام BFS مع أوزان. ونسيان سطر [[if (d > dist.get(u)) continue]]: الكود بيفضل صح بس بيعيد شغل على نسخ قديمة. واستخدام Dijkstra مع أوزان سالبة (بيطلّع إجابة غلط من غير أي error). والـ heap بـ sort بعد كل push. وفي الانترفيو: قول الـ Big-O صح [[O((V + E) log V)]]، واذكر إن الـ greedy هنا صح بسبب إن الأوزان مش سالبة.`
-          },
-          lines: [
-            "الـ heap من ملف min-heap.js.",
-            "أقصر مسافة من source لكل عقدة.",
-            "أحسن مسافة معروفة، والمصدر 0.",
-            "heap على [المسافة، العقدة]، والأقرب يطلع الأول.",
-            "ابدأ بالمصدر.",
-            "طول ما فيه عقد.",
-            "أقرب واحدة.",
-            "نسخة قديمة (لقينا أحسن منها بعد ما اتحطت): فوّت.",
-            "لكل طريق طالع [الجار، الوزن].",
-            "المسافة للجار من خلالي.",
-            "أحسن من المعروفة؟",
-            "حدّثها.",
-            "وحط النسخة الجديدة في الـ heap.",
-            "قفلة الـ if.",
-            "قفلة الـ for.",
-            "قفلة الـ while.",
-            "كل المسافات.",
-            "قفلة.",
-            "الطرق: من كل مدينة لـ [مدينة، مسافة].",
-            "A لـ B بـ 4، و A لـ C بـ 1.",
-            "C لـ B بـ 2، و C لـ D بـ 5.",
-            "B لـ D بـ 1.",
-            "قفلة.",
-            "B بـ 3 (من خلال C) مش 4، و D بـ 4.",
-            "مفيش طرق طالعة من D: A مش متوصلة."
-          ],
-          check: {
-            lang: "js",
-            starter: R`// الـ MinHeap من درس «min heap (by hand)» جاهز هنا تستخدمه
-class MinHeap {
-  constructor(compare = (a, b) => a - b) { this.data = []; this.compare = compare; }
-  get size() { return this.data.length; }
-  peek() { return this.data[0]; }
-  push(value) {
-    const d = this.data;
-    d.push(value);
-    let i = d.length - 1;
-    while (i > 0) {
-      const p = (i - 1) >> 1;
-      if (this.compare(d[i], d[p]) >= 0) break;
-      [d[i], d[p]] = [d[p], d[i]];
-      i = p;
-    }
-  }
-  pop() {
-    const d = this.data;
-    if (d.length === 0) return undefined;
-    const top = d[0], last = d.pop();
-    if (d.length > 0) {
-      d[0] = last;
-      let i = 0;
-      while (true) {
-        const l = 2 * i + 1, r = l + 1;
-        let m = i;
-        if (l < d.length && this.compare(d[l], d[m]) < 0) m = l;
-        if (r < d.length && this.compare(d[r], d[m]) < 0) m = r;
-        if (m === i) break;
-        [d[i], d[m]] = [d[m], d[i]];
-        i = m;
-      }
-    }
-    return top;
-  }
-}
-function shortest(graph, source) {
-  const dist = new Map([[source, 0]]), prev = new Map();
-  // Dijkstra عادي، و prev.set(v, u) جنب dist.set
-  return { dist, prev };
-}
-function networkDelayTime(times, n, k) {
-  // ابني graph كـ object، والإجابة أكبر مسافة أو -1
-  return -1;
-}
-function path(graph, from, to) {
-  // ارجع من to بالـ prev لحد from
-  return null;
-}`,
-            tests: R`const roads = { A: [["B", 4], ["C", 1]], C: [["B", 2], ["D", 5]], B: [["D", 1]] };
-test("([[2,1,1],[2,3,1],[3,4,1]], 4, 2) ← 2", () => expect(networkDelayTime([[2, 1, 1], [2, 3, 1], [3, 4, 1]], 4, 2)).toBe(2));
-test("نفس المثال من 1 ← -1 (1 مبتبعتش لحد)", () => expect(networkDelayTime([[2, 1, 1], [2, 3, 1], [3, 4, 1]], 4, 1)).toBe(-1));
-test("الطريق المباشر أطول: ([[1,2,5],[1,3,1],[3,2,1]], 3, 1) ← 2", () => expect(networkDelayTime([[1, 2, 5], [1, 3, 1], [3, 2, 1]], 3, 1)).toBe(2));
-test("path(A → D) ← 'A -> C -> B -> D (4)' مش A B D", () => expect(path(roads, "A", "D")).toBe("A -> C -> B -> D (4)"));
-test("من D لـ A مفيش طريق ← null", () => expect(path(roads, "D", "A")).toBe(null));
-test("شبكة 2000 سيرفر (O((V + E) log V))", () => {
-  const times = [];
-  for (let i = 1; i < 2000; i++) { times.push([i, i + 1, 1]); times.push([1, i + 1, 3000]); }
-  expect(networkDelayTime(times, 2000, 1)).toBe(1999);
-});`,
-            solution: R`// الـ MinHeap من درس «min heap (by hand)» جاهز هنا تستخدمه
-class MinHeap {
-  constructor(compare = (a, b) => a - b) { this.data = []; this.compare = compare; }
-  get size() { return this.data.length; }
-  peek() { return this.data[0]; }
-  push(value) {
-    const d = this.data;
-    d.push(value);
-    let i = d.length - 1;
-    while (i > 0) {
-      const p = (i - 1) >> 1;
-      if (this.compare(d[i], d[p]) >= 0) break;
-      [d[i], d[p]] = [d[p], d[i]];
-      i = p;
-    }
-  }
-  pop() {
-    const d = this.data;
-    if (d.length === 0) return undefined;
-    const top = d[0], last = d.pop();
-    if (d.length > 0) {
-      d[0] = last;
-      let i = 0;
-      while (true) {
-        const l = 2 * i + 1, r = l + 1;
-        let m = i;
-        if (l < d.length && this.compare(d[l], d[m]) < 0) m = l;
-        if (r < d.length && this.compare(d[r], d[m]) < 0) m = r;
-        if (m === i) break;
-        [d[i], d[m]] = [d[m], d[i]];
-        i = m;
-      }
-    }
-    return top;
-  }
-}
-function shortest(graph, source) {
-  const dist = new Map([[source, 0]]), prev = new Map();
-  const heap = new MinHeap((a, b) => a[0] - b[0]);
-  heap.push([0, source]);
-  while (heap.size) {
-    const [d, u] = heap.pop();
-    if (d > dist.get(u)) continue;
-    for (const [v, w] of graph[u] ?? []) {
-      if (d + w < (dist.get(v) ?? Infinity)) { dist.set(v, d + w); prev.set(v, u); heap.push([d + w, v]); }
-    }
-  }
-  return { dist, prev };
-}
-function networkDelayTime(times, n, k) {
-  const graph = {};
-  for (const [u, v, w] of times) (graph[u] ??= []).push([v, w]);
-  const { dist } = shortest(graph, k);
-  return dist.size === n ? Math.max(...dist.values()) : -1;
-}
-function path(graph, from, to) {
-  const { dist, prev } = shortest(graph, from);
-  if (!dist.has(to)) return null;
-  const out = [to];
-  while (out[0] !== from) out.unshift(prev.get(out[0]));
-  return out.join(" -> ") + " (" + dist.get(to) + ")";
-}`
-          }
-        },
-        {
-          cmd: "bit manipulation (XOR)",
-          title: "حيل الـ bits: الـ XOR بيلاقي الرقم الوحيد، و n & (n - 1) بيشيل آخر 1",
-          desc: R`الأرقام جوه الجهاز bits، و JavaScript بتدّيك عمليات عليها: [[&]] (and)، و [[|]] (or)، و [[^]] (xor)، و [[~]] (not)، و [[<<]] و [[>>]] (إزاحة).
-
-XOR ليه ٣ خواص بتعمل سحر: [[x ^ x = 0]]، و [[x ^ 0 = x]]، والترتيب مش بيفرق. فلو عملت XOR لكل الأرقام في array كل رقم فيها متكرر مرتين ما عدا واحد، الأزواج بتلغي بعض ويفضل الوحيد. [[O(n)]] وقت و [[O(1)]] ذاكرة، من غير Map.
-
-[[n & (n - 1)]] بيشيل أيمن 1 في n. فـ «n قوة لـ 2؟» = [[n > 0 && (n & (n - 1)) === 0]] (قوى الـ 2 فيها 1 واحد بس). وعدّ الـ 1s: شيل واحد لحد ما n تبقى 0.
-
-الـ flags: كل صلاحية bit ([[READ = 1]]، و [[WRITE = 2]]، و [[ADMIN = 4]]). [[|]] يجمعهم، و [[&]] يسأل «فيه الصلاحية دي؟». ده نفس الـ permissions في لينكس ([[chmod 755]]).
-
-تحذير JavaScript: الـ bitwise بيحوّل الرقم لـ 32-bit بإشارة. [[2 ** 31 | 0]] بيطلع سالب، والأرقام أكبر من كده بتتقص. لو محتاج أكتر من 32 bit، استخدم BigInt.`,
-          example: R`const single = nums => nums.reduce((acc, x) => acc ^ x, 0);
-const missing = nums => nums.reduce((acc, x, i) => acc ^ x ^ (i + 1), 0);
-const isPowerOfTwo = n => n > 0 && (n & (n - 1)) === 0;
-function countBits(n) {
+function countComponents(g) {
+  const seen = new Set();
   let count = 0;
-  while (n) { n &= n - 1; count++; }
+  for (const v of g.keys()) if (!seen.has(v)) { dfs(g, v, seen); count++; }
   return count;
 }
-const READ = 1, WRITE = 2, ADMIN = 4;
-const perms = READ | WRITE;
-console.log(single([4, 1, 2, 1, 2])); // 4
-console.log(missing([3, 0, 1])); // 2
-console.log(isPowerOfTwo(64), isPowerOfTwo(12)); // true false
-console.log(countBits(11), (11).toString(2)); // 3 1011
-console.log((perms & WRITE) !== 0, (perms & ADMIN) !== 0); // true false
-console.log(2 ** 31 | 0, 2n ** 40n); // -2147483648 1099511627776n
-// single and missing: O(n) time, O(1) space; countBits: O(number of 1 bits)`,
-          try: R`حل «Counting Bits»: array فيها عدد الـ 1s لكل رقم من 0 لـ n في [[O(n)]] (مش [[countBits]] لكل رقم). n = 5 الإجابة [[[0, 1, 1, 2, 1, 2]]]. (عدد الـ 1s في i = عدد الـ 1s في [[i >> 1]] + آخر bit في i.) وبعدين «Single Number III»: كل رقم متكرر مرتين ما عدا اتنين، هاتهم الاتنين في [[O(1)]] ذاكرة. [[[1, 2, 1, 3, 2, 5]]] الإجابة 3 و 5. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[countBitsUpTo(n)]] و [[singleNumberIII(nums)]] (بترجّع الرقمين من الأصغر للأكبر).`,
-          sol: R`Counting Bits: [[dp[i] = dp[i >> 1] + (i & 1)]]. [[i >> 1]] هو i من غير آخر bit (أصغر من i، فمحسوب قبل كده)، و [[i & 1]] هو آخر bit. ده DP صغير. الناتج لـ 5: [[[0, 1, 1, 2, 1, 2]]].
+const g = buildGraph(edges);
+console.log(g.get("d")); // ['b', 'c', 'e']
+console.log([...dfs(g, "a")].join(" ")); // a b d c e
+console.log(countComponents(buildGraph([["a", "b"], ["c", "d"], ["d", "e"]]))); // 2
+// build: O(V + E); DFS visits every vertex once and every edge twice: O(V + E) time, O(V) space`,
+          try: R`حل «Find if Path Exists in Graph»: عندك n عقدة مترقمة من 0 لـ n - 1، و edges، و source و destination. فيه طريق؟ ابني الـ graph بـ arrays بدل Map، وحلها بـ BFS المرة دي (queue ومؤشر [[head]]). جرّب n = 6 و edges [[[0,1],[0,2],[3,5],[5,4],[4,3]]]: من 0 لـ 5 الإجابة false، ومن 3 لـ 4 true. وخلي بالك إن فيه عقد ممكن متبقاش في أي edge. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[validPath(n, edges, source, destination)]].`,
+          sol: R`الناتج: [[false]] من 0 لـ 5 (0 و 1 و 2 في جزيرة، و 3 و 4 و 5 في جزيرة تانية)، و [[true]] من 3 لـ 4، و [[true]] من 2 لـ 2 (العقدة بتوصل لنفسها).
 
-Single Number III: الـ XOR للكل = [[a ^ b]] (الأزواج اتلغت)، ومش صفر لأن a ≠ b. أي bit فيه 1 في الناتج ده معناه إن a و b مختلفين فيه. خد أيمن bit بـ [[x & -x]]، وقسّم الأرقام لمجموعتين: اللي فيها الـ bit ده واللي مفيهاش. a في مجموعة و b في التانية، وكل زوج متكرر بيقع كله في نفس المجموعة. XOR لكل مجموعة لوحدها يطلّع a و b.
+ليه arrays؟ لما العقد أرقام من 0 لـ n - 1، [[Array.from({ length: n }, () => [])]] أسرع وأبسط من Map، وكل عقدة ليها قائمة حتى لو ملهاش edges. لو استخدمت [[new Array(n).fill([])]] كل الخانات هتشاور على نفس الـ array، وكل الجيران هيتخلطوا: دي أشهر غلطة في المسألة دي.
 
-للمثال: [[3 ^ 5 = 6]] (110)، وأيمن bit هو 2 (010). اللي فيهم الـ bit ده: 2 و 3 و 2 → XOR = 3. الباقي: 1 و 1 و 5 → 5.
-
-الغلطة الشائعة: تقارن [[(x & mask) === 1]] بدل [[!== 0]]. لو الـ mask مش 1، ناتج الـ & هو الـ mask نفسه (2 أو 4...) مش 1.`,
-          solCode: R`function countBitsUpTo(n) {
-  const dp = new Array(n + 1).fill(0);
-  for (let i = 1; i <= n; i++) dp[i] = dp[i >> 1] + (i & 1);
-  return dp;
-}
-function singleNumberIII(nums) {
-  const xor = nums.reduce((acc, x) => acc ^ x, 0);
-  const bit = xor & -xor;
-  let a = 0, b = 0;
-  for (const x of nums) {
-    if ((x & bit) !== 0) a ^= x;
-    else b ^= x;
+BFS بـ مؤشر [[head]] بدل [[shift]]: الـ queue بتفضل array عادية، وإنت بتقرا منها بالترتيب. وضيف العقدة للـ [[seen]] لحظة ما تحطها في الـ queue، مش لما تطلعها، وإلا نفس العقدة ممكن تدخل الـ queue كذا مرة.`,
+          solCode: R`function validPath(n, edges, source, destination) {
+  const graph = Array.from({ length: n }, () => []);
+  for (const [u, v] of edges) { graph[u].push(v); graph[v].push(u); }
+  const seen = new Array(n).fill(false);
+  const queue = [source];
+  seen[source] = true;
+  for (let head = 0; head < queue.length; head++) {
+    const u = queue[head];
+    if (u === destination) return true;
+    for (const v of graph[u]) if (!seen[v]) { seen[v] = true; queue.push(v); }
   }
-  return [a, b].sort((p, q) => p - q);
+  return false;
 }
-console.log(countBitsUpTo(5)); // [0, 1, 1, 2, 1, 2]
-console.log(singleNumberIII([1, 2, 1, 3, 2, 5])); // [3, 5]
-console.log(singleNumberIII([-1, 0])); // [-1, 0]
-// countBitsUpTo: O(n) time and space; singleNumberIII: O(n) time, O(1) space`,
+const edges = [[0, 1], [0, 2], [3, 5], [5, 4], [4, 3]];
+console.log(validPath(6, edges, 0, 5)); // false
+console.log(validPath(6, edges, 3, 4)); // true
+console.log(validPath(6, edges, 2, 2)); // true
+// O(V + E) time and space`,
           flag: "script",
           deep: {
-            why: "في شغل الـ web، الـ bits بتظهر في: permission flags (Discord و Unix بيخزنوا الصلاحيات كـ bits)، و feature flags مضغوطة في رقم واحد، و hashing، و bloom filters، وضغط البيانات، و WebGL. وفي الانترفيو، Single Number و Missing Number و Number of 1 Bits مسائل Easy مشهورة، والـ XOR trick بيخلّي الحل سطر واحد.",
-            how: R`single على [4, 1, 2, 1, 2]: [[0 ^ 4 = 4]]، [[4 ^ 1 = 5]]، [[5 ^ 2 = 7]]، [[7 ^ 1 = 6]]، [[6 ^ 2 = 4]]. الـ 1 والـ 2 لغوا بعض.
+            why: "الـ graphs بتوصف أي «علاقات»: مين متابع مين، والصفحات اللي بتلينك لبعض، والـ packages اللي معتمدة على بعض في [[package-lock.json]]، والـ microservices اللي بتكلم بعض، والخرايط. وأغلب مسائل الـ graphs في الانترفيو بتبدأ بنفس الخطوة: ابني adjacency list من الـ edges، وبعدين DFS أو BFS.",
+            how: R`[[buildGraph]] بتضيف كل عقدة للـ Map حتى لو ملهاش جيران غير في ناحية واحدة (عشان [[g.get(v)]] متبقاش undefined). وفي الـ undirected graph كل edge بيتضاف مرتين: من u لـ v ومن v لـ u.
 
-missing على [3, 0, 1] (أرقام من 0 لـ 3 وناقص واحد): XOR كل الأرقام اللي في الـ array مع كل الأرقام من 1 لـ n. الموجودين بيتلغوا مع نفسهم، ويفضل الناقص: [[3 ^ 1 ^ 0 ^ 2 ^ 1 ^ 3 = 2]].
+DFS من a: نزور a ونحطها في seen، وجيرانها b و c. نروح b: جيرانها a (اتزارت) و d. نروح d: جيرانها b (اتزارت) و c و e. نروح c: كل جيرانها اتزاروا. نرجع لـ d ونروح e. الترتيب a b d c e.
 
-countBits(11): 11 = 1011. [[1011 & 1010 = 1010]]، [[1010 & 1001 = 1000]]، [[1000 & 0111 = 0]]. ٣ خطوات = ٣ واحدات. ليه؟ [[n - 1]] بيقلب أيمن 1 لـ 0 وكل الأصفار اللي بعده لـ 1، فالـ & بيشيل الـ 1 ده بس.
+من غير [[seen]]: a تروح b، و b ترجع a، و a تروح b... للأبد.
 
-[[(11).toString(2)]] بيطبع الرقم بالـ binary، و [[parseInt("1011", 2)]] العكس. مفيدين للـ debugging.
+connected components: لف على كل العقد، وأي عقدة لسه ماتزارتش يبقى بداية جزيرة جديدة، فابدأ DFS منها وزوّد العدّاد. الـ DFS بيعلّم الجزيرة كلها، فمش هتتعد تاني. والإجمالي لسه [[O(V + E)]] لأن كل عقدة بتتزار مرة واحدة في كل الـ DFS calls مع بعض.
 
-[[2 ** 31 | 0]]: 2^31 مش داخل في 32-bit بإشارة (أقصاه [[2^31 - 1]])، فبيلف ويبقى سالب. BigInt ([[2n ** 40n]]) مفيهوش الحد ده، والـ bitwise شغال عليه.`,
-            when: "مسائل «كل حاجة متكررة ما عدا» (XOR)، والـ flags والـ masks، و «قوة لـ 2؟»، والـ subsets بالـ bitmask (n ≤ 20)، و DP على bitmask. في كود الشغل العادي، استخدم Set أو object من الـ booleans لو أوضح؛ الـ bits بتوفّر ذاكرة وسرعة بس بتصعّب القراية.",
-            mistakes: R`نسيان إن الـ bitwise في JS بيقص لـ 32 bit (IDs كبيرة، و timestamps بالملّي ثانية). وأولوية العمليات: [[n & n - 1 === 0]] بتتقري [[n & ((n - 1) === 0)]]، فحط أقواس دايمًا. والخلط بين [[>>]] (بتحفظ الإشارة) و [[>>>]] (بتملى أصفار). و [[~~x]] أو [[x | 0]] كـ «تقريب» بيبوّظ الأرقام الكبيرة، استخدم [[Math.trunc]].`
+الـ Big-O: كل عقدة بتدخل مرة، وكل edge بيتبص عليه مرة من كل ناحية، فـ [[O(V + E)]]. ده الـ Big-O بتاع أغلب مسائل الـ graph traversal، واتعوّد تقوله كده بدل [[O(n)]].`,
+            when: "adjacency list: الاختيار الافتراضي. matrix: لما الـ graph كثيف (أغلب العقد متوصلة ببعض) أو صغير، أو محتاج «فيه edge بين دول؟» كتير. والـ grid (زي الخرايط والـ mazes) هو graph من غير ما تبنيه: كل خانة جيرانها الأربعة، وده الدرس الجاي.",
+            mistakes: R`[[new Array(n).fill([])]]: كل الخانات نفس الـ array. وإنك تنسى تضيف الناحية التانية في الـ undirected. وإنك تنسى [[seen]] فتلف في دايرة. وإنك تفترض إن الـ graph متوصل كله، فتعمل DFS من عقدة واحدة وتفوّت جزر تانية. وفي الانترفيو اسأل دايمًا: directed ولا undirected؟ فيه دواير؟ فيه عقد لوحدها؟ العقد أرقام ولا strings؟`
           },
+          teach: R`## الفكرة في جملة
+
+الـ graph بيوصلك كـ قائمة وصلات (edges): «a متوصلة بـ b». عشان تمشي عليه بسرعة، حوّله لـ **adjacency list**: Map فيها لكل عقدة قائمة جيرانها. وبعدها DFS زي الشجرة بالظبط، بس مع [[Set]] بتفتكر العقد اللي زرتها، لأن الـ graph فيه دواير والشجرة لأ.
+
+كل الأرقام اللي تحت من تشغيل حقيقي على Node 24.19.0 على ويندوز، بعد ما ضفنا [[console.log]] يطبع الـ Map بعد كل edge، وكل زيارة في الـ DFS.
+
+---
+
+## ١. [[buildGraph]] سطر سطر
+
+~~~js
+function buildGraph(edges, directed = false) {
+  const g = new Map();
+  for (const [u, v] of edges) {
+    if (!g.has(u)) g.set(u, []);
+    if (!g.has(v)) g.set(v, []);
+    g.get(u).push(v);
+    if (!directed) g.get(v).push(u);
+  }
+  return g;
+}
+~~~
+
+- [[edges]]: array من أزواج، كل زوج وصلة. و [[directed = false]] معناها افتراضيًا الوصلة في الاتجاهين (undirected): لو a صاحب b، يبقى b صاحب a.
+- [[new Map()]]: مفتاح ← قيمة. المفتاح اسم العقدة، والقيمة array جيرانها.
+- [[for (const [u, v] of edges)]]: destructuring بيفك كل زوج: [[u]] الطرف الأول و [[v]] التاني.
+- [[if (!g.has(u)) g.set(u, [])]]: لو العقدة لسه مالهاش مكان، اعملها array فاضية. ده لازم قبل [[push]]، لأن [[g.get(u)]] لعقدة مش موجودة بيرجّع [[undefined]]، و [[undefined.push]] بيوقع البرنامج.
+- السطر اللي بعده بيعمل نفس الحاجة لـ [[v]]، حتى في الـ directed: عشان كل عقدة يبقى ليها مكان حتى لو مفيش وصلات طالعة منها.
+- [[g.get(u).push(v)]]: v من جيران u.
+- [[if (!directed) g.get(v).push(u)]]: ولو مش directed، u من جيران v كمان.
+
+### التتبع على edges تانية
+
+~~~js
+buildGraph([["x", "y"], ["y", "z"], ["x", "z"], ["w", "v"]])
+~~~
+
+~~~text الناتج (Node 24 على ويندوز)
+edge x-y: { x: [y], y: [x] }
+edge y-z: { x: [y], y: [x,z], z: [y] }
+edge x-z: { x: [y,z], y: [x,z], z: [y,x] }
+edge w-v: { x: [y,z], y: [x,z], z: [y,x], w: [v], v: [w] }
+~~~
+
+كل edge بيظهر مرتين: [[x-y]] خلّت y في جيران x، و x في جيران y. والعقد x و y و z عاملين مثلث (دايرة)، و w و v لوحدهم.
+
+ولو [[directed = true]]: [[buildGraph([["a","b"]], true)]] بيطلّع [[Map(2) { 'a' => [ 'b' ], 'b' => [] }]]. السهم من a لـ b بس، و b ليها مكان فاضي.
+
+---
+
+## ٢. [[dfs]] سطر سطر
+
+~~~js
+function dfs(g, start, seen = new Set()) {
+  seen.add(start);
+  for (const next of g.get(start)) if (!seen.has(next)) dfs(g, next, seen);
+  return seen;
+}
+~~~
+
+- [[seen = new Set()]]: [[Set]] مجموعة قيم من غير تكرار، و [[has]] و [[add]] فيها [[O(1)]] في المتوسط. أول نداء بيعملها، والنداءات اللي جوه بتاخد نفس الـ Set.
+- [[seen.add(start)]]: علّم العقدة **قبل** ما تنزل على جيرانها. لو علّمتها بعد، جارها هيرجعلها وهي لسه مش متعلّمة.
+- [[for (const next of g.get(start))]]: كل جار.
+- [[if (!seen.has(next)) dfs(...)]]: انزل بس لو الجار لسه ماتزارش. ده اللي بيمنع اللف في دايرة.
+- مفيش base case صريح: لما كل الجيران يبقوا متزارين، الـ loop بيخلص والنداء بيرجع.
+- [[return seen]]: الـ Set فيها كل اللي وصلناله، بترتيب الزيارة (الـ Set بتحافظ على ترتيب الإضافة).
+
+### التتبع: [[dfs(g, "x")]]
+
+~~~text الناتج (Node 24 على ويندوز)
+visit x  seen = {x}
+  visit y  seen = {x,y}
+    x already seen, skip
+    visit z  seen = {x,y,z}
+      y already seen, skip
+      x already seen, skip
+  z already seen, skip
+x y z
+~~~
+
+| الخطوة | العقدة | جيرانها | اللي حصل | seen بعدها |
+|---|---|---|---|---|
+| 1 | x | y, z | علّم x، انزل y | {x} |
+| 2 | y | x, z | علّم y. x متزارة، انزل z | {x, y} |
+| 3 | z | y, x | علّم z. الاتنين متزارين، ارجع | {x, y, z} |
+| 4 | y | | خلصت جيرانها، ارجع | |
+| 5 | x | | الجار التاني z متزارة خلاص، ارجع | |
+
+من غير الـ [[seen]]: x تنزل y، و y تنزل x، و x تنزل y... لحد ما الـ call stack يخلص ويطلع [[RangeError]].
+
+و w و v مظهروش خالص: مفيش طريق ليهم من x.
+
+---
+
+## ٣. [[countComponents]]: عدد الجزر
+
+~~~js
+function countComponents(g) {
+  const seen = new Set();
+  let count = 0;
+  for (const v of g.keys()) if (!seen.has(v)) { dfs(g, v, seen); count++; }
+  return count;
+}
+~~~
+
+- [[g.keys()]]: كل العقد اللي في الـ Map، بترتيب إضافتها.
+- **Set واحدة** لكل نداءات [[dfs]]: كل DFS بيعلّم جزيرته كلها في نفس الـ Set.
+- أي عقدة لسه مش في [[seen]] لازم تبقى في جزيرة جديدة (لو كانت في جزيرة قديمة، الـ DFS بتاعها كان علّمها). فابدأ منها وزوّد العدّاد.
+
+~~~text الناتج (Node 24 على ويندوز)
+start new component at x
+visit x  seen = {x}
+  visit y  seen = {x,y}
+    x already seen, skip
+    visit z  seen = {x,y,z}
+      y already seen, skip
+      x already seen, skip
+  z already seen, skip
+count = 1
+y already seen
+z already seen
+start new component at w
+visit w  seen = {x,y,z,w}
+  visit v  seen = {x,y,z,w,v}
+    w already seen, skip
+count = 2
+v already seen
+2
+~~~
+
+| العقدة في الـ loop | في seen؟ | اللي حصل | count |
+|---|---|---|---|
+| x | لأ | DFS علّم x و y و z | 1 |
+| y | آه | فوّت | 1 |
+| z | آه | فوّت | 1 |
+| w | لأ | DFS علّم w و v | 2 |
+| v | آه | فوّت | 2 |
+
+---
+
+## ٤. ناتج المثال
+
+~~~text الناتج (Node 24 على ويندوز)
+[ 'b', 'c', 'e' ]
+a b d c e
+2
+~~~
+
+- [[g.get("d")]]: d ظهرت في [[b-d]] و [[c-d]] و [[d-e]]، فجيرانها b و c و e بنفس الترتيب.
+- [[dfs(g, "a")]]: a ثم b (أول جار) ثم d (جار b الجديد) ثم c (أول جار جديد لـ d) ثم e.
+- الـ graph التاني فيه جزيرة a-b وجزيرة c-d-e.
+
+---
+
+## ٥. الـ Big-O وليه
+
+V = عدد العقد، و E = عدد الـ edges.
+
+| | القيمة | السبب |
+|---|---|---|
+| البناء | [[O(V + E)]] وقت وذاكرة | لفة على الـ edges، وكل edge بيتخزن مرتين، وكل عقدة ليها array |
+| DFS | [[O(V + E)]] وقت | كل عقدة بتتزار مرة، وقائمة جيرانها بتتقرا مرة. مجموع أطوال كل القوايم = 2E |
+| DFS | [[O(V)]] ذاكرة | الـ Set فيها V عقدة بالكتير، والـ call stack ممكن يوصل V في graph شكله خط |
+| countComponents | [[O(V + E)]] | نفس الـ DFS، لأن الـ Set المشتركة بتمنع أي عقدة تتزار مرتين على كل الجزر |
+
+---
+
+## الخلاصة
+
+~~~text
+adjacency list   Map: عقدة ← array جيرانها
+undirected       كل edge يتضاف من الناحيتين
+has قبل push     عشان كل عقدة يبقى ليها array
+seen             Set، علّم قبل ما تنزل، وانزل بس على اللي مش متزار
+جزر              loop على كل العقد + Set واحدة، وكل عقدة جديدة = جزيرة
+الـ Big-O        O(V + E) وقت، O(V) ذاكرة للـ DFS
+~~~`,
           lines: [
-            "الـ XOR لكل الأرقام: الأزواج بتلغي بعض.",
-            "XOR الأرقام مع 1 لـ n: الناقص بس اللي بيفضل.",
-            "قوة لـ 2 = فيها 1 واحد بس.",
-            "عدّ الـ 1s.",
-            "العداد.",
-            "شيل أيمن 1 وعدّ، لحد ما يخلصوا.",
-            "رجّع.",
+            "الوصلات كـ أزواج.",
+            "بناء adjacency list، و directed بيحدد لو الوصلة في اتجاه واحد.",
+            "Map من العقدة لقائمة جيرانها.",
+            "عدّي على كل وصلة.",
+            "اتأكد إن u ليها قائمة.",
+            "و v كمان، حتى لو ملهاش جيران طالعين.",
+            "ضيف v في جيران u.",
+            "لو مش directed، ضيف u في جيران v.",
+            "قفلة الـ for.",
+            "رجّع الـ graph.",
             "قفلة.",
-            "كل صلاحية bit لوحدها.",
-            "صلاحيتين مع بعض = 3 (011).",
-            "4 هي الوحيدة.",
-            "2 ناقصة من 0 لـ 3.",
-            "64 = 1000000، و 12 = 1100.",
-            "11 فيها ٣ واحدات.",
-            "فيه WRITE، ومفيش ADMIN.",
-            "2^31 بيلف لسالب في 32-bit، و BigInt مفيهوش حد."
+            "DFS recursive بـ Set للي اتزار.",
+            "علّم العقدة.",
+            "انزل على كل جار لسه ماتزارش.",
+            "رجّع كل اللي اتزار.",
+            "قفلة.",
+            "عدد الجزر (connected components).",
+            "Set واحدة لكل الـ DFS calls.",
+            "العدّاد.",
+            "كل عقدة ماتزارتش = جزيرة جديدة، علّمها كلها وعدّها.",
+            "رجّع العدد.",
+            "قفلة.",
+            "ابني الـ graph.",
+            "جيران d.",
+            "كل اللي يوصل له من a بترتيب الـ DFS.",
+            "جزيرة a-b وجزيرة c-d-e."
           ],
           check: {
             lang: "js",
-            starter: R`function countBitsUpTo(n) {
-  const dp = new Array(n + 1).fill(0);
-  // dp[i] = dp[i >> 1] + (i & 1)
-  return dp;
-}
-function singleNumberIII(nums) {
-  // XOR الكل = a ^ b، وخد أيمن bit بـ x & -x، وقسّم
-  return [];
+            starter: R`function validPath(n, edges, source, destination) {
+  const graph = Array.from({ length: n }, () => []);
+  // ابني الـ graph (الاتجاهين)، وبعدين BFS بـ queue ومؤشر head
+  return false;
 }`,
-            tests: R`test("countBitsUpTo(5) ← [0, 1, 1, 2, 1, 2]", () => expect(countBitsUpTo(5)).toEqual([0, 1, 1, 2, 1, 2]));
-test("countBitsUpTo(0) ← [0]", () => expect(countBitsUpTo(0)).toEqual([0]));
-test("countBitsUpTo(100000): الطول 100001 وآخر رقم 6 (O(n))", () => {
-  const r = countBitsUpTo(100000);
-  expect([r.length, r[100000], r[65535]]).toEqual([100001, 6, 16]);
-});
-test("singleNumberIII([1, 2, 1, 3, 2, 5]) ← [3, 5]", () => expect(singleNumberIII([1, 2, 1, 3, 2, 5])).toEqual([3, 5]));
-test("صفر وسالب: [-1, 0] ← [-1, 0]", () => expect(singleNumberIII([-1, 0])).toEqual([-1, 0]));
-test("(x & mask) !== 0 مش === 1: [4, 6, 1, 1] ← [4, 6]", () => expect(singleNumberIII([4, 6, 1, 1])).toEqual([4, 6]));`,
-            solution: R`function countBitsUpTo(n) {
-  const dp = new Array(n + 1).fill(0);
-  for (let i = 1; i <= n; i++) dp[i] = dp[i >> 1] + (i & 1);
-  return dp;
-}
-function singleNumberIII(nums) {
-  const xor = nums.reduce((acc, x) => acc ^ x, 0);
-  const bit = xor & -xor;
-  let a = 0, b = 0;
-  for (const x of nums) {
-    if ((x & bit) !== 0) a ^= x;
-    else b ^= x;
+            tests: R`const E = [[0, 1], [0, 2], [3, 5], [5, 4], [4, 3]];
+test("من 0 لـ 5 ← false (جزيرتين)", () => expect(validPath(6, E, 0, 5)).toBe(false));
+test("من 3 لـ 4 ← true", () => expect(validPath(6, E, 3, 4)).toBe(true));
+test("العقدة بتوصل لنفسها: من 2 لـ 2 ← true", () => expect(validPath(6, E, 2, 2)).toBe(true));
+test("عقدة ملهاش edges خالص: (3, [[0, 1]], 0, 2) ← false", () => expect(validPath(3, [[0, 1]], 0, 2)).toBe(false));
+test("الـ edges في الاتجاهين: (3, [[1, 0], [2, 1]], 0, 2) ← true", () => expect(validPath(3, [[1, 0], [2, 1]], 0, 2)).toBe(true));
+test("سلسلة 200 ألف عقدة (O(V + E)، و fill([]) كانت هتخلط الجيران)", () => {
+  const n = 200000, edges = Array.from({ length: n - 1 }, (_, i) => [i, i + 1]);
+  expect([validPath(n, edges, 0, n - 1), validPath(n + 1, edges, 0, n)]).toEqual([true, false]);
+});`,
+            solution: R`function validPath(n, edges, source, destination) {
+  const graph = Array.from({ length: n }, () => []);
+  for (const [u, v] of edges) { graph[u].push(v); graph[v].push(u); }
+  const seen = new Array(n).fill(false);
+  const queue = [source];
+  seen[source] = true;
+  for (let head = 0; head < queue.length; head++) {
+    const u = queue[head];
+    if (u === destination) return true;
+    for (const v of graph[u]) if (!seen[v]) { seen[v] = true; queue.push(v); }
   }
-  return [Math.min(a, b), Math.max(a, b)];
+  return false;
 }`
           }
         },
         {
-          cmd: "LRU cache (Map)",
-          title: "cache حجمه محدود بيطرد اللي بقاله أطول وقت ماتستخدمش (LRU Cache)",
-          desc: R`LRU (least recently used): لما الـ cache يتملي وعايز تضيف حاجة جديدة، اطرد اللي بقاله أطول وقت محدش لمسه. والمطلوب في الانترفيو: [[get]] و [[put]] الاتنين [[O(1)]].
+          cmd: "number of islands",
+          title: "عدّ الجزر في خريطة من 1 و 0 (Number of Islands)",
+          desc: R`الـ grid هو graph من غير ما تبنيه: كل خانة عقدة، وجيرانها الأربعة (فوق وتحت وشمال ويمين) هما الـ edges. الجزيرة مجموعة 1 متوصلين ببعض أفقي أو رأسي (مش قطري).
 
-الحل الكلاسيكي في أي لغة: hash map + doubly linked list. الـ map بتوصلك للعقدة في [[O(1)]]، والـ list بتحفظ الترتيب: الجديد في آخرها والقديم في أولها، وتقدر تشيل عقدة من النص في [[O(1)]].
+الحل: لف على كل الخانات. أول ما تلاقي 1، دي جزيرة جديدة: زوّد العدّاد، وبعدين «اغرق» الجزيرة كلها بـ DFS، يعني حوّل كل 1 متوصل بيها لـ 0، عشان متتعدّش تاني.
 
-في JavaScript فيه اختصار: الـ [[Map]] بتحفظ ترتيب الإضافة. فـ «استخدمت key» = امسحه وضيفه تاني (يروح للآخر). و «اطرد الأقدم» = أول key في الـ Map: [[map.keys().next().value]]. كل ده [[O(1)]] في المتوسط.
-
-في الانترفيو قول الاختصار ده، بس اتوقع إنهم يقولولك «اعملها من غير ما تعتمد على ترتيب الـ Map»، فاعرف النسخة الكلاسيكية كمان (الـ try).`,
-          example: R`class LRUCache {
-  constructor(capacity) {
-    this.capacity = capacity;
-    this.map = new Map();
-  }
-  get(key) {
-    if (!this.map.has(key)) return -1;
-    const value = this.map.get(key);
-    this.map.delete(key);
-    this.map.set(key, value);
-    return value;
-  }
-  put(key, value) {
-    if (this.map.has(key)) this.map.delete(key);
-    this.map.set(key, value);
-    if (this.map.size > this.capacity) this.map.delete(this.map.keys().next().value);
-  }
+ده نفس connected components من الدرس اللي فات، بس الـ [[seen]] هنا هي الـ grid نفسها (بنعلّم بتغيير القيمة). عشان منبوّظش الـ input اللي جاي من برّا، بنشتغل على نسخة.`,
+          example: R`function numIslands(grid) {
+  const rows = grid.length, cols = grid[0]?.length ?? 0;
+  const g = grid.map(row => [...row]);
+  let count = 0;
+  const sink = (r, c) => {
+    if (r < 0 || c < 0 || r >= rows || c >= cols || g[r][c] !== "1") return;
+    g[r][c] = "0";
+    sink(r + 1, c); sink(r - 1, c); sink(r, c + 1); sink(r, c - 1);
+  };
+  for (let r = 0; r < rows; r++)
+    for (let c = 0; c < cols; c++)
+      if (g[r][c] === "1") { count++; sink(r, c); }
+  return count;
 }
-const cache = new LRUCache(2);
-cache.put(1, "one");
-cache.put(2, "two");
-console.log(cache.get(1)); // one
-cache.put(3, "three");
-console.log(cache.get(2), [...cache.map.keys()]); // -1 [1, 3]
-cache.put(1, "ONE");
-cache.put(4, "four");
-console.log([...cache.map.entries()]); // [[1, 'ONE'], [4, 'four']]
-// get and put: O(1) average; O(capacity) space`,
-          try: R`اكتب [[LRUList]] بنفس الـ API من غير ما تعتمد على ترتيب الـ Map: Map من الـ key للعقدة، و doubly linked list فيها عقدتين وهميتين [[head]] و [[tail]] (عشان متعملش if للأطراف). محتاج دالتين صغيرين: [[remove(node)]] و [[addToEnd(node)]]. لازم تعدّي نفس السيناريو اللي في المثال وتطلّع نفس النتايج. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[LRUList]] بـ [[get]] و [[put]]، والاختبارات بتمشي على الـ list من [[head]] لـ [[tail]].`,
-          sol: R`نفس الناتج: [[one]]، وبعدين [[-1]] و الترتيب [[1 3]]، وبعد ما [[put(1)]] و [[put(4)]]، الـ cache فيه 1 و 4 (الـ 3 اتطردت لأن 1 اتحدثت بعدها).
+const map = ["11000", "11000", "00100", "00011"].map(s => s.split(""));
+console.log(numIslands(map)); // 3
+console.log(numIslands([["1", "1"], ["1", "1"]])); // 1
+console.log(numIslands([["1", "0", "1"]])); // 2
+console.log(numIslands([])); // 0
+// O(rows × cols) time; O(rows × cols) space for the copy and, in the worst case, the recursion`,
+          try: R`حل «Max Area of Island»: رجّع مساحة أكبر جزيرة بدل العدد (خلّي [[sink]] ترجّع عدد الخانات اللي غرّقتها). وبعدين اكتبها بـ BFS (queue) بدل recursion، وجرّبها على grid 1000 × 1000 كله 1: النسخة الـ recursive هتعمل إيه؟ اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[maxAreaOfIsland(grid)]] بـ BFS (الـ grid فيها "1" و "0" زي المثال).`,
+          sol: R`للخريطة اللي في المثال: أكبر جزيرة مساحتها 4 (المربع اللي فوق على الشمال). و grid كله 0 الإجابة 0.
 
-العقدة فيها [[key]] و [[value]] و [[prev]] و [[next]]. الـ key لازم يبقى في العقدة، عشان لما تطرد [[head.next]] تعرف تمسحه من الـ Map.
+[[area]] ترجّع 0 لو برّا الحدود أو مش 1، وغير كده [[1 + area(4 جيران)]]. وخد [[Math.max]] على كل الجزر.
 
-[[remove(node)]]: [[node.prev.next = node.next]] و [[node.next.prev = node.prev]]. [[addToEnd(node)]]: حطها بين [[tail.prev]] و [[tail]]. بالعقد الوهمية، مفيش ولا if في الدالتين.
+على grid مليون خانة كله 1: الـ DFS الـ recursive ممكن ينزل مليون مستوى، فهيقع بـ [[RangeError: Maximum call stack size exceeded]]. نسخة الـ BFS بـ queue ومؤشر [[head]] بتشتغل عادي وبترجّع 1000000.
 
-get: لو موجود، remove و addToEnd ورجّع القيمة. put: لو موجود، حدّث القيمة وحرّكها للآخر. لو جديد، اعمل عقدة وضيفها، ولو الحجم عدّى، اطرد [[head.next]].
-
-الغلطة الشائعة: singly linked list، فالـ remove من النص يبقى [[O(n)]] لأنك محتاج تلاقي اللي قبلها.`,
-          solCode: R`class LRUList {
-  constructor(capacity) {
-    this.capacity = capacity;
-    this.map = new Map();
-    this.head = { prev: null, next: null };
-    this.tail = { prev: this.head, next: null };
-    this.head.next = this.tail;
-  }
-  remove(node) { node.prev.next = node.next; node.next.prev = node.prev; }
-  addToEnd(node) {
-    node.prev = this.tail.prev; node.next = this.tail;
-    this.tail.prev.next = node; this.tail.prev = node;
-  }
-  get(key) {
-    const node = this.map.get(key);
-    if (!node) return -1;
-    this.remove(node); this.addToEnd(node);
-    return node.value;
-  }
-  put(key, value) {
-    let node = this.map.get(key);
-    if (node) { node.value = value; this.remove(node); }
-    else { node = { key, value }; this.map.set(key, node); }
-    this.addToEnd(node);
-    if (this.map.size > this.capacity) {
-      const oldest = this.head.next;
-      this.remove(oldest);
-      this.map.delete(oldest.key);
-    }
-  }
-  keys() { const out = []; for (let n = this.head.next; n !== this.tail; n = n.next) out.push(n.key); return out; }
-}
-const cache = new LRUList(2);
-cache.put(1, "one"); cache.put(2, "two");
-console.log(cache.get(1)); // one
-cache.put(3, "three");
-console.log(cache.get(2), cache.keys()); // -1 [1, 3]
-cache.put(1, "ONE"); cache.put(4, "four");
-console.log(cache.keys(), cache.get(1)); // [1, 4] ONE
-// get and put: O(1); O(capacity) space`,
-          flag: "script",
-          deep: {
-            why: "الـ LRU هو سياسة الطرد الأشهر: الـ browser cache، و [[maxmemory-policy allkeys-lru]] في Redis (Redis بيطبّق نسخة تقريبية بتاخد عينة)، ومكتبة [[lru-cache]] في npm اللي بتستخدمها أدوات كتير، و cache الصفحات في نظام التشغيل. و LRU Cache من أكتر مسائل «صمّم data structure» اللي بتتسأل في الانترفيو.",
-            how: R`السيناريو: [[put(1)]] و [[put(2)]]: الترتيب 1 ثم 2. [[get(1)]]: امسح 1 وضيفه تاني، الترتيب 2 ثم 1 (1 بقى الأحدث). [[put(3)]]: الترتيب 2 و 1 و 3، والحجم 3 > 2، فاطرد أول key: 2. [[get(2)]] = -1.
-
-[[put(1, "ONE")]]: 1 موجود، امسحه وضيفه بالقيمة الجديدة، الترتيب 3 ثم 1. [[put(4)]]: 3 و 1 و 4، اطرد 3. الباقي 1 و 4.
-
-ليه [[delete]] ثم [[set]] في [[put]] حتى لو الـ key موجود؟ لأن [[set]] على key موجود بيغيّر القيمة بس ومش بيحرّكه للآخر. ده أكتر bug بيحصل في النسخة دي.
-
-[[this.map.keys().next().value]]: [[keys()]] بترجّع iterator، و [[next()]] بتدّي أول عنصر من غير ما تعمل array. ده [[O(1)]]، عكس [[[...map.keys()][0]]] اللي بيعمل array كاملة ([[O(n)]]).`,
-            when: "cache بحجم محدود والبيانات الحديثة غالبًا هتتطلب تاني: نتايج API، وصور، و query results، وملفات compiled. لو محتاج انتهاء بالوقت (TTL)، ضيف timestamp لكل entry. لو فيه حاجات بتتطلب كتير جدًا بس مش حديثة، LFU (الأقل استخدامًا) ممكن يبقى أحسن. وفي الـ production على أكتر من سيرفر، استخدم Redis بدل Map في الذاكرة (درس «cache-aside + TTL» في «تاب بناء مشروع كامل»).",
-            mistakes: R`[[set]] على key موجود من غير [[delete]]، فالترتيب ميتحدثش. ونسيان إن [[get]] كمان بتحدّث الترتيب. وطرد الأقدم قبل ما تتأكد إن الـ key الجديد مش موجود أصلًا (فتطرد حاجة من غير داعي). وفي النسخة الكلاسيكية: نسيان تخزين الـ key في العقدة. وفي الـ production: cache في ذاكرة process واحدة مش بيتشارك بين السيرفرات، وبيضيع مع كل restart.`
-          },
-          lines: [
-            "الـ cache.",
-            "بياخد الحجم الأقصى.",
-            "نحفظه.",
-            "Map بتحفظ ترتيب الإضافة: الأقدم في الأول.",
-            "قفلة.",
-            "قراءة.",
-            "مش موجود: -1 (زي ما LeetCode بيطلب).",
-            "القيمة.",
-            "امسحه.",
-            "وضيفه تاني: بقى الأحدث.",
-            "رجّع القيمة.",
-            "قفلة get.",
-            "كتابة.",
-            "لو موجود امسحه الأول، عشان set لوحدها مش بتغيّر الترتيب.",
-            "ضيفه في الآخر.",
-            "عدّينا الحجم: اطرد أول key (الأقدم).",
-            "قفلة put.",
-            "قفلة الـ class.",
-            "cache بيشيل عنصرين.",
-            "ضيف 1.",
-            "ضيف 2.",
-            "قراءة 1 بتخليه الأحدث.",
-            "ضيف 3: الأقدم دلوقتي 2، فيتطرد.",
-            "2 اتطرد، والباقي 1 و 3.",
-            "حدّث 1: بقى الأحدث.",
-            "ضيف 4: الأقدم 3، فيتطرد.",
-            "الباقي 1 بالقيمة الجديدة و 4."
-          ],
-          check: {
-            lang: "js",
-            starter: R`class LRUList {
-  constructor(capacity) {
-    this.capacity = capacity;
-    this.map = new Map(); // key → node
-    this.head = { prev: null, next: null };
-    this.tail = { prev: this.head, next: null };
-    this.head.next = this.tail;
-  }
-  remove(node) {}
-  addToEnd(node) {}
-  get(key) { return -1; }
-  put(key, value) {}
-}`,
-            tests: R`const keys = c => { const out = []; for (let n = c.head.next; n && n !== c.tail; n = n.next) out.push(n.key); return out; };
-test("put 1، put 2، get 1 ← 'one'", () => {
-  const c = new LRUList(2);
-  c.put(1, "one"); c.put(2, "two");
-  expect(c.get(1)).toBe("one");
-});
-test("put 3 بتطرد 2 (1 اتقرت): get 2 ← -1، والترتيب من القديم للجديد [1, 3]", () => {
-  const c = new LRUList(2);
-  c.put(1, "one"); c.put(2, "two"); c.get(1); c.put(3, "three");
-  expect([c.get(2), keys(c)]).toEqual([-1, [1, 3]]);
-});
-test("put على key موجود بيحدّث وبيحرّكه للآخر: put 1 'ONE'، put 4 ← 3 اتطردت", () => {
-  const c = new LRUList(2);
-  c.put(1, "one"); c.put(3, "three"); c.put(1, "ONE"); c.put(4, "four");
-  expect([c.get(3), c.get(1), c.get(4), keys(c)]).toEqual([-1, "ONE", "four", [1, 4]]);
-});
-test("capacity 1", () => {
-  const c = new LRUList(1);
-  c.put("a", 1); c.put("b", 2);
-  expect([c.get("a"), c.get("b"), c.map.size]).toEqual([-1, 2, 1]);
-});
-test("الـ list والـ Map دايمًا نفس الحجم، والـ prev متظبطة", () => {
-  const c = new LRUList(3);
-  for (let i = 0; i < 10; i++) { c.put(i % 5, i); c.get((i * 3) % 5); }
-  let back = 0;
-  for (let n = c.tail.prev; n !== c.head; n = n.prev) back++;
-  expect([keys(c).length, back, c.map.size]).toEqual([3, 3, 3]);
-});
-test("١٠٠ ألف عملية (كل واحدة O(1))", () => {
-  const c = new LRUList(1000);
-  for (let i = 0; i < 100000; i++) { c.put(i, i); if (i % 3 === 0) c.get(i - 500); }
-  expect([c.get(99999), c.get(0), c.map.size]).toEqual([99999, -1, 1000]);
-});`,
-            solution: R`class LRUList {
-  constructor(capacity) {
-    this.capacity = capacity;
-    this.map = new Map();
-    this.head = { prev: null, next: null };
-    this.tail = { prev: this.head, next: null };
-    this.head.next = this.tail;
-  }
-  remove(node) {
-    node.prev.next = node.next;
-    node.next.prev = node.prev;
-  }
-  addToEnd(node) {
-    node.prev = this.tail.prev;
-    node.next = this.tail;
-    this.tail.prev.next = node;
-    this.tail.prev = node;
-  }
-  get(key) {
-    const node = this.map.get(key);
-    if (!node) return -1;
-    this.remove(node);
-    this.addToEnd(node);
-    return node.value;
-  }
-  put(key, value) {
-    let node = this.map.get(key);
-    if (node) {
-      node.value = value;
-      this.remove(node);
-    } else {
-      node = { key, value, prev: null, next: null };
-      this.map.set(key, node);
-    }
-    this.addToEnd(node);
-    if (this.map.size > this.capacity) {
-      const old = this.head.next;
-      this.remove(old);
-      this.map.delete(old.key);
-    }
-  }
-}`
+في الـ BFS علّم الخانة (حوّلها لـ 0) لحظة ما تحطها في الـ queue، مش لما تطلعها. لو استنيت، نفس الخانة هتدخل الـ queue من كذا جار، والـ queue هتكبر أضعاف.`,
+          solCode: R`function maxAreaOfIsland(grid) {
+  const rows = grid.length, cols = grid[0]?.length ?? 0;
+  const g = grid.map(row => [...row]);
+  const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+  let best = 0;
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (g[r][c] !== "1") continue;
+      g[r][c] = "0";
+      const queue = [[r, c]];
+      for (let head = 0; head < queue.length; head++) {
+        const [cr, cc] = queue[head];
+        for (const [dr, dc] of dirs) {
+          const nr = cr + dr, nc = cc + dc;
+          if (nr >= 0 && nc >= 0 && nr < rows && nc < cols && g[nr][nc] === "1") {
+            g[nr][nc] = "0";
+            queue.push([nr, nc]);
           }
         }
-      ]
-    },
-    {
-      t: "حل المسائل والتمرين",
-      l: 3,
-      n: "إطار ثابت لأي مسألة في الانترفيو، وخطة تمرين: مسائل متدرجة لكل نمط، وجلسات بتايمر، ومراجعة اللي وقعت فيه",
-      items: [
-        {
-          cmd: "interview framework",
-          title: "مسألة جديدة قدامك في الانترفيو: تعمل إيه بالترتيب؟",
-          desc: R`الإنترفيوير بيقيّم طريقة وصولك للحل قد الحل نفسه. الخطوات دي بتضمن إنك متقعدش ساكت، ومتكتبش كود لمسألة غير اللي اتسألت. (الجانب الكلامي والتواصل مشروح في «تاب الانترفيو»، درس «clarify → examples → brute → optimize → test». هنا بنطبّقه على كود.)
-
-١. clarify (٢-٣ دقايق): اسأل عن الـ input: فاضي ممكن؟ أرقام سالبة؟ تكرار؟ مترتب؟ الحجم قد إيه؟ (n ≤ 20 غالبًا exponential مقبول، و n ≤ 10^5 محتاج [[O(n log n)]] أو أحسن.) والـ output: أرجّع إيه لو مفيش إجابة؟
-
-٢. examples (٢-٣ دقايق): اكتب مثال عادي، ومثال edge (فاضي، عنصر واحد، كله متكرر)، وحلهم بإيدك. دول هيبقوا الـ tests بعدين.
-
-٣. brute force (دقيقتين): قول أبسط حل وقيمته Big-O، حتى لو بطيء. ده بيثبت إنك فاهم المسألة، وبيدّيك حاجة ترجع لها لو اتزنقت.
-
-٤. optimize (٥-١٠ دقايق): فين الشغل المتكرر؟ قارن بالأنماط: hash map، two pointers، sliding window، sort، binary search، heap، BFS/DFS، DP. قول الـ Big-O المتوقعة قبل ما تكتب.
-
-٥. code (١٥-٢٠ دقيقة): أسماء واضحة، ودوال صغيرة، واتكلم وانت بتكتب.
-
-٦. test: مشّي الأمثلة بإيدك على الكود نفسه (مش على اللي في دماغك)، وبعدين الـ edge cases.
-
-٧. complexity: وقت وذاكرة، وليه. واذكر trade-off لو فيه.`,
-          example: R`// 1. Clarify: unsorted ints, may repeat, may be empty -> 0. Longest run of consecutive values.
-// 2. Examples: [100, 4, 200, 1, 3, 2] -> 4 (1 2 3 4); [] -> 0; [1, 2, 0, 1] -> 3
-// 3. Brute force: sort, then count runs. O(n log n)
-function longestBrute(nums) {
-  const sorted = [...new Set(nums)].sort((a, b) => a - b);
-  let best = 0, run = 0;
-  for (let i = 0; i < sorted.length; i++) {
-    run = i > 0 && sorted[i] === sorted[i - 1] + 1 ? run + 1 : 1;
-    best = Math.max(best, run);
+      }
+      best = Math.max(best, queue.length);
+    }
   }
   return best;
 }
-// 4. Optimize: a Set gives O(1) lookups; only start counting at the start of a run
-function longestConsecutive(nums) {
-  const set = new Set(nums);
-  let best = 0;
-  for (const x of set) {
-    if (set.has(x - 1)) continue;
-    let len = 1;
-    while (set.has(x + len)) len++;
-    best = Math.max(best, len);
-  }
-  return best;
-}
-// 6. Test: the examples + edge cases, against the brute force
-const tests = [{ input: [100, 4, 200, 1, 3, 2], want: 4 }, { input: [], want: 0 }, { input: [1, 2, 0, 1], want: 3 }, { input: [0, 3, 7, 2, 5, 8, 4, 6, 0, 1], want: 9 }, { input: [-2, -1, 5], want: 2 }];
-const results = tests.map(({ input, want }) => longestConsecutive(input) === want && longestBrute(input) === want);
-console.log(results.every(Boolean) ? "all passed" : results); // all passed
-// 7. Complexity: brute O(n log n) time; optimized O(n) time (each run is walked once, from its start), O(n) space`,
-          try: R`طبّق الـ ٧ خطوات على «Product of Array Except Self» بتايمر ٣٠ دقيقة وبصوت عالي: array، رجّع array كل خانة فيها حاصل ضرب كل العناصر ما عدا اللي في مكانها، من غير قسمة، في [[O(n)]]. [[[1, 2, 3, 4]]] → [[[24, 12, 8, 6]]]. اكتب الـ clarify والـ examples كـ comments الأول، وبعدين brute force، وبعدين الحل الأحسن، وقارن الاتنين على الأمثلة. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[productExceptSelf(nums)]] بالحل الـ [[O(n)]].`,
-          sol: R`clarify: فيه أصفار؟ (مهم جدًا: القسمة كانت هتقع). أرقام سالبة؟ الطول ≥ 2؟ ممكن الناتج يعدّي حدود الأرقام؟
-
-examples: [[[1, 2, 3, 4]]] → [[[24, 12, 8, 6]]]، و [[[-1, 1, 0, -3, 3]]] → [[[0, 0, 9, 0, 0]]] (صفر واحد: كل الخانات صفر ما عدا مكانه)، و [[[0, 0]]] → [[[0, 0]]].
-
-brute force: لكل i، loop يضرب الباقي. [[O(n^2)]].
-
-optimize: الإجابة عند i = (حاصل ضرب كل اللي على شماله) × (كل اللي على يمينه). ده prefix و suffix (زي درس «prefix sum» بس ضرب). لفة من الشمال تكتب الـ prefix في الناتج، ولفة من اليمين تضرب في suffix متراكم في متغير. [[O(n)]] وقت، و [[O(1)]] ذاكرة زيادة (غير الناتج).
-
-الأخطاء اللي بتتكرر: الحل بالقسمة (بيقع مع الصفر)، ونسيان إن [[-0]] بيطلع في JavaScript لما تضرب صفر في سالب ([[Object.is(-0, 0)]] false، بس [[-0 === 0]] true، فالـ tests بـ [[===]] بتعدّي). ولو خلصت في أقل من ٣٠ دقيقة، قول الـ follow-up لوحدك: «لو مسموح بالقسمة، هتعامل مع الأصفار إزاي؟».`,
-          solCode: R`// Brute force: O(n^2)
-const productBrute = nums => nums.map((_, i) => nums.reduce((p, x, j) => (j === i ? p : p * x), 1));
-// Optimized: prefix products left to right, then suffix products right to left. O(n) time, O(1) extra space
-function productExceptSelf(nums) {
-  const out = new Array(nums.length).fill(1);
-  for (let i = 1; i < nums.length; i++) out[i] = out[i - 1] * nums[i - 1];
-  let suffix = 1;
-  for (let i = nums.length - 1; i >= 0; i--) {
-    out[i] *= suffix;
-    suffix *= nums[i];
-  }
-  return out;
-}
-const tests = [[[1, 2, 3, 4], [24, 12, 8, 6]], [[-1, 1, 0, -3, 3], [0, 0, 9, 0, 0]], [[0, 0], [0, 0]], [[2, 3], [3, 2]]];
-for (const [input, want] of tests) {
-  const a = productExceptSelf(input), b = productBrute(input);
-  console.log(a.every((x, i) => x === want[i]) && b.every((x, i) => x === want[i]) ? "ok" : "FAIL", a.join(" "));
-}
-// ok 24 12 8 6 / ok 0 0 9 0 0 / ok 0 0 / ok 3 2`,
+const map = ["11000", "11000", "00100", "00011"].map(s => s.split(""));
+console.log(maxAreaOfIsland(map)); // 4
+console.log(maxAreaOfIsland([["0", "0"]])); // 0
+const big = Array.from({ length: 1000 }, () => new Array(1000).fill("1"));
+console.log(maxAreaOfIsland(big)); // 1000000
+// O(rows × cols) time and space, no recursion depth limit`,
           flag: "script",
           deep: {
-            why: "أغلب الناس بتفشل في الانترفيو مش عشان مش عارفة الحل، لكن عشان بدأت تكتب على طول، وحلّت مسألة غير المطلوبة، أو اتزنقت في النص وسكتت، أو قالت «خلصت» والكود فيه bug في أول مثال. الإطار الثابت بيحميك من الـ ٤ دول، وبيدّي الإنترفيوير فرص يساعدك (hints) في الوقت الصح.",
-            how: R`المثال مكتوب بنفس الترتيب اللي هتقوله: الـ clarify والـ examples comments فوق، وبعدين brute force، وبعدين optimize مع جملة بتقول الفكرة، وبعدين tests بتقارن الاتنين.
+            why: "Number of Islands من أكتر مسائل الانترفيو اللي بتتسأل في الشركات الكبيرة، لأنها بتختبر إنك شايف الـ grid كـ graph. ونفس الفكرة بالظبط هي أداة «الجردل» (flood fill) في برامج الرسم، وتحديد المناطق المتوصلة في خريطة لعبة، وتجميع الخانات المتشابهة في spreadsheet.",
+            how: R`dry run على الخريطة: [[(0,0)]] = 1، جزيرة رقم 1. [[sink(0,0)]] بتغرّق [[(0,0) (1,0) (0,1) (1,1)]]، والباقي حواليهم 0 أو برّا.
 
-الفكرة في [[longestConsecutive]]: الحل البديهي بعد الـ Set: من كل رقم، عدّ لقدام طول ما [[x + 1]] موجود. ده ممكن يبقى [[O(n^2)]] (كل رقم في run طويل هيعدّ الـ run من عنده). الحيلة: متبدأش تعدّ غير من «بداية run» (رقم ملوش [[x - 1]]). فكل run بيتمشي مرة واحدة، والإجمالي [[O(n)]] حتى مع الـ while الداخلي.
+نكمل اللف لحد [[(2,2)]] = 1، جزيرة 2، وبتغرق لوحدها. وبعدين [[(3,3)]] = 1، جزيرة 3، وبتغرق هي و [[(3,4)]]. الإجابة 3.
 
-ده بالظبط نوع الجملة اللي الإنترفيوير عايز يسمعها في خطوة ٧: «فيه loop جوه loop، بس الـ inner loop بيتنفذ مرة واحدة لكل عنصر في الإجمالي، فـ amortized [[O(n)]]».
+الشرط الطويل في أول [[sink]] هو كل الـ base cases في سطر واحد: برّا الحدود من أي ناحية، أو ماء، أو اتغرّقت قبل كده. الترتيب مهم: لازم تتأكد من الحدود قبل ما تقرا [[g[r][c]]]، عشان [[g[-1]]] بـ undefined و [[undefined[c]]] هتوقع البرنامج.
 
-الـ brute force بيفضل مفيد بعد ما تلاقي الحل الأحسن: قارن الاتنين على inputs عشوائية كتير. لو اختلفوا في أي حالة، فيه bug. ده اسمه stress testing، وبيتعمل في المسابقات والشغل.
+[[grid[0]?.length ?? 0]]: لو الـ grid فاضي، [[grid[0]]] undefined، والـ optional chaining بيمنع الـ crash.
 
-توزيع الوقت في انترفيو ٤٥ دقيقة: حوالي ٥ للتعارف، و ٣٠-٣٥ للمسألة (زي التقسيم اللي في الشرح)، و ٥ لأسئلتك. لو عدّت ١٠ دقايق في optimize من غير فكرة، اكتب الـ brute force وقول «هحسّنه لو فضل وقت».`,
-            when: "في كل مسألة، حتى السهلة. في المسألة السهلة الـ clarify والـ examples بياخدوا دقيقة، بس بيبيّنوا إنك منظم. وفي الـ online assessment (من غير إنترفيوير) نفس الخطوات بس في دماغك، والـ examples بتبقى test cases بتجرّبها قبل الـ submit.",
-            mistakes: R`تبدأ تكتب قبل الـ clarify. تسكت أكتر من دقيقة (قول «بفكر في hash map عشان...»). تتمسك بفكرة optimize مش ماشية بدل ما تكتب brute force. تقول «خلصت» من غير ما تمشّي مثال على الكود. تقول Big-O غلط (أو ماتقولهاش خالص). وفي الآخر، متسألش أسئلة للإنترفيوير عن الشغل (درس «أسئلتك للإنترفيوير» في «تاب الانترفيو»).`
+الـ Big-O: كل خانة بتتزار مرة في الـ loop الخارجي، وبتتغرق مرة واحدة بالكتير، فـ [[O(rows × cols)]].`,
+            when: "أي grid فيه «مناطق متوصلة»: عدّها، أو احسب مساحتها، أو حيطها (Surrounded Regions)، أو اعرف إيه اللي يوصل للحافة (Pacific Atlantic Water Flow). DFS أو BFS الاتنين ينفعوا؛ BFS أأمن لو الـ grid كبير. ولو الـ grid بيتغير (جزر بتتضاف واحدة واحدة)، ده union-find.",
+            mistakes: R`قراءة الخانة قبل التأكد من الحدود. ونسيان إنك تعلّم الخانة قبل ما تنزل على جيرانها (فتلف في دايرة). وإنك تقارن بـ [[1]] (رقم) والـ grid فيه [["1"]] (string)؛ LeetCode بيستخدم strings في المسألة دي بالذات. وإنك تعدّل الـ input من غير ما تقول، وفي الانترفيو قول «هعدّل الـ grid عشان أوفّر ذاكرة، ولو مش مسموح هعمل Set أو نسخة».`
           },
+          teach: R`## الفكرة في جملة
+
+لف على الخريطة خانة خانة. أول ما تقابل [["1"]]، دي بداية جزيرة جديدة: عدّها، وبعدين «غرّقها» كلها، يعني حوّل الخانة دي وكل [["1"]] متوصل بيها لـ [["0"]]. كده لما الـ loop يكمّل، باقي الجزيرة مش هيتعد تاني. عدد مرات التغريق = عدد الجزر.
+
+كل الأرقام اللي تحت من تشغيل حقيقي على Node 24.19.0 على ويندوز، بعد ما ضفنا [[console.log]] مع كل خانة بتتغرق، وشكل الـ grid بعد كل جزيرة.
+
+---
+
+## ١. الكود سطر سطر
+
+### [[const rows = grid.length, cols = grid[0]?.length ?? 0;]]
+
+- [[rows]]: عدد الصفوف = طول الـ array الخارجية.
+- [[grid[0]?.length]]: طول أول صف. [[?.]] (optional chaining) معناها «لو [[grid[0]]] موجود هات [[.length]]، ولو [[undefined]] رجّع [[undefined]] من غير ما تقع».
+- [[?? 0]]: (nullish coalescing) «لو اللي قبلي [[null]] أو [[undefined]] خد 0».
+- فلو الـ grid فاضي [[[]]]: [[rows]] = 0 و [[cols]] = 0، والـ loops مش هتلف. جرّبناها: [[[][0]?.length ?? 0]] طلعت [[0]].
+
+### [[const g = grid.map(row => [...row]);]]
+
+نسخة من الـ grid. [[[...row]]] (spread) بيعمل array جديدة فيها نفس عناصر الصف. لازم ننسخ كل صف لوحده: لو عملنا [[grid.map(row => row)]] بس، الصفوف هتبقى هي هي ونغرّق الـ input الأصلي. وبعد التشغيل اتأكدنا إن الأصلي ماتغيرش.
+
+### الدالة [[sink(r, c)]]
+
+~~~js
+const sink = (r, c) => {
+  if (r < 0 || c < 0 || r >= rows || c >= cols || g[r][c] !== "1") return;
+  g[r][c] = "0";
+  sink(r + 1, c); sink(r - 1, c); sink(r, c + 1); sink(r, c - 1);
+};
+~~~
+
+- [[r]] رقم الصف و [[c]] رقم العمود.
+- السطر الأول كل الـ base cases: برّا الخريطة من فوق ([[r < 0]]) أو شمال ([[c < 0]]) أو تحت ([[r >= rows]]) أو يمين ([[c >= cols]])، أو الخانة مش [["1"]] (ماية، أو اتغرقت قبل كده). ارجع.
+- الترتيب في الشرط مهم: [[||]] بتقف عند أول [[true]]، فشروط الحدود بتتفحص **قبل** [[g[r][c]]]. لو [[r = -1]]، [[g[-1]]] بـ [[undefined]]، و [[undefined[c]]] هيوقع البرنامج، بس احنا بنرجع قبلها.
+- [[g[r][c] = "0"]]: غرّق الخانة. ده كمان علامة «اتزارت»، فمش محتاجين Set.
+- السطر الأخير: انزل على الجيران الأربعة: تحت ([[r + 1]])، وفوق ([[r - 1]])، ويمين ([[c + 1]])، وشمال ([[c - 1]]). القطري مش جار.
+
+### الـ loop
+
+~~~js
+for (let r = 0; r < rows; r++)
+  for (let c = 0; c < cols; c++)
+    if (g[r][c] === "1") { count++; sink(r, c); }
+~~~
+
+loop جوه loop بيعدّي على كل خانة من فوق لتحت ومن الشمال لليمين. الـ [[for]] من غير أقواس [[{}]] بيشغّل السطر اللي بعده بس. ولاحظ إننا بنقارن بـ [["1"]] (string) لأن الخريطة حروف مش أرقام.
+
+---
+
+## ٢. التتبع على خريطة تانية
+
+~~~text الخريطة (3 × 3)
+1 1 0
+0 0 1
+1 0 1
+~~~
+
+~~~text الناتج (Node 24 على ويندوز)
+(0,0) is 1 -> island #1
+    sink(0,0) -> 0
+    sink(0,1) -> 0
+    grid now: 000 001 101
+(1,2) is 1 -> island #2
+    sink(1,2) -> 0
+    sink(2,2) -> 0
+    grid now: 000 000 100
+(2,0) is 1 -> island #3
+    sink(2,0) -> 0
+    grid now: 000 000 000
+3
+~~~
+
+| الجزيرة | لقيناها عند | الخانات اللي اتغرقت | الـ grid بعدها (صف صف) |
+|---|---|---|---|
+| 1 | (0,0) | (0,0) و (0,1) | 000 / 001 / 101 |
+| 2 | (1,2) | (1,2) و (2,2) | 000 / 000 / 100 |
+| 3 | (2,0) | (2,0) | 000 / 000 / 000 |
+
+تفاصيل الجزيرة الأولى: [[sink(0,0)]] غرّقت الخانة، ونزلت تحت لـ (1,0): ماية، رجعت. فوق (-1,0): برّا، رجعت. يمين (0,1): [["1"]]، غرّقتها ونزلت منها على جيرانها الأربعة، كلهم ماية أو برّا أو اتغرقوا. شمال (0,-1): برّا. خلصت.
+
+الـ loop كمّل: (0,1) بقت [["0"]] فمش هتتعد تاني، وده سر الحل كله. والجزيرة التانية (1,2) و (2,2) متوصلين رأسي، فاتغرقوا مع بعض. أما (2,0) و (2,2) في نفس الصف بس بينهم ماية، فهما جزيرتين.
+
+---
+
+## ٣. ناتج المثال
+
+~~~text الناتج (Node 24 على ويندوز)
+3
+1
+2
+0
+~~~
+
+- الخريطة المشهورة: مربع 2 × 2 فوق، وخانة في النص، وخانتين تحت على اليمين = 3.
+- [[[["1", "1"], ["1", "1"]]]]: كله أرض متوصلة = 1.
+- [[[["1", "0", "1"]]]]: صف واحد، والـ 0 فاصل = 2.
+- [[[]]]: مفيش خانات = 0.
+
+وسطر [[map(s => s.split(""))]] بيحوّل كل string زي [["11000"]] لـ array حروف [[["1","1","0","0","0"]]]، عشان نقدر نغيّر خانة فيها (الـ strings في JavaScript مبتتغيرش).
+
+---
+
+## ٤. الـ Big-O وليه
+
+| | القيمة | السبب |
+|---|---|---|
+| الوقت | [[O(rows × cols)]] | الـ loop بيعدّي على كل خانة مرة. وكل خانة بتتغرق مرة واحدة بالكتير، وكل تغريق بيعمل ٤ نداءات بس |
+| الذاكرة | [[O(rows × cols)]] | النسخة [[g]] بحجم الخريطة. والـ recursion في أسوأ حالة (خريطة كلها 1 بشكل ملفوف) عمقها ممكن يوصل لعدد الخانات |
+
+العمق ده هو نقطة الضعف: خريطة كبيرة كلها أرض ممكن توقع الـ call stack. ده موضوع الـ try.
+
+---
+
+## الخلاصة
+
+~~~text
+الـ grid      graph جاهز: كل خانة جيرانها الأربعة
+العدّ          أول "1" تقابله = جزيرة جديدة، count++
+sink          غرّق الخانة ("0") وانزل على الأربعة
+الحدود        تتفحص قبل g[r][c]، و || بتقف بدري
+seen          الـ grid نفسها بعد التغريق
+النسخة        map + [...row] عشان الـ input ميتغيرش
+الـ Big-O     O(rows × cols) وقت وذاكرة
+~~~`,
           lines: [
-            "الـ brute force: رتّب بعد ما تشيل المكرر.",
-            "نسخة من غير تكرار ومترتبة.",
-            "أطول run، والـ run الحالي.",
-            "على الأرقام المترتبة.",
-            "الرقم بعد اللي قبله بواحد؟ كمّل الـ run، غير كده ابدأ من 1.",
-            "حدّث الأطول.",
+            "بتعدّ الجزر.",
+            "الأبعاد، مع حماية للـ grid الفاضي.",
+            "نسخة عشان منغيّرش الـ input.",
+            "العدّاد.",
+            "sink بتغرّق جزيرة كاملة بـ DFS.",
+            "برّا الحدود أو مش أرض: ارجع.",
+            "غرّق الخانة دي (هي كمان علامة إنها اتزارت).",
+            "انزل على الجيران الأربعة.",
+            "قفلة sink.",
+            "لف على كل الصفوف.",
+            "وكل الأعمدة.",
+            "أرض لسه ماتغرقتش: جزيرة جديدة، عدّها وغرّقها كلها.",
+            "رجّع العدد.",
             "قفلة.",
-            "الإجابة.",
-            "قفلة.",
-            "الحل الأحسن.",
-            "Set: بحث في O(1) ومن غير تكرار.",
-            "الأطول.",
-            "لكل رقم (مرة واحدة حتى لو متكرر).",
-            "مش بداية run: فوّت، هيتعد من بدايته.",
-            "من البداية.",
-            "عدّ لقدام.",
-            "حدّث.",
-            "قفلة.",
-            "الإجابة.",
-            "قفلة.",
-            "الأمثلة والـ edge cases: الـ input والإجابة المتوقعة.",
-            "كل test: الحلين لازم يدّوا الإجابة.",
-            "لو كله نجح اطبع كده، غير كده اطبع أنهي فشل."
+            "الخريطة المشهورة بتاعة المسألة، كل صف array من الحروف.",
+            "٣ جزر.",
+            "كله أرض: جزيرة واحدة.",
+            "اتنين مفصولين بـ 0.",
+            "فاضي."
           ],
           check: {
             lang: "js",
-            starter: R`function productExceptSelf(nums) {
-  const out = new Array(nums.length).fill(1);
-  // لفة من الشمال تكتب الـ prefix، ولفة من اليمين تضرب في suffix متراكم
-  return out;
+            starter: R`function maxAreaOfIsland(grid) {
+  const rows = grid.length, cols = grid[0]?.length ?? 0;
+  const g = grid.map(row => [...row]);
+  let best = 0;
+  // لكل "1": BFS بـ queue ومؤشر head، وعلّم الخانة لحظة ما تدخل الـ queue
+  return best;
 }`,
-            tests: R`const noNegZero = a => a.map(x => x + 0);
-test("[1, 2, 3, 4] ← [24, 12, 8, 6]", () => expect(productExceptSelf([1, 2, 3, 4])).toEqual([24, 12, 8, 6]));
-test("صفر واحد: [-1, 1, 0, -3, 3] ← [0, 0, 9, 0, 0] (القسمة كانت هتقع)", () => expect(noNegZero(productExceptSelf([-1, 1, 0, -3, 3]))).toEqual([0, 0, 9, 0, 0]));
-test("صفرين ← كله صفر", () => expect(noNegZero(productExceptSelf([0, 0]))).toEqual([0, 0]));
-test("[2, 3] ← [3, 2]", () => expect(productExceptSelf([2, 3])).toEqual([3, 2]));
-test("3000 رقم (O(n)، الـ brute force O(n^2))", () => {
-  const a = Array.from({ length: 3000 }, (_, i) => (i % 7 === 0 ? -1 : 1));
-  const neg = a.filter(x => x < 0).length;
-  const r = productExceptSelf(a);
-  expect([r[0], r[1]]).toEqual([(-1) ** (neg - 1), (-1) ** neg]);
-});`,
-            solution: R`function productExceptSelf(nums) {
-  const out = new Array(nums.length).fill(1);
-  for (let i = 1; i < nums.length; i++) out[i] = out[i - 1] * nums[i - 1];
-  let suffix = 1;
-  for (let i = nums.length - 1; i >= 0; i--) {
-    out[i] *= suffix;
-    suffix *= nums[i];
+            tests: R`const grid = rows => rows.map(s => s.split(""));
+test("الخريطة اللي في المثال ← 4", () => expect(maxAreaOfIsland(grid(["11000", "11000", "00100", "00011"]))).toBe(4));
+test("كله 0 ← 0، و [] ← 0", () => expect([maxAreaOfIsland(grid(["000", "000"])), maxAreaOfIsland([])]).toEqual([0, 0]));
+test("[['1']] ← 1", () => expect(maxAreaOfIsland([["1"]])).toBe(1));
+test("القطري مش جار: ['101', '010', '101'] ← 1", () => expect(maxAreaOfIsland(grid(["101", "010", "101"]))).toBe(1));
+test("شكل U ← 7", () => expect(maxAreaOfIsland(grid(["101", "101", "111"]))).toBe(7));
+test("400 × 400 كله 1: الـ DFS الـ recursive هيقع، الـ BFS بيرجّع 160000", () => expect(maxAreaOfIsland(Array.from({ length: 400 }, () => new Array(400).fill("1")))).toBe(160000));`,
+            solution: R`function maxAreaOfIsland(grid) {
+  const rows = grid.length, cols = grid[0]?.length ?? 0;
+  const g = grid.map(row => [...row]);
+  let best = 0;
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (g[r][c] !== "1") continue;
+      g[r][c] = "0";
+      const queue = [[r, c]];
+      for (let head = 0; head < queue.length; head++) {
+        const [y, x] = queue[head];
+        for (const [dy, dx] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+          const ny = y + dy, nx = x + dx;
+          if (ny < 0 || nx < 0 || ny >= rows || nx >= cols || g[ny][nx] !== "1") continue;
+          g[ny][nx] = "0";
+          queue.push([ny, nx]);
+        }
+      }
+      best = Math.max(best, queue.length);
+    }
   }
-  return out;
+  return best;
 }`
           }
         },
         {
-          cmd: "practice regimen",
-          title: "خطة تمرين حقيقية: أنهي مسائل، بتايمر قد إيه، وإمتى ترجع للي وقعت فيها",
-          desc: R`«مسألة أو اتنين كل يوم» مش خطة. الخطة ليها ٣ أجزاء: قائمة متدرجة لكل نمط، وجلسات بتايمر، ومراجعة متباعدة للي وقعت فيه.
+          cmd: "shortest path in grid (BFS)",
+          title: "أقل عدد خطوات من نقطة لنقطة في متاهة",
+          desc: R`لما كل خطوة بنفس التكلفة (خطوة = 1)، BFS بيلاقي أقصر طريق. ليه؟ لأنه بيزور كل الخانات اللي على بعد 1، وبعدين كل اللي على بعد 2، وهكذا. فأول مرة يوصل للهدف، دي أقل مسافة ممكنة.
 
-١. القائمة: لكل نمط في التاب ده، ٣ easy و ٣ medium و ١ hard، بأسمائهم على LeetCode. اعمل الـ easy بتاعة النمط، وبعدين الـ medium، وسيب الـ hard لما تخلص الأنماط كلها. القائمة كاملة في «الحل» تحت (بعد ما تجرب). والتصنيف easy/medium/hard حسب LeetCode وقت الكتابة، وممكن يتغير.
+الـ DFS مينفعش هنا: ممكن ينزل في طريق طويل ملفوف ويوصل للهدف الأول، ومفيش ضمان إنه الأقصر.
 
-٢. الجلسات بتايمر: easy ٢٠ دقيقة، و medium ٣٥، و hard ٥٠. لو الوقت خلص ومفيش فكرة: اقرا hint واحدة بس، وخد ١٠ دقايق زيادة. لو لسه: اقرا الحل، وافهمه، واقفل الصفحة، واكتبه من دماغك. أي مسألة احتاجت hint أو حل، أو عدّت الوقت، اسمها «وقعت فيها».
+الأدوات: queue ومؤشر [[head]]، و [[dist]] جدول بنفس حجم الـ grid فيه المسافة لكل خانة ([[-1]] = لسه ماوصلناش). الـ [[dist]] بيقوم بدور الـ [[seen]] كمان. و [[dirs]] فيها الاتجاهات الأربعة، عشان منكتبش نفس الكود ٤ مرات.
 
-٣. المراجعة المتباعدة (spaced repetition): المسألة اللي وقعت فيها ترجعلها بعد يوم، وبعدين ٣ أيام، وبعدين أسبوع، وأسبوعين، وشهر. كل مرة تحلها لوحدك في الوقت، تروح للمسافة اللي بعدها. لو وقعت تاني، ترجع لأول (بعد يوم). بعد ما تعدّي الشهر، اعتبرها اتقفلت.
-
-المثال سكربت صغير بيعمل الحساب ده: كل مسألة معاها [[step]] (أنهي مسافة) و [[last]] (آخر محاولة)، والسكربت بيقولك إيه اللي عليه الدور النهاردة.`,
-          example: R`const DAY = 24 * 60 * 60 * 1000;
-const INTERVALS = [1, 3, 7, 14, 30];
-function review(card, result, today) {
-  const step = result === "ok" ? card.step + 1 : 0;
-  return { ...card, step, last: today, done: step >= INTERVALS.length };
+لو الخطوات ليها تكاليف مختلفة (طريق سريع وطريق زحمة)، BFS مبقاش ينفع، ومحتاج Dijkstra (درس «Dijkstra» في نفس المستوى).`,
+          example: R`function shortestPath(grid, start, goal) {
+  const rows = grid.length, cols = grid[0].length;
+  const dist = grid.map(row => [...row].map(() => -1));
+  const queue = [start];
+  const [sr, sc] = start;
+  dist[sr][sc] = 0;
+  const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+  for (let head = 0; head < queue.length; head++) {
+    const [r, c] = queue[head];
+    if (r === goal[0] && c === goal[1]) return dist[r][c];
+    for (const [dr, dc] of dirs) {
+      const nr = r + dr, nc = c + dc;
+      if (nr < 0 || nc < 0 || nr >= rows || nc >= cols) continue;
+      if (grid[nr][nc] === "#" || dist[nr][nc] !== -1) continue;
+      dist[nr][nc] = dist[r][c] + 1;
+      queue.push([nr, nc]);
+    }
+  }
+  return -1;
 }
-function dueToday(cards, today) {
-  const now = Date.parse(today);
-  return cards
-    .filter(c => !c.done && Date.parse(c.last) + INTERVALS[c.step] * DAY <= now)
-    .map(c => c.title);
-}
-let cards = [
-  { title: "Coin Change", step: 0, last: "2026-09-01" },
-  { title: "Course Schedule", step: 3, last: "2026-09-20" },
-  { title: "Merge k Sorted Lists", step: 1, last: "2026-09-27" },
+const maze = [
+  "..#.",
+  "..#.",
+  "....",
+  "#.#.",
 ];
-console.log(dueToday(cards, "2026-09-29")); // ['Coin Change']
-cards = cards.map(c => (c.title === "Coin Change" ? review(c, "ok", "2026-09-29") : c));
-console.log(cards[0]); // { title: 'Coin Change', step: 1, last: '2026-09-29', done: false }
-console.log(dueToday(cards, "2026-09-30")); // ['Merge k Sorted Lists']
-console.log(review(cards[2], "fail", "2026-09-30").step); // 0
-// every call is O(number of cards)`,
-          try: R`حوّل السكربت لأداة بتستخدمها فعلًا: ملف [[cards.json]] فيه مسائلك، و [[node review.js]] يطبع اللي عليه الدور النهاردة، و [[node review.js "Coin Change" ok]] (أو fail) يحدّث المسألة ويحفظ. وبعدين ابدأ الخطة: الأسبوع ده الأنماط الـ ٣ الأولى من القائمة (easy بس)، وسجّل كل مسألة بالوقت اللي أخدته ولو احتجت hint.`,
-          sol: R`الأداة: [[fs.readFileSync]] و [[JSON.parse]] في الأول، و [[fs.writeFileSync]] في الآخر، و [[process.argv.slice(2)]] للـ arguments. لو مفيش arguments اطبع [[dueToday]]، ولو فيه اسم ونتيجة شغّل [[review]] على المسألة دي (ولو مش موجودة ضيفها بـ [[step: 0]]). النهاردة = [[new Date().toISOString().slice(0, 10)]]. الـ solCode تحت شغال بتاريخ ثابت عشان الناتج يبقى متوقع.
+console.log(shortestPath(maze, [0, 0], [0, 3])); // 7
+console.log(shortestPath(maze, [0, 0], [0, 0])); // 0
+console.log(shortestPath([".#", "#."], [0, 0], [1, 1])); // -1
+// O(rows × cols) time and space: every cell enters the queue at most once`,
+          try: R`خلّي الدالة ترجّع الطريق نفسه مش طوله بس: احفظ لكل خانة «جيت منين» ([[parent]])، ولما توصل للهدف ارجع بالـ parents لحد البداية واعكس. وبعدين حل «Rotting Oranges»: كل البرتقان البايظ بيبوّظ جيرانه كل دقيقة، في كام دقيقة كله يبوظ؟ (BFS بيبدأ من كل البايظين مع بعض: multi-source BFS). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[shortestRoute(grid, start, goal)]] بترجّع الخانات كـ [["r,c"]] من البداية للهدف (أو null)، و [[orangesRotting(grid)]].`,
+          sol: R`الطريق في المتاهة من [[(0,0)]] لـ [[(0,3)]]: ٨ خانات (٧ خطوات)، زي [[0,0 → 1,0 → 2,0 → 2,1 → 2,2 → 2,3 → 1,3 → 0,3]]. ممكن يطلع عندك طريق تاني بنفس الطول حسب ترتيب [[dirs]]، وده صح برضه.
 
-القائمة المتدرجة (easy / medium / hard):
+الـ [[parent]] ممكن تبقى Map مفتاحها [[r + "," + c]]، أو جدول زي [[dist]]. واحفظ الـ parent لحظة ما تحط الخانة في الـ queue (نفس لحظة [[dist]]).
 
-arrays و strings: Reverse String، Valid Anagram، Valid Palindrome / Rotate Array، Product of Array Except Self، String Compression / First Missing Positive.
+Rotting Oranges على [[[[2,1,1],[1,1,0],[0,1,1]]]]: الإجابة 4. حط كل الـ 2 في الـ queue في الأول بمسافة 0، وعدّ البرتقان السليم. BFS عادي، وكل ما سليمة تبوظ نقّص العدد. في الآخر لو فيه سليم لسه، الإجابة [[-1]] (زي [[[[2,1,1],[0,1,1],[1,0,1]]]]). ولو مفيش سليم من الأول، الإجابة 0.
 
-hash map و set: Two Sum، Contains Duplicate، First Unique Character in a String / Group Anagrams، Longest Consecutive Sequence، Top K Frequent Elements / Substring with Concatenation of All Words.
-
-recursion و prefix sums: Fibonacci Number، Range Sum Query - Immutable، Find Pivot Index / Subarray Sum Equals K، Pow(x, n)، Continuous Subarray Sum / Number of Submatrices That Sum to Target.
-
-two pointers: Merge Sorted Array، Move Zeroes، Remove Duplicates from Sorted Array / Two Sum II - Input Array Is Sorted، 3Sum، Container With Most Water / Trapping Rain Water.
-
-sliding window: Maximum Average Subarray I، Best Time to Buy and Sell Stock، Contains Duplicate II / Longest Substring Without Repeating Characters، Longest Repeating Character Replacement، Permutation in String / Minimum Window Substring.
-
-stacks و queues: Valid Parentheses، Implement Queue using Stacks، Baseball Game / Min Stack، Daily Temperatures، Evaluate Reverse Polish Notation / Largest Rectangle in Histogram.
-
-binary search: Binary Search، Search Insert Position، First Bad Version / Find First and Last Position of Element in Sorted Array، Search in Rotated Sorted Array، Koko Eating Bananas / Median of Two Sorted Arrays.
-
-sorting: Squares of a Sorted Array، Majority Element، Height Checker / Sort an Array، Sort Colors، Largest Number / Count of Smaller Numbers After Self.
-
-linked lists و intervals: Reverse Linked List، Merge Two Sorted Lists، Linked List Cycle / Merge Intervals، Insert Interval، Remove Nth Node From End of List / Reverse Nodes in k-Group.
-
-trees: Maximum Depth of Binary Tree، Invert Binary Tree، Diameter of Binary Tree / Binary Tree Level Order Traversal، Validate Binary Search Tree، Lowest Common Ancestor of a Binary Tree / Serialize and Deserialize Binary Tree.
-
-graphs: Find if Path Exists in Graph، Flood Fill، Find the Town Judge / Number of Islands، Course Schedule، Rotting Oranges / Word Ladder.
-
-heaps: Kth Largest Element in a Stream، Last Stone Weight، Relative Ranks / Kth Largest Element in an Array، Top K Frequent Words، K Closest Points to Origin / Merge k Sorted Lists.
-
-dynamic programming: Climbing Stairs، Min Cost Climbing Stairs، N-th Tribonacci Number / House Robber، Coin Change، Longest Common Subsequence / Distinct Subsequences.
-
-greedy: Assign Cookies، Lemonade Change، Maximum Units on a Truck / Jump Game، Non-overlapping Intervals، Gas Station / Candy.
-
-backtracking و trie: Binary Watch، Letter Case Permutation (medium على LeetCode، بس سهلة كبداية)، Longest Common Prefix / Subsets، Combination Sum، Implement Trie (Prefix Tree) / N-Queens.
-
-union-find و Dijkstra و bits و LRU: Single Number، Missing Number، Number of 1 Bits / Number of Provinces، Network Delay Time، LRU Cache / Swim in Rising Water.
-
-الجدول الأسبوعي المقترح: ٥ أيام × جلسة ساعة (مسألة جديدة أو اتنين + اللي عليه الدور في المراجعة)، ويوم واحد mock: مسألتين medium ورا بعض في ٧٠ دقيقة، بصوت عالي أو مع صاحبك، من غير ما تعرف النمط مسبقًا (اختار عشوائي من القائمة). ويوم راحة. المراجعة ليها الأولوية على المسائل الجديدة.
-
-الغلطات الشائعة: تحل ٥٠٠ مسألة من غير ما ترجع لأي واحدة (هتنساهم). وتقرا الحل بعد ٥ دقايق. وتفضل على easy لأنها مريحة. وتحل من غير تايمر، فأول انترفيو الوقت يخضّك.`,
-          solCode: R`const fs = require("fs");
-const DAY = 24 * 60 * 60 * 1000, INTERVALS = [1, 3, 7, 14, 30];
-const FILE = "cards.json";
-const review = (card, result, today) => {
-  const step = result === "ok" ? card.step + 1 : 0;
-  return { ...card, step, last: today, done: step >= INTERVALS.length };
-};
-const due = (cards, today) => cards.filter(c => !c.done && Date.parse(c.last) + INTERVALS[c.step] * DAY <= Date.parse(today));
-function main(args, today) {
-  const cards = fs.existsSync(FILE) ? JSON.parse(fs.readFileSync(FILE, "utf8")) : [];
-  const [title, result] = args;
-  if (!title) return due(cards, today).map(c => "due: " + c.title).join("\n") || "nothing due";
-  const i = cards.findIndex(c => c.title === title);
-  const card = i === -1 ? { title, step: 0, last: today } : cards[i];
-  const next = review(card, result, today);
-  if (i === -1) cards.push(next); else cards[i] = next;
-  fs.writeFileSync(FILE, JSON.stringify(cards, null, 2));
-  return title + " -> next review in " + (next.done ? "never (done)" : INTERVALS[next.step] + " day(s)");
+الغلطة الشائعة: تعمل BFS منفصل من كل برتقانة بايظة. ده [[O((rows × cols)^2)]] وبيدّي إجابة غلط لو مش بتاخد الـ minimum صح.`,
+          solCode: R`function shortestRoute(grid, start, goal) {
+  const rows = grid.length, cols = grid[0].length;
+  const key = (r, c) => r + "," + c;
+  const parent = new Map([[key(...start), null]]);
+  const queue = [start];
+  for (let head = 0; head < queue.length; head++) {
+    const [r, c] = queue[head];
+    if (r === goal[0] && c === goal[1]) {
+      const path = [];
+      for (let k = key(r, c); k !== null; k = parent.get(k)) path.push(k);
+      return path.reverse();
+    }
+    for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      const nr = r + dr, nc = c + dc;
+      if (nr < 0 || nc < 0 || nr >= rows || nc >= cols || grid[nr][nc] === "#" || parent.has(key(nr, nc))) continue;
+      parent.set(key(nr, nc), key(r, c));
+      queue.push([nr, nc]);
+    }
+  }
+  return null;
 }
-if (fs.existsSync(FILE)) fs.unlinkSync(FILE);
-console.log(main(["Coin Change", "fail"], "2026-09-29")); // Coin Change -> next review in 1 day(s)
-console.log(main([], "2026-09-29")); // nothing due
-console.log(main([], "2026-09-30")); // due: Coin Change
-console.log(main(["Coin Change", "ok"], "2026-09-30")); // Coin Change -> next review in 3 day(s)
-// real use: main(process.argv.slice(2), new Date().toISOString().slice(0, 10))`,
+function orangesRotting(grid) {
+  const g = grid.map(row => [...row]);
+  let queue = [], fresh = 0, minutes = 0;
+  g.forEach((row, r) => row.forEach((v, c) => { if (v === 2) queue.push([r, c]); if (v === 1) fresh++; }));
+  while (queue.length && fresh > 0) {
+    const next = [];
+    for (const [r, c] of queue)
+      for (const [nr, nc] of [[r + 1, c], [r - 1, c], [r, c + 1], [r, c - 1]])
+        if (g[nr]?.[nc] === 1) { g[nr][nc] = 2; fresh--; next.push([nr, nc]); }
+    queue = next;
+    minutes++;
+  }
+  return fresh === 0 ? minutes : -1;
+}
+const maze = ["..#.", "..#.", "....", "#.#."];
+console.log(shortestRoute(maze, [0, 0], [0, 3]).join(" > ")); // 0,0 > 1,0 > 2,0 > 2,1 > 2,2 > 2,3 > 1,3 > 0,3
+console.log(orangesRotting([[2, 1, 1], [1, 1, 0], [0, 1, 1]])); // 4
+console.log(orangesRotting([[2, 1, 1], [0, 1, 1], [1, 0, 1]])); // -1
+console.log(orangesRotting([[0, 2]])); // 0
+// both O(rows × cols) time and space`,
           flag: "script",
           deep: {
-            why: "الذاكرة بتنسى بسرعة: مسألة حليتها بـ hint النهاردة، بعد أسبوعين هتقعد قدامها كأنها جديدة. المراجعة المتباعدة (نفس فكرة Anki) بتثبّت الأنماط بأقل وقت، لأنك بتراجع بس اللي قرّبت تنساه. والتايمر بيعوّدك على ضغط الانترفيو الحقيقي، والقائمة المتدرجة بتمنعك تقفز لـ hard قبل ما الأساس يثبت.",
-            how: R`[[review]]: لو الحل نجح، روح للمسافة اللي بعدها. لو فشل، ارجع لأول مسافة (يوم). و [[done]] لما تعدّي آخر مسافة (٣٠ يوم).
+            why: "«أقل عدد خطوات» سؤال بيتكرر بأشكال كتير: أقل عدد نقلات في لعبة، وأقل عدد تحويلات بين كلمتين (Word Ladder)، وأقرب مخزن لكل عميل، ودرجات القرابة في شبكة اجتماعية («صديق صديقك»). وكلهم BFS على graph، سواء كان grid أو شبكة أو حالات لعبة.",
+            how: R`dry run مختصر: [[dist(0,0) = 0]]. من [[(0,0)]] نضيف [[(1,0)]] و [[(0,1)]] بمسافة 1. من [[(1,0)]] نضيف [[(2,0)]] و [[(1,1)]] بمسافة 2. [[(0,1)]] جيرانها يا إما حيطة يا إما اتزاروا. وهكذا، الموجة بتتوسع خطوة خطوة.
 
-[[dueToday]]: المسألة عليها الدور لو «آخر محاولة + المسافة الحالية» ≤ النهاردة. [[Date.parse("2026-09-01")]] بيرجّع الوقت بالملّي ثانية (UTC)، فالجمع والمقارنة أرقام عادية.
+الحيطة في [[(0,2)]] و [[(1,2)]] بتجبر الطريق ينزل لصف 2 عشان يعدّي لليمين. بعد ما يوصل [[(2,3)]] بمسافة 5، يطلع [[(1,3)]] بـ 6، و [[(0,3)]] بـ 7.
 
-في المثال: Coin Change آخر محاولة 1 سبتمبر ومسافتها يوم، فعليها الدور من 2 سبتمبر (متأخرة). Course Schedule في المسافة 14 يوم من 20 سبتمبر، فدورها 4 أكتوبر. Merge k في المسافة 3 أيام من 27، فدورها 30.
+ليه بنكتب [[dist]] لحظة ما الخانة تدخل الـ queue؟ لو استنينا لحد ما تطلع، نفس الخانة ممكن تدخل الـ queue من جارين مختلفين، والـ queue تكبر. والأهم إن أول مرة بنوصل لخانة في BFS هي أقصر مسافة ليها، فمفيش داعي نكتبها تاني.
 
-بعد ما Coin Change تتحل صح النهاردة، بتروح للمسافة 3 أيام، فمش هتظهر بكرة. و Merge k بتظهر بكرة. ولو وقعت فيها، [[step]] بترجع 0.
+[[grid[nr][nc]]] بيشتغل على strings عادي ([["..#."[2]]] = "#")، فمش لازم نحوّل كل صف لـ array.
 
-الـ spread [[{ ...card, step }]] بيعمل object جديد بدل ما يعدّل القديم. نفس أسلوب الـ state في React.`,
-            when: "ابدأ الخطة قبل الانترفيو بـ ٦-١٠ أسابيع لو بتبدأ من الصفر في الأنماط، و ٢-٣ أسابيع لو مراجعة. في آخر أسبوعين، وقّف المسائل الجديدة تقريبًا وركّز على المراجعة والـ mocks (زي درس «آخر أسبوعين» في «تاب الانترفيو»). ولو الشركة بتعمل take-home أو pair programming مش LeetCode، قلّل الـ hard وزوّد مشاريع صغيرة.",
-            mistakes: R`عدّ المسائل كهدف («حليت ٣٠٠») بدل الأنماط. وقراءة الحل من غير ما تكتبه تاني من دماغك. وتجاهل الـ easy لأنها «سهلة» (الانترفيو فيه easy كتير، ولازم تخلصها في ١٠ دقايق من غير bugs). والمراجعة من غير تايمر. وإنك متسجلش إنك احتجت hint، فالمسألة تتعلّم «نجحت» وهي لأ. وفي الـ mock: متختارش النمط بنفسك، لأن نص صعوبة الانترفيو إنك تعرف النمط لوحدك.`
+multi-source BFS (الـ try): بدل ما الـ queue تبدأ بعنصر واحد، تبدأ بكل المصادر مع بعض بمسافة 0. الموجات بتتوسع من كل المصادر في نفس الوقت، وكل خانة بتاخد المسافة لأقرب مصدر.`,
+            when: "أقصر طريق لما كل الخطوات بنفس التكلفة: BFS، [[O(V + E)]]. لو التكاليف 0 و 1 بس، فيه 0-1 BFS بـ deque. لو التكاليف موجبة ومختلفة: Dijkstra. لو فيه تكاليف سالبة: Bellman-Ford (نادرًا ما يتسأل). ولو المطلوب «فيه طريق ولا لأ» بس، DFS كفاية.",
+            mistakes: R`استخدام DFS لأقصر طريق. وإنك تعلّم الخانة لما تطلع من الـ queue بدل لما تدخل. و [[queue.shift()]] على grid كبير. وإنك تنسى حالة إن البداية هي الهدف (الإجابة 0) أو إن البداية نفسها حيطة. وإنك ترجّع [[Infinity]] أو [[undefined]] لما مفيش طريق بدل اللي المسألة طالباه (في الغالب [[-1]]).`
           },
+          teach: R`## الفكرة في جملة
+
+ابدأ من نقطة البداية، وزور كل الخانات اللي على بعد 1، وبعدين كل اللي على بعد 2، وهكذا، زي موجة بتتوسع. الـ **queue** هي اللي بتضمن الترتيب ده: الخانات بتطلع منها بنفس ترتيب ما دخلت، فمفيش خانة على بعد 3 بتتزار قبل خانة على بعد 2. فأول مرة نوصل للهدف، المسافة دي أقل مسافة ممكنة.
+
+كل الأرقام اللي تحت من تشغيل حقيقي على Node 24.19.0 على ويندوز، بعد ما ضفنا [[console.log]] يطبع كل خانة بتطلع من الـ queue واللي اتضاف بسببها.
+
+---
+
+## ١. الكود سطر سطر
+
+### [[const rows = grid.length, cols = grid[0].length;]]
+
+أبعاد المتاهة. هنا الصفوف strings زي [["..#."]]، و [[.length]] بتاعة الـ string عدد حروفها.
+
+### [[const dist = grid.map(row => [...row].map(() => -1));]]
+
+جدول بنفس حجم المتاهة كله [[-1]]:
+
+- [[[...row]]]: الـ string [["..#."]] بيتفك لـ array حروف.
+- [[.map(() => -1)]]: كل حرف بيتبدّل بـ [[-1]]، أيًا كان. جرّبناها على [["ab"]] طلعت [[[ -1, -1 ]]].
+- [[-1]] معناها «لسه ماوصلناش هنا». فالجدول ده بيشيل حاجتين: المسافة لكل خانة، وهل اتزارت ولا لأ.
+
+### البداية
+
+~~~js
+const queue = [start];
+const [sr, sc] = start;
+dist[sr][sc] = 0;
+~~~
+
+- [[start]] زوج [[[صف, عمود]]]. الـ queue بتبدأ بيه.
+- [[const [sr, sc] = start]]: destructuring، [[sr]] = start row و [[sc]] = start column.
+- المسافة من البداية لنفسها 0.
+
+### [[const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]];]]
+
+الاتجاهات الأربعة كـ «كام صف وكام عمود»: [[[1, 0]]] تحت، [[[-1, 0]]] فوق، [[[0, 1]]] يمين، [[[0, -1]]] شمال. كده بنكتب كود الجار مرة واحدة جوه loop بدل ٤ مرات.
+
+### [[for (let head = 0; head < queue.length; head++)]]
+
+دي الـ queue. [[head]] مؤشر على أول عنصر لسه ماطلعش. بدل ما نشيل من أول الـ array بـ [[shift]] (اللي بتزق كل العناصر)، بنقدّم المؤشر بس. والشرط [[head < queue.length]] بيتحسب كل لفة، فلو ضفنا عناصر جديدة الـ loop بيكمّل عليها.
+
+### [[const [r, c] = queue[head];]]
+
+الخانة اللي عليها الدور.
+
+### [[if (r === goal[0] && c === goal[1]) return dist[r][c];]]
+
+لو هي الهدف، رجّع مسافتها. مش بنقارن [[queue[head] === goal]] لأن دول arrays مختلفة في الذاكرة حتى لو نفس الأرقام، فبنقارن الرقمين.
+
+### الجيران
+
+~~~js
+for (const [dr, dc] of dirs) {
+  const nr = r + dr, nc = c + dc;
+  if (nr < 0 || nc < 0 || nr >= rows || nc >= cols) continue;
+  if (grid[nr][nc] === "#" || dist[nr][nc] !== -1) continue;
+  dist[nr][nc] = dist[r][c] + 1;
+  queue.push([nr, nc]);
+}
+~~~
+
+- [[dr]] و [[dc]]: الفرق في الصف والعمود. [[nr]] و [[nc]] (new row و new column): الخانة الجارة.
+- [[continue]]: فوّت باقي اللفة دي وروح للاتجاه اللي بعده.
+- أول شرط: برّا المتاهة.
+- تاني شرط: حيطة [["#"]]، أو [[dist]] مش [[-1]] يعني اتزارت قبل كده. [[grid[nr][nc]]] بيشتغل على الـ string مباشرة: [["..#."[2]]] = [["#"]].
+- [[dist[nr][nc] = dist[r][c] + 1]]: الجار أبعد مني بخطوة. وبنكتبها **لحظة ما يدخل الـ queue**، فلو جار تاني حاول يضيفه بعد كده هيلاقيه مش [[-1]] ويفوّته.
+
+### [[return -1;]]
+
+الـ queue خلصت ومحدش وصل للهدف: مفيش طريق.
+
+---
+
+## ٢. التتبع على متاهة 3 × 3
+
+~~~text المتاهة (من (0,0) لـ (2,2))
+. . .
+. # .
+. . .
+~~~
+
+~~~text الناتج (Node 24 على ويندوز)
+head=0 take (0,0) dist 0  add (1,0)=1 (0,1)=1  queue len 3
+head=1 take (1,0) dist 1  add (2,0)=2  queue len 4
+head=2 take (0,1) dist 1  add (0,2)=2  queue len 5
+head=3 take (2,0) dist 2  add (2,1)=3  queue len 6
+head=4 take (0,2) dist 2  add (1,2)=3  queue len 7
+head=5 take (2,1) dist 3  add (2,2)=4  queue len 8
+head=6 take (1,2) dist 3  add -  queue len 8
+head=7 take (2,2) = goal, return 4
+4
+~~~
+
+| head | الخانة | مسافتها | اللي اتضاف | ليه |
+|---|---|---|---|---|
+| 0 | (0,0) | 0 | (1,0) و (0,1) بمسافة 1 | فوق وشمال برّا |
+| 1 | (1,0) | 1 | (2,0) بمسافة 2 | (1,1) حيطة، (0,0) اتزارت |
+| 2 | (0,1) | 1 | (0,2) بمسافة 2 | (1,1) حيطة |
+| 3 | (2,0) | 2 | (2,1) بمسافة 3 | |
+| 4 | (0,2) | 2 | (1,2) بمسافة 3 | |
+| 5 | (2,1) | 3 | (2,2) بمسافة 4 | (1,1) حيطة |
+| 6 | (1,2) | 3 | ولا حاجة | (2,2) اتكتبت خلاص من الخطوة 5 |
+| 7 | (2,2) | 4 | | الهدف: رجّع 4 |
+
+لاحظ ترتيب المسافات اللي بتطلع: 0، 1، 1، 2، 2، 3، 3، 4. عمرها ما نزلت. ده معنى «الموجة». ولاحظ head = 6: الخانة (2,2) كان ممكن تيجي من (1,2) كمان، بس [[dist]] بتاعها اتكتب خلاص، فمتضافتش مرتين.
+
+جدول [[dist]] لو سبنا الـ BFS يكمّل لآخره (من غير ما يقف عند الهدف):
+
+~~~text الناتج (Node 24 على ويندوز)
+ 0  1  2
+ 1 -1  3
+ 2  3  4
+~~~
+
+الحيطة فضلت [[-1]] لأنها مااتزارتش أبدًا.
+
+---
+
+## ٣. ناتج المثال
+
+~~~text الناتج (Node 24 على ويندوز)
+7
+0
+-1
+~~~
+
+جدول المسافات الكامل لمتاهة المثال من (0,0):
+
+~~~text الناتج (Node 24 على ويندوز)
+ 0  1 -1  7
+ 1  2 -1  6
+ 2  3  4  5
+-1  4 -1  6
+~~~
+
+- الهدف (0,3) مسافته 7: الحيطة في العمود 2 بتجبر الطريق ينزل لصف 2، ويلف ويطلع.
+- [[[0, 0]]] لـ [[[0, 0]]]: أول خانة تطلع من الـ queue هي الهدف، فـ 0.
+- [[[".#", "#."]]]: البداية محبوسة بين حيطتين، الـ queue بتخلص بعد خانة واحدة، فـ [[-1]].
+
+---
+
+## ٤. الـ Big-O وليه
+
+| | القيمة | السبب |
+|---|---|---|
+| الوقت | [[O(rows × cols)]] | كل خانة بتدخل الـ queue مرة بالكتير (بفضل [[dist]])، وكل خانة بتبص على ٤ جيران بس |
+| الذاكرة | [[O(rows × cols)]] | جدول [[dist]] بحجم المتاهة، والـ queue ممكن يبقى فيها كل الخانات |
+
+وبلغة الـ graphs: V = عدد الخانات، و E حوالي 4V، فده [[O(V + E)]] زي أي BFS.
+
+---
+
+## الخلاصة
+
+~~~text
+queue + head    الخانات بتطلع بترتيب دخولها، من غير shift
+dist            -1 = ماوصلناش، وغير كده المسافة (وهو نفسه الـ seen)
+اكتب dist       لحظة ما الخانة تدخل الـ queue، مش لما تطلع
+dirs            ٤ اتجاهات كـ [dr, dc] بدل ٤ نسخ من الكود
+أول وصول        للهدف = أقصر مسافة، لأن المسافات بتطلع بالترتيب
+مفيش طريق       الـ queue تخلص ← -1
+الـ Big-O       O(rows × cols) وقت وذاكرة
+~~~
+
+> BFS بيدّي أقصر طريق بس لما كل خطوة بنفس التكلفة. لو الخطوات ليها أوزان مختلفة، محتاج Dijkstra.`,
           lines: [
-            "يوم بالملّي ثانية.",
-            "المسافات بالأيام: 1 ثم 3 ثم 7 ثم 14 ثم 30.",
-            "حدّث مسألة بعد محاولة.",
-            "نجحت: المسافة اللي بعدها. فشلت: ارجع لأول.",
-            "نسخة جديدة، وخلصت لو عدّت آخر مسافة.",
+            "أقل عدد خطوات من start لـ goal.",
+            "الأبعاد.",
+            "جدول المسافات، كله -1 في الأول (ماوصلناش).",
+            "الـ queue بتبدأ بالبداية.",
+            "صف وعمود البداية.",
+            "المسافة للبداية 0.",
+            "الاتجاهات الأربعة: تحت، فوق، يمين، شمال.",
+            "queue بمؤشر head بدل shift.",
+            "الخانة اللي عليها الدور.",
+            "وصلنا للهدف: المسافة دي أقل مسافة أكيد.",
+            "جرّب كل اتجاه.",
+            "الخانة الجارة.",
+            "برّا الحدود: فوّت.",
+            "حيطة، أو اتزارت قبل كده: فوّت.",
+            "المسافة = مسافتي + 1، وده كمان بيعلّمها إنها اتزارت.",
+            "حطها في آخر الـ queue.",
+            "قفلة الـ for الداخلية.",
+            "قفلة الـ for الخارجية.",
+            "الـ queue خلصت ومفيش وصول: مفيش طريق.",
             "قفلة.",
-            "اللي عليه الدور النهاردة.",
-            "النهاردة كرقم.",
-            "رجّع.",
-            "مش خلصانة، وآخر محاولة + المسافة ≤ النهاردة.",
-            "أسماءهم بس.",
+            "المتاهة: # حيطة، و . مكان فاضي.",
+            "الصف الأول.",
+            "التاني.",
+            "التالت.",
+            "الرابع.",
+            "قفلة الـ array.",
+            "لازم تنزل لصف 2 وتلف: ٧ خطوات.",
+            "البداية هي الهدف.",
+            "محبوس بين حيطتين."
+          ],
+          check: {
+            lang: "js",
+            starter: R`function shortestRoute(grid, start, goal) {
+  const key = (r, c) => r + "," + c;
+  const parent = new Map([[key(...start), null]]);
+  // نفس shortestPath، واحفظ parent لكل خانة لحظة ما تدخل الـ queue
+  return null;
+}
+function orangesRotting(grid) {
+  // multi-source BFS: كل الـ 2 في الـ queue من الأول
+  return -1;
+}`,
+            tests: R`const maze = ["..#.", "..#.", "....", "#.#."];
+const isRoute = (g, p, s, t) => Array.isArray(p) && p[0] === s.join(",") && p.at(-1) === t.join(",") && p.every((k, i) => {
+  const [r, c] = k.split(",").map(Number);
+  if (g[r][c] === "#") return false;
+  if (i === 0) return true;
+  const [pr, pc] = p[i - 1].split(",").map(Number);
+  return Math.abs(r - pr) + Math.abs(c - pc) === 1;
+});
+test("المتاهة من 0,0 لـ 0,3: 8 خانات (7 خطوات) وكل خطوة لجار مفتوح", () => {
+  const p = shortestRoute(maze, [0, 0], [0, 3]);
+  expect([p && p.length, isRoute(maze, p, [0, 0], [0, 3])]).toEqual([8, true]);
+});
+test("البداية هي الهدف ← ['0,0']", () => expect(shortestRoute(maze, [0, 0], [0, 0])).toEqual(["0,0"]));
+test("مفيش طريق ← null", () => expect(shortestRoute([".#", "#."], [0, 0], [1, 1])).toBe(null));
+test("orangesRotting([[2,1,1],[1,1,0],[0,1,1]]) ← 4", () => expect(orangesRotting([[2, 1, 1], [1, 1, 0], [0, 1, 1]])).toBe(4));
+test("برتقانة محدش يوصلها ← -1", () => expect(orangesRotting([[2, 1, 1], [0, 1, 1], [1, 0, 1]])).toBe(-1));
+test("مفيش سليم من الأول ← 0، وسليم من غير بايظ ← -1", () => expect([orangesRotting([[0, 2]]), orangesRotting([[1]])]).toEqual([0, -1]));
+test("بايظين في طرفين بيشتغلوا مع بعض: [[2,1,1,1,2]] ← 2", () => expect(orangesRotting([[2, 1, 1, 1, 2]])).toBe(2));
+test("متاهة 300 × 300 مفتوحة ← 599 خانة (O(rows × cols))", () => {
+  const g = Array.from({ length: 300 }, () => ".".repeat(300));
+  const p = shortestRoute(g, [0, 0], [299, 299]);
+  expect([p && p.length, isRoute(g, p, [0, 0], [299, 299])]).toEqual([599, true]);
+});`,
+            solution: R`function shortestRoute(grid, start, goal) {
+  const rows = grid.length, cols = grid[0].length;
+  const key = (r, c) => r + "," + c;
+  const parent = new Map([[key(...start), null]]);
+  const queue = [start];
+  for (let head = 0; head < queue.length; head++) {
+    const [r, c] = queue[head];
+    if (r === goal[0] && c === goal[1]) {
+      const path = [];
+      for (let k = key(r, c); k !== null; k = parent.get(k)) path.push(k);
+      return path.reverse();
+    }
+    for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      const nr = r + dr, nc = c + dc;
+      if (nr < 0 || nc < 0 || nr >= rows || nc >= cols || grid[nr][nc] === "#" || parent.has(key(nr, nc))) continue;
+      parent.set(key(nr, nc), key(r, c));
+      queue.push([nr, nc]);
+    }
+  }
+  return null;
+}
+function orangesRotting(grid) {
+  const g = grid.map(row => [...row]);
+  let queue = [], fresh = 0, minutes = 0;
+  g.forEach((row, r) => row.forEach((v, c) => { if (v === 2) queue.push([r, c]); if (v === 1) fresh++; }));
+  while (queue.length && fresh > 0) {
+    const next = [];
+    for (const [r, c] of queue)
+      for (const [nr, nc] of [[r + 1, c], [r - 1, c], [r, c + 1], [r, c - 1]])
+        if (g[nr]?.[nc] === 1) { g[nr][nc] = 2; fresh--; next.push([nr, nc]); }
+    queue = next;
+    minutes++;
+  }
+  return fresh === 0 ? minutes : -1;
+}`
+          }
+        },
+        {
+          cmd: "topological sort (course schedule)",
+          title: "رتّب المهام بحيث كل مهمة تيجي بعد اللي معتمدة عليه (Course Schedule)",
+          desc: R`عندك كورسات، وكل كورس ليه prerequisites. عايز ترتيب تاخد بيه كل الكورسات بحيث متاخدش كورس قبل متطلباته. ده اسمه topological sort، وبيشتغل على directed graph من غير دواير (DAG).
+
+طريقة Kahn (بـ BFS): احسب لكل عقدة [[indegree]] (عدد الحاجات اللي مستنياها). الحاجات اللي indegree بتاعها 0 مش مستنية حد، فحطها في الـ queue. كل ما تطلّع واحدة وتحطها في الترتيب، قلّل indegree لكل اللي معتمد عليها، واللي يوصل لـ 0 يدخل الـ queue.
+
+لو خلصت والترتيب ناقص عقد، يبقى فيه دايرة: كورسات معتمدة على بعض في حلقة، ومحدش فيهم هيوصل لـ 0 أبدًا. فالكود نفسه بيكشف الدواير ببلاش.`,
+          example: R`function courseOrder(n, prereqs) {
+  const graph = Array.from({ length: n }, () => []);
+  const indegree = new Array(n).fill(0);
+  for (const [course, pre] of prereqs) {
+    graph[pre].push(course);
+    indegree[course]++;
+  }
+  const queue = [];
+  for (let i = 0; i < n; i++) if (indegree[i] === 0) queue.push(i);
+  const order = [];
+  for (let head = 0; head < queue.length; head++) {
+    const c = queue[head];
+    order.push(c);
+    for (const next of graph[c]) if (--indegree[next] === 0) queue.push(next);
+  }
+  return order.length === n ? order : [];
+}
+console.log(courseOrder(4, [[1, 0], [2, 0], [3, 1], [3, 2]])); // [0, 1, 2, 3]
+console.log(courseOrder(2, [[1, 0], [0, 1]])); // []
+console.log(courseOrder(3, [])); // [0, 1, 2]
+// O(V + E) time and space`,
+          try: R`طبّقها على حاجة حقيقية: عندك packages ومعتمدة على بعض كـ object: [[{ app: ["api", "ui"], api: ["db", "auth"], auth: ["db"], ui: [], db: [] }]]. اكتب [[buildOrder(deps)]] ترجّع ترتيب تبني بيه كل package بعد اللي هي معتمدة عليه، أو ترمي Error فيه كلمة cycle لو فيه اعتماد دائري. وجرّبها لما [[db]] تعتمد على [[app]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[buildOrder(deps)]] بترجّع ترتيب صح (أي ترتيب بيحقق الشروط)، أو ترمي Error فيه كلمة cycle.`,
+          sol: R`الكود اللي تحت بيطلّع [[ui db auth api app]]، وأي ترتيب تاني فيه db قبل auth و api، و auth قبل api، و api و ui قبل app. الـ topological sort مش وحيد، وأي ترتيب يحقق الشروط صح.
+
+خلي بالك من اتجاه السهم: «api معتمدة على db» يعني السهم من db لـ api (لازم db تتبني الأول)، فـ [[graph.get(db).push(api)]] و [[indegree(api)++]]. لو عكست الاتجاه هيطلعلك الترتيب مقلوب (app الأول).
+
+لو [[db]] بقت معتمدة على [[app]]: db ← app ← api ← db دايرة، ومفيش حد فيهم indegree بتاعه هيوصل 0، فالترتيب هيطلع ناقص ([[ui]] بس)، والدالة ترمي [[cycle detected]].
+
+واتأكد إن كل dependency ليها مكان في الـ Map حتى لو مش key في الـ object (مثلًا dependency خارجية مش متعرّفة).`,
+          solCode: R`function buildOrder(deps) {
+  const graph = new Map(), indegree = new Map();
+  const ensure = x => { if (!graph.has(x)) { graph.set(x, []); indegree.set(x, 0); } };
+  for (const [pkg, needs] of Object.entries(deps)) {
+    ensure(pkg);
+    for (const dep of needs) {
+      ensure(dep);
+      graph.get(dep).push(pkg);
+      indegree.set(pkg, indegree.get(pkg) + 1);
+    }
+  }
+  const queue = [...graph.keys()].filter(x => indegree.get(x) === 0);
+  for (let head = 0; head < queue.length; head++)
+    for (const next of graph.get(queue[head])) {
+      indegree.set(next, indegree.get(next) - 1);
+      if (indegree.get(next) === 0) queue.push(next);
+    }
+  if (queue.length !== graph.size) throw new Error("cycle detected");
+  return queue;
+}
+const deps = { app: ["api", "ui"], api: ["db", "auth"], auth: ["db"], ui: [], db: [] };
+console.log(buildOrder(deps).join(" ")); // ui db auth api app
+try { buildOrder({ ...deps, db: ["app"] }); } catch (e) { console.log(e.message); }
+// O(V + E) time and space`,
+          flag: "script",
+          deep: {
+            why: "topological sort موجود في أدوات بتستخدمها كل يوم: npm و pnpm بيرتبوا تثبيت الـ packages، و Turborepo و Nx بيرتبوا build الـ packages في monorepo، و GitHub Actions بيرتب الـ jobs حسب [[needs]]، والـ migrations بتتنفذ بالترتيب، و Excel بيعيد حساب الخلايا بعد اللي معتمدة عليه. وفي الانترفيو، Course Schedule من أشهر مسائل الـ graphs.",
+            how: R`dry run على [[[[1,0],[2,0],[3,1],[3,2]]]]: الـ edges 0→1 و 0→2 و 1→3 و 2→3. الـ indegree: 0 عندها 0، و 1 و 2 عندهم 1، و 3 عندها 2.
+
+الـ queue تبدأ بـ [0]. نطلّع 0، والترتيب [0]. نقلّل 1 و 2 لـ 0، فيدخلوا الـ queue.
+
+نطلّع 1: نقلّل 3 لـ 1. نطلّع 2: نقلّل 3 لـ 0، فتدخل. نطلّع 3. الترتيب [0, 1, 2, 3]، وطوله 4 = n، يبقى مفيش دايرة.
+
+في [[[[1,0],[0,1]]]]: الاتنين indegree بتاعهم 1، والـ queue بتبدأ فاضية، والترتيب طوله 0، فنرجّع [] (مستحيل).
+
+الـ input بتاع LeetCode [[[course, pre]]] معناه «course محتاج pre»، فالسهم من pre لـ course. ده أكتر حاجة بتلخبط الناس في المسألة دي.
+
+فيه طريقة تانية بـ DFS: رتّب العقد حسب وقت خروجها (post-order)، واعكس الترتيب. بتشتغل، بس محتاجة كشف دواير لوحدها (الدرس الجاي)، و Kahn أسهل تشرحه في الانترفيو.`,
+            when: "أي «رتّب حاجات ليها شروط قبلها»: تبعيات، ومهام، وخطوات build، وترتيب قراءة دروس. ولو المطلوب «ممكن ولا لأ» بس (Course Schedule I)، نفس الكود وارجع [[order.length === n]]. ولو محتاج أول ترتيب أبجديًا، بدّل الـ queue بـ min heap.",
+            mistakes: R`عكس اتجاه السهم. ونسيان العقد اللي ملهاش أي edges (لازم تدخل الترتيب برضه). ونسيان التأكد من طول الترتيب في الآخر، فترجّع ترتيب ناقص وكأنه صح. وإنك تفترض إن فيه ترتيب واحد بس صح؛ أي ترتيب يحقق الشروط مقبول، وفي الانترفيو قول كده.`
+          },
+          teach: R`## الفكرة في جملة
+
+لكل كورس عدّ هو **مستني كام متطلب** (ده الـ [[indegree]]). الكورسات اللي مستنية 0 تقدر تاخدها دلوقتي، فحطها في queue. كل ما تاخد كورس، كل الكورسات اللي كانت مستنياه بقت مستنية واحد أقل، واللي يوصل منهم لـ 0 يدخل الـ queue. لو في الآخر خدت كل الكورسات، ده ترتيب صح. لو فيه كورسات عمرها ما وصلت لـ 0، يبقى فيه دايرة.
+
+الطريقة دي اسمها **Kahn's algorithm**. كل الأرقام اللي تحت من تشغيل حقيقي على Node 24.19.0 على ويندوز، بعد ما ضفنا [[console.log]] يطبع الـ [[graph]] والـ [[indegree]] والـ queue والترتيب بعد كل كورس.
+
+---
+
+## ١. الكود سطر سطر
+
+### [[const graph = Array.from({ length: n }, () => []);]]
+
+[[Array.from({ length: n }, fn)]] بتعمل array طولها n، وكل خانة قيمتها اللي [[fn]] بترجّعه. هنا كل خانة array فاضية **جديدة**. الكورسات أرقام من 0 لـ n - 1، فالرقم نفسه هو الـ index. و [[graph[x]]] = الكورسات اللي بتفتح بعد x.
+
+### [[const indegree = new Array(n).fill(0);]]
+
+array طولها n كلها أصفار. [[indegree[x]]] = عدد المتطلبات اللي x لسه مستنياها. [[fill(0)]] هنا آمنة لأن 0 رقم مش array.
+
+### بناء الأسهم
+
+~~~js
+for (const [course, pre] of prereqs) {
+  graph[pre].push(course);
+  indegree[course]++;
+}
+~~~
+
+- كل زوج [[[course, pre]]] معناه «course محتاج pre الأول».
+- فالسهم من [[pre]] لـ [[course]]: لما pre تخلص، course تقرّب تتفتح. عشان كده [[graph[pre].push(course)]].
+- [[indegree[course]++]]: [[++]] بيزوّد 1. الكورس بقى مستني متطلب زيادة.
+
+### البداية: كل اللي مش مستني حاجة
+
+~~~js
+const queue = [];
+for (let i = 0; i < n; i++) if (indegree[i] === 0) queue.push(i);
+~~~
+
+### الـ loop
+
+~~~js
+for (let head = 0; head < queue.length; head++) {
+  const c = queue[head];
+  order.push(c);
+  for (const next of graph[c]) if (--indegree[next] === 0) queue.push(next);
+}
+~~~
+
+- queue بمؤشر [[head]] زي درس الـ BFS: بنقرا بالترتيب من غير [[shift]].
+- [[order.push(c)]]: خد الكورس ده.
+- [[--indegree[next]]]: [[--]] **قبل** المتغير بيقلّل 1 الأول وبعدين يرجّع القيمة الجديدة. فالسطر معناه «قلّل، ولو القيمة الجديدة بقت 0 حطه في الـ queue». لو كتبناها [[indegree[next]--]] (بعد المتغير)، هترجّع القيمة **القديمة** والمقارنة هتبقى غلط.
+
+### [[return order.length === n ? order : [];]]
+
+لو خدنا الـ n كورس، رجّع الترتيب. غير كده فيه كورسات مااتاخدتش لأنها في دايرة، فرجّع [[[]]] (مستحيل).
+
+---
+
+## ٢. التتبع: ٥ كورسات من غير دايرة
+
+[[courseOrder(5, [[1, 0], [2, 0], [3, 1], [4, 2], [4, 3]])]]: 1 و 2 محتاجين 0، و 3 محتاج 1، و 4 محتاج 2 و 3.
+
+~~~text الأسهم
+0 → 1 → 3 → 4
+0 → 2 ──────→ 4
+~~~
+
+~~~text الناتج (Node 24 على ويندوز)
+graph = [[1,2],[3],[4],[4],[]]  indegree = [0,1,1,1,2]
+start queue = [0]
+take 0  1->0 push, 2->0 push  | indegree = [0,0,0,1,2] queue = [1,2] order = [0]
+take 1  3->0 push  | indegree = [0,0,0,0,2] queue = [2,3] order = [0,1]
+take 2  4->1  | indegree = [0,0,0,0,1] queue = [3] order = [0,1,2]
+take 3  4->0 push  | indegree = [0,0,0,0,0] queue = [4] order = [0,1,2,3]
+take 4  no edges  | indegree = [0,0,0,0,0] queue = [] order = [0,1,2,3,4]
+[ 0, 1, 2, 3, 4 ]
+~~~
+
+| الخطوة | خدنا | اللي اتقلّل | indegree بعدها | الـ queue الباقية | order |
+|---|---|---|---|---|---|
+| البداية | | | [0, 1, 1, 1, 2] | [0] | [] |
+| 1 | 0 | 1 ← 0، و 2 ← 0 (دخلوا) | [0, 0, 0, 1, 2] | [1, 2] | [0] |
+| 2 | 1 | 3 ← 0 (دخل) | [0, 0, 0, 0, 2] | [2, 3] | [0, 1] |
+| 3 | 2 | 4 ← 1 (لسه) | [0, 0, 0, 0, 1] | [3] | [0, 1, 2] |
+| 4 | 3 | 4 ← 0 (دخل) | [0, 0, 0, 0, 0] | [4] | [0, 1, 2, 3] |
+| 5 | 4 | مفيش | كله 0 | [] | [0, 1, 2, 3, 4] |
+
+أهم خطوة هي 3: خدنا 2، فـ 4 بقت مستنية واحد بس (3)، فمدخلتش. ولما خدنا 3 في الخطوة 4 وصلت 0. يعني 4 مااتاخدتش غير بعد ما **الاتنين** خلصوا.
+
+---
+
+## ٣. التتبع: فيه دايرة
+
+[[courseOrder(3, [[1, 0], [2, 1], [1, 2]])]]: 1 محتاج 0 و 2، و 2 محتاج 1. يعني 1 و 2 كل واحد مستني التاني.
+
+~~~text الناتج (Node 24 على ويندوز)
+graph = [[1],[2],[1]]  indegree = [0,2,1]
+start queue = [0]
+take 0  1->1  | indegree = [0,1,1] queue = [] order = [0]
+[]
+~~~
+
+خدنا 0، فـ 1 بقت مستنية 1 بدل 2 (لسه مستنية 2). والـ queue فضيت. الترتيب طوله 1 مش 3، فالدالة رجّعت [[[]]]. الكورسات اللي في الدايرة عمرها ما توصل لـ 0، وده اللي بيكشفها.
+
+---
+
+## ٤. ناتج المثال
+
+~~~text الناتج (Node 24 على ويندوز)
+[ 0, 1, 2, 3 ]
+[]
+[ 0, 1, 2 ]
+~~~
+
+- [[[[1, 0], [2, 0], [3, 1], [3, 2]]]]: 0 الأول، وبعدين 1 و 2، و 3 بعد الاتنين.
+- [[[[1, 0], [0, 1]]]]: كل واحد مستني التاني، الـ queue بتبدأ فاضية.
+- [[courseOrder(3, [])]]: مفيش شروط، كل الـ indegree أصفار، فكلهم يدخلوا الـ queue بالترتيب.
+
+والترتيب مش وحيد: في المثال الأول [[[0, 2, 1, 3]]] صح برضه. الكود ده بيطلّع واحد منهم حسب ترتيب الـ queue.
+
+---
+
+## ٥. الـ Big-O وليه
+
+V = عدد الكورسات، و E = عدد الشروط.
+
+| | القيمة | السبب |
+|---|---|---|
+| الوقت | [[O(V + E)]] | بناء الأسهم لفة على E، وكل كورس بيدخل الـ queue مرة، وكل سهم بيتقلّل بسببه مرة واحدة (لما صاحبه يتاخد) |
+| الذاكرة | [[O(V + E)]] | [[graph]] فيه E سهم، و [[indegree]] و [[queue]] و [[order]] كل واحد V |
+
+---
+
+## الخلاصة
+
+~~~text
+[course, pre]    السهم من pre لـ course
+indegree         كل كورس مستني كام متطلب
+البداية          كل اللي indegree بتاعه 0 في الـ queue
+كل خطوة          خد كورس ← قلّل اللي بعده ← اللي وصل 0 يدخل
+--x              بيقلّل الأول وبعدين يقارن
+دايرة            order أقصر من n ← رجّع []
+الـ Big-O        O(V + E) وقت وذاكرة
+~~~`,
+          lines: [
+            "n كورس، و prereqs أزواج [الكورس، متطلبه].",
+            "لكل كورس، قائمة الكورسات اللي بتفتح بعده.",
+            "indegree: كل كورس مستني كام متطلب.",
+            "لكل شرط.",
+            "السهم من المتطلب للكورس.",
+            "الكورس بقى مستني واحد زيادة.",
             "قفلة.",
-            "المسائل اللي بتراجعها.",
-            "متأخرة من أول الشهر.",
-            "دورها 4 أكتوبر.",
-            "دورها 30 سبتمبر.",
+            "الـ queue.",
+            "كل كورس مش مستني حاجة يبدأ فيها.",
+            "الترتيب النهائي.",
+            "queue بمؤشر.",
+            "الكورس اللي عليه الدور.",
+            "خده.",
+            "كل اللي كان مستنيه: قلّل، واللي بقى 0 يدخل الـ queue.",
             "قفلة.",
-            "النهاردة 29: Coin Change بس.",
-            "حليتها صح النهاردة.",
-            "بقت في المسافة 3 أيام.",
-            "بكرة: Merge k بس.",
-            "لو وقعت فيها: ترجع لأول مسافة."
-          ]
+            "لو مخدناش كل الكورسات يبقى فيه دايرة، رجّع فاضي.",
+            "قفلة.",
+            "0 الأول، وبعدين 1 و 2، وبعدين 3.",
+            "كل واحد مستني التاني: مستحيل.",
+            "مفيش شروط: أي ترتيب، والكود بيطلّعهم بالترتيب."
+          ],
+          check: {
+            lang: "js",
+            starter: R`function buildOrder(deps) {
+  const graph = new Map(), indegree = new Map();
+  // «api معتمدة على db» يعني السهم من db لـ api
+  // واتأكد إن كل dependency ليها مكان حتى لو مش key
+  return [];
+}`,
+            tests: R`const isValid = (deps, order) => {
+  const pos = new Map(order.map((p, i) => [p, i]));
+  const all = new Set(Object.entries(deps).flatMap(([p, ds]) => [p, ...ds]));
+  return order.length === all.size && pos.size === all.size && Object.entries(deps).every(([p, ds]) => ds.every(d => pos.get(d) < pos.get(p)));
+};
+const deps = { app: ["api", "ui"], api: ["db", "auth"], auth: ["db"], ui: [], db: [] };
+test("المثال: db قبل auth و api، و auth قبل api، و api و ui قبل app", () => expect(isValid(deps, buildOrder(deps))).toBe(true));
+test("{} ← []", () => expect(buildOrder({})).toEqual([]));
+test("dependency مش key: { a: ['ext'] } ← ['ext', 'a']", () => expect(buildOrder({ a: ["ext"] })).toEqual(["ext", "a"]));
+test("db معتمدة على app ← Error فيه cycle", () => expect(() => buildOrder({ ...deps, db: ["app"] })).toThrow(/cycle/));
+test("package معتمدة على نفسها ← cycle", () => expect(() => buildOrder({ a: ["a"] })).toThrow(/cycle/));
+test("سلسلة 20 ألف package (O(V + E))", () => {
+  const d = {};
+  for (let i = 1; i < 20000; i++) d["p" + i] = ["p" + (i - 1)];
+  const order = buildOrder(d);
+  expect([order.length, order[0], order.at(-1)]).toEqual([20000, "p0", "p19999"]);
+});`,
+            solution: R`function buildOrder(deps) {
+  const graph = new Map(), indegree = new Map();
+  const add = p => { if (!graph.has(p)) { graph.set(p, []); indegree.set(p, 0); } };
+  for (const [p, ds] of Object.entries(deps)) {
+    add(p);
+    for (const d of ds) {
+      add(d);
+      graph.get(d).push(p);
+      indegree.set(p, indegree.get(p) + 1);
+    }
+  }
+  const queue = [...graph.keys()].filter(p => indegree.get(p) === 0);
+  for (let head = 0; head < queue.length; head++) {
+    for (const next of graph.get(queue[head])) {
+      indegree.set(next, indegree.get(next) - 1);
+      if (indegree.get(next) === 0) queue.push(next);
+    }
+  }
+  if (queue.length !== graph.size) throw new Error("cycle detected");
+  return queue;
+}`
+          }
+        },
+        {
+          cmd: "cycle detection",
+          title: "فيه دايرة في الـ graph؟ (circular imports و deadlocks)",
+          desc: R`كشف الدواير بيختلف حسب نوع الـ graph:
+
+directed graph: بـ DFS و ٣ حالات لكل عقدة: 0 لسه مازرتهاش، و 1 أنا جوه المسار الحالي بتاعها (نزلت منها ولسه مارجعتش)، و 2 خلصت كل اللي تحتها. لو قابلت عقدة حالتها 1، يبقى رجعت لحاجة لسه في المسار: دايرة. لو حالتها 2، دي اتفحصت قبل كده ومفيش منها دايرة، فوّتها.
+
+ليه مش [[seen]] عادية؟ في شكل الـ diamond (0→1 و 0→2 و 1→2)، هتوصل لـ 2 مرتين من طريقين مختلفين. ده مش دايرة، بس Set عادية هتقول إنه دايرة.
+
+undirected graph: كل edge بيبان من الناحيتين، فلازم تتجاهل الأب اللي جيت منه. لو قابلت جار اتزار ومش أبوك، يبقى فيه دايرة.
+
+وللـ directed فيه طريقة تانية ببلاش: Kahn من الدرس اللي فات، لو الترتيب طلع ناقص.`,
+          example: R`function hasCycleDirected(n, edges) {
+  const graph = Array.from({ length: n }, () => []);
+  for (const [u, v] of edges) graph[u].push(v);
+  const state = new Array(n).fill(0);
+  const visit = u => {
+    if (state[u] === 1) return true;
+    if (state[u] === 2) return false;
+    state[u] = 1;
+    for (const v of graph[u]) if (visit(v)) return true;
+    state[u] = 2;
+    return false;
+  };
+  for (let u = 0; u < n; u++) if (visit(u)) return true;
+  return false;
+}
+function hasCycleUndirected(n, edges) {
+  const graph = Array.from({ length: n }, () => []);
+  for (const [u, v] of edges) { graph[u].push(v); graph[v].push(u); }
+  const seen = new Array(n).fill(false);
+  const visit = (u, parent) => {
+    seen[u] = true;
+    for (const v of graph[u]) {
+      if (v === parent) continue;
+      if (seen[v] || visit(v, u)) return true;
+    }
+    return false;
+  };
+  for (let u = 0; u < n; u++) if (!seen[u] && visit(u, -1)) return true;
+  return false;
+}
+console.log(hasCycleDirected(3, [[0, 1], [1, 2], [2, 0]])); // true
+console.log(hasCycleDirected(3, [[0, 1], [0, 2], [1, 2]])); // false
+console.log(hasCycleUndirected(3, [[0, 1], [1, 2]])); // false
+console.log(hasCycleUndirected(3, [[0, 1], [1, 2], [2, 0]])); // true
+// both O(V + E) time, O(V) space`,
+          try: R`اكشف الـ circular imports في مشروع: [[{ "a.js": ["b.js"], "b.js": ["c.js"], "c.js": ["a.js"], "d.js": ["a.js"] }]] (كل ملف والملفات اللي بيعملها import). اكتب [[findCycle(imports)]] ترجّع الدايرة نفسها كـ array، زي [[["a.js", "b.js", "c.js", "a.js"]]]، أو null لو مفيش. (احفظ المسار الحالي في stack، ولما تقابل عقدة حالتها 1، اقطع المسار من عندها.) اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[findCycle(imports)]] بترجّع الدايرة (أول ملف متكرر في الآخر) أو null.`,
+          sol: R`الإجابة: [[a.js → b.js → c.js → a.js]]. لو بدأت الـ DFS من [[d.js]] الأول برضه هتلاقي نفس الدايرة، بس d.js مش جزء منها، عشان كده بنقطع المسار من أول ظهور لـ [[a.js]] مش من أوله.
+
+الحالات: [[path]] array فيها المسار الحالي. أول ما تنزل على ملف: حالته 1 و [[path.push]]. لما ترجع منه: حالته 2 و [[path.pop]]. لو قابلت ملف حالته 1: [[path.slice(path.indexOf(file))]] وضيف الملف في الآخر عشان تقفل الدايرة.
+
+من غير دايرة (شيل [[c.js → a.js]]) الإجابة null.
+
+ده بالظبط اللي أدوات زي madge و ESLint rule [[import/no-cycle]] بتعمله. و circular imports في Node بتطلّع bugs غريبة: الـ module بيستلم object ناقص لأن الملف التاني لسه ماخلصش تحميل.`,
+          solCode: R`function findCycle(imports) {
+  const state = new Map(), path = [];
+  const visit = file => {
+    if (state.get(file) === 1) return [...path.slice(path.indexOf(file)), file];
+    if (state.get(file) === 2) return null;
+    state.set(file, 1);
+    path.push(file);
+    for (const dep of imports[file] ?? []) {
+      const cycle = visit(dep);
+      if (cycle) return cycle;
+    }
+    path.pop();
+    state.set(file, 2);
+    return null;
+  };
+  for (const file of Object.keys(imports)) {
+    const cycle = visit(file);
+    if (cycle) return cycle;
+  }
+  return null;
+}
+console.log(findCycle({ "a.js": ["b.js"], "b.js": ["c.js"], "c.js": ["a.js"], "d.js": ["a.js"] })); // ['a.js', 'b.js', 'c.js', 'a.js']
+console.log(findCycle({ "d.js": ["a.js"], "a.js": ["b.js"], "b.js": ["c.js"], "c.js": ["a.js"] })); // ['a.js', 'b.js', 'c.js', 'a.js']
+console.log(findCycle({ "a.js": ["b.js"], "b.js": ["c.js"], "c.js": [] })); // null
+// O(V + E) time, O(V) space`,
+          flag: "script",
+          deep: {
+            why: "الدواير مشكلة حقيقية في الشغل: circular imports بتطلّع [[undefined]] في أماكن غريبة، و deadlock في الداتابيز هو دايرة «مين مستني مين»، والـ migration أو الـ build اللي معتمد على نفسه بيعلّق. وفي الانترفيو، Course Schedule في الأساس سؤال «فيه دايرة ولا لأ».",
+            how: R`dry run للـ directed على [[0→1، 1→2، 2→0]]: [[visit(0)]]: حالتها 1. تنزل 1: حالتها 1. تنزل 2: حالتها 1. تنزل 0: حالتها 1 بالفعل، يعني 0 لسه في المسار: دايرة.
+
+الـ diamond [[0→1، 0→2، 1→2]]: [[visit(0)]] تنزل 1، و 1 تنزل 2، و 2 ملهاش حاجة فتبقى 2 (خلصت). نرجع 1 تبقى 2. نرجع 0 وتنزل 2 تاني: حالتها 2، فوّت. مفيش دايرة. لو كنا بنستخدم Set عادية كانت هتقول «2 اتزارت» وتعتبرها دايرة.
+
+الـ undirected على [[0-1، 1-2]]: [[visit(0, -1)]] تنزل 1 وأبوها 0. جيران 1: 0 (الأب، فوّت) و 2. تنزل 2 وأبوها 1. جيران 2: 1 (الأب). مفيش دايرة. ولو ضفت [[2-0]]: جيران 2 فيها 0، و 0 اتزارت ومش الأب، دايرة.
+
+الـ loop الخارجي على كل العقد عشان الـ graph ممكن يبقى أكتر من جزيرة، والدايرة ممكن تبقى في أي واحدة.`,
+            when: "directed (imports، تبعيات، مهام): ٣ حالات أو Kahn. undirected (شبكة، طرق): parent أو union-find (درس «union-find» في نفس المستوى، وبيبقى أسهل لما الـ edges بتيجي واحدة واحدة). ولو محتاج الدايرة نفسها مش مجرد true/false، الـ DFS بالـ path هو اللي بيطلّعها.",
+            mistakes: R`Set واحدة في الـ directed فالـ diamond يبان دايرة. ونسيان الأب في الـ undirected فكل edge يبان دايرة (0 تروح 1، و 1 تشوف 0 «اتزارت»). ولو فيه edges مكررة بين نفس العقدتين (multi-graph)، مقارنة الأب بالقيمة بتفوّت الدايرة الصغيرة دي، والحل تقارن بـ id الـ edge. وإنك تنسى إن DFS الـ recursive على graph فيه مليون عقدة في خط ممكن يعمل stack overflow.`
+          },
+          teach: R`## الفكرة في جملة
+
+الدايرة معناها إنك وانت ماشي في DFS رجعت لعقدة **لسه في المسار اللي انت نازل فيه**. في الـ directed graph بنفرّق بين «العقدة دي في المسار الحالي» (دايرة لو رجعتلها) و «العقدة دي خلصت قبل كده» (مش دايرة، طريق تاني وصلها بس). وفي الـ undirected كل edge بيبان من الناحيتين، فبنتجاهل العقدة اللي جينا منها، وأي عقدة تانية متزارة تبقى دايرة.
+
+كل الأرقام اللي تحت من تشغيل حقيقي على Node 24.19.0 على ويندوز، بعد ما ضفنا [[console.log]] جوه [[visit]] يطبع الحالات مع كل نزول ورجوع، بمسافة على قد العمق.
+
+---
+
+## ١. [[hasCycleDirected]] سطر سطر
+
+~~~js
+function hasCycleDirected(n, edges) {
+  const graph = Array.from({ length: n }, () => []);
+  for (const [u, v] of edges) graph[u].push(v);
+  const state = new Array(n).fill(0);
+  const visit = u => {
+    if (state[u] === 1) return true;
+    if (state[u] === 2) return false;
+    state[u] = 1;
+    for (const v of graph[u]) if (visit(v)) return true;
+    state[u] = 2;
+    return false;
+  };
+  for (let u = 0; u < n; u++) if (visit(u)) return true;
+  return false;
+}
+~~~
+
+- [[graph]]: adjacency list بـ arrays لأن العقد أرقام من 0 لـ n - 1. السهم من u لـ v بس (directed)، فبنضيف ناحية واحدة.
+- [[state]]: حالة كل عقدة: **0** لسه مازرتهاش، **1** أنا جوه المسار بتاعها دلوقتي (نزلت منها ولسه مارجعتش)، **2** خلصت هي وكل اللي تحتها.
+- [[if (state[u] === 1) return true;]]: وصلت لعقدة لسه مفتوحة في المسار، يعني السهم ده بيرجّعني لورا: دايرة.
+- [[if (state[u] === 2) return false;]]: العقدة دي اتفحصت كلها قبل كده ومطلعش منها دايرة. مفيش داعي ننزل تاني.
+- [[state[u] = 1;]]: داخلين المسار.
+- [[for (const v of graph[u]) if (visit(v)) return true;]]: انزل على كل جار، ولو أي واحد لقى دايرة طلّع [[true]] على طول لفوق.
+- [[state[u] = 2;]]: خلصنا كل اللي تحتي من غير دواير، فأنا خارج المسار.
+- الـ loop الأخير بيبدأ [[visit]] من كل عقدة، عشان الـ graph ممكن يبقى أكتر من جزء مش متوصلين. والعقد اللي حالتها 2 بترجع على طول، فمحدش بيتفحص مرتين.
+
+### التتبع: شكل diamond من غير دايرة
+
+[[0→1، 0→2، 1→3، 2→3]]: فيه طريقين من 0 لـ 3، بس مفيش دايرة.
+
+~~~text الناتج (Node 24 على ويندوز)
+outer u=0
+visit(0): state[0]=1  state = [1,0,0,0]
+  visit(1): state[1]=1  state = [1,1,0,0]
+    visit(3): state[3]=1  state = [1,1,0,1]
+    visit(3) finished: state[3]=2  state = [1,1,0,2]
+  visit(1) finished: state[1]=2  state = [1,2,0,2]
+  visit(2): state[2]=1  state = [1,2,1,2]
+    visit(3): state 2 -> done before, false
+  visit(2) finished: state[2]=2  state = [1,2,2,2]
+visit(0) finished: state[0]=2  state = [2,2,2,2]
+outer u=1
+visit(1): state 2 -> done before, false
+outer u=2
+visit(2): state 2 -> done before, false
+outer u=3
+visit(3): state 2 -> done before, false
+false
+~~~
+
+| الخطوة | اللي حصل | state بعدها (0, 1, 2, 3) |
+|---|---|---|
+| 1 | دخلنا 0 | [1, 0, 0, 0] |
+| 2 | دخلنا 1 | [1, 1, 0, 0] |
+| 3 | دخلنا 3، ملهاش أسهم | [1, 1, 0, 1] |
+| 4 | 3 خلصت | [1, 1, 0, 2] |
+| 5 | 1 خلصت | [1, 2, 0, 2] |
+| 6 | دخلنا 2 | [1, 2, 1, 2] |
+| 7 | 2 بتشاور على 3: حالتها **2**، مش دايرة | [1, 2, 1, 2] |
+| 8 | 2 خلصت، و 0 خلصت | [2, 2, 2, 2] |
+
+الخطوة 7 هي سبب الـ ٣ حالات: وصلنا 3 للمرة التانية. لو كنا بنستخدم Set واحدة «اتزارت ولا لأ»، كنا هنقول دايرة. بس 3 حالتها 2 (خلصت)، مش 1 (في المسار)، فده طريق تاني بس.
+
+### التتبع: فيه دايرة
+
+[[0→1، 1→2، 2→3، 3→1]]: الدايرة 1 ثم 2 ثم 3 ثم 1.
+
+~~~text الناتج (Node 24 على ويندوز)
+outer u=0
+visit(0): state[0]=1  state = [1,0,0,0]
+  visit(1): state[1]=1  state = [1,1,0,0]
+    visit(2): state[2]=1  state = [1,1,1,0]
+      visit(3): state[3]=1  state = [1,1,1,1]
+        visit(1): state 1 -> CYCLE
+true
+~~~
+
+| الخطوة | اللي حصل | state |
+|---|---|---|
+| 1 | دخلنا 0 ثم 1 ثم 2 ثم 3 | [1, 1, 1, 1] |
+| 2 | 3 بتشاور على 1: حالتها **1**، يعني لسه في المسار | دايرة |
+
+الـ [[true]] بيطلع من [[visit(1)]] لـ [[visit(3)]] لـ [[visit(2)]] لـ [[visit(1)]] لـ [[visit(0)]] لبرّا، كل واحد بيرجّعه على طول من غير ما يكمّل.
+
+---
+
+## ٢. [[hasCycleUndirected]] سطر سطر
+
+~~~js
+function hasCycleUndirected(n, edges) {
+  const graph = Array.from({ length: n }, () => []);
+  for (const [u, v] of edges) { graph[u].push(v); graph[v].push(u); }
+  const seen = new Array(n).fill(false);
+  const visit = (u, parent) => {
+    seen[u] = true;
+    for (const v of graph[u]) {
+      if (v === parent) continue;
+      if (seen[v] || visit(v, u)) return true;
+    }
+    return false;
+  };
+  for (let u = 0; u < n; u++) if (!seen[u] && visit(u, -1)) return true;
+  return false;
+}
+~~~
+
+- كل edge بيتضاف من الناحيتين.
+- هنا حالتين بس كفاية ([[seen]] true أو false)، بس [[visit]] بتاخد [[parent]]: العقدة اللي جينا منها.
+- [[if (v === parent) continue;]]: الأب دايمًا هيبان في جيراني (لأن الـ edge من الناحيتين)، وده مش دايرة، ده نفس الـ edge اللي نزلنا منه.
+- [[if (seen[v] || visit(v, u)) return true;]]: جار متزار ومش أبويا = طريق تاني ليه = دايرة. ولو مش متزار، انزل عليه وأنا أبوه ([[visit(v, u)]])، ولو لقى دايرة تحت طلّعها.
+- [[visit(u, -1)]]: أول عقدة ملهاش أب، و [[-1]] رقم مش موجود في الـ graph.
+- [[!seen[u] &&]]: ابدأ بس من العقد اللي لسه مااتزارتش (جزء جديد من الـ graph).
+
+### التتبع: خط [[0-1، 1-2، 2-3]]
+
+~~~text الناتج (Node 24 على ويندوز)
+visit(0, parent -1)  neighbors [1]
+  visit(1, parent 0)  neighbors [0,2]
+    0 is parent, skip
+    visit(2, parent 1)  neighbors [1,3]
+      1 is parent, skip
+      visit(3, parent 2)  neighbors [2]
+        2 is parent, skip
+false
+~~~
+
+كل عقدة شافت أبوها بس، وفوّتته. مفيش دايرة.
+
+### التتبع: نفس الخط + [[3-1]]
+
+~~~text الناتج (Node 24 على ويندوز)
+visit(0, parent -1)  neighbors [1]
+  visit(1, parent 0)  neighbors [0,2,3]
+    0 is parent, skip
+    visit(2, parent 1)  neighbors [1,3]
+      1 is parent, skip
+      visit(3, parent 2)  neighbors [2,1]
+        2 is parent, skip
+        1 seen and not parent -> CYCLE
+true
+~~~
+
+| العقدة | أبوها | جيرانها | اللي حصل |
+|---|---|---|---|
+| 0 | -1 | 1 | انزل 1 |
+| 1 | 0 | 0, 2, 3 | 0 أب، انزل 2 |
+| 2 | 1 | 1, 3 | 1 أب، انزل 3 |
+| 3 | 2 | 2, 1 | 2 أب، 1 **متزارة ومش أبويا**: دايرة 1-2-3-1 |
+
+---
+
+## ٣. ناتج المثال
+
+~~~text الناتج (Node 24 على ويندوز)
+true
+false
+false
+true
+~~~
+
+- [[0→1→2→0]]: [[visit(2)]] بتلاقي 0 حالتها 1، دايرة.
+- [[0→1، 0→2، 1→2]]: diamond، 2 بتتقابل مرة تانية وحالتها 2، مش دايرة.
+- [[0-1، 1-2]]: خط.
+- [[0-1، 1-2، 2-0]]: مثلث، 2 بتلاقي 0 متزارة ومش أبوها.
+
+---
+
+## ٤. الـ Big-O وليه
+
+| | القيمة | السبب |
+|---|---|---|
+| الوقت | [[O(V + E)]] | كل عقدة بتتزار مرة (الحالة 2 أو [[seen]] بيمنعوا التكرار)، وكل قائمة جيران بتتقرا مرة |
+| الذاكرة | [[O(V)]] | [[state]] أو [[seen]] بحجم V، والـ call stack ممكن يوصل V في graph شكله خط (الـ graph نفسه [[O(V + E)]]) |
+
+---
+
+## الخلاصة
+
+~~~text
+directed        ٣ حالات: 0 جديدة، 1 في المسار، 2 خلصت
+                قابلت 1 ← دايرة، قابلت 2 ← فوّت (طريق تاني بس)
+                state = 2 بعد ما كل الجيران يخلصوا
+undirected      seen + parent
+                الأب ← فوّت، متزار ومش الأب ← دايرة
+الـ loop برّا    من كل عقدة، عشان الأجزاء اللي مش متوصلة
+الـ Big-O       O(V + E) وقت، O(V) ذاكرة
+~~~`,
+          lines: [
+            "كشف دايرة في directed graph.",
+            "adjacency list.",
+            "السهم في اتجاه واحد بس.",
+            "0 جديدة، 1 في المسار الحالي، 2 خلصت.",
+            "visit بترجّع true لو لقت دايرة.",
+            "رجعت لعقدة لسه في المسار: دايرة.",
+            "اتفحصت قبل كده ومفيش منها دايرة.",
+            "أنا دلوقتي في المسار.",
+            "انزل على كل جار، ولو أي واحد لقى دايرة ارجع true.",
+            "خلصت كل اللي تحتي من غير دواير.",
+            "مفيش دايرة من هنا.",
+            "قفلة visit.",
+            "ابدأ من كل عقدة (العقد اللي خلصت بترجع على طول).",
+            "مفيش دواير.",
+            "قفلة.",
+            "كشف دايرة في undirected graph.",
+            "adjacency list.",
+            "كل edge من الناحيتين.",
+            "اللي اتزار.",
+            "visit بتعرف هي جاية منين.",
+            "علّم.",
+            "لكل جار.",
+            "ده اللي جيت منه، مش دايرة.",
+            "جار اتزار ومش أبويا، أو دايرة تحت: دايرة.",
+            "قفلة الـ for.",
+            "مفيش.",
+            "قفلة visit.",
+            "كل جزيرة لوحدها.",
+            "مفيش دواير.",
+            "قفلة.",
+            "0 ثم 1 ثم 2 ثم 0: دايرة.",
+            "diamond: طريقين لـ 2، مش دايرة.",
+            "خط: مفيش دايرة.",
+            "مثلث: دايرة."
+          ],
+          check: {
+            lang: "js",
+            starter: R`function findCycle(imports) {
+  const state = new Map(); // 0 مزارش، 1 في المسار الحالي، 2 خلص
+  const path = [];
+  // لما تقابل ملف حالته 1: path.slice(path.indexOf(file)) وضيف الملف في الآخر
+  return null;
+}`,
+            tests: R`const isCycle = (g, c) => Array.isArray(c) && c.length >= 2 && c[0] === c.at(-1) && new Set(c.slice(0, -1)).size === c.length - 1 && c.slice(0, -1).every((f, i) => (g[f] || []).includes(c[i + 1]));
+const g = { "a.js": ["b.js"], "b.js": ["c.js"], "c.js": ["a.js"], "d.js": ["a.js"] };
+test("a.js → b.js → c.js → a.js", () => {
+  const c = findCycle(g);
+  expect([isCycle(g, c), c && [...c.slice(0, -1)].sort()]).toEqual([true, ["a.js", "b.js", "c.js"]]);
+});
+test("d.js مش جزء من الدايرة حتى لو الـ DFS بدأ منها", () => {
+  const g2 = { "d.js": ["a.js"], "a.js": ["b.js"], "b.js": ["a.js"] };
+  const c = findCycle(g2);
+  expect([isCycle(g2, c), c.includes("d.js")]).toEqual([true, false]);
+});
+test("من غير دايرة ← null", () => expect(findCycle({ "a.js": ["b.js"], "b.js": ["c.js"], "d.js": ["a.js"] })).toBe(null));
+test("ملف بيعمل import لنفسه ← ['a.js', 'a.js']", () => expect(findCycle({ "a.js": ["a.js"] })).toEqual(["a.js", "a.js"]));
+test("import لحاجة مش ملف في المشروع (lodash) ← null من غير ما يقع", () => expect(findCycle({ "a.js": ["lodash"] })).toBe(null));
+test("شكل الماسة من غير دايرة (حالة 2 مش 1) ← null", () => expect(findCycle({ a: ["b", "c"], b: ["d"], c: ["d"], d: [] })).toBe(null));`,
+            solution: R`function findCycle(imports) {
+  const state = new Map();
+  const path = [];
+  const visit = f => {
+    const s = state.get(f) || 0;
+    if (s === 1) return [...path.slice(path.indexOf(f)), f];
+    if (s === 2) return null;
+    state.set(f, 1);
+    path.push(f);
+    for (const next of imports[f] || []) {
+      const c = visit(next);
+      if (c) return c;
+    }
+    path.pop();
+    state.set(f, 2);
+    return null;
+  };
+  for (const f of Object.keys(imports)) {
+    const c = visit(f);
+    if (c) return c;
+  }
+  return null;
+}`
+          }
         }
       ]
     }

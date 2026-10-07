@@ -1,153 +1,152 @@
 // تكملة تاب dsa: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/dsa/01.js (شرح حقول الدرس في أوله)
 MORE("dsa", [
     {
-      t: "stacks و queues",
-      l: 2,
-      n: "آخر واحد دخل أول واحد يطلع (stack)، وأول واحد دخل أول واحد يطلع (queue)",
+      t: "recursion و prefix sums",
+      l: 1,
+      n: "دالة بتنادي نفسها على مسألة أصغر، وتجهيز مرة واحدة يوفّر loops كتير بعدين",
       items: [
         {
-          cmd: "stack (matching brackets)",
-          title: "الأقواس دي متقفلة صح وبالترتيب؟ زي ({[]})",
-          desc: R`كل قوس بيفتح حطه في stack. كل قوس بيقفل لازم يطابق آخر واحد اتفتح (اللي فوق الـ stack)، فاعمله pop وقارن. في الآخر الـ stack لازم يبقى فاضي. [[O(n)]].
+          cmd: "recursion (base case)",
+          title: "احسب n! بدالة بتنادي نفسها",
+          desc: R`recursion يعني دالة بتحل المسألة بإنها تنادي نفسها على نسخة أصغر منها، لحد ما توصل لحالة صغيرة إجابتها معروفة (الـ base case). [[factorial(5) = 5 × factorial(4)]]، ولحد [[factorial(1) = 1]].
 
-ليه stack؟ لأن آخر قوس اتفتح هو أول واحد لازم يتقفل. ده بالظبط LIFO (Last In, First Out).
+أي دالة recursive محتاجة حاجتين: base case بيوقّف، وكل نداء بيقرّب منه. لو نسيت الأولى، أو الخطوة مش بتقرّب، الدالة هتنادي نفسها لحد ما الـ stack يتملي.
 
-وفي JS الـ array هي الـ stack: [[push]] و [[pop]] و [[at(-1)]] للي فوق، كلهم [[O(1)]].`,
-          example: R`function isValid(s) {
-  const pairs = { ")": "(", "]": "[", "}": "{" };
-  const stack = [];
-  for (const ch of s) {
-    if (ch === "(" || ch === "[" || ch === "{") stack.push(ch);
-    else if (ch in pairs) {
-      if (stack.pop() !== pairs[ch]) return false;
-    }
-  }
-  return stack.length === 0;
+الـ Big-O هنا: n نداء، كل واحد شغله [[O(1)]]، يعني [[O(n)]] وقت، و [[O(n)]] ذاكرة للـ call stack.`,
+          example: R`function factorial(n) {
+  if (n <= 1) return 1;
+  return n * factorial(n - 1);
 }
-console.log(isValid("({[]})")); // true
-console.log(isValid("([)]"));   // false
-console.log(isValid("(("));     // false
-console.log(isValid("))"));     // false
-// O(n) time, O(n) space`,
-          try: R`عدّلها ترجّع index أول قوس غلط (أو -1). وبعدين حل: أقل عدد أقواس تضيفها عشان [[())(]] تبقى سليمة (الإجابة 2). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[firstBadIndex(s)]] بترجّع مكان أول قوس غلط أو -1، و [[minAddToMakeValid(s)]].`,
+function sumDigits(n) {
+  if (n < 10) return n;
+  return (n % 10) + sumDigits(Math.floor(n / 10));
+}
+console.log(factorial(5));    // 120
+console.log(factorial(0));    // 1
+console.log(sumDigits(9045)); // 18
+console.log(factorial(171));  // Infinity
+// factorial: O(n) time, O(n) call stack; sumDigits: O(number of digits)`,
+          try: R`اكتب [[power(x, n)]] بـ recursion بطريقتين: [[x * power(x, n - 1)]]، و «لو n زوجي، احسب [[power(x, n / 2)]] مرة واحدة وربّعها». عدّ النداءات في الاتنين لـ n = 1024، وقول الـ Big-O لكل واحدة. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[powerFast]] بالنسخة اللي بتقسم n على ٢.`,
           flag: "script",
           deep: {
-            why: "الـ stack هو الـ data structure اللي ورا حاجات بتستخدمها كل يوم: الـ call stack نفسه، و undo في أي editor، وزرار back في المتصفح، والـ parser اللي بيقرا JSON و HTML ويتأكد إن كل حاجة اتقفلت. والمسألة دي أبسط مثال عليه، وبتتسأل كتير.",
-            how: R`dry run على ({[]}):
+            why: "recursion هي الطريقة الطبيعية لأي حاجة شكلها «جواها نسخة أصغر منها»: شجرة (كل فرع شجرة)، وفولدرات جوه فولدرات، و JSON متداخل، وكومنتات عليها ردود عليها ردود. ومن غيرها trees و backtracking و DP هيبقوا صعبين جدًا.",
+            how: R`طريقة التفكير (مش التتبّع): افترض إن الدالة شغالة صح للمسألة الأصغر، وركّز بس على سؤال واحد: إزاي أبني الإجابة من إجابة الأصغر؟ ده اسمه leap of faith.
 
-( يفتح: الـ stack فيه (. و { يفتح: فيه ( و {. و [ يفتح: فيه ( و { و [.
+[[factorial(n)]]: لو [[factorial(n - 1)]] صح، يبقى الإجابة n × الناتج. خلاص.
 
-] يقفل: pop بيطلّع [، وبيطابق. فاضل ( و {.
+وبعدين الـ base case: أصغر مسألة ممكنة وإجابتها من غير نداء. هنا n ≤ 1.
 
-} يقفل: pop بيطلّع {، بيطابق. ) يقفل: pop بيطلّع (، بيطابق. الـ stack فاضي: true.
+التتبّع لـ [[factorial(4)]]: بتستنى [[factorial(3)]]، اللي بتستنى [[factorial(2)]]، اللي بتستنى [[factorial(1)]] اللي بترجّع 1 على طول. بعدين النتايج بتطلع لفوق: 2 × 1 = 2، و 3 × 2 = 6، و 4 × 6 = 24. النداءات بتنزل لحد الـ base case، والنتايج بتطلع. ده بالظبط اللي بيحصل في الـ call stack (الدرس الجاي).
 
-على ([)]: ( و [ اتحطوا. جت ): pop بيطلّع [ ومش بيطابق (: false على طول.
-
-ليه الـ object من القفل للفتح مش العكس؟ لأن لما ييجي قوس قفل محتاج تعرف «المفروض يبقى فوق إيه»، فالقفل هو المفتاح.
-
-و [[ch in pairs]] بتسأل: الحرف ده مفتاح في الـ object؟ يعني قوس قفل. أي حرف تاني (حروف أو أرقام) بيتجاهل.`,
-            when: "أقواس وتاجز، وأي «آخر حاجة اتفتحت لازم تتقفل الأول». وكمان حساب expression زي 3 + (4 × 2)، و undo/redo، و DFS من غير recursion.",
-            mistakes: R`إنك تعدّ الأقواس بس (عدد الفتح = عدد القفل): ([)] عدّها سليم وهي غلط. وإنك تنسى الـ check الأخير إن الـ stack فاضي ((( هترجع true). وإنك تعتمد على إن [[pop()]] على stack فاضي بترجّع undefined بهدوء: هنا ده شغال لصالحنا، بس في كود تاني ممكن يخبّي bug، فاعمل check صريح لو المعنى مهم.`
+و [[n <= 1]] أأمن من [[n === 1]]: الأولى بتغطي 0، والتانية مع [[factorial(0)]] هتنزل -1 و -2 ومش هتقف.`,
+            when: "trees و graphs (DFS)، و divide and conquer (merge sort)، و backtracking، وأي بيانات متداخلة. وتجنّبها لو العمق ممكن يوصل آلاف (شوف الدرس الجاي).",
+            mistakes: R`base case ناقص أو مش بيتوصله ([[n === 1]] مع n = 0، أو رقم عشري زي 2.5). ونسيان [[return]] قبل النداء: الدالة هترجّع undefined. وإنك تفتكر إن الأرقام مالهاش حد: بعد 18! الناتج بيعدّي [[Number.MAX_SAFE_INTEGER]]، يعني مفيش ضمان إنه مضبوط، ومحتاج [[BigInt]] (اكتب [[1n]] بدل 1).`
           },
           teach: R`## الفكرة في جملة
 
-امشي على الـ string حرف حرف. كل قوس بيفتح حطه فوق الـ stack. كل قوس بيقفل لازم يقابل **آخر** قوس اتفتح، يعني اللي فوق الـ stack: شيله وقارن. لو مطابقش، غلط على طول. ولو خلصت والـ stack فيه حاجة، فيه قوس اتفتح وماتقفلش.
+**recursion** يعني دالة بتنادي نفسها على نسخة أصغر من نفس المسألة. 4! = 4 × 3!، و 3! = 3 × 2!، وهكذا لحد ما نوصل لمسألة صغيرة إجابتها معروفة من غير حساب: ده الـ **base case** (1! = 1). من غيره الدالة مش هتقف.
 
-كل الأرقام اللي تحت من تشغيل حقيقي على Node 24.19.0 على ويندوز، بعد ما ضفنا [[console.log]] جوه الـ loop يطبع الحالة.
+كل الأرقام اللي تحت من تشغيل حقيقي على Node 24.19.0 على ويندوز، بعد ما ضفنا [[console.log]] في أول كل نداء وفي آخره، بمسافة على قد عمق النداء.
 
 ---
 
-## ١. الكود سطر سطر
+## ١. [[factorial]] سطر سطر
 
 ~~~js
-function isValid(s) {
-  const pairs = { ")": "(", "]": "[", "}": "{" };
-  const stack = [];
-  for (const ch of s) {
-    if (ch === "(" || ch === "[" || ch === "{") stack.push(ch);
-    else if (ch in pairs) {
-      if (stack.pop() !== pairs[ch]) return false;
-    }
-  }
-  return stack.length === 0;
+function factorial(n) {
+  if (n <= 1) return 1;
+  return n * factorial(n - 1);
 }
 ~~~
 
-### [[const pairs = { ")": "(", "]": "[", "}": "{" };]]
+**factorial** (المضروب، ويتكتب n!) = حاصل ضرب كل الأرقام من 1 لـ n. يعني 4! = 4 × 3 × 2 × 1 = 24.
 
-object (جدول مفتاح وقيمة). المفتاح قوس **القفل**، والقيمة قوس **الفتح** بتاعه. ليه بالاتجاه ده؟ لأن السؤال اللي هنسأله دايمًا بييجي لما نقابل قوس قفل: «القوس ده المفروض يقفل مين؟». فـ [[pairs["]"]]] بترجّع [["["]].
+### [[if (n <= 1) return 1;]]
 
-### [[const stack = [];]]
+الـ base case. 1! = 1، و 0! = 1 بالتعريف. ليه [[<=]] مش [[===]]؟ لو كتبت [[n === 1]] ونادينا [[factorial(0)]]، الشرط مش هيتحقق أبدًا: هتنزل -1 و -2 ومش هتقف لحد ما البرنامج يقع.
 
-array فاضية هنستخدمها كـ stack. الـ stack (كومة أطباق) ليه عمليتين بس: [[push]] تحط فوق، و [[pop]] تشيل اللي فوق وترجّعه. ده اسمه LIFO = Last In, First Out: آخر واحد دخل أول واحد يطلع. الاتنين [[O(1)]] لأنهم بيشتغلوا على آخر الـ array بس.
+### [[return n * factorial(n - 1);]]
 
-### [[for (const ch of s)]]
-
-[[for...of]] بتمشي على الـ string حرف حرف، و [[ch]] (اختصار character) هو الحرف الحالي.
-
-### [[if (ch === "(" || ch === "[" || ch === "{") stack.push(ch);]]
-
-[[||]] معناها «أو». لو الحرف قوس بيفتح من أي نوع، حطه فوق الـ stack. لسه مش عارفين مين هيقفله، فبنستنى.
-
-### [[else if (ch in pairs)]]
-
-[[in]] بتسأل: الحرف ده **مفتاح** في الـ object؟ جرّبناها: [[")" in pairs]] طلعت [[true]]، و [["a" in pairs]] طلعت [[false]]. يعني الفرع ده للأقواس اللي بتقفل بس، وأي حرف تاني (حرف أو رقم) مبيدخلش أي فرع، فبيتجاهل.
-
-### [[if (stack.pop() !== pairs[ch]) return false;]]
-
-ده قلب الحل، ويتقرا من جوه لبرة:
-
-1. [[stack.pop()]]: شيل آخر قوس اتفتح.
-2. [[pairs[ch]]]: القوس اللي المفروض يكون اتفتح.
-3. [[!==]]: لو مختلفين، الترتيب غلط: [[return false]] ونخرج من الدالة كلها على طول.
-
-ولو الـ stack فاضي؟ [[[].pop()]] بترجّع [[undefined]] (جرّبناها)، و [[undefined]] عمره ما هيساوي قوس، فبترجع [[false]] صح.
-
-### [[return stack.length === 0;]]
-
-خلصنا الحروف. لو الـ stack فاضي، كل قوس اتفتح اتقفل: [[true]]. لو فيه حاجة، فيه أقواس فاضلة مفتوحة: [[false]].
+هنا السر: افترض إن [[factorial(n - 1)]] بترجّع الإجابة الصح للمسألة الأصغر (ده اسمه **leap of faith**). يبقى إجابتك n × الناتج ده. وكل نداء n بيقل واحد، فأكيد هنوصل لـ 1.
 
 ---
 
-## ٢. التتبع على [["{[]()}"]] (سليمة)
+## ٢. التتبع: [[factorial(4)]]
 
-| الحرف | العملية | اللي طلع من pop | المفروض | الـ stack بعدها |
-|---|---|---|---|---|
-| { | push | | | [ { ] |
-| [ | push | | | [ {, [ ] |
-| ] | pop | [ | [ | [ { ] |
-| ( | push | | | [ {, ( ] |
-| ) | pop | ( | ( | [ { ] |
-| } | pop | { | { | [ ] |
-| النهاية | | | | فاضي: [[true]] |
+كل نداء بيستنى النداء اللي جواه يخلص الأول. المسافة على الشمال = العمق:
 
-لاحظ إن الـ stack مكبرش عن عنصرين: الـ [ اتقفلت قبل ما الـ ( تيجي.
+~~~text الناتج (Node 24 على ويندوز)
+call factorial(4)
+  call factorial(3)
+    call factorial(2)
+      call factorial(1)
+      base -> 1
+    factorial(2) = 2 * 1 = 2
+  factorial(3) = 3 * 2 = 6
+factorial(4) = 4 * 6 = 24
+~~~
 
-## ٣. التتبع على [["a(]"]] (غلط)
+نفس الكلام في جدول، بترتيب اللي حصل:
 
-| الحرف | العملية | اللي طلع | المفروض | النتيجة |
-|---|---|---|---|---|
-| a | مش قوس، اتجاهل | | | [ ] |
-| ( | push | | | [ ( ] |
-| ] | pop | ( | [ | مختلفين: [[false]] |
+| الخطوة | النداء | بيستنى | بيرجّع |
+|---|---|---|---|
+| 1 | factorial(4) | factorial(3) | |
+| 2 | factorial(3) | factorial(2) | |
+| 3 | factorial(2) | factorial(1) | |
+| 4 | factorial(1) | ولا حاجة (base case) | 1 |
+| 5 | factorial(2) | | 2 × 1 = 2 |
+| 6 | factorial(3) | | 3 × 2 = 6 |
+| 7 | factorial(4) | | 4 × 6 = 24 |
 
-وعلى [["]"]] لوحدها: الـ pop طلّع [[undefined]] والمفروض [ ، فـ [[false]].
+النداءات **بتنزل** لحد الـ base case، والنتايج **بتطلع** لفوق. أقصى عمق وصلناه 4 نداءات مفتوحين في نفس الوقت.
+
+---
+
+## ٣. [[sumDigits]] سطر سطر
+
+~~~js
+function sumDigits(n) {
+  if (n < 10) return n;
+  return (n % 10) + sumDigits(Math.floor(n / 10));
+}
+~~~
+
+- [[n < 10]]: رقم من خانة واحدة، مجموع أرقامه هو نفسه. ده الـ base case.
+- [[n % 10]]: [[%]] باقي القسمة. باقي قسمة أي عدد على 10 هو آخر رقم فيه: [[372 % 10]] = 2.
+- [[Math.floor(n / 10)]]: [[372 / 10]] = 37.2، و [[Math.floor]] بتقرّب لتحت فتبقى 37. يعني شلنا آخر رقم.
+- فالقاعدة: مجموع أرقام 372 = آخر رقم (2) + مجموع أرقام الباقي (37).
+
+### التتبع: [[sumDigits(372)]]
+
+~~~text الناتج (Node 24 على ويندوز)
+call sumDigits(372) n%10=2 floor(n/10)=37
+  call sumDigits(37) n%10=7 floor(n/10)=3
+    call sumDigits(3) n%10=3 floor(n/10)=0
+    base -> 3
+  sumDigits(37) = 10
+sumDigits(372) = 12
+~~~
+
+| النداء | n % 10 | الباقي | بيرجّع |
+|---|---|---|---|
+| sumDigits(3) | | | 3 (base case) |
+| sumDigits(37) | 7 | 3 | 7 + 3 = 10 |
+| sumDigits(372) | 2 | 37 | 2 + 10 = 12 |
 
 ---
 
 ## ٤. الناتج الكامل للمثال
 
 ~~~text الناتج (Node 24 على ويندوز)
-true
-false
-false
-false
+120
+1
+18
+Infinity
 ~~~
 
-- [["({[]})"]]: متداخلين صح، [[true]].
-- [["([)]"]]: الـ ) جت والـ [ هي اللي فوق، [[false]] عند الحرف التالت.
-- [["(("]]: مفيش ولا قفلة، الـ loop خلص والـ stack فيه اتنين، [[false]] من السطر الأخير.
-- [["))"]]: أول قفلة لقت الـ stack فاضي، [[false]].
+- [[factorial(5)]] = 120، و [[factorial(0)]] = 1 لأن الـ base case [[<= 1]] غطّاه، و [[sumDigits(9045)]] = 9 + 0 + 4 + 5 = 18.
+- [[factorial(171)]] = [[Infinity]]: أكبر رقم JS تقدر تخزّنه ([[Number.MAX_VALUE]]) حوالي 1.8 × 10^308. شغّلنا [[factorial(170)]] وطلعت حوالي 7.26 × 10^306، ولما تضرب في 171 بتعدّي الحد.
+- وقبلها بكتير الدقة بتضيع: [[factorial(18)]] = 6402373705728000 لسه أقل من [[Number.MAX_SAFE_INTEGER]] (9007199254740991)، بس [[factorial(19)]] أكبر منه، فمفيش ضمان إن كل رقم فيه مضبوط. للأرقام الكبيرة استخدم [[BigInt]].
 
 ---
 
@@ -155,1778 +154,680 @@ false
 
 | | القيمة | السبب |
 |---|---|---|
-| الوقت | [[O(n)]] | كل حرف بيتلمس مرة، وكل عملية عليه ([[push]] أو [[pop]] أو [[in]]) [[O(1)]] |
-| الذاكرة | [[O(n)]] | أسوأ حالة كل الحروف فتح زي [["(((("]]، فالـ stack بيشيلهم كلهم |
+| وقت factorial | [[O(n)]] | n نداء، وكل نداء ضربة واحدة ومقارنة |
+| ذاكرة factorial | [[O(n)]] | n نداء مفتوحين في نفس الوقت، كل واحد واخد مكان في الـ call stack (الدرس الجاي) |
+| sumDigits | [[O(d)]] | d = عدد أرقام n، لأن كل نداء بيشيل رقم. يعني [[O(log n)]] بالنسبة لـ n نفسه |
 
 ---
 
 ## الخلاصة
 
 ~~~text
-pairs     قفل ← فتح، عشان السؤال بييجي عند القفل
-فتح       push
-قفل       pop وقارن بـ pairs[ch]، ولو مختلف false على طول
-آخر سطر   الـ stack لازم يبقى فاضي
+base case      أصغر مسألة، إجابتها من غير نداء (n <= 1)
+الخطوة          نادي نفسك على مسألة أصغر، وابني الإجابة من نتيجتها
+لازم            كل نداء يقرّب من الـ base case
+التنفيذ         النداءات بتنزل، والنتايج بتطلع
+الـ Big-O       factorial: O(n) وقت و O(n) stack
 ~~~
 
-> أي مسألة فيها «آخر حاجة اتفتحت لازم تتقفل الأول» هي stack. عدّ الأقواس لوحده مش كفاية: [["([)]"]] عددها سليم وترتيبها غلط.`,
+> قبل ما تكتب أي دالة recursive اسأل سؤالين: إيه أصغر مسألة؟ وإزاي أبني إجابة n من إجابة الأصغر؟`,
           lines: [
-            "true لو كل الأقواس متقفلة صح.",
-            "كل قوس قفل ← القوس اللي بيفتحه.",
-            "الـ stack: الأقواس المفتوحة اللي لسه متقفلتش.",
-            "حرف حرف.",
-            "قوس بيفتح: حطه فوق.",
-            "قوس بيقفل...",
-            "...لازم اللي فوق يبقى نفس النوع. [[pop]] على stack فاضي بترجّع undefined، فبيفشل صح.",
+            "n! = n × (n-1) × ... × 1.",
+            "الـ base case: 0! و 1! بـ 1. من غيره الدالة مش هتقف.",
+            "المسألة الأكبر = n × نفس المسألة على n - 1.",
             "قفلة.",
+            "مثال تاني: مجموع أرقام عدد.",
+            "رقم واحد: مجموعه هو نفسه.",
+            "آخر رقم ([[n % 10]]) + مجموع أرقام الباقي من غير آخر رقم.",
             "قفلة.",
-            "لو فاضل حاجة مفتوحة، يبقى غلط.",
-            "قفلة.",
-            "متداخلين صح.",
-            "الـ ) جت والـ [ لسه مفتوح فوقها.",
-            "فتح من غير قفل.",
-            "قفل من غير فتح."
+            "5 × 4 × 3 × 2 × 1.",
+            "0! = 1 بالتعريف، والـ base case غطّاه.",
+            "9 + 0 + 4 + 5.",
+            "171! أكبر من أكبر رقم JS تقدر تخزّنه، فبيطلع Infinity."
           ],
-          sol: R`index أول قوس غلط: خزّن الـ indexes في الـ stack بدل الحروف. لو قفلة ملهاش فتحة أو مش مناسبة، رجّع مكانها. ولو الـ loop خلص والـ stack فيه حاجة، رجّع [[stack[0]]] (أول فتحة ماتقفلتش). النتايج: [[-1]] لـ ({[]})، و 2 لـ ([)]، و 0 لـ ((.
+          sol: R`النسخة الأولى [[x * power(x, n - 1)]] بتعمل 1025 نداء لـ n = 1024 (من 1024 لحد 0)، فهي [[O(n)]] time و [[O(n)]] stack. النسخة التانية بتعمل 12 نداء بس: n بتتقسم نصين كل مرة (1024، 512، ... 1، 0)، فهي [[O(log n)]].
 
-أقل إضافة: مع نوع واحد من الأقواس مش محتاج stack، عداد كفاية. [[open]] بيزيد مع كل فتحة وبيقل مع كل قفلة، ولو جت قفلة و [[open]] صفر زوّد [[add]]. الإجابة [[add + open]]، و ())( تطلع 2. [[O(n)]] time و [[O(1)]] space.
+المهم في التانية إنك تحسب [[power(x, n / 2)]] مرة واحدة في متغير وتضربه في نفسه. ولو n فردي: [[x * power(x, n - 1)]] (وده يرجّعها زوجي في الخطوة الجاية).
 
-الغلطة المشهورة: تكتفي بـ [[open]] وتخليه ينزل تحت الصفر. كده ( و ) بيلغوا بعض حتى لو القفلة جت قبل الفتحة، فـ ")(" تطلع 0 وهي محتاجة 2.`,
-          solCode: R`function firstBadIndex(s) {
-  const pairs = { ")": "(", "]": "[", "}": "{" };
-  const stack = [];
-  for (let i = 0; i < s.length; i++) {
-    const ch = s[i];
-    if (ch === "(" || ch === "[" || ch === "{") stack.push(i);
-    else if (ch in pairs) {
-      if (!stack.length || s[stack.pop()] !== pairs[ch]) return i;
-    }
-  }
-  return stack.length ? stack[0] : -1;
+الغلطة المشهورة: تكتب [[power(x, n / 2) * power(x, n / 2)]]. شكلها صح، بس كل نداء بيعمل اتنين، فعدد النداءات بيرجع قريب من n، والـ [[O(log n)]] تضيع.`,
+          solCode: R`let calls = 0;
+function powerSlow(x, n) {
+  calls++;
+  if (n === 0) return 1;
+  return x * powerSlow(x, n - 1);
 }
-console.log(firstBadIndex("({[]})")); // -1
-console.log(firstBadIndex("([)]"));   // 2
-console.log(firstBadIndex("(("));     // 0  (never closed)
-console.log(firstBadIndex("a)"));     // 1
-function minAddToMakeValid(s) {
-  let open = 0, add = 0;
-  for (const ch of s) {
-    if (ch === "(") open++;
-    else if (open > 0) open--;
-    else add++;
-  }
-  return add + open;
+function powerFast(x, n) {
+  calls++;
+  if (n === 0) return 1;
+  if (n % 2 === 1) return x * powerFast(x, n - 1);
+  const half = powerFast(x, n / 2);
+  return half * half;
 }
-console.log(minAddToMakeValid("())("));  // 2
-console.log(minAddToMakeValid("((("));   // 3
-console.log(minAddToMakeValid("()"));    // 0
-// firstBadIndex: O(n) time, O(n) space; minAdd: O(n) time, O(1) space (one kind of bracket needs only a counter)`,
+console.log(powerSlow(2, 10), powerFast(2, 10)); // 1024 1024
+calls = 0; powerSlow(2, 1024); console.log("slow calls:", calls); // slow calls: 1025
+calls = 0; powerFast(2, 1024); console.log("fast calls:", calls); // fast calls: 12
+// powerSlow: O(n) time and O(n) stack; powerFast: O(log n) time and O(log n) stack`,
           check: {
             lang: "js",
-            starter: R`function firstBadIndex(s) {
-  const pairs = { ")": "(", "]": "[", "}": "{" };
-  const stack = []; // خزّن الـ indexes مش الحروف
-  return -1;
-}
-function minAddToMakeValid(s) {
-  let open = 0, add = 0;
-  // ...
-  return add + open;
+            starter: R`function powerFast(x, n) {
+  // base case الأول: n === 0
+  // لو n زوجي: احسب powerFast(x, n / 2) مرة واحدة في متغير وربّعه
 }`,
-            tests: R`test("'({[]})' ← -1", () => expect(firstBadIndex("({[]})")).toBe(-1));
-test("'([)]' ← 2 (القفلة مش مناسبة)", () => expect(firstBadIndex("([)]")).toBe(2));
-test("'((' ← 0 (أول فتحة ماتقفلتش)", () => expect(firstBadIndex("((")).toBe(0));
-test("'())' ← 2 و ')(' ← 0", () => expect([firstBadIndex("())"), firstBadIndex(")(")]).toEqual([2, 0]));
-test("أي حرف تاني بيتجاهل: 'a(b)c' ← -1", () => expect(firstBadIndex("a(b)c")).toBe(-1));
-test("minAddToMakeValid('())(') ← 2", () => expect(minAddToMakeValid("())(")).toBe(2));
-test("')(' ← 2 مش 0: open مينزلش تحت الصفر", () => expect(minAddToMakeValid(")(")).toBe(2));
-test("'' ← 0 و '(((' ← 3", () => expect([minAddToMakeValid(""), minAddToMakeValid("(((")]).toEqual([0, 3]));`,
-            solution: R`function firstBadIndex(s) {
-  const pairs = { ")": "(", "]": "[", "}": "{" };
-  const stack = [];
-  for (let i = 0; i < s.length; i++) {
-    const ch = s[i];
-    if (ch === "(" || ch === "[" || ch === "{") stack.push(i);
-    else if (ch in pairs) {
-      if (!stack.length || s[stack.at(-1)] !== pairs[ch]) return i;
-      stack.pop();
-    }
-  }
-  return stack.length ? stack[0] : -1;
-}
-function minAddToMakeValid(s) {
-  let open = 0, add = 0;
-  for (const ch of s) {
-    if (ch === "(") open++;
-    else if (ch === ")") {
-      if (open > 0) open--;
-      else add++;
-    }
-  }
-  return add + open;
-}`
-          }
-        },
-        {
-          cmd: "min stack",
-          title: "stack بيرجّع أصغر رقم فيه في أي لحظة في O(1)",
-          desc: R`جنب الـ stack الأساسي، stack تاني [[mins]] كل خانة فيه = أصغر رقم من أول الـ stack لحد الخانة دي. مع كل push تحط الأصغر بين الجديد وآخر خانة في [[mins]]، ومع كل pop تشيل من الاتنين. [[getMin]] = اللي فوق [[mins]]. كل العمليات [[O(1)]].
-
-الحل البديهي تدوّر على الأصغر بـ loop مع كل [[getMin]]: [[O(n)]]. أو تخزّن الأصغر في متغير واحد، بس لما تعمل pop للأصغر نفسه، مش هتعرف مين اللي بعده.
-
-الـ stack التاني بيحفظ «التاريخ»: لكل ارتفاع للـ stack، الأصغر كان مين.`,
-          example: R`class MinStack {
-  constructor() { this.items = []; this.mins = []; }
-  push(x) {
-    this.items.push(x);
-    this.mins.push(this.mins.length ? Math.min(x, this.mins.at(-1)) : x);
-  }
-  pop() { this.mins.pop(); return this.items.pop(); }
-  getMin() { return this.mins.at(-1); }
-}
-const st = new MinStack();
-st.push(5); st.push(2); st.push(7); st.push(1);
-console.log(st.getMin());           // 1
-console.log(st.pop(), st.getMin()); // 1 2
-console.log(st.pop(), st.getMin()); // 7 2
-// push, pop and getMin are all O(1) time; O(n) extra space for mins`,
-          try: R`ضيف [[top()]] و [[size]]. وبعدين حل النسخة الموفّرة: خزّن في mins بس لما الجديد ≤ الأصغر الحالي، وفي pop شيل من mins بس لو العنصر اللي خارج = الأصغر. ليه لازم ≤ مش <؟ (جرّب push 2 و push 2 و pop). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[top()]] و [[size]] والنسخة الموفّرة (بتبص على [[mins]]).`,
-          flag: "script",
-          deep: {
-            why: "سؤال بيختبر إزاي تصمّم data structure بعمليات O(1) بإنك تدفع ذاكرة. ونفس الفكرة («خزّن معلومة زيادة مع كل عنصر») بتتكرر كتير: max stack، و undo بحالة كاملة، وقوايم بتحفظ المجموع لحد كل عنصر.",
-            how: R`dry run: push 5 و 2 و 7 و 1:
-
-push 5: items [5]، و mins [5]. push 2: items [5, 2]، و mins [5, 2]. push 7: الأصغر بين 7 و 2 هو 2، و mins [5, 2, 2]. push 1: mins [5, 2, 2, 1].
-
-getMin: آخر خانة = 1.
-
-pop: شلنا 1 من items و 1 من mins. دلوقتي آخر خانة في mins = 2، وده فعلًا أصغر رقم في [5, 2, 7].
-
-pop تاني: شلنا 7 من items و 2 (الخانة التالتة) من mins. آخر خانة 2، وده الأصغر في [5, 2].
-
-الخانة i في mins بتجاوب «لو الـ stack ارتفاعه i + 1، الأصغر مين؟». وبما إن الـ stack بيتغير من فوق بس، الإجابة دي عمرها ما بتتغير لما تضيف أو تشيل فوقها.
-
-الذاكرة [[O(n)]] زيادة. النسخة الموفّرة بتخزّن في mins بس لما الأصغر يتغير، بس أسوأ حالة (أرقام نازلة) برضه [[O(n)]].`,
-            when: "أي data structure مطلوب منها «الأصغر أو الأكبر لحد دلوقتي» مع إضافة وحذف من ناحية واحدة. وفي الانترفيو: أي «صمّم class عملياته O(1)».",
-            mistakes: R`إنك تخزّن الأصغر في متغير واحد وتنسى إنه لما يتشال مش هتعرف اللي بعده. وفي النسخة الموفّرة إنك تستخدم [[<]] بدل [[<=]]: لو الأصغر اتضاف مرتين وشلت واحدة، هتشيله من mins وهو لسه موجود. وإنك تنسى تعمل pop من mins مع كل pop. و [[getMin]] على stack فاضي: اتفق مع الانترفيوير هترجّع إيه (undefined أو error).`
-          },
-          teach: R`## الفكرة في جملة
-
-مع كل عنصر بتحطه في الـ stack، احفظ جنبه «أصغر رقم في الـ stack لحد هنا». كده [[getMin]] مجرد قراية لآخر خانة، مهما كان فيه عناصر. والسبب إن الـ stack بيتغيّر من فوق بس: الخانات اللي تحت عمرها ما بتتغيّر، فالأصغر اللي اتحفظ جنبها بيفضل صح.
-
-كل الأرقام اللي تحت من تشغيل حقيقي على Node 24.19.0 على ويندوز، بعد ما ضفنا [[console.log]] في [[push]] و [[pop]] يطبع الـ array الاتنين.
-
----
-
-## ١. الكود سطر سطر
-
-~~~js
-class MinStack {
-  constructor() { this.items = []; this.mins = []; }
-  push(x) {
-    this.items.push(x);
-    this.mins.push(this.mins.length ? Math.min(x, this.mins.at(-1)) : x);
-  }
-  pop() { this.mins.pop(); return this.items.pop(); }
-  getMin() { return this.mins.at(-1); }
-}
-~~~
-
-### [[class MinStack]] و [[constructor()]]
-
-[[class]] قالب بنعمل منه objects بـ [[new MinStack()]]. و [[constructor]] دالة بتشتغل مرة واحدة وقت الـ [[new]]، وبتجهّز الـ object. [[this]] معناها «الـ object ده نفسه».
-
-- [[this.items]]: الـ stack الحقيقي.
-- [[this.mins]]: stack تاني **بنفس الطول دايمًا**. الخانة رقم i فيه = أصغر رقم في [[items]] من الخانة 0 لحد الخانة i.
-
-### [[push(x)]]
-
-1. [[this.items.push(x)]]: حط العنصر عادي.
-2. [[this.mins.length ? ... : x]]: ده الـ ternary operator، يعني [[شرط ? لو صح : لو غلط]]. الشرط [[this.mins.length]]: لو 0 يتحسب false (الـ stack كان فاضي)، فالأصغر هو x نفسه.
-3. لو مش فاضي: [[Math.min(x, this.mins.at(-1))]]. [[at(-1)]] بترجّع آخر عنصر في الـ array (السالب بيعدّ من الآخر). يعني الأصغر الجديد = الأصغر بين x والأصغر القديم.
-
-### [[pop()]]
-
-[[this.mins.pop()]] الأول عشان الاتنين يفضلوا نفس الطول، وبعدين [[return this.items.pop()]] بيشيل العنصر ويرجّعه. لو نسيت تشيل من [[mins]]، هيفضل فيها أصغر قديم لعنصر مش موجود.
-
-### [[getMin()]]
-
-[[this.mins.at(-1)]]: آخر خانة في [[mins]] = أصغر رقم في الـ stack كله دلوقتي. ولو الـ stack فاضي بترجع [[undefined]] (جرّبناها).
-
----
-
-## ٢. التتبع: push 4 و 9 و 3 و 8، وبعدين 3 مرات pop
-
-| العملية | items | mins | getMin |
-|---|---|---|---|
-| push 4 | [4] | [4] | 4 |
-| push 9 | [4, 9] | [4, **4**] | 4 |
-| push 3 | [4, 9, 3] | [4, 4, **3**] | 3 |
-| push 8 | [4, 9, 3, 8] | [4, 4, 3, **3**] | 3 |
-| pop ← 8 | [4, 9, 3] | [4, 4, 3] | 3 |
-| pop ← 3 | [4, 9] | [4, 4] | 4 |
-| pop ← 9 | [4] | [4] | 4 |
-
-ركّز في سطر «pop ← 3»: الـ 3 كانت هي الأصغر واتشالت. لو كنا حافظين الأصغر في متغير واحد، مكناش هنعرف الأصغر اللي بعدها مين. هنا الإجابة (4) كانت محفوظة جاهزة في الخانة اللي تحتها.
-
----
-
-## ٣. الناتج الكامل للمثال
-
-~~~js
-const st = new MinStack();
-st.push(5); st.push(2); st.push(7); st.push(1);
-console.log(st.getMin());
-console.log(st.pop(), st.getMin());
-console.log(st.pop(), st.getMin());
-~~~
-
-~~~text الناتج (Node 24 على ويندوز)
-1
-1 2
-7 2
-~~~
-
-بعد الـ 4 push: items = [5, 2, 7, 1] و mins = [5, 2, 2, 1]. أول pop طلّع 1 والأصغر رجع 2، وتاني pop طلّع 7 والأصغر لسه 2. و [[console.log]] لما تاخد كذا قيمة بتطبعهم في سطر واحد بينهم مسافة.
-
----
-
-## ٤. الـ Big-O وليه
-
-| العملية | الوقت | السبب |
-|---|---|---|
-| push | [[O(1)]] | push على آخر array مرتين و [[Math.min]] على رقمين |
-| pop | [[O(1)]] | pop مرتين |
-| getMin | [[O(1)]] | قراية آخر خانة، من غير ما نلف على حاجة |
-| الذاكرة | [[O(n)]] زيادة | [[mins]] طولها نفس طول [[items]] |
-
-يعني دفعنا ذاكرة (array تانية) عشان نكسب وقت: الحل البديهي اللي بيلف على الـ stack كله في كل [[getMin]] بياخد [[O(n)]].
-
----
-
-## الخلاصة
-
-~~~text
-items       الـ stack نفسه
-mins[i]     أصغر رقم من الخانة 0 لحد i
-push        mins.push(min(x, آخر mins))، أو x لو فاضي
-pop         شيل من الاتنين مع بعض
-getMin      mins.at(-1)
-~~~
-
-> الفكرة العامة: «خزّن مع كل عنصر معلومة محسوبة لحد هنا». نفس الحيلة بتعمل max stack أو مجموع لحد كل خانة.`,
-          lines: [
-            "stack عادي ومعاه أصغر رقم في O(1).",
-            "اتنين array: العناصر، والأصغر عند كل ارتفاع.",
-            "إضافة.",
-            "حط العنصر.",
-            "الأصغر الجديد = الأصغر بين x وآخر خانة في mins (أو x لو الـ stack كان فاضي).",
-            "قفلة.",
-            "شيل من الاتنين مع بعض عشان يفضلوا متزامنين، ورجّع العنصر.",
-            "الأصغر = آخر خانة في mins.",
-            "قفلة الـ class.",
-            "stack جديد.",
-            "items بقت [5, 2, 7, 1]، و mins بقت [5, 2, 2, 1].",
-            "الأصغر 1.",
-            "شلنا 1، فرجع الأصغر 2.",
-            "شلنا 7، والأصغر لسه 2."
-          ],
-          sol: R`[[top()]] هي [[this.items.at(-1)]]، و [[size]] getter بيرجّع [[this.items.length]]. بعد push 5 و 2 و 7 و 2، [[mins]] بتبقى [[[5, 2, 2]]] بس، والـ 7 مش متخزنة لأنها مش أصغر.
-
-ليه [[<=]]؟ لو استخدمت [[<]]، الـ 2 التانية مش هتتخزن في mins، فتبقى [[[5, 2]]]. أول pop بيطلّع 2، وبما إنه = الأصغر، بيشيل الـ 2 الوحيدة من mins. فـ getMin هترجع 5 مع إن فيه 2 لسه في الـ stack. مع [[<=]] الإجابة الصح 2. كل العمليات [[O(1)]].
-
-الغلطة المشهورة: تفتكر إن النسخة دي بتوفّر دايمًا. في input نازل (5، 4، 3، ...) كل عنصر بيتخزن مرتين، فأسوأ حالة [[O(n)]] space زي الأولى.`,
-          solCode: R`class MinStack {
-  constructor() { this.items = []; this.mins = []; }
-  push(x) {
-    this.items.push(x);
-    if (!this.mins.length || x <= this.mins.at(-1)) this.mins.push(x);
-  }
-  pop() {
-    const x = this.items.pop();
-    if (x === this.mins.at(-1)) this.mins.pop();
-    return x;
-  }
-  top() { return this.items.at(-1); }
-  get size() { return this.items.length; }
-  getMin() { return this.mins.at(-1); }
-}
-const st = new MinStack();
-st.push(5); st.push(2); st.push(7); st.push(2);
-console.log(st.top(), st.size, st.getMin(), st.mins); // 2 4 2 [5, 2, 2]
-st.pop();
-console.log(st.getMin()); // 2  (with < instead of <=, mins would be [5, 2], the pop removes that 2, and this prints 5)
-st.pop(); st.pop();
-console.log(st.getMin(), st.size); // 5 1
-// all operations O(1); mins holds only the new records, O(n) in the worst case (a decreasing input)`,
-          check: {
-            lang: "js",
-            starter: R`class MinStack {
-  constructor() { this.items = []; this.mins = []; }
-  push(x) {
-    this.items.push(x);
-    this.mins.push(this.mins.length ? Math.min(x, this.mins.at(-1)) : x);
-  }
-  pop() { this.mins.pop(); return this.items.pop(); }
-  getMin() { return this.mins.at(-1); }
-}`,
-            tests: R`test("push 5 و 2 و 7 و 1: getMin ← 1، وبعد pop ← 2", () => {
-  const st = new MinStack();
-  [5, 2, 7, 1].forEach(x => st.push(x));
-  expect(st.getMin()).toBe(1);
-  expect([st.pop(), st.getMin()]).toEqual([1, 2]);
-});
-test("top() و size", () => {
-  const st = new MinStack();
-  st.push(4); st.push(9);
-  expect([st.top(), st.size]).toEqual([9, 2]);
-});
-test("الموفّرة: بعد push 5 و 2 و 7 و 2، الـ mins فيها [5, 2, 2] بس", () => {
-  const st = new MinStack();
-  [5, 2, 7, 2].forEach(x => st.push(x));
-  expect(st.mins).toEqual([5, 2, 2]);
-});
-test("ليه <= مش <: push 2 و push 2 و pop ← getMin لسه 2", () => {
-  const st = new MinStack();
-  st.push(2); st.push(2); st.pop();
-  expect(st.getMin()).toBe(2);
-});
-test("stack فاضي: getMin و top ← undefined و size ← 0", () => {
-  const st = new MinStack();
-  expect([st.getMin(), st.top(), st.size]).toEqual([undefined, undefined, 0]);
+            tests: R`test("powerFast(2, 10) ← 1024", () => expect(powerFast(2, 10)).toBe(1024));
+test("powerFast(5, 0) ← 1 (الـ base case)", () => expect(powerFast(5, 0)).toBe(1));
+test("n فردي: powerFast(3, 13) ← 1594323", () => expect(powerFast(3, 13)).toBe(1594323));
+test("powerFast(2, 31) ← 2147483648", () => expect(powerFast(2, 31)).toBe(2147483648));
+test("n = 100001: النسخة اللي بتنزّل n واحد هتعمل stack overflow، والنسخة O(log n) بتنزل حوالي ٣٤ مستوى", () => {
+  expect(powerFast(1, 100000)).toBe(1);
+  expect(powerFast(-1, 100001)).toBe(-1);
 });`,
-            solution: R`class MinStack {
-  constructor() { this.items = []; this.mins = []; }
-  push(x) {
-    this.items.push(x);
-    if (!this.mins.length || x <= this.mins.at(-1)) this.mins.push(x);
-  }
-  pop() {
-    const x = this.items.pop();
-    if (x === this.mins.at(-1)) this.mins.pop();
-    return x;
-  }
-  getMin() { return this.mins.at(-1); }
-  top() { return this.items.at(-1); }
-  get size() { return this.items.length; }
+            solution: R`function powerFast(x, n) {
+  if (n === 0) return 1;
+  if (n % 2 === 1) return x * powerFast(x, n - 1);
+  const half = powerFast(x, n / 2);
+  return half * half;
 }`
           }
         },
         {
-          cmd: "monotonic stack",
-          title: "لكل رقم في الـ array، أول رقم أكبر منه على يمينه",
-          desc: R`امشي من الشمال لليمين ومعاك stack فيه indexes لسه «مستنية» حد أكبر منها. لما ييجي رقم جديد، طول ما هو أكبر من اللي فوق الـ stack، يبقى هو الإجابة بتاعته: اعمل pop وسجّل. وبعدين حط الجديد. [[O(n)]].
+          cmd: "call stack",
+          title: "إيه اللي بيحصل في الذاكرة لما دالة تنادي نفسها مليون مرة؟",
+          desc: R`كل نداء لدالة بيحجز frame في الـ call stack (المتغيرات المحلية ومكان الرجوع)، والـ frame مبيتشالش غير لما الدالة ترجع. recursion بعمق n يعني n frame في نفس الوقت، والـ stack ليه حد: في Node حوالي ١٠ آلاف لـ ١٢ ألف نداء لدالة بسيطة، وبعدها [[RangeError: Maximum call stack size exceeded]].
 
-الـ stack ده قيمه دايمًا نازلة من تحت لفوق (monotonic)، لأن أي رقم أصغر من الجديد بيتشال قبل ما الجديد يتحط.
+الحل لما العمق كبير: حوّلها loop. أي recursion ينفع تتكتب loop، أحيانًا بـ stack إنت اللي بتديره (array) بدل الـ call stack.
 
-ليه [[O(n)]] مع إن فيه while جوه for؟ لأن كل index بيدخل الـ stack مرة ويطلع مرة بالكتير. المجموع 2n عملية.`,
-          example: R`function nextGreater(a) {
-  const res = new Array(a.length).fill(-1);
-  const stack = [];
-  for (let i = 0; i < a.length; i++) {
-    while (stack.length && a[stack.at(-1)] < a[i]) {
-      res[stack.pop()] = a[i];
-    }
-    stack.push(i);
-  }
-  return res;
+وخلي بالك: V8 (اللي في Chrome و Node) مبيعملش tail call optimization، فحتى لو النداء آخر حاجة في الدالة، برضه بياخد frame.`,
+          example: R`function depth(n) {
+  return n === 0 ? 0 : 1 + depth(n - 1);
 }
-console.log(nextGreater([2, 1, 2, 4, 3])); // [4, 2, 4, -1, -1]
-console.log(nextGreater([5, 4, 3]));       // [-1, -1, -1]
-console.log(nextGreater([]));              // []
-// O(n) time (every index is pushed and popped at most once), O(n) space`,
-          try: R`حل daily temperatures: لكل يوم، كام يوم لحد ما الحرارة تبقى أعلى؟ [73, 74, 75, 71, 69, 72, 76, 73] ترجع [1, 1, 4, 2, 1, 1, 0, 0]. (نفس الكود، بس سجّل الفرق بين الـ indexes بدل القيمة، والافتراضي 0). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[dailyTemperatures]].`,
+console.log(depth(1000)); // 1000
+try { depth(1e6); }
+catch (e) { console.log(e instanceof RangeError, e.message); } // true Maximum call stack size exceeded
+function depthLoop(n) {
+  let d = 0;
+  while (n > 0) { d++; n--; }
+  return d;
+}
+console.log(depthLoop(1e6)); // 1000000
+// recursion: O(n) stack space and it crashes past ~10k frames; the loop: O(1) space`,
+          try: R`اعرف أقصى عمق على جهازك: [[let d = 0; const f = () => { d++; f(); }; try { f(); } catch { console.log(d); }]]. وبعدين ضيف متغيرات محلية كتير جوه f وشوف الرقم بيقل (الـ frame كبر).`,
           flag: "script",
           deep: {
-            why: "الـ monotonic stack بيحل عيلة كاملة من المسائل في O(n) بدل O(n^2): أول أكبر أو أصغر على اليمين أو الشمال، وأيام لحد درجة حرارة أعلى، وأكبر مستطيل في histogram، و stock span. الحل البديهي لكل عنصر بيدوّر على يمينه: O(n^2).",
-            how: R`dry run على [2, 1, 2, 4, 3]:
+            why: "bug حقيقي بيحصل في الإنتاج: دالة recursive بتمشي على شجرة كومنتات أو قايمة مترابطة أو فولدرات، بتشتغل تمام في التجربة، وبعدين بيانات عميقة جت فالسيرفر وقع بـ RangeError. ولازم تفهم ليه عشان تعرف امتى الـ recursion آمنة.",
+            how: R`الـ call stack منطقة ذاكرة الـ runtime بيستخدمها عشان يفتكر «أنا فين». لما تنادي دالة، بيتحط فوقه frame فيه: الـ arguments، والمتغيرات المحلية، والمكان اللي هيرجع له بعد ما الدالة تخلص. لما الدالة ترجع، الـ frame بيتشال.
 
-i = 0 (2): الـ stack فاضي. حط 0.
+في [[depth(3)]]: frame لـ depth(3)، فوقه depth(2)، فوقه depth(1)، فوقه depth(0). depth(0) بترجع 0 وتتشال، depth(1) تكمّل وترجع 1 وتتشال، وهكذا. أقصى ارتفاع وصله الـ stack = n + 1.
 
-i = 1 (1): اللي فوق قيمته 2، و 1 مش أكبر. حط 1. الـ stack فيه 0 و 1 (قيمهم 2 و 1، نازلة).
+حجم الـ stack محدود (في V8 حوالي 1MB افتراضيًا)، فعدد الـ frames بيعتمد على حجم كل frame. عشان كده الرقم مش ثابت بين الأجهزة والإصدارات. فيه flag اسمه [[--stack-size]] في Node، بس متعتمدش عليه: الحل الصح إنك تشيل العمق.
 
-i = 2 (2): اللي فوق (index 1) قيمته 1 أصغر من 2: إجابته 2، pop. اللي فوق دلوقتي (index 0) قيمته 2، مش أصغر من 2. حط 2.
+tail call: [[return f(n - 1)]] من غير أي حساب بعده. المواصفات (ES2015) بتقول المحرك المفروض يعيد استخدام نفس الـ frame، بس Safari بس اللي عامل كده. V8 مش عاملها، يعني في Node الـ tail recursion برضه بتعمل stack overflow.
 
-i = 3 (4): index 2 قيمته 2 أصغر: إجابته 4. و index 0 قيمته 2 أصغر: إجابته 4. الـ stack فضي، حط 3.
-
-i = 4 (3): اللي فوق قيمته 4، مش أصغر. حط 4. خلصنا، و index 3 و 4 فضلوا بـ -1.
-
-ليه نخزّن indexes مش قيم؟ عشان نعرف نكتب الإجابة فين في res، ولو المطلوب مسافة (daily temperatures) نحسبها من الـ index.
-
-لو المطلوب «أول أصغر»، اعكس المقارنة. ولو «على الشمال»، امشي من اليمين للشمال. ولو الـ array دايرية (circular)، لف مرتين واستخدم [[i % n]].`,
-            when: "أي «أول عنصر أكبر أو أصغر من ده» أو «لحد إمتى القيمة دي هتفضل الأكبر». ولما تلاقي نفسك بتكتب loop جوه loop بيدوّر على اليمين لحد ما يلاقي حاجة أكبر.",
-            mistakes: R`إنك تخزّن القيم بدل الـ indexes فمتعرفش تسجّل الإجابة فين. وإنك تستخدم [[<=]] بدل [[<]] من غير ما تفكر: مع أرقام متساوية ده بيغيّر المعنى بين «أكبر» و «أكبر أو يساوي». وإنك تقول الـ Big-O [[O(n^2)]] بسبب الـ while جوه الـ for: عدّ العمليات على كل عنصر، مش شكل الـ loops.`
+التحويل لـ loop: لو الدالة بتنادي نفسها مرة واحدة، غالبًا loop عادي كفاية. لو بتنادي نفسها أكتر من مرة (شجرة)، استخدم array كـ stack: [[push]] بدل النداء، و [[pop]] بدل الرجوع.`,
+            when: "أي recursion العمق فيها مرتبط بحجم البيانات: linked list، أو شجرة ممكن تبقى مايلة، أو grid كبيرة في flood fill. لو العمق log n (شجرة متوازنة، merge sort)، الـ recursion آمنة.",
+            mistakes: R`إنك تفتكر إن try/catch حوالين الـ recursion حل: ده بيخبّي المشكلة بس. وإنك تفتكر إن tail recursion بتحل المشكلة في Node. وإنك تنسى إن [[JSON.stringify]] على object متداخل جدًا ممكن يرمي نفس الـ RangeError. وإنك تقول على الـ recursion «O(1) space».`
           },
           teach: R`## الفكرة في جملة
 
-امشي من الشمال لليمين، ومعاك stack فيه indexes لعناصر لسه **مستنية** حد أكبر منها. كل عنصر جديد بيبص على اللي فوق الـ stack: طول ما الجديد أكبر، يبقى هو الإجابة بتاعته، فشيله وسجّل. وبعدين الجديد نفسه يدخل يستنى.
-
-كل الأرقام اللي تحت من تشغيل حقيقي على Node 24.19.0 على ويندوز، بعد ما ضفنا [[console.log]] جوه الـ loop يطبع الـ stack و [[res]].
-
----
-
-## ١. الكود سطر سطر
-
-~~~js
-function nextGreater(a) {
-  const res = new Array(a.length).fill(-1);
-  const stack = [];
-  for (let i = 0; i < a.length; i++) {
-    while (stack.length && a[stack.at(-1)] < a[i]) {
-      res[stack.pop()] = a[i];
-    }
-    stack.push(i);
-  }
-  return res;
-}
-~~~
-
-### [[const res = new Array(a.length).fill(-1);]]
-
-[[new Array(n)]] بتعمل array طولها n بس خاناتها فاضية، و [[fill(-1)]] بتملاها كلها بـ -1. جرّبناها بـ 3 وطلعت [[[ -1, -1, -1 ]]]. ليه -1 من الأول؟ لأن أي عنصر محدش هيلاقيله إجابة هيفضل كده، فمش محتاجين نعدّي في الآخر نكتبها.
-
-### [[const stack = [];]]
-
-بنحط فيه **indexes** مش قيم. ليه؟ لأن لما نلاقي الإجابة لازم نعرف نكتبها في أنهي خانة في [[res]]. والقيمة نفسها بنجيبها بـ [[a[index]]].
-
-### [[for (let i = 0; i < a.length; i++)]]
-
-لفة على كل index من الشمال لليمين. [[a[i]]] هو «العنصر الجديد».
-
-### [[while (stack.length && a[stack.at(-1)] < a[i])]]
-
-من جوه لبرة:
-
-1. [[stack.at(-1)]]: الـ index اللي فوق الـ stack.
-2. [[a[...]]]: قيمته.
-3. [[< a[i]]]: أصغر من الجديد؟
-4. [[stack.length &&]]: الأول اتأكد إن الـ stack مش فاضي. [[&&]] بتقف عند أول false، فلو فاضي مش هنقرا [[at(-1)]] أصلًا.
-
-[[while]] مش [[if]]: الجديد ممكن يبقى الإجابة لكذا واحد مستني ورا بعض.
-
-### [[res[stack.pop()] = a[i];]]
-
-[[stack.pop()]] بيشيل الـ index اللي فوق ويرجّعه، وبنستخدمه على طول كمكان في [[res]]. والإجابة هي قيمة الجديد [[a[i]]].
-
-### [[stack.push(i);]]
-
-بعد ما الجديد خلّص على كل اللي أصغر منه، يدخل هو يستنى حد أكبر منه.
-
----
-
-## ٢. التتبع على [[[4, 2, 1, 3, 6]]]
-
-القيم بين قوسين جنب كل index.
-
-| i (القيمة) | اللي اتشال وإجابته | الـ stack بعدها (indexes) | قيمهم | res |
-|---|---|---|---|---|
-| 0 (4) | | [0] | [4] | [-1, -1, -1, -1, -1] |
-| 1 (2) | 2 مش أكبر من 4 | [0, 1] | [4, 2] | [-1, -1, -1, -1, -1] |
-| 2 (1) | 1 مش أكبر من 2 | [0, 1, 2] | [4, 2, 1] | [-1, -1, -1, -1, -1] |
-| 3 (3) | index 2 (1) ← 3، و index 1 (2) ← 3 | [0, 3] | [4, 3] | [-1, 3, 3, -1, -1] |
-| 4 (6) | index 3 (3) ← 6، و index 0 (4) ← 6 | [4] | [6] | [6, 3, 3, 6, -1] |
-
-- عند i = 3: الـ while لفّت مرتين وشالت اتنين، ووقفت عند الـ 4 لأن 4 مش أصغر من 3.
-- عمود «قيمهم» دايمًا **نازل** من الشمال لليمين (من تحت لفوق). ده معنى monotonic: أي حاجة أصغر من الجديد بتتشال قبل ما يدخل.
-- الـ 6 فضلت في الـ stack في الآخر، فإجابتها -1 من الـ [[fill]].
-
-الناتج [[[ 6, 3, 3, 6, -1 ]]].
-
----
-
-## ٣. الناتج الكامل للمثال
-
-~~~text الناتج (Node 24 على ويندوز)
-[ 4, 2, 4, -1, -1 ]
-[ -1, -1, -1 ]
-[]
-~~~
-
-- [[[2, 1, 2, 4, 3]]]: الـ 2 الأولى إجابتها 4 مش 2 التانية، لأن الشرط [[<]] («أكبر» مش «أكبر أو يساوي»).
-- [[[5, 4, 3]]]: نازلة، الـ while مبتلفّش أبدًا، وكله -1.
-- [[[]]]: الـ for مبتلفّش.
-
----
-
-## ٤. الـ Big-O وليه
-
-فيه while جوه for، فليه مش [[O(n^2)]]؟ عدّ الشغل على كل index بدل ما تبص على شكل الـ loops: كل index بيدخل الـ stack **مرة** بالـ [[push]]، وبيطلع **مرة** بالكتير بالـ [[pop]]. يعني كل لفات الـ while مع بعض طول البرنامج كله ≤ n.
-
-| | القيمة | السبب |
-|---|---|---|
-| الوقت | [[O(n)]] | n push و n pop بالكتير، يعني حوالي 2n عملية |
-| الذاكرة | [[O(n)]] | [[res]]، والـ stack ممكن يشيل n في array نازلة |
-
----
-
-## الخلاصة
-
-~~~text
-stack        indexes مستنية إجابة، قيمهم نازلة
-while        طول ما الجديد أكبر من اللي فوق: pop وسجّل الجديد إجابته
-push(i)      الجديد يدخل يستنى
-fill(-1)     اللي ملقاش حد أكبر
-Big-O        كل index داخل مرة وخارج مرة: O(n)
-~~~
-
-> «أول أصغر» اعكس المقارنة، و «على الشمال» امشي من اليمين. نفس القالب.`,
-          lines: [
-            "لكل عنصر: أول عنصر أكبر منه على يمينه، أو -1.",
-            "الإجابات، وافتراضيًا -1 (مفيش أكبر).",
-            "indexes مستنية إجابة. قيمها نازلة من تحت لفوق.",
-            "عدّي من الشمال لليمين.",
-            "طول ما الجديد أكبر من اللي فوق...",
-            "...يبقى الجديد هو الإجابة بتاعته. شيله وسجّل.",
-            "قفلة الـ while.",
-            "الجديد نفسه مستني حد أكبر منه.",
-            "قفلة الـ for.",
-            "اللي فضلوا في الـ stack ملهمش أكبر، وقيمتهم -1 من الأول.",
-            "قفلة.",
-            "2 ← 4، و 1 ← 2، و 2 ← 4، و 4 و 3 مفيش.",
-            "نازلة: ولا واحد ليه أكبر على يمينه.",
-            "فاضية."
-          ],
-          sol: R`الناتج [[[1, 1, 4, 2, 1, 1, 0, 0]]]. التعديل: الافتراضي [[fill(0)]]، ولما تعمل pop للـ index [[j]]، سجّل [[res[j] = i - j]] بدل [[a[i]]]. الـ 75 مثلًا (index 2) فضلت في الـ stack لحد 76 (index 6)، فالإجابة 4.
-
-الحل [[O(n)]] time لأن كل index بيدخل الـ stack مرة ويخرج مرة، و [[O(n)]] space. ودرجات متساوية زي [30, 30, 30] ترجع أصفار، لأن الشرط [[<]] مش [[<=]] («أعلى» مش «أعلى أو زي»).
-
-الغلطة المشهورة: تخزّن القيم في الـ stack مش الـ indexes. كده مش هتعرف تحسب المسافة، ومش هتعرف تكتب في [[res]] مكان مين.`,
-          solCode: R`function dailyTemperatures(t) {
-  const res = new Array(t.length).fill(0);
-  const stack = [];
-  for (let i = 0; i < t.length; i++) {
-    while (stack.length && t[stack.at(-1)] < t[i]) {
-      const j = stack.pop();
-      res[j] = i - j;
-    }
-    stack.push(i);
-  }
-  return res;
-}
-console.log(dailyTemperatures([73, 74, 75, 71, 69, 72, 76, 73]).join(" ")); // 1 1 4 2 1 1 0 0
-console.log(dailyTemperatures([30, 30, 30]).join(" "));                     // 0 0 0
-// O(n) time (each index is pushed and popped once), O(n) space`,
-          check: {
-            lang: "js",
-            starter: R`function dailyTemperatures(t) {
-  const res = new Array(t.length).fill(0);
-  const stack = [];
-  // زي nextGreater، بس سجّل res[j] = i - j
-  return res;
-}`,
-            tests: R`test("[73, 74, 75, 71, 69, 72, 76, 73] ← [1, 1, 4, 2, 1, 1, 0, 0]", () => expect(dailyTemperatures([73, 74, 75, 71, 69, 72, 76, 73])).toEqual([1, 1, 4, 2, 1, 1, 0, 0]));
-test("درجات متساوية ← أصفار (أعلى مش أعلى أو زي)", () => expect(dailyTemperatures([30, 30, 30])).toEqual([0, 0, 0]));
-test("[30, 40, 50, 60] ← [1, 1, 1, 0]", () => expect(dailyTemperatures([30, 40, 50, 60])).toEqual([1, 1, 1, 0]));
-test("[] ← []", () => expect(dailyTemperatures([])).toEqual([]));
-test("3000 يوم نازلين وبعدهم يوم حر (O(n): كل index بيدخل ويخرج مرة)", () => {
-  const t = [...Array.from({ length: 3000 }, (_, i) => 3000 - i), 5000];
-  const r = dailyTemperatures(t);
-  expect([r[0], r[2999], r[3000]]).toEqual([3000, 1, 0]);
-});`,
-            solution: R`function dailyTemperatures(t) {
-  const res = new Array(t.length).fill(0);
-  const stack = [];
-  for (let i = 0; i < t.length; i++) {
-    while (stack.length && t[stack.at(-1)] < t[i]) {
-      const j = stack.pop();
-      res[j] = i - j;
-    }
-    stack.push(i);
-  }
-  return res;
-}`
-          }
-        },
-        {
-          cmd: "queue و deque",
-          title: "طابور أول واحد يدخل أول واحد يطلع، سريع في JS (وليه shift بطيء؟)",
-          desc: R`[[shift()]] بتشيل أول عنصر وبتحرّك كل الباقي خطوة لورا، فهي [[O(n)]]. طابور بـ push و shift على مئات الآلاف من العناصر بيبقى [[O(n^2)]]. الحل: خزّن العناصر في object ومعاك رقمين، [[head]] و [[tail]]. الإضافة عند tail والطلوع من head، الاتنين [[O(1)]].
-
-الـ queue هو FIFO (First In, First Out)، وده اللي بيحتاجه BFS، وطوابير الـ jobs، و rate limiting.
-
-والـ deque (double-ended queue) بتضيف وتشيل من الناحيتين. نفس فكرة head و tail، بس head ينفع ينزل بالسالب. و JS مفيهاش queue أو deque جاهزين.`,
-          example: R`class Queue {
-  constructor() { this.items = {}; this.head = 0; this.tail = 0; }
-  enqueue(x) { this.items[this.tail++] = x; }
-  dequeue() {
-    if (this.head === this.tail) return undefined;
-    const x = this.items[this.head];
-    delete this.items[this.head++];
-    return x;
-  }
-  get size() { return this.tail - this.head; }
-}
-const q = new Queue();
-q.enqueue("a"); q.enqueue("b"); q.enqueue("c");
-console.log(q.dequeue(), q.dequeue(), q.size); // a b 1
-// enqueue and dequeue are O(1); Array.prototype.shift is O(n) because every item moves down one index`,
-          try: R`قيس الفرق: ١٠٠ ألف عنصر بـ push و shift، وبعدين بالـ Queue دي، بـ [[console.time]]. وبعدين حوّلها deque: ضيف [[pushFront]] (بتقلّل head وتكتب فيه) و [[popBack]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[Deque]] بالأربع عمليات و [[size]].`,
-          flag: "script",
-          deep: {
-            why: "BFS، وطابور مهام (إيميلات بتتبعت واحد واحد)، و sliding window maximum، كلهم queue. ولو كتبته بـ shift الكود هيشتغل في التجربة ويبقى بطيء جدًا على بيانات حقيقية. قياس على Node 24: تفضية array فيها ١٠٠ ألف عنصر بـ shift خدت حوالي ٠.٧ ثانية، و ٤٠٠ ألف خدت أكتر من ٤٠ ثانية. ده شكل O(n^2).",
-            how: R`ليه shift بطيء؟ الـ array بلوك متصل، والعنصر رقم i لازم يبقى في الخانة i. لما تشيل الأول، كل عنصر لازم يتنقل خانة لورا عشان الـ indexes تفضل صح. ده n عملية. V8 عنده تحسينات في حالات معينة، بس القياس فوق بيقول إن الطابور الكبير بـ shift بيبقى [[O(n^2)]] فعلًا.
-
-الحل بالـ head و tail: العناصر مبتتحركش أبدًا. «أول الطابور» مجرد رقم بيزيد. الـ object هنا شغال كأنه Map من رقم لقيمة، و [[delete]] بيسيب الذاكرة تتحرر.
-
-بديل أبسط في BFS: array عادية ومتغير [[head]] بيزيد، من غير ما تشيل حاجة: [[const x = queue[head++]]]. العيب إن الذاكرة مبتتحررش لحد ما الـ BFS يخلص، وده عادي في مسائل الانترفيو.
-
-وبديل تاني: circular buffer، array بحجم ثابت والمؤشرات بتلف بـ [[% capacity]]. ده اللي بتستخدمه المكتبات لما الحجم معروف.
-
-الـ deque: نفس الـ object، بس [[pushFront]] بتكتب في [[--this.head]]، والـ head ينفع يبقى سالب عادي لأن مفاتيح الـ object أي رقم. و [[popBack]] بتقرا من [[--this.tail]].`,
-            when: "BFS على شجرة أو graph أو grid. أي طابور طلبات أو رسايل بيتعالج بالترتيب. و deque في sliding window maximum ومسائل «الأكبر في كل شباك».",
-            mistakes: R`[[shift()]] في BFS على بيانات كبيرة. وإنك تفتكر إن [[unshift]] أحسن: نفس المشكلة من الناحية التانية. وإنك تنسى check الفاضي في dequeue فترجّع undefined وتكمّل كأن فيه عنصر. وفي النسخة بالـ array والـ head من غير مسح: الذاكرة بتفضل محجوزة لكل اللي خرجوا، مش مشكلة في BFS بس مشكلة في طابور شغال على طول في سيرفر.`
-          },
-          teach: R`## الفكرة في جملة
-
-الطابور (queue) أول واحد يدخل أول واحد يطلع: FIFO = First In, First Out. بدل ما نشيل أول عنصر من array بـ [[shift()]] (ودي بتحرّك كل الباقي)، العناصر بتفضل مكانها، ومعانا رقمين: [[head]] مكان أول واحد في الطابور، و [[tail]] الخانة اللي الجاي هيقف فيها. الدخول بيزوّد [[tail]]، والخروج بيزوّد [[head]]. ولا عنصر بيتحرك.
+كل ما دالة تتنادى، الـ runtime بيحجز لها **frame** (إطار) في منطقة ذاكرة اسمها **call stack**: فيه الـ arguments والمتغيرات المحلية والمكان اللي هيرجع له لما تخلص. الـ frame مبيتشالش غير لما الدالة ترجع. فـ recursion بعمق مليون = مليون frame في نفس الوقت، والـ stack حجمه محدود، فبيتملي والبرنامج يرمي [[RangeError]].
 
 كل الأرقام اللي تحت من تشغيل حقيقي على Node 24.19.0 على ويندوز.
 
 ---
 
-## ١. الكود سطر سطر
+## ١. [[depth]] سطر سطر
 
 ~~~js
-class Queue {
-  constructor() { this.items = {}; this.head = 0; this.tail = 0; }
-  enqueue(x) { this.items[this.tail++] = x; }
-  dequeue() {
-    if (this.head === this.tail) return undefined;
-    const x = this.items[this.head];
-    delete this.items[this.head++];
-    return x;
-  }
-  get size() { return this.tail - this.head; }
+function depth(n) {
+  return n === 0 ? 0 : 1 + depth(n - 1);
 }
 ~~~
 
-### [[constructor()]]
+[[condition ? a : b]] اسمه **ternary operator**: لو الشرط صح خد a، غير كده خد b. يعني: لو n = 0 رجّع 0، غير كده رجّع 1 + [[depth(n - 1)]]. الدالة بتعدّ هي نزلت كام مستوى، فـ [[depth(n)]] = n.
 
-- [[this.items = {}]]: object عادي بنستخدمه كـ «رقم ← قيمة». ليه مش array؟ عشان لما نمسح الخانات اللي في الأول منحتاجش الباقي يتزق لورا.
-- [[this.head = 0]]: مكان أول عنصر في الطابور.
-- [[this.tail = 0]]: المكان اللي الإضافة الجاية هتتكتب فيه. الاتنين صفر يعني الطابور فاضي.
+المهم إن الجمع [[1 + ...]] مش هيحصل غير لما [[depth(n - 1)]] ترجع. فكل نداء **مستني** اللي جواه، والـ frame بتاعه لسه محجوز.
 
-### [[enqueue(x) { this.items[this.tail++] = x; }]]
+### التتبع: [[depth(3)]] وحجم الـ stack
 
-enqueue = دخّل الطابور. [[this.tail++]] اسمه post-increment: **بيرجّع القيمة القديمة الأول** وبعدين يزوّد. فلو tail = 5، الكتابة بتحصل في الخانة 5، و tail بيبقى 6. جرّبناها لوحدها: object فاضي و [[t = 5]] و [[o[t++] = "a"]] طلّعت [[{"5":"a"}]] و t بقت 6.
-
-### [[dequeue()]]
-
-dequeue = اطلع من الطابور.
-
-1. [[if (this.head === this.tail) return undefined;]]: لو المؤشرين على نفس الخانة، مفيش حد بينهم: الطابور فاضي.
-2. [[const x = this.items[this.head];]]: اقرا أول واحد.
-3. [[delete this.items[this.head++];]]: [[delete]] بيشيل المفتاح من الـ object عشان الذاكرة تتحرر. و [[this.head++]] برضه post-increment: بيمسح الخانة القديمة، وبعدها head يتقدم.
-4. [[return x;]]: رجّع اللي قريناه.
-
-### [[get size()]]
-
-[[get]] بيخلّي الدالة تتقري زي خاصية من غير قوسين: [[q.size]] مش [[q.size()]]. والعدد = الفرق بين المؤشرين.
-
----
-
-## ٢. التتبع: enqueue x و y، dequeue، enqueue z، وبعدين 3 مرات dequeue
-
-| العملية | items | head | tail | size |
-|---|---|---|---|---|
-| البداية | {} | 0 | 0 | 0 |
-| enqueue x | {0: x} | 0 | 1 | 1 |
-| enqueue y | {0: x, 1: y} | 0 | 2 | 2 |
-| dequeue ← x | {1: y} | 1 | 2 | 1 |
-| enqueue z | {1: y, 2: z} | 1 | 3 | 2 |
-| dequeue ← y | {2: z} | 2 | 3 | 1 |
-| dequeue ← z | {} | 3 | 3 | 0 |
-| dequeue ← undefined | {} | 3 | 3 | 0 |
-
-لاحظ إن y فضلت في الخانة 1 من أول ما دخلت لحد ما خرجت: ولا عنصر اتنقل. وآخر سطر: head = tail فرجعت [[undefined]] ومحدش اتلمس.
-
----
-
-## ٣. الناتج الكامل للمثال
-
-~~~js
-const q = new Queue();
-q.enqueue("a"); q.enqueue("b"); q.enqueue("c");
-console.log(q.dequeue(), q.dequeue(), q.size);
-~~~
+ضفنا عدّاد بيزيد أول النداء (push) ويقل قبل الرجوع (pop):
 
 ~~~text الناتج (Node 24 على ويندوز)
-a b 1
+push depth(3) stack size=1
+push depth(2) stack size=2
+push depth(1) stack size=3
+push depth(0) stack size=4
+pop depth(0) returns 0
+pop depth(1) returns 1
+pop depth(2) returns 2
+pop depth(3) returns 3
 ~~~
 
-خرجوا بنفس ترتيب الدخول (a ثم b)، وفضل c لوحده فـ size = 3 - 2 = 1.
+| اللحظة | الـ frames اللي في الـ stack (تحت ← فوق) | الحجم |
+|---|---|---|
+| بعد نداء depth(3) | depth(3) | 1 |
+| بعد نداء depth(2) | depth(3)، depth(2) | 2 |
+| بعد نداء depth(1) | depth(3)، depth(2)، depth(1) | 3 |
+| بعد نداء depth(0) | depth(3)، depth(2)، depth(1)، depth(0) | **4** |
+| depth(0) رجعت 0 | depth(3)، depth(2)، depth(1) | 3 |
+| depth(1) رجعت 1 | depth(3)، depth(2) | 2 |
+| ... | | |
+
+أقصى حجم = n + 1. ولو n مليون، يبقى مليون frame وواحد.
 
 ---
 
-## ٤. ليه [[shift()]] بطيئة؟ قسناها
+## ٢. [[try]] و [[catch]] والـ RangeError
 
-الـ array في الذاكرة خانات ورا بعض، والعنصر رقم i لازم يبقى في الخانة i. لما [[shift()]] تشيل الأول، كل عنصر لازم يتنقل خانة لورا عشان الـ indexes تفضل صح: n عملية في كل shift.
+~~~js
+try { depth(1e6); }
+catch (e) { console.log(e instanceof RangeError, e.message); }
+~~~
 
-قسنا تفضية array بـ [[while (arr.length) arr.shift()]] على Node 24 على ويندوز:
+- [[1e6]]: كتابة علمية، يعني 1 × 10^6 = مليون.
+- [[try { ... }]]: جرّب الكود ده، ولو رمى error متوقّعش البرنامج.
+- [[catch (e) { ... }]]: لو حصل error، امسكه في متغير [[e]] ونفّذ ده.
+- [[e instanceof RangeError]]: هل الـ error ده من نوع RangeError؟ ([[instanceof]] بتسأل «الـ object ده اتعمل من الـ class دي؟»).
+- [[e.message]]: نص الرسالة.
 
-| عدد العناصر | الوقت |
+~~~text الناتج
+true Maximum call stack size exceeded
+~~~
+
+بحثنا بـ binary search على أقصى n تعدّي من غير error لـ [[depth]] على نفس الجهاز، وطلع 9765. الرقم ده بيتغير من جهاز لجهاز ومن إصدار لإصدار، ومش حاجة تبني عليها.
+
+---
+
+## ٣. [[depthLoop]]: نفس الحساب من غير frames
+
+~~~js
+function depthLoop(n) {
+  let d = 0;
+  while (n > 0) { d++; n--; }
+  return d;
+}
+~~~
+
+بدل ما ننادي الدالة على n - 1، بنلف: كل لفة نزوّد [[d]] وننقّص [[n]]. الدالة اتنادت **مرة واحدة**، فـ frame واحد بس طول الوقت.
+
+| بعد اللفة | n | d |
+|---|---|---|
+| البداية | 3 | 0 |
+| 1 | 2 | 1 |
+| 2 | 1 | 2 |
+| 3 | 0 | 3 |
+
+الناتج 3، وده من تتبّع حقيقي لـ [[depthLoop(3)]]. ومع مليون: مليون لفة، ونفس الـ frame.
+
+---
+
+## ٤. الناتج الكامل للمثال
+
+~~~text الناتج (Node 24 على ويندوز)
+1000
+true Maximum call stack size exceeded
+1000000
+~~~
+
+---
+
+## ٥. الـ solCode: حجم الـ frame بيأثر
+
+~~~js
+let d = 0;
+const f = () => { d++; f(); };
+try { f(); } catch { console.log("small frame:", d); }
+~~~
+
+- [[f]] بتزوّد العدّاد وتنادي نفسها من غير base case خالص، فأكيد هتقع. [[d]] في الآخر = عدد النداءات اللي دخلت قبل ما الـ stack يتملي.
+- [[catch { ... }]] من غير [[(e)]]: مسموح لما مش محتاج الـ error نفسه.
+- الدالة التانية [[g]] نفس الفكرة بس فيها ٨ متغيرات محلية ([[let a = d2, b = a + 1, ...]])، والـ [[return a + b + ...]] بعد النداء بيجبر المحرك يحتفظ بيهم في الـ frame.
+
+~~~text الناتج (Node 24 على ويندوز)
+small frame: 12504
+big frame: 6946
+~~~
+
+الـ stack حجمه ثابت (في V8، المحرك اللي في Node و Chrome، حوالي 1MB افتراضيًا). frame أكبر = عدد أقل يدخل. عشان كده مفيش «رقم سحري» للعمق.
+
+---
+
+## ٦. الـ Big-O وليه
+
+| | الذاكرة | السبب |
+|---|---|---|
+| [[depth(n)]] recursion | [[O(n)]] | n + 1 frame مفتوحين في نفس اللحظة |
+| [[depthLoop(n)]] | [[O(1)]] | frame واحد ومتغيرين، مهما n كبرت |
+| الوقت للاتنين | [[O(n)]] | n خطوة في الحالتين |
+
+---
+
+## الخلاصة
+
+~~~text
+frame          الـ arguments والمتغيرات المحلية ومكان الرجوع، لكل نداء
+بيتشال امتى     لما الدالة ترجع بس
+العمق d        d frame في نفس الوقت = O(d) ذاكرة
+الحد           حوالي 10 آلاف لـ 12 ألف لدالة بسيطة في Node، وبيقل لو الـ frame كبير
+الحل           حوّلها loop (أو stack إنت اللي بتديره في array)
+~~~
+
+> الـ recursion آمنة لما العمق صغير (زي log n في شجرة متوازنة). لو العمق ممكن يوصل لحجم البيانات نفسه، استخدم loop.`,
+          lines: [
+            "دالة بتنزل n مستوى.",
+            "لو 0 خلاص، غير كده 1 + نفسها على n - 1. كل نداء مستني اللي بعده.",
+            "قفلة.",
+            "ألف مستوى: مفيش مشكلة.",
+            "مليون مستوى...",
+            "...الـ stack اتملى قبل ما نوصل للـ base case: RangeError.",
+            "نفس الحساب بـ loop.",
+            "عدّاد.",
+            "لفة بدل نداء: مفيش frames جديدة.",
+            "رجّع.",
+            "قفلة.",
+            "مليون عادي، لأن الذاكرة O(1)."
+          ],
+          sol: R`على جهازي بـ Node 22 الرقم طلع حوالي 12500، ومع 8 متغيرات محلية جوه الدالة نزل لحوالي 7000. رقمك هيبقى مختلف (الجهاز والإصدار بيفرقوا)، بس لازم يقل لما تضيف متغيرات.
+
+السبب: الـ stack حجمه ثابت (حوالي 1MB افتراضيًا)، وكل نداء بيحجز frame فيه متغيراته. frame أكبر يبقى عدد أقل يدخل. كل نداء [[O(1)]] space، فعمق d بيكلّف [[O(d)]].
+
+الغلطة المشهورة: تفتكر إن الرقم ده ثابت وتبني عليه كود. الحل مش إنك تكبّر الـ stack بـ [[--stack-size]]، الحل إنك تحوّل الـ recursion العميقة لـ loop أو stack صريح.`,
+          solCode: R`let d = 0;
+const f = () => { d++; f(); };
+try { f(); } catch { console.log("small frame:", d); } // about 12500 on node 22 (varies by machine and version)
+let d2 = 0;
+const g = () => {
+  d2++;
+  let a = d2, b = a + 1, c = b + 1, e = c + 1, h = e + 1, i = h + 1, j = i + 1, k = j + 1;
+  g();
+  return a + b + c + e + h + i + j + k;
+};
+try { g(); } catch { console.log("big frame:", d2); } // about 7000: each frame holds more locals, so fewer fit
+// each call is O(1) stack space, so depth d costs O(d); the total stack size is fixed (~1 MB by default)`
+        },
+        {
+          cmd: "memoization",
+          title: "fib(50) بالطريقة العادية بتاخد وقت طويل جدًا، خليها تطلع في لحظة",
+          desc: R`memoization: خزّن نتيجة كل نداء في Map، ولو نفس المدخل اتطلب تاني رجّع المخزّن بدل ما تحسب. [[fib]] بتتحول من [[O(2^n)]] لـ [[O(n)]].
+
+المشكلة في [[fibSlow]]: [[fib(50)]] بتنادي [[fib(49)]] و [[fib(48)]]، و [[fib(49)]] بتنادي [[fib(48)]] تاني، وهكذا. نفس القيم بتتحسب ملايين المرات. بالـ memo كل قيمة من 0 لـ n بتتحسب مرة واحدة بس.
+
+ده أول خطوة في dynamic programming: recursion + cache = top-down DP.`,
+          example: R`function fibSlow(n) {
+  if (n < 2) return n;
+  return fibSlow(n - 1) + fibSlow(n - 2);
+}
+function fib(n, memo = new Map()) {
+  if (n < 2) return n;
+  if (memo.has(n)) return memo.get(n);
+  const val = fib(n - 1, memo) + fib(n - 2, memo);
+  memo.set(n, val);
+  return val;
+}
+console.log(fibSlow(20)); // 6765
+console.log(fib(50));     // 12586269025
+// fibSlow: O(2^n) time; fib with memo: O(n) time, O(n) space (map + call stack)`,
+          try: R`حط عدّاد نداءات في النسختين وقارن لـ n = 25 (حوالي ربع مليون نداء مقابل ٤٩). وبعدين اكتب [[memoize(fn)]] عامة: تاخد أي دالة ليها argument واحد وترجّع نسخة بـ cache. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[memoize]] وبتعدّ كام مرة الدالة الأصلية اتنادت.`,
+          flag: "script",
+          deep: {
+            why: "فيه مسائل كتير الحل البديهي فيها recursion بتحسب نفس الحاجة مرات كتير: عدد الطرق، أقل تكلفة، هل ممكن. الـ memoization بتحوّلها من «مستحيل» لـ «فوري» بسطرين زيادة. وفي الشغل نفس الفكرة اسمها caching: [[useMemo]] في React، و cache لنتايج API.",
+            how: R`ارسم شجرة النداءات لـ [[fibSlow(5)]]: fib(5) بتنادي fib(4) و fib(3). و fib(4) بتنادي fib(3) و fib(2). يعني fib(3) اتحسبت مرتين، و fib(2) تلات مرات. كل ما n تكبر، التكرار بيتضاعف: عدد النداءات حوالي 1.6^n.
+
+مع الـ memo: أول مرة fib(3) تتحسب بتتخزّن. المرة التانية، [[memo.has(3)]] بترجّعها في [[O(1)]]. النتيجة إن كل رقم من 0 لـ 50 بيتحسب مرة واحدة، وكل واحد بيعمل نداءين، يعني حوالي 2n نداء: [[O(n)]].
+
+ليه الـ memo بتتبعت كـ argument؟ عشان كل النداءات تشارك نفس الـ Map. لو عملت [[new Map()]] جوه جسم الدالة، كل نداء هيبدأ بـ cache فاضي.
+
+الـ memo مش مجاني: [[O(n)]] ذاكرة للـ Map، و [[O(n)]] للـ call stack. والنسخة الـ bottom-up (loop من تحت لفوق) بتشيل الاتنين، ودي في درس «bottom-up DP (table)» في المستوى التالت.
+
+ومش أي دالة ينفع يتعملها memo: لازم تكون pure، نفس المدخل يدّي نفس المخرج دايمًا، ومن غير side effects.`,
+            when: "لما الـ recursion فيها نداءات متكررة لنفس المدخلات (overlapping subproblems). ارسم شجرة النداءات لـ n صغير: لو شفت نفس النداء مرتين، يبقى memo.",
+            mistakes: R`إنك تحط [[new Map()]] جوه جسم الدالة فكل نداء يبدأ فاضي. وإنك تستخدم [[if (memo[n])]] مع object: لو القيمة المخزّنة 0 هتعتبرها مش موجودة وتحسب تاني، استخدم [[has]] أو [[in]]. وإنك تنسى إن الأرقام الكبيرة بتفقد دقة: بعد fib(78) الناتج بيعدّي [[Number.MAX_SAFE_INTEGER]]، ولو المطلوب رقم مضبوط استخدم BigInt.`
+          },
+          teach: R`## الفكرة في جملة
+
+**memoization**: أول مرة تحسب نتيجة لمدخل معين، خزّنها في Map. لو نفس المدخل اتطلب تاني، رجّع المخزّن بدل ما تحسب من الأول. مع [[fib]] ده بيحوّل ملايين النداءات لـ 99 نداء بس.
+
+**Fibonacci** (فيبوناتشي): كل رقم = مجموع الرقمين اللي قبله. 0، 1، 1، 2، 3، 5، 8، 13... يعني fib(0) = 0 و fib(1) = 1 و fib(n) = fib(n - 1) + fib(n - 2).
+
+كل الأرقام اللي تحت من تشغيل حقيقي على Node 24.19.0 على ويندوز، بعد ما ضفنا عدّادات و [[console.log]] جوه الدوال.
+
+---
+
+## ١. [[fibSlow]]: ليه بطيئة؟
+
+~~~js
+function fibSlow(n) {
+  if (n < 2) return n;
+  return fibSlow(n - 1) + fibSlow(n - 2);
+}
+~~~
+
+- [[if (n < 2) return n;]]: الـ base case. fib(0) = 0 و fib(1) = 1، يعني الإجابة هي n نفسها.
+- [[fibSlow(n - 1) + fibSlow(n - 2)]]: كل نداء بيعمل **نداءين**. ودي المشكلة.
+
+### عدّينا النداءات لـ [[fibSlow(5)]]
+
+حطينا عدّاد لكل n:
+
+| n | اتحسبت كام مرة |
 |---|---|
-| ١٠٠ ألف | حوالي 0.7 ثانية |
-| ٢٠٠ ألف | حوالي 3.3 ثانية |
-| ٤٠٠ ألف | حوالي 43.6 ثانية |
+| 5 | 1 |
+| 4 | 1 |
+| 3 | 2 |
+| 2 | 3 |
+| 1 | 5 |
+| 0 | 3 |
+| **المجموع** | **15 نداء** |
 
-لما العدد اتضاعف، الوقت اتضرب في أكتر من ٤: ده شكل [[O(n^2)]]. ونفس الـ ١٠٠ ألف بالـ Queue اللي فوق خدت حوالي 9ms.
-
----
-
-## ٥. الـ Big-O وليه
-
-| العملية | Queue دي | array بـ push و shift |
-|---|---|---|
-| إضافة | [[O(1)]]: كتابة في خانة وزيادة رقم | [[O(1)]] |
-| طلوع | [[O(1)]]: قراية ومسح وزيادة رقم | [[O(n)]]: كل العناصر بتتحرك |
-| n عملية | [[O(n)]] | [[O(n^2)]] |
-| الذاكرة | [[O(n)]] للعناصر الموجودة بس، لأن [[delete]] بيمسح اللي خرج | [[O(n)]] |
+fib(3) اتحسبت مرتين، و fib(2) تلات مرات، بنفس النتيجة كل مرة. وكل ما n تكبر التكرار بيتضاعف تقريبًا: [[fibSlow(20)]] عملت 21891 نداء، و [[fibSlow(30)]] عملت 2692537 نداء (حوالي ٢.٧ مليون). عشان كده [[fibSlow(50)]] عمليًا مش هتخلص.
 
 ---
 
-## الخلاصة
-
-~~~text
-FIFO       أول واحد دخل أول واحد يطلع
-items      object: رقم ← قيمة، ومحدش بيتحرك
-tail++     الإضافة في الخانة tail وبعدين tail يزيد
-head++     الطلوع من الخانة head وبعدين head يزيد
-فاضي       head === tail
-size       tail - head
-~~~
-
-> JS مفيهاش queue جاهزة. في BFS على بيانات كبيرة متستخدمش [[shift()]]: استخدم الفكرة دي، أو array ومتغير [[head]] بيزيد.`,
-          lines: [
-            "طابور FIFO.",
-            "object للعناصر، و head أول واحد، و tail مكان الإضافة الجاية.",
-            "إضافة في الآخر: خانة جديدة و tail يزيد. O(1).",
-            "طلوع من الأول.",
-            "فاضي: head لحق tail.",
-            "أول عنصر.",
-            "امسحه عشان الذاكرة، وقدّم head. محدش اتحرك من مكانه.",
-            "رجّعه.",
-            "قفلة.",
-            "العدد = الفرق بين المؤشرين.",
-            "قفلة الـ class.",
-            "طابور جديد.",
-            "تلاتة دخلوا بالترتيب.",
-            "أول اتنين خرجوا بنفس الترتيب، وفاضل واحد."
-          ],
-          sol: R`على ١٠٠ ألف عنصر: [[push]] + [[shift]] أخدت حوالي 700ms على Node 24 على ويندوز، والـ Queue حوالي 10ms. أرقامك هتختلف، بس الفرق كبير لأن [[shift]] ممكن تحرّك كل العناصر خطوة لورا.
-
-الـ deque: [[pushFront(x)]] بتعمل [[this.items[--this.head] = x]] (الـ head ممكن ينزل تحت الصفر، ومفيش مشكلة لأن الـ keys في object). و [[popBack()]] بتعمل [[--this.tail]] وتقرا وتمسح. الأربع عمليات [[O(1)]]. مثال: pushBack b، pushFront a، pushBack c، وبعدين popFront و popBack و popBack يطلّعوا [[a c b]].
-
-الغلطة المشهورة: [[this.items[this.head--] = x]] بدل [[--this.head]]. كده بتكتب فوق أول عنصر موجود، لأن الـ head لسه بيشاور عليه.`,
-          solCode: R`class Deque {
-  constructor() { this.items = {}; this.head = 0; this.tail = 0; }
-  pushBack(x) { this.items[this.tail++] = x; }
-  pushFront(x) { this.items[--this.head] = x; }
-  popFront() {
-    if (this.head === this.tail) return undefined;
-    const x = this.items[this.head];
-    delete this.items[this.head++];
-    return x;
-  }
-  popBack() {
-    if (this.head === this.tail) return undefined;
-    const x = this.items[--this.tail];
-    delete this.items[this.tail];
-    return x;
-  }
-  get size() { return this.tail - this.head; }
-}
-const N = 100_000;
-console.time("shift");
-const arr = [];
-for (let i = 0; i < N; i++) arr.push(i);
-let s1 = 0;
-while (arr.length) s1 += arr.shift();
-console.timeEnd("shift"); // shift: around 700ms on Node 24 (varies)
-console.time("queue");
-const q = new Deque();
-for (let i = 0; i < N; i++) q.pushBack(i);
-let s2 = 0;
-while (q.size) s2 += q.popFront();
-console.timeEnd("queue"); // queue: around 10ms
-console.log(s1 === s2); // true
-const d = new Deque();
-d.pushBack("b"); d.pushFront("a"); d.pushBack("c");
-console.log(d.popFront(), d.popBack(), d.popBack(), d.size); // a c b 0
-// all four operations O(1); head can go negative, which is fine for object keys`,
-          check: {
-            lang: "js",
-            starter: R`class Deque {
-  constructor() { this.items = {}; this.head = 0; this.tail = 0; }
-  pushBack(x) { this.items[this.tail++] = x; }
-  popFront() {
-    if (this.head === this.tail) return undefined;
-    const x = this.items[this.head];
-    delete this.items[this.head++];
-    return x;
-  }
-  pushFront(x) {
-    // قلّل head الأول وبعدين اكتب
-  }
-  popBack() {
-    // قلّل tail واقرا وامسح
-  }
-  get size() { return this.tail - this.head; }
-}`,
-            tests: R`test("pushBack b، pushFront a، pushBack c ← popFront a و popBack c و popBack b", () => {
-  const d = new Deque();
-  d.pushBack("b"); d.pushFront("a"); d.pushBack("c");
-  expect([d.size, d.popFront(), d.popBack(), d.popBack(), d.size]).toEqual([3, "a", "c", "b", 0]);
-});
-test("--this.head مش this.head--: pushFront متكتبش فوق أول عنصر", () => {
-  const d = new Deque();
-  d.pushBack(1); d.pushFront(0);
-  expect([d.popFront(), d.popFront()]).toEqual([0, 1]);
-});
-test("فاضي: popFront و popBack ← undefined والـ size يفضل 0", () => {
-  const d = new Deque();
-  expect([d.popFront(), d.popBack(), d.size]).toEqual([undefined, undefined, 0]);
-});
-test("١٠٠ ألف pushFront وبعدين popBack بنفس ترتيب الدخول (كله O(1))", () => {
-  const d = new Deque();
-  for (let i = 0; i < 100000; i++) d.pushFront(i);
-  let ok = true;
-  for (let i = 0; i < 100000; i++) if (d.popBack() !== i) ok = false;
-  expect([ok, d.size]).toEqual([true, 0]);
-});`,
-            solution: R`class Deque {
-  constructor() { this.items = {}; this.head = 0; this.tail = 0; }
-  pushBack(x) { this.items[this.tail++] = x; }
-  popFront() {
-    if (this.head === this.tail) return undefined;
-    const x = this.items[this.head];
-    delete this.items[this.head++];
-    return x;
-  }
-  pushFront(x) { this.items[--this.head] = x; }
-  popBack() {
-    if (this.head === this.tail) return undefined;
-    const x = this.items[--this.tail];
-    delete this.items[this.tail];
-    return x;
-  }
-  get size() { return this.tail - this.head; }
-}`
-          }
-        }
-      ]
-    },
-    {
-      t: "binary search",
-      l: 2,
-      n: "كل خطوة بتشيل نص الاحتمالات، فمليون عنصر محتاجين ٢٠ خطوة",
-      items: [
-        {
-          cmd: "binary search",
-          title: "دوّر على رقم في array مترتبة من غير ما تعدّي عليها كلها",
-          desc: R`بص على العنصر اللي في النص: لو هو المطلوب خلاص، لو أصغر يبقى المطلوب في النص اليمين، لو أكبر يبقى في الشمال. كل خطوة بتشيل نص الاحتمالات: [[O(log n)]].
-
-مليون عنصر محتاجين ٢٠ مقارنة بالكتير، ومليار محتاجين ٣٠. عشان كده الـ binary search من أقوى الأدوات، بس شرطه إن البيانات مترتبة.
-
-المهم تفهم الحدود: [[lo]] و [[hi]] الاتنين جوه المنطقة اللي لسه ممكن يكون فيها المطلوب، والـ loop شغال طول ما المنطقة مش فاضية ([[lo <= hi]]).`,
-          example: R`function binarySearch(a, target) {
-  let lo = 0, hi = a.length - 1;
-  while (lo <= hi) {
-    const mid = lo + Math.floor((hi - lo) / 2);
-    if (a[mid] === target) return mid;
-    if (a[mid] < target) lo = mid + 1;
-    else hi = mid - 1;
-  }
-  return -1;
-}
-const a = [1, 3, 5, 7, 9, 11];
-console.log(binarySearch(a, 7));  // 3
-console.log(binarySearch(a, 4));  // -1
-console.log(binarySearch([], 1)); // -1
-// O(log n) time, O(1) space`,
-          try: R`اكتبها recursive بـ [[(a, target, lo, hi)]]، وقول الـ space complexity بتاعتها. وبعدين دوّر في array مترتبة واتلفّت زي [4, 5, 6, 7, 0, 1, 2] في O(log n): في كل خطوة، نص واحد على الأقل مترتب. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[bsRec(a, target, lo, hi)]] (والـ lo و hi ليهم قيم افتراضية)، و [[searchRotated(a, target)]].`,
-          flag: "script",
-          deep: {
-            why: "أي بحث في بيانات مترتبة: الـ index في قاعدة البيانات (B-tree بنفس الروح)، و [[git bisect]] اللي بيدوّر على الـ commit اللي بوّظ الكود، والبحث في لوج مترتب بالوقت. والانترفيو بيحبها لأن فيها off-by-one كتير وسهل تتكتب غلط.",
-            how: R`dry run على [1, 3, 5, 7, 9, 11] ونبحث عن 7:
-
-lo = 0 و hi = 5، و mid = 2 (قيمته 5). 5 أصغر من 7، فـ lo = 3.
-
-lo = 3 و hi = 5، و mid = 4 (قيمته 9). أكبر، فـ hi = 3.
-
-lo = 3 و hi = 3، و mid = 3 (قيمته 7). لقيناه.
-
-والبحث عن 4: mid = 2 (5) أكبر، فـ hi = 1. mid = 0 (1) أصغر، فـ lo = 1. mid = 1 (3) أصغر، فـ lo = 2. دلوقتي lo = 2 أكبر من hi = 1: المنطقة فاضية، -1.
-
-القاعدة اللي بتمنع الأخطاء: قرّر معنى lo و hi وخليك عليه. هنا الاتنين «شاملين» (المطلوب ممكن يكون عند lo أو عند hi). فالـ loop بـ [[<=]]، والتحديث [[mid + 1]] و [[mid - 1]] لأن mid نفسه اتفحص خلاص.
-
-لو كتبت [[lo = mid]] بدل [[mid + 1]]، لما lo و hi يبقوا جنب بعض، mid هيفضل = lo، والـ loop هيلف للأبد.
-
-و [[lo + Math.floor((hi - lo) / 2)]] بدل [[(lo + hi) / 2]]: في Java و C++ جمع رقمين كبار ممكن يعدّي حد الـ int. في JS الأرقام doubles فمفيش overflow عملي، بس العادة دي بتبان كويس في الانترفيو. وفيه كمان [[(lo + hi) >>> 1]] اللي هتشوفه في الدروس الجاية.`,
-            when: "أي بحث في حاجة مترتبة. ولو المطلوب «أول/آخر مكان» أو «يتحط فين» أو «أقل قيمة تحقق شرط»، دي تنويعات عليها (الدروس الجاية).",
-            mistakes: R`[[lo < hi]] مع [[hi = a.length - 1]] بيفوّت آخر عنصر فاضل. و [[lo = mid]] بدل [[mid + 1]] بيعمل loop لا نهائي. ونسيان [[Math.floor]] فيطلع mid كسر والقيمة undefined. وتشغيلها على array مش مترتبة: مفيش error، بس الإجابات غلط. ولو هتدوّر مرة واحدة بس في array مش مترتبة، [[includes]] ([[O(n)]]) أحسن من sort وبعده binary search ([[O(n log n)]]).`
-          },
-          teach: R`## الفكرة في جملة
-
-الـ array مترتبة، فلو بصّيت على العنصر اللي في النص وطلع أصغر من المطلوب، يبقى النص الشمال كله أصغر كمان ومفيش داعي تبص فيه. كل مقارنة بترمي نص الاحتمالات. معانا رقمين [[lo]] و [[hi]] بيحدّدوا المنطقة اللي لسه ممكن المطلوب يكون فيها، والمنطقة بتتقسم نصين لحد ما نلاقيه أو تفضى.
-
-كل الأرقام اللي تحت من تشغيل حقيقي على Node 24.19.0 على ويندوز، بعد ما ضفنا [[console.log]] جوه الـ loop يطبع lo و hi و mid.
-
----
-
-## ١. الكود سطر سطر
+## ٢. [[fib]] مع الـ memo سطر سطر
 
 ~~~js
-function binarySearch(a, target) {
-  let lo = 0, hi = a.length - 1;
-  while (lo <= hi) {
-    const mid = lo + Math.floor((hi - lo) / 2);
-    if (a[mid] === target) return mid;
-    if (a[mid] < target) lo = mid + 1;
-    else hi = mid - 1;
-  }
-  return -1;
+function fib(n, memo = new Map()) {
+  if (n < 2) return n;
+  if (memo.has(n)) return memo.get(n);
+  const val = fib(n - 1, memo) + fib(n - 2, memo);
+  memo.set(n, val);
+  return val;
 }
 ~~~
 
-### [[let lo = 0, hi = a.length - 1;]]
+### [[memo = new Map()]] في الـ parameters
 
-lo = low (الحد الأدنى)، و hi = high (الحد الأعلى). الاتنين **شاملين**: المطلوب ممكن يكون عند lo نفسه أو عند hi نفسه. في الأول المنطقة هي الـ array كلها، من أول index (0) لآخر index ([[a.length - 1]]).
+ده **default parameter**: لو اللي نادى الدالة مبعتش [[memo]]، اعمل Map جديدة. فـ [[fib(50)]] من برّا بتبدأ بـ Map فاضية، وكل النداءات اللي جوه بتبعت **نفس** الـ Map: [[fib(n - 1, memo)]]. كده الكل بيشارك نفس الـ cache.
 
-### [[while (lo <= hi)]]
+### [[if (memo.has(n)) return memo.get(n);]]
 
-المنطقة من lo لـ hi فيها عنصر واحد على الأقل طول ما [[lo <= hi]]. لما lo = hi، فيه عنصر واحد لسه ماتفحصش، فلازم نلف كمان مرة: عشان كده [[<=]] مش [[<]].
+اتحسبت قبل كده؟ رجّعها على طول، من غير أي نداء جديد. ولاحظ إننا بنسأل بـ [[has]] مش [[if (memo.get(n))]]: لو القيمة المخزّنة 0، [[get]] هترجع 0 والـ if هيعتبرها مش موجودة.
 
-### [[const mid = lo + Math.floor((hi - lo) / 2);]]
+### [[const val = fib(n - 1, memo) + fib(n - 2, memo);]]
 
-من جوه لبرة:
+نفس معادلة فيبوناتشي، بس مع تمرير الـ memo.
 
-1. [[hi - lo]]: عرض المنطقة.
-2. [[/ 2]]: نصه. القسمة في JS بتطلّع كسور: [[7 / 2]] طلعت [[3.5]].
-3. [[Math.floor]]: بتقرّب لتحت: [[Math.floor(7 / 2)]] طلعت [[3]]. من غيرها [[a[3.5]]] بترجع [[undefined]].
-4. [[lo + ...]]: نبدأ من lo ونمشي نص العرض. ده نفس [[(lo + hi) / 2]] بس من غير جمع رقمين كبار (في لغات زي Java الجمع ده ممكن يعدّي حد الـ int).
+### [[memo.set(n, val); return val;]]
 
-### [[if (a[mid] === target) return mid;]]
-
-لقيناه: رجّع مكانه وخلاص.
-
-### [[if (a[mid] < target) lo = mid + 1;]]
-
-النص أصغر من المطلوب، والـ array مترتبة، فكل حاجة من lo لـ mid أصغر كمان. المنطقة الجديدة تبدأ **بعد** mid: [[mid + 1]]، لأن mid نفسه اتفحص.
-
-### [[else hi = mid - 1;]]
-
-النص أكبر: كل حاجة من mid لـ hi أكبر. المنطقة الجديدة تخلص **قبل** mid.
-
-### [[return -1;]]
-
-الـ loop وقف لأن lo بقت أكبر من hi: المنطقة فضيت، والمطلوب مش موجود. -1 اتفاق معروف معناه «مش موجود» لأنه مستحيل يبقى index.
+خزّن النتيجة **قبل** ما ترجع، عشان أي نداء بعد كده يلاقيها.
 
 ---
 
-## ٢. التتبع: البحث عن 32 في [[[2, 4, 8, 16, 32, 64, 128]]]
+## ٣. التتبع: [[fib(5)]]
 
-| الخطوة | lo | hi | mid | a[mid] | القرار | بعدها |
-|---|---|---|---|---|---|---|
-| 1 | 0 | 6 | 3 | 16 | أصغر من 32، روح يمين | lo = 4، hi = 6 |
-| 2 | 4 | 6 | 5 | 64 | أكبر، روح شمال | lo = 4، hi = 4 |
-| 3 | 4 | 4 | 4 | 32 | لقيناه | رجّع 4 |
+~~~text الناتج (Node 24 على ويندوز)
+fib(5)
+  fib(4)
+    fib(3)
+      fib(2)
+        fib(1) base -> 1
+        fib(0) base -> 0
+      set memo 2 = 1  memo=[[2,1]]
+      fib(1) base -> 1
+    set memo 3 = 2  memo=[[2,1],[3,2]]
+    fib(2) memo hit -> 1
+  set memo 4 = 3  memo=[[2,1],[3,2],[4,3]]
+  fib(3) memo hit -> 2
+set memo 5 = 5  memo=[[2,1],[3,2],[4,3],[5,5]]
+5
+~~~
 
-٧ عناصر وخلصنا في ٣ مقارنات.
+| الخطوة | اللي حصل | الـ memo بعدها |
+|---|---|---|
+| 1 | النزول على الشمال لحد fib(1) و fib(0) | {} |
+| 2 | fib(2) = 1 + 0 = 1 | {2: 1} |
+| 3 | fib(3) = fib(2) + fib(1) = 1 + 1 = 2 | {2: 1, 3: 2} |
+| 4 | fib(4) محتاجة fib(2): **موجودة**، مفيش نزول | |
+| 5 | fib(4) = 2 + 1 = 3 | {2: 1, 3: 2, 4: 3} |
+| 6 | fib(5) محتاجة fib(3): **موجودة** | |
+| 7 | fib(5) = 3 + 2 = 5 | {2: 1, 3: 2, 4: 3, 5: 5} |
 
-## ٣. التتبع: البحث عن 5 (مش موجود)
-
-| الخطوة | lo | hi | mid | a[mid] | القرار | بعدها |
-|---|---|---|---|---|---|---|
-| 1 | 0 | 6 | 3 | 16 | أكبر | lo = 0، hi = 2 |
-| 2 | 0 | 2 | 1 | 4 | أصغر | lo = 2، hi = 2 |
-| 3 | 2 | 2 | 2 | 8 | أكبر | lo = 2، hi = 1 |
-| النهاية | 2 | 1 | | | lo > hi، المنطقة فاضية | رجّع -1 |
-
-لاحظ إن lo وقفت عند 2، وده بالظبط المكان اللي الـ 5 كانت هتتحط فيه (بين 4 و 8). الحتة دي هي درس «search insert position».
+9 نداءات بدل 15. والفرق بيكبر جامد: كل رقم من 2 لـ n بيتحسب مرة واحدة وبيعمل نداءين، فالمجموع 2n - 1. عدّيناهم لـ [[fib(50)]] وطلعوا 99 نداء، وخلصت في 0.021ms.
 
 ---
 
 ## ٤. الناتج الكامل للمثال
 
 ~~~text الناتج (Node 24 على ويندوز)
-3
--1
--1
+6765
+12586269025
 ~~~
 
-- 7 عند index 3.
-- 4 مش موجود.
-- [[[]]]: hi = -1 من الأول، و [[0 <= -1]] غلط، فالـ loop مبيلفّش ويرجع -1.
+[[fibSlow(20)]] = 6765 لسه سريعة (21891 نداء)، و [[fib(50)]] = 12586269025 في لحظة.
 
 ---
 
 ## ٥. الـ Big-O وليه
 
-كل لفة المنطقة بتبقى النص أو أقل. فعدد اللفات = كام مرة تقسم n على ٢ لحد ما توصل لـ 1، وده [[log₂ n]]. جرّبنا [[2 ** 20]] طلعت 1048576 (حوالي مليون)، فمليون عنصر محتاجين ٢٠ لفة بالكتير، و [[2 ** 30]] حوالي مليار: ٣٠ لفة.
-
-| | القيمة | السبب |
-|---|---|---|
-| الوقت | [[O(log n)]] | المنطقة بتتنصّف كل لفة |
-| الذاكرة | [[O(1)]] | lo و hi و mid بس |
+| | الوقت | الذاكرة | السبب |
+|---|---|---|---|
+| fibSlow | [[O(2^n)]] | [[O(n)]] stack | كل نداء بيعمل اتنين، والشجرة بتتضاعف كل مستوى (بالظبط حوالي 1.6^n) |
+| fib بالـ memo | [[O(n)]] | [[O(n)]] | كل n بتتحسب مرة، والـ Map فيها n قيمة، والـ stack بينزل n مستوى |
 
 ---
 
 ## الخلاصة
 
 ~~~text
-شرط           الـ array مترتبة
-lo, hi        شاملين: من 0 لـ a.length - 1
-while         lo <= hi (فيه عنصر لسه ماتفحصش)
-mid           lo + Math.floor((hi - lo) / 2)
-أصغر          lo = mid + 1
-أكبر          hi = mid - 1
-فضيت          return -1
+المشكلة         نفس المدخل بيتحسب مرات كتير (overlapping subproblems)
+الحل            Map: لو has(n) رجّع get(n)، غير كده احسب و set قبل الرجوع
+الـ memo          بيتبعت مع كل نداء عشان الكل يشارك نفس الـ cache
+has مش get      عشان القيم زي 0 متتحسبش تاني
+النتيجة          O(2^n) بقت O(n): fib(50) بـ 99 نداء
 ~~~
 
-> اختار معنى lo و hi (هنا شاملين) والتزم بيه: هو اللي بيحدد [[<=]] و [[mid + 1]] و [[mid - 1]]. أي خلط بينهم يعمل loop لا نهائي أو يفوّت عنصر.`,
+> recursion + cache = **top-down dynamic programming**. هتشوفها تاني في مسائل «عدد الطرق» و «أقل تكلفة».`,
           lines: [
-            "ترجّع مكان target أو -1.",
-            "المنطقة اللي ممكن يكون فيها: من أول لآخر عنصر (شاملين الاتنين).",
-            "طول ما المنطقة فيها عنصر واحد على الأقل.",
-            "النص. [[Math.floor]] مهمة لأن القسمة في JS بتطلّع كسور.",
-            "لقيناه.",
-            "النص أصغر: المطلوب على اليمين، والنص نفسه اتستبعد (+ 1).",
-            "النص أكبر: المطلوب على الشمال (- 1).",
+            "النسخة العادية.",
+            "fib(0) = 0 و fib(1) = 1.",
+            "كل نداء بيعمل نداءين، والشجرة بتتضاعف كل مستوى: O(2^n).",
             "قفلة.",
-            "المنطقة فضيت: مش موجود.",
+            "نفس الدالة ومعاها Map بتتبعت مع كل نداء.",
+            "نفس الـ base case.",
+            "اتحسبت قبل كده؟ رجّعها على طول.",
+            "احسبها مرة واحدة.",
+            "خزّنها قبل ما ترجع.",
+            "رجّعها.",
             "قفلة.",
-            "array مترتبة.",
-            "7 عند index 3.",
-            "4 مش موجود.",
-            "array فاضية: hi = -1 والـ loop مبيلفّش."
+            "20 لسه سريعة حتى من غير memo (حوالي ٢٢ ألف نداء).",
+            "50 في أقل من ملّي ثانية. من غير memo كانت هتاخد عشرات المليارات من النداءات."
           ],
-          sol: R`النسخة الـ recursive: [[if (lo > hi) return -1]]، واحسب mid، وبعدين [[return bsRec(a, target, mid + 1, hi)]] أو [[lo, mid - 1]]. الناتج 3 و -1 و -1. الوقت [[O(log n)]] بس الـ space [[O(log n)]] كمان (عمق الـ stack)، والـ loop كان [[O(1)]].
+          sol: R`لـ n = 25: النسخة البطيئة بتعمل 242785 نداء، ونسخة الـ memo بتعمل 49 بس، والاتنين بيرجّعوا 75025. الـ 49 جاية من إن كل n من 2 لـ 25 بتتحسب مرة، وكل واحدة بتنادي اتنين.
 
-المتلفّتة: في كل خطوة قارن [[a[lo] <= a[mid]]]. لو آه، الشمال مترتب: لو target بين [[a[lo]]] و [[a[mid]]] روح شمال، وإلا يمين. لو لأ يبقى اليمين مترتب، واعمل نفس الشيك عليه. على [4, 5, 6, 7, 0, 1, 2]: الـ 0 عند 4، والـ 4 عند 0، والـ 2 عند 6، والـ 3 مش موجودة.
+[[memoize(fn)]]: بترجّع دالة جديدة معاها Map، لو الـ argument موجود ترجّع القيمة المتخزنة، ولو لأ تنادي [[fn]] وتخزّن النتيجة. تتأكد إنها شغالة لو دالة زي [[square]] اتنادت مرتين بـ 9 واتنفذت مرة واحدة بس. ولـ fib، الدالة لازم تنادي النسخة الـ memoized نفسها ([[fibM(n - 1)]])، فـ [[fibM(50)]] بتطلع 12586269025 على طول.
 
-الغلطة المشهورة: [[a[lo] < a[mid]]] بدل [[<=]]. لما [[lo === mid]] (آخر عنصرين) الشرط يغلط، فـ [3, 1] والتارجت 1 ترجع -1.`,
-          solCode: R`function bsRec(a, target, lo = 0, hi = a.length - 1) {
-  if (lo > hi) return -1;
-  const mid = lo + Math.floor((hi - lo) / 2);
-  if (a[mid] === target) return mid;
-  if (a[mid] < target) return bsRec(a, target, mid + 1, hi);
-  return bsRec(a, target, lo, mid - 1);
+الغلطة المشهورة: [[const fast = memoize(fibSlow)]]. النداء الأول بيتخزن، بس [[fibSlow]] جواها بتنادي نفسها مش النسخة الـ memoized، فبتفضل بطيئة. وغلطة تانية: [[if (cache.get(x))]] بدل [[has]]، فالقيم زي 0 مش هتتخزن أبدًا.`,
+          solCode: R`let slowCalls = 0, memoCalls = 0;
+function fibSlow(n) {
+  slowCalls++;
+  if (n < 2) return n;
+  return fibSlow(n - 1) + fibSlow(n - 2);
 }
-console.log(bsRec([1, 3, 5, 7, 9, 11], 7), bsRec([1, 3, 5], 4), bsRec([], 1)); // 3 -1 -1
-function searchRotated(a, target) {
-  let lo = 0, hi = a.length - 1;
-  while (lo <= hi) {
-    const mid = (lo + hi) >>> 1;
-    if (a[mid] === target) return mid;
-    if (a[lo] <= a[mid]) {
-      if (a[lo] <= target && target < a[mid]) hi = mid - 1;
-      else lo = mid + 1;
-    } else {
-      if (a[mid] < target && target <= a[hi]) lo = mid + 1;
-      else hi = mid - 1;
-    }
-  }
-  return -1;
+function fib(n, memo = new Map()) {
+  memoCalls++;
+  if (n < 2) return n;
+  if (memo.has(n)) return memo.get(n);
+  const val = fib(n - 1, memo) + fib(n - 2, memo);
+  memo.set(n, val);
+  return val;
 }
-const r = [4, 5, 6, 7, 0, 1, 2];
-console.log(searchRotated(r, 0), searchRotated(r, 4), searchRotated(r, 2), searchRotated(r, 3)); // 4 0 6 -1
-console.log(searchRotated([1], 1), searchRotated([3, 1], 1)); // 0 1
-// bsRec: O(log n) time, O(log n) stack space; searchRotated: O(log n) time, O(1) space (distinct values)`,
+console.log(fibSlow(25), slowCalls); // 75025 242785
+console.log(fib(25), memoCalls);     // 75025 49
+function memoize(fn) {
+  const cache = new Map();
+  return x => {
+    if (cache.has(x)) return cache.get(x);
+    const val = fn(x);
+    cache.set(x, val);
+    return val;
+  };
+}
+const fibM = memoize(n => (n < 2 ? n : fibM(n - 1) + fibM(n - 2)));
+console.log(fibM(50)); // 12586269025
+let squareRuns = 0;
+const square = memoize(x => { squareRuns++; return x * x; });
+console.log(square(9), square(9), squareRuns); // 81 81 1
+// fibSlow: O(2^n) time; memo: O(n) time, O(n) space`,
           check: {
             lang: "js",
-            starter: R`function bsRec(a, target, lo = 0, hi = a.length - 1) {
-  // if (lo > hi) return -1، واحسب mid، ونادي نفسك على نص واحد
-}
-function searchRotated(a, target) {
-  let lo = 0, hi = a.length - 1;
-  // في كل خطوة: a[lo] <= a[mid] يبقى الشمال مترتب
-  return -1;
+            starter: R`function memoize(fn) {
+  const cache = new Map();
+  // رجّع دالة جديدة: لو الـ argument في الـ cache رجّع قيمته، وإلا نادي fn وخزّن
 }`,
-            tests: R`test("bsRec([1, 3, 5, 7, 9, 11], 7) ← 3", () => expect(bsRec([1, 3, 5, 7, 9, 11], 7)).toBe(3));
-test("مش موجود ← -1، و [] ← -1", () => expect([bsRec([1, 3, 5, 7, 9, 11], 4), bsRec([], 1)]).toEqual([-1, -1]));
-test("searchRotated([4, 5, 6, 7, 0, 1, 2]): 0 ← 4، و 4 ← 0، و 2 ← 6", () => {
-  const a = [4, 5, 6, 7, 0, 1, 2];
-  expect([searchRotated(a, 0), searchRotated(a, 4), searchRotated(a, 2)]).toEqual([4, 0, 6]);
+            tests: R`test("بترجّع نفس نتايج الدالة الأصلية", () => {
+  const sq = memoize(x => x * x);
+  expect([sq(9), sq(3), sq(9)]).toEqual([81, 9, 81]);
 });
-test("searchRotated: 3 مش موجودة ← -1", () => expect(searchRotated([4, 5, 6, 7, 0, 1, 2], 3)).toBe(-1));
-test("فخ <= : searchRotated([3, 1], 1) ← 1", () => expect(searchRotated([3, 1], 1)).toBe(1));
-test("مليون عنصر متلفّتين: كل بحث O(log n)", () => {
-  const n = 1000000, k = 377777, a = Array.from({ length: n }, (_, i) => (i + k) % n);
-  expect([searchRotated(a, 0), searchRotated(a, n - 1), searchRotated(a, k), bsRec(Array.from({ length: n }, (_, i) => i * 2), 1999998)]).toEqual([n - k, n - k - 1, 0, 999999]);
+test("الدالة الأصلية بتتنادي مرة واحدة لنفس الـ argument", () => {
+  let calls = 0;
+  const f = memoize(x => { calls++; return x * 2; });
+  f(9); f(9); f(9);
+  expect(calls).toBe(1);
+});
+test("بتخزّن النتايج falsy زي 0 و undefined (افحص بـ has مش get)", () => {
+  let calls = 0;
+  const f = memoize(x => { calls++; return x === 1 ? 0 : undefined; });
+  f(1); f(1); f(2); f(2);
+  expect(calls).toBe(2);
+});
+test("كل دالة memoized ليها cache لوحدها", () => {
+  const a = memoize(x => x + 1), b = memoize(x => x + 100);
+  expect([a(1), b(1)]).toEqual([2, 101]);
+});
+test("fibM(78) بتنادي النسخة الـ memoized نفسها فبتخلص في لحظة (O(n) بدل O(2^n))", () => {
+  const fibM = memoize(n => (n < 2 ? n : fibM(n - 1) + fibM(n - 2)));
+  expect(fibM(78)).toBe(8944394323791464);
 });`,
-            solution: R`function bsRec(a, target, lo = 0, hi = a.length - 1) {
-  if (lo > hi) return -1;
-  const mid = lo + Math.floor((hi - lo) / 2);
-  if (a[mid] === target) return mid;
-  return a[mid] < target ? bsRec(a, target, mid + 1, hi) : bsRec(a, target, lo, mid - 1);
-}
-function searchRotated(a, target) {
-  let lo = 0, hi = a.length - 1;
-  while (lo <= hi) {
-    const mid = (lo + hi) >>> 1;
-    if (a[mid] === target) return mid;
-    if (a[lo] <= a[mid]) {
-      if (a[lo] <= target && target < a[mid]) hi = mid - 1;
-      else lo = mid + 1;
-    } else {
-      if (a[mid] < target && target <= a[hi]) lo = mid + 1;
-      else hi = mid - 1;
-    }
-  }
-  return -1;
+            solution: R`function memoize(fn) {
+  const cache = new Map();
+  return x => {
+    if (cache.has(x)) return cache.get(x);
+    const value = fn(x);
+    cache.set(x, value);
+    return value;
+  };
 }`
           }
         },
         {
-          cmd: "lower bound (first/last)",
-          title: "أول وآخر مكان لرقم متكرر في array مترتبة",
-          desc: R`[[lowerBound(a, x)]] بترجّع أول مكان قيمته ≥ x. أول ظهور لـ x هو الـ lowerBound بتاعه، وآخر ظهور هو lowerBound لـ [[x + 1]] ناقص واحد. الاتنين [[O(log n)]].
+          cmd: "prefix sum",
+          title: "مجموع أي جزء من array بين l و r في O(1)، بعد تجهيز مرة واحدة",
+          desc: R`اعمل array تانية [[pre]] كل خانة فيها مجموع أول i عناصر. بعدها مجموع أي جزء من l لـ r = [[pre[r + 1] - pre[l]]]. التجهيز [[O(n)]] مرة واحدة، وكل سؤال بعد كده [[O(1)]].
 
-الفرق عن الـ binary search العادية: لما تلاقي x متقفش، لأن ممكن يكون فيه نسخة قبله. بدل كده [[hi = mid]] وتكمّل على الشمال.
+من غيرها، كل سؤال بيعمل loop على الجزء: q سؤال × n = [[O(q × n)]]. بالـ prefix sum بقت [[O(n + q)]].
 
-هنا [[hi = a.length]] (مش [[a.length - 1]]) والـ loop بـ [[lo < hi]]: المنطقة [lo, hi) نصها مفتوح، والإجابة ممكن تبقى [[a.length]] نفسها لو كل العناصر أصغر من x.`,
-          example: R`function lowerBound(a, target) {
-  let lo = 0, hi = a.length;
-  while (lo < hi) {
-    const mid = (lo + hi) >>> 1;
-    if (a[mid] < target) lo = mid + 1;
-    else hi = mid;
-  }
-  return lo;
+الـ [[pre]] أطول من الـ array بواحد وبتبدأ بـ 0، عشان الجزء اللي بيبدأ من أول الـ array ميحتاجش if.`,
+          example: R`function buildPrefix(a) {
+  const pre = new Array(a.length + 1).fill(0);
+  for (let i = 0; i < a.length; i++) pre[i + 1] = pre[i] + a[i];
+  return pre;
 }
-function firstLast(a, x) {
-  const first = lowerBound(a, x);
-  if (first === a.length || a[first] !== x) return [-1, -1];
-  return [first, lowerBound(a, x + 1) - 1];
-}
-console.log(firstLast([5, 7, 7, 8, 8, 8, 10], 8), firstLast([5, 7], 6)); // [3, 5] [-1, -1]
-// O(log n) time, O(1) space; x + 1 works for integers only (use an upperBound for anything else)`,
-          try: R`اكتب [[upperBound]] (أول مكان قيمته > x) بتغيير علامة واحدة، واستخدمها بدل [[x + 1]] عشان تشتغل مع أرقام عشرية و strings. وبعدين: عدد مرات ظهور x = [[upperBound - lowerBound]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[upperBound]] و [[firstLast]] من غير [[x + 1]]، و [[count]].`,
+const rangeSum = (pre, l, r) => pre[r + 1] - pre[l];
+const a = [3, -1, 4, 1, 5, 9];
+const pre = buildPrefix(a);
+console.log(pre);                 // [0, 3, 2, 6, 7, 12, 21]
+console.log(rangeSum(pre, 1, 3)); // 4
+console.log(rangeSum(pre, 0, 5)); // 21
+console.log(rangeSum(pre, 4, 4)); // 5
+// build: O(n) time and O(n) space, then every query is O(1)`,
+          try: R`حل «عدد الأجزاء المتصلة اللي مجموعها k» ([1, 2, 3] و k = 3 الإجابة 2): وانت بتجمّع، خزّن في Map كل مجموع شفته كام مرة، واسأل «[[sum - k]] ظهر كام مرة قبل كده؟». ده prefix sum مع hash map، وبيشتغل مع الأرقام السالبة. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[subarraySum(nums, k)]] بترجّع عدد الأجزاء المتصلة اللي مجموعها k.`,
           flag: "script",
           deep: {
-            why: "الـ binary search العادية بترجّع «أي» مكان للقيمة، ودا مش كفاية لما فيه تكرار: أول طلب في يوم معين، أو عدد المستخدمين اللي عمرهم بين ٢٠ و ٣٠ في array مترتبة. الـ lower bound هو القالب اللي بيحل كل ده، وموجود جاهز في لغات تانية ([[bisect_left]] في Python، و [[std::lower_bound]] في C++).",
-            how: R`dry run: lowerBound على [5, 7, 7, 8, 8, 8, 10] و x = 8:
+            why: "لما عندك أسئلة كتير على نفس البيانات (مجموع المبيعات من يوم لـ يوم، عدد الزيارات في فترة)، الحساب من الأول كل مرة بيضيّع وقت. التجهيز مرة واحدة ودفع شوية ذاكرة بيخلّي كل سؤال فوري. وهو أساس مسائل «subarray sum» كلها.",
+            how: R`dry run على [3, -1, 4, 1, 5, 9]:
 
-lo = 0 و hi = 7. mid = 3 (8)، مش أصغر من 8، فـ hi = 3.
+pre = [0, 3, 2, 6, 7, 12, 21]. يعني pre عند 4 = 7 = 3 + (-1) + 4 + 1.
 
-lo = 0 و hi = 3. mid = 1 (7)، أصغر، فـ lo = 2.
+مجموع من 1 لـ 3 = pre عند 4 ناقص pre عند 1 = 7 - 3 = 4. ليه؟ pre عند 4 فيه أول ٤ عناصر، و pre عند 1 فيه أول عنصر بس، والفرق هو العناصر من 1 لـ 3.
 
-lo = 2 و hi = 3. mid = 2 (7)، أصغر، فـ lo = 3. دلوقتي lo = hi = 3. أول 8 عند 3.
+الـ off-by-one أكتر حاجة بتبوّظ هنا، لأن [[pre]] متأخرة خانة عن الـ array. خلي في دماغك قاعدة واحدة ثابتة: «[[pre[i]]] = مجموع أول i عنصر»، والباقي بيطلع منها.
 
-lowerBound لـ 9: هيوصل لـ 6 (أول قيمة ≥ 9 هي 10 عند 6). فآخر 8 عند 5.
+نفس الفكرة في 2D: كل خانة فيها مجموع المستطيل من الركن لحد عندها، وأي مستطيل مجموعه بيطلع من ٤ خانات. وفيه أخ ليها اسمه difference array، لو عايز تزوّد قيمة على range كامل مرات كتير.
 
-ليه الـ loop ده مبيلفّش للأبد؟ mid دايمًا أصغر من hi (لأن [[>>> 1]] بيقرّب لتحت)، فـ [[hi = mid]] بيصغّر المنطقة، و [[lo = mid + 1]] بيصغّرها. المنطقة بتقل كل لفة.
-
-طريقة تفكير بتسهّل كل ده: تخيّل الـ array اتحولت لـ false, false, true, true حسب الشرط «القيمة ≥ x». إنت بتدوّر على أول true. كل مسائل الـ binary search الصعبة بترجع لكده.
-
-[[x + 1]] بتشتغل مع الأعداد الصحيحة بس. مع 2.5 مثلًا، [[x + 1]] = 3.5، وممكن يكون فيه 3 في النص تتحسب غلط. عشان كده الـ upperBound (أول قيمة > x) هي الحل العام.`,
-            when: "أول أو آخر ظهور، وعدد مرات ظهور قيمة في بيانات مترتبة، وعدد العناصر في range (upperBound للحد الأعلى ناقص lowerBound للأدنى).",
-            mistakes: R`إنك تخلط القالبين: [[hi = a.length]] مع [[lo <= hi]] بيقرا برّا الـ array، و [[hi = mid - 1]] مع [[lo < hi]] بيفوّت الإجابة. اختار قالب واحد واحفظه. وإنك تنسى تتأكد إن القيمة عند [[first]] هي x فعلًا، فترجّع مكان رقم تاني. وإنك تحل «أول ظهور» بإنك تلاقي أي ظهور وتمشي لورا بـ loop: مع array كلها نفس الرقم ده بقى [[O(n)]].`
+والـ try (subarray sum equals k): لو المجموع لحد دلوقتي sum، وفيه جزء متصل بيخلص هنا مجموعه k، يبقى فيه prefix قبل كده مجموعه [[sum - k]]. فالـ Map بتعدّ الـ prefixes. ده [[O(n)]] وبيشتغل مع السالب، عكس الـ sliding window اللي محتاج أرقام موجبة.`,
+            when: "أسئلة كتير على مجموع ranges في بيانات مش بتتغير. لو البيانات بتتغير كتير، الـ prefix لازم يتبني من جديد مع كل تعديل، ووقتها فيه هياكل تانية (Fenwick tree أو segment tree).",
+            mistakes: R`off-by-one: [[pre[r] - pre[l]]] بدل [[pre[r + 1] - pre[l]]] (بيشيل آخر عنصر). وإنك تبني الـ prefix جوه كل سؤال فترجع [[O(n)]] لكل سؤال. وإنك تنسى إن مجموع أرقام كبيرة ممكن يعدّي [[Number.MAX_SAFE_INTEGER]]. والـ edge cases: array فاضية (pre = [0])، و l = r، و l = 0.`
           },
           teach: R`## الفكرة في جملة
 
-[[lowerBound(a, x)]] بتدوّر على **أول** مكان قيمته ≥ x. فكّر في الـ array كأنها اتحولت لصف من «لأ» و «آه» حسب السؤال «القيمة دي ≥ x؟»: كله «لأ» الأول وبعدين كله «آه» (لأنها مترتبة). إنت بتدوّر على أول «آه». ولما تلاقي «آه» متقفش: يمكن فيه «آه» قبلها، فتكمّل على الشمال وإنت سايبها في المنطقة.
+جهّز مرة واحدة array اسمها [[pre]] (اختصار prefix، يعني «البادئة»)، كل خانة [[pre[i]]] فيها **مجموع أول i عنصر**. بعدها مجموع أي جزء من l لـ r = [[pre[r + 1] - pre[l]]]: عملية طرح واحدة، مهما الجزء طويل.
 
-كل الأرقام اللي تحت من تشغيل حقيقي على Node 24.19.0 على ويندوز، بعد ما ضفنا [[console.log]] جوه الـ loop يطبع lo و hi و mid.
+كل الأرقام اللي تحت من تشغيل حقيقي على Node 24.19.0 على ويندوز، بعد ما ضفنا [[console.log]] جوه الـ loop يطبع الحالة.
 
 ---
 
-## ١. الكود سطر سطر
+## ١. [[buildPrefix]] سطر سطر
 
 ~~~js
-function lowerBound(a, target) {
-  let lo = 0, hi = a.length;
-  while (lo < hi) {
-    const mid = (lo + hi) >>> 1;
-    if (a[mid] < target) lo = mid + 1;
-    else hi = mid;
-  }
-  return lo;
+function buildPrefix(a) {
+  const pre = new Array(a.length + 1).fill(0);
+  for (let i = 0; i < a.length; i++) pre[i + 1] = pre[i] + a[i];
+  return pre;
 }
 ~~~
 
-### [[let lo = 0, hi = a.length;]]
+### [[new Array(a.length + 1).fill(0)]]
 
-هنا المنطقة **نص مفتوحة**: [lo, hi). يعني lo داخلة و hi **مش** داخلة. ليه [[hi = a.length]] مش [[a.length - 1]]؟ لأن الإجابة ممكن تبقى «بعد آخر عنصر» لو كل العناصر أصغر من target. فـ [[a.length]] نفسها إجابة ممكنة.
+- [[new Array(5)]]: array طولها 5 بس خاناتها فاضية. جرّبنا [[new Array(3)]] وطلعت [[[ <3 empty items> ]]].
+- [[.fill(0)]]: املا كل الخانات بـ 0، فبقت [[[ 0, 0, 0 ]]].
+- ليه الطول [[a.length + 1]]؟ لأن [[pre[0]]] معناها «مجموع أول 0 عنصر» = 0. الخانة الزيادة دي هي اللي بتخلّي الجزء اللي بيبدأ من أول الـ array ميحتاجش [[if]].
 
-### [[while (lo < hi)]]
+### [[pre[i + 1] = pre[i] + a[i];]]
 
-المنطقة [lo, hi) فاضية لما lo = hi. فبنلف طول ما [[lo < hi]]، ولما يتساووا يبقى ده المكان.
+مجموع أول i + 1 عنصر = مجموع أول i عنصر + العنصر رقم i. يعني كل خانة = اللي قبلها + عنصر جديد. ولاحظ إن [[pre]] متأخرة خانة عن [[a]]: العنصر [[a[i]]] بيدخل في [[pre[i + 1]]].
 
-### [[const mid = (lo + hi) >>> 1;]]
+### التتبع على [[[2, 7, -3, 5]]]
 
-[[>>>]] اسمه unsigned right shift: بيزق الـ bits خانة لليمين، وده قسمة على ٢ مع تقريب لتحت في سطر واحد. جرّبناها: [[(3 + 6) >>> 1]] طلعت 4. بتشتغل صح طول ما الرقم أقل من حوالي ٤ مليار.
+| i | a[i] | الحساب | pre بعد اللفة |
+|---|---|---|---|
+| البداية | | | [0, 0, 0, 0, 0] |
+| 0 | 2 | pre[1] = 0 + 2 = 2 | [0, 2, 0, 0, 0] |
+| 1 | 7 | pre[2] = 2 + 7 = 9 | [0, 2, 9, 0, 0] |
+| 2 | -3 | pre[3] = 9 + (-3) = 6 | [0, 2, 9, 6, 0] |
+| 3 | 5 | pre[4] = 6 + 5 = 11 | [0, 2, 9, 6, 11] |
 
-### [[if (a[mid] < target) lo = mid + 1;]]
-
-mid في منطقة الـ «لأ» (أصغر من target)، فالإجابة أكيد بعده.
-
-### [[else hi = mid;]]
-
-mid في منطقة الـ «آه» (≥ target)، فممكن يكون **هو** الإجابة. فمنرميهوش: [[hi = mid]] مش [[mid - 1]]. وبما إن hi مش داخلة في المنطقة، ده معناه «الإجابة عند mid أو قبله».
-
-### [[return lo;]]
-
-lo = hi = أول «آه». ولو مفيش «آه» خالص، بترجع [[a.length]].
-
-### ليه الـ loop مبيلفّش للأبد؟
-
-[[>>> 1]] بيقرّب لتحت، فـ mid دايمًا أصغر من hi. يعني [[hi = mid]] بيصغّر المنطقة، و [[lo = mid + 1]] بيصغّرها. المنطقة بتقل كل لفة.
+آخر خانة (11) = مجموع الـ array كلها. والرقم السالب عادي: المجموع نزل من 9 لـ 6.
 
 ---
 
-## ٢. [[firstLast]]
+## ٢. [[rangeSum]]: ليه الطرح بيشتغل؟
 
 ~~~js
-function firstLast(a, x) {
-  const first = lowerBound(a, x);
-  if (first === a.length || a[first] !== x) return [-1, -1];
-  return [first, lowerBound(a, x + 1) - 1];
-}
+const rangeSum = (pre, l, r) => pre[r + 1] - pre[l];
 ~~~
 
-1. [[first]]: أول مكان ≥ x.
-2. الشرط: لو [[first]] برّا الـ array، أو القيمة هناك مش x (يعني أول حاجة ≥ x أكبر منه)، يبقى x مش موجود: [[[-1, -1]]]. و [[||]] بتقف عند أول true، فلو [[first === a.length]] مش هنقرا [[a[first]]] أصلًا.
-3. آخر x: أول مكان ≥ [[x + 1]] هو أول حاجة أكبر من x، والخانة اللي قبله هي آخر x. ده بيشتغل مع الأعداد الصحيحة بس.
+arrow function بتاخد الـ [[pre]] وحدود الجزء l و r (الاتنين داخلين). على [[pre = [0, 2, 9, 6, 11]]]:
 
----
-
-## ٣. التتبع: [[firstLast([1, 2, 2, 2, 3, 5], 2)]]
-
-**أول نداء: [[lowerBound(a, 2)]]**
-
-| lo | hi | mid | a[mid] | أصغر من 2؟ | بعدها |
-|---|---|---|---|---|---|
-| 0 | 6 | 3 | 2 | لأ | lo = 0، hi = 3 |
-| 0 | 3 | 1 | 2 | لأ | lo = 0، hi = 1 |
-| 0 | 1 | 0 | 1 | آه | lo = 1، hi = 1 |
-
-رجعت 1. لاحظ إنها لقت 2 عند index 3 من أول لفة وموقفتش، وكمّلت لحد أول واحدة.
-
-**تاني نداء: [[lowerBound(a, 3)]]**
-
-| lo | hi | mid | a[mid] | أصغر من 3؟ | بعدها |
-|---|---|---|---|---|---|
-| 0 | 6 | 3 | 2 | آه | lo = 4، hi = 6 |
-| 4 | 6 | 5 | 5 | لأ | lo = 4، hi = 5 |
-| 4 | 5 | 4 | 3 | لأ | lo = 4، hi = 4 |
-
-رجعت 4، فآخر 2 عند 4 - 1 = 3. الناتج [[[ 1, 3 ]]].
-
-**مش موجود: [[firstLast(a, 4)]]**: [[lowerBound(a, 4)]] رجعت 5 (الـ 5 أول حاجة ≥ 4)، و [[a[5]]] = 5 مش 4، فالناتج [[[ -1, -1 ]]]. ومع 9: رجعت 6 = [[a.length]]، فالشرط الأول وقّفها.
-
----
-
-## ٤. الناتج الكامل للمثال
+| السؤال | الحساب | الناتج | تأكيد يدوي |
+|---|---|---|---|
+| rangeSum(pre, 1, 2) | pre[3] - pre[1] = 6 - 2 | 4 | 7 + (-3) = 4 |
+| rangeSum(pre, 0, 3) | pre[4] - pre[0] = 11 - 0 | 11 | الكل |
+| rangeSum(pre, 2, 2) | pre[3] - pre[2] = 6 - 9 | -3 | عنصر واحد |
+| rangeSum(pre, 0, 0) | pre[1] - pre[0] = 2 - 0 | 2 | أول عنصر |
 
 ~~~text الناتج (Node 24 على ويندوز)
-[ 3, 5 ] [ -1, -1 ]
+4 11 -3 2
 ~~~
 
-الـ 8 في [[[5, 7, 7, 8, 8, 8, 10]]] من 3 لـ 5، والـ 6 مش موجودة في [[[5, 7]]].
+الفكرة: [[pre[r + 1]]] فيها العناصر من 0 لـ r. و [[pre[l]]] فيها العناصر من 0 لـ l - 1. لما تطرح، اللي من 0 لـ l - 1 بيروح، ويفضل من l لـ r بالظبط.
 
----
-
-## ٥. الـ Big-O وليه
-
-| | القيمة | السبب |
-|---|---|---|
-| lowerBound | [[O(log n)]] | المنطقة بتتنصّف كل لفة |
-| firstLast | [[O(log n)]] | نداءين، و 2 log n لسه [[O(log n)]] |
-| الذاكرة | [[O(1)]] | lo و hi و mid |
-
-ولو كنت لقيت أي 8 بالـ binary search العادية ومشيت شمال خطوة خطوة لحد أول واحدة، array كلها نفس الرقم كانت هتبقى [[O(n)]].
-
----
-
-## الخلاصة
-
-~~~text
-المنطقة       [lo, hi) نص مفتوحة: hi = a.length
-while         lo < hi
-أصغر          lo = mid + 1
-≥ target      hi = mid (ممكن يكون هو الإجابة)
-النتيجة       lo = أول مكان ≥ target، أو a.length
-أول x         lowerBound(x) والقيمة هناك = x
-آخر x         lowerBound(x + 1) - 1 (أعداد صحيحة بس)
-~~~
-
-> متخلطش القالبين: الشامل ([[hi = a.length - 1]] و [[<=]] و [[mid - 1]]) والنص مفتوح ([[hi = a.length]] و [[<]] و [[hi = mid]]). كل واحد صح لوحده، والخلط بيكسر الاتنين.`,
-          lines: [
-            "أول index قيمته ≥ target (أو a.length لو مفيش).",
-            "hi = a.length: الإجابة ممكن تبقى بعد آخر عنصر.",
-            "لحد ما lo و hi يتقابلوا.",
-            "النص. [[>>> 1]] قسمة على ٢ مع تقريب لتحت.",
-            "النص أصغر من target: الإجابة أكيد بعده.",
-            "النص ≥ target: ممكن يكون هو الإجابة، فسيبه في المنطقة (hi = mid مش mid - 1).",
-            "قفلة.",
-            "lo = hi = الإجابة.",
-            "قفلة.",
-            "أول وآخر مكان لـ x.",
-            "أول مكان ≥ x.",
-            "لو برّا الـ array أو القيمة هناك مش x، يبقى x مش موجود.",
-            "آخر x = قبل أول مكان ≥ x + 1 بخانة.",
-            "قفلة.",
-            "8 من 3 لـ 5، و 6 مش موجود."
-          ],
-          sol: R`[[upperBound]] هي نفس [[lowerBound]] بالظبط، بس [[<]] بتبقى [[<=]]: كده بتعدّي كل القيم اللي = x وتقف عند أول أكبر منها. وآخر مكان لـ x = [[upperBound - 1]].
-
-دلوقتي بتشتغل مع أي حاجة بتتقارن: [[firstLast([1.5, 2.5, 2.5, 3], 2.5)]] ترجع [[[1, 2]]]، ومع strings [[["ali", "bob", "bob", "zed"]]] ترجع [[[1, 2]]]. و [[x + 1]] كانت هتبوظ هنا: [[2.5 + 1]] بتعدّي الـ 3، و [["bob" + 1]] بتبقى "bob1". عدد مرات 8 في [5, 7, 7, 8, 8, 8, 10] = 6 - 3 = 3. كله [[O(log n)]].
-
-الغلطة المشهورة: تغيّر العلامة في مكان تاني (مثلًا [[hi = mid - 1]]) فالحدود تتلخبط وتطلع بـ loop مالهاش نهاية أو إجابة ناقصة واحد.`,
-          solCode: R`function lowerBound(a, x) {
-  let lo = 0, hi = a.length;
-  while (lo < hi) {
-    const mid = (lo + hi) >>> 1;
-    if (a[mid] < x) lo = mid + 1;
-    else hi = mid;
-  }
-  return lo;
-}
-function upperBound(a, x) {
-  let lo = 0, hi = a.length;
-  while (lo < hi) {
-    const mid = (lo + hi) >>> 1;
-    if (a[mid] <= x) lo = mid + 1;
-    else hi = mid;
-  }
-  return lo;
-}
-function firstLast(a, x) {
-  const first = lowerBound(a, x);
-  if (first === a.length || a[first] !== x) return [-1, -1];
-  return [first, upperBound(a, x) - 1];
-}
-const count = (a, x) => upperBound(a, x) - lowerBound(a, x);
-console.log(firstLast([5, 7, 7, 8, 8, 8, 10], 8));        // [3, 5]
-console.log(firstLast([1.5, 2.5, 2.5, 3], 2.5));         // [1, 2]
-console.log(firstLast(["ali", "bob", "bob", "zed"], "bob")); // [1, 2]
-console.log(count([5, 7, 7, 8, 8, 8, 10], 8), count([5, 7], 6)); // 3 0
-// O(log n) time, O(1) space`,
-          check: {
-            lang: "js",
-            starter: R`function lowerBound(a, target) {
-  let lo = 0, hi = a.length;
-  while (lo < hi) {
-    const mid = (lo + hi) >>> 1;
-    if (a[mid] < target) lo = mid + 1;
-    else hi = mid;
-  }
-  return lo;
-}
-function upperBound(a, target) {
-  // نفس lowerBound بعلامة واحدة مختلفة
-}
-function firstLast(a, x) {
-  return [-1, -1];
-}
-function count(a, x) {
-  return 0;
-}`,
-            tests: R`test("upperBound([5, 7, 7, 8, 8, 8, 10], 8) ← 6", () => expect(upperBound([5, 7, 7, 8, 8, 8, 10], 8)).toBe(6));
-test("upperBound([1, 2], 5) ← 2 (بعد الآخر)", () => expect(upperBound([1, 2], 5)).toBe(2));
-test("firstLast([5, 7, 7, 8, 8, 8, 10], 8) ← [3, 5]", () => expect(firstLast([5, 7, 7, 8, 8, 8, 10], 8)).toEqual([3, 5]));
-test("أرقام عشرية: firstLast([1.5, 2.5, 2.5, 3], 2.5) ← [1, 2]", () => expect(firstLast([1.5, 2.5, 2.5, 3], 2.5)).toEqual([1, 2]));
-test("strings: firstLast(['ali', 'bob', 'bob', 'zed'], 'bob') ← [1, 2]", () => expect(firstLast(["ali", "bob", "bob", "zed"], "bob")).toEqual([1, 2]));
-test("مش موجود ← [-1, -1]", () => expect(firstLast([5, 7], 6)).toEqual([-1, -1]));
-test("count: 8 ← 3، و [] ← 0", () => expect([count([5, 7, 7, 8, 8, 8, 10], 8), count([], 1)]).toEqual([3, 0]));
-test("مليون عنصر (O(log n))", () => {
-  const a = Array.from({ length: 1000000 }, (_, i) => Math.floor(i / 10));
-  expect([count(a, 4242), firstLast(a, 99999)]).toEqual([10, [999990, 999999]]);
-});`,
-            solution: R`function lowerBound(a, target) {
-  let lo = 0, hi = a.length;
-  while (lo < hi) {
-    const mid = (lo + hi) >>> 1;
-    if (a[mid] < target) lo = mid + 1;
-    else hi = mid;
-  }
-  return lo;
-}
-function upperBound(a, target) {
-  let lo = 0, hi = a.length;
-  while (lo < hi) {
-    const mid = (lo + hi) >>> 1;
-    if (a[mid] <= target) lo = mid + 1;
-    else hi = mid;
-  }
-  return lo;
-}
-function firstLast(a, x) {
-  const first = lowerBound(a, x);
-  if (first === a.length || a[first] !== x) return [-1, -1];
-  return [first, upperBound(a, x) - 1];
-}
-function count(a, x) {
-  return upperBound(a, x) - lowerBound(a, x);
-}`
-          }
-        },
-        {
-          cmd: "search insert position",
-          title: "الرقم ده لو مش موجود، يتحط فين عشان الترتيب يفضل صح؟",
-          desc: R`نفس الـ binary search العادية بالظبط، بس لما تخلص من غير ما تلاقي الرقم، رجّع [[lo]] بدل -1. [[lo]] ساعتها أول مكان قيمته أكبر من target، وده مكان الإضافة. [[O(log n)]].
-
-ليه [[lo]]؟ الـ loop بيقف لما [[lo = hi + 1]]. كل اللي قبل lo أصغر من target (اتستبعدوا بـ [[lo = mid + 1]])، وكل اللي بعد hi أكبر (اتستبعدوا بـ [[hi = mid - 1]]). فـ lo هو الحد بينهم.
-
-ده نفس نتيجة الـ lowerBound من الدرس اللي فات، بقالب تاني، طول ما مفيش تكرار (مع التكرار بيرجّع أي نسخة يقابلها، مش أولها). اختار واحد تحفظه، وافهم التاني.`,
-          example: R`function searchInsert(a, target) {
-  let lo = 0, hi = a.length - 1;
-  while (lo <= hi) {
-    const mid = (lo + hi) >>> 1;
-    if (a[mid] === target) return mid;
-    if (a[mid] < target) lo = mid + 1;
-    else hi = mid - 1;
-  }
-  return lo;
-}
-console.log(searchInsert([1, 3, 5, 6], 5)); // 2
-console.log(searchInsert([1, 3, 5, 6], 2)); // 1
-console.log(searchInsert([1, 3, 5, 6], 7)); // 4
-console.log(searchInsert([1, 3, 5, 6], 0)); // 0
-console.log(searchInsert([], 3));           // 0
-// O(log n) time, O(1) space`,
-          try: R`استخدمها عشان تضيف رقم لـ array مترتبة: [[a.splice(searchInsert(a, x), 0, x)]]. البحث [[O(log n)]]، بس الإضافة نفسها Big-O بتاعتها إيه؟ (O(n)، لأن splice بتحرّك اللي بعدها). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[insertSorted(a, x)]] بتضيف في نفس الـ array وترجّعها.`,
-          flag: "script",
-          deep: {
-            why: "«يتحط فين» سؤال بيتسأل كتير: leaderboard مترتب وعايز تضيف score جديد، أو مواعيد مترتبة وعايز تحط ميعاد، أو autocomplete بيدوّر على أول كلمة بتبدأ بحروف معينة. ولو فهمت ليه [[lo]] هو الإجابة، يبقى فهمت الـ binary search فعلًا.",
-            how: R`dry run على [1, 3, 5, 6] و target = 2:
-
-lo = 0 و hi = 3. mid = 1 (3)، أكبر من 2، فـ hi = 0.
-
-lo = 0 و hi = 0. mid = 0 (1)، أصغر، فـ lo = 1.
-
-lo = 1 أكبر من hi = 0، الـ loop وقف. رجّع 1. وفعلًا 2 مكانها بين 1 و 3.
-
-و target = 7: mid = 1 (3) أصغر، lo = 2. mid = 2 (5) أصغر، lo = 3. mid = 3 (6) أصغر، lo = 4. وقف، ورجّع 4 = طول الـ array: يتحط في الآخر.
-
-الـ invariant (الحاجة اللي بتفضل صح طول الوقت): كل حاجة قبل lo أصغر من target، وكل حاجة بعد hi أكبر. لما الـ loop يقف (lo = hi + 1)، مفيش حاجة بين الاتنين، فـ lo هو أول «أكبر».
-
-لو فيه تكرار (زي [1, 3, 3, 3, 5] و target = 3)، الكود ده بيرجّع أي 3 يقابله، مش أولهم. لو المطلوب أول واحد، استخدم الـ lowerBound.`,
-            when: "إضافة في قايمة مترتبة، أو تحديد «أنهي شريحة»: أسعار شحن حسب الوزن بحدود [0, 1, 5, 10] كيلو، والوزن 3 في أنهي شريحة؟",
-            mistakes: R`إنك ترجّع [[hi]] بدل [[lo]] (بيطلع قبل المكان الصح بخانة). وإنك ترجّع [[mid]] الأخير: ساعات بيطلع صح وساعات لأ حسب آخر اتجاه. والـ edge cases اللي لازم تجربها: أصغر من الكل، وأكبر من الكل، و array فاضية، و array فيها عنصر واحد.`
-          },
-          teach: R`## الفكرة في جملة
-
-ده الـ binary search العادي حرف بحرف، والفرق في آخر سطر بس: لما المنطقة تفضى من غير ما نلاقي الرقم، بنرجّع [[lo]] بدل -1. ليه؟ لأن وقتها كل اللي قبل lo أصغر من target، وكل اللي من lo ورايح أكبر. فـ lo هو بالظبط المكان اللي الرقم يتحط فيه والترتيب يفضل صح.
-
-كل الأرقام اللي تحت من تشغيل حقيقي على Node 24.19.0 على ويندوز، بعد ما ضفنا [[console.log]] جوه الـ loop يطبع lo و hi و mid.
-
----
-
-## ١. الكود سطر سطر
-
-~~~js
-function searchInsert(a, target) {
-  let lo = 0, hi = a.length - 1;
-  while (lo <= hi) {
-    const mid = (lo + hi) >>> 1;
-    if (a[mid] === target) return mid;
-    if (a[mid] < target) lo = mid + 1;
-    else hi = mid - 1;
-  }
-  return lo;
-}
-~~~
-
-- [[let lo = 0, hi = a.length - 1;]]: الحدود **شاملة** زي الـ binary search العادي.
-- [[while (lo <= hi)]]: طول ما فيه عنصر ماتفحصش.
-- [[const mid = (lo + hi) >>> 1;]]: النص. [[>>> 1]] قسمة على ٢ مع تقريب لتحت ([[(3 + 6) >>> 1]] = 4).
-- [[if (a[mid] === target) return mid;]]: موجود، رجّع مكانه.
-- [[lo = mid + 1]]: النص أصغر، فالـ mid وكل اللي قبله أصغر من target. اترموا.
-- [[hi = mid - 1]]: النص أكبر، فالـ mid وكل اللي بعده أكبر. اترموا.
-- [[return lo;]]: السطر الجديد. شرحه في الجزء ٣.
-
----
-
-## ٢. التتبع على [[[2, 4, 6, 8, 10]]]
-
-### target = 7 (بين 6 و 8)
-
-| lo | hi | mid | a[mid] | القرار | بعدها |
-|---|---|---|---|---|---|
-| 0 | 4 | 2 | 6 | أصغر من 7 | lo = 3، hi = 4 |
-| 3 | 4 | 3 | 8 | أكبر من 7 | lo = 3، hi = 2 |
-
-lo = 3 أكبر من hi = 2، وقف. رجّع **3**: الـ 7 تتحط مكان الـ 8 والـ 8 تتزق، فتبقى [2, 4, 6, 7, 8, 10].
-
-### target = 11 (أكبر من الكل)
-
-| lo | hi | mid | a[mid] | بعدها |
-|---|---|---|---|---|
-| 0 | 4 | 2 | 6 | lo = 3، hi = 4 |
-| 3 | 4 | 3 | 8 | lo = 4، hi = 4 |
-| 4 | 4 | 4 | 10 | lo = 5، hi = 4 |
-
-رجّع **5** = طول الـ array: يتحط في الآخر.
-
-### target = 1 (أصغر من الكل)
-
-| lo | hi | mid | a[mid] | بعدها |
-|---|---|---|---|---|
-| 0 | 4 | 2 | 6 | lo = 0، hi = 1 |
-| 0 | 1 | 0 | 2 | lo = 0، hi = -1 |
-
-lo عمرها ما اتحركت، فرجّع **0**: يتحط في الأول. و target = 6 اتلقت من أول لفة ورجعت 2.
-
----
-
-## ٣. ليه [[lo]] بالظبط؟
-
-فيه حاجة بتفضل صح طول الـ loop (اسمها invariant):
-
-- كل اللي **قبل** lo أصغر من target (اترموا بـ [[lo = mid + 1]] لأنهم أصغر).
-- كل اللي **بعد** hi أكبر من target (اترموا بـ [[hi = mid - 1]] لأنهم أكبر).
-
-الـ loop بيقف لما lo = hi + 1. يعني مفيش ولا خانة بين «اللي قبل lo» و «اللي بعد hi». فـ lo هو أول خانة في منطقة «الأكبر»، وده مكان الإضافة. وعشان كده hi غلط (أقل بخانة)، و mid الأخير مش مضمون (بيعتمد على آخر اتجاه).
-
-ومع التكرار: [[searchInsert([1, 3, 3, 3, 5], 3)]] رجعت 2، لأن أول mid وقع على 3 في النص ورجع على طول. يعني أي نسخة يقابلها، مش أولها. لو محتاج أولها، ده شغل الـ lowerBound من الدرس اللي فات.
-
----
-
-## ٤. الناتج الكامل للمثال
-
-~~~text الناتج (Node 24 على ويندوز)
-2
-1
-4
-0
-0
-~~~
-
-5 موجود عند 2، و 2 يتحط عند 1، و 7 في الآخر (4)، و 0 في الأول، والـ array الفاضية: hi = -1 فالـ loop مبيلفّش ويرجع lo = 0.
-
----
-
-## ٥. الـ Big-O وليه
-
-| | القيمة | السبب |
-|---|---|---|
-| الوقت | [[O(log n)]] | نفس الـ binary search: المنطقة بتتنصّف |
-| الذاكرة | [[O(1)]] | lo و hi و mid |
-
-> البحث بس هو اللي [[O(log n)]]. لو هتضيف الرقم فعلًا في array، الإضافة نفسها ليها تمن، وده سؤال التمرين.
-
----
-
-## الخلاصة
-
-~~~text
-نفس binary search   حدود شاملة، lo <= hi، mid + 1 و mid - 1
-موجود               رجّع mid
-مش موجود            رجّع lo مش -1
-ليه lo              قبله كله أصغر، ومن عنده كله أكبر
-أطراف               أصغر من الكل 0، أكبر من الكل a.length، فاضية 0
-~~~`,
-          lines: [
-            "مكان target، أو المكان اللي يتحط فيه.",
-            "نفس الحدود الشاملة.",
-            "نفس الـ loop.",
-            "النص.",
-            "موجود: رجّع مكانه.",
-            "أصغر: روح يمين.",
-            "أكبر: روح شمال.",
-            "قفلة.",
-            "مش موجود: lo هو أول مكان قيمته أكبر من target.",
-            "قفلة.",
-            "5 موجود عند 2.",
-            "2 بين 1 و 3، يتحط عند 1.",
-            "أكبر من الكل: في الآخر (4).",
-            "أصغر من الكل: في الأول (0).",
-            "array فاضية: 0."
-          ],
-          sol: R`[[a.splice(searchInsert(a, x), 0, x)]] بتحط الرقم في مكانه. لو ضفت 5 و 1 و 4 و 2 و 3 و 0 و 6 لـ array فاضية، الناتج [[0 1 2 3 4 5 6]] مترتب.
-
-البحث [[O(log n)]]، بس الإضافة [[O(n)]]: [[splice]] لازم تحرّك كل العناصر اللي بعد المكان خطوة لقدام. فكل إضافة [[O(n)]]، و n إضافات [[O(n^2)]] في أسوأ حالة (لو كل رقم جديد أصغر من كله).
-
-الغلطة المشهورة: تقول إن الحل كله [[O(log n)]] لأن فيه binary search. لو محتاج إضافة ومسح سريع مع ترتيب، ده شغل balanced tree أو heap. ولو هتبني الـ array مرة واحدة، اعمل push للكل وبعدين sort واحد ([[O(n log n)]]).`,
-          solCode: R`function searchInsert(a, target) {
-  let lo = 0, hi = a.length - 1;
-  while (lo <= hi) {
-    const mid = (lo + hi) >>> 1;
-    if (a[mid] === target) return mid;
-    if (a[mid] < target) lo = mid + 1;
-    else hi = mid - 1;
-  }
-  return lo;
-}
-function insertSorted(a, x) {
-  a.splice(searchInsert(a, x), 0, x);
-  return a;
-}
-const a = [];
-for (const x of [5, 1, 4, 2, 3, 0, 6]) insertSorted(a, x);
-console.log(a.join(" ")); // 0 1 2 3 4 5 6
-// find the spot: O(log n); splice shifts everything after it: O(n); so one insert is O(n)
-// n inserts = O(n^2) in the worst case: to build a big sorted array, push everything then sort once (O(n log n))`,
-          check: {
-            lang: "js",
-            starter: R`function searchInsert(a, target) {
-  let lo = 0, hi = a.length - 1;
-  while (lo <= hi) {
-    const mid = (lo + hi) >>> 1;
-    if (a[mid] === target) return mid;
-    if (a[mid] < target) lo = mid + 1;
-    else hi = mid - 1;
-  }
-  return lo;
-}
-function insertSorted(a, x) {
-  // a.splice(مكان, 0, x)
-  return a;
-}`,
-            tests: R`test("ضيف 5 و 1 و 4 و 2 و 3 و 0 و 6 لـ [] ← [0, 1, 2, 3, 4, 5, 6]", () => {
-  const a = [];
-  for (const x of [5, 1, 4, 2, 3, 0, 6]) insertSorted(a, x);
-  expect(a).toEqual([0, 1, 2, 3, 4, 5, 6]);
-});
-test("بترجّع نفس الـ array", () => { const a = [1, 3]; expect(insertSorted(a, 2) === a).toBe(true); });
-test("رقم مكرر: insertSorted([1, 3, 3, 5], 3) ← [1, 3, 3, 3, 5]", () => expect(insertSorted([1, 3, 3, 5], 3)).toEqual([1, 3, 3, 3, 5]));
-test("في الأطراف: 0 في الأول و 9 في الآخر", () => expect(insertSorted(insertSorted([2, 4], 0), 9)).toEqual([0, 2, 4, 9]));`,
-            solution: R`function searchInsert(a, target) {
-  let lo = 0, hi = a.length - 1;
-  while (lo <= hi) {
-    const mid = (lo + hi) >>> 1;
-    if (a[mid] === target) return mid;
-    if (a[mid] < target) lo = mid + 1;
-    else hi = mid - 1;
-  }
-  return lo;
-}
-function insertSorted(a, x) {
-  a.splice(searchInsert(a, x), 0, x);
-  return a;
-}`
-          }
-        },
-        {
-          cmd: "binary search on answer",
-          title: "أقل سرعة أكل تخلّص بيها كل أكوام الموز في h ساعة",
-          desc: R`مش بتدوّر في array، بتدوّر في مدى الإجابات الممكنة (السرعة من 1 لأكبر كوم). اسأل عن كل سرعة: «ينفع أخلّص في h ساعة؟». لو نفع، جرّب أبطأ. لو لأ، لازم أسرع. [[O(n log m)]].
-
-الشرط الأساسي: الإجابة لازم تبقى monotonic. لو سرعة 4 بتلحق، يبقى 5 و 6 وأي سرعة أكبر بتلحق. يعني false, false, true, true وإنت بتدوّر على أول true.
-
-ده نفس الـ lowerBound، بس بدل «القيمة ≥ x» الشرط دالة إنت كاتبها. أي مسألة فيها «أقل قيمة تحقق كذا» أو «أكبر قيمة تحقق كذا» جرّب فيها الفكرة دي.`,
-          example: R`function minEatingSpeed(piles, h) {
-  const hoursAt = k => piles.reduce((t, p) => t + Math.ceil(p / k), 0);
-  let lo = 1, hi = Math.max(...piles);
-  while (lo < hi) {
-    const mid = (lo + hi) >>> 1;
-    if (hoursAt(mid) <= h) hi = mid;
-    else lo = mid + 1;
-  }
-  return lo;
-}
-console.log(minEatingSpeed([3, 6, 7, 11], 8));       // 4
-console.log(minEatingSpeed([30, 11, 23, 4, 20], 5)); // 30
-console.log(minEatingSpeed([30, 11, 23, 4, 20], 6)); // 23
-// O(n log m) time (m = biggest pile), O(1) space`,
-          try: R`حل «ship within D days»: أوزان طرود بالترتيب، وأقل حمولة للمركب تشحنهم كلهم في D أيام (كل يوم بتشحن طرود ورا بعض لحد ما الحمولة تتملي). الأوزان من 1 لـ 10 و D = 5 الإجابة 15. المدى هنا من أتقل طرد لمجموع الكل. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[shipWithinDays(weights, days)]].`,
-          flag: "script",
-          deep: {
-            why: "من أقوى الأفكار في الانترفيو لأنها مش واضحة: المسألة مفيهاش array مترتبة خالص، ومع ذلك الحل binary search. بتظهر في مسائل التحسين: أقل حمولة، أقل وقت، أكبر مسافة ممكنة، أقل عدد سيرفرات يستحمل الضغط.",
-            how: R`dry run على [3, 6, 7, 11] و h = 8:
-
-المدى من 1 لـ 11. mid = 6: الساعات 1 + 1 + 2 + 2 = 6 ≤ 8، بتلحق، hi = 6.
-
-lo = 1 و hi = 6. mid = 3: الساعات 1 + 2 + 3 + 4 = 10، مبتلحقش، lo = 4.
-
-lo = 4 و hi = 6. mid = 5: الساعات 1 + 2 + 2 + 3 = 8، بتلحق، hi = 5.
-
-lo = 4 و hi = 5. mid = 4: الساعات 1 + 2 + 2 + 3 = 8، بتلحق، hi = 4. و lo = hi = 4.
-
-الـ Big-O: الـ binary search بياخد log m خطوة (m = أكبر كوم)، وكل خطوة بتحسب الساعات على n كوم. المجموع [[O(n log m)]]. لو جرّبت كل السرعات من 1 لـ m بالترتيب يبقى [[O(n × m)]]، ومع m مليار ده مستحيل.
-
-الخطوات لأي مسألة من النوع ده: (١) إيه الإجابة؟ رقم: سرعة، أو حمولة، أو وقت. (٢) أقل وأكبر قيمة ممكنة ليها. (٣) دالة [[canDo(x)]]: لو الإجابة x، ينفع؟ (٤) اتأكد إنها monotonic، وبعدين lowerBound على أول true.`,
-            when: "«أقل X بحيث يحصل Y» أو «أكبر X بحيث ميحصلش Y»، والتحقق من إجابة معينة أسهل بكتير من إيجادها.",
-            mistakes: R`إنك تبدأ lo بـ 0: القسمة على 0 بتدّي Infinity. وإنك تكتب [[Math.floor]] بدل [[Math.ceil]] في حساب الساعات. وإنك تستخدم [[Math.max(...piles)]] على array فيها مئات الآلاف من العناصر: الـ spread بيحط كل عنصر كـ argument، وعلى Node 24 مع ٢٠٠ ألف عنصر بيرمي RangeError. استخدم loop أو [[reduce]]. وإنك تنسى تتأكد إن الشرط monotonic: لو مش كده الـ binary search هيرجّع إجابة غلط من غير error.`
-          },
-          teach: R`## الفكرة في جملة
-
-مفيش array مترتبة هنا خالص. بدل كده بنعمل binary search على **الإجابة نفسها**: السرعة ممكن تبقى من 1 لأكبر كوم. لأي سرعة k نقدر نسأل سؤال سهل: «بالسرعة دي أخلّص في h ساعة؟». والإجابة monotonic: لو k بتلحق، أي سرعة أكبر بتلحق. يعني صف من «لأ، لأ، لأ، آه، آه»، وإحنا بندوّر على أول «آه» بنفس قالب الـ lowerBound.
-
-كل الأرقام اللي تحت من تشغيل حقيقي على Node 24.19.0 على ويندوز، بعد ما ضفنا [[console.log]] جوه الـ loop يطبع lo و hi و mid والساعات.
-
----
-
-## ١. الكود سطر سطر
-
-~~~js
-function minEatingSpeed(piles, h) {
-  const hoursAt = k => piles.reduce((t, p) => t + Math.ceil(p / k), 0);
-  let lo = 1, hi = Math.max(...piles);
-  while (lo < hi) {
-    const mid = (lo + hi) >>> 1;
-    if (hoursAt(mid) <= h) hi = mid;
-    else lo = mid + 1;
-  }
-  return lo;
-}
-~~~
-
-### المسألة
-
-[[piles]] أكوام موز، و [[h]] عدد الساعات. بتختار سرعة k (موزة في الساعة). كل ساعة بتاكل من كوم **واحد** بس، ولو الكوم خلص قبل الساعة ما تخلص، الباقي من الساعة بيضيع. عايزين أقل k تخلّص كل الأكوام في h ساعة أو أقل.
-
-### [[const hoursAt = k => ...]]
-
-دالة مساعدة (arrow function) بتحسب الساعات اللي محتاجها بسرعة k. من جوه لبرة:
-
-1. [[p / k]]: الكوم ده محتاج كام ساعة، بكسور.
-2. [[Math.ceil]]: تقريب **لفوق**، لأن الساعة مبتتقسمش على كومين. كوم فيه 7 بسرعة 3: [[Math.ceil(7 / 3)]] طلعت 3، أما [[Math.floor]] كانت هتطلّع 2 وتكدب.
-3. [[piles.reduce((t, p) => t + ..., 0)]]: [[reduce]] بتمشي على الـ array وتجمّع في [[t]] (total) بادئ من 0. [[p]] هو الكوم الحالي. جرّبنا [[[1, 2, 3].reduce((t, p) => t + p, 0)]] وطلعت 6.
-
-### [[let lo = 1, hi = Math.max(...piles);]]
-
-مدى الإجابات الممكنة:
-
-- [[lo = 1]]: أقل سرعة منطقية. صفر مينفعش (القسمة على 0).
-- [[hi = Math.max(...piles)]]: [[...]] هنا spread، بيفرد الـ array كـ arguments للدالة، فـ [[Math.max(...[3, 9, 2])]] طلعت 9. ليه أكبر كوم كفاية؟ بالسرعة دي كل كوم بيخلص في ساعة واحدة، وأسرع من كده مش هيقلّل الساعات.
-
-### [[while (lo < hi)]] و [[mid]]
-
-نفس قالب الـ lowerBound بالظبط: لما lo = hi تبقى دي الإجابة.
-
-### [[if (hoursAt(mid) <= h) hi = mid;]]
-
-السرعة mid بتلحق. يمكن تكون هي الأقل، ويمكن فيه أبطأ منها بتلحق. فنسيبها في المنطقة ([[hi = mid]] مش [[mid - 1]]) وندوّر على الشمال.
-
-### [[else lo = mid + 1;]]
-
-مبتلحقش، وأي سرعة أبطأ مش هتلحق كمان. الإجابة أكيد أسرع من mid.
-
-### [[return lo;]]
-
-أقل سرعة بتلحق.
-
----
-
-## ٢. التتبع على [[[9, 4, 10]]] و h = 6
-
-المدى من 1 لـ 10. عمود الساعات فيه ساعات كل كوم بالترتيب.
-
-| lo | hi | mid | ساعات كل كوم | المجموع | ≤ 6؟ | بعدها |
-|---|---|---|---|---|---|---|
-| 1 | 10 | 5 | 2 + 1 + 2 | 5 | آه | lo = 1، hi = 5 |
-| 1 | 5 | 3 | 3 + 2 + 4 | 9 | لأ | lo = 4، hi = 5 |
-| 4 | 5 | 4 | 3 + 1 + 3 | 7 | لأ | lo = 5، hi = 5 |
-
-lo = hi = **5**. التلات لفات جرّبوا 3 سرعات بس من 10. والسرعة 4 تستاهل وقفة: 7 ساعات، يعني ناقصة ساعة واحدة، فـ 5 هي الأقل فعلًا.
+ولو كتبت [[pre[r] - pre[l]]] (من غير + 1) هتشيل آخر عنصر من الجزء. دي أشهر غلطة هنا. احفظ قاعدة واحدة بس: «[[pre[i]]] = مجموع أول i عنصر»، والباقي بيطلع منها.
 
 ---
 
 ## ٣. الناتج الكامل للمثال
 
 ~~~text الناتج (Node 24 على ويندوز)
+[
+  0,  3,  2, 6,
+  7, 12, 21
+]
 4
-30
-23
+21
+5
 ~~~
 
-- [[[3, 6, 7, 11]]] و 8 ساعات: بسرعة 4 الساعات 1 + 2 + 2 + 3 = 8 بالظبط.
-- ٥ أكوام و ٥ ساعات: لازم كل كوم في ساعة، فالسرعة = أكبر كوم (30).
-- نفس الأكوام و ٦ ساعات: ساعة زيادة بتسمح لأكبر كوم ياخد ساعتين، فـ 23 كفاية.
+Node بيطبع الـ array الطويلة على كذا سطر، بس هي [[[0, 3, 2, 6, 7, 12, 21]]]. و [[rangeSum(pre, 1, 3)]] = 7 - 3 = 4، و [[(pre, 0, 5)]] = 21 - 0، و [[(pre, 4, 4)]] = 12 - 7 = 5.
+
+وجرّبنا [[buildPrefix([])]]: الـ loop مبيلفّش، والناتج [[[ 0 ]]].
 
 ---
 
@@ -1934,102 +835,88 @@ lo = hi = **5**. التلات لفات جرّبوا 3 سرعات بس من 10. �
 
 | | القيمة | السبب |
 |---|---|---|
-| الوقت | [[O(n log m)]] | m = أكبر كوم. الـ binary search بياخد log m لفة، وكل لفة [[hoursAt]] بتمشي على الـ n كوم |
-| الذاكرة | [[O(1)]] | lo و hi و mid، و [[reduce]] مبتعملش array |
-
-لو جرّبت كل السرعات من 1 لـ m بالترتيب يبقى [[O(n × m)]]. مع كوم فيه مليار موزة، ده مليار تجربة مقابل حوالي ٣٠.
+| التجهيز | [[O(n)]] وقت، [[O(n)]] ذاكرة | لفة واحدة، و array طولها n + 1 |
+| كل سؤال | [[O(1)]] | قراية خانتين وطرح |
+| q سؤال من غير prefix | [[O(q × n)]] | كل سؤال بيلف على الجزء |
+| q سؤال بالـ prefix | [[O(n + q)]] | تجهيز مرة + q × O(1) |
 
 ---
 
 ## الخلاصة
 
 ~~~text
-الإجابة رقم      دوّر في مداه مش في array
-المدى            lo = أقل قيمة منطقية، hi = أكبر قيمة لازمة
-canDo(mid)       هنا hoursAt(mid) <= h
-monotonic        لو mid بتنفع، أي حاجة أكبر بتنفع
-القالب           lowerBound: بتنفع ← hi = mid، مبتنفعش ← lo = mid + 1
-Big-O            log(المدى) × تمن الـ canDo
+pre[i]          مجموع أول i عنصر، و pre[0] = 0
+الطول           a.length + 1
+البناء          pre[i + 1] = pre[i] + a[i]
+مجموع l..r       pre[r + 1] - pre[l]
+الـ Big-O       O(n) مرة واحدة، وبعدها O(1) لكل سؤال
 ~~~
 
-> أي «أقل X بحيث يحصل Y» والتحقق من X معيّنة سهل: جرّب الفكرة دي.`,
+> الـ prefix sum بيشتغل مع الأرقام السالبة عادي، ودي ميزته الكبيرة على الـ sliding window اللي هتشوفه بعدين.`,
           lines: [
-            "piles أكوام الموز، و h عدد الساعات المتاحة.",
-            "بسرعة k: كل كوم محتاج [[ceil(p / k)]] ساعة (الساعة مبتتقسمش على كومين).",
-            "مدى الإجابة: أقل سرعة 1، وأكبر كوم كفاية (ساعة لكل كوم).",
-            "نفس قالب الـ lowerBound.",
-            "سرعة في النص.",
-            "بتلحق: الإجابة هي دي أو أقل، hi = mid.",
-            "مبتلحقش: لازم أسرع من mid.",
+            "تجهيز: مرة واحدة.",
+            "array أطول بواحد، كلها أصفار. الخانة i = مجموع أول i عناصر.",
+            "كل خانة = اللي قبلها + العنصر الجديد.",
+            "رجّعها.",
             "قفلة.",
-            "أقل سرعة بتلحق.",
-            "قفلة.",
-            "بسرعة 4: 1 + 2 + 2 + 3 = 8 ساعات بالظبط.",
-            "الساعات قد عدد الأكوام: لازم تخلّص كل كوم في ساعة، يعني السرعة = أكبر كوم.",
-            "ساعة زيادة: 23 تكفي."
+            "مجموع من l لـ r (شاملين الاتنين): أول r+1 عنصر ناقص أول l عنصر.",
+            "array فيها رقم سالب عادي.",
+            "جهّز مرة.",
+            "أول خانة 0، وآخر خانة مجموع الكل.",
+            "من index 1 لـ 3: -1 + 4 + 1.",
+            "الـ array كلها.",
+            "جزء فيه عنصر واحد."
           ],
-          sol: R`الإجابة 15. المدى من [[Math.max(...weights)]] (أتقل طرد لازم يدخل المركب) لـ [[sum]] (كله في يوم واحد). والدالة المساعدة [[daysAt(cap)]] بتمشي على الطرود وتبدأ يوم جديد لما [[load + w > cap]]. وبعدين نفس binary search: لو [[daysAt(mid) <= D]] جرّب أصغر ([[hi = mid]])، وإلا [[lo = mid + 1]].
+          sol: R`ابدأ الـ Map بـ [[[[0, 1]]]] (مجموع 0 ظهر مرة قبل ما تبدأ)، وكل عنصر: زوّد [[sum]]، وضيف للعدّاد [[seen.get(sum - k) || 0]]، وبعدين سجّل [[sum]]. النتايج: [1, 2, 3] مع 3 تطلع 2، و [1, 1, 1] مع 2 تطلع 2، و [1, -1, 0] مع 0 تطلع 3. الحل [[O(n)]] time و [[O(n)]] space.
 
-كمان [3, 2, 2, 4, 1, 4] مع 3 أيام الإجابة 6، و [1, 2, 3, 1, 1] مع 4 أيام الإجابة 3. الوقت [[O(n log S)]] (S = مجموع الأوزان)، والـ space [[O(1)]].
+ليه [[sum - k]]؟ لو المجموع لحد هنا [[sum]]، وفيه مكان قبل كده المجموع كان [[sum - k]]، يبقى اللي بينهم مجموعه k بالظبط.
 
-الغلطة المشهورة: تبدأ [[lo]] من 1. مع حمولة أصغر من أتقل طرد، [[daysAt]] هتحط الطرد التقيل في يوم لوحده وتفتكر إن ده ينفع، فالإجابة تطلع أصغر من المفروض وغلط.`,
-          solCode: R`function shipWithinDays(weights, days) {
-  const daysAt = cap => {
-    let d = 1, load = 0;
-    for (const w of weights) {
-      if (load + w > cap) { d++; load = 0; }
-      load += w;
-    }
-    return d;
-  };
-  let lo = Math.max(...weights), hi = weights.reduce((s, w) => s + w, 0);
-  while (lo < hi) {
-    const mid = (lo + hi) >>> 1;
-    if (daysAt(mid) <= days) hi = mid;
-    else lo = mid + 1;
+الغلطة المشهورة: تنسى [[[0, 1]]] فتضيع كل جزء بيبدأ من أول الـ array (الإجابة تطلع 1 بدل 2 في أول مثال). وغلطة تانية: تحاول sliding window، ودي بتبوظ مع الأرقام السالبة.`,
+          solCode: R`function subarraySum(nums, k) {
+  const seen = new Map([[0, 1]]);
+  let sum = 0, count = 0;
+  for (const x of nums) {
+    sum += x;
+    count += seen.get(sum - k) || 0;
+    seen.set(sum, (seen.get(sum) || 0) + 1);
   }
-  return lo;
+  return count;
 }
-console.log(shipWithinDays([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5)); // 15
-console.log(shipWithinDays([3, 2, 2, 4, 1, 4], 3));             // 6
-console.log(shipWithinDays([1, 2, 3, 1, 1], 4));                // 3
-// O(n log S) time (S = sum of weights), O(1) space`,
+console.log(subarraySum([1, 2, 3], 3));    // 2  ([1, 2] and [3])
+console.log(subarraySum([1, 1, 1], 2));    // 2
+console.log(subarraySum([1, -1, 0], 0));   // 3  ([1, -1], [0], [1, -1, 0])
+console.log(subarraySum([3, 4, -7], 0));   // 1
+// O(n) time, O(n) space`,
           check: {
             lang: "js",
-            starter: R`function shipWithinDays(weights, days) {
-  const daysAt = cap => {
-    // امشي على الطرود، وابدأ يوم جديد لما load + w > cap
-  };
-  let lo = 1, hi = 0; // المدى الصح: من أتقل طرد لمجموع الكل
-  return lo;
+            starter: R`function subarraySum(nums, k) {
+  const seen = new Map([[0, 1]]);
+  let sum = 0, count = 0;
+  // لكل عنصر: زوّد sum، وضيف seen.get(sum - k)، وبعدين سجّل sum
+  return count;
 }`,
-            tests: R`const daysNeeded = (ws, cap) => { let d = 1, load = 0; for (const w of ws) { if (load + w > cap) { d++; load = 0; } load += w; } return d; };
-test("الأوزان من 1 لـ 10 و 5 أيام ← 15", () => expect(shipWithinDays([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5)).toBe(15));
-test("([3, 2, 2, 4, 1, 4], 3) ← 6", () => expect(shipWithinDays([3, 2, 2, 4, 1, 4], 3)).toBe(6));
-test("([1, 2, 3, 1, 1], 4) ← 3", () => expect(shipWithinDays([1, 2, 3, 1, 1], 4)).toBe(3));
-test("lo يبدأ من أتقل طرد: ([10, 1, 1], 3) ← 10", () => expect(shipWithinDays([10, 1, 1], 3)).toBe(10));
-test("يوم واحد ← المجموع كله", () => expect(shipWithinDays([4, 5, 6], 1)).toBe(15));
-test("20 ألف طرد: الناتج بيكفي، والناتج - 1 مبيكفيش (O(n log S))", () => {
-  const ws = Array.from({ length: 20000 }, (_, i) => (i * 37) % 500 + 1);
-  const cap = shipWithinDays(ws, 100);
-  expect([daysNeeded(ws, cap) <= 100, daysNeeded(ws, cap - 1) > 100]).toEqual([true, true]);
+            tests: R`test("([1, 2, 3], 3) ← 2", () => expect(subarraySum([1, 2, 3], 3)).toBe(2));
+test("([1, 1, 1], 2) ← 2", () => expect(subarraySum([1, 1, 1], 2)).toBe(2));
+test("أصفار وسالب: ([1, -1, 0], 0) ← 3", () => expect(subarraySum([1, -1, 0], 0)).toBe(3));
+test("سالب في النص: ([2, -1, 1, 2], 2) ← 4 (sliding window كانت هتغلط)", () => expect(subarraySum([2, -1, 1, 2], 2)).toBe(4));
+test("([], 0) ← 0", () => expect(subarraySum([], 0)).toBe(0));
+test("3000 رقم عشوائي من -5 لـ 5، مقارنة بالـ brute force O(n^2)", () => {
+  let seed = 7;
+  const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) % 11 - 5;
+  const a = Array.from({ length: 3000 }, rnd);
+  let want = 0;
+  for (let i = 0; i < a.length; i++) { let s = 0; for (let j = i; j < a.length; j++) { s += a[j]; if (s === 3) want++; } }
+  expect(subarraySum(a, 3)).toBe(want);
 });`,
-            solution: R`function shipWithinDays(weights, days) {
-  const daysAt = cap => {
-    let d = 1, load = 0;
-    for (const w of weights) {
-      if (load + w > cap) { d++; load = 0; }
-      load += w;
-    }
-    return d;
-  };
-  let lo = Math.max(...weights), hi = weights.reduce((s, w) => s + w, 0);
-  while (lo < hi) {
-    const mid = (lo + hi) >>> 1;
-    if (daysAt(mid) <= days) hi = mid;
-    else lo = mid + 1;
+            solution: R`function subarraySum(nums, k) {
+  const seen = new Map([[0, 1]]);
+  let sum = 0, count = 0;
+  for (const x of nums) {
+    sum += x;
+    count += seen.get(sum - k) || 0;
+    seen.set(sum, (seen.get(sum) || 0) + 1);
   }
-  return lo;
+  return count;
 }`
           }
         }

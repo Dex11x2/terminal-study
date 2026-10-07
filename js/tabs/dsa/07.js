@@ -1,1524 +1,916 @@
 // تكملة تاب dsa: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/dsa/01.js (شرح حقول الدرس في أوله)
 MORE("dsa", [
     {
-      t: "graphs",
-      l: 3,
-      n: "عقد وعلاقات من غير root: adjacency list، و islands، وأقصر طريق بـ BFS، و topological sort، و cycles",
+      t: "binary search",
+      l: 2,
+      n: "كل خطوة بتشيل نص الاحتمالات، فمليون عنصر محتاجين ٢٠ خطوة",
       items: [
         {
-          cmd: "adjacency list",
-          title: "إزاي تخزّن graph في الكود، وتمشي عليه من غير ما تلف في دواير؟",
-          desc: R`الـ graph: عقد (vertices) ووصلات بينها (edges). الشجرة نوع من الـ graph، بس الـ graph العادي ممكن يبقى فيه دواير، وممكن عقدة ليها أكتر من أب، ومفيش root.
-
-أشهر طريقة تخزّنه بيها: adjacency list، يعني Map (أو array) فيها لكل عقدة قائمة جيرانها. الذاكرة [[O(V + E)]]: عدد العقد + عدد الوصلات.
-
-البديل adjacency matrix: جدول V × V فيه true لو فيه وصلة. بتسأل «فيه وصلة بين a و b؟» في [[O(1)]]، بس بتاخد [[O(V^2)]] ذاكرة حتى لو الوصلات قليلة. أغلب الـ graphs الحقيقية (أصحاب، links، dependencies) وصلاتها قليلة، فالـ list هي الاختيار الافتراضي.
-
-الفرق الوحيد بين DFS على شجرة وعلى graph: لازم [[Set]] للعقد اللي زرتها، وإلا هتلف في دايرة لحد ما الـ stack يخلص.`,
-          example: R`const edges = [["a", "b"], ["a", "c"], ["b", "d"], ["c", "d"], ["d", "e"]];
-function buildGraph(edges, directed = false) {
-  const g = new Map();
-  for (const [u, v] of edges) {
-    if (!g.has(u)) g.set(u, []);
-    if (!g.has(v)) g.set(v, []);
-    g.get(u).push(v);
-    if (!directed) g.get(v).push(u);
-  }
-  return g;
-}
-function dfs(g, start, seen = new Set()) {
-  seen.add(start);
-  for (const next of g.get(start)) if (!seen.has(next)) dfs(g, next, seen);
-  return seen;
-}
-function countComponents(g) {
-  const seen = new Set();
-  let count = 0;
-  for (const v of g.keys()) if (!seen.has(v)) { dfs(g, v, seen); count++; }
-  return count;
-}
-const g = buildGraph(edges);
-console.log(g.get("d")); // ['b', 'c', 'e']
-console.log([...dfs(g, "a")].join(" ")); // a b d c e
-console.log(countComponents(buildGraph([["a", "b"], ["c", "d"], ["d", "e"]]))); // 2
-// build: O(V + E); DFS visits every vertex once and every edge twice: O(V + E) time, O(V) space`,
-          try: R`حل «Find if Path Exists in Graph»: عندك n عقدة مترقمة من 0 لـ n - 1، و edges، و source و destination. فيه طريق؟ ابني الـ graph بـ arrays بدل Map، وحلها بـ BFS المرة دي (queue ومؤشر [[head]]). جرّب n = 6 و edges [[[0,1],[0,2],[3,5],[5,4],[4,3]]]: من 0 لـ 5 الإجابة false، ومن 3 لـ 4 true. وخلي بالك إن فيه عقد ممكن متبقاش في أي edge. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[validPath(n, edges, source, destination)]].`,
-          sol: R`الناتج: [[false]] من 0 لـ 5 (0 و 1 و 2 في جزيرة، و 3 و 4 و 5 في جزيرة تانية)، و [[true]] من 3 لـ 4، و [[true]] من 2 لـ 2 (العقدة بتوصل لنفسها).
-
-ليه arrays؟ لما العقد أرقام من 0 لـ n - 1، [[Array.from({ length: n }, () => [])]] أسرع وأبسط من Map، وكل عقدة ليها قائمة حتى لو ملهاش edges. لو استخدمت [[new Array(n).fill([])]] كل الخانات هتشاور على نفس الـ array، وكل الجيران هيتخلطوا: دي أشهر غلطة في المسألة دي.
-
-BFS بـ مؤشر [[head]] بدل [[shift]]: الـ queue بتفضل array عادية، وإنت بتقرا منها بالترتيب. وضيف العقدة للـ [[seen]] لحظة ما تحطها في الـ queue، مش لما تطلعها، وإلا نفس العقدة ممكن تدخل الـ queue كذا مرة.`,
-          solCode: R`function validPath(n, edges, source, destination) {
-  const graph = Array.from({ length: n }, () => []);
-  for (const [u, v] of edges) { graph[u].push(v); graph[v].push(u); }
-  const seen = new Array(n).fill(false);
-  const queue = [source];
-  seen[source] = true;
-  for (let head = 0; head < queue.length; head++) {
-    const u = queue[head];
-    if (u === destination) return true;
-    for (const v of graph[u]) if (!seen[v]) { seen[v] = true; queue.push(v); }
-  }
-  return false;
-}
-const edges = [[0, 1], [0, 2], [3, 5], [5, 4], [4, 3]];
-console.log(validPath(6, edges, 0, 5)); // false
-console.log(validPath(6, edges, 3, 4)); // true
-console.log(validPath(6, edges, 2, 2)); // true
-// O(V + E) time and space`,
-          flag: "script",
-          deep: {
-            why: "الـ graphs بتوصف أي «علاقات»: مين متابع مين، والصفحات اللي بتلينك لبعض، والـ packages اللي معتمدة على بعض في [[package-lock.json]]، والـ microservices اللي بتكلم بعض، والخرايط. وأغلب مسائل الـ graphs في الانترفيو بتبدأ بنفس الخطوة: ابني adjacency list من الـ edges، وبعدين DFS أو BFS.",
-            how: R`[[buildGraph]] بتضيف كل عقدة للـ Map حتى لو ملهاش جيران غير في ناحية واحدة (عشان [[g.get(v)]] متبقاش undefined). وفي الـ undirected graph كل edge بيتضاف مرتين: من u لـ v ومن v لـ u.
-
-DFS من a: نزور a ونحطها في seen، وجيرانها b و c. نروح b: جيرانها a (اتزارت) و d. نروح d: جيرانها b (اتزارت) و c و e. نروح c: كل جيرانها اتزاروا. نرجع لـ d ونروح e. الترتيب a b d c e.
-
-من غير [[seen]]: a تروح b، و b ترجع a، و a تروح b... للأبد.
-
-connected components: لف على كل العقد، وأي عقدة لسه ماتزارتش يبقى بداية جزيرة جديدة، فابدأ DFS منها وزوّد العدّاد. الـ DFS بيعلّم الجزيرة كلها، فمش هتتعد تاني. والإجمالي لسه [[O(V + E)]] لأن كل عقدة بتتزار مرة واحدة في كل الـ DFS calls مع بعض.
-
-الـ Big-O: كل عقدة بتدخل مرة، وكل edge بيتبص عليه مرة من كل ناحية، فـ [[O(V + E)]]. ده الـ Big-O بتاع أغلب مسائل الـ graph traversal، واتعوّد تقوله كده بدل [[O(n)]].`,
-            when: "adjacency list: الاختيار الافتراضي. matrix: لما الـ graph كثيف (أغلب العقد متوصلة ببعض) أو صغير، أو محتاج «فيه edge بين دول؟» كتير. والـ grid (زي الخرايط والـ mazes) هو graph من غير ما تبنيه: كل خانة جيرانها الأربعة، وده الدرس الجاي.",
-            mistakes: R`[[new Array(n).fill([])]]: كل الخانات نفس الـ array. وإنك تنسى تضيف الناحية التانية في الـ undirected. وإنك تنسى [[seen]] فتلف في دايرة. وإنك تفترض إن الـ graph متوصل كله، فتعمل DFS من عقدة واحدة وتفوّت جزر تانية. وفي الانترفيو اسأل دايمًا: directed ولا undirected؟ فيه دواير؟ فيه عقد لوحدها؟ العقد أرقام ولا strings؟`
-          },
-          teach: R`## الفكرة في جملة
-
-الـ graph بيوصلك كـ قائمة وصلات (edges): «a متوصلة بـ b». عشان تمشي عليه بسرعة، حوّله لـ **adjacency list**: Map فيها لكل عقدة قائمة جيرانها. وبعدها DFS زي الشجرة بالظبط، بس مع [[Set]] بتفتكر العقد اللي زرتها، لأن الـ graph فيه دواير والشجرة لأ.
-
-كل الأرقام اللي تحت من تشغيل حقيقي على Node 24.19.0 على ويندوز، بعد ما ضفنا [[console.log]] يطبع الـ Map بعد كل edge، وكل زيارة في الـ DFS.
-
----
-
-## ١. [[buildGraph]] سطر سطر
-
-~~~js
-function buildGraph(edges, directed = false) {
-  const g = new Map();
-  for (const [u, v] of edges) {
-    if (!g.has(u)) g.set(u, []);
-    if (!g.has(v)) g.set(v, []);
-    g.get(u).push(v);
-    if (!directed) g.get(v).push(u);
-  }
-  return g;
-}
-~~~
-
-- [[edges]]: array من أزواج، كل زوج وصلة. و [[directed = false]] معناها افتراضيًا الوصلة في الاتجاهين (undirected): لو a صاحب b، يبقى b صاحب a.
-- [[new Map()]]: مفتاح ← قيمة. المفتاح اسم العقدة، والقيمة array جيرانها.
-- [[for (const [u, v] of edges)]]: destructuring بيفك كل زوج: [[u]] الطرف الأول و [[v]] التاني.
-- [[if (!g.has(u)) g.set(u, [])]]: لو العقدة لسه مالهاش مكان، اعملها array فاضية. ده لازم قبل [[push]]، لأن [[g.get(u)]] لعقدة مش موجودة بيرجّع [[undefined]]، و [[undefined.push]] بيوقع البرنامج.
-- السطر اللي بعده بيعمل نفس الحاجة لـ [[v]]، حتى في الـ directed: عشان كل عقدة يبقى ليها مكان حتى لو مفيش وصلات طالعة منها.
-- [[g.get(u).push(v)]]: v من جيران u.
-- [[if (!directed) g.get(v).push(u)]]: ولو مش directed، u من جيران v كمان.
-
-### التتبع على edges تانية
-
-~~~js
-buildGraph([["x", "y"], ["y", "z"], ["x", "z"], ["w", "v"]])
-~~~
-
-~~~text الناتج (Node 24 على ويندوز)
-edge x-y: { x: [y], y: [x] }
-edge y-z: { x: [y], y: [x,z], z: [y] }
-edge x-z: { x: [y,z], y: [x,z], z: [y,x] }
-edge w-v: { x: [y,z], y: [x,z], z: [y,x], w: [v], v: [w] }
-~~~
-
-كل edge بيظهر مرتين: [[x-y]] خلّت y في جيران x، و x في جيران y. والعقد x و y و z عاملين مثلث (دايرة)، و w و v لوحدهم.
-
-ولو [[directed = true]]: [[buildGraph([["a","b"]], true)]] بيطلّع [[Map(2) { 'a' => [ 'b' ], 'b' => [] }]]. السهم من a لـ b بس، و b ليها مكان فاضي.
-
----
-
-## ٢. [[dfs]] سطر سطر
-
-~~~js
-function dfs(g, start, seen = new Set()) {
-  seen.add(start);
-  for (const next of g.get(start)) if (!seen.has(next)) dfs(g, next, seen);
-  return seen;
-}
-~~~
-
-- [[seen = new Set()]]: [[Set]] مجموعة قيم من غير تكرار، و [[has]] و [[add]] فيها [[O(1)]] في المتوسط. أول نداء بيعملها، والنداءات اللي جوه بتاخد نفس الـ Set.
-- [[seen.add(start)]]: علّم العقدة **قبل** ما تنزل على جيرانها. لو علّمتها بعد، جارها هيرجعلها وهي لسه مش متعلّمة.
-- [[for (const next of g.get(start))]]: كل جار.
-- [[if (!seen.has(next)) dfs(...)]]: انزل بس لو الجار لسه ماتزارش. ده اللي بيمنع اللف في دايرة.
-- مفيش base case صريح: لما كل الجيران يبقوا متزارين، الـ loop بيخلص والنداء بيرجع.
-- [[return seen]]: الـ Set فيها كل اللي وصلناله، بترتيب الزيارة (الـ Set بتحافظ على ترتيب الإضافة).
-
-### التتبع: [[dfs(g, "x")]]
-
-~~~text الناتج (Node 24 على ويندوز)
-visit x  seen = {x}
-  visit y  seen = {x,y}
-    x already seen, skip
-    visit z  seen = {x,y,z}
-      y already seen, skip
-      x already seen, skip
-  z already seen, skip
-x y z
-~~~
-
-| الخطوة | العقدة | جيرانها | اللي حصل | seen بعدها |
-|---|---|---|---|---|
-| 1 | x | y, z | علّم x، انزل y | {x} |
-| 2 | y | x, z | علّم y. x متزارة، انزل z | {x, y} |
-| 3 | z | y, x | علّم z. الاتنين متزارين، ارجع | {x, y, z} |
-| 4 | y | | خلصت جيرانها، ارجع | |
-| 5 | x | | الجار التاني z متزارة خلاص، ارجع | |
-
-من غير الـ [[seen]]: x تنزل y، و y تنزل x، و x تنزل y... لحد ما الـ call stack يخلص ويطلع [[RangeError]].
-
-و w و v مظهروش خالص: مفيش طريق ليهم من x.
-
----
-
-## ٣. [[countComponents]]: عدد الجزر
-
-~~~js
-function countComponents(g) {
-  const seen = new Set();
-  let count = 0;
-  for (const v of g.keys()) if (!seen.has(v)) { dfs(g, v, seen); count++; }
-  return count;
-}
-~~~
-
-- [[g.keys()]]: كل العقد اللي في الـ Map، بترتيب إضافتها.
-- **Set واحدة** لكل نداءات [[dfs]]: كل DFS بيعلّم جزيرته كلها في نفس الـ Set.
-- أي عقدة لسه مش في [[seen]] لازم تبقى في جزيرة جديدة (لو كانت في جزيرة قديمة، الـ DFS بتاعها كان علّمها). فابدأ منها وزوّد العدّاد.
-
-~~~text الناتج (Node 24 على ويندوز)
-start new component at x
-visit x  seen = {x}
-  visit y  seen = {x,y}
-    x already seen, skip
-    visit z  seen = {x,y,z}
-      y already seen, skip
-      x already seen, skip
-  z already seen, skip
-count = 1
-y already seen
-z already seen
-start new component at w
-visit w  seen = {x,y,z,w}
-  visit v  seen = {x,y,z,w,v}
-    w already seen, skip
-count = 2
-v already seen
-2
-~~~
-
-| العقدة في الـ loop | في seen؟ | اللي حصل | count |
-|---|---|---|---|
-| x | لأ | DFS علّم x و y و z | 1 |
-| y | آه | فوّت | 1 |
-| z | آه | فوّت | 1 |
-| w | لأ | DFS علّم w و v | 2 |
-| v | آه | فوّت | 2 |
-
----
-
-## ٤. ناتج المثال
-
-~~~text الناتج (Node 24 على ويندوز)
-[ 'b', 'c', 'e' ]
-a b d c e
-2
-~~~
-
-- [[g.get("d")]]: d ظهرت في [[b-d]] و [[c-d]] و [[d-e]]، فجيرانها b و c و e بنفس الترتيب.
-- [[dfs(g, "a")]]: a ثم b (أول جار) ثم d (جار b الجديد) ثم c (أول جار جديد لـ d) ثم e.
-- الـ graph التاني فيه جزيرة a-b وجزيرة c-d-e.
-
----
-
-## ٥. الـ Big-O وليه
-
-V = عدد العقد، و E = عدد الـ edges.
-
-| | القيمة | السبب |
-|---|---|---|
-| البناء | [[O(V + E)]] وقت وذاكرة | لفة على الـ edges، وكل edge بيتخزن مرتين، وكل عقدة ليها array |
-| DFS | [[O(V + E)]] وقت | كل عقدة بتتزار مرة، وقائمة جيرانها بتتقرا مرة. مجموع أطوال كل القوايم = 2E |
-| DFS | [[O(V)]] ذاكرة | الـ Set فيها V عقدة بالكتير، والـ call stack ممكن يوصل V في graph شكله خط |
-| countComponents | [[O(V + E)]] | نفس الـ DFS، لأن الـ Set المشتركة بتمنع أي عقدة تتزار مرتين على كل الجزر |
-
----
-
-## الخلاصة
-
-~~~text
-adjacency list   Map: عقدة ← array جيرانها
-undirected       كل edge يتضاف من الناحيتين
-has قبل push     عشان كل عقدة يبقى ليها array
-seen             Set، علّم قبل ما تنزل، وانزل بس على اللي مش متزار
-جزر              loop على كل العقد + Set واحدة، وكل عقدة جديدة = جزيرة
-الـ Big-O        O(V + E) وقت، O(V) ذاكرة للـ DFS
-~~~`,
-          lines: [
-            "الوصلات كـ أزواج.",
-            "بناء adjacency list، و directed بيحدد لو الوصلة في اتجاه واحد.",
-            "Map من العقدة لقائمة جيرانها.",
-            "عدّي على كل وصلة.",
-            "اتأكد إن u ليها قائمة.",
-            "و v كمان، حتى لو ملهاش جيران طالعين.",
-            "ضيف v في جيران u.",
-            "لو مش directed، ضيف u في جيران v.",
-            "قفلة الـ for.",
-            "رجّع الـ graph.",
-            "قفلة.",
-            "DFS recursive بـ Set للي اتزار.",
-            "علّم العقدة.",
-            "انزل على كل جار لسه ماتزارش.",
-            "رجّع كل اللي اتزار.",
-            "قفلة.",
-            "عدد الجزر (connected components).",
-            "Set واحدة لكل الـ DFS calls.",
-            "العدّاد.",
-            "كل عقدة ماتزارتش = جزيرة جديدة، علّمها كلها وعدّها.",
-            "رجّع العدد.",
-            "قفلة.",
-            "ابني الـ graph.",
-            "جيران d.",
-            "كل اللي يوصل له من a بترتيب الـ DFS.",
-            "جزيرة a-b وجزيرة c-d-e."
-          ],
-          check: {
-            lang: "js",
-            starter: R`function validPath(n, edges, source, destination) {
-  const graph = Array.from({ length: n }, () => []);
-  // ابني الـ graph (الاتجاهين)، وبعدين BFS بـ queue ومؤشر head
-  return false;
-}`,
-            tests: R`const E = [[0, 1], [0, 2], [3, 5], [5, 4], [4, 3]];
-test("من 0 لـ 5 ← false (جزيرتين)", () => expect(validPath(6, E, 0, 5)).toBe(false));
-test("من 3 لـ 4 ← true", () => expect(validPath(6, E, 3, 4)).toBe(true));
-test("العقدة بتوصل لنفسها: من 2 لـ 2 ← true", () => expect(validPath(6, E, 2, 2)).toBe(true));
-test("عقدة ملهاش edges خالص: (3, [[0, 1]], 0, 2) ← false", () => expect(validPath(3, [[0, 1]], 0, 2)).toBe(false));
-test("الـ edges في الاتجاهين: (3, [[1, 0], [2, 1]], 0, 2) ← true", () => expect(validPath(3, [[1, 0], [2, 1]], 0, 2)).toBe(true));
-test("سلسلة 200 ألف عقدة (O(V + E)، و fill([]) كانت هتخلط الجيران)", () => {
-  const n = 200000, edges = Array.from({ length: n - 1 }, (_, i) => [i, i + 1]);
-  expect([validPath(n, edges, 0, n - 1), validPath(n + 1, edges, 0, n)]).toEqual([true, false]);
-});`,
-            solution: R`function validPath(n, edges, source, destination) {
-  const graph = Array.from({ length: n }, () => []);
-  for (const [u, v] of edges) { graph[u].push(v); graph[v].push(u); }
-  const seen = new Array(n).fill(false);
-  const queue = [source];
-  seen[source] = true;
-  for (let head = 0; head < queue.length; head++) {
-    const u = queue[head];
-    if (u === destination) return true;
-    for (const v of graph[u]) if (!seen[v]) { seen[v] = true; queue.push(v); }
-  }
-  return false;
-}`
-          }
-        },
-        {
-          cmd: "number of islands",
-          title: "عدّ الجزر في خريطة من 1 و 0 (Number of Islands)",
-          desc: R`الـ grid هو graph من غير ما تبنيه: كل خانة عقدة، وجيرانها الأربعة (فوق وتحت وشمال ويمين) هما الـ edges. الجزيرة مجموعة 1 متوصلين ببعض أفقي أو رأسي (مش قطري).
-
-الحل: لف على كل الخانات. أول ما تلاقي 1، دي جزيرة جديدة: زوّد العدّاد، وبعدين «اغرق» الجزيرة كلها بـ DFS، يعني حوّل كل 1 متوصل بيها لـ 0، عشان متتعدّش تاني.
-
-ده نفس connected components من الدرس اللي فات، بس الـ [[seen]] هنا هي الـ grid نفسها (بنعلّم بتغيير القيمة). عشان منبوّظش الـ input اللي جاي من برّا، بنشتغل على نسخة.`,
-          example: R`function numIslands(grid) {
-  const rows = grid.length, cols = grid[0]?.length ?? 0;
-  const g = grid.map(row => [...row]);
-  let count = 0;
-  const sink = (r, c) => {
-    if (r < 0 || c < 0 || r >= rows || c >= cols || g[r][c] !== "1") return;
-    g[r][c] = "0";
-    sink(r + 1, c); sink(r - 1, c); sink(r, c + 1); sink(r, c - 1);
-  };
-  for (let r = 0; r < rows; r++)
-    for (let c = 0; c < cols; c++)
-      if (g[r][c] === "1") { count++; sink(r, c); }
-  return count;
-}
-const map = ["11000", "11000", "00100", "00011"].map(s => s.split(""));
-console.log(numIslands(map)); // 3
-console.log(numIslands([["1", "1"], ["1", "1"]])); // 1
-console.log(numIslands([["1", "0", "1"]])); // 2
-console.log(numIslands([])); // 0
-// O(rows × cols) time; O(rows × cols) space for the copy and, in the worst case, the recursion`,
-          try: R`حل «Max Area of Island»: رجّع مساحة أكبر جزيرة بدل العدد (خلّي [[sink]] ترجّع عدد الخانات اللي غرّقتها). وبعدين اكتبها بـ BFS (queue) بدل recursion، وجرّبها على grid 1000 × 1000 كله 1: النسخة الـ recursive هتعمل إيه؟ اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[maxAreaOfIsland(grid)]] بـ BFS (الـ grid فيها "1" و "0" زي المثال).`,
-          sol: R`للخريطة اللي في المثال: أكبر جزيرة مساحتها 4 (المربع اللي فوق على الشمال). و grid كله 0 الإجابة 0.
-
-[[area]] ترجّع 0 لو برّا الحدود أو مش 1، وغير كده [[1 + area(4 جيران)]]. وخد [[Math.max]] على كل الجزر.
-
-على grid مليون خانة كله 1: الـ DFS الـ recursive ممكن ينزل مليون مستوى، فهيقع بـ [[RangeError: Maximum call stack size exceeded]]. نسخة الـ BFS بـ queue ومؤشر [[head]] بتشتغل عادي وبترجّع 1000000.
-
-في الـ BFS علّم الخانة (حوّلها لـ 0) لحظة ما تحطها في الـ queue، مش لما تطلعها. لو استنيت، نفس الخانة هتدخل الـ queue من كذا جار، والـ queue هتكبر أضعاف.`,
-          solCode: R`function maxAreaOfIsland(grid) {
-  const rows = grid.length, cols = grid[0]?.length ?? 0;
-  const g = grid.map(row => [...row]);
-  const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]];
-  let best = 0;
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      if (g[r][c] !== "1") continue;
-      g[r][c] = "0";
-      const queue = [[r, c]];
-      for (let head = 0; head < queue.length; head++) {
-        const [cr, cc] = queue[head];
-        for (const [dr, dc] of dirs) {
-          const nr = cr + dr, nc = cc + dc;
-          if (nr >= 0 && nc >= 0 && nr < rows && nc < cols && g[nr][nc] === "1") {
-            g[nr][nc] = "0";
-            queue.push([nr, nc]);
-          }
-        }
-      }
-      best = Math.max(best, queue.length);
-    }
-  }
-  return best;
-}
-const map = ["11000", "11000", "00100", "00011"].map(s => s.split(""));
-console.log(maxAreaOfIsland(map)); // 4
-console.log(maxAreaOfIsland([["0", "0"]])); // 0
-const big = Array.from({ length: 1000 }, () => new Array(1000).fill("1"));
-console.log(maxAreaOfIsland(big)); // 1000000
-// O(rows × cols) time and space, no recursion depth limit`,
-          flag: "script",
-          deep: {
-            why: "Number of Islands من أكتر مسائل الانترفيو اللي بتتسأل في الشركات الكبيرة، لأنها بتختبر إنك شايف الـ grid كـ graph. ونفس الفكرة بالظبط هي أداة «الجردل» (flood fill) في برامج الرسم، وتحديد المناطق المتوصلة في خريطة لعبة، وتجميع الخانات المتشابهة في spreadsheet.",
-            how: R`dry run على الخريطة: [[(0,0)]] = 1، جزيرة رقم 1. [[sink(0,0)]] بتغرّق [[(0,0) (1,0) (0,1) (1,1)]]، والباقي حواليهم 0 أو برّا.
-
-نكمل اللف لحد [[(2,2)]] = 1، جزيرة 2، وبتغرق لوحدها. وبعدين [[(3,3)]] = 1، جزيرة 3، وبتغرق هي و [[(3,4)]]. الإجابة 3.
-
-الشرط الطويل في أول [[sink]] هو كل الـ base cases في سطر واحد: برّا الحدود من أي ناحية، أو ماء، أو اتغرّقت قبل كده. الترتيب مهم: لازم تتأكد من الحدود قبل ما تقرا [[g[r][c]]]، عشان [[g[-1]]] بـ undefined و [[undefined[c]]] هتوقع البرنامج.
-
-[[grid[0]?.length ?? 0]]: لو الـ grid فاضي، [[grid[0]]] undefined، والـ optional chaining بيمنع الـ crash.
-
-الـ Big-O: كل خانة بتتزار مرة في الـ loop الخارجي، وبتتغرق مرة واحدة بالكتير، فـ [[O(rows × cols)]].`,
-            when: "أي grid فيه «مناطق متوصلة»: عدّها، أو احسب مساحتها، أو حيطها (Surrounded Regions)، أو اعرف إيه اللي يوصل للحافة (Pacific Atlantic Water Flow). DFS أو BFS الاتنين ينفعوا؛ BFS أأمن لو الـ grid كبير. ولو الـ grid بيتغير (جزر بتتضاف واحدة واحدة)، ده union-find.",
-            mistakes: R`قراءة الخانة قبل التأكد من الحدود. ونسيان إنك تعلّم الخانة قبل ما تنزل على جيرانها (فتلف في دايرة). وإنك تقارن بـ [[1]] (رقم) والـ grid فيه [["1"]] (string)؛ LeetCode بيستخدم strings في المسألة دي بالذات. وإنك تعدّل الـ input من غير ما تقول، وفي الانترفيو قول «هعدّل الـ grid عشان أوفّر ذاكرة، ولو مش مسموح هعمل Set أو نسخة».`
-          },
-          teach: R`## الفكرة في جملة
-
-لف على الخريطة خانة خانة. أول ما تقابل [["1"]]، دي بداية جزيرة جديدة: عدّها، وبعدين «غرّقها» كلها، يعني حوّل الخانة دي وكل [["1"]] متوصل بيها لـ [["0"]]. كده لما الـ loop يكمّل، باقي الجزيرة مش هيتعد تاني. عدد مرات التغريق = عدد الجزر.
-
-كل الأرقام اللي تحت من تشغيل حقيقي على Node 24.19.0 على ويندوز، بعد ما ضفنا [[console.log]] مع كل خانة بتتغرق، وشكل الـ grid بعد كل جزيرة.
-
----
-
-## ١. الكود سطر سطر
-
-### [[const rows = grid.length, cols = grid[0]?.length ?? 0;]]
-
-- [[rows]]: عدد الصفوف = طول الـ array الخارجية.
-- [[grid[0]?.length]]: طول أول صف. [[?.]] (optional chaining) معناها «لو [[grid[0]]] موجود هات [[.length]]، ولو [[undefined]] رجّع [[undefined]] من غير ما تقع».
-- [[?? 0]]: (nullish coalescing) «لو اللي قبلي [[null]] أو [[undefined]] خد 0».
-- فلو الـ grid فاضي [[[]]]: [[rows]] = 0 و [[cols]] = 0، والـ loops مش هتلف. جرّبناها: [[[][0]?.length ?? 0]] طلعت [[0]].
-
-### [[const g = grid.map(row => [...row]);]]
-
-نسخة من الـ grid. [[[...row]]] (spread) بيعمل array جديدة فيها نفس عناصر الصف. لازم ننسخ كل صف لوحده: لو عملنا [[grid.map(row => row)]] بس، الصفوف هتبقى هي هي ونغرّق الـ input الأصلي. وبعد التشغيل اتأكدنا إن الأصلي ماتغيرش.
-
-### الدالة [[sink(r, c)]]
-
-~~~js
-const sink = (r, c) => {
-  if (r < 0 || c < 0 || r >= rows || c >= cols || g[r][c] !== "1") return;
-  g[r][c] = "0";
-  sink(r + 1, c); sink(r - 1, c); sink(r, c + 1); sink(r, c - 1);
-};
-~~~
-
-- [[r]] رقم الصف و [[c]] رقم العمود.
-- السطر الأول كل الـ base cases: برّا الخريطة من فوق ([[r < 0]]) أو شمال ([[c < 0]]) أو تحت ([[r >= rows]]) أو يمين ([[c >= cols]])، أو الخانة مش [["1"]] (ماية، أو اتغرقت قبل كده). ارجع.
-- الترتيب في الشرط مهم: [[||]] بتقف عند أول [[true]]، فشروط الحدود بتتفحص **قبل** [[g[r][c]]]. لو [[r = -1]]، [[g[-1]]] بـ [[undefined]]، و [[undefined[c]]] هيوقع البرنامج، بس احنا بنرجع قبلها.
-- [[g[r][c] = "0"]]: غرّق الخانة. ده كمان علامة «اتزارت»، فمش محتاجين Set.
-- السطر الأخير: انزل على الجيران الأربعة: تحت ([[r + 1]])، وفوق ([[r - 1]])، ويمين ([[c + 1]])، وشمال ([[c - 1]]). القطري مش جار.
-
-### الـ loop
-
-~~~js
-for (let r = 0; r < rows; r++)
-  for (let c = 0; c < cols; c++)
-    if (g[r][c] === "1") { count++; sink(r, c); }
-~~~
-
-loop جوه loop بيعدّي على كل خانة من فوق لتحت ومن الشمال لليمين. الـ [[for]] من غير أقواس [[{}]] بيشغّل السطر اللي بعده بس. ولاحظ إننا بنقارن بـ [["1"]] (string) لأن الخريطة حروف مش أرقام.
-
----
-
-## ٢. التتبع على خريطة تانية
-
-~~~text الخريطة (3 × 3)
-1 1 0
-0 0 1
-1 0 1
-~~~
-
-~~~text الناتج (Node 24 على ويندوز)
-(0,0) is 1 -> island #1
-    sink(0,0) -> 0
-    sink(0,1) -> 0
-    grid now: 000 001 101
-(1,2) is 1 -> island #2
-    sink(1,2) -> 0
-    sink(2,2) -> 0
-    grid now: 000 000 100
-(2,0) is 1 -> island #3
-    sink(2,0) -> 0
-    grid now: 000 000 000
-3
-~~~
-
-| الجزيرة | لقيناها عند | الخانات اللي اتغرقت | الـ grid بعدها (صف صف) |
-|---|---|---|---|
-| 1 | (0,0) | (0,0) و (0,1) | 000 / 001 / 101 |
-| 2 | (1,2) | (1,2) و (2,2) | 000 / 000 / 100 |
-| 3 | (2,0) | (2,0) | 000 / 000 / 000 |
-
-تفاصيل الجزيرة الأولى: [[sink(0,0)]] غرّقت الخانة، ونزلت تحت لـ (1,0): ماية، رجعت. فوق (-1,0): برّا، رجعت. يمين (0,1): [["1"]]، غرّقتها ونزلت منها على جيرانها الأربعة، كلهم ماية أو برّا أو اتغرقوا. شمال (0,-1): برّا. خلصت.
-
-الـ loop كمّل: (0,1) بقت [["0"]] فمش هتتعد تاني، وده سر الحل كله. والجزيرة التانية (1,2) و (2,2) متوصلين رأسي، فاتغرقوا مع بعض. أما (2,0) و (2,2) في نفس الصف بس بينهم ماية، فهما جزيرتين.
-
----
-
-## ٣. ناتج المثال
-
-~~~text الناتج (Node 24 على ويندوز)
-3
-1
-2
-0
-~~~
-
-- الخريطة المشهورة: مربع 2 × 2 فوق، وخانة في النص، وخانتين تحت على اليمين = 3.
-- [[[["1", "1"], ["1", "1"]]]]: كله أرض متوصلة = 1.
-- [[[["1", "0", "1"]]]]: صف واحد، والـ 0 فاصل = 2.
-- [[[]]]: مفيش خانات = 0.
-
-وسطر [[map(s => s.split(""))]] بيحوّل كل string زي [["11000"]] لـ array حروف [[["1","1","0","0","0"]]]، عشان نقدر نغيّر خانة فيها (الـ strings في JavaScript مبتتغيرش).
-
----
-
-## ٤. الـ Big-O وليه
-
-| | القيمة | السبب |
-|---|---|---|
-| الوقت | [[O(rows × cols)]] | الـ loop بيعدّي على كل خانة مرة. وكل خانة بتتغرق مرة واحدة بالكتير، وكل تغريق بيعمل ٤ نداءات بس |
-| الذاكرة | [[O(rows × cols)]] | النسخة [[g]] بحجم الخريطة. والـ recursion في أسوأ حالة (خريطة كلها 1 بشكل ملفوف) عمقها ممكن يوصل لعدد الخانات |
-
-العمق ده هو نقطة الضعف: خريطة كبيرة كلها أرض ممكن توقع الـ call stack. ده موضوع الـ try.
-
----
-
-## الخلاصة
-
-~~~text
-الـ grid      graph جاهز: كل خانة جيرانها الأربعة
-العدّ          أول "1" تقابله = جزيرة جديدة، count++
-sink          غرّق الخانة ("0") وانزل على الأربعة
-الحدود        تتفحص قبل g[r][c]، و || بتقف بدري
-seen          الـ grid نفسها بعد التغريق
-النسخة        map + [...row] عشان الـ input ميتغيرش
-الـ Big-O     O(rows × cols) وقت وذاكرة
-~~~`,
-          lines: [
-            "بتعدّ الجزر.",
-            "الأبعاد، مع حماية للـ grid الفاضي.",
-            "نسخة عشان منغيّرش الـ input.",
-            "العدّاد.",
-            "sink بتغرّق جزيرة كاملة بـ DFS.",
-            "برّا الحدود أو مش أرض: ارجع.",
-            "غرّق الخانة دي (هي كمان علامة إنها اتزارت).",
-            "انزل على الجيران الأربعة.",
-            "قفلة sink.",
-            "لف على كل الصفوف.",
-            "وكل الأعمدة.",
-            "أرض لسه ماتغرقتش: جزيرة جديدة، عدّها وغرّقها كلها.",
-            "رجّع العدد.",
-            "قفلة.",
-            "الخريطة المشهورة بتاعة المسألة، كل صف array من الحروف.",
-            "٣ جزر.",
-            "كله أرض: جزيرة واحدة.",
-            "اتنين مفصولين بـ 0.",
-            "فاضي."
-          ],
-          check: {
-            lang: "js",
-            starter: R`function maxAreaOfIsland(grid) {
-  const rows = grid.length, cols = grid[0]?.length ?? 0;
-  const g = grid.map(row => [...row]);
-  let best = 0;
-  // لكل "1": BFS بـ queue ومؤشر head، وعلّم الخانة لحظة ما تدخل الـ queue
-  return best;
-}`,
-            tests: R`const grid = rows => rows.map(s => s.split(""));
-test("الخريطة اللي في المثال ← 4", () => expect(maxAreaOfIsland(grid(["11000", "11000", "00100", "00011"]))).toBe(4));
-test("كله 0 ← 0، و [] ← 0", () => expect([maxAreaOfIsland(grid(["000", "000"])), maxAreaOfIsland([])]).toEqual([0, 0]));
-test("[['1']] ← 1", () => expect(maxAreaOfIsland([["1"]])).toBe(1));
-test("القطري مش جار: ['101', '010', '101'] ← 1", () => expect(maxAreaOfIsland(grid(["101", "010", "101"]))).toBe(1));
-test("شكل U ← 7", () => expect(maxAreaOfIsland(grid(["101", "101", "111"]))).toBe(7));
-test("400 × 400 كله 1: الـ DFS الـ recursive هيقع، الـ BFS بيرجّع 160000", () => expect(maxAreaOfIsland(Array.from({ length: 400 }, () => new Array(400).fill("1")))).toBe(160000));`,
-            solution: R`function maxAreaOfIsland(grid) {
-  const rows = grid.length, cols = grid[0]?.length ?? 0;
-  const g = grid.map(row => [...row]);
-  let best = 0;
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      if (g[r][c] !== "1") continue;
-      g[r][c] = "0";
-      const queue = [[r, c]];
-      for (let head = 0; head < queue.length; head++) {
-        const [y, x] = queue[head];
-        for (const [dy, dx] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
-          const ny = y + dy, nx = x + dx;
-          if (ny < 0 || nx < 0 || ny >= rows || nx >= cols || g[ny][nx] !== "1") continue;
-          g[ny][nx] = "0";
-          queue.push([ny, nx]);
-        }
-      }
-      best = Math.max(best, queue.length);
-    }
-  }
-  return best;
-}`
-          }
-        },
-        {
-          cmd: "shortest path in grid (BFS)",
-          title: "أقل عدد خطوات من نقطة لنقطة في متاهة",
-          desc: R`لما كل خطوة بنفس التكلفة (خطوة = 1)، BFS بيلاقي أقصر طريق. ليه؟ لأنه بيزور كل الخانات اللي على بعد 1، وبعدين كل اللي على بعد 2، وهكذا. فأول مرة يوصل للهدف، دي أقل مسافة ممكنة.
-
-الـ DFS مينفعش هنا: ممكن ينزل في طريق طويل ملفوف ويوصل للهدف الأول، ومفيش ضمان إنه الأقصر.
-
-الأدوات: queue ومؤشر [[head]]، و [[dist]] جدول بنفس حجم الـ grid فيه المسافة لكل خانة ([[-1]] = لسه ماوصلناش). الـ [[dist]] بيقوم بدور الـ [[seen]] كمان. و [[dirs]] فيها الاتجاهات الأربعة، عشان منكتبش نفس الكود ٤ مرات.
-
-لو الخطوات ليها تكاليف مختلفة (طريق سريع وطريق زحمة)، BFS مبقاش ينفع، ومحتاج Dijkstra (درس «Dijkstra» في نفس المستوى).`,
-          example: R`function shortestPath(grid, start, goal) {
-  const rows = grid.length, cols = grid[0].length;
-  const dist = grid.map(row => [...row].map(() => -1));
-  const queue = [start];
-  const [sr, sc] = start;
-  dist[sr][sc] = 0;
-  const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]];
-  for (let head = 0; head < queue.length; head++) {
-    const [r, c] = queue[head];
-    if (r === goal[0] && c === goal[1]) return dist[r][c];
-    for (const [dr, dc] of dirs) {
-      const nr = r + dr, nc = c + dc;
-      if (nr < 0 || nc < 0 || nr >= rows || nc >= cols) continue;
-      if (grid[nr][nc] === "#" || dist[nr][nc] !== -1) continue;
-      dist[nr][nc] = dist[r][c] + 1;
-      queue.push([nr, nc]);
-    }
+          cmd: "binary search",
+          title: "دوّر على رقم في array مترتبة من غير ما تعدّي عليها كلها",
+          desc: R`بص على العنصر اللي في النص: لو هو المطلوب خلاص، لو أصغر يبقى المطلوب في النص اليمين، لو أكبر يبقى في الشمال. كل خطوة بتشيل نص الاحتمالات: [[O(log n)]].
+
+مليون عنصر محتاجين ٢٠ مقارنة بالكتير، ومليار محتاجين ٣٠. عشان كده الـ binary search من أقوى الأدوات، بس شرطه إن البيانات مترتبة.
+
+المهم تفهم الحدود: [[lo]] و [[hi]] الاتنين جوه المنطقة اللي لسه ممكن يكون فيها المطلوب، والـ loop شغال طول ما المنطقة مش فاضية ([[lo <= hi]]).`,
+          example: R`function binarySearch(a, target) {
+  let lo = 0, hi = a.length - 1;
+  while (lo <= hi) {
+    const mid = lo + Math.floor((hi - lo) / 2);
+    if (a[mid] === target) return mid;
+    if (a[mid] < target) lo = mid + 1;
+    else hi = mid - 1;
   }
   return -1;
 }
-const maze = [
-  "..#.",
-  "..#.",
-  "....",
-  "#.#.",
-];
-console.log(shortestPath(maze, [0, 0], [0, 3])); // 7
-console.log(shortestPath(maze, [0, 0], [0, 0])); // 0
-console.log(shortestPath([".#", "#."], [0, 0], [1, 1])); // -1
-// O(rows × cols) time and space: every cell enters the queue at most once`,
-          try: R`خلّي الدالة ترجّع الطريق نفسه مش طوله بس: احفظ لكل خانة «جيت منين» ([[parent]])، ولما توصل للهدف ارجع بالـ parents لحد البداية واعكس. وبعدين حل «Rotting Oranges»: كل البرتقان البايظ بيبوّظ جيرانه كل دقيقة، في كام دقيقة كله يبوظ؟ (BFS بيبدأ من كل البايظين مع بعض: multi-source BFS). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[shortestRoute(grid, start, goal)]] بترجّع الخانات كـ [["r,c"]] من البداية للهدف (أو null)، و [[orangesRotting(grid)]].`,
-          sol: R`الطريق في المتاهة من [[(0,0)]] لـ [[(0,3)]]: ٨ خانات (٧ خطوات)، زي [[0,0 → 1,0 → 2,0 → 2,1 → 2,2 → 2,3 → 1,3 → 0,3]]. ممكن يطلع عندك طريق تاني بنفس الطول حسب ترتيب [[dirs]]، وده صح برضه.
-
-الـ [[parent]] ممكن تبقى Map مفتاحها [[r + "," + c]]، أو جدول زي [[dist]]. واحفظ الـ parent لحظة ما تحط الخانة في الـ queue (نفس لحظة [[dist]]).
-
-Rotting Oranges على [[[[2,1,1],[1,1,0],[0,1,1]]]]: الإجابة 4. حط كل الـ 2 في الـ queue في الأول بمسافة 0، وعدّ البرتقان السليم. BFS عادي، وكل ما سليمة تبوظ نقّص العدد. في الآخر لو فيه سليم لسه، الإجابة [[-1]] (زي [[[[2,1,1],[0,1,1],[1,0,1]]]]). ولو مفيش سليم من الأول، الإجابة 0.
-
-الغلطة الشائعة: تعمل BFS منفصل من كل برتقانة بايظة. ده [[O((rows × cols)^2)]] وبيدّي إجابة غلط لو مش بتاخد الـ minimum صح.`,
-          solCode: R`function shortestRoute(grid, start, goal) {
-  const rows = grid.length, cols = grid[0].length;
-  const key = (r, c) => r + "," + c;
-  const parent = new Map([[key(...start), null]]);
-  const queue = [start];
-  for (let head = 0; head < queue.length; head++) {
-    const [r, c] = queue[head];
-    if (r === goal[0] && c === goal[1]) {
-      const path = [];
-      for (let k = key(r, c); k !== null; k = parent.get(k)) path.push(k);
-      return path.reverse();
-    }
-    for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
-      const nr = r + dr, nc = c + dc;
-      if (nr < 0 || nc < 0 || nr >= rows || nc >= cols || grid[nr][nc] === "#" || parent.has(key(nr, nc))) continue;
-      parent.set(key(nr, nc), key(r, c));
-      queue.push([nr, nc]);
-    }
-  }
-  return null;
-}
-function orangesRotting(grid) {
-  const g = grid.map(row => [...row]);
-  let queue = [], fresh = 0, minutes = 0;
-  g.forEach((row, r) => row.forEach((v, c) => { if (v === 2) queue.push([r, c]); if (v === 1) fresh++; }));
-  while (queue.length && fresh > 0) {
-    const next = [];
-    for (const [r, c] of queue)
-      for (const [nr, nc] of [[r + 1, c], [r - 1, c], [r, c + 1], [r, c - 1]])
-        if (g[nr]?.[nc] === 1) { g[nr][nc] = 2; fresh--; next.push([nr, nc]); }
-    queue = next;
-    minutes++;
-  }
-  return fresh === 0 ? minutes : -1;
-}
-const maze = ["..#.", "..#.", "....", "#.#."];
-console.log(shortestRoute(maze, [0, 0], [0, 3]).join(" > ")); // 0,0 > 1,0 > 2,0 > 2,1 > 2,2 > 2,3 > 1,3 > 0,3
-console.log(orangesRotting([[2, 1, 1], [1, 1, 0], [0, 1, 1]])); // 4
-console.log(orangesRotting([[2, 1, 1], [0, 1, 1], [1, 0, 1]])); // -1
-console.log(orangesRotting([[0, 2]])); // 0
-// both O(rows × cols) time and space`,
+const a = [1, 3, 5, 7, 9, 11];
+console.log(binarySearch(a, 7));  // 3
+console.log(binarySearch(a, 4));  // -1
+console.log(binarySearch([], 1)); // -1
+// O(log n) time, O(1) space`,
+          try: R`اكتبها recursive بـ [[(a, target, lo, hi)]]، وقول الـ space complexity بتاعتها. وبعدين دوّر في array مترتبة واتلفّت زي [4, 5, 6, 7, 0, 1, 2] في O(log n): في كل خطوة، نص واحد على الأقل مترتب. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[bsRec(a, target, lo, hi)]] (والـ lo و hi ليهم قيم افتراضية)، و [[searchRotated(a, target)]].`,
           flag: "script",
           deep: {
-            why: "«أقل عدد خطوات» سؤال بيتكرر بأشكال كتير: أقل عدد نقلات في لعبة، وأقل عدد تحويلات بين كلمتين (Word Ladder)، وأقرب مخزن لكل عميل، ودرجات القرابة في شبكة اجتماعية («صديق صديقك»). وكلهم BFS على graph، سواء كان grid أو شبكة أو حالات لعبة.",
-            how: R`dry run مختصر: [[dist(0,0) = 0]]. من [[(0,0)]] نضيف [[(1,0)]] و [[(0,1)]] بمسافة 1. من [[(1,0)]] نضيف [[(2,0)]] و [[(1,1)]] بمسافة 2. [[(0,1)]] جيرانها يا إما حيطة يا إما اتزاروا. وهكذا، الموجة بتتوسع خطوة خطوة.
+            why: "أي بحث في بيانات مترتبة: الـ index في قاعدة البيانات (B-tree بنفس الروح)، و [[git bisect]] اللي بيدوّر على الـ commit اللي بوّظ الكود، والبحث في لوج مترتب بالوقت. والانترفيو بيحبها لأن فيها off-by-one كتير وسهل تتكتب غلط.",
+            how: R`dry run على [1, 3, 5, 7, 9, 11] ونبحث عن 7:
 
-الحيطة في [[(0,2)]] و [[(1,2)]] بتجبر الطريق ينزل لصف 2 عشان يعدّي لليمين. بعد ما يوصل [[(2,3)]] بمسافة 5، يطلع [[(1,3)]] بـ 6، و [[(0,3)]] بـ 7.
+lo = 0 و hi = 5، و mid = 2 (قيمته 5). 5 أصغر من 7، فـ lo = 3.
 
-ليه بنكتب [[dist]] لحظة ما الخانة تدخل الـ queue؟ لو استنينا لحد ما تطلع، نفس الخانة ممكن تدخل الـ queue من جارين مختلفين، والـ queue تكبر. والأهم إن أول مرة بنوصل لخانة في BFS هي أقصر مسافة ليها، فمفيش داعي نكتبها تاني.
+lo = 3 و hi = 5، و mid = 4 (قيمته 9). أكبر، فـ hi = 3.
 
-[[grid[nr][nc]]] بيشتغل على strings عادي ([["..#."[2]]] = "#")، فمش لازم نحوّل كل صف لـ array.
+lo = 3 و hi = 3، و mid = 3 (قيمته 7). لقيناه.
 
-multi-source BFS (الـ try): بدل ما الـ queue تبدأ بعنصر واحد، تبدأ بكل المصادر مع بعض بمسافة 0. الموجات بتتوسع من كل المصادر في نفس الوقت، وكل خانة بتاخد المسافة لأقرب مصدر.`,
-            when: "أقصر طريق لما كل الخطوات بنفس التكلفة: BFS، [[O(V + E)]]. لو التكاليف 0 و 1 بس، فيه 0-1 BFS بـ deque. لو التكاليف موجبة ومختلفة: Dijkstra. لو فيه تكاليف سالبة: Bellman-Ford (نادرًا ما يتسأل). ولو المطلوب «فيه طريق ولا لأ» بس، DFS كفاية.",
-            mistakes: R`استخدام DFS لأقصر طريق. وإنك تعلّم الخانة لما تطلع من الـ queue بدل لما تدخل. و [[queue.shift()]] على grid كبير. وإنك تنسى حالة إن البداية هي الهدف (الإجابة 0) أو إن البداية نفسها حيطة. وإنك ترجّع [[Infinity]] أو [[undefined]] لما مفيش طريق بدل اللي المسألة طالباه (في الغالب [[-1]]).`
+والبحث عن 4: mid = 2 (5) أكبر، فـ hi = 1. mid = 0 (1) أصغر، فـ lo = 1. mid = 1 (3) أصغر، فـ lo = 2. دلوقتي lo = 2 أكبر من hi = 1: المنطقة فاضية، -1.
+
+القاعدة اللي بتمنع الأخطاء: قرّر معنى lo و hi وخليك عليه. هنا الاتنين «شاملين» (المطلوب ممكن يكون عند lo أو عند hi). فالـ loop بـ [[<=]]، والتحديث [[mid + 1]] و [[mid - 1]] لأن mid نفسه اتفحص خلاص.
+
+لو كتبت [[lo = mid]] بدل [[mid + 1]]، لما lo و hi يبقوا جنب بعض، mid هيفضل = lo، والـ loop هيلف للأبد.
+
+و [[lo + Math.floor((hi - lo) / 2)]] بدل [[(lo + hi) / 2]]: في Java و C++ جمع رقمين كبار ممكن يعدّي حد الـ int. في JS الأرقام doubles فمفيش overflow عملي، بس العادة دي بتبان كويس في الانترفيو. وفيه كمان [[(lo + hi) >>> 1]] اللي هتشوفه في الدروس الجاية.`,
+            when: "أي بحث في حاجة مترتبة. ولو المطلوب «أول/آخر مكان» أو «يتحط فين» أو «أقل قيمة تحقق شرط»، دي تنويعات عليها (الدروس الجاية).",
+            mistakes: R`[[lo < hi]] مع [[hi = a.length - 1]] بيفوّت آخر عنصر فاضل. و [[lo = mid]] بدل [[mid + 1]] بيعمل loop لا نهائي. ونسيان [[Math.floor]] فيطلع mid كسر والقيمة undefined. وتشغيلها على array مش مترتبة: مفيش error، بس الإجابات غلط. ولو هتدوّر مرة واحدة بس في array مش مترتبة، [[includes]] ([[O(n)]]) أحسن من sort وبعده binary search ([[O(n log n)]]).`
           },
           teach: R`## الفكرة في جملة
 
-ابدأ من نقطة البداية، وزور كل الخانات اللي على بعد 1، وبعدين كل اللي على بعد 2، وهكذا، زي موجة بتتوسع. الـ **queue** هي اللي بتضمن الترتيب ده: الخانات بتطلع منها بنفس ترتيب ما دخلت، فمفيش خانة على بعد 3 بتتزار قبل خانة على بعد 2. فأول مرة نوصل للهدف، المسافة دي أقل مسافة ممكنة.
+الـ array مترتبة، فلو بصّيت على العنصر اللي في النص وطلع أصغر من المطلوب، يبقى النص الشمال كله أصغر كمان ومفيش داعي تبص فيه. كل مقارنة بترمي نص الاحتمالات. معانا رقمين [[lo]] و [[hi]] بيحدّدوا المنطقة اللي لسه ممكن المطلوب يكون فيها، والمنطقة بتتقسم نصين لحد ما نلاقيه أو تفضى.
 
-كل الأرقام اللي تحت من تشغيل حقيقي على Node 24.19.0 على ويندوز، بعد ما ضفنا [[console.log]] يطبع كل خانة بتطلع من الـ queue واللي اتضاف بسببها.
+كل الأرقام اللي تحت من تشغيل حقيقي على Node 24.19.0 على ويندوز، بعد ما ضفنا [[console.log]] جوه الـ loop يطبع lo و hi و mid.
 
 ---
 
 ## ١. الكود سطر سطر
 
-### [[const rows = grid.length, cols = grid[0].length;]]
-
-أبعاد المتاهة. هنا الصفوف strings زي [["..#."]]، و [[.length]] بتاعة الـ string عدد حروفها.
-
-### [[const dist = grid.map(row => [...row].map(() => -1));]]
-
-جدول بنفس حجم المتاهة كله [[-1]]:
-
-- [[[...row]]]: الـ string [["..#."]] بيتفك لـ array حروف.
-- [[.map(() => -1)]]: كل حرف بيتبدّل بـ [[-1]]، أيًا كان. جرّبناها على [["ab"]] طلعت [[[ -1, -1 ]]].
-- [[-1]] معناها «لسه ماوصلناش هنا». فالجدول ده بيشيل حاجتين: المسافة لكل خانة، وهل اتزارت ولا لأ.
-
-### البداية
-
 ~~~js
-const queue = [start];
-const [sr, sc] = start;
-dist[sr][sc] = 0;
-~~~
-
-- [[start]] زوج [[[صف, عمود]]]. الـ queue بتبدأ بيه.
-- [[const [sr, sc] = start]]: destructuring، [[sr]] = start row و [[sc]] = start column.
-- المسافة من البداية لنفسها 0.
-
-### [[const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]];]]
-
-الاتجاهات الأربعة كـ «كام صف وكام عمود»: [[[1, 0]]] تحت، [[[-1, 0]]] فوق، [[[0, 1]]] يمين، [[[0, -1]]] شمال. كده بنكتب كود الجار مرة واحدة جوه loop بدل ٤ مرات.
-
-### [[for (let head = 0; head < queue.length; head++)]]
-
-دي الـ queue. [[head]] مؤشر على أول عنصر لسه ماطلعش. بدل ما نشيل من أول الـ array بـ [[shift]] (اللي بتزق كل العناصر)، بنقدّم المؤشر بس. والشرط [[head < queue.length]] بيتحسب كل لفة، فلو ضفنا عناصر جديدة الـ loop بيكمّل عليها.
-
-### [[const [r, c] = queue[head];]]
-
-الخانة اللي عليها الدور.
-
-### [[if (r === goal[0] && c === goal[1]) return dist[r][c];]]
-
-لو هي الهدف، رجّع مسافتها. مش بنقارن [[queue[head] === goal]] لأن دول arrays مختلفة في الذاكرة حتى لو نفس الأرقام، فبنقارن الرقمين.
-
-### الجيران
-
-~~~js
-for (const [dr, dc] of dirs) {
-  const nr = r + dr, nc = c + dc;
-  if (nr < 0 || nc < 0 || nr >= rows || nc >= cols) continue;
-  if (grid[nr][nc] === "#" || dist[nr][nc] !== -1) continue;
-  dist[nr][nc] = dist[r][c] + 1;
-  queue.push([nr, nc]);
+function binarySearch(a, target) {
+  let lo = 0, hi = a.length - 1;
+  while (lo <= hi) {
+    const mid = lo + Math.floor((hi - lo) / 2);
+    if (a[mid] === target) return mid;
+    if (a[mid] < target) lo = mid + 1;
+    else hi = mid - 1;
+  }
+  return -1;
 }
 ~~~
 
-- [[dr]] و [[dc]]: الفرق في الصف والعمود. [[nr]] و [[nc]] (new row و new column): الخانة الجارة.
-- [[continue]]: فوّت باقي اللفة دي وروح للاتجاه اللي بعده.
-- أول شرط: برّا المتاهة.
-- تاني شرط: حيطة [["#"]]، أو [[dist]] مش [[-1]] يعني اتزارت قبل كده. [[grid[nr][nc]]] بيشتغل على الـ string مباشرة: [["..#."[2]]] = [["#"]].
-- [[dist[nr][nc] = dist[r][c] + 1]]: الجار أبعد مني بخطوة. وبنكتبها **لحظة ما يدخل الـ queue**، فلو جار تاني حاول يضيفه بعد كده هيلاقيه مش [[-1]] ويفوّته.
+### [[let lo = 0, hi = a.length - 1;]]
+
+lo = low (الحد الأدنى)، و hi = high (الحد الأعلى). الاتنين **شاملين**: المطلوب ممكن يكون عند lo نفسه أو عند hi نفسه. في الأول المنطقة هي الـ array كلها، من أول index (0) لآخر index ([[a.length - 1]]).
+
+### [[while (lo <= hi)]]
+
+المنطقة من lo لـ hi فيها عنصر واحد على الأقل طول ما [[lo <= hi]]. لما lo = hi، فيه عنصر واحد لسه ماتفحصش، فلازم نلف كمان مرة: عشان كده [[<=]] مش [[<]].
+
+### [[const mid = lo + Math.floor((hi - lo) / 2);]]
+
+من جوه لبرة:
+
+1. [[hi - lo]]: عرض المنطقة.
+2. [[/ 2]]: نصه. القسمة في JS بتطلّع كسور: [[7 / 2]] طلعت [[3.5]].
+3. [[Math.floor]]: بتقرّب لتحت: [[Math.floor(7 / 2)]] طلعت [[3]]. من غيرها [[a[3.5]]] بترجع [[undefined]].
+4. [[lo + ...]]: نبدأ من lo ونمشي نص العرض. ده نفس [[(lo + hi) / 2]] بس من غير جمع رقمين كبار (في لغات زي Java الجمع ده ممكن يعدّي حد الـ int).
+
+### [[if (a[mid] === target) return mid;]]
+
+لقيناه: رجّع مكانه وخلاص.
+
+### [[if (a[mid] < target) lo = mid + 1;]]
+
+النص أصغر من المطلوب، والـ array مترتبة، فكل حاجة من lo لـ mid أصغر كمان. المنطقة الجديدة تبدأ **بعد** mid: [[mid + 1]]، لأن mid نفسه اتفحص.
+
+### [[else hi = mid - 1;]]
+
+النص أكبر: كل حاجة من mid لـ hi أكبر. المنطقة الجديدة تخلص **قبل** mid.
 
 ### [[return -1;]]
 
-الـ queue خلصت ومحدش وصل للهدف: مفيش طريق.
+الـ loop وقف لأن lo بقت أكبر من hi: المنطقة فضيت، والمطلوب مش موجود. -1 اتفاق معروف معناه «مش موجود» لأنه مستحيل يبقى index.
 
 ---
 
-## ٢. التتبع على متاهة 3 × 3
+## ٢. التتبع: البحث عن 32 في [[[2, 4, 8, 16, 32, 64, 128]]]
 
-~~~text المتاهة (من (0,0) لـ (2,2))
-. . .
-. # .
-. . .
-~~~
+| الخطوة | lo | hi | mid | a[mid] | القرار | بعدها |
+|---|---|---|---|---|---|---|
+| 1 | 0 | 6 | 3 | 16 | أصغر من 32، روح يمين | lo = 4، hi = 6 |
+| 2 | 4 | 6 | 5 | 64 | أكبر، روح شمال | lo = 4، hi = 4 |
+| 3 | 4 | 4 | 4 | 32 | لقيناه | رجّع 4 |
 
-~~~text الناتج (Node 24 على ويندوز)
-head=0 take (0,0) dist 0  add (1,0)=1 (0,1)=1  queue len 3
-head=1 take (1,0) dist 1  add (2,0)=2  queue len 4
-head=2 take (0,1) dist 1  add (0,2)=2  queue len 5
-head=3 take (2,0) dist 2  add (2,1)=3  queue len 6
-head=4 take (0,2) dist 2  add (1,2)=3  queue len 7
-head=5 take (2,1) dist 3  add (2,2)=4  queue len 8
-head=6 take (1,2) dist 3  add -  queue len 8
-head=7 take (2,2) = goal, return 4
-4
-~~~
+٧ عناصر وخلصنا في ٣ مقارنات.
 
-| head | الخانة | مسافتها | اللي اتضاف | ليه |
-|---|---|---|---|---|
-| 0 | (0,0) | 0 | (1,0) و (0,1) بمسافة 1 | فوق وشمال برّا |
-| 1 | (1,0) | 1 | (2,0) بمسافة 2 | (1,1) حيطة، (0,0) اتزارت |
-| 2 | (0,1) | 1 | (0,2) بمسافة 2 | (1,1) حيطة |
-| 3 | (2,0) | 2 | (2,1) بمسافة 3 | |
-| 4 | (0,2) | 2 | (1,2) بمسافة 3 | |
-| 5 | (2,1) | 3 | (2,2) بمسافة 4 | (1,1) حيطة |
-| 6 | (1,2) | 3 | ولا حاجة | (2,2) اتكتبت خلاص من الخطوة 5 |
-| 7 | (2,2) | 4 | | الهدف: رجّع 4 |
+## ٣. التتبع: البحث عن 5 (مش موجود)
 
-لاحظ ترتيب المسافات اللي بتطلع: 0، 1، 1، 2، 2، 3، 3، 4. عمرها ما نزلت. ده معنى «الموجة». ولاحظ head = 6: الخانة (2,2) كان ممكن تيجي من (1,2) كمان، بس [[dist]] بتاعها اتكتب خلاص، فمتضافتش مرتين.
+| الخطوة | lo | hi | mid | a[mid] | القرار | بعدها |
+|---|---|---|---|---|---|---|
+| 1 | 0 | 6 | 3 | 16 | أكبر | lo = 0، hi = 2 |
+| 2 | 0 | 2 | 1 | 4 | أصغر | lo = 2، hi = 2 |
+| 3 | 2 | 2 | 2 | 8 | أكبر | lo = 2، hi = 1 |
+| النهاية | 2 | 1 | | | lo > hi، المنطقة فاضية | رجّع -1 |
 
-جدول [[dist]] لو سبنا الـ BFS يكمّل لآخره (من غير ما يقف عند الهدف):
-
-~~~text الناتج (Node 24 على ويندوز)
- 0  1  2
- 1 -1  3
- 2  3  4
-~~~
-
-الحيطة فضلت [[-1]] لأنها مااتزارتش أبدًا.
+لاحظ إن lo وقفت عند 2، وده بالظبط المكان اللي الـ 5 كانت هتتحط فيه (بين 4 و 8). الحتة دي هي درس «search insert position».
 
 ---
 
-## ٣. ناتج المثال
+## ٤. الناتج الكامل للمثال
 
 ~~~text الناتج (Node 24 على ويندوز)
-7
-0
+3
+-1
 -1
 ~~~
 
-جدول المسافات الكامل لمتاهة المثال من (0,0):
-
-~~~text الناتج (Node 24 على ويندوز)
- 0  1 -1  7
- 1  2 -1  6
- 2  3  4  5
--1  4 -1  6
-~~~
-
-- الهدف (0,3) مسافته 7: الحيطة في العمود 2 بتجبر الطريق ينزل لصف 2، ويلف ويطلع.
-- [[[0, 0]]] لـ [[[0, 0]]]: أول خانة تطلع من الـ queue هي الهدف، فـ 0.
-- [[[".#", "#."]]]: البداية محبوسة بين حيطتين، الـ queue بتخلص بعد خانة واحدة، فـ [[-1]].
-
----
-
-## ٤. الـ Big-O وليه
-
-| | القيمة | السبب |
-|---|---|---|
-| الوقت | [[O(rows × cols)]] | كل خانة بتدخل الـ queue مرة بالكتير (بفضل [[dist]])، وكل خانة بتبص على ٤ جيران بس |
-| الذاكرة | [[O(rows × cols)]] | جدول [[dist]] بحجم المتاهة، والـ queue ممكن يبقى فيها كل الخانات |
-
-وبلغة الـ graphs: V = عدد الخانات، و E حوالي 4V، فده [[O(V + E)]] زي أي BFS.
-
----
-
-## الخلاصة
-
-~~~text
-queue + head    الخانات بتطلع بترتيب دخولها، من غير shift
-dist            -1 = ماوصلناش، وغير كده المسافة (وهو نفسه الـ seen)
-اكتب dist       لحظة ما الخانة تدخل الـ queue، مش لما تطلع
-dirs            ٤ اتجاهات كـ [dr, dc] بدل ٤ نسخ من الكود
-أول وصول        للهدف = أقصر مسافة، لأن المسافات بتطلع بالترتيب
-مفيش طريق       الـ queue تخلص ← -1
-الـ Big-O       O(rows × cols) وقت وذاكرة
-~~~
-
-> BFS بيدّي أقصر طريق بس لما كل خطوة بنفس التكلفة. لو الخطوات ليها أوزان مختلفة، محتاج Dijkstra.`,
-          lines: [
-            "أقل عدد خطوات من start لـ goal.",
-            "الأبعاد.",
-            "جدول المسافات، كله -1 في الأول (ماوصلناش).",
-            "الـ queue بتبدأ بالبداية.",
-            "صف وعمود البداية.",
-            "المسافة للبداية 0.",
-            "الاتجاهات الأربعة: تحت، فوق، يمين، شمال.",
-            "queue بمؤشر head بدل shift.",
-            "الخانة اللي عليها الدور.",
-            "وصلنا للهدف: المسافة دي أقل مسافة أكيد.",
-            "جرّب كل اتجاه.",
-            "الخانة الجارة.",
-            "برّا الحدود: فوّت.",
-            "حيطة، أو اتزارت قبل كده: فوّت.",
-            "المسافة = مسافتي + 1، وده كمان بيعلّمها إنها اتزارت.",
-            "حطها في آخر الـ queue.",
-            "قفلة الـ for الداخلية.",
-            "قفلة الـ for الخارجية.",
-            "الـ queue خلصت ومفيش وصول: مفيش طريق.",
-            "قفلة.",
-            "المتاهة: # حيطة، و . مكان فاضي.",
-            "الصف الأول.",
-            "التاني.",
-            "التالت.",
-            "الرابع.",
-            "قفلة الـ array.",
-            "لازم تنزل لصف 2 وتلف: ٧ خطوات.",
-            "البداية هي الهدف.",
-            "محبوس بين حيطتين."
-          ],
-          check: {
-            lang: "js",
-            starter: R`function shortestRoute(grid, start, goal) {
-  const key = (r, c) => r + "," + c;
-  const parent = new Map([[key(...start), null]]);
-  // نفس shortestPath، واحفظ parent لكل خانة لحظة ما تدخل الـ queue
-  return null;
-}
-function orangesRotting(grid) {
-  // multi-source BFS: كل الـ 2 في الـ queue من الأول
-  return -1;
-}`,
-            tests: R`const maze = ["..#.", "..#.", "....", "#.#."];
-const isRoute = (g, p, s, t) => Array.isArray(p) && p[0] === s.join(",") && p.at(-1) === t.join(",") && p.every((k, i) => {
-  const [r, c] = k.split(",").map(Number);
-  if (g[r][c] === "#") return false;
-  if (i === 0) return true;
-  const [pr, pc] = p[i - 1].split(",").map(Number);
-  return Math.abs(r - pr) + Math.abs(c - pc) === 1;
-});
-test("المتاهة من 0,0 لـ 0,3: 8 خانات (7 خطوات) وكل خطوة لجار مفتوح", () => {
-  const p = shortestRoute(maze, [0, 0], [0, 3]);
-  expect([p && p.length, isRoute(maze, p, [0, 0], [0, 3])]).toEqual([8, true]);
-});
-test("البداية هي الهدف ← ['0,0']", () => expect(shortestRoute(maze, [0, 0], [0, 0])).toEqual(["0,0"]));
-test("مفيش طريق ← null", () => expect(shortestRoute([".#", "#."], [0, 0], [1, 1])).toBe(null));
-test("orangesRotting([[2,1,1],[1,1,0],[0,1,1]]) ← 4", () => expect(orangesRotting([[2, 1, 1], [1, 1, 0], [0, 1, 1]])).toBe(4));
-test("برتقانة محدش يوصلها ← -1", () => expect(orangesRotting([[2, 1, 1], [0, 1, 1], [1, 0, 1]])).toBe(-1));
-test("مفيش سليم من الأول ← 0، وسليم من غير بايظ ← -1", () => expect([orangesRotting([[0, 2]]), orangesRotting([[1]])]).toEqual([0, -1]));
-test("بايظين في طرفين بيشتغلوا مع بعض: [[2,1,1,1,2]] ← 2", () => expect(orangesRotting([[2, 1, 1, 1, 2]])).toBe(2));
-test("متاهة 300 × 300 مفتوحة ← 599 خانة (O(rows × cols))", () => {
-  const g = Array.from({ length: 300 }, () => ".".repeat(300));
-  const p = shortestRoute(g, [0, 0], [299, 299]);
-  expect([p && p.length, isRoute(g, p, [0, 0], [299, 299])]).toEqual([599, true]);
-});`,
-            solution: R`function shortestRoute(grid, start, goal) {
-  const rows = grid.length, cols = grid[0].length;
-  const key = (r, c) => r + "," + c;
-  const parent = new Map([[key(...start), null]]);
-  const queue = [start];
-  for (let head = 0; head < queue.length; head++) {
-    const [r, c] = queue[head];
-    if (r === goal[0] && c === goal[1]) {
-      const path = [];
-      for (let k = key(r, c); k !== null; k = parent.get(k)) path.push(k);
-      return path.reverse();
-    }
-    for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
-      const nr = r + dr, nc = c + dc;
-      if (nr < 0 || nc < 0 || nr >= rows || nc >= cols || grid[nr][nc] === "#" || parent.has(key(nr, nc))) continue;
-      parent.set(key(nr, nc), key(r, c));
-      queue.push([nr, nc]);
-    }
-  }
-  return null;
-}
-function orangesRotting(grid) {
-  const g = grid.map(row => [...row]);
-  let queue = [], fresh = 0, minutes = 0;
-  g.forEach((row, r) => row.forEach((v, c) => { if (v === 2) queue.push([r, c]); if (v === 1) fresh++; }));
-  while (queue.length && fresh > 0) {
-    const next = [];
-    for (const [r, c] of queue)
-      for (const [nr, nc] of [[r + 1, c], [r - 1, c], [r, c + 1], [r, c - 1]])
-        if (g[nr]?.[nc] === 1) { g[nr][nc] = 2; fresh--; next.push([nr, nc]); }
-    queue = next;
-    minutes++;
-  }
-  return fresh === 0 ? minutes : -1;
-}`
-          }
-        },
-        {
-          cmd: "topological sort (course schedule)",
-          title: "رتّب المهام بحيث كل مهمة تيجي بعد اللي معتمدة عليه (Course Schedule)",
-          desc: R`عندك كورسات، وكل كورس ليه prerequisites. عايز ترتيب تاخد بيه كل الكورسات بحيث متاخدش كورس قبل متطلباته. ده اسمه topological sort، وبيشتغل على directed graph من غير دواير (DAG).
-
-طريقة Kahn (بـ BFS): احسب لكل عقدة [[indegree]] (عدد الحاجات اللي مستنياها). الحاجات اللي indegree بتاعها 0 مش مستنية حد، فحطها في الـ queue. كل ما تطلّع واحدة وتحطها في الترتيب، قلّل indegree لكل اللي معتمد عليها، واللي يوصل لـ 0 يدخل الـ queue.
-
-لو خلصت والترتيب ناقص عقد، يبقى فيه دايرة: كورسات معتمدة على بعض في حلقة، ومحدش فيهم هيوصل لـ 0 أبدًا. فالكود نفسه بيكشف الدواير ببلاش.`,
-          example: R`function courseOrder(n, prereqs) {
-  const graph = Array.from({ length: n }, () => []);
-  const indegree = new Array(n).fill(0);
-  for (const [course, pre] of prereqs) {
-    graph[pre].push(course);
-    indegree[course]++;
-  }
-  const queue = [];
-  for (let i = 0; i < n; i++) if (indegree[i] === 0) queue.push(i);
-  const order = [];
-  for (let head = 0; head < queue.length; head++) {
-    const c = queue[head];
-    order.push(c);
-    for (const next of graph[c]) if (--indegree[next] === 0) queue.push(next);
-  }
-  return order.length === n ? order : [];
-}
-console.log(courseOrder(4, [[1, 0], [2, 0], [3, 1], [3, 2]])); // [0, 1, 2, 3]
-console.log(courseOrder(2, [[1, 0], [0, 1]])); // []
-console.log(courseOrder(3, [])); // [0, 1, 2]
-// O(V + E) time and space`,
-          try: R`طبّقها على حاجة حقيقية: عندك packages ومعتمدة على بعض كـ object: [[{ app: ["api", "ui"], api: ["db", "auth"], auth: ["db"], ui: [], db: [] }]]. اكتب [[buildOrder(deps)]] ترجّع ترتيب تبني بيه كل package بعد اللي هي معتمدة عليه، أو ترمي Error فيه كلمة cycle لو فيه اعتماد دائري. وجرّبها لما [[db]] تعتمد على [[app]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[buildOrder(deps)]] بترجّع ترتيب صح (أي ترتيب بيحقق الشروط)، أو ترمي Error فيه كلمة cycle.`,
-          sol: R`الكود اللي تحت بيطلّع [[ui db auth api app]]، وأي ترتيب تاني فيه db قبل auth و api، و auth قبل api، و api و ui قبل app. الـ topological sort مش وحيد، وأي ترتيب يحقق الشروط صح.
-
-خلي بالك من اتجاه السهم: «api معتمدة على db» يعني السهم من db لـ api (لازم db تتبني الأول)، فـ [[graph.get(db).push(api)]] و [[indegree(api)++]]. لو عكست الاتجاه هيطلعلك الترتيب مقلوب (app الأول).
-
-لو [[db]] بقت معتمدة على [[app]]: db ← app ← api ← db دايرة، ومفيش حد فيهم indegree بتاعه هيوصل 0، فالترتيب هيطلع ناقص ([[ui]] بس)، والدالة ترمي [[cycle detected]].
-
-واتأكد إن كل dependency ليها مكان في الـ Map حتى لو مش key في الـ object (مثلًا dependency خارجية مش متعرّفة).`,
-          solCode: R`function buildOrder(deps) {
-  const graph = new Map(), indegree = new Map();
-  const ensure = x => { if (!graph.has(x)) { graph.set(x, []); indegree.set(x, 0); } };
-  for (const [pkg, needs] of Object.entries(deps)) {
-    ensure(pkg);
-    for (const dep of needs) {
-      ensure(dep);
-      graph.get(dep).push(pkg);
-      indegree.set(pkg, indegree.get(pkg) + 1);
-    }
-  }
-  const queue = [...graph.keys()].filter(x => indegree.get(x) === 0);
-  for (let head = 0; head < queue.length; head++)
-    for (const next of graph.get(queue[head])) {
-      indegree.set(next, indegree.get(next) - 1);
-      if (indegree.get(next) === 0) queue.push(next);
-    }
-  if (queue.length !== graph.size) throw new Error("cycle detected");
-  return queue;
-}
-const deps = { app: ["api", "ui"], api: ["db", "auth"], auth: ["db"], ui: [], db: [] };
-console.log(buildOrder(deps).join(" ")); // ui db auth api app
-try { buildOrder({ ...deps, db: ["app"] }); } catch (e) { console.log(e.message); }
-// O(V + E) time and space`,
-          flag: "script",
-          deep: {
-            why: "topological sort موجود في أدوات بتستخدمها كل يوم: npm و pnpm بيرتبوا تثبيت الـ packages، و Turborepo و Nx بيرتبوا build الـ packages في monorepo، و GitHub Actions بيرتب الـ jobs حسب [[needs]]، والـ migrations بتتنفذ بالترتيب، و Excel بيعيد حساب الخلايا بعد اللي معتمدة عليه. وفي الانترفيو، Course Schedule من أشهر مسائل الـ graphs.",
-            how: R`dry run على [[[[1,0],[2,0],[3,1],[3,2]]]]: الـ edges 0→1 و 0→2 و 1→3 و 2→3. الـ indegree: 0 عندها 0، و 1 و 2 عندهم 1، و 3 عندها 2.
-
-الـ queue تبدأ بـ [0]. نطلّع 0، والترتيب [0]. نقلّل 1 و 2 لـ 0، فيدخلوا الـ queue.
-
-نطلّع 1: نقلّل 3 لـ 1. نطلّع 2: نقلّل 3 لـ 0، فتدخل. نطلّع 3. الترتيب [0, 1, 2, 3]، وطوله 4 = n، يبقى مفيش دايرة.
-
-في [[[[1,0],[0,1]]]]: الاتنين indegree بتاعهم 1، والـ queue بتبدأ فاضية، والترتيب طوله 0، فنرجّع [] (مستحيل).
-
-الـ input بتاع LeetCode [[[course, pre]]] معناه «course محتاج pre»، فالسهم من pre لـ course. ده أكتر حاجة بتلخبط الناس في المسألة دي.
-
-فيه طريقة تانية بـ DFS: رتّب العقد حسب وقت خروجها (post-order)، واعكس الترتيب. بتشتغل، بس محتاجة كشف دواير لوحدها (الدرس الجاي)، و Kahn أسهل تشرحه في الانترفيو.`,
-            when: "أي «رتّب حاجات ليها شروط قبلها»: تبعيات، ومهام، وخطوات build، وترتيب قراءة دروس. ولو المطلوب «ممكن ولا لأ» بس (Course Schedule I)، نفس الكود وارجع [[order.length === n]]. ولو محتاج أول ترتيب أبجديًا، بدّل الـ queue بـ min heap.",
-            mistakes: R`عكس اتجاه السهم. ونسيان العقد اللي ملهاش أي edges (لازم تدخل الترتيب برضه). ونسيان التأكد من طول الترتيب في الآخر، فترجّع ترتيب ناقص وكأنه صح. وإنك تفترض إن فيه ترتيب واحد بس صح؛ أي ترتيب يحقق الشروط مقبول، وفي الانترفيو قول كده.`
-          },
-          teach: R`## الفكرة في جملة
-
-لكل كورس عدّ هو **مستني كام متطلب** (ده الـ [[indegree]]). الكورسات اللي مستنية 0 تقدر تاخدها دلوقتي، فحطها في queue. كل ما تاخد كورس، كل الكورسات اللي كانت مستنياه بقت مستنية واحد أقل، واللي يوصل منهم لـ 0 يدخل الـ queue. لو في الآخر خدت كل الكورسات، ده ترتيب صح. لو فيه كورسات عمرها ما وصلت لـ 0، يبقى فيه دايرة.
-
-الطريقة دي اسمها **Kahn's algorithm**. كل الأرقام اللي تحت من تشغيل حقيقي على Node 24.19.0 على ويندوز، بعد ما ضفنا [[console.log]] يطبع الـ [[graph]] والـ [[indegree]] والـ queue والترتيب بعد كل كورس.
-
----
-
-## ١. الكود سطر سطر
-
-### [[const graph = Array.from({ length: n }, () => []);]]
-
-[[Array.from({ length: n }, fn)]] بتعمل array طولها n، وكل خانة قيمتها اللي [[fn]] بترجّعه. هنا كل خانة array فاضية **جديدة**. الكورسات أرقام من 0 لـ n - 1، فالرقم نفسه هو الـ index. و [[graph[x]]] = الكورسات اللي بتفتح بعد x.
-
-### [[const indegree = new Array(n).fill(0);]]
-
-array طولها n كلها أصفار. [[indegree[x]]] = عدد المتطلبات اللي x لسه مستنياها. [[fill(0)]] هنا آمنة لأن 0 رقم مش array.
-
-### بناء الأسهم
-
-~~~js
-for (const [course, pre] of prereqs) {
-  graph[pre].push(course);
-  indegree[course]++;
-}
-~~~
-
-- كل زوج [[[course, pre]]] معناه «course محتاج pre الأول».
-- فالسهم من [[pre]] لـ [[course]]: لما pre تخلص، course تقرّب تتفتح. عشان كده [[graph[pre].push(course)]].
-- [[indegree[course]++]]: [[++]] بيزوّد 1. الكورس بقى مستني متطلب زيادة.
-
-### البداية: كل اللي مش مستني حاجة
-
-~~~js
-const queue = [];
-for (let i = 0; i < n; i++) if (indegree[i] === 0) queue.push(i);
-~~~
-
-### الـ loop
-
-~~~js
-for (let head = 0; head < queue.length; head++) {
-  const c = queue[head];
-  order.push(c);
-  for (const next of graph[c]) if (--indegree[next] === 0) queue.push(next);
-}
-~~~
-
-- queue بمؤشر [[head]] زي درس الـ BFS: بنقرا بالترتيب من غير [[shift]].
-- [[order.push(c)]]: خد الكورس ده.
-- [[--indegree[next]]]: [[--]] **قبل** المتغير بيقلّل 1 الأول وبعدين يرجّع القيمة الجديدة. فالسطر معناه «قلّل، ولو القيمة الجديدة بقت 0 حطه في الـ queue». لو كتبناها [[indegree[next]--]] (بعد المتغير)، هترجّع القيمة **القديمة** والمقارنة هتبقى غلط.
-
-### [[return order.length === n ? order : [];]]
-
-لو خدنا الـ n كورس، رجّع الترتيب. غير كده فيه كورسات مااتاخدتش لأنها في دايرة، فرجّع [[[]]] (مستحيل).
-
----
-
-## ٢. التتبع: ٥ كورسات من غير دايرة
-
-[[courseOrder(5, [[1, 0], [2, 0], [3, 1], [4, 2], [4, 3]])]]: 1 و 2 محتاجين 0، و 3 محتاج 1، و 4 محتاج 2 و 3.
-
-~~~text الأسهم
-0 → 1 → 3 → 4
-0 → 2 ──────→ 4
-~~~
-
-~~~text الناتج (Node 24 على ويندوز)
-graph = [[1,2],[3],[4],[4],[]]  indegree = [0,1,1,1,2]
-start queue = [0]
-take 0  1->0 push, 2->0 push  | indegree = [0,0,0,1,2] queue = [1,2] order = [0]
-take 1  3->0 push  | indegree = [0,0,0,0,2] queue = [2,3] order = [0,1]
-take 2  4->1  | indegree = [0,0,0,0,1] queue = [3] order = [0,1,2]
-take 3  4->0 push  | indegree = [0,0,0,0,0] queue = [4] order = [0,1,2,3]
-take 4  no edges  | indegree = [0,0,0,0,0] queue = [] order = [0,1,2,3,4]
-[ 0, 1, 2, 3, 4 ]
-~~~
-
-| الخطوة | خدنا | اللي اتقلّل | indegree بعدها | الـ queue الباقية | order |
-|---|---|---|---|---|---|
-| البداية | | | [0, 1, 1, 1, 2] | [0] | [] |
-| 1 | 0 | 1 ← 0، و 2 ← 0 (دخلوا) | [0, 0, 0, 1, 2] | [1, 2] | [0] |
-| 2 | 1 | 3 ← 0 (دخل) | [0, 0, 0, 0, 2] | [2, 3] | [0, 1] |
-| 3 | 2 | 4 ← 1 (لسه) | [0, 0, 0, 0, 1] | [3] | [0, 1, 2] |
-| 4 | 3 | 4 ← 0 (دخل) | [0, 0, 0, 0, 0] | [4] | [0, 1, 2, 3] |
-| 5 | 4 | مفيش | كله 0 | [] | [0, 1, 2, 3, 4] |
-
-أهم خطوة هي 3: خدنا 2، فـ 4 بقت مستنية واحد بس (3)، فمدخلتش. ولما خدنا 3 في الخطوة 4 وصلت 0. يعني 4 مااتاخدتش غير بعد ما **الاتنين** خلصوا.
-
----
-
-## ٣. التتبع: فيه دايرة
-
-[[courseOrder(3, [[1, 0], [2, 1], [1, 2]])]]: 1 محتاج 0 و 2، و 2 محتاج 1. يعني 1 و 2 كل واحد مستني التاني.
-
-~~~text الناتج (Node 24 على ويندوز)
-graph = [[1],[2],[1]]  indegree = [0,2,1]
-start queue = [0]
-take 0  1->1  | indegree = [0,1,1] queue = [] order = [0]
-[]
-~~~
-
-خدنا 0، فـ 1 بقت مستنية 1 بدل 2 (لسه مستنية 2). والـ queue فضيت. الترتيب طوله 1 مش 3، فالدالة رجّعت [[[]]]. الكورسات اللي في الدايرة عمرها ما توصل لـ 0، وده اللي بيكشفها.
-
----
-
-## ٤. ناتج المثال
-
-~~~text الناتج (Node 24 على ويندوز)
-[ 0, 1, 2, 3 ]
-[]
-[ 0, 1, 2 ]
-~~~
-
-- [[[[1, 0], [2, 0], [3, 1], [3, 2]]]]: 0 الأول، وبعدين 1 و 2، و 3 بعد الاتنين.
-- [[[[1, 0], [0, 1]]]]: كل واحد مستني التاني، الـ queue بتبدأ فاضية.
-- [[courseOrder(3, [])]]: مفيش شروط، كل الـ indegree أصفار، فكلهم يدخلوا الـ queue بالترتيب.
-
-والترتيب مش وحيد: في المثال الأول [[[0, 2, 1, 3]]] صح برضه. الكود ده بيطلّع واحد منهم حسب ترتيب الـ queue.
+- 7 عند index 3.
+- 4 مش موجود.
+- [[[]]]: hi = -1 من الأول، و [[0 <= -1]] غلط، فالـ loop مبيلفّش ويرجع -1.
 
 ---
 
 ## ٥. الـ Big-O وليه
 
-V = عدد الكورسات، و E = عدد الشروط.
+كل لفة المنطقة بتبقى النص أو أقل. فعدد اللفات = كام مرة تقسم n على ٢ لحد ما توصل لـ 1، وده [[log₂ n]]. جرّبنا [[2 ** 20]] طلعت 1048576 (حوالي مليون)، فمليون عنصر محتاجين ٢٠ لفة بالكتير، و [[2 ** 30]] حوالي مليار: ٣٠ لفة.
 
 | | القيمة | السبب |
 |---|---|---|
-| الوقت | [[O(V + E)]] | بناء الأسهم لفة على E، وكل كورس بيدخل الـ queue مرة، وكل سهم بيتقلّل بسببه مرة واحدة (لما صاحبه يتاخد) |
-| الذاكرة | [[O(V + E)]] | [[graph]] فيه E سهم، و [[indegree]] و [[queue]] و [[order]] كل واحد V |
+| الوقت | [[O(log n)]] | المنطقة بتتنصّف كل لفة |
+| الذاكرة | [[O(1)]] | lo و hi و mid بس |
 
 ---
 
 ## الخلاصة
 
 ~~~text
-[course, pre]    السهم من pre لـ course
-indegree         كل كورس مستني كام متطلب
-البداية          كل اللي indegree بتاعه 0 في الـ queue
-كل خطوة          خد كورس ← قلّل اللي بعده ← اللي وصل 0 يدخل
---x              بيقلّل الأول وبعدين يقارن
-دايرة            order أقصر من n ← رجّع []
-الـ Big-O        O(V + E) وقت وذاكرة
-~~~`,
+شرط           الـ array مترتبة
+lo, hi        شاملين: من 0 لـ a.length - 1
+while         lo <= hi (فيه عنصر لسه ماتفحصش)
+mid           lo + Math.floor((hi - lo) / 2)
+أصغر          lo = mid + 1
+أكبر          hi = mid - 1
+فضيت          return -1
+~~~
+
+> اختار معنى lo و hi (هنا شاملين) والتزم بيه: هو اللي بيحدد [[<=]] و [[mid + 1]] و [[mid - 1]]. أي خلط بينهم يعمل loop لا نهائي أو يفوّت عنصر.`,
           lines: [
-            "n كورس، و prereqs أزواج [الكورس، متطلبه].",
-            "لكل كورس، قائمة الكورسات اللي بتفتح بعده.",
-            "indegree: كل كورس مستني كام متطلب.",
-            "لكل شرط.",
-            "السهم من المتطلب للكورس.",
-            "الكورس بقى مستني واحد زيادة.",
+            "ترجّع مكان target أو -1.",
+            "المنطقة اللي ممكن يكون فيها: من أول لآخر عنصر (شاملين الاتنين).",
+            "طول ما المنطقة فيها عنصر واحد على الأقل.",
+            "النص. [[Math.floor]] مهمة لأن القسمة في JS بتطلّع كسور.",
+            "لقيناه.",
+            "النص أصغر: المطلوب على اليمين، والنص نفسه اتستبعد (+ 1).",
+            "النص أكبر: المطلوب على الشمال (- 1).",
             "قفلة.",
-            "الـ queue.",
-            "كل كورس مش مستني حاجة يبدأ فيها.",
-            "الترتيب النهائي.",
-            "queue بمؤشر.",
-            "الكورس اللي عليه الدور.",
-            "خده.",
-            "كل اللي كان مستنيه: قلّل، واللي بقى 0 يدخل الـ queue.",
+            "المنطقة فضيت: مش موجود.",
             "قفلة.",
-            "لو مخدناش كل الكورسات يبقى فيه دايرة، رجّع فاضي.",
-            "قفلة.",
-            "0 الأول، وبعدين 1 و 2، وبعدين 3.",
-            "كل واحد مستني التاني: مستحيل.",
-            "مفيش شروط: أي ترتيب، والكود بيطلّعهم بالترتيب."
+            "array مترتبة.",
+            "7 عند index 3.",
+            "4 مش موجود.",
+            "array فاضية: hi = -1 والـ loop مبيلفّش."
           ],
+          sol: R`النسخة الـ recursive: [[if (lo > hi) return -1]]، واحسب mid، وبعدين [[return bsRec(a, target, mid + 1, hi)]] أو [[lo, mid - 1]]. الناتج 3 و -1 و -1. الوقت [[O(log n)]] بس الـ space [[O(log n)]] كمان (عمق الـ stack)، والـ loop كان [[O(1)]].
+
+المتلفّتة: في كل خطوة قارن [[a[lo] <= a[mid]]]. لو آه، الشمال مترتب: لو target بين [[a[lo]]] و [[a[mid]]] روح شمال، وإلا يمين. لو لأ يبقى اليمين مترتب، واعمل نفس الشيك عليه. على [4, 5, 6, 7, 0, 1, 2]: الـ 0 عند 4، والـ 4 عند 0، والـ 2 عند 6، والـ 3 مش موجودة.
+
+الغلطة المشهورة: [[a[lo] < a[mid]]] بدل [[<=]]. لما [[lo === mid]] (آخر عنصرين) الشرط يغلط، فـ [3, 1] والتارجت 1 ترجع -1.`,
+          solCode: R`function bsRec(a, target, lo = 0, hi = a.length - 1) {
+  if (lo > hi) return -1;
+  const mid = lo + Math.floor((hi - lo) / 2);
+  if (a[mid] === target) return mid;
+  if (a[mid] < target) return bsRec(a, target, mid + 1, hi);
+  return bsRec(a, target, lo, mid - 1);
+}
+console.log(bsRec([1, 3, 5, 7, 9, 11], 7), bsRec([1, 3, 5], 4), bsRec([], 1)); // 3 -1 -1
+function searchRotated(a, target) {
+  let lo = 0, hi = a.length - 1;
+  while (lo <= hi) {
+    const mid = (lo + hi) >>> 1;
+    if (a[mid] === target) return mid;
+    if (a[lo] <= a[mid]) {
+      if (a[lo] <= target && target < a[mid]) hi = mid - 1;
+      else lo = mid + 1;
+    } else {
+      if (a[mid] < target && target <= a[hi]) lo = mid + 1;
+      else hi = mid - 1;
+    }
+  }
+  return -1;
+}
+const r = [4, 5, 6, 7, 0, 1, 2];
+console.log(searchRotated(r, 0), searchRotated(r, 4), searchRotated(r, 2), searchRotated(r, 3)); // 4 0 6 -1
+console.log(searchRotated([1], 1), searchRotated([3, 1], 1)); // 0 1
+// bsRec: O(log n) time, O(log n) stack space; searchRotated: O(log n) time, O(1) space (distinct values)`,
           check: {
             lang: "js",
-            starter: R`function buildOrder(deps) {
-  const graph = new Map(), indegree = new Map();
-  // «api معتمدة على db» يعني السهم من db لـ api
-  // واتأكد إن كل dependency ليها مكان حتى لو مش key
-  return [];
+            starter: R`function bsRec(a, target, lo = 0, hi = a.length - 1) {
+  // if (lo > hi) return -1، واحسب mid، ونادي نفسك على نص واحد
+}
+function searchRotated(a, target) {
+  let lo = 0, hi = a.length - 1;
+  // في كل خطوة: a[lo] <= a[mid] يبقى الشمال مترتب
+  return -1;
 }`,
-            tests: R`const isValid = (deps, order) => {
-  const pos = new Map(order.map((p, i) => [p, i]));
-  const all = new Set(Object.entries(deps).flatMap(([p, ds]) => [p, ...ds]));
-  return order.length === all.size && pos.size === all.size && Object.entries(deps).every(([p, ds]) => ds.every(d => pos.get(d) < pos.get(p)));
-};
-const deps = { app: ["api", "ui"], api: ["db", "auth"], auth: ["db"], ui: [], db: [] };
-test("المثال: db قبل auth و api، و auth قبل api، و api و ui قبل app", () => expect(isValid(deps, buildOrder(deps))).toBe(true));
-test("{} ← []", () => expect(buildOrder({})).toEqual([]));
-test("dependency مش key: { a: ['ext'] } ← ['ext', 'a']", () => expect(buildOrder({ a: ["ext"] })).toEqual(["ext", "a"]));
-test("db معتمدة على app ← Error فيه cycle", () => expect(() => buildOrder({ ...deps, db: ["app"] })).toThrow(/cycle/));
-test("package معتمدة على نفسها ← cycle", () => expect(() => buildOrder({ a: ["a"] })).toThrow(/cycle/));
-test("سلسلة 20 ألف package (O(V + E))", () => {
-  const d = {};
-  for (let i = 1; i < 20000; i++) d["p" + i] = ["p" + (i - 1)];
-  const order = buildOrder(d);
-  expect([order.length, order[0], order.at(-1)]).toEqual([20000, "p0", "p19999"]);
+            tests: R`test("bsRec([1, 3, 5, 7, 9, 11], 7) ← 3", () => expect(bsRec([1, 3, 5, 7, 9, 11], 7)).toBe(3));
+test("مش موجود ← -1، و [] ← -1", () => expect([bsRec([1, 3, 5, 7, 9, 11], 4), bsRec([], 1)]).toEqual([-1, -1]));
+test("searchRotated([4, 5, 6, 7, 0, 1, 2]): 0 ← 4، و 4 ← 0، و 2 ← 6", () => {
+  const a = [4, 5, 6, 7, 0, 1, 2];
+  expect([searchRotated(a, 0), searchRotated(a, 4), searchRotated(a, 2)]).toEqual([4, 0, 6]);
+});
+test("searchRotated: 3 مش موجودة ← -1", () => expect(searchRotated([4, 5, 6, 7, 0, 1, 2], 3)).toBe(-1));
+test("فخ <= : searchRotated([3, 1], 1) ← 1", () => expect(searchRotated([3, 1], 1)).toBe(1));
+test("مليون عنصر متلفّتين: كل بحث O(log n)", () => {
+  const n = 1000000, k = 377777, a = Array.from({ length: n }, (_, i) => (i + k) % n);
+  expect([searchRotated(a, 0), searchRotated(a, n - 1), searchRotated(a, k), bsRec(Array.from({ length: n }, (_, i) => i * 2), 1999998)]).toEqual([n - k, n - k - 1, 0, 999999]);
 });`,
-            solution: R`function buildOrder(deps) {
-  const graph = new Map(), indegree = new Map();
-  const add = p => { if (!graph.has(p)) { graph.set(p, []); indegree.set(p, 0); } };
-  for (const [p, ds] of Object.entries(deps)) {
-    add(p);
-    for (const d of ds) {
-      add(d);
-      graph.get(d).push(p);
-      indegree.set(p, indegree.get(p) + 1);
+            solution: R`function bsRec(a, target, lo = 0, hi = a.length - 1) {
+  if (lo > hi) return -1;
+  const mid = lo + Math.floor((hi - lo) / 2);
+  if (a[mid] === target) return mid;
+  return a[mid] < target ? bsRec(a, target, mid + 1, hi) : bsRec(a, target, lo, mid - 1);
+}
+function searchRotated(a, target) {
+  let lo = 0, hi = a.length - 1;
+  while (lo <= hi) {
+    const mid = (lo + hi) >>> 1;
+    if (a[mid] === target) return mid;
+    if (a[lo] <= a[mid]) {
+      if (a[lo] <= target && target < a[mid]) hi = mid - 1;
+      else lo = mid + 1;
+    } else {
+      if (a[mid] < target && target <= a[hi]) lo = mid + 1;
+      else hi = mid - 1;
     }
   }
-  const queue = [...graph.keys()].filter(p => indegree.get(p) === 0);
-  for (let head = 0; head < queue.length; head++) {
-    for (const next of graph.get(queue[head])) {
-      indegree.set(next, indegree.get(next) - 1);
-      if (indegree.get(next) === 0) queue.push(next);
-    }
-  }
-  if (queue.length !== graph.size) throw new Error("cycle detected");
-  return queue;
+  return -1;
 }`
           }
         },
         {
-          cmd: "cycle detection",
-          title: "فيه دايرة في الـ graph؟ (circular imports و deadlocks)",
-          desc: R`كشف الدواير بيختلف حسب نوع الـ graph:
+          cmd: "lower bound (first/last)",
+          title: "أول وآخر مكان لرقم متكرر في array مترتبة",
+          desc: R`[[lowerBound(a, x)]] بترجّع أول مكان قيمته ≥ x. أول ظهور لـ x هو الـ lowerBound بتاعه، وآخر ظهور هو lowerBound لـ [[x + 1]] ناقص واحد. الاتنين [[O(log n)]].
 
-directed graph: بـ DFS و ٣ حالات لكل عقدة: 0 لسه مازرتهاش، و 1 أنا جوه المسار الحالي بتاعها (نزلت منها ولسه مارجعتش)، و 2 خلصت كل اللي تحتها. لو قابلت عقدة حالتها 1، يبقى رجعت لحاجة لسه في المسار: دايرة. لو حالتها 2، دي اتفحصت قبل كده ومفيش منها دايرة، فوّتها.
+الفرق عن الـ binary search العادية: لما تلاقي x متقفش، لأن ممكن يكون فيه نسخة قبله. بدل كده [[hi = mid]] وتكمّل على الشمال.
 
-ليه مش [[seen]] عادية؟ في شكل الـ diamond (0→1 و 0→2 و 1→2)، هتوصل لـ 2 مرتين من طريقين مختلفين. ده مش دايرة، بس Set عادية هتقول إنه دايرة.
-
-undirected graph: كل edge بيبان من الناحيتين، فلازم تتجاهل الأب اللي جيت منه. لو قابلت جار اتزار ومش أبوك، يبقى فيه دايرة.
-
-وللـ directed فيه طريقة تانية ببلاش: Kahn من الدرس اللي فات، لو الترتيب طلع ناقص.`,
-          example: R`function hasCycleDirected(n, edges) {
-  const graph = Array.from({ length: n }, () => []);
-  for (const [u, v] of edges) graph[u].push(v);
-  const state = new Array(n).fill(0);
-  const visit = u => {
-    if (state[u] === 1) return true;
-    if (state[u] === 2) return false;
-    state[u] = 1;
-    for (const v of graph[u]) if (visit(v)) return true;
-    state[u] = 2;
-    return false;
-  };
-  for (let u = 0; u < n; u++) if (visit(u)) return true;
-  return false;
-}
-function hasCycleUndirected(n, edges) {
-  const graph = Array.from({ length: n }, () => []);
-  for (const [u, v] of edges) { graph[u].push(v); graph[v].push(u); }
-  const seen = new Array(n).fill(false);
-  const visit = (u, parent) => {
-    seen[u] = true;
-    for (const v of graph[u]) {
-      if (v === parent) continue;
-      if (seen[v] || visit(v, u)) return true;
-    }
-    return false;
-  };
-  for (let u = 0; u < n; u++) if (!seen[u] && visit(u, -1)) return true;
-  return false;
-}
-console.log(hasCycleDirected(3, [[0, 1], [1, 2], [2, 0]])); // true
-console.log(hasCycleDirected(3, [[0, 1], [0, 2], [1, 2]])); // false
-console.log(hasCycleUndirected(3, [[0, 1], [1, 2]])); // false
-console.log(hasCycleUndirected(3, [[0, 1], [1, 2], [2, 0]])); // true
-// both O(V + E) time, O(V) space`,
-          try: R`اكشف الـ circular imports في مشروع: [[{ "a.js": ["b.js"], "b.js": ["c.js"], "c.js": ["a.js"], "d.js": ["a.js"] }]] (كل ملف والملفات اللي بيعملها import). اكتب [[findCycle(imports)]] ترجّع الدايرة نفسها كـ array، زي [[["a.js", "b.js", "c.js", "a.js"]]]، أو null لو مفيش. (احفظ المسار الحالي في stack، ولما تقابل عقدة حالتها 1، اقطع المسار من عندها.) اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[findCycle(imports)]] بترجّع الدايرة (أول ملف متكرر في الآخر) أو null.`,
-          sol: R`الإجابة: [[a.js → b.js → c.js → a.js]]. لو بدأت الـ DFS من [[d.js]] الأول برضه هتلاقي نفس الدايرة، بس d.js مش جزء منها، عشان كده بنقطع المسار من أول ظهور لـ [[a.js]] مش من أوله.
-
-الحالات: [[path]] array فيها المسار الحالي. أول ما تنزل على ملف: حالته 1 و [[path.push]]. لما ترجع منه: حالته 2 و [[path.pop]]. لو قابلت ملف حالته 1: [[path.slice(path.indexOf(file))]] وضيف الملف في الآخر عشان تقفل الدايرة.
-
-من غير دايرة (شيل [[c.js → a.js]]) الإجابة null.
-
-ده بالظبط اللي أدوات زي madge و ESLint rule [[import/no-cycle]] بتعمله. و circular imports في Node بتطلّع bugs غريبة: الـ module بيستلم object ناقص لأن الملف التاني لسه ماخلصش تحميل.`,
-          solCode: R`function findCycle(imports) {
-  const state = new Map(), path = [];
-  const visit = file => {
-    if (state.get(file) === 1) return [...path.slice(path.indexOf(file)), file];
-    if (state.get(file) === 2) return null;
-    state.set(file, 1);
-    path.push(file);
-    for (const dep of imports[file] ?? []) {
-      const cycle = visit(dep);
-      if (cycle) return cycle;
-    }
-    path.pop();
-    state.set(file, 2);
-    return null;
-  };
-  for (const file of Object.keys(imports)) {
-    const cycle = visit(file);
-    if (cycle) return cycle;
+هنا [[hi = a.length]] (مش [[a.length - 1]]) والـ loop بـ [[lo < hi]]: المنطقة [lo, hi) نصها مفتوح، والإجابة ممكن تبقى [[a.length]] نفسها لو كل العناصر أصغر من x.`,
+          example: R`function lowerBound(a, target) {
+  let lo = 0, hi = a.length;
+  while (lo < hi) {
+    const mid = (lo + hi) >>> 1;
+    if (a[mid] < target) lo = mid + 1;
+    else hi = mid;
   }
-  return null;
+  return lo;
 }
-console.log(findCycle({ "a.js": ["b.js"], "b.js": ["c.js"], "c.js": ["a.js"], "d.js": ["a.js"] })); // ['a.js', 'b.js', 'c.js', 'a.js']
-console.log(findCycle({ "d.js": ["a.js"], "a.js": ["b.js"], "b.js": ["c.js"], "c.js": ["a.js"] })); // ['a.js', 'b.js', 'c.js', 'a.js']
-console.log(findCycle({ "a.js": ["b.js"], "b.js": ["c.js"], "c.js": [] })); // null
-// O(V + E) time, O(V) space`,
+function firstLast(a, x) {
+  const first = lowerBound(a, x);
+  if (first === a.length || a[first] !== x) return [-1, -1];
+  return [first, lowerBound(a, x + 1) - 1];
+}
+console.log(firstLast([5, 7, 7, 8, 8, 8, 10], 8), firstLast([5, 7], 6)); // [3, 5] [-1, -1]
+// O(log n) time, O(1) space; x + 1 works for integers only (use an upperBound for anything else)`,
+          try: R`اكتب [[upperBound]] (أول مكان قيمته > x) بتغيير علامة واحدة، واستخدمها بدل [[x + 1]] عشان تشتغل مع أرقام عشرية و strings. وبعدين: عدد مرات ظهور x = [[upperBound - lowerBound]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[upperBound]] و [[firstLast]] من غير [[x + 1]]، و [[count]].`,
           flag: "script",
           deep: {
-            why: "الدواير مشكلة حقيقية في الشغل: circular imports بتطلّع [[undefined]] في أماكن غريبة، و deadlock في الداتابيز هو دايرة «مين مستني مين»، والـ migration أو الـ build اللي معتمد على نفسه بيعلّق. وفي الانترفيو، Course Schedule في الأساس سؤال «فيه دايرة ولا لأ».",
-            how: R`dry run للـ directed على [[0→1، 1→2، 2→0]]: [[visit(0)]]: حالتها 1. تنزل 1: حالتها 1. تنزل 2: حالتها 1. تنزل 0: حالتها 1 بالفعل، يعني 0 لسه في المسار: دايرة.
+            why: "الـ binary search العادية بترجّع «أي» مكان للقيمة، ودا مش كفاية لما فيه تكرار: أول طلب في يوم معين، أو عدد المستخدمين اللي عمرهم بين ٢٠ و ٣٠ في array مترتبة. الـ lower bound هو القالب اللي بيحل كل ده، وموجود جاهز في لغات تانية ([[bisect_left]] في Python، و [[std::lower_bound]] في C++).",
+            how: R`dry run: lowerBound على [5, 7, 7, 8, 8, 8, 10] و x = 8:
 
-الـ diamond [[0→1، 0→2، 1→2]]: [[visit(0)]] تنزل 1، و 1 تنزل 2، و 2 ملهاش حاجة فتبقى 2 (خلصت). نرجع 1 تبقى 2. نرجع 0 وتنزل 2 تاني: حالتها 2، فوّت. مفيش دايرة. لو كنا بنستخدم Set عادية كانت هتقول «2 اتزارت» وتعتبرها دايرة.
+lo = 0 و hi = 7. mid = 3 (8)، مش أصغر من 8، فـ hi = 3.
 
-الـ undirected على [[0-1، 1-2]]: [[visit(0, -1)]] تنزل 1 وأبوها 0. جيران 1: 0 (الأب، فوّت) و 2. تنزل 2 وأبوها 1. جيران 2: 1 (الأب). مفيش دايرة. ولو ضفت [[2-0]]: جيران 2 فيها 0، و 0 اتزارت ومش الأب، دايرة.
+lo = 0 و hi = 3. mid = 1 (7)، أصغر، فـ lo = 2.
 
-الـ loop الخارجي على كل العقد عشان الـ graph ممكن يبقى أكتر من جزيرة، والدايرة ممكن تبقى في أي واحدة.`,
-            when: "directed (imports، تبعيات، مهام): ٣ حالات أو Kahn. undirected (شبكة، طرق): parent أو union-find (درس «union-find» في نفس المستوى، وبيبقى أسهل لما الـ edges بتيجي واحدة واحدة). ولو محتاج الدايرة نفسها مش مجرد true/false، الـ DFS بالـ path هو اللي بيطلّعها.",
-            mistakes: R`Set واحدة في الـ directed فالـ diamond يبان دايرة. ونسيان الأب في الـ undirected فكل edge يبان دايرة (0 تروح 1، و 1 تشوف 0 «اتزارت»). ولو فيه edges مكررة بين نفس العقدتين (multi-graph)، مقارنة الأب بالقيمة بتفوّت الدايرة الصغيرة دي، والحل تقارن بـ id الـ edge. وإنك تنسى إن DFS الـ recursive على graph فيه مليون عقدة في خط ممكن يعمل stack overflow.`
+lo = 2 و hi = 3. mid = 2 (7)، أصغر، فـ lo = 3. دلوقتي lo = hi = 3. أول 8 عند 3.
+
+lowerBound لـ 9: هيوصل لـ 6 (أول قيمة ≥ 9 هي 10 عند 6). فآخر 8 عند 5.
+
+ليه الـ loop ده مبيلفّش للأبد؟ mid دايمًا أصغر من hi (لأن [[>>> 1]] بيقرّب لتحت)، فـ [[hi = mid]] بيصغّر المنطقة، و [[lo = mid + 1]] بيصغّرها. المنطقة بتقل كل لفة.
+
+طريقة تفكير بتسهّل كل ده: تخيّل الـ array اتحولت لـ false, false, true, true حسب الشرط «القيمة ≥ x». إنت بتدوّر على أول true. كل مسائل الـ binary search الصعبة بترجع لكده.
+
+[[x + 1]] بتشتغل مع الأعداد الصحيحة بس. مع 2.5 مثلًا، [[x + 1]] = 3.5، وممكن يكون فيه 3 في النص تتحسب غلط. عشان كده الـ upperBound (أول قيمة > x) هي الحل العام.`,
+            when: "أول أو آخر ظهور، وعدد مرات ظهور قيمة في بيانات مترتبة، وعدد العناصر في range (upperBound للحد الأعلى ناقص lowerBound للأدنى).",
+            mistakes: R`إنك تخلط القالبين: [[hi = a.length]] مع [[lo <= hi]] بيقرا برّا الـ array، و [[hi = mid - 1]] مع [[lo < hi]] بيفوّت الإجابة. اختار قالب واحد واحفظه. وإنك تنسى تتأكد إن القيمة عند [[first]] هي x فعلًا، فترجّع مكان رقم تاني. وإنك تحل «أول ظهور» بإنك تلاقي أي ظهور وتمشي لورا بـ loop: مع array كلها نفس الرقم ده بقى [[O(n)]].`
           },
           teach: R`## الفكرة في جملة
 
-الدايرة معناها إنك وانت ماشي في DFS رجعت لعقدة **لسه في المسار اللي انت نازل فيه**. في الـ directed graph بنفرّق بين «العقدة دي في المسار الحالي» (دايرة لو رجعتلها) و «العقدة دي خلصت قبل كده» (مش دايرة، طريق تاني وصلها بس). وفي الـ undirected كل edge بيبان من الناحيتين، فبنتجاهل العقدة اللي جينا منها، وأي عقدة تانية متزارة تبقى دايرة.
+[[lowerBound(a, x)]] بتدوّر على **أول** مكان قيمته ≥ x. فكّر في الـ array كأنها اتحولت لصف من «لأ» و «آه» حسب السؤال «القيمة دي ≥ x؟»: كله «لأ» الأول وبعدين كله «آه» (لأنها مترتبة). إنت بتدوّر على أول «آه». ولما تلاقي «آه» متقفش: يمكن فيه «آه» قبلها، فتكمّل على الشمال وإنت سايبها في المنطقة.
 
-كل الأرقام اللي تحت من تشغيل حقيقي على Node 24.19.0 على ويندوز، بعد ما ضفنا [[console.log]] جوه [[visit]] يطبع الحالات مع كل نزول ورجوع، بمسافة على قد العمق.
+كل الأرقام اللي تحت من تشغيل حقيقي على Node 24.19.0 على ويندوز، بعد ما ضفنا [[console.log]] جوه الـ loop يطبع lo و hi و mid.
 
 ---
 
-## ١. [[hasCycleDirected]] سطر سطر
+## ١. الكود سطر سطر
 
 ~~~js
-function hasCycleDirected(n, edges) {
-  const graph = Array.from({ length: n }, () => []);
-  for (const [u, v] of edges) graph[u].push(v);
-  const state = new Array(n).fill(0);
-  const visit = u => {
-    if (state[u] === 1) return true;
-    if (state[u] === 2) return false;
-    state[u] = 1;
-    for (const v of graph[u]) if (visit(v)) return true;
-    state[u] = 2;
-    return false;
-  };
-  for (let u = 0; u < n; u++) if (visit(u)) return true;
-  return false;
+function lowerBound(a, target) {
+  let lo = 0, hi = a.length;
+  while (lo < hi) {
+    const mid = (lo + hi) >>> 1;
+    if (a[mid] < target) lo = mid + 1;
+    else hi = mid;
+  }
+  return lo;
 }
 ~~~
 
-- [[graph]]: adjacency list بـ arrays لأن العقد أرقام من 0 لـ n - 1. السهم من u لـ v بس (directed)، فبنضيف ناحية واحدة.
-- [[state]]: حالة كل عقدة: **0** لسه مازرتهاش، **1** أنا جوه المسار بتاعها دلوقتي (نزلت منها ولسه مارجعتش)، **2** خلصت هي وكل اللي تحتها.
-- [[if (state[u] === 1) return true;]]: وصلت لعقدة لسه مفتوحة في المسار، يعني السهم ده بيرجّعني لورا: دايرة.
-- [[if (state[u] === 2) return false;]]: العقدة دي اتفحصت كلها قبل كده ومطلعش منها دايرة. مفيش داعي ننزل تاني.
-- [[state[u] = 1;]]: داخلين المسار.
-- [[for (const v of graph[u]) if (visit(v)) return true;]]: انزل على كل جار، ولو أي واحد لقى دايرة طلّع [[true]] على طول لفوق.
-- [[state[u] = 2;]]: خلصنا كل اللي تحتي من غير دواير، فأنا خارج المسار.
-- الـ loop الأخير بيبدأ [[visit]] من كل عقدة، عشان الـ graph ممكن يبقى أكتر من جزء مش متوصلين. والعقد اللي حالتها 2 بترجع على طول، فمحدش بيتفحص مرتين.
+### [[let lo = 0, hi = a.length;]]
 
-### التتبع: شكل diamond من غير دايرة
+هنا المنطقة **نص مفتوحة**: [lo, hi). يعني lo داخلة و hi **مش** داخلة. ليه [[hi = a.length]] مش [[a.length - 1]]؟ لأن الإجابة ممكن تبقى «بعد آخر عنصر» لو كل العناصر أصغر من target. فـ [[a.length]] نفسها إجابة ممكنة.
 
-[[0→1، 0→2، 1→3، 2→3]]: فيه طريقين من 0 لـ 3، بس مفيش دايرة.
+### [[while (lo < hi)]]
 
-~~~text الناتج (Node 24 على ويندوز)
-outer u=0
-visit(0): state[0]=1  state = [1,0,0,0]
-  visit(1): state[1]=1  state = [1,1,0,0]
-    visit(3): state[3]=1  state = [1,1,0,1]
-    visit(3) finished: state[3]=2  state = [1,1,0,2]
-  visit(1) finished: state[1]=2  state = [1,2,0,2]
-  visit(2): state[2]=1  state = [1,2,1,2]
-    visit(3): state 2 -> done before, false
-  visit(2) finished: state[2]=2  state = [1,2,2,2]
-visit(0) finished: state[0]=2  state = [2,2,2,2]
-outer u=1
-visit(1): state 2 -> done before, false
-outer u=2
-visit(2): state 2 -> done before, false
-outer u=3
-visit(3): state 2 -> done before, false
-false
-~~~
+المنطقة [lo, hi) فاضية لما lo = hi. فبنلف طول ما [[lo < hi]]، ولما يتساووا يبقى ده المكان.
 
-| الخطوة | اللي حصل | state بعدها (0, 1, 2, 3) |
-|---|---|---|
-| 1 | دخلنا 0 | [1, 0, 0, 0] |
-| 2 | دخلنا 1 | [1, 1, 0, 0] |
-| 3 | دخلنا 3، ملهاش أسهم | [1, 1, 0, 1] |
-| 4 | 3 خلصت | [1, 1, 0, 2] |
-| 5 | 1 خلصت | [1, 2, 0, 2] |
-| 6 | دخلنا 2 | [1, 2, 1, 2] |
-| 7 | 2 بتشاور على 3: حالتها **2**، مش دايرة | [1, 2, 1, 2] |
-| 8 | 2 خلصت، و 0 خلصت | [2, 2, 2, 2] |
+### [[const mid = (lo + hi) >>> 1;]]
 
-الخطوة 7 هي سبب الـ ٣ حالات: وصلنا 3 للمرة التانية. لو كنا بنستخدم Set واحدة «اتزارت ولا لأ»، كنا هنقول دايرة. بس 3 حالتها 2 (خلصت)، مش 1 (في المسار)، فده طريق تاني بس.
+[[>>>]] اسمه unsigned right shift: بيزق الـ bits خانة لليمين، وده قسمة على ٢ مع تقريب لتحت في سطر واحد. جرّبناها: [[(3 + 6) >>> 1]] طلعت 4. بتشتغل صح طول ما الرقم أقل من حوالي ٤ مليار.
 
-### التتبع: فيه دايرة
+### [[if (a[mid] < target) lo = mid + 1;]]
 
-[[0→1، 1→2، 2→3، 3→1]]: الدايرة 1 ثم 2 ثم 3 ثم 1.
+mid في منطقة الـ «لأ» (أصغر من target)، فالإجابة أكيد بعده.
 
-~~~text الناتج (Node 24 على ويندوز)
-outer u=0
-visit(0): state[0]=1  state = [1,0,0,0]
-  visit(1): state[1]=1  state = [1,1,0,0]
-    visit(2): state[2]=1  state = [1,1,1,0]
-      visit(3): state[3]=1  state = [1,1,1,1]
-        visit(1): state 1 -> CYCLE
-true
-~~~
+### [[else hi = mid;]]
 
-| الخطوة | اللي حصل | state |
-|---|---|---|
-| 1 | دخلنا 0 ثم 1 ثم 2 ثم 3 | [1, 1, 1, 1] |
-| 2 | 3 بتشاور على 1: حالتها **1**، يعني لسه في المسار | دايرة |
+mid في منطقة الـ «آه» (≥ target)، فممكن يكون **هو** الإجابة. فمنرميهوش: [[hi = mid]] مش [[mid - 1]]. وبما إن hi مش داخلة في المنطقة، ده معناه «الإجابة عند mid أو قبله».
 
-الـ [[true]] بيطلع من [[visit(1)]] لـ [[visit(3)]] لـ [[visit(2)]] لـ [[visit(1)]] لـ [[visit(0)]] لبرّا، كل واحد بيرجّعه على طول من غير ما يكمّل.
+### [[return lo;]]
+
+lo = hi = أول «آه». ولو مفيش «آه» خالص، بترجع [[a.length]].
+
+### ليه الـ loop مبيلفّش للأبد؟
+
+[[>>> 1]] بيقرّب لتحت، فـ mid دايمًا أصغر من hi. يعني [[hi = mid]] بيصغّر المنطقة، و [[lo = mid + 1]] بيصغّرها. المنطقة بتقل كل لفة.
 
 ---
 
-## ٢. [[hasCycleUndirected]] سطر سطر
+## ٢. [[firstLast]]
 
 ~~~js
-function hasCycleUndirected(n, edges) {
-  const graph = Array.from({ length: n }, () => []);
-  for (const [u, v] of edges) { graph[u].push(v); graph[v].push(u); }
-  const seen = new Array(n).fill(false);
-  const visit = (u, parent) => {
-    seen[u] = true;
-    for (const v of graph[u]) {
-      if (v === parent) continue;
-      if (seen[v] || visit(v, u)) return true;
-    }
-    return false;
-  };
-  for (let u = 0; u < n; u++) if (!seen[u] && visit(u, -1)) return true;
-  return false;
+function firstLast(a, x) {
+  const first = lowerBound(a, x);
+  if (first === a.length || a[first] !== x) return [-1, -1];
+  return [first, lowerBound(a, x + 1) - 1];
 }
 ~~~
 
-- كل edge بيتضاف من الناحيتين.
-- هنا حالتين بس كفاية ([[seen]] true أو false)، بس [[visit]] بتاخد [[parent]]: العقدة اللي جينا منها.
-- [[if (v === parent) continue;]]: الأب دايمًا هيبان في جيراني (لأن الـ edge من الناحيتين)، وده مش دايرة، ده نفس الـ edge اللي نزلنا منه.
-- [[if (seen[v] || visit(v, u)) return true;]]: جار متزار ومش أبويا = طريق تاني ليه = دايرة. ولو مش متزار، انزل عليه وأنا أبوه ([[visit(v, u)]])، ولو لقى دايرة تحت طلّعها.
-- [[visit(u, -1)]]: أول عقدة ملهاش أب، و [[-1]] رقم مش موجود في الـ graph.
-- [[!seen[u] &&]]: ابدأ بس من العقد اللي لسه مااتزارتش (جزء جديد من الـ graph).
-
-### التتبع: خط [[0-1، 1-2، 2-3]]
-
-~~~text الناتج (Node 24 على ويندوز)
-visit(0, parent -1)  neighbors [1]
-  visit(1, parent 0)  neighbors [0,2]
-    0 is parent, skip
-    visit(2, parent 1)  neighbors [1,3]
-      1 is parent, skip
-      visit(3, parent 2)  neighbors [2]
-        2 is parent, skip
-false
-~~~
-
-كل عقدة شافت أبوها بس، وفوّتته. مفيش دايرة.
-
-### التتبع: نفس الخط + [[3-1]]
-
-~~~text الناتج (Node 24 على ويندوز)
-visit(0, parent -1)  neighbors [1]
-  visit(1, parent 0)  neighbors [0,2,3]
-    0 is parent, skip
-    visit(2, parent 1)  neighbors [1,3]
-      1 is parent, skip
-      visit(3, parent 2)  neighbors [2,1]
-        2 is parent, skip
-        1 seen and not parent -> CYCLE
-true
-~~~
-
-| العقدة | أبوها | جيرانها | اللي حصل |
-|---|---|---|---|
-| 0 | -1 | 1 | انزل 1 |
-| 1 | 0 | 0, 2, 3 | 0 أب، انزل 2 |
-| 2 | 1 | 1, 3 | 1 أب، انزل 3 |
-| 3 | 2 | 2, 1 | 2 أب، 1 **متزارة ومش أبويا**: دايرة 1-2-3-1 |
+1. [[first]]: أول مكان ≥ x.
+2. الشرط: لو [[first]] برّا الـ array، أو القيمة هناك مش x (يعني أول حاجة ≥ x أكبر منه)، يبقى x مش موجود: [[[-1, -1]]]. و [[||]] بتقف عند أول true، فلو [[first === a.length]] مش هنقرا [[a[first]]] أصلًا.
+3. آخر x: أول مكان ≥ [[x + 1]] هو أول حاجة أكبر من x، والخانة اللي قبله هي آخر x. ده بيشتغل مع الأعداد الصحيحة بس.
 
 ---
 
-## ٣. ناتج المثال
+## ٣. التتبع: [[firstLast([1, 2, 2, 2, 3, 5], 2)]]
+
+**أول نداء: [[lowerBound(a, 2)]]**
+
+| lo | hi | mid | a[mid] | أصغر من 2؟ | بعدها |
+|---|---|---|---|---|---|
+| 0 | 6 | 3 | 2 | لأ | lo = 0، hi = 3 |
+| 0 | 3 | 1 | 2 | لأ | lo = 0، hi = 1 |
+| 0 | 1 | 0 | 1 | آه | lo = 1، hi = 1 |
+
+رجعت 1. لاحظ إنها لقت 2 عند index 3 من أول لفة وموقفتش، وكمّلت لحد أول واحدة.
+
+**تاني نداء: [[lowerBound(a, 3)]]**
+
+| lo | hi | mid | a[mid] | أصغر من 3؟ | بعدها |
+|---|---|---|---|---|---|
+| 0 | 6 | 3 | 2 | آه | lo = 4، hi = 6 |
+| 4 | 6 | 5 | 5 | لأ | lo = 4، hi = 5 |
+| 4 | 5 | 4 | 3 | لأ | lo = 4، hi = 4 |
+
+رجعت 4، فآخر 2 عند 4 - 1 = 3. الناتج [[[ 1, 3 ]]].
+
+**مش موجود: [[firstLast(a, 4)]]**: [[lowerBound(a, 4)]] رجعت 5 (الـ 5 أول حاجة ≥ 4)، و [[a[5]]] = 5 مش 4، فالناتج [[[ -1, -1 ]]]. ومع 9: رجعت 6 = [[a.length]]، فالشرط الأول وقّفها.
+
+---
+
+## ٤. الناتج الكامل للمثال
 
 ~~~text الناتج (Node 24 على ويندوز)
-true
-false
-false
-true
+[ 3, 5 ] [ -1, -1 ]
 ~~~
 
-- [[0→1→2→0]]: [[visit(2)]] بتلاقي 0 حالتها 1، دايرة.
-- [[0→1، 0→2، 1→2]]: diamond، 2 بتتقابل مرة تانية وحالتها 2، مش دايرة.
-- [[0-1، 1-2]]: خط.
-- [[0-1، 1-2، 2-0]]: مثلث، 2 بتلاقي 0 متزارة ومش أبوها.
+الـ 8 في [[[5, 7, 7, 8, 8, 8, 10]]] من 3 لـ 5، والـ 6 مش موجودة في [[[5, 7]]].
+
+---
+
+## ٥. الـ Big-O وليه
+
+| | القيمة | السبب |
+|---|---|---|
+| lowerBound | [[O(log n)]] | المنطقة بتتنصّف كل لفة |
+| firstLast | [[O(log n)]] | نداءين، و 2 log n لسه [[O(log n)]] |
+| الذاكرة | [[O(1)]] | lo و hi و mid |
+
+ولو كنت لقيت أي 8 بالـ binary search العادية ومشيت شمال خطوة خطوة لحد أول واحدة، array كلها نفس الرقم كانت هتبقى [[O(n)]].
+
+---
+
+## الخلاصة
+
+~~~text
+المنطقة       [lo, hi) نص مفتوحة: hi = a.length
+while         lo < hi
+أصغر          lo = mid + 1
+≥ target      hi = mid (ممكن يكون هو الإجابة)
+النتيجة       lo = أول مكان ≥ target، أو a.length
+أول x         lowerBound(x) والقيمة هناك = x
+آخر x         lowerBound(x + 1) - 1 (أعداد صحيحة بس)
+~~~
+
+> متخلطش القالبين: الشامل ([[hi = a.length - 1]] و [[<=]] و [[mid - 1]]) والنص مفتوح ([[hi = a.length]] و [[<]] و [[hi = mid]]). كل واحد صح لوحده، والخلط بيكسر الاتنين.`,
+          lines: [
+            "أول index قيمته ≥ target (أو a.length لو مفيش).",
+            "hi = a.length: الإجابة ممكن تبقى بعد آخر عنصر.",
+            "لحد ما lo و hi يتقابلوا.",
+            "النص. [[>>> 1]] قسمة على ٢ مع تقريب لتحت.",
+            "النص أصغر من target: الإجابة أكيد بعده.",
+            "النص ≥ target: ممكن يكون هو الإجابة، فسيبه في المنطقة (hi = mid مش mid - 1).",
+            "قفلة.",
+            "lo = hi = الإجابة.",
+            "قفلة.",
+            "أول وآخر مكان لـ x.",
+            "أول مكان ≥ x.",
+            "لو برّا الـ array أو القيمة هناك مش x، يبقى x مش موجود.",
+            "آخر x = قبل أول مكان ≥ x + 1 بخانة.",
+            "قفلة.",
+            "8 من 3 لـ 5، و 6 مش موجود."
+          ],
+          sol: R`[[upperBound]] هي نفس [[lowerBound]] بالظبط، بس [[<]] بتبقى [[<=]]: كده بتعدّي كل القيم اللي = x وتقف عند أول أكبر منها. وآخر مكان لـ x = [[upperBound - 1]].
+
+دلوقتي بتشتغل مع أي حاجة بتتقارن: [[firstLast([1.5, 2.5, 2.5, 3], 2.5)]] ترجع [[[1, 2]]]، ومع strings [[["ali", "bob", "bob", "zed"]]] ترجع [[[1, 2]]]. و [[x + 1]] كانت هتبوظ هنا: [[2.5 + 1]] بتعدّي الـ 3، و [["bob" + 1]] بتبقى "bob1". عدد مرات 8 في [5, 7, 7, 8, 8, 8, 10] = 6 - 3 = 3. كله [[O(log n)]].
+
+الغلطة المشهورة: تغيّر العلامة في مكان تاني (مثلًا [[hi = mid - 1]]) فالحدود تتلخبط وتطلع بـ loop مالهاش نهاية أو إجابة ناقصة واحد.`,
+          solCode: R`function lowerBound(a, x) {
+  let lo = 0, hi = a.length;
+  while (lo < hi) {
+    const mid = (lo + hi) >>> 1;
+    if (a[mid] < x) lo = mid + 1;
+    else hi = mid;
+  }
+  return lo;
+}
+function upperBound(a, x) {
+  let lo = 0, hi = a.length;
+  while (lo < hi) {
+    const mid = (lo + hi) >>> 1;
+    if (a[mid] <= x) lo = mid + 1;
+    else hi = mid;
+  }
+  return lo;
+}
+function firstLast(a, x) {
+  const first = lowerBound(a, x);
+  if (first === a.length || a[first] !== x) return [-1, -1];
+  return [first, upperBound(a, x) - 1];
+}
+const count = (a, x) => upperBound(a, x) - lowerBound(a, x);
+console.log(firstLast([5, 7, 7, 8, 8, 8, 10], 8));        // [3, 5]
+console.log(firstLast([1.5, 2.5, 2.5, 3], 2.5));         // [1, 2]
+console.log(firstLast(["ali", "bob", "bob", "zed"], "bob")); // [1, 2]
+console.log(count([5, 7, 7, 8, 8, 8, 10], 8), count([5, 7], 6)); // 3 0
+// O(log n) time, O(1) space`,
+          check: {
+            lang: "js",
+            starter: R`function lowerBound(a, target) {
+  let lo = 0, hi = a.length;
+  while (lo < hi) {
+    const mid = (lo + hi) >>> 1;
+    if (a[mid] < target) lo = mid + 1;
+    else hi = mid;
+  }
+  return lo;
+}
+function upperBound(a, target) {
+  // نفس lowerBound بعلامة واحدة مختلفة
+}
+function firstLast(a, x) {
+  return [-1, -1];
+}
+function count(a, x) {
+  return 0;
+}`,
+            tests: R`test("upperBound([5, 7, 7, 8, 8, 8, 10], 8) ← 6", () => expect(upperBound([5, 7, 7, 8, 8, 8, 10], 8)).toBe(6));
+test("upperBound([1, 2], 5) ← 2 (بعد الآخر)", () => expect(upperBound([1, 2], 5)).toBe(2));
+test("firstLast([5, 7, 7, 8, 8, 8, 10], 8) ← [3, 5]", () => expect(firstLast([5, 7, 7, 8, 8, 8, 10], 8)).toEqual([3, 5]));
+test("أرقام عشرية: firstLast([1.5, 2.5, 2.5, 3], 2.5) ← [1, 2]", () => expect(firstLast([1.5, 2.5, 2.5, 3], 2.5)).toEqual([1, 2]));
+test("strings: firstLast(['ali', 'bob', 'bob', 'zed'], 'bob') ← [1, 2]", () => expect(firstLast(["ali", "bob", "bob", "zed"], "bob")).toEqual([1, 2]));
+test("مش موجود ← [-1, -1]", () => expect(firstLast([5, 7], 6)).toEqual([-1, -1]));
+test("count: 8 ← 3، و [] ← 0", () => expect([count([5, 7, 7, 8, 8, 8, 10], 8), count([], 1)]).toEqual([3, 0]));
+test("مليون عنصر (O(log n))", () => {
+  const a = Array.from({ length: 1000000 }, (_, i) => Math.floor(i / 10));
+  expect([count(a, 4242), firstLast(a, 99999)]).toEqual([10, [999990, 999999]]);
+});`,
+            solution: R`function lowerBound(a, target) {
+  let lo = 0, hi = a.length;
+  while (lo < hi) {
+    const mid = (lo + hi) >>> 1;
+    if (a[mid] < target) lo = mid + 1;
+    else hi = mid;
+  }
+  return lo;
+}
+function upperBound(a, target) {
+  let lo = 0, hi = a.length;
+  while (lo < hi) {
+    const mid = (lo + hi) >>> 1;
+    if (a[mid] <= target) lo = mid + 1;
+    else hi = mid;
+  }
+  return lo;
+}
+function firstLast(a, x) {
+  const first = lowerBound(a, x);
+  if (first === a.length || a[first] !== x) return [-1, -1];
+  return [first, upperBound(a, x) - 1];
+}
+function count(a, x) {
+  return upperBound(a, x) - lowerBound(a, x);
+}`
+          }
+        },
+        {
+          cmd: "search insert position",
+          title: "الرقم ده لو مش موجود، يتحط فين عشان الترتيب يفضل صح؟",
+          desc: R`نفس الـ binary search العادية بالظبط، بس لما تخلص من غير ما تلاقي الرقم، رجّع [[lo]] بدل -1. [[lo]] ساعتها أول مكان قيمته أكبر من target، وده مكان الإضافة. [[O(log n)]].
+
+ليه [[lo]]؟ الـ loop بيقف لما [[lo = hi + 1]]. كل اللي قبل lo أصغر من target (اتستبعدوا بـ [[lo = mid + 1]])، وكل اللي بعد hi أكبر (اتستبعدوا بـ [[hi = mid - 1]]). فـ lo هو الحد بينهم.
+
+ده نفس نتيجة الـ lowerBound من الدرس اللي فات، بقالب تاني، طول ما مفيش تكرار (مع التكرار بيرجّع أي نسخة يقابلها، مش أولها). اختار واحد تحفظه، وافهم التاني.`,
+          example: R`function searchInsert(a, target) {
+  let lo = 0, hi = a.length - 1;
+  while (lo <= hi) {
+    const mid = (lo + hi) >>> 1;
+    if (a[mid] === target) return mid;
+    if (a[mid] < target) lo = mid + 1;
+    else hi = mid - 1;
+  }
+  return lo;
+}
+console.log(searchInsert([1, 3, 5, 6], 5)); // 2
+console.log(searchInsert([1, 3, 5, 6], 2)); // 1
+console.log(searchInsert([1, 3, 5, 6], 7)); // 4
+console.log(searchInsert([1, 3, 5, 6], 0)); // 0
+console.log(searchInsert([], 3));           // 0
+// O(log n) time, O(1) space`,
+          try: R`استخدمها عشان تضيف رقم لـ array مترتبة: [[a.splice(searchInsert(a, x), 0, x)]]. البحث [[O(log n)]]، بس الإضافة نفسها Big-O بتاعتها إيه؟ (O(n)، لأن splice بتحرّك اللي بعدها). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[insertSorted(a, x)]] بتضيف في نفس الـ array وترجّعها.`,
+          flag: "script",
+          deep: {
+            why: "«يتحط فين» سؤال بيتسأل كتير: leaderboard مترتب وعايز تضيف score جديد، أو مواعيد مترتبة وعايز تحط ميعاد، أو autocomplete بيدوّر على أول كلمة بتبدأ بحروف معينة. ولو فهمت ليه [[lo]] هو الإجابة، يبقى فهمت الـ binary search فعلًا.",
+            how: R`dry run على [1, 3, 5, 6] و target = 2:
+
+lo = 0 و hi = 3. mid = 1 (3)، أكبر من 2، فـ hi = 0.
+
+lo = 0 و hi = 0. mid = 0 (1)، أصغر، فـ lo = 1.
+
+lo = 1 أكبر من hi = 0، الـ loop وقف. رجّع 1. وفعلًا 2 مكانها بين 1 و 3.
+
+و target = 7: mid = 1 (3) أصغر، lo = 2. mid = 2 (5) أصغر، lo = 3. mid = 3 (6) أصغر، lo = 4. وقف، ورجّع 4 = طول الـ array: يتحط في الآخر.
+
+الـ invariant (الحاجة اللي بتفضل صح طول الوقت): كل حاجة قبل lo أصغر من target، وكل حاجة بعد hi أكبر. لما الـ loop يقف (lo = hi + 1)، مفيش حاجة بين الاتنين، فـ lo هو أول «أكبر».
+
+لو فيه تكرار (زي [1, 3, 3, 3, 5] و target = 3)، الكود ده بيرجّع أي 3 يقابله، مش أولهم. لو المطلوب أول واحد، استخدم الـ lowerBound.`,
+            when: "إضافة في قايمة مترتبة، أو تحديد «أنهي شريحة»: أسعار شحن حسب الوزن بحدود [0, 1, 5, 10] كيلو، والوزن 3 في أنهي شريحة؟",
+            mistakes: R`إنك ترجّع [[hi]] بدل [[lo]] (بيطلع قبل المكان الصح بخانة). وإنك ترجّع [[mid]] الأخير: ساعات بيطلع صح وساعات لأ حسب آخر اتجاه. والـ edge cases اللي لازم تجربها: أصغر من الكل، وأكبر من الكل، و array فاضية، و array فيها عنصر واحد.`
+          },
+          teach: R`## الفكرة في جملة
+
+ده الـ binary search العادي حرف بحرف، والفرق في آخر سطر بس: لما المنطقة تفضى من غير ما نلاقي الرقم، بنرجّع [[lo]] بدل -1. ليه؟ لأن وقتها كل اللي قبل lo أصغر من target، وكل اللي من lo ورايح أكبر. فـ lo هو بالظبط المكان اللي الرقم يتحط فيه والترتيب يفضل صح.
+
+كل الأرقام اللي تحت من تشغيل حقيقي على Node 24.19.0 على ويندوز، بعد ما ضفنا [[console.log]] جوه الـ loop يطبع lo و hi و mid.
+
+---
+
+## ١. الكود سطر سطر
+
+~~~js
+function searchInsert(a, target) {
+  let lo = 0, hi = a.length - 1;
+  while (lo <= hi) {
+    const mid = (lo + hi) >>> 1;
+    if (a[mid] === target) return mid;
+    if (a[mid] < target) lo = mid + 1;
+    else hi = mid - 1;
+  }
+  return lo;
+}
+~~~
+
+- [[let lo = 0, hi = a.length - 1;]]: الحدود **شاملة** زي الـ binary search العادي.
+- [[while (lo <= hi)]]: طول ما فيه عنصر ماتفحصش.
+- [[const mid = (lo + hi) >>> 1;]]: النص. [[>>> 1]] قسمة على ٢ مع تقريب لتحت ([[(3 + 6) >>> 1]] = 4).
+- [[if (a[mid] === target) return mid;]]: موجود، رجّع مكانه.
+- [[lo = mid + 1]]: النص أصغر، فالـ mid وكل اللي قبله أصغر من target. اترموا.
+- [[hi = mid - 1]]: النص أكبر، فالـ mid وكل اللي بعده أكبر. اترموا.
+- [[return lo;]]: السطر الجديد. شرحه في الجزء ٣.
+
+---
+
+## ٢. التتبع على [[[2, 4, 6, 8, 10]]]
+
+### target = 7 (بين 6 و 8)
+
+| lo | hi | mid | a[mid] | القرار | بعدها |
+|---|---|---|---|---|---|
+| 0 | 4 | 2 | 6 | أصغر من 7 | lo = 3، hi = 4 |
+| 3 | 4 | 3 | 8 | أكبر من 7 | lo = 3، hi = 2 |
+
+lo = 3 أكبر من hi = 2، وقف. رجّع **3**: الـ 7 تتحط مكان الـ 8 والـ 8 تتزق، فتبقى [2, 4, 6, 7, 8, 10].
+
+### target = 11 (أكبر من الكل)
+
+| lo | hi | mid | a[mid] | بعدها |
+|---|---|---|---|---|
+| 0 | 4 | 2 | 6 | lo = 3، hi = 4 |
+| 3 | 4 | 3 | 8 | lo = 4، hi = 4 |
+| 4 | 4 | 4 | 10 | lo = 5، hi = 4 |
+
+رجّع **5** = طول الـ array: يتحط في الآخر.
+
+### target = 1 (أصغر من الكل)
+
+| lo | hi | mid | a[mid] | بعدها |
+|---|---|---|---|---|
+| 0 | 4 | 2 | 6 | lo = 0، hi = 1 |
+| 0 | 1 | 0 | 2 | lo = 0، hi = -1 |
+
+lo عمرها ما اتحركت، فرجّع **0**: يتحط في الأول. و target = 6 اتلقت من أول لفة ورجعت 2.
+
+---
+
+## ٣. ليه [[lo]] بالظبط؟
+
+فيه حاجة بتفضل صح طول الـ loop (اسمها invariant):
+
+- كل اللي **قبل** lo أصغر من target (اترموا بـ [[lo = mid + 1]] لأنهم أصغر).
+- كل اللي **بعد** hi أكبر من target (اترموا بـ [[hi = mid - 1]] لأنهم أكبر).
+
+الـ loop بيقف لما lo = hi + 1. يعني مفيش ولا خانة بين «اللي قبل lo» و «اللي بعد hi». فـ lo هو أول خانة في منطقة «الأكبر»، وده مكان الإضافة. وعشان كده hi غلط (أقل بخانة)، و mid الأخير مش مضمون (بيعتمد على آخر اتجاه).
+
+ومع التكرار: [[searchInsert([1, 3, 3, 3, 5], 3)]] رجعت 2، لأن أول mid وقع على 3 في النص ورجع على طول. يعني أي نسخة يقابلها، مش أولها. لو محتاج أولها، ده شغل الـ lowerBound من الدرس اللي فات.
+
+---
+
+## ٤. الناتج الكامل للمثال
+
+~~~text الناتج (Node 24 على ويندوز)
+2
+1
+4
+0
+0
+~~~
+
+5 موجود عند 2، و 2 يتحط عند 1، و 7 في الآخر (4)، و 0 في الأول، والـ array الفاضية: hi = -1 فالـ loop مبيلفّش ويرجع lo = 0.
+
+---
+
+## ٥. الـ Big-O وليه
+
+| | القيمة | السبب |
+|---|---|---|
+| الوقت | [[O(log n)]] | نفس الـ binary search: المنطقة بتتنصّف |
+| الذاكرة | [[O(1)]] | lo و hi و mid |
+
+> البحث بس هو اللي [[O(log n)]]. لو هتضيف الرقم فعلًا في array، الإضافة نفسها ليها تمن، وده سؤال التمرين.
+
+---
+
+## الخلاصة
+
+~~~text
+نفس binary search   حدود شاملة، lo <= hi، mid + 1 و mid - 1
+موجود               رجّع mid
+مش موجود            رجّع lo مش -1
+ليه lo              قبله كله أصغر، ومن عنده كله أكبر
+أطراف               أصغر من الكل 0، أكبر من الكل a.length، فاضية 0
+~~~`,
+          lines: [
+            "مكان target، أو المكان اللي يتحط فيه.",
+            "نفس الحدود الشاملة.",
+            "نفس الـ loop.",
+            "النص.",
+            "موجود: رجّع مكانه.",
+            "أصغر: روح يمين.",
+            "أكبر: روح شمال.",
+            "قفلة.",
+            "مش موجود: lo هو أول مكان قيمته أكبر من target.",
+            "قفلة.",
+            "5 موجود عند 2.",
+            "2 بين 1 و 3، يتحط عند 1.",
+            "أكبر من الكل: في الآخر (4).",
+            "أصغر من الكل: في الأول (0).",
+            "array فاضية: 0."
+          ],
+          sol: R`[[a.splice(searchInsert(a, x), 0, x)]] بتحط الرقم في مكانه. لو ضفت 5 و 1 و 4 و 2 و 3 و 0 و 6 لـ array فاضية، الناتج [[0 1 2 3 4 5 6]] مترتب.
+
+البحث [[O(log n)]]، بس الإضافة [[O(n)]]: [[splice]] لازم تحرّك كل العناصر اللي بعد المكان خطوة لقدام. فكل إضافة [[O(n)]]، و n إضافات [[O(n^2)]] في أسوأ حالة (لو كل رقم جديد أصغر من كله).
+
+الغلطة المشهورة: تقول إن الحل كله [[O(log n)]] لأن فيه binary search. لو محتاج إضافة ومسح سريع مع ترتيب، ده شغل balanced tree أو heap. ولو هتبني الـ array مرة واحدة، اعمل push للكل وبعدين sort واحد ([[O(n log n)]]).`,
+          solCode: R`function searchInsert(a, target) {
+  let lo = 0, hi = a.length - 1;
+  while (lo <= hi) {
+    const mid = (lo + hi) >>> 1;
+    if (a[mid] === target) return mid;
+    if (a[mid] < target) lo = mid + 1;
+    else hi = mid - 1;
+  }
+  return lo;
+}
+function insertSorted(a, x) {
+  a.splice(searchInsert(a, x), 0, x);
+  return a;
+}
+const a = [];
+for (const x of [5, 1, 4, 2, 3, 0, 6]) insertSorted(a, x);
+console.log(a.join(" ")); // 0 1 2 3 4 5 6
+// find the spot: O(log n); splice shifts everything after it: O(n); so one insert is O(n)
+// n inserts = O(n^2) in the worst case: to build a big sorted array, push everything then sort once (O(n log n))`,
+          check: {
+            lang: "js",
+            starter: R`function searchInsert(a, target) {
+  let lo = 0, hi = a.length - 1;
+  while (lo <= hi) {
+    const mid = (lo + hi) >>> 1;
+    if (a[mid] === target) return mid;
+    if (a[mid] < target) lo = mid + 1;
+    else hi = mid - 1;
+  }
+  return lo;
+}
+function insertSorted(a, x) {
+  // a.splice(مكان, 0, x)
+  return a;
+}`,
+            tests: R`test("ضيف 5 و 1 و 4 و 2 و 3 و 0 و 6 لـ [] ← [0, 1, 2, 3, 4, 5, 6]", () => {
+  const a = [];
+  for (const x of [5, 1, 4, 2, 3, 0, 6]) insertSorted(a, x);
+  expect(a).toEqual([0, 1, 2, 3, 4, 5, 6]);
+});
+test("بترجّع نفس الـ array", () => { const a = [1, 3]; expect(insertSorted(a, 2) === a).toBe(true); });
+test("رقم مكرر: insertSorted([1, 3, 3, 5], 3) ← [1, 3, 3, 3, 5]", () => expect(insertSorted([1, 3, 3, 5], 3)).toEqual([1, 3, 3, 3, 5]));
+test("في الأطراف: 0 في الأول و 9 في الآخر", () => expect(insertSorted(insertSorted([2, 4], 0), 9)).toEqual([0, 2, 4, 9]));`,
+            solution: R`function searchInsert(a, target) {
+  let lo = 0, hi = a.length - 1;
+  while (lo <= hi) {
+    const mid = (lo + hi) >>> 1;
+    if (a[mid] === target) return mid;
+    if (a[mid] < target) lo = mid + 1;
+    else hi = mid - 1;
+  }
+  return lo;
+}
+function insertSorted(a, x) {
+  a.splice(searchInsert(a, x), 0, x);
+  return a;
+}`
+          }
+        },
+        {
+          cmd: "binary search on answer",
+          title: "أقل سرعة أكل تخلّص بيها كل أكوام الموز في h ساعة",
+          desc: R`مش بتدوّر في array، بتدوّر في مدى الإجابات الممكنة (السرعة من 1 لأكبر كوم). اسأل عن كل سرعة: «ينفع أخلّص في h ساعة؟». لو نفع، جرّب أبطأ. لو لأ، لازم أسرع. [[O(n log m)]].
+
+الشرط الأساسي: الإجابة لازم تبقى monotonic. لو سرعة 4 بتلحق، يبقى 5 و 6 وأي سرعة أكبر بتلحق. يعني false, false, true, true وإنت بتدوّر على أول true.
+
+ده نفس الـ lowerBound، بس بدل «القيمة ≥ x» الشرط دالة إنت كاتبها. أي مسألة فيها «أقل قيمة تحقق كذا» أو «أكبر قيمة تحقق كذا» جرّب فيها الفكرة دي.`,
+          example: R`function minEatingSpeed(piles, h) {
+  const hoursAt = k => piles.reduce((t, p) => t + Math.ceil(p / k), 0);
+  let lo = 1, hi = Math.max(...piles);
+  while (lo < hi) {
+    const mid = (lo + hi) >>> 1;
+    if (hoursAt(mid) <= h) hi = mid;
+    else lo = mid + 1;
+  }
+  return lo;
+}
+console.log(minEatingSpeed([3, 6, 7, 11], 8));       // 4
+console.log(minEatingSpeed([30, 11, 23, 4, 20], 5)); // 30
+console.log(minEatingSpeed([30, 11, 23, 4, 20], 6)); // 23
+// O(n log m) time (m = biggest pile), O(1) space`,
+          try: R`حل «ship within D days»: أوزان طرود بالترتيب، وأقل حمولة للمركب تشحنهم كلهم في D أيام (كل يوم بتشحن طرود ورا بعض لحد ما الحمولة تتملي). الأوزان من 1 لـ 10 و D = 5 الإجابة 15. المدى هنا من أتقل طرد لمجموع الكل. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[shipWithinDays(weights, days)]].`,
+          flag: "script",
+          deep: {
+            why: "من أقوى الأفكار في الانترفيو لأنها مش واضحة: المسألة مفيهاش array مترتبة خالص، ومع ذلك الحل binary search. بتظهر في مسائل التحسين: أقل حمولة، أقل وقت، أكبر مسافة ممكنة، أقل عدد سيرفرات يستحمل الضغط.",
+            how: R`dry run على [3, 6, 7, 11] و h = 8:
+
+المدى من 1 لـ 11. mid = 6: الساعات 1 + 1 + 2 + 2 = 6 ≤ 8، بتلحق، hi = 6.
+
+lo = 1 و hi = 6. mid = 3: الساعات 1 + 2 + 3 + 4 = 10، مبتلحقش، lo = 4.
+
+lo = 4 و hi = 6. mid = 5: الساعات 1 + 2 + 2 + 3 = 8، بتلحق، hi = 5.
+
+lo = 4 و hi = 5. mid = 4: الساعات 1 + 2 + 2 + 3 = 8، بتلحق، hi = 4. و lo = hi = 4.
+
+الـ Big-O: الـ binary search بياخد log m خطوة (m = أكبر كوم)، وكل خطوة بتحسب الساعات على n كوم. المجموع [[O(n log m)]]. لو جرّبت كل السرعات من 1 لـ m بالترتيب يبقى [[O(n × m)]]، ومع m مليار ده مستحيل.
+
+الخطوات لأي مسألة من النوع ده: (١) إيه الإجابة؟ رقم: سرعة، أو حمولة، أو وقت. (٢) أقل وأكبر قيمة ممكنة ليها. (٣) دالة [[canDo(x)]]: لو الإجابة x، ينفع؟ (٤) اتأكد إنها monotonic، وبعدين lowerBound على أول true.`,
+            when: "«أقل X بحيث يحصل Y» أو «أكبر X بحيث ميحصلش Y»، والتحقق من إجابة معينة أسهل بكتير من إيجادها.",
+            mistakes: R`إنك تبدأ lo بـ 0: القسمة على 0 بتدّي Infinity. وإنك تكتب [[Math.floor]] بدل [[Math.ceil]] في حساب الساعات. وإنك تستخدم [[Math.max(...piles)]] على array فيها مئات الآلاف من العناصر: الـ spread بيحط كل عنصر كـ argument، وعلى Node 24 مع ٢٠٠ ألف عنصر بيرمي RangeError. استخدم loop أو [[reduce]]. وإنك تنسى تتأكد إن الشرط monotonic: لو مش كده الـ binary search هيرجّع إجابة غلط من غير error.`
+          },
+          teach: R`## الفكرة في جملة
+
+مفيش array مترتبة هنا خالص. بدل كده بنعمل binary search على **الإجابة نفسها**: السرعة ممكن تبقى من 1 لأكبر كوم. لأي سرعة k نقدر نسأل سؤال سهل: «بالسرعة دي أخلّص في h ساعة؟». والإجابة monotonic: لو k بتلحق، أي سرعة أكبر بتلحق. يعني صف من «لأ، لأ، لأ، آه، آه»، وإحنا بندوّر على أول «آه» بنفس قالب الـ lowerBound.
+
+كل الأرقام اللي تحت من تشغيل حقيقي على Node 24.19.0 على ويندوز، بعد ما ضفنا [[console.log]] جوه الـ loop يطبع lo و hi و mid والساعات.
+
+---
+
+## ١. الكود سطر سطر
+
+~~~js
+function minEatingSpeed(piles, h) {
+  const hoursAt = k => piles.reduce((t, p) => t + Math.ceil(p / k), 0);
+  let lo = 1, hi = Math.max(...piles);
+  while (lo < hi) {
+    const mid = (lo + hi) >>> 1;
+    if (hoursAt(mid) <= h) hi = mid;
+    else lo = mid + 1;
+  }
+  return lo;
+}
+~~~
+
+### المسألة
+
+[[piles]] أكوام موز، و [[h]] عدد الساعات. بتختار سرعة k (موزة في الساعة). كل ساعة بتاكل من كوم **واحد** بس، ولو الكوم خلص قبل الساعة ما تخلص، الباقي من الساعة بيضيع. عايزين أقل k تخلّص كل الأكوام في h ساعة أو أقل.
+
+### [[const hoursAt = k => ...]]
+
+دالة مساعدة (arrow function) بتحسب الساعات اللي محتاجها بسرعة k. من جوه لبرة:
+
+1. [[p / k]]: الكوم ده محتاج كام ساعة، بكسور.
+2. [[Math.ceil]]: تقريب **لفوق**، لأن الساعة مبتتقسمش على كومين. كوم فيه 7 بسرعة 3: [[Math.ceil(7 / 3)]] طلعت 3، أما [[Math.floor]] كانت هتطلّع 2 وتكدب.
+3. [[piles.reduce((t, p) => t + ..., 0)]]: [[reduce]] بتمشي على الـ array وتجمّع في [[t]] (total) بادئ من 0. [[p]] هو الكوم الحالي. جرّبنا [[[1, 2, 3].reduce((t, p) => t + p, 0)]] وطلعت 6.
+
+### [[let lo = 1, hi = Math.max(...piles);]]
+
+مدى الإجابات الممكنة:
+
+- [[lo = 1]]: أقل سرعة منطقية. صفر مينفعش (القسمة على 0).
+- [[hi = Math.max(...piles)]]: [[...]] هنا spread، بيفرد الـ array كـ arguments للدالة، فـ [[Math.max(...[3, 9, 2])]] طلعت 9. ليه أكبر كوم كفاية؟ بالسرعة دي كل كوم بيخلص في ساعة واحدة، وأسرع من كده مش هيقلّل الساعات.
+
+### [[while (lo < hi)]] و [[mid]]
+
+نفس قالب الـ lowerBound بالظبط: لما lo = hi تبقى دي الإجابة.
+
+### [[if (hoursAt(mid) <= h) hi = mid;]]
+
+السرعة mid بتلحق. يمكن تكون هي الأقل، ويمكن فيه أبطأ منها بتلحق. فنسيبها في المنطقة ([[hi = mid]] مش [[mid - 1]]) وندوّر على الشمال.
+
+### [[else lo = mid + 1;]]
+
+مبتلحقش، وأي سرعة أبطأ مش هتلحق كمان. الإجابة أكيد أسرع من mid.
+
+### [[return lo;]]
+
+أقل سرعة بتلحق.
+
+---
+
+## ٢. التتبع على [[[9, 4, 10]]] و h = 6
+
+المدى من 1 لـ 10. عمود الساعات فيه ساعات كل كوم بالترتيب.
+
+| lo | hi | mid | ساعات كل كوم | المجموع | ≤ 6؟ | بعدها |
+|---|---|---|---|---|---|---|
+| 1 | 10 | 5 | 2 + 1 + 2 | 5 | آه | lo = 1، hi = 5 |
+| 1 | 5 | 3 | 3 + 2 + 4 | 9 | لأ | lo = 4، hi = 5 |
+| 4 | 5 | 4 | 3 + 1 + 3 | 7 | لأ | lo = 5، hi = 5 |
+
+lo = hi = **5**. التلات لفات جرّبوا 3 سرعات بس من 10. والسرعة 4 تستاهل وقفة: 7 ساعات، يعني ناقصة ساعة واحدة، فـ 5 هي الأقل فعلًا.
+
+---
+
+## ٣. الناتج الكامل للمثال
+
+~~~text الناتج (Node 24 على ويندوز)
+4
+30
+23
+~~~
+
+- [[[3, 6, 7, 11]]] و 8 ساعات: بسرعة 4 الساعات 1 + 2 + 2 + 3 = 8 بالظبط.
+- ٥ أكوام و ٥ ساعات: لازم كل كوم في ساعة، فالسرعة = أكبر كوم (30).
+- نفس الأكوام و ٦ ساعات: ساعة زيادة بتسمح لأكبر كوم ياخد ساعتين، فـ 23 كفاية.
 
 ---
 
@@ -1526,103 +918,102 @@ true
 
 | | القيمة | السبب |
 |---|---|---|
-| الوقت | [[O(V + E)]] | كل عقدة بتتزار مرة (الحالة 2 أو [[seen]] بيمنعوا التكرار)، وكل قائمة جيران بتتقرا مرة |
-| الذاكرة | [[O(V)]] | [[state]] أو [[seen]] بحجم V، والـ call stack ممكن يوصل V في graph شكله خط (الـ graph نفسه [[O(V + E)]]) |
+| الوقت | [[O(n log m)]] | m = أكبر كوم. الـ binary search بياخد log m لفة، وكل لفة [[hoursAt]] بتمشي على الـ n كوم |
+| الذاكرة | [[O(1)]] | lo و hi و mid، و [[reduce]] مبتعملش array |
+
+لو جرّبت كل السرعات من 1 لـ m بالترتيب يبقى [[O(n × m)]]. مع كوم فيه مليار موزة، ده مليار تجربة مقابل حوالي ٣٠.
 
 ---
 
 ## الخلاصة
 
 ~~~text
-directed        ٣ حالات: 0 جديدة، 1 في المسار، 2 خلصت
-                قابلت 1 ← دايرة، قابلت 2 ← فوّت (طريق تاني بس)
-                state = 2 بعد ما كل الجيران يخلصوا
-undirected      seen + parent
-                الأب ← فوّت، متزار ومش الأب ← دايرة
-الـ loop برّا    من كل عقدة، عشان الأجزاء اللي مش متوصلة
-الـ Big-O       O(V + E) وقت، O(V) ذاكرة
-~~~`,
+الإجابة رقم      دوّر في مداه مش في array
+المدى            lo = أقل قيمة منطقية، hi = أكبر قيمة لازمة
+canDo(mid)       هنا hoursAt(mid) <= h
+monotonic        لو mid بتنفع، أي حاجة أكبر بتنفع
+القالب           lowerBound: بتنفع ← hi = mid، مبتنفعش ← lo = mid + 1
+Big-O            log(المدى) × تمن الـ canDo
+~~~
+
+> أي «أقل X بحيث يحصل Y» والتحقق من X معيّنة سهل: جرّب الفكرة دي.`,
           lines: [
-            "كشف دايرة في directed graph.",
-            "adjacency list.",
-            "السهم في اتجاه واحد بس.",
-            "0 جديدة، 1 في المسار الحالي، 2 خلصت.",
-            "visit بترجّع true لو لقت دايرة.",
-            "رجعت لعقدة لسه في المسار: دايرة.",
-            "اتفحصت قبل كده ومفيش منها دايرة.",
-            "أنا دلوقتي في المسار.",
-            "انزل على كل جار، ولو أي واحد لقى دايرة ارجع true.",
-            "خلصت كل اللي تحتي من غير دواير.",
-            "مفيش دايرة من هنا.",
-            "قفلة visit.",
-            "ابدأ من كل عقدة (العقد اللي خلصت بترجع على طول).",
-            "مفيش دواير.",
+            "piles أكوام الموز، و h عدد الساعات المتاحة.",
+            "بسرعة k: كل كوم محتاج [[ceil(p / k)]] ساعة (الساعة مبتتقسمش على كومين).",
+            "مدى الإجابة: أقل سرعة 1، وأكبر كوم كفاية (ساعة لكل كوم).",
+            "نفس قالب الـ lowerBound.",
+            "سرعة في النص.",
+            "بتلحق: الإجابة هي دي أو أقل، hi = mid.",
+            "مبتلحقش: لازم أسرع من mid.",
             "قفلة.",
-            "كشف دايرة في undirected graph.",
-            "adjacency list.",
-            "كل edge من الناحيتين.",
-            "اللي اتزار.",
-            "visit بتعرف هي جاية منين.",
-            "علّم.",
-            "لكل جار.",
-            "ده اللي جيت منه، مش دايرة.",
-            "جار اتزار ومش أبويا، أو دايرة تحت: دايرة.",
-            "قفلة الـ for.",
-            "مفيش.",
-            "قفلة visit.",
-            "كل جزيرة لوحدها.",
-            "مفيش دواير.",
+            "أقل سرعة بتلحق.",
             "قفلة.",
-            "0 ثم 1 ثم 2 ثم 0: دايرة.",
-            "diamond: طريقين لـ 2، مش دايرة.",
-            "خط: مفيش دايرة.",
-            "مثلث: دايرة."
+            "بسرعة 4: 1 + 2 + 2 + 3 = 8 ساعات بالظبط.",
+            "الساعات قد عدد الأكوام: لازم تخلّص كل كوم في ساعة، يعني السرعة = أكبر كوم.",
+            "ساعة زيادة: 23 تكفي."
           ],
+          sol: R`الإجابة 15. المدى من [[Math.max(...weights)]] (أتقل طرد لازم يدخل المركب) لـ [[sum]] (كله في يوم واحد). والدالة المساعدة [[daysAt(cap)]] بتمشي على الطرود وتبدأ يوم جديد لما [[load + w > cap]]. وبعدين نفس binary search: لو [[daysAt(mid) <= D]] جرّب أصغر ([[hi = mid]])، وإلا [[lo = mid + 1]].
+
+كمان [3, 2, 2, 4, 1, 4] مع 3 أيام الإجابة 6، و [1, 2, 3, 1, 1] مع 4 أيام الإجابة 3. الوقت [[O(n log S)]] (S = مجموع الأوزان)، والـ space [[O(1)]].
+
+الغلطة المشهورة: تبدأ [[lo]] من 1. مع حمولة أصغر من أتقل طرد، [[daysAt]] هتحط الطرد التقيل في يوم لوحده وتفتكر إن ده ينفع، فالإجابة تطلع أصغر من المفروض وغلط.`,
+          solCode: R`function shipWithinDays(weights, days) {
+  const daysAt = cap => {
+    let d = 1, load = 0;
+    for (const w of weights) {
+      if (load + w > cap) { d++; load = 0; }
+      load += w;
+    }
+    return d;
+  };
+  let lo = Math.max(...weights), hi = weights.reduce((s, w) => s + w, 0);
+  while (lo < hi) {
+    const mid = (lo + hi) >>> 1;
+    if (daysAt(mid) <= days) hi = mid;
+    else lo = mid + 1;
+  }
+  return lo;
+}
+console.log(shipWithinDays([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5)); // 15
+console.log(shipWithinDays([3, 2, 2, 4, 1, 4], 3));             // 6
+console.log(shipWithinDays([1, 2, 3, 1, 1], 4));                // 3
+// O(n log S) time (S = sum of weights), O(1) space`,
           check: {
             lang: "js",
-            starter: R`function findCycle(imports) {
-  const state = new Map(); // 0 مزارش، 1 في المسار الحالي، 2 خلص
-  const path = [];
-  // لما تقابل ملف حالته 1: path.slice(path.indexOf(file)) وضيف الملف في الآخر
-  return null;
-}`,
-            tests: R`const isCycle = (g, c) => Array.isArray(c) && c.length >= 2 && c[0] === c.at(-1) && new Set(c.slice(0, -1)).size === c.length - 1 && c.slice(0, -1).every((f, i) => (g[f] || []).includes(c[i + 1]));
-const g = { "a.js": ["b.js"], "b.js": ["c.js"], "c.js": ["a.js"], "d.js": ["a.js"] };
-test("a.js → b.js → c.js → a.js", () => {
-  const c = findCycle(g);
-  expect([isCycle(g, c), c && [...c.slice(0, -1)].sort()]).toEqual([true, ["a.js", "b.js", "c.js"]]);
-});
-test("d.js مش جزء من الدايرة حتى لو الـ DFS بدأ منها", () => {
-  const g2 = { "d.js": ["a.js"], "a.js": ["b.js"], "b.js": ["a.js"] };
-  const c = findCycle(g2);
-  expect([isCycle(g2, c), c.includes("d.js")]).toEqual([true, false]);
-});
-test("من غير دايرة ← null", () => expect(findCycle({ "a.js": ["b.js"], "b.js": ["c.js"], "d.js": ["a.js"] })).toBe(null));
-test("ملف بيعمل import لنفسه ← ['a.js', 'a.js']", () => expect(findCycle({ "a.js": ["a.js"] })).toEqual(["a.js", "a.js"]));
-test("import لحاجة مش ملف في المشروع (lodash) ← null من غير ما يقع", () => expect(findCycle({ "a.js": ["lodash"] })).toBe(null));
-test("شكل الماسة من غير دايرة (حالة 2 مش 1) ← null", () => expect(findCycle({ a: ["b", "c"], b: ["d"], c: ["d"], d: [] })).toBe(null));`,
-            solution: R`function findCycle(imports) {
-  const state = new Map();
-  const path = [];
-  const visit = f => {
-    const s = state.get(f) || 0;
-    if (s === 1) return [...path.slice(path.indexOf(f)), f];
-    if (s === 2) return null;
-    state.set(f, 1);
-    path.push(f);
-    for (const next of imports[f] || []) {
-      const c = visit(next);
-      if (c) return c;
-    }
-    path.pop();
-    state.set(f, 2);
-    return null;
+            starter: R`function shipWithinDays(weights, days) {
+  const daysAt = cap => {
+    // امشي على الطرود، وابدأ يوم جديد لما load + w > cap
   };
-  for (const f of Object.keys(imports)) {
-    const c = visit(f);
-    if (c) return c;
+  let lo = 1, hi = 0; // المدى الصح: من أتقل طرد لمجموع الكل
+  return lo;
+}`,
+            tests: R`const daysNeeded = (ws, cap) => { let d = 1, load = 0; for (const w of ws) { if (load + w > cap) { d++; load = 0; } load += w; } return d; };
+test("الأوزان من 1 لـ 10 و 5 أيام ← 15", () => expect(shipWithinDays([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5)).toBe(15));
+test("([3, 2, 2, 4, 1, 4], 3) ← 6", () => expect(shipWithinDays([3, 2, 2, 4, 1, 4], 3)).toBe(6));
+test("([1, 2, 3, 1, 1], 4) ← 3", () => expect(shipWithinDays([1, 2, 3, 1, 1], 4)).toBe(3));
+test("lo يبدأ من أتقل طرد: ([10, 1, 1], 3) ← 10", () => expect(shipWithinDays([10, 1, 1], 3)).toBe(10));
+test("يوم واحد ← المجموع كله", () => expect(shipWithinDays([4, 5, 6], 1)).toBe(15));
+test("20 ألف طرد: الناتج بيكفي، والناتج - 1 مبيكفيش (O(n log S))", () => {
+  const ws = Array.from({ length: 20000 }, (_, i) => (i * 37) % 500 + 1);
+  const cap = shipWithinDays(ws, 100);
+  expect([daysNeeded(ws, cap) <= 100, daysNeeded(ws, cap - 1) > 100]).toEqual([true, true]);
+});`,
+            solution: R`function shipWithinDays(weights, days) {
+  const daysAt = cap => {
+    let d = 1, load = 0;
+    for (const w of weights) {
+      if (load + w > cap) { d++; load = 0; }
+      load += w;
+    }
+    return d;
+  };
+  let lo = Math.max(...weights), hi = weights.reduce((s, w) => s + w, 0);
+  while (lo < hi) {
+    const mid = (lo + hi) >>> 1;
+    if (daysAt(mid) <= days) hi = mid;
+    else lo = mid + 1;
   }
-  return null;
+  return lo;
 }`
           }
         }
