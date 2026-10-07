@@ -9659,6 +9659,11 @@
   "date": "2026-10-07",
   "on": "pwsh 7.6 and Windows PowerShell 5.1 with Docker Desktop (Docker down simulated with DOCKER_HOST)"
  },
+ "rn|API client بالتوكن": {
+  "hash": "4dfcbac30244",
+  "date": "2026-10-07",
+  "on": "Windows 11 Node 24.19, Expo SDK 57: tsc + Jest against fake backend; docs: emulator/device networking"
+ },
  "rn|AsyncStorage": {
   "hash": "01d1c7b48d0e",
   "date": "2026-10-07",
@@ -9669,10 +9674,20 @@
   "date": "2026-10-07",
   "on": "windows: expo install expo-dev-client, expo run:android (fails at missing Android SDK); docs: Expo Go, eas build"
  },
+ "rn|FlashList": {
+  "hash": "a676f43e9075",
+  "date": "2026-10-07",
+  "on": "Windows 11 Node 24.19, Expo SDK 57, flash-list 2.0.2: web build in headless Chrome; docs: device performance"
+ },
  "rn|FlatList": {
   "hash": "55a608f8b4dc",
   "date": "2026-10-07",
   "on": "windows: Expo SDK 57 web + headless Chrome (5000-item solCode)"
+ },
+ "rn|I18nManager و RTL": {
+  "hash": "339106aee2de",
+  "date": "2026-10-07",
+  "on": "Windows 11 Node 24.19, Expo SDK 57: expo config introspect + Jest + web build in headless Chrome; docs: native RTL, forceRTL reload"
  },
  "rn|Image و expo-image": {
   "hash": "35f11c255208",
@@ -9708,6 +9723,11 @@
   "hash": "0a522d653e8e",
   "date": "2026-10-07",
   "on": "windows: create-expo-app@latest, npm create vite@latest --template react-ts; docs: flutter create"
+ },
+ "rn|Reanimated": {
+  "hash": "ca00e8ff6108",
+  "date": "2026-10-07",
+  "on": "Windows 11 Node 24.19, Expo SDK 57, Reanimated 4.5.1: Jest + web build in headless Chrome; docs: UI vs JS thread on device"
  },
  "rn|ScrollView و SafeArea": {
   "hash": "b3cd0c1ba18b",
@@ -9774,6 +9794,36 @@
   "date": "2026-10-07",
   "on": "windows: Expo SDK 57 web + headless Chrome (all try variants measured)"
  },
+ "rn|image picker ورفع صورة": {
+  "hash": "9282434cb866",
+  "date": "2026-10-07",
+  "on": "Windows 11 Node 24.19, Expo SDK 57: tsc + web build in headless Chrome (upload to fake backend); docs: native picker/camera"
+ },
+ "rn|jest-expo + RNTL": {
+  "hash": "5ff90d1b9729",
+  "date": "2026-10-07",
+  "on": "Windows 11 Node 24.19, Expo SDK 57: npx expo install --dev vs -- --save-dev, Jest, tsc"
+ },
+ "rn|location": {
+  "hash": "669b8a334f6f",
+  "date": "2026-10-07",
+  "on": "Windows 11 Node 24.19, Expo SDK 57: tsc + web build in headless Chrome with geolocation; docs: device GPS, native reverse geocode"
+ },
+ "rn|login من التطبيق": {
+  "hash": "02902949fad4",
+  "date": "2026-10-07",
+  "on": "Windows 11 Node 24.19, Expo SDK 57: tsc + Jest renderRouter with Stack.Protected; docs: Android back button"
+ },
+ "rn|mocks للـ native modules": {
+  "hash": "d1cf66da3d4b",
+  "date": "2026-10-07",
+  "on": "Windows 11 Node 24.19, Expo SDK 57: Jest"
+ },
+ "rn|notifications": {
+  "hash": "2119dff57ab1",
+  "date": "2026-10-07",
+  "on": "Windows 11 Node 24.19, Expo SDK 57: tsc + web build in headless Chrome; docs: local/push on device"
+ },
  "rn|npx expo install": {
   "hash": "774ebe6f70d0",
   "date": "2026-10-07",
@@ -9784,15 +9834,30 @@
   "date": "2026-10-07",
   "on": "Expo SDK 57 web (Chrome headless, fake API) + tsc"
  },
+ "rn|permissions": {
+  "hash": "5bc5167357b8",
+  "date": "2026-10-07",
+  "on": "Windows 11 Node 24.19, Expo SDK 57: tsc + Jest (mocked expo-location) + expo config introspect; docs: real permission dialogs"
+ },
  "rn|pull to refresh و infinite": {
   "hash": "f3c6e5ba97aa",
   "date": "2026-10-07",
   "on": "Expo SDK 57 web (infinite scroll) + jest-expo/RNTL 14; docs: pull-to-refresh on device"
  },
+ "rn|re-renders و React Compiler": {
+  "hash": "89f5ff31485d",
+  "date": "2026-10-07",
+  "on": "Windows 11 Node 24.19, Expo SDK 57: Jest render counts + web build with React Compiler; docs: RN DevTools Profiler"
+ },
  "rn|react-hook-form + Controller": {
   "hash": "fcc2318aa976",
   "date": "2026-10-07",
   "on": "Expo SDK 57 web + jest-expo/RNTL 14 userEvent"
+ },
+ "rn|refresh token": {
+  "hash": "d8973a709b81",
+  "date": "2026-10-07",
+  "on": "Windows 11 Node 24.19, Expo SDK 57: Jest solCode test + rotating fake backend"
  },
  "rn|useMutation و invalidate": {
   "hash": "063152bf4bd4",
@@ -9803,6 +9868,16 @@
   "hash": "12e21b2529bc",
   "date": "2026-10-07",
   "on": "Expo SDK 57 web (visibility refetch, offline via NetInfo); docs: AppState on device"
+ },
+ "rn|اختبار شاشة فيها API": {
+  "hash": "3c65df59d28f",
+  "date": "2026-10-07",
+  "on": "Windows 11 Node 24.19, Expo SDK 57: Jest example + solCode + variants"
+ },
+ "rn|الأرقام والخطوط العربي": {
+  "hash": "257dcc3d2ada",
+  "date": "2026-10-07",
+  "on": "Windows 11 Node 24.19 (ICU 78.3) + web build in headless Chrome; docs: Hermes output, font loading"
  },
  "rn|الكيبورد": {
   "hash": "c09520e1a3b1",
