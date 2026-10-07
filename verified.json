@@ -8309,6 +8309,11 @@
   "date": "2026-10-07",
   "on": "ubuntu:24.04 (Docker)"
  },
+ "symbols|#  -  **  ```  (Markdown)": {
+  "hash": "76ce61c0ec90",
+  "date": "2026-10-07",
+  "on": "npx marked 18.1.0 (Node 24, Windows)"
+ },
  "symbols|#  و  #!": {
   "hash": "daa1f9a59f42",
   "date": "2026-10-07",
@@ -8349,10 +8354,20 @@
   "date": "2026-10-07",
   "on": "Node 24.19 on Windows; bash in ubuntu:24.04 Docker"
  },
+ "symbols|$var  و  ->  (PHP)": {
+  "hash": "8e788171227e",
+  "date": "2026-10-07",
+  "on": "Docker php:8.4-cli (PHP 8.4.26)"
+ },
  "symbols|%": {
   "hash": "c588f35ed0c6",
   "date": "2026-10-07",
   "on": "Node 24.19 on Windows; Python 3.14 (Windows)"
+ },
+ "symbols|%20": {
+  "hash": "58e5e0e1df8e",
+  "date": "2026-10-07",
+  "on": "Node 24 + Python urllib (Windows); fetch line printed, not sent"
  },
  "symbols|%VAR%  و  $env:VAR": {
   "hash": "4f74a07bd762",
@@ -8379,6 +8394,11 @@
   "date": "2026-10-07",
   "on": "ubuntu:24.04 (Docker, git); npm in Git Bash; cmd /c + pwsh"
  },
+ "symbols|'text'  ضد  \"column\"": {
+  "hash": "354c38de7a70",
+  "date": "2026-10-07",
+  "on": "Docker postgres:18 (psql); docs: MySQL quoting"
+ },
  "symbols|( )  و  { }": {
   "hash": "a8c91b1d1b1c",
   "date": "2026-10-07",
@@ -8393,6 +8413,11 @@
   "hash": "6c479ef450d8",
   "date": "2026-10-07",
   "on": "ubuntu:24.04 (Docker)"
+ },
+ "symbols|* * * * *": {
+  "hash": "a86e555c1b92",
+  "date": "2026-10-07",
+  "on": "Docker ubuntu:24.04 (cron + live daemon) + cron-parser/cronstrue in Node; docs: GitHub Actions UTC"
  },
  "symbols|**": {
   "hash": "35b8ef7edf11",
@@ -8439,6 +8464,11 @@
   "date": "2026-10-07",
   "on": "ubuntu:24.04 (Docker, python3); npm 11.17 in Git Bash on Windows"
  },
+ "symbols|://  ?  &  =  #": {
+  "hash": "0d947a74b2ba",
+  "date": "2026-10-07",
+  "on": "Node 24 (Windows)"
+ },
  "symbols|;": {
   "hash": "ca2bc8843a81",
   "date": "2026-10-07",
@@ -8479,6 +8509,11 @@
   "date": "2026-10-07",
   "on": "Node 24.19 on Windows"
  },
+ "symbols|=>  و  .  و  ::  (PHP)": {
+  "hash": "b44a08d2321a",
+  "date": "2026-10-07",
+  "on": "Docker php:8.4-cli (PHP 8.4.26)"
+ },
  "symbols|>  و  >>": {
   "hash": "4cd6be1d11c3",
   "date": "2026-10-07",
@@ -8504,6 +8539,11 @@
   "date": "2026-10-07",
   "on": "Python 3.14 on Windows; docs: FastAPI/Angular/NestJS uses"
  },
+ "symbols|@scope/pkg  و  git@": {
+  "hash": "319ba688d32b",
+  "date": "2026-10-07",
+  "on": "npm view + npm-package-arg (Windows), ssh -G in Docker ubuntu:24.04; docs: clone/ssh not run"
+ },
  "symbols|A | B  و  A & B": {
   "hash": "0bd863bb8017",
   "date": "2026-10-07",
@@ -8513,6 +8553,21 @@
   "hash": "e977c8a61788",
   "date": "2026-10-07",
   "on": "Node 24 on Windows 11 + ubuntu:24.04 (Docker); docs: keyboard layout shortcuts"
+ },
+ "symbols|HEAD~1  و  HEAD^": {
+  "hash": "ddeee8f062fe",
+  "date": "2026-10-07",
+  "on": "Git for Windows throwaway repo (bash, pwsh, cmd); docs: zsh extendedglob, interactive cmd More?"
+ },
+ "symbols|LIKE '%a_'": {
+  "hash": "bf6cc961dab3",
+  "date": "2026-10-07",
+  "on": "Docker postgres:18 (psql); SQLite via Python sqlite3; docs: MySQL collation"
+ },
+ "symbols|SELECT *  و  --  و  ;": {
+  "hash": "738f39ece839",
+  "date": "2026-10-07",
+  "on": "Docker postgres:18 (psql 18.6); docs: MySQL -- rule"
  },
  "symbols|[ ]  و  [[ ]]": {
   "hash": "695b16c56d6f",
@@ -8529,6 +8584,11 @@
   "date": "2026-10-07",
   "on": "ubuntu:24.04 (Docker); docs: the docker run line itself"
  },
+ "symbols|^1.2.3  و  ~1.2.3": {
+  "hash": "757a14e0fe96",
+  "date": "2026-10-07",
+  "on": "Node semver 7.8.5 + npx semver + npm outdated (Windows)"
+ },
  "symbols|^C  ^D  ^Z": {
   "hash": "6e5ab557f723",
   "date": "2026-10-07",
@@ -8539,6 +8599,11 @@
   "date": "2026-10-07",
   "on": "Node 24.19 on Windows; Python 3.14 (Windows)"
  },
+ "symbols|a..b  و  a...b": {
+  "hash": "82eb7d6114bc",
+  "date": "2026-10-07",
+  "on": "Git for Windows throwaway repo with local bare origin"
+ },
  "symbols|arr[0]  و  [a, b]": {
   "hash": "613199e68465",
   "date": "2026-10-07",
@@ -8548,6 +8613,11 @@
   "hash": "586e6c277e15",
   "date": "2026-10-07",
   "on": "Node 24.19 on Windows; Python 3.14 (Windows)"
+ },
+ "symbols|key: value  و  -  (YAML)": {
+  "hash": "091afacfb5de",
+  "date": "2026-10-07",
+  "on": "PyYAML 6.0.3 (Python 3.14 venv) + Node yaml 2.9.1 (Windows)"
  },
  "symbols|name=value": {
   "hash": "69855168e2bf",
