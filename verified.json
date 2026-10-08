@@ -1160,9 +1160,9 @@
   "on": "Windows 11 Node 24, Prisma 7 + PostgreSQL 18 Docker (security fix rerun)"
  },
  "arch|RLS و app.tenant_id": {
-  "hash": "2e4b7d0c2385",
+  "hash": "f527de9735c9",
   "date": "2026-10-08",
-  "on": "psql on postgres:18 + Prisma 7 as app_user"
+  "on": "docs: teach wording updated after the tenant-extension fix; lesson code unchanged since its PostgreSQL 18 run"
  },
  "arch|Sentry": {
   "hash": "ed19b8da4115",
