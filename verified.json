@@ -6154,6 +6154,11 @@
   "date": "2026-10-08",
   "on": "Android compile in cirruslabs/flutter (AGP 9.4.1) (compiled only); docs: image loading on device"
  },
+ "kotlin|Column و Row و Box": {
+  "hash": "76178f4d2b96",
+  "date": "2026-10-08",
+  "on": "Compose Multiplatform 1.12.1 Desktop (eclipse-temurin:21-jdk, runComposeUiTest headless), LTR+RTL bounds"
+ },
  "kotlin|DataStore": {
   "hash": "dea1ece152ed",
   "date": "2026-10-08",
@@ -6164,10 +6169,25 @@
   "date": "2026-10-08",
   "on": "eclipse-temurin:21-jdk (kotlinc 2.4.20 + kotlinx-coroutines 1.10.2)"
  },
+ "kotlin|LazyColumn": {
+  "hash": "d9eb2100cc9f",
+  "date": "2026-10-08",
+  "on": "Compose Multiplatform 1.12.1 Desktop (eclipse-temurin:21-jdk, runComposeUiTest headless)"
+ },
  "kotlin|List و Map و Set": {
   "hash": "daa427bcd53e",
   "date": "2026-10-07",
   "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20"
+ },
+ "kotlin|Material 3 و Theme": {
+  "hash": "64ffebade00a",
+  "date": "2026-10-08",
+  "on": "Compose Multiplatform 1.12.1 Desktop (eclipse-temurin:21-jdk, runComposeUiTest headless) + Android assembleDebug (AGP 9.4.1, Compose 1.10.6, cirruslabs/flutter image); docs: dynamic color on device, Preview rendering"
+ },
+ "kotlin|Navigation Compose": {
+  "hash": "0c8892f45521",
+  "date": "2026-10-08",
+  "on": "Compose Multiplatform 1.12.1 Desktop (eclipse-temurin:21-jdk, runComposeUiTest headless) + navigation 2.9.2 + Android assembleDebug (AGP 9.4.1, Compose 1.10.6, cirruslabs/flutter image); docs: system Back button, missing serialization plugin error"
  },
  "kotlin|Retrofit و serialization": {
   "hash": "d089622c6fe3",
@@ -6249,10 +6269,20 @@
   "date": "2026-10-07",
   "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20"
  },
+ "kotlin|remember و state": {
+  "hash": "4cec3fac53f9",
+  "date": "2026-10-08",
+  "on": "Compose Multiplatform 1.12.1 Desktop (eclipse-temurin:21-jdk, runComposeUiTest headless), SaveableStateRegistry recreate + Android lintDebug; docs: emulator rotation"
+ },
  "kotlin|scope functions": {
   "hash": "ace850af534d",
   "date": "2026-10-07",
   "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20"
+ },
+ "kotlin|state hoisting": {
+  "hash": "765c1a41c11d",
+  "date": "2026-10-08",
+  "on": "Compose Multiplatform 1.12.1 Desktop (eclipse-temurin:21-jdk, runComposeUiTest headless)"
  },
  "kotlin|string templates": {
   "hash": "8228e9beb172",
@@ -6269,6 +6299,11 @@
   "date": "2026-10-08",
   "on": "eclipse-temurin:21-jdk (kotlinc 2.4.20 + javac 21, javap) + Android compile in cirruslabs/flutter (AGP 9.4.1)"
  },
+ "kotlin|التنسيق والـ Modifiers في Compose": {
+  "hash": "a76db3e30ae2",
+  "date": "2026-10-08",
+  "on": "Compose Multiplatform 1.12.1 Desktop (eclipse-temurin:21-jdk, runComposeUiTest headless), pixel colors + click areas; docs: border placement"
+ },
  "kotlin|الدوال": {
   "hash": "71c3630011ff",
   "date": "2026-10-07",
@@ -6279,6 +6314,11 @@
   "date": "2026-10-07",
   "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20"
  },
+ "kotlin|الـ ViewModel وحفظ البيانات": {
+  "hash": "039dcff22174",
+  "date": "2026-10-08",
+  "on": "Compose Multiplatform 1.12.1 Desktop (eclipse-temurin:21-jdk, runComposeUiTest headless) + lifecycle 2.11.0 + Android assembleDebug (AGP 9.4.1, Compose 1.10.6, cirruslabs/flutter image); docs: emulator rotation/Terminate"
+ },
  "kotlin|المتغيرات والـ Null Safety في Kotlin": {
   "hash": "a07e91fbba94",
   "date": "2026-10-07",
@@ -6288,6 +6328,11 @@
   "hash": "6278f4c50d4f",
   "date": "2026-10-07",
   "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20; docs: sdk install kotlin, brew, Windows PATH"
+ },
+ "kotlin|مقدمة Jetpack Compose": {
+  "hash": "001c6f11ff39",
+  "date": "2026-10-08",
+  "on": "Compose Multiplatform 1.12.1 Desktop (eclipse-temurin:21-jdk, runComposeUiTest headless) + Android assembleDebug (AGP 9.4.1, Compose 1.10.6, cirruslabs/flutter image); docs: Android Studio Preview, Logcat on device"
  },
  "kotlin|مقدمة Kotlin وكتابة أول برنامج": {
   "hash": "d40bf013db41",
