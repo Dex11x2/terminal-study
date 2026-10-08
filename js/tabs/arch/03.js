@@ -1,2249 +1,915 @@
 // تكملة تاب arch: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/arch/01.js (شرح حقول الدرس في أوله)
 MORE("arch", [
     {
-      t: "الصلاحيات والدفع",
-      l: 2,
-      n: "مين يقدر يعمل إيه، وبعدين أهم ميزة في المنتج: الفلوس من الزرار لحد التفعيل",
+      t: "هيكل المشروع وخطة البناء",
+      l: 1,
+      n: "الفولدرات والبيئات، وتبني بأنهي ترتيب، وإمتى تقول الميزة خلصت",
       items: [
         {
-          cmd: "requireAuth و requireRole",
-          title: "مين داخل، ومسموحله يعمل إيه",
-          desc: R`[[requireAuth]] بيتأكد من الـ access token، ويحط المستخدم في [[req.user]]. و [[requireRole]] بيتأكد إن دوره مسموح. وبيتحطوا قدام الـ route: [[router.post("/admin/courses", requireAuth, requireRole("ADMIN"), handler)]].
+          cmd: "monorepo",
+          title: "كل التطبيقات في repo واحد",
+          desc: R`الـ monorepo معناه إن الواجهة والـ API والكود المشترك كلهم في repo واحد. أي تغيير في شكل الداتا بيعدّي على الاتنين في commit واحد و PR واحد. مع pnpm workspaces كل فولدر بيبقى package لوحده. و [[packages/shared]] بيبقى فيه الـ types و Zod schemas اللي الاتنين بيستخدموها.
 
-401 معناها «مش عارفين انت مين». و 403 معناها «عارفينك، بس مش مسموحلك».`,
-          example: R`export function requireAuth(req, res, next) {
-  const header = req.headers.authorization ?? "";
-  const token = header.startsWith("Bearer ") ? header.slice(7) : null;
-  if (!token) throw new AppError(401, "UNAUTHENTICATED", "سجّل دخول الأول");
-  try {
-    const payload = jwt.verify(token, config.JWT_SECRET, { algorithms: ["HS256"] });
-    req.user = { id: payload.sub, role: payload.role };
-  } catch {
-    throw new AppError(401, "TOKEN_EXPIRED", "التوكن انتهى");
-  }
-  next();
-}
-
-export const requireRole = (...roles) => (req, res, next) =>
-  roles.includes(req.user?.role) ? next() : next(new AppError(403, "FORBIDDEN", "مش مسموحلك"));`,
-          try: R`اعمل route للأدمن بس، واطلبه ٣ مرات: من غير توكن (المفروض 401)، وبتوكن طالب (403)، وبتوكن أدمن (200). بعدين عدّل حرف في التوكن وابعته، ولازم يرجع 401.`,
+أوامر pnpm (filter و workspace:*) في تاب «Node و npm».`,
+          example: R`myapp/
+  apps/web/             Next.js: الصفحات والواجهة
+  apps/api/             Express + Prisma: الـ API والـ webhooks
+  apps/worker/          الـ jobs في الخلفية: إيميلات ومعالجة صور
+  packages/shared/      Zod schemas و types مشتركة
+  docs/                 requirements و erd و adr و runbook
+  pnpm-workspace.yaml   بيعرّف apps/* و packages/*
+  .github/workflows/    CI واحد بيفحص الكل`,
+          try: R`اعمل الهيكل ده، وفي [[packages/shared]] حط [[export const CreateOrder = z.object({ courseId: z.string() })]]. استورده في الـ api عشان الـ validation، وفي الـ web عشان الفورم. بعدين غيّر اسم الحقل ولاحظ إن الاتنين بيقعوا في typecheck مع بعض.`,
           flag: "script",
           deep: {
-            why: "إخفاء زرار الأدمن في الواجهة مش حماية، ده شكل بس. أي حد يقدر يبعت الطلب بـ curl. الحماية الحقيقية بتبقى على السيرفر، على كل route، من غير استثناء.",
-            how: R`[[jwt.verify]] بيتأكد من التوقيع والمدة. و [[algorithms]] بتحدد الخوارزمية المقبولة، ودي بتقفل هجمات قديمة زي توكن بـ [[alg: none]]. وفي Express، الـ throw جوه middleware عادي (مش async) بيوصل للـ error handler لوحده.
+            why: "لما كل تطبيق في repo لوحده، الـ API بتغيّر شكل الرد، والواجهة متعرفش غير لما تقع في الإنتاج. وكل ميزة بتحتاج PR في مكانين وتنسيق بينهم. الـ monorepo بيخلي العقد بين الاتنين كود مشترك، والـ typecheck بيمسك الاختلاف.",
+            how: R`[[pnpm-workspace.yaml]] فيه [[packages: ["apps/*", "packages/*"]]]. كل فولدر فيه package.json باسم زي [[@myapp/shared]]. والـ api بيعتمد عليه بـ [[workspace:*]]، يعني دايمًا النسخة اللي في الـ repo.
 
-الدور متخزن جوه التوكن، فمش محتاج تسأل القاعدة مع كل طلب. بس ده ليه تمن: لو شلت صلاحية أدمن، التوكن اللي معاه هيفضل شغال لحد ما يخلص، يعني لحد ١٥ دقيقة. في أغلب الـ routes ده مقبول. بس في لوحة الأدمن والعمليات الخطيرة، اقرا الدور من القاعدة مع كل طلب. طلب واحد زيادة، في مقابل إن الصلاحية تتشال فورًا.
+الـ Zod schema المشترك بيستخدم في ٣ أماكن. السيرفر بيعمل بيه validation للطلب. والواجهة بتعمل بيه validation للفورم قبل ما تبعت. وكمان بتطلع منه الـ TypeScript types بـ [[z.infer]]. يعني تعريف واحد، ومفيش اختلاف.
 
-ولما المنتج يكبر، الأدوار لوحدها مبتكفيش. بتعمل permissions زي [[course:publish]] و [[order:refund]]، وكل دور بيبقى مجموعة permissions. وساعتها الـ middleware بيبقى [[requirePermission("order:refund")]]، وتقدر تعمل دور جديد من غير ما تلمس الكود.
+كل تطبيق ليه Dockerfile و deploy لوحده. الـ monorepo بيوحّد الكود، مش الـ deploy. والـ worker ممكن يبقى نفس كود الـ api بس بيشغّل ملف تاني.
 
-وفي Next.js، الـ proxy (اسمه كان middleware قبل Next 16) مش مكان الحماية الوحيد. الوثائق نفسها بتقول اتحقق جوه كل Server Function و Route Handler. التفاصيل في تاب «Next.js».`,
-            when: "على كل route مش public. والأسهل تحطهم على الـ router كله مرة واحدة: [[admin.use(requireAuth, requireRole(\"ADMIN\"))]].",
-            mistakes: R`إنك تحمي في الواجهة بس. أو [[jwt.decode]] بدل verify. أو تنسى route واحد في النص. وفي مشروع حقيقي كان الدور بييجي من التوكن في لوحة الأدمن، فأدمن اتشالت صلاحيته فضل شغال لحد ما التوكن خلص. وفي مشروع تاني كانت الواجهة كاتبة قوايم الأدوار بإيدها في كذا مكان ([[role === "dev" || role === ...]])، مكررة من السيرفر، ومع أول تعديل بقوا مختلفين.`
+وفيه أدوات زي Turborepo و Nx بتعمل cache للـ builds والـ tests، ومفيدة لما المشروع يكبر. في الأول pnpm لوحده كفاية.
+
+إمتى repos منفصلة أحسن؟ لما فرق مختلفة بتنشر في أوقات مختلفة، أو لما جزء منهم open source، أو SDK بيتنشر لعملا.`,
+            when: "أول ما يبقى عندك أكتر من تطبيق بيتكلموا مع بعض: واجهة و API، أو API و worker، أو موقع ولوحة أدمن.",
+            mistakes: R`إن [[packages/shared]] يستورد من [[apps/api]]، فتعمل دايرة. أو تحط فيه كود سيرفر (Prisma أو أسرار) فيتسحب لبندل المتصفح. أو يبقى فيه lockfile لكل تطبيق لوحده جوه الـ monorepo. وفي مشروع حقيقي كانت ملفات الـ build المضغوطة (zip و tar.gz) متعملها commit جنب الكود. دي مكانها الـ CI والـ releases، مش git.`
           },
-          teach: R`## اتنين middleware بيقفوا قدام الـ route
+          teach: R`## المثال شجرة فولدرات
 
-[[requireAuth]] بيجاوب على «انت مين؟» من التوكن، و [[requireRole]] بيجاوب على «مسموحلك؟» من الدور اللي جوه التوكن. جربنا الكود ده بـ Express 5 و jsonwebtoken 9 على Node 24 (ويندوز 11)، بتوكنات متوقّعة بسر تجربة، على route [[/admin/stats]] اللي في الـ solCode.
-
----
-
-## ١. [[export function requireAuth(req, res, next) {]]
-
-middleware في Express دالة بتاخد ٣ حاجات: [[req]] (الطلب)، و [[res]] (الرد)، و [[next]] (دالة لما تناديها Express بيروح للي بعدك). و [[export]] عشان ملف الـ routes يستوردها.
+المثال شكل الـ repo من برّه: ٣ تطبيقات في [[apps/]]، و package مشتركة في [[packages/]]، وملفات للمشروع كله. وتحت في الـ solCode الملفات اللي بتخلي ده يشتغل فعلًا. جرّبنا الـ solCode كامل بـ pnpm 10.33 و TypeScript 5.9 على ويندوز 11.
 
 ---
 
-## ٢. هات التوكن من الـ header
+## ١. الشجرة سطر سطر
 
-### [[const header = req.headers.authorization ?? "";]]
+| المسار | فيه إيه | بيتعمله deploy؟ |
+|---|---|---|
+| [[apps/web/]] | Next.js: الصفحات | أيوه، لوحده |
+| [[apps/api/]] | Express و Prisma والـ webhooks | أيوه، لوحده |
+| [[apps/worker/]] | jobs في الخلفية: إيميلات وصور | أيوه، لوحده (أو نفس صورة الـ api بأمر تاني) |
+| [[packages/shared/]] | Zod schemas و types | لأ، بيتسحب جوه اللي بيستخدمه |
+| [[docs/]] | requirements و erd و adr | لأ |
+| [[pnpm-workspace.yaml]] | بيقول لـ pnpm فين الـ packages | لأ |
+| [[.github/workflows/]] | CI واحد للكل | لأ |
 
-الواجهة بتبعت التوكن في header اسمه [[Authorization]] بالشكل ده:
+الفرق بين [[apps]] و [[packages]]: الـ apps حاجات بتشتغل، والـ packages مكتبات بتستخدمها الـ apps.
+
+---
+
+## ٢. [[pnpm-workspace.yaml]]
 
 ~~~text
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIi...
+packages:
+  - "apps/*"
+  - "packages/*"
 ~~~
 
-Node بيخلّي أسامي الـ headers small، فبنقرا [[req.headers.authorization]]. و [[??]] (nullish coalescing) معناها «لو اللي قبلي [[undefined]] أو [[null]]، خد اللي بعدي»، فلو الـ header مش موجود [[header]] بيبقى نص فاضي بدل [[undefined]]، والسطر الجاي ميقعش.
-
-### [[header.startsWith("Bearer ") ? header.slice(7) : null]]
-
-- [[startsWith("Bearer ")]]: النص بيبدأ بكلمة Bearer ومسافة؟
-- [[? ... : ...]] (ternary): لو أيوه خد اللي قبل [[:]]، لو لأ خد اللي بعدها.
-- [[slice(7)]]: شيل أول ٧ حروف. [[Bearer ]] بالمسافة ٧ حروف بالظبط، فاللي فاضل هو التوكن.
-
-### [[if (!token) throw new AppError(401, ...)]]
-
-مفيش توكن؟ ارمي خطأ. [[AppError]] الكلاس اللي عملناه في درس «شكل الأخطاء»: status و code ورسالة، والـ error handler بيحوّله JSON.
+ملف YAML: [[packages:]] مفتاح، وتحته قايمة (كل بند بـ [[- ]]). [[*]] معناها «أي فولدر جوه». كده pnpm بيعتبر كل فولدر في [[apps]] و [[packages]] فيه [[package.json]] مشروع لوحده في نفس الـ workspace.
 
 ---
 
-## ٣. [[jwt.verify(token, config.JWT_SECRET, { algorithms: ["HS256"] })]]
+## ٣. [[packages/shared/package.json]]
 
-[[jwt.verify]] بيعمل ٣ حاجات: يحسب التوقيع تاني بالسر ويقارنه، ويشوف [[exp]] (وقت الانتهاء)، ولو كله تمام يرجّع الـ payload. ولو أي حاجة غلط بيرمي.
-
-[[algorithms: ["HS256"]]] بتقول «اقبل التوقيع ده بس». جربنا توكن معمول بإيدنا بـ [[alg: none]] (من غير توقيع خالص):
-
-~~~text الناتج
-JsonWebTokenError jwt signature is required
-~~~
-
-يعني اترفض. والتوكن المنتهي:
-
-~~~text الناتج
-TokenExpiredError jwt expired
-~~~
-
-### [[req.user = { id: payload.sub, role: payload.role };]]
-
-[[sub]] (subject) هو id المستخدم اللي حطيناه وقت الـ login. بنحطه على [[req]] عشان أي middleware أو handler بعدنا يقراه، من غير ما يفك التوكن تاني.
-
-### [[catch { throw new AppError(401, "TOKEN_EXPIRED", ...) }]]
-
-[[catch]] من غير [[(err)]] صيغة جديدة في JavaScript لما مش محتاج الخطأ نفسه. وأي فشل (توقيع غلط أو انتهى) بيبقى 401.
-
-### [[next();]]
-
-كله تمام، روح للي بعدي. ولاحظ إن الـ middleware ده مش [[async]]: الـ [[throw]] فيه بيوصل للـ error handler لوحده. وفي Express 5 حتى الـ [[async]] بيوصل (في Express 4 كان لازم [[next(err)]]).
-
----
-
-## ٤. [[export const requireRole = (...roles) => (req, res, next) => ...]]
-
-ده سطر فيه دالتين جوه بعض:
-
-1. [[(...roles) =>]] دالة بتاخد أي عدد أدوار ([[...]] اسمها rest، بتجمعهم في array). بتنادي عليها وقت تسجيل الـ route: [[requireRole("ADMIN")]] أو [[requireRole("INSTRUCTOR", "ADMIN")]].
-2. وهي بترجّع **middleware** تاني [[(req, res, next) =>]]، ده اللي Express بينادي عليه مع كل طلب.
-
-### [[roles.includes(req.user?.role) ? next() : next(new AppError(403, ...))]]
-
-- [[req.user?.role]]: [[?.]] (optional chaining) لو [[req.user]] مش موجود (حد نسي [[requireAuth]] قبله)، النتيجة [[undefined]] بدل ما الكود يقع، و [[includes(undefined)]] بترجع [[false]]، فالرد 403. يعني النسيان بيقفل مش بيفتح.
-- [[next(err)]]: لما تدّي [[next]] خطأ، Express بيفوّت كل اللي بعده ويروح للـ error handler.
-
----
-
-## ٥. التجربة: كل الحالات
-
-الـ route من الـ solCode: [[router.get("/admin/stats", requireAuth, requireRole("ADMIN"), handler)]]. Express بيشغّلهم بالترتيب من الشمال لليمين.
-
-~~~text الناتج
-no token         401 {"error":{"code":"UNAUTHENTICATED","message":"سجّل دخول الأول"}}
-student          403 {"error":{"code":"FORBIDDEN","message":"مش مسموحلك"}}
-admin            200 {"data":{"users":0}}
-student->ADMIN   401 {"error":{"code":"TOKEN_EXPIRED","message":"التوكن انتهى"}}
-lowercase bearer 401 {"error":{"code":"UNAUTHENTICATED","message":"سجّل دخول الأول"}}
-alg none         401 {"error":{"code":"TOKEN_EXPIRED","message":"التوكن انتهى"}}
-expired          401 {"error":{"code":"TOKEN_EXPIRED","message":"التوكن انتهى"}}
-~~~
-
-- [[student->ADMIN]]: خدنا توكن الطالب، فكّينا الـ payload وغيّرنا [[role]] لـ [[ADMIN]] ورجّعناه من غير ما نلمس التوقيع. اترفض، لأن التوقيع اتحسب على الـ payload القديم.
-- [[lowercase bearer]]: [[startsWith("Bearer ")]] حساسة لحالة الحروف، فـ [[bearer]] اترفضت كأن مفيش توكن.
-- [[users: 0]] لأن القاعدة كانت فاضية وقت التجربة.
-
-| الطلب | مين وقّفه | الكود |
-|---|---|---|
-| من غير توكن | [[requireAuth]] | 401 |
-| توكن متعدل أو منتهي أو [[alg: none]] | [[jwt.verify]] جوه [[requireAuth]] | 401 |
-| طالب | [[requireRole("ADMIN")]] | 403 |
-| أدمن | ولا حد، وصل للـ handler | 200 |
-
----
-
-## الخلاصة
-
-- 401 = مش عارفين انت مين (مفيش توكن أو التوكن بايظ). 403 = عارفينك بس مش مسموحلك.
-- [[jwt.verify]] مش [[jwt.decode]]: الـ decode بيقرا من غير ما يتحقق من التوقيع.
-- [[algorithms]] بتقفل [[alg: none]]، و [[?.]] في [[requireRole]] بتخلي النسيان يقفل الباب مش يفتحه.
-- الدور من التوكن ممكن يفضل قديم لحد ١٥ دقيقة، فالأدمن والعمليات الخطيرة تقرا الدور من القاعدة.`,
-          lines: [
-            "middleware بيتأكد إن فيه مستخدم داخل.",
-            "الـ header، أو نص فاضي لو مش موجود.",
-            "خد التوكن بعد كلمة Bearer.",
-            "مفيش توكن؟ 401.",
-            "جرّب تتحقق...",
-            "...من التوقيع والمدة، وبالخوارزمية دي بس.",
-            "حط المستخدم في الطلب عشان اللي بعده يستخدمه.",
-            "لو التحقق فشل...",
-            "...401، والواجهة هتعمل refresh.",
-            "قفلة.",
-            "كمّل للي بعده.",
-            "قفلة.",
-            "middleware بياخد الأدوار المسموحة ويرجّع middleware...",
-            "...لو الدور في القايمة كمّل، ولو لأ 403."
-          ],
-          sol: R`النتايج: من غير توكن [[401 UNAUTHENTICATED]]، وبتوكن طالب [[403 FORBIDDEN]]، وبتوكن أدمن [[200]]، وبتوكن متعدل [[401]]. لاحظ إن الكود بيرجّع [[TOKEN_EXPIRED]] لأي فشل في [[jwt.verify]]، سواء التوكن انتهى أو التوقيع غلط. ده كويس للواجهة (في الحالتين هتعمل refresh)، بس في اللوج فرّق بينهم: [[TokenExpiredError]] عادي، و [[JsonWebTokenError: invalid signature]] ممكن يبقى حد بيجرب.
-
-خلي بالك وانت بتعدّل: لو غيرت آخر حرف في التوكن، ممكن يعدّي! آخر حرف في base64url فيه bits زيادة مش مستخدمة، فساعات حرفين مختلفين بيطلّعوا نفس البايتات. غيّر حرف في نص الـ payload (الجزء اللي في النص) عشان تتأكد. وكمان [[bearer]] بحرف صغير هترجع 401 [[UNAUTHENTICATED]] لأن الكود بيدوّر على [[Bearer ]] بالظبط.
-
-لو الطالب رجع 200، يبقى [[requireRole]] مش متسجّل على الـ route، أو الدور بيتقري من الـ body بدل التوكن.`,
-          solCode: R`router.get("/admin/stats", requireAuth, requireRole("ADMIN"), async (req, res) => {
-  res.json({ data: { users: await db.user.count() } });
-});
-
-# curl -s -w ' %{http_code}\n' localhost:4000/admin/stats                                   # 401
-# curl -s -w ' %{http_code}\n' -H "Authorization: Bearer $STUDENT" localhost:4000/admin/stats   # 403
-# curl -s -w ' %{http_code}\n' -H "Authorization: Bearer $ADMIN" localhost:4000/admin/stats     # 200`
-        },
-        {
-          cmd: "ownership",
-          title: "مسموحلك بالنوع ده، بس الحاجة دي بتاعتك؟",
-          desc: R`الدور مش كفاية. الطالب مسموحله يشوف الطلبات، بس طلباته هو بس. عشان كده كل query لازم يبقى فيه شرط الملكية جوه الـ [[where]] نفسه: [[{ id, userId: req.user.id }]]. ولو الحاجة مش بتاعته، رد 404 مش 403، عشان ميعرفش إنها موجودة أصلًا.
-
-ولو شغال بـ Supabase والواجهة بتكلّم القاعدة مباشرة، نفس القاعدة بتتكتب في القاعدة نفسها بـ RLS.`,
-          example: R`router.get("/orders/:id", requireAuth, async (req, res) => {
-  const order = await db.order.findFirst({
-    where: { id: req.params.id, ...(req.user.role !== "ADMIN" && { userId: req.user.id }) },
-    select: { id: true, status: true, amountCents: true, course: { select: { slug: true, title: true } } },
-  });
-  if (!order) throw new AppError(404, "NOT_FOUND", "الطلب مش موجود");
-  res.json({ data: order });
-});
-router.get("/lessons/:id/video", requireAuth, async (req, res) => {
-  const lesson = await db.lesson.findFirst({
-    where: { id: req.params.id, OR: [{ isPreview: true }, { course: { enrollments: { some: { userId: req.user.id } } } }] },
-  });
-  if (!lesson) throw new AppError(403, "NOT_ENROLLED", "اشترك في الكورس الأول");
-  res.json({ data: { url: await storage.signedUrl(lesson.videoKey, 3600) } });
-});`,
-          try: R`اعمل مستخدمين، وكل واحد يعمل طلب. بتوكن الأول اطلب طلب التاني بالـ id بتاعه. لازم يرجع 404. بعدين جرّب تجيب فيديو درس في كورس مش مشترك فيه.`,
-          flag: "script",
-          deep: {
-            why: "دي أشهر ثغرة في الـ APIs، واسمها IDOR أو Broken Access Control، ورقم ١ في OWASP. الـ endpoint بيتأكد إنك داخل، ويجيب أي id تبعته. فتغيّر رقم في الـ URL تشوف طلبات غيرك، أو فواتيرهم، أو فيديوهاتهم المدفوعة.",
-            how: R`الشرط جوه الـ where مش بعد ما تجيب الداتا. لو جبت الطلب وبعدين عملت [[if (order.userId !== req.user.id)]]، ده صح برضه، بس سهل تنساه. أما لما الشرط جزء من الـ query، مفيش طريقة الداتا تطلع غلط.
-
-الفيديو مثال على الملكية عن طريق علاقة: الدرس مسموح لو معمول preview، أو لو الكورس بتاعه فيه enrollment للمستخدم ده. Prisma بتحوّل [[some]] لـ EXISTS في SQL. والرابط اللي بيرجع موقّع وعمره ساعة، يعني الفيديو نفسه مش public.
-
-وفي Supabase، الواجهة بتكلّم القاعدة مباشرة، فالـ RLS هو الـ backend بتاعك. سياسة القراية بتبقى كده: [[create policy "own orders" on orders for select using (user_id = auth.uid());]]. وفيه ٣ حاجات لازم تاخد بالك منها:
-
-١. سياسة UPDATE بتسمح بتعديل الصف كله، بكل أعمدته. [[using (auth.uid() = id)]] على profiles معناها إن المستخدم يقدر يغيّر أي عمود في صفّه، ومنهم role. الحل إنك تمنع الأعمدة الحساسة: [[revoke update on profiles from authenticated]] وبعدين [[grant update (name, avatar_url) on profiles to authenticated]] للأعمدة المسموحة بس. الـ revoke على عمود واحد ملوش أي تأثير طول ما فيه grant على الجدول كله، وده الافتراضي في Supabase. أو تخلي التعديل عن طريق function.
-
-٢. الـ RLS بيحمي الصفوف مش الأعمدة. [[using (true)]] على جدول الأسئلة معناها إن الإجابات الصح بتطلع مع الأسئلة. الحل إنك تحط الإجابات في جدول تاني محدش يقراه غير السيرفر.
-
-٣. سياسة الأدمن اللي بتقرا من نفس الجدول ([[exists (select 1 from profiles where ...)]] على جدول profiles نفسه) بتعمل دايرة. الحل function بـ [[security definer]] زي [[is_admin()]].
-
-التفاصيل في تاب «SQL و Prisma»، و OWASP في تاب «أمان الموقع».`,
-            when: "كل endpoint بياخد id من برّه. من غير استثناء، حتى لو «محدش هيعرف الـ id».",
-            mistakes: R`في مشاريع حقيقية لقينا كل واحدة من دول. سياسة تعديل الـ profile من غير تحديد أعمدة، فأي مستخدم يقدر يخلّي نفسه admin. وطالب يقدر يعدّل نتيجة امتحانه ([[score]] و [[is_passed]]) في صفّه. ولاعب يعدّل الـ xp والـ level بتوعه. وأسئلة الامتحان بإجاباتها الصح مقروءة لأي حد عن طريق [[using (true)]]. وكتب مدفوعة PDF متخزنة بروابط public دايمة، فأي حد معاه اللينك ينزّلها على طول. والصح هنا رابط موقّع عمره ساعة. وكمان في مشروع منهم، ملف «تصليح» الـ RLS كان بيعمل نفس السياسات الغلط تاني.`
-          },
-          teach: R`## شرط الملكية جوه الـ query نفسه
-
-الـ route الأول بيرجّع طلب بالـ id بشرط إنه بتاعك (إلا لو أدمن)، والتاني بيرجّع رابط فيديو درس بشرط إنه preview أو انت مشترك في الكورس. جربنا الاتنين بـ Express 5 و Prisma 7 على PostgreSQL 18 (Docker، ويندوز 11، Node 24): مستخدمين Ali و Mona، وكورس SQL فيه درس preview ودرس مدفوع، وطلب واحد لـ Ali. والـ [[storage.signedUrl]] في التجربة دالة وهمية بترجع رابط شكله زي الحقيقي.
-
----
-
-## ١. [[router.get("/orders/:id", requireAuth, async (req, res) => {]]
-
-- [[:id]] اسمه route parameter: أي حاجة في المكان ده في الـ URL بتتحط في [[req.params.id]].
-- [[requireAuth]] من الدرس اللي فات: بيحط [[req.user]] بـ [[id]] و [[role]].
-
----
-
-## ٢. [[db.order.findFirst({ where: ..., select: ... })]]
-
-[[findFirst]] بيرجّع أول صف يطابق الشرط أو [[null]]. ليه مش [[findUnique]]؟ الاتنين شغالين هنا، بس [[findFirst]] بتقبل أي شرط من غير ما تفكر هل الحقول دي unique ولا لأ.
-
-### الشرط: [[{ id: req.params.id, ...(req.user.role !== "ADMIN" && { userId: req.user.id }) }]]
-
-من جوه لبرة:
-
-1. [[req.user.role !== "ADMIN"]]: [[true]] لو مش أدمن.
-2. [[true && { userId: ... }]]: [[&&]] بترجع آخر قيمة لو الاتنين صح، يعني الـ object [[{ userId }]]. ولو الأولى [[false]] بترجع [[false]] على طول.
-3. [[...]] (spread): بيفرد خانات الـ object جوه الـ where. و [[...false]] جوه object مبيعملش حاجة.
-
-طبعنا الشرط الناتج للحالتين:
-
-~~~text الناتج
-{"where":{"id":"X","userId":"u_ali"}}     ← طالب
-{"where":{"id":"X"}}                      ← أدمن
-~~~
-
-يعني الطالب بيدوّر على «طلب رقمه X **وصاحبه أنا**». لو الطلب بتاع حد تاني، القاعدة مبترجعش حاجة أصلًا.
-
-### [[select: { id: true, status: true, amountCents: true, course: { select: { slug: true, title: true } } }]]
-
-[[select]] بيحدد الأعمدة اللي ترجع. [[true]] يعني هات العمود ده، و [[course: { select: ... }]] بيجيب من الجدول المرتبط (العلاقة) العمودين دول بس. كده [[userId]] و [[gatewayTxId]] مش بيطلعوا للواجهة.
-
----
-
-## ٣. [[if (!order) throw new AppError(404, "NOT_FOUND", ...)]]
-
-مش موجود ومش بتاعك نفس الرد بالظبط:
-
-~~~text الناتج
-ali -> his order       200 {"data":{"id":"cmuzek3ta0000q8ie9238l7ja","status":"PENDING","amountCents":50000,"course":{"slug":"sql-basics","title":"SQL"}}}
-mona -> ali order      404 {"error":{"code":"NOT_FOUND","message":"الطلب مش موجود"}}
-mona -> fake id        404 {"error":{"code":"NOT_FOUND","message":"الطلب مش موجود"}}
-admin -> ali order     200 {"data":{"id":"cmuzek3ta0000q8ie9238l7ja",...}}
-~~~
-
-Mona متقدرش تفرّق بين «الطلب ده مش موجود» و «موجود بس مش بتاعي»، فمتقدرش تعرف أي ids حقيقية. ولو كان الرد 403، كانت هتعرف إن [[cmuzek3...]] طلب موجود عند حد.
-
----
-
-## ٤. رابط الفيديو: الملكية عن طريق علاقة
-
-### [[OR: [{ isPreview: true }, { course: { enrollments: { some: { userId: req.user.id } } } }]]]
-
-[[OR]] array من شروط، يكفي واحد منهم يتحقق:
-
-- [[{ isPreview: true }]]: الدرس مجاني للعرض.
-- [[{ course: { enrollments: { some: { userId } } } }]]: اقراها كده: «الكورس بتاع الدرس ده، عنده enrollments، **فيه واحد على الأقل** ([[some]]) الـ userId بتاعه أنا».
-
-شغّلنا Prisma بـ log للـ queries عشان نشوف الـ SQL (مختصر):
-
-~~~text الناتج
-SELECT ... FROM "Lesson" LEFT JOIN "Course" AS "j0" ON "j0"."id" = "Lesson"."courseId"
-WHERE ("Lesson"."id" = $1 AND ("Lesson"."isPreview" = $2
-  OR (EXISTS(SELECT "t1"."courseId" FROM "Enrollment" AS "t1"
-             WHERE ("t1"."userId" = $3 AND "j0"."id" = "t1"."courseId")) ...)))
-LIMIT $4
-~~~
-
-[[some]] اتحولت [[EXISTS(...)]]: القاعدة بتدوّر على صف واحد بس وتقف. و [[$1]] و [[$3]] parameters، يعني القيم مش ملزوقة في النص، فمفيش SQL injection.
-
-### [[if (!lesson) throw new AppError(403, "NOT_ENROLLED", ...)]]
-
-هنا 403 مش 404، لأن الدرس نفسه ظاهر في صفحة الكورس، ومفيش سر في وجوده. والرسالة بتقول للمستخدم يعمل إيه.
-
-### [[res.json({ data: { url: await storage.signedUrl(lesson.videoKey, 3600) } })]]
-
-[[videoKey]] مكان الملف في الـ storage (زي [[videos/sql/join.mp4]])، و [[3600]] ثانية = ساعة. الرابط بيخلص بعدها، فلو اتنشر مش هيفضل شغال.
-
-~~~text الناتج
-mona preview           200 {"data":{"url":"https://cdn.example.com/videos/sql/intro.mp4?expires=3600&sig=…"}}
-mona paid              403 {"error":{"code":"NOT_ENROLLED","message":"اشترك في الكورس الأول"}}
-mona paid enrolled     200 {"data":{"url":"https://cdn.example.com/videos/sql/join.mp4?expires=3600&sig=…"}}
-~~~
-
-التالتة بعد ما عملنا لـ Mona enrollment في الكورس.
-
----
-
-## ٥. Supabase: نفس الفكرة في القاعدة
-
-الـ [[deep]] بيشرح الـ RLS: لما الواجهة بتكلّم القاعدة مباشرة، الشرط [[user_id = auth.uid()]] بيبقى policy بدل [[where]]. الجزء ده من وثائق Supabase، متجربش هنا (التجربة الكاملة لـ RLS في درس «RLS و app.tenant_id»).
-
----
-
-## الخلاصة
-
-| | طلب بالـ id | فيديو درس |
-|---|---|---|
-| الشرط | [[id]] + [[userId]] (إلا الأدمن) | [[id]] + (preview أو enrollment) |
-| مش مسموح | 404 (ميعرفش إنه موجود) | 403 (الدرس معروف أصلًا) |
-| بيرجع | حقول محددة بـ [[select]] | رابط موقّع عمره ساعة |
-
-الشرط جوه الـ [[where]] مش [[if]] بعد ما تجيب الصف: كده مفيش طريقة الداتا تطلع غلط حتى لو حد نسي.`,
-          lines: [
-            "طلب واحد بالـ id.",
-            "دوّر...",
-            "...بالـ id، ولو مش أدمن لازم يكون صاحبه. الشرط جوه الـ query نفسه.",
-            "رجّع الحقول اللي الصفحة محتاجاها بس.",
-            "قفلة.",
-            "مش موجود أو مش بتاعه؟ نفس الرد 404.",
-            "رجّعه.",
-            "قفلة.",
-            "رابط فيديو درس.",
-            "دوّر على الدرس...",
-            "...لو preview مجاني، أو الكورس بتاعه فيه اشتراك للمستخدم ده.",
-            "قفلة.",
-            "مش مشترك؟ 403 ومعاها سبب واضح.",
-            "رابط موقّع عمره ساعة، مش رابط public.",
-            "قفلة."
-          ],
-          sol: R`بتوكن صاحب الطلب: [[200]] و [[{"data":{"id":"...","status":"PENDING","amountCents":50000,"course":{"slug":"...","title":"SQL"}}}]]. وبتوكن المستخدم التاني على نفس الـ id: [[404]] و [[{"error":{"code":"NOT_FOUND","message":"الطلب مش موجود"}}]]، مش 403. كده مبيعرفش إن الطلب ده موجود أصلًا. والأدمن بياخد 200 على أي طلب.
-
-الفيديو: درس [[isPreview: true]] بيرجع الرابط لأي حد مسجّل دخول. ودرس عادي في كورس مش مشترك فيه بيرجع [[403 NOT_ENROLLED]]. هنا 403 مقبولة، لأن الدرس نفسه ظاهر في صفحة الكورس ومفيش سر في وجوده.
-
-لو المستخدم التاني شاف الطلب، يبقى انت عامل [[findUnique({ where: { id } })]] وبعدين بتقارن [[userId]]، ونسيت المقارنة في route من الـ routes. الشرط جوه الـ where نفسه أضمن، لأنه ميتنسيش.`
-        },
-        {
-          cmd: "POST /orders",
-          title: "من زرار «اشتري» لطلب مستني الدفع",
-          desc: R`الواجهة بتبعت [[courseId]] بس. السعر، والكورس منشور ولا لأ، والطالب مشترك قبل كده ولا لأ، كل ده السيرفر بيقرره من القاعدة. بعدين بيعمل Order بحالة PENDING، ويطلب من البوابة رابط دفع، ويرجّعه. والواجهة بتعمل [[window.location.href = checkoutUrl]].`,
-          example: R`router.post("/orders", requireAuth, async (req, res) => {
-  const { courseId } = CreateOrder.parse(req.body);
-  const course = await db.course.findFirst({ where: { id: courseId, published: true } });
-  if (!course) throw new AppError(404, "NOT_FOUND", "الكورس مش موجود");
-  const owned = await db.enrollment.findUnique({ where: { userId_courseId: { userId: req.user.id, courseId } } });
-  if (owned) throw new AppError(409, "ALREADY_ENROLLED", "الكورس ده عندك أصلًا");
-  const order = await db.order.create({ data: { userId: req.user.id, courseId, amountCents: course.priceCents } });
-  const user = await db.user.findUniqueOrThrow({ where: { id: req.user.id } });
-  const checkoutUrl = await paymob.createCheckout({ order, course, user });
-  res.status(201).json({ data: { orderId: order.id, checkoutUrl } });
-});`,
-          try: R`ابعت الطلب بـ curl ومعاه [[amountCents: 1]] في الـ body. لازم الطلب يتعمل بالسعر الحقيقي، والحقل الزيادة يتجاهل. بعدين اشترك في كورس وحاول تطلبه تاني، ولازم ترجع 409.`,
-          flag: "script",
-          deep: {
-            why: "أي حاجة جاية من المتصفح المستخدم يقدر يغيّرها: الـ DevTools، أو curl، أو إضافة. لو السعر أو الحالة جايين من الواجهة، أي حد يقدر يشتري بجنيه، أو يسجّل طلب مدفوع من غير ما يدفع.",
-            how: R`الطلب بيتعمل قبل ما نكلّم البوابة. كده عندنا id نبعته للبوابة كمرجع (special_reference)، والبوابة هترجّعه في الـ webhook، فنعرف أنهي طلب اتدفع. ولو البوابة وقعت، الطلب بيفضل PENDING، ومفيش حاجة باظت.
-
-والسعر بيتنسخ في الطلب ([[amountCents]]). الـ webhook بعدين بيقارن المبلغ اللي اتدفع بالرقم ده، مش بسعر الكورس الحالي اللي ممكن يكون اتغير في النص.
-
-والكوبونات بتتحسب هنا على السيرفر: تتأكد إن الكوبون صالح، وتحسب السعر النهائي، وتنسخه في الطلب. وعدد استخدامات الكوبون بيزيد لما الدفع ينجح، مش هنا، وبـ update ذري: [[updateMany({ where: { code, uses: { lt: maxUses } }, data: { uses: { increment: 1 } } })]].
-
-والكورس المجاني (السعر صفر) السيرفر بيعمله enrollment على طول من غير بوابة. بس ده قرار السيرفر من السعر اللي في القاعدة، مش حقل جاي من الواجهة.
-
-وممكن تعيد استخدام طلب PENDING قديم لنفس الطالب ونفس الكورس بدل ما تعمل واحد جديد مع كل ضغطة. ده بيقلل الطلبات اليتيمة في القاعدة.`,
-            when: "أي عملية فيها فلوس أو صلاحيات. الواجهة بتبعت «عايز إيه»، والسيرفر بيقرر «بكام» و «مسموح ولا لأ».",
-            mistakes: R`في مشروع حقيقي، صفحة الدفع كانت بتعمل insert للطلب من المتصفح مباشرة في Supabase، ومعاه المبلغ والخصم والحالة. وسياسة RLS كانت بتسمح بطلب حالته [[completed]] لو طريقة الدفع [[free]]. وtrigger في القاعدة بيدّي الكورس لأي طلب completed. النتيجة إن أي عضو يقدر ياخد أي كورس مدفوع ببلاش، أو يدفع المبلغ اللي هو كتبه. وفي مشروع تاني، عداد استخدام الكوبون كان بيزيد قبل الدفع، وبطريقة «اقرا الرقم وضيف واحد واكتبه»، فطلبين مع بعض بيستخدموا نفس آخر كوبون.`
-          },
-          teach: R`## الواجهة بتقول «عايز إيه»، والسيرفر بيقرر الباقي
-
-الـ route ده بياخد [[courseId]] بس، ويتأكد من الكورس والاشتراك من القاعدة، ويعمل طلب بالسعر اللي في القاعدة، ويرجّع رابط دفع. جربناه بـ Express 5 و Zod 4 و Prisma 7 على PostgreSQL 18 (Docker، ويندوز 11، Node 24). و [[paymob.createCheckout]] في التجربة دالة وهمية بترجّع رابط بنفس الشكل (الحقيقية في الدرس الجاي).
-
----
-
-## ١. [[const { courseId } = CreateOrder.parse(req.body);]]
-
-[[CreateOrder]] schema في Zod: [[z.object({ courseId: z.string().min(1) })]]. [[parse]] بيتأكد من الشكل، ولو غلط بيرمي [[ZodError]] والـ error handler بيحوّله 400.
-
-والأهم: [[z.object]] بيشيل أي خانة مش متعرّفة. جربنا:
-
-~~~text الناتج
-CreateOrder.parse({ courseId: "c_sql", amountCents: 1, status: "PAID" })
-→ { courseId: 'c_sql' }
-~~~
-
-[[amountCents]] و [[status]] اختفوا. وفوق كده بنعمل destructuring لـ [[courseId]] بس، فحتى لو الـ schema اتغيرت، الكود مش هيشوف غيره.
-
-ومن غير [[courseId]]:
-
-~~~text الناتج
-no courseId    400 {"error":{"code":"VALIDATION",...,"details":[{"expected":"string","code":"invalid_type","path":["courseId"],...}]}}
-~~~
-
----
-
-## ٢. الكورس: [[db.course.findFirst({ where: { id: courseId, published: true } })]]
-
-شرطين: الـ id ده، **و** منشور. كورس لسه draft بيرجع [[null]]، فـ 404 زي الكورس اللي مش موجود:
-
-~~~text الناتج
-draft course   404 {"error":{"code":"NOT_FOUND","message":"الكورس مش موجود"}}
-~~~
-
----
-
-## ٣. مشترك قبل كده؟ [[findUnique({ where: { userId_courseId: { userId, courseId } } })]]
-
-جدول [[Enrollment]] عليه [[@@unique([userId, courseId])]]: الطالب مرة واحدة في كل كورس. Prisma بتعمل من القيد ده اسم واحد بيجمع الحقلين بـ [[_]]: [[userId_courseId]]، وبيه تقدر تعمل [[findUnique]] على الاتنين مع بعض.
-
-لو لقاه: [[409]] (Conflict يعني الطلب بيتعارض مع حالة موجودة):
-
-~~~text الناتج
-enrolled       409 {"error":{"code":"ALREADY_ENROLLED","message":"الكورس ده عندك أصلًا"}}
-~~~
-
----
-
-## ٤. الطلب: [[db.order.create({ data: { userId: req.user.id, courseId, amountCents: course.priceCents } })]]
-
-ركّز على مصدر كل خانة:
-
-| الخانة | جاية منين |
+| الحقل | ليه |
 |---|---|
-| [[userId]] | التوكن ([[req.user.id]]) |
-| [[courseId]] | الـ body، بس اتأكدنا إنه كورس منشور |
-| [[amountCents]] | القاعدة ([[course.priceCents]]) |
-| [[status]] | الـ schema: [[@default(PENDING)]] |
+| [["name": "@myapp/shared"]] | الاسم اللي التطبيقات هتعمل بيه import. [[@myapp/]] اسمه scope، بيجمّع packages المشروع |
+| [["private": true]] | تمنع [[pnpm publish]] بالغلط على npm |
+| [["type": "module"]] | الملفات ES Modules ([[import]] و [[export]]) |
+| [["exports": { ".": "./src/index.ts" }]] | لما حد يكتب [[from "@myapp/shared"]] يوصل للملف ده. ملف TS مباشرة، من غير build |
+| [["dependencies": { "zod": "^4" }]] | الـ shared نفسه محتاج Zod |
 
-ولاحظ [[courseId]] لوحدها من غير [[: courseId]]: اختصار في JavaScript لما اسم الخانة واسم المتغير واحد.
+---
 
-التجربة اللي في الـ [[try]]، بعتنا [[amountCents: 1]]:
+## ٤. [[packages/shared/src/index.ts]]
 
-~~~text الناتج
-amountCents:1  201 {"data":{"orderId":"cmuzelmlx0000iwiedvgitwip","checkoutUrl":"https://accept.paymob.com/unifiedcheckout/?publicKey=egy_pk_test_…&clientSecret=egy_csk_test_…"}}
-[ { amountCents: 50000, status: 'PENDING' } ]
+~~~text
+import { z } from "zod";
+export const CreateOrder = z.object({ courseId: z.string() });
+export type CreateOrderInput = z.infer<typeof CreateOrder>;
 ~~~
 
-الطلب اتعمل بـ 50000 قرش (٥٠٠ جنيه) زي ما الكورس في القاعدة. الفلوس دايمًا بالقرش كرقم صحيح ([[Int]])، عشان الكسور العشرية في الأرقام بتعمل أخطاء تقريب.
+- [[z.object({ courseId: z.string() })]] schema: object فيه [[courseId]] نص.
+- [[typeof CreateOrder]] نوع الـ schema نفسه (مش القيمة).
+- [[z.infer<...>]] بيطلّع من الـ schema نوع TypeScript: [[{ courseId: string }]]. تعريف واحد، وطالع منه الـ validation والـ type مع بعض.
 
 ---
 
-## ٥. [[db.user.findUniqueOrThrow({ where: { id: req.user.id } })]]
+## ٥. [["@myapp/shared": "workspace:*"]] في الـ api والـ web
 
-البوابة محتاجة الاسم والإيميل، والتوكن فيه id ودور بس. [[OrThrow]] معناها لو مش موجود ارمي (P2025 → 404) بدل ما ترجع [[null]].
+[[workspace:]] معناها «متدوّرش على npm، خد اللي في الـ repo». و [[*]] أي نسخة. وجنبها [["typecheck": "tsc --noEmit"]]: [[tsc]] هو الـ TypeScript compiler، و [[--noEmit]] افحص بس ومتطلّعش ملفات JS. (كل app محتاج [[tsconfig.json]] صغير، احنا استخدمنا [[{ "compilerOptions": { "strict": true, "module": "nodenext", "noEmit": true }, "include": ["src"] }]].)
+
+~~~powershell
+pnpm install
+~~~
+
+بعدها بصّينا جوه [[apps/api/node_modules/@myapp/]]:
+
+~~~text الناتج
+lrwxrwxrwx ... shared -> .../mono/packages/shared
+~~~
+
+[[l]] في أول السطر و [[->]] معناهم symlink: مش نسخة، ده «شاور على» الفولدر الأصلي. فأي تعديل في الـ shared بيبان في الاتنين فورًا.
 
 ---
 
-## ٦. [[paymob.createCheckout({ order, course, user })]] و [[res.status(201)]]
+## ٦. [[apps/api/src/orders.ts]] و [[apps/web/src/order-form.ts]]
 
-الطلب اتحفظ **قبل** ما نكلّم البوابة، عشان [[order.id]] يتبعت لها كمرجع. ولو البوابة وقعت، الطلب بيفضل PENDING ومفيش حاجة باظت.
+- الـ api بيستخدم **القيمة**: [[CreateOrder.parse(body)]] بيعمل validation ويرجّع الداتا بنوعها.
+- الـ web بيستخدم **النوع** بس: [[import type]] معناها «النوع ده للفحص بس»، ومبيتسحبش أي كود في البندل.
 
-[[201]] = Created: اتعمل حاجة جديدة. والرد فيه [[orderId]] و [[checkoutUrl]]، والواجهة بتعمل [[window.location.href = checkoutUrl]].
+---
+
+## ٧. نكسر العقد ونشوف مين يقع
+
+~~~powershell
+pnpm -r typecheck
+~~~
+
+~~~text الناتج
+Scope: 3 of 4 workspace projects
+apps/api typecheck$ tsc --noEmit
+apps/web typecheck$ tsc --noEmit
+apps/api typecheck: Done
+apps/web typecheck: Done
+~~~
+
+[[-r]] (recursive) شغّل السكربت في كل packages الـ workspace اللي فيها. و «3 of 4» لأن الـ root نفسه مش محسوب.
+
+دلوقتي غيّرنا [[courseId]] لـ [[courseSlug]] في الـ shared بس:
+
+~~~powershell
+pnpm -r --no-bail typecheck
+~~~
+
+~~~text الناتج
+apps/web typecheck: src/order-form.ts(2,44): error TS2353: Object literal may only specify known properties, and 'courseId' does not exist in type '{ courseSlug: string; }'.
+apps/api typecheck: src/orders.ts(3,11): error TS2339: Property 'courseId' does not exist on type '{ courseSlug: string; }'.
+apps/web typecheck: Failed
+apps/api typecheck: Failed
+
+Summary: 2 fails, 0 passes
+~~~
+
+- [[(2,44)]] السطر ٢ والعمود ٤٤ في الملف.
+- [[--no-bail]] كمّل حتى لو واحد وقع، عشان تشوف كل الأخطاء. من غيرها pnpm بيوقف عند أول فشل ([[ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL]]).
+
+تغيير واحد في مكان واحد، والاتنين وقعوا في نفس اللحظة. ده بالظبط اللي الـ monorepo بيشتريهولك.
 
 ---
 
 ## الخلاصة
 
-| الحالة | الرد |
+| الحاجة | دورها |
 |---|---|
-| مفيش [[courseId]] | 400 VALIDATION |
-| كورس مش موجود أو draft | 404 NOT_FOUND |
-| مشترك قبل كده | 409 ALREADY_ENROLLED |
-| تمام (حتى لو بعت [[amountCents]]) | 201 والسعر من القاعدة |
+| [[pnpm-workspace.yaml]] | بيعرّف الـ packages |
+| [[@myapp/shared]] + [[exports]] | كود مشترك من غير build ولا publish |
+| [[workspace:*]] | استخدم نسخة الـ repo (symlink) |
+| [[z.infer]] | type من نفس الـ schema |
+| [[pnpm -r --no-bail typecheck]] | افحص الكل، وشوف كل اللي وقع |
 
-أي حقل فيه فلوس أو حالة أو صلاحية بييجي من القاعدة أو التوكن، عمره ما بييجي من الـ body.`,
+الـ shared مفيهوش كود سيرفر ولا أسرار، لأن الواجهة بتستورده.`,
           lines: [
-            "إنشاء طلب، ولازم يكون داخل.",
-            "الواجهة بتبعت id الكورس بس. أي حقل تاني بيتجاهل.",
-            "الكورس لازم يكون موجود ومنشور.",
-            "مش موجود؟ 404.",
-            "مشترك قبل كده؟",
-            "لو أيوه، 409، ومفيش طلب جديد.",
-            "الطلب بالسعر اللي في القاعدة وحالته PENDING (الافتراضي من الـ schema).",
-            "بيانات المستخدم الكاملة، للبوابة (الاسم والإيميل).",
-            "اطلب من البوابة رابط دفع للطلب ده (الدرس الجاي).",
-            "رجّع رقم الطلب والرابط، والواجهة تحوّل عليه.",
-            "قفلة."
+            "جذر المشروع.",
+            "الواجهة: تطبيق Next.js.",
+            "الـ API: Express و Prisma والـ webhooks.",
+            "الـ worker: بياخد الشغل التقيل من queue، ونفس الكود ممكن يتشغّل من الـ api.",
+            "الكود المشترك: schemas و types من غير أي حاجة سيرفر.",
+            "التوثيق جنب الكود، وبيتراجع في نفس الـ PR.",
+            "ملف الـ workspace اللي بيخلي pnpm يعرف الـ packages.",
+            "CI واحد بيعمل lint و test للكل، أو للي اتغير بس."
           ],
-          sol: R`الطلب بـ [[amountCents: 1]] بيرجع [[201]] و [[{"data":{"orderId":"...","checkoutUrl":"..."}}]]، وفي القاعدة [[amountCents]] بتاع الطلب هو [[priceCents]] بتاع الكورس (50000 مثلًا) والـ status [[PENDING]]. الحقل الزيادة اتشال لأن [[z.object]] في Zod بيشيل أي key مش متعرّف (strip)، والكود أصلًا بياخد السعر من القاعدة.
+          sol: R`بعد [[pnpm install]] الـ package المشتركة بتتربط بـ symlink جوه [[node_modules/@myapp/shared]] في كل app، فمفيش build ولا publish. و [[pnpm -r typecheck]] يعدّي على الاتنين.
 
-بعد ما الكورس يبقى عندك (enrollment موجود)، نفس الطلب يرجّع [[409]] و [[{"error":{"code":"ALREADY_ENROLLED","message":"الكورس ده عندك أصلًا"}}]]. ولو بعت [[courseId]] لكورس مش منشور، [[404 NOT_FOUND]].
+لما تغيّر [[courseId]] لـ [[courseSlug]] في الـ shared، شغّل [[pnpm -r --no-bail typecheck]] (من غير [[--no-bail]] pnpm بيقف عند أول واحد يقع). هتشوف غلطتين في نفس اللحظة: في الـ api [[Property 'courseId' does not exist on type '{ courseSlug: string; }']]، وفي الـ web [[Object literal may only specify known properties, and 'courseId' does not exist]]. ده الهدف كله: العقد بين الواجهة والـ API اتكسر، والـ CI مسكه قبل ما يوصل للمستخدم.
 
-لو الـ amountCents اللي في القاعدة طلع 1، يبقى انت عامل [[data: { ...req.body, userId }]] أو [[data: input]]. ده بالظبط الـ mass assignment، ومعناه إن أي حد يقدر يشتري أي كورس بقرش.`,
-          solCode: R`curl -s -w ' %{http_code}\n' -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $TOKEN" \
-  -d '{"courseId":"COURSE_ID","amountCents":1}' localhost:4000/orders
+لو محدش وقع، غالبًا الـ web مستورد القيم بـ any، أو الـ package مش متعرّفة كـ [[workspace:*]] ومتسطبة نسخة قديمة من npm.`,
+          solCode: R`// pnpm-workspace.yaml
+packages:
+  - "apps/*"
+  - "packages/*"
 
-psql "$DATABASE_URL" -c 'SELECT "amountCents", status FROM "Order" ORDER BY "createdAt" DESC LIMIT 1;'`
-        },
-        {
-          cmd: "Paymob intention",
-          title: "اطلب من البوابة صفحة دفع للطلب ده",
-          desc: R`Paymob عندها Intention API. السيرفر بيبعت المبلغ، ورقم الـ integration، وبيانات العميل، و [[special_reference]] بيبقى رقم الطلب بتاعنا، ومعاهم رابط الـ webhook ورابط الرجوع. الرد فيه [[client_secret]]، والسيرفر بيركّب منه رابط الـ Unified Checkout.
-
-الكارت بيتكتب في صفحة Paymob، ومبيعدّيش على سيرفرك أبدًا. وتفاصيل الـ webhook والـ tunnel على جهازك في تاب «Node و npm».`,
-          example: R`export async function createCheckout({ order, course, user }) {
-  let r;
-  try {
-    r = await fetch("https://accept.paymob.com/v1/intention/", {
-      method: "POST", signal: AbortSignal.timeout(10_000),
-      headers: { Authorization: $__btToken $__{config.PAYMOB_SECRET_KEY}$__bt, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        amount: order.amountCents, currency: "EGP", payment_methods: [config.PAYMOB_CARD_INTEGRATION_ID],
-        items: [{ name: course.title, amount: order.amountCents, quantity: 1 }],
-        billing_data: { first_name: user.name, last_name: "-", email: user.email, phone_number: user.phone ?? "NA" },
-        special_reference: order.id, notification_url: $__bt$__{config.API_ORIGIN}/webhooks/paymob$__bt,
-        redirection_url: $__bt$__{config.WEB_ORIGIN}/orders/$__{order.id}$__bt,
-      }),
-    });
-  } catch (err) {
-    logger.warn({ err, orderId: order.id }, "paymob unreachable");
-  }
-  if (!r?.ok) throw new AppError(502, "GATEWAY_DOWN", "بوابة الدفع مش متاحة دلوقتي، جرّب كمان شوية");
-  const { client_secret } = await r.json();
-  return $__bthttps://accept.paymob.com/unifiedcheckout/?publicKey=$__{config.PAYMOB_PUBLIC_KEY}&clientSecret=$__{client_secret}$__bt;
-}`,
-          try: R`اعمل حساب test في Paymob، وخد المفتاح السري والـ public key ورقم integration الكروت. اعمل طلب وافتح الرابط اللي رجع، وادفع بكارت الاختبار اللي في وثائقهم. شوف اللي وصل للـ webhook من لوحة ngrok.`,
-          flag: "script",
-          deep: {
-            why: "ده الجزء اللي بيحوّل الطلب لصفحة دفع حقيقية. وفيه ٣ حاجات لازم تبقى صح: المبلغ جاي من الطلب، والمفتاح السري على السيرفر بس، والمرجع اللي هيربط الدفعة بالطلب.",
-            how: R`الفلو فيه ٣ أطراف. سيرفرك بيعمل intention بالمفتاح السري. Paymob بترجّع [[client_secret]] خاص بالعملية دي. والمتصفح بيتحوّل لصفحة Paymob ومعاه الـ public key والـ client_secret، ودول الاتنين مش أسرار.
-
-بعد ما العميل يدفع، Paymob بتعمل حاجتين منفصلتين. أولًا بتبعت POST لـ [[notification_url]] من سيرفرها لسيرفرك، وده الـ webhook، ودي الحقيقة. وتانيًا بتحوّل المتصفح لـ [[redirection_url]]، وده للعرض بس، ومش دليل على أي حاجة.
-
-[[special_reference]] بيرجع في الـ webhook جوه [[obj.order.merchant_order_id]]، وبيه بنعرف أنهي طلب اتدفع. والمبلغ بالقرش، ومجموع الـ items لازم يساوي الـ amount. ورقم الـ integration بيحدد طريقة الدفع (كارت، أو محفظة، أو تقسيط)، ومن الـ config بيتحوّل رقم بـ [[z.coerce.number()]]. والمهلة ١٠ ثواني، عشان لو البوابة بطيئة طلب المستخدم ميفضلش معلّق.
-
-وكون صفحة الكارت عند Paymob معناه إن بيانات الكارت عمرها ما بتلمس سيرفرك، فانت تقريبًا بره نطاق PCI DSS. ده سبب كفاية إنك متعملش فورم كارت بنفسك.
-
-وفي staging استخدم integration بوضع test ومفاتيح test. وفي Stripe نفس الفكرة بالظبط: Checkout Session بـ [[metadata.orderId]]، والتأكيد من event اسمه [[checkout.session.completed]] في الـ webhook. وفلو Paymob القديم (auth token، وبعدين order، وبعدين payment key، وبعدين iframe) لسه موجود في مشاريع قديمة، بس الـ intention هو الطريقة الحالية.`,
-            when: "مرة لكل محاولة دفع. ولو المستخدم رجع من غير ما يدفع وضغط «ادفع» تاني، ممكن تعمل intention جديد لنفس الطلب.",
-            mistakes: "إنك تعمل الـ intention من الواجهة، فالمفتاح السري يبقى في الـ JavaScript. أو تبعت المبلغ من الـ request body. أو fetch من غير timeout، فطلب المستخدم يعلق دقايق. أو timeout من غير try/catch: الـ fetch بيرمي قبل سطر [[!r.ok]]، فالمستخدم ياخد 500 عام بدل «بوابة الدفع مش متاحة». أو مفاتيح الإنتاج في staging. أو تعتمد على رابط الرجوع كتأكيد للدفع، ودي الدرس الجاي والتاني بعده."
-          },
-          teach: R`## السيرفر بيطلب صفحة دفع، والكارت عمره ما بيلمسه
-
-الدالة دي بتبعت POST لـ Intention API بتاعة Paymob بالمفتاح السري، وبتاخد [[client_secret]] من الرد، وبتركّب منه رابط صفحة الدفع. معندناش حساب Paymob، فجربناها على Node 24 (ويندوز 11) قصاد سيرفر وهمي على [[localhost:6021]] بيرد بنفس شكل رد Paymob، وغيّرنا أول الـ URL بس. أسماء الحقول ومسار [[/v1/intention/]] وشكل رابط الـ Unified Checkout من وثائق Paymob.
-
----
-
-## ١. [[let r;]] و [[try {]]
-
-[[r]] متعرّف **برا** الـ [[try]] لأن [[let]] بيعيش جوه الأقواس [[{}]] اللي اتعرّف فيها بس. لو اتعرّف جوه، السطر [[if (!r?.ok)]] اللي تحت مش هيشوفه.
-
-والـ [[try]] ليه؟ لأن [[fetch]] نفسه **بيرمي** (مش بيرجّع رد) في حالتين: المهلة خلصت، أو مفيش اتصال خالص (DNS أو السيرفر مقفول).
-
----
-
-## ٢. [[fetch("https://accept.paymob.com/v1/intention/", { ... })]]
-
-### [[method: "POST", signal: AbortSignal.timeout(10_000)]]
-
-- [[AbortSignal.timeout(ms)]] بيعمل signal بيلغي الطلب بعد المدة دي. و [[10_000]] هي 10000 (الـ [[_]] للقراية بس، JavaScript بيتجاهلها) = ١٠ ثواني.
-- من غيره، [[fetch]] ممكن يستنى دقايق لو البوابة معلّقة، والمستخدم واقف قدام زرار بيلف.
-
-### [[headers: { Authorization: $__btToken $__{config.PAYMOB_SECRET_KEY}$__bt, "Content-Type": "application/json" }]]
-
-Paymob بتطلب المفتاح السري بكلمة [[Token]] ومسافة قبله (مش Bearer). والقيمة مكتوبة template literal: النص بين backticks، و [[$__{...}]] بيحط قيمة متغير جوه النص. [[Content-Type]] بيقول للبوابة إن الجسم JSON.
-
-### الـ body: [[JSON.stringify({ ... })]]
-
-السيرفر الوهمي طبع اللي وصله بالظبط:
-
-~~~text الناتج (اللي وصل للبوابة)
+// packages/shared/package.json
 {
-  "method": "POST",
-  "url": "/v1/intention/",
-  "auth": "Token egy_sk_test_xxx",
-  "body": {
-    "amount": 50000,
-    "currency": "EGP",
-    "payment_methods": [4512345],
-    "items": [{ "name": "SQL", "amount": 50000, "quantity": 1 }],
-    "billing_data": { "first_name": "Ali", "last_name": "-", "email": "ali@example.com", "phone_number": "NA" },
-    "special_reference": "cmuzelmlx0000iwiedvgitwip",
-    "notification_url": "https://abcd.ngrok-free.app/webhooks/paymob",
-    "redirection_url": "http://localhost:3000/orders/cmuzelmlx0000iwiedvgitwip"
-  }
+  "name": "@myapp/shared",
+  "private": true,
+  "type": "module",
+  "exports": { ".": "./src/index.ts" },
+  "dependencies": { "zod": "^4" }
 }
-~~~
 
-(المفاتيح ورقم الـ integration وهميين للتجربة.)
+// packages/shared/src/index.ts
+import { z } from "zod";
+export const CreateOrder = z.object({ courseId: z.string() });
+export type CreateOrderInput = z.infer<typeof CreateOrder>;
 
-| الحقل | معناه |
-|---|---|
-| [[amount]] | المبلغ بالقرش، من الطلب (50000 = ٥٠٠ جنيه) |
-| [[payment_methods]] | array فيها رقم الـ integration: بيحدد طريقة الدفع (كارت هنا) |
-| [[items]] | اللي بيتباع، ومجموع [[amount × quantity]] لازم يساوي [[amount]] |
-| [[billing_data]] | بيانات العميل. [[last_name]] و [[phone_number]] مطلوبين عندهم، فبنحط [[-]] و [[NA]] لو مش معانا |
-| [[special_reference]] | id الطلب بتاعنا، بيرجع في الـ webhook |
-| [[notification_url]] | الـ webhook: Paymob هتبعت عليه من سيرفرها |
-| [[redirection_url]] | المتصفح هيرجع عليه بعد الدفع (للعرض بس) |
+// apps/api/package.json و apps/web/package.json (الجزء المهم)
+"scripts": { "typecheck": "tsc --noEmit" },
+"dependencies": { "@myapp/shared": "workspace:*" }
 
-و [[user.phone ?? "NA"]]: لو [[phone]] بـ [[null]] (زي Ali في التجربة) خد [[NA]].
+// apps/api/src/orders.ts
+import { CreateOrder } from "@myapp/shared";
+export function createOrder(body: unknown) {
+  const { courseId } = CreateOrder.parse(body);
+  return { courseId };
+}
 
----
+// apps/web/src/order-form.ts
+import type { CreateOrderInput } from "@myapp/shared";
+export const initial: CreateOrderInput = { courseId: "" };
 
-## ٣. [[catch (err) { logger.warn({ err, orderId: order.id }, "paymob unreachable"); }]]
-
-الخطأ بيتسجّل ومش بيترمي تاني، و [[r]] بيفضل [[undefined]]. جربنا الحالتين:
-
-~~~text الناتج
-WARN paymob unreachable {"err":"TimeoutError","orderId":"cmuzelmlx0000iwiedvgitwip"}
-hang -> AppError 502 GATEWAY_DOWN 10.0s
-WARN paymob unreachable {"err":"TypeError","orderId":"cmuzelmlx0000iwiedvgitwip"}
-closed port -> AppError 502 GATEWAY_DOWN 0.0s
-~~~
-
-- [[hang]]: السيرفر الوهمي استلم ومردّش خالص. بعد ١٠.٠ ثانية بالظبط الـ fetch رمى [[TimeoutError]] ([[The operation was aborted due to timeout]]).
-- [[closed port]]: مفيش حد على البورت. الـ fetch رمى [[TypeError: fetch failed]] وسببه [[ECONNREFUSED]] (الاتصال اترفض).
-
----
-
-## ٤. [[if (!r?.ok) throw new AppError(502, "GATEWAY_DOWN", ...)]]
-
-- [[r?.ok]]: لو [[r]] بـ [[undefined]] (الـ catch اشتغل) النتيجة [[undefined]]، و [[!undefined]] = [[true]].
-- [[r.ok]] بـ [[true]] لو الـ status من 200 لـ 299 بس. فلو البوابة ردت 401 (مفتاح غلط) [[ok]] بـ [[false]].
-
-~~~text الناتج
-401 -> AppError 502 GATEWAY_DOWN 0.0s
-~~~
-
-كل حالات الفشل التلاتة بقت نفس الـ [[502]] (Bad Gateway: سيرفر ورايا رد غلط أو مردّش) برسالة مفهومة. لاحظ إن حالة الـ 401 مش بتتسجّل في اللوج زي التانيين، فلو عايز تعرف إن المفتاح غلط ضيف [[logger.warn({ status: r.status }, ...)]] قبل الـ throw.
-
----
-
-## ٥. [[const { client_secret } = await r.json();]] والرابط
-
-الرد الناجح فيه [[client_secret]] خاص بالعملية دي. والرابط:
-
-~~~text الناتج
-ok -> https://accept.paymob.com/unifiedcheckout/?publicKey=egy_pk_test_yyy&clientSecret=egy_csk_test_abc123
-~~~
-
-[[?]] بتبدأ الـ query string، و [[&]] بتفصل بين الخانات. [[publicKey]] و [[clientSecret]] الاتنين **مش أسرار**: هيبانوا في شريط العنوان. السر الوحيد هو [[PAYMOB_SECRET_KEY]] وده فضل على السيرفر.
-
----
-
-## الخلاصة
-
-| اللي حصل | [[fetch]] عمل إيه | النتيجة |
-|---|---|---|
-| البوابة ردت 2xx | رجّع رد [[ok]] | رابط الدفع |
-| البوابة ردت 4xx/5xx | رجّع رد مش [[ok]] | 502 |
-| البوابة معلّقة | رمى [[TimeoutError]] بعد ١٠ ثواني | لوج + 502 |
-| مفيش اتصال | رمى [[TypeError: fetch failed]] | لوج + 502 |
-
-المبلغ من الطلب، والمفتاح السري على السيرفر، و [[special_reference]] هو اللي هيربط الدفعة بالطلب في الـ webhook.`,
-          lines: [
-            "دالة في [[paymob.ts]] بتاخد الطلب والكورس والمستخدم وبترجّع رابط دفع.",
-            "الرد هيتحط هنا. معرّف برا الـ try عشان نقراه بعده.",
-            "try: لأن الـ fetch نفسه بيرمي لو المهلة خلصت أو النت/الـ DNS وقع، قبل ما يبقى فيه response أصلًا.",
-            "POST لـ Intention API بتاعة Paymob...",
-            "...ومهلة ١٠ ثواني. لو البوابة بطيئة، منعلقش المستخدم.",
-            "المفتاح السري بكلمة Token قبله. ده مكانه السيرفر بس.",
-            "جسم الطلب:",
-            "المبلغ بالقرش من الطلب، والعملة، ورقم integration الكروت.",
-            "الـ items، ومجموعها لازم يساوي المبلغ.",
-            "بيانات الفاتورة. رقم التليفون مطلوب عندهم.",
-            "رقم طلبنا كمرجع، هيرجع في الـ webhook. ورابط الـ webhook بتاعنا.",
-            "المكان اللي المتصفح هيرجع له بعد الدفع. للعرض بس.",
-            "قفلة الـ body.",
-            "قفلة الـ fetch.",
-            "timeout ([[TimeoutError]]) أو خطأ شبكة: منرميش الخطأ الخام (كان هيطلع 500 عام)...",
-            "...بنسجّله في اللوج عشان نعرف البوابة بتقع إمتى، و [[r]] بيفضل undefined.",
-            "قفلة الـ catch.",
-            "مفيش رد خالص ([[?.]]) أو البوابة رجّعت error؟ الحالتين نفس الـ 502 برسالة مفهومة.",
-            "خد الـ client_secret.",
-            "رابط صفحة الدفع الموحدة، بالـ public key والـ client_secret.",
-            "قفلة."
-          ],
-          sol: R`اللي المفروض تشوفه: [[createCheckout]] يرجّع رابط بالشكل [[https://accept.paymob.com/unifiedcheckout/?publicKey=egy_pk_test_...&clientSecret=egy_csk_test_...]]، ولما تفتحه تلاقي صفحة Paymob فيها اسم الكورس والمبلغ بالجنيه (المبلغ اللي انت بعته بالقروش مقسوم على 100). وبعد الدفع بكارت الاختبار، البوابة بترجّعك على [[redirection_url]] (صفحة الطلب عندك)، وبتبعت POST على [[notification_url]].
-
-في لوحة ngrok ([[http://127.0.0.1:4040]]) هتلاقي POST على [[/webhooks/paymob?hmac=...]]، وجسمه JSON فيه [["type": "TRANSACTION"]] و [[obj]] فيه [[success]] و [[pending]] و [[amount_cents]] و [[order.merchant_order_id]]. الأخير هو الـ id بتاع الطلب عندك (اللي بعته في [[special_reference]])، ومنه الـ webhook بيعرف أنهي طلب.
-
-أشهر مشاكل: 401 من [[/v1/intention/]] يبقى المفتاح السري غلط أو فيه مسافة، أو بتستخدم مفتاح live مع integration test. ولو الصفحة فتحت من غير الكارت، يبقى [[PAYMOB_CARD_INTEGRATION_ID]] مش رقم integration الكروت. ولو مفيش webhook خالص، يبقى [[API_ORIGIN]] لسه localhost بدل رابط ngrok. الأرقام وأسماء الحقول الدقيقة ممكن تتغير، فراجعها في وثائق Paymob الحالية.`
+// من الـ root
+// pnpm install && pnpm -r --no-bail typecheck`
         },
         {
-          cmd: "webhook الدفع",
-          title: "البوابة بتأكد: فعّل مرة واحدة بس",
-          desc: R`الـ webhook هو المكان الوحيد اللي بيحوّل الطلب لـ PAID. قبل ما يعمل أي حاجة، بيتأكد من ٣ حاجات. التوقيع (HMAC) صح. والدفعة نجحت ومش معلّقة. والمبلغ هو مبلغ الطلب. وبعدين بيحدّث الطلب بشرط إنه لسه مش PAID، ويدّي الاشتراك، والاتنين جوه transaction واحدة.
+          cmd: "feature folders",
+          title: "رتّب الكود حسب الميزة مش حسب النوع",
+          desc: R`بدل ما يبقى عندك [[controllers/]] و [[services/]] و [[models/]]، والميزة الواحدة متفرقة في ٣ أماكن، خلي لكل ميزة فولدر فيه كل حاجتها: routes و service و schema. ده اسمه modular monolith: تطبيق واحد بـ deploy واحد، بس جواه modules حدودها واضحة.
 
-كود [[verifyPaymob]] وتجربته على جهازك في تاب «Node و npm» في قسم الـ Webhooks.`,
-          example: R`router.post("/webhooks/paymob", async (req, res) => {
-  if (req.body.type !== "TRANSACTION") return res.status(200).end();
-  const tx = req.body.obj;
-  if (!verifyPaymob(tx, req.query.hmac, config.PAYMOB_HMAC_SECRET)) return res.status(401).end();
-  if (tx.success === true && tx.pending === false) await orders.markPaid(tx.order.merchant_order_id, tx);
-  res.status(200).end();
-});
-export async function markPaid(orderId, tx) {
-  await db.$transaction(async (t) => {
-    const order = await t.order.findUnique({ where: { id: orderId } });
-    if (!order || tx.amount_cents !== order.amountCents) return logger.error({ orderId, txId: tx.id }, "payment mismatch");
-    const { count } = await t.order.updateMany({ where: { id: orderId, status: { not: "PAID" } }, data: { status: "PAID", gatewayTxId: String(tx.id) } });
-    if (count === 0) return;
-    await t.enrollment.upsert({ where: { userId_courseId: { userId: order.userId, courseId: order.courseId } }, create: { userId: order.userId, courseId: order.courseId }, update: {} });
-  });
-}`,
-          try: R`من لوحة ngrok اعمل Replay لنفس الـ webhook الناجح ٣ مرات، وتأكد إن فيه enrollment واحد بس. بعدين ابعت webhook فاشل لنفس الطلب بعد النجاح، ولازم يفضل PAID. وبعدين غيّر حرف في الـ hmac، ولازم ترجع 401 ومفيش حاجة تتغير.`,
+القاعدة إن الـ module بيكلّم التاني عن طريق الـ service بتاعه بس، ومبيقراش جداوله مباشرة.`,
+          example: R`apps/api/src/
+  modules/auth/        auth.routes.ts  auth.service.ts  auth.schema.ts
+  modules/courses/     courses.routes.ts  courses.service.ts  courses.schema.ts
+  modules/orders/      orders.routes.ts  orders.service.ts  paymob.ts
+  modules/uploads/     uploads.routes.ts  storage.ts
+  lib/                 db.ts  logger.ts  errors.ts  config.ts
+  middleware/          requireAuth.ts  requireRole.ts  rateLimit.ts
+  app.ts               بيجمّع الـ routers والـ middleware
+  server.ts            بيشغّل app.listen بس`,
+          try: R`اعمل module الـ courses بالتلات ملفات. خلي الـ service ميستوردش حاجة من express خالص. وبعدين اكتب اختبار بينادي [[coursesService.list()]] مباشرة من غير سيرفر.`,
           flag: "script",
           deep: {
-            why: "ده أخطر endpoint في المشروع. هو عام، وأي حد يقدر يبعتله، وهو اللي بيدّي حاجات بفلوس. أي غلطة فيه معناها واحدة من الاتنين: كورسات ببلاش، أو ناس دفعت ومخدتش حاجة.",
-            how: R`الحارس الأول التوقيع. Paymob بتحسب HMAC-SHA512 على حقول معينة بترتيب معين، وبتبعته في [[?hmac=]] في الـ query string. انت بتحسب نفس الحاجة بالسر بتاعك وبتقارن بـ [[timingSafeEqual]]. ولو التوقيع مش موجود، ده رفض. مش «عدّيه وخلاص».
+            why: "في التقسيم حسب النوع، أي تعديل في «الطلبات» بيلف على ٣ فولدرات. ومسح ميزة مستحيل تعرف هتلمس إيه. ومع الوقت كل حاجة بتكلّم كل حاجة. أما لما الميزة في فولدر واحد، بتفهمها وتعدّلها وتمسحها وحدها. ولو احتجت تفصلها service لوحدها بعدين، حدودها أصلًا جاهزة.",
+            how: R`جوه الـ module فيه ٣ طبقات. الـ routes هي HTTP بس: بتقرا الـ input وتعمله parse بـ Zod، وتنادي الـ service، وترد. والـ service فيها القواعد (business rules)، ومتعرفش حاجة عن [[req]] و [[res]]. ودي أهم نقطة: نفس الدالة بيناديها route، أو webhook، أو job، أو اختبار. والوصول للقاعدة من جوه الـ service بـ Prisma. ولو المنطق كبر، ممكن تعمل repository لوحده، بس في الأول مش لازم.
 
-الحارس التاني المبلغ. حتى لو التوقيع سليم، قارن [[amount_cents]] بمبلغ الطلب اللي في القاعدة. أي اختلاف معناه bug أو تلاعب، يتسجّل في اللوج ومفيش تفعيل.
+فصل [[app.ts]] عن [[server.ts]] بيخلي الاختبارات تستورد الـ app وتضربه بـ supertest من غير ما تفتح بورت.
 
-الحارس التالت الحالة. [[updateMany]] بشرط [[status: { not: "PAID" }]] قراية وكتابة في خطوة ذرية. أول webhook بياخد count بـ 1 ويكمّل. وأي تكرار بعده، حتى لو في نفس الملّي ثانية، بياخد 0 ويطلع. والـ upsert على الاشتراك حماية زيادة.
+والكلام بين الـ modules بيبقى من الـ service. مثلًا الـ orders service لما الدفع ينجح بتنادي [[enrollments.grant(userId, courseId)]]، ومبتكتبش في جدول enrollment بنفسها. كده لو قاعدة الاشتراك اتغيرت، بتتغير في مكان واحد.
 
-الـ transaction بتضمن إن الطلب والاشتراك يتكتبوا الاتنين أو ولا واحد. ولو القاعدة وقعت في النص، الـ handler بيرمي error، ويرد 500، و Paymob بتعيد بعدين. وده اللي احنا عايزينه: الدفعة متضيعش.
-
-وليه المحاولات الفاشلة مبتغيّرش الحالة لـ FAILED؟ لأن المستخدم ممكن يجرّب كارت تاني في نفس صفحة الدفع وينجح. ولو الطلب بقى FAILED، النجاح اللي بعده ممكن يتعامل غلط. المحاولات الفاشلة بتتسجّل في لوج الـ webhooks بس.
-
-والـ handler هنا سريع، transaction واحدة. أي شغل تقيل بعد الدفع (إيميل الإيصال، والـ analytics) يروح queue بعد الـ commit. وفيه طبقة أمان أخيرة: job كل ربع ساعة بيسأل Paymob عن الطلبات اللي فضلت PENDING أكتر من نص ساعة. لو الـ webhook ضاع، الـ job ده بيلحقه (reconciliation).
-
-وفيه بديل تاني شفناه في مشروع حقيقي وكان كويس: trigger في القاعدة بيدّي الاشتراك لما حالة الطلب تبقى completed، بـ [[on conflict do update]]، والـ function بتاعته محدش يقدر يناديها من برّه.`,
-            when: "كل webhook بيأثر على فلوس أو صلاحيات. ونفس الحراس التلاتة بتنطبق على Stripe و Tabby و Tamara، بس شكل التوقيع مختلف.",
-            mistakes: R`في مشروع حقيقي، الـ webhook كان بيعدّي من غير تحقق لو الـ header مش موجود أو السر مش متظبط. وكان مكتوب في الكود إن ده «عشان منكسرش الـ setup الحالي». وكمان الـ HMAC كان بيتحسب على الـ body الخام، وبيدوّر عليه في الـ headers، مع إن Paymob بتبعته في الـ query على حقول معينة. يعني عمليًا مفيش أي webhook كان بيتحقق منه. وفي مشروع تاني، مكانش فيه شرط على الحالة، فـ webhook فشل وصل متأخر قلب طلب مدفوع لـ failed. وفي تالت كان منع التكرار «اقرا الحالة، وبعدين اكتب» في خطوتين. وغلطة تانية: إنك تعالج كل حاجة بتوصل، وPaymob بتبعت أنواع تانية زي [[TOKEN]] للكروت المحفوظة. اتأكد إن [[req.body.type]] بيساوي [[TRANSACTION]].`
+الطبقات والـ SOLID والـ patterns بالتفصيل في تاب «هندسة البرمجيات».`,
+            when: "من أول module. ولو عندك مشروع قديم مترتب حسب النوع، انقل ميزة ميزة وانت بتعدّل فيها، مش كله مرة واحدة.",
+            mistakes: R`إنك تحط الـ business logic جوه الـ route handler، فلما الـ webhook يحتاج نفس المنطق تنسخه، والنسختين يختلفوا بعد شهر. أو service بتاخد [[req]] كـ parameter. أو فولدر [[utils/]] يبقى مخزن لكل حاجة ملهاش مكان. وفي مشروع حقيقي كان controller الدفع لوحده ٢٠٠٠ سطر، وفيه ٣ بوابات. الأحسن ملف لكل بوابة، وواجهة واحدة يناديها الـ orders service.`
           },
-          teach: R`## ٣ حراس قبل ما الطلب يبقى PAID
+          teach: R`## المثال شجرة، والـ solCode module كامل
 
-الـ route بيتأكد إن الحدث معاملة وإن التوقيع سليم، و [[markPaid]] بتتأكد من المبلغ وبتقلب الحالة مرة واحدة بس، وبتدّي الاشتراك في نفس الـ transaction. معندناش حساب Paymob، فجربنا بالـ solCode: سكربت بيعمل [[obj]] بنفس شكل Paymob ويوقّعه بسر تجربة، ويبعته للـ route الحقيقي (Express 5 و Prisma 7 على PostgreSQL 18 في Docker، ويندوز 11، Node 24). و [[verifyPaymob]] نفس الدالة اللي في تاب «Node و npm».
-
----
-
-## ١. [[router.post("/webhooks/paymob", async (req, res) => {]]
-
-مفيش [[requireAuth]]: اللي بيبعت هو سيرفر Paymob مش مستخدم معاه توكن. الحماية الوحيدة هي التوقيع.
-
-### [[if (req.body.type !== "TRANSACTION") return res.status(200).end();]]
-
-Paymob بتبعت أنواع تانية زي [[TOKEN]] (كارت اتحفظ). بنرد 200 عشان البوابة متعيدش، ومبنعملش حاجة. [[.end()]] بيقفل الرد من غير جسم.
-
-~~~text الناتج
-TOKEN type 200
-~~~
-
-### [[const tx = req.body.obj;]]
-
-بيانات المعاملة نفسها: المبلغ، والنجاح، ورقم الطلب، والكارت...
+المثال شكل [[apps/api/src/]] متقسم حسب الميزة. والـ solCode module الكورسات بملفاته التلاتة واختبار. جرّبنا الـ solCode على PostgreSQL 18 في Docker بـ Prisma 7.10 و Vitest 5 و Express 5 (ويندوز 11، Node 24)، بـ ٣ كورسات تجربة: [[SQL Basics]] و [[React Basics]] منشورين، و [[Advanced SQL (draft)]] مش منشور.
 
 ---
 
-## ٢. الحارس الأول: [[if (!verifyPaymob(tx, req.query.hmac, config.PAYMOB_HMAC_SECRET)) return res.status(401).end();]]
+## ١. الشجرة
 
-Paymob بتبعت التوقيع في الـ URL: [[/webhooks/paymob?hmac=...]]، فبنقراه من [[req.query.hmac]]. [[verifyPaymob]] بتلزق ٢٠ حقل من [[tx]] بترتيب ثابت وتحسب HMAC-SHA512 بالسر، وتقارن بـ [[timingSafeEqual]]. HMAC يعني hash بمفتاح: من غير السر محدش يقدر يطلّع نفس الرقم.
-
-~~~text الناتج
-tampered 401
-  => {"status":"PENDING","gatewayTxId":null} enrollments: 0
-no hmac 401
-  => {"status":"PENDING","gatewayTxId":null} enrollments: 0
-~~~
-
-[[tampered]]: غيّرنا آخر حرف في التوقيع. [[no hmac]]: من غير [[?hmac=]] خالص. الاتنين 401 ومفيش حاجة اتغيرت. التوقيع الصح طوله ١٢٨ حرف hex (٥١٢ bit ÷ ٤).
-
----
-
-## ٣. [[if (tx.success === true && tx.pending === false) await orders.markPaid(...)]]
-
-[[===]] مقارنة صارمة: [[true]] الـ boolean بالظبط، مش [["true"]] النص. والشرطين مع بعض: نجحت **ومش** معلّقة (التحويلات البنكية مثلًا بتيجي [[pending: true]] الأول).
-
-[[tx.order.merchant_order_id]] هو [[special_reference]] اللي بعتناه في الـ intention، يعني id الطلب عندنا.
-
-~~~text الناتج
-failed after 200
-  => {"status":"PAID","gatewayTxId":"9001"} enrollments: 1
-~~~
-
-webhook فاشل بعد النجاح: رد 200 ومنادتش [[markPaid]] أصلًا، والطلب فضل PAID.
-
-### [[res.status(200).end();]]
-
-بعد ما الشغل اتحفظ. لو [[markPaid]] رمت (القاعدة وقعت)، Express 5 بيوصّل الخطأ للـ error handler، فالرد 500، و Paymob بتعيد بعدين.
-
----
-
-## ٤. [[markPaid]]: جوه [[db.$transaction(async (t) => { ... })]]
-
-[[$transaction]] بـ دالة (interactive transaction): كل اللي بيتعمل بـ [[t]] بيتنفذ على اتصال واحد، ولو الدالة رمت كله بيترجع (rollback). لازم تستخدم [[t]] جوه مش [[db]]، وإلا الـ query هيبقى برا الـ transaction.
-
-### الحارس التاني: [[if (!order || tx.amount_cents !== order.amountCents) return logger.error(...)]]
-
-حتى لو التوقيع سليم، المبلغ لازم يساوي مبلغ الطلب. بعتنا webhook موقّع صح بـ [[amount_cents: 100]]:
-
-~~~text الناتج
-ERROR payment mismatch {"orderId":"cmuzeoczb00005cieccukkeqc","txId":9001}
-wrong amount 200
-  => {"status":"PENDING","gatewayTxId":null} enrollments: 0
-~~~
-
-سجّل ورجع من غير تفعيل. والرد 200 لأن الإعادة مش هتصلّح حاجة: ده محتاج إنسان يبص.
-
-### الحارس التالت: [[updateMany({ where: { id: orderId, status: { not: "PAID" } }, data: { status: "PAID", gatewayTxId: String(tx.id) } })]]
-
-[[updateMany]] بترجع [[{ count }]]: عدد الصفوف اللي اتعدلت فعلًا. والشرط [[status: { not: "PAID" }]] جوه نفس الـ UPDATE، فالقاعدة بتقرا وتكتب في خطوة واحدة. و [[String(tx.id)]] لأن [[tx.id]] رقم والعمود [[gatewayTxId]] نص.
-
-~~~text الناتج
-  updateMany count: 1
-first 200
-  => {"status":"PAID","gatewayTxId":"9001"} enrollments: 1
-  updateMany count: 0
-replay 200
-  updateMany count: 0
-replay 200
-  => {"status":"PAID","gatewayTxId":"9001"} enrollments: 1
-~~~
-
-### [[if (count === 0) return;]]
-
-0 يعني حد فعّله قبلنا: تكرار، اطلع من غير ما تلمس الاشتراك.
-
-### وفي نفس اللحظة؟
-
-بعتنا ٥ webhooks لطلب جديد **مع بعض** ([[Promise.all]]):
-
-~~~text الناتج
-  updateMany count: 1
-  updateMany count: 0
-  updateMany count: 0
-  updateMany count: 0
-  updateMany count: 0
-  o2 => PAID enrollments: 1
-~~~
-
-واحد بس خد 1. التانيين وقفوا على قفل الصف لحد ما الأول عمل commit، وبعدها PostgreSQL أعاد فحص الشرط فلقى الحالة PAID. لو كان الكود «اقرا الحالة، ولو مش PAID اكتب» في خطوتين، الخمسة كانوا هيقروا PENDING مع بعض.
-
-### [[t.enrollment.upsert({ where: { userId_courseId: ... }, create: { ... }, update: {} })]]
-
-[[upsert]]: لو موجود اعمل [[update]] (هنا [[{}]] يعني ولا حاجة)، ولو مش موجود اعمل [[create]]. حماية زيادة لو الطالب عنده اشتراك من طريق تاني.
-
----
-
-## ٥. الـ solCode: إزاي وقّعنا الـ webhook بإيدنا
-
-- [[process.argv.slice(2)]]: الـ arguments بعد [[node hook.mjs]]، فـ [[ORDER_ID true]] بيبقوا [[orderId]] و [[success]].
-- [[obj]]: نفس شكل معاملة Paymob، و [[merchant_order_id: orderId]].
-- [[get(o, "order.id")]]: بتمشي جوه الـ object نقطة نقطة بـ [[reduce]]، و [[a == null ? a : a[k]]] بتقف لو حاجة ناقصة بدل ما تقع.
-- [[crypto.createHmac("sha512", secret).update(...).digest("hex")]]: نفس حسبة [[verifyPaymob]] بالظبط، فالتوقيع بيطلع صح.
-- [[r.status]]: بيطبع رد السيرفر.
-
----
-
-## الخلاصة
-
-| الحارس | فين | لو فشل |
+| الفولدر | نوعه | فيه |
 |---|---|---|
-| النوع [[TRANSACTION]] | الـ route | 200 ومفيش شغل |
-| التوقيع HMAC | الـ route | 401 |
-| نجحت ومش معلّقة | الـ route | 200 ومفيش تفعيل |
-| المبلغ | [[markPaid]] | لوج ومفيش تفعيل |
-| لسه مش PAID (ذري) | [[updateMany]] | count 0 ومفيش تكرار |
+| [[modules/auth/]] و [[modules/courses/]] و [[modules/orders/]] و [[modules/uploads/]] | ميزات | كل ميزة فيها routes و service و schema |
+| [[lib/]] | حاجات مشتركة مش ميزات | القاعدة، واللوج، والأخطاء، والإعدادات |
+| [[middleware/]] | بيتحط قدام الـ routes | requireAuth و requireRole و rateLimit |
+| [[app.ts]] | بيبني الـ app | بيجمّع الـ routers والـ middleware ويرجّع [[app]] |
+| [[server.ts]] | نقطة التشغيل | [[app.listen]] بس |
 
-والـ transaction بتضمن إن الطلب والاشتراك يتكتبوا مع بعض أو ولا واحد.`,
-          lines: [
-            "مسار الـ webhook. مفيش requireAuth، الحماية هي التوقيع.",
-            "مش معاملة (زي TOKEN للكروت المحفوظة)؟ رد 200 ومتعملش حاجة.",
-            "بيانات المعاملة.",
-            "التوقيع غلط أو مش موجود؟ 401 ومفيش أي شغل.",
-            "نجحت ومش معلّقة بس؟ فعّل الطلب اللي رقمه رجع في merchant_order_id.",
-            "200 بعد ما الشغل اتحفظ. لو حصل error قبلها، البوابة هتعيد.",
-            "قفلة.",
-            "تفعيل الطلب، في الـ orders service عشان الـ job كمان يناديها.",
-            "كله جوه transaction: الاتنين يحصلوا أو ولا واحد.",
-            "هات الطلب.",
-            "مش موجود أو المبلغ مختلف؟ سجّل وماتفعّلش.",
-            "حوّله PAID بشرط إنه لسه مش PAID. قراية وكتابة في خطوة واحدة.",
-            "0 يعني حد فعّله قبلنا. ده تكرار، اطلع.",
-            "ادّي الاشتراك، وupsert عشان لو موجود ميقعش.",
-            "قفلة الـ transaction.",
-            "قفلة."
-          ],
-          sol: R`الـ Replay التلاتة كلهم بيرجعوا [[200]]، وفي القاعدة الطلب [[PAID]] و [[gatewayTxId]] فيه رقم المعاملة، وعدد الـ enrollments للطالب ده والكورس ده [[1]]. أول مرة [[updateMany]] رجّعت [[count: 1]]، والمرتين اللي بعدها [[count: 0]] فرجعت قبل الـ upsert.
+أسامي الملفات فيها اسم الميزة ([[courses.service.ts]] مش [[service.ts]])، عشان لما تفتح ٥ تابات في الـ editor تعرف مين مين.
 
-الـ webhook الفاشل بعد النجاح برضه بيرجع 200، والطلب بيفضل [[PAID]]، لأن الـ route مبينادي [[markPaid]] غير لو [[success === true && pending === false]]. والـ hmac المتعدل بيرجع [[401]] من غير ما حاجة في القاعدة تتلمس.
+---
 
-لو لقيت enrollment مكرر، يبقى نسيت الشرط [[status: { not: "PAID" }]] أو معندكش [[@@unique([userId, courseId])]]. ولو الـ Replay رجع 500 مرة من المرات، ابص على اللوج: غالبًا [[P2002]] على [[gatewayTxId]]، وده معناه إن نفس المعاملة اتسجلت على طلب تاني.`,
-          solCode: R`// تجربة من غير ngrok: ابعت webhook موقّع بإيدك
-import crypto from "node:crypto";
+## ٢. [[courses.schema.ts]]: شكل الـ input
 
-const [orderId, success = "true"] = process.argv.slice(2);
-const obj = { id: 9001, amount_cents: 50000, created_at: "2026-09-29T20:00:00", currency: "EGP", error_occured: false,
-  has_parent_transaction: false, integration_id: 111, is_3d_secure: true, is_auth: false, is_capture: false,
-  is_refunded: false, is_standalone_payment: true, is_voided: false, order: { id: 555, merchant_order_id: orderId },
-  owner: 1, pending: false, source_data: { pan: "2346", sub_type: "MasterCard", type: "card" }, success: success === "true" };
-const fields = ["amount_cents","created_at","currency","error_occured","has_parent_transaction","id","integration_id","is_3d_secure","is_auth","is_capture","is_refunded","is_standalone_payment","is_voided","order.id","owner","pending","source_data.pan","source_data.sub_type","source_data.type","success"];
-const get = (o, p) => p.split(".").reduce((a, k) => (a == null ? a : a[k]), o);
-const hmac = crypto.createHmac("sha512", process.env.PAYMOB_HMAC_SECRET).update(fields.map((f) => String(get(obj, f))).join("")).digest("hex");
-const r = await fetch("http://localhost:4000/webhooks/paymob?hmac=" + hmac, {
-  method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "TRANSACTION", obj }),
+~~~text
+export const ListCourses = z.object({
+  q: z.string().trim().max(100).optional(),
+  take: z.coerce.number().int().min(1).max(50).default(20),
 });
-console.log(r.status);
+export type ListCoursesInput = z.infer<typeof ListCourses>;
+~~~
 
-// node hook.mjs ORDER_ID true   (٣ مرات)
-// node hook.mjs ORDER_ID false`
-        },
-        {
-          cmd: "صفحة ما بعد الدفع",
-          title: "الـ redirect مش دليل إن الفلوس وصلت",
-          desc: R`بعد الدفع، Paymob بتحوّل المتصفح لـ [[/orders/:id]]، ومعاه query فيها [[success=true]] وحاجات تانية. أي حد يقدر يكتب الـ URL ده بإيده. عشان كده الصفحة مبتصدقش الـ query، بتسأل الـ API عن حالة الطلب، والحالة دي الـ webhook بس اللي بيغيّرها.
+- [[q]]: نص، [[trim()]] بيشيل المسافات من الأطراف، و [[max(100)]] حد أقصى، و [[optional()]] ممكن ميتبعتش.
+- [[take]]: كام كورس يرجع. [[z.coerce.number()]] بيحوّل النص لرقم الأول، لأن أي حاجة في الـ query string بتوصل نص ([[?take=5]] يعني [["5"]]). و [[int()]] صحيح، و [[min(1).max(50)]] حدود، و [[default(20)]] لو مبعتوش.
 
-والـ webhook ممكن يوصل بعد الـ redirect بثواني، فالصفحة بتسأل كل ثانيتين لمدة دقيقة.`,
-          example: R`"use client";
-import { useEffect, useState } from "react";
-
-export default function OrderResult({ orderId }) {
-  const [status, setStatus] = useState("PENDING");
-  useEffect(() => {
-    const id = setInterval(async () => {
-      const res = await apiFetch($__bt/orders/$__{orderId}$__bt);
-      const s = res.ok ? (await res.json()).data.status : "PENDING";
-      if (s !== "PENDING") { setStatus(s); clearInterval(id); }
-    }, 2000);
-    const stop = setTimeout(() => clearInterval(id), 60_000);
-    return () => { clearInterval(id); clearTimeout(stop); };
-  }, [orderId]);
-  return status === "PAID" ? <a href="/me/courses">الدفع تم. ادخل على كورساتك</a> : <p>بنأكد الدفع مع البنك… لو اتأخر هيوصلك إيميل.</p>;
-}`,
-          try: R`افتح [[/orders/ID?success=true]] لطلب لسه PENDING، من غير ما تدفع. الصفحة لازم تفضل «بنأكد». بعدين ابعت الـ webhook من لوحة ngrok، وشوف الصفحة بتتغير لوحدها في خلال ثانيتين.`,
-          flag: "script",
-          deep: {
-            why: "صفحة الرجوع هي أول مكان المطوّر بيفكر يفعّل فيه، لأنها «باينة»: المستخدم رجع و success=true. بس المستخدم ممكن يقفل الصفحة قبل ما ترجع، فالـ redirect ميحصلش أصلًا. وممكن كمان يكتب الـ URL بإيده. الـ webhook بيوصل من سيرفر لسيرفر، مهما المستخدم عمل.",
-            how: R`الصفحة بتعمل polling: كل ثانيتين تسأل [[GET /orders/:id]]، واللي بيتأكد إن الطلب ده بتاع المستخدم (درس الملكية). أول ما الحالة تتغير بتوقف. وبعد دقيقة بتوقف برضه، وتقول للمستخدم إن الإيميل هيوصله. الـ cleanup في الـ return بيوقف الـ interval لو المستخدم خرج من الصفحة.
-
-الـ query بتاعة الـ redirect ممكن تتستخدم للعرض «السلبي» بس. لو [[success=false]]، اعرض على طول «الدفع مكملش» وزرار «جرّب تاني». الغلط هنا نتيجته زرار زيادة، مش كورس ببلاش. وفي المقابل، النجاح لازم ييجي من الـ API.
-
-وبدل الـ polling ممكن تستخدم socket.io: الـ webhook بعد التفعيل يبعت event للمستخدم. بس الـ polling أبسط، وبيشتغل حتى لو الـ socket مقطوع، ولدقيقة واحدة تمنه تافه. والـ polling والـ state في React في تاب «React».
-
-وفيه حاجة لازم متنساهاش: الإيميل. لو المستخدم قفل الصفحة، إيميل «الكورس اتفعّل» هو اللي بيطمنه. وده بيتبعت من الـ queue بعد الـ webhook.`,
-            when: "أي تكامل فيه redirect بعد عملية بتحصل عند طرف تاني: دفع، أو OAuth، أو توقيع مستندات.",
-            mistakes: R`في مشروع حقيقي، endpoint التحقق من الدفع كان بيرجّع SUCCESS لطلب لسه PENDING، لمجرد إن المستخدم وصل صفحة الرجوع. وكان مكتوب في الكود «غالبًا نجح بما إن Paymob رجّعته هنا». أي حد يفتح الرابط ده يشوف «تم الدفع». ومن الغلطات كمان: polling من غير حد أقصى، فالصفحة المفتوحة تفضل تضرب الـ API طول اليوم. أو تنسى تعمل cleanup للـ interval، فيفضل شغال بعد ما المستخدم يخرج من الصفحة.`
-          },
-          teach: R`## الصفحة بتسأل السيرفر، مش بتصدّق الـ URL
-
-الـ component ده بيعرض «بنأكد الدفع» ويسأل [[GET /orders/:id]] كل ثانيتين لحد ما الحالة تتغير أو تعدّي دقيقة. جربناه في Next.js 16 (React 19) على Node 24 (ويندوز 11)، وفتحناه في Chrome headless بـ playwright. والـ API في التجربة route بسيط في نفس الـ Next app بيرجّع PENDING لحد ما نبعتله POST (بدل الـ webhook)، و [[apiFetch]] بقت [[fetch("/api" + path)]].
-
----
-
-## ١. [["use client"]] والـ imports
-
-[["use client"]] في أول الملف بيقول لـ Next إن الـ component ده بيشتغل في المتصفح، لأنه محتاج hooks ([[useState]] و [[useEffect]]) و timers. من غيرها Next بيعتبره Server Component وبيرفض الـ hooks.
-
----
-
-## ٢. [[export default function OrderResult({ orderId }) {]]
-
-[[{ orderId }]] destructuring للـ props: الصفحة الأب بتنادي [[<OrderResult orderId={id} />]] بالـ id اللي في الـ URL.
-
-### [[const [status, setStatus] = useState("PENDING");]]
-
-[[useState]] بترجع array فيها حاجتين: القيمة الحالية، ودالة تغيّرها. كل ما تنادي [[setStatus]] React بيرسم الـ component تاني بالقيمة الجديدة. والبداية [["PENDING"]] دايمًا، مهما الـ URL قال.
-
----
-
-## ٣. [[useEffect(() => { ... }, [orderId]);]]
-
-[[useEffect]] بيشغّل الكود بعد ما الـ component يظهر. و [[[orderId]]] في الآخر (dependency array) معناها «شغّله تاني لو [[orderId]] اتغير بس»، مش مع كل رسمة.
-
-### [[const id = setInterval(async () => { ... }, 2000);]]
-
-[[setInterval]] بينادي الدالة كل ٢٠٠٠ ملّي (ثانيتين)، وبيرجّع رقم [[id]] بنوقفه بيه بعدين.
-
-جوه:
-
-- [[const res = await apiFetch(...)]]: اسأل السيرفر.
-- [[res.ok ? (await res.json()).data.status : "PENDING"]]: لو الرد 2xx خد [[data.status]] من الـ JSON، ولو لأ (401 أو 500) اعتبرها لسه PENDING ومتعرضش حاجة غلط.
-- [[if (s !== "PENDING") { setStatus(s); clearInterval(id); }]]: أول ما تتغير، اعرضها ووقّف السؤال.
-
-### [[const stop = setTimeout(() => clearInterval(id), 60_000);]]
-
-[[setTimeout]] بينادي مرة واحدة بعد ٦٠ ثانية: يوقّف الـ interval مهما حصل. ده الحد الأقصى.
-
-### [[return () => { clearInterval(id); clearTimeout(stop); };]]
-
-الدالة اللي [[useEffect]] بترجعها اسمها cleanup: React بينادي عليها لما المستخدم يخرج من الصفحة (أو [[orderId]] يتغير). من غيرها الـ interval يفضل شغال في الخلفية.
-
----
-
-## ٤. التجربة: [[?success=true]] من غير دفع
-
-فتحنا [[/ar/orders/o_123?success=true&id=999]] وراقبنا الطلبات:
+جرّبناه:
 
 ~~~text الناتج
-0.2s text: بنأكد الدفع مع البنك… لو اتأخر هيوصلك إيميل.
-2.2s GET /api/orders/o_123 200 {"data":{"id":"o_123","status":"PENDING"}}
-4.2s GET /api/orders/o_123 200 {"data":{"id":"o_123","status":"PENDING"}}
-5.2s -- webhook marks PAID
-6.2s GET /api/orders/o_123 200 {"data":{"id":"o_123","status":"PAID"}}
-6.6s text: الدفع تم. ادخل على كورساتك
-11.6s calls before/after 5s: 3 3
+ListCourses.parse({ q: "  sql ", take: "5" })   =>  { q: 'sql', take: 5 }
+ListCourses.parse({ take: "500" })              =>  Too big: expected number to be <=50
 ~~~
 
-- [[success=true]] في الـ URL ملهاش أي تأثير: الصفحة فضلت «بنأكد».
-- أول سؤال بعد ثانيتين مش على طول، لأن [[setInterval]] بيستنى المدة الأول.
-- بعد الـ «webhook» أول سؤال جاب PAID، والصفحة اتغيرت.
-- عدد الطلبات فضل [[3]] بعد ٥ ثواني: الـ [[clearInterval]] وقّف السؤال.
+---
 
-### ولو الـ webhook مجاش خالص؟
+## ٣. [[courses.service.ts]]: القواعد، من غير HTTP
 
-استخدمنا ساعة وهمية في playwright ([[page.clock]]) وقدّمنا الوقت ٧٠ ثانية، وبعدين ٢٠ كمان:
+~~~text
+import { db } from "../../lib/db";
+import type { ListCoursesInput } from "./courses.schema";
+~~~
+
+[[../../]] يعني اطلع فولدرين ([[courses]] وبعده [[modules]]) لحد [[src/]]. و [[import type]] بيجيب النوع بس. ومفيش ولا import من express: [[grep -rn express src/modules/courses/courses.service.ts]] رجع فاضي (exit 1).
+
+~~~text
+list({ q, take = 20 }: Partial<ListCoursesInput> = {}) {
+~~~
+
+- [[{ q, take = 20 }]] destructuring: بيطلّع الحقلين من الـ object، و [[take]] ليه قيمة افتراضية.
+- [[Partial<ListCoursesInput>]] نفس النوع بس كل الحقول اختيارية، عشان الاختبار ينادي [[list()]] من غير حاجة.
+- [[= {}]] لو اتنادت من غير أي argument خالص.
+
+~~~text
+where: { published: true, ...(q && { title: { contains: q, mode: "insensitive" } }) },
+~~~
+
+ده أصعب سطر، من جوه لبرة:
+
+1. [[{ title: { contains: q, mode: "insensitive" } }]] شرط Prisma: العنوان فيه الكلمة، و [[insensitive]] من غير فرق بين كبير وصغير (Postgres بيعمله [[ILIKE]]).
+2. [[q && {...}]] لو [[q]] فاضي أو [[undefined]] النتيجة [[undefined]]، ولو فيه قيمة النتيجة الـ object.
+3. [[...( )]] (spread) بيفرد الـ object جوه الـ where. وفرد [[undefined]] مبيضيفش حاجة. فالشرط بيتضاف بس لو فيه بحث.
+
+~~~text
+select: { id: true, slug: true, title: true, priceCents: true },
+orderBy: { title: "asc" },
+take,
+~~~
+
+[[select]] بيرجّع الأعمدة دي بس، فـ [[instructorId]] مبيطلعش. و [[orderBy]] ترتيب أبجدي. و [[take]] لوحدها اختصار [[take: take]].
+
+جرّبنا [[coursesService.list({ q: "sql" })]]:
 
 ~~~text الناتج
-o_never calls after 70s: 30 after 90s: 30 | بنأكد الدفع مع البنك… لو اتأخر هيوصلك إيميل.
-~~~
-
-٣٠ سؤال في الدقيقة (٦٠ ÷ ٢)، وبعدها وقف خالص، والرسالة فضلت. الإيميل هو اللي هيبلّغ المستخدم.
-
----
-
-## ٥. [[return status === "PAID" ? <a ...>...</a> : <p>...</p>;]]
-
-ternary في JSX: لو PAID اعرض لينك الكورسات، غير كده رسالة الانتظار. ولاحظ إن أي حالة تانية غير PENDING (زي FAILED) هتوقف السؤال وتعرض رسالة الانتظار، فلو عايز تعرض «الدفع مكملش» ضيف فرع ليها.
-
----
-
-## الخلاصة
-
-| الحاجة | الكود | ليه |
-|---|---|---|
-| الحالة الأولى | [[useState("PENDING")]] | الـ URL مش دليل |
-| السؤال | [[setInterval(..., 2000)]] | الـ webhook ممكن يتأخر ثواني |
-| الوقف عند التغيير | [[clearInterval(id)]] | مفيش طلبات زيادة |
-| الحد الأقصى | [[setTimeout(..., 60_000)]] | الصفحة المفتوحة متضربش الـ API طول اليوم |
-| الخروج | الـ cleanup | مفيش interval يتيم |
-
-النجاح بييجي من الـ API اللي الـ webhook بس اللي بيغيّره.`,
-          lines: [
-            "component بيشتغل في المتصفح (hooks).",
-            "الـ hooks اللي هنستخدمها.",
-            "الصفحة بتاخد رقم الطلب.",
-            "الحالة بتبدأ PENDING.",
-            "لما الصفحة تفتح...",
-            "...كل ثانيتين...",
-            "...اسأل الـ API عن الطلب...",
-            "...وخد الحالة. لو فيه خطأ، اعتبرها لسه PENDING.",
-            "لو اتغيرت، اعرضها ووقّف السؤال.",
-            "قفلة الـ interval.",
-            "بعد دقيقة وقّف في كل الأحوال.",
-            "لما يخرج من الصفحة، وقّف الاتنين.",
-            "قفلة الـ effect.",
-            "مدفوع؟ لينك للكورسات. غير كده رسالة انتظار.",
-            "قفلة."
-          ],
-          sol: R`وانت فاتح [[/orders/ID?success=true]] لطلب PENDING، الصفحة بتفضل «بنأكد الدفع مع البنك…»، وفي Network هتلاقي [[GET /orders/ID]] كل ثانيتين وكلهم راجعين [[{"data":{"status":"PENDING",...}}]]. الـ [[success=true]] في الـ URL ملهاش أي تأثير، وده المطلوب: أي حد يقدر يكتبها بإيده.
-
-أول ما تبعت الـ webhook، أول polling بعده يرجع [[PAID]]، والصفحة تتحول للينك «الدفع تم» في خلال ثانيتين، والطلبات تقف. ولو استنيت أكتر من دقيقة من غير webhook، الـ polling بيقف لوحده والصفحة بتفضل على الرسالة، وده المقصود (الإيميل هو اللي هيبلّغه).
-
-لو الصفحة قالت «تم» من غير webhook، يبقى انت بتقرا [[searchParams.success]] في مكان ما. ولو الطلبات مبتقفش بعد PAID، يبقى الـ [[clearInterval]] مش شغال. ولو رجعت 401 كل مرة، يبقى [[apiFetch]] مش بيبعت التوكن، والصفحة هتفضل PENDING للأبد.`
-        },
-        {
-          cmd: "اشتراكات Stripe",
-          title: "اشتراك شهري بـ Stripe Billing: الخطط والتجربة والتجديد والفشل",
-          desc: R`دفع الكورس مرة واحدة اتعمل بـ Paymob في الدروس اللي فاتت. الاشتراك الشهري (خطة Pro للأكاديمية مثلًا) مختلف: التجديد كل شهر، والكارت ممكن يفشل في شهر، والعميل يرقّي أو ينزّل الخطة في النص. Stripe Billing بيدير ده كله: Product و Price شهري في الـ dashboard، و Checkout بـ [[mode: "subscription"]] للاشتراك، و Customer Portal لتغيير الكارت والخطة والإلغاء.
-
-الـ webhook هو مصدر الحقيقة زي Paymob: جدول [[subscriptions]] عندك بيتحدث من الأحداث، والصلاحيات بتتقري منه. Stripe مش متاح كحساب تاجر لكل الدول (راجع قايمة الدول المدعومة)، فلو شغلك في مصر غالبًا هتستخدم Paymob أو شركة ليها كيان برّه.`,
-          example: R`router.post("/billing/checkout", tenantScope, requireTenantRole("OWNER"), async (req, res) => {
-  const { plan } = z.object({ plan: z.enum(["pro_monthly", "pro_yearly"]) }).parse(req.body);
-  const session = await stripe.checkout.sessions.create({
-    mode: "subscription",
-    customer: req.tenant.stripeCustomerId,
-    line_items: [{ price: config.PRICES[plan], quantity: 1 }],
-    subscription_data: { trial_period_days: 14, metadata: { tenantId: req.tenant.id } },
-    success_url: $__bt$__{config.WEB_ORIGIN}/billing?done=1$__bt,
-    cancel_url: $__bt$__{config.WEB_ORIGIN}/billing$__bt,
-  });
-  res.json({ data: { url: session.url } });
-});
-router.post("/billing/portal", tenantScope, requireTenantRole("OWNER"), async (req, res) => {
-  const portal = await stripe.billingPortal.sessions.create({ customer: req.tenant.stripeCustomerId, return_url: $__bt$__{config.WEB_ORIGIN}/billing$__bt });
-  res.json({ data: { url: portal.url } });
-});
-app.post("/webhooks/stripe", express.raw({ type: "application/json" }), async (req, res) => {
-  let event;
-  try { event = stripe.webhooks.constructEvent(req.body, req.get("stripe-signature"), config.STRIPE_WEBHOOK_SECRET); } catch { return res.status(400).send("bad signature"); }
-  if (event.type.startsWith("customer.subscription.")) {
-    const sub = await stripe.subscriptions.retrieve(event.data.object.id);
-    const item = sub.items.data[0];
-    await db.subscription.upsert({
-      where: { stripeSubscriptionId: sub.id },
-      create: { tenantId: sub.metadata.tenantId, stripeSubscriptionId: sub.id, status: sub.status, priceId: item.price.id, currentPeriodEnd: new Date(item.current_period_end * 1000), cancelAtPeriodEnd: sub.cancel_at_period_end },
-      update: { status: sub.status, priceId: item.price.id, currentPeriodEnd: new Date(item.current_period_end * 1000), cancelAtPeriodEnd: sub.cancel_at_period_end },
-    });
-  }
-  if (event.type === "invoice.payment_failed") await emailQueue.add("payment-failed", { invoiceId: event.data.object.id });
-  res.json({ received: true });
-});`,
-          try: R`اعمل حساب Stripe في test mode، و Product بـ Price شهري وسنوي. ثبّت Stripe CLI واعمل [[stripe listen --forward-to localhost:4000/webhooks/stripe]]، واشترك بالكارت [[4242 4242 4242 4242]]. بعدين من الـ Portal غيّر الخطة من شهري لسنوي، وبعدين الغي. وبعدين جرّب [[stripe trigger invoice.payment_failed]]. بعد كل خطوة بص على جدول subscriptions.`,
-          flag: "script",
-          deep: {
-            why: "الاشتراكات فيها حالات أكتر بكتير من الدفع مرة واحدة: تجربة بتخلص، وتجديد بيفشل، وإعادة محاولات، وترقية في نص الشهر، وإلغاء في آخر الفترة. لو بنيت ده بنفسك فوق دفع عادي، هتقضي شهور في حالات حدية. Stripe Billing بيعمله، ودورك إنك تعكس الحالة عندك صح وتفتح وتقفل الميزات على أساسها.",
-            how: R`[[status]] بتاع الاشتراك هو اللي بيقرر: [[trialing]] و [[active]] يعني الميزات مفتوحة. و [[past_due]] يعني التجديد فشل و Stripe بيحاول تاني (سيب الميزات مفتوحة فترة سماح وبان banner «حدّث الكارت»). و [[canceled]] و [[unpaid]] يعني اقفل. و [[incomplete]] أول دفعة لسه مكملتش. و [[cancelAtPeriodEnd]] معناها المستخدم لغى بس الفترة المدفوعة لسه شغالة.
-
-التجربة: [[trial_period_days: 14]]، والكارت بيتطلب في الـ Checkout افتراضيًا، فبعد ١٤ يوم بيتحاسب لوحده. وحدث [[customer.subscription.trial_will_end]] بييجي قبلها بـ ٣ أيام، وده وقت إيميل «تجربتك هتخلص».
-
-الـ proration: لما العميل يرقّي من شهري لسنوي أو من Basic لـ Pro في نص الفترة، Stripe بيحسب الفرق للأيام الباقية ويحطه في الفاتورة الجاية (أو يحاسب فورًا حسب الإعداد). من الـ Portal ده بيحصل لوحده. ومن الكود: [[stripe.subscriptions.update(id, { items: [{ id: itemId, price: newPrice }], proration_behavior: "create_prorations" })]].
-
-الـ dunning: لما التجديد يفشل، Stripe بيعمل Smart Retries على كذا يوم، وبيبعت إيميلات للعميل لو فعّلتها من الـ dashboard، وفي الآخر بيلغي أو بيسيبه unpaid حسب إعداداتك. وانت بتاخد [[invoice.payment_failed]] مع كل محاولة، وتبعت إيميلك أو تحط banner.
-
-الـ webhook: [[express.raw]] لازم لأن التوقيع محسوب على الـ body زي ما وصل حرف بحرف، ولازم يتسجّل قبل [[express.json()]] العام أو يبقى route لوحده. و [[constructEvent]] بترمي لو التوقيع غلط أو قديم (أكتر من ٥ دقايق افتراضيًا)، فبنرجّع 400. وبنستخدم أحداث [[customer.subscription.*]] (created و updated و deleted) عشان نعكس الحالة كلها بـ upsert، فالتكرار ميبوظش حاجة. بس Stripe مبتضمنش ترتيب الأحداث: لو حدث [[updated]] قديم (فيه trialing) وصل بعد [[deleted]]، والكود بيكتب الـ object اللي جوه الحدث، الاشتراك الملغي يرجع شغال. عشان كده المثال بيتجاهل الـ object اللي في الحدث ويجيب الاشتراك من Stripe بـ [[subscriptions.retrieve]]، فياخد آخر حالة دايمًا مهما كان ترتيب الوصول.
-
-[[current_period_end]] بقى على مستوى الـ subscription item (أول عنصر في [[items.data]]) من API سنة 2025، مش على الاشتراك نفسه. لو بتقرا كود قديم أو tutorial قديم، دي أول حاجة هتلاقيها مختلفة.
-
-الـ customer: اعمل Stripe customer لكل tenant مرة واحدة ([[stripe.customers.create]]) وخزن الـ id. ولو الاشتراك للشخص مش للـ workspace، يبقى لكل user.`,
-            when: "منتج بخطط شهرية أو سنوية لعملاء برّه مصر أو شركة ليها كيان في دولة مدعومة. ولو السوق مصر بس، الاشتراكات بتتعمل بـ Paymob (فيه subscriptions) أو بفواتير شهرية بتتدفع كل مرة.",
-            mistakes: R`تفتح الميزات من صفحة [[success_url]] بدل الـ webhook. أو [[express.json]] قبل الـ webhook فالتوقيع يفشل دايمًا. أو تقفل الميزات أول ما [[past_due]] تيجي والعميل لسه Stripe بيحاول. أو تنسى [[cancel_at_period_end]] فتقفل على واحد لسه دافع للشهر. أو تحط السعر من الواجهة بدل price id من config. أو تسيب الـ webhook من غير تسجيل الـ event id، فتتلخبط لو حصل مشكلة. وفي الانترفيو: «الـ webhook وصل قبل ما الـ redirect يرجع، أو العكس؟» الواجهة تعرض «جاري التفعيل» وتسأل السيرفر، نفس «صفحة ما بعد الدفع».`
-          },
-          teach: R`## ٣ routes: ابدأ اشتراك، وادير اشتراكك، واسمع من Stripe
-
-الأول بيعمل Checkout Session لاشتراك، والتاني بيفتح Customer Portal، والتالت webhook بيعكس حالة الاشتراك في جدول [[subscriptions]]. معندناش حساب Stripe، فالـ Checkout والـ Portal هنا من وثائق Stripe (محتاجين API حقيقي). أما الـ webhook فجربناه كامل على جهازنا: SDK بتاع Stripe 23 بيقدر يعمل توقيع تجربة بـ [[generateTestHeaderString]] من غير نت، فبعتنا أحداث موقّعة للـ route الحقيقي (Express 5 و Prisma 7 على PostgreSQL 18 في Docker، ويندوز 11، Node 24).
-
----
-
-## ١. [[router.post("/billing/checkout", tenantScope, requireTenantRole("OWNER"), ...)]]
-
-[[tenantScope]] و [[requireTenantRole]] من قسم «multi-tenant SaaS» في المستوى الجاي: الاشتراك بتاع الـ workspace كله، ومالكه بس اللي يدفع.
-
-### [[z.object({ plan: z.enum(["pro_monthly", "pro_yearly"]) })]]
-
-الواجهة بتبعت **اسم** خطة من قايمة، مش سعر ولا price id. أي اسم تاني → 400.
-
-### [[stripe.checkout.sessions.create({ ... })]] (من الـ docs)
-
-| الخيار | معناه |
-|---|---|
-| [[mode: "subscription"]] | اشتراك متكرر، مش دفعة واحدة ([[payment]]) |
-| [[customer]] | عميل Stripe بتاع الـ workspace، اتعمل مرة واحدة واتخزن |
-| [[line_items: [{ price: config.PRICES[plan], quantity: 1 }]]] | الـ price id ([[price_...]]) من الإعدادات حسب اسم الخطة |
-| [[subscription_data.trial_period_days: 14]] | تجربة ١٤ يوم |
-| [[subscription_data.metadata.tenantId]] | بيتنسخ على الاشتراك، فيرجعلنا في كل حدث عنه |
-| [[success_url]] / [[cancel_url]] | المتصفح يرجع فين. للعرض بس |
-
-والرد فيه [[session.url]]: صفحة Stripe، والواجهة بتحوّل عليها.
-
-### [[stripe.billingPortal.sessions.create({ customer, return_url })]] (من الـ docs)
-
-بوابة جاهزة عند Stripe: تغيير الكارت والخطة والإلغاء والفواتير. انت بس بتعمل session قصيرة وتدّي الرابط.
-
----
-
-## ٢. الـ webhook: [[app.post("/webhooks/stripe", express.raw({ type: "application/json" }), ...)]]
-
-[[express.raw]] بيسيب الـ body [[Buffer]] (bytes زي ما وصلت) من غير ما يحوّله object، لأن التوقيع محسوب على النص حرف بحرف. و [[app.post]] مش [[router]] عشان يتسجّل قبل [[express.json()]] العام.
-
-### [[stripe.webhooks.constructEvent(req.body, req.get("stripe-signature"), config.STRIPE_WEBHOOK_SECRET)]]
-
-Stripe بتبعت header شكله كده:
-
-~~~text الـ header اللي اتبعت في التجربة
-Stripe-Signature: t=1791456351,v1=dcfa2a1bf3dd…
-~~~
-
-[[t]] وقت الإرسال (ثواني من ١٩٧٠)، و [[v1]] HMAC-SHA256 لـ [[t.body]] بالسر [[whsec_...]]. [[constructEvent]] بتحسبه تاني وتقارن، وتتأكد إن [[t]] مش أقدم من ٥ دقايق، وترجّع الحدث كـ object. جربنا ٣ حالات فشل:
-
-~~~text الناتج
-constructEvent threw: StripeSignatureVerificationError - No signatures found matching the expected signature for payload. Are you passing the raw request body you rece…
-customer.subscription.updated          400 bad signature
-constructEvent threw: StripeSignatureVerificationError - Timestamp outside the tolerance zone
-customer.subscription.updated          400 bad signature
-constructEvent threw: StripeSignatureVerificationError - Webhook payload must be provided as a string or a Buffer (https://nodejs.org/api/buffer.html) instance represe…
-customer.subscription.updated          400 bad signature
-~~~
-
-1. غيّرنا حرف في [[v1]]: التوقيع مش مطابق.
-2. توقيع صح بس [[t]] من ١٠ دقايق: replay قديم، اترفض.
-3. نفس الحدث السليم، بس على تطبيق فيه [[app.use(express.json())]] **قبل** الـ webhook: الـ body بقى object، و [[constructEvent]] رفضت. دي أشهر غلطة.
-
-والـ [[try { ... } catch { return res.status(400)... }]] على سطر واحد: أي فشل في التحقق = 400 ومفيش شغل.
-
----
-
-## ٣. [[if (event.type.startsWith("customer.subscription."))]]
-
-بيلقط [[created]] و [[updated]] و [[deleted]] (وكمان [[trial_will_end]]) بشرط واحد.
-
-### [[const sub = await stripe.subscriptions.retrieve(event.data.object.id);]]
-
-بنجيب الاشتراك من Stripe بالـ id، مش بنصدّق الـ object اللي جوه الحدث. ليه؟ Stripe مبتضمنش ترتيب الأحداث. جربنا بالنسخة اللي بتكتب [[event.data.object]] مباشرة: بعتنا [[deleted]]، وبعدها حدث [[updated]] أقدم وصل متأخر:
-
-~~~text الناتج (بـ event.data.object)
-customer.subscription.deleted          200 {"received":true}
-   row: [{"status":"canceled",...}]
--- late, older event arrives after deleted:
-customer.subscription.updated          200 {"received":true}
-   row: [{"status":"trialing",...}]
-~~~
-
-الاشتراك الملغي رجع trialing، يعني الميزات اتفتحت تاني لعميل لغى. وبـ [[retrieve]] (عملناها في التجربة دالة وهمية بترجّع آخر حالة عند «Stripe»، والحقيقية API call):
-
-~~~text الناتج (بـ retrieve)
--- late, older event arrives after deleted:
-customer.subscription.updated          200 {"received":true}
-   row: [{"status":"canceled",...}]
-~~~
-
-### [[const item = sub.items.data[0];]]
-
-الاشتراك فيه array من items (كل خطة item). عندنا خطة واحدة فبناخد الأول. ومن API سنة 2025 [[current_period_end]] بقى على الـ item مش على الاشتراك (الـ CHANGELOG بتاع stripe-node بيقول اتشال من [[Subscription]] واتضاف على [[SubscriptionItem]]).
-
-### [[db.subscription.upsert({ where: { stripeSubscriptionId: sub.id }, create: {...}, update: {...} })]]
-
-- [[where]] بالـ id بتاع Stripe ([[sub_...]])، وعليه [[@unique]].
-- [[new Date(item.current_period_end * 1000)]]: Stripe بتبعت الوقت بالثواني، و [[Date]] في JavaScript بالملّي، فبنضرب في ١٠٠٠.
-- [[tenantId: sub.metadata.tenantId]] في الـ create بس: اللي حطيناه في [[subscription_data.metadata]].
-
-التجربة خطوة خطوة (نفس الاشتراك):
-
-~~~text الناتج
-customer.subscription.created   200  row: status trialing,  priceId price_pro_monthly, cancelAtPeriodEnd false
-customer.subscription.created   200  row: نفس الصف (التكرار ملوش أثر)
-customer.subscription.updated   200  row: status trialing,  priceId price_pro_yearly,  cancelAtPeriodEnd false
-customer.subscription.updated   200  row: status trialing,  priceId price_pro_yearly,  cancelAtPeriodEnd true
-customer.subscription.deleted   200  row: status canceled,  priceId price_pro_yearly,  cancelAtPeriodEnd true
-~~~
-
-ودايمًا صف واحد، و [[currentPeriodEnd]] بعد ١٤ يوم ([[2026-10-22T10:45:51.000Z]]).
-
-### اشتراك من غير [[tenantId]]
-
-زي اللي [[stripe trigger]] بيعمله:
-
-~~~text الناتج
-UNHANDLED PrismaClientValidationError: Invalid $__btdb.subscription.upsert()$__bt invocation ... Argument $__bttenant$__bt is missing.
-customer.subscription.created          500 {"error":{"code":"INTERNAL","message":"حصلت مشكلة"}}
-~~~
-
-500 معناها Stripe هتفضل تعيد الحدث. اتعامل معاه: لو [[!sub.metadata.tenantId]] سجّل في اللوج ورد 200.
-
----
-
-## ٤. [[if (event.type === "invoice.payment_failed") await emailQueue.add(...)]]
-
-~~~text الناتج
-invoice.payment_failed                 200 {"received":true}
-   queue: [["payment-failed",{"invoiceId":"in_TEST1"}]]
-~~~
-
-الـ handler بيحط job بالـ id بس ويرد، والإيميل بيتبعت من الـ worker (درس «background jobs»). و [[res.json({ received: true })]] رد سريع، لأن Stripe بتعتبر الحدث فشل لو الرد اتأخر.
-
----
-
-## الخلاصة
-
-| الجزء | بيعمل إيه | اتجرب؟ |
-|---|---|---|
-| [[/billing/checkout]] | صفحة اشتراك عند Stripe بتجربة ١٤ يوم | من الـ docs |
-| [[/billing/portal]] | بوابة العميل | من الـ docs |
-| [[express.raw]] + [[constructEvent]] | التوقيع والوقت | اتجرب (٣ حالات رفض) |
-| [[retrieve]] + [[upsert]] | آخر حالة، صف واحد | اتجرب (retrieve وهمية) |
-| [[invoice.payment_failed]] | إيميل «حدّث الكارت» | اتجرب (queue وهمية) |
-
-الصلاحيات بتتقري من جدول [[subscriptions]] اللي الـ webhook بيحدّثه، مش من [[success_url]].`,
-          lines: [
-            "بدء الاشتراك: الـ OWNER بس، جوه الـ workspace.",
-            "الخطة من قايمة ثابتة، مش سعر من الواجهة.",
-            "Checkout من Stripe:",
-            "وضع الاشتراك.",
-            "عميل Stripe بتاع الـ workspace.",
-            "الـ price id من الإعدادات.",
-            "تجربة ١٤ يوم، والـ tenant في الـ metadata عشان الـ webhook يعرف ده لمين.",
-            "يرجع هنا بعد الدفع...",
-            "...أو لو لغى.",
-            "قفلة.",
-            "الواجهة تعمل redirect للـ URL ده.",
-            "قفلة.",
-            "Customer Portal: تغيير الكارت والخطة والإلغاء والفواتير.",
-            "session قصيرة للبوابة بتاعة العميل ده.",
-            "رجّع الـ URL.",
-            "قفلة.",
-            "الـ webhook: الـ body خام عشان التوقيع.",
-            "الحدث.",
-            "اتحقق من التوقيع. لو غلط أو قديم، 400 ومتكملش.",
-            "أي تغيير في الاشتراك (إنشاء، أو تحديث، أو إلغاء):",
-            "هات آخر حالة للاشتراك من Stripe نفسه، مش الـ object اللي في الحدث، لأن الأحداث ممكن توصل بترتيب غلط.",
-            "أول item (الخطة).",
-            "اعكس الحالة عندك:",
-            "بالـ id بتاع Stripe.",
-            "لو جديد: الـ tenant، والحالة، والخطة، ونهاية الفترة، والإلغاء في الآخر.",
-            "لو موجود: حدّث نفس الحقول.",
-            "قفلة.",
-            "قفلة.",
-            "تجديد فشل؟ ابعت إيميل «حدّث الكارت».",
-            "رد سريع إن الحدث اتستلم.",
-            "قفلة."
-          ],
-          sol: R`بعد الاشتراك: صف في subscriptions بـ [[status: "trialing"]] و [[currentPeriodEnd]] بعد ١٤ يوم. بعد التغيير لسنوي من الـ Portal: نفس الصف بـ [[priceId]] الجديد، و Stripe عامل proration في الفاتورة الجاية. بعد الإلغاء من الـ Portal (الافتراضي في آخر الفترة): [[cancelAtPeriodEnd: true]] والحالة لسه trialing أو active، وبعد ما الفترة تخلص بييجي [[customer.subscription.deleted]] والحالة [[canceled]].
-
-[[stripe trigger invoice.payment_failed]] بيعمل عميل واشتراك تجريبيين من عنده، فهتلاقي إيميل payment-failed في الـ queue. وممكن الـ upsert يرمي لأن [[metadata.tenantId]] فاضي في الاشتراك التجريبي: ده متوقع، واتعامل معاه (تجاهل الاشتراكات من غير tenant، وسجّلها في اللوج).
-
-لو كل الـ webhooks بترجع 400: غالبًا [[express.json()]] اشتغل قبل [[express.raw]]، أو بتستخدم secret الـ dashboard بدل اللي [[stripe listen]] طبعه ([[whsec_...]]).`
-        }
-      ]
-    },
-    {
-      t: "الملفات والـ realtime والإشعارات",
-      l: 2,
-      n: "الملفات مبتعدّيش على سيرفرك، والمستخدم يعرف اللي حصل لحظتها أو على إيميله أو موبايله",
-      items: [
-        {
-          cmd: "signed upload URL",
-          title: "رفع الملفات من غير ما تعدّي على سيرفرك",
-          desc: R`الرفع على ٣ خطوات. الأول، الواجهة بتسأل السيرفر «عايز أرفع صورة نوعها كذا وحجمها كذا»، والسيرفر يتأكد من الصلاحية والنوع والحجم، ويرجّع رابط موقّع (presigned URL) عمره ٥ دقايق. التاني، المتصفح بيرفع الملف مباشرة على S3 أو R2 بـ PUT. التالت، الواجهة بتبلّغ السيرفر بالـ key، والسيرفر يربطه بالكورس.
-
-الملف نفسه عمره ما بيعدّي على الـ API.`,
-          example: R`import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-
-const s3 = new S3Client({ region: config.S3_REGION, requestChecksumCalculation: "WHEN_REQUIRED" });
-const Upload = z.object({ type: z.enum(["image/jpeg", "image/png", "image/webp"]), size: z.number().int().max(5_000_000) });
-
-router.post("/uploads/cover", requireAuth, requireRole("INSTRUCTOR", "ADMIN"), async (req, res) => {
-  const { type } = Upload.parse(req.body);
-  const key = $__btcovers/$__{req.user.id}/$__{crypto.randomUUID()}.$__{type.split("/")[1]}$__bt;
-  const url = await getSignedUrl(s3, new PutObjectCommand({ Bucket: config.S3_BUCKET, Key: key, ContentType: type }), { expiresIn: 300, signableHeaders: new Set(["content-type"]) });
-  res.json({ data: { url, key } });
-});`,
-          try: R`اطلب رابط، وارفع عليه صورة من المتصفح: [[fetch(url, { method: "PUT", body: file, headers: { "Content-Type": file.type } })]]. بعدين جرّب ترفع بنفس الرابط بعد ٦ دقايق (هيرفض)، وبـ Content-Type مختلف عن اللي اتوقّع (هيرفض برضه). وقبل كل ده لازم تظبط CORS على الـ bucket.`,
-          flag: "script",
-          deep: {
-            why: "لو الملف بيعدّي على Express، كل رفع بياكل رام وCPU وباندويث من السيرفر اللي بيرد على كل الناس. فيديو ٥٠٠ ميجا ممكن يخلي السيرفر يقع، أو يوصل لحد Nginx ([[client_max_body_size]]) أو الـ timeout.",
-            how: R`الرابط الموقّع جواه توقيع بمفاتيحك على حاجات محددة: الـ bucket، والـ key، والـ method، والـ Content-Type، ومدة الصلاحية. أي تغيير في أي واحدة منهم، التوقيع بيبقى غلط وS3 بترفض. يعني انت بتدّي إذن لملف واحد، في مكان واحد، لمدة ٥ دقايق. بس الـ SDK مبيوقّعش الـ Content-Type افتراضيًا، عشان كده بنضيف [[signableHeaders]] في المثال.
-
-الـ key بيتعمل على السيرفر: فولدر المستخدم، واسم عشوائي، والامتداد من النوع المسموح. متستخدمش اسم الملف الأصلي، عشان متتعرضش لـ path traversal أو لملف يكتب فوق ملف تاني.
-
-بس خلي بالك: الـ presigned PUT مبيقفلش الحجم. الـ [[size]] اللي الواجهة بتبعته مجرد كلام. عشان تفرض حد حقيقي، إما تستخدم presigned POST ([[createPresignedPost]] من [[@aws-sdk/s3-presigned-post]]) بشرط [[content-length-range]]، أو تعمل [[HeadObject]] في خطوة التأكيد وتمسح الملف لو كبير. وفي خطوة التأكيد كمان، اتأكد إن الـ key بيبدأ بـ [[covers/<userId>/]]، عشان محدش يربط ملف حد تاني.
-
-والـ bucket يبقى private افتراضيًا. القراية تبقى بروابط GET موقّعة قصيرة، أو من CDN. والصور العامة بس (زي أغلفة الكورسات) ممكن تبقى public.
-
-وفي Supabase Storage، نفس الفكرة: [[createSignedUploadUrl(path)]] على السيرفر، وبعدين [[uploadToSignedUrl(path, token, file)]] من الواجهة. والرابط صالح ساعتين. والفيديو قصة لوحده: استخدم خدمة فيديو (Bunny Stream، أو Cloudflare Stream، أو Mux)، بتحوّله HLS وبتحميه بتوكنات. والملفات الكبيرة جدًا بتترفع multipart أو resumable. والملفات اللي اترفعت ومحدش ربطها بحاجة، امسحها بـ lifecycle rule بعد يوم.`,
-            when: "أي رفع أكبر من صورة بروفايل صغيرة، وأي منتج فيه فيديو أو PDF.",
-            mistakes: R`في مشروع حقيقي، الرفع كان بـ multer و [[memoryStorage]]، وحد أقصى ١٠٠ ميجا للصور و ٥٠٠ للـ PDF. يعني الملف كله بيتحمّل في الرام، وكام رفع مع بعض كفاية يوقّعوا السيرفر. وفي مشروع تاني، route رفع الأدمن مكانش فيه قايمة أنواع مسموحة، والـ bucket كان public. ملف HTML أو SVG هناك ممكن يشغّل JavaScript على الدومين بتاعك. ومن الغلطات كمان: إنك تصدّق الـ Content-Type أو الامتداد اللي جاي من الـ client. أو تسيب bucket public فيه ملفات مدفوعة.`
-          },
-          teach: R`## السيرفر بيدّي «إذن» لملف واحد، والمتصفح بيرفع على S3 مباشرة
-
-الـ route بيتأكد من الصلاحية والنوع والحجم، ويعمل key عشوائي، ويرجّع رابط PUT موقّع عمره ٥ دقايق. جربناه بـ AWS SDK v3 ([[@aws-sdk/client-s3]] 3.1147) على Node 24 (ويندوز 11) قصاد LocalStack 4.9 في Docker (S3 وهمي على الجهاز، وشغّلناه بـ [[S3_SKIP_SIGNATURE_VALIDATION=0]] عشان يتحقق من التوقيعات زي S3 الحقيقي). الفرق الوحيد في التجربة إن العميل فيه [[endpoint: "http://localhost:6022"]] و [[forcePathStyle: true]] ومفاتيح [[test]].
-
----
-
-## ١. الـ imports
-
-- [[S3Client]]: العميل اللي بيكلّم S3. و [[PutObjectCommand]]: أمر «حط ملف».
-- [[getSignedUrl]] من [[@aws-sdk/s3-request-presigner]]: بدل ما تبعت الأمر، بتاخد منه **رابط** موقّع حد تاني يقدر ينفّذه.
-
----
-
-## ٢. [[new S3Client({ region: config.S3_REGION, requestChecksumCalculation: "WHEN_REQUIRED" })]]
-
-- [[region]]: المنطقة اللي فيها الـ bucket (زي [[eu-central-1]]). والمفاتيح بيقراها لوحده من متغيرات البيئة ([[AWS_ACCESS_KEY_ID]] و [[AWS_SECRET_ACCESS_KEY]]) أو من IAM role على السيرفر.
-- [[requestChecksumCalculation: "WHEN_REQUIRED"]]: النسخ الجديدة من الـ SDK بتحسب checksum للـ body افتراضيًا. بس وقت عمل الرابط مفيش ملف، فبيحط checksum لملف **فاضي**. عملنا رابط من عميل من غير الخيار ده:
-
-~~~text الناتج
-x-amz-checksum-crc32 = AAAAAA==      ← CRC32 لـ 0 byte
-~~~
-
-S3 الحقيقي بيرفض أي ملف مش فاضي على الرابط ده لأن الـ checksum مش مطابق (LocalStack عدّاه، فالجزء ده من وثائق AWS). [[WHEN_REQUIRED]] بتشيله.
-
----
-
-## ٣. [[const Upload = z.object({ type: z.enum([...]), size: z.number().int().max(5_000_000) })]]
-
-- [[z.enum]]: ٣ أنواع صور بس. SVG مش منهم عن قصد: ملف SVG ممكن يبقى جواه JavaScript.
-- [[size]]: رقم صحيح لحد ٥ مليون byte (حوالي ٥ ميجا).
-
-~~~text الناتج
-validation: 400 400 student: 403
-~~~
-
-[[image/svg+xml]] → 400، و ٩ ميجا → 400، وطالب (مش INSTRUCTOR ولا ADMIN) → 403 من [[requireRole]].
-
----
-
-## ٤. [[const key = $__btcovers/$__{req.user.id}/$__{crypto.randomUUID()}.$__{type.split("/")[1]}$__bt]]
-
-مكان الملف في الـ bucket، متركّب على السيرفر من ٣ حتت:
-
-1. [[req.user.id]]: فولدر لكل مستخدم.
-2. [[crypto.randomUUID()]]: اسم عشوائي (UUID = ٣٦ حرف مستحيل يتكرر).
-3. [[type.split("/")[1]]]: [["image/webp".split("/")]] بتدّي [[["image", "webp"]]]، والعنصر رقم ١ هو الامتداد.
-
-~~~text الناتج
-covers/u_inst/1c65bc26-1990-4b13-aefd-90a1289d0678.webp
-~~~
-
-اسم الملف الأصلي مش داخل خالص، فمفيش [[../]] ولا ملف يكتب فوق ملف تاني.
-
----
-
-## ٥. [[getSignedUrl(s3, new PutObjectCommand({ Bucket, Key: key, ContentType: type }), { expiresIn: 300, signableHeaders: new Set(["content-type"]) })]]
-
-من جوه لبرة:
-
-1. [[new PutObjectCommand({...})]]: أمر رفع للـ bucket ده، بالـ key ده، بالنوع ده.
-2. [[expiresIn: 300]]: ٣٠٠ ثانية = ٥ دقايق.
-3. [[signableHeaders: new Set(["content-type"])]]: دخّل header الـ Content-Type في التوقيع. [[Set]] مجموعة قيم من غير تكرار، والـ SDK عايزها بالشكل ده.
-4. [[getSignedUrl]]: يحسب التوقيع بالمفتاح السري ويرجّع رابط.
-
-فكّينا الرابط اللي رجع:
-
-~~~text الناتج
-http://localhost:6022/myapp-uploads/covers/u_inst/1c65bc26-....webp
-   X-Amz-Algorithm = AWS4-HMAC-SHA256
-   X-Amz-Content-Sha256 = UNSIGNED-PAYLOAD
-   X-Amz-Credential = test/20261008/us-east-1/s3/aws4_request
-   X-Amz-Date = 20261008T104759Z
-   X-Amz-Expires = 300
-   X-Amz-Signature = 092f489453…
-   X-Amz-SignedHeaders = content-type;host
-   x-id = PutObject
-~~~
-
-| الخانة | معناها |
-|---|---|
-| [[AWS4-HMAC-SHA256]] | طريقة التوقيع (Signature Version 4) |
-| [[UNSIGNED-PAYLOAD]] | محتوى الملف نفسه مش داخل في التوقيع (مش معروف لسه) |
-| [[X-Amz-Credential]] | مين وقّع: المفتاح العام / التاريخ / المنطقة / الخدمة |
-| [[X-Amz-Date]] و [[X-Amz-Expires]] | وقّع إمتى وصالح كام ثانية |
-| [[X-Amz-SignedHeaders]] | الـ headers اللي لازم تتبعت زي ما هي: [[content-type]] و [[host]] |
-| [[X-Amz-Signature]] | التوقيع نفسه |
-
-من غير [[signableHeaders]] الخانة دي بتبقى [[host]] بس، وجربنا: رفعنا png على رابط اتعمل لـ webp ونجح [[200]].
-
----
-
-## ٦. الرفع على الرابط
-
-~~~text الناتج
-correct              200
-HEAD: {"ContentType":"image/webp","ContentLength":15}
-wrong type           403 SignatureDoesNotMatch The request signature we calculated does not match the signature you provided...
-expired              403 AccessDenied Request has expired
-6MB on size:10       200
-~~~
-
-- [[correct]]: PUT بنفس النوع → 200، و [[HeadObject]] بيأكد إن الملف موجود بالنوع ده.
-- [[wrong type]]: [[image/png]] على رابط webp → التوقيع مش مطابق.
-- [[expired]]: عملنا رابط بـ [[expiresIn: 1]] واستنينا ٢.٥ ثانية.
-- [[6MB on size:10]]: طلبنا الرابط بـ [[size: 10]] ورفعنا ٦ ميجا، ونجح. ده اللي الـ [[deep]] بيقوله: الـ presigned PUT مبيقفلش الحجم، فاتأكد بـ [[HeadObject]] في خطوة التأكيد أو استخدم presigned POST.
-
----
-
-## ٧. الـ solCode: الواجهة و CORS
-
-في الواجهة: [[input.files[0]]] الملف اللي اختاره المستخدم، و [[file.type]] و [[file.size]] بيتبعتوا للسيرفر، وبعدين [[fetch(url, { method: "PUT", body: file, headers: { "Content-Type": file.type } })]].
-
-المتصفح مش هيرفع على دومين تاني غير لو الـ bucket سامح بـ CORS. حطينا قاعدة الـ solCode على LocalStack وبعتنا الـ preflight (طلب [[OPTIONS]] اللي المتصفح بيبعته قبل الـ PUT):
-
-~~~text الناتج
-http://localhost:3000 200 access-control-allow-origin: http://localhost:3000 | access-control-allow-methods: PUT | access-control-allow-headers: content-type | access-control-max-age: 3000
-https://evil.example 403
-~~~
-
-[[MaxAgeSeconds: 3000]] يعني المتصفح يفتكر الإذن ده ٥٠ دقيقة من غير ما يسأل تاني.
-
----
-
-## الخلاصة
-
-| الحماية | فين |
-|---|---|
-| مين يرفع | [[requireRole("INSTRUCTOR", "ADMIN")]] |
-| أنهي أنواع | [[z.enum]] + [[ContentType]] جوه التوقيع |
-| فين | الـ key من السيرفر، عشوائي، تحت فولدر المستخدم |
-| لحد إمتى | [[expiresIn: 300]] |
-| الحجم | **مش مقفول** بالـ PUT: [[HeadObject]] بعدين أو presigned POST |
-
-الملف عمره ما بيعدّي على الـ API.`,
-          lines: [
-            "عميل S3 وأمر رفع ملف.",
-            "دالة بتعمل رابط موقّع لأي أمر.",
-            "العميل بيقرا المفاتيح من البيئة (أو IAM role على السيرفر)، و WHEN_REQUIRED عشان الـ SDK ميحطش checksum لملف فاضي جوه الرابط الموقّع.",
-            "مسموح ٣ أنواع صور بس، ولحد ٥ ميجا.",
-            "مسار طلب الرابط، للمدرّب والأدمن بس.",
-            "اتأكد من النوع والحجم.",
-            "الـ key: فولدر المستخدم، واسم عشوائي، وامتداد من النوع. مش اسم الملف الأصلي.",
-            "رابط PUT موقّع للـ key ده وبالنوع ده بس، عمره ٥ دقايق.",
-            "رجّع الرابط والـ key. الـ key هيتبعت تاني في خطوة التأكيد.",
-            "قفلة."
-          ],
-          sol: R`الرابط اللي بيرجع شكله كده: [[https://BUCKET.s3.REGION.amazonaws.com/covers/USER/UUID.webp?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=...&X-Amz-Expires=300&X-Amz-SignedHeaders=content-type%3Bhost&X-Amz-Signature=...]]. [[X-Amz-Expires=300]] هي الـ ٥ دقايق، و [[SignedHeaders=content-type;host]] معناها إن الـ Content-Type داخل في التوقيع. الرفع الصح بيرجع [[200]] وجسم فاضي.
-
-بعد ٦ دقايق S3 بيرجع [[403]] و XML فيه [[AccessDenied]] و [[Request has expired]]. وبـ Content-Type مختلف (مثلًا image/png على رابط اتعمل لـ webp) بيرجع [[403 SignatureDoesNotMatch]]. ولو شفت في الـ Console [[blocked by CORS policy]] قبل ما الطلب يوصل أصلًا، يبقى CORS الـ bucket مش متظبط: لازم [[AllowedOrigins]] فيه origin الموقع، و [[AllowedMethods]] فيه PUT، و [[AllowedHeaders]] فيه content-type.
-
-لو الرفع الصح نفسه رجع [[SignatureDoesNotMatch]]، اتأكد إنك باعت نفس الـ type بالظبط اللي طلبت بيه الرابط، ومن غير headers زيادة. و [[requestChecksumCalculation: "WHEN_REQUIRED"]] موجودة عشان النسخ الجديدة من SDK متضيفش checksum الـ متصفح مش بيبعته.`,
-          solCode: R`// في الواجهة
-const file = input.files[0];
-const res = await apiFetch("/uploads/cover", { method: "POST", body: JSON.stringify({ type: file.type, size: file.size }) });
-const { data: { url, key } } = await res.json();
-const put = await fetch(url, { method: "PUT", body: file, headers: { "Content-Type": file.type } });
-console.log(put.status, key); // 200
-
-// CORS على الـ bucket (S3 أو R2)
 [
   {
-    "AllowedOrigins": ["http://localhost:3000", "https://myapp.com"],
-    "AllowedMethods": ["PUT"],
-    "AllowedHeaders": ["content-type"],
-    "MaxAgeSeconds": 3000
+    id: 'cmuzcoqw000020siee7iwyh2k',
+    slug: 'sql-basics',
+    title: 'SQL Basics',
+    priceCents: 49900
   }
-]`
-        },
-        {
-          cmd: "معالجة الصور",
-          title: "صورة ١٢ ميجا من الموبايل لازم تصغر قبل ما تتعرض",
-          desc: R`الصورة اللي المدرّب بيرفعها من موبايله ممكن تبقى ٤٠٠٠ بكسل و ١٢ ميجا. بعد الرفع، job في الخلفية بيقراها، ويتأكد إنها صورة فعلًا، ويعمل منها مقاسين بصيغة WebP، ويعلّم على الكورس إن الغلاف جاهز. والصفحة بتعرض المقاس المناسب للشاشة.`,
-          example: R`import sharp from "sharp";
+]
+~~~
 
-export async function processCover({ key }) {
-  const original = await storage.read(key);
-  const meta = await sharp(original).metadata();
-  if (!["jpeg", "png", "webp"].includes(meta.format)) throw new Error($__btnot an image: $__{key}$__bt);
-  for (const width of [400, 1200]) {
-    const out = await sharp(original).rotate().resize({ width, withoutEnlargement: true }).webp({ quality: 80 }).toBuffer();
-    await storage.write(key.replace(/\.\w+$/, $__bt-$__{width}.webp$__bt), out, "image/webp");
-  }
-  await db.course.updateMany({ where: { coverKey: key }, data: { coverReady: true } });
-}`,
-          try: R`صوّر صورة بموبايلك بالطول، وشغّل الدالة عليها مرة بـ [[.rotate()]] ومرة من غيرها. قارن الاتنين، وقارن حجم الأصل بحجم نسخة الـ 400.`,
-          flag: "script",
-          deep: {
-            why: "صورة ١٢ ميجا في صفحة الكورسات معناها تحميل بطيء على الموبايل، و LCP وحش، وباندويث بتدفع تمنها. وكمان الصورة من الموبايل ممكن يبقى فيها مكان التصوير (GPS) في الـ EXIF، وده بيكشف بيت المدرّب.",
-            how: R`sharp مبني على libvips، وده سريع وموفّر في الرام. [[metadata()]] بيقرا الـ header بتاع الملف، وده بيكشف ملف عامل نفسه صورة بامتداد مزيف.
-
-[[rotate()]] من غير أرقام بيلف الصورة حسب الـ EXIF، لأن الموبايل بيصوّر بالعرض ويكتب «لفّها» في الـ metadata. والناتج من sharp بيطلع من غير الـ metadata دي افتراضيًا، فالـ GPS بيروح. و [[withoutEnlargement]] بيمنع إنه يكبّر صورة صغيرة فتبوظ.
-
-ومقاسين كفاية لأغلب الحالات: 400 للكروت، و 1200 لصفحة الكورس. والواجهة بتختار بـ [[srcset]] أو [[sizes]]، أو بتسيب next/image يعمل ده.
-
-ده job مش جوه الـ request. المعالجة بتاخد ثانية أو اتنين وبتاكل CPU، والـ worker ممكن يشتغل على سيرفر لوحده. ولو فشل بيتعاد (درس «background jobs» في القسم الجاي). ولحد ما يخلص، الواجهة بتعرض placeholder بسبب [[coverReady: false]].
-
-وsharp عنده حد افتراضي لعدد البكسلات ([[limitInputPixels]])، بيحميك من صورة صغيرة في الحجم لكنها لما تتفك تبقى مليارات البكسلات (decompression bomb).
-
-وبديل الشغل ده كله: خدمة صور زي Cloudflare Images أو imgproxy، أو next/image على سيرفرك. التفاصيل في درس الـ CDN في المستوى التالت.`,
-            when: "أي صور جاية من المستخدمين: أغلفة، وصور بروفايل، وإيصالات تحويل.",
-            mistakes: "إنك تعرض الأصل زي ما هو. أو تعالج جوه الـ request فالرفع ياخد ١٠ ثواني. أو تنسى rotate فتطلع الصور مقلوبة. أو تسيب الـ EXIF بالـ GPS. أو تثق في الامتداد بدل ما تقرا الـ header."
-          },
-          teach: R`## job بياخد الصورة الأصلية ويطلّع منها مقاسين WebP
-
-الدالة بتقرا الملف من الـ storage، وتتأكد إنه صورة فعلًا، وتعمل نسخة عرضها ٤٠٠ ونسخة ١٢٠٠ بصيغة WebP، وتعلّم على الكورس إن الغلاف جاهز. جربناها بـ sharp 0.35 (libvips 8.18) على Node 24 (ويندوز 11). الـ [[storage]] و [[db]] في التجربة وهميين (Map في الذاكرة ودالة بتطبع)، والصورة اتعملت بـ sharp: ٤٠٠٠×٣٠٠٠ فيها noise عشان حجمها يبقى زي صورة موبايل، و EXIF فيه [[orientation: 6]].
+[[Advanced SQL (draft)]] فيه «SQL» بس مطلعش، لأن [[published: true]].
 
 ---
 
-## ١. [[import sharp from "sharp";]]
+## ٤. [[courses.routes.ts]]: HTTP بس
 
-sharp مكتبة صور مبنية على libvips (مكتوبة بـ C)، فهي أسرع بكتير من أي حاجة مكتوبة JavaScript، ومبتحمّلش الصورة كلها في الرام مرة واحدة.
-
----
-
-## ٢. [[export async function processCover({ key }) {]]
-
-الـ job بياخد [[key]] بس (مكان الملف)، مش الصورة نفسها. الـ queue بتخزن داتا صغيرة.
-
-### [[const original = await storage.read(key);]]
-
-يرجّع [[Buffer]]: bytes الملف.
-
----
-
-## ٣. [[const meta = await sharp(original).metadata();]]
-
-[[metadata()]] بيقرا الـ header بتاع الملف بس من غير ما يفك الصورة كلها. بيرجّع [[format]] و [[width]] و [[height]] و [[orientation]] وغيرهم:
-
-~~~text الناتج
-original 4000 x 3000 orientation 6 71457 bytes
-~~~
-
-### [[if (!["jpeg", "png", "webp"].includes(meta.format)) throw ...]]
-
-الـ [[format]] جاي من محتوى الملف، مش من الامتداد. جربنا ٣ ملفات اسمها [[.png]]:
-
-~~~text الناتج
-evil.png: Input buffer contains unsupported image format
-anim.png (gif inside): not an image: covers/u/anim.png
-bomb.png: Input image exceeds pixel limit
-~~~
-
-1. [[evil.png]] جواه HTML: [[metadata()]] نفسه رمى، لأن sharp معرفش الصيغة أصلًا.
-2. [[anim.png]] جواه GIF حقيقي: sharp عرفه ([[format: "gif"]])، والسطر ده هو اللي رفضه.
-3. [[bomb.png]] ملف ٦٩ byte بس، عدّلنا الـ header بتاعه يقول ٢٠٠٠٠×٢٠٠٠٠ (٤٠٠ مليون بكسل). sharp رفضه من الـ header بسبب [[limitInputPixels]] (الافتراضي حوالي ٢٦٨ مليون بكسل). ده الـ decompression bomb اللي الـ [[deep]] بيتكلم عنه.
-
-في الحالات التلاتة الـ job بيرمي، والـ queue بتسجّله فاشل.
-
----
-
-## ٤. [[for (const width of [400, 1200]) {]]
-
-loop على المقاسين. [[for...of]] بيلف على قيم الـ array.
-
-### [[sharp(original).rotate().resize({ width, withoutEnlargement: true }).webp({ quality: 80 }).toBuffer()]]
-
-سلسلة (chain): كل خطوة بترجع نفس الـ object فتكمّل عليه، والشغل الحقيقي بيحصل عند [[toBuffer()]]:
-
-| الخطوة | بتعمل إيه |
-|---|---|
-| [[.rotate()]] | من غير رقم: لف حسب الـ EXIF orientation |
-| [[.resize({ width, withoutEnlargement: true })]] | العرض ده، والطول بيتحسب بنفس النسبة، ومتكبّرش صورة أصغر |
-| [[.webp({ quality: 80 })]] | حوّل WebP بجودة ٨٠ من ١٠٠ |
-| [[.toBuffer()]] | نفّذ ورجّع الـ bytes |
-
-#### ليه [[rotate()]]؟ (الـ solCode)
-
-الموبايل بيخزن البكسلات بالعرض ويكتب في الـ EXIF «لفّها ٩٠ درجة» ([[orientation: 6]]). جربنا نفس الصورة بيها ومن غيرها:
-
-~~~text الناتج
-with rotate 400 x 533 462 bytes
-no rotate 400 x 300 292 bytes
-~~~
-
-من غير [[rotate()]] الصورة طلعت نايمة (٤٠٠×٣٠٠). ولما بتلف، ٣٠٠٠×٤٠٠٠ بعرض ٤٠٠ بيبقى طولها [[4000 × 400 ÷ 3000 = 533]].
-
-#### [[withoutEnlargement]]
-
-صورة ٣٠٠×٢٠٠:
-
-~~~text الناتج
-small -> covers/u/small-400.webp 300x200
-small -> covers/u/small-1200.webp 300x200
-~~~
-
-فضلت زي ما هي بدل ما تتمطّ وتبوظ.
-
-### [[storage.write(key.replace(/\.\w+$/, $__bt-$__{width}.webp$__bt), out, "image/webp")]]
-
-الـ regex [[/\.\w+$/]] معناه: نقطة ([[\.]])، وبعدها حرف أو رقم أو أكتر ([[\w+]])، في آخر النص ([[$]]). يعني الامتداد. وبيتبدل بـ [[-400.webp]]:
-
-~~~text الناتج
-wrote covers/u_inst/abc-400.webp image/webp 8598 bytes
-wrote covers/u_inst/abc-1200.webp image/webp 529064 bytes
-~~~
-
-والأصل كان [[8542438]] byte (حوالي ٨.٥ ميجا)، يعني نسخة الـ ٤٠٠ أصغر منه ألف مرة تقريبًا (الصورة دي noise؛ صورة حقيقية بتختلف).
-
-### الـ EXIF راح
-
-~~~text الناتج
-in: has EXIF 8542438 bytes
-covers/u_inst/abc-400.webp 400x533 exif: none orientation: undefined
-covers/u_inst/abc-1200.webp 1200x1600 exif: none orientation: undefined
-~~~
-
-sharp مبينسخش الـ metadata للناتج إلا لو طلبت ([[withMetadata]] أو [[keepExif]])، فالـ GPS وموديل الموبايل مش موجودين في اللي هيتعرض.
-
----
-
-## ٥. [[db.course.updateMany({ where: { coverKey: key }, data: { coverReady: true } })]]
-
-~~~text الناتج
-updateMany {"where":{"coverKey":"covers/u_inst/abc.jpg"},"data":{"coverReady":true}}
-~~~
-
-[[updateMany]] مش [[update]] لأن [[coverKey]] مش unique، ولو الكورس اتمسح أو غيّر الغلاف في النص الـ count بيبقى 0 من غير ما يرمي.
-
----
-
-## الخلاصة
-
-| الخطوة | ليه |
-|---|---|
-| [[metadata()]] + قايمة صيغ | الامتداد ممكن يكدب، والـ header لأ |
-| [[rotate()]] | صور الموبايل متطلعش نايمة |
-| [[resize]] + [[withoutEnlargement]] | مقاس مناسب ومن غير تمطيط |
-| [[webp({ quality: 80 })]] | حجم أصغر بمراحل |
-| الناتج من غير EXIF | الـ GPS مش بيتنشر |
-| [[coverReady]] | الواجهة تعرض placeholder لحد ما يخلص |`,
-          lines: [
-            "sharp: مكتبة الصور الأسرع في Node.",
-            "job بياخد الـ key بتاع الملف اللي اترفع.",
-            "اقرا الملف من الـ storage.",
-            "اقرا الـ header بتاع الصورة الحقيقي.",
-            "مش صورة فعلًا؟ ارمي error، والـ job يتسجّل فاشل.",
-            "لكل مقاس من الاتنين...",
-            "...لف حسب الـ EXIF، وصغّر من غير تكبير، وحوّل WebP بجودة 80.",
-            "...واحفظه جنب الأصل باسم فيه المقاس.",
-            "قفلة الـ loop.",
-            "علّم إن الغلاف جاهز، عشان الواجهة تعرضه بدل الـ placeholder.",
-            "قفلة."
-          ],
-          sol: R`صورة الموبايل بالطول غالبًا متخزنة بالعرض وجواها EXIF بيقول «لفّها 90 درجة» ([[orientation: 6]]). جربناها على صورة 4000×3000 عليها orientation 6: مع [[.rotate()]] نسخة الـ 400 طلعت [[400 x 533]] (بالطول، صح)، ومن غيرها طلعت [[400 x 300]] (نايمة على جنبها). ده لأن [[.rotate()]] من غير رقم بيلف حسب الـ EXIF، والـ webp الناتج مفيهوش EXIF أصلًا، فمفيش حد تاني هيلفها.
-
-الحجم: الأصل من موبايل حديث بيبقى من ٣ لـ ١٢ ميجا، ونسخة الـ 400 webp بـ quality 80 بتبقى عشرات الكيلو بس (الرقم بيختلف حسب الصورة). يعني تقريبًا ١٠٠ مرة أصغر، وده الفرق بين صفحة كورسات بتحمّل في ثانية وصفحة بتحمّل في ٣٠.
-
-لو النسختين طلعوا نفس الاتجاه، يبقى صورتك مفيهاش EXIF orientation (بعض التطبيقات بتلف البيكسلات نفسها قبل ما تحفظ). جرب صورة طالعة من الكاميرا مباشرة، أو اعمل واحدة بالسكربت اللي تحت.`,
-          solCode: R`import sharp from "sharp";
-
-// لو معندكش صورة فيها EXIF، اعمل واحدة: بيكسلات بالعرض و orientation 6
-const photo = await sharp({ create: { width: 4000, height: 3000, channels: 3, background: "#4a7" } })
-  .jpeg().withMetadata({ orientation: 6 }).toBuffer();
-
-const m = await sharp(photo).metadata();
-console.log("original", m.width, "x", m.height, "orientation", m.orientation, photo.length, "bytes");
-
-for (const rotate of [true, false]) {
-  let p = sharp(photo);
-  if (rotate) p = p.rotate();
-  const out = await p.resize({ width: 400, withoutEnlargement: true }).webp({ quality: 80 }).toBuffer();
-  const o = await sharp(out).metadata();
-  console.log(rotate ? "with rotate" : "no rotate", o.width, "x", o.height, out.length, "bytes");
-}
-// with rotate 400 x 533
-// no rotate 400 x 300`
-        },
-        {
-          cmd: "socket.io",
-          title: "إشعار يوصل للمستخدم لحظة ما يحصل",
-          desc: R`socket.io بيفتح اتصال دايم بين المتصفح والسيرفر، فالسيرفر يقدر يبعت من غير ما حد يسأله. الاتصال بيتأكد من التوكن أول ما يتفتح، وكل مستخدم بيدخل room باسمه، وأي service عايزة تبلّغه بتنادي [[notify(userId, ...)]].
-
-في الواجهة: [[const socket = io(API_URL, { auth: { token } })]]، وبعدها [[socket.on("notification", show)]].`,
-          example: R`import { Server } from "socket.io";
-
-export const io = new Server(httpServer, { cors: { origin: config.WEB_ORIGIN, credentials: true } });
-io.use((socket, next) => {
-  try {
-    const payload = jwt.verify(socket.handshake.auth.token, config.JWT_SECRET);
-    socket.data.userId = payload.sub;
-    next();
-  } catch {
-    next(new Error("UNAUTHENTICATED"));
-  }
+~~~text
+coursesRouter.get("/courses", async (req, res) => {
+  res.json({ data: await coursesService.list(ListCourses.parse(req.query)) });
 });
-io.on("connection", (socket) => socket.join($__btuser:$__{socket.data.userId}$__bt));
-export async function notify(userId, n) {
-  const saved = await db.notification.create({ data: { userId, type: n.type, payload: n.payload } });
-  io.to($__btuser:$__{userId}$__bt).emit("notification", saved);
-}`,
-          try: R`افتح الموقع في تابين بنفس المستخدم، وتاب تالت بمستخدم تاني. نادي [[notify]] للأول من endpoint تجربة. التابين بتوعه يوصلهم، والتالت لأ. بعدين جرّب تتصل بتوكن غلط من الـ Console، ولازم يرفض.`,
-          flag: "script",
-          deep: {
-            why: "من غيره، الواجهة بتسأل كل شوية «فيه جديد؟» (polling)، وده آلاف الطلبات من غير فايدة، والإشعار بيتأخر لحد السؤال الجاي. الاتصال الدايم بيخلي السيرفر يبعت أول ما الحاجة تحصل.",
-            how: R`[[io.use]] بيشتغل مرة واحدة لكل اتصال، قبل ما يتفتح. التوكن بيتبعت في [[auth]] مش في الـ query string، لأن الـ query بيتسجّل في لوجات Nginx. ولو التحقق فشل، الاتصال مبيتفتحش خالص. والـ [[userId]] جاي من التوكن اللي السيرفر اتحقق منه، مش من كلام الـ client.
-
-الـ room باسم المستخدم بتخلي [[io.to("user:ID")]] توصل لكل أجهزته وتاباته مع بعض. وفي شات أو كورس، بتعمل rooms للمحادثة أو الكورس، بس لازم تتأكد من العضوية قبل ما تعمل join.
-
-الإشعار بيتحفظ في القاعدة الأول، وبعدين يتبعت. لو المستخدم مش متصل، هيشوفه لما يفتح ([[GET /me/notifications]]). يعني الـ socket للسرعة بس، مش المصدر.
-
-والتوكن بيخلص بعد ربع ساعة، بس الاتصال اللي اتفتح بيفضل مفتوح. لو ده مهم (زي logout)، اقفل الاتصالات بنفسك: [[io.in("user:ID").disconnectSockets()]].
-
-ولو عندك أكتر من سيرفر، المستخدم ممكن يكون متصل بسيرفر والـ notify بيحصل على سيرفر تاني. الحل Redis adapter، ومعاه sticky sessions في الـ load balancer. ده في درس الـ scaling. والـ WebSocket ورا Nginx محتاج headers الـ Upgrade (تاب «Nginx»).
-
-وفيه بدايل. SSE أبسط لو الكلام في اتجاه واحد (من السيرفر للمتصفح بس)، وشغال على HTTP عادي. و Supabase Realtime لو شغال على Supabase. أو خدمة مدفوعة زي Pusher أو Ably لو مش عايز تشغّل حاجة بنفسك.`,
-            when: "إشعارات، وشات، وحالة طلب بتتغير، ولوحة أدمن بتتحدث لوحدها. ولو التحديث كل دقيقة كفاية، الـ polling أبسط.",
-            mistakes: R`في مشروع حقيقي، سيرفر الـ socket مكانش فيه أي تحقق. الـ client بيبعت [[join]] بالـ userId بتاعه هو، و [[send-message]] ومعاها senderId و senderName. يعني أي حد يقدر يسمع إشعارات أي حد، ويبعت رسايل باسمه. وكمان محتوى الرسايل كان بيتطبع في اللوج. ومن الغلطات كمان: إنك تبعت قبل ما القاعدة تحفظ، فلو الـ transaction فشلت المستخدم يشوف إشعار لحاجة محصلتش.`
-          },
-          teach: R`## اتصال دايم، بتوكن متأكد منه، و room لكل مستخدم
-
-السيرفر بيتأكد من التوكن قبل ما أي اتصال يتفتح، وكل اتصال بيدخل room باسم صاحبه، و [[notify]] بتحفظ الإشعار في القاعدة وتبعته للـ room. جربناه بـ socket.io 4.8 و socket.io-client 4.8 و Prisma 7 على PostgreSQL 18 (Docker، ويندوز 11، Node 24): تابين لـ Ali، وتاب لـ Mona، واتصالين بتوكن غلط ومن غير توكن، والـ endpoint اللي في الـ solCode.
-
----
-
-## ١. [[new Server(httpServer, { cors: { origin: config.WEB_ORIGIN, credentials: true } })]]
-
-socket.io بيركب على **نفس** سيرفر HTTP بتاع Express ([[http.createServer(app)]])، فنفس البورت بيخدم الـ API والـ realtime. وأول طلبات الاتصال HTTP عادي، فالـ CORS بيحدد مين يقدر يتصل من المتصفح: الواجهة بس.
-
----
-
-## ٢. [[io.use((socket, next) => { ... })]]
-
-middleware بيشتغل **مرة واحدة لكل اتصال جديد** قبل ما يتفتح (مش مع كل رسالة).
-
-### [[jwt.verify(socket.handshake.auth.token, config.JWT_SECRET)]]
-
-[[socket.handshake]] بيانات أول طلب، و [[auth]] الـ object اللي الـ client بعته: [[io(url, { auth: { token } })]]. نفس التحقق بتاع [[requireAuth]].
-
-### [[socket.data.userId = payload.sub;]]
-
-[[socket.data]] مكان تحط فيه أي حاجة تخص الاتصال ده. الـ id من التوكن اللي اتحقق منه، مش من رسالة الـ client.
-
-### [[next()]] أو [[next(new Error("UNAUTHENTICATED"))]]
-
-[[next()]] من غير حاجة = افتح الاتصال. ومع [[Error]] = ارفضه، والرسالة بتوصل للـ client في [[connect_error]]:
-
-~~~text الناتج
-ali tab1 connected F0BtBs3Wq0XZLehEAAAA
-ali tab2 connected GHzy9aG7AlGtf14yAAAB
-mona tab connected _gAkTdl41NX3pa5qAAAC
-bad token connect_error: UNAUTHENTICATED active: false
-no token connect_error: UNAUTHENTICATED active: false
 ~~~
 
-الرقم بعد [[connected]] هو [[socket.id]]، مختلف لكل اتصال حتى لنفس المستخدم. و [[active: false]] معناها الـ client مش هيحاول تاني لوحده بعد رفض الـ middleware، واستنينا ثانية ونص واتأكدنا:
+من جوه لبرة: [[req.query]] (نصوص من الـ URL)، و [[ListCourses.parse]] بيعمل validation ويحوّل، و [[coursesService.list]] بيجيب، و [[res.json({ data: ... })]] بيرد. ولو الـ parse فشل، الـ ZodError بتوصل للـ error handler (400) من غير try/catch في Express 5. شغّلناه على سيرفر صغير فيه الـ router ده والـ errorHandler بتاع درس «شكل الأخطاء»:
+
+~~~bash
+curl -s "localhost:6018/courses?q=react&take=5"
+curl -s "localhost:6018/courses?take=500"
+~~~
 
 ~~~text الناتج
-bad still active? false connected? false
+{"data":[{"id":"cmuzcoqw000030siej9cp8q04","slug":"react-basics","title":"React Basics","priceCents":59900}]}
+{"error":{"code":"VALIDATION","message":"البيانات مش مظبوطة","details":[{"origin":"number","code":"too_big",...
 ~~~
 
 ---
 
-## ٣. [[io.on("connection", (socket) => socket.join($__btuser:$__{socket.data.userId}$__bt))]]
+## ٥. الاختبار: الـ service من غير سيرفر
 
-[[connection]] بيحصل بعد ما الـ middleware يعدّي. و [[join]] بيدخّل الاتصال room اسمها [[user:u_ali]]. الـ room مجرد اسم لمجموعة اتصالات:
+- [[afterAll(() => db.$disconnect())]] بعد كل الاختبارات اقفل الاتصال بالقاعدة، وإلا Vitest يفضل مستني.
+- الاختبار الأول: فيه نتايج، وأول واحد مفيهوش [[instructorId]] ([[not.toHaveProperty]]).
+- التاني: كل عنوان فيه «sql» بعد [[toLowerCase()]]، و [[every]] بترجّع [[true]] لو الشرط صح للكل.
 
-~~~text الناتج
-rooms: user:u_ali=2 user:u_mona=1
+~~~powershell
+npx vitest run src/modules
 ~~~
 
-تابين Ali في نفس الـ room.
-
----
-
-## ٤. [[export async function notify(userId, n) {]]
-
-### [[const saved = await db.notification.create({ data: { userId, type: n.type, payload: n.payload } });]]
-
-الحفظ الأول. [[payload]] عمود [[Json]]، فبيقبل أي object.
-
-### [[io.to($__btuser:$__{userId}$__bt).emit("notification", saved);]]
-
-[[io.to(room)]] بيختار كل الاتصالات اللي في الـ room دي، و [[emit(اسم, داتا)]] بيبعت event. بنبعت الصف المحفوظ نفسه (فيه [[id]] و [[createdAt]]).
-
-نادينا [[POST /dev/notify/u_ali]]:
-
 ~~~text الناتج
-ali tab1 got {"id":"cmuzf1vgs00002oie1782gn51","userId":"u_ali","type":"order.paid","payload":{"orderId":"o_1"},"createdAt":"2026-10-08T10:51:18.028Z"}
-ali tab2 got {"id":"cmuzf1vgs00002oie1782gn51",...}
-POST /dev/notify/u_ali 204
-saved rows: 1
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Duration  1.06s
 ~~~
 
-التابين خدوا نفس الإشعار، وتاب Mona مخدش حاجة، وفي القاعدة صف واحد. ولاحظ إن الإشعارات اتطبعت **قبل** رد الـ 204: الـ emit وصل وهو لسه بيقفل الطلب.
-
----
-
-## ٥. [[io.in("user:ID").disconnectSockets()]] (من الـ deep)
-
-عشان الـ logout يقفل الاتصالات المفتوحة:
-
-~~~text الناتج
-after disconnectSockets: false false true
-~~~
-
-تابين Ali اتقفلوا، و Mona لسه متصلة.
-
----
-
-## ٦. الـ solCode من ناحية الـ client
-
-- [[io("http://localhost:4000", { auth: { token: ACCESS_TOKEN } })]]: يفتح الاتصال ويبعت التوكن في الـ handshake.
-- [[good.on("connect", ...)]] و [[good.on("notification", ...)]]: بيسمع على الأحداث بالاسم.
-- [[reconnection: false]] على الاتصال الغلط عشان التجربة متكررش المحاولة.
+مفيش [[app.listen]] ولا supertest: الـ service دالة عادية.
 
 ---
 
 ## الخلاصة
 
-| الحاجة | الكود | النتيجة في التجربة |
+| الطبقة | تعرف HTTP؟ | بتعمل إيه |
 |---|---|---|
-| مين يتصل | [[io.use]] + [[jwt.verify]] | توكن غلط أو مفيش → [[connect_error: UNAUTHENTICATED]] |
-| هو مين | [[socket.data.userId]] من التوكن | مش من كلام الـ client |
-| يوصل لمين | room [[user:ID]] | كل تابات Ali، مش Mona |
-| مش متصل؟ | الحفظ قبل الـ emit | الإشعار في القاعدة يتقري بعدين |
-| logout | [[disconnectSockets()]] | اتصالاته بس تتقفل |`,
+| schema | لأ | شكل الـ input وتحويله |
+| service | لأ | القواعد والقاعدة. بيناديها route أو webhook أو job أو اختبار |
+| routes | أيوه | تقرا، تعمل parse، تنادي الـ service، ترد |
+
+الـ module بيكلّم module تاني من الـ service بتاعه، ومبيقراش جداوله.`,
           lines: [
-            "سيرفر socket.io.",
-            "ركّبه على نفس سيرفر HTTP، و CORS للواجهة بس.",
-            "middleware بيشتغل قبل ما أي اتصال يتفتح.",
-            "جرّب...",
-            "...تتحقق من التوكن اللي في auth.",
-            "خزّن id المستخدم على الاتصال. ده من التوكن، مش من كلام الـ client.",
-            "اسمح بالاتصال.",
-            "لو التحقق فشل...",
-            "...ارفض الاتصال.",
-            "قفلة.",
-            "قفلة.",
-            "كل اتصال جديد يدخل room المستخدم بتاعه.",
-            "دالة بتناديها أي service.",
-            "احفظ الإشعار الأول، عشان لو مش متصل يلاقيه بعدين.",
-            "ابعته لكل أجهزة المستخدم المتصلة.",
-            "قفلة."
+            "كود الـ API.",
+            "module الدخول: الـ routes، والمنطق، وschemas الـ validation.",
+            "module الكورسات بنفس الشكل.",
+            "module الطلبات، ومعاه التكامل مع البوابة في ملف لوحده.",
+            "module الرفع، وجواه طبقة storage تقدر تبدّلها (local أو S3).",
+            "حاجات مشتركة مش ميزات: القاعدة، واللوج، والأخطاء، والإعدادات.",
+            "الـ middleware اللي بيتحط قدام الـ routes.",
+            "بيبني الـ app ويرجّعه. الاختبارات بتستورده من هنا.",
+            "بيشغّل السيرفر بس. ده الملف اللي بيتشغّل في الإنتاج."
           ],
-          sol: R`التابين بتوع المستخدم الأول يوصلهم نفس الـ event في نفس اللحظة، بالشكل [[{"id":...,"userId":"u1","type":"order.paid","payload":{...}}]]، والتاب التالت مبيوصلوش حاجة. ده لأن كل socket بيدخل room اسمها [[user:ID]]، و [[io.to(room)]] بيبعت لكل الـ sockets اللي في الـ room، مهما كانوا كام تاب أو جهاز.
+          sol: R`الاختبار لازم يعدّي من غير ما تعمل [[app.listen]] ولا supertest: [[coursesService.list()]] دالة عادية بترجّع array. وعشان تتأكد إن الـ service نضيف، [[grep -rn express src/modules/courses/courses.service.ts]] لازم يرجع فاضي. الناتج المتوقع من Vitest: [[Test Files 1 passed]] و [[Tests 2 passed]].
 
-الاتصال بتوكن غلط بيطلّع [[connect_error]] ورسالته [[UNAUTHENTICATED]]، ومفيش [[connect]] خالص. وخلي بالك: لما الـ middleware هو اللي رفض، الـ client مبيحاولش تاني لوحده ([[socket.active]] بيبقى [[false]])، على عكس انقطاع النت اللي بيعيد فيه لوحده. فلو التوكن انتهى، حدّث [[socket.auth.token]] واعمل [[socket.connect()]] بإيدك.
+الـ routes هي الوحيدة اللي تعرف HTTP: بتاخد [[req.query]]، وتعمله parse بالـ schema، وتنادي الـ service، وترجّع JSON. لو لقيت نفسك بتعدّي [[req]] أو [[res]] للـ service، أو بترمي [[res.status(404)]] من جواها، يبقى الحدود باظت. الـ service ترمي [[AppError]]، والـ handler هو اللي يحوّل.`,
+          solCode: R`// modules/courses/courses.schema.ts
+import { z } from "zod";
+export const ListCourses = z.object({
+  q: z.string().trim().max(100).optional(),
+  take: z.coerce.number().int().min(1).max(50).default(20),
+});
+export type ListCoursesInput = z.infer<typeof ListCourses>;
 
-لو التالت وصله الإشعار، يبقى انت عامل [[io.emit]] بدل [[io.to(...)]]. ولو ولا تاب وصله، اتأكد إن الـ userId اللي بتبعته لـ notify هو نفس الـ [[sub]] اللي في التوكن (string مش number).`,
-          solCode: R`// في Console تاب مفتوح (أو ملف client.mjs مع socket.io-client)
-import { io } from "socket.io-client";
+// modules/courses/courses.service.ts
+import { db } from "../../lib/db";
+import type { ListCoursesInput } from "./courses.schema";
 
-const good = io("http://localhost:4000", { auth: { token: ACCESS_TOKEN } });
-good.on("connect", () => console.log("connected", good.id));
-good.on("notification", (n) => console.log("got", n));
+export const coursesService = {
+  list({ q, take = 20 }: Partial<ListCoursesInput> = {}) {
+    return db.course.findMany({
+      where: { published: true, ...(q && { title: { contains: q, mode: "insensitive" } }) },
+      select: { id: true, slug: true, title: true, priceCents: true },
+      orderBy: { title: "asc" },
+      take,
+    });
+  },
+};
 
-const bad = io("http://localhost:4000", { auth: { token: "abc.def.ghi" }, reconnection: false });
-bad.on("connect_error", (e) => console.log("rejected:", e.message)); // rejected: UNAUTHENTICATED
+// modules/courses/courses.routes.ts
+import { Router } from "express";
+import { ListCourses } from "./courses.schema";
+import { coursesService } from "./courses.service";
 
-// endpoint تجربة في السيرفر
-router.post("/dev/notify/:userId", async (req, res) => {
-  await notify(req.params.userId, { type: "test", payload: { at: Date.now() } });
-  res.status(204).end();
+export const coursesRouter = Router();
+coursesRouter.get("/courses", async (req, res) => {
+  res.json({ data: await coursesService.list(ListCourses.parse(req.query)) });
+});
+
+// modules/courses/courses.service.test.ts
+import { afterAll, expect, test } from "vitest";
+import { db } from "../../lib/db";
+import { coursesService } from "./courses.service";
+
+afterAll(() => db.$disconnect());
+
+test("بيرجّع الكورسات المنشورة بس، ومن غير أعمدة داخلية", async () => {
+  const list = await coursesService.list();
+  expect(list.length).toBeGreaterThan(0);
+  expect(list[0]).not.toHaveProperty("instructorId");
+});
+
+test("البحث مش حساس لحالة الحروف", async () => {
+  const list = await coursesService.list({ q: "sql" });
+  expect(list.every((c) => c.title.toLowerCase().includes("sql"))).toBe(true);
 });`
         },
         {
-          cmd: "transactional email",
-          title: "إيميلات النظام: تأكيد، واستعادة باسورد، وإيصال",
-          desc: R`الإيميلات اللي النظام بيبعتها لوحده (استعادة باسورد، وإيصال دفع، وترحيب) بتتبعت من worker مش من الـ request. الـ route بيحط job في queue ويرد، والـ worker بيبعت عن طريق مزوّد زي Resend. ولو فشل، الـ queue بتعيده، بشرط تحدد [[attempts]] (ومعاه [[backoff]] عشان الإعادة تستنى شوية)، لأن الافتراضي في BullMQ محاولة واحدة من غير إعادة. حطهم مرة واحدة في [[defaultJobOptions]] على الـ Queue: [[new Queue("emails", { connection, defaultJobOptions: { attempts: 5, backoff: { type: "exponential", delay: 10_000 } } })]]، عشان كل الإيميلات (زي reset) تتعاد.`,
-          example: R`import { Resend } from "resend";
-import { Worker } from "bullmq";
+          cmd: ".env لكل بيئة",
+          title: "dev و staging و prod وكل واحدة بإعداداتها",
+          desc: R`نفس الكود بيشتغل في ٣ أماكن. dev على جهازك. و staging نسخة طبق الأصل من الإنتاج، بداتا تجربة ومفاتيح test من البوابة. و prod للناس الحقيقية. الفرق بينهم متغيرات بيئة بس، مش if جوه الكود.
 
-const resend = new Resend(config.RESEND_API_KEY);
-const templates = { reset: resetEmail, receipt: receiptEmail, welcome: welcomeEmail };
+واتأكد من المتغيرات كلها أول ما السيرفر يقوم. لو فيه متغير ناقص، السيرفر يقع فورًا برسالة واضحة، بدل ما يقع بعد ساعة في نص عملية دفع.`,
+          example: R`import { z } from "zod";
 
-new Worker("emails", async (job) => {
-  const { subject, html } = templates[job.name](job.data);
-  const { error } = await resend.emails.send(
-    { from: "myapp <no-reply@example.com>", to: job.data.to, subject, html },
-    { idempotencyKey: $__bt$__{job.name}/$__{job.id}$__bt },
-  );
-  if (error) throw new Error(error.message);
-}, { connection });`,
-          try: R`خلي مفتاح Resend غلط عن قصد، واطلب استعادة باسورد. الـ API لازم يرد عادي، والـ job يفشل ويتعاد أكتر من مرة (شوفه في Bull Board أو في اللوج). رجّع المفتاح الصح، والـ job يعدّي في المحاولة الجاية.`,
+const Env = z.object({
+  APP_ENV: z.enum(["development", "staging", "production"]),
+  DATABASE_URL: z.url(),
+  JWT_SECRET: z.string().min(32),
+  WEB_ORIGIN: z.url(),
+  PAYMOB_SECRET_KEY: z.string().min(1),
+  PAYMOB_HMAC_SECRET: z.string().min(1),
+  REDIS_URL: z.url().optional(),
+});
+
+export const config = Env.parse(process.env);`,
+          try: R`حط الملف ده في [[lib/config.ts]]، وامسح [[JWT_SECRET]] من الـ .env وشغّل السيرفر. لازم يقع في أول ثانية برسالة فيها اسم المتغير. بعدين اعمل [[.env.example]] بنفس الأسماء ومن غير قيم.`,
           flag: "script",
           deep: {
-            why: "مزوّد الإيميل ممكن يبطأ أو يقع. لو الإرسال جوه الـ request، التسجيل كله يبقى بطيء، أو يفشل عشان الإيميل. ولو من غير retry، الإيميل اللي فشل بيروح خالص، والطالب مستني لينك مش هييجي.",
-            how: R`الـ worker بيستلم الـ job باسمه ([[reset]] أو [[receipt]]) والداتا بتاعته، ويختار القالب. القالب دالة بترجّع subject و html بلغة المستخدم. خزّن [[locale]] للمستخدم في القاعدة عشان كده، وخلي الإيميل العربي فيه [[dir="rtl"]].
+            why: "المتغير الناقص من غير فحص بيطلع undefined، والمشكلة مبتبانش غير لما الكود يوصله: أول دفعة، أو أول إيميل. وفي staging بتكتشف المشاكل دي قبل الإنتاج. وفصل البيئات بيمنع أسوأ غلطة: مفاتيح Paymob الحقيقية في بيئة تجربة، أو قاعدة الإنتاج في جهاز التطوير.",
+            how: R`كل تطبيق عنده [[.env.example]] متعمله commit، فيه أسماء المتغيرات ومن غير قيم. وعنده [[.env]] على الجهاز في [[.gitignore]]. وفي الإنتاج القيم بتيجي من المنصة، أو من [[env_file]] في compose على السيرفر.
 
-[[idempotencyKey]] بيتبعت كـ argument تاني. لو الإرسال نجح بس الرد اتأخر، والـ job اتعاد، Resend بتعرف إنه نفس الإيميل ومبتبعتوش تاني. والمفتاح ده صالح ٢٤ ساعة عندهم. والـ [[throw]] لو فيه error هو اللي بيخلي BullMQ يعيد.
+[[Env.parse(process.env)]] بيشتغل مرة واحدة وقت الـ import. لو فيه حاجة غلط، بيرمي error فيه كل الحقول الغلط مرة واحدة، والسيرفر مبيقومش. ده اسمه fail fast. وكمان [[config]] بيبقى typed، فـ [[config.JWT_SECRET]] نوعه string مش [[string | undefined]].
 
-و [[connection]] جاي من [[lib/redis.ts]]: [[new IORedis(config.REDIS_URL, { maxRetriesPerRequest: null })]]، والـ worker محتاج الإعداد ده.
+خلي بالك إن NODE_ENV مش APP_ENV. [[NODE_ENV=production]] لازم يبقى في staging والإنتاج الاتنين، عشان المكتبات تشتغل بالوضع السريع. وعشان تفرّق بينهم استخدم APP_ENV.
 
-وعشان الإيميل يوصل للـ inbox مش الـ spam، لازم تأكد الدومين عند المزوّد، وتضيف في الـ DNS سجلات SPF و DKIM اللي بيدّيهالك، وسجل DMARC. وابعت من subdomain زي [[mail.example.com]]، عشان سمعة الإرسال متأثرش على الدومين الأساسي. والإيميلات التسويقية تروح من stream أو subdomain تاني غير إيميلات النظام، عشان الـ spam في التسويق ميوقّعش إيصالات الدفع.
+وفي الواجهة، أي متغير بيبدأ بـ [[NEXT_PUBLIC_]] بيتحط في الـ JavaScript وقت الـ build، وأي حد يقدر يقراه. عشان كده مفيش أي سر يبدأ بيه. وكمان build الـ staging غير build الإنتاج لو القيم مختلفة.
 
-وفي staging، الإيميلات تروح sandbox أو قايمة إيميلات بتاعة الفريق بس. والقوالب ممكن تتكتب بـ React Email أو MJML.`,
-            when: "أي إيميل بيطلع نتيجة لفعل المستخدم. والإيميلات التسويقية (newsletter) ليها أداة لوحدها وقواعد إلغاء اشتراك.",
-            mistakes: R`إنك تبعت من جوه الـ request. أو تبعت من Gmail شخصي. أو تنسى SPF و DKIM فكل حاجة تروح spam. أو تعيد الإرسال من غير idempotency فالطالب يوصله ٣ إيصالات. وفي مشروع حقيقي، لو مفتاح الإيميل مش موجود، الكود كان بيطبع الإيميل كله في اللوج بدل ما يقع. ده مريح في التطوير، بس في الإنتاج معناه إن لينكات الاستعادة والـ OTP بتتكتب في اللوجات. الصح إن [[config.ts]] يرفض يقوم من غير المفتاح في الإنتاج.`
+وكل بيئة ليها حاجتها لوحدها: قاعدة بيانات، و bucket للملفات، و integration في Paymob بوضع test، وإيميلات staging تروح sandbox مش لناس حقيقيين. تفاصيل .env نفسه في تاب «Node و npm»، ولو اترفع على git شوف تاب «الأمان».`,
+            when: "أول ملف تكتبه في أي API. وكل ما تضيف متغير: في config.ts، وفي .env.example، وفي إعدادات staging والإنتاج، في نفس الـ PR.",
+            mistakes: R`staging بيستخدم قاعدة الإنتاج «مؤقتًا». أو [[NODE_ENV=staging]]، فمكتبات كتير تشتغل بوضع التطوير البطيء. وفي مشاريع حقيقية لقينا ٣ غلطات. الأولى مفاتيح Paymob و Bunny السرية كانت بتبدأ بـ [[NEXT_PUBLIC_]]، يعني كانت في الـ JavaScript عند كل زائر. التانية [[AUTH_SECRET]] كان ليه قيمة افتراضية في الكود، فلو المتغير ناقص السيرفر يشتغل عادي بسر معروف. والتالتة [[.env.example]] كان فيه [[JWT_SECRET]] والكود بيقرا [[JWT_ACCESS_SECRET]]، ومكانش فيه ولا متغير لـ Paymob، مع إنها البوابة الأساسية.`
           },
-          teach: R`## الـ route بيحط job، والـ worker هو اللي بيبعت
+          teach: R`## ملف بيفحص الإعدادات قبل ما السيرفر يقوم
 
-الـ worker بيسمع على queue اسمها [[emails]]، ولكل job بيختار قالب باسمها، ويبعت عن طريق Resend بمفتاح idempotency، ولو فشل بيرمي عشان BullMQ يعيد. جربناه بـ BullMQ 6.3 و ioredis 6 على Redis 8 (Docker) و resend 6.32 (ويندوز 11، Node 24). معندناش حساب Resend، فخلينا الـ SDK يكلّم سيرفر وهمي على جهازنا (الـ SDK بيقرا [[RESEND_BASE_URL]] من البيئة)، والسيرفر ده بيرد بشكل خطأ Resend من وثائقهم لو المفتاح غلط. وصغّرنا الـ [[delay]] لثانية واحدة بدل ١٠ عشان منستناش.
-
----
-
-## ١. [[const resend = new Resend(config.RESEND_API_KEY);]]
-
-العميل بالمفتاح ([[re_...]]). كل طلب بيروح بـ [[Authorization: Bearer <المفتاح>]].
-
-## ٢. [[const templates = { reset: resetEmail, receipt: receiptEmail, welcome: welcomeEmail };]]
-
-object بيربط اسم الـ job بدالة القالب. كل دالة بتاخد الداتا وترجّع [[{ subject, html }]]. في التجربة:
-
-~~~js
-const resetEmail = (d) => ({ subject: "استعادة الباسورد", html: $__bt<div dir="rtl"><a href="$__{d.link}">غيّر الباسورد</a></div>$__bt });
-~~~
+المثال ملف [[lib/config.ts]]: بيوصف كل متغير بيئة التطبيق محتاجه بـ Zod، ويفحص [[process.env]] مرة واحدة أول ما الملف يتعمل له import. لو فيه حاجة ناقصة أو غلط، بيرمي error والسيرفر ميقومش. جرّبناه بـ Zod 4.6 و Node 24 على ويندوز 11، بملف [[.env]] فيه كل حاجة ما عدا [[JWT_SECRET]]، وسيرفر من سطرين بيطبع [[listening]].
 
 ---
 
-## ٣. [[new Worker("emails", async (job) => { ... }, { connection });]]
+## ١. [[const Env = z.object({ ... })]]
 
-- [["emails"]] اسم الـ queue لازم يطابق اسمها عند اللي بيضيف ([[new Queue("emails", ...)]]).
-- الدالة بتتنادى لكل job. لو رجعت عادي الـ job بقت [[completed]]، ولو رمت بقت فاشلة وBullMQ يقرر يعيد ولا لأ.
-- [[connection]] اتصال Redis من [[new IORedis(url, { maxRetriesPerRequest: null })]]: الـ worker بيعمل أوامر بتستنى (blocking)، و ioredis افتراضيًا بيقفلها بعد ٢٠ محاولة، فالـ [[null]] بيلغي الحد ده.
+[[z.object]] بيوصف object وكل حقل فيه. و [[process.env]] نفسه object: كل متغير بيئة مفتاح، وقيمته **نص دايمًا** (أو [[undefined]] لو مش موجود).
 
-### [[const { subject, html } = templates[job.name](job.data);]]
+| السطر | الشرط | ليه |
+|---|---|---|
+| [[APP_ENV: z.enum([...])]] | واحدة من ٣ قيم بالظبط | [[dev]] أو [[prod]] بالغلط يقع بدل ما يعدّي |
+| [[DATABASE_URL: z.url()]] | URL سليم | رابط ناقص يقع دلوقتي، مش أول query |
+| [[JWT_SECRET: z.string().min(32)]] | ٣٢ حرف على الأقل | سر قصير بيتخمّن |
+| [[WEB_ORIGIN: z.url()]] | URL | بيتستخدم في CORS وفي لينكات الإيميلات |
+| [[PAYMOB_SECRET_KEY]] و [[PAYMOB_HMAC_SECRET]] | [[min(1)]] | مش فاضيين |
+| [[REDIS_URL: z.url().optional()]] | URL أو مش موجود خالص | اختياري في dev |
 
-[[templates[job.name]]] بيجيب الدالة بالاسم ([[templates["reset"]]])، وبعدين [[(job.data)]] بينادي عليها.
-
-### [[resend.emails.send({ from, to, subject, html }, { idempotencyKey: ... })]]
-
-- [[from: "myapp <no-reply@example.com>"]]: اسم ظاهر وإيميل من دومينك المتأكد.
-- الـ argument التاني options، فيه [[idempotencyKey]] = [[reset/1]] (اسم الـ job ورقمها). الـ SDK بيبعته header اسمه [[Idempotency-Key]]، والسيرفر الوهمي طبعه:
-
-~~~text الناتج
-[fake resend] POST /emails key=re_BAD… Idempotency-Key=reset/1
-~~~
-
-ونفس المفتاح بيتبعت في **كل** محاولة لنفس الـ job، فلو محاولة وصلت بس الرد ضاع، Resend مبتبعتش الإيميل تاني (من الـ docs: المفتاح صالح ٢٤ ساعة).
-
-### [[const { error } = ...]] و [[if (error) throw new Error(error.message);]]
-
-[[send]] مبترميش لو Resend رفض، بترجّع [[{ data: null, error }]]. من غير السطر ده الـ job هتتعلّم [[completed]] والإيميل مبعتش. (والـ SDK بيطبع [[[Resend API Error]]] في الـ console لوحده كمان.)
+[[z.url()]] في Zod 4 بقت دالة على [[z]] مباشرة (في Zod 3 كانت [[z.string().url()]]).
 
 ---
 
-## ٤. التجربة: مفتاح غلط وبعدين صلّحناه
+## ٢. [[export const config = Env.parse(process.env);]]
 
-الـ queue معمولة بـ [[defaultJobOptions: { attempts: 5, backoff: { type: "exponential", delay: 1000 } }]]:
+- [[Env.parse(...)]] بيفحص. لو تمام بيرجّع object فيه الحقول المتعرّفة بس، وبأنواعها. لو لأ بيرمي [[ZodError]].
+- السطر ده برّه أي دالة، فبيشتغل **وقت الـ import**. يعني أول ما [[server.ts]] يعمل [[import { config } from "./lib/config"]]، الفحص بيحصل قبل أي سطر تاني.
+- [[config.JWT_SECRET]] نوعه [[string]] مش [[string | undefined]]، فمش محتاج تكتب [[!]] أو تتأكد في كل مكان.
 
-~~~text الناتج
-route would answer after 8 ms
-0.0s attempt 1 reset 1
-0.0s failed attempt 1 of 5 - API key is invalid
-1.1s attempt 2 reset 1
-1.1s failed attempt 2 of 5 - API key is invalid
-3.2s attempt 3 reset 1
-3.2s failed attempt 3 of 5 - API key is invalid
-3.5s -- fix the key (simulate deploy)
-7.3s attempt 4 reset 1
-7.4s completed 1
+---
+
+## ٣. التجربة: [[JWT_SECRET]] ناقص
+
+[[node --env-file=.env]] بيخلي Node نفسه يقرا الملف ويحطه في [[process.env]] (من Node 20.6، من غير dotenv):
+
+~~~powershell
+node --env-file=.env server.mjs
 ~~~
 
-- [[queue.add]] خد ٨ ملّي، فالـ route بيرد بسرعة مهما الإيميل اتأخر.
-- الانتظار بين المحاولات [[delay × 2^(n-1)]]: ثانية، ٢، ٤ (مع ١٠ ثواني في الدرس: ١٠، ٢٠، ٤٠).
-- بعد ما المفتاح اتصلّح، المحاولة الرابعة نجحت، والإيميل اتبعت مرة واحدة.
-
-ومن غير [[attempts]] خالص:
-
 ~~~text الناتج
-no attempts option: tries = 1 state = failed opts.attempts = 0
+.../config.mjs:13
+export const config = Env.parse(process.env);
+                          ^
+
+ZodError: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "JWT_SECRET"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+]
 ~~~
 
-محاولة واحدة والـ job قعدت في الـ failed. ده ليه الـ desc بيقول حطها في [[defaultJobOptions]].
+و [[listening]] متطبعتش، وخرج بكود 1. ده الـ fail fast.
+
+- [[path]] اسم المتغير.
+- [[received undefined]]: مش موجود خالص.
+
+---
+
+## ٤. أكتر من غلطة مرة واحدة
+
+جرّبنا [[JWT_SECRET=short]] و [[APP_ENV=dev]] مع بعض:
+
+~~~text الناتج (مختصر)
+ZodError: [
+  { "code": "invalid_value", "path": ["APP_ENV"],
+    "message": "Invalid option: expected one of \"development\"|\"staging\"|\"production\"" },
+  { "code": "too_small", "minimum": 32, "path": ["JWT_SECRET"],
+    "message": "Too small: expected string to have >=32 characters" }
+]
+~~~
+
+الاتنين ظهروا في نفس الرسالة، فبتصلّحهم مرة واحدة.
+
+> خلي بالك: احنا حطينا القيم دي في الـ shell، والـ [[.env]] كان فيه [[APP_ENV=development]]. [[--env-file]] **مبيغيّرش** متغير موجود بالفعل في البيئة، فقيمة الـ shell هي اللي كسبت. ونفس الكلام في dotenv افتراضيًا.
+
+ولما حطينا سر عشوائي طويل:
+
+~~~powershell
+node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"
+~~~
+
+[[randomBytes(32)]] ٣٢ byte عشوائي، و [[base64url]] بيكتبهم ٤٣ حرف. السيرفر قام:
+
+~~~text الناتج
+listening development
+~~~
+
+---
+
+## ٥. فخ في [[.env.example]]
+
+الـ solCode فيه [[.env.example]]: نفس الأسامي من غير قيم، ويترفع على git عشان أي حد ينسخه لـ [[.env]]. جرّبنا سطر [[REDIS_URL=]] فاضي:
+
+~~~text الناتج
+"path": ["REDIS_URL"],
+"message": "Invalid URL"
+~~~
+
+السطر الفاضي بيدّي [[""]] (نص فاضي)، مش [[undefined]]، و [[optional()]] بيقبل [[undefined]] بس. عشان كده المتغير الاختياري في الـ example بيتكتب تعليق: [[# REDIS_URL=redis://localhost:6379]].
+
+---
+
+## ٦. [[.gitignore]]
+
+~~~text
+.env
+.env.*
+!.env.example
+~~~
+
+- [[.env]] و [[.env.*]] (زي [[.env.production]]) ميترفعوش.
+- [[!]] في الأول معناها استثناء: [[.env.example]] يترفع حتى لو طابق اللي فوقه.
 
 ---
 
 ## الخلاصة
 
-| الحاجة | الكود | ليه |
-|---|---|---|
-| الإرسال برا الـ request | [[queue.add]] + [[Worker]] | الرد في ملّي، والمزوّد يقع براحته |
-| القالب | [[templates[job.name](job.data)]] | اسم الـ job بيختار الإيميل |
-| مفيش تكرار | [[idempotencyKey: name/id]] | نفس المفتاح في كل محاولة |
-| الفشل يتعاد | [[if (error) throw]] + [[attempts]] | [[send]] مبترميش لوحدها |
-| الإعادة تستنى | [[backoff: exponential]] | متضربش خدمة واقعة |`,
+| الحاجة | الفايدة |
+|---|---|
+| [[Env.parse(process.env)]] وقت الـ import | السيرفر يقع في أول ثانية، مش في نص دفعة |
+| كل الأخطاء مع بعض | تصلّح مرة واحدة |
+| [[config]] typed | مفيش [[undefined]] مفاجئ |
+| [[.env.example]] في git | الأسامي معروفة لكل اللي في الفريق |
+| [[APP_ENV]] مش [[NODE_ENV]] | [[NODE_ENV=production]] في staging والإنتاج الاتنين |
+
+متغير جديد = سطر في [[config.ts]] وسطر في [[.env.example]] وقيمة في كل بيئة، في نفس الـ PR.`,
           lines: [
-            "SDK بتاع Resend.",
-            "الـ Worker بتاع BullMQ.",
-            "العميل بالمفتاح من الـ config.",
-            "قالب لكل نوع إيميل. كل قالب دالة بترجّع subject و html.",
-            "worker بيسمع على queue الإيميلات.",
-            "اختار القالب باسم الـ job، واملاه بالداتا.",
-            "ابعت...",
-            "...من دومينك المتأكد، للمستخدم، بالقالب.",
-            "...ومفتاح idempotency، عشان الإعادة متبعتش مرتين.",
-            "قفلة الإرسال.",
-            "فشل؟ ارمي error، و BullMQ هيعيد بعدين.",
-            "اتصال Redis من lib/redis.ts."
+            "Zod هو اللي هيفحص المتغيرات.",
+            "شكل الإعدادات المطلوبة.",
+            "البيئة، ومسموح ٣ قيم بس.",
+            "رابط القاعدة لازم يبقى URL سليم.",
+            "سر التوكنات ٣٢ حرف على الأقل. السر القصير بيتكسر.",
+            "رابط الواجهة، وبيتستخدم في CORS وفي روابط الإيميلات.",
+            "مفتاح Paymob السري، وده مكانه السيرفر بس.",
+            "سر الـ HMAC عشان نتحقق من الـ webhook.",
+            "Redis اختياري في dev، بس في الإنتاج هتحتاجه للـ queues.",
+            "قفلة الـ schema.",
+            "افحص مرة واحدة وقت التشغيل، ولو فيه غلط السيرفر ميقومش خالص."
           ],
-          sol: R`بالمفتاح الغلط، [[POST /auth/forgot]] بيرجع 200 في ملّي ثواني عادي (جربناها: الـ API رد في حوالي 20ms)، لأنه بيحط job بس. في اللوج هتلاقي الـ job فشل: [[failed attempt 1 of 5]]، وبعدين 2، وهكذا، والوقت بينهم بيزيد (10 ثواني، 20، 40...). رسالة الخطأ هي رسالة Resend عن المفتاح (حاجة زي [[API key is invalid]])، لأن [[resend.emails.send]] مبترميش، بترجّع [[{ data: null, error }]]، وسطر [[if (error) throw]] هو اللي بيحوّلها فشل.
+          sol: R`السيرفر لازم يقع قبل ما يطبع «listening»، بـ [[ZodError]] فيها [[path: ["JWT_SECRET"]]] و [[message: "Invalid input: expected string, received undefined"]] (ده شكل رسايل Zod 4). ولو حطيت قيمة قصيرة زي [[JWT_SECRET=short]] هتشوف [[Too small: expected string to have >=32 characters]]. ولو [[APP_ENV=dev]] هتشوف [[Invalid option: expected one of "development"|"staging"|"production"]]. وكل المتغيرات الغلط بتظهر مع بعض في نفس الرسالة، مش واحد واحد.
 
-لو رجّعت المفتاح الصح قبل ما المحاولات تخلص، المحاولة الجاية تعدّي والإيميل يوصل مرة واحدة بس، لأن الـ [[idempotencyKey]] ثابت لنفس الـ job. ولو المحاولات خلصت، الـ job بيقعد في الـ failed، وتقدر تعيده من Bull Board.
+لو السيرفر اشتغل عادي، يبقى في الغالب الـ .env مش بيتقري أصلًا (ناقص [[import "dotenv/config"]] أو [[node --env-file=.env]])، والمتغير جاي من الـ shell. أو [[config]] بيتعمل import بعد ما السيرفر اشتغل. لازم يبقى أول حاجة في [[server.ts]].`,
+          solCode: R`# .env.example: الأسماء بس، ويترفع على git
+APP_ENV=development
+DATABASE_URL=
+JWT_SECRET=
+WEB_ORIGIN=http://localhost:3000
+PAYMOB_SECRET_KEY=
+PAYMOB_HMAC_SECRET=
+# اختياري: سيبه تعليق. REDIS_URL= فاضي بيوصل "" مش undefined، و z.url() بيرفضه
+# REDIS_URL=redis://localhost:6379
 
-لو الـ job فشل مرة واحدة ومتعادش، يبقى مفيش [[attempts]] (الافتراضي في BullMQ محاولة واحدة). ولو الـ API نفسه رجع 500، يبقى بتبعت الإيميل جوه الـ request. وفي BullMQ الجديد مكتبة ioredis بقت optional، فلو ظهرلك [[could not load the optional 'ioredis' package]]، سطّبها ([[npm i ioredis]]) واعمل [[connection]] من [[new IORedis(url, { maxRetriesPerRequest: null })]].`
+# .gitignore
+.env
+.env.*
+!.env.example`
         },
         {
-          cmd: "web push",
-          title: "إشعار على الموبايل والموقع مقفول",
-          desc: R`الـ Web Push بيوصل إشعار للمستخدم حتى لو الموقع مقفول، طول ما المتصفح بيدعمه. المتصفح بيعمل subscription (عنوان وشوية مفاتيح) ويبعته للسيرفر يخزنه. ولما يحصل حاجة، السيرفر بيبعت على العنوان ده بمكتبة [[web-push]] ومفاتيح VAPID بتاعتك.
+          cmd: "ترتيب البناء",
+          title: "تبدأ بإيه وتخلّص بإيه",
+          desc: R`الترتيب اللي بيقلل الرجوع لورا: schema، وبعدين API، وبعدين UI، وبعدين auth، وبعدين الدفع، وفي الآخر الإطلاق. بس قبل ده كله اعمل «walking skeleton»: صفحة واحدة بتنادي endpoint واحد بيقرا من القاعدة، ومرفوعة على staging من أول أسبوع. كده مشاكل الـ deploy والـ CORS والمتغيرات بتظهر وهي لسه صغيرة.
 
-والـ subscription اللي بترجع 404 أو 410 معناها إن المستخدم لغى الإذن، أو مسح الموقع، وبتتمسح.`,
-          example: R`import webpush from "web-push";
-
-webpush.setVapidDetails("mailto:you@example.com", config.VAPID_PUBLIC_KEY, config.VAPID_PRIVATE_KEY);
-router.post("/me/push-subscriptions", requireAuth, async (req, res) => {
-  const sub = PushSub.parse(req.body);
-  await db.pushSubscription.upsert({ where: { endpoint: sub.endpoint }, create: { userId: req.user.id, ...sub }, update: { userId: req.user.id } });
-  res.status(204).end();
-});
-export async function pushTo(userId, payload) {
-  for (const s of await db.pushSubscription.findMany({ where: { userId } })) {
-    await webpush.sendNotification({ endpoint: s.endpoint, keys: s.keys }, JSON.stringify(payload))
-      .catch((e) => [404, 410].includes(e.statusCode) && db.pushSubscription.delete({ where: { id: s.id } }));
-  }
-}`,
-          try: R`اعمل مفاتيح بـ [[npx web-push generate-vapid-keys]]. في الواجهة سجّل service worker، واطلب الإذن من زرار، وابعت الـ subscription. نادي [[pushTo]] واقفل التاب، والإشعار لازم يوصل. بعدين الغي الإذن من إعدادات الموقع ونادي تاني، ولاحظ إن الصف اتمسح.`,
+وبعدين ابني ميزة ميزة بالعرض (vertical slice). كل ميزة من القاعدة للشاشة وتخلص. متعملش كل الجداول الأول، وبعدين كل الـ APIs، وبعدين كل الشاشات.`,
+          example: R`أسبوع 1: skeleton: GET /health وصفحة بتعرضه، و CI، و deploy على staging
+أسبوع 1: schema أولي و seed بكورسات تجربة
+أسبوع 2: الكورسات: API القايمة والتفاصيل، وبعدين الصفحات بتاعتهم
+أسبوع 3: auth: signup و login و refresh، وبعدين فورم الدخول وصفحة «حسابي»
+أسبوع 4: الدفع: order، وبعدين Paymob، وبعدين webhook، وبعدين صفحة النتيجة
+أسبوع 5: المشاهدة: الدروس للمشتركين بس، ورفع الفيديو للمدرّب
+أسبوع 6: لوحة الأدمن، ومراقبة الأخطاء، والباك أب، والإطلاق`,
+          try: R`اعمل الـ skeleton بتاع مشروعك النهارده: [[GET /health]] بيرجّع [[{ ok: true }]] من القاعدة، وصفحة Next بتعرضه، ومرفوعين على سيرفر أو منصة. متكتبش ولا ميزة قبل ما ده يشتغل على رابط حقيقي.`,
           flag: "script",
           deep: {
-            why: "الإيميل بيتقري متأخر، والـ socket محتاج الموقع مفتوح. الـ push بيوصل على شاشة الموبايل: «الدرس الجديد نزل»، أو «الحصة كمان ساعة». وده بيفرق في رجوع المستخدمين.",
-            how: R`مفاتيح VAPID بتتعمل مرة واحدة. الـ public key بيروح للواجهة، والـ private بيفضل على السيرفر. وفي الواجهة: [[registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey })]] بيرجّع subscription، فيها endpoint (عنوان عند Google أو Mozilla أو Apple) ومفتاحين [[p256dh]] و [[auth]].
+            why: "لو بنيت كل طبقة لوحدها، مفيش حاجة هتشتغل من أولها لآخرها لحد الأسبوع الخامس، وكل المفاجآت هتطلع في الآخر. والـ deploy تحديدًا مليان مفاجآت: الـ cookies مش شغالة على الدومين الحقيقي، والـ webhook مش واصل، والـ build بيقع على السيرفر.",
+            how: R`الترتيب ده ليه منطق. القراية العامة (الكورسات) بتيجي الأول لأنها مش محتاجة auth، وبيبقى عندك حاجة تتشاف بسرعة. الـ auth قبل الطلبات لأن كل طلب محتاج صاحب. والدفع بعد الاتنين لأنه محتاج مستخدم وطلب. والمشاهدة بعد الدفع لأنها محتاجة اشتراك.
 
-المكتبة بتشفّر الـ payload بالمفاتيح دي، وبتبعته للـ endpoint، وخدمة المتصفح هي اللي بتوصّله للجهاز. والـ service worker بيستقبله في event اسمه [[push]] ويعرضه بـ [[showNotification]]. والـ payload صغير (حوالي ٤ كيلو)، فابعت عنوان ورابط، مش الداتا كلها.
+والـ vertical slice معناها إن الميزة «خلصت» فعلًا بكل طبقاتها واختباراتها. لو وقفت في أي أسبوع، اللي خلص شغال وتقدر توريه لحد.
 
-الإذن اطلبه من زرار واضح بعد ما المستخدم يفهم هيستفيد إيه. متطلبوش أول ما الصفحة تفتح، لأن لو رفض مش هتقدر تسأله تاني. وعلى iOS، الـ web push بيشتغل بس لو الموقع متضاف على الشاشة الرئيسية كـ PWA. وخلي في جدول تفضيلات: المستخدم يختار أنواع الإشعارات اللي عايزها.
+الـ seed من أول أسبوع ([[prisma db seed]] في تاب «Node و npm»). من غير داتا تجربة، الواجهة بتتبني على بيانات فاضية، والمشاكل مبتبانش.
 
-وفي تطبيق موبايل حقيقي (Capacitor مثلًا)، الإشعارات بتبقى عن طريق FCM و APNs. نفس الفكرة: token للجهاز بيتخزن، وبيتمسح لما يرجع «مش متسجّل». التفاصيل في تاب «Desktop و Mobile».`,
-            when: "تذكيرات بمواعيد، وتحديثات مهمة. ومش لكل حاجة، لأن الإزعاج بيخلي المستخدم يقفل الإذن خالص.",
-            mistakes: R`إنك تطلب الإذن أول ما الصفحة تفتح. أو متمسحش الـ subscriptions الميتة، فالإرسال يبطأ مع الوقت. أو تحط بيانات حساسة في نص الإشعار، وهو بيظهر على شاشة القفل. ودي حاجة كانت معمولة صح في مشروعين حقيقيين: واحد بيمسح الـ subscriptions اللي بترجع 404 و 410، والتاني بيمسح توكنات FCM اللي بترجع «not registered».`
+وابدأ في الحاجات اللي بتاخد وقت برّه الكود بدري. حساب التاجر في بوابة الدفع مثلًا محتاج أوراق ومراجعة ممكن تاخد أسابيع. والدومين وإعداد الإيميل (DNS) نفس الكلام. قدّمهم من أول يوم، عشان لما توصل للدفع متلاقيش نفسك مستني.
+
+والحاجة اللي مش خلصانة تقدر ترفعها مخفية ورا feature flag، بدل ما تفضل في branch طويل بيبعد كل يوم عن main.`,
+            when: "في أول المشروع كخطة، ومع كل ميزة كبيرة: قسّمها slices، وكل slice تخلص لوحدها.",
+            mistakes: "إنك تأجّل الـ deploy لآخر أسبوع. أو تبني لوحة أدمن كاملة قبل ما الطالب يقدر يشتري. أو تبدأ الدفع في آخر أسبوع وتكتشف إن حساب التاجر لسه متفعّلش. أو تشتغل branch واحد ٣ أسابيع وتعمل merge مرة واحدة."
           },
-          teach: R`## المتصفح بيدّيك عنوان، والسيرفر بيبعت عليه متشفّر
+          teach: R`## المثال خطة، والـ solCode أول حاجة فيها
 
-المتصفح بيعمل subscription (عنوان عند خدمة الـ push ومفتاحين)، والسيرفر بيخزنها، و [[pushTo]] بتبعت لكل أجهزة المستخدم وتمسح اللي ماتت. جربنا جانب السيرفر بـ web-push 3.6 و Prisma 7 على PostgreSQL 18 (Docker، ويندوز 11، Node 24). خدمة الـ push (FCM أو Mozilla) عملناها سيرفر HTTPS وهمي على جهازنا بشهادة self-signed، والـ subscriptions عملناها بمفاتيح حقيقية بالشكل اللي المتصفح بيطلّعه ([[crypto.createECDH("prime256v1")]]). جزء المتصفح والـ service worker في الـ solCode من وثائق MDN، متجربش هنا.
-
----
-
-## ١. المفاتيح: [[npx web-push generate-vapid-keys]]
-
-~~~text الناتج (المفاتيح مختصرة)
-=======================================
-
-Public Key:
-BPNbKEzIAn…yoEs
-
-Private Key:
-77L8CF8ubs…5AMk
-
-=======================================
-~~~
-
-بالـ [[--json]] قسنا: العام ٨٧ حرف بيبدأ بـ [[B]]، والخاص ٤٣ حرف. VAPID اختصار Voluntary Application Server Identification: السيرفر بيثبت لخدمة الـ push إنه هو صاحب الـ subscription. العام ٦٥ byte (نقطة على منحنى P-256، وأول byte [[0x04]] وده اللي بيخلي base64url يبدأ بـ B)، والخاص ٣٢ byte.
-
-### [[webpush.setVapidDetails("mailto:you@example.com", PUBLIC, PRIVATE);]]
-
-مرة واحدة وقت التشغيل. الإيميل وسيلة تواصل لو خدمة الـ push عايزة تكلّمك.
+المثال خطة ٦ أسابيع، كل سطر أسبوع والحاجة اللي بتخلص فيه. والـ solCode هو الـ walking skeleton: endpoint واحد في الـ API بيكلّم القاعدة، وصفحة واحدة في Next بتعرضه. جرّبنا جزء الـ API بـ Express 5 و Prisma 7.10 و PostgreSQL 18 في Docker (ويندوز 11). وجزء صفحة Next مشغّلناهوش هنا، وشرحه من توثيق Next.js.
 
 ---
 
-## ٢. [[router.post("/me/push-subscriptions", requireAuth, ...)]]
+## ١. الخطة: ليه الترتيب ده
 
-### [[const sub = PushSub.parse(req.body);]]
+| الأسبوع | اللي بيخلص | ليه في المكان ده |
+|---|---|---|
+| 1 | skeleton و CI و deploy على staging | مشاكل الـ deploy والـ CORS والمتغيرات تظهر وهي صغيرة |
+| 1 | schema أولي و seed | الشاشات تتبني على داتا حقيقية مش فاضية |
+| 2 | الكورسات (API وبعدين صفحات) | قراية عامة من غير auth، فبتتشاف بسرعة |
+| 3 | auth | كل اللي بعد كده محتاج صاحب |
+| 4 | الدفع | محتاج مستخدم وطلب. أخطر ميزة، فليها أسبوع لوحدها |
+| 5 | المشاهدة ورفع الفيديو | محتاجة اشتراك، والاشتراك بييجي من الدفع |
+| 6 | الأدمن والمراقبة والباك أب والإطلاق | قبل ما ناس حقيقية تدخل |
 
-[[PushSub]] من الـ solCode: [[endpoint: z.url()]] و [[keys: { p256dh, auth }]]. شكل اللي المتصفح بيبعته:
-
-~~~text الناتج
-{"endpoint":"https://localhost:6020/push/dev-1","expirationTime":null,"keys":{"p256dh":"BL-FaeR8…","auth":"MF9wMXPVyMkfkQObmYDT_g"}}
-~~~
-
-[[p256dh]] المفتاح العام بتاع المتصفح، و [[auth]] سر ١٦ byte. والاتنين بيستخدمهم السيرفر في التشفير. [[expirationTime]] مش في الـ schema فـ Zod بيشيله. وبودي غلط:
-
-~~~text الناتج
-bad body: 400
-~~~
-
-### [[db.pushSubscription.upsert({ where: { endpoint }, create: { userId, ...sub }, update: { userId } })]]
-
-[[endpoint]] عليه [[@unique]]: نفس الجهاز بيبعت نفس الـ endpoint كل مرة. لو موجود بنحدّث صاحبه بس (حد تاني دخل من نفس المتصفح)، ولو جديد بنعمله. و [[...sub]] بيفرد [[endpoint]] و [[keys]].
-
-~~~text الناتج
-subscribe laptop 204
-subscribe phone 204
-same endpoint again: 204 rows: 2
-~~~
-
-الـ phone اتبعت مرتين وفضلوا صفين بس.
+كل سطر **vertical slice**: الميزة من القاعدة للشاشة. «الكورسات: API القايمة والتفاصيل، وبعدين الصفحات بتاعتهم» يعني في آخر الأسبوع التاني فيه حاجة شغالة تتوري لحد، مش «كل الجداول خلصت».
 
 ---
 
-## ٣. [[export async function pushTo(userId, payload) {]]
+## ٢. الـ API: [[GET /health]]
 
-### [[for (const s of await db.pushSubscription.findMany({ where: { userId } })) {]]
-
-كل أجهزة المستخدم، واحد ورا التاني.
-
-### [[webpush.sendNotification({ endpoint, keys }, JSON.stringify(payload))]]
-
-المكتبة بتشفّر الـ payload بمفاتيح الجهاز، وتوقّع JWT بمفتاح VAPID الخاص، وتبعت POST للـ endpoint. السيرفر الوهمي طبع اللي وصله:
-
-~~~text الناتج
-[push service] POST /push/laptop TTL=2419200 enc=aes128gcm body=182B auth=vapid t=eyJ0eX…
-[push service] POST /push/phone TTL=2419200 enc=aes128gcm body=182B auth=vapid t=eyJ0eX…
+~~~text
+app.get("/health", async (req, res) => {
+  await db.$queryRaw$__btSELECT 1$__bt;
+  res.json({ ok: true });
+});
 ~~~
 
-| الـ header | معناه |
+### [[db.$queryRaw$__btSELECT 1$__bt]]
+
+- [[$queryRaw]] بيبعت SQL خام للقاعدة. وبيتكتب كـ **tagged template**: الـ SQL بين علامتين backtick بعد اسم الدالة على طول من غير أقواس، و Prisma بيحوّل أي [[$__{x}]] جواه لـ parameter آمن مش نص ملزوق.
+- [[SELECT 1]] أبسط استعلام: مبيقراش أي جدول، بيرجّع رقم ١. الهدف مش النتيجة، الهدف إن القاعدة ردّت.
+- [[await]] بيستنى. لو القاعدة واقعة، الـ promise بتترفض والسطر اللي بعده ميتنفذش.
+
+### [[res.json({ ok: true })]]
+
+لو وصلنا هنا يبقى القاعدة شغالة.
+
+جرّبنا سيرفرين: واحد على القاعدة الحقيقية، وواحد [[DATABASE_URL]] بتاعه على بورت مفيهوش حاجة:
+
+~~~bash
+curl -si localhost:6018/health
+curl -si localhost:6019/health
+~~~
+
+~~~text الناتج
+HTTP/1.1 200 OK
+{"ok":true}
+
+HTTP/1.1 500 Internal Server Error
+~~~
+
+والتاني كتب في الترمنال بتاعه:
+
+~~~text ترمنال السيرفر
+PrismaClientKnownRequestError:
+Invalid $__btprisma.$queryRaw()$__bt invocation:
+~~~
+
+وده المطلوب: لو القاعدة واقعة الصفحة لازم تعرض «down»، مش [[ok]] ثابتة. (السيرفر ده مفيهوش الـ errorHandler، عشان كده الـ 500 جت من Express نفسه. في مشروعك هيبقى [[INTERNAL]] JSON.)
+
+---
+
+## ٣. الصفحة: [[apps/web/app/page.tsx]] (من توثيق Next.js)
+
+### [[export const dynamic = "force-dynamic";]]
+
+Next.js بيحاول يبني الصفحات وقت الـ build لو يقدر (static). السطر ده بيقوله «ارسم الصفحة دي مع كل طلب»، عشان الـ health يتسأل كل مرة مش مرة وقت الـ build.
+
+### [[export default async function Home()]]
+
+في مجلد [[app/]]، ملف [[page.tsx]] هو الصفحة، والـ [[default export]] هو الـ component. و [[async]] مسموحة في server components: الدالة بتشتغل على السيرفر، فتقدر [[await]] جواها.
+
+### [[await fetch(process.env.API_URL + "/health", { cache: "no-store" })]]
+
+- [[process.env.API_URL]] متغير بيئة على سيرفر الواجهة، من غير [[NEXT_PUBLIC_]] لأنه مش محتاج يوصل للمتصفح.
+- [[cache: "no-store"]] متخزنش الرد، اسأل كل مرة.
+
+### [[res.ok ? await res.json() : { ok: false }]]
+
+[[res.ok]] بـ [[true]] لو الـ status من 200 لـ 299. لو الـ API رجّع 500، بنعتبره [[{ ok: false }]] بدل ما نقرا JSON مش متوقع.
+
+### [[<main>API: {data.ok ? "ok" : "down"}</main>]]
+
+JSX: الـ [[{ }]] جوه الـ HTML بيحط قيمة JavaScript. فالصفحة بتعرض [[API: ok]] أو [[API: down]].
+
+---
+
+## ٤. إمتى الـ skeleton يبقى خلص
+
+| الفحص | بيتأكد من |
 |---|---|
-| [[TTL=2419200]] | خدمة الـ push تحتفظ بالرسالة لحد ٤ أسابيع (٢٤١٩٢٠٠ ثانية) لو الجهاز مقفول. ده افتراضي المكتبة |
-| [[Content-Encoding: aes128gcm]] | الجسم متشفّر: خدمة Google أو Mozilla نفسها متقدرش تقراه |
-| [[Authorization: vapid t=..., k=...]] | [[t]] الـ JWT الموقّع، و [[k]] المفتاح العام |
-| الجسم 182B | ٦٤ byte JSON + header التشفير والـ tag |
-
-ولو المفاتيح بايظة المكتبة بترمي قبل ما تبعت:
-
-~~~text الناتج
-bad keys: The subscription p256dh value should be 65 bytes long.
-~~~
-
-### [[.catch((e) => [404, 410].includes(e.statusCode) && db.pushSubscription.delete(...))]]
-
-لو خدمة الـ push ردت 404 أو 410 (Gone)، الجهاز لغى الإذن أو المتصفح اتمسح، فبنمسح الصف. [[&&]] هنا معناها «لو الشرط صح نفّذ اللي بعده». خلينا السيرفر الوهمي يرد 410 للـ phone:
-
-~~~text الناتج
--- phone revoked permission
-[push service] POST /push/laptop ... body=116B
-[push service] POST /push/phone ... body=116B
-rows after 410: https://localhost:6020/push/laptop
-~~~
-
-وأي خطأ تاني (زي 500 أو نت) بيتبلع ومش بيوقف الـ loop، فجهاز واحد بايظ ميمنعش الباقي.
-
-### الحجم
-
-بعتنا ٥٠٠٠ حرف، والمكتبة بعتتهم (5120B) من غير اعتراض، بس خدمات الـ push الحقيقية بترفض الأكبر من ٤ كيلو تقريبًا (من الـ docs). عشان كده ابعت عنوان ورابط بس.
-
----
-
-## ٤. الـ solCode في المتصفح (من الـ docs)
-
-- [[navigator.serviceWorker.register("/sw.js")]]: سجّل الـ service worker، ده اللي بيصحى لما الإشعار يوصل والموقع مقفول.
-- [[Notification.requestPermission()]]: نافذة الإذن، من زرار مش أول ما الصفحة تفتح.
-- [[reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: VAPID_PUBLIC_KEY })]]: [[userVisibleOnly]] وعد إن كل push هيظهر إشعار (Chrome بيطلبه)، والمفتاح العام بيربط الـ subscription بسيرفرك.
-- في [[sw.js]]: [[event.waitUntil(self.registration.showNotification(...))]] يخلي المتصفح يستنى لحد ما الإشعار يظهر، و [[notificationclick]] يفتح الرابط.
+| الرابط الحقيقي (مش localhost) بيفتح | DNS و HTTPS والـ deploy |
+| بيعرض [[API: ok]] | الواجهة بتوصل للـ API ([[API_URL]] صح، CORS لو الطلب من المتصفح) |
+| وقّف القاعدة، يعرض [[down]] | الـ API بيسأل القاعدة فعلًا، والـ migrations اتعملت |
 
 ---
 
 ## الخلاصة
 
-| الخطوة | مين | اتجرب؟ |
-|---|---|---|
-| مفاتيح VAPID | [[generate-vapid-keys]] | أيوه |
-| الإذن والـ subscription | المتصفح | من الـ docs |
-| التخزين بالـ endpoint | [[upsert]] | أيوه |
-| التشفير والإرسال | [[sendNotification]] | أيوه (خدمة push وهمية) |
-| مسح الميت | [[404]]/[[410]] → [[delete]] | أيوه |`,
+- أول أسبوع: طلب واحد بيعدّي على كل الطبقات لحد سيرفر حقيقي.
+- بعدها ميزة ميزة بالعرض، وكل ميزة تخلص بكل طبقاتها.
+- [[SELECT 1]] في الـ health بيتأكد إن القاعدة بترد، و [[force-dynamic]] و [[no-store]] بيمنعوا نتيجة قديمة متخزنة.
+- ابدأ في حساب التاجر والدومين من أول يوم، لأنهم بياخدوا وقت برّه الكود.`,
           lines: [
-            "مكتبة web-push.",
-            "مفاتيح VAPID بتاعتك، وإيميل تواصل لخدمات الـ push.",
-            "مسار تسجيل subscription للمستخدم الداخل.",
-            "اتأكد من الشكل: endpoint ومفتاحين.",
-            "خزّنها، ولو الـ endpoint موجود حدّث صاحبه (جهاز مشترك).",
-            "رد 204.",
-            "قفلة.",
-            "ابعت لكل أجهزة المستخدم.",
-            "لكل subscription عنده...",
-            "...ابعت الـ payload متشفّر...",
-            "...ولو رجع 404 أو 410، الـ subscription ماتت، امسحها.",
-            "قفلة الـ loop.",
-            "قفلة."
+            "الهيكل الماشي: طلب واحد بيعدّي على كل الطبقات لحد الإنتاج.",
+            "القاعدة وداتا تجربة، عشان الشاشات تتبني على حاجة حقيقية.",
+            "أول ميزة كاملة. قراية عامة من غير auth.",
+            "المستخدمين، لأن كل اللي بعد كده محتاج صاحب.",
+            "أخطر ميزة. خلي قبلها وبعدها وقت.",
+            "المحتوى المحمي: معتمد على الاشتراك اللي بيجي من الدفع.",
+            "التشغيل: مراقبة وباك أب قبل ما الناس الحقيقية تدخل."
           ],
-          sol: R`[[npx web-push generate-vapid-keys]] بيطبع [[Public Key:]] (حوالي 87 حرف base64url بيبدأ غالبًا بـ B) و [[Private Key:]] (43 حرف). العام بيروح للواجهة، والخاص في .env السيرفر بس.
+          sol: R`الـ skeleton خلص لما تفتح الرابط الحقيقي (مش localhost) وتلاقي الصفحة بتعرض [[ok: true]] جاية من API على سيرفر، والـ API سأل القاعدة فعلًا. ولو وقّفت القاعدة، الصفحة المفروض تعرض خطأ مش [[ok: true]] ثابتة. كده انت اتأكدت من الـ DNS والـ HTTPS والـ CORS ومتغيرات البيئة والـ migrations على السيرفر، وكل دول حاجات بتاخد يوم لوحدها لو سيبتها للآخر.
 
-بعد الإذن، الـ subscription اللي بتتبعت شكلها [[{"endpoint":"https://fcm.googleapis.com/fcm/send/...","expirationTime":null,"keys":{"p256dh":"...","auth":"..."}}]] (في Firefox الـ endpoint على mozilla.com). [[pushTo]] وانت قافل التاب لازم يطلّع إشعار من النظام، لأن الـ service worker بيصحى لوحده. ولو المتصفح نفسه مقفول خالص، الإشعار بيوصل أول ما يفتح (على الموبايل بيوصل عادي).
-
-بعد ما تلغي الإذن، خدمة الـ push بترجع [[410 Gone]] (أو 404) للـ endpoint ده، والـ catch بيمسح الصف. ممكن تاخد شوية وقت قبل ما الخدمة تعرف. ولو مفيش إشعار خالص: اتأكد إن الـ SW عنده [[push]] listener بيعمل [[showNotification]] جوه [[event.waitUntil]]، وإن الصفحة على HTTPS أو localhost، وإن إشعارات النظام نفسها مش مقفولة للمتصفح.`,
-          solCode: R`// public/sw.js
-self.addEventListener("push", (event) => {
-  const data = event.data ? event.data.json() : {};
-  event.waitUntil(self.registration.showNotification(data.title ?? "myapp", { body: data.body, data: { url: data.url ?? "/" } }));
-});
-self.addEventListener("notificationclick", (event) => {
-  event.notification.close();
-  event.waitUntil(clients.openWindow(event.notification.data.url));
+أشهر حاجة هتقابلك: الصفحة بتشتغل على جهازك ومش على السيرفر عشان [[NEXT_PUBLIC_API_URL]] لسه بـ localhost، أو الـ API بيرفض الطلب بـ CORS لأن [[WEB_ORIGIN]] مش متظبط على الدومين الحقيقي. ده بالظبط سبب إنك تعمله أول يوم.`,
+          solCode: R`// apps/api/src/app.ts
+app.get("/health", async (req, res) => {
+  await db.$queryRaw$__btSELECT 1$__bt;
+  res.json({ ok: true });
 });
 
-// زرار «فعّل الإشعارات» في الواجهة
-async function enablePush() {
-  const reg = await navigator.serviceWorker.register("/sw.js");
-  if ((await Notification.requestPermission()) !== "granted") return;
-  const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: VAPID_PUBLIC_KEY });
-  await apiFetch("/me/push-subscriptions", { method: "POST", body: JSON.stringify(sub) });
-}
+// apps/web/app/page.tsx (server component)
+export const dynamic = "force-dynamic";
 
-// السيرفر
-const PushSub = z.object({
-  endpoint: z.url(),
-  keys: z.object({ p256dh: z.string(), auth: z.string() }),
-});
-// await pushTo(userId, { title: "كورس جديد", body: "SQL من الصفر", url: "/courses/sql" });`
+export default async function Home() {
+  const res = await fetch(process.env.API_URL + "/health", { cache: "no-store" });
+  const data = res.ok ? await res.json() : { ok: false };
+  return <main>API: {data.ok ? "ok" : "down"}</main>;
+}`
+        },
+        {
+          cmd: "definition of done",
+          title: "إمتى الميزة تبقى خلصت فعلًا",
+          desc: R`«خلصت» مش معناها «شغالة على جهازي». اتفق على قايمة ثابتة، وأي ميزة لازم تعدّيها قبل ما تتقفل. وحطها في PR template عشان تظهر لوحدها مع كل PR. القايمة دي هي الفرق بين مشروع بيكبر بهدوء، ومشروع كل ميزة فيه بتكسر اللي قبلها.`,
+          example: R`- [ ] كل الـ acceptance criteria بتاعة الـ story متحققة
+- [ ] validation بـ Zod على كل input في السيرفر
+- [ ] الصلاحيات: جرّبت بيوزر مش صاحب الداتا، ورجع 403 أو 404
+- [ ] الحالات الوحشة: فاضي، وخطأ، وبطيء (loading)، ونت قاطع
+- [ ] فيه اختبار للـ service على الأقل، و npm run check عدّى
+- [ ] الـ migration اتجرّبت على staging، ومفيش عمود فيه داتا اتمسح
+- [ ] عربي وإنجليزي و RTL، وعلى موبايل
+- [ ] الأخطاء بتوصل Sentry، ومفيش أسرار في اللوج
+- [ ] .env.example والـ docs اتحدّثوا لو فيه متغير أو قرار جديد`,
+          try: R`حط القايمة في [[.github/pull_request_template.md]]، وافتح PR لآخر ميزة عملتها وعلّم على اللي اتعمل بجد. اللي معرفتش تعلّم عليه هو شغلك الجاي.`,
+          flag: "script",
+          deep: {
+            why: "من غير تعريف ثابت، كل ميزة بتخلص بمستوى مختلف. واحدة فيها validation والتانية لأ، وواحدة شغالة بالعربي والتانية بتتقلب في RTL. والحاجات دي بتتراكم لحد ما يبقى عندك «تنضيف» بياخد شهر.",
+            how: R`القايمة دي معمولة من الغلطات اللي بتتكرر، مش من كتاب. كل بند فيها ورا مشكلة حصلت قبل كده.
+
+بند الصلاحيات هو أهم واحد: افتح الطلب بيوزر تاني فعلًا، متفترضش. أشهر ثغرة في أي API هي إن endpoint بيتأكد إنك داخل ومبيتأكدش إن الحاجة بتاعتك.
+
+بند الـ migration مهم لأن مسح عمود أو تغيير نوعه على قاعدة فيها داتا مبيرجعش. والطريقة الآمنة (expand ثم contract) في أسئلة الانترفيو في آخر التاب.
+
+والـ PR template بيظهر لوحده في GitHub كل ما تفتح PR، فالقايمة متتنسيش. والبنود اللي تقدر تتأتمت (lint و typecheck و test) بتروح في CI، فالقايمة اليدوية تفضل صغيرة. التفاصيل في تاب «فحص الكود» وتاب «GitHub Actions».`,
+            when: "مع كل PR، حتى لو بتشتغل لوحدك. انت بعد شهر هتبقى شخص تاني مش فاكر حاجة.",
+            mistakes: "قايمة طويلة لدرجة إن محدش بيقراها، فالكل يعلّم عليها وخلاص. أو بنود مش بتتقاس زي «الكود نضيف». أو إنك تعتبر الميزة خلصت قبل ما تتجرّب على staging."
+          },
+          teach: R`## المثال: checklist بتظهر مع كل PR
+
+المثال ٩ بنود Markdown. كل بند بيبدأ بـ [[- [ ] ]]: الـ [[- ]] بند في قايمة، و [[[ ] ]] مربع فاضي. GitHub بيعرضه checkbox تقدر تضغط عليه، ولما تعلّم بيتحوّل لـ [[- [x] ]] جوه نص الـ PR. والملف مكانه [[.github/pull_request_template.md]]، و GitHub بيحطه لوحده في وصف أي PR جديد (ده من توثيق GitHub، والـ sol فيه التفاصيل).
+
+---
+
+## ١. البنود: كل واحد بيمنع مشكلة
+
+| البند | المشكلة اللي بيمنعها | إزاي تتأكد |
+|---|---|---|
+| الـ acceptance criteria متحققة | الميزة «خلصت» وهي نص شغل | امشي على شروط الـ story واحد واحد |
+| validation بـ Zod على كل input | داتا بايظة في القاعدة | كل route بيعمل [[parse]] قبل أي حاجة |
+| الصلاحيات: يوزر مش صاحب الداتا ياخد 403 أو 404 | IDOR | افتح الطلب بحساب تاني فعلًا |
+| الحالات الوحشة: فاضي، وخطأ، و loading، ونت قاطع | شاشة بيضا أو spinner للأبد | جرّب الـ Offline في DevTools |
+| اختبار للـ service و [[npm run check]] عدّى | bug يرجع تاني | الـ CI أخضر |
+| الـ migration اتجرّبت على staging | عمود فيه داتا يتمسح | شغّلها على نسخة شبه الإنتاج |
+| عربي وإنجليزي و RTL وموبايل | الواجهة تتقلب | افتح الصفحة بالـ ar على شاشة صغيرة |
+| الأخطاء بتوصل Sentry ومفيش أسرار في اللوج | وقعة محدش عارف بيها، أو باسورد في اللوج | ارمي error متعمد وشوفه وصل |
+| [[.env.example]] والـ docs اتحدّثوا | اللي بعدك ميعرفش يشغّل المشروع | أي متغير جديد ليه سطر |
+
+---
+
+## ٢. أهم بند: الصلاحيات
+
+ليه 403 **أو** 404؟ 403 بتقول «الحاجة موجودة بس مش بتاعتك». 404 بتقول «مفيش حاجة هنا». لما الـ query نفسها فيها [[userId: req.user.id]] (درس ownership)، الطلب بتاع حد تاني مبيتلقاش أصلًا، فبيطلع 404، وده كمان مبيكشفش إن الـ id ده موجود.
+
+والمهم في الجملة «جرّبت بيوزر مش صاحب الداتا»: متفترضش إن الكود صح، افتحه بحساب تاني.
+
+---
+
+## ٣. البنود اللي تروح CI
+
+| البند | يتأتمت؟ |
+|---|---|
+| lint و typecheck و test | أيوه، في GitHub Actions |
+| [[npm run check]] | أيوه |
+| الصلاحيات | جزء منه: اختبار بيوزر تاني |
+| RTL والموبايل والحالات الوحشة | لأ، بعينك |
+
+كل اللي يتأتمت بيطلع من القايمة اليدوية للـ CI، فالقايمة تفضل قصيرة ويتقري كل بند فيها.
+
+---
+
+## الخلاصة
+
+- «خلصت» = عدّت القايمة، مش «شغالة على جهازي».
+- القايمة في [[.github/pull_request_template.md]] عشان تظهر لوحدها.
+- كل بند لازم يتقاس. «الكود نضيف» مش بند.
+- علّم بس على اللي عملته فعلًا، واللي فاضل اعمله issue.`,
+          lines: [
+            "الميزة بتعمل اللي الـ story طالباه، بكل شروطها.",
+            "السيرفر مبيثقش في أي حاجة جاية من برّه.",
+            "أهم بند. افتح الطلب بيوزر تاني فعلًا، متفترضش.",
+            "الشاشة ليها ٤ حالات مش حالة واحدة.",
+            "المنطق متغطي باختبار، وكل الفحوصات عدّت.",
+            "القاعدة اتغيرت بأمان، واتجرّبت على داتا شبه الحقيقية.",
+            "اتجرّبت باللغتين وعلى شاشة صغيرة.",
+            "لو وقعت في الإنتاج هتعرف، ومفيش باسورد أو توكن في اللوج.",
+            "اللي جاي بعدك يلاقي الإعدادات والقرارات مكتوبة."
+          ],
+          sol: R`GitHub بيقرا الملف ده من [[.github/pull_request_template.md]] على الـ default branch، فأول PR بعد ما يتعمل merge هيفتح والقايمة جواه لوحدها، والـ checkboxes بتتعلّم بالضغط عليها. ولو القايمة مظهرتش، غالبًا الملف لسه في branch تانية، أو اسمه أو مكانه غلط.
+
+النتيجة الطبيعية لأول مرة إنك متعلّمش على كله. أشهر ٣ بيفضلوا فاضيين: الحالات الوحشة (مفيش loading ولا رسالة لما النت يقطع)، واختبار الصلاحيات بيوزر تاني، والموبايل و RTL. ومتعلّمش على حاجة معملتهاش «عشان هي بسيطة»، القايمة دي قيمتها في إنها صادقة. واللي فاضل اعمله issues ليها أصحاب.`
         }
       ]
     }

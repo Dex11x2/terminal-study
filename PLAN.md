@@ -136,7 +136,7 @@
 | ٤٩ | `cpp/01-06.js` (54) | [x] (cpp اتقسم؛ gcc:14 اتمسحت) |
 | ٥٠ | `apis/01-04.js` (44) | [x] (apis اتقسم) |
 | ٥١ | `cloud/01-04.js` (74) | [ ] (مفيش حسابات cloud: الأوامر من الـ docs إلا اللي يشتغل محلي) |
-| ٥٢ | `arch/01-06.js` (87) | [ ] (مفاهيم: شرح الفكرة خطوة بخطوة) |
+| ٥٢ | `arch/01-06.js` (87) | [x] (arch اتقسم؛ الـ 5 ثغرات اتصلحت) |
 | ٥٣ | `sweng/01-03.js` و `ai/01-03.js` (73) | [ ] |
 | ٥٤ | `interview/01-03.js` و `projects/01-03.js` (~75) | [ ] |
 | ٥٥ | `projects/04-07.js` (~21) | [ ] |
@@ -209,11 +209,16 @@
 ### ٤ب. ثغرات في كود دروس arch لسه مااتصلحتش (٨ أكتوبر)
 
 وكيل arch/03-04 لقاها وكتبها في الشرح بس من غير ما يغيّر الكود:
-- [ ] `resolveTenant` (byDomain) بيقبل دومين مش متأكد منه: لازم فلتر `domainVerifiedAt`.
-- [ ] `forTenant` مش بيغطي `$queryRaw`، و nested write على `Workspace` ممكن يعمل project في workspace تاني.
-- [ ] بحث Prisma `contains` مش بيعمل escape لـ `%` و `_`.
-- [ ] الكاش من Redis بيرجّع التواريخ strings.
-- [ ] `trust proxy 1` من غير proxy قدامه: header ‏`X-Forwarded-For` مزيف بيعدّي الـ rate limit.
+- [x] `resolveTenant` (byDomain) بيقبل دومين مش متأكد منه: لازم فلتر `domainVerifiedAt`. (اتصلح: `tenantLookup.byDomain` بشرط `domainVerifiedAt: { not: null }`)
+- [x] `forTenant` مش بيغطي `$queryRaw`، و nested write على `Workspace` ممكن يعمل project في workspace تاني. (اتصلح: `noRaw` للـ 4 دوال الخام، و `Workspace` بـ `AND: [{ id: tenantId }]`)
+- [x] بحث Prisma `contains` مش بيعمل escape لـ `%` و `_`. (اتصلح: دالة `like()`)
+- [x] الكاش من Redis بيرجّع التواريخ strings. (اتصلح: `JSON.parse(hit, reviveDates)`)
+- [x] `trust proxy 1` من غير proxy قدامه: header ‏`X-Forwarded-For` مزيف بيعدّي الـ rate limit. (اتصلح: `"loopback"`)
+
+### ٤ج. متابعات من arch (٨ أكتوبر)
+
+- [ ] Sentry v11 من غير `dataCollection` بيبعت قيمة كوكي الـ refresh token في `request.cookies` (درس Sentry في arch). محتاج يتضاف للمثال.
+- [ ] presigned URLs من aws-sdk الحالي فيها `x-amz-checksum-crc32` لجسم فاضي، و S3 الحقيقي ممكن يرفضها. الحل `requestChecksumCalculation: "WHEN_REQUIRED"`. يأثر على «signed upload URL» في arch و cloud.
 
 ### ٥. أسئلة مفتوحة
 
