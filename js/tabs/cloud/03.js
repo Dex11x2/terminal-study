@@ -1,695 +1,757 @@
 // تكملة تاب cloud: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/cloud/01.js (شرح حقول الدرس في أوله)
 MORE("cloud", [
     {
-      t: "Terraform و CI/CD",
-      l: 3,
-      n: "البنية مكتوبة كود في Git، والـ deploy بيدخل AWS من غير مفاتيح دايمة",
+      t: "S3 و CloudFront",
+      l: 2,
+      n: "الملفات مكانها object storage مش ديسك السيرفر، والـ CDN بيوصّلها بسرعة لأي حد",
       items: [
         {
-          cmd: "Terraform resource",
-          title: "البنية مكتوبة كود بدل الضغط في الكونسول",
-          desc: R`Terraform بيقرا ملفات [[.tf]] فيها الموارد اللي عايزها، ويقارنها باللي موجود فعلًا، ويعمل الفرق بس، والـ provider هو الـ plugin اللي بيكلّم AWS (أو Cloudflare أو Vercel) والـ resource حاجة واحدة.
+          cmd: "aws s3",
+          title: "مخزن ملفات مالوش آخر، ومقفول افتراضي",
+          desc: R`S3 بيخزّن objects (ملف ومعاه key زي [[uploads/42/avatar.png]]) جوه bucket، من غير حد للحجم الكلي، وبتدفع على الجيجا المخزنة والطلبات والنقل برا AWS.
 
-الموارد بتشاور على بعض: [[aws_s3_bucket.assets.id]] يعني «الـ id بتاع الـ bucket ده»، و Terraform بيفهم منها الترتيب لوحده.`,
-          example: R`provider "aws" {
-  region = "eu-central-1"
-}
-
-resource "aws_s3_bucket" "assets" {
-  bucket = "myapp-assets"
-}
-
-resource "aws_s3_bucket_public_access_block" "assets" {
-  bucket                  = aws_s3_bucket.assets.id
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
-}`,
-          try: R`ضيف [[variable "env" { default = "dev" }]] و [[output "bucket_arn" { value = aws_s3_bucket.assets.arn }]]، وخلّي اسم الـ bucket [["myapp-assets-$__{var.env}"]]. شغّل plan (الدرس الجاي) وشوف هيعمل كام resource.`,
-          flag: "script",
+أي bucket جديد مقفول افتراضي: Block Public Access شغال بإعداداته الأربعة، والـ ACLs مقفولة. خليه كده، واللي عايزه يتعرض للناس قدّمه من CloudFront أو بـ presigned URL.`,
+          example: R`aws s3 mb s3://myapp-assets --region eu-central-1
+aws s3api get-public-access-block --bucket myapp-assets
+aws s3 cp ./logo.png s3://myapp-assets/public/logo.png
+aws s3 ls s3://myapp-assets/ --recursive --human-readable
+aws s3 cp s3://myapp-assets/public/logo.png ./downloaded.png
+aws s3 presign s3://myapp-assets/public/logo.png --expires-in 600`,
+          try: "اعمل bucket باسم فريد (الأسماء عالمية، فحط اسمك أو رقم فيه)، وارفع صورة، وافتح رابطها العادي [[https://myapp-assets.s3.eu-central-1.amazonaws.com/public/logo.png]] في المتصفح: هيطلع AccessDenied. بعدين افتح الرابط اللي طلّعه [[presign]].",
           deep: {
-            why: "البنية اللي اتعملت بالضغط في الكونسول محدش فاكر اتعملت إزاي، ومينفعش تعمل منها نسخة لـ staging، ومحدش يعرف مين غيّر إيه. في Terraform كل تغيير commit وليه review، وتقدر تعمل نفس البيئة في region تانية بتغيير متغير.",
-            how: R`الـ block شكله [[resource "TYPE" "NAME"]]: الـ TYPE من الـ provider ([[aws_s3_bucket]])، والـ NAME اسمك انت جوه Terraform بس. الاسم الحقيقي في AWS هو [[bucket = ...]].
+            why: "لو المستخدمين بيرفعوا ملفات على ديسك السيرفر، السيرفر بقى «مش قابل للاستبدال»: مينفعش تشغّل نسختين، ولو الديسك باظ الملفات راحت، ولو نقلت لازم تنقلها. S3 بيفصل الملفات عن السيرفر: أي نسخة من التطبيق تقرا وتكتب نفس المكان، و AWS بيخزّن كل ملف في أكتر من AZ.",
+            how: R`اسم الـ bucket فريد على مستوى العالم (مش حسابك بس)، وبيبقى جزء من الدومين، فحروف صغيرة وأرقام وشرطة بس. ومفيش فولدرات حقيقية: الـ [[/]] جزء من اسم الـ key، والكونسول بس بيعرضها كأنها فولدرات.
 
-في AWS provider الحديث، إعدادات الـ bucket كل واحدة resource لوحدها: public access block، و versioning، و encryption، و lifecycle. عشان كده فيه resource تانية بنفس الاسم [[assets]] بتشاور على الأولى.
+[[aws s3]] أوامر عالية المستوى زي [[cp]] و [[ls]] و [[sync]]. و [[aws s3api]] بيكلّم الـ API مباشرة بكل الإعدادات. الاتنين بيكمّلوا بعض.
 
-المراجع بين الموارد بتعمل dependency graph: Terraform عارف إن الـ public access block محتاج الـ bucket الأول، فيعمله الأول. واللي مش معتمدين على بعض بيتعملوا بالتوازي.
+الـ Block Public Access أربع إعدادات: [[BlockPublicAcls]] و [[IgnorePublicAcls]] (ميسمحش بـ ACL عامة ولا يعمل بيها)، و [[BlockPublicPolicy]] و [[RestrictPublicBuckets]] (ميسمحش بـ bucket policy بتفتح للكل). ممكن تتحط على مستوى الحساب كله، ودي أقوى حماية. ولو [[get-public-access-block]] رجّع الأربعة [[true]]، محدش يقدر يفتح الـ bucket بالغلط.
 
-المتغيرات ([[variable]]) بتدخّل قيم من برا ([[-var]] أو ملف [[.tfvars]])، و [[output]] بيطلّع قيم بعد التطبيق (زي عنوان القاعدة). والـ modules بتجمع موارد في وحدة تتعاد (زي «bucket مقفول بإعداداته»).
+[[presign]] بيعمل رابط فيه توقيع ومدة (هنا ١٠ دقايق): اللي معاه الرابط يقرا الملف ده بس لحد ما المدة تخلص، والـ bucket لسه مقفول. من الـ CLI أو الـ SDK أقصى مدة ٧ أيام، ولو اتعمل بمفاتيح مؤقتة (role) بيموت لما المفاتيح تموت.
 
-والـ provider بياخد الصلاحيات من نفس مكان الـ CLI (profile أو متغيرات أو role). وتثبيت نسخة الـ provider نفسه في درس الـ state.`,
-            when: "أي بنية هتعيش أكتر من أسبوع أو محتاج منها أكتر من نسخة (dev و prod). للتجربة السريعة الكونسول عادي، بس امسح اللي عملته.",
-            mistakes: "تعمل نص الحاجات بـ Terraform ونص بالكونسول، فالـ plan يطلع تغييرات غريبة. وتعدّل من الكونسول مورد Terraform بيديره (drift)، وأول apply يرجّعه. وتغيّر الـ NAME في الكود وتفتكره rename وهو في الحقيقة «امسح واعمل جديد» (استخدم [[moved]] block)."
+و S3 فيه storage classes: Standard للعادي، و Intelligent-Tiering بينقل الملفات اللي محدش بيفتحها لطبقة أرخص لوحده، و Glacier للأرشيف.`,
+            when: "أي ملف المستخدم بيرفعه، وأي ملف التطبيق بيولّده (PDF، وشهادات، وتقارير)، والباك أب، وملفات الموقع الـ static.",
+            mistakes: "في مشروع حقيقي كانت ملفات الـ CV اللي المتقدمين بيرفعوها في bucket عام وبيتجاب لها public URL: أي حد يلاقي الرابط يشوف بيانات شخصية. الملفات الخاصة مكانها bucket مقفول وتتفتح بـ signed URL لمدة قصيرة لليوزر المسموح له بس. وغلطة تانية: تفتح Block Public Access عشان «الصور مش ظاهرة» بدل ما تحط CloudFront قدامها."
           },
-          lines: [
-            "الـ provider: هنكلّم AWS.",
-            "في فرانكفورت.",
-            "قفلة.",
-            "resource نوعه bucket، واسمه جوه Terraform assets.",
-            "اسمه الحقيقي في AWS.",
-            "قفلة.",
-            "resource تاني: منع الوصول العام لنفس الـ bucket.",
-            "بيشاور على الـ bucket اللي فوق، فبيتعمل بعده.",
-            "امنع ACLs عامة.",
-            "امنع bucket policy عامة.",
-            "تجاهل أي ACL عامة موجودة.",
-            "اقفل الوصول لو فيه policy عامة.",
-            "قفلة."
-          ],
-          sol: R`الملف كامل تحت. [[terraform validate]] يقول [[Success! The configuration is valid.]]، و [[terraform plan]] ينتهي بـ:
+          teach: R`## الفكرة: دورة حياة ملف في S3
 
-[[Plan: 2 to add, 0 to change, 0 to destroy.]]
-[[Changes to Outputs: + bucket_arn = (known after apply)]]
+المثال ٦ أوامر بالترتيب: اعمل مكان، اتأكد إنه مقفول، ارفع، اعرض، نزّل، وادّي حد رابط مؤقت. اتجرّبوا كلهم بـ AWS CLI 2.37 على LocalStack (محاكي AWS في Docker، بمفاتيح وهمية [[test]])، بملف تجربة صغير اسمه [[logo.png]] (٣٠ بايت).
 
-يعني resource للـ bucket (وفيه [[bucket = "myapp-assets-dev"]]) وواحد للـ public access block، والـ ARN «known after apply» لأنه مش معروف غير بعد الإنشاء. جرّب [[terraform plan -var env=prod]] وشوف الاسم يبقى [[myapp-assets-prod]]. (شغّلت ده فعلًا بـ provider 6.x والنتيجة زي ما هي.)
+### كلمتين الأول
 
-أخطاء شائعة: [[Error: Retrieving AWS account details: validating provider credentials ... InvalidClientTokenId]] يعني الترمنال مش داخل على AWS (اعمل [[aws login]] أو حدد [[AWS_PROFILE]]). و [[Reference to undeclared input variable]] لو كتبت [[var.env]] من غير block الـ variable. ولو كتبت [["myapp-assets-var.env"]] من غير [[$__{var.env}]]، الاسم هيبقى النص ده حرفيًا.`,
-          solCode: R`provider "aws" {
-  region = "eu-central-1"
-}
+| الكلمة | معناها |
+|---|---|
+| S3 | Simple Storage Service: مخزن ملفات |
+| bucket | «الجردل» اللي الملفات جواه. اسمه فريد في الدنيا كلها |
+| object | الملف نفسه + بياناته (النوع والحجم وغيره) |
+| key | اسم الملف الكامل جوه الـ bucket، زي [[public/logo.png]] |
 
-variable "env" {
-  default = "dev"
-}
+---
 
-resource "aws_s3_bucket" "assets" {
-  bucket = "myapp-assets-$__{var.env}"
-}
+## ١. [[aws s3 mb s3://myapp-assets --region eu-central-1]]
 
-resource "aws_s3_bucket_public_access_block" "assets" {
-  bucket                  = aws_s3_bucket.assets.id
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
-}
+| الحتة | معناها |
+|---|---|
+| [[s3]] | الأوامر «المريحة» بتاعة S3 |
+| [[mb]] | make bucket، نفس فكرة [[mkdir]] |
+| [[s3://myapp-assets]] | عنوان الـ bucket. [[s3://]] بتقول للـ CLI «ده في S3 مش على جهازك» |
+| [[--region eu-central-1]] | اعمله في فرانكفورت. الـ bucket بيعيش في region واحدة |
 
-output "bucket_arn" {
-  value = aws_s3_bucket.assets.arn
-}`
-        },
-        {
-          cmd: "terraform plan / apply",
-          title: "شوف هيتغير إيه قبل ما يتغير",
-          desc: R`الدورة دايمًا [[init]] مرة (ينزّل الـ provider) ثم [[plan]] يوريك بالظبط هيعمل إيه ثم [[apply]] ينفّذ، والرموز في الـ plan: [[+]] يعمل، و [[~]] يعدّل، و [[-]] يمسح، و [[-/+]] يمسح ويعمل من جديد.
+~~~text الناتج
+make_bucket: myapp-assets
+~~~
 
-احفظ الـ plan في ملف وطبّق الملف ده بالظبط، عشان اللي اتراجع هو اللي يتنفذ. تحذير: اقرا أي [[-]] أو [[-/+]] مرتين، ده مسح حقيقي، و [[destroy]] بيمسح كل حاجة.`,
-          example: R`terraform init
-terraform fmt -recursive
-terraform validate
-terraform plan -out=tfplan
-terraform apply tfplan
-terraform state list
-terraform destroy`,
-          try: "اعمل الـ bucket بـ apply. غيّر اسمه في الكود وشغّل plan: هتلاقي [[-/+]] لأن اسم الـ bucket مينفعش يتعدّل. رجّع الاسم، وبعدين [[destroy]] وانت فاهم هيمسح إيه.",
-          flag: "danger",
-          deep: {
-            why: "أخطر حاجة في Terraform إنك تطبّق وانت مش شايف. سطر واحد في الكود ممكن يعني «امسح قاعدة البيانات واعمل واحدة فاضية». الـ plan فرصتك تشوف ده قبل ما يحصل.",
-            how: R`[[init]] بينزّل الـ providers في [[.terraform/]] ويكتب [[.terraform.lock.hcl]] (ارفعه على Git زي package-lock)، ويجهّز الـ backend.
+على AWS الحقيقي الاسم ده غالبًا محجوز عند حد تاني، وهيرجع [[BucketAlreadyExists]]. حط اسمك أو رقم فيه.
 
-[[plan]] بيعمل ٣ حاجات: يقرا الـ state (Terraform فاكر عمل إيه)، ويسأل AWS عن الحالة الحقيقية (refresh)، ويقارن بالكود. والنتيجة قايمة تغييرات. بعض الإعدادات لو اتغيرت محتاجة resource جديد (اسم الـ bucket، أو الـ AMI بتاع سيرفر)، فتلاقي [[forces replacement]] جنبها.
+---
 
-[[-out=tfplan]] بيحفظ الـ plan، و [[apply tfplan]] بينفّذه من غير ما يسأل تاني. ومن غير ملف، [[apply]] بيعمل plan جديد ويسألك [[yes]].
+## ٢. [[aws s3api get-public-access-block --bucket myapp-assets]]
 
-[[fmt]] بينسّق الكود، و [[validate]] بيتأكد إن الـ syntax والأنواع سليمة من غير ما يكلّم AWS. الاتنين مكانهم CI.
+[[s3api]] غير [[s3]]: بيكلّم الـ API مباشرة، بأسامي العمليات الرسمية وكل الإعدادات. و [[get-public-access-block]] بيقرا إعدادات منع الوصول العام:
 
-[[destroy]] بيمسح كل حاجة في الـ state. وللموارد المهمة حط [[prevent_destroy = true]] جوه [[lifecycle]]، وفي RDS [[deletion_protection = true]].
-
-وفي CI: [[plan]] على كل PR ويتحط تعليق، و [[apply]] بعد الـ merge بس، على الـ plan اللي اتراجع.`,
-            when: "مع كل تغيير في البنية. ومتعملش apply على الإنتاج من جهازك لو فيه CI بيعمله.",
-            mistakes: "[[terraform apply -auto-approve]] من غير ما تبص على الـ plan. وتشوف [[forces replacement]] على قاعدة البيانات وتكمّل. وتضيف [[.terraform/]] لـ Git (مئات الميجات)، أو تنسى [[.terraform.lock.hcl]] فكل واحد في الفريق ياخد نسخة provider مختلفة."
-          },
-          lines: [
-            "نزّل الـ providers وجهّز الـ backend (أول مرة وبعد أي تغيير فيهم).",
-            "نسّق كل الملفات.",
-            "افحص الكود من غير ما تكلّم AWS.",
-            "اعرض التغييرات واحفظها في ملف.",
-            "نفّذ الـ plan المحفوظ بالظبط.",
-            "الموارد اللي Terraform بيديرها.",
-            "امسح كل حاجة في الـ state (بيسألك الأول)."
-          ],
-          sol: R`بعد [[apply]]: [[Apply complete! Resources: 2 added, 0 changed, 0 destroyed.]] و [[bucket_arn = "arn:aws:s3:::myapp-assets-dev"]]، و [[state list]] يطبع السطرين [[aws_s3_bucket.assets]] و [[aws_s3_bucket_public_access_block.assets]].
-
-لما تغيّر الاسم (مثلًا [[-var env=staging]]) الـ plan يطبع:
-
-[[# aws_s3_bucket.assets must be replaced]]
-[[~ bucket = "myapp-assets-dev" -> "myapp-assets-staging" # forces replacement]]
-[[Plan: 2 to add, 0 to change, 2 to destroy.]]
-
-يعني الاتنين هيتمسحوا ويتعملوا من جديد ([[-/+]])، لأن اسم الـ bucket مينفعش يتعدّل، والـ access block تابع له. ده اللي عايزك تلاحظه: أي ملفات جوه الـ bucket كانت هتضيع. و [[destroy]] يطبع [[Plan: 0 to add, 0 to change, 2 to destroy.]] ويستنى [[yes]].
-
-الغلطة الشائعة: [[destroy]] يفشل بـ [[BucketNotEmpty]] لأن فيه ملفات جوه الـ bucket؛ ده حماية، فاضيه بإيدك ([[aws s3 rm s3://... --recursive]]) أو استخدم [[force_destroy = true]] في بيئات التجربة بس. (الـ plan ده اتجرّب هنا على state فيه الـ bucket بـ [[-refresh=false]].)`
-        },
-        {
-          cmd: "Terraform state",
-          title: "Terraform فاكر إيه، ومتخزّن فين",
-          desc: R`الـ state ملف JSON فيه كل مورد Terraform عمله ورقمه الحقيقي في AWS، ومن غيره Terraform مش عارف إن [[aws_s3_bucket.assets]] هو [[myapp-assets]].
-
-افتراضي بيبقى [[terraform.tfstate]] على جهازك، وده ينفع لوحدك بس. في فريق أو CI: الـ state في S3 مع lock عشان محدش يطبّق في نفس اللحظة. والـ state فيه أسرار (باسوردات و connection strings) فمكانه مش Git.`,
-          example: R`terraform {
-  required_version = ">= 1.11"
-  required_providers {
-    aws = { source = "hashicorp/aws", version = "~> 6.0" }
-  }
-  backend "s3" {
-    bucket       = "myapp-tfstate"
-    key          = "prod/terraform.tfstate"
-    region       = "eu-central-1"
-    use_lockfile = true
-    encrypt      = true
-  }
-}`,
-          try: "اعمل bucket للـ state بإيدك (مرة واحدة) وفعّل عليه versioning. ضيف الـ block وشغّل [[terraform init -migrate-state]] ينقل الـ state المحلي لـ S3. وافتح ترمنالين وشغّل [[plan]] في الاتنين في نفس اللحظة وشوف رسالة الـ lock.",
-          flag: "script",
-          deep: {
-            why: "اتنين في الفريق عملوا apply في نفس الوقت كل واحد بـ state على جهازه = موارد متكررة أو ممسوحة. أو اللابتوب اللي عليه الـ state باظ = Terraform نسي كل حاجة ومبقاش يعرف يدير البنية.",
-            how: R`[[required_version]] و [[required_providers]] بيثبّتوا النسخ: [[~> 6.0]] يعني أي 6.x بس مش 7 (اللي ممكن يكسر حاجات). والـ lock file بيثبّت النسخة بالظبط.
-
-الـ backend "s3": [[key]] مسار الملف جوه الـ bucket (ملف لكل بيئة: [[prod/]] و [[staging/]]). و [[use_lockfile = true]] بيعمل ملف lock جنب الـ state وقت الـ plan والـ apply، فأي حد تاني يستنى أو يفشل برسالة واضحة. ده بدل طريقة DynamoDB القديمة اللي بقت deprecated (الـ lock في S3 نفسه بقى رسمي من Terraform 1.11).
-
-[[encrypt]] بيشفّر الملف في S3. وفعّل versioning على الـ bucket، فلو الـ state باظ ترجّع نسخة قبلها. واقفل الـ bucket بـ Block Public Access وصلاحيات محدودة.
-
-أوامر الـ state: [[terraform state list]] و [[state show]] للقراية، و [[import]] عشان تدخّل مورد اتعمل بالكونسول تحت إدارة Terraform، و [[state mv]] أو [[moved]] block لو غيّرت الاسم. ومتعدّلش الملف بإيدك أبدًا.
-
-والـ bucket بتاع الـ state نفسه بيتعمل مرة واحدة بإيدك أو بـ Terraform منفصل، لأن مينفعش Terraform يخزّن الـ state في bucket لسه هيعمله.`,
-            when: "من أول ما حد تاني أو CI هيشغّل Terraform على نفس البنية. وعمليًا من أول يوم.",
-            mistakes: "[[terraform.tfstate]] على GitHub وفيه باسورد القاعدة. و state واحد للإنتاج والـ dev، فـ destroy للتجربة يمسح الإنتاج. وتعدّل الـ JSON بإيدك لما حاجة تتلخبط. وتستخدم [[dynamodb_table]] في مشروع جديد مع إنه deprecated."
-          },
-          lines: [
-            "إعدادات Terraform نفسه.",
-            "Terraform 1.11 أو أحدث (الـ lock في S3 رسمي).",
-            "الـ providers المطلوبة.",
-            "AWS provider من HashiCorp، أي نسخة 6.x.",
-            "قفلة.",
-            "خزّن الـ state في S3.",
-            "الـ bucket (اتعمل قبل كده بإيدك).",
-            "مسار الملف: ملف لكل بيئة.",
-            "الـ region بتاع الـ bucket.",
-            "lock بملف جنب الـ state، فمحدش يطبّق في نفس الوقت.",
-            "شفّر الملف في S3.",
-            "قفلة الـ backend.",
-            "قفلة."
-          ],
-          sol: R`[[terraform init -migrate-state]] بيسألك [[Do you want to copy existing state to the new backend?]]، تكتب [[yes]]، وبعدها [[Successfully configured the backend "s3"!]]. وفي الـ bucket هتلاقي [[prod/terraform.tfstate]]، ومع versioning كل apply بيعمل version جديدة ترجع لها لو الـ state باظ. وتقدر تمسح [[terraform.tfstate]] المحلي بعد ما تتأكد إن [[terraform plan]] بيقول [[No changes]].
-
-والـ lock: الـ plan بياخد الـ lock ثواني بس، فلو الاتنين مجوش في نفس اللحظة بالظبط ممكن الاتنين يعدّوا. الأضمن: شغّل [[terraform apply]] في ترمنال وسيبه واقف عند [[Enter a value:]] (هو ماسك الـ lock)، وشغّل [[plan]] في التاني. هتاخد:
-
-[[Error: Error acquiring the state lock]] ومعاها [[Lock Info:]] فيها [[ID]] و [[Path]] و [[Operation: OperationTypeApply]] و [[Who]] (اليوزر والجهاز). جرّبت الرسالة دي بـ local state والشكل واحد؛ مع S3 الـ Path بيبقى [[myapp-tfstate/prod/terraform.tfstate]]، وملف [[.tflock]] بيظهر جنب الـ state طول ما الـ lock ماسك.
-
-الغلطة الشائعة: تعمل [[terraform force-unlock ID]] والعملية التانية لسه شغالة فعلًا، فالاتنين يكتبوا في نفس الـ state. استخدمه بس لو متأكد إن اللي ماسك الـ lock مات (مثلًا CI اتقفل في النص). وتانية: [[Error: Failed to get existing workspaces ... NoSuchBucket]] لأنك عملت الـ backend قبل ما تعمل الـ bucket بإيدك.`
-        },
-        {
-          cmd: "GitHub OIDC",
-          title: "GitHub Actions يدخل AWS من غير مفاتيح في Secrets",
-          desc: R`بدل IAM user بـ access key دايم في GitHub Secrets، GitHub بيدّي كل job توكن موقّع فيه «أنا repo كذا و branch كذا»، و AWS يتأكد منه ويدّي مفاتيح مؤقتة لساعة من role انت محدد مين يلبسها.
-
-مرة واحدة من الكونسول: IAM ← Identity providers ← OpenID Connect، بالـ URL [[https://token.actions.githubusercontent.com]] والـ audience [[sts.amazonaws.com]]. وبعدين role بالـ trust policy دي.`,
-          example: R`{
-  "Version": "2012-10-17",
-  "Statement": [{
-    "Effect": "Allow",
-    "Principal": { "Federated": "arn:aws:iam::123456789012:oidc-provider/token.actions.githubusercontent.com" },
-    "Action": "sts:AssumeRoleWithWebIdentity",
-    "Condition": {
-      "StringEquals": {
-        "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
-        "token.actions.githubusercontent.com:sub": "repo:myorg/myapp:ref:refs/heads/main"
-      }
+~~~text الناتج
+{
+    "PublicAccessBlockConfiguration": {
+        "BlockPublicAcls": true,
+        "IgnorePublicAcls": true,
+        "BlockPublicPolicy": true,
+        "RestrictPublicBuckets": true
     }
+}
+~~~
+
+| الإعداد | بيمنع إيه |
+|---|---|
+| [[BlockPublicAcls]] | حد يحط ACL (صلاحية على ملف) بتفتحه للكل |
+| [[IgnorePublicAcls]] | ولو فيه ACL عامة قديمة، اتجاهلها |
+| [[BlockPublicPolicy]] | حد يحط bucket policy بتفتح للكل |
+| [[RestrictPublicBuckets]] | ولو فيه policy عامة، محدش من برا الحساب يوصل |
+
+الأربعة [[true]] = الـ bucket مقفول من كل ناحية، وده الافتراضي لأي bucket جديد.
+
+---
+
+## ٣. [[aws s3 cp ./logo.png s3://myapp-assets/public/logo.png]]
+
+[[cp]] زي [[cp]] بتاع لينكس: من، لـ. من جهازك ([[./logo.png]]، و [[./]] يعني الفولدر الحالي) لـ S3.
+
+~~~text الناتج
+upload: ./logo.png to s3://myapp-assets/public/logo.png
+~~~
+
+(قبله بيظهر سطر تقدّم زي [[Completed 30 Bytes/30 Bytes]] وبيتمسح.) و [[public/]] مش فولدر اتعمل: هو جزء من اسم الـ key. S3 مفيهوش فولدرات حقيقية.
+
+---
+
+## ٤. [[aws s3 ls s3://myapp-assets/ --recursive --human-readable]]
+
+| الحتة | معناها |
+|---|---|
+| [[ls]] | اعرض |
+| [[--recursive]] | كل الملفات حتى اللي جوه «فولدرات»، مش أول مستوى بس |
+| [[--human-readable]] | الحجم بـ Bytes و KiB و MiB بدل رقم البايت الخام |
+
+~~~text الناتج
+2026-10-08 10:02:49   30 Bytes public/logo.png
+~~~
+
+التاريخ والوقت (آخر تعديل)، والحجم، والـ key كامل.
+
+---
+
+## ٥. [[aws s3 cp s3://myapp-assets/public/logo.png ./downloaded.png]]
+
+نفس [[cp]] بالعكس: من S3 لجهازك.
+
+~~~text الناتج
+download: s3://myapp-assets/public/logo.png to ./downloaded.png
+~~~
+
+---
+
+## ٦. [[aws s3 presign ... --expires-in 600]]
+
+[[presign]] بيعمل رابط موقّع، و [[--expires-in 600]] صالح ٦٠٠ ثانية = ١٠ دقايق. الأمر ده مش بيكلّم S3 خالص، بيحسب التوقيع على جهازك بمفاتيحك:
+
+~~~text الناتج (على LocalStack، فالعنوان عنوانه)
+http://teach-cloud01-ls:4566/myapp-assets/public/logo.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=test%2F20261008%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20261008T100251Z&X-Amz-Expires=600&X-Amz-SignedHeaders=host&X-Amz-Signature=20ce8ddc6cf8...
+~~~
+
+نفك الـ query string (اللي بعد [[?]]، وكل خانة بينها [[&]]):
+
+| الخانة | معناها |
+|---|---|
+| [[X-Amz-Algorithm=AWS4-HMAC-SHA256]] | طريقة التوقيع: SigV4 |
+| [[X-Amz-Credential=test/20261008/eu-central-1/s3/aws4_request]] | مين وقّع (الـ access key، هنا [[test]])، واليوم، والـ region، والخدمة. [[%2F]] هي [[/]] مكتوبة بطريقة الـ URL |
+| [[X-Amz-Date]] | وقت التوقيع بالـ UTC |
+| [[X-Amz-Expires=600]] | صالح كام ثانية من الوقت ده |
+| [[X-Amz-SignedHeaders=host]] | الـ headers الداخلة في التوقيع |
+| [[X-Amz-Signature]] | التوقيع نفسه. أي تغيير في أي حاجة فوق يبوّظه |
+
+### جرّبناه بـ curl
+
+| التجربة | الرد |
+|---|---|
+| الرابط الموقّع | محتوى الملف |
+| نفس الرابط وغيّرنا آخر حرف في التوقيع | [[<Code>SignatureDoesNotMatch</Code>]] |
+| رابط بـ [[--expires-in 1]] واستنينا ٣ ثواني | [[<Code>AccessDenied</Code><Message>Request has expired</Message>]] |
+| bucket اسمه مش موجود | [[<Code>NoSuchBucket</Code>]] |
+
+والرابط العادي من غير توقيع؟ على AWS الحقيقي بيرجّع [[AccessDenied]] لأن الـ bucket مقفول (من الـ docs). LocalStack رجّع الملف عادي، لأنه مبيطبّقش صلاحيات الـ bucket افتراضيًا، فدي حاجة لازم تجرّبها على AWS نفسه.
+
+---
+
+## الخلاصة
+
+| الأمر | بيعمل إيه |
+|---|---|
+| [[s3 mb]] | اعمل bucket (اسم فريد في الدنيا) |
+| [[s3api get-public-access-block]] | اتأكد إن الأربعة [[true]] |
+| [[s3 cp]] | ارفع أو نزّل، حسب مين [[s3://]] |
+| [[s3 ls --recursive --human-readable]] | كل الملفات بأحجام مقروءة |
+| [[s3 presign --expires-in N]] | رابط مؤقت لملف واحد، والـ bucket يفضل مقفول |
+
+> [[s3]] للشغل اليومي، و [[s3api]] لأي إعداد. والملف الخاص ميتفتحش للعامة أبدًا: رابط موقّع لمدة قصيرة.`,
+          lines: [
+            "اعمل bucket في فرانكفورت (الاسم لازم يبقى فريد في الدنيا كلها).",
+            "اتأكد إن الإعدادات الأربعة لمنع الوصول العام [[true]].",
+            "ارفع ملف. [[public/]] جزء من الاسم مش فولدر حقيقي.",
+            "اعرض كل اللي في الـ bucket بأحجام مقروءة.",
+            "نزّل ملف من S3 لجهازك.",
+            "رابط مؤقت لمدة ١٠ دقايق للملف ده بس، والـ bucket لسه مقفول."
+          ],
+          sol: R`الأوامر بتطبع بالترتيب تقريبًا: [[make_bucket: myapp-assets-ali-7]]، وبعدين JSON فيه الأربع قيم [[BlockPublicAcls]] و [[IgnorePublicAcls]] و [[BlockPublicPolicy]] و [[RestrictPublicBuckets]] كلهم [[true]] (ده الافتراضي للـ buckets الجديدة)، وبعدين [[upload: ./logo.png to s3://.../public/logo.png]]، و [[ls]] بيطبع سطر فيه التاريخ والحجم زي [[4.2 KiB public/logo.png]].
+
+الرابط العادي في المتصفح هيرجّع XML فيه [[<Code>AccessDenied</Code>]]، لأن الـ bucket مقفول ومفيش توقيع. والرابط اللي [[presign]] طلّعه طويل وفيه [[X-Amz-Algorithm=AWS4-HMAC-SHA256]] و [[X-Amz-Expires=600]] و [[X-Amz-Signature=...]]، وبيفتح الصورة. وبعد ١٠ دقايق نفس الرابط بيرجّع [[Request has expired]].
+
+أخطاء شائعة: [[BucketAlreadyExists]] يعني الاسم محجوز عند حد تاني في الدنيا، زوّد اسمك أو رقم. ولو فتحت رابط المثال نفسه ([[myapp-assets]]) من غير ما تغيّر الاسم هتلاقي [[NoSuchBucket]] مش AccessDenied، لأن الـ bucket ده مش موجود أصلًا. ولو الـ presign اتعمل بمفاتيح مؤقتة (login أو SSO)، الرابط بيحتوي [[X-Amz-Security-Token]] وبيموت مع الجلسة حتى لو [[--expires-in]] أطول. ولو رجّع [[SignatureDoesNotMatch]] اتأكد إن الـ region في الأمر هي region الـ bucket.`
+        },
+        {
+          cmd: "presigned URL",
+          title: "المتصفح يرفع الملف على S3 من غير ما يعدي على سيرفرك",
+          desc: R`بدل ما الملف يعدي من المتصفح لسيرفرك وبعدين لـ S3، السيرفر بيعمل «إذن رفع» مؤقت (URL موقّع) لملف واحد باسم ونوع محددين، والمتصفح يرفع عليه مباشرة بـ PUT.
+
+السيرفر بيتحقق من اليوزر والنوع ويختار الاسم، و S3 بيشيل الملف نفسه. وفي المتصفح: [[await fetch(url, { method: "PUT", headers: { "Content-Type": file.type }, body: file })]] وبعدها يبعت الـ [[key]] للـ API.`,
+          example: R`import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { randomUUID } from "node:crypto";
+
+const s3 = new S3Client({ region: "eu-central-1", requestChecksumCalculation: "WHEN_REQUIRED" });
+const ALLOWED = ["image/png", "image/jpeg", "application/pdf"];
+
+app.post("/uploads/sign", requireAuth, async (req, res) => {
+  if (!ALLOWED.includes(req.body.contentType)) return res.status(400).json({ error: "type" });
+  const key = $__btuploads/$__{req.user.id}/$__{randomUUID()}$__bt;
+  const cmd = new PutObjectCommand({ Bucket: "myapp-assets", Key: key, ContentType: req.body.contentType });
+  const url = await getSignedUrl(s3, cmd, { expiresIn: 300, signableHeaders: new Set(["content-type"]) });
+  res.json({ url, key });
+});`,
+          try: R`شغّل الـ route، وخد الـ url وارفع بيه من الترمنال: [[curl -X PUT -H "Content-Type: image/png" --upload-file logo.png "URL"]]. جرّب نفس الـ URL بنوع [[image/gif]] وشوف SignatureDoesNotMatch. وبعدين جرّبه من المتصفح بـ fetch، وهتقابل CORS: ظبطه بـ [[aws s3api put-bucket-cors --bucket myapp-assets --cors-configuration file://cors.json]] واسمح بـ PUT من دومينك بس.`,
+          flag: "script",
+          deep: {
+            why: "رفع الملفات عن طريق السيرفر بياكل رام وباندويدث ووقت: الطلب ماسك اتصال لحد ما الملف كله يوصل، وبعدين السيرفر يرفعه تاني. وفي Vercel جسم الطلب ليه حد ٤.٥ ميجا، وفي Lambda ٦ ميجا. الـ presigned URL بيخلّي كل واحد يعمل شغله: السيرفر يقرر، و S3 يستقبل.",
+            how: R`[[getSignedUrl]] مش بيكلّم S3 خالص. بيحسب توقيع (SigV4) بالمفاتيح اللي السيرفر شايلها (يفضل role) على: الـ method (PUT)، والـ bucket، والـ key، ووقت الانتهاء. والـ Content-Type بيدخل في التوقيع بس لو طلبته: SDK v3 افتراضيًا بيشيله من التوقيع، عشان كده المثال بيبعت [[signableHeaders: new Set(["content-type"])]]؛ من غيرها أي نوع هيعدي. التوقيع ده بيتحط في الـ query string بتاع الـ URL.
+
+لما المتصفح يعمل PUT، S3 بيعيد نفس الحساب. لو أي حاجة اتغيرت (اسم تاني، نوع تاني، المدة خلصت) التوقيع مش هيطابق والطلب يترفض. عشان كده المتصفح لازم يبعت نفس [[Content-Type]] اللي اتوقّع.
+
+الـ URL بيشتغل بصلاحيات اللي وقّعه. لو الـ role بتاعة السيرفر مش معاها [[s3:PutObject]] على [[uploads/*]]، الرفع هيترفض حتى لو التوقيع سليم.
+
+المتصفح بيرفع على دومين تاني (S3)، فلازم CORS على الـ bucket: [[AllowedOrigins]] دومينك، و [[AllowedMethods]] فيها [[PUT]]، و [[AllowedHeaders]] فيها [[content-type]].
+
+بعد الرفع، المتصفح يبعت الـ [[key]] للـ API، والسيرفر يتأكد إنه بيبدأ بـ [[uploads/USER_ID/]] بتاع اليوزر ده وإن الملف موجود ([[HeadObject]]) قبل ما يحفظه في قاعدة البيانات. والقراية بعدين بـ presigned GET أو CloudFront.
+
+الـ PUT الواحد أقصاه ٥ جيجا، وللملفات الأكبر فيه multipart upload بأكتر من URL.`,
+            when: "أي رفع من المتصفح أو الموبايل: صور، وفيديوهات، و PDF، وإثبات دفع. خصوصًا لو السيرفر صغير أو serverless.",
+            mistakes: R`في مشروع حقيقي كان الـ backend بيستقبل الفيديوهات بـ multer في الرام ([[memoryStorage]]) بحد ١٠٠ ميجا، وملفات PDF لحد ٥٠٠ ميجا، وبعدين يرفعها للـ storage. كام رفعة في نفس الوقت على سيرفر ١ جيجا رام كفاية توقّع الـ process. تاني غلطة: تسيب المتصفح يختار الـ key فيكتب فوق ملف حد تاني. تالت: [[expiresIn]] بالساعات بدل الدقايق. رابع: الـ PUT الموقّع مبيحددش حجم أقصى، فلو محتاج حد استخدم presigned POST مع [[content-length-range]].`
+          },
+          teach: R`## الفكرة: السيرفر بيدّي «تذكرة»، و S3 بيستلم الملف
+
+الكود route في Express بيعمل حاجة واحدة: يتأكد من اليوزر ونوع الملف، يختار اسم، ويرجّع URL موقّع. السيرفر نفسه مبيشوفش الملف خالص.
+
+~~~text
+المتصفح  ── POST /uploads/sign {contentType} ──►  سيرفرك   (يتحقق ويوقّع)
+المتصفح  ◄── { url, key } ─────────────────────   سيرفرك
+المتصفح  ── PUT url + الملف ───────────────────►  S3       (يتأكد من التوقيع ويحفظ)
+~~~
+
+اتجرّب فعلًا: نفس الكود في [[node:22-slim]] بـ Express 5 و AWS SDK 3.1147، والـ [[S3Client]] متوجّه لـ LocalStack (محاكي AWS في Docker) بـ [[endpoint]] و [[forcePathStyle]]، و [[requireAuth]] وهمي بيحط [[req.user.id = 42]]. والرفع بـ [[curl]].
+
+---
+
+## ١. الـ imports
+
+~~~js
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { randomUUID } from "node:crypto";
+~~~
+
+| الاسم | جاي منين | بيعمل إيه |
+|---|---|---|
+| [[S3Client]] | [[@aws-sdk/client-s3]] | الكلاينت اللي بيكلّم S3 |
+| [[PutObjectCommand]] | نفس الباكدج | وصف عملية «ارفع ملف» (من غير ما تتنفذ) |
+| [[getSignedUrl]] | [[@aws-sdk/s3-request-presigner]] | ياخد الوصف ويطلّع URL موقّع |
+| [[randomUUID]] | [[node:crypto]] (جوه Node) | اسم عشوائي زي [[3d30da63-8086-43cc-...]] مبيتكررش |
+
+SDK v3 مقسوم باكدجات صغيرة، فبتسطّب اللي محتاجه بس: [[npm i @aws-sdk/client-s3 @aws-sdk/s3-request-presigner]].
+
+---
+
+## ٢. الكلاينت والأنواع المسموحة
+
+~~~js
+const s3 = new S3Client({ region: "eu-central-1", requestChecksumCalculation: "WHEN_REQUIRED" });
+const ALLOWED = ["image/png", "image/jpeg", "application/pdf"];
+~~~
+
+- [[region]]: لازم تبقى region الـ bucket، لأنها داخلة في التوقيع.
+- مفيش مفاتيح مكتوبة: الـ SDK بيدوّر لوحده (متغيرات البيئة، أو الـ role على AWS).
+- [[requestChecksumCalculation: "WHEN_REQUIRED"]]: النسخ الجديدة من الـ SDK بتحسب checksum لكل رفع افتراضيًا. ومع الـ presign مفيش ملف وقت التوقيع، فبيحسب checksum لملف فاضي ويحطه في الـ URL. جرّبنا من غيرها والـ URL طلع فيه:
+
+~~~text جزء من الـ URL من غير WHEN_REQUIRED
+&x-amz-checksum-crc32=AAAAAA%3D%3D&x-amz-sdk-checksum-algorithm=CRC32
+~~~
+
+[[AAAAAA==]] ده الـ CRC32 لصفر بايت. S3 الحقيقي بيقارنه بالملف اللي اترفع فيرفضه (LocalStack قبله عادي، فدي من الـ docs ومن مشكلة معروفة في الـ SDK). ومع [[WHEN_REQUIRED]] السطرين دول اختفوا من الـ URL.
+
+- [[ALLOWED]]: قايمة الـ MIME types المسموحة. الـ MIME type هو نوع الملف بالشكل اللي الويب فاهمه: [[image/png]] و [[application/pdf]].
+
+---
+
+## ٣. الـ route
+
+~~~js
+app.post("/uploads/sign", requireAuth, async (req, res) => {
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[app.post]] | لما ييجي طلب POST |
+| [[/uploads/sign]] | على المسار ده |
+| [[requireAuth]] | middleware بيشتغل الأول: مش مسجّل دخول؟ يرفض. مسجّل؟ يحط [[req.user]] ويكمّل |
+| [[async (req, res) =>]] | الدالة الأساسية. [[async]] لأن جواها [[await]] |
+
+### التحقق من النوع
+
+~~~js
+if (!ALLOWED.includes(req.body.contentType)) return res.status(400).json({ error: "type" });
+~~~
+
+[[req.body.contentType]] النوع اللي المتصفح بعته (من [[file.type]]). [[includes]] موجود في القايمة؟ لو لأ ([[!]])، رد بـ 400 (طلب غلط) و [[return]] عشان الدالة متكمّلش. جرّبنا [[image/gif]]:
+
+~~~text الناتج
+{"error":"type"} 400
+~~~
+
+### الاسم
+
+~~~js
+const key = $__btuploads/$__{req.user.id}/$__{randomUUID()}$__bt;
+~~~
+
+ده template literal: نص بين علامتين [[$__bt]] وجواه [[$__{...}]] بتتبدل بقيمتها. فاليوزر 42 بياخد [[uploads/42/3d30da63-8086-43cc-9ac6-c7f8fe630035]]. السيرفر هو اللي بيختار، فاليوزر ميقدرش يكتب فوق ملف حد تاني.
+
+### وصف الرفع
+
+~~~js
+const cmd = new PutObjectCommand({ Bucket: "myapp-assets", Key: key, ContentType: req.body.contentType });
+~~~
+
+[[new]] بيعمل object من الـ class. ده **وصف** بس: «ارفع على الـ bucket ده بالاسم ده بالنوع ده». محدش بعته لـ S3.
+
+### التوقيع
+
+~~~js
+const url = await getSignedUrl(s3, cmd, { expiresIn: 300, signableHeaders: new Set(["content-type"]) });
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[await getSignedUrl(s3, cmd, ...)]] | وقّع الوصف ده بمفاتيح الكلاينت. بيتحسب على السيرفر، من غير طلب لـ S3 |
+| [[expiresIn: 300]] | صالح ٣٠٠ ثانية = ٥ دقايق |
+| [[signableHeaders]] | الـ headers اللي لازم تدخل في التوقيع |
+| [[new Set(["content-type"])]] | Set مجموعة من غير تكرار، فيها اسم header واحد |
+
+ليه [[signableHeaders]]؟ جرّبنا نوقّع نفس الوصف مرتين وطبعنا [[X-Amz-SignedHeaders]] من الـ URL:
+
+~~~text الناتج
+host                (من غير signableHeaders)
+content-type;host   (بيها)
+~~~
+
+من غيرها الـ Content-Type مش داخل في التوقيع، فالمتصفح يقدر يرفع أي نوع على نفس الـ URL، وتحقق [[ALLOWED]] فوق يبقى ملوش لازمة.
+
+### الرد
+
+~~~js
+res.json({ url, key });
+~~~
+
+[[{ url, key }]] اختصار لـ [[{ url: url, key: key }]].
+
+~~~text الناتج (على LocalStack)
+{"url":"http://teach-cloud01-ls:4566/myapp-assets/uploads/42/3d30da63-...?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=test%2F20261008%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20261008T100535Z&X-Amz-Expires=300&X-Amz-Signature=e492ae43...&X-Amz-SignedHeaders=content-type%3Bhost&x-id=PutObject","key":"uploads/42/3d30da63-8086-43cc-9ac6-c7f8fe630035"}
+~~~
+
+على AWS الحقيقي أول الـ URL بيبقى [[https://myapp-assets.s3.eu-central-1.amazonaws.com/uploads/42/...]]. و [[UNSIGNED-PAYLOAD]] يعني محتوى الملف نفسه مش داخل في التوقيع (لأنه مكانش موجود)، و [[%3B]] هي [[;]].
+
+---
+
+## ٤. الرفع بالـ URL
+
+~~~bash
+curl -X PUT -H "Content-Type: image/png" --upload-file logo.png "URL"
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[-X PUT]] | الـ method، ولازم PUT زي ما اتوقّع |
+| [[-H "Content-Type: image/png"]] | نفس النوع اللي اتوقّع بالظبط |
+| [[--upload-file logo.png]] | الملف هو الـ body |
+| [["URL"]] | بين علامتين، لأن فيه [[&]] والـ shell بيفهمها «شغّل في الخلفية» |
+
+| التجربة | الرد |
+|---|---|
+| [[image/png]] (زي التوقيع) | [[200]] من غير body، والملف ظهر في [[aws s3 ls s3://myapp-assets/uploads/42/]] |
+| نفس الـ URL بـ [[image/gif]] | [[SignatureDoesNotMatch]] |
+
+وفي المتصفح نفس الحركة بـ [[fetch(url, { method: "PUT", headers: { "Content-Type": file.type }, body: file })]]، ومحتاجة CORS على الـ bucket (الـ solCode).
+
+---
+
+## الخلاصة
+
+| الخطوة | مين | بيعمل إيه |
+|---|---|---|
+| ١ | السيرفر | يتأكد من اليوزر ([[requireAuth]]) والنوع ([[ALLOWED]]) |
+| ٢ | السيرفر | يختار الـ key: [[uploads/USER/UUID]] |
+| ٣ | السيرفر | [[getSignedUrl]] لـ ٥ دقايق، والـ Content-Type داخل في التوقيع |
+| ٤ | المتصفح | PUT مباشرة لـ S3 بنفس النوع |
+| ٥ | المتصفح ثم السيرفر | يبعت الـ [[key]] للـ API، والسيرفر يتأكد منه ويحفظه |
+
+> الـ URL بيشتغل بصلاحيات اللي وقّعه، فالـ role بتاعة السيرفر محتاجة [[s3:PutObject]] على [[uploads/*]].`,
+          lines: [
+            "كلاينت S3 والأمر اللي هنوقّعه.",
+            "الدالة اللي بتوقّع من غير ما تكلّم S3.",
+            "عشان أسامي ملفات عشوائية مبتتكررش.",
+            "الكلاينت مرة واحدة، وبياخد صلاحياته من الـ role. و WHEN_REQUIRED عشان الـ SDK ميحطّش checksum لملف فاضي في الـ URL فالرفع يفشل.",
+            "الأنواع المسموحة بس.",
+            "route محمي: لازم اليوزر يبقى مسجّل دخول.",
+            "نوع مش مسموح؟ ارفض.",
+            "السيرفر هو اللي يختار الاسم: فولدر لكل يوزر واسم عشوائي.",
+            "وصف الرفع: الـ bucket والاسم والنوع (المتصفح لازم يبعت نفس النوع).",
+            "وقّع لمدة ٥ دقايق، وخلّي الـ Content-Type جزء من التوقيع (SDK v3 مش بيوقّعه لوحده).",
+            "رجّع الـ URL والـ key للمتصفح.",
+            "قفلة الـ route."
+          ],
+          sol: R`الـ route بيرجّع JSON فيه [[key]] زي [[uploads/42/0e2027a6-...]] و [[url]] فيه [[X-Amz-SignedHeaders=content-type%3Bhost]]، يعني الـ Content-Type داخل في التوقيع. وطلب بنوع [[image/gif]] للـ route نفسه بيرجع [[400 {"error":"type"}]] من السيرفر. والرفع بـ curl بنوع [[image/png]] يرجّع 200 من غير body، والملف يظهر في [[aws s3 ls s3://myapp-assets/uploads/42/]]. ولو غيّرت الـ header في curl لـ [[image/gif]] على نفس الـ URL، S3 يرجّع 403 [[SignatureDoesNotMatch]].
+
+مهم: نسخ SDK v3 من أول 3.729 بتحسب checksum تلقائي، ومع الـ presign مفيش body وقت التوقيع، فالـ URL بيطلع فيه [[x-amz-checksum-crc32=AAAAAA%3D%3D]] (checksum لملف فاضي)، وأي رفع لملف حقيقي عليه بيفشل برسالة checksum. جرّبتها على 3.1143 والـ URL طلع فيه السطر ده فعلًا. الحل اللي في المثال دلوقتي: [[requestChecksumCalculation: "WHEN_REQUIRED"]] في الـ [[S3Client]]، وبعدها الـ URL بيطلع من غير checksum.
+
+الـ CORS: من المتصفح من غير CORS هتشوف في الـ console [[blocked by CORS policy]] والطلب نفسه اتبعت كـ preflight [[OPTIONS]] واترفض. بعد [[put-bucket-cors]] بالملف اللي تحت، الـ fetch يعدّي. ولو حطيت [[AllowedOrigins: ["*"]]] هيشتغل برضه، بس ده بيسمح لأي موقع يستخدم روابطك.`,
+          solCode: R`cat > cors.json <<'EOF'
+{
+  "CORSRules": [{
+    "AllowedOrigins": ["https://myapp.example.com", "http://localhost:5173"],
+    "AllowedMethods": ["PUT"],
+    "AllowedHeaders": ["content-type"],
+    "MaxAgeSeconds": 3000
   }]
-}`,
-          try: "اعمل الـ provider والـ role، وادّي الـ role صلاحية [[s3:ListBucket]] بس. اعمل workflow على main يشغّل [[aws sts get-caller-identity]] و [[aws s3 ls s3://myapp-site]]. بعدين شغّله من branch تاني وشوف [[Not authorized to perform sts:AssumeRoleWithWebIdentity]].",
-          flag: "script",
-          deep: {
-            why: "access key في GitHub Secrets: أي action خبيث في الـ workflow، أو أي حد بصلاحية على الـ repo، يقدر يطلّعه، وبيفضل شغال لحد ما حد يفتكر يغيّره. مع OIDC مفيش سر متخزن أصلًا، والمفاتيح بتموت بعد ساعة، ومربوطة بـ repo و branch محددين.",
-            how: R`لما الـ job فيه [[id-token: write]] في الـ permissions، GitHub بيقدر يطلّع JWT موقّع بمفتاحه. التوكن فيه claims: [[aud]] (لمين، هنا sts.amazonaws.com)، و [[sub]] (مين: [[repo:ORG/REPO:ref:refs/heads/BRANCH]]، أو [[repo:ORG/REPO:environment:production]] لو الـ job عليه environment)، وحاجات تانية.
-
-الـ action [[configure-aws-credentials]] بيبعت التوكن لـ STS بـ [[AssumeRoleWithWebIdentity]]. AWS بيتأكد من التوقيع بمفاتيح GitHub العامة (عشان كده سجّلت الـ provider)، وبعدين يقيّم الـ trust policy: [[aud]] مطابق؟ [[sub]] مطابق؟ لو آه يرجّع مفاتيح مؤقتة، والـ action يحطها متغيرات بيئة لباقي الـ steps.
-
-الـ [[sub]] هو القفل الحقيقي. [[StringEquals]] على main بس معناه إن PR من fork أو branch تجربة مش هيقدر يلبس role الإنتاج. ولو محتاج أكتر من branch استخدم [[StringLike]] بحذر: [[repo:myorg/*]] يعني أي repo في الـ org.
-
-والأحسن كمان: GitHub environment اسمه production بموافقة يدوية، والـ sub يبقى [[environment:production]]، فمحدش يطبّق على الإنتاج من غير approval. التفاصيل عن environments في تاب GitHub Actions.`,
-            when: "أي CI بيكلّم AWS: deploy على S3 و CloudFront، و push لـ ECR، و terraform apply.",
-            mistakes: "trust policy من غير شرط [[sub]] (أو [[sub]] فيه نجمة على الـ org كله): repos تانية تقدر تلبس الـ role بتاعتك. وتنسى [[id-token: write]] فيطلع [[Could not load credentials]]. وتدّي الـ role بتاعة الـ CI [[AdministratorAccess]]."
-          },
-          lines: [
-            "بداية الـ trust policy.",
-            "إصدار لغة الـ policy.",
-            "قاعدة واحدة.",
-            "اسمح.",
-            "لمين: توكنات موقّعة من GitHub (الـ provider اللي سجّلته).",
-            "إنه يلبس الـ role بتوكن OIDC.",
-            "بشروط.",
-            "لازم القيم تطابق بالظبط.",
-            "التوكن معمول لـ AWS STS.",
-            "ومن الـ repo ده و branch main بس.",
-            "قفلة.",
-            "قفلة الشروط.",
-            "قفلة القاعدة والقايمة.",
-            "قفلة الـ policy."
-          ],
-          sol: R`الـ workflow تحت (عدّى من [[actionlint]]). على main، step الـ credentials يطبع [[Assuming role with OIDC]] وبعدها [[Authenticated as assumedRoleId AROA...:GitHubActions]]، و [[get-caller-identity]] يطلّع [[arn:aws:sts::123456789012:assumed-role/github-readonly/GitHubActions]]، و [[s3 ls]] يعرض الملفات. من branch تاني، نفس الـ step يفشل بـ [[Could not assume role with OIDC: Not authorized to perform sts:AssumeRoleWithWebIdentity]]، لأن الـ [[sub]] في التوكن بقى [[repo:myorg/myapp:ref:refs/heads/feature-x]] ومش مطابق للـ Condition.
-
-لاحظ إن [[s3:ListBucket]] بيتدّى على الـ bucket نفسه [[arn:aws:s3:::myapp-site]] مش [[/*]]. لو كتبته بـ [[/*]] هتاخد [[AccessDenied ... ListObjectsV2]] مع إن الـ role اتلبست صح.
-
-أخطاء شائعة: [[No OpenIDConnect provider found in your account]] يعني الـ provider مش معمول (أو الـ ARN في الـ trust فيه رقم حساب غلط). و [[Incorrect token audience]] يعني [[client-id-list]] مش [[sts.amazonaws.com]]. ولو الـ workflow بيشتغل على [[pull_request]] الـ sub بيبقى [[repo:myorg/myapp:pull_request]]، ولو فيه [[environment:]] بيبقى [[repo:myorg/myapp:environment:prod]]، فالـ Condition لازم تطابق الشكل ده.`,
-          solCode: R`aws iam create-open-id-connect-provider --url https://token.actions.githubusercontent.com --client-id-list sts.amazonaws.com
-# trust-github.json = الـ trust policy اللي في المثال
-aws iam create-role --role-name github-readonly --assume-role-policy-document file://trust-github.json
-aws iam put-role-policy --role-name github-readonly --policy-name list-site --policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":"s3:ListBucket","Resource":"arn:aws:s3:::myapp-site"}]}'
-# .github/workflows/whoami.yml
-name: whoami
-on: [push, workflow_dispatch]
-permissions:
-  id-token: write
-  contents: read
-jobs:
-  whoami:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: aws-actions/configure-aws-credentials@v6
-        with:
-          role-to-assume: arn:aws:iam::123456789012:role/github-readonly
-          aws-region: eu-central-1
-      - run: aws sts get-caller-identity
-      - run: aws s3 ls s3://myapp-site`
+}
+EOF
+aws s3api put-bucket-cors --bucket myapp-assets --cors-configuration file://cors.json
+aws s3api get-bucket-cors --bucket myapp-assets`
         },
         {
-          cmd: "deploy.yml إلى AWS",
-          title: "workflow بيبني الموقع ويرفعه على S3 و CloudFront",
-          desc: R`بعد ما الـ role جاهزة الـ workflow بسيط: [[id-token: write]] في الـ permissions، و step بـ [[aws-actions/configure-aws-credentials]] بياخد الـ role والـ region، وبعدها أي أمر [[aws]] شغال.
+          cmd: "S3 + CloudFront",
+          title: "ارفع build بتاع React وقدّمه من CDN",
+          desc: R`موقع static (Vite أو React أو Next.js بـ [[output: 'export']]) مجرد ملفات، والطريقة الحديثة: bucket مقفول و CloudFront قدامه بيقرا منه عن طريق OAC (Origin Access Control)، فتاخد HTTPS ودومين وكاش في كل العالم.
 
-مفيش [[AWS_ACCESS_KEY_ID]] في أي مكان. ولو محتاج رقم الحساب أو الـ distribution، حطهم في GitHub Variables (مش أسرار).`,
-          example: R`on: { push: { branches: [main] } }
-permissions:
-  id-token: write
-  contents: read
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - uses: aws-actions/configure-aws-credentials@v6
-        with:
-          role-to-assume: arn:aws:iam::123456789012:role/github-deploy
-          aws-region: eu-central-1
-      - run: npm ci && npm run build && aws s3 sync dist/assets s3://myapp-site/assets --cache-control "public,max-age=31536000,immutable"
-      - run: aws s3 cp dist/index.html s3://myapp-site/index.html --cache-control no-cache && aws cloudfront create-invalidation --distribution-id E1ABCDEF2GHIJK --paths "/index.html"`,
-          try: "حط الـ workflow في repo الموقع واعمل push على main، وافتح الـ run وشوف step الـ credentials: هتلاقي الـ role اللي اتلبست. بعدين شيل [[id-token: write]] وشوف الخطأ.",
-          flag: "script",
+الملفات اللي أسماءها فيها hash ([[assets/index-a1b2c3.js]]) كاشها سنة، و [[index.html]] من غير كاش، عشان أول ما ترفع نسخة جديدة الناس تشوفها.`,
+          example: R`npm run build
+aws s3 sync ./dist/assets s3://myapp-site/assets --cache-control "public,max-age=31536000,immutable"
+aws s3 cp ./dist/index.html s3://myapp-site/index.html --cache-control "no-cache"
+aws cloudfront create-invalidation --distribution-id E1ABCDEF2GHIJK --paths "/index.html"`,
+          try: "اعمل distribution من الكونسول: الـ origin هو الـ bucket، واختار Origin access control (الكونسول بيعرض يحدّث الـ bucket policy)، و Default root object [[index.html]]. ارفع بالأوامر وافتح رابط cloudfront.net. بعدين افتح [[/about]] مباشرة وشوف هيحصل إيه.",
           deep: {
-            why: "الـ deploy اليدوي من جهازك بيعتمد على إن جهازك عليه الصلاحيات الصح والـ build صح. الـ CI بيعمل نفس الخطوات كل مرة من كود نضيف، وبصلاحيات مؤقتة ومحدودة.",
-            how: R`لما تكتب [[permissions]] صريح، أي صلاحية مش مكتوبة بتبقى [[none]]. عشان كده [[contents: read]] لازمة للـ checkout، و [[id-token: write]] لازمة لطلب التوكن. وممكن تحطهم على مستوى الـ job بدل الـ workflow كله.
+            why: "S3 عنده «static website hosting» قديم، بس ده HTTP بس ومحتاج الـ bucket يبقى عام. CloudFront بيحل الاتنين: HTTPS بشهادة ببلاش من ACM، والـ bucket يفضل مقفول ومحدش يوصله غير CloudFront، والملفات بتتقدّم من أقرب نقطة للزائر.",
+            how: R`OAC بيخلّي CloudFront يوقّع طلباته لـ S3. والـ bucket policy بتسمح لخدمة [[cloudfront.amazonaws.com]] تعمل [[s3:GetObject]] بشرط إن [[AWS:SourceArn]] هو الـ distribution بتاعك بس. يعني حتى لو حد عرف اسم الـ bucket مش هيقدر يقرا منه مباشرة. (OAI القديم لسه موجود، بس AWS بتنصح بـ OAC.)
 
-[[configure-aws-credentials]] بعد ما ياخد المفاتيح المؤقتة بيحطها في [[AWS_ACCESS_KEY_ID]] و [[AWS_SECRET_ACCESS_KEY]] و [[AWS_SESSION_TOKEN]] كمتغيرات بيئة للـ steps اللي بعده، فالـ CLI والـ SDK بيلاقوها لوحدهم. والمدة الافتراضية ساعة.
+مشكلة الـ SPA: لما حد يفتح [[/about]] مباشرة، CloudFront بيطلب [[about]] من S3، والملف مش موجود. ولأن الـ bucket مقفول، S3 بيرجّع 403 مش 404. الحل في Custom error responses: 403 و 404 يرجّعوا [[/index.html]] بكود 200، و React Router يكمّل.
 
-الـ runner بتاع [[ubuntu-latest]] عليه AWS CLI جاهز. ونفس النمط لأي حاجة: push لـ ECR بـ [[aws-actions/amazon-ecr-login]]، أو [[terraform plan]] و [[apply]].
+ترتيب الرفع مهم: الـ assets الأول ثم [[index.html]]. لو عكست، فيه لحظة [[index.html]] الجديدة بتطلب ملف JS لسه مترفعش. والملفات القديمة في [[assets/]] سيبها شوية، لأن حد فاتح الصفحة القديمة لسه بيطلبها.
 
-والـ role نفسها صلاحياتها على قد الـ workflow: [[s3:PutObject]] و [[s3:ListBucket]] على [[myapp-site]]، و [[cloudfront:CreateInvalidation]] على الـ distribution دي. مش أكتر.
+[[Cache-Control]] اللي بتحطه على الـ object بيرجع مع الملف، و CloudFront والمتصفح بيحترموه (في حدود الـ cache policy). [[immutable]] بيقول للمتصفح «متسألش تاني خالص»، وده آمن لأن أي تعديل بيطلع اسم جديد.
 
-والتفاصيل العامة (triggers و jobs و secrets و environments و concurrency) في تاب GitHub Actions.`,
-            when: "أي deploy لـ AWS من GitHub. ونفس الفكرة موجودة في GitLab CI و Bitbucket مع OIDC.",
-            mistakes: "تكتب [[id-token: write]] بس وتنسى [[contents: read]] فالـ checkout يقع. وتستخدم [[aws s3 sync --delete]] على الـ bucket كله فتمسح assets الناس لسه بتطلبها. وتنسى [[concurrency]] فاتنين deploy يشتغلوا في نفس الوقت والأقدم يخلص الأخير."
+وباقي الملفات ([[favicon.ico]] و [[robots.txt]]): [[aws s3 sync ./dist s3://myapp-site --exclude "assets/*" --exclude index.html]].`,
+            when: "أي frontend مش محتاج server rendering: لوحة تحكم، أو landing page، أو موقع Vite. أرخص وأسرع من تشغيله على سيرفر.",
+            mistakes: "تفعّل static website hosting وتفتح الـ bucket للعامة عشان «أسهل». وتنسى الـ custom error responses، فالموقع شغال من الرئيسية بس وأي refresh على صفحة داخلية يطلع AccessDenied. وترفع [[index.html]] بكاش طويل، فالناس تفضل تشوف النسخة القديمة أيام. وتعمل invalidation لـ [[/*]] مع كل رفعة بدل ما تعتمد على الأسماء اللي فيها hash."
           },
+          teach: R`## الفكرة: ٤ أوامر لكل deploy، والترتيب مهم
+
+الـ distribution نفسه (CloudFront قدام الـ bucket بـ OAC) بيتعمل مرة واحدة من الكونسول زي ما الـ try بيقول. الأوامر الأربعة دي هي اللي بتعيدها كل مرة تنشر نسخة جديدة: ابني، ارفع الملفات الثابتة بكاش طويل، ارفع [[index.html]] بكاش صفر، وقول لـ CloudFront ينسى [[index.html]] القديمة.
+
+أوامر S3 اتجرّبت بـ AWS CLI 2.37 على LocalStack (محاكي AWS في Docker)، على فولدر [[dist]] صغير عملناه بإيدنا فيه نفس الشكل اللي Vite بيطلّعه. CloudFront مش موجود في LocalStack المجاني، فأمره من الـ docs ومن الـ help.
+
+---
+
+## ١. [[npm run build]]
+
+بيشغّل سكربت [[build]] من [[package.json]] (في Vite ده [[vite build]])، والنتيجة فولدر [[dist]]:
+
+~~~text شكل dist
+dist/
+  index.html
+  favicon.ico
+  assets/
+    index-a1b2c3.js
+    index-d4e5f6.css
+~~~
+
+الحروف اللي بعد [[index-]] اسمها **hash**: بصمة محسوبة من محتوى الملف. غيّرت سطر في الكود؟ الـ hash بيتغير والاسم بيتغير. وده سر الكاش كله: الملف اللي اسمه [[index-a1b2c3.js]] عمره ما هيتغير، لأن أي نسخة جديدة هتبقى اسم تاني.
+
+و [[index.html]] اسمه ثابت دايمًا، وهو اللي جواه أسامي ملفات الـ JS الحالية.
+
+---
+
+## ٢. [[aws s3 sync ./dist/assets ... --cache-control "..."]]
+
+~~~bash
+aws s3 sync ./dist/assets s3://myapp-site/assets --cache-control "public,max-age=31536000,immutable"
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[sync]] | خلّي المكانين زي بعض: ارفع الجديد والمتغيّر بس |
+| [[./dist/assets]] | من هنا |
+| [[s3://myapp-site/assets]] | لـ هنا |
+| [[--cache-control "..."]] | الـ header اللي هيتحفظ مع كل ملف ويرجع معاه لكل زائر |
+
+### الـ Cache-Control حتة حتة
+
+| الحتة | معناها |
+|---|---|
+| [[public]] | مسموح لأي كاش في السكة (CloudFront والمتصفح) يحتفظ بيه |
+| [[max-age=31536000]] | لمدة ٣١٥٣٦٠٠٠ ثانية = ٣٦٥ يوم × ٢٤ × ٦٠ × ٦٠ = سنة |
+| [[immutable]] | متسألش السيرفر «اتغيّر؟» خالص، حتى لو اليوزر عمل refresh |
+
+~~~text الناتج
+upload: dist/assets/index-a1b2c3.js to s3://myapp-site/assets/index-a1b2c3.js
+upload: dist/assets/index-d4e5f6.css to s3://myapp-site/assets/index-d4e5f6.css
+~~~
+
+وشغّلناه تاني من غير ما نغيّر حاجة: مطبعش ولا سطر. [[sync]] بيقارن الحجم ووقت التعديل، ومبيرفعش اللي زي ما هو.
+
+---
+
+## ٣. [[aws s3 cp ./dist/index.html ... --cache-control "no-cache"]]
+
+[[no-cache]] اسمه مضلل: مش معناه «متكاشش». معناه «احتفظ بيه، بس اسأل السيرفر قبل ما تستخدمه كل مرة». فأول ما ترفع [[index.html]] جديد، الزائر الجاي ياخده.
+
+~~~text الناتج
+upload: dist/index.html to s3://myapp-site/index.html
+~~~
+
+### اتأكد اللي اتحفظ
+
+[[s3api head-object]] بيجيب بيانات الملف من غير الملف نفسه:
+
+~~~text aws s3api head-object --bucket myapp-site --key assets/index-a1b2c3.js --query "[CacheControl,ContentType]"
+[
+    "public,max-age=31536000,immutable",
+    "text/javascript"
+]
+~~~
+
+~~~text نفس الأمر على index.html
+[
+    "no-cache",
+    "text/html"
+]
+~~~
+
+و [[ContentType]] الـ CLI خمّنه لوحده من الامتداد ([[.js]] و [[.html]]). لو اتحفظ غلط (زي [[binary/octet-stream]])، المتصفح ممكن ينزّل الصفحة بدل ما يعرضها.
+
+### ليه [[index.html]] في الآخر؟
+
+لو رفعته الأول، فيه لحظة [[index.html]] الجديد بيطلب [[index-NEW.js]] اللي لسه مترفعش، والزائر يشوف صفحة بيضا. لما الـ assets تترفع الأول، [[index.html]] الجديد ميطلعش غير والملفات اللي بيطلبها موجودة.
+
+### وباقي الملفات
+
+~~~bash
+aws s3 sync ./dist s3://myapp-site --exclude "assets/*" --exclude index.html
+~~~
+
+~~~text الناتج
+upload: dist/favicon.ico to s3://myapp-site/favicon.ico
+~~~
+
+[[--exclude]] سيب اللي بيطابق ده، فرفع [[favicon.ico]] بس.
+
+---
+
+## ٤. [[aws cloudfront create-invalidation ...]]
+
+~~~bash
+aws cloudfront create-invalidation --distribution-id E1ABCDEF2GHIJK --paths "/index.html"
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[create-invalidation]] | قول لكل الـ edges حوالين العالم: ارموا النسخة اللي عندكم |
+| [[--distribution-id E1ABCDEF2GHIJK]] | أنهي distribution (الـ ID بيبدأ بـ E) |
+| [[--paths "/index.html"]] | الملف ده بس. المسار بيبدأ بـ [[/]] |
+
+ليه محتاجينه مع إن [[index.html]] عليه [[no-cache]]؟ لأن CloudFront ممكن يكون خد نسخة قبل كده بإعدادات الـ cache policy بتاعته. الـ invalidation بيضمن إن الـ edge يجيب الجديدة. والـ assets مش محتاجة invalidation أصلًا: أسماءها جديدة. الرد (من الـ docs) فيه [[Invalidation.Id]] و [[Status: InProgress]]، وتفاصيله في الدرس الجاي.
+
+---
+
+## الخلاصة
+
+| الترتيب | الأمر | الكاش | ليه |
+|---|---|---|---|
+| ١ | [[npm run build]] | | أسامي فيها hash |
+| ٢ | [[s3 sync dist/assets]] | سنة + [[immutable]] | الاسم بيتغير مع أي تعديل |
+| ٣ | [[s3 cp index.html]] | [[no-cache]] | اسمه ثابت، ولازم يتحدّث فورًا |
+| ٤ | [[create-invalidation /index.html]] | | نسخة الـ edge القديمة تتشال |
+
+> الـ bucket يفضل مقفول، و CloudFront بس اللي بيقرا منه (OAC). وصفحات الـ SPA الداخلية زي [[/about]] محتاجة custom error response ترجّع [[/index.html]].`,
           lines: [
-            "اشتغل مع كل push على main.",
-            "صلاحيات الـ workflow (أي حاجة مش مكتوبة بتبقى none).",
-            "مسموح يطلب توكن OIDC.",
-            "ويقرا الكود.",
-            "الـ jobs.",
-            "job اسمه deploy.",
-            "على Ubuntu (عليه AWS CLI).",
-            "الخطوات.",
-            "هات الكود.",
-            "البس الـ role بـ OIDC.",
-            "الإعدادات.",
-            "الـ role اللي الـ trust policy بتاعتها بتسمح للـ repo ده.",
-            "الـ region.",
-            "ابني وارفع الـ assets بكاش سنة.",
-            "ارفع index.html من غير كاش وامسحه من كاش CloudFront."
+            "ابني الموقع في dist.",
+            "ارفع الـ assets (أسماءها فيها hash) بكاش سنة، و immutable.",
+            "ارفع index.html في الآخر، من غير كاش.",
+            "قول لـ CloudFront يرمي نسخته القديمة من index.html بس."
           ],
-          sol: R`الـ run المفروض يبقى أخضر، وفي step [[configure-aws-credentials]] هتلاقي [[Assuming role with OIDC]] و [[Authenticated as assumedRoleId ...]]. و step الـ sync يطبع [[upload: dist/assets/index-a1b2c3.js to s3://myapp-site/assets/index-a1b2c3.js]] لكل ملف جديد (والملفات اللي متغيرتش مش بتترفع تاني)، والأخير يطبع JSON الـ invalidation بحالة [[InProgress]].
+          sol: R`بعد الرفع، رابط [[https://dXXXX.cloudfront.net/]] المفروض يفتح الموقع (بسبب Default root object). بس [[/about]] مباشرة هيرجّع XML فيه [[<Code>AccessDenied</Code>]] بكود 403، مش 404، لأن CloudFront بيطلب ملف اسمه [[about]] من S3، والملف مش موجود، والـ bucket مقفول ومفيش [[s3:ListBucket]]، فـ S3 بيقول 403 بدل ما يعترف إن الملف مش موجود.
 
-لما تشيل [[id-token: write]]: step الـ credentials يطبع [[It looks like you might be trying to authenticate with OIDC. Did you mean to set the id-token permission?]] وبعدها يفشل بـ [[Credentials could not be loaded, please check your action inputs: Could not load credentials from any providers]]. السبب: من غير الصلاحية دي GitHub مش بيدّي الـ job توكن OIDC أصلًا، فالـ action ملقاش حاجة يبدّلها بمفاتيح AWS.
+الحل: في الـ distribution، Error pages، اعمل custom error response لـ 403 (و 404) بـ Response page path [[/index.html]] و HTTP response code 200. بعد ما التعديل يخلص deploy، [[curl -sI https://dXXXX.cloudfront.net/about]] يرجّع [[HTTP/2 200]] والصفحة تفتح و React Router يعرض [[/about]].
 
-أخطاء شائعة: الـ run نجح والموقع لسه قديم لأن [[index.html]] اترفع بكاش طويل من deploy قديم (المتصفح نفسه كاشه). و [[AccessDenied]] على [[CreateInvalidation]] لأن الـ role ناقصها [[cloudfront:CreateInvalidation]]. ولو حطيت [[permissions]] على مستوى الـ job، اللي على مستوى الـ workflow بيتلغي للـ job ده، فلازم تكتب [[contents: read]] هناك كمان وإلا [[checkout]] يفشل في repo private.`
-        }
-      ]
-    },
-    {
-      t: "المراقبة و SRE",
-      l: 3,
-      n: "تعرف إن فيه مشكلة قبل العميل، وتتصرف صح لما تحصل، وتتعلم منها",
-      items: [
-        {
-          cmd: "CloudWatch",
-          title: "لوجات ومقاييس وإنذارات على AWS",
-          desc: R`المراقبة ٣ أنواع: logs (إيه اللي حصل بالتفصيل) و metrics (أرقام على مدار الوقت) و traces (رحلة طلب واحد بين الخدمات)، و CloudWatch بيجمع اللوجات والـ metrics من خدمات AWS لوحده وانت بتضيف الإنذارات.
-
-اكتب لوجات التطبيق JSON (بـ pino مثلًا) عشان تبحث فيها بالحقول، وحط مدة احتفاظ لكل log group لأن الافتراضي «للأبد» وبيتحاسب. تحذير: تغيير المدة بيمسح اللوجات الأقدم منها، والإنذارات بتتحاسب بالشهر.`,
-          example: R`aws logs tail /ecs/myapp-api --since 30m --follow --format short
-aws logs put-retention-policy --log-group-name /ecs/myapp-api --retention-in-days 30
-aws logs start-query --log-group-name /ecs/myapp-api --start-time $(date -d '-1 hour' +%s) --end-time $(date +%s) --query-string 'fields @timestamp, path, status | filter status >= 500 | stats count() by path'
-aws logs get-query-results --query-id 12345678-1234-1234-1234-123456789012
-aws cloudwatch put-metric-alarm --alarm-name myapp-5xx --namespace AWS/ApplicationELB --metric-name HTTPCode_Target_5XX_Count --dimensions Name=LoadBalancer,Value=app/myapp-alb/0123456789abcdef --statistic Sum --period 300 --evaluation-periods 1 --threshold 10 --comparison-operator GreaterThanThreshold --alarm-actions arn:aws:sns:eu-central-1:123456789012:myapp-alerts`,
-          try: "حط في التطبيق logger بيطبع JSON فيه [[path]] و [[status]] و [[ms]]، وشغّله على ECS أو Lambda. واعمل Logs Insights query بتطلّع أبطأ ١٠ endpoints بـ [[stats avg(ms) by path | sort avg(ms) desc | limit 10]].",
-          flag: "danger",
-          deep: {
-            why: "من غير مراقبة بتعرف إن الموقع واقع من عميل على واتساب. ومن غير لوجات منظمة بتقضي ساعة grep في نص عشوائي. والـ log groups اللي من غير retention بتكبر لحد ما تبقى بند كبير في الفاتورة.",
-            how: R`اللوجات: كل خدمة بتكتب في log group ([[/aws/lambda/NAME]] أو اللي حددته في ECS). Lambda و ECS بـ awslogs بيودّوا stdout و stderr لوحدهم، فالتطبيق يطبع على الشاشة بس. ولو السطر JSON، Logs Insights بيفهم الحقول لوحده: [[filter status >= 500]] بدل regex.
-
-[[start-query]] بيبدأ query ويرجّع [[queryId]]، و [[get-query-results]] بيجيب النتيجة (والكونسول أسهل). وبتدفع على الجيجات اللي اتمسحت، فضيّق الوقت.
-
-الـ metrics: كل خدمة بتبعت metrics أساسية لوحدها (CPU الـ EC2، وأخطاء Lambda، و 5xx الـ ALB، واتصالات RDS). الـ alarm بيبص على metric كل [[period]] ثانية، ولو عدّى الحد لعدد [[evaluation-periods]] بيتحول ALARM ويبعت لـ SNS (إيميل أو Slack أو غيره).
-
-الـ traces: X-Ray أو OpenTelemetry. كل طلب ليه trace id بيتنقل في الهيدرز بين الخدمات، فتشوف «الطلب ده قعد ٢ ثانية منهم ١.٨ في query واحدة». والتفاصيل وكود شغال في فئة «OpenTelemetry والـ tracing» تحت.
-
-وتقدر تطلّع metrics من اللوجات نفسها (metric filters)، وده مفيد لرقم زي «عدد الطلبات اللي فشلت في الدفع».`,
-            when: "من أول يوم في الإنتاج: retention لكل log group، وإنذار على 5xx، وإنذار على الـ latency، وإنذار على الفاتورة.",
-            mistakes: "[[console.log]] نص حر مع كل حاجة، ومفيش request id يربط سطور الطلب الواحد. وتطبع باسوردات أو توكنات في اللوج. و ٥٠ إنذار على كل حاجة فالناس تتجاهلهم كلهم. وإنذار على CPU عالي بدل ما يبقى على اللي اليوزر حاسس بيه (أخطاء وبطء)."
-          },
-          lines: [
-            "تابع اللوج لايف من آخر نص ساعة.",
-            "احتفظ بـ ٣٠ يوم بس (الأقدم بيتمسح).",
-            "Logs Insights: عدد أخطاء 5xx لكل مسار في آخر ساعة.",
-            "هات نتيجة الـ query بالرقم اللي رجع.",
-            "إنذار: لو أكتر من ١٠ أخطاء 5xx في ٥ دقايق، ابعت لـ SNS."
-          ],
-          sol: R`الـ logger تحت (جرّبته محليًا). كل طلب بيطبع سطر زي:
-
-[[{"level":"info","method":"GET","path":"/users/:id","status":200,"ms":4}]]
-
-لاحظ إن [[path]] هو الـ route pattern مش المسار الحقيقي ([[/users/:id]] مش [[/users/7]])، عشان الـ stats تجمّع كل المستخدمين في سطر واحد. Logs Insights بيقرا حقول الـ JSON لوحده، فالـ query تحت بترجع جدول: [[path]] و [[avgMs]] و [[n]]، مترتب من الأبطأ.
-
-من الترمنال: [[start-query]] بيرجّع [[queryId]]، و [[get-query-results]] بيرجّع [[status: Running]] وبعدين [[Complete]] ومعاه [[results]] كل صف فيها list من [[{field, value}]].
-
-أخطاء شائعة: الجدول فاضي لأن التطبيق بيطبع نص عادي مش JSON (أو بيطبع [[console.log(obj)]] من غير [[JSON.stringify]] فيطلع شكل Node مش JSON)، أو اختار log group غلط أو فترة زمنية مفيهاش لوجات. ولو الـ path هو المسار الحقيقي، الـ stats هتطلع آلاف الصفوف ومفيش فايدة. ولو [[sort]] على [[avg(ms)]] مباشرة مشتغلش عندك، سمّيه بـ [[as avgMs]] زي ما تحت.`,
-          solCode: R`app.use((req, res, next) => {
-  const start = performance.now();
-  res.on("finish", () => {
-    console.log(JSON.stringify({
-      level: res.statusCode >= 500 ? "error" : "info",
-      method: req.method,
-      path: req.route?.path ?? "unmatched",
-      status: res.statusCode,
-      ms: Math.round(performance.now() - start),
-    }));
-  });
-  next();
-});
-// Logs Insights:
-// fields path, ms | filter ispresent(ms) | stats avg(ms) as avgMs, count(*) as n by path | sort avgMs desc | limit 10`
+لو الرئيسية نفسها رجّعت AccessDenied، يبقى الـ bucket policy مش متحدّثة بالـ OAC (انسخ الـ policy اللي الكونسول بيعرضها وحطها في الـ bucket)، أو Default root object فاضي. ولو ظهرت صفحة بيضا والـ console فيه 403 على ملفات [[/assets/]]، يبقى رفعت [[dist/assets]] لمسار غلط.`
         },
         {
-          cmd: "Prometheus + Grafana",
-          title: "مقاييس ولوحات لتطبيقك على أي سيرفر",
-          desc: R`Prometheus بيسحب أرقام من endpoint اسمه [[/metrics]] في تطبيقك كل شوية ويخزّنها، و Grafana بيرسمها لوحات وبيعمل إنذارات، وفي Node مكتبة [[prom-client]] بتطلّع الأرقام بالشكل المطلوب.
+          cmd: "CloudFront cache",
+          title: "الـ CDN بيكاش إيه ولمدة قد إيه",
+          desc: R`CloudFront عنده مئات النقط حوالين العالم (edge locations): أول زائر من منطقة بيجيب الملف من الـ origin والـ edge يحتفظ بيه، واللي بعده ياخده من الـ edge مباشرة، والهيدر [[x-cache]] بيقولك Hit ولا Miss.
 
-أهم ٣ أرقام لأي API (RED): Rate (طلبات في الثانية)، و Errors (نسبة الأخطاء)، و Duration (الـ latency، خصوصًا p95 و p99).`,
-          example: R`import client from "prom-client";
-
-client.collectDefaultMetrics();
-const httpDuration = new client.Histogram({
-  name: "http_request_duration_seconds",
-  help: "HTTP request latency",
-  labelNames: ["method", "route", "status"],
-  buckets: [0.05, 0.1, 0.3, 1, 3],
-});
-
-app.use((req, res, next) => {
-  const end = httpDuration.startTimer({ method: req.method });
-  res.on("finish", () => end({ route: req.route?.path ?? "unmatched", status: res.statusCode }));
-  next();
-});
-app.get("/metrics", async (req, res) => res.type(client.register.contentType).send(await client.register.metrics()));`,
-          try: R`شغّل Prometheus و Grafana بـ Docker Compose، و [[prometheus.yml]] فيه [[scrape_configs]] بـ target [[api:3000]]. وفي Grafana اعمل panel بالـ query [[histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, route))]] وشوف p95 لكل route.`,
-          flag: "script",
+مدة الكاش بتتحدد من [[Cache-Control]] اللي الـ origin بيبعته، في حدود الـ min و max TTL في الـ cache policy. ولو غيّرت ملف ومستعجل، اعمل invalidation.`,
+          example: R`curl -sI https://d111111abcdef8.cloudfront.net/assets/index-a1b2c3.js | grep -i -E "x-cache|age|cache-control"
+curl -sI https://d111111abcdef8.cloudfront.net/assets/index-a1b2c3.js | grep -i -E "x-cache|age"
+aws cloudfront create-invalidation --distribution-id E1ABCDEF2GHIJK --paths "/blog/*" "/index.html"
+aws cloudfront get-invalidation --distribution-id E1ABCDEF2GHIJK --id I2J3K4L5M6N7O8
+aws cloudfront list-distributions --query "DistributionList.Items[].[Id,Origins.Items[0].DomainName]" --output table`,
+          try: "اطلب نفس الملف مرتين وشوف [[x-cache]] يتحول من Miss لـ Hit، و [[age]] (عمر النسخة بالثواني) بيزيد. بعدين اعمل invalidation واطلبه تاني.",
           deep: {
-            why: "CloudWatch مربوط بـ AWS ومكلف مع الحجم. على VPS أو k8s، Prometheus و Grafana ببلاش ومعيار الصناعة. والمتوسط بيكدب: متوسط ١٠٠ مللي ممكن يخبّي إن ١٪ من الطلبات بتاخد ٥ ثواني.",
-            how: R`Prometheus بيعمل scrape: كل [[scrape_interval]] بيطلب [[/metrics]] من كل target ويخزّن الأرقام بوقتها (time series). وكل مجموعة labels مختلفة = series لوحدها.
+            why: "من غير CDN كل زائر من الخليج أو أوروبا بيعدي لحد سيرفرك، والسيرفر بيدفع باندويدث على كل ملف. مع CDN معظم الطلبات بتخلص عند الـ edge: أسرع للزائر، وأقل حمل وتكلفة عليك. والنقل من S3 لـ CloudFront ببلاش، و CloudFront نفسه عنده حصة مجانية كل شهر.",
+            how: R`الـ cache key هو اللي بيحدد «ده نفس الطلب ولا لأ»: افتراضي الدومين والمسار. لو ضفت query strings أو headers أو cookies للـ key، كل قيمة مختلفة بتبقى نسخة لوحدها، ونسبة الـ Hit بتقع. عشان كده الـ managed policy اللي اسمها [[CachingOptimized]] مبتحطش cookies ولا query strings.
 
-الأنواع: Counter (بيزيد بس، زي عدد الطلبات، وبتقراه بـ [[rate()]])، و Gauge (بيطلع وينزل، زي الاتصالات المفتوحة)، و Histogram (بيعد القيم في buckets عشان تحسب percentiles).
+الـ TTL: CloudFront بيحترم [[max-age]] أو [[s-maxage]] (الأخير للـ CDN بس) في حدود الـ min والـ max بتوع الـ policy. لو الـ origin مبعتش حاجة، بيستخدم الـ default (يوم في CachingOptimized).
 
-الـ Histogram هنا بيطلّع [[http_request_duration_seconds_bucket]] لكل حد (أقل من ٠.٠٥، أقل من ٠.١، ...)، و [[_sum]] و [[_count]]. و [[histogram_quantile(0.95, ...)]] بيحسب p95 منهم. و [[startTimer]] بيرجّع دالة، لما تناديها بتحسب المدة وتسجّلها بالـ labels.
+للـ API: behavior لوحده لـ [[/api/*]] بـ [[CachingDisabled]]، فـ CloudFront يبقى مجرد proxy سريع. متكاشش حاجة فيها بيانات يوزر إلا لو الـ key فيه اللي يميّز اليوزر، وإلا يوزر يشوف بيانات يوزر تاني.
 
-[[collectDefaultMetrics]] بيضيف أرقام Node نفسه: الرام، و event loop lag، و GC.
+الـ invalidation بتقول لكل الـ edges «ارمي النسخة دي». أول ١٠٠٠ path في الشهر ببلاش على مستوى الحساب، و [[/*]] بيتحسب path واحد مهما كان عدد الملفات. بس بتاخد وقت تخلص، والأحسن دايمًا أسماء فيها hash.
 
-الـ route لازم يبقى القالب ([[/users/:id]]) مش المسار الحقيقي ([[/users/8812]])، وإلا كل يوزر series جديدة والـ Prometheus يتملى (high cardinality).
-
-و Grafana بيقرا من Prometheus ويرسم، وفيه alerting بيبعت Telegram أو Slack أو إيميل. ولو مش عايز تدير ده، Grafana Cloud فيه خطة مجانية.`,
-            when: "أي تطبيق على VPS أو k8s في الإنتاج. وحتى على AWS لو عندك خدمات كتير وعايز لوحات موحدة.",
-            mistakes: "labels فيها user id أو المسار الخام أو الإيميل: ملايين series. و [[/metrics]] مفتوح للنت (بيكشف مسارات وأرقام داخلية)، فاقفله في Nginx أو على بورت داخلي. وتحسب المتوسط بدل p95. وتعمل [[rate()]] على Gauge."
+و [[x-cache: RefreshHit]] يعني الـ edge سأل الـ origin «اتغير؟» ورد «لأ»، فرجّع النسخة اللي عنده.`,
+            when: "الملفات الثابتة، وصور المستخدمين (مع signed URLs للخاص)، والصفحات العامة اللي مش بتتغير لكل يوزر.",
+            mistakes: "تكاش [[/api/me]] فيوزر يشوف بيانات يوزر تاني. وتحط كل الـ query strings في الـ cache key فكل [[?utm_source=]] نسخة جديدة. وتعتمد على invalidation بعد كل deploy ومش فاهم ليه ناس شايفة القديم دقايق. وتنسى إن المتصفح نفسه عنده كاش: invalidation في CloudFront مبتمسحش كاش متصفح اتقاله [[max-age=31536000]]."
           },
+          teach: R`## الفكرة: اسأل الـ headers، هي بتقولك كل حاجة
+
+أول سطرين في المثال بيطلبوا نفس الملف مرتين ويبصوا على ٣ headers: الملف جه من الكاش ولا لأ، وعمره كام، ومسموح يتكاش قد إيه. وبعدهم ٣ أوامر AWS: ارمي من الكاش، وشوف الرمي خلص ولا لأ، واعرض الـ distributions.
+
+الـ [[d111111abcdef8]] في المثال اسم مثال مش موجود. فجرّبنا نفس الـ [[curl]] على ملفات حقيقية بيقدّمها CloudFront (صور موقع AWS نفسه على [[awsstatic.com]])، من جهاز في القاهرة. وأوامر [[aws cloudfront]] محتاجة حساب حقيقي (ومش موجودة في LocalStack المجاني)، فشكلها من الـ docs.
+
+---
+
+## ١. السطر الأول: [[curl -sI ... | grep -i -E "..."]]
+
+~~~bash
+curl -sI https://d111111abcdef8.cloudfront.net/assets/index-a1b2c3.js | grep -i -E "x-cache|age|cache-control"
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[curl]] | ابعت طلب |
+| [[-s]] | silent: من غير شريط تقدّم |
+| [[-I]] | HEAD: هات الـ headers بس من غير الملف |
+| [[grep]] | اطبع السطور اللي فيها كلمة معينة |
+| [[-i]] | متفرّقش بين الحروف الكبيرة والصغيرة ([[X-Cache]] زي [[x-cache]]) |
+| [[-E]] | regex «موسّع» (Extended) |
+
+وفيه علامة [[|]] بمعنيين في نفس السطر:
+
+- بين [[curl]] و [[grep]] اسمها pipe: ابعت ناتج الأمر الأول للتاني.
+- جوه [["x-cache|age|cache-control"]] (بسبب [[-E]]) معناها «أو»: أي سطر فيه واحدة من التلاتة.
+
+### أول طلب لملف محدش طلبه قريب
+
+~~~text الناتج (الطلب الأول)
+cache-control: max-age=31536000
+x-cache: Miss from cloudfront
+~~~
+
+[[Miss from cloudfront]]: الـ edge مكانش عنده الملف، فراح جابه من الـ origin (الـ bucket أو السيرفر) واحتفظ بيه. ومفيش [[age]] لأنه لسه جاي طازة.
+
+### بعدها بثواني
+
+~~~text الناتج (طلبات بعدها، كل واحد بعد ثانيتين)
+x-cache: Hit from cloudfront
+x-amz-cf-pop: CAI50-P1
+age: 8
+
+x-cache: Hit from cloudfront
+x-amz-cf-pop: CAI50-P1
+age: 10
+~~~
+
+| الـ header | معناه |
+|---|---|
+| [[x-cache: Hit from cloudfront]] | الرد جه من الـ edge، والـ origin محدش كلّمه |
+| [[age: 8]] | النسخة دي في الكاش بقالها ٨ ثواني، وبتزيد مع الوقت |
+| [[cache-control: max-age=31536000]] | الـ origin قال: احتفظوا بيه سنة |
+| [[x-amz-cf-pop: CAI50-P1]] | أنهي edge رد. [[CAI]] كود مطار القاهرة: فيه نقطة CloudFront في القاهرة نفسها |
+
+### ملاحظة: جالنا Miss مرتين الأول
+
+في التجربة الحقيقية أول طلبين الاتنين طلعوا [[Miss]]، وبعدها [[Hit]]. ليه؟ الدومين ده بيرجع ٤ عناوين IP مختلفة ([[getent ahosts]] طلّع ٤)، فكل طلب ممكن يروح لسيرفر مختلف جوه نفس الـ edge، وكل واحد ليه كاشه لحد ما يتملي. فـ Miss مرتين مش معناه إن الكاش بايظ.
+
+### صورة مشهورة: [[age]] بالأيام
+
+على لوجو AWS (ملف بيتطلب طول الوقت):
+
+~~~text الناتج
+content-type: image/png
+cache-control: max-age=31536000
+x-cache: Hit from cloudfront
+age: 5771615
+~~~
+
+[[5771615]] ثانية = حوالي ٦٧ يوم في الكاش. وده مسموح لأن [[max-age]] سنة.
+
+### فخ في الـ grep
+
+لاحظ [[content-type: image/png]] طلعت مع إنها مش من التلاتة! لأن [[image]] جواها [[age]]، و [[grep]] بيدوّر على الحروف في أي حتة في السطر. لو عايز [[age]] بس: [[grep -i -E "^age|x-cache"]]، و [[^]] يعني «في أول السطر».
+
+### والـ query string؟
+
+جرّبنا نفس اللوجو بـ [[?teach=]] ورقم عشوائي، وطلع [[Hit]] برضه بنفس الـ [[age]]. يعني الـ cache policy بتاعة الموقع ده مش حاطة الـ query string في الـ cache key، زي [[CachingOptimized]]. لو كانت حاطاه، كل رقم كان هيبقى نسخة جديدة و [[Miss]].
+
+---
+
+## ٢. [[aws cloudfront create-invalidation ...]]
+
+~~~bash
+aws cloudfront create-invalidation --distribution-id E1ABCDEF2GHIJK --paths "/blog/*" "/index.html"
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[--distribution-id]] | أنهي distribution |
+| [[--paths]] | قايمة مسارات بمسافة بينها |
+| [["/blog/*"]] | كل اللي تحت [[/blog/]]، وبيتحسب **path واحد** مهما كان عدد الملفات |
+| [["/index.html"]] | ملف واحد |
+
+العلامات حوالين [["/blog/*"]] مهمة: من غيرها الـ shell ممكن يحاول يفك النجمة لأسامي ملفات عندك. الرد (من الـ docs) فيه [[Invalidation.Id]] زي [[I2J3K4L5M6N7O8]] و [[Status: InProgress]].
+
+---
+
+## ٣. [[aws cloudfront get-invalidation ...]]
+
+بالـ [[--id]] اللي رجع من اللي فات: [[InProgress]] لسه شغال، و [[Completed]] خلص في كل الـ edges (غالبًا دقيقة أو اتنين). والطلب اللي بعده يرجع [[Miss]] مرة، وبعدين [[Hit]] تاني.
+
+---
+
+## ٤. [[aws cloudfront list-distributions ...]]
+
+~~~bash
+aws cloudfront list-distributions --query "DistributionList.Items[].[Id,Origins.Items[0].DomainName]" --output table
+~~~
+
+[[Origins.Items[0]]] أول origin في القايمة ([[[0]]] أول عنصر، العد من صفر)، و [[.DomainName]] عنوانه، زي [[myapp-site.s3.eu-central-1.amazonaws.com]]. فالجدول بيقولك كل distribution بيقرا من فين. ومنه بتجيب الـ ID اللي الأوامر اللي فوق محتاجاه.
+
+---
+
+## الخلاصة
+
+| اللي شايفه | معناه |
+|---|---|
+| [[Miss from cloudfront]] | الـ edge جاب من الـ origin |
+| [[Hit from cloudfront]] | من الكاش |
+| [[RefreshHit from cloudfront]] | الـ edge سأل الـ origin «اتغير؟» ورد «لأ» |
+| [[age: N]] | عمر النسخة بالثواني |
+| [[x-amz-cf-pop]] | أنهي edge رد |
+
+> المدة بتيجي من [[Cache-Control]] بتاع الـ origin في حدود الـ cache policy. والـ invalidation علاج للطوارئ: الحل الدايم أسامي فيها hash.`,
           lines: [
-            "مكتبة Prometheus لـ Node.",
-            "أرقام Node الأساسية: الرام و event loop و GC.",
-            "Histogram لمدة الطلبات.",
-            "اسم الـ metric (بالثواني، ده العرف).",
-            "وصف.",
-            "الأبعاد اللي هتقسّم بيها.",
-            "حدود الـ buckets بالثواني.",
-            "قفلة.",
-            "middleware على كل طلب.",
-            "ابدأ العدّاد بالـ method.",
-            "لما الرد يخلص: سجّل المدة بقالب الـ route (مش المسار الخام) والـ status.",
-            "كمّل للـ route.",
-            "قفلة.",
-            "endpoint بيطلّع كل الأرقام بصيغة Prometheus."
+            "أول طلب: شوف x-cache و age و Cache-Control.",
+            "تاني طلب: المفروض Hit، و age بيعدّ.",
+            "ارمي من الكاش كل صفحات المدونة وملف index (كل واحد path).",
+            "حالة الـ invalidation: InProgress ولا Completed.",
+            "كل distribution والـ origin اللي بيقرا منه."
           ],
-          sol: R`الملفين تحت. بعد [[docker compose up -d]]: [[http://localhost:9090/targets]] المفروض يوري الـ job [[api]] بحالة [[UP]]. و [[curl localhost:3000/metrics]] يطلّع سطور زي:
+          sol: R`أول طلب بيرجّع [[x-cache: Miss from cloudfront]] ومفيش [[age]]، والطلب التاني [[x-cache: Hit from cloudfront]] ومعاه [[age: 3]] مثلًا، والرقم ده بيزيد كل ما تطلب بعدها (عمر النسخة في الـ edge بالثواني). و [[cache-control]] هو اللي انت رفعت بيه: [[public,max-age=31536000,immutable]].
 
-[[http_request_duration_seconds_bucket{le="0.3",method="GET",route="/users/:id",status="200"} 3]]
+بعد [[create-invalidation]] هتاخد [[Id]] وحالة [[InProgress]]، و [[get-invalidation]] بعد دقيقة أو اتنين يقول [[Completed]]. الطلب اللي بعدها يرجع [[Miss from cloudfront]] تاني، وبعدين Hit. ولو شفت [[RefreshHit from cloudfront]] ده معناه إن الـ edge سأل الـ origin «اتغيّر؟» ورد «لأ»، فكمّل بنفس النسخة.
 
-جرّبت ده فعلًا: route بتاخد ١٢٠ مللي، والـ query بتاعة الـ p95 رجّعت [[0.29]] للـ route ده. مش غلط: الـ histogram عارف بس إن الطلبات بين 0.1 و 0.3 (الـ buckets)، فـ [[histogram_quantile]] بيقدّر بالـ interpolation جوه الـ bucket. عشان رقم أدق، حط buckets قريبة من الأرقام اللي تهمك. و route اسمها [[unmatched]] ممكن تطلع [[NaN]] لو مفيهاش ترافيك في آخر ٥ دقايق.
-
-أخطاء شائعة: الـ target [[DOWN]] بـ [[connection refused]] لأنك كتبت [[localhost:3000]] جوه Prometheus (ده الـ container نفسه)، الصح اسم الـ service في Compose [[api:3000]]. والـ panel فاضي في Grafana لأن الـ data source URL مكتوب [[http://localhost:9090]] بدل [[http://prometheus:9090]]. ولو شلت [[by (le, route)]] أو نسيت [[le]] الـ query بترجع فاضي أو خطأ.`,
-          solCode: R`# prometheus.yml
-global:
-  scrape_interval: 15s
-scrape_configs:
-  - job_name: api
-    static_configs:
-      - targets: ["api:3000"]
-# compose.yaml
-services:
-  api:
-    build: .
-    ports: ["3000:3000"]
-  prometheus:
-    image: prom/prometheus
-    volumes: ["./prometheus.yml:/etc/prometheus/prometheus.yml:ro"]
-    ports: ["9090:9090"]
-  grafana:
-    image: grafana/grafana
-    ports: ["3001:3000"]
-    depends_on: [prometheus]`
-        },
-        {
-          cmd: "Sentry",
-          title: "اعرف الأخطاء اللي حصلت عند المستخدم بالـ stack trace",
-          desc: R`Sentry بيمسك أي exception في الـ backend أو المتصفح ويبعته بالـ stack trace واليوزر والـ request والنسخة، ويجمّع الأخطاء المتشابهة في issue واحدة وينبّهك لما حاجة جديدة تظهر.
-
-في Node: ملف [[instrument.mjs]] فيه [[Sentry.init]] ويتحمّل قبل أي حاجة بـ [[node --import]]، و [[setupExpressErrorHandler]] بعد كل الـ routes.`,
-          example: R`// instrument.mjs
-import * as Sentry from "@sentry/node";
-Sentry.init({
-  dsn: process.env.SENTRY_DSN,
-  environment: process.env.NODE_ENV,
-  release: process.env.GIT_SHA,
-  tracesSampleRate: 0.1,
-  dataCollection: { userInfo: false, cookies: false },
-});
-// app.mjs: بعد كل الـ routes وقبل أي error handler تاني
-Sentry.setupExpressErrorHandler(app);
-// التشغيل: node --import ./instrument.mjs app.mjs`,
-          try: R`اعمل حساب Sentry مجاني ومشروع Node، وحط الـ DSN في متغير بيئة. اعمل route بترمي [[throw new Error("test sentry")]] وافتحه، وشوف الـ issue: الـ stack trace والـ request والـ environment. وبعدها امسح الـ route ده.`,
-          flag: "script",
-          deep: {
-            why: "اللوجات بتقولك إن فيه خطأ لو دوّرت. Sentry بيجيلك هو: «خطأ جديد ظهر في النسخة اللي نزلت من ساعة، حصل ٣٤٠ مرة لـ ٥٠ يوزر، في السطر ده». والأهم أخطاء المتصفح: من غيره مش هتعرف إن زرار الدفع بيقع على Safari.",
-            how: R`[[--import ./instrument.mjs]] بيحمّل Sentry قبل تطبيقك، فيقدر يلف (instrument) الـ http و Express و pg و Prisma قبل ما يتحمّلوا. لو عملت init في نص الكود، جزء من الـ tracing مش هيشتغل.
-
-[[setupExpressErrorHandler(app)]] بيضيف error middleware يبعت أي خطأ وصل لـ [[next(err)]] أو اترمى في route. ومكانه بعد الـ routes وقبل الـ error handler بتاعك (اللي بيرجّع JSON لليوزر).
-
-[[environment]] و [[release]] بيخلّوك تفلتر: أخطاء الإنتاج بس، ومن أنهي نسخة بدأت. و [[release]] بالـ commit SHA بيربط الخطأ بالـ deploy اللي جابه.
-
-[[tracesSampleRate: 0.1]]: ١٠٪ من الطلبات بتتسجل كـ traces للأداء. و [[1.0]] في الإنتاج بيخلّص الـ quota بسرعة.
-
-[[dataCollection: { userInfo: false, cookies: false }]]: ميبعتش IPs والكوكيز وبيانات اليوزر تلقائي. ده في SDK نسخة 11 (الحالية). في نسخة 10 وقبلها كان [[sendDefaultPii: false]] وكان هو الافتراضي، إنما في 11 اتشال وبيتجاهل في صمت، والافتراضي بقى إنه يبعت الـ IP والكوكيز، فلازم تقفلهم بنفسك. بيانات العملاء لما تطلع لخدمة برا دي مسؤولية قانونية.
-
-وفي المتصفح (React أو Next.js) فيه SDK لكل framework، ولازم ترفع source maps عشان الـ stack trace يبقى على الكود الأصلي مش الـ minified.`,
-            when: "أي تطبيق في الإنتاج، backend و frontend. والخطة المجانية كفاية لمشروع صغير.",
-            mistakes: R`في مشروع حقيقي كان [[Sentry.init]] مكتوب في أول [[index.ts]] وتحته تعليق «لازم يتنفذ قبل أي حاجة»، وبعده [[import express]]. بس في ESM كل الـ imports بتتنفذ الأول قبل أي كود في الملف، فالـ init كان بيحصل بعد تحميل Express، والحل ملف instrument منفصل مع [[--import]]. وفي نفس المشروع route للتجربة [[/debug-sentry]] اتساب في الإنتاج. وغلطات تانية: الـ DSN في الكود بدل متغير بيئة، وأخطاء متكررة محدش بيحلها ولا بيعملها ignore لحد ما محدش يبص على Sentry خالص.`
-          },
-          lines: [
-            "هات الـ SDK.",
-            "ابدأ Sentry قبل أي حاجة في التطبيق.",
-            "مفتاح المشروع من متغير بيئة.",
-            "البيئة: production أو staging.",
-            "النسخة: الـ commit SHA.",
-            "سجّل ١٠٪ من الطلبات للأداء.",
-            "متبعتش بيانات شخصية تلقائي.",
-            "قفلة.",
-            "في app.mjs: ابعت أي خطأ في Express لـ Sentry."
-          ],
-          sol: R`بعد ما تفتح الـ route، خلال ثواني هيظهر issue في Sentry عنوانه [[Error: test sentry]]، وجواه: الـ stack trace لحد السطر اللي فيه [[throw]] في ملفك، وقسم Request فيه الـ URL والـ method والـ headers (من غير IP والكوكيز لأن [[userInfo: false]] و [[cookies: false]])، و tags فيها [[environment]] و [[release]] (لو [[GIT_SHA]] متسجل). واليوزر نفسه هيشوف 500 عادي، لأن Sentry بيسجّل الخطأ وبيسيب الـ error handler التاني يرد.
-
-لو مفيش حاجة ظهرت: أول سبب إن [[SENTRY_DSN]] مش متعرّف في البيئة اللي شغّلت منها، و [[Sentry.init]] بـ dsn فاضي مبيشتكيش، بيقفل نفسه في صمت. تاني سبب: شغّلت [[node app.mjs]] من غير [[--import ./instrument.mjs]]، فالـ instrumentation متحمّلش قبل express. تالت: الـ route عامل [[try/catch]] وبيرجّع 500 بنفسه، فالخطأ موصلش للـ handler أصلًا (في الحالة دي استخدم [[Sentry.captureException(err)]]). ورابع: [[setupExpressErrorHandler]] متحط قبل الـ routes.
-
-جرّب كمان تفتح الـ route مرتين: هيبقى issue واحد عدده 2 events، مش اتنين. وبعدها امسح الـ route واعمل Resolve للـ issue.`,
-          solCode: R`app.get("/debug-sentry", () => {
-  throw new Error("test sentry");
-});
-// SENTRY_DSN=https://...ingest.sentry.io/... NODE_ENV=staging GIT_SHA=$(git rev-parse --short HEAD) node --import ./instrument.mjs app.mjs`
-        },
-        {
-          cmd: "SLI / SLO / error budget",
-          title: "الاعتمادية بالأرقام: قد إيه مسموح نقع",
-          desc: R`SLI رقم بتقيسه من ناحية اليوزر (نسبة الطلبات اللي نجحت أو اللي خلصت في أقل من ٣٠٠ مللي)، و SLO هدف ليه زي «٩٩.٩٪ في ٣٠ يوم»، و error budget هو الفرق: ٠.١٪ مسموح يفشل، يعني حوالي ٤٣ دقيقة وقوع كامل في الشهر.
-
-لو الميزانية لسه موجودة، اعمل deploy وجرّب براحتك. لو خلصت، وقّف الـ features وركّز على الاعتمادية لحد ما ترجع.`,
-          example: R`const slo = 0.999;
-const minutesIn30Days = 30 * 24 * 60;
-console.log((minutesIn30Days * (1 - slo)).toFixed(1)); // 43.2
-
-const total = 1_200_000;
-const failed = 900;
-const sli = 1 - failed / total;
-const budgetUsed = (failed / total) / (1 - slo);
-console.log((sli * 100).toFixed(3) + "%", Math.round(budgetUsed * 100) + "% of budget"); // 99.925% 75% of budget`,
-          try: "احسب الميزانية لـ ٩٩٪ و ٩٩.٩٩٪. بعدين خد لوجات الـ ALB أو Nginx لأسبوع واحسب الـ SLI الحقيقي بتاعك: كام طلب 5xx من الإجمالي.",
-          flag: "script",
-          deep: {
-            why: "«الموقع لازم يبقى شغال ١٠٠٪» هدف مستحيل وبيقتل السرعة: كل deploy بقى خطر. الـ SLO بيحوّل النقاش من إحساس لرقم: عندنا ٤٣ دقيقة في الشهر، صرفنا منهم ٣٠، يبقى نهدّى.",
-            how: R`اختار SLIs من ناحية اليوزر مش السيرفر: CPU ٩٠٪ مش مشكلة لو الطلبات سريعة. الشائع: availability (نسبة الردود اللي مش 5xx) و latency (نسبة الطلبات الأسرع من حد معين).
-
-كل ٩ زيادة أغلى بكتير: ٩٩٪ = ٧.٢ ساعة في الشهر، و ٩٩.٩٪ = ٤٣ دقيقة، و ٩٩.٩٩٪ = ٤ دقايق ونص. الأخيرة معناها إن أي مشكلة لازم تتحل قبل ما حد يصحى أصلًا، يعني automation كامل و Multi-AZ وأكتر.
-
-والـ SLO بتاعك لازم يبقى أقل من اعتمادية اللي انت معتمد عليه: لو القاعدة Single-AZ، متوعدش بـ ٩٩.٩٩٪.
-
-الـ SLA حاجة تانية: عقد مع العميل فيه تعويض لو النسبة وقعت. ودايمًا أقل من الـ SLO، عشان الـ SLO ينبّهك قبل ما تدفع.
-
-والإنذار الصح على «burn rate»: بنصرف الميزانية بسرعة قد إيه. لو بالمعدل ده هتخلص في يومين، صحّي حد. لو في ٣ أسابيع، تذكرة للصبح.`,
-            when: "لما يبقى عندك مستخدمين بيدفعوا وعايز قرار واضح: نزوّد features ولا نصلّح استقرار.",
-            mistakes: "SLO بـ ١٠٠٪. و SLI على CPU أو uptime السيرفر بدل تجربة اليوزر. وتحط SLO ومحدش بيبص عليه أو بيغيّر قراره بسببه. وتخلط SLO بـ SLA في الانترفيو."
-          },
-          lines: [
-            "الهدف: ٩٩.٩٪.",
-            "دقايق الشهر.",
-            "الميزانية: ٤٣.٢ دقيقة وقوع كامل في الشهر.",
-            "طلبات الشهر.",
-            "اللي فشل منها.",
-            "الـ SLI: نسبة النجاح الفعلية.",
-            "صرفنا كام من الميزانية.",
-            "٩٩.٩٢٥٪ نجاح، وصرفنا ٧٥٪ من الميزانية."
-          ],
-          sol: R`الحسبة لـ ٣٠ يوم (٤٣٢٠٠ دقيقة): ٩٩٪ = [[432.0]] دقيقة (٧.٢ ساعة)، و ٩٩.٩٪ = [[43.2]]، و ٩٩.٩٩٪ = [[4.3]] دقيقة بس. كل ٩ زيادة بتقسم الميزانية على ١٠، وده ليه ٩٩.٩٩٪ معناها إن deploy بايظ واحد في الشهر ممكن يخلّص الميزانية.
-
-للوجات: الـ awk تحت بيعد الطلبات والـ 5xx من لوج Nginx بالشكل الافتراضي (الحقل التاسع هو الـ status). على لوج تجربة فيه ٤ طلبات منهم 502 واحد طبع [[total=4 5xx=1 SLI=75.000%]]. على لوج حقيقي لأسبوع المفروض تلاقي رقم زي [[99.9xx%]]. وقارنه بالـ SLO: لو ٩٩.٩٥٪ والـ SLO ٩٩.٩٪، يبقى صرفت نص الميزانية.
-
-الأخطاء الشائعة: تحسب الـ 4xx كفشل (الـ 404 والـ 401 غالبًا غلطة العميل مش السيستم)، أو تعد طلبات الـ health check من الـ load balancer فتعلّي الـ SLI على الفاضي. ولو اللوج بصيغة مختلفة (JSON أو ALB)، رقم الحقل هيختلف: اطبع سطر واحد الأول وعدّ.`,
-          solCode: R`for (const slo of [0.99, 0.999, 0.9999]) console.log(slo, (30 * 24 * 60 * (1 - slo)).toFixed(1));
-// 0.99 432.0 / 0.999 43.2 / 0.9999 4.3
-# من لوجات Nginx لأسبوع:
-cat /var/log/nginx/access.log /var/log/nginx/access.log.1 | awk '{t++} $9>=500{f++} END{printf "total=%d 5xx=%d SLI=%.3f%%\n", t, f, 100*(1-f/t)}'`
-        },
-        {
-          cmd: "incident response",
-          title: "الموقع وقع: تعمل إيه بالترتيب",
-          desc: R`الترتيب: اتأكد إن فيه مشكلة وحجمها، وقول للناس، ووقّف النزيف (rollback أو تعطيل feature) قبل ما تدوّر على السبب، والسبب بتدوّر عليه بعد ما الموقع يرجع.
-
-ومحدش هيعرف إن الموقع وقع من غير uptime check من برا: حاجة (Uptime Kuma على سيرفر تاني، أو Better Stack، أو Route 53 health check) بتطلب [[/health]] كل دقيقة وتبعتلك لو فشل.`,
-          example: R`curl -s -o /dev/null -w "%{http_code} %{time_total}s\n" https://myapp.example.com/health
-aws ecs describe-services --cluster myapp --services api --query "services[0].deployments[].[status,taskDefinition,rolloutState]" --output table
-aws logs tail /ecs/myapp-api --since 15m --filter-pattern ERROR
-aws ecs update-service --cluster myapp --service api --task-definition myapp-api:41
-aws ecs wait services-stable --cluster myapp --services api`,
-          try: "اكتب runbook من ٥ سطور لمشروعك: تعرف منين إنه واقع، وتبص فين الأول، وإزاي ترجّع نسخة. وجرّبه فعلًا على staging: deploy بنسخة بايظة وبعدين رجّعها وانت بتحسب الوقت.",
-          deep: {
-            why: "وقت الحادثة الكل متوتر، وأسوأ حاجة ٣ ناس يعدّلوا على الإنتاج في نفس الوقت، أو حد يقعد ساعة يدوّر على السبب والموقع واقع والعملاء مش عارفين حاجة. خطوات ثابتة ومكتوبة بتقلل الوقت والغلط.",
-            how: R`١. اكتشف: إنذار من الـ uptime check أو Sentry أو CloudWatch، مش من عميل. والـ health check يبقى من مكان تاني غير السيرفر نفسه، وإلا لو السيرفر وقع المراقب وقع معاه.
-
-٢. قيّم: كل الناس ولا جزء؟ كل الـ endpoints ولا واحد؟ من إمتى؟ حصل deploy أو تغيير إعدادات قريب؟ أغلب الحوادث بتيجي بعد تغيير.
-
-٣. نظّم: واحد incident commander بيقرر وبيكلّم الناس، والباقي بيشتغلوا. قناة واحدة للحادثة، وحد بيكتب timeline بالوقت. ورسالة للعملاء (status page) حتى لو «بنحقق».
-
-٤. خفّف: rollback لآخر نسخة سليمة، أو feature flag، أو زوّد السيرفرات، أو اقفل الحاجة اللي بتضرب. في ECS: الـ task definition بتاعة النسخة اللي قبلها ([[:41]])، و [[wait services-stable]] بيستنى لحد ما النسخ الجديدة تبقى healthy.
-
-٥. اتأكد إن الأرقام رجعت طبيعية، وبعدين اقفل الحادثة واكتب postmortem.
-
-وعلى VPS نفس الخطوات بأوامر تانية: تاب التشخيص فيه السلّم الكامل و 502 و 504 و «الـ deploy كسر الموقع».`,
-            when: "في كل حادثة، حتى الصغيرة. والتمرين عليها قبلها (game day) بيفرق جدًا.",
-            mistakes: "تدوّر على الـ root cause والموقع واقع بدل ما ترجّع النسخة الأول. وكل واحد في الفريق يجرّب حل على الإنتاج في نفس الوقت. ومحدش يقول للعملاء. ومراقب الـ uptime على نفس السيرفر. ومفيش طريقة rollback مجرّبة أصلًا."
-          },
-          lines: [
-            "الموقع بيرد؟ الكود والوقت.",
-            "فيه deploy شغال أو فشل؟ النسخة الحالية والجديدة وحالة الـ rollout.",
-            "الأخطاء في آخر ربع ساعة.",
-            "rollback: رجّع الـ service للـ task definition رقم 41 (آخر نسخة سليمة).",
-            "استنى لحد ما النسخ ترجع healthy."
-          ],
-          sol: R`runbook نموذجي من ٥ سطور (عدّله لمشروعك):
-
-١. الكشف: uptime check من برا على [[/health]] كل دقيقة بينبّه على Telegram أو الإيميل، أو إنذار 5xx من CloudWatch. أول خطوة أأكّد بـ [[curl -w "%{http_code}"]].
-٢. أبص فين الأول: هل فيه deploy في آخر ساعة؟ ([[describe-services]] أو تاريخ الـ releases). لو أيوه، ده المشتبه الأول.
-٣. اللوج: [[aws logs tail ... --since 15m --filter-pattern ERROR]] أو [[docker compose logs --since 15m]].
-٤. الرجوع: [[update-service]] بالـ task definition اللي قبلها (أو [[git revert]] و deploy)، ومتستناش لحد ما تفهم السبب.
-٥. أبلّغ: رسالة قصيرة للفريق أو العملاء، وبعد ما يستقر أكتب postmortem.
-
-على staging: المفروض تقيس ٣ أرقام: وقت الاكتشاف (من الـ deploy البايظ لحد الإنذار)، ووقت القرار، ووقت الرجوع ([[wait services-stable]] على ECS غالبًا دقايق). لو الرقم الكلي أكبر من ١٥ دقيقة، أكبر جزء فيه غالبًا الاكتشاف، مش الرجوع.
-
-الغلطة الشائعة: الـ rollback يرجّع الكود بس، والـ migration الجديدة اللي نزلت معاه لسه موجودة، فالنسخة القديمة تقع برضه. عشان كده الـ migrations لازم تبقى backward compatible. وتانية: تقعد تصلّح في الإنتاج قدام الناس بدل ما ترجع الأول.`,
-          solCode: R`aws ecs describe-services --cluster myapp --services api --query "services[0].deployments[].[status,taskDefinition,rolloutState]" --output table
-aws ecs list-task-definitions --family-prefix myapp-api --sort DESC --max-items 3
-aws ecs update-service --cluster myapp --service api --task-definition myapp-api:41
-aws ecs wait services-stable --cluster myapp --services api`
-        },
-        {
-          cmd: "postmortem",
-          title: "بعد الحادثة: تكتب إيه عشان متتكررش",
-          desc: R`الـ postmortem مستند قصير بعد كل حادثة مهمة فيه حصل إيه، وأثّر على مين وقد إيه، والـ timeline، والسبب الجذري، وليه متمسكش بدري، و action items بصاحب وتاريخ.
-
-وهو «blameless»: السؤال «إيه في السيستم سمح للغلطة دي تعدّي؟» مش «مين غلط؟». لو الناس خافت هتخبّي الغلطات، ونفس الحادثة هترجع.`,
-          example: R`# Postmortem: 502 على الـ API يوم 2026-09-12
-Impact: 38 دقيقة، 12% من الطلبات فشلت، مفيش داتا ضاعت
-Detection: إنذار الـ uptime بعد 4 دقايق (مش من عميل)
-Timeline: 14:02 deploy v1.9 / 14:06 إنذار / 14:15 rollback / 14:40 رجع طبيعي
-Root cause: migration عملت lock على جدول orders، والـ pool خلص
-Why not caught: staging فيه 200 صف، والإنتاج 2 مليون
-Action: migrations بـ CONCURRENTLY و lock_timeout (owner: Ali، قبل 09-20)
-Action: اختبار الـ migrations على نسخة بحجم الإنتاج (owner: Mona، قبل 09-30)`,
-          try: "اكتب postmortem لآخر مشكلة حصلت في مشروع من مشاريعك (حتى لو بسيطة، زي شهادة SSL خلصت). واسأل «ليه» ٥ مرات لحد ما توصل لحاجة في السيستم مش في شخص.",
-          flag: "script",
-          deep: {
-            why: "من غير postmortem الحادثة بتتنسى في أسبوع ونفس السبب يرجع بعد شهرين. المستند بيحوّل الوجع لتغيير حقيقي: اختبار أو إنذار أو خطوة في الـ CI.",
-            how: R`Impact بالأرقام: مدة، ونسبة، وعدد عملاء، وفلوس لو فيه. و Detection: عرفنا إزاي وبعد قد إيه؛ لو من عميل، ده في حد ذاته action item.
-
-الـ Timeline بالدقيقة من المصادر (لوجات، ورسائل القناة)، مش من الذاكرة.
-
-الـ Root cause بـ «5 whys»: ليه وقع؟ الـ pool خلص. ليه؟ الطلبات مستنية lock. ليه؟ migration قفلت الجدول. ليه عدّت؟ staging صغير. ليه؟ مفيش بيانات بحجم حقيقي. الإجابة الأخيرة هي اللي بتتصلّح.
-
-الـ Action items قليلة ومحددة، كل واحد ليه صاحب وتاريخ وبيتتابع. «نبقى أحرص» مش action item. «الـ CI يرفض migration من غير lock_timeout» action item.
-
-وبيتشارك مع الفريق كله. وشركات كبيرة بتنشر postmortems علني (Cloudflare و GitHub مثلًا)، والقراية فيها بتعلّمك أنماط كتير.`,
-            when: "بعد أي حادثة أثّرت على اليوزرز أو كانت هتأثر. وفي خلال أيام، والتفاصيل لسه فاكرها.",
-            mistakes: "postmortem بيدوّر على مين الغلطان. و action items كتير ومحدش مسؤول عنها فمبتتعملش. و root cause «خطأ بشري» ووقفت لحد هنا. وتكتبه بعد شهر من الذاكرة."
-          },
-          lines: [
-            "الأثر بالأرقام: المدة والنسبة والداتا.",
-            "عرفنا إزاي وبعد قد إيه.",
-            "الأحداث بالوقت من المصادر.",
-            "السبب الجذري التقني.",
-            "ليه الاختبارات مكشفتهوش.",
-            "تصليح بصاحب وتاريخ.",
-            "تصليح تاني يمنع النوع ده كله."
-          ],
-          sol: R`مثال نموذجي لمشكلة بسيطة، عشان تشوف الـ «٥ ليه» بتوصل لفين:
-
-المشكلة: الموقع طلّع تحذير SSL ساعتين. ليه؟ الشهادة خلصت. ليه؟ التجديد التلقائي فشل. ليه؟ certbot كان محتاج بورت 80 وأنا قفلته في الفايروول من شهرين. ليه محدش عرف؟ مفيش إنذار على فشل التجديد ولا على تاريخ الانتهاء. ليه؟ مفيش مراقبة للشهادات أصلًا. الـ Action هنا مش «أفتكر أجدد»، دي: uptime check بيفحص تاريخ الشهادة وينبّه قبل ١٤ يوم (owner و تاريخ)، وتجديد بـ DNS challenge مش محتاج بورت 80.
-
-الـ postmortem الكويس لازم فيه: Impact بأرقام (مدة، نسبة، داتا ضاعت ولا لأ)، و Detection (عرفنا إزاي، ومن مين)، و Timeline بالدقايق، و Root cause في السيستم، و Actions كل واحدة ليها owner وتاريخ.
-
-الغلطة الشائعة: توقف عند «ليه» الأولى أو التانية وتكتب «فلان نسي» أو «هنخلّي بالنا». لو الإجابة شخص، اسأل «ليه السيستم سمح إن النسيان ده يوقّع الموقع؟». وتانية: Actions من غير owner وتاريخ، ودي عمليًا مش هتتعمل.`
+الغلطة الشائعة: الطلبين يرجعوا Miss على طول. ده غالبًا لأنهم راحوا لـ edge مختلفين (فيه أكتر من IP)، أو لأن الـ cache policy بتحط query string أو header في الـ key، أو لأن الملف مرفوع بـ [[no-cache]] أو [[max-age=0]]. وخد بالك إن [[age]] مش هيقل بعد invalidation في المتصفح لو المتصفح نفسه كاشه: [[curl]] مفيهوش كاش، فهو الأصدق في التجربة دي.`
         }
       ]
     }

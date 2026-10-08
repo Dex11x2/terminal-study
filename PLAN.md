@@ -135,7 +135,7 @@
 | ٤٨ | `swift/01-05.js` (49) | [x] (swift اتقسم؛ swift:latest اتمسحت. «VStack و HStack و ZStack» و «التوقيع و provisioning» من الـ docs بس: محتاجين ماك) |
 | ٤٩ | `cpp/01-06.js` (54) | [x] (cpp اتقسم؛ gcc:14 اتمسحت) |
 | ٥٠ | `apis/01-04.js` (44) | [x] (apis اتقسم) |
-| ٥١ | `cloud/01-04.js` (74) | [ ] (مفيش حسابات cloud: الأوامر من الـ docs إلا اللي يشتغل محلي) |
+| ٥١ | `cloud/01-04.js` (74) | [x] (cloud اتقسم؛ اتجرب على LocalStack و Terraform و Jaeger و Prometheus، و RDS/ECS/CloudFront من الـ docs) |
 | ٥٢ | `arch/01-06.js` (87) | [x] (arch اتقسم؛ الـ 5 ثغرات اتصلحت) |
 | ٥٣ | `sweng/01-03.js` و `ai/01-03.js` (73) | [ ] |
 | ٥٤ | `interview/01-03.js` و `projects/01-03.js` (~75) | [ ] |

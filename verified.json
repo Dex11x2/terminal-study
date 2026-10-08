@@ -2504,10 +2504,25 @@
   "date": "2026-10-08",
   "on": "aws-cli 2.37 + LocalStack 4.9 (regions loop); docs: budgets create-budget/describe-budgets"
  },
+ "cloud|Cache-Control + CDN": {
+  "hash": "f7177932b4b6",
+  "date": "2026-10-08",
+  "on": "Express 5 + curl (Git Bash), ETag -> 304"
+ },
+ "cloud|CloudFront + ECS + RDS": {
+  "hash": "434e7123c554",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
  "cloud|CloudFront cache": {
   "hash": "64e74cc7d190",
   "date": "2026-10-08",
   "on": "curl against real CloudFront (awsstatic.com); docs: aws cloudfront commands"
+ },
+ "cloud|CloudWatch": {
+  "hash": "3b1717da18aa",
+  "date": "2026-10-08",
+  "on": "AWS CLI 2.37 vs LocalStack 4.9: logs tail, retention, queries, alarms; logger solCode Express 5 (Windows Node 24); docs: real Insights results and alarm states"
  },
  "cloud|Cloudflare Pages": {
   "hash": "376ea57097a9",
@@ -2559,6 +2574,16 @@
   "date": "2026-10-08",
   "on": "aws-cli 2.37 help + parameter validation; docs: real create/describe/delete"
  },
+ "cloud|GitHub OIDC": {
+  "hash": "b80844c7a0fb",
+  "date": "2026-10-08",
+  "on": "AWS CLI 2.37 vs LocalStack 4.9: OIDC provider, role, assume-role-with-web-identity (test JWT); actionlint 1.7.12; docs: real GitHub token and STS rejection"
+ },
+ "cloud|HA و DR": {
+  "hash": "53d21e269761",
+  "date": "2026-10-08",
+  "on": "bucket versioning on LocalStack 4.9; psql failover loop on postgres:16-alpine; docs: RDS multi-az, autoscaling"
+ },
  "cloud|IAM policy JSON": {
   "hash": "f3fcda1bfb1c",
   "date": "2026-10-08",
@@ -2584,6 +2609,16 @@
   "date": "2026-10-08",
   "on": "node:22-slim + LocalStack 4.9 Lambda nodejs22.x; docs: nodejs24.x"
  },
+ "cloud|OTLP و backend": {
+  "hash": "e36b585cf081",
+  "date": "2026-10-08",
+  "on": "Jaeger v2.22 Docker + node:22-slim via OTLP HTTP, sampler ratio; docs: Honeycomb"
+ },
+ "cloud|OpenTelemetry في Node": {
+  "hash": "872becc13b85",
+  "date": "2026-10-08",
+  "on": "node:22-slim, Express 5 + ConsoleSpanExporter (4 spans)"
+ },
  "cloud|PaaS ولا VPS: الحساب": {
   "hash": "1a5739c3465d",
   "date": "2026-10-08",
@@ -2594,10 +2629,20 @@
   "date": "2026-10-08",
   "on": "aws-cli 2.37 + LocalStack 4.9 (example + solCode); docs: AccessDenied message"
  },
+ "cloud|Prometheus + Grafana": {
+  "hash": "8355cd87c267",
+  "date": "2026-10-08",
+  "on": "prom-client 15 + Express 5 in node:22-slim, Prometheus 3.15 Docker (p95, rate); docs: Grafana"
+ },
  "cloud|R2": {
   "hash": "bd52f70d926a",
   "date": "2026-10-08",
   "on": "Windows Node 24 + @aws-sdk 3.1147 (presigned URL signed headers); docs: real PUT to R2"
+ },
+ "cloud|RPO / RTO": {
+  "hash": "006bde34de6b",
+  "date": "2026-10-08",
+  "on": "docs: concept"
  },
  "cloud|Route 53": {
   "hash": "fc6a9136a7ff",
@@ -2614,10 +2659,35 @@
   "date": "2026-10-08",
   "on": "node:22-slim AWS SDK client-sesv2 (request captured); docs: actual sending, DKIM"
  },
+ "cloud|SLI / SLO / error budget": {
+  "hash": "9f272f89ac30",
+  "date": "2026-10-08",
+  "on": "Windows Node 24; awk in ubuntu:24.04"
+ },
+ "cloud|SLO vs SLA": {
+  "hash": "36c48e40d792",
+  "date": "2026-10-08",
+  "on": "Windows Node 24"
+ },
+ "cloud|Sentry": {
+  "hash": "d523ba28f511",
+  "date": "2026-10-08",
+  "on": "@sentry/node 11.5 + Express 5 (Windows Node 24), local fake DSN; docs: Sentry UI"
+ },
  "cloud|Supabase / Neon": {
   "hash": "7c86ffcf625f",
   "date": "2026-10-08",
   "on": "Node 24 URL parsing + real dig; docs: connections, pg_stat_activity"
+ },
+ "cloud|Terraform resource": {
+  "hash": "c6a762e65e93",
+  "date": "2026-10-08",
+  "on": "hashicorp/terraform 1.16.5 vs LocalStack 4.9: init/validate/plan/graph, -var, undeclared-var error"
+ },
+ "cloud|Terraform state": {
+  "hash": "4e90183f7894",
+  "date": "2026-10-08",
+  "on": "hashicorp/terraform 1.16.5 vs LocalStack 4.9: S3 backend -migrate-state, use_lockfile lock error"
  },
  "cloud|VPS ولا managed ولا PaaS": {
   "hash": "4eb630138d31",
@@ -2644,15 +2714,70 @@
   "date": "2026-10-08",
   "on": "aws-cli 2.37 + LocalStack 4.9 (mb, public access block, cp, ls, presign, curl); docs: AccessDenied on unsigned URL"
  },
+ "cloud|blue-green vs canary": {
+  "hash": "a1cd364585b4",
+  "date": "2026-10-08",
+  "on": "docs: Lambda alias routing-config (LocalStack update-alias crashed)"
+ },
+ "cloud|control vs convenience": {
+  "hash": "ee228f0dd908",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "cloud|cost optimization": {
+  "hash": "248be83bed0c",
+  "date": "2026-10-08",
+  "on": "AWS CLI 2.37 vs LocalStack 4.9: spot price history, VPC endpoint; sort in ubuntu:24.04; docs: Cost Explorer, Compute Optimizer"
+ },
+ "cloud|custom span": {
+  "hash": "f6520bf8ff71",
+  "date": "2026-10-08",
+  "on": "node:22-slim with OTel (exception event, solCode fetch span)"
+ },
+ "cloud|deploy.yml إلى AWS": {
+  "hash": "39a0158534a3",
+  "date": "2026-10-08",
+  "on": "actionlint 1.7.12; npm build (Windows Node 24); s3 sync/cp --cache-control on LocalStack 4.9; docs: CloudFront invalidation, GitHub run"
+ },
+ "cloud|direct-to-S3 upload": {
+  "hash": "45d3b3faabca",
+  "date": "2026-10-08",
+  "on": "@aws-sdk/client-s3 3.1147 in node:22-slim, presigned PUT on LocalStack 4.9 with signature validation (403 on wrong Content-Type)"
+ },
  "cloud|fly launch": {
   "hash": "2ec8734d19c9",
   "date": "2026-10-08",
   "on": "fly.toml parsed + flyctl v0.4.114 --help; docs: launch/deploy/secrets/scale"
  },
+ "cloud|incident response": {
+  "hash": "b5fe656324eb",
+  "date": "2026-10-08",
+  "on": "curl -w on nginx:alpine (Git Bash, PowerShell 5.1); logs tail on LocalStack 4.9; docs: ECS output"
+ },
+ "cloud|instrumentation.ts": {
+  "hash": "c776221f2e0b",
+  "date": "2026-10-08",
+  "on": "Next.js 16.4 + @vercel/otel 2.1.3 in node:22-slim, traces to Jaeger v2.22; docs: NodeSDK variant"
+ },
  "cloud|kubectl": {
   "hash": "378e2487be6e",
   "date": "2026-10-08",
   "on": "kind v0.33.0 (k8s v1.37.0) + kubectl v1.36.1 on Docker Desktop (cluster, pods, describe, logs, exec, rollout undo)"
+ },
+ "cloud|least privilege + roles": {
+  "hash": "b3d030f73e74",
+  "date": "2026-10-08",
+  "on": "credential report on LocalStack 4.9 + ubuntu:24.04 tools; docs: concepts"
+ },
+ "cloud|orchestration": {
+  "hash": "af1d877b1863",
+  "date": "2026-10-08",
+  "on": "docs: concept (kubectl ran on kind in cloud/02)"
+ },
+ "cloud|postmortem": {
+  "hash": "6431c1cda9dc",
+  "date": "2026-10-08",
+  "on": "postgres:16-alpine Docker (lock_timeout, CREATE INDEX CONCURRENTLY); docs: template"
  },
  "cloud|presigned URL": {
   "hash": "6ef8b33e7f07",
@@ -2674,15 +2799,45 @@
   "date": "2026-10-08",
   "on": "yaml parsed in Node 24 + Express with PORT=10000 in node:22-slim; docs: Blueprint deploy"
  },
+ "cloud|rightsize + commit + clean": {
+  "hash": "b70c15ae76fb",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
  "cloud|root + MFA": {
   "hash": "4f3e86ee1a0a",
   "date": "2026-10-08",
   "on": "aws-cli 2.37 + LocalStack 4.9 (get-account-summary, list-users, list-access-keys); docs: account get-alternate-contact"
  },
+ "cloud|scale out vs scale up": {
+  "hash": "471aaf929f22",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
  "cloud|security groups": {
   "hash": "7a6f8eb179c2",
   "date": "2026-10-08",
   "on": "aws-cli 2.37 + LocalStack 4.9 (example + solCode)"
+ },
+ "cloud|stateless": {
+  "hash": "21c765340da3",
+  "date": "2026-10-08",
+  "on": "node:22-slim x2 behind nginx:alpine, then connect-redis 10 on redis:7-alpine (20/20)"
+ },
+ "cloud|terraform plan / apply": {
+  "hash": "39cb4e5b598b",
+  "date": "2026-10-08",
+  "on": "hashicorp/terraform 1.16.5 vs LocalStack 4.9: init, fmt, validate, plan -out, apply, state list, replacement, destroy"
+ },
+ "cloud|trace id في اللوج": {
+  "hash": "62ebef8087b6",
+  "date": "2026-10-08",
+  "on": "pino 10.4 + Express 5 in node:22-slim, instrumentation-pino"
+ },
+ "cloud|trace و span": {
+  "hash": "e067d05481db",
+  "date": "2026-10-08",
+  "on": "node:22-slim, OTel sdk-node 0.223 + auto-instrumentations 0.81, traceparent"
  },
  "cloud|vercel": {
   "hash": "de8afb5521cd",
@@ -2693,6 +2848,11 @@
   "hash": "56104526c2f5",
   "date": "2026-10-08",
   "on": "aws-cli 2.37 + LocalStack 4.9 (ec2, s3, lambda, route53, logs); docs: rds, cloudfront"
+ },
+ "cloud|امسح اللي مش مستخدم": {
+  "hash": "3f5c4ef8cbe5",
+  "date": "2026-10-08",
+  "on": "AWS CLI 2.37 vs LocalStack 4.9: volumes, addresses, terminate, s3 rb, region sweep solCode; docs: RDS, ELB"
  },
  "cmd|%errorlevel% و !errorlevel!": {
   "hash": "2b0c85c2fa5e",
