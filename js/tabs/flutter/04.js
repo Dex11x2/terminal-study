@@ -1,3090 +1,1371 @@
 // تكملة تاب flutter: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/flutter/01.js (شرح حقول الدرس في أوله)
 MORE("flutter", [
     {
-      t: "الـ state بـ Riverpod",
-      l: 2,
-      n: "providers بتشيل البيانات بره الـ widgets، و Notifier يغيّرها، و AsyncNotifier للي جاي من API بحالات loading و error و data",
+      t: "Dart: الأخطاء والأنواع المتقدمة",
+      l: 1,
+      n: "exceptions صح، و generics، و mixins، و extensions، و enums فيها بيانات: الحاجات اللي هتقابلها في كود أي package",
       items: [
         {
-          cmd: "ProviderScope و ref.watch",
-          title: "قيمة واحدة كل الشاشات تقراها وتتحدث لما تتغير",
-          desc: R`[[Riverpod]] (نسخة 3، الـ package اسمها [[flutter_riverpod]]) بيحط البيانات والخدمات في «providers» متعرّفة كمتغيرات top-level، وأي widget يقراها. [[ProviderScope]] بيلف التطبيق كله ودا المكان اللي القيم بتتخزن فيه فعلًا.
+          cmd: "try و on و rethrow",
+          title: "تمسك نوع الخطأ اللي تعرف تتعامل معاه بس",
+          desc: R`في Dart فيه نوعين حاجات بتترمي: [[Exception]] يعني حاجة متوقعة ممكن تحصل (النت فاصل، JSON بايظ، السيرفر رجّع 404)، و [[Error]] يعني غلطة في الكود نفسه (index بره الـ list، [[!]] على null، cast غلط). الأولى بتمسكها وتتعامل معاها، والتانية بتصلّحها في الكود.
 
-الـ widget بيبقى [[ConsumerWidget]] بدل StatelessWidget، و build بتاخد [[WidgetRef ref]] زيادة. [[ref.watch(provider)]] بيقرا القيمة ويعيد build لو اتغيرت، و [[ref.read(provider)]] بيقراها مرة من غير اشتراك (جوه onPressed).`,
-          example: R`import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:http/http.dart' as http;
-
-const apiBase = String.fromEnvironment('API_URL', defaultValue: 'http://10.0.2.2:3000');
-
-final httpClientProvider = Provider<http.Client>((ref) {
-  final client = http.Client();
-  ref.onDispose(client.close);
-  return client;
-});
-
-final baseUrlProvider = Provider<Uri>((ref) => Uri.parse(apiBase));
-
-class ApiStatus extends ConsumerWidget {
-  const ApiStatus({super.key});
-
+[[on FormatException catch (e)]] بيمسك نوع معين بس، و [[catch (e, st)]] بيدّيك الـ stack trace كمان. و [[rethrow]] بيرمي نفس الخطأ تاني بعد ما تسجّله مثلًا، و [[finally]] بيتنفذ في كل الأحوال. وتعمل exception خاص بيك بـ class بيعمل [[implements Exception]].`,
+          example: R`class ApiException implements Exception {
+  ApiException(this.statusCode, this.message);
+  final int statusCode;
+  final String message;
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final base = ref.watch(baseUrlProvider);
-    return Text('API: $__{base.host}:$__{base.port}');
+  String toString() => 'ApiException($statusCode): $message';
+}
+
+int parseAge(String raw) {
+  final age = int.parse(raw);
+  if (age < 0) throw ApiException(422, 'age must be positive');
+  return age;
+}
+
+int saveAge(String raw) {
+  try {
+    return parseAge(raw);
+  } on ApiException {
+    print('log: rejected $raw');
+    rethrow;
   }
 }
 
 void main() {
-  runApp(const ProviderScope(child: MaterialApp(home: Scaffold(body: Center(child: ApiStatus())))));
-}`,
-          try: "شغّل مرة عادي ومرة بـ [[flutter run --dart-define=API_URL=http://192.168.1.10:8000]]. وبعدين في main اعمل override: [[ProviderScope(overrides: [baseUrlProvider.overrideWithValue(Uri.parse('https://staging.example.com'))], child: ...)]] وشوف النص. وآخر حاجة: شيل الـ ProviderScope خالص وشغّل.",
-          flag: "script",
-          deep: {
-            why: "setState بيشتغل جوه widget واحد. أول ما شاشتين محتاجين نفس البيانات (السلة، المستخدم الحالي، الإعدادات) هتبدأ تعدّي القيم في constructors من فوق لتحت ٥ مستويات، أو تعمل singletons global يصعب اختبارها. Riverpod بيدّي كل حاجة مكان واحد، وأي widget يقراها مباشرة، وفي الاختبارات تبدّل أي provider بـ fake من غير ما تلمس الكود.",
-            how: R`الـ provider نفسه (المتغير [[baseUrlProvider]]) مش القيمة: هو «وصفة» بتقول القيمة بتتعمل إزاي. القيمة بتتعمل أول مرة حد يطلبها (lazy)، وبتتخزن جوه الـ ProviderScope، وكل اللي يطلبها بعد كده ياخد نفس النسخة. عشان كده التعريف global عادي ومفيش مشكلة: الـ state نفسها مش global.
-
-[[ref]] جوه الـ provider بيخليه يعتمد على providers تانية: [[final base = ref.watch(baseUrlProvider);]] جوه provider تاني، ولو base اتغيرت، التاني يتحسب من جديد. ودا graph تبعيات Riverpod بيديره لوحده. و [[ref.onDispose]] بيقفل الموارد لما الـ provider يتشال.
-
-[[ref.watch]] مقابل [[ref.read]]:
-- watch في build (أو جوه provider): بيشترك، والـ widget يعيد build مع كل تغيير.
-- read في callbacks ([[onPressed]]): قراية مرة واحدة. read جوه build غلط، لأن الـ widget مش هيتحدث.
-- [[ref.listen]] في build: ينفّذ حاجة (SnackBar، تنقل) لما القيمة تتغير من غير rebuild.
-
-أنواع الـ widgets: [[ConsumerWidget]] بدل Stateless، و [[ConsumerStatefulWidget]] مع [[ConsumerState]] بدل Stateful (وهناك [[ref]] property متاحة في كل الدوال)، و [[Consumer(builder: ...)]] لو عايز جزء صغير بس يعيد build.
-
-الـ autoDispose: [[Provider.autoDispose(...)]] بيمسح القيمة لما محدش يبقى بيعمل watch عليها (الشاشة اتقفلت). مناسب لبيانات شاشة واحدة.
-
-الـ overrides: [[overrideWithValue]] و [[overrideWith]] في ProviderScope بيبدّلوا provider بقيمة تانية. دي اللي بتستخدمها في الاختبارات (درس flutter test) وفي تجهيز حاجات async قبل runApp (زي SharedPreferences).
-
-وفيه codegen اختياري: [[@riverpod]] على دالة أو class و [[riverpod_generator]] يولّد الـ provider. نفس المفاهيم، والدروس هنا بالكتابة اليدوية عشان تفهم اللي بيتولّد.`,
-            when: "أي حاجة أكتر من widget واحد محتاجها، أو خدمة (API client، repository) عايز تبدّلها في الاختبارات. والـ state المحلية البحتة (checkbox في كارت، tab مختار) خليها setState.",
-            mistakes: R`تنسى [[ProviderScope]] فوق التطبيق. و [[ref.read]] جوه build فالشاشة متتحدثش. و [[ref.watch]] جوه onPressed (بيشتغل بس بيعمل اشتراكات ملهاش لازمة، والـ lint بيمسكه). وتعمل الـ provider جوه build أو جوه class ([[final p = Provider(...)]] في كل rebuild) فكل مرة provider جديد وقيمة جديدة: الـ providers تتعرّف top-level أو static final.`
-          },
-          teach: R`## الكود ده بيعمل إيه؟
-
-بيعرّف ٢ providers: واحد بيعمل [[http.Client]] واحد للتطبيق كله، والتاني بيقرا عنوان الـ API. وبعدين widget بيقرا العنوان من الـ provider ويعرضه، والتطبيق كله ملفوف في [[ProviderScope]]. كل الناتج تحت اتشغّل فعلًا في مشروع [[flutter create]] جوه [[docker run --rm ghcr.io/cirruslabs/flutter:stable]] (Flutter 3.44، Dart 3.12، flutter_riverpod 3.4.3)، بـ [[flutter test]] بيبني نفس الـ widget ويطبع النص اللي ظاهر.
-
----
-
-## ١. الـ imports
-
-~~~dart
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:http/http.dart' as http;
-~~~
-
-- [[package:]] معناها «من package متسطّبة»، مش ملف في مشروعك. الاتنين التانيين بيتسطبوا بـ [[flutter pub add flutter_riverpod http]].
-- [[flutter_riverpod]] فيها [[Provider]] و [[ProviderScope]] و [[ConsumerWidget]] و [[WidgetRef]].
-- [[as http]]: كل حاجة من الـ package دي هتتكتب قبلها [[http.]] ([[http.Client]]). بنعمل كده عشان أسامي زي [[get]] و [[Client]] متتلخبطش مع حاجات تانية.
-
----
-
-## ٢. العنوان وقت الـ build: [[String.fromEnvironment]]
-
-~~~dart
-const apiBase = String.fromEnvironment('API_URL', defaultValue: 'http://10.0.2.2:3000');
-~~~
-
-- [[String.fromEnvironment('API_URL')]]: بيقرا قيمة اسمها [[API_URL]] اتبعتت للـ compiler بـ [[--dart-define=API_URL=...]]. القيمة بتتحط في الكود **وقت الترجمة**، مش وقت التشغيل.
-- [[const]]: لازم، لأن القيمة معروفة وقت الترجمة. والـ docs بتاعة Dart بتقول إن [[fromEnvironment]] مضمون يشتغل بس لما يتنادى كـ const.
-- [[defaultValue:]]: لو مفيش [[--dart-define]]. و [[10.0.2.2]] هو الـ localhost بتاع الكمبيوتر من جوه Android emulator.
-
-جربت نفس الاختبار مرتين:
-
-~~~text flutter test
-default -> API: 10.0.2.2:3000
-~~~
-
-~~~text flutter test --dart-define=API_URL=http://192.168.1.10:8000
-default -> API: 192.168.1.10:8000
-~~~
-
-ولأن القيمة اتطبخت جوه الكود، hot reload مش هيغيّرها: محتاج تشغيل جديد بالـ define الجديد.
-
----
-
-## ٣. أول provider: [[Provider<http.Client>]]
-
-~~~dart
-final httpClientProvider = Provider<http.Client>((ref) {
-  final client = http.Client();
-  ref.onDispose(client.close);
-  return client;
-});
-~~~
-
-نفكّه حتة حتة:
-
-- [[final httpClientProvider]]: متغير top-level (بره أي class). دا **مش** الـ client نفسه، دا «وصفة» بتقول الـ client بيتعمل إزاي.
-- [[Provider<http.Client>]]: أبسط نوع provider: قيمة بتتحسب مرة ومش بتتغير من بره. و [[<http.Client>]] نوع القيمة (generic).
-- [[(ref) { ... }]]: دالة بتاخد [[ref]] وترجّع القيمة. Riverpod بينادي الدالة دي أول مرة حد يطلب الـ provider.
-- [[http.Client()]]: اتصال HTTP واحد يتعاد استخدامه في كل الطلبات (أسرع من اتصال جديد كل مرة).
-- [[ref.onDispose(client.close)]]: «لما الـ provider ده يتشال، نادي [[client.close]]». لاحظ إن مفيش [[()]] بعد close: احنا بنبعت الدالة نفسها (tear-off) عشان تتنادى بعدين، مش بننفّذها دلوقتي.
-- [[return client;]]: دي القيمة اللي أي حد هياخدها.
-
-### lazy ونسخة واحدة
-
-كتبت اختبار صغير بـ [[ProviderContainer]] (الـ ProviderScope من غير UI) بيعدّ الدالة اتنادت كام مرة:
-
-~~~text flutter test
-before read: created=0
-after 2 reads: created=1 a=42 b=42
-same client: true
-after dispose: disposed=1
-~~~
-
-- قبل أي قراية: الدالة متنادتش خالص (lazy).
-- بعد قرايتين: اتنادت **مرة واحدة**، والقراية التانية خدت نفس القيمة. وقرايتين لـ [[httpClientProvider]] رجّعوا نفس الـ object ([[identical]] = true).
-- بعد [[dispose]] للـ container: الـ [[onDispose]] اشتغل.
-
----
-
-## ٤. تاني provider بسطر واحد
-
-~~~dart
-final baseUrlProvider = Provider<Uri>((ref) => Uri.parse(apiBase));
-~~~
-
-- [[=>]]: دالة بسطر واحد بترجّع اللي بعده على طول.
-- [[Uri.parse(apiBase)]]: بيحوّل النص لـ [[Uri]] فيه أجزاء جاهزة: [[scheme]] (http) و [[host]] و [[port]] و [[path]].
-- [[ref]] مش مستخدم هنا، بس لو عايز تبني على provider تاني كنت هتكتب [[ref.watch(otherProvider)]] جوه الدالة.
-
----
-
-## ٥. الـ widget: [[ConsumerWidget]]
-
-~~~dart
-class ApiStatus extends ConsumerWidget {
-  const ApiStatus({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final base = ref.watch(baseUrlProvider);
-    return Text('API: $__{base.host}:$__{base.port}');
-  }
-}
-~~~
-
-- [[extends ConsumerWidget]]: زي [[StatelessWidget]] بالظبط، بس build بتاخد باراميتر زيادة.
-- [[const ApiStatus({super.key});]]: constructor عادي بيبعت الـ key للأب.
-- [[@override]]: احنا بنكتب نسخة build بتاعتنا بدل اللي في الأب.
-- [[WidgetRef ref]]: الباب اللي الـ widget بيقرا منه الـ providers.
-- [[ref.watch(baseUrlProvider)]]: هات القيمة **واشترك فيها**: لو اتغيرت، build يتنادى تاني لوحده. ودا الفرق عن [[ref.read]] اللي بيقرا مرة من غير اشتراك (مكانه جوه [[onPressed]]).
-- [[$__{base.host}]] و [[$__{base.port}]]: interpolation، بيحط القيمة جوه النص.
-
----
-
-## ٦. [[main]] و [[ProviderScope]]
-
-~~~dart
-void main() {
-  runApp(const ProviderScope(child: MaterialApp(home: Scaffold(body: Center(child: ApiStatus())))));
-}
-~~~
-
-من برة لجوه: [[ProviderScope]] ← [[MaterialApp]] ← [[Scaffold]] ← [[Center]] ← [[ApiStatus]]. الـ ProviderScope لازم يبقى **فوق** أي widget بيقرا providers، لأنه المكان اللي القيم بتتخزن فيه فعلًا. والـ providers نفسها global، بس قيمها جوه الـ scope.
-
----
-
-## ٧. التجارب اللي في «جرّب»
-
-### override
-
-~~~dart
-ProviderScope(
-  overrides: [baseUrlProvider.overrideWithValue(Uri.parse('https://staging.example.com'))],
-  child: ...,
-)
-~~~
-
-~~~text flutter test
-override -> API: staging.example.com:443
-~~~
-
-- [[overrides:]]: لستة بتبدّل providers بقيم تانية جوه الـ scope ده بس.
-- [[overrideWithValue(...)]]: «متناديش الوصفة، استخدم القيمة دي».
-- [[443]]: الـ URL مفيهوش port، فـ [[Uri.port]] رجّع الافتراضي لـ [[https]]. (والافتراضي لـ http هو 80.)
-- [[ApiStatus]] متعدلش خالص. دي نفس الفكرة اللي هتستخدمها في الاختبارات.
-
-### من غير ProviderScope
-
-~~~text flutter test
-no scope -> StateError: Bad state: No ProviderScope found
-~~~
-
-أول ما [[ref.watch]] يدوّر على scope فوقه ومش يلاقي، بيرمي [[StateError]].
-
----
-
-## الخلاصة
-
-| الحاجة | بتعمل إيه |
-|---|---|
-| [[Provider<T>((ref) => ...)]] | وصفة لقيمة، بتتعمل أول مرة حد يطلبها، ونسخة واحدة للكل |
-| [[ref.onDispose(f)]] | نظّف لما الـ provider يتشال |
-| [[ConsumerWidget]] + [[WidgetRef ref]] | widget يقدر يقرا providers |
-| [[ref.watch(p)]] | اقرا واعمل rebuild لو اتغيرت (في build) |
-| [[ref.read(p)]] | اقرا مرة (في callbacks) |
-| [[ProviderScope]] | مخزن القيم، فوق التطبيق كله |
-| [[overrideWithValue]] | بدّل provider بقيمة تانية من غير ما تلمس الكود |
-
-> الـ provider مش القيمة، الـ provider عنوانها. والقيمة عايشة جوه الـ ProviderScope، ومن غيره مفيش قيم أصلًا.`,
-          lines: [
-            "مكتبة Material.",
-            "Riverpod لـ Flutter (من [[flutter pub add flutter_riverpod]]).",
-            "http.",
-            "العنوان من [[--dart-define]] وقت الـ build، ولو مش موجود عنوان الـ emulator.",
-            "provider بيرجّع http.Client واحد للتطبيق كله.",
-            "بيتعمل أول مرة حد يطلبه.",
-            "[[ref.onDispose]]: اقفل الـ client لما الـ provider يتشال.",
-            "القيمة.",
-            "قفلة.",
-            "provider بسيط بيرجّع الـ base URL.",
-            "[[ConsumerWidget]]: زي StatelessWidget بس build بتاخد ref.",
-            "constructor.",
-            "بتعيد تعريف build.",
-            "build بـ ref زيادة.",
-            "[[ref.watch]]: اقرا واعمل rebuild لو اتغيرت.",
-            "استخدمها عادي.",
-            "قفلة build.",
-            "قفلة الـ class.",
-            "البداية.",
-            "[[ProviderScope]] فوق التطبيق كله: هنا القيم بتتخزن.",
-            "قفلة main."
-          ],
-          sol: R`عادي: [[API: 10.0.2.2:3000]]. ومع [[--dart-define=API_URL=http://192.168.1.10:8000]]: [[API: 192.168.1.10:8000]] (القيمة اتحطت وقت الترجمة، ولازم full restart مش hot reload عشان تتغير).
-
-مع الـ override: [[API: staging.example.com:443]]. الـ port 443 لأن [[Uri.port]] بيرجّع الافتراضي للـ scheme لو مش مكتوب. ولاحظ إن ApiStatus نفسه متعدلش خالص.
-
-من غير ProviderScope: التطبيق بيضرب أول ما ApiStatus يعمل build، والرسالة بتقول إن مفيش ProviderScope فوق الـ widget ([[No ProviderScope found]]).`
-        },
-        {
-          cmd: "Notifier",
-          title: "سلة مشتريات أي شاشة تضيف فيها وأي شاشة تشوفها",
-          desc: R`[[Notifier<T>]] class فيه [[build()]] بترجّع القيمة الأولية، و methods بتغيّر [[state]]. وبتعرّفه بـ [[NotifierProvider]]. الـ widgets بتقرا القيمة بـ [[ref.watch(cartProvider)]]، وبتنادي الدوال بـ [[ref.read(cartProvider.notifier).add(...)]].
-
-الـ state immutable: متعدّلش في الـ list ([[state.add]])، اعمل list جديدة ([[state = [...state, item]]]). Riverpod بيعرف إن حاجة اتغيرت لما [[state]] يتحط بقيمة جديدة.`,
-          example: R`import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-typedef CartItem = ({String name, double price, int qty});
-
-class CartNotifier extends Notifier<List<CartItem>> {
-  @override
-  List<CartItem> build() => [];
-
-  void add(String name, double price) {
-    final i = state.indexWhere((e) => e.name == name);
-    if (i == -1) {
-      state = [...state, (name: name, price: price, qty: 1)];
-    } else {
-      state = [
-        for (final (j, e) in state.indexed)
-          j == i ? (name: e.name, price: e.price, qty: e.qty + 1) : e,
-      ];
+  for (final raw in ['30', 'abc', '-5']) {
+    try {
+      print('age $__{saveAge(raw)}');
+    } on FormatException catch (e) {
+      print('not a number: $__{e.source}');
+    } on ApiException catch (e, st) {
+      print('invalid: $__{e.message} $__{e.statusCode}');
+      print(st.toString().split('\n').first);
+    } finally {
+      print('checked $raw');
     }
   }
-
-  void clear() => state = [];
-}
-
-final cartProvider = NotifierProvider<CartNotifier, List<CartItem>>(CartNotifier.new);
-
-final cartTotalProvider = Provider<double>((ref) {
-  return ref.watch(cartProvider).fold(0.0, (sum, e) => sum + e.price * e.qty);
-});
-
-class CartButton extends ConsumerWidget {
-  const CartButton({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final count = ref.watch(cartProvider.select((items) => items.length));
-    final total = ref.watch(cartTotalProvider);
-    return TextButton(
-      onPressed: () => ref.read(cartProvider.notifier).add('Tea', 10),
-      child: Text('$count items • $__{total.toStringAsFixed(2)} EGP'),
-    );
-  }
 }`,
-          try: "حط CartButton في شاشتين مختلفتين (AppBar في الرئيسية وشاشة المنتج) ودوس في واحدة: التانية اتحدثت؟ ضيف [[remove(String name)]] بتقلل الكمية وتشيل العنصر لما يوصل صفر. وبعدين غيّر add لـ [[state.add(...)]] بدل list جديدة وشوف اللي بيحصل للزرار.",
+          try: "شغّل المثال بـ [[dart run]] واقرا الناتج. بعدين امسح سطر [[rethrow;]] من [[saveAge]] وشوف الـ compiler بيقول إيه، وحط مكانه [[return -1;]] وشغّل تاني: إيه اللي اتغير في ناتج [['-5']]؟ وآخر حاجة: ضيف [['']] (نص فاضي) للـ list وقول هيطبع إيه قبل ما تشغّل.",
           flag: "script",
           deep: {
-            why: "السلة محتاجاها شاشة المنتجات (زرار أضف)، و AppBar (العدد)، وشاشة الدفع (الإجمالي). لو في setState جوه شاشة واحدة، الباقيين مش هيعرفوا. Notifier بيحط الـ state ومنطق تعديلها في class واحد، بعيد عن الـ UI، وتقدر تختبره من غير ما تعمل widget خالص.",
-            how: R`[[CartNotifier.new]] tear-off للـ constructor: Riverpod بيعمل الـ Notifier بنفسه أول مرة حد يطلبه، وينادي [[build()]] للقيمة الأولية. و build ممكن تعمل [[ref.watch]] لـ providers تانية، ولو اتغيرت الـ Notifier يتعمله build من جديد.
+            why: "لو مسكت كل حاجة بـ [[catch (e)]] هتبلع الأخطاء اللي المفروض تكسّر التطبيق وانت بتطوّر، زي null أو index غلط، وتفضل الشاشة فاضية من غير ما تعرف ليه. ولو مسكتش حاجة خالص، أول مرة النت يقطع التطبيق هيقع. الحل في النص: امسك الأنواع اللي تعرف تعمل معاها حاجة مفيدة (تعرض رسالة، تعيد المحاولة)، وسيب الباقي يطلع.",
+            how: R`[[throw]] في Dart بيرمي أي object، حتى String ([[throw 'oops']])، بس دا ممنوع عرفًا والـ lint [[only_throw_errors]] بيمسكه. ارمي حاجة بتعمل implements لـ Exception أو extends لـ Error.
 
-[[state]] getter و setter: أي [[state = ...]] بيقارن القيمة الجديدة بالقديمة ([[==]] أو [[identical]])، ولو مختلفة يبلّغ كل اللي عاملين watch. عشان كده [[state.add(x)]] مش بيعمل حاجة للـ UI: نفس الـ list (نفس المرجع) اتعدلت من جوه، فمفيش «تغيير» يتبلّغ. وفوق كده الـ list الافتراضية [[[]]] ممكن تبقى const في مواقف تانية فتضرب.
+ترتيب الـ [[on]] مهم: أول واحد يطابق يكسب، فالأنواع المحددة الأول والعامة ([[on Exception]]) في الآخر. و [[catch (e)]] من غير [[on]] بيمسك أي حاجة، حتى الـ Errors.
 
-[[select]]: [[ref.watch(cartProvider.select((items) => items.length))]] بيعمل rebuild بس لو العدد اتغير، مش لو كمية عنصر زادت. مفيد للـ widgets اللي بتتعرض كتير.
+الفرق في الـ stack trace: [[rethrow]] بيحافظ على الـ stack trace الأصلي (من [[parseAge]] زي ما بيطبع المثال). إنما [[throw e]] جوه الـ catch بيبدأ trace جديد من السطر ده، فتضيع مكان المشكلة الحقيقي. ولو عايز ترمي نوع تاني وتحافظ على الـ trace: [[Error.throwWithStackTrace(MyException(), st)]].
 
-provider مشتق: [[cartTotalProvider]] بيعمل watch على السلة ويحسب الإجمالي. بيتحسب من جديد تلقائيًا مع كل تغيير في السلة، ومفيش مكان تنسى فيه تحدّث الإجمالي. زي [[useMemo]] أو computed.
+الـ exceptions الجاهزة اللي هتقابلها: [[FormatException]] (من [[int.parse]] و [[jsonDecode]] و [[DateTime.parse]])، و [[TimeoutException]] (من [[.timeout()]])، و [[SocketException]] و [[HttpException]] من dart:io، و [[ClientException]] من package http. والـ Errors: [[RangeError]] و [[TypeError]] و [[StateError]] و [[ArgumentError]] و [[UnimplementedError]].
 
-[[ref.read(cartProvider.notifier)]] بيرجّع الـ Notifier نفسه عشان تنادي methods. و [[ref.read(cartProvider)]] بيرجّع الـ state.
+وفي async نفس الكلام بالظبط: [[try]] حوالين [[await]]، والـ Future الفاشل بيتمسك بـ [[on]] زي أي exception عادي (درس async و await).
 
-Riverpod 3: [[StateProvider]] و [[StateNotifierProvider]] و [[ChangeNotifierProvider]] بقوا legacy واتنقلوا لـ [[package:flutter_riverpod/legacy.dart]]. هتلاقيهم في tutorials ومشاريع قديمة، والجديد Notifier.
-
-الاختبار من غير UI:
-[[final c = ProviderContainer(); c.read(cartProvider.notifier).add('Tea', 10); expect(c.read(cartTotalProvider), 10);]]`,
-            when: "state متشاركة بين شاشات وليها عمليات: سلة، فلاتر بحث، إعدادات المستخدم، مفضلة. ولو البيانات جاية من API: AsyncNotifier (الدرس الجاي).",
-            mistakes: R`[[state.add()]] أو [[state[0].qty++]] بدل ما تعمل state جديدة، فالـ UI مبيتحدثش. ومنطق التعديل مكتوب في onPressed بدل method في الـ Notifier، فيتكرر في كل زرار. و [[ref.watch(cartProvider.notifier)]] في build: الـ notifier نفسه مش بيتغير فمفيش فايدة، الـ watch على القيمة. وتنادي method في Notifier من جوه build بتاع widget فتعمل loop.`
+جوه Flutter: أي exception مش ممسوك في build أو في callback بيوصل لـ [[FlutterError.onError]]، وفي debug بيطلع الشاشة الحمرا. والأخطاء اللي بره الـ framework (Futures مش ممسوكة) بتروح لـ [[PlatformDispatcher.instance.onError]]. الاتنين دول اللي بتوصّل فيهم Sentry أو Crashlytics.`,
+            when: "أي كود بيكلم حاجة بره تطبيقك: شبكة، ملفات، parsing، تخزين. وعرّف exception خاص (ApiException، NotFoundException) لما الطبقة اللي فوق محتاجة تفرّق بين الحالات وتعرض رسالة مختلفة لكل واحدة.",
+            mistakes: R`[[catch (e) {}]] فاضي: الخطأ اختفى ومحدش هيعرف. على الأقل سجّله. وتمسك [[Error]] (زي [[on TypeError]]) عشان تخبّي bug بدل ما تصلّحه. و [[throw e]] بدل [[rethrow]] فيضيع الـ stack trace. وتعمل [[class MyError extends Error]] لحاجة متوقعة زي «المستخدم مش موجود»: دي Exception مش Error. وسؤال انترفيو: «إيه الفرق بين Exception و Error في Dart؟» Exception حالة متوقعة المفروض تتمسك، و Error غلطة برمجية المفروض تتصلّح، والـ linter والـ packages (زي Riverpod اللي مبيعملش retry لو الخطأ Error) بيعتمدوا على الفرق ده.`
           },
-          teach: R`## الكود ده بيعمل إيه؟
+          teach: R`## البرنامج بيعمل إيه؟
 
-سلة مشتريات: class واحد ([[CartNotifier]]) شايل لستة العناصر وفيه الدوال اللي بتعدّلها، و provider تاني بيحسب الإجمالي لوحده، وزرار بيعرض العدد والإجمالي ويضيف شاي لما تدوس. الناتج تحت من [[flutter test]] حقيقي في [[docker run --rm ghcr.io/cirruslabs/flutter:stable]] (Flutter 3.44، flutter_riverpod 3.4.3): زرارين [[CartButton]] في نفس الشاشة، ودوست على الأول بس.
-
----
-
-## ١. شكل العنصر: [[typedef]] و record
-
-~~~dart
-typedef CartItem = ({String name, double price, int qty});
-~~~
-
-- [[({String name, double price, int qty})]]: **record**، يعني قيمة فيها كذا حقل بأسامي، من غير ما تكتب class. بتقرا منه [[e.name]] و [[e.price]] و [[e.qty]].
-- [[typedef CartItem = ...]]: اسم مختصر للنوع ده، عشان متكتبش الأقواس كلها في كل حتة.
-- الـ records **immutable**: مفيش [[e.qty++]]. لو عايز كمية تانية تعمل record جديد. ودا بالظبط اللي Riverpod محتاجه.
-- و record بيتطبع كده: [[(name: Tea, price: 10.0, qty: 2)]].
+بيعرّف exception خاص اسمه [[ApiException]]، ودالة [[parseAge]] بتحوّل نص لسن وممكن ترمي نوعين أخطاء، ودالة في النص [[saveAge]] بتسجّل نوع واحد منهم وترميه تاني لفوق. و [[main]] بتجرّب ٣ نصوص وتمسك كل نوع لوحده. كل اللي تحت اتشغّل بـ [[dart run]] في [[docker run --rm dart:stable]] (Dart 3.13.5)، ومعاه تجارب «جرّب» كلها.
 
 ---
 
-## ٢. الـ Notifier والقيمة الأولية
+## ١. الـ exception بتاعك
 
 ~~~dart
-class CartNotifier extends Notifier<List<CartItem>> {
+class ApiException implements Exception {
+  ApiException(this.statusCode, this.message);
+  final int statusCode;
+  final String message;
   @override
-  List<CartItem> build() => [];
-~~~
-
-- [[Notifier<List<CartItem>>]]: class من Riverpod، والـ [[<...>]] نوع الـ state اللي شايله: لستة عناصر.
-- [[build()]]: Riverpod بيناديها أول مرة حد يطلب السلة، واللي بترجّعه هو الـ state الأولية: لستة فاضية.
-- جوه أي method في الـ class فيه [[state]]: تقرا منه القيمة الحالية، وتكتب فيه قيمة جديدة.
-
----
-
-## ٣. [[add]]: منتج جديد ولا موجود؟
-
-~~~dart
-  void add(String name, double price) {
-    final i = state.indexWhere((e) => e.name == name);
-~~~
-
-- [[indexWhere(...)]]: بيلف على اللستة ويرجّع رقم (index) أول عنصر الشرط بتاعه true. ولو مفيش: [[-1]].
-- [[(e) => e.name == name]]: الشرط: اسم العنصر هو نفس الاسم اللي جاي.
-
-### لو مش موجود ([[i == -1]])
-
-~~~dart
-      state = [...state, (name: name, price: price, qty: 1)];
-~~~
-
-- [[[ ... ]]]: لستة **جديدة**.
-- [[...state]]: الـ spread، «فك كل عناصر اللستة القديمة هنا».
-- وبعدها record جديد بكمية 1.
-- [[state = ...]]: هنا السحر: Riverpod بيقارن اللستة الجديدة بالقديمة، ولقاها object تاني، فبيبلّغ كل اللي عاملين watch.
-
-### لو موجود
-
-~~~dart
-      state = [
-        for (final (j, e) in state.indexed)
-          j == i ? (name: e.name, price: e.price, qty: e.qty + 1) : e,
-      ];
-~~~
-
-من جوه لبرة:
-
-1. [[state.indexed]]: بيحوّل اللستة لأزواج [[(index, عنصر)]]: [[(0, شاي)]] و [[(1, لبن)]].
-2. [[final (j, e)]]: pattern بيفك كل زوج: j الرقم، و e العنصر.
-3. [[for (...) ...]] جوه [[[ ]]]: collection for، بتبني لستة عنصر عنصر.
-4. [[j == i ? ... : e]]: لو ده العنصر اللي بندوّر عليه اعمل record جديد بكمية +1، غير كده حط العنصر زي ما هو.
-
-النتيجة لستة جديدة فيها نفس العناصر وواحد بس اتغير.
-
-### [[clear]]
-
-~~~dart
-  void clear() => state = [];
+  String toString() => 'ApiException($statusCode): $message';
 }
 ~~~
 
-سطر واحد: state بقت لستة فاضية جديدة.
+- [[class ApiException]]: نوع جديد عادي (درس class).
+- [[implements Exception]]: [[Exception]] في Dart interface فاضي، مفيهوش methods لازم تكتبها. إنك تعمله implements معناه «النوع ده حالة متوقعة ممكن تتمسك»، ودا اللي بيفرّقه عن [[Error]] (غلطة في الكود).
+- [[ApiException(this.statusCode, this.message);]]: constructor بيحط القيمتين في الـ fields على طول.
+- [[statusCode]] رقم زي 404 أو 422 (422 = Unprocessable Content: البيانات وصلت بس قيمتها مش مقبولة)، و [[message]] النص.
+- [[@override String toString()]]: [[print]] بتنادي [[toString]]. من غيرها كان هيطبع [[Instance of 'ApiException']].
+
+جربت [[print(1 is Exception)]] و [[print(FormatException('x') is Exception)]] و [[print(RangeError('x') is Error)]]:
+
+~~~text الناتج
+false
+true
+true
+~~~
+
+يعني [[FormatException]] من نوع Exception، و [[RangeError]] من نوع Error.
 
 ---
 
-## ٤. الـ provider: [[NotifierProvider]]
+## ٢. دالة بترمي: [[parseAge]]
 
 ~~~dart
-final cartProvider = NotifierProvider<CartNotifier, List<CartItem>>(CartNotifier.new);
-~~~
-
-- نوعين بين [[< >]]: الـ class اللي فيه المنطق، ونوع الـ state.
-- [[CartNotifier.new]]: tear-off للـ constructor، يعني «دي الطريقة اللي تعمل بيها CartNotifier». Riverpod بيعمله بنفسه أول مرة حد يطلبه.
-
-جربت الـ Notifier من غير أي UI بـ [[ProviderContainer]]: [[add('Tea', 10)]] مرتين و [[add('Milk', 15.5)]]:
-
-~~~text flutter test
-state: [(name: Tea, price: 10.0, qty: 2), (name: Milk, price: 15.5, qty: 1)]
-total: 35.5
-~~~
-
-الشاي اتجمع في عنصر واحد كميته 2 بدل ما يتكرر.
-
----
-
-## ٥. provider مشتق: الإجمالي
-
-~~~dart
-final cartTotalProvider = Provider<double>((ref) {
-  return ref.watch(cartProvider).fold(0.0, (sum, e) => sum + e.price * e.qty);
-});
-~~~
-
-- [[ref.watch(cartProvider)]] جوه provider: «أنا معتمد على السلة». أي تغيير في السلة بيخلي الإجمالي يتحسب تاني لوحده.
-- [[fold(0.0, (sum, e) => ...)]]: بيلف على اللستة شايل مجموع بيبدأ من [[0.0]]، ومع كل عنصر بيرجّع المجموع الجديد: [[sum + سعر × كمية]]. هنا: [[10 × 2 + 15.5 × 1 = 35.5]].
-- [[0.0]] مش [[0]]: عشان نوع المجموع يبقى double من الأول.
-
----
-
-## ٦. الزرار: [[select]] و [[.notifier]]
-
-~~~dart
-    final count = ref.watch(cartProvider.select((items) => items.length));
-    final total = ref.watch(cartTotalProvider);
-    return TextButton(
-      onPressed: () => ref.read(cartProvider.notifier).add('Tea', 10),
-      child: Text('$count items • $__{total.toStringAsFixed(2)} EGP'),
-    );
-~~~
-
-- [[cartProvider.select((items) => items.length)]]: اشترك في **العدد بس**. الـ widget يعمل rebuild لو العدد اتغير، مش لو كمية عنصر زادت.
-- [[ref.read(cartProvider.notifier)]]: [[.notifier]] بيرجّع الـ CartNotifier نفسه عشان تنادي [[add]]. و [[ref.read]] لأننا جوه callback.
-- [[toStringAsFixed(2)]]: الرقم كنص برقمين بعد العلامة: [[20.00]].
-
-### الناتج
-
-~~~text flutter test (زرارين، والضغط على الأول بس)
-start: a="0 items • 0.00 EGP" b="0 items • 0.00 EGP" selectBuilds=1
-tap1:  a="1 items • 10.00 EGP" b="1 items • 10.00 EGP" selectBuilds=2
-tap2:  a="1 items • 20.00 EGP" b="1 items • 20.00 EGP" selectBuilds=2
-~~~
-
-- الزرار التاني (b) اتحدث مع إن محدش داس عليه: الاتنين بيقروا نفس الـ provider.
-- بعد الضغطة التانية: العدد لسه 1 (منتج واحد كميته 2) والإجمالي 20.
-- [[selectBuilds]]: widget تالت عامل watch على العدد بس بـ select. في الضغطة الأولى اتبني تاني (العدد 0 بقى 1)، وفي التانية **لأ** (العدد فضل 1).
-
----
-
-## ٧. ليه [[state.add]] غلط؟
-
-ضيفت method بتعمل [[state.add(...)]] بدل لستة جديدة، وناديتها:
-
-~~~text flutter test
-after addMutating: text="0 items • 0.00 EGP" listLen=1 notified=0
-~~~
-
-اللستة فعلًا بقى فيها عنصر ([[listLen=1]])، بس محدش اتبلّغ ([[notified=0]]) والزرار لسه بيقول 0. لأن [[state]] لسه نفس الـ object، فـ Riverpod شايف إن مفيش تغيير.
-
----
-
-## ٨. الـ solCode: [[remove]]
-
-~~~dart
-void remove(String name) {
-  state = [
-    for (final e in state)
-      if (e.name != name) e
-      else if (e.qty > 1) (name: e.name, price: e.price, qty: e.qty - 1),
-  ];
+int parseAge(String raw) {
+  final age = int.parse(raw);
+  if (age < 0) throw ApiException(422, 'age must be positive');
+  return age;
 }
 ~~~
 
-- [[for]] على كل عنصر، و collection [[if]] بيقرر يحط إيه في اللستة الجديدة:
-  - مش العنصر ده: حطه زي ما هو.
-  - هو العنصر وكميته أكتر من 1: حط نسخة بكمية أقل.
-  - هو العنصر وكميته 1: **مفيش** فرع، فالعنصر مش بيتحط، يعني اتشال.
+فيها مكانين ممكن يرموا:
 
-~~~text flutter test (بعد شاي ×2 ولبن ×1)
-remove Tea: [(name: Tea, price: 10.0, qty: 1), (name: Milk, price: 15.5, qty: 1)]
-remove Tea again: [(name: Milk, price: 15.5, qty: 1)]
-clear: [] total=0.0
-~~~
-
----
-
-## الخلاصة
-
-| الحاجة | بتعمل إيه |
-|---|---|
-| [[Notifier<T>]] + [[build()]] | الـ state الأولية والمنطق في class واحد |
-| [[state = جديد]] | الطريقة الوحيدة اللي بتبلّغ الـ widgets |
-| [[NotifierProvider<N, T>(N.new)]] | تعريف الـ provider |
-| [[ref.watch(p.select(f))]] | rebuild لما جزء معين يتغير بس |
-| [[ref.read(p.notifier).method()]] | نادي دالة في الـ Notifier من callback |
-| provider بيعمل [[ref.watch]] لـ provider | قيمة مشتقة بتتحسب لوحدها |
-
-> متعدّلش الـ state من جوه ([[add]] و [[qty++]]): اعمل لستة جديدة وحطها في [[state]].`,
-          lines: [
-            "مكتبة Material.",
-            "Riverpod.",
-            "record type لعنصر السلة.",
-            "Notifier بيشيل [[List<CartItem>]].",
-            "بتعيد تعريف build.",
-            "القيمة الأولية: سلة فاضية.",
-            "إضافة منتج.",
-            "موجود قبل كده؟",
-            "لأ...",
-            "...list جديدة فيها القديم والجديد.",
-            "موجود...",
-            "...list جديدة برضه.",
-            "[[indexed]] بيدّي (index, عنصر).",
-            "العنصر ده يزيد كميته، والباقي زي ما هو.",
-            "قفلة الـ list.",
-            "قفلة الـ if.",
-            "قفلة add.",
-            "تفضية.",
-            "قفلة الـ class.",
-            "الـ provider: بيعمل CartNotifier ويشيل الـ state.",
-            "provider مشتق: الإجمالي.",
-            "بيتحسب من السلة، ويتحسب تاني لوحده لما تتغير.",
-            "قفلة.",
-            "widget بيقرا ويكتب.",
-            "constructor.",
-            "بتعيد تعريف build.",
-            "build.",
-            "[[select]]: rebuild لو العدد اتغير بس.",
-            "الإجمالي.",
-            "الزرار.",
-            "[[ref.read]] في callback، و [[.notifier]] عشان تنادي method.",
-            "النص.",
-            "قفلة الزرار.",
-            "قفلة build.",
-            "قفلة الـ class."
-          ],
-          sol: R`الشاشتين بيتحدثوا مع بعض: الاتنين عاملين watch على نفس الـ provider في نفس الـ ProviderScope. بعد ضغطتين: [[1 items • 20.00 EGP]] (منتج واحد كميته 2، فالعدد 1 والإجمالي 20).
-
-remove: لو الكمية 1 شيل العنصر، غير كده قلّل. ومع [[state.add(...)]]: الزرار مش بيتحدث خالص (الـ list اتعدلت من جوه بس محدش اتبلّغ)، ولو في مكان تاني حصل rebuild لأي سبب هتلاقي الرقم «نط» فجأة. ودا نفس سلوك setState من غير setState.`,
-          solCode: R`void remove(String name) {
-  state = [
-    for (final e in state)
-      if (e.name != name) e
-      else if (e.qty > 1) (name: e.name, price: e.price, qty: e.qty - 1),
-  ];
-}`
-        },
-        {
-          cmd: "AsyncNotifier",
-          title: "بيانات من API ليها loading و error و data ويتحدثوا بعد الإضافة",
-          desc: R`[[AsyncNotifier<T>]] زي Notifier بس [[build()]] بتاعته async: بترجّع [[Future<T>]]، والـ state بتاعه [[AsyncValue<T>]] اللي هو يا [[AsyncLoading]] يا [[AsyncData]] يا [[AsyncError]]. Riverpod بيدير الحالات دي لوحده: أول ما حد يعمل watch يبدأ التحميل، ولو فشل يحط AsyncError.
-
-والـ methods ([[add]] مثلًا) بتكلم الـ API وبعدين تحدّث [[state]] بالنتيجة. والـ repository بيتحقن كـ provider، فتبدّله بـ fake في الاختبارات.`,
-          example: R`import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-class Todo {
-  const Todo(this.id, this.title);
-  final int id;
-  final String title;
-}
-
-abstract interface class TodoRepo {
-  Future<List<Todo>> fetchAll();
-  Future<Todo> create(String title);
-}
-
-final todoRepoProvider = Provider<TodoRepo>((ref) => throw UnimplementedError('override in main'));
-
-final todosProvider = AsyncNotifierProvider<TodosNotifier, List<Todo>>(TodosNotifier.new);
-
-class TodosNotifier extends AsyncNotifier<List<Todo>> {
-  @override
-  Future<List<Todo>> build() => ref.watch(todoRepoProvider).fetchAll();
-
-  Future<void> add(String title) async {
-    final created = await ref.read(todoRepoProvider).create(title);
-    if (!ref.mounted) return;
-    state = AsyncData([...?state.value, created]);
-  }
-}`,
-          try: "اعمل [[HttpTodoRepo implements TodoRepo]] بيكلم الـ API (بـ http و fromJson من الدروس اللي فاتت)، واعمل override في main: [[ProviderScope(overrides: [todoRepoProvider.overrideWithValue(HttpTodoRepo())])]]. وبعدين اعمل [[FakeTodoRepo]] بيرجّع لستة ثابتة بعد ثانية، وبدّله: الشاشة اشتغلت من غير أي تعديل؟",
-          flag: "script",
-          deep: {
-            why: "FutureBuilder بيحل الحالات التلاتة لشاشة واحدة. بس في تطبيق حقيقي اللستة دي متشاركة: شاشة الإضافة محتاجة تحدّثها، والـ badge محتاج العدد، و pull-to-refresh محتاج يعيد التحميل، والبيانات لازم تفضل موجودة لو رجعت للشاشة. AsyncNotifier بيعمل كل ده، وبيفصل منطق البيانات عن الـ widgets.",
-            how: R`[[build()]] بتتنادى أول مرة حد يعمل watch. ولأنها بتعمل [[ref.watch(todoRepoProvider)]]، لو الـ repo اتغير (مستخدم تاني عمل login مثلًا) الـ build يتنادى تاني لوحده.
-
-[[AsyncValue]] sealed class في Riverpod 3، فتعمل عليه switch exhaustive (الدرس الجاي). وفيه [[value]] (القيمة أو null)، و [[error]]، و [[isLoading]]، و [[hasValue]]، و [[requireValue]] (بيرمي لو مفيش). ولما تعمل refresh، الحالة بتبقى loading بس [[value]] لسه فيها البيانات القديمة، فتقدر تعرضها ومعاها loader صغير بدل ما تفضّي الشاشة.
-
-[[add]]: بنكلم السيرفر الأول، ولو نجح نضيف النتيجة للـ state الموجودة ([[...?state.value]]، علامة ? عشان لو لسه بيحمّل). ولو السيرفر فشل، الـ exception بيطلع من add للـ widget اللي نادى، فيعرض SnackBar، والـ state القديمة سليمة. بديل: [[state = await AsyncValue.guard(() async {...})]] بيحوّل أي exception لـ AsyncError، بس ساعتها اللستة كلها بتختفي وتظهر شاشة خطأ عشان إضافة فشلت، ودا نادرًا اللي عايزه.
-
-[[ref.mounted]] (جديد في Riverpod 3): بعد await ممكن يكون الـ provider اتعمله dispose (autoDispose والشاشة اتقفلت)، فتحديث state ساعتها غلط. زي [[mounted]] في State.
-
-الـ retry التلقائي في Riverpod 3: provider فشل بـ Exception بيتعاد لوحده (بتأخير بيبدأ ٢٠٠ms ويتضاعف لحد ٦.٤ ثانية، لحد ١٠ مرات). لو الخطأ [[Error]] (bug في الكود) مش بيعيد. وتتحكم فيه بـ [[retry:]] على الـ provider أو على ProviderScope، وتقفله بدالة بترجّع null. ودا سبب تاني إن فرق Exception و Error مهم.
-
-[[ref.invalidate(todosProvider)]] بيعلّم القيمة إنها قديمة ويعيد build (والقيمة أو الخطأ القديم بيفضلوا موجودين لحد ما النتيجة الجديدة توصل). و [[ref.refresh(todosProvider.future)]] نفس الكلام ويرجّع Future تستنى عليه (مناسب لـ [[RefreshIndicator]]).
-
-وللـ parameters (todo واحد بالـ id): [[AsyncNotifierProvider.family]] والـ id بيتبعت للـ constructor: [[ref.watch(todoProvider(42))]].
-
-[[throw UnimplementedError(...)]] في todoRepoProvider: pattern مشهور معناه «الـ provider ده لازم يتعمله override». لو نسيت، الخطأ واضح من أول تشغيل.`,
-            when: "أي بيانات جاية من API وأكتر من مكان محتاجها أو بتتعدل: لستة المنتجات، والطلبات، والبروفايل. ولقراية بسيطة من غير methods: [[FutureProvider]] كفاية ([[final p = FutureProvider((ref) => repo.fetch());]]).",
-            mistakes: R`[[state = AsyncData([...state.value!, created])]] و [[!]] يضرب لو لسه بيحمّل. وتنسى [[ref.mounted]] بعد await فيطلع error من Riverpod في الـ console. وتحط [[AsyncValue.guard]] على كل عملية فأي فشل صغير يمسح الشاشة. وتعمل [[ref.watch]] جوه [[add]] بدل [[ref.read]]: في methods الـ Notifier استخدم read.`
-          },
-          teach: R`## الكود ده بيعمل إيه؟
-
-لستة مهام جاية من API: موديل [[Todo]]، و «عقد» ([[TodoRepo]]) بيقول أي مصدر بيانات لازم يعرف يعمل إيه، و provider للـ repo، و [[AsyncNotifier]] بيحمّل اللستة ويضيف عليها. الـ widget مش في المثال (هو الدرس الجاي). الناتج تحت من [[flutter test]] حقيقي في [[docker run --rm ghcr.io/cirruslabs/flutter:stable]] (Flutter 3.44، flutter_riverpod 3.4.3)، بـ [[ProviderContainer]] بيطبع كل حالة بتعدّي على الـ provider، ومرة مع API وهمي بـ Node شغال على الجهاز.
-
----
-
-## ١. الموديل
-
-~~~dart
-class Todo {
-  const Todo(this.id, this.title);
-  final int id;
-  final String title;
-}
-~~~
-
-- [[const Todo(this.id, this.title)]]: constructor بيحط الـ arguments في الحقول على طول، و [[const]] عشان تقدر تعمل [[const Todo(1, 'buy milk')]].
-- [[final]]: الحقول متتغيرش بعد ما الـ object يتعمل.
-
----
-
-## ٢. العقد: [[abstract interface class]]
-
-~~~dart
-abstract interface class TodoRepo {
-  Future<List<Todo>> fetchAll();
-  Future<Todo> create(String title);
-}
-~~~
-
-- [[abstract]]: مينفعش تعمل منه object مباشرة، والدوال من غير جسم ([[;]] بدل [[{ }]]).
-- [[interface]]: اللي هيستخدمه لازم يعمل [[implements TodoRepo]] ويكتب الدالتين بنفسه.
-- [[Future<List<Todo>>]]: «لستة مهام هتوصل بعدين» (شبكة أو ديسك).
-
-الفايدة: [[HttpTodoRepo]] بيكلم السيرفر، و [[FakeTodoRepo]] بيرجّع بيانات ثابتة، والاتنين «شكلهم» واحد، فالباقي مش فارق معاه مين فيهم.
-
----
-
-## ٣. provider لازم يتعمله override
-
-~~~dart
-final todoRepoProvider = Provider<TodoRepo>((ref) => throw UnimplementedError('override in main'));
-~~~
-
-- الدالة مش بترجّع repo، بترمي [[UnimplementedError]]. يعني «انت لازم تبدّلني».
-- في main بتعمل [[overrideWithValue(HttpTodoRepo())]]، وفي الاختبار [[overrideWithValue(FakeTodoRepo())]].
-
-لو نسيت، جربت:
-
-~~~text flutter test (من غير override)
-no override: ProviderException: Tried to use a provider that is in error state.
-A provider threw the following exception:
-UnimplementedError: override in main
-~~~
-
-الرسالة اللي كتبتها بنفسك ظاهرة، فالسبب واضح من أول تشغيل.
-
----
-
-## ٤. الـ provider والـ AsyncNotifier
-
-~~~dart
-final todosProvider = AsyncNotifierProvider<TodosNotifier, List<Todo>>(TodosNotifier.new);
-
-class TodosNotifier extends AsyncNotifier<List<Todo>> {
-  @override
-  Future<List<Todo>> build() => ref.watch(todoRepoProvider).fetchAll();
-~~~
-
-- [[AsyncNotifierProvider<TodosNotifier, List<Todo>>]]: زي NotifierProvider، بس الـ state اللي بره هيبقى [[AsyncValue<List<Todo>>]] مش اللستة نفسها.
-- [[build()]] هنا بترجّع **Future**. Riverpod بيحط الحالة loading، ويستنى الـ Future، ولو خلص يحط data، ولو رمى يحط error.
-- [[ref.watch(todoRepoProvider)]]: هات الـ repo واعتمد عليه. لو الـ repo اتغير، build يتنادى تاني.
-
-### الحالات اللي حصلت فعلًا
-
-مع [[FakeTodoRepo]] (من الـ solCode، بيستنى ثانية):
-
-~~~text flutter test
-  -> AsyncLoading<List<Todo>> isLoading=true value=null error=null
-  -> AsyncData<List<Todo>> isLoading=false value=[1:buy milk, 2:call mom] error=null
-loaded after 1002ms
-~~~
-
-- الأول [[AsyncLoading]]: لسه مفيش قيمة ([[value=null]]).
-- بعد ثانية [[AsyncData]] باللستة.
-- [[ref.read(todosProvider.future)]] (اللي استنيت بيه) بيرجّع Future بيخلص لما البيانات توصل.
-
----
-
-## ٥. [[add]]: السيرفر الأول وبعدين الـ state
-
-~~~dart
-  Future<void> add(String title) async {
-    final created = await ref.read(todoRepoProvider).create(title);
-    if (!ref.mounted) return;
-    state = AsyncData([...?state.value, created]);
-  }
-}
-~~~
-
-- [[ref.read]] مش watch: احنا جوه method مش build، عايزين القيمة مرة.
-- [[await ... create(title)]]: ابعت للسيرفر واستنى الـ Todo اللي اتعمل (بالـ id بتاعه). لو السيرفر فشل، الـ exception بيطلع من [[add]] للي ناداها، والسطر اللي بعده مش بيتنفذ، فالـ state القديمة سليمة.
-- [[ref.mounted]]: بعد الـ await ممكن الـ provider يكون اتقفل (الشاشة اتقفلت). لو كده، اخرج من غير ما تلمس state.
-- [[state.value]]: اللستة الحالية أو null لو لسه بيحمّل.
-- [[...?]]: spread «null-aware»: لو null متحطش حاجة، غير كده فك العناصر. فلو لسه مفيش لستة، الجديدة هتبقى فيها العنصر ده بس.
-- [[AsyncData([...])]]: حالة data جديدة باللستة الجديدة.
-
-~~~text flutter test (بعد add('pay rent'))
-  -> AsyncData<List<Todo>> isLoading=false value=[1:buy milk, 2:call mom, 3:pay rent] error=null
-~~~
-
-مفيش loading في النص: اللستة زادت عنصر على طول.
-
----
-
-## ٦. refresh: البيانات القديمة بتفضل
-
-عملت [[ref.refresh(todosProvider.future)]]:
-
-~~~text flutter test
-  -> AsyncData<List<Todo>> isLoading=true value=[1:buy milk, 2:call mom, 3:pay rent] error=null
-  -> AsyncData<List<Todo>> isLoading=false value=[1:buy milk, 2:call mom] error=null
-~~~
-
-- أثناء الـ refresh: [[isLoading=true]] بس [[value]] لسه فيها اللستة القديمة. فالشاشة تقدر تفضل تعرضها (الدرس الجاي بيستغل ده).
-- بعد الـ refresh: «pay rent» اختفت، لأن [[create]] في FakeTodoRepo بيرجّع Todo بس من غير ما يضيفه لـ [[_items]]. يعني الـ fake ده مش بيحفظ. مع سيرفر حقيقي العنصر كان هيرجع.
-
----
-
-## ٧. التجربة: [[HttpTodoRepo]] مع سيرفر حقيقي
-
-كتبت [[HttpTodoRepo implements TodoRepo]]: [[fetchAll]] بيعمل [[GET /todos]] ويحوّل كل JSON لـ Todo، و [[create]] بيعمل [[POST /todos]]. وشغّلت API وهمي بـ Node على البورت 5995، والاختبار بـ [[--dart-define=API_URL=http://host.docker.internal:5995]] ([[host.docker.internal]] هو الجهاز من جوه Docker، زي [[10.0.2.2]] من الـ emulator):
-
-~~~text flutter test
-http: [1:buy milk, 2:call mom]
-http after add: AsyncData<List<Todo>> isLoading=false value=[1:buy milk, 2:call mom, 3:from flutter] error=null
-~~~
-
-~~~text log السيرفر
-GET /todos auth=- ct=- body=
-POST /todos auth=- ct=application/json body={"title":"from flutter"}
-~~~
-
-نفس [[TodosNotifier]] بالظبط، اتغير بس الـ override.
-
----
-
-## ٨. لو التحميل فشل: AsyncError و retry
-
-repo بيرمي [[Exception('no internet')]] دايمًا، مع قفل الـ retry ([[retry: (n, e) => null]]):
-
-~~~text flutter test
-build failed: AsyncError<List<Todo>> isLoading=false value=null error=Exception: no internet
-~~~
-
-ومن غير ما أقفله (الافتراضي في Riverpod 3)، عدّيت كام مرة الـ repo اتنادى في 1.6 ثانية:
-
-~~~text flutter test
-calls after 1.6s with default retry: 4
-~~~
-
-ليه 4؟ أول محاولة عند 0، وبعدها retry بعد 200ms (عند 200)، ثم بعد 400ms (عند 600)، ثم بعد 800ms (عند 1400). التأخير بيتضاعف لحد 6.4 ثانية، وبحد أقصى 10 مرات، وده مكتوب في [[ProviderContainer.defaultRetry]] في كود Riverpod نفسه. ولو اللي اترمى [[Error]] (bug) مش [[Exception]]، مفيش retry.
-
----
-
-## ٩. الـ solCode: [[FakeTodoRepo]] و main
-
-~~~dart
-class FakeTodoRepo implements TodoRepo {
-  final _items = [const Todo(1, 'buy milk'), const Todo(2, 'call mom')];
-  @override
-  Future<List<Todo>> fetchAll() async {
-    await Future.delayed(const Duration(seconds: 1));
-    return _items;
-  }
-  @override
-  Future<Todo> create(String title) async => Todo(_items.length + 1, title);
-}
-~~~
-
-- [[implements TodoRepo]]: لازم يكتب الدالتين، و [[@override]] على كل واحدة.
-- [[_items]]: الـ [[_]] في أول الاسم معناها private للملف ده.
-- [[Future.delayed(...)]]: بيمثّل وقت الشبكة عشان تشوف الـ loader.
-- [[async =>]]: دالة async بسطر واحد، الـ Todo بيتلف في Future لوحده.
-
-~~~dart
-void main() {
-  runApp(ProviderScope(
-    overrides: [todoRepoProvider.overrideWithValue(FakeTodoRepo())],
-    child: const MaterialApp(home: Scaffold(body: TodosScreen())),
-  ));
-}
-~~~
-
-الـ ProviderScope من غير [[const]] لأن [[FakeTodoRepo()]] مش const. والـ [[TodosScreen]] من الدرس الجاي.
-
----
-
-## الخلاصة
-
-| الحاجة | بتعمل إيه |
-|---|---|
-| [[AsyncNotifier<T>]] + [[Future<T> build()]] | تحميل async والحالات بتتدار لوحدها |
-| [[AsyncValue]] | [[AsyncLoading]] أو [[AsyncData]] أو [[AsyncError]]، وفيه [[value]] و [[error]] و [[isLoading]] |
-| repo كـ provider بـ [[throw UnimplementedError]] | لازم override: حقيقي في main و fake في الاختبار |
-| [[ref.mounted]] بعد await | متحدّثش state لـ provider اتقفل |
-| [[...?state.value]] | ضيف على الموجود حتى لو لسه null |
-| retry تلقائي | 200ms ويتضاعف لحد 6.4s، 10 مرات، للـ Exception بس |
-
-> الـ widget مش عارف البيانات جاية منين. بدّل الـ repo بـ override، والشاشة والـ Notifier زي ما هم.`,
-          lines: [
-            "Riverpod.",
-            "موديل بسيط (في مشروعك: الموديل بتاع fromJson أو freezed).",
-            "constructor.",
-            "id.",
-            "العنوان.",
-            "قفلة.",
-            "العقد: أي repository لازم يعرف يجيب ويضيف.",
-            "هات الكل.",
-            "ضيف واحد.",
-            "قفلة.",
-            "provider للـ repo، ولازم يتعمله override (حقيقي في main، و fake في الاختبارات).",
-            "الـ provider بتاع اللستة: الـ state بتاعه [[AsyncValue<List<Todo>>]].",
-            "AsyncNotifier.",
-            "بتعيد تعريف build.",
-            "async: Riverpod بيحط loading لحد ما الـ Future يخلص، وبعدين data أو error.",
-            "method للإضافة.",
-            "كلّم السيرفر. لو فشل الـ exception يطلع للي نادى.",
-            "الـ provider ممكن يكون اتقفل وانت مستني.",
-            "ضيف للموجود (ولو لسه مفيش قيمة ابدأ من فاضي).",
-            "قفلة add.",
-            "قفلة الـ class."
-          ],
-          sol: R`HttpTodoRepo بيعمل [[http.get]] ويحوّل بـ [[Todo.fromJson]]، و create بيعمل POST ويحوّل الرد. بعد الـ override الشاشة (الدرس الجاي) بتعرض loader ثم اللستة الحقيقية.
-
-ولما تبدّل بـ FakeTodoRepo: نفس الشاشة بالظبط بتشتغل بالبيانات الثابتة، من غير ما تعدّل TodosNotifier ولا الـ widget. دا الهدف من الـ repository كـ provider: الـ UI مش عارف البيانات جاية منين.
-
-الغلط الشائع: تكتب [[HttpTodoRepo()]] مباشرة جوه build بتاع الـ Notifier بدل ما تقراه من provider، فمش هتعرف تبدّله في الاختبار.`,
-          solCode: R`class FakeTodoRepo implements TodoRepo {
-  final _items = [const Todo(1, 'buy milk'), const Todo(2, 'call mom')];
-  @override
-  Future<List<Todo>> fetchAll() async {
-    await Future.delayed(const Duration(seconds: 1));
-    return _items;
-  }
-  @override
-  Future<Todo> create(String title) async => Todo(_items.length + 1, title);
-}
-
-void main() {
-  runApp(ProviderScope(
-    overrides: [todoRepoProvider.overrideWithValue(FakeTodoRepo())],
-    child: const MaterialApp(home: Scaffold(body: TodosScreen())),
-  ));
-}`
-        },
-        {
-          cmd: "loading و error و empty",
-          title: "الشاشة ليها ٤ حالات مش واحدة، وكل واحدة ليها شكل",
-          desc: R`أي شاشة بتعرض بيانات من الشبكة ليها ٤ حالات: بيحمّل، وحصل خطأ (ومعاه زرار «حاول تاني»)، وجه فاضي (ومعاه رسالة تشرح)، وفيه بيانات. التطبيقات الضعيفة بتعمل الأخيرة بس، والمستخدم يشوف شاشة بيضا ومش عارف ليه.
-
-مع Riverpod 3، [[AsyncValue]] sealed، فتعمل switch بـ patterns: [[AsyncValue(:final value?)]] فيه بيانات، و [[AsyncValue(:final error?)]] فيه خطأ، والباقي loading. و [[RefreshIndicator]] لـ pull-to-refresh.`,
-          example: R`// نفس ملف الدرس اللي فات: todosProvider و imports بتوع material و flutter_riverpod
-class TodosScreen extends ConsumerWidget {
-  const TodosScreen({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final todos = ref.watch(todosProvider);
-    return RefreshIndicator(
-      onRefresh: () => ref.refresh(todosProvider.future),
-      child: switch (todos) {
-        AsyncValue(:final value?) when value.isEmpty => const EmptyView(),
-        AsyncValue(:final value?) => ListView.builder(
-            itemCount: value.length,
-            itemBuilder: (context, i) => ListTile(title: Text(value[i].title)),
-          ),
-        AsyncValue(:final error?) => ErrorView(
-            message: '$error',
-            onRetry: () => ref.invalidate(todosProvider),
-          ),
-        _ => const Center(child: CircularProgressIndicator()),
-      },
-    );
-  }
-}
-// EmptyView و ErrorView: ListView فيها أيقونة ونص (وزرار retry في ErrorView).
-// لازم تبقى ListView مش Column عشان الـ pull-to-refresh يشتغل وهي فاضية.`,
-          try: "اعمل FakeTodoRepo فيه flag اسمه [[fail]]. جرّب ٣ مرات: لستة فاضية، و fail = true، ولستة فيها عناصر. وفي حالة الخطأ غيّر fail لـ false (من زرار debug مثلًا) ودوس «حاول تاني». وبعدين اعمل pull-to-refresh وانت عندك بيانات: البيانات بتختفي؟",
-          flag: "script",
-          deep: {
-            why: "على الموبايل النت بيقطع طول الوقت (مترو، أسانسير، باقة خلصت). الشاشة لازم تقول للمستخدم إيه اللي حصل وإيه اللي يعمله: «مفيش اتصال، حاول تاني» أحسن من loader بيلف للأبد. و«مفيش طلبات لسه، اطلب أول حاجة» أحسن من شاشة فاضية بيفتكرها bug.",
-            how: R`ترتيب الـ cases مقصود:
-١. فيه بيانات وفاضية: EmptyView.
-٢. فيه بيانات: اللستة. ودي بتيجي قبل الخطأ عشان لو refresh فشل والبيانات القديمة موجودة، نفضل نعرضها (وتقدر تعرض SnackBar بالخطأ بـ [[ref.listen]]).
-٣. خطأ ومفيش بيانات: ErrorView.
-٤. أي حاجة تانية: أول تحميل.
-
-[[:final value?]] الـ [[?]] pattern null-check: يطابق لو value مش null بس، ويدّيك value من غير ?. و [[when value.isEmpty]] شرط إضافي.
-
-[[ref.refresh(todosProvider.future)]] بيعيد build ويرجّع Future بيخلص لما البيانات الجديدة توصل، و RefreshIndicator بيفضّل الـ spinner لحد ما يخلص. أثناء الـ refresh الـ AsyncValue loading بس [[value]] لسه موجودة، فالـ case التاني بيطابق والبيانات مش بتختفي. ولو عايز تعرف إنه بيعمل refresh: [[todos.isRefreshing]].
-
-[[ref.invalidate]] في زرار retry: بيعيد build فورًا من غير ما يستنى الـ retry التلقائي. وفي Riverpod 3 الحالة أثناء التحميل بتفضل شايلة الخطأ القديم ([[isLoading]] و [[isRefreshing]] بـ true)، فالـ case بتاع الخطأ لسه بيطابق والـ ErrorView بيفضل ظاهر لحد ما النتيجة توصل. لو عايز spinner في الزرار نفسه أثناء المحاولة، اسأل [[todos.isLoading]] جوه ErrorView.
-
-الـ RefreshIndicator محتاج ابن scrollable. لو EmptyView كانت Column، السحب مش هيشتغل وهي فاضية. عشان كده ListView حتى لو فيها عنصرين.
-
-رسالة الخطأ: [[$error]] بيعرض النص الخام للـ exception، كويس للتطوير. في الإنتاج اعمل دالة بتحوّل [[ClientException]] لـ «مفيش اتصال بالنت» و [[ApiException]] بـ 401 لـ «سجّل دخول تاني»، وغيره «حصل خطأ، حاول تاني».
-
-البديل الأقدم: [[todos.when(data: ..., error: ..., loading: ...)]] لسه موجود، والـ switch بقى الأوضح مع sealed.
-
-وبدل spinner: skeleton loaders (مستطيلات رمادي بشكل المحتوى) بتحسّس المستخدم إن التحميل أسرع. package [[skeletonizer]] مشهورة ليها.`,
-            when: "كل شاشة بتعرض بيانات من الشبكة أو قاعدة البيانات. واعمل EmptyView و ErrorView widgets مشتركة في التطبيق كله عشان الشكل يبقى واحد.",
-            mistakes: R`تعرض loader بس، والخطأ مبيظهرش فيفضل يلف. وتنسى حالة الفاضي. وتحط الخطأ قبل البيانات في الـ switch فأي refresh فاشل يمسح الشاشة. و RefreshIndicator حوالين Column أو Center فالسحب مش شغال في حالة الفاضي أو الخطأ. وتعرض [[Exception: SocketException: Failed host lookup...]] للمستخدم.`
-          },
-          teach: R`## الكود ده بيعمل إيه؟
-
-شاشة بتقرا [[todosProvider]] من الدرس اللي فات، وبـ [[switch]] واحد بتختار تعرض إيه من ٤ حاجات: رسالة «فاضي»، أو اللستة، أو شاشة خطأ بزرار «حاول تاني»، أو spinner. وكلها جوه [[RefreshIndicator]] عشان السحب لتحت يعيد التحميل. اتجرّب في مشروع حقيقي جوه [[docker run --rm ghcr.io/cirruslabs/flutter:stable]] (Flutter 3.44، flutter_riverpod 3.4.3): widget tests بتطبع اللي ظاهر في كل لحظة، والتطبيق نفسه بـ [[flutter run -d web-server]] واتصوّر بـ Chrome headless.
-
----
-
-## ١. القراية
-
-~~~dart
-class TodosScreen extends ConsumerWidget {
-  const TodosScreen({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final todos = ref.watch(todosProvider);
-~~~
-
-- [[ConsumerWidget]] و [[WidgetRef ref]]: زي درس ProviderScope.
-- [[todos]] نوعه [[AsyncValue<List<Todo>>]]: مش اللستة، دي «الحالة» اللي جواها اللستة أو الخطأ أو ولا حاجة.
-- [[ref.watch]]: كل ما الحالة تتغير (loading ← data مثلًا) build يتنادى تاني.
-
----
-
-## ٢. [[RefreshIndicator]]: اسحب لتحت
-
-~~~dart
-    return RefreshIndicator(
-      onRefresh: () => ref.refresh(todosProvider.future),
-~~~
-
-- [[RefreshIndicator]]: widget بيلف ابن scrollable، ولما المستخدم يسحب من فوق لتحت يظهر spinner صغير وينادي [[onRefresh]].
-- [[onRefresh]] لازم ترجّع **Future**: الـ spinner بيفضل لحد ما يخلص.
-- [[ref.refresh(todosProvider.future)]]: أعد build للـ provider، ورجّع Future بيخلص لما البيانات الجديدة توصل. ([[ref.refresh(todosProvider)]] من غير [[.future]] كان هيرجّع AsyncValue مش Future.)
-
----
-
-## ٣. الـ [[switch]] و الـ patterns
-
-~~~dart
-      child: switch (todos) {
-~~~
-
-[[switch (x) { ... }]] هنا **expression**: بيرجّع قيمة (الـ widget)، وكل سطر شكله [[pattern => قيمة]]، وبيتجرّبوا بالترتيب، وأول واحد يطابق يكسب.
-
-### الـ case الأول: فيه بيانات بس فاضية
-
-~~~dart
-        AsyncValue(:final value?) when value.isEmpty => const EmptyView(),
-~~~
-
-نفكّه:
-
-- [[AsyncValue(...)]]: object pattern: «لو todos من نوع AsyncValue، بص جواه».
-- [[:final value]]: هات الـ getter اللي اسمه [[value]] وحطه في متغير بنفس الاسم. ودي اختصار لـ [[value: final value]].
-- [[?]] بعدها: null-check pattern: يطابق **بس** لو value مش null، ويدّيك value نوعه [[List<Todo>]] من غير [[?]].
-- [[when value.isEmpty]]: شرط زيادة (guard): اللستة موجودة **وفاضية**.
-
-### التاني: فيه بيانات
-
-~~~dart
-        AsyncValue(:final value?) => ListView.builder(
-            itemCount: value.length,
-            itemBuilder: (context, i) => ListTile(title: Text(value[i].title)),
-          ),
-~~~
-
-- نفس الـ pattern من غير شرط: أي بيانات مش null (وهنا مش فاضية، لأن الفاضية اتمسكت فوق).
-- [[ListView.builder]]: لستة بتبني العناصر اللي ظاهرة على الشاشة بس.
-- [[itemCount]]: كام عنصر. و [[itemBuilder: (context, i) => ...]]: بيتنادى لكل رقم [[i]] ويرجّع الـ widget بتاعه.
-- [[ListTile(title: Text(...))]]: صف جاهز من Material.
-
-### التالت: خطأ
-
-~~~dart
-        AsyncValue(:final error?) => ErrorView(
-            message: '$error',
-            onRetry: () => ref.invalidate(todosProvider),
-          ),
-~~~
-
-- [[:final error?]]: يطابق لو فيه خطأ (ومفيش بيانات، لأن البيانات اتمسكت قبله).
-- [[$error]] جوه النص: بينادي [[toString()]] بتاع الـ exception، فبيطلع زي [[Exception: no internet]].
-- [[ref.invalidate(todosProvider)]]: «القيمة دي قديمة، أعد build دلوقتي».
-
-### الرابع: أي حاجة تانية
-
-~~~dart
-        _ => const Center(child: CircularProgressIndicator()),
-      },
-    );
-~~~
-
-[[_]] wildcard: بيطابق أي حاجة. هنا معناه: لا بيانات ولا خطأ، يبقى أول تحميل. [[CircularProgressIndicator]] الدايرة اللي بتلف.
-
----
-
-## ٤. اللي حصل فعلًا
-
-[[EmptyView]] و [[ErrorView]] عملتهم [[ListView]] فيها أيقونة ونص («مفيش مهام لسه» و الخطأ + زرار «حاول تاني»)، والـ repo هو [[FakeTodoRepo]] بتاع الـ solCode (بيستنى ثانية).
-
-### لستة فاضية
-
-~~~text flutter test
-empty t=0: spinner
-empty t=1s: EmptyView
-~~~
-
-### fail = true، وبعدين «حاول تاني»
-
-~~~text flutter test (retry التلقائي مقفول)
-fail t=1s: ErrorView(Exception: no internet)
-after retry tap: ErrorView(Exception: no internet)
-retry +1s: list[buy milk]
-~~~
-
-لاحظ السطر التاني: بعد الضغط مفيش spinner كبير، الـ ErrorView لسه ظاهر. ليه؟ طبعت الحالة نفسها بعد [[invalidate]]:
-
-~~~text flutter test
-  -> AsyncError<List<Todo>> isLoading=true hasValue=false error=Exception: no internet isRefreshing=true
-  -> AsyncData<List<Todo>> isLoading=false hasValue=true error=null isRefreshing=false
-~~~
-
-في Riverpod 3 الحالة أثناء إعادة التحميل بتفضل شايلة الخطأ القديم ([[isLoading=true]] ومعاه [[error]])، فالـ case التالت لسه بيطابق لحد ما البيانات توصل.
-
-### retry تلقائي من غير ما تدوس
-
-نفس الكلام بس بالـ retry الافتراضي، وغيّرت fail لـ false ومدستش على حاجة:
-
-~~~text flutter test
-auto t=1s: ErrorView(Exception: no internet)
-auto +3s (no tap): list[buy milk]
-~~~
-
-الشاشة اتصلّحت لوحدها: Riverpod عاد المحاولة (200ms ثم 400ms ثم 800ms...).
-
-### pull-to-refresh وانت عندك بيانات
-
-~~~text flutter test
-data: list[buy milk, call mom]
-during pull: list[buy milk, call mom] + pull-spinner
-after pull: list[buy milk, call mom]
-~~~
-
-البيانات **مختفتش** أثناء السحب: الحالة loading بس [[value]] لسه فيها اللستة، فالـ case التاني هو اللي طابق. ودا سبب إن case البيانات جاي قبل case الخطأ وقبل الـ [[_]].
-
-### السحب على الشاشة الفاضية
-
-~~~text flutter test
-pull on empty: EmptyView + pull-spinner
-~~~
-
-اشتغل لأن EmptyView نفسها [[ListView]]. لو كانت [[Column]] مكانش فيه حاجة تتسحب.
-
-### على الشاشة
-
-شغّلت الـ main بتاع الدرس اللي فات (FakeTodoRepo بعنصرين) بـ [[flutter run -d web-server --web-port 5994]] وصوّرت بـ Chrome headless: بعد ٢٠٠ms دايرة بتلف في نص الشاشة، وبعد الثانية [[buy milk]] و [[call mom]] كصفين.
-
----
-
-## ٥. الـ solCode: [[FakeTodoRepo]] بـ flag
-
-~~~dart
-class FakeTodoRepo implements TodoRepo {
-  FakeTodoRepo(this.items, {this.fail = false});
-  final List<Todo> items;
-  bool fail;
-  @override
-  Future<List<Todo>> fetchAll() async {
-    await Future.delayed(const Duration(seconds: 1));
-    if (fail) throw Exception('no internet');
-    return items;
-  }
-  @override
-  Future<Todo> create(String title) async => Todo(items.length + 1, title);
-}
-~~~
-
-- [[FakeTodoRepo(this.items, {this.fail = false})]]: الـ items إجباري، و [[fail]] named اختياري افتراضيه false. فتعمل [[FakeTodoRepo([])]] أو [[FakeTodoRepo(items, fail: true)]].
-- [[bool fail;]] من غير [[final]]: عشان تقدر تغيّره وانت شغال ([[r.fail = false]]) وتجرّب «حاول تاني».
-- [[throw Exception('no internet')]]: [[Exception]] مش [[Error]]، فالـ retry التلقائي بيشتغل عليه.
-
----
-
-## الخلاصة
-
-| الـ case | بيطابق إمتى | بيعرض |
+| السطر | يرمي إيه | إمتى |
 |---|---|---|
-| [[AsyncValue(:final value?) when value.isEmpty]] | فيه لستة وفاضية | EmptyView |
-| [[AsyncValue(:final value?)]] | فيه لستة (حتى أثناء refresh) | ListView |
-| [[AsyncValue(:final error?)]] | خطأ ومفيش لستة | ErrorView + retry |
-| [[_]] | غير كده: أول تحميل | spinner |
+| [[int.parse(raw)]] | [[FormatException]] | النص مش رقم ([['abc']] أو [['']]) |
+| [[throw ApiException(...)]] | [[ApiException]] | الرقم سالب |
 
-> الترتيب هو الشغل كله: البيانات قبل الخطأ قبل الـ loading، فالـ refresh ميمسحش الشاشة. والفاضي والخطأ يبقوا scrollable عشان السحب يشتغل.`,
-          lines: [
-            "ConsumerWidget.",
-            "constructor.",
-            "بتعيد تعريف build.",
-            "build.",
-            "[[AsyncValue<List<Todo>>]].",
-            "السحب لتحت يعيد التحميل.",
-            "بيستنى لحد ما البيانات الجديدة توصل.",
-            "switch expression على الحالة.",
-            "فيه بيانات بس فاضية.",
-            "فيه بيانات (حتى لو بيعمل refresh أو الـ refresh فشل).",
-            "العدد.",
-            "كل عنصر.",
-            "قفلة.",
-            "خطأ ومفيش بيانات.",
-            "الرسالة.",
-            "retry: امسح وابدأ من الأول.",
-            "قفلة.",
-            "غير كده: أول تحميل.",
-            "قفلة الـ switch.",
-            "قفلة RefreshIndicator.",
-            "قفلة build.",
-            "قفلة الـ class."
-          ],
-          sol: R`لستة فاضية: loader ثانية ثم أيقونة ونص «مفيش مهام لسه». و fail = true: loader ثم ErrorView بالرسالة (زي [[Exception: no internet]]). لاحظ إن Riverpod 3 بيعمل retry لوحده في الخلفية مع الـ Exceptions (٢٠٠ms ثم ٤٠٠ms...)، فلو غيّرت fail لـ false ممكن الشاشة تتصلّح لوحدها قبل ما تدوس. زرار «حاول تاني» بيعمل invalidate فيبدأ فورًا.
+- [[throw]]: بيوقف الدالة فورًا ويرمي الـ object لفوق، لحد أول [[try]] يمسكه. لو مفيش، البرنامج يقع.
+- [[int.parse]] نفسه بيرمي FormatException. جربت أمسكه وأطبع تفاصيله:
 
-الـ pull-to-refresh مع بيانات: البيانات بتفضل ظاهرة والـ spinner بتاع السحب فوق، لأن [[value]] لسه موجودة أثناء الـ loading والـ case التاني مطابق. لو كنت حاطط [[AsyncLoading() => spinner]] كأول case، الشاشة كانت هتفضى مع كل refresh.`,
-          solCode: R`class FakeTodoRepo implements TodoRepo {
-  FakeTodoRepo(this.items, {this.fail = false});
-  final List<Todo> items;
-  bool fail;
-  @override
-  Future<List<Todo>> fetchAll() async {
-    await Future.delayed(const Duration(seconds: 1));
-    if (fail) throw Exception('no internet');
-    return items;
+~~~text الناتج
+message=Invalid radix-10 number source=abc
+FormatException: Invalid radix-10 number (at character 1)
+abc
+^
+~~~
+
+[[radix-10]] يعني «رقم بالنظام العشري». و [[e.source]] هو النص اللي فشل، ودا اللي المثال بيطبعه.
+
+---
+
+## ٣. الطبقة اللي في النص: [[saveAge]]
+
+~~~dart
+int saveAge(String raw) {
+  try {
+    return parseAge(raw);
+  } on ApiException {
+    print('log: rejected $raw');
+    rethrow;
   }
-  @override
-  Future<Todo> create(String title) async => Todo(items.length + 1, title);
+}
+~~~
+
+- [[try { ... }]]: «جرّب الكود ده، ولو رمى حاجة شوف الـ on اللي تحت».
+- [[on ApiException]]: امسك النوع ده **بس**. الـ FormatException مش هيتمسك هنا، هيعدّي لفوق لوحده. ومفيش [[catch (e)]] لأننا مش محتاجين الـ object نفسه، بنسجّل بس.
+- [[rethrow;]]: ارمي **نفس** الخطأ تاني لفوق، بنفس الـ stack trace. يعني الطبقة دي سجّلت وسابت القرار للي فوقها.
+
+### ليه [[rethrow]] لازم هنا؟
+
+جربت أمسح السطر. [[dart run]] رفض يترجم:
+
+~~~text dart run
+t1a.dart:15:5: Error: A non-null value must be returned since the return type 'int' doesn't allow null.
+int saveAge(String raw) {
+    ^
+~~~
+
+و [[dart analyze]] بيقول نفس المعنى بصيغة تانية (ودي اللي هتشوفها في VS Code):
+
+~~~text dart analyze
+error - The body might complete normally, causing 'null' to be returned, but the return type, 'int', is a potentially non-nullable type. Try adding either a return or a throw statement at the end. - body_might_complete_normally
+~~~
+
+الدالة وعدت ترجّع [[int]]. لو الـ [[on]] خلص من غير return ولا throw، الدالة هتخلص فاضية (null)، والـ null safety مانعها.
+
+---
+
+## ٤. [[main]]: كل نوع ليه تصرّف
+
+~~~dart
+  for (final raw in ['30', 'abc', '-5']) {
+    try {
+      print('age $__{saveAge(raw)}');
+    } on FormatException catch (e) {
+      print('not a number: $__{e.source}');
+    } on ApiException catch (e, st) {
+      print('invalid: $__{e.message} $__{e.statusCode}');
+      print(st.toString().split('\n').first);
+    } finally {
+      print('checked $raw');
+    }
+  }
+~~~
+
+- [[for (final raw in [...])]]: لف على ٣ نصوص: سليم، ومش رقم، وسالب. والـ try **جوه** الـ loop، فلو واحد فشل الباقي يكمّل.
+- [[on FormatException catch (e)]]: [[catch (e)]] بيدّيك الـ object اللي اترمى في متغير اسمه [[e]] (أي اسم).
+- [[on ApiException catch (e, st)]]: المتغير التاني [[st]] هو الـ **stack trace**: لستة الدوال اللي كانت شغالة لما الخطأ اترمى، من الأحدث للأقدم.
+- [[st.toString().split('\n').first]]: حوّل الـ trace لنص، وقسّمه سطور ([[\n]] = سطر جديد)، وخد أول سطر بس.
+- [[finally]]: بيتنفذ **في كل الحالات**: نجح، أو اتمسك خطأ، أو حتى لو خطأ عدّى لفوق من غير ما يتمسك. مكانه أي تنضيف لازم يحصل (تقفل ملف، توقف loading).
+- ترتيب الـ [[on]]: أول واحد يطابق هو اللي بيكسب. ولو كتبت [[catch (e)]] من غير [[on]] بيمسك أي حاجة، حتى الـ Errors. جربت [[print(list[5])]] على لستة فيها ٣ عناصر وتحتها [[on Exception]] ثم [[catch (e)]]: الأولى معدّتهوش لأن RangeError مش Exception، والتانية مسكته:
+
+~~~text الناتج
+caught RangeError: RangeError (length): Invalid value: Not in inclusive range 0..2: 5
+~~~
+
+---
+
+## ٥. الناتج كله
+
+~~~text dart run
+age 30
+checked 30
+not a number: abc
+checked abc
+log: rejected -5
+invalid: age must be positive 422
+#0      parseAge (file:///w/l1.dart:11:16)
+checked -5
+~~~
+
+نقرا الـ ٣ حالات:
+
+| النص | اللي حصل | اتطبع |
+|---|---|---|
+| [['30']] | مفيش خطأ | [[age 30]] ثم [[checked 30]] |
+| [['abc']] | FormatException من int.parse، عدّى من saveAge لأنها مش بتمسكه | [[not a number: abc]] ثم [[checked abc]] |
+| [['-5']] | ApiException: saveAge سجّلت ورمته تاني، و main مسكته | [[log: rejected -5]] ثم [[invalid: ...]] ثم سطر الـ trace ثم [[checked -5]] |
+
+### سطر الـ trace: [[#0 parseAge (file:///w/l1.dart:11:16)]]
+
+- [[#0]]: أول دالة في اللستة، يعني المكان اللي الخطأ اترمى فيه بالظبط.
+- [[parseAge]]: اسم الدالة، مش saveAge. دا لأن [[rethrow]] حافظ على الـ trace الأصلي.
+- [[l1.dart:11:16]]: الملف، والسطر 11 (سطر الـ throw في ملفي)، والعمود 16 (مكان كلمة throw في السطر).
+
+### نفس الكلام بـ [[throw e]] بدل [[rethrow]]
+
+جربت أغيّر [[on ApiException]] لـ [[on ApiException catch (e)]] و [[rethrow;]] لـ [[throw e;]]. كله زي ما هو ماعدا سطر الـ trace:
+
+~~~text الناتج
+#0      saveAge (file:///w/t1d.dart:20:5)
+~~~
+
+بقى بيشاور على [[saveAge]]، يعني على سطر [[throw e]] نفسه. المكان الحقيقي للمشكلة ([[parseAge]]) ضاع. عشان كده [[rethrow]] دايمًا.
+
+---
+
+## ٦. التجارب في «جرّب»
+
+### [[return -1;]] بدل [[rethrow;]]
+
+بيترجم عادي، بس آخر حالة بقت:
+
+~~~text الناتج
+log: rejected -5
+age -1
+checked -5
+~~~
+
+الخطأ «اتبلع»: [[main]] فاكرة إن كله تمام وطبعت سن [[-1]]. دا أخطر من إن التطبيق يقع، لأن محدش هياخد باله.
+
+### نص فاضي [['']]
+
+ضفته للستة. [[int.parse('')]] بيرمي FormatException، و [[e.source]] نص فاضي:
+
+~~~text آخر سطرين
+not a number:
+checked
+~~~
+
+---
+
+## الخلاصة
+
+| الحاجة | الشكل | معناها |
+|---|---|---|
+| exception خاص | [[class X implements Exception]] | حالة متوقعة ليها بيانات |
+| مسك نوع | [[on FormatException catch (e)]] | النوع ده بس، والباقي يعدّي لفوق |
+| الـ trace | [[catch (e, st)]] | فين الخطأ حصل |
+| ارمي تاني | [[rethrow;]] | نفس الخطأ ونفس الـ trace |
+| دايمًا | [[finally]] | بيتنفذ في كل الحالات |
+
+> Exception تمسكه وتتعامل معاه، و Error تصلّحه في الكود. ومتكتبش [[catch (e) {}]] فاضي.`,
+          lines: [
+            "exception خاص بيك: [[implements Exception]] يعني «حالة متوقعة».",
+            "constructor بيحط الكود والرسالة.",
+            "كود HTTP زي 404 أو 422.",
+            "رسالة تتعرض أو تتسجل.",
+            "بتعيد تعريف toString...",
+            "...عشان لما يتطبع يبقى مفهوم.",
+            "قفلة الـ class.",
+            "دالة ممكن ترمي نوعين أخطاء.",
+            "[[int.parse]] بيرمي [[FormatException]] لو النص مش رقم.",
+            "[[throw]]: ارمي الـ exception بتاعك لو الرقم سالب.",
+            "رجّع السن.",
+            "قفلة.",
+            "دالة في النص بين الـ UI والـ parsing.",
+            "جرّب.",
+            "نادي الدالة اللي ممكن ترمي.",
+            "[[on ApiException]] من غير catch: مش محتاج المتغير هنا.",
+            "سجّل...",
+            "...وارمي نفس الخطأ تاني لفوق بنفس الـ stack trace.",
+            "قفلة الـ on.",
+            "قفلة الدالة.",
+            "البداية.",
+            "جرّب ٣ قيم: سليمة، ومش رقم، وسالبة.",
+            "try لكل قيمة لوحدها.",
+            "age 30 للأولى.",
+            "[[on FormatException]]: يمسك النوع ده بس، و [[e.source]] النص اللي فشل.",
+            "not a number: abc.",
+            "النوع التاني. [[st]] الـ stack trace.",
+            "invalid: age must be positive 422.",
+            "أول سطر في الـ trace: بيشاور على [[parseAge]] مش [[saveAge]]، بفضل rethrow.",
+            "[[finally]]: بيتنفذ سواء نجح أو فشل.",
+            "checked مع كل قيمة.",
+            "قفلة try.",
+            "قفلة الـ loop.",
+            "قفلة main."
+          ],
+          sol: R`الناتج بالترتيب: [[age 30]] ثم [[checked 30]]، وبعدين [[not a number: abc]] ثم [[checked abc]]، وبعدين [[log: rejected -5]] ثم [[invalid: age must be positive 422]] ثم سطر [[#0      parseAge (...)]] ثم [[checked -5]]. لاحظ إن finally بيتنفذ في التلات حالات.
+
+لما تمسح [[rethrow;]] الـ compiler بيرفض: [[The body might complete normally, causing 'null' to be returned, but the return type, 'int', is a potentially non-nullable type]]. لأن الدالة وعدت ترجّع int، والـ catch بيخلص من غير return. ولما تحط [[return -1;]] الكود يترجم، بس [['-5']] بقت تطبع [[log: rejected -5]] ثم [[age -1]]: الخطأ اتبلع والـ UI فاكر إن كله تمام. دا بالظبط ليه rethrow موجود.
+
+والنص الفاضي [['']]: [[int.parse('')]] بيرمي FormatException، فهيطبع [[not a number: ]] (فاضي بعد النقطتين) ثم [[checked ]].`,
+          solCode: R`// saveAge بعد استبدال rethrow (مثال على الغلط):
+int saveAge(String raw) {
+  try {
+    return parseAge(raw);
+  } on ApiException {
+    print('log: rejected $raw');
+    return -1; // الخطأ اتبلع: اللي فوق مش هيعرف إن فيه مشكلة
+  }
 }`
         },
         {
-          cmd: "Provider و Bloc",
-          title: "هتقابل Provider و Bloc في شغل حد تاني، فلازم تقراهم",
-          desc: R`Riverpod مش الوحيد. [[provider]] (نفس المؤلف، أقدم) بيحط [[ChangeNotifier]] في الشجرة، وبتقراه بـ [[context.watch<CartModel>()]]. و [[flutter_bloc]] بيفصل الأحداث عن الحالة: [[Cubit]] فيه methods بتعمل [[emit(state)]]، و [[Bloc]] الكامل بياخد events ويطلّع states.
+          cmd: "generics",
+          title: "كود واحد يشتغل مع أي نوع ويفضل type-safe",
+          desc: R`[[List<String>]] و [[Future<User>]] دي generics: الـ class مكتوب مرة، والنوع اللي جواه بيتحدد وقت الاستخدام. وتقدر تعمل بتوعك: [[class Page<T>]] لرد API فيه لستة من أي حاجة، أو دالة [[T? findById<T extends Entity>(...)]].
 
-المثال نفس السلة بالاتنين جنب بعض عشان تشوف الفرق. هتقابلهم في مشاريع موجودة وفي الانترفيوهات، فلازم تعرف تقرا الكود بتاعهم وتختار ما بينهم.`,
-          example: R`import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
+[[extends]] جوه الـ generic بيحط شرط: [[T extends Entity]] يعني «أي نوع، بشرط يبقى فيه id». فجوه الدالة تقدر تكتب [[item.id]] والـ compiler مطمن.`,
+          example: R`class Page<T> {
+  const Page(this.items, this.total);
+  final List<T> items;
+  final int total;
 
-class CartModel extends ChangeNotifier {
-  final _items = <String>[];
-  int get count => _items.length;
-  void add(String item) {
-    _items.add(item);
-    notifyListeners();
-  }
+  Page<R> map<R>(R Function(T item) convert) =>
+      Page(items.map(convert).toList(), total);
 }
 
-class CartCubit extends Cubit<List<String>> {
-  CartCubit() : super(const []);
-  void add(String item) => emit([...state, item]);
+abstract class Entity {
+  int get id;
 }
 
-class CartPage extends StatelessWidget {
-  const CartPage({super.key});
-
+class Todo implements Entity {
+  Todo(this.id, this.title);
   @override
-  Widget build(BuildContext context) {
-    final providerCount = context.watch<CartModel>().count;
-    return Column(
-      children: [
-        Text('Provider: $providerCount'),
-        BlocBuilder<CartCubit, List<String>>(
-          builder: (context, items) => Text('Bloc: $__{items.length}'),
-        ),
-        FilledButton(
-          onPressed: () {
-            context.read<CartModel>().add('tea');
-            context.read<CartCubit>().add('tea');
-          },
-          child: const Text('Add tea'),
-        ),
-      ],
-    );
+  final int id;
+  final String title;
+}
+
+T? findById<T extends Entity>(List<T> list, int id) {
+  for (final item in list) {
+    if (item.id == id) return item;
   }
+  return null;
 }
 
 void main() {
-  runApp(
-    MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => CartModel())],
-      child: BlocProvider(
-        create: (_) => CartCubit(),
-        child: const MaterialApp(home: Scaffold(body: CartPage())),
-      ),
-    ),
-  );
+  final todos = [Todo(1, 'buy milk'), Todo(2, 'call mom')];
+  final page = Page(todos, 40);
+  final titles = page.map((t) => t.title.toUpperCase());
+  print('$__{titles.items} of $__{titles.total}');
+  final found = findById(todos, 2);
+  print(found?.title);
+  print(titles.runtimeType);
 }`,
-          try: "اعمل [[flutter pub add provider flutter_bloc]] وشغّل. بعدين في CartModel شيل [[notifyListeners()]] ودوس: أنهي عدّاد وقف؟ رجّعه، وفي الـ Cubit غيّر الـ emit لـ [[state.add(item); emit(state);]]: أنهي عدّاد وقف دلوقتي؟",
+          try: "نادي [[findById([1, 2], 1)]] وشوف الـ error. وبعدين جرّب الفخ ده: [[final List<Object> objs = <String>['a']; objs.add(1);]]. هل الـ compiler مسكه؟ وإيه اللي حصل وقت التشغيل؟",
           flag: "script",
           deep: {
-            why: "مشاريع Flutter اللي هتشتغل عليها في شركة معمولة بأدوات مختلفة حسب سنة ما اتبدأت: كتير بـ Provider (كان الموصى بيه في docs Flutter سنين)، وكتير في الشركات الكبيرة بـ Bloc. ولو مش فاهم الفكرة ورا كل واحد هتتوه في الكود، وفي الانترفيو السؤال شبه أكيد: «بتستخدم إيه في الـ state management وليه؟».",
-            how: R`Provider: [[ChangeNotifier]] class عادي فيه state mutable، وبعد كل تعديل [[notifyListeners()]] (من Flutter نفسه، مش من الـ package). و [[ChangeNotifierProvider]] بيحطه في الشجرة فوق الشاشات. [[context.watch<T>()]] بيقرا ويعمل rebuild، و [[context.read<T>()]] للـ callbacks، و [[context.select]] لجزء. العيوب: معتمد على الشجرة (لازم الـ provider فوق الـ widget، ولو لأ [[ProviderNotFoundException]] وقت التشغيل)، ونسيان notifyListeners سهل، ومفيش async state جاهزة.
+            why: "من غير generics يا تكتب [[TodoPage]] و [[UserPage]] و [[OrderPage]] نفس الكود ٣ مرات، يا تكتب [[Page]] واحد فيه [[List<dynamic>]] وتخسر فحص الأنواع وتعمل cast في كل حتة. الـ generics بتدّيك الاتنين: كود واحد، والـ compiler عارف إن [[page.items.first]] نوعه Todo.",
+            how: R`Dart بيستنتج النوع من القيم: [[Page(todos, 40)]] بقت [[Page<Todo>]] من غير ما تكتبها، و [[page.map((t) => t.title)]] بقت [[Page<String>]] لأن الدالة بترجّع String.
 
-Bloc: الـ state immutable، والتغيير الوحيد بـ [[emit]]. [[Cubit]] الشكل البسيط (methods بتعمل emit). و [[Bloc]] الكامل: الـ UI بيبعت events ([[bloc.add(AddItem('tea'))]]) و [[on<AddItem>((event, emit) => ...)]] بيحوّلها لـ states. ودا بيدّيك log كامل لكل event و state (BlocObserver)، وسهل تختبره (package bloc_test)، بس الكود أطول. [[BlocBuilder]] للبناء، و [[BlocListener]] للـ side effects (تنقل، SnackBar)، و [[BlocConsumer]] الاتنين.
+الـ generics في Dart «reified»: النوع بيفضل موجود وقت التشغيل، مش بيتمسح زي Java أو TypeScript. عشان كده [[titles.runtimeType]] بيطبع [[Page<String>]]، و [[x is List<int>]] بيشتغل فعلًا.
 
-الـ emit بيقارن بـ [[==]]: لو بعت نفس الـ object (بعد ما عدّلته من جوه) مفيش rebuild. ودا ليه الـ Bloc states غالبًا بـ freezed أو equatable.
+الـ generics في Dart covariant: [[List<String>]] ينفع تتحط في متغير [[List<Object>]]. دا مريح، بس معناه إن فحص الـ [[add]] بيتأجل لوقت التشغيل: لو حطيت int في list هي في الحقيقة [[List<String>]] هيضرب [[type 'int' is not a subtype of type 'String']]. ودا من الحاجات القليلة اللي الـ compiler مش بيمسكها.
 
-Riverpod (الدروس اللي فاتت): مش معتمد على الشجرة (الـ providers global، والـ state في ProviderScope)، فمفيش ProviderNotFoundException، والخطأ بيتمسك وقت الترجمة. و AsyncValue جاهزة للـ async. و overrides سهلة للاختبار.
+الأماكن اللي هتشوف فيها generics في Flutter كل يوم: [[State<Counter>]]، و [[FutureBuilder<List<Todo>>]]، و [[ValueNotifier<int>]]، و [[Provider<ApiClient>]] و [[AsyncNotifier<List<Todo>>]] في Riverpod، و [[Navigator.push<bool>]] لما الشاشة ترجّع نتيجة.
 
-المقارنة المختصرة:
-- مشروع جديد: Riverpod (أو Bloc لو الفريق متعود عليه).
-- Provider: لسه شغال ومدعوم، بس للمشاريع الموجودة.
-- Bloc: لما عايز قواعد صارمة وفريق كبير وكل تغيير يتسجّل كـ event.
-- setState و ValueNotifier: state محلية، ودايمًا الأبسط أحسن لو كفاية (درس «state management» في المستوى ٣).`,
-            when: "Provider و Bloc لما تشتغل على مشروع معمول بيهم، أو فريق اختارهم. ومتخلطش أكتر من واحد في مشروع جديد من غير سبب.",
-            mistakes: R`تنسى [[notifyListeners()]] بعد التعديل في ChangeNotifier. وتعمل emit لنفس الـ list بعد ما عدّلتها فالـ Bloc مش بيعمل rebuild. و [[context.watch]] جوه onPressed (بيضرب في Provider: [[Tried to listen to a value exposed with provider, from outside of the widget tree]]). وتحط ChangeNotifierProvider تحت الشاشة اللي محتاجاه فيطلع [[ProviderNotFoundException]]. وفي الانترفيو تقول «Bloc أحسن» أو «Riverpod أحسن» من غير trade-offs.`
+الـ typedef بيدّي اسم لنوع طويل: [[typedef Json = Map<String, dynamic>;]] ودي بتتكتب في معظم المشاريع.`,
+            when: "أي class أو دالة بتشيل أو بتلف على بيانات من غير ما يهمها نوعها بالظبط: رد API فيه pagination، و cache، و Result<T> فيه نجاح أو فشل، و repository أساسي. ومتعملهاش لو هتستخدم نوع واحد بس.",
+            mistakes: R`تسيب الـ generic من غير نوع ([[final list = [];]]) فيبقى [[List<dynamic>]] وتخسر الفحص كله: اكتب [[<String>[]]]. وتعمل [[as List<String>]] على list جاية من [[jsonDecode]]: هيضرب لأنها في الحقيقة [[List<dynamic>]]، والصح [[(json['tags'] as List).cast<String>()]] (درس null safety بعمق). وتكتب generics معقدة ٣ مستويات عشان «يبقى reusable» ومحدش يعرف يقرا الكود.`
           },
-          teach: R`## الكود ده بيعمل إيه؟
+          teach: R`## البرنامج بيعمل إيه؟
 
-نفس السلة مكتوبة مرتين جنب بعض: مرة بـ [[provider]] ([[ChangeNotifier]]) ومرة بـ [[flutter_bloc]] ([[Cubit]])، وشاشة فيها عدّادين وزرار واحد بيضيف «tea» في الاتنين. الهدف إنك تعرف تقرا الاتنين. اتجرّب بـ widget tests في مشروع حقيقي ([[flutter pub add provider flutter_bloc]]: provider 6.1.5، flutter_bloc 9.1.1) جوه [[docker run --rm ghcr.io/cirruslabs/flutter:stable]] (Flutter 3.44)، والاختبار بيدوس الزرار مرتين ويطبع العدّادين.
+بيعمل class اسمه [[Page]] بيشيل لستة من **أي نوع** مع العدد الكلي (زي رد API فيه pagination)، ودالة [[findById]] بتدوّر في أي لستة بشرط عناصرها يكون ليها id. وبيجرّبهم على لستة [[Todo]]. اتشغّل بـ [[dart run]] في [[docker run --rm dart:stable]] (Dart 3.13.5)، ومعاه تجارب «جرّب».
 
 ---
 
-## ١. الـ imports
+## ١. [[class Page<T>]]
 
 ~~~dart
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
+class Page<T> {
+  const Page(this.items, this.total);
+  final List<T> items;
+  final int total;
 ~~~
 
-[[flutter_bloc]] فيها [[Cubit]] و [[BlocBuilder]] و [[BlocProvider]]. و [[provider]] فيها [[ChangeNotifierProvider]] و [[MultiProvider]] والـ extensions [[context.watch]] و [[context.read]].
+- [[<T>]] بعد اسم الـ class: **type parameter**، يعني «نوع لسه مش معروف، اسمه T». T اسم متعارف عليه (Type)، وممكن أي اسم: [[E]] للـ Element و [[K]] و [[V]] للـ Key و Value.
+- [[List<T> items]]: لستة من T، أيًا كان. لو حد عمل [[Page<Todo>]] تبقى [[List<Todo>]]، ولو [[Page<String>]] تبقى [[List<String>]].
+- [[const Page(...)]]: constructor ثابت، ينفع يتعمل بيه object وقت الترجمة لو القيم ثابتة. وعشان كده الـ fields كلها [[final]].
+- [[total]] العدد الكلي على السيرفر (40)، مش عدد اللي في الصفحة دي (2).
 
 ---
 
-## ٢. Provider: [[ChangeNotifier]]
+## ٢. method بـ generic تاني: [[map<R>]]
 
 ~~~dart
-class CartModel extends ChangeNotifier {
-  final _items = <String>[];
-  int get count => _items.length;
-  void add(String item) {
-    _items.add(item);
-    notifyListeners();
-  }
+  Page<R> map<R>(R Function(T item) convert) =>
+      Page(items.map(convert).toList(), total);
 }
 ~~~
 
-- [[extends ChangeNotifier]]: [[ChangeNotifier]] جاي من Flutter نفسه (مش من الـ package)، فيه لستة «سامعين» ودالة تبلّغهم.
-- [[final _items = <String>[];]]: لستة نصوص عادية **بتتعدل من جوه** (mutable). [[final]] معناها المتغير ميشاورش على لستة تانية، مش إن اللستة متتغيرش.
-- [[int get count => ...]]: getter، بتقراه كأنه حقل: [[model.count]].
-- [[_items.add(item)]]: عدّل اللستة نفسها.
-- [[notifyListeners()]]: «يا كل اللي سامعين، حاجة اتغيرت». من غيرها محدش يعرف.
-
----
-
-## ٣. Bloc: [[Cubit]]
-
-~~~dart
-class CartCubit extends Cubit<List<String>> {
-  CartCubit() : super(const []);
-  void add(String item) => emit([...state, item]);
-}
-~~~
-
-- [[Cubit<List<String>>]]: الـ state لستة نصوص، و **immutable**.
-- [[CartCubit() : super(const [])]]: الـ [[:]] بعد الـ constructor اسمها initializer list، و [[super(...)]] بيبعت القيمة الأولية للأب: لستة فاضية [[const]] (متتعدلش خالص).
-- [[emit(...)]]: الطريقة الوحيدة لتغيير الـ state. بتحط قيمة جديدة وتبلّغ.
-- [[[...state, item]]]: لستة جديدة فيها القديم + الجديد. زي Notifier في Riverpod بالظبط.
-
----
-
-## ٤. الشاشة
-
-~~~dart
-class CartPage extends StatelessWidget {
-  ...
-  Widget build(BuildContext context) {
-    final providerCount = context.watch<CartModel>().count;
-~~~
-
-- [[StatelessWidget]] عادي: مفيش [[ref]]. الاتنين بيقروا من [[context]]، لأنهم بيحطوا القيم **في شجرة الـ widgets**.
-- [[context.watch<CartModel>()]]: دوّر لفوق في الشجرة على CartModel، واشترك فيه. لما يعمل notifyListeners، **الـ build ده كله** يتنادى تاني.
-
-~~~dart
-        Text('Provider: $providerCount'),
-        BlocBuilder<CartCubit, List<String>>(
-          builder: (context, items) => Text('Bloc: $__{items.length}'),
-        ),
-~~~
-
-- [[BlocBuilder<CartCubit, List<String>>]]: widget بيسمع الـ Cubit، والنوعين: الـ Cubit ونوع الـ state.
-- [[builder: (context, items) => ...]]: بيتنادى مع كل state جديدة، و [[items]] هي الـ state. وبيعيد build **للجزء ده بس**، مش الشاشة كلها.
-
-~~~dart
-        FilledButton(
-          onPressed: () {
-            context.read<CartModel>().add('tea');
-            context.read<CartCubit>().add('tea');
-          },
-          child: const Text('Add tea'),
-        ),
-~~~
-
-- [[context.read<T>()]]: هات القيمة مرة من غير اشتراك. نفس قاعدة Riverpod: read في الـ callbacks، و watch في build.
-
----
-
-## ٥. main: فين الحاجات دي متحطوطة؟
-
-~~~dart
-void main() {
-  runApp(
-    MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => CartModel())],
-      child: BlocProvider(
-        create: (_) => CartCubit(),
-        child: const MaterialApp(home: Scaffold(body: CartPage())),
-      ),
-    ),
-  );
-}
-~~~
-
-- [[MultiProvider(providers: [...])]]: بيحط كذا provider فوق بعض من غير تداخل. هنا واحد بس، بس دا الشكل المعتاد.
-- [[ChangeNotifierProvider(create: (_) => CartModel())]]: بيعمل الـ CartModel أول مرة حد يطلبه، ويحطه في الشجرة، ويعمله dispose لما يتشال. [[(_)]] معناها «فيه باراميتر (context) بس مش محتاجه».
-- [[BlocProvider(create: ...)]]: نفس الفكرة للـ Cubit، وبيقفله ([[close]]) لوحده.
-- الترتيب: الاتنين **فوق** [[MaterialApp]]، فأي شاشة تحتهم تلاقيهم.
-
----
-
-## ٦. اللي حصل فعلًا
-
-~~~text flutter test (ضغطتين)
-normal: Provider: 2 | Bloc: 2
-~~~
-
-### من غير [[notifyListeners()]]
-
-~~~text flutter test
-no notifyListeners: Provider: 0 | Bloc: 2
-~~~
-
-اللستة جوه CartModel فيها عنصرين، بس محدش اتبلّغ فـ [[context.watch]] معملش rebuild. وعدّاد Bloc شغال، ومش بيصلّح عدّاد Provider لأن BlocBuilder بيعيد build لنفسه بس.
-
-### [[state.add(item); emit(state);]] في الـ Cubit
-
-~~~text flutter test
-state.add on const []: Provider: 2 | Bloc: 0
-Unsupported operation: Cannot add to an unmodifiable list
-~~~
-
-الـ [[const []]] متتعدلش، فأول [[state.add]] ضرب. وعدّاد Provider زاد عادي لأن سطره اتنفذ قبل الـ Cubit.
-
-وجربت نفس الغلطة بلستة أولية عادية [[<String>[]]]، مع CartModel من غير notify عشان محدش يعيد build للشاشة كلها:
-
-~~~text flutter test
-state.add growable + no notify: Provider: 0 | Bloc: 1
-~~~
-
-أول [[emit(state)]] عدّى (لسه محصلش emit قبل كده)، والتاني اتجاهل لأن [[emit]] بيعمل [[if (state == _state && _emitted) return;]] (من كود bloc نفسه): نفس الـ object. فالعدّاد واقف على 1 والحقيقة 2. ومع CartModel العادي الرقم كان طالع 2 بالصدفة، لأن notifyListeners عاد build للشاشة كلها.
-
-### غلطتين تانيين جربتهم
-
-[[context.watch]] جوه onPressed:
-
-~~~text flutter test
-Failed assertion: ... 'context.owner!.debugBuilding || listen == false || ...'
-Tried to listen to a value exposed with provider, from outside of the widget tree.
-~~~
-
-و CartPage من غير ChangeNotifierProvider فوقها:
-
-~~~text flutter test
-Error: Could not find the correct Provider<CartModel> above this CartPage Widget
-~~~
-
-ودا الفرق الكبير عن Riverpod: هنا الخطأ وقت التشغيل لو الترتيب في الشجرة غلط.
-
----
-
-## الخلاصة
-
-| | Provider | Bloc (Cubit) | Riverpod |
-|---|---|---|---|
-| الـ state | mutable + [[notifyListeners()]] | immutable + [[emit]] | immutable + [[state =]] |
-| فين بتتخزن | في الشجرة | في الشجرة | ProviderScope |
-| القراية في build | [[context.watch<T>()]] | [[BlocBuilder]] | [[ref.watch]] |
-| في callback | [[context.read<T>()]] | [[context.read<C>()]] | [[ref.read]] |
-| تنساه فيحصل | الـ UI ميتحدثش | الـ UI ميتحدثش أو يضرب | الـ UI ميتحدثش |
-
-> الثلاثة نفس الفكرة: قيمة بره الـ widget، و watch في build، و read في الأحداث. الفرق في مين بيبلّغ ومين بيخزّن.`,
-          lines: [
-            "مكتبة Material.",
-            "flutter_bloc.",
-            "provider.",
-            "Provider: class عادي بيورث ChangeNotifier.",
-            "state mutable جوه.",
-            "getter للعدد.",
-            "تعديل.",
-            "عدّل الـ list نفسها...",
-            "...وبلّغ كل اللي سامعين. من غيرها الـ UI مش هيعرف.",
-            "قفلة.",
-            "قفلة الـ class.",
-            "Bloc: Cubit بـ state immutable.",
-            "القيمة الأولية بتتبعت لـ super.",
-            "[[emit]] بـ list جديدة.",
-            "قفلة.",
-            "شاشة عادية StatelessWidget.",
-            "constructor.",
-            "بتعيد تعريف build.",
-            "build.",
-            "Provider: [[context.watch]] بيقرا ويعمل rebuild.",
-            "عمود.",
-            "العيال.",
-            "عدّاد Provider.",
-            "Bloc: BlocBuilder بيعمل rebuild للجزء ده بس.",
-            "الـ state هي اللستة.",
-            "قفلة.",
-            "زرار واحد بيضيف في الاتنين.",
-            "callback.",
-            "[[context.read]] في callbacks (نفس القاعدة في الاتنين).",
-            "الـ Cubit.",
-            "قفلة الـ callback.",
-            "النص.",
-            "قفلة الزرار.",
-            "قفلة العيال.",
-            "قفلة العمود.",
-            "قفلة build.",
-            "قفلة الـ class.",
-            "البداية.",
-            "runApp.",
-            "providers فوق الشجرة.",
-            "ChangeNotifierProvider بيعمل CartModel ويعمله dispose.",
-            "BlocProvider بيعمل الـ Cubit ويقفله.",
-            "الـ Cubit.",
-            "التطبيق تحتهم.",
-            "قفلة BlocProvider.",
-            "قفلة MultiProvider.",
-            "قفلة runApp.",
-            "قفلة main."
-          ],
-          sol: R`بعد ضغطتين: [[Provider: 2]] و [[Bloc: 2]].
-
-من غير [[notifyListeners()]]: عدّاد Provider بيفضل 0 (الـ list بتكبر جوه بس محدش اتبلّغ)، وعدّاد Bloc بيزيد عادي. وأول ما Bloc يعمل emit، ليه مش بيتحدث Provider؟ لأن BlocBuilder بيعمل rebuild لنفسه بس، مش للشاشة كلها.
-
-ومع [[state.add(item); emit(state);]]: عدّاد Bloc بيفضل 0، وعدّاد Provider شغال. السبب المباشر إن الـ [[const []]] الأولية unmodifiable، فأول [[state.add]] بيضرب [[Unsupported operation: Cannot add to an unmodifiable list]]. ولو الأولية لستة عادية ([[super(<String>[])]])، أول emit بيعدّي (لسه محصلش emit قبله)، وبعد كده emit بيقارن بـ [[==]] ويلاقي نفس الـ object فبيتجاهله: العدّاد بيقف على 1. وخلي بالك إن notifyListeners بتاع Provider بيعيد build للشاشة كلها فبيخبّي المشكلة ويظهر 2. نفس الدرس بتاع Notifier في Riverpod: الـ state immutable.`
-        }
-      ]
-    },
-    {
-      t: "التخزين والـ backend بتاعك",
-      l: 2,
-      n: "إعدادات صغيرة في shared_preferences، وبيانات كتير في SQLite، والتوكن في secure storage، والـ API اللي انت كاتبه بـ Express أو FastAPI",
-      items: [
-        {
-          cmd: "shared_preferences",
-          title: "تفتكر إعدادات المستخدم بعد ما يقفل التطبيق",
-          desc: R`[[shared_preferences]] key-value بسيط بيتحفظ على الجهاز: الثيم، واللغة، وهل شاف شاشة التعريف. زي localStorage في المتصفح. بيخزّن [[String]] و [[int]] و [[double]] و [[bool]] و [[List<String>]] بس.
-
-من نسخة 2.3 فيه ٣ APIs: [[SharedPreferences]] القديم (هيتعمله deprecate)، و [[SharedPreferencesAsync]] (كل حاجة async ومن غير cache)، و [[SharedPreferencesWithCache]] (قراية sync من cache). للكود الجديد استخدم واحد من الجداد.`,
-          example: R`import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-class SettingsStore {
-  final _prefs = SharedPreferencesAsync();
-
-  Future<ThemeMode> loadTheme() async {
-    final raw = await _prefs.getString('theme');
-    return ThemeMode.values.asNameMap()[raw] ?? ThemeMode.system;
-  }
-
-  Future<void> saveTheme(ThemeMode mode) => _prefs.setString('theme', mode.name);
-
-  Future<bool> seenOnboarding() async => await _prefs.getBool('onboarding_done') ?? false;
-
-  Future<void> markOnboardingDone() => _prefs.setBool('onboarding_done', true);
-}
-
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  final store = SettingsStore();
-  final theme = await store.loadTheme();
-  runApp(MaterialApp(themeMode: theme, darkTheme: ThemeData.dark(), home: const Placeholder()));
-}`,
-          try: "اعمل شاشة فيها [[SegmentedButton<ThemeMode>]] (فاتح، غامق، النظام) بتنادي saveTheme وتغيّر الثيم فورًا. اقفل التطبيق خالص وافتحه: فاكر اختيارك؟ وبعدين امسح [[WidgetsFlutterBinding.ensureInitialized()]] وشغّل.",
-          flag: "script",
-          deep: {
-            why: "المستخدم اختار الوضع الغامق، قفل التطبيق، فتحه لقاه فاتح. أو شاشة التعريف بتظهر كل مرة. الحاجات الصغيرة دي لازم تتحفظ، وقاعدة بيانات كاملة ليها كتير.",
-            how: R`تحت الغطا: على Android الـ APIs الجديدة بتستخدم DataStore Preferences (الموصى بيه من Google)، والقديم SharedPreferences بتاع Android. على iOS [[NSUserDefaults]]. وعلى الويب localStorage. يعني بيانات عادية مش مشفّرة: أي حد معاه root أو backup للجهاز يقراها.
-
-الفرق بين الـ APIs:
-- [[SharedPreferencesAsync]]: كل قراية await، ودايمًا بتجيب آخر قيمة من التخزين الحقيقي. أبسط وأصح.
-- [[SharedPreferencesWithCache]]: [[await SharedPreferencesWithCache.create(cacheOptions: SharedPreferencesWithCacheOptions(allowList: {'theme'}))]] مرة، وبعدين [[getString]] sync من الذاكرة. مفيد لو بتقرا كتير في build.
-- [[SharedPreferences.getInstance()]]: القديم، هتلاقيه في كل الأمثلة القديمة، وليه نفس فكرة الـ cache.
-
-خلي بالك: الـ APIs الجديدة على Android بتخزّن في مكان مختلف عن القديم، فلو بتغيّر API في تطبيق منشور لازم تنقل البيانات (الـ README بتاع الـ package فيه migration utility).
-
-[[WidgetsFlutterBinding.ensureInitialized()]]: أي plugin بيكلم الـ native (shared_preferences، sqflite، secure storage) محتاج الـ binding يبقى جاهز. لو هتنادي حاجة زي دي في main قبل runApp، لازم السطر ده الأول.
-
-[[ThemeMode.values.asNameMap()]] نفس فكرة enhanced enum: بنخزّن [[.name]] (نص ثابت) مش [[.index]]، ولو القيمة مش معروفة نرجع للافتراضي.
-
-ومع Riverpod: اعمل provider للـ store، والثيم نفسه في Notifier بيحمّل من الـ store في build ويحفظ في method.`,
-            when: "إعدادات وتفضيلات صغيرة: ثيم، لغة، آخر تاب مفتوح، «متعرضش ده تاني». مش لبيانات المستخدم الحقيقية (قواعد بيانات) ولا للتوكنز والباسوردات (secure storage).",
-            mistakes: R`تخزّن التوكن أو الباسورد فيه: مش مشفّر. وتخزّن JSON كبير (لستة المنتجات كلها) كـ String: بطيء ومش معمول لكده. وتنسى ensureInitialized فيطلع error عن الـ binding. وتقرا بـ [[.index]] بتاع enum. وتستخدم الـ API القديم والجديد مع بعض فتلاقي القيم «اختفت» لأنهم بيخزّنوا في أماكن مختلفة على Android.`
-          },
-          teach: R`## الكود ده بيعمل إيه؟
-
-class صغير ([[SettingsStore]]) بيحفظ ويقرا إعدادين: الثيم، وهل المستخدم شاف شاشة التعريف. و [[main]] بتقرا الثيم المحفوظ **قبل** أول frame وتشغّل التطبيق بيه. اتجرّب في مشروع حقيقي جوه [[docker run --rm ghcr.io/cirruslabs/flutter:stable]] (Flutter 3.44، shared_preferences 2.5): unit test بتخزين في الذاكرة، والتطبيق نفسه مع الـ SegmentedButton بتاع الـ solCode بـ [[flutter run -d web-server]] وفتحته في Chrome headless.
-
----
-
-## ١. الـ imports والـ store
-
-~~~dart
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-class SettingsStore {
-  final _prefs = SharedPreferencesAsync();
-~~~
-
-- [[material.dart]] هنا عشان [[ThemeMode]] (enum فيه [[system]] و [[light]] و [[dark]]).
-- [[SharedPreferencesAsync()]]: الـ API الجديد: كل قراية وكتابة [[await]]، ومفيش cache في الذاكرة، فدايمًا بتقرا آخر قيمة من التخزين.
-- ليه class؟ عشان باقي التطبيق ينادي [[loadTheme()]] ومايعرفش اسم المفتاح [[theme]] ولا إزاي بيتخزن. ولو غيّرت التخزين بعدين، بتغيّر هنا بس.
-
----
-
-## ٢. [[loadTheme]]: من نص لـ enum
-
-~~~dart
-  Future<ThemeMode> loadTheme() async {
-    final raw = await _prefs.getString('theme');
-    return ThemeMode.values.asNameMap()[raw] ?? ThemeMode.system;
-  }
-~~~
-
-من جوه لبرة:
-
-1. [[_prefs.getString('theme')]]: هات النص المتخزن تحت المفتاح [[theme]]. نوعه [[Future<String?>]]: ممكن null لو أول مرة.
-2. [[ThemeMode.values]]: لستة كل قيم الـ enum.
-3. [[.asNameMap()]]: بيحوّلها لـ Map من الاسم للقيمة.
-4. [[[raw]]]: دوّر بالنص اللي جه. لو مش موجود (أو null) بيرجّع null.
-5. [[?? ThemeMode.system]]: لو null خد الافتراضي.
-
-~~~text flutter test
-asNameMap: {system: ThemeMode.system, light: ThemeMode.light, dark: ThemeMode.dark}
-unknown -> ThemeMode.system
-~~~
-
----
-
-## ٣. الحفظ والـ onboarding
-
-~~~dart
-  Future<void> saveTheme(ThemeMode mode) => _prefs.setString('theme', mode.name);
-
-  Future<bool> seenOnboarding() async => await _prefs.getBool('onboarding_done') ?? false;
-
-  Future<void> markOnboardingDone() => _prefs.setBool('onboarding_done', true);
-}
-~~~
-
-- [[mode.name]]: اسم القيمة كنص: [[dark]]. بنخزّن الاسم مش [[mode.index]] (اللي هو [[2]] لـ dark): لو حد غيّر ترتيب الـ enum، الأرقام تبوظ والأسامي لأ.
-
-~~~text flutter test
-ThemeMode.dark.name=dark index=2
-~~~
-
-- [[setString]] و [[setBool]]: كل نوع ليه دالة. والأنواع المسموحة: String و int و double و bool و [[List<String>]].
-- [[await _prefs.getBool(...) ?? false]]: الـ [[await]] بيتنفذ الأول فيدّي [[bool?]]، وبعدين [[??]]. يعني «لو مفيش قيمة يبقى لسه مشافهاش».
-
-### التجربة في الذاكرة
-
-في الاختبار مفيش موبايل، فحطيت تخزين وهمي ([[InMemorySharedPreferencesAsync.empty()]]) وعملت store جديد بعد الحفظ عشان أتأكد إن القيمة اتقرت من التخزين مش من متغير:
-
-~~~text flutter test
-first run: theme=ThemeMode.system onboarding=false
-after save (new store): theme=ThemeMode.dark onboarding=true
-~~~
-
----
-
-## ٤. [[main]] بقت async
-
-~~~dart
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  final store = SettingsStore();
-  final theme = await store.loadTheme();
-  runApp(MaterialApp(themeMode: theme, darkTheme: ThemeData.dark(), home: const Placeholder()));
-}
-~~~
-
-- [[Future<void> main() async]]: عشان نقدر نعمل [[await]] قبل [[runApp]].
-- [[WidgetsFlutterBinding.ensureInitialized()]]: الـ «binding» هو الحتة اللي بتربط Dart بالـ engine والـ native (Android و iOS). الـ plugins بتكلم الـ native عن طريقه. [[runApp]] بيجهّزه لوحده، بس احنا بنكلم plugin **قبل** runApp، فلازم نجهّزه بإيدينا.
-- [[await store.loadTheme()]]: استنى الثيم. فأول frame يترسم بالثيم الصح من غير «وميض».
-- [[themeMode: theme]]: يختار بين [[theme]] (الفاتح الافتراضي) و [[darkTheme]]. و [[system]] معناها «زي الجهاز».
-- [[Placeholder()]]: مربع بخطين متقاطعين، مكان مؤقت للشاشة الحقيقية.
-
-### من غير ensureInitialized
-
-الرسالة دي بتطلع لما أي كود يكلم الـ native قبل ما الـ binding يتجهز. طلّعتها في [[flutter test]] بـ [[MethodChannel]] (نفس الطريق اللي الـ plugins بتكلم بيه الـ native):
-
-~~~text flutter test
-Binding has not yet been initialized.
-The "instance" getter on the ServicesBinding binding mixin is only available once that binding has been initialized.
-Typically, this is done by calling "WidgetsFlutterBinding.ensureInitialized()" or "runApp()" (the latter calls the former).
-~~~
-
-على Android و iOS دي اللي بتظهر لأن الـ plugin بيكلم الـ native من نفس الطريق (من الـ docs، مفيش موبايل هنا). وعلى الويب جربت التطبيق من غير السطر ده واشتغل عادي، لأن plugin الويب مش بيعدّي على channel. فمتعتمدش على تجربة الويب: السطر ده لازم.
-
----
-
-## ٥. على المتصفح: هل افتكر؟
-
-شغّلت الـ solCode (SegmentedButton فوق MaterialApp في StatefulWidget) بـ [[flutter run -d web-server --web-port 5994]] وفتحته في Chrome headless:
-
-1. أول فتح: «النظام» متعلّم والشاشة فاتحة، و localStorage فاضي:
-
-~~~text Chrome
-localStorage before: {}
-~~~
-
-2. دوست «غامق»: الشاشة بقت غامقة فورًا، والقيمة اتحفظت:
-
-~~~text Chrome
-localStorage after click: {"theme":"\"dark\""}
-~~~
-
-3. عملت reload للصفحة: فتحت غامقة من أول frame، و «غامق» متعلّم.
-
-على الويب [[SharedPreferencesAsync]] بيخزّن في localStorage (المفتاح زي ما هو، والقيمة JSON). وعلى Android في DataStore، وعلى iOS في [[NSUserDefaults]] (من الـ docs، مفيش موبايل هنا). وفي كل الحالات **مش مشفّر**.
-
----
-
-## ٦. الـ solCode: [[SegmentedButton]]
-
-~~~dart
-SegmentedButton<ThemeMode>(
-  segments: const [
-    ButtonSegment(value: ThemeMode.light, label: Text('فاتح')),
-    ButtonSegment(value: ThemeMode.dark, label: Text('غامق')),
-    ButtonSegment(value: ThemeMode.system, label: Text('النظام')),
-  ],
-  selected: {_theme},
-  onSelectionChanged: (s) {
-    setState(() => _theme = s.first);
-    store.saveTheme(s.first);
-  },
-)
-~~~
-
-- [[SegmentedButton<ThemeMode>]]: أزرار لازقة في بعض، وكل واحد ليه قيمة من النوع ده.
-- [[ButtonSegment(value: ..., label: ...)]]: زرار واحد: القيمة اللي بيمثلها والنص.
-- [[selected: {_theme}]]: **Set** (الأقواس [[{ }]] من غير [[:]])، لأن الـ widget ده ممكن يسمح باختيار أكتر من واحد.
-- [[onSelectionChanged: (s)]]: [[s]] الـ Set الجديدة، و [[s.first]] القيمة اللي اختارها.
-- [[setState]] يغيّر الثيم على الشاشة فورًا، و [[saveTheme]] يحفظه للمرة الجاية. مفيش [[await]] لأن المستخدم مش محتاج يستنى الحفظ.
-
----
-
-## الخلاصة
-
-| الحاجة | بتعمل إيه |
-|---|---|
-| [[SharedPreferencesAsync()]] | key-value على الجهاز، كله async |
-| [[getString]] / [[setString]] (و Bool و Int و Double و StringList) | قراية وكتابة، والقراية ممكن null |
-| [[enum.name]] + [[values.asNameMap()]] | خزّن الاسم ورجّعه enum |
-| [[WidgetsFlutterBinding.ensureInitialized()]] | قبل أي plugin قبل runApp |
-| قراية في main قبل runApp | أول frame بالإعداد الصح |
-
-> إعدادات صغيرة بس. مش مشفّر، فلا توكن ولا باسورد، ومش قاعدة بيانات.`,
-          lines: [
-            "مكتبة Material (فيها ThemeMode).",
-            "shared_preferences.",
-            "class بيلف التخزين عشان باقي التطبيق ميعرفش التفاصيل.",
-            "الـ API الجديد: كل حاجة async ومن غير cache.",
-            "تحميل الثيم.",
-            "النص المتخزّن أو null لو أول مرة.",
-            "من النص للـ enum، ولو مش معروف: النظام.",
-            "قفلة.",
-            "حفظ: الاسم مش الـ index.",
-            "هل شاف شاشة التعريف؟ لو مفيش قيمة يبقى لأ.",
-            "علّم إنه شافها.",
-            "قفلة الـ class.",
-            "main بقت async.",
-            "لازم قبل أي plugin قبل runApp.",
-            "الـ store.",
-            "حمّل الثيم قبل أول frame، فمفيش «وميض» بالثيم الغلط.",
-            "شغّل بالثيم المحفوظ.",
-            "قفلة main."
-          ],
-          sol: R`الشاشة: [[SegmentedButton<ThemeMode>]] بـ ٣ segments، و onSelectionChanged بينادي [[saveTheme]] ويحدّث متغير الثيم (في State فوق MaterialApp أو في Notifier). بعد القفل والفتح التطبيق بيفتح على الثيم اللي اخترته من أول frame، لأن main بيقراه قبل runApp.
-
-من غير ensureInitialized: بيضرب قبل ما التطبيق يظهر برسالة إن الـ binding مش متعمله initialize ([[Binding has not yet been initialized]]) وبتقترح عليك تنادي [[WidgetsFlutterBinding.ensureInitialized()]].`,
-          solCode: R`SegmentedButton<ThemeMode>(
-  segments: const [
-    ButtonSegment(value: ThemeMode.light, label: Text('فاتح')),
-    ButtonSegment(value: ThemeMode.dark, label: Text('غامق')),
-    ButtonSegment(value: ThemeMode.system, label: Text('النظام')),
-  ],
-  selected: {_theme},
-  onSelectionChanged: (s) {
-    setState(() => _theme = s.first);
-    store.saveTheme(s.first);
-  },
-)`
-        },
-        {
-          cmd: "sqflite",
-          title: "قاعدة بيانات SQLite جوه الموبايل للبيانات الكتير",
-          desc: R`لما البيانات تكبر وتحتاج بحث وترتيب (ملاحظات، رسايل offline، cache للمنتجات)، shared_preferences مش كفاية. [[sqflite]] بيدّيك SQLite حقيقي على Android و iOS: جداول، و SQL، و indexes. نفس الـ SQL اللي في «تاب SQL و Prisma».
-
-[[openDatabase]] بيفتح الملف أو يعمله، و [[onCreate]] بيعمل الجداول أول مرة، و [[onUpgrade]] بيعدّل الجداول لما تزوّد [[version]]. وفيه دوال جاهزة: [[insert]] و [[query]] و [[update]] و [[delete]]، و [[rawQuery]] لو عايز SQL بإيدك.`,
-          example: R`import 'package:path/path.dart' as p;
-import 'package:sqflite/sqflite.dart';
-
-class NotesDb {
-  NotesDb._(this._db);
-  final Database _db;
-
-  static Future<NotesDb> open() async {
-    final path = p.join(await getDatabasesPath(), 'notes.db');
-    final db = await openDatabase(
-      path,
-      version: 2,
-      onCreate: (db, version) async {
-        await db.execute('CREATE TABLE notes (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, pinned INTEGER NOT NULL DEFAULT 0, created_at TEXT NOT NULL)');
-      },
-      onUpgrade: (db, oldVersion, newVersion) async {
-        if (oldVersion < 2) await db.execute('ALTER TABLE notes ADD COLUMN pinned INTEGER NOT NULL DEFAULT 0');
-      },
-    );
-    return NotesDb._(db);
-  }
-
-  Future<int> add(String title) => _db.insert('notes', {'title': title, 'created_at': DateTime.now().toIso8601String()});
-
-  Future<List<Map<String, Object?>>> search(String q) =>
-      _db.query('notes', where: 'title LIKE ?', whereArgs: ['%$q%'], orderBy: 'pinned DESC, id DESC');
-
-  Future<int> remove(int id) => _db.delete('notes', where: 'id = ?', whereArgs: [id]);
-}`,
-          try: "ضيف [[togglePin(int id)]] بـ [[update]]. وبعدين زوّد الـ version لـ 3 وضيف عمود [[body TEXT]] في onUpgrade (وفي onCreate كمان). جرّب على تطبيق فيه بيانات قديمة: البيانات فضلت؟ وبعدين جرّب تبني الـ where كده: [[where: \"title LIKE '%$q%'\"]] وابحث بـ [[' OR 1=1 --]].",
-          flag: "script",
-          deep: {
-            why: "تطبيق ملاحظات أو قايمة مهام أو تطبيق لازم يشتغل من غير نت محتاج يخزّن مئات أو آلاف السجلات ويدوّر فيها ويرتّبها بسرعة. SQLite موجود جوه كل موبايل أصلًا، ومعمول بالظبط لكده.",
-            how: R`[[getDatabasesPath()]] المكان الصح على كل نظام، و [[p.join]] من package path بيبني المسار. الملف بيفضل موجود لحد ما التطبيق يتمسح.
-
-الـ migrations: الـ [[version]] رقم انت بتزوّده مع كل تغيير في الجداول. تطبيق جديد: onCreate بس (بالشكل الأحدث). تطبيق قديم عنده version 1: onUpgrade بيتنادى بـ oldVersion = 1، فبتطبّق التغييرات خطوة خطوة ([[if (oldVersion < 2)]] ثم [[if (oldVersion < 3)]]). لازم onCreate يبقى دايمًا بالشكل النهائي، و onUpgrade يوصّل أي نسخة قديمة لنفس الشكل. ودا نفس منطق migrations في Prisma بس بإيدك.
-
-[[whereArgs]] و [[?]]: القيم بتتبعت منفصلة عن الـ SQL (parameterized)، فمفيش SQL injection. متبنيش الـ where بـ string interpolation أبدًا.
-
-SQLite مفيهوش bool ولا datetime: bool بيبقى INTEGER (0 و 1)، والتاريخ TEXT بـ ISO 8601 (بيترتّب صح كنص) أو INTEGER millis.
-
-النتايج [[List<Map<String, Object?>>]]، فبتحوّلها لموديل بـ fromMap زي fromJson.
-
-[[transaction]] لو هتعمل كذا عملية لازم تنجح كلها أو متحصلش: [[await db.transaction((txn) async { ... })]]، وجواها استخدم [[txn]] مش [[db]]. و [[batch()]] لإدخال مئات الصفوف مرة واحدة أسرع بكتير من loop.
-
-البديل: [[drift]] (كان اسمه moor) فوق SQLite: الجداول بتتعرّف بـ Dart، والـ queries type-safe بتتولّد بـ build_runner، و migrations بأدوات، و [[watch()]] بيرجّع Stream يتحدث لوحده لما الجدول يتغير. أحسن لمشروع كبير، و sqflite أبسط وأقرب لـ SQL اللي انت عارفه.
-
-sqflite مش شغال على الويب ولا في [[flutter test]] العادي (محتاج الـ native). للاختبار على الكمبيوتر فيه [[sqflite_common_ffi]].`,
-            when: "بيانات كتير أو ليها علاقات أو محتاجة بحث: وضع offline، و cache للمحتوى، وتطبيقات ملاحظات ومهام. لو كام إعداد: shared_preferences. ولو البيانات أصلًا على السيرفر ومش محتاج offline: متعملش نسخة محلية من غير سبب.",
-            mistakes: R`SQL injection بـ interpolation في where. وتغيّر الجدول في onCreate وتنسى onUpgrade، فالناس اللي عندهم التطبيق يضربوا بـ [[no such column]] والتطبيقات الجديدة سليمة (فمتلاقيش الـ bug عندك). وتفتح الـ database مع كل عملية بدل مرة واحدة. وتنادي [[db]] جوه transaction بدل [[txn]] فيحصل deadlock.`
-          },
-          teach: R`## الكود ده بيعمل إيه؟
-
-class بيفتح ملف SQLite اسمه [[notes.db]] (أو يعمله)، فيه جدول ملاحظات، ويرقّي الجدول لو التطبيق القديم كان عامله بشكل أقدم، وفيه ٣ عمليات: إضافة وبحث ومسح. sqflite محتاج Android أو iOS، فشغّلته في [[flutter test]] جوه [[docker run --rm ghcr.io/cirruslabs/flutter:stable]] (Flutter 3.44، sqflite 2.4) بـ [[sqflite_common_ffi]]: نفس الـ API بالظبط بس فوق SQLite بتاع الكمبيوتر، بسطرين في أول الاختبار ([[sqfliteFfiInit(); databaseFactory = databaseFactoryFfi;]]). الكود نفسه متغيرش.
-
----
-
-## ١. الـ imports
-
-~~~dart
-import 'package:path/path.dart' as p;
-import 'package:sqflite/sqflite.dart';
-~~~
-
-- [[path]]: package لبناء المسارات صح على كل نظام ([[/]] على Android و iOS). [[as p]] عشان تكتب [[p.join]].
-- [[sqflite]]: فيها [[Database]] و [[openDatabase]] و [[getDatabasesPath]].
-
----
-
-## ٢. constructor private و [[open()]]
-
-~~~dart
-class NotesDb {
-  NotesDb._(this._db);
-  final Database _db;
-~~~
-
-- [[NotesDb._(...)]]: named constructor اسمه [[_]]، والـ [[_]] معناها private: محدش بره الملف يقدر يكتب [[NotesDb._(...)]].
-- ليه؟ عشان فتح الـ database **async** (لازم await)، والـ constructor مينفعش يبقى async. فبنعمل دالة static async هي الطريق الوحيد.
-- [[final Database _db]]: الاتصال المفتوح، بيتفتح مرة ويفضل.
-
-~~~dart
-  static Future<NotesDb> open() async {
-    final path = p.join(await getDatabasesPath(), 'notes.db');
-~~~
-
-- [[static]]: بتتنادى على الـ class نفسه: [[await NotesDb.open()]].
-- [[getDatabasesPath()]]: الفولدر اللي النظام بيحط فيه قواعد البيانات للتطبيق ده. في الاختبار طلع:
-
-~~~text flutter test
-getDatabasesPath: /w/app/.dart_tool/sqflite_common_ffi/databases
-~~~
-
-على Android بيبقى جوه فولدر التطبيق الخاص (من الـ docs). و [[p.join(...)]] بيلزق الفولدر واسم الملف بالفاصل الصح.
-
----
-
-## ٣. [[openDatabase]]: version و onCreate و onUpgrade
-
-~~~dart
-    final db = await openDatabase(
-      path,
-      version: 2,
-      onCreate: (db, version) async {
-        await db.execute('CREATE TABLE notes (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, pinned INTEGER NOT NULL DEFAULT 0, created_at TEXT NOT NULL)');
-      },
-~~~
-
-- [[version: 2]]: رقم «شكل الجداول». sqflite بيحفظه جوه الملف نفسه.
-- [[onCreate]]: بيتنادى **بس** لو الملف مكانش موجود (أول تسطيب). بيعمل الجداول بآخر شكل.
-- [[db.execute('...')]]: نفّذ SQL مبيرجّعش صفوف.
-
-الجملة نفسها:
+نفكّها من الشمال:
 
 | الحتة | معناها |
 |---|---|
-| [[id INTEGER PRIMARY KEY AUTOINCREMENT]] | رقم بيزيد لوحده، ومتكررش |
-| [[title TEXT NOT NULL]] | نص، وإجباري |
-| [[pinned INTEGER NOT NULL DEFAULT 0]] | SQLite مفيهوش bool، فـ 0 و 1، والافتراضي 0 |
-| [[created_at TEXT NOT NULL]] | التاريخ كنص ISO 8601 |
+| [[Page<R>]] | نوع الرجوع: صفحة من نوع جديد R |
+| [[map<R>]] | الـ method نفسها ليها type parameter خاص بيها |
+| [[R Function(T item) convert]] | parameter اسمه convert، نوعه «دالة بتاخد T وترجّع R» |
+| [[items.map(convert)]] | طبّق الدالة على كل عنصر (بيرجّع Iterable) |
+| [[.toList()]] | حوّل الـ Iterable لـ List |
+| [[total]] | العدد الكلي زي ما هو |
 
-~~~dart
-      onUpgrade: (db, oldVersion, newVersion) async {
-        if (oldVersion < 2) await db.execute('ALTER TABLE notes ADD COLUMN pinned INTEGER NOT NULL DEFAULT 0');
-      },
-    );
-    return NotesDb._(db);
-  }
-~~~
-
-- [[onUpgrade]]: بيتنادى لو الملف موجود ورقمه **أقل** من [[version]]. [[oldVersion]] اللي في الملف، و [[newVersion]] اللي في الكود.
-- [[if (oldVersion < 2)]]: طبّق الفرق بين 1 و 2 بس: ضيف العمود.
-- [[ALTER TABLE ... ADD COLUMN]]: ضيف عمود لجدول موجود من غير ما تمسح بياناته.
-
-### التجربة: تطبيق قديم عنده version 1
-
-عملت ملف بـ version 1 (جدول من غير [[pinned]]) وفيه ملاحظة، وبعدين فتحته بـ [[NotesDb.open()]]:
-
-~~~text flutter test
-version now: 2
-columns: [id, title, created_at, pinned]
-~~~
-
-العمود اتضاف في الآخر، والملاحظة القديمة لسه موجودة (هتشوفها تحت بـ [[id]] 1).
-
-ولو نسيت onUpgrade (onCreate بس بالشكل الجديد)، الملف القديم مش بيتعمله حاجة، وأول query فيها pinned:
-
-~~~text flutter test
-no onUpgrade: SqfliteFfiException(sqlite_error: 1, , SqliteException(1): while preparing statement, no such column: pinned, SQL logic error (code 1)
-~~~
+يعني [[Page<Todo>]] و [[(t) => t.title]] يطلّعوا [[Page<String>]].
 
 ---
 
-## ٤. [[add]]: insert بـ Map
+## ٣. الشرط: [[Entity]] و [[T extends Entity]]
 
 ~~~dart
-  Future<int> add(String title) => _db.insert('notes', {'title': title, 'created_at': DateTime.now().toIso8601String()});
-~~~
+abstract class Entity {
+  int get id;
+}
 
-- [[_db.insert('notes', {...})]]: اسم الجدول و Map من اسم العمود للقيمة. sqflite بيبني [[INSERT]] لوحده بـ [[?]].
-- [[DateTime.now().toIso8601String()]]: الوقت كنص زي [[2026-10-07T19:37:30.178925]]. الشكل ده بيترتّب صح كنص.
-- [[id]] و [[pinned]] مش مكتوبين: الأول بيتولّد والتاني افتراضيه 0.
-- بيرجّع [[Future<int>]]: الـ id الجديد.
-
-~~~text flutter test
-add -> id 2
-add -> id 3
-add -> id 4
-~~~
-
-بدأ من 2 لأن الملاحظة القديمة أخدت 1.
-
----
-
-## ٥. [[search]]: query بـ [[?]]
-
-~~~dart
-  Future<List<Map<String, Object?>>> search(String q) =>
-      _db.query('notes', where: 'title LIKE ?', whereArgs: ['%$q%'], orderBy: 'pinned DESC, id DESC');
-~~~
-
-- [[_db.query('notes', ...)]]: [[SELECT * FROM notes]] مع شروط.
-- [[where: 'title LIKE ?']]: الشرط، و [[?]] مكان فاضي للقيمة.
-- [[whereArgs: ['%$q%']]]: القيمة اللي هتتحط مكان الـ [[?]]. [[%]] في LIKE معناها «أي حروف»، فـ [[%milk%]] = فيه milk في أي مكان.
-- [[orderBy: 'pinned DESC, id DESC']]: المتثبّت الأول، وبعدين الأحدث.
-- النتيجة [[List<Map<String, Object?>>]]: كل صف Map من اسم العمود للقيمة.
-
-~~~text flutter test
-search("milk"): [{id: 4, title: milk prices, created_at: 2026-10-07T19:37:30.178925, pinned: 0}, {id: 2, title: buy milk, created_at: 2026-10-07T19:37:30.145650, pinned: 0}]
-~~~
-
-بعد [[togglePin(2)]] (الـ solCode) والبحث بنص فاضي (يعني الكل):
-
-~~~text flutter test
-after togglePin(2), search(""): [2:buy milk:pinned=1, 4:milk prices:pinned=0, 3:call mom:pinned=0, 1:old note:pinned=0]
-~~~
-
-المتثبّت طلع أول، والباقي من الأحدث للأقدم.
-
-### ليه [[?]] مش interpolation؟
-
-جربت البحث بـ [[' OR 1=1 --]] بالطريقتين:
-
-~~~text flutter test
-safe search(evil): []
-interpolated SQL: title LIKE '%' OR 1=1 --%'
-interpolated rows: 4
-~~~
-
-- بـ whereArgs: اتعامل معاه كنص عادي بيدوّر عليه، فمفيش نتايج.
-- بـ [[where: "title LIKE '%$evil%'"]]: الـ [[']] قفل النص بدري، و [[OR 1=1]] بقى شرط دايمًا صح، و [[--]] خلّى الباقي تعليق. فرجع **كل** الملاحظات. ودا SQL injection.
-
----
-
-## ٦. [[remove]]
-
-~~~dart
-  Future<int> remove(int id) => _db.delete('notes', where: 'id = ?', whereArgs: [id]);
+class Todo implements Entity {
+  Todo(this.id, this.title);
+  @override
+  final int id;
+  final String title;
 }
 ~~~
 
-بيرجّع عدد الصفوف اللي اتمسحت:
-
-~~~text flutter test
-remove(1) -> 1 rows
-remove(99) -> 0 rows
-~~~
-
-ولما جربت insert من غير title، الـ [[NOT NULL]] اشتغل:
-
-~~~text flutter test
-NOT NULL: ... NOT NULL constraint failed: notes.title, constraint failed (code 1299)
-~~~
-
----
-
-## ٧. الـ solCode: togglePin و version 3
+- [[abstract class]]: class مينفعش تعمل منه object مباشرة، وظيفته يحدد «عقد». و [[int get id;]] من غير جسم معناه «أي حد يطبّقني لازم يكون عنده id».
+- [[Todo implements Entity]]: Todo بيوعد إنه هيحقق العقد. و [[@override final int id;]]: field عادي بيحقق الـ getter المطلوب (الـ field في Dart بيعمل getter لوحده).
 
 ~~~dart
-Future<int> togglePin(int id) =>
-    _db.rawUpdate('UPDATE notes SET pinned = 1 - pinned WHERE id = ?', [id]);
-~~~
-
-- [[rawUpdate]]: SQL مكتوب بإيدك، والـ list التانية هي قيم الـ [[?]].
-- [[pinned = 1 - pinned]]: لو 0 تبقى 1، ولو 1 تبقى 0. قلب في سطر واحد من غير ما تقرا القيمة الأول.
-
-~~~dart
-version: 3,
-onCreate: ... body TEXT ...,
-onUpgrade: (db, oldVersion, newVersion) async {
-  if (oldVersion < 2) await db.execute('ALTER TABLE notes ADD COLUMN pinned INTEGER NOT NULL DEFAULT 0');
-  if (oldVersion < 3) await db.execute('ALTER TABLE notes ADD COLUMN body TEXT');
-},
-~~~
-
-فتحت نفس الملف (اللي بقى version 2) بالكود ده:
-
-~~~text flutter test
-onUpgrade 2 -> 3
-v3 rows: [{id: 2, title: buy milk, created_at: ..., pinned: 1, body: null}, {id: 3, title: call mom, ...}, {id: 4, title: milk prices, ...}]
-~~~
-
-- اتنفذ شرط [[< 3]] بس (لأن الملف كان 2)، والبيانات فضلت، و [[body]] بـ [[null]] في القديم.
-- تطبيق عنده version 1 كان هيعدّي على الشرطين بالترتيب. وتطبيق جديد خالص: onCreate بس، وفيها body من الأول.
-
----
-
-## الخلاصة
-
-| الحاجة | بتعمل إيه |
-|---|---|
-| [[openDatabase(path, version:, onCreate:, onUpgrade:)]] | افتح أو اعمل، وارقّي الشكل |
-| onCreate | أول تسطيب: آخر شكل |
-| [[if (oldVersion < N)]] في onUpgrade | كل تغيير خطوة، بالترتيب |
-| [[insert]] / [[query]] / [[delete]] / [[rawUpdate]] | العمليات، والـ id أو عدد الصفوف بيرجع |
-| [[where: 'x = ?', whereArgs: [v]]] | القيم منفصلة عن الـ SQL: مفيش injection |
-
-> onCreate لأي حد جديد، و onUpgrade لأي حد قديم، والاتنين لازم يوصلوا لنفس الشكل. والـ bug بتاع onUpgrade مش هيظهر عندك، هيظهر عند اللي عندهم التطبيق القديم.`,
-          lines: [
-            "بناء المسارات.",
-            "sqflite.",
-            "class بيلف الـ database.",
-            "constructor private: الطريقة الوحيدة [[open()]].",
-            "الاتصال.",
-            "دالة static async بتفتح وترجّع object جاهز.",
-            "مسار الملف في مكان قواعد البيانات بتاع النظام.",
-            "افتح أو اعمل.",
-            "المسار.",
-            "رقم شكل الجداول الحالي.",
-            "أول تسطيب: اعمل الجداول بآخر شكل.",
-            "SQL عادي.",
-            "قفلة.",
-            "تطبيق قديم بـ version أقل: طبّق الفرق بس.",
-            "من 1 لـ 2: ضيف العمود.",
-            "قفلة.",
-            "قفلة openDatabase.",
-            "الـ object.",
-            "قفلة open.",
-            "insert بـ Map، وبيرجّع الـ id الجديد.",
-            "بحث.",
-            "[[?]] و whereArgs: القيمة منفصلة عن الـ SQL، فمفيش injection.",
-            "مسح بالـ id.",
-            "قفلة الـ class."
-          ],
-          sol: R`togglePin: [[rawUpdate('UPDATE notes SET pinned = 1 - pinned WHERE id = ?', [id])]] أو update بقيمة محسوبة. الـ migration لـ 3: [[if (oldVersion < 3) await db.execute('ALTER TABLE notes ADD COLUMN body TEXT');]] في onUpgrade، وتضيف [[body TEXT]] لجملة CREATE في onCreate. البيانات القديمة بتفضل، والعمود الجديد null فيها.
-
-الـ injection: مع [[where: "title LIKE '%$q%'"]] والبحث [[' OR 1=1 --]]، الـ SQL بقى [[title LIKE '%' OR 1=1 --%']] فبيرجع كل الملاحظات. مع whereArgs بيدوّر على النص ده حرفيًا ومش بيلاقي حاجة. نفس درس SQL injection في «تاب الأمان».`,
-          solCode: R`Future<int> togglePin(int id) =>
-    _db.rawUpdate('UPDATE notes SET pinned = 1 - pinned WHERE id = ?', [id]);
-
-// في open():
-version: 3,
-onCreate: (db, version) async {
-  await db.execute('CREATE TABLE notes (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, body TEXT, pinned INTEGER NOT NULL DEFAULT 0, created_at TEXT NOT NULL)');
-},
-onUpgrade: (db, oldVersion, newVersion) async {
-  if (oldVersion < 2) await db.execute('ALTER TABLE notes ADD COLUMN pinned INTEGER NOT NULL DEFAULT 0');
-  if (oldVersion < 3) await db.execute('ALTER TABLE notes ADD COLUMN body TEXT');
-},`
-        },
-        {
-          cmd: "flutter_secure_storage",
-          title: "مكان آمن للتوكن بدل shared_preferences",
-          desc: R`التوكن (JWT أو refresh token) هو مفتاح حساب المستخدم: لو اتسرق، أي حد يدخل بيه. [[flutter_secure_storage]] بيخزّنه في المكان الآمن بتاع النظام: [[Keychain]] على iOS، وعلى Android مشفّر بمفتاح في [[Android Keystore]] (مفتاح مبيطلعش من الـ hardware).
-
-الاستخدام زي key-value عادي بس كله async: [[write]] و [[read]] و [[delete]] و [[deleteAll]]. والقيم String بس.`,
-          example: R`import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
-class TokenStore {
-  const TokenStore();
-  static const _storage = FlutterSecureStorage();
-
-  Future<void> save(String access, String refresh) async {
-    await _storage.write(key: 'access_token', value: access);
-    await _storage.write(key: 'refresh_token', value: refresh);
+T? findById<T extends Entity>(List<T> list, int id) {
+  for (final item in list) {
+    if (item.id == id) return item;
   }
-
-  Future<String?> get access => _storage.read(key: 'access_token');
-
-  Future<void> clear() => _storage.deleteAll();
-}`,
-          try: "في main قبل runApp اقرا التوكن ([[await const TokenStore().access]]) وحطه في الـ session بتاع درس redirect، فلو فيه توكن التطبيق يفتح على الرئيسية مباشرة. سجّل دخول، اقفل التطبيق خالص وافتحه. وبعدين امسح التطبيق من الموبايل وسطّبه تاني: التوكن لسه موجود؟",
-          flag: "script",
-          deep: {
-            why: "shared_preferences ملف XML أو DataStore عادي في فولدر التطبيق: على موبايل عليه root، أو من backup، أو من malware بصلاحيات عالية، التوكن بيتقري كنص. الـ secure storage بيشفّر بمفاتيح محمية من الـ hardware، فحتى لو الملف اتسحب مش هيتفك.",
-            how: R`على Android من نسخة 10 من الـ package: التشفير بقى RSA OAEP لتغليف المفتاح + AES-GCM للبيانات، والمفتاح في Android Keystore، والخيار القديم [[encryptedSharedPreferences]] (مبني على مكتبة Jetpack Security اللي اتعملها deprecate) بقى deprecated ونسخة 10 بتنقل بياناته. ونسخة 11 (الحالية) شالته خالص، ورفعت أقل Android مدعوم لـ 7.0 (minSdk 24). فلو جاي من نسخة أقدم من 10، عدّي على 10 الأول عشان البيانات تتنقل. وفيه [[AndroidOptions.biometric(...)]] لو عايز بصمة قبل القراية.
-
-على iOS: Keychain. وخلي بالك إن Keychain بيفضل موجود حتى بعد ما التطبيق يتمسح (سلوك النظام)، عكس Android. فمستخدم مسح التطبيق وسطّبه تاني ممكن يلاقي نفسه عامل login. الحل الشائع: flag في shared_preferences اسمه [[first_run]]؛ لو مش موجود امسح الـ secure storage.
-
-Android auto backup: البيانات المشفّرة ممكن تترجع من backup Google Drive على جهاز جديد، بس المفتاح مش هيترجع (في الـ Keystore)، فالقراية تفشل. الـ package بيعمل [[resetOnError]] (افتراضيًا true) فبيمسح بدل ما يضرب. أو استثني ملفاتها من الـ backup في AndroidManifest.
-
-على الويب: شغال بس على HTTPS أو localhost، وفي الآخر مخزّن في المتصفح، فمش بنفس الأمان. التوكنز على الويب الأحسن تبقى httpOnly cookies (درس res.cookie في «تاب Backend بـ Node»).
-
-async: كل قراية بتروح للـ native، فمتقراش في build. اقرا مرة في main أو في provider وخزّن في الذاكرة.
-
-[[static const _storage = FlutterSecureStorage();]]: الـ class نفسه خفيف ومفيهوش state، فـ const عادي.`,
-            when: "أي حاجة لو اتسرقت تدخل على حساب: access و refresh tokens، و API keys خاصة بالمستخدم، و PIN. والإعدادات العادية: shared_preferences.",
-            mistakes: R`التوكن في shared_preferences. وتقرا من secure storage في كل request (بطيء): اقراه مرة وخزّنه في الذاكرة وحدّثه لما يتغير. وتنسى تمسحه في logout. وتفتكر إن مسح التطبيق على iOS بيمسحه. وتحط API key بتاع خدمة (Stripe secret، OpenAI) في التطبيق أصلًا، مشفّر أو لأ: أي حاجة في الـ APK ممكن تتطلع، الـ secrets دي مكانها السيرفر.`
-          },
-          teach: R`## الكود ده بيعمل إيه؟
-
-class صغير ([[TokenStore]]) بيحفظ توكنين بعد الـ login، ويقرا الـ access token، ويمسح كله في الـ logout، وكله فوق [[flutter_secure_storage]]. اتجرّب في مشروع حقيقي (flutter_secure_storage 11.2.0) جوه [[docker run --rm ghcr.io/cirruslabs/flutter:stable]] (Flutter 3.44): بـ [[flutter test]] مع التخزين الوهمي اللي الـ package نفسها بتوفّره، وعلى الويب في Chrome headless. الـ Keychain والـ Keystore محتاجين موبايل، فكلامهم من الـ docs والـ CHANGELOG بتاع الـ package.
-
----
-
-## ١. الـ class و الـ storage
-
-~~~dart
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
-class TokenStore {
-  const TokenStore();
-  static const _storage = FlutterSecureStorage();
-~~~
-
-- [[const TokenStore();]]: constructor [[const]]: الـ class مفيهوش حقول بتتغير، فتقدر تكتب [[const TokenStore()]] في أي مكان ويبقى نفس الـ object.
-- [[static]]: الحقل ده تبع الـ class نفسه مش كل object، فنسخة واحدة بس.
-- [[const FlutterSecureStorage()]]: الـ object نفسه خفيف ومفيهوش state، هو بس «باب» للتخزين الآمن بتاع النظام. والقيم نفسها مش جواه.
-- [[_storage]]: الـ [[_]] private: باقي التطبيق ميكلمش التخزين مباشرة.
-
----
-
-## ٢. [[save]]: كتابة توكنين
-
-~~~dart
-  Future<void> save(String access, String refresh) async {
-    await _storage.write(key: 'access_token', value: access);
-    await _storage.write(key: 'refresh_token', value: refresh);
-  }
-~~~
-
-- [[write(key: ..., value: ...)]]: named parameters: المفتاح والقيمة، والاتنين String.
-- [[await]] على كل واحدة: كل write بتروح للـ native (تشفير وكتابة)، فبنستنى تخلص.
-- **access token**: قصير العمر، بيتبعت مع كل طلب. **refresh token**: أطول، بيجيب access جديد لما القديم ينتهي.
-
----
-
-## ٣. [[get access]]: getter async
-
-~~~dart
-  Future<String?> get access => _storage.read(key: 'access_token');
-~~~
-
-- [[get access]]: getter، بتستخدمه من غير أقواس: [[await store.access]].
-- [[Future<String?>]]: القيمة هتوصل بعدين، وممكن [[null]] لو مفيش توكن (مش عامل login).
-
----
-
-## ٤. [[clear]]
-
-~~~dart
-  Future<void> clear() => _storage.deleteAll();
+  return null;
 }
 ~~~
 
-[[deleteAll()]] بيمسح كل اللي التطبيق ده حاطه في الـ secure storage. ولو عايز واحد بس: [[delete(key: 'access_token')]].
+- [[<T extends Entity>]]: T أي نوع **بشرط** يكون Entity أو بيطبّقها. دا الـ **bound**.
+- ليه الشرط؟ عشان سطر [[item.id]]. من غيره T ممكن تبقى int، و int ملهاش id، فالـ compiler يرفض.
+- [[T?]]: بترجّع نفس نوع العناصر أو null لو ملقتش. لاحظ إنها مش بترجّع [[Entity?]]: اللي بعت [[List<Todo>]] ياخد [[Todo?]] ويقدر يقرا [[title]].
 
 ---
 
-## ٥. اللي حصل فعلًا
+## ٤. [[main]]: الـ compiler بيستنتج الأنواع
 
-في الاختبار مفيش موبايل، فـ [[FlutterSecureStorage.setMockInitialValues({})]] بيحط تخزين وهمي في الذاكرة بنفس الـ API:
-
-~~~text flutter test
-before login: null
-after save: eyJhbGciOi.access
-all: {access_token: eyJhbGciOi.access, refresh_token: r-123}
-after clear: null  all={}
+~~~dart
+  final todos = [Todo(1, 'buy milk'), Todo(2, 'call mom')];
+  final page = Page(todos, 40);
+  final titles = page.map((t) => t.title.toUpperCase());
+  print('$__{titles.items} of $__{titles.total}');
+  final found = findById(todos, 2);
+  print(found?.title);
+  print(titles.runtimeType);
 ~~~
 
-- قبل الـ login: [[null]].
-- [[readAll()]]: كل المفاتيح والقيم، اتنين بعد save.
-- بعد clear: فاضي.
+مفيش ولا نوع مكتوب، والـ compiler عارفهم كلهم:
 
-### على الويب
-
-نفس الـ class في تطبيق ويب بيحفظ التوكن لو مش موجود ويعرضه، وفتحته مرتين في Chrome: الفتحة التانية لقت التوكن محفوظ ([[before=eyJhbGciOi.access]]). وده اللي اتخزن في localStorage:
-
-~~~text Chrome localStorage
-"FlutterSecureStorage.refresh_token": "+eGTqHbuntb+8nBu.ivQCDLufNmHBLQYheDsBj1VzALCR",
-"FlutterSecureStorage": "HSrty/tIMFblJgy8UQo5f8gFvyCktEVu+jNDEMqJRvk=",
-"FlutterSecureStorage.access_token": "BlmG8emTZvutsFsX.Uf5cN0IP+pFXmVQXMy9dmvQZYhlzRzbFFyZCwJmDgM8U"
-~~~
-
-القيم مشفّرة (مش [[eyJ...]] كنص)، بس لاحظ إن **المفتاح نفسه** ([[FlutterSecureStorage]]) متخزن جنبها في نفس المكان. يعني أي script بيشتغل في الصفحة (XSS) يقدر يفكهم. عشان كده على الويب الأحسن httpOnly cookies.
-
-### على الموبايل (من الـ docs)
-
-| النظام | فين | ملاحظة |
+| المتغير | النوع المستنتج | منين |
 |---|---|---|
-| Android | ملف مشفّر بـ AES-GCM، ومفتاحه متغلّف بـ RSA OAEP في Android Keystore | من نسخة 10 الـ package سابت Jetpack Security، ونسخة 11 شالت [[encryptedSharedPreferences]] خالص ورفعت minSdk لـ 24 (من الـ CHANGELOG) |
-| iOS | Keychain | بيفضل بعد مسح التطبيق |
-| Web | localStorage مشفّر بـ WebCrypto | المفتاح جنب البيانات |
+| [[todos]] | [[List<Todo>]] | العناصر كلها Todo |
+| [[page]] | [[Page<Todo>]] | من نوع todos |
+| [[titles]] | [[Page<String>]] | الدالة بترجّع String، فـ R = String |
+| [[found]] | [[Todo?]] | T = Todo |
 
-و [[resetOnError]] افتراضيه [[true]] من نسخة 10 (اتأكدت منه في [[android_options.dart]] جوه الـ package: [[bool resetOnError = true]]).
+- [[toUpperCase()]]: النص بحروف كبيرة.
+- [[found?.title]]: [[?.]] يعني «لو found مش null هات title، ولو null رجّع null من غير ما تضرب».
+- [[runtimeType]]: النوع الحقيقي للـ object وقت التشغيل.
+
+~~~text dart run
+[BUY MILK, CALL MOM] of 40
+call mom
+Page<String>
+~~~
+
+السطر التالت مهم: [[Page<String>]] مش [[Page]] بس. في Dart الـ generics **reified**، يعني النوع بيفضل موجود وقت التشغيل (في Java و TypeScript بيتمسح). جربت كمان:
+
+~~~text الناتج
+Page([1, 2], 2).runtimeType        → Page<int>
+[].runtimeType                     → List<dynamic>
+<String>[].runtimeType             → List<String>
+page.items is List<int>            → true
+~~~
+
+لاحظ إن اللستة الفاضية من غير نوع بقت [[List<dynamic>]]: مفيش عناصر يستنتج منها، فبيحط dynamic وانت خسرت الفحص. اكتب النوع قبل القوسين المربعين زي السطر التالت.
 
 ---
 
-## ٦. الـ solCode: اقرا التوكن قبل runApp
+## ٥. التجارب في «جرّب»
+
+### [[findById([1, 2], 1)]]
+
+~~~text dart run
+t2a.dart:3:24: Error: The argument type 'List<int>' can't be assigned to the parameter type 'List<Entity>'.
+~~~
+
+الـ compiler حاول يخلي T = int، ولقى إن int مش Entity، فرفض. دا اللي الـ [[extends]] بيضمنه.
+
+### فخ الـ covariance
 
 ~~~dart
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  session.value = await const TokenStore().access;
-  runApp(MaterialApp.router(routerConfig: router));
-}
+  final List<Object> objs = <String>['a'];
+  print(objs.runtimeType);
+  objs.add(1);
 ~~~
 
-- [[ensureInitialized()]]: لازم قبل أي plugin قبل runApp (درس shared_preferences).
-- [[session]]: الـ [[ValueNotifier<String?>]] بتاع درس redirect، اللي الـ GoRouter بيسمعه بـ [[refreshListenable]].
-- [[await const TokenStore().access]]: اقرا التوكن **مرة واحدة** قبل أول frame. لو موجود، الـ redirect مش هيودّي login.
-- [[MaterialApp.router(routerConfig: router)]]: التطبيق بالـ GoRouter.
+الـ compiler سكت (مفيش أي error)، لأن [[List<String>]] يعتبر نوع من [[List<Object>]]. ودا اسمه **covariance**: لو String نوع من Object، يبقى List<String> نوع من List<Object>. بس وقت التشغيل:
 
-جربت ده بـ widget test بالـ router بتاع درس redirect، مرة بتخزين فاضي ومرة فيه توكن:
-
-~~~text flutter test
-startup storage={} -> screen "login" path=/login?from=%2F
-startup storage={access_token: eyJ.saved} -> screen "home" path=/
+~~~text dart run
+List<String>
+Unhandled exception:
+type 'int' is not a subtype of type 'String' of 'value'
+#0      List.add (dart:core-patch/growable_array.dart:285:14)
 ~~~
 
-- من غير توكن: اتحوّل لـ login، و [[from=%2F]] هي [[/]] متشفّرة في الـ URL (عشان يرجع لها بعد الدخول).
-- بتوكن: فتح على الرئيسية على طول.
+- [[List<String>]]: الـ object الحقيقي لسه List<String>، النوع المكتوب على المتغير مش بيغيّره.
+- [[List.add]] فحص القيمة وقت التشغيل ولقاها int فرمى TypeError.
 
 ---
 
 ## الخلاصة
 
-| الحاجة | بتعمل إيه |
-|---|---|
-| [[const FlutterSecureStorage()]] | باب للتخزين الآمن بتاع النظام |
-| [[write(key:, value:)]] / [[read(key:)]] | String بس، وكله async |
-| [[delete]] / [[deleteAll]] | logout |
-| قراية مرة في main | أول شاشة صح، ومتقراش في build |
-| [[setMockInitialValues({})]] | تخزين وهمي للاختبارات |
+| الحاجة | الشكل | معناها |
+|---|---|---|
+| class بـ generic | [[class Page<T>]] | النوع بيتحدد وقت الاستخدام |
+| method بـ generic | [[Page<R> map<R>(...)]] | نوع جديد خاص بالـ method |
+| نوع دالة | [[R Function(T item)]] | دالة بتاخد T وترجّع R |
+| شرط | [[<T extends Entity>]] | أي نوع، بشرط يكون Entity |
+| reified | [[runtimeType]] → [[Page<String>]] | النوع موجود وقت التشغيل |
 
-> التوكن هنا مش في shared_preferences. وعلى iOS بيفضل بعد مسح التطبيق، وعلى الويب مش آمن زي الموبايل.`,
+> متسيبش لستة أو map فاضية من غير نوع، والـ compiler مش بيمسك كل حاجة: الـ add على list متحطوطة في متغير بنوع أعم بيتفحص وقت التشغيل بس.`,
           lines: [
-            "الـ package.",
-            "class بيلف التخزين.",
-            "const: مفيش state.",
-            "instance واحد، و const لأنه خفيف.",
-            "حفظ التوكنين بعد login.",
-            "access token.",
-            "refresh token.",
+            "class بـ generic اسمه T: النوع بيتحدد لما حد يستخدمه.",
+            "constructor.",
+            "لستة من T، أيًا كان T.",
+            "العدد الكلي (للـ pagination).",
+            "دالة بـ generic تاني R: بتحوّل [[Page<T>]] لـ [[Page<R>]] بدالة تحويل.",
+            "بتطبّق التحويل على كل عنصر وتحافظ على total.",
             "قفلة.",
-            "قراية (null لو مفيش).",
-            "logout: امسح الكل.",
+            "class مجرد: أي حاجة ليها id.",
+            "getter لازم أي class يطبّقه.",
+            "قفلة.",
+            "Todo بيحقق شرط Entity.",
+            "constructor.",
+            "بيعيد تعريف getter الـ id...",
+            "...بـ field عادي.",
+            "العنوان.",
+            "قفلة.",
+            "[[T extends Entity]]: أي نوع بشرط يبقى فيه id، والنتيجة [[T?]] لأن ممكن ميلاقيش.",
+            "لف على اللستة.",
+            "[[item.id]] مسموح لأن T أكيد Entity.",
+            "قفلة الـ loop.",
+            "ملقاش.",
+            "قفلة.",
+            "البداية.",
+            "[[List<Todo>]] من القيم.",
+            "[[Page<Todo>]] من غير ما تكتب النوع.",
+            "[[Page<String>]]: R اتستنتجت من الدالة.",
+            "[BUY MILK, CALL MOM] of 40.",
+            "[[findById]] رجّعت [[Todo?]] مش Entity: الـ generic حافظ على النوع.",
+            "call mom.",
+            "Page<String>: النوع موجود وقت التشغيل.",
             "قفلة."
           ],
-          sol: R`في main: [[WidgetsFlutterBinding.ensureInitialized();]] ثم [[session.value = await const TokenStore().access;]] ثم runApp. لو فيه توكن، الـ redirect مش هيحوّل لـ login، والتطبيق يفتح على الرئيسية على طول.
+          sol: R`الناتج: [[[BUY MILK, CALL MOM] of 40]] ثم [[call mom]] ثم [[Page<String>]].
 
-بعد القفل والفتح: فاضل عامل login. وبعد المسح والتسطيب: على Android التوكن اتمسح (بيانات التطبيق اتمسحت)، وعلى iOS ممكن تلاقيه لسه موجود لأن الـ Keychain بيفضل. دا مش bug في كودك، دا سلوك iOS، وحله flag الـ first_run في shared_preferences.`,
-          solCode: R`Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  session.value = await const TokenStore().access;
-  runApp(MaterialApp.router(routerConfig: router));
+[[findById([1, 2], 1)]] مش هيترجم: [[The argument type 'List<int>' can't be assigned to the parameter type 'List<Entity>']]. الـ compiler عرف إن int مش Entity، ودا لازمة [[extends]] في الـ generic.
+
+والفخ: الـ compiler سكت خالص، لأن [[List<String>]] يعتبر [[List<Object>]] (covariance). بس وقت التشغيل ضرب: [[type 'int' is not a subtype of type 'String' of 'value']]. الـ list في الحقيقة لسه List<String> والـ runtime فحصها عند الـ add. الغلط الشائع إنك تفتكر إن النوع المكتوب على المتغير هو اللي بيتحكم، والصح إن نوع الـ object الحقيقي هو اللي بيتفحص.`
+        },
+        {
+          cmd: "mixin",
+          title: "تضيف قدرات جاهزة لكذا class من غير وراثة",
+          desc: R`الـ class في Dart بيورث من أب واحد بس ([[extends]]). إنما [[mixin]] حتة كود (fields و methods) تقدر تحطها في أي عدد classes بـ [[with]]: [[class ProductRepo extends Repository with Logger, Cache]].
+
+و [[mixin Cache on Repository]] معناها إن الـ mixin ده يتحط بس على classes بتورث Repository، فيقدر ينادي دوالها. وانت بتستخدم mixins من Flutter من أول يوم: [[with SingleTickerProviderStateMixin]] في أي animation.`,
+          example: R`mixin Logger {
+  final logs = <String>[];
+  void log(String msg) => logs.add('[$runtimeType] $msg');
+}
+
+abstract class Repository {
+  Future<List<String>> fetchAll();
+}
+
+mixin Cache on Repository {
+  List<String>? _cached;
+  Future<List<String>> cachedFetch() async => _cached ??= await fetchAll();
+}
+
+class ProductRepo extends Repository with Logger, Cache {
+  int calls = 0;
+  @override
+  Future<List<String>> fetchAll() async {
+    calls++;
+    log('network call $calls');
+    return ['tea', 'coffee'];
+  }
+}
+
+Future<void> main() async {
+  final repo = ProductRepo();
+  await repo.cachedFetch();
+  final items = await repo.cachedFetch();
+  print('$items calls=$__{repo.calls}');
+  print(repo.logs);
+  final Logger logger = repo;
+  logger.log('done');
+  print(repo.logs.length);
+}`,
+          try: "اعمل [[class Settings with Cache {}]] (من غير extends Repository) وشوف الـ error. وبعدين اعمل mixin تاني اسمه [[Timestamps]] فيه [[DateTime? updatedAt]] و [[void touch()]]، وضيفه على ProductRepo ونادي [[touch()]] جوه fetchAll.",
+          flag: "script",
+          deep: {
+            why: "فيه قدرات بتتكرر في classes ملهاش أب مشترك: logging، و cache، و validation. لو حطيتها في أب واحد، كل class لازم يورث منه حتى لو مش محتاجها، ولو عايز قدرتين من أبين مختلفين مش هينفع لأن الوراثة واحدة بس. الـ mixin بيخليك تركّب القدرات زي قطع ليجو.",
+            how: R`[[with A, B]] بيتقري من الشمال لليمين كأنه سلسلة: [[Repository]] ثم [[Repository+Logger]] ثم [[Repository+Logger+Cache]] ثم ProductRepo. ولو اتنين mixins فيهم method بنفس الاسم، اللي على اليمين (الأخير) هو اللي بيكسب، و [[super.method()]] جواه بينادي اللي قبله في السلسلة. عشان كده الترتيب مهم.
+
+[[on Repository]] بيعمل حاجتين: بيسمح للـ mixin ينادي [[fetchAll()]] كأنه موجود، وبيمنع أي حد يحطه على class مش Repository (الـ error اللي في التجربة).
+
+من Dart 3 فيه فرق واضح: [[mixin]] للـ mixins بس (مينفعش تعمل منه object)، و [[class]] عادي مينفعش يتحط بعد with إلا لو كتبته [[mixin class]]. قبل Dart 3 أي class من غير constructor كان ينفع يبقى mixin، ودا اتقفل.
+
+الفرق بين الـ ٣ كلمات:
+- [[extends]]: وراثة، أب واحد، بتاخد الكود والنوع.
+- [[implements]]: عقد، أي عدد، بتاخد النوع بس ولازم تكتب كل method بنفسك.
+- [[with]]: mixin، أي عدد، بتاخد الكود جاهز.
+
+في Flutter: [[SingleTickerProviderStateMixin]] بيضيف للـ State القدرة إنه يبقى [[vsync]] لـ AnimationController، و [[AutomaticKeepAliveClientMixin]] بيخلي عنصر في ListView ميتشالش لما يخرج من الشاشة، و [[WidgetsBindingObserver]] بيسمع لحالة التطبيق (background و foreground).`,
+            when: "قدرة صغيرة مستقلة بتتكرر في classes مختلفة. ولو العلاقة «هو نوع من» (Circle هو Shape) استخدم extends. ولو محتاج تبدّل التنفيذ في الاختبارات (repository حقيقي و fake) استخدم implements على abstract interface.",
+            mistakes: R`تعمل mixin فيه state كتير ودوال بتعتمد على بعض، فيبقى أب مستخبي بس أصعب في القراية. وتنسى إن الترتيب في with بيفرق لما فيه method بنفس الاسم. وتعمل [[with SingleTickerProviderStateMixin]] وعندك اتنين AnimationControllers: هيضرب، والصح [[TickerProviderStateMixin]]. وسؤال انترفيو: «إيه الفرق بين extends و implements و with؟» (فوق)، و«ليه Dart معندهاش multiple inheritance؟» لأن mixins بتحل المشكلة من غير diamond problem، بسبب الترتيب الخطي.`
+          },
+          teach: R`## البرنامج بيعمل إيه؟
+
+بيعمل قدرتين جاهزين: [[Logger]] (يسجّل رسايل) و [[Cache]] (يحفظ نتيجة أول طلب ومايطلبش تاني)، ويركّبهم على [[ProductRepo]] بـ [[with]] من غير وراثة. وبعدين يطلب البيانات مرتين ويتأكد إن الطلب الحقيقي حصل مرة واحدة. اتشغّل بـ [[dart run]] و [[dart analyze]] في [[docker run --rm dart:stable]] (Dart 3.13.5)، ومعاه الـ solCode والتجارب.
+
+---
+
+## ١. [[mixin Logger]]
+
+~~~dart
+mixin Logger {
+  final logs = <String>[];
+  void log(String msg) => logs.add('[$runtimeType] $msg');
+}
+~~~
+
+- [[mixin]]: حتة كود (fields و methods) معمولة عشان تتحط جوه classes تانية. مش class تعمل منه object: جربت [[Logger()]] و [[dart analyze]] قال [[Mixins can't be instantiated.]]
+- [[final logs = <String>[];]]: لستة نصوص فاضية. كل class هيحط Logger جواه هياخد **نسخة خاصة بيه** من اللستة دي، زي أي field عادي.
+- [[runtimeType]]: هنا مش «Logger»، هو نوع الـ object الحقيقي اللي الـ mixin اتحط فيه. فهيطبع [[ProductRepo]].
+- [[$runtimeType]] جوه النص: [[$]] وبعدها اسم بيحط القيمة في النص.
+
+---
+
+## ٢. العقد: [[abstract class Repository]]
+
+~~~dart
+abstract class Repository {
+  Future<List<String>> fetchAll();
+}
+~~~
+
+أي repository لازم يعرف يجيب البيانات. [[Future<List<String>>]] يعني «هترجّع لستة نصوص بعدين» (درس async و await). ومفيش جسم، فده عقد بس.
+
+---
+
+## ٣. [[mixin Cache on Repository]]
+
+~~~dart
+mixin Cache on Repository {
+  List<String>? _cached;
+  Future<List<String>> cachedFetch() async => _cached ??= await fetchAll();
+}
+~~~
+
+- [[on Repository]]: شرط. «الـ mixin ده يتحط بس على class هو أصلًا Repository». والمكسب: جوه الـ mixin تقدر تنادي [[fetchAll()]] كأنها موجودة، لأن أكيد هتبقى موجودة.
+- [[List<String>? _cached]]: الـ cache، بيبدأ null. و [[_]] = private على مستوى الملف.
+- [[async]] و [[await fetchAll()]]: استنى النتيجة.
+- [[??=]]: «لو المتغير اللي على الشمال null، احسب اللي على اليمين وخزّنه فيه. ولو مش null، سيبه ورجّع قيمته». فأول مرة بينادي fetchAll، وأي مرة بعدها بيرجّع المحفوظ من غير ما ينادي حاجة.
+
+---
+
+## ٤. التركيب: [[extends Repository with Logger, Cache]]
+
+~~~dart
+class ProductRepo extends Repository with Logger, Cache {
+  int calls = 0;
+  @override
+  Future<List<String>> fetchAll() async {
+    calls++;
+    log('network call $calls');
+    return ['tea', 'coffee'];
+  }
+}
+~~~
+
+- [[extends Repository]]: الوراثة الوحيدة (أب واحد بس في Dart).
+- [[with Logger, Cache]]: حط القدرتين دول. الترتيب بيتقري من الشمال لليمين كأنها طبقات: Repository، فوقيه Logger، فوقيه Cache، وفوق الكل ProductRepo.
+- [[calls]]: عدّاد عشان نشوف الطلب الحقيقي حصل كام مرة.
+- [[@override fetchAll()]]: ProductRepo بيحقق العقد. والجسم بيمثّل طلب شبكة: يزوّد العدّاد، ويسجّل بـ [[log]] (جاية من Logger)، ويرجّع لستة ثابتة.
+
+---
+
+## ٥. [[main]]
+
+~~~dart
+  final repo = ProductRepo();
+  await repo.cachedFetch();
+  final items = await repo.cachedFetch();
+  print('$items calls=$__{repo.calls}');
+  print(repo.logs);
+  final Logger logger = repo;
+  logger.log('done');
+  print(repo.logs.length);
+~~~
+
+- [[Future<void> main() async]]: main نفسها async عشان نقدر نعمل await جواها.
+- [[repo.cachedFetch()]] مرتين: الأولى نادت fetchAll وخزّنت، والتانية رجّعت المخزّن.
+- [[$__{repo.calls}]]: [[$__{ }]] لما اللي جوه النص فيه نقطة أو عملية مش اسم بس.
+- [[final Logger logger = repo;]]: الـ mixin **نوع** كمان. ProductRepo يتحط في متغير نوعه Logger، زي ما يتحط في متغير نوعه Repository. جربت [[repo is Logger]] و [[repo is Cache]] والاتنين [[true]].
+
+~~~text dart run
+[tea, coffee] calls=1
+[[ProductRepo] network call 1]
+2
+~~~
+
+- [[calls=1]]: طلبنا مرتين والطلب الحقيقي حصل مرة. الـ cache شغال.
+- السطر التاني: لستة فيها عنصر واحد. القوسين المربعين اللي بره بتوع اللستة، واللي جوه من الـ log نفسه وفيهم اسم الـ class.
+- [[2]]: الـ log التاني [[done]] اتضاف من خلال المتغير [[logger]].
+
+---
+
+## ٦. الترتيب في [[with]] بيفرق
+
+جربت ٣ mixins فيهم method بنفس الاسم:
+
+~~~dart
+mixin A { String hi() => 'A'; }
+mixin B { String hi() => 'B'; }
+mixin C on A { @override String hi() => 'C>' + super.hi(); }
+class X with A, B {}
+class Y with B, A {}
+class Z with A, C {}
+~~~
+
+~~~text dart run
+B
+A
+C>A
+~~~
+
+- [[X with A, B]]: اللي على اليمين (B) هو اللي فوق، فهو اللي بيكسب.
+- [[Y with B, A]]: العكس.
+- [[Z with A, C]]: [[super.hi()]] جوه C بينادي الطبقة اللي تحتها مباشرة (A). دا معنى إن الترتيب خطي: كل طبقة عارفة اللي تحتها، فمفيش «diamond problem».
+
+---
+
+## ٧. التجارب في «جرّب»
+
+### [[class Settings with Cache {}]]
+
+~~~text dart analyze
+error - Missing concrete implementation of 'Repository.fetchAll'. ... - non_abstract_class_inherits_abstract_member
+error - 'Cache' can't be mixed onto 'Object' because 'Object' doesn't implement 'Repository'. Try extending the class 'Cache'. - mixin_application_not_implemented_interface
+~~~
+
+خطأين: التاني هو الشرط [[on Repository]] (Settings أبوه Object مش Repository)، والأول نتيجة طبيعية: الـ Cache بيعتمد على fetchAll ومحدش كتبها.
+
+### الـ solCode: mixin تالت [[Timestamps]]
+
+~~~dart
+mixin Timestamps {
+  DateTime? updatedAt;
+  void touch() => updatedAt = DateTime.now();
+}
+~~~
+
+- [[DateTime? updatedAt]]: وقت آخر تحديث، null في الأول.
+- [[touch()]]: يحط الوقت الحالي. و [[DateTime.now()]] الوقت دلوقتي.
+- واتضاف [[with Logger, Cache, Timestamps]] و [[touch();]] جوه fetchAll.
+
+جربته: ناديت cachedFetch، وخزّنت updatedAt، واستنيت 50ms، وناديت تاني، وطبعت [[calls]] و «هل الوقت زي ما هو» و «هل اتحط وقت أصلًا»:
+
+~~~text dart run
+1 true true
+~~~
+
+الوقت متغيرش في المرة التانية، لأنها جت من الـ cache ومعدّتش على fetchAll.
+
+---
+
+## الخلاصة
+
+| الكلمة | بتاخد إيه | العدد |
+|---|---|---|
+| [[extends]] | الكود والنوع | أب واحد |
+| [[implements]] | النوع بس، والكود تكتبه انت | أي عدد |
+| [[with]] | الكود الجاهز والنوع | أي عدد، والترتيب بيفرق |
+| [[mixin X on Y]] | زي with، بس بشرط الـ class يبقى Y | |
+
+> في Flutter هتكتب [[with SingleTickerProviderStateMixin]] على الـ State عشان الـ animations، ودا نفس الفكرة بالظبط.`,
+          lines: [
+            "[[mixin]]: حتة كود تتحط في أي class.",
+            "field جوه الـ mixin: كل class بياخد نسخة خاصة بيه.",
+            "method بتستخدم [[runtimeType]] بتاع الـ class اللي اتحطت فيه.",
+            "قفلة.",
+            "class مجرد فيه عقد واحد.",
+            "أي repository لازم يعرف يجيب البيانات.",
+            "قفلة.",
+            "[[on Repository]]: الـ mixin ده يتحط بس على Repository.",
+            "cache خاص بالـ mixin.",
+            "[[??=]]: لو الـ cache فاضي نادي fetchAll (موجودة بفضل on) وخزّن.",
+            "قفلة.",
+            "وراثة واحدة + اتنين mixins.",
+            "عدّاد للنداءات الحقيقية.",
+            "بيطبّق العقد.",
+            "الدالة الحقيقية (زي طلب شبكة).",
+            "زوّد العدّاد.",
+            "[[log]] جاية من Logger.",
+            "النتيجة.",
+            "قفلة.",
+            "قفلة الـ class.",
+            "البداية.",
+            "object.",
+            "أول مرة: بيروح للـ «شبكة».",
+            "تاني مرة: من الـ cache.",
+            "[tea, coffee] calls=1: اتنادت مرة واحدة بس.",
+            "لستة فيها سطر واحد: اسم الـ class بين أقواس مربعة ثم network call 1.",
+            "الـ mixin نوع كمان: ProductRepo يتحط في متغير Logger.",
+            "نادي من خلاله.",
+            "2.",
+            "قفلة."
+          ],
+          sol: R`الناتج: [[[tea, coffee] calls=1]] ثم لستة فيها سطر log واحد (ProductRepo بين أقواس مربعة ثم network call 1) ثم [[2]].
+
+[[class Settings with Cache {}]] مش هيترجم: [['Cache' can't be mixed onto 'Object' because 'Object' doesn't implement 'Repository']]. الـ [[on]] شرط والـ compiler بيطبّقه.
+
+الـ Timestamps: بعد ما تضيفه ([[with Logger, Cache, Timestamps]]) وتنادي [[touch()]] جوه fetchAll، [[repo.updatedAt]] هيبقى فيه وقت أول نداء، ومش هيتغير في النداء التاني لأن التاني جه من الـ cache ومعدّاش على fetchAll. لو اتغير يبقى الـ cache مش شغال.`,
+          solCode: R`mixin Timestamps {
+  DateTime? updatedAt;
+  void touch() => updatedAt = DateTime.now();
+}
+
+class ProductRepo extends Repository with Logger, Cache, Timestamps {
+  int calls = 0;
+  @override
+  Future<List<String>> fetchAll() async {
+    calls++;
+    touch();
+    log('network call $calls');
+    return ['tea', 'coffee'];
+  }
 }`
         },
         {
-          cmd: "API client بالتوكن",
-          title: "التطبيق يكلم الـ backend اللي كتبته بـ Express أو FastAPI",
-          desc: R`دا الدرس اللي بيربط Flutter بباقي الموقع: الـ backend اللي عملته في «تاب Backend بـ Node» أو «تاب Python و FastAPI» فيه [[/auth/login]] بيرجّع توكن، وباقي الـ routes محمية بـ [[Authorization: Bearer <token>]]. التطبيق محتاج class واحد بيعمل login ويخزّن التوكن، ويحطه في كل طلب، ولو السيرفر رد 401 يمسح التوكن ويرجّع المستخدم لشاشة الدخول.
+          cmd: "extension",
+          title: "تضيف دوال لـ String أو أي نوع مش بتاعك",
+          desc: R`[[extension StringX on String]] بيضيف methods و getters لنوع موجود من غير ما تعدّل فيه ولا تورث منه: [['ali'.capitalized]] بدل [[capitalize('ali')]]. بتشتغل على أي نوع: String و num و List و DateTime و BuildContext.
 
-وعنوان السيرفر مش متكتب في الكود: [[String.fromEnvironment('API_URL')]] بيتحدد وقت الـ build بـ [[--dart-define]]. وعلى الـ emulator الـ localhost بتاع جهازك هو [[10.0.2.2]].`,
-          example: R`import 'dart:convert';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:http/http.dart' as http;
+و [[extension type]] (من Dart 3.3) حاجة مختلفة: نوع جديد وقت الترجمة بس فوق نوع موجود. [[UserId(42)]] وقت التشغيل هو int عادي، بس الـ compiler مش هيسيبك تبعت int مكان UserId بالغلط.`,
+          example: R`extension StringX on String {
+  String get capitalized => isEmpty ? this : this[0].toUpperCase() + substring(1);
+  bool get isValidEmail => RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(this);
+}
 
-const apiUrl = String.fromEnvironment('API_URL', defaultValue: 'http://10.0.2.2:3000');
+extension PriceFormat on num {
+  String get egp => '$__{toStringAsFixed(2)} EGP';
+}
 
-class UnauthorizedException implements Exception {}
+extension ListSum<T extends num> on Iterable<T> {
+  num get sum => fold<num>(0, (a, b) => a + b);
+}
 
-class ApiClient {
-  ApiClient({http.Client? client, this.onUnauthorized}) : _http = client ?? http.Client();
-  final http.Client _http;
-  final void Function()? onUnauthorized;
-  final _storage = const FlutterSecureStorage();
+extension type UserId(int value) {
+  bool get isValid => value > 0;
+}
 
-  Future<void> login(String email, String password) async {
-    final res = await _http.post(
-      Uri.parse('$apiUrl/auth/login'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'email': email, 'password': password}),
-    );
-    if (res.statusCode != 200) throw UnauthorizedException();
-    final {'token': String token} = jsonDecode(res.body) as Map<String, dynamic>;
-    await _storage.write(key: 'token', value: token);
-  }
-
-  Future<dynamic> get(String path) async {
-    final token = await _storage.read(key: 'token');
-    final res = await _http.get(Uri.parse('$apiUrl$path'), headers: {
-      'Accept': 'application/json',
-      if (token != null) 'Authorization': 'Bearer $token',
-    });
-    if (res.statusCode == 401) {
-      await _storage.delete(key: 'token');
-      onUnauthorized?.call();
-      throw UnauthorizedException();
-    }
-    if (res.statusCode >= 400) throw http.ClientException('HTTP $__{res.statusCode}', res.request?.url);
-    return jsonDecode(res.body);
-  }
-
-  Future<void> logout() => _storage.delete(key: 'token');
+void main() {
+  print('ali'.capitalized);
+  print('ali@mail.com'.isValidEmail);
+  print(450.egp);
+  print([10, 25, 15].sum.egp);
+  final id = UserId(42);
+  print('$__{id.value} $__{id.isValid}');
 }`,
-          try: "شغّل الـ backend بتاعك (Express على 3000 أو [[fastapi dev]] على 8000) واتأكد إن [[/auth/login]] بيرجّع [[{\"token\": \"...\"}]]. شغّل التطبيق على الـ emulator بـ [[--dart-define=API_URL=http://10.0.2.2:3000]] واعمل login وهات بيانات route محمي. وبعدين جرّب على موبايل حقيقي على نفس الـ WiFi: إيه اللي لازم يتغير؟ وآخر حاجة: غيّر التوكن المتخزّن لقيمة غلط وشوف اللي بيحصل.",
+          try: "اعمل [[extension on DateTime]] فيها getter اسمه [[ago]] بيرجّع «من X دقيقة» أو «من X ساعة». وبعدين جرّب تبعت [[42]] لدالة parameter بتاعها [[UserId]]: الـ compiler هيقول إيه؟ وجرّب [[final dynamic s = 'ali'; print(s.capitalized);]].",
           flag: "script",
           deep: {
-            why: "من غير class واحد للـ API، كل شاشة بتكتب الـ headers والـ base URL وفحص 401 بنفسها، وأول ما التوكن ينتهي نص الشاشات تفضل تعرض «خطأ» والنص التاني يرجّع login. ودا الجزء اللي بيحوّل التطبيق من «demo» لتطبيق شغال مع الـ backend الحقيقي بتاعك.",
-            how: R`عنوان السيرفر حسب المكان:
-- Android emulator: [[10.0.2.2]] هو الـ localhost بتاع الكمبيوتر.
-- iOS simulator: [[localhost]] شغال عادي.
-- موبايل حقيقي: IP الكمبيوتر على الشبكة ([[ipconfig]] أو [[ip a]])، والسيرفر لازم يسمع على [[0.0.0.0]] مش 127.0.0.1 بس ([[app.listen(3000, '0.0.0.0')]] في Express، و [[fastapi dev --host 0.0.0.0]] أو [[uvicorn --host 0.0.0.0]])، والـ firewall يسمح.
-- أو [[adb reverse tcp:3000 tcp:3000]] فالموبايل المتوصل USB يشوف localhost بتاع الكمبيوتر.
-- الإنتاج: [[https://api.yourdomain.com]] من [[--dart-define-from-file=env/prod.json]] (درس dart-define في المستوى ٣).
+            why: "كل مشروع فيه دوال صغيرة بتتكرر: تنسيق سعر، و validation لإيميل، و «من ٥ دقايق». لو عملتها دوال عادية هتتوه في ملف utils ومحدش هيلاقيها. الـ extension بيحطها على النوع نفسه، فالـ autocomplete بيقترحها أول ما تكتب نقطة بعد String.",
+            how: R`الـ extension مش بيعدّل الـ class فعلًا: الـ compiler بيحوّل [['ali'.capitalized]] لنداء دالة static وقت الترجمة. عشان كده:
+- بتشتغل على النوع المعروف وقت الترجمة بس. متغير [[dynamic]] مش هيشوفها وهيضرب [[NoSuchMethodError]].
+- مينفعش تضيف fields (state) جوه extension، getters و methods بس.
+- لو الـ class نفسه فيه method بنفس الاسم، بتاعة الـ class هي اللي بتكسب.
+- لازم تعمل import للملف اللي فيه الـ extension عشان تبان.
 
-HTTP من غير S: Android بيمنع cleartext في release (وفي debug التيمبليت بتاع Flutter بيسمح). للتطوير بس: [[android:usesCleartextTraffic="true"]] في manifest الـ debug. في الإنتاج HTTPS دايمًا.
+[[extension ListSum<T extends num> on Iterable<T>]] extension بـ generic: بتشتغل على [[List<int>]] و [[Set<double>]] وأي Iterable أرقام.
 
-CORS: مش موجود في الموبايل (دا قيد متصفح)، فالتطبيق على Android هيشتغل حتى لو السيرفر مش عامل CORS. بس نفس الكود على Flutter web هيتمنع لو الـ backend مش سامح بالـ origin (درس cors في «تاب Backend بـ Node» و «CORS و middleware» في «تاب Python و FastAPI»).
+في Flutter هتلاقي extensions كتير على [[BuildContext]]: [[context.go('/home')]] في go_router و [[context.mounted]] نفسها. ومشاريع كتير بتعمل [[extension on BuildContext { ThemeData get theme => Theme.of(this); }]] عشان تكتب [[context.theme]].
 
-شكل الرد: المثال مستني [[{"token": "..."}]]. لو backend بتاعك بيرجّع [[access_token]] (زي OAuth2PasswordBearer في FastAPI)، عدّل الـ pattern. وخلي بالك: [[OAuth2PasswordRequestForm]] في FastAPI بياخد form-urlencoded بـ [[username]] مش JSON، فالـ body يبقى [[body: {'username': email, 'password': password}]] من غير jsonEncode.
-
-الـ pattern [[final {'token': String token} = ...]]: لو الرد مفيهوش token نص، بيرمي StateError فورًا بدل ما يخزّن null.
-
-401: التوكن انتهى أو اتلغى. بنمسحه ونبلّغ ([[onUnauthorized]]) فالـ session بتاع الـ router يبقى null، والـ redirect يودّي login من أي شاشة. لو عندك refresh token (درس access و refresh في «تاب Backend بـ Node»)، هنا بتحاول refresh مرة وتعيد الطلب قبل ما ترمي.
-
-[[http.Client? client]] في الـ constructor: في الاختبارات بتبعت [[MockClient]] من [[package:http/testing.dart]] فتختبر فحص 401 من غير سيرفر.
-
-وفي Riverpod: [[final apiProvider = Provider((ref) => ApiClient(onUnauthorized: () => ...));]] والـ repositories بتقراه.`,
-            when: "أول ما التطبيق يكلم backend فيه auth. class واحد لكل الطلبات، وكل الـ repositories فوقه.",
-            mistakes: R`[[localhost]] على الـ emulator. والسيرفر بيسمع على 127.0.0.1 فالموبايل الحقيقي مش شايفه. و HTTP في release فكل الطلبات تفشل بـ [[Cleartext HTTP traffic not permitted]]. والتوكن في shared_preferences. وتقرا التوكن من secure storage في كل طلب في تطبيق بيعمل طلبات كتير (هنا مقبول للتبسيط، بس الأحسن cache في الذاكرة). وتبعت JSON لـ endpoint مستني form (FastAPI OAuth2) فيرجع 422.`
+[[extension type UserId(int value)]]: zero-cost wrapper. وقت التشغيل مفيش object جديد، هو int. بس وقت الترجمة [[UserId]] نوع مختلف، فدالة [[deleteUser(UserId id)]] مش هتقبل [[productId]] بالغلط. و [[package:web]] كله مبني بيها عشان JS interop.`,
+            when: "دوال مساعدة صغيرة مرتبطة بنوع واحد (تنسيق، تحويل، validation). و extension type لـ ids ومبالغ من نفس النوع الأساسي عايز تمنع الخلط بينها.",
+            mistakes: R`تحط business logic كبير في extension على String، فيبقى [['...'.saveToDatabase()]]: دي مكانها class. وتعمل extension باسم مستخدم في package تانية فيحصل تعارض ([[ambiguous extension member]]): اديها اسم مميز أو استخدم [[hide]] في الـ import. وتفتكر إنها هتشتغل على dynamic.`
           },
-          teach: R`## الكود ده بيعمل إيه؟
+          teach: R`## البرنامج بيعمل إيه؟
 
-class واحد ([[ApiClient]]) بيعمل ٣ حاجات: login بيبعت الإيميل والباسورد ويخزّن التوكن اللي راجع في الـ secure storage، و [[get]] بيحط التوكن في كل طلب ويتعامل مع الردود الغلط، و logout بيمسح التوكن. جربته بجد: شغّلت API وهمي بـ Node على الجهاز (بورت 5995) فيه [[POST /auth/login]] و [[GET /me]] محمي و [[GET /boom]] بيرجّع 500، والكود اتشغّل في [[flutter test]] جوه [[docker run --rm ghcr.io/cirruslabs/flutter:stable]] (Flutter 3.44، http 1.6) بـ [[--dart-define=API_URL=http://host.docker.internal:5995]] ([[host.docker.internal]] هو الجهاز من جوه Docker، زي [[10.0.2.2]] من الـ emulator). والـ secure storage بالتخزين الوهمي بتاع الـ package.
-
----
-
-## ١. الـ imports والعنوان
-
-~~~dart
-import 'dart:convert';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:http/http.dart' as http;
-
-const apiUrl = String.fromEnvironment('API_URL', defaultValue: 'http://10.0.2.2:3000');
-~~~
-
-- [[dart:convert]]: فيها [[jsonEncode]] (Map ← نص JSON) و [[jsonDecode]] (نص JSON ← Map أو List).
-- [[apiUrl]]: نفس فكرة درس ProviderScope: بيتحدد وقت الـ build بـ [[--dart-define]]، والافتراضي الكمبيوتر من الـ Android emulator.
-
-~~~text flutter test
-apiUrl=http://host.docker.internal:5995
-~~~
+بيضيف getters جديدة لأنواع موجودة مش بتاعتك: [[String]] (أول حرف كابيتال، وفحص إيميل)، و [[num]] (سعر بالجنيه)، وأي Iterable أرقام (المجموع). وبيعمل نوع جديد [[UserId]] فوق int بـ [[extension type]]. اتشغّل بـ [[dart run]] و [[dart analyze]] في [[docker run --rm dart:stable]] (Dart 3.13.5)، ومعاه الـ solCode والتجارب.
 
 ---
 
-## ٢. exception خاص و الـ constructor
+## ١. [[extension StringX on String]]
 
 ~~~dart
-class UnauthorizedException implements Exception {}
-
-class ApiClient {
-  ApiClient({http.Client? client, this.onUnauthorized}) : _http = client ?? http.Client();
-  final http.Client _http;
-  final void Function()? onUnauthorized;
-  final _storage = const FlutterSecureStorage();
-~~~
-
-- [[implements Exception]]: نوع خاص بيك، فالشاشة تقدر تعمل [[on UnauthorizedException]] وتفرّقه عن أي خطأ تاني.
-- [[{http.Client? client, this.onUnauthorized}]]: الاتنين named واختياريين.
-- [[: _http = client ?? http.Client()]]: initializer list: لو حد بعت client (في الاختبار: [[MockClient]]) استخدمه، غير كده اعمل واحد حقيقي.
-- [[void Function()?]]: نوعه «دالة مش بتاخد حاجة ومش بترجّع حاجة، أو null». هتتنادى لما الجلسة تنتهي.
-
----
-
-## ٣. [[login]]
-
-~~~dart
-  Future<void> login(String email, String password) async {
-    final res = await _http.post(
-      Uri.parse('$apiUrl/auth/login'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'email': email, 'password': password}),
-    );
-~~~
-
-- [[_http.post(url, headers:, body:)]]: طلب POST.
-- [[Content-Type: application/json]]: بنقول للسيرفر «الـ body ده JSON». Express بـ [[express.json()]] و FastAPI بـ Pydantic محتاجينه.
-- [[jsonEncode({...})]]: الـ Map بقى نص زي اللي السيرفر استلمه:
-
-~~~text log السيرفر
-POST /auth/login auth=- ct=application/json body={"email":"ali@mail.com","password":"secret123"}
-~~~
-
-~~~dart
-    if (res.statusCode != 200) throw UnauthorizedException();
-    final {'token': String token} = jsonDecode(res.body) as Map<String, dynamic>;
-    await _storage.write(key: 'token', value: token);
-  }
-~~~
-
-- [[res.statusCode]]: رقم الرد. أي حاجة غير 200 هنا معناها بيانات غلط.
-- [[jsonDecode(res.body) as Map<String, dynamic>]]: نص الرد بقى Map، و [[as]] بيقول للـ compiler نوعه.
-- [[final {'token': String token} = ...]]: map pattern: «الـ Map لازم فيه مفتاح [[token]] قيمته String، وحطها في متغير [[token]]». لو مش كده بيرمي فورًا.
-- [[_storage.write]]: خزّن التوكن في المكان الآمن.
-
-~~~text flutter test
-login wrong password -> THROWS UnauthorizedException: Instance of 'UnauthorizedException'
-login ok -> stored token=tok-abc123
-~~~
-
-### لو الـ backend بيرجّع [[access_token]]
-
-بعتّ رد زي بتاع FastAPI ([[{"access_token":"abc","token_type":"bearer"}]]) بـ [[MockClient]] من [[package:http/testing.dart]]:
-
-~~~text flutter test
-login with access_token response -> THROWS StateError: Bad state: Pattern matching error
-~~~
-
-الـ pattern مالقاش [[token]] فرمى على طول، بدل ما يخزّن null ويكمّل. عدّل الـ pattern لشكل الرد بتاعك.
-
----
-
-## ٤. [[get]]: التوكن في الهيدر
-
-~~~dart
-  Future<dynamic> get(String path) async {
-    final token = await _storage.read(key: 'token');
-    final res = await _http.get(Uri.parse('$apiUrl$path'), headers: {
-      'Accept': 'application/json',
-      if (token != null) 'Authorization': 'Bearer $token',
-    });
-~~~
-
-- [[Future<dynamic>]]: الرد ممكن Map أو List، فالنوع مفتوح.
-- [[_storage.read]]: هات التوكن (أو null).
-- [[Accept: application/json]]: «عايز الرد JSON».
-- [[if (token != null) 'Authorization': ...]]: collection if جوه الـ Map: الهيدر ده يتحط **بس** لو فيه توكن.
-- [[Bearer $token]]: الشكل القياسي: كلمة [[Bearer]] ومسافة والتوكن. ودا اللي السيرفر شافه:
-
-~~~text log السيرفر
-GET /me auth=Bearer tok-abc123 ct=- body=
-~~~
-
-~~~text flutter test
-get /todos (no token) -> [{id: 1, title: buy milk}, {id: 2, title: call mom}, {id: 3, title: from flutter}]
-get /me -> {id: 7, email: ali@mail.com}
-~~~
-
-[[/todos]] مش محمي فرجع من غير توكن، و [[/me]] رجع بعد الـ login.
-
----
-
-## ٥. 401: الجلسة انتهت
-
-~~~dart
-    if (res.statusCode == 401) {
-      await _storage.delete(key: 'token');
-      onUnauthorized?.call();
-      throw UnauthorizedException();
-    }
-~~~
-
-- [[401]] Unauthorized: التوكن مش موجود أو غلط أو انتهى.
-- [[_storage.delete]]: التوكن ده خلاص ملوش لازمة.
-- [[onUnauthorized?.call()]]: [[?.]] معناها «لو مش null نادي». الـ [[call()]] هي اللي بتنادي الدالة. في التطبيق دي بتعمل [[session.value = null]] فالـ router يرجّعك login.
-- [[throw]]: عشان الشاشة اللي طلبت تعرف إن الطلب فشل.
-
-غيّرت التوكن المتخزن لـ [[tampered]]:
-
-~~~text flutter test
-get /me (bad token) -> THROWS UnauthorizedException: Instance of 'UnauthorizedException'
-after 401: stored token=null onUnauthorized calls=2
-~~~
-
-التوكن اتمسح، و [[onUnauthorized]] اتنادت مرتين في الاختبار كله: مرة هنا ومرة لما طلبت [[/me]] من غير توكن في الأول.
-
----
-
-## ٦. أي خطأ تاني، والرد العادي
-
-~~~dart
-    if (res.statusCode >= 400) throw http.ClientException('HTTP $__{res.statusCode}', res.request?.url);
-    return jsonDecode(res.body);
-  }
-
-  Future<void> logout() => _storage.delete(key: 'token');
+extension StringX on String {
+  String get capitalized => isEmpty ? this : this[0].toUpperCase() + substring(1);
+  bool get isValidEmail => RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(this);
 }
 ~~~
 
-- [[>= 400]]: 4xx (غلط من التطبيق) و 5xx (السيرفر وقع).
-- [[http.ClientException(message, uri)]]: نوع جاهز من http، فيه الرسالة والعنوان. [[res.request?.url]]: [[?.]] لأن الـ request ممكن يبقى null.
-- [[return jsonDecode(res.body)]]: كله تمام.
+- [[extension]]: «ضيف الحاجات دي للنوع ده». و [[StringX]] اسم الـ extension (اختياري، بس مهم لو حصل تعارض أسماء). و [[on String]]: النوع اللي بتضيف عليه.
+- جوه الـ extension، [[this]] هو النص نفسه اللي اتنادت عليه الدالة. وتقدر تنادي methods بتاعته من غير [[this.]]: [[isEmpty]] و [[substring]].
 
-~~~text flutter test
-get /boom -> THROWS ClientException: ClientException: HTTP 500, uri=http://host.docker.internal:5995/boom
-~~~
+### [[capitalized]] حتة حتة
 
-ولو السيرفر مش شغال خالص (جربت بورت مفيش عليه حاجة):
+| الحتة | معناها |
+|---|---|
+| [[isEmpty ? this : ...]] | لو النص فاضي رجّعه زي ما هو (من غيرها [[this[0].toUpperCase()]] هيضرب RangeError) |
+| [[this[0].toUpperCase()]] | أول حرف، كابيتال |
+| [[+ substring(1)]] | ولزّق عليه باقي النص من الحرف رقم 1 |
 
-~~~text flutter test
-server down -> THROWS _ClientSocketException: ClientException with SocketException: Connection refused (OS Error: Connection refused, errno = 111), ...
-~~~
+جربت [[''.capitalized.isEmpty]] وطلع [[true]]: النص الفاضي عدّى بسلام.
 
-ودي اللي هتشوفها لو العنوان أو البورت غلط، أو استخدمت [[localhost]] من جوه الـ emulator.
+### [[isValidEmail]]: الـ regex
+
+[[RegExp(r'...')]] بيعمل regular expression، و [[r]] قبل النص يعني raw string: الـ [[\]] يفضل زي ما هو. و [[.hasMatch(this)]] هل النص مطابق.
+
+| الحتة | معناها |
+|---|---|
+| [[^]] و [[$]] | أول النص وآخره (النص كله لازم يطابق) |
+| [[[^@\s]+]] | حرف واحد أو أكتر، مش [[@]] ومش مسافة ([[\s]]) |
+| [[@]] | علامة @ |
+| [[\.]] | نقطة حقيقية (النقطة لوحدها في regex معناها «أي حرف») |
+
+يعني «حاجة @ حاجة . حاجة» من غير مسافات. جربت [['a b'.isValidEmail]] وطلع [[false]].
 
 ---
 
-## ٧. العنوان حسب الجهاز
+## ٢. extension على الأرقام
 
-| بتشغّل على | [[API_URL]] |
-|---|---|
-| Android emulator | [[http://10.0.2.2:3000]] |
-| iOS simulator | [[http://localhost:3000]] |
-| موبايل حقيقي على نفس الـ WiFi | IP الكمبيوتر، والسيرفر بيسمع على [[0.0.0.0]] |
-| موبايل بـ USB | [[adb reverse tcp:3000 tcp:3000]] و [[http://localhost:3000]] |
-| الإنتاج | [[https://...]] من [[--dart-define-from-file]] |
+~~~dart
+extension PriceFormat on num {
+  String get egp => '$__{toStringAsFixed(2)} EGP';
+}
+~~~
 
-(جوه Docker: [[host.docker.internal]] زي ما استخدمت هنا.)
+- [[num]]: النوع الأب لـ [[int]] و [[double]]، فالـ getter بيشتغل على الاتنين.
+- [[toStringAsFixed(2)]]: الرقم كنص برقمين بعد العلامة: [[450]] تبقى [[450.00]].
+
+---
+
+## ٣. extension بـ generic
+
+~~~dart
+extension ListSum<T extends num> on Iterable<T> {
+  num get sum => fold<num>(0, (a, b) => a + b);
+}
+~~~
+
+- [[<T extends num>]]: الـ extension ليه type parameter بشرط يكون رقم (درس generics). فبيشتغل على [[List<int>]] و [[Set<double>]]، ومش هيظهر على [[List<String>]].
+- [[Iterable]]: أي حاجة تتلف عليها (List و Set وغيرهم).
+- [[fold<num>(0, (a, b) => a + b)]]: ابدأ من 0، ولكل عنصر [[b]] ضيفه على المجموع [[a]]. يعني 0+10، ثم +25، ثم +15 = 50.
+
+---
+
+## ٤. [[extension type UserId(int value)]]
+
+~~~dart
+extension type UserId(int value) {
+  bool get isValid => value > 0;
+}
+~~~
+
+- دي حاجة تانية خالص (من Dart 3.3): **نوع جديد** وقت الترجمة، ملفوف حوالين int.
+- [[(int value)]]: القيمة اللي جوه واسمها [[value]].
+- [[isValid]]: getter خاص بالنوع ده.
+
+جربت أطبع [[id.runtimeType]] و [[id is int]]:
+
+~~~text الناتج
+int
+true
+~~~
+
+وقت التشغيل مفيش object جديد خالص، هو int عادي. الحماية كلها وقت الترجمة، ودا معنى «zero-cost».
+
+---
+
+## ٥. [[main]] والناتج
+
+~~~dart
+  print('ali'.capitalized);
+  print('ali@mail.com'.isValidEmail);
+  print(450.egp);
+  print([10, 25, 15].sum.egp);
+  final id = UserId(42);
+  print('$__{id.value} $__{id.isValid}');
+~~~
+
+~~~text dart run
+Ali
+true
+450.00 EGP
+50.00 EGP
+42 true
+~~~
+
+- [[450.egp]]: الـ getter اتنادى على رقم مكتوب في الكود على طول.
+- [[[10, 25, 15].sum.egp]]: extensionين ورا بعض: sum رجّع 50 (نوعه num)، و egp اتنادت عليه.
+
+---
+
+## ٦. التجارب في «جرّب»
+
+### الـ solCode: [[extension Ago on DateTime]]
+
+~~~dart
+extension Ago on DateTime {
+  String get ago {
+    final diff = DateTime.now().difference(this);
+    if (diff.inMinutes < 60) return 'من $__{diff.inMinutes} دقيقة';
+    if (diff.inHours < 24) return 'من $__{diff.inHours} ساعة';
+    return 'من $__{diff.inDays} يوم';
+  }
+}
+~~~
+
+- [[String get ago { ... }]]: getter بجسم كامل بدل [[=>]]، عشان فيه أكتر من سطر.
+- [[DateTime.now().difference(this)]]: الفرق بين دلوقتي والوقت ده، نوعه [[Duration]] (مدة).
+- [[diff.inMinutes]] و [[inHours]] و [[inDays]]: المدة كلها بالدقايق أو الساعات أو الأيام (أرقام صحيحة).
+- [[subtract(const Duration(minutes: 5))]] في main: الوقت دلوقتي ناقص ٥ دقايق.
+
+~~~text dart run
+من 5 دقيقة
+من 3 ساعة
+~~~
+
+### تبعت [[42]] مكان [[UserId]]
+
+~~~text dart run
+Error: The argument type 'int' can't be assigned to the parameter type 'UserId'.
+  deleteUser(42);
+             ^
+~~~
+
+مع إنه int وقت التشغيل، الـ compiler بيعامله نوع مختلف. دا اللي بيمنعك تبعت id منتج لدالة مستنية id يوزر.
+
+### extension على [[dynamic]]
+
+~~~dart
+  final dynamic s = 'ali';
+  print(s.capitalized);
+~~~
+
+بيترجم عادي، وبيضرب وقت التشغيل:
+
+~~~text dart run
+Unhandled exception:
+NoSuchMethodError: Class 'String' has no instance getter 'capitalized'.
+Receiver: "ali"
+Tried calling: capitalized
+~~~
+
+الـ extension مش بيعدّل الـ String فعلًا. الـ compiler بيشوف النوع المكتوب وقت الترجمة ([[String]]) فيحوّل [['ali'.capitalized]] لنداء دالة عادية. ولما النوع [[dynamic]] مبيعرفش يعمل كده، فوقت التشغيل الـ String نفسه بيتسأل عن capitalized ومعندوش.
 
 ---
 
 ## الخلاصة
 
-| الخطوة | الكود |
-|---|---|
-| login | POST بـ JSON، وغير 200 = بيانات غلط |
-| شكل الرد | [[final {'token': String token} = ...]] بيرمي لو مختلف |
-| كل طلب | [[Authorization: Bearer <token>]] لو موجود |
-| 401 | امسح التوكن، بلّغ ([[onUnauthorized]])، وارمي |
-| 4xx و 5xx التانية | [[ClientException]] |
-
-> class واحد بيعرف العنوان والتوكن والـ 401، وباقي التطبيق بيقول [[api.get('/me')]] وخلاص.`,
+| الحاجة | الشكل | معناها |
+|---|---|---|
+| extension | [[extension StringX on String]] | دوال جديدة على نوع موجود |
+| [[this]] جواها | [[this.isEmpty]] | القيمة اللي اتنادت عليها |
+| بـ generic | [[on Iterable<T>]] مع [[T extends num]] | على أي Iterable أرقام |
+| extension type | [[extension type UserId(int value)]] | نوع جديد وقت الترجمة، int وقت التشغيل |
+| حدودها | [[dynamic]] | مش بتشتغل، لأنها بتتحل وقت الترجمة |`,
           lines: [
-            "jsonEncode و jsonDecode.",
-            "التخزين الآمن.",
-            "http.",
-            "العنوان من [[--dart-define]]، وافتراضيًا الكمبيوتر من الـ emulator.",
-            "exception لما السيرفر يرفض التوكن.",
-            "الـ client.",
-            "http.Client ممكن يتبعت (للاختبارات)، و callback لما الـ session تنتهي.",
-            "الاتصال.",
-            "هيتنادى عند 401 (مثلًا [[session.value = null]]).",
-            "التخزين.",
-            "login.",
-            "POST للـ backend.",
-            "[[/auth/login]] في Express أو FastAPI.",
-            "JSON.",
-            "الإيميل والباسورد.",
+            "extension على String، واسمها StringX.",
+            "getter: أول حرف كابيتال. [[this]] هو النص نفسه.",
+            "getter بيتأكد من شكل الإيميل بـ regex بسيط.",
             "قفلة.",
-            "أي رد غير 200 يبقى بيانات غلط.",
-            "pattern: الرد لازم فيه token نص، وإلا يرمي فورًا.",
-            "خزّن التوكن.",
-            "قفلة login.",
-            "GET لأي route.",
-            "هات التوكن.",
-            "الطلب.",
-            "JSON.",
-            "التوكن في الهيدر لو موجود (collection if).",
-            "قفلة الـ headers.",
-            "التوكن اتلغى أو انتهى...",
-            "...امسحه...",
-            "...وبلّغ التطبيق (الـ router يرجّع login)...",
-            "...وارمي عشان الشاشة تعرف.",
+            "extension على num (يعني int و double).",
+            "السعر بجنيه ورقمين عشري.",
             "قفلة.",
-            "أي خطأ تاني من السيرفر.",
-            "الرد كـ Map أو List.",
-            "قفلة get.",
-            "logout.",
+            "extension بـ generic على أي Iterable أرقام.",
+            "المجموع بـ fold.",
+            "قفلة.",
+            "[[extension type]]: نوع جديد فوق int، من غير تكلفة وقت التشغيل.",
+            "getter خاص بالنوع ده.",
+            "قفلة.",
+            "البداية.",
+            "Ali.",
+            "true.",
+            "450.00 EGP.",
+            "50.00 EGP: extensionين ورا بعض.",
+            "[[UserId]] بيتعمل زي class.",
+            "42 true.",
             "قفلة."
           ],
-          sol: R`على الـ emulator مع [[API_URL=http://10.0.2.2:3000]] الـ login بيخزّن التوكن و [[get('/todos')]] بيرجّع البيانات. لو ظهر [[Connection refused]] يبقى السيرفر مش شغال أو البورت غلط. ولو ظهر 422 من FastAPI يبقى الـ endpoint مستني form مش JSON.
+          sol: R`الـ extension على DateTime: بتحسب [[DateTime.now().difference(this)]]، ولو أقل من ساعة ترجّع الدقايق، وإلا الساعات، وإلا الأيام. [[DateTime.now().subtract(const Duration(minutes: 5)).ago]] لازم تطبع «من 5 دقيقة».
 
-على موبايل حقيقي: [[API_URL]] يبقى IP الكمبيوتر (زي [[http://192.168.1.10:3000]])، والسيرفر لازم يسمع على [[0.0.0.0]]، والـ firewall يسمح بالبورت. أو [[adb reverse tcp:3000 tcp:3000]] وتسيب [[http://localhost:3000]].
+بعت [[42]] مكان [[UserId]]: [[The argument type 'int' can't be assigned to the parameter type 'UserId']]. دا الهدف من extension type. والصح [[deleteUser(UserId(42))]].
 
-توكن غلط: السيرفر بيرد 401، فالـ client بيمسح التوكن، وينادي onUnauthorized، ويرمي UnauthorizedException. لو onUnauthorized بيعمل [[session.value = null]]، الـ router بيرميك على login أوتوماتيك. الغلط الشائع إن التطبيق يعرض «خطأ» ويفضل في نفس الشاشة، لأن الـ 401 اتعامل كأي خطأ.`
-        }
-      ]
-    },
-    {
-      t: "الاختبارات",
-      l: 3,
-      n: "widget tests بتشتغل في ثواني من غير موبايل، و integration tests بتشغّل التطبيق الحقيقي على جهاز",
-      items: [
-        {
-          cmd: "flutter test",
-          title: "تختبر شاشة بتدوس وتكتب فيها من غير موبايل",
-          desc: R`الـ widget test بيبني الـ widget في بيئة وهمية (من غير شاشة ولا emulator)، وتقدر تكتب في الحقول وتدوس الأزرار وتتأكد من اللي ظاهر. بيشتغل بـ [[flutter test]] في ثواني، وفي CI.
-
-[[testWidgets]] بتدّيك [[tester]]: [[pumpWidget]] يبني، و [[tap]] و [[enterText]] يتفاعلوا، و [[pump]] يرسم frame (بعد أي تغيير لازم pump عشان الشاشة تتحدث). و [[find.text]] و [[find.byType]] بيدوّروا، و [[expect(..., findsOneWidget)]] بيتأكد.`,
-          example: R`// test/login_form_test.dart
-import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:my_app/login_form.dart';
-
-void main() {
-  Widget app() => const MaterialApp(home: Scaffold(body: LoginForm()));
-
-  testWidgets('empty fields show both errors', (tester) async {
-    await tester.pumpWidget(app());
-    await tester.tap(find.text('Sign in'));
-    await tester.pump();
-    expect(find.text('اكتب إيميل صحيح'), findsOneWidget);
-    expect(find.text('8 حروف على الأقل'), findsOneWidget);
-  });
-
-  testWidgets('valid input signs in', (tester) async {
-    await tester.pumpWidget(app());
-    await tester.enterText(find.byType(TextFormField).first, 'ali@mail.com');
-    await tester.enterText(find.byType(TextFormField).last, 'secret123');
-    await tester.tap(find.byType(FilledButton));
-    await tester.pump();
-    expect(find.text('Signing in...'), findsOneWidget);
-    await tester.pump(const Duration(seconds: 1));
-    await tester.pump();
-    expect(find.text('Welcome ali@mail.com'), findsOneWidget);
-  });
-}`,
-          try: "حط LoginForm من درس «Form و validator» في [[lib/login_form.dart]] وشغّل [[flutter test]]. بعدين بدّل آخر [[pump(const Duration(seconds: 1))]] و [[pump()]] بـ [[pumpAndSettle()]] بس: الاختبار نجح؟ ليه؟ واكتب اختبار تالت لـ TodosScreen بـ FakeTodoRepo فاضي (ProviderScope مع overrides) بيتأكد إن «مفيش مهام لسه» ظاهرة.",
-          flag: "script",
-          deep: {
-            why: "كل ما التطبيق يكبر، تعديل في validator أو provider ممكن يكسر شاشة مش واخد بالك منها، وتكتشفه من تقييم نجمة واحدة على Play. الـ widget tests بتشغّل سيناريوهات المستخدم الأساسية في ثواني مع كل commit، وأرخص بكتير من إنك تجرّب بإيدك.",
-            how: R`فيه ٣ أنواع اختبارات في Flutter:
-- unit ([[test()]] من package test): دالة أو class من غير UI. أسرع حاجة. زي اختبار CartNotifier بـ [[ProviderContainer]].
-- widget ([[testWidgets]]): widget أو شاشة في بيئة وهمية. المثال هنا.
-- integration: التطبيق الحقيقي على جهاز (الدرس الجاي).
-
-الوقت في widget tests وهمي (fake async): مفيش حاجة بتحصل لوحدها. [[pump()]] بيرسم frame واحد، و [[pump(Duration)]] بيقدّم الساعة الوهمية المدة دي (فالـ [[Future.delayed]] بتاع ثانية بيخلص فورًا)، و [[pumpAndSettle()]] بيفضل يرسم frames لحد ما مفيش animations. بس pumpAndSettle مش بيقدّم الوقت لـ timers لو مفيش frames مستنية، ودا سبب إنه مش كفاية بعد Future.delayed.
-
-الـ finders: [[find.text]] و [[find.byType]] و [[find.byIcon]] و [[find.byKey(const ValueKey('submit'))]] (أثبت حاجة لو النص ممكن يتغير أو يتترجم)، و [[find.widgetWithText(ListTile, 'milk')]]. والـ matchers: [[findsOneWidget]] و [[findsNothing]] و [[findsNWidgets(3)]].
-
-الشبكة: الـ widget tests بتمنع طلبات HTTP الحقيقية (بترجع 400)، ودا مقصود. عشان كده الـ repository لازم يبقى provider تقدر تعمله override بـ fake:
-[[ProviderScope(overrides: [todoRepoProvider.overrideWithValue(FakeRepo([]))], child: ...)]]
-
-الـ plugins (shared_preferences، secure storage) مش موجودة في الاختبار: كل واحد فيه mock ([[SharedPreferencesAsyncPlatform.instance = InMemorySharedPreferencesAsync.empty()]] و [[FlutterSecureStorage.setMockInitialValues({})]])، أو الأحسن تعمل override للـ store نفسه.
-
-golden tests: [[expectLater(find.byType(ProductCard), matchesGoldenFile('card.png'))]] بتقارن شكل الـ widget بصورة محفوظة، و [[flutter test --update-goldens]] بيحدّثها.
-
-[[flutter test --coverage]] بيطلّع [[coverage/lcov.info]].`,
-            when: "السيناريوهات المهمة: login، و checkout، و الفورمز، وحالات loading و error و empty. ومع أي bug بتصلّحه: اختبار يمسكه عشان ميرجعش. ومتختبرش كل widget صغير بيعرض نص.",
-            mistakes: R`تنسى [[pump()]] بعد tap فالاختبار يشوف الشاشة القديمة. و [[pumpAndSettle]] مع [[CircularProgressIndicator]] ظاهر: الـ animation مبيخلصش فيضرب timeout. وتختبر بـ HTTP حقيقي. وتدوّر بـ [[find.text]] على نص بيتغير مع الترجمة، فالاختبارات تقع لما حد يعدّل كلمة: استخدم keys للحاجات المهمة. والـ widget محتاج MaterialApp أو Scaffold فوقه (Directionality و Theme و ScaffoldMessenger) وانت بتبنيه لوحده.`
-          },
-          teach: R`## الكود ده بيعمل إيه؟
-
-ملف اختبار فيه اختبارين لـ [[LoginForm]] (من درس «Form و validator»): الأول بيدوس Sign in والحقول فاضية ويتأكد إن رسالتين الخطأ ظهروا، والتاني بيكتب إيميل وباسورد صح ويدوس ويتأكد من «Signing in...» وبعدين رسالة الترحيب. حطيت الـ LoginForm في [[lib/login_form.dart]] في مشروع اسمه [[my_app]]، والملف ده في [[test/login_form_test.dart]]، وشغّلت [[flutter test]] جوه [[docker run --rm ghcr.io/cirruslabs/flutter:stable]] (Flutter 3.44). مفيش موبايل ولا emulator.
-
-~~~text flutter test test/login_form_test.dart
-00:00 +0: loading /w/app/test/login_form_test.dart
-00:00 +0: empty fields show both errors
-00:00 +1: valid input signs in
-00:01 +2: All tests passed!
-~~~
-
-[[+1]] و [[+2]] عدد اللي نجح لحد دلوقتي، و [[00:01]] الوقت: ثانية للاتنين.
-
----
-
-## ١. الـ imports
-
-~~~dart
-import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:my_app/login_form.dart';
-~~~
-
-- [[flutter_test]]: جاية مع أي مشروع [[flutter create]] في [[dev_dependencies]]. فيها [[testWidgets]] و [[find]] و [[expect]].
-- [[package:my_app/...]]: ملف من مشروعك نفسه. [[my_app]] هو [[name:]] في [[pubspec.yaml]]، و [[login_form.dart]] جوه [[lib/]].
-
----
-
-## ٢. دالة بتبني الشاشة
-
-~~~dart
-void main() {
-  Widget app() => const MaterialApp(home: Scaffold(body: LoginForm()));
-~~~
-
-- [[main]]: [[flutter test]] بيشغّل main بتاعة كل ملف بينتهي بـ [[_test.dart]] جوه [[test/]].
-- [[app()]]: دالة صغيرة عشان كل اختبار يبني نسخة جديدة.
-- ليه [[MaterialApp]] و [[Scaffold]]؟ الـ [[TextFormField]] محتاج Theme واتجاه الكتابة، و [[ScaffoldMessenger.of(context)]] (اللي بيعرض الـ SnackBar) محتاج Scaffold فوقه. لوحده الـ LoginForm هيضرب.
-
----
-
-## ٣. الاختبار الأول: الحقول فاضية
-
-~~~dart
-  testWidgets('empty fields show both errors', (tester) async {
-    await tester.pumpWidget(app());
-    await tester.tap(find.text('Sign in'));
-    await tester.pump();
-    expect(find.text('اكتب إيميل صحيح'), findsOneWidget);
-    expect(find.text('8 حروف على الأقل'), findsOneWidget);
-  });
-~~~
-
-- [[testWidgets('اسم', (tester) async { ... })]]: اختبار widget. الاسم بيظهر في الناتج، و [[tester]] هو اللي بيبني ويدوس ويكتب.
-- [[pumpWidget(app())]]: ابني الشاشة وارسم أول frame.
-- [[find.text('Sign in')]]: «دوّر على widget فيه النص ده». ده **finder**: وصف للي بتدوّر عليه، مش الـ widget نفسه.
-- [[tap(...)]]: دوس عليه. الـ [[_submit]] بيتنادى، والـ validators بيشتغلوا.
-- [[pump()]]: ارسم frame جديد. من غيره الشاشة لسه زي ما كانت قبل الضغطة، والرسايل مش هتظهر.
-- [[expect(finder, findsOneWidget)]]: «لازم يبقى فيه واحد بالظبط». لو صفر أو اتنين الاختبار يقع.
-
----
-
-## ٤. الاختبار التاني: بيانات صح
-
-~~~dart
-    await tester.enterText(find.byType(TextFormField).first, 'ali@mail.com');
-    await tester.enterText(find.byType(TextFormField).last, 'secret123');
-    await tester.tap(find.byType(FilledButton));
-    await tester.pump();
-    expect(find.text('Signing in...'), findsOneWidget);
-~~~
-
-- [[find.byType(TextFormField)]]: كل الحقول من النوع ده (اتنين). [[.first]] الإيميل، و [[.last]] الباسورد.
-- [[enterText(finder, 'نص')]]: اكتب في الحقل كأن المستخدم كتب.
-- [[find.byType(FilledButton)]]: الزرار بنوعه بدل نصه.
-- بعد [[pump()]]: [[_busy]] بقى true، فالزرار بيقول «Signing in...».
-
-~~~dart
-    await tester.pump(const Duration(seconds: 1));
-    await tester.pump();
-    expect(find.text('Welcome ali@mail.com'), findsOneWidget);
-  });
+والـ dynamic: بيترجم عادي، وبيضرب وقت التشغيل بـ [[NoSuchMethodError: Class 'String' has no instance getter 'capitalized']]. لأن الـ extension بتتحل وقت الترجمة من النوع المكتوب، والنوع هنا dynamic.`,
+          solCode: R`extension Ago on DateTime {
+  String get ago {
+    final diff = DateTime.now().difference(this);
+    if (diff.inMinutes < 60) return 'من $__{diff.inMinutes} دقيقة';
+    if (diff.inHours < 24) return 'من $__{diff.inHours} ساعة';
+    return 'من $__{diff.inDays} يوم';
+  }
 }
-~~~
 
-- الـ LoginForm فيه [[await Future.delayed(const Duration(seconds: 1))]]. في الاختبار **الوقت وهمي**: محدش بيستنى ثانية بجد.
-- [[pump(const Duration(seconds: 1))]]: قدّم الساعة الوهمية ثانية وارسم. الـ Future.delayed خلص، و [[setState]] و [[showSnackBar]] اتنادوا.
-- [[pump()]] تاني: frame كمان عشان الـ SnackBar يتبني.
-
-### التجربة: [[pumpAndSettle()]] بدل الاتنين
-
-~~~text flutter test
-pumpAndSettle advanced fake time: 700ms, busy=true
-Expected: exactly one matching candidate
-  Actual: _TextWidgetFinder:<Found 0 widgets with text "Welcome ali@mail.com": []>
-~~~
-
-قِست الساعة الوهمية: [[pumpAndSettle]] قدّمها 700ms بس، لأنه بيرسم frames لحد ما الـ animations تخلص (ripple الزرار) وبيوقف. الـ delay ثانية، فلسه «Signing in...». الوقت المحدد = [[pump(Duration)]].
-
----
-
-## ٥. التجربة التالتة: [[TodosScreen]] (الـ solCode)
-
-~~~dart
-testWidgets('empty todos', (tester) async {
-  await tester.pumpWidget(ProviderScope(
-    overrides: [todoRepoProvider.overrideWithValue(FakeTodoRepo([]))],
-    child: const MaterialApp(home: Scaffold(body: TodosScreen())),
-  ));
-  expect(find.byType(CircularProgressIndicator), findsOneWidget);
-  await tester.pump(const Duration(seconds: 1));
-  await tester.pump();
-  expect(find.text('مفيش مهام لسه'), findsOneWidget);
-});
-~~~
-
-- [[ProviderScope(overrides: [...])]]: نفس الـ override بتاع main، بس بـ repo فاضي.
-- أول frame: لسه بيحمّل، فالـ spinner موجود.
-- [[pump(1s)]]: الـ [[Future.delayed]] بتاع الـ FakeTodoRepo خلص، و [[pump()]] رسم EmptyView.
-
-~~~text flutter test
-00:01 +3: /w/app/test/todos_screen_test.dart: empty todos
-~~~
-
-ليه مش [[pumpAndSettle()]] من الأول؟ لأن [[CircularProgressIndicator]] animation مبتخلصش، فـ pumpAndSettle هيفضل يستنى لحد ما يضرب timeout.
-
-### والشبكة الحقيقية؟
-
-جربت [[http.get]] حقيقي للـ API الوهمي جوه [[testWidgets]]:
-
-~~~text flutter test
-status=400 body=""
-~~~
-
-الـ widget tests بتقفل الشبكة عمدًا وبترجّع 400 لأي طلب. عشان كده الـ repo لازم يبقى provider تبدّله بـ fake.
-
----
-
-## ٦. golden test (من الـ deep)
-
-~~~dart
-await expectLater(find.byType(LoginForm), matchesGoldenFile('goldens/login_form.png'));
-~~~
-
-جربته ٣ مرات:
-
-~~~text flutter test
-Could not be compared against non-existent file: "goldens/login_form.png"
-~~~
-
-~~~text flutter test --update-goldens
-00:00 +1: All tests passed!
-~~~
-
-وبعد ما غيّرت نص الزرار لـ «Log in»:
-
-~~~text flutter test
-Golden "goldens/login_form.png": Pixel test failed, 0.25%, 1221px diff detected.
-~~~
-
-وعمل فولدر [[test/failures/]] فيه الصورة القديمة والجديدة وصورة الفرق.
-
-و [[flutter test --coverage]] عمل [[coverage/lcov.info]] فيه كل سطر في [[lib/login_form.dart]] اتنفذ كام مرة.
-
----
-
-## الخلاصة
-
-| الحاجة | بتعمل إيه |
-|---|---|
-| [[testWidgets(name, (tester) async {...})]] | اختبار widget من غير جهاز |
-| [[pumpWidget]] | ابني |
-| [[tap]] / [[enterText]] | دوس واكتب |
-| [[pump()]] | frame واحد بعد أي تغيير |
-| [[pump(Duration)]] | قدّم الوقت الوهمي (timers و delays) |
-| [[pumpAndSettle()]] | لحد ما الـ animations تخلص، مش لحد ما الـ timers تخلص |
-| [[find.text]] / [[find.byType]] + [[findsOneWidget]] | دوّر واتأكد |
-
-> بعد أي tap: pump. بعد أي delay: pump بالمدة. وأي spinner ظاهر = متستخدمش pumpAndSettle.`,
-          lines: [
-            "flutter_test جاية مع كل مشروع.",
-            "flutter_test.",
-            "الشاشة اللي بتختبرها.",
-            "البداية.",
-            "الـ widget جوه MaterialApp و Scaffold عشان Theme و SnackBar يشتغلوا.",
-            "اختبار widget.",
-            "ابني.",
-            "دوس الزرار.",
-            "ارسم frame بعد التغيير.",
-            "رسالة الإيميل ظاهرة مرة.",
-            "ورسالة الباسورد.",
-            "قفلة.",
-            "اختبار تاني.",
-            "ابني.",
-            "اكتب في أول حقل.",
-            "وفي آخر حقل.",
-            "دوس.",
-            "frame.",
-            "الزرار في حالة التحميل.",
-            "قدّم الوقت الوهمي ثانية: الـ Future.delayed خلص.",
-            "frame تاني عشان الـ setState والـ SnackBar.",
-            "رسالة الترحيب.",
-            "قفلة.",
-            "قفلة main."
-          ],
-          sol: R`[[flutter test]] بيطبع [[All tests passed!]] للاتنين.
-
-مع [[pumpAndSettle()]] لوحدها بعد [[Signing in...]] الاختبار بيقع: [[Found 0 widgets with text "Welcome ali@mail.com"]]. لأن pumpAndSettle بيرسم frames لحد ما مفيش animations، والزرار خلص الـ animation بتاعه بسرعة، فرجع قبل ما الساعة الوهمية توصل ثانية، والـ Future.delayed لسه مستني. عشان تقدّم الوقت لازم [[pump(Duration)]].
-
-الاختبار التالت: [[pumpWidget(ProviderScope(overrides: [todoRepoProvider.overrideWithValue(FakeTodoRepo([]))], child: const MaterialApp(home: Scaffold(body: TodosScreen()))))]]، ثم [[expect(find.byType(CircularProgressIndicator), findsOneWidget)]]، ثم [[pump(const Duration(seconds: 1))]] (لو الـ fake فيه delay) أو [[pumpAndSettle()]]، ثم [[expect(find.text('مفيش مهام لسه'), findsOneWidget)]].`,
-          solCode: R`testWidgets('empty todos', (tester) async {
-  await tester.pumpWidget(ProviderScope(
-    overrides: [todoRepoProvider.overrideWithValue(FakeTodoRepo([]))],
-    child: const MaterialApp(home: Scaffold(body: TodosScreen())),
-  ));
-  expect(find.byType(CircularProgressIndicator), findsOneWidget);
-  await tester.pump(const Duration(seconds: 1));
-  await tester.pump();
-  expect(find.text('مفيش مهام لسه'), findsOneWidget);
-});`
+void main() {
+  print(DateTime.now().subtract(const Duration(minutes: 5)).ago);
+  print(DateTime.now().subtract(const Duration(hours: 3)).ago);
+}`
         },
         {
-          cmd: "integration_test",
-          title: "تشغّل التطبيق الحقيقي على موبايل وتدوس فيه أوتوماتيك",
-          desc: R`الـ integration test بيشغّل التطبيق كله على جهاز حقيقي أو emulator: الـ plugins الحقيقية، والشبكة الحقيقية (أو staging)، والـ rendering الحقيقي. بنفس API الـ widget tests ([[tester.tap]] و [[find]])، بس بعد [[IntegrationTestWidgetsFlutterBinding.ensureInitialized()]].
+          cmd: "enhanced enum",
+          title: "enum فيه بيانات ودوال بدل switch في كل حتة",
+          desc: R`[[enum OrderStatus { pending, shipped }]] العادي قايمة أسماء. ومن Dart 2.17 الـ enum ينفع يبقى فيه fields و constructor و methods: كل حالة ليها label بالعربي ولون، و [[isFinal]] getter، و [[fromApi]] بتحوّل النص الجاي من السيرفر.
 
-الملفات في فولدر [[integration_test/]] وبتشغّلها بـ [[flutter test integration_test]] والجهاز متوصل. أبطأ بكتير من widget tests، فبتعمل منها قليل: السيناريوهات الأساسية من أول لآخر.`,
-          example: R`// flutter pub add 'dev:integration_test:{"sdk":"flutter"}'
-// integration_test/app_test.dart
-import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:integration_test/integration_test.dart';
-import 'package:my_app/main.dart' as app;
+وكل enum فيه جاهز: [[.name]] (الاسم كنص)، و [[.index]]، و [[values]] (كل الحالات). و [[switch]] على enum لازم يغطي كل الحالات، فلو ضفت حالة جديدة الـ compiler يوريك كل الأماكن اللي محتاجة تتعدل.`,
+          example: R`enum OrderStatus {
+  pending('في الانتظار', 0xFFFFA000),
+  shipped('اتشحن', 0xFF1976D2),
+  delivered('وصل', 0xFF388E3C),
+  cancelled('اتلغى', 0xFFD32F2F);
+
+  const OrderStatus(this.label, this.color);
+  final String label;
+  final int color;
+
+  bool get isFinal => this == delivered || this == cancelled;
+
+  static OrderStatus fromApi(String raw) =>
+      values.asNameMap()[raw] ?? OrderStatus.pending;
+}
+
+String nextStep(OrderStatus s) => switch (s) {
+  OrderStatus.pending => 'جهّز الطلب',
+  OrderStatus.shipped => 'تابع الشحنة',
+  OrderStatus.delivered || OrderStatus.cancelled => 'مفيش',
+};
 
 void main() {
-  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-
-  testWidgets('counter increments on a real device', (tester) async {
-    app.main();
-    await tester.pumpAndSettle();
-    expect(find.text('0'), findsOneWidget);
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pumpAndSettle();
-    expect(find.text('1'), findsOneWidget);
-  });
-}
-// flutter test integration_test/app_test.dart -d emulator-5554
-// flutter test integration_test -d chrome   (محتاج chromedriver شغال)`,
-          try: "في مشروع العدّاد الافتراضي ضيف الـ package والملف، وشغّل على الـ emulator. اتفرّج على التطبيق وهو بيتفتح والزرار بيتداس لوحده. وبعدين خلي الاختبار يدوس ٣ مرات ويتأكد من 3، وشغّله تاني.",
+  final s = OrderStatus.fromApi('shipped');
+  print('$__{s.name} $__{s.index} $__{s.label} $__{s.isFinal}');
+  print(OrderStatus.fromApi('lost'));
+  print(nextStep(OrderStatus.cancelled));
+  print(OrderStatus.values.where((x) => !x.isFinal).map((x) => x.label).toList());
+}`,
+          try: "ضيف حالة [[returned('مرتجع', 0xFF6D4C41)]] وشغّل: الـ compiler هيقف فين؟ صلّحه. وبعدين في Flutter اعرض badge لكل حالة بـ [[Chip(label: Text(s.label), backgroundColor: Color(s.color))]].",
           flag: "script",
           deep: {
-            why: "الـ widget tests بيمثّلوا الـ plugins والشبكة، فمش هيمسكوا إن الكاميرا محتاجة صلاحية مش مكتوبة في AndroidManifest، أو إن الـ release build فيه مشكلة obfuscation، أو إن الـ API الحقيقي غيّر شكل الرد. الـ integration test بيجرّب التجميعة كلها زي ما المستخدم هيشوفها.",
-            how: R`[[IntegrationTestWidgetsFlutterBinding]] binding بيشتغل جوه التطبيق الحقيقي وبيبعت النتايج للأداة على الكمبيوتر. [[app.main()]] بيشغّل main بتاعتك زي ما هي، فكل حاجة حقيقية.
+            why: "الحالة (pending و shipped) بتيجي معاها بيانات: النص اللي يتعرض، واللون، وهل ينفع يتلغى. من غير enhanced enum بتكتب switch للنص في مكان، و switch للون في مكان تاني، وأول حالة جديدة تنسى تضيفها في واحد منهم. هنا كل حاجة عن الحالة في مكان واحد.",
+            how: R`كل قيمة في الـ enum object ثابت (const) بيتعمل مرة واحدة، عشان كده الـ constructor لازم [[const]] وكل الـ fields لازم [[final]]. والقيم بتتكتب الأول، وبعد آخر واحدة [[;]] مش [[,]].
 
-الوقت هنا حقيقي مش وهمي: [[pumpAndSettle]] بيستنى فعلًا. ولو فيه طلب شبكة، استنى على حاجة تظهر بدل وقت ثابت (loop صغيرة بـ [[pump(Duration(milliseconds: 100))]] لحد ما [[find]] يلاقي).
+[[values.asNameMap()]] بترجّع [[Map<String, OrderStatus>]] من الاسم للقيمة، فلو قريت منها بالمفتاح [['shipped']] بترجّع القيمة أو null لو السيرفر بعت حاجة مش معروفة. وفيه كمان [[OrderStatus.values.byName('shipped')]] بس دي بترمي [[ArgumentError]] لو الاسم مش موجود، ودا مش اللي عايزه مع بيانات جاية من بره.
 
-الـ backend: شغّل ضد staging أو backend محلي بـ [[--dart-define=API_URL=...]]، مش الإنتاج. أو اعمل override للـ repositories بـ fakes في main مخصوص للاختبار ([[-t integration_test/main_test.dart]]).
+switch على enum exhaustive: لو نسيت حالة، الـ compiler بيرفض الـ switch expression. و [[||]] في الـ pattern بيجمع أكتر من حالة في سطر.
 
-في CI: على GitHub Actions تقدر تشغّل Android emulator (action زي reactivecircus/android-emulator-runner) وده بطيء، أو ترفع الاختبارات لـ Firebase Test Lab يشغّلها على موبايلات حقيقية كتير.
+الـ enum ينفع يعمل [[implements]] و [[with]] (mixin)، بس مينفعش [[extends]] ولا تعمل منه object جديد.
 
-[[flutter drive]] الطريقة الأقدم، وبتحتاجها لو عايز تاخد screenshots أو تقيس أداء ([[traceAction]] وتطلّع timeline).
-
-والأداء: integration test في profile mode ([[flutter drive --profile]]) بيقيس الـ frame times على موبايل حقيقي، ودا الرقم اللي يعتمد عليه، مش debug.`,
-            when: "٢ لـ ٥ سيناريوهات أساسية (login، الشراء، إضافة عنصر) قبل كل release، وفي CI ليلي. والتفاصيل الكتير في widget tests لأنها أسرع ١٠٠ مرة.",
-            mistakes: R`تحط كل الاختبارات integration فالـ CI ياخد ساعة. وتشغّلها على الإنتاج فتعمل طلبات وحسابات حقيقية. وتستخدم [[pump(Duration(seconds: 3))]] ثابت للشبكة فالاختبار يبقى flaky (يعدّي مرة ويقع مرة). وتنسى [[ensureInitialized()]] فتطلع رسايل غريبة عن الـ binding.`
+وخلي بالك من [[.index]]: بيتغير لو رتّبت الحالات، فمتخزّنهوش في قاعدة بيانات ولا تبعته للسيرفر. خزّن [[.name]].`,
+            when: "أي مجموعة حالات ثابتة معروفة: حالة طلب، ونوع مستخدم، وثيم، ولغة، وأنواع إشعارات. ولو الحالات بتيجي من السيرفر وممكن تزيد من غير تحديث التطبيق، خلي فيه قيمة احتياطية (زي pending أو unknown).",
+            mistakes: R`تخزّن [[.index]] في shared_preferences أو ترسله للـ API، وبعدين ترتّب القيم فكل البيانات القديمة تتقري غلط. وتستخدم [[byName]] على نص من السيرفر فيقع التطبيق أول ما الـ backend يضيف حالة. وتكتب [[default:]] أو [[_]] في switch على enum فتقفل فحص الحالات الناقصة بإيدك.`
           },
-          teach: R`## الكود ده بيعمل إيه؟
+          teach: R`## البرنامج بيعمل إيه؟
 
-اختبار بيشغّل تطبيق العدّاد الافتراضي (اللي [[flutter create]] بيعمله) كله، ويتأكد إن الرقم 0، ويدوس [[+]]، ويتأكد إنه بقى 1. نفس كلام الـ widget test بالظبط، الفرق إنه بيشتغل **جوه التطبيق الحقيقي على جهاز**.
-
-إيه اللي اتشغّل هنا وإيه اللي من الـ docs: مفيش موبايل ولا emulator، فالتشغيل على الجهاز نفسه من الـ docs. اللي اتعمل فعلًا جوه [[docker run --rm ghcr.io/cirruslabs/flutter:stable]] (Flutter 3.44): الـ package اتضافت، والملف عدّى [[flutter analyze]] من غير مشاكل، ونفس جسم الاختبار (والـ solCode) اتشغّل كـ widget test عادي على نفس التطبيق ونجح، وجربت أمر التشغيل على emulator مش موجود عشان تشوف الرسالة.
+بيعرّف حالات الطلب ([[OrderStatus]]) كـ enum كل حالة فيه شايلة نص عربي ولون، ومعاه getter بيقول الحالة نهائية ولا لأ، ودالة بتحوّل النص الجاي من السيرفر لحالة. وبعدين switch بيقول الخطوة الجاية لكل حالة. اتشغّل بـ [[dart run]] و [[dart analyze]] في [[docker run --rm dart:stable]] (Dart 3.13.5)، ومعاه التجارب.
 
 ---
 
-## ١. السطور اللي فوق: تجهيز
+## ١. القيم: [[pending('في الانتظار', 0xFFFFA000)]]
 
 ~~~dart
-// flutter pub add 'dev:integration_test:{"sdk":"flutter"}'
-// integration_test/app_test.dart
+enum OrderStatus {
+  pending('في الانتظار', 0xFFFFA000),
+  shipped('اتشحن', 0xFF1976D2),
+  delivered('وصل', 0xFF388E3C),
+  cancelled('اتلغى', 0xFFD32F2F);
 ~~~
 
-- [[flutter pub add 'dev:...']]: [[dev:]] معناها تتحط في [[dev_dependencies]] (للتطوير بس، مش جوه التطبيق المنشور). و [[{"sdk":"flutter"}]] معناها إن الـ package جاية مع Flutter نفسه مش من pub.dev. والـ quotes حوالين الكلام كله عشان الترمنال ميفهمش [[{ }]] و [[" "]] غلط. بعد التشغيل الـ pubspec بقى فيه:
-
-~~~text pubspec.yaml
-  integration_test:
-    sdk: flutter
-~~~
-
-- المسار: الملفات دي في فولدر [[integration_test/]] جنب [[test/]] مش جواه.
+- [[enum]]: نوع ليه عدد ثابت من القيم، ومحدش يقدر يعمل قيمة جديدة وقت التشغيل.
+- كل قيمة بعدها أقواس: دي نداء للـ constructor (تحت) بقيمتين: النص واللون.
+- [[0xFFFFA000]]: رقم مكتوب بالـ hex ([[0x]] = نظام ستاشر). اقراه ٤ أزواج: [[FF]] الشفافية (Alpha، FF = مش شفاف خالص)، و [[FF]] الأحمر، و [[A0]] الأخضر، و [[00]] الأزرق. دا لون برتقالي. وفي Flutter [[Color(0xFFFFA000)]] بياخد نفس الرقم.
+- القيم بينها [[,]]، وبعد آخر واحدة [[;]] لأن بعدها كود تاني (constructor و fields).
 
 ---
 
-## ٢. الـ imports
+## ٢. الـ constructor والـ fields
 
 ~~~dart
-import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:integration_test/integration_test.dart';
-import 'package:my_app/main.dart' as app;
+  const OrderStatus(this.label, this.color);
+  final String label;
+  final int color;
 ~~~
 
-- [[material.dart]]: عشان [[Icons.add]].
-- [[flutter_test]]: نفس [[testWidgets]] و [[find]] و [[expect]] بتوع الدرس اللي فات.
-- [[integration_test]]: فيها الـ binding بتاع الأجهزة.
-- [[my_app/main.dart' as app]]: ملف main بتاع تطبيقك نفسه. [[as app]] عشان [[main]] بتاعته متتلخبطش مع [[main]] بتاعة ملف الاختبار، فبتناديها [[app.main()]].
+- [[const]] إجباري: كل قيمة في الـ enum object ثابت بيتعمل مرة واحدة وقت الترجمة.
+- وعشان كده الـ fields كلها [[final]] لازم.
 
 ---
 
-## ٣. الـ binding
+## ٣. getter و static method
 
 ~~~dart
-void main() {
-  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-~~~
+  bool get isFinal => this == delivered || this == cancelled;
 
-الـ binding هو الحتة اللي بتربط Flutter بالمكان اللي شغال فيه. في الـ widget tests بيبقى [[TestWidgetsFlutterBinding]] (بيئة وهمية ووقت وهمي). السطر ده بيبدّله بواحد شغال **جوه التطبيق الحقيقي على الجهاز**، وبيبعت النتايج للترمنال على الكمبيوتر. لازم يبقى أول سطر.
-
----
-
-## ٤. الاختبار
-
-~~~dart
-  testWidgets('counter increments on a real device', (tester) async {
-    app.main();
-    await tester.pumpAndSettle();
-    expect(find.text('0'), findsOneWidget);
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pumpAndSettle();
-    expect(find.text('1'), findsOneWidget);
-  });
+  static OrderStatus fromApi(String raw) =>
+      values.asNameMap()[raw] ?? OrderStatus.pending;
 }
 ~~~
 
-- [[app.main()]]: شغّل التطبيق زي ما المستخدم بيفتحه: [[runApp]] الحقيقية، بالـ plugins الحقيقية.
-- [[pumpAndSettle()]]: استنى لحد ما الشاشة تهدى (مفيش animations). هنا الوقت **حقيقي**، فبيستنى فعلًا.
-- [[find.text('0')]]: الرقم في نص الشاشة.
-- [[find.byIcon(Icons.add)]]: دوّر بالأيقونة بدل النص: زرار الـ [[+]] العايم.
-- [[tap]] ثم [[pumpAndSettle]] ثم [[expect(find.text('1'), ...)]]: الرقم زاد.
+- [[isFinal]]: [[this]] هي الحالة اللي اتنادى عليها. و [[||]] = «أو». فـ true لو وصل أو اتلغى.
+- [[static]]: الدالة تتنادى على الـ enum نفسه ([[OrderStatus.fromApi(...)]]) مش على قيمة.
+- [[values]]: لستة فيها كل القيم بالترتيب. جوه الـ enum تقدر تكتبها كده من غير [[OrderStatus.]].
+- [[asNameMap()]]: بتحوّل اللستة لـ map من الاسم للقيمة.
+- [[asNameMap()[raw] ?? OrderStatus.pending]]: هات القيمة بالمفتاح [[raw]] من الـ map، ولو مش موجود بيرجع null، و [[??]] تحط pending مكانه. يعني نص غريب من السيرفر مش هيوقّع التطبيق.
 
-نفس الجسم ده (من غير الـ binding) كـ widget test على نفس الـ [[lib/main.dart]] اللي [[flutter create]] عمله:
+جربت أطبع الحاجات دي:
 
-~~~text flutter test
-00:00 +0: counter increments (same body, widget-test binding)
-00:00 +1: three taps (solCode)
-00:01 +2: All tests passed!
+~~~text dart run
+[OrderStatus.pending, OrderStatus.shipped, OrderStatus.delivered, OrderStatus.cancelled]
+{pending: OrderStatus.pending, shipped: OrderStatus.shipped, delivered: OrderStatus.delivered, cancelled: OrderStatus.cancelled}
+null
 ~~~
+
+السطر الأول [[values]]، والتاني [[asNameMap()]]، والتالت قراية المفتاح [['lost']] منها.
+
+### وليه مش [[byName]]؟
+
+[[values.byName('lost')]] بيعمل نفس الحكاية بس بيرمي error لو الاسم مش موجود. جربته:
+
+~~~text dart run
+Unhandled exception:
+Invalid argument (name): No enum value with that name: "lost"
+~~~
+
+[[Invalid argument]] دا شكل [[ArgumentError]] لما يتطبع. مع بيانات جاية من بره، asNameMap و [[??]] أأمن.
 
 ---
 
-## ٥. التشغيل (السطرين اللي تحت)
-
-~~~text الأوامر
-flutter test integration_test/app_test.dart -d emulator-5554
-flutter test integration_test -d chrome   (محتاج chromedriver شغال)
-~~~
-
-- [[flutter test <ملف أو فولدر>]]: نفس الأمر بتاع الـ widget tests، بس بيبني التطبيق ويسطّبه على الجهاز الأول.
-- [[-d emulator-5554]]: [[-d]] اختصار [[--device-id]]: أنهي جهاز. [[emulator-5554]] الاسم اللي [[flutter devices]] بيدّيه لأول Android emulator.
-- [[integration_test]] من غير اسم ملف: كل الملفات اللي في الفولدر.
-
-هنا مفيش emulator، فجربت الأمر عشان تشوف الرسالة:
-
-~~~text flutter test integration_test/app_test.dart -d emulator-5554
-No supported devices found with name or id matching 'emulator-5554'.
-
-The following devices were found:
-Linux (desktop) • linux • linux-x64 • Ubuntu 24.04.3 LTS ...
-~~~
-
-ومع emulator شغال (من الـ docs): أول مرة بياخد دقيقة أو اتنين يبني ويسطّب، والتطبيق بيفتح قدامك والزرار بيتداس لوحده، وفي الآخر [[All tests passed!]].
-
----
-
-## ٦. الـ solCode: ٣ ضغطات
+## ٤. [[switch]] على الـ enum
 
 ~~~dart
-for (var i = 0; i < 3; i++) {
-  await tester.tap(find.byIcon(Icons.add));
-  await tester.pumpAndSettle();
-}
-expect(find.text('3'), findsOneWidget);
+String nextStep(OrderStatus s) => switch (s) {
+  OrderStatus.pending => 'جهّز الطلب',
+  OrderStatus.shipped => 'تابع الشحنة',
+  OrderStatus.delivered || OrderStatus.cancelled => 'مفيش',
+};
 ~~~
 
-- [[for (var i = 0; i < 3; i++)]]: كرر ٣ مرات: [[i]] بيبدأ 0، ويزيد 1 ([[i++]]) بعد كل لفة، والشرط [[i < 3]].
-- كل لفة: دوس واستنى. من غير الـ pumpAndSettle جوه اللفة، الضغطة التانية ممكن تحصل قبل ما الشاشة تتحدث.
+- [[switch (s) { ... }]] هنا **expression**: بيرجّع قيمة، فالدالة كلها [[=>]] سطر واحد.
+- كل سطر: [[pattern => القيمة]]. أول pattern يطابق يكسب.
+- [[||]] جوه الـ pattern: «دي أو دي» بنفس النتيجة.
+- مفيش [[default]] ولا [[_]]: الـ compiler بيتأكد بنفسه إن كل الحالات متغطية (exhaustive).
 
-ونجح في الناتج اللي فوق ([[three taps (solCode)]]).
+---
+
+## ٥. [[main]] والناتج
+
+~~~dart
+  final s = OrderStatus.fromApi('shipped');
+  print('$__{s.name} $__{s.index} $__{s.label} $__{s.isFinal}');
+  print(OrderStatus.fromApi('lost'));
+  print(nextStep(OrderStatus.cancelled));
+  print(OrderStatus.values.where((x) => !x.isFinal).map((x) => x.label).toList());
+~~~
+
+~~~text dart run
+shipped 1 اتشحن false
+OrderStatus.pending
+مفيش
+[في الانتظار, اتشحن]
+~~~
+
+| اللي اتطبع | جاي منين |
+|---|---|
+| [[shipped]] | [[.name]]: اسم القيمة كنص (جاهز في أي enum) |
+| [[1]] | [[.index]]: ترتيبها من صفر (pending = 0) |
+| [[اتشحن]] | [[label]] بتاعنا |
+| [[false]] | [[isFinal]]: shipped مش نهائية |
+| [[OrderStatus.pending]] | [['lost']] مش معروف، فرجعنا للاحتياطي. وطباعة قيمة enum بتطلع اسم النوع ونقطة واسمها |
+| [[مفيش]] | سطر الـ [[||]] في الـ switch |
+| آخر سطر | [[where]] سابت اللي مش نهائي ([[!]] = عكس)، و [[map]] خدت الـ label، و [[toList]] عملتها لستة |
+
+---
+
+## ٦. التجربة: حالة جديدة [[returned]]
+
+ضفت [[returned('مرتجع', 0xFF6D4C41);]] ونقلت الـ [[;]] لآخرها. [[dart analyze]] وقف عند الـ switch:
+
+~~~text dart analyze
+error - The type 'OrderStatus' isn't exhaustively matched by the switch cases since it doesn't match the pattern 'OrderStatus.returned'. Try adding a wildcard pattern or cases that match 'OrderStatus.returned'. - non_exhaustive_switch_expression
+~~~
+
+و [[dart run]] بيقول نفس المعنى: [[The type 'OrderStatus' is not exhaustively matched by the switch cases since it doesn't match 'OrderStatus.returned'.]] دي الميزة: أي حالة جديدة الـ compiler يوديك لكل switch محتاج يتعدل. بس [[isFinal]] مش switch، فمحدش هيفكّرك تعدّلها.
 
 ---
 
 ## الخلاصة
 
-| | widget test | integration test |
+| الحاجة | الشكل | معناها |
 |---|---|---|
-| فين | [[test/]] | [[integration_test/]] |
-| الـ binding | وهمي (تلقائي) | [[IntegrationTestWidgetsFlutterBinding.ensureInitialized()]] |
-| الوقت | وهمي | حقيقي |
-| الـ plugins والشبكة | لأ (fakes) | حقيقية |
-| التشغيل | [[flutter test]] | [[flutter test integration_test -d <device>]] |
-| السرعة | ثواني | دقايق |
+| قيمة ببيانات | [[pending('...', 0xFF...)]] | نداء للـ constructor |
+| constructor | [[const OrderStatus(...)]] | لازم const، والـ fields final |
+| جاهز في أي enum | [[.name]] و [[.index]] و [[values]] | الاسم، والترتيب، وكل القيم |
+| من نص | [[values.asNameMap()[raw] ?? احتياطي]] | من غير ما يضرب |
+| switch | من غير [[_]] | الـ compiler يمسك الحالة الناقصة |
 
-> نفس الـ API ([[tap]] و [[find]] و [[expect]])، بس على التطبيق كله وعلى جهاز. قليل منها للسيناريوهات المهمة، والباقي widget tests.`,
+> خزّن [[.name]] مش [[.index]]: الـ index بيتغير لو رتّبت القيم.`,
           lines: [
-            "Material (فيها Icons).",
-            "نفس API الـ widget tests.",
-            "الـ binding بتاع الأجهزة الحقيقية.",
-            "main بتاعة التطبيق نفسه.",
+            "enum فيه بيانات.",
+            "كل قيمة بتنادي الـ constructor: نص ولون (ARGB).",
+            "قيمة.",
+            "قيمة.",
+            "آخر قيمة وبعدها [[;]].",
+            "constructor لازم const.",
+            "field لازم final.",
+            "اللون كرقم (في Flutter: [[Color(color)]]).",
+            "getter: هل الحالة نهائية؟",
+            "دالة static بتحوّل نص السيرفر لقيمة...",
+            "...ولو مش معروف ترجع pending بدل ما تضرب.",
+            "قفلة الـ enum.",
+            "switch expression على الـ enum.",
+            "حالة.",
+            "حالة.",
+            "[[||]]: حالتين نفس النتيجة.",
+            "قفلة الـ switch.",
             "البداية.",
-            "لازم أول سطر.",
-            "اختبار.",
-            "شغّل التطبيق زي ما المستخدم بيفتحه.",
-            "استنى لحد ما الشاشة تهدى.",
-            "العدّاد 0.",
-            "دوس زرار +.",
-            "استنى.",
-            "بقى 1.",
-            "قفلة.",
-            "قفلة main."
+            "من نص جاي من API.",
+            "shipped 1 اتشحن false.",
+            "نص مش معروف: OrderStatus.pending.",
+            "مفيش.",
+            "[في الانتظار, اتشحن]: الحالات اللي لسه مخلصتش.",
+            "قفلة."
           ],
-          sol: R`[[flutter test integration_test/app_test.dart -d emulator-5554]] بيبني التطبيق (أول مرة دقيقة أو اتنين)، ويسطّبه، والتطبيق بيفتح على الـ emulator والرقم بيبقى 1 لوحده، وفي الترمنال [[All tests passed!]].
+          sol: R`بعد ما تضيف [[returned]] (وتنقل الـ [[;]] لآخرها)، الـ compiler بيقف عند [[nextStep]]: [[The type 'OrderStatus' isn't exhaustively matched by the switch cases since it doesn't match the pattern 'OrderStatus.returned']]. تصلّحه بإنك تضيف [[OrderStatus.returned => 'استلم المرتجع',]] أو تضمها لسطر مفيش. ولو عايزها حالة نهائية زوّدها في [[isFinal]] كمان، ودي الحاجة اللي الـ compiler مش هيفكّرك بيها لأنها مش switch.
 
-للـ ٣ ضغطات: loop بـ [[for (var i = 0; i < 3; i++)]] فيها tap و pumpAndSettle، ثم [[expect(find.text('3'), findsOneWidget)]].
-
-لو ظهر [[No supported devices found with name or id matching 'emulator-5554']] يبقى الـ emulator مش شغال أو اسمه مختلف ([[flutter devices]] بيعرض الأسامي). وعلى Chrome لازم chromedriver شغال على بورت 4444 الأول، وإلا بيفشل.`,
-          solCode: R`for (var i = 0; i < 3; i++) {
-  await tester.tap(find.byIcon(Icons.add));
-  await tester.pumpAndSettle();
-}
-expect(find.text('3'), findsOneWidget);`
+ولو كنت كاتب [[_ => 'مفيش']] بدل الحالتين، الكود كان هيترجم عادي والحالة الجديدة كانت هتقع في «مفيش» من غير ما تاخد بالك.`
         }
       ]
     }

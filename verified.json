@@ -4204,10 +4204,20 @@
   "date": "2026-10-07",
   "on": "flutter test (fake repo + HTTP repo against fake Node API) in docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44)"
  },
+ "flutter|BuildContext": {
+  "hash": "46216b330a11",
+  "date": "2026-10-08",
+  "on": "docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44.0): widget tests + flutter analyze use_build_context_synchronously"
+ },
  "flutter|Container و Padding": {
   "hash": "797a68a58c6a",
   "date": "2026-10-07",
   "on": "docker cirruslabs/flutter:stable (Flutter 3.44.0): flutter test"
+ },
+ "flutter|DevTools": {
+  "hash": "054eb50ede2e",
+  "date": "2026-10-08",
+  "on": "docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44.0): flutter run --profile -d web-server, dart devtools, debugDumpApp; docs: DevTools Performance UI"
  },
  "flutter|Expanded": {
   "hash": "c171b60fcc7e",
@@ -4239,6 +4249,11 @@
   "date": "2026-10-07",
   "on": "flutter test in docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44), flutter_riverpod 3.4.3"
  },
+ "flutter|Play internal testing": {
+  "hash": "e7c7263dd624",
+  "date": "2026-10-08",
+  "on": "docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44.0) + bundletool 1.18.3: build-apks, get-size; docs: Play Console steps"
+ },
  "flutter|Provider و Bloc": {
   "hash": "93f4a560a56d",
   "date": "2026-10-07",
@@ -4269,6 +4284,11 @@
   "date": "2026-10-07",
   "on": "docker dart:stable (Dart 3.13.5)"
  },
+ "flutter|ValueKey": {
+  "hash": "0a3510a53da4",
+  "date": "2026-10-08",
+  "on": "docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44.0): widget tests + flutter analyze"
+ },
  "flutter|async و await": {
   "hash": "e5772132023d",
   "date": "2026-10-07",
@@ -4278,6 +4298,16 @@
   "hash": "c61809936d7c",
   "date": "2026-10-07",
   "on": "docker dart:stable (Dart 3.13.5)"
+ },
+ "flutter|const و rebuilds": {
+  "hash": "0c7a3bc8a5b8",
+  "date": "2026-10-08",
+  "on": "docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44.0): widget test with/without const, flutter analyze + prefer_const_constructors, dart fix"
+ },
+ "flutter|dart-define و flavors": {
+  "hash": "5ef88605e8fb",
+  "date": "2026-10-08",
+  "on": "docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44.0): flutter test with dart-define/flavor, web-server + headless Chrome, flutter build apk --debug --flavor staging + aapt2"
  },
  "flutter|enhanced enum": {
   "hash": "f104875c2a70",
@@ -4293,6 +4323,11 @@
   "hash": "664b48e5cf16",
   "date": "2026-10-07",
   "on": "docker dart:stable (Dart 3.13.5)"
+ },
+ "flutter|flutter build appbundle": {
+  "hash": "ab94b4a41e13",
+  "date": "2026-10-08",
+  "on": "docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44.0) (Android SDK 36): example lines + build apk + aapt2 + build web --release; docs: adb install -r, flutter symbolize"
  },
  "flutter|flutter create": {
   "hash": "f886af0e23b7",
@@ -4344,6 +4379,11 @@
   "date": "2026-10-07",
   "on": "docker dart:stable (Dart 3.13.5), http 1.6.0 against local fake API shaped like jsonplaceholder (real site unreachable)"
  },
+ "flutter|iOS": {
+  "hash": "7196ee54e7b7",
+  "date": "2026-10-08",
+  "on": "docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44.0) (Linux): flutter build ipa error, Info.plist/pbxproj reading; docs: Xcode, TestFlight"
+ },
  "flutter|initState و dispose": {
   "hash": "d1d599d6b480",
   "date": "2026-10-07",
@@ -4358,6 +4398,16 @@
   "hash": "707b01ec2a66",
   "date": "2026-10-07",
   "on": "docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44, freezed 4.0.0-dev.3, json_serializable 6.14.1): build_runner + analyze + test"
+ },
+ "flutter|key.properties": {
+  "hash": "1077dbb72690",
+  "date": "2026-10-08",
+  "on": "docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44.0) (AGP 9.0.1, Java 21): keytool, build appbundle signed, without key.properties; docs: Play App Signing"
+ },
+ "flutter|lifecycle": {
+  "hash": "f6691da14cf3",
+  "date": "2026-10-08",
+  "on": "docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44.0): widget test of Probe, AppLifecycleListener"
  },
  "flutter|loading و error و empty": {
   "hash": "d31ad266482e",
@@ -4424,10 +4474,25 @@
   "date": "2026-10-07",
   "on": "flutter test with sqflite_common_ffi in docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44) (sqflite 2.4.4)"
  },
+ "flutter|state management": {
+  "hash": "1720ba306088",
+  "date": "2026-10-08",
+  "on": "docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44.0): widget test of CartBadge/AddButton"
+ },
  "flutter|try و on و rethrow": {
   "hash": "775b224610f8",
   "date": "2026-10-07",
   "on": "docker dart:stable (Dart 3.13.5): dart run + dart analyze"
+ },
+ "flutter|widget و element و render": {
+  "hash": "87328838d83f",
+  "date": "2026-10-08",
+  "on": "docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44.0): widget test, debugDumpApp/debugDumpRenderTree"
+ },
+ "flutter|أيقونة و splash": {
+  "hash": "8fbdff286b6b",
+  "date": "2026-10-08",
+  "on": "docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44.0): flutter_launcher_icons, flutter_native_splash, web splash via headless Chrome"
  },
  "flutter|مقدمة Dart ودالة main()": {
   "hash": "e1d22914a3c6",
