@@ -66,6 +66,178 @@ class NotesViewModel(private val repo: NotesRepository) : ViewModel() {
             when: R`من أول ما يبقى عندك أكتر من شاشة أو أكتر من مصدر داتا. وللتطبيق الصغير جدًا، repository بسيط و ViewModel كفاية، من غير use cases ولا modules.`,
             mistakes: R`ViewModel بينادي Retrofit و Room مباشرة. و repository بيرجّع [[MutableStateFlow]] أو بيعرف حاجة عن Compose. و «Clean Architecture» كاملة بـ ٣ models و use case لكل دالة في تطبيق فيه شاشتين: تعقيد من غير لازمة. والشاشة تعمل refresh من الشبكة وتعرض نتيجته مباشرة، وفي نفس الوقت تقرا من Room، فيبقى عندك مصدرين حقيقة.`
           },
+          teach: R`## الكود بيعمل إيه؟
+
+كلاسين بس: [[NotesRepository]] (الـ data layer) و [[NotesViewModel]] (الـ UI layer). الـ repository هو اللي يعرف الداتا جاية منين (Room ولا السيرفر)، والـ ViewModel بيكلم الـ repository بس ومبيعرفش حاجة عن Room ولا Retrofit. والشاشة (مش في المثال) بتكلم الـ ViewModel بس.
+
+### اتجرّب فين؟
+
+- الكلاسين زي ما هم، ومعاهم [[NoteEntity]] و [[NoteDao]] (Room) و [[NotesApi]] (Retrofit) و [[NoteDto]] و [[toEntity()]] من الحل، اتترجموا في مشروع Android حقيقي (AGP 9.4.1 و Kotlin 2.4.20 و Room 2.8.5 و KSP) بـ [[./gradlew assembleDebug]] جوه image فيها Android SDK 36: [[BUILD SUCCESSFUL]].
+- نفس شكل الـ ViewModel ده (بـ repository وهمي) اتختبر بـ unit tests حقيقية في درس unit tests.
+- تشغيل الشاشة على موبايل: من الـ docs (مفيش emulator).
+
+---
+
+## الصورة قبل الكود
+
+| الطبقة | الكلاس | بيعرف مين؟ |
+|---|---|---|
+| UI | الشاشة (composable) | الـ ViewModel بس |
+| UI | [[NotesViewModel]] | الـ repository بس |
+| Data | [[NotesRepository]] | الـ DAO والـ API |
+| Data sources | [[NoteDao]] (Room) و [[NotesApi]] (Retrofit) | ولا حد من اللي فوقهم |
+
+الأسهم نازلة لتحت بس: محدش تحت يعرف مين فوقه. والـ state بيطلع من Room للشاشة، والأحداث (ضغطة زرار) بتنزل من الشاشة للـ repository. ده الـ **unidirectional data flow**.
+
+---
+
+## ١. الـ repository
+
+~~~kotlin
+class NotesRepository(
+    private val dao: NoteDao,
+    private val api: NotesApi
+) {
+~~~
+
+- [[private val dao: NoteDao]] جوه أقواس الـ constructor: بيعرّف parameter و property في نفس الوقت. [[private]] يعني محدش برا الكلاس يقدر يوصل لـ [[repo.dao]].
+- الـ repository **مش بيعمل** الـ DAO ولا الـ API بنفسه ([[Room.databaseBuilder]] أو [[Retrofit.Builder]] مش هنا). بياخدهم جاهزين من برا. ده اسمه dependency injection، وده اللي بيخلي الاختبار سهل: في الاختبار تدّيله DAO وهمي. (الدرس الجاي Hilt بيعمل ده لوحده.)
+- [[NoteDao]] و [[NotesApi]] interfaces: Room و Retrofit بيكتبوا التنفيذ.
+
+### القراية: Flow من Room
+
+~~~kotlin
+    val notes: Flow<List<NoteEntity>> = dao.observeAll()
+~~~
+
+- [[observeAll()]] في الـ DAO عليها [[@Query("SELECT * FROM notes ...")]] وبترجّع [[Flow]]: كل ما جدول notes يتغير، بتبعت اللستة الجديدة (درس Room).
+- الشاشة **دايمًا** بتقرا من هنا، يعني من Room. ده الـ **single source of truth**: مصدر واحد للحقيقة.
+
+### المزامنة مع السيرفر
+
+~~~kotlin
+    suspend fun refresh() {
+        val remote = api.getNotes()
+        dao.upsertAll(remote.map { it.toEntity() })
+    }
+~~~
+
+١. [[suspend]]: دالة بتستنى (شبكة وداتابيز) من غير ما تقفل الـ thread، ولازم تتنادى من coroutine (درس coroutines).
+
+٢. [[api.getNotes()]]: Retrofit بيعمل [[GET /notes]] ويرجّع [[List<NoteDto>]]. الـ DTO (Data Transfer Object) هو شكل الـ JSON اللي جاي من السيرفر.
+
+٣. [[remote.map { it.toEntity() }]]: [[map]] بتعدي على كل عنصر وتحوّله، و [[it]] هو العنصر الحالي. [[toEntity()]] extension function من الحل:
+
+~~~kotlin
+fun NoteDto.toEntity() = NoteEntity(id = id, title = title)
+~~~
+
+[[NoteDto.]] قبل اسم الدالة معناها «دالة جديدة على NoteDto» (درس extension functions)، فتنادى [[dto.toEntity()]] كأنها جوه الكلاس.
+
+٤. [[dao.upsertAll(...)]]: [[@Upsert]] = insert لو الـ id مش موجود، و update لو موجود. فلو السيرفر رجّع نفس الملاحظة تاني مش هتتكرر.
+
+لاحظ إن [[refresh()]] **مبترجّعش** حاجة. هي بتكتب في Room، و [[notes]] اللي فوق هتبعت اللستة الجديدة لوحدها.
+
+### الإضافة
+
+~~~kotlin
+    suspend fun add(title: String) {
+        dao.insert(NoteEntity(title = title))
+    }
+}
+~~~
+
+[[NoteEntity(title = title)]]: الـ id بـ 0 من القيمة الافتراضية، و Room بيديله رقم جديد. وتاني: مفيش رجوع لقيمة، الـ Flow بيبلّغ.
+
+---
+
+## ٢. الـ ViewModel
+
+~~~kotlin
+class NotesViewModel(private val repo: NotesRepository) : ViewModel() {
+~~~
+
+- [[: ViewModel()]]: بيورث من [[ViewModel]] بتاع AndroidX، فبيعيش بعد لف الشاشة وعنده [[viewModelScope]].
+- بياخد الـ repository بس. مفيش [[NoteDao]] ولا [[NotesApi]] هنا خالص.
+
+### الـ state للشاشة
+
+~~~kotlin
+    val notes: StateFlow<List<NoteEntity>> = repo.notes
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+~~~
+
+[[stateIn]] بتحوّل الـ [[Flow]] لـ [[StateFlow]] (Flow ليه قيمة حالية دايمًا، والشاشة تقراه بـ [[collectAsStateWithLifecycle()]]):
+
+| الحتة | معناها |
+|---|---|
+| [[viewModelScope]] | الـ coroutine اللي بتسمع لـ Room بتتلغي لما الـ ViewModel يموت |
+| [[SharingStarted.WhileSubscribed(5_000)]] | اسمع لـ Room طول ما فيه شاشة بتسمع، ولما آخر واحدة تمشي استنى ٥ ثواني قبل ما توقف (عشان لف الشاشة مياخدش query جديد) |
+| [[5_000]] | ٥٠٠٠ ملي ثانية. الـ [[_]] بس للقراية زي الفاصلة |
+| [[emptyList()]] | القيمة الأولى لحد ما Room يرد |
+
+### حدث: إضافة
+
+~~~kotlin
+    fun onAddClicked(title: String) {
+        if (title.isBlank()) return
+        viewModelScope.launch { repo.add(title.trim()) }
+    }
+~~~
+
+- الاسم [[onAddClicked]]: الشاشة بتقول «حصل إيه» (الزرار اتداس)، والـ ViewModel هو اللي يقرر يعمل إيه.
+- [[isBlank()]]: فاضي أو مسافات بس، فمنضيفش. ده منطق، ومكانه الـ ViewModel مش الـ composable، عشان يتختبر من غير UI (في درس unit tests اختبار [[blankTitle_isIgnored]] بيتأكد من السطر ده بالظبط وعدّى).
+- [[viewModelScope.launch { }]]: يبدأ coroutine عشان [[add]] دالة suspend.
+- [[trim()]]: يشيل المسافات من الأول والآخر.
+
+### حدث: refresh
+
+~~~kotlin
+    fun onRefresh() {
+        viewModelScope.launch {
+            runCatching { repo.refresh() }
+        }
+    }
+}
+~~~
+
+[[runCatching { }]] بتشغّل الكود، ولو رمى exception بتمسكه وترجّعه في [[Result]] بدل ما التطبيق يقع. هنا النتيجة متجاهلة: لو مفيش نت، الـ refresh فشل بس الملاحظات القديمة لسه ظاهرة من Room.
+
+---
+
+## ٣. الحل: رسالة لما الـ refresh يفشل
+
+~~~kotlin
+private val _message = MutableStateFlow<String?>(null)
+val message = _message.asStateFlow()
+~~~
+
+- [[_message]] الـ [[MutableStateFlow]] (اللي يتكتب فيه) private، و [[message]] نسخة read-only للشاشة. العرف: الـ [[_]] في أول الاسم للنسخة الخاصة.
+- [[String?]] و [[null]]: مفيش رسالة في الأول.
+
+~~~kotlin
+        try {
+            repo.refresh()
+        } catch (e: IOException) {
+            _message.value = "مقدرناش نحدّث، اللي ظاهر محفوظ عندك"
+        }
+~~~
+
+[[IOException]] بس (مشاكل شبكة)، مش أي exception. وده أحسن من [[runCatching]] لأن [[runCatching]] بتمسك كمان [[CancellationException]] اللي الـ coroutines بتستخدمها عشان تتلغي. الكود ده اتترجم في نفس المشروع.
+
+---
+
+## الخلاصة
+
+| | الـ repository | الـ ViewModel |
+|---|---|---|
+| بياخد في الـ constructor | الـ DAO والـ API | الـ repository |
+| بيعرض | [[Flow]] للقراية و [[suspend fun]] للعمليات | [[StateFlow]] للشاشة ودوال أحداث [[onXxx]] |
+| بيعرف عن Room و Retrofit؟ | أيوه | لأ |
+| بيعرف عن Compose؟ | لأ | لأ |
+
+- الشاشة بتقرا من Room دايمًا، والشبكة بتكتب في Room: مصدر واحد.
+- كل كلاس بياخد اللي محتاجه في الـ constructor، فتبدّله بـ fake في الاختبار.`,
           lines: [
             "الـ repository بتاع الملاحظات...",
             "...بياخد الـ DAO...",
@@ -184,6 +356,259 @@ class MainActivity : ComponentActivity() {
             when: R`أي تطبيق فيه أكتر من كام كلاس بيعتمدوا على بعض. وللتجارب الصغيرة جدًا، DI يدوي (تعمل الحاجات في الـ Application وتوزعها) كفاية.`,
             mistakes: R`تنسى [[@AndroidEntryPoint]] على الـ Activity: [[Given component holder class MainActivity does not implement interface dagger.hilt.internal.GeneratedComponent]]. وتنسى [[android:name]] في الـ manifest فالـ Application بتاعك مش بيتعمل. و [[@Singleton]] على حاجة شايلة state شاشة معينة. واستخدام [[kapt]] من tutorial قديم مع AGP 9: استخدم KSP.`
           },
+          teach: R`## الكود بيعمل إيه؟
+
+بيوصّل كل حاجة ببعض من غير ما تكتب [[new]] ولا factory: Hilt بيعرف إن الشاشة محتاجة [[NotesViewModel]]، والـ ViewModel محتاج [[NotesRepository]]، والـ repository محتاج [[NoteDao]]، والـ DAO جاي من [[AppDatabase]]، والداتابيز محتاجة [[Context]]. وبيكتب الكود اللي بيعملهم بالترتيب ده **وقت البناء**.
+
+### اتجرّب فين؟
+
+- المثال زي ما هو اتبنى في مشروع Android حقيقي (AGP 9.4.1 و Kotlin 2.4.20 و KSP 2.3.12 و Hilt 2.60.1 و [[androidx.hilt:hilt-lifecycle-viewmodel-compose:1.3.0]] و Room 2.8.5) بـ [[./gradlew assembleDebug]] جوه image فيها Android SDK 36: [[BUILD SUCCESSFUL]]. وقريت الكود اللي Hilt ولّده، وهنشوف منه تحت.
+- شيلت [[provideNoteDao]] عن قصد وبنيت تاني عشان نشوف الغلط الحقيقي، وبعدين الحل ([[NetworkModule]]) اتبنى برضه.
+- نسخة 1.4.0 من [[hilt-lifecycle-viewmodel-compose]] رفضت تتبني بـ [[compileSdk 36]] (بتطلب 37)، عشان كده 1.3.0.
+- فتح التطبيق على موبايل: من الـ docs.
+
+---
+
+## ١. نقطة البداية: [[@HiltAndroidApp]]
+
+~~~kotlin
+@HiltAndroidApp
+class NotesApp : Application()
+~~~
+
+- [[Application]]: كلاس Android بيتعمل مرة واحدة أول ما الـ process يبدأ، قبل أي Activity.
+- [[@HiltAndroidApp]]: Hilt بيولّد كلاس اسمه [[Hilt_NotesApp]] بيعمل «الحاوية» الكبيرة (اسمها [[SingletonComponent]]) اللي هتعيش طول عمر التطبيق. وده اللي اتولّد فعلًا:
+
+~~~text الملفات اللي Hilt ولّدها (مختصرة)
+Hilt_NotesApp.java
+DaggerNotesApp_HiltComponents_SingletonC.java
+DataModule_ProvideDatabaseFactory.java
+DataModule_ProvideNoteDaoFactory.java
+NotesRepository_Factory.java
+NotesViewModel_Factory.java
+Hilt_MainActivity.java
+~~~
+
+- ولازم تسجّل الكلاس في [[AndroidManifest.xml]]، وإلا Android هيستخدم [[Application]] العادي ومحدش هيعمل الحاوية:
+
+~~~text AndroidManifest.xml
+<application android:name=".NotesApp" ...>
+~~~
+
+---
+
+## ٢. الوصفات: [[@Module]]
+
+~~~kotlin
+@Module
+@InstallIn(SingletonComponent::class)
+object DataModule {
+~~~
+
+- [[@Module]]: «الكلاس ده فيه وصفات». محتاجه للحاجات اللي **مش بتاعتك**: [[AppDatabase]] بتتعمل بـ [[Room.databaseBuilder]] مش بـ constructor تقدر تحط عليه [[@Inject]].
+- [[@InstallIn(SingletonComponent::class)]]: الوصفات دي متاحة في الحاوية الكبيرة. [[::class]] معناها «الكلاس نفسه» مش object منه.
+- [[object]] مش [[class]]: نسخة واحدة ثابتة ومفيهاش state، فـ Hilt بينادي الدوال على طول.
+
+### وصفة الداتابيز
+
+~~~kotlin
+    @Provides
+    @Singleton
+    fun provideDatabase(@ApplicationContext context: Context): AppDatabase =
+        Room.databaseBuilder(context, AppDatabase::class.java, "notes.db").build()
+~~~
+
+- [[@Provides]]: «لو حد طلب [[AppDatabase]] (نوع الـ return)، نادي الدالة دي». اسم الدالة نفسه مش مهم لـ Hilt، المهم النوع.
+- [[@Singleton]]: اعملها **مرة واحدة** واحفظها. من غيرها كل حد يطلب داتابيز هياخد واحدة جديدة.
+- [[@ApplicationContext context: Context]]: الدالة محتاجة Context، و Hilt بيديها الـ Application context (مش Activity، عشان الداتابيز عايشة أطول من أي شاشة).
+- [[= ...]] بعد الدالة: دالة جسمها سطر واحد بيرجّع قيمته (expression body).
+
+في الكود المولّد [[@Singleton]] بقت كده:
+
+~~~java
+this.provideDatabaseProvider = DoubleCheck.provider(new SwitchingProvider<AppDatabase>(singletonCImpl, 0));
+~~~
+
+[[DoubleCheck]] بيحفظ أول نسخة ويرجّعها كل مرة بعد كده (وآمن مع أكتر من thread).
+
+### وصفة الـ DAO
+
+~~~kotlin
+    @Provides
+    fun provideNoteDao(db: AppDatabase): NoteDao = db.noteDao()
+}
+~~~
+
+- الدالة محتاجة [[db: AppDatabase]]، و Hilt عارف يعمله من الوصفة اللي فوق. يعني الوصفات بتعتمد على بعض.
+- مفيش [[@Singleton]]: Room أصلًا بيرجّع نفس الـ DAO من نفس الداتابيز. والكود المولّد:
+
+~~~java
+NoteDao noteDao() {
+  return DataModule_ProvideNoteDaoFactory.provideNoteDao(provideDatabaseProvider.get());
+}
+~~~
+
+---
+
+## ٣. كلاساتك: [[@Inject constructor]]
+
+~~~kotlin
+class NotesRepository @Inject constructor(private val dao: NoteDao) {
+    val notes = dao.observeAll()
+}
+~~~
+
+- [[@Inject constructor(...)]]: «Hilt، انت اللي تعمل الكلاس ده، باللي في الـ constructor». ولما تحط annotation على الـ constructor في Kotlin لازم تكتب كلمة [[constructor]] صريحة.
+- مفيش module للـ repository: الكلاس بتاعك، فـ [[@Inject]] كفاية.
+
+Hilt ولّد [[NotesRepository_Factory.java]]، والسطر المهم فيه:
+
+~~~java
+public static NotesRepository newInstance(NoteDao dao) {
+  return new NotesRepository(dao);
+}
+~~~
+
+ده بالظبط الكود اللي كنت هتكتبه بإيدك.
+
+---
+
+## ٤. الـ ViewModel: [[@HiltViewModel]]
+
+~~~kotlin
+@HiltViewModel
+class NotesViewModel @Inject constructor(private val repo: NotesRepository) : ViewModel() {
+    val notes = repo.notes.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+}
+~~~
+
+- [[@HiltViewModel]]: الـ ViewModel ده Hilt بيعمله. والـ ViewModels ليها حاوية خاصة ([[ViewModelComponent]]) بتتعمل لكل ViewModel.
+- ومن غير Hilt كنت محتاج [[ViewModelProvider.Factory]] بإيدك عشان الـ ViewModel ليه parameter.
+
+وفي الحاوية المولّدة:
+
+~~~java
+case 0: // com.sara.notes.di.NotesViewModel
+return (T) new NotesViewModel(viewModelCImpl.notesRepository());
+...
+NotesRepository notesRepository() {
+  return new NotesRepository(singletonCImpl.noteDao());
+}
+~~~
+
+السلسلة كلها: ViewModel ← repository ← DAO ← الداتابيز (المحفوظة) ← Context.
+
+---
+
+## ٥. الـ Activity والشاشة
+
+~~~kotlin
+@AndroidEntryPoint
+class MainActivity : ComponentActivity() {
+~~~
+
+[[@AndroidEntryPoint]]: Hilt ولّد [[Hilt_MainActivity]]، والـ plugin بتاع Gradle بيخلي [[MainActivity]] تورث منه وقت البناء. وده جزء منه:
+
+~~~java
+public abstract class Hilt_MainActivity extends ComponentActivity implements GeneratedComponentManagerHolder {
+  ...
+  @Override
+  public ViewModelProvider.Factory getDefaultViewModelProviderFactory() {
+    return DefaultViewModelFactories.getActivityFactory(this, super.getDefaultViewModelProviderFactory());
+  }
+~~~
+
+يعني الـ Activity بقى ليها factory بيعرف يعمل أي [[@HiltViewModel]]. ولو نسيت [[@AndroidEntryPoint]]، الـ Activity مش هيبقى فيها الكلام ده، و [[hiltViewModel()]] هيقع وقت التشغيل (الرسالة في «أشهر الأخطاء» تحت من الـ docs).
+
+~~~kotlin
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            val vm: NotesViewModel = hiltViewModel()
+            val notes by vm.notes.collectAsStateWithLifecycle()
+            Text("عندك $__{notes.size} ملاحظة")
+        }
+    }
+}
+~~~
+
+- [[hiltViewModel()]]: زي [[viewModel()]] بس بيستخدم factory بتاع Hilt. الـ import: [[androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel]].
+- [[val vm: NotesViewModel]]: النوع لازم يتكتب عشان [[hiltViewModel()]] تعرف تعمل أنهي ViewModel.
+- [[collectAsStateWithLifecycle()]] و [[by]]: الـ StateFlow بقى Compose state، والشاشة تترسم تاني لما الرقم يتغير.
+
+---
+
+## ٦. لو حاجة ناقصة: البناء بيقع
+
+شيلت دالة [[provideNoteDao]] من الـ module وبنيت:
+
+~~~text الناتج
+error: [Dagger/MissingBinding] com.sara.notes.data.NoteDao cannot be provided without an @Provides-annotated method.
+  ...
+      com.sara.notes.data.NoteDao is injected at
+          [...ViewModelC] com.sara.notes.di.NotesRepository(dao)
+      com.sara.notes.di.NotesRepository is injected at
+          [...ViewModelC] com.sara.notes.di.NotesViewModel(repo)
+...
+> Task :app:hiltJavaCompileDebug FAILED
+BUILD FAILED in 1m 3s
+~~~
+
+اقراها من تحت لفوق: الـ ViewModel طالب repository، والـ repository طالب [[NoteDao]]، ومفيش وصفة لـ [[NoteDao]]. الغلط ظهر في [[hiltJavaCompileDebug]] قبل ما التطبيق يتعمل أصلًا.
+
+---
+
+## ٧. الحل: [[NetworkModule]]
+
+~~~kotlin
+    @Provides
+    @Singleton
+    fun provideJson(): Json = Json { ignoreUnknownKeys = true }
+~~~
+
+[[Json]] من kotlinx.serialization، و [[ignoreUnknownKeys = true]]: لو السيرفر بعت حقول زيادة، تجاهلها بدل ما تقع.
+
+~~~kotlin
+    @Provides
+    @Singleton
+    fun provideNotesApi(json: Json): NotesApi = Retrofit.Builder()
+        .baseUrl("https://api.example.com/")
+        .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+        .build()
+        .create(NotesApi::class.java)
+~~~
+
+- [[json: Json]] جاي من الوصفة اللي فوقها.
+- [[asConverterFactory]] من [[retrofit2.converter.kotlinx.serialization]]، و [[toMediaType()]] من [[okhttp3.MediaType.Companion]] (الاتنين محتاجين import).
+- [[.create(NotesApi::class.java)]]: Retrofit بيعمل تنفيذ الـ interface. [[::class.java]] الكلاس بصيغة Java لأن Retrofit مكتوب Java.
+
+وبعدها الـ repository بياخد الـ API بإضافة parameter بس:
+
+~~~kotlin
+class NotesRepository @Inject constructor(
+    private val dao: NoteDao,
+    private val api: NotesApi
+)
+~~~
+
+مفيش ولا سطر اتغير في الـ ViewModel ولا الـ Activity. البناء عدّى.
+
+---
+
+## الخلاصة
+
+| الـ annotation | مكانها | معناها |
+|---|---|---|
+| [[@HiltAndroidApp]] | كلاس الـ Application (+ [[android:name]] في الـ manifest) | ابدأ الحاوية |
+| [[@AndroidEntryPoint]] | الـ Activity | الـ Activity دي بتاخد من Hilt |
+| [[@Inject constructor]] | كلاساتك | Hilt يعملها لوحده |
+| [[@Module]] + [[@InstallIn]] | object | وصفات للحاجات اللي مش بتاعتك |
+| [[@Provides]] | دالة في الـ module | النوع اللي بترجّعه هو اللي بتوفّره |
+| [[@Singleton]] | على [[@Provides]] أو الكلاس | نسخة واحدة |
+| [[@HiltViewModel]] + [[hiltViewModel()]] | الـ ViewModel والشاشة | من غير factory |
+
+- كل حاجة ناقصة بتطلع وقت البناء برسالة فيها السلسلة كلها.
+- Hilt بيكتب كود Java عادي ([[new NotesRepository(...)]]) بدالك، مفيش سحر وقت التشغيل.`,
           lines: [
             R`[[@HiltAndroidApp]]: هنا Hilt بيبدأ.`,
             R`كلاس الـ Application (ويتسجّل في الـ manifest بـ [[android:name]]).`,
@@ -305,6 +730,238 @@ ViewModel بـ viewModelScope: اعمل JUnit Rule اسمها [[MainDispatcherRu
             when: "أي منطق فيه شروط أو حسابات، وكل ViewModel، وكل bug بتصلحه (اكتب اختبار بيمسكه الأول وبعدين صلّح).",
             mistakes: R`تحط المنطق في الـ composable فمتعرفش تختبره من غير UI. وتختبر تفاصيل التنفيذ مش السلوك (كل ما تعدّل الكود الاختبار يقع). وتنسى [[runTest]] وتنادي suspend fun من اختبار عادي فمش هيترجم. و [[assertEquals(actual, expected)]] بالعكس فرسالة الغلط تبقى ملخبطة.`
           },
+          teach: R`## الكود بيعمل إيه؟
+
+فيه حاجتين: [[PriceCalculator]] (الكود الحقيقي، مكانه [[src/main]]) و [[PriceCalculatorTest]] (الاختبار، مكانه [[src/test]]). كل دالة عليها [[@Test]] بتنادي الكود بقيمة معينة وتتأكد إن النتيجة هي المتوقعة. لو النتيجة غلط، الاختبار «بيقع» وبيقولك المتوقع كان إيه وطلع إيه.
+
+### اتجرّب فين؟
+
+- الكلاسين زي ما هم، والحل ([[CartViewModelTest]] و [[MainDispatcherRule]] و [[NotesViewModelTest]])، واختبارين زيادة بـ MockK و Turbine، اتشغلوا في مشروع Android حقيقي (AGP 9.4.1 و Kotlin 2.4.20 و JUnit 4.13.2 و kotlinx-coroutines-test 1.10.2 و MockK 1.14.11 و Turbine 1.2.1) بـ [[./gradlew testDebugUnitTest]] جوه image فيها Android SDK 36 و Java 21. كلهم عدّوا.
+- وبوّظت الشرط عن قصد عشان نشوف شكل الاختبار الواقع.
+
+---
+
+## ١. الكود اللي هنختبره
+
+~~~kotlin
+class PriceCalculator {
+    fun finalPrice(price: Double): Double {
+        require(price >= 0) { "السعر مينفعش يبقى سالب" }
+        return if (price >= 1000) price * 0.9 else price
+    }
+}
+~~~
+
+- [[require(شرط) { رسالة }]]: لو الشرط false بترمي [[IllegalArgumentException]] بالرسالة دي. يعني «المدخل ده غلط».
+- [[if (...) a else b]] في Kotlin بترجّع قيمة، فـ [[return if ...]] بيرجّع واحدة من الاتنين.
+- [[price * 0.9]]: خصم 10%. يعني 1000 تبقى 900.
+
+الكلاس ده Kotlin عادي، مفيهوش ولا حاجة من Android، وده اللي بيخليه يتختبر على الـ JVM في ثواني.
+
+---
+
+## ٢. كلاس الاختبار
+
+~~~kotlin
+class PriceCalculatorTest {
+    private val calc = PriceCalculator()
+~~~
+
+- الاسم العرف: اسم الكلاس + [[Test]]، ونفس الـ package، بس في [[src/test/java/...]].
+- [[calc]] property: JUnit 4 بيعمل **object جديد من كلاس الاختبار لكل [[@Test]]**، فكل اختبار بياخد [[calc]] جديد ومفيش اختبار بيأثر على التاني.
+- الـ imports اللي محتاجها: [[org.junit.Test]] و [[org.junit.Assert.assertEquals]].
+
+### الاختبار الأول
+
+~~~kotlin
+    @Test
+    fun discount_isAppliedAboveThreshold() {
+        assertEquals(900.0, calc.finalPrice(1000.0), 0.001)
+    }
+~~~
+
+- [[@Test]]: JUnit بيدوّر على الدوال اللي عليها الـ annotation دي ويشغّلها.
+- الاسم بيوصف **السلوك**: «الخصم بيتطبق فوق الحد». لما يقع، الاسم لوحده بيقولك إيه اللي باظ.
+- [[assertEquals(expected, actual, delta)]]: المتوقع الأول ([[900.0]])، بعدين الحقيقي ([[calc.finalPrice(1000.0)]]).
+- [[0.001]] اسمه delta: الفرق المسموح. ليه؟ لأن الـ Double مش دقيق في الكسور: [[0.1 + 0.2]] بيطلع [[0.30000000000000004]] مش [[0.3]]. فبنقول «لو الفرق أقل من 0.001 اعتبرهم زي بعض».
+
+### الاختبار التاني
+
+~~~kotlin
+    @Test
+    fun noDiscount_belowThreshold() {
+        assertEquals(500.0, calc.finalPrice(500.0), 0.001)
+    }
+~~~
+
+تحت الـ 1000: السعر زي ما هو.
+
+### اختبار الـ exception
+
+~~~kotlin
+    @Test(expected = IllegalArgumentException::class)
+    fun negativePrice_throws() {
+        calc.finalPrice(-1.0)
+    }
+}
+~~~
+
+- [[expected = IllegalArgumentException::class]]: الاختبار **ينجح** لو الـ exception ده اترمى، ويقع لو مترماش.
+- [[::class]]: الكلاس نفسه كقيمة.
+- مفيش assert هنا: الـ [[require]] هي اللي المفروض ترمي.
+
+---
+
+## ٣. التشغيل
+
+~~~bash
+./gradlew testDebugUnitTest
+~~~
+
+[[./gradlew test]] بيشغّل اختبارات كل الـ variants (debug و release)، و [[testDebugUnitTest]] الـ debug بس (أسرع). التقرير XML في [[app/build/test-results/testDebugUnitTest/]] و HTML في [[app/build/reports/tests/testDebugUnitTest/index.html]]. ده اللي طلع في الـ XML:
+
+~~~text الناتج (TEST-com.sara.notes.PriceCalculatorTest.xml)
+<testsuite name="com.sara.notes.PriceCalculatorTest" tests="3" skipped="0" failures="0" errors="0" time="0.004"
+<testcase name="negativePrice_throws" time="0.001"/>
+<testcase name="noDiscount_belowThreshold" time="0.001"/>
+<testcase name="discount_isAppliedAboveThreshold" time="0.0"/>
+~~~
+
+٣ اختبارات، صفر وقعوا، في ٤ ملي ثانية. ده اللي نقصده بـ «سريعة».
+
+### لما الكود يبوظ
+
+غيّرت [[>= 1000]] لـ [[> 1000]]:
+
+~~~text الناتج
+PriceCalculatorTest > discount_isAppliedAboveThreshold FAILED
+    java.lang.AssertionError at PriceCalculatorTest.kt:10
+
+java.lang.AssertionError: expected:<900.0> but was:<1000.0>
+~~~
+
+- اسم الاختبار بيقولك المشكلة: الخصم مش بيتطبق عند الحد.
+- [[expected:<900.0> but was:<1000.0>]]: لو كنت كتبت [[assertEquals(actual, expected)]] بالعكس، كانت الرسالة هتقول «expected 1000» وتلخبطك.
+- [[PriceCalculatorTest.kt:10]]: رقم السطر في الاختبار.
+
+---
+
+## ٤. الحل: اختبار ViewModel
+
+~~~kotlin
+    @Test
+    fun addItem_updatesCountAndTotal() {
+        val vm = CartViewModel()
+        vm.addItem(50.0)
+        vm.addItem(25.0)
+        val state = vm.uiState.value
+        assertEquals(2, state.count)
+        assertEquals(75.0, state.total, 0.001)
+    }
+~~~
+
+الـ ٣ خطوات: **Arrange** ([[CartViewModel()]])، **Act** ([[addItem]] مرتين)، **Assert** (العدد 2 والإجمالي 75). و [[uiState.value]]: القيمة الحالية في الـ StateFlow. عدّى في 0.1 ثانية. الـ [[CartViewModel]] ده مفيهوش coroutines ([[update]] على الـ StateFlow متزامنة)، فمش محتاج حاجة زيادة.
+
+### الـ ViewModel اللي فيه [[viewModelScope]]
+
+[[viewModelScope.launch]] بيشتغل على [[Dispatchers.Main]] (الـ UI thread بتاع Android). وفي الـ JVM مفيش Android ولا main thread، فلازم تبدّله:
+
+~~~kotlin
+class MainDispatcherRule(
+    private val dispatcher: TestDispatcher = UnconfinedTestDispatcher()
+) : TestWatcher() {
+    override fun starting(description: Description) = Dispatchers.setMain(dispatcher)
+    override fun finished(description: Description) = Dispatchers.resetMain()
+}
+~~~
+
+- [[TestWatcher]]: كلاس من JUnit بيدّيك دوال بتتنادى قبل كل اختبار ([[starting]]) وبعده ([[finished]]).
+- [[Dispatchers.setMain(...)]]: من الآن، [[Dispatchers.Main]] = الـ dispatcher ده. و [[resetMain()]] ترجّعه.
+- [[UnconfinedTestDispatcher()]]: بيشغّل الـ coroutine **فورًا** في نفس الـ thread، فبعد [[launch]] على طول الكود اللي جواه يكون اتنفذ.
+
+~~~kotlin
+class NotesViewModelTest {
+    @get:Rule
+    val mainRule = MainDispatcherRule()
+
+    @Test
+    fun blankTitle_isIgnored() = runTest {
+        val repo = FakeNotesRepository()
+        val vm = NotesViewModel(repo)
+        vm.onAddClicked("   ")
+        assertEquals(0, repo.added.size)
+    }
+}
+~~~
+
+- [[@get:Rule]]: JUnit بيدوّر على الـ rules على الـ getter، و Kotlin بيحط الـ annotation على الـ field افتراضيًا، فـ [[get:]] بتقوله «حطها على الـ getter».
+- [[= runTest { }]]: الاختبار كله جوه [[runTest]]، فتقدر تنادي suspend functions، والـ [[delay]] بيتخطى من غير ما يستنى.
+- [[FakeNotesRepository]]: repository وهمي بلستة في الذاكرة. وعشان ده يشتغل، الـ ViewModel لازم ياخد **interface** ([[NotesRepository]]) والـ fake يعملها implement. ده الشكل اللي جربته:
+
+~~~kotlin
+class FakeNotesRepository : NotesRepository {
+    val added = mutableListOf<String>()
+    override val notes = MutableStateFlow<List<String>>(emptyList())
+    override suspend fun add(title: String) {
+        added += title
+        notes.value = notes.value + title
+    }
+}
+~~~
+
+[[blankTitle_isIgnored]] عدّى: [[onAddClicked("   ")]] منادتش [[add]] خالص.
+
+### زيادة: MockK و Turbine
+
+نفس الاختبار بـ mock بدل fake، و Flow بـ Turbine (الاتنين عدّوا):
+
+~~~kotlin
+val repo = mockk<NotesRepository>(relaxed = true)
+every { repo.notes } returns flowOf(emptyList())
+NotesViewModel(repo).onAddClicked("  اشتري لبن ")
+coVerify(exactly = 1) { repo.add("اشتري لبن") }
+~~~
+
+- [[mockk<T>(relaxed = true)]]: object وهمي، و [[relaxed]] يعني أي دالة متتعرّفش بترجّع قيمة فاضية بدل ما ترمي.
+- [[every { } returns x]]: لما حد يطلب [[repo.notes]] رجّع x.
+- [[coVerify(exactly = 1) { }]]: اتأكد إن الـ suspend fun دي اتنادت مرة واحدة بالقيمة دي (بعد [[trim()]]).
+
+~~~kotlin
+vm.notes.test {
+    assertEquals(emptyList<String>(), awaitItem())
+    vm.onAddClicked("ذاكر Kotlin")
+    assertEquals(listOf("ذاكر Kotlin"), awaitItem())
+}
+~~~
+
+[[test { }]] من Turbine بتسمع للـ Flow، و [[awaitItem()]] بتستنى القيمة الجاية. لو جت قيمة زيادة متوقعتهاش، الاختبار بيقع في الآخر.
+
+---
+
+## ٥. ليه المنطق ميتكتبش بـ Android
+
+شغّلت ViewModel فيه [[Log.d(...)]] في unit test عادي:
+
+~~~text الناتج
+java.lang.RuntimeException: Method d in android.util.Log not mocked. See https://developer.android.com/r/studio-ui/build/not-mocked for details.
+~~~
+
+الـ [[android.jar]] اللي الـ unit tests بتشوفه فيه أسماء الدوال بس من غير تنفيذ. عشان كده المنطق يتكتب Kotlin عادي، أو تستخدم Robolectric (في الدرس الجاي).
+
+---
+
+## الخلاصة
+
+| الحاجة | بتعمل إيه |
+|---|---|
+| [[src/test/]] | unit tests على الـ JVM، من غير موبايل |
+| [[@Test]] | دالة اختبار، وكل اختبار object جديد |
+| [[assertEquals(expected, actual, delta)]] | المتوقع الأول، و delta للـ Double |
+| [[@Test(expected = X::class)]] | ينجح لو X اترمى |
+| [[runTest { }]] | لـ suspend و coroutines، والـ delay بيتخطى |
+| [[MainDispatcherRule]] | بيبدّل [[Dispatchers.Main]] للـ ViewModels |
+| fake / [[mockk]] / Turbine | repository وهمي، و mock، واختبار Flow |
+| [[./gradlew testDebugUnitTest]] | التشغيل، والتقرير في [[app/build/reports/tests/]] |`,
           lines: [
             "الكلاس اللي هنختبره (في src/main).",
             "دالة السعر النهائي.",
@@ -414,6 +1071,189 @@ class NotesViewModelTest {
             when: "الشاشات المهمة (login، الدفع، الفورم)، وكل حالات الـ UI state. ومتحاولش تغطي كل pixel: الاختبارات دي أبطأ من الـ unit tests.",
             mistakes: R`تختبر الشاشة الكاملة اللي بتنادي API حقيقي فالاختبار يقع لما النت يقع. وتدوّر بنص بيتغير بالترجمة (الاختبار يقع على موبايل لغته مختلفة): استخدم [[testTag]] أو [[stringResource]] في الاختبار. وتحط [[Thread.sleep]] بدل ما تسيب الـ rule يستنى.`
           },
+          teach: R`## الكود بيعمل إيه؟
+
+بيعرض الـ [[Counter]] (من درس remember و state) لوحده، وبيعمل اللي اليوزر بيعمله: يدوّر على نص على الشاشة، يدوس على زرار، يكتب في حقل، وبعدين يتأكد إن الشاشة اتغيرت صح.
+
+### اتجرّب فين؟
+
+- مفيش emulator ولا موبايل هنا، فـ [[./gradlew connectedAndroidTest]] من الـ docs.
+- بدل كده شغّلت **نفس الاختبارات بالحرف** على الـ JVM بـ **Robolectric 4.17** (Android وهمي بيشتغل جوه الـ JVM): حطيتهم في [[src/test]] وزوّدت [[@RunWith(RobolectricTestRunner::class)]] فوق الكلاس، وشغّلت [[./gradlew testDebugUnitTest]] في مشروع Android حقيقي (AGP 9.4.1 و Compose BOM 2026.06.01 و Java 21). اختبارين الـ Counter و ٣ اختبارات الحل عدّوا كلهم.
+- مع Robolectric و SDK 36 على Java 21 احتجت أزوّد للـ test JVM: [[--add-exports=java.base/jdk.internal.access=ALL-UNNAMED]]، وإلا كل اختبار بيقع بـ [[Failed to interact with raw FileDescriptor internals]].
+
+---
+
+## ١. الـ rule
+
+~~~kotlin
+class CounterScreenTest {
+    @get:Rule
+    val composeRule = createComposeRule()
+~~~
+
+- [[createComposeRule()]]: بتجهّز Activity فاضية تعرض فيها الـ composable، وبتديك أدوات الدوّارة والأفعال. محتاجة مكتبة [[androidx.compose.ui:ui-test-junit4]]، و [[ui-test-manifest]] في [[debugImplementation]] (فيها الـ Activity الفاضية في الـ manifest).
+- [[@get:Rule]]: JUnit بيقرا الـ rules من الـ getter، فـ [[get:]] بتحط الـ annotation هناك.
+- الـ rule بيستنى لوحده لحد ما Compose يخلّص أي recomposition أو animation قبل كل سطر، فمفيش [[Thread.sleep]].
+
+---
+
+## ٢. الاختبار الأول: الزرار
+
+~~~kotlin
+    @Test
+    fun clickingButton_incrementsCounter() {
+        composeRule.setContent { Counter() }
+~~~
+
+[[setContent { }]]: اعرض الـ composable ده بس، من غير باقي التطبيق.
+
+قبل ما نكمل: الاختبار بيدوّر في إيه؟ Compose بيعمل **semantics tree**: شجرة فيها النصوص والأدوار والأفعال لكل عنصر. طبعتها بـ [[composeRule.onRoot().printToString()]] للـ Counter، وده الناتج (مختصر):
+
+~~~text الناتج
+Node #1 at (l=0.0, t=0.0, r=312.0, b=211.0)px
+ |-Node #3 at (l=16.0, t=16.0, r=24.0, b=51.0)px
+ | Text = '[العدد: 0]'
+ |-Node #4 at (l=16.0, t=59.0, r=74.0, b=111.0)px
+ | Role = 'Button'
+ | Text = '[زوّد]'
+ | Actions = [..., OnClick, RequestFocus, ...]
+ | MergeDescendants = 'true'
+ |-Node #7 at (l=16.0, t=119.0, r=296.0, b=195.0)px
+   EditableText = ''
+   IsEditable = 'true'
+   Text = '[اسمك]'
+   Actions = [..., OnClick, ..., SetText, ...]
+   MergeDescendants = 'true'
+~~~
+
+- كل [[Node]] عنصر، ومعاه مكانه بالـ pixels ([[l]] شمال، [[t]] فوق، [[r]] يمين، [[b]] تحت).
+- الزرار [[Role = 'Button']] وجواه النص [[زوّد]]. [[MergeDescendants = 'true']] يعني الـ Text اللي جوه الزرار اتدمج فيه، فلما تدوّر على «زوّد» بتلاقي الزرار نفسه (اللي عنده [[OnClick]]).
+- الـ TextField عنده [[Text = '[اسمك]']] (الـ label اتدمج فيه) و [[SetText]].
+
+~~~kotlin
+        composeRule.onNodeWithText("العدد: 0").assertIsDisplayed()
+~~~
+
+- [[onNodeWithText("...")]]: دوّر على عنصر **واحد** نصه كده بالظبط.
+- [[assertIsDisplayed()]]: اتأكد إنه ظاهر على الشاشة.
+
+~~~kotlin
+        composeRule.onNodeWithText("زوّد").performClick()
+        composeRule.onNodeWithText("العدد: 1").assertIsDisplayed()
+    }
+~~~
+
+[[performClick()]] بيدوس، والـ rule بيستنى الـ recomposition، وبعدين النص بقى [[العدد: 1]]. عدّى.
+
+### لو التأكيد غلط
+
+جربت [[onNodeWithText("العدد: 5").assertIsDisplayed()]]:
+
+~~~text الناتج
+java.lang.AssertionError: Assert failed: The component with Text + InputText + EditableText contains 'العدد: 5' (ignoreCase: false) is not displayed!
+~~~
+
+الرسالة بتقولك بيدوّر على إيه بالظبط. أول حاجة تعملها ساعتها: اطبع الشجرة اللي فوق وشوف النص الحقيقي.
+
+---
+
+## ٣. الاختبار التاني: الكتابة
+
+~~~kotlin
+    @Test
+    fun typingName_showsGreeting() {
+        composeRule.setContent { Counter() }
+        composeRule.onNodeWithText("أهلًا يا Sara").assertDoesNotExist()
+~~~
+
+- كل [[@Test]] بيبدأ بشاشة جديدة، فلازم [[setContent]] تاني.
+- [[assertDoesNotExist()]]: العنصر مش في الشجرة خالص (الـ [[if (name.isNotBlank())]] لسه false).
+
+~~~kotlin
+        composeRule.onNodeWithText("اسمك").performTextInput("Sara")
+        composeRule.onNodeWithText("أهلًا يا Sara").assertIsDisplayed()
+    }
+}
+~~~
+
+- [[onNodeWithText("اسمك")]]: بيلاقي الـ TextField عن طريق الـ label (Node #7 فوق).
+- [[performTextInput("Sara")]]: بيكتب النص (عن طريق الـ [[SetText]] / [[InsertTextAtCursor]] اللي في Actions)، فـ [[onValueChange]] بتتنادى والـ state يتغير.
+- بعدها الترحيب ظهر. عدّى.
+
+---
+
+## ٤. الحل: شاشة stateless
+
+~~~kotlin
+@Composable
+fun PostsContent(state: PostsUiState, onRetry: () -> Unit) {
+    when (state) {
+        PostsUiState.Loading -> CircularProgressIndicator(Modifier.testTag("loading"))
+        is PostsUiState.Error -> Button(onClick = onRetry) { Text(state.message) }
+        is PostsUiState.Success -> LazyColumn { items(state.posts, key = { it.id }) { Text(it.title) } }
+    }
+}
+~~~
+
+- بتاخد الـ state والـ lambda من برا، فالاختبار يديها أي حالة على طول من غير ViewModel ولا شبكة.
+- [[Modifier.testTag("loading")]]: الـ spinner مفيهوش نص، فبنديله اسم للاختبار بس.
+- [[is PostsUiState.Error]]: [[is]] بتشيك النوع وبتعمل smart cast، فـ [[state.message]] متاحة.
+
+~~~kotlin
+    @Test
+    fun loading_showsSpinner() {
+        composeRule.setContent { PostsContent(PostsUiState.Loading, onRetry = { }) }
+        composeRule.onNodeWithTag("loading").assertIsDisplayed()
+    }
+~~~
+
+[[onNodeWithTag]] بيدوّر بالـ testTag. و [[onRetry = { }]] lambda فاضية لأننا مش محتاجينها هنا.
+
+~~~kotlin
+    @Test
+    fun error_clickRetry_callsCallback() {
+        var retries = 0
+        composeRule.setContent { PostsContent(PostsUiState.Error("مفيش نت"), onRetry = { retries++ }) }
+        composeRule.onNodeWithText("مفيش نت").performClick()
+        assertEquals(1, retries)
+    }
+~~~
+
+[[var retries = 0]] عدّاد في الاختبار نفسه، والـ lambda بتزوّده. بعد الضغطة [[retries]] بقى 1، يعني الزرار متوصّل بـ [[onRetry]] فعلًا.
+
+~~~kotlin
+        val posts = listOf(Post(1, "أول بوست", ""), Post(2, "تاني بوست", ""))
+        composeRule.setContent { PostsContent(PostsUiState.Success(posts), onRetry = { }) }
+        composeRule.onNodeWithText("تاني بوست").assertIsDisplayed()
+~~~
+
+لستة ثابتة، ونتأكد إن العنوان ظاهر.
+
+### الوقت
+
+~~~text الناتج (من تقارير الـ XML)
+clickingButton_incrementsCounter   30.303s
+typingName_showsGreeting            1.298s
+loading_showsSpinner                0.443s
+error_clickRetry_callsCallback      0.23s
+success_showsTitles                 0.242s
+~~~
+
+أول اختبار Robolectric بياخد وقت عشان بيحمّل Android الوهمي، والباقي أقل من ثانية. وعلى emulator (من الـ docs) أبطأ لأنه بيبني APK للاختبار ويسطّبه الأول.
+
+---
+
+## الخلاصة
+
+| الحاجة | بتعمل إيه |
+|---|---|
+| [[createComposeRule()]] + [[@get:Rule]] | تجهّز Compose للاختبار |
+| [[setContent { }]] | تعرض composable لوحده |
+| [[onNodeWithText]] / [[onNodeWithTag]] | تدوّر في الـ semantics tree |
+| [[performClick()]] / [[performTextInput()]] | تعمل زي اليوزر |
+| [[assertIsDisplayed()]] / [[assertDoesNotExist()]] | تتأكد |
+| [[onRoot().printToString()]] أو [[printToLog]] | تشوف الشجرة لما متلاقيش عنصر |
+| [[src/androidTest]] + [[connectedAndroidTest]] | على موبايل (أو [[src/test]] + Robolectric على الـ JVM) |`,
           lines: [
             "كلاس الاختبار (في src/androidTest).",
             R`[[@get:Rule]]: الـ annotation على الـ getter.`,
@@ -522,6 +1362,146 @@ class NotesViewModel(private val repo: NotesRepository) : ViewModel() {
             when: R`Log للحاجات اللي عايز تتابعها وهي شغالة (خصوصًا timing و coroutines، لأن الـ breakpoint بيغيّر التوقيت). Debugger لما عايز تفهم ليه قيمة غلط. Layout Inspector لمشاكل الشكل والـ recomposition الزيادة.`,
             mistakes: R`تقرا أول سطر في الـ stack trace بس وتتجاهل [[Caused by]]. وتسيب [[println]] بدل Log (بيظهر بـ tag [[System.out]] وصعب تفلتره). وتطبع بيانات حساسة في الـ logs. وتنسى إن Logcat ممكن يبقى مفلتر على جهاز أو process قديم فتفتكر إن مفيش logs.`
           },
+          teach: R`## الكود بيعمل إيه؟
+
+ViewModel بيكتب ٣ رسايل في الـ log: واحدة لما الـ refresh يبدأ، وواحدة لما يخلص بعدد الملاحظات، وواحدة لو وقع ومعاها الـ exception كله. والرسايل دي بتشوفها في Logcat وانت بتجرّب.
+
+### اتجرّب فين؟
+
+- الكلاس زي ما هو اتترجم في مشروع Android حقيقي (AGP 9.4.1 و Kotlin 2.4.20)، و [[repo]] repository وهمي بيرجّع 3، وواحد تاني بيرمي [[UnknownHostException]] (زي ما بيحصل لما النت مقفول).
+- مفيش موبايل، فشغّلته في unit test بـ **Robolectric** (Android وهمي على الـ JVM)، و Robolectric بيطبع اللوجات بنفس شكل [[adb logcat]] لما تقوله [[ShadowLog.stream = System.out]]. الناتج تحت حقيقي.
+- Logcat في Android Studio والـ debugger و Layout Inspector و App Inspection: من الـ docs.
+
+---
+
+## ١. الـ TAG
+
+~~~kotlin
+private const val TAG = "NotesVM"
+~~~
+
+- [[TAG]]: اسم قصير بيتكتب جنب كل رسالة، وبيه بتفلتر Logcat ([[tag:NotesVM]]).
+- [[const val]]: ثابت وقت الترجمة (نص أو رقم بس). و [[private]] برا الكلاس = الملف ده بس يشوفه.
+- العرف: اسم الكلاس أو اختصاره، وأقل من 23 حرف (Android قديم كان بيرفض أطول من كده).
+
+---
+
+## ٢. الرسايل
+
+~~~kotlin
+class NotesViewModel(private val repo: NotesRepository) : ViewModel() {
+    fun refresh() {
+        Log.d(TAG, "refresh بدأ")
+~~~
+
+[[Log]] كلاس في [[android.util]]، والحرف بعد النقطة هو المستوى:
+
+| الدالة | المستوى | الحرف في Logcat | امتى |
+|---|---|---|---|
+| [[Log.v]] | verbose | V | تفاصيل كتير جدًا |
+| [[Log.d]] | debug | D | وانت بتطوّر |
+| [[Log.i]] | info | I | حدث مهم عادي |
+| [[Log.w]] | warning | W | حاجة غريبة بس مكمّلين |
+| [[Log.e]] | error | E | حاجة فشلت |
+
+~~~kotlin
+        viewModelScope.launch {
+            try {
+                val count = repo.refresh()
+                Log.i(TAG, "refresh خلص: $count ملاحظة")
+~~~
+
+[[$count]] string template: القيمة بتتحط جوه النص.
+
+~~~kotlin
+            } catch (e: IOException) {
+                Log.e(TAG, "refresh وقع", e)
+            }
+~~~
+
+النسخة اللي بـ ٣ parameters: التالت [[Throwable]]، و Log بيطبع نوعه ورسالته والـ stack trace كله تحت رسالتك. و [[UnknownHostException]] نوع من [[IOException]]، فالـ catch بيمسكه.
+
+### الناتج
+
+~~~text الناتج (Robolectric، repository بيرجّع 3 وبعدين repository من غير نت)
+D/NotesVM: refresh بدأ
+I/NotesVM: refresh خلص: 3 ملاحظة
+D/NotesVM: refresh بدأ
+E/NotesVM: refresh وقع
+java.net.UnknownHostException: Unable to resolve host "api.example.com": No address associated with hostname
+    at com.sara.notes.FakeOffline.refresh(LogTests.kt:14)
+    at com.sara.notes.logs.NotesViewModel$refresh$1.invokeSuspend(Logs.kt:17)
+    at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
+    at kotlinx.coroutines.internal.DispatchedContinuationKt.resumeCancellableWith(DispatchedContinuation.kt:375)
+    ...
+~~~
+
+الشكل [[مستوى/TAG: الرسالة]]. و Logcat في Android Studio بيزوّد قبلها الوقت والـ PID (رقم الـ process) واسم الـ package (من الـ docs).
+
+---
+
+## ٣. تقرا الـ stack trace إزاي
+
+خد السطور اللي فوق واحد واحد:
+
+1. [[java.net.UnknownHostException]]: نوع الـ exception. و [[Unable to resolve host "api.example.com"]]: الموبايل معرفش يحوّل اسم السيرفر لـ IP، يعني غالبًا مفيش نت.
+2. [[at com.sara.notes.FakeOffline.refresh(LogTests.kt:14)]]: أول سطر = آخر دالة كانت شغالة، والملف ورقم السطر بين الأقواس. ده المكان اللي الـ exception اترمى منه.
+3. [[at com.sara.notes.logs.NotesViewModel$refresh$1.invokeSuspend(Logs.kt:17)]]: مين نادى عليها. [[$refresh$1]] هو الـ lambda اللي جوه [[launch]] في دالة [[refresh]]، و [[invokeSuspend]] اسم الدالة اللي Kotlin بيولّدها للـ coroutine. و [[Logs.kt:17]] هو سطر [[val count = repo.refresh()]].
+4. السطور اللي بعدها [[kotlin.coroutines]] و [[kotlinx.coroutines]]: مكتبات، مش كودك.
+
+القاعدة: نزّل لحد **أول سطر فيه الـ package بتاعك** ([[com.sara.notes]]). ولو تحت فيه [[Caused by:]] (exception جوه exception)، روح للأخير: ده السبب الأصلي.
+
+وفي crash حقيقي Logcat بيكتب فوق ده سطر [[FATAL EXCEPTION: main]] واسم الـ process (من الـ docs).
+
+---
+
+## ٤. ليه [[Log]] مينفعش في unit test عادي
+
+نفس الـ ViewModel في JUnit من غير Robolectric:
+
+~~~text الناتج
+java.lang.RuntimeException: Method d in android.util.Log not mocked. See https://developer.android.com/r/studio-ui/build/not-mocked for details.
+~~~
+
+الـ unit tests بتشوف [[android.jar]] فاضي (أسماء الدوال بس). فاللي فيه [[Log]] يا إما Robolectric، يا إما مكتبة زي Timber، يا إما المنطق يتفصل عن الـ logging.
+
+---
+
+## ٥. الفلتر في Logcat و adb
+
+| تكتب | يعني |
+|---|---|
+| [[package:mine]] | تطبيقك بس |
+| [[tag:NotesVM]] | الـ TAG ده |
+| [[level:error]] | E وطالع |
+| [[package:mine level:warn]] | الاتنين مع بعض |
+| [[adb logcat -s NotesVM]] | من الترمنال: tag واحد ([[-s]] = silent لكل الباقي) |
+| [[adb logcat *:E]] | كل الـ tags ([[*]])، errors بس |
+| [[adb logcat -c]] | فضّي الـ buffer |
+
+([[adb]] = Android Debug Bridge، أداة الـ SDK اللي بتكلم الموبايل. الأوامر دي من الـ docs.)
+
+---
+
+## ٦. الأدوات التانية (من الـ docs)
+
+- **breakpoint**: دوس جنب رقم السطر (نقطة حمرا)، وشغّل بـ Debug (أيقونة الحشرة). لما يوصل للسطر بيقف، وتاب Variables بيوريك [[this]] و [[count]] وكل حاجة. F8 = السطر الجاي (Step Over)، و F7 = ادخل جوه الدالة (Step Into).
+- **Layout Inspector**: شجرة الـ UI وهي شغالة، والمقاسات، وعداد الـ recompositions لكل composable.
+- **App Inspection**: Database Inspector (جداول Room) و Network Inspector.
+
+---
+
+## الخلاصة
+
+| الأداة | امتى |
+|---|---|
+| [[Log.d/i/w/e(TAG, msg)]] | تتابع اللي بيحصل، خصوصًا التوقيت والـ coroutines |
+| [[Log.e(TAG, msg, e)]] | تطبع الـ exception بالـ stack trace |
+| الـ stack trace | أول سطر فيه الـ package بتاعك، و [[Caused by]] في الآخر |
+| breakpoint | عايز تشوف قيم المتغيرات |
+| Layout Inspector | مشاكل الشكل والـ recomposition |
+
+- متكتبش توكنات ولا بيانات شخصية في الـ log: بتفضل في الـ release.`,
           lines: [
             R`الـ TAG ثابت لكل الكلاس (العرف إنه اسم الكلاس).`,
             "ViewModel.",
@@ -599,6 +1579,145 @@ fun ProductsList(products: List<Product>, modifier: Modifier = Modifier) {
             when: "خلي الأساسيات (key، الشغل التقيل برا الـ composable، release للقياس) عادة من الأول. والتحسينات التانية لما تقيس وتلاقي مشكلة فعلًا.",
             mistakes: R`تحكم على الأداء من الـ debug. وتحط [[derivedStateOf]] في كل حتة بدون داعي (هي نفسها ليها تكلفة). وتعمل [[sortedBy]] جوه الـ composable من غير remember مع لستة كبيرة. وتقرا [[listState.firstVisibleItemIndex]] مباشرة في composable كبير فيترسم مع كل pixel scroll.`
           },
+          teach: R`## الكود بيعمل إيه؟
+
+لستة منتجات مترتبة بالسعر، ولما اليوزر ينزل أكتر من ٥ عناصر يظهر زرار صغير «↑» يرجّعه لأول اللستة. وفيه ٣ تحسينات صغيرة: [[derivedStateOf]] عشان الشاشة متترسمش مع كل scroll، و [[remember(products)]] عشان الترتيب ميتحسبش كل مرة، و [[key]] في اللستة.
+
+### اتجرّب فين؟
+
+- الكود زي ما هو اتترجم في مشروع Android حقيقي (AGP 9.4.1 و Kotlin 2.4.20 و Compose BOM 2026.06.01).
+- مفيش موبايل ولا Layout Inspector، فعملت قياس بديل: نسختين من نفس الفكرة (مع وبدون [[derivedStateOf]]) جوه اختبار Compose بـ Robolectric على الـ JVM، وعدّيت كام مرة الـ composable اتعمله recomposition وأنا بعمل scroll عنصر عنصر ٢٠ مرة. الأرقام تحت حقيقية.
+- وبنيت الـ debug والـ release وقارنت الحجم. نعومة الـ scroll على موبايل و Profiler و Macrobenchmark: من الـ docs.
+
+---
+
+## ١. حالة الـ scroll
+
+~~~kotlin
+@Composable
+fun ProductsList(products: List<Product>, modifier: Modifier = Modifier) {
+    val listState = rememberLazyListState()
+    val scope = rememberCoroutineScope()
+~~~
+
+- [[modifier: Modifier = Modifier]]: العرف في Compose: كل composable بياخد modifier من اللي بيناديه، والقيمة الافتراضية [[Modifier]] الفاضي.
+- [[rememberLazyListState()]]: object فيه مكان الـ scroll. أهم حاجة فيه [[firstVisibleItemIndex]]: رقم أول عنصر ظاهر فوق. وبيتغير **مع كل عنصر بيعدّي**.
+- [[rememberCoroutineScope()]]: scope مربوط بالـ composable، عشان نبدأ coroutine من جوه [[onClick]] (الـ scroll animation دالة suspend).
+
+---
+
+## ٢. [[derivedStateOf]]: القلب
+
+~~~kotlin
+    val showScrollToTop by remember {
+        derivedStateOf { listState.firstVisibleItemIndex > 5 }
+    }
+~~~
+
+من جوه لبرة:
+
+1. [[listState.firstVisibleItemIndex > 5]]: Boolean. لو اليوزر نزل من 0 لـ 20، الرقم بيتغير ٢٠ مرة، بس الـ Boolean بيتغير **مرة واحدة** (لما يعدّي الـ 5).
+2. [[derivedStateOf { }]]: state جديد محسوب من states تانية. بيعيد الحساب كل ما [[firstVisibleItemIndex]] يتغير، بس **مبيبلّغش** اللي بيقراه إلا لما النتيجة نفسها تتغير.
+3. [[remember { }]]: عشان الـ derivedStateOf نفسه يتعمل مرة واحدة، مش object جديد مع كل recomposition.
+4. [[by]]: نقرا [[showScrollToTop]] كـ Boolean على طول بدل [[.value]].
+
+### القياس
+
+نفس الشاشة مرتين، وفيها [[SideEffect { compositions++ }]] (بيتنفذ بعد كل composition ناجح)، وعملت [[scrollToItem(i)]] من 1 لـ 20:
+
+~~~text الناتج
+بدون derivedStateOf: 21 composition
+مع derivedStateOf: 2 composition
+~~~
+
+- **21** = مرة أول ما الشاشة اترسمت + 20 مرة، واحدة مع كل عنصر. لأن الـ composable كان بيقرا [[firstVisibleItemIndex]] مباشرة، فأي تغيير فيه = recomposition للشاشة كلها.
+- **2** = مرة في الأول + مرة لما العنصر بقى 6 والـ Boolean بقى true. الـ 18 scroll التانيين محدش اتبلّغ بيهم.
+
+ومتحطوش في كل حتة: لو النتيجة بتتغير بنفس سرعة الـ input (زي [["$__{first} $__{last}"]])، derivedStateOf مش هيوفّر حاجة وهو نفسه ليه تكلفة.
+
+---
+
+## ٣. [[remember(products)]]: متحسبش كل مرة
+
+~~~kotlin
+    val sorted = remember(products) { products.sortedBy { it.price } }
+~~~
+
+- [[sortedBy { it.price }]]: لستة جديدة مترتبة بالسعر من الأصغر. بتعدي على اللستة كلها كل مرة تتنادى.
+- [[remember(products) { }]]: احسب مرة واحفظ النتيجة، ومتحسبش تاني إلا لو [[products]] اتغيرت (الـ parameter اسمه key). من غيرها، كل recomposition (حتى بسبب حاجة ملهاش علاقة) = ترتيب من جديد.
+
+---
+
+## ٤. اللستة و [[key]]
+
+~~~kotlin
+    Box(modifier) {
+        LazyColumn(state = listState) {
+            items(sorted, key = { it.id }) { product ->
+                Text("$__{product.title}: $__{product.price}", Modifier.padding(16.dp))
+            }
+        }
+~~~
+
+- [[Box]]: العناصر فوق بعض، فالزرار يبقى فوق اللستة.
+- [[state = listState]]: نفس الـ state اللي بنقرا منه فوق.
+- [[key = { it.id }]]: كل عنصر ليه هوية ثابتة. لو الترتيب اتغير أو عنصر اتمسح، Compose يعرف مين هو مين ويحرّكهم بدل ما يعيد رسم كله (درس LazyColumn).
+
+---
+
+## ٥. الزرار
+
+~~~kotlin
+        if (showScrollToTop) {
+            SmallFloatingActionButton(
+                onClick = { scope.launch { listState.animateScrollToItem(0) } },
+                modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp)
+            ) { Text("↑") }
+        }
+    }
+}
+~~~
+
+- [[if (showScrollToTop)]]: هنا بنقرا الـ Boolean، وده اللي بيعمل الـ recomposition مرتين بس.
+- [[scope.launch { listState.animateScrollToItem(0) }]]: [[animateScrollToItem]] suspend (بتاخد وقت الحركة)، فلازم coroutine.
+- [[Modifier.align(Alignment.BottomEnd)]]: الركن تحت في آخر السطر (يمين في الإنجليزي، شمال في العربي RTL). [[align]] متاحة بس جوه [[Box]].
+
+---
+
+## ٦. debug ولا release؟
+
+بنيت نفس المشروع بالطريقتين:
+
+~~~text الناتج
+app-debug.apk                       12,750,406 byte  (12.2 MB)
+app-release.apk (من غير R8)          9,181,769 byte  (8.8 MB)
+app-release.apk (R8 + shrinkResources) 992,154 byte  (0.95 MB)
+~~~
+
+- الـ debug فيه الكود كله من غير تحسين، وفيه معلومات debugging، و ART بيشغّله بشكل أبطأ عشان الـ debugger. فقياس الأداء عليه بيكدب.
+- الـ release بـ R8 (الكود اتقلّص من [[classes.dex]] و [[classes2.dex]] حجمهم مع بعض حوالي 23 ميجا قبل الضغط لملف واحد 1.4 ميجا).
+
+وجوه الـ release APK لقيت:
+
+~~~text الناتج
+assets/dexopt/baseline.prof    4177 byte
+~~~
+
+ده **Baseline Profile**: مكتبات Compose نفسها جاية بـ profile جاهز، و AGP بيحطه في التطبيق. لما التطبيق يتسطّب، Android بيترجم الكود اللي في القايمة دي مقدمًا (AOT)، بدل ما يستنى الـ JIT يكتشفه وانت بتستخدمه. وتقدر تعمل profile لكودك انت بمكتبة Macrobenchmark (من الـ docs).
+
+---
+
+## الخلاصة
+
+| الحاجة | بتحل إيه | الرقم هنا |
+|---|---|---|
+| [[derivedStateOf]] | state بيتغير كتير ونتيجته بتتغير قليل | 21 ← 2 composition |
+| [[remember(key) { }]] | حساب تقيل في كل recomposition | |
+| [[key = { it.id }]] | اللستة تعرف كل عنصر | |
+| release + R8 | الـ debug مش مقياس | 12.2 ميجا ← 0.95 ميجا |
+| Baseline Profile | أول فتح والـ scroll | [[baseline.prof]] جوه الـ APK |
+
+- قيس الأول (Layout Inspector و Profiler)، وبعدين حسّن.`,
           lines: [
             R`[[@Composable]].`,
             "لستة منتجات.",
@@ -709,6 +1828,246 @@ fun ProductsList(products: List<Product>, modifier: Modifier = Modifier) {
             when: "أول ما يبقى عندك سيرفر staging، أو قبل أول رفعة على Play. والـ debug suffix من أول يوم.",
             mistakes: R`تعمل commit للـ keystore أو كلمة السر في [[build.gradle.kts]]. وتنسى الـ keystore والباسورد ومتعملهمش backup. وتغيّر الـ [[applicationId]] بالـ flavor من غير ما تاخد بالك إنه بقى تطبيق تاني على Play. وتحط API key سري في BuildConfig وتفتكر إنه مستخبي.`
           },
+          teach: R`## الكود بيعمل إيه؟
+
+ده جزء [[android { }]] من [[app/build.gradle.kts]]، وبيقول لـ Gradle ٣ حاجات: التوقيع بتاع الـ release هيتعمل بأنهي مفتاح، والـ debug يبقى ليه id مختلف، وفيه نسختين من التطبيق ([[staging]] و [[prod]]) كل واحدة بتكلم سيرفر مختلف.
+
+### اتجرّب فين؟
+
+- الـ block ده بالحرف اتحط في مشروع Android حقيقي (AGP 9.4.1 و Gradle 9.8.1 و Java 21، جوه image فيها Android SDK 36)، وعملت keystore بأمر [[keytool]] اللي في الحل (في [[docker run --rm eclipse-temurin:21-jdk]]) بباسورد تجربة.
+- بنيت [[assembleStagingDebug]] و [[assembleProdRelease]] بالـ environment variables، وقريت [[BuildConfig.java]] اللي اتولّد، وكشفت الـ APKs بـ [[aapt2]] و [[apksigner]] من الـ SDK. وجربت البناء من غير الـ variables وبباسورد غلط.
+- التسطيب على الموبايل: من الـ docs.
+
+---
+
+## ١. التوقيع: [[signingConfigs]]
+
+~~~kotlin
+    signingConfigs {
+        create("release") {
+~~~
+
+[[create("release") { }]]: اعمل signing config جديد اسمه release. الاسم ده هنستخدمه تحت. (الـ debug config موجود لوحده.)
+
+~~~kotlin
+            storeFile = file(System.getenv("KEYSTORE_PATH") ?: "release.jks")
+~~~
+
+من جوه لبرة:
+
+1. [[System.getenv("KEYSTORE_PATH")]]: اقرا environment variable بالاسم ده. بترجّع [[String?]]: نص، أو [[null]] لو مش متحدد.
+2. [[?: "release.jks"]]: الـ Elvis operator: لو اللي على الشمال null خد اللي على اليمين (درس null safety).
+3. [[file(...)]]: دالة Gradle بتحوّل المسار لـ File، والمسار النسبي بيتحسب من فولدر [[app/]].
+
+~~~kotlin
+            storePassword = System.getenv("KEYSTORE_PASSWORD")
+            keyAlias = "upload"
+            keyPassword = System.getenv("KEY_PASSWORD")
+        }
+    }
+~~~
+
+- الـ keystore ملف ليه باسورد ([[storePassword]])، وجواه مفتاح أو أكتر، كل واحد ليه اسم ([[keyAlias]]) وباسورد ([[keyPassword]]).
+- [[upload]]: نفس الـ [[-alias upload]] في أمر [[keytool]].
+- الباسوردات مش مكتوبة في الملف: الملف ده بيتعمله commit، فأي حاجة فيه أي حد يشوفها.
+
+---
+
+## ٢. الـ build types
+
+~~~kotlin
+    buildTypes {
+        debug {
+            applicationIdSuffix = ".debug"
+        }
+~~~
+
+[[applicationIdSuffix]]: كلمة بتتلزق في آخر الـ applicationId. ده اللي [[aapt2 dump badging]] قاله على الـ APK:
+
+~~~text الناتج
+app-staging-debug.apk  ->  package: name='com.sara.notes.debug' versionCode='12' versionName='1.3.0'
+app-prod-release.apk   ->  package: name='com.sara.notes' versionCode='12' versionName='1.3.0'
+~~~
+
+Android بيعتبرهم تطبيقين مختلفين، فيتسطّبوا جنب بعض.
+
+~~~kotlin
+        release {
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig = signingConfigs.getByName("release")
+        }
+    }
+~~~
+
+- السطور التلاتة الأولى R8 (درس R8 بعد الجاي).
+- [[signingConfigs.getByName("release")]]: هات الـ config اللي عملناه فوق بالاسم.
+
+---
+
+## ٣. الـ flavors
+
+~~~kotlin
+    flavorDimensions += "env"
+~~~
+
+[[flavorDimensions]]: «محاور» الـ flavors. هنا محور واحد اسمه [[env]] (environment). و [[+=]] بتضيف للستة.
+
+~~~kotlin
+    productFlavors {
+        create("staging") {
+            dimension = "env"
+            buildConfigField("String", "API_URL", "\"https://staging.example.com/\"")
+        }
+~~~
+
+[[buildConfigField(النوع, الاسم, القيمة)]]: الـ ٣ نصوص دول بيتكتبوا **كود Java** حرفيًا في كلاس [[BuildConfig]]. عشان كده القيمة فيها [[\"]] (علامة تنصيص جوه نص Kotlin): لازم الـ Java يطلع فيه نص بين علامتين.
+
+~~~kotlin
+        create("prod") {
+            dimension = "env"
+            buildConfigField("String", "API_URL", "\"https://api.example.com/\"")
+        }
+    }
+    buildFeatures {
+        buildConfig = true
+    }
+~~~
+
+[[buildConfig = true]]: من AGP 8، [[BuildConfig]] مش بيتولّد إلا لو طلبته.
+
+### الـ BuildConfig اللي اتولّد
+
+لـ [[stagingDebug]] (الملف في [[app/build/generated/source/buildConfig/staging/debug/com/sara/notes/BuildConfig.java]]):
+
+~~~java
+public final class BuildConfig {
+  public static final boolean DEBUG = Boolean.parseBoolean("true");
+  public static final String APPLICATION_ID = "com.sara.notes.debug";
+  public static final String BUILD_TYPE = "debug";
+  public static final String FLAVOR = "staging";
+  public static final int VERSION_CODE = 12;
+  public static final String VERSION_NAME = "1.3.0";
+  // Field from product flavor: staging
+  public static final String API_URL = "https://staging.example.com/";
+}
+~~~
+
+ولـ [[prodRelease]] نفس الشكل بـ [[API_URL = "https://api.example.com/"]]. وفي كودك: [[.baseUrl(BuildConfig.API_URL)]].
+
+---
+
+## ٤. الـ variants والـ tasks
+
+flavor واحد من كل dimension × build type = ٤ variants، و Gradle عمل task لكل واحد. من [[./gradlew tasks --all]]:
+
+~~~text الناتج (مختصر)
+app:assembleProdDebug - Assembles main output for variant prodDebug
+app:assembleProdRelease - Assembles main output for variant prodRelease
+app:assembleStagingDebug - Assembles main output for variant stagingDebug
+app:assembleStagingRelease - Assembles main output for variant stagingRelease
+app:bundleProdRelease - Assembles bundle for variant prodRelease
+app:assembleDebug - Assembles main outputs for all Debug variants.
+app:assembleStaging - Assembles main outputs for all Staging variants.
+~~~
+
+[[assembleDebug]] بقى يبني الاتنين debug. والمخرجات:
+
+~~~text الناتج
+app/build/outputs/apk/staging/debug/app-staging-debug.apk    12,750,414 byte
+app/build/outputs/apk/prod/release/app-prod-release.apk        992,154 byte
+~~~
+
+---
+
+## ٥. الـ keystore (الحل)
+
+~~~bash
+keytool -genkeypair -v -keystore ~/keys/notes-upload.jks -keyalg RSA -keysize 2048 -validity 10000 -alias upload
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[keytool]] | أداة بتيجي مع الـ JDK |
+| [[-genkeypair]] | اعمل مفتاح خاص + عام وشهادة |
+| [[-v]] | verbose: اطبع تفاصيل |
+| [[-keystore ~/keys/notes-upload.jks]] | الملف (برا المشروع) |
+| [[-keyalg RSA -keysize 2048]] | نوع المفتاح وطوله بالـ bits |
+| [[-validity 10000]] | صالح ١٠٠٠٠ يوم (حوالي ٢٧ سنة). Play بيطلب مفتاح صالح لبعد أكتوبر 2033 (من الـ docs) |
+| [[-alias upload]] | اسم المفتاح جوه الملف |
+
+وهو بيسأل كده (الإجابات كانت متبعتة من ملف):
+
+~~~text الناتج
+Enter keystore password:  Re-enter new password:
+What is your first and last name?
+  [Unknown]:  What is the name of your organizational unit?
+  [Unknown]:  What is the name of your organization?
+  ...
+Is CN=Sara, OU=Dev, O=Sara Apps, L=Cairo, ST=Cairo, C=EG correct?
+  [no]:
+Generating 2,048 bit RSA key pair and self-signed certificate (SHA384withRSA) with a validity of 10,000 days
+[Storing /root/keys/notes-upload.jks]
+~~~
+
+لاحظ إنه مسألش على باسورد للمفتاح: الـ keystore بقى نوعه **PKCS12** افتراضيًا ([[Keystore type: PKCS12]] في [[keytool -list]])، وفيه باسورد المفتاح = باسورد الملف. فـ [[KEY_PASSWORD]] و [[KEYSTORE_PASSWORD]] نفس القيمة.
+
+### الـ environment variables والبناء
+
+~~~bash
+export KEYSTORE_PATH=~/keys/notes-upload.jks
+export KEYSTORE_PASSWORD='...'
+export KEY_PASSWORD='...'
+./gradlew assembleProdRelease
+~~~
+
+[[export]] في bash بيخلي المتغير متاح للبرامج اللي هتشتغل من الترمنال ده (Gradle). وفي PowerShell نفس الفكرة بـ [[$env:]]:
+
+~~~powershell
+$env:KEYSTORE_PATH = "$HOME\keys\notes-upload.jks"
+$env:KEYSTORE_PATH
+~~~
+
+~~~text الناتج (pwsh)
+C:\Users\ali\keys\notes-upload.jks
+~~~
+
+ويتأكد من التوقيع [[apksigner]] (في [[build-tools]] بتاع الـ SDK):
+
+~~~text الناتج (apksigner verify --print-certs)
+app-staging-debug.apk -> Signer #1 certificate DN: C=US, O=Android, CN=Android Debug
+app-prod-release.apk  -> Signer #1 certificate DN: CN=Sara, OU=Dev, O=Sara Apps, L=Cairo, C=EG
+~~~
+
+الـ debug اتوقّع لوحده بمفتاح debug اللي Android Studio بيعمله، والـ release بمفتاحك.
+
+### لو الـ variables مش موجودة أو غلط
+
+~~~text الناتج (من غير variables)
+Execution failed for task ':app:validateSigningProdRelease'
+> Keystore file not set for signing config release
+~~~
+
+~~~text الناتج (باسورد غلط)
+> com.android.ide.common.signing.KeytoolException: Failed to read key upload from store "/w/keys/notes-upload.jks": keystore password was incorrect
+~~~
+
+البناء بيقع بدل ما يطلّع APK متوقّع غلط، وده المطلوب.
+
+---
+
+## الخلاصة
+
+| الحتة | بتعمل إيه |
+|---|---|
+| [[signingConfigs { create("release") }]] | المفتاح، والباسوردات من الـ environment |
+| [[applicationIdSuffix = ".debug"]] | الـ debug يتسطّب جنب الـ release |
+| [[flavorDimensions]] + [[productFlavors]] | نسخ staging و prod |
+| [[buildConfigField]] + [[buildConfig = true]] | ثابت في [[BuildConfig]] لكل flavor |
+| variant = flavor × build type | [[assembleStagingDebug]] و [[bundleProdRelease]] ... |
+
+- الـ keystore والباسوردات برا git، ومعاهم backup.`,
           lines: [
             R`[[android]].`,
             "إعدادات التوقيع.",
@@ -746,9 +2105,9 @@ fun ProductsList(products: List<Product>, modifier: Modifier = Modifier) {
             "قفلة.",
             "قفلة."
           ],
-          sol: R`أمر الـ keystore تحت (هيسألك على الباسورد والاسم والبلد). وبعد ما تبني: [[app/build/outputs/apk/staging/debug/app-staging-debug.apk]]، ولو سطّبت الـ staging debug والـ prod release هتلاقي التطبيقين جنب بعض على الموبايل.
+          sol: R`أمر الـ keystore تحت (هيسألك على باسورد الملف مرتين، والاسم والمؤسسة والمدينة والبلد). وبعد ما تبني: [[app/build/outputs/apk/staging/debug/app-staging-debug.apk]]، ولو سطّبت الـ staging debug والـ prod release هتلاقي التطبيقين جنب بعض على الموبايل.
 
-ولو الـ environment variables مش متحددة، البناء بتاع release هيقع بـ [[Keystore file ... not found]] أو [[keystore password was incorrect]]، وده أحسن من إنه يبني بتوقيع غلط.`,
+ولو الـ environment variables مش متحددة، البناء بتاع release هيقع بـ [[Keystore file not set for signing config release]]، ولو الباسورد غلط بـ [[keystore password was incorrect]]، وده أحسن من إنه يبني بتوقيع غلط. ولاحظ إن [[keytool]] الحديث بيعمل keystore نوعه PKCS12، فمش هيسألك على باسورد للمفتاح: [[KEY_PASSWORD]] هو نفس [[KEYSTORE_PASSWORD]].`,
           solCode: R`keytool -genkeypair -v -keystore ~/keys/notes-upload.jks -keyalg RSA -keysize 2048 -validity 10000 -alias upload
 
 export KEYSTORE_PATH=~/keys/notes-upload.jks
@@ -792,6 +2151,176 @@ adb install -r app/build/outputs/apk/release/app-release.apk`,
             when: R`AAB لـ Play دايمًا. APK للتجربة، وللمتاجر التانية، أو لعميل عايز ملف يسطّبه.`,
             mistakes: R`ترفع debug APK أو AAB متوقّع بمفتاح الـ debug: Play بيرفضه. وتنسى تزوّد [[versionCode]]. وتختبر الـ debug بس وترفع release عمرك ما شغّلته. وتمسح الـ upload key «عشان مش محتاجه» قبل ما تتأكد إن Play App Signing متفعّل.`
           },
+          teach: R`## الأوامر بتعمل إيه؟
+
+٦ سطور هي رحلة التطبيق من الكود لإيد اليوزر: نسخة debug للتجربة، وفحص lint، و AAB للرفع على Play، و APK release، وتسطيبه على موبايل.
+
+### اتجرّب فين؟
+
+- الأوامر من [[./gradlew assembleDebug]] لحد [[./gradlew assembleRelease]] اتشغلت على مشروع Android حقيقي (AGP 9.4.1 و Gradle 9.8.1 و Java 21) جوه image فيها Android SDK 36، والـ release متوقّع بـ keystore تجربة (الدرس اللي فات) و R8 شغال. والملفات اتفحصت بـ [[unzip]] و [[aapt2]] و [[apksigner]] و [[jarsigner]].
+- [[adb install]] محتاج موبايل أو emulator، ومفيش هنا: من الـ docs.
+- على ويندوز الـ wrapper اسمه [[gradlew.bat]]، وفي PowerShell بتكتب [[.\gradlew.bat assembleDebug]] (من الـ docs)، وباقي الأوامر نفسها.
+
+---
+
+## ١. [[./gradlew assembleDebug]]
+
+~~~bash
+./gradlew assembleDebug
+~~~
+
+- [[./gradlew]]: الـ Gradle Wrapper: script في فولدر المشروع بينزّل نسخة Gradle المكتوبة في [[gradle/wrapper/gradle-wrapper.properties]] ويشغّلها، فكل الناس بتبني بنفس النسخة. و [[./]] يعني «الملف اللي في الفولدر ده».
+- [[assemble]]: ابني الـ APK. و [[Debug]]: الـ build type.
+
+~~~text الناتج
+BUILD SUCCESSFUL in 2m 19s
+41 actionable tasks: 29 executed, 12 up-to-date
+~~~
+
+- [[actionable tasks]]: Gradle قسّم البناء لخطوات (compile، و KSP، و dex، و package...). [[executed]] اتعملت فعلًا، و [[up-to-date]] متغيرش مدخلها من آخر مرة فاتخطت. عشان كده تاني بناء أسرع بكتير.
+- الملف: [[app/build/outputs/apk/debug/app-debug.apk]]، حجمه **12,750,406 byte** (حوالي 12 ميجا)، ومتوقّع بمفتاح debug تلقائي.
+
+---
+
+## ٢. [[./gradlew lintRelease]]
+
+~~~bash
+./gradlew lintRelease
+~~~
+
+[[lint]] بيقرا الكود والـ resources والـ Gradle من غير ما يشغّلهم، وبيدوّر على مشاكل معروفة. على المشروع ده:
+
+~~~text الناتج
+Wrote HTML report to file:///w/app/build/reports/lint-results-release.html
+Wrote SARIF report to file:///w/app/build/reports/lint-results-release.sarif
+BUILD SUCCESSFUL
+~~~
+
+ولما فتحت التقرير لقيت warnings بس:
+
+| القاعدة | العدد | معناها |
+|---|---|---|
+| [[GradleDependency]] | 5 | مكتبة Android ليها نسخة أحدث |
+| [[NewerVersionAvailable]] | 4 | نفس الكلام لمكتبات Maven التانية |
+| [[OldTargetApi]] | 1 | [[targetSdk = 36]] مش آخر نسخة Android |
+| [[MissingApplicationIcon]] | 1 | الـ manifest مفيهوش [[android:icon]] |
+
+الـ warnings مبتوقّفش البناء. عشان أشوف error، ضفت سطر بيستخدم [[NotificationChannel]] (موجود من Android 8، يعني API 26) والـ [[minSdk = 24]]:
+
+~~~text الناتج
+Channel.kt:6: Error: Call requires API level 26 (current min is 24): android.app.NotificationChannel() [NewApi]
+fun makeChannel() = NotificationChannel("notes", "Notes", NotificationManager.IMPORTANCE_DEFAULT)
+
+> Task :app:lintRelease FAILED
+Lint found 1 error, 11 warnings.
+> Lint found errors in the project; aborting build.
+~~~
+
+- [[NewApi]]: اسم القاعدة. التطبيق كان هيقع على أي موبايل Android 7 بـ [[NoSuchMethodError]] / [[NoClassDefFoundError]]، و lint مسكه قبل الرفع.
+- وتحت سطر الكود lint بيحط علامات [[~]] تحت [[NotificationChannel]] بالظبط (شلتها من الصندوق).
+
+---
+
+## ٣. [[./gradlew bundleRelease]] و [[ls]]
+
+~~~bash
+./gradlew bundleRelease
+ls app/build/outputs/bundle/release/
+~~~
+
+[[bundle]] بدل [[assemble]] = اعمل AAB بدل APK. و [[ls]] بيعرض الملفات (في PowerShell كمان [[ls]] شغال، اسم تاني لـ [[Get-ChildItem]]):
+
+~~~text الناتج
+app-release.aab    2,253,870 byte
+~~~
+
+الـ AAB ملف zip. فتحته بـ [[unzip -l]]، وده اللي جواه (مختصر):
+
+~~~text الناتج
+BUNDLE-METADATA/com.android.tools.build.obfuscation/proguard.map   16,570,201
+BUNDLE-METADATA/com.android.tools.build.profiles/baseline.prof          4,177
+base/dex/classes.dex                                                 1,473,880
+base/lib/arm64-v8a/libandroidx.graphics.path.so                         10,096
+base/lib/armeabi-v7a/libandroidx.graphics.path.so                        7,252
+base/lib/x86/libandroidx.graphics.path.so                                9,284
+base/lib/x86_64/libandroidx.graphics.path.so                            10,760
+base/manifest/AndroidManifest.xml                                        5,393
+base/resources.pb                                                       47,199
+META-INF/UPLOAD.SF
+META-INF/UPLOAD.RSA
+~~~
+
+- [[base/]]: الـ module الأساسي. الكود في [[dex/]]، والـ resources في [[resources.pb]] (صيغة protobuf، Play بيحوّلها).
+- [[base/lib/]]: نفس المكتبة لـ ٤ معالجات ([[arm64-v8a]] الموبايلات الحديثة، و [[armeabi-v7a]] القديمة، و [[x86]] و [[x86_64]] للـ emulators). Play بيدّي كل موبايل نسخته بس.
+- [[proguard.map]]: الـ mapping بتاع R8 (درس R8) جوه الـ AAB، فـ Play بيستلمه لوحده مع الرفعة ويفك الـ crashes.
+- [[META-INF/UPLOAD.SF]] و [[UPLOAD.RSA]]: التوقيع بمفتاح الـ upload (اسم الـ alias). و [[jarsigner -verify]] قال [[jar verified.]].
+
+### ليه الـ AAB أكبر من الـ APK؟
+
+| | الحجم |
+|---|---|
+| [[app-release.aab]] | 2,253,870 byte |
+| [[app-release.apk]] | 992,154 byte |
+
+السبب [[proguard.map]]: مضغوط جوه الـ zip حوالي 1.36 ميجا، وده لوحده أكبر من الفرق كله. وده ملف لـ Play بس، مش بيوصل للموبايل. واللي اليوزر بينزّله من Play (split APKs، من الـ docs) فيه مكتبة المعالج بتاعه بس، و resources الشاشة واللغة بتاعته بس، فبيبقى أصغر من الـ APK الكامل. في التطبيق الصغير ده الفرق بسيط (المكتبات كلها حوالي 37 كيلو)، وفي تطبيق فيه مكتبات native تقيلة الفرق بيبقى ميجات.
+
+---
+
+## ٤. [[./gradlew assembleRelease]]
+
+~~~bash
+./gradlew assembleRelease
+~~~
+
+~~~text الناتج
+app/build/outputs/apk/release/app-release.apk    992,154 byte
+~~~
+
+- من 12.2 ميجا (debug) لـ 0.95 ميجا: R8 شال الكود اللي محدش بيستخدمه، و [[isShrinkResources]] شال الـ resources.
+- الاسم [[app-release.apk]] لأن فيه [[signingConfig]] للـ release. من غيره الملف بيطلع [[app-release-unsigned.apk]] (من الـ docs)، ومش هيتسطّب.
+
+وتأكدت من الـ APK بأدوات الـ SDK:
+
+~~~text الناتج (aapt2 dump badging)
+package: name='com.sara.notes' versionCode='12' versionName='1.3.0' ... compileSdkVersion='36'
+minSdkVersion:'24'
+targetSdkVersion:'36'
+~~~
+
+~~~text الناتج (apksigner verify --verbose --print-certs)
+Verifies
+Verified using v1 scheme (JAR signing): false
+Verified using v2 scheme (APK Signature Scheme v2): true
+Signer #1 certificate DN: CN=Sara, OU=Dev, O=Sara Apps, L=Cairo, C=EG
+~~~
+
+[[v2]] نوع التوقيع اللي بيغطي الملف كله. و [[v1]] (القديم) مش محتاجينه لأن [[minSdk = 24]] (أي موبايل Android 7 وطالع بيفهم v2).
+
+---
+
+## ٥. [[adb install -r]] (من الـ docs)
+
+~~~bash
+adb install -r app/build/outputs/apk/release/app-release.apk
+~~~
+
+- [[adb]] (Android Debug Bridge): من [[platform-tools]] في الـ SDK، بيكلم الموبايل المتوصّل بـ USB (مع USB debugging) أو الـ emulator.
+- [[-r]]: replace، يعني سطّب فوق النسخة الموجودة وخلّي الداتا.
+- النجاح بيطبع [[Success]]. ولو النسخة المتسطبة متوقّعة بمفتاح تاني (مثلًا debug): [[INSTALL_FAILED_UPDATE_INCOMPATIBLE]]، والحل [[adb uninstall com.sara.notes]] الأول (الداتا هتتمسح).
+
+---
+
+## الخلاصة
+
+| الأمر | بيطلّع | لمين |
+|---|---|---|
+| [[assembleDebug]] | [[app-debug.apk]] (12.2 ميجا هنا) | انت، للتجربة |
+| [[lintRelease]] | تقرير HTML، ويقع لو فيه error | قبل أي رفعة |
+| [[bundleRelease]] | [[app-release.aab]] (2.15 ميجا، فيه الـ mapping وكل المعالجات) | Google Play |
+| [[assembleRelease]] | [[app-release.apk]] (0.95 ميجا) | تجربة الـ release، أو توزيع برا Play |
+| [[adb install -r]] | تسطيب على الموبايل | انت |
+
+- زوّد [[versionCode]] قبل كل رفعة، وجرّب الـ release نفسه مش الـ debug بس.`,
           lines: [
             "نسخة debug للتجربة.",
             "افحص الكود بقواعد lint على الـ release.",
@@ -800,7 +2329,7 @@ adb install -r app/build/outputs/apk/release/app-release.apk`,
             "APK release (للتجربة أو التوزيع برا Play).",
             R`سطّبه على الموبايل فوق النسخة الموجودة ([[-r]]).`
           ],
-          sol: R`[[app/build/outputs/bundle/release/app-release.aab]] حجمه أكبر شوية من الـ APK لأن فيه resources كل الأجهزة، بس اللي اليوزر بينزّله فعلًا من Play أصغر من الـ APK الكامل. والـ release APK غالبًا أصغر من الـ debug بشكل واضح بسبب R8 و shrinkResources.
+          sol: R`[[app/build/outputs/bundle/release/app-release.aab]] غالبًا أكبر من الـ release APK: جواه ملف الـ mapping بتاع R8 ([[BUNDLE-METADATA/.../proguard.map]]) عشان Play يفك الـ crashes، ومكتبات كل المعالجات. في مشروع Compose صغير اتجرّب: الـ AAB كان 2.15 ميجا والـ APK 0.95 ميجا، والـ mapping لوحده حوالي 1.36 ميجا مضغوط. بس اللي اليوزر بينزّله من Play بيبقى مخصوص لموبايله. والـ release APK أصغر من الـ debug بشكل واضح بسبب R8 و shrinkResources (في نفس المشروع: 12.2 ميجا debug و 0.95 ميجا release).
 
 وآخر سطر في الترمنال [[BUILD SUCCESSFUL]]. لو وقع في الـ lint، افتح التقرير اللي الرسالة بتشاور عليه وصلّح الـ errors (أو لو متأكد إنها مش مشكلة، تقدر تتجاهل قاعدة معينة في [[lint { disable += "..." }]]، بس متعملهاش كعادة).`
         },
@@ -842,13 +2371,151 @@ Gson مثال كلاسيكي: بيقرا أسماء الـ fields وقت الت�
             when: R`دايمًا في الـ release. والقواعد تكتبها لما تستخدم reflection أو مكتبة بتطلب كده في الـ README بتاعها.`,
             mistakes: R`[[-keep class ** { *; }]] أو تقفل R8 خالص «عشان الـ crash يروح»: كده خسرت كل الفايدة. وتنسى تحتفظ بالـ mapping فالـ crash reports تبقى حروف. ومتجرّبش الـ release قبل الرفع. وتفتكر إن R8 بيحمي الأسرار في الكود: مش حماية حقيقية.`
           },
+          teach: R`## الكود بيعمل إيه؟
+
+ده محتوى ملف [[app/proguard-rules.pro]]: ٤ قواعد بتقول لـ R8 «الحاجات دي متلمسهاش». لأن R8 وهو بيبني الـ release بيشيل أي كلاس مش شايف حد بيستخدمه، وبيغيّر أسماء الباقي لحروف قصيرة. والقواعد دي للحاجات اللي بتتنادى **بالاسم** وقت التشغيل، و R8 ميقدرش يشوفها.
+
+### اتجرّب فين؟
+
+- القواعد دي بالحرف في مشروع Android حقيقي namespace بتاعه [[com.sara.notes]] (AGP 9.4.1، و R8 نسخة 9.4.24 حسب أول سطر في الـ mapping)، وفيه كلاس [[com.sara.notes.data.remote.dto.NoteJson]] و [[com.sara.notes.plugins.ExportPlugin]] عشان القواعد يبقى ليها حاجة تمسكها. اتبنى [[./gradlew assembleRelease]] مرة بـ [[isMinifyEnabled = false]] ومرة بـ [[true]] جوه image فيها Android SDK 36.
+- قريت [[mapping.txt]] و [[seeds.txt]] و [[usage.txt]] اللي R8 كتبهم، وفكيت stack trace متلخبط بأداة [[retrace]] اللي في الـ SDK.
+- Analyze APK في Android Studio وتشغيل الـ crash على موبايل: من الـ docs.
+
+---
+
+## ١. الفرق في الحجم
+
+~~~text الناتج
+isMinifyEnabled = false   app-release.apk   9,181,769 byte   (classes.dex + classes2.dex = 24,451,080 byte قبل الضغط)
+isMinifyEnabled = true    app-release.apk     992,154 byte   (classes.dex = 1,473,880 byte)
+~~~
+
+الكود اتقلّص حوالي ١٦ مرة. أغلبه كان من المكتبات (Compose و Room و Hilt و OkHttp...): التطبيق بيستخدم جزء صغير منها، و R8 شال الباقي.
+
+---
+
+## ٢. القواعد سطر سطر
+
+### [[-keep class com.sara.notes.data.remote.dto.** { *; }]]
+
+~~~text proguard-rules.pro
+-keep class com.sara.notes.data.remote.dto.** { *; }
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[-keep]] | متشيلش ومتغيّرش الاسم |
+| [[class]] | القاعدة على كلاسات |
+| [[com.sara.notes.data.remote.dto.**]] | أي كلاس في الـ package ده **أو أي package تحته**. ([[*]] واحدة = الـ package ده بس) |
+| [[{ *; }]] | وكل الـ members جواه (fields و methods) |
+
+ليه؟ لأن مكتبة زي Gson بتقرا أسماء الـ fields وقت التشغيل وتطابقها مع الـ JSON. والنتيجة في [[mapping.txt]]:
+
+~~~text الناتج (mapping.txt)
+com.sara.notes.data.remote.dto.NoteJson -> com.sara.notes.data.remote.dto.NoteJson:
+    1:3:long getId():3:3 -> getId
+    1:3:java.lang.String getTitle():3:3 -> getTitle
+~~~
+
+الشكل [[الاسم الأصلي -> الاسم الجديد]]. هنا الاتنين زي بعض: الكلاس والدوال فضلوا بأسمائهم.
+
+### [[-keepattributes Signature, *Annotation*]]
+
+R8 افتراضيًا بيشيل معلومات زيادة من الـ bytecode:
+- [[Signature]]: الـ generics زي [[List<NoteJson>]]. من غيرها المكتبة تشوف [[List]] بس ومتعرفش جواها إيه.
+- [[*Annotation*]]: أي attribute اسمه فيه Annotation، يعني الـ annotations زي [[@SerializedName]]. الـ [[*]] هنا wildcard في الاسم.
+
+### [[-keep class com.sara.notes.plugins.ExportPlugin]]
+
+كلاس بيتنادى بـ [[Class.forName("com.sara.notes.plugins.ExportPlugin")]]: الاسم نص، و R8 مش بيعتبره استخدام. من غير [[{ *; }]] هنا: الكلاس نفسه واسمه محفوظين، بس الـ members عادي يتشالوا أو يتغيروا.
+
+~~~text الناتج (mapping.txt)
+com.sara.notes.plugins.ExportPlugin -> com.sara.notes.plugins.ExportPlugin:
+~~~
+
+### [[-dontwarn org.slf4j.**]]
+
+بعض المكتبات بتشاور على كلاسات من مكتبة تانية اختيارية مش عندك (هنا logging اسمها slf4j). R8 بيوقف البناء بـ warning [[Missing class ...]]، و [[-dontwarn]] بتقوله «عارف، كمّل». في المشروع ده مكانش فيه warning أصلًا، فالقاعدة ملهاش أثر، وده طبيعي.
+
+---
+
+## ٣. R8 عمل إيه في باقي الكلاسات؟
+
+نفس الـ [[mapping.txt]] (حوالي ١٦ ميجا) لكلاسات التطبيق:
+
+~~~text الناتج (mapping.txt، مختصر)
+com.sara.notes.di.MainActivity -> com.sara.notes.di.MainActivity:
+com.sara.notes.di.NotesApp -> com.sara.notes.di.NotesApp:
+com.sara.notes.data.AppDatabase -> com.sara.notes.data.AppDatabase:
+com.sara.notes.di.NotesViewModel -> r50:
+com.sara.notes.data.NoteDao_Impl -> o50:
+com.sara.notes.data.NotesApi -> p50:
+com.sara.notes.di.DataModule -> R8$$REMOVED$$CLASS$$303:
+~~~
+
+ثلاث أنواع:
+
+| النوع | مثال | ليه |
+|---|---|---|
+| الاسم فضل | [[MainActivity]] و [[NotesApp]] | مكتوبين في الـ manifest بالاسم، و AGP بيعمل لهم keep لوحده. و [[AppDatabase]] عشان Room بيدوّر على [[AppDatabase_Impl]] بالاسم (قاعدة جاية مع مكتبة Room نفسها: [[-keep class * extends androidx.room.RoomDatabase]]، لقيتها في [[configuration.txt]]) |
+| اتغير لحروف | [[NotesViewModel -> r50]] | استخدامه واضح في الكود، فالاسم مش مهم |
+| اتشال خالص | [[DataModule]] | Hilt كان بينادي دالته، و R8 حط كودها مكان النداء (inline) فالكلاس نفسه مبقاش ليه لازمة |
+
+و R8 كتب ملفين كمان في [[app/build/outputs/mapping/release/]]:
+- [[seeds.txt]]: كل اللي اتعمله keep (فيه [[MainActivity]] و [[NoteJson]] و [[ExportPlugin]]...).
+- [[usage.txt]]: كل اللي اتشال. لقيت فيه [[com.sara.notes.PriceCalculator]] وكل كلاسات package [[arch]]: موجودين في الكود بس محدش بيناديهم في التطبيق، فاتشالوا.
+
+---
+
+## ٤. فك الـ crash: [[retrace]]
+
+stack trace من الـ release بيبقى كده (الأسماء من الـ mapping الحقيقي):
+
+~~~text trace.txt
+java.lang.IllegalStateException: boom
+    at wq.a(SourceFile:10)
+    at com.sara.notes.di.MainActivity.i(SourceFile:1)
+~~~
+
+[[wq]] و [[a]] و [[i]] ملهمش معنى، و [[SourceFile]] مكان اسم الملف. بالأداة اللي في [[cmdline-tools/latest/bin]]:
+
+~~~bash
+retrace app/build/outputs/mapping/release/mapping.txt trace.txt
+~~~
+
+~~~text الناتج
+java.lang.IllegalStateException: boom
+    at com.sara.notes.di.Hilt_MainActivity.inject(Hilt_MainActivity.java:88)
+    at com.sara.notes.di.Hilt_MainActivity$1.onContextAvailable(Hilt_MainActivity.java:42)
+    at com.sara.notes.di.Hilt_MainActivity.onCreate(Hilt_MainActivity.java:54)
+~~~
+
+- [[wq.a]] رجعت [[Hilt_MainActivity$1.onContextAvailable]]، والسطر 10 في الكود المضغوط رجع السطر 42 في الملف الأصلي.
+- السطرين بقوا ٣: R8 كان دمج [[inject()]] جوه [[onContextAvailable]] (inline)، والـ mapping فاكر ده فرجّع السطر الناقص.
+- الـ mapping مختلف في كل build. لو ضاع، الـ crash ده مش هيتفك. عشان كده Play بياخده جوه الـ AAB لوحده (الدرس اللي فات)، ولازم تحتفظ بيه لأي APK وزّعته برا Play.
+
+---
+
+## الخلاصة
+
+| الحتة | معناها |
+|---|---|
+| [[isMinifyEnabled = true]] | شغّل R8 (هنا: 8.8 ميجا ← 0.95 ميجا) |
+| [[-keep class X { *; }]] | X وكل اللي جواه زي ما هم |
+| [[**]] / [[*]] | أي package تحت / الـ package ده بس |
+| [[-keepattributes Signature, *Annotation*]] | حافظ على الـ generics والـ annotations |
+| [[-dontwarn]] | متوقفش على كلاس ناقص اختياري |
+| [[mapping.txt]] و [[seeds.txt]] و [[usage.txt]] | الأسماء الجديدة، واللي اتحفظ، واللي اتشال |
+| [[retrace]] | يرجّع الـ stack trace لأسمائه |
+
+- القواعد بس للي بيتنادى بالاسم (reflection). مكتبات زي Room و Hilt و Retrofit جايبة قواعدها معاها.`,
           lines: [
             R`الـ DTOs دي بتتحوّل بـ Gson (reflection)، فاحتفظ بكل كلاساتها وأسماء الـ fields بتاعتها.`,
             "Gson محتاج معلومات الـ generics والـ annotations وقت التشغيل.",
             R`كلاس بيتنادى بالاسم بـ [[Class.forName]]: متشيلهوش ولا تغيّر اسمه.`,
             "مكتبة بتشاور على كلاس اختياري مش عندنا: متطلّعش تحذير."
           ],
-          sol: R`مع R8 الـ APK بيصغر بشكل ملحوظ (في تطبيق Compose بسيط ممكن من عشرات الميجا لكام ميجا). وفي Analyze APK هتشوف كلاسات اسمها حروف زي [[a]] و [[b]]، وكلاسات تانية بأسماءها الحقيقية: دي اللي عليها keep أو الـ Activities.
+          sol: R`مع R8 الـ APK بيصغر بشكل ملحوظ (في تطبيق Compose صغير فيه Hilt و Room و Retrofit اتجرّب: release من غير R8 كان 8.8 ميجا، ومع R8 و shrinkResources بقى 0.95 ميجا). وفي Analyze APK هتشوف كلاسات اسمها حروف زي [[a]] و [[b]]، وكلاسات تانية بأسماءها الحقيقية: دي اللي عليها keep أو الـ Activities.
 
 الـ crash في الـ release بيطلع [[at a.b.c(SourceFile:1)]]. بعد retrace بالـ mapping بيرجع [[at com.sara.notes.data.NotesRepository.refresh(NotesRepository.kt:24)]].`
         },
@@ -903,6 +2570,120 @@ Play App Signing بيتفعّل تلقائيًا مع أول AAB. ومن Play Co
             when: "لما يبقى عندك نسخة شغالة ومتجرّبة، ويفضّل تبدأ internal testing بدري جدًا عشان تكتشف مشاكل التوقيع والـ release من الأول.",
             mistakes: R`تنسى إن الحساب الشخصي الجديد محتاج closed test 14 يوم وتوعد عميل بتاريخ نشر. و Data safety مش مطابق للي التطبيق بيعمله فعلًا (مكتبة analytics بتجمع داتا وانت قايل لأ). وتسيب [[com.example]] في الـ applicationId. وترفع للـ production على طول من غير ما تجرّب على internal.`
           },
+          teach: R`## الكود بيعمل إيه؟
+
+ده [[defaultConfig]] في [[app/build.gradle.kts]]: الـ ٥ قيم اللي Google Play بيقراها من الـ AAB أول ما ترفعه. هوية التطبيق، وأقدم وأحدث Android بيدعمه، ورقم النسخة. أي رفعة على Play Console بتتقبل أو تترفض بسببهم قبل ما حد يبص على الكود.
+
+### اتجرّب فين؟
+
+- الـ block ده بالحرف في مشروع Android حقيقي (AGP 9.4.1، جوه image فيها Android SDK 36)، واتبنى [[bundleRelease]] و [[assembleRelease]]، وقريت القيم من الـ APK المبني بـ [[aapt2 dump badging]] (أداة في الـ SDK).
+- خطوات Play Console نفسها (الحساب، والـ tracks، والمراجعة، والسياسات): من Play Console Help، لأنها محتاجة حساب مدفوع. والسياسات بتتغير، فراجعها هناك وقت الرفع.
+
+---
+
+## ١. القيم واحدة واحدة
+
+~~~kotlin
+android {
+    defaultConfig {
+~~~
+
+[[defaultConfig]]: الإعدادات اللي كل الـ variants بتاخدها، إلا لو flavor أو build type غيّرها (زي [[applicationIdSuffix]] في درس build variants).
+
+~~~kotlin
+        applicationId = "com.sara.notes"
+~~~
+
+- الـ id الفريد للتطبيق على الموبايل وعلى Play. صفحة التطبيق بتبقى [[play.google.com/store/apps/details?id=com.sara.notes]].
+- العرف: domain بالعكس + اسم التطبيق.
+- **مبيتغيرش بعد أول رفعة أبدًا**: لو غيّرته، Play يعتبره تطبيق جديد، واليوزرز القدام مش هيوصلهم تحديث. و [[com.example]] Play بيرفضه.
+- مختلف عن [[namespace]] (package الكود و [[R]])، وممكن يكونوا زي بعض.
+
+~~~kotlin
+        minSdk = 24
+~~~
+
+أقدم Android يقدر يسطّب التطبيق: API 24 = Android 7.0. موبايل أقدم مش هيشوف التطبيق على Play أصلًا. وده اللي خلّى lint يمسك [[NotificationChannel]] (API 26) في درس APK و AAB.
+
+~~~kotlin
+        targetSdk = 36
+~~~
+
+- «أنا اختبرت التطبيق على Android 16 (API 36)». Android بيطبّق سلوك النسخة دي على التطبيق (صلاحيات أشد، edge-to-edge إجباري...). ولو targetSdk قديم، Android بيشغّله بـ compatibility modes.
+- Play بيطلب رقم أدنى بيزيد كل سنة. حسب Play Console Help: من 31 أغسطس 2026 التطبيقات الجديدة والتحديثات لازم 36.
+- مختلف عن [[compileSdk]] (الـ APIs اللي تقدر تكتبها في الكود).
+
+~~~kotlin
+        versionCode = 12
+        versionName = "1.3.0"
+    }
+}
+~~~
+
+| | [[versionCode]] | [[versionName]] |
+|---|---|---|
+| النوع | رقم صحيح ([[Int]]) | نص |
+| مين بيشوفه | Android و Play بس | اليوزر في صفحة التطبيق |
+| القاعدة | لازم **يزيد** مع كل AAB بيترفع على أي track | أي شكل، والعرف [[major.minor.patch]] |
+
+Play بيرفض AAB ليه نفس [[versionCode]] رفعته قبل كده، حتى لو على internal testing بس.
+
+### القيم في الـ APK المبني
+
+~~~text الناتج (aapt2 dump badging app-release.apk)
+package: name='com.sara.notes' versionCode='12' versionName='1.3.0' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'
+minSdkVersion:'24'
+targetSdkVersion:'36'
+uses-permission: name='android.permission.INTERNET'
+~~~
+
+- [[package: name]] هو الـ [[applicationId]].
+- [[compileSdkVersionCodename='16']]: API 36 = Android 16.
+- [[uses-permission]]: الصلاحيات من الـ manifest. Play بيعرضها، ولازم تبقى متسقة مع نموذج Data safety.
+
+---
+
+## ٢. خطوات Play Console (من Play Console Help)
+
+| الخطوة | فيها إيه | أشهر غلطة |
+|---|---|---|
+| ١. الحساب | 25 دولار مرة واحدة، وتحقق هوية. personal أو organization (D-U-N-S) | |
+| ٢. Create app | الاسم، واللغة، ومجاني ولا مدفوع | المجاني ميرجعش مدفوع |
+| ٣. Store listing | وصف، وأيقونة 512×512، و feature graphic 1024×500، و screenshots | |
+| ٤. App content | privacy policy، و Data safety، و content rating، والجمهور، والإعلانات | Data safety مش مطابق للمكتبات |
+| ٥. Testing tracks | internal (لحد 100) ← closed ← open | |
+| ٦. Production | رفع AAB، و release notes، ومراجعة، و staged rollout | |
+
+### الـ tracks
+
+| الـ track | مين يشوفه | ليه |
+|---|---|---|
+| Internal testing | لحد 100 tester بالإيميل | تجربة سريعة، بيوصل في دقايق |
+| Closed testing | قايمة إيميلات أو Google Group | جماعة محددة |
+| Open testing | أي حد من صفحة التطبيق | beta عامة |
+| Production | الكل، وممكن بنسبة (staged rollout) | النشر الحقيقي |
+
+والحساب الشخصي الجديد (من بعد نوفمبر 2023) مش هيقدر يطلب production قبل closed test فيه **12 tester** مشتركين **14 يوم متواصلين**.
+
+### بعد أول رفعة
+
+- **Play App Signing** بيتفعّل لوحده: الـ AAB متوقّع بالـ upload key بتاعك (اللي [[apksigner]] وراك فيه [[CN=Sara]] في درس build variants)، و Google بتوقّع الـ APKs النهائية بمفتاح تاني عندها. فالـ SHA-1 و SHA-256 اللي محتاجهم لـ Google Sign-In أو Firebase تاخدهم من Play Console (App integrity)، مش من الـ keystore بتاعك.
+- **Pre-launch report**: Play بيشغّل التطبيق على موبايلات حقيقية ويطلّع crashes.
+- **Android vitals**: نسبة الـ crashes والـ ANRs عند اليوزرز، والـ stack traces متفكوكة بالـ mapping اللي جه مع الـ AAB.
+
+---
+
+## الخلاصة
+
+| القيمة | قاعدتها |
+|---|---|
+| [[applicationId]] | هوية التطبيق للأبد، مش [[com.example]] |
+| [[minSdk]] | أقدم Android (24 = Android 7) |
+| [[targetSdk]] | الرقم اللي Play بيطلبه وقت الرفع (36 = Android 16) |
+| [[versionCode]] | يزيد مع **كل** AAB |
+| [[versionName]] | اللي اليوزر بيشوفه |
+
+- ابدأ internal testing بدري، وخطط لـ 14 يوم closed test لو حسابك شخصي جديد.`,
           lines: [
             R`[[android]].`,
             R`[[defaultConfig]].`,

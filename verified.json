@@ -6314,6 +6314,11 @@
   "date": "2026-10-08",
   "on": "Compose Multiplatform 1.12.1 Desktop (eclipse-temurin:21-jdk, runComposeUiTest headless), LTR+RTL bounds"
  },
+ "kotlin|Compose UI tests": {
+  "hash": "0215f2dfefe1",
+  "date": "2026-10-08",
+  "on": "Android project in docker ghcr.io/cirruslabs/flutter:stable (AGP 9.4.1, SDK 36): tests via Robolectric 4.17; docs: connectedAndroidTest on device"
+ },
  "kotlin|DataStore": {
   "hash": "dea1ece152ed",
   "date": "2026-10-08",
@@ -6323,6 +6328,11 @@
   "hash": "1f64827b23ee",
   "date": "2026-10-08",
   "on": "eclipse-temurin:21-jdk (kotlinc 2.4.20 + kotlinx-coroutines 1.10.2)"
+ },
+ "kotlin|Hilt": {
+  "hash": "ce9aa923adfd",
+  "date": "2026-10-08",
+  "on": "Android project in docker ghcr.io/cirruslabs/flutter:stable (AGP 9.4.1, SDK 36), Hilt 2.60.1, KSP: assembleDebug, MissingBinding error reproduced; docs: runtime on device"
  },
  "kotlin|LazyColumn": {
   "hash": "d9eb2100cc9f",
@@ -6334,6 +6344,11 @@
   "date": "2026-10-07",
   "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20"
  },
+ "kotlin|Logcat و debugging": {
+  "hash": "c5359acc6135",
+  "date": "2026-10-08",
+  "on": "Android project in docker ghcr.io/cirruslabs/flutter:stable (AGP 9.4.1, SDK 36): Robolectric with ShadowLog; docs: Logcat UI, adb, debugger, Layout Inspector"
+ },
  "kotlin|Material 3 و Theme": {
   "hash": "64ffebade00a",
   "date": "2026-10-08",
@@ -6343,6 +6358,16 @@
   "hash": "0c8892f45521",
   "date": "2026-10-08",
   "on": "Compose Multiplatform 1.12.1 Desktop (eclipse-temurin:21-jdk, runComposeUiTest headless) + navigation 2.9.2 + Android assembleDebug (AGP 9.4.1, Compose 1.10.6, cirruslabs/flutter image); docs: system Back button, missing serialization plugin error"
+ },
+ "kotlin|Play Console والـ tracks": {
+  "hash": "a5a838969727",
+  "date": "2026-10-08",
+  "on": "Android project in docker ghcr.io/cirruslabs/flutter:stable (AGP 9.4.1, SDK 36): bundleRelease + aapt2 dump badging; docs: Play Console steps and policies"
+ },
+ "kotlin|R8 و ProGuard": {
+  "hash": "5a8bdf5fdf27",
+  "date": "2026-10-08",
+  "on": "Android project in docker ghcr.io/cirruslabs/flutter:stable (AGP 9.4.1, SDK 36): minify off/on, mapping/seeds/usage, retrace; docs: Analyze APK, device crash"
  },
  "kotlin|Retrofit و serialization": {
   "hash": "d089622c6fe3",
@@ -6358,6 +6383,11 @@
   "hash": "de165acbe76d",
   "date": "2026-10-08",
   "on": "Android compile in cirruslabs/flutter (AGP 9.4.1) (generated binding + Unresolved reference error reproduced); docs: running the screen"
+ },
+ "kotlin|build variants و signing": {
+  "hash": "434e8849cace",
+  "date": "2026-10-08",
+  "on": "Android project in docker ghcr.io/cirruslabs/flutter:stable (AGP 9.4.1, SDK 36) + keytool: assembleStagingDebug/assembleProdRelease, BuildConfig, aapt2/apksigner, signing errors; docs: install on device"
  },
  "kotlin|class": {
   "hash": "42e0490c08d2",
@@ -6444,10 +6474,20 @@
   "date": "2026-10-07",
   "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20"
  },
+ "kotlin|unit tests": {
+  "hash": "fe481e5dd8c4",
+  "date": "2026-10-08",
+  "on": "Android project in docker ghcr.io/cirruslabs/flutter:stable (AGP 9.4.1, SDK 36): testDebugUnitTest (MockK/Turbine), failing case reproduced"
+ },
  "kotlin|val و var": {
   "hash": "96d44ca7c27b",
   "date": "2026-10-07",
   "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20"
+ },
+ "kotlin|الأداء": {
+  "hash": "dd29f4df4dd0",
+  "date": "2026-10-08",
+  "on": "Android project in docker ghcr.io/cirruslabs/flutter:stable (AGP 9.4.1, SDK 36): derivedStateOf recompositions under Robolectric, debug vs release sizes; docs: Profiler, Macrobenchmark"
  },
  "kotlin|التكامل بين Java و Kotlin في أندرويد": {
   "hash": "bd67725e7370",
@@ -6478,6 +6518,16 @@
   "hash": "a07e91fbba94",
   "date": "2026-10-07",
   "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20"
+ },
+ "kotlin|المعمارية: UI و data": {
+  "hash": "7f8b5b5abe28",
+  "date": "2026-10-08",
+  "on": "Android project in docker ghcr.io/cirruslabs/flutter:stable (AGP 9.4.1, SDK 36): assembleDebug example + solCode; docs: running on device"
+ },
+ "kotlin|بناء ونشر التطبيق: APK و AAB": {
+  "hash": "4e63225885d3",
+  "date": "2026-10-08",
+  "on": "Android project in docker ghcr.io/cirruslabs/flutter:stable (AGP 9.4.1, SDK 36): assembleDebug, lintRelease, bundleRelease, assembleRelease, aapt2/apksigner; docs: adb install"
  },
  "kotlin|تسطيب Kotlin": {
   "hash": "6278f4c50d4f",
