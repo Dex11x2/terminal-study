@@ -1,940 +1,1026 @@
 // تكملة تاب speak: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/speak/01.js (شرح حقول الدرس في أوله)
 MORE("speak", [
     {
-      t: "مكالمات الفيديو والـ screen share",
-      l: 2,
-      n: "you're on mute و can you hear me، وتشارك شاشتك وتشاور على حاجة، ولما النت يقطع أو تدخل متأخر أو تمشي بدري",
+      t: "كلمات تقنية بننطقها غلط",
+      l: 1,
+      n: "cache و queue و height، وأسماء الأدوات (Nginx و Kubernetes و Azure و Vite)، و algorithm و determine، والحروف الساكتة، والاختصارات: بتتقري حروف ولا كلمة",
       items: [
         {
-          cmd: "you're on mute",
-          title: "«You're on mute» و «Can you hear me?»: جمل المكالمة من أولها لآخرها",
-          desc: R`كل مكالمة Zoom أو Google Meet أو Teams فيها نفس الـ ١٠ مواقف: حد بيتكلم وهو mute، وحد صوته واطي، وحد مش سامع، وصدى، وحد عايز يتكلم، ونهاية المكالمة. ولو الجمل دي جاهزة في دماغك، أول دقيقة في أي مكالمة هتعدّي من غير توتر.
+          cmd: "cache و queue و suite",
+          title: "cache و queue و suite و height و width و route و data: بتتقال إزاي؟",
+          desc: R`دي كلمات بتتكرر كل يوم، وأغلبنا بيقولها غلط لأننا اتعلمناها من الكتابة. الأخبار الحلوة: قايمة قصيرة، ولو صلحتها هتبان فورًا.
 
-أهم ٥: [[Can you hear me?]] (أول ما تدخل)، و [[You're on mute.]] (لحد بيتكلم ومحدش سامعه)، و [[Sorry, I was on mute.]] (لما تكون انت)، و [[You're breaking up.]] (صوته بيقطع)، و [[I'll drop off now, thanks everyone.]] (وانت خارج).
-
-وفيه مواقف بتتقال بجمل ثابتة محدش بيغيّرها، فاحفظها زي ما هي: [[Go ahead]] (اتفضل اتكلم)، و [[Sorry, go ahead]] (لما اتنين يتكلموا مع بعض)، و [[You first]]، و [[Let's give it a minute for others to join]].`,
-          example: R`Can you hear me OK?
-Yes, I can hear you. / Sorry, I can't hear you. Could you check your mic?
-You're on mute.
-Sorry, I was on mute. As I was saying, the build is green now.
-You're breaking up a little. Could you repeat that?
-There's an echo. I think someone's mic is on; could everyone else mute?
-Your voice is a bit low. Could you move closer to the mic?
-Sorry, go ahead. / No, you go first.
-Let's give it a minute for others to join.
-I have a hard stop at 4, so I'll need to drop off then.
-I'll drop off now. Thanks, everyone!`,
-          try: R`افتح Google Meet لوحدك (ابدأ اجتماع وادخله من الموبايل واللابتوب مع بعض) وقول كل جملة بصوت عالي في مكانها: اعمل mute واتكلم وبعدين قول [[Sorry, I was on mute]]، وهكذا. وبعدين اكتب في [[phrases.md]] أهم ٥ جمل ليك، وحطهم في sticky note جنب الشاشة أول أسبوعين.`,
+[[cache]] = «كاش» /kæʃ/ زي [[cash]] بالظبط (مش «كاتش» ولا «كاشيه»). [[queue]] = «كيو» /kjuː/ زي حرف [[Q]] (مش «كويو»). [[suite]] (test suite) = «سويت» /swiːt/ زي [[sweet]] (مش «سوت»، دي [[suit]] البدلة). [[height]] = «هايت» /haɪt/ آخرها «ت» (مش «هايث»). [[width]] = «ويدث» /wɪdθ/ بكسرة قصيرة (مش «وايدث»). [[route]] فيها نطقين مقبولين: «روت» /ruːt/ و «راوت» /raʊt/ (الأمريكان بيقولوا [[router]] «راوتر» غالبًا). [[data]] برضو نطقين مقبولين: «ديْتا» /ˈdeɪtə/ و «داتا» /ˈdætə/ أو /ˈdɑːtə/: كلمة «داتا» المصري مقبولة.`,
+          example: R`cache = كاش /kæʃ/ (= cash)          queue = كيو /kjuː/ (= Q)
+suite = سويت /swiːt/ (= sweet)      suit = سوت /suːt/ (clothes, not tests)
+height = هايت /haɪt/ (ends in t)    width = ويدث /wɪdθ/ (short i, then d + th)
+route = روت /ruːt/ or راوت /raʊt/   router = راوتر /ˈraʊtər/ (US) or روتر (UK)
+data = ديْتا /ˈdeɪtə/ or داتا /ˈdætə/ — both are fine
+Sentence 1:  Clear the cache and restart the queue worker.
+Sentence 2:  The test suite checks the height and width of the image.
+Sentence 3:  This route returns the user data.`,
+          try: R`اسمع الـ ٧ كلمات في Google ([[how to pronounce ...]]) وبعدين سجّل الجمل الـ ٣. وبعدين قول الجملة دي بسرعة ٣ مرات: [[The queue caches the route data, and the suite tests the width and height.]]`,
           flag: "script",
           deep: {
-            why: R`المواقف دي بتحصل في أول دقيقة من كل مكالمة تقريبًا، ولو اتلخبطت فيها، التوتر بيكمّل معاك باقي الاجتماع. والجمل ثابتة جدًا، يعني ٣٠ دقيقة تدريب بتحل المشكلة للأبد.`,
-            how: R`[[hard stop]] = لازم أمشي في الميعاد ده بالظبط (عندي حاجة بعدها). قولها في أول المكالمة مش في آخرها: [[Just so you know, I have a hard stop at 4.]]
+            why: R`[[cache]] و [[queue]] و [[route]] و [[data]] بتتقال في كل اجتماع تقني تقريبًا، والانترفيو فيه أسئلة كاملة عنهم («How would you cache this?»، «Why use a queue?»). لو قلت «كويو» ٥ مرات في إجابة، الإنترفيوير هيركز في النطق مش في الإجابة.`,
+            how: R`[[cache]]: الحروف [[che]] في الآخر ساكتة الـ e، والـ [[ch]] هنا «ش» (جاية من الفرنساوي). ومنها [[cached]] = «كاشْت» و [[caching]] = «كاشِنگ». و [[cache-control]] = «كاش كنترول».
 
-[[breaking up]] = صوتك بيقطع (للنت). [[cut out]] = قطع ثانية. [[frozen]] = الصورة واقفة: [[You're frozen]]. [[lag]] = تأخير: [[There's a bit of a lag.]]
+[[queue]]: «كيو»، والجمع [[queues]] = «كيوز»، و [[enqueue]] = «إن-كيو»، و [[dequeue]] = «دي-كيو». والطريقة السهلة تفتكرها: هي حرف [[Q]].
 
-لما اتنين يتكلموا في نفس الوقت (بيحصل كتير مع الـ lag): [[Sorry, go ahead]] أو [[After you]]. ولو انت كنت عايز تقول حاجة مهمة: [[Sorry, just one quick thing...]].
+[[suite]] vs [[suit]]: [[test suite]] = «تست سويت». و [[suit]] البدلة (وفعل [[suits me]] = يناسبني) = «سوت». وكمان [[sweet]] = «سويت» نفس نطق [[suite]].
 
-في الآخر: [[Thanks, everyone. Talk soon.]] أو [[Have a good one!]] أو [[Have a great weekend!]] (يوم الخميس أو الجمعة حسب فريقك). و [[I'll drop off]] أو [[I'll hop off]] = هخرج من المكالمة.`,
-            when: "أول وآخر دقيقة في كل مكالمة، وأي مشكلة صوت.",
-            mistakes: R`[[Open your mic]] (الصح [[unmute]]). و [[I can't hear you good]]. و [[Your voice is cutting]] (الصح [[You're breaking up]] أو [[Your audio is cutting out]]). و [[I will go now bye]] فجأة من غير شكر. وتفضل تتكلم ٢ دقيقة وانت mute ومحدش يقولك: لما تبدأ تتكلم، بص على أيقونة المايك.`
+[[height]] vs [[weight]]: الاتنين آخرهم «ت». المصري بيقول «هايث» عشان الـ [[width]] و [[length]] آخرهم «ث». اتعلمهم كمجموعة: [[width]] ث، [[length]] ث، [[depth]] ث، [[height]] ت.`,
+            when: "أي كلام عن الأداء (cache)، أو الـ background jobs (queue)، أو الاختبارات (suite)، أو CSS (height و width)، أو الـ backend (route و data).",
+            mistakes: R`«كاتش» (دي [[catch]] زي try/catch، كلمة تانية خالص!). و «كاشيه» (دي كلمة فرنساوي [[cachet]] معناها حاجة تانية). و «كويو». و «سوت تيست». و «هايث» و «وايدث». وخلي بالك: [[catch]] «كاتش» و [[cache]] «كاش» الاتنين بيتقالوا في نفس الموضوع أحيانًا، فالغلط هنا بيلخبط بجد.`
           },
+          teach: R`## الفكرة: ٧ كلمات، وكل واحدة ليها «توأم» يفكّرك بنطقها
+
+المثال ٥ سطور «كلمة = نطق (توأم)» و ٣ جمل. أسهل طريقة تحفظ النطق إنك تربطه بكلمة تانية انت عارفها.
+
+---
+
+## ١. السطور الخمسة
+
+| الكلمة | النطق | التوأم | الغلط المصري |
+|---|---|---|---|
+| [[cache]] | «كاش» | [[cash]] فلوس | «كاتش» (دي [[catch]]) أو «كاشيه» |
+| [[queue]] | «كيو» | حرف [[Q]] | «كويو» |
+| [[suite]] | «سويت» | [[sweet]] | «سوت» (دي [[suit]] البدلة) |
+| [[height]] | «هايت» آخرها ت | [[weight]] | «هايث» |
+| [[width]] | «وِدث» كسرة قصيرة | | «وايدث» |
+| [[route]] | «روت» أو «راوت» | [[root]] أو [[out]] | |
+| [[data]] | «ديْتا» أو «داتا» | | |
+
+اتراجع على Wiktionary وقت كتابة الشرح: [[cache]] بريطاني [[/kæʃ/]] بس، والأمريكي [[/kæʃ/]] وفيه كمان [[/keɪʃ/]] «كيْش» أقل انتشارًا. فـ «كاش» هو الأأمن. و [[queue]] [[/kjuː/]] = حرف Q. و [[suite]] [[/swiːt/]] = نفس نطق [[sweet]]. و [[width]] ليه كذا شكل، منهم [[/wɪdθ/]] و [[/wɪtθ/]] و [[/wɪθ/]]، وكلهم كسرة قصيرة مش «واي».
+
+> ليه [[cache]] و [[catch]] بالذات خطر؟ لأن الاتنين بيتقالوا في نفس الكلام: [[catch the error]] و [[cache the result]]. لو قلت «كاتش» للتانية، اللي قدامك هيفهم try/catch.
+
+[[height]] و [[width]] بيتلخبطوا لأن [[width]] و [[length]] و [[depth]] آخرهم «ث»، و [[height]] لوحدها آخرها «ت». احفظهم مجموعة.
+
+[[route]] و [[data]] ليهم نطقين مقبولين؛ الشرط الوحيد إنك تثبت على واحد في نفس الكلام.
+
+---
+
+## ٢. الجمل
+
+~~~text Sentence 1
+Clear the cache and restart the queue worker.
+~~~
+
+[[Clear]] = امسح. [[queue worker]] = البرنامج اللي بيسحب الشغل من الطابور وينفّذه. [[restart]] الضغط على [[START]].
+
+~~~text Sentence 2
+The test suite checks the height and width of the image.
+~~~
+
+[[test suite]] = «تِست سويت»: مجموعة الاختبارات. [[height]] بالتاء و [[width]] بالدال والثاء.
+
+~~~text Sentence 3
+This route returns the user data.
+~~~
+
+[[route]] هنا endpoint في الـ backend. قولها «روت» أو «راوت»، و [[data]] «ديْتا» أو «داتا».
+
+ومشتقات بتتقال كتير: [[cached]] «كاشْت»، و [[caching]] «كاشِنگ»، و [[caches]] «كاشِز» (مقطع زيادة)، و [[queues]] «كيوز»، و [[enqueue]] «إن-كيو».
+
+---
+
+## الخلاصة
+
+- [[cache]] = [[cash]]، و [[queue]] = Q، و [[suite]] = [[sweet]].
+- [[height]] بالتاء، و [[width]] بكسرة قصيرة + د + ث.
+- [[route]] و [[data]] نطقين صح، اثبت على واحد.`,
           lines: [
-            R`«سامعني كويس؟» أول جملة لما تدخل.`,
-            R`«آه سامعك» أو «مش سامعك، ممكن تشوف المايك؟»`,
-            R`«انت على mute». بتقولها لحد بيتكلم ومحدش سامعه.`,
-            R`«آسف، كنت mute. زي ما كنت بقول، الـ build بقى أخضر». As I was saying = نرجع للي كنت بقوله.`,
-            R`«صوتك بيقطع شوية، ممكن تعيد؟» breaking up = بيقطع.`,
-            R`«فيه صدى. أظن مايك حد مفتوح؛ ممكن الباقي يعمل mute؟»`,
-            R`«صوتك واطي شوية، ممكن تقرّب من المايك؟»`,
-            R`لما اتنين يتكلموا مع بعض: «آسف، اتفضل» أو «لا، انت الأول».`,
-            R`«نستنى دقيقة لحد ما الباقي يدخل».`,
-            R`«لازم أمشي الساعة ٤ بالظبط، فهخرج ساعتها». hard stop = ميعاد مقفول.`,
-            R`«هخرج دلوقتي. شكرًا يا جماعة!» drop off = أخرج من المكالمة.`
+            R`cache = كاش، زي cash. و queue = كيو، زي حرف Q.`,
+            R`suite = سويت زي sweet (مجموعة اختبارات). و suit = سوت (بدلة): كلمة تانية.`,
+            R`height = هايت بالتاء. و width = ويدث بكسرة قصيرة وبعدها د وث.`,
+            R`route نطقين مقبولين: روت أو راوت. و router بالأمريكاني راوتر.`,
+            R`data: ديْتا أو داتا، الاتنين تمام.`,
+            R`«امسح الـ cache وشغّل الـ queue worker تاني». worker = البرنامج اللي بيسحب من الطابور.`,
+            R`«مجموعة الاختبارات بتتأكد من ارتفاع وعرض الصورة».`,
+            R`«الـ route ده بيرجّع داتا اليوزر».`
           ],
-          sol: R`لو عملت التمرين صح، المفروض تكون قلت كل جملة مرة على الأقل في موقفها الحقيقي (mute حقيقي، صدى حقيقي لو الجهازين جنب بعض). ده أهم من الحفظ: المخ بيربط الجملة بالموقف.
+          sol: R`التسجيل الصح: [[cache]] بتتسمع زي [[cash]]، و [[queue]] مقطع واحد «كيو»، و [[suite]] زي [[sweet]]، و [[height]] آخرها «ت» واضحة، و [[width]] بكسرة قصيرة.
 
-أهم ٥ للـ sticky note (لو هتختار):
-[[Can you hear me OK?]]
-[[Sorry, I was on mute.]]
-[[You're breaking up. Could you repeat that?]]
-[[Sorry, go ahead.]]
-[[I'll drop off now. Thanks, everyone!]]
+في جملة السرعة: [[caches]] = «كاشِز» (مقطع زيادة عشان آخرها «ش»، زي درس [[-ed و -s]]). ولو لقيت نفسك بتقول «كاتشِز» يبقى لسه الكلمة متخزنة غلط: قول [[cash, cache, cash, cache]] ٥ مرات.
 
-لو حاسس إنك مش محتاج الورقة بعد أسبوع، شيلها. ولو لسه بتبص عليها، سيبها: ده مش غش، ده نفس فكرة الـ cheat sheet اللي المبرمجين بيستخدموها لأي أداة جديدة.`
+وفي [[route]] و [[data]]: أي نطق من الاتنين صح، بس خليك ثابت على واحد في نفس الكلام.`
         },
         {
-          cmd: "can you see my screen",
-          title: "تشارك شاشتك وتشاور: «Can you see my screen?» و «Let me zoom in»",
-          desc: R`الـ screen share هو نص الشغل التقني في المكالمات: تشرح كود، أو bug، أو تعمل demo، أو حد بيساعدك. والمشكلة إنك بتعمل حاجتين مع بعض: بتحرّك الماوس، وبتتكلم إنجليزي. فالجمل لازم تبقى أوتوماتيك.
+          cmd: "Linux و SQL و Nginx",
+          title: "أسماء الأدوات: Linux و SQL و GIF و Nginx و Kubernetes و Azure و Vue و Angular و Vite",
+          desc: R`أسماء الأدوات ليها نطق «رسمي» من أصحابها، وأحيانًا نطقين الاتنين مقبولين. القاعدة: لو فيه خلاف مشهور (SQL و GIF)، الاتنين تمام. لو مفيش خلاف (Nginx و Azure و Vite)، فيه نطق صح واحد وغالبًا المصري بيقول غيره.
 
-البداية: [[Let me share my screen.]] وبعدين [[Can you see my screen?]] أو [[Can everyone see my screen?]]. ولو شاركت الشاشة الغلط: [[Oops, wrong window. One sec.]]
-
-التشاور: [[As you can see here...]]، و [[If you look at line 42...]]، و [[This part here...]] (والماوس على الحتة)، و [[On the left / on the right / at the top / at the bottom]]، و [[Let me zoom in.]] (الخط صغير: دايمًا كبّر الخط في VS Code قبل ما تشارك).
-
-النهاية: [[I'll stop sharing now.]] أو [[Let me stop sharing.]]`,
-          example: R`Let me share my screen. Can you see it?
-Can you see my VS Code, or is it still showing the browser?
-Oops, wrong window. One second.
-Is the font big enough? Let me zoom in.
-As you can see here, the request fails with a 401.
-If you look at line 42, we never await this promise.
-This part on the left is the request, and on the right is the response.
-Let me scroll down a bit. OK, here.
-Could you share your screen? It'll be easier to see the error.
-I'll stop sharing now.`,
-          try: R`اعمل فيديو ٢ دقيقة بـ OBS أو Loom أو حتى Zoom recording لنفسك، بتشارك فيه شاشتك وتشرح ملف كود من مشروعك. استخدم ٥ جمل على الأقل من المثال. وبعدين اتفرج على الفيديو: كام مرة سكتّ وانت بتدوّر على حاجة؟ الماوس كان بيشاور على اللي بتقوله؟`,
+القايمة الأهم: [[Linux]] = «لينِكس» /ˈlɪnəks/ بكسرة قصيرة (مش «لاينكس»). [[SQL]] = «إس كيو إل» أو «سيكوِل» /ˈsiːkwəl/ (الاتنين صح). [[GIF]] = «گِف» أو «جِف» (صاحبها قال «جِف» والأغلبية بتقول «گِف»). [[Nginx]] = «إنجن إكس» [[engine-x]] (مش «إنجينكس»). [[Kubernetes]] = «كوبَر-نيتيز» /ˌkuːbərˈnetiːz/ والضغط على [[NE]]، واختصارها [[K8s]] = «كيْتس» أو «كيه إيتس». [[Azure]] = «آژَر» /ˈæʒər/ (مش «أزور»). [[Vue]] = «ڤيو» زي [[view]]. [[Angular]] = «آنگيولَر» /ˈæŋɡjələr/. [[Vite]] = «ڤيت» /viːt/ (كلمة فرنساوي معناها سريع، مش «ڤايت»).`,
+          example: R`Linux = لينِكس /ˈlɪnəks/        Ubuntu = أوبونتو /ʊˈbʊntuː/      Debian = ديبيان
+SQL = S-Q-L or "sequel"         MySQL = my-S-Q-L               PostgreSQL = Postgres (بوستگرِس) or Postgres-Q-L
+GIF = گِف /ɡɪf/ or جِف /dʒɪf/    JSON = جيْسِن /ˈdʒeɪsən/          YAML = يامِل /ˈjæməl/
+Nginx = engine-x (إنجن إكس)     Apache = أپاتشي /əˈpætʃi/        Redis = ريدِس /ˈredɪs/
+Kubernetes = كوبَر-NE-تيز       K8s = "kates" or "K-eights"   Azure = آژَر /ˈæʒər/
+Vue = ڤيو (= view)              Angular = آنگيولَر               Vite = ڤيت /viːt/ (= veet)
+Git = گِت (hard g)               GitHub = گِت هَب                 Django = جانگو (silent D)
+Sentence:  We deploy the Vue app with Vite, behind Nginx, on an Ubuntu server in Azure.`,
+          try: R`اكتب اسم الـ stack بتاعك كله في جملة واحدة (زي آخر سطر في المثال): اللغة، والـ framework، والداتابيز، والسيرفر، والـ cloud. دوّر على نطق كل اسم في YouGlish (ويفضّل من talk لأصحاب الأداة)، وسجّل الجملة. دي الجملة اللي هتقولها في «Tell me about yourself» فلازم تبقى مظبوطة.`,
           flag: "script",
           deep: {
-            why: R`في الـ remote، الـ screen share هو الـ «تعالى اقعد جنبي» بتاع المكتب. ولو إنت سلس فيه، الناس هتحب تشتغل معاك pair، ودي أسرع طريقة تتعلم بيها. وفي الانترفيو، الـ live coding كله screen share.`,
-            how: R`قبل ما تشارك: اقفل الإشعارات (Slack والواتساب)، واقفل التابات اللي فيها حاجة شخصية، وكبّر الخط في VS Code ([[Ctrl + =]]) والمتصفح. وشارك نافذة واحدة بدل الشاشة كلها لو ممكن.
+            why: R`اسم الـ stack هو أول حاجة بتقولها في أي انترفيو وأي تعريف بنفسك. ولو قلت «إنجينكس» و «أزور» في أول ٢٠ ثانية، الإنترفيوير هيعرف إنك اتعلمت من القراية بس. ولو قلتهم صح، ده بيدّي انطباع إنك «من جوه» المجتمع ده وبتسمع talks.`,
+            how: R`[[Linux]]: Linus Torvalds نفسه قال «لينُكس» في تسجيل مشهور. النطق «لينِكس» أو «لينُكس» الاتنين تمام، الغلط هو «لاينكس».
 
-وانت بتشارك: اتكلم قبل ما تحرك الماوس: [[I'm going to open the user service now]] وبعدين افتح. كده الناس بتلحقك. والسكوت وانت بتدوّر: [[Let me find it... one sec... here it is.]] أحسن من صمت ١٠ ثواني.
+[[SQL]]: الاستاندرد الرسمي بيقول «إس كيو إل»، وناس كتير بتقول «سيكوِل» (من اسم قديم للغة). و [[MySQL]] أصحابها بيقولوا «ماي إس كيو إل». و [[PostgreSQL]] أغلب الناس بتقول «Postgres» وخلاص.
 
-كلمات الأماكن: [[at the top]]، و [[at the bottom]]، و [[on the left / right]]، و [[in the sidebar]]، و [[in the terminal]]، و [[in the console]]، و [[in the Network tab]]، و [[line 42]]، و [[this function here]]. وأفعال: [[scroll up / down]]، و [[click on]]، و [[hover over]]، و [[open]]، و [[switch to]] (تنقل لنافذة تانية).
+[[Nginx]]: الموقع الرسمي بيكتب النطق [[engine-x]]. [[Vite]]: الـ docs بتقول النطق [[/vit/]] زي [[veet]]. [[Azure]]: Microsoft بتقولها «آژَر» والضغط على أولها. [[Django]]: الـ D ساكتة (زي فيلم Django Unchained). [[Git]] و [[GitHub]]: گ صلبة زي «جمل» بالمصري، مش ج.
 
-لو حد تاني بيشارك وعايز يشاور على حاجة: [[Could you scroll up a bit?]]، و [[Could you go back to the previous file?]]، و [[Could you zoom in? It's a bit small on my side.]]`,
-            when: "شرح bug لزميل، و code walkthrough، و demo، و live coding، و pair programming.",
-            mistakes: R`تشارك الشاشة كلها وعليها إشعار واتساب شخصي. وخط صغير جدًا ([[Can you zoom in?]] أول تعليق هتسمعه). و [[Do you see my screen?]] (مقبولة، بس [[Can you see]] أشهر). وتحرك الماوس بسرعة وتقول [[here... and here... and here]] من غير ما تقول إيه اللي هناك. وتنسى تعمل [[stop sharing]].`
+ولو مش متأكد من اسم أداة في اجتماع: قول الاسم زي ما تعرف واكمل، أو اسأل [[How do you pronounce it?]]: محدش هيستغرب.`,
+            when: "أي تعريف بنفسك أو بالمشروع، وأي كلام عن الـ infrastructure. جهّز جملة الـ stack بتاعك قبل أي انترفيو.",
+            mistakes: R`«لاينكس»، و «إنجينكس»، و «أزور»، و «ڤو» أو «ڤوي» ([[Vue]])، و «أنجولار»، و «ڤايت»، و «دجانجو» بالـ D، و «جيت هاب» بالجيم الفصحى، و «جيسون» بفتحة طويلة (الصح «جيْسِن» والآخر ضعيف). و «كوبرنيتس» بالضغط على الأول (الصح [[ku-ber-NE-tes]]).`
           },
-          lines: [
-            R`«خليني أشارك شاشتي. شايفينها؟»`,
-            R`«شايفين الـ VS Code ولا لسه ظاهر المتصفح؟»`,
-            R`«أوبس، نافذة غلط. ثانية واحدة».`,
-            R`«الخط كبير كفاية؟ خليني أكبّر». zoom in = تكبير.`,
-            R`«زي ما انتوا شايفين هنا، الـ request بيفشل بـ 401».`,
-            R`«لو بصيتوا على سطر ٤٢، إحنا مش بنعمل await للـ promise دي».`,
-            R`«الجزء اللي على الشمال ده الـ request، واللي على اليمين الـ response».`,
-            R`«خليني أنزل شوية. أيوه، هنا».`,
-            R`«ممكن تشارك شاشتك؟ هيبقى أسهل نشوف الخطأ».`,
-            R`«هوقف المشاركة دلوقتي».`
-          ],
-          sol: R`الفيديو الكويس:
-١) بيبدأ بجملة بتقول هتشرح إيه: [[I'm going to walk you through the auth middleware in my project.]]
-٢) الخط كبير ومقروء.
-٣) قبل كل حركة جملة: [[Now I'll open the routes file.]]
-٤) الماوس بيشاور على اللي بيتقال: [[This line here checks the token.]]
-٥) بيخلص بـ [[That's it. I'll stop sharing now.]]
+          teach: R`## الفكرة: اسم الأداة ليه نطق من أصحابها
 
-المتوقع في أول فيديو: ٢–٤ فترات سكوت وانت بتدوّر على ملف. الحل: [[Let me find it... one sec]]، وجهّز الملفات مفتوحة في tabs قبل ما تبدأ. والفيديو الضعيف: كله [[here]] و [[this]] من غير أسماء، فاللي بيتفرج مش عارف انت فين.`
+المثال جدول أسماء (٧ سطور) وجملة stack. الجدول متقسم ٣ أعمدة في كل سطر عشان تتقري بسرعة. هنرتبهم حسب نوع الغلطة.
+
+---
+
+## ١. أسماء ليها نطق واحد والمصري بيقول غيره
+
+| الاسم | الصح | الغلط | المصدر |
+|---|---|---|---|
+| [[Linux]] | «لينِكس» كسرة قصيرة | «لاينكس» | Wiktionary: [[/ˈlɪ.nəks/]] أو [[/ˈlɪ.nʊks/]] |
+| [[Nginx]] | «إنجن إكس» | «إنجينكس» | الموقع الرسمي بيكتبها [[engine-x]] |
+| [[Vite]] | «ڤيت» زي [[veet]] | «ڤايت» | الـ docs: كلمة فرنساوي = سريع |
+| [[Vue]] | «ڤيو» زي [[view]] | «ڤو» | |
+| [[Django]] | «جانگو» | «دجانجو» | الـ D ساكتة |
+| [[Git]] / [[GitHub]] | «گِت» / «گِت هَب» | «جيت» | g صلبة |
+| [[JSON]] | «جيْسِن» | «جيسون» بفتحة طويلة | |
+| [[Kubernetes]] | «كوبَر-**نِ**-تيز» | «**كو**برنيتس» | Wiktionary: الضغط على NE |
+
+و [[Azure]]: Wiktionary بيعرض أكتر من نطق مقبول (أشهرهم [[/ˈæʒɚ/]] «آژَر» بالأمريكي)، والدرس بيختار «آژَر» لأنه الأشهر في الشغل. اللي مش مقبول «أزور» بفتح الزاي.
+
+## ٢. أسماء ليها نطقين والاتنين صح
+
+| الاسم | نطق ١ | نطق ٢ |
+|---|---|---|
+| [[SQL]] | «إس كيو إل» (الاستاندرد الأصلي قال كده، حسب Wikipedia) | «سيكوِل» (sequel) |
+| [[GIF]] | «گِف» (الأغلبية) | «جِف» (صاحب الفورمات) |
+| [[K8s]] | «كيْتس» (kates) | «كيه إيتس» |
+| [[PostgreSQL]] | «پوستگرِس» (الأشهر) | «پوستگرِس كيو إل» |
+
+[[K8s]] معناها: K وبعدها ٨ حروف وبعدها s (K-ubernete-s)، زي [[i18n]] لـ internationalization.
+
+## ٣. أسماء عادية بس خلي بالك من الضغط
+
+[[Ubuntu]] «أو-**بون**-تو»، و [[Apache]] «أ-**پا**-تشي»، و [[Redis]] «**ري**-دِس»، و [[YAML]] «**يا**-مِل»، و [[Angular]] «**آن**-گيو-لَر».
+
+---
+
+## ٤. جملة الـ stack (آخر سطر)
+
+~~~text Sentence
+We deploy the Vue app with Vite, behind Nginx, on an Ubuntu server in Azure.
+~~~
+
+| الحتة | المعنى | النطق |
+|---|---|---|
+| [[We deploy the Vue app]] | بننزّل تطبيق Vue | «ڤيو» |
+| [[with Vite]] | بـ Vite (أداة البناء) | «ڤيت» |
+| [[behind Nginx]] | ورا Nginx (reverse proxy) | «إنجن إكس» |
+| [[on an Ubuntu server]] | على سيرفر Ubuntu | [[an]] عشان Ubuntu أولها صوت متحرك |
+| [[in Azure]] | في Azure | «آژَر» |
+
+دي الجملة اللي هتقولها في أول الانترفيو، فجهّز نسختك بالـ stack بتاعك.
+
+---
+
+## الخلاصة
+
+- لو فيه خلاف مشهور (SQL و GIF)، الاتنين صح.
+- لو مفيش خلاف (Nginx و Vite و Linux)، فيه نطق واحد، وغالبًا مش اللي في دماغك.
+- مش متأكد؟ [[How do you pronounce it?]] عادي جدًا.`,
+          lines: [
+            R`Linux لينِكس (مش لاينكس)، و Ubuntu أوبونتو، و Debian ديبيان.`,
+            R`SQL نطقين مقبولين. MySQL بالحروف. PostgreSQL الناس بتقول Postgres.`,
+            R`GIF نطقين مقبولين. JSON جيْسِن. YAML يامِل.`,
+            R`Nginx = engine-x. و Apache أپاتشي. و Redis ريدِس.`,
+            R`Kubernetes الضغط على NE. واختصارها K8s. و Azure آژَر.`,
+            R`Vue زي view. Angular آنگيولَر. Vite زي veet (فرنساوي = سريع).`,
+            R`Git و GitHub بـ g صلبة. Django الـ D ساكتة.`,
+            R`«بننزّل تطبيق Vue بـ Vite، ورا Nginx، على سيرفر Ubuntu في Azure». behind = ورا (reverse proxy).`
+          ],
+          sol: R`مثال لجملة stack صح:
+[[I build full-stack apps with TypeScript, React and Next.js, with PostgreSQL and Prisma, and I deploy them with Docker and Nginx on a Linux VPS.]]
+
+النطق المتوقع: [[TypeScript]] «تايپ-سكريپت» (p واضحة، ومن غير «إ» قبل script)، و [[Next.js]] «نِكست جيه إس»، و [[PostgreSQL]] «پوستگرِس»، و [[Prisma]] «پريزما»، و [[Docker]] «دوكَر»، و [[Nginx]] «إنجن إكس»، و [[Linux]] «لينِكس»، و [[VPS]] «ڤي پي إس».
+
+لو اسم في الـ stack بتاعك مش موجود هنا، دوّر عليه في YouGlish. ولو ملقتش مقطع، ابحث في YouTube عن talk بعنوان الأداة واسمع أول دقيقة: المتكلم غالبًا بيقول الاسم في أول جملة.`
         },
         {
-          cmd: "النت قطع",
-          title: "النت قطع، واتأخرت، ومحتاج تمشي بدري: جمل الطوارئ",
-          desc: R`في مصر النت والكهربا مش مضمونين ١٠٠٪، وده بيحصل للكل. المهم إزاي تتعامل معاه باحترافية: تبلّغ بسرعة، ومن غير اعتذار طويل، وتقول الحل.
+          cmd: "algorithm و determine",
+          title: "algorithm و variable و asynchronous و determine و develop: الكلمات الطويلة",
+          desc: R`الكلمات الطويلة اللي أصلها لاتيني أو يوناني بتقع فيها غلطتين: الضغط في مكان غلط، ونطق حرف بالطريقة «العربي» أو «الإنجليزي الكتابي».
 
-قبل المكالمة لو متوقع مشكلة: [[Heads-up: my internet is a bit unstable today, so I might keep my camera off.]] (heads-up = تنبيه مسبق).
+[[algorithm]] = «آلگوريذَم» /ˈælɡərɪðəm/: الضغط على [[AL]]، والـ [[th]] = ذ (مش «ز» ولا «ث»)، والآخر [[-rithm]] مقطع ضعيف. [[variable]] = «ڤيريَبل» /ˈveriəbl/: الضغط على أولها، وأصلها [[vary]]. [[asynchronous]] = «إيْسِنكرِنَس» /eɪˈsɪŋkrənəs/: الضغط على [[SYN]]، وأولها «إيْ» مش «أ». [[async]] = «إيْسِنك». [[determine]] = «ديتِرمِن» /dɪˈtɜːrmɪn/: الآخر «مِن» قصيرة، مش «ماين» (الغلطة دي منتشرة جدًا). [[develop]] = «ديڤيلَب» /dɪˈveləp/: الضغط على [[VEL]].
 
-لو وقعت ورجعت: [[Sorry, I got disconnected. What did I miss?]] أو [[Sorry about that, my connection dropped. Where were we?]]. ولو مش قادر ترجع: ابعت في الشات أو Slack على طول: [[My internet is down. I'll join from my phone in 2 minutes.]]
-
-التأخير: ابعت قبل الميعاد مش بعده: [[Running 5 minutes late, sorry! Please start without me.]]. والمشي بدري: قوله في الأول: [[I need to leave 10 minutes early today.]]`,
-          example: R`Heads-up: my internet is a bit unstable today, so I'll keep my camera off.
-Sorry, I got disconnected. What did I miss?
-Sorry about that, my connection dropped. Where were we?
-I think I lost you for a second. Could you repeat the last part?
-My internet is down. I'll join from my phone in two minutes.
-There's a power cut in my area. I'll be back online in about 30 minutes.
-Running five minutes late, sorry! Please start without me.
-Sorry I'm late. Please don't let me interrupt; I'll catch up.
-I need to leave ten minutes early today, so could we cover my part first?`,
-          try: R`اكتب ٣ رسايل Slack جاهزة وحطها في Notes على الموبايل (عشان لو النت وقع تبعتها من الموبايل): (١) النت وقع وهتدخل من الموبايل. (٢) الكهربا قطعت ومش عارف هترجع إمتى. (٣) متأخر ١٠ دقايق. وبعدين قول بصوت عالي جملة [[Sorry, I got disconnected. What did I miss?]] بـ ٣ نبرات: مرتبك، وعادي، وواثق. خلّي الأخيرة هي نبرتك.`,
+ومعاهم: [[architecture]] «آركِتِكتشَر» (ch = k)، و [[authentication]] «أوثِنتِكيشَن» (ث + ضغط على [[CA]])، و [[synchronous]] «سِنكرِنَس»، و [[iterate]] «إتَريْت» (الضغط على [[IT]])، و [[integer]] «إنتِجَر» (ج مش گ)، و [[boolean]] «بوليَن»، و [[null]] «نَل».`,
+          example: R`algorithm = آلگوريذَم  /ˈælɡərɪðəm/   AL-go-ri-thm (th = ذ)
+variable = ڤيريَبل  /ˈveriəbl/   VA-ri-a-ble (from "vary")
+asynchronous = إيْسِنكرِنَس  /eɪˈsɪŋkrənəs/   a-SYN-chro-nous;   async = إيْسِنك
+determine = ديتِرمِن  /dɪˈtɜːrmɪn/   de-TER-mine (not "mine")
+develop = ديڤيلَب  /dɪˈveləp/   de-VEL-op;   developer = ديڤيلَپَر
+integer = إنتِجَر (soft g)   boolean = بوليَن   null = نَل   iterate = إتَريْت
+authentication = أوثِنتِكيشَن   au-then-ti-CA-tion
+Sentence:  The algorithm determines which variable the async function should update.`,
+          try: R`اكتب إجابة من ٣ جمل للسؤال ده بالإنجليزي: [[What's the difference between synchronous and asynchronous code?]]، ولازم تستخدم فيها ٤ كلمات على الأقل من القايمة. سجّلها واسمعها وانت بتقرا الـ IPA: الضغط في المكان الصح؟ و [[determine]] طالعة «مِن» ولا «ماين»؟`,
           flag: "script",
           deep: {
-            why: R`اللي بيختفي من مكالمة من غير ما يقول، أو بيرجع ويعتذر دقيقتين، بيبان مش محترف. واللي بيبعت سطر في الشات ويرجع ويقول [[What did I miss?]] ويكمل عادي، محدش بيفتكر إنه وقع أصلًا. والشركات اللي بتوظف من مصر عارفة إن الموضوع ده بيحصل؛ اللي بيفرق إزاي بتتعامل معاه.`,
-            how: R`[[What did I miss?]] = فاتني إيه؟ و [[Where were we?]] = كنا فين؟ و [[I'll catch up]] = هلحق/هفهم لوحدي بعدين (من الـ notes أو التسجيل).
+            why: R`الكلمات دي هي لغة الانترفيو التقني نفسها. سؤال زي «Explain async/await» أو «What algorithm would you use?» هيخليك تقول الكلمة ١٠ مرات. والنطق الغلط المتكرر بيشتت اللي قدامك.`,
+            how: R`[[determine]] الغلطة جاية من إن [[mine]] لوحدها «ماين». بس لما تيجي في آخر كلمة طويلة من غير ضغط بتبقى «مِن»: [[determine]] و [[examine]] «إگزامِن» و [[famine]]. استثناء مهم: [[undermine]] «أندَرماين»، و [[combine]] «كمباين». فاحفظ [[determine]] و [[examine]] كاستثناء.
 
-تجهيزات: خلي الموبايل فيه تطبيق Zoom/Meet/Teams متسجّل دخول، وباقة نت احتياطي، وشاحن. ولو الكهربا بتقطع في منطقتك في مواعيد معروفة، ده سبب كويس تطلب مواعيد اجتماعات مناسبة: [[Could we move the standup 30 minutes earlier? There are scheduled power cuts in my area at that time.]]
+[[algorithm]]: قولها ٣ حتت: [[AL]] + [[go]] + [[rithm]]، والتالتة فيها «ذ» صغيرة وبعدين «م». ومنها [[algorithmic]] «آلگوريذمِك» الضغط اتنقل لـ [[RITH]].
 
-الاعتذار: جملة واحدة ([[Sorry about that]]) وبعدين كمّل. متحكيش القصة كلها.
+[[asynchronous]]: الـ [[a-]] هنا «إيْ» (زي الحرف A)، وكذلك في [[async]] و [[await]] = «أويْت» (هنا «أ» ضعيفة). وأشهر نطق للـ [[async]] بين المبرمجين «إيْ-سِنك». [[sync]] = «سِنك» زي [[sink]].
 
-ولو فاتك جزء مهم وانت مكسوف تطلب إعادة: [[Is there a recording, or could someone share the notes?]]`,
-            when: "أي مشكلة نت أو كهربا أو تأخير. جهّز الرسايل من قبلها.",
-            mistakes: R`تختفي من غير رسالة. و [[Sorry sorry sorry, the internet in Egypt is very bad...]] وقصة طويلة. و [[The electricity is cut]] (الأوضح [[There's a power cut]] أو [[power outage]]). و [[I'm late 5 minutes]] (الصح [[I'm running 5 minutes late]] أو [[I'll be 5 minutes late]]). وتقول إنك هتمشي بدري في آخر الاجتماع بدل أوله.`
+وخلي بالك إن [[integer]] الجيم فيها ج «dʒ» مش گ.`,
+            when: "أي إجابة تقنية في الانترفيو، وأي شرح لكود.",
+            mistakes: R`«ديترماين» (أشهرهم). و «ألجوريزم» (ز بدل ذ، وضغط غلط). و «ڤاريّابل». و «أسينكرونوس» بنطق كل حرف. و «ديفيلوب» بضغط على الأول. و «إنتيگر» بالـ g الصلبة. و «بولين» بالضغط على الآخر. و «نول» (الصح «نَل»).`
           },
-          lines: [
-            R`تنبيه مسبق: «النت مش مستقر النهارده، فهقفل الكاميرا». heads-up = تنبيه.`,
-            R`«آسف، اتقطعت. فاتني إيه؟»`,
-            R`«آسف، النت وقع. كنا فين؟»`,
-            R`«أظن فقدتك ثانية. ممكن تعيد آخر جزء؟» (لو الطرف التاني اللي قطع).`,
-            R`«النت واقع. هدخل من الموبايل في دقيقتين».`,
-            R`«الكهربا قاطعة في منطقتي. هرجع أونلاين في حوالي نص ساعة». power cut = قطع كهربا.`,
-            R`«هتأخر ٥ دقايق، آسف! ابدأوا من غيري». running late = متأخر.`,
-            R`«آسف على التأخير. كملوا متوقفوش عشاني؛ هلحق». catch up = ألحق.`,
-            R`«محتاج أمشي بدري ١٠ دقايق النهارده، ممكن نبدأ بالجزء بتاعي؟» cover = نغطي/نتكلم في.`
-          ],
-          sol: R`الرسايل الجاهزة:
-(١) [[My internet just went down. Joining from my phone in 2 minutes.]]
-(٢) [[Power cut in my area, not sure how long it'll take. I'll catch up from the notes and update you on Slack.]]
-(٣) [[Running about 10 minutes late, sorry! Please start without me.]]
+          teach: R`## الفكرة: الكلمات الطويلة بتقع في الضغط وفي حرف واحد
 
-النبرة الواثقة: [[Sorry, I got disconnected. What did I miss?]] بسرعة عادية، ونبرة نازلة في [[disconnected]]، وطالعة في [[miss?]]، ومن غير ضحكة متوترة. التسجيل الضعيف: الجملة متقطعة بـ [[ehh]] أو بتبدأ بـ [[Sorry, sorry...]] مكررة.`
+المثال ٧ سطور، كل سطر: الكلمة = نطق عربي تقريبي = IPA = مقاطع بالضغط. وفي الآخر جملة بتجمعهم. الـ IPA اللي في المثال اتراجع على Wiktionary وقت كتابة الشرح ([[algorithm]] و [[asynchronous]] و [[determine]] و [[variable]]).
+
+---
+
+## ١. السطور واحد واحد
+
+| الكلمة | الضغط | الحرف الخطير | الغلط |
+|---|---|---|---|
+| [[algorithm]] | **AL**-go-ri-thm | [[th]] = ذ | «ألجوريزم» (ز + ضغط في الآخر) |
+| [[variable]] | **VA**-ri-a-ble | أصلها [[vary]] | «ڤاري**يا**بل» |
+| [[asynchronous]] | a-**SYN**-chro-nous | أولها «إيْ» | «أسينكرونوس» بكل الحروف واضحة |
+| [[async]] | «إيْ-سِنك» | | |
+| [[determine]] | de-**TER**-mine | آخرها «مِن» | «ديترماين» |
+| [[develop]] | de-**VEL**-op | | «**دي**ڤيلوب» |
+| [[integer]] | **IN**-te-ger | g = ج ناعمة | «إنتيگر» |
+| [[authentication]] | au-then-ti-**CA**-tion | th = ث | «أوسنتيكيشن» |
+
+ومعاهم: [[boolean]] «بو-ليَن» (الضغط على الأول)، و [[null]] «نَل» مش «نول»، و [[iterate]] «**إ**-تَ-ريْت».
+
+## ٢. ليه [[determine]] بالذات؟
+
+لأن [[mine]] لوحدها «ماين»، فالمخ بيكمّل عليها. بس في آخر كلمة طويلة من غير ضغط بتبقى «مِن»: [[determine]] و [[examine]]. والاستثناءات اللي فعلًا «ماين»: [[combine]] و [[undermine]]. الحل: احفظ [[determine]] و [[examine]] على إنهم «مِن».
+
+## ٣. ليه [[asynchronous]] و [[synchronous]] بيتلخبطوا؟
+
+الضغط في الاتنين على [[SYN]]: «**سِن**-كرِ-نَس» و «إيْ-**سِن**-كرِ-نَس». والمقاطع بعد الضغط ضعيفة [[ə]]؛ لو قلتها «سينكرونوس» بكل حرف واضح، الكلمة بتبان «مقروءة» مش «متقالة».
+
+---
+
+## ٤. الجملة
+
+~~~text Sentence
+The algorithm determines which variable the async function should update.
+~~~
+
+| الحتة | المعنى |
+|---|---|
+| [[The algorithm determines]] | الـ algorithm بيحدد ([[determines]] = «دي-**تِر**-مِنز») |
+| [[which variable]] | أنهي متغير |
+| [[the async function should update]] | الدالة الـ async المفروض تحدّثه ([[update]] هنا فعل: up-**DATE**) |
+
+---
+
+## الخلاصة
+
+| الكلمة | افتكر |
+|---|---|
+| algorithm | AL + ذ |
+| determine | TER + «مِن» |
+| asynchronous / async | «إيْ» + SYN |
+| integer | ج ناعمة |
+| null | «نَل» |`,
+          lines: [
+            R`algorithm: الضغط على AL، والـ th ذ.`,
+            R`variable: الضغط على أولها، وهي من vary (يتغير).`,
+            R`asynchronous: الضغط على SYN، وأولها «إيْ». و async «إيْسِنك».`,
+            R`determine: الآخر «مِن» قصيرة. من أشهر الغلطات: «ديترماين».`,
+            R`develop وdeveloper: الضغط على VEL.`,
+            R`integer بجيم ناعمة، و boolean بوليَن، و null نَل، و iterate الضغط على IT.`,
+            R`authentication: ث في النص، والضغط على CA.`,
+            R`«الـ algorithm بيحدد أنهي متغير الدالة الـ async المفروض تحدّثه».`
+          ],
+          sol: R`إجابة نموذجية (٣ جمل):
+[[Synchronous code runs one line at a time, and each line waits for the previous one. Asynchronous code starts a task, like a network request, and continues without waiting; the result comes back later through a callback or a promise. So async code keeps the app responsive while the slow work happens in the background.]]
+
+الكلمات من القايمة: [[synchronous]]، و [[asynchronous]]، و [[async]]... ولو ضفت [[determine]] أو [[algorithm]] أحسن.
+
+في التسجيل: [[synchronous]] = «سِنكرِنَس» الضغط على [[SYN]]، و [[asynchronous]] نفس الضغط. ولو سمعت نفسك بتقول «سينكرونوس» بكل الحروف واضحة، ده الغلط: المقاطع الأخيرة ضعيفة [[ə]]. والإجابة الضعيفة: جملة واحدة «async is not sync» من غير مثال.`
+        },
+        {
+          cmd: "حروف ساكتة",
+          title: "schema و architecture و pseudo و debt و facade: حروف مكتوبة ومش بتتقال",
+          desc: R`الإنجليزي مليان حروف مكتوبة ومش بتتنطق، أو حروف بتتنطق بصوت مش صوتها. وكتير من الكلمات التقنية جاية من اليوناني أو الفرنساوي فيها ده.
+
+[[ch]] = [[k]] في الكلمات اليوناني: [[schema]] «سكيما»، و [[architecture]] «آركِتِكتشَر»، و [[archive]] «آركايڤ»، و [[mechanism]] «ميكَنِزم»، و [[technical]] «تِكنِكَل»، و [[character]] «كارِكتَر» (و [[char]] بيتقال «تشار» أو «كار» أو «كير»: الكل مقبول). و [[hierarchy]] «هايرَركي».
+
+حروف ساكتة: [[pseudo]] (pseudo-code) = «سودو» الـ p ساكتة. [[debt]] (technical debt) = «دِت» الـ b ساكتة. [[subtle]] (bug صعب يتلاحظ) = «سَتِل» الـ b ساكتة. [[Wednesday]] = «وِنزدي». [[often]] «أوفِن» (الـ t غالبًا ساكتة). [[listen]] «لِسِن». [[design]] «ديزاين» الـ g ساكتة. [[sign]] و [[align]] «ألاين».
+
+فرنساوي: [[facade]] (Facade pattern) = «فَساد» /fəˈsɑːd/. [[resume]] كفعل (يكمّل) = «ريزيوم»، واسم (CV) [[résumé]] = «ريزيوميْ». [[suite]] من الدرس اللي فات. و [[genre]] «ژونرا».`,
+          example: R`ch = k:  schema (سكيما)  architecture (آركِتِكتشَر)  archive (آركايڤ)  mechanism  technical  character
+Silent p/b/g/t:  pseudo (سودو)  debt (دِت)  subtle (سَتِل)  design (ديزاين)  align (ألاين)  often (أوفِن)
+Fewer syllables:  Wednesday (وِنزدي)  comfortable (كَمفتَبل)  interesting (إنترِستِنگ)  different (دِفرَنت)
+French:  facade (فَساد)  resume v. (ريزيوم) vs résumé n. (ريزيوميْ)
+Two ways:  live demo = لايڤ /laɪv/ (adjective)   I live in Cairo = لِڤ /lɪv/ (verb)
+Two ways:  I read docs daily = ريد   I read it yesterday = رِد
+Sentence 1:  The database schema is part of the architecture docs, not the archive.
+Sentence 2:  This subtle bug is technical debt from the pseudo-code we never cleaned up.`,
+          try: R`اكتب ٥ كلمات تقنية من شغلك انت ممكن يكون فيها حرف ساكت (ابحث في Cambridge عن النطق). وبعدين سجّل الجملتين الأخيرتين من المثال وجملة من عندك فيها [[live]] بالمعنيين.`,
+          flag: "script",
+          deep: {
+            why: R`[[schema]] و [[architecture]] و [[technical debt]] بتتقال في كل كلام عن الـ backend والتصميم. ولو قلت «شيما» أو «أرشيتكتشر» أو «ديبت»، ده بيبان جدًا لأنها كلمات «senior». وكلمة [[live]] بالذات: [[live demo]] و [[live coding]] و [[go live]] كلها «لايڤ»، والمصري بيقولها «لِڤ» ساعات.`,
+            how: R`القاعدة التقريبية لـ [[ch]]: لو الكلمة يوناني الأصل (علمية أو تقنية، وفيها [[chr]] أو [[sch]] أو [[arch]] قبل حرف متحرك) غالبًا [[k]]: [[chrome]] «كروم»، و [[synchronous]] «سِنكرِنَس»، و [[chronological]]. لكن [[arch]] لوحدها (قوس) «آرتش»، و [[chart]] «تشارت»، و [[cache]] «كاش»: مفيش قاعدة بتشتغل ١٠٠٪، عشان كده اسمع.
+
+[[resume]]: فعل = «ريزيوم» ([[resume the upload]] = كمّل الرفع). اسم = CV، بالأمريكاني [[résumé]] أو [[resume]] «ريزيوميْ». وفي الانترفيو: [[Can you walk me through your résumé?]].
+
+[[live]]: صفة (مباشر، شغال على الإنتاج) = «لايڤ»: [[live site]] و [[go live]] و [[livestream]]. فعل (يعيش) = «لِڤ».
+
+[[read]]: مضارع «ريد»، وماضي «رِد» (زي [[red]]). وفي الـ standup: [[I read the docs yesterday]] = «رِد».`,
+            when: "كلام عن تصميم النظام (schema, architecture, hierarchy)، والـ code quality (technical debt, subtle bug)، والـ demos (live).",
+            mistakes: R`«شيما» أو «سكِما». و «أرشيتكتشر» (بالشين). و «پسودو كود» بالـ p. و «دِبت». و «سَبتِل». و «ويدنسداي». و «فاكيد» ([[facade]]). و «لِڤ ديمو» بدل «لايڤ ديمو». و «ريد» في الماضي.`
+          },
+          teach: R`## الفكرة: الكتابة بتكذب، فاحفظ ٤ أنماط
+
+المثال ٦ سطور أنماط وجملتين. كل سطر بيبدأ باسم النمط وبعده [[:]].
+
+---
+
+## ١. [[ch = k]] (السطر الأول)
+
+الكلمات اللي أصلها يوناني (وأغلبها علمية أو تقنية) الـ [[ch]] فيها «ك»:
+
+| الكلمة | النطق | الغلط |
+|---|---|---|
+| [[schema]] | «سكيما» | «شيما» |
+| [[architecture]] | «آر-كِ-تِك-تشَر» | «أرشيتكتشر» |
+| [[archive]] | «آر-كايڤ» | «أرشيڤ» |
+| [[mechanism]] / [[technical]] / [[character]] | «ميكَنِزم» / «تِكنِكَل» / «كارِكتَر» | |
+
+Wiktionary: [[schema]] [[/ˈskiːmə/]] بالبريطاني و [[/ˈskimə/]] بالأمريكي. يعني «سكيما» من غير شك.
+
+## ٢. حروف ساكتة (السطر التاني)
+
+| الكلمة | الحرف الساكت | النطق |
+|---|---|---|
+| [[pseudo]] (pseudo-code) | p | «سودو» |
+| [[debt]] (technical debt) | b | «دِت» |
+| [[subtle]] (bug خفي) | b | «سَتِل» |
+| [[design]] / [[align]] | g | «دي-زاين» / «أ-لاين» |
+| [[often]] | t (غالبًا) | «أوفِن» |
+
+## ٣. مقاطع أقل من الكتابة (السطر التالت)
+
+[[Wednesday]] = «وِنز-دي» (مقطعين)، و [[comfortable]] = «كَمف-تَ-بل» (٣)، و [[interesting]] = «إن-ترِس-تِنگ» (٣)، و [[different]] = «دِف-رَنت» (٢ أو ٣).
+
+## ٤. فرنساوي (السطر الرابع)
+
+[[facade]] = «فَ-ساد» (Wiktionary: [[/fəˈsɑ(ː)d/]]): الـ c = س، ومفيش e في الآخر. و [[resume]] كفعل «ري-زيوم» (يكمّل: [[resume the upload]])، و [[résumé]] كاسم «رِ-زيو-ميْ» (CV).
+
+## ٥. نفس الكتابة، نطقين (السطر الخامس والسادس)
+
+| الكلمة | المعنى | النطق |
+|---|---|---|
+| [[live demo]] | صفة: مباشر | «لايڤ» |
+| [[I live in Cairo]] | فعل: أعيش | «لِڤ» |
+| [[I read docs daily]] | مضارع | «ريد» |
+| [[I read it yesterday]] | ماضي | «رِد» زي [[red]] |
+
+---
+
+## ٦. الجمل
+
+~~~text Sentence 1
+The database schema is part of the architecture docs, not the archive.
+~~~
+
+٣ كلمات [[ch = k]] في جملة واحدة: [[schema]] و [[architecture]] و [[archive]].
+
+~~~text Sentence 2
+This subtle bug is technical debt from the pseudo-code we never cleaned up.
+~~~
+
+٣ حروف ساكتة: b في [[subtle]] و [[debt]]، و p في [[pseudo]]. [[technical debt]] = الديون التقنية (حلول سريعة هتدفع تمنها بعدين). [[cleaned up]] = نضّفنا.
+
+---
+
+## الخلاصة
+
+- [[sch]] و [[arch]] و [[chr]] في الكلمات التقنية غالبًا «ك»، بس [[cache]] و [[chart]] لأ: اسمع.
+- pseudo بلا p، و debt و subtle بلا b، و design بلا g.
+- [[live demo]] «لايڤ»، و [[read]] الماضي «رِد».`,
+          lines: [
+            R`ch بتتنطق k في الكلمات اليوناني: schema، و architecture، و archive، و mechanism، و technical، و character.`,
+            R`حروف ساكتة: p في pseudo، و b في debt و subtle، و g في design و align، و t في often غالبًا.`,
+            R`كلمات مقاطعها أقل من كتابتها: Wednesday وِنزدي، و comfortable ٣ مقاطع، و interesting ٣، و different ٢ أو ٣.`,
+            R`فرنساوي: facade فَساد. و resume فعل «يكمّل» غير résumé اسم «CV».`,
+            R`live صفة (مباشر) = لايڤ. live فعل (يعيش) = لِڤ.`,
+            R`read مضارع = ريد. read ماضي = رِد (زي red).`,
+            R`«الـ schema بتاع الداتابيز جزء من docs الـ architecture، مش الأرشيف».`,
+            R`«الـ bug الخفي ده technical debt من الـ pseudo-code اللي عمرنا ما نضّفناه». clean up = ننضّف.`
+          ],
+          sol: R`أمثلة لكلمات ممكن تكون لقيتها: [[Kotlin]] (عادية)، [[Chromium]] «كروميَم» (ch = k)، [[psql]] «پي إس كيو إل» (الـ p هنا بتتنطق لأنها حرف لوحده!)، [[campaign]] «كامپيْن» (g ساكتة)، [[receipt]] «ريسيت» (p ساكتة)، [[island]] «آيلَند»، [[yacht]] مش تقنية بس مشهورة.
+
+والجملة بـ [[live]]: [[I'll do a live demo on Thursday.]] (لايڤ) و [[I live in Alexandria.]] (لِڤ). ولو في جملة واحدة: [[The app went live while I was living in Cairo.]]
+
+التسجيل الصح للجملتين: [[schema]] بـ «سك»، و [[architecture]] بـ «آرك»، و [[subtle]] من غير b، و [[debt]] «دِت»، و [[pseudo]] من غير p.`
+        },
+        {
+          cmd: "API و JSON",
+          title: "الاختصارات: API بالحروف، و JSON كلمة، و SaaS كلمة، و SQL الاتنين",
+          desc: R`الاختصارات نوعين: اختصار بيتقري حروف (initialism) زي [[API]] = «إيْ پي آي»، واختصار بيتقري كلمة (acronym) زي [[JSON]] = «جيْسِن». ومفيش قاعدة من الكتابة تقولك أنهي نوع، فلازم تسمع. والغلطة الكلاسيكية إنك تقرا حروف لحاجة بتتقال كلمة ([[S-A-A-S]] بدل «ساس») أو العكس.
+
+وأسماء الحروف نفسها في الإنجليزي بتختلف عن اللي اتعلمناه ساعات: [[A]] «إيْ»، و [[E]] «إي»، و [[I]] «آي»، و [[G]] «جي» (ج ناعمة)، و [[J]] «جيْ»، و [[H]] «إيْتش»، و [[R]] «آر»، و [[Q]] «كيو»، و [[W]] «دابِليو»، و [[Y]] «واي»، و [[Z]] «زي» بالأمريكاني و «زِد» بالبريطاني. وأشهر لخبطة عند المصريين: [[G]] و [[J]]، و [[E]] و [[I]] (زي في [[CI]] «سي آي» و [[CLI]] «سي إل آي»).`,
+          example: R`Letters:  API (إيْ پي آي)  URL (يو آر إل)  CLI (سي إل آي)  CI/CD (سي آي سي دي)  npm (إن پي إم)
+Letters:  HTML  CSS  HTTP  SSH  DNS  VPS  UI  UX  JWT (or "jot")  UUID (يو يو آي دي)  AWS  GCP
+Words:  JSON (جيْسِن)  YAML (يامِل)  SaaS (ساس)  GUI (گوي)  ASCII (آسكي)  CRUD (كرَد)  OAuth (أو-أوث)
+Words:  RAM (رام)  NAT (نات)  CORS (كورز)  REST (رِست)  WASM (وازِم)  SPA (إس پي إيْ, or سپا)
+Both OK:  SQL (S-Q-L / sequel)   GIF (گِف / جِف)   char (تشار / كار)   IDE (letters)
+Letter names:  G = جي   J = جيْ   E = إي   I = آي   H = إيْتش   W = دابِليو   Z = زي (US) / زِد (UK)
+Sentence:  The CLI calls the REST API, gets JSON back, and the CI checks the YAML.`,
+          try: R`اكتب ١٠ اختصارات بتستخدمها في شغلك أو مذاكرتك، وجنب كل واحد: حروف ولا كلمة، ونطقه. اتأكد من ٣ منهم على الأقل في YouGlish. وبعدين قول بصوت عالي أسماء الحروف دي بالترتيب: [[G J E I H W Y Q]].`,
+          flag: "script",
+          deep: {
+            why: R`الكلام التقني نصه اختصارات. ولو قلت «سي إي آي» بدل «سي آي» أو «جي دبليو تي» بلخبطة الـ G والـ J، ده بيوقف الكلام. والإملا بالحروف كمان مهم: هتحتاج تتهجى اسم متغير أو URL أو كود في مكالمة.`,
+            how: R`أسهل طريقة تعرف: لو الاختصار ممكن يتقري بسهولة كمقطع (فيه حرف متحرك في مكان مناسب) غالبًا كلمة ([[JSON]] و [[CRUD]] و [[CORS]] و [[REST]]). لو كله حروف ساكنة (HTTP و SSH و DNS) أو صعب يتقري، حروف. بس فيه استثناءات: [[SQL]] و [[URL]] (ناس قليلة بتقول «إيرل»)، و [[API]] دايمًا حروف.
+
+التهجّي في مكالمة: الحروف اللي بتتلخبط في النت ([[B]] و [[D]] و [[P]] و [[T]] و [[M]] و [[N]]) قول معاها كلمة: [[B as in Bravo]]، [[M as in Mike]]، [[N as in November]]. أو [[B for Bob]]. وفي الـ URLs: [[dot]] للنقطة، و [[slash]] للـ /، و [[dash]] أو [[hyphen]] للـ -، و [[underscore]] للـ _، و [[all lowercase]] = كله صغير.
+
+و [[npm]] رسميًا بالحروف الصغيرة وبتتقال حروف. و [[JWT]] المعيار نفسه (RFC 7519) بيقول النطق المقترح «jot»، بس «جيْ دابِليو تي» أشهر في الكلام.`,
+            when: "أي كلام تقني، وأي مكالمة فيها تهجّي اسم أو URL أو كود أو إيميل.",
+            mistakes: R`«سي إي آي» بدل [[CI]]. و «جي» للـ [[J]] (الصح «جيْ»). و «إس إيه إيه إس» بدل «ساس». و «جيسون» بفتحة. و «ديبي» بدل [[DB]] «دي بي». و «كروود» ([[CRUD]] = «كرَد»). و «يو آر إل» صح، بس «أورل» غلط. وتهجّي [[B]] و [[P]] من غير كلمة مساعدة في مكالمة وحشة.`
+          },
+          teach: R`## الفكرة: الاختصار يا حروف يا كلمة، والكتابة مش بتقولك
+
+المثال ٦ سطور تصنيف وجملة. السطور متقسمة: حروف، وكلمات، والاتنين، وأسماء الحروف نفسها.
+
+---
+
+## ١. بتتقري حروف (initialism): السطرين الأولانيين
+
+[[API]] «إيْ پي آي»، و [[URL]] «يو آر إل»، و [[CLI]] «سي إل آي»، و [[CI/CD]] «سي آي سي دي»، و [[npm]] «إن پي إم»، و [[HTML]] و [[CSS]] و [[HTTP]] و [[SSH]] و [[DNS]] و [[VPS]] و [[UI]] و [[UX]] و [[UUID]] «يو يو آي دي» و [[AWS]] و [[GCP]].
+
+الملاحظة: أغلبهم مفيهوش حرف متحرك يخليهم يتقروا كلمة (HTTP و SSH و DNS)، فطبيعي حروف. و [[JWT]] حروف في الكلام، والمعيار نفسه (RFC 7519) بيقترح «jot».
+
+## ٢. بتتقري كلمة (acronym): السطر التالت والرابع
+
+| الاختصار | النطق | الغلط |
+|---|---|---|
+| [[JSON]] | «جيْسِن» | «جي إس أو إن» |
+| [[YAML]] | «يامِل» | |
+| [[SaaS]] | «ساس» | «إس إيه إيه إس» |
+| [[GUI]] | «گوي» | |
+| [[ASCII]] | «آس-كي» | |
+| [[CRUD]] | «كرَد» | «كروود» |
+| [[OAuth]] | «أو-أوث» (ث) | «أوس» |
+| [[CORS]] | «كورز» | |
+| [[REST]] | «رِست» | |
+| [[WASM]] | «وازِم» | |
+
+## ٣. الاتنين صح (السطر الخامس)
+
+[[SQL]] و [[GIF]] و [[char]] ليهم نطقين مشهورين. و [[IDE]] حروف بس.
+
+## ٤. أسماء الحروف (السطر السادس)
+
+| الحرف | اسمه | بيتلخبط مع |
+|---|---|---|
+| G | «جي» (ج ناعمة) | J |
+| J | «جيْ» | G |
+| E | «إي» | I |
+| I | «آي» | E |
+| H | «إيْتش» | |
+| W | «دابِليو» | |
+| Z | «زي» أمريكي، «زِد» بريطاني | |
+
+ودي بتفرق في الاختصارات نفسها: [[CI]] «سي **آي**» مش «سي **إي**»، و [[JWT]] «**جيْ** دابِليو تي» مش «جي».
+
+---
+
+## ٥. الجملة
+
+~~~text Sentence
+The CLI calls the REST API, gets JSON back, and the CI checks the YAML.
+~~~
+
+| الحتة | حروف ولا كلمة | المعنى |
+|---|---|---|
+| [[the CLI]] | حروف | أداة سطر الأوامر |
+| [[calls the REST API]] | كلمة + حروف | بتنادي الـ API |
+| [[gets JSON back]] | كلمة | بترجعلها JSON ([[back]] = راجع) |
+| [[the CI checks the YAML]] | حروف + كلمة | الـ CI بيفحص ملف YAML |
+
+ولو محتاج تتهجى في مكالمة: [[B as in Bravo]] و [[M as in Mike]]، و [[dot]] للنقطة، و [[slash]] للـ /.
+
+---
+
+## الخلاصة
+
+- مفيش قاعدة من الكتابة: [[API]] حروف دايمًا، و [[JSON]] كلمة دايمًا. اسمع.
+- G «جي» و J «جيْ»، و E «إي» و I «آي».
+- لو اتنين نطقين مشهورين (SQL)، الاتنين صح.`,
+          lines: [
+            R`اختصارات بتتقري حروف: API، و URL، و CLI، و CI/CD، و npm (بالحروف الصغيرة).`,
+            R`حروف كمان: HTML و CSS و HTTP و SSH و DNS و VPS و UI و UX و JWT و UUID و AWS و GCP.`,
+            R`اختصارات بتتقري كلمة: JSON جيْسِن، و YAML يامِل، و SaaS ساس، و GUI گوي، و ASCII آسكي، و CRUD كرَد، و OAuth أو-أوث.`,
+            R`كلمات كمان: RAM و NAT و CORS كورز و REST رِست و WASM وازِم. SPA الاتنين.`,
+            R`فيها نطقين مقبولين: SQL و GIF و char. و IDE حروف.`,
+            R`أسماء الحروف اللي بتتلخبط: G جي، و J جيْ، و E إي، و I آي، و H إيْتش، و W دابِليو، و Z زي أو زِد.`,
+            R`«الـ CLI بينادي الـ REST API، وبيرجعله JSON، والـ CI بيفحص الـ YAML».`
+          ],
+          sol: R`مثال لقايمة صح: [[HTTP]] حروف، [[HTTPS]] حروف، [[SSL]] حروف، [[TLS]] حروف، [[PR]] حروف «پي آر»، [[CORS]] كلمة «كورز»، [[ORM]] حروف «أو آر إم»، [[SEO]] حروف «إس إي أو»، [[NoSQL]] «نو سيكوِل» أو «نو إس كيو إل»، [[PWA]] حروف.
+
+أسماء الحروف بالترتيب: [[G]] «جي»، [[J]] «جيْ»، [[E]] «إي»، [[I]] «آي»، [[H]] «إيْتش»، [[W]] «دابِليو»، [[Y]] «واي»، [[Q]] «كيو».
+
+لو لقيت نفسك بتقول [[H]] «هيتش»: ده نطق موجود في بعض لهجات إنجلترا وأيرلندا، بس «إيْتش» أشهر وأأمن. ولو قلت [[Z]] «زِد»، ده بريطاني صح؛ مع فريق أمريكي هيفهموك عادي.`
         }
       ]
     },
     {
-      t: "تشرح كودك وتعمل demo",
-      l: 2,
-      n: "تشرح PR بصوتك (context ← what ← why ← trade-offs)، وتمشّي حد في الكود، وتعمل demo لفيتشر، وتحوّل ملاحظاتك المكتوبة لكلام طبيعي",
+      t: "أرقام وتواريخ وإصدارات ورموز بصوت عالي",
+      l: 1,
+      n: "تقرا v2.10.3 و localhost:5173 و 404، و 3:30 PM والتواريخ وفرق التوقيت، و 1.5k و 99.9% و fifteen مش fifty، ورموز الكود زي { } و => و ||",
       items: [
         {
-          cmd: "تشرح PR بصوتك",
-          title: "تشرح PR أو فيتشر بصوتك في دقيقتين: context ← what ← why ← trade-offs",
-          desc: R`الموقف: في اجتماع أو مكالمة review، حد قالك [[Can you walk us through your PR?]]. والغلطة المشهورة إنك تفتح الـ diff وتقرا الكود سطر سطر. الناس مش محتاجة الكود، محتاجة الصورة.
+          cmd: "v2.10.3",
+          title: "تقرا v2.10.3 و Node 22 و port 5173 و 127.0.0.1 و 404 إزاي؟",
+          desc: R`الأرقام التقنية ليها طريقة قراية خاصة، ومختلفة عن الأرقام العادية. أهم قاعدة: رقم الإصدار (version) بيتقري كل جزء لوحده كرقم كامل، والنقطة [[point]] أو [[dot]]: [[v2.10.3]] = [[version two point ten point three]] (مش «two point one zero»، ومش «two point thirteen»). لأن [[10]] هنا رقم عشرة، مش كسر عشري. والـ [[v]] بتتقري [[version]] أو [[v]] «ڤي».
 
-الترتيب اللي بيشتغل دايمًا (ونفس ترتيب وصف PR المكتوب في درس [[وصف PR]] في «تاب إنجليزي للمبرمج: قراية وكتابة»):
-١) Context: المشكلة إيه، وليه بنعمل ده. [[So the problem was...]]
-٢) What: عملت إيه على مستوى عالي. [[What I did is...]]
-٣) Why: ليه الطريقة دي. [[I went with X because...]]
-٤) Trade-offs: التمن أو الحاجة اللي مش مثالية. [[The downside is...]]
-٥) What to look at: عايز الريفيو يركز فين. [[I'd love feedback on...]]
+والـ status codes بتتقري ٣ أرقام: [[404]] = [[four oh four]]، و [[500]] = [[five hundred]]، و [[201]] = [[two oh one]]، و [[429]] = [[four twenty-nine]]. والـ ports: [[3000]] = [[three thousand]]، و [[8080]] = [[eighty eighty]]، و [[5173]] = [[fifty-one seventy-three]]، و [[5432]] = [[fifty-four thirty-two]]. والـ IPs بتتقري أرقام ونقط: [[127.0.0.1]] = [[one two seven dot zero dot zero dot one]] (أو [[one twenty-seven...]]) وكتير بيقولوا [[localhost]] وخلاص.
 
-وكل جزء جملة أو اتنين. دقيقتين بالكتير، وبعدين [[Any questions?]].`,
-          example: R`Context:  So the problem was that the orders page took about five seconds to load for big customers.
-What:  What I did is add pagination on the API, twenty orders per page, and an index on customer_id.
-Why:  I went with cursor pagination instead of offset, because offset gets slow on large tables.
-Trade-off:  The downside is that you can't jump to page ten directly; you can only go next and previous.
-Trade-off:  I think that's fine for this page, but let me know if the product team disagrees.
-Result:  On staging, the page now loads in under half a second.
-Review:  I'd love feedback on the cursor encoding in orders.service.ts. That's the tricky part.
-Close:  That's pretty much it. Any questions?`,
-          try: R`خد آخر PR أو commit كبير عملته (أو فيتشر في مشروعك)، واكتب ٥ سطور بالترتيب ده (سطر لكل جزء)، وبعدين سجّل نفسك بتشرحه من غير ما تبص على الورقة، في أقل من دقيقتين. اسمع وعدّ: قلت [[because]] كام مرة؟ (لو صفر، مفيش why.)`,
+والـ [[0]] في الكلام التقني بتتقال [[oh]] «أو» أو [[zero]]: الاتنين تمام، و [[oh]] أسرع في وسط الأرقام.`,
+          example: R`v2.10.3  →  version two point ten point three
+Node 22 / React 19 / Python 3.13  →  Node twenty-two / React nineteen / Python three point thirteen
+ES2015 / HTTP/2 / IPv6  →  E S twenty fifteen / H T T P two / I P v six
+404 / 500 / 201 / 429  →  four oh four / five hundred / two oh one / four twenty-nine
+localhost:3000 / :8080 / :5173 / :5432  →  localhost three thousand / eighty eighty / fifty-one seventy-three / fifty-four thirty-two
+127.0.0.1  →  one two seven dot zero dot zero dot one (or just "localhost")
+PR 231 / issue 1045  →  PR two thirty-one / issue ten forty-five
+commit a3f9c2  →  a three f nine c two
+Sentence:  After we upgraded to v2.10.3, the API started returning 429 on port 8080.`,
+          try: R`اقرا بصوت عالي وسجّل: [[Next.js 15.5.2]]، و [[Node 22.11.0]]، و [[TypeScript 5.9]]، و [[503]]، و [[302]]، و [[localhost:4200]]، و [[192.168.1.10]]، و [[PR 1204]]. وبعدين قول جملة عن مشروعك فيها version و port و status code.`,
           flag: "script",
           deep: {
-            why: R`الشرح ده بيتطلب منك في الـ code review، و sprint demo، و الانترفيو («walk me through a project»). والترتيب ده بيوري إنك فاهم ليه عملت اللي عملته، مش بس نفذت. والـ trade-offs بالذات هي علامة الـ mid/senior: الـ junior بيقول «عملت X»، والأحسن بيقول «عملت X بدل Y، والتمن كان Z».`,
-            how: R`عبارات لكل جزء:
-Context: [[So the problem was...]]، [[The goal here is...]]، [[Users were complaining that...]].
-What: [[What I did is...]]، [[The main change is...]]، [[At a high level, ...]].
-Why: [[I went with X because...]]، [[I chose X over Y since...]]، [[The reason is...]].
-Trade-offs: [[The downside is...]]، [[The trade-off is...]]، [[One thing I'm not 100% happy with is...]]، [[A limitation is...]].
-Review: [[I'd love feedback on...]]، [[The tricky part is...]]، [[Could you take a closer look at...]].
-Close: [[That's pretty much it]]، [[Happy to go into more detail]]، [[Any questions?]].
+            why: R`في الـ debugging مع زميل وفي الـ incident calls، الأرقام دي هي نص الكلام: «we're on version...»، «it returns 502»، «the app runs on port...». ولو قريتها غلط ([[two point one zero]]) ممكن حد ينزّل إصدار غلط أو يدوّر في مكان غلط.`,
+            how: R`الإصدارات: كل جزء رقم كامل. [[1.0]] = [[one point oh]]، و [[3.12]] = [[three point twelve]]، و [[0.9.1]] = [[zero point nine point one]] (أو [[oh point nine point one]]). وفي الكلام العادي بتتقال مختصرة: [[We're on Node 22]]، و [[the 3.x branch]] = [[three point X]]، و [[a major version]] = إصدار كبير (أول رقم)، و [[a patch]] = آخر رقم.
 
-وكلمات الربط اللي بتخلي الكلام يمشي: [[so]]، و [[and then]]، و [[because]]، و [[but]]، و [[which means]]. في الكلام دي أهم من الـ grammar المظبوط.
+الأرقام الطويلة (ports و PR numbers): بتتقري أزواج: [[1045]] = [[ten forty-five]]، و [[2026]] = [[twenty twenty-six]]. لو فيه [[0]] في النص: [[3005]] = [[thirty oh five]] أو [[three thousand five]].
 
-ولو حد سأل سؤال مش عارف إجابته: درس «مش عارف في اجتماع».`,
-            when: "code review بالصوت، و sprint demo، و walkthrough لزميل جديد، و «tell me about a project» في الانترفيو.",
-            mistakes: R`تقرا الـ diff سطر سطر. تبدأ بالتفاصيل ([[So in line 12 I changed...]]) قبل الصورة الكبيرة. مفيش [[why]] خالص. تخبّي الـ trade-off (هيتكشف في الـ review، والأحسن تقوله انت). وتطوّل ٧ دقايق: خلّي التفاصيل للأسئلة.`
+الـ hashes والأكواد: حرف حرف ورقم رقم، وبتقول أول ٤–٧ بس ([[commit a3f9c2]]). والإيميلات: [[at]] للـ @، و [[dot]] للنقطة.
+
+و [[HTTP/2]] = [[H T T P two]]، و [[HTTP 1.1]] = [[H T T P one point one]]، و [[IPv4]] = [[I P v four]].`,
+            when: "أي كلام عن إصدارات (upgrade, bump)، أو incident، أو تشغيل مشروع لزميل («open localhost...»)، أو تقرا error بصوت عالي.",
+            mistakes: R`[[two point one zero]] لـ [[2.10]]. و [[four hundred four]] لـ [[404]] (مفهومة بس غريبة). و [[localhost three zero zero zero]] (مفهومة بس بطيئة). و [[two thousand and fifteen]] لـ [[ES2015]] (الأشهر [[twenty fifteen]]). وتقرا hash بالكامل ٤٠ حرف: ٦–٧ كفاية.`
           },
-          lines: [
-            R`السياق: «المشكلة كانت إن صفحة الأوردرات بتاخد ٥ ثواني للعملاء الكبار».`,
-            R`عملت إيه: «ضفت pagination في الـ API، ٢٠ أوردر في الصفحة، و index على customer_id».`,
-            R`ليه: «اخترت cursor pagination بدل offset، لأن offset بيبطأ مع الجداول الكبيرة». went with = اخترت.`,
-            R`التمن: «العيب إنك متقدرش تروح لصفحة ١٠ على طول؛ بس next و previous».`,
-            R`«أظن ده تمام للصفحة دي، بس قولولي لو فريق المنتج مش موافق».`,
-            R`النتيجة: «على الـ staging، الصفحة بقت بتحمّل في أقل من نص ثانية».`,
-            R`«عايز رأيكم في الـ cursor encoding في الملف ده. دي الحتة الصعبة». tricky = صعبة/خادعة.`,
-            R`الختام: «هو ده تقريبًا. فيه أسئلة؟»`
-          ],
-          sol: R`مثال لـ ٥ سطور لـ PR بسيط:
-[[So the problem was that users could submit the signup form twice and create duplicate accounts.]]
-[[What I did is disable the button while the request is pending, and add a unique constraint on email in the database.]]
-[[I added both because the button alone doesn't protect against a slow network or a script.]]
-[[The downside is that the user now sees a database error if it still happens, so I mapped it to a friendly message.]]
-[[I'd love feedback on the error mapping. That's pretty much it. Any questions?]]
+          teach: R`## الفكرة: كل نوع رقم ليه طريقة قراية
 
-في التسجيل: [[because]] مرة على الأقل، و [[downside]] أو [[trade-off]] مرة. والمدة ٤٠–٩٠ ثانية. التسجيل الضعيف: [[I changed the form and the database. That's it.]] من غير ولا سبب.`
+المثال ٨ سطور «الرقم ← بيتقري إزاي» وجملة. السهم [[→]] في المثال معناه «بيتقري كده». هنقسّمهم حسب النوع.
+
+---
+
+## ١. الإصدارات (السطر الأول والتاني)
+
+القاعدة: كل جزء بين النقط **رقم كامل**، والنقطة [[point]].
+
+| المكتوب | الصح | الغلط |
+|---|---|---|
+| [[v2.10.3]] | version two point **ten** point three | two point one zero |
+| [[Python 3.13]] | three point **thirteen** | three point one three |
+| [[Node 22]] | Node twenty-two | |
+
+ليه؟ لأن [[2.10]] في الإصدارات مش كسر عشري: ده الإصدار العاشر بعد ٢، وبيجي **بعد** [[2.9]]. لو قلت «two point one» حد ممكن يفهم [[2.1]].
+
+## ٢. المعايير (السطر التالت)
+
+[[ES2015]] = [[E S twenty fifteen]] (السنة أزواج)، و [[HTTP/2]] = [[H T T P two]]، و [[IPv6]] = [[I P v six]].
+
+## ٣. الـ status codes (السطر الرابع)
+
+| الكود | بيتقري | ليه |
+|---|---|---|
+| [[404]] | four oh four | الصفر في النص [[oh]] |
+| [[500]] | five hundred | رقم مدوّر |
+| [[201]] | two oh one | |
+| [[429]] | four twenty-nine | آخر رقمين مع بعض |
+
+## ٤. الـ ports والـ IP (السطر الخامس والسادس)
+
+الأرقام ذات ٤ خانات بتتقري **أزواج**: [[8080]] = eighty eighty، و [[5173]] = fifty-one seventy-three، و [[5432]] = fifty-four thirty-two. إلا لو مدوّر: [[3000]] = three thousand. والـ [[:]] اللي قبل الـ port مش بتتقري؛ بتقول [[localhost three thousand]] أو [[port three thousand]].
+
+[[127.0.0.1]] = [[one two seven dot zero dot zero dot one]]، أو ببساطة [[localhost]].
+
+## ٥. أرقام الـ PRs والـ hashes (السطر السابع والتامن)
+
+[[PR 231]] = PR two thirty-one (أزواج من اليمين: 2 / 31). و [[issue 1045]] = ten forty-five. و [[commit a3f9c2]] = حرف حرف: «إيْ ثري إف ناين سي تو»، وكفاية أول ٦ أو ٧.
+
+---
+
+## ٦. الجملة
+
+~~~text Sentence
+After we upgraded to v2.10.3, the API started returning 429 on port 8080.
+~~~
+
+القراية: [[After we upgraded to version two point ten point three, the API started returning four twenty-nine on port eighty eighty.]]
+
+[[upgraded]] و [[started]] آخرهم «ِد» بمقطع زيادة (آخرهم صوت d و t). و [[429]] = Too Many Requests.
+
+---
+
+## الخلاصة
+
+| النوع | الطريقة | مثال |
+|---|---|---|
+| version | كل جزء رقم كامل + point | two point ten |
+| status code | رقم + oh للصفر | four oh four |
+| port / PR | أزواج | eighty eighty |
+| IP | أرقام + dot | one two seven dot... |
+| hash | حرف حرف، أول ٦ | a three f nine... |`,
+          lines: [
+            R`الإصدار: كل جزء رقم كامل. ten مش one zero.`,
+            R`أسماء أدوات + إصدار: Node twenty-two، React nineteen، Python three point thirteen.`,
+            R`معايير: ES twenty fifteen، و HTTP two، و IP v six.`,
+            R`status codes: 404 «فور أو فور»، و 500 «فايڤ هاندرِد»، و 201 «تو أو وان»، و 429 «فور توِنتي ناين».`,
+            R`الـ ports: ٣٠٠٠ «ثري ثاوزِند»، و ٨٠٨٠ «إيتي إيتي»، و ٥١٧٣ «فِفتي وان سِڤِنتي ثري»، و ٥٤٣٢ (Postgres).`,
+            R`الـ IP: أرقام ونقط، أو قول localhost لو هو ده.`,
+            R`أرقام الـ PRs والـ issues: أزواج: two thirty-one، و ten forty-five.`,
+            R`الـ commit hash: حرف حرف، وأول ٦ كفاية.`,
+            R`«بعد ما عملنا upgrade لـ v2.10.3، الـ API بدأ يرجّع 429 على port 8080». 429 = Too Many Requests.`
+          ],
+          sol: R`القراية الصح:
+[[Next.js 15.5.2]] = [[Next J S fifteen point five point two]]
+[[Node 22.11.0]] = [[Node twenty-two point eleven point oh]] (أو [[point zero]])
+[[TypeScript 5.9]] = [[TypeScript five point nine]]
+[[503]] = [[five oh three]]، و [[302]] = [[three oh two]]
+[[localhost:4200]] = [[localhost forty-two hundred]] (ده الـ port بتاع Angular)
+[[192.168.1.10]] = [[one ninety-two dot one sixty-eight dot one dot ten]]
+[[PR 1204]] = [[PR twelve oh four]]
+
+جملة من عندك، مثلًا: [[My app runs on Next.js fifteen on port three thousand, and the health check returns two hundred.]] لو قلت [[eleven]] في Node كـ [[one one]]، رجّع للقاعدة: كل جزء رقم كامل.`
         },
         {
-          cmd: "تمشي حد في الكود",
-          title: "تمشّي زميل في الكود: «This function takes... and returns...»",
-          desc: R`موقف تاني غير شرح الـ PR: زميل جديد، أو حد هيكمّل شغلك، وعايزك [[walk him through the codebase]]. هنا بتشرح الكود نفسه وانت بتشارك الشاشة. والسر: من برا لجوه. الأول الفولدرات والصورة الكبيرة، وبعدين flow واحد من أوله لآخره (مثلًا request واحد من الـ route للداتابيز)، وبعدين التفاصيل.
+          cmd: "3:30 PM",
+          title: "3:30 PM و March 5th و «بتوقيتك ولا بتوقيتي»: المواعيد بالإنجليزي",
+          desc: R`المواعيد بتتقال بطريقتين: الأرقام ([[three thirty]]) وده الأسهل والأشهر في الشغل، أو الطريقة التقليدية ([[half past three]]). استخدم الأرقام، وافهم التقليدية لما تسمعها.
 
-والجمل اللي بتوصف كود بسيطة جدًا وبتتكرر: [[This function takes X and returns Y]]. و [[This is where we...]]. و [[This gets called when...]]. و [[It reads from... and writes to...]]. و [[If X, it..., otherwise it...]]. و [[This is just a helper for...]]. ومع الجمل دي تقدر تشرح أي كود بإنجليزي بسيط.`,
-          example: R`Let's start with the big picture. The app has three main folders: routes, services and db.
-Let's follow one request from start to finish: creating an order.
-It starts here, in the orders route. This just validates the body and calls the service.
-This function takes the cart and the user ID, and returns the new order.
-First it checks the stock. If something is out of stock, it throws a 409.
-Otherwise, it opens a transaction and writes the order and the items.
-This gets called by the payment webhook later, when the payment succeeds.
-This file is just a helper for formatting prices; you can ignore it for now.
-The part I'd be careful with is this retry logic. It's a bit fragile.
-Does that make sense so far? Any questions before we go deeper?`,
-          try: R`اختار flow واحد من مشروعك (login، أو إضافة للـ cart، أو رفع صورة)، وسجّل فيديو ٣ دقايق بتمشّي فيه «زميل جديد» في الكود من أول الـ request لحد الداتابيز. لازم تستخدم [[This function takes... and returns...]] مرتين على الأقل، و [[If... otherwise...]] مرة، و [[Does that make sense?]] مرة.`,
+[[3:30 PM]] = [[three thirty P M]]. و [[10:05]] = [[ten oh five]]. و [[9:00]] = [[nine]] أو [[nine o'clock]] أو [[nine A M]]. و [[12:00 PM]] = [[noon]] و [[12:00 AM]] = [[midnight]] (قولهم بالكلمة لأن AM و PM مع ١٢ بيلخبطوا الناس). و [[quarter past three]] = ٣:١٥، و [[quarter to four]] = ٣:٤٥، و [[half past three]] = ٣:٣٠.
+
+حروف الجر: [[at 3 PM]] (ساعة)، و [[on Monday]] و [[on March 5th]] (يوم)، و [[in March]] و [[in 2026]] (شهر وسنة)، و [[by Thursday]] = قبل أو يوم الخميس (deadline)، و [[until Thursday]] = لحد الخميس (مدة). والتواريخ: [[March 5th]] بتتقري [[March fifth]]، أو [[the fifth of March]]. وفي الكتابة بالأرقام [[3/5]] في أمريكا = ٥ مارس، وفي أغلب العالم = ٣ مايو: عشان كده قول اسم الشهر.
+
+وفرق التوقيت أهم حاجة في الشغل مع برا: قول دايمًا [[your time]] و [[my time]]، أو الـ time zone بالاسم.`,
+          example: R`3:30 PM  →  three thirty P M  (or: half past three)
+10:05  →  ten oh five          9:00  →  nine / nine o'clock / nine A M
+12:00 PM  →  noon              12:00 AM  →  midnight
+3:15  →  three fifteen / quarter past three     3:45  →  three forty-five / quarter to four
+at 3 PM  |  on Monday  |  on March 5th  |  in March  |  in 2026  |  by Thursday  |  until Thursday
+March 5th  →  March fifth / the fifth of March     2026  →  twenty twenty-six
+Does 4 PM your time work? That's 5 PM for me in Cairo.
+Can we push the call by 30 minutes?   I'll have it done by end of day, EOD.
+The deadline is Q3, so by the end of September.`,
+          try: R`اكتب وقول بصوت عالي ٣ رسايل: (١) تقترح ميعاد مكالمة مع زميل في برلين (قول الوقت بتوقيته وتوقيتك). (٢) تطلب تأجيل مكالمة نص ساعة. (٣) تقول إن التاسك هيخلص يوم الخميس ١٢ مارس قبل الساعة ٢ الضهر. قبلها ابحث في Google عن [[Cairo time to Berlin time]] عشان تعرف الفرق النهارده.`,
           flag: "script",
           deep: {
-            why: R`الـ knowledge transfer ده بيحصل كتير: onboarding، وقبل أجازة، ولما حد يمسك تاسك انت بدأتها. واللي بيشرح كويس بياخد ثقة الفريق بسرعة. وفي انترفيو الـ take-home، أحيانًا بيطلبوا منك تمشّيهم في الكود اللي سلمته.`,
-            how: R`الأفعال اللي بتوصف كود: [[takes]] (بياخد parameters)، و [[returns]]، و [[calls]] (بينادي)، و [[gets called by]] (بيتنادى من)، و [[reads from]] و [[writes to]]، و [[checks]]، و [[throws]]، و [[handles]]، و [[loops over]] (بيلف على)، و [[maps X to Y]]، و [[wraps]] (بيغلّف).
+            why: R`في الشغل remote، الغلط في الميعاد معناه إنك تفوّت اجتماع أو تسلّم متأخر. و [[3/5]] و [[12 PM]] و «الساعة ٤» من غير time zone من أشهر أسباب اللخبطة، حتى بين الـ native speakers.`,
+            how: R`اقترح ميعاد بالشكل ده: [[How about Tuesday at 4 PM your time, 5 PM Cairo time?]] أو [[Does 10 AM CET work for you?]]. وأدوات زي Google Calendar بتحوّل التوقيت لوحدها لما تبعت invite: ابعت invite مش بس رسالة.
 
-وأدوات الربط: [[First]] و [[Then]] و [[After that]] و [[Finally]]، و [[If ... otherwise ...]]، و [[When ... , it ...]]، و [[Once ... , ...]] (أول ما).
+وخلي بالك إن مصر رجّعت التوقيت الصيفي (DST) من ٢٠٢٣، وأوروبا وأمريكا بيغيّروا في تواريخ مختلفة عن بعض، فالفرق بيتغير كام أسبوع في السنة. عشان كده اتأكد من الفرق قبل الميعاد مش من الذاكرة (Google: [[Cairo time to London time]]).
 
-التحذيرات: [[The part I'd be careful with is...]]، و [[This is a bit fragile]] (هش)، و [[This is legacy code]] (قديم)، و [[There's a known issue here]]، و [[Don't touch this unless...]] (بهزار نص جد).
-
-كل ٣–٤ دقايق وقّف واسأل: [[Does that make sense so far?]] أو [[Any questions before we go deeper?]]. الزميل غالبًا مش هيقاطعك لو محتاج يسأل.`,
-            when: "onboarding لحد جديد، و handover قبل أجازة، وشرح take-home في انترفيو، و pair programming.",
-            mistakes: R`تبدأ بأول ملف في الفولدر بالترتيب الأبجدي بدل flow حقيقي. وتقرا كل سطر. و [[This function it takes]] (فاعلين: [[This function takes]]). و [[This function return]] من غير s. و [[Is it clear?]] (بتتسمع زي امتحان؛ [[Does that make sense?]] ألطف).`
+عبارات تغيير المواعيد: [[push the call by 30 minutes]] = أجّل نص ساعة، و [[move the meeting to Thursday]] = انقل، و [[reschedule]] = حدد ميعاد تاني، و [[bring it forward]] = قدّمه، و [[I'm running 5 minutes late]] = هتأخر ٥ دقايق. واختصارات: [[EOD]] = آخر اليوم، و [[EOW]] = آخر الأسبوع، و [[ASAP]] = في أسرع وقت (بتتقري حروف أو «إيْساپ»)، و [[Q3]] = الربع التالت من السنة (يوليو–سبتمبر).`,
+            when: "أي تحديد ميعاد أو deadline، وخصوصًا مع ناس في بلد تاني.",
+            mistakes: R`[[in Monday]] (الصح [[on]]). و [[at the morning]] (الصح [[in the morning]]). و [[until Thursday]] بمعنى deadline (الصح [[by Thursday]]). و «the meeting is at 4» من غير time zone لحد في بلد تاني. و [[12 PM]] وانت قصدك نص الليل. و [[3/5]] مكتوبة لحد أمريكي وانت قصدك ٣ مايو. و [[postpone the meeting to 3]] (المفهوم أكتر [[move the meeting to 3]]).`
           },
+          teach: R`## الفكرة: الساعة بالأرقام، والجر صح، والـ time zone دايمًا
+
+المثال ٩ سطور: ٤ سطور ساعات، وسطر حروف جر، وسطر تواريخ، و ٣ جمل شغل حقيقية.
+
+---
+
+## ١. الساعات (أول ٤ سطور)
+
+| المكتوب | بالأرقام (استخدم دي) | التقليدي (افهمه لما تسمعه) |
+|---|---|---|
+| [[3:30 PM]] | three thirty P M | half past three |
+| [[10:05]] | ten oh five | five past ten |
+| [[9:00]] | nine / nine A M | nine o'clock |
+| [[3:15]] | three fifteen | quarter past three |
+| [[3:45]] | three forty-five | quarter to four |
+| [[12:00 PM]] | noon | |
+| [[12:00 AM]] | midnight | |
+
+[[oh]] = الصفر في نص الرقم («أو»). و [[past]] = بعد، و [[to]] = إلا (quarter to four = أربعة إلا ربع). و [[AM]] و [[PM]] بيتقروا حروف «إيْ إم» و «پي إم». الـ ١٢ قولها بالكلمة ([[noon]] و [[midnight]]) لأن [[12 PM]] و [[12 AM]] بيلخبطوا ناس كتير.
+
+## ٢. حروف الجر (السطر الخامس)
+
+| الحرف | مع إيه | مثال |
+|---|---|---|
+| [[at]] | ساعة | [[at 3 PM]] |
+| [[on]] | يوم أو تاريخ | [[on Monday]]، [[on March 5th]] |
+| [[in]] | شهر أو سنة أو جزء من اليوم | [[in March]]، [[in 2026]]، [[in the morning]] |
+| [[by]] | deadline: في أو قبل | [[by Thursday]] |
+| [[until]] | لحد (مدة مستمرة) | [[I'm off until Thursday]] |
+
+الفرق بين [[by]] و [[until]] أهم سطر: [[I'll finish it by Thursday]] = هخلّصها قبل الخميس أو فيه. [[I'll work on it until Thursday]] = هفضل شغال عليها لحد الخميس.
+
+## ٣. التواريخ (السطر السادس)
+
+[[March 5th]] بتتقري [[March fifth]] (رقم ترتيبي: first و second و third و fifth و twelfth)، أو [[the fifth of March]]. والسنة أزواج: [[2026]] = twenty twenty-six. ولما تكتب، اكتب اسم الشهر: [[3/5]] في أمريكا ٥ مارس، وفي أغلب العالم ٣ مايو.
+
+---
+
+## ٤. الجمل
+
+~~~text السطر السابع
+Does 4 PM your time work? That's 5 PM for me in Cairo.
+~~~
+
+[[Does ... work?]] = ينفع؟ (مش «تشتغل»). [[your time]] = بتوقيتك. وقلت التوقيتين، فمفيش لخبطة.
+
+~~~text السطر التامن
+Can we push the call by 30 minutes?   I'll have it done by end of day, EOD.
+~~~
+
+[[push the call by 30 minutes]] = نأجّل المكالمة نص ساعة ([[by]] هنا = بمقدار). و [[I'll have it done]] = هتبقى خلصانة. و [[EOD]] = end of day، بتتقري حروف «إي أو دي».
+
+~~~text السطر التاسع
+The deadline is Q3, so by the end of September.
+~~~
+
+[[Q3]] = «كيو ثري»: الربع التالت من السنة (يوليو لسبتمبر). و [[by the end of September]] = قبل آخر سبتمبر.
+
+> فرق التوقيت بين القاهرة وأوروبا مش ثابت طول السنة، لأن مصر رجّعت التوقيت الصيفي من ٢٠٢٣ وتواريخ التغيير مختلفة عن أوروبا. ابحث في Google عن [[Cairo time to Berlin time]] قبل الميعاد بدل الذاكرة.
+
+---
+
+## الخلاصة
+
+- قول الساعة بالأرقام ([[three thirty]])، و [[noon]] و [[midnight]] للـ ١٢.
+- [[at]] ساعة، و [[on]] يوم، و [[in]] شهر وسنة، و [[by]] deadline.
+- مع أي حد في بلد تاني: [[your time]] و [[my time]]، وابعت calendar invite.`,
           lines: [
-            R`«نبدأ بالصورة الكبيرة. التطبيق فيه ٣ فولدرات أساسية».`,
-            R`«هنمشي ورا request واحد من أوله لآخره: إنشاء أوردر». follow = نمشي ورا.`,
-            R`«بيبدأ هنا في الـ route. ده بيعمل validation للـ body وبينادي الـ service بس».`,
-            R`«الدالة دي بتاخد الـ cart والـ user ID، وبترجّع الأوردر الجديد». الجملة الأساسية لوصف أي دالة.`,
-            R`«الأول بتشيك على المخزون. لو حاجة خلصانة، بترمي 409». throw = ترمي خطأ.`,
-            R`«غير كده، بتفتح transaction وبتكتب الأوردر والعناصر». otherwise = غير كده.`,
-            R`«الدالة دي بيناديها الـ webhook بتاع الدفع بعدين، لما الدفع ينجح».`,
-            R`«الملف ده مجرد helper لتنسيق الأسعار؛ ممكن تتجاهله دلوقتي».`,
-            R`«الحتة اللي هاخد بالي منها هي الـ retry logic دي. هشة شوية». fragile = هش.`,
-            R`«مفهوم لحد هنا؟ فيه أسئلة قبل ما ندخل أعمق؟»`
+            R`٣:٣٠ العصر: بالأرقام «ثري ثِرتي پي إم» أو التقليدي «هاف پاست ثري».`,
+            R`١٠:٠٥ «تِن أو فايڤ». و ٩:٠٠ ليها ٣ طرق.`,
+            R`١٢ الضهر = noon، و ١٢ بالليل = midnight: قولهم بالكلمة.`,
+            R`quarter past = وربع، و quarter to = إلا ربع.`,
+            R`حروف الجر: at للساعة، و on لليوم والتاريخ، و in للشهر والسنة، و by للـ deadline، و until لحد (مدة).`,
+            R`التاريخ: March fifth أو the fifth of March. والسنة أزواج.`,
+            R`«٤ العصر بتوقيتك ينفع؟ دي ٥ عندي في القاهرة».`,
+            R`«ممكن نأجّل المكالمة نص ساعة؟» و «هخلّصها قبل آخر اليوم».`,
+            R`«الـ deadline في الربع التالت، يعني قبل آخر سبتمبر».`
           ],
-          sol: R`مثال لشرح flow الـ login (جزء منه):
-[[Let's follow the login flow. It starts in the login form component. When the user submits, it calls the login function in auth.ts. This function takes the email and password and sends them to /api/login. On the server, the route checks the password with bcrypt. If it's correct, it creates a session and sets an HttpOnly cookie; otherwise it returns a 401. Does that make sense so far?]]
+          sol: R`نماذج صح (الفرق بين القاهرة وبرلين ساعة غالبًا، بس اتأكد النهارده):
+(١) [[Hi Lena, how about Wednesday at 2 PM your time, 3 PM Cairo time? I'll send an invite.]]
+(٢) [[Sorry, something came up. Can we push our call by 30 minutes, to 3:30?]]
+(٣) [[I'll have the task done by Thursday, March 12th, before 2 PM.]] وبتتقري: [[Thursday, March twelfth, before two P M]].
 
-راجع الفيديو: فيه flow واحد من أوله لآخره؟ و [[takes... returns...]] مرتين؟ و [[If... otherwise...]]؟ ووقفت تسأل؟ المدة ٢–٤ دقايق.
-
-الفيديو الضعيف: بيفتح كل ملف في الفولدر ويقول [[This is the utils file, this is the config file...]] من غير ما يقول إزاي بيشتغلوا مع بعض.`
+راجع: [[on Wednesday]] مش [[in]]، و [[by Thursday]] للـ deadline، و [[twelfth]] (مش [[twelveth]]: الـ v بتبقى f). والإجابة الضعيفة: [[The meeting is at 3]] من غير يوم ولا time zone.`
         },
         {
-          cmd: "demo",
-          title: "تعمل demo لفيتشر قدام الفريق أو العميل: قبل وأثناء ولو حاجة وقعت",
-          desc: R`الـ demo (في آخر الـ sprint أو لعميل) مش شرح كود: ده قصة من وجهة نظر اليوزر. الناس عايزة تشوف «اليوزر يقدر يعمل إيه دلوقتي مكانش يقدر يعمله قبل كده».
+          cmd: "1.5k و 99.9%",
+          title: "fifteen ولا fifty؟ و 1.5k و 99.9% و 250ms و 10x: الأرقام في الكلام",
+          desc: R`أخطر لخبطة أرقام في الكلام: [[fifteen]] (١٥) و [[fifty]] (٥٠)، و [[thirteen]] و [[thirty]]، و [[fourteen]] و [[forty]]... الفرق في الضغط: [[fif-TEEN]] الضغط على الآخر والـ [[n]] واضحة، و [[FIF-ty]] الضغط على الأول. في مكالمة بنت وحشة ممكن ١٥ ثانية تتسمع ٥٠. ولو الرقم مهم، أكّده: [[fifteen, one five]].
 
-الترتيب: ١) جملة عن المشكلة أو الهدف. ٢) ورّي من ناحية اليوزر خطوة خطوة، وانت بتقول بتعمل إيه. ٣) حالة غلط واحدة (validation أو error) عشان يبان إنك فكرت فيها. ٤) إيه اللي لسه مش خلصان. ٥) أسئلة.
+الكسور العشرية بـ [[point]]: [[1.5]] = [[one point five]]، و [[0.5]] = [[zero point five]] أو [[point five]] أو [[half]]. والإنجليزي بيستخدم النقطة للعشري والفاصلة للآلاف: [[1,250]] = ألف ومتين وخمسين، مش واحد وربع.
 
-ولو حاجة وقعت (وهتقع مرة، ده قانون الـ demos): متتوترش ومتفضلش تصلّح قدامهم. [[Looks like the demo gods aren't with me today]] (جملة مشهورة بهزار)، وبعدين [[Let me show you the screenshots instead]] أو [[I'll send a recording after the call]].`,
-          example: R`Today I'm going to show you the new password reset flow.
-Before this, users had to email support to reset their password. Now they can do it themselves.
-So I'm on the login page, and I click "Forgot password".
-I enter my email and hit send. You can see the confirmation message here.
-Now I'll open the email. The link expires after 30 minutes, for security.
-Let me show you what happens if the link is expired. We show a clear message and a button to try again.
-What's not done yet: the email template still needs the final design.
-Hmm, looks like staging is a bit slow today. Let me refresh.
-If it doesn't load, I'll send you a short recording after the call.
-That's the demo. Any questions or feedback?`,
-          try: R`اعمل demo مسجّل (Loom أو OBS) لفيتشر واحدة في مشروعك، أقل من ٣ دقايق، بالترتيب الخماسي. ولازم فيه: جملة [[Before this... Now...]]، وحالة error واحدة، وجملة [[What's not done yet]]. ولو حاجة وقعت أثناء التسجيل، متوقفش: اتعامل معاها بجملة من الجمل وكمّل.`,
+الاختصارات: [[1.5k]] = [[one point five K]] أو [[fifteen hundred]]، و [[2M]] = [[two million]] (مش [[two millions]]: [[hundred]] و [[thousand]] و [[million]] مفرد بعد رقم)، و [[99.9%]] = [[ninety-nine point nine percent]] (والمبرمجين بيقولوا [[three nines]] للـ uptime)، و [[250ms]] = [[two hundred fifty milliseconds]]، و [[2.5 GB]] = [[two point five gigs]] أو [[gigabytes]]، و [[10x]] = [[ten X]] أو [[ten times]].`,
+          example: R`15 vs 50:  fif-TEEN vs FIF-ty     13 vs 30:  thir-TEEN vs THIR-ty     Confirm:  fifteen, one-five
+1.5 → one point five     0.5 → point five / half     1,250 → one thousand two hundred fifty / twelve fifty
+1.5k users → one point five K users / fifteen hundred users     2M → two million (not millions)
+99.9% → ninety-nine point nine percent / three nines     0.1% → zero point one percent
+250ms → two hundred fifty milliseconds     2.5 GB → two point five gigs     10x → ten X / ten times
+O(n²) → O of n squared     O(n log n) → O of n log n     2^10 → two to the tenth
+25,000 EGP → twenty-five thousand Egyptian pounds (25K)     $1,200 → twelve hundred dollars
+1/3 → a third     3/4 → three quarters     -5 → minus five / negative five
+Sentence:  We cut the response time from 800 milliseconds to 250, and errors dropped to 0.1%.`,
+          try: R`اكتب ٣ «إنجازات بأرقام» من مشروع ليك (حقيقية أو تقريبية تعرف قستها إزاي)، زي: عدد يوزرز، ووقت تحميل قبل وبعد، ونسبة. قولهم بصوت عالي وسجّل، وبعدين قول [[15, 50, 13, 30, 14, 40]] ورا بعض وانت مركز في الضغط.`,
           flag: "script",
           deep: {
-            why: R`الـ demo هو اللحظة اللي شغلك بيتشاف فيها من المدير والعميل والـ product. demo واضح بيخلي شغل أسبوعين يبان، و demo ملخبط بيخلي نفس الشغل يبان ناقص. وفي الانترفيو (portfolio review) نفس المهارة.`,
-            how: R`اتكلم بلغة اليوزر مش الكود: [[the user can now...]] مش [[I added an endpoint that...]] (إلا لو الجمهور مبرمجين وسألوا).
+            why: R`في الانترفيو، الأرقام هي اللي بتخلي قصتك مقنعة («reduced load time from 4 to 1.5 seconds»). ولو قلتها غلط أو مش واضحة، الإنترفيوير هيسأل تاني أو هيفهم رقم تاني. وفي الشغل، [[fifteen]] و [[fifty]] ممكن تبقى فرق بين timeout معقول وكارثة.`,
+            how: R`[[-teen]] vs [[-ty]]: في [[-teen]] طوّل الـ [[ee]] واضغط عليها، وقول الـ [[n]] واضحة: «فِف-تيين». في [[-ty]] الضغط على الأول والآخر قصير: «فِف-تي» (والأمريكان بيقولوا الـ t قريبة من «د»: «فِفدي»).
 
-قبل الـ demo: جهّز الداتا (يوزر تجريبي، ومنتجات)، وافتح التابات، واقفل الإشعارات، وجرّب الـ flow مرة قبلها بـ ١٠ دقايق. وجهّز backup: screenshots أو فيديو.
+[[percent]] مفرد دايمًا: [[fifty percent]] مش [[percents]]. و [[a hundred users]] أو [[one hundred users]]. و [[hundreds of users]] (مئات) من غير رقم قبلها بس.
 
-وانت بتعمل demo: قول قبل ما تدوس ([[Now I'll click Save]]). واستنى ثانية بعد كل خطوة مهمة عشان الناس تشوف. ولو فيه loading: [[This takes a second...]].
+المقارنة: [[from X to Y]] = من كذا لكذا، و [[by 40%]] = بنسبة ٤٠٪ ([[reduced by 40%]])، و [[twice as fast]] = أسرع مرتين، و [[half the time]] = نص الوقت، و [[about]] و [[roughly]] و [[around]] = تقريبًا (استخدمهم لو الرقم تقريبي، دي أمانة مش ضعف).
 
-الأسئلة اللي هتيجي: [[What happens if...?]]. لو عارف: جاوب أو ورّي. لو مش عارف: [[Good question, I haven't tested that case. I'll check and get back to you.]]، واكتبها.
-
-والـ feedback: [[Thanks, that's a good point. I'll add it to the ticket.]] حتى لو مش موافق، متتناقشش في الـ demo؛ ناقش بعدين.`,
-            when: "sprint review، و demo لعميل، و portfolio review في انترفيو، و فيديو لـ README.",
-            mistakes: R`تشرح الكود بدل الفيتشر. وتصلّح bug قدام الناس ١٠ دقايق. و [[Sorry sorry, it was working yesterday!]] (كل الناس بتقولها، بس الأحسن جملة الـ backup). وداتا تجريبية فيها كلام غريب أو «test test asdf». وتنسى تقول إيه اللي لسه مخلصش، فالعميل يفتكر إنه خلص.`
+الـ Big O: [[O(n)]] = [[O of n]] أو [[linear]]، و [[O(1)]] = [[O of one]] أو [[constant time]]، و [[O(n²)]] = [[O of n squared]] أو [[quadratic]]، و [[O(log n)]] = [[O of log n]].`,
+            when: "إنجازاتك في الـ CV والانترفيو، والكلام عن الأداء والـ monitoring، والأسعار والمرتبات.",
+            mistakes: R`[[fifteen]] بضغط على الأول فتتسمع [[fifty]]. و [[two millions users]]. و [[fifty percents]]. و [[one comma five]] لـ ١٫٥ (العربي والأوروبي بيستخدموا الفاصلة للعشري، الإنجليزي لأ). و [[the performance increased 50%]] من غير [[by]] (مفهومة بس الأوضح [[improved by 50%]]).`
           },
+          teach: R`## الفكرة: الأرقام في الكلام ليها اختصاراتها، و ١٥ و ٥٠ فخ
+
+المثال ٩ سطور، كل سطر نوع أرقام، وفي الآخر جملة إنجاز.
+
+---
+
+## ١. teen و ty (السطر الأول)
+
+| الرقم | الضغط | النطق |
+|---|---|---|
+| ١٥ [[fifteen]] | fif-**TEEN** | «فِف-**تيين**» والـ n واضحة |
+| ٥٠ [[fifty]] | **FIF**-ty | «**فِف**-تي» قصيرة |
+| ١٣ [[thirteen]] | thir-**TEEN** | «ثِر-**تيين**» |
+| ٣٠ [[thirty]] | **THIR**-ty | «**ثِر**-تي» |
+
+ولو الرقم مهم في مكالمة: [[fifteen, one five]] = قولها وبعدين رقم رقم.
+
+## ٢. العشري والآلاف (السطر التاني)
+
+[[point]] للعشري: [[1.5]] = one point five، و [[0.5]] = point five أو half. والفاصلة في الإنجليزي **للآلاف**: [[1,250]] = one thousand two hundred fifty (أو twelve fifty). العربي والأوروبي بيستخدموا الفاصلة للعشري، فمتقولش [[one comma five]].
+
+## ٣. الاختصارات (السطر التالت والرابع والخامس)
+
+| المكتوب | بيتقري | ملاحظة |
+|---|---|---|
+| [[1.5k]] | one point five K / fifteen hundred | K = ألف |
+| [[2M]] | two million | million مفرد بعد رقم |
+| [[99.9%]] | ninety-nine point nine percent | المبرمجين: [[three nines]] |
+| [[250ms]] | two hundred fifty milliseconds | |
+| [[2.5 GB]] | two point five gigs | gigs = gigabytes |
+| [[10x]] | ten X / ten times | أسرع ١٠ مرات |
+
+القاعدة المهمة: [[hundred]] و [[thousand]] و [[million]] و [[percent]] **مفرد** بعد رقم: [[two million users]] و [[fifty percent]]، مش [[millions]] و [[percents]].
+
+## ٤. Big O والأُس (السطر السادس)
+
+[[O(n²)]] = O of n squared، و [[O(n log n)]] = O of n log n، و [[2^10]] = two to the tenth. الـ [[^]] اسمها caret، بس هنا بتتقري «to the».
+
+## ٥. الفلوس والكسور (السطر السابع والتامن)
+
+[[25,000 EGP]] = twenty-five thousand Egyptian pounds (و [[25K]] = twenty-five K). و [[$1,200]] = twelve hundred dollars (العلامة في الأول بتتقري في الآخر). و [[1/3]] = a third، و [[3/4]] = three quarters، و [[-5]] = minus five أو negative five.
+
+---
+
+## ٦. الجملة
+
+~~~text Sentence
+We cut the response time from 800 milliseconds to 250, and errors dropped to 0.1%.
+~~~
+
+| الحتة | المعنى |
+|---|---|
+| [[We cut the response time]] | قلّلنا وقت الرد ([[cut]] ماضيها cut) |
+| [[from 800 milliseconds to 250]] | من ٨٠٠ لـ ٢٥٠ (eight hundred / two fifty) |
+| [[errors dropped to 0.1%]] | الأخطاء نزلت لـ zero point one percent |
+
+[[from X to Y]] هو شكل أي إنجاز بأرقام. و [[by]] للفرق: [[reduced by 40%]].
+
+---
+
+## الخلاصة
+
+- teen ضغطها في الآخر، و ty في الأول. والمهم أكّده رقم رقم.
+- النقطة عشري والفاصلة آلاف.
+- [[million]] و [[percent]] مفرد بعد رقم.
+- [[about]] و [[roughly]] لو الرقم تقريبي: دي أمانة مش ضعف.`,
           lines: [
-            R`«النهارده هوريكم flow الـ password reset الجديد».`,
-            R`قبل وبعد: «قبل كده اليوزرز كانوا بيبعتوا للـ support. دلوقتي يقدروا يعملوها بنفسهم».`,
-            R`«أنا في صفحة الـ login، وهدوس Forgot password». وصف الخطوة وانت بتعملها.`,
-            R`«هكتب إيميلي وأدوس send. تقدروا تشوفوا رسالة التأكيد هنا». hit = تدوس.`,
-            R`«هفتح الإيميل. اللينك بيخلص بعد نص ساعة، للأمان». expires = بينتهي.`,
-            R`حالة error: «خليني أوريكم لو اللينك خلص: بنعرض رسالة واضحة وزرار نجرّب تاني».`,
-            R`«اللي لسه مخلصش: قالب الإيميل محتاج التصميم النهائي».`,
-            R`حاجة وقعت: «الـ staging بطيء شوية النهارده. خليني أعمل refresh».`,
-            R`الـ backup: «لو محمّلش، هبعتلكم تسجيل قصير بعد المكالمة».`,
-            R`«ده الـ demo. فيه أسئلة أو feedback؟»`
+            R`١٥ و ٥٠: الفرق في الضغط. teen الضغط على الآخر، و ty على الأول. ولو مهم أكّد برقم رقم.`,
+            R`العشري بـ point. والفاصلة للآلاف: ١٬٢٥٠ = ألف ومتين وخمسين.`,
+            R`1.5k = one point five K. و million مفرد بعد رقم.`,
+            R`النسب: percent مفرد دايمًا. three nines = 99.9% uptime.`,
+            R`الوقت والمساحة والمضاعفات: milliseconds، و gigs، و ten X.`,
+            R`الـ Big O: O of n squared، و O of n log n. والأُس: to the tenth.`,
+            R`الفلوس: twenty-five thousand Egyptian pounds، و twelve hundred dollars.`,
+            R`الكسور والسالب: a third، و three quarters، و minus أو negative.`,
+            R`«قلّلنا وقت الرد من ٨٠٠ مللي ثانية لـ ٢٥٠، والأخطاء نزلت لـ ٠٫١٪». cut = قلّل، dropped = نزل.`
           ],
-          sol: R`الـ demo الكويس (مثال لفيتشر بحث):
-[[Today I'll show you the new search. Before this, users had to scroll through all products. Now they can search by name or category. I'll type "shoes"... and you can see the results update as I type. If there are no results, we show a message with suggestions. What's not done yet is search by price. Any questions?]]
+          sol: R`نماذج لـ ٣ إنجازات:
+[[The app has about fifteen hundred active users a month.]]
+[[I reduced the page load time from four seconds to one point five.]]
+[[After I added the index, the query went from two seconds to about thirty milliseconds, roughly sixty times faster.]]
 
-راجع التسجيل: أقل من ٣ دقايق؟ فيه before/now؟ فيه حالة error؟ فيه «not done yet»؟ بتقول قبل ما تدوس؟
+راجع: [[about]] أو [[roughly]] لو الرقم تقريبي، و [[from ... to ...]] للمقارنة، و [[percent]] مفرد. وفي التسجيل: [[fifteen hundred]] الـ [[n]] في [[teen]] واضحة، و [[thirty]] الضغط على [[THIR]]، و [[sixty]] على [[SIX]].
 
-لو حاجة وقعت أثناء التسجيل وكمّلت بجملة backup، ده أحسن تدريب ممكن: سيبه في الفيديو. الـ demo الضعيف: كله [[and this... and this...]] من غير ما تقول اليوزر بيستفيد إيه.`
+الإجابة الضعيفة: [[I made it faster]] من غير أرقام، أو رقم مش عارف جبته منين: هيتسأل «How did you measure that?» والإجابة الصح عليه: [[I used Lighthouse / the Network tab / the logs]].`
         },
         {
-          cmd: "من مكتوب لمتكلم",
-          title: "تحوّل ملاحظاتك المكتوبة لكلام طبيعي: جمل أقصر و contractions وكلمات ربط",
-          desc: R`كتير من اللي إنجليزيتهم ضعيفة بيكتبوا اللي هيقولوه الأول، ودي فكرة ممتازة. المشكلة إنهم بيقروه زي ما هو، فيبان «آلي» وتقيل. الكتابة والكلام ليهم قواعد مختلفة، فمحتاج تحوّل.
+          cmd: "رموز الكود",
+          title: "تقرا سطر كود بصوت عالي: { } و ( ) و => و === و || و _ في pair programming",
+          desc: R`في الـ pair programming والـ live coding وانت بتملي كود على حد أو بتشرح، محتاج تقول الرموز بأساميها. ومعظمنا عارف الرمز بس مش عارف اسمه بالإنجليزي، فبنقول «القوس اللي كده» ونشاور.
 
-١) قسّم الجمل الطويلة: جملة الكتابة اللي فيها [[which]] و [[however]] وفاصلتين تبقى ٣ جمل قصيرة.
-٢) contractions: [[it is]] ← [[it's]]، و [[we will]] ← [[we'll]]، و [[do not]] ← [[don't]].
-٣) كلمات رسمية ← كلمات كلام: [[however]] ← [[but]]، و [[therefore]] ← [[so]]، و [[in order to]] ← [[to]]، و [[utilize]] ← [[use]]، و [[approximately]] ← [[about]]، و [[regarding]] ← [[about]].
-٤) ابدأ بكلمة ربط: [[So,]] و [[Basically,]] و [[Also,]] و [[The thing is,]].
-٥) متحفظش جمل: احفظ النقط (bullets) بس، وقول الجمل كل مرة من جديد.`,
-          example: R`Written:  The migration, which was scheduled for Friday, has been postponed due to issues identified in staging.
-Spoken:  So, the migration was planned for Friday. But we found some issues on staging. So we're moving it.
-Written:  It is recommended that we utilize a queue in order to process the emails asynchronously.
-Spoken:  I think we should use a queue. That way the emails go out in the background.
-Written:  However, this approach will not scale; therefore, an alternative is required.
-Spoken:  The thing is, this won't scale. So we need another approach.
-Written:  Regarding the deadline, approximately two additional days will be needed.
-Spoken:  About the deadline: I'll need about two more days.
-Notes, not sentences:  migration → moved (staging issues) → new date Tue → need QA sign-off`,
-          try: R`خد رسالة أو وصف PR كتبته بالإنجليزي (أو فقرة من README)، وحوّلها لكلام بالـ ٥ خطوات. اكتب النسخة المتكلمة، وبعدين اكتب النقط بس (bullets زي آخر سطر). ارمي النسخة المكتوبة، وسجّل نفسك وانت بتقول الكلام من النقط بس.`,
+الأقواس: [[( )]] = [[parentheses]] أو [[parens]] (أو [[brackets]] بالبريطاني)، و [ ] = [[square brackets]]، و [[{ }]] = [[curly braces]] أو [[curly brackets]]، و [[< >]] = [[angle brackets]] (وفي المقارنة [[less than]] و [[greater than]]). وتقول [[open paren]] و [[close paren]] لما تملي.
+
+علامات: [[;]] = [[semicolon]]، و [[:]] = [[colon]]، و [[.]] = [[dot]]، و [[,]] = [[comma]]، و [[!]] = [[bang]] أو [[exclamation mark]] أو [[not]]، و [[=]] = [[equals]]، و [[===]] = [[triple equals]]، و [[!==]] = [[not equal]] أو [[bang double equals]]، و [[=>]] = [[arrow]] أو [[fat arrow]]، و [[&&]] = [[and]]، و [[||]] = [[or]] أو [[double pipe]]، و [[?.]] = [[optional chaining]]، و [[??]] = [[nullish coalescing]] أو [[double question mark]]، و [[...]] = [[spread]] أو [[dot dot dot]].
+
+ورموز الكيبورد: [[_]] = [[underscore]]، و [[-]] = [[dash]] أو [[hyphen]] أو [[minus]]، و [[/]] = [[slash]]، و [[\]] = [[backslash]]، و [[|]] = [[pipe]]، و [[*]] = [[star]] أو [[asterisk]]، و [[#]] = [[hash]] (والأمريكان [[pound]])، و [[@]] = [[at]]، و [[~]] = [[tilde]]، و [[^]] = [[caret]]، و [[&]] = [[ampersand]]، و [[%]] = [[percent]] أو [[mod]]، و [[$__bt]] = [[backtick]].`,
+          example: R`( ) parens     [ ] square brackets     { } curly braces     < > angle brackets
+;  semicolon    :  colon    ,  comma    .  dot    !  bang / not    ?  question mark
+=  equals    ===  triple equals    !==  not equal    =>  arrow    &&  and    ||  or
+?.  optional chaining    ??  nullish coalescing    ...  spread    $__bt  backtick
+_  underscore    -  dash    /  slash    \  backslash    |  pipe    *  star    #  hash    @  at    ~  tilde
+camelCase    PascalCase    snake_case    kebab-case    UPPER_CASE    all lowercase
+Code:  const total = items.reduce((sum, i) => sum + i.price, 0);
+Say it:  const total equals items dot reduce, open paren, sum comma i, arrow, sum plus i dot price, comma zero, close paren, semicolon.
+Short:  "On line twelve, change the triple equals to not equal, and wrap it in curly braces."`,
+          try: R`خد ٣ سطور من كود كتبته انت (فيهم أقواس وarrow function وشرط)، واقرا كل سطر بصوت عالي بالطريقة الطويلة (زي [[Say it]]). وبعدين اعمل «إملاء»: قول سطر لصاحب (أو سجّله وافتح ملف فاضي واكتب من التسجيل) وشوف هل الكود اللي اتكتب مطابق.`,
           flag: "script",
           deep: {
-            why: R`اللي بيقرا نص رسمي في اجتماع بيبان متوتر وبعيد، والناس بتفصل. واللي بيتكلم بجمل قصيرة بسيطة بيبان واثق، حتى لو فيه غلطات grammar. وحاجة مهمة: الجمل القصيرة أسهل كمان في النطق والتنفس، فالتوتر بيقل.`,
-            how: R`اختبار سريع: لو الجملة أطول من نَفَس واحد، قسّمها. ولو فيها كلمة عمرك ما سمعتها في مكالمة ([[henceforth]] و [[aforementioned]] و [[kindly]])، غيّرها.
+            why: R`في الـ live coding الإنترفيوير ساعات بيقول «you're missing a closing brace» أو «change the double equals to triple equals». ولو مش عارف الأسماء هتدوّر وتضيّع وقت. وفي الـ pair programming انت اللي هتقول «put a semicolon after the paren».`,
+            how: R`في الكلام العادي محدش بيقرا كل رمز. بتقول المعنى: [[if user is not null]] بدل [[if open paren user bang equals null close paren]]. الرموز بالأسماء بتحتاجها لما تشاور على حاجة معينة: [[You're missing a closing curly brace on line 20]]، أو [[Add a question mark before the dot]].
 
-الأمريكان والبريطانيين في الشغل بيتكلموا بسيط جدًا: [[So basically we need to...]] و [[The thing is...]] و [[Here's the problem...]] و [[Long story short...]] (من الآخر). ودي جمل بتديك ثانية تفكر في الجملة الجاية.
+أسماء الـ casing مهمة جدًا في الـ code review والكلام: [[camelCase]] (userName)، و [[PascalCase]] (UserName)، و [[snake_case]] (user_name)، و [[kebab-case]] (user-name)، و [[SCREAMING_SNAKE_CASE]] أو [[UPPER_CASE]] للـ constants.
 
-الـ passive في الكتابة ([[has been postponed]]) بيتحول active في الكلام ([[we're moving it]]). والكلام بيقول مين: [[we]] و [[I]] و [[the client]].
+لما تتهجى اسم متغير: [[user underscore id, all lowercase]] أو [[userId, camelCase, capital I]]. و [[capital]] أو [[uppercase]] = حرف كبير، و [[lowercase]] = صغير.
 
-الـ bullets: كلمة أو اتنين لكل فكرة، وأسهم للترتيب. الورقة دي مسموح تبص عليها في الاجتماع. النص الكامل ممنوع.`,
-            when: "قبل أي اجتماع مهم، أو presentation، أو demo، أو انترفيو: اكتب، وحوّل، واحتفظ بالنقط بس.",
-            mistakes: R`تقرا نص مكتوب بصوت رتيب وعينك على الورقة. تحفظ كلمة بكلمة وتتوه لو حد قاطعك. تستخدم [[however]] و [[therefore]] في كل جملة. و [[kindly note that]] في الكلام (رسمية جدًا وغريبة). والعكس: كلام «عامي» زيادة ([[gonna]] و [[wanna]] مقبولين في الكلام بس ركز على الوضوح الأول).`
+والـ [[#]]: البريطانيين [[hash]]، والأمريكان [[pound sign]] أو [[number sign]]، وفي السوشيال [[hashtag]]. في الكود [[hash]] مفهومة للكل.`,
+            when: "pair programming، و live coding في انترفيو، و code review بالصوت، ولما حد بيملّيك أمر أو URL.",
+            mistakes: R`«قوس» لكل الأنواع ([[bracket]] مش واضحة لوحدها: قول [[curly]] أو [[square]]). و [[comma]] و [[colon]] بيتلخبطوا. و [[slash]] و [[backslash]] بيتلخبطوا (في مسارات Windows ده بيفرق). و [[dash]] و [[underscore]]. و «إكسكلاميشن» بدل [[bang]] أو [[not]] في وسط الكود (مش غلط، بس طويلة).`
           },
+          teach: R`## الفكرة: اعرف اسم كل رمز، بس اتكلم بالمعنى
+
+المثال ٦ سطور أسماء رموز، وسطر كود، ونفس السطر مقروء رمز رمز، وجملة عملية. أغلب الوقت مش هتقرا الرموز، هتقول المعنى. الأسماء بتحتاجها لما تشاور على حاجة.
+
+---
+
+## ١. الأقواس (السطر الأول)
+
+| الرمز | اسمه | لما تملي |
+|---|---|---|
+| [[( )]] | parentheses / parens | open paren / close paren |
+| [ ] | square brackets | open square bracket |
+| [[{ }]] | curly braces | open curly brace |
+| [[< >]] | angle brackets | (وفي المقارنة less than / greater than) |
+
+[[bracket]] لوحدها مش واضحة (البريطانيين بيقصدوا بيها الأقواس العادية). قول النوع دايمًا: curly ولا square.
+
+## ٢. علامات وعمليات (السطر التاني والتالت والرابع)
+
+[[;]] semicolon، و [[:]] colon، و [[,]] comma، و [[.]] dot، و [[!]] bang أو not، و [[?]] question mark.
+
+[[=]] equals، و [[===]] triple equals، و [[!==]] not equal، و [[=>]] arrow، و [[&&]] and، و الخطين الرأسيين (OR) بيتقروا or أو double pipe.
+
+[[?.]] optional chaining، و [[??]] nullish coalescing، و [[...]] spread، وعلامة الـ template string اسمها backtick.
+
+## ٣. رموز الكيبورد (السطر الخامس)
+
+[[_]] underscore، و [[-]] dash أو hyphen أو minus، و [[/]] slash، والمايلة العكسية backslash (مسارات Windows)، والخط الرأسي pipe، و [[*]] star أو asterisk، و [[#]] hash، و [[@]] at، و [[~]] tilde «تِلدا».
+
+## ٤. طرق كتابة الأسماء (السطر السادس)
+
+| الاسم | شكله | بيستخدم في |
+|---|---|---|
+| [[camelCase]] | userName | متغيرات JS |
+| [[PascalCase]] | UserName | classes و React components |
+| [[snake_case]] | user_name | Python و الداتابيز |
+| [[kebab-case]] | user-name | URLs و CSS classes |
+| [[UPPER_CASE]] | MAX_SIZE | constants |
+
+---
+
+## ٥. سطر الكود مقروء (السطر السابع والتامن)
+
+~~~text Code
+const total = items.reduce((sum, i) => sum + i.price, 0);
+~~~
+
+القراية الطويلة (للإملاء بس):
+
+| الكود | بيتقري |
+|---|---|
+| [[const total =]] | const total equals |
+| [[items.reduce(]] | items dot reduce, open paren |
+| [[(sum, i) =>]] | sum comma i, arrow |
+| [[sum + i.price]] | sum plus i dot price |
+| [[, 0);]] | comma zero, close paren, semicolon |
+
+لاحظ إن المثال كتب [[(sum, i)]] من غير ما يقول الأقواس الداخلية؛ في الإملاء الحقيقي قولها: [[open paren, sum comma i, close paren, arrow]].
+
+## ٦. الطريقة العملية (آخر سطر)
+
+~~~text Short
+On line twelve, change the triple equals to not equal, and wrap it in curly braces.
+~~~
+
+ده الشكل اللي هتسمعه وتقوله في pair programming: مكان ([[On line twelve]]) + فعل ([[change ... to ...]]، و [[wrap it in]] = لفّها جوه). مش بتقرا السطر كله، بتشاور على الحتة.
+
+---
+
+## الخلاصة
+
+- الأقواس: parens و square brackets و curly braces، وقول النوع دايمًا.
+- في الكلام قول المعنى ([[if the user is missing]])، والأسماء للإملاء والتصحيح.
+- اعرف أسماء الـ casing: camelCase و snake_case و kebab-case.`,
           lines: [
-            R`مكتوب: جملة طويلة فيها which و passive و due to.`,
-            R`متكلم: ٣ جمل قصيرة، و we بدل passive، و so و but.`,
-            R`مكتوب: It is recommended و utilize و in order to.`,
-            R`متكلم: I think we should use. و That way = كده.`,
-            R`مكتوب: However و therefore.`,
-            R`متكلم: The thing is و So. و won't بدل will not.`,
-            R`مكتوب: Regarding و approximately و additional.`,
-            R`متكلم: About و about و more. بسيطة ومباشرة.`,
-            R`النقط اللي تحتفظ بيها: كلمات وأسهم، مش جمل.`
+            R`الأقواس الـ ٤: parens (عادية)، و square brackets (مربعة)، و curly braces (معقوفة)، و angle brackets (زاوية).`,
+            R`علامات الترقيم: semicolon ; و colon : و comma , و dot . و bang ! و question mark ?.`,
+            R`المقارنة والمنطق: equals، و triple equals، و not equal، و arrow، و and، و or.`,
+            R`حديثة في JS: optional chaining و nullish coalescing و spread و backtick (template string).`,
+            R`رموز الكيبورد: underscore و dash و slash و backslash و pipe و star و hash و at و tilde.`,
+            R`أسماء طرق كتابة الأسماء: camelCase و PascalCase و snake_case و kebab-case و UPPER_CASE.`,
+            R`سطر كود: جمع أسعار العناصر بـ reduce.`,
+            R`نفس السطر مقروء رمز رمز: بتحتاج ده في الإملاء بس.`,
+            R`الطريقة العملية: «في سطر ١٢ غيّر الـ triple equals لـ not equal، وحطها جوه curly braces». wrap = تلف.`
           ],
-          sol: R`مثال: الرسالة المكتوبة [[We have identified the root cause of the login failures, which was related to an expired certificate. It has been renewed, and monitoring has been added to prevent recurrence.]]
+          sol: R`مثال: السطر [[if (!user?.email) return res.status(400).json({ error: "Email is required" });]]
 
-المتكلمة: [[So, we found out why login was failing. Basically, a certificate expired. We renewed it, and it's working now. We also added monitoring, so we'll get an alert before it happens again.]]
+الطريقة الطويلة: [[if, open paren, bang user, question mark dot email, close paren, return res dot status, open paren, four hundred, close paren, dot json, open paren, open curly brace, error colon, double quote, Email is required, double quote, close curly brace, close paren, semicolon.]]
 
-النقط: [[login failing → cert expired → renewed → working → added alert]]
+الطريقة الطبيعية في pair programming: [[If the user or their email is missing, return a four hundred with an error message.]]
 
-راجع التسجيل: قلت الكلام من النقط بس؟ الجمل قصيرة؟ فيها [[so]] و [[basically]]؟ لو التسجيل طالع نفس النسخة المكتوبة كلمة بكلمة، انت حفظت؛ جرّب تقوله مرة تانية بكلام مختلف شوية.`
-        }
-      ]
-    },
-    {
-      t: "تقديرات وخلاف وتاخد دورك في الاجتماع",
-      l: 2,
-      n: "تدّي تقدير من غير ما تتزنق، و «That's doable, but...»، وتختلف بأدب، وتقول «مش عارف» صح، وتقاطع وتاخد دورك، وتلخّص الاجتماع بـ action items",
-      items: [
-        {
-          cmd: "estimates",
-          title: "«How long will it take?»: تدّي تقدير بافتراضات ومدى، مش رقم واحد",
-          desc: R`أصعب سؤال في الاجتماع للـ junior: [[How long will this take?]]. والغلطتين المشهورتين: رقم متفائل جدًا عشان تبان سريع ([[One day!]])، أو [[I don't know]] وخلاص.
-
-الإجابة الصح فيها ٣ حاجات: مدى مش رقم ([[two to three days]])، وافتراض ([[assuming the API is ready]])، ومخاطرة لو فيه ([[if we need to change the schema, add a day]]). ولو محتاج تفكر: [[Let me look into it and give you an estimate by end of day.]] دي إجابة محترمة جدًا.
-
-كلمات التقدير: [[roughly]] و [[about]] و [[around]] (تقريبًا)، و [[a ballpark]] (رقم تقريبي جدًا: [[Can you give me a ballpark?]])، و [[at least]] و [[at most]]، و [[best case / worst case]]، و [[realistically]] (بواقعية).`,
-          example: R`Q: How long do you think this will take?
-A: Roughly two to three days, assuming the design is final.
-A: If we also need to change the database schema, I'd add another day.
-A: Best case, I can have it done by Wednesday. Realistically, Thursday.
-A: I'm not sure yet. Let me look into it and give you an estimate by end of day.
-Q: Can you give me a ballpark?
-A: A ballpark would be one to two weeks, but I'd like to break it down first.
-A: The unknown part is the payment provider. I haven't worked with their API before.
-A: I'll update you tomorrow if it looks bigger than I thought.`,
-          try: R`خد ٣ فيتشرز من مشروعك أو من «تاب المشاريع» (مثلًا: login بـ Google، أو export لـ CSV، أو notifications)، ولكل واحدة قول بصوت عالي تقدير فيه: مدى، وافتراض، ومخاطرة. وبعدين قول للأصعب فيهم جملة «مش متأكد، هرجعلك».`,
-          flag: "script",
-          deep: {
-            why: R`التقديرات هي أكتر مصدر لفقدان الثقة في المبرمجين: وعد بيوم، وخلص في أسبوع. والتقدير اللي فيه افتراضات بيحميك: لو الافتراض اتكسر (التصميم اتغير)، الكل عارف إن التقدير اتغير. ودي مش فهلوة، دي الطريقة المهنية.`,
-            how: R`قبل ما ترد: قسّم في دماغك (أو على ورقة) الحاجة لأجزاء، وقدّر كل جزء، وجمّعهم، وزوّد هامش للمجهول (المبرمجين عمومًا بيقللوا التقدير).
-
-عبارات الافتراض: [[assuming...]]، و [[as long as...]]، و [[if ... , then ...]]، و [[that depends on...]].
-
-عبارات المجهول: [[The unknown part is...]]، و [[I haven't worked with X before]]، و [[That's the risky part]].
-
-الـ follow-up: [[I'll update you if it looks bigger]]. ولو فعلًا طلع أكبر، قول بدري (درس [[follow up و تأخير]] في «تاب إنجليزي للمبرمج: قراية وكتابة»).
-
-ولو حد ضغط ([[Can't you do it in one day?]]): درس «That's doable, but» الجاي.
-
-وخلي بالك من الفرق: [[effort]] (قد إيه شغل: ٣ أيام شغل) و [[duration]] (هيخلص إمتى: لو عندك تاسكات تانية، ٣ أيام شغل ممكن تبقى أسبوع).`,
-            when: "sprint planning، ولما مديرك أو العميل يسأل «هتخلص إمتى؟»، وفي الانترفيو (take-home: «how long did it take you?»).",
-            mistakes: R`[[Tomorrow inshallah]] لحاجة كبيرة. و [[I don't know]] من غير «هرجعلك». ورقم واحد من غير افتراض. و [[It's easy]] (أخطر جملة: كل حاجة easy لحد ما تبدأ). وتقدير effort على إنه duration. و [[2-3 days]] وبعدين تسكت ومتقولش لما يطلع ٥.`
-          },
-          lines: [
-            R`السؤال: «تفتكر هتاخد قد إيه؟»`,
-            R`مدى + افتراض: «تقريبًا ٢ لـ ٣ أيام، بافتراض إن التصميم نهائي».`,
-            R`مخاطرة: «لو كمان محتاجين نغير الـ schema، هزوّد يوم».`,
-            R`أحسن حالة وواقعي: «أحسن حالة الأربع، بواقعية الخميس».`,
-            R`«مش متأكد لسه. هبص عليها وأديك تقدير آخر اليوم».`,
-            R`«ممكن رقم تقريبي؟» ballpark = تقريبي جدًا.`,
-            R`«رقم تقريبي أسبوع لاتنين، بس عايز أقسّمها الأول». break it down = أقسّمها.`,
-            R`«الجزء المجهول هو مزوّد الدفع. مشتغلتش مع الـ API بتاعهم قبل كده».`,
-            R`«هبلّغك بكرة لو طلعت أكبر من اللي فاكره».`
-          ],
-          sol: R`نماذج:
-[[Login with Google: about one day, assuming we use the library we already have for auth. If we need to merge accounts with the same email, add half a day.]]
-[[Export to CSV: a few hours for the basic version. If it has to handle 100,000 rows, I'd need to stream it, so maybe a day.]]
-[[Notifications: I'm not sure yet. It depends on whether we need push notifications or just email. Let me look into it and get back to you tomorrow.]]
-
-راجع: كل تقدير فيه مدى أو [[about]]؟ فيه [[assuming]] أو [[if]]؟ والأخير فيه وعد برد بميعاد؟ الإجابة الضعيفة: [[One day]] للتلاتة.`
-        },
-        {
-          cmd: "That's doable, but",
-          title: "«That's doable, but...»: تقول لأ أو تتفاوض على الوقت في الاجتماع",
-          desc: R`الدرس المكتوب في [[تقول لأ بأدب]] في «تاب إنجليزي للمبرمج: قراية وكتابة». هنا نفس الفكرة بالكلام، في اجتماع، والكل بيبصلك. والفرق إنك مفيش وقت تفكر، فمحتاج جمل «تشتري» بيها ثانيتين وتفتح التفاوض.
-
-الجملة الأشهر: [[That's doable, but...]] = ممكن، بس.... بتقول «آه» وبعدين الشرط أو التمن. وأخواتها: [[I can do that if...]]، و [[That would mean...]] (يعني كده...)، و [[Something would have to give]] (حاجة لازم تتشال)، و [[What's the priority?]].
-
-والفكرة الأساسية زي المكتوب: متقولش «لأ» ناشفة، ومتقولش «آه» وانت عارف إنها مستحيلة. قول التمن واسيبهم يختاروا.`,
-          example: R`That's doable, but it means the search feature moves to next sprint.
-I can do that by Friday if we skip the admin export for now.
-That would mean cutting the tests, and I'd rather not do that for payments.
-Hmm, that's tight. Can I get back to you after I check the API docs?
-I see why it's important. What if we ship a simple version on Friday and improve it next week?
-If we add this, something else has to give. Which one is more important?
-To be honest, I don't think Friday is realistic. Tuesday is more likely.
-I'm happy to try, but I want to flag the risk now rather than on Thursday.`,
-          try: R`تخيّل مديرك قالك في اجتماع: [[Can we also add dark mode before the release on Thursday?]] ودا محتاج يومين وانت عندك يوم ونص. قول بصوت عالي ٣ ردود مختلفة (سجّلهم): واحد بـ [[That's doable, but...]]، وواحد بـ [[What if we...]]، وواحد بـ [[To be honest...]].`,
-          flag: "script",
-          deep: {
-            why: R`في مصر ثقافة «حاضر» قوية، وفي فرق برا دي بتتفهم «وعد». ولو الوعد ماتنفذش، الثقة بتقع. واللي بيقول التمن في الاجتماع، قدام الكل، بيبان senior وبيحمي نفسه والفريق.`,
-            how: R`اشتري وقت: [[Hmm, let me think.]]، و [[That's tight.]] (ضيق)، و [[Good question.]]. وبعدين الجملة.
-
-التمن: [[That means X moves to next sprint]]، و [[We'd have to skip X]]، و [[The risk is Y]]، و [[It would cost us Z]].
-
-البديل: [[What if we...?]]، و [[How about a simpler version first?]]، و [[Could we do X now and Y later?]]، و [[An MVP by Friday, the full thing next week.]]
-
-الأولوية: [[Which one is more important?]]، و [[What's the priority here?]]. دي بترجع القرار للي عنده السلطة.
-
-التحذير: [[I want to flag a risk...]] = عايز أنبه لخطر. و [[rather than on Thursday]] = بدل ما أقولها الخميس. دي بتوري إنك بتفكر قدام.
-
-والنبرة: هادية، ومش دفاعية. ابتسامة صغيرة مع [[That's tight]] بتفرق.`,
-            when: "planning، ولما حد يزود scope في نص الـ sprint، ولما يتطلب deadline مش واقعي.",
-            mistakes: R`[[Impossible!]] (درامية). و [[OK]] وانت عارف إنها مستحيلة. و [[I will try]] (بتتفهم «آه»). ودفاع طويل عن نفسك ([[Because I have too much work and nobody helps me and...]]). و [[No, I can't]] من غير بديل ولا سبب.`
-          },
-          lines: [
-            R`«ممكن، بس يعني البحث هيتنقل للـ sprint الجاي». doable = ممكن يتعمل.`,
-            R`«أقدر أخلصها الجمعة لو أجّلنا الـ admin export دلوقتي».`,
-            R`«ده معناه نشيل الاختبارات، وأفضّل منعملش كده في الدفع». rather not = أفضّل لأ.`,
-            R`«امم، ده ضيق. ممكن أرجعلك بعد ما أشوف الـ docs؟» tight = ضيق.`,
-            R`«فاهم إنها مهمة. إيه رأيك ننزّل نسخة بسيطة الجمعة ونحسّنها الأسبوع الجاي؟»`,
-            R`«لو ضفنا دي، حاجة تانية لازم تتشال. أنهي أهم؟» something has to give = لازم تضحية.`,
-            R`«بصراحة، مش شايف الجمعة واقعية. التلات أقرب».`,
-            R`«مستعد أحاول، بس عايز أنبّه للخطر دلوقتي بدل الخميس». flag = أنبّه.`
-          ],
-          sol: R`٣ ردود نموذجية:
-[[That's doable, but it means the notifications fix moves to after the release. Is that OK?]]
-[[What if we ship dark mode for the main pages on Thursday, and the settings pages next week?]]
-[[To be honest, I don't think a full dark mode is realistic by Thursday. It needs about two days, and I have one and a half. I'd rather do it properly next week.]]
-
-راجع التسجيل: كل رد فيه تمن أو بديل؟ النبرة هادية؟ مفيش [[I will try]]؟ الإجابة الضعيفة: [[OK, I will try my best]]، ودي في الحقيقة وعد مش هيتنفذ.`
-        },
-        {
-          cmd: "disagree بأدب",
-          title: "تختلف في رأي تقني في اجتماع: «I see your point, but...»",
-          desc: R`الخلاف التقني عادي وصحي في أي فريق كويس، والشركات برا بتتوقع منك تقول رأيك حتى لو junior. بس الطريقة بتفرق جدًا: الإنجليزي في الشغل «ناعم» أكتر من العربي. الجملة اللي بتتقال بالعربي عادي («لأ، ده غلط») بتتسمع بالإنجليزي عدوانية.
-
-التركيبة: ١) اعترف بالرأي التاني: [[I see your point]] أو [[That makes sense]] أو [[I agree that...]]. ٢) قدّم رأيك كرأي مش كحقيقة: [[I'm not sure that...]] أو [[My concern is...]] أو [[I wonder if...]]. ٣) السبب أو الداتا. ٤) اقتراح أو سؤال: [[What if we...?]] أو [[Could we test both?]].
-
-ولو القرار اتاخد عكس رأيك: [[OK, I'm happy to go with that.]] ده الـ «disagree and commit» اللي فيه درس كامل في «تاب الانترفيو»: [[disagree and commit]].`,
-          example: R`I see your point, but I'm worried about the extra complexity.
-That makes sense for now. My concern is what happens when we have ten times more users.
-I agree that Redis would be faster. I'm just not sure we need it yet.
-I wonder if we could solve this with an index first, before adding a cache.
-Could we measure it first? Then we'll know if the query is really the problem.
-I might be missing something, but wouldn't this break the mobile app?
-I see it a bit differently. For me, the bigger risk is the migration, not the performance.
-OK, fair enough. I'm happy to go with that. Let's revisit it if we see problems.`,
-          try: R`اختار خلاف تقني حقيقي (مثلًا: tabs ولا spaces، أو REST ولا GraphQL، أو ORM ولا SQL خام، أو monorepo). سجّل نفسك وانت بترد على زميل رأيه عكسك في ٣–٤ جمل بالتركيبة الرباعية. وبعدين سجّل الجملة اللي بتقولها لو القرار اتاخد عكسك.`,
-          flag: "script",
-          deep: {
-            why: R`الـ junior اللي عمره ما بيختلف بيبان مش بيفكر، واللي بيختلف بشكل ناشف بيبان صعب في الشغل. والتوازن ده من أهم حاجات الـ culture fit، ومتقيّم في الانترفيو بسؤال مباشر («tell me about a disagreement»، وليه قصة كاملة في درس «STAR: خلاف»).`,
-            how: R`الـ softeners (مليّنات): [[I think]]، و [[I feel like]]، و [[maybe]]، و [[I'm not sure]]، و [[I might be wrong, but]]، و [[a bit]]. بتحوّل الحقيقة لرأي، ودي بتفتح نقاش بدل ما تقفله.
-
-الأسئلة بدل الجمل: [[Wouldn't this break...?]] أقوى وألطف من [[This will break...]]. وسؤال [[What would happen if...?]] بيخلي التاني يكتشف المشكلة بنفسه.
-
-الداتا: [[Could we measure it first?]]، و [[Do we have numbers on that?]]، و [[Let's try both and compare]]. الخلاف بالداتا بيتحل، الخلاف بالرأي بيطول.
-
-الإنهاء: [[Fair enough]] = ماشي، منطقي. و [[Let's revisit it if...]] = نرجعلها لو.... و [[I'm happy to go with that]] = موافق أمشي بيها.
-
-ولو الخلاف سخن: [[Maybe we can take this offline and come back with a proposal?]] = نكمّل بعدين بره الاجتماع.`,
-            when: "code review بالصوت، و design discussions، و planning. مش في الـ standup (الـ standup للـ updates).",
-            mistakes: R`[[No, you're wrong.]] و [[This is wrong.]] (ناشفة جدًا بالإنجليزي). و [[With all due respect...]] (بتتسمع إن اللي جاي إهانة!). و [[I am disagree]] (الصح [[I disagree]]، والأحسن [[I see it differently]]). وتسكت في الاجتماع وتشتكي بعده. وتفضل تجادل بعد ما القرار اتاخد.`
-          },
-          lines: [
-            R`«فاهم وجهة نظرك، بس قلقان من التعقيد الزيادة». I see your point = فاهمك.`,
-            R`«منطقي دلوقتي. قلقي هو لما يبقى عندنا ١٠ أضعاف اليوزرز». concern = قلق.`,
-            R`«موافق إن Redis أسرع. بس مش متأكد إننا محتاجينه دلوقتي».`,
-            R`«بتساءل لو ممكن نحلها بـ index الأول، قبل ما نضيف cache». I wonder if = اقتراح لطيف.`,
-            R`«ممكن نقيس الأول؟ ساعتها هنعرف لو الـ query هي المشكلة فعلًا».`,
-            R`«يمكن فايتني حاجة، بس مش ده هيكسر تطبيق الموبايل؟» سؤال بدل اتهام.`,
-            R`«أنا شايفها مختلف شوية. بالنسبالي الخطر الأكبر في الـ migration».`,
-            R`«ماشي، منطقي. موافق نمشي بيها. نرجعلها لو شفنا مشاكل». revisit = نرجع نبص.`
-          ],
-          sol: R`مثال (ORM ولا SQL خام، وزميلك عايز SQL خام):
-[[I see your point: raw SQL gives us more control, and it's faster for complex reports. My concern is that we're a small team, and Prisma gives us type safety and migrations for free. What if we use Prisma for most things and raw SQL just for the heavy reports?]]
-
-ولو القرار اتاخد عكسك: [[OK, fair enough. I'm happy to go with raw SQL. Let's revisit it in a couple of months if the queries get hard to maintain.]]
-
-راجع: فيه اعتراف بالرأي التاني؟ رأيك متقدم كـ «concern» مش حقيقة؟ فيه اقتراح؟ الإجابة الضعيفة: [[No, ORM is better because it's better.]]`
-        },
-        {
-          cmd: "مش عارف في اجتماع",
-          title: "حد سألك سؤال ومش عارف الإجابة: «I'm not sure, let me check»",
-          desc: R`هيحصل كتير، خصوصًا في أول شغلك: حد في الاجتماع يسأل [[Why is this endpoint slow?]] أو [[What happens if the payment fails twice?]] وانت مش عارف. والغلطتين: إنك تخترع إجابة، أو تسكت وتتوتر.
-
-الإجابة الصح: ١) قول إنك مش متأكد، بوضوح. ٢) قول اللي انت عارفه (لو فيه). ٣) قول هتعمل إيه وإمتى. [[I'm not sure, to be honest. I know the retry logic is in the webhook handler, but I haven't tested that case. Let me check and get back to you by tomorrow.]]
-
-دي إجابة قوية جدًا، مش ضعيفة. الـ «I don't know» اللي معاها خطة هي أكتر حاجة بتبني ثقة. والإجابة المخترعة اللي بتطلع غلط هي أكتر حاجة بتهدها.`,
-          example: R`Good question. I'm not sure, to be honest.
-I don't know off the top of my head. Let me check and get back to you.
-I know the retry logic is in the webhook handler, but I haven't tested that case.
-My guess is it's the missing index, but I'd need to confirm that.
-I'd rather not guess. I'll look into it after the call and update the ticket.
-That's outside my area. Omar would know better. Omar, any idea?
-I'll find out and post the answer in the channel by tomorrow morning.
-I'm not sure what you mean by "sync". Do you mean the cron job or the webhook?`,
-          try: R`اطلب من حد (أو AI) يسألك ٥ أسئلة تقنية صعبة عن مشروعك أو عن حاجة بتذاكرها، وجاوب على الأسئلة اللي مش متأكد منها بالتركيبة التلاتية (مش متأكد + اللي أعرفه + هعمل إيه). ممنوع تخترع. سجّل.`,
-          flag: "script",
-          deep: {
-            why: R`في ثقافة الشغل برا، [[I don't know, but I'll find out]] جملة محترمة جدًا ومتوقعة. والتخمين اللي بيتقدم كحقيقة لما يطلع غلط بيخلّي الناس تشك في كل كلامك بعد كده. وفي الانترفيو، الإنترفيوير أحيانًا بيسأل سؤال عارف إنك مش هتعرفه عشان يشوف هتعمل إيه.`,
-            how: R`عبارات «مش عارف»: [[I'm not sure]]، و [[I don't know off the top of my head]] (مش في دماغي دلوقتي)، و [[I'd need to check]]، و [[I haven't looked into that yet]].
-
-عبارات «اللي أعرفه»: [[What I do know is...]]، و [[I know that..., but...]]، و [[My guess is..., but I'd need to confirm]] (تخمين معلن إنه تخمين = تمام).
-
-عبارات الخطة: [[Let me check and get back to you]]، و [[I'll look into it after the call]]، و [[I'll find out and post it in the channel by...]]. والأهم: اعمل كده فعلًا.
-
-توجيه لحد تاني: [[Omar would know better]]، و [[That's more of a question for the backend team]].
-
-ولو السؤال نفسه مش واضح (مش الإجابة): اسأل عن السؤال ([[Do you mean X or Y?]]). ساعات بتكتشف إنك عارف الإجابة.`,
-            when: "أي سؤال في اجتماع أو review أو انترفيو، مش متأكد من إجابته.",
-            mistakes: R`تخترع إجابة بثقة. و [[I don't know]] وتسكت (من غير خطة). و [[It's not my fault]] أو [[Nobody told me]] (دفاعي). و [[I will search]] (الأوضح [[I'll look into it]]). وتقول [[let me check]] ومترجعش خالص: دي أسوأ من إنك متقولهاش.`
-          },
-          lines: [
-            R`«سؤال حلو. مش متأكد بصراحة». بيشتري ثانية ويعترف.`,
-            R`«مش في دماغي دلوقتي. هشوف وأرجعلك». off the top of my head = من الذاكرة حالًا.`,
-            R`اللي تعرفه: «عارف إن الـ retry في الـ webhook handler، بس مجربتش الحالة دي».`,
-            R`تخمين معلن: «تخميني إنه الـ index الناقص، بس محتاج أتأكد».`,
-            R`«أفضّل مخمّنش. هبص عليها بعد المكالمة وأحدّث التيكت».`,
-            R`«دي برا منطقتي. عمر هيعرف أحسن. عمر، عندك فكرة؟»`,
-            R`«هعرف وأكتب الإجابة في القناة قبل بكرة الصبح».`,
-            R`السؤال مش واضح: «مش فاهم قصدك بـ sync. قصدك الـ cron job ولا الـ webhook؟»`
-          ],
-          sol: R`مثال لسؤال صعب: [[How would your app handle 10,000 users at the same time?]]
-إجابة كويسة: [[To be honest, I haven't load-tested it, so I'm not sure. What I do know is that the database has indexes on the main queries, and the API is stateless, so we could run more instances. My guess is the first bottleneck would be the database connections, but I'd need to test that with a tool like k6 to confirm.]]
-
-راجع: ولا إجابة مخترعة؟ كل «مش عارف» معاها حاجة تعرفها أو خطة؟ التسجيل الضعيف: [[Yes, it can handle it]] من غير أي أساس، أو [[I don't know]] وسكوت.`
-        },
-        {
-          cmd: "تقاطع وتاخد دورك",
-          title: "تاخد دورك في الكلام وتقاطع بأدب: «Can I jump in?» و «Sorry, go ahead»",
-          desc: R`في اجتماع فيه ٥–٦ أشخاص بيتكلموا إنجليزي بسرعة، الـ junior اللي إنجليزيته ضعيفة غالبًا بيفضل ساكت لأنه مستني «فرصة». والفرصة مش هتيجي لوحدها. محتاج جمل تدخل بيها الكلام بأدب.
-
-الدخول: [[Can I jump in here?]] أو [[Sorry to interrupt, but...]] أو [[Can I add something?]] أو [[Just a quick question...]]. ولو في Zoom أو Meet: استخدم زرار «raise hand» أو اكتب في الشات [[Quick question when there's a moment]].
-
-لما حد يقاطعك: [[Sorry, can I just finish this point?]] (بأدب، وبنبرة هادية). ولما تتكلموا مع بعض: [[Sorry, go ahead]].
-
-والرجوع لنقطة فاتت: [[Going back to what Sara said...]] أو [[Just to go back to the caching point for a second...]].`,
-          example: R`Can I jump in here for a second?
-Sorry to interrupt, but I think that affects the mobile app too.
-Can I add something? We had the same problem last month.
-Just a quick question before we move on: who owns the migration?
-Sorry, can I just finish this point? It's quick.
-Oh sorry, go ahead. / No, please, you go first.
-Going back to what Sara said about caching, I think she's right.
-Building on Omar's idea, what if we also log the failed payments?
-I haven't heard from Lina yet. Lina, what do you think?`,
-          try: R`اتفرج على podcast أو panel تقني على YouTube فيه ٣ أشخاص أو أكتر بيتكلموا (مثلًا من Syntax أو أي مؤتمر). كل ما حد يقاطع حد أو ياخد دوره، وقّف واكتب الجملة اللي استخدمها. وبعدين قول ٥ جمل من المثال بصوت عالي بنبرة واثقة، وسجّل.`,
-          flag: "script",
-          deep: {
-            why: R`اللي مبيتكلمش في الاجتماعات بيبان مش فاهم أو مش مهتم، حتى لو هو أشطر واحد في الفريق. وفي تقييمات الأداء، «communication» و «visibility» بيتحسبوا. والجمل دي بتخليك تدخل الكلام من غير ما تبان قليل الذوق.`,
-            how: R`التوقيت: ادخل في آخر جملة حد، مش في نصها. استنى نفَس أو سكتة صغيرة. ولو الكلام ماشي بسرعة، [[Can I jump in?]] بصوت أعلى شوية، وبعدين استنى ثانية.
-
-[[Building on...]] = بكمّل على فكرة فلان: ألطف طريقة تدخل بيها لأنك بتدعم حد مش بتعارضه.
-
-[[Going back to...]] = مفيدة جدًا للي بيفكر ببطء بالإنجليزي: مش لازم ترد على طول، ممكن ترجع للنقطة بعد دقيقتين.
-
-والعكس: لو انت اللي بتدير الاجتماع أو شايف حد ساكت: [[I haven't heard from X yet. What do you think?]] دي بتبين إنك team player.
-
-في الشات: كتير من الاجتماعات الـ remote الناس بتكتب في الشات وهي بتسمع. ده مكان كويس لو الكلام صعب عليك: [[+1 to Sara's point]] أو [[Quick question: ...]].`,
-            when: "أي اجتماع فيه أكتر من ٣ أشخاص: planning، و retro، و design review.",
-            mistakes: R`تسكت الاجتماع كله. تقاطع في نص جملة حد من غير [[sorry]]. و [[Wait wait wait]] (بتتسمع حادة). و [[Let me talk]] (أمر). وتتكلم مع حد في نفس الوقت وتكمّل بدل ما تقول [[sorry, go ahead]]. وتبدأ نقطة جديدة خالص وسط نقاش تاني من غير [[before we move on]] أو [[on a different topic]].`
-          },
-          lines: [
-            R`«ممكن أدخل هنا ثانية؟» jump in = أدخل الكلام.`,
-            R`«آسف إني بقاطع، بس أظن ده بيأثر على تطبيق الموبايل كمان».`,
-            R`«ممكن أضيف حاجة؟ حصلتلنا نفس المشكلة الشهر اللي فات».`,
-            R`«سؤال سريع قبل ما نكمّل: مين مسؤول عن الـ migration؟» owns = مسؤول عن.`,
-            R`لما حد يقاطعك: «آسف، ممكن أكمّل النقطة دي؟ سريعة».`,
-            R`لما تتكلموا مع بعض: «آسف، اتفضل» أو «لا، اتفضل انت الأول».`,
-            R`«نرجع لكلام سارة عن الـ caching، أظن معاها حق».`,
-            R`«بناءً على فكرة عمر، إيه رأيكم نسجّل كمان الدفعات الفاشلة؟» building on = بكمّل على.`,
-            R`تدّي حد تاني دور: «لسه مسمعناش من لينا. لينا، رأيك إيه؟»`
-          ],
-          sol: R`الجمل اللي هتلاقيها في الـ podcasts: [[Can I jump in?]]، و [[Yeah, and also...]]، و [[To add to that...]]، و [[Sorry, go ahead]]، و [[I was going to say...]]، و [[Right, right, and...]]. لاحظ إنهم بيستخدموا [[Yeah, and...]] كتير عشان يدخلوا: ده بيدعم الكلام قبل ما يضيف.
-
-التسجيل الواثق: [[Can I jump in here?]] بنبرة طالعة وسرعة عادية، مش مهموسة. و [[Sorry to interrupt, but...]] بتتقال بسرعة، الأهمية للي بعد [[but]].
-
-علامة التحسن الحقيقية: في الاجتماع الجاي، اتكلم مرة واحدة على الأقل بجملة من دول. مرة واحدة كفاية للأسبوع الأول.`
-        },
-        {
-          cmd: "So to recap",
-          title: "تلخّص آخر الاجتماع: «So to recap...» و action items ومين هيعمل إيه",
-          desc: R`أكتر مهارة بتفرق بين حد «حاضر» وحد «بيقود» في أي اجتماع: التلخيص في الآخر. دقيقة واحدة بتقول فيها: قررنا إيه، ومين هيعمل إيه، وإمتى. ولو انت الـ junior اللي بيعمل ده، ده بيتلاحظ جدًا.
-
-الجمل: [[So to recap...]] أو [[Just to summarize...]] أو [[Before we wrap up, let me make sure we're on the same page]]. وبعدين: [[We agreed that...]]، و [[Action items: ...]]، و [[I'll ... by ...]]، و [[Omar will ...]]، و [[The open question is ...]]. وآخرها: [[Did I miss anything?]] و [[I'll post the notes in the channel.]]
-
-وخلي بالك: التلخيص بتاعك لازم يكون بـ «مين» و «إمتى»: [[someone should look at the logs]] مش action item. [[Omar will check the logs by Wednesday]] هو الـ action item.`,
-          example: R`OK, before we wrap up, let me quickly recap.
-We agreed to go with cursor pagination and skip the page numbers for now.
-Action items: I'll update the API and open a PR by Wednesday.
-Omar will check how the mobile app uses the endpoint.
-Sara will ask the product team if page numbers are a must-have.
-The open question is whether we need to support old app versions.
-Did I miss anything?
-Great. I'll post the notes in the channel after the call.
-Thanks, everyone!`,
-          try: R`اتفرج على أي اجتماع أو podcast تقني ١٠ دقايق (أو استخدم آخر اجتماع حضرته)، واكتب recap بالشكل ده: قرار واحد، و ٣ action items (مين + إيه + إمتى)، وسؤال مفتوح. قوله بصوت عالي في أقل من دقيقة، وبعدين اكتبه كرسالة Slack.`,
-          flag: "script",
-          deep: {
-            why: R`اجتماعات كتير بتخلص والكل فاكر إن حد تاني هيعمل الحاجة. والتلخيص بيمنع ده. واللي بيلخّص بيتشاف إنه منظم وفاهم، وده بيسرّع الترقية. وكمان للي إنجليزيته ضعيفة: التلخيص بيخليك تتأكد إنك فهمت الاجتماع صح (لو غلط، هيصححوك).`,
-            how: R`اكتب وانت بتسمع: ٣ عناوين على ورقة: Decisions و Actions و Questions. كل ما حد يقول [[OK, let's do that]] دي decision. كل ما حد يقول [[I'll...]] أو [[Can you...]] دي action. وقرب الآخر هيبقى التلخيص جاهز.
-
-صيغة الـ action item: [[Who + will + verb + what + by when]]. [[I'll update the API by Wednesday.]]
-
-ولو محدش حدد مين: [[Who's going to take the logs?]] أو [[Should I take that one?]] (لو عايز تاخدها).
-
-والجمل اللي بتنهي الاجتماع: [[Let's wrap up]]، و [[I think we're done]]، و [[Let's call it here]]، و [[I'll let you go]] (مؤدبة، يعني مش هعطلكم أكتر).
-
-ورسالة الـ Slack بعدها بنفس الشكل: [[Notes from today's call:]] وبعدين bullets.`,
-            when: "آخر أي اجتماع فيه قرارات، وخصوصًا مع عميل (التلخيص المكتوب بعد المكالمة بيحميك من «مش ده اللي اتفقنا عليه»).",
-            mistakes: R`[[We will do it]] (مين؟ إمتى؟). وتلخيص طويل بيعيد الاجتماع كله. وإنك متسألش [[Did I miss anything?]]. وتقول [[I'll post the notes]] ومتبعتهاش. و [[Recap]] بعد ما الناس بدأت تخرج (قولها قبل آخر ٣ دقايق).`
-          },
-          lines: [
-            R`«تمام، قبل ما نقفل، خليني ألخّص بسرعة». wrap up = ننهي.`,
-            R`القرار: «اتفقنا نمشي بالـ cursor pagination ونشيل أرقام الصفحات دلوقتي».`,
-            R`action item ليك: «هحدّث الـ API وأفتح PR قبل الأربع».`,
-            R`action item لعمر: «عمر هيشوف تطبيق الموبايل بيستخدم الـ endpoint إزاي».`,
-            R`«سارة هتسأل فريق المنتج لو أرقام الصفحات لازمة». must-have = ضروري.`,
-            R`السؤال المفتوح: «هل محتاجين ندعم إصدارات التطبيق القديمة».`,
-            R`«نسيت حاجة؟»`,
-            R`«تمام. هنزّل الملاحظات في القناة بعد المكالمة».`,
-            R`«شكرًا يا جماعة!»`
-          ],
-          sol: R`مثال recap:
-[[So to recap: we agreed to launch the beta on the 15th. Action items: I'll fix the signup bug by Tuesday. Mona will prepare the onboarding emails by Thursday. Ahmed will set up the analytics before launch. The open question is the pricing page; we'll decide next week. Did I miss anything?]]
-
-رسالة Slack:
-[[Notes from today's call:]]
-[[- Decision: beta launch on the 15th]]
-[[- Me: fix signup bug (Tue)]]
-[[- Mona: onboarding emails (Thu)]]
-[[- Ahmed: analytics (before launch)]]
-[[- Open: pricing page, decide next week]]
-
-راجع: كل action فيه اسم وميعاد؟ أقل من دقيقة بالصوت؟ التلخيص الضعيف: [[So we discussed many things and we will work on them.]]`
-        }
-      ]
-    },
-    {
-      t: "مع مديرك وعميلك",
-      l: 2,
-      n: "الـ 1:1 مع مديرك: تطلب feedback وتقول انت محتاج إيه، ومكالمة عميل: تسأل عن المتطلبات وتأكد عليها",
-      items: [
-        {
-          cmd: "1:1 وفيدباك",
-          title: "الـ 1:1 مع مديرك: تطلب feedback وتقول محتاج إيه وتستقبل نقد",
-          desc: R`الـ 1:1 (one-on-one) = اجتماع أسبوعي أو كل أسبوعين بينك وبين مديرك لوحدكم. ده مش standup: ده وقتك انت. والـ junior المصري غالبًا بيدخله ساكت ومستني المدير يتكلم، فبيخلص في ٥ دقايق من غير فايدة.
-
-جهّز ٣ حاجات: ١) حاجة ماشية كويس أو اتعلمتها. ٢) حاجة صعبة أو محتاج فيها مساعدة. ٣) سؤال عن التطور أو feedback: [[Is there anything I should be doing differently?]] أو [[What would you like to see from me in the next month?]].
-
-واستقبال النقد: متدافعش على طول. [[Thanks, that's helpful]] وبعدين سؤال يوضح: [[Could you give me an example?]]، وبعدين خطة: [[I'll try to ... next time]]. حتى لو مش موافق، اشكر الأول، وناقش بعدين بهدوء.`,
-          example: R`One thing that went well this week: I finally understood how our auth flow works.
-One thing I'm struggling with is estimating tasks. I keep underestimating them.
-Is there anything I should be doing differently?
-What would you like to see from me in the next month?
-I'd like to get more experience with the backend. Is there a task I could pick up?
-Thanks, that's really helpful. Could you give me an example so I understand better?
-That's fair. Next time, I'll ask for help after an hour instead of a whole day.
-I see what you mean. Can I share some context on why I did it that way?`,
-          try: R`حضّر 1:1 حقيقي أو متخيّل: اكتب الـ ٣ نقط (حاجة كويسة، وحاجة صعبة، وسؤال feedback)، وقولهم بصوت عالي. وبعدين تخيّل المدير قالك: [[Your PRs are too big and hard to review.]] سجّل ردك: شكر + سؤال + خطة.`,
-          flag: "script",
-          deep: {
-            why: R`الـ 1:1 هو أهم اجتماع لكارير الـ junior: هنا بتطلب مهام أصعب، وبتعرف انت فين، وبتبني علاقة مع اللي بيقرر ترقيتك. والـ feedback اللي بتطلبه بنفسك بيتقال بصراحة أكتر من اللي بيجي في تقييم آخر السنة.`,
-            how: R`عبارات الصعوبة (من غير ما تبان بتشتكي): [[One thing I'm struggling with is...]]، و [[I'd like some help with...]]، و [[I'm finding X a bit challenging]].
-
-عبارات الطلب: [[I'd like to get more experience with...]]، و [[Could I pick up...?]]، و [[Would it be possible to pair with someone on...?]].
-
-عبارات الـ feedback: [[Is there anything I should be doing differently?]]، و [[How am I doing so far?]]، و [[What's one thing I could improve?]] (سؤال محدد بيجيب إجابة محددة).
-
-استقبال النقد: [[Thanks, that's helpful]]، و [[That's fair]] (معاك حق)، و [[I see what you mean]]، و [[Could you give me an example?]]. ولو عايز توضح: [[Can I share some context?]] (مش [[But I...]] على طول).
-
-ولو الـ 1:1 بالإنجليزي وصعب عليك: ابعت النقط مكتوبة قبلها بساعة ([[Here are a few things I'd like to discuss]]). المديرين بيحبوا ده.`,
-            when: "كل 1:1، وبعد أول شهر في أي شغل (اطلب feedback حتى لو محدش عرض)، وبعد أي مشروع كبير.",
-            mistakes: R`تدخل من غير ولا نقطة. [[Everything is fine]] كل مرة. تدافع على طول ([[No, but that's because...]]). تعيط أو تتضايق قدامه من نقد عادي. وتطلب «ترقية» من غير ما تسأل «إيه المطلوب عشان أوصل للمستوى الجاي؟» (ده السؤال الصح: [[What would I need to show to get to the next level?]]).`
-          },
-          lines: [
-            R`حاجة كويسة: «حاجة مشيت كويس الأسبوع ده: أخيرًا فهمت الـ auth flow».`,
-            R`حاجة صعبة: «حاجة صعبة عليا هي تقدير التاسكات. دايمًا بقدّر أقل». struggling with = بعاني مع.`,
-            R`«فيه حاجة المفروض أعملها بشكل مختلف؟»`,
-            R`«تحب تشوف مني إيه الشهر الجاي؟»`,
-            R`طلب: «عايز خبرة أكتر في الـ backend. فيه تاسك أقدر آخدها؟» pick up = آخد.`,
-            R`استقبال نقد: «شكرًا، ده مفيد جدًا. ممكن مثال عشان أفهم أكتر؟»`,
-            R`«معاك حق. المرة الجاية هطلب مساعدة بعد ساعة بدل يوم كامل». fair = منطقي/عادل.`,
-            R`لو عايز توضّح: «فاهم قصدك. ممكن أشرح السياق ليه عملتها كده؟»`
-          ],
-          sol: R`نموذج الـ ٣ نقط:
-[[One thing that went well: I shipped the search feature, and I learned a lot about indexes.]]
-[[One thing I'm struggling with is reading other people's code quickly.]]
-[[Is there anything I should be doing differently? And what would you like to see from me next month?]]
-
-الرد على [[Your PRs are too big]]:
-[[Thanks, that's helpful. Could you give me an example of a PR that was too big? ... That's fair. From now on, I'll try to keep PRs under 300 lines and split big features into smaller PRs.]]
-
-الرد الضعيف: [[But the feature was big, so the PR was big.]] (دفاع فوري). حتى لو فيه جزء صح، ابدأ بالشكر والسؤال.`
-        },
-        {
-          cmd: "مكالمة عميل",
-          title: "مكالمة مع عميل: تسأل عن المتطلبات صح وتأكد عليها قبل ما تبدأ",
-          desc: R`لو بتشتغل فريلانس أو في شركة outsourcing، هتكلم عملاء. والعميل غالبًا مش تقني، وبيقول [[I want an app like Uber but for...]]. شغلك في المكالمة: تفهم هو عايز إيه فعلًا، وتكتب، وتأكد عليه.
-
-الأسئلة المفتوحة الأول: [[Could you tell me more about...?]]، و [[Who will be using it?]]، و [[What problem are you trying to solve?]]، و [[How do you do it today?]]. وبعدين أسئلة محددة: [[Do you need X or is Y enough?]]، و [[What's the deadline?]]، و [[What's most important for the first version?]].
-
-وفي الآخر التأكيد (زي «So to recap»)، ومعاه الحاجات اللي مش في الـ scope: [[Just to be clear, the first version won't include...]]. وبعدها إيميل مكتوب (درس [[إيميل لعميل]] في «تاب إنجليزي للمبرمج: قراية وكتابة»). وتفاصيل الـ scope المكتوب في «تاب الشغل والكارير»: [[scope مكتوب]].`,
-          example: R`Thanks for your time today. Could you tell me a bit about your business?
-What problem are you trying to solve with this app?
-Who will be using it: your staff, your customers, or both?
-How do you handle bookings today? Excel? WhatsApp?
-What's the most important thing for the first version?
-Do you need online payments at launch, or can customers pay at the clinic for now?
-Do you have a deadline in mind?
-Let me make sure I got this right: customers book online, you confirm by SMS, and payment stays at the clinic.
-Just to be clear, the first version won't include a mobile app. Is that OK?
-I'll send you a summary and a quote by Thursday.`,
-          try: R`اعمل «رول بلاي» مع صاحب أو AI: هو عميل عنده مطعم عايز «موقع للأوردرات». انت تسأل ٦ أسئلة على الأقل (٣ مفتوحة و ٣ محددة)، وفي الآخر تأكيد بـ [[Let me make sure I got this right]] وجملة [[Just to be clear, the first version won't include...]]. سجّل المكالمة.`,
-          flag: "script",
-          deep: {
-            why: R`أغلب مشاكل الفريلانس (شغل زيادة ببلاش، وعميل زعلان) سببها سوء فهم في أول مكالمة. والأسئلة الصح بتوري للعميل إنك محترف وبتفكر في بيزنس مش كود بس، ودي اللي بتخليه يختارك.`,
-            how: R`الأسئلة المفتوحة بتبدأ بـ [[What]] و [[How]] و [[Who]] و [[Could you tell me about]]. والمحددة بتبدأ بـ [[Do you need...]] و [[Is it OK if...]] و [[Which one...]].
-
-سؤال [[How do you do it today?]] ذهبي: بيوريك الـ workflow الحقيقي، وبيطلع مشاكل العميل مقالهاش.
-
-الأولويات: [[What's a must-have and what's a nice-to-have?]] = إيه الضروري وإيه اللي «لو حصل كويس». ده بيسهّل تقسيم الشغل لمراحل.
-
-كلمات تقنية للعميل: بسّطها. مش [[We'll use a REST API with JWT]]، بل [[Your customers will log in with their email, and their data will be secure.]]
-
-الفلوس والوقت: [[I'll send you a quote]] (عرض سعر)، و [[an estimate]]، و [[milestones]] (مراحل)، و [[a deposit]] (مقدم). وتفاصيل التسعير في «تاب الشغل والكارير»: [[التسعير]].`,
-            when: "أول مكالمة مع أي عميل، وأي مكالمة فيها طلب جديد.",
-            mistakes: R`تسمع وتقول [[OK, no problem]] على كل حاجة. متسألش عن الـ deadline والميزانية. تستخدم كلام تقني العميل مش فاهمه. متأكدش في الآخر. ومتبعتش ملخص مكتوب (فكل واحد فاكر حاجة مختلفة). و [[What is your budget?]] في أول دقيقة (اسألها بعد ما تفهم المشروع).`
-          },
-          lines: [
-            R`«شكرًا على وقتك. ممكن تحكيلي شوية عن البيزنس بتاعك؟»`,
-            R`«إيه المشكلة اللي عايز تحلها بالتطبيق ده؟»`,
-            R`«مين هيستخدمه: الموظفين، ولا العملاء، ولا الاتنين؟»`,
-            R`«بتتعامل مع الحجوزات إزاي النهارده؟ Excel؟ WhatsApp؟» السؤال الذهبي.`,
-            R`«إيه أهم حاجة في النسخة الأولى؟»`,
-            R`«محتاج دفع أونلاين من أول يوم، ولا العملاء يدفعوا في العيادة دلوقتي؟»`,
-            R`«عندك deadline في دماغك؟»`,
-            R`التأكيد: «خليني أتأكد إني فهمت: العملاء بيحجزوا أونلاين، وانت بتأكد بـ SMS، والدفع في العيادة».`,
-            R`برا الـ scope: «عشان نبقى واضحين، النسخة الأولى مش هيبقى فيها تطبيق موبايل. تمام؟»`,
-            R`الخطوة الجاية: «هبعتلك ملخص وعرض سعر قبل الخميس». quote = عرض سعر.`
-          ],
-          sol: R`أسئلة كويسة للمطعم:
-مفتوحة: [[How do you take orders today?]]، و [[Who will manage the orders on your side?]]، و [[What's the biggest problem with the current way?]]
-محددة: [[Do you need delivery tracking, or just order and pickup?]]، و [[Do you want online payment or cash on delivery?]]، و [[Do you need Arabic and English?]]
-
-التأكيد: [[Let me make sure I got this right: customers order from the website, you get a notification on a tablet, and they pay cash on delivery. Just to be clear, the first version won't include delivery tracking or a mobile app. Is that OK?]]
-
-راجع: فيه [[How do you ... today?]]؟ فيه سؤال أولوية؟ فيه تأكيد وحاجة برا الـ scope؟ المكالمة الضعيفة: العميل اتكلم ٩٠٪ وانت قلت [[OK]] و [[no problem]] بس.`
-        }
-      ]
-    },
-    {
-      t: "تعرّف نفسك وتحكي مشروعك بالإنجليزي",
-      l: 3,
-      n: "Tell me about yourself بـ ٣ نسخ جاهزة للـ junior (خريج جديد، وجاي من مجال تاني، و self-taught / freelancer)، وتحكي مشروعك في دقيقتين",
-      items: [
-        {
-          cmd: "about yourself: ٣ نسخ",
-          title: "Tell me about yourself للـ junior: ٣ نسخ جاهزة تفصّلها على نفسك",
-          desc: R`الهيكل نفسه (present ← proof ← how I work ← future ← why you) مشروح في درس [[tell me about yourself]] في «تاب الانترفيو». هنا ٣ نسخ إنجليزي كاملة بجمل بسيطة، لـ ٣ أنواع من الـ juniors، تاخد اللي شبهك وتغيّر التفاصيل.
-
-قواعد اللغة للإجابة دي: ١) جمل قصيرة، كل جملة فكرة. ٢) الحاضر للي انت عليه ([[I'm a...]] و [[I work with...]])، والماضي للي عملته ([[I built...]] و [[I graduated...]])، والمستقبل لللي عايزه ([[I'd like to...]] و [[I'm looking for...]]). ٣) رقم واحد على الأقل. ٤) آخر جملة عن الشركة دي.
-
-والمدة ٦٠–٩٠ ثانية. ومتحفظهاش كلمة بكلمة: احفظ الجمل الـ ٦ كنقط، وقولها كل مرة بكلام قريب.`,
-          example: R`[Fresh graduate] I'm a junior full-stack developer. I graduated in Computer Science from Cairo University this summer.
-[Fresh graduate] For my graduation project, I built a clinic booking system with React, Node and PostgreSQL. It's used by two clinics now.
-[Fresh graduate] I enjoy the backend side most, especially designing APIs and writing tests.
-[Fresh graduate] I'm looking for a team where I can learn from senior engineers, and your focus on healthcare products really interests me.
-[Career switcher] I'm a front-end developer, and before that I worked in accounting for three years.
-[Career switcher] I taught myself JavaScript and React, and I built a budgeting app that about 200 people use.
-[Career switcher] My accounting background helps me understand business requirements and talk to non-technical people.
-[Career switcher] I'd like to join a fintech team like yours, where I can use both skills.
-[Freelancer] I'm a web developer, and for the last two years I've worked as a freelancer.
-[Freelancer] I've delivered around ten projects for small businesses, mostly Next.js sites with online payments.
-[Freelancer] I handle everything from the first client call to deployment, so I'm used to owning a project end to end.
-[Freelancer] Now I want to work on a bigger product with a team, and learn how things are done at scale.`,
-          try: R`اختار النسخة الأقرب ليك، وغيّر كل التفاصيل لتفاصيلك الحقيقية (الجامعة، المشروع، الرقم، الشركة). اكتبها في ٥–٦ جمل. سجّلها ٣ مرات في ٣ أيام من النقط بس (مش من النص). قارن التسجيل الأول بالتالت: المدة، وعدد الـ [[ehh]]، والنطق (اسم الـ stack من درس «Linux و SQL و Nginx»).`,
-          flag: "script",
-          deep: {
-            why: R`أول سؤال في كل انترفيو تقريبًا، ولو بدأت بثقة، الباقي بيبقى أسهل. وللي إنجليزيته ضعيفة ده أكتر سؤال يستاهل تحضير، لأنه ١٠٠٪ جاي، وإجابته عنك انت، فتقدر تجهّزها بالظبط.`,
-            how: R`عبارات مفيدة:
-البداية: [[I'm a ... developer]]، و [[I work mainly with ...]]، و [[I recently graduated in ...]].
-الدليل: [[I built ...]]، و [[It's used by ...]]، و [[I was responsible for ...]].
-التميّز: [[I enjoy ...]]، و [[I'm good at ...]]، و [[What I bring is ...]]، و [[My background in X helps me ...]].
-المستقبل: [[I'm looking for ...]]، و [[I'd like to grow in ...]]، و [[Now I want to ...]].
-الشركة: [[Your focus on X really interests me]]، و [[I read about your ... and ...]].
-
-الـ career switcher: المجال القديم ميزة مش عيب. قوله في جملة وقول بيفيدك إزاي.
-
-الـ freelancer: متقولش [[freelancer]] كأنك بتعتذر. قول عدد المشاريع ونوع العملاء، وإنك [[own projects end to end]]. وقول ليه عايز فريق دلوقتي (التعلم، والـ scale) مش «عشان الفريلانس مفيهوش فلوس».
-
-وجهّز نسخة ٣٠ ثانية: أول جملتين وآخر جملة بس.`,
-            when: "أول كل انترفيو، و recruiter call، وأي networking event، ولما تقابل فريق جديد أول يوم.",
-            mistakes: R`[[My name is ... and I am from Egypt]] (هو عارف اسمك من الـ CV). و [[I am a hard worker and passionate]] من غير دليل. وتحكي من الثانوي. و [[I have 0 experience]] (قول اللي عملته، مش اللي معملتوش). و [[I finished my graduation]] (الصح [[I graduated]]). وتحفظ النص فتقوله بسرعة وبنبرة واحدة.`
-          },
-          lines: [
-            R`خريج جديد، الحاضر: «أنا junior full-stack، اتخرجت حاسبات من جامعة القاهرة الصيف ده».`,
-            R`الدليل: «مشروع التخرج نظام حجز عيادات بـ React و Node و PostgreSQL، وعيادتين بيستخدموه».`,
-            R`التميّز: «بحب الـ backend أكتر، خصوصًا تصميم الـ APIs وكتابة الاختبارات».`,
-            R`المستقبل والشركة: «بدوّر على فريق أتعلم فيه من seniors، وتركيزكم على منتجات الصحة بيهمني».`,
-            R`جاي من مجال تاني، الحاضر: «أنا front-end، وقبلها اشتغلت محاسب ٣ سنين».`,
-            R`الدليل: «علّمت نفسي JS و React، وعملت تطبيق ميزانية بيستخدمه حوالي ٢٠٠ شخص».`,
-            R`الميزة: «خلفيتي في المحاسبة بتساعدني أفهم متطلبات البيزنس وأتكلم مع ناس مش تقنيين».`,
-            R`الشركة: «عايز أنضم لفريق fintech زيكم، أستخدم فيه المهارتين».`,
-            R`فريلانسر، الحاضر: «أنا web developer، وآخر سنتين شغال فريلانس».`,
-            R`الدليل: «سلّمت حوالي ١٠ مشاريع لبيزنس صغيرة، أغلبها Next.js بدفع أونلاين».`,
-            R`الميزة: «بمسك كل حاجة من أول مكالمة مع العميل للـ deploy، فمتعود أمسك مشروع من أوله لآخره». end to end = من الأول للآخر.`,
-            R`المستقبل: «عايز أشتغل على منتج أكبر مع فريق، وأتعلم الحاجات بتتعمل إزاي على scale كبير».`
-          ],
-          sol: R`نموذج لخريج جديد بعد التفصيل:
-[[I'm a junior back-end developer. I graduated from Ain Shams University in 2025, in Computer Science. For my graduation project, I built an attendance system with Node, Express and PostgreSQL, and my faculty used it for one semester with about 400 students. I enjoy working with databases, and I wrote the tests and the CI for that project myself. Now I'm looking for a team where I can learn from experienced engineers, and I like that your team builds tools for schools.]]
-
-المدة المتوقعة: ٥٠–٧٠ ثانية. راجع: فيه رقم (٤٠٠)؟ آخر جملة عن الشركة؟ الأزمنة صح ([[graduated]] و [[built]] ماضي، و [[enjoy]] و [[I'm looking]] حاضر)؟
-
-بين التسجيل الأول والتالت: المدة غالبًا بتقل، والـ [[ehh]] بتقل للنص. ولو التالت نفس الأول كلمة بكلمة، انت حافظ نص: قوله مرة بترتيب مختلف شوية.`
-        },
-        {
-          cmd: "walk me through a project",
-          title: "«Walk me through a project you're proud of»: تحكي مشروعك بالإنجليزي في دقيقتين",
-          desc: R`السؤال التاني الأشهر بعد «Tell me about yourself». الهيكل مشروح في درس [[problem → decisions → results]] في «تاب الانترفيو»: المشكلة، ودورك، والقرارات والـ trade-offs، والنتيجة، وهتغير إيه. هنا اللغة.
-
-الجمل اللي هتحتاجها: المشكلة [[The problem was that...]]، والدور [[I was responsible for...]] أو [[I built it alone]]، والقرار [[I chose X over Y because...]]، والتمن [[The trade-off was...]]، والصعوبة [[The hardest part was...]]، والنتيجة [[As a result...]]، والدرس [[If I did it again, I would...]].
-
-وأهم نقطة لغة: [[would]] في الجملة الأخيرة: [[If I did it again, I would add tests earlier]]. دي الصيغة الصح للـ «لو رجع بيا الزمن». ومتقولش [[If I will do it again]].`,
-          example: R`The project I'm most proud of is a booking system for a small clinic.
-The problem was that they managed appointments on paper, and patients often came at the same time.
-I built it alone, from the database design to the deployment.
-I chose PostgreSQL over MongoDB because the data is very relational: patients, doctors, appointments.
-The hardest part was preventing double bookings when two people book the same slot at the same time.
-I solved it with a unique constraint on doctor and time, and I handle the error with a clear message.
-The trade-off was that I kept the UI very simple, because the deadline was three weeks.
-As a result, the clinic stopped using paper, and double bookings went to zero.
-If I did it again, I would add automated tests from day one; I added them late and it was painful.`,
-          try: R`اكتب قصة مشروعك في ٩ جمل بنفس الترتيب، بتفاصيلك الحقيقية. وبعدين جهّز إجابات لـ ٣ follow-ups متوقعة بالإنجليزي: [[Why did you choose X?]]، و [[What would you do differently?]]، و [[How would it handle more users?]]. سجّل القصة والإجابات.`,
-          flag: "script",
-          deep: {
-            why: R`ده السؤال اللي الإنترفيوير بيحكم منه على مستواك التقني الحقيقي: مش «بتعرف React؟» لكن «بتفكر إزاي؟». وللي إنجليزيته ضعيفة، ده سؤال تقدر تحضّره ١٠٠٪ لأنه عن مشروعك.`,
-            how: R`اختار مشروع فيه قرار حقيقي (اخترت حاجة بدل حاجة لسبب) وصعوبة حقيقية (مش «كان صعب أتعلم React»). والأحسن لو فيه يوزرز حقيقيين أو رقم.
-
-الأزمنة: القصة كلها ماضي بسيط ([[built]] و [[chose]] و [[solved]])، إلا لو المشروع لسه شغال ([[It's used by...]] و [[It handles...]]).
-
-الـ follow-ups:
-[[Why X?]] → [[Because ... . The alternative was Y, but ...]]
-[[What would you do differently?]] → [[I would ...]] (بـ would)
-[[How would it scale?]] → [[Right now it handles ... . If it grew, I'd first look at ... , because ...]]
-[[What was your role?]] (لو فريق) → [[I owned the ... part. Specifically, I ...]]
-
-وخلي بالك من كلمات الفخر: [[I'm proud of]] عادي تقولها، بس الدليل أهم من الكلمة.`,
-            when: "كل انترفيو تقريبًا، ومع الـ recruiter بشكل أقصر، وفي أي portfolio review.",
-            mistakes: R`قايمة technologies من غير قصة ([[I used React, Node, Mongo, Redis, Docker...]]). و [[we]] طول الوقت في مشروع فريق من غير ما تقول انت عملت إيه. و [[If I will do it again, I will...]] (الصح [[If I did it again, I would...]]). ومشروع tutorial منسوخ (الإنترفيوير هيعرف من أول سؤال follow-up).`
-          },
-          lines: [
-            R`«المشروع اللي فخور بيه أكتر: نظام حجز لعيادة صغيرة».`,
-            R`المشكلة: «كانوا بيسجلوا المواعيد على ورق، والمرضى كتير كانوا بييجوا في نفس الوقت».`,
-            R`الدور: «عملته لوحدي، من تصميم الداتابيز للـ deployment».`,
-            R`القرار: «اخترت PostgreSQL بدل MongoDB لأن الداتا relational جدًا». chose X over Y = اخترت X بدل Y.`,
-            R`الصعوبة: «أصعب حاجة كانت منع الحجز المزدوج لما اتنين يحجزوا نفس الميعاد في نفس اللحظة».`,
-            R`الحل: «حلّيتها بـ unique constraint على الدكتور والوقت، وبتعامل مع الخطأ برسالة واضحة».`,
-            R`التمن: «خليت الواجهة بسيطة جدًا لأن الـ deadline كان ٣ أسابيع».`,
-            R`النتيجة: «العيادة بطّلت ورق، والحجز المزدوج بقى صفر». As a result = والنتيجة.`,
-            R`الدرس بـ would: «لو عملته تاني، كنت هضيف اختبارات من أول يوم؛ ضفتها متأخر وكان متعب». painful = متعب.`
-          ],
-          sol: R`إجابات نموذجية للـ follow-ups (لمشروع زي المثال):
-[[Why PostgreSQL?]] → [[Because the data has clear relations, and I needed constraints and transactions to prevent double bookings. MongoDB could work, but I'd have to handle that logic myself.]]
-[[What would you do differently?]] → [[I would write tests from the start, and I would add SMS reminders earlier, because no-shows were the next big problem.]]
-[[How would it handle more users?]] → [[Right now it's one clinic, so the load is tiny. If it grew to many clinics, I'd first add indexes on the appointment queries, and then look at caching the doctors' schedules.]]
-
-راجع التسجيل: القصة ٩٠–١٢٠ ثانية؟ فيها [[because]] مرتين على الأقل؟ فيها [[would]] في آخرها؟ الإجابة الضعيفة: [[I made a clinic app with React and Node. It was good.]]`
+في تمرين الإملاء: الغلطات الشائعة إن [[?.]] تطلع [[.]] بس (عشان اتقالت سريعة)، أو [[curly]] تتكتب [[(]]. لو الكود اللي اتكتب طلع مطابق من أول مرة، ممتاز. ولو لأ، الغلط غالبًا في الأقواس: قول نوعها دايمًا.`
         }
       ]
     }

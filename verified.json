@@ -12309,6 +12309,296 @@
   "date": "2026-10-06",
   "on": "docker ubuntu-24.04 curl vs nginx lab + win11 curl.exe; docs: securityheaders.com"
  },
+ "speak|-ed و -s": {
+  "hash": "5b9ad006fb6b",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|1.5k و 99.9%": {
+  "hash": "5c9528044ab6",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|1:1 وفيدباك": {
+  "hash": "fc0b432c5867",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|3:30 PM": {
+  "hash": "10793eb413b8",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|API و JSON": {
+  "hash": "18f34c487046",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|Could you walk me through": {
+  "hash": "ad05dfaf9c19",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|Linux و SQL و Nginx": {
+  "hash": "cba1f93ec319",
+  "date": "2026-10-08",
+  "on": "docs: Wiktionary pronunciations (Linux, Kubernetes, Azure); Wikipedia (SQL)"
+ },
+ "speak|REST بالإنجليزي": {
+  "hash": "608de2f641c7",
+  "date": "2026-10-08",
+  "on": "docs: Wiktionary pronunciations (idempotent)"
+ },
+ "speak|STAR: feedback صعب": {
+  "hash": "7d1c77dd1ccd",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|STAR: اتعلمت بسرعة": {
+  "hash": "1a47d891d60e",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|STAR: خلاف": {
+  "hash": "8251ebff23f6",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|STAR: ضغط ووقت": {
+  "hash": "d62e1b778f8e",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|STAR: غلطة": {
+  "hash": "0d3a164d5a1b",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|So to recap": {
+  "hash": "fa97e388e6c8",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|That's doable, but": {
+  "hash": "e46ce4cef03c",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|about yourself: ٣ نسخ": {
+  "hash": "2583ea7fa6ef",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|algorithm و determine": {
+  "hash": "a8082cc385ff",
+  "date": "2026-10-08",
+  "on": "docs: Wiktionary pronunciations (algorithm, asynchronous, determine, variable)"
+ },
+ "speak|cache و queue و suite": {
+  "hash": "681c679caa75",
+  "date": "2026-10-08",
+  "on": "docs: Wiktionary pronunciations (cache, queue, suite, width)"
+ },
+ "speak|can you see my screen": {
+  "hash": "878f31d40147",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|demo": {
+  "hash": "2af24c617311",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|disagree بأدب": {
+  "hash": "d7a9f991a3fb",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|estimates": {
+  "hash": "619f7c154258",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|estring": {
+  "hash": "0a6d4fe7ae5e",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|event loop بالإنجليزي": {
+  "hash": "e2664386be3e",
+  "date": "2026-10-08",
+  "on": "Windows 11, Node 24 (pwsh + Git Bash); docs: concept"
+ },
+ "speak|indexes بالإنجليزي": {
+  "hash": "9c97e0d988e4",
+  "date": "2026-10-08",
+  "on": "docs: Wiktionary pronunciations (query)"
+ },
+ "speak|listening بالمستوى": {
+  "hash": "6ed33708660c",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|live coding phrases": {
+  "hash": "d6a81f1fab19",
+  "date": "2026-10-08",
+  "on": "Windows 11, Node 24 (solCode twoSum); docs: concept"
+ },
+ "speak|mock interview بالـ AI": {
+  "hash": "322efb9dfb19",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|p و v": {
+  "hash": "9197f5e889a9",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|salary بالإنجليزي": {
+  "hash": "3e7835fd6708",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|shadowing": {
+  "hash": "c38746b1dd91",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|small talk": {
+  "hash": "40ed85821de4",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|standup بالكلام": {
+  "hash": "5a5596b4cc8a",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|stress": {
+  "hash": "71a0da1f12a3",
+  "date": "2026-10-08",
+  "on": "docs: Wiktionary pronunciations (variable)"
+ },
+ "speak|subtitles تدريجي": {
+  "hash": "a3981d33991f",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|th و ch": {
+  "hash": "306277ee1986",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|v2.10.3": {
+  "hash": "1398a8ca2694",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|walk me through a project": {
+  "hash": "d12f7cdf3714",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|you're on mute": {
+  "hash": "f4fd0693bc84",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|آخر الانترفيو": {
+  "hash": "710e0fef1cd2",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|أزمنة الكلام": {
+  "hash": "e3f5db562034",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|التوتر وتطلب يعيد": {
+  "hash": "38cc2e9e38fe",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|النت قطع": {
+  "hash": "6d4a2c436aad",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|تسجّل نفسك": {
+  "hash": "677fa5031b53",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|تسمع النطق": {
+  "hash": "93d2f1b2ff16",
+  "date": "2026-10-08",
+  "on": "docs: Wiktionary pronunciations (determine)"
+ },
+ "speak|تشرح PR بصوتك": {
+  "hash": "364d09a8dcde",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|تقاطع وتاخد دورك": {
+  "hash": "bbfae73019fd",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|تمشي حد في الكود": {
+  "hash": "9e3dc2d632db",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|حروف ساكتة": {
+  "hash": "ae3c3298c254",
+  "date": "2026-10-08",
+  "on": "docs: Wiktionary pronunciations (schema, facade)"
+ },
+ "speak|رموز الكود": {
+  "hash": "4697cecd9e7b",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|غلطات الكلام": {
+  "hash": "1ed24ab0ab6f",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|قالب الشرح": {
+  "hash": "f394a29d0da1",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|لغة STAR": {
+  "hash": "c9143c20b024",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|مش عارف في اجتماع": {
+  "hash": "86f6c7a10ebb",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|مش فاهم بأدب": {
+  "hash": "3b8713d7c62a",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|مكالمة عميل": {
+  "hash": "2d05b7ef46ff",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|من مكتوب لمتكلم": {
+  "hash": "efe0c0701ab9",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "speak|٣٠ يوم ١٥ دقيقة": {
+  "hash": "affbb3c451c6",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
  "spring|@DataJpaTest": {
   "hash": "cd46e051bfb9",
   "date": "2026-10-07",
