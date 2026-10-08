@@ -9294,6 +9294,106 @@
   "date": "2026-10-07",
   "on": "docker php:8.4-cli (PHP 8.4.26)"
  },
+ "projects|قبل أي مشروع: الحل المرجعي": {
+  "hash": "6aae05983270",
+  "date": "2026-10-08",
+  "on": "Windows 11 Git 2.56 (full compare flow)"
+ },
+ "projects|قبل أي مشروع: الـ repo والـ commits": {
+  "hash": "daf3a87fde2f",
+  "date": "2026-10-08",
+  "on": "Windows 11 Git 2.56 (local switch/commit/merge --squash); docs: git push, gh pr create/merge"
+ },
+ "projects|قبل أي مشروع: تعريف خلصت": {
+  "hash": "e19a37dc86c6",
+  "date": "2026-10-08",
+  "on": "Windows 11 Git Bash, Node 24.19, Git 2.56 (done-check.mjs on a test repo)"
+ },
+ "projects|قبل أي مشروع: موبايل وكيبورد وقارئ شاشة": {
+  "hash": "0d08d534a306",
+  "date": "2026-10-08",
+  "on": "Windows 11 serve + Lighthouse 13.5 + Playwright 1.64, ip in ubuntu:24.04, ipconfig in pwsh; docs: macOS ipconfig, NVDA/phone test"
+ },
+ "projects|مشروع ١: accessibility و Lighthouse": {
+  "hash": "840603503665",
+  "date": "2026-10-08",
+  "on": "Windows 11 Playwright 1.64 + axe 4.13 + Lighthouse 13.5"
+ },
+ "projects|مشروع ١: الإنجليزي و RTL": {
+  "hash": "ab964c6e21f9",
+  "date": "2026-10-08",
+  "on": "Windows 11 Chrome 154 via Playwright (measurements + bidi screenshot)"
+ },
+ "projects|مشروع ١: الـ layout الـ responsive": {
+  "hash": "e07683f4fa22",
+  "date": "2026-10-08",
+  "on": "Windows 11 Chrome 154 via Playwright (computed styles at 6 widths, dark mode)"
+ },
+ "projects|مشروع ١: الـ spec": {
+  "hash": "431c564c2845",
+  "date": "2026-10-08",
+  "on": "Windows 11 Git Bash + pwsh 7 New-Item"
+ },
+ "projects|مشروع ١: النشر والـ README": {
+  "hash": "4872cdbbcd97",
+  "date": "2026-10-08",
+  "on": "Windows 11 (playwright screenshot, YAML parse, npm test); docs: GitHub Pages deploy/Actions run"
+ },
+ "projects|مشروع ١: الهيكل الـ semantic": {
+  "hash": "a20abe87d8a4",
+  "date": "2026-10-08",
+  "on": "Windows 11 Chrome 154 via Playwright (ariaSnapshot) + W3C Nu validator"
+ },
+ "projects|مشروع ٢: fetch والحالات الأربع": {
+  "hash": "fcc93d4e8023",
+  "date": "2026-10-08",
+  "on": "Windows 11 Chrome 154 via Playwright (page.route for every state) + Node fetch"
+ },
+ "projects|مشروع ٢: localStorage": {
+  "hash": "218fa6428b27",
+  "date": "2026-10-08",
+  "on": "Windows 11 Chrome 154 via Playwright (corrupt data, quota, ids)"
+ },
+ "projects|مشروع ٢: الاختبارات والنشر": {
+  "hash": "807e82480001",
+  "date": "2026-10-08",
+  "on": "Windows 11 node --test + Playwright 1.64 (repeat-each=3); docs: Pages deploy"
+ },
+ "projects|مشروع ٢: الـ spec والـ state": {
+  "hash": "01d7c6a415a8",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24.19 (node --test)"
+ },
+ "projects|مشروع ٢: اللعب والكيبورد": {
+  "hash": "3ef7c9bfa2fd",
+  "date": "2026-10-08",
+  "on": "Windows 11 Chrome 154 via Playwright (keyboard-only play)"
+ },
+ "projects|مشروع ٣: أخطاء يقراها قارئ الشاشة": {
+  "hash": "4d48ad11364c",
+  "date": "2026-10-08",
+  "on": "Windows 11 Chrome 154 via Playwright (summary, aria-invalid)"
+ },
+ "projects|مشروع ٣: الإرسال مرة واحدة": {
+  "hash": "6891e3e0902b",
+  "date": "2026-10-08",
+  "on": "Windows 11 Express 5.2/multer 2.4 + curl (parallel same key) + Playwright 1.64"
+ },
+ "projects|مشروع ٣: التنقل والمراجعة": {
+  "hash": "b933c4e139f6",
+  "date": "2026-10-08",
+  "on": "Windows 11 Chrome 154 via Playwright (FormData)"
+ },
+ "projects|مشروع ٣: الـ spec والخطوات": {
+  "hash": "abbe74833fb6",
+  "date": "2026-10-08",
+  "on": "Windows 11 Chrome 154 via Playwright (validity, elements.type id clash)"
+ },
+ "projects|مشروع ٣: صورة بـ preview": {
+  "hash": "a86db2836a43",
+  "date": "2026-10-08",
+  "on": "Windows 11 Chrome 154 via Playwright + curl to Express 5.2/multer 2.4; docs: heap snapshot"
+ },
  "ps|$LASTEXITCODE": {
   "hash": "5f92172f28f3",
   "date": "2026-10-06",

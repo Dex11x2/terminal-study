@@ -52,6 +52,137 @@ MORE("projects", [
             when: R`أي فورم فيه أكتر من ٦ أو ٧ حقول على موبايل، أو حقول بتعتمد على اختيار قبلها. الفورم القصير (دخول، أو اشتراك في newsletter) خليه صفحة واحدة.`,
             mistakes: R`[[placeholder]] بدل [[label]]: بيختفي أول ما تكتب، وقارئ الشاشة ممكن ميقراهوش. أو radio من غير fieldset، فقارئ الشاشة يقول «في العيادة، radio» من غير ما يقول السؤال. أو [[type="number"]] للموبايل (بيشيل الصفر اللي في الأول، وبيعمل scroll بالعجلة). أو [[id]] على عنصر بنفس اسم [[name]] حقل تاني: في الحل المرجعي الـ fieldset كان [[id="type"]] والـ radios [[name="type"]]، فـ [[form.elements.type]] رجّع الـ fieldset مع الـ radios، والـ validation بتاع الـ radio اتلغى من غير أي error. اتصلح لـ [[type-group]]، واختبار Playwright هو اللي مسكه.`
           },
+          teach: R`## الفكرة: فورم واحد، و ٤ أقسام، و قسم واحد بس ظاهر
+
+المثال أول الفورم: ملخص الأخطاء (مخفي) والخطوة الأولى بحقولها التلاتة. والـ solCode فيه الصفحة كاملة. هنفك المثال سطر سطر، وبعدين الخطوات التانية، ونشوف المتصفح بيفهم القواعد دي إزاي. كله اتجرّب في Chrome 154 (بـ Playwright) على الحل المرجعي شغال على Express 5.2 و multer 2.4 و Node 24.19.
+
+---
+
+## ١. الفورم
+
+~~~text
+<form id="booking" novalidate>
+~~~
+
+- [[<form>]] واحد لكل الخطوات: الحقول كلها موجودة في الـ DOM طول الوقت، فالرجوع لخطوة الداتا فيها، والإرسال [[new FormData(form)]] سطر واحد.
+- [[novalidate]]: بيقفل فقاعات المتصفح اللي بتظهر لما تبعت فورم فيه غلط. القواعد نفسها ([[required]] و [[pattern]]) لسه شغالة، واحنا هنقرا نتيجتها بالكود ونعرض رسايلنا.
+
+## ٢. ملخص الأخطاء
+
+~~~text
+<div id="summary" class="summary" tabindex="-1" hidden>
+  <h2>فيه <span id="summary-count"></span> محتاجين تتصلح:</h2>
+  <ul id="summary-list"></ul>
+</div>
+~~~
+
+- [[hidden]]: attribute بيخفي العنصر من الشاشة **ومن قارئ الشاشة** ومن ترتيب الـ Tab.
+- [[tabindex="-1"]]: العنصر ده مش بيتوصله بـ Tab، بس الكود يقدر يعمل له [[focus()]]. هنحط عليه الـ focus لما يبقى فيه أخطاء.
+- [[#summary-count]] و [[#summary-list]] فاضيين، الكود هيملاهم.
+
+## ٣. الخطوة
+
+~~~text
+<section class="step" data-step="0" aria-labelledby="s0">
+  <h2 id="s0" tabindex="-1">الخطوة 1 من 4: بياناتك</h2>
+~~~
+
+- [[data-step="0"]]: رقم الخطوة من صفر (للقراية بس؛ الكود بيمشي بترتيب العناصر).
+- [[aria-labelledby="s0"]]: اسم القسم هو نص الـ h2.
+- العنوان فيه «1 من 4»: قارئ الشاشة لما الـ focus ييجي عليه بيعرف هو فين.
+
+## ٤. حقل الاسم
+
+~~~text
+<label for="name">الاسم</label>
+<input id="name" name="name" autocomplete="name" required minlength="3" aria-describedby="name-error">
+<p class="error" id="name-error"></p>
+~~~
+
+| الحتة | بتعمل إيه |
+|---|---|
+| [[<label for="name">]] | بيربط الكلمة بالحقل اللي [[id="name"]]: الضغط عليها بيحط الـ focus في الحقل، وقارئ الشاشة بيقولها اسم الحقل |
+| [[name="name"]] | اسم الخانة في [[FormData]] وفي اللي بيوصل للسيرفر |
+| [[autocomplete="name"]] | المتصفح يقترح اسمك المحفوظ |
+| [[required]] | لازم يتملي ([[validity.valueMissing]]) |
+| [[minlength="3"]] | ٣ حروف على الأقل ([[validity.tooShort]]) |
+| [[aria-describedby="name-error"]] | الوصف هو نص الـ [[p]] اللي تحته، بيتقري بعد الاسم |
+
+[[#name-error]] موجود من الأول وفاضي. أول ما الكود يكتب فيه، بيبقى جزء من وصف الحقل.
+
+## ٥. حقل الموبايل
+
+~~~text
+<label for="phone">الموبايل</label>
+<p class="hint" id="phone-hint">11 رقم ويبدأ بـ 01</p>
+<input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" dir="ltr" required pattern="01[0125][0-9]{8}" aria-describedby="phone-hint phone-error">
+~~~
+
+- [[type="tel"]]: نص عادي (مش رقم)، فالصفر في الأول بيفضل. و [[inputmode="tel"]]: لوحة أرقام التليفون على الموبايل.
+- [[dir="ltr"]]: الرقم بيتكتب شمال ليمين في صفحة عربي.
+- [[pattern="01[0125][0-9]{8}"]]: regex لازم يطابق القيمة **كلها**: [[01]]، وبعده رقم من [[0]] و [[1]] و [[2]] و [[5]]، وبعده ٨ أرقام. المجموع ١١.
+- [[aria-describedby="phone-hint phone-error"]]: أكتر من id بمسافة، فالوصف الـ hint وبعده الخطأ.
+
+جرّبنا قيم في الحقل وقرينا [[validity]]:
+
+~~~text الناتج
+""             valid=false valueMissing     | browser msg: Please fill out this field.
+"123"          valid=false patternMismatch  | browser msg: Please match the requested format.
+"01912345678"  valid=false patternMismatch  | browser msg: Please match the requested format.
+"01012345678"  valid=true
+~~~
+
+- [[019]] وقع: [[9]] مش من [[[0125]]].
+- [[validationMessage]] رسالة المتصفح بلغته هو (إنجليزي هنا)، ومش بتقول المطلوب. عشان كده هنكتب رسايلنا في المحطة الجاية.
+
+## ٦. الإيميل
+
+~~~text
+<input id="email" name="email" type="email" autocomplete="email" dir="ltr" aria-describedby="email-error">
+~~~
+
+مفيش [[required]]: فاضي مسموح. بس لو اتكتب، [[type="email"]] بيفحص الشكل ([[validity.typeMismatch]])، وبيفتح كيبورد فيه [[@]].
+
+---
+
+## ٧. الخطوات التانية (الـ solCode)
+
+| الخطوة | العناصر المهمة |
+|---|---|
+| ٢ الكشف | [[<select required>]] أول [[option]] فيه [[value=""]]، و [[<fieldset>]] فيه [[<legend>]] والـ radios، و [[type="date"]] |
+| ٣ الصورة | [[type="file" accept="image/jpeg,image/png,image/webp"]]، و [[#photo-error]] عليه [[role="alert"]]، و [[<figure id="preview" hidden>]] |
+| ٤ المراجعة | [[<dl id="review">]] فاضي، و [[<p id="submit-status" role="status">]] |
+| الزراير | «رجوع» و «التالي» [[type="button"]]، و «احجز» [[type="submit"]] مخفي |
+
+- [[<option value="">]]: من غيره أول تخصص كان هيبقى مختار لوحده، و [[required]] مكانش هيقول حاجة.
+- [[<fieldset>]] و [[<legend>]]: قارئ الشاشة بيقول السؤال («نوع الكشف») قبل كل اختيار. و [[required]] على radio واحد بس بيخلي المجموعة كلها مطلوبة.
+- [[type="button"]] مهم: أي [[<button>]] جوه form من غير [[type]] بيبقى submit.
+- [[#done]] **برّه** الفورم: بعد الحجز الفورم كله بيستخبى والرسالة تظهر.
+
+## ٨. ليه [[id="type-group"]] مش [[id="type"]]
+
+الـ radios اسمها [[name="type"]]. [[form.elements.type]] بيرجّع كل العناصر اللي [[name]] **أو** [[id]] بتاعها [[type]]. عملنا فورم تجريبي فيه [[<fieldset id="type">]] وسألناه:
+
+~~~text الناتج
+fieldset id="type":       RadioNodeList 3 FIELDSET,INPUT,INPUT first.checkValidity=true first is FIELDSET
+الفورم الحقيقي (type-group): RadioNodeList 2 first.checkValidity=false
+~~~
+
+مع [[id="type"]] أول عنصر بقى الـ fieldset، و [[checkValidity()]] عليه [[true]] دايمًا، فالـ radio الفاضي كان هيعدّي من غير ولا رسالة. بعد التغيير لـ [[type-group]] أول عنصر هو الـ radio نفسه، والفحص بيقول [[false]] صح.
+
+---
+
+## الخلاصة
+
+| القاعدة | ليه |
+|---|---|
+| [[<form novalidate>]] واحد | الداتا كلها في مكان، والرسايل بطريقتنا |
+| [[hidden]] على كل خطوة إلا الحالية | مخفية من الشاشة وقارئ الشاشة والـ Tab |
+| [[label for]] لكل حقل، و [[fieldset]] + [[legend]] للـ radio | كل حقل ليه اسم مسموع |
+| [[aria-describedby]] على الـ hint والخطأ | الوصف بيتقري مع الحقل |
+| [[type]] و [[inputmode]] و [[autocomplete]] و [[dir]] | الكيبورد والاقتراح والاتجاه الصح |
+| [[tabindex="-1"]] على العناوين والملخص | الكود يحط عليهم focus |
+| [[id]] ميساويش [[name]] حقل تاني | [[form.elements]] بيرجّع الاتنين |`,
           lines: [
             R`فورم واحد لكل الخطوات، و [[novalidate]] عشان نعرض الأخطاء بطريقتنا.`,
             R`ملخص الأخطاء: مخفي، وبياخد focus من الكود.`,
@@ -210,6 +341,188 @@ MORE("projects", [
             when: R`أي فورم. الملخص مهم بالذات لما الأخطاء ممكن تبقى تحت الشاشة، أو في خطوة فيها حقول كتير.`,
             mistakes: R`الخطأ لونه أحمر بس من غير نص. أو الرسالة بتظهر أول ما المستخدم يبدأ يكتب («الإيميل غلط» وهو لسه كاتب حرف). أو [[alert()]] للأخطاء. أو [[aria-live]] على كل رسالة خطأ، فلما ٥ حقول يغلطوا مع بعض قارئ الشاشة يقرا ٥ رسايل ورا بعض. أو [[innerHTML]] للملخص بنص فيه قيم من المستخدم (الحل بيستخدم [[textContent]]). أو تعتمد على الـ validation ده وتنسى السيرفر.`
           },
+          teach: R`## الفكرة: المتصفح بيقول «فيه غلط إيه»، واحنا بنقول «تعمل إيه»
+
+المثال [[validateStep(i)]]: بتفحص حقول خطوة واحدة، وتكتب رسالة تحت كل حقل غلط، وتملا الملخص. والـ solCode فيه كل اللي حواليها: الرسايل، و [[messageFor]]، و [[setError]]، و [[showSummary]]، والـ listeners. هنفكهم بترتيب الملف، وبعدين نجرّبهم في Chrome 154 (بـ Playwright) على الحل المرجعي.
+
+---
+
+## ١. أول الملف: المتغيرات
+
+~~~text form.js
+const form = document.querySelector('#booking')
+const steps = [...form.querySelectorAll('.step')]
+const stepItems = [...document.querySelectorAll('.steps li')]
+const [back, nextBtn, submitBtn] = ['#back', '#next', '#submit'].map(s => document.querySelector(s))
+const summary = document.querySelector('#summary')
+const last = steps.length - 1
+let current = 0
+~~~
+
+- [[[...form.querySelectorAll('.step')]]]: [[querySelectorAll]] بيرجّع NodeList، و [[...]] بيحوّلها array عادية ([[map]] و [[forEach]] بالأرقام).
+- [[const [back, nextBtn, submitBtn] = [...].map(...)]]: array destructuring. ٣ selectors اتحوّلوا ٣ عناصر، وكل واحد في متغير.
+- [[last]] = 3، رقم آخر خطوة. و [[current]] الخطوة الحالية.
+
+## ٢. الرسايل
+
+~~~text
+const MESSAGES = {
+  name: { valueMissing: 'اكتب اسمك', tooShort: 'الاسم لازم 3 حروف على الأقل' },
+  phone: { valueMissing: 'اكتب رقم الموبايل', patternMismatch: 'الرقم لازم 11 رقم ويبدأ بـ 010 أو 011 أو 012 أو 015' },
+  ...
+  date: { valueMissing: 'اختار اليوم', rangeUnderflow: 'اختار يوم من النهارده أو بعده' },
+}
+const today = new Date().toLocaleDateString('en-CA')
+form.date.min = today
+~~~
+
+- كل حقل ليه object: اسم الـ flag في [[validity]]، والرسالة. الرسالة بتقول **تعمل إيه**، مش «invalid».
+- [[toLocaleDateString('en-CA')]]: التاريخ بشكل كندا، وهو بالصدفة [[YYYY-MM-DD]]، نفس الشكل اللي [[input type="date"]] عايزه.
+- [[form.date.min = today]]: [[form.date]] = الحقل اللي اسمه [[date]]. و [[min]] بيخلي أي يوم قبل النهارده [[rangeUnderflow]]. اتقرا وقت التجربة: [[min= 2026-10-08]].
+
+## ٣. [[messageFor(el)]]
+
+~~~text
+function messageFor(el) {
+  for (const [key, msg] of Object.entries(MESSAGES[el.name] ?? {})) if (el.validity[key]) return msg
+  return el.validationMessage
+}
+~~~
+
+- [[MESSAGES[el.name] ?? {}]]: رسايل الحقل ده، ولو مالوش رسايل object فاضي.
+- [[Object.entries]]: بيحوّل الـ object لأزواج [[[key, msg]]]، و [[for...of]] بيلف عليهم بالترتيب.
+- أول flag يبقى [[true]] نرجّع رسالته. ولو مفيش، رسالة المتصفح كاحتياطي.
+
+## ٤. [[setError(name, msg)]]
+
+~~~text
+function setError(name, msg) {
+  document.querySelector($__bt#$__{name}-error$__bt).textContent = msg
+  const el = form.elements[name]
+  if (el instanceof RadioNodeList) return
+  if (msg) el.setAttribute('aria-invalid', 'true')
+  else el.removeAttribute('aria-invalid')
+}
+~~~
+
+- اكتب الرسالة في [[#name-error]] (أو امسحها لو [[msg]] فاضي). [[textContent]]: نص بس.
+- [[form.elements[name]]]: الحقل بالاسم. وللـ radios بيرجّع [[RadioNodeList]] (مجموعة)، ومينفعش [[aria-invalid]] عليها كلها، فبنخرج.
+- [[aria-invalid="true"]]: قارئ الشاشة بيقول «invalid entry»، والـ CSS بيلوّن البوردر بـ [[[aria-invalid="true"]]].
+
+## ٥. [[validateStep(i)]] (المثال)
+
+~~~text
+function validateStep(i) {
+  const errors = []
+  const names = new Set([...steps[i].querySelectorAll('input, select')].filter(el => el.type !== 'file').map(el => el.name))
+~~~
+
+من جوه لبرة:
+
+1. [[steps[i].querySelectorAll('input, select')]]: كل الحقول في الخطوة دي بس.
+2. [[filter(el => el.type !== 'file')]]: من غير حقل الصورة (ليه فحص لوحده في المحطة الرابعة).
+3. [[map(el => el.name)]]: الأسماء. في الخطوة ٢: [["specialty", "type", "type", "date"]].
+4. [[new Set(...)]]: Set بيشيل المكرر، فالـ radios ([[type]] مرتين) تتفحص مرة.
+
+~~~text
+  for (const name of names) {
+    const el = form.elements[name]
+    const first = el instanceof RadioNodeList ? el[0] : el
+    const msg = first.checkValidity() ? '' : messageFor(first)
+    setError(name, msg)
+    if (msg) errors.push({ id: first.id || (first.id = $__bt$__{name}-first$__bt), msg })
+  }
+  showSummary(errors)
+  return errors.length === 0
+}
+~~~
+
+- [[el[0]]] للـ radio: [[required]] عليه بيمثّل المجموعة كلها، فلو مفيش واحد مختار [[valueMissing]] بيبقى [[true]] عليه.
+- [[checkValidity()]]: [[true]] لو سليم.
+- [[first.id || (first.id = ...)]]: الـ radio مالوش id، فنديله واحد ([[type-first]]) عشان لينك الملخص يوديله. [[||]] بيرجّع الـ id لو موجود، ولو لأ بيعمل التخصيص ويرجّع قيمته.
+
+## ٦. [[showSummary(errors)]]
+
+~~~text
+function showSummary(errors) {
+  summary.hidden = errors.length === 0
+  if (!errors.length) return
+  document.querySelector('#summary-count').textContent = errors.length === 1 ? 'حاجة واحدة' : $__bt$__{errors.length} حاجات$__bt
+  document.querySelector('#summary-list').replaceChildren(...errors.map(({ id, msg }) => {
+    const li = document.createElement('li'), a = document.createElement('a')
+    a.href = $__bt#$__{id}$__bt
+    a.textContent = msg
+    li.append(a)
+    return li
+  }))
+  summary.focus()
+}
+~~~
+
+- [[summary.hidden = ...]]: يظهر لو فيه أخطاء.
+- [[replaceChildren(...)]]: امسح اللي جوه القايمة وحط الجديد. كل خطأ [[li]] جواه لينك للحقل.
+- [[createElement]] و [[textContent]] بدل [[innerHTML]]: مفيش أي نص بيتفسر HTML.
+- [[summary.focus()]]: قارئ الشاشة بيقرا الملخص كله.
+
+## ٧. الـ listeners
+
+~~~text
+summary.addEventListener('click', e => {
+  const link = e.target.closest('a')
+  if (!link) return
+  e.preventDefault()
+  document.getElementById(link.hash.slice(1)).focus()
+})
+
+form.addEventListener('input', e => {
+  const el = e.target
+  if (el.getAttribute('aria-invalid') === 'true' || el.type === 'radio') setError(el.name, el.checkValidity() ? '' : messageFor(el))
+})
+~~~
+
+- [[link.hash]] = [["#name"]]، و [[slice(1)]] بيشيل [[#]]. [[preventDefault()]] بيمنع القفزة العادية، و [[focus()]] بيحط المؤشر في الحقل فعلًا.
+- [[input]] event بيحصل مع كل حرف. بس بنعيد الفحص **لو الحقل كان غلط قبل كده** (أو radio)، فالرسالة مبتظهرش وانت لسه بتكتب أول مرة، وبتختفي أول ما تصلّح.
+
+---
+
+## ٨. التجربة
+
+«التالي» على الخطوة الأولى فاضية:
+
+~~~text الناتج
+focus: DIV#summary "فيه 2 حاجات محتاجين تتصلح: اكتب اسمك اكتب رقم الموبايل"
+summary list: <li><a href="#name">اكتب اسمك</a></li><li><a href="#phone">اكتب رقم الموبايل</a></li>
+name aria-invalid: true
+phone: - textbox "الموبايل" [invalid]
+~~~
+
+الإيميل مش في الملخص: فاضي ومش [[required]]. ودوسنا اللينك الأول وكتبنا:
+
+~~~text الناتج
+after link focus: INPUT#name
+typing "من":    الاسم لازم 3 حروف على الأقل   aria-invalid=true
+typing "منى علي": ""                         aria-invalid=null
+~~~
+
+الرسالة اتغيرت من [[valueMissing]] لـ [[tooShort]] وانت بتكتب، واختفت أول ما بقى سليم. وفي الخطوة التانية فاضية الملخص فيه «اختار التخصص» و «اختار نوع الكشف» و «اختار اليوم»، ويوم 2020-01-01: «اختار يوم من النهارده أو بعده».
+
+واختبار Playwright الأول في المحطة الأخيرة بيتأكد من ده كله، وكمان إن الوصف المسموع للموبايل [[11 رقم ويبدأ بـ 01 اكتب رقم الموبايل]] (الـ hint وبعده الخطأ)، و axe صفر violations والأخطاء ظاهرة.
+
+---
+
+## الخلاصة
+
+| الحتة | بتعمل إيه |
+|---|---|
+| [[MESSAGES]] | رسالة بالعربي لكل flag في [[validity]] |
+| [[messageFor]] | أول flag [[true]] ← رسالته |
+| [[setError]] | الرسالة تحت الحقل و [[aria-invalid]] |
+| [[validateStep]] | حقول الخطوة بس، و [[Set]] للـ radio، و [[checkValidity()]] |
+| [[showSummary]] | لينك لكل خطأ و [[focus()]] على الملخص |
+| [[input]] listener | يعيد الفحص بس لو كان غلط |
+
+- المتصفح بيعمل القواعد ([[required]] و [[pattern]] و [[min]])، واحنا بنعمل الرسايل.
+- كل ده راحة للمستخدم: السيرفر بيعيد الفحص (المحطة الأخيرة).`,
           lines: [
             R`بتفحص خطوة واحدة وترجّع true لو سليمة.`,
             R`قايمة الأخطاء اللي هتتعرض في الملخص.`,
@@ -339,6 +652,150 @@ back.addEventListener('click', () => go(current - 1))`,
             when: R`أي فورم متعدد الخطوات. وفي React نفس الفكرة: state للخطوة الحالية، والحقول كلها في نفس الفورم (react-hook-form بيدعم ده).`,
             mistakes: R`تمسح الخطوة من الـ DOM بدل ما تخفيها، فالداتا تروح. أو «رجوع» بيعمل validation (مش لازم: المستخدم راجع يصلّح). أو تنسى الـ Enter فالفورم يتبعت من الخطوة الأولى ناقص. أو المراجعة بتعرض [[dental]] و [[online]]. أو مؤشر خطوات بالألوان بس من غير [[aria-current]].`
           },
+          teach: R`## الفكرة: [[go(i)]] بتبدّل الخطوة، و [[renderReview()]] بتعرض اللي اتكتب بالكلام المفهوم
+
+المثال [[go(i)]] و listener «التالي» و «رجوع». والـ solCode فيه [[renderReview()]] كمان. هنفكهم سطر سطر، ونشوف Enter جوه حقل بيعمل إيه، وبعدين المراجعة الحقيقية اللي طلعت. اتجرّب في Chrome 154 (بـ Playwright) على الحل المرجعي.
+
+---
+
+## ١. [[go(i)]]
+
+~~~text
+function go(i) {
+  steps[current].hidden = true
+  current = i
+  steps[i].hidden = false
+~~~
+
+خبّي الحالية، وحدّث الرقم، واظهر الجديدة. [[hidden]] هنا property بتحط أو تشيل الـ attribute. الخطوة المخفية الحقول بتاعتها لسه في الفورم وقيمها زي ما هي.
+
+~~~text
+  stepItems.forEach((li, j) => j === i ? li.setAttribute('aria-current', 'step') : li.removeAttribute('aria-current'))
+~~~
+
+لف على [[<li>]] المؤشر فوق: اللي رقمه [[i]] ياخد [[aria-current="step"]]، والباقي يتشال منه. قارئ الشاشة بيقول «current step» على الحالي، والـ CSS بيميّزه بـ [[.steps [aria-current]]].
+
+~~~text
+  back.hidden = i === 0
+  nextBtn.hidden = i === last
+  submitBtn.hidden = i !== last
+  summary.hidden = true
+~~~
+
+كل سطر شرط بيرجّع [[true]] أو [[false]]:
+
+| الخطوة | رجوع | التالي | احجز |
+|---|---|---|---|
+| 0 | مخفي | ظاهر | مخفي |
+| 1 و 2 | ظاهر | ظاهر | مخفي |
+| 3 ([[last]]) | ظاهر | مخفي | ظاهر |
+
+و [[summary.hidden = true]]: أخطاء الخطوة اللي فاتت ملهاش معنى هنا.
+
+~~~text
+  if (i === last) renderReview()
+  steps[i].querySelector('h2').focus()
+}
+~~~
+
+- المراجعة بتتبني **كل مرة** تدخل الخطوة الأخيرة، فلو رجعت وغيّرت حاجة، المراجعة الجديدة فيها التغيير.
+- [[focus()]] على عنوان الخطوة: قارئ الشاشة يقرا «الخطوة 2 من 4: الكشف».
+
+## ٢. الزراير
+
+~~~text
+nextBtn.addEventListener('click', () => { if (validateStep(current)) go(current + 1) })
+back.addEventListener('click', () => go(current - 1))
+~~~
+
+«التالي» بيفحص الخطوة الأول، و «رجوع» لأ: اللي راجع غالبًا راجع يصلّح.
+
+## ٣. Enter جوه حقل
+
+أي Enter جوه [[input]] في فورم بيعمل submit (اسمها implicit submission)، حتى و «احجز» مخفي. عشان كده أول سطرين في الـ submit listener (المحطة الأخيرة):
+
+~~~text
+form.addEventListener('submit', async e => {
+  e.preventDefault()
+  if (current !== last) { if (validateStep(current)) go(current + 1); return }
+~~~
+
+لو مش آخر خطوة: اعمل زي «التالي» واخرج. جرّبنا: كتبنا الاسم والموبايل ودوسنا Enter في حقل الموبايل:
+
+~~~text الناتج
+Enter in phone -> H2#s1 "الخطوة 2 من 4: الكشف" | aria-current: الكشف
+~~~
+
+## ٤. [[renderReview()]]
+
+~~~text
+function renderReview() {
+  const labels = { name: 'الاسم', phone: 'الموبايل', email: 'الإيميل', specialty: 'التخصص', type: 'نوع الكشف', date: 'اليوم' }
+  const data = new FormData(form)
+~~~
+
+- [[labels]]: اسم الخانة → الكلمة اللي تتعرض. وترتيبها هو ترتيب العرض.
+- [[new FormData(form)]]: كل قيم الفورم، حتى اللي في خطوات مخفية، ومعاها الملف.
+
+~~~text
+  const rows = Object.entries(labels).flatMap(([name, label]) => {
+    const el = form.elements[name]
+    const value = el.tagName === 'SELECT' ? el.selectedOptions[0].text
+      : el instanceof RadioNodeList ? form.querySelector($__bt[name="$__{name}"]:checked$__bt)?.parentElement.textContent.trim()
+      : data.get(name)
+~~~
+
+- [[flatMap]]: زي [[map]]، بس كل عنصر بيرجّع array ([[[dt, dd]]]) وكلهم بيتفردوا في array واحدة.
+- القيمة حسب نوع الحقل (ternary متداخل):
+  - [[select]]: [[selectedOptions[0].text]] = النص «أسنان»، مش القيمة [[dental]].
+  - radio: [[:checked]] = المختار، و [[parentElement]] = الـ [[label]] اللي حواليه، و [[textContent.trim()]] = «أونلاين». و [[?.]] لو مفيش مختار.
+  - غير كده: [[data.get(name)]].
+
+~~~text
+    const dt = document.createElement('dt'), dd = document.createElement('dd')
+    dt.textContent = label
+    dd.textContent = value || '—'
+    return [dt, dd]
+  })
+~~~
+
+[[<dt>]] الاسم و [[<dd>]] القيمة، جوه [[<dl>]]. و [[value || '—']]: الفاضي (الإيميل) يتعرض شرطة.
+
+~~~text
+  const photo = data.get('photo')
+  const dt = document.createElement('dt'), dd = document.createElement('dd')
+  dt.textContent = 'الصورة'
+  dd.textContent = photo?.size ? photo.name : 'من غير صورة'
+  document.querySelector('#review').replaceChildren(...rows, dt, dd)
+}
+~~~
+
+[[data.get('photo')]] بيرجّع [[File]]. ولو مفيش صورة، [[FormData]] بيحط File فاضي برضه. سألنا الفورم وهو من غير صورة: [[File "" 0 application/octet-stream]]، يعني اسم فاضي وحجم صفر. فبنفحص [[size]] مش وجوده.
+
+## ٥. المراجعة الحقيقية
+
+ملينا الخطوات ([[منى علي]] و [[01012345678]] من غير إيميل، وأسنان، وأونلاين، وبكره، وصورة [[rx.png]]):
+
+~~~text الناتج (#review)
+الاسم | منى علي | الموبايل | 01012345678 | الإيميل | — | التخصص | أسنان | نوع الكشف | أونلاين | اليوم | 2026-10-09 | الصورة | rx.png
+focus: H2#s3 "الخطوة 4 من 4: راجع وابعت"
+~~~
+
+واختبار Playwright «back keeps the data» بيرجع من الخطوة التانية ويتأكد إن الاسم لسه [[منى علي]].
+
+---
+
+## الخلاصة
+
+| الحاجة | الكود |
+|---|---|
+| تبديل الخطوة | [[hidden]] على الحالية والجديدة |
+| المؤشر | [[aria-current="step"]] على واحد بس |
+| الزراير | [[hidden]] حسب [[i === 0]] و [[i === last]] |
+| قارئ الشاشة يعرف إن الخطوة اتغيرت | [[focus()]] على الـ h2 |
+| Enter مايبعتش بدري | الـ submit listener: لو مش آخر خطوة = «التالي» |
+| المراجعة بالكلام | [[selectedOptions[0].text]] ونص الـ label للـ radio |
+| الصورة | [[photo?.size]] مش [[photo]] |`,
           lines: [
             R`[[go(i)]]: انقل للخطوة رقم i.`,
             R`خبّي الحالية.`,
@@ -434,6 +891,151 @@ function renderReview() {
             when: R`أي رفع صورة: بروفايل، أو منتج، أو مستند. ولملفات كبيرة (فيديو) محتاج progress bar ورفع مباشر للـ storage.`,
             mistakes: R`[[FileReader.readAsDataURL]] لصورة ١٠ ميجا فالصفحة تهنج. أو نسيان [[revokeObjectURL]]. أو الفحص في المتصفح بس. أو [[alt=""]] على المعاينة (هي معلومة مهمة مش زينة). أو رفع الصورة لحظة الاختيار قبل ما المستخدم يبعت، فالسيرفر يمتلي صور ناس غيّروا رأيهم. أو تفتكر إن [[accept]] حماية: ده اقتراح في نافذة الاختيار بس.`
           },
+          teach: R`## الفكرة: افحص النوع والحجم في المتصفح للراحة، واعرض الصورة من الذاكرة، وحرّرها لما تخلص
+
+المثال الـ [[change]] listener على حقل الصورة. والـ solCode فيه الثوابت، و [[clearPreview]]، و «شيل الصورة»، وأول [[server.js]] بإعداد multer. هنفكهم، ونجرّب في Chrome 154 (بـ Playwright) وبـ [[curl]] على السيرفر (Express 5.2 و multer 2.4 على بورت 6037).
+
+---
+
+## ١. الثوابت
+
+~~~text
+const ALLOWED = ['image/jpeg', 'image/png', 'image/webp'], MAX = 2 * 1024 * 1024
+const photo = form.photo, preview = document.querySelector('#preview'), img = document.querySelector('#preview-img')
+let previewUrl = null
+~~~
+
+- [[ALLOWED]]: أنواع الـ MIME المسموحة. MIME type = اسم نوع الملف زي [[image/png]].
+- [[MAX]] = 2 × 1024 × 1024 = 2,097,152 بايت = 2 ميجا.
+- [[previewUrl]]: الـ URL المؤقت الحالي، عشان نحرره بعدين.
+
+## ٢. [[clearPreview()]]
+
+~~~text
+function clearPreview() {
+  if (previewUrl) URL.revokeObjectURL(previewUrl)
+  previewUrl = null
+  preview.hidden = true
+  img.removeAttribute('src')
+}
+~~~
+
+[[revokeObjectURL]] بيقول للمتصفح «خلاص مش محتاج الملف ده في الذاكرة». جرّبنا على Blob صغير:
+
+~~~text الناتج
+blob:http://localhost:6037/<uuid> | before revoke: hello | after revoke: TypeError: Failed to fetch
+~~~
+
+قبل الـ revoke الـ URL بيرجّع المحتوى، وبعده مبقاش موجود. من غيره، كل صورة المستخدم يختارها بتفضل محجوزة لحد ما الصفحة تتقفل.
+
+## ٣. الـ [[change]] listener (المثال)
+
+~~~text
+photo.addEventListener('change', () => {
+  clearPreview()
+  setError('photo', '')
+  const file = photo.files[0]
+  if (!file) return
+~~~
+
+- [[change]] بيحصل لما يختار ملف، أو يفتح النافذة ويلغي.
+- أول حاجة: شيل المعاينة القديمة والرسالة القديمة.
+- [[photo.files]]: قايمة الملفات المختارة (FileList)، و [[[0]]] أول واحد. لو لغى، [[undefined]] ونخرج.
+
+~~~text
+  const problem = !ALLOWED.includes(file.type) ? 'الصورة لازم تبقى JPG أو PNG أو WebP'
+    : file.size > MAX ? $__btالصورة $__{(file.size / 1024 / 1024).toFixed(1)} ميجا، والحد 2 ميجا$__bt : ''
+  if (problem) { photo.value = ''; return setError('photo', problem) }
+~~~
+
+- ternary متداخل: النوع غلط؟ رسالة. الحجم كبير؟ رسالة فيها الحجم الحقيقي. غير كده نص فاضي.
+- [[file.size / 1024 / 1024]]: بايت → كيلو → ميجا. و [[toFixed(1)]]: رقم عشري واحد كنص.
+- [[photo.value = '']]: فضّي الحقل. ده التغيير الوحيد المسموح من الكود على [[input type="file"]] (مينفعش تحط فيه ملف).
+- [[return setError(...)]]: اعرض الرسالة واخرج في سطر واحد.
+
+~~~text
+  previewUrl = URL.createObjectURL(file)
+  img.src = previewUrl
+  img.alt = $__btمعاينة الصورة اللي اخترتها: $__{file.name}$__bt
+  document.querySelector('#preview-name').textContent = $__bt$__{file.name} ($__{Math.round(file.size / 1024)} KB)$__bt
+  preview.hidden = false
+})
+~~~
+
+- [[URL.createObjectURL(file)]]: URL بيشاور على الملف اللي في الذاكرة، من غير ما يتقري كله. أسرع بكتير من [[FileReader.readAsDataURL]] اللي بيحوّل الصورة كلها نص base64.
+- [[alt]]: المعاينة معلومة (اتأكد إنك اخترت الصح)، فليها alt حقيقي فيه اسم الملف.
+
+## ٤. «شيل الصورة»
+
+~~~text
+document.querySelector('#remove-photo').addEventListener('click', () => {
+  photo.value = ''
+  clearPreview()
+  photo.focus()
+})
+~~~
+
+بعد ما الزرار نفسه بيستخبى (جوه [[#preview]])، الـ focus كان هيضيع. [[photo.focus()]] بيرجّعه لحقل الاختيار.
+
+## ٥. التجربة في المتصفح
+
+~~~text الناتج
+ملف 3.4 ميجا:    الصورة 3.4 ميجا، والحد 2 ميجا   | value: ""
+rx.png صغيرة:    src: blob:http://localhost:6037/<uuid>
+                 alt: معاينة الصورة اللي اخترتها: rx.png
+                 name: rx.png (0 KB)
+شيل الصورة:      focus: INPUT#photo   preview hidden: true
+~~~
+
+[[0 KB]] لأن الصورة ٧٠ بايت، و [[Math.round(0.07)]] = 0. واختبار Playwright بيرفع [[a.txt]] ويلاقي [[getByRole('alert')]] فيه «الصورة لازم تبقى JPG أو PNG أو WebP»: [[role="alert"]] على [[#photo-error]] بيخلي الرسالة تتقري والـ focus لسه على زرار الاختيار.
+
+---
+
+## ٦. السيرفر: multer
+
+~~~text server.js
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 2 * 1024 * 1024, files: 1, fields: 10 },
+  fileFilter: (req, file, cb) => cb(ALLOWED.includes(file.mimetype) ? null : new Error('BAD_TYPE'), true),
+})
+~~~
+
+- multer بيقرا الطلبات اللي نوعها [[multipart/form-data]] (اللي [[FormData]] بيبعته).
+- [[memoryStorage()]]: الملف في الذاكرة كـ Buffer ([[req.file.buffer]]). للتجربة بس.
+- [[limits]]: [[fileSize]] بيقطع الرفع أول ما يعدّي ٢ ميجا (مبيستناش الملف كله)، و [[files: 1]] ملف واحد، و [[fields: 10]] أقصى عدد حقول نص.
+- [[fileFilter]]: [[cb(error, accept)]]. لو النوع مش مسموح بنمرر error.
+
+بـ [[curl]] (اتشغّل من Git Bash):
+
+~~~bash
+curl -s -o /dev/null -w "%{http_code}\n" -X POST http://localhost:6037/api/bookings -H "Idempotency-Key: curl-key-0005" -F name="منى علي" ... -F "photo=@big.png;type=image/png"
+~~~
+
+- [[-F]]: حقل في multipart، و [[@big.png]] = ارفع الملف ده، و [[;type=image/png]] = النوع اللي بنعلنه.
+- [[-w "%{http_code}"]]: اطبع رقم الحالة بس.
+
+~~~text الناتج
+صورة 3 ميجا:         413   {"error":"الصورة أكبر من 2 ميجا"}
+PDF:                 400   {"error":"نوع الصورة مش مسموح"}
+نص اسمه fake.png وبنعلن type=image/png:   201   {"id":"536ea9af"}
+~~~
+
+السطر الأخير مهم: [[file.mimetype]] في multer هو اللي **العميل قاله**، زي [[file.type]] في المتصفح (اللي جاي من الامتداد). ملف نص اتقبل كصورة. الحل المرجعي واقف هنا لأنه بيخزن في الذاكرة ومبيعرضش الصورة لحد. في مشروع حقيقي لازم تفحص المحتوى نفسه: [[sharp(buffer).metadata()]] بيرمي لو مش صورة، وإعادة الحفظ بـ sharp بتشيل أي حاجة زيادة جوه الملف (درس [[sharp]] في تاب «Backend بـ Node»).
+
+---
+
+## الخلاصة
+
+| الحاجة | الكود |
+|---|---|
+| النوع والحجم في المتصفح | [[file.type]] و [[file.size]]، ورسالة فيها الحجم |
+| فضّي الحقل | [[photo.value = '']] |
+| معاينة من غير قراية الملف | [[URL.createObjectURL(file)]] |
+| حرّر الذاكرة | [[URL.revokeObjectURL]] قبل كل معاينة جديدة |
+| الرسالة تتقري فورًا | [[role="alert"]] |
+| السيرفر | multer: [[limits.fileSize]] (413) و [[fileFilter]] (400) |
+| الحماية الحقيقية | فحص المحتوى (sharp)، لأن الـ MIME type كلام العميل |`,
           lines: [
             R`أول ما المستخدم يختار (أو يلغي) ملف:`,
             R`شيل المعاينة القديمة وحرّر الـ URL بتاعها.`,
@@ -540,6 +1142,203 @@ const upload = multer({
             when: R`أي POST بيعمل حاجة مينفعش تتكرر: حجز، أو طلب، أو دفع، أو إرسال رسالة. وفي APIs بيستخدمها تطبيق موبايل على شبكة وحشة، ده شرط.`,
             mistakes: R`[[disabled]] على الزرار وخلاص، فمفيش حماية على السيرفر. أو مفتاح جديد مع كل ضغطة (كده ملوش فايدة). أو تحفظ الرد في الـ Map بعد ما الشغل يخلص، فطلبين في نفس اللحظة الاتنين يعدّوا الفحص. أو تحفظ الأخطاء كمان فالمستخدم ميعرفش يصلّح. أو الـ validation في المتصفح بس. وفي الانترفيو: «إزاي تمنع طلب يتكرر؟» الإجابة الكاملة فيها المفتاح من العميل، والتخزين بـ unique على السيرفر، ومسك السباق، والـ TTL.`
           },
+          teach: R`## الفكرة: مفتاح واحد لكل محاولة حجز، والسيرفر بيرجّع نفس الرد لنفس المفتاح
+
+المثال أول الـ submit listener في المتصفح، والـ solCode فيه [[server.js]] كامل واختبارات Playwright. هنفك الاتنين، ونكمّل الحتة اللي المثال واقف عندها ([[catch]] و [[finally]])، ونشغّل الاختبارات، ونثبت بـ [[curl]] إن ترتيب سطر واحد في السيرفر هو الفرق بين حجز واحد وحجزين. اتشغّل على Node 24.19 و Express 5.2 و multer 2.4 و Playwright 1.64 مع Chrome 154، والسيرفر على بورت 6037 بدل 4175.
+
+---
+
+## ١. قبل الـ listener
+
+المثال بيستخدم ٣ حاجات متعرّفة فوقه:
+
+~~~text form.js
+const idempotencyKey = crypto.randomUUID()
+const status = document.querySelector('#submit-status')
+let sending = false
+~~~
+
+- [[crypto.randomUUID()]]: ID عشوائي زي [[3b2c...-...]]. بيتعمل **مرة واحدة** لما الصفحة تفتح، يعني مفتاح لكل «محاولة حجز» مش لكل ضغطة. (متاح في الصفحات اللي على https أو localhost بس.)
+- [[status]]: الـ [[<p role="status">]] في الخطوة الأخيرة. [[role="status"]] = رسايل بتتقري من غير ما تقاطع.
+- [[sending]]: فيه طلب شغال دلوقتي؟
+
+## ٢. الـ listener (المثال)
+
+~~~text
+form.addEventListener('submit', async e => {
+  e.preventDefault()
+  if (current !== last) { if (validateStep(current)) go(current + 1); return }
+  if (sending) return
+  sending = true
+~~~
+
+- [[e.preventDefault()]]: امنع المتصفح يبعت الفورم ويفتح صفحة جديدة.
+- Enter في خطوة قبل الأخيرة = «التالي» (المحطة اللي فاتت).
+- [[if (sending) return]]: الضغطة التانية وفيه طلب شغال بتتجاهل. ده اللي بيحمي من الدبل كليك في المتصفح.
+
+~~~text
+  submitBtn.setAttribute('aria-disabled', 'true')
+  submitBtn.textContent = 'بيتبعت...'
+  status.textContent = 'بنبعت الحجز...'
+~~~
+
+[[aria-disabled]] مش [[disabled]]: [[disabled]] بيشيل الزرار من الـ focus، فالـ focus يقع على [[body]] ومستخدم الكيبورد يتوه. [[aria-disabled]] بيقول لقارئ الشاشة «مقفول» والزرار لسه عليه الـ focus، والمنع الفعلي من [[sending]].
+
+~~~text
+  try {
+    const res = await fetch('/api/bookings', { method: 'POST', body: new FormData(form), headers: { 'Idempotency-Key': idempotencyKey } })
+    const body = await res.json().catch(() => ({}))
+    if (!res.ok) throw new Error(body.error ?? 'حصلت مشكلة في السيرفر، جرّب تاني')
+~~~
+
+- [[body: new FormData(form)]]: كل الحقول والصورة. المتصفح بيحط [[Content-Type: multipart/form-data]] والـ boundary لوحده، فمتحطهوش بإيدك.
+- [[headers: { 'Idempotency-Key': ... }]]: نفس المفتاح في كل محاولة.
+- [[res.json().catch(() => ({}))]]: لو الرد مش JSON، object فاضي بدل error. و [[({})]] بين قوسين عشان arrow function ترجّع object.
+- [[body.error ?? '...']]: رسالة السيرفر، ولو مفيش رسالة عامة.
+
+~~~text
+    form.hidden = true
+    document.querySelector('#done').hidden = false
+    document.querySelector('#booking-id').textContent = body.id
+    document.querySelector('#done-title').focus()
+~~~
+
+نجح: خبّي الفورم، واظهر [[#done]]، والـ focus على عنوانه.
+
+## ٣. باقي الـ listener
+
+المثال واقف هنا. ده الجزء اللي كمّلنا بيه الحل وشغّلنا عليه الاختبارات:
+
+~~~text form.js
+  } catch (err) {
+    status.textContent = err instanceof TypeError ? 'النت فصل. بياناتك لسه هنا، دوس «احجز» تاني.' : err.message
+  } finally {
+    sending = false
+    submitBtn.removeAttribute('aria-disabled')
+    submitBtn.textContent = 'احجز'
+  }
+})
+~~~
+
+- [[err instanceof TypeError]]: [[fetch]] بيرمي [[TypeError]] لما الشبكة نفسها تقع. غير كده الـ error اللي احنا رميناه برسالة السيرفر.
+- [[finally]]: بيتنفذ في النجاح والفشل. الزرار يرجع شغال، والمفتاح **ما اتغيرش**.
+
+وقت التجربة، بعد الضغطة وقبل الرد:
+
+~~~text الناتج
+during: بيتبعت... true | status: بنبعت الحجز...
+done focus: H2#done-title "اتحجز. رقم الحجز <id>"
+~~~
+
+---
+
+## ٤. السيرفر: الـ route
+
+~~~text server.js
+const bookings = []
+const byKey = new Map() // Idempotency-Key -> Promise<{ status, body }>
+
+app.use(express.static('public'))
+
+app.post('/api/bookings', async (req, res) => {
+  const key = req.get('Idempotency-Key') ?? ''
+  if (!/^[\w-]{8,100}$/.test(key)) return res.status(400).json({ error: 'Idempotency-Key ناقص' })
+  if (!byKey.has(key)) byKey.set(key, handle(req, res))
+  const result = await byKey.get(key)
+  if (result.status !== 201) byKey.delete(key)
+  res.status(result.status).json(result.body)
+})
+~~~
+
+- [[express.static('public')]]: ملفات الصفحة من فولدر [[public]].
+- [[req.get('Idempotency-Key')]]: قيمة الـ header (من غير فرق كبير وصغير).
+- [[/^[\w-]{8,100}$/]]: حروف وأرقام و [[_]] و [[-]]، من ٨ لـ ١٠٠. مفيش مفتاح = 400.
+- **أهم سطرين**: لو المفتاح جديد، حط **الـ Promise** في الـ Map فورًا، قبل ما الشغل يخلص. وبعدين [[await]] عليه. الطلب التاني بنفس المفتاح، حتى لو وصل في نفس الملّي ثانية، هيلاقي الـ Promise ويستنى **نفس** النتيجة.
+- [[result.status !== 201]]: لو فشل (بيانات غلط)، امسح المفتاح، عشان المستخدم يصلّح ويبعت بنفس المفتاح.
+
+## ٥. [[handle]] و [[createBooking]]
+
+~~~text
+function handle(req, res) {
+  return new Promise(resolve => upload.single('photo')(req, res, async err => {
+    if (err) return resolve(err.code === 'LIMIT_FILE_SIZE' ? { status: 413, ... } : { status: 400, ... })
+    resolve(await createBooking(req.body, req.file))
+  }))
+}
+~~~
+
+[[upload.single('photo')]] middleware عادي [[(req, res, next)]]. بننديه بإيدنا ونلف النتيجة في Promise، فالنتيجة دايمًا [[{ status, body }]] مش response مبعوت. ده اللي بيخلي النتيجة تتشارك بين الطلبين.
+
+[[createBooking]] بتعيد **كل** الفحوص على السيرفر (الاسم ٣ حروف، والموبايل بنفس الـ regex، والتخصص والنوع من قايمة، واليوم مش قبل النهارده بتوقيت القاهرة)، وبعدين [[sleep(300)]] (شبه الكتابة في القاعدة) و [[randomUUID().slice(0, 8)]] رقم الحجز.
+
+## ٦. التجربة بـ curl
+
+~~~text الناتج
+حجز سليم:                      201  {"id":"590d55f6"}
+نفس المفتاح تاني (وبيانات غلط):      {"id":"590d55f6"}   ← نفس الرد، مفيش حجز جديد
+عدد الحجوزات:                       {"count":1}
+من غير مفتاح:                  400  {"error":"Idempotency-Key ناقص"}
+name=x و phone=123:                 {"error":"فيه بيانات غلط","fields":{"name":"الاسم قصير","phone":"رقم الموبايل غلط",...}}
+~~~
+
+وطلبين **في نفس اللحظة** بنفس المفتاح ([[&]] في bash بيشغّل الاتنين مع بعض):
+
+~~~text الناتج
+{"id":"310eedbe"} 201 0.307624s
+{"id":"310eedbe"} 201 0.295968s
+~~~
+
+نفس الـ id، والعدد زاد ١ بس. وبعدين غيّرنا السيرفر في نسخة تجريبية: الـ Map بتتملي **بعد** الشغل ([[const result = await handle(...)]] ثم [[byKey.set]]). نفس التجربة:
+
+~~~text الناتج
+{"id":"5bd0200b"} 201
+{"id":"8734a260"} 201
+{"count":2}
+~~~
+
+حجزين. الطلبين لقوا الـ Map فاضية لأن الأول لسه في الـ [[sleep(300)]]. ده السباق اللي حط الـ Promise بدري بيمنعه.
+
+## ٧. الاختبارات
+
+~~~bash
+npx playwright test --reporter=list
+~~~
+
+~~~text الناتج
+  ok 1 › empty step: summary gets focus and each field is described by its error (1.0s)
+  ok 2 › radio and select errors on step 2, and back keeps the data (459ms)
+  ok 3 › wrong file type is rejected with an announced message (517ms)
+  ok 4 › double click on submit creates exactly one booking (1.4s)
+  ok 5 › same Idempotency-Key twice in parallel on the API gives one booking (324ms)
+  ok 6 › server rejects bad data even if the browser checks are bypassed (6ms)
+  ok 7 › network error keeps the data and lets you retry with the same key (762ms)
+
+  7 passed (9.1s)
+~~~
+
+أدوات جديدة فيها:
+
+| الأداة | بتعمل إيه |
+|---|---|
+| [[{ page, request }]] | [[request]] بيكلّم الـ API مباشرة من غير متصفح |
+| [[request.get('/api/bookings/count')]] | العدد قبل وبعد |
+| [[dblclick()]] | دبل كليك حقيقي |
+| [[Promise.all([send(), send()])]] | طلبين مع بعض |
+| [[multipart: {...}]] | يبعت [[multipart/form-data]] زي [[FormData]] |
+| [[route.abort('internetdisconnected')]] | أول طلب «النت فصل» |
+| [[route.request().headers()['idempotency-key']]] | يسجّل المفتاح في كل محاولة، والاختبار بيتأكد إنهم زي بعض |
+
+---
+
+## الخلاصة
+
+| الطبقة | الحماية |
+|---|---|
+| المتصفح | [[sending]] يمنع طلب تاني وطلب شغال، و [[aria-disabled]] من غير ما الـ focus يضيع |
+| المتصفح | مفتاح واحد لكل محاولة، ونفسه بعد فشل الشبكة |
+| السيرفر | الـ Promise في الـ Map **قبل** الشغل، فالطلبين المتزامنين بياخدوا نفس النتيجة |
+| السيرفر | النتايج الفاشلة بتتمسح، والـ validation كله بيتعاد |
+| الإنتاج | Map في الذاكرة بتضيع مع restart: جدول بـ [[UNIQUE]] أو Redis [[SET NX]] بـ TTL |`,
           lines: [
             R`الـ submit، سواء من الزرار أو Enter.`,
             R`امنع إرسال المتصفح العادي.`,
