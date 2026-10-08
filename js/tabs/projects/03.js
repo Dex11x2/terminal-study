@@ -1,787 +1,786 @@
 // تكملة تاب projects: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/projects/01.js (شرح حقول الدرس في أوله)
 MORE("projects", [
     {
-      t: "مشروع ٣: فورم متعدد الخطوات",
-      l: 2,
-      n: "حجز كشف في ٤ خطوات: select و radio، وأخطاء قارئ الشاشة بيقراها، وصورة بـ preview، وإرسال مرة واحدة حتى لو دست مرتين",
+      t: "مشروع ٢: تطبيق JavaScript بـ fetch و localStorage",
+      l: 1,
+      n: "كويز من غير frameworks: state واحد، وأربع حالات للداتا، وكيبورد، وتقدّم محفوظ، واختبارات",
       items: [
         {
-          cmd: "مشروع ٣: الـ spec والخطوات",
-          title: "تقسّم فورم طويل لخطوات من غير ما تكسر الـ HTML إزاي؟",
-          desc: R`المشروع: فورم «احجز كشف» في ٤ خطوات: بياناتك (اسم وموبايل وإيميل اختياري)، والكشف (تخصص من select، ونوع الكشف radio، واليوم)، وصورة روشتة اختيارية بمعاينة، ومراجعة وإرسال. HTML و JavaScript عادي، وسيرفر Express صغير بيستقبل الحجز.
+          cmd: "مشروع ٢: الـ spec والـ state",
+          title: "ترسم الـ state بتاع التطبيق قبل الشاشات إزاي؟",
+          desc: R`المشروع: كويز «اختبر نفسك» بـ JavaScript عادي. الأسئلة جاية من [[questions.json]] بـ fetch، والإجابة بتظهر صح ولا غلط، وفي الآخر النتيجة. ولو قفلت الصفحة في النص ورجعت، بيكمّل من نفس السؤال. وأحسن نتيجة محفوظة. واختيار القسم من الـ URL: [[?cat=js]].
 
-الفورم ده فيه تقريبًا كل حاجة صعبة في الفورمات: validation على خطوات، ورسايل خطأ لقارئ الشاشة، وملفات، وضغطة مزدوجة، ونت بيفصل. لو عملته صح هنا، هتعمله في React أو Next بسهولة.
+ليه مش todo app؟ الكويز فيه نفس الحاجات (fetch، و state، و events، و localStorage) بس فيه كمان حالات انتقال واضحة، وحاجة تتحفظ لها معنى.
 
-المحطة دي: الـ HTML كله. خلصت يعني: (١) [[<form>]] واحد فيه ٤ [[<section>]]، كلهم مخفيين بـ [[hidden]] إلا الحالي. (٢) كل حقل ليه [[<label for>]]، والـ radio جوه [[<fieldset>]] بـ [[<legend>]]. (٣) كل حقل ليه [[<p id="...-error">]] مربوط بـ [[aria-describedby]]، والـ hints كمان. (٤) قايمة الخطوات [[<ol>]] والحالية عليها [[aria-current="step"]]. (٥) [[autocomplete]] و [[inputmode]] و [[type]] صح لكل حقل.
+المحطة دي: ارسم كل الحالات اللي التطبيق ممكن يبقى فيها، واكتب المنطق كدوال pure (مبتلمسش الـ DOM ولا الشبكة) في [[quiz.js]]. خلصت يعني: (١) الحالات مكتوبة: loading و error و empty و playing و done. (٢) [[start]] و [[answer]] و [[next]] و [[score]] بترجّع state جديد ومبتعدّلش القديم. (٣) اختبارات [[node --test]] للمنطق عدّت.
 
-الدروس: [[form و label]] و [[fieldset و radio]] و [[textarea و date و number]] و [[Constraint Validation API]] في تاب «HTML و CSS».`,
-          example: R`  <form id="booking" novalidate>
-    <div id="summary" class="summary" tabindex="-1" hidden>
-      <h2>فيه <span id="summary-count"></span> محتاجين تتصلح:</h2>
-      <ul id="summary-list"></ul>
-    </div>
-
-    <section class="step" data-step="0" aria-labelledby="s0">
-      <h2 id="s0" tabindex="-1">الخطوة 1 من 4: بياناتك</h2>
-      <label for="name">الاسم</label>
-      <input id="name" name="name" autocomplete="name" required minlength="3" aria-describedby="name-error">
-      <p class="error" id="name-error"></p>
-
-      <label for="phone">الموبايل</label>
-      <p class="hint" id="phone-hint">11 رقم ويبدأ بـ 01</p>
-      <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" dir="ltr" required pattern="01[0125][0-9]{8}" aria-describedby="phone-hint phone-error">
-      <p class="error" id="phone-error"></p>
-
-      <label for="email">الإيميل (اختياري)</label>
-      <input id="email" name="email" type="email" autocomplete="email" dir="ltr" aria-describedby="email-error">
-      <p class="error" id="email-error"></p>
-    </section>`,
-          try: R`اكتب [[public/index.html]] بالخطوات الأربعة كاملة، ومؤقتًا شيل [[hidden]] من كل الخطوات عشان تشوفهم تحت بعض. اتأكد إن الفورم ده لوحده، من غير JS، ينفع يتملي ويتبعت. وافتحه على الموبايل: حقل الموبايل لازم يفتح كيبورد أرقام، والإيميل كيبورد فيه @، والاسم يقترح اسمك.`,
+الدروس: [[UI = f(state)]] في تاب «React» (نفس الفكرة من غير React)، و [[immutability]] و [[object destructuring و spread]] في تاب «JavaScript»، و [[node --test]] في تاب «Node و npm».`,
+          example: R`// الحالات: loading ← ثم error أو empty أو playing ← ثم done
+let state = { status: 'loading' }
+state = { status: 'error', error: 'HTTP 500' }
+state = { status: 'empty', questions: [] }
+state = { status: 'playing', questions, index: 0, answers: [] }
+state = { status: 'done', questions, index: 2, answers: [1, 0, 1] }
+function setState(next) { state = next; app.innerHTML = view(state) }`,
+          try: R`اكتب [[quiz.js]] فيه: [[isQuestion(q)]] بترجّع true لو السؤال شكله سليم، و [[start(questions)]]، و [[answer(state, choice)]] (مبتغيّرش إجابة اتجاوبت)، و [[next(state)]] (مبتعدّيش سؤال من غير إجابة، وبعد آخر سؤال الحالة [[done]])، و [[score(state)]]. واكتب [[tests/quiz.test.js]] بـ [[node:test]] فيه ٥ اختبارات على الأقل، وشغّله بـ [[node --test]].`,
           flag: "script",
           deep: {
-            why: R`لو كل خطوة [[<form>]] لوحده، هتضطر تجمّع الداتا بإيدك وتخزنها بين الخطوات، و [[FormData]] مش هيشوف غير خطوة واحدة. [[<form>]] واحد بخطوات مخفية بيخلي كل الحقول موجودة طول الوقت، والإرسال في الآخر [[new FormData(form)]] سطر واحد، والرجوع لخطوة قبل كده الداتا لسه فيها.`,
-            how: R`[[novalidate]] على الـ form: بيقفل فقاعات المتصفح الافتراضية، بس الـ Constraint Validation API لسه شغال ([[required]] و [[pattern]] و [[minlength]] و [[checkValidity()]]). احنا بنستخدم نفس القواعد، بس بنعرض الرسايل بطريقتنا (المحطة الجاية).
+            why: R`أغلب كود JavaScript المبتدئ بيخزّن الحالة في الـ DOM نفسه: الزرار عليه class «selected»، والرقم مكتوب في span، ولما تحتاج تعرف السكور تقرا من الـ HTML. ده بيقع أول ما الشاشة تتعقد. لما الحالة في object واحد، والشاشة بتترسم منه، أي bug تقدر تشوفه بـ [[console.log(state)]]، وأي حاجة تقدر تختبرها من غير متصفح.`,
+            how: R`[[status]] واحد بدل [[isLoading]] و [[hasError]] و [[isDone]] منفصلين. مع flags منفصلة ممكن توصل لحالة مستحيلة ([[isLoading: true]] و [[hasError: true]] مع بعض). مع [[status]] واحد، الحالات المستحيلة مش ممكن تتكتب أصلًا. ده نفس فكرة الـ discriminated unions في تاب «TypeScript».
 
-[[aria-describedby="phone-hint phone-error"]]: قارئ الشاشة لما يدخل الحقل بيقول الـ label وبعدين الوصف، والوصف هنا الـ hint والخطأ مع بعض. عنصر الخطأ موجود من الأول وفاضي، فأول ما يتكتب فيه نص، بيتقري مع الحقل.
+الدوال pure: [[answer(state, 1)]] بترجّع object جديد بـ [[{ ...state, answers }]]، ومبتلمسش القديم. ليه؟ عشان [[setState]] تقدر تقارن القديم بالجديد (هتحتاجه لنقل الـ focus في المحطة التالتة)، وعشان الاختبارات تبقى سطرين.
 
-[[type="tel"]] و [[inputmode="tel"]] و [[autocomplete="tel"]] و [[dir="ltr"]]: كيبورد أرقام، واقتراح الرقم المحفوظ، والرقم بيتكتب شمال ليمين حتى في صفحة عربي. و [[pattern="01[0125][0-9]{8}"]] بيطابق الأرقام المصرية (١١ رقم تبدأ بـ 010 أو 011 أو 012 أو 015).
+[[setState]] هي المكان الوحيد اللي بيغيّر [[state]] وبيرسم. أي event handler بيحسب state جديد وينادي [[setState]]، ومبيلمسش الـ DOM بنفسه. ده الـ pattern اللي React بيعمله ليك في المشروع الرابع.
 
-الـ [[<h2 tabindex="-1">]] في كل خطوة: هنحط عليه الـ focus لما الخطوة تتغير. والـ [[#summary]] كمان [[tabindex="-1"]] لنفس السبب.
-
-الـ select أول option فيه [[value=""]] («اختار تخصص») عشان [[required]] يشتغل. من غيره أول تخصص بيتختار لوحده والمستخدم ممكن ميخدش باله.`,
-            when: R`أي فورم فيه أكتر من ٦ أو ٧ حقول على موبايل، أو حقول بتعتمد على اختيار قبلها. الفورم القصير (دخول، أو اشتراك في newsletter) خليه صفحة واحدة.`,
-            mistakes: R`[[placeholder]] بدل [[label]]: بيختفي أول ما تكتب، وقارئ الشاشة ممكن ميقراهوش. أو radio من غير fieldset، فقارئ الشاشة يقول «في العيادة، radio» من غير ما يقول السؤال. أو [[type="number"]] للموبايل (بيشيل الصفر اللي في الأول، وبيعمل scroll بالعجلة). أو [[id]] على عنصر بنفس اسم [[name]] حقل تاني: في الحل المرجعي الـ fieldset كان [[id="type"]] والـ radios [[name="type"]]، فـ [[form.elements.type]] رجّع الـ fieldset مع الـ radios، والـ validation بتاع الـ radio اتلغى من غير أي error. اتصلح لـ [[type-group]]، واختبار Playwright هو اللي مسكه.`
+[[isQuestion]] موجودة لأن الداتا جاية من برّه (حتى لو ملف عندك). السؤال اللي [[answer]] بتاعه 5 وفيه ٣ اختيارات لازم يتشال قبل ما يوقّع التطبيق.`,
+            when: R`قبل أي HTML أو DOM. ولو التطبيق صغير أوي (زرار واحد بيغيّر رقم)، مش محتاج كل ده، بس كويز أو فورم أو أي حاجة ليها أكتر من حالتين محتاجاه.`,
+            mistakes: R`[[isLoading]] و [[error]] و [[questions]] كمتغيرات منفصلة، وتنسى تصفّر واحد فيهم. أو [[state.answers.push(i)]] (تعديل مباشر) فالمقارنة بين القديم والجديد تبوظ. أو المنطق جوه الـ click handler فمتقدرش تختبره من غير متصفح. أو تحسب السكور وتخزنه في الـ state بدل ما تحسبه من الإجابات (درس [[derived state]] في تاب «React»): النسختين بيختلفوا في أول bug.`
           },
-          teach: R`## الفكرة: فورم واحد، و ٤ أقسام، و قسم واحد بس ظاهر
+          teach: R`## الفكرة: التطبيق كله object واحد، والشاشة بتترسم منه
 
-المثال أول الفورم: ملخص الأخطاء (مخفي) والخطوة الأولى بحقولها التلاتة. والـ solCode فيه الصفحة كاملة. هنفك المثال سطر سطر، وبعدين الخطوات التانية، ونشوف المتصفح بيفهم القواعد دي إزاي. كله اتجرّب في Chrome 154 (بـ Playwright) على الحل المرجعي شغال على Express 5.2 و multer 2.4 و Node 24.19.
-
----
-
-## ١. الفورم
-
-~~~text
-<form id="booking" novalidate>
-~~~
-
-- [[<form>]] واحد لكل الخطوات: الحقول كلها موجودة في الـ DOM طول الوقت، فالرجوع لخطوة الداتا فيها، والإرسال [[new FormData(form)]] سطر واحد.
-- [[novalidate]]: بيقفل فقاعات المتصفح اللي بتظهر لما تبعت فورم فيه غلط. القواعد نفسها ([[required]] و [[pattern]]) لسه شغالة، واحنا هنقرا نتيجتها بالكود ونعرض رسايلنا.
-
-## ٢. ملخص الأخطاء
-
-~~~text
-<div id="summary" class="summary" tabindex="-1" hidden>
-  <h2>فيه <span id="summary-count"></span> محتاجين تتصلح:</h2>
-  <ul id="summary-list"></ul>
-</div>
-~~~
-
-- [[hidden]]: attribute بيخفي العنصر من الشاشة **ومن قارئ الشاشة** ومن ترتيب الـ Tab.
-- [[tabindex="-1"]]: العنصر ده مش بيتوصله بـ Tab، بس الكود يقدر يعمل له [[focus()]]. هنحط عليه الـ focus لما يبقى فيه أخطاء.
-- [[#summary-count]] و [[#summary-list]] فاضيين، الكود هيملاهم.
-
-## ٣. الخطوة
-
-~~~text
-<section class="step" data-step="0" aria-labelledby="s0">
-  <h2 id="s0" tabindex="-1">الخطوة 1 من 4: بياناتك</h2>
-~~~
-
-- [[data-step="0"]]: رقم الخطوة من صفر (للقراية بس؛ الكود بيمشي بترتيب العناصر).
-- [[aria-labelledby="s0"]]: اسم القسم هو نص الـ h2.
-- العنوان فيه «1 من 4»: قارئ الشاشة لما الـ focus ييجي عليه بيعرف هو فين.
-
-## ٤. حقل الاسم
-
-~~~text
-<label for="name">الاسم</label>
-<input id="name" name="name" autocomplete="name" required minlength="3" aria-describedby="name-error">
-<p class="error" id="name-error"></p>
-~~~
-
-| الحتة | بتعمل إيه |
-|---|---|
-| [[<label for="name">]] | بيربط الكلمة بالحقل اللي [[id="name"]]: الضغط عليها بيحط الـ focus في الحقل، وقارئ الشاشة بيقولها اسم الحقل |
-| [[name="name"]] | اسم الخانة في [[FormData]] وفي اللي بيوصل للسيرفر |
-| [[autocomplete="name"]] | المتصفح يقترح اسمك المحفوظ |
-| [[required]] | لازم يتملي ([[validity.valueMissing]]) |
-| [[minlength="3"]] | ٣ حروف على الأقل ([[validity.tooShort]]) |
-| [[aria-describedby="name-error"]] | الوصف هو نص الـ [[p]] اللي تحته، بيتقري بعد الاسم |
-
-[[#name-error]] موجود من الأول وفاضي. أول ما الكود يكتب فيه، بيبقى جزء من وصف الحقل.
-
-## ٥. حقل الموبايل
-
-~~~text
-<label for="phone">الموبايل</label>
-<p class="hint" id="phone-hint">11 رقم ويبدأ بـ 01</p>
-<input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" dir="ltr" required pattern="01[0125][0-9]{8}" aria-describedby="phone-hint phone-error">
-~~~
-
-- [[type="tel"]]: نص عادي (مش رقم)، فالصفر في الأول بيفضل. و [[inputmode="tel"]]: لوحة أرقام التليفون على الموبايل.
-- [[dir="ltr"]]: الرقم بيتكتب شمال ليمين في صفحة عربي.
-- [[pattern="01[0125][0-9]{8}"]]: regex لازم يطابق القيمة **كلها**: [[01]]، وبعده رقم من [[0]] و [[1]] و [[2]] و [[5]]، وبعده ٨ أرقام. المجموع ١١.
-- [[aria-describedby="phone-hint phone-error"]]: أكتر من id بمسافة، فالوصف الـ hint وبعده الخطأ.
-
-جرّبنا قيم في الحقل وقرينا [[validity]]:
-
-~~~text الناتج
-""             valid=false valueMissing     | browser msg: Please fill out this field.
-"123"          valid=false patternMismatch  | browser msg: Please match the requested format.
-"01912345678"  valid=false patternMismatch  | browser msg: Please match the requested format.
-"01012345678"  valid=true
-~~~
-
-- [[019]] وقع: [[9]] مش من [[[0125]]].
-- [[validationMessage]] رسالة المتصفح بلغته هو (إنجليزي هنا)، ومش بتقول المطلوب. عشان كده هنكتب رسايلنا في المحطة الجاية.
-
-## ٦. الإيميل
-
-~~~text
-<input id="email" name="email" type="email" autocomplete="email" dir="ltr" aria-describedby="email-error">
-~~~
-
-مفيش [[required]]: فاضي مسموح. بس لو اتكتب، [[type="email"]] بيفحص الشكل ([[validity.typeMismatch]])، وبيفتح كيبورد فيه [[@]].
+المثال ٧ سطور: ٥ أشكال للـ [[state]] (واحد لكل حالة)، ودالة [[setState]] اللي هي الباب الوحيد لتغييره. والـ solCode فيه [[quiz.js]]: دوال بتاخد state وترجّع state جديد، واختباراتها. هنفك المثال، وبعدين كل دالة، ونشغّلها فعلًا في Node ونطبع الـ state بعد كل خطوة. اتشغّل بـ Node 24.19 على Windows 11.
 
 ---
 
-## ٧. الخطوات التانية (الـ solCode)
+## ١. الحالات الخمسة
 
-| الخطوة | العناصر المهمة |
-|---|---|
-| ٢ الكشف | [[<select required>]] أول [[option]] فيه [[value=""]]، و [[<fieldset>]] فيه [[<legend>]] والـ radios، و [[type="date"]] |
-| ٣ الصورة | [[type="file" accept="image/jpeg,image/png,image/webp"]]، و [[#photo-error]] عليه [[role="alert"]]، و [[<figure id="preview" hidden>]] |
-| ٤ المراجعة | [[<dl id="review">]] فاضي، و [[<p id="submit-status" role="status">]] |
-| الزراير | «رجوع» و «التالي» [[type="button"]]، و «احجز» [[type="submit"]] مخفي |
-
-- [[<option value="">]]: من غيره أول تخصص كان هيبقى مختار لوحده، و [[required]] مكانش هيقول حاجة.
-- [[<fieldset>]] و [[<legend>]]: قارئ الشاشة بيقول السؤال («نوع الكشف») قبل كل اختيار. و [[required]] على radio واحد بس بيخلي المجموعة كلها مطلوبة.
-- [[type="button"]] مهم: أي [[<button>]] جوه form من غير [[type]] بيبقى submit.
-- [[#done]] **برّه** الفورم: بعد الحجز الفورم كله بيستخبى والرسالة تظهر.
-
-## ٨. ليه [[id="type-group"]] مش [[id="type"]]
-
-الـ radios اسمها [[name="type"]]. [[form.elements.type]] بيرجّع كل العناصر اللي [[name]] **أو** [[id]] بتاعها [[type]]. عملنا فورم تجريبي فيه [[<fieldset id="type">]] وسألناه:
-
-~~~text الناتج
-fieldset id="type":       RadioNodeList 3 FIELDSET,INPUT,INPUT first.checkValidity=true first is FIELDSET
-الفورم الحقيقي (type-group): RadioNodeList 2 first.checkValidity=false
+~~~text
+let state = { status: 'loading' }
+state = { status: 'error', error: 'HTTP 500' }
+state = { status: 'empty', questions: [] }
+state = { status: 'playing', questions, index: 0, answers: [] }
+state = { status: 'done', questions, index: 2, answers: [1, 0, 1] }
 ~~~
 
-مع [[id="type"]] أول عنصر بقى الـ fieldset، و [[checkValidity()]] عليه [[true]] دايمًا، فالـ radio الفاضي كان هيعدّي من غير ولا رسالة. بعد التغيير لـ [[type-group]] أول عنصر هو الـ radio نفسه، والفحص بيقول [[false]] صح.
+| [[status]] | الخانات اللي معاه | الشاشة |
+|---|---|---|
+| [[loading]] | مفيش | «بيحمّل الأسئلة...» |
+| [[error]] | [[error]]: رسالة | الرسالة وزرار «حاول تاني» |
+| [[empty]] | [[questions]] فاضية | «مفيش أسئلة في القسم ده» |
+| [[playing]] | [[questions]] و [[index]] (رقم السؤال الحالي من صفر) و [[answers]] (رقم الاختيار لكل سؤال) | السؤال والاختيارات |
+| [[done]] | نفس اللي فوق | النتيجة |
+
+- [[let]] مش [[const]]: لأن [[state]] نفسه هيتبدّل بـ object جديد. الـ objects نفسها مبتتعدلش.
+- [[status]] واحد بدل [[isLoading]] و [[isError]]: مستحيل تبقى «بيحمّل» و «خطأ» في نفس الوقت، لأن الخانة ليها قيمة واحدة.
+- [[questions]] في السطرين الأخيرين اختصار [[questions: questions]] (shorthand property).
+- السكور مش في الـ state: بيتحسب من [[answers]] كل مرة.
+
+## ٢. [[setState]]: الباب الوحيد
+
+~~~text
+function setState(next) { state = next; app.innerHTML = view(state) }
+~~~
+
+بدّل الـ state، وارسم الشاشة كلها من جديد من [[view(state)]] (دالة بترجّع HTML كـ string، في المحطة الجاية). أي ضغطة في التطبيق بتعمل حاجة واحدة: تحسب state جديد وتنادي [[setState]]. مفيش حد بيلمس الـ DOM غيرها.
+
+---
+
+## ٣. [[quiz.js]] دالة دالة
+
+### [[isQuestion(q)]]: الداتا شكلها سليم؟
+
+~~~text
+export function isQuestion(q) {
+  return q && typeof q.id === 'string' && typeof q.q === 'string' && Array.isArray(q.choices)
+    && q.choices.length >= 2 && Number.isInteger(q.answer) && q.answer >= 0 && q.answer < q.choices.length
+}
+~~~
+
+- [[export]]: الدالة تتستورد من ملف تاني ([[app.js]] والاختبارات).
+- [[q &&]]: لو [[q]] نفسه [[null]] أو [[undefined]] وقّف هنا (من غيرها [[q.id]] هيرمي).
+- [[typeof x === 'string']]: نوعه نص. و [[Array.isArray]]: مصفوفة فعلًا.
+- [[Number.isInteger(q.answer)]]: رقم صحيح، مش [["1"]] ولا [[1.5]].
+- [[q.answer < q.choices.length]]: الإجابة الصح لازم تبقى اختيار موجود.
+
+~~~text الناتج
+isQuestion(سؤال سليم)              → true
+isQuestion({ ..., choices: ['a','b'], answer: 5 })  → false
+isQuestion(null)                   → null
+isQuestion({ id: 1, ... })         → false   (الـ id رقم مش نص)
+~~~
+
+لاحظ [[null]] مش [[false]]: [[&&]] بيرجّع أول قيمة falsy زي ما هي. في [[filter(isQuestion)]] مفيش فرق، لأن [[null]] falsy برضه.
+
+### [[start(questions, saved)]]
+
+~~~text
+export function start(questions, saved) {
+  const status = questions.length ? 'playing' : 'empty'
+  const sameSet = saved && saved.ids?.join() === questions.map(q => q.id).join()
+  return sameSet
+    ? { status, questions, index: saved.index, answers: saved.answers }
+    : { status, questions, index: 0, answers: [] }
+}
+~~~
+
+- [[questions.length ? 'playing' : 'empty']]: صفر = falsy، فمفيش أسئلة = [[empty]].
+- [[saved.ids?.join()]]: [[?.]] = optional chaining، لو [[ids]] مش موجودة ارجع [[undefined]] بدل error. و [[join()]] من غير حاجة بيحوّل المصفوفة لنص مفصول بفاصلة: [['a,b']].
+- المقارنة نص بنص: نفس الأسئلة **بنفس الترتيب**؟ يبقى كمّل من التقدم المحفوظ. غير كده ابدأ من الأول.
+
+~~~text الناتج
+start(qs, { ids: ['a','b'], index: 1, answers: [1] }).index  → 1   (نفس الأسئلة: كمّل)
+start(qs, { ids: ['b','a'], index: 1, answers: [1] }).index  → 0   (الترتيب اتغير: من الأول)
+start([])  → {"status":"empty","questions":[],"index":0,"answers":[]}
+~~~
+
+### [[answer(state, choice)]]
+
+~~~text
+export function answer(state, choice) {
+  if (state.status !== 'playing' || state.answers[state.index] !== undefined) return state
+  const answers = [...state.answers]
+  answers[state.index] = choice
+  return { ...state, answers }
+}
+~~~
+
+- السطر الأول حارس: مش بنلعب، أو السؤال ده اتجاوب قبل كده؟ رجّع نفس الـ state زي ما هو.
+- [[[...state.answers]]]: [[...]] spread، مصفوفة **جديدة** فيها نفس العناصر. بنعدّل في النسخة، مش الأصل.
+- [[{ ...state, answers }]]: object جديد فيه كل خانات القديم، و [[answers]] الجديدة مكانها.
+
+### [[next(state)]] و [[score(state)]]
+
+~~~text
+export function next(state) {
+  if (state.answers[state.index] === undefined) return state
+  const index = state.index + 1
+  return index >= state.questions.length ? { ...state, status: 'done' } : { ...state, index }
+}
+
+export function score(state) {
+  return state.answers.filter((a, i) => a === state.questions[i].answer).length
+}
+~~~
+
+- [[next]]: من غير إجابة متتحركش. بعد آخر سؤال [[done]]، وغير كده السؤال اللي بعده.
+- [[score]]: [[filter((a, i) => ...)]] بياخد الإجابة ورقمها، ويسيب اللي بتساوي الإجابة الصح. و [[.length]] = عددهم.
+
+## ٤. نشغّلهم ونشوف الـ state
+
+سكربت صغير بيعمل جولة على سؤالين ([[1+1]] الصح 1، و [[2+2]] الصح 0):
+
+~~~text الناتج (questions مختصرة لـ "[2]")
+s1 = start(qs)          {"status":"playing","index":0,"answers":[]}
+s2 = answer(s1, 1)      {"status":"playing","index":0,"answers":[1]}
+s1 === s2: false | s1.answers: [] | s2.answers: [ 1 ] | same questions array: true
+answer(s2, 0) === s2: true
+next(s1) === s1: true
+s3 = next(s2)           {"status":"playing","index":1,"answers":[1]}
+s4 = next(answer(s3,1)) {"status":"done","index":1,"answers":[1,1]}   score: 1
+~~~
+
+- [[s1]] فضل زي ما هو بعد [[answer]]: ده الـ immutability. ونقدر نقارن القديم بالجديد.
+- [[same questions array: true]]: الـ spread نسخ «من برّه» بس (shallow)، فمصفوفة الأسئلة نفسها مشتركة. ده تمام لأن محدش بيعدّلها.
+- إجابة تانية على نفس السؤال، و [[next]] من غير إجابة: نفس الـ object بالظبط (الحراس اشتغلوا).
+- السكور 1: الأول صح ([[1]])، والتاني غلط (اخترنا [[1]] والصح [[0]]).
+
+## ٥. الاختبارات
+
+~~~text tests/quiz.test.js (أول ٣ سطور)
+import { test } from 'node:test'
+import assert from 'node:assert/strict'
+import { start, answer, next, score, isQuestion } from '../quiz.js'
+~~~
+
+- [[node:test]]: مكتبة الاختبارات اللي جاية مع Node، مفيش حاجة تتسطب.
+- [[node:assert/strict]]: [[assert.equal]] فيها بتقارن بـ [[===]].
+- [[../quiz.js]]: الامتداد لازم في ES modules.
+
+~~~bash
+node --test tests/*.test.js
+~~~
+
+~~~text الناتج
+✔ empty list gives the empty state (0.9896ms)
+✔ a full round counts the right answers (0.2096ms)
+✔ answering twice does not change the first answer (0.7204ms)
+✔ next without an answer stays on the same question (0.141ms)
+✔ resume only when the saved ids match the questions (0.1705ms)
+✔ isQuestion rejects broken items (0.1703ms)
+ℹ tests 6
+ℹ pass 6
+ℹ duration_ms 87.7013
+~~~
+
+أقل من ١٠٠ms ومن غير متصفح، لأن [[quiz.js]] مبيلمسش الـ DOM ولا الشبكة. و [["type": "module"]] في [[package.json]] هو اللي بيخلي [[import]] يشتغل في ملفات [[.js]].
 
 ---
 
 ## الخلاصة
 
-| القاعدة | ليه |
-|---|---|
-| [[<form novalidate>]] واحد | الداتا كلها في مكان، والرسايل بطريقتنا |
-| [[hidden]] على كل خطوة إلا الحالية | مخفية من الشاشة وقارئ الشاشة والـ Tab |
-| [[label for]] لكل حقل، و [[fieldset]] + [[legend]] للـ radio | كل حقل ليه اسم مسموع |
-| [[aria-describedby]] على الـ hint والخطأ | الوصف بيتقري مع الحقل |
-| [[type]] و [[inputmode]] و [[autocomplete]] و [[dir]] | الكيبورد والاقتراح والاتجاه الصح |
-| [[tabindex="-1"]] على العناوين والملخص | الكود يحط عليهم focus |
-| [[id]] ميساويش [[name]] حقل تاني | [[form.elements]] بيرجّع الاتنين |`,
+| الدالة | بتاخد | بترجّع |
+|---|---|---|
+| [[isQuestion(q)]] | سؤال من برّه | سليم ولا لأ |
+| [[start(questions, saved)]] | الأسئلة وتقدّم محفوظ اختياري | [[playing]] أو [[empty]]، من الأول أو من المحفوظ |
+| [[answer(state, i)]] | الـ state ورقم الاختيار | state جديد، أو نفس القديم لو متجاوب |
+| [[next(state)]] | الـ state | السؤال اللي بعده أو [[done]] |
+| [[score(state)]] | الـ state | عدد الصح، محسوب مش متخزن |
+
+- [[status]] واحد = مفيش حالات مستحيلة.
+- [[{ ...state, x }]] و [[[...arr]]] = نسخة جديدة، والقديم زي ما هو.
+- [[setState]] المكان الوحيد اللي بيغيّر وبيرسم.`,
           lines: [
-            R`فورم واحد لكل الخطوات، و [[novalidate]] عشان نعرض الأخطاء بطريقتنا.`,
-            R`ملخص الأخطاء: مخفي، وبياخد focus من الكود.`,
-            R`عنوانه بعدد الأخطاء.`,
-            R`قايمة الأخطاء، كل واحد لينك للحقل بتاعه.`,
-            R`قفلة الملخص.`,
-            R`الخطوة الأولى، واسمها من العنوان بتاعها.`,
-            R`العنوان فيه رقم الخطوة، و [[tabindex="-1"]] عشان ياخد focus.`,
-            R`[[label]] مربوط بالحقل بـ [[for]].`,
-            R`الاسم: مطلوب، ٣ حروف على الأقل، واقتراح الاسم المحفوظ، ووصفه عنصر الخطأ.`,
-            R`عنصر الخطأ: فاضي لحد ما يبقى فيه خطأ.`,
-            R`label الموبايل.`,
-            R`الـ hint: بيتقري مع الحقل.`,
-            R`الموبايل: كيبورد أرقام، واتجاه شمال ليمين، و pattern للأرقام المصرية، ووصفه الـ hint والخطأ.`,
-            R`عنصر خطأ الموبايل.`,
-            R`label الإيميل، ومكتوب إنه اختياري.`,
-            R`[[type="email"]] بيفتح كيبورد فيه @ وبيتحقق من الشكل. مش [[required]].`,
-            R`عنصر خطأ الإيميل.`,
-            R`قفلة الخطوة الأولى.`
+            R`البداية: مفيش داتا لسه.`,
+            R`الطلب فشل: بنخزن الرسالة عشان تتعرض.`,
+            R`الطلب نجح بس مفيش أسئلة في القسم ده.`,
+            R`بنلعب: الأسئلة، ورقم السؤال الحالي، والإجابات لحد دلوقتي.`,
+            R`خلصنا: نفس الداتا، والسكور بيتحسب من [[answers]] مش بيتخزن.`,
+            R`المكان الوحيد اللي بيغيّر الـ state وبيرسم الشاشة منه.`
           ],
-          sol: R`الصفحة من غير JS: الخطوات الأربعة تحت بعض، والـ submit شغال (بس مفيش سيرفر بيستقبله لسه). على الموبايل: الموبايل بيفتح لوحة أرقام، والإيميل فيه @ و .com، والاسم بيقترح اسمك من الجهاز.
+          sol: R`الحل المرجعي تحت فيه [[quiz.js]] واختباراته. [[node --test tests/*.test.js]] بيطلّع [[# tests 6]] و [[# pass 6]] في أقل من ١٠٠ms، من غير متصفح.
 
-الـ HTML الكامل تحت. لاحظ الـ fieldset: [[id="type-group"]] مش [[id="type"]]، والسبب مكتوب في الأخطاء الشائعة. ولاحظ إن [[#done]] برّه الـ form: بعد النجاح الـ form كله بيتخفي، ورسالة النجاح بتاخد الـ focus.
+لاحظ [[start(questions, saved)]]: بتاخد تقدّم محفوظ اختياري (هتستخدمه في محطة localStorage)، وبتكمّل منه بس لو الأسئلة هي هي ([[ids]] نفس الترتيب). لو ملف الأسئلة اتغير، التقدم القديم مالوش معنى.
 
-لو عملت الخطوات كـ ٤ forms: الإرسال هيحتاج تجمع [[FormData]] من كل واحد، والـ Enter في أي حقل هيبعت الخطوة لوحدها للسيرفر.`,
-          solCode: R`<!doctype html>
+أشهر غلط: [[answer]] بتسمح تغيّر الإجابة بعد ما اتعرضت صح ولا غلط، فالمستخدم يعرف الصح ويغيّر. الاختبار «answering twice does not change the first answer» بيمسكه. والغلط التاني: [[next]] من غير إجابة بتعدّي، فالسكور يتحسب على [[undefined]].`,
+          solCode: R`// ── quiz.js ──
+export function isQuestion(q) {
+  return q && typeof q.id === 'string' && typeof q.q === 'string' && Array.isArray(q.choices)
+    && q.choices.length >= 2 && Number.isInteger(q.answer) && q.answer >= 0 && q.answer < q.choices.length
+}
+
+export function start(questions, saved) {
+  const status = questions.length ? 'playing' : 'empty'
+  const sameSet = saved && saved.ids?.join() === questions.map(q => q.id).join()
+  return sameSet
+    ? { status, questions, index: saved.index, answers: saved.answers }
+    : { status, questions, index: 0, answers: [] }
+}
+
+export function answer(state, choice) {
+  if (state.status !== 'playing' || state.answers[state.index] !== undefined) return state
+  const answers = [...state.answers]
+  answers[state.index] = choice
+  return { ...state, answers }
+}
+
+export function next(state) {
+  if (state.answers[state.index] === undefined) return state
+  const index = state.index + 1
+  return index >= state.questions.length ? { ...state, status: 'done' } : { ...state, index }
+}
+
+export function score(state) {
+  return state.answers.filter((a, i) => a === state.questions[i].answer).length
+}
+
+// ── tests/quiz.test.js ──
+import { test } from 'node:test'
+import assert from 'node:assert/strict'
+import { start, answer, next, score, isQuestion } from '../quiz.js'
+
+const qs = [
+  { id: 'a', q: '1+1', choices: ['1', '2'], answer: 1 },
+  { id: 'b', q: '2+2', choices: ['4', '5'], answer: 0 },
+]
+
+test('empty list gives the empty state', () => {
+  assert.equal(start([]).status, 'empty')
+})
+
+test('a full round counts the right answers', () => {
+  let s = start(qs)
+  s = next(answer(s, 1))
+  s = next(answer(s, 1))
+  assert.equal(s.status, 'done')
+  assert.equal(score(s), 1)
+})
+
+test('answering twice does not change the first answer', () => {
+  const s = answer(answer(start(qs), 0), 1)
+  assert.equal(s.answers[0], 0)
+})
+
+test('next without an answer stays on the same question', () => {
+  assert.equal(next(start(qs)).index, 0)
+})
+
+test('resume only when the saved ids match the questions', () => {
+  assert.equal(start(qs, { ids: ['a', 'b'], index: 1, answers: [1] }).index, 1)
+  assert.equal(start(qs, { ids: ['x'], index: 1, answers: [1] }).index, 0)
+})
+
+test('isQuestion rejects broken items', () => {
+  assert.equal(isQuestion({ id: 'x', q: '?', choices: ['a'], answer: 0 }), false)
+  assert.equal(isQuestion({ id: 'x', q: '?', choices: ['a', 'b'], answer: 5 }), false)
+})`
+        },
+        {
+          cmd: "مشروع ٢: fetch والحالات الأربع",
+          title: "تجيب الداتا وتعرض بيحمّل وفاضي وخطأ إزاي؟",
+          desc: R`اكتب [[api.js]] بدالة [[loadQuestions(cat)]]، و [[view(state)]] في [[app.js]] بترجّع HTML لكل حالة، و [[init()]] بتربطهم.
+
+خلصت يعني: (١) أول ما الصفحة تفتح بيظهر «بيحمّل» فورًا. (٢) لو السيرفر رجّع 500 أو 404، أو الشبكة وقعت، أو الطلب خد أكتر من ٨ ثواني: رسالة واضحة فيها السبب وزرار «حاول تاني» شغال. (٣) [[?cat=sql]] (قسم مفيهوش أسئلة) بيطلّع «مفيش أسئلة» ولينك يرجّع لكل الأسئلة. (٤) أي نص جاي من الداتا بيتعرض كنص، مش HTML (escape). (٥) الصفحة بتشتغل من سيرفر محلي، مش [[file://]].
+
+الدروس: [[fetch و AbortController]] و [[async و await]] و [[try و catch و finally]] و [[اعرض داتا من fetch]] في تاب «JavaScript»، و [[سيرفر محلي بدل file://]] و [[Network]] و [[Throttling و Blocking]] في تاب «Console»، و [[3. XSS]] في تاب «الأمان».`,
+          example: R`import { isQuestion } from './quiz.js'
+
+export async function loadQuestions(cat, { timeout = 8000 } = {}) {
+  const res = await fetch('questions.json', { signal: AbortSignal.timeout(timeout) })
+  if (!res.ok) throw new Error($__btHTTP $__{res.status}$__bt)
+  const data = await res.json()
+  if (!Array.isArray(data)) throw new Error('الداتا مش في الشكل المتوقع')
+  return data.filter(isQuestion).filter(q => !cat || q.cat === cat)
+}`,
+          try: R`اكتب [[api.js]] و [[view()]] و [[init()]]. شغّل [[npx serve .]] وجرّب الأربع حالات بإيدك: (١) Network > Throttling > Slow 4G عشان تشوف «بيحمّل». (٢) Network > Block request URL على [[questions.json]] عشان الخطأ. (٣) [[?cat=sql]] للفاضي. (٤) حط في [[questions.json]] سؤال نصه [[<img src=x onerror=alert(1)>]] واتأكد إنه بيظهر كنص ومفيش alert.`,
+          flag: "script",
+          deep: {
+            why: R`الـ tutorial بيعمل [[fetch().then(r => r.json()).then(render)]] وخلاص. في الحقيقة النت بيقطع، والسيرفر بيقع، والداتا بتيجي ناقصة. تطبيق بيعرض شاشة فاضية من غير رسالة لما الطلب يفشل، المستخدم بيفتكره بايظ وبيقفل. الأربع حالات هي الفرق الأوضح بين مشروع مبتدئ ومشروع حد اشتغل قبل كده.`,
+            how: R`[[fetch]] مبيرميش error على 404 أو 500: بيرجّع response و [[res.ok]] بـ false. لازم تفحصه بنفسك وترمي. وبيرمي بس لو الشبكة نفسها وقعت ([[TypeError: Failed to fetch]]).
+
+[[AbortSignal.timeout(8000)]] بيلغي الطلب لو خد أكتر من ٨ ثواني، والـ error اسمه [[TimeoutError]]. من غيره الطلب ممكن يفضل معلّق دقايق على شبكة وحشة، والشاشة «بيحمّل» للأبد.
+
+[[init()]] بتعمل [[setState({ status: 'loading' })]] الأول، وبعدين [[try]]: لو نجح [[start(...)]] بتقرر playing ولا empty. لو فشل [[catch]] بيعمل error. وزرار «حاول تاني» بينادي [[init()]] تاني، فنفس الكود بيتجرّب.
+
+الـ escape: [[view]] بتبني HTML بـ template literals و [[innerHTML]]. أي نص جاي من الداتا لازم يعدّي على [[esc()]] اللي بتحوّل [[<]] و [[&]] والعلامات لـ entities. من غيرها، سؤال فيه HTML هيتنفذ. ده XSS حتى لو الداتا من ملفك انت، لأن بكرة الملف ده ممكن ييجي من API أو من أدمن. البديل الأأمن إنك تبني بـ [[createElement]] و [[textContent]] (المشروع التالت بيعمل كده).
+
+[[aria-busy="true"]] على رسالة التحميل، و [[role="alert"]] على الخطأ عشان قارئ الشاشة يقراه أول ما يظهر.`,
+            when: R`أي شاشة بتجيب داتا، في أي مشروع. في React هتعملها بـ [[isPending]] و [[isError]] من React Query، بس الأربع حالات هي هي.`,
+            mistakes: R`[[.catch(console.error)]] وخلاص، فالمستخدم مبيشوفش حاجة. أو تنسى [[res.ok]] فالـ 404 يوصل لـ [[res.json()]] ويرمي (درس [[Unexpected token '<']] في تاب «Console»). أو تفتح [[index.html]] بدبل كليك فـ fetch يقع. أو [[innerHTML]] بنص من الداتا من غير escape. أو «حاول تاني» بيعمل [[location.reload()]]، فبيضيّع أي حاجة المستخدم كان عاملها.`
+          },
+          teach: R`## الفكرة: الطلب ممكن يفشل بـ ٤ طرق، وكل طريقة ليها رسالة
+
+المثال [[api.js]]: دالة واحدة بتجيب الأسئلة، وبترمي error مفهوم في أي حالة وحشة. والـ solCode فيه [[index.html]] و [[app.js]]: [[view(state)]] بترسم كل حالة، و [[init()]] بتربط الطلب بالـ state. هنفك الاتنين، وبعدين نجرّب كل حالة فعلًا: شغّلنا التطبيق على [[serve]] وفتحناه في Chrome 154 بـ Playwright، وتحكّمنا في رد [[questions.json]] بـ [[page.route]] (500، و 404، ونت فاصل، وبطء، وداتا غلط)، وطبعنا اللي اترسم في [[#app]].
+
+---
+
+## ١. [[api.js]] سطر سطر
+
+~~~text
+import { isQuestion } from './quiz.js'
+~~~
+
+[[./quiz.js]] بالامتداد والـ [[./]]: في المتصفح الـ import لازم يبقى مسار كامل لملف.
+
+~~~text
+export async function loadQuestions(cat, { timeout = 8000 } = {}) {
+~~~
+
+- [[async]]: الدالة بترجّع Promise، وجواها ينفع [[await]].
+- [[{ timeout = 8000 } = {}]]: باراميتر تاني اختياري object، بنفك منه [[timeout]] وقيمته الافتراضية ٨٠٠٠ms. و [[= {}]] في الآخر عشان لو محدش بعت حاجة خالص، الفك ميرميش.
+
+~~~text
+  const res = await fetch('questions.json', { signal: AbortSignal.timeout(timeout) })
+~~~
+
+- [[fetch('questions.json')]]: مسار نسبي، يعني جنب الصفحة.
+- [[AbortSignal.timeout(8000)]]: «إشارة» بتلغي الطلب لوحدها بعد ٨ ثواني. لما بتتلغي، [[fetch]] بيرمي error اسمه [[TimeoutError]].
+- [[await]]: استنى لحد ما الـ headers توصل. [[res]] = الـ Response.
+
+~~~text
+  if (!res.ok) throw new Error($__btHTTP $__{res.status}$__bt)
+~~~
+
+[[res.ok]] = [[true]] لو الـ status من 200 لـ 299. [[fetch]] **مبيرميش** على 404 أو 500: السيرفر رد، فالطلب «نجح» من وجهة نظره. لازم تفحص بنفسك. جرّبنا من Node على ملف مش موجود:
+
+~~~text الناتج
+status 404 ok false
+SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+~~~
+
+السطر التاني ده اللي بيحصل لو نسيت [[res.ok]] وكمّلت على [[res.json()]]: صفحة الـ 404 بتاعة السيرفر HTML، وأول حرف فيها [[<]].
+
+~~~text
+  const data = await res.json()
+  if (!Array.isArray(data)) throw new Error('الداتا مش في الشكل المتوقع')
+  return data.filter(isQuestion).filter(q => !cat || q.cat === cat)
+}
+~~~
+
+- [[res.json()]]: اقرا الـ body وحوّله JS. لو مش JSON سليم بيرمي.
+- [[Array.isArray]]: JSON سليم مش معناه مصفوفة ([[{"oops":1}]] JSON سليم).
+- [[filter(isQuestion)]]: شيل الأسئلة البايظة. و [[filter(q => !cat || q.cat === cat)]]: لو مفيش قسم ([[!cat]] = true) سيب الكل، غير كده القسم ده بس.
+
+## ٢. أنواع الـ errors
+
+| اللي حصل | مين بيرمي | اسم/رسالة الـ error |
+|---|---|---|
+| السيرفر رد 500 أو 404 | احنا ([[!res.ok]]) | [[HTTP 500]] |
+| الشبكة وقعت | [[fetch]] | في Chrome: [[TypeError: Failed to fetch]]، وفي Node: [[TypeError: fetch failed]] |
+| عدّى ٨ ثواني | [[fetch]] بسبب الـ signal | [[TimeoutError: The operation was aborted due to timeout]] |
+| الرد مش JSON | [[res.json()]] | [[SyntaxError: Unexpected token ...]] |
+| JSON بس مش مصفوفة | احنا | [[الداتا مش في الشكل المتوقع]] |
+
+---
+
+## ٣. [[index.html]]
+
+~~~text
+<script type="module" src="app.js"></script>
+...
+<div id="app"></div>
+<p id="live" class="sr-only" aria-live="polite"></p>
+~~~
+
+- [[type="module"]]: يخلي [[import]] يشتغل، وبيأجّل التشغيل لحد ما الـ HTML يتقري (زي [[defer]])، فـ [[#app]] موجود وقت ما الكود يدوّر عليه حتى لو السكربت في الـ head.
+- [[#app]]: المكان اللي [[view]] بترسم فيه.
+- [[#live]]: هنستخدمه في المحطة الجاية. [[sr-only]] = مخفي بالعين، موجود لقارئ الشاشة.
+
+وعشان [[type="module"]]، الصفحة لازم تتفتح من سيرفر. فتحناها من [[file://]] في Chrome، و [[#app]] فضل فاضي، وفي الـ Console:
+
+~~~text الناتج
+Access to script at 'file:///.../app.js' from origin 'null' has been blocked by CORS policy: Cross origin requests are only supported for protocol schemes: chrome, ..., http, https, isolated-app.
+Failed to load resource: net::ERR_FAILED
+~~~
+
+## ٤. [[esc]]: النص يفضل نص
+
+~~~text
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c])
+~~~
+
+- [[String(s)]]: حوّل أي حاجة لنص (رقم مثلًا).
+- [[/[&<>"']/g]]: أي حرف من الخمسة دول، و [[g]] = كلهم مش أول واحد بس.
+- الدالة التانية بترجّع البديل من object: [[{ '<': '&lt;', ... }[c]]].
+
+~~~text الناتج
+esc('<img src=x onerror=alert(1)>')  →  &lt;img src=x onerror=alert(1)&gt;
+esc('Tom & "Jerry" it\'s')           →  Tom &amp; &quot;Jerry&quot; it&#39;s
+~~~
+
+المتصفح بيعرض [[&lt;]] كـ [[<]]، بس مش بيعتبره بداية tag.
+
+## ٥. [[view(state)]]: HTML لكل حالة
+
+~~~text
+function view(s) {
+  switch (s.status) {
+    case 'loading': return $__bt<p class="skeleton" aria-busy="true">بيحمّل الأسئلة...</p>$__bt
+    case 'error': return $__bt<p role="alert">مقدرناش نجيب الأسئلة ($__{esc(s.error)}).</p><button data-action="retry">حاول تاني</button>$__bt
+    case 'empty': return $__bt<p>مفيش أسئلة في القسم ده لسه.</p><a href="./">كل الأسئلة</a>$__bt
+    ...
+~~~
+
+- [[switch (s.status)]]: فرع لكل حالة، و [[return]] بيخرج على طول (مش محتاج [[break]]).
+- template literal بـ backticks و [[$__{...}]] جواه قيمة.
+- [[aria-busy="true"]]: «الحتة دي لسه بتتحمّل».
+- [[role="alert"]]: قارئ الشاشة بيقرا الرسالة أول ما تظهر.
+- [[esc(s.error)]]: حتى رسالة الخطأ بتعدّي على [[esc]].
+- [[data-action="retry"]]: الزرار بيقول هو بيعمل إيه. الـ listener في المحطة الجاية.
+
+وحالة [[playing]] بتبني السؤال والاختيارات بـ [[q.choices.map(...).join('')]]: كل اختيار زرار، و [[join('')]] يلزقهم من غير فواصل. وكل نص من الداتا جوه [[esc()]].
+
+## ٦. [[init()]]
+
+~~~text
+async function init() {
+  setState({ status: 'loading' })
+  try {
+    setState(start(await loadQuestions(cat), loadSaved()))
+  } catch (err) {
+    setState({ status: 'error', error: err.name === 'TimeoutError' ? 'الشبكة بطيئة' : err.message })
+  }
+}
+init()
+~~~
+
+1. ارسم «بيحمّل» **قبل** الطلب، فبيظهر فورًا.
+2. [[await loadQuestions(cat)]]، و [[cat]] جاي من [[new URLSearchParams(location.search).get('cat')]] (اللي بعد [[?]] في اللينك).
+3. [[start(...)]] بتقرر [[playing]] ولا [[empty]] (و [[loadSaved()]] للمحطة الرابعة).
+4. أي error في أي خطوة يروح [[catch]]: لو timeout رسالة بالعربي، غير كده رسالة الـ error نفسها.
+
+و «حاول تاني» بينادي [[init()]] تاني: نفس الطريق من الأول، من غير [[location.reload()]].
+
+---
+
+## ٧. التجربة: كل حالة اترسمت إزاي
+
+ده الـ HTML الحقيقي اللي اتكتب في [[#app]] في كل حالة:
+
+~~~text الناتج
+تأخير 800ms:   <p class="skeleton" aria-busy="true">بيحمّل الأسئلة...</p>
+رد 500:        <p role="alert">مقدرناش نجيب الأسئلة (HTTP 500).</p><button data-action="retry">حاول تاني</button>
+رد 404 HTML:   <p role="alert">مقدرناش نجيب الأسئلة (HTTP 404).</p>...
+نت فاصل:       <p role="alert">مقدرناش نجيب الأسئلة (Failed to fetch).</p>...
+{"oops":1}:    <p role="alert">مقدرناش نجيب الأسئلة (الداتا مش في الشكل المتوقع).</p>...
+?cat=sql:      <p>مفيش أسئلة في القسم ده لسه.</p><a href="./">كل الأسئلة</a>
+تأخير 9 ثواني: <p role="alert">مقدرناش نجيب الأسئلة (الشبكة بطيئة).</p>...   ← ظهرت بعد 8.1 ثانية
+~~~
+
+- الـ 404 طلّع [[HTTP 404]] مش [[Unexpected token '<']]، لأن [[res.ok]] اتفحص الأول.
+- الـ timeout: ٨ ثواني بالظبط تقريبًا، وبعدها رسالة بدل «بيحمّل» للأبد.
+
+وسؤال خبيث: بعتنا داتا فيها [[{ q: '<img src=x onerror=alert(1)>', choices: ['<b>a</b>', 'b'] }]] وسؤال تاني بايظ ([[answer: 3]] واختيار واحد):
+
+~~~text الناتج
+<p>سؤال 1 من 1</p> <h2 tabindex="-1">&lt;img src=x onerror=alert(1)&gt;</h2>
+<div class="choices"><button ...>&lt;b&gt;a&lt;/b&gt;</button><button ...>b</button></div>
+dialogs= 0   imgs= 0
+~~~
+
+- [[سؤال 1 من 1]]: السؤال البايظ اتشال بـ [[isQuestion]].
+- النص اتعرض حرفيًا، ومفيش ولا [[alert]] ([[dialogs= 0]]) ولا صورة اتعملت ([[imgs= 0]]).
+
+---
+
+## الخلاصة
+
+| الحالة | الكود اللي بيمسكها |
+|---|---|
+| بيحمّل | [[setState({ status: 'loading' })]] أول سطر في [[init]] |
+| 404 و 500 | [[if (!res.ok) throw]] |
+| نت فاصل | [[fetch]] بيرمي [[TypeError]] |
+| بطء | [[AbortSignal.timeout(8000)]] و [[err.name === 'TimeoutError']] |
+| داتا غلط | [[Array.isArray]] و [[filter(isQuestion)]] |
+| فاضي | [[start]] بترجّع [[empty]] |
+| XSS | [[esc()]] على كل نص من الداتا |`,
+          lines: [
+            R`[[isQuestion]] من ملف المنطق، عشان نشيل الأسئلة البايظة.`,
+            R`الدالة بتاخد القسم، و timeout افتراضي ٨ ثواني.`,
+            R`الطلب. [[AbortSignal.timeout]] بيلغيه لوحده لو طوّل.`,
+            R`fetch مبيرميش على 404 و 500، فبنرمي احنا برسالة فيها الكود.`,
+            R`حوّل الرد لـ JS. لو مش JSON سليم هيرمي هنا.`,
+            R`لو الشكل نفسه غلط (مش array)، ارمي برسالة مفهومة.`,
+            R`شيل الأسئلة البايظة، وبعدين فلتر بالقسم لو فيه.`,
+            R`قفلة الدالة.`
+          ],
+          sol: R`اللي هتشوفه: مع Slow 4G، «بيحمّل الأسئلة...» في مربع رمادي لثانية أو اتنين. مع block: «مقدرناش نجيب الأسئلة (Failed to fetch).» وزرار «حاول تاني»، ولو شلت الـ block ودوست عليه الأسئلة تظهر. مع [[?cat=sql]]: «مفيش أسئلة في القسم ده لسه.» ولينك. والسؤال اللي فيه [[<img ...>]] بيظهر كنص حرفي.
+
+الحل المرجعي فيه [[index.html]] و [[app.js]] كامل ([[view()]] و [[init()]] وكمان اللي هتعمله في المحطتين الجايين). لاحظ إن [[init]] مفيهاش ولا سطر DOM: كل حاجة بتعدّي من [[setState]].
+
+لو الخطأ بيظهر كـ [[Unexpected token '<', "<!DOCTYPE "... is not valid JSON]]: السيرفر رجّع صفحة HTML (غالبًا 404 بتاعة السيرفر)، ومفيش [[res.ok]] قبل [[res.json()]]. ولو الصفحة فاضية خالص وفي Console خطأ CORS أو [[Failed to load module script]]: فتحتها بـ [[file://]].`,
+          solCode: R`<!-- ── index.html ── -->
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>احجز كشف</title>
+  <title>اختبر نفسك</title>
   <link rel="stylesheet" href="styles.css">
-  <script type="module" src="form.js"></script>
+  <script type="module" src="app.js"></script>
 </head>
 <body>
-<main>
-  <h1>احجز كشف</h1>
-  <ol class="steps" aria-label="خطوات الحجز">
-    <li aria-current="step">بياناتك</li><li>الكشف</li><li>صورة</li><li>مراجعة</li>
-  </ol>
-
-  <form id="booking" novalidate>
-    <div id="summary" class="summary" tabindex="-1" hidden>
-      <h2>فيه <span id="summary-count"></span> محتاجين تتصلح:</h2>
-      <ul id="summary-list"></ul>
-    </div>
-
-    <section class="step" data-step="0" aria-labelledby="s0">
-      <h2 id="s0" tabindex="-1">الخطوة 1 من 4: بياناتك</h2>
-      <label for="name">الاسم</label>
-      <input id="name" name="name" autocomplete="name" required minlength="3" aria-describedby="name-error">
-      <p class="error" id="name-error"></p>
-
-      <label for="phone">الموبايل</label>
-      <p class="hint" id="phone-hint">11 رقم ويبدأ بـ 01</p>
-      <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" dir="ltr" required pattern="01[0125][0-9]{8}" aria-describedby="phone-hint phone-error">
-      <p class="error" id="phone-error"></p>
-
-      <label for="email">الإيميل (اختياري)</label>
-      <input id="email" name="email" type="email" autocomplete="email" dir="ltr" aria-describedby="email-error">
-      <p class="error" id="email-error"></p>
-    </section>
-
-    <section class="step" data-step="1" aria-labelledby="s1" hidden>
-      <h2 id="s1" tabindex="-1">الخطوة 2 من 4: الكشف</h2>
-      <label for="specialty">التخصص</label>
-      <select id="specialty" name="specialty" required aria-describedby="specialty-error">
-        <option value="">اختار تخصص</option>
-        <option value="derma">جلدية</option>
-        <option value="dental">أسنان</option>
-        <option value="peds">أطفال</option>
-      </select>
-      <p class="error" id="specialty-error"></p>
-
-      <fieldset id="type-group" aria-describedby="type-error">
-        <legend>نوع الكشف</legend>
-        <label><input type="radio" name="type" value="clinic" required> في العيادة</label>
-        <label><input type="radio" name="type" value="online"> أونلاين</label>
-        <p class="error" id="type-error"></p>
-      </fieldset>
-
-      <label for="date">اليوم</label>
-      <input id="date" name="date" type="date" required aria-describedby="date-error">
-      <p class="error" id="date-error"></p>
-    </section>
-
-    <section class="step" data-step="2" aria-labelledby="s2" hidden>
-      <h2 id="s2" tabindex="-1">الخطوة 3 من 4: صورة روشتة أو تحليل (اختياري)</h2>
-      <label for="photo">اختار صورة</label>
-      <p class="hint" id="photo-hint">JPG أو PNG أو WebP، وأقصى حجم 2 ميجا</p>
-      <input id="photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="photo-hint photo-error">
-      <p class="error" id="photo-error" role="alert"></p>
-      <figure id="preview" hidden>
-        <img id="preview-img" alt="">
-        <figcaption><span id="preview-name"></span> <button type="button" id="remove-photo">شيل الصورة</button></figcaption>
-      </figure>
-    </section>
-
-    <section class="step" data-step="3" aria-labelledby="s3" hidden>
-      <h2 id="s3" tabindex="-1">الخطوة 4 من 4: راجع وابعت</h2>
-      <dl id="review"></dl>
-      <p id="submit-status" role="status"></p>
-    </section>
-
-    <div class="nav">
-      <button type="button" id="back" hidden>رجوع</button>
-      <button type="button" id="next">التالي</button>
-      <button type="submit" id="submit" hidden>احجز</button>
-    </div>
-  </form>
-
-  <section id="done" hidden aria-labelledby="done-title">
-    <h2 id="done-title" tabindex="-1">اتحجز. رقم الحجز <span id="booking-id"></span></h2>
-    <p>هنكلمك على الموبايل نأكد الميعاد.</p>
-  </section>
-</main>
+  <main>
+    <h1>اختبر نفسك</h1>
+    <div id="app"></div>
+    <p id="live" class="sr-only" aria-live="polite"></p>
+  </main>
 </body>
-</html>`
+</html>
+
+// ── app.js ──
+import { loadQuestions } from './api.js'
+import { start, answer, next, score } from './quiz.js'
+import { loadSaved, save, clearProgress } from './storage.js'
+
+const app = document.querySelector('#app')
+const live = document.querySelector('#live')
+const cat = new URLSearchParams(location.search).get('cat')
+let state = { status: 'loading' }
+let best = loadSaved()?.best ?? 0
+
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c])
+
+function view(s) {
+  switch (s.status) {
+    case 'loading': return $__bt<p class="skeleton" aria-busy="true">بيحمّل الأسئلة...</p>$__bt
+    case 'error': return $__bt<p role="alert">مقدرناش نجيب الأسئلة ($__{esc(s.error)}).</p><button data-action="retry">حاول تاني</button>$__bt
+    case 'empty': return $__bt<p>مفيش أسئلة في القسم ده لسه.</p><a href="./">كل الأسئلة</a>$__bt
+    case 'done': return $__bt<h2 tabindex="-1">النتيجة: $__{score(s)} من $__{s.questions.length}</h2><p>أحسن نتيجة: $__{best}</p><button data-action="restart">من الأول</button>$__bt
+    case 'playing': {
+      const q = s.questions[s.index], picked = s.answers[s.index], answered = picked !== undefined
+      const cls = i => !answered ? '' : i === q.answer ? 'right' : i === picked ? 'wrong' : ''
+      return $__bt<p>سؤال $__{s.index + 1} من $__{s.questions.length}</p>
+        <h2 tabindex="-1">$__{esc(q.q)}</h2>
+        <div class="choices">$__{q.choices.map((c, i) =>
+          $__bt<button data-action="answer" data-i="$__{i}" class="$__{cls(i)}" $__{answered ? 'disabled' : ''}>$__{esc(c)}</button>$__bt).join('')}</div>
+        $__{answered ? $__bt<button data-action="next">$__{s.index + 1 < s.questions.length ? 'اللي بعده' : 'النتيجة'}</button>$__bt : ''}$__bt
+    }
+  }
+}
+
+function setState(nextState) {
+  const moved = nextState.status !== state.status || nextState.index !== state.index
+  state = nextState
+  app.innerHTML = view(state)
+  if (moved) app.querySelector('h2')?.focus()
+  else app.querySelector('[data-action="next"]')?.focus()
+  if (state.status === 'playing' || state.status === 'done') save(state, best)
+}
+
+app.addEventListener('click', e => {
+  const btn = e.target.closest('button[data-action]')
+  if (!btn) return
+  const { action } = btn.dataset
+  if (action === 'answer') {
+    const i = Number(btn.dataset.i), q = state.questions[state.index]
+    setState(answer(state, i))
+    live.textContent = i === q.answer ? 'إجابة صح' : $__btغلط. الإجابة الصح: $__{q.choices[q.answer]}$__bt
+  } else if (action === 'next') {
+    const n = next(state)
+    if (n.status === 'done') best = Math.max(best, score(n))
+    setState(n)
+  } else if (action === 'restart') {
+    clearProgress(best)
+    setState(start(state.questions))
+  } else if (action === 'retry') {
+    init()
+  }
+})
+
+async function init() {
+  setState({ status: 'loading' })
+  try {
+    setState(start(await loadQuestions(cat), loadSaved()))
+  } catch (err) {
+    setState({ status: 'error', error: err.name === 'TimeoutError' ? 'الشبكة بطيئة' : err.message })
+  }
+}
+init()`
         },
         {
-          cmd: "مشروع ٣: أخطاء يقراها قارئ الشاشة",
-          title: "تعمل validation لكل خطوة ورسايل واضحة للكل إزاي؟",
-          desc: R`زرار «التالي» ميعدّيش غير لما حقول الخطوة الحالية تبقى سليمة. ولو فيه أخطاء: كل حقل غلط تحته رسالة بالعربي، وعليه [[aria-invalid]]، وملخص فوق فيه لينك لكل خطأ وبياخد الـ focus.
+          cmd: "مشروع ٢: اللعب والكيبورد",
+          title: "تمسك الضغطات وتنقل الـ focus وتعلن النتيجة لقارئ الشاشة إزاي؟",
+          desc: R`خلّي الكويز يتلعب: الاختيارات زراير، والضغطة بتسجّل الإجابة وتلوّن الصح والغلط، و «اللي بعده» بيودّي للسؤال الجاي، وفي الآخر النتيجة و «من الأول».
 
-خلصت يعني: (١) «التالي» على خطوة فاضية بيطلّع الملخص، والـ focus عليه، وقارئ الشاشة بيقرا «فيه ٢ حاجات محتاجين تتصلح». (٢) لينك في الملخص بيودّي للحقل ويحط عليه الـ focus. (٣) الرسايل بتقول تعمل إيه («الرقم لازم 11 رقم ويبدأ بـ 010...»)، مش «invalid». (٤) أول ما الحقل يتصلح، الرسالة بتختفي وهو بيكتب. (٥) الـ radio الفاضي ليه رسالة.
+خلصت يعني: (١) listener واحد على [[#app]] بيمسك كل الزراير (event delegation)، حتى الزراير اللي بتترسم بعدين. (٢) الكويز كله يتلعب بالكيبورد: Tab للاختيار و Enter. (٣) بعد الإجابة، الـ focus بيروح لزرار «اللي بعده». (٤) لما السؤال يتغير، الـ focus بيروح لعنوان السؤال الجديد، فقارئ الشاشة بيقراه. (٥) «إجابة صح» أو «غلط. الإجابة الصح: ...» بتتقري من غير ما الـ focus يتحرك ([[aria-live]]).
 
-الدروس: [[Constraint Validation API]] و [[ملخص الأخطاء]] و [[aria]] في تاب «HTML و CSS».`,
-          example: R`function validateStep(i) {
-  const errors = []
-  const names = new Set([...steps[i].querySelectorAll('input, select')].filter(el => el.type !== 'file').map(el => el.name))
-  for (const name of names) {
-    const el = form.elements[name]
-    const first = el instanceof RadioNodeList ? el[0] : el
-    const msg = first.checkValidity() ? '' : messageFor(first)
-    setError(name, msg)
-    if (msg) errors.push({ id: first.id || (first.id = $__bt$__{name}-first$__bt), msg })
+الدروس: [[addEventListener]] و [[event delegation]] و [[textContent و classList]] في تاب «JavaScript»، و [[aria]] و [[focus-visible]] و [[إعلان تغيير الصفحة]] في تاب «HTML و CSS».`,
+          example: R`app.addEventListener('click', e => {
+  const btn = e.target.closest('button[data-action]')
+  if (!btn) return
+  const { action } = btn.dataset
+  if (action === 'answer') {
+    const i = Number(btn.dataset.i), q = state.questions[state.index]
+    setState(answer(state, i))
+    live.textContent = i === q.answer ? 'إجابة صح' : $__btغلط. الإجابة الصح: $__{q.choices[q.answer]}$__bt
+  } else if (action === 'next') {
+    const n = next(state)
+    if (n.status === 'done') best = Math.max(best, score(n))
+    setState(n)
+  } else if (action === 'restart') {
+    clearProgress(best)
+    setState(start(state.questions))
+  } else if (action === 'retry') {
+    init()
   }
-  showSummary(errors)
-  return errors.length === 0
-}`,
-          try: R`اكتب [[MESSAGES]] و [[messageFor]] و [[setError]] و [[validateStep]] و [[showSummary]]، واربط «التالي» بيهم. جرّب بالكيبورد وقارئ الشاشة: «التالي» على خطوة فاضية، واسمع الملخص، ودوس على أول لينك، واكتب الاسم واسمع الرسالة بتختفي. وفي الخطوة التانية سيب الـ radio فاضي.`,
+})`,
+          try: R`اكتب الـ listener و [[setState]] الكاملة. وبعدين العب الكويز كله بالكيبورد بس، ومرة بقارئ الشاشة: لازم تسمع السؤال أول ما يظهر، وتسمع «إجابة صح» بعد الاختيار. جرّب كمان تدوس على نفس الاختيار مرتين بسرعة: الإجابة الأولى هي اللي تتحسب.`,
           flag: "script",
           deep: {
-            why: R`رسايل المتصفح الافتراضية بتظهر فقاعة لحقل واحد بس، وبلغة المتصفح مش لغة الموقع، وبتختفي بعد ثواني. ومستخدم قارئ الشاشة غالبًا مبيعرفش إن فيه خطأ أصلًا لو الرسالة ظهرت بعيد عن الـ focus. الملخص + الرسالة جنب الحقل + [[aria-invalid]] هو النمط اللي مواقع الحكومات الكبيرة بتستخدمه (GOV.UK) لأنه اتجرّب على ناس كتير.`,
-            how: R`[[el.validity]] فيه flag لكل نوع خطأ: [[valueMissing]] و [[tooShort]] و [[patternMismatch]] و [[typeMismatch]] و [[rangeUnderflow]]. [[messageFor]] بتلف على رسايل الحقل وترجّع أول واحدة الـ flag بتاعها true، ولو ملقتش ترجع [[validationMessage]] بتاعة المتصفح كاحتياطي.
+            why: R`كل مرة [[innerHTML]] بيتغير، الزراير القديمة بتتمسح، وأي listener كان عليها بيروح معاها. event delegation بيحل ده: listener واحد على الأب، بيفضل موجود. ولما الشاشة بتتبدّل كلها، الـ focus بيروح لـ [[body]]، فمستخدم الكيبورد لازم يدوس Tab من أول الصفحة، ومستخدم قارئ الشاشة مش عارف إن حاجة اتغيرت أصلًا. نقل الـ focus بإيدك هو اللي بيخلي التطبيق يتستخدم.`,
+            how: R`[[e.target.closest('button[data-action]')]]: الضغطة ممكن تبقى على نص جوه الزرار، فـ [[closest]] بيطلع لحد الزرار. [[data-action]] بيقول الزرار ده بيعمل إيه، و [[data-i]] رقم الاختيار. كل الأكشنز في مكان واحد وسهل تتقري.
 
-[[validateStep(i)]] بتجيب أسماء الحقول اللي في الخطوة (من غير الملف، اللي ليه منطق لوحده)، و [[Set]] عشان الـ radio الواحد ليه أكتر من input بنفس الاسم. [[form.elements[name]]] بيرجّع [[RadioNodeList]] للـ radios، فبنفحص أول واحد: [[required]] على radio واحد في المجموعة بيخلي المجموعة كلها مطلوبة.
+الـ focus: [[setState]] بتقارن القديم بالجديد. لو الحالة أو رقم السؤال اتغير، الـ focus يروح للـ [[h2]] (عليه [[tabindex="-1"]] عشان ينفع ياخد focus من الكود من غير ما يدخل في ترتيب الـ Tab). لو لأ (يعني جاوبت على نفس السؤال)، يروح لزرار «اللي بعده».
 
-الملخص: كل خطأ لينك [[href="#id"]]. الضغط عليه بيعمل [[preventDefault]] وبيحط الـ focus على الحقل بإيدك، لأن الانتقال للـ anchor مش دايمًا بيحط focus على الـ input. والملخص نفسه بياخد [[focus()]] فقارئ الشاشة بيقرا محتواه كله.
+[[aria-live="polite"]] على [[#live]]: أي نص يتكتب فيه، قارئ الشاشة بيقراه لما يخلص اللي بيقوله، من غير ما الـ focus يتحرك. [[polite]] مش [[assertive]] عشان ميقطعش الكلام. والعنصر لازم يبقى موجود في الصفحة من الأول (في [[index.html]])، مش بيترسم مع الرسالة، وإلا مش هيتقري.
 
-[[aria-invalid="true"]] بيخلي قارئ الشاشة يقول «invalid entry» مع الحقل، وبيدّيك selector للـ CSS ([[[aria-invalid="true"]]]) للـ border الأحمر.
-
-والـ input listener: لو الحقل عليه [[aria-invalid]]، أي كتابة بتعيد فحصه. فالرسالة تختفي أول ما يبقى سليم، بس مبتظهرش وانت لسه بتكتب أول مرة (أزعج حاجة في الفورمات).
-
-وكل ده في المتصفح للراحة بس: السيرفر بيعيد الفحص كله (المحطة الأخيرة).`,
-            when: R`أي فورم. الملخص مهم بالذات لما الأخطاء ممكن تبقى تحت الشاشة، أو في خطوة فيها حقول كتير.`,
-            mistakes: R`الخطأ لونه أحمر بس من غير نص. أو الرسالة بتظهر أول ما المستخدم يبدأ يكتب («الإيميل غلط» وهو لسه كاتب حرف). أو [[alert()]] للأخطاء. أو [[aria-live]] على كل رسالة خطأ، فلما ٥ حقول يغلطوا مع بعض قارئ الشاشة يقرا ٥ رسايل ورا بعض. أو [[innerHTML]] للملخص بنص فيه قيم من المستخدم (الحل بيستخدم [[textContent]]). أو تعتمد على الـ validation ده وتنسى السيرفر.`
+الزراير بعد الإجابة [[disabled]]: مبتتداسش ومش في ترتيب الـ Tab. والألوان مش لوحدها اللي بتقول صح ولا غلط، الرسالة المكتوبة كمان، عشان اللي عنده عمى ألوان.`,
+            when: R`في أي تطبيق بيبدّل جزء كبير من الشاشة من غير ما يغيّر الصفحة: كويز، أو wizard، أو قايمة بتتفلتر.`,
+            mistakes: R`[[querySelectorAll('button').forEach(...)]] بعد كل رسم عشان تحط listeners، فبتتكرر أو بتروح. أو [[<div onclick>]] بدل [[<button>]] فالكيبورد ميشتغلش. أو [[aria-live]] على عنصر بيترسم جديد كل مرة. أو [[focus()]] على عنصر مش focusable (h2 من غير tabindex) فمفيش حاجة تحصل. أو تعتمد على اللون بس. وفي الانترفيو: «إيه هو event delegation وليه؟» الإجابة: الـ events بتعمل bubble، فـ listener واحد على الأب بيمسك الضغطات على عناصر اتضافت بعده، وده أقل ذاكرة وأبسط.`
           },
-          teach: R`## الفكرة: المتصفح بيقول «فيه غلط إيه»، واحنا بنقول «تعمل إيه»
+          teach: R`## الفكرة: listener واحد بيمسك كل الزراير، و [[setState]] بتقرر الـ focus يروح فين
 
-المثال [[validateStep(i)]]: بتفحص حقول خطوة واحدة، وتكتب رسالة تحت كل حقل غلط، وتملا الملخص. والـ solCode فيه كل اللي حواليها: الرسايل، و [[messageFor]]، و [[setError]]، و [[showSummary]]، والـ listeners. هنفكهم بترتيب الملف، وبعدين نجرّبهم في Chrome 154 (بـ Playwright) على الحل المرجعي.
+المثال هو الـ click listener كامل: بيعرف الزرار اللي اتداس، وبيحسب state جديد، وبيعلن النتيجة. والجزء التاني من الشغل جوه [[setState]] (في solCode المحطة اللي فاتت): نقل الـ focus. هنفك الاتنين، وبعدين نلعب بالكيبورد بس في Chrome 154 (بـ Playwright) ونطبع العنصر اللي عليه الـ focus بعد كل زرار.
 
 ---
 
-## ١. أول الملف: المتغيرات
-
-~~~text form.js
-const form = document.querySelector('#booking')
-const steps = [...form.querySelectorAll('.step')]
-const stepItems = [...document.querySelectorAll('.steps li')]
-const [back, nextBtn, submitBtn] = ['#back', '#next', '#submit'].map(s => document.querySelector(s))
-const summary = document.querySelector('#summary')
-const last = steps.length - 1
-let current = 0
-~~~
-
-- [[[...form.querySelectorAll('.step')]]]: [[querySelectorAll]] بيرجّع NodeList، و [[...]] بيحوّلها array عادية ([[map]] و [[forEach]] بالأرقام).
-- [[const [back, nextBtn, submitBtn] = [...].map(...)]]: array destructuring. ٣ selectors اتحوّلوا ٣ عناصر، وكل واحد في متغير.
-- [[last]] = 3، رقم آخر خطوة. و [[current]] الخطوة الحالية.
-
-## ٢. الرسايل
+## ١. listener واحد على الأب
 
 ~~~text
-const MESSAGES = {
-  name: { valueMissing: 'اكتب اسمك', tooShort: 'الاسم لازم 3 حروف على الأقل' },
-  phone: { valueMissing: 'اكتب رقم الموبايل', patternMismatch: 'الرقم لازم 11 رقم ويبدأ بـ 010 أو 011 أو 012 أو 015' },
-  ...
-  date: { valueMissing: 'اختار اليوم', rangeUnderflow: 'اختار يوم من النهارده أو بعده' },
-}
-const today = new Date().toLocaleDateString('en-CA')
-form.date.min = today
+app.addEventListener('click', e => {
+  const btn = e.target.closest('button[data-action]')
+  if (!btn) return
+  const { action } = btn.dataset
 ~~~
 
-- كل حقل ليه object: اسم الـ flag في [[validity]]، والرسالة. الرسالة بتقول **تعمل إيه**، مش «invalid».
-- [[toLocaleDateString('en-CA')]]: التاريخ بشكل كندا، وهو بالصدفة [[YYYY-MM-DD]]، نفس الشكل اللي [[input type="date"]] عايزه.
-- [[form.date.min = today]]: [[form.date]] = الحقل اللي اسمه [[date]]. و [[min]] بيخلي أي يوم قبل النهارده [[rangeUnderflow]]. اتقرا وقت التجربة: [[min= 2026-10-08]].
+- [[app.addEventListener('click', ...)]]: على [[#app]] نفسه، مش على الزراير. كل مرة [[setState]] بتعمل [[innerHTML]]، الزراير القديمة بتتمسح وبتتعمل جديدة. لو الـ listener كان على الزرار كان هيتمسح معاه. لكن [[#app]] نفسه عمره ما بيتمسح.
+- ليه بيوصل له؟ الـ click بيعمل **bubble**: بيحصل على العنصر اللي اتداس، وبعدين على أبوه، وجده، لحد الـ document. ده اسمه event delegation.
+- [[e.target]]: العنصر اللي اتداس فعلًا. ممكن يبقى حاجة جوه الزرار.
+- [[closest('button[data-action]')]]: اطلع من [[e.target]] لفوق لحد أول [[button]] عليه [[data-action]]. لو الضغطة على الزرار نفسه بيرجّعه هو.
+- [[if (!btn) return]]: الضغطة على حاجة تانية (العنوان مثلًا): متعملش حاجة.
+- [[btn.dataset]]: كل attributes الـ [[data-*]] في object. [[data-action="answer"]] بتبقى [[dataset.action]]. و [[{ action }]] destructuring.
 
-## ٣. [[messageFor(el)]]
+وده بيشتغل بالكيبورد كمان: Enter أو Space على [[<button>]] بيطلّعوا click event عادي. عشان كده لازم [[<button>]] مش [[<div>]].
+
+## ٢. اختيار إجابة
 
 ~~~text
-function messageFor(el) {
-  for (const [key, msg] of Object.entries(MESSAGES[el.name] ?? {})) if (el.validity[key]) return msg
-  return el.validationMessage
-}
+  if (action === 'answer') {
+    const i = Number(btn.dataset.i), q = state.questions[state.index]
+    setState(answer(state, i))
+    live.textContent = i === q.answer ? 'إجابة صح' : $__btغلط. الإجابة الصح: $__{q.choices[q.answer]}$__bt
 ~~~
 
-- [[MESSAGES[el.name] ?? {}]]: رسايل الحقل ده، ولو مالوش رسايل object فاضي.
-- [[Object.entries]]: بيحوّل الـ object لأزواج [[[key, msg]]]، و [[for...of]] بيلف عليهم بالترتيب.
-- أول flag يبقى [[true]] نرجّع رسالته. ولو مفيش، رسالة المتصفح كاحتياطي.
+- [[Number(btn.dataset.i)]]: كل قيم [[dataset]] نصوص، [["1"]] مش [[1]]. و [[===]] بين نص ورقم دايمًا [[false]]، فلازم [[Number]].
+- [[q]]: السؤال الحالي، عشان نقارن الاختيار بالإجابة الصح.
+- [[setState(answer(state, i))]]: احسب وارسم. الزراير بتترسم [[disabled]] وملوّنة.
+- [[live.textContent = ...]]: اكتب النتيجة في [[#live]]. [[textContent]] مش [[innerHTML]]: نص الاختيار جاي من الداتا.
 
-## ٤. [[setError(name, msg)]]
-
-~~~text
-function setError(name, msg) {
-  document.querySelector($__bt#$__{name}-error$__bt).textContent = msg
-  const el = form.elements[name]
-  if (el instanceof RadioNodeList) return
-  if (msg) el.setAttribute('aria-invalid', 'true')
-  else el.removeAttribute('aria-invalid')
-}
-~~~
-
-- اكتب الرسالة في [[#name-error]] (أو امسحها لو [[msg]] فاضي). [[textContent]]: نص بس.
-- [[form.elements[name]]]: الحقل بالاسم. وللـ radios بيرجّع [[RadioNodeList]] (مجموعة)، ومينفعش [[aria-invalid]] عليها كلها، فبنخرج.
-- [[aria-invalid="true"]]: قارئ الشاشة بيقول «invalid entry»، والـ CSS بيلوّن البوردر بـ [[[aria-invalid="true"]]].
-
-## ٥. [[validateStep(i)]] (المثال)
+## ٣. اللي بعده، ومن الأول، وحاول تاني
 
 ~~~text
-function validateStep(i) {
-  const errors = []
-  const names = new Set([...steps[i].querySelectorAll('input, select')].filter(el => el.type !== 'file').map(el => el.name))
-~~~
-
-من جوه لبرة:
-
-1. [[steps[i].querySelectorAll('input, select')]]: كل الحقول في الخطوة دي بس.
-2. [[filter(el => el.type !== 'file')]]: من غير حقل الصورة (ليه فحص لوحده في المحطة الرابعة).
-3. [[map(el => el.name)]]: الأسماء. في الخطوة ٢: [["specialty", "type", "type", "date"]].
-4. [[new Set(...)]]: Set بيشيل المكرر، فالـ radios ([[type]] مرتين) تتفحص مرة.
-
-~~~text
-  for (const name of names) {
-    const el = form.elements[name]
-    const first = el instanceof RadioNodeList ? el[0] : el
-    const msg = first.checkValidity() ? '' : messageFor(first)
-    setError(name, msg)
-    if (msg) errors.push({ id: first.id || (first.id = $__bt$__{name}-first$__bt), msg })
+  } else if (action === 'next') {
+    const n = next(state)
+    if (n.status === 'done') best = Math.max(best, score(n))
+    setState(n)
+  } else if (action === 'restart') {
+    clearProgress(best)
+    setState(start(state.questions))
+  } else if (action === 'retry') {
+    init()
   }
-  showSummary(errors)
-  return errors.length === 0
-}
-~~~
-
-- [[el[0]]] للـ radio: [[required]] عليه بيمثّل المجموعة كلها، فلو مفيش واحد مختار [[valueMissing]] بيبقى [[true]] عليه.
-- [[checkValidity()]]: [[true]] لو سليم.
-- [[first.id || (first.id = ...)]]: الـ radio مالوش id، فنديله واحد ([[type-first]]) عشان لينك الملخص يوديله. [[||]] بيرجّع الـ id لو موجود، ولو لأ بيعمل التخصيص ويرجّع قيمته.
-
-## ٦. [[showSummary(errors)]]
-
-~~~text
-function showSummary(errors) {
-  summary.hidden = errors.length === 0
-  if (!errors.length) return
-  document.querySelector('#summary-count').textContent = errors.length === 1 ? 'حاجة واحدة' : $__bt$__{errors.length} حاجات$__bt
-  document.querySelector('#summary-list').replaceChildren(...errors.map(({ id, msg }) => {
-    const li = document.createElement('li'), a = document.createElement('a')
-    a.href = $__bt#$__{id}$__bt
-    a.textContent = msg
-    li.append(a)
-    return li
-  }))
-  summary.focus()
-}
-~~~
-
-- [[summary.hidden = ...]]: يظهر لو فيه أخطاء.
-- [[replaceChildren(...)]]: امسح اللي جوه القايمة وحط الجديد. كل خطأ [[li]] جواه لينك للحقل.
-- [[createElement]] و [[textContent]] بدل [[innerHTML]]: مفيش أي نص بيتفسر HTML.
-- [[summary.focus()]]: قارئ الشاشة بيقرا الملخص كله.
-
-## ٧. الـ listeners
-
-~~~text
-summary.addEventListener('click', e => {
-  const link = e.target.closest('a')
-  if (!link) return
-  e.preventDefault()
-  document.getElementById(link.hash.slice(1)).focus()
-})
-
-form.addEventListener('input', e => {
-  const el = e.target
-  if (el.getAttribute('aria-invalid') === 'true' || el.type === 'radio') setError(el.name, el.checkValidity() ? '' : messageFor(el))
 })
 ~~~
 
-- [[link.hash]] = [["#name"]]، و [[slice(1)]] بيشيل [[#]]. [[preventDefault()]] بيمنع القفزة العادية، و [[focus()]] بيحط المؤشر في الحقل فعلًا.
-- [[input]] event بيحصل مع كل حرف. بس بنعيد الفحص **لو الحقل كان غلط قبل كده** (أو radio)، فالرسالة مبتظهرش وانت لسه بتكتب أول مرة، وبتختفي أول ما تصلّح.
+- [[next]]: لو الـ state الجديد [[done]]، حدّث [[best]] **قبل** الرسم، عشان شاشة النتيجة تعرض الرقم الجديد. [[Math.max]] = الأكبر.
+- [[restart]]: امسح التقدم بس (المحطة الجاية)، وابدأ بنفس الأسئلة اللي في الذاكرة من غير طلب تاني.
+- [[retry]]: نفس [[init()]] بتاعة أول الصفحة.
+
+## ٤. الـ focus جوه [[setState]]
+
+~~~text app.js
+function setState(nextState) {
+  const moved = nextState.status !== state.status || nextState.index !== state.index
+  state = nextState
+  app.innerHTML = view(state)
+  if (moved) app.querySelector('h2')?.focus()
+  else app.querySelector('[data-action="next"]')?.focus()
+  if (state.status === 'playing' || state.status === 'done') save(state, best)
+}
+~~~
+
+- [[moved]] بيتحسب **قبل** ما [[state]] يتبدّل: قارن القديم بالجديد. اتغيرت الحالة أو رقم السؤال؟
+- [[innerHTML]] بيرسم من جديد، فالعنصر اللي كان عليه الـ focus اتمسح. لو مقلناش حاجة، الـ focus بيقع على [[body]].
+- [[moved]]: الـ focus على الـ [[h2]] الجديد. قارئ الشاشة بيقرا السؤال على طول. والـ [[h2]] عليه [[tabindex="-1"]] في [[view]]: ده اللي بيخلي [[focus()]] يشتغل عليه، ومن غير ما يدخل ترتيب الـ Tab.
+- مش [[moved]] (جاوبت على نفس السؤال): الـ focus على «اللي بعده»، الخطوة الطبيعية الجاية.
+- [[?.focus()]]: لو العنصر مش موجود (حالة [[loading]] مثلًا مفيهاش h2)، [[?.]] بيمنع الـ error.
+
+## ٥. [[aria-live]]
+
+~~~text index.html
+<p id="live" class="sr-only" aria-live="polite"></p>
+~~~
+
+أي نص يتكتب في العنصر ده، قارئ الشاشة بيقراه من غير ما الـ focus يتحرك. [[polite]] = استنى لما تخلص الكلام اللي بتقوله. والعنصر موجود في الـ HTML من الأول ومش جوه [[#app]]، لأن [[innerHTML]] كان هيعمله جديد كل مرة، وقارئ الشاشة بيراقب العنصر اللي كان موجود.
 
 ---
 
-## ٨. التجربة
+## ٦. لعب بالكيبورد بس
 
-«التالي» على الخطوة الأولى فاضية:
-
-~~~text الناتج
-focus: DIV#summary "فيه 2 حاجات محتاجين تتصلح: اكتب اسمك اكتب رقم الموبايل"
-summary list: <li><a href="#name">اكتب اسمك</a></li><li><a href="#phone">اكتب رقم الموبايل</a></li>
-name aria-invalid: true
-phone: - textbox "الموبايل" [invalid]
-~~~
-
-الإيميل مش في الملخص: فاضي ومش [[required]]. ودوسنا اللينك الأول وكتبنا:
+افتحنا [[/?cat=js]] ودوسنا زراير، وبعد كل زرار طبعنا [[document.activeElement]]:
 
 ~~~text الناتج
-after link focus: INPUT#name
-typing "من":    الاسم لازم 3 حروف على الأقل   aria-invalid=true
-typing "منى علي": ""                         aria-invalid=null
+start:      H2 "typeof null بيرجّع إيه؟"
+Tab:        BUTTON ""null""
+Tab:        BUTTON ""object""
+Enter:      BUTTON "اللي بعده" | live=إجابة صح
+Shift+Tab:  BODY
+Tab,Enter:  H2 "0 == '' بيرجّع إيه؟"
 ~~~
 
-الرسالة اتغيرت من [[valueMissing]] لـ [[tooShort]] وانت بتكتب، واختفت أول ما بقى سليم. وفي الخطوة التانية فاضية الملخص فيه «اختار التخصص» و «اختار نوع الكشف» و «اختار اليوم»، ويوم 2020-01-01: «اختار يوم من النهارده أو بعده».
+- أول ما الصفحة حمّلت، الـ focus على السؤال ([[init]] نادت [[setState]] والحالة اتغيرت من [[loading]] لـ [[playing]]).
+- Tab الأول: أول اختيار، مش الـ h2 ([[tabindex="-1"]] بره ترتيب الـ Tab).
+- Enter على «"object"»: الإجابة اتسجلت، والـ focus راح لـ «اللي بعده»، و [[#live]] فيه «إجابة صح».
+- Shift+Tab من «اللي بعده» راح [[BODY]]: الاختيارات [[disabled]] فخرجت من ترتيب الـ Tab، والـ h2 مش فيه أصلًا، فمفيش حاجة قبله.
+- Enter على «اللي بعده»: السؤال التاني، والـ focus على عنوانه.
 
-واختبار Playwright الأول في المحطة الأخيرة بيتأكد من ده كله، وكمان إن الوصف المسموع للموبايل [[11 رقم ويبدأ بـ 01 اكتب رقم الموبايل]] (الـ hint وبعده الخطأ)، و axe صفر violations والأخطاء ظاهرة.
+ودبل كليك على اختيار «true» في السؤال التاني:
 
----
-
-## الخلاصة
-
-| الحتة | بتعمل إيه |
-|---|---|
-| [[MESSAGES]] | رسالة بالعربي لكل flag في [[validity]] |
-| [[messageFor]] | أول flag [[true]] ← رسالته |
-| [[setError]] | الرسالة تحت الحقل و [[aria-invalid]] |
-| [[validateStep]] | حقول الخطوة بس، و [[Set]] للـ radio، و [[checkValidity()]] |
-| [[showSummary]] | لينك لكل خطأ و [[focus()]] على الملخص |
-| [[input]] listener | يعيد الفحص بس لو كان غلط |
-
-- المتصفح بيعمل القواعد ([[required]] و [[pattern]] و [[min]])، واحنا بنعمل الرسايل.
-- كل ده راحة للمستخدم: السيرفر بيعيد الفحص (المحطة الأخيرة).`,
-          lines: [
-            R`بتفحص خطوة واحدة وترجّع true لو سليمة.`,
-            R`قايمة الأخطاء اللي هتتعرض في الملخص.`,
-            R`أسماء حقول الخطوة من غير الملف، و [[Set]] عشان الـ radio يتفحص مرة.`,
-            R`لكل اسم:`,
-            R`هات العنصر (أو [[RadioNodeList]] لو radio).`,
-            R`للـ radio خد أول واحد، الـ required عليه بيمثّل المجموعة.`,
-            R`لو سليم مفيش رسالة، لو لأ هات الرسالة المناسبة.`,
-            R`اكتب الرسالة تحت الحقل وحط أو شيل [[aria-invalid]].`,
-            R`لو فيه خطأ، ضيفه للملخص بـ id الحقل (والـ radio ياخد id لو معندوش).`,
-            R`قفلة الـ for.`,
-            R`اعرض الملخص أو خبّيه.`,
-            R`رجّع النتيجة.`,
-            R`قفلة الدالة.`
-          ],
-          sol: R`«التالي» على الخطوة الأولى فاضية: الملخص بيظهر وعليه الـ focus، وفيه لينكين: «اكتب اسمك» و «اكتب رقم الموبايل». الإيميل مش فيه لأنه اختياري. الحقلين عليهم [[aria-invalid="true"]]. وقارئ الشاشة على حقل الموبايل بيقول «الموبايل، edit، invalid entry، 11 رقم ويبدأ بـ 01 اكتب رقم الموبايل».
-
-ده اتختبر في Playwright: [[toBeFocused()]] على الملخص، و [[toHaveCount(2)]] على اللينكات، و [[toHaveAccessibleDescription('اكتب اسمك')]] على الاسم، والضغط على اللينك بيحط الـ focus على الحقل، والكتابة بتشيل [[aria-invalid]]، و axe صفر violations والأخطاء ظاهرة.
-
-الحل المرجعي تحت: أول الملف لحد الـ input listener.`,
-          solCode: R`const form = document.querySelector('#booking')
-const steps = [...form.querySelectorAll('.step')]
-const stepItems = [...document.querySelectorAll('.steps li')]
-const [back, nextBtn, submitBtn] = ['#back', '#next', '#submit'].map(s => document.querySelector(s))
-const summary = document.querySelector('#summary')
-const last = steps.length - 1
-let current = 0
-
-const MESSAGES = {
-  name: { valueMissing: 'اكتب اسمك', tooShort: 'الاسم لازم 3 حروف على الأقل' },
-  phone: { valueMissing: 'اكتب رقم الموبايل', patternMismatch: 'الرقم لازم 11 رقم ويبدأ بـ 010 أو 011 أو 012 أو 015' },
-  email: { typeMismatch: 'الإيميل مش مكتوب صح، زي name@example.com' },
-  specialty: { valueMissing: 'اختار التخصص' },
-  type: { valueMissing: 'اختار نوع الكشف' },
-  date: { valueMissing: 'اختار اليوم', rangeUnderflow: 'اختار يوم من النهارده أو بعده' },
-}
-const today = new Date().toLocaleDateString('en-CA')
-form.date.min = today
-
-function messageFor(el) {
-  for (const [key, msg] of Object.entries(MESSAGES[el.name] ?? {})) if (el.validity[key]) return msg
-  return el.validationMessage
-}
-
-function setError(name, msg) {
-  document.querySelector($__bt#$__{name}-error$__bt).textContent = msg
-  const el = form.elements[name]
-  if (el instanceof RadioNodeList) return
-  if (msg) el.setAttribute('aria-invalid', 'true')
-  else el.removeAttribute('aria-invalid')
-}
-
-function validateStep(i) {
-  const errors = []
-  const names = new Set([...steps[i].querySelectorAll('input, select')].filter(el => el.type !== 'file').map(el => el.name))
-  for (const name of names) {
-    const el = form.elements[name]
-    const first = el instanceof RadioNodeList ? el[0] : el
-    const msg = first.checkValidity() ? '' : messageFor(first)
-    setError(name, msg)
-    if (msg) errors.push({ id: first.id || (first.id = $__bt$__{name}-first$__bt), msg })
-  }
-  showSummary(errors)
-  return errors.length === 0
-}
-
-function showSummary(errors) {
-  summary.hidden = errors.length === 0
-  if (!errors.length) return
-  document.querySelector('#summary-count').textContent = errors.length === 1 ? 'حاجة واحدة' : $__bt$__{errors.length} حاجات$__bt
-  document.querySelector('#summary-list').replaceChildren(...errors.map(({ id, msg }) => {
-    const li = document.createElement('li'), a = document.createElement('a')
-    a.href = $__bt#$__{id}$__bt
-    a.textContent = msg
-    li.append(a)
-    return li
-  }))
-  summary.focus()
-}
-
-summary.addEventListener('click', e => {
-  const link = e.target.closest('a')
-  if (!link) return
-  e.preventDefault()
-  document.getElementById(link.hash.slice(1)).focus()
-})
-
-form.addEventListener('input', e => {
-  const el = e.target
-  if (el.getAttribute('aria-invalid') === 'true' || el.type === 'radio') setError(el.name, el.checkValidity() ? '' : messageFor(el))
-})`
-        },
-        {
-          cmd: "مشروع ٣: التنقل والمراجعة",
-          title: "تتنقل بين الخطوات وتعرض المراجعة من غير ما حد يتوه إزاي؟",
-          desc: R`«التالي» و «رجوع» بيبدّلوا الخطوة، والمؤشر فوق بيتحدث، والـ focus بيروح لعنوان الخطوة الجديدة. والخطوة الأخيرة بتعرض كل اللي اتكتب عشان المستخدم يراجع قبل ما يبعت.
-
-خلصت يعني: (١) «رجوع» بيرجّع للخطوة اللي قبلها والداتا زي ما هي. (٢) [[aria-current="step"]] بيتنقل مع الخطوة. (٣) قارئ الشاشة بيقرا «الخطوة 2 من 4: الكشف» أول ما تتغير. (٤) الـ Enter في أي حقل بيعمل «التالي» مش إرسال. (٥) المراجعة بتعرض اسم التخصص («أسنان») مش القيمة ([[dental]])، واسم نوع الكشف، واسم الصورة.
-
-الدروس: [[FormData و URLSearchParams]] في تاب «JavaScript»، و [[إعلان تغيير الصفحة]] في تاب «HTML و CSS».`,
-          example: R`function go(i) {
-  steps[current].hidden = true
-  current = i
-  steps[i].hidden = false
-  stepItems.forEach((li, j) => j === i ? li.setAttribute('aria-current', 'step') : li.removeAttribute('aria-current'))
-  back.hidden = i === 0
-  nextBtn.hidden = i === last
-  submitBtn.hidden = i !== last
-  summary.hidden = true
-  if (i === last) renderReview()
-  steps[i].querySelector('h2').focus()
-}
-
-nextBtn.addEventListener('click', () => { if (validateStep(current)) go(current + 1) })
-back.addEventListener('click', () => go(current - 1))`,
-          try: R`اكتب [[go(i)]] و [[renderReview()]]، واربط «التالي» و «رجوع». وفي الـ submit listener: لو مش في آخر خطوة، اعتبر الـ submit «التالي». جرّب: املا الخطوة الأولى، ودوس Enter جوه حقل الموبايل: لازم تروح للخطوة التانية مش تبعت. ارجع للأولى وغيّر الاسم، وروح للمراجعة: الاسم الجديد لازم يظهر.`,
-          flag: "script",
-          deep: {
-            why: R`الـ wizard اللي مبيقولش انت فين ولا بيحفظ الداتا لما ترجع هو أكتر حاجة بتخلي الناس تقفل الفورم في النص. وبالنسبة لقارئ الشاشة، تبديل الخطوة من غير ما الـ focus يتحرك معناه إن الشاشة اتغيرت وهو لسه واقف على زرار «التالي» ومش عارف.`,
-            how: R`[[go(i)]] بتخفي الخطوة الحالية بـ [[hidden]] وتظهر الجديدة. [[hidden]] مش [[display: none]] في CSS بس، ده attribute بيشيل العنصر من الـ accessibility tree ومن ترتيب الـ Tab كمان. وبتحدّث [[aria-current]] على المؤشر، وبتظهر وتخفي الزراير («رجوع» مش في الأولى، و «احجز» في الأخيرة بس). وفي الآخر [[focus()]] على الـ h2.
-
-[[form.addEventListener('submit')]]: Enter في أي input بيعمل submit للفورم (implicit submission) حتى لو زرار الـ submit مخفي. عشان كده الـ listener بيسأل: لو مش آخر خطوة، يعمل validate و [[go(current + 1)]]، وكأنك دوست «التالي».
-
-المراجعة بتتبني من [[FormData(form)]] بس بتعرض النص المفهوم: للـ select [[el.selectedOptions[0].text]]، وللـ radio نص الـ label بتاع المختار. وبتتبني بـ [[createElement]] و [[textContent]]، فأي حاجة المستخدم كتبها بتتعرض كنص.
-
-و [[<dl>]] (dt و dd) هو العنصر اللي معناه «اسم وقيمة»، وقارئ الشاشة بيقراه كده.`,
-            when: R`أي فورم متعدد الخطوات. وفي React نفس الفكرة: state للخطوة الحالية، والحقول كلها في نفس الفورم (react-hook-form بيدعم ده).`,
-            mistakes: R`تمسح الخطوة من الـ DOM بدل ما تخفيها، فالداتا تروح. أو «رجوع» بيعمل validation (مش لازم: المستخدم راجع يصلّح). أو تنسى الـ Enter فالفورم يتبعت من الخطوة الأولى ناقص. أو المراجعة بتعرض [[dental]] و [[online]]. أو مؤشر خطوات بالألوان بس من غير [[aria-current]].`
-          },
-          teach: R`## الفكرة: [[go(i)]] بتبدّل الخطوة، و [[renderReview()]] بتعرض اللي اتكتب بالكلام المفهوم
-
-المثال [[go(i)]] و listener «التالي» و «رجوع». والـ solCode فيه [[renderReview()]] كمان. هنفكهم سطر سطر، ونشوف Enter جوه حقل بيعمل إيه، وبعدين المراجعة الحقيقية اللي طلعت. اتجرّب في Chrome 154 (بـ Playwright) على الحل المرجعي.
-
----
-
-## ١. [[go(i)]]
-
-~~~text
-function go(i) {
-  steps[current].hidden = true
-  current = i
-  steps[i].hidden = false
+~~~text الناتج (answers من localStorage)
+[ 1, 0 ]
 ~~~
 
-خبّي الحالية، وحدّث الرقم، واظهر الجديدة. [[hidden]] هنا property بتحط أو تشيل الـ attribute. الخطوة المخفية الحقول بتاعتها لسه في الفورم وقيمها زي ما هي.
-
-~~~text
-  stepItems.forEach((li, j) => j === i ? li.setAttribute('aria-current', 'step') : li.removeAttribute('aria-current'))
-~~~
-
-لف على [[<li>]] المؤشر فوق: اللي رقمه [[i]] ياخد [[aria-current="step"]]، والباقي يتشال منه. قارئ الشاشة بيقول «current step» على الحالي، والـ CSS بيميّزه بـ [[.steps [aria-current]]].
-
-~~~text
-  back.hidden = i === 0
-  nextBtn.hidden = i === last
-  submitBtn.hidden = i !== last
-  summary.hidden = true
-~~~
-
-كل سطر شرط بيرجّع [[true]] أو [[false]]:
-
-| الخطوة | رجوع | التالي | احجز |
-|---|---|---|---|
-| 0 | مخفي | ظاهر | مخفي |
-| 1 و 2 | ظاهر | ظاهر | مخفي |
-| 3 ([[last]]) | ظاهر | مخفي | ظاهر |
-
-و [[summary.hidden = true]]: أخطاء الخطوة اللي فاتت ملهاش معنى هنا.
-
-~~~text
-  if (i === last) renderReview()
-  steps[i].querySelector('h2').focus()
-}
-~~~
-
-- المراجعة بتتبني **كل مرة** تدخل الخطوة الأخيرة، فلو رجعت وغيّرت حاجة، المراجعة الجديدة فيها التغيير.
-- [[focus()]] على عنوان الخطوة: قارئ الشاشة يقرا «الخطوة 2 من 4: الكشف».
-
-## ٢. الزراير
-
-~~~text
-nextBtn.addEventListener('click', () => { if (validateStep(current)) go(current + 1) })
-back.addEventListener('click', () => go(current - 1))
-~~~
-
-«التالي» بيفحص الخطوة الأول، و «رجوع» لأ: اللي راجع غالبًا راجع يصلّح.
-
-## ٣. Enter جوه حقل
-
-أي Enter جوه [[input]] في فورم بيعمل submit (اسمها implicit submission)، حتى و «احجز» مخفي. عشان كده أول سطرين في الـ submit listener (المحطة الأخيرة):
-
-~~~text
-form.addEventListener('submit', async e => {
-  e.preventDefault()
-  if (current !== last) { if (validateStep(current)) go(current + 1); return }
-~~~
-
-لو مش آخر خطوة: اعمل زي «التالي» واخرج. جرّبنا: كتبنا الاسم والموبايل ودوسنا Enter في حقل الموبايل:
-
-~~~text الناتج
-Enter in phone -> H2#s1 "الخطوة 2 من 4: الكشف" | aria-current: الكشف
-~~~
-
-## ٤. [[renderReview()]]
-
-~~~text
-function renderReview() {
-  const labels = { name: 'الاسم', phone: 'الموبايل', email: 'الإيميل', specialty: 'التخصص', type: 'نوع الكشف', date: 'اليوم' }
-  const data = new FormData(form)
-~~~
-
-- [[labels]]: اسم الخانة → الكلمة اللي تتعرض. وترتيبها هو ترتيب العرض.
-- [[new FormData(form)]]: كل قيم الفورم، حتى اللي في خطوات مخفية، ومعاها الملف.
-
-~~~text
-  const rows = Object.entries(labels).flatMap(([name, label]) => {
-    const el = form.elements[name]
-    const value = el.tagName === 'SELECT' ? el.selectedOptions[0].text
-      : el instanceof RadioNodeList ? form.querySelector($__bt[name="$__{name}"]:checked$__bt)?.parentElement.textContent.trim()
-      : data.get(name)
-~~~
-
-- [[flatMap]]: زي [[map]]، بس كل عنصر بيرجّع array ([[[dt, dd]]]) وكلهم بيتفردوا في array واحدة.
-- القيمة حسب نوع الحقل (ternary متداخل):
-  - [[select]]: [[selectedOptions[0].text]] = النص «أسنان»، مش القيمة [[dental]].
-  - radio: [[:checked]] = المختار، و [[parentElement]] = الـ [[label]] اللي حواليه، و [[textContent.trim()]] = «أونلاين». و [[?.]] لو مفيش مختار.
-  - غير كده: [[data.get(name)]].
-
-~~~text
-    const dt = document.createElement('dt'), dd = document.createElement('dd')
-    dt.textContent = label
-    dd.textContent = value || '—'
-    return [dt, dd]
-  })
-~~~
-
-[[<dt>]] الاسم و [[<dd>]] القيمة، جوه [[<dl>]]. و [[value || '—']]: الفاضي (الإيميل) يتعرض شرطة.
-
-~~~text
-  const photo = data.get('photo')
-  const dt = document.createElement('dt'), dd = document.createElement('dd')
-  dt.textContent = 'الصورة'
-  dd.textContent = photo?.size ? photo.name : 'من غير صورة'
-  document.querySelector('#review').replaceChildren(...rows, dt, dd)
-}
-~~~
-
-[[data.get('photo')]] بيرجّع [[File]]. ولو مفيش صورة، [[FormData]] بيحط File فاضي برضه. سألنا الفورم وهو من غير صورة: [[File "" 0 application/octet-stream]]، يعني اسم فاضي وحجم صفر. فبنفحص [[size]] مش وجوده.
-
-## ٥. المراجعة الحقيقية
-
-ملينا الخطوات ([[منى علي]] و [[01012345678]] من غير إيميل، وأسنان، وأونلاين، وبكره، وصورة [[rx.png]]):
-
-~~~text الناتج (#review)
-الاسم | منى علي | الموبايل | 01012345678 | الإيميل | — | التخصص | أسنان | نوع الكشف | أونلاين | اليوم | 2026-10-09 | الصورة | rx.png
-focus: H2#s3 "الخطوة 4 من 4: راجع وابعت"
-~~~
-
-واختبار Playwright «back keeps the data» بيرجع من الخطوة التانية ويتأكد إن الاسم لسه [[منى علي]].
+إجابة واحدة اتسجلت. الضغطة التانية جت على زرار بقى [[disabled]] (مبيطلعش click)، ولو كانت عدّت، [[answer]] كانت هترجّع نفس الـ state.
 
 ---
 
@@ -789,747 +788,518 @@ focus: H2#s3 "الخطوة 4 من 4: راجع وابعت"
 
 | الحاجة | الكود |
 |---|---|
-| تبديل الخطوة | [[hidden]] على الحالية والجديدة |
-| المؤشر | [[aria-current="step"]] على واحد بس |
-| الزراير | [[hidden]] حسب [[i === 0]] و [[i === last]] |
-| قارئ الشاشة يعرف إن الخطوة اتغيرت | [[focus()]] على الـ h2 |
-| Enter مايبعتش بدري | الـ submit listener: لو مش آخر خطوة = «التالي» |
-| المراجعة بالكلام | [[selectedOptions[0].text]] ونص الـ label للـ radio |
-| الصورة | [[photo?.size]] مش [[photo]] |`,
+| listener يفضل بعد كل رسم | على [[#app]]، و [[e.target.closest('button[data-action]')]] |
+| الزرار بيعمل إيه | [[data-action]] و [[btn.dataset]] |
+| الأرقام من [[dataset]] | [[Number(...)]] |
+| السؤال اتغير | [[focus()]] على الـ h2 بـ [[tabindex="-1"]] |
+| جاوبت | [[focus()]] على «اللي بعده» |
+| إعلان من غير ما الـ focus يتحرك | [[aria-live="polite"]] على عنصر موجود من الأول |
+| الضغطة المزدوجة | [[disabled]] + [[answer]] بتتجاهل التانية |`,
           lines: [
-            R`[[go(i)]]: انقل للخطوة رقم i.`,
-            R`خبّي الحالية.`,
-            R`حدّث الرقم.`,
-            R`اظهر الجديدة.`,
-            R`[[aria-current="step"]] على الخطوة الحالية بس في المؤشر.`,
-            R`«رجوع» مش في الخطوة الأولى.`,
-            R`«التالي» مش في الأخيرة.`,
-            R`«احجز» في الأخيرة بس.`,
-            R`خبّي ملخص الأخطاء القديم.`,
-            R`لو دي المراجعة، ابنيها من الداتا الحالية.`,
-            R`الـ focus على عنوان الخطوة، فقارئ الشاشة يقراه.`,
-            R`قفلة الدالة.`,
-            R`«التالي»: افحص الخطوة الحالية الأول.`,
-            R`«رجوع»: من غير فحص.`
+            R`listener واحد على [[#app]] لكل الضغطات، حتى على زراير اترسمت بعده.`,
+            R`اطلع من العنصر اللي اتداس لحد أقرب زرار عليه [[data-action]].`,
+            R`لو الضغطة مش على زرار بيعمل حاجة، سيبها.`,
+            R`اسم الأكشن من [[data-action]].`,
+            R`اختيار إجابة:`,
+            R`رقم الاختيار من [[data-i]]، والسؤال الحالي.`,
+            R`احسب الـ state الجديد وارسم. [[answer]] بتتجاهل الإجابة التانية.`,
+            R`اكتب النتيجة في الـ live region، فقارئ الشاشة يقولها.`,
+            R`السؤال اللي بعده:`,
+            R`احسب الـ state الجديد.`,
+            R`لو خلصنا، حدّث أحسن نتيجة قبل الرسم.`,
+            R`ارسم.`,
+            R`من الأول:`,
+            R`امسح التقدم المحفوظ (بس سيب أحسن نتيجة).`,
+            R`ابدأ بنفس الأسئلة من غير ما تجيبها تاني.`,
+            R`حاول تاني بعد خطأ:`,
+            R`نفس [[init()]] بتاعة أول الصفحة.`,
+            R`قفلة الـ if.`,
+            R`قفلة الـ listener.`
           ],
-          sol: R`Enter في حقل الموبايل بعد ما الخطوة تبقى سليمة: الخطوة التانية بتظهر، والـ focus على «الخطوة 2 من 4: الكشف». «رجوع» بيرجّع والاسم لسه مكتوب (اختبار Playwright «back keeps the data» بيتأكد بـ [[toHaveValue('منى علي')]]). والمراجعة بتعرض «أسنان» و «أونلاين» واسم الصورة (الاختبار بيتأكد إن [[#review]] فيه «أسنان» و «rx.png»).
+          sol: R`بالكيبورد: Tab بيوصل لأول اختيار، Enter، الاختيارات بتتلوّن والـ focus بيبقى على «اللي بعده»، Enter تاني، والـ focus على عنوان السؤال الجديد. بقارئ الشاشة (NVDA مثلًا): «heading level 2، typeof null بيرجّع إيه؟» وبعد الاختيار «إجابة صح».
 
-الحل المرجعي: [[go]] و [[renderReview]] تحت. والـ submit listener اللي بيحوّل Enter لـ «التالي» في المحطة الأخيرة.
+ده اتختبر في Playwright: [[toBeFocused()]] على الـ h2 أول ما الصفحة تحمّل، وعلى زرار «النتيجة» بعد الإجابة، و [[#live]] فيه «إجابة صح»، و axe نضيف قبل وبعد الإجابة.
 
-لو الـ Enter بيبعت: الـ submit listener مفيهوش شرط الخطوة، أو فيه زرار [[type="submit"]] تاني في خطوة قبل الأخيرة (أي [[<button>]] جوه form من غير [[type]] بيبقى submit).`,
-          solCode: R`function go(i) {
-  steps[current].hidden = true
-  current = i
-  steps[i].hidden = false
-  stepItems.forEach((li, j) => j === i ? li.setAttribute('aria-current', 'step') : li.removeAttribute('aria-current'))
-  back.hidden = i === 0
-  nextBtn.hidden = i === last
-  submitBtn.hidden = i !== last
-  summary.hidden = true
-  if (i === last) renderReview()
-  steps[i].querySelector('h2').focus()
+الضغطة المزدوجة: التانية بتوصل لزرار [[disabled]] (مفيش click event)، وحتى لو وصلت، [[answer]] بترجّع نفس الـ state لأن السؤال متجاوب. حماية في طبقتين.
+
+الحل المرجعي هو [[app.js]] اللي في المحطة اللي فاتت: [[setState]] فيها منطق الـ focus، والـ listener هو المثال.`
+        },
+        {
+          cmd: "مشروع ٢: localStorage",
+          title: "تحفظ التقدم في المتصفح من غير ما التطبيق يقع لو الداتا بايظة إزاي؟",
+          desc: R`احفظ التقدم (الأسئلة، ورقم السؤال، والإجابات) وأحسن نتيجة في localStorage، ولما الصفحة تفتح تاني كمّل من نفس المكان.
+
+خلصت يعني: (١) refresh في نص الكويز بيرجّعك لنفس السؤال. (٢) أحسن نتيجة بتفضل بعد «من الأول» وبعد refresh. (٣) لو ملف الأسئلة اتغير، التقدم القديم بيتجاهل ومش بيوقّع حاجة. (٤) لو اللي في localStorage بايظ ([[{not json]])، التطبيق بيبدأ عادي. (٥) لو localStorage مقفول أو المساحة خلصت، التطبيق بيشتغل من غير حفظ. (٦) الـ key فيه رقم نسخة.
+
+الدروس: [[JSON]] في تاب «JavaScript»، و [[localStorage و JWT]] في تاب «Console» (إيه اللي ميتحطش فيه)، و [[useLocalStorage]] في تاب «React» (نفس الفكرة في React).`,
+          example: R`const KEY = 'quiz:v1'
+
+export function loadSaved() {
+  try {
+    const data = JSON.parse(localStorage.getItem(KEY))
+    if (!data || !Array.isArray(data.ids) || !Array.isArray(data.answers)) return null
+    return data
+  } catch {
+    return null
+  }
 }
 
-nextBtn.addEventListener('click', () => { if (validateStep(current)) go(current + 1) })
-back.addEventListener('click', () => go(current - 1))
+export function save(state, best) {
+  const data = { ids: state.questions.map(q => q.id), index: state.index, answers: state.answers, best }
+  try { localStorage.setItem(KEY, JSON.stringify(data)) } catch { /* private mode أو المساحة خلصت: كمّل من غير حفظ */ }
+}`,
+          try: R`اكتب [[storage.js]] واستخدمه في [[setState]] (احفظ بعد كل رسم في playing و done) وفي [[init]] (مرر [[loadSaved()]] لـ [[start]]). جرّب: جاوب سؤالين، refresh، لازم تكمّل من التالت. وبعدين في Console: [[localStorage.setItem('quiz:v1', '{not json')]] و refresh. وبعدين غيّر [[id]] سؤال في [[questions.json]] و refresh: لازم يبدأ من الأول.`,
+          flag: "script",
+          deep: {
+            why: R`localStorage بيبان بسيط: [[setItem]] و [[getItem]]. بس الداتا اللي فيه عايشة أطول من الكود اللي كتبها. بعد شهر هتغيّر شكل الـ state، والمستخدمين عندهم الشكل القديم. ومستخدم هيعدّل فيه من DevTools. ولو [[JSON.parse]] رمى وانت مش ماسكه، التطبيق مش هيفتح خالص عند المستخدم ده لحد ما يمسح الداتا بإيده، وهو مش هيعرف يعمل كده.`,
+            how: R`القراية: [[JSON.parse(localStorage.getItem(KEY))]] جوه [[try]]. لو المفتاح مش موجود، [[getItem]] بيرجّع [[null]] و [[JSON.parse(null)]] بيرجّع [[null]]، مش error. لو النص بايظ بيرمي، و [[catch]] بيرجّع [[null]]. وبعد الـ parse بنفحص الشكل ([[Array.isArray(data.ids)]]): JSON سليم مش معناه إنه الشكل اللي انت مستنيه.
 
-function renderReview() {
-  const labels = { name: 'الاسم', phone: 'الموبايل', email: 'الإيميل', specialty: 'التخصص', type: 'نوع الكشف', date: 'اليوم' }
-  const data = new FormData(form)
-  const rows = Object.entries(labels).flatMap(([name, label]) => {
-    const el = form.elements[name]
-    const value = el.tagName === 'SELECT' ? el.selectedOptions[0].text
-      : el instanceof RadioNodeList ? form.querySelector($__bt[name="$__{name}"]:checked$__bt)?.parentElement.textContent.trim()
-      : data.get(name)
-    const dt = document.createElement('dt'), dd = document.createElement('dd')
-    dt.textContent = label
-    dd.textContent = value || '—'
-    return [dt, dd]
-  })
-  const photo = data.get('photo')
-  const dt = document.createElement('dt'), dd = document.createElement('dd')
-  dt.textContent = 'الصورة'
-  dd.textContent = photo?.size ? photo.name : 'من غير صورة'
-  document.querySelector('#review').replaceChildren(...rows, dt, dd)
+الكتابة: [[setItem]] نفسه ممكن يرمي ([[QuotaExceededError]] لما المساحة تخلص، أو في بعض أوضاع الـ private). جوه [[try]] وكمّل من غير حفظ.
+
+الإصدار: [[quiz:v1]]. لو غيّرت شكل الداتا بطريقة مش متوافقة، خليها [[v2]] والقديم يتجاهل لوحده. أو اكتب migration بيقرا v1 ويحوّله.
+
+والتحقق إن الأسئلة هي هي: بنحفظ [[ids]] الأسئلة بالترتيب، و [[start]] بتقارنهم. لو اختلفوا، رقم السؤال والإجابات القديمة ملهمش معنى.
+
+وإيه اللي ميتحطش في localStorage: أي token أو داتا حساسة. أي JavaScript على الصفحة (مكتبة، أو XSS) يقدر يقراه.`,
+            when: R`تفضيلات وتقدّم ومسودات: حاجات لو ضاعت مش كارثة. أي حاجة لازم تفضل (فلوس، أو تقدّم في كورس مدفوع) مكانها السيرفر.`,
+            mistakes: R`[[JSON.parse]] من غير try، فمستخدم واحد عنده داتا بايظة التطبيق عنده ميّت. أو تحفظ الأسئلة نفسها مع التقدم، فلو صلّحت غلطة في سؤال المستخدم يفضل شايف القديم. أو key زي [[state]] (مشاريع تانية على نفس الـ localhost بتستخدم نفس الاسم). أو تحفظ حاجة كبيرة في كل keystroke (localStorage متزامن وبيوقّف الـ main thread). أو تحط JWT فيه.`
+          },
+          teach: R`## الفكرة: اقرا كأن الداتا بايظة، واكتب كأن الكتابة ممكن تفشل
+
+المثال [[storage.js]]: دالة بتقرا التقدم المحفوظ، ودالة بتكتبه. الاتنين جوه [[try]]، لأن localStorage بيعيش أطول من الكود، وأي حد يقدر يعدّل فيه. هنفكهم سطر سطر، ونجرّب كل حالة وحشة فعلًا في Chrome 154 (بـ Playwright على الحل المرجعي)، ونطبع اللي اتخزن بعد كل خطوة.
+
+---
+
+## ١. المفتاح
+
+~~~text
+const KEY = 'quiz:v1'
+~~~
+
+- localStorage خاص بالـ origin (البروتوكول + الدومين + البورت). كل مشاريعك على [[localhost:3000]] بتشوف نفس الـ storage، فاسم زي [[state]] ممكن يتضرب. [[quiz:]] بيميّز التطبيق.
+- [[v1]]: رقم شكل الداتا. لو غيّرت الشكل بطريقة القديم ميتقريش بيها، خليها [[v2]]: المفتاح القديم بيتجاهل لوحده.
+
+## ٢. القراية
+
+~~~text
+export function loadSaved() {
+  try {
+    const data = JSON.parse(localStorage.getItem(KEY))
+    if (!data || !Array.isArray(data.ids) || !Array.isArray(data.answers)) return null
+    return data
+  } catch {
+    return null
+  }
+}
+~~~
+
+نفكها بالترتيب اللي بتتنفذ بيه، وجرّبنا كل حتة في Console الصفحة:
+
+~~~text الناتج
+localStorage.getItem('nope')  → null
+JSON.parse(null)              → null
+JSON.parse('{not json')       → SyntaxError: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+~~~
+
+- [[localStorage.getItem(KEY)]]: بيرجّع **نص** أو [[null]] لو المفتاح مش موجود.
+- [[JSON.parse(...)]]: النص لـ object. ولو [[null]] بيرجّع [[null]] عادي، من غير error. فأول مرة خالص مفيش مشكلة.
+- النص البايظ بيرمي [[SyntaxError]]، و [[catch]] بيرجّع [[null]]. من غير الـ [[try]] ده، الـ error هيطلع لـ [[init]] والتطبيق مش هيفتح عند المستخدم ده أبدًا.
+- [[catch {]] من غير [[(e)]]: لما مش محتاج الـ error نفسه، JavaScript الحديث بيسمح تشيله.
+- سطر الشكل: JSON سليم زي [[5]] أو [[{"x":1}]] بيعدّي [[JSON.parse]]. فبنتأكد إن فيه [[ids]] و [[answers]] مصفوفات قبل ما نديها لـ [[start]].
+
+## ٣. الكتابة
+
+~~~text
+export function save(state, best) {
+  const data = { ids: state.questions.map(q => q.id), index: state.index, answers: state.answers, best }
+  try { localStorage.setItem(KEY, JSON.stringify(data)) } catch { /* private mode أو المساحة خلصت: كمّل من غير حفظ */ }
+}
+~~~
+
+- [[ids]] بس مش الأسئلة كاملة: لو صلّحت غلطة في نص سؤال، المستخدم يشوف النسخة الجديدة، والتقدم لسه شغال (نفس الـ ids).
+- [[best]]: shorthand لـ [[best: best]].
+- [[JSON.stringify]]: localStorage بيخزن نصوص بس. جرّبنا من غيره: [[setItem('n', 5)]] ثم [[getItem('n')]] رجّع [["5"]] نص مش رقم. و [[setItem('o', {a:1})]] رجّع [["[object Object]"]]: الـ object اتحوّل نص وضاع.
+- [[setItem]] نفسه ممكن يرمي. حاولنا نخزن نص ٦ ميجا:
+
+~~~text الناتج
+QuotaExceededError: Failed to execute 'setItem' on 'Storage': Setting the value of 'big' exceeded the quota.
+~~~
+
+جرّبنا أحجام تانية في Chrome 154: نص ٥ ميجا (حرف لاتيني) اتخزن، و ٥.١ ميجا رمى نفس الـ error. يعني الحد حوالي ٥ ميجا لكل origin. والـ [[catch]] الفاضي هنا مقصود: الحفظ ميزة إضافية، ولو فشل الكويز يكمّل عادي.
+
+## ٤. [[clearProgress]] (من الـ solCode)
+
+~~~text
+export function clearProgress(best) {
+  try { localStorage.setItem(KEY, JSON.stringify({ ids: [], index: 0, answers: [], best })) } catch {}
+}
+~~~
+
+«من الأول» بيمسح التقدم ويسيب [[best]]. لو استخدمنا [[removeItem(KEY)]] كانت أحسن نتيجة هتروح معاه.
+
+## ٥. الربط
+
+- في [[init]]: [[start(await loadQuestions(cat), loadSaved())]]. و [[start]] بتكمّل من المحفوظ بس لو الـ [[ids]] زي بعض بنفس الترتيب.
+- في [[setState]]: [[save(state, best)]] بعد كل رسم في [[playing]] و [[done]].
+- وفي أول [[app.js]]: [[let best = loadSaved()?.best ?? 0]]. [[?.]] لو [[loadSaved()]] رجّعت [[null]]، و [[??]] = «لو اللي قبلي [[null]] أو [[undefined]] خد 0».
+
+---
+
+## ٦. التجربة: localStorage بعد كل خطوة
+
+~~~text الناتج (قيمة quiz:v1)
+فتح الصفحة:     {"ids":["js-typeof-null","js-eq","js-const","css-logical"],"index":0,"answers":[],"best":0}
+جاوب الأول:    {..."index":0,"answers":[1],"best":0}
+اللي بعده:      {..."index":1,"answers":[1],"best":0}
+~~~
+
+جاوبنا التاني ودوسنا «اللي بعده» وعملنا refresh:
+
+~~~text الناتج
+reload         → سؤال 3 من 4
+'{not json'    → سؤال 1 من 4   (التطبيق فتح عادي)
+id متغير       → سؤال 1 من 4   (حطينا ids فيها "old-id" بدل أول سؤال، و index 2)
+~~~
+
+وجولة كاملة على [[?cat=css]] (سؤال واحد) ثم «من الأول»:
+
+~~~text الناتج
+النتيجة:    {"ids":["css-logical"],"index":0,"answers":[1],"best":1}
+من الأول:   {"ids":["css-logical"],"index":0,"answers":[],"best":1}
+~~~
+
+[[best]] فضل 1. و [[ids]] رجعت تاني لأن [[setState(start(...))]] حفظت الجولة الجديدة بعد [[clearProgress]] على طول.
+
+---
+
+## الخلاصة
+
+| الخطر | الحماية |
+|---|---|
+| مفيش داتا أول مرة | [[JSON.parse(null)]] بيرجّع [[null]] |
+| نص بايظ | [[try]] و [[catch]] يرجّع [[null]] |
+| JSON سليم بشكل غلط | [[Array.isArray(data.ids)]] |
+| المساحة خلصت أو private mode | [[setItem]] جوه [[try]] |
+| الأسئلة اتغيرت | [[ids]] بالترتيب، و [[start]] بتقارن |
+| شكل الداتا اتغير في نسخة جديدة | [[quiz:v1]] → [[quiz:v2]] |
+
+- localStorage نصوص بس: [[JSON.stringify]] في الكتابة و [[JSON.parse]] في القراية.
+- الحفظ في [[setState]] مش في [[quiz.js]]، عشان المنطق يفضل يتختبر في Node.`,
+          lines: [
+            R`مفتاح واحد باسم التطبيق ورقم نسخة.`,
+            R`قراية التقدم المحفوظ:`,
+            R`[[try]] لأن [[JSON.parse]] بيرمي على أي نص بايظ.`,
+            R`اقرا وحوّل. لو المفتاح مش موجود الناتج [[null]].`,
+            R`JSON سليم مش كفاية: اتأكد من الشكل.`,
+            R`رجّع الداتا لو كل حاجة تمام.`,
+            R`أي error في القراية:`,
+            R`اعتبر مفيش حاجة محفوظة.`,
+            R`قفلة الـ catch.`,
+            R`قفلة الدالة.`,
+            R`الحفظ:`,
+            R`احفظ الـ ids بس مش الأسئلة كاملة، ورقم السؤال، والإجابات، وأحسن نتيجة.`,
+            R`[[setItem]] ممكن يرمي، فلو فشل كمّل من غير حفظ.`,
+            R`قفلة الدالة.`
+          ],
+          sol: R`بعد سؤالين و refresh: «سؤال 3 من 4». واختبار Playwright «resume from the same question after reload» بيعمل نفس الفكرة على قسم js: سؤال واحد و refresh، فيرجع على «سؤال 2 من 3». الداتا البايظة: التطبيق بيفتح عادي على «سؤال 1 من 4» (اختبار «broken localStorage data does not break the app» بيحط [[{not json]] بـ [[addInitScript]] قبل ما الصفحة تحمّل). و [[id]] متغير: المقارنة في [[start]] بتطلع false فبيبدأ من الأول.
+
+الحل المرجعي فيه [[storage.js]] كامل. لاحظ [[clearProgress(best)]]: «من الأول» بيمسح التقدم بس، و best بيفضل.
+
+الغلط الشائع: تنادي [[save]] جوه [[answer]] في [[quiz.js]]، فالمنطق الـ pure بقى بيلمس المتصفح ومتقدرش تختبره بـ [[node --test]] (localStorage مش موجود في Node). الحفظ مكانه [[setState]]، اللي هي أصلًا المكان اللي بيلمس العالم الخارجي.`,
+          solCode: R`// ── storage.js ──
+const KEY = 'quiz:v1'
+
+export function loadSaved() {
+  try {
+    const data = JSON.parse(localStorage.getItem(KEY))
+    if (!data || !Array.isArray(data.ids) || !Array.isArray(data.answers)) return null
+    return data
+  } catch {
+    return null
+  }
+}
+
+export function save(state, best) {
+  const data = { ids: state.questions.map(q => q.id), index: state.index, answers: state.answers, best }
+  try { localStorage.setItem(KEY, JSON.stringify(data)) } catch { /* private mode أو المساحة خلصت: كمّل من غير حفظ */ }
+}
+
+export function clearProgress(best) {
+  try { localStorage.setItem(KEY, JSON.stringify({ ids: [], index: 0, answers: [], best })) } catch {}
 }`
         },
         {
-          cmd: "مشروع ٣: صورة بـ preview",
-          title: "تعرض الصورة قبل الرفع وتمنع الملف الغلط إزاي؟",
-          desc: R`في الخطوة التالتة المستخدم بيختار صورة اختيارية. أول ما يختار: لو النوع أو الحجم غلط رسالة واضحة، ولو تمام معاينة للصورة واسمها وحجمها وزرار «شيل الصورة».
+          cmd: "مشروع ٢: الاختبارات والنشر",
+          title: "تختبر الحالات الوحشة في متصفح حقيقي إزاي؟",
+          desc: R`المنطق عنده اختبارات من أول محطة. دلوقتي اختبر التطبيق نفسه في متصفح: لعبة كاملة، و refresh في النص، وخطأ ثم «حاول تاني»، وقسم فاضي، و localStorage بايظ. وارفعه على GitHub Pages زي مشروع ١.
 
-خلصت يعني: (١) [[accept]] على الـ input بيقترح الصور بس في نافذة الاختيار. (٢) ملف مش صورة أو أكبر من ٢ ميجا: رسالة بتتقري فورًا، والـ input بيتفضى. (٣) الصورة السليمة بتظهر بـ alt فيه اسمها. (٤) تغيير الصورة أو شيلها بيعمل [[URL.revokeObjectURL]] للقديمة. (٥) «شيل الصورة» بيرجّع الـ focus للـ input. (٦) السيرفر بيرفض النوع والحجم الغلط برضه.
+خلصت يعني: (١) [[npm test]] (المنطق بـ [[node --test]]) و [[npm run e2e]] (Playwright على موبايل) الاتنين أخضر. (٢) اختبار الخطأ مش محتاج تقفل السيرفر: بيتحكم في الرد بـ [[page.route]]. (٣) axe نضيف وانت بتلعب. (٤) لينك live و README و [[done-check]] أخضر.
 
-الدروس: [[input type=file]] و [[drag and drop و progress]] في تاب «JavaScript»، و [[multer]] و [[sharp]] في تاب «Backend بـ Node»، و [[معالجة الصور]] في تاب «بناء مشروع كامل».`,
-          example: R`photo.addEventListener('change', () => {
-  clearPreview()
-  setError('photo', '')
-  const file = photo.files[0]
-  if (!file) return
-  const problem = !ALLOWED.includes(file.type) ? 'الصورة لازم تبقى JPG أو PNG أو WebP'
-    : file.size > MAX ? $__btالصورة $__{(file.size / 1024 / 1024).toFixed(1)} ميجا، والحد 2 ميجا$__bt : ''
-  if (problem) { photo.value = ''; return setError('photo', problem) }
-  previewUrl = URL.createObjectURL(file)
-  img.src = previewUrl
-  img.alt = $__btمعاينة الصورة اللي اخترتها: $__{file.name}$__bt
-  document.querySelector('#preview-name').textContent = $__bt$__{file.name} ($__{Math.round(file.size / 1024)} KB)$__bt
-  preview.hidden = false
+الدروس: [[getByRole و expect(page)]] و [[trace viewer و flaky]] و [[@axe-core/playwright]] في تاب «فحص الكود»، و [[node --test]] في تاب «Node و npm».`,
+          example: R`test('loading, then error with a working retry', async ({ page }) => {
+  let fail = true
+  await page.route('**/questions.json', async route => {
+    if (fail) { await new Promise(r => setTimeout(r, 500)); return route.fulfill({ status: 500, body: 'oops' }) }
+    return route.continue()
+  })
+  await page.goto('/')
+  await expect(page.getByText('بيحمّل الأسئلة...')).toBeVisible()
+  await expect(page.getByRole('alert')).toContainText('HTTP 500')
+  fail = false
+  await page.getByRole('button', { name: 'حاول تاني' }).click()
+  await expect(page.getByText('سؤال 1 من 4')).toBeVisible()
 })`,
-          try: R`اكتب الـ change listener و [[clearPreview]] و «شيل الصورة». جرّب ٣ ملفات: صورة صغيرة، وملف PDF (غيّر الـ filter في نافذة الاختيار لـ All files)، وصورة أكبر من ٢ ميجا. وفي DevTools: Memory، خد heap snapshot بعد ما تغيّر الصورة ٢٠ مرة، مرة مع [[revokeObjectURL]] ومرة من غيرها.`,
+          try: R`ركّب [[@playwright/test]] و [[@axe-core/playwright]] و [[serve]]، واعمل [[playwright.config.js]] بـ [[devices['Pixel 7']]] و [[webServer]]. اكتب ٥ اختبارات: لعبة كاملة بالكيبورد، و resume بعد refresh، وخطأ ثم retry بـ [[page.route]]، وقسم فاضي، و localStorage بايظ بـ [[addInitScript]]. شغّلهم ٣ مرات ورا بعض: لازم يعدّوا التلاتة (مفيش flaky).`,
           flag: "script",
           deep: {
-            why: R`المعاينة بتقلل الغلط: المستخدم بيشوف إنه اختار الروشتة مش صورة سيلفي. والفحص في المتصفح بيوفّر عليه يستنى رفع ١٠ ميجا عشان السيرفر يرفض في الآخر. بس الفحص الحقيقي على السيرفر، لأن أي حد يقدر يبعت أي ملف من غير الفورم.`,
-            how: R`[[URL.createObjectURL(file)]] بيعمل URL زي [[blob:http://localhost/...]] بيشاور على الملف في الذاكرة، من غير ما يقراه كله زي [[FileReader.readAsDataURL]]. أسرع وأخف، بس المتصفح بيفضل ماسك الملف لحد ما تعمل [[revokeObjectURL]] أو الصفحة تتقفل. عشان كده [[clearPreview]] بتعمله قبل أي معاينة جديدة.
+            why: R`الحالات الوحشة هي أكتر حاجة بتتكسر من غير ما حد ياخد باله، لأن محدش بيجرّبها بإيده بعد أول مرة. اختبار بيعمل 500 ويتأكد إن «حاول تاني» شغال بيفضل يجرّبها في كل PR. و [[node --test]] للمنطق + Playwright للـ flow هو نفس التقسيم اللي هتعمله في كل مشروع بعد كده.`,
+            how: R`[[page.route('**/questions.json', handler)]] بيمسك الطلب قبل ما يطلع من المتصفح. [[route.fulfill({ status: 500 })]] بيرد رد وهمي، و [[route.continue()]] بيسيبه يروح للسيرفر الحقيقي. المتغير [[fail]] بيخلي أول طلب يفشل والتاني ينجح، فالاختبار بيجرّب الـ retry فعلًا.
 
-[[file.type]] جاي من امتداد الملف (والمتصفح بيخمّنه)، مش من محتواه. ملف [[virus.exe]] اتغير اسمه لـ [[photo.png]] هيعدّي. ده كفاية للمتصفح (تجربة المستخدم)، بس السيرفر لازم يفحص المحتوى نفسه: مكتبة زي [[sharp]] لو فشلت تقرا الصورة يبقى مش صورة، وبتعيد حفظها فبتشيل أي حاجة زيادة (والـ EXIF اللي فيه مكان التصوير).
+الـ [[setTimeout]] بـ 500ms قبل الـ 500: عشان حالة «بيحمّل» تفضل ظاهرة وقت كفاية يتأكد منها الاختبار. من غيرها، الخطأ بيوصل بسرعة و «بيحمّل» بتختفي قبل ما الاختبار يلحق يشوفها: جرّبناها ١٠ مرات من غير الـ delay ووقع الـ ١٠ ([[element(s) not found]] على «بيحمّل»). وعلى جهاز أبطأ ممكن يعدّي ساعات، وده أسوأ: اختبار flaky.
 
-[[photo.value = '']] بيفضّي الـ input. مينفعش تحط فيه ملف من الكود، بس تقدر تفضّيه.
+[[expect(...).toBeVisible()]] بيستنى لحد ٥ ثواني (auto-wait)، فمفيش [[waitForTimeout]] في أي حتة. ده أهم سبب إن اختبارات Playwright مش flaky لو اتكتبت صح.
 
-[[role="alert"]] على [[#photo-error]]: الرسالة بتتقري أول ما تتكتب، لأن الـ focus لسه على زرار اختيار الملف. وفي الحقول التانية مش محتاجين كده لأن الـ focus بيروح للملخص.
+[[page.addInitScript]] بيشغّل كود قبل أي script في الصفحة، فالـ localStorage بيبقى بايظ قبل ما التطبيق يقراه.
 
-والسيرفر: [[multer]] بـ [[limits: { fileSize: 2MB, files: 1 }]] بيقطع الرفع أول ما يعدّي الحد (مش بيستنى الملف كله)، و [[fileFilter]] بيرفض الأنواع التانية. والـ [[memoryStorage]] مناسب للتجربة هنا بس؛ في مشروع حقيقي الملف بيروح S3 مباشرة بـ signed URL (درس [[signed upload URL]] في تاب «بناء مشروع كامل»).`,
-            when: R`أي رفع صورة: بروفايل، أو منتج، أو مستند. ولملفات كبيرة (فيديو) محتاج progress bar ورفع مباشر للـ storage.`,
-            mistakes: R`[[FileReader.readAsDataURL]] لصورة ١٠ ميجا فالصفحة تهنج. أو نسيان [[revokeObjectURL]]. أو الفحص في المتصفح بس. أو [[alt=""]] على المعاينة (هي معلومة مهمة مش زينة). أو رفع الصورة لحظة الاختيار قبل ما المستخدم يبعت، فالسيرفر يمتلي صور ناس غيّروا رأيهم. أو تفتكر إن [[accept]] حماية: ده اقتراح في نافذة الاختيار بس.`
+[[testMatch: '*.spec.js']] في الـ config، عشان Playwright ميحاولش يشغّل [[quiz.test.js]] بتاع [[node --test]].`,
+            when: R`اختبار e2e لكل حالة وحشة ليها منطق (retry، و resume)، مش لكل تفصيلة شكل. والتفاصيل مكانها اختبارات المنطق السريعة.`,
+            mistakes: R`[[await page.waitForTimeout(2000)]] بدل ما تستنى حاجة معينة. أو اختبار الخطأ بيقفل السيرفر فعلًا، فالاختبارات اللي بعده تقع. أو [[getByText('سؤال')]] بيلاقي عنصرين فيقع بـ strict mode violation (خليه أدق). أو الاختبارات بتعتمد على بعض (الأول بيحفظ في localStorage والتاني بيقرا)، مع إن كل اختبار بياخد متصفح نضيف. أو تحط [[quiz.test.js]] و [[app.spec.js]] في نفس الفولدر من غير [[testMatch]].`
           },
-          teach: R`## الفكرة: افحص النوع والحجم في المتصفح للراحة، واعرض الصورة من الذاكرة، وحرّرها لما تخلص
+          teach: R`## الفكرة: المنطق بـ [[node --test]]، والتطبيق نفسه في متصفح بـ Playwright
 
-المثال الـ [[change]] listener على حقل الصورة. والـ solCode فيه الثوابت، و [[clearPreview]]، و «شيل الصورة»، وأول [[server.js]] بإعداد multer. هنفكهم، ونجرّب في Chrome 154 (بـ Playwright) وبـ [[curl]] على السيرفر (Express 5.2 و multer 2.4 على بورت 6037).
-
----
-
-## ١. الثوابت
-
-~~~text
-const ALLOWED = ['image/jpeg', 'image/png', 'image/webp'], MAX = 2 * 1024 * 1024
-const photo = form.photo, preview = document.querySelector('#preview'), img = document.querySelector('#preview-img')
-let previewUrl = null
-~~~
-
-- [[ALLOWED]]: أنواع الـ MIME المسموحة. MIME type = اسم نوع الملف زي [[image/png]].
-- [[MAX]] = 2 × 1024 × 1024 = 2,097,152 بايت = 2 ميجا.
-- [[previewUrl]]: الـ URL المؤقت الحالي، عشان نحرره بعدين.
-
-## ٢. [[clearPreview()]]
-
-~~~text
-function clearPreview() {
-  if (previewUrl) URL.revokeObjectURL(previewUrl)
-  previewUrl = null
-  preview.hidden = true
-  img.removeAttribute('src')
-}
-~~~
-
-[[revokeObjectURL]] بيقول للمتصفح «خلاص مش محتاج الملف ده في الذاكرة». جرّبنا على Blob صغير:
-
-~~~text الناتج
-blob:http://localhost:6037/<uuid> | before revoke: hello | after revoke: TypeError: Failed to fetch
-~~~
-
-قبل الـ revoke الـ URL بيرجّع المحتوى، وبعده مبقاش موجود. من غيره، كل صورة المستخدم يختارها بتفضل محجوزة لحد ما الصفحة تتقفل.
-
-## ٣. الـ [[change]] listener (المثال)
-
-~~~text
-photo.addEventListener('change', () => {
-  clearPreview()
-  setError('photo', '')
-  const file = photo.files[0]
-  if (!file) return
-~~~
-
-- [[change]] بيحصل لما يختار ملف، أو يفتح النافذة ويلغي.
-- أول حاجة: شيل المعاينة القديمة والرسالة القديمة.
-- [[photo.files]]: قايمة الملفات المختارة (FileList)، و [[[0]]] أول واحد. لو لغى، [[undefined]] ونخرج.
-
-~~~text
-  const problem = !ALLOWED.includes(file.type) ? 'الصورة لازم تبقى JPG أو PNG أو WebP'
-    : file.size > MAX ? $__btالصورة $__{(file.size / 1024 / 1024).toFixed(1)} ميجا، والحد 2 ميجا$__bt : ''
-  if (problem) { photo.value = ''; return setError('photo', problem) }
-~~~
-
-- ternary متداخل: النوع غلط؟ رسالة. الحجم كبير؟ رسالة فيها الحجم الحقيقي. غير كده نص فاضي.
-- [[file.size / 1024 / 1024]]: بايت → كيلو → ميجا. و [[toFixed(1)]]: رقم عشري واحد كنص.
-- [[photo.value = '']]: فضّي الحقل. ده التغيير الوحيد المسموح من الكود على [[input type="file"]] (مينفعش تحط فيه ملف).
-- [[return setError(...)]]: اعرض الرسالة واخرج في سطر واحد.
-
-~~~text
-  previewUrl = URL.createObjectURL(file)
-  img.src = previewUrl
-  img.alt = $__btمعاينة الصورة اللي اخترتها: $__{file.name}$__bt
-  document.querySelector('#preview-name').textContent = $__bt$__{file.name} ($__{Math.round(file.size / 1024)} KB)$__bt
-  preview.hidden = false
-})
-~~~
-
-- [[URL.createObjectURL(file)]]: URL بيشاور على الملف اللي في الذاكرة، من غير ما يتقري كله. أسرع بكتير من [[FileReader.readAsDataURL]] اللي بيحوّل الصورة كلها نص base64.
-- [[alt]]: المعاينة معلومة (اتأكد إنك اخترت الصح)، فليها alt حقيقي فيه اسم الملف.
-
-## ٤. «شيل الصورة»
-
-~~~text
-document.querySelector('#remove-photo').addEventListener('click', () => {
-  photo.value = ''
-  clearPreview()
-  photo.focus()
-})
-~~~
-
-بعد ما الزرار نفسه بيستخبى (جوه [[#preview]])، الـ focus كان هيضيع. [[photo.focus()]] بيرجّعه لحقل الاختيار.
-
-## ٥. التجربة في المتصفح
-
-~~~text الناتج
-ملف 3.4 ميجا:    الصورة 3.4 ميجا، والحد 2 ميجا   | value: ""
-rx.png صغيرة:    src: blob:http://localhost:6037/<uuid>
-                 alt: معاينة الصورة اللي اخترتها: rx.png
-                 name: rx.png (0 KB)
-شيل الصورة:      focus: INPUT#photo   preview hidden: true
-~~~
-
-[[0 KB]] لأن الصورة ٧٠ بايت، و [[Math.round(0.07)]] = 0. واختبار Playwright بيرفع [[a.txt]] ويلاقي [[getByRole('alert')]] فيه «الصورة لازم تبقى JPG أو PNG أو WebP»: [[role="alert"]] على [[#photo-error]] بيخلي الرسالة تتقري والـ focus لسه على زرار الاختيار.
+المثال اختبار واحد بيجرّب ٣ حالات ورا بعض: «بيحمّل»، ثم خطأ 500، ثم «حاول تاني» بينجح. والـ solCode فيه الـ config وباقي الاختبارات. هنفك المثال سطر سطر، وبعدين الـ config والاختبارات التانية، ونشغّل الكل. اتشغّل على Windows 11 بـ Node 24.19 و Playwright 1.64 (زوّدنا [[channel: 'chrome']] عشان يستخدم Chrome المتسطب، وبورت 6036 بدل 4174)، و [[questions.json]] فيه ٤ أسئلة: ٣ [[js]] وواحد [[css]].
 
 ---
 
-## ٦. السيرفر: multer
+## ١. المثال سطر سطر
 
-~~~text server.js
-const upload = multer({
-  storage: multer.memoryStorage(),
-  limits: { fileSize: 2 * 1024 * 1024, files: 1, fields: 10 },
-  fileFilter: (req, file, cb) => cb(ALLOWED.includes(file.mimetype) ? null : new Error('BAD_TYPE'), true),
+~~~text
+test('loading, then error with a working retry', async ({ page }) => {
+  let fail = true
+~~~
+
+[[fail]] متغير عادي في الاختبار، والـ handler تحت بيقراه. هنغيّره في النص عشان أول طلب يفشل والتاني ينجح.
+
+~~~text
+  await page.route('**/questions.json', async route => {
+    if (fail) { await new Promise(r => setTimeout(r, 500)); return route.fulfill({ status: 500, body: 'oops' }) }
+    return route.continue()
+  })
+~~~
+
+- [[page.route(pattern, handler)]]: أي طلب من الصفحة لينكه يطابق الـ pattern بيعدّي على الـ handler **قبل** ما يطلع. [[**]] = أي حاجة قبلها (البروتوكول والدومين والفولدرات).
+- [[new Promise(r => setTimeout(r, 500))]]: استنى نص ثانية. [[setTimeout]] مبيرجّعش Promise، فبنلفّه في واحد عشان [[await]] يشتغل.
+- [[route.fulfill({ status: 500, body: 'oops' })]]: رد وهمي من غير ما الطلب يوصل للسيرفر.
+- [[route.continue()]]: سيب الطلب يكمّل للسيرفر الحقيقي.
+
+~~~text
+  await page.goto('/')
+  await expect(page.getByText('بيحمّل الأسئلة...')).toBeVisible()
+  await expect(page.getByRole('alert')).toContainText('HTTP 500')
+~~~
+
+- [[getByText]]: العنصر اللي نصه كده.
+- [[toBeVisible()]] بيستنى لحد ٥ ثواني لحد ما يظهر (auto-wait)، فمفيش [[waitForTimeout]].
+- [[getByRole('alert')]]: العنصر اللي [[role="alert"]]، يعني رسالة الخطأ. و [[toContainText]]: جواه النص ده (مش لازم يساويه).
+
+~~~text
+  fail = false
+  await page.getByRole('button', { name: 'حاول تاني' }).click()
+  await expect(page.getByText('سؤال 1 من 4')).toBeVisible()
 })
 ~~~
 
-- multer بيقرا الطلبات اللي نوعها [[multipart/form-data]] (اللي [[FormData]] بيبعته).
-- [[memoryStorage()]]: الملف في الذاكرة كـ Buffer ([[req.file.buffer]]). للتجربة بس.
-- [[limits]]: [[fileSize]] بيقطع الرفع أول ما يعدّي ٢ ميجا (مبيستناش الملف كله)، و [[files: 1]] ملف واحد، و [[fields: 10]] أقصى عدد حقول نص.
-- [[fileFilter]]: [[cb(error, accept)]]. لو النوع مش مسموح بنمرر error.
+من دلوقتي الطلبات تعدّي، ندوس «حاول تاني»، والسؤال الأول يظهر: [[init()]] اشتغلت تاني فعلًا.
 
-بـ [[curl]] (اتشغّل من Git Bash):
+### ليه الـ 500ms؟
+
+شلنا الـ delay وشغّلنا الاختبار ده ١٠ مرات:
+
+~~~text الناتج
+Error: expect(locator).toBeVisible() failed
+Locator: getByText('بيحمّل الأسئلة...')
+Expected: visible
+Error: element(s) not found
+  10 failed
+~~~
+
+الرد الوهمي بيوصل في أقل من ملّي ثانية، فـ «بيحمّل» بتتمسح قبل ما الاختبار يدوّر عليها. الـ delay بيخلي الحالة دي موجودة وقت كفاية.
+
+## ٢. الـ config
+
+~~~text playwright.config.js
+export default defineConfig({
+  testDir: './tests',
+  testMatch: '*.spec.js',
+  use: { baseURL: 'http://localhost:4174', ...devices['Pixel 7'] },
+  webServer: { command: 'npx serve -l 4174 .', url: 'http://localhost:4174', reuseExistingServer: true },
+})
+~~~
+
+- [[testMatch: '*.spec.js']]: في نفس فولدر [[tests]] فيه [[quiz.test.js]] بتاع [[node --test]]، و Playwright افتراضيًا بياخد ملفات [[.test.js]] و [[.spec.js]] الاتنين. جرّبنا من غير السطر ده: Playwright استورد [[quiz.test.js]]، و [[node:test]] شغّل اختباراته وهو بيتستورد وطبع ٦ سطور [[✔]] وسط ناتج Playwright، والنتيجة [[6 passed]] برضه. يعني مبيوقعش، بس الناتج بيتلخبط واختبارات المنطق بتشتغل مرتين. [[testMatch]] بيقصر Playwright على [[*.spec.js]].
+- [[use]] مباشرة من غير [[projects]]: project واحد بإعدادات Pixel 7.
+- [[serve .]]: الفولدر كله، لأن الموقع هنا هو جذر المشروع.
+
+و [[package.json]]: [["test": "node --test tests/*.test.js"]] و [["e2e": "playwright test"]]. أمرين منفصلين، السريع والبطيء.
+
+## ٣. باقي الاختبارات (الـ solCode)
+
+| الاختبار | الأداة الجديدة فيه |
+|---|---|
+| لعبة على [[?cat=css]] وأحسن نتيجة بعد reload | [[getByRole('heading', { level: 2 })]] و [[toBeFocused()]] و [[page.reload()]] |
+| resume من نفس السؤال | يجاوب سؤال، [[reload]]، ويتأكد من «سؤال 2 من 3» |
+| قسم فاضي | [[goto('/?cat=sql')]] |
+| localStorage بايظ | [[page.addInitScript(() => localStorage.setItem('quiz:v1', '{not json'))]] |
+| axe وانت بتلعب | [[AxeBuilder]] قبل الإجابة وبعدها |
+
+[[addInitScript]] بيشغّل الكود ده في الصفحة **قبل** أي script فيها، فالداتا البايظة موجودة قبل ما [[app.js]] يقراها. ولو حطيته بعد [[goto]] كان التطبيق قرا الأول.
+
+وكل اختبار بياخد context جديد (زي متصفح incognito)، فالـ localStorage فاضي في أول كل اختبار، والاختبارات مبتعتمدش على بعض.
+
+## ٤. التشغيل
 
 ~~~bash
-curl -s -o /dev/null -w "%{http_code}\n" -X POST http://localhost:6037/api/bookings -H "Idempotency-Key: curl-key-0005" -F name="منى علي" ... -F "photo=@big.png;type=image/png"
+npm test
 ~~~
-
-- [[-F]]: حقل في multipart، و [[@big.png]] = ارفع الملف ده، و [[;type=image/png]] = النوع اللي بنعلنه.
-- [[-w "%{http_code}"]]: اطبع رقم الحالة بس.
 
 ~~~text الناتج
-صورة 3 ميجا:         413   {"error":"الصورة أكبر من 2 ميجا"}
-PDF:                 400   {"error":"نوع الصورة مش مسموح"}
-نص اسمه fake.png وبنعلن type=image/png:   201   {"id":"536ea9af"}
+✔ empty list gives the empty state (0.9896ms)
+...
+✔ isQuestion rejects broken items (0.1703ms)
+ℹ tests 6
+ℹ pass 6
 ~~~
-
-السطر الأخير مهم: [[file.mimetype]] في multer هو اللي **العميل قاله**، زي [[file.type]] في المتصفح (اللي جاي من الامتداد). ملف نص اتقبل كصورة. الحل المرجعي واقف هنا لأنه بيخزن في الذاكرة ومبيعرضش الصورة لحد. في مشروع حقيقي لازم تفحص المحتوى نفسه: [[sharp(buffer).metadata()]] بيرمي لو مش صورة، وإعادة الحفظ بـ sharp بتشيل أي حاجة زيادة جوه الملف (درس [[sharp]] في تاب «Backend بـ Node»).
-
----
-
-## الخلاصة
-
-| الحاجة | الكود |
-|---|---|
-| النوع والحجم في المتصفح | [[file.type]] و [[file.size]]، ورسالة فيها الحجم |
-| فضّي الحقل | [[photo.value = '']] |
-| معاينة من غير قراية الملف | [[URL.createObjectURL(file)]] |
-| حرّر الذاكرة | [[URL.revokeObjectURL]] قبل كل معاينة جديدة |
-| الرسالة تتقري فورًا | [[role="alert"]] |
-| السيرفر | multer: [[limits.fileSize]] (413) و [[fileFilter]] (400) |
-| الحماية الحقيقية | فحص المحتوى (sharp)، لأن الـ MIME type كلام العميل |`,
-          lines: [
-            R`أول ما المستخدم يختار (أو يلغي) ملف:`,
-            R`شيل المعاينة القديمة وحرّر الـ URL بتاعها.`,
-            R`امسح أي رسالة خطأ قديمة.`,
-            R`الملف المختار (ممكن مفيش لو لغى).`,
-            R`لو مفيش ملف، خلاص.`,
-            R`النوع مش صورة من المسموح؟`,
-            R`الحجم أكبر من ٢ ميجا؟ والرسالة فيها الحجم الحقيقي.`,
-            R`لو فيه مشكلة: فضّي الـ input واعرض الرسالة.`,
-            R`اعمل URL مؤقت للملف في الذاكرة.`,
-            R`اعرضه في الصورة.`,
-            R`[[alt]] بيوصف المعاينة واسم الملف.`,
-            R`الاسم والحجم بالكيلو.`,
-            R`اظهر المعاينة.`,
-            R`قفلة الـ listener.`
-          ],
-          sol: R`الصورة الصغيرة: معاينة واسمها وحجمها بالـ KB. الـ PDF: «الصورة لازم تبقى JPG أو PNG أو WebP» بتتقري فورًا، والـ input فاضي. الصورة الكبيرة: «الصورة 3.4 ميجا، والحد 2 ميجا». اختبار Playwright بيرفع ملف [[a.txt]] بـ [[setInputFiles]] ويتأكد إن [[getByRole('alert')]] فيه الرسالة والمعاينة مخفية.
-
-الـ heap snapshot: من غير [[revokeObjectURL]] هتلاقي الـ Blobs بتتراكم (كل صورة اخترتها لسه في الذاكرة). معاه، واحدة بس.
-
-والسيرفر برضه بيرفض: صورة أكبر من ٢ ميجا بـ 413 ورسالة «الصورة أكبر من 2 ميجا»، ونوع غلط بـ 400. الحل المرجعي فيه كود المعاينة، وأول [[server.js]] بإعداد multer.`,
-          solCode: R`// الصورة
-const ALLOWED = ['image/jpeg', 'image/png', 'image/webp'], MAX = 2 * 1024 * 1024
-const photo = form.photo, preview = document.querySelector('#preview'), img = document.querySelector('#preview-img')
-let previewUrl = null
-
-function clearPreview() {
-  if (previewUrl) URL.revokeObjectURL(previewUrl)
-  previewUrl = null
-  preview.hidden = true
-  img.removeAttribute('src')
-}
-
-photo.addEventListener('change', () => {
-  clearPreview()
-  setError('photo', '')
-  const file = photo.files[0]
-  if (!file) return
-  const problem = !ALLOWED.includes(file.type) ? 'الصورة لازم تبقى JPG أو PNG أو WebP'
-    : file.size > MAX ? $__btالصورة $__{(file.size / 1024 / 1024).toFixed(1)} ميجا، والحد 2 ميجا$__bt : ''
-  if (problem) { photo.value = ''; return setError('photo', problem) }
-  previewUrl = URL.createObjectURL(file)
-  img.src = previewUrl
-  img.alt = $__btمعاينة الصورة اللي اخترتها: $__{file.name}$__bt
-  document.querySelector('#preview-name').textContent = $__bt$__{file.name} ($__{Math.round(file.size / 1024)} KB)$__bt
-  preview.hidden = false
-})
-
-document.querySelector('#remove-photo').addEventListener('click', () => {
-  photo.value = ''
-  clearPreview()
-  photo.focus()
-})
-
-// ── server.js (أوله) ──
-import express from 'express'
-import multer from 'multer'
-import { randomUUID } from 'node:crypto'
-import { setTimeout as sleep } from 'node:timers/promises'
-
-const app = express()
-const ALLOWED = ['image/jpeg', 'image/png', 'image/webp']
-const upload = multer({
-  storage: multer.memoryStorage(),
-  limits: { fileSize: 2 * 1024 * 1024, files: 1, fields: 10 },
-  fileFilter: (req, file, cb) => cb(ALLOWED.includes(file.mimetype) ? null : new Error('BAD_TYPE'), true),
-})`
-        },
-        {
-          cmd: "مشروع ٣: الإرسال مرة واحدة",
-          title: "تمنع الحجز يتكرر لو المستخدم داس مرتين أو النت فصل إزاي؟",
-          desc: R`الإرسال بـ [[fetch]] و [[FormData]]، والسيرفر بيعمل الحجز ويرجّع رقمه. المشكلة: دبل كليك، أو النت يفصل بعد ما السيرفر عمل الحجز وقبل ما الرد يوصل، فالمستخدم يدوس تاني. النتيجة من غير حماية: حجزين.
-
-خلصت يعني: (١) دبل كليك على «احجز» بيعمل حجز واحد بالظبط. (٢) الزرار بيقول «بيتبعت...» وعليه [[aria-disabled]]، والـ focus مبيضيعش. (٣) لو النت فصل: رسالة، والبيانات موجودة، و «احجز» تاني بيبعت بنفس [[Idempotency-Key]]. (٤) السيرفر: نفس المفتاح مرتين (حتى في نفس اللحظة) = حجز واحد ونفس الرد. (٥) السيرفر بيعيد كل الـ validation، وبيرفض لو المتصفح اتخطى. (٦) اختبارات Playwright لكل ده.
-
-الدروس: [[Idempotency-Key]] و [[safe و idempotent]] في تاب «APIs متقدمة»، و [[idempotency]] في أسئلة انترفيو تاب «Backend بـ Node»، و [[validate(schema)]] في نفس التاب.`,
-          example: R`form.addEventListener('submit', async e => {
-  e.preventDefault()
-  if (current !== last) { if (validateStep(current)) go(current + 1); return }
-  if (sending) return
-  sending = true
-  submitBtn.setAttribute('aria-disabled', 'true')
-  submitBtn.textContent = 'بيتبعت...'
-  status.textContent = 'بنبعت الحجز...'
-  try {
-    const res = await fetch('/api/bookings', { method: 'POST', body: new FormData(form), headers: { 'Idempotency-Key': idempotencyKey } })
-    const body = await res.json().catch(() => ({}))
-    if (!res.ok) throw new Error(body.error ?? 'حصلت مشكلة في السيرفر، جرّب تاني')
-    form.hidden = true
-    document.querySelector('#done').hidden = false
-    document.querySelector('#booking-id').textContent = body.id
-    document.querySelector('#done-title').focus()`,
-          try: R`اكتب الـ submit listener، و [[server.js]] بـ Express و multer و [[Map]] للمفاتيح. اكتب اختبارات Playwright: دبل كليك = حجز واحد (اسأل السيرفر عن العدد قبل وبعد)، وطلبين API بنفس المفتاح في نفس اللحظة بـ [[Promise.all]] = حجز واحد ونفس الـ id، وبيانات غلط مباشرة للـ API = 400، والنت يفصل أول مرة ([[route.abort('internetdisconnected')]]) والتانية تنجح بنفس المفتاح.`,
-          flag: "script",
-          deep: {
-            why: R`حجز مكرر معناه دكتور مستني مريضين في نفس الميعاد، وطلب مكرر في متجر معناه عميل دفع مرتين. و «اقفل الزرار» لوحده مش كفاية: الزرار بيحمي من الدبل كليك بس، مش من «النت فصل فدست تاني» ولا من تطبيق موبايل بيعمل retry لوحده. المفتاح اللي بيتبعت مع الطلب هو اللي بيخلي السيرفر يعرف إن ده نفس الطلب.`,
-            how: R`في المتصفح: [[crypto.randomUUID()]] مرة واحدة لما الصفحة تفتح، يعني مفتاح لكل «محاولة حجز» مش لكل ضغطة. وكل إرسال بيبعته في [[Idempotency-Key]]. و [[sending]] بيمنع طلب تاني وطلب شغال. و [[aria-disabled]] بدل [[disabled]]: [[disabled]] بيشيل الـ focus من الزرار فمستخدم الكيبورد بيتوه، و [[aria-disabled]] بيقول لقارئ الشاشة إنه مقفول والـ JS هو اللي بيمنع.
-
-لو الطلب فشل: [[TypeError]] من fetch معناه الشبكة، فالرسالة «النت فصل». والزرار يرجع شغال، والمفتاح هو هو. لو السيرفر كان عمل الحجز فعلًا، الطلب التاني هيرجّع نفس الرد بدل ما يعمل حجز جديد.
-
-في السيرفر: [[Map]] من المفتاح لـ Promise بالنتيجة. أول طلب بيحط الـ Promise قبل ما يبدأ الشغل، فالطلب التاني اللي بيوصل في نفس اللحظة بيلاقيه ويستنى نفس النتيجة (ده اللي بيحمي من السباق). والنتايج اللي مش 201 بتتمسح، عشان لو البيانات كانت غلط، المستخدم يصلّح ويبعت بنفس المفتاح (Stripe بيعمل نفس الحكاية تقريبًا: الطلب اللي فشل في الـ validation مبيتحفظش).
-
-الـ [[Map]] في الذاكرة للتجربة بس: بتضيع مع restart، ومش مشتركة بين أكتر من نسخة من السيرفر. في الإنتاج: جدول فيه المفتاح [[UNIQUE]] والرد، أو Redis بـ [[SET NX]] و TTL (درس [[connect-redis و lock]] في تاب «Backend بـ Node»)، ويتمسح بعد ٢٤ ساعة مثلًا.`,
-            when: R`أي POST بيعمل حاجة مينفعش تتكرر: حجز، أو طلب، أو دفع، أو إرسال رسالة. وفي APIs بيستخدمها تطبيق موبايل على شبكة وحشة، ده شرط.`,
-            mistakes: R`[[disabled]] على الزرار وخلاص، فمفيش حماية على السيرفر. أو مفتاح جديد مع كل ضغطة (كده ملوش فايدة). أو تحفظ الرد في الـ Map بعد ما الشغل يخلص، فطلبين في نفس اللحظة الاتنين يعدّوا الفحص. أو تحفظ الأخطاء كمان فالمستخدم ميعرفش يصلّح. أو الـ validation في المتصفح بس. وفي الانترفيو: «إزاي تمنع طلب يتكرر؟» الإجابة الكاملة فيها المفتاح من العميل، والتخزين بـ unique على السيرفر، ومسك السباق، والـ TTL.`
-          },
-          teach: R`## الفكرة: مفتاح واحد لكل محاولة حجز، والسيرفر بيرجّع نفس الرد لنفس المفتاح
-
-المثال أول الـ submit listener في المتصفح، والـ solCode فيه [[server.js]] كامل واختبارات Playwright. هنفك الاتنين، ونكمّل الحتة اللي المثال واقف عندها ([[catch]] و [[finally]])، ونشغّل الاختبارات، ونثبت بـ [[curl]] إن ترتيب سطر واحد في السيرفر هو الفرق بين حجز واحد وحجزين. اتشغّل على Node 24.19 و Express 5.2 و multer 2.4 و Playwright 1.64 مع Chrome 154، والسيرفر على بورت 6037 بدل 4175.
-
----
-
-## ١. قبل الـ listener
-
-المثال بيستخدم ٣ حاجات متعرّفة فوقه:
-
-~~~text form.js
-const idempotencyKey = crypto.randomUUID()
-const status = document.querySelector('#submit-status')
-let sending = false
-~~~
-
-- [[crypto.randomUUID()]]: ID عشوائي زي [[3b2c...-...]]. بيتعمل **مرة واحدة** لما الصفحة تفتح، يعني مفتاح لكل «محاولة حجز» مش لكل ضغطة. (متاح في الصفحات اللي على https أو localhost بس.)
-- [[status]]: الـ [[<p role="status">]] في الخطوة الأخيرة. [[role="status"]] = رسايل بتتقري من غير ما تقاطع.
-- [[sending]]: فيه طلب شغال دلوقتي؟
-
-## ٢. الـ listener (المثال)
-
-~~~text
-form.addEventListener('submit', async e => {
-  e.preventDefault()
-  if (current !== last) { if (validateStep(current)) go(current + 1); return }
-  if (sending) return
-  sending = true
-~~~
-
-- [[e.preventDefault()]]: امنع المتصفح يبعت الفورم ويفتح صفحة جديدة.
-- Enter في خطوة قبل الأخيرة = «التالي» (المحطة اللي فاتت).
-- [[if (sending) return]]: الضغطة التانية وفيه طلب شغال بتتجاهل. ده اللي بيحمي من الدبل كليك في المتصفح.
-
-~~~text
-  submitBtn.setAttribute('aria-disabled', 'true')
-  submitBtn.textContent = 'بيتبعت...'
-  status.textContent = 'بنبعت الحجز...'
-~~~
-
-[[aria-disabled]] مش [[disabled]]: [[disabled]] بيشيل الزرار من الـ focus، فالـ focus يقع على [[body]] ومستخدم الكيبورد يتوه. [[aria-disabled]] بيقول لقارئ الشاشة «مقفول» والزرار لسه عليه الـ focus، والمنع الفعلي من [[sending]].
-
-~~~text
-  try {
-    const res = await fetch('/api/bookings', { method: 'POST', body: new FormData(form), headers: { 'Idempotency-Key': idempotencyKey } })
-    const body = await res.json().catch(() => ({}))
-    if (!res.ok) throw new Error(body.error ?? 'حصلت مشكلة في السيرفر، جرّب تاني')
-~~~
-
-- [[body: new FormData(form)]]: كل الحقول والصورة. المتصفح بيحط [[Content-Type: multipart/form-data]] والـ boundary لوحده، فمتحطهوش بإيدك.
-- [[headers: { 'Idempotency-Key': ... }]]: نفس المفتاح في كل محاولة.
-- [[res.json().catch(() => ({}))]]: لو الرد مش JSON، object فاضي بدل error. و [[({})]] بين قوسين عشان arrow function ترجّع object.
-- [[body.error ?? '...']]: رسالة السيرفر، ولو مفيش رسالة عامة.
-
-~~~text
-    form.hidden = true
-    document.querySelector('#done').hidden = false
-    document.querySelector('#booking-id').textContent = body.id
-    document.querySelector('#done-title').focus()
-~~~
-
-نجح: خبّي الفورم، واظهر [[#done]]، والـ focus على عنوانه.
-
-## ٣. باقي الـ listener
-
-المثال واقف هنا. ده الجزء اللي كمّلنا بيه الحل وشغّلنا عليه الاختبارات:
-
-~~~text form.js
-  } catch (err) {
-    status.textContent = err instanceof TypeError ? 'النت فصل. بياناتك لسه هنا، دوس «احجز» تاني.' : err.message
-  } finally {
-    sending = false
-    submitBtn.removeAttribute('aria-disabled')
-    submitBtn.textContent = 'احجز'
-  }
-})
-~~~
-
-- [[err instanceof TypeError]]: [[fetch]] بيرمي [[TypeError]] لما الشبكة نفسها تقع. غير كده الـ error اللي احنا رميناه برسالة السيرفر.
-- [[finally]]: بيتنفذ في النجاح والفشل. الزرار يرجع شغال، والمفتاح **ما اتغيرش**.
-
-وقت التجربة، بعد الضغطة وقبل الرد:
-
-~~~text الناتج
-during: بيتبعت... true | status: بنبعت الحجز...
-done focus: H2#done-title "اتحجز. رقم الحجز <id>"
-~~~
-
----
-
-## ٤. السيرفر: الـ route
-
-~~~text server.js
-const bookings = []
-const byKey = new Map() // Idempotency-Key -> Promise<{ status, body }>
-
-app.use(express.static('public'))
-
-app.post('/api/bookings', async (req, res) => {
-  const key = req.get('Idempotency-Key') ?? ''
-  if (!/^[\w-]{8,100}$/.test(key)) return res.status(400).json({ error: 'Idempotency-Key ناقص' })
-  if (!byKey.has(key)) byKey.set(key, handle(req, res))
-  const result = await byKey.get(key)
-  if (result.status !== 201) byKey.delete(key)
-  res.status(result.status).json(result.body)
-})
-~~~
-
-- [[express.static('public')]]: ملفات الصفحة من فولدر [[public]].
-- [[req.get('Idempotency-Key')]]: قيمة الـ header (من غير فرق كبير وصغير).
-- [[/^[\w-]{8,100}$/]]: حروف وأرقام و [[_]] و [[-]]، من ٨ لـ ١٠٠. مفيش مفتاح = 400.
-- **أهم سطرين**: لو المفتاح جديد، حط **الـ Promise** في الـ Map فورًا، قبل ما الشغل يخلص. وبعدين [[await]] عليه. الطلب التاني بنفس المفتاح، حتى لو وصل في نفس الملّي ثانية، هيلاقي الـ Promise ويستنى **نفس** النتيجة.
-- [[result.status !== 201]]: لو فشل (بيانات غلط)، امسح المفتاح، عشان المستخدم يصلّح ويبعت بنفس المفتاح.
-
-## ٥. [[handle]] و [[createBooking]]
-
-~~~text
-function handle(req, res) {
-  return new Promise(resolve => upload.single('photo')(req, res, async err => {
-    if (err) return resolve(err.code === 'LIMIT_FILE_SIZE' ? { status: 413, ... } : { status: 400, ... })
-    resolve(await createBooking(req.body, req.file))
-  }))
-}
-~~~
-
-[[upload.single('photo')]] middleware عادي [[(req, res, next)]]. بننديه بإيدنا ونلف النتيجة في Promise، فالنتيجة دايمًا [[{ status, body }]] مش response مبعوت. ده اللي بيخلي النتيجة تتشارك بين الطلبين.
-
-[[createBooking]] بتعيد **كل** الفحوص على السيرفر (الاسم ٣ حروف، والموبايل بنفس الـ regex، والتخصص والنوع من قايمة، واليوم مش قبل النهارده بتوقيت القاهرة)، وبعدين [[sleep(300)]] (شبه الكتابة في القاعدة) و [[randomUUID().slice(0, 8)]] رقم الحجز.
-
-## ٦. التجربة بـ curl
-
-~~~text الناتج
-حجز سليم:                      201  {"id":"590d55f6"}
-نفس المفتاح تاني (وبيانات غلط):      {"id":"590d55f6"}   ← نفس الرد، مفيش حجز جديد
-عدد الحجوزات:                       {"count":1}
-من غير مفتاح:                  400  {"error":"Idempotency-Key ناقص"}
-name=x و phone=123:                 {"error":"فيه بيانات غلط","fields":{"name":"الاسم قصير","phone":"رقم الموبايل غلط",...}}
-~~~
-
-وطلبين **في نفس اللحظة** بنفس المفتاح ([[&]] في bash بيشغّل الاتنين مع بعض):
-
-~~~text الناتج
-{"id":"310eedbe"} 201 0.307624s
-{"id":"310eedbe"} 201 0.295968s
-~~~
-
-نفس الـ id، والعدد زاد ١ بس. وبعدين غيّرنا السيرفر في نسخة تجريبية: الـ Map بتتملي **بعد** الشغل ([[const result = await handle(...)]] ثم [[byKey.set]]). نفس التجربة:
-
-~~~text الناتج
-{"id":"5bd0200b"} 201
-{"id":"8734a260"} 201
-{"count":2}
-~~~
-
-حجزين. الطلبين لقوا الـ Map فاضية لأن الأول لسه في الـ [[sleep(300)]]. ده السباق اللي حط الـ Promise بدري بيمنعه.
-
-## ٧. الاختبارات
 
 ~~~bash
 npx playwright test --reporter=list
 ~~~
 
 ~~~text الناتج
-  ok 1 › empty step: summary gets focus and each field is described by its error (1.0s)
-  ok 2 › radio and select errors on step 2, and back keeps the data (459ms)
-  ok 3 › wrong file type is rejected with an announced message (517ms)
-  ok 4 › double click on submit creates exactly one booking (1.4s)
-  ok 5 › same Idempotency-Key twice in parallel on the API gives one booking (324ms)
-  ok 6 › server rejects bad data even if the browser checks are bypassed (6ms)
-  ok 7 › network error keeps the data and lets you retry with the same key (762ms)
+  ok 1 tests\app.spec.js:3:1 › play a round, see the score, and keep the best score after reload (1.0s)
+  ok 3 tests\app.spec.js:16:1 › resume from the same question after reload (660ms)
+  ok 2 tests\axe.spec.js:3:1 › axe clean while playing and after answering (2.1s)
+  ok 4 tests\app.spec.js:24:1 › loading, then error with a working retry (1.4s)
+  ok 5 tests\app.spec.js:38:1 › empty category shows the empty state (348ms)
+  ok 6 tests\app.spec.js:43:1 › broken localStorage data does not break the app (428ms)
 
-  7 passed (9.1s)
+  6 passed (11.9s)
 ~~~
 
-أدوات جديدة فيها:
+وعشان نتأكد إن مفيش flaky، [[--repeat-each=3]] بيشغّل كل اختبار ٣ مرات:
 
-| الأداة | بتعمل إيه |
-|---|---|
-| [[{ page, request }]] | [[request]] بيكلّم الـ API مباشرة من غير متصفح |
-| [[request.get('/api/bookings/count')]] | العدد قبل وبعد |
-| [[dblclick()]] | دبل كليك حقيقي |
-| [[Promise.all([send(), send()])]] | طلبين مع بعض |
-| [[multipart: {...}]] | يبعت [[multipart/form-data]] زي [[FormData]] |
-| [[route.abort('internetdisconnected')]] | أول طلب «النت فصل» |
-| [[route.request().headers()['idempotency-key']]] | يسجّل المفتاح في كل محاولة، والاختبار بيتأكد إنهم زي بعض |
+~~~text الناتج
+  18 passed (9.4s)
+~~~
+
+## ٥. النشر
+
+نفس [[pages.yml]] بتاع مشروع ١ (من وثايق GitHub، مش متجرّب هنا)، بفرقين: job الاختبار فيه [[npm test]] قبل [[npx playwright test]]، و [[path]] في [[upload-pages-artifact]] بيشاور على فولدر فيه ملفات الموقع بس ([[index.html]] و [[app.js]] و [[quiz.js]] و [[api.js]] و [[storage.js]] و [[questions.json]] و [[styles.css]])، مش الـ repo كله.
 
 ---
 
 ## الخلاصة
 
-| الطبقة | الحماية |
+| الأداة | بتعمل إيه |
 |---|---|
-| المتصفح | [[sending]] يمنع طلب تاني وطلب شغال، و [[aria-disabled]] من غير ما الـ focus يضيع |
-| المتصفح | مفتاح واحد لكل محاولة، ونفسه بعد فشل الشبكة |
-| السيرفر | الـ Promise في الـ Map **قبل** الشغل، فالطلبين المتزامنين بياخدوا نفس النتيجة |
-| السيرفر | النتايج الفاشلة بتتمسح، والـ validation كله بيتعاد |
-| الإنتاج | Map في الذاكرة بتضيع مع restart: جدول بـ [[UNIQUE]] أو Redis [[SET NX]] بـ TTL |`,
+| [[page.route]] + [[route.fulfill]] | رد وهمي (500) من غير ما تلمس السيرفر |
+| [[route.continue()]] | سيب الطلب يعدّي |
+| متغير [[fail]] | أول طلب يفشل والتاني ينجح، فالـ retry يتجرّب فعلًا |
+| delay في الرد الوهمي | الحالة الوسطانية («بيحمّل») تفضل كفاية تتشاف |
+| [[expect(...).toBeVisible()]] | بيستنى لوحده، من غير [[waitForTimeout]] |
+| [[addInitScript]] | داتا قبل ما الصفحة تحمّل |
+| [[testMatch]] | Playwright و [[node --test]] في نفس الفولدر |
+| [[--repeat-each=3]] | اكشف الـ flaky |`,
           lines: [
-            R`الـ submit، سواء من الزرار أو Enter.`,
-            R`امنع إرسال المتصفح العادي.`,
-            R`لو مش آخر خطوة، ده «التالي» مش إرسال.`,
-            R`لو فيه طلب شغال، متعملش حاجة.`,
-            R`علّم إن فيه طلب شغال.`,
-            R`قول لقارئ الشاشة إن الزرار مقفول، من غير ما الـ focus يضيع.`,
-            R`الزرار يقول إنه شغال.`,
-            R`رسالة في الـ [[role="status"]] بتتقري.`,
-            R`الإرسال:`,
-            R`كل الحقول والصورة في [[FormData]]، ونفس المفتاح في كل محاولة.`,
-            R`اقرا الرد، ولو مش JSON اعتبره فاضي.`,
-            R`لو الحالة مش 2xx، ارمي برسالة السيرفر.`,
-            R`نجح: خبّي الفورم.`,
-            R`اظهر رسالة النجاح.`,
-            R`ورقم الحجز.`,
-            R`والـ focus على الرسالة، فقارئ الشاشة يقراها.`
+            R`اسم الاختبار بيقول الحالة اللي بيجرّبها.`,
+            R`أول طلب يفشل، والتاني ينجح.`,
+            R`امسك أي طلب لـ [[questions.json]].`,
+            R`لو لسه في وضع الفشل: استنى نص ثانية ورد بـ 500.`,
+            R`غير كده سيبه يروح للسيرفر الحقيقي.`,
+            R`قفلة الـ route.`,
+            R`افتح الصفحة.`,
+            R`«بيحمّل» لازم تظهر الأول.`,
+            R`وبعدين رسالة الخطأ فيها الكود. [[getByRole('alert')]] لأن العنصر [[role="alert"]].`,
+            R`من دلوقتي الطلبات تنجح.`,
+            R`دوس «حاول تاني».`,
+            R`الأسئلة ظهرت: الـ retry اشتغل.`,
+            R`قفلة الاختبار.`
           ],
-          sol: R`بالحل المرجعي، ٧ اختبارات Playwright عدّت: (١) الملخص والـ aria (مع axe)، (٢) الـ radio والرجوع، (٣) نوع الملف الغلط، (٤) دبل كليك: عدد الحجوزات زاد ١ بالظبط، (٥) طلبين API بنفس المفتاح بـ [[Promise.all]]: الأول 201، والاتنين نفس الـ JSON، والعدد زاد ١، (٦) [[{ name: 'x', phone: '123' }]] مباشرة: 400 و [[fields]] فيها [[name]] و [[phone]]، (٧) أول إرسال [[route.abort]]: الرسالة «النت فصل»، والتاني نجح، والمفتاحين زي بعض.
+          sol: R`بالحل المرجعي: [[npm test]] بيطلّع ٦ اختبارات [[pass]]، و [[npx playwright test]] بيطلّع ٦ اختبارات [[passed]] (٥ في [[app.spec.js]] وواحد axe). اتشغّلوا على Chromium بـ viewport الـ Pixel 7.
 
-السيرفر بيعمل [[sleep(300)]] قبل ما يحفظ عشان يشبه الواقع ويخلي السباق يحصل فعلًا في الاختبار. لو شلت [[byKey.set]] قبل الشغل وحطيته بعده، اختبار الـ [[Promise.all]] بيقع بحجزين.
+لو اختبار الخطأ بيقع عند «بيحمّل» (دايمًا أو أحيانًا): غالبًا الـ delay مش موجود أو قصير. من غيره وقع معانا ١٠ مرات من ١٠. ده بالظبط سبب وجوده. ولو كل الاختبارات بتقع بـ [[net::ERR_CONNECTION_REFUSED]]: الـ [[webServer]] مش شغال أو على بورت تاني. ولو بتقع بحاجات مالهاش معنى، ممكن سيرفر تاني قديم شغال على نفس البورت و [[reuseExistingServer: true]] بيستخدمه: غيّر البورت أو اقفله.
 
-الحل فيه [[server.js]] كامل والاختبارات والـ config. والـ [[/api/bookings/count]] للاختبار بس: في مشروع حقيقي مكانه قاعدة الاختبار مش route مفتوح.`,
-          solCode: R`// ── server.js ──
-import express from 'express'
-import multer from 'multer'
-import { randomUUID } from 'node:crypto'
-import { setTimeout as sleep } from 'node:timers/promises'
-
-const app = express()
-const ALLOWED = ['image/jpeg', 'image/png', 'image/webp']
-const upload = multer({
-  storage: multer.memoryStorage(),
-  limits: { fileSize: 2 * 1024 * 1024, files: 1, fields: 10 },
-  fileFilter: (req, file, cb) => cb(ALLOWED.includes(file.mimetype) ? null : new Error('BAD_TYPE'), true),
-})
-const bookings = []
-const byKey = new Map() // Idempotency-Key -> Promise<{ status, body }>
-
-app.use(express.static('public'))
-
-app.post('/api/bookings', async (req, res) => {
-  const key = req.get('Idempotency-Key') ?? ''
-  if (!/^[\w-]{8,100}$/.test(key)) return res.status(400).json({ error: 'Idempotency-Key ناقص' })
-  if (!byKey.has(key)) byKey.set(key, handle(req, res))
-  const result = await byKey.get(key)
-  if (result.status !== 201) byKey.delete(key) // الغلط ميتحفظش، عشان المستخدم يصلّح ويبعت بنفس المفتاح
-  res.status(result.status).json(result.body)
-})
-
-function handle(req, res) {
-  return new Promise(resolve => upload.single('photo')(req, res, async err => {
-    if (err) return resolve(err.code === 'LIMIT_FILE_SIZE'
-      ? { status: 413, body: { error: 'الصورة أكبر من 2 ميجا' } }
-      : { status: 400, body: { error: err.message === 'BAD_TYPE' ? 'نوع الصورة مش مسموح' : 'الطلب مش سليم' } })
-    resolve(await createBooking(req.body, req.file))
-  }))
-}
-
-async function createBooking({ name = '', phone = '', email = '', specialty = '', type = '', date = '' }, file) {
-  const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Africa/Cairo' })
-  const fields = {}
-  if (name.trim().length < 3) fields.name = 'الاسم قصير'
-  if (!/^01[0125]\d{8}$/.test(phone)) fields.phone = 'رقم الموبايل غلط'
-  if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) fields.email = 'الإيميل غلط'
-  if (!['derma', 'dental', 'peds'].includes(specialty)) fields.specialty = 'التخصص مش موجود'
-  if (!['clinic', 'online'].includes(type)) fields.type = 'نوع الكشف غلط'
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || date < today) fields.date = 'اليوم غلط'
-  if (Object.keys(fields).length) return { status: 400, body: { error: 'فيه بيانات غلط', fields } }
-  await sleep(300) // شبه الكتابة في القاعدة ورفع الصورة
-  const booking = { id: randomUUID().slice(0, 8), name, phone, specialty, type, date, photo: file ? file.size : 0 }
-  bookings.push(booking)
-  return { status: 201, body: { id: booking.id } }
-}
-
-app.get('/api/bookings/count', (req, res) => res.json({ count: bookings.length })) // للاختبار بس
-
-app.listen(4175, () => console.log('http://localhost:4175'))
+النشر: نفس [[pages.yml]] بتاع مشروع ١، بس حط ملفات الموقع في فولدر لوحده وخلي [[path]] يشاور عليه، و job الاختبار فيه [[npm test]] قبل [[npx playwright test]].`,
+          solCode: R`// ── package.json ──
+{"type":"module","scripts":{"test":"node --test tests/*.test.js","e2e":"playwright test"}}
 
 // ── playwright.config.js ──
 import { defineConfig, devices } from '@playwright/test'
 
 export default defineConfig({
   testDir: './tests',
-  use: { baseURL: 'http://localhost:4175', ...devices['Pixel 7'] },
-  webServer: { command: 'node server.js', url: 'http://localhost:4175', reuseExistingServer: false },
+  testMatch: '*.spec.js',
+  use: { baseURL: 'http://localhost:4174', ...devices['Pixel 7'] },
+  webServer: { command: 'npx serve -l 4174 .', url: 'http://localhost:4174', reuseExistingServer: true },
 })
 
-// ── tests/form.spec.js ──
+// ── tests/app.spec.js ──
 import { test, expect } from '@playwright/test'
-import AxeBuilder from '@axe-core/playwright'
 
-const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==', 'base64')
-const tomorrow = new Date(Date.now() + 86400000).toLocaleDateString('en-CA')
-
-async function fillAll(page) {
-  await page.getByLabel('الاسم').fill('منى علي')
-  await page.getByLabel('الموبايل').fill('01012345678')
-  await page.getByRole('button', { name: 'التالي' }).click()
-  await page.getByLabel('التخصص').selectOption('dental')
-  await page.getByRole('radio', { name: 'أونلاين' }).check()
-  await page.getByLabel('اليوم').fill(tomorrow)
-  await page.getByRole('button', { name: 'التالي' }).click()
-  await page.getByLabel('اختار صورة').setInputFiles({ name: 'rx.png', mimeType: 'image/png', buffer: png })
-  await expect(page.getByRole('img', { name: /rx.png/ })).toBeVisible()
-  await page.getByRole('button', { name: 'التالي' }).click()
-}
-
-test('empty step: summary gets focus and each field is described by its error', async ({ page }) => {
-  await page.goto('/')
-  await page.getByRole('button', { name: 'التالي' }).click()
-  await expect(page.locator('#summary')).toBeFocused()
-  await expect(page.locator('#summary-list li')).toHaveCount(2)
-  const name = page.getByLabel('الاسم')
-  await expect(name).toHaveAttribute('aria-invalid', 'true')
-  await expect(name).toHaveAccessibleDescription('اكتب اسمك')
-  await expect(page.getByLabel('الموبايل')).toHaveAccessibleDescription(/11 رقم ويبدأ بـ 01 اكتب رقم الموبايل/)
-  await page.getByRole('link', { name: 'اكتب اسمك' }).click()
-  await expect(name).toBeFocused()
-  await name.fill('منى')
-  await expect(name).not.toHaveAttribute('aria-invalid')
-  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
+test('play a round, see the score, and keep the best score after reload', async ({ page }) => {
+  await page.goto('/?cat=css')
+  await expect(page.getByRole('heading', { level: 2 })).toBeFocused()
+  await page.getByRole('button', { name: 'margin-inline-start' }).click()
+  await expect(page.locator('#live')).toHaveText('إجابة صح')
+  await expect(page.getByRole('button', { name: 'النتيجة' })).toBeFocused()
+  await page.keyboard.press('Enter')
+  await expect(page.getByRole('heading', { name: 'النتيجة: 1 من 1' })).toBeVisible()
+  await page.reload()
+  await page.getByRole('button', { name: 'النتيجة' }).click()
+  await expect(page.getByText('أحسن نتيجة: 1')).toBeVisible()
 })
 
-test('radio and select errors on step 2, and back keeps the data', async ({ page }) => {
-  await page.goto('/')
-  await page.getByLabel('الاسم').fill('منى علي')
-  await page.getByLabel('الموبايل').fill('01012345678')
-  await page.getByRole('button', { name: 'التالي' }).click()
-  await expect(page.getByRole('heading', { name: /الخطوة 2 من 4/ })).toBeFocused()
-  await page.getByRole('button', { name: 'التالي' }).click()
-  await expect(page.locator('#summary-list')).toContainText('اختار نوع الكشف')
-  await page.getByRole('button', { name: 'رجوع' }).click()
-  await expect(page.getByLabel('الاسم')).toHaveValue('منى علي')
+test('resume from the same question after reload', async ({ page }) => {
+  await page.goto('/?cat=js')
+  await page.getByRole('button', { name: '"object"' }).click()
+  await page.getByRole('button', { name: 'اللي بعده' }).click()
+  await page.reload()
+  await expect(page.getByText('سؤال 2 من 3')).toBeVisible()
 })
 
-test('wrong file type is rejected with an announced message', async ({ page }) => {
-  await page.goto('/')
-  await fillAll(page)
-  await page.getByRole('button', { name: 'رجوع' }).click()
-  await page.getByLabel('اختار صورة').setInputFiles({ name: 'a.txt', mimeType: 'text/plain', buffer: Buffer.from('hi') })
-  await expect(page.getByRole('alert')).toHaveText('الصورة لازم تبقى JPG أو PNG أو WebP')
-  await expect(page.locator('#preview')).toBeHidden()
-})
-
-test('double click on submit creates exactly one booking', async ({ page, request }) => {
-  const before = (await (await request.get('/api/bookings/count')).json()).count
-  await page.goto('/')
-  await fillAll(page)
-  await expect(page.locator('#review')).toContainText('أسنان')
-  await expect(page.locator('#review')).toContainText('rx.png')
-  await page.getByRole('button', { name: 'احجز' }).dblclick()
-  await expect(page.getByRole('heading', { name: /اتحجز/ })).toBeFocused()
-  const after = (await (await request.get('/api/bookings/count')).json()).count
-  expect(after - before).toBe(1)
-})
-
-test('same Idempotency-Key twice in parallel on the API gives one booking', async ({ request }) => {
-  const before = (await (await request.get('/api/bookings/count')).json()).count
-  const send = () => request.post('/api/bookings', {
-    headers: { 'Idempotency-Key': 'test-key-123456' },
-    multipart: { name: 'منى علي', phone: '01012345678', specialty: 'peds', type: 'clinic', date: tomorrow },
-  })
-  const [a, b] = await Promise.all([send(), send()])
-  expect(a.status()).toBe(201)
-  expect(await a.json()).toEqual(await b.json())
-  expect((await (await request.get('/api/bookings/count')).json()).count - before).toBe(1)
-})
-
-test('server rejects bad data even if the browser checks are bypassed', async ({ request }) => {
-  const res = await request.post('/api/bookings', { headers: { 'Idempotency-Key': 'bad-data-1234' }, multipart: { name: 'x', phone: '123' } })
-  expect(res.status()).toBe(400)
-  expect((await res.json()).fields).toMatchObject({ name: 'الاسم قصير', phone: 'رقم الموبايل غلط' })
-})
-
-test('network error keeps the data and lets you retry with the same key', async ({ page }) => {
-  const keys = []
+test('loading, then error with a working retry', async ({ page }) => {
   let fail = true
-  await page.route('**/api/bookings', route => {
-    keys.push(route.request().headers()['idempotency-key'])
-    if (fail) { fail = false; return route.abort('internetdisconnected') }
+  await page.route('**/questions.json', async route => {
+    if (fail) { await new Promise(r => setTimeout(r, 500)); return route.fulfill({ status: 500, body: 'oops' }) }
     return route.continue()
   })
   await page.goto('/')
-  await fillAll(page)
-  await page.getByRole('button', { name: 'احجز' }).click()
-  await expect(page.getByRole('status')).toContainText('النت فصل')
-  await page.getByRole('button', { name: 'احجز' }).click()
-  await expect(page.getByRole('heading', { name: /اتحجز/ })).toBeVisible()
-  expect(keys).toHaveLength(2)
-  expect(keys[0]).toBe(keys[1])
+  await expect(page.getByText('بيحمّل الأسئلة...')).toBeVisible()
+  await expect(page.getByRole('alert')).toContainText('HTTP 500')
+  fail = false
+  await page.getByRole('button', { name: 'حاول تاني' }).click()
+  await expect(page.getByText('سؤال 1 من 4')).toBeVisible()
+})
+
+test('empty category shows the empty state', async ({ page }) => {
+  await page.goto('/?cat=sql')
+  await expect(page.getByText('مفيش أسئلة في القسم ده لسه.')).toBeVisible()
+})
+
+test('broken localStorage data does not break the app', async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('quiz:v1', '{not json'))
+  await page.goto('/')
+  await expect(page.getByText('سؤال 1 من 4')).toBeVisible()
+})
+
+// ── tests/axe.spec.js ──
+import { test, expect } from '@playwright/test'
+import AxeBuilder from '@axe-core/playwright'
+test('axe clean while playing and after answering', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.getByText('سؤال 1 من 4')).toBeVisible()
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
+  await page.getByRole('button', { name: '"null"' }).click()
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
 })`
         }
       ]

@@ -138,8 +138,8 @@
 | ٥١ | `cloud/01-04.js` (74) | [x] (cloud اتقسم؛ اتجرب على LocalStack و Terraform و Jaeger و Prometheus، و RDS/ECS/CloudFront من الـ docs) |
 | ٥٢ | `arch/01-06.js` (87) | [x] (arch اتقسم؛ الـ 5 ثغرات اتصلحت) |
 | ٥٣ | `sweng/01-03.js` و `ai/01-03.js` (73) | [ ] |
-| ٥٤ | `interview/01-03.js` و `projects/01-03.js` (~75) | [ ] |
-| ٥٥ | `projects/04-07.js` (~21) | [ ] |
+| ٥٤ | `interview/01-03.js` و `projects/01-03.js` (~75) | [x] |
+| ٥٥ | `projects/04-07.js` (~21) | [x] (projects اتقسم؛ open redirect و race الطلبات و reconnect الـ LISTEN اتصلحوا) |
 | ٥٦ | `career/01-02.js` و `english/01-04.js` (89) | [x] (career و english اتقسموا؛ ملاحظة git identity اتضافت) |
 | ٥٧ | `speak/01-03.js` (58) | [x] (speak اتقسم؛ IPA اتصلح لـ idempotent و query) |
 
@@ -219,6 +219,8 @@
 
 - [ ] Sentry v11 من غير `dataCollection` بيبعت قيمة كوكي الـ refresh token في `request.cookies` (درس Sentry في arch). محتاج يتضاف للمثال.
 - [ ] presigned URLs من aws-sdk الحالي فيها `x-amz-checksum-crc32` لجسم فاضي، و S3 الحقيقي ممكن يرفضها. الحل `requestChecksumCalculation: "WHEN_REQUIRED"`. يأثر على «signed upload URL» في arch و cloud.
+
+- [ ] مشروع ٧ (AI): الحد اليومي count-then-insert مش atomic نظريًا (١٠ طلبات متوازية معدّتوش في ٣ جولات). ممكن يتحول لـ advisory lock زي الـ order.
 
 ### ٥. أسئلة مفتوحة
 

@@ -10344,6 +10344,121 @@
   "date": "2026-10-08",
   "on": "Windows 11 Chrome 154 via Playwright + curl to Express 5.2/multer 2.4; docs: heap snapshot"
  },
+ "projects|مشروع ٤: API وهمي بـ MSW": {
+  "hash": "363d09b0a55c",
+  "date": "2026-10-08",
+  "on": "Windows 11 (MSW 3.0, Vitest jsdom + Chrome headless)"
+ },
+ "projects|مشروع ٤: الاختبارات": {
+  "hash": "f01ba49603bb",
+  "date": "2026-10-08",
+  "on": "Windows 11 Vitest 5 jsdom (7 passed)"
+ },
+ "projects|مشروع ٤: الجدول والفلترة في الـ URL": {
+  "hash": "9fe23e934a9e",
+  "date": "2026-10-08",
+  "on": "Windows 11 Chrome headless via playwright-core on vite dev"
+ },
+ "projects|مشروع ٤: الـ spec والـ setup": {
+  "hash": "8403002cdd88",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24 (Vite 8.3 build, tsc -b, preview + Chrome headless)"
+ },
+ "projects|مشروع ٤: صفحة التفاصيل والحالات": {
+  "hash": "6b1ccfc3b243",
+  "date": "2026-10-08",
+  "on": "Windows 11 Chrome headless + Vitest"
+ },
+ "projects|مشروع ٥: CRUD والملكية": {
+  "hash": "d48d121b7c6e",
+  "date": "2026-10-08",
+  "on": "Windows 11 curl on Express, postgres:18 Docker"
+ },
+ "projects|مشروع ٥: OpenAPI والـ CI": {
+  "hash": "194c2768a3c6",
+  "date": "2026-10-08",
+  "on": "Windows 11 Swagger UI + local CI-equivalent run; docs: GitHub Actions run"
+ },
+ "projects|مشروع ٥: auth والأدوار": {
+  "hash": "d29613b53d4e",
+  "date": "2026-10-08",
+  "on": "Windows 11 curl on Express, postgres:18 Docker"
+ },
+ "projects|مشروع ٥: الاختبارات بـ supertest": {
+  "hash": "68c04e8f72bc",
+  "date": "2026-10-08",
+  "on": "Windows 11 Vitest + supertest on postgres:18 Docker (13 passed)"
+ },
+ "projects|مشروع ٥: الـ spec والـ schema": {
+  "hash": "384a57fabc19",
+  "date": "2026-10-08",
+  "on": "Windows 11 Prisma 7.10 on postgres:18 Docker"
+ },
+ "projects|مشروع ٥: الهيكل والأخطاء": {
+  "hash": "7fbd6b50d488",
+  "date": "2026-10-08",
+  "on": "Windows 11 Express 5 + curl, postgres:18 Docker"
+ },
+ "projects|مشروع ٦: Docker والدومين و SSL": {
+  "hash": "ebb8f55d70ca",
+  "date": "2026-10-08",
+  "on": "Windows 11 Docker compose (build, migrate, app, Caddy internal TLS); docs: Let's Encrypt, deploy job"
+ },
+ "projects|مشروع ٦: Sentry والإطلاق": {
+  "hash": "3fabea7e2db2",
+  "date": "2026-10-08",
+  "on": "Windows 11 next start + local fake Sentry DSN, pg_dump/pg_restore on postgres:18 Docker; docs: Sentry dashboard"
+ },
+ "projects|مشروع ٦: الاختبارات و CI": {
+  "hash": "c94d04e8ca57",
+  "date": "2026-10-08",
+  "on": "Windows 11 Vitest (12) + Playwright 1.64 (4); docs: GitHub Actions run"
+ },
+ "projects|مشروع ٦: الدخول والاشتراك": {
+  "hash": "546e9cb294fe",
+  "date": "2026-10-08",
+  "on": "Windows 11 curl + Playwright Chrome, better-auth 1.7.7"
+ },
+ "projects|مشروع ٦: الـ spec والهيكل الماشي": {
+  "hash": "db9d747a9c5c",
+  "date": "2026-10-08",
+  "on": "Windows 11 Next 16.4 build/start, postgres:18 Docker"
+ },
+ "projects|مشروع ٦: صفحات الكورسات و SEO": {
+  "hash": "b53ff5286c08",
+  "date": "2026-10-08",
+  "on": "Windows 11 curl on next start; docs: Lighthouse"
+ },
+ "projects|مشروع ٧ (AI): اسأل الكورس بـ RAG": {
+  "hash": "6b503b42c6a6",
+  "date": "2026-10-08",
+  "on": "Windows 11 Vitest (4) on postgres:18 Docker + pgvector 0.8.7; docs: real Gemini/Claude calls"
+ },
+ "projects|مشروع ٧ (realtime): أسئلة لايف بـ SSE": {
+  "hash": "e801a8d2b063",
+  "date": "2026-10-08",
+  "on": "Windows 11 Vitest + curl -N, pg_notify and docker restart on postgres:18 Docker"
+ },
+ "projects|مشروع ٧ (دفع): webhook مرة واحدة": {
+  "hash": "5ff47d9257ba",
+  "date": "2026-10-08",
+  "on": "Windows 11 Vitest on postgres:18 Docker (7 passed) + curl bad signature; docs: stripe listen/resend"
+ },
+ "projects|مشروع ٧ (دفع): الـ order والـ checkout": {
+  "hash": "1d63dae1e6c5",
+  "date": "2026-10-08",
+  "on": "Windows 11 Vitest on postgres:18 Docker (race test), next build; docs: real Stripe Checkout"
+ },
+ "projects|مشروع ٧: اختار الميزة وصمّمها": {
+  "hash": "ffa038aa7a2f",
+  "date": "2026-10-08",
+  "on": "docs: design doc"
+ },
+ "projects|مشروع ٧: الإطلاق وتدريب الأعطال": {
+  "hash": "4d04e5bc6320",
+  "date": "2026-10-08",
+  "on": "Windows 11 local build (DB restart, AI no-key + limit); docs: Stripe CLI, prompt injection"
+ },
  "ps|$LASTEXITCODE": {
   "hash": "5f92172f28f3",
   "date": "2026-10-06",
