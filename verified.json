@@ -909,6 +909,141 @@
   "date": "2026-10-07",
   "on": "docker ubuntu:24.04 (grep/sed); docs: aapt"
  },
+ "arch|.env لكل بيئة": {
+  "hash": "a8d7dc4f1c9d",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24 --env-file, Zod 4.6; git check of .gitignore"
+ },
+ "arch|2FA: التفعيل": {
+  "hash": "a182817d6b56",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24, otplib 13.5 + qrcode + AES-256-GCM, Express 5 + Prisma 7 on postgres:18 (Docker); docs: phone authenticator app"
+ },
+ "arch|2FA: الدخول": {
+  "hash": "f9e7dd30a35d",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24, otplib 13.5 + Express 5 + Prisma 7 on postgres:18 (Docker)"
+ },
+ "arch|CAPTCHA و lockout": {
+  "hash": "cefe9092ab08",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24, Express 5 + ioredis 6 on redis:8-alpine + Cloudflare siteverify test keys; docs: widget UI"
+ },
+ "arch|ERD": {
+  "hash": "056d1ffe00e7",
+  "date": "2026-10-08",
+  "on": "Windows 11, Playwright Chromium + Mermaid 11 (parse/render)"
+ },
+ "arch|MVP": {
+  "hash": "61b5d7e6f25c",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "arch|OAuth": {
+  "hash": "0ec2e3f647af",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24, Express 5 redirect/cookie inspected; docs: Google consent screen"
+ },
+ "arch|OAuth callback": {
+  "hash": "258811df3f31",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24, Express 5 + jose 6 with local fake token/JWKS server; docs: real Google"
+ },
+ "arch|access + refresh": {
+  "hash": "ca4db58e40ec",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24, Express 5 + jsonwebtoken 9 + cookie-parser, curl; docs: browser DevTools/jwt.io"
+ },
+ "arch|apiFetch": {
+  "hash": "cb4538db1f7e",
+  "date": "2026-10-08",
+  "on": "Windows 11, Playwright Chromium against local Express 5 API"
+ },
+ "arch|definition of done": {
+  "hash": "c6ebec214044",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "arch|feature folders": {
+  "hash": "8055ced99a75",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24, Vitest 5 + Prisma 7 on postgres:18 (Docker) + Express route via curl"
+ },
+ "arch|monorepo": {
+  "hash": "7b2601b5658c",
+  "date": "2026-10-08",
+  "on": "Windows 11, pnpm 10.33 workspace + tsc typecheck"
+ },
+ "arch|passkeys": {
+  "hash": "10db6b411f8c",
+  "date": "2026-10-08",
+  "on": "Windows 11, @simplewebauthn 14 in Playwright Chromium virtual authenticator, postgres:18 + redis:8-alpine; docs: real device"
+ },
+ "arch|password reset": {
+  "hash": "ee0d58d21a38",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24, Express 5 + Prisma 7 on postgres:18 (Docker), curl; docs: real email provider"
+ },
+ "arch|refresh rotation": {
+  "hash": "bffa7df36f9b",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24, Express 5 + Prisma 7 on postgres:18 (Docker), curl"
+ },
+ "arch|schema.prisma": {
+  "hash": "8971938449bb",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24, Prisma 7.10 migrate/generate on postgres:18 (Docker)"
+ },
+ "arch|signup": {
+  "hash": "d17630c280d6",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24, Express 5 + argon2 0.45 + Prisma 7 on postgres:18 (Docker), curl"
+ },
+ "arch|step-up auth": {
+  "hash": "b4b3839d2b35",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24, Express 5 + jsonwebtoken + Prisma 7 on postgres:18 (Docker)"
+ },
+ "arch|user stories": {
+  "hash": "05b05deb4654",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "arch|اختيار الـ stack": {
+  "hash": "780aef942b08",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "arch|تأكيد الإيميل": {
+  "hash": "89c29d8a5e7c",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24, Express 5 + Prisma 7 on postgres:18 (Docker), curl"
+ },
+ "arch|ترتيب البناء": {
+  "hash": "f7f1f60b8956",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24, Express 5 /health + Prisma 7 on postgres:18 (Docker); docs: Next.js page"
+ },
+ "arch|تغيير الإيميل والباسورد": {
+  "hash": "32b063896cef",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24, Express 5 + Prisma 7 on postgres:18 (Docker)"
+ },
+ "arch|ربط الحسابات": {
+  "hash": "b2801753fc3a",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24, tsx + Prisma 7 on postgres:18 (Docker)"
+ },
+ "arch|شكل الأخطاء": {
+  "hash": "1836fdd61d89",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24, Express 5.2 + Zod 4.6, curl"
+ },
+ "arch|قايمة الـ endpoints": {
+  "hash": "4ba3546e7781",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
  "bash|#!/usr/bin/env bash": {
   "hash": "591d8dbbef8f",
   "date": "2026-10-06",

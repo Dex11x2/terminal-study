@@ -40,6 +40,119 @@ router.post("/auth/signup", async (req, res) => {
             when: "أول ميزة في الـ auth. وحط rate limit على المسار ده زي الـ login بالظبط.",
             mistakes: R`إنك تخزّن الباسورد نص، أو MD5، أو SHA256 من غير salt. ودول كلهم سريعين، والسرعة هنا عيب. وفي مشروع حقيقي كان فيه عمود للباسورد كنص عادي، والدخول بيقارن بيه الأول قبل الـ hash، وحسابات الموظفين بتتعمل بباسورد افتراضي واحد للكل. وكمان كان فيه route للتطوير بيعرض المستخدمين بباسورداتهم، ولسه موجود. كفاية تسريب واحد عشان كل الحسابات تتكشف. وغلطة تانية شائعة: إنك ترجّع [[user]] كله من create، فيطلع [[passwordHash]] في الرد.`
           },
+          teach: R`## ٣ خطوات في route واحد
+
+الـ route بيستلم [[{ name, email, password }]]، ويفحصهم بـ Zod، ويعمل hash للباسورد بـ argon2، ويحفظ المستخدم، ويرد بالحقول الآمنة بس. جرّبناه بـ Express 5.2 و Zod 4.6 و argon2 0.45 و Prisma 7.10 على PostgreSQL 18 في Docker (ويندوز 11، Node 24)، ومعاه الـ errorHandler بتاع درس «شكل الأخطاء». الطلبات بـ curl على بورت 6017.
+
+---
+
+## ١. الـ imports
+
+- [[import argon2 from "argon2";]] مكتبة الـ hash. فيها كود C++ متجمّع جاهز (prebuilt)، فمش محتاج compiler على جهازك في أغلب الأحوال.
+- [[import { z } from "zod";]] للـ validation.
+
+---
+
+## ٢. [[const Signup = z.object({ ... })]]
+
+| الحقل | الشرط | ليه |
+|---|---|---|
+| [[name: z.string().trim().min(2).max(80)]] | نص، من غير مسافات أطراف، من ٢ لـ ٨٠ | [[trim]] بيشتغل الأول، فـ [[" A "]] بيبقى [["A"]] ويقع في [[min(2)]] |
+| [[email: z.email().transform((e) => e.toLowerCase())]] | إيميل سليم، وبعدين small | [[Ali@Example.com]] و [[ali@example.com]] يبقوا حساب واحد |
+| [[password: z.string().min(8).max(128)]] | من ٨ لـ ١٢٨ | الحد الأقصى عشان محدش يبعت ميجا يتعمله hash |
+
+- [[z.email()]] في Zod 4 دالة على [[z]] مباشرة (Zod 3 كان [[z.string().email()]]).
+- [[.transform(fn)]] بيغيّر القيمة **بعد** ما الفحص ينجح. و [[(e) => e.toLowerCase()]] arrow function بتاخد الإيميل وترجّعه small.
+
+بعتنا داتا كلها غلط مرة واحدة:
+
+~~~bash
+curl -s -H "Content-Type: application/json" -d '{"name":" A ","email":"nope","password":"123"}' localhost:6017/auth/signup
+~~~
+
+~~~text الناتج (الـ details مختصرة)
+VALIDATION
+name: Too small: expected string to have >=2 characters
+email: Invalid email address
+password: Too small: expected string to have >=8 characters
+~~~
+
+التلاتة رجعوا في رد واحد (400)، فالفورم يعرض كل غلطة جنب حقلها.
+
+---
+
+## ٣. [[router.post("/auth/signup", async (req, res) => { ... })]]
+
+[[router]] هو [[express.Router()]]. والدالة [[async]] عشان جواها [[await]]. ومفيش try/catch: في Express 5 أي error جوه دالة async بيوصل للـ errorHandler لوحده.
+
+### [[const input = Signup.parse(req.body);]]
+
+[[req.body]] جاي من [[express.json()]]. لو الشكل غلط [[parse]] بيرمي [[ZodError]] والطلب بيقف هنا. لو سليم، [[input]] فيه القيم **بعد** الـ trim والـ transform. ومن هنا ورايح بنستخدم [[input]] بس، مش [[req.body]].
+
+### [[const passwordHash = await argon2.hash(input.password);]]
+
+- [[argon2.hash]] بيرجّع promise، فـ [[await]].
+- بطيء عن قصد: قسناه على الجهاز ده **٤٦ ملّي ثانية** لـ hash واحد، ونفس الجهاز بيعمل ١٠٠٠ sha256 في ٢.٧ ملّي ثانية. يعني اللي سرق القاعدة وعايز يجرّب باسوردات هيبقى أبطأ آلاف المرات.
+
+### [[db.user.create({ data: { name, email, passwordHash } })]]
+
+بنكتب الـ hash بس، والباسورد نفسه مبيتخزنش في أي مكان. ولو الإيميل موجود، القيد [[@unique]] بيرفض، و Prisma بيرمي [[P2002]]، والـ errorHandler بيرد 409.
+
+### [[res.status(201).json({ data: { id, name, email } })]]
+
+[[201 Created]] يعني «اتعمل حاجة جديدة». وبنختار الحقول بإيدنا، مش [[user]] كله، لأن [[user]] فيه [[passwordHash]].
+
+---
+
+## ٤. التجربة: نفس الإيميل بحروف مختلفة
+
+~~~bash
+curl -si -H "Content-Type: application/json" -d '{"name":"Ali","email":"Ali@Example.com","password":"secret123"}' localhost:6017/auth/signup
+curl -si -H "Content-Type: application/json" -d '{"name":"Ali","email":"ali@example.com","password":"secret123"}' localhost:6017/auth/signup
+~~~
+
+~~~text الناتج
+HTTP/1.1 201 Created
+{"data":{"id":"cmuzdfpd30000z4iekkhfr3uy","name":"Ali","email":"ali@example.com"}}
+
+HTTP/1.1 409 Conflict
+{"error":{"code":"CONFLICT","message":"موجود قبل كده"}}
+~~~
+
+الإيميل رجع small في الأول، والتاني اترفض لأن القيمتين بقوا واحد.
+
+---
+
+## ٥. شكل الـ hash في القاعدة
+
+~~~text الناتج من psql
+$argon2id$v=19$m=65536,p=4,t=3$CoZHPisc4hAnuMwu/6vojQ$P5qn/7j4gFyp2crsGOKBFy3D6LuQivsB0t1tk2/RAok
+~~~
+
+الـ [[$]] بتفصل حتت:
+
+| الحتة | معناها |
+|---|---|
+| [[argon2id]] | النوع: id بيجمع مقاومة الـ GPU (من argon2d) ومقاومة الـ side-channel (من argon2i) |
+| [[v=19]] | نسخة الخوارزمية (0x13) |
+| [[m=65536]] | الذاكرة بالـ KiB، يعني ٦٤ ميجا لكل hash |
+| [[t=3]] | عدد اللفات على الذاكرة |
+| [[p=4]] | التوازي (threads) |
+| [[CoZHPisc4hAnuMwu/6vojQ]] | الـ salt: ١٦ byte عشوائي بـ base64. مختلف لكل مستخدم، فنفس الباسورد بيطلع hash مختلف |
+| آخر حتة | الـ hash نفسه |
+
+كل الإعدادات جوه النص، فـ [[argon2.verify(hash, password)]] (في الـ login) مش محتاج حاجة تانية. ولو زوّدت الإعدادات بعدين، الـ hashes القديمة لسه بتتحقق.
+
+---
+
+## الخلاصة
+
+| الخطوة | السطر | لو اتنسيت |
+|---|---|---|
+| validation + small | [[Signup.parse]] | حسابين لنفس الشخص، أو داتا بايظة |
+| hash | [[argon2.hash]] | الباسوردات مكشوفة لو القاعدة اتسربت |
+| unique | [[@unique]] في الـ schema | تكرار لو طلبين وصلوا مع بعض |
+| رد نضيف | اختيار الحقول | [[passwordHash]] يطلع في الـ JSON |`,
           lines: [
             "argon2 عشان الـ hash. ده الموصى بيه حاليًا، و bcrypt مقبول برضه.",
             "Zod للـ validation.",
@@ -100,6 +213,159 @@ router.post("/auth/login", loginLimiter, async (req, res) => {
             when: "أي API بيخدم أكتر من client، أو عايز دخول طويل من غير ما تخاطر.",
             mistakes: R`في مشروع حقيقي، الـ refresh token كان بيتحط في cookie httpOnly، وبرضه بيرجع في الـ JSON. والواجهة كانت بتحفظه في localStorage، فالـ httpOnly بقت ملهاش لازمة. وفي مشروع تاني، التوكن الوحيد كان في localStorage وعمره أيام. ومن الغلطات الشائعة كمان: بيانات حساسة في الـ payload (ده base64 مش تشفير). أو [[jwt.decode]] بدل [[jwt.verify]]. أو رسالتين مختلفتين للإيميل الغلط والباسورد الغلط. أو login من غير rate limit.`
           },
+          teach: R`## الـ login بيطلّع توكنين
+
+الـ route بيتأكد من الإيميل والباسورد، وبعدين بيطلّع **access token** (JWT عمره ربع ساعة) في الـ JSON، و **refresh token** (نص عشوائي عمره ٣٠ يوم) في cookie، ويحفظ hash الـ refresh في جدول sessions. جرّبناه بـ jsonwebtoken 9 و argon2 و cookie-parser و Prisma 7 على PostgreSQL 18 (ويندوز 11، Node 24)، بعد ما سجّلنا [[ali@example.com]] بباسورد [[secret123]] في درس signup. وفي التجربة الـ JWT اتوقّع بسر تجربة، مش سر حقيقي.
+
+---
+
+## ١. [[const sha256 = (s) => crypto.createHash("sha256").update(s).digest("hex");]]
+
+من جوه لبرة:
+
+1. [[crypto.createHash("sha256")]] جهّز hash من نوع SHA-256 (من موديول [[node:crypto]]).
+2. [[.update(s)]] دخّل النص.
+3. [[.digest("hex")]] طلّع الناتج نص hex: ٦٤ حرف.
+
+sha256 سريع جدًا، وده مناسب هنا: التوكن عشوائي ٣٢ byte مستحيل يتخمّن، فمش محتاجين بطء argon2.
+
+---
+
+## ٢. [[router.post("/auth/login", loginLimiter, async (req, res) => {]]
+
+[[loginLimiter]] middleware قبل الـ handler: بيحدد عدد المحاولات لكل IP (درس rate limit في تاب «Backend بـ Node»). Express بينادي الاتنين بالترتيب. (في تجربتنا خليناه middleware فاضي بيعدّي.)
+
+---
+
+## ٣. [[const { email, password } = Login.parse(req.body);]]
+
+[[Login]] schema بنفس فكرة [[Signup]]: إيميل small وباسورد. و [[{ email, password }]] destructuring بيطلّع الحقلين في متغيرين.
+
+---
+
+## ٤. التحقق: ٣ سطور
+
+### [[const user = await db.user.findUnique({ where: { email } });]]
+
+[[findUnique]] بيدوّر بعمود unique، وبيرجّع المستخدم أو [[null]]. و [[{ email }]] اختصار [[{ email: email }]].
+
+### [[await argon2.verify(user?.passwordHash ?? DUMMY_HASH, password)]]
+
+من جوه لبرة:
+
+- [[user?.passwordHash]]: [[?.]] (optional chaining) لو [[user]] بـ [[null]] النتيجة [[undefined]] بدل ما يرمي error.
+- [[?? DUMMY_HASH]]: لو اللي قبلها [[null]] أو [[undefined]]، خد [[DUMMY_HASH]]: hash عملناه مرة واحدة لباسورد وهمي.
+- [[argon2.verify(hash, password)]] بيعمل hash للباسورد بنفس الـ salt والإعدادات اللي جوه النص، ويقارن. بيرجّع [[true]] أو [[false]].
+
+ليه الوهمي؟ عشان الوقت. قسنا ٣ مرات باسورد غلط لإيميل موجود، و ٣ لإيميل مش موجود:
+
+~~~text الناتج (curl -w "%{time_total}")
+wrong-pass 401 0.058441
+no-user    401 0.056488
+wrong-pass 401 0.056185
+no-user    401 0.055151
+wrong-pass 401 0.062010
+no-user    401 0.065868
+~~~
+
+نفس الوقت تقريبًا (حوالي ٥٦ ملّي). لو شلت الـ verify للإيميل المش موجود، الرد هيرجع أسرع بحوالي ٤٦ ملّي (وقت hash واحد على الجهاز ده)، والمهاجم يعرف مين متسجّل من الساعة.
+
+### [[if (!user || !ok) throw new AppError(401, "BAD_CREDENTIALS", ...)]]
+
+رسالة واحدة للحالتين:
+
+~~~text الناتج
+{"error":{"code":"BAD_CREDENTIALS","message":"الإيميل أو الباسورد غلط"}}
+~~~
+
+---
+
+## ٥. الـ access token: [[jwt.sign({ sub, role }, config.JWT_SECRET, { expiresIn: "15m" })]]
+
+- الـ payload: [[sub]] (subject: مين صاحب التوكن) و [[role]].
+- [[config.JWT_SECRET]] السر اللي بيتوقّع بيه.
+- [[expiresIn: "15m"]] المكتبة بتحط [[exp]] = دلوقتي + ٩٠٠ ثانية.
+
+فكّينا توكن معمول بنفس السطر ده بالأمر اللي في الـ solCode:
+
+~~~bash
+node -e 'const t = process.argv[1]; console.log(JSON.parse(Buffer.from(t.split(".")[1], "base64url")))' "eyJhbGciOi..."
+~~~
+
+~~~text الناتج
+{
+  sub: 'cmuzdfpd30000z4iekkhfr3uy',
+  role: 'STUDENT',
+  iat: 1791454027,
+  exp: 1791454927
+}
+~~~
+
+- [[t.split(".")]] الـ JWT ٣ حتت بينهم نقط: header و payload و signature. والعنصر رقم [[1]] هو التاني (العد من صفر).
+- [[Buffer.from(..., "base64url")]] فك الـ base64url لـ bytes، و [[JSON.parse]] حوّلها object.
+- [[iat]] (issued at) وقت الإصدار بالثواني من ١٩٧٠، و [[exp - iat = 900]] يعني ١٥ دقيقة.
+
+والـ header: [[{ alg: 'HS256', typ: 'JWT' }]]: [[HS256]] يعني HMAC بـ SHA-256 بسر واحد للتوقيع والتحقق.
+
+يعني أي حد يقرا التوكن من غير مفتاح. التوقيع بيمنع **التعديل** بس: غيّرنا [[role]] لـ [[ADMIN]] في الـ payload وعملنا [[jwt.verify]]:
+
+~~~text الناتج
+JsonWebTokenError invalid signature
+~~~
+
+---
+
+## ٦. الـ refresh token
+
+### [[crypto.randomBytes(32).toString("base64url")]]
+
+٣٢ byte عشوائي (٢٥٦ bit) مكتوبين base64url: ٤٣ حرف. نص ملوش معنى، مش JWT.
+
+### [[db.session.create({ data: { userId, tokenHash: sha256(refresh), expiresAt } })]]
+
+بنخزن الـ hash بس. و [[30 * 864e5]]: [[864e5]] يعني 86,400,000 ملّي = يوم، يعني ٣٠ يوم بالملّي (2,592,000,000).
+
+### [[res.cookie("rt", refresh, { ... })]]
+
+جربنا الـ login الحقيقي:
+
+~~~text الناتج
+HTTP/1.1 200 OK
+Set-Cookie: rt=<43 حرف>; Max-Age=2592000; Path=/auth; Expires=Sat, 07 Nov 2026 10:06:55 GMT; HttpOnly; Secure; SameSite=Lax
+~~~
+
+| الخيار | في الـ header | معناه |
+|---|---|---|
+| [[maxAge: 30 * 864e5]] | [[Max-Age=2592000]] و [[Expires=...]] | Express بياخدها بالملّي ويكتبها بالثواني، وبيحسب التاريخ كمان |
+| [[path: "/auth"]] | [[Path=/auth]] | بتتبعت لمسارات [[/auth/...]] بس |
+| [[httpOnly: true]] | [[HttpOnly]] | [[document.cookie]] مش شايفها، فالـ XSS ميسرقهاش |
+| [[secure: true]] | [[Secure]] | HTTPS بس (المتصفحات بتستثني localhost) |
+| [[sameSite: "lax"]] | [[SameSite=Lax]] | متتبعتش مع POST جاي من موقع تاني (CSRF) |
+
+---
+
+## ٧. [[res.json({ data: { accessToken, user: { id, name, role } } })]]
+
+~~~text الناتج (التوكن مختصر)
+{"data":{"accessToken":"eyJhbGciOiJIUzI1NiIs...","user":{"id":"cmuzdfpd30000z4iekkhfr3uy","name":"Ali","role":"STUDENT"}}}
+~~~
+
+الواجهة بتحط [[accessToken]] في متغير في الذاكرة (درس apiFetch)، والـ refresh مش في الـ JSON خالص: هو في الـ cookie بس.
+
+---
+
+## الخلاصة
+
+| | access token | refresh token |
+|---|---|---|
+| شكله | JWT موقّع | نص عشوائي ٤٣ حرف |
+| عمره | ١٥ دقيقة | ٣٠ يوم |
+| مكانه في المتصفح | متغير في الذاكرة | cookie [[HttpOnly]] |
+| بيتبعت إزاي | [[Authorization: Bearer ...]] | لوحده مع [[/auth/...]] |
+| السيرفر بيتحقق إزاي | التوقيع، من غير قاعدة | hash في جدول sessions |
+| يتلغي قبل ما يخلص؟ | لأ | أيوه (revokedAt) |
+
+الـ payload مقروء لأي حد، ورسالة الخطأ واحدة، والوقت واحد بالـ DUMMY_HASH.`,
           lines: [
             "دالة صغيرة بتعمل sha256. بنخزن بيها الـ refresh token في القاعدة.",
             "مسار الدخول، وقدامه rate limit عشان تخمين الباسوردات.",
@@ -164,6 +430,132 @@ router.post("/auth/logout", async (req, res) => {
             when: "مع أي نظام refresh tokens. من غير rotation، التوكن الطويل بيبقى أضعف نقطة عندك.",
             mistakes: R`إنك تلغي الـ access token في الـ logout وتنسى الـ refresh، فيفضل شغال ٣٠ يوم. أو [[clearCookie]] من غير نفس الـ path اللي اتعملت بيه، فالمتصفح ميمسحهاش. أو إنك تتحقق بـ [[findUnique]] وبعدين [[update]] في خطوتين، فطلبين في نفس اللحظة الاتنين يعدّوا. أو reuse detection من غير فترة سماح، فالتابات تطرد بعض.`
           },
+          teach: R`## route للتجديد و route للخروج
+
+[[/auth/refresh]] بياخد الـ refresh من الـ cookie، يلغي الـ session بتاعته، ويطلّع session جديدة وتوكنات جديدة. ولو الـ session كانت ملغية أصلًا، يلغي كل sessions المستخدم. و [[/auth/logout]] بيلغي الـ session ويمسح الـ cookie. جرّبناهم بنفس سيرفر درس «access + refresh» (Express 5 و cookie-parser و Prisma 7 و PostgreSQL 18، ويندوز 11)، والـ cookie بنبعتها بإيدنا بـ [[curl -b]].
+
+---
+
+## ١. [[const token = req.cookies.rt;]]
+
+[[req.cookies]] object فيه كل الـ cookies اللي المتصفح بعتها، و [[cookie-parser]] هو اللي بيملاه من الـ header [[Cookie: rt=...]]. من غيره [[req.cookies]] بيبقى [[undefined]] والسطر ده يرمي error.
+
+---
+
+## ٢. [[const session = token && (await db.session.findUnique({ ... }))]]
+
+- [[token && (...)]]: لو مفيش cookie، [[session]] بياخد قيمة [[token]] نفسها ([[undefined]]) ومنكلّمش القاعدة خالص.
+- [[where: { tokenHash: sha256(token) }]] بندوّر بالـ hash، لأن ده اللي متخزن.
+- [[include: { user: true }]] هات المستخدم مع الـ session في نفس الـ query، عشان [[issueTokens]] محتاجاه.
+
+### [[if (!session || session.expiresAt < new Date()) throw ... NO_SESSION]]
+
+مفيش session، أو [[expiresAt]] (تاريخ) أصغر من دلوقتي يعني خلصت. جرّبنا من غير cookie:
+
+~~~text الناتج
+HTTP/1.1 401 Unauthorized
+{"error":{"code":"NO_SESSION","message":"سجّل دخول تاني"}}
+~~~
+
+---
+
+## ٣. قلب الدرس: [[updateMany]] بشرط
+
+~~~text
+const { count } = await db.session.updateMany({ where: { id: session.id, revokedAt: null }, data: { revokedAt: new Date() } });
+~~~
+
+القاعدة بتنفذ ده كـ SQL واحد: [[UPDATE "Session" SET "revokedAt" = now WHERE id = ... AND "revokedAt" IS NULL]]. و [[updateMany]] بيرجّع [[{ count }]]: كام صف اتغير.
+
+| [[count]] | معناه |
+|---|---|
+| 1 | الـ session كانت شغالة، واحنا اللي لغيناها دلوقتي. استخدام سليم |
+| 0 | كانت ملغية قبل كده. يعني حد استخدم التوكن ده قبلنا |
+
+ليه مش [[if (session.revokedAt)]] وبعدين [[update]]؟ لأن طلبين في نفس اللحظة الاتنين هيلاقوا [[revokedAt]] فاضي ويعدّوا. الشرط جوه الـ UPDATE بيخلي القاعدة نفسها تختار واحد بس.
+
+---
+
+## ٤. [[if (count === 0) { ... }]]: الـ reuse detection
+
+~~~text
+await db.session.updateMany({ where: { userId: session.userId, revokedAt: null }, data: { revokedAt: new Date() } });
+throw new AppError(401, "TOKEN_REUSED", "سجّل دخول تاني");
+~~~
+
+الغي **كل** الـ sessions المفتوحة للمستخدم ده، على كل الأجهزة. التجربة كاملة:
+
+1. login، وحفظنا الـ cookie في [[RT1]].
+2. refresh بـ [[RT1]]: رجع [[200]] و cookie جديدة [[RT2]] مختلفة.
+3. refresh بـ [[RT1]] تاني (كأن حد سرقها):
+
+~~~text الناتج
+HTTP/1.1 401 Unauthorized
+{"error":{"code":"TOKEN_REUSED","message":"سجّل دخول تاني"}}
+~~~
+
+4. refresh بـ [[RT2]] (اللي مع صاحب الحساب):
+
+~~~text الناتج
+HTTP/1.1 401 Unauthorized
+{"error":{"code":"TOKEN_REUSED","message":"سجّل دخول تاني"}}
+~~~
+
+[[RT2]] اتلغت في الخطوة ٣، فهي كمان بقت reuse. الاتنين برّه، وصاحب الحساب يدخل تاني بالباسورد، والمهاجم معهوش.
+
+---
+
+## ٥. [[return issueTokens(res, session.user);]]
+
+[[issueTokens]] هي آخر جزء من الـ login بعد ما اتنقل لدالة: session جديدة، و cookie جديدة، و access token في الـ JSON. و [[return]] عشان مفيش كود بعدها يحاول يرد تاني.
+
+---
+
+## ٦. [[/auth/logout]]
+
+~~~text
+if (req.cookies.rt) await db.session.updateMany({ where: { tokenHash: sha256(req.cookies.rt) }, data: { revokedAt: new Date() } });
+res.clearCookie("rt", { path: "/auth" }).status(204).end();
+~~~
+
+- بيعلّم على الـ session [[revokedAt]] مش بيمسحها، عشان لو التوكن رجع تاني نعرف إنه reuse.
+- [[res.clearCookie("rt", { path: "/auth" })]] لازم نفس الـ [[path]] اللي اتعملت بيه. المتصفح بيعرّف الـ cookie بالاسم والـ path والدومين مع بعض.
+- [[.status(204).end()]] تمام ومفيش body. والدوال دي بترجّع [[res]] نفسه، فبتتكتب ورا بعض (chaining).
+
+~~~text الناتج
+HTTP/1.1 204 No Content
+Set-Cookie: rt=; Path=/auth; Expires=Thu, 01 Jan 1970 00:00:00 GMT
+~~~
+
+مسح الـ cookie = نفس الاسم، قيمة فاضية، وتاريخ انتهاء في ١٩٧٠ (فات من زمان)، فالمتصفح بيشيلها.
+
+وبصّينا في الجدول بعد التجربة: كل الصفوف [[revoked = t]]، ومفيش صف اتمسح.
+
+---
+
+## ٧. مشكلة التابين
+
+بعتنا نفس الـ cookie في طلبين refresh في نفس اللحظة (زي تابين مفتوحين):
+
+~~~text الناتج
+tab1 200
+{"error":{"code":"TOKEN_REUSED", ...  tab2 401
+~~~
+
+واحد كسب، والتاني اتعامل كأنه سرقة، والمستخدم اتطرد من التابين. الحل في الواجهة: refresh واحد مشترك (درس apiFetch، أو [[navigator.locks]] بين التابات)، أو فترة سماح صغيرة في السيرفر.
+
+---
+
+## الخلاصة
+
+| الحالة | الرد |
+|---|---|
+| مفيش cookie أو session خلصت | 401 NO_SESSION |
+| session شغالة | 200 وتوكنات جديدة، والقديمة اتلغت |
+| session ملغية قبل كده | 401 TOKEN_REUSED، وكل sessions المستخدم تتلغي |
+| logout | 204 و cookie فاضية بنفس الـ path |
+
+الإلغاء والفحص في خطوة واحدة ([[updateMany]] بشرط [[revokedAt: null]])، والـ session بتتعلّم مش بتتمسح.`,
           lines: [
             "مسار التجديد. مفيش requireAuth هنا، لأن الـ access token أصلًا خلص.",
             "الـ refresh token من الـ cookie.",
@@ -230,6 +622,148 @@ export async function apiFetch(path, options = {}) {
             when: "في أي واجهة بتكلّم API بتوكنات. اكتبها مرة في [[lib/api.ts]]، وممنوع أي fetch مباشر للـ API في أي مكان تاني.",
             mistakes: "إنك تحفظ التوكن في localStorage عشان «ميضيعش مع الـ reload». الـ refresh cookie هي اللي بتحل المشكلة دي. أو refresh من غير تنسيق، فطلبات كتير تعمل refresh مع بعض. أو إعادة الطلب في loop لا نهائي لو الـ refresh رجع 401. أو تنسى credentials فالـ cookie متتبعتش، وتفضل تدوّر على المشكلة في السيرفر."
           },
+          teach: R`## دالة واحدة لكل طلبات الواجهة
+
+[[apiFetch]] بدل [[fetch]] في كل مكان: بتحط التوكن في الـ header، ولو الرد رجع 401 بتعمل refresh **واحد** حتى لو ١٠ طلبات رجعوا 401 مع بعض، وبعدين تعيد الطلب. جرّبناها في Chromium (Playwright) على صفحة متقدّمة من نفس سيرفر الـ API (بورت 6017، فمفيش CORS)، والـ access token عمره **ثانيتين** بدل ١٥ دقيقة عشان يخلص بسرعة. ضفنا للتجربة بس array اسمها [[log]] بتسجّل كل طلب بيتبعت، وسطر [[setAccessToken]] بعد الـ login.
+
+---
+
+## ١. المتغيرين اللي برّه الدالة
+
+~~~text
+let accessToken = null;
+let refreshing = null;
+~~~
+
+متغيرات على مستوى الموديول: كل استدعاءات [[apiFetch]] شايفة نفس النسخة.
+
+- [[accessToken]] التوكن في الذاكرة بس. أي XSS يقدر يقرا localStorage، لكن متغير جوه موديول أصعب بكتير.
+- [[refreshing]] الـ promise بتاعة الـ refresh اللي شغال دلوقتي، أو [[null]].
+
+---
+
+## ٢. [[const send = () => fetch(API_URL + path, { ... })]]
+
+دالة صغيرة بتبعت الطلب، عشان نناديها مرتين (الأولى، والإعادة بعد الـ refresh) والمرة التانية تاخد التوكن **الجديد**.
+
+### [[{ ...options, credentials: "include", headers: {...} }]]
+
+- [[...options]] (spread) انسخ كل اللي المستدعي بعته ([[method]] و [[body]]...).
+- [[credentials: "include"]] ابعت الـ cookies حتى لو الـ API على origin تاني. من غيرها الـ [[rt]] متتبعتش، و [[Set-Cookie]] في الرد بيتجاهل.
+
+### الـ headers من جوه لبرة
+
+~~~text
+headers: { "Content-Type": "application/json", ...options.headers, ...(accessToken && { Authorization: $__btBearer $__{accessToken}$__bt }) }
+~~~
+
+1. [[$__btBearer $__{accessToken}$__bt]] template string: كلمة [[Bearer]] ومسافة والتوكن.
+2. [[accessToken && { Authorization: ... }]] لو مفيش توكن النتيجة [[null]]، ولو فيه النتيجة object.
+3. [[...( )]] فرد [[null]] مبيضيفش حاجة، ففي الحالة دي مفيش [[Authorization]] خالص.
+4. [[...options.headers]] بعد الـ Content-Type، فالمستدعي يقدر يغيّره.
+
+---
+
+## ٣. [[let res = await send();]]
+
+أول محاولة. [[let]] مش [[const]] لأننا ممكن نبدّله برد الإعادة.
+
+---
+
+## ٤. [[if (res.status === 401 && !path.startsWith("/auth/"))]]
+
+- [[401]] بس. الـ 403 معناها «مش مسموحلك»، والـ refresh مش هيغيّر ده.
+- [[!path.startsWith("/auth/")]] لو الطلب نفسه login أو refresh ورجع 401 (باسورد غلط مثلًا)، متعملش refresh. وإلا يبقى loop.
+
+---
+
+## ٥. [[refreshing ??= fetch(...).then(...).finally(...)]]
+
+### [[??=]]
+
+«لو [[refreshing]] بـ [[null]] أو [[undefined]]، حط فيه القيمة دي. غير كده سيبه». يعني أول طلب يرجع 401 هو اللي بيبدأ الـ refresh، والباقيين يلاقوه موجود.
+
+### [[fetch(API_URL + "/auth/refresh", { method: "POST", credentials: "include" })]]
+
+الـ refresh نفسه. التوكن هنا مش في الـ header، هو الـ cookie اللي المتصفح بيبعتها لوحده.
+
+### [[.then(async (r) => { accessToken = r.ok ? (await r.json()).data.accessToken : null; })]]
+
+لو نجح ([[r.ok]] يعني 200 لـ 299)، خد التوكن الجديد من [[data.accessToken]]. لو فشل، [[null]].
+
+### [[.finally(() => { refreshing = null; })]]
+
+[[finally]] بتشتغل نجح أو فشل: فضّي المكان عشان الـ 401 الجاية (بعد ربع ساعة) تبدأ refresh جديد.
+
+---
+
+## ٦. [[await refreshing;]] و [[if (accessToken) res = await send();]]
+
+كل الطلبات اللي رجعت 401 بتستنى **نفس** الـ promise. لما تخلص، لو فيه توكن نعيد الطلب، ولو لأ بنرجّع الـ 401 الأصلي والواجهة توديه صفحة الدخول.
+
+---
+
+## ٧. التجربة
+
+### ٣ طلبات مع بعض بعد ما التوكن خلص
+
+استنينا ٣ ثواني بعد الـ login، وبعدين [[Promise.all]] على [[/me/data]] و [[/me/data]] و [[/admin/stats]]:
+
+~~~text الناتج
+statuses: [200, 200, 200]
+order: ["/me/data", "/me/data", "/admin/stats", "/auth/refresh", "/admin/stats", "/me/data", "/me/data"]
+~~~
+
+٣ طلبات رجعت 401، وبعدها refresh **واحد**، وبعدها الـ ٣ اتعادوا ونجحوا. المستخدم شاف 200 في الآخر وبس.
+
+### من غير التنسيق
+
+بعتنا ٣ refresh مباشرة في نفس اللحظة بنفس الـ cookie (اللي كان هيحصل لو كل طلب عمل refresh لوحده):
+
+~~~text الناتج
+["200 ok", "401 TOKEN_REUSED", "401 TOKEN_REUSED"]
+~~~
+
+واحد نجح، والاتنين التانيين اتعاملوا كسرقة (درس refresh rotation) فلغوا كل الـ sessions. ده سبب [[refreshing]].
+
+### بعد reload
+
+حطينا [[accessToken = null]] (زي ما الـ reload بيمسح الذاكرة):
+
+~~~text الناتج
+afterReload: 200
+order: ["/me/data", "/auth/refresh", "/me/data"]
+~~~
+
+الـ cookie لسه موجودة، فالدالة كمّلت لوحدها.
+
+### بعد logout
+
+~~~text الناتج
+afterLogout: 401
+order: ["/me/data", "/auth/refresh"]
+~~~
+
+الـ refresh فشل، فمفيش إعادة، والـ 401 رجع للواجهة. ومفيش loop.
+
+### الـ cookie من JavaScript
+
+[[document.cookie.includes("rt=")]] رجعت [[false]]: الـ [[HttpOnly]] شغالة.
+
+---
+
+## الخلاصة
+
+| الحالة | اللي بيحصل |
+|---|---|
+| توكن سليم | طلب واحد |
+| توكن خلص | 401، refresh، إعادة |
+| ١٠ طلبات بتوكن خلصان | refresh واحد مشترك، و ١٠ إعادات |
+| reload | أول طلب يعمل refresh من الـ cookie |
+| الـ refresh فشل | الـ 401 يرجع للواجهة، تروح صفحة الدخول |
+| 403 | يرجع زي ما هو، من غير refresh |
+
+ممنوع أي [[fetch]] مباشر للـ API برّه الدالة دي.`,
           lines: [
             "الـ access token في الذاكرة بس، مش localStorage.",
             "الـ refresh اللي شغال دلوقتي، لو فيه.",
@@ -289,6 +823,145 @@ router.post("/auth/reset", async (req, res) => {
             when: "في أي نظام فيه باسوردات. وبنفس الشكل تأكيد الإيميل وتغيير الإيميل: token مرة واحدة، ومتخزن hash، وليه مدة.",
             mistakes: R`إنك تخزن التوكن زي ما هو. أو تعمله من [[Math.random]] أو من الوقت. أو تسيبه شغال أيام. أو تسمح يتستخدم أكتر من مرة. أو ترد «الإيميل ده مش مسجّل». أو تنسى تلغي الـ sessions القديمة. وحاجة مهمة: لو مزوّد الإيميل مش متظبط، متخليش الكود «يطبع الإيميل في اللوج» كبديل في الإنتاج. في مشروع حقيقي كان ده الـ fallback، فلو المفتاح ناقص، لينكات الاستعادة وأكواد الـ OTP كانت هتتكتب في اللوجات.`
           },
+          teach: R`## route يبعت اللينك، و route يستخدمه
+
+[[/auth/forgot]] بيعمل توكن عشوائي، ويخزن الـ hash بتاعه بمدة ٣٠ دقيقة، ويحط إيميل في الـ queue، ويرد نفس الرد دايمًا. و [[/auth/reset]] بيتأكد من التوكن ويغيّر الباسورد ويلغي كل الـ sessions. جرّبناهم بنفس سيرفر دروس الـ auth (Express 5 و Prisma 7 و PostgreSQL 18، ويندوز 11). الـ [[emailQueue]] في التجربة دالة بتطبع الإيميل في ترمنال السيرفر بدل ما تبعته، و [[forgotLimiter]] middleware فاضي. و [[Forgot]] و [[Reset]] schemas Zod: [[Forgot]] فيه [[email]] (small)، و [[Reset]] فيه [[token]] و [[password]] بنفس شروط التسجيل.
+
+---
+
+## ١. [[/auth/forgot]] سطر سطر
+
+### [[const user = await db.user.findUnique({ where: { email: Forgot.parse(req.body).email } });]]
+
+من جوه لبرة: [[Forgot.parse(req.body)]] بيفحص ويرجّع object، و [[.email]] بياخد الإيميل منه، و [[findUnique]] بيدوّر.
+
+### [[if (user) { ... }]]
+
+لو موجود بس بنعمل التوكن. ولو مش موجود، بنكمّل لنفس الرد من غير ما نعمل حاجة.
+
+### [[crypto.randomBytes(32).toString("base64url")]]
+
+٢٥٦ bit عشوائي، ٤٣ حرف. بيتولّد من مصدر عشوائي آمن (CSPRNG) في نظام التشغيل، مش [[Math.random]] اللي ممكن يتوقّع.
+
+### [[db.passwordReset.create({ data: { userId, tokenHash: sha256(token), expiresAt: new Date(Date.now() + 30 * 60e3) } })]]
+
+- [[sha256(token)]] الـ hash بس في القاعدة.
+- [[60e3]] يعني 60000 ملّي = دقيقة، و [[30 * 60e3]] نص ساعة. [[Date.now()]] الوقت دلوقتي بالملّي.
+
+### [[emailQueue.add("reset", { to, link: $__bt$__{config.WEB_ORIGIN}/reset?token=$__{token}$__bt })]]
+
+اللينك بيروح لصفحة في **الواجهة** ([[WEB_ORIGIN]])، والتوكن الأصلي في الـ URL. ده الإيميل اللي اتطبع عندنا:
+
+~~~text ترمنال السيرفر
+EMAIL reset {"to":"ali@example.com","link":"http://localhost:5173/reset?token=<43 حرف>"}
+~~~
+
+والـ [[queue]] معناها إن الرد ميستناش مزوّد الإيميل.
+
+### [[res.json({ data: { message: "لو الإيميل مسجّل، هيوصلك لينك خلال دقايق" } })]]
+
+قارنّا إيميل موجود بإيميل مش موجود:
+
+~~~text الناتج
+HTTP/1.1 200 OK
+Content-Length: 97
+{"data":{"message":"لو الإيميل مسجّل، هيوصلك لينك خلال دقايق"}}
+
+HTTP/1.1 200 OK
+Content-Length: 97
+{"data":{"message":"لو الإيميل مسجّل، هيوصلك لينك خلال دقايق"}}
+~~~
+
+نفس الـ status، ونفس الجسم، ونفس الطول. والوقت؟
+
+~~~text الناتج (curl -w "%{time_total}")
+exists 0.006787
+nobody 0.003355
+exists 0.006585
+nobody 0.003163
+~~~
+
+الموجود أبطأ بحوالي ٣ ملّي، لأنه بيكتب صف في القاعدة. الفرق صغير وبيتوه في تذبذب الشبكة الحقيقية، بس موجود. لو كنا بنبعت الإيميل نفسه جوه الطلب (مئات الملّي لمزوّد خارجي)، الفرق كان هيبقى واضح جدًا. عشان كده الـ queue.
+
+---
+
+## ٢. [[/auth/reset]] سطر سطر
+
+### [[const { token, password } = Reset.parse(req.body);]]
+
+باسورد قصير بيقف هنا بـ 400 VALIDATION، قبل ما نلمس القاعدة.
+
+### [[db.passwordReset.findUnique({ where: { tokenHash: sha256(token) } })]]
+
+بندوّر بالـ hash بتاع التوكن اللي جه. نفس التوكن دايمًا بيطلع نفس الـ hash.
+
+### [[if (!row || row.usedAt || row.expiresAt < new Date()) throw ... BAD_TOKEN]]
+
+٣ أسباب للرفض، ونفس الرسالة للتلاتة: مش موجود، أو اتستخدم ([[usedAt]] فيه تاريخ)، أو خلص.
+
+### [[await authService.resetPassword(row, password);]] (الـ solCode)
+
+~~~text
+const passwordHash = await argon2.hash(password);
+await db.$transaction(async (t) => {
+  const { count } = await t.passwordReset.updateMany({ where: { id: row.id, usedAt: null }, data: { usedAt: new Date() } });
+  if (count === 0) throw new AppError(400, "BAD_TOKEN", "اللينك انتهى، اطلب واحد جديد");
+  await t.passwordReset.updateMany({ where: { userId: row.userId, usedAt: null }, data: { usedAt: new Date() } });
+  await t.user.update({ where: { id: row.userId }, data: { passwordHash } });
+  await t.session.updateMany({ where: { userId: row.userId, revokedAt: null }, data: { revokedAt: new Date() } });
+});
+~~~
+
+- الـ hash **قبل** الـ transaction، عشان الـ transaction تفضل قصيرة (argon2 بياخد عشرات الملّي).
+- [[db.$transaction(async (t) => { ... })]] transaction تفاعلية: [[t]] نسخة من الـ client كل اللي بيتعمل بيها جوه نفس الـ transaction. لو أي سطر رمى error، كله بيترجع (rollback).
+- أول سطر بيحرق اللينك ده بشرط إنه لسه مش مستخدم. ليه؟ الـ [[findUnique]] في الـ route والكتابة هنا خطوتين، وطلبين بنفس اللينك ممكن يعدّوا الفحص الأول مع بعض. جرّبنا من غير السطر ده: طلبين في نفس اللحظة الاتنين رجعوا [[204]]، يعني باسوردين اتكتبوا ورا بعض. ومعاه (٣ محاولات):
+
+~~~text الناتج
+r1 204
+{"error":{"code":"BAD_TOKEN",...}} r2 400
+~~~
+
+- بعده: باقي لينكات المستخدم المفتوحة تتعلّم مستخدمة، والـ hash الجديد، وإلغاء كل الـ sessions، فلو حد كان داخل بالباسورد القديم يطلع.
+
+### [[res.status(204).end();]]
+
+تمام ومفيش body.
+
+---
+
+## ٣. التجربة
+
+~~~text الناتج
+أول مرة باللينك:       HTTP/1.1 204 No Content
+تاني مرة بنفس اللينك:  HTTP/1.1 400 Bad Request
+{"error":{"code":"BAD_TOKEN","message":"اللينك انتهى، اطلب واحد جديد"}}
+login بالباسورد الجديد: 200
+~~~
+
+وفي القاعدة بعدها:
+
+~~~text الناتج من psql
+ total | used
+     4 |    4
+
+ open_sessions | count
+             1 |    10
+~~~
+
+كل اللينكات الأربعة اللي طلبناها في التجربة بقت مستخدمة، والـ session المفتوحة الوحيدة هي login الباسورد الجديد. وجرّبنا لينك عدّى عليه الوقت (غيّرنا [[expiresAt]] لدقيقة فاتت): [[BAD_TOKEN]] برضه.
+
+---
+
+## الخلاصة
+
+| الحماية | فين |
+|---|---|
+| توكن مستحيل يتخمّن | [[randomBytes(32)]] |
+| القاعدة لو اتسربت متنفعش | [[sha256(token)]] بس متخزن |
+| بينتهي | [[expiresAt]] بعد ٣٠ دقيقة |
+| مرة واحدة | [[usedAt]]، وكل لينكات المستخدم تتقفل مع بعض |
+| محدش يعرف مين متسجّل | نفس الرد، والإيميل في queue |
+| اللي كان داخل يطلع | إلغاء كل الـ sessions في نفس الـ transaction |`,
           lines: [
             "طلب لينك الاستعادة، وعليه rate limit عشان محدش يغرق إيميل حد برسايل.",
             "دوّر بالإيميل بعد الـ validation. الـ schema بيحوّله small.",
@@ -311,15 +984,18 @@ router.post("/auth/reset", async (req, res) => {
 
 الطلب لإيميل موجود ولإيميل مش موجود لازم يرجعوا نفس الـ status (200)، ونفس الجسم حرف بحرف، ونفس الـ Content-Length: [[{"data":{"message":"لو الإيميل مسجّل، هيوصلك لينك خلال دقايق"}}]]. قارنهم بـ [[curl -si]] مش بعينك. ولو الإيميل الموجود أبطأ بشكل واضح، يبقى انت بتبعت الإيميل جوه الـ request بدل الـ queue، والوقت نفسه بيكشف مين متسجل.
 
-والصح إن [[resetPassword]] يعمل ٣ حاجات في transaction: يعلّم على كل لينكات المستخدم إنها اتستخدمت، ويحدّث الـ hash، ويلغي كل الـ sessions، عشان لو حد كان داخل بالباسورد القديم يخرج.`,
+والصح إن [[resetPassword]] يعمل كل حاجة في transaction واحدة: يحرق اللينك ده بـ [[updateMany]] بشرط [[usedAt: null]] (ولو count بـ 0 يرمي BAD_TOKEN)، ويعلّم على باقي لينكات المستخدم إنها اتستخدمت، ويحدّث الـ hash، ويلغي كل الـ sessions، عشان لو حد كان داخل بالباسورد القديم يخرج. من غير شرط الـ count، جرّبنا طلبين بنفس اللينك في نفس اللحظة والاتنين رجعوا 204.`,
           solCode: R`const authService = {
   async resetPassword(row, password) {
     const passwordHash = await argon2.hash(password);
-    await db.$transaction([
-      db.passwordReset.updateMany({ where: { userId: row.userId, usedAt: null }, data: { usedAt: new Date() } }),
-      db.user.update({ where: { id: row.userId }, data: { passwordHash } }),
-      db.session.updateMany({ where: { userId: row.userId, revokedAt: null }, data: { revokedAt: new Date() } }),
-    ]);
+    await db.$transaction(async (t) => {
+      // احرق اللينك ده بشرط إنه لسه مش مستخدم: لو طلبين بنفس اللينك وصلوا مع بعض، واحد بس ياخد count بـ 1
+      const { count } = await t.passwordReset.updateMany({ where: { id: row.id, usedAt: null }, data: { usedAt: new Date() } });
+      if (count === 0) throw new AppError(400, "BAD_TOKEN", "اللينك انتهى، اطلب واحد جديد");
+      await t.passwordReset.updateMany({ where: { userId: row.userId, usedAt: null }, data: { usedAt: new Date() } });
+      await t.user.update({ where: { id: row.userId }, data: { passwordHash } });
+      await t.session.updateMany({ where: { userId: row.userId, revokedAt: null }, data: { revokedAt: new Date() } });
+    });
   },
 };
 
@@ -365,6 +1041,108 @@ router.post("/auth/reset", async (req, res) => {
             when: "لما يبقى الدخول السهل فارق في التسجيل. وغالبًا بيبقى Could في الـ MVP، مش Must. ولو بتضيفه، اضيف معاه الـ callback والربط كاملين من أول يوم.",
             mistakes: "إنك تتجاهل الـ state أو تقارنه بقيمة ثابتة. أو تحط الـ verifier في الـ URL بدل cookie. أو تنسى الـ nonce وتقبل أي id_token سليم التوقيع. أو تاخد الإيميل من الـ client وتصدّقه. أو تحط الـ client secret في تطبيق موبايل أو في الواجهة. أو redirect_uri مفتوح بياخد أي URL. وسؤال انترفيو مشهور: «state و nonce و PKCE كلهم عشوائي، ليه التلاتة؟» الإجابة: state ضد CSRF على الـ callback، و nonce بيربط الـ id_token بالجلسة دي، و PKCE بيحمي الـ code لو اتسرب."
           },
+          teach: R`## الـ route ده بيعمل redirect بس
+
+[[GET /auth/google]] مبيكلّمش جوجل. بيعمل ٣ قيم عشوائية، ويحطهم في cookie، ويبني URL صفحة الموافقة بتاعة جوجل، ويحوّل المتصفح عليها (302). جرّبناه على سيرفر Express 5 محلي (بورت 6017، ويندوز 11) بـ client id تجريبي، وفكّينا الـ redirect والـ cookie بسكربت Node. صفحة جوجل نفسها والموافقة محتاجين OAuth client حقيقي من Google Cloud Console، فالجزء ده من توثيق Google.
+
+---
+
+## ١. القيم العشوائية
+
+~~~text
+const state = crypto.randomBytes(16).toString("base64url");
+const nonce = crypto.randomBytes(16).toString("base64url");
+const verifier = crypto.randomBytes(32).toString("base64url");
+~~~
+
+١٦ byte بيبقوا ٢٢ حرف base64url، و ٣٢ byte بيبقوا ٤٣ حرف. ده اللي طلع عندنا:
+
+~~~text الناتج
+cookie keys: [ 'state', 'nonce', 'verifier' ] lens 22 22 43
+~~~
+
+| القيمة | بتروح لجوجل؟ | بتحمي من إيه |
+|---|---|---|
+| [[state]] | أيوه، وبترجع في الـ callback | CSRF: حد يخلّيك تفتح callback بـ code بتاعه |
+| [[nonce]] | أيوه، وبترجع **جوه** الـ id_token | id_token قديم أو من جلسة تانية |
+| [[verifier]] | لأ، الـ hash بتاعه بس | حد سرق الـ code في السكة |
+
+والـ verifier لازم يبقى من ٤٣ لـ ١٢٨ حرف حسب RFC 7636 (معيار PKCE)، و ٣٢ byte بيدّوا ٤٣ بالظبط.
+
+---
+
+## ٢. [[const challenge = crypto.createHash("sha256").update(verifier).digest("base64url");]]
+
+ده PKCE (Proof Key for Code Exchange، بتتنطق «pixy»): بنبعت لجوجل [[sha256(verifier)]] بس. ولما نيجي نبدّل الـ code في الـ callback بنبعت الـ verifier نفسه، وجوجل تحسب الـ hash وتقارن. اللي سرق الـ code ومعهوش الـ verifier ميقدرش يبدّله، ومن الـ hash مينفعش يرجع للـ verifier.
+
+اتأكدنا:
+
+~~~text الناتج
+challenge == sha256(verifier): true 43
+verifier in URL? false
+~~~
+
+---
+
+## ٣. [[res.cookie("oauth", JSON.stringify({ state, nonce, verifier }), { ... })]]
+
+- [[JSON.stringify]] التلاتة في نص واحد، والـ callback يرجّعهم بـ [[JSON.parse]].
+- [[path: "/auth/google"]] الـ cookie بتتبعت لـ [[/auth/google]] و [[/auth/google/callback]] بس.
+- [[maxAge: 600e3]] يعني 600,000 ملّي = ١٠ دقايق.
+- [[sameSite: "lax"]] لازم: الرجوع من جوجل GET عادي (top-level navigation)، و lax بتسمح بالـ cookie فيه. [[strict]] كانت هتمنعها.
+
+~~~text الناتج
+Set-Cookie: oauth=<..>; Max-Age=600; Path=/auth/google; Expires=...; HttpOnly; Secure; SameSite=Lax
+~~~
+
+---
+
+## ٤. بناء الـ URL
+
+~~~text
+const url = new URL("https://accounts.google.com/o/oauth2/v2/auth");
+url.search = new URLSearchParams({ ... }).toString();
+~~~
+
+- [[new URL(...)]] object للعنوان.
+- [[new URLSearchParams({...})]] بيحوّل الـ object لـ [[key=value&key=value]]، وبيعمل encoding لأي رمز خاص لوحده ([[:]] بتبقى [[%3A]] والمسافة [[+]]).
+- [[url.search = ...]] بيحط الكلام ده بعد [[?]].
+
+ده الـ [[Location]] اللي رجع:
+
+~~~text الناتج
+HTTP/1.1 302 Found
+Location: https://accounts.google.com/o/oauth2/v2/auth?client_id=test-client.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A6017%2Fauth%2Fgoogle%2Fcallback&response_type=code&scope=openid+email+profile&state=<..>&nonce=<..>&code_challenge=<..>&code_challenge_method=S256
+~~~
+
+| الـ parameter | القيمة | معناه |
+|---|---|---|
+| [[client_id]] | رقم التطبيق | من Google Cloud Console |
+| [[redirect_uri]] | [[http://localhost:6017/auth/google/callback]] | لازم يطابق اللي متسجّل هناك حرف بحرف، وإلا [[redirect_uri_mismatch]] |
+| [[response_type]] | [[code]] | عايزين code نبدّله من السيرفر (Authorization Code flow) |
+| [[scope]] | [[openid email profile]] | [[openid]] = عايزين id_token، والباقي الإيميل والاسم والصورة |
+| [[state]] و [[nonce]] | العشوائيين | طابقوا اللي في الـ cookie: [[state match: true  nonce match: true]] |
+| [[code_challenge]] | الـ hash | PKCE |
+| [[code_challenge_method]] | [[S256]] | الـ hash نوعه SHA-256 (البديل [[plain]] ضعيف) |
+
+---
+
+## ٥. [[res.redirect(url.toString());]]
+
+[[302 Found]] ومعاه [[Location]]، فالمتصفح يروح لجوجل لوحده. هناك المستخدم يختار حسابه ويوافق، وجوجل ترجّعه على الـ [[redirect_uri]] ومعاه [[?code=...&state=...]] (الدرس الجاي).
+
+---
+
+## الخلاصة
+
+| الخطوة | السطر |
+|---|---|
+| ٣ قيم عشوائية | [[randomBytes]] |
+| PKCE | [[challenge = sha256(verifier)]]، والـ verifier ميطلعش من السيرفر |
+| حفظهم ١٠ دقايق | cookie [[HttpOnly]] و [[SameSite=Lax]] و [[Path=/auth/google]] |
+| صفحة جوجل | [[URLSearchParams]] و [[res.redirect]] |
+
+state ضد CSRF، و nonce بيربط الـ id_token بالجلسة، و PKCE بيحمي الـ code.`,
           lines: [
             "المسار اللي زرار «ادخل بجوجل» بيودّي عليه.",
             "state عشوائي ضد CSRF.",
@@ -435,6 +1213,119 @@ router.get("/auth/google/callback", async (req, res) => {
             when: "مع أي «ادخل بـ ...» (جوجل، أو Apple، أو Microsoft، أو GitHub). الخطوات هي هي في كل مزوّد OIDC، اللي بيتغير الـ URLs والـ issuer. GitHub مش OIDC للدخول العادي، فمفيش id_token، وبتجيب الإيميل من [[/user/emails]] وتبص على [[verified]].",
             mistakes: R`[[jwt.decode]] بدل verify. أو verify من غير [[audience]]. أو تثق في [[email]] من غير [[email_verified]]. أو تربط بالإيميل بدل الـ sub. أو تعمل [[createRemoteJWKSet]] جوه الـ route فتجيب المفاتيح مع كل دخول. أو تحط الـ access token بتاعك في الـ redirect URL ([[/courses?token=...]])، فيتسجل في التاريخ واللوجات. أو تنسى [[clearCookie]] بنفس الـ path فالـ cookie القديمة تفضل. وفي الانترفيو: «إيه الفرق بين access_token و id_token بتوع جوجل؟» الـ id_token ليك انت (مين الشخص)، والـ access_token لـ Google APIs (يعمل إيه)، ومتستخدمش الـ access_token كإثبات هوية.`
           },
+          teach: R`## ٥ فحوصات بالترتيب، وبعدين session
+
+جوجل بترجّع المستخدم على [[/auth/google/callback?code=...&state=...]]. الـ route بيقارن الـ state، ويبدّل الـ code بـ tokens من سيرفر لسيرفر، ويتحقق من الـ id_token، ويقارن الـ nonce، ويتأكد من [[email_verified]]. وبعدين يلاقي المستخدم أو يعمله، ويفتح session.
+
+جرّبناه من غير جوجل، بالظبط زي ما الـ solCode بيقول: سيرفر محلي (بورت 6018) بيقدّم [[/certs]] (مفتاح RSA عام عملناه بـ jose) و [[/token]] (بيرجّع id_token إحنا موقّعينه)، وغيّرنا في الـ config رابط الـ token والـ JWKS بس يشاوروا عليه بدل جوجل. الباقي هو كود الدرس زي ما هو، على Express 5 و jose 6 و Prisma 7 و PostgreSQL 18 (ويندوز 11، Node 24). الاتصال بجوجل الحقيقي من توثيق Google.
+
+---
+
+## ١. [[createRemoteJWKSet(new URL("https://www.googleapis.com/oauth2/v3/certs"))]]
+
+JWKS اختصار JSON Web Key Set: ملف JSON فيه المفاتيح **العامة** اللي جوجل بتتحقق بيها من توقيعها. [[createRemoteJWKSet]] بترجّع دالة (resolver) بتجيب الملف أول مرة وتكاشه، وتختار المفتاح بالـ [[kid]] اللي في header التوكن. بتتعمل مرة واحدة برّه الـ route.
+
+---
+
+## ٢. الـ state
+
+~~~text
+const saved = JSON.parse(req.cookies.oauth ?? "{}");
+res.clearCookie("oauth", { path: "/auth/google" });
+if (!req.query.code || !saved.state || req.query.state !== saved.state) throw new AppError(400, "OAUTH_STATE", ...);
+~~~
+
+- [[req.cookies.oauth ?? "{}"]] لو مفيش cookie، [[JSON.parse("{}")]] بيدّي object فاضي بدل ما يرمي.
+- [[clearCookie]] على طول، بنفس الـ path: الـ cookie تنفع مرة واحدة. في الرد الناجح ظهرت [[oauth=]] فاضية في الـ Set-Cookie.
+- [[!saved.state]] مهمة: من غيرها، لو الاتنين [[undefined]] ([[undefined !== undefined]] بـ false) الفحص يعدّي.
+
+بعتنا state غلط:
+
+~~~text الناتج
+state wrong          400 OAUTH_STATE
+~~~
+
+---
+
+## ٣. تبديل الـ code: [[fetch("https://oauth2.googleapis.com/token", { method: "POST", body: new URLSearchParams({...}) })]]
+
+طلب من سيرفرنا لسيرفر جوجل مباشرة، المتصفح مش فيه. [[URLSearchParams]] كـ body بيتبعت [[application/x-www-form-urlencoded]]، وده الشكل اللي جوجل مستنياه. السيرفر المزيف طبع اللي وصله:
+
+~~~text ترمنال السيرفر المزيف
+TOKEN REQ grant_type=authorization_code&code=4%2F0Afake&code_verifier=<..>&client_id=test-client.apps.googleusercontent.com&client_secret=test-secret&redirect_uri=http%3A%2F%2Flocalhost%3A6017%2Fauth%2Fgoogle%2Fcallback
+~~~
+
+| الحقل | ليه |
+|---|---|
+| [[grant_type=authorization_code]] | نوع التبديل: code مقابل tokens |
+| [[code]] | اللي جه في الـ URL |
+| [[code_verifier]] | PKCE: الأصل اللي الـ challenge اتعمل منه |
+| [[client_id]] و [[client_secret]] | إثبات إن ده تطبيقنا. الـ secret على السيرفر بس |
+| [[redirect_uri]] | لازم نفس اللي في الخطوة الأولى بالظبط |
+
+و [[if (!r.ok) throw ... OAUTH_EXCHANGE]]: جوجل بترفض لو الـ code استُخدم قبل كده، أو خلص (دقايق)، أو الـ verifier غلط.
+
+---
+
+## ٤. [[jwtVerify(id_token, GOOGLE_JWKS, { issuer: [...], audience })]]
+
+بتعمل ٤ فحوصات مرة واحدة، وأي واحد يفشل بيرمي error بكود. [[.catch]] بيحوّل أي فشل لـ 401 [[OAUTH_TOKEN]] من غير ما نقول السبب للمستخدم. طبعنا الكود الداخلي في اللوج:
+
+| التوكن المزيف | الرد | كود jose في اللوج |
+|---|---|---|
+| [[aud]] تطبيق تاني | 401 OAUTH_TOKEN | [[ERR_JWT_CLAIM_VALIDATION_FAILED]] |
+| [[exp]] من دقيقة | 401 OAUTH_TOKEN | [[ERR_JWT_EXPIRED]] |
+| متوقّع بمفتاح RSA تاني | 401 OAUTH_TOKEN | [[ERR_JWS_SIGNATURE_VERIFICATION_FAILED]] |
+
+- [[issuer]] array لأن جوجل بتكتب [[iss]] بشكلين: [[https://accounts.google.com]] و [[accounts.google.com]].
+- [[audience]] لازم يساوي الـ client id بتاعنا. من غيره، id_token معمول لأي تطبيق تاني فيه «ادخل بجوجل» (حتى موقع مهاجم) يعدّي عندنا.
+- [[{ payload }]] destructuring: الـ claims بعد التحقق.
+
+---
+
+## ٥. [[payload.nonce !== saved.nonce]] و [[payload.email_verified !== true]]
+
+~~~text الناتج
+nonce wrong          401 OAUTH_NONCE
+email not verified   403 EMAIL_NOT_VERIFIED
+~~~
+
+- الـ nonce اللي جوه التوكن لازم يساوي اللي في الـ cookie: التوكن ده اتعمل للجلسة دي.
+- [[!== true]] مش [[!payload.email_verified]]: أي قيمة غير [[true]] بالظبط (حتى النص [["true"]]) بترفض.
+
+---
+
+## ٦. النجاح
+
+~~~text
+const user = await linkOrCreate("google", payload);
+await createSession(res, user);
+res.redirect($__bt$__{config.WEB_ORIGIN}/courses$__bt);
+~~~
+
+~~~text الناتج
+valid                302 http://localhost:5173/courses | oauth=, rt=<..>
+same user again      302 http://localhost:5173/courses | oauth=, rt=<..>
+~~~
+
+- [[linkOrCreate]] (الدرس الجاي) بيدوّر بالـ [[sub]]. أول مرة عمل مستخدم [[mona@gmail.com]] من غير باسورد وإيميله متأكد، والمرة التانية لقاه.
+- [[createSession]] نفس session الـ login: صف في القاعدة و cookie [[rt]].
+- الـ redirect للواجهة **من غير** أي توكن في الـ URL. أول طلب هناك هيرجع 401، و [[apiFetch]] تعمل refresh من الـ cookie.
+
+---
+
+## الخلاصة
+
+| الفحص | الكود لو فشل |
+|---|---|
+| state + code موجودين ومتطابقين | 400 OAUTH_STATE |
+| جوجل قبلت الـ code | 401 OAUTH_EXCHANGE |
+| التوقيع و iss و aud و exp | 401 OAUTH_TOKEN |
+| nonce | 401 OAUTH_NONCE |
+| [[email_verified === true]] | 403 EMAIL_NOT_VERIFIED |
+| كله تمام | 302 للواجهة + cookie [[rt]] |
+
+[[jwtVerify]] مش [[decodeJwt]]، ومعاها [[audience]] دايمًا.`,
           lines: [
             "مكتبة jose للتحقق من الـ JWT.",
             "مفاتيح جوجل العامة. الـ resolver بيكاشها ويجيبها تاني لو جوجل غيّرتها.",
@@ -530,6 +1421,99 @@ export async function linkOrCreate(provider, p) {
             when: "أول ما يبقى عندك أكتر من طريقة دخول. حتى لو جوجل بس دلوقتي، اعمل الجدول من الأول، عشان Apple مطلوبة في iOS لو فيه دخول بطرف تالت.",
             mistakes: R`عمود [[googleId]] في جدول users، وبعدين [[appleId]] و [[githubId]]. أو ربط أوتوماتيك بالإيميل من غير ما تتأكد إنه متأكد في الناحيتين. أو [[provider]] بحروف مختلفة ([[Google]] و [[google]]) فيتعمل حسابين. أو تسمح بفك آخر طريقة دخول. وفي الانترفيو: «إيه هو pre-account takeover وإزاي تمنعه؟» بالظبط الحالة اللي فوق.`
           },
+          teach: R`## جدول لطرق الدخول، ودالة بتقرر
+
+المثال حتتين: model [[Account]] (كل صف = طريقة دخول لمستخدم)، ودالة [[linkOrCreate]] اللي الـ callback بيناديها بعد ما يتحقق من الـ id_token. جرّبنا الـ model بـ migration على PostgreSQL 18، والدالة بسكربت [[tsx]] بينادي عليها بـ ٤ سيناريوهات وبعدين سباق (Prisma 7.10، ويندوز 11). قبل التجربة كان فيه مستخدمين اتنين وحساب جوجل واحد من درس الـ callback.
+
+---
+
+## ١. [[model Account]]
+
+| السطر | معناه |
+|---|---|
+| [[provider String]] | [["google"]] أو [["apple"]]... دايمًا small، وإلا [[Google]] و [[google]] يبقوا اتنين |
+| [[providerAccountId String]] | الـ [[sub]] من المزوّد: ثابت حتى لو الإيميل اتغيّر |
+| [[userId String]] | صاحبه عندنا |
+| [[@relation(..., onDelete: Cascade)]] | لو المستخدم اتمسح، طرق دخوله تتمسح معاه |
+| [[@@id([provider, providerAccountId])]] | primary key من عمودين: نفس الـ sub عند نفس المزوّد مرة واحدة بس |
+| [[@@index([userId])]] | «هات طرق دخول المستخدم ده» بسرعة (صفحة الإعدادات) |
+
+مفيش [[id]] منفصل: الاتنين مع بعض هما الهوية. Prisma بيسمّي المفتاح ده [[provider_providerAccountId]] (الاسمين بـ [[_]] بينهم)، وده اللي بتستخدمه في [[findUnique]].
+
+---
+
+## ٢. [[db.$transaction(async (t) => { ... })]]
+
+كل القراية والكتابة جوه transaction واحدة، و [[t]] هو الـ client بتاعها. لو أي سطر رمى، مفيش حاجة بتتكتب.
+
+---
+
+## ٣. خطوة خطوة جوه الدالة
+
+### [[t.account.findUnique({ where: { provider_providerAccountId: { provider, providerAccountId: p.sub } }, include: { user: true } })]]
+
+دوّر بالـ sub الأول. ولو لقيته ([[if (acc) return acc.user;]]) خلاص، ده هو، حتى لو إيميله عند جوجل اتغيّر.
+
+### [[const email = p.email.toLowerCase();]] و [[t.user.findUnique({ where: { email } })]]
+
+مفيش حساب جوجل بالـ sub ده. هل فيه مستخدم عندنا بنفس الإيميل؟
+
+### [[if (existing && !existing.emailVerifiedAt) throw ... LINK_NEEDS_LOGIN]]
+
+فيه مستخدم، بس إيميله **مش متأكد**. ممكن يكون مهاجم عمل الحساب بإيميلك قبلك (pre-account takeover). فمنربطش.
+
+### [[const user = existing ?? (await t.user.create({ ... }))]]
+
+[[??]]: لو فيه [[existing]] (ومتأكد، لأننا عدّينا السطر اللي فوق) استخدمه. لو لأ، اعمل مستخدم جديد: [[emailVerifiedAt: new Date()]] لأن جوجل أكدت الإيميل، ومفيش [[passwordHash]] (العمود بقى [[String?]] اختياري). و [[p.name ?? email]] لو جوجل مبعتتش اسم، استخدم الإيميل.
+
+### [[t.account.create({ data: { provider, providerAccountId: p.sub, userId: user.id } })]]
+
+سجّل طريقة الدخول دي للمستخدم ده.
+
+---
+
+## ٤. التجربة: ٤ سيناريوهات
+
+~~~text الناتج
+start                        users=2 accounts=1
+(1) first google login       ok new@gmail.com | users=3 accounts=2
+(2) same person again        ok new@gmail.com | users=3 accounts=2
+(3) unverified password acc  409 LINK_NEEDS_LOGIN | users=4 accounts=2
+(4) after verifying          ok sara@example.com | users=4 accounts=3
+~~~
+
+1. sub جديد وإيميل جديد ([[New@Gmail.com]] اتخزن small): مستخدم جديد وحساب جديد.
+2. نفس الـ sub: لقاه في أول خطوة، ومفيش ولا صف جديد.
+3. قبلها عملنا [[sara@example.com]] بباسورد من غير تأكيد (users بقوا ٤)، وجه دخول جوجل بنفس الإيميل: رفض 409، ومفيش account اتعمل.
+4. علّمنا إيميل سارة متأكد، ونفس الدخول: account جديد مربوط بسارة القديمة، ومفيش user جديد.
+
+---
+
+## ٥. السباق
+
+٥ callbacks لنفس الشخص الجديد في نفس اللحظة (كررناها ٣ مرات):
+
+~~~text الناتج
+race 0 ok, P2002, P2002, P2002, P2002 | users with that email: 1
+race 1 ok, P2002, P2002, P2002, P2002 | users with that email: 1
+race 2 ok, P2002, P2002, P2002, P2002 | users with that email: 1
+~~~
+
+الخمسة عدّوا الـ [[findUnique]] مع بعض (لسه محدش كتب)، وكلهم حاولوا [[user.create]]. القيد [[@unique]] على الإيميل سمح لواحد بس، والباقيين خدوا [[P2002]] واترجعت الـ transaction بتاعتهم كلها. والـ errorHandler بيحوّل [[P2002]] لـ 409، والمستخدم يضغط تاني فيلاقيه. مستخدم واحد في الآخر، مش خمسة. (لما جربنا اتنين بس، مرة اتنفذوا ورا بعض والاتنين رجعوا ok لنفس المستخدم، وده سليم برضه.)
+
+---
+
+## الخلاصة
+
+| الحالة | النتيجة |
+|---|---|
+| الـ sub معروف | نفس المستخدم |
+| sub جديد، ومفيش حد بالإيميل | مستخدم جديد إيميله متأكد ومن غير باسورد |
+| sub جديد، والإيميل لحساب متأكد | ربط بالحساب ده |
+| sub جديد، والإيميل لحساب مش متأكد | 409 LINK_NEEDS_LOGIN |
+| طلبات متزامنة | واحد ينجح، والباقي P2002 = 409 |
+
+الهوية هي [[(provider, sub)]]، والإيميل للتواصل بس. والربط بالإيميل بس لو متأكد في الناحيتين.`,
           lines: [
             "جدول طرق الدخول.",
             "اسم المزوّد: google أو apple...",
@@ -608,6 +1592,122 @@ router.post("/auth/verify-email", async (req, res) => {
             when: "في أي منتج فيه تسجيل بإيميل. وفي الـ MVP ممكن تسيبه يدخل ويتفرج، وتقفل الشراء والدعوات لحد ما يأكد.",
             mistakes: R`التأكيد بـ GET. أو لينك من غير انتهاء. أو التوكن متخزن زي ما هو. أو «ابعت تاني» من غير حد. أو تأكيد الإيميل الجديد بلينك اتبعت للقديم. أو إنك تمنع الدخول خالص قبل التأكيد، والإيميل واقع في spam، فالمستخدم مش قادر يعمل حاجة ولا يغيّر إيميله الغلط.`
           },
+          teach: R`## route يبعت اللينك بحد، و route يأكد
+
+[[/auth/verify-email/send]] (لازم يكون داخل) بيعد اللينكات اللي اتبعتت في آخر ساعة، ولو أقل من ٣ يعمل توكن ويحطه في الـ queue. و [[/auth/verify-email]] بياخد التوكن بـ POST، ويقفل كل لينكات التأكيد، ويأكد الإيميل بشرط إنه متغيّرش. جرّبناهم على سيرفر دروس الـ auth (Express 5 و Prisma 7 و PostgreSQL 18، ويندوز 11)، و [[emailQueue]] بيطبع الإيميل في الترمنال بدل ما يبعته، و [[requireAuth]] بيتحقق من الـ access token ويحط [[req.user]].
+
+جدول [[EmailToken]] في التجربة: [[userId]] و [[purpose]] (enum فيه [[VERIFY]] و [[CHANGE_EMAIL]]) و [[email]] و [[tokenHash]] (unique) و [[expiresAt]] و [[usedAt]] و [[createdAt]].
+
+---
+
+## ١. [[/auth/verify-email/send]]
+
+### [[router.post("/auth/verify-email/send", requireAuth, async (req, res) => {]]
+
+[[requireAuth]] قبل الـ handler: من غير access token سليم الطلب بيقف بـ 401.
+
+### [[db.user.findUniqueOrThrow({ where: { id: req.user.id } })]]
+
+[[OrThrow]]: لو المستخدم اتمسح والتوكن لسه شغال، بيرمي [[P2025]] (404) بدل ما يرجّع [[null]].
+
+### [[if (user.emailVerifiedAt) return res.status(204).end();]]
+
+متأكد بالفعل؟ مفيش إيميل. جرّبناها بعد التأكيد ورجعت [[204]].
+
+### [[db.emailToken.count({ where: { userId, purpose: "VERIFY", createdAt: { gt: new Date(Date.now() - 3600e3) } } })]]
+
+- [[count]] بيرجّع رقم بس، مش الصفوف.
+- [[gt]] (greater than) أكبر من: اللي اتعمل بعد «من ساعة» ([[3600e3]] = 3,600,000 ملّي).
+
+يعني الحد محسوب من نفس الجدول، من غير Redis.
+
+### [[if (recent >= 3) throw new AppError(429, "TOO_MANY_EMAILS", ...)]]
+
+~~~text الناتج (٤ طلبات ورا بعض)
+send1 202
+send2 202
+send3 202
+{"error":{"code":"TOO_MANY_EMAILS","message":"بعتنالك كذا إيميل. استنى ساعة وجرّب تاني"}}send4 429
+~~~
+
+### [[db.emailToken.create({ data: { userId, purpose: "VERIFY", email: user.email, tokenHash: sha256(token), expiresAt: ... 24 * 3600e3 } })]]
+
+الجديد هنا عمود [[email]]: الإيميل اللي اللينك ده بيأكده **بالظبط**. و ٢٤ ساعة لأن الناس بتفتح الإيميل بعدين.
+
+### [[emailQueue.add(...)]] و [[res.status(202).end()]]
+
+~~~text ترمنال السيرفر
+EMAIL verify-email {"to":"omar@example.com","link":"http://localhost:5173/verify-email?token=<..>"}
+~~~
+
+اللينك لصفحة في الواجهة، مش للـ API. و [[202 Accepted]] = «استلمنا، وهيتعمل بعدين».
+
+---
+
+## ٢. [[/auth/verify-email]]
+
+### [[db.emailToken.findUnique({ where: { tokenHash: sha256(String(req.body.token)) } })]]
+
+[[String(...)]] بيضمن إن اللي داخل لـ [[sha256]] نص، حتى لو حد بعت رقم أو object (ولو بعت [[undefined]] بيبقى النص [["undefined"]] وملوش صف).
+
+### [[if (!row || row.purpose !== "VERIFY" || row.usedAt || row.expiresAt < new Date()) throw ... BAD_TOKEN]]
+
+٤ أسباب للرفض. [[purpose]] مهم: توكن تغيير إيميل ميتقبلش هنا.
+
+### الـ transaction
+
+~~~text
+const [, { count }] = await db.$transaction([
+  db.emailToken.updateMany({ where: { userId: row.userId, purpose: "VERIFY", usedAt: null }, data: { usedAt: new Date() } }),
+  db.user.updateMany({ where: { id: row.userId, email: row.email }, data: { emailVerifiedAt: new Date() } }),
+]);
+~~~
+
+- [[$transaction([...])]] بيرجّع array فيها نتيجة كل عملية بالترتيب.
+- [[const [, { count }] = ...]] destructuring لـ array: الفاصلة الأولى معناها «سيب العنصر الأول»، والتاني ناخد منه [[count]].
+- العملية الأولى: كل لينكات التأكيد المفتوحة للمستخدم تتقفل، مش اللي اتفتح بس.
+- التانية: [[updateMany]] مش [[update]]، عشان نقدر نحط شرط [[email: row.email]]. لو الإيميل في users اتغيّر، مفيش صف يطابق و [[count]] بـ 0.
+
+### [[if (count === 0) throw ... EMAIL_CHANGED]]
+
+---
+
+## ٣. التجربة
+
+أكّدنا بأول لينك من التلاتة، وجرّبنا التاني:
+
+~~~text الناتج
+verify1 204
+{"error":{"code":"BAD_TOKEN","message":"اللينك انتهى، اطلب واحد جديد"}} verify2 400
+~~~
+
+والجدول بعدها: ٣ توكنات، و ٣ مستخدمين ([[used]])، و [[verified = t]].
+
+وتجربة الإيميل المتغيّر: مستخدم تاني طلب لينك لـ [[hana@example.com]]، وغيّرنا إيميله في القاعدة لـ [[hana2@example.com]]، وفتحنا اللينك:
+
+~~~text الناتج
+{"error":{"code":"EMAIL_CHANGED","message":"الإيميل اتغير بعد اللينك ده"}} 400
+{"error":{"code":"BAD_TOKEN","message":"اللينك انتهى، اطلب واحد جديد"}} 400
+~~~
+
+~~~text الناتج من psql
+       email       | verified |   token_email    | used
+ hana2@example.com | f        | hana@example.com | t
+~~~
+
+الإيميل الجديد مش متأكد، والتوكن اتحرق (الـ transaction خلصت، والرمي بعدها). المرة التانية بقت BAD_TOKEN.
+
+---
+
+## الخلاصة
+
+| الحماية | فين |
+|---|---|
+| ٣ إيميلات في الساعة | [[count]] على نفس الجدول، و 429 |
+| اللينك بيأكد إيميل معيّن | عمود [[email]] وشرط [[email: row.email]] |
+| مرة واحدة، وكل اللينكات تتقفل | [[updateMany]] على كل توكنات VERIFY |
+| برامج فحص الإيميل متأكدش لوحدها | التأكيد POST من صفحة الواجهة، مش GET |
+| نوع التوكن | [[purpose !== "VERIFY"]] |`,
           lines: [
             "ابعت لينك تأكيد. لازم يكون داخل.",
             "هات المستخدم.",
@@ -687,6 +1787,167 @@ router.post("/me/2fa/enable", requireAuth, async (req, res) => {
             when: "للأدمن والمدرّبين إجباري. وللطلاب اختياري في الإعدادات. ولو المنتج فيه فلوس (رصيد، أو محفظة، أو payouts للمدرّبين)، اطلبه قبل أي سحب.",
             mistakes: R`السر نص عادي في القاعدة. أو تفعيل من غير كود تأكيد. أو [[epochTolerance]] كبيرة جدًا (دقايق). أو تنسى إن [[verify]] بترجّع object فتكتب [[if (await verify(...))]]، وده دايمًا true لأن الـ object مش falsy. أو تعرض الـ recovery codes تاني من الإعدادات، يعني متخزنين بشكل يترجع. أو تبعت الأكواد بـ SMS كبديل وحيد، والـ SIM swap بيسرقها.`
           },
+          teach: R`## خطوتين: سر و QR، وبعدين تأكيد بكود
+
+[[/me/2fa/setup]] بيعمل سر عشوائي، ويخزنه مشفّر، ويرجّع صورة QR. و [[/me/2fa/enable]] بياخد أول كود من تطبيق الموبايل، ولو صح بيشغّل الـ 2FA ويرجّع ١٠ recovery codes. جرّبناهم بـ otplib 13.5 و qrcode 1.5 على سيرفر دروس الـ auth (Express 5 و Prisma 7 و PostgreSQL 18، ويندوز 11). بدل الموبايل، ولّدنا الكود بـ [[generate({ secret })]] من otplib نفسها، وهي نفس الحسبة اللي Google Authenticator بيعملها. ورجّعنا الـ [[uri]] كمان في الرد للتجربة بس.
+
+---
+
+## ١. [[import { generateSecret, generateURI, verify } from "otplib";]]
+
+otplib من نسخة 13 بقت functions منفصلة (مش [[authenticator.xxx]] زي القديم)، و [[verify]] بقت async.
+
+---
+
+## ٢. [[/me/2fa/setup]]
+
+### [[router.post("/me/2fa/setup", requireAuth, requireRecentAuth(), ...)]]
+
+داخل، و [[authAt]] بتاعه من أقل من ١٠ دقايق (درس step-up). احنا كنا لسه عاملين login، فعدّى.
+
+### [[if (user.totpEnabledAt) throw new AppError(409, "MFA_ALREADY_ON", ...)]]
+
+بعد التفعيل جرّبنا setup تاني:
+
+~~~text الناتج
+setup again: 409 MFA_ALREADY_ON
+~~~
+
+### [[const secret = generateSecret();]]
+
+~~~text الناتج
+secret: 32 chars base32
+~~~
+
+base32 حروف [[A-Z]] وأرقام [[2-7]] بس (من غير ٠ و ١ عشان ميتلخبطوش مع O و I)، لأن الناس ممكن تكتبه بإيدها. ٣٢ حرف = ٢٠ byte عشوائي.
+
+### [[totpSecretEnc: encrypt(secret)]]
+
+بيتخزن مشفّر، ولسه [[totpEnabledAt]] فاضي: الـ 2FA مش شغالة لحد ما يأكد بكود. في القاعدة شكله:
+
+~~~text الناتج من psql (أول ٤٠ حرف)
+mKR3gE9XSz0iFxF7.BU56M23_lstoLhGSQ4RZJg.
+~~~
+
+### [[generateURI({ issuer: "myapp", label: user.email, secret })]]
+
+~~~text الناتج
+otpauth://totp/myapp:omar%40example.com?secret=<SECRET>&issuer=myapp
+~~~
+
+ده الـ URI اللي التطبيقات بتفهمه: [[totp]] النوع، و [[myapp:omar%40example.com]] اللي هيظهر في التطبيق ([[%40]] هي [[@]] بعد الـ encoding)، و [[secret]] السر، و [[issuer]] اسم التطبيق.
+
+### [[await QRCode.toDataURL(uri)]]
+
+~~~text الناتج
+qr: data:image/png;base64,iVBORw0K... 3190 chars
+~~~
+
+صورة PNG مكتوبة نص (data URL). الواجهة بتحطها في [[<img src="...">]] على طول. والسر بيرجع كنص كمان للي هيكتبه بإيده.
+
+---
+
+## ٣. [[/me/2fa/enable]]
+
+### [[z.object({ code: z.string().regex(/^\d{6}$/) })]]
+
+[[/^\d{6}$/]] regex: [[^]] البداية، و [[\d]] رقم، و [[{6}]] ٦ مرات، و [[$]] النهاية. يعني ٦ أرقام بالظبط ومفيش غيرهم:
+
+~~~text الناتج
+5 digits: 400 VALIDATION
+~~~
+
+### [[if (!user.totpSecretEnc || user.totpEnabledAt) throw ... NO_PENDING_SETUP]]
+
+مفيش setup، أو شغالة بالفعل.
+
+### [[await verify({ secret: decrypt(user.totpSecretEnc), token: code, epochTolerance: 30 })]]
+
+من جوه لبرة: [[decrypt]] يرجّع السر، و [[verify]] تحسب الكود المتوقع وتقارن. و [[epochTolerance: 30]] تقبل ٣٠ ثانية قبل وبعد (الفترة اللي فاتت واللي جاية). الكود نفسه: HMAC للسر مع رقم الفترة [[floor(unixTime / 30)]]، ومنه ٦ أرقام.
+
+~~~text الناتج
+verify() returns: {"valid":true,"delta":0,"epoch":1791454560,"timeStep":"number"} | floor(now/30) = true
+~~~
+
+بترجّع **object**: [[valid]] صح ولا لأ، و [[delta]] الكود من أنهي فترة (0 = الحالية، -1 = اللي فاتت)، و [[epoch]] وقت الفترة، و [[timeStep]] رقمها (طلع بالظبط [[floor(now/30)]]). وده الفخ:
+
+~~~text الناتج
+if(await verify(bad)) -> true but .valid = false
+~~~
+
+أي object في JavaScript بيعتبر [[true]] في الـ if، حتى لو الكود غلط. عشان كده الكود بيكتب [[if (!r.valid)]].
+
+كود غلط:
+
+~~~text الناتج
+wrong code: 400 BAD_CODE
+~~~
+
+### الـ recovery codes
+
+~~~text
+const codes = Array.from({ length: 10 }, () => crypto.randomBytes(5).toString("hex"));
+~~~
+
+[[Array.from({ length: 10 }, fn)]] array من ١٠ عناصر، كل عنصر من الدالة. و [[randomBytes(5)]] ٥ bytes = ١٠ حروف hex.
+
+### الـ transaction
+
+- [[totpEnabledAt: new Date()]] الـ 2FA بقت شغالة.
+- [[totpLastStep: r.timeStep]] الفترة اللي الكود ده اتقبل فيها، عشان نفس الكود ميتقبلش تاني في الدخول. في القاعدة: [[59715152]].
+- امسح الأكواد القديمة، وخزّن sha256 للجديدة بس.
+
+~~~text الناتج
+enable: 200 10 codes, e.g. 1e4******* len 10
+~~~
+
+والأكواد بترجع **مرة واحدة**: القاعدة فيها hashes بس، فمفيش طريقة نعرضهم تاني.
+
+---
+
+## ٤. التشفير (الـ solCode): AES-256-GCM
+
+### [[const KEY = Buffer.from(config.TOTP_ENC_KEY, "base64");]]
+
+المفتاح ٣٢ byte (= 256 bit، ومن هنا [[256]] في الاسم)، مكتوب base64 في متغير البيئة (٤٤ حرف).
+
+### [[encrypt]]
+
+1. [[crypto.randomBytes(12)]] الـ IV (initialization vector): ١٢ byte عشوائي جديد مع **كل** تشفير. ١٢ هو الطول المعتاد لـ GCM.
+2. [[createCipheriv("aes-256-gcm", KEY, iv)]] جهّز التشفير.
+3. [[cipher.update(plain, "utf8")]] و [[cipher.final()]] النص المشفّر، و [[Buffer.concat]] بيلزقهم.
+4. [[cipher.getAuthTag()]] الـ tag: ١٦ byte زي «ختم» على الناتج.
+5. التلاتة بـ base64url ومتلزقين بـ [[.]].
+
+~~~text الناتج (نفس النص مرتين)
+qvXHN2iOj26AOVwB.G1GyxZEpQfg_0AfPWfVggQ.tUXUv7i20p0
+ENgw07rwj6CrGdNh.W8S5c1xQJo9-c___XsNgZA.erXYeJLkqJo
+same? false | parts: [ 16, 22, 11 ]
+~~~
+
+مختلفين لأن الـ IV مختلف. الأطوال: IV ١٢ byte = ١٦ حرف، و tag ١٦ byte = ٢٢ حرف، والداتا ٨ byte = ١١ حرف.
+
+### [[decrypt]]
+
+بيفك التلاتة، و [[decipher.setAuthTag(tag)]] بيقول «ده الختم المتوقع»، و [[final()]] بيتأكد منه:
+
+~~~text الناتج
+decrypt: JBSWY3DP
+tampered: Unsupported state or unable to authenticate data
+~~~
+
+غيّرنا حرف واحد في الداتا، فالختم مطابقش و [[final()]] رمت. GCM مش بيشفّر بس، بيكشف أي تعديل.
+
+---
+
+## الخلاصة
+
+| الخطوة | الحاجة المهمة |
+|---|---|
+| setup | سر base32 عشوائي، مشفّر AES-GCM، و QR من [[otpauth://]] |
+| enable | ٦ أرقام، و [[r.valid]] مش [[r]]، وسماحية فترة واحدة قبل وبعد |
+| بعد التفعيل | [[totpLastStep]] و ١٠ recovery codes تتعرض مرة واحدة |
+| التشفير | IV جديد كل مرة، والـ tag بيكشف التعديل، والمفتاح برّه القاعدة |`,
           lines: [
             "otplib للـ TOTP: سر، و URI للـ QR، وتحقق.",
             "مكتبة بتحوّل الـ URI لصورة QR.",
@@ -785,6 +2046,123 @@ router.post("/auth/2fa", mfaLimiter, async (req, res) => {
             when: "مع أي 2FA. والـ recovery codes جزء من الـ 2FA نفسه، مش ميزة إضافية.",
             mistakes: R`نفس السر للـ mfaToken والـ access token. أو مفيش rate limit على الكود. أو الكود يتقبل أكتر من مرة. أو recovery codes متخزنة نص، أو بتتقارن بـ [[findFirst]] وبعدين [[update]] في خطوتين. أو «ابعتلي الكود بالإيميل» كبديل من غير أي حد، فبقى الإيميل هو الـ factor التاني بس. وفي الانترفيو: «TOTP بيحمي من phishing؟» لأ مش تمامًا: موقع مزيف ممكن ياخد الكود ويستخدمه في نفس الثانية. اللي بيحمي فعلًا الـ passkeys، لأنها مربوطة بالدومين.`
           },
+          teach: R`## الـ login بقى خطوتين
+
+لو الـ 2FA شغالة، الباسورد الصح بيرجّع [[mfaToken]] بس (مش توكنات دخول). والواجهة بتبعته مع الكود لـ [[/auth/2fa]]: كود TOTP ٦ أرقام، أو recovery code. جرّبناه على سيرفر دروس الـ auth (Express 5 و otplib 13 و jsonwebtoken و Prisma 7 و PostgreSQL 18، ويندوز 11) بحساب فعّلنا عليه الـ 2FA في الدرس اللي فات. الكود ولّدناه بـ [[generate({ secret })]] من otplib بعد ما فكينا السر من القاعدة (زي ما التطبيق بيحسبه)، واستنينا فترة ٣٠ ثانية جديدة الأول، وضفنا recovery code معروف ([[abcde12345]]) للتجربة.
+
+---
+
+## ١. آخر الـ login
+
+~~~text
+if (user.totpEnabledAt) {
+  const mfaToken = jwt.sign({ sub: user.id }, config.MFA_JWT_SECRET, { expiresIn: "5m" });
+  return res.json({ data: { mfaRequired: true, mfaToken } });
+}
+~~~
+
+- [[sub]] بس، من غير [[role]]: التوكن ده مش بيدّي أي صلاحية.
+- [[MFA_JWT_SECRET]] سر **تاني** غير [[JWT_SECRET]].
+- [[expiresIn: "5m"]] خمس دقايق يكتب فيهم الكود.
+
+~~~text الناتج
+login  200 {"data":{"mfaRequired":true,"mfaToken":"eyJhbGciOiJIUzI1NiIs...
+mfaToken payload: {"sub":"cmuzdrjin00038cieaxx4sn48","iat":1791454680,"exp":1791454980}
+~~~
+
+[[exp - iat = 300]] ثانية. وجربناه كـ [[Authorization: Bearer]] على endpoint عليه [[requireAuth]]:
+
+~~~text الناتج
+mfaToken as Bearer  401 {"error":{"code":"UNAUTHENTICATED","message":"سجّل دخول"}}
+~~~
+
+[[requireAuth]] بيتحقق بـ [[JWT_SECRET]]، والتوقيع اتعمل بسر تاني، فرفض. لو السرين واحد، الباسورد لوحده كان هيكفي.
+
+---
+
+## ٢. [[checkTotp(user, code)]]
+
+~~~text
+const r = await verify({ secret: decrypt(user.totpSecretEnc), token: code, epochTolerance: 30, afterTimeStep: user.totpLastStep ?? undefined });
+if (!r.valid) return false;
+~~~
+
+[[afterTimeStep]] بيرفض أي كود فترته أقدم من آخر فترة اتقبلت **أو تساويها**. و [[?? undefined]] لأن القاعدة بترجّع [[null]] لو مفيش، والمكتبة مستنية [[undefined]] أو رقم.
+
+~~~text
+const { count } = await db.user.updateMany({ where: { id: user.id, OR: [{ totpLastStep: null }, { totpLastStep: { lt: r.timeStep } }] }, data: { totpLastStep: r.timeStep } });
+return count === 1;
+~~~
+
+نفس فكرة الـ refresh rotation: خزّن الفترة دي **بشرط** إنها أحدث من المتخزنة ([[lt]] = less than). [[OR]] بيقبل الحالتين: لسه مفيش فترة، أو المتخزنة أقدم. لو طلبين بنفس الكود وصلوا مع بعض، الاتنين يعدّوا [[verify]]، بس واحد بس ياخد [[count === 1]].
+
+---
+
+## ٣. [[/auth/2fa]]
+
+### [[z.object({ mfaToken: z.string(), code: z.string().trim().max(20) })]]
+
+[[trim]] عشان المسافات اللي بتيجي مع النسخ واللصق، و [[max(20)]] حد معقول.
+
+### [[try { sub = jwt.verify(mfaToken, config.MFA_JWT_SECRET).sub; } catch { throw ... MFA_EXPIRED }]]
+
+[[jwt.verify]] بيرمي لو التوقيع غلط أو خلص. [[catch]] من غير [[(e)]] مسموحة في JavaScript الحديث. بوّظنا آخر التوكن:
+
+~~~text الناتج
+bad mfaToken  401 {"error":{"code":"MFA_EXPIRED","message":"ابدأ الدخول من الأول"}}
+~~~
+
+### [[if (/^\d{6}$/.test(code)) ok = await checkTotp(user, code);]]
+
+[[regex.test(text)]] بترجّع [[true]] لو النص ٦ أرقام بالظبط: يبقى TOTP.
+
+~~~text الناتج
+totp 1st       200 {"data":{"accessToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+same totp 2nd  401 {"error":{"code":"BAD_CODE","message":"الكود غلط"}}
+~~~
+
+نفس الكود، في نفس الـ ٣٠ ثانية، اترفض المرة التانية: [[totpLastStep]] بقى فترته.
+
+### الـ recovery code
+
+~~~text
+const { count } = await db.recoveryCode.updateMany({ where: { userId: user.id, codeHash: sha256(code.toLowerCase().replace(/[^0-9a-f]/g, "")), usedAt: null }, data: { usedAt: new Date() } });
+~~~
+
+من جوه لبرة:
+
+1. [[code.toLowerCase()]]: [[ABCDE-12345]] بقى [[abcde-12345]].
+2. [[.replace(/[^0-9a-f]/g, "")]]: [[[^...]]] أي حرف **مش** من 0-9 و a-f، و [[g]] كله مش أول واحد بس. الشَرطة والمسافات بتتشال، فبقى [[abcde12345]].
+3. [[sha256(...)]] ونقارن بالـ hash المتخزن.
+4. [[updateMany]] بشرط [[usedAt: null]]: يلاقيه ويحرقه في خطوة واحدة.
+
+~~~text الناتج
+recovery ABCDE-12345  200 {"data":{"accessToken":...
+recovery again        401 {"error":{"code":"BAD_CODE","message":"الكود غلط"}}
+~~~
+
+~~~text ترمنال السيرفر
+EMAIL recovery-code-used {"to":"omar@example.com"}
+~~~
+
+### [[return issueTokens(res, user);]]
+
+بعد الكود الصح بس، نفس توكنات أي login.
+
+---
+
+## الخلاصة
+
+| الحالة | الرد |
+|---|---|
+| باسورد صح و 2FA شغالة | 200 [[mfaRequired]] و [[mfaToken]] (٥ دقايق) |
+| [[mfaToken]] على API عادي | 401، سر مختلف |
+| [[mfaToken]] بايظ أو خلص | 401 MFA_EXPIRED |
+| TOTP صح، أول مرة في الفترة | 200 توكنات |
+| نفس الـ TOTP تاني | 401 BAD_CODE |
+| recovery code بأي شكل كتابة | 200 أول مرة وإيميل تنبيه، وبعدها 401 |
+
+وفي الإنتاج لازم [[mfaLimiter]] حقيقي: ٦ أرقام يعني مليون احتمال بس.`,
           lines: [
             "الباسورد صح، والـ 2FA شغالة؟",
             "توكن ٥ دقايق بسر مختلف، معناه «ناقص الكود» بس.",
@@ -859,6 +2237,111 @@ GitHub بيعمل كده بالظبط («sudo mode»)، وجوجل بتطلب ا
             when: "على كل endpoint بيغيّر طريقة الدخول أو التواصل (إيميل، باسورد، 2FA، ربط أو فك provider، passkeys)، أو بيطلّع فلوس، أو بيمسح حاجة مبترجعش.",
             mistakes: R`الـ refresh بيحدّث [[authAt]]. أو الـ step-up بالباسورد بس والـ 2FA شغالة. أو [[/auth/reauth]] من غير rate limit، فبقى endpoint تخمين باسورد تاني. أو إنك تعتمد على «الواجهة بتطلب الباسورد» والسيرفر مبيتحققش، يعني أي طلب مباشر يعدّي. أو إنك تطلب الباسورد القديم في فورم تغيير الباسورد بس، وتنسى الإيميل والـ 2FA.`
           },
+          teach: R`## middleware بيسأل «إمتى آخر مرة أثبت إنه هو؟»
+
+[[requireRecentAuth]] بيقرا [[authAt]] من الـ access token، ولو عدى أكتر من ١٠ دقايق بيرفض بـ [[REAUTH_REQUIRED]]. و [[/auth/reauth]] بياخد الباسورد (والكود لو فيه 2FA)، ويحدّث [[authAt]] في الـ session، ويرجّع access token جديد. جرّبناه على سيرفر دروس الـ auth (Express 5 و jsonwebtoken و argon2 و Prisma 7 و PostgreSQL 18، ويندوز 11). الـ access token فيه [[sid]] (رقم الـ session) و [[authAt]] (بالثواني من ١٩٧٠)، وجدول sessions فيه عمود [[authAt DateTime @default(now())]]، وعشان نجرّب «توكن من ساعة» وقّعنا توكن بإيدنا بنفس السر بتاع التجربة و [[authAt]] أقدم بـ ٣٦٠٠ ثانية.
+
+~~~text الناتج: payload توكن بعد login
+{"sub":"..","role":"STUDENT","sid":"..","authAt":1791454740,"iat":1791454740,...}
+~~~
+
+---
+
+## ١. [[requireRecentAuth(maxAgeSec = 600)]]
+
+~~~text
+export function requireRecentAuth(maxAgeSec = 600) {
+  return (req, res, next) => {
+    if (Date.now() / 1000 - (req.user.authAt ?? 0) > maxAgeSec) throw new AppError(401, "REAUTH_REQUIRED", ...);
+    next();
+  };
+}
+~~~
+
+- دالة **بترجّع** middleware. عشان كده بتتكتب [[requireRecentAuth()]] بأقواس في الـ route، وتقدر تدّيها مدة تانية: [[requireRecentAuth(300)]].
+- [[= 600]] قيمة افتراضية: ١٠ دقايق بالثواني.
+- [[Date.now() / 1000]] الوقت بالثواني (عشان [[authAt]] بالثواني).
+- [[req.user.authAt ?? 0]] لو التوكن مفيهوش [[authAt]] (توكن قديم)، اعتبره من ١٩٧٠، يعني يترفض.
+- الـ [[throw]] جوه middleware عادي بيوصل للـ errorHandler.
+
+~~~text الناتج
+DELETE /me (authAt -1h)   401 {"error":{"code":"REAUTH_REQUIRED","message":"اكتب الباسورد تاني عشان تكمّل"}}
+~~~
+
+---
+
+## ٢. [[/auth/reauth]]
+
+### [[router.post("/auth/reauth", requireAuth, reauthLimiter, ...)]]
+
+لازم داخل (أي توكن سليم حتى لو قديم)، وعليه rate limit لأنه بيقبل باسوردات.
+
+### [[z.object({ password: z.string().max(128), code: z.string().optional() })]]
+
+[[code]] اختياري، للي عنده 2FA.
+
+### [[if (!user.passwordHash || !(await argon2.verify(user.passwordHash, password))) throw ... BAD_PASSWORD]]
+
+[[!user.passwordHash]] الأول: المستخدم اللي داخل بجوجل بس مفيش عنده باسورد، ومن غير الفحص ده [[argon2.verify(null, ...)]] كانت هترمي. (هو محتاج reauth من جوجل أو passkey، والـ deep بيشرحها.)
+
+~~~text الناتج
+reauth wrong password  401 {"error":{"code":"BAD_PASSWORD","message":"الباسورد غلط"}}
+~~~
+
+### [[if (user.totpEnabledAt && !(code && (await checkTotp(user, code)))) throw ... BAD_CODE]]
+
+من جوه لبرة: [[checkTotp]] نفس دالة درس «2FA: الدخول». [[code && ...]] لو مفيش كود خالص النتيجة [[undefined]] (يعني false). و [[!( )]] قلبها. فالشرط: «الـ 2FA شغالة **و** الكود ناقص أو غلط». جرّبنا مستخدم عليه 2FA بالباسورد بس:
+
+~~~text الناتج
+2FA user, password only  401 {"error":{"code":"BAD_CODE","message":"كود الـ 2FA غلط"}}
+~~~
+
+### [[db.session.update({ where: { id: req.user.sid }, data: { authAt: new Date() } })]]
+
+بنحدّث الـ session **الحالية** بس ([[sid]] من التوكن). باقي أجهزة المستخدم مبيتعملهاش step-up.
+
+### [[res.json({ data: { accessToken: signAccess(user, session.id, session.authAt) } })]]
+
+توكن جديد [[authAt]] بتاعه دلوقتي:
+
+~~~text الناتج
+reauth right password   200 {"data":{"accessToken":"eyJhbGciOiJIUzI1NiIsInR5cC...
+new authAt - now: 0
+DELETE /me (new token)  204
+~~~
+
+---
+
+## ٣. [[router.delete("/me", requireAuth, requireRecentAuth(), deleteAccount);]]
+
+الترتيب مهم: [[requireAuth]] الأول عشان يحط [[req.user]]، وبعدين [[requireRecentAuth()]] يقرا منه. لو قلبتهم، [[req.user]] هيبقى [[undefined]] والسطر يرمي TypeError (500).
+
+---
+
+## ٤. السؤال: الـ refresh يحط [[authAt]] إيه؟
+
+رجّعنا [[authAt]] الـ session ٢٠ دقيقة لورا، وعملنا refresh:
+
+~~~text الناتج
+after refresh, authAt age (s): 1200
+DELETE /me (refreshed)  401 {"error":{"code":"REAUTH_REQUIRED",...}}
+~~~
+
+التوكن الجديد شايل [[authAt]] القديم (١٢٠٠ ثانية = ٢٠ دقيقة)، فالـ step-up اتطلب تاني. وده المطلوب. بس خلي بالك: الـ refresh في درس «refresh rotation» بيعمل **session جديدة**، و [[authAt]] فيها [[default(now())]]. عشان التجربة تطلع كده، [[issueTokens]] عندنا بتاخد [[session.authAt]] كـ parameter تالت وتكتبه في الـ session الجديدة. لو نسيت، كل refresh بيعمل step-up لوحده.
+
+---
+
+## الخلاصة
+
+| الحاجة | فين |
+|---|---|
+| وقت آخر إثبات | [[authAt]] في الـ session وفي الـ access token |
+| الرفض | [[requireRecentAuth()]] بعد [[requireAuth]]، و 401 REAUTH_REQUIRED |
+| الإثبات | [[/auth/reauth]]: باسورد، وكود لو فيه 2FA، و rate limit |
+| بيحدّث مين | الـ session الحالية بس ([[sid]]) |
+| الـ refresh | ينقل [[authAt]] القديم، مش الوقت الحالي |
+
+وفي الواجهة: [[REAUTH_REQUIRED]] = افتح نافذة الباسورد، وابعت reauth، وعيد الطلب بالتوكن الجديد.`,
           lines: [
             "middleware بيتأكد إن آخر إثبات هوية حصل من قريب (١٠ دقايق افتراضي).",
             "دالة الـ middleware.",
@@ -878,7 +2361,7 @@ GitHub بيعمل كده بالظبط («sudo mode»)، وجوجل بتطلب ا
           ],
           sol: R`بالتوكن القديم: [[DELETE /me]] يرجع [[401 REAUTH_REQUIRED]]. بعد [[/auth/reauth]] بالباسورد (والكود لو فيه 2FA) بتاخد access token جديد، و [[DELETE /me]] بيه يعدّي.
 
-إجابة السؤال: الـ refresh بعد ٢٠ دقيقة لازم يحط [[authAt]] بتاع الـ session نفسها (وقت الـ login أو آخر reauth)، يعني قديم، فالـ step-up يتطلب تاني. في كود الـ refresh: [[signAccess(user, session.id, session.authAt)]].
+إجابة السؤال: الـ refresh بعد ٢٠ دقيقة لازم يحط [[authAt]] بتاع الـ session نفسها (وقت الـ login أو آخر reauth)، يعني قديم، فالـ step-up يتطلب تاني. وخلي بالك إن الـ refresh بيعمل session **جديدة** (rotation)، وعمود [[authAt]] فيها default [[now()]]. فلازم تنقل القيمة القديمة: [[issueTokens(res, session.user, session.authAt)]]، و [[issueTokens]] تعمل الـ session الجديدة بنفس [[authAt]] وتحطه في التوكن. لو نادتها من غير التالت زي كود درس «refresh rotation»، كل refresh هيصفّر [[authAt]] والـ step-up يبقى ملوش لازمة.
 
 لو جرّبت الـ reauth بالباسورد بس والـ 2FA شغالة، المفروض [[401 BAD_CODE]]. ولو عدّى، يبقى نسيت الشرط التاني.`
         },
@@ -893,7 +2376,7 @@ GitHub بيعمل كده بالظبط («sudo mode»)، وجوجل بتطلب ا
   const user = await db.user.findUniqueOrThrow({ where: { id: req.user.id } });
   await db.$transaction([
     db.user.update({ where: { id: user.id }, data: { passwordHash: await argon2.hash(newPassword) } }),
-    db.session.updateMany({ where: { userId: user.id, revokedAt: null, id: { not: req.user.sid } }, data: { revokedAt: new Date() } }),
+    db.session.deleteMany({ where: { userId: user.id, id: { not: req.user.sid } } }),
   ]);
   await emailQueue.add("password-changed", { to: user.email });
   res.status(204).end();
@@ -923,13 +2406,147 @@ router.post("/me/email", requireAuth, requireRecentAuth(), async (req, res) => {
             when: "في صفحة الإعدادات لأي منتج فيه حسابات. ولو المنتج فيه فلوس، ممكن تضيف فترة انتظار (٢٤ ساعة مثلًا) قبل ما الإيميل الجديد يقدر يعمل سحب.",
             mistakes: R`تغيير الإيميل فورًا من غير تأكيد. أو لينك التأكيد يروح للإيميل القديم. أو متبعتش أي حاجة للقديم. أو تغيير الباسورد من غير إلغاء الـ sessions. أو إلغاء الـ session الحالية كمان فالمستخدم يطلع ويستغرب. أو إنك تنسى تحدّث إيميل Stripe أو مزوّد الإيميلات بعد التغيير.`
           },
+          teach: R`## ٣ routes: الباسورد، وطلب تغيير الإيميل، وتأكيده
+
+[[/me/password]] بيغيّر الباسورد ويطلّع كل الأجهزة التانية. [[/me/email]] مبيغيّرش الإيميل، بيبعت لينك للإيميل الجديد وتنبيه للقديم. و [[/auth/confirm-email-change]] (الـ solCode) هو اللي بيغيّره فعلًا لما اللينك يتفتح. جرّبناهم على سيرفر دروس الـ auth (Express 5 و argon2 و Prisma 7 و PostgreSQL 18، ويندوز 11)، بمستخدم داخل من «متصفحين» (login مرتين: A و B)، و [[emailQueue]] بيطبع الإيميلات.
+
+---
+
+## ١. [[/me/password]]
+
+### [[router.post("/me/password", requireAuth, requireRecentAuth(), ...)]]
+
+داخل، ومن قريب (درس step-up). ده اللي بيغني عن «اكتب الباسورد القديم» في الفورم.
+
+### [[z.object({ newPassword: z.string().min(8).max(128) })]]
+
+نفس قواعد التسجيل.
+
+### الـ transaction
+
+~~~text
+db.user.update({ where: { id: user.id }, data: { passwordHash: await argon2.hash(newPassword) } }),
+db.session.deleteMany({ where: { userId: user.id, id: { not: req.user.sid } } }),
+~~~
+
+- [[await argon2.hash(newPassword)]] بيتحسب قبل ما الـ array يتبني، فالـ transaction نفسها بتستلم hash جاهز.
+- [[id: { not: req.user.sid }]] كل الـ sessions **ما عدا** الحالية ([[sid]] من التوكن).
+- [[deleteMany]] مش [[updateMany]] بـ [[revokedAt]]. المثال الأصلي كان بيعلّم [[revokedAt]]، وجرّبناه كده الأول:
+
+~~~text الناتج (النسخة القديمة)
+A: change password      204
+B: refresh              401 {"error":{"code":"TOKEN_REUSED",...}}
+A: refresh              401 {"error":{"code":"TOKEN_REUSED",...}}
+~~~
+
+الـ refresh (درس rotation) بيعتبر أي session ملغية «توكن مسروق» وبيلغي **كل** الـ sessions، فـ A اللي غيّر الباسورد طلع هو كمان. بعد ما خليناها مسح:
+
+~~~text الناتج
+A: change password      204
+B: access token still   200 {"data":{"me":"cmuzdyb0s0000lsiel4b59l2e"}}
+B: refresh              401 {"error":{"code":"NO_SESSION","message":"سجّل دخول تاني"}}
+A: refresh              200 {"data":{"accessToken":...
+~~~
+
+- B لسه شغال بالـ access token لحد ما يخلص (لحد ١٥ دقيقة): ده حد الـ JWT المعروف.
+- أول refresh لـ B مبيلاقيش session: يدخل من الأول.
+- A فضل داخل.
+
+### [[emailQueue.add("password-changed", { to: user.email })]] و [[res.status(204).end()]]
+
+~~~text ترمنال السيرفر
+EMAIL password-changed {"to":"chg@example.com"}
+~~~
+
+---
+
+## ٢. [[/me/email]]
+
+### [[z.object({ email: z.email().transform((e) => e.toLowerCase()) })]]
+
+بعتنا [[Chg.New@Example.com]] واتخزن [[chg.new@example.com]].
+
+### [[db.emailToken.create({ data: { userId, purpose: "CHANGE_EMAIL", email, tokenHash: sha256(token), expiresAt: ... 3600e3 } })]]
+
+الإيميل الجديد مستني في صف التوكن، و [[purpose: "CHANGE_EMAIL"]]، والمدة ساعة. وجدول users لسه زي ما هو:
+
+~~~text الناتج
+A: change email      202
+users.email still: chg@example.com
+~~~
+
+### الإيميلين
+
+~~~text ترمنال السيرفر
+EMAIL confirm-new-email {"to":"chg.new@example.com","link":"http://localhost:5173/confirm-email?token=<..>"}
+EMAIL email-change-requested {"to":"chg@example.com","newEmail":"chg.new@example.com"}
+~~~
+
+اللينك للجديد (يثبت إنه بتاعه)، والتنبيه للقديم (لو مش هو يتحرك بدري).
+
+---
+
+## ٣. [[/auth/confirm-email-change]] (الـ solCode)
+
+### الفحص
+
+[[!row || row.purpose !== "CHANGE_EMAIL" || row.usedAt || row.expiresAt < new Date()]]: جرّبنا توكن تأكيد إيميل عادي (VERIFY) على الـ route ده:
+
+~~~text الناتج
+{"error":{"code":"BAD_TOKEN","message":"اللينك انتهى"}} 400
+~~~
+
+### [[const old = await db.user.findUniqueOrThrow(...)]]
+
+بنقرا الإيميل القديم **قبل** التغيير، عشان نبعتله التنبيه الأخير.
+
+### الـ transaction
+
+~~~text
+await db.$transaction(async (t) => {
+  const { count } = await t.emailToken.updateMany({ where: { id: row.id, usedAt: null }, data: { usedAt: new Date() } });
+  if (count === 0) throw new AppError(400, "BAD_TOKEN", "اللينك انتهى");
+  await t.user.update({ where: { id: row.userId }, data: { email: row.email, emailVerifiedAt: new Date() } });
+  await t.session.updateMany({ where: { userId: row.userId, revokedAt: null }, data: { revokedAt: new Date() } });
+});
+~~~
+
+- السطر الأول بيحرق التوكن **بشرط** إنه لسه مش مستخدم. النسخة الأولى كانت [[update({ where: { id: row.id } })]] من غير شرط، وجربنا فتح اللينك مرتين في نفس اللحظة: الاتنين رجعوا [[204]] واتبعت إيميل [[email-changed]] مرتين. بالشرط:
+
+~~~text الناتج
+c1 204
+{"error":{"code":"BAD_TOKEN","message":"اللينك انتهى"}} c2 400
+~~~
+
+- [[email: row.email, emailVerifiedAt: new Date()]] الإيميل الجديد، ومتأكد لأنه فتح اللينك.
+- كل الـ sessions تتلغي، حتى الحالية (اللينك ممكن يتفتح من جهاز تاني). هنا مفيش حد هيفضل داخل، فالـ reuse detection مش مشكلة.
+
+ولو الإيميل الجديد اتسجّل بيه حد في النص: طلبنا تغيير لإيميل مستخدم موجود وأكدنا:
+
+~~~text الناتج
+{"error":{"code":"CONFLICT","message":"موجود قبل كده"}} 409
+~~~
+
+[[@unique]] رمى P2002، والـ transaction كلها اترجعت (التوكن ماتحرقش).
+
+---
+
+## الخلاصة
+
+| | تغيير الباسورد | تغيير الإيميل |
+|---|---|---|
+| قبلها | step-up | step-up |
+| بيحصل إمتى | فورًا | بعد ما اللينك يتفتح |
+| الـ sessions | التانية تتمسح، والحالية تفضل | كلها تتلغي بعد التأكيد |
+| الإيميلات | تنبيه للإيميل | لينك للجديد، وتنبيه للقديم مرتين (طلب، وتم) |
+| التوكن | مفيش | [[CHANGE_EMAIL]]، ساعة، مرة واحدة بشرط [[usedAt: null]] |`,
           lines: [
             "تغيير الباسورد: داخل، ومن قريب.",
             "الباسورد الجديد بنفس قواعد التسجيل.",
             "هات المستخدم.",
             "في transaction واحدة:",
             "الـ hash الجديد...",
-            "...والغي كل الـ sessions ما عدا الحالية.",
+            "...وامسح كل الـ sessions ما عدا الحالية. مسح مش [[revokedAt]]: الـ refresh بيعتبر أي session ملغية سرقة (reuse) وبيلغي كل الأجهزة، فالجهاز الحالي كان هيطلع هو كمان.",
             "قفلة الـ transaction.",
             "إيميل تنبيه لصاحب الحساب.",
             "تمام.",
@@ -946,18 +2563,19 @@ router.post("/me/email", requireAuth, requireRecentAuth(), async (req, res) => {
           ],
           sol: R`بعد ما تفتح لينك التأكيد: الرد 204، والإيميل في users بقى الجديد و [[emailVerifiedAt]] اتملى، وعدد الـ sessions المفتوحة بقى صفر، وفي الـ queue إيميل [[email-changed]] للعنوان القديم. لو فتحت نفس اللينك تاني: [[400 BAD_TOKEN]].
 
-تغيير الباسورد من متصفح: التاني بيفضل شغال لحد ما الـ access token بتاعه يخلص (لحد ١٥ دقيقة)، وبعدين الـ refresh بيرجع 401 وبيطلع لصفحة الدخول. المتصفح اللي غيّرت منه بيفضل داخل.
+تغيير الباسورد من متصفح: التاني بيفضل شغال لحد ما الـ access token بتاعه يخلص (لحد ١٥ دقيقة)، وبعدين الـ refresh بيرجع [[401 NO_SESSION]] وبيطلع لصفحة الدخول. المتصفح اللي غيّرت منه بيفضل داخل. ولو الـ sessions التانية اتعلّمت [[revokedAt]] بدل ما تتمسح، الـ refresh بتاع التاني هيرجع [[TOKEN_REUSED]] ويلغي كل الـ sessions، والمتصفح اللي غيّرت منه يطلع هو كمان. جرّبناها كده الأول وده اللي حصل.
 
 الغلطة الشائعة: تستخدم [[update]] بدل التحقق من [[purpose]]، فلينك تأكيد إيميل عادي (VERIFY) يتقبل كتغيير إيميل.`,
           solCode: R`router.post("/auth/confirm-email-change", async (req, res) => {
   const row = await db.emailToken.findUnique({ where: { tokenHash: sha256(String(req.body.token)) } });
   if (!row || row.purpose !== "CHANGE_EMAIL" || row.usedAt || row.expiresAt < new Date()) throw new AppError(400, "BAD_TOKEN", "اللينك انتهى");
   const old = await db.user.findUniqueOrThrow({ where: { id: row.userId } });
-  await db.$transaction([
-    db.emailToken.update({ where: { id: row.id }, data: { usedAt: new Date() } }),
-    db.user.update({ where: { id: row.userId }, data: { email: row.email, emailVerifiedAt: new Date() } }),
-    db.session.updateMany({ where: { userId: row.userId, revokedAt: null }, data: { revokedAt: new Date() } }),
-  ]);
+  await db.$transaction(async (t) => {
+    const { count } = await t.emailToken.updateMany({ where: { id: row.id, usedAt: null }, data: { usedAt: new Date() } });
+    if (count === 0) throw new AppError(400, "BAD_TOKEN", "اللينك انتهى");
+    await t.user.update({ where: { id: row.userId }, data: { email: row.email, emailVerifiedAt: new Date() } });
+    await t.session.updateMany({ where: { userId: row.userId, revokedAt: null }, data: { revokedAt: new Date() } });
+  });
   await emailQueue.add("email-changed", { to: old.email, newEmail: row.email });
   res.status(204).end();
 });`
@@ -974,7 +2592,7 @@ router.post("/me/email", requireAuth, requireRecentAuth(), async (req, res) => {
     method: "POST", body: new URLSearchParams({ secret: config.TURNSTILE_SECRET, response: token, remoteip: ip }),
   });
   const out = await r.json();
-  return out.success === true && out.action === "login";
+  return out.success === true && (out.action === "login" || out.metadata?.result_with_testing_key === true);
 }
 router.post("/auth/login", loginLimiter, async (req, res) => {
   const { email, password, captcha } = Login.parse(req.body);
@@ -1011,6 +2629,137 @@ Turnstile: الواجهة بتحط [[<div class="cf-turnstile" data-sitekey="...
             when: "على الـ login، والتسجيل، و «نسيت الباسورد»، وأي فورم عام بيبعت إيميلات. وابدأ بالـ CAPTCHA بعد عدد محاولات، مش من أول مرة، عشان متضايقش كل الناس.",
             mistakes: R`CAPTCHA من غير تحقق على السيرفر. أو lockout دايم بعد ٥ محاولات (DoS على أي حد). أو عداد بالـ user id فقط، فالإيميلات المش متسجّلة بتتعامل مختلف. أو رسالة «الحساب اتقفل» للإيميلات المتسجّلة بس. أو تنسى تمسح العداد بعد الدخول الصح. أو [[trust proxy]] مش متظبط، فالـ rate limit بالـ IP بيقفل كل الناس مرة واحدة.`
           },
+          teach: R`## عداد لكل إيميل في Redis
+
+الـ login بقى بيعد المحاولات الغلط لكل إيميل في Redis، لمدة ربع ساعة من أول غلطة. من ٥ لفوق لازم توكن CAPTCHA سليم، ومن ٢٠ لفوق الإيميل مقفول لحد ما العداد يخلص. جرّبناه على سيرفر دروس الـ auth (Express 5 و ioredis 6 مع Redis 8 في Docker، و Prisma 7 و PostgreSQL 18، ويندوز 11). والتحقق من Turnstile اتعمل فعلًا مع سيرفر Cloudflare، بمفاتيح الاختبار العامة اللي في توثيقهم، والتوكن التجريبي [[XXXX.DUMMY.TOKEN.XXXX]] (اللي الـ widget بيطلّعه مع الـ site key التجريبي). الـ widget نفسه في المتصفح من توثيق Cloudflare.
+
+---
+
+## ١. [[turnstileOk(token, ip)]]
+
+### [[if (!token) return false;]]
+
+مفيش توكن؟ متكلّمش Cloudflare أصلًا.
+
+### [[fetch(".../turnstile/v0/siteverify", { method: "POST", body: new URLSearchParams({ secret, response: token, remoteip: ip }) })]]
+
+- [[secret]] المفتاح السري (على السيرفر بس).
+- [[response]] التوكن اللي الـ widget حطه في الفورم.
+- [[remoteip]] اختياري: Cloudflare بتقارنه بالـ IP اللي حل الـ challenge.
+
+ده الرد الحقيقي اللي رجع:
+
+~~~text الناتج (secret 1x...AA)
+{"challenge_ts":"2026-10-08T10:22:15.187Z","error-codes":[],"hostname":"example.com","metadata":{"result_with_testing_key":true},"success":true}
+~~~
+
+~~~text الناتج (secret 2x...AA)
+{"error-codes":["invalid-input-response"],"success":false,"messages":[],"metadata":{"result_with_testing_key":true}}
+~~~
+
+### [[return out.success === true && (out.action === "login" || out.metadata?.result_with_testing_key === true);]]
+
+- [[success === true]] بالظبط.
+- [[action === "login"]]: الـ widget اتعمل بـ [[data-action="login"]]، فالتوكن ده مينفعش يتاخد من فورم التسجيل مثلًا.
+- بص على الرد التجريبي فوق: **مفيهوش [[action]] خالص**. لو الشرط [[action === "login"]] لوحده، التوكن التجريبي كان هيترفض دايمًا والتجربة مش هتعدّي. عشان كده الشرط بيقبل [[result_with_testing_key]] كمان. و [[?.]] لو [[metadata]] مش موجود.
+
+---
+
+## ٢. أول الـ login
+
+### [[const failKey = $__btlogin:fail:$__{sha256(email)}$__bt;]]
+
+اسم المفتاح في Redis: [[login:fail:]] وبعده hash الإيميل. الـ [[:]] عادة في Redis لتقسيم الأسامي (زي فولدرات). والـ hash عشان الإيميلات متتخزنش نص، ولأنه بيتحسب لأي إيميل، متسجّل أو لأ.
+
+### [[const fails = Number(await redis.get(failKey)) || 0;]]
+
+[[redis.get]] بترجّع نص ([["7"]]) أو [[null]]. [[Number(null)]] = 0، و [[Number("7")]] = 7. و [[|| 0]] احتياطي لو طلع [[NaN]].
+
+### [[if (fails >= 20) throw ... LOCKED]] و [[if (fails >= 5 && !(await turnstileOk(...))) throw ... CAPTCHA_REQUIRED]]
+
+الترتيب مهم: القفل الأول (من غير ما نكلّم Cloudflare)، وبعدين الـ CAPTCHA. ومن ٥ لـ ١٩ كل محاولة محتاجة توكن جديد.
+
+---
+
+## ٣. لما الباسورد غلط
+
+~~~text
+const n = await redis.incr(failKey);
+if (n === 1) await redis.expire(failKey, 15 * 60);
+if (n === 20 && user) await emailQueue.add("login-locked", { to: user.email });
+~~~
+
+- [[INCR]] بيزوّد ١ ويرجّع القيمة الجديدة، في خطوة واحدة (atomic)، ولو المفتاح مش موجود بيبدأه من 0. فطلبين مع بعض مبيضيعوش زيادة.
+- [[EXPIRE]] أول مرة بس: المفتاح يتمسح بعد ٩٠٠ ثانية من **أول** غلطة.
+- الإيميل لصاحب الحساب عند ٢٠ بالظبط، ولو الحساب موجود.
+
+### [[await redis.del(failKey);]]
+
+دخل صح؟ العداد يتمسح.
+
+---
+
+## ٤. التجربة
+
+### إيميل متسجّل
+
+~~~text الناتج
+ 1 401 BAD_CREDENTIALS
+ 2 401 BAD_CREDENTIALS
+ 3 401 BAD_CREDENTIALS
+ 4 401 BAD_CREDENTIALS
+ 5 401 BAD_CREDENTIALS
+ 6 400 CAPTCHA_REQUIRED     <- الباسورد الصح، من غير captcha
+ 7 200 OK                   <- الباسورد الصح + التوكن التجريبي
+~~~
+
+### إيميل مش متسجّل خالص
+
+~~~text الناتج
+ 1-5   401 BAD_CREDENTIALS
+ 6     400 CAPTCHA_REQUIRED
+ 7-21  401 BAD_CREDENTIALS   (مع توكن، والعداد بيكمّل لحد 20)
+ 22    429 LOCKED
+ 23    429 LOCKED            <- حتى بالباسورد الصح، القفل قبل أي فحص
+~~~
+
+نفس الطريق بالظبط، فمحدش يعرف مين متسجّل من شكل الردود. ومفيش إيميل [[login-locked]] اتبعت (مفيش [[user]]).
+
+### العداد في Redis
+
+~~~bash
+docker exec teach-arch0102-redis redis-cli GET login:fail:79783106d8827...
+docker exec teach-arch0102-redis redis-cli TTL login:fail:79783106d8827...
+~~~
+
+~~~text الناتج
+20
+897
+~~~
+
+[[TTL]] (time to live): فاضل ٨٩٧ ثانية ويتمسح. لو رجع [[-1]] يبقى [[EXPIRE]] متعملش والعداد عايش للأبد.
+
+### secret بيرفض
+
+مع [[TURNSTILE_SECRET=2x...]] و ٥ غلطات قبلها، الباسورد الصح ومعاه التوكن:
+
+~~~text الناتج
+400 CAPTCHA_REQUIRED
+~~~
+
+---
+
+## الخلاصة
+
+| العداد | اللي بيحصل |
+|---|---|
+| 0 لـ 4 | login عادي |
+| 5 لـ 19 | لازم توكن Turnstile سليم (السيرفر يتحقق) |
+| 20 | 429 LOCKED، وإيميل لصاحب الحساب لو موجود |
+| بعد ١٥ دقيقة من أول غلطة | العداد بيتمسح لوحده (TTL) |
+| login صح | العداد بيتمسح |
+
+العداد بالإيميل (hash) مش بالـ user id، والـ rate limit بالـ IP فوقه.`,
           lines: [
             "دالة التحقق من توكن Turnstile.",
             "مفيش توكن؟ فشل.",
@@ -1018,7 +2767,7 @@ Turnstile: الواجهة بتحط [[<div class="cf-turnstile" data-sitekey="...
             "...مع الـ secret والتوكن والـ IP.",
             "قفلة الطلب.",
             "اقرا الرد.",
-            "لازم ينجح، ويكون معمول لفورم الـ login.",
+            "لازم ينجح، ويكون معمول لفورم الـ login. مفاتيح الاختبار مبترجّعش [[action]] خالص، بس بترجّع [[metadata.result_with_testing_key]]، فبنقبلها عشان التجربة المحلية تشتغل.",
             "قفلة.",
             "الـ login، وعليه rate limit بالـ IP زي الأول.",
             "الإيميل والباسورد، وتوكن الـ CAPTCHA لو موجود.",
@@ -1039,7 +2788,7 @@ Turnstile: الواجهة بتحط [[<div class="cf-turnstile" data-sitekey="...
           ],
           sol: R`الـ ٥ محاولات الأولى ترجع [[401 BAD_CREDENTIALS]]. السادسة بالباسورد الصح ومن غير captcha ترجع [[400 CAPTCHA_REQUIRED]]، ومع توكن الـ widget التجريبي تعدّي. والإيميل المش متسجّل بيمشي نفس الطريق بالظبط: ٥ مرات 401، وبعدين CAPTCHA_REQUIRED، وبعد ٢٠ [[429 LOCKED]]. ده المقصود، عشان محدش يعرف مين متسجّل.
 
-مع الـ secret [[2x...]] أي توكن بيترفض وبيرجع [[success: false]] و [[error-codes]]، فالـ login بيفضل CAPTCHA_REQUIRED.
+مع الـ secret [[2x...]] أي توكن بيترفض وبيرجع [[success: false]] و [[error-codes: ["invalid-input-response"]]]، فالـ login بيفضل CAPTCHA_REQUIRED. وخلي بالك: رد مفاتيح الاختبار مفيهوش [[action]] (جرّبناه: [[{"success":true,"hostname":"example.com","metadata":{"result_with_testing_key":true},...}]])، فلو الفحص [[out.action === "login"]] بس، التوكن التجريبي عمره ما هيعدّي. عشان كده السطر بيقبل [[result_with_testing_key]] كمان، والـ secret التجريبي ده عمره ما يتحط في الإنتاج.
 
 لو حاسس إن CAPTCHA_REQUIRED بيظهر من غير سبب، اتأكد إن الـ TTL اتحط ([[redis-cli TTL login:fail:...]])، ولو رجع [[-1]] يبقى العداد عايش للأبد.`
         },
@@ -1063,7 +2812,7 @@ router.post("/me/passkeys/options", requireAuth, requireRecentAuth(), async (req
 });
 router.post("/me/passkeys", requireAuth, async (req, res) => {
   const expectedChallenge = await redis.getdel($__btwebauthn:$__{req.user.id}$__bt);
-  const { verified, registrationInfo } = await verifyRegistrationResponse({ response: req.body, expectedChallenge, expectedOrigin: config.WEB_ORIGIN, expectedRPID: config.RP_ID });
+  const { verified, registrationInfo } = await verifyRegistrationResponse({ response: req.body, expectedChallenge, expectedOrigin: config.WEB_ORIGIN, expectedRPID: config.RP_ID }).catch(() => ({ verified: false }));
   if (!verified) throw new AppError(400, "PASSKEY_FAILED", "مقدرناش نسجّل المفتاح");
   const { credential } = registrationInfo;
   await db.passkey.create({ data: { userId: req.user.id, credentialId: credential.id, publicKey: Buffer.from(credential.publicKey), counter: credential.counter, transports: credential.transports ?? [] } });
@@ -1087,6 +2836,138 @@ router.post("/me/passkeys", requireAuth, async (req, res) => {
             when: "منتج فيه حسابات قيّمة (فلوس، أو داتا شركات)، أو جمهور بيستخدم موبايلات حديثة. وللأدمن أحسن من TOTP. ولو المستخدمين عندهم passkey، ممكن يعتبر عامل واحد كفاية بدل باسورد + 2FA.",
             mistakes: R`challenge ثابت أو متخزن في الواجهة. أو rpID مختلف بين التسجيل والدخول (www وبدونها). أو إنك تجرب على IP بدل دومين (WebAuthn محتاج HTTPS أو localhost). أو [[publicKey]] يتخزن كنص من غير encoding صح. أو إنك تشيل الباسورد والإيميل خالص من أول يوم، والمستخدم غيّر موبايله ومعهوش مزامنة.`
           },
+          teach: R`## تسجيل passkey: options، وبعدين verify
+
+[[/me/passkeys/options]] بيطلّع إعدادات التسجيل وفيها challenge عشوائي، ويحفظ الـ challenge في Redis ٥ دقايق. المتصفح بيعمل المفتاح ([[startRegistration]])، ويبعت النتيجة لـ [[/me/passkeys]]، والسيرفر يتحقق ويخزن المفتاح العام. جرّبناه بـ @simplewebauthn/server 14 على سيرفر دروس الـ auth (Express 5 و ioredis و Prisma 7 و PostgreSQL 18، ويندوز 11)، والمتصفح Chromium (Playwright) بـ **virtual authenticator** من بروتوكول DevTools (نفس اللي في DevTools من More tools ثم WebAuthn)، و @simplewebauthn/browser 14 من jsdelivr. الصفحة كانت على [[http://localhost:6017]]، فخلّينا [[WEB_ORIGIN]] بنفس القيمة.
+
+---
+
+## ١. [[/me/passkeys/options]]
+
+### [[requireAuth, requireRecentAuth()]]
+
+إضافة طريقة دخول = عملية حساسة (درس step-up).
+
+### [[include: { passkeys: true }]]
+
+هات المفاتيح الموجودة عشان [[excludeCredentials]].
+
+### [[generateRegistrationOptions({ ... })]]
+
+| الخيار | القيمة | معناه |
+|---|---|---|
+| [[rpName]] | [["myapp"]] | الاسم اللي بيظهر للمستخدم. rp = relying party = موقعك |
+| [[rpID]] | [["localhost"]] | الدومين اللي المفتاح مربوط بيه. موقع تاني مش هيقدر يستخدمه |
+| [[userName]] | الإيميل | بيظهر في قايمة الـ passkeys |
+| [[attestationType: "none"]] | | مش عايزين إثبات نوع الجهاز |
+| [[excludeCredentials]] | المفاتيح المتسجّلة | نفس الجهاز ميتسجّلش مرتين |
+| [[residentKey: "preferred"]] | | مفتاح discoverable لو ينفع (دخول من غير ما يكتب إيميل) |
+| [[userVerification: "preferred"]] | | بصمة أو PIN لو ينفع |
+
+اللي رجع فعلًا (مختصر):
+
+~~~text الناتج
+rp: {"name":"myapp","id":"localhost"}
+user: {"name":"four@example.com","displayName":"", id: 43 حرف}
+challenge: 43 حرف
+pubKeyCredParams algs: [-48, -8, -7, -257]
+timeout: 60000, attestation: "none"
+authenticatorSelection: {"residentKey":"preferred","userVerification":"preferred","requireResidentKey":false}
+excludeCredentials: []
+~~~
+
+- [[user.id]] مبعتناهوش، فالمكتبة عملت واحد عشوائي.
+- [[pubKeyCredParams]] أنواع المفاتيح المقبولة بأرقام COSE بالترتيب المفضّل: [[-8]] Ed25519، و [[-7]] ES256، و [[-257]] RS256 (و [[-48]] نوع أحدث).
+
+### [[redis.set($__btwebauthn:$__{user.id}$__bt, options.challenge, "EX", 300)]]
+
+[[EX 300]] يتمسح لوحده بعد ٥ دقايق.
+
+---
+
+## ٢. في المتصفح: [[startRegistration({ optionsJSON })]]
+
+بتحوّل الـ options لشكل [[navigator.credentials.create]]، والجهاز (البصمة) بيعمل زوج مفاتيح: الخاص بيفضل على الجهاز، والعام بيرجع. الرد:
+
+~~~text الناتج
+keys: ["id","rawId","response","type","clientExtensionResults","authenticatorAttachment"]
+response: ["attestationObject","clientDataJSON","transports","publicKeyAlgorithm","publicKey","authenticatorData"]
+type: "public-key", transports: ["internal"]
+~~~
+
+[[clientDataJSON]] فيه الـ challenge والـ origin اللي المتصفح نفسه كتبهم، والـ JavaScript مش بيقدر يزوّرهم.
+
+---
+
+## ٣. [[/me/passkeys]]
+
+### [[const expectedChallenge = await redis.getdel(...)]]
+
+[[GETDEL]] بيقرا ويمسح في خطوة واحدة: الـ challenge ينفع مرة.
+
+### [[verifyRegistrationResponse({ response: req.body, expectedChallenge, expectedOrigin, expectedRPID }).catch(() => ({ verified: false }))]]
+
+بتتأكد إن الـ challenge هو هو، والـ origin هو الواجهة، والـ rpID صح، والتوقيع سليم. والمكتبة **بترمي** error لو أي حاجة مش مطابقة (مش بترجّع [[verified: false]]). المثال الأصلي مكانش فيه [[.catch]]، وبعتنا نفس الرد مرتين:
+
+~~~text الناتج (من غير catch)
+500 {"error":{"code":"INTERNAL","message":"حصلت مشكلة، جرّب تاني"}}
+~~~
+
+~~~text ترمنال السيرفر
+Error: Unexpected registration response challenge "KJ4l3gnA...", expected "null"
+~~~
+
+الـ challenge اتمسح بالـ [[getdel]] الأولاني، فالتاني جاب [[null]]، والمكتبة رمت، فطلع 500. بعد ما ضفنا [[.catch]]:
+
+~~~text الناتج
+register 201
+replay   400 {"error":{"code":"PASSKEY_FAILED","message":"مقدرناش نسجّل المفتاح"}}
+~~~
+
+وجرّبنا origin غلط (السيرفر مستني [[5173]] والصفحة على [[6017]]): 400، وفي اللوج [[Unexpected registration response origin "http://localhost:6017", expected "http://localhost:5173"]].
+
+### [[db.passkey.create({ data: { credentialId, publicKey: Buffer.from(credential.publicKey), counter, transports } })]]
+
+- [[credential.publicKey]] [[Uint8Array]]، و [[Buffer.from]] بيحوّله للنوع اللي Prisma بيخزنه في عمود [[Bytes]].
+- في الجدول: [[pk_bytes = 42]] (مفتاح Ed25519 بصيغة COSE)، و [[counter = 1]]، و [[transports = {internal}]].
+
+---
+
+## ٤. التجربة: excludeCredentials
+
+بعد التسجيل طلبنا options تاني: [[excludeCredentials]] بقى فيه المفتاح، والمتصفح رفض يعمل واحد تاني على نفس الجهاز:
+
+~~~text الناتج
+InvalidStateError: The authenticator was previously registered
+~~~
+
+---
+
+## ٥. الدخول (الـ sol، اتجرّب برضه)
+
+[[generateAuthenticationOptions({ rpID, allowCredentials: [] })]]: [[allowCredentials]] فاضية = «أي مفتاح discoverable للدومين ده». والمتصفح [[startAuthentication({ optionsJSON })]] بيرجّع [[authenticatorData]] و [[clientDataJSON]] و [[signature]] و [[userHandle]]. السيرفر بيدوّر على الـ passkey بـ [[response.id]] ويتحقق بالمفتاح العام المتخزن:
+
+~~~text الناتج
+login        200 {"data":{"accessToken":...
+login replay 400 PASSKEY_FAILED
+~~~
+
+~~~text ترمنال السيرفر
+PASSKEY LOGIN four@example.com newCounter 2
+~~~
+
+---
+
+## الخلاصة
+
+| الخطوة | فين | الحماية |
+|---|---|---|
+| options | السيرفر | challenge عشوائي ٥ دقايق، و excludeCredentials |
+| create | المتصفح والجهاز | المفتاح الخاص مبيطلعش، ومربوط بالـ rpID |
+| verify | السيرفر | challenge مرة واحدة (getdel)، و origin و rpID وتوقيع |
+| تخزين | القاعدة | المفتاح العام والعداد بس، ملهمش قيمة لوحدهم |
+
+أي فشل في التحقق بيترمي، فاعمله [[catch]] وارجع 400. والصفحة لازم على HTTPS أو localhost.`,
           lines: [
             "المكتبة: options و verify للتسجيل.",
             "طلب options لتسجيل passkey. داخل ومن قريب.",
@@ -1101,7 +2982,7 @@ router.post("/me/passkeys", requireAuth, async (req, res) => {
             "قفلة.",
             "استلام رد الجهاز.",
             "هات الـ challenge وامسحه في خطوة واحدة.",
-            "اتحقق من الـ challenge والـ origin والـ rpID والتوقيع.",
+            "اتحقق من الـ challenge والـ origin والـ rpID والتوقيع. المكتبة بترمي error لو أي حاجة مش مطابقة (حتى لو الـ challenge اتمسح)، والـ [[catch]] بيحوّلها [[verified: false]]، فالرد 400 مش 500.",
             "فشل؟ ارفض.",
             "المفتاح اللي اتعمل.",
             "خزّن الـ id والمفتاح العام والعداد والـ transports.",
