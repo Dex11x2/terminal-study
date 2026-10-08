@@ -172,6 +172,7 @@
 
 كل `sol` في الدروس دي بيقول إنه من الـ docs. نجرّبها لما يبقى فيه الجهاز المناسب.
 
+- [ ] **محتاجة حساب AWS (٨ أكتوبر):** cloud «aws rds create-db-instance» و «RDS snapshots و PITR» و «RDS من جهازك» اتشرحوا من الـ docs (LocalStack المجاني مفيهوش RDS)، ومش متعلّم عليهم.
 - [x] **محتاجة Android SDK (٧ أكتوبر، اتجربت ٨ أكتوبر بـ image الـ flutter):** دروس kotlin «مشروع Android» و «Gradle و libs.versions.toml» و «AndroidManifest و res» و «Activity و lifecycle» اتشرحت من الـ docs ومش متعلّم عليها. ممكن تتجرب بـ `ghcr.io/cirruslabs/flutter:stable` (اتضح إن فيها Android SDK 36 و Gradle و Java 21).
 - [x] **محتاجة toolchains مش متسطبة (٧ أكتوبر، اتجربت كلها في Docker نفس اليوم ما عدا AAPT2):** files «.java و .class و .jar» و «.c و .h و .cpp و .o» و «.go و go.mod» و «.php» و «.swift و .dart و .rs و .rb» و «pom.xml و build.gradle» و «AndroidManifest.xml و strings.xml» و «.csproj و .sln و appsettings.json»: الشرح اتكتب من الـ docs ومش متعلّم عليها في verified.json. تتجرب لما نوافق على images زي `eclipse-temurin` و `gcc` و `golang` و `php` و `rust` (ونفس القرار هيلزم لتابات اللغات: php و go و dotnet و spring و kotlin و swift و cpp و flutter). **القرار (٧ أكتوبر): وافقت تنزّل الـ images الرسمية لكل لغة، وتمسحها (docker rmi للـ tags اللي نزلت بس) بعد ما التاب يخلص.** وكيل كل تاب لغة: ينزّل الـ image اللي محتاجها، ويكتب في تقريره أسماء الـ images اللي نزّلها عشان القائد يمسحها بعد التاب.
 

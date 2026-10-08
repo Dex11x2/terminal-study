@@ -1739,6 +1739,106 @@
   "date": "2026-10-06",
   "on": "ubuntu-24.04 docker (bash 5.2)"
  },
+ "cloud|Budgets و free tier": {
+  "hash": "c465e341fb68",
+  "date": "2026-10-08",
+  "on": "aws-cli 2.37 + LocalStack 4.9 (regions loop); docs: budgets create-budget/describe-budgets"
+ },
+ "cloud|CloudFront cache": {
+  "hash": "64e74cc7d190",
+  "date": "2026-10-08",
+  "on": "curl against real CloudFront (awsstatic.com); docs: aws cloudfront commands"
+ },
+ "cloud|EBS": {
+  "hash": "331f8cc9fbeb",
+  "date": "2026-10-08",
+  "on": "aws-cli 2.37 + LocalStack 4.9 (volumes, snapshot, modify-volume) + ubuntu:24.04 growpart/resize2fs on image files; docs: df on real server"
+ },
+ "cloud|IAM policy JSON": {
+  "hash": "f3fcda1bfb1c",
+  "date": "2026-10-08",
+  "on": "aws-cli 2.37 + LocalStack 4.9 (create-policy validation); docs: policy evaluation"
+ },
+ "cloud|IAM users و roles": {
+  "hash": "d1fdcbf7658d",
+  "date": "2026-10-08",
+  "on": "aws-cli 2.37 + LocalStack 4.9 (create-role, policies, instance profile, sts assume-role); docs: IMDS on real EC2"
+ },
+ "cloud|IaaS / PaaS / SaaS": {
+  "hash": "7086e697cfca",
+  "date": "2026-10-08",
+  "on": "aws-cli 2.37 + LocalStack 4.9 (lambda invoke); docs: ssh/apt, rds describe, vercel deploy"
+ },
+ "cloud|Lambda deploy + API Gateway": {
+  "hash": "107da1e4f0d7",
+  "date": "2026-10-08",
+  "on": "ubuntu:24.04 zip + aws-cli 2.37 + LocalStack 4.9 (function, invoke, permission, logs, function URL); docs: apigatewayv2, nodejs24.x"
+ },
+ "cloud|Lambda handler": {
+  "hash": "961cfcb21e91",
+  "date": "2026-10-08",
+  "on": "node:22-slim + LocalStack 4.9 Lambda nodejs22.x; docs: nodejs24.x"
+ },
+ "cloud|Parameter Store و Secrets Manager": {
+  "hash": "98a604b945d3",
+  "date": "2026-10-08",
+  "on": "aws-cli 2.37 + LocalStack 4.9 (example + solCode); docs: AccessDenied message"
+ },
+ "cloud|S3 + CloudFront": {
+  "hash": "ba005a48ebba",
+  "date": "2026-10-08",
+  "on": "aws-cli 2.37 + LocalStack 4.9 (s3 sync/cp --cache-control, head-object); docs: cloudfront create-invalidation"
+ },
+ "cloud|SES": {
+  "hash": "9e2764fb7b2b",
+  "date": "2026-10-08",
+  "on": "node:22-slim AWS SDK client-sesv2 (request captured); docs: actual sending, DKIM"
+ },
+ "cloud|VPS ولا managed ولا PaaS": {
+  "hash": "4eb630138d31",
+  "date": "2026-10-08",
+  "on": "node:22-slim (example + solCode)"
+ },
+ "cloud|aws configure / login / sso": {
+  "hash": "a6ddd6e4a332",
+  "date": "2026-10-08",
+  "on": "amazon/aws-cli 2.37 offline (configure, profiles, sts errors, logout); docs: aws login / sso browser flow"
+ },
+ "cloud|aws ec2 run-instances": {
+  "hash": "a988acffb770",
+  "date": "2026-10-08",
+  "on": "aws-cli 2.37 + LocalStack 4.9 (key pair, run/describe-instances); docs: SSM AMI parameter, ssh, cloud-init"
+ },
+ "cloud|aws s3": {
+  "hash": "9de5073ef9af",
+  "date": "2026-10-08",
+  "on": "aws-cli 2.37 + LocalStack 4.9 (mb, public access block, cp, ls, presign, curl); docs: AccessDenied on unsigned URL"
+ },
+ "cloud|presigned URL": {
+  "hash": "6ef8b33e7f07",
+  "date": "2026-10-08",
+  "on": "node:22-slim Express 5 + AWS SDK 3 against LocalStack 4.9, curl PUT; docs: real-S3 checksum rejection, CORS"
+ },
+ "cloud|regions و AZs": {
+  "hash": "d3cfb42aef7c",
+  "date": "2026-10-08",
+  "on": "ubuntu docker bash + pwsh 7 curl.exe (real latency to AWS endpoints); LocalStack 4.9 AZs; docs: account list-regions"
+ },
+ "cloud|root + MFA": {
+  "hash": "4f3e86ee1a0a",
+  "date": "2026-10-08",
+  "on": "aws-cli 2.37 + LocalStack 4.9 (get-account-summary, list-users, list-access-keys); docs: account get-alternate-contact"
+ },
+ "cloud|security groups": {
+  "hash": "7a6f8eb179c2",
+  "date": "2026-10-08",
+  "on": "aws-cli 2.37 + LocalStack 4.9 (example + solCode)"
+ },
+ "cloud|الخدمات الأساسية": {
+  "hash": "56104526c2f5",
+  "date": "2026-10-08",
+  "on": "aws-cli 2.37 + LocalStack 4.9 (ec2, s3, lambda, route53, logs); docs: rds, cloudfront"
+ },
  "cmd|%errorlevel% و !errorlevel!": {
   "hash": "2b0c85c2fa5e",
   "date": "2026-10-06",
