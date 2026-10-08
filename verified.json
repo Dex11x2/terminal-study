@@ -6484,6 +6484,271 @@
   "date": "2026-10-07",
   "on": "docker golang:1.25 (Go 1.25.14, linux/amd64)"
  },
+ "interview|1xx لحد 5xx": {
+  "hash": "c258356016fc",
+  "date": "2026-10-08",
+  "on": "Express 5 on Node 24 Windows + curl"
+ },
+ "interview|Cache-Control و ETag": {
+  "hash": "92572f22b4a0",
+  "date": "2026-10-08",
+  "on": "Express static on Node 24 Windows + curl; docker ubuntu:24.04"
+ },
+ "interview|DNS → TCP → TLS → HTTP → render": {
+  "hash": "fcc2f1ac8f06",
+  "date": "2026-10-08",
+  "on": "docker ubuntu:24.04 (curl, nslookup, dig)"
+ },
+ "interview|English وانجليزيتك مش قوية": {
+  "hash": "bc64ba3e64a3",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "interview|HttpOnly cookie": {
+  "hash": "12ba3f432953",
+  "date": "2026-10-08",
+  "on": "Express 5 + Chromium (Playwright)"
+ },
+ "interview|Observer و Strategy": {
+  "hash": "e6686054ba89",
+  "date": "2026-10-08",
+  "on": "Node 24 Windows"
+ },
+ "interview|README بالافتراضات": {
+  "hash": "dafc597a3fcb",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "interview|SOLID": {
+  "hash": "2cebc3adc94a",
+  "date": "2026-10-08",
+  "on": "Node 24 Windows"
+ },
+ "interview|STAR": {
+  "hash": "a43e198352b1",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "interview|Singleton و Factory": {
+  "hash": "0e9f1fd3852a",
+  "date": "2026-10-08",
+  "on": "Node 24 Windows + pg; docs: psql solCode"
+ },
+ "interview|authentication و authorization": {
+  "hash": "2383b68a9a46",
+  "date": "2026-10-08",
+  "on": "Express 5 + cookie-parser + curl; docs: Prisma solCode"
+ },
+ "interview|authorization code + PKCE": {
+  "hash": "601800f2850b",
+  "date": "2026-10-08",
+  "on": "Node 24 Windows (S256 RFC 7636 vector); docs: OAuth flow"
+ },
+ "interview|back-of-envelope": {
+  "hash": "f1d42e89f7bf",
+  "date": "2026-10-08",
+  "on": "Node 24 Windows"
+ },
+ "interview|base case + مشكلة أصغر": {
+  "hash": "a1f81931fab6",
+  "date": "2026-10-08",
+  "on": "Node 24 Windows"
+ },
+ "interview|certificate + key exchange": {
+  "hash": "334bdd8590bd",
+  "date": "2026-10-08",
+  "on": "docker ubuntu:24.04 (curl, openssl s_client)"
+ },
+ "interview|check-then-act و circular wait": {
+  "hash": "1da5384db496",
+  "date": "2026-10-08",
+  "on": "Node 24 Windows + docker postgres:16-alpine"
+ },
+ "interview|clarify → examples → brute → optimize → test": {
+  "hash": "f23e42a25878",
+  "date": "2026-10-08",
+  "on": "Node 24 Windows"
+ },
+ "interview|concurrency ≠ parallelism": {
+  "hash": "136a8141614e",
+  "date": "2026-10-08",
+  "on": "Node 24 Windows + Express solCode + curl"
+ },
+ "interview|deadline فات": {
+  "hash": "63a528dd2d14",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "interview|deep dive و trade-offs": {
+  "hash": "a6c108e2b444",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "interview|disagree and commit": {
+  "hash": "d49395571c68",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "interview|encapsulation · abstraction · inheritance · polymorphism": {
+  "hash": "35a8175eda23",
+  "date": "2026-10-08",
+  "on": "Node 24 Windows"
+ },
+ "interview|header.payload.signature": {
+  "hash": "1d0c61a1d83b",
+  "date": "2026-10-08",
+  "on": "Node 24 Windows (example + verify solCode)"
+ },
+ "interview|merge commit ولا history خطي": {
+  "hash": "b84061bff057",
+  "date": "2026-10-08",
+  "on": "docker ubuntu:24.04 git (bare remote, force-with-lease)"
+ },
+ "interview|multiplexing و QUIC": {
+  "hash": "6436be05cabe",
+  "date": "2026-10-08",
+  "on": "docker ubuntu:24.04 (curl 8.5.0)"
+ },
+ "interview|n log n و log n": {
+  "hash": "028eda33406f",
+  "date": "2026-10-08",
+  "on": "Node 24 Windows"
+ },
+ "interview|pair programming round": {
+  "hash": "2bbed8292bd5",
+  "date": "2026-10-08",
+  "on": "docker node:22-slim (git, grep, Vitest 5)"
+ },
+ "interview|problem → decisions → results": {
+  "hash": "ff7cf0dabfd1",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "interview|ps و kill و signals": {
+  "hash": "b0babdf4ebb7",
+  "date": "2026-10-08",
+  "on": "docker node:22-slim (ps, ss, kill); docs: systemctl/journalctl"
+ },
+ "interview|reachability": {
+  "hash": "f1f54ffa3ce3",
+  "date": "2026-10-08",
+  "on": "Node 24 Windows (--expose-gc)"
+ },
+ "interview|readable قبل clever": {
+  "hash": "03d62f4dc7f9",
+  "date": "2026-10-08",
+  "on": "Node 24 Windows"
+ },
+ "interview|reliable ولا fast": {
+  "hash": "8bc372f15cb7",
+  "date": "2026-10-08",
+  "on": "Node 24 Windows + docker ubuntu:24.04 (nc)"
+ },
+ "interview|resources + verbs + stateless": {
+  "hash": "ab286c59c3ef",
+  "date": "2026-10-08",
+  "on": "docs: concept (URL parsing run in Node 24)"
+ },
+ "interview|rwx للـ owner و group و others": {
+  "hash": "30e5c5af4efe",
+  "date": "2026-10-08",
+  "on": "docker ubuntu:24.04 as non-root user"
+ },
+ "interview|safe و idempotent": {
+  "hash": "a371b05829fe",
+  "date": "2026-10-08",
+  "on": "Node 24 Windows local mock API + curl"
+ },
+ "interview|same-origin policy": {
+  "hash": "fcd8832e6ab7",
+  "date": "2026-10-08",
+  "on": "Express 5 + cors on Node 24 Windows + curl"
+ },
+ "interview|tell me about yourself": {
+  "hash": "f7704a3a2e07",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "interview|think aloud": {
+  "hash": "ab4376ed3947",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "interview|time box": {
+  "hash": "0c2e02e7d9bf",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "interview|trunk-based": {
+  "hash": "cd95f021beb3",
+  "date": "2026-10-08",
+  "on": "docker ubuntu:24.04 git; docs: gh pr flags"
+ },
+ "interview|unit · integration · e2e": {
+  "hash": "7de5b7f501f5",
+  "date": "2026-10-08",
+  "on": "Vitest 5.0.3 on Node 24 Windows"
+ },
+ "interview|آخر أسبوعين": {
+  "hash": "f5addc2e12ab",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "interview|أسئلتك للإنترفيوير": {
+  "hash": "c5d2dd2a5a01",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "interview|إطار الـ system design": {
+  "hash": "cdd5087c05ae",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "interview|اتجاه واحد ولا اتنين": {
+  "hash": "c15c696af4d3",
+  "date": "2026-10-08",
+  "on": "Node 24 Windows + curl -N + EventSource"
+ },
+ "interview|افهم الطرفين وبعدين اختار": {
+  "hash": "285aa999364b",
+  "date": "2026-10-08",
+  "on": "docker ubuntu:24.04 git; docs: npm install part"
+ },
+ "interview|العملية الأكتر تكرار": {
+  "hash": "7ace219679de",
+  "date": "2026-10-08",
+  "on": "Node 24 Windows"
+ },
+ "interview|بعد الرفض": {
+  "hash": "78792cb02e55",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "interview|ذاكرة منفصلة ولا مشتركة": {
+  "hash": "c3d5d0b3ced4",
+  "date": "2026-10-08",
+  "on": "Node 24 Windows (worker + solCode)"
+ },
+ "interview|عد اللوبات المخفية": {
+  "hash": "c56e1f4b7ab2",
+  "date": "2026-10-08",
+  "on": "Node 24 Windows"
+ },
+ "interview|غلطة عملتها": {
+  "hash": "2e0641896cc9",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "interview|مراحل التوظيف": {
+  "hash": "9bab1728bc6a",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "interview|معدل النمو مع n": {
+  "hash": "0ba1f50d89cc",
+  "date": "2026-10-08",
+  "on": "Node 24 Windows"
+ },
  "js|&& و || و !": {
   "hash": "adff64700c3c",
   "date": "2026-10-06",
