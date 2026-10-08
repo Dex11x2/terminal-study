@@ -254,6 +254,71 @@
   "date": "2026-10-07",
   "on": "windows-11 node24 Angular 22.2.1 ng build --stats-json, esbuild-visualizer, budgets, NgOptimizedImage in Chrome headless"
  },
+ "apis|201 و 204 و 202": {
+  "hash": "619ecc5d911e",
+  "date": "2026-10-08",
+  "on": "Windows 11: Express 5.2.1 / Node 24.19 + curl 8.22 + Zod 4.6, in-memory db/queue; docs: Prisma P2025, BullMQ"
+ },
+ "apis|4xx صح": {
+  "hash": "49b8425b2442",
+  "date": "2026-10-08",
+  "on": "Windows 11: Express 5.2.1 / Node 24.19 + curl 8.22 + Zod 4.6, in-memory db"
+ },
+ "apis|ETag و Cache-Control": {
+  "hash": "7bc84175b2f3",
+  "date": "2026-10-08",
+  "on": "Windows 11: Express 5.2.1 / Node 24.19 + curl 8.22, curl.exe in pwsh 7.6 and powershell 5.1, Invoke-WebRequest"
+ },
+ "apis|Idempotency-Key": {
+  "hash": "c1182e02815e",
+  "date": "2026-10-08",
+  "on": "Windows 11: Express 5.2.1 / Node 24.19 + curl 8.22 + ioredis 6.0 + Redis 8.10 (docker), Invoke-RestMethod (pwsh 7.6)"
+ },
+ "apis|If-Match و 412": {
+  "hash": "0b1896c53c6a",
+  "date": "2026-10-08",
+  "on": "Windows 11: Express 5.2.1 / Node 24.19 + curl 8.22 + Zod 4.6 + solCode client, in-memory Prisma stand-in; docs: Prisma updateMany/update"
+ },
+ "apis|PUT و PATCH": {
+  "hash": "ca6ac570a2fe",
+  "date": "2026-10-08",
+  "on": "Windows 11: Express 5.2.1 / Node 24.19 + curl 8.22 + Zod 4.6, in-memory Prisma stand-in; docs: Prisma P2025"
+ },
+ "apis|cursor pagination": {
+  "hash": "38f144357fe1",
+  "date": "2026-10-08",
+  "on": "Windows 11: Express 5.2.1 / Node 24.19 + curl 8.22, in-memory Prisma stand-in; PostgreSQL 18.6 EXPLAIN ANALYZE"
+ },
+ "apis|filter و sort": {
+  "hash": "90263acb40d0",
+  "date": "2026-10-08",
+  "on": "Windows 11: Express 5.2.1 / Node 24.19 + curl 8.22 + Zod 4.6, in-memory Prisma stand-in; docs: Prisma insensitive ILIKE"
+ },
+ "apis|offset pagination": {
+  "hash": "b5dfb13889fd",
+  "date": "2026-10-08",
+  "on": "Windows 11: Express 5.2.1 / Node 24.19 + curl 8.22 + Zod 4.6, in-memory Prisma stand-in; PostgreSQL 18.6 EXPLAIN ANALYZE"
+ },
+ "apis|problem+json": {
+  "hash": "b7ecdbe3f831",
+  "date": "2026-10-08",
+  "on": "Windows 11: Express 5.2.1 / Node 24.19 + curl 8.22 + Zod 4.6"
+ },
+ "apis|resources و URLs": {
+  "hash": "818eed2a5339",
+  "date": "2026-10-08",
+  "on": "Windows 11: Express 5.2.1 / Node 24.19 + curl 8.22"
+ },
+ "apis|safe و idempotent": {
+  "hash": "5b993489d4af",
+  "date": "2026-10-08",
+  "on": "Windows 11: Express 5.2.1 / Node 24.19 + curl 8.22; docs: browser resubmit warning"
+ },
+ "apis|versioning": {
+  "hash": "2be40368fda1",
+  "date": "2026-10-08",
+  "on": "Windows 11: Express 5.2.1 / Node 24.19 + curl 8.22, pwsh 7.6; ubuntu:24.04 (date); docs: macOS date -r"
+ },
  "api|$transaction": {
   "hash": "c345ee4d16af",
   "date": "2026-10-07",
