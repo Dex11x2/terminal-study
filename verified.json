@@ -1,4 +1,184 @@
 {
+ "ai|.claude/settings.json": {
+  "hash": "0bd3ca1f9bbd",
+  "date": "2026-10-08",
+  "on": "Win11 Node 24.19 (JSON validation only); docs: Claude Code permission behavior"
+ },
+ "ai|.env و API key": {
+  "hash": "8ff6745d6699",
+  "date": "2026-10-08",
+  "on": "ubuntu:24.04 Docker (git) + Win11 Node 24.19 (--env-file)"
+ },
+ "ai|429 و retry": {
+  "hash": "2d7abb67adcc",
+  "date": "2026-10-08",
+  "on": "Win11 Node 24.19 @anthropic-ai/sdk 0.132 + mock 429"
+ },
+ "ai|@anthropic-ai/sdk": {
+  "hash": "2790a62645d1",
+  "date": "2026-10-08",
+  "on": "Win11 Node 24.19 @anthropic-ai/sdk 0.132 + mock"
+ },
+ "ai|@google/genai": {
+  "hash": "8b9b654e40c8",
+  "date": "2026-10-08",
+  "on": "Win11 Node 24.19 @google/genai 2.28 + mock"
+ },
+ "ai|LLM": {
+  "hash": "2869878a85c2",
+  "date": "2026-10-08",
+  "on": "ubuntu:24.04 Docker (curl+jq) against local Gemini mock"
+ },
+ "ai|RAG": {
+  "hash": "dd4d68048a34",
+  "date": "2026-10-08",
+  "on": "Win11 Node 24.19 pg + pgvector:pg18 Docker + mocks (local e5 embeddings)"
+ },
+ "ai|backend proxy": {
+  "hash": "3f5602ba6711",
+  "date": "2026-10-08",
+  "on": "Win11 Node 24.19 Express 5.2 + @google/genai + mock, curl"
+ },
+ "ai|chunking": {
+  "hash": "e50cb847e375",
+  "date": "2026-10-08",
+  "on": "Win11 Node 24.19"
+ },
+ "ai|context window": {
+  "hash": "e965890cf319",
+  "date": "2026-10-08",
+  "on": "Win11 Node 24.19 @google/genai 2.28 + mock"
+ },
+ "ai|context من غير أسرار": {
+  "hash": "582e5527ceb3",
+  "date": "2026-10-08",
+  "on": "ubuntu:24.04 Docker (git, grep, sed)"
+ },
+ "ai|embeddings": {
+  "hash": "ec4f7607fe66",
+  "date": "2026-10-08",
+  "on": "Win11 Node 24.19 @google/genai 2.28 + mock backed by local multilingual-e5-small"
+ },
+ "ai|evals": {
+  "hash": "30cff06400de",
+  "date": "2026-10-08",
+  "on": "Win11 Node 24.19 @anthropic-ai/sdk 0.132 + mock"
+ },
+ "ai|few-shot": {
+  "hash": "fb80c8703175",
+  "date": "2026-10-08",
+  "on": "Win11 Node 24.19 @google/genai 2.28 + mock"
+ },
+ "ai|google-genai": {
+  "hash": "4ed69f00043f",
+  "date": "2026-10-08",
+  "on": "Win11 Python 3.14 google-genai 2.29 + mock"
+ },
+ "ai|latency ولا جودة": {
+  "hash": "7d7a63777e38",
+  "date": "2026-10-08",
+  "on": "Win11 Node 24.19 @anthropic-ai/sdk 0.132 + mock; docs: real latency"
+ },
+ "ai|output format": {
+  "hash": "debf65e20853",
+  "date": "2026-10-08",
+  "on": "Win11 Node 24.19"
+ },
+ "ai|pgvector": {
+  "hash": "5dfe582f58ff",
+  "date": "2026-10-08",
+  "on": "pgvector/pgvector:pg18 Docker psql"
+ },
+ "ai|prompt caching": {
+  "hash": "5a27b12bd162",
+  "date": "2026-10-08",
+  "on": "Win11 Node 24.19 @anthropic-ai/sdk 0.132 + mock; docs: cache rules"
+ },
+ "ai|prompt injection": {
+  "hash": "feecd95f55fe",
+  "date": "2026-10-08",
+  "on": "Win11 Node 24.19"
+ },
+ "ai|streaming": {
+  "hash": "1f29f538dacd",
+  "date": "2026-10-08",
+  "on": "Win11 Node 24.19 Express 5.2 + @anthropic-ai/sdk 0.132 + SSE mock"
+ },
+ "ai|structured output": {
+  "hash": "fe4353203d12",
+  "date": "2026-10-08",
+  "on": "Win11 Node 24.19 @anthropic-ai/sdk 0.132 + mock + zod 4.6"
+ },
+ "ai|system instruction": {
+  "hash": "5024cec4a640",
+  "date": "2026-10-08",
+  "on": "Win11 Node 24.19 @google/genai 2.28 + mock (request body captured)"
+ },
+ "ai|temperature": {
+  "hash": "330039eb5196",
+  "date": "2026-10-08",
+  "on": "Win11 Node 24.19"
+ },
+ "ai|tokens": {
+  "hash": "a9f472a75f6f",
+  "date": "2026-10-08",
+  "on": "Win11 Node 24.19 @google/genai 2.28 + mock (local tokenizer)"
+ },
+ "ai|tool calling": {
+  "hash": "de4422e7428c",
+  "date": "2026-10-08",
+  "on": "Win11 Node 24.19 @anthropic-ai/sdk 0.132 + mock + zod 4.6"
+ },
+ "ai|workflow مع المساعد": {
+  "hash": "69438f07fa53",
+  "date": "2026-10-08",
+  "on": "node:22-slim Docker (git, npm test); docs: claude --permission-mode plan"
+ },
+ "ai|أدوات بأقل صلاحية": {
+  "hash": "451d55ad4d49",
+  "date": "2026-10-08",
+  "on": "Win11 Node 24.19"
+ },
+ "ai|اختيار الموديل": {
+  "hash": "b1415bbcb0d9",
+  "date": "2026-10-08",
+  "on": "Win11 Node 24.19 + Gemini mock; docs: model names"
+ },
+ "ai|تتحقق من الناتج": {
+  "hash": "8026739a14b2",
+  "date": "2026-10-08",
+  "on": "node:22-slim Docker (npm view, npm install, tsc)"
+ },
+ "ai|تكتب بإيدك الأول": {
+  "hash": "716091ced18a",
+  "date": "2026-10-08",
+  "on": "Win11 Node 24.19 node --test"
+ },
+ "ai|تكلفة الطلب": {
+  "hash": "772b9c8e29e5",
+  "date": "2026-10-08",
+  "on": "Win11 Node 24.19"
+ },
+ "ai|ذاكرة المحادثة": {
+  "hash": "32fa3e96e30b",
+  "date": "2026-10-08",
+  "on": "Win11 Node 24.19 + Anthropic mock"
+ },
+ "ai|رد الموديل مش موثوق": {
+  "hash": "a36f3740f7b7",
+  "date": "2026-10-08",
+  "on": "Win11 Node 24.19"
+ },
+ "ai|لوج من غير PII": {
+  "hash": "48e4c64bd356",
+  "date": "2026-10-08",
+  "on": "Win11 Node 24.19"
+ },
+ "ai|ميزانية لكل مستخدم": {
+  "hash": "35ff61c0c6b3",
+  "date": "2026-10-08",
+  "on": "Win11 Node 24.19 @anthropic-ai/sdk 0.132 + mock (429 retries)"
+ },
  "angular|@Component": {
   "hash": "ebdc724f2930",
   "date": "2026-10-07",
