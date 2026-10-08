@@ -11674,6 +11674,111 @@
   "date": "2026-10-05",
   "on": "ubuntu-24.04, pwsh 7.6, powershell 5.1; docs: macOS sw_vers/Darwin, winver window"
  },
+ "swift|ARC و weak و retain cycles": {
+  "hash": "acafbe288de6",
+  "date": "2026-10-08",
+  "on": "docker swift:latest (Swift 6.4, Linux)"
+ },
+ "swift|Array و Dictionary و Set": {
+  "hash": "fa6a93dd4368",
+  "date": "2026-10-08",
+  "on": "docker swift:latest (Swift 6.4, Linux)"
+ },
+ "swift|access control": {
+  "hash": "095445c85d6d",
+  "date": "2026-10-08",
+  "on": "docker swift:latest (Swift 6.4, Linux)"
+ },
+ "swift|enums و associated values": {
+  "hash": "c71dc0dfc886",
+  "date": "2026-10-08",
+  "on": "docker swift:latest (Swift 6.4, Linux)"
+ },
+ "swift|for و while و ranges": {
+  "hash": "71c91563300c",
+  "date": "2026-10-08",
+  "on": "docker swift:latest (Swift 6.4, Linux)"
+ },
+ "swift|guard let و optional chaining": {
+  "hash": "d75e434f62f5",
+  "date": "2026-10-08",
+  "on": "docker swift:latest (Swift 6.4, Linux)"
+ },
+ "swift|if و guard": {
+  "hash": "58a57e29df56",
+  "date": "2026-10-08",
+  "on": "docker swift:latest (Swift 6.4, Linux)"
+ },
+ "swift|map و filter و reduce": {
+  "hash": "bc881fac7dd0",
+  "date": "2026-10-08",
+  "on": "docker swift:latest (Swift 6.4, Linux)"
+ },
+ "swift|properties و methods و mutating": {
+  "hash": "e0cae1269e68",
+  "date": "2026-10-08",
+  "on": "docker swift:latest (Swift 6.4, Linux)"
+ },
+ "swift|protocols و extensions": {
+  "hash": "91ab89bde774",
+  "date": "2026-10-08",
+  "on": "docker swift:latest (Swift 6.4, Linux)"
+ },
+ "swift|switch والـ pattern matching": {
+  "hash": "e69d77b5ccc3",
+  "date": "2026-10-08",
+  "on": "docker swift:latest (Swift 6.4, Linux)"
+ },
+ "swift|الأخطاء throws و do catch": {
+  "hash": "52fe11a14ac4",
+  "date": "2026-10-08",
+  "on": "docker swift:latest (Swift 6.4, Linux)"
+ },
+ "swift|الأنواع واستنتاجها": {
+  "hash": "b70f7a78eb20",
+  "date": "2026-10-08",
+  "on": "docker swift:latest (Swift 6.4, Linux)"
+ },
+ "swift|الدوال و argument labels": {
+  "hash": "4c7db5a87f3e",
+  "date": "2026-10-08",
+  "on": "docker swift:latest (Swift 6.4, Linux)"
+ },
+ "swift|العمليات الحسابية والمقارنة": {
+  "hash": "4225456d79bc",
+  "date": "2026-10-08",
+  "on": "docker swift:latest (Swift 6.4, Linux)"
+ },
+ "swift|الـ Optionals وفكها بأمان": {
+  "hash": "b6b95e95150f",
+  "date": "2026-10-08",
+  "on": "docker swift:latest (Swift 6.4, Linux)"
+ },
+ "swift|الـ Structs والـ Classes في Swift": {
+  "hash": "969a69b211a9",
+  "date": "2026-10-08",
+  "on": "docker swift:latest (Swift 6.4, Linux)"
+ },
+ "swift|الـ closures": {
+  "hash": "97d9d30eb6da",
+  "date": "2026-10-08",
+  "on": "docker swift:latest (Swift 6.4, Linux)"
+ },
+ "swift|الـ generics": {
+  "hash": "ee7eb8868589",
+  "date": "2026-10-08",
+  "on": "docker swift:latest (Swift 6.4, Linux)"
+ },
+ "swift|تجهيز Swift": {
+  "hash": "3385cc518367",
+  "date": "2026-10-08",
+  "on": "docker swift:latest (Swift 6.4, Linux); docs: xcodebuild/macOS part"
+ },
+ "swift|مقدمة Swift والـ print": {
+  "hash": "dd303d48d5a0",
+  "date": "2026-10-08",
+  "on": "docker swift:latest (Swift 6.4, Linux)"
+ },
  "symbols|!  و  !!": {
   "hash": "d62abe085a09",
   "date": "2026-10-07",

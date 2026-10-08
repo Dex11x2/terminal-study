@@ -43,7 +43,7 @@ docker run --rm -it -v "$PWD":/src -w /src swift swift --version
 mkdir Hello && cd Hello
 swift package init --type executable
 swift run`,
-          try: R`نفّذ [[swift --version]] (أو أمر الـ Docker). وبعدين اعمل مشروع [[Hello]] بـ [[swift package init --type executable]] وافتح [[Sources/main.swift]]، غيّر الرسالة لاسمك، وشغّل [[swift run]] تاني.`,
+          try: R`نفّذ [[swift --version]] (أو أمر الـ Docker). وبعدين اعمل مشروع [[Hello]] بـ [[swift package init --type executable]] وافتح [[Sources/Hello/Hello.swift]]، غيّر الرسالة لاسمك، وشغّل [[swift run]] تاني.`,
           deep: {
             why: R`ناس كتير بتشتري كورس iOS وتكتشف بعد أسبوع إن جهازها Windows ومش هينفع. لو عارف الحقيقة من الأول تقدر تخطط: اتعلم اللغة دلوقتي على جهازك، واجمع لماك مستعمل لما توصل لـ SwiftUI. أو لو مش ناوي تشتري ماك خالص، Flutter أو React Native بيطلّعوا تطبيقات iOS بس برضه محتاجين ماك عشان البناء النهائي والرفع (أو خدمة build سحابية زي EAS أو Codemagic).`,
             how: R`Swift بتتحول لكود الآلة عن طريق compiler مبني على [[LLVM]] (نفس البنية التحتية بتاعة Clang و Rust). [[swift main.swift]] بيترجم الملف في الذاكرة ويشغّله على طول. [[swift build]] بيترجم المشروع وبيحط الناتج في [[.build/debug]]، و [[swift run]] = build + تشغيل. على الماك، Xcode بيستخدم نفس الـ compiler بس بيضيف الـ SDKs بتاعة iOS (UIKit و SwiftUI) والـ Simulator والتوقيع والرفع.
@@ -52,23 +52,167 @@ swift run`,
             when: R`أول يوم. ولو على Linux أو Windows، كل دروس المستوى الأول تقدر تجربها بـ [[swift main.swift]]. من أول المستوى التاني (SwiftUI) هتحتاج ماك.`,
             mistakes: R`تنزّل Xcode من موقع غير App Store أو developer.apple.com. وتنسى تفتح Xcode مرة بعد التنزيل فيكمّل تثبيت الـ components. وتشتري ماك Intel قديم رخيص وتكتشف إن آخر Xcode مش بيدعمه. وتفتكر إن Swift Playgrounds على الـ iPad لعبة: ده بيبني تطبيقات SwiftUI حقيقية وتقدر ترفع منه على المتجر كمان.`
           },
+          teach: R`## المثال بيعمل إيه؟
+
+٣ حاجات: يتأكد إن Swift متسطبة ويطبع نسختها، يشغّل Swift من غير ما تسطّبها خالص (جوه Docker)، ويعمل مشروع صغير بـ SwiftPM ويشغّله. جزء الماك ([[xcodebuild]]) من الـ docs الرسمية لأن مفيش ماك هنا، والباقي كله اتشغّل فعلًا في [[docker run --rm swift:latest]] على Swift 6.4.
+
+---
+
+## ١. على الماك: [[xcodebuild -version]] و [[swift --version]]
+
+~~~zsh
+xcodebuild -version
+swift --version
+~~~
+
+- [[xcodebuild]] أداة سطر الأوامر بتاعة Xcode (بتبني المشاريع من غير ما تفتح البرنامج). و [[-version]] بتطبع نسخة Xcode ورقم الـ build. لو طلع خطأ إن الأداة مش موجودة، يبقى Xcode لسه متسطبش أو متفتحش مرة.
+- [[swift --version]] بيطبع نسخة الـ compiler والـ target (المعالج والنظام اللي بيترجم ليه). على ماك Apple Silicon الـ target بيبقى [[arm64-apple-macosx...]] (من الـ docs).
+
+---
+
+## ٢. Swift من غير تسطيب: Docker
+
+~~~bash
+docker run --rm -it -v "$PWD":/src -w /src swift swift --version
+~~~
+
+نفكه حتة حتة:
+
+| الحتة | معناها |
+|---|---|
+| [[docker run]] | شغّل container من image |
+| [[--rm]] | امسح الـ container أول ما يخلص |
+| [[-it]] | interactive + terminal: عشان لو فتحت REPL تقدر تكتب فيه |
+| [[-v "$PWD":/src]] | volume: الفولدر الحالي ([[$PWD]] = print working directory) يظهر جوه الـ container في [[/src]] |
+| [[-w /src]] | working directory: الأوامر تتنفذ من جوه [[/src]] |
+| [[swift]] (الأولى) | اسم الـ image الرسمية من Docker Hub (من غير tag يبقى [[swift:latest]]) |
+| [[swift --version]] | الأمر اللي بيتنفذ جوه الـ container |
+
+اتشغّل هنا وطلع:
+
+~~~text الناتج
+Swift version 6.4 (swift-6.4-RELEASE)
+Target: x86_64-unknown-linux-gnu
+~~~
+
+- [[x86_64]] نوع المعالج (Intel و AMD 64-bit). على ماك M1 أو سيرفر ARM هتلاقي [[aarch64]].
+- [[unknown-linux-gnu]]: النظام لينكس بمكتبة GNU.
+
+> الـ image دي كبيرة (حوالي 5.5 جيجا على الديسك بعد التنزيل) لأن فيها الـ compiler كامل. فيه tag اسمه [[slim]] أصغر بس **مفيهوش compiler**، بيشغّل برامج متترجمة بس.
+
+---
+
+## ٣. مشروع بـ Swift Package Manager
+
+~~~bash
+mkdir Hello && cd Hello
+swift package init --type executable
+swift run
+~~~
+
+### [[mkdir Hello && cd Hello]]
+
+[[mkdir]] (make directory) بيعمل فولدر، و [[&&]] معناها «لو اللي قبلي نجح نفّذ اللي بعدي»، و [[cd]] (change directory) بيدخلك جواه. اسم الفولدر هو اللي SwiftPM بياخده اسم للمشروع.
+
+### [[swift package init --type executable]]
+
+- [[swift package]] هي SwiftPM: مدير الحزم والبناء الرسمي.
+- [[init]] بيعمل مشروع جديد في الفولدر الحالي.
+- [[--type executable]]: برنامج بيتشغّل (فيه نقطة بداية)، مش [[library]] بيستخدمها كود تاني.
+
+على Swift 6.4 طلع:
+
+~~~text الناتج
+Creating executable package: Hello
+Creating Package.swift
+Creating .gitignore
+Creating Sources
+Creating Sources/Hello/Hello.swift
+Creating Tests/
+Creating Tests/HelloTests/
+Creating Tests/HelloTests/HelloTests.swift
+~~~
+
+- [[Package.swift]]: وصف المشروع (اسمه، الـ targets، الـ dependencies). مكتوب بـ Swift نفسها.
+- [[Sources/Hello/Hello.swift]]: الكود. فولدر لكل target باسمه.
+- [[Tests/HelloTests]]: مكان الاختبارات (درس Swift Testing).
+- [[.gitignore]]: بيقول لـ git يتجاهل فولدر [[.build]] اللي فيه الناتج.
+
+> النسخ الأقدم من Swift كانت بتعمل [[Sources/main.swift]] فيه سطر [[print]] بس. النسخة الجديدة بتعمل الملف ده:
+
+~~~swift
+@main
+struct Hello {
+    static func main() {
+        print("Hello, world!")
+    }
+}
+~~~
+
+[[@main]] بتقول «البرنامج بيبدأ من هنا»، فـ Swift بتنادي [[static func main()]] أول ما البرنامج يشتغل. ([[struct]] و [[static]] هتفهمهم في دروس الأنواع. دلوقتي كفاية تعرف إن سطر الـ [[print]] هو اللي هتغيّره).
+
+### [[swift run]]
+
+بيعمل حاجتين: [[swift build]] (يترجم ويحط الناتج في [[.build/debug]]) وبعدين يشغّل البرنامج.
+
+~~~text الناتج أول مرة
+Building for debugging...
+[Planning deferred tasks]
+[18 / 22] Hello-product
+[19 / 22] Hello-product
+[23 / 23] Hello-product
+Build complete! (2.72 secs)
+Hello, world!
+~~~
+
+- [[for debugging]]: الـ build الافتراضي debug (من غير تحسينات وفيه معلومات للـ debugger). للنسخة السريعة: [[swift run -c release]].
+- [[[23 / 23]]]: عدد خطوات البناء.
+- المرة التانية (بعد ما غيّرنا النص) البناء أخد [[0.54 secs]] بس، لأن SwiftPM بيترجم اللي اتغير بس.
+
+> جوه Docker طلع كمان سطرين [[warning: safeExec: signal(32, SIG_DFL) failed]] قبل الناتج. دول من بيئة الـ container ومش ليهم علاقة بالكود، تجاهلهم.
+
+---
+
+## ٤. [[swift main.swift]]: ملف واحد من غير مشروع
+
+لدروس المستوى الأول كفاية ملف واحد: [[swift main.swift]] بيترجمه في الذاكرة ويشغّله على طول. وكل أمثلة التاب اتجربت كده. ملاحظة: الوضع ده بيترجم بـ **language mode 5** افتراضيًا (اتطبع في رسالة crash عندنا: [[Compiling with effective version 5.10]])، ولو عايز قواعد Swift 6 الصارمة: [[swiftc -swift-version 6 main.swift]]. وكل أمثلة الدروس اللي جاية اتترجمت بالوضعين.
+
+---
+
+## الخلاصة
+
+| الأمر | بيعمل إيه | محتاج ماك؟ |
+|---|---|---|
+| [[xcodebuild -version]] | نسخة Xcode | أيوه |
+| [[swift --version]] | نسخة الـ compiler والـ target | لأ |
+| [[docker run --rm swift swift ...]] | Swift من غير تسطيب | لأ |
+| [[swift package init --type executable]] | مشروع جديد بـ [[Package.swift]] | لأ |
+| [[swift run]] | build + تشغيل | لأ |
+| [[swift main.swift]] | يشغّل ملف واحد | لأ |
+
+اللغة كلها على أي جهاز، و SwiftUI و Simulator والرفع على المتجر محتاجين Xcode على ماك.`,
           lines: [
             "بيطبع نسخة Xcode اللي على الماك (مثلًا Xcode 26.x).",
             "بيطبع نسخة Swift والـ target (مثلًا arm64-apple-macosx).",
             R`بيشغّل Swift جوه container: [[-v]] بيربط الفولدر الحالي بـ [[/src]]، و [[-w]] بيخلي الشغل فيه، و [[--rm]] بيمسح الـ container لما يخلص.`,
             R`فولدر للمشروع وتدخل جواه. اسم الفولدر هو اسم المشروع.`,
-            R`بيعمل [[Package.swift]] و [[Sources/main.swift]] فيه [[print("Hello, world!")]].`,
+            R`بيعمل [[Package.swift]] و [[Sources/Hello/Hello.swift]] (في Swift 6.4: [[@main struct Hello]] جواه [[print("Hello, world!")]]، والنسخ الأقدم كانت بتعمل [[Sources/main.swift]])، وفولدر [[Tests]].`,
             "بيبني المشروع ويشغّله."
           ],
           sol: R`[[swift --version]] بيطبع حاجة زي:
-[[Swift version 6.0.3 (swift-6.0.3-RELEASE)]] وتحتها الـ target (على Linux [[x86_64-unknown-linux-gnu]] أو [[aarch64-unknown-linux-gnu]]).
+[[Swift version 6.4 (swift-6.4-RELEASE)]] وتحتها الـ target (على Linux [[x86_64-unknown-linux-gnu]] أو [[aarch64-unknown-linux-gnu]]).
 
-و [[swift run]] أول مرة بيطبع سطور البناء ([[Building for debugging...]] و [[Build of product 'Hello' complete!]]) وبعدين:
+و [[swift run]] أول مرة بيطبع سطور البناء ([[Building for debugging...]] و [[Build complete! (2.72 secs)]]) وبعدين:
 [[Hello, world!]]
 
 بعد ما تعدّل الملف:`,
-          solCode: R`// Sources/main.swift
-print("أهلًا، أنا سارة وده أول برنامج Swift ليا")`
+          solCode: R`// Sources/Hello/Hello.swift
+@main
+struct Hello {
+    static func main() {
+        print("أهلًا، أنا سارة وده أول برنامج Swift ليا")
+    }
+}`
         },
         {
           cmd: "مقدمة Swift والـ print",
@@ -104,6 +248,117 @@ print(report)`,
             when: R`[[let]] افتراضيًا لأي قيمة، و [[var]] للعدادات والحاجات اللي بتتجمع أو بتتغير. و [[\(...)]] بدل جمع النصوص بـ [[+]] عشان أوضح.`,
             mistakes: R`تكتب [[#]] للتعليقات (عادة من Python): الكود مش هيترجم. وتكتب [["Count: " + count]] و count رقم: Swift مش بتحوّل الرقم لنص لوحدها، استخدم [[\(count)]]. وتنسى الـ backslash فتكتب [[(name)]] جوه النص فتطبع كلمة name نفسها. وتحط نص بعد [["""]] الأولى على نفس السطر: لازم السطر يبقى فاضي بعدها.`
           },
+          teach: R`## البرنامج بيعمل إيه؟
+
+بيعرّف ثابت ومتغير، يغيّر المتغير، ويطبع جمل فيها القيم دي جوه النص، وفي الآخر نص على كذا سطر. كل الناتج والأخطاء تحت اتشغّلوا بـ [[swift main.swift]] في [[docker run --rm swift:latest]] (Swift 6.4).
+
+---
+
+## ١. [[let]]: اسم لقيمة مش هتتغير
+
+~~~swift
+let appName = "مهامي"
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[let]] | ثابت (constant): القيمة بتتحط مرة واحدة |
+| [[appName]] | الاسم. الـ style في Swift: camelCase (أول كلمة small وكل كلمة بعدها أولها capital) |
+| [[=]] | «حط القيمة دي في الاسم ده» (مش «يساوي» بتاعة الرياضة) |
+| [["مهامي"]] | نص بين [[" "]]، نوعه [[String]] |
+
+مكتبناش النوع، و Swift عرفته لوحدها من القيمة. ده اسمه type inference (الدرس الجاي).
+
+والسطر اللي فوقه [[// let: ثابت...]] تعليق: [[//]] لحد آخر السطر Swift بتتجاهله.
+
+---
+
+## ٢. [[var]] و [[+=]]
+
+~~~swift
+var doneCount = 0
+doneCount += 1
+~~~
+
+- [[var]] (variable): متغير، ينفع تغيّر قيمته بعدين. نوعه اتستنتج [[Int]] من الصفر.
+- [[+=]] اختصار [[doneCount = doneCount + 1]]: خد القيمة الحالية (0) وزوّد 1 وحطها تاني. بقت **1**.
+- ومفيش [[;]] في آخر السطر: Swift مش محتاجاها (بتحتاجها بس لو حطيت أمرين في سطر واحد).
+
+---
+
+## ٣. [[print]] و [[\(...)]]
+
+~~~swift
+print("أهلًا في \(appName)، خلّصت \(doneCount) مهمة")
+print("الباقي: \(5 - doneCount)")
+~~~
+
+- [[print(...)]] دالة جاهزة بتطبع اللي بين القوسين وتنزل سطر جديد.
+- [[\(appName)]]: الـ backslash [[\]] وبعده قوسين = string interpolation. Swift بتحسب اللي جوه القوسين وتحط الناتج مكانه في النص.
+- [[\(5 - doneCount)]]: جوه القوسين ينفع حساب كامل، مش متغير بس: 5 - 1 = 4.
+
+~~~text الناتج
+أهلًا في مهامي، خلّصت 1 مهمة
+الباقي: 4
+~~~
+
+---
+
+## ٤. نص على كذا سطر: [["""]]
+
+~~~swift
+let report = """
+  التطبيق: \(appName)
+  المنجز: \(doneCount)
+  """
+print(report)
+~~~
+
+- [["""]] (تلات علامات تنصيص) بتفتح نص متعدد السطور. لازم السطر يخلص بعدها على طول، والنص يبدأ من السطر اللي تحته.
+- الـ interpolation شغال جواه عادي.
+- [["""]] الأخيرة ليها مسافتين قبلها، و Swift بتشيل نفس المسافتين دول من أول كل سطر. عشان كده الناتج طالع من غير مسافات في الأول:
+
+~~~text الناتج
+التطبيق: مهامي
+المنجز: 1
+~~~
+
+---
+
+## ٥. التجربة: الأخطاء اللي هتشوفها
+
+**تغيّر [[let]]** (ضفنا [[appName = "تاني"]] في السطر التالت):
+
+~~~text الناتج
+main.swift:3:1: error: cannot assign to value: 'appName' is a 'let' constant
+~~~
+
+[[main.swift:3:1]] معناها: الملف، السطر 3، العمود 1. وتحت الرسالة الـ compiler بيقترح [[note: change 'let' to 'var' to make it mutable]]. والبرنامج **مش بيتشغّل خالص**: ده خطأ compile.
+
+**[[var]] متغيرتش** (الكود جوه [[func run() { ... }]] من غير [[+= 1]]):
+
+~~~text الناتج
+main.swift:3:7: warning: variable 'doneCount' was never mutated; consider changing to 'let' constant [#VariableNeverMutated]
+أهلًا في مهامي، خلّصت 0 مهمة
+~~~
+
+ده **warning** مش error: البرنامج اشتغل وطبع، بس الـ compiler بينصحك تخليها [[let]]. و [[[#VariableNeverMutated]]] اسم التحذير، وجنبه لينك لشرحه في docs.swift.org.
+
+ليه حطيناه جوه دالة؟ لأن المتغيرات في أعلى [[main.swift]] (برة أي دالة) global، والتحذير ده مش بيطلع ليها.
+
+---
+
+## الخلاصة
+
+| الكود | معناه |
+|---|---|
+| [[let x = ...]] | ثابت. ابدأ بيه دايمًا |
+| [[var x = ...]] | متغير. لما تحتاج تغيّر فعلًا |
+| [[x += 1]] | زوّد 1 (مفيش [[++]]) |
+| [[print("...")]] | اطبع وانزل سطر |
+| [[\(expr)]] | حط قيمة جوه النص |
+| [[""" ... """]] | نص على كذا سطر |
+| [[//]] | تعليق (مش [[#]]) |`,
           lines: [
             R`ثابت اسمه [[appName]]، نوعه [[String]] اتستنتج من القيمة.`,
             R`متغير [[doneCount]] نوعه [[Int]] وبدايته صفر.`,
@@ -168,6 +423,144 @@ print(Int.max)`,
             when: R`سيب الاستنتاج يشتغل في أغلب الحالات، وحط النوع بـ [[:]] لما القيمة الأولية مش بتوضح النوع اللي عايزه (زي [[Double]] بقيمة صحيحة)، أو في الـ properties بتاعة الـ structs.`,
             mistakes: R`تستخدم [[Float]] من غير سبب: [[Double]] هو الافتراضي. وتستخدم [[Double]] للفلوس في تطبيق حقيقي: [[0.1 + 0.2]] مش بالظبط 0.3، فاستخدم [[Decimal]] أو خزّن القروش كـ [[Int]]. وتفتكر إن [[Int(9.99)]] بيقرّب لـ 10: هو بيقص، والتقريب [[Int(9.99.rounded())]].`
           },
+          teach: R`## البرنامج بيعمل إيه؟
+
+بيعرّف قيمة من كل نوع أساسي، يطبع أنواعهم، يحسب سعر بعد ما يحوّل الأنواع بإيده، ويورّيك تحويلين ممكن يفاجئوك. الناتج والأخطاء من [[swift main.swift]] على Swift 6.4 في Docker.
+
+---
+
+## ١. الاستنتاج من القيمة
+
+~~~swift
+let count = 3
+let price = 12.5
+let name = "قلم"
+let inStock = true
+~~~
+
+| القيمة | Swift استنتجت | ليه |
+|---|---|---|
+| [[3]] | [[Int]] | رقم من غير علامة عشرية |
+| [[12.5]] | [[Double]] | فيه علامة عشرية |
+| [["قلم"]] | [[String]] | بين [[" "]] |
+| [[true]] | [[Bool]] | [[true]] أو [[false]] بس |
+
+---
+
+## ٢. النوع بإيدك: [[: Double]]
+
+~~~swift
+let tax: Double = 2
+print(type(of: count), type(of: price), type(of: tax))
+~~~
+
+- [[: Double]] بعد الاسم اسمها type annotation: «النوع ده بالظبط». الشكل دايمًا [[الاسم: النوع = القيمة]].
+- القيمة [[2]] لوحدها كانت هتبقى Int، بس لأننا قلنا Double بقت [[2.0]].
+- [[type(of: x)]] بترجّع نوع القيمة. و [[of:]] ده اسم الـ argument (درس الدوال). و [[print]] لما تديها كذا قيمة بفاصلة بتطبعهم بمسافة بينهم:
+
+~~~text الناتج
+Int Double Double
+~~~
+
+---
+
+## ٣. مفيش تحويل لوحده: [[Double(count)]]
+
+~~~swift
+let total = Double(count) * price + tax
+print("\(count) \(name) بـ \(total) جنيه، متاح: \(inStock)")
+~~~
+
+من جوه لبرة:
+1. [[Double(count)]]: بيعمل Double جديد من الـ Int: [[3]] بقت [[3.0]]. ([[count]] نفسها لسه Int).
+2. [[3.0 * 12.5]] = [[37.5]]. [[*]] ضرب.
+3. [[+ tax]] = [[39.5]].
+
+~~~text الناتج
+3 قلم بـ 39.5 جنيه، متاح: true
+~~~
+
+ولو شلت [[Double(...)]] (التجربة) الـ compiler بيرفض:
+
+~~~text الناتج
+main.swift:9:13: error: cannot convert value of type 'Int' to expected argument type 'Double'
+~~~
+
+يعني: [[*]] اللي بتاخد Double مستنية Double، وانت اديتها Int. وده قصد: Swift عمرها ما بتحوّل نوع لنوع تاني لوحدها.
+
+---
+
+## ٤. [[Int(9.99)]]: بيقص مش بيقرّب
+
+~~~swift
+print(Int(9.99))
+~~~
+
+~~~text الناتج
+9
+~~~
+
+التحويل لـ Int بيرمي الكسر (truncate). لو عايز 10: [[Int(9.99.rounded())]].
+
+---
+
+## ٥. [[Int("42")]]: تحويل ممكن يفشل
+
+~~~swift
+let parsed = Int("42")
+print(parsed as Any, Int("abc") as Any)
+~~~
+
+- النص [["42"]] ينفع يبقى رقم، بس [["abc"]] لأ. فـ [[Int(String)]] مش بترجّع [[Int]]، بترجّع [[Int?]] (optional: «يا Int يا مفيش»). علامة [[?]] بعد النوع ليها درس كامل.
+- [[as Any]]: لو طبعت optional على طول الـ compiler بيدّي warning، و [[as Any]] بتقوله «عارف، اطبعه كده».
+
+~~~text الناتج
+Optional(42) nil
+~~~
+
+[[Optional(42)]] = نجح والقيمة جوه «علبة». [[nil]] = فشل، مفيش قيمة.
+
+---
+
+## ٦. [[Int.max]] والـ overflow
+
+~~~swift
+print(Int.max)
+~~~
+
+~~~text الناتج
+9223372036854775807
+~~~
+
+ده 2 أس 63 ناقص 1: [[Int]] على الأجهزة 64-bit بياخد 64 bit، واحد منهم للإشارة (موجب أو سالب).
+
+**[[Int.max + 1]] بأرقام ثابتة** (التجربة): الـ compiler بيحسبها قبل التشغيل ويرفض:
+
+~~~text الناتج
+main.swift:1:24: error: arithmetic operation '9223372036854775807 + 1' (on type 'Int') results in an overflow
+~~~
+
+**ولو الرقم جاي وقت التشغيل** (جربنا [[Int.max + CommandLine.arguments.count]]، والـ count ده 1): البرنامج اترجم عادي، ووقع وهو شغال:
+
+~~~text الناتج
+*** Program crashed: Illegal instruction at 0x000079b2fe45415d ***
+~~~
+
+ومفيش رسالة «overflow» مكتوبة: Swift بتحط تعليمة بتوقف البرنامج فورًا (trap) بدل ما تكمّل برقم سالب غلط زي C و Java.
+
+---
+
+## الخلاصة
+
+| عايز | اكتب | الناتج |
+|---|---|---|
+| تعرف النوع | [[type(of: x)]] | [[Int]] |
+| Int لـ Double | [[Double(n)]] | [[3.0]] |
+| Double لـ Int | [[Int(9.99)]] | [[9]] (قص) |
+| نص لرقم | [[Int("42")]] | [[Int?]]: [[Optional(42)]] أو [[nil]] |
+| تحدد النوع | [[let x: Double = 2]] | [[2.0]] |
+
+ومفيش تحويل لوحده أبدًا: Int و Double مع بعض = خطأ compile.`,
           lines: [
             R`[[Int]] اتستنتج من الرقم الصحيح.`,
             R`[[Double]] عشان فيه علامة عشرية.`,
@@ -182,7 +575,7 @@ print(Int.max)`,
             R`بيطبع القيمتين. [[as Any]] بس عشان نطبع optional من غير تحذير.`,
             "أكبر Int ممكن."
           ],
-          sol: R`[[count * price]] من غير تحويل بيطلّع: [[binary operator '*' cannot be applied to operands of type 'Int' and 'Double']].
+          sol: R`[[count * price]] من غير تحويل بيطلّع: [[cannot convert value of type 'Int' to expected argument type 'Double']] (على Swift 6.4).
 
 و [[Int.max + 1]] بثوابت الـ compiler بيكتشفه قبل التشغيل: [[arithmetic operation '9223372036854775807 + 1' (on type 'Int') results in an overflow]]. ولو الأرقام جاية وقت التشغيل البرنامج بيقع بدل ما يكمّل بقيمة غلط.
 
@@ -232,6 +625,146 @@ print(2.0.squareRoot(), (10.0 / 3).rounded())`,
             when: R`الـ ternary للقيم البسيطة اللي بتتحدد بشرط واحد (زي النص في زرار)، ولو الشرط معقد استخدم [[if]] أو [[switch]] كـ expression (درس الشروط).`,
             mistakes: R`تقسم Int على Int وتستنى كسر. وتكتب [[if x = 5]] بدل [[==]]: Swift بترفضها (حلو). وتقارن Double بـ [[==]] بعد حسابات: [[0.1 + 0.2 == 0.3]] بيطلع [[false]]، قارن بفرق صغير. وتكتب [[a ?b : c]] من غير مسافات حوالين [[?]]: Swift بتحتاج مسافة قبل [[?]] بتاع الـ ternary وإلا هتفهمه optional.`
           },
+          teach: R`## البرنامج بيعمل إيه؟
+
+بيجرب كل نوع عمليات: قسمة وباقي، اختصارات [[+=]]، مقارنات، منطق، ternary، مقارنة نصوص، ودوال على الـ Double. الناتج من [[swift main.swift]] على Swift 6.4 في Docker.
+
+---
+
+## ١. قسمة الأعداد الصحيحة
+
+~~~swift
+let a = 7, b = 2
+print(a / b, a % b)
+print(Double(a) / Double(b))
+~~~
+
+- [[let a = 7, b = 2]]: ثابتين في سطر واحد، الفاصلة بتفصلهم.
+- [[a / b]]: الاتنين [[Int]]، فالناتج [[Int]] والكسر بيترمي: 7 / 2 = **3** (مش 3.5 ولا 4).
+- [[a % b]]: [[%]] اسمها remainder، باقي القسمة: 7 = 2 × 3 + **1**.
+- [[Double(a) / Double(b)]]: حوّلنا الاتنين، فالقسمة بقت عشرية: **3.5**.
+
+~~~text الناتج
+3 1
+3.5
+~~~
+
+---
+
+## ٢. [[+=]] و [[*=]]
+
+~~~swift
+var score = 10
+score += 5
+score *= 2
+print(score)
+~~~
+
+- [[var]] لأن القيمة هتتغير.
+- [[score += 5]] = [[score = score + 5]]: بقت 15.
+- [[score *= 2]] = [[score = score * 2]]: بقت **30**.
+
+ولو كتبت [[score++]] (التجربة):
+
+~~~text الناتج
+main.swift:5:6: error: cannot find operator '++' in scope; did you mean '+= 1'?
+~~~
+
+يعني الـ operator ده مش موجود في اللغة خالص (اتشال في Swift 3)، والـ compiler نفسه بيقولك البديل.
+
+---
+
+## ٣. المقارنة والمنطق
+
+~~~swift
+let isAdult = 20 >= 18
+let hasTicket = false
+print(isAdult && hasTicket, isAdult || hasTicket, !hasTicket)
+~~~
+
+- [[>=]] «أكبر من أو يساوي»، والناتج [[Bool]]: [[20 >= 18]] = [[true]].
+- [[&&]] (و): صح لو الاتنين صح. true && false = **false**.
+- [[||]] (أو): صح لو واحد على الأقل صح. true || false = **true**.
+- [[!]] قبل القيمة (نفي): بتقلبها. !false = **true**.
+
+~~~text الناتج
+false true true
+~~~
+
+---
+
+## ٤. الـ ternary: [[? :]]
+
+~~~swift
+let label = score > 25 ? "ممتاز" : "كويس"
+print(label)
+~~~
+
+الشكل [[شرط ? لو_صح : لو_غلط]]. [[score > 25]] → 30 > 25 = true، فالقيمة الأولى: **ممتاز**. ولازم مسافة قبل [[?]]، وإلا Swift تفهمها optional.
+
+---
+
+## ٥. مقارنة النصوص
+
+~~~swift
+print("swift" == "Swift", "abc" < "abd")
+~~~
+
+- [[==]] بتقارن المحتوى حرف حرف، وحساسة لحالة الحروف: s صغيرة غير S كبيرة، فالناتج **false**.
+- [[<]] على النصوص بالترتيب الأبجدي: أول حرفين زي بعض، والتالت c قبل d، فـ **true**.
+
+---
+
+## ٦. دوال على الـ Double نفسه
+
+~~~swift
+print(2.0.squareRoot(), (10.0 / 3).rounded())
+~~~
+
+- [[2.0.squareRoot()]]: النقطة الأولى جزء من الرقم، والتانية «نادي دالة على القيمة دي». الجذر التربيعي لـ 2: [[1.4142135623730951]].
+- [[(10.0 / 3).rounded()]]: القوسين الأول عشان القسمة تتحسب الأول (3.3333...)، وبعدين [[rounded()]] بتقرّب لأقرب عدد صحيح، والناتج لسه Double: **3.0**.
+
+~~~text الناتج كله بالترتيب
+3 1
+3.5
+30
+false true true
+ممتاز
+false true
+1.4142135623730951 3.0
+~~~
+
+---
+
+## ٧. حل التجربة: المتوسط بطريقتين
+
+~~~swift
+let g1 = 90, g2 = 85, g3 = 82
+print((g1 + g2 + g3) / 3)
+print(Double(g1 + g2 + g3) / 3)
+~~~
+
+~~~text الناتج
+85
+85.66666666666667
+~~~
+
+المجموع 257. قسمة Int: 257 / 3 = 85 والباقي 2 اترمى. قسمة Double: [[85.66666666666667]]. لاحظ إن [[3]] في السطر التالت اتعاملت Double لوحدها: دي مش «تحويل»، ده رقم مكتوب (literal) بياخد النوع المطلوب.
+
+---
+
+## الخلاصة
+
+| الرمز | معناه | مثال | الناتج |
+|---|---|---|---|
+| [[/]] | قسمة (Int بيقص) | [[7 / 2]] | [[3]] |
+| [[%]] | باقي القسمة | [[7 % 2]] | [[1]] |
+| [[+=]] و [[*=]] | عدّل وخزّن | [[s += 5]] | |
+| [[==]] و [[!=]] | يساوي / مش يساوي | [["a" == "A"]] | [[false]] |
+| [[&&]] و [[||]] و [[!]] | و / أو / نفي | | |
+| [[c ? x : y]] | ternary | | |
+
+ومفيش [[++]] ولا [[--]]: اكتب [[+= 1]].`,
           lines: [
             R`ثابتين في سطر واحد مفصولين بـ [[,]].`,
             R`قسمة Int بتقص: 3، والباقي 1.`,
@@ -307,6 +840,143 @@ print(badge)`,
             when: R`[[guard]] في أول الدالة للـ validation والـ preconditions، و [[if]] للتفرع العادي في النص. ولو بتقارن قيمة واحدة بحالات كتير [[switch]] أحسن (الدرس الجاي).`,
             mistakes: R`تكتب [[guard]] بشرط معكوس في دماغك: [[guard x > 0]] معناها «لازم x أكبر من صفر» مش «لو x أكبر من صفر اخرج». وتنسى إن [[else]] بتاع guard لازم يخرج. وتحط أقواس حوالين الشرط بحكم العادة: شغالة بس مش style Swift.`
           },
+          teach: R`## البرنامج بيعمل إيه؟
+
+دالة بتراجع طلب شراء: ترفض الكمية الغلط والكمية الأكبر من المخزون بـ [[guard]]، وبعدين تختار رسالة بـ [[if]]. وفي الآخر [[if]] بيرجّع قيمة على طول. الناتج من [[swift main.swift]] على Swift 6.4 في Docker.
+
+---
+
+## ١. توقيع الدالة
+
+~~~swift
+func checkOrder(quantity: Int, inStock: Int) -> String {
+~~~
+
+- [[func]] بتعرّف دالة، واسمها [[checkOrder]].
+- جوه القوسين parameters: كل واحد [[الاسم: النوع]].
+- [[-> String]]: السهم معناه «بترجّع»، والدالة دي بترجّع نص. (الدوال ليها درس كامل).
+
+---
+
+## ٢. أول [[guard]]
+
+~~~swift
+  guard quantity > 0 else {
+    return "الكمية لازم تبقى أكبر من صفر"
+  }
+~~~
+
+اقراها كده: «**لازم** [[quantity > 0]]، **وإلا** نفّذ اللي في [[else]]».
+- لو الشرط صح: Swift بتعدّي البلوك كله وتكمّل تحت.
+- لو غلط: تدخل [[else]]، و [[return]] بيرجّع الرسالة ويخرج من الدالة فورًا.
+
+والـ [[else]] إجباري، ولازم يخرج. شلنا [[return]] (التجربة):
+
+~~~text الناتج
+main.swift:4:3: error: 'guard' body must not fall through, consider using a 'return' or 'throw' to exit the scope
+~~~
+
+fall through يعني «يكمّل لتحت». الـ compiler بيرفض لأن الكود اللي تحت الـ guard مكتوب على أساس إن الشرط متحقق.
+
+---
+
+## ٣. تاني [[guard]] و interpolation
+
+~~~swift
+  guard quantity <= inStock else {
+    return "المتاح \(inStock) بس"
+  }
+~~~
+
+[[<=]] «أصغر من أو يساوي». ولو الكمية أكبر من المخزون بنرجّع رسالة فيها الرقم بـ [[\(inStock)]].
+
+---
+
+## ٤. [[if]] / [[else if]] / [[else]]
+
+~~~swift
+  if quantity >= 10 {
+    return "تمام، وليك خصم جملة"
+  } else if quantity >= 5 {
+    return "تمام، وليك شحن مجاني"
+  } else {
+    return "تمام"
+  }
+~~~
+
+- مفيش أقواس حوالين الشرط، والـ [[{ }]] إجبارية.
+- الشروط بتتجرب بالترتيب، وأول واحد صح بيتنفذ والباقي يتساب. عشان كده [[>= 10]] الأول: لو بدأنا بـ [[>= 5]] كان الـ 30 هيدخله.
+- الوصول هنا معناه إن الـ guards الاتنين عدّوا.
+
+---
+
+## ٥. النداءات التلاتة
+
+~~~swift
+print(checkOrder(quantity: 0, inStock: 20))
+print(checkOrder(quantity: 7, inStock: 20))
+print(checkOrder(quantity: 30, inStock: 20))
+~~~
+
+| النداء | وقف فين | الرسالة |
+|---|---|---|
+| 0 | أول guard (0 مش أكبر من 0) | الكمية لازم تبقى أكبر من صفر |
+| 7 | عدّى الـ guards، [[else if]] (7 ≥ 5) | تمام، وليك شحن مجاني |
+| 30 | تاني guard (30 > 20) | المتاح 20 بس |
+
+---
+
+## ٦. [[if]] كـ expression
+
+~~~swift
+let stock = 3
+let badge = if stock == 0 { "خلصان" } else if stock < 5 { "قرب يخلص" } else { "متاح" }
+print(badge)
+~~~
+
+من Swift 5.9: الـ [[if]] نفسه بيطلّع قيمة، فبنحطها في [[badge]] على طول. كل فرع فيه قيمة واحدة من نفس النوع، والـ [[else]] الأخير لازم. 3 مش صفر وأقل من 5: **قرب يخلص**.
+
+~~~text الناتج كله
+الكمية لازم تبقى أكبر من صفر
+تمام، وليك شحن مجاني
+المتاح 20 بس
+قرب يخلص
+~~~
+
+---
+
+## ٧. حل التجربة: [[canVote]]
+
+~~~swift
+func canVote(age: Int) -> Bool {
+  guard age >= 0 else {
+    print("سن غلط: \(age)")
+    return false
+  }
+  return age >= 18
+}
+print(canVote(age: -3), canVote(age: 16), canVote(age: 30))
+~~~
+
+~~~text الناتج
+سن غلط: -3
+false false true
+~~~
+
+- الـ guard فيه سطرين: يطبع، وبعدين [[return false]]. لو شلت الـ return هيطلع نفس خطأ [['guard' body must not fall through]] (جربناه).
+- [[return age >= 18]]: المقارنة نفسها [[Bool]]، فبنرجّعها على طول من غير if.
+- [[سن غلط: -3]] اتطبع **قبل** سطر النتايج، لأن [[print]] بيحسب الـ arguments التلاتة الأول (وأولهم بيطبع)، وبعدين يطبعهم.
+
+---
+
+## الخلاصة
+
+| | [[if]] | [[guard]] |
+|---|---|---|
+| المعنى | لو كذا اعمل كذا | لازم كذا، وإلا اخرج |
+| البلوك بيتنفذ لما | الشرط صح | الشرط غلط |
+| الخروج | اختياري | إجباري ([[return]] / [[throw]] / [[break]] / [[continue]]) |
+| مكانه | أي حتة | أول الدالة غالبًا (early exit) |`,
           lines: [
             R`دالة بتاخد رقمين وبترجّع [[String]]. [[->]] معناها «بترجّع» (تفاصيل الدوال في درس الدوال).`,
             R`[[guard]]: لازم الكمية أكبر من صفر، وإلا ادخل الـ else.`,
@@ -398,6 +1068,134 @@ print(message)`,
             when: R`كل ما تقارن قيمة واحدة بأكتر من حالتين، ودايمًا مع الـ enums. في SwiftUI هتلاقيه جوه [[body]] كتير عشان تعرض شاشة حسب الحالة (loading و error و loaded).`,
             mistakes: R`تحط [[default]] مع enum بتاعك وانت مغطي كل الحالات: كده لما تضيف حالة جديدة الـ compiler مش هينبهك. وتكتب [[case 1...5]] وانت قصدك [[1..<5]]. وتعمل [[1...0]] (البداية أكبر من النهاية): البرنامج بيقع وقت التشغيل.`
           },
+          teach: R`## البرنامج بيعمل إيه؟
+
+٣ استخدامات لـ [[switch]]: تحويل درجة لتقدير بالـ ranges، وتحديد مكان نقطة بالـ tuples، واختيار رسالة من أمر نصي بـ switch بيرجّع قيمة. الناتج من [[swift main.swift]] على Swift 6.4 في Docker.
+
+---
+
+## ١. [[grade]]: switch على ranges
+
+~~~swift
+func grade(_ score: Int) -> String {
+  switch score {
+  case 90...100: return "امتياز"
+  case 75..<90: return "جيد جدًا"
+  case 50..<75: return "مقبول"
+  case 0..<50: return "راسب"
+  default: return "درجة غلط"
+  }
+}
+~~~
+
+- [[_ score]]: الـ [[_]] قبل الاسم معناها إن اللي بينادي مش بيكتب label: [[grade(95)]] مش [[grade(score: 95)]].
+- [[switch score { }]]: قارن [[score]] بالـ cases بالترتيب، وادخل أول واحد يطابق.
+- [[case 90...100:]]: [[...]] closed range، الطرفين داخلين: 90 لحد 100.
+- [[case 75..<90:]]: [[..<]] half-open، الأول داخل والآخر لأ: 75 لحد 89.
+- مفيش [[break]]: كل case بيخلص لوحده.
+- [[default:]] لأي حاجة مطابقتش. ليه إجباري؟ لأن [[Int]] فيه قيم سالبة وأكبر من 100، والـ switch لازم يغطي **كل** القيم. شلناه (التجربة):
+
+~~~text الناتج
+main.swift:2:3: error: switch must be exhaustive
+~~~
+
+ومعاه [[note: add a default clause]].
+
+~~~swift
+print(grade(95), grade(75), grade(30), grade(120))
+~~~
+
+~~~text الناتج
+امتياز جيد جدًا راسب درجة غلط
+~~~
+
+75 دخلت «جيد جدًا» لأن [[75..<90]] بيبدأ بـ 75. و 120 مفيش range فيه، فـ default.
+
+---
+
+## ٢. switch على tuple
+
+~~~swift
+let point = (3, 0)
+switch point {
+case (0, 0):
+  print("في نقطة الأصل")
+case (_, 0):
+  print("على محور x")
+case let (x, y) where x == y:
+  print("على القطر: \(x)")
+default:
+  print("في حتة تانية")
+}
+~~~
+
+- [[(3, 0)]] tuple: قيمتين متجمعين في قيمة واحدة من غير ما تعمل نوع.
+- [[case (0, 0):]] الاتنين لازم صفر. 3 مش صفر: مش هو.
+- [[case (_, 0):]] الـ [[_]] = «أي قيمة، مش فارقة»، والتانية لازم صفر. ✓ فبيطبع **على محور x** ويخرج.
+- [[case let (x, y) where x == y:]] [[let]] بتحط القيمتين في اسمين جداد، و [[where]] بتزود شرط. بيطابق (2, 2) مثلًا.
+- الـ case بيبدأ تحته سطر جديد عادي، والـ indentation مش مهم للـ compiler.
+
+**ملاحظة من التشغيل:** لأن [[point]] ثابت قيمته معروفة، الـ compiler بيطلّع ٣ تحذيرات [[warning: will never be executed]] على الـ cases اللي عمرها ما هتتنفذ، ومعاها [[note: condition always evaluates to false]]. البرنامج بيشتغل عادي، والتحذيرات دي بتختفي لو القيمة جاية وقت التشغيل.
+
+---
+
+## ٣. switch بيرجّع قيمة
+
+~~~swift
+let command = "stop"
+let message = switch command {
+case "start", "run": "بنشغّل"
+case "stop": "بنوقف"
+default: "أمر مش معروف"
+}
+print(message)
+~~~
+
+- [[let message = switch ...]]: من Swift 5.9 الـ switch expression، كل case فيه قيمة واحدة (من غير [[return]]) بتتحط في [[message]].
+- [[case "start", "run":]]: case واحد بقيمتين، الفاصلة معناها «أو».
+- مع [[String]] الـ default لازم برضه (النصوص مالهاش آخر).
+
+~~~text الناتج كله
+امتياز جيد جدًا راسب درجة غلط
+على محور x
+بنوقف
+~~~
+
+---
+
+## ٤. حل التجربة: switch كامل من غير default
+
+~~~swift
+let isLoggedIn = true, isAdmin = false
+switch (isLoggedIn, isAdmin) {
+case (true, true): print("أهلًا يا أدمن")
+case (true, false): print("أهلًا")
+case (false, true): print("حالة غريبة: أدمن مش عامل login")
+case (false, false): print("سجّل دخول الأول")
+}
+~~~
+
+~~~text الناتج
+أهلًا
+~~~
+
+[[Bool]] ليه قيمتين، فالـ tuple من اتنين Bool ليه 2 × 2 = 4 حالات بالظبط. لما غطيتهم كلهم، الـ compiler عرف إن الـ switch exhaustive ومطلبش [[default]].
+
+---
+
+## الخلاصة
+
+| الـ pattern | بيطابق |
+|---|---|
+| [[case 5:]] | القيمة دي بالظبط |
+| [[case "a", "b":]] | أي واحدة منهم |
+| [[case 1...5:]] | من 1 لـ 5 والاتنين داخلين |
+| [[case 1..<5:]] | من 1 لـ 4 |
+| [[case (_, 0):]] | tuple تانيه صفر |
+| [[case let (x, y) where ...:]] | يربط أسماء ويضيف شرط |
+| [[default:]] | أي حاجة باقية |
+
+لازم يغطي كل القيم، ومفيش [[break]].`,
           lines: [
             R`[[_]] قبل [[score]] معناها إن اللي بينادي مش بيكتب اسم الـ parameter: [[grade(95)]].`,
             R`[[switch]] على الدرجة.`,
@@ -489,6 +1287,160 @@ while attempts < 5 {
             when: R`[[for-in]] في 90% من الحالات. [[while]] لما مش عارف عدد اللفات (قراية لحد ما الداتا تخلص، retry لحد ما ينجح). و [[repeat-while]] نادرًا (منيو لازم يظهر مرة على الأقل).`,
             mistakes: R`تكتب [[0...names.count]] بدل [[..<]] فتقرا عنصر برة المصفوفة والبرنامج يقع بـ [[Index out of range]]. وأحسن من الاتنين: [[for name in names]] أو [[names.indices]]. وتغيّر array وانت بتلف عليها وتستنى إن الـ loop يشوف التغيير: الـ for بيلف على نسخة.`
           },
+          teach: R`## البرنامج بيعمل إيه؟
+
+٥ loops صغيرين: لفة على range، ولفة على array بالرقم، وعد تنازلي بـ [[stride]]، وجمع الأرقام الزوجية بـ [[where]]، و [[while]] فيه [[continue]] و [[break]]. الناتج من [[swift main.swift]] على Swift 6.4 في Docker.
+
+---
+
+## ١. [[for i in 1...3]]
+
+~~~swift
+for i in 1...3 {
+  print("لفة \(i)")
+}
+~~~
+
+- [[for ... in ...]]: «لكل عنصر في ده». 
+- [[i]] اسم بتختاره، وفي كل لفة بياخد القيمة اللي عليها الدور. وهو ثابت جوه اللفة (زي [[let]]).
+- [[1...3]] = 1 و 2 و 3.
+
+~~~text الناتج
+لفة 1
+لفة 2
+لفة 3
+~~~
+
+---
+
+## ٢. [[enumerated()]]: الرقم والعنصر
+
+~~~swift
+let names = ["سارة", "علي", "منى"]
+for (index, name) in names.enumerated() {
+  print("\(index + 1). \(name)")
+}
+~~~
+
+- [[[...]]] array (قايمة). درس Array جاي.
+- [[names.enumerated()]] بتدّي كل عنصر مع رقمه كـ tuple: (0, "سارة") و (1, "علي") و (2, "منى").
+- [[(index, name)]] بيفك الـ tuple في اسمين.
+- الترقيم بيبدأ من **0**، عشان كده [[index + 1]].
+
+~~~text الناتج
+1. سارة
+2. علي
+3. منى
+~~~
+
+---
+
+## ٣. [[stride]]: عد بخطوة
+
+~~~swift
+for n in stride(from: 10, through: 0, by: -5) {
+  print(n, terminator: " ")
+}
+print()
+~~~
+
+- [[stride(from: 10, through: 0, by: -5)]]: ابدأ من 10، وزوّد -5 كل مرة، لحد 0 **وداخل** ([[through]]). لو كتبت [[to: 0]] الصفر مكانش هيدخل.
+- [[terminator: " "]]: [[print]] عادةً بتختم بسطر جديد، وهنا قلنالها تختم بمسافة، فالأرقام جنب بعض.
+- [[print()]] فاضية: بتطبع السطر الجديد اللي استغنينا عنه.
+
+~~~text الناتج
+10 5 0 
+~~~
+
+---
+
+## ٤. [[where]] في الـ for
+
+~~~swift
+var sum = 0
+for n in 1...100 where n % 2 == 0 {
+  sum += n
+}
+print("مجموع الزوجي:", sum)
+~~~
+
+- [[where n % 2 == 0]]: اللفة بتتنفذ بس للأرقام اللي باقي قسمتها على 2 صفر (الزوجي).
+- 2 + 4 + ... + 100: خمسين رقم، متوسطهم 51، فالمجموع 50 × 51 = **2550**.
+
+~~~text الناتج
+مجموع الزوجي: 2550
+~~~
+
+---
+
+## ٥. [[while]] و [[continue]] و [[break]]
+
+~~~swift
+var attempts = 0
+while attempts < 5 {
+  attempts += 1
+  if attempts == 2 { continue }
+  if attempts == 4 { break }
+  print("محاولة \(attempts)")
+}
+~~~
+
+[[while شرط]] بيلف طول ما الشرط صح، ومش عارف عدد اللفات مقدمًا.
+
+| attempts | اللي حصل |
+|---|---|
+| 1 | طبع «محاولة 1» |
+| 2 | [[continue]]: سيب باقي اللفة وارجع للشرط |
+| 3 | طبع «محاولة 3» |
+| 4 | [[break]]: اخرج من الـ loop كله |
+
+~~~text الناتج
+محاولة 1
+محاولة 3
+~~~
+
+لاحظ إن [[attempts += 1]] في **أول** اللفة. لو كانت في الآخر، الـ [[continue]] كان هيرجع قبلها و attempts هتفضل 2 للأبد (infinite loop).
+
+---
+
+## ٦. حل التجربة
+
+~~~swift
+for i in 1...10 {
+  print("7 × \(i) = \(7 * i)")
+}
+for name in names.reversed() {
+  print(name)
+}
+~~~
+
+~~~text الناتج (اتشغّل بعد المثال عشان names موجودة)
+7 × 1 = 7
+7 × 2 = 14
+...
+7 × 10 = 70
+منى
+علي
+سارة
+~~~
+
+[[names.reversed()]] بترجّع نفس العناصر بالعكس من غير ما تغيّر [[names]] نفسها.
+
+---
+
+## الخلاصة
+
+| الكود | بيلف على |
+|---|---|
+| [[for i in 0..<n]] | 0 لحد n-1 |
+| [[for i in 1...n]] | 1 لحد n |
+| [[for _ in 1...3]] | 3 مرات من غير ما تحتاج الرقم |
+| [[for (i, x) in a.enumerated()]] | الرقم (من 0) والعنصر |
+| [[stride(from:through:by:)]] | بخطوة، والآخر داخل ([[to:]] من غيره) |
+| [[for ... where شرط]] | العناصر اللي بتحقق الشرط بس |
+| [[while شرط]] | طول ما الشرط صح |
+
+و [[continue]] = اللفة الجاية، و [[break]] = اخرج خالص.`,
           lines: [
             R`من 1 لـ 3 والتلاتة داخلين.`,
             "بيطبع رقم اللفة.",
@@ -583,6 +1535,156 @@ print(range.min, range.max)`,
             when: R`labels: سيب الافتراضي (label = اسم الـ parameter) في أغلب الحالات، واستخدم [[_]] لما أول argument واضح من اسم الدالة ([[print(x)]] و [[square(4)]])، وlabel برة مختلف لما بيخلي الجملة أوضح ([[to:]] و [[from:]] و [[with:]]). و [[inout]] نادرًا: أغلب الوقت رجّع قيمة جديدة أوضح.`,
             mistakes: R`تنادي من غير label فيطلع [[missing argument label 'name:' in call]]. وتحاول تعدّل parameter عادي جوه الدالة ([[cannot assign to value: 'x' is a 'let' constant]]). وتستخدم [[numbers[0]]] من غير ما تتأكد إن الـ array مش فاضية: لو فاضية البرنامج يقع. (الحل الأنظف [[numbers.min()]] اللي بيرجّع optional).`
           },
+          teach: R`## البرنامج بيعمل إيه؟
+
+٤ دوال، كل واحدة بتوريك حاجة: قيمة افتراضية، و labels مختلفة برة وجوه، و [[inout]] اللي بتعدّل متغير بتاع اللي بينادي، ودالة بترجّع قيمتين في tuple. الناتج من [[swift main.swift]] على Swift 6.4 في Docker.
+
+---
+
+## ١. [[greet]]: قيمة افتراضية ومن غير [[return]]
+
+~~~swift
+func greet(name: String, excited: Bool = false) -> String {
+  excited ? "أهلًا يا \(name)!!" : "أهلًا يا \(name)"
+}
+print(greet(name: "سارة"))
+print(greet(name: "علي", excited: true))
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[func greet]] | دالة اسمها greet |
+| [[name: String]] | parameter اسمه name ونوعه String، وهو نفسه الـ label وانت بتنادي |
+| [[excited: Bool = false]] | [[= false]] قيمة افتراضية: ينفع متبعتهوش |
+| [[-> String]] | بترجّع String |
+
+- جسم الدالة expression واحد (ternary)، فـ Swift بترجّعه لوحدها من غير [[return]].
+- النداء الأول من غير [[excited]] فبقت false. التاني بعتناها true.
+
+~~~text الناتج
+أهلًا يا سارة
+أهلًا يا علي!!
+~~~
+
+---
+
+## ٢. [[send]]: [[_]] و label برة غير الاسم جوه
+
+~~~swift
+func send(_ message: String, to user: String) {
+  print("بنبعت «\(message)» لـ \(user)")
+}
+send("اجتماع الساعة 3", to: "منى")
+~~~
+
+كل parameter ممكن يبقى ليه اسمين: **label** (اللي بيتكتب في النداء) و**اسم** (اللي بتستخدمه جوه الدالة):
+
+| الـ parameter | الـ label | الاسم جوه |
+|---|---|---|
+| [[_ message]] | مفيش ([[_]]) | [[message]] |
+| [[to user]] | [[to]] | [[user]] |
+
+فالنداء بيتقري جملة: [[send("...", to: "منى")]]، وجوه الدالة [[user]] أوضح من [[to]]. ومفيش [[->]] لأن الدالة مبترجعش حاجة (نوعها الحقيقي [[Void]]).
+
+~~~text الناتج
+بنبعت «اجتماع الساعة 3» لـ منى
+~~~
+
+---
+
+## ٣. [[inout]] و [[&]]
+
+~~~swift
+func addBonus(to salary: inout Int, percent: Int) {
+  salary += salary * percent / 100
+}
+var mySalary = 10_000
+addBonus(to: &mySalary, percent: 15)
+print(mySalary)
+~~~
+
+- الـ parameters العادية ثوابت جوه الدالة. [[inout]] قبل النوع بتقول: «الدالة هتعدّل القيمة، والتعديل يرجع للمتغير الأصلي».
+- الحساب بالترتيب من الشمال: [[10000 * 15]] = 150000، [[/ 100]] = 1500، فـ [[salary += 1500]] = 11500. (لو كتبت [[percent / 100]] الأول، 15 / 100 في Int = صفر!)
+- [[10_000]]: الـ [[_]] جوه الرقم للقراية بس = 10000.
+- [[&mySalary]]: الـ [[&]] إجباري وانت بتنادي، عشان أي حد يقرا السطر يعرف إن المتغير ده هيتغير. ولازم [[var]].
+
+~~~text الناتج
+11500
+~~~
+
+ومن غير [[&]] (التجربة):
+
+~~~text الناتج
+main.swift:16:14: error: passing value of type 'Int' to an inout parameter requires explicit '&'
+~~~
+
+---
+
+## ٤. [[minMax]]: ترجيع tuple بأسماء
+
+~~~swift
+func minMax(_ numbers: [Int]) -> (min: Int, max: Int) {
+  var lo = numbers[0], hi = numbers[0]
+  for n in numbers {
+    lo = min(lo, n)
+    hi = max(hi, n)
+  }
+  return (lo, hi)
+}
+let range = minMax([4, 9, 1, 7])
+print(range.min, range.max)
+~~~
+
+- [[[Int]]]: array من Int.
+- [[-> (min: Int, max: Int)]]: بترجّع tuple فيه قيمتين ليهم أسماء.
+- [[numbers[0]]]: أول عنصر (الترقيم من 0). بنبدأ بيه الاتنين.
+- [[min(lo, n)]] و [[max(hi, n)]]: دوال جاهزة بترجّع الأصغر والأكبر.
+- [[return (lo, hi)]] والقيم بتتحط في [[min]] و [[max]] بالترتيب، وبعدين بنقراها [[range.min]].
+
+| n | lo | hi |
+|---|---|---|
+| 4 | 4 | 4 |
+| 9 | 4 | 9 |
+| 1 | 1 | 9 |
+| 7 | 1 | 9 |
+
+~~~text الناتج
+1 9
+~~~
+
+> لو بعتّ array فاضية، [[numbers[0]]] بيوقّع البرنامج. الأمان: [[numbers.min()]] اللي بترجّع optional.
+
+---
+
+## ٥. حل التجربة
+
+~~~swift
+func price(_ base: Double, discount: Double = 0) -> Double {
+  base - base * discount / 100
+}
+print(price(200))
+print(price(200, discount: 25))
+~~~
+
+~~~text الناتج
+200.0
+150.0
+~~~
+
+200 - 200 × 25 / 100 = 200 - 50 = 150. والناتج فيه [[.0]] لأنه Double.
+
+---
+
+## الخلاصة
+
+| الشكل | النداء |
+|---|---|
+| [[func f(x: Int)]] | [[f(x: 1)]] |
+| [[func f(_ x: Int)]] | [[f(1)]] |
+| [[func f(to x: Int)]] | [[f(to: 1)]] وجوه الدالة [[x]] |
+| [[func f(x: Int = 0)]] | [[f()]] أو [[f(x: 5)]] |
+| [[func f(x: inout Int)]] | [[f(x: &v)]] و v لازم [[var]] |
+| [[-> (a: Int, b: Int)]] | [[r.a]] و [[r.b]] |`,
           lines: [
             R`دالة بـ parameter عادي وواحد بقيمة افتراضية، وبترجّع [[String]].`,
             R`expression واحد، فمش محتاجين [[return]].`,
@@ -671,6 +1773,137 @@ print(empty.first as Any)`,
             when: R`[[??]] لما فيه قيمة افتراضية منطقية. [[if let]] لما عايز تعمل حاجة بس لو القيمة موجودة. [[guard let]] (الدرس الجاي) لما القيمة لازمة لباقي الدالة. و [[!]] تقريبًا أبدًا في كود التطبيق، إلا في حاجات مضمونة زي [[URL(string: "https://apple.com")!]] بنص ثابت انت كاتبه.`,
             mistakes: R`تحط [[!]] في كل حتة عشان الـ compiler يسكت: كده رجعت لمشكلة الـ null بتاعة اللغات التانية. وتطبع optional من غير فك فيطلع [[Optional("سارة")]] للمستخدم. وتفتكر إن [[""]] (نص فاضي) زي [[nil]]: النص الفاضي قيمة موجودة.`
           },
+          teach: R`## البرنامج بيعمل إيه؟
+
+بيعمل قيمة ممكن تبقى فاضية ([[String?]])، ويتعامل معاها بالطرق الآمنة: [[??]] لقيمة افتراضية، و [[if let]] للفك، وتحويل نص لرقم بشرطين، و [[max()]] و [[first]] اللي بيرجّعوا optional. الناتج من [[swift main.swift]] على Swift 6.4 في Docker.
+
+---
+
+## ١. [[String?]] و [[nil]]
+
+~~~swift
+var bio: String? = nil
+~~~
+
+- [[?]] بعد النوع = Optional: «يا [[String]] يا مفيش».
+- [[nil]] = مفيش قيمة. ولازم نكتب النوع هنا: من [[nil]] لوحدها Swift متعرفش ده optional من إيه.
+- [[var]] عشان هنحط فيه قيمة بعدين.
+
+---
+
+## ٢. [[??]]: قيمة افتراضية
+
+~~~swift
+print(bio ?? "لسه مفيش نبذة")
+~~~
+
+[[a ?? b]] اسمها nil-coalescing: «لو [[a]] فيها قيمة خدها، لو nil خد [[b]]». و [[bio]] nil، فاتطبع:
+
+~~~text الناتج
+لسه مفيش نبذة
+~~~
+
+والناتج نوعه [[String]] عادي (مش optional)، عشان كده [[print]] طبعته من غير [[Optional(...)]].
+
+---
+
+## ٣. [[if let]]: افتح العلبة
+
+~~~swift
+bio = "مطورة iOS"
+if let bio {
+  print("النبذة: \(bio)، وطولها \(bio.count)")
+}
+~~~
+
+- [[if let bio]] اختصار [[if let bio = bio]] (من Swift 5.7): لو [[bio]] فيها قيمة، اعمل ثابت جديد بنفس الاسم نوعه [[String]] **عادي** وادخل البلوك. لو nil اتخطى البلوك.
+- جوه البلوك [[bio.count]] شغالة. برة البلوك، على الـ optional، كانت هتبقى خطأ compile.
+- [[count]] عدد الحروف: «مطورة» 5 + مسافة 1 + «iOS» 3 = **9**.
+
+~~~text الناتج
+النبذة: مطورة iOS، وطولها 9
+~~~
+
+---
+
+## ٤. [[if let]] بشرطين
+
+~~~swift
+let input = "25"
+if let age = Int(input), age >= 18 {
+  print("السن \(age): مسموح")
+} else {
+  print("رقم غلط أو صغير")
+}
+~~~
+
+- [[Int(input)]] بترجّع [[Int?]]: التحويل ممكن يفشل.
+- [[if let age = ...]]: لو نجح، [[age]] بقت [[Int]].
+- [[,]] معناها «و كمان»: [[age >= 18]] بيتشيك بس لو الفك نجح، وبيستخدم [[age]] اللي لسه متفكة.
+
+| input | الفك | الشرط | الفرع |
+|---|---|---|---|
+| [["25"]] | 25 | صح | السن 25: مسموح |
+| [["abc"]] | فشل | مبيتشيكش | رقم غلط أو صغير |
+| [["12"]] | 12 | غلط | رقم غلط أو صغير |
+
+الصفين التانيين من التجربة: اتشغّلوا وطلّعوا نفس الرسالة.
+
+---
+
+## ٥. دوال بترجّع optional
+
+~~~swift
+let scores = [70, 95, 88]
+print(scores.max() ?? 0)
+let empty: [Int] = []
+print(empty.first as Any)
+~~~
+
+- [[scores.max()]] بترجّع [[Int?]]: لو الـ array فاضية مفيش أكبر رقم. هنا فيها، فـ **95**، و [[?? 0]] للأمان.
+- [[let empty: [Int] = []]]: array فاضية. لازم النوع لأن [[[]]] لوحدها مفيهاش عناصر يتستنتج منها.
+- [[empty.first]]: أول عنصر... ومفيش، فـ **nil**. و [[as Any]] بس عشان نطبع optional من غير warning.
+
+~~~text الناتج كله
+لسه مفيش نبذة
+النبذة: مطورة iOS، وطولها 9
+السن 25: مسموح
+95
+nil
+~~~
+
+---
+
+## ٦. التجربة: [[!]] على nil
+
+~~~swift
+var nickname: String? = nil
+print(nickname!)
+~~~
+
+البرنامج اترجم عادي، ووقع وهو شغال:
+
+~~~text الناتج
+main/main.swift:2: Fatal error: Unexpectedly found nil while unwrapping an Optional value
+*** Program crashed: Illegal instruction at 0x00007387eaaf7aff ***
+~~~
+
+- [[Fatal error]]: Swift وقفت البرنامج عمدًا، و [[:2]] رقم السطر.
+- [[Unexpectedly found nil while unwrapping]]: «لقيت nil وانت قلتلي افتح».
+- [[Illegal instruction]]: الطريقة اللي Swift بتوقف بيها البرنامج (trap). على iPhone ده معناه التطبيق يقفل في وش المستخدم.
+
+---
+
+## الخلاصة
+
+| الطريقة | الشكل | لو nil |
+|---|---|---|
+| قيمة افتراضية | [[x ?? "default"]] | ياخد الافتراضي |
+| فك آمن | [[if let x { }]] | يتخطى البلوك |
+| فك بشرط | [[if let v = x, v > 0 { }]] | يروح [[else]] |
+| force unwrap | [[x!]] | **crash** |
+
+وأي دالة ممكن «متلاقيش» ([[Int("...")]] و [[first]] و [[max()]]) بترجّع optional.`,
           lines: [
             R`[[String?]] optional، وبدايته [[nil]].`,
             R`لو nil يطبع النص الافتراضي.`,
@@ -748,6 +1981,143 @@ print(maybeUser?.address?.city.count as Any)`,
             when: R`[[guard let]] في أول الدوال وفي الـ handlers (لما تستقبل داتا من النت أو من المستخدم). و [[?.]] لما تقرا قيمة متداخلة ومش فارق معاك لو مش موجودة. و [[if let]] لما الكود اللي محتاج القيمة صغير.`,
             mistakes: R`تكتب [[user!.address!.city]]: أي nil في السكة = crash. وتنسى إن نتيجة [[?.]] optional فتحاول تستخدمها كـ String عادي. وتكتب [[guard let]] جوه loop ونسيت إن [[return]] بيخرج من الدالة كلها، يمكن كنت عايز [[continue]].`
           },
+          teach: R`## البرنامج بيعمل إيه؟
+
+دالة بتعمل «ليبل شحن» لمستخدم ممكن يبقى مش موجود، وعنوانه ممكن يبقى مش موجود. بتستخدم [[guard let]] تخرج بدري لو حاجة ناقصة، و [[?.]] عشان تمشي في السلسلة من غير crash. الناتج من [[swift main.swift]] على Swift 6.4 في Docker.
+
+---
+
+## ١. الأنواع: [[struct]] بحقل optional
+
+~~~swift
+struct Address {
+  var city: String
+}
+struct User {
+  var name: String
+  var address: Address?
+}
+~~~
+
+- [[struct]] بيعمل نوع جديد فيه أكتر من حقل (property). ليه درس كامل، هنا محتاجينه بس عشان المثال.
+- [[address: Address?]]: المستخدم ممكن ميكونش عنده عنوان.
+- Swift بتعمل للـ struct دالة إنشاء جاهزة بأسماء الحقول: [[User(name: "...", address: ...)]].
+
+---
+
+## ٢. أول [[guard let]]
+
+~~~swift
+func shippingLabel(for user: User?) -> String {
+  guard let user else {
+    return "مفيش مستخدم"
+  }
+~~~
+
+- [[for user: User?]]: label اسمه [[for]] (فالنداء [[shippingLabel(for: sara)]] بيتقري جملة)، والـ parameter نفسه optional.
+- [[guard let user]] اختصار [[guard let user = user]]: لو nil ادخل [[else]] واخرج. لو فيه قيمة، اعمل [[user]] جديد نوعه [[User]] عادي، **ويفضل موجود لآخر الدالة** (مش جوه بلوك زي [[if let]]).
+
+---
+
+## ٣. تاني [[guard let]] و [[?.]]
+
+~~~swift
+  guard let city = user.address?.city else {
+    return "\(user.name): ضيف عنوان الأول"
+  }
+~~~
+
+نفكه من جوه لبرة:
+1. [[user.address]]: نوعه [[Address?]].
+2. [[?.city]]: optional chaining. لو العنوان موجود هات [[city]]، لو nil وقّف هنا والنتيجة nil. نوع النتيجة [[String?]] (حتى لو [[city]] نفسها String عادي).
+3. [[guard let city = ...]]: فك النتيجة. لو nil اخرج برسالة فيها [[user.name]] (شغالة لأن أول guard فك [[user]]).
+
+---
+
+## ٤. الطريق السعيد
+
+~~~swift
+  return "شحن لـ \(user.name) في \(city)"
+}
+~~~
+
+لو وصلنا هنا يبقى [[user]] و [[city]] الاتنين قيم عادية، من غير ولا [[if]] متداخل.
+
+---
+
+## ٥. النداءات
+
+~~~swift
+let sara = User(name: "سارة", address: Address(city: "الإسكندرية"))
+let ali = User(name: "علي", address: nil)
+print(shippingLabel(for: sara))
+print(shippingLabel(for: ali))
+print(shippingLabel(for: nil))
+~~~
+
+| النداء | وقف فين | الناتج |
+|---|---|---|
+| [[sara]] | عدّى الاتنين | شحن لـ سارة في الإسكندرية |
+| [[ali]] | تاني guard (العنوان nil) | علي: ضيف عنوان الأول |
+| [[nil]] | أول guard | مفيش مستخدم |
+
+لاحظ إن [[sara]] نوعها [[User]] مش [[User?]]، وبعتناها لـ parameter من نوع [[User?]] عادي: Swift بتحط القيمة في العلبة لوحدها.
+
+---
+
+## ٦. سلسلة من أولها optional
+
+~~~swift
+let maybeUser: User? = sara
+print(maybeUser?.address?.city.count as Any)
+~~~
+
+- [[maybeUser?]]: الحلقة الأولى optional.
+- [[.address?]]: التانية optional.
+- [[.city.count]]: من غير [[?]] لأن [[city]] و [[count]] مش optional.
+- السلسلة كلها نجحت، و «الإسكندرية» 10 حروف، بس النتيجة **[[Optional(10)]]** لأن السلسلة كان ممكن تقف في النص، فنوعها [[Int?]].
+
+~~~text الناتج كله
+شحن لـ سارة في الإسكندرية
+علي: ضيف عنوان الأول
+مفيش مستخدم
+Optional(10)
+~~~
+
+---
+
+## ٧. حل التجربة
+
+~~~swift
+func parseAge(_ text: String) -> Int {
+  guard let age = Int(text) else {
+    return -1
+  }
+  return age
+}
+print(parseAge("30"), parseAge("تلاتين"))
+print(ali.address?.city ?? "مش معروف")
+~~~
+
+~~~text الناتج
+30 -1
+مش معروف
+~~~
+
+- [[Int("تلاتين")]] فشل فرجّعنا -1.
+- [[ali.address?.city]] = nil (مفيش عنوان)، و [[??]] بتدي القيمة البديلة.
+
+---
+
+## الخلاصة
+
+| | [[if let x]] | [[guard let x]] |
+|---|---|---|
+| [[x]] متاح فين | جوه البلوك بس | لآخر الدالة |
+| لو nil | يتخطى البلوك | لازم يخرج |
+| الأنسب | كود صغير محتاج القيمة | قيمة لازمة لباقي الدالة |
+
+و [[a?.b?.c]] بيقف عند أول nil، ونتيجته دايمًا optional.`,
           lines: [
             "نوع للعنوان.",
             "المدينة.",
@@ -836,6 +2206,159 @@ print(tags.intersection(other))`,
             when: R`[[Array]] لأي قايمة بترتيب (رسايل، منتجات). [[Dictionary]] لما بتدور بمفتاح (منتج بالـ id، إعدادات). [[Set]] لما مش عايز تكرار أو بتسأل «موجود ولا لأ» كتير (tags، ids اتشافت).`,
             mistakes: R`توصل بـ index من غير ما تتأكد. وتعتمد على ترتيب الـ Dictionary أو الـ Set. وتمسح عناصر من array وانت بتلف عليها بالـ index فالـ indexes تتلخبط: استخدم [[removeAll(where:)]]. وتنسى إن [[dict[key]]] optional فتطبع [[Optional(5.0)]].`
           },
+          teach: R`## البرنامج بيعمل إيه؟
+
+٣ أجزاء: سلة مشتريات كـ [[Array]] (نضيف ونمسح ونقرا)، وأسعار كـ [[Dictionary]] (مفتاح وقيمة)، و tags كـ [[Set]] (من غير تكرار). الناتج من [[swift main.swift]] على Swift 6.4 في Docker.
+
+---
+
+## ١. Array: إضافة
+
+~~~swift
+var cart = ["قلم", "كشكول"]
+cart.append("مسطرة")
+cart.insert("شنطة", at: 0)
+print(cart, cart.count)
+~~~
+
+- [[[ ... ]]] بعناصر بينهم فاصلة = array. النوع اتستنتج [[[String]]] (يعني Array of String).
+- [[var]] عشان هنعدّل. على [[let]] أي [[append]] = خطأ compile.
+- [[append]]: يضيف في الآخر. [[insert(_, at: 0)]]: يضيف في مكان 0 (الأول) ويزق الباقي.
+- [[count]]: عدد العناصر.
+
+~~~text الناتج
+["شنطة", "قلم", "كشكول", "مسطرة"] 4
+~~~
+
+---
+
+## ٢. Array: قراية ومسح
+
+~~~swift
+print(cart[1], cart.first ?? "-", cart.contains("قلم"))
+cart.remove(at: 0)
+print(cart)
+~~~
+
+- [[cart[1]]]: العنصر رقم 1 = التاني = **قلم** (الترقيم من 0).
+- [[cart.first]]: أول عنصر بس **optional** (لو فاضية nil)، فـ [[?? "-"]]: **شنطة**.
+- [[contains("قلم")]]: موجود؟ **true**.
+- [[remove(at: 0)]]: امسح الأول.
+
+~~~text الناتج
+قلم شنطة true
+["قلم", "كشكول", "مسطرة"]
+~~~
+
+**index برة الحدود** (التجربة: [[cart[10]]] على array فيها عنصرين):
+
+~~~text الناتج
+Swift/ContiguousArrayBuffer.swift:695: Fatal error: Index out of range
+*** Program crashed: Illegal instruction ...
+~~~
+
+الـ compiler مش بيمسكها، والبرنامج بيقع وقت التشغيل. والملف المذكور جوه مكتبة Swift نفسها (هي اللي بتشيك الحدود)، مش في كودك.
+
+---
+
+## ٣. Dictionary
+
+~~~swift
+var prices: [String: Double] = ["قلم": 5, "كشكول": 20]
+prices["مسطرة"] = 7.5
+prices["قلم"] = 6
+print(prices["قلم"] ?? 0, prices["ممحاة"] ?? 0)
+print(prices["ممحاة", default: 1])
+~~~
+
+- [[[String: Double]]]: dictionary المفتاح فيه String والقيمة Double. كتبنا النوع عشان [[5]] و [[20]] لوحدهم كانوا هيبقوا Int.
+- [[["قلم": 5, ...]]]: كل عنصر [[مفتاح: قيمة]].
+- [[prices["مسطرة"] = 7.5]]: المفتاح مش موجود، فاتضاف. [[prices["قلم"] = 6]]: موجود، فاتعدّل.
+- القراية [[prices["قلم"]]] نوعها [[Double?]] دايمًا: المفتاح ممكن ميكونش موجود. «ممحاة» مش موجودة فـ [[?? 0]] اشتغلت.
+- [[default: 1]] جوه القوسين: نفس فكرة [[??]] بس النتيجة [[Double]] على طول.
+
+~~~text الناتج
+6.0 0.0
+1.0
+~~~
+
+---
+
+## ٤. اللف على dictionary بترتيب
+
+~~~swift
+for (item, price) in prices.sorted(by: { $0.key < $1.key }) {
+  print(item, price)
+}
+~~~
+
+- الـ dictionary **ملوش ترتيب**: لو لفيت عليه على طول الترتيب ممكن يتغير من تشغيل للتاني.
+- [[sorted(by:)]] بترجّع array من أزواج مترتبة. وبتاخد closure بيقارن عنصرين: [[$0]] الأول و [[$1]] التاني (درس الـ closures). [[$0.key < $1.key]]: رتّب بالمفتاح أبجديًا.
+- [[(item, price)]] بيفك كل زوج.
+
+~~~text الناتج
+قلم 6.0
+كشكول 20.0
+مسطرة 7.5
+~~~
+
+ق قبل ك قبل م في الأبجدية.
+
+---
+
+## ٥. Set
+
+~~~swift
+var tags: Set<String> = ["swift", "ios"]
+tags.insert("swift")
+tags.insert("xcode")
+print(tags.count, tags.contains("ios"))
+let other: Set = ["ios", "android"]
+print(tags.intersection(other))
+~~~
+
+- [[Set<String>]]: النوع لازم يتكتب، لأن [[[...]]] لوحدها بتبقى Array. والـ [[<String>]] نوع العناصر (generics، درس جاي).
+- [[insert("swift")]] تاني: موجودة، فمفيش حاجة حصلت. [[insert("xcode")]] اتضافت. العدد **3**.
+- [[let other: Set = [...]]]: [[Set]] من غير نوع العنصر، Swift استنتجته String.
+- [[intersection]]: العناصر المشتركة بين الاتنين: **["ios"]**.
+
+~~~text الناتج
+3 true
+["ios"]
+~~~
+
+---
+
+## ٦. حل التجربة: عد الكلمات
+
+~~~swift
+var counts: [String: Int] = [:]
+for word in ["a", "b", "a", "c", "a"] {
+  counts[word, default: 0] += 1
+}
+print(counts["a"]!, counts["b"]!, counts["c"]!)
+~~~
+
+- [[[:]]]: dictionary فاضي (العلامة [[:]] هي اللي بتفرقه عن array فاضية [[[]]]).
+- [[counts[word, default: 0] += 1]]: لو الكلمة مش موجودة ابدأ من 0، وزوّد 1، وخزّن.
+- [[!]] هنا آمن لأننا متأكدين إن الـ 3 مفاتيح اتحطوا.
+
+~~~text الناتج
+3 1 1
+~~~
+
+---
+
+## الخلاصة
+
+| | Array | Dictionary | Set |
+|---|---|---|---|
+| مثال النوع | [[[String]]] | [[[String: Double]]] | [[Set<String>]] |
+| الترتيب | مضمون | لأ | لأ |
+| تكرار | مسموح | المفاتيح لأ | لأ |
+| القراية | [[a[i]]] (برة الحدود = crash) | [[d[key]]] بترجّع optional | [[s.contains(x)]] |
+| إضافة | [[append]] و [[insert(_:at:)]] | [[d[key] = v]] | [[insert]] |
+| مسح | [[remove(at:)]] | [[d[key] = nil]] | [[remove]] |`,
           lines: [
             R`array من String، و [[var]] عشان هنعدّلها.`,
             "إضافة في الآخر.",
@@ -930,6 +2453,168 @@ print(products.allSatisfy { $0.price > 50 })`,
             when: R`أي تحويل أو فلترة أو تجميع لقايمة. في SwiftUI هتعمل [[filter]] و [[sorted]] على الداتا قبل ما تعرضها في List. ولو الـ loop فيه منطق معقد أو side effects (طباعة، شبكة)، [[for]] العادي أوضح.`,
             mistakes: R`تستخدم [[map]] وترجع optional فتطلع [[[Int?]]] بدل [[compactMap]]. وتسلسل 6 دوال بـ [[$0]] في سطر واحد لحد ما محدش يفهمه: قسّم وسمّي الخطوات. وتستخدم [[map]] عشان side effect (طباعة) بدل [[forEach]] أو for.`
           },
+          teach: R`## البرنامج بيعمل إيه؟
+
+عنده ٣ منتجات، وبيطلع منهم معلومات من غير ولا loop مكتوب بإيده: الأسماء، والمتاح، ومجموع أسعار المتاح، والترتيب بالسعر، وتحويل نصوص لأرقام، وأول منتج غالي، وهل كلهم فوق 50. الناتج من [[swift main.swift]] على Swift 6.4 في Docker.
+
+---
+
+## ١. الداتا
+
+~~~swift
+struct Product {
+  let name: String
+  let price: Double
+  let inStock: Bool
+}
+let products = [
+  Product(name: "سماعة", price: 450, inStock: true),
+  Product(name: "شاحن", price: 200, inStock: false),
+  Product(name: "كابل", price: 80, inStock: true),
+]
+~~~
+
+نوع [[Product]] بـ ٣ حقول، و array منه نوعها [[[Product]]]. الفاصلة بعد آخر عنصر مسموحة.
+
+---
+
+## ٢. [[map]] و key path
+
+~~~swift
+let names = products.map(\.name)
+print(names)
+~~~
+
+- [[map]] بتلف على كل عنصر، وتطبق عليه حاجة، وترجّع **array جديدة** بالنتايج.
+- [[\.name]] اسمه key path: «الـ property اللي اسمها name». يعني «من كل منتج هات اسمه». نفس [[map { $0.name }]].
+
+~~~text الناتج
+["سماعة", "شاحن", "كابل"]
+~~~
+
+---
+
+## ٣. [[filter]] و [[$0]]
+
+~~~swift
+let available = products.filter { $0.inStock }
+print(available.count)
+~~~
+
+- [[filter]] بتسيب العناصر اللي الـ closure بيرجّعلها [[true]].
+- [[{ $0.inStock }]] closure (دالة صغيرة من غير اسم). [[$0]] اسم جاهز للعنصر الحالي. ومفيش أقواس [[()]] بعد [[filter]] لأن الـ closure هو الـ argument الوحيد (trailing closure).
+- الشاحن [[inStock: false]] فاتشال: **2**.
+
+---
+
+## ٤. [[map]] ثم [[reduce]]
+
+~~~swift
+let total = available.map(\.price).reduce(0, +)
+print("مجموع المتاح:", total)
+~~~
+
+من الشمال لليمين:
+1. [[available.map(\.price)]] → [[[450.0, 80.0]]].
+2. [[.reduce(0, +)]]: ابدأ بـ 0، وطبّق [[+]] بين اللي اتجمع لحد دلوقتي وكل عنصر: 0 + 450 = 450، ثم 450 + 80 = **530**. و [[+]] هنا متبعته كدالة لأنه فعلًا دالة بتاخد اتنين.
+
+~~~text الناتج
+مجموع المتاح: 530.0
+~~~
+
+---
+
+## ٥. [[sorted]] بـ [[$0]] و [[$1]]
+
+~~~swift
+let cheapFirst = products.sorted { $0.price < $1.price }
+print(cheapFirst.map(\.name))
+~~~
+
+[[sorted]] بتاخد closure بيقارن **عنصرين**: [[$0]] و [[$1]]، ويرجّع true لو الأول المفروض ييجي قبل التاني. [[<]] على السعر = من الأرخص للأغلى: 80، 200، 450.
+
+~~~text الناتج
+["كابل", "شاحن", "سماعة"]
+~~~
+
+---
+
+## ٦. [[compactMap]]
+
+~~~swift
+let inputs = ["10", "abc", "25", ""]
+let numbers = inputs.compactMap { Int($0) }
+print(numbers)
+~~~
+
+- [[Int($0)]] بترجّع [[Int?]]: 10، nil، 25، nil.
+- [[map]] كانت هتطلّع [[[Int?]]] فيها nil. [[compactMap]] بتحوّل **وبتشيل الـ nil**: [[[Int]]] نضيفة.
+
+~~~text الناتج
+[10, 25]
+~~~
+
+---
+
+## ٧. [[first]] بشرط و [[allSatisfy]]
+
+~~~swift
+print(products.first { $0.price > 300 }?.name ?? "-")
+print(products.allSatisfy { $0.price > 50 })
+~~~
+
+- [[first { شرط }]] (اسمها الكامل [[first(where:)]]): أول عنصر يحقق الشرط، أو nil. فـ [[?.name]] و [[?? "-"]]. السماعة 450: **سماعة**.
+- [[allSatisfy]]: كلهم بيحققوا الشرط؟ أرخص واحد 80 > 50: **true**.
+
+~~~text الناتج كله
+["سماعة", "شاحن", "كابل"]
+2
+مجموع المتاح: 530.0
+["كابل", "شاحن", "سماعة"]
+[10, 25]
+سماعة
+true
+~~~
+
+---
+
+## ٨. حل التجربة: سلسلة
+
+~~~swift
+let result = products
+  .filter { $0.inStock && $0.price < 300 }
+  .map(\.name)
+  .sorted()
+print(result)
+~~~
+
+| الخطوة | الناتج |
+|---|---|
+| [[filter]] متاح وأقل من 300 | الكابل بس (الشاحن مش متاح، والسماعة 450) |
+| [[map(\.name)]] | [[["كابل"]]] |
+| [[sorted()]] | [[["كابل"]]] (String بيتقارن لوحده) |
+
+~~~text الناتج
+["كابل"]
+~~~
+
+كل سطر بيبدأ بـ [[.]] بيكمّل على نتيجة اللي قبله، فالسلسلة بتتقري من فوق لتحت.
+
+---
+
+## الخلاصة
+
+| الدالة | بترجّع |
+|---|---|
+| [[map { }]] | array بنفس العدد بعد التحويل |
+| [[filter { }]] | العناصر اللي الشرط بتاعها true |
+| [[reduce(start, f)]] | قيمة واحدة |
+| [[compactMap { }]] | تحويل + شيل الـ nil |
+| [[sorted { $0 < $1 }]] | array مترتبة |
+| [[first { }]] | أول عنصر optional |
+| [[allSatisfy { }]] | Bool |
+
+و [[$0]] = أول argument في الـ closure، و [[\.name]] = key path لـ property.`,
           lines: [
             "نوع للمنتج.",
             "الاسم.",
@@ -1028,6 +2713,149 @@ handlers.forEach { $0() }`,
             when: R`trailing closures و [[$0]] للـ closures القصيرة (سطر أو اتنين). ولو الـ closure طويل أو فيه أكتر من parameter، سمّي الـ parameters ([[{ user, index in }]]) عشان القراية. و [[@escaping]] لما بتخزن الـ closure أو بتبعته لكود async.`,
             mistakes: R`تستخدم [[$0]] في closure متداخل جوه closure: مش هتعرف أنهي [[$0]] بتاع مين. وتنسى إن الـ closure بيمسك المتغير مش قيمته وقت التعريف (لو اتغير بعدين الـ closure هيشوف الجديد). وتمسك [[self]] بقوة في closure متخزن جوه class فتعمل memory leak.`
           },
+          teach: R`## البرنامج بيعمل إيه؟
+
+٤ استخدامات للـ closure: closure متخزن في ثابت، ودالة بتاخد closure (و trailing closure)، ودالة بترجّع closure فاكر عداده، و closure بيتخزن عشان يتنادى بعدين ([[@escaping]]). الناتج من [[swift main.swift]] على Swift 6.4 في Docker.
+
+---
+
+## ١. closure في ثابت
+
+~~~swift
+let add: (Int, Int) -> Int = { a, b in a + b }
+print(add(2, 3))
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[(Int, Int) -> Int]] | نوع الـ closure: بياخد اتنين Int وبيرجّع Int |
+| [[{ ... }]] | الـ closure نفسه |
+| [[a, b]] | أسماء الـ parameters (أنواعهم معروفة من النوع اللي فوق) |
+| [[in]] | فاصل: الـ parameters قبله، والجسم بعده |
+| [[a + b]] | الجسم. سطر واحد فمش محتاج [[return]] |
+
+[[add(2, 3)]] بتنادى زي أي دالة: **5**.
+
+---
+
+## ٢. دالة بتاخد closure
+
+~~~swift
+func repeatTimes(_ n: Int, action: (Int) -> Void) {
+  for i in 1...n {
+    action(i)
+  }
+}
+~~~
+
+- [[action: (Int) -> Void]]: parameter نوعه closure بياخد Int ومبيرجعش حاجة. [[Void]] = «مفيش قيمة راجعة».
+- الدالة مش عارفة الـ closure هيعمل إيه، هي بس بتناديه n مرة وتديله رقم اللفة.
+
+---
+
+## ٣. trailing closure
+
+~~~swift
+repeatTimes(3) { i in
+  print("مرة \(i)")
+}
+~~~
+
+الشكل الكامل كان [[repeatTimes(3, action: { i in print(...) })]]. لأن الـ closure آخر argument، Swift بتسمح تقفل القوسين بدري وتكتبه برة **من غير label**. ده نفس شكل [[Button("حفظ") { ... }]] و [[VStack { ... }]] في SwiftUI.
+
+~~~text الناتج
+مرة 1
+مرة 2
+مرة 3
+~~~
+
+---
+
+## ٤. closure بيمسك متغير (capture)
+
+~~~swift
+func makeCounter() -> () -> Int {
+  var count = 0
+  return {
+    count += 1
+    return count
+  }
+}
+let next = makeCounter()
+print(next(), next(), next())
+~~~
+
+- [[-> () -> Int]]: الدالة بترجّع closure، والـ closure ده نوعه [[() -> Int]] (مبياخدش حاجة وبيرجّع Int). اقراها: «بترجّع (حاجة مبتاخدش وبترجّع Int)».
+- [[count]] متغير محلي في [[makeCounter]]، وكان المفروض يختفي أول ما الدالة تخلص.
+- بس الـ closure اللي رجع **مسكه** (captured)، فالمتغير بيفضل عايش جوه الـ closure.
+- كل نداء [[next()]] بيزود نفس الـ [[count]]:
+
+~~~text الناتج
+1 2 3
+~~~
+
+**التجربة:** عملنا [[let otherCounter = makeCounter()]] وناديناه مرتين، وبعدين [[next()]] تاني:
+
+~~~text الناتج
+1 2
+4
+~~~
+
+[[otherCounter]] بدأ من 1، لأن كل نداء لـ [[makeCounter()]] بيعمل [[count]] جديد خاص بيه. و [[next]] كمّل من 4 لوحده.
+
+---
+
+## ٥. [[@escaping]]: closure هيعيش بعد الدالة
+
+~~~swift
+var handlers: [() -> Void] = []
+func store(in list: inout [() -> Void], _ handler: @escaping () -> Void) {
+  list.append(handler)
+}
+store(in: &handlers) { print("خلصنا") }
+handlers.forEach { $0() }
+~~~
+
+- [[[() -> Void]]]: array من closures.
+- [[store]] مش بتنادي الـ closure، بتحطه في الـ array عشان يتنادى **بعد** ما [[store]] نفسها ترجع. ده اسمه escaping (الـ closure «هرب» من الدالة)، ولازم تقولها صريحة بـ [[@escaping]]. الـ [[@]] بتعلّم attribute: معلومة زيادة للـ compiler.
+- [[inout]] و [[&handlers]]: عشان الإضافة تحصل في الـ array الأصلية (درس الدوال).
+- [[handlers.forEach { $0() }]]: [[$0]] هنا هو الـ closure المتخزن نفسه، و [[()]] بتناديه.
+
+~~~text الناتج
+خلصنا
+~~~
+
+**التجربة:** شلنا [[@escaping]]:
+
+~~~text الناتج
+main.swift:26:15: error: converting non-escaping parameter 'handler' to generic parameter 'Element' may allow it to escape
+~~~
+
+الترجمة: «انت بتحط closure مش escaping جوه array (اللي نوع عنصرها [[Element]])، وده ممكن يخليه يهرب». الـ closures من غير [[@escaping]] الـ compiler ضامن إنها هتتنادى وتخلص جوه الدالة، فمينفعش تتخزن.
+
+~~~text الناتج كله
+5
+مرة 1
+مرة 2
+مرة 3
+1 2 3
+خلصنا
+~~~
+
+---
+
+## الخلاصة
+
+| الشكل | مثال |
+|---|---|
+| كامل | [[{ (a: Int, b: Int) -> Int in return a + b }]] |
+| النوع معروف | [[{ a, b in a + b }]] |
+| أسماء جاهزة | [[{ $0 + $1 }]] |
+| trailing | [[f(3) { i in ... }]] |
+| نوع closure | [[(Int) -> Void]] و [[() -> Int]] |
+| هيتخزن | [[@escaping () -> Void]] |
+
+والـ closure بيمسك المتغيرات اللي حواليه ويفضل شايفها.`,
           lines: [
             R`closure في ثابت، ونوعه [[(Int, Int) -> Int]]. الأسماء قبل [[in]].`,
             "بننادي الـ closure زي أي دالة: 5.",

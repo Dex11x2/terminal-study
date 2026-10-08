@@ -51,6 +51,126 @@ print(fixed.x)`,
             when: R`struct: الـ models (منتج، رسالة، رد API)، والـ Views في SwiftUI، وأي قيمة. class: الحاجة اللي ليها هوية واحدة مشتركة (session المستخدم، cache، view model متشارك)، وكلاسات UIKit، و SwiftData models.`,
             mistakes: R`تعمل كل حاجة class بحكم عادة Java: هتلاقي داتا بتتغير من حتة مش متوقعة. وتعدّل struct جوه array بـ for loop وتستغرب إن الأصل متغيرش ([[for var item in items]] بيعدّل نسخة). وتفتكر إن [[let]] على class بتخليه ثابت.`
           },
+          teach: R`## البرنامج بيعمل إيه؟
+
+بيعمل نفس التجربة مرتين: ينسخ قيمة ويعدّل النسخة. مرة بـ [[struct]] (الأصل مبيتأثرش) ومرة بـ [[class]] (الأصل بيتغير). الناتج من [[swift main.swift]] على Swift 6.4 في Docker.
+
+---
+
+## ١. [[struct Point]]
+
+~~~swift
+struct Point {
+  var x: Int
+  var y: Int
+}
+~~~
+
+- [[struct]] بيعرّف نوع جديد اسمه [[Point]]. الاسم بيبدأ بحرف capital (كل الأنواع كده: [[Int]] و [[String]]).
+- [[var x: Int]]: property (حقل) قابلة للتعديل. ومفيش قيمة، فلازم تتبعت وانت بتعمل النقطة.
+
+---
+
+## ٢. النسخ في الـ struct
+
+~~~swift
+var a = Point(x: 1, y: 2)
+var b = a
+b.x = 100
+print("struct: a.x = \(a.x), b.x = \(b.x)")
+~~~
+
+- [[Point(x: 1, y: 2)]]: memberwise initializer. Swift كتبته لوحدها، بـ label لكل property بالترتيب.
+- [[var b = a]]: [[b]] **نسخة كاملة مستقلة**. دلوقتي فيه نقطتين في الذاكرة.
+- [[b.x = 100]]: النقطة [[.]] بتوصل لـ property. التعديل على [[b]] بس.
+
+~~~text الناتج
+struct: a.x = 1, b.x = 100
+~~~
+
+---
+
+## ٣. [[final class Account]]
+
+~~~swift
+final class Account {
+  var balance: Int
+  init(balance: Int) {
+    self.balance = balance
+  }
+}
+~~~
+
+- [[class]] زي struct في الشكل، بس reference type.
+- [[final]]: محدش يقدر يورث من الكلاس ده (يعمل [[class X: Account]]).
+- [[init(...)]]: الـ initializer. الكلاس **مبياخدش** memberwise init جاهز، فلازم نكتبه.
+- [[self.balance = balance]]: [[self]] = «الـ object ده نفسه». الشمال الـ property، واليمين الـ parameter اللي بنفس الاسم.
+
+---
+
+## ٤. النسخ في الـ class
+
+~~~swift
+let acc1 = Account(balance: 500)
+let acc2 = acc1
+acc2.balance = 0
+print("class: acc1 = \(acc1.balance), acc2 = \(acc2.balance)")
+print(acc1 === acc2)
+~~~
+
+- [[Account(balance: 500)]] بيعمل **object واحد** في الذاكرة، و [[acc1]] فيه «عنوانه» (reference).
+- [[let acc2 = acc1]]: نسخنا العنوان بس. الاتنين بيشاوروا على نفس الـ object.
+- [[acc2.balance = 0]] اشتغل رغم [[let]]: الـ [[let]] بتقفل المتغير ([[acc2]] مش هيشاور على object تاني)، مش الـ object نفسه. و [[balance]] نفسها [[var]].
+- [[===]] (تلات علامات): «نفس الـ object بالظبط؟».
+
+~~~text الناتج
+class: acc1 = 0, acc2 = 0
+true
+~~~
+
+---
+
+## ٥. [[let]] على struct
+
+~~~swift
+let fixed = Point(x: 0, y: 0)
+print(fixed.x)
+~~~
+
+القراية عادي: **0**. لكن [[fixed.x = 5]] (التجربة):
+
+~~~text الناتج
+main.swift:22:7: error: cannot assign to property: 'fixed' is a 'let' constant
+~~~
+
+في الـ struct القيمة هي المتغير نفسه، فـ [[let]] بتقفل كل حاجة جواه حتى الـ [[var]].
+
+---
+
+## ٦. التجربة: [[struct Point]] ← [[class Point]]
+
+~~~text الناتج
+main.swift:1:7: error: class 'Point' has no initializers
+main.swift:5:9: error: 'Point' cannot be constructed because it has no accessible initializers
+main.swift:20:13: error: 'Point' cannot be constructed because it has no accessible initializers
+~~~
+
+ومع أول خطأ الـ compiler قال [[note: stored property 'x' without initial value prevents synthesized initializers]]: الكلاس فيه properties من غير قيمة ومن غير [[init]]. بعد ما تكتب [[init(x: Int, y: Int)]]، الـ [[a.x]] هتطبع 100 لأن [[b]] بقى reference لنفس النقطة. و [[fixed.x = 5]] هيشتغل.
+
+---
+
+## الخلاصة
+
+| | [[struct]] | [[class]] |
+|---|---|---|
+| النوع | value type | reference type |
+| [[b = a]] | نسخة مستقلة | نفس الـ object |
+| [[init]] جاهز | أيوه (memberwise) | لأ، تكتبه |
+| [[let]] | يقفل كل الـ properties | يقفل الـ reference بس |
+| وراثة | لأ | أيوه (إلا لو [[final]]) |
+| [[===]] | مش متاح | نفس الـ object؟ |
+
+ابدأ بـ [[struct]]، وخد [[class]] لما محتاج object واحد متشارك.`,
           lines: [
             R`[[struct]] اسمه Point.`,
             "property قابلة للتعديل.",
@@ -133,6 +253,142 @@ print(CartItem.taxRate)`,
             when: R`computed properties لأي قيمة مشتقة من قيم تانية (المجموع، الاسم الكامل، هل الفورم سليم). و [[didSet]] للـ side effects البسيطة (حفظ، log). و [[static]] للثوابت المشتركة وللـ factory methods ([[User.preview]] في SwiftUI previews).`,
             mistakes: R`تحط computed property تقيلة (حسابات كتير أو شبكة) وتقراها في loop. وتعمل [[didSet]] بيعدّل نفس الـ property فيعمل loop. وتنسى إن [[didSet]] مش بيشتغل في الـ init فتستغرب إن الـ log مطلعش.`
           },
+          teach: R`## البرنامج بيعمل إيه؟
+
+عنصر في سلة مشتريات: ليه اسم وسعر ثابتين، وكمية بتتغير من method واحدة بس وبتطبع كل تغيير، ومجموع بيتحسب لوحده بالضريبة. الناتج من [[swift main.swift]] على Swift 6.4 في Docker.
+
+---
+
+## ١. [[static]]: قيمة للنوع كله
+
+~~~swift
+struct CartItem {
+  static let taxRate = 0.14
+~~~
+
+[[static]] معناها إن [[taxRate]] تابعة لـ [[CartItem]] نفسه، مش لكل عنصر. نسخة واحدة بس مهما عملت عناصر، وبتتقري من اسم النوع: [[CartItem.taxRate]].
+
+---
+
+## ٢. stored properties
+
+~~~swift
+  let name: String
+  let price: Double
+~~~
+
+دول **stored**: قيمتهم متخزنة فعلًا جوه كل عنصر. و [[let]] يعني بعد ما العنصر يتعمل مش هيتغيروا.
+
+---
+
+## ٣. [[private(set)]] و [[didSet]]
+
+~~~swift
+  private(set) var quantity: Int {
+    didSet {
+      print("\(name): \(oldValue) ← \(quantity)")
+    }
+  }
+~~~
+
+- [[private(set)]]: أي حد يقدر **يقرا** [[quantity]]، بس **الكتابة** من جوه الـ struct بس.
+- [[{ didSet { ... } }]] بعد الـ property: property observer. الكود ده بيتنفذ **بعد** كل تغيير في القيمة.
+- [[oldValue]]: اسم جاهز جوه [[didSet]] للقيمة القديمة. و [[quantity]] جواه = الجديدة.
+- وفيه أخوه [[willSet]] بيتنفذ **قبل** التغيير، وجواه [[newValue]].
+
+---
+
+## ٤. computed property
+
+~~~swift
+  var total: Double {
+    price * Double(quantity) * (1 + Self.taxRate)
+  }
+~~~
+
+- مفيش [[=]]: فيه [[{ }]] على طول بعد النوع. ده معناه إن [[total]] مش متخزنة، **بتتحسب كل مرة تتقري**. فعمرها ما هتبقى قديمة.
+- [[Double(quantity)]]: الكمية Int، ولازم تتحول عشان تتضرب في Double.
+- [[Self.taxRate]]: [[Self]] بـ S كبيرة = «النوع الحالي» (هنا [[CartItem]]). بنستخدمها عشان نوصل للـ static من جوه.
+
+---
+
+## ٥. [[mutating]]
+
+~~~swift
+  mutating func add(_ n: Int = 1) {
+    quantity += n
+  }
+}
+~~~
+
+- [[func]] جوه النوع اسمها method.
+- الـ struct value، والـ methods العادية بتشوف [[self]] كأنه [[let]]. [[mutating]] بتقول: «الـ method دي بتعدّل الـ struct».
+- [[n: Int = 1]] قيمة افتراضية: [[add()]] = [[add(1)]].
+
+شلنا [[mutating]] (التجربة):
+
+~~~text الناتج
+main.swift:14:14: error: left side of mutating operator isn't mutable: 'self' is immutable
+~~~
+
+يعني: الشمال بتاع [[+=]] مش قابل للتعديل لأن [[self]] ثابت. والـ compiler بيقترح [[note: mark method 'mutating' to make 'self' mutable]].
+
+---
+
+## ٦. التشغيل
+
+~~~swift
+var item = CartItem(name: "كشكول", price: 50, quantity: 1)
+item.add()
+item.add(3)
+print(item.quantity, item.total)
+print(CartItem.taxRate)
+~~~
+
+- الـ memberwise init لسه موجود وبياخد [[quantity]].
+- [[var item]]: لازم [[var]] عشان ننادي mutating.
+- [[add()]]: 1 ← 2، و [[didSet]] طبع. [[add(3)]]: 2 ← 5.
+- [[total]] = 50 × 5 × 1.14 = 285 بالحساب... بس الطباعة [[285.00000000000006]]. الـ [[Double]] بيخزن الأرقام بالنظام الثنائي، و 1.14 مبتتكتبش فيه بالظبط، فبيطلع فرق صغير جدًا.
+
+~~~text الناتج
+كشكول: 1 ← 2
+كشكول: 2 ← 5
+5 285.00000000000006
+0.14
+~~~
+
+ملحوظة: [[didSet]] **مش** بيتنادى وقت الإنشاء (الـ init)، عشان كده مفيش سطر «لا شيء ← 1». جربناها في struct فيه [[init]] بيحط القيمة وبعدين غيّرناها مرة: [[didSet]] طبع مرة واحدة بس، للتغيير.
+
+---
+
+## ٧. باقي التجربة
+
+~~~swift
+item.quantity = 10
+let fixedItem = CartItem(name: "x", price: 1, quantity: 1)
+fixedItem.add()
+~~~
+
+~~~text الناتج
+main.swift:22:6: error: cannot assign to property: 'quantity' setter is inaccessible
+main.swift:24:11: error: cannot use mutating member on immutable value: 'fixedItem' is a 'let' constant
+~~~
+
+- الأول: الـ setter (جزء الكتابة) private بسبب [[private(set)]].
+- التاني: [[fixedItem]] [[let]]، فمينفعش mutating عليه.
+
+---
+
+## الخلاصة
+
+| الحاجة | الشكل | معناها |
+|---|---|---|
+| stored | [[let name: String]] | قيمة متخزنة |
+| computed | [[var total: Double { ... }]] | بتتحسب كل قراية |
+| observer | [[didSet { oldValue }]] | كود بعد كل تغيير (مش في الـ init) |
+| static | [[static let taxRate]] | للنوع كله: [[CartItem.taxRate]] |
+| mutating | [[mutating func add]] | method بتعدّل struct |
+| private(set) | [[private(set) var q]] | قراية للكل، كتابة من جوه |`,
           lines: [
             "struct لعنصر في السلة.",
             R`[[static]]: ثابت واحد للنوع كله.`,
@@ -223,6 +479,153 @@ print(Plan(rawValue: "pro")?.price ?? -1, Plan(rawValue: "gold") as Any)`,
             when: R`أي حاجة ليها مجموعة حالات محدودة: حالة تحميل، نوع اشتراك، تاب في التطبيق، نوع إشعار، أخطاء (enum بيتبع [[Error]]). و raw values لما الحالات بتتحفظ أو بتيجي من API كنص.`,
             mistakes: R`تحط [[default:]] في switch على enum بتاعك فتخسر تنبيه الحالات الجديدة. وتستخدم [[String]] للحالات ([[status == "loadng"]] بغلطة إملائية محدش هيمسكها). وتنسى إن [[Plan(rawValue:)]] optional.`
           },
+          teach: R`## البرنامج بيعمل إيه؟
+
+جزئين: enum بيوصف حالة تحميل شاشة، وبعض حالاته شايلة داتا (associated values) ودالة بتوصفها بـ [[switch]]. وenum تاني لخطط اشتراك ليه raw values وسعر لكل خطة. الناتج من [[swift main.swift]] على Swift 6.4 في Docker.
+
+---
+
+## ١. [[enum LoadState]] بـ associated values
+
+~~~swift
+enum LoadState {
+  case idle
+  case loading
+  case loaded(items: [String])
+  case failed(message: String)
+}
+~~~
+
+- [[enum]] نوع قيمه محددة: الحالة يا [[idle]] يا [[loading]] يا [[loaded]] يا [[failed]]. مفيش حاجة تانية ممكنة.
+- [[case idle]] و [[case loading]]: حالات فاضية.
+- [[case loaded(items: [String])]]: الحالة دي **شايلة** array من النصوص. ده associated value: كل قيمة من الحالة دي معاها داتا خاصة بيها.
+- [[case failed(message: String)]]: شايلة رسالة.
+
+فمستحيل يبقى عندك «فيه error وفيه items في نفس الوقت»: النوع نفسه بيمنعها.
+
+---
+
+## ٢. [[switch]] بيفك الداتا
+
+~~~swift
+func describe(_ state: LoadState) -> String {
+  switch state {
+  case .idle: "لسه مبدأناش"
+  case .loading: "بنحمّل..."
+  case .loaded(let items) where items.isEmpty: "مفيش نتايج"
+  case .loaded(let items): "لقينا \(items.count)"
+  case .failed(let message): "حصلت مشكلة: \(message)"
+  }
+}
+~~~
+
+- [[.idle]]: اختصار [[LoadState.idle]]. النقطة في الأول كفاية لأن Swift عارفة إن [[state]] نوعه [[LoadState]].
+- الـ switch هنا expression (من غير [[return]]): كل case فيه قيمة واحدة بترجع.
+- [[case .loaded(let items)]]: لو الحالة loaded، طلّع الـ array اللي جواها في اسم [[items]].
+- [[where items.isEmpty]]: شرط زيادة. لازم ييجي **قبل** [[.loaded]] العام، لأن الـ cases بتتجرب بالترتيب.
+- **مفيش [[default]]**: الـ ٤ حالات متغطية، والـ compiler عارف كده.
+
+---
+
+## ٣. النداءات
+
+~~~swift
+print(describe(.loading))
+print(describe(.loaded(items: ["أ", "ب"])))
+print(describe(.loaded(items: [])))
+print(describe(.failed(message: "مفيش نت")))
+~~~
+
+بتعمل القيمة بنفس شكل الـ case: [[.loaded(items: [...])]].
+
+~~~text الناتج
+بنحمّل...
+لقينا 2
+مفيش نتايج
+حصلت مشكلة: مفيش نت
+~~~
+
+**التجربة:** ضفنا [[case offline]] من غير ما نعدّل الـ switch:
+
+~~~text الناتج
+main.swift:9:3: error: switch must be exhaustive
+~~~
+
+ومعاه [[note: add missing case: '.offline']]: الـ compiler بيقولك بالظبط الحالة الناقصة. لو كان فيه [[default]] كان سكت والحالة الجديدة دخلت فيه من غير ما تاخد بالك.
+
+---
+
+## ٤. [[enum Plan]]: raw values و [[CaseIterable]]
+
+~~~swift
+enum Plan: String, CaseIterable {
+  case free, pro, team
+  var price: Int {
+    switch self {
+    case .free: 0
+    case .pro: 99
+    case .team: 299
+    }
+  }
+}
+~~~
+
+- [[: String]] بعد الاسم: كل حالة ليها raw value نصي. لو مكتبتهوش، بيبقى اسم الحالة نفسه: [[Plan.pro.rawValue]] = [["pro"]].
+- [[CaseIterable]]: protocol بيدّيك [[Plan.allCases]] = array بكل الحالات بالترتيب.
+- [[case free, pro, team]]: ٣ حالات في سطر واحد.
+- [[var price: Int { switch self { ... } }]]: computed property جوه الـ enum. [[self]] = الحالة الحالية.
+
+---
+
+## ٥. استخدامها
+
+~~~swift
+for plan in Plan.allCases {
+  print(plan.rawValue, plan.price)
+}
+print(Plan(rawValue: "pro")?.price ?? -1, Plan(rawValue: "gold") as Any)
+~~~
+
+- [[Plan(rawValue: "pro")]]: من نص لـ enum. بترجّع [[Plan?]] لأن النص ممكن ميطابقش أي حالة.
+- [[pro]] موجودة: [[?.price]] = 99. [["gold"]] مش موجودة: nil.
+
+~~~text الناتج
+free 0
+pro 99
+team 299
+99 nil
+~~~
+
+---
+
+## ٦. [[if case]] (التجربة)
+
+~~~swift
+let someState = LoadState.failed(message: "timeout")
+if case .failed(let m) = someState { print(m) }
+~~~
+
+~~~text الناتج
+timeout
+~~~
+
+[[if case pattern = value]]: زي case واحد من switch. لو الحالة failed، فك الرسالة واطبعها، ولو أي حالة تانية متعملش حاجة. مفيد لما يهمك حالة واحدة بس.
+
+---
+
+## الخلاصة
+
+| الحاجة | الشكل |
+|---|---|
+| حالات بسيطة | [[enum E { case a, b }]] |
+| قيمة مرفقة | [[case loaded(items: [String])]] |
+| فكها | [[case .loaded(let items):]] |
+| raw value | [[enum Plan: String]] و [[.rawValue]] |
+| من raw value | [[Plan(rawValue: "x")]] بترجّع optional |
+| كل الحالات | [[CaseIterable]] و [[allCases]] |
+| حالة واحدة | [[if case .failed(let m) = s]] |
+
+ومتحطش [[default]] في switch على enum بتاعك.`,
           lines: [
             "enum لحالة تحميل شاشة.",
             "حالة من غير داتا.",
@@ -327,6 +730,177 @@ print(Version(major: 2) < Version(major: 5), Version(major: 3) == Version(major:
             when: R`protocol لما عندك أكتر من نوع بيعمل نفس الحاجة (مصادر داتا: API حقيقي و fake للاختبار). extension لتنظيم الكود ولإضافة helpers على أنواع النظام. واتبع [[Equatable]] و [[Hashable]] و [[Codable]] و [[Identifiable]] لأي model.`,
             mistakes: R`تعمل protocol لكل class «احتياطي» حتى لو مفيش غير تنفيذ واحد. وتضيف extensions على [[String]] لكل حاجة لحد ما النوع يتملي helpers. وتحط stored property في extension: مينفعش ([[extensions must not contain stored properties]]).`
           },
+          teach: R`## البرنامج بيعمل إيه؟
+
+بيعرّف عقد [[Shape]] (لازم يبقى ليه مساحة ووصف)، ويدّي وصف افتراضي، ويعمل شكلين بيتبعوه، ويلف عليهم في array واحدة. وبعدين يضيف property جديدة لـ [[Int]] بتاع Swift، ويعمل نوع بيتقارن بـ [[<]]. الناتج من [[swift main.swift]] على Swift 6.4 في Docker.
+
+---
+
+## ١. [[protocol Shape]]
+
+~~~swift
+protocol Shape {
+  var area: Double { get }
+  func describe() -> String
+}
+~~~
+
+- [[protocol]]: قايمة متطلبات من غير تنفيذ.
+- [[var area: Double { get }]]: أي نوع بيتبع Shape لازم يبقى عنده [[area]] تتقري. [[{ get }]] = قراية بس مطلوبة (ممكن تبقى stored أو computed).
+- [[func describe() -> String]]: لازم method بالتوقيع ده. من غير جسم [[{ }]].
+
+---
+
+## ٢. protocol extension: تنفيذ افتراضي
+
+~~~swift
+extension Shape {
+  func describe() -> String {
+    "مساحة: \(area)"
+  }
+}
+~~~
+
+[[extension]] بتضيف كود لنوع موجود. هنا بنضيف **تنفيذ** لـ [[describe]] على مستوى الـ protocol، فأي نوع بيتبع Shape ومكتبش describe ياخد ده.
+
+---
+
+## ٣. [[Square]]: بيتبع وياخد الافتراضي
+
+~~~swift
+struct Square: Shape {
+  let side: Double
+  var area: Double { side * side }
+}
+~~~
+
+- [[: Shape]] = «بيتبع (conforms to) الـ protocol». الـ compiler هيتأكد إن كل المتطلبات موجودة.
+- [[area]] computed. و [[describe]] مش مكتوبة، فهتيجي من الـ extension.
+
+---
+
+## ٤. [[Circle]]: بيكتب نسخته
+
+~~~swift
+struct Circle: Shape {
+  let radius: Double
+  var area: Double { (Double.pi * radius * radius).rounded() }
+  func describe() -> String { "دايرة مساحتها \(area)" }
+}
+~~~
+
+- [[Double.pi]]: ثابت ط (3.14159...). π × 2 × 2 = 12.566...، و [[rounded()]] = **13.0**.
+- كتب [[describe]] بتاعه، فبتغطي على الافتراضية.
+
+---
+
+## ٥. [[any Shape]]: أنواع مختلفة في array واحدة
+
+~~~swift
+let shapes: [any Shape] = [Square(side: 3), Circle(radius: 2)]
+for s in shapes {
+  print(s.describe())
+}
+~~~
+
+- array عادي لازم كل عناصره نوع واحد. [[[any Shape]]] معناها «أي قيمة بتتبع Shape»، فينفع Square و Circle مع بعض.
+- [[s.describe()]] بتنادي نسخة النوع الحقيقي وقت التشغيل.
+
+~~~text الناتج
+مساحة: 9.0
+دايرة مساحتها 13.0
+~~~
+
+3 × 3 = 9 بالوصف الافتراضي، والدايرة بوصفها.
+
+---
+
+## ٦. extension على [[Int]]
+
+~~~swift
+extension Int {
+  var isEven: Bool { self % 2 == 0 }
+}
+print(4.isEven, 7.isEven)
+~~~
+
+[[Int]] نوع من Swift نفسها، ومع ذلك ضفنا عليه computed property. [[self]] هنا = الرقم نفسه. فبقى [[4.isEven]] شغال في البرنامج كله.
+
+~~~text الناتج
+true false
+~~~
+
+ولو حاولت تحط stored property في extension (جربنا [[var cache: Int = 0]] جوه [[extension Int]]):
+
+~~~text الناتج
+main.swift:6:21: error: extensions must not contain stored properties
+~~~
+
+الـ extension مينفعش يغيّر حجم النوع في الذاكرة، فـ computed بس.
+
+---
+
+## ٧. [[Comparable]]: تكتب [[<]] بس
+
+~~~swift
+struct Version: Comparable {
+  let major: Int
+  static func < (a: Version, b: Version) -> Bool { a.major < b.major }
+}
+print(Version(major: 2) < Version(major: 5), Version(major: 3) == Version(major: 3))
+~~~
+
+- [[Comparable]] بيطلب دالة [[<]]. والـ operators في Swift دوال [[static]] اسمها الرمز نفسه: [[static func < (a: Version, b: Version) -> Bool]].
+- [[==]] مكتبناهاش: [[Comparable]] بيورث [[Equatable]]، و Swift بتكتب [[==]] للـ struct لوحدها (بتقارن كل الـ properties).
+- و [[>]] و [[<=]] و [[>=]] جاهزين من الـ standard library على أساس [[<]].
+
+~~~text الناتج
+true true
+~~~
+
+---
+
+## ٨. حل التجربة
+
+~~~swift
+import Foundation
+
+struct Rectangle: Shape {
+  let width: Double
+  let height: Double
+  var area: Double { width * height }
+}
+print(Rectangle(width: 2, height: 5).describe())
+
+extension String {
+  var isBlank: Bool {
+    trimmingCharacters(in: .whitespaces).isEmpty
+  }
+}
+print("   ".isBlank, " a ".isBlank)
+~~~
+
+~~~text الناتج
+مساحة: 10.0
+true false
+~~~
+
+- [[Rectangle]] مكتبش describe، فخد الافتراضية.
+- [[import Foundation]]: [[trimmingCharacters]] جاية من مكتبة Foundation مش من Swift الأساسية.
+- [[trimmingCharacters(in: .whitespaces)]] بتشيل المسافات من الطرفين: [["   "]] بقت [[""]] فاضية = true، و [[" a "]] بقت [["a"]] = false.
+
+---
+
+## الخلاصة
+
+| الحاجة | الشكل | فايدتها |
+|---|---|---|
+| عقد | [[protocol P { var x: T { get } }]] | متطلبات من غير تنفيذ |
+| يتبعه | [[struct S: P]] | الـ compiler يتأكد من المتطلبات |
+| تنفيذ افتراضي | [[extension P { func f() {...} }]] | كل اللي بيتبعوا ياخدوه |
+| إضافة لنوع موجود | [[extension Int { var ... }]] | computed بس |
+| أنواع مختلفة مع بعض | [[[any P]]] | |
+| مقارنة | [[Comparable]] + [[static func <]] | [[==]] و [[>]] ببلاش |`,
           lines: [
             R`[[protocol]]: عقد.`,
             R`لازم property [[area]] تتقري.`,
@@ -431,6 +1005,145 @@ print(countMatches(in: ["swift", "swiftui", "kotlin"], prefix: "swift"))`,
             when: R`لما تلاقي نفسك بتكتب نفس الدالة لأكتر من نوع. في التطبيقات هتستخدمها أكتر من ما تكتبها: [[[Item]]] و [[Result<Data, Error>]] و [[Binding<String>]]. وأشهر مكان تكتب فيه generic: network layer بيعمل decode لأي نوع [[Decodable]] ([[func get<T: Decodable>(_ url: URL) async throws -> T]]).`,
             mistakes: R`تعمل كل حاجة generic من أول يوم قبل ما يبقى عندك حالتين حقيقيتين. وتنسى الـ constraint فتحاول تستخدم [[>]] على T عادي ([[binary operator '>' cannot be applied to two 'T' operands]]). وتخلط بين [[some]] (نوع واحد ثابت) و [[any]] (صندوق لأي نوع).`
           },
+          teach: R`## البرنامج بيعمل إيه؟
+
+٣ حاجات generic: دالة [[largest]] بتجيب أكبر عنصر في أي array نوعها بيتقارن، ونوع [[Stack]] بيشيل أي نوع، ودالة بتاخد أي collection فيها نصوص بـ [[some]]. الناتج من [[swift main.swift]] على Swift 6.4 في Docker.
+
+---
+
+## ١. توقيع [[largest]]
+
+~~~swift
+func largest<T: Comparable>(_ items: [T]) -> T? {
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[<T: Comparable>]] | فيه نوع اسمه [[T]] هيتحدد عند النداء، بشرط يتبع [[Comparable]] (يقبل [[<]] و [[>]]) |
+| [[_ items: [T]]] | array من النوع ده |
+| [[-> T?]] | بترجّع عنصر من نفس النوع، أو nil |
+
+الـ [[T]] (Type) اسم متعارف عليه، وينفع أي اسم.
+
+---
+
+## ٢. جسم [[largest]]
+
+~~~swift
+  guard var best = items.first else { return nil }
+  for item in items where item > best {
+    best = item
+  }
+  return best
+}
+~~~
+
+- [[guard var]]: زي [[guard let]] بس الناتج [[var]] عشان هنغيّره. لو الـ array فاضية [[first]] = nil، فنرجّع nil.
+- [[where item > best]]: لف بس على العناصر الأكبر من الأفضل الحالي، وحدّث.
+- [[item > best]] مسموحة **بس** عشان [[T: Comparable]]. شلنا الشرط وكتبنا [[<T>]] بس:
+
+~~~text الناتج
+main.swift:3:32: error: binary operator '>' cannot be applied to two 'T' operands
+~~~
+
+يعني: [[T]] ممكن يبقى أي نوع، ومش كل الأنواع فيها [[>]].
+
+---
+
+## ٣. نداء بأنواع مختلفة
+
+~~~swift
+print(largest([3, 9, 2]) ?? 0)
+print(largest(["موز", "تفاح", "مانجا"]) ?? "")
+print(largest([Double]()) as Any)
+~~~
+
+- الأول: Swift استنتجت [[T = Int]]: **9**.
+- التاني: [[T = String]]، والمقارنة أبجدية: الحرف الأول ت ثم م ثم م، و «موز» بعد «مانجا» لأن تاني حرف و بعد ا. فـ **موز**.
+- [[[Double]()]]: array فاضية من Double (الأقواس [[()]] بتعمل instance جديد فاضي). [[T = Double]] والنتيجة **nil**.
+
+---
+
+## ٤. [[Stack<Element>]]: نوع generic
+
+~~~swift
+struct Stack<Element> {
+  private var items: [Element] = []
+  mutating func push(_ item: Element) { items.append(item) }
+  mutating func pop() -> Element? { items.popLast() }
+  var isEmpty: Bool { items.isEmpty }
+}
+~~~
+
+- [[<Element>]] بعد اسم الـ struct: نوع العناصر بيتحدد لما تعمل Stack.
+- [[private var items]]: الـ array الداخلية محدش برة يلمسها، فالطريقة الوحيدة [[push]] و [[pop]].
+- [[popLast()]]: بتشيل آخر عنصر وترجّعه، أو nil لو فاضية. (Stack = آخر حاجة دخلت أول حاجة تطلع، زي زرار Back في المتصفح).
+- [[mutating]] لأنهم بيعدّلوا الـ struct.
+
+~~~swift
+var history = Stack<String>()
+history.push("الرئيسية")
+history.push("المنتج")
+print(history.pop() ?? "-", history.isEmpty)
+~~~
+
+[[Stack<String>()]]: حددنا [[Element = String]] صريح (مفيش قيمة يتستنتج منها). [[pop]] رجّع آخر واحد **المنتج**، ولسه فيه «الرئيسية» فـ [[isEmpty]] = **false**.
+
+---
+
+## ٥. [[some Collection<String>]]
+
+~~~swift
+func countMatches(in items: some Collection<String>, prefix: String) -> Int {
+  items.filter { $0.hasPrefix(prefix) }.count
+}
+print(countMatches(in: ["swift", "swiftui", "kotlin"], prefix: "swift"))
+~~~
+
+- [[some Collection<String>]]: «أي نوع collection عناصره String» (Array أو Set أو غيرهم). ده اختصار لـ [[func countMatches<C: Collection>(...) where C.Element == String]].
+- [[hasPrefix(prefix)]]: النص بيبدأ بكده؟ swift و swiftui أيوه: **2**.
+
+~~~text الناتج كله
+9
+موز
+nil
+المنتج false
+2
+~~~
+
+---
+
+## ٦. التجربة
+
+**نوع مش Comparable** ([[struct Box { let v: Int }]] و [[largest([Box(v: 1)])]]):
+
+~~~text الناتج
+main.swift:26:7: error: global function 'largest' requires that 'Box' conform to 'Comparable'
+~~~
+
+ومعاه [[note: where 'T' = 'Box']]: الـ compiler بيقولك T اتحدد إيه وليه مش نافع.
+
+**الحل: [[peek]]** جوه [[struct Stack]]:
+
+~~~swift
+var peek: Element? { items.last }
+~~~
+
+ضفناها ونادينا [[history.peek]] بعد الـ pop: طبعت **الرئيسية**، والعنصر فضل مكانه.
+
+---
+
+## الخلاصة
+
+| الشكل | معناه |
+|---|---|
+| [[func f<T>(_ x: T)]] | دالة لأي نوع |
+| [[<T: Comparable>]] | بشرط النوع يتبع protocol |
+| [[struct Box<Element>]] | نوع generic |
+| [[Stack<String>()]] | تحديد النوع صريح |
+| [[some Collection<String>]] | أي collection من String (اختصار generic) |
+
+[[Array]] و [[Dictionary]] و [[Optional]] نفسهم generics: [[[Int]]] = [[Array<Int>]].`,
           lines: [
             R`[[<T: Comparable>]]: T أي نوع بيتقارن. والدالة بترجّع [[T?]].`,
             R`[[guard var]]: لو الـ array فاضية نرجّع nil.`,
@@ -530,6 +1243,148 @@ typed throws (Swift 6) مفيدة في الكود الداخلي والمكتب�
             when: R`[[throws]] للفشل المتوقع اللي اللي بينادي ممكن يتعامل معاه (validation، شبكة، parsing). [[try?]] لما الفشل مش مهم سببه (قراية cache). [[try!]] تقريبًا أبدًا. والأخطاء البرمجية (bug) مش errors: استخدم [[precondition]] أو [[fatalError]].`,
             mistakes: R`تمسك كل حاجة بـ [[catch {}]] فاضي فالخطأ يختفي ومتعرفش التطبيق مش شغال ليه. وتستخدم [[try?]] في كل حتة فتخسر رسالة الخطأ اللي كانت هتقولك المشكلة. وتعرض [[error]] للمستخدم كما هو ([[noDigits]]): اعمل رسالة مفهومة.`
           },
+          teach: R`## البرنامج بيعمل إيه؟
+
+دالة بتراجع باسورد وبترمي error لو قصير أو مفيهوش رقم. وبعدين بنجربها على ٣ باسوردات بـ [[do]]/[[catch]]، ومرة بـ [[try?]]، ومرة بنحوّل النتيجة لـ [[Result]]. الناتج من [[swift main.swift]] على Swift 6.4 في Docker.
+
+---
+
+## ١. نوع الخطأ
+
+~~~swift
+enum PasswordError: Error {
+  case tooShort(min: Int)
+  case noDigits
+}
+~~~
+
+- أي نوع بيتبع protocol [[Error]] ينفع يترمي. الـ enum أنسب حاجة: كل حالة = سبب.
+- [[tooShort(min: Int)]]: associated value، الخطأ شايل معلومة (أقل طول).
+
+---
+
+## ٢. دالة بترمي: [[throws(PasswordError)]]
+
+~~~swift
+func validate(_ password: String) throws(PasswordError) -> String {
+  guard password.count >= 8 else {
+    throw .tooShort(min: 8)
+  }
+  guard password.contains(where: \.isNumber) else {
+    throw .noDigits
+  }
+  return "باسورد قوي"
+}
+~~~
+
+- [[throws]] قبل [[->]]: «الدالة دي ممكن تفشل». و [[(PasswordError)]] بعدها (typed throws، من Swift 6): نوع الخطأ بالظبط. لو كتبت [[throws]] بس، ممكن ترمي أي [[Error]].
+- [[throw .tooShort(min: 8)]]: بيرمي الخطأ ويخرج من الدالة فورًا، زي [[return]]. والنقطة كفاية لأن النوع معروف من التوقيع.
+- [[contains(where: \.isNumber)]]: فيه أي حرف رقم؟ [[\.isNumber]] key path على كل [[Character]].
+
+---
+
+## ٣. [[do]] / [[try]] / [[catch]]
+
+~~~swift
+for p in ["abc", "abcdefgh", "abcdefg1"] {
+  do {
+    let result = try validate(p)
+    print(p, "→", result)
+  } catch .tooShort(let min) {
+    print(p, "→ لازم \(min) حروف على الأقل")
+  } catch {
+    print(p, "→ خطأ:", error)
+  }
+}
+~~~
+
+- [[do { }]]: بلوك فيه كود ممكن يفشل.
+- [[try validate(p)]]: [[try]] إجباري قبل أي دالة [[throws]]. لو فشلت، اللي بعدها في البلوك ميتنفذش، والتنفيذ ينط على [[catch]].
+- [[catch .tooShort(let min)]]: catch لحالة معينة، وبيفك القيمة اللي جواها (زي case في switch).
+- [[catch]] من غير حاجة: أي خطأ باقي، وجواه اسم جاهز [[error]].
+
+| الباسورد | اللي حصل |
+|---|---|
+| [[abc]] | 3 حروف: [[tooShort]]، اتمسك في أول catch |
+| [[abcdefgh]] | 8 بس مفيش رقم: [[noDigits]]، اتمسك في التاني |
+| [[abcdefg1]] | عدّى: [[باسورد قوي]] |
+
+~~~text الناتج
+abc → لازم 8 حروف على الأقل
+abcdefgh → خطأ: noDigits
+abcdefg1 → باسورد قوي
+~~~
+
+[[print]] للـ error طبع اسم الحالة [[noDigits]].
+
+---
+
+## ٤. [[try?]]
+
+~~~swift
+let maybe = try? validate("123")
+print(maybe as Any)
+~~~
+
+[[try?]]: لو نجح النتيجة جوه optional، ولو فشل **nil** والخطأ يتنسي. «123» قصير:
+
+~~~text الناتج
+nil
+~~~
+
+---
+
+## ٥. [[Result]]
+
+~~~swift
+let result = Result { try validate("swift2026") }
+switch result {
+case .success(let msg): print("Result:", msg)
+case .failure(let err): print("Result فشل:", err)
+}
+~~~
+
+- [[Result { try ... }]]: بينفذ الـ closure. لو نجح [[.success(القيمة)]]، لو رمى [[.failure(الخطأ)]]. [[Result]] نفسه enum بحالتين.
+- «swift2026» 9 حروف وفيه أرقام: نجح.
+
+~~~text الناتج
+Result: باسورد قوي
+~~~
+
+---
+
+## ٦. التجربة
+
+**من غير [[try]]** ([[let x = validate("abc")]]):
+
+~~~text الناتج
+main.swift:31:9: error: call can throw but is not marked with 'try'
+~~~
+
+ومعاه ٣ اقتراحات: [[try]] أو [[try?]] أو [[try!]].
+
+**[[try!]] على باسورد غلط:**
+
+~~~text الناتج
+main/main.swift:31: Fatal error: 'try!' expression unexpectedly raised an error: main.PasswordError.tooShort(min: 8)
+*** Program crashed: Illegal instruction ...
+~~~
+
+[[try!]] = «متأكد إنها مش هتفشل». فشلت، فالبرنامج وقع، والرسالة فيها الخطأ بالكامل: [[main]] اسم الـ module، وبعده النوع والحالة والقيمة.
+
+---
+
+## الخلاصة
+
+| الشكل | لو نجح | لو فشل |
+|---|---|---|
+| [[do { try f() } catch { }]] | يكمّل | ينط على catch |
+| [[try? f()]] | القيمة optional | nil |
+| [[try! f()]] | القيمة | **crash** |
+| [[Result { try f() }]] | [[.success]] | [[.failure]] |
+| [[func g() throws]] + [[try f()]] | يكمّل | الخطأ يطلع لللي نادى g |
+
+و [[throw]] بيخرج فورًا زي [[return]]، و [[try]] إجباري قبل أي دالة [[throws]].`,
           lines: [
             R`enum بيتبع [[Error]] فينفع يترمي.`,
             R`حالة بقيمة مرفقة.`,
@@ -616,16 +1471,145 @@ print(account.balance, account.lastAction)`,
             why: R`الـ access control مش أمان ضد الهاكرز (الكود بيتفك برضه)، ده أمان ضد الأخطاء: لو [[balance]] ينفع يتعدل من أي حتة، مفيش ضمان إن الـ validation اتعمل. لما تقفله، كل التعديلات بتعدي على method واحدة فيها القواعد. وبيخلي الـ API بتاع النوع صغير وواضح: اللي مش private هو اللي المفروض تستخدمه.`,
             how: R`الـ module في Swift = target بيتبني لوحده (التطبيق، framework، package target). [[internal]] الافتراضي معناه كل ملفات التطبيق شايفة بعض من غير import. و [[@testable import MyApp]] في الاختبارات بيفتح الـ internal للاختبار.
 
-لاحظ الـ [[init]] اللي كتبناه: لو الـ struct فيه أي stored property [[private]]، الـ memberwise init الجاهز بيبقى [[private]] هو كمان (حتى لو الـ property ليها قيمة افتراضية)، فمحدش برة يقدر يعمل object. جرّب تمسح الـ init وهتلاقي: [['BankAccount' initializer is inaccessible due to 'private' protection level]]. الحل إنك تكتب [[init]] بنفسك بالمستوى اللي عايزه.`,
+لاحظ الـ [[init]] اللي كتبناه: لو الـ struct فيه stored property [[private]] **من غير قيمة افتراضية**، الـ memberwise init الجاهز لازم ياخدها، فبيبقى [[private]] هو كمان، ومحدش برة يقدر يعمل object: [['BankAccount' initializer is inaccessible due to 'private' protection level]]. الحل إنك تكتب [[init]] بنفسك بالمستوى اللي عايزه. أما لو كل الـ properties الـ private ليها قيم افتراضية (زي هنا)، فعلى Swift 6.4 اللي جربنا عليها الـ memberwise init بيسيبها برة وبيفضل internal: مسحنا الـ init والمثال اشتغل بنفس الناتج. (النسخ الأقدم من Swift كانت بتخليه private في الحالتين، فكتابة الـ init بإيدك أضمن لو مشروعك على نسخة أقدم).`,
             when: R`خلي أي حاجة [[private]] لحد ما حاجة برة تحتاجها فعلًا. و [[private(set)]] لأي state ليها قواعد تغيير. و [[public]] بس في الـ packages اللي بتتشارك.`,
             mistakes: R`تسيب كل حاجة internal لأنه الافتراضي، فكل ملف في التطبيق يقدر يعدّل كل حاجة. وتعمل [[@State]] من غير [[private]] فحد يحاول يبعتلها قيمة من برة (مش هتشتغل زي ما يتوقع). وتنسى إن [[private]] بتسمح للـ extension في نفس الملف بس.`
           },
+          teach: R`## البرنامج بيعمل إيه؟
+
+حساب بنكي الرصيد بتاعه **يتقري** من أي حتة بس **يتغير** من [[deposit]] بس، والسجل والـ validation مستخبيين جوه. الناتج والأخطاء من [[swift main.swift]] على Swift 6.4 في Docker.
+
+---
+
+## ١. الـ properties ومستوياتها
+
+~~~swift
+struct BankAccount {
+  let owner: String
+  private(set) var balance: Double = 0
+  private var history: [String] = []
+~~~
+
+| الـ property | مين يقرا | مين يكتب |
+|---|---|---|
+| [[owner]] (من غير كلمة = [[internal]]) | الكل | محدش ([[let]]) |
+| [[private(set) var balance]] | الكل | جوه الـ struct بس |
+| [[private var history]] | جوه الـ struct بس | جوه الـ struct بس |
+
+- [[internal]] هو الافتراضي: أي ملف في نفس الـ module (التطبيق كله) شايفه.
+- [[= 0]] و [[= []]]: قيم افتراضية، فمش لازم تتبعت وانت بتعمل الحساب.
+
+---
+
+## ٢. الـ [[init]]
+
+~~~swift
+  init(owner: String) {
+    self.owner = owner
+  }
+~~~
+
+كتبناه بإيدنا عشان اللي برة يبعت المالك بس، والرصيد يبدأ صفر دايمًا. الـ [[self.owner]] الـ property، و [[owner]] الـ parameter.
+
+> جربنا نمسح الـ init على Swift 6.4: المثال اشتغل بنفس الناتج، لأن الـ memberwise init الجاهز بيسيب الـ properties الـ private اللي ليها قيمة افتراضية برة. لكن لما عملنا struct فيه [[private var history: [String]]] **من غير** قيمة افتراضية، الـ memberwise init لازم ياخدها فبقى private:
+
+~~~text الناتج
+main.swift:5:9: error: 'BankAccount' initializer is inaccessible due to 'private' protection level
+~~~
+
+---
+
+## ٣. الطريقة الوحيدة للتعديل
+
+~~~swift
+  mutating func deposit(_ amount: Double) {
+    guard isValid(amount) else { return }
+    balance += amount
+    history.append("+\(amount)")
+  }
+~~~
+
+- [[mutating]] لأنها بتعدّل الـ struct.
+- [[guard isValid(amount) else { return }]]: لو المبلغ غلط اخرج بهدوء من غير أي تعديل.
+- [[balance += amount]] مسموح هنا: احنا **جوه** الـ struct.
+- [[history.append("+\(amount)")]]: بنسجل العملية. [[amount]] Double فبيتطبع [[500.0]].
+
+---
+
+## ٤. نافذة صغيرة على الحاجة المخفية
+
+~~~swift
+  var lastAction: String { history.last ?? "مفيش" }
+  private func isValid(_ amount: Double) -> Bool {
+    amount > 0
+  }
+}
+~~~
+
+- [[lastAction]] computed و internal: بتوري آخر عملية بس من السجل، من غير ما تفتح السجل كله.
+- [[private func isValid]]: helper داخلي. ده تفصيلة تنفيذ، فمش جزء من الـ API.
+
+---
+
+## ٥. الاستخدام
+
+~~~swift
+var account = BankAccount(owner: "منى")
+account.deposit(500)
+account.deposit(-20)
+print(account.balance, account.lastAction)
+~~~
+
+- [[deposit(500)]]: عدّى الـ validation: الرصيد 500، والسجل [[["+500.0"]]].
+- [[deposit(-20)]]: [[isValid]] رجّعت false، فخرجت من غير تعديل.
+- [[account.balance]] القراية مسموحة من برة.
+
+~~~text الناتج
+500.0 +500.0
+~~~
+
+---
+
+## ٦. التجربة: محاولات من برة
+
+~~~swift
+account.balance = 1_000_000
+print(account.history)
+print(account.isValid(5))
+~~~
+
+~~~text الناتج
+main.swift:22:9: error: cannot assign to property: 'balance' setter is inaccessible
+main.swift:23:15: error: 'history' is inaccessible due to 'private' protection level
+main.swift:24:15: error: 'isValid' is inaccessible due to 'private' protection level
+~~~
+
+- الأول: الـ **setter** (جزء الكتابة) بتاع [[balance]] private، والقراية لأ.
+- التاني والتالت: [[private]] كاملة، حتى القراية ممنوعة. ومع كل واحد [[note: 'history' declared here]] بيشاور على التعريف.
+
+لاحظ إن الكود اللي حاول ده **في نفس الملف**، ومع ذلك اترفض: [[private]] حدودها النوع نفسه (والـ extensions بتاعته في نفس الملف). جربنا نغيّر [[history]] لـ [[fileprivate]]: [[print(account.history)]] اشتغل وطبع [[["+500.0"]]].
+
+---
+
+## الخلاصة
+
+| الكلمة | مين يشوف |
+|---|---|
+| [[private]] | النوع ده بس (والـ extensions بتاعته في نفس الملف) |
+| [[fileprivate]] | أي حاجة في نفس الملف |
+| [[internal]] (الافتراضي) | الـ module كله (التطبيق) |
+| [[package]] | الـ modules اللي في نفس الـ Swift package |
+| [[public]] | أي module تاني (من غير وراثة أو override) |
+| [[open]] | أي module، ويورث ويعمل override |
+| [[private(set)]] | القراية بالمستوى العادي، والكتابة private |
+
+القاعدة: [[private]] لحد ما حاجة برة تحتاجها فعلًا.`,
           lines: [
             "struct لحساب بنكي.",
             "المالك، ثابت.",
             R`[[private(set)]]: الكل يقرا، التعديل من جوه بس.`,
             R`[[private]]: محدش برة يشوفها خالص.`,
-            R`[[init]] مكتوب بإيدنا. من غيره الـ memberwise init هيبقى private (شوف تحت).`,
+            R`[[init]] مكتوب بإيدنا عشان نتحكم في اللي بيتبعت (تفاصيل الـ memberwise init والـ private في «إزاي»).`,
             "بنحط المالك، والباقي ليه قيم افتراضية.",
             "قفلة.",
             "الطريقة الوحيدة لتزويد الرصيد.",
@@ -711,6 +1695,134 @@ t = nil`,
             when: R`[[weak]] للـ back-references (ابن بيشاور على أب، delegate)، و [[[weak self]]] في أي closure متخزن جوه class (timers، notifications، completion handlers متخزنة). في closures مش escaping (زي [[map]]) مش محتاجها.`,
             mistakes: R`تحط [[[weak self]]] في كل closure حتى في [[map]] بدون داعي. وتستخدم [[unowned]] عشان تهرب من الـ optional وبعدين تاخد crash. وتفتكر إن SwiftUI views نفسها ممكن تعمل cycle: الـ View struct، المشكلة في الـ classes اللي وراها.`
           },
+          teach: R`## البرنامج بيعمل إيه؟
+
+بيعمل objects من classes ليها [[deinit]] بيطبع لحظة المسح، عشان **تشوف** ARC بعينك. جزء فيه شخص وشقة بيشاوروا على بعض (و [[weak]] بيمنع الـ cycle)، وجزء فيه object بيخزن closure بيستخدم [[self]] (و [[[weak self]]] بيمنع الـ cycle). الناتج من [[swift main.swift]] على Swift 6.4 في Docker.
+
+---
+
+## ١. [[Person]]: reference قوي و [[deinit]]
+
+~~~swift
+final class Person {
+  let name: String
+  var apartment: Apartment?
+  init(name: String) { self.name = name }
+  deinit { print("\(name) اتمسح") }
+}
+~~~
+
+- class لأن ARC للـ classes بس (الـ structs قيم، مفيش عداد).
+- [[var apartment: Apartment?]]: reference **قوي** (strong) للشقة. ده الافتراضي لأي property.
+- [[deinit { }]]: بيتنادى لوحده لحظة ما عداد الـ references يوصل صفر والـ object يتمسح. مفيش أقواس ولا parameters.
+
+---
+
+## ٢. [[Apartment]]: reference ضعيف
+
+~~~swift
+final class Apartment {
+  let number: Int
+  weak var tenant: Person?
+  init(number: Int) { self.number = number }
+  deinit { print("شقة \(number) اتمسحت") }
+}
+~~~
+
+[[weak var tenant: Person?]]:
+- [[weak]]: بيشاور على الشخص **من غير ما يزود عداده**.
+- لازم [[var]] و optional ([[?]]): لما الشخص يتمسح، Swift بتحط [[nil]] هنا لوحدها.
+
+---
+
+## ٣. نربطهم ونسيبهم
+
+~~~swift
+var sara: Person? = Person(name: "سارة")
+var flat: Apartment? = Apartment(number: 7)
+sara?.apartment = flat
+flat?.tenant = sara
+sara = nil
+flat = nil
+~~~
+
+نعد الـ strong references خطوة خطوة:
+
+| الخطوة | عداد سارة | عداد الشقة |
+|---|---|---|
+| إنشاء الاتنين | 1 ([[sara]]) | 1 ([[flat]]) |
+| [[sara?.apartment = flat]] | 1 | 2 |
+| [[flat?.tenant = sara]] (weak) | 1 | 2 |
+| [[sara = nil]] | **0** ← تتمسح، و [[apartment]] بتاعها بيروح | 1 |
+| [[flat = nil]] | | **0** ← تتمسح |
+
+- المتغيرين optional ([[Person?]]) عشان نقدر نحطهم [[nil]]. و [[sara?.]] لأنهم optional.
+
+~~~text الناتج
+سارة اتمسح
+شقة 7 اتمسحت
+~~~
+
+**التجربة: من غير [[weak]]** على [[tenant]]: السطرين دول **مطلعوش خالص**. الشقة كانت ماسكة سارة بقوة، فعداد سارة بعد [[sara = nil]] بقى 1 مش 0، وسارة ماسكة الشقة، فالاتنين فضلوا في الذاكرة ومحدش يقدر يوصلهم. ده retain cycle = memory leak.
+
+---
+
+## ٤. [[Ticker]]: closure جوه class
+
+~~~swift
+final class Ticker {
+  var onTick: (() -> Void)?
+  var count = 0
+  func start() {
+    onTick = { [weak self] in
+      self?.count += 1
+    }
+  }
+  deinit { print("Ticker اتمسح") }
+}
+~~~
+
+- [[var onTick: (() -> Void)?]]: property شايلة closure (optional). القوسين حوالين نوع الـ closure عشان الـ [[?]] تبقى على الـ closure كله.
+- الـ object ماسك الـ closure (strong). ولو الـ closure استخدم [[self]] عادي، هيمسك الـ object (strong) = cycle.
+- [[[weak self]]]: اسمها capture list، في أول الـ closure قبل [[in]]. بتقول «امسك self ضعيف». فـ [[self]] جوه بقت optional، عشان كده [[self?.count]].
+
+~~~swift
+var t: Ticker? = Ticker()
+t?.start()
+t?.onTick?()
+print(t?.count ?? 0)
+t = nil
+~~~
+
+- [[t?.onTick?()]]: [[t]] optional، و [[onTick]] نفسه optional، فـ [[?]] قبل [[()]]: «نادي الـ closure لو موجود». count بقى 1.
+- [[t = nil]]: مفيش حد تاني ماسك الـ Ticker، فاتمسح.
+
+~~~text الناتج
+1
+Ticker اتمسح
+~~~
+
+**التجربة: من غير [[[weak self]]]** وبـ [[self.count += 1]]: [[Ticker اتمسح]] **مطلعتش**. الـ object ماسك الـ closure في [[onTick]]، والـ closure ماسك الـ object.
+
+~~~text الناتج كله (بالـ weak)
+سارة اتمسح
+شقة 7 اتمسحت
+1
+Ticker اتمسح
+~~~
+
+---
+
+## الخلاصة
+
+| النوع | بيزود العداد؟ | لو الـ object اتمسح | الشكل |
+|---|---|---|---|
+| strong (الافتراضي) | أيوه | مش هيتمسح طول ما انت ماسكه | [[var x: T]] |
+| [[weak]] | لأ | يبقى [[nil]] لوحده | [[weak var x: T?]] |
+| [[unowned]] | لأ | الوصول = **crash** | [[unowned let x: T]] |
+| capture list | | | [[{ [weak self] in self?.f() }]] |
+
+الـ cycle = اتنين ماسكين بعض بقوة. اكسره بـ [[weak]] في الاتجاه «الراجع» (الابن للأب، الـ delegate، الـ closure لـ self).`,
           lines: [
             "class (الـ ARC للـ classes بس).",
             "الاسم.",
