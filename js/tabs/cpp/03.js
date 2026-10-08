@@ -1,1122 +1,1476 @@
 // تكملة تاب cpp: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/cpp/01.js (شرح حقول الدرس في أوله)
 MORE("cpp", [
     {
-      t: "من C لـ C++",
-      l: 2,
-      n: "نفس قوة C بأدوات أأمن: std::cout و std::string و namespaces، والـ references بدل الـ pointers في أغلب الأماكن، و overloading",
+      t: "الـ Arrays والـ Strings والـ Pointers",
+      l: 1,
+      n: "أهم جزء في C: الذاكرة شكلها إيه، والـ array والنص والـ pointer علاقتهم ببعض، و malloc و free",
       items: [
         {
-          cmd: "مقدمة C++ والفرق عن C",
-          title: "أول برنامج C++: iostream و std::cout و std::cin و std::string، و :: و << و >> معناهم إيه؟",
-          desc: R`C++ بدأت في الثمانينات كـ «C مع classes»، ودلوقتي لغة كبيرة بإصدار جديد كل ٣ سنين (C++11 و 14 و 17 و 20 و 23). أغلب كود C بيتعمله compile كـ C++، بس الـ C++ الحديثة بتتكتب بشكل مختلف: بدل الـ arrays والـ char arrays و malloc بتستخدم أنواع جاهزة بتدير ذاكرتها لوحدها.
+          cmd: "arrays في C",
+          title: "الـ array في C: إزاي تعرّفها وتعرف طولها، وليه C مش بتمنعك تقرا بره حدودها؟",
+          desc: R`الـ array مجموعة عناصر من نفس النوع جنب بعض في الذاكرة. [[int marks[5];]] بتحجز مكان لـ 5 أرقام صحاح ورا بعض (20 byte لو الـ int بـ 4).
 
-حاجات جديدة في أول برنامج:
-• [[#include <iostream>]]: مكتبة الإدخال والإخراج بتاعة C++. الـ headers القياسية في C++ ملهاش [[.h]].
-• [[std::]]: كل حاجة في المكتبة القياسية جوه namespace اسمه [[std]]. الـ namespace زي «اسم العيلة» عشان الأسماء متتخبطش. و [[::]] (اسمها scope resolution) معناها «من جوه»: [[std::cout]] = cout اللي جوه std.
-• [[std::cout << x]]: اطبع x. [[<<]] هنا مش زق bits، دي «ابعت لـ». وتقدر تسلسلها: [[std::cout << "a" << 5 << '\n';]].
-• [[std::cin >> x]]: اقرا في x، من غير [[&]] ومن غير format specifiers: النوع بيتعرف لوحده.
-• [[std::string]]: نص بجد. بيكبر لوحده، و [[+]] بتلزق، و [[==]] بتقارن الحروف، و [[.size()]] الطول. مفيش [[\0]] تقلق منها ولا buffer overflow.
-• [[namespace shop { ... }]]: تعمل namespace بتاعك، وتنادي اللي جواه بـ [[shop::with_tax]].
+• الـ index بيبدأ من 0: أول عنصر [[marks[0]]] وآخر عنصر [[marks[4]]].
+• الأقواس المربعة [[[ ]]] في التعريف بتقول الحجم، وفي الاستخدام بتقول رقم العنصر.
+• القيم الأولية بين [[{ }]]: [[int marks[5] = {90, 75, 60, 85, 70};]]. ولو كتبت قيم أقل، الباقي بيبقى صفر، فـ [[int zeros[4] = {0};]] كلها أصفار. ومن غير قيم أولية خالص، الـ array المحلية فيها زبالة.
+• الطول: C مش بتحفظ طول الـ array في أي حتة. جوه نفس الدالة اللي عرّفتها تقدر تحسبه: [[sizeof(marks) / sizeof(marks[0])]] = حجمها كله ÷ حجم عنصر واحد.
+• لما تبعت array لدالة، اللي بيتبعت عنوان أول عنصر بس، فالدالة متعرفش الطول، ولازم تبعته معاها. عشان كده [[average(marks, len)]].
+• [[const int arr[]]] في الـ parameter معناها «الدالة دي هتقرا بس، مش هتغيّر».
 
-وفي C++ مش لازم تكتب [[void]] في [[main()]]، و [[main]] لو خلصت من غير return بترجّع 0.
+وأهم تحذير: C مش بتتشيّك على الحدود. [[marks[5]]] أو [[marks[100]]] هتتعمل compile وتشتغل وتقرا (أو تكتب) في ذاكرة مش بتاعتك. ده اسمه buffer overflow، ومن أشهر أسباب الثغرات الأمنية في التاريخ.
 
-بتعمل compile بـ [[g++]] بدل [[gcc]]، وبتحدد الإصدار: [[g++ -std=c++20 -Wall -Wextra main.cpp -o app]].`,
-          example: R`#include <iostream>
-#include <string>
+وفيه arrays بأكتر من بُعد: [[int grid[2][3]]] صفين في كل صف ٣ عناصر، و [[grid[1][2]]] الصف التاني العنصر التالت.`,
+          example: R`#include <stdio.h>
 
-namespace shop {
-double with_tax(double price) { return price * 1.14; }
+double average(const int arr[], int len) {
+    int sum = 0;
+    for (int i = 0; i < len; i++) {
+        sum += arr[i];
+    }
+    return (double)sum / len;
 }
 
-int main() {
-    std::string name;
-    int qty = 0;
-    std::cout << "name and quantity: ";
-    std::cin >> name >> qty;
-    std::string msg = "Hi " + name + "!";
-    std::cout << msg << " length=" << msg.size() << '\n';
-    std::cout << "total: " << shop::with_tax(100.0) * qty << '\n';
+int main(void) {
+    int marks[5] = {90, 75, 60, 85, 70};
+    int len = sizeof(marks) / sizeof(marks[0]);
+    marks[2] = 65;
+    printf("len=%d first=%d last=%d\n", len, marks[0], marks[len - 1]);
+    printf("average=%.1f\n", average(marks, len));
+    int zeros[4] = {0};
+    printf("zeros[3]=%d\n", zeros[3]);
+    int grid[2][3] = {{1, 2, 3}, {4, 5, 6}};
+    printf("grid[1][2]=%d\n", grid[1][2]);
     return 0;
 }`,
-          try: R`شغّله واكتب [[Sara 2]]. وبعدين جرّب تقرا سطر كامل فيه مسافات بـ [[std::getline(std::cin, name);]] بدل [[std::cin >> name]]. وجرّب [[std::string a = "10"; std::cout << a + a;]] و [[std::stoi(a) + std::stoi(a)]]: إيه الفرق؟`,
+          try: R`اكتب دالة [[int max_of(const int arr[], int len)]] ترجّع أكبر عنصر، ودالة [[void reverse(int arr[], int len)]] تقلب الـ array في مكانها. وجرّب جوه [[average]] تطبع [[sizeof(arr)]]: طلع كام، وليه مش 20؟`,
           flag: "script",
           deep: {
-            why: R`C++ هي لغة محركات الألعاب (Unreal) والمتصفحات (Chrome و Firefox) وقواعد البيانات (MySQL و MongoDB) والتداول السريع والـ embedded الأكبر، وجزء كبير من مكتبات الـ AI من جوه (PyTorch و TensorFlow مكتوبين بـ C++ تحت Python). وبتدّيك سرعة C مع أدوات بتقلل أخطاء الذاكرة لو استخدمتها صح.`,
-            how: R`[[std::cout]] object من نوع [[std::ostream]]، والـ [[<<]] دالة متعرّفة ليه (operator overloading، ليها درس). كل [[<<]] بترجّع الـ stream نفسه، فتقدر تكمّل [[<<]] بعدها. وده سبب إن السلسلة شغالة.
+            why: "الـ array أبسط وأسرع هيكل بيانات: العناصر جنب بعض، فالوصول لأي عنصر بالـ index خطوة واحدة، والـ CPU بيحب يقرا ذاكرة متتالية. vector في C++ و list في Python و array في JS كلهم مبنيين على نفس الفكرة.",
+            how: R`[[marks[i]]] الـ compiler بيحسبها: عنوان أول عنصر + i × حجم العنصر. مفيش أي فحص إن i أقل من الطول، لأن ده هيكلّف وقت في كل وصول، و C اختارت السرعة وسابت المسؤولية عليك.
 
-[[std::string]] جواه pointer لحروف على الـ heap (أو جوه الـ object نفسه لو النص قصير)، وطول، وسعة. لما بيتمسح بيحرر الذاكرة لوحده (RAII، ليها درس).
-
-[[std::endl]] بتنزل سطر وكمان بتعمل flush للـ buffer، وده أبطأ لو بتطبع كتير. [['\n']] بتنزل سطر بس، فاستخدمها إلا لو محتاج flush.
-
-[[using namespace std;]] بتخليك تكتب [[cout]] من غير [[std::]]. مقبولة في ملف [[.cpp]] صغير أو مسابقة، بس متحطهاش في header أبدًا: كل اللي هيعمل include للـ header هيورثها، والأسماء هتتخبط.`,
-            when: R`لما محتاج سرعة وتحكم في الذاكرة بس عايز أدوات أعلى من C: ألعاب، وأنظمة، و desktop apps (Qt)، ومكتبات سريعة. ولو مشروع C قديم، ممكن تدخل C++ فيه تدريجيًا.`,
-            mistakes: R`تعمل compile لكود C++ بـ [[gcc]] بدل [[g++]]: خطأ link بأسماء غريبة لأن مكتبة C++ متربطتش. وتكتب [[std::cin >> name]] وتفتكر إنها هتقرا اسم فيه مسافة: بتقف عند أول مسافة. وتخلط [[cin >>]] مع [[getline]]: الـ Enter اللي بعد الرقم بيفضل، فـ getline اللي بعدها بترجع سطر فاضي. والحل [[std::cin >> std::ws]] قبل getline.`
+جوه [[average]]، [[arr]] مش array، ده pointer لأول عنصر (الدرس الجاي بعد الـ strings بيشرح ده). عشان كده [[sizeof(arr)]] جوه الدالة بيدّيك حجم pointer (8) مش حجم الـ array. و gcc بينبّهك لو كتبتها: [[-Wsizeof-array-argument]].`,
+            when: R`array ثابتة الحجم لما تعرف الحجم وقت الكتابة (أيام الأسبوع، grid صغيرة). ولو الحجم بيتحدد وقت التشغيل أو بيكبر، [[malloc]] (آخر الكاتيجوري دي)، أو في C++ [[std::vector]].`,
+            mistakes: R`[[for (i = 0; i <= len; i++)]]: الـ [[<=]] بتقرا عنصر زيادة بره الـ array. وتحسب الطول بـ sizeof جوه دالة استلمت الـ array. وتنسى تدي قيم أولية فتلاقي أرقام غريبة. وتعمل array محلية ضخمة ([[int big[10000000];]]) فالـ stack يخلص والبرنامج يقع: الحاجات الكبيرة مكانها malloc.`
           },
+          teach: R`## البرنامج بيعمل إيه؟
+
+بيعمل array فيها ٥ درجات، يغيّر واحدة، يحسب الطول، ويبعتها لدالة تحسب المتوسط. وبعدين يورّيك array بأصفار تلقائية و array بُعدين. اتشغّل في [[docker run --rm gcc:14]] (gcc 14.4.0) بـ [[gcc -std=c17 -Wall -Wextra]].
+
+~~~text الناتج كله
+len=5 first=90 last=70
+average=77.0
+zeros[3]=0
+grid[1][2]=6
+~~~
+
+---
+
+## ١. التعريف والقيم الأولية
+
+~~~c
+    int marks[5] = {90, 75, 60, 85, 70};
+~~~
+
+- [[int]]: نوع كل عنصر. كلهم لازم نفس النوع.
+- [[marks[5]]]: الاسم، و [[[5]]] في التعريف = **عدد** العناصر. الحجم لازم يبقى معروف هنا.
+- [[{90, 75, ...}]]: القيم بالترتيب بين أقواس معقوفة.
+
+في الذاكرة الخمسة جنب بعض، كل واحد 4 bytes، فالـ array كلها 20 byte:
+
+~~~text marks في الذاكرة
+index:   [0]  [1]  [2]  [3]  [4]
+value:    90   75   60   85   70
+~~~
+
+---
+
+## ٢. الطول بـ [[sizeof]]
+
+~~~c
+    int len = sizeof(marks) / sizeof(marks[0]);
+~~~
+
+- [[sizeof(marks)]]: حجم الـ array كلها بالـ bytes = 20.
+- [[sizeof(marks[0])]]: حجم عنصر واحد = 4.
+- 20 ÷ 4 = **5**. C مش بتحفظ الطول في أي حتة، فده الحساب الوحيد، وبيشتغل بس في نفس المكان اللي الـ array متعرّفة فيه (تحت هتشوف ليه).
+
+---
+
+## ٣. القراية والكتابة بالـ index
+
+~~~c
+    marks[2] = 65;
+    printf("len=%d first=%d last=%d\n", len, marks[0], marks[len - 1]);
+~~~
+
+- [[marks[2]]] في الاستخدام = العنصر رقم 2، وده **التالت** لأن العد من 0. الـ 60 بقت 65.
+- [[marks[0]]] أول عنصر (90)، و [[marks[len - 1]]] آخر عنصر = [[marks[4]]] (70). مفيش [[marks[5]]].
+
+~~~text الناتج
+len=5 first=90 last=70
+~~~
+
+---
+
+## ٤. الـ array جوه دالة
+
+~~~c
+double average(const int arr[], int len) {
+    int sum = 0;
+    for (int i = 0; i < len; i++) {
+        sum += arr[i];
+    }
+    return (double)sum / len;
+}
+~~~
+
+- [[const int arr[]]]: الدالة بتستلم array من int. [[[]]] فاضية لأن الحجم مش بيوصل أصلًا. و [[const]] وعد إن الدالة مش هتغيّر العناصر (لو حاولت، الـ compiler يرفض).
+- [[int len]]: لازم الطول ييجي معاها كـ parameter منفصل.
+- الـ loop من [[i = 0]] طول ما [[i < len]]: يعني 0 لـ 4. [[sum += arr[i]]] بيجمع.
+- [[(double)sum / len]]: cast عشان القسمة تبقى عشرية.
+
+~~~c
+    printf("average=%.1f\n", average(marks, len));
+~~~
+
+المجموع: 90 + 75 + 65 + 85 + 70 = 385، ÷ 5 = [[77.0]].
+
+### ليه الدالة محتاجة [[len]]؟ (الـ try)
+
+ضفت [[sizeof(arr)]] جوه الدالة و [[sizeof(marks)]] في main:
+
+~~~text الناتج
+L1try.c:4:46: warning: 'sizeof' on array function parameter 'arr' will return size of 'const int *' [-Wsizeof-array-argument]
+sizeof(marks) in main=20
+sizeof(arr) inside=8
+~~~
+
+لما بتبعت array لدالة، اللي بيتبعت **عنوان أول عنصر** بس (pointer)، مش الـ 20 byte. فـ [[sizeof(arr)]] جوه الدالة = حجم عنوان = 8 على جهاز 64-bit. و gcc بنفسه بيقولك إن [[arr]] هنا [[const int *]] (الـ [[*]] = pointer، ليه درس بعد الجاي).
+
+---
+
+## ٥. الأصفار التلقائية
+
+~~~c
+    int zeros[4] = {0};
+    printf("zeros[3]=%d\n", zeros[3]);
+~~~
+
+إديت قيمة واحدة، والباقي بيتملى أصفار لوحده: [[zeros[3]=0]]. لكن لو مكتبتش [[= {...}]] خالص، الـ array المحلية فيها زبالة (اللي كان في الذاكرة قبلها).
+
+---
+
+## ٦. array بُعدين
+
+~~~c
+    int grid[2][3] = {{1, 2, 3}, {4, 5, 6}};
+    printf("grid[1][2]=%d\n", grid[1][2]);
+~~~
+
+- [[[2][3]]]: صفين، كل صف ٣ عناصر. والقيم صف صف، كل صف بين [[{ }]].
+
+~~~text grid
+         [0]  [1]  [2]
+row [0]:  1    2    3
+row [1]:  4    5    6
+~~~
+
+[[grid[1][2]]] = الصف التاني، العمود التالت = [[6]]. وفي الذاكرة الستة ورا بعض: صف 0 كله وبعده صف 1.
+
+---
+
+## ٧. القراية بره الحدود
+
+ضفت [[printf("%d\n", marks[5]);]] (عنصر مش موجود):
+
+- بـ [[-Wall -Wextra]] بس: ولا warning، والبرنامج طبع [[0]] بهدوء، رقم من ذاكرة مش بتاعته.
+- بـ [[-fsanitize=address,undefined]]:
+
+~~~text الناتج
+L1try.c:16:25: runtime error: index 5 out of bounds for type 'int [5]'
+~~~
+
+C مش بتتشيّك على الحدود عشان السرعة، فالـ sanitizer هو اللي بيمسكها وقت التطوير (ليه درس في آخر الكاتيجوري).
+
+---
+
+## ٨. الـ solCode
+
+### [[max_of]]
+
+~~~c
+int max_of(const int arr[], int len) {
+    int best = arr[0];
+    for (int i = 1; i < len; i++) {
+        if (arr[i] > best) best = arr[i];
+    }
+    return best;
+}
+~~~
+
+ابدأ بأول عنصر كأنه الأكبر، ولف من التاني ([[i = 1]])، وأي عنصر أكبر يبقى هو الجديد.
+
+### [[reverse]]
+
+~~~c
+void reverse(int arr[], int len) {
+    for (int i = 0, j = len - 1; i < j; i++, j--) {
+        int tmp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = tmp;
+    }
+}
+~~~
+
+- مفيش [[const]] لأنها بتغيّر.
+- الـ for فيها متغيرين: [[i]] من الأول و [[j]] من الآخر. الفاصلة [[,]] بتسمح بأكتر من حاجة في البداية والخطوة. وبيقفوا لما يتقابلوا ([[i < j]]).
+- التبديل بمتغير مؤقت [[tmp]]: لو كتبت [[arr[i] = arr[j]]] على طول، القيمة القديمة هتضيع.
+- الدالة بتغيّر الـ array الأصلية، لأن اللي اتبعت عنوانها مش نسخة منها (عكس الـ int في درس الدوال).
+
+~~~text الناتج مع {4, 9, 1, 7, 3}
+max=9
+3 7 1 9 4 
+~~~
+
+---
+
+## الخلاصة
+
+| الحاجة | الشكل |
+|---|---|
+| تعريف | [[int a[5] = {1, 2, 3, 4, 5};]] |
+| أول / آخر | [[a[0]]] / [[a[len - 1]]] |
+| الطول (في نفس المكان بس) | [[sizeof(a) / sizeof(a[0])]] |
+| لدالة | [[f(a, len)]] و [[void f(const int a[], int len)]] |
+| بُعدين | [[int g[2][3]]] و [[g[row][col]]] |
+
+- الـ index من 0 لـ [[len - 1]]، و [[i < len]] مش [[<=]].
+- C مبتمنعكش تعدّي الحدود: الـ sanitizer بيمسكها.`,
           lines: [
-            R`[[iostream]]: فيها [[std::cout]] و [[std::cin]].`,
-            R`[[string]]: فيها [[std::string]].`,
-            R`[[namespace]] بتاعنا اسمه shop.`,
-            "دالة جوه الـ namespace.",
-            "قفلة الـ namespace.",
-            R`[[main()]] في C++ من غير void.`,
-            R`نص فاضي بيكبر لوحده.`,
-            "رقم بقيمة أولية.",
-            R`[[<<]] = ابعت النص ده لـ cout (الشاشة).`,
-            R`[[>>]] = اقرا من cin في name وبعدين في qty. النوع بيتعرف لوحده.`,
-            R`[[+]] بتلزق النصوص، والنتيجة string جديد.`,
-            R`سلسلة [[<<]]، و [[.size()]] الطول، و [['\n']] سطر جديد.`,
-            R`[[shop::with_tax]] = with_tax اللي جوه shop.`,
+            "فيها printf.",
+            R`الدالة بتاخد الـ array (عنوانها في الحقيقة) وطولها. و [[const]] = مش هتغيّرها.`,
+            "مجموع.",
+            "لف على كل index من 0 لـ len - 1.",
+            R`[[arr[i]]] العنصر رقم i.`,
+            "قفلة الـ for.",
+            R`cast لـ double عشان القسمة متشيلش الكسر.`,
+            "قفلة الدالة.",
+            "بداية main.",
+            "array من ٥ أرقام بقيم أولية.",
+            "الطول = الحجم كله ÷ حجم عنصر واحد = 20 ÷ 4 = 5.",
+            "تغيير العنصر التالت (index 2).",
+            R`أول عنصر index 0، وآخر عنصر [[len - 1]].`,
+            "نبعت الـ array وطولها للدالة.",
+            "قيمة واحدة والباقي أصفار تلقائيًا.",
+            "آخر عنصر صفر.",
+            "array بُعدين: صفين × ٣ أعمدة.",
+            "الصف التاني (1)، العمود التالت (2) = 6.",
             "نجاح.",
             "قفلة main."
           ],
-          sol: R`مع [[Sara 2]]:
-[[name and quantity: Hi Sara! length=8]]
-[[total: 228]]
-([[228]] من غير كسور لأن cout بيطبع لحد ٦ أرقام مهمة افتراضيًا.)
-
-[[a + a]] بتطبع [[1010]] (لزق نصوص)، و [[std::stoi(a) + std::stoi(a)]] بتطبع [[20]] (std::stoi بتحوّل نص لـ int).
-
-مع [[std::getline(std::cin, name)]] الاسم ممكن يبقى «Sara Ahmed» كله.`
-        },
-        {
-          cmd: "references",
-          title: "الـ reference (int &) في C++: اسم تاني لنفس المتغير، وإمتى تستخدمه بدل الـ pointer؟",
-          desc: R`الـ reference اسم تاني (alias) لمتغير موجود. [[int &alias = s;]] معناها «alias هو s نفسه». أي حاجة تعملها في alias بتحصل في s، ومفيش نسخة.
-
-نفس الرمز [[&]] بقى ليه ٣ معاني، والمكان هو اللي بيفرق:
-• في تعريف نوع: [[int &r = x;]] = r reference لـ x.
-• قبل متغير في expression: [[&x]] = عنوان x (زي C).
-• بين قيمتين: [[a & b]] = AND على الـ bits.
-
-ليه references؟ عشان تبعت حاجة لدالة من غير ما تتنسخ، أو عشان الدالة تغيّرها، من غير نجوم:
-• [[void add_bonus(int &salary)]]: الدالة بتغيّر المتغير الأصلي. والنداء [[add_bonus(s)]] عادي من غير [[&]].
-• [[int total(const std::vector<int> &v)]]: الـ vector مش بيتنسخ (ممكن يكون مليون عنصر)، و [[const]] بتمنع الدالة تغيّره. ده أشهر شكل parameter في C++: [[const T &]].
-
-الفرق بين reference و pointer:
-• الـ reference لازم يتربط بمتغير أول ما يتعرّف، ومينفعش يبقى فاضي (مفيش null reference).
-• مينفعش تغيّره يشاور على متغير تاني بعد كده.
-• مش محتاج [[*]] ولا [[->]].
-• الـ pointer ممكن يبقى [[nullptr]] (الـ NULL بتاعة C++) وممكن يتغيّر. فاستخدمه لما «مفيش قيمة» حالة طبيعية.
-
-[[std::vector<int>]]: array بتكبر لوحدها، وليها درس. الأقواس [[< >]] هنا معناها «vector من int» (template، ليها درس). و [[for (int x : v)]] معناها «لكل عنصر x في v» (range-for).`,
-          example: R`#include <iostream>
-#include <vector>
-
-void add_bonus(int &salary) { salary += 500; }
-void add_bonus_ptr(int *salary) {
-    if (salary) *salary += 500;
-}
-long long total(const std::vector<int> &v) {
-    long long sum = 0;
-    for (int x : v) sum += x;
-    return sum;
-}
-
-int main() {
-    int s = 5000;
-    int &alias = s;
-    alias += 1;
-    add_bonus(s);
-    add_bonus_ptr(&s);
-    std::cout << "s=" << s << '\n';
-    std::vector<int> big(1000000, 1);
-    std::cout << "total=" << total(big) << '\n';
-}`,
-          try: R`اكتب [[void swap_ref(int &a, int &b)]] وقارنها بـ swap بتاعة درس الـ pointers. وبعدين شيل الـ [[&]] من parameter بتاع [[add_bonus]] وشغّل: s بقت كام؟ وجرّب [[int &r;]] من غير قيمة وشوف الـ compiler قال إيه. وجرّب جوه [[total]] تكتب [[v.push_back(1);]].`,
-          flag: "script",
-          deep: {
-            why: R`في C لما بتبعت struct كبير لدالة يا إما تنسخه (بطيء) يا إما تبعت pointer (ممكن يبقى NULL ومحتاج نجوم). الـ [[const T &]] بتدّيك الاتنين: من غير نسخ، ومن غير null، وبنفس شكل المتغير العادي. وهتشوفها في كل كود C++ تقريبًا.`,
-            how: R`الـ compiler غالبًا بينفّذ الـ reference كعنوان من جوه (زي pointer)، بس اللغة بتمنعك تعمل عليه arithmetic أو تخليه null. فالتكلفة هي نفسها تكلفة pointer: 8 bytes بدل نسخ الـ vector كله (4 مليون byte هنا).
-
-[[const int &r = 5;]] مسموحة: الـ compiler بيعمل متغير مؤقت ويطوّل عمره. بس [[int &r = 5;]] لأ، لأن مينفعش تغيّر الرقم 5.
-
-للأنواع الصغيرة (int و double و char و pointers) ابعت بالقيمة عادي، نسخها أرخص من الـ reference.`,
-            when: R`[[const T &]] لأي parameter نوعه كبير (string و vector و classes) وانت هتقرا بس. [[T &]] لما الدالة لازم تغيّره (out parameter)، بس الأحسن ترجّع قيمة لو تقدر. pointer لما الحاجة ممكن متبقاش موجودة ([[nullptr]]).`,
-            mistakes: R`ترجّع reference لمتغير محلي من دالة ([[int &f() { int x = 1; return x; }]]): الـ x بيموت والـ reference بيشاور على زبالة (dangling reference). و [[-Wall]] بينبّهك. وتنسى [[const]] فالدالة متقبلش قيم مؤقتة زي [[total({1, 2, 3})]]. وتفتكر إن [[alias = other;]] بتخلي alias يشاور على other: هي بتنسخ قيمة other جوه s.`
-          },
-          lines: [
-            "فيها std::cout.",
-            R`فيها [[std::vector]].`,
-            R`[[int &]]: الدالة بتاخد المتغير الأصلي نفسه.`,
-            "نفس الفكرة بالـ pointer زي C.",
-            "لازم تتشيّك على null، ولازم نجمة.",
-            "قفلة.",
-            R`[[const &]]: من غير نسخ، ومن غير تعديل. long long عشان المجموع.`,
-            "مجموع.",
-            R`range-for: لكل عنصر x في v.`,
-            "رجّع المجموع.",
-            "قفلة.",
-            "main.",
-            "متغير عادي.",
-            R`[[alias]] اسم تاني لـ s نفسه.`,
-            "s بقت 5001.",
-            R`النداء عادي من غير [[&]]، و s بقت 5501.`,
-            R`مع الـ pointer لازم [[&s]]. s بقت 6001.`,
-            "اطبع.",
-            "مليون عنصر كلهم 1 (4 ميجا تقريبًا).",
-            "الـ vector مش بيتنسخ: اللي بيتبعت reference.",
-            "قفلة main."
-          ],
           sol: R`الناتج:
-[[s=6001]]
-[[total=1000000]]
+[[len=5 first=90 last=70]]
+[[average=77.0]]
+[[zeros[3]=0]]
+[[grid[1][2]=6]]
+(المتوسط: 90 + 75 + 65 + 85 + 70 = 385 ÷ 5 = 77.)
 
-من غير [[&]] في [[add_bonus]]: الدالة بتاخد نسخة، فـ s بتبقى [[5501]] (1 من alias و 500 من الـ pointer بس).
+[[sizeof(arr)]] جوه الدالة بـ 8 على جهاز 64-bit: ده حجم pointer، لأن الـ array اتبعتت كعنوان أول عنصر. ومع [[-Wall]]، gcc بينبّهك:
+[[warning: 'sizeof' on array function parameter 'arr' will return size of 'const int *']]
 
-[[int &r;]]:
-[[error: 'r' declared as reference but not initialized]]
+[[reverse]] بتبدّل أول عنصر مع آخر عنصر، والتاني مع اللي قبل الأخير، لحد ما يتقابلوا في النص.`,
+          solCode: R`#include <stdio.h>
 
-[[v.push_back(1)]] جوه total:
-[[error: passing 'const std::vector<int>' as 'this' argument discards qualifiers]]
-يعني الـ const منعتك تغيّر الـ vector، وده المطلوب.`,
-          solCode: R`#include <iostream>
-
-void swap_ref(int &a, int &b) {
-    int tmp = a;
-    a = b;
-    b = tmp;
+int max_of(const int arr[], int len) {
+    int best = arr[0];
+    for (int i = 1; i < len; i++) {
+        if (arr[i] > best) best = arr[i];
+    }
+    return best;
 }
 
-int main() {
-    int x = 1, y = 2;
-    swap_ref(x, y);
-    std::cout << x << ' ' << y << '\n';
+void reverse(int arr[], int len) {
+    for (int i = 0, j = len - 1; i < j; i++, j--) {
+        int tmp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = tmp;
+    }
+}
+
+int main(void) {
+    int a[5] = {4, 9, 1, 7, 3};
+    printf("max=%d\n", max_of(a, 5));
+    reverse(a, 5);
+    for (int i = 0; i < 5; i++) printf("%d ", a[i]);
+    printf("\n");
+    return 0;
 }`
         },
         {
-          cmd: "overloading و default args",
-          title: "إزاي تعمل كذا دالة بنفس الاسم (overloading) وparameters ليها قيمة افتراضية في C++؟",
-          desc: R`في C كل دالة لازم ليها اسم مختلف ([[abs]] و [[labs]] و [[fabs]]). في C++ تقدر تعمل كذا دالة بنفس الاسم طالما الـ parameters مختلفة في العدد أو النوع. ده اسمه function overloading، والـ compiler بيختار المناسبة من الـ arguments اللي بعتّها:
-• [[area(4)]]: int واحد، فبتروح لـ [[area(int side)]].
-• [[area(3, 5)]]: اتنين int.
-• [[area(1.0)]]: double.
+          cmd: "strings في C",
+          title: "النص في C مجرد array من char آخرها '\\0': يعني إيه، وإزاي تنسخ وتقارن من غير ما تعدّي الحدود؟",
+          desc: R`C معندهاش نوع string. النص هو array من [[char]] وآخرها حرف خاص قيمته صفر: [['\0']] (اسمه null terminator). كل الدوال اللي بتتعامل مع النصوص بتمشي حرف حرف لحد ما تقابل الصفر ده، وكده بتعرف النص خلص فين.
 
-نوع الـ return لوحده مش كفاية: مينفعش دالتين يفرقوا في نوع اللي بيرجع بس.
+[[char name[] = "Sara";]] بتحجز 5 bytes مش 4: [['S' 'a' 'r' 'a' '\0']]. عشان كده:
+• [[strlen(name)]] بـ 4: بتعد الحروف لحد الـ [[\0]].
+• [[sizeof(name)]] بـ 5: حجم الـ array كلها.
 
-default arguments: parameter ليه قيمة لو محدش بعتها:
-[[std::string greet(const std::string &name, const std::string &greeting = "Hello")]]
-فـ [[greet("Sara")]] = [[greet("Sara", "Hello")]]. والـ parameters اللي ليها default لازم تبقى في الآخر.
+دوال [[string.h]] الأشهر:
+• [[strlen(s)]]: الطول.
+• [[strcmp(a, b)]]: بترجّع 0 لو متساويين، وسالب أو موجب حسب الترتيب الأبجدي. [[==]] بين نصين بتقارن العناوين مش الحروف، فمتستخدمهاش.
+• [[strcpy(dst, src)]]: بتنسخ من غير ما تعرف حجم dst، فلو src أطول بتكتب بره الـ array. ودي من أخطر الدوال.
+• [[strcat]]: بتلزق نص في آخر نص، ونفس الخطر.
 
-ودي نفس الفكرة اللي بتخلي [[std::cout <<]] تطبع int و double و string: كذا نسخة من [[<<]] لكل نوع.`,
-          example: R`#include <iostream>
-#include <string>
+الطريقة الآمنة للنسخ والتركيب: [[snprintf(buf, sizeof(buf), "...", ...)]]. بتكتب لحد الحجم اللي اديته بالظبط، وبتحط [[\0]] دايمًا، وبترجّع الطول اللي كانت محتاجاه. فلو الرقم ده أكبر من أو بيساوي حجم الـ buffer، يبقى النص اتقص.
 
-int area(int side) { return side * side; }
-int area(int w, int h) { return w * h; }
-double area(double r) { return 3.14159 * r * r; }
+[[char *s = "Sara";]] (بالنجمة) حاجة تانية: ده pointer لنص ثابت في ذاكرة للقراية بس. لو حاولت تغيّر حرف فيه، البرنامج غالبًا هيقع. لو عايز تعدّل، استخدم [[char s[] = "Sara";]].`,
+          example: R`#include <stdio.h>
+#include <string.h>
 
-std::string greet(const std::string &name, const std::string &greeting = "Hello") {
-    return greeting + ", " + name;
+int main(int argc, char *argv[]) {
+    const char *full = argc > 1 ? argv[1] : "Sara Mohamed";
+    char name[] = "Sara";
+    printf("strlen=%zu sizeof=%zu\n", strlen(name), sizeof(name));
+    printf("name[4] = %d\n", name[4]);
+    char greeting[32];
+    snprintf(greeting, sizeof(greeting), "Hello, %s!", name);
+    printf("%s\n", greeting);
+    char small[8];
+    int needed = snprintf(small, sizeof(small), "%s", full);
+    printf("small=\"%s\" needed=%d\n", small, needed);
+    if (strcmp(name, "Sara") == 0) {
+        printf("same text\n");
+    }
+    name[0] = 's';
+    printf("%s\n", name);
+    return 0;
+}`,
+          try: R`شغّله من غير arguments، وبعدين [[./app Ali]]. وبعدين اكتب دالة [[int count_char(const char *s, char c)]] تعد حرف معيّن في نص بـ loop لحد الـ [[\0]] (من غير strlen). وجرّب تشيل الـ [[\0]] من آخر نص بإيدك: [[char bad[4] = {'a','b','c','d'};]] واطبعه بـ [[%s]]: إيه اللي اتطبع؟`,
+          flag: "script",
+          deep: {
+            why: R`كل نص في C (أسماء ملفات، input، رسايل شبكة) هو array حروف. وأشهر ثغرات أمنية في التاريخ جت من نسخ نص أطول من الـ buffer بـ [[strcpy]] أو [[gets]] (اتشالت من اللغة خالص في C11 لأنها مينفعش تستخدم بأمان).`,
+            how: R`[[strlen]] بتلف من أول حرف لحد ما تلاقي byte قيمته 0، فهي [[O(n)]] كل مرة تناديها. فمتحطهاش في شرط for على نص طويل: [[for (i = 0; i < strlen(s); i++)]] بتحسب الطول في كل لفة.
+
+لو نص ملوش [[\0]]، [[printf("%s")]] و [[strlen]] هيكمّلوا يقروا في الذاكرة اللي بعده لحد ما يلاقوا صفر بالصدفة، فهتشوف حروف غريبة أو البرنامج يقع.
+
+[[%s]] في [[snprintf]] بتاخد عنوان أول حرف، وبتفضل تنسخ لحد الـ [[\0]] أو لحد ما الـ buffer يخلص.`,
+            when: R`[[snprintf]] لأي نسخ أو تركيب. [[strcmp]] للمقارنة. [[strncmp(a, b, n)]] لمقارنة أول n حرف (زي «النص بيبدأ بـ...»). و [[fgets]] لقراية سطر (درس الملفات). وفي C++ استخدم [[std::string]] وارتاح من كل ده.`,
+            mistakes: R`[[if (name == "Sara")]] بتقارن عناوين، استخدم [[strcmp]]. و [[char s[4] = "Sara";]]: مفيش مكان للـ [[\0]]. و [[strcpy]] من غير ما تتأكد من الطول. وتغيّر حرف في [[char *s = "..."]]. وتنسى إن [[strlen]] مش بتعد الـ [[\0]]، فتعمل [[malloc(strlen(s))]] وتنسى الـ +1.`
+          },
+          teach: R`## البرنامج بيعمل إيه؟
+
+بيورّيك إن النص في C array حروف آخرها صفر: يقيس الطول بطريقتين، ويطبع الصفر المخفي، ويركّب نص بأمان بـ [[snprintf]]، ويحاول يحط نص طويل في buffer صغير ويقولك اتقص، ويقارن نصين، ويغيّر حرف. اتشغّل في [[docker run --rm gcc:14]] (gcc 14.4.0) بـ [[gcc -std=c17 -Wall -Wextra]].
+
+~~~text الناتج من غير arguments
+strlen=4 sizeof=5
+name[4] = 0
+Hello, Sara!
+small="Sara Mo" needed=12
+same text
+sara
+~~~
+
+---
+
+## ١. [[string.h]]
+
+~~~c
+#include <string.h>
+~~~
+
+فيها دوال النصوص: [[strlen]] و [[strcmp]] و [[strcpy]] و [[strcat]] وغيرهم. ([[snprintf]] من [[stdio.h]].)
+
+---
+
+## ٢. النص اللي هنقصّه
+
+~~~c
+    const char *full = argc > 1 ? argv[1] : "Sara Mohamed";
+~~~
+
+من جوه لبرة:
+
+- [[argc > 1 ? argv[1] : "Sara Mohamed"]]: الـ ternary operator. [[شرط ? أ : ب]] = لو اليوزر كتب argument خد [[argv[1]]]، غير كده خد النص الثابت.
+- [[const char *full]]: [[full]] عنوان أول حرف في نص ([[char *]])، و [[const]] = مش هنغيّر حروفه من خلاله. النص [[" "]] في الكود متخزّن في ذاكرة للقراية بس، عشان كده [[const]] مناسبة.
+
+---
+
+## ٣. [[char name[] = "Sara";]]
+
+~~~c
+    char name[] = "Sara";
+    printf("strlen=%zu sizeof=%zu\n", strlen(name), sizeof(name));
+    printf("name[4] = %d\n", name[4]);
+~~~
+
+- [[[]]] فاضية: الـ compiler بيعدّ الحروف ويحدد الحجم لوحده. والنص بيتنسخ **جوه** الـ array، فتقدر تعدّله.
+- الحجم 5 مش 4:
+
+~~~text name في الذاكرة
+index:  [0]  [1]  [2]  [3]  [4]
+char:   'S'  'a'  'r'  'a'  '\0'
+~~~
+
+- [[strlen(name)]]: بتمشي حرف حرف لحد ما تلاقي الـ [[\0]] ومبتعدّهوش: 4.
+- [[sizeof(name)]]: حجم الـ array كلها بالصفر: 5.
+- [[name[4]]] بـ [[%d]]: الـ [[\0]] قيمته [[0]]. (مش الحرف '0' اللي كوده 48، ده byte قيمته صفر.)
+
+~~~text الناتج
+strlen=4 sizeof=5
+name[4] = 0
+~~~
+
+---
+
+## ٤. [[snprintf]]: تركيب نص بأمان
+
+~~~c
+    char greeting[32];
+    snprintf(greeting, sizeof(greeting), "Hello, %s!", name);
+    printf("%s\n", greeting);
+~~~
+
+[[snprintf]] زي printf، بس بتكتب في array بدل الشاشة (s = string، و n = بحد أقصى):
+
+| الـ argument | هنا | معناه |
+|---|---|---|
+| ١ | [[greeting]] | فين تكتب |
+| ٢ | [[sizeof(greeting)]] | أقصى عدد bytes (32)، **بالـ** [[\0]] |
+| ٣ | [[Hello, %s!]] | الـ format زي printf |
+| ٤ | [[name]] | القيمة اللي مكان [[%s]] |
+
+~~~text الناتج
+Hello, Sara!
+~~~
+
+---
+
+## ٥. لما النص أطول من الـ buffer
+
+~~~c
+    char small[8];
+    int needed = snprintf(small, sizeof(small), "%s", full);
+    printf("small=\"%s\" needed=%d\n", small, needed);
+~~~
+
+- [[small]] 8 bytes: يعني 7 حروف + [[\0]] بالكتير.
+- [[full]] = [[Sara Mohamed]] (12 حرف). snprintf كتبت أول 7 ([[Sara Mo]]) وحطت [[\0]]، ومكتبتش ولا byte بره.
+- اللي بترجّعه = الطول **اللي كانت محتاجاه** (12). فالقاعدة: لو [[needed >= sizeof(small)]] يبقى النص اتقص.
+- [[\"]] جوه النص: علامة تنصيص عادية بتتطبع، والـ [[\]] بيمنعها تقفل النص.
+
+~~~text الناتج
+small="Sara Mo" needed=12
+~~~
+
+ومع [[./app Ali]]: [[small="Ali" needed=3]]، لأن Ali لحقت.
+
+---
+
+## ٦. [[strcmp]]: المقارنة
+
+~~~c
+    if (strcmp(name, "Sara") == 0) {
+        printf("same text\n");
+    }
+~~~
+
+[[strcmp]] بتقارن حرف حرف، وبترجّع **0** لو متطابقين، وسالب لو الأول قبل التاني أبجديًا، وموجب لو بعده. عشان كده [[== 0]].
+
+وليه مش [[==]] على طول؟ جربت [[if (name == "Sara")]]:
+
+~~~text الناتج
+warning: comparison with string literal results in unspecified behavior [-Waddress]
+not equal
+~~~
+
+[[==]] بين نصين بتقارن **العناوين** (الـ array في مكان، والنص الثابت في مكان تاني)، مش الحروف. فطلعت not equal رغم إن الكلام واحد.
+
+---
+
+## ٧. تعديل حرف
+
+~~~c
+    name[0] = 's';
+    printf("%s\n", name);
+~~~
+
+[[name]] array بتاعتك، فالتعديل مسموح: [[sara]]. لكن جربت نفس الكلام على [[char *s = "Sara";]] وبعدين [[s[0] = 's';]]: من غير ولا warning، والبرنامج وقع بـ [[Segmentation fault]] (exit code 139)، لأن [[s]] بيشاور على النص الثابت اللي في ذاكرة للقراية بس.
+
+---
+
+## ٨. الـ try: نص من غير [[\0]]
+
+~~~c
+    char bad[4] = {'a', 'b', 'c', 'd'};
+    printf("[%s]\n", bad);
+~~~
+
+- عادي: طبع [[[abcd]]]. بالصدفة الـ byte اللي بعد الـ array كان صفر. ممكن على جهاز تاني أو بـ flags تانية تشوف حروف غريبة بعدها.
+- بـ [[-fsanitize=address]]:
+
+~~~text الناتج
+==110==ERROR: AddressSanitizer: stack-buffer-overflow on address 0x7f7521a00024 ...
+READ of size 5 at 0x7f7521a00024 thread T0
+    #3 0x40123d in main /w/L2bad.c:5
+~~~
+
+printf قرت **5** bytes من array حجمها 4، لأنها كانت بتدوّر على الصفر. والسطر [[L2bad.c:5]] هو الـ printf.
+
+وكمان [[char s4[4] = "Sara";]] في C بتتعمل compile من غير ولا warning: الـ 4 حروف دخلت والـ [[\0]] اتساب بره. (في C++ ده error.)
+
+---
+
+## ٩. الـ solCode: [[count_char]]
+
+~~~c
+int count_char(const char *s, char c) {
+    int count = 0;
+    for (int i = 0; s[i] != '\0'; i++) {
+        if (s[i] == c) count++;
+    }
+    return count;
 }
+~~~
 
-int main() {
-    std::cout << area(4) << ' ' << area(3, 5) << ' ' << area(1.0) << '\n';
-    std::cout << greet("Sara") << " | " << greet("Omar", "Welcome") << '\n';
-}`,
-          try: R`ضيف [[area(2.5f)]] (float) و [[area(2L)]] (long) وشغّل: أنهي نسخة اتنادت، وفيه واحدة منهم الـ compiler رفضها؟ ليه؟ وبعدين اكتب [[print]] بـ ٣ overloads: لـ int و double و [[const std::string &]].`,
-          flag: "script",
-          deep: {
-            why: R`بتخلي الـ API بتاعك طبيعي: اسم واحد للفكرة الواحدة. والمكتبة القياسية كلها مبنية على كده ([[std::to_string]] ليها نسخة لكل نوع رقم). ولو هتفهم رسايل الخطأ بتاعة C++ لازم تعرف الـ overload resolution، لأن نص الأخطاء الطويلة غالبًا «مش لاقي نسخة مناسبة، والنسخ اللي جربتها هي ...».`,
-            how: R`الـ compiler بيدّي كل دالة اسم داخلي فيه أنواع الـ parameters (name mangling)، فـ [[area(int)]] و [[area(double)]] اسمهم مختلف في الـ object file. شوفه بـ [[nm app]]: هتلاقي حاجات زي [[_Z4areai]] و [[_Z4aread]]. عشان كده لو هتنادي دالة C++ من C لازم [[extern "C"]].
+- [[const char *s]]: النص جاي كعنوان أول حرف، و [[const]] لأننا بنقرا بس.
+- الشرط [[s[i] != '\0']] بدل [[i < len]]: كمّل لحد الصفر. ده نفس اللي [[strlen]] بتعمله من جوه.
+- [['a']] بعلامة مفردة = حرف واحد، و [["a"]] بمزدوجة = نص (حرفين: a و [[\0]]).
 
-اختيار الـ overload: تطابق تام الأول، وبعدين promotions (زي float لـ double، و char لـ int)، وبعدين conversions (زي long لـ int أو double). لو لقى أكتر من واحدة في نفس الدرجة: [[ambiguous]].`,
-            when: R`نفس العملية على أنواع مختلفة (area و print و parse). default args لما فيه parameter أغلب الناس هتسيبه على قيمة واحدة. ولو النسخ كلها نفس الكود بنوع مختلف، استخدم template بدل ما تكرر (ليها درس).`,
-            mistakes: R`overloads بتعمل حاجات مختلفة في المعنى تحت نفس الاسم: بتلخبط. وتجمع overload و default args بشكل يخلي النداء ambiguous ([[f(int)]] و [[f(int, int = 0)]] ونداء [[f(1)]]). وتحط الـ default في التعريف والـ prototype الاتنين: يتحط في الـ declaration (الـ header) بس.`
-          },
+[[count_char("banana", 'a')]] طبعت [[3]].
+
+---
+
+## الخلاصة
+
+| عايز | استخدم | متستخدمش |
+|---|---|---|
+| الطول | [[strlen(s)]] | [[sizeof]] على pointer |
+| تقارن | [[strcmp(a, b) == 0]] | [[a == b]] |
+| تنسخ أو تركّب | [[snprintf(buf, sizeof(buf), ...)]] | [[strcpy]] و [[strcat]] من غير ما تحسب |
+| نص تعدّله | [[char s[] = "..."]] | [[char *s = "..."]] |
+
+- النص = حروف + [[\0]]، فالحجم = الطول + 1.
+- [[snprintf]] بترجّع الطول المطلوب: لو [[>=]] حجم الـ buffer يبقى اتقص.`,
           lines: [
-            "فيها cout.",
-            "فيها std::string.",
-            "نسخة بـ int واحد: مربع.",
-            "نسخة بـ اتنين int: مستطيل.",
-            "نسخة بـ double: دايرة.",
-            R`الـ parameter التاني ليه قيمة افتراضية [["Hello"]].`,
-            R`[[+]] بين strings بتلزق.`,
-            "قفلة.",
-            "main.",
-            "الـ compiler بيختار حسب الـ arguments: 16 و 15 و 3.14159.",
-            R`من غير التاني بياخد [["Hello"]]، ومعاه بياخد اللي بعتّه.`,
-            "قفلة main."
-          ],
-          sol: R`الناتج:
-[[16 15 3.14159]]
-[[Hello, Sara | Welcome, Omar]]
-
-[[area(2.5f)]] بتروح لنسخة الـ double (float لـ double اسمها promotion، أحسن من التحويل لـ int) وبتطبع [[19.6349]].
-[[area(2L)]] بيرفضها:
-[[error: call of overloaded 'area(long int)' is ambiguous]]
-لأن long لـ int و long لـ double الاتنين conversion في نفس الدرجة، فالـ compiler مش عارف يختار. الحل [[area(2)]] أو [[area(static_cast<int>(x))]].`,
-          solCode: R`#include <iostream>
-#include <string>
-
-void print(int x) { std::cout << "int: " << x << '\n'; }
-void print(double x) { std::cout << "double: " << x << '\n'; }
-void print(const std::string &s) { std::cout << "string: " << s << '\n'; }
-
-int main() {
-    print(5);
-    print(2.5);
-    print(std::string("hi"));
-}`
-        }
-      ]
-    },
-    {
-      t: "الـ Classes والـ OOP",
-      l: 2,
-      n: "class و constructor و destructor، و const، و RAII اللي هي أهم فكرة في C++، و rule of 0/3/5، و operators، والوراثة و virtual",
-      items: [
-        {
-          cmd: "الـ Classes والـ OOP في C++",
-          title: "class في C++: constructor و member initializer list و this و private و destructor (~)",
-          desc: R`الـ class بيجمع داتا والدوال اللي بتشتغل عليها في نوع واحد. الداتا اسمها members، والدوال اسمها member functions (أو methods).
-
-• [[public:]] و [[private:]]: مين يقدر يوصل. الـ public متاح لأي حد، والـ private جوه الـ class بس. الفكرة (encapsulation) إن الرصيد ميتغيرش غير من [[withdraw]] اللي بتتشيّك على القيمة، مش [[acc.balance_ = -500]] من بره.
-• الـ constructor: دالة بنفس اسم الـ class ومن غير نوع return، بتتنادى لوحدها لما الـ object يتعمل.
-• الـ member initializer list: [[: owner_(owner), balance_(balance)]] بعد قوس الـ constructor وقبل [[{]]. بتدّي الـ members قيمتهم أول ما يتعملوا، بدل ما يتعملوا فاضيين ويتغيّروا جوه [[{ }]]. استخدمها دايمًا. والـ members بيتعملوا بترتيب تعريفهم في الـ class مش بترتيب الـ list.
-• الـ destructor: [[~BankAccount()]]. علامة [[~]] (tilde) قبل اسم الـ class. بيتنادى لوحده لما الـ object يموت: لما يخرج من الـ scope بتاعه (الـ [[{ }]] اللي اتعرّف جواها).
-• [[this]]: pointer للـ object اللي الدالة اتنادت عليه. [[this->balance_]] زي [[balance_]] بالظبط، بتحتاجها لو فيه parameter بنفس الاسم. ولأنه pointer بنستخدم [[->]].
-• [[double balance() const]]: الـ [[const]] بعد القوسين معناها «الدالة دي مش هتغيّر الـ object». الدرس الجاي كله عنها.
-• الـ [[_]] في آخر [[owner_]] مجرد عادة عشان تفرق الـ members عن الـ parameters.
-
-[[struct]] في C++ زي [[class]] بالظبط، الفرق الوحيد إن الـ struct كله public افتراضيًا والـ class كله private. العادة: struct للداتا البسيطة، و class لما فيه قواعد لازم تتحمي.`,
-          example: R`#include <iostream>
-#include <string>
-
-class BankAccount {
-public:
-    BankAccount(const std::string &owner, double balance)
-        : owner_(owner), balance_(balance) {
-        std::cout << "open " << owner_ << '\n';
-    }
-    ~BankAccount() { std::cout << "close " << owner_ << '\n'; }
-
-    bool withdraw(double amount) {
-        if (amount <= 0 || amount > balance_) return false;
-        this->balance_ -= amount;
-        return true;
-    }
-    double balance() const { return balance_; }
-
-private:
-    std::string owner_;
-    double balance_;
-};
-
-int main() {
-    BankAccount acc("Sara", 1000);
-    acc.withdraw(300);
-    bool ok = acc.withdraw(5000);
-    std::cout << "balance=" << acc.balance() << " ok=" << ok << '\n';
-    {
-        BankAccount temp("Omar", 50);
-    }
-    std::cout << "end of main\n";
-}`,
-          try: R`اتوقع ترتيب السطور قبل ما تشغّل، وبعدين شغّل وقارن. وبعدين ضيف [[void deposit(double amount)]] بترفض أي مبلغ سالب، وجرّب من main تكتب [[acc.balance_ = 1e9;]]: إيه اللي حصل؟ وآخر حاجة: اعمل class [[Counter]] بيعد هو اتعمل منه كام object دلوقتي (زوّد في الـ constructor وقلّل في الـ destructor) باستخدام [[static int count;]].`,
-          flag: "script",
-          deep: {
-            why: R`الـ class بيخليك تحط القواعد جنب الداتا: مفيش رصيد سالب، ومفيش ملف مفتوح من غير ما يتقفل. ومن غير الـ destructor مكنش هيبقى فيه RAII، وهي الفكرة اللي C++ كلها قايمة عليها (الدرس بعد الجاي).`,
-            how: R`الـ object المحلي ([[BankAccount acc(...)]]) بيتعمل على الـ stack زي أي متغير. الـ member functions مش بتتخزن جوه كل object: هي دوال عادية بتاخد [[this]] كـ parameter مستخبي. فـ [[acc.withdraw(300)]] كأنها [[withdraw(&acc, 300)]].
-
-الـ destructor بيتنادى أوتوماتيك عند آخر الـ scope، بالعكس من ترتيب الإنشاء: آخر واحد اتعمل أول واحد يموت. فلو فيه objects كتير، الأخير بيتقفل الأول. وده مضمون حتى لو خرجت بـ return أو حصل exception.
-
-لو مكتبتش constructor خالص، الـ compiler بيعمل واحد افتراضي. لكن أول ما تكتب واحد بـ parameters، الافتراضي بيختفي، فـ [[BankAccount x;]] مش هتتعمل compile.`,
-            when: R`أي حاجة ليها حالة وقواعد: حساب، اتصال، ملف، لاعب في لعبة. ولو مجرد داتا من غير قواعد (نقطة x و y) استخدم struct بحقول public وخلاص.`,
-            mistakes: R`تدّي القيم جوه [[{ }]] بدل الـ initializer list: الـ members بيتعملوا مرتين، ولو member نوعه const أو reference مش هيتعمل compile أصلًا. وترتيب الـ initializer list مختلف عن ترتيب تعريف الـ members: [[-Wall]] بينبّهك ([[-Wreorder]]). وتعمل كل حاجة public فالـ class ملوش لازمة. وتنسى [[;]] بعد قفلة الـ class: [[};]].`
-          },
-          lines: [
-            "cout.",
-            "string.",
-            R`تعريف class اسمه BankAccount.`,
-            R`[[public:]]: اللي تحت متاح لأي حد.`,
-            "الـ constructor: نفس اسم الـ class ومن غير نوع return.",
-            R`member initializer list: owner_ و balance_ بياخدوا قيمهم أول ما يتعملوا.`,
-            "جسم الـ constructor: رسالة.",
-            "قفلة الـ constructor.",
-            R`الـ destructor بـ [[~]]: بيتنادى لوحده لما الـ object يموت.`,
-            "دالة بترجّع نجح ولا لأ.",
-            "ارفض المبلغ الغلط أو الأكبر من الرصيد.",
-            R`[[this->]]: الـ member بتاع الـ object ده. زي [[balance_]] بالظبط.`,
-            "نجح.",
-            "قفلة.",
-            R`[[const]]: الدالة دي بتقرا بس.`,
-            R`[[private:]]: محدش من بره يوصل للي تحت.`,
-            "اسم صاحب الحساب.",
-            "الرصيد.",
-            R`قفلة الـ class، ولاحظ الـ [[;]].`,
-            "main.",
-            R`object على الـ stack: الـ constructor اتنادى، وطبع open Sara.`,
-            "سحب 300: الرصيد 700.",
-            "5000 أكبر من الرصيد: false.",
-            R`bool بيتطبع 0 أو 1.`,
-            R`[[{]]: scope جديد.`,
-            "object تاني: open Omar.",
-            R`[[}]]: temp بيموت هنا، فبيطبع close Omar.`,
-            "بيتطبع قبل ما acc يموت.",
-            "آخر main: acc بيموت، close Sara."
-          ],
-          sol: R`الناتج:
-[[open Sara]]
-[[balance=700 ok=0]]
-[[open Omar]]
-[[close Omar]]
-[[end of main]]
-[[close Sara]]
-
-[[acc.balance_ = 1e9;]]:
-[[error: 'double BankAccount::balance_' is private within this context]]
-
-الـ Counter: [[static int count;]] جوه الـ class معناها متغير واحد مشترك بين كل الـ objects مش واحد لكل object، ولازم يتعرّف بره ([[int Counter::count = 0;]]) أو تكتبه [[static inline int count = 0;]] جوه الـ class من C++17.`,
-          solCode: R`#include <iostream>
-
-class Counter {
-public:
-    Counter() { ++count; }
-    ~Counter() { --count; }
-    static inline int count = 0;
-};
-
-int main() {
-    Counter a;
-    {
-        Counter b, c;
-        std::cout << Counter::count << '\n';
-    }
-    std::cout << Counter::count << '\n';
-}`
-        },
-        {
-          cmd: "const",
-          title: "const correctness: const في المتغيرات والـ parameters والـ member functions والـ pointers",
-          desc: R`[[const]] وعد: «القيمة دي مش هتتغير». والـ compiler بيلزمك بيه، فأي محاولة تغيّر حاجة const بتبقى error وقت الـ compile مش bug وقت التشغيل.
-
-أماكنها:
-• متغير: [[const int max_retries = 3;]].
-• parameter: [[void print(const Account &a)]]: الدالة بتاخد الـ object من غير نسخ، ومش هتغيّره. ده الشكل اللي هتكتبه أكتر حاجة.
-• member function: [[int balance() const]]: الـ [[const]] بعد القوسين معناها «الدالة دي مش هتغيّر أي member». والمهم: على object من نوع const (أو const reference) تقدر تنادي الدوال الـ const بس. فلو نسيت تكتبها على getter، [[print]] مش هتقدر تناديه.
-• return: [[const std::string &owner() const]]: رجّع الاسم من غير نسخ، ومن غير ما حد يغيّره.
-
-مع الـ pointers فيه حاجتين ممكن يبقوا const، والقاعدة: اقرا من اليمين للشمال:
-• [[const char *msg]]: pointer لـ char ثابت. الحروف متتغيرش، بس msg نفسه ممكن يشاور على نص تاني.
-• [[char *const fixed]]: pointer ثابت لـ char. مش هيشاور على حاجة تانية، بس الحروف تتغير.
-• [[const char *const p]]: الاتنين.
-
-const correctness يعني: كل حاجة مش هتتغير اكتبها const من الأول. بتمنع bugs، وبتوضّح نيتك لأي حد بيقرا الكود.`,
-          example: R`#include <iostream>
-#include <string>
-
-class Account {
-public:
-    explicit Account(const std::string &owner) : owner_(owner) {}
-    const std::string &owner() const { return owner_; }
-    int balance() const { return balance_; }
-    void deposit(int amount) { balance_ += amount; }
-
-private:
-    std::string owner_;
-    int balance_ = 0;
-};
-
-void print(const Account &a) {
-    std::cout << a.owner() << ": " << a.balance() << '\n';
-}
-
-int main() {
-    const int max_retries = 3;
-    const char *msg = "hello";
-    char buf[] = "abc";
-    char *const fixed = buf;
-    fixed[0] = 'X';
-    msg = "bye";
-    Account acc("Sara");
-    acc.deposit(200);
-    print(acc);
-    std::cout << max_retries << ' ' << msg << ' ' << buf << '\n';
-}`,
-          try: R`جرّب واحدة واحدة واقرا الـ error: (1) جوه [[print]] اكتب [[a.deposit(10);]]. (2) شيل [[const]] من [[int balance() const]]. (3) [[max_retries = 4;]]. (4) [[msg[0] = 'H';]]. (5) [[fixed = nullptr;]]. وفي كل مرة قول ليه الـ compiler رفض.`,
-          flag: "script",
-          deep: {
-            why: "الـ bugs اللي بتمنعها وقت الـ compile أرخص بكتير من اللي بتلاقيها وقت التشغيل. و const بتقول للي بيقرا: «مفيش حاجة هنا بتتغير»، فبيقرا أسرع. وفي الانترفيو بيسألوا عن const member functions وعن الفرق بين const char * و char *const.",
-            how: R`[[this]] جوه دالة const نوعه [[const Account *]]، فأي محاولة تغيّر member بتبقى تغيير في حاجة const. وعشان كده [[const Account &a]] متقدرش تنادي [[deposit]]: نوع this مش هيتطابق.
-
-[[explicit]] قبل constructor بـ parameter واحد بتمنع التحويل الأوتوماتيك: من غيرها، [[print(std::string("Ali"))]] كانت هتتعمل compile بإنها تعمل Account مؤقت من النص بهدوء. خليها عادة لأي constructor بـ parameter واحد.
-
-[[int balance_ = 0;]] جوه الـ class اسمها default member initializer: قيمة افتراضية لو الـ constructor مدهاش قيمة.
-
-وفيه [[mutable]]: member ممكن يتغير حتى جوه دالة const (زي cache أو mutex). استخدمها نادرًا.`,
-            when: R`دايمًا. أي parameter كبير ومش هيتغير [[const T &]]. أي member function مبتغيرش حاجة [[const]]. أي متغير محلي مش هيتغير [[const]]. والثوابت اللي معروفة وقت الـ compile [[constexpr]] (المستوى ٣).`,
-            mistakes: R`تنسى [[const]] على الـ getters، فتكتشف المشكلة لما تبعت الـ object كـ [[const &]] وتلاقي كل حاجة مرفوضة. وتستخدم [[const_cast]] عشان تشيل const وتسكت الـ compiler: غالبًا ده bug. وتلخبط [[const char *]] مع [[char *const]]. وترجّع [[const]] by value ([[const std::string name()]]): ملهاش فايدة وبتمنع الـ move.`
-          },
-          lines: [
-            "cout.",
-            "string.",
-            "class.",
-            "public.",
-            R`[[explicit]]: مفيش تحويل أوتوماتيك من string لـ Account.`,
-            R`بترجّع reference ثابت: من غير نسخ ومن غير تعديل. والـ [[const]] الأخيرة: الدالة مبتغيّرش الـ object.`,
-            "getter: const.",
-            "بتغيّر الرصيد، فمش const.",
-            "private.",
-            "الاسم.",
-            "قيمة افتراضية 0.",
-            "قفلة الـ class.",
-            R`[[const Account &]]: من غير نسخ، ومش هتتغيّر.`,
-            "مسموح: الاتنين const.",
-            "قفلة.",
-            "main.",
-            "ثابت.",
-            "pointer لحروف ثابتة.",
-            "array عادية تتغير.",
-            R`[[char *const]]: الـ pointer نفسه ثابت.`,
-            "مسموح: الحروف مش const.",
-            "مسموح: msg نفسه مش const، بس اللي بيشاور عليه const.",
-            "object عادي.",
-            "deposit مسموحة عليه.",
-            "يتبعت كـ const reference.",
-            "اطبع.",
-            "قفلة main."
-          ],
-          sol: R`الناتج:
-[[Sara: 200]]
-[[3 bye Xbc]]
-
-الأخطاء (gcc 14):
-(1) [[a.deposit(10)]]: [[passing 'const Account' as 'this' argument discards qualifiers]]
-(2) من غير const على balance: نفس الخطأ، بس عند [[a.balance()]] جوه print.
-(3) [[assignment of read-only variable 'max_retries']]
-(4) [[assignment of read-only location '* msg']]
-(5) [[assignment of read-only variable 'fixed']]
-
-«discards qualifiers» معناها: «كنت هتشيل الـ const عشان تنادي الدالة دي، وده ممنوع».`
-        },
-        {
-          cmd: "RAII",
-          title: "RAII: ليه الـ destructor هو أهم فكرة في C++، وإزاي بيمنع الـ leaks؟",
-          desc: R`RAII اختصار Resource Acquisition Is Initialization، والاسم صعب بس الفكرة بسيطة:
-• أي مورد (ذاكرة، ملف، اتصال، lock) تاخده في الـ constructor بتاع object.
-• وترجّعه في الـ destructor بتاعه.
-• والـ object نفسه متغير محلي عادي.
-
-النتيجة: لما الـ object يخرج من الـ scope بأي طريقة (آخر الدالة، [[return]] في النص، exception)، الـ destructor بيتنادى لوحده والمورد يرجع. مفيش [[fclose]] أو [[free]] تنساها.
-
-قارن بـ C: لو الدالة فيها ٣ أماكن بترجع منها، لازم تحط [[fclose]] قبل كل [[return]]، ولو نسيت واحدة يبقى leak.
-
-المكتبة القياسية كلها RAII: [[std::string]] و [[std::vector]] بيحرروا ذاكرتهم، و [[std::ifstream]] و [[std::ofstream]] بيقفلوا الملف، و [[std::lock_guard]] بيفك الـ mutex، و [[std::unique_ptr]] بيمسح الـ object. فلو كتبت C++ حديثة صح، نادرًا هتكتب [[delete]] أو [[fclose]] بإيدك.
-
-في المثال class صغير بيلف [[FILE *]] بتاع C. [[nullptr]] هي الـ NULL بتاعة C++، ونوعها pointer فعلًا مش رقم 0. والسطرين اللي فيهم [[= delete]] بيمنعوا نسخ الـ object (لو اتنسخ، الاتنين هيقفلوا نفس الملف). الدرس الجاي بيشرح ليه.`,
-          example: R`#include <cstdio>
-#include <iostream>
-
-class File {
-public:
-    File(const char *path, const char *mode) : f_(std::fopen(path, mode)) {}
-    ~File() {
-        if (f_) {
-            std::fclose(f_);
-            std::cout << "file closed\n";
-        }
-    }
-    File(const File &) = delete;
-    File &operator=(const File &) = delete;
-    bool ok() const { return f_ != nullptr; }
-    void write(const char *text) { std::fputs(text, f_); }
-
-private:
-    std::FILE *f_;
-};
-
-bool save(const char *text) {
-    File f("raii.txt", "w");
-    if (!f.ok()) return false;
-    if (text[0] == '\0') return false;
-    f.write(text);
-    return true;
-}
-
-int main() {
-    save("hello\n");
-    save("");
-    std::cout << "done\n";
-}`,
-          try: R`اكتب نفس [[save]] بـ C (fopen و fclose) وعدّ كام [[fclose]] محتاجها عشان متسيبش الملف مفتوح. وبعدين اعمل class [[Timer]] بيحفظ الوقت في الـ constructor ([[std::chrono::steady_clock::now()]]) ويطبع الوقت اللي عدّى في الـ destructor، وحطه في أول دالة عشان تقيس هي بتاخد قد إيه.`,
-          flag: "script",
-          deep: {
-            why: R`أغلب الـ leaks والـ crashes في C جاية من «نسيت أحرر» أو «حررت مرتين». RAII بيخلي التحرير أوتوماتيك ومضمون، والـ compiler هو اللي بيحط النداء مش انت. وده سبب إن C++ مش محتاجة garbage collector: الذاكرة والموارد بترجع في لحظة معروفة بالظبط، مش «وقت ما الـ GC يقرر».`,
-            how: R`الـ compiler بيحط نداء الـ destructor في كل مخرج من الـ scope: آخر [[{ }]]، وقبل كل [[return]]، وفي مسار الـ exception (stack unwinding: لما exception يطلع، كل الـ objects المحلية في كل الدوال اللي بيعدّي عليها بيتنادى الـ destructor بتاعها بالعكس).
-
-في المثال، [[save("")]] بترجع false من سطر الشرط قبل ما تكتب، ومع ذلك الملف بيتقفل وبيتطبع [[file closed]]. في الـ C كنت محتاج fclose قبل الـ return ده.
-
-الـ destructor ممنوع يرمي exception (افتراضيًا هو [[noexcept]])، لأنه ممكن يتنادى وفيه exception تاني طالع، والبرنامج هيتقفل.`,
-            when: R`كل مورد لازم يترجّع. ولو المكتبة القياسية فيها wrapper جاهز استخدمه ([[std::fstream]] و [[std::unique_ptr]] و [[std::lock_guard]] و [[std::jthread]]). اكتب class RAII بنفسك بس لمورد من مكتبة C (زي FILE أو handle من SQLite أو socket).`,
-            mistakes: R`تعمل الـ object بـ [[new]] وتنسى [[delete]]: كده الـ destructor مش هيتنادى، والـ RAII ضاع. الـ objects تبقى محلية، أو جوه smart pointer. وتسيب class RAII يتنسخ فاتنين يقفلوا نفس المورد (double close / double free). وتكتب [[File("x.txt", "w");]] من غير اسم: ده object مؤقت بيموت في نفس السطر.`
-          },
-          lines: [
-            R`[[cstdio]]: نسخة C++ من stdio.h، وفيها [[std::fopen]].`,
-            "cout.",
-            "class بيلف FILE.",
-            "public.",
-            "الـ constructor بيفتح الملف (الحصول على المورد = الإنشاء).",
-            "الـ destructor.",
-            "لو الملف اتفتح...",
-            "...اقفله. ده بيحصل لوحده.",
-            "رسالة عشان نشوف إمتى.",
+            "فيها printf و snprintf.",
+            R`فيها [[strlen]] و [[strcmp]].`,
+            "main بـ arguments.",
+            R`نص من الترمنال لو موجود، وإلا نص ثابت. الـ [[?]] و [[:]] (ternary): لو الشرط صح خد الأولى، وإلا التانية.`,
+            R`array من 5: أربع حروف + [[\0]].`,
+            R`[[strlen]] بتعد لحد الصفر (4)، و [[sizeof]] حجم الـ array (5).`,
+            R`العنصر الخامس هو الـ [[\0]]، وقيمته 0.`,
+            "buffer كبير كفاية.",
+            R`[[snprintf]]: اكتب نص منسّق، ومتعدّيش 32 byte.`,
+            "Hello, Sara!",
+            "buffer صغير: 7 حروف + الصفر.",
+            "بتكتب اللي يلحق، وبترجّع الطول اللي كانت محتاجاه.",
+            R`النص اتقص، والرقم المرجّع بيقولك كان محتاج كام. و [[\"]] علامة تنصيص جوه النص.`,
+            R`[[strcmp]] بترجّع 0 لو النصين زي بعض.`,
+            "بيتطبع.",
             "قفلة الـ if.",
-            "قفلة الـ destructor.",
-            R`[[= delete]]: ممنوع النسخ (copy constructor).`,
-            "وممنوع النسخ بالـ = (copy assignment).",
-            R`[[nullptr]]: الـ null بتاعة C++.`,
-            "كتابة نص.",
-            "private.",
-            "الـ FILE pointer.",
-            "قفلة الـ class.",
-            "دالة بتحفظ نص.",
-            "object محلي: الملف اتفتح.",
-            "لو الفتح فشل ارجع، ومفيش حاجة تتقفل.",
-            "مخرج مبكر: الملف هيتقفل لوحده هنا برضه.",
-            "اكتب.",
-            "مخرج عادي: f بيموت والملف بيتقفل.",
-            "قفلة.",
-            "main.",
-            "file closed.",
-            "رجعت بدري، و file closed برضه.",
-            "done.",
-            "قفلة main: مفيش return، و main في C++ بترجّع 0 لوحدها."
+            "تعديل حرف: مسموح لأن name array مش نص ثابت.",
+            "بقت sara.",
+            "نجاح.",
+            "قفلة main."
           ],
-          sol: R`الناتج:
-[[file closed]]
-[[file closed]]
-[[done]]
+          sol: R`من غير arguments:
+[[strlen=4 sizeof=5]]
+[[name[4] = 0]]
+[[Hello, Sara!]]
+[[small="Sara Mo" needed=12]]
+[[same text]]
+[[sara]]
 
-الـ [[file closed]] التانية من النداء اللي رجع بدري: الملف اتقفل مع إن مفيش ولا سطر بيقفله في المسار ده.
+[[needed=12]] و الـ buffer 8، يعني النص اتقص: 7 حروف + [[\0]]. مع [[./app Ali]] السطر بيبقى [[small="Ali" needed=3]].
 
-نسخة C محتاجة [[fclose]] قبل كل [[return]] بعد الفتح الناجح (٢ هنا)، وكل مخرج جديد هتضيفه بعدين محتاج واحدة كمان.
+النص اللي ملوش [[\0]] بيطبع abcd وبعدها حروف عشوائية أو مفيش حاجة زيادة، حسب اللي في الذاكرة بعده بالصدفة. ده undefined behavior.`,
+          solCode: R`#include <stdio.h>
 
-الـ Timer:`,
-          solCode: R`#include <chrono>
-#include <iostream>
-
-class Timer {
-public:
-    explicit Timer(const char *name) : name_(name), start_(std::chrono::steady_clock::now()) {}
-    ~Timer() {
-        auto end = std::chrono::steady_clock::now();
-        auto us = std::chrono::duration_cast<std::chrono::microseconds>(end - start_).count();
-        std::cout << name_ << " took " << us << " us\n";
+int count_char(const char *s, char c) {
+    int count = 0;
+    for (int i = 0; s[i] != '\0'; i++) {
+        if (s[i] == c) count++;
     }
-
-private:
-    const char *name_;
-    std::chrono::steady_clock::time_point start_;
-};
-
-long long work() {
-    Timer t("work");
-    long long sum = 0;
-    for (int i = 0; i < 10'000'000; ++i) sum += i % 7;
-    return sum;
+    return count;
 }
 
-int main() {
-    std::cout << work() << '\n';
+int main(void) {
+    printf("%d\n", count_char("banana", 'a'));
+    return 0;
 }`
         },
         {
-          cmd: "rule of 0/3/5",
-          title: "rule of 3 و 5 و 0: إمتى تكتب copy constructor و destructor بنفسك، وإمتى متكتبهمش خالص؟",
-          desc: R`لما تنسخ object ([[Buffer b = a;]] أو تبعته بالقيمة)، C++ بتعمل copy constructor افتراضي بينسخ كل member زي ما هو. ده تمام لـ int و string و vector. بس لو فيه member هو pointer لذاكرة انت حجزتها، النسخ الافتراضي بينسخ العنوان بس: الاتنين بيشاوروا على نفس الذاكرة، وكل واحد destructor بتاعه هيعمل [[delete]]، فتبقى double free.
+          cmd: "المؤشرات Pointers والذاكرة",
+          title: "الـ pointer يعني إيه؟ & بتجيب العنوان و * بتروح للعنوان، بالرسم",
+          desc: R`الذاكرة (RAM) عبارة عن bytes كتير ورا بعض، وكل byte ليه رقم اسمه العنوان (address)، زي رقم الشقة في عمارة. أي متغير عندك قاعد في عنوان معيّن.
 
-[[new int[n]()]] بتحجز array على الـ heap (زي malloc بس بتعمل constructors)، و [[delete[] p]] بتحررها. ولـ object واحد: [[new T]] و [[delete p]].
+الـ pointer متغير عادي، بس القيمة اللي جواه عنوان متغير تاني.
 
-rule of 3: لو كتبت واحدة من الـ ٣ دول بنفسك، غالبًا محتاج التلاتة:
-• destructor ([[~Buffer()]]).
-• copy constructor ([[Buffer(const Buffer &other)]]): بيعمل object جديد نسخة من other.
-• copy assignment ([[Buffer &operator=(const Buffer &other)]]): بيخلي object موجود نسخة من other ([[a = b;]]).
-وفي C++11 اتضاف اتنين للـ move ([[Buffer(Buffer &&)]] و [[operator=(Buffer &&)]])، فبقت rule of 5. الـ move ليه درس في المستوى ٣.
+رمزين لازم تفرق بينهم:
+• [[&x]] (الـ address-of operator): «عنوان x فين؟».
+• [[*p]] (الـ dereference operator): «روح للعنوان اللي في p، وهات (أو غيّر) اللي هناك».
+• والنجمة في التعريف [[int *p]] معناها حاجة تالتة: «p نوعه pointer لـ int». مش عملية.
 
-rule of 0 (اللي المفروض تعمله غالبًا): متكتبش ولا واحدة. خلي الـ members أنواع بتدير نفسها ([[std::vector]] و [[std::string]] و [[std::unique_ptr]])، والـ compiler هيعمل الـ ٥ صح لوحده. [[struct Better { std::vector<int> data; };]] بيتنسخ صح من غير ولا سطر.
+بعد [[int score = 100;]] و [[int *ptr = &score;]] الذاكرة شكلها كده (العناوين مثال):
 
-[[std::copy(from, to, dest)]] من [[<algorithm>]] بتنسخ عناصر من مدى لمكان تاني. و [[std::size_t]] نوع الأحجام (زي size_t في C).`,
-          example: R`#include <algorithm>
-#include <cstddef>
-#include <iostream>
-#include <vector>
+[[  العنوان        الاسم     القيمة]]
+[[  0x7ffc1000     score     100]]
+[[  0x7ffc1008     ptr       0x7ffc1000]]
 
-class Buffer {
-public:
-    explicit Buffer(std::size_t n) : size_(n), data_(new int[n]()) {}
-    ~Buffer() { delete[] data_; }
-    Buffer(const Buffer &other) : size_(other.size_), data_(new int[other.size_]) {
-        std::copy(other.data_, other.data_ + size_, data_);
-    }
-    Buffer &operator=(const Buffer &other) {
-        if (this == &other) return *this;
-        int *fresh = new int[other.size_];
-        std::copy(other.data_, other.data_ + other.size_, fresh);
-        delete[] data_;
-        data_ = fresh;
-        size_ = other.size_;
-        return *this;
-    }
-    int &at(std::size_t i) { return data_[i]; }
+• [[ptr]] قيمته [[0x7ffc1000]] (عنوان score).
+• [[*ptr]] = روح لـ [[0x7ffc1000]] وهات اللي هناك = 100.
+• [[*ptr = 250;]] = روح لـ [[0x7ffc1000]] واكتب 250. فـ score نفسه بقى 250، من غير ما تكتب اسمه.
 
-private:
-    std::size_t size_;
-    int *data_;
-};
+وده بيحل مشكلة الدرس اللي فات: الدالة بتاخد نسخة، فلو عايزها تغيّر متغير عندك ابعتلها عنوانه، وهي تروح للعنوان وتغيّر. ده اللي [[swap(&x, &y)]] بتعمله، وده نفس سبب [[&]] في [[scanf]].
 
-struct Better {
-    std::vector<int> data;
-};
+[[NULL]] عنوان خاص معناه «مش بشاور على حاجة». اعمل أي pointer مش جاهز بـ [[NULL]]، واتشيّك عليه قبل ما تعمل [[*]].`,
+          example: R`#include <stdio.h>
 
-int main() {
-    Buffer a(3);
-    a.at(0) = 7;
-    Buffer b = a;
-    b.at(0) = 99;
-    std::cout << a.at(0) << ' ' << b.at(0) << '\n';
-    a = b;
-    std::cout << a.at(0) << '\n';
-    Better x{{1, 2, 3}};
-    Better y = x;
-    y.data[0] = 100;
-    std::cout << x.data[0] << ' ' << y.data[0] << '\n';
-}`,
-          try: R`امسح الـ copy constructor والـ copy assignment من Buffer، واعمل compile بـ [[-g -fsanitize=address]] وشغّل: إيه اللي حصل وليه؟ وبعدين حوّل Buffer لـ rule of 0: خلي [[data_]] نوعه [[std::vector<int>]] وامسح الـ destructor والـ copy functions، واتأكد إن الناتج زي ما هو.`,
-          flag: "script",
-          deep: {
-            why: "ده أشهر bug في C++ القديمة، وأشهر سؤال انترفيو في الـ OOP بتاعها. ولما تفهمه هتفهم ليه C++ الحديثة بتقول: متمسكش pointer بيملك ذاكرة بإيدك، خليه vector أو unique_ptr.",
-            how: R`[[Buffer b = a;]] بتنادي الـ copy constructor (object جديد). [[a = b;]] بتنادي الـ copy assignment (a موجود قبل كده، فلازم يحرر ذاكرته القديمة الأول).
-
-ليه الـ assignment بيحجز الجديد وينسخ الأول وبعدين يحرر القديم؟ عشان لو [[new]] رمت exception (مفيش ذاكرة)، الـ object يفضل سليم. ولو عملت delete الأول ورمت، [[data_]] هيبقى بيشاور على ذاكرة محررة. وفيه أسلوب مشهور اسمه copy-and-swap بيعمل نفس الحاجة بشكل أقصر.
-
-[[if (this == &other)]]: حماية من [[a = a;]]. من غيرها كنت هتحرر الذاكرة وبعدين تنسخ منها.
-
-لو كتبت destructor بس، الـ compiler لسه بيعمل copy constructor افتراضي (بينسخ الـ pointer). ده سبب القاعدة.
-
-[[= delete]] (اللي في درس RAII) هو الحل لو الـ object مينفعش يتنسخ أصلًا.`,
-            when: R`rule of 0 في ٩٥٪ من الـ classes. rule of 5 بس لو بتكتب class بيدير مورد بنفسه (container خاص بيك، أو wrapper لـ handle من مكتبة C)، ويبقى صغير ومعمول للحاجة دي بس، والباقي يستخدمه.`,
-            mistakes: R`تكتب destructor فيه [[delete]] وتسيب الـ copy الافتراضي. و [[delete]] بدل [[delete[]]] على حاجة اتعملت بـ [[new[]]] (undefined behavior). وتنسى [[return *this;]] في الـ assignment. وتنسى حالة [[a = a]].`
-          },
-          lines: [
-            R`[[std::copy]].`,
-            R`[[std::size_t]].`,
-            "cout.",
-            "vector.",
-            "class بيدير ذاكرة بنفسه.",
-            "public.",
-            R`[[new int[n]()]]: احجز n عنصر على الـ heap وصفّرهم.`,
-            R`destructor: [[delete[]]] للـ array.`,
-            "copy constructor: احجز ذاكرة جديدة بنفس الحجم...",
-            "...وانسخ العناصر. دلوقتي كل واحد ليه ذاكرته.",
-            "قفلة.",
-            "copy assignment: a موجود فعلًا.",
-            R`[[a = a]]: متعملش حاجة.`,
-            "احجز الجديد الأول.",
-            "انسخ فيه.",
-            "وبعدين حرر القديم.",
-            "خد الجديد.",
-            "والحجم.",
-            R`رجّع الـ object نفسه، عشان [[a = b = c]] تشتغل.`,
-            "قفلة.",
-            R`بترجّع [[int &]] فتقدر تكتب [[a.at(0) = 7]].`,
-            "private.",
-            "الحجم.",
-            "الـ pointer اللي بيملك الذاكرة.",
-            "قفلة.",
-            R`rule of 0: الـ vector بيدير نفسه.`,
-            "member واحد.",
-            "قفلة.",
-            "main.",
-            "3 أصفار.",
-            "أول عنصر 7.",
-            "copy constructor: b ليه ذاكرته.",
-            "تغيير b مش بيأثر على a.",
-            "7 99.",
-            "copy assignment.",
-            "99.",
-            "Better بقيم أولية.",
-            "نسخ صح من غير ما نكتب حاجة.",
-            "تغيير النسخة بس.",
-            "1 100.",
-            "قفلة main: a و b بيموتوا، وكل واحد بيحرر ذاكرته هو."
-          ],
-          sol: R`الناتج:
-[[7 99]]
-[[99]]
-[[1 100]]
-
-لما تمسح الـ copy functions: [[b = a]] بتنسخ الـ pointer بس، فـ [[b.at(0) = 99]] بتغيّر a كمان (السطر الأول بيطلع [[99 99]])، وفي الآخر الـ destructors الاتنين بيعملوا [[delete[]]] على نفس العنوان. ASan بيقول:
-[[ERROR: AddressSanitizer: attempting double-free]]
-وفي حالة [[a = b]] كمان الذاكرة القديمة بتاعة a ضاعت (leak).
-
-نسخة الـ rule of 0: [[std::vector<int> data_;]] و [[explicit Buffer(std::size_t n) : data_(n) {}]] و [[int &at(std::size_t i) { return data_[i]; }]] وبس. نفس الناتج، وأقل بـ ١٥ سطر.`
-        },
-        {
-          cmd: "operator overloading",
-          title: "operator overloading: إزاي تخلي + و == و << يشتغلوا على الـ class بتاعك؟",
-          desc: R`في C++ تقدر تعرّف معنى العمليات ([[+]] و [[==]] و [[<<]] و [[[]]] وغيرهم) لأنواعك. [[a + b]] على objects بتتحول لنداء دالة اسمها [[operator+]].
-
-شكلين:
-• member function: [[Vec2 operator+(const Vec2 &o) const]]. الطرف الشمال هو this، والطرف اليمين هو o.
-• دالة عادية بره الـ class: لازم لما الطرف الشمال مش من نوعك. أشهر مثال [[<<]] للطباعة: الشمال [[std::ostream]] (زي cout)، فلازم [[std::ostream &operator<<(std::ostream &os, const Vec2 &v)]]، وترجّع [[os]] عشان السلسلة تكمّل.
-
-قواعد عملية:
-• [[+]] بترجّع object جديد (by value)، ومتغيّرش الطرفين، فهي [[const]].
-• [[+=]] بتغيّر this وترجّع [[*this]] كـ reference.
-• [[==]] في C++20: [[bool operator==(const Vec2 &o) const = default;]] بتقارن كل الـ members لوحدها، والـ [[!=]] بتيجي معاها ببلاش.
-• خلي المعنى طبيعي: [[+]] تجمع، مش تمسح ملف.
-
-[[return {x + o.x, y + o.y};]]: الأقواس [[{ }]] بتعمل Vec2 جديد من القيم دي، لأن الـ compiler عارف نوع الـ return.`,
-          example: R`#include <iostream>
-
-struct Vec2 {
-    double x = 0, y = 0;
-    Vec2 operator+(const Vec2 &o) const { return {x + o.x, y + o.y}; }
-    Vec2 operator*(double k) const { return {x * k, y * k}; }
-    Vec2 &operator+=(const Vec2 &o) {
-        x += o.x;
-        y += o.y;
-        return *this;
-    }
-    bool operator==(const Vec2 &o) const = default;
-};
-
-std::ostream &operator<<(std::ostream &os, const Vec2 &v) {
-    return os << '(' << v.x << ", " << v.y << ')';
+void swap(int *a, int *b) {
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
 }
 
-int main() {
-    Vec2 a{1, 2}, b{3, 4};
-    Vec2 c = a + b * 2;
-    a += b;
-    std::cout << c << ' ' << a << '\n';
-    std::cout << std::boolalpha << (a == Vec2{4, 6}) << ' ' << (a != b) << '\n';
+int main(void) {
+    int score = 100;
+    int *ptr = &score;
+    printf("score=%d *ptr=%d\n", score, *ptr);
+    printf("&score=%p ptr=%p\n", (void *)&score, (void *)ptr);
+    *ptr = 250;
+    printf("score after *ptr = 250: %d\n", score);
+    int x = 1, y = 2;
+    swap(&x, &y);
+    printf("x=%d y=%d\n", x, y);
+    int *nothing = NULL;
+    if (nothing == NULL) printf("nothing points nowhere\n");
+    return 0;
 }`,
-          try: R`ضيف [[operator-]] و [[operator*]] تانية بتاخد [[double]] على الشمال ([[2 * b]] بدل [[b * 2]]): لازم تبقى برا الـ struct، ليه؟ وبعدين اعمل struct [[Money]] بيخزن قروش في [[long long]]، بـ [[+]] و [[<<]] بيطبع [[12.50 EGP]].`,
+          try: R`ارسم على ورقة الذاكرة بعد كل سطر في main. وبعدين اكتب دالة [[void min_max(const int arr[], int len, int *min, int *max)]] بترجّع قيمتين عن طريق الـ pointers، وناديها من main. وآخر حاجة: اعمل [[int *bad;]] من غير قيمة واكتب [[*bad = 5;]]، واعمل compile بـ [[-Wall]] وشغّل.`,
           flag: "script",
           deep: {
-            why: R`عشان أنواعك تبقى طبيعية زي الأنواع المدمجة: [[a + b * 2]] أوضح بكتير من [[add(a, scale(b, 2))]]، خصوصًا في الرياضة والجرافيكس والفلوس. والمكتبة القياسية معتمدة عليه: [[std::string]] بـ [[+]]، و [[std::cout]] بـ [[<<]]، والـ iterators بـ [[*]] و [[++]]، و [[std::sort]] بتستخدم [[<]].`,
-            how: R`[[a + b * 2]] بتتحول لـ [[a.operator+(b.operator*(2))]]، بنفس أولوية العمليات العادية: مقدرش تغيّر الأولوية ولا تعمل operator جديد.
+            why: R`الـ pointers هي اللي بتخلي C تعمل أي حاجة: دالة تغيّر متغيراتك، وتبعت حاجة كبيرة لدالة من غير ما تنسخها (تبعت عنوانها بس، 8 bytes)، وتحجز ذاكرة وقت التشغيل (malloc)، وتبني linked lists و trees. وكل لغة تانية فيها نفس الفكرة بس مستخبية: الـ object في Java و JS بيتبعت كـ reference، وده pointer من جوه.`,
+            how: R`الـ pointer على جهاز 64-bit حجمه 8 bytes مهما كان نوع اللي بيشاور عليه. النوع ([[int *]] أو [[double *]]) بيقول للـ compiler حاجتين: لما تعمل [[*p]] يقرا كام byte ويفسّرهم إزاي، ولما تعمل [[p + 1]] يتحرك كام byte (الدرس الجاي).
 
-[[b * 2]] بتشتغل لأن b على الشمال. لكن [[2 * b]]: الشمال double، و double مش class عشان تضيفله member. فلازم دالة عادية [[Vec2 operator*(double k, const Vec2 &v)]].
+[[%p]] بتطبع عنوان، ومحتاجة [[void *]]، عشان كده الـ cast [[(void *)]]. و [[void *]] معناها «pointer لأي حاجة، من غير نوع».
 
-[[std::boolalpha]] بتخلي cout يطبع true و false بدل 1 و 0.
+العنوان بيتغيّر كل مرة تشغّل البرنامج، لأن نظام التشغيل بيحط الـ stack في مكان عشوائي (ASLR) عشان يصعّب الاختراق.
 
-في C++20 فيه كمان [[operator<=>]] (اسمها spaceship) بتعرّف [[<]] و [[>]] و [[<=]] و [[>=]] مرة واحدة، و [[= default]] عليها بتقارن الـ members بالترتيب.`,
-            when: R`أنواع رياضية (vectors و matrices و أرقام كبيرة و فلوس)، و [[<<]] لأي نوع عايز تطبعه، و [[==]] لأي نوع هتقارنه أو تحطه في container. ولو المعنى مش واضح لأي حد هيقرا، اعمل دالة باسم.`,
-            mistakes: R`[[+]] بتغيّر الطرف الشمال. و [[+=]] بترجّع by value بدل reference. و [[<<]] مش بترجّع الـ stream فالسلسلة متكمّلش. وتعمل [[==]] و [[!=]] بمنطق مختلف في C++ قبل 20. وتعمل [[&&]] أو [[||]] overload: بتخسر الـ short-circuit.`
+[[NULL]] في الحقيقة عنوان 0، ونظام التشغيل مش بيسمح لأي برنامج يقرا أو يكتب هناك. عشان كده [[*NULL]] بيقع على طول بـ Segmentation fault بدل ما يبوّظ حاجة بهدوء.`,
+            when: R`لما دالة لازم تغيّر متغير عند اللي ناداها، أو ترجّع أكتر من قيمة. ولما تبعت struct أو array كبيرة لدالة (ابعت [[const T *]] لو هتقرا بس). وفي كل ذاكرة ديناميكية وهياكل بيانات مترابطة.`,
+            mistakes: R`pointer من غير قيمة أولية (wild pointer) وتعمل عليه [[*]]: بيكتب في مكان عشوائي. و [[*]] على [[NULL]]: segfault. وترجّع عنوان متغير محلي من دالة (dangling pointer): المتغير اتمسح لما الدالة خلصت. وتلخبط بين [[int *p]] في التعريف و [[*p]] في الاستخدام. وتكتب [[int* a, b;]] وتفتكر الاتنين pointers: b هنا int عادي.`
           },
+          teach: R`## البرنامج بيعمل إيه؟
+
+بيعمل pointer بيشاور على متغير، ويقرا ويكتب في المتغير عن طريقه، ويطبع العنوان نفسه. وبعدين دالة [[swap]] بتبدّل متغيرين في main لأنها خدت عناوينهم، و pointer بـ [[NULL]]. اتشغّل في [[docker run --rm gcc:14]] (gcc 14.4.0) بـ [[gcc -std=c17 -Wall -Wextra]].
+
+~~~text الناتج (العناوين بتتغيّر كل تشغيلة)
+score=100 *ptr=100
+&score=0x7ffe68e84cfc ptr=0x7ffe68e84cfc
+score after *ptr = 250: 250
+x=2 y=1
+nothing points nowhere
+~~~
+
+---
+
+## ١. متغير و pointer عليه
+
+~~~c
+    int score = 100;
+    int *ptr = &score;
+~~~
+
+السطر التاني من جوه لبرة:
+
+- [[&score]]: [[&]] هنا اسمها address-of: «هات **عنوان** score في الذاكرة» (مش قيمته).
+- [[int *ptr]]: النجمة في **التعريف** معناها «ptr نوعه pointer لـ int»، يعني متغير شايل عنوان مكان فيه int.
+- [[=]]: حط العنوان في ptr.
+
+~~~text الذاكرة بعد السطرين
+العنوان           الاسم    القيمة
+0x7ffe68e84cfc    score    100
+(مكان تاني)       ptr      0x7ffe68e84cfc
+~~~
+
+---
+
+## ٢. [[*ptr]]: روح للعنوان
+
+~~~c
+    printf("score=%d *ptr=%d\n", score, *ptr);
+~~~
+
+- [[*ptr]] في **الاستخدام** (مش في التعريف) اسمها dereference: «روح للعنوان اللي جوه ptr وهات اللي هناك» = 100.
+- نفس الرمز [[*]] ليه ٣ معاني: ضرب ([[a * b]])، وتعريف pointer ([[int *p]])، و dereference ([[*p]]).
+
+~~~text الناتج
+score=100 *ptr=100
+~~~
+
+---
+
+## ٣. طباعة العنوان بـ [[%p]]
+
+~~~c
+    printf("&score=%p ptr=%p\n", (void *)&score, (void *)ptr);
+~~~
+
+- [[%p]]: اطبع pointer (عنوان) بالـ hex.
+- [[(void *)]]: cast لـ «pointer من غير نوع»، لأن [[%p]] متعرّفة إنها بتاخد [[void *]].
+- الاتنين نفس الرقم: ptr شايل عنوان score بالظبط.
+- [[0x]] = الرقم hex، و [[0x7ffe...]] أرقام عالية لأن الـ stack (مكان المتغيرات المحلية) على Linux في آخر الذاكرة.
+
+شغّلته مرتين كمان وطلع [[0x7ffcaf9684dc]] ومرة [[0x7ffe3adf7dec]]: نظام التشغيل بيحط الـ stack في مكان عشوائي كل مرة (ASLR = Address Space Layout Randomization) عشان يصعّب الاختراق.
+
+---
+
+## ٤. الكتابة عن طريق الـ pointer
+
+~~~c
+    *ptr = 250;
+    printf("score after *ptr = 250: %d\n", score);
+~~~
+
+[[*ptr]] على **شمال** [[=]]: «روح للعنوان واكتب هناك 250». والعنوان ده هو score، فـ score بقت 250 من غير ما نكتب اسمها.
+
+~~~text الناتج
+score after *ptr = 250: 250
+~~~
+
+---
+
+## ٥. [[swap]]: دالة بتغيّر متغيرات main
+
+~~~c
+void swap(int *a, int *b) {
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+~~~
+
+~~~c
+    int x = 1, y = 2;
+    swap(&x, &y);
+~~~
+
+- [[swap(&x, &y)]]: بنبعت **العناوين**. الدالة لسه بتاخد نسخة، بس نسخة من العنوان، والعنوان النسخة بيشاور على نفس المكان.
+- [[int *a, int *b]]: a فيه عنوان x، و b فيه عنوان y.
+
+| السطر | بيعمل إيه | x | y | tmp |
+|---|---|---|---|---|
+| قبل | | 1 | 2 | |
+| [[int tmp = *a;]] | اقرا اللي في عنوان x | 1 | 2 | 1 |
+| [[*a = *b;]] | اكتب في x اللي في y | 2 | 2 | 1 |
+| [[*b = tmp;]] | اكتب في y القديم | 2 | 1 | 1 |
+
+~~~text الناتج
+x=2 y=1
+~~~
+
+قارنها بـ [[try_change]] في درس الدوال: هناك بعتنا القيمة فمتغيرتش. ونفس السبب ورا [[&]] في [[scanf("%d", &n)]].
+
+---
+
+## ٦. [[NULL]]
+
+~~~c
+    int *nothing = NULL;
+    if (nothing == NULL) printf("nothing points nowhere\n");
+~~~
+
+[[NULL]] قيمة خاصة = «مش بشاور على حاجة». اعمل بيها أي pointer لسه ملوش مكان، واتشيّك عليها قبل [[*]]. جربت [[*p]] على NULL:
+
+~~~text الناتج
+Segmentation fault (core dumped)
+exit=139
+~~~
+
+النظام مش بيسمح لأي برنامج يلمس العنوان 0، فالبرنامج بيقع على طول بدل ما يبوّظ حاجة بهدوء.
+
+---
+
+## ٧. الـ try: pointer من غير قيمة
+
+~~~c
+    int *bad;
+    *bad = 5;
+~~~
+
+~~~text الناتج من gcc -Wall
+L3bad.c:5:10: warning: 'bad' is used uninitialized [-Wuninitialized]
+    5 |     *bad = 5;
+      |     ~~~~~^~~
+~~~
+
+- [[bad]] فيه أي زبالة، و [[*bad = 5]] بيكتب في عنوان عشوائي (wild pointer).
+- من غير optimization البرنامج طبع [[wrote 5]] وخرج بـ 0 كأن مفيش حاجة. ونفس الكود بـ [[-O2]] وقع بـ Segmentation fault (exit 139). نفس الغلطة، سلوكين مختلفين: ده شكل الـ undefined behavior، والنوع اللي «بيشتغل» أخطر.
+
+وفخ تاني من الـ mistakes: [[int* a, b;]]. جربت [[sizeof(a)]] و [[sizeof(b)]]: طلعوا [[8 4]]. النجمة بتمسك في a بس، و b طلع int عادي.
+
+---
+
+## ٨. الـ solCode: [[min_max]]
+
+~~~c
+void min_max(const int arr[], int len, int *min, int *max) {
+    *min = arr[0];
+    *max = arr[0];
+    for (int i = 1; i < len; i++) {
+        if (arr[i] < *min) *min = arr[i];
+        if (arr[i] > *max) *max = arr[i];
+    }
+}
+~~~
+
+- الدالة محتاجة ترجّع **قيمتين**، و [[return]] بترجّع واحدة. فبتاخد عنوانين وتكتب فيهم.
+- [[*min = arr[0]]]: اكتب في المتغير اللي في main.
+- في main: [[int lo, hi;]] و [[min_max(a, 5, &lo, &hi);]].
+
+~~~text الناتج مع {4, 9, 1, 7, 3}
+min=1 max=9
+~~~
+
+---
+
+## الخلاصة
+
+| المكتوب | معناه |
+|---|---|
+| [[int *p]] (تعريف) | p شايل عنوان int |
+| [[&x]] | عنوان x |
+| [[*p]] (استخدام) | اللي في العنوان: قراية أو كتابة |
+| [[%p]] + [[(void *)]] | طباعة عنوان |
+| [[NULL]] | مش بشاور على حاجة |
+
+- عشان دالة تغيّر متغيرك: ابعت [[&x]] واستلم [[int *]].
+- أي pointer: يا عنوان حقيقي يا [[NULL]]، ومتعملش [[*]] على NULL.`,
           lines: [
-            "cout.",
-            "struct: كله public.",
-            "قيم افتراضية 0.",
-            "a + b: نقطة جديدة، والطرفين مش بيتغيروا.",
-            "ضرب في رقم.",
-            R`[[+=]] بتغيّر this...`,
-            "x.",
-            "y.",
-            R`...وترجّع الـ object نفسه كـ reference.`,
-            "قفلة.",
-            R`C++20: [[==]] بتقارن كل الـ members، و [[!=]] معاها.`,
-            "قفلة الـ struct.",
-            R`[[<<]] بره الـ struct لأن الشمال ostream.`,
-            "اطبع وارجع الـ stream نفسه.",
-            "قفلة.",
-            "main.",
-            "نقطتين.",
-            R`الضرب الأول: (6, 8)، وبعدين الجمع: (7, 10).`,
-            "a بقت (4, 6).",
-            R`[[<<]] بتاعتنا بتطبع الشكل ده.`,
-            R`[[boolalpha]]: true/false بدل 1/0.`,
-            "قفلة."
+            "فيها printf.",
+            R`[[swap]] بتاخد عنوانين لـ int.`,
+            R`[[*a]]: روح للعنوان اللي في a وهات القيمة (1)، واحفظها.`,
+            R`حط في عنوان a القيمة اللي في عنوان b.`,
+            "وحط في عنوان b القيمة القديمة.",
+            "قفلة swap.",
+            "بداية main.",
+            "متغير عادي في عنوان ما.",
+            R`[[int *]] = pointer لـ int، و [[&score]] = عنوان score.`,
+            R`[[*ptr]] بتروح للعنوان وتجيب 100.`,
+            R`[[&score]] و ptr نفس العنوان. [[%p]] محتاجة [[void *]].`,
+            "اكتب 250 في العنوان اللي ptr بيشاور عليه، يعني في score.",
+            "score بقى 250.",
+            "متغيرين.",
+            R`نبعت عناوينهم مش قيمهم، فـ swap تقدر تغيّرهم.`,
+            "اتبدّلوا: x=2 y=1.",
+            R`[[NULL]]: pointer مش بيشاور على حاجة.`,
+            R`اتشيّك قبل ما تعمل [[*]].`,
+            "نجاح.",
+            "قفلة main."
           ],
-          sol: R`الناتج:
-[[(7, 10) (4, 6)]]
-[[true true]]
+          sol: R`الناتج (العنوان عندك هيختلف، وهيتغيّر كل مرة):
+[[score=100 *ptr=100]]
+[[&score=0x7fff96a249fc ptr=0x7fff96a249fc]]
+[[score after *ptr = 250: 250]]
+[[x=2 y=1]]
+[[nothing points nowhere]]
 
-[[2 * b]] لازم برا، لأن الـ member function الطرف الشمال بتاعها دايمًا this، والشمال هنا double:`,
-          solCode: R`#include <iostream>
+[[min_max]] بتكتب في [[*min]] و [[*max]]، والنداء [[min_max(a, 5, &lo, &hi)]].
 
-struct Vec2 {
-    double x = 0, y = 0;
-    Vec2 operator-(const Vec2 &o) const { return {x - o.x, y - o.y}; }
-    Vec2 operator*(double k) const { return {x * k, y * k}; }
-};
+[[*bad = 5;]] مع [[-Wall]]: [[warning: 'bad' is used uninitialized [-Wuninitialized]]]، والبرنامج ممكن يقع بـ [[Segmentation fault]]، وممكن ميقعش ويكتب في مكان عشوائي بهدوء (ده اللي حصل عندي على gcc 14: كمّل عادي). والحالة التانية أسوأ، لأن الغلط بيبان بعدين في مكان ملوش علاقة.`,
+          solCode: R`#include <stdio.h>
 
-Vec2 operator*(double k, const Vec2 &v) { return v * k; }
-
-struct Money {
-    long long cents = 0;
-    Money operator+(const Money &o) const { return {cents + o.cents}; }
-};
-
-std::ostream &operator<<(std::ostream &os, const Money &m) {
-    long long abs_cents = m.cents < 0 ? -m.cents : m.cents;
-    if (m.cents < 0) os << '-';
-    os << abs_cents / 100 << '.' << (abs_cents % 100 < 10 ? "0" : "") << abs_cents % 100;
-    return os << " EGP";
+void min_max(const int arr[], int len, int *min, int *max) {
+    *min = arr[0];
+    *max = arr[0];
+    for (int i = 1; i < len; i++) {
+        if (arr[i] < *min) *min = arr[i];
+        if (arr[i] > *max) *max = arr[i];
+    }
 }
 
-int main() {
-    Vec2 b{3, 4};
-    Vec2 d = 2 * b - Vec2{1, 1};
-    std::cout << d.x << ' ' << d.y << '\n';
-    std::cout << Money{1000} + Money{250} << '\n';
+int main(void) {
+    int a[5] = {4, 9, 1, 7, 3};
+    int lo, hi;
+    min_max(a, 5, &lo, &hi);
+    printf("min=%d max=%d\n", lo, hi);
+    return 0;
 }`
         },
         {
-          cmd: "inheritance و virtual",
-          title: "الوراثة و virtual و override: إزاي reference للأب ينادي دالة الابن (polymorphism)؟",
-          desc: R`الوراثة: [[class Circle : public Shape]] معناها Circle «نوع من» Shape: بياخد كل members و دوال Shape ويزوّد عليهم. والـ [[:]] هنا معناها «بيورث من»، و [[public]] معناها إن الـ public في الأب يفضل public.
+          cmd: "pointer arithmetic",
+          title: "يعني إيه p + 1 في الـ pointers، وليه arr[i] هي نفسها *(arr + i)؟",
+          desc: R`لما تزوّد رقم على pointer، هو مبيزيدش bytes، بيزيد عناصر. لو [[p]] من نوع [[int *]] و الـ int بـ 4 bytes، يبقى [[p + 1]] العنوان اللي بعده بـ 4 bytes، يعني العنصر اللي بعده.
 
-الـ constructor بتاع الابن لازم ينادي constructor الأب في الـ initializer list: [[Circle(double r) : Shape("circle"), r_(r) {}]].
+ومن هنا: [[arr[i]]] في C معناها بالظبط [[*(arr + i)]]: روح لأول عنصر، واتحرك i عناصر، وهات اللي هناك. الأقواس المربعة مجرد اختصار.
 
-polymorphism: دالة بتاخد [[const Shape &]] تقدر تبعتلها Circle أو Rect. السؤال: لما تنادي [[s.area()]] أنهي نسخة هتشتغل؟
-• من غير [[virtual]]: نسخة Shape دايمًا، لأن الـ compiler بيقرر من نوع الـ reference (Shape).
-• مع [[virtual]] في الأب: بيتقرر وقت التشغيل من النوع الحقيقي للـ object، فـ Circle بتنادي area بتاعتها.
+array decay: اسم الـ array في أغلب الأماكن بيتحول لوحده لـ pointer لأول عنصر. فـ [[int *p = arr;]] صح من غير [[&]]، ولما تبعت array لدالة اللي بيتبعت pointer. وده سبب إن الدالة متعرفش الطول، وسبب إن [[scanf("%s", name)]] من غير [[&]].
 
-• [[override]] في الابن: بتقول للـ compiler «أنا قاصد أغطي دالة virtual في الأب». لو غلطت في الاسم أو الـ parameters أو نسيت [[const]]، بيطلّع error بدل ما يعمل دالة جديدة بهدوء. اكتبها دايمًا.
-• [[virtual ~Shape() = default;]]: أي class فيه دالة virtual لازم الـ destructor بتاعه يبقى virtual. وإلا لو مسحت Circle عن طريق [[Shape *]]، الـ destructor بتاع Circle مش هيتنادى.
-• [[protected:]]: متاح للأبناء ومش متاح لأي حد تاني.
+بس الـ array مش pointer:
+• [[sizeof(arr)]] حجم الـ array كلها (16 لـ 4 أرقام)، و [[sizeof(p)]] حجم الـ pointer (8).
+• [[p++]] مسموح، و [[arr++]] لأ: الـ array مكانها ثابت.
 
-[[std::vector<const Shape *>]]: vector من pointers للأب، وكل عنصر بيشاور على نوع مختلف. ده الاستخدام الكلاسيكي.`,
-          example: R`#include <iostream>
-#include <string>
-#include <vector>
+عمليات مسموحة: pointer + رقم، و pointer - pointer (عدد العناصر بينهم، لو الاتنين في نفس الـ array)، والمقارنة ([[it != arr + 4]]). و [[arr + 4]] (واحد بعد الآخر) مسموح تحسبه وتقارن بيه، بس متعملوش [[*]].`,
+          example: R`#include <stdio.h>
 
-class Shape {
-public:
-    explicit Shape(const std::string &name) : name_(name) {}
-    virtual ~Shape() = default;
-    virtual double area() const { return 0; }
-    const std::string &name() const { return name_; }
-
-private:
-    std::string name_;
-};
-
-class Circle : public Shape {
-public:
-    explicit Circle(double r) : Shape("circle"), r_(r) {}
-    double area() const override { return 3.14159 * r_ * r_; }
-
-private:
-    double r_;
-};
-
-class Rect : public Shape {
-public:
-    Rect(double w, double h) : Shape("rect"), w_(w), h_(h) {}
-    double area() const override { return w_ * h_; }
-
-private:
-    double w_, h_;
-};
-
-void report(const Shape &s) {
-    std::cout << s.name() << " area=" << s.area() << '\n';
+int sum(const int *p, int len) {
+    int total = 0;
+    for (int i = 0; i < len; i++) total += *(p + i);
+    return total;
 }
 
-int main() {
-    Circle c(1);
-    Rect r(2, 3);
-    report(c);
-    report(r);
-    std::vector<const Shape *> all = {&c, &r};
-    double total = 0;
-    for (const Shape *s : all) total += s->area();
-    std::cout << "total=" << total << '\n';
+int main(void) {
+    int arr[4] = {10, 20, 30, 40};
+    int *p = arr;
+    printf("%d %d %d\n", *p, *(p + 1), p[2]);
+    printf("bytes from p to p+1: %td\n", (char *)(p + 1) - (char *)p);
+    p++;
+    printf("after p++: %d\n", *p);
+    printf("sizeof(arr)=%zu sizeof(p)=%zu\n", sizeof(arr), sizeof(p));
+    printf("sum=%d\n", sum(arr, 4));
+    for (int *it = arr; it != arr + 4; it++) printf("%d ", *it);
+    printf("\n");
+    return 0;
 }`,
-          try: R`شيل كلمة [[virtual]] من [[area]] في Shape (ومعاها override في الابنين) وشغّل: إيه اللي اتغيّر؟ ورجّعها، وفي Rect غيّر [[area() const override]] لـ [[area() override]] (من غير const): إيه الـ error؟ وبعدين ضيف class [[Square]] بيورث من Rect.`,
+          try: R`اكتب [[size_t my_strlen(const char *s)]] بالـ pointers بس، من غير [[[ ]]] ولا index: امشي بـ pointer لحد ما [[*s]] تبقى [['\0']]، والطول هو الفرق بين الـ pointer في الآخر وفي الأول. وجرّب تطبع [[3[arr]]]: ليه بتشتغل؟`,
           flag: "script",
           deep: {
-            why: R`ده أساس الـ OOP: كود بيتعامل مع «أي Shape» من غير ما يعرف كل الأنواع. تضيف نوع جديد من غير ما تلمس [[report]]. ومحركات الألعاب و GUI frameworks (Qt) مبنية بالشكل ده.`,
-            how: R`كل class فيه دالة virtual بيبقى ليه جدول (vtable) فيه عناوين الدوال الـ virtual بتاعته، وكل object فيه pointer مستخبي للجدول ده (vptr، غالبًا 8 bytes زيادة). [[s.area()]] بتتحول لـ «روح للجدول بتاع الـ object وهات عنوان area». ده اسمه dynamic dispatch، وتكلفته pointer زيادة في كل object، ونداء غير مباشر الـ compiler مش دايمًا يقدر يعمله inline.
+            why: R`ده اللي بيخلي الـ arrays سريعة، وده اللي ورا الـ iterators في C++ (فكرتها نفس فكرة [[it != arr + 4]] بالظبط). ولو فهمت الدرس ده هتفهم ليه الدوال محتاجة الطول، وليه الـ buffer overflow سهل يحصل.`,
+            how: R`[[p + i]] الـ compiler بيحسبها: العنوان + i × [[sizeof(*p)]]. عشان كده النوع مهم: [[char *]] بيتحرك byte، و [[int *]] أربعة، و [[double *]] تمانية. وفي المثال عملنا cast لـ [[char *]] عشان نشوف المسافة بالـ bytes.
 
-object slicing: لو بعت Circle بالقيمة لدالة بتاخد [[Shape]] (مش reference)، الجزء بتاع Circle بيتقص، واللي بيوصل Shape بس، فـ area بتاعة Shape هي اللي هتشتغل. عشان كده polymorphism لازم reference أو pointer.
+الفرق بين pointerين نوعه [[ptrdiff_t]] وبيتطبع بـ [[%td]].
 
-[[final]] على class أو دالة بتمنع حد يورث منها أو يغطيها.`,
-            when: R`لما عندك أنواع مختلفة بتشترك في نفس الواجهة، والنوع بيتحدد وقت التشغيل (أشكال في رسمة، أعداء في لعبة، طرق دفع). ولو الأنواع معروفة وقليلة فكّر في [[std::variant]]، ولو بتدوّر على إعادة استخدام كود بس، الـ composition (class جواه object من التاني) غالبًا أحسن من الوراثة.`,
-            mistakes: R`تنسى [[virtual]] على الـ destructor. وتنسى [[override]] فتعمل دالة جديدة بالغلط (اسم مختلف حرف أو const ناقصة). وتبعت بالقيمة فيحصل slicing. وتنادي دالة virtual من constructor الأب وتستنى نسخة الابن: وقت constructor الأب الـ object لسه Shape بس.`
+ولأن [[a[b]]] معناها [[*(a + b)]] والجمع بيقبل الترتيب، [[3[arr]]] هي [[*(3 + arr)]] = [[arr[3]]]. معلومة غريبة للانترفيو، متكتبهاش في كود حقيقي.`,
+            when: R`قراية كود C الحقيقي (المكتبات، نواة Linux) مليانة pointer arithmetic. في كودك استخدم [[arr[i]]] لأنها أوضح، والـ pointers لما تمشي على buffer (parsing لنص أو بروتوكول). وفي C++ الـ iterators والـ [[std::span]] بيدّوك نفس الفكرة بأمان أكتر.`,
+            mistakes: R`تفتكر إن [[p + 1]] بتزوّد byte واحد. وتعمل [[*]] على [[arr + len]] (واحد بعد الآخر). وتطرح pointers من arrays مختلفة. وتعمل [[sizeof]] على pointer وتفتكره حجم الـ array. وتعدّل الـ pointer الأصلي اللي جالك من malloc ([[p++]]) وبعدين تعمل [[free(p)]] على العنوان الجديد: لازم free على نفس العنوان اللي malloc رجّعته.`
           },
+          teach: R`## البرنامج بيعمل إيه؟
+
+بيمشي على array من ٤ أرقام بالـ pointer بدل الـ index: يقرا بـ [[*(p + 1)]]، ويقيس [[p + 1]] بيتحرك كام byte، ويحرّك الـ pointer نفسه، ويقارن [[sizeof]] بتاع array و pointer، ويلف على الـ array بـ pointer لحد «واحد بعد الآخر». اتشغّل في [[docker run --rm gcc:14]] (gcc 14.4.0) بـ [[gcc -std=c17 -Wall -Wextra]].
+
+~~~text الناتج كله
+10 20 30
+bytes from p to p+1: 4
+after p++: 20
+sizeof(arr)=16 sizeof(p)=8
+sum=100
+10 20 30 40 
+~~~
+
+---
+
+## ١. [[int *p = arr;]]: الـ array decay
+
+~~~c
+    int arr[4] = {10, 20, 30, 40};
+    int *p = arr;
+~~~
+
+اسم الـ array في أغلب الأماكن بيتحوّل لوحده لعنوان أول عنصر (ده اسمه decay). فـ [[int *p = arr;]] زي [[int *p = &arr[0];]] بالظبط، ومحتاجتش [[&]].
+
+---
+
+## ٢. تلات طرق تقرا بيها
+
+~~~c
+    printf("%d %d %d\n", *p, *(p + 1), p[2]);
+~~~
+
+| المكتوب | معناه | القيمة |
+|---|---|---|
+| [[*p]] | اللي في أول عنوان | 10 |
+| [[*(p + 1)]] | اتحرك **عنصر** واحد، وهات اللي هناك | 20 |
+| [[p[2]]] | اختصار لـ [[*(p + 2)]] | 30 |
+
+الأقواس في [[*(p + 1)]] لازمة: [[*p + 1]] من غيرها = (اللي في p) + 1 = 11.
+
+---
+
+## ٣. [[p + 1]] بيتحرك كام byte؟
+
+~~~c
+    printf("bytes from p to p+1: %td\n", (char *)(p + 1) - (char *)p);
+~~~
+
+من جوه لبرة:
+
+- [[p + 1]]: العنوان اللي بعد p بعنصر int.
+- [[(char *)]]: cast لـ pointer لـ char. الـ char بـ byte واحد، فلما نطرح pointerين من نوع [[char *]] الفرق بيطلع بالـ bytes.
+- [[-]] بين pointerين = عدد العناصر بينهم (بنوع الـ pointer)، ونوع الناتج [[ptrdiff_t]].
+- [[%td]]: [[t]] = حجم ptrdiff_t، و [[d]] = رقم صحيح.
+
+~~~text الناتج
+bytes from p to p+1: 4
+~~~
+
+يعني [[p + 1]] = العنوان + 1 × [[sizeof(int)]] = + 4. جربت نفس الحسبة على [[double *]] و [[char *]] وطلعوا [[8 1]]: كل pointer بيتحرك بحجم النوع بتاعه.
+
+---
+
+## ٤. [[p++]]: تحريك الـ pointer نفسه
+
+~~~c
+    p++;
+    printf("after p++: %d\n", *p);
+~~~
+
+p بقى بيشاور على العنصر التاني: [[after p++: 20]]. الـ array نفسها متحركتش. ولو كتبت [[arr++]] الـ compiler يرفض ([[error: lvalue required as increment operand]]، يعني «ده مش حاجة ينفع تتغيّر»): الـ array مكانها ثابت، والـ pointer متغير.
+
+---
+
+## ٥. الـ array مش pointer
+
+~~~c
+    printf("sizeof(arr)=%zu sizeof(p)=%zu\n", sizeof(arr), sizeof(p));
+~~~
+
+~~~text الناتج
+sizeof(arr)=16 sizeof(p)=8
+~~~
+
+[[sizeof]] هو المكان اللي الـ decay مبيحصلش فيه: [[arr]] هنا الـ array كلها (4 × 4 = 16)، و [[p]] عنوان (8 bytes على 64-bit) مهما كان بيشاور على إيه.
+
+---
+
+## ٦. [[sum]]: دالة بـ pointer صريح
+
+~~~c
+int sum(const int *p, int len) {
+    int total = 0;
+    for (int i = 0; i < len; i++) total += *(p + i);
+    return total;
+}
+~~~
+
+- [[const int *p]]: نفس [[const int arr[]]] بتاعة درس الـ arrays بالظبط. الكتابتين في parameter معناهم pointer.
+- [[*(p + i)]] = [[p[i]]]. الـ for هنا جسمها جملة واحدة من غير [[{ }]].
+- [[sum(arr, 4)]]: 10 + 20 + 30 + 40 = [[100]].
+
+---
+
+## ٧. اللف بالـ pointer
+
+~~~c
+    for (int *it = arr; it != arr + 4; it++) printf("%d ", *it);
+~~~
+
+| الجزء | هنا |
+|---|---|
+| البداية | [[int *it = arr]]: it على أول عنصر |
+| الشرط | [[it != arr + 4]]: طول ما مش وصلنا «واحد بعد الآخر» |
+| الخطوة | [[it++]]: العنصر اللي بعده |
+
+[[arr + 4]] عنوان بعد آخر عنصر. C بتسمح تحسبه وتقارن بيه (جربت [[(arr + 4) - arr]] وطلع [[4]])، بس [[*(arr + 4)]] ممنوع: مفيش عنصر هناك. وده بالظبط شكل الـ iterators في C++: [[begin()]] و [[end()]].
+
+~~~text الناتج
+10 20 30 40 
+~~~
+
+---
+
+## ٨. الـ try
+
+### [[3[arr]]]
+
+جربت [[printf("%d\n", 3[arr]);]] وطبعت [[40]]. [[a[b]]] مجرد [[*(a + b)]]، والجمع مش فارق معاه الترتيب: [[*(3 + arr)]] = [[*(arr + 3)]] = [[arr[3]]]. معلومة للانترفيو بس.
+
+### الـ solCode: [[my_strlen]]
+
+~~~c
+size_t my_strlen(const char *s) {
+    const char *start = s;
+    while (*s != '\0') s++;
+    return (size_t)(s - start);
+}
+~~~
+
+- [[stddef.h]] فيها [[size_t]] و [[ptrdiff_t]].
+- [[start]]: احفظ عنوان البداية قبل ما تحرّك s.
+- [[while (*s != '\0') s++;]]: طول ما الحرف اللي s عليه مش الصفر، اتحرك حرف.
+- [[s - start]]: عدد الحروف بين الآخر والأول. نوعه [[ptrdiff_t]] (ممكن يبقى سالب)، فبنعمل cast لـ [[size_t]] اللي الدالة بترجّعه.
+
+[[my_strlen("pointer")]] طبعت [[7]].
+
+---
+
+## الخلاصة
+
+| المكتوب | معناه |
+|---|---|
+| [[p + i]] | العنوان + i × حجم النوع |
+| [[*(p + i)]] = [[p[i]]] | العنصر رقم i |
+| [[q - p]] | عدد العناصر بينهم ([[%td]]) |
+| [[int *p = arr]] | decay: عنوان أول عنصر |
+| [[arr + len]] | واحد بعد الآخر: قارن بيه، متقراش منه |
+
+- [[sizeof(arr)]] = الـ array كلها، و [[sizeof(p)]] = 8.
+- النوع هو اللي بيحدد [[p + 1]] بيتحرك كام byte.`,
           lines: [
-            "cout.",
-            "string.",
-            "vector.",
-            "الأب.",
-            "public.",
-            "constructor بياخد الاسم.",
-            R`destructor virtual: لازم في أي أب فيه virtual.`,
-            R`[[virtual]]: النسخة اللي هتشتغل بتتحدد من النوع الحقيقي.`,
-            "دالة عادية مشتركة.",
-            "private: حتى الأبناء ميشوفوهاش مباشرة.",
-            "الاسم.",
-            "قفلة.",
-            R`[[: public Shape]]: Circle بيورث من Shape.`,
-            "public.",
-            "نادي constructor الأب الأول، وبعدين الـ member بتاعك.",
-            R`[[override]]: بغطي area بتاعة الأب.`,
-            "private.",
-            "نص القطر.",
-            "قفلة.",
-            "ابن تاني.",
-            "public.",
-            "نفس الفكرة.",
-            "مساحة المستطيل.",
-            "private.",
-            "العرض والطول.",
-            "قفلة.",
-            R`بتاخد أي Shape بـ reference، فمفيش slicing.`,
-            "area هنا بتشتغل نسخة النوع الحقيقي.",
-            "قفلة.",
-            "main.",
-            "دايرة نص قطرها 1.",
-            "مستطيل 2 × 3.",
-            "circle area=3.14159.",
-            "rect area=6.",
-            "vector من pointers للأب، كل واحد بيشاور على نوع.",
+            "فيها printf.",
+            R`نفس الدالة بتاعة الـ array، بس مكتوبة كـ pointer صريح.`,
             "مجموع.",
-            R`[[->]] لأن s pointer، والنداء virtual.`,
-            "total=9.14159.",
+            R`[[*(p + i)]] = العنصر رقم i، زي [[p[i]]] بالظبط.`,
+            "رجّع المجموع.",
+            "قفلة الدالة.",
+            "بداية main.",
+            "array من ٤ أرقام.",
+            R`اسم الـ array بيتحول لعنوان أول عنصر، من غير [[&]].`,
+            R`أول عنصر، والتاني بالـ arithmetic، والتالت بالأقواس.`,
+            R`المسافة بين p و p+1 بالـ bytes = حجم int.`,
+            "الـ pointer اتحرك عنصر واحد.",
+            "بقى بيشاور على 20.",
+            "الـ array 16 byte، والـ pointer 8.",
+            "نبعت الـ array، واللي بيتبعت عنوان أول عنصر.",
+            R`لف بالـ pointer: من أول عنصر لحد «واحد بعد الآخر».`,
+            "سطر جديد.",
+            "نجاح.",
             "قفلة main."
           ],
           sol: R`الناتج:
-[[circle area=3.14159]]
-[[rect area=6]]
-[[total=9.14159]]
+[[10 20 30]]
+[[bytes from p to p+1: 4]]
+[[after p++: 20]]
+[[sizeof(arr)=16 sizeof(p)=8]]
+[[sum=100]]
+[[10 20 30 40 ]]
 
-من غير [[virtual]]: كل حاجة بتطلع [[area=0]] و [[total=0]]، لأن الـ compiler بيختار من نوع الـ reference (Shape).
+[[my_strlen]]: احفظ البداية، وامشي لحد الصفر، واطرح.
+[[3[arr]]] بتطبع 40، لأنها [[*(3 + arr)]] = [[*(arr + 3)]].`,
+          solCode: R`#include <stdio.h>
+#include <stddef.h>
 
-من غير [[const]] في Rect مع [[override]]:
-[[error: 'double Rect::area()' marked 'override', but does not override]]
-لأن [[area() const]] و [[area()]] دالتين مختلفتين. من غير override كانت هتتعمل compile، و report كانت هتنادي نسخة Shape بهدوء.
+size_t my_strlen(const char *s) {
+    const char *start = s;
+    while (*s != '\0') s++;
+    return (size_t)(s - start);
+}
 
-Square: [[class Square : public Rect { public: explicit Square(double s) : Rect(s, s) {} };]]. بس الاسم هيطلع rect: لو عايز «square» محتاج constructor في Rect بياخد الاسم.`
+int main(void) {
+    printf("%zu\n", my_strlen("pointer"));
+    return 0;
+}`
         },
         {
-          cmd: "abstract classes",
-          title: "الـ abstract class والـ pure virtual (= 0): إزاي تعمل interface في C++؟",
-          desc: R`أحيانًا الأب مالوش معنى لوحده: مفيش «Notifier» عام، فيه Email و SMS. فبتعمل الدالة pure virtual:
-[[virtual void send(...) = 0;]]
-الـ [[= 0]] معناها «مفيش تنفيذ هنا، وكل ابن لازم ينفّذها».
+          cmd: "إدارة الذاكرة: malloc و free",
+          title: "malloc و calloc و realloc و free: إمتى تحجز من الـ heap، والفرق بينه وبين الـ stack",
+          desc: R`لحد دلوقتي كل المتغيرات كانت على الـ stack: الـ compiler بيعرف حجمها وقت الـ compile، وبتتمسح لوحدها لما الدالة تخلص. ده سريع جدًا، بس ليه حدود:
+• الحجم لازم يبقى معروف (أو صغير)، والـ stack نفسه صغير (غالبًا ٨ ميجا على Linux و ١ ميجا على Windows).
+• المتغير بيموت مع الدالة، فمينفعش ترجّع array محلية.
 
-أي class فيه دالة pure virtual واحدة على الأقل اسمه abstract class: مينفعش تعمل منه object ([[Notifier n;]] بتبقى error). بتستخدمه كـ reference أو pointer بس.
+الـ heap مساحة كبيرة تحجز منها وقت التشغيل بالحجم اللي محتاجه، والذاكرة دي بتفضل موجودة لحد ما انت تقول. الدوال في [[stdlib.h]]:
+• [[malloc(bytes)]]: احجز عدد bytes، والقيم جواها زبالة. بترجّع pointer لأول byte، أو [[NULL]] لو مفيش ذاكرة.
+• [[calloc(count, size)]]: احجز count عنصر وصفّرهم.
+• [[realloc(p, new_bytes)]]: كبّر أو صغّر حجز قديم. ممكن ينقله لمكان تاني ويرجّع عنوان جديد، أو [[NULL]] لو فشل (والقديم لسه سليم).
+• [[free(p)]]: رجّع الذاكرة. بعدها p بيشاور على حاجة مش بتاعتك.
 
-لو كل دواله pure virtual ومفيش داتا، يبقى interface: «عقد» بيقول أي حد عايز يبقى Notifier لازم يعرف يعمل send. C++ معندهاش كلمة interface زي Java و C#، وده الشكل بتاعه.
+القاعدة: كل malloc أو calloc ليها free واحدة بالظبط. لو نسيت يبقى memory leak (البرنامج بياكل ذاكرة ومبيرجعهاش). ولو عملت free مرتين (double free) أو استخدمت الذاكرة بعد free (use after free) ده undefined behavior، وغالبًا ثغرة أمنية.
 
-الفايدة: الكود اللي بيستخدم الـ interface ([[notify_all]]) مش بيعرف ولا بيهتم بالأنواع الحقيقية. تقدر تضيف [[WhatsAppNotifier]] بكرة من غير ما تغيّر notify_all، وتقدر في الـ tests تبعت [[FakeNotifier]] بيسجّل الرسايل بدل ما يبعتها فعلًا.
+[[n * sizeof *arr]]: [[sizeof *arr]] = حجم العنصر اللي arr بيشاور عليه. أحسن من [[sizeof(int)]] لأن لو غيّرت نوع arr بعدين الحجم هيتظبط لوحده.`,
+          example: R`#include <stdio.h>
+#include <stdlib.h>
 
-[[{&email, &sms}]]: قايمة عناوين بتتحول لـ [[std::vector<Notifier *>]] اللي الدالة مستنياه.`,
-          example: R`#include <iostream>
-#include <string>
-#include <vector>
-
-class Notifier {
-public:
-    virtual ~Notifier() = default;
-    virtual void send(const std::string &to, const std::string &msg) = 0;
-};
-
-class EmailNotifier : public Notifier {
-public:
-    void send(const std::string &to, const std::string &msg) override {
-        std::cout << "[email to " << to << "] " << msg << '\n';
+int main(void) {
+    int n = 3;
+    int *arr = malloc(n * sizeof *arr);
+    if (arr == NULL) {
+        fprintf(stderr, "out of memory\n");
+        return 1;
     }
-};
-
-class SmsNotifier : public Notifier {
-public:
-    void send(const std::string &to, const std::string &msg) override {
-        std::cout << "[sms to " << to << "] " << msg << '\n';
+    for (int i = 0; i < n; i++) arr[i] = (i + 1) * 10;
+    int *bigger = realloc(arr, 5 * sizeof *arr);
+    if (bigger == NULL) {
+        free(arr);
+        return 1;
     }
-};
-
-void notify_all(const std::vector<Notifier *> &channels, const std::string &msg) {
-    for (Notifier *n : channels) n->send("sara", msg);
-}
-
-int main() {
-    EmailNotifier email;
-    SmsNotifier sms;
-    notify_all({&email, &sms}, "your order shipped");
+    arr = bigger;
+    arr[3] = 40;
+    arr[4] = 50;
+    for (int i = 0; i < 5; i++) printf("%d ", arr[i]);
+    printf("\n");
+    int *zeros = calloc(4, sizeof *zeros);
+    if (!zeros) {
+        free(arr);
+        return 1;
+    }
+    printf("calloc gives zeros: %d %d\n", zeros[0], zeros[3]);
+    free(zeros);
+    free(arr);
+    arr = NULL;
+    return 0;
 }`,
-          try: R`جرّب [[Notifier n;]] في main واقرا الـ error. وبعدين اعمل [[FakeNotifier]] بيحفظ الرسايل في [[std::vector<std::string> sent;]] بدل ما يطبعها، وابعته لـ notify_all، واطبع [[sent.size()]] بعدها. ده بالظبط اللي بيتعمل في الـ unit tests.`,
+          try: R`اكتب برنامج يقرا أرقام من الـ input لحد ما يخلص (scanf ترجّع حاجة غير 1)، ويخزنهم في array بتكبر لوحدها: ابدأ بسعة 4، ولما تتملي اعمل realloc بالضعف. في الآخر اطبع العدد والمجموع واعمل free. جرّبه بـ [[seq 1 100 | ./app]]. وبعدين امسح الـ free واعمل compile بـ [[-fsanitize=address]]: إيه اللي اتطبع في الآخر؟`,
           flag: "script",
           deep: {
-            why: R`الـ interfaces بتفصل «إيه» عن «إزاي». الكود الأساسي يعتمد على الـ interface، والتفاصيل (إيميل، SMS، قاعدة بيانات) تتغير أو تتبدّل في الـ tests. ودي فكرة dependency inversion اللي في تاب هندسة البرمجيات.`,
-            how: R`الـ vtable بتاع Notifier فيه خانة لـ send من غير عنوان دالة حقيقي، فالـ compiler بيمنع أي object منه. وكل ابن بيملا الخانة. ولو ابن نسي ينفّذ دالة pure virtual، بيبقى هو كمان abstract، والـ error بيطلع لما تحاول تعمل منه object.
+            why: "أي برنامج حقيقي بيتعامل مع داتا حجمها مش معروف مسبقًا: ملف، أو طلبات من الشبكة، أو صورة. والـ heap هو المكان الوحيد لده في C. وأخطاء الذاكرة (leaks و use after free و double free) من أشهر أسباب الـ crashes والثغرات في برامج C و C++، عشان كده C++ عملت RAII و smart pointers (المستوى ٢ و ٣).",
+            how: R`[[malloc]] مش بتكلم نظام التشغيل كل مرة: مكتبة C عندها مدير ذاكرة بياخد chunks كبيرة من النظام ويقسمها. وبيحفظ قبل كل حجز حجمه، وده اللي بيخلي [[free(p)]] تعرف تحرر كام من غير ما تقولها.
 
-ممكن دالة pure virtual يبقى ليها جسم برضه، والأبناء ينادوه بـ [[Notifier::send(...)]]، بس ده نادر.
+[[realloc]] لو فيه مكان فاضي بعد الحجز بتكبّره في مكانه، ولو مفيش بتحجز مكان جديد وتنسخ وتحرر القديم. عشان كده لازم تاخد العنوان اللي رجع. والتكبير بالضعف (مش +1 كل مرة) بيخلي متوسط تكلفة الإضافة ثابت، وده نفس اللي [[std::vector]] بيعمله.
 
-البديل من غير virtual خالص: templates أو [[concepts]] (C++20)، والنوع بيتحدد وقت الـ compile، وده أسرع بس كل نوع بيعمل نسخة من الكود.`,
-            when: R`أي حتة فيها أكتر من تنفيذ لنفس الدور: طرق دفع، و storage (ملف أو سحابة)، و loggers، و plugins. وفي أي حاجة بتكلم العالم الخارجي وعايز تعمل لها fake في الـ tests.`,
-            mistakes: R`تنسى الـ virtual destructor في الـ interface. وتحط داتا كتير في الـ interface فيبقى أب تقيل. وتعمل interface لحاجة ليها تنفيذ واحد بس «احتياطي»: كود زيادة من غير فايدة. وتنسى [[override]] في الأبناء.`
+لما البرنامج يخلص، نظام التشغيل بياخد كل ذاكرته. بس في برنامج شغال طول الوقت (سيرفر، لعبة) الـ leak بيتراكم لحد ما الذاكرة تخلص.`,
+            when: R`لما الحجم بيتحدد وقت التشغيل، أو كبير على الـ stack، أو الداتا لازم تعيش بعد ما الدالة اللي عملتها تخلص. وفي C++ متستخدمش malloc خالص تقريبًا: [[std::vector]] و [[std::string]] و [[std::make_unique]] بيعملوا الحجز والتحرير لوحدهم.`,
+            mistakes: R`[[arr = realloc(arr, ...)]] مباشرة: لو فشلت، arr بقى NULL وضاع عنوان الذاكرة القديمة (leak). ومتتشيّكش على NULL. و [[malloc(n)]] بدل [[malloc(n * sizeof *arr)]]: حجزت n bytes مش n عنصر. و free مرتين، أو استخدام بعد free. والحل البسيط: [[arr = NULL;]] بعد free، لأن [[free(NULL)]] مسموحة ومبتعملش حاجة.`
           },
+          teach: R`## البرنامج بيعمل إيه؟
+
+بيحجز array من 3 أرقام على الـ heap بـ [[malloc]]، ويكبّرها لـ 5 بـ [[realloc]]، ويحجز 4 أصفار بـ [[calloc]]، وفي الآخر يرجّع كل اللي حجزه بـ [[free]]. وكل حجز بيتشيّك عليه لو فشل. اتشغّل في [[docker run --rm gcc:14]] (gcc 14.4.0) بـ [[gcc -std=c17 -Wall -Wextra]]، ومرة كمان بـ [[-fsanitize=address,undefined]] ومطلعش ولا تقرير.
+
+~~~text الناتج
+10 20 30 40 50 
+calloc gives zeros: 0 0
+~~~
+
+---
+
+## ١. [[malloc]]
+
+~~~c
+    int n = 3;
+    int *arr = malloc(n * sizeof *arr);
+~~~
+
+من جوه لبرة:
+
+- [[sizeof *arr]]: حجم الحاجة اللي [[arr]] بيشاور عليها = [[sizeof(int)]] = 4. مش محتاج أقواس لأنها مش اسم نوع. وميزتها: لو غيّرت [[int *arr]] لـ [[double *arr]] بعدين، الحجم يتظبط لوحده.
+- [[n * sizeof *arr]] = 3 × 4 = 12 byte.
+- [[malloc(12)]] (memory allocate): «احجزلي 12 byte في الـ heap». بترجّع عنوان أول byte كـ [[void *]] (pointer من غير نوع)، و C بتحوّله لـ [[int *]] لوحدها.
+- [[int *arr]]: من هنا arr بيتعامل زي array من 3 int.
+
+الذاكرة دي قيمها زبالة لحد ما تكتب فيها، ومش بتتمسح لما الدالة تخلص: بتفضل لحد [[free]].
+
+---
+
+## ٢. اتشيّك على [[NULL]]
+
+~~~c
+    if (arr == NULL) {
+        fprintf(stderr, "out of memory\n");
+        return 1;
+    }
+~~~
+
+لو مفيش ذاكرة، malloc بترجّع [[NULL]]. ولو كمّلت من غير ما تتشيّك، أول [[arr[0] = ...]] هتبقى كتابة على العنوان 0 = crash.
+
+---
+
+## ٣. الاستخدام زي array
+
+~~~c
+    for (int i = 0; i < n; i++) arr[i] = (i + 1) * 10;
+~~~
+
+[[arr[i]]] = [[*(arr + i)]] زي درس الـ pointer arithmetic. القيم: 10 و 20 و 30.
+
+---
+
+## ٤. [[realloc]]: كبّر
+
+~~~c
+    int *bigger = realloc(arr, 5 * sizeof *arr);
+    if (bigger == NULL) {
+        free(arr);
+        return 1;
+    }
+    arr = bigger;
+~~~
+
+- [[realloc(arr, 20)]]: «خلي الحجز ده 20 byte». لو فيه مكان فاضي بعده بيكبّره في مكانه، ولو مفيش بيحجز مكان جديد، **وينسخ** الـ 10 و 20 و 30، ويحرر القديم.
+- عشان كده العنوان اللي بيرجع ممكن يبقى جديد، ولازم تستخدمه هو.
+- ليه في [[bigger]] مش في [[arr]] على طول؟ لو realloc فشلت بترجّع [[NULL]] **والحجز القديم لسه موجود**. لو كتبت [[arr = realloc(arr, ...)]] هتكتب NULL فوق العنوان الوحيد اللي معاك، والذاكرة القديمة تضيع (leak).
+- لو فشلت: نحرر القديم ونخرج. لو نجحت: [[arr = bigger]].
+
+~~~c
+    arr[3] = 40;
+    arr[4] = 50;
+    for (int i = 0; i < 5; i++) printf("%d ", arr[i]);
+~~~
+
+العنصرين الجداد فيهم زبالة فبنملاهم.
+
+~~~text الناتج
+10 20 30 40 50 
+~~~
+
+---
+
+## ٥. [[calloc]]: احجز وصفّر
+
+~~~c
+    int *zeros = calloc(4, sizeof *zeros);
+    if (!zeros) {
+        free(arr);
+        return 1;
+    }
+    printf("calloc gives zeros: %d %d\n", zeros[0], zeros[3]);
+~~~
+
+- [[calloc(count, size)]] (c = clear): 4 عناصر × 4 byte، **وكلهم أصفار**. الفرق عن malloc: الـ argumentين منفصلين، والتصفير مضمون.
+- [[!zeros]] = [[zeros == NULL]] (NULL قيمته صفر، و [[!]] بتقلبه).
+- لو فشلت، لازم نحرر [[arr]] اللي اتحجزت قبلها قبل ما نخرج.
+
+~~~text الناتج
+calloc gives zeros: 0 0
+~~~
+
+---
+
+## ٦. [[free]]
+
+~~~c
+    free(zeros);
+    free(arr);
+    arr = NULL;
+~~~
+
+- كل حجز له [[free]] واحدة بالظبط، على **نفس** العنوان اللي رجع (هنا العنوان اللي رجع من realloc).
+- [[arr = NULL]]: بعد free العنوان لسه جوه arr بس الذاكرة مش بتاعتك (dangling pointer). NULL بيخلي أي استخدام غلط بعد كده يقع بوضوح، و [[free(NULL)]] مسموحة ومبتعملش حاجة.
+
+| الدالة | الـ arguments | القيم | لو فشلت |
+|---|---|---|---|
+| [[malloc]] | bytes | زبالة | [[NULL]] |
+| [[calloc]] | عدد، حجم | أصفار | [[NULL]] |
+| [[realloc]] | pointer، bytes جديدة | القديمة محفوظة، الجديدة زبالة | [[NULL]] والقديم سليم |
+| [[free]] | pointer | | |
+
+---
+
+## ٧. الـ solCode: array بتكبر لوحدها
+
+~~~c
+    size_t count = 0, cap = 4;
+    int *nums = malloc(cap * sizeof *nums);
+    if (!nums) return 1;
+    int x;
+    while (scanf("%d", &x) == 1) {
+        if (count == cap) {
+            cap *= 2;
+            int *bigger = realloc(nums, cap * sizeof *nums);
+            if (!bigger) {
+                free(nums);
+                return 1;
+            }
+            nums = bigger;
+        }
+        nums[count++] = x;
+    }
+~~~
+
+- [[count]] عدد العناصر اللي فيها، و [[cap]] (capacity) عدد اللي تساعهم. الاتنين [[size_t]] لأنهم أحجام.
+- [[while (scanf(...) == 1)]]: كمّل طول ما قريت رقم. لما الـ input يخلص (EOF) أو ييجي حاجة مش رقم، scanf بترجّع حاجة تانية فنقف.
+- لو اتملت ([[count == cap]]): ضاعف السعة بنفس طريقة المثال.
+- [[nums[count++] = x]]: اكتب في [[nums[count]]] وبعدين زوّد count (الـ [[++]] بعد الاسم = القيمة القديمة الأول).
+- بعد الـ loop: مجموع في [[long long]] وطباعة بـ [[%zu]] و [[%lld]]، و [[free(nums)]].
+
+~~~bash
+seq 1 100 | ./app
+~~~
+
+~~~text الناتج
+count=100 sum=5050
+~~~
+
+[[seq 1 100]] بيطبع الأرقام من 1 لـ 100 كل واحد في سطر. والسعة اتضاعفت 4 ثم 8 ثم 16 ثم 32 ثم 64 ثم 128: ٥ مرات realloc بس لـ 100 رقم. وجربت كمان input فاضي ([[count=0 sum=0]]) و [[3 4 x 5]] ([[count=2 sum=7]]: وقف عند x).
+
+---
+
+## ٨. الـ try: امسح الـ [[free]]
+
+مسحت [[free(nums);]] وعملت compile بـ [[-g -fsanitize=address]]:
+
+~~~text الناتج
+count=100 sum=5050
+
+=================================================================
+==67==ERROR: LeakSanitizer: detected memory leaks
+
+Direct leak of 512 byte(s) in 1 object(s) allocated from:
+    #0 0x7425b980c998  (/usr/local/lib64/libasan.so.8+0xf3998)
+    #1 0x4012ba in main /w/L5leak.c:12
+
+SUMMARY: AddressSanitizer: 512 byte(s) leaked in 1 allocation(s).
+exit=1
+~~~
+
+- [[LeakSanitizer]]: جزء من AddressSanitizer بيشتغل لما البرنامج يخلص، ويدوّر على ذاكرة اتحجزت ومحدش حررها.
+- [[512 byte(s)]] = السعة الأخيرة 128 × 4 byte.
+- [[#1 ... main /w/L5leak.c:12]]: السطر اللي الحجز ده اتعمل فيه، وهو سطر الـ [[realloc]] (آخر realloc هو اللي ادّى الحجز ده).
+- [[exit=1]]: الـ sanitizer غيّر الـ exit code لفشل، فالـ CI هيمسكها.
+
+---
+
+## الخلاصة
+
+- [[T *p = malloc(n * sizeof *p);]] وبعدها على طول [[if (!p)]].
+- realloc في متغير جديد، وبعدين [[p = bigger]].
+- كل حجز = [[free]] واحدة، وبعدها [[p = NULL]].
+- [[-fsanitize=address]] بيمسك الـ leaks والـ use after free والـ double free.`,
           lines: [
-            "cout.",
-            "string.",
-            "vector.",
-            "الـ interface.",
-            "public.",
-            "virtual destructor.",
-            R`[[= 0]]: pure virtual. مفيش تنفيذ، وكل ابن لازم يعمله.`,
-            "قفلة.",
-            "تنفيذ أول.",
-            "public.",
-            "ينفّذ send.",
-            "بيطبع كأنه إيميل.",
-            "قفلة الدالة.",
-            "قفلة.",
-            "تنفيذ تاني.",
-            "public.",
-            "send.",
-            "بيطبع كأنه SMS.",
-            "قفلة الدالة.",
-            "قفلة.",
-            "بتاخد أي Notifiers من غير ما تعرف نوعهم.",
-            "لكل واحد: نادي send، والنسخة بتتحدد وقت التشغيل.",
-            "قفلة.",
-            "main.",
-            "object حقيقي.",
-            "تاني.",
-            R`[[{&email, &sms}]] بتعمل vector من pointers.`,
-            "قفلة."
+            "فيها printf.",
+            R`فيها [[malloc]] و [[calloc]] و [[realloc]] و [[free]].`,
+            "بداية main.",
+            "عدد العناصر، ممكن ييجي من اليوزر.",
+            R`احجز n × حجم int من الـ heap. [[sizeof *arr]] = حجم اللي arr بيشاور عليه.`,
+            R`malloc بترجّع [[NULL]] لو مفيش ذاكرة.`,
+            "رسالة على stderr.",
+            "اخرج بفشل.",
+            "قفلة الـ if.",
+            R`نستخدمها زي array عادية: 10 و 20 و 30.`,
+            R`كبّر لـ 5 عناصر. النتيجة في متغير جديد عشان لو فشلت منضيّعش arr.`,
+            "realloc فشلت.",
+            "القديم لسه سليم، فنحرره.",
+            "ونخرج.",
+            "قفلة الـ if.",
+            "نجحت: خد العنوان الجديد (ممكن يكون اتنقل).",
+            "العناصر الجديدة فيها زبالة، فنملاها.",
+            "العنصر الأخير.",
+            "اطبع الخمسة.",
+            "سطر جديد.",
+            R`[[calloc]]: 4 عناصر متصفّرة.`,
+            R`[[!zeros]] = لو NULL.`,
+            "متنساش الحجز التاني قبل ما تخرج.",
+            "اخرج بفشل.",
+            "قفلة الـ if.",
+            "calloc بتضمن أصفار.",
+            "free لكل حجز.",
+            R`وده كمان. ولاحظ إن [[free]] على العنوان اللي رجع من realloc.`,
+            "عشان أي استخدام بالغلط بعد كده يبقى NULL واضح.",
+            "نجاح.",
+            "قفلة main."
           ],
           sol: R`الناتج:
-[[[email to sara] your order shipped]]
-[[[sms to sara] your order shipped]]
+[[10 20 30 40 50 ]]
+[[calloc gives zeros: 0 0]]
 
-[[Notifier n;]]:
-[[error: cannot declare variable 'n' to be of abstract type 'Notifier']]
-وتحتها [[note: because the following virtual functions are pure within 'Notifier']].
+برنامج الـ array اللي بتكبر مع [[seq 1 100 | ./app]] لازم يطبع [[count=100 sum=5050]].
 
-الـ FakeNotifier:`,
-          solCode: R`#include <iostream>
-#include <string>
-#include <vector>
+ولما تمسح الـ free وتعمل compile بـ [[-g -fsanitize=address]]، في آخر التشغيل بيطلع تقرير LeakSanitizer:
+[[ERROR: LeakSanitizer: detected memory leaks]]
+[[Direct leak of 512 byte(s) in 1 object(s) allocated from:]]
+ومعاه السطر اللي اتعمل فيه الحجز. (الـ 512 = سعة 128 × 4 bytes، لأن السعة اتضاعفت 4 ثم 8 ... لحد 128.)`,
+          solCode: R`#include <stdio.h>
+#include <stdlib.h>
 
-class Notifier {
-public:
-    virtual ~Notifier() = default;
-    virtual void send(const std::string &to, const std::string &msg) = 0;
-};
-
-class FakeNotifier : public Notifier {
-public:
-    std::vector<std::string> sent;
-    void send(const std::string &to, const std::string &msg) override {
-        sent.push_back(to + ": " + msg);
+int main(void) {
+    size_t count = 0, cap = 4;
+    int *nums = malloc(cap * sizeof *nums);
+    if (!nums) return 1;
+    int x;
+    while (scanf("%d", &x) == 1) {
+        if (count == cap) {
+            cap *= 2;
+            int *bigger = realloc(nums, cap * sizeof *nums);
+            if (!bigger) {
+                free(nums);
+                return 1;
+            }
+            nums = bigger;
+        }
+        nums[count++] = x;
     }
-};
-
-void notify_all(const std::vector<Notifier *> &channels, const std::string &msg) {
-    for (Notifier *n : channels) n->send("sara", msg);
-}
-
-int main() {
-    FakeNotifier fake;
-    notify_all({&fake}, "hello");
-    std::cout << fake.sent.size() << ' ' << fake.sent[0] << '\n';
+    long long sum = 0;
+    for (size_t i = 0; i < count; i++) sum += nums[i];
+    printf("count=%zu sum=%lld\n", count, sum);
+    free(nums);
+    return 0;
 }`
         }
       ]

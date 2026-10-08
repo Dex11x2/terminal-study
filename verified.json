@@ -2479,20 +2479,75 @@
   "date": "2026-10-06",
   "on": "win11 cmd (username masked later)"
  },
+ "cpp|C++ في المسابقات": {
+  "hash": "dbc4edee8a2a",
+  "date": "2026-10-08",
+  "on": "docker gcc:14 (g++ 14.4.0)"
+ },
+ "cpp|CMake": {
+  "hash": "4af1df25373c",
+  "date": "2026-10-08",
+  "on": "docker gcc:14 (g++ 14.4.0, cmake 3.31.6); docs: Visual Studio generator"
+ },
+ "cpp|RAII": {
+  "hash": "d1d7efb4ec80",
+  "date": "2026-10-08",
+  "on": "docker gcc:14 (g++ 14.4.0)"
+ },
+ "cpp|Smart Pointers: الذاكرة الذكية": {
+  "hash": "93599719bd23",
+  "date": "2026-10-08",
+  "on": "docker gcc:14 (g++ 14.4.0, ASan/LSan)"
+ },
+ "cpp|abstract classes": {
+  "hash": "ca1cc4bbd2a9",
+  "date": "2026-10-08",
+  "on": "docker gcc:14 (g++ 14.4.0)"
+ },
+ "cpp|algorithms و lambdas": {
+  "hash": "62438162225a",
+  "date": "2026-10-08",
+  "on": "docker gcc:14 (g++ 14.4.0)"
+ },
  "cpp|arrays في C": {
   "hash": "23766bc84a0e",
   "date": "2026-10-08",
   "on": "gcc:14 docker (gcc 14.4.0, ASan/UBSan)"
+ },
+ "cpp|atomic و async": {
+  "hash": "b6bb3c5cbe7d",
+  "date": "2026-10-08",
+  "on": "docker gcc:14 (g++ 14.4.0)"
+ },
+ "cpp|auto و structured bindings": {
+  "hash": "f887223fa385",
+  "date": "2026-10-08",
+  "on": "docker gcc:14 (g++ 14.4.0)"
  },
  "cpp|compile و link": {
   "hash": "99ba89260b2b",
   "date": "2026-10-08",
   "on": "gcc:14 docker (gcc 14.4.0)"
  },
+ "cpp|const": {
+  "hash": "845bc5aa750f",
+  "date": "2026-10-08",
+  "on": "docker gcc:14 (g++ 14.4.0)"
+ },
+ "cpp|constexpr": {
+  "hash": "0279666523e4",
+  "date": "2026-10-08",
+  "on": "docker gcc:14 (g++ 14.4.0)"
+ },
  "cpp|enum و #define و const": {
   "hash": "aae1c7e9bcf8",
   "date": "2026-10-08",
   "on": "gcc:14 docker (gcc 14.4.0)"
+ },
+ "cpp|exceptions": {
+  "hash": "b77135c34f5d",
+  "date": "2026-10-08",
+  "on": "docker gcc:14 (g++ 14.4.0)"
  },
  "cpp|file I/O في C": {
   "hash": "63c0bebc715c",
@@ -2509,10 +2564,35 @@
   "date": "2026-10-08",
   "on": "gcc:14 docker (gcc 14.4.0)"
  },
+ "cpp|inheritance و virtual": {
+  "hash": "01a9e558ea21",
+  "date": "2026-10-08",
+  "on": "docker gcc:14 (g++ 14.4.0)"
+ },
+ "cpp|iterators": {
+  "hash": "52b640e854d1",
+  "date": "2026-10-08",
+  "on": "docker gcc:14 (g++ 14.4.0, ASan)"
+ },
  "cpp|main و exit code": {
   "hash": "316ce3c684fb",
   "date": "2026-10-08",
   "on": "gcc:14 docker (gcc 14.4.0); docs: Windows $LASTEXITCODE/%ERRORLEVEL%"
+ },
+ "cpp|operator overloading": {
+  "hash": "4c604738b5e2",
+  "date": "2026-10-08",
+  "on": "docker gcc:14 (g++ 14.4.0)"
+ },
+ "cpp|optional و variant": {
+  "hash": "d4b13f52d0d0",
+  "date": "2026-10-08",
+  "on": "docker gcc:14 (g++ 14.4.0)"
+ },
+ "cpp|overloading و default args": {
+  "hash": "75d98dc08b12",
+  "date": "2026-10-08",
+  "on": "docker gcc:14 (g++ 14.4.0)"
  },
  "cpp|pointer arithmetic": {
   "hash": "b06ef377b2a3",
@@ -2524,6 +2604,31 @@
   "date": "2026-10-08",
   "on": "gcc:14 docker (gcc 14.4.0)"
  },
+ "cpp|references": {
+  "hash": "c0d6be2ebc06",
+  "date": "2026-10-08",
+  "on": "docker gcc:14 (g++ 14.4.0)"
+ },
+ "cpp|rule of 0/3/5": {
+  "hash": "8ffe65babe3b",
+  "date": "2026-10-08",
+  "on": "docker gcc:14 (g++ 14.4.0, ASan)"
+ },
+ "cpp|sanitizers و valgrind": {
+  "hash": "058e99e1570d",
+  "date": "2026-10-08",
+  "on": "docker gcc:14 (g++ 14.4.0 ASan/UBSan/TSan, valgrind 3.24.0, clang-tidy 19, cppcheck 2.17.1)"
+ },
+ "cpp|set و deque و array": {
+  "hash": "f5bc6e74ac4b",
+  "date": "2026-10-08",
+  "on": "docker gcc:14 (g++ 14.4.0)"
+ },
+ "cpp|string_view و span": {
+  "hash": "97237f4ff723",
+  "date": "2026-10-08",
+  "on": "docker gcc:14 (g++ 14.4.0, ASan)"
+ },
  "cpp|strings في C": {
   "hash": "3a466cdf267e",
   "date": "2026-10-08",
@@ -2534,10 +2639,30 @@
   "date": "2026-10-08",
   "on": "gcc:14 docker (gcc 14.4.0)"
  },
+ "cpp|threads و mutex": {
+  "hash": "1f72aa3e530c",
+  "date": "2026-10-08",
+  "on": "docker gcc:14 (g++ 14.4.0, TSan)"
+ },
  "cpp|undefined behavior": {
   "hash": "f3a70daa9db3",
   "date": "2026-10-08",
   "on": "gcc:14 docker (gcc 14.4.0, -O0 and -O2)"
+ },
+ "cpp|unit testing": {
+  "hash": "2253d6604bc2",
+  "date": "2026-10-08",
+  "on": "docker gcc:14 (g++ 14.4.0, cmake, GoogleTest 1.15.2, ctest)"
+ },
+ "cpp|vcpkg و Conan": {
+  "hash": "7fe4409badad",
+  "date": "2026-10-08",
+  "on": "docker gcc:14 (g++ 14.4.0, cmake, vcpkg fmt 12.2.0, FetchContent); docs: Conan, bootstrap-vcpkg.bat"
+ },
+ "cpp|أسئلة إنترفيو C و C++": {
+  "hash": "52a62759fc91",
+  "date": "2026-10-08",
+  "on": "docker gcc:14 (g++ 14.4.0, ASan)"
  },
  "cpp|أكتر من ملف و make": {
   "hash": "837b0c56f395",
@@ -2549,6 +2674,11 @@
   "date": "2026-10-08",
   "on": "gcc:14 docker (gcc 14.4.0, ASan/LeakSanitizer)"
  },
+ "cpp|الأداء و cache": {
+  "hash": "9c75b8367228",
+  "date": "2026-10-08",
+  "on": "docker gcc:14 (g++ 14.4.0 -O2/-O0)"
+ },
  "cpp|الدوال والـ prototypes": {
   "hash": "91c3b0259f3a",
   "date": "2026-10-08",
@@ -2558,6 +2688,31 @@
   "hash": "9677173c158f",
   "date": "2026-10-08",
   "on": "gcc:14 docker (gcc 14.4.0)"
+ },
+ "cpp|الـ Classes والـ OOP في C++": {
+  "hash": "5dd9a594afca",
+  "date": "2026-10-08",
+  "on": "docker gcc:14 (g++ 14.4.0)"
+ },
+ "cpp|الـ Move Semantics و std::move": {
+  "hash": "aebb07ece20f",
+  "date": "2026-10-08",
+  "on": "docker gcc:14 (g++ 14.4.0)"
+ },
+ "cpp|الـ map و unordered_map في C++": {
+  "hash": "3471f87da8a8",
+  "date": "2026-10-08",
+  "on": "docker gcc:14 (g++ 14.4.0)"
+ },
+ "cpp|الـ std::vector في C++": {
+  "hash": "1e410c37f02e",
+  "date": "2026-10-08",
+  "on": "docker gcc:14 (g++ 14.4.0, ASan)"
+ },
+ "cpp|القوالب Templates والبرمجة العامة": {
+  "hash": "e95f0fd15608",
+  "date": "2026-10-08",
+  "on": "docker gcc:14 (g++ 14.4.0)"
  },
  "cpp|المؤشرات Pointers والذاكرة": {
   "hash": "408211007ebb",
@@ -2574,10 +2729,25 @@
   "date": "2026-10-08",
   "on": "ubuntu:24.04 docker (apt build-essential gdb) + gcc:14 docker; docs: dnf, xcode-select, MSYS2, Visual Studio"
  },
+ "cpp|شغل C و C++": {
+  "hash": "42219233aa6f",
+  "date": "2026-10-08",
+  "on": "docker gcc:14 (g++ 14.4.0); docs: volatile hardware registers"
+ },
+ "cpp|مشروع ختامي": {
+  "hash": "78f0042d1a24",
+  "date": "2026-10-08",
+  "on": "docker gcc:14 (g++ 14.4.0)"
+ },
  "cpp|مقدمة C وكتابة أول برنامج": {
   "hash": "4c96e9741b31",
   "date": "2026-10-08",
   "on": "gcc:14 docker (gcc 14.4.0)"
+ },
+ "cpp|مقدمة C++ والفرق عن C": {
+  "hash": "2b69c56d52a2",
+  "date": "2026-10-08",
+  "on": "docker gcc:14 (g++ 14.4.0)"
  },
  "css|(id, class, type)": {
   "hash": "ec88ca39c1bb",

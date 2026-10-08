@@ -1,1102 +1,1609 @@
 // تكملة تاب cpp: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/cpp/01.js (شرح حقول الدرس في أوله)
 MORE("cpp", [
     {
-      t: "الـ STL: containers و iterators و algorithms",
-      l: 2,
-      n: "المكتبة القياسية: vector و map و set و unordered_map و deque و array، والـ iterators، والـ algorithms والـ lambdas، و auto و structured bindings",
+      t: "struct والملفات والمشاريع والـ debugging",
+      l: 1,
+      n: "تجمع داتا في struct، وتقرا وتكتب ملفات، وتقسم المشروع لملفات بـ make، وتفهم الـ undefined behavior وتمسكه بـ gdb والـ sanitizers",
       items: [
         {
-          cmd: "الـ std::vector في C++",
-          title: "std::vector: array بتكبر لوحدها (push_back و at و size و reserve و erase)",
-          desc: R`[[std::vector<T>]] أهم container في C++، واختيارك الافتراضي لأي «قايمة». array على الـ heap بتكبر لوحدها وبتحرر نفسها (RAII)، والعناصر جنب بعض في الذاكرة زي array الـ C بالظبط.
+          cmd: "struct و typedef",
+          title: "struct في C: إزاي تجمع كذا متغير في نوع واحد، والفرق بين . و ->",
+          desc: R`[[struct]] بيعمل نوع جديد فيه كذا حقل (field)، كل واحد بنوعه، زي طالب ليه اسم وسن ومعدل:
+[[struct Student { char name[32]; int age; double gpa; };]]
+ومن غير typedef، كل مرة هتكتب [[struct Student s;]].
 
-[[< >]] بعد اسم الـ container بتقول نوع العناصر: [[std::vector<int>]] و [[std::vector<std::string>]].
+[[typedef]] بيدّي نوع موجود اسم جديد. [[typedef struct { ... } Student;]] معناها «سمّي الـ struct ده Student»، فتكتب [[Student s;]] على طول.
 
-أهم العمليات:
-• [[v.push_back(x)]]: ضيف في الآخر. و [[v.emplace_back(args)]]: نفس الفكرة بس بيبني العنصر في مكانه من الـ arguments (مفيد مع الـ objects).
-• [[v.size()]]: عدد العناصر. و [[v.empty()]]: فاضي ولا لأ.
-• [[v[i]]]: العنصر رقم i من غير فحص حدود (سريع، و UB لو بره).
-• [[v.at(i)]]: نفس الحاجة بس بتتشيّك، ولو بره بترمي exception ([[std::out_of_range]]).
-• [[v.front()]] و [[v.back()]]: أول وآخر عنصر.
-• [[v.pop_back()]]: شيل الأخير.
-• [[v.erase(v.begin() + i)]]: شيل العنصر رقم i. [[v.begin()]] iterator لأول عنصر (الـ iterators ليها درس).
-• [[v.reserve(n)]]: احجز مكان لـ n عنصر مقدمًا من غير ما تضيف. و [[v.capacity()]]: المكان المحجوز فعلًا.
-• [[std::vector<int> v(5, 0)]]: خمس عناصر كلهم 0. خلي بالك: الأقواس [[( )]] غير [[{ }]]، فـ [[std::vector<int> v{5, 0}]] = عنصرين: 5 و 0.
+الوصول للحقول:
+• [[s.age]]: النقطة لما يكون عندك المتغير نفسه.
+• [[p->age]]: السهم لما يكون عندك pointer للـ struct. هي اختصار لـ [[(*p).age]]: روح للعنوان وبعدين هات الحقل.
 
-و vector جوه vector = جدول: [[std::vector<std::vector<int>> grid(3, std::vector<int>(4, 0));]] تلات صفوف في كل صف ٤ أصفار.`,
-          example: R`#include <iostream>
-#include <vector>
+حاجات لازم تعرفها:
+• [[Student b = a;]] بتنسخ كل الحقول، وحتى الـ array اللي جوه. فـ b نسخة مستقلة.
+• الـ struct بيتبعت للدالة بالقيمة (نسخة) زي أي متغير. فلو الدالة لازم تغيّره، أو هو كبير ومش عايز تنسخه، ابعت pointer: [[birthday(&a)]]. ولو هتقرا بس: [[const Student *]].
+• تقدر تعمل array من structs: [[Student group[2]]].
+• الحجم ممكن يبقى أكبر من مجموع الحقول، لأن الـ compiler بيزوّد bytes فاضية (padding) عشان كل حقل يبدأ في عنوان مناسب لنوعه.`,
+          example: R`#include <stdio.h>
+#include <string.h>
 
-int main() {
-    std::vector<int> v = {5, 3, 8};
-    v.push_back(1);
-    v.emplace_back(9);
-    std::cout << "size=" << v.size() << " front=" << v.front() << " back=" << v.back() << '\n';
-    v[0] = 50;
-    std::cout << "at(1)=" << v.at(1) << '\n';
-    v.erase(v.begin() + 1);
-    v.pop_back();
-    for (int x : v) std::cout << x << ' ';
-    std::cout << '\n';
-    std::vector<int> big;
-    big.reserve(1000);
-    std::cout << "size=" << big.size() << " capacity=" << big.capacity() << '\n';
-    std::vector<std::vector<int>> grid(2, std::vector<int>(3, 7));
-    std::cout << "grid " << grid.size() << "x" << grid[0].size() << " = " << grid[1][2] << '\n';
-}`,
-          try: R`اعمل vector فاضي، وضيف فيه الأرقام من 1 لـ 20 بـ push_back، واطبع [[size]] و [[capacity]] بعد كل إضافة: إمتى الـ capacity بتتغير، وبكام؟ وبعدين اطبع [[v.at(100)]]، وبعدين [[v[100]]] واعمل compile بـ [[-fsanitize=address]].`,
-          flag: "script",
-          deep: {
-            why: R`vector بيحل كل مشاكل الـ array في C: بيعرف طوله، وبيكبر لوحده، وبيحرر نفسه، وبيتنسخ صح، وبيتبعت لدالة بـ [[const &]] من غير ما يضيع الطول. ولأن العناصر جنب بعض، اللف عليه أسرع من أغلب الـ containers التانية بفرق كبير (درس الأداء في المستوى ٣). القاعدة المشهورة: استخدم vector إلا لو عندك سبب.`,
-            how: R`جوه الـ vector ٣ حاجات: pointer للعناصر على الـ heap، والـ size، والـ capacity. لما الـ size يوصل للـ capacity و تعمل push_back، بيحجز مكان أكبر (في libstdc++ بتاع gcc ضعف القديم)، وينقل العناصر، ويحرر القديم. عشان كده push_back متوسطها [[O(1)]] (amortized) مع إن مرة كل فين وفين بتبقى [[O(n)]].
+typedef struct {
+    char name[32];
+    int age;
+    double gpa;
+} Student;
 
-ونتيجة النقل ده: أي pointer أو reference أو iterator لعنصر في الـ vector بيبقى باظ بعد push_back لو حصل نقل. ده اسمه iterator invalidation.
-
-[[erase]] من النص [[O(n)]] لأنه بيزق كل اللي بعده خطوة. ومن الآخر ([[pop_back]]) [[O(1)]].`,
-            when: R`أي قايمة. لو عارف الحجم التقريبي اعمل [[reserve]] عشان توفّر النقل. ولو الحجم ثابت ومعروف وقت الـ compile ممكن [[std::array]]. ولو بتضيف وتشيل من الأول كتير [[std::deque]].`,
-            mistakes: R`تحتفظ بـ pointer أو reference لعنصر وبعدين تعمل push_back. وتعمل erase جوه range-for على نفس الـ vector (درس الـ iterators). وتستخدم [[v[i]]] بـ i ممكن يبقى بره، والأحسن [[at]] وانت بتطوّر. و [[for (int i = 0; i < v.size(); i++)]]: مقارنة int بـ unsigned و [[-Wextra]] بينبّهك، استخدم range-for أو [[std::size_t]]. و [[reserve]] مش بتغيّر الـ size: [[v[0]]] بعدها لسه UB.`
-          },
-          lines: [
-            "cout.",
-            R`[[vector]].`,
-            "main.",
-            R`[[std::vector<int>]] بقيم أولية.`,
-            "ضيف في الآخر.",
-            "نفس الفكرة: بيبني العنصر في مكانه.",
-            "size=5 front=5 back=9.",
-            R`[[[ ]]] من غير فحص.`,
-            R`[[at]] بفحص الحدود. at(1)=3.`,
-            R`شيل العنصر رقم 1 (3). [[v.begin() + 1]] = iterator للعنصر التاني.`,
-            "شيل الأخير (9).",
-            "اللي فاضل: 50 8 1.",
-            "سطر جديد.",
-            "vector فاضي.",
-            "احجز مكان لـ 1000 من غير ما تضيف.",
-            "size=0 و capacity=1000.",
-            "جدول: صفين، كل صف ٣ عناصر قيمتهم 7.",
-            R`[[grid[1][2]]]: الصف التاني العنصر التالت.`,
-            "قفلة."
-          ],
-          sol: R`الناتج:
-[[size=5 front=5 back=9]]
-[[at(1)=3]]
-[[50 8 1 ]]
-[[size=0 capacity=1000]]
-[[grid 2x3 = 7]]
-
-الـ capacity مع gcc بتمشي 1 ثم 2 ثم 4 ثم 8 ثم 16 ثم 32: بتتضاعف لما تتملي (المعيار مش بيحدد الرقم، و MSVC بيزوّد ١.٥ مرة).
-
-[[v.at(100)]] بترمي exception، ولو محدش مسكه البرنامج بيقف:
-[[terminate called after throwing an instance of 'std::out_of_range']]
-[[what():  vector::_M_range_check: __n (which is 100) >= this->size() (which is 20)]]
-
-[[v[100]]] من غير sanitizer ممكن تطبع أي رقم وتكمّل. مع ASan: [[heap-buffer-overflow]].`
-        },
-        {
-          cmd: "الـ map و unordered_map في C++",
-          title: "std::map و std::unordered_map: تخزين key و value، والفرق بينهم، وفخ الـ []",
-          desc: R`الـ map بيخزن أزواج: key و value، وتوصل للقيمة بالـ key بسرعة. زي object في JS أو dict في Python.
-
-[[std::map<std::string, int> stock]]: المفتاح string والقيمة int.
-• [[stock["book"] = 3;]]: ضيف أو عدّل.
-• [[stock["pen"] += 2;]]: عدّل.
-• [[stock.count("laptop")]]: 1 لو موجود و 0 لو لأ. وفي C++20 [[stock.contains("laptop")]] أوضح.
-• [[stock.find("apple")]]: بترجّع iterator. لو مش موجود بيساوي [[stock.end()]]. والـ iterator بيشاور على pair: [[it->first]] المفتاح و [[it->second]] القيمة.
-• [[stock.erase("pen")]]: امسح.
-• اللف: [[for (const auto &p : stock)]] كل p فيه [[.first]] و [[.second]]. ([[auto]] = «الـ compiler يعرف النوع لوحده»، ليها درس.)
-
-الفرق:
-• [[std::map]]: المفاتيح مترتبة دايمًا (أبجديًا هنا)، والعمليات [[O(log n)]]. مبني على شجرة (red-black tree).
-• [[std::unordered_map]]: مفيش ترتيب، والعمليات [[O(1)]] في المتوسط. مبني على hash table. أسرع في أغلب الحالات.
-
-الفخ المشهور: [[m[key]]] لو المفتاح مش موجود بتضيفه بقيمة افتراضية (0 للأرقام، و "" للنصوص) وبعدين ترجّعها. فمجرد إنك «تبص» على مفتاح مش موجود بـ [[[ ]]] بيغيّر الـ map. للقراية بس استخدم [[find]] أو [[contains]] أو [[at]] (بترمي exception لو مش موجود).
-
-وده بالظبط اللي بيخلي العدّ سهل: [[words[w]++]] لو w جديد بيبدأ من 0 ويبقى 1.`,
-          example: R`#include <iostream>
-#include <map>
-#include <string>
-#include <unordered_map>
-
-int main() {
-    std::map<std::string, int> stock = {{"pen", 10}, {"apple", 5}};
-    stock["book"] = 3;
-    stock["pen"] += 2;
-    for (const auto &p : stock) std::cout << p.first << '=' << p.second << ' ';
-    std::cout << '\n';
-    std::cout << "laptop? " << stock.count("laptop") << '\n';
-    auto it = stock.find("apple");
-    if (it != stock.end()) std::cout << "apple " << it->second << '\n';
-    std::unordered_map<std::string, int> words;
-    for (std::string w : {"a", "b", "a", "c", "a"}) words[w]++;
-    std::cout << "a appears " << words["a"] << " times, size=" << words.size() << '\n';
-    int ghost = stock["ghost"];
-    std::cout << "after [ghost]: size=" << stock.size() << " value=" << ghost << '\n';
-}`,
-          try: R`اكتب برنامج يقرا كلام من الـ input لحد ما يخلص ([[while (std::cin >> w)]]) ويطبع كل كلمة وعدد مراتها مترتبة أبجديًا. جرّبه بـ [[echo "to be or not to be" | ./app]]. وبعدين بدّل الـ map بـ unordered_map: الترتيب اتغيّر؟ وبعدين اطبع [[stock.at("ghost2")]].`,
-          flag: "script",
-          deep: {
-            why: R`العدّ والتجميع والبحث بالـ key موجودين في كل برنامج تقريبًا، ونص مسائل الانترفيو بتتحل بـ hash map (two sum، و anagrams، و أول حرف مش متكرر). وفهم الفرق بين الشجرة والـ hash بيتسأل.`,
-            how: R`[[std::map]] شجرة متوازنة: كل عنصر node لوحده على الـ heap، وكل بحث بينزل من الجذر، فـ [[O(log n)]]. والترتيب بيتحدد بـ [[<]] على المفتاح، فأي نوع ليه [[<]] ينفع مفتاح.
-
-[[std::unordered_map]] array من «buckets». المفتاح بيعدّي على دالة hash تطلّع رقم، والرقم بيحدد الـ bucket. المتوسط [[O(1)]]، بس لو مفاتيح كتير وقعت في نفس الـ bucket ممكن يبقى [[O(n)]]. ولما يتملي بيعمل rehash (يكبر ويوزّع تاني). والمفتاح محتاج hash و [[==]]: الأنواع المدمجة و string جاهزين، ولـ struct بتاعك لازم تكتب hash.
-
-اللف على [[unordered_map]] ترتيبه مش مضمون، وممكن يتغير بين تشغيل وتشغيل أو بين compilers.`,
-            when: R`unordered_map كاختيار افتراضي للبحث والعدّ. map لما محتاج ترتيب (تطبع مترتب، أو أصغر مفتاح أكبر من x بـ [[lower_bound]]). ولو المفاتيح أرقام صغيرة من 0 لـ n، vector عادي أسرع من الاتنين.`,
-            mistakes: R`تستخدم [[m[key]]] عشان تتشيّك على وجود مفتاح فتضيفه بالغلط. وتعتمد على ترتيب unordered_map. وتعمل [[m[key]]] على map نوعه [[const]]: مش هتتعمل compile لأن [[[ ]]] ممكن تضيف، استخدم [[at]] أو [[find]]. وتمسح عناصر وانت بتلف عليها بالـ range-for.`
-          },
-          lines: [
-            "cout.",
-            R`[[std::map]].`,
-            "string.",
-            R`[[std::unordered_map]].`,
-            "main.",
-            "map: المفتاح string والقيمة int، بقيم أولية.",
-            R`ضيف مفتاح جديد بـ [[[ ]]].`,
-            "عدّل قيمة موجودة: 12.",
-            R`اللف بيطلع مترتب أبجديًا. p فيه first و second.`,
-            "سطر جديد.",
-            R`[[count]]: 0 لأن laptop مش موجود.`,
-            R`[[find]] بترجّع iterator، أو [[end()]] لو مش موجود.`,
-            R`[[it->second]]: القيمة. السهم لأن الـ iterator بيتصرف زي pointer.`,
-            "hash map للعدّ.",
-            R`[[words[w]++]]: الكلمة الجديدة بتبدأ من 0.`,
-            "a ظهرت 3 مرات، و 3 كلمات مختلفة.",
-            R`الفخ: [[[ ]]] على مفتاح مش موجود بتضيفه بـ 0.`,
-            "الـ size بقى 4 بدل 3.",
-            "قفلة."
-          ],
-          sol: R`الناتج:
-[[apple=5 book=3 pen=12 ]]
-[[laptop? 0]]
-[[apple 5]]
-[[a appears 3 times, size=3]]
-[[after [ghost]: size=4 value=0]]
-
-عدّ الكلمات مع [[echo "to be or not to be"]] بالـ map:
-[[be 2]] و [[not 1]] و [[or 1]] و [[to 2]] مترتبين. بالـ unordered_map نفس الأرقام بترتيب تاني.
-
-[[stock.at("ghost2")]] بترمي [[std::out_of_range]] برسالة [[map::at]].`,
-          solCode: R`#include <iostream>
-#include <map>
-#include <string>
-
-int main() {
-    std::map<std::string, int> count;
-    std::string w;
-    while (std::cin >> w) count[w]++;
-    for (const auto &[word, n] : count) std::cout << word << ' ' << n << '\n';
-}`
-        },
-        {
-          cmd: "set و deque و array",
-          title: "containers تانية: std::array و std::set و std::deque و priority_queue، إمتى كل واحد؟",
-          desc: R`غير vector و map، فيه containers لحالات معينة:
-
-• [[std::array<int, 3>]]: array بحجم ثابت معروف وقت الـ compile (الرقم جزء من النوع). زي array الـ C بالظبط في السرعة والمكان (على الـ stack)، بس بتعرف حجمها ([[.size()]])، وبتتنسخ، وبتتبعت لدالة من غير ما تتحول لـ pointer.
-• [[std::set<int>]]: مجموعة من غير تكرار ومترتبة. [[insert]] و [[erase]] و [[contains]] (C++20) [[O(log n)]]. و [[std::unordered_set]] نفس الفكرة من غير ترتيب و [[O(1)]] في المتوسط.
-• [[std::deque<int>]]: «double-ended queue». زي vector بس الإضافة والشيل من الأول ([[push_front]] و [[pop_front]]) [[O(1)]] كمان.
-• [[std::priority_queue<int>]]: heap. [[top()]] دايمًا أكبر عنصر، و [[push]] و [[pop]] [[O(log n)]]. ولو عايز الأصغر: [[std::priority_queue<int, std::vector<int>, std::greater<int>>]].
-• [[std::stack]] و [[std::queue]]: واجهات بسيطة (adapters) فوق deque: stack بيطلع آخر واحد دخل (LIFO)، و queue أول واحد دخل (FIFO).
-• [[std::list]]: linked list. نادرًا ما بيبقى الاختيار الصح (درس الأداء).
-
-القاعدة: ابدأ بـ vector. لو محتاج «موجود ولا لأ» بسرعة: unordered_set. لو محتاج ترتيب ومن غير تكرار: set. لو بتشيل من الأول: deque. لو دايمًا عايز الأكبر أو الأصغر: priority_queue.`,
-          example: R`#include <array>
-#include <deque>
-#include <iostream>
-#include <queue>
-#include <set>
-
-int main() {
-    std::array<int, 3> rgb = {255, 128, 0};
-    std::cout << "rgb size=" << rgb.size() << " g=" << rgb[1] << '\n';
-    std::set<int> s = {5, 1, 5, 3};
-    s.insert(2);
-    for (int x : s) std::cout << x << ' ';
-    std::cout << "| has 3? " << s.contains(3) << '\n';
-    std::deque<int> d = {2, 3};
-    d.push_front(1);
-    d.push_back(4);
-    d.pop_front();
-    std::cout << "deque front=" << d.front() << " back=" << d.back() << '\n';
-    std::priority_queue<int> pq;
-    for (int x : {4, 9, 1}) pq.push(x);
-    std::cout << "max=" << pq.top() << '\n';
-    pq.pop();
-    std::cout << "next=" << pq.top() << '\n';
-}`,
-          try: R`اكتب دالة بتاخد [[std::vector<int>]] وترجّع عدد الأرقام المختلفة فيها بـ [[std::unordered_set]] (من غير sort). وبعدين استخدم priority_queue بالأصغر عشان تطبع أصغر ٣ أرقام من [[{7, 2, 9, 4, 1, 8}]].`,
-          flag: "script",
-          deep: {
-            why: "اختيار الـ container الصح بيحوّل حل O(n²) لـ O(n log n) أو O(n)، وده بالظبط اللي بيتقاس في انترفيوهات الـ DSA. ومعرفة إن set مترتبة و unordered_set لأ، وإن priority_queue بتطلّع الأكبر افتراضيًا، بتوفّر bugs.",
-            how: R`[[std::array]] مجرد struct جواه array الـ C، فمفيش أي تكلفة زيادة. [[std::set]] شجرة زي map بس من غير values. [[std::deque]] مقسوم chunks صغيرة، فالإضافة من الطرفين رخيصة، بس العناصر مش كلها جنب بعض. [[std::priority_queue]] binary heap جوه vector: الأكبر في الأول، وكل push أو pop بيصلّح الترتيب في [[O(log n)]].
-
-[[std::greater<int>]] function object بيعمل [[a > b]]، فلما تديه للـ priority_queue الترتيب بيتعكس.`,
-            when: R`array لحجم ثابت صغير (ألوان، إحداثيات، جدول ثابت). set لـ «مجموعة مترتبة من غير تكرار». deque لـ sliding window أو queue بتشيل من الأول. priority_queue لـ Dijkstra و «أكبر k عنصر» و الـ scheduling.`,
-            mistakes: R`تستخدم [[std::list]] عشان «الإضافة في النص O(1)» وتنسى إن الوصول للنص نفسه [[O(n)]] والـ cache بيكرهها. وتفتكر إن priority_queue بتطلّع الأصغر (زي heapq في Python): هي بتطلّع الأكبر. وتعمل [[std::array<int, n>]] و n متغير: لازم ثابت وقت الـ compile.`
-          },
-          lines: [
-            R`[[std::array]].`,
-            R`[[std::deque]].`,
-            "cout.",
-            R`[[std::priority_queue]].`,
-            R`[[std::set]].`,
-            "main.",
-            R`array حجمها 3 (جزء من النوع).`,
-            "بتعرف حجمها.",
-            "set: التكرار بيتشال، والترتيب أوتوماتيك.",
-            "ضيف 2.",
-            "1 2 3 5 مترتبين.",
-            R`[[contains]] (C++20): 1.`,
-            "deque.",
-            "ضيف في الأول.",
-            "وفي الآخر.",
-            "شيل من الأول.",
-            "front=2 back=4.",
-            "heap: الأكبر فوق.",
-            "ضيف 3 أرقام.",
-            "max=9.",
-            "شيل الأكبر.",
-            "اللي بعده 4.",
-            "قفلة."
-          ],
-          sol: R`الناتج:
-[[rgb size=3 g=128]]
-[[1 2 3 5 | has 3? 1]]
-[[deque front=2 back=4]]
-[[max=9]]
-[[next=4]]
-
-عدد المختلفين: [[std::unordered_set<int> seen(v.begin(), v.end()); return seen.size();]].
-أصغر ٣ من [[{7, 2, 9, 4, 1, 8}]]: [[1 2 4]].`,
-          solCode: R`#include <functional>
-#include <iostream>
-#include <queue>
-#include <unordered_set>
-#include <vector>
-
-std::size_t count_distinct(const std::vector<int> &v) {
-    std::unordered_set<int> seen(v.begin(), v.end());
-    return seen.size();
+void birthday(Student *s) {
+    s->age++;
 }
 
-int main() {
-    std::cout << count_distinct({1, 2, 2, 3, 3, 3}) << '\n';
-    std::priority_queue<int, std::vector<int>, std::greater<int>> pq;
-    for (int x : {7, 2, 9, 4, 1, 8}) pq.push(x);
-    for (int i = 0; i < 3; ++i) {
-        std::cout << pq.top() << ' ';
-        pq.pop();
-    }
-    std::cout << '\n';
-}`
-        },
-        {
-          cmd: "auto و structured bindings",
-          title: "auto و range-for و structured bindings (auto [a, b]) و std::pair و std::tuple",
-          desc: R`[[auto]]: الـ compiler يستنتج النوع من القيمة. [[auto x = 5;]] = int، و [[auto it = m.find(k);]] بدل [[std::map<std::string, int>::iterator it]]. النوع لسه ثابت وقت الـ compile، دي مش variable زي JS.
-
-بس [[auto]] بتنسخ: [[auto s = name;]] نسخة. لو مش عايز نسخة: [[const auto &s = name;]]. ونفس الكلام في الـ range-for:
-• [[for (auto x : v)]]: نسخة من كل عنصر (تمام للأرقام).
-• [[for (const auto &x : v)]]: من غير نسخ ومن غير تعديل (للـ strings والـ objects).
-• [[for (auto &x : v)]]: من غير نسخ وتقدر تعدّل العناصر.
-
-[[std::pair<A, B>]]: قيمتين مع بعض، [[.first]] و [[.second]]. و [[std::tuple<A, B, C>]]: أي عدد، وتوصل بـ [[std::get<0>(t)]].
-
-structured bindings (C++17): تفك pair أو tuple أو struct لمتغيرات بأسماء في سطر واحد:
-• [[auto [lo, hi] = min_max(9, 4);]]
-• [[for (const auto &[name, score] : scores)]]: كل عنصر في الـ map بقى [[name]] و [[score]] بدل [[p.first]] و [[p.second]].
-
-ودي طريقة نضيفة ترجّع بيها أكتر من قيمة من دالة: رجّع pair أو tuple أو struct، وفكّه عند النداء.`,
-          example: R`#include <iostream>
-#include <map>
-#include <string>
-#include <tuple>
-#include <utility>
-
-std::pair<int, int> min_max(int a, int b) {
-    if (a < b) return {a, b};
-    return {b, a};
-}
-
-std::tuple<std::string, int, bool> load_user() {
-    return {"Sara", 22, true};
-}
-
-int main() {
-    auto [lo, hi] = min_max(9, 4);
-    std::cout << lo << ' ' << hi << '\n';
-    auto [name, age, active] = load_user();
-    std::cout << name << ' ' << age << ' ' << active << '\n';
-    std::map<std::string, int> score = {{"ali", 7}, {"mona", 9}};
-    for (auto &[who, pts] : score) pts += 1;
-    for (const auto &[who, pts] : score) std::cout << who << ':' << pts << ' ';
-    std::cout << '\n';
-    auto p = std::make_pair(1, 2.5);
-    std::cout << p.first << ' ' << p.second << ' ' << std::get<0>(load_user()) << '\n';
+int main(void) {
+    Student a = {"Sara", 21, 3.4};
+    Student b = a;
+    strcpy(b.name, "Omar");
+    birthday(&a);
+    printf("%s %d %.1f\n", a.name, a.age, a.gpa);
+    printf("%s %d\n", b.name, b.age);
+    Student group[2] = {{"Ali", 20, 2.9}, {"Mona", 22, 3.8}};
+    for (int i = 0; i < 2; i++) printf("%s ", group[i].name);
+    printf("\nsizeof(Student)=%zu\n", sizeof(Student));
+    return 0;
 }`,
-          try: R`غيّر [[for (auto &[who, pts] : score)]] لـ [[for (auto [who, pts] : score)]] (من غير [[&]]): الأرقام لسه بتزيد؟ ليه؟ وبعدين اكتب struct [[Stats { int min; int max; double avg; };]] ودالة بترجّعه من vector، وفكّه بـ [[auto [mn, mx, avg] = stats(v);]].`,
+          try: R`اعمل struct اسمه [[Product]] فيه اسم وسعر وكمية، واعمل array من ٣ منتجات، واكتب دالة [[double total_value(const Product *items, int n)]] ترجّع مجموع (السعر × الكمية). وبعدين جرّب ترتيب حقول [[Student]]: حط [[int age]] الأول وبعده [[double gpa]] وبعده الاسم، والحجم اتغيّر؟`,
           flag: "script",
           deep: {
-            why: R`أنواع C++ ممكن تبقى طويلة جدًا (خصوصًا مع الـ iterators والـ templates)، و auto بتخلي الكود يتقري. والـ structured bindings بتخلي اللف على map ورجوع أكتر من قيمة واضحين، بدل [[.first]] و [[.second]] اللي محدش فاكر مين فيهم إيه.`,
-            how: R`[[auto]] بتتبع نفس قواعد الـ templates: بتشيل الـ [[&]] والـ [[const]] من القيمة. فـ [[auto x = some_const_ref;]] بتعمل نسخة عادية. عشان كده لازم تكتب [[auto &]] أو [[const auto &]] بإيدك.
+            why: R`أي داتا حقيقية ليها أكتر من حقل: مستخدم، طلب، نقطة في لعبة، packet في الشبكة. الـ struct بيخليك تتعامل معاها كوحدة واحدة، وهو الأساس اللي الـ class في C++ اتبنت عليه (في C++ الـ struct والـ class تقريبًا نفس الحاجة).`,
+            how: R`الحقول بتتخزن ورا بعض بنفس ترتيب كتابتها. الـ [[double]] محتاج يبدأ في عنوان بيقبل القسمة على 8، فبعد [[name]] (32) و [[age]] (4) = 36، الـ compiler بيحط 4 bytes فاضية عشان gpa يبدأ عند 40. فالحجم 48 مش 44.
 
-structured binding بيعمل object واحد مستخبي، والأسماء بتبقى أسماء لأجزائه. فـ [[auto &[who, pts]]] الـ object المستخبي reference للعنصر الأصلي، و pts بيشاور على الـ value جوه الـ map فعلًا. ومن غير [[&]] بيبقى نسخة.
+[[s->age++]]: السهم أولويته أعلى من [[++]]، فهي بتزوّد الحقل مش الـ pointer.
 
-عناصر الـ map نوعها [[std::pair<const std::string, int>]]: المفتاح const، فـ [[who]] مينفعش يتغير حتى مع [[&]].`,
-            when: R`[[auto]] لما النوع واضح من السطر نفسه أو طويل ومش مهم (iterators و lambdas). اكتب النوع صريح لو بيوضّح المعنى ([[int count = 0;]]). و structured bindings في أي لف على map، وأي دالة بترجّع أكتر من قيمة.`,
-            mistakes: R`[[for (auto x : v)]] على vector من strings كبيرة: نسخة كل لفة. و [[auto x = {1, 2};]] نوعها [[std::initializer_list<int>]] مش vector. وتستخدم tuple بـ ٥ قيم: الأحسن struct بأسماء. وتفتكر إن [[auto]] بتخلي المتغير يغيّر نوعه بعدين.`
+[[{"Sara", 21, 3.4}]] بتملي الحقول بالترتيب. ومن C99 تقدر تسمّيهم: [[{.age = 21, .name = "Sara"}]]، وده أوضح والحقول اللي مكتبتهاش بتبقى صفر.`,
+            when: R`كل ما يكون عندك داتا متعلقة ببعض. وابعته لأي دالة بـ pointer ([[const]] لو للقراية) بدل ما تنسخه، خصوصًا لو كبير.`,
+            mistakes: R`تستخدم [[.]] مع pointer أو [[->]] مع متغير عادي: الـ compiler بيقولك وغالبًا بيقترح الصح. وتبعت struct بالقيمة لدالة بتعدّله وتستغرب إن الأصل متغيرش. وتنسخ struct فيه pointer وتفتكر إن النسخ عمل نسخة من الداتا اللي الـ pointer بيشاور عليها: النسخ بينسخ العنوان بس (shallow copy). ودي نفس المشكلة اللي C++ حلّتها بالـ copy constructor (rule of 3).`
           },
-          lines: [
-            "cout.",
-            "map.",
-            "string.",
-            R`[[std::tuple]].`,
-            R`[[std::pair]].`,
-            "دالة بترجّع قيمتين في pair.",
-            R`[[{a, b}]] بيعمل pair.`,
-            "الترتيب العكسي.",
-            "قفلة.",
-            "tuple بـ ٣ أنواع مختلفة.",
-            "بيعمل tuple من القيم.",
-            "قفلة.",
-            "main.",
-            R`structured binding: فك الـ pair لاسمين.`,
-            "4 9.",
-            "فك tuple لـ ٣ أسماء.",
-            R`Sara 22 1 (bool بيتطبع 1).`,
-            "map.",
-            R`[[auto &]]: pts reference للقيمة جوه الـ map، فالتعديل حقيقي.`,
-            R`[[const auto &]]: قراية بس من غير نسخ.`,
-            "سطر جديد.",
-            R`[[make_pair]]: النوع اتستنتج pair<int, double>.`,
-            R`[[std::get<0>]]: أول عنصر في الـ tuple.`,
-            "قفلة."
-          ],
-          sol: R`الناتج:
-[[4 9]]
-[[Sara 22 1]]
-[[ali:8 mona:10 ]]
-[[1 2.5 Sara]]
+          teach: R`## البرنامج بيعمل إيه؟
 
-من غير [[&]] الأرقام مش بتزيد (هتطبع [[ali:7 mona:9]])، لأن pts بقى نسخة من القيمة، والتعديل حصل في النسخة. و gcc 14 بـ [[-Wall -Wextra]] مبيقولش ولا كلمة، فالغلطة دي لازم تاخد بالك منها بنفسك.`,
-          solCode: R`#include <algorithm>
-#include <iostream>
-#include <numeric>
-#include <vector>
+بيعرّف نوع جديد [[Student]] فيه اسم وسن ومعدل، ويعمل طالبة وينسخها ويغيّر اسم النسخة، ويزوّد سن الأصل بدالة بتاخد pointer، ويعمل array من طالبين، ويطبع حجم الـ struct. اتشغّل في [[docker run --rm gcc:14]] (gcc 14.4.0) بـ [[gcc -std=c17 -Wall -Wextra]].
 
-struct Stats {
-    int min;
-    int max;
-    double avg;
-};
+~~~text الناتج
+Sara 22 3.4
+Omar 21
+Ali Mona 
+sizeof(Student)=48
+~~~
 
-Stats stats(const std::vector<int> &v) {
-    auto [mn, mx] = std::minmax_element(v.begin(), v.end());
-    double avg = std::accumulate(v.begin(), v.end(), 0.0) / v.size();
-    return {*mn, *mx, avg};
+---
+
+## ١. [[typedef struct { ... } Student;]]
+
+~~~c
+typedef struct {
+    char name[32];
+    int age;
+    double gpa;
+} Student;
+~~~
+
+نفكّها من جوه لبرة:
+
+- [[struct { ... }]]: نوع جديد فيه ٣ حقول (fields)، كل حقل نوعه واسمه و [[;]].
+- [[typedef النوع الاسم;]]: «اديني اسم تاني للنوع ده». هنا الاسم [[Student]].
+- النتيجة: تكتب [[Student a;]] على طول. من غير typedef كنت هتكتب [[struct Student { ... };]] وبعدين [[struct Student a;]] في كل مكان.
+- الـ [[;]] بعد [[}]] لازمة.
+
+---
+
+## ٢. [[Student a = {"Sara", 21, 3.4};]]
+
+القيم الأولية بنفس ترتيب الحقول: name ثم age ثم gpa. والنص [["Sara"]] بيتنسخ جوه الـ array [[name]].
+
+---
+
+## ٣. النسخ بـ [[=]]
+
+~~~c
+    Student b = a;
+    strcpy(b.name, "Omar");
+~~~
+
+- [[Student b = a;]]: بينسخ **كل** bytes الـ struct، حتى الـ 32 حرف بتوع الاسم. b نسخة مستقلة.
+- [[b.name]]: النقطة [[.]] = «الحقل name من b».
+- [[strcpy(b.name, "Omar")]]: انسخ النص في الـ array. (مينفعش [[b.name = "Omar"]]: جربتها وطلع [[error: assignment to expression with array type]]، لأن الـ array مبتتعيّنش بـ [[=]].) الـ 32 byte كفاية لـ Omar، فـ strcpy آمنة هنا.
+- [[a.name]] لسه Sara.
+
+---
+
+## ٤. الدالة و [[->]]
+
+~~~c
+void birthday(Student *s) {
+    s->age++;
 }
+~~~
 
-int main() {
-    auto [mn, mx, avg] = stats({4, 8, 1, 7});
-    std::cout << mn << ' ' << mx << ' ' << avg << '\n';
-}`
-        },
-        {
-          cmd: "iterators",
-          title: "الـ iterators: begin و end و ++it و *it، وإزاي تمسح من container وانت بتلف عليه",
-          desc: R`الـ iterator «إصبع» بيشاور على عنصر في container، وبيتصرف زي pointer:
-• [[*it]]: العنصر نفسه. و [[it->member]] لو العنصر struct أو pair.
-• [[++it]]: العنصر اللي بعده.
-• [[v.begin()]]: أول عنصر. و [[v.end()]]: «واحد بعد الآخر»، مش عنصر حقيقي، فمتعملش عليه [[*]]. بيستخدم كعلامة نهاية بس.
-• [[v.rbegin()]] و [[v.rend()]]: نفس الفكرة بالعكس.
+- [[Student *s]]: الدالة بتاخد **عنوان** الطالب، عشان تغيّر الأصل مش نسخة (نفس فكرة [[swap]]).
+- [[s->age]]: السهم = «روح للـ struct اللي s بيشاور عليه، وهات age». اختصار لـ [[(*s).age]] (الأقواس لازمة لأن النقطة أولويتها أعلى من النجمة).
+- [[s->age++]]: [[->]] أولويته أعلى من [[++]]، فالزيادة على الحقل.
 
-ده نفس اللف بالـ pointers اللي في درس pointer arithmetic في C بالظبط: [[for (int *it = arr; it != arr + 4; it++)]]. الـ iterators عمّموا الفكرة على كل الـ containers، حتى اللي عناصرها مش جنب بعض زي map و list. والـ range-for ([[for (int x : v)]]) بيتحول لـ loop بالـ iterators من جوه.
+~~~c
+    birthday(&a);
+    printf("%s %d %.1f\n", a.name, a.age, a.gpa);
+    printf("%s %d\n", b.name, b.age);
+~~~
 
-مش كل الـ iterators زي بعض:
-• vector و array و deque: random access. تقدر تعمل [[it + 2]] و [[it - v.begin()]] (المسافة).
-• list و map و set: bidirectional، [[++]] و [[--]] بس.
+~~~text الناتج
+Sara 22 3.4
+Omar 21
+~~~
 
-المسح وانت بتلف: [[v.erase(it)]] بتبوّظ الـ iterator ده (وأي iterator بعده في الـ vector). عشان كده erase بترجّع iterator للعنصر اللي بعد اللي اتمسح، وتكمّل منه. ومتزودش [[++it]] في اللفة دي.
+a بقت 22. و b لسه 21 لأنها اتنسخت **قبل** birthday، وبقى اسمها Omar.
 
-وفي C++20 فيه [[std::erase_if(v, condition)]] بتعمل الحكاية دي كلها في سطر.`,
-          example: R`#include <iostream>
-#include <list>
-#include <vector>
+ولو كتبت [[s.age++]] على pointer:
 
-int main() {
-    std::vector<int> v = {10, 20, 30, 40};
-    for (auto it = v.begin(); it != v.end(); ++it) std::cout << *it << ' ';
-    std::cout << '\n';
-    auto it = v.begin() + 2;
-    std::cout << "*it=" << *it << " index=" << (it - v.begin()) << '\n';
-    for (auto r = v.rbegin(); r != v.rend(); ++r) std::cout << *r << ' ';
-    std::cout << '\n';
-    for (auto e = v.begin(); e != v.end();) {
-        if (*e % 20 == 0) e = v.erase(e);
-        else ++e;
-    }
-    for (int x : v) std::cout << x << ' ';
-    std::cout << '\n';
-    std::list<int> l = {1, 2, 3};
-    auto li = l.begin();
-    ++li;
-    l.insert(li, 99);
-    for (int x : l) std::cout << x << ' ';
-    std::cout << '\n';
-}`,
-          try: R`اكتب نفس loop المسح بس بـ range-for ([[for (int x : v) if (...) v.erase(...)]]) واعمل compile بـ [[-fsanitize=address]]: إيه اللي حصل؟ وبعدين اعمل نفس المسح بسطر واحد بـ [[std::erase_if(v, [](int x) { return x % 20 == 0; });]]. وجرّب [[auto li2 = l.begin() + 1;]] على الـ list.`,
-          flag: "script",
-          deep: {
-            why: R`الـ iterators هما اللغة المشتركة بين الـ containers والـ algorithms: [[std::sort(v.begin(), v.end())]] مش عارفة إنها شغالة على vector، هي شايفة iterators بس. فلو فهمتهم، المكتبة كلها هتبقى مفهومة. وأخطاء الـ iterator invalidation من أشهر أسباب الـ crashes في C++.`,
-            how: R`في vector، الـ iterator غالبًا pointer مغلّف، فمفيش تكلفة. في map، الـ iterator بيشاور على node في الشجرة، و [[++]] بيمشي للعنصر اللي بعده بالترتيب.
+~~~text الناتج
+L6dot.c:11:6: error: 's' is a pointer; did you mean to use '->'?
+   11 |     s.age++;
+      |      ^
+      |      ->
+~~~
 
-الـ invalidation: vector لما يكبر بينقل كل العناصر، فكل الـ iterators القديمة بتبوّظ. وerase بيزق اللي بعده خطوة. في list و map، المسح بيبوّظ الـ iterator بتاع العنصر الممسوح بس، والإضافة مش بتبوّظ حاجة.
+gcc بيقولك الصح بنفسه.
 
-[[++it]] مقابل [[it++]]: الاتنين بيمشوا خطوة. [[it++]] بيرجّع نسخة من القديم، فلو مش محتاجها [[++it]] أنظف، وده سبب إنك هتشوفها كتير في كود C++.`,
-            when: R`الـ range-for لما بتلف على كل حاجة من غير تعديل الـ container. الـ iterators الصريحة لما تمسح أو تضيف وانت بتلف، أو تلف على جزء، أو تبعت مدى لـ algorithm. وفي C++20 الـ ranges ([[std::ranges::sort(v)]]) بتخبي begin و end.`,
-            mistakes: R`[[*v.end()]]. و erase جوه range-for. وتحتفظ بـ iterator بعد push_back. وتقارن iterators من containers مختلفة. و [[it + 2]] على list أو map: مش هتتعمل compile، استخدم [[std::next(it, 2)]].`
-          },
-          lines: [
-            "cout.",
-            R`[[std::list]]: linked list.`,
-            "vector.",
-            "main.",
-            "4 عناصر.",
-            R`لف بالـ iterator: من begin لحد end، و [[*it]] العنصر.`,
-            "سطر جديد.",
-            "iterator للعنصر التالت.",
-            "30، والمسافة من البداية 2.",
-            "لف بالعكس.",
-            "سطر جديد.",
-            R`loop من غير [[++e]] في الهيدر، عشان المسح بيتحكم فيها.`,
-            R`[[erase]] بترجّع iterator للعنصر اللي بعد الممسوح.`,
-            "لو مفيش مسح امشي خطوة.",
-            "قفلة.",
-            "اللي فاضل: 10 30.",
-            "سطر جديد.",
-            "linked list.",
-            "iterator لأول عنصر.",
-            R`[[++]] بس: list مفيهاش [[+ 1]].`,
-            "insert قبل العنصر اللي li بيشاور عليه.",
-            "1 99 2 3.",
-            "سطر جديد.",
-            "قفلة."
-          ],
-          sol: R`الناتج:
-[[10 20 30 40 ]]
-[[*it=30 index=2]]
-[[40 30 20 10 ]]
-[[10 30 ]]
-[[1 99 2 3 ]]
+---
 
-المسح جوه range-for ([[for (int x : v) if (x % 20 == 0) v.erase(std::find(v.begin(), v.end(), x));]]): undefined behavior. عندي طبع [[10]] بس بدل [[10 30]]، ومن غير أي error حتى مع ASan، لأن erase مش بتحرر ذاكرة الـ vector فمفيش حاجة «ممنوعة» اتلمست. السبب إن الـ range-for ماسك iterator ومستني end قديمة، وبعد الـ erase العناصر اتزقت فبيفوّت عناصر ويقرا بعد الآخر الجديد. الغلط الصامت ده أسوأ من crash.
+## ٥. array من structs
 
-[[l.begin() + 1]] على list:
-[[error: no match for 'operator+']]
-الحل [[std::next(l.begin(), 1)]].`
-        },
-        {
-          cmd: "algorithms و lambdas",
-          title: "std::sort و find و count_if و transform و accumulate مع الـ lambdas ([](int x) { ... })",
-          desc: R`[[<algorithm>]] و [[<numeric>]] فيهم أكتر من ١٠٠ دالة جاهزة شغالة على أي مدى [[(begin, end)]]. بدل ما تكتب loop كل مرة، بتنادي اسم بيقول انت بتعمل إيه:
-• [[std::sort(b, e)]]: ترتيب [[O(n log n)]].
-• [[std::find(b, e, value)]]: بترجّع iterator لأول عنصر بيساوي value، أو e لو مش موجود.
-• [[std::count_if(b, e, pred)]]: كام عنصر الشرط صح عليه.
-• [[std::transform(b, e, out, f)]]: طبّق f على كل عنصر واكتب الناتج في out.
-• [[std::accumulate(b, e, init)]] (من numeric): المجموع. ونوع init بيحدد نوع النتيجة: [[0]] int، و [[0LL]] long long، و [[0.0]] double.
-• وفيه [[min_element]] و [[max_element]] و [[reverse]] و [[unique]] و [[binary_search]] و [[any_of]] و [[all_of]] وغيرهم.
+~~~c
+    Student group[2] = {{"Ali", 20, 2.9}, {"Mona", 22, 3.8}};
+    for (int i = 0; i < 2; i++) printf("%s ", group[i].name);
+~~~
 
-الـ lambda دالة صغيرة من غير اسم بتكتبها مكان ما هتستخدمها:
-[[[](int x) { return x > 4; }]]
-• [[[ ]]]: الـ capture list: متغيرات من بره الـ lambda عايزها جوه. فاضية = مش محتاج حاجة.
-• [[[factor]]]: خد نسخة من factor.
-• [[[&calls]]]: خد calls بالـ reference، فالتعديل جوه بيأثر بره.
-• [[[=]]] كله نسخ، و [[[&]]] كله reference.
-• بعد كده parameters و جسم زي أي دالة.
+- كل عنصر قيمه بين [[{ }]] جوه الـ [[{ }]] الكبيرة.
+- [[group[i].name]]: الأول [[group[i]]] (طالب)، وبعدين [[.name]] منه.
 
-مع [[std::sort]] تقدر تدي lambda بتقارن عنصرين وترجّع true لو الأول يتحط الأول: [[[](const Product &a, const Product &b) { return a.price > b.price; }]] = من الأغلى للأرخص.`,
-          example: R`#include <algorithm>
-#include <iostream>
-#include <numeric>
-#include <string>
-#include <vector>
+~~~text الناتج
+Ali Mona 
+~~~
 
-struct Product {
-    std::string name;
+---
+
+## ٦. الحجم والـ padding
+
+~~~c
+    printf("\nsizeof(Student)=%zu\n", sizeof(Student));
+~~~
+
+الـ [[\n]] في الأول بتقفل سطر الأسماء. والحجم:
+
+~~~text الناتج
+sizeof(Student)=48
+~~~
+
+ليه 48 والحقول 32 + 4 + 8 = 44؟
+
+| الحقل | يبدأ عند byte | الحجم |
+|---|---|---|
+| [[name]] | 0 | 32 |
+| [[age]] | 32 | 4 |
+| (فاضي: padding) | 36 | 4 |
+| [[gpa]] | 40 | 8 |
+
+الـ [[double]] على x86-64 بيحب يبدأ عند عنوان بيقبل القسمة على 8 (alignment)، والـ CPU بيقراه أسرع كده. فالـ compiler ساب 4 byte فاضيين بعد age عشان gpa يبدأ عند 40.
+
+### الـ try: غيّر الترتيب
+
+| الترتيب | الحجم |
+|---|---|
+| [[name, age, gpa]] (الأصلي) | 48 |
+| [[age, gpa, name]] | 48: 4 + 4 فاضيين + 8 + 32 |
+| [[gpa, age, name]] | 48: 8 + 4 + 32 = 44، ويتكمّل لـ 48 |
+
+الحالة التالتة: الـ struct كله لازم حجمه يقبل القسمة على 8، عشان في array منه كل [[gpa]] يفضل على 8. فالـ compiler بيزوّد 4 في **الآخر**. الحجم مفرقش هنا، بس في structs تانية ترتيب الحقول من الأكبر للأصغر بيوفّر.
+
+---
+
+## ٧. الـ solCode: [[total_value]]
+
+~~~c
+typedef struct {
+    char name[32];
     double price;
-};
+    int qty;
+} Product;
 
-int main() {
-    std::vector<int> v = {5, 2, 9, 1, 7};
-    std::sort(v.begin(), v.end());
-    auto it = std::find(v.begin(), v.end(), 7);
-    std::cout << "7 at index " << (it - v.begin()) << '\n';
-    int sum = std::accumulate(v.begin(), v.end(), 0);
-    auto big = std::count_if(v.begin(), v.end(), [](int x) { return x > 4; });
-    std::cout << "sum=" << sum << " big=" << big << '\n';
-    int factor = 10;
-    std::vector<int> scaled(v.size());
-    std::transform(v.begin(), v.end(), scaled.begin(), [factor](int x) { return x * factor; });
-    std::cout << scaled.front() << ".." << scaled.back() << '\n';
-    std::vector<Product> items = {{"pen", 5}, {"bag", 120}, {"book", 60}};
-    std::sort(items.begin(), items.end(),
-              [](const Product &a, const Product &b) { return a.price > b.price; });
-    for (const auto &p : items) std::cout << p.name << ' ';
-    std::cout << '\n';
-    int calls = 0;
-    auto counter = [&calls]() { ++calls; };
-    counter();
-    counter();
-    std::cout << "calls=" << calls << '\n';
-}`,
-          try: R`على [[items]]: (1) رتّبهم بالاسم أبجديًا. (2) اعرف هل فيه منتج أغلى من 100 بـ [[std::any_of]]. (3) احسب مجموع الأسعار بـ accumulate (خلي بالك من نوع الـ init). وبعدين غيّر [[[&calls]]] لـ [[[calls]]]: إيه اللي حصل؟`,
-          flag: "script",
-          deep: {
-            why: R`[[std::count_if(..., x > 4)]] بتقول «بعدّ اللي أكبر من 4» من أول نظرة، والـ loop بإيدك محتاج تقراه كله عشان تفهمه. والـ algorithms متختبرة كويس ومحسّنة: [[std::sort]] في gcc مثلًا introsort (quicksort بيتحول لـ heapsort لو الحالة وحشة)، فمضمون [[O(n log n)]].`,
-            how: R`الـ lambda الـ compiler بيحوّلها لـ class صغير مستخبي جواه الـ captures كـ members، و [[operator()]] فيه جسمها. فـ [[[factor](int x) { ... }]] كأنها object جواه نسخة من factor. وعشان النوع معروف وقت الـ compile، الـ compiler يقدر يعملها inline جوه sort، فبتبقى أسرع غالبًا من [[qsort]] بتاعة C اللي بتاخد pointer لدالة.
+double total_value(const Product *items, int n) {
+    double total = 0;
+    for (int i = 0; i < n; i++) total += items[i].price * items[i].qty;
+    return total;
+}
+~~~
 
-الـ capture بالنسخة بتاخد القيمة وقت ما الـ lambda اتعملت، والنسخة جوه const افتراضيًا (عشان تعدّلها لازم [[mutable]]). الـ capture بالـ reference لازم المتغير الأصلي يفضل عايش طول ما الـ lambda ممكن تتنادى.
+- [[const Product *items]]: عنوان أول منتج، و [[const]] لأننا بنقرا بس. ومبنسخش الـ structs (كل واحد 48 byte).
+- [[items[i]]] منتج (مش pointer)، فبعده [[.]] مش [[->]].
+- في main: [[{{"pen", 5.5, 10}, {"book", 80, 2}, {"bag", 250, 1}}]] = 55 + 160 + 250.
 
-[[std::count_if]] بترجّع [[std::ptrdiff_t]] مش int، عشان كده [[auto big]].`,
-            when: R`أي loop ليه اسم معروف (بحث، عدّ، ترتيب، تحويل، مجموع). اكتب loop بإيدك لو المنطق مش بيتطابق مع algorithm واضح. والـ lambdas في الـ algorithms، والـ callbacks، والـ threads (المستوى ٣). وفي C++20 فيه نسخ ranges: [[std::ranges::sort(v)]] من غير begin و end.`,
-            mistakes: R`[[std::accumulate(v.begin(), v.end(), 0)]] على vector من double: الـ init int، فكل جمع بيتقرّب لـ int. استخدم [[0.0]]. و [[std::transform]] لـ vector فاضي من غير ما تحجز مكان (اعمله بالحجم، أو استخدم [[std::back_inserter]]). و lambda بتعمل capture بالـ reference لمتغير محلي وبتعيش بعده (dangling). ودالة مقارنة في sort بترجّع [[<=]] بدل [[<]]: undefined behavior وممكن يقع.`
-          },
+~~~text الناتج
+total=465.00
+~~~
+
+---
+
+## الخلاصة
+
+| المكتوب | معناه |
+|---|---|
+| [[typedef struct { ... } T;]] | نوع جديد اسمه T |
+| [[T a = {...};]] | قيم بالترتيب |
+| [[a.field]] | حقل من متغير |
+| [[p->field]] | حقل من pointer = [[(*p).field]] |
+| [[T b = a;]] | نسخة كاملة |
+| [[f(&a)]] و [[void f(T *p)]] | الدالة تعدّل الأصل |
+
+- الحجم ممكن يزيد عن مجموع الحقول (padding).`,
           lines: [
-            R`[[sort]] و [[find]] و [[count_if]] و [[transform]].`,
-            "cout.",
-            R`[[accumulate]].`,
-            "string.",
-            "vector.",
-            "struct.",
-            "الاسم.",
-            "السعر.",
-            "قفلة.",
-            "main.",
-            "أرقام مش مترتبة.",
-            "رتّب: 1 2 5 7 9.",
-            "دوّر على 7.",
-            "المسافة من البداية: 3.",
-            R`المجموع، و [[0]] = int.`,
-            R`lambda من غير captures: كام واحد أكبر من 4؟ (3).`,
-            "sum=24 big=3.",
-            "متغير هنستخدمه جوه lambda.",
-            "vector بنفس الحجم عشان transform تكتب فيه.",
-            R`[[[factor]]]: خد نسخة من factor جوه الـ lambda.`,
-            "10..90.",
-            "vector من structs.",
-            "رتّب بدالة مقارنة...",
-            "...الأغلى الأول.",
-            "bag book pen.",
-            "سطر جديد.",
-            "عدّاد.",
-            R`[[[&calls]]]: بالـ reference، فالتعديل بيوصل لـ calls الأصلي.`,
-            "نداء.",
-            "نداء.",
-            "calls=2.",
-            "قفلة."
-          ],
-          sol: R`الناتج:
-[[7 at index 3]]
-[[sum=24 big=3]]
-[[10..90]]
-[[bag book pen ]]
-[[calls=2]]
-
-بالاسم: [[[](const Product &a, const Product &b) { return a.name < b.name; }]] = [[bag book pen]] (صدفة نفس الترتيب هنا).
-[[std::any_of(items.begin(), items.end(), [](const Product &p) { return p.price > 100; })]] = true.
-المجموع: [[std::accumulate(..., 0.0, [](double s, const Product &p) { return s + p.price; })]] = 185.
-
-مع [[[calls]]] بالنسخة: [[error: increment of read-only variable 'calls']]، لأن النسخة جوه الـ lambda const. ولو حطيت [[mutable]] هتتعمل compile بس calls بره هتفضل 0.`
-        }
-      ]
-    },
-    {
-      t: "templates و errors و CMake",
-      l: 2,
-      n: "كود generic بالـ templates و concepts، والأخطاء بالـ exceptions و optional و variant، وتنظيم المشروع بـ CMake",
-      items: [
-        {
-          cmd: "القوالب Templates والبرمجة العامة",
-          title: "الـ templates: دالة أو class واحدة تشتغل مع أي نوع، و concepts بتحدد الأنواع المسموحة",
-          desc: R`لو كتبت [[max_of]] لـ int، وبعدين محتاجها لـ double و string، مش هتكتبها ٣ مرات. الـ template «قالب» الـ compiler بيعمل منه نسخة لكل نوع بتستخدمه:
-[[template <typename T>]]
-[[T max_of(const std::vector<T> &items) { ... }]]
-• [[template <typename T>]]: اللي جاي ده قالب، و T اسم لنوع لسه مش معروف.
-• لما تنادي [[max_of(std::vector<int>{...})]]، الـ compiler بيستنتج إن T = int ويعمل نسخة بـ int.
-• وتقدر تحدده صريح: [[max_of<double>(...)]].
-
-الـ class template بنفس الفكرة: [[Box<double> b(2.5);]] وهنا لازم تكتب النوع بين [[< >]] (أو تسيب الـ compiler يستنتجه من الـ constructor في C++17). [[std::vector<int>]] و [[std::map<K, V>]] نفسهم class templates.
-
-المشكلة: الـ template بيقبل أي نوع، ولو النوع مينفعش (مفيهوش [[>]] مثلًا) الـ error بيطلع من جوه الـ template، وبيبقى طويل ومش مفهوم.
-
-الحل في C++20: concepts. شرط على النوع بيتفحص عند النداء:
-[[template <typename T> concept Number = std::integral<T> || std::floating_point<T>;]]
-[[template <Number T> T twice(T x)]]
-لو بعت string، الـ error بيبقى سطرين واضحين: «الشرط Number مش متحقق».`,
-          example: R`#include <concepts>
-#include <iostream>
-#include <string>
-#include <vector>
-
-template <typename T>
-T max_of(const std::vector<T> &items) {
-    T best = items.front();
-    for (const T &x : items)
-        if (x > best) best = x;
-    return best;
-}
-
-template <typename T>
-class Box {
-public:
-    explicit Box(T value) : value_(value) {}
-    T get() const { return value_; }
-
-private:
-    T value_;
-};
-
-template <typename T>
-concept Number = std::integral<T> || std::floating_point<T>;
-
-template <Number T>
-T twice(T x) { return x * 2; }
-
-int main() {
-    std::cout << max_of(std::vector<int>{3, 9, 2}) << '\n';
-    std::cout << max_of(std::vector<std::string>{"pear", "apple", "zoo"}) << '\n';
-    Box<double> b(2.5);
-    std::cout << b.get() << ' ' << twice(21) << ' ' << twice(1.5) << '\n';
-}`,
-          try: R`ضيف [[twice(std::string("x"))]] واقرا الـ error. وبعدين شيل [[Number]] وخليها [[template <typename T>]] وجرّب نفس النداء: الـ error بقى أطول؟ وبعدين اكتب template [[Pair<A, B>]] بسيط فيه [[first]] و [[second]]، ودالة [[swap_values]] template.`,
-          flag: "script",
-          deep: {
-            why: R`المكتبة القياسية كلها templates: كل container وكل algorithm بيشتغل مع أي نوع وبنفس سرعة الكود المكتوب بإيدك، لأن الـ compiler بيعمل نسخة خاصة لكل نوع (مش زي generics في Java اللي بتشيل النوع وقت التشغيل). وانت هتستخدم templates كل يوم حتى لو مش هتكتبها كتير.`,
-            how: R`الـ template مش كود لوحده، ده وصفة. الكود الحقيقي بيتولد لما تستخدمه بنوع (instantiation). عشان كده الـ templates لازم جسمها كله يبقى في الـ header: الملف اللي بيستخدمها لازم يشوف الوصفة كاملة عشان يولّد النسخة.
-
-الضريبة: كل نوع = نسخة، فالملف التنفيذي بيكبر والـ compile بيبطأ لو الـ templates كتير.
-
-[[std::integral<T>]] و [[std::floating_point<T>]] concepts جاهزة في [[<concepts>]]. وفيه كتابة أقصر في C++20: [[auto twice(Number auto x)]].
-
-[[typename]] و [[class]] جوه [[template < >]] نفس المعنى.`,
-            when: R`لما نفس المنطق بالظبط بيشتغل مع أنواع مختلفة: containers، و algorithms، و wrappers. مش لأي دالة «احتياطي». وضيف concepts لأي template عام عشان الأخطاء تبقى مفهومة.`,
-            mistakes: R`تحط تعريف دالة template في [[.cpp]] والـ prototype في الـ header: [[undefined reference]] وقت الـ link. وتكتب templates معقدة لحاجة نوعين بس، والـ overloading كان أبسط. وتستسلم قدام error template طويل: دوّر على أول سطر فيه «required from here» في ملفك انت، وعلى كلمة [[error]] الأولى.`
-          },
-          lines: [
-            R`[[concepts]]: فيها std::integral و std::floating_point.`,
-            "cout.",
-            "string.",
-            "vector.",
-            R`[[template <typename T>]]: T نوع هيتحدد وقت الاستخدام.`,
-            "دالة بتشتغل على vector من أي نوع.",
-            "أول عنصر.",
-            "لف على الكل.",
-            R`محتاجة [[>]] على T.`,
-            "رجّع الأكبر.",
-            "قفلة.",
-            "class template.",
-            "class.",
-            "public.",
-            "constructor.",
-            "getter.",
-            "private.",
-            "member من النوع T.",
-            "قفلة.",
-            R`concept: شرط على T.`,
-            "رقم صحيح أو عشري.",
-            R`[[Number T]] بدل [[typename T]]: النوع لازم يحقق الشرط.`,
-            "دالة صغيرة.",
-            "main.",
-            "T = int: 9.",
-            R`T = std::string: الأكبر أبجديًا zoo.`,
-            R`[[Box<double>]]: النوع صريح.`,
-            "2.5 و 42 و 3.",
-            "قفلة."
-          ],
-          sol: R`الناتج:
-[[9]]
-[[zoo]]
-[[2.5 42 3]]
-
-[[twice(std::string("x"))]] مع concept:
-[[error: no matching function for call to 'twice(std::string)']]
-وتحتها [[note: constraints not satisfied]] و [[note: no operand of the disjunction is satisfied]] (يعني ولا شرط من اللي بينهم [[||]] اتحقق). واضح: النوع مش Number.
-
-من غير concept: الـ error بيطلع من جوه [[twice]] نفسها:
-[[error: no match for 'operator*' (operand types are 'std::__cxx11::basic_string<char>' and 'int')]]
-(string مفيهوش ضرب في رقم)، ومعاه سطور كتير عن كل نسخ [[operator*]] اللي جرّبها. ولاحظ اسم النوع الحقيقي لـ std::string جوه الـ compiler.`,
-          solCode: R`#include <iostream>
-#include <string>
-
-template <typename A, typename B>
-struct Pair {
-    A first;
-    B second;
-};
-
-template <typename T>
-void swap_values(T &a, T &b) {
-    T tmp = a;
-    a = b;
-    b = tmp;
-}
-
-int main() {
-    Pair<std::string, int> p{"age", 22};
-    std::cout << p.first << '=' << p.second << '\n';
-    std::string x = "left", y = "right";
-    swap_values(x, y);
-    std::cout << x << ' ' << y << '\n';
-}`
-        },
-        {
-          cmd: "exceptions",
-          title: "الـ exceptions: throw و try و catch، وليه تمسك بـ const &، وإمتى noexcept",
-          desc: R`لما دالة تلاقي مشكلة متقدرش تحلها (input غلط، ملف مش موجود)، تقدر «ترمي» exception بدل ما ترجّع رقم خطأ:
-[[throw std::invalid_argument("division by zero");]]
-التنفيذ بيقف في نفس اللحظة، ويطلع من الدوال واحدة ورا التانية لحد ما يلاقي [[try]] ليه [[catch]] مناسب:
-[[try { ... } catch (const std::invalid_argument &e) { ... }]]
-• [[e.what()]]: الرسالة اللي اتبعتت مع الـ throw.
-• امسك بـ [[const &]] دايمًا: من غير نسخ، ومن غير slicing (لو مسكت بالقيمة كنوع الأب، الجزء بتاع الابن بيتقص).
-• الـ catch بيتفحص بالترتيب، فحط الأنواع المحددة الأول والعامة ([[std::exception]]) في الآخر.
-• [[catch (...)]] بيمسك أي حاجة، بس مش هتعرف هي إيه.
-
-الأنواع الجاهزة في [[<stdexcept>]]: [[std::invalid_argument]] و [[std::out_of_range]] و [[std::runtime_error]] و [[std::logic_error]]، وكلهم بيورثوا من [[std::exception]]. والمكتبة نفسها بترمي: [[std::stoi("abc")]] بترمي invalid_argument، و [[v.at(99)]] بترمي out_of_range، و [[new]] لو الذاكرة خلصت بترمي [[std::bad_alloc]].
-
-لو exception طلع ومحدش مسكه، البرنامج بيتقفل بـ [[std::terminate]].
-
-وهنا RAII بيبان: وانت طالع من الدوال بسبب الـ exception، كل الـ objects المحلية بيتنادى الـ destructor بتاعها، فالملفات بتتقفل والذاكرة بترجع.
-
-[[noexcept]] بعد دالة: «الدالة دي مش هترمي». لو رمت رغم كده، terminate على طول. مهمة جدًا لـ move constructors (المستوى ٣).`,
-          example: R`#include <iostream>
-#include <stdexcept>
-#include <string>
-
-double divide(double a, double b) {
-    if (b == 0) throw std::invalid_argument("division by zero");
-    return a / b;
-}
-
-int parse_age(const std::string &text) {
-    int age = std::stoi(text);
-    if (age < 0 || age > 150) throw std::out_of_range("age must be 0..150");
-    return age;
-}
-
-int main() {
-    try {
-        std::cout << divide(10, 4) << '\n';
-        std::cout << divide(1, 0) << '\n';
-        std::cout << "never printed\n";
-    } catch (const std::invalid_argument &e) {
-        std::cout << "invalid: " << e.what() << '\n';
-    }
-    for (std::string input : {"30", "abc", "200"}) {
-        try {
-            int age = parse_age(input);
-            std::cout << "age " << age << '\n';
-        } catch (const std::exception &e) {
-            std::cout << input << " -> error: " << e.what() << '\n';
-        }
-    }
-}`,
-          try: R`شيل الـ try و catch اللي حوالين [[divide(1, 0)]] وشغّل: البرنامج قال إيه، و exit code كام؟ وبعدين اكتب class [[InsufficientFunds]] بيورث من [[std::runtime_error]] وارميه من [[withdraw]] في حساب بنكي وامسكه في main. وجرّب [[std::stoi("99999999999")]].`,
-          flag: "script",
-          deep: {
-            why: R`في C كل دالة بترجّع كود خطأ، وكل نداء محتاج [[if]]، ولو نسيت واحدة الغلط بيعدّي بهدوء. الـ exception مينفعش يتنسي: لو محدش مسكه البرنامج بيقف. وبتفصل الكود العادي عن كود الأخطاء.`,
-            how: R`لما exception يترمي، الـ runtime بيعمل stack unwinding: بيرجع frame frame، وفي كل frame بينادي الـ destructors بتاعة الـ objects المحلية، لحد ما يلاقي catch مطابق.
-
-في الـ compilers الحديثة (zero-cost model)، الكود اللي مبيرميش مالوش تقريبًا أي تكلفة وقت التشغيل. بس الرمي نفسه بطيء (ممكن آلاف المرات أبطأ من return عادي). عشان كده الـ exceptions للحالات الاستثنائية فعلًا، مش للتحكم العادي في الـ flow.
-
-ملحوظة عن الترتيب: [[std::cout << "age " << parse_age(input)]] كانت هتطبع [[age]] الأول وبعدين ترمي، لأن [[<<]] بتتنفذ من الشمال لليمين (من C++17). عشان كده حسبنا القيمة في متغير الأول.
-
-بعض المشاريع (ألعاب، و embedded، وجوجل في كود C++ قديم عندها) بتقفل الـ exceptions خالص ([[-fno-exceptions]]) وبتستخدم error codes أو [[std::expected]] (C++23).`,
-            when: R`للأخطاء اللي الدالة متقدرش تتعامل معاها والنداء اللي فوقها هو اللي يقرر (ملف مش موجود، داتا بايظة، invariant اتكسر). مش لحاجة متوقعة تحصل كتير (زي «المستخدم مش موجود» في بحث): دي [[std::optional]] (الدرس الجاي).`,
-            mistakes: R`[[catch (std::exception e)]] بالقيمة: نسخ و slicing. و [[catch (...)]] وتبلع الخطأ من غير ما تسجّله. وترمي من destructor. وتستخدم exceptions كـ if عادي في loop سريع. وترمي pointer ([[throw new X]]): ارمي object.`
-          },
-          lines: [
-            "cout.",
-            R`[[stdexcept]]: أنواع الـ exceptions الجاهزة.`,
-            R`string و [[std::stoi]].`,
-            "دالة ممكن ترمي.",
-            R`[[throw]]: وقف هنا واطلع لحد أقرب catch.`,
-            "لو مفيش مشكلة.",
-            "قفلة.",
-            "دالة تانية.",
-            R`[[std::stoi]] نفسها بترمي invalid_argument لو النص مش رقم.`,
-            "ارمي لو الرقم بره الحدود.",
-            "رجّع.",
-            "قفلة.",
-            "main.",
-            R`[[try]]: الكود اللي ممكن يرمي.`,
-            "2.5.",
-            "بترمي، فالسطر ده مش هيكمّل.",
-            "مش هيتطبع.",
-            R`[[catch]] بـ [[const &]]: النوع لازم يطابق.`,
-            R`[[what()]]: الرسالة.`,
-            "قفلة.",
-            "لف على ٣ نصوص.",
-            "try لكل واحد.",
-            "احسب الأول (عشان مفيش حاجة تتطبع لو رمت).",
-            "اطبع لو نجحت.",
-            R`[[std::exception]]: الأب، بيمسك الاتنين.`,
-            "اطبع الرسالة.",
-            "قفلة الـ catch.",
-            "قفلة الـ for.",
+            "فيها printf.",
+            R`فيها [[strcpy]].`,
+            R`[[typedef struct]]: نوع جديد من غير اسم، وهنسميه تحت.`,
+            "حقل: array حروف للاسم.",
+            "حقل: السن.",
+            "حقل: المعدل.",
+            R`اسم النوع: [[Student]].`,
+            R`الدالة بتاخد pointer عشان تعدّل الأصل.`,
+            R`[[->]]: الحقل age من الـ struct اللي s بيشاور عليه، وزوّده 1.`,
+            "قفلة الدالة.",
+            "بداية main.",
+            "قيم أولية بنفس ترتيب الحقول.",
+            "نسخة كاملة مستقلة، حتى الـ array اللي جوه.",
+            R`نغيّر اسم النسخة بس. [[.]] لأن b متغير مش pointer.`,
+            "نبعت عنوان a.",
+            "a اتغيّرت: السن 22.",
+            "b لسه 21، واسمها Omar.",
+            "array من structs.",
+            R`[[group[i].name]]: العنصر رقم i، وبعدين حقل الاسم.`,
+            R`الحجم 48 مش 44 بسبب الـ padding.`,
+            "نجاح.",
             "قفلة main."
           ],
           sol: R`الناتج:
-[[2.5]]
-[[invalid: division by zero]]
-[[age 30]]
-[[abc -> error: stoi]]
-[[200 -> error: age must be 0..150]]
-(رسالة [[stoi]] دي من libstdc++ بتاع gcc. مع compilers تانية ممكن تختلف.)
+[[Sara 22 3.4]]
+[[Omar 21]]
+[[Ali Mona ]]
+[[sizeof(Student)=48]]
 
-من غير try حوالين divide:
-[[terminate called after throwing an instance of 'std::invalid_argument']]
-[[what():  division by zero]]
-والبرنامج بيقف بـ [[Aborted]] و exit code 134.
+لو رتبت [[int age; double gpa; char name[32];]] الحجم بيفضل 48 (4 + 4 padding + 8 + 32). ولو [[double gpa; int age; char name[32];]] = 8 + 4 + 32 = 44، وبعدين الـ compiler بيكمّل لـ 48 عشان الـ array من الـ structs كل عنصر فيها يبدأ صح. القاعدة العملية: رتّب الحقول من الأكبر للأصغر لو الحجم يفرق معاك.
 
-[[std::stoi("99999999999")]] بترمي [[std::out_of_range]] لأن الرقم مش داخل في int.`,
-          solCode: R`#include <iostream>
-#include <stdexcept>
-#include <string>
+[[total_value]]: loop على [[items[i].price * items[i].qty]].`,
+          solCode: R`#include <stdio.h>
 
-class InsufficientFunds : public std::runtime_error {
-public:
-    InsufficientFunds(double need, double have)
-        : std::runtime_error("need " + std::to_string(need) + " but have " + std::to_string(have)) {}
-};
+typedef struct {
+    char name[32];
+    double price;
+    int qty;
+} Product;
 
-class Account {
-public:
-    void withdraw(double amount) {
-        if (amount > balance_) throw InsufficientFunds(amount, balance_);
-        balance_ -= amount;
-    }
+double total_value(const Product *items, int n) {
+    double total = 0;
+    for (int i = 0; i < n; i++) total += items[i].price * items[i].qty;
+    return total;
+}
 
-private:
-    double balance_ = 100;
-};
-
-int main() {
-    Account acc;
-    try {
-        acc.withdraw(30);
-        acc.withdraw(500);
-    } catch (const InsufficientFunds &e) {
-        std::cout << "cannot withdraw: " << e.what() << '\n';
-    }
+int main(void) {
+    Product items[3] = {{"pen", 5.5, 10}, {"book", 80, 2}, {"bag", 250, 1}};
+    printf("total=%.2f\n", total_value(items, 3));
+    return 0;
 }`
         },
         {
-          cmd: "optional و variant",
-          title: "std::optional لقيمة ممكن متبقاش موجودة، و std::variant لقيمة من كذا نوع",
-          desc: R`[[std::optional<T>]] (C++17): يا فيه قيمة من نوع T، يا مفيش. بدل ما ترجّع -1 أو [[nullptr]] أو ترمي exception لما مفيش نتيجة:
-• [[return std::nullopt;]]: مفيش.
-• [[return 5;]]: فيه.
-• [[if (auto i = find_index(...))]]: الـ optional بيتحول لـ true لو فيه قيمة. والقيمة نفسها بـ [[*i]].
-• [[opt.has_value()]] و [[opt.value()]] (بترمي لو فاضي) و [[opt.value_or(-1)]] (قيمة احتياطية).
+          cmd: "enum و #define و const",
+          title: "enum و #define و const: إزاي تسمّي الثوابت، وليه الـ macro محتاج أقواس؟",
+          desc: R`الأرقام اللي ملهاش اسم في الكود (magic numbers) صعب تتفهم وصعب تتغير. عندك ٣ طرق تسمّيها:
 
-[[if (auto i = f(); i)]] أو [[if (auto i = f())]]: متغير بيتعرّف جوه الـ if، وموجود جوه الـ if بس.
+[[#define MAX_USERS 100]]: أمر للـ preprocessor. قبل الـ compile، أي [[MAX_USERS]] في الكود بيتبدّل بـ [[100]] نصيًا، كأنك عملت find and replace. ملوش نوع، والـ debugger مبيشوفوش.
 
-[[std::variant<int, double, std::string>]] (C++17): قيمة واحدة بس نوعها واحد من دول. زي union في TypeScript أو enum بداتا في Rust. وبيعرف هو شايل أنهي نوع دلوقتي:
-• [[std::holds_alternative<int>(v)]]: شايل int؟
-• [[std::get<int>(v)]]: هات الـ int (وبترمي لو شايل حاجة تانية).
-• [[std::get_if<double>(&v)]]: pointer للـ double لو موجود، أو [[nullptr]].
-• [[std::visit(f, v)]]: نادي f بالنوع اللي جوه، أيًا كان.
+الـ macro بـ parameters: [[#define SQUARE(x) ((x) * (x))]]. ده برضه تبديل نص، وعشان كده الأقواس مهمة: [[SQUARE_BAD(1 + 2)]] بتتحول لـ [[1 + 2 * 1 + 2]] = 5 مش 9.
 
-[[static_cast<int>(i)]]: تحويل صريح من نوع لنوع (هنا من size_t لـ int). ده الـ cast بتاع C++، وأوضح وأأمن من [[(int)i]] بتاع C.`,
-          example: R`#include <iostream>
-#include <optional>
-#include <string>
-#include <variant>
-#include <vector>
+[[const int limit = 3;]]: متغير عادي ليه نوع، بس مينفعش يتغير بعد ما تديله قيمة. الـ compiler بيمنعك لو حاولت.
 
-std::optional<int> find_index(const std::vector<std::string> &v, const std::string &key) {
-    for (std::size_t i = 0; i < v.size(); ++i)
-        if (v[i] == key) return static_cast<int>(i);
-    return std::nullopt;
+[[enum]]: مجموعة أسماء ليها أرقام صحيحة. [[enum Color { RED, GREEN, BLUE };]] تلقائيًا RED = 0 و GREEN = 1 و BLUE = 2، وتقدر تحدد القيم بنفسك [[BANNED = 9]]. مناسب لأي حاجة ليها حالات محددة: لون، أو حالة طلب، أو اتجاه.
+
+ميزة enum مع switch: لو نسيت حالة، gcc بـ [[-Wall]] بيقولك ([[-Wswitch]]).`,
+          example: R`#include <stdio.h>
+
+#define MAX_USERS 100
+#define SQUARE_BAD(x) x * x
+#define SQUARE(x) ((x) * (x))
+
+enum Color { RED, GREEN, BLUE };
+enum Status { ACTIVE = 1, BANNED = 9 };
+
+const char *color_name(enum Color c) {
+    switch (c) {
+        case RED: return "red";
+        case GREEN: return "green";
+        case BLUE: return "blue";
+    }
+    return "unknown";
 }
 
-using Value = std::variant<int, double, std::string>;
-
-void print(const Value &v) {
-    if (std::holds_alternative<int>(v)) std::cout << "int " << std::get<int>(v) << '\n';
-    else if (const double *d = std::get_if<double>(&v)) std::cout << "double " << *d << '\n';
-    else std::cout << "text " << std::get<std::string>(v) << '\n';
-}
-
-int main() {
-    std::vector<std::string> names = {"ali", "sara", "omar"};
-    if (auto i = find_index(names, "sara")) std::cout << "sara at " << *i << '\n';
-    auto missing = find_index(names, "zed");
-    std::cout << "zed found? " << missing.has_value() << " fallback=" << missing.value_or(-1) << '\n';
-    std::vector<Value> values = {42, 3.5, std::string("hi")};
-    for (const auto &v : values) print(v);
+int main(void) {
+    const int limit = 3;
+    enum Color c = GREEN;
+    printf("MAX_USERS=%d limit=%d\n", MAX_USERS, limit);
+    printf("c=%d name=%s banned=%d\n", c, color_name(c), BANNED);
+    printf("SQUARE_BAD(1 + 2)=%d SQUARE(1 + 2)=%d\n", SQUARE_BAD(1 + 2), SQUARE(1 + 2));
+    return 0;
 }`,
-          try: R`اطبع [[missing.value()]] من غير ما تتشيّك: إيه اللي حصل؟ وبعدين اكتب [[print]] تاني بـ [[std::visit]] و lambda واحدة: [[std::visit([](const auto &x) { std::cout << x << '\n'; }, v);]]. وآخر حاجة: اعمل دالة [[std::optional<int> parse_int(const std::string &s)]] ترجّع nullopt بدل ما ترمي (استخدم try و catch حوالين stoi جواها).`,
+          try: R`ضيف [[YELLOW]] للـ enum ومتضيفهاش في الـ switch، واعمل compile بـ [[-Wall]]. وبعدين جرّب [[limit = 5;]]. وآخر حاجة: اعمل [[int i = 2;]] واطبع [[SQUARE(i++)]] وشوف [[i]] بقت كام، و gcc قال إيه.`,
           flag: "script",
           deep: {
-            why: R`«مفيش نتيجة» حالة عادية جدًا (بحث مالقاش، config مش موجود). لو رجّعت -1 لازم كل اللي بينادي يفتكر إن -1 معناها كده. و nullptr ممكن يتعمله dereference بالغلط. الـ optional بيكتب الاحتمال في النوع نفسه، فالـ compiler والقارئ الاتنين عارفين إن القيمة ممكن متبقاش موجودة.`,
-            how: R`[[std::optional<T>]] جواه مكان لـ T و bool بيقول فيه ولا لأ. مفيش heap ولا pointers. [[*opt]] من غير فحص على optional فاضي undefined behavior، و [[.value()]] بترمي [[std::bad_optional_access]].
+            why: R`الثوابت المسمّاة بتخلي الكود يتقري ([[if (status == BANNED)]] بدل [[if (status == 9)]])، وتغيّر القيمة من مكان واحد. والـ macros موجودة في كل كود C قديم وجديد، فلازم تعرف مشاكلها.`,
+            how: R`الـ preprocessor مبيفهمش C، بيبدّل نص وبس. شوف بنفسك بـ [[gcc -E]]: هتلاقي [[SQUARE_BAD(1 + 2)]] بقت [[1 + 2 * 1 + 2]].
 
-[[std::variant]] جواه مكان يكفي أكبر نوع فيهم + رقم بيقول النوع الحالي. وأأمن من [[union]] بتاع C لأنه بيعرف هو شايل إيه، وبينادي الـ destructor الصح.
+[[SQUARE(i++)]] بتتحول لـ [[((i++) * (i++))]]: i بتزيد مرتين في نفس الجملة، وده undefined behavior. ودي مشكلة مفيش أقواس تحلها، والحل دالة عادية ([[static inline int square(int x)]]).
 
-[[using Value = ...;]] اسم مستعار للنوع (زي typedef بس أوضح).
+الـ enum في C مجرد int بأسماء، فـ [[enum Color c = 42;]] بتعدّي. C++ عملت [[enum class]] اللي مبيتحولش لـ int لوحده.
 
-[[std::visit]] مع lambda فيها [[auto]] بيعمل نسخة من الـ lambda لكل نوع في الـ variant وقت الـ compile.`,
-            when: R`optional لأي «ممكن يبقى مفيش». variant لما القيمة واحدة من مجموعة أنواع محددة: token في parser، أو رسالة من أنواع مختلفة، أو نتيجة يا نجاح يا خطأ (وفي C++23 فيه [[std::expected<T, E>]] معمول للحالة دي بالظبط).`,
-            mistakes: R`[[*opt]] من غير ما تتشيّك. و [[std::optional<T &>]]: مش مسموح (لحد C++26)، استخدم pointer. وتستخدم variant مكان الوراثة لما الأنواع هتزيد كتير. و [[std::get<double>(v)]] والقيمة int: [[std::bad_variant_access]].`
+[[#ifndef]] و [[#define]] و [[#endif]] في الـ headers (الدرس بعد الجاي) برضه أوامر preprocessor بتشتغل بنفس الفكرة.`,
+            when: R`[[enum]] لأي مجموعة حالات. [[const]] للثوابت العادية (في C++ استخدم [[constexpr]]). و [[#define]] للحاجات اللي محتاجة preprocessor فعلًا: include guards، وثوابت حجم array في C القديم، وكود مختلف حسب النظام ([[#ifdef _WIN32]]).`,
+            mistakes: R`macro من غير أقواس حوالين كل parameter وحوالين الناتج. وتحط [[;]] في آخر [[#define]]: [[#define MAX 100;]] بتحط الـ [[;]] في كل مكان. وتبعت حاجة ليها أثر جانبي ([[i++]] أو نداء دالة) لـ macro فتتنفذ مرتين. وتنسى حالة في switch على enum وتتجاهل الـ warning.`
           },
+          teach: R`## البرنامج بيعمل إيه؟
+
+بيورّيك ٣ طرق تدّي اسم لثابت: [[#define]] و [[const]] و [[enum]]، ودالة بتحوّل لون من الـ enum لاسمه بـ switch، ومقارنة بين macro من غير أقواس وواحد بأقواس. اتشغّل في [[docker run --rm gcc:14]] (gcc 14.4.0) بـ [[gcc -std=c17 -Wall -Wextra]].
+
+~~~text الناتج
+MAX_USERS=100 limit=3
+c=1 name=green banned=9
+SQUARE_BAD(1 + 2)=5 SQUARE(1 + 2)=9
+~~~
+
+---
+
+## ١. [[#define]]
+
+~~~c
+#define MAX_USERS 100
+#define SQUARE_BAD(x) x * x
+#define SQUARE(x) ((x) * (x))
+~~~
+
+- [[#define الاسم النص]]: أمر للـ preprocessor (زي [[#include]]): «أي مكان فيه الاسم ده، حط النص ده بداله» قبل الـ compile. مفيش [[=]] ولا [[;]].
+- [[SQUARE_BAD(x)]]: macro بياخد parameter. الـ [[x]] بيتبدّل باللي بين القوسين **كنص** زي ما هو.
+- العُرف إن أسماء الـ macros بحروف كبيرة، عشان تعرفها لما تشوفها.
+
+---
+
+## ٢. [[enum]]
+
+~~~c
+enum Color { RED, GREEN, BLUE };
+enum Status { ACTIVE = 1, BANNED = 9 };
+~~~
+
+- [[enum Color]]: نوع جديد قيمه أسماء. أول اسم بياخد 0 والباقي يزيد 1: RED = 0، GREEN = 1، BLUE = 2.
+- [[ACTIVE = 1, BANNED = 9]]: تقدر تحدد الأرقام بنفسك.
+- في C الـ enum مجرد int بأسماء، فبيتطبع بـ [[%d]].
+
+---
+
+## ٣. [[color_name]]: switch على enum
+
+~~~c
+const char *color_name(enum Color c) {
+    switch (c) {
+        case RED: return "red";
+        case GREEN: return "green";
+        case BLUE: return "blue";
+    }
+    return "unknown";
+}
+~~~
+
+- [[const char *]]: بترجّع عنوان نص ثابت للقراية بس.
+- [[enum Color c]]: الـ parameter نوعه الـ enum (لاحظ إن [[enum]] جزء من اسم النوع في C، إلا لو عملت typedef).
+- [[case RED: return "red";]]: الـ [[return]] بتخرج من الدالة كلها، فمش محتاج [[break]].
+- [[return "unknown";]] بعد الـ switch: لو جت قيمة مش من الـ ٣ (C بتسمح بـ [[enum Color c = 42;]])، ولو شلت السطر ده gcc بينبّه: [[warning: control reaches end of non-void function [-Wreturn-type]]].
+
+### الـ try: لون رابع
+
+ضفت [[YELLOW]] للـ enum ومحطتهاش في الـ switch:
+
+~~~text الناتج
+L7y.c: In function 'color_name':
+L7y.c:11:5: warning: enumeration value 'YELLOW' not handled in switch [-Wswitch]
+   11 |     switch (c) {
+      |     ^~~~~~
+~~~
+
+دي ميزة الـ enum: [[-Wall]] بيعرف كل القيم وبيقولك لو نسيت واحدة. ولو كان فيه [[default:]] مكانش هينبّه.
+
+---
+
+## ٤. [[const]]
+
+~~~c
+    const int limit = 3;
+~~~
+
+متغير عادي ليه نوع واسم، بس **مينفعش يتغيّر** بعد القيمة الأولى. جربت [[limit = 5;]]:
+
+~~~text الناتج
+L7c.c:22:11: error: assignment of read-only variable 'limit'
+~~~
+
+[[read-only]] = للقراية بس. وده error مش warning: الملف مبيطلعش.
+
+---
+
+## ٥. الطباعة
+
+~~~c
+    enum Color c = GREEN;
+    printf("MAX_USERS=%d limit=%d\n", MAX_USERS, limit);
+    printf("c=%d name=%s banned=%d\n", c, color_name(c), BANNED);
+~~~
+
+~~~text الناتج
+MAX_USERS=100 limit=3
+c=1 name=green banned=9
+~~~
+
+[[c]] بـ [[%d]] طلع 1 (GREEN)، و [[color_name(c)]] رجّعت [[green]].
+
+---
+
+## ٦. ليه الـ macro محتاج أقواس
+
+~~~c
+    printf("SQUARE_BAD(1 + 2)=%d SQUARE(1 + 2)=%d\n", SQUARE_BAD(1 + 2), SQUARE(1 + 2));
+~~~
+
+شفت السطر ده بعد الـ preprocessor بـ [[gcc -E]]:
+
+~~~text الناتج (gcc -E)
+    printf("SQUARE_BAD(1 + 2)=%d SQUARE(1 + 2)=%d\n", 1 + 2 * 1 + 2, ((1 + 2) * (1 + 2)));
+~~~
+
+- الـ [[MAX_USERS]] في السطر اللي قبله بقت [[100]] حرفيًا.
+- [[SQUARE_BAD(1 + 2)]] بقت [[1 + 2 * 1 + 2]]: الضرب الأول، فـ 1 + 2 + 2 = **5**.
+- [[SQUARE(1 + 2)]] بقت [[((1 + 2) * (1 + 2))]] = **9**.
+- أقواس حوالين كل [[x]] عشان الـ argument يتحسب الأول، وأقواس حوالين الكل عشان لو كتبت [[10 / SQUARE(2)]] متتلخبطش مع اللي حواليه.
+- النص جوه [[" "]] متغيّرش: الـ preprocessor مبيلمسش النصوص.
+
+~~~text الناتج
+SQUARE_BAD(1 + 2)=5 SQUARE(1 + 2)=9
+~~~
+
+### الـ try: [[SQUARE(i++)]]
+
+~~~c
+    int i = 2;
+    int r = SQUARE(i++);
+~~~
+
+~~~text الناتج
+warning: operation on 'i' may be undefined [-Wsequence-point]
+SQUARE(i++)=6 i=4
+~~~
+
+بقت [[((i++) * (i++))]]: i زادت **مرتين** في نفس الجملة، وده undefined behavior. هنا طلع 2 × 3 = 6 و i = 4 (بـ [[-O0]] و [[-O2]])، بس مش مضمون على compiler تاني. ومفيش أقواس تحل ده: الحل دالة عادية.
+
+---
+
+## الخلاصة
+
+| الطريقة | ليها نوع؟ | إمتى |
+|---|---|---|
+| [[#define N 100]] | لأ، تبديل نص | include guards وحاجات الـ preprocessor |
+| [[const int n = 100;]] | أيوه | ثابت عادي |
+| [[enum { A, B, C }]] | int بأسماء | مجموعة حالات، ومع switch |
+
+- macro بـ parameters: أقواس حوالين كل parameter وحوالين الناتج، ومتبعتلوش [[i++]].
+- [[gcc -E]] بيورّيك الكود بعد التبديل.`,
           lines: [
-            "cout.",
-            R`[[std::optional]].`,
-            "string.",
-            R`[[std::variant]].`,
-            "vector.",
-            "بترجّع optional: يا index يا مفيش.",
-            R`[[std::size_t]] عشان المقارنة مع [[size()]] تبقى من نفس النوع.`,
-            R`لقيناه: رجّع الـ index. [[static_cast<int>]] تحويل صريح.`,
-            R`[[std::nullopt]]: مفيش.`,
-            "قفلة.",
-            R`[[using]]: اسم قصير للنوع.`,
-            "دالة بتطبع أي Value.",
-            R`لو int: [[std::get<int>]].`,
-            R`[[get_if]]: pointer لو double، و nullptr لو لأ.`,
-            "غير كده string.",
-            "قفلة.",
-            "main.",
-            "أسماء.",
-            R`الـ optional بيتحول لـ true لو فيه قيمة، و [[*i]] القيمة.`,
-            "بحث مش هيلاقي.",
-            R`[[has_value]]: 0، و [[value_or]]: القيمة الاحتياطية -1.`,
-            "vector فيه ٣ أنواع مختلفة.",
-            "كل واحد بيتطبع حسب نوعه.",
-            "قفلة."
+            "فيها printf.",
+            R`ثابت بالـ preprocessor: كل MAX_USERS هتبقى 100.`,
+            "macro غلط: من غير أقواس.",
+            "macro صح: أقواس حوالين x وحوالين الناتج.",
+            "enum: RED = 0 و GREEN = 1 و BLUE = 2.",
+            "قيم محددة بإيدك.",
+            R`دالة بترجّع اسم اللون. [[const char *]] = نص للقراية بس.`,
+            "switch على enum.",
+            R`[[return]] جوه case بتخرج من الدالة، فمش محتاج break.`,
+            "اللون الأخضر.",
+            "الأزرق.",
+            "قفلة الـ switch.",
+            "احتياطي لو جت قيمة مش في الـ enum.",
+            "قفلة الدالة.",
+            "بداية main.",
+            R`[[const]]: مينفعش تتغير.`,
+            "متغير من نوع الـ enum.",
+            "الـ macro اتبدّل بـ 100 قبل الـ compile.",
+            "الـ enum قيمته رقم: GREEN = 1.",
+            "5 و 9: الفرق كله في الأقواس.",
+            "نجاح.",
+            "قفلة main."
           ],
           sol: R`الناتج:
-[[sara at 1]]
-[[zed found? 0 fallback=-1]]
-[[int 42]]
-[[double 3.5]]
-[[text hi]]
+[[MAX_USERS=100 limit=3]]
+[[c=1 name=green banned=9]]
+[[SQUARE_BAD(1 + 2)=5 SQUARE(1 + 2)=9]]
 
-[[missing.value()]]:
-[[terminate called after throwing an instance of 'std::bad_optional_access']]
-[[what():  bad optional access]]`,
-          solCode: R`#include <iostream>
-#include <optional>
-#include <stdexcept>
-#include <string>
-#include <variant>
+مع [[YELLOW]] من غير case:
+[[warning: enumeration value 'YELLOW' not handled in switch [-Wswitch]]]
 
-std::optional<int> parse_int(const std::string &s) {
-    try {
-        return std::stoi(s);
-    } catch (const std::exception &) {
-        return std::nullopt;
+[[limit = 5;]]:
+[[error: assignment of read-only variable 'limit']]
+
+[[SQUARE(i++)]]: gcc بـ [[-Wall]] بيقول [[operation on 'i' may be undefined [-Wsequence-point]]]. والناتج اللي هتشوفه (غالبًا 6 و i بقت 4) مش مضمون، ممكن يختلف مع compiler أو optimization تاني.`
+        },
+        {
+          cmd: "file I/O في C",
+          title: "إزاي تكتب في ملف وتقرا منه سطر سطر في C (fopen و fprintf و fgets و fclose)؟",
+          desc: R`الملفات في C بتتعامل معاها عن طريق [[FILE *]]: pointer لـ struct بتديره المكتبة، وانت مش محتاج تعرف جواه إيه.
+
+• [[fopen(path, mode)]]: بتفتح الملف وترجّع [[FILE *]]، أو [[NULL]] لو فشلت (الملف مش موجود، أو مفيش صلاحية). الـ modes: [["r"]] قراية، و [["w"]] كتابة (بتمسح القديم أو تعمل ملف جديد)، و [["a"]] إضافة في الآخر. ولو ملف binary زوّد [[b]]: [["rb"]].
+• [[fprintf(f, ...)]]: زي printf بالظبط بس بتكتب في الملف.
+• [[fgets(buf, size, f)]]: بتقرا سطر كامل (لحد [[\n]]) أو لحد size - 1 حرف، وبتحط [[\0]] في الآخر. بترجّع [[NULL]] لما الملف يخلص. ودي الطريقة الآمنة لقراية أي input نصي.
+• [[fclose(f)]]: بتقفل الملف. لازم، لأن الكتابة بتتجمع في buffer في الذاكرة، ومش بتتكتب على الديسك فعلًا غير لما الـ buffer يتملي أو تقفل.
+• [[perror("msg")]]: بتطبع رسالتك وبعدها سبب آخر خطأ من النظام، زي [[No such file or directory]].
+
+[[fgets]] بتسيب الـ [[\n]] في آخر السطر. [[strcspn(line, "\n")]] بترجّع مكان أول [[\n]] (أو طول النص لو مفيش)، فـ [[line[strcspn(line, "\n")] = '\0';]] بتشيله.
+
+[[stdin]] و [[stdout]] و [[stderr]] نفسهم [[FILE *]] جاهزين، فـ [[fgets(buf, sizeof buf, stdin)]] بتقرا سطر من الكيبورد.`,
+          example: R`#include <stdio.h>
+#include <string.h>
+
+int main(void) {
+    FILE *out = fopen("notes.txt", "w");
+    if (out == NULL) {
+        perror("fopen notes.txt");
+        return 1;
     }
-}
+    fprintf(out, "buy milk\n");
+    fprintf(out, "study pointers\n");
+    fclose(out);
 
-int main() {
-    std::variant<int, double, std::string> v = 3.5;
-    std::visit([](const auto &x) { std::cout << x << '\n'; }, v);
-    std::cout << parse_int("42").value_or(-1) << ' ' << parse_int("abc").value_or(-1) << '\n';
+    FILE *in = fopen("notes.txt", "r");
+    if (in == NULL) {
+        perror("fopen notes.txt");
+        return 1;
+    }
+    char line[128];
+    int n = 0;
+    while (fgets(line, sizeof line, in) != NULL) {
+        line[strcspn(line, "\n")] = '\0';
+        printf("%d: %s\n", ++n, line);
+    }
+    fclose(in);
+    return 0;
+}`,
+          try: R`غيّر [["w"]] لـ [["a"]] وشغّل البرنامج ٣ مرات: الملف بقى فيه كام سطر؟ وغيّر اسم ملف القراية لـ [[missing.txt]] وشوف رسالة perror. وبعدين اكتب برنامج [[mywc]] بياخد اسم ملف من [[argv[1]]] ويطبع عدد السطور والكلمات والحروف (زي أمر [[wc]]).`,
+          flag: "script",
+          deep: {
+            why: "أي برنامج حقيقي بيقرا config أو بيحفظ داتا أو بيكتب logs. وطريقة الـ FILE * و fgets هي نفسها اللي هتلاقيها في كود C في كل حتة، و C++ بنت عليها ifstream و ofstream.",
+            how: R`الـ [[FILE]] جواه buffer: [[fprintf]] بتكتب في الذاكرة، والمكتبة بتبعت للنظام لما الـ buffer يتملي أو تعمل [[fflush]] أو [[fclose]]. عشان كده لو البرنامج وقع قبل fclose ممكن آخر كلام ميتكتبش.
+
+[[sizeof line]] من غير أقواس مسموحة مع متغير (مع نوع لازم أقواس: [[sizeof(int)]]).
+
+على Windows الـ mode النصي بيحوّل [[\n]] لـ [[\r\n]] وهو بيكتب ويرجّعها وهو بيقرا، والـ [["b"]] بتلغي التحويل ده. على Linux مفيش فرق.`,
+            when: R`[[fgets]] لأي قراية نصية سطر سطر (حتى من الكيبورد بدل scanf). [[fread]] و [[fwrite]] للملفات الـ binary. ولو هتعمل parsing جامد (CSV أو JSON) استخدم مكتبة.`,
+            mistakes: R`متتشيّكش إن fopen رجّعت NULL، فأول fprintf توقع البرنامج. وتنسى fclose: ممكن الداتا متتكتبش، والبرنامج يخلص الـ file handles لو بيفتح ملفات كتير. وتفتح بـ [["w"]] ملف كنت عايز تضيف عليه فيتمسح. وتستخدم [[while (!feof(f))]] كشرط للـ loop: بتلف لفة زيادة. الصح تتشيّك على اللي fgets رجّعته.`
+          },
+          teach: R`## البرنامج بيعمل إيه؟
+
+جزئين: الأول بيفتح [[notes.txt]] للكتابة ويكتب فيه سطرين ويقفله. التاني بيفتح نفس الملف للقراية ويقرا سطر سطر ويطبع كل سطر برقمه. اتشغّل في [[docker run --rm gcc:14]] (gcc 14.4.0) بـ [[gcc -std=c17 -Wall -Wextra]].
+
+~~~text الناتج
+1: buy milk
+2: study pointers
+~~~
+
+---
+
+## ١. [[fopen]] للكتابة
+
+~~~c
+    FILE *out = fopen("notes.txt", "w");
+    if (out == NULL) {
+        perror("fopen notes.txt");
+        return 1;
+    }
+~~~
+
+- [[FILE]]: نوع (struct) معرّف في [[stdio.h]]، فيه كل حاجة عن الملف المفتوح: مكانه، والـ buffer، وإنت واقف فين. انت عمرك ما بتلمس جواه، بتمسك pointer ليه بس: [[FILE *]].
+- [[fopen("notes.txt", "w")]]: افتح الملف ده (المسار نسبي للفولدر اللي انت شغّال منه). و [["w"]] = write: لو موجود **يتمسح** محتواه، ولو مش موجود يتعمل.
+- لو فشلت (مفيش صلاحية، فولدر مش موجود) بترجّع [[NULL]].
+- [[perror("...")]] (print error): بتطبع على stderr كلامك وبعده [[:]] وسبب آخر خطأ من النظام بالإنجليزي.
+
+| الـ mode | معناه | لو الملف مش موجود |
+|---|---|---|
+| [["r"]] | قراية | [[NULL]] |
+| [["w"]] | كتابة من الأول (يمسح القديم) | يتعمل |
+| [["a"]] | append: كتابة في الآخر | يتعمل |
+| [["rb"]] / [["wb"]] | نفس الكلام لملف binary | |
+
+---
+
+## ٢. الكتابة والقفل
+
+~~~c
+    fprintf(out, "buy milk\n");
+    fprintf(out, "study pointers\n");
+    fclose(out);
+~~~
+
+- [[fprintf(out, ...)]]: زي printf بالظبط، بس أول argument هو الملف.
+- [[fclose(out)]]: اقفل. الكتابة بتتجمع في buffer في الذاكرة، و fclose هي اللي بتضمن إنها اتبعتت للنظام.
+
+بصيت على الملف بـ [[cat -A notes.txt]] ([[-A]] بيورّي الحروف المخفية، و [[$]] = آخر سطر):
+
+~~~text الناتج
+buy milk$
+study pointers$
+~~~
+
+---
+
+## ٣. القراية سطر سطر
+
+~~~c
+    FILE *in = fopen("notes.txt", "r");
+    ...
+    char line[128];
+    int n = 0;
+    while (fgets(line, sizeof line, in) != NULL) {
+~~~
+
+- [["r"]]: افتح للقراية. (والـ if بعدها نفس فحص الـ NULL.)
+- [[char line[128]]]: buffer للسطر.
+- [[fgets(line, sizeof line, in)]] (file get string): اقرا من [[in]] لحد [[\n]] (وبتاخدها معاها) أو لحد 127 حرف، وحط [[\0]] في الآخر. عمرها ما بتكتب أكتر من [[sizeof line]].
+- [[sizeof line]] من غير أقواس: مسموح مع متغير، ومع اسم نوع لازم أقواس.
+- بترجّع [[NULL]] لما الملف يخلص، فالـ while بتقف.
+
+---
+
+## ٤. شيل الـ [[\n]]
+
+~~~c
+        line[strcspn(line, "\n")] = '\0';
+~~~
+
+من جوه لبرة:
+
+- [[strcspn(line, "\n")]] (من [[string.h]]): بتعدّ الحروف من أول السطر لحد أول حرف من [["\n"]]. في [[buy milk\n]] بترجّع 8 (مكان الـ [[\n]]). ولو مفيش [[\n]] (آخر سطر من غير Enter) بترجّع طول النص، يعني مكان الـ [[\0]] أصلًا، فمفيش ضرر.
+- [[line[8] = '\0']]: حط نهاية النص مكان الـ [[\n]].
+
+من غيرها كل سطر هيطبع سطر فاضي بعده (الـ [[\n]] بتاعته + الـ [[\n]] بتاعة printf).
+
+---
+
+## ٥. الطباعة والقفل
+
+~~~c
+        printf("%d: %s\n", ++n, line);
+    }
+    fclose(in);
+~~~
+
+[[++n]] قبل الاسم: زوّد الأول وبعدين استخدم، فأول سطر رقمه 1.
+
+---
+
+## ٦. الـ try
+
+### [["a"]] بدل [["w"]]، ٣ مرات
+
+~~~text الناتج
+$ wc -l notes.txt
+6 notes.txt
+~~~
+
+[["a"]] بيضيف في الآخر، فكل تشغيل زوّد سطرين: 3 × 2 = 6.
+
+### ملف مش موجود
+
+~~~text الناتج
+fopen missing.txt: No such file or directory
+exit=1
+~~~
+
+الكلام اللي قبل [[:]] من عندك، و [[No such file or directory]] من النظام (الخطأ اللي اسمه ENOENT).
+
+---
+
+## ٧. الـ solCode: [[mywc]]
+
+~~~c
+    FILE *f = fopen(argv[1], "r");
+    if (!f) {
+        perror(argv[1]);
+        return 1;
+    }
+    long lines = 0, words = 0, chars = 0;
+    int c, in_word = 0;
+    while ((c = fgetc(f)) != EOF) {
+        chars++;
+        if (c == '\n') lines++;
+        if (isspace(c)) in_word = 0;
+        else if (!in_word) {
+            in_word = 1;
+            words++;
+        }
+    }
+~~~
+
+- [[fgetc(f)]]: اقرا حرف واحد. بترجّع [[int]] مش [[char]]، عشان تقدر ترجّع [[EOF]] (قيمة خاصة، غالبًا -1) لما الملف يخلص، من غير ما تتلخبط مع أي حرف حقيقي. عشان كده [[int c]].
+- [[(c = fgetc(f)) != EOF]]: اقرا وحط في c، وبعدين قارن. الأقواس الداخلية لازمة لأن [[!=]] أولويتها أعلى من [[=]].
+- [[isspace(c)]] من [[ctype.h]]: صح لو مسافة أو Tab أو [[\n]].
+- [[in_word]]: علامة «أنا جوه كلمة». كلمة جديدة تبدأ لما نلاقي حرف مش مسافة وإحنا مش جوه كلمة.
+- [[%ld]]: لـ [[long]].
+
+قارنته بـ [[wc]] الحقيقي:
+
+~~~text الناتج
+$ ./mywc notes.txt
+2 4 24 notes.txt
+$ wc notes.txt
+ 2  4 24 notes.txt
+$ ./mywc t.txt
+3 6 30 t.txt
+$ wc t.txt
+ 3  6 30 t.txt
+~~~
+
+([[t.txt]] فيه مسافتين ورا بعض و Tab وسطر فاضي وآخر سطر من غير [[\n]]، فالسطور 3 مش 4: wc بيعدّ الـ [[\n]].) ومن غير اسم ملف: [[usage: ./mywc FILE]]، وملف مش موجود: [[nope.txt: No such file or directory]]، والاتنين exit 1.
+
+---
+
+## الخلاصة
+
+| الدالة | بتعمل إيه | بترجّع لما تفشل/تخلص |
+|---|---|---|
+| [[fopen(path, mode)]] | تفتح | [[NULL]] |
+| [[fprintf(f, ...)]] | تكتب منسّق | |
+| [[fgets(buf, size, f)]] | سطر | [[NULL]] |
+| [[fgetc(f)]] | حرف (int) | [[EOF]] |
+| [[fclose(f)]] | تقفل وتكتب الباقي | |
+| [[perror(msg)]] | سبب الخطأ | |
+
+- [["w"]] بيمسح، [["a"]] بيضيف.
+- الـ loop على اللي fgets أو fgetc رجّعته، مش على [[feof]].`,
+          lines: [
+            "فيها FILE و fopen و fprintf و fgets.",
+            R`فيها [[strcspn]].`,
+            "بداية main.",
+            R`افتح للكتابة. [["w"]] بتمسح أي محتوى قديم.`,
+            "لو الفتح فشل.",
+            "اطبع السبب من النظام.",
+            "اخرج بفشل.",
+            "قفلة الـ if.",
+            "اكتب سطر في الملف.",
+            "سطر تاني.",
+            "اقفل: الكلام بيتكتب على الديسك فعلًا هنا.",
+            R`افتح نفس الملف للقراية.`,
+            "لو فشل.",
+            "السبب.",
+            "خروج.",
+            "قفلة الـ if.",
+            "buffer للسطر.",
+            "عدّاد السطور.",
+            R`اقرا سطر سطر لحد ما [[fgets]] ترجّع NULL (الملف خلص).`,
+            R`شيل الـ [[\n]] من آخر السطر.`,
+            R`[[++n]] بتزوّد الأول وبعدين تطبع: 1 ثم 2.`,
+            "قفلة الـ while.",
+            "اقفل ملف القراية.",
+            "نجاح.",
+            "قفلة main."
+          ],
+          sol: R`الناتج:
+[[1: buy milk]]
+[[2: study pointers]]
+
+مع [["a"]] الملف بيكبر ٢ سطر كل تشغيل، فبعد ٣ مرات فيه ٦ سطور، والبرنامج بيطبعهم كلهم.
+
+مع [[missing.txt]]:
+[[fopen missing.txt: No such file or directory]]
+
+[[mywc]]: لف بـ [[fgetc]] حرف حرف: زوّد الحروف كل مرة، والسطور لما تقابل [[\n]]، والكلمات لما تقابل حرف مش مسافة بعد مسافة. قارن ناتجك بـ [[wc file.txt]].`,
+          solCode: R`#include <ctype.h>
+#include <stdio.h>
+
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        fprintf(stderr, "usage: %s FILE\n", argv[0]);
+        return 1;
+    }
+    FILE *f = fopen(argv[1], "r");
+    if (!f) {
+        perror(argv[1]);
+        return 1;
+    }
+    long lines = 0, words = 0, chars = 0;
+    int c, in_word = 0;
+    while ((c = fgetc(f)) != EOF) {
+        chars++;
+        if (c == '\n') lines++;
+        if (isspace(c)) in_word = 0;
+        else if (!in_word) {
+            in_word = 1;
+            words++;
+        }
+    }
+    fclose(f);
+    printf("%ld %ld %ld %s\n", lines, words, chars, argv[1]);
+    return 0;
 }`
         },
         {
-          cmd: "CMake",
-          title: "CMake: إزاي تعمل build لمشروع C++ على أي نظام بـ CMakeLists.txt وفولدر build",
-          desc: R`make كويس، بس الـ Makefile بيتكتب لـ compiler ونظام معيّن. CMake طبقة فوقه: بتكتب وصف المشروع مرة واحدة في [[CMakeLists.txt]]، و CMake يولّد ملفات الـ build المناسبة للجهاز (Makefile على Linux، أو Ninja، أو مشروع Visual Studio على Windows). وده الشكل اللي أغلب مشاريع ومكتبات C++ المفتوحة بتستخدمه، و VS Code (extension اسمها CMake Tools) و CLion و Visual Studio بيفهموه مباشرة.
+          cmd: "أكتر من ملف و make",
+          title: "إزاي تقسم برنامج C على أكتر من ملف (.h و .c)، وتعمله build بـ make؟",
+          desc: R`لما البرنامج يكبر بتقسمه:
+• ملف header ([[.h]]): فيه الـ prototypes والـ structs والثوابت، يعني «إيه اللي الملف ده بيقدّمه».
+• ملف source ([[.c]]): فيه جسم الدوال نفسها.
+• أي ملف عايز يستخدم الدوال دي بيعمل [[#include "math_utils.h"]]. علامات التنصيص [[" "]] (بدل [[< >]]) معناها «دوّر في فولدر المشروع الأول».
 
-أهم الأوامر في [[CMakeLists.txt]]:
-• [[cmake_minimum_required(VERSION 3.20)]]: أقل إصدار CMake.
-• [[project(todo LANGUAGES CXX)]]: اسم المشروع ولغته (CXX = C++).
-• [[set(CMAKE_CXX_STANDARD 20)]]: C++20 (بيحط [[-std=c++20]] أو الـ flag المناسب للـ compiler).
-• [[add_executable(app src/main.cpp)]]: target اسمه app من الملفات دي.
-• [[add_library(core src/todo.cpp)]]: مكتبة من ملفات.
-• [[target_include_directories(core PUBLIC include)]]: فولدر الـ headers. [[PUBLIC]] معناها إن اللي هيستخدم core هيشوف الفولدر ده كمان.
-• [[target_link_libraries(app PRIVATE core)]]: app بيستخدم core.
-• [[target_compile_options(app PRIVATE -Wall -Wextra)]]: flags للـ target ده.
+include guard: لو الـ header اتعمله include مرتين (ملف بيعمل include لملف بيعمل include لنفس الـ header)، التعريفات هتتكرر والـ compiler يزعّق. الحل ٣ سطور:
+• [[#ifndef MATH_UTILS_H]]: لو الاسم ده مش متعرّف...
+• [[#define MATH_UTILS_H]]: عرّفه، وكمّل الملف.
+• [[#endif]]: آخر الملف.
+تاني مرة الاسم هيبقى متعرّف، فالملف كله هيتنط. وفيه بديل أقصر بتدعمه كل الـ compilers المشهورة: [[#pragma once]] في أول الملف.
 
-الـ build نفسه بيبقى في فولدر لوحده (out-of-source)، عشان الملفات المولّدة متختلطش بالكود:
-[[cmake -S . -B build]] (configure: اقرا CMakeLists.txt وولّد في build)
-[[cmake --build build]] (build)
-[[./build/app]]
+الـ build: كل [[.c]] بيتعمله compile لوحده لـ [[.o]]، وبعدين link:
+[[gcc -c main.c]] و [[gcc -c math_utils.c]] و [[gcc main.o math_utils.o -o app]]
+أو مرة واحدة: [[gcc main.c math_utils.c -o app]].
 
-شكل المشروع:
-[[todo/CMakeLists.txt]]
-[[todo/include/todo.h]]
-[[todo/src/todo.cpp]]
-[[todo/src/main.cpp]]`,
-          example: R`cmake_minimum_required(VERSION 3.20)
-project(todo LANGUAGES CXX)
-
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-add_library(core src/todo.cpp)
-target_include_directories(core PUBLIC include)
-
-add_executable(app src/main.cpp)
-target_link_libraries(app PRIVATE core)
-target_compile_options(app PRIVATE -Wall -Wextra)`,
-          try: R`سطّب CMake ([[sudo apt install cmake]] أو [[brew install cmake]] أو من cmake.org). اعمل المشروع ده: [[include/todo.h]] فيها [[int count_done(const std::vector<bool> &items);]]، و [[src/todo.cpp]] فيها تنفيذها، و [[src/main.cpp]] بتناديها. وبعدين [[cmake -S . -B build]] و [[cmake --build build]] و [[./build/app]]. وبعدين عدّل main.cpp بس واعمل build تاني: كام ملف اتعمله compile؟`,
+[[make]] بيعمل ده لوحده من ملف اسمه [[Makefile]]، وبيعيد بس الملفات اللي اتغيّرت. كل قاعدة شكلها:
+[[target: dependencies]]
+وتحتها الأمر، والسطر ده لازم يبدأ بـ Tab حقيقي مش مسافات.`,
+          example: R`// ===== math_utils.h =====
+#ifndef MATH_UTILS_H
+#define MATH_UTILS_H
+int add(int a, int b);
+int clamp(int x, int lo, int hi);
+#endif
+// ===== math_utils.c =====
+#include "math_utils.h"
+int add(int a, int b) { return a + b; }
+int clamp(int x, int lo, int hi) {
+    if (x < lo) return lo;
+    if (x > hi) return hi;
+    return x;
+}
+// ===== main.c =====
+#include <stdio.h>
+#include "math_utils.h"
+int main(void) {
+    printf("%d %d\n", add(2, 3), clamp(150, 0, 100));
+    return 0;
+}`,
+          try: R`اعمل الـ ٣ ملفات في فولدر واحد واعمل build بأمر gcc واحد. وبعدين اكتب [[Makefile]] فيه قاعدة لـ app وقاعدة لكل [[.o]] وقاعدة [[clean]]، وشغّل [[make]] مرتين: التانية عملت إيه؟ وبعدين اعمل [[touch math_utils.c]] و [[make]]. وآخر حاجة: اعمل build من غير [[math_utils.c]] في الأمر: الخطأ ده compile ولا link؟`,
           flag: "script",
           deep: {
-            why: R`أي مشروع C++ حقيقي، وأي مكتبة هتنزّلها من GitHub، غالبًا فيه [[CMakeLists.txt]]. فلازم تعرف تقراه وتعمل build. وهو اللي بيخلّي نفس المشروع يتبني على Linux و Mac و Windows من غير ما تكتب ٣ Makefiles.`,
-            how: R`CMake بيشتغل على مرحلتين: configure ([[cmake -S . -B build]]) بيدوّر على الـ compiler ويقرا الوصف ويولّد ملفات build، و build ([[cmake --build build]]) بينادي make أو ninja أو MSBuild. ومن هنا ورايح أي تعديل في الكود محتاج [[cmake --build build]] بس، وهو بيعيد compile للي اتغيّر.
+            why: R`مفيش مشروع حقيقي في ملف واحد. والتقسيم ده بيخلّي الـ build أسرع (بتعيد compile للي اتغيّر بس)، وبيفصل «الواجهة» (الـ header) عن «التنفيذ» (الـ .c)، وده نفس شكل أي مكتبة C بتستخدمها.`,
+            how: R`[[#include]] بتنسخ الـ header جوه كل ملف [[.c]] بيطلبه. فالـ prototypes بتوصل لكل ملف، بس جسم الدالة موجود في ملف واحد بس ([[math_utils.o]])، والـ linker هو اللي بيوصّل النداء بالتعريف. لو جسم الدالة في الـ header، وملفين عملوا include ليه، الـ linker هيلاقي الدالة مرتين: [[multiple definition of $__btadd']].
 
-[[CMAKE_EXPORT_COMPILE_COMMANDS]] بيطلّع [[build/compile_commands.json]]: ملف فيه أمر الـ compile بتاع كل ملف، وده اللي clangd و clang-tidy بيقروه عشان الـ autocomplete والتحليل يبقوا مظبوطين.
+[[make]] بيقارن وقت تعديل الملف بوقت تعديل الـ dependencies بتاعته. لو أي dependency أحدث، بيعيد الأمر. عشان كده [[main.o]] لازم يعتمد على [[math_utils.h]] كمان: لو غيّرت الـ header لازم main.c يتعمله compile تاني.
 
-[[PUBLIC]] و [[PRIVATE]] و [[INTERFACE]] بيحددوا الإعداد بيعدّي للي بيستخدم الـ target ولا لأ. ده أسلوب «modern CMake»: كل حاجة على target مش global.
-
-نوع الـ build: [[cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug]] (أو [[Release]]) بيحط [[-g]] أو [[-O3]] لوحده.`,
-            when: R`أي مشروع C++ فيه أكتر من ملفين، أو لازم يتبني على أكتر من نظام، أو بيستخدم مكتبات خارجية. ولو بتتعلم ملف واحد، [[g++]] مباشرة أسهل.`,
-            mistakes: R`تشغّل [[cmake .]] في فولدر الكود نفسه فيتملي ملفات مولّدة. وتستخدم أسلوب CMake القديم ([[include_directories]] و [[set(CMAKE_CXX_FLAGS ...)]] global) اللي هتلاقيه في tutorials قديمة. وتحط [[-Wall -Wextra]] كده لـ MSVC: هو بيفهم [[/W4]]، فاستخدم [[if(MSVC)]] أو generator expression. وتنسى تضيف ملف [[.cpp]] جديد في [[add_executable]] أو [[add_library]] فيطلع undefined reference.`
+[[$(CC)]] و [[$(CFLAGS)]] متغيرات في الـ Makefile، و [[.PHONY: clean]] معناها إن clean مش اسم ملف.`,
+            when: R`أول ما البرنامج يعدّي كام مية سطر، أو فيه جزء ممكن يتستخدم في برنامج تاني. make كويس للمشاريع الصغيرة وموجود في كل حتة. للمشاريع الأكبر أو اللي لازم تشتغل على Windows كمان، CMake (المستوى ٢).`,
+            mistakes: R`تحط جسم دالة (مش prototype) في الـ header. وتنسى الـ include guard. وتعمل [[#include "math_utils.c"]]: بتعمل include لملفات [[.h]] بس. ومسافات بدل Tab في الـ Makefile: [[missing separator]]. وتنسى ملف في أمر الـ link: [[undefined reference to $__btclamp']].`
           },
-          lines: [
-            "أقل إصدار CMake مطلوب.",
-            "اسم المشروع، واللغة C++.",
-            "استخدم C++20.",
-            "ولو الـ compiler مش بيدعمه وقّف بخطأ بدل ما تنزل لإصدار أقدم.",
-            R`ولّد [[compile_commands.json]] للـ editors والأدوات.`,
-            R`مكتبة اسمها core من [[src/todo.cpp]].`,
-            R`الـ headers في [[include]]، و PUBLIC: أي حد يستخدم core يشوفها.`,
-            R`البرنامج نفسه اسمه app.`,
-            "app بيستخدم core.",
-            R`warnings للـ target ده (gcc و clang).`
-          ],
-          sol: R`أول build:
-[[cmake -S . -B build]] بيطبع حاجات زي [[The CXX compiler identification is GNU 14.x]] وفي الآخر [[Build files have been written to: .../build]].
-[[cmake --build build]] بيعمل compile لـ [[todo.cpp]] و [[main.cpp]] وبيطبع [[Built target core]] و [[Built target app]].
+          teach: R`## المثال بيعمل إيه؟
 
-بعد تعديل main.cpp بس: ملف واحد اتعمله compile ([[main.cpp.o]]) وبعدين link، و core مش بيتلمس.
+المثال **٣ ملفات** في صندوق واحد، والسطور اللي زي [[// ===== math_utils.h =====]] بتقولك كل حتة تتحط في أنهي ملف: header فيه شكل دالتين، و [[.c]] فيه جسمهم، و [[main.c]] بيستخدمهم. وبعدين بنعمل build بـ gcc ومرة بـ make. اتشغّل في [[docker run --rm gcc:14]] (gcc 14.4.0، و make جاية مع الصورة).
 
-الملفات:`,
-          solCode: R`// include/todo.h
-#pragma once
-#include <vector>
-int count_done(const std::vector<bool> &items);
+---
 
-// src/todo.cpp
-#include "todo.h"
-int count_done(const std::vector<bool> &items) {
-    int n = 0;
-    for (bool done : items)
-        if (done) ++n;
-    return n;
+## ١. [[math_utils.h]]: الواجهة
+
+~~~c
+#ifndef MATH_UTILS_H
+#define MATH_UTILS_H
+int add(int a, int b);
+int clamp(int x, int lo, int hi);
+#endif
+~~~
+
+- السطرين اللي في النص prototypes بس: «فيه دالة اسمها add بتاخد int و int وبترجّع int». مفيش جسم.
+- الـ include guard (التلات سطور اللي بتبدأ بـ [[#]]):
+  - [[#ifndef MATH_UTILS_H]]: if not defined. «لو الاسم ده لسه محدش عرّفه، كمّل. غير كده اتنط لحد [[#endif]]».
+  - [[#define MATH_UTILS_H]]: عرّف الاسم. مش محتاج قيمة، المهم إنه بقى متعرّف.
+  - [[#endif]]: آخر الـ if.
+- النتيجة: أول [[#include]] للملف بيدخل، وأي include تاني في نفس الـ [[.c]] بيلاقي الاسم متعرّف فيتنط. الاسم نفسه أي حاجة فريدة، والعُرف اسم الملف بحروف كبيرة.
+
+---
+
+## ٢. [[math_utils.c]]: التنفيذ
+
+~~~c
+#include "math_utils.h"
+int add(int a, int b) { return a + b; }
+int clamp(int x, int lo, int hi) {
+    if (x < lo) return lo;
+    if (x > hi) return hi;
+    return x;
 }
+~~~
 
-// src/main.cpp
-#include <iostream>
-#include "todo.h"
-int main() {
-    std::cout << count_done({true, false, true}) << " done\n";
-}`
+- [[#include "math_utils.h"]]: الملف بيعمل include للـ header بتاعه، عشان لو الـ prototype والتعريف اختلفوا (نوع parameter مثلًا) الـ compiler يقولك.
+- [[" "]] بدل [[< >]]: دوّر في فولدر الملف الأول، وبعدين فولدرات النظام.
+- [[clamp]]: «حط x جوه الحدود»: لو أقل من [[lo]] رجّع lo، لو أكبر من [[hi]] رجّع hi، غير كده x زي ما هو.
+
+---
+
+## ٣. [[main.c]]
+
+~~~c
+#include <stdio.h>
+#include "math_utils.h"
+int main(void) {
+    printf("%d %d\n", add(2, 3), clamp(150, 0, 100));
+    return 0;
+}
+~~~
+
+main.c مشافش جسم add ولا clamp، شاف الـ prototypes بس، وده كفاية للـ compile.
+
+---
+
+## ٤. build بأمر واحد
+
+~~~bash
+gcc -std=c17 -Wall -Wextra main.c math_utils.c -o app
+./app
+~~~
+
+~~~text الناتج
+5 100
+~~~
+
+[[add(2, 3)]] = 5، و [[clamp(150, 0, 100)]] = 100 (150 أكبر من الحد). وgcc هنا عمل compile لكل [[.c]] لوحده، وبعدين link للاتنين.
+
+### من غير [[math_utils.c]]
+
+~~~bash
+gcc -std=c17 -Wall -Wextra main.c -o app2
+~~~
+
+~~~text الناتج
+/usr/bin/ld: /tmp/ccYj9jg6.o: in function $__btmain':
+main.c:(.text+0x19): undefined reference to $__btclamp'
+/usr/bin/ld: main.c:(.text+0x2a): undefined reference to $__btadd'
+collect2: error: ld returned 1 exit status
+~~~
+
+ده خطأ **link**: main.c اتعمله compile من غير مشاكل (الـ prototypes موجودة)، وبعدين [[ld]] (الـ linker) دوّر على جسم clamp و add في كل الملفات ملقاهمش. [[/tmp/ccYj9jg6.o]] ملف [[.o]] مؤقت عمله gcc، و [[collect2]] البرنامج اللي gcc بيشغّل بيه الـ linker.
+
+---
+
+## ٥. الـ Makefile (الـ solCode)
+
+~~~text Makefile
+CC = gcc
+CFLAGS = -std=c17 -Wall -Wextra -g
+
+app: main.o math_utils.o
+	$(CC) $(CFLAGS) main.o math_utils.o -o app
+
+main.o: main.c math_utils.h
+	$(CC) $(CFLAGS) -c main.c
+
+math_utils.o: math_utils.c math_utils.h
+	$(CC) $(CFLAGS) -c math_utils.c
+
+clean:
+	rm -f *.o app
+
+.PHONY: clean
+~~~
+
+- [[CC = gcc]] و [[CFLAGS = ...]]: متغيرات. [[$(CC)]] بيتبدّل بقيمتها. (CC = C compiler، و CFLAGS = الـ flags.) لو عايز تغيّر الـ compiler بتغيّره في سطر واحد.
+- كل قاعدة: [[target: dependencies]] وتحتها الأمر اللي بيعمل الـ target. والأمر **لازم** يبدأ بـ Tab حقيقي.
+- [[app: main.o math_utils.o]]: «app محتاج الملفين دول». make بيعمل الـ dependencies الأول.
+- [[main.o: main.c math_utils.h]]: الـ header في الـ dependencies، عشان لو اتغيّر main.c يتعمله compile تاني.
+- [[-c]]: compile لـ [[.o]] من غير link (درس compile و link).
+- [[clean]]: قاعدة ملهاش dependencies، بتمسح الناتج. و [[.PHONY: clean]] بتقول لـ make إن clean مش اسم ملف، فتتنفذ دايمًا حتى لو فيه ملف اسمه clean.
+- أول قاعدة في الملف ([[app]]) هي اللي [[make]] لوحده بيعملها.
+
+---
+
+## ٦. [[make]] مرتين
+
+~~~text أول make
+gcc -std=c17 -Wall -Wextra -g -c main.c
+gcc -std=c17 -Wall -Wextra -g -c math_utils.c
+gcc -std=c17 -Wall -Wextra -g main.o math_utils.o -o app
+~~~
+
+make بيطبع كل أمر قبل ما ينفّذه. عمل الـ [[.o]] الاتنين الأول وبعدين الـ link.
+
+~~~text تاني make
+make: 'app' is up to date.
+~~~
+
+make بيقارن **وقت التعديل**: app أحدث من main.o و math_utils.o، وهما أحدث من الـ [[.c]] والـ [[.h]]، فمفيش حاجة تتعمل.
+
+### بعد [[touch math_utils.c]]
+
+[[touch]] بيحدّث وقت تعديل الملف من غير ما يغيّره:
+
+~~~text الناتج
+gcc -std=c17 -Wall -Wextra -g -c math_utils.c
+gcc -std=c17 -Wall -Wextra -g main.o math_utils.o -o app
+~~~
+
+math_utils.c بس اتعمله compile، و main.o اتساب، وبعدين link. في مشروع فيه مية ملف ده الفرق بين ثانية ودقايق.
+
+### [[make clean]]
+
+~~~text الناتج
+rm -f *.o app
+~~~
+
+وفضلت الملفات الأصلية بس.
+
+### مسافات بدل Tab
+
+غيّرت الـ Tab لـ ٤ مسافات:
+
+~~~text الناتج
+Makefile.sp:5: *** missing separator.  Stop.
+~~~
+
+السطر 5 هو أول أمر. الرسالة مش واضحة، بس معناها دايمًا تقريبًا «فيه مسافات مكان Tab».
+
+---
+
+## الخلاصة
+
+| الملف | فيه |
+|---|---|
+| [[.h]] | prototypes و structs وثوابت، جوه include guard |
+| [[.c]] | جسم الدوال، وبيعمل include للـ [[.h]] بتاعه |
+| [[Makefile]] | [[target: deps]] + أمر بـ Tab |
+
+- [[undefined reference]] = ملف [[.c]] ناقص في أمر الـ link.
+- make بيعيد بس اللي dependencies بتاعته اتغيّرت.`,
+          lines: [
+            R`[[#ifndef]]: لو الاسم ده لسه متعرّفش (أول مرة الملف يتقري)...`,
+            R`[[#define]]: عرّفه، عشان تاني مرة الملف يتنط.`,
+            "prototype: الملفات التانية تعرف شكل add.",
+            "prototype لـ clamp.",
+            R`[[#endif]]: قفلة الـ [[#ifndef]].`,
+            R`الـ .c بيعمل include للـ header بتاعه، عشان الـ compiler يتأكد إن التعريف زي الـ prototype.`,
+            "جسم add في سطر واحد.",
+            "جسم clamp.",
+            "لو أقل من الحد الأدنى رجّع الحد.",
+            "لو أكبر من الأعلى رجّع الأعلى.",
+            "غير كده رجّعه زي ما هو.",
+            "قفلة clamp.",
+            R`[[< >]]: header من النظام.`,
+            R`[[" "]]: header من المشروع.`,
+            "main.",
+            "بتنادي الدوال اللي متعرّفة في ملف تاني.",
+            "نجاح.",
+            "قفلة main."
+          ],
+          sol: R`[[gcc -std=c17 -Wall -Wextra main.c math_utils.c -o app && ./app]] بيطبع [[5 100]].
+
+أول [[make]] بيعمل compile للملفين و link. التانية بتقول [[make: 'app' is up to date.]]. وبعد [[touch math_utils.c]]، make بيعيد compile لـ math_utils.c بس، وبعدين link.
+
+من غير [[math_utils.c]]: ده خطأ link، لأن main.c نفسه اتعمله compile تمام (الـ prototype موجود):
+[[undefined reference to $__btadd']]
+[[collect2: error: ld returned 1 exit status]]
+([[ld]] هو الـ linker.)
+
+الـ Makefile (السطور اللي تحت كل قاعدة لازم تبدأ بـ Tab):`,
+          solCode: R`CC = gcc
+CFLAGS = -std=c17 -Wall -Wextra -g
+
+app: main.o math_utils.o
+	$(CC) $(CFLAGS) main.o math_utils.o -o app
+
+main.o: main.c math_utils.h
+	$(CC) $(CFLAGS) -c main.c
+
+math_utils.o: math_utils.c math_utils.h
+	$(CC) $(CFLAGS) -c math_utils.c
+
+clean:
+	rm -f *.o app
+
+.PHONY: clean`
+        },
+        {
+          cmd: "undefined behavior",
+          title: "يعني إيه undefined behavior، وليه البرنامج الغلط ممكن يشتغل عادي؟ (segfault و buffer overflow و use after free)",
+          desc: R`معيار C (و C++) فيه حاجات بيقول عليها «undefined behavior» (UB): لو حصلت، اللغة مش ملزمة بأي نتيجة. البرنامج ممكن يقع، أو يطلّع رقم غلط، أو يشتغل عادي خالص، أو يتصرف كويس على جهازك ويقع عند العميل. والـ compiler مسموحله يفترض إن الـ UB عمره ما هيحصل، ويعمل optimization على الأساس ده.
+
+أشهرهم:
+• القراية أو الكتابة بره حدود array (buffer overflow).
+• [[*]] على [[NULL]] أو على pointer ملوش قيمة.
+• استخدام ذاكرة بعد [[free]] (use after free)، أو free مرتين.
+• متغير محلي بتقرا قيمته قبل ما تديله قيمة.
+• overflow في [[int]] (signed). في unsigned مش UB، بيلف.
+• القسمة على صفر في الأرقام الصحيحة.
+• تغيير متغير مرتين في نفس الجملة ([[i = i++]]).
+
+segmentation fault (segfault): نظام التشغيل بيقفل البرنامج لأنه لمس ذاكرة مش بتاعته. ده أحسن نتيجة ممكنة للـ UB، لأنه بيقولك فيه مشكلة. الأسوأ إن البرنامج يكمّل بداتا بايظة.
+
+المثال برنامج فيه ٤ أخطاء، بتختار واحد منهم برقم من الترمنال. [[atoi]] بتحوّل نص لرقم ([["2"]] لـ 2).`,
+          example: R`#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int main(int argc, char *argv[]) {
+    int which = argc > 1 ? atoi(argv[1]) : 0;
+    int arr[3] = {1, 2, 3};
+    int *p = NULL;
+    char *name = malloc(8);
+    int big = INT_MAX;
+    if (which == 1) printf("arr[3] = %d\n", arr[which + 2]);
+    if (which == 2) *p = 42;
+    if (which == 3) {
+        free(name);
+        name[0] = 'X';
+        return 0;
+    }
+    if (which == 4) printf("INT_MAX + 4 = %d\n", big + which);
+    printf("done (case %d)\n", which);
+    free(name);
+    return 0;
+}`,
+          try: R`اعمل compile بـ [[gcc -std=c17 -Wall -Wextra -g ub.c -o ub]] واقرا الـ warning. وبعدين شغّل [[./ub 1]] و [[./ub 2]] و [[./ub 3]] و [[./ub 4]]، وبعد كل واحد [[echo $?]]. مين وقع ومين كمّل عادي؟ وبعدين اعمل compile تاني بـ [[-O2]] وشغّل [[./ub 1]]: نفس الرقم؟ (احتفظ بالملف ده للدرس الجاي).`,
+          flag: "script",
+          deep: {
+            why: R`ده أهم فرق بين C/C++ واللغات اللي بتحميك. في Python لو قريت بره الـ list بيطلع [[IndexError]] على طول. في C البرنامج بيكمّل، والغلط ممكن يبان بعد ساعات في مكان تاني، أو ميبانش غير لما حد يستغله. أغلب الثغرات الأمنية الكبيرة في برامج C و C++ (زي Heartbleed في OpenSSL سنة ٢٠١٤) أخطاء ذاكرة من النوع ده.`,
+            how: R`ليه اللغة بتسيبها undefined بدل ما تمنعها؟ عشان المنع بيكلّف: فحص حدود في كل وصول لـ array، وفحص overflow في كل جمع. C اختارت السرعة وسابت المسؤولية للمبرمج.
+
+والـ compiler بيستغل ده: لو كتبت [[if (x + 1 < x)]] عشان تمسك الـ overflow، الـ compiler ممكن يشيل الشرط خالص، لأن x + 1 في int «مينفعش» يبقى أقل من x من غير UB. عشان كده النتايج بتتغير بين [[-O0]] و [[-O2]].
+
+case 1 هنا بيقرا الـ int اللي بعد الـ array في الـ stack بالصدفة (ممكن يكون big أو أي حاجة). case 2 segfault. case 3 غالبًا بيعدّي بهدوء، لأن الذاكرة المحررة لسه مع البرنامج. case 4 بيلف لسالب على x86 في الغالب، بس ده مش مضمون.`,
+            when: R`في كل سطر C و C++ بتكتبه. والدفاع: [[-Wall -Wextra]] دايمًا، والـ sanitizers وانت بتجرّب (الدرس الجاي)، وفحص الحدود والـ NULL بنفسك، وفي C++ استخدام [[std::vector]] و [[std::string]] و smart pointers بدل الـ pointers الخام.`,
+            mistakes: R`تفتكر إن «البرنامج اشتغل» معناها إنه صح. وتقول «على جهازي شغال». وتحاول تمسك signed overflow بعد ما يحصل بدل ما تمنعه قبلها ([[if (a > INT_MAX - b)]]). وتعتمد على قيمة متغير ملوش قيمة أولية لأنها «طلعت صفر» مرة.`
+          },
+          teach: R`## البرنامج بيعمل إيه؟
+
+برنامج فيه ٤ غلطات undefined behavior، وكل تشغيلة بتختار واحدة برقم من الترمنال: قراية بره array، و [[*]] على NULL، وكتابة بعد [[free]]، و overflow في int. الهدف تشوف بعينك إن ٣ منهم البرنامج «اشتغل» فيهم عادي. اتشغّل في [[docker run --rm gcc:14]] (gcc 14.4.0) بـ [[gcc -std=c17 -Wall -Wextra -g ub.c -o ub]].
+
+---
+
+## ١. التجهيز
+
+~~~c
+#include <limits.h>
+
+int main(int argc, char *argv[]) {
+    int which = argc > 1 ? atoi(argv[1]) : 0;
+    int arr[3] = {1, 2, 3};
+    int *p = NULL;
+    char *name = malloc(8);
+    int big = INT_MAX;
+~~~
+
+- [[atoi(argv[1])]] (ASCII to integer، من [[stdlib.h]]): بتحوّل النص [["2"]] للرقم 2. ولو النص مش رقم بترجّع 0 من غير ما تقولك (عشان كده في كود حقيقي [[strtol]] أحسن).
+- [[argc > 1 ? ... : 0]]: لو مفيش argument، which = 0 ومفيش غلطة هتحصل.
+- [[arr]] فيها 3 عناصر: الـ indexes المسموحة 0 و 1 و 2 بس.
+- [[p]] = NULL، و [[name]] = 8 byte على الـ heap، و [[big]] = أكبر int.
+
+---
+
+## ٢. case 1: قراية بره الـ array
+
+~~~c
+    if (which == 1) printf("arr[3] = %d\n", arr[which + 2]);
+~~~
+
+[[which + 2]] = 3، يعني [[arr[3]]]: العنصر الرابع في array فيها ٣. الـ index مكتوب كحساب عشان الـ compiler ميكتشفهاش وقت الـ compile.
+
+~~~text ./ub 1
+arr[3] = 2147483647
+done (case 1)
+exit=0
+~~~
+
+قرا [[2147483647]] = قيمة [[big]] اللي الـ compiler حطها في الـ stack جنب الـ array بالصدفة. البرنامج كمّل وطبع done وخرج بـ 0 كأن كله تمام.
+
+ونفس الكود بـ [[-O2]] شغّلته مرتين: [[arr[3] = 1750686696]] ومرة [[arr[3] = -2036542136]]. الـ optimization غيّر مكان المتغيرات، فبقى بيقرا زبالة مختلفة كل مرة.
+
+---
+
+## ٣. case 2: [[*]] على NULL
+
+~~~c
+    if (which == 2) *p = 42;
+~~~
+
+~~~text ./ub 2
+Segmentation fault (core dumped)
+exit=139
+~~~
+
+- [[*p = 42]]: اكتب في العنوان 0. النظام مش بيسمح بالعنوان ده خالص، فبعت للبرنامج إشارة [[SIGSEGV]] (segmentation violation) وقفله.
+- [[core dumped]]: النظام ممكن يحفظ صورة من ذاكرة البرنامج لحظة الوقوع (core file) عشان تفتحها في gdb بعدين.
+- [[139]] = 128 + 11، و 11 رقم SIGSEGV. أي exit code أكبر من 128 معناه «اتقفل بإشارة رقم (الكود − 128)».
+- ده **أحسن** نتيجة للـ UB: على الأقل عرفت.
+
+---
+
+## ٤. case 3: use after free
+
+~~~c
+    if (which == 3) {
+        free(name);
+        name[0] = 'X';
+        return 0;
+    }
+~~~
+
+- [[free(name)]] رجّع الذاكرة، وبعدها [[name[0] = 'X']] كتب فيها.
+- [[return 0]] جوه الـ if عشان البرنامج ميوصلش للـ [[free(name)]] اللي تحت ويعمل free تانية (double free).
+
+~~~text ./ub 3
+exit=0
+~~~
+
+ولا كلمة. الذاكرة المحررة لسه مع مكتبة C ومرجعتش للنظام، فمحدش اشتكى. في برنامج حقيقي الـ malloc الجاية ممكن تدّي نفس المكان لحاجة تانية، والـ X تبوّظها.
+
+بس gcc 14 مسكها وقت الـ compile:
+
+~~~text الـ warning
+ub.c:15:17: warning: pointer 'name' used after 'free' [-Wuse-after-free]
+   15 |         name[0] = 'X';
+      |         ~~~~~~~~^~~~~
+ub.c:14:9: note: call to 'free' here
+   14 |         free(name);
+~~~
+
+---
+
+## ٥. case 4: signed overflow
+
+~~~c
+    if (which == 4) printf("INT_MAX + 4 = %d\n", big + which);
+~~~
+
+~~~text ./ub 4
+INT_MAX + 4 = -2147483645
+done (case 4)
+exit=0
+~~~
+
+[[2147483647 + 4]] مش داخل في int. على x86 الـ CPU بيلف (زي الـ unsigned): [[INT_MIN + 3]] = [[-2147483648 + 3]] = [[-2147483645]]. بس اللغة **مش** بتضمن ده، والـ compiler مسموحله يفترض إنه مش هيحصل ويعمل optimization على الأساس ده.
+
+---
+
+## ٦. النهاية العادية
+
+~~~c
+    printf("done (case %d)\n", which);
+    free(name);
+    return 0;
+~~~
+
+لو وصلنا هنا يبقى البرنامج كمّل. و [[./ub]] من غير رقم بيطبع [[done (case 0)]].
+
+---
+
+## ٧. الخلاصة: مين وقع؟
+
+| case | الغلط | اللي حصل (gcc 14، [[-O0]]) | exit |
+|---|---|---|---|
+| 1 | قراية [[arr[3]]] | طبع رقم من الذاكرة اللي جنبها | 0 |
+| 2 | [[*NULL = 42]] | Segmentation fault | 139 |
+| 3 | كتابة بعد free | ولا حاجة | 0 |
+| 4 | [[INT_MAX + 4]] | رقم سالب | 0 |
+
+- ٣ من ٤ «اشتغلوا». «البرنامج اشتغل» مش معناها إنه صح.
+- النتيجة بتتغيّر مع [[-O2]] ومع compiler أو جهاز تاني.
+- الدرس الجاي: gdb بيوريك case 2 وقع فين، والـ sanitizers بيخلّوا 1 و 3 و 4 يتمسكوا عند السطر بالظبط. احتفظ بـ [[ub.c]].`,
+          lines: [
+            "فيها printf.",
+            R`فيها [[atoi]] و [[malloc]] و [[free]].`,
+            R`فيها [[INT_MAX]].`,
+            "main بـ arguments.",
+            R`الرقم من الترمنال، و 0 لو مفيش. [[atoi]] بتحوّل النص لرقم.`,
+            "array من ٣: الـ indexes المسموحة 0 و 1 و 2.",
+            "pointer مش بيشاور على حاجة.",
+            "8 bytes على الـ heap.",
+            "أكبر int.",
+            "case 1: index 3 بره الـ array (buffer overflow في القراية).",
+            R`case 2: [[*]] على NULL.`,
+            "case 3.",
+            "حرر الذاكرة...",
+            "...واكتب فيها بعد كده (use after free).",
+            "اخرج (عشان متعملش free تاني).",
+            "قفلة.",
+            "case 4: signed overflow.",
+            "لو وصلنا هنا يبقى البرنامج كمّل.",
+            "free عادية.",
+            "نجاح.",
+            "قفلة main."
+          ],
+          sol: R`الـ warning وقت الـ compile (gcc 14 لقى case 3 لوحده):
+[[warning: pointer 'name' used after 'free' [-Wuse-after-free]]]
+
+اللي حصل عندي (gcc 14، Linux، [[-O0]]):
+• [[./ub 1]]: طبع [[arr[3] = 2147483647]] (قرا big اللي جنب الـ array بالصدفة) و [[done (case 1)]]، و exit code 0. البرنامج «اشتغل».
+• [[./ub 2]]: [[Segmentation fault (core dumped)]] و exit code 139 (128 + رقم الإشارة SIGSEGV اللي هو 11).
+• [[./ub 3]]: ولا حاجة، exit code 0. كتب في ذاكرة محررة ومحدش اشتكى.
+• [[./ub 4]]: [[INT_MAX + 4 = -2147483645]] و done.
+
+بـ [[-O2]]، [[./ub 1]] طبع رقم تاني خالص (عندي [[-2007785912]]). نفس الكود، رقم مختلف: ده الـ UB. الأرقام عندك ممكن تختلف، والمهم إن ٣ من الـ ٤ أخطاء عدّوا من غير crash.`
+        },
+        {
+          cmd: "gdb و sanitizers",
+          title: "إزاي تعرف البرنامج وقع فين بـ gdb، وتمسك أخطاء الذاكرة بـ -fsanitize=address؟",
+          desc: R`أداتين لازم تتعلمهم بدري:
+
+١. gdb (الـ debugger): بيشغّل برنامجك تحت المراقبة. لو وقع، بيوقف عند السطر اللي وقع فيه ويوريك المتغيرات. ولازم تعمل compile بـ [[-g]] (عشان يعرف أرقام السطور والأسماء) و [[-O0]] (عشان المتغيرات متتشالش).
+
+أهم أوامره:
+• [[run]] (أو [[r]]): شغّل. و [[gdb --args ./app 2]] بتدّيله الـ arguments.
+• [[bt]] (backtrace): مين نادى مين لحد السطر اللي وقع فيه.
+• [[print x]] (أو [[p x]]): قيمة متغير. و [[info locals]]: كل المتغيرات المحلية.
+• [[break file.c:12]] (أو [[b]]): وقّف عند سطر معيّن قبل ما يتنفذ. و [[next]] ([[n]]): السطر اللي بعده. و [[step]] ([[s]]): ادخل جوه الدالة. و [[continue]] ([[c]]): كمّل.
+• [[quit]]: اخرج.
+على الماك الـ debugger اسمه [[lldb]] وأوامره قريبة، وفي VS Code الاتنين بيشتغلوا من زرار Run and Debug.
+
+٢. الـ sanitizers: الـ compiler بيحط فحوصات جوه البرنامج نفسه وقت التشغيل. [[-fsanitize=address]] (ASan) بيمسك الكتابة والقراية بره الحدود، والـ use after free، والـ leaks على Linux. و [[-fsanitize=undefined]] (UBSan) بيمسك signed overflow والقسمة على صفر وحاجات تانية. البرنامج بيبقى أبطأ (حوالي الضعف مع ASan)، فده للتطوير والـ tests بس.
+
+الفرق المهم: من غيرهم، الـ UB ممكن ميبانش (زي case 1 و 3 في الدرس اللي فات). معاهم، البرنامج بيقف عند أول غلط ويقولك السطر بالظبط.`,
+          example: R`# compile بمعلومات للـ debugger ومن غير optimization
+gcc -std=c17 -Wall -Wextra -g -O0 ub.c -o ub
+gdb --args ./ub 2
+(gdb) run
+(gdb) bt
+(gdb) print p
+(gdb) info locals
+(gdb) quit
+# نفس الملف مع ASan و UBSan
+gcc -std=c17 -g -fsanitize=address,undefined ub.c -o ub_asan
+./ub_asan 1
+./ub_asan 3
+./ub_asan 4`,
+          try: R`استخدم ملف [[ub.c]] من الدرس اللي فات. اعمل الخطوات دي واقرا كل ناتج. وبعدين في gdb جرّب [[break ub.c:11]] قبل [[run]]، وبعدين [[print arr]] و [[print which]] و [[next]]. وآخر حاجة: شغّل برنامج الـ realloc من درس malloc بعد ما تمسح الـ free، بـ [[-fsanitize=address]].`,
+          deep: {
+            why: R`من غير debugger هتقعد تحط [[printf]] في كل حتة عشان تعرف وقع فين. ومن غير sanitizers أخطاء الذاكرة اللي مش بتوقع البرنامج هتفضل مستخبية لحد ما تظهر في مكان تاني. الأداتين دول بيوفّروا ساعات، وبيخلّوا الـ UB اللي في الدرس اللي فات يبان على طول.`,
+            how: R`[[-g]] بيحط جدول جوه الملف التنفيذي يربط كل عنوان في الكود بالسطر والملف، وده اللي gdb بيقراه. ASan بيحجز مساحات «ممنوعة» (redzones) حوالين كل array وكل malloc، ويعلّم الذاكرة المحررة إنها ممنوعة لفترة، وبيحط فحص قبل كل قراية وكتابة. لو لمست مساحة ممنوعة بيوقف ويطبع: نوع الغلط، والسطر، ومين حجز الذاكرة دي ومين حررها.
+
+ASan و UBSan متاحين في gcc و clang على Linux و Mac، و ASan في MSVC كمان ([[/fsanitize=address]]). الـ leak detection جزء من ASan على Linux، وعلى الماك مش متاح افتراضيًا.`,
+            when: R`gdb لما البرنامج يقع أو يطلّع ناتج غلط ومش فاهم ليه. الـ sanitizers طول ما انت بتطوّر وفي الـ tests: اعمل لنفسك أمر build بيهم واستخدمه على طول. ولو برنامج مالتي threads، فيه [[-fsanitize=thread]] (المستوى ٣).`,
+            mistakes: R`تعمل debug لنسخة متعملها compile بـ [[-O2]] من غير [[-g]]: مفيش أرقام سطور والمتغيرات «optimized out». وتشغّل الـ sanitizers مع [[valgrind]] في نفس الوقت (مينفعش). وتسلّم نسخة فيها [[-fsanitize]]: أبطأ، ومش معمولة للإنتاج. وتتجاهل أول error وتدوّر على اللي بعده: أول واحد غالبًا هو السبب.`
+          },
+          teach: R`## الأوامر دي بتعمل إيه؟
+
+بتاخد [[ub.c]] بتاع الدرس اللي فات وتعمل حاجتين: تشغّل case 2 جوه gdb عشان تعرف وقع فين وإيه قيم المتغيرات ساعتها، وتعمل compile بالـ sanitizers عشان case 1 و 3 و 4 اللي كانوا بيعدّوا بهدوء يتمسكوا. اتشغّل في [[docker run --rm gcc:14]] (gcc 14.4.0)، و gdb اتسطّب جوه الـ container بـ [[apt-get install gdb]] وطلع [[GNU gdb (Debian 16.3-1) 16.3]]. الأوامر اللي بتبدأ بـ [[(gdb)]] بتتكتب جوه gdb بعد ما يفتح، مش في الترمنال.
+
+---
+
+## ١. compile للـ debugger
+
+~~~bash
+gcc -std=c17 -Wall -Wextra -g -O0 ub.c -o ub
+~~~
+
+- [[-g]]: حط جوه الملف جدول بيربط كل عنوان في الكود بالملف ورقم السطر، وأسماء المتغيرات وأنواعها. من غيره gdb هيوريك عناوين hex بس.
+- [[-O0]]: من غير optimization، عشان كل متغير يفضل موجود في مكانه وكل سطر يتنفذ بترتيبه. مع [[-O2]] هتشوف [[<optimized out>]] مكان قيم كتير.
+
+---
+
+## ٢. [[gdb --args ./ub 2]]
+
+- [[gdb]]: الـ GNU debugger.
+- [[--args]]: «اللي بعدي هو البرنامج والـ arguments بتاعته». من غيرها gdb هيفتكر الـ [[2]] اسم ملف core أو رقم process يتعلّق بيه، مش argument للبرنامج.
+- بيفتح ويستنى أوامرك عند [[(gdb)]]. البرنامج لسه مبدأش.
+
+---
+
+## ٣. [[(gdb) run]]
+
+شغّل البرنامج لحد ما يخلص أو يقع:
+
+~~~text الناتج
+Program received signal SIGSEGV, Segmentation fault.
+0x00000000004011e7 in main (argc=2, argv=0x7ffd312cc708) at ub.c:12
+12	    if (which == 2) *p = 42;
+~~~
+
+- [[SIGSEGV]]: نفس الإشارة اللي قفلت البرنامج في الدرس اللي فات، بس gdb مسكها ووقّف البرنامج **مكانه** بدل ما يموت.
+- [[0x00000000004011e7]]: عنوان التعليمة اللي وقعت.
+- [[in main (argc=2, argv=...)]]: جوه أنهي دالة، وقيم الـ parameters بتاعتها.
+- [[at ub.c:12]] والسطر نفسه تحتها: ده اللي [[-g]] بيدّيهولك.
+
+وفي Docker طلع قبلها [[warning: Error disabling address space randomization: Operation not permitted]]: gdb بيحاول يقفل الـ ASLR عشان العناوين تبقى ثابتة بين التشغيلات، والـ container مش سامح. مش مشكلة، العناوين بس هتتغيّر.
+
+---
+
+## ٤. [[(gdb) bt]]
+
+[[bt]] = backtrace: سلسلة النداءات من الدالة اللي وقعت لحد main.
+
+~~~text الناتج
+#0  0x00000000004011e7 in main (argc=2, argv=0x7ffd312cc708) at ub.c:12
+~~~
+
+هنا سطر واحد ([[#0]]) لأن الوقوع جوه main نفسها. لو كان جوه دالة جوه دالة، كنت هتشوف [[#0]] الدالة اللي وقعت و [[#1]] اللي نادتها وهكذا لحد main. ده أول أمر تكتبه بعد أي crash.
+
+---
+
+## ٥. [[(gdb) print p]]
+
+~~~text الناتج
+$1 = (int *) 0x0
+~~~
+
+- [[print]] (أو [[p]]): اطبع قيمة أي متغير أو تعبير (تقدر تكتب [[print which + 1]] أو [[print arr[1]]]).
+- [[$1]]: gdb بيدّي كل نتيجة رقم عشان ترجعلها ([[print $1]]).
+- [[(int *) 0x0]]: نوعه [[int *]] وقيمته 0، يعني NULL. السبب واضح.
+
+---
+
+## ٦. [[(gdb) info locals]]
+
+كل المتغيرات المحلية في الدالة الحالية مرة واحدة:
+
+~~~text الناتج
+which = 2
+arr = {1, 2, 3}
+p = 0x0
+name = 0x168042a0 ""
+big = 2147483647
+~~~
+
+gdb بيعرف يطبع الـ array كلها، والـ [[char *]] كعنوان ونص ([[""]] لأن malloc رجّعت ذاكرة أول byte فيها صفر بالصدفة). وبعدها [[quit]] (أو [[q]]) يقفل gdb، وهيسألك لو البرنامج لسه شغال.
+
+---
+
+## ٧. الـ try: breakpoint وخطوة خطوة
+
+~~~text جوه gdb --args ./ub 1
+(gdb) break ub.c:11
+(gdb) run
+(gdb) print arr
+(gdb) print which
+(gdb) next
+(gdb) next
+(gdb) continue
+~~~
+
+~~~text الناتج
+Breakpoint 1 at 0x4011ba: file ub.c, line 11.
+Breakpoint 1, main (argc=2, argv=0x7ffedd9bd7c8) at ub.c:11
+11	    if (which == 1) printf("arr[3] = %d\n", arr[which + 2]);
+$1 = {1, 2, 3}
+$2 = 1
+12	    if (which == 2) *p = 42;
+13	    if (which == 3) {
+arr[3] = 2147483647
+done (case 1)
+[Inferior 1 (process 216) exited normally]
+~~~
+
+- [[break ub.c:11]] (أو [[b]]): وقّف **قبل** تنفيذ السطر 11.
+- [[run]]: البرنامج وقف عند السطر 11، فقدرت تشوف arr و which قبل الغلطة.
+- [[next]] (أو [[n]]): نفّذ السطر الحالي وقف عند اللي بعده. لاحظ إن [[arr[3] = ...]] اتطبعت متأخر: الـ printf كتبت في buffer، والـ buffer طلع لما البرنامج خلص.
+- [[continue]] (أو [[c]]): كمّل لحد breakpoint تاني أو النهاية. [[Inferior 1]] اسم gdb للبرنامج اللي بيراقبه، و [[exited normally]] = خرج بـ 0. يعني gdb لوحده مش هيمسك case 1، محتاج sanitizer.
+
+---
+
+## ٨. compile بالـ sanitizers
+
+~~~bash
+gcc -std=c17 -g -fsanitize=address,undefined ub.c -o ub_asan
+~~~
+
+- [[-fsanitize=address]] (ASan): بيحط مناطق ممنوعة حوالين كل array وكل malloc، ويعلّم الذاكرة المحررة، ويفحص قبل كل قراية وكتابة.
+- [[undefined]] (UBSan): بيفحص الـ overflow والـ index بره الحدود (لو الحجم معروف) والقسمة على صفر وغيرهم.
+- [[-g]] عشان التقارير تقول السطر.
+
+### [[./ub_asan 1]]
+
+~~~text الناتج (مختصر)
+ub.c:11:48: runtime error: index 3 out of bounds for type 'int [3]'
+==224==ERROR: AddressSanitizer: stack-buffer-overflow on address 0x731dbbd0002c ...
+READ of size 4 at 0x731dbbd0002c thread T0
+    #0 0x40153d in main /w/ub.c:11
+  This frame has 1 object(s):
+    [32, 44) 'arr' (line 7) <== Memory access at offset 44 overflows this variable
+SUMMARY: AddressSanitizer: stack-buffer-overflow /w/ub.c:11 in main
+exit=1
+~~~
+
+- أول سطر من UBSan: السطر 11 العمود 48، و index 3 في array نوعها [[int [3]]].
+- بعدها ASan: [[stack-buffer-overflow]] (array على الـ stack اتعدّت)، [[READ of size 4]] = قراية int.
+- [[#0 ... /w/ub.c:11]]: الـ backtrace زي [[bt]] في gdb.
+- [[[32, 44) 'arr' (line 7)]]: arr في الـ bytes من 32 لـ 43، والقراية كانت عند 44: أول byte بعدها بالظبط.
+- ASan **وقّف** البرنامج (مفيش done) وخرج بـ 1. وتحت التقرير جدول «Shadow bytes» طويل، ده تفاصيل داخلية تقدر تتجاهلها.
+
+### [[./ub_asan 3]]
+
+~~~text الناتج (مختصر)
+==225==ERROR: AddressSanitizer: heap-use-after-free on address 0x502000000010 ...
+WRITE of size 1 at 0x502000000010 thread T0
+    #0 0x401621 in main /w/ub.c:15
+freed by thread T0 here:
+    #1 0x4015d7 in main /w/ub.c:14
+previously allocated by thread T0 here:
+    #1 0x40141d in main /w/ub.c:9
+exit=1
+~~~
+
+ده أقوى تقرير: الكتابة حصلت فين (سطر 15، byte واحد = [['X']])، والذاكرة اتحررت فين (سطر 14)، واتحجزت فين أصلًا (سطر 9). القصة كلها.
+
+### [[./ub_asan 4]]
+
+~~~text الناتج
+ub.c:18:21: runtime error: signed integer overflow: 2147483647 + 4 cannot be represented in type 'int'
+INT_MAX + 4 = -2147483645
+done (case 4)
+exit=0
+~~~
+
+UBSan بيطبع التحذير **ويكمّل** افتراضيًا (عشان كده done اتطبعت و exit 0). لو عايزه يقف: [[-fno-sanitize-recover=undefined]] (جربتها: نفس الرسالة، ومفيش done، و exit 1).
+
+---
+
+## ٩. الـ leak (آخر الـ try)
+
+برنامج الـ realloc من درس malloc من غير [[free]]، بـ [[-fsanitize=address]]، طلّع [[ERROR: LeakSanitizer: detected memory leaks]] و [[Direct leak of 512 byte(s)]] بالسطر اللي حجز (التفاصيل في درس malloc).
+
+---
+
+## الخلاصة
+
+| الأداة | الأمر | بتمسك |
+|---|---|---|
+| gdb | [[gcc -g -O0]] ثم [[gdb --args ./app ...]] | crash: فين، ومين نادى، والقيم |
+| ASan | [[-fsanitize=address]] | بره الحدود، use after free، double free، leaks |
+| UBSan | [[-fsanitize=undefined]] | signed overflow، index، قسمة على صفر |
+
+| أمر gdb | اختصار | معناه |
+|---|---|---|
+| [[run]] | [[r]] | شغّل |
+| [[bt]] | | سلسلة النداءات |
+| [[print x]] | [[p x]] | قيمة |
+| [[info locals]] | | كل المتغيرات المحلية |
+| [[break f.c:12]] | [[b]] | وقّف قبل السطر |
+| [[next]] / [[step]] | [[n]] / [[s]] | السطر الجاي / ادخل جوه الدالة |
+| [[continue]] | [[c]] | كمّل |
+| [[quit]] | [[q]] | اخرج |
+
+- على الماك [[lldb]] بأوامر قريبة، وعلى Windows مع MSVC الـ ASan بـ [[/fsanitize=address]] (من الـ docs).
+- الـ sanitizers للتطوير والـ tests، مش للنسخة اللي بتسلّمها.`,
+          lines: [
+            R`[[-g]] لأرقام السطور، و [[-O0]] عشان المتغيرات متتشالش.`,
+            R`افتح البرنامج في gdb، و [[--args]] بتدّيله argument 2.`,
+            "جوه gdb: شغّل. هيقف عند الـ segfault.",
+            R`[[bt]]: إحنا فين ومين نادانا.`,
+            "قيمة p: هتلاقيه 0x0 يعني NULL.",
+            "كل المتغيرات المحلية مرة واحدة.",
+            "اخرج من gdb.",
+            R`compile مع ASan و UBSan. البرنامج هيبقى أبطأ وأكبر.`,
+            "case 1: القراية بره الـ array.",
+            "case 3: use after free.",
+            "case 4: signed overflow."
+          ],
+          sol: R`gdb مع case 2:
+[[Program received signal SIGSEGV, Segmentation fault.]]
+[[0x00000000004011e7 in main (argc=2, argv=0x7fffffffdad8) at ub.c:12]]
+[[12	    if (which == 2) *p = 42;]]
+و [[print p]] بيطبع [[(int *) 0x0]]، و [[info locals]] بيطبع [[which = 2]] و [[arr = {1, 2, 3}]] و [[p = 0x0]] والباقي.
+
+مع الـ sanitizers (مختصر):
+[[./ub_asan 1]]:
+[[ub.c:11:48: runtime error: index 3 out of bounds for type 'int [3]']]
+[[ERROR: AddressSanitizer: stack-buffer-overflow ... READ of size 4]]
+[[#0 0x40153d in main /src/ub.c:11]]
+
+[[./ub_asan 3]]:
+[[ERROR: AddressSanitizer: heap-use-after-free ... WRITE of size 1]]
+وتحتها «freed by thread T0 here» بالسطر 14 اللي عمل free.
+
+[[./ub_asan 4]]:
+[[ub.c:18:21: runtime error: signed integer overflow: 2147483647 + 4 cannot be represented in type 'int']]
+
+الأخطاء اللي كانت بتعدّي بهدوء بقت بتقف عند السطر بالظبط. وبرنامج الـ realloc من غير free بيطلّع [[ERROR: LeakSanitizer: detected memory leaks]].`
         }
       ]
     }
