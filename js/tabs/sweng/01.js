@@ -73,6 +73,127 @@ console.log(editors.length); // 1`,
             when: "كل مرة تكتب اسم. وكل مرة تلاقي نفسك بتكتب تعليق يشرح متغير ده إيه، ده غالبًا معناه إن الاسم محتاج يتغير.",
             mistakes: R`أسماء عامة زي [[data]] و [[info]] و [[result]] و [[handleClick2]]. واختصارات مش مشهورة ([[usrCnt]]). واسم بقى كدب بعد تعديل: [[getActiveUsers]] اللي بقت ترجع كل الـ users بعد ما حد شال الفلتر، ودي أسوأ من اسم وحش لأنها بتضلّلك. وفي انترفيو live coding، الأسماء الواضحة من أول سطر بتفرق مع اللي بيقيّمك أكتر ما تتخيل.`
           },
+          teach: R`## الفكرة
+
+المثال فيه نفس المنطق مكتوب مرتين: مرة بأسماء لازم تخمّنها، ومرة بأسماء بتحكي. هنقرا الاتنين سطر سطر ونشوف الفرق بيبان فين. كل الأمثلة هنا اتشغّلت بـ [[npx tsx]] (tsx 4.23 على Node 24.19) واتفحصت بـ [[npx tsc --noEmit --strict]] (TypeScript 7.0) على ويندوز.
+
+---
+
+## ١. النسخة القديمة
+
+~~~text main.ts
+function check(u: { r: string; e: boolean }) {
+  return u.r === "admin" || u.e;
+}
+~~~
+
+- [[function check]]: دالة اسمها «افحص». تفحص إيه؟ مش مكتوب.
+- [[u: { r: string; e: boolean }]]: الـ parameter اسمه [[u]]، ونوعه object فيه خانتين: [[r]] نص، و [[e]] قيمة [[true]] أو [[false]]. الـ [[:]] بعد الاسم في TypeScript معناها «نوعه كذا».
+- [[===]]: مقارنة بالقيمة والنوع مع بعض. و [[||]] معناها «أو»: لو الجزء الأول [[true]] الدالة ترجّعه، غير كده ترجّع الجزء التاني.
+
+الكود شغال، والمشكلة إن اللي بيقراه لازم يدوّر: [[r]] دي role؟ و [[e]] دي email ولا enabled ولا editor؟ ولأن [[r]] نوعها [[string]] مفتوح، أي غلطة كتابة بتعدّي:
+
+~~~text الناتج: check({ r: "admin", e: false }), check({ r: "viewer", e: true }), check({ r: "Admin", e: false })
+true true false
+~~~
+
+التالتة كتبت [["Admin"]] بحرف كبير، والدالة رجّعت [[false]] من غير أي اعتراض. ده bug صامت.
+
+---
+
+## ٢. النوع باسم واضح
+
+~~~text main.ts
+type Member = { role: "admin" | "editor" | "viewer"; isOwner: boolean };
+~~~
+
+- [[type Member = ...]]: بنسمّي شكل الداتا مرة واحدة، فبعد كده نكتب [[Member]] بدل ما نكرر الشكل كله.
+- [[role: "admin" | "editor" | "viewer"]]: الـ [[|]] معناها «واحدة من دول». يعني [[role]] مش أي نص، دي واحدة من ٣ قيم بس (اسمها union of literal types).
+- [[isOwner: boolean]]: الاسم سؤال جوابه آه أو لأ، فمش محتاج تعليق يقول إنه boolean.
+
+ودلوقتي نفس غلطة [["Admin"]] بتتمسك قبل التشغيل:
+
+~~~text الناتج: npx tsc --noEmit --strict
+n2.ts(5,15): error TS2820: Type '"Admin"' is not assignable to type '"admin" | "editor" | "viewer"'. Did you mean '"admin"'?
+~~~
+
+[[(5,15)]] رقم السطر والعمود، و TypeScript كمان اقترح الصح.
+
+---
+
+## ٣. الدالة باسم السؤال
+
+~~~text main.ts
+function canEditPost(member: Member): boolean {
+  return member.role === "admin" || member.isOwner;
+}
+~~~
+
+- [[canEditPost]]: فعل بـ [[can]] في الأول، فاللي بيقرا عارف إنها بترجّع آه أو لأ، وعارف السؤال: «يقدر يعدّل البوست؟».
+- [[member: Member]]: اسم الـ parameter هو الحاجة نفسها، مش حرف.
+- [[): boolean]]: نوع الرجوع مكتوب، فلو حد غيّر الجسم ورجّع حاجة تانية بالغلط، [[tsc]] هيعترض.
+- السطر التاني هو نفس منطق [[check]] بالظبط، بس بيتقري جملة: «الدور admin أو هو صاحب البوست».
+
+---
+
+## ٤. الـ array والـ filter
+
+~~~text main.ts
+const members: Member[] = [
+  { role: "viewer", isOwner: true },
+  { role: "viewer", isOwner: false },
+];
+const editors = members.filter(canEditPost);
+console.log(editors.length); // 1
+~~~
+
+- [[Member[]]]: الـ [[[]]] بعد النوع معناها «array من النوع ده». والاسم [[members]] جمع، فباين إنه قايمة.
+- [[members.filter(canEditPost)]]: [[filter]] بتعدّي على كل عنصر وتنادي الدالة عليه، واللي رجّعتله [[true]] بيفضل. لاحظ إننا بعتنا اسم الدالة نفسه من غير [[()]]، يعني «استخدم الدالة دي»، مش «نفّذها دلوقتي».
+- [[editors]]: اسم الناتج بيقول هو إيه.
+
+~~~text الناتج: console.log(editors) ثم console.log(editors.length)
+[ { role: 'viewer', isOwner: true } ]
+1
+~~~
+
+العضو الأول [[viewer]] بس هو صاحب البوست فعدّى، والتاني لأ. والسطر [[members.filter(canEditPost)]] بيتقري إنجليزي: «هات الأعضاء اللي يقدروا يعدّلوا البوست».
+
+---
+
+## ٥. حل التمرين (solCode)
+
+النسخة القديمة اسمها [[handle2(data)]] وفيها [[res]] و [[temp]] و [[flag]]. الجديدة:
+
+~~~text sol.ts
+async function hasPlacedOrders(userId: string, loadUser: (id: string) => Promise<User>): Promise<boolean> {
+  const user = await loadUser(userId);
+  return user.orders.length > 0;
+}
+~~~
+
+- [[hasPlacedOrders]]: اسم بـ [[has]] لأنها بترجّع boolean، والسؤال كامل في الاسم.
+- [[userId: string]] بدل [[data: any]]: الاسم بيقول إنه id، والنوع بقى محدد بدل [[any]] اللي بيقفل الفحص.
+- [[loadUser: (id: string) => Promise<User>]]: parameter نوعه **دالة** بتاخد id وبترجّع [[Promise]] فيه [[User]]. بنبعت طريقة التحميل من برّه بدل [[fetch]] جوه الدالة، فنقدر نجرّبها من غير سيرفر (ده dependency injection، ليه درس في المستوى ٢).
+- [[async]] و [[await]]: الدالة بتستنى التحميل يخلص من غير ما توقف البرنامج، وبترجّع [[Promise<boolean>]].
+- [[flag]] اختفى خالص: الشرط [[user.orders.length > 0]] نفسه هو الإجابة.
+
+~~~text الناتج: npx tsx sol.ts
+true
+~~~
+
+---
+
+## الخلاصة
+
+| الحاجة | الاسم بيبقى | مثال |
+|---|---|---|
+| متغير | اسم بيقول هو إيه | [[user]] و [[editors]] |
+| دالة | فعل بيقول بتعمل إيه | [[canEditPost]] و [[loadUser]] |
+| boolean | سؤال | [[isOwner]] و [[hasPlacedOrders]] |
+| array | جمع | [[members]] |
+
+- الاسم الكويس بيوفّر تعليق، والنوع المحدد ([["admin" | "editor" | "viewer"]] بدل [[string]]) بيمسك غلطات الكتابة.
+- غيّر الأسماء بـ F2 في VS Code مش Find/Replace.`,
           lines: [
             "الاسم [[check]] مبيقولش بيشيك على إيه، و [[u]] و [[r]] و [[e]] حروف لازم تخمّنها.",
             "[[e]] ممكن تبقى email أو enabled أو editor. محدش يعرف من غير ما يدوّر.",
@@ -149,6 +270,127 @@ console.log(placeOrder({ email: "you@example.com", items: [{ price: 50, qty: 2 }
             when: "وانت بتكتب: لما تحس إنك محتاج تعليق يفصل جزء عن جزء. ووانت بتصلّح bug: قبل ما تعدّل في دالة ضخمة، اطلّع الجزء اللي هتعدّله في دالة لوحده واختبره.",
             mistakes: R`تقسّم لدرجة إن كل دالة سطر واحد ملوش معنى لوحده، فتلف بين ٢٠ دالة عشان تفهم حاجة بسيطة: التقسيم على المعنى مش على عدد السطور. وتعمل دوال صغيرة بس بتكلم بعض عن طريق متغيرات global بدل parameters و return، فالتقسيم بقى شكلي. وفي انترفيو لو اتسألت «إيه اللي يخلي الدالة كويسة؟» متقولش «قصيرة» وبس، قول «بتعمل حاجة واحدة، على مستوى تفاصيل واحد، واسمها بيوصفها».`
           },
+          teach: R`## الفكرة
+
+المثال طلب شراء متقسّم ٣ دوال: واحدة تتأكد، وواحدة تحسب، وواحدة كبيرة بتحكي الخطوات بس. هنفك كل دالة، ونشغّل كل واحدة لوحدها عشان نشوف ليه التقسيم ده بيسهّل الاختبار. اتشغّل بـ [[npx tsx]] على Node 24.19 (ويندوز).
+
+---
+
+## ١. شكل الداتا
+
+~~~text main.ts
+type Item = { price: number; qty: number };
+type Order = { email: string; items: Item[] };
+~~~
+
+- [[Item]]: صنف واحد في الطلب، ليه سعر ([[price]]) وكمية ([[qty]] اختصار quantity).
+- [[Order]]: الطلب كله: إيميل، وقايمة أصناف ([[Item[]]] يعني array من [[Item]]).
+
+---
+
+## ٢. [[validate]]: شغلتها تتأكد وبس
+
+~~~text main.ts
+function validate(order: Order): void {
+  if (!order.email.includes("@")) throw new Error("invalid email");
+  if (order.items.length === 0) throw new Error("empty order");
+}
+~~~
+
+- [[: void]]: الدالة مبترجّعش حاجة. يا إما تعدّي في هدوء، يا إما توقف كل حاجة بـ [[throw]].
+- [[order.email.includes("@")]]: النص فيه [[@]]؟ والـ [[!]] قبلها بتعكس: «لو **مفيهوش** @».
+- [[throw new Error("...")]]: بتعمل خطأ برسالة وبترميه، فالدالة بتقف هنا والكود اللي ناداها مبيكملش.
+- [[order.items.length === 0]]: عدد الأصناف صفر، يعني طلب فاضي.
+
+نجرّبها لوحدها على طلبين غلط:
+
+~~~text الناتج
+invalid email
+empty order
+~~~
+
+الأول [["you.example.com"]] من غير @، والتاني إيميله سليم بس مفيهوش أصناف. كل حالة ليها رسالتها.
+
+---
+
+## ٣. [[subtotal]]: شغلتها تحسب وبس
+
+~~~text main.ts
+function subtotal(items: Item[]): number {
+  return items.reduce((sum, item) => sum + item.price * item.qty, 0);
+}
+~~~
+
+[[reduce]] بتعدّي على الأصناف واحد واحد وبتجمّعهم في رقم واحد:
+
+- [[(sum, item) => ...]]: دالة صغيرة (arrow function، الـ [[=>]] معناها «بترجّع»). [[sum]] المجموع لحد دلوقتي، و [[item]] الصنف الحالي.
+- [[sum + item.price * item.qty]]: الضرب بيحصل قبل الجمع، فبنزوّد سعر × كمية على المجموع.
+- [[, 0]] في الآخر: المجموع يبدأ من صفر. من غيره [[reduce]] على array فاضية بترمي خطأ.
+
+~~~text الناتج: subtotal([{ price: 50, qty: 2 }, { price: 10, qty: 3 }]) و subtotal([])
+130
+0
+~~~
+
+٥٠×٢ = ١٠٠، و ١٠×٣ = ٣٠، والمجموع ١٣٠. والـ array الفاضية رجّعت صفر بفضل البداية [[0]]. لاحظ إننا اختبرنا الحسبة من غير إيميل ومن غير أي validation، لأنها دالة لوحدها: input وبيطلع output.
+
+---
+
+## ٤. [[placeOrder]]: بتحكي الخطوات
+
+~~~text main.ts
+function placeOrder(order: Order): number {
+  validate(order);
+  const total = subtotal(order.items);
+  // sendReceipt(order.email, total) هنا في المشروع الحقيقي
+  return total;
+}
+console.log(placeOrder({ email: "you@example.com", items: [{ price: 50, qty: 2 }] })); // 100
+~~~
+
+اقراها بصوت عالي: «اتأكد من الطلب، احسب الإجمالي، رجّعه». مفيهاش [[reduce]] ولا [[includes]]، دي تفاصيل تحت. ده المقصود بـ **مستوى تفاصيل واحد**: كل سطر فيها خطوة باسمها.
+
+والتعليق [[// sendReceipt...]] مكان الخطوة التالتة في مشروع حقيقي (بعت الإيصال على الإيميل)، وكانت هتبقى دالة رابعة لوحدها.
+
+~~~text الناتج: npx tsx main.ts
+100
+~~~
+
+---
+
+## ٥. حل التمرين: [[registerUser]]
+
+الحل بيعمل نفس الحكاية مع تسجيل يوزر: ٤ دوال صغيرة ودالة بتحكي.
+
+| الدالة | شغلتها الوحيدة |
+|---|---|
+| [[validateSignup]] | إيميل فيه @، وباسورد ٨ حروف على الأقل، وإيميل مش متسجل قبل كده |
+| [[hashPassword]] | تحوّل الباسورد لـ hash (هنا وهمي: [[hashed:8]]، وفي الحقيقي bcrypt أو argon2) |
+| [[saveUser]] | تعمل user بـ id جديد وتحطه في الـ array |
+| [[welcomeMessage]] | ترجّع جملة الترحيب |
+| [[registerUser]] | تنادي الأربعة بالترتيب |
+
+تلات حاجات جديدة في الحل:
+
+- [[{ email, password }: Input]] في [[validateSignup]]: ده destructuring، بيطلّع الخانتين من الـ object في متغيرين على طول.
+- [[users.some((u) => u.email === email)]]: [[some]] بترجّع [[true]] لو عنصر واحد على الأقل حقق الشرط.
+- [[saveUser(input.email, hashPassword(input.password))]]: الجوه بيتنفذ الأول: الـ hash، وبعدين الحفظ.
+
+~~~text الناتج: npx tsx sol.ts
+Welcome you@example.com
+email taken
+~~~
+
+التسجيل الأول نجح. التاني بنفس الإيميل وقع في [[validateSignup]] برسالة [[email taken]]، و [[try]] و [[catch]] في آخر سطر مسكت الخطأ وطبعت رسالته بدل ما البرنامج يقع. و [[(e as Error)]] بتقول لـ TypeScript «اعتبر [[e]] Error» لأن نوعه في الـ catch [[unknown]].
+
+---
+
+## الخلاصة
+
+- الدالة بتعمل حاجة واحدة لو تقدر توصفها في جملة من غير «و».
+- الدالة الكبيرة بتحكي الخطوات بأسماء، والتفاصيل في الصغيرة.
+- الدوال الصغيرة اللي بتاخد input وترجّع output ([[subtotal]]) بتتختبر لوحدها في سطر واحد.
+- التقسيم على المعنى، مش على عدد السطور.`,
           lines: [
             "شكل الصنف: سعر وكمية.",
             "شكل الطلب.",
@@ -240,6 +482,128 @@ console.log(withdraw({ isActive: true, balance: 100 }, 150)); // insufficient ba
             when: "أي دالة بتتحقق من حاجات قبل ما تشتغل: validation، وصلاحيات، وحالات loading و error في الـ components، وحالات فاضية (array فاضية، أو قيمة null).",
             mistakes: R`تنسى [[return]] بعد [[res.status(401).json()]] في Express، فالكود يكمّل ويحاول يرد تاني، ويطلع [[Cannot set headers after they are sent]]. وتعكس الشرط غلط ([[!a && b]] بدل [[!(a && b)]])، فجرّب كل الحالات الغلط بعد التعديل. وفي React، الـ hooks لازم تبقى قبل أي early return، لأن عدد الـ hooks لازم يفضل ثابت في كل render (قاعدة الـ hooks في تاب React).`
           },
+          teach: R`## الفكرة
+
+بدل ما الشغل الحقيقي يبقى جوه ٣ if متداخلين، كل حالة غلط بتتفحص في سطر لوحدها وتخرج على طول. هنقارن النسختين، ونشغّل الدالة على كل حالة، ونشوف إزاي الـ guard بيساعد TypeScript كمان. اتشغّل بـ [[npx tsx]] على Node 24.19، والفحص بـ [[tsc --strict]] (TypeScript 7.0) على ويندوز.
+
+---
+
+## ١. النسخة القديمة (المتعلّقة في المثال)
+
+~~~text قبل
+if (acc) {
+  if (acc.isActive) {
+    if (amount <= acc.balance) { acc.balance -= amount; return "ok"; }
+  }
+}
+return "failed";
+~~~
+
+عشان توصل لسطر [[acc.balance -= amount]] لازم تشيل في دماغك ٣ شروط. والأوحش إن ٣ أسباب فشل مختلفة (مفيش حساب، الحساب موقوف، الرصيد مش مكفّي) كلهم بيوصلوا لنفس [[return "failed"]]، فمحدش يعرف إيه اللي حصل.
+
+---
+
+## ٢. النوع والدالة
+
+~~~text main.ts
+type Account = { isActive: boolean; balance: number };
+
+function withdraw(acc: Account | null, amount: number): string {
+~~~
+
+- [[Account | null]]: الـ [[|]] معناها «أو». يعني ممكن يجيلك حساب، أو [[null]] (مفيش حساب أصلًا، زي لما تدوّر في الداتابيز وملقيتش).
+- [[: string]]: الدالة بترجّع نص بيقول حصل إيه.
+
+---
+
+## ٣. الـ guards: شرط معكوس وخروج
+
+~~~text main.ts
+  if (!acc) return "no account";
+  if (!acc.isActive) return "account inactive";
+  if (amount > acc.balance) return "insufficient balance";
+~~~
+
+كل سطر شرط من القديم **معكوس**:
+
+| القديم (ادخل لو) | الجديد (اخرج لو) |
+|---|---|
+| [[if (acc)]] | [[if (!acc) return ...]] |
+| [[if (acc.isActive)]] | [[if (!acc.isActive) return ...]] |
+| [[if (amount <= acc.balance)]] | [[if (amount > acc.balance) return ...]] |
+
+- [[!acc]]: الـ [[!]] معناها «مش». و [[null]] بيتحسب false، فـ [[!null]] بتبقى true والدالة تخرج.
+- [[return "..."]]: بيوقف الدالة هنا ويرجّع الرسالة، فالسطور اللي تحت مبتتنفذش.
+- عكس [[<=]] (أصغر من أو يساوي) هو [[>]] (أكبر من)، مش [[>=]].
+
+---
+
+## ٤. الشغل الحقيقي على الشمال
+
+~~~text main.ts
+  acc.balance -= amount;
+  return "ok";
+}
+~~~
+
+لو وصلنا هنا، يبقى كل الشروط اتحققت. [[-=]] معناها «اطرح وخزّن»: [[acc.balance = acc.balance - amount]].
+
+نشغّل الدالة على كل الحالات:
+
+~~~text الناتج
+no account
+account inactive
+insufficient balance
+ok 70
+~~~
+
+كل حالة فشل ليها رسالتها. وفي الأخيرة سحبنا ٣٠ من ١٠٠ فالرصيد بقى [[70]]. والمثال نفسه بيطبع السطر التالت بس: [[insufficient balance]].
+
+---
+
+## ٥. ليه الـ guard الأول مهم لـ TypeScript
+
+بعد [[if (!acc) return]]، TypeScript عارف إن [[acc]] مش [[null]] في باقي الدالة، فبيسمحلك تكتب [[acc.isActive]]. ده اسمه **narrowing** (تضييق النوع). شيل السطر ده وشوف:
+
+~~~text الناتج: npx tsc --noEmit --strict
+g2.ts(3,8): error TS18047: 'acc' is possibly 'null'.
+~~~
+
+[[TS18047]] معناها: «انت بتقرا خانة من حاجة ممكن تكون null». يعني الـ guard مش بس بيرتّب الكود، ده بيمنع [[Cannot read properties of null]] وقت التشغيل.
+
+---
+
+## ٦. حل التمرين: [[addComment]]
+
+نفس الفكرة بس ٦ حالات غلط، كل واحدة سطر برسالتها:
+
+~~~text sol.ts
+  if (!user) return "login required";
+  if (user.isBanned) return "user banned";
+  if (!user.emailVerified) return "verify your email first";
+  if (!post) return "post not found";
+  if (post.locked) return "comments are locked";
+  if (text.trim() === "") return "empty comment";
+  return "ok";
+~~~
+
+- النوع [[{ ... } | null]] متعرّف للـ [[User]] و [[Post]] نفسهم، فلازم الـ guard يمسك [[null]] قبل أي [[.]].
+- [[text.trim()]]: بتشيل المسافات من الأول والآخر، فتعليق كله مسافات بيبقى [[""]] ويترفض.
+
+~~~text الناتج: npx tsx sol.ts
+login required
+comments are locked
+ok
+~~~
+
+---
+
+## الخلاصة
+
+- اعكس الشرط واخرج: [[if (!x) return]] بدل [[if (x) { ... }]].
+- كل حالة غلط ليها سطر ورسالة، والشغل الحقيقي في الآخر من غير indent.
+- عكس [[a && b]] هو [[!a || !b]] (قانون De Morgan)، وعكس [[<=]] هو [[>]].
+- الـ guards مكانها أول الدالة، و TypeScript بيستفيد منها في الـ narrowing.`,
           lines: [
             "شكل الحساب.",
             "بداية الدالة.",
@@ -313,6 +677,143 @@ console.log(withVat(10000), deliveryDate(OrderStatus.Pending)); // 11400 null`,
             when: "أي رقم أو string ليه معنى في البيزنس: نسب، ومدد، وحدود (أقصى حجم ملف، وعدد المحاولات)، وحالات، وأدوار.",
             mistakes: R`constant اسمه زي قيمته: [[const FOURTEEN = 0.14]] ملوش أي فايدة، الاسم لازم يقول المعنى مش الرقم. والفلوس بـ float: [[0.1 + 0.2]] بتطلع [[0.30000000000000004]]، فخزّن الفلوس بالقروش كـ integer زي [[priceCents]] في المثال، أو Decimal في الداتابيز. وكل constants المشروع في ملف واحد عملاق: الأحسن كل constant جنب الـ feature اللي بتستخدمه، والمشترك بس في ملف عام.`
           },
+          teach: R`## الفكرة
+
+المثال بياخد ٣ أرقام مالهاش معنى ([[0.14]] و [[3]] و [[259200000]]) ويدّي كل واحد اسم في مكان واحد، وبعدين يستخدم الأسماء في دالتين. اتشغّل بـ [[npx tsx]] على Node 24.19، والأخطاء من [[tsc --strict]] (TypeScript 7.0) على ويندوز.
+
+---
+
+## ١. الأرقام القديمة: جت منين؟
+
+~~~text قبل
+const total = price + price * 0.14;
+if (order.status === 3) deliverAt = Date.now() + 259200000;
+~~~
+
+اللي بيقرا مش عارف إن [[0.14]] ضريبة القيمة المضافة، ولا إن [[3]] يعني «اتشحن»، ولا إن [[259200000]] تلات أيام بالميلي ثانية. حسبناها:
+
+~~~text الناتج
+86400000 259200000 3
+~~~
+
+يعني يوم = ٨٦٬٤٠٠٬٠٠٠ ms، و [[259200000]] ÷ يوم = ٣ أيام بالظبط. محتاج آلة حاسبة عشان تفهم سطر.
+
+---
+
+## ٢. الـ constants
+
+~~~text main.ts
+const VAT_RATE = 0.14;
+const DELIVERY_DAYS = 3;
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+~~~
+
+- [[const]]: متغير مينفعش يتعاد تعيينه.
+- [[VAT_RATE]]: VAT اختصار Value Added Tax (ضريبة القيمة المضافة)، و RATE النسبة. الكتابة بـ UPPER_SNAKE_CASE (حروف كبيرة و [[_]]) عادة بتقول «دي قيمة ثابتة».
+- [[MS_PER_DAY]]: الحسبة نفسها مكتوبة بدل ناتجها: ٢٤ ساعة × ٦٠ دقيقة × ٦٠ ثانية × ١٠٠٠ ميلي. و MS اختصار milliseconds. الوحدة في الاسم عشان محدش يفتكرها ثواني.
+
+---
+
+## ٣. الحالات بـ [[as const]]
+
+~~~text main.ts
+const OrderStatus = { Pending: "pending", Paid: "paid", Shipped: "shipped" } as const;
+type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus];
+~~~
+
+السطر الأول object عادي فيه ٣ حالات. و [[as const]] بتقول لـ TypeScript حاجتين: الخانات read-only، وقيمة كل خانة نوعها هو النص بالظبط ([["shipped"]]) مش أي [[string]]. لو حاولت تغيّرها:
+
+~~~text الناتج: npx tsc --noEmit --strict
+m2.ts(3,4): error TS2540: Cannot assign to 'Pending' because it is a read-only property.
+~~~
+
+السطر التاني نفكّه من جوه لبرة:
+
+| الحتة | معناها | الناتج |
+|---|---|---|
+| [[typeof OrderStatus]] | نوع الـ object اللي فوق | [[{ readonly Pending: "pending"; ... }]] |
+| [[keyof ...]] | أسماء خاناته | [["Pending" | "Paid" | "Shipped"]] |
+| [[(...)[keyof ...]]] | قيم الخانات دي | [["pending" | "paid" | "shipped"]] |
+
+ولاحظ إن الاسم [[OrderStatus]] متعرّف مرتين: مرة قيمة ([[const]]) ومرة نوع ([[type]]). TypeScript بيفصل بينهم حسب المكان، فتكتب [[OrderStatus.Shipped]] كقيمة و [[status: OrderStatus]] كنوع.
+
+---
+
+## ٤. [[withVat]]
+
+~~~text main.ts
+function withVat(priceCents: number): number {
+  return priceCents + Math.round(priceCents * VAT_RATE);
+}
+~~~
+
+- [[priceCents]]: السعر بالقرش كرقم صحيح، والوحدة في الاسم.
+- [[Math.round]]: ليه بنقرّب؟ لأن الـ float مش دقيق:
+
+~~~text الناتج
+1400 1400.0000000000002 0.30000000000000004
+~~~
+
+[[10000 * 0.14]] طلعت [[1400.0000000000002]] مش [[1400]]، و [[0.1 + 0.2]] مش [[0.3]]. الأرقام العشرية بتتخزن بالـ binary فبيبقى فيها كسر صغير، فبنقرّب لأقرب قرش.
+
+---
+
+## ٥. [[deliveryDate]]
+
+~~~text main.ts
+function deliveryDate(status: OrderStatus, now = Date.now()): Date | null {
+  return status === OrderStatus.Shipped ? new Date(now + DELIVERY_DAYS * MS_PER_DAY) : null;
+}
+~~~
+
+- [[now = Date.now()]]: parameter بقيمة افتراضية. لو مبعتوش، بياخد الوقت الحالي بالـ ms. ولو بعته، تقدر تختبر بوقت ثابت.
+- [[شرط ? قيمة : قيمة تانية]]: ده الـ ternary operator، if صغيرة بترجّع قيمة: لو اتشحن رجّع تاريخ، غير كده [[null]].
+- [[new Date(رقم)]]: بيحوّل عدد الـ ms من ١ يناير ١٩٧٠ لتاريخ.
+
+جرّبناها بـ [[now = 0]]:
+
+~~~text الناتج: deliveryDate(OrderStatus.Shipped, 0)
+1970-01-04T00:00:00.000Z
+~~~
+
+صفر هو ١ يناير ١٩٧٠، وبعد ٣ أيام ٤ يناير. ولو بعت حالة مش موجودة:
+
+~~~text الناتج: deliveryDate("done")
+m1.ts(11,14): error TS2345: Argument of type '"done"' is not assignable to parameter of type 'OrderStatus'.
+~~~
+
+---
+
+## ٦. السطر الأخير
+
+~~~text الناتج: npx tsx main.ts
+11400 null
+~~~
+
+[[10000]] قرش + ١٤٪ = [[11400]]. والطلب [[Pending]] مش متشحن، فالتاريخ [[null]].
+
+---
+
+## ٧. حل التمرين
+
+ملف [[constants.ts]] فيه كل رقم ليه معنى، بـ [[export]] عشان باقي الملفات تعمل [[import]]: [[VAT_RATE]]، و [[SESSION_TTL_MS = 30 * 60 * 1000]] (TTL اختصار Time To Live، يعني مدة الصلاحية)، و [[MAX_LOGIN_ATTEMPTS = 5]]، و [[Role]] بنفس طريقة [[as const]].
+
+~~~text الناتج: npx tsx sol.ts
+false 1800000 28
+~~~
+
+- [[false]]: اليوزر عنده ٥ محاولات فاشلة، و [[5 < 5]] غلط، فمش مسموحله.
+- [[1800000]]: [[sessionExpiry(0)]] = صفر + ٣٠ دقيقة بالـ ms.
+- [[28]]: ١٤٪ من ٢٠٠.
+
+---
+
+## الخلاصة
+
+- الرقم اللي ليه معنى في البيزنس ياخد اسم بيقول المعنى، مش القيمة ([[VAT_RATE]] مش [[FOURTEEN]]).
+- الحسبة تتكتب ([[24 * 60 * 60 * 1000]]) والوحدة في الاسم ([[_MS]] و [[Cents]]).
+- الحالات object بـ [[as const]] ونوع طالع منه، فالحالة الغلط تتمسك قبل التشغيل.
+- الفلوس بالقروش كأرقام صحيحة، لأن الـ float فيه كسور صغيرة.`,
           lines: [
             "نسبة الضريبة باسم. لو اتغيرت، بتتغير هنا بس.",
             "أيام التوصيل باسم.",
@@ -389,6 +890,110 @@ console.log(parseAmount("١٢٠"), parseAmount("45"), DELAY_BETWEEN_CALLS_MS); /
             when: "كل ما تكتب كود هيستغرب منه حد: workaround، أو رقم ليه سبب، أو ترتيب مهم، أو شرط من العميل. والكود الطبيعي الواضح مش محتاج تعليق.",
             mistakes: R`تعليقات قديمة بتكدب: الكود اتغير والتعليق لأ، ودي أسوأ من مفيش تعليق. وكود متعلّق (commented-out) قاعد شهور «احتياطي»: امسحه، Git فاكره. وتعليق بيعيد الاسم ([[// get user]] فوق [[getUser()]]). وشرح «ليه عملت التغيير ده» مكانه رسالة الـ commit ووصف الـ PR، مش تعليق في الكود.`
           },
+          teach: R`## الفكرة
+
+المثال فيه ٤ تعليقات: واحد سيئ بيعيد الكود، و ٣ كويسين (ليه، وتحذير، و TODO). هنفك الدالة اللي تحت تعليق «ليه» ونشوف بعينينا المشكلة اللي التعليق بيشرحها. اتشغّل بـ [[npx tsx]] على Node 24.19 (ويندوز).
+
+---
+
+## ١. التعليق السيئ
+
+~~~text قبل
+// حوّل النص لرقم ورجّعه
+// return Number(input);
+~~~
+
+الكود [[return Number(input)]] بيقول بالظبط «حوّل لرقم ورجّع». التعليق ممضافش أي معلومة، ويوم ما حد يغيّر السطر وينسى التعليق، التعليق هيبقى بيكدب.
+
+---
+
+## ٢. المشكلة اللي ورا تعليق «ليه»
+
+[[Number]] مبيفهمش الأرقام العربية الهندية (١٢٠):
+
+~~~text الناتج: Number("١٢٠")
+NaN
+~~~
+
+[[NaN]] اختصار Not a Number، يعني «ده مش رقم». من غير التعليق، اللي بيقرا الدالة هيشوف سطر [[replace]] غريب ويقول «ليه التعقيد ده؟» ويشيله، فيرجع الـ bug.
+
+---
+
+## ٣. سطر التحويل حتة حتة
+
+~~~text main.ts
+const western = input.replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 0x660));
+~~~
+
+### [[/[٠-٩]/g]]
+
+ده regular expression (نمط بحث). [[[٠-٩]]] معناها «أي حرف من ٠ لـ ٩»، و [[g]] اختصار global: «كل الأماكن» مش أول واحد بس.
+
+### [[(d) => ...]]
+
+[[replace]] بتنادي الدالة دي على كل حرف لقيته، و [[d]] هو الحرف (digit). اللي الدالة بترجّعه بيتحط مكانه.
+
+### [[d.charCodeAt(0) - 0x660]]
+
+كل حرف ليه رقم في جدول Unicode. [[charCodeAt(0)]] بتجيب رقم أول حرف في النص. و [[0x660]] رقم مكتوب بالـ hex (الـ [[0x]] في الأول معناها hexadecimal):
+
+~~~text الناتج: "٠".charCodeAt(0), 0x660, "١".charCodeAt(0), "٩".charCodeAt(0) - 0x660
+1632 1632 1633 9
+~~~
+
+الصفر العربي كوده ١٦٣٢، و [[0x660]] هو نفس الرقم. والأرقام ورا بعض في الجدول، فـ «كود الحرف ناقص كود الصفر» بيطلّع قيمته: ١ بيطلع 1، و ٩ بيطلع 9.
+
+### [[String(...)]]
+
+[[replace]] محتاجة نص ترجّعه، فبنحوّل الرقم لنص.
+
+~~~text الناتج
+120 string 120
+سعر 45 جنيه
+~~~
+
+[[western]] بقى [["120"]] (لسه نص)، وبعدين [[Number(western)]] بيبقى الرقم [[120]]. والسطر التاني بيوري إن الحروف اللي مش أرقام بتفضل زي ما هي.
+
+---
+
+## ٤. التحذير والـ TODO
+
+~~~text main.ts
+// تحذير: المزوّد بيحظرك بعد ٥ طلبات في الثانية، فمتصغّرش الرقم ده
+const DELAY_BETWEEN_CALLS_MS = 250;
+~~~
+
+٢٥٠ ms بين كل طلب = ٤ طلبات في الثانية، تحت الحد بتاع المزوّد (٥). الكود مستحيل يقول السبب ده، فالتعليق هو المكان الوحيد ليه.
+
+~~~text main.ts
+// TODO(#142): شيل الـ workaround ده لما المكتبة تصلّح الـ timezone bug
+~~~
+
+[[TODO]] معاه رقم ticket ([[#142]])، فأي حد يقدر يتابعه ويعرف إمتى يشيله.
+
+---
+
+## ٥. الناتج
+
+~~~text الناتج: npx tsx main.ts
+120 45 250
+~~~
+
+[["١٢٠"]] بقت [[120]]، و [["45"]] الإنجليزي عدّى زي ما هو لأن الـ regex ملقاش فيه أرقام عربي.
+
+---
+
+## الخلاصة
+
+| نوع التعليق | يفضل؟ | مثال |
+|---|---|---|
+| بيعيد الكود | لأ، امسحه | [[// حوّل النص لرقم]] |
+| بيشرح «إيه» لكود صعب | لأ، حوّله اسم أو دالة | [[// check if user can edit]] |
+| «ليه» | آه | [[// العملاء بيكتبوا أرقام عربي]] |
+| تحذير | آه | [[// متصغّرش الرقم ده]] |
+| TODO برقم | آه | [[// TODO(#142): ...]] |
+
+الكود بيقول إيه، والتعليق بيقول ليه.`,
           lines: [
             "دالة بتحوّل النص لرقم.",
             "بتبدّل كل رقم عربي (٠ لـ ٩) بالرقم الإنجليزي بتاعه: كود الحرف ناقص كود الصفر العربي.",
@@ -402,763 +1007,6 @@ console.log(parseAmount("١٢٠"), parseAmount("45"), DELAY_BETWEEN_CALLS_MS); /
 تعليق «ليه» الكويس بيجاوب على سؤال اللي جاي بعدك: «أشيل ده؟». بيقول سبب من برا الكود: bug في مكتبة (ومعاه رابط الـ issue)، أو طلب من العميل (ومعاه رقم الـ ticket)، أو قيد خارجي زي rate limit. مثال: [[// ليه: بوابة الدفع بترفض أكتر من رقمين عشريين، فبنقرّب هنا مش في الواجهة (#231)]].
 
 الغلط الشائع إن التعليق يبقى «ليه» مزيف: [[// ليه: عشان نحسب الضريبة]] ده «إيه» متنكر. ولو مش لاقي سبب تكتبه للحتة الغريبة، اعمل [[git blame]] على السطر واقرا الـ commit اللي دخّلها (تاب git). ولو ملقيتش سبب هناك كمان، غالبًا الحتة دي ممكن تتشال: شيلها في commit لوحده والاختبارات تحكم.`
-        }
-      ]
-    },
-    {
-      t: "البساطة",
-      l: 1,
-      n: "متكررش نفسك، بس متجرّدش بدري، ومتبنيش حاجة محدش طلبها",
-      items: [
-        {
-          cmd: "DRY",
-          title: "نفس المنطق مكتوب في كذا مكان",
-          desc: R`DRY (Don't Repeat Yourself) معناها إن كل قاعدة في البيزنس ليها مكان واحد بس في الكود. لو قاعدة الخصم مكتوبة في ٤ أماكن، يوم ما تتغير هتعدّل ٣ وتنسى الرابع. بس مش «أي سطرين شبه بعض ادمجهم»: القاعدة العملية rule of three، تالت مرة تشوف التكرار اطلّع دالة.
-
-والسؤال الصح: الحتتين دول بيتغيروا مع بعض لنفس السبب؟ لو آه، دي معلومة واحدة ادمجها. لو شبه بعض بالصدفة، سيبهم.`,
-          example: R`type Coupon = { type: "percent"; percent: number } | { type: "fixed"; amount: number };
-
-// قبل: نفس الحسبة متنسخة في ٣ أماكن في service الطلبات
-// if (coupon.type === "percent") discount = (total * coupon.percent) / 100;
-// else discount = Math.min(coupon.amount, total);
-
-function couponDiscount(coupon: Coupon, total: number): number {
-  const raw = coupon.type === "percent" ? (total * coupon.percent) / 100 : coupon.amount;
-  return Math.min(Math.max(raw, 0), total);
-}
-
-console.log(couponDiscount({ type: "percent", percent: 10 }, 500)); // 50
-console.log(couponDiscount({ type: "fixed", amount: 800 }, 500)); // 500
-console.log(couponDiscount({ type: "percent", percent: 150 }, 500)); // 500`,
-          try: R`دوّر في مشروع عندك على حسبة متكررة (خصم، أو تنسيق تاريخ، أو تنسيق سعر بالعملة). اطلّعها في دالة واحدة، واكتب لها ٣ اختبارات vitest (حالة عادية، وحالة حدّية زي الصفر، وحالة غلط)، واستبدل كل النسخ بالنداء عليها.`,
-          flag: "script",
-          deep: {
-            why: R`التكرار مش مشكلة شكل. المشكلة إن القاعدة الواحدة بقى ليها أكتر من نسخة، والنسخ بتختلف مع الوقت. في مشروع حقيقي كانت حسبة خصم الكوبون متنسخة في أكتر من مكان في service الطلبات، وكل نسخة فيها نفس الـ bugs: خصم النسبة مش متقفّل على الإجمالي، والشرط بيعتبر الكوبون نسبة لو خانة النسبة فيها أي قيمة حتى لو نوعه ثابت. تصليح الـ bug محتاج تلاقي كل النسخ الأول.`,
-            how: R`DRY عن المعرفة مش عن النص. اتنين validation لـ email في الـ signup وفي الـ profile: دي نفس القاعدة، فتبقى schema واحدة (zod مثلًا) تستخدمها في الاتنين وفي الفرونت كمان. أما [[price * 0.14]] في الضريبة و [[score * 0.14]] في ترتيب المنتجات: نفس الرقم بالصدفة، ولو دمجتهم، يوم ما الضريبة تتغير ترتيب المنتجات هيبوظ.
-
-الـ rule of three (مشهورة من كتاب Refactoring لـ Martin Fowler): أول مرة اكتب، تاني مرة استحمل التكرار وخد بالك، تالت مرة اطلّع دالة. لأن بعد ٣ أمثلة بتعرف إيه الثابت وإيه اللي بيتغير، فالدالة هتطلع صح. لو طلّعتها من أول نسختين، بتخمّن.
-
-والـ abstraction الغلط أسوأ من التكرار. Sandi Metz قالتها: «duplication is far cheaper than the wrong abstraction». الدالة المشتركة اللي بدأت بسيطة، وكل مكان محتاج حاجة مختلفة فبيضيفلها parameter و if، لحد ما تبقى [[formatPrice(value, true, false, 'short', null)]] ومحدش فاهمها. الحل ساعتها إنك ترجّع التكرار (inline) وتعيد التقسيم صح.
-
-وDRY مش في الدوال بس: الأنواع اطلّعها من الـ schema (Prisma بيولّد types، و zod بـ [[z.infer]]) بدل ما تكتبها مرتين، والإعدادات في مكان واحد مش hardcoded في ٣ ملفات.`,
-            when: "لما قاعدة بيزنس (خصم، أو صلاحية، أو validation، أو حسبة) تتكتب مرتين. ولما تصلّح bug وتكتشف إنه موجود في نسخة تانية.",
-            mistakes: R`تدمج حاجتين شبه بعض بالصدفة فتربطهم ببعض من غير داعي. وتعمل abstraction من أول نسختين، فتبقى دالة فيها flags لكل حالة. ونسخ نفس الـ service بين مشاريع كاملة وكل نسخة بتتعدّل لوحدها: لو ده بيتكرر، الكود المشترك يستاهل package أو monorepo (تاب «فحص الكود»). وفي انترفيو لو اتسألت عن DRY، اذكر الوش التاني (الـ wrong abstraction)، ده اللي بيفرّقك عن اللي حافظ التعريف.`
-          },
-          lines: [
-            "الكوبون يا نسبة يا مبلغ ثابت. [[type]] بيحدد الشكل (discriminated union).",
-            "الدالة الوحيدة في المشروع اللي تعرف تحسب خصم كوبون.",
-            "النسبة تتحسب من الإجمالي، والثابت زي ما هو.",
-            "الخصم عمره ما يبقى سالب ولا أكبر من الإجمالي. القاعدة دي بقت في مكان واحد.",
-            "قفلة.",
-            "١٠٪ من ٥٠٠: 50.",
-            "كوبون ٨٠٠ على طلب ٥٠٠: الخصم 500 مش 800.",
-            "كوبون غلط ١٥٠٪: برضه 500. النسخ القديمة كانت هتطلّع خصم أكبر من الطلب."
-          ],
-          sol: R`الـ ٣ اختبارات خضرا، والنسخ القديمة كلها بقت [[formatPrice(...)]]. وأهم خطوة بعد الاستبدال: ابحث تاني عن شكل النسخ القديمة (مثلًا [[toFixed(2)]] أو [[ج.م]]) واتأكد إن مفيش ولا واحدة فاضلة، وإلا هتصلّح bug في مكان وينفضل في التاني.
-
-الفخ اللي هتقع فيه غالبًا في أول اختبار: [[expected 'EGP 1,250.50' to be 'EGP 1,250.50']]، والاتنين شكلهم واحد بالظبط! [[Intl.NumberFormat]] بيحط non-breaking space ([[ ]]) بعد العملة مش مسافة عادية. الحل إنك تكتبها في الـ expected زي الحل، أو تقارن بـ [[toMatch(/1,250\.50/)]].
-
-وحالة الغلط (سالب أو [[NaN]]) مهمة: من غيرها الفاتورة هتطبع [[EGPNaN]] وانت مش واخد بالك. ولو لقيت إن النسختين «شبه بعض» بس بيختلفوا في قاعدة بيزنس (سعر للعميل بالضريبة وسعر للمورد من غير)، متجمّعهمش بـ boolean parameter: دول حاجتين مختلفتين بالصدفة شبه بعض، والتكرار هنا أرخص من abstraction غلط.`,
-          solCode: R`// price.ts
-const egp = new Intl.NumberFormat("en-EG", { style: "currency", currency: "EGP" });
-
-export function formatPrice(cents: number): string {
-  if (!Number.isFinite(cents) || cents < 0) throw new RangeError($__btinvalid price: $__{cents}$__bt);
-  return egp.format(cents / 100);
-}
-
-// price.test.ts
-import { describe, it, expect } from "vitest";
-import { formatPrice } from "./price";
-
-describe("formatPrice", () => {
-  it("formats a normal price", () => {
-    expect(formatPrice(125050)).toBe("EGP\u00a01,250.50");
-  });
-  it("handles zero", () => {
-    expect(formatPrice(0)).toBe("EGP\u00a00.00");
-  });
-  it("rejects negative and NaN", () => {
-    expect(() => formatPrice(-1)).toThrow(RangeError);
-    expect(() => formatPrice(NaN)).toThrow("invalid price");
-  });
-});`
-        },
-        {
-          cmd: "KISS و YAGNI",
-          title: "أبسط حل يشتغل، ومتبنيش حاجة محدش طلبها",
-          desc: R`KISS (Keep It Simple): اختار أبسط حل يحل المشكلة اللي قدامك، والكود «الذكي» اللي محتاج ١٠ دقايق تفهمه أسوأ من ٥ سطور عادية. و YAGNI (You Aren't Gonna Need It): متبنيش حاجة عشان «يمكن نحتاجها بعدين»، لأن أغلب «بعدين» ده مبيجيش، واللي بيجي بيجي بشكل مختلف عن اللي خمّنته.
-
-الاتنين مع بعض: ابني المطلوب النهارده بأبسط شكل، واكتبه نضيف كفاية إنه يتغير بسهولة لما الطلب الجديد يوصل.`,
-          example: R`// KISS، قبل: "ذكي" ومحدش يفهمه من غير ورقة وقلم
-const isWeekendClever = (d: Date) => ((0b1100000 >> d.getDay()) & 1) === 1;
-
-// KISS، بعد: الجمعة والسبت (getDay: الأحد 0 ... السبت 6)
-const WEEKEND_DAYS = [5, 6];
-const isWeekend = (d: Date) => WEEKEND_DAYS.includes(d.getDay());
-
-// YAGNI: عملة واحدة في التطبيق؟ يبقى formatter واحد، مش نظام عملات "للمستقبل"
-const egp = new Intl.NumberFormat("en-EG", { style: "currency", currency: "EGP" });
-const formatPrice = (amount: number) => egp.format(amount);
-
-const friday = new Date(2026, 8, 25);
-console.log(isWeekendClever(friday), isWeekend(friday), formatPrice(1250.5)); // true true EGP 1,250.50`,
-          try: R`دوّر في مشروعك على حاجة اتبنت «للمستقبل»: interface ليها implementation واحد، أو parameter كل اللي بينادوه بيبعتوله نفس القيمة، أو إعداد محدش غيّره. شيلها وبسّط، وشوف كام سطر راح من غير ما أي حاجة تبوظ.`,
-          flag: "script",
-          deep: {
-            why: "كل سطر بتكتبه لازم حد يقراه ويختبره ويصونه ويفهمه قبل ما يعدّل جنبه. الحاجات اللي اتبنت «احتياطي» بتتكلف دلوقتي (وقت، وتعقيد، و bugs) عشان فايدة ممكن متجيش. والكود المعقد بيبطّأ كل تعديل بعد كده، مش التعديل الأول بس.",
-            how: R`YAGNI (من Extreme Programming) مش ضد التصميم الكويس. الفرق بين «قرار بيسهّل التغيير» و «ميزة لسه محدش طلبها»: إنك تفصل حسبة الضريبة في دالة لوحدها ده تصميم كويس ومش مكلّف. إنك تبني نظام ضرايب بيدعم ٣٠ دولة وعميلك في دولة واحدة ده YAGNI.
-
-علامات إنك بتبني للمستقبل: interface ليها implementation واحد ومفيش خطة لتاني، أو parameter كل اللي بينادوه بيبعتوا نفس القيمة، أو config لحاجة محدش بيغيّرها، أو «framework» داخلي لحاجة بتتعمل مرتين.
-
-و KISS معناها كمان: استخدم اللي موجود في اللغة بدل ما تكتبه. [[Intl.NumberFormat]] بدل دالة تنسيق أرقام بتكتبها بإيدك، و [[structuredClone]] بدل deep copy يدوي. والكود الواضح اللي أطول بسطرين أحسن من السطر «الذكي»: الـ bitmask في المثال شغال، بس اللي هيقراه لازم يحوّل الرقم لـ binary في دماغه.
-
-والفكرة مش إنك متفكرش في المستقبل. فكّر فيه، واكتب الكود بحيث يبقى سهل تغيّره (دوال صغيرة واختبارات)، بس متبنيهوش قبل ما ييجي.`,
-            when: "مع كل قرار تصميم. اسأل: مين طلب ده؟ وإيه اللي هيحصل لو ما عملتوش النهارده؟ لو الإجابة «مفيش حاجة، هنعمله لما نحتاجه»، يبقى استنى.",
-            mistakes: R`تفهم YAGNI إنها «متكتبش اختبارات» أو «متفصلش الكود»: دي حاجات بتسهّل التغيير، مش ميزات زيادة. وتعمل microservices لمشروع فيه مطوّر واحد و ١٠٠ مستخدم، و monolith مترتب أبسط بكتير (تاب «بناء مشروع كامل»). وفي الناحية التانية: تتجاهل قرارات صعب تغيّرها بعدين، زي إن الفلوس تتخزن بالقروش، أو إن الـ IDs تبقى UUID لو هتعمل sync بين أجهزة. دي قرارات أول يوم مش YAGNI.`
-          },
-          lines: [
-            "بيشتغل، بس لازم تحوّل الرقم لـ binary في دماغك عشان تعرف إنه الجمعة والسبت.",
-            "الأيام بأسماء واضحة في array.",
-            "نفس النتيجة، ويتقري من أول نظرة.",
-            "formatter جاهز في اللغة نفسها ([[Intl]])، بدل دالة تنسيق مكتوبة باليد.",
-            "دالة صغيرة للتطبيق كله. لو يوم ما اتضافت عملة، تبقى parameter ساعتها.",
-            "يوم جمعة للتجربة (الشهور في Date بتبدأ من 0، فـ 8 يعني سبتمبر).",
-            "بيطبع [[true true]] والسعر متنسّق بالعملة."
-          ],
-          sol: R`اللي بيتلاقي كتير: [[interface PriceFormatter]] ليها class واحد بس، أو parameter [[currency]] كل الـ ٢٣ نداء بيبعتوا فيه [[EGP]]، أو [[options]] object محدش بيبعت فيه غير القيم الافتراضية. في الحل التلاتة بقوا دالة واحدة سطر واحد، و [[formatPrice(99.5)]] بترجع [[EGP 99.50]].
-
-بعد الحذف شغّل [[tsc --noEmit]] والاختبارات: لو كله أخضر يبقى الحاجة دي ماكانتش بتعمل حاجة. و [[git diff --stat]] هيوريك كام سطر راح، وعادةً بيبقى أكتر من المتوقع.
-
-متشيلش interface عليها اتنين implementations حقيقيين (in-memory للاختبارات و Prisma للإنتاج مثلًا): دي مستخدمة فعلًا ومش YAGNI. والسؤال اللي تسأله لنفسك (وتقوله في الانترفيو): «لو احتجتها بعدين، إضافتها هتبقى صعبة؟». لو الإجابة refactor ساعة، شيلها دلوقتي. الاستثناء: الحاجات الغالية تتغير بعدين، زي شكل الـ public API أو الـ database schema.`,
-          solCode: R`// قبل: interface ليها implementation واحد، و parameter كل الناس بتبعتله "EGP"
-// interface PriceFormatter { format(amount: number, currency: string): string }
-// class DefaultPriceFormatter implements PriceFormatter { format(a, c) { ... } }
-// const formatter: PriceFormatter = new DefaultPriceFormatter();
-// formatter.format(total, "EGP");  // 23 نداء، كلهم "EGP"
-
-// بعد: دالة واحدة، ولما عملة تانية تيجي فعلًا نضيف الـ parameter وقتها
-const egp = new Intl.NumberFormat("en-EG", { style: "currency", currency: "EGP" });
-export const formatPrice = (amount: number) => egp.format(amount);
-
-console.log(formatPrice(99.5)); // EGP 99.50`
-        }
-      ]
-    },
-    {
-      t: "الأخطاء",
-      l: 1,
-      n: "اقع بدري وبصوت عالي، وسمّي كل نوع خطأ، ومتبلعش خطأ أبدًا",
-      items: [
-        {
-          cmd: "fail fast",
-          title: "ارفض الداتا الغلط أول ما تدخل",
-          desc: R`fail fast معناها: أول ما تكتشف إن فيه حاجة غلط، وقّف وقول بوضوح. متكمّلش بداتا غلط على أمل إنها تعدّي، لأنها هتقع بعدين في مكان بعيد وبرسالة ملهاش علاقة بالسبب.
-
-وأهم مكان ليه هو الحدود (boundaries): الـ request اللي جاي من برا، والـ env variables وقت التشغيل، والرد من API خارجي. افحصهم عند الباب، وجوه الكود ثق في الأنواع.`,
-          example: R`function requireEnv(name: string): string {
-  const value = process.env[name];
-  if (!value) throw new Error($__btMissing env var $__{name}$__bt);
-  return value;
-}
-
-type Transfer = { from: string; to: string; amount: number };
-function parseTransfer(body: unknown): Transfer {
-  const b = (body ?? {}) as Partial<Transfer>;
-  if (typeof b.from !== "string" || typeof b.to !== "string") throw new TypeError("from/to required");
-  if (typeof b.amount !== "number" || b.amount <= 0) throw new RangeError("amount must be > 0");
-  return { from: b.from, to: b.to, amount: b.amount };
-}
-
-process.env.PAYMENT_KEY = "YOUR_KEY";
-console.log(requireEnv("PAYMENT_KEY")); // YOUR_KEY
-console.log(parseTransfer({ from: "a", to: "b", amount: -5 })); // RangeError: amount must be > 0`,
-          try: R`في مشروع Express أو Next عندك، اعمل ملف [[env.ts]] بيقرا كل الـ env variables المطلوبة بـ [[requireEnv]] ويصدّرهم. امسح متغير من [[.env]] وشغّل: لازم التطبيق يقع وهو بيقوم برسالة فيها الاسم، مش بعد ساعة في أول request.`,
-          flag: "script",
-          deep: {
-            why: R`الغلط اللي بيتكتشف متأخر غالي. [[undefined]] دخل من الـ request، وعدّى على ٣ دوال، واتخزن في الداتابيز، وبعد أسبوع صفحة التقارير وقعت بـ [[Cannot read properties of undefined]]. دلوقتي انت بتدوّر على السبب في كود ملوش ذنب. لو كان اترفض عند الباب، كنت هتعرف في نفس اللحظة ومن الرسالة نفسها.`,
-            how: R`الفكرة: التحقق عند الحدود، والثقة جوه. الـ body في Express نوعه الحقيقي [[unknown]] مهما كتبت type، لأن TypeScript مبيشتغلش وقت التشغيل ومش هيمنع حد يبعت أي JSON. عشان كده الدالة اللي بتستقبله لازم تفحصه وتطلّع نوع مضمون.
-
-عمليًا بتستخدم مكتبة schema زي zod بدل الـ if اليدوية: [[z.object({ amount: z.number().positive() })]] و [[schema.parse(body)]] بترمي خطأ فيه كل الخانات الغلط، وبتطلّعلك النوع من الـ schema نفسها بـ [[z.infer]] (التفاصيل في تاب «Backend بـ Node»). المثال هنا يدوي عشان تشوف اللي بيحصل جوه.
-
-الـ env variables: اقراهم مرة وقت التشغيل وافحصهم كلهم، فالتطبيق يرفض يقوم لو ناقصه حاجة. أحسن ما يقوم «سليم» ويقع أول ما حد يدفع.
-
-والـ assertions جوه الكود ([[if (!order) throw new Error('order must exist here')]]) للحالات اللي «مستحيل» تحصل: لو حصلت يبقى فيه bug، والأحسن تعرف فورًا بدل ما الكود يكمّل بحالة غلط.
-
-وfail fast مش معناها إن السيرفر كله يقع مع أي خطأ: الـ request الغلط بيترفض بـ 400 والسيرفر يفضل شغال. اللي بيقع بدري هو العملية الغلط، مش السيستم.`,
-            when: "أي داتا جاية من برا الكود بتاعك: request body و query، و env، ورد من API خارجي، وملفات بيرفعها المستخدم، وداتا من localStorage.",
-            mistakes: R`تستخدم [[as Transfer]] على الـ body وتفتكره فحص: [[as]] بيقول لـ TypeScript «صدّقني» ومبيفحصش حاجة. وقيم افتراضية بتخبّي المشكلة: [[process.env.JWT_SECRET || 'dev-secret']] في الإنتاج معناها إن السيرفر شغال بسر معروف لأي حد قرا الكود، ودي ثغرة. و [[try/catch]] حوالين كل حاجة بيرجّع null، فالخطأ يتحوّل لـ null ماشي في الكود ويقع بعدين برضه.`
-          },
-          lines: [
-            "دالة بتجيب env variable ولازم تلاقيه.",
-            "اقرا القيمة.",
-            "مش موجودة؟ اقع حالًا واكتب اسم المتغير الناقص.",
-            "رجّعها string مضمون، مش [[string | undefined]].",
-            "قفلة.",
-            "شكل التحويل اللي جوه الكود هيثق فيه.",
-            "الـ body جاي من برا فنوعه [[unknown]]: مفيش أي حاجة مضمونة.",
-            "بنقراه كـ Partial عشان نفحص كل خانة، ولو null نبدأ بـ object فاضي.",
-            "من أو لـ مش string؟ ارفض.",
-            "المبلغ مش رقم، أو صفر، أو سالب؟ ارفض.",
-            "من هنا ورايح الداتا مضمونة، ونوعها [[Transfer]].",
-            "قفلة.",
-            "للتجربة بس: حط قيمة في الـ env.",
-            "بيطبع [[YOUR_KEY]].",
-            "بيقع بـ [[RangeError]] قبل ما أي فلوس تتحرك."
-          ],
-          sol: R`لما كل المتغيرات موجودة هتشوف [[listening on 3000]]. ولما تمسح [[JWT_SECRET]] من [[.env]]، التطبيق يقع وهو بيقوم، قبل ما يسمع على أي port، بـ [[Error: Missing env var JWT_SECRET]] و exit code 1. ده المطلوب: الـ deploy يفشل فورًا والرسالة فيها اسم المتغير.
-
-الشرط إن [[env.ts]] يتعمله import في أول الـ server، وإن باقي الكود يقرا [[env.JWT_SECRET]] مش [[process.env.JWT_SECRET]]. ابحث عن [[process.env]] في المشروع: أي مكان فاضل برا [[env.ts]] هو متغير مش متفحوص. ولو بتقرا [[.env]] بـ dotenv لازم [[import "dotenv/config"]] يبقى قبل [[env.ts]]، أو شغّل بـ [[node --env-file=.env]].
-
-الغلط الشائع: تنادي [[requireEnv]] جوه دالة بتشتغل وقت الـ request (جوه [[signToken()]] مثلًا)، فالتطبيق يقوم عادي ويقع في أول login. وكمان [[process.env.PORT]] دايمًا string، فلو محتاج رقم حوّله وافحص إنه مش [[NaN]]. ولو المشروع فيه Zod، [[z.object({...}).parse(process.env)]] بيعمل نفس الفكرة لكل المتغيرات مرة واحدة وبيطلّع كل الناقص في رسالة واحدة.`,
-          solCode: R`// env.ts
-function requireEnv(name: string): string {
-  const value = process.env[name];
-  if (!value) throw new Error($__btMissing env var $__{name}$__bt);
-  return value;
-}
-
-export const env = {
-  DATABASE_URL: requireEnv("DATABASE_URL"),
-  JWT_SECRET: requireEnv("JWT_SECRET"),
-  PORT: Number(process.env.PORT ?? 3000),
-};
-
-// server.ts
-import { env } from "./env"; // أول import: لو ناقص حاجة، التطبيق يقع هنا قبل ما يسمع على أي port
-console.log($__btlistening on $__{env.PORT}$__bt);`
-        },
-        {
-          cmd: "custom errors",
-          title: "كل نوع خطأ ليه اسم ومعاملة",
-          desc: R`بدل [[throw new Error('not found')]] وبعدين تقارن نص الرسالة، اعمل class لكل نوع خطأ مهم ([[NotFoundError]] و [[ValidationError]] و [[PaymentDeclinedError]])، وفرّق بينهم بـ [[instanceof]]. وفي مكان واحد (error handler) بتحوّل كل نوع لـ status code، والـ services متعرفش حاجة عن HTTP.`,
-          example: R`class AppError extends Error {
-  status = 500;
-}
-class NotFoundError extends AppError {
-  override status = 404;
-  override name = "NotFoundError";
-}
-
-function toHttp(err: unknown): { status: number; body: string } {
-  if (err instanceof AppError) return { status: err.status, body: err.message };
-  console.error(err);
-  return { status: 500, body: "Internal error" };
-}
-console.log(toHttp(new NotFoundError("Order 7 not found"))); // { status: 404, body: 'Order 7 not found' }
-console.log(toHttp(new TypeError("x is undefined")).status); // 500`,
-          try: R`في مشروع Express عندك، اعمل [[AppError]] و [[NotFoundError]] و [[ValidationError]]، واكتب error middleware واحد بـ ٤ parameters [[(err, req, res, next)]] بيعمل زي [[toHttp]] ويتحط آخر حاجة. امسح كل [[res.status(404)]] المتفرقة في الـ controllers وخلّي الـ service ترمي [[NotFoundError]].`,
-          flag: "script",
-          deep: {
-            why: R`لو كل الأخطاء [[Error]] عادي، مفيش طريقة تفرّق بينهم غير إنك تقرا الرسالة: [[if (e.message.includes('not found'))]]، ويوم ما حد يغيّر الرسالة أو يترجمها، الكود ده يبوظ من غير ما حد ياخد باله. وكمان الـ service بتبقى مضطرة ترد HTTP بنفسها، فمينفعش تناديها من cron job أو script.`,
-            how: R`في JavaScript تقدر ترمي أي حاجة ([[throw 'oops']])، بس ارمي دايمًا Error أو class وارث منه، عشان يبقى معاه [[stack]] يقولك الخطأ حصل فين.
-
-[[instanceof]] بيمشي على سلسلة الـ prototype: [[NotFoundError]] هو [[AppError]] وهو [[Error]]. فالـ catch يقدر يمسك نوع معين، أو كل أخطاء التطبيق مرة واحدة زي [[toHttp]].
-
-التقسيم المهم نوعين: أخطاء متوقعة (operational) زي مش موجود، أو داتا غلط، أو الدفع اترفض، أو API خارجي واقع. دي جزء من البيزنس، ليها status ورسالة للمستخدم. وأخطاء مش متوقعة (bugs) زي [[TypeError]] من [[undefined]]: دي 500 برسالة عامة، والتفاصيل في اللوج بس، لأن الـ stack فيه مسارات ملفات وممكن أسرار.
-
-في Express، الـ error middleware بياخد ٤ parameters وبيتحط بعد كل الـ routes، وفي Express 5 أي promise بترفض في handler بتوصله لوحدها من غير [[next(err)]] يدوي (التفاصيل في تاب «Backend بـ Node»). وعلى الفرونت، Next فيه [[error.tsx]] و React فيه error boundaries لنفس الفكرة.
-
-وفيه أسلوب تاني للأخطاء المتوقعة: متعملش throw خالص، ورجّعها كقيمة ([[Result]]): نوع يا نجاح يا فشل، والـ TypeScript يجبر اللي بينادي يفحص الاتنين (تاب TypeScript، درس «generic types و defaults»).`,
-            when: "أول ما يبقى عندك أكتر من نوع خطأ ليه معاملة مختلفة: 404 و 400 و 409 و 402. وفي أي مكتبة أو SDK بتكتبه، عشان اللي بيستخدمه يمسك أخطاءك بالنوع.",
-            mistakes: R`ترجّع [[err.message]] أو [[err.stack]] للمستخدم في كل الأخطاء، فتسرّب تفاصيل السيرفر. وتعمل [[catch (e) { throw new Error('failed') }]] فتضيّع النوع والـ stack الأصلي (الحل [[cause]]، في الدرس الجاي). و [[instanceof]] بيفشل لو فيه نسختين من نفس المكتبة في [[node_modules]]، لأن كل نسخة ليها class مختلف. ومع [[strict]] في tsconfig، الـ [[e]] في الـ catch نوعها [[unknown]]، فافحصها بـ [[instanceof]] قبل ما تقرا [[e.message]].`
-          },
-          lines: [
-            "أساس كل أخطاء التطبيق اللي احنا عارفينها.",
-            "كل خطأ معروف معاه status، والافتراضي 500.",
-            "قفلة.",
-            "خطأ «مش موجود» بيورث من الأساس.",
-            "الـ status بتاعه 404. [[override]] بتقول إننا قاصدين نغيّر قيمة موجودة في الأب.",
-            "الاسم بيظهر في اللوج والـ stack بدل Error عادي.",
-            "قفلة.",
-            "المكان الوحيد اللي بيحوّل الأخطاء لـ HTTP. النوع [[unknown]] لأن أي حاجة ممكن تترمي في JavaScript.",
-            "خطأ من أخطاءنا؟ رجّع الـ status والرسالة بتاعته.",
-            "أي حاجة تانية bug مش متوقع: التفاصيل تتسجل في اللوج...",
-            "...والمستخدم ياخد 500 برسالة عامة.",
-            "قفلة.",
-            "بيطبع 404 والرسالة.",
-            "خطأ مش بتاعنا: 500، وتفاصيله في اللوج بس."
-          ],
-          sol: R`بـ curl هتشوف: [[/orders/7]] بـ 200، و [[/orders/99]] بـ 404 و [[Order 99 not found]]، و [[/orders/abc]] بـ 422، و [[/boom]] بـ 500 ورسالة عامة [[Internal error]] (والتفاصيل الحقيقية في console السيرفر بس). والـ route نفسه سطر واحد ومفيهوش ولا [[res.status]].
-
-لو الـ middleware مش بيتنادى و Express بيرد بصفحة HTML فيها stack trace، يبقى واحد من ٣: الـ middleware متسجّل قبل الـ routes مش بعدها، أو ليه ٣ parameters بس (Express بيعرف الـ error middleware من إن ليه ٤، حتى لو [[_next]] مش مستخدم)، أو الخطأ اترمى من callback برا الـ handler (زي [[setTimeout]]) فمحدش مسكه.
-
-في Express 5 الـ async handler اللي بيرمي بيوصل للـ middleware لوحده. في Express 4 لازم [[next(err)]] أو try/catch، وإلا الطلب بيفضل معلّق. ومتنساش [[name]] في كل class: من غيره [[err.name]] بيبقى [[Error]] في الـ logs وفي الرد.`,
-          solCode: R`import express, { type Request, type Response, type NextFunction } from "express";
-
-class AppError extends Error {
-  status = 500;
-}
-class NotFoundError extends AppError {
-  override status = 404;
-  override name = "NotFoundError";
-}
-class ValidationError extends AppError {
-  override status = 422;
-  override name = "ValidationError";
-}
-
-// الـ service بترمي، ومتعرفش حاجة عن HTTP
-const orders = new Map([["7", { id: "7", total: 250 }]]);
-function getOrder(id: string) {
-  if (!/^\d+$/.test(id)) throw new ValidationError($__btInvalid order id: $__{id}$__bt);
-  const order = orders.get(id);
-  if (!order) throw new NotFoundError($__btOrder $__{id} not found$__bt);
-  return order;
-}
-
-const app = express();
-app.get("/orders/:id", (req, res) => {
-  res.json(getOrder(req.params.id)); // مفيش res.status(404) هنا خالص
-});
-app.get("/boom", () => {
-  throw new TypeError("x is undefined");
-});
-
-// آخر حاجة، و ٤ parameters عشان Express يعرف إنه error middleware
-app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
-  if (err instanceof AppError) return res.status(err.status).json({ error: err.name, message: err.message });
-  console.error(err);
-  res.status(500).json({ error: "InternalError", message: "Internal error" });
-});
-
-app.listen(3000, () => console.log("http://localhost:3000"));`
-        },
-        {
-          cmd: "catch {}",
-          title: "خطأ اتبلع ومحدش عرف إنه حصل",
-          desc: R`[[catch {}]] الفاضي بيقول «لو حصل أي خطأ، اعمل نفسك مشفتش». الكود يكمّل كأن كل حاجة تمام، والنتيجة داتا ناقصة أو عملية متعملتش ومحدش يعرف ليه. في الـ catch يا تعالج الخطأ فعلًا، يا تضيف معلومة وترميه تاني بـ [[cause]]، يا متعملش catch خالص وسيبه يطلع للي فوق.`,
-          example: R`// قبل: لو الـ JSON بايظ، الإعدادات بتبقى undefined ومحدش يعرف ليه
-// let config; try { config = JSON.parse(text); } catch {}
-
-function parseConfig(text: string): { port: number } {
-  try {
-    return JSON.parse(text);
-  } catch (err) {
-    throw new Error("config.json is not valid JSON", { cause: err });
-  }
-}
-
-try {
-  parseConfig("{ port: 3000 }");
-} catch (err) {
-  const e = err as Error;
-  console.log(e.message, "| cause:", (e.cause as Error).message);
-}`,
-          try: R`دوّر في مشروعك على [[catch {}]] و [[catch (e) {}]] و [[.catch(() => {})]]. لكل واحد قرّر: أعالجه، ولا أسجّله وأكمّل بقيمة بديلة، ولا أشيل الـ catch خالص. واكتب في كل catch فضل سطر «ليه».`,
-          flag: "script",
-          deep: {
-            why: R`الخطأ اللي اتبلع أصعب bug ممكن تدوّر عليه، لأن مفيش أي أثر: لا لوج، ولا رسالة، ولا exit code. الـ feature ببساطة مش شغالة. وفي مشروع حقيقي (تطبيق desktop) كان إنشاء فولدر اللوجات وكتابة لوج الجلسة جوه [[catch {}]] فاضية، فلو الصلاحيات غلط، التطبيق بيشتغل عادي واللوجات مبتتكتبش خالص، ومحدش هيكتشف ده غير يوم ما يحتاجها.`,
-            how: R`عندك ٤ اختيارات بس، واختار واحد بوعي:
-
-١. متعملش catch. سيب الخطأ يطلع لحد مكان عارف يعمل حاجة (الـ error handler في Express، أو error boundary في React). ده الصح في أغلب الحالات.
-
-٢. ضيف سياق وارمي تاني: [[throw new Error('failed to load user 42', { cause: err })]]. الـ [[cause]] (من ES2022) بيحفظ الخطأ الأصلي بالـ stack بتاعه، و Node بيطبع الاتنين لما الخطأ يوصل للآخر من غير ما حد يمسكه.
-
-٣. عالج فعلًا: retry لطلب شبكة فشل، أو قيمة بديلة مقصودة («الـ theme في localStorage بايظة؟ استخدم الافتراضي»)، بس سجّلها بـ [[console.warn]].
-
-٤. تجاهل مقصود ومكتوب: حالات قليلة التجاهل فيها صح (تقفل اتصال مقفول أصلًا، أو [[localStorage]] بيرمي في private browsing). اكتب تعليق بيقول ليه، عشان اللي بعدك يعرف إنه قرار مش كسل.
-
-والـ promises نفس الكلام: [[.catch(() => {})]] بلع، و promise من غير [[await]] ولا catch ممكن ترفض وتقفل Node كله ([[unhandledRejection]]). وقاعدة [[no-floating-promises]] في typescript-eslint بتمسك ده (تاب «فحص الكود»).`,
-            when: "كل مرة تكتب catch، اسأل: أنهي اختيار من الأربعة؟ ولو مش عارف، سيبه يطلع.",
-            mistakes: R`[[catch (e) { console.log(e) }]] وتكمّل عادي: ده بلع بشياكة، السطر بيتوه في اللوج والكود بيكمّل بحالة غلط. و [[catch (e) { throw new Error('something went wrong') }]] من غير cause، فالـ stack الأصلي ضاع. و [[return null]] في الـ catch، فاللي نادى مش عارف null معناها «مش موجود» ولا «حصل خطأ». وفي انترفيو لو اتسألت «بتتعامل مع الأخطاء إزاي؟»، قول: الأخطاء المتوقعة ليها أنواع ومعاملة، والمش متوقعة بتطلع لـ handler واحد بيسجّلها ويرد رد عام، ومفيش catch فاضي.`
-          },
-          lines: [
-            "دالة بتقرا الإعدادات من نص.",
-            "جرّب.",
-            "لو الـ JSON سليم، رجّعه.",
-            "لو باظ، امسك الخطأ...",
-            "...وارمي خطأ جديد بيقول إيه اللي فشل من وجهة نظرنا، والأصلي جواه في [[cause]]، فمفيش حاجة ضاعت.",
-            "قفلة الـ catch.",
-            "قفلة الدالة.",
-            "هنا بنجرّب JSON غلط (المفتاح من غير علامات تنصيص).",
-            "النداء.",
-            "هنا المكان اللي فعلًا عارف يعمل إيه بالخطأ.",
-            "[[err]] نوعها [[unknown]]، فبنقول إنها Error.",
-            "الرسالة بتاعتنا، وبعدها السبب الأصلي من [[JSON.parse]].",
-            "قفلة."
-          ],
-          sol: R`كل catch فاضي هيطلع واحد من ٣ قرارات، وده شكلهم في الحل: (١) قيمة بديلة: cache أو localStorage بايظ، تسجّل [[console.warn]] وترجّع default، والناتج [[bad theme cache, using default: ...]] ثم [[light]]. (٢) تعالجه: خطأ متوقع ليه معنى (كوبون مش موجود يعني [[null]])، بس بتفحص نوعه وترمي أي حاجة تانية، فالناتج [[discount: null]] للـ 404 و [[rethrown: ECONNRESET]] لقطع الشبكة. (٣) تشيله: الـ catch كان بيخبّي فشل لازم يوقف العملية، زي فشل الدفع.
-
-المقياس: بعد التمرين مفيش catch في المشروع من غير قرار من التلاتة، وكل واحد فوقه سطر «ليه».
-
-الغلط الشائع: تحوّل [[catch {}]] لـ [[catch (e) { console.log(e) }]] وتعتبره خلص. ده لسه بلع: الكود بيكمّل كأن كل حاجة تمام، بس بقى فيه سطر في log محدش بيقراه. والغلط التاني إن الـ catch في (٢) يلقط كل حاجة من غير ما يفحص، فانقطاع النت يظهر للمستخدم «الكوبون غلط».`,
-          solCode: R`// ١) أسجّل وأكمّل بقيمة بديلة: الـ cache مش ضروري، لو باظ نجيب من المصدر
-function readCachedTheme(raw: string | null): string {
-  try {
-    return JSON.parse(raw ?? "null")?.theme ?? "light";
-  } catch (err) {
-    // ليه: localStorage ممكن يبقى فيه نسخة قديمة بايظة، والـ default كفاية
-    console.warn("bad theme cache, using default:", (err as Error).message);
-    return "light";
-  }
-}
-
-// ٢) أعالجه: خطأ متوقع ليه معنى في البيزنس
-async function findCoupon(code: string, load: (c: string) => Promise<number>): Promise<number | null> {
-  try {
-    return await load(code);
-  } catch (err) {
-    // ليه: الـ API بترجع 404 للكوبون الغلط، ودي مش مشكلة، ده «مفيش خصم»
-    if (err instanceof Error && err.message === "404") return null;
-    throw err; // أي حاجة تانية (شبكة، 500) مش شغلتي هنا
-  }
-}
-
-// ٣) أشيل الـ catch خالص: كان بيبلع خطأ لازم يوقف العملية
-// قبل: try { await chargeCard(order) } catch {}  ← الطلب بيتشحن من غير فلوس
-// بعد: await chargeCard(order);  والـ error middleware هو اللي يرد
-
-console.log(readCachedTheme("{broken"));
-findCoupon("NOPE", async () => { throw new Error("404"); }).then((d) => console.log("discount:", d));
-findCoupon("X", async () => { throw new Error("ECONNRESET"); }).catch((e) => console.log("rethrown:", e.message));`
-        }
-      ]
-    },
-    {
-      t: "الـ state والـ side effects",
-      l: 1,
-      n: "الداتا متتغيرش من تحت إيدك، والحسبة بعيدة عن الداتابيز والشبكة",
-      items: [
-        {
-          cmd: "immutability",
-          title: "متعدّلش الداتا، اعمل نسخة جديدة",
-          desc: R`immutability معناها إنك متعدّلش object أو array موجود، وبدل كده تعمل نسخة جديدة فيها التغيير: [[{ ...user, name: 'Ali' }]] بدل [[user.name = 'Ali']]، و [[[...items, newItem]]] بدل [[items.push(newItem)]]. لأن الـ object ممكن يكون متشارك في أكتر من مكان، والتعديل في مكان بيغيّره في الكل من غير ما حد يعرف.
-
-و React أصلًا مبيشوفش التغيير لو عدّلت نفس الـ object، لأنه بيقارن بالمرجع (reference).`,
-          example: R`type Cart = { readonly items: readonly string[]; readonly coupon?: string };
-
-const cart: Cart = { items: ["book"] };
-
-// قبل: بيعدّل الأصل، وأي حد ماسك cart اتغير عنده من غير ما يعرف
-// cart.items.push("pen");
-
-const withPen: Cart = { ...cart, items: [...cart.items, "pen"] };
-const withCoupon: Cart = { ...withPen, coupon: "SAVE10" };
-const sorted = withPen.items.toSorted();
-
-console.log(cart.items, withPen.items, withCoupon.coupon, sorted);
-// [ 'book' ] [ 'book', 'pen' ] SAVE10 [ 'book', 'pen' ]
-
-const settings = Object.freeze({ theme: "dark" });
-// settings.theme = "light";  خطأ في TypeScript، ووقت التشغيل مبيتغيرش`,
-          try: R`في component React عندك فيه [[useState]] لـ array أو object، دوّر على [[push]] أو [[splice]] أو تعديل خانة مباشر قبل الـ setter. جرّب التعديل المباشر وشوف الشاشة مش بتتحدث، وبعدين النسخة الجديدة بالـ spread وشوفها بتتحدث.`,
-          flag: "script",
-          deep: {
-            why: R`لما الداتا بتتعدّل من أكتر من مكان، مبقاش فيه حد يقدر يقولك قيمتها إيه في لحظة معينة من غير ما يتتبع كل اللي لمسها. bugs زي «الكارت اتغير لوحده» سببها غالبًا array متشاركة: حد اتعمل له نسخة من المرجع مش من الداتا، وعدّل فيها. ومع immutability، عشان تعرف الداتا اتغيرت، بتقارن المرجع بس ([[prev !== next]])، وده اللي React و Zustand و Redux مبنيين عليه.`,
-            how: R`الـ objects والـ arrays في JavaScript بتتنقل بالمرجع: [[const b = a]] مش نسخة، ده اسم تاني لنفس الحاجة في الذاكرة، وأي تعديل من [[b]] بيبان في [[a]].
-
-الـ spread ([[...]]) بيعمل shallow copy: المستوى الأول بس جديد. لو جوه الـ object فيه object تاني، النسخة والأصل لسه متشاركين فيه. عشان كده لما تعدّل حاجة عميقة، تنسخ كل مستوى في الطريق: [[{ ...user, address: { ...user.address, city: 'Cairo' } }]]. ولو عايز نسخة عميقة كاملة: [[structuredClone(obj)]] (موجودة في Node والمتصفحات).
-
-الدوال اللي بتعدّل الأصل ([[push]] و [[pop]] و [[splice]] و [[sort]] و [[reverse]]) ليها بدايل بترجع array جديدة: spread، و [[filter]]، و [[toSorted]] و [[toReversed]] و [[toSpliced]] و [[with(index, value)]] (من ES2023).
-
-و [[const]] مش immutability: بيمنع إنك تربط الاسم بقيمة تانية، بس المحتوى يتعدّل عادي. اللي بيمنع التعديل: [[readonly]] و [[Readonly<T>]] و [[as const]] في TypeScript (وقت الكتابة بس)، و [[Object.freeze]] وقت التشغيل (وبرضه shallow). وفي ملفات ES modules (أو strict mode) الكتابة على object متجمّد بترمي [[TypeError]]، وفي غيرها بتتجاهل بسكوت.`,
-            when: "الـ state في React أو أي store. الداتا اللي بتتشارك بين دوال أو modules. الإعدادات. وأي دالة بتاخد array أو object: متعدّلش الـ input بتاعها.",
-            mistakes: R`[[items.sort()]] على array جاية من props أو state: بتعدّل الأصل، والـ UI يا مبيتحدثش يا بيتحدث غلط. و [[const]] وتفتكر الـ object بقى ثابت. و spread مستوى واحد وانت بتعدّل حاجة عميقة، فتعدّل في الأصل من غير ما تاخد بالك. ومش لازم كل حاجة immutable: متغير محلي جوه دالة بتبني فيه array بـ [[push]] وترجّعه في الآخر ده تمام، محدش تاني شايفه.`
-          },
-          lines: [
-            "[[readonly]] بيخلي TypeScript يمنع أي تعديل على الخانات والـ array نفسها ([[push]] مش موجودة على array متعلّم readonly).",
-            "الكارت الأصلي.",
-            "نسخة جديدة: كل الخانات زي ما هي ([[...cart]])، والـ items array جديدة فيها القديم و pen.",
-            "نسخة من النسخة بكوبون. الأصل والنسخة اللي قبلها زي ما هم.",
-            "[[toSorted]] بترجع array جديدة مترتبة، عكس [[sort]] اللي بترتّب الأصل نفسه.",
-            "الأصل لسه فيه book بس.",
-            "[[Object.freeze]] بيقفل الـ object وقت التشغيل كمان، مش بس في TypeScript."
-          ],
-          sol: R`شغّلت الحل في jsdom، وده اللي حصل بالظبط: البداية [[1 todos]]، وبعد زرار [[add (wrong)]] فضلت [[1 todos]]. الـ push عدّل الـ array، بس [[setTodos(todos)]] بعت نفس المرجع، و React بيقارن بـ [[Object.is]] فشاف إن مفيش تغيير ومرسمش. وبعد زرار [[add]] الصح الشاشة بقت [[3 todos]] مش ٢! لأن العنصر اللي اتعمله push كان موجود فعلًا في الـ array، وظهر مع أول render جه بعده.
-
-ده اللي بيخلي الـ bug ده مرعب في مشروع حقيقي: الداتا بتظهر «متأخرة» مع ضغطة زرار ملهاش علاقة، فتدوّر على المشكلة في المكان الغلط. والحل نسخة جديدة دايمًا: [[setTodos(prev => [...prev, item])]] للإضافة، و [[map]] مع [[{ ...t, done: !t.done }]] للتعديل، و [[filter]] للمسح، و [[toSorted]] بدل [[sort]].
-
-وخد بالك إن الـ spread بينسخ أول مستوى بس: لو عدّلت [[t.address.city]] مباشرة لسه بتعدّل الأصل. ولو عملت [[prev.push]] جوه [[setTodos(prev => ...)]]، الـ StrictMode في التطوير بيشغّل الـ updater مرتين فالعنصر يتضاف مرتين: دي علامة إنك بتعدّل مش بتنسخ.`,
-          solCode: R`import { useState } from "react";
-
-type Todo = { id: number; text: string; done: boolean };
-
-export function Todos() {
-  const [todos, setTodos] = useState<Todo[]>([{ id: 1, text: "buy milk", done: false }]);
-
-  // غلط: بيعدّل نفس الـ array، و React بيقارن بـ Object.is فبيلاقيه هو هو ومش بيرسم
-  function addWrong(text: string) {
-    todos.push({ id: Date.now(), text, done: false });
-    setTodos(todos);
-  }
-
-  // صح: array جديدة، ولو بتعدّل عنصر: object جديد للعنصر ده بس
-  function add(text: string) {
-    setTodos((prev) => [...prev, { id: Date.now(), text, done: false }]);
-  }
-  function toggle(id: number) {
-    setTodos((prev) => prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t)));
-  }
-  function remove(id: number) {
-    setTodos((prev) => prev.filter((t) => t.id !== id));
-  }
-
-  return (
-    <>
-      <p>{todos.length} todos</p>
-      <button id="wrong" onClick={() => addWrong("pen")}>add (wrong)</button>
-      <button id="right" onClick={() => add("pen")}>add</button>
-      <button id="toggle" onClick={() => toggle(1)}>toggle</button>
-      <button id="remove" onClick={() => remove(1)}>remove</button>
-    </>
-  );
-}`
-        },
-        {
-          cmd: "pure functions",
-          title: "الحسبة لوحدها، والداتابيز والشبكة على الأطراف",
-          desc: R`الـ pure function بترجع نفس النتيجة لنفس المدخلات، ومبتعملش أي side effect: مبتقراش داتابيز، ولا بتكتب ملف، ولا بتعدّل متغير برّاها، ولا بتعتمد على [[Date.now()]] أو [[Math.random()]].
-
-الفكرة العملية اسمها functional core, imperative shell: قواعد البيزنس في دوال pure سهل تفهمها وتختبرها، والـ I/O في طبقة رفيعة برّا بتجيب الداتا، وتنادي الدوال الـ pure، وتحفظ أو تبعت النتيجة.`,
-          example: R`type Sale = { amount: number; refunded: boolean };
-
-// core: pure. مفيش I/O ولا وقت ولا random، ومبتعدّلش المدخلات
-const netRevenue = (sales: readonly Sale[]): number =>
-  sales.filter((s) => !s.refunded).map((s) => s.amount).reduce((sum, a) => sum + a, 0);
-
-// shell: بيجيب ويبعت بس، ومفيهوش أي قرار
-async function dailyReport(load: () => Promise<Sale[]>, send: (msg: string) => void) {
-  const sales = await load();
-  send($__btRevenue today: $__{netRevenue(sales)}$__bt);
-}
-
-const fakeLoad = async () => [
-  { amount: 10, refunded: false },
-  { amount: 5, refunded: true },
-];
-dailyReport(fakeLoad, console.log); // Revenue today: 10`,
-          try: R`اختار دالة في مشروعك فيها حسبة و [[await prisma...]] أو [[fetch]] في نفس المكان. اطلّع الحسبة لدالة pure بتاخد الداتا كـ parameter، واكتب لها اختبار vitest من غير أي mock. قارن بصعوبة اختبار الدالة الأصلية.`,
-          flag: "script",
-          deep: {
-            why: R`الدالة اللي بتحسب وبتكلم الداتابيز في نفس الوقت مينفعش تختبرها غير لو عندك داتابيز أو mocks كتير. ولو فيها [[new Date()]]، نتيجتها بتتغير كل يوم، فالاختبار ينجح النهارده ويقع بكرة. الـ pure function بتختبرها بسطر: مدخلات ونتيجة متوقعة. ولما يحصل bug، بتكرره بنفس المدخلات بالظبط.`,
-            how: R`الـ side effect أي حاجة الدالة بتعملها غير إنها ترجع قيمة: تكتب في داتابيز أو ملف، أو تبعت request، أو تطبع، أو تعدّل parameter أو متغير global، أو تقرا حاجة بتتغير لوحدها (الوقت، و random، و env).
-
-الـ pure function ليها صفتين: deterministic (نفس المدخلات نفس النتيجة دايمًا)، ومفيش side effects. والنتيجة إنك تقدر تناديها أي عدد مرات، أو تحفظ نتيجتها (memoization)، أو تشغّلها بالتوازي من غير قلق.
-
-البرنامج من غير side effects ملوش لازمة، فالهدف مش إنك تلغيها، الهدف إنك تزقها للأطراف. الترتيب: هات الداتا (I/O)، احسب (pure)، احفظ أو ابعت (I/O). والقرارات كلها في الجزء الـ pure.
-
-الوقت و random: خدهم كـ parameter ([[now = Date.now()]]) بدل ما تقراهم جوه الدالة. في الإنتاج بياخد القيمة الافتراضية، وفي الاختبار بتبعت وقت ثابت.
-
-والـ pipeline ([[filter]] ثم [[map]] ثم [[reduce]]) أسلوب functional: كل خطوة دالة صغيرة بترجع نسخة جديدة، والسلسلة بتتقري زي وصف للي عايزه. بس لو الـ array ضخمة جدًا، كل خطوة بتعمل array مؤقتة، فساعتها loop واحد أسرع (قيس الأول، تاب DSA).`,
-            when: "حسابات الأسعار والخصومات والضرايب، والتحقق من الصلاحيات، وتحويل الداتا (من شكل الداتابيز لشكل الـ API)، و reducers في React. أي منطق بيزنس.",
-            mistakes: R`دالة شكلها pure بس بتعدّل الـ input ([[items.sort()]] جوه دالة حسبة)، فاللي نادى عليها اتغيرت الداتا عنده. و [[Date.now()]] مستخبية جوه حسبة، فالاختبارات بتقع في آخر الشهر بس. وفي React، الـ render نفسه لازم يبقى pure (مفيش fetch ولا تعديل state جواه)، والـ side effects مكانها event handlers و [[useEffect]]، و StrictMode بيعمل render مرتين في التطوير عشان يكشف ده.`
-          },
-          lines: [
-            "شكل البيعة.",
-            "دالة pure: بتاخد array وترجع رقم. [[readonly]] بيضمن إنها مش هتعدّل فيها.",
-            "pipeline: شيل المرتجع، وخد المبالغ، واجمعهم. filter و map كل واحدة بترجع array جديدة، و reduce بترجع الرقم النهائي.",
-            "الـ shell: الدالة اللي بتكلم العالم. الـ load والـ send جايين من برا، فتقدر تبدّلهم.",
-            "I/O: هات الداتا.",
-            "نادِ الحسبة الـ pure، وابعت النتيجة (I/O تاني).",
-            "قفلة.",
-            "بدل الداتابيز في التجربة: دالة بترجع داتا ثابتة.",
-            "بيعة عادية.",
-            "بيعة اترجعت.",
-            "قفلة.",
-            "شغّل التقرير، و [[console.log]] مكان الإيميل. بيطبع [[Revenue today: 10]]."
-          ],
-          sol: R`الـ ٣ اختبارات خضرا، ومن غير [[vi.mock]] ولا داتابيز ولا [[await]]: بتبعت array و object وتقارن رقم. قارن ده باختبار الدالة الأصلية: كنت محتاج mock لـ [[prisma.order.findUnique]] يرجّع شكل الـ include بالظبط، ولو حد غيّر الـ query (زوّد [[select]] مثلًا) الاختبار يقع مع إن الحسبة سليمة.
-
-والـ shell اللي فضل ([[invoiceForOrder]]) سطرين: يجيب ويبعت للدالة. ده مش محتاج unit test، بيتغطى باختبار integration واحد على داتابيز حقيقية (درس «هرم الاختبارات»).
-
-علامة إن الفصل ناقص: الدالة الـ pure لسه بتنادي [[new Date()]] أو [[Math.random()]] أو بتعدّل الـ array اللي داخلالها. الوقت يدخل parameter ([[now: Date]]) وكذلك الـ random. والغلط التاني إنك تبعت الـ order كله زي ما Prisma رجّعه: ابعت اللي الدالة محتاجاه بس ([[lines]] و [[customer]])، فالأنواع تبقى صغيرة والاختبار يبني الداتا في سطر.`,
-          solCode: R`// invoice.ts
-export type Line = { price: number; qty: number };
-export type Customer = { isVip: boolean };
-
-// قبل: async function invoiceTotal(orderId) { const order = await prisma.order.findUnique(...); ...حسبة...; }
-// بعد: الحسبة pure، والـ I/O برا
-export function invoiceTotal(lines: readonly Line[], customer: Customer): number {
-  const subtotal = lines.reduce((sum, l) => sum + l.price * l.qty, 0);
-  const discount = customer.isVip && subtotal >= 1000 ? subtotal * 0.1 : 0;
-  return subtotal - discount;
-}
-
-// الـ shell: سطرين، ومفيهوش قرار
-// export async function invoiceForOrder(id: string) {
-//   const order = await prisma.order.findUniqueOrThrow({ where: { id }, include: { lines: true, customer: true } });
-//   return invoiceTotal(order.lines, order.customer);
-// }
-
-// invoice.test.ts
-import { it, expect } from "vitest";
-import { invoiceTotal } from "./invoice";
-
-it("no discount for normal customers", () => {
-  expect(invoiceTotal([{ price: 600, qty: 2 }], { isVip: false })).toBe(1200);
-});
-it("10% for VIP from 1000", () => {
-  expect(invoiceTotal([{ price: 500, qty: 2 }], { isVip: true })).toBe(900);
-});
-it("no VIP discount under 1000", () => {
-  expect(invoiceTotal([{ price: 999, qty: 1 }], { isVip: true })).toBe(999);
-});`
-        }
-      ]
-    },
-    {
-      t: "Code smells",
-      l: 1,
-      n: "علامات إن الكود محتاج refactoring، وأمثلة حقيقية من مشاريع اتبنت بسرعة",
-      items: [
-        {
-          cmd: "code smells",
-          title: "علامات إن الكود محتاج يتصلّح",
-          desc: R`الـ code smell علامة مش bug: الكود شغال، بس شكله بيقول إن تعديله هيبقى صعب. أشهرهم: دالة طويلة، وكود متكرر، و parameters كتير، و boolean بيقلب سلوك الدالة، و god object، وأرقام من غير أسماء، وكود ميت محدش بيناديه.
-
-المثال بيصلّح اتنين مع بعض: ٥ parameters ورا بعض (سهل تبدّل اتنين من نفس النوع ومحدش ياخد باله) بقوا object بأسماء، والـ boolean اللي كان بيقلب الدالة بقى دالة تانية باسمها.`,
-          example: R`// قبل: 5 parameters ورا بعض، وآخرهم boolean محدش فاهمه من برا
-// createUser("you@example.com", "Ali", "0100", 30, true);  الاسم والإيميل متبدّلين، و true دي إيه؟
-
-type NewUser = { name: string; email: string; phone?: string };
-
-function createUser({ name, email, phone = "" }: NewUser) {
-  return { id: crypto.randomUUID(), name, email, phone, role: "member" as const };
-}
-function createAdmin(user: NewUser) {
-  return { ...createUser(user), role: "admin" as const };
-}
-
-const admin = createAdmin({ email: "you@example.com", name: "Ali" });
-console.log(admin.name, admin.role); // Ali admin`,
-          try: R`دوّر في مشروعك على دالة بتاخد ٤ parameters أو أكتر، أو نداء فيه [[true]] أو [[false]] أو [[undefined, undefined]]. حوّلها لـ object parameter (أو لدالتين لو الـ boolean بيقسمها نصين)، وسيب TypeScript يدلّك على كل الأماكن اللي محتاجة تتغير.`,
-          flag: "script",
-          deep: {
-            why: R`الـ smells بتدّيك لغة ومقياس. بدل «الكود ده وحش»، تقول «الدالة دي بتاخد ٦ parameters وفيها flag»، ودي حاجة محددة ليها علاج معروف. ومهمة في الـ code review، وفي الانترفيو لما يدّيك كود ويقولك «إيه رأيك فيه؟».`,
-            how: R`أشهر الـ smells وعلاجها (من كتاب Refactoring):
-
-دالة طويلة: Extract Function (درس «small functions»).
-كود متكرر: دالة واحدة من تالت مرة (درس DRY).
-parameters كتير: Parameter Object زي المثال. ولو نفس المجموعة بتتنقل مع بعض في كل مكان ([[lat, lng]] أو [[startDate, endDate]])، دي data clump، اعملها نوع لوحدها.
-flag argument ([[render(true)]]): لو بيختار بين سلوكين مختلفين، دالتين بأسماء. ولو بيعدّل تفصيلة، options بأسماء ([[listUsers({ includeDeleted: true })]]). ولو الاختيار بيتحدد وقت التشغيل، union ([[format: 'csv' | 'json']]) وجدول من القيمة للدالة، وده strategy في أبسط شكل (المستوى ٢، درس «over-engineering»).
-booleans متعارضة ([[isLoading]] و [[isError]] و [[isSuccess]] مع بعض): حالة واحدة [[status: 'loading' | 'error' | 'success']]، فالتركيبات المستحيلة تبقى مستحيلة في النوع نفسه.
-god object: قسّمه على المسؤولية (الدرس الجاي).
-primitive obsession: كل حاجة string و number، فـ [[userId]] و [[orderId]] ممكن يتبدّلوا. العلاج أنواع أدق (تاب TypeScript).
-feature envy: دالة بتقرا من object تاني أكتر من نفسها: انقلها جنب الداتا.
-shotgun surgery: تغيير صغير محتاج تعدّل ١٠ ملفات: المعلومة متفرقة، لمّها.
-dead code: دوال و exports محدش بيناديها: امسحها (Git فاكرها)، وأداة زي knip بتلاقيها.
-
-ولما تفك الـ object في الـ parameters ([[{ name, email }: NewUser]])، TypeScript بيتأكد إن الخانات المطلوبة موجودة، وإن مفيش خانة غلط لو بتبعت object literal مباشرة.`,
-            when: "في الـ code review، وقبل ما تضيف ميزة في كود قديم (نضّف الحتة اللي هتشتغل فيها الأول)، ولما حاجة بسيطة تاخد وقت أطول من المتوقع لأن «الكود معقد».",
-            mistakes: R`تعامل الـ smell كقانون: مش كل دالة ٣٠ سطر محتاجة تتقسم، ومش كل boolean parameter غلط ([[force = false]] بقيمة افتراضية في job مقبول لحد ما يتضاف تاني وتالت). الـ smell سؤال: «ده بيصعّب التغيير هنا؟». وتقسّم لدالتين وتنسخ الكود المشترك فيهم، والصح إن واحدة تبني على التانية زي [[createAdmin]]. وrefactoring ضخم لكل الـ smells في نفس PR فيه ميزة جديدة، فالمراجعة تبقى مستحيلة: الـ refactoring في PR لوحده ومعاه اختبارات.`
-          },
-          lines: [
-            "الـ parameters بقت نوع واحد بأسماء، والتليفون اختياري ([[?]]) بدل ما تبعت [[undefined]] في النص.",
-            "الدالة بتاخد object وتفكّه، والاختياري ليه قيمة افتراضية.",
-            R`بترجّع user عادي. [[as const]] بيخلي النوع [["member"]] بالظبط مش أي string.`,
-            "قفلة.",
-            "الأدمن دالة لوحده بدل [[createUser(..., true)]]، والنداء نفسه بيقول بيعمل إيه.",
-            "بتبني على العادية وبتغيّر الـ role بس، فمفيش كود متكرر.",
-            "قفلة.",
-            "النداء بالأسماء: الترتيب مبقاش يفرق، ومستحيل تبدّل الاسم بالإيميل.",
-            "بيطبع [[Ali admin]]."
-          ],
-          sol: R`بعد ما تغيّر التوقيع لـ object، شغّل [[tsc --noEmit]]: TypeScript هيطلّع خطأ في كل نداء قديم لسه بيبعت parameters ورا بعض، ودي بالظبط قايمة الأماكن اللي محتاجة تتغير. خلّصها لحد ما تبقى صفر. ولو فيه boolean زي [[isHtml]] بيقسم الدالة نصين، الحل دالتين ([[sendHtml]] و [[sendText]]) زي الحل. الناتج [[text/html undefined]] ثم [[support@example.com]]: الخانات الاختيارية ([[cc]] و [[replyTo]]) بقت بالاسم، ومفيش [[undefined, undefined]].
-
-الغلط الشائع إنك تعمل object parameter بـ type [[any]] أو [[Record<string, unknown>]]: كده خسرت الـ checklist، ونداء فيه [[{ emial: ... }]] بغلطة إملائية هيعدّي. استخدم type مسمّى زي [[Email]]، و TypeScript هيطلّع خطأ على الخانة الغلط.
-
-وفي الانترفيو: «ليه object parameter؟» الإجابة: النداء بيتقري من غير ما تفتح الدالة، والترتيب مبقاش مهم فمينفعش تبدّل الاسم والإيميل، وتقدر تضيف خانة اختيارية من غير ما تكسر ولا نداء قديم.`,
-          solCode: R`// قبل: sendEmail("you@example.com", "Welcome", "<h1>Hi</h1>", undefined, undefined, true);
-// آخر true دي «html»؟ ولا «urgent»؟ والـ undefined دي إيه؟
-
-type Email = { to: string; subject: string; body: string; cc?: string[]; replyTo?: string };
-
-function sendText(email: Email) {
-  return { ...email, contentType: "text/plain" };
-}
-function sendHtml(email: Email) {
-  return { ...email, contentType: "text/html" };
-}
-
-const sent = sendHtml({ to: "you@example.com", subject: "Welcome", body: "<h1>Hi</h1>" });
-console.log(sent.contentType, sent.cc); // text/html undefined
-console.log(sendText({ to: "you@example.com", subject: "Hi", body: "x", replyTo: "support@example.com" }).replyTo);`
-        },
-        {
-          cmd: "god object",
-          title: "ملف واحد شايل كل حاجة",
-          desc: R`الـ god object (أو god component في React) حاجة واحدة شايلة مسؤوليات كتير ملهاش علاقة ببعض. أي تعديل في أي feature بيعدّي عليها، وكل الناس بتتخانق عليها في الـ merge conflicts، ومحدش فاهمها كلها. العلاج: قسّم على المسؤولية مش على الحجم، فكل feature في hook أو component أو module لوحده، والأب بيجمّعهم.`,
-          example: R`import { useState } from "react";
-
-// قبل: الـ checkout فيه 44 useState، منهم 6 للكوبون لوحده
-// const [couponCode, setCouponCode] = useState(""); const [couponLoading, ...] ...
-
-type CouponState = { status: "idle" | "loading" | "valid" | "invalid"; discount: number };
-
-export function useCoupon(validate: (code: string) => Promise<number | null>) {
-  const [state, setState] = useState<CouponState>({ status: "idle", discount: 0 });
-  async function apply(code: string) {
-    setState({ status: "loading", discount: 0 });
-    const discount = await validate(code);
-    setState(discount === null ? { status: "invalid", discount: 0 } : { status: "valid", discount });
-  }
-  return { ...state, apply };
-}
-
-// الأب بقى بيجمّع بس: const coupon = useCoupon(api.validateCoupon); const shipping = useShipping();`,
-          try: R`افتح أكبر component عندك واعدّ الـ [[useState]] والـ [[useEffect]]. جمّع اللي بيتغيروا مع بعض (كل حاجة ليها علاقة بالكوبون مثلًا)، واطلّعهم في custom hook لوحده، وشوف الـ component الأصلي خسر كام سطر.`,
-          flag: "script",
-          deep: {
-            why: R`الملف الضخم بيتكوّن تدريجيًا: كل feature جديدة «هنحطها هنا بسرعة». في مشروع حقيقي كانت صفحة الـ checkout component واحد أكتر من ٦٠٠٠ سطر فيه ٤٤ [[useState]] و ٢٦ [[useEffect]]: كوبونات، ومدة اشتراك، وإضافات، وطرق دفع، ورفع إيصال. وفي الـ backend ملف admin service واحد فيه أكتر من ٨٠ دالة لكل جداول المشروع، والاتنين اتنسخوا زي ما هم لمشاريع تانية. أي تعديل بسيط محتاج تفهم آلاف السطور، وأي state ممكن يبوّظ feature تانية، واستحالة تكتب اختبار لحتة واحدة.`,
-            how: R`الـ god object عكس Single Responsibility (أول مبدأ في SOLID): كل module يبقى ليه سبب واحد يتغير.
-
-إزاي تقسّم component ضخم: جمّع الـ state اللي بيتغير مع بعض في custom hook زي [[useCoupon]]. واطلّع كل جزء UI بيعرض حاجة واحدة في component لوحده ([[CouponBox]] و [[PaymentMethods]] و [[OrderSummary]]). والحسابات (الإجمالي بعد الخصم) دوال pure برّا الـ component خالص. والأب بيبقى «مايسترو»: بينادي الـ hooks ويوزّع على الأطفال.
-
-ولاحظ في المثال إن ٤ booleans للكوبون (loading و valid و error و ...) بقوا [[status]] واحد، فمستحيل الكوبون يبقى «بيحمّل» و «مرفوض» في نفس الوقت.
-
-وإزاي تقسّم service ضخم: كل feature ليها module ([[users.service]] و [[orders.service]] و [[coupons.service]])، والـ admin routes تنادي الـ services دي بدل ما يبقى ليها service خاص فيه نسخة تانية من كل حاجة.
-
-ومتقسّمش مرة واحدة. كل مرة تلمس الملف عشان feature، اطلّع الحتة اللي بتشتغل فيها بس، ودي اسمها boy scout rule: سيب الكود أنضف شوية من ما لقيته. وقبل ما تقسّم كود حساس زي الـ checkout، اكتب اختبار e2e بيغطي الحالة الأساسية (المستوى ٣، درس «هرم الاختبارات»).`,
-            when: "لما الملف يعدّي كام مية سطر وفيه أكتر من feature، أو لما كل PR بيلمس نفس الملف، أو لما تعمل scroll كتير عشان تلاقي الـ state اللي بتدوّر عليها.",
-            mistakes: R`تقسّم على الشكل مش المعنى: [[Checkout1.tsx]] و [[Checkout2.tsx]] كل واحد ٣٠٠٠ سطر. وتطلّع hooks بس تسيبها تعتمد على بعض بـ ١٠ parameters. و prop drilling لعمق ٥ مستويات بعد التقسيم، وساعتها context أو store صغير لحالة الـ checkout أحسن (تاب React). وفي الناحية التانية: متعملش ٥٠ ملف لـ feature بسيطة، التقسيم لما يبقى فيه سبب.`
-          },
-          lines: [
-            "من React.",
-            "حالة الكوبون كلها في نوع واحد، والـ status قيمة واحدة بدل كذا boolean.",
-            "custom hook مسؤول عن الكوبون بس. الـ validate جاية من برا (API حقيقي، أو fake في الاختبار).",
-            "state واحدة بدل ٦.",
-            "الفعل الوحيد اللي الـ hook بيعرضه.",
-            "ابدأ التحميل.",
-            "اسأل السيرفر: الكوبون ده بيخصم كام؟",
-            "null يعني مرفوض، غير كده مقبول بالخصم.",
-            "قفلة apply.",
-            "الـ component ياخد الحالة والفعل بس، ومش شايف التفاصيل.",
-            "قفلة."
-          ],
-          sol: R`الـ component الكبير هتلاقي فيه عادةً ٣ أو ٤ مجموعات state بتتغير مع بعض: الكوبون (الكود، والتحميل، والخطأ، والخصم)، والشحن، والدفع. كل مجموعة تبقى custom hook زي [[useCoupon]] في الحل، والـ component يبقى [[const coupon = useCoupon(api.validateCoupon)]] ويعرض بس. جرّبت الـ hook لوحده: [[save50]] بمسافات بترجع [[valid 50]]، و [[nope]] بترجع [[invalid 0]].
-
-التقسيم صح لو الـ hook مش محتاج state من الأب غير اللي بيتبعتله، والـ component مابقاش فيه ولا [[useState]] ليه علاقة بالكوبون. ولو الـ hook محتاج [[setShipping]] من الأب عشان يشتغل، يبقى المجموعتين مش مستقلين فعلًا: يا تدمجهم، يا الـ hook ياخد callback.
-
-الغلط الشائع: hook واحد [[useCheckout]] فيه كل الـ state. ده نقل الـ god object لملف تاني من غير ما يقسمه. ولو الـ hook بيرجّع ١٥ حاجة، يبقى لسه شايل أكتر من مسؤولية.`,
-          solCode: R`import { useState } from "react";
-
-type CouponState = { status: "idle" | "loading" | "valid" | "invalid"; discount: number };
-
-// hooks/useCoupon.ts: كل حاجة الكوبون في مكان واحد
-export function useCoupon(validate: (code: string) => Promise<number | null>) {
-  const [code, setCode] = useState("");
-  const [state, setState] = useState<CouponState>({ status: "idle", discount: 0 });
-  async function apply() {
-    setState({ status: "loading", discount: 0 });
-    const discount = await validate(code.trim().toUpperCase());
-    setState(discount === null ? { status: "invalid", discount: 0 } : { status: "valid", discount });
-  }
-  return { code, setCode, ...state, apply };
-}
-
-// Checkout.tsx: بيجمّع بس، ومبقاش فيه ولا useState للكوبون
-export function Checkout({ subtotal, validateCoupon }: { subtotal: number; validateCoupon: (c: string) => Promise<number | null> }) {
-  const coupon = useCoupon(validateCoupon);
-  return (
-    <form onSubmit={(e) => { e.preventDefault(); coupon.apply(); }}>
-      <input value={coupon.code} onChange={(e) => coupon.setCode(e.target.value)} />
-      <button disabled={coupon.status === "loading"}>Apply</button>
-      {coupon.status === "invalid" && <p role="alert">Invalid coupon</p>}
-      <output>Total: {subtotal - coupon.discount}</output>
-    </form>
-  );
-}`
         }
       ]
     }

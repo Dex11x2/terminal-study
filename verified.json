@@ -12174,6 +12174,191 @@
   "date": "2026-10-05",
   "on": "ubuntu-24.04, pwsh 7.6, powershell 5.1; docs: macOS sw_vers/Darwin, winver window"
  },
+ "sweng|ADR": {
+  "hash": "932608cbb761",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "sweng|CODEOWNERS و rulesets": {
+  "hash": "1e784bdb12a0",
+  "date": "2026-10-08",
+  "on": "docs: GitHub CODEOWNERS/rulesets docs"
+ },
+ "sweng|DRY": {
+  "hash": "83c08f7d8c13",
+  "date": "2026-10-08",
+  "on": "Windows: Node 24.19 + tsx; solCode tests on Vitest 5.0"
+ },
+ "sweng|KISS و YAGNI": {
+  "hash": "f1514aebd87d",
+  "date": "2026-10-08",
+  "on": "Windows: Node 24.19 + tsx (example + solCode)"
+ },
+ "sweng|PR يتراجع": {
+  "hash": "e957a776f810",
+  "date": "2026-10-08",
+  "on": "Windows Git Bash: Git 2.56 in a throwaway repo with local bare origin; docs: gh pr create"
+ },
+ "sweng|README و runbook": {
+  "hash": "c3781877c2e8",
+  "date": "2026-10-08",
+  "on": "docker ubuntu:24.04 (df, du) + docker system df; docs: journalctl --vacuum-size, docker prune"
+ },
+ "sweng|Scrum و Kanban": {
+  "hash": "f64aa5007e0d",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "sweng|bisect بالاختبار": {
+  "hash": "597a409192a0",
+  "date": "2026-10-08",
+  "on": "Windows: Git 2.56 bisect run + Vitest 5.0; ubuntu:24.04 Git 2.43 wording"
+ },
+ "sweng|catch {}": {
+  "hash": "9890aca9d2c8",
+  "date": "2026-10-08",
+  "on": "Windows: Node 24.19 + tsx (example + solCode)"
+ },
+ "sweng|code smells": {
+  "hash": "53f17f6ba106",
+  "date": "2026-10-08",
+  "on": "Windows: Node 24.19 + tsx + tsc 7.0 (example + solCode)"
+ },
+ "sweng|codebase مش بتاعك": {
+  "hash": "93729a410904",
+  "date": "2026-10-08",
+  "on": "Windows Git Bash + pwsh: Git 2.56 in a throwaway repo + npm 11"
+ },
+ "sweng|composition ولا inheritance": {
+  "hash": "11161361b8ac",
+  "date": "2026-10-08",
+  "on": "Windows: Node 24.19 + tsx (example + solCode)"
+ },
+ "sweng|custom errors": {
+  "hash": "066d13d5a9c6",
+  "date": "2026-10-08",
+  "on": "Windows: Node 24.19 + tsx; solCode Express 5.2 + curl"
+ },
+ "sweng|debugging method": {
+  "hash": "2812a6b457e7",
+  "date": "2026-10-08",
+  "on": "Windows: Node 24.19 + tsx"
+ },
+ "sweng|dependency injection": {
+  "hash": "38c633bcfdb1",
+  "date": "2026-10-08",
+  "on": "Windows: Node 24.19 + tsx; solCode tests on Vitest 5.0"
+ },
+ "sweng|draft PR و التقسيم": {
+  "hash": "f5bb12f1ecaf",
+  "date": "2026-10-08",
+  "on": "Windows: Git 2.56 stacked branches + rebase --onto; docs: gh pr create/ready/list"
+ },
+ "sweng|fail fast": {
+  "hash": "0160b3f9a448",
+  "date": "2026-10-08",
+  "on": "Windows Git Bash: Node 24.19 + tsx (example + solCode)"
+ },
+ "sweng|god object": {
+  "hash": "a52cf5f2d2fd",
+  "date": "2026-10-08",
+  "on": "Windows: React 19.3 in jsdom via tsx"
+ },
+ "sweng|guard clauses": {
+  "hash": "d3c9db2d9aad",
+  "date": "2026-10-08",
+  "on": "Windows: Node 24.19 + tsx + tsc 7.0 (example + solCode)"
+ },
+ "sweng|immutability": {
+  "hash": "bdc0f4137cd1",
+  "date": "2026-10-08",
+  "on": "Windows: Node 24.19 + tsx + tsc 7.0; solCode React 19.3 in jsdom"
+ },
+ "sweng|magic numbers": {
+  "hash": "6e8b11e085db",
+  "date": "2026-10-08",
+  "on": "Windows: Node 24.19 + tsx + tsc 7.0 (example + solCode)"
+ },
+ "sweng|naming": {
+  "hash": "30a670f39529",
+  "date": "2026-10-08",
+  "on": "Windows: Node 24.19 + tsx + tsc 7.0 (example + solCode)"
+ },
+ "sweng|over-engineering": {
+  "hash": "d3ad3fa66a33",
+  "date": "2026-10-08",
+  "on": "Windows: Node 24.19 + tsx + tsc 7.0"
+ },
+ "sweng|pure functions": {
+  "hash": "a048e90233e1",
+  "date": "2026-10-08",
+  "on": "Windows: Node 24.19 + tsx; solCode tests on Vitest 5.0"
+ },
+ "sweng|red green refactor": {
+  "hash": "9a1089aa854c",
+  "date": "2026-10-08",
+  "on": "Windows: Vitest 5.0 (red/green cycles + solCode)"
+ },
+ "sweng|refactor بأمان": {
+  "hash": "f0ea70849dd3",
+  "date": "2026-10-08",
+  "on": "Windows: Vitest 5.0 + Git 2.56 in a throwaway repo"
+ },
+ "sweng|regression test": {
+  "hash": "e0c1a6ac3acf",
+  "date": "2026-10-08",
+  "on": "Windows: Vitest 5.0 + Git 2.56 in a throwaway repo"
+ },
+ "sweng|small functions": {
+  "hash": "65a52c3ae4dc",
+  "date": "2026-10-08",
+  "on": "Windows: Node 24.19 + tsx + tsc 7.0 (example + solCode)"
+ },
+ "sweng|technical debt": {
+  "hash": "690d96ce3b46",
+  "date": "2026-10-08",
+  "on": "Windows Git Bash: grep + Git 2.56 in a throwaway repo; docs: gh issue create/list"
+ },
+ "sweng|ticket و acceptance criteria": {
+  "hash": "ea2d427a9227",
+  "date": "2026-10-08",
+  "on": "Windows: Vitest 5.0 (it.todo solCode); docs: concept"
+ },
+ "sweng|why comments": {
+  "hash": "cf0adb22b818",
+  "date": "2026-10-08",
+  "on": "Windows: Node 24.19 + tsx + tsc 7.0"
+ },
+ "sweng|اختبر السلوك": {
+  "hash": "b7ea400a9a10",
+  "date": "2026-10-08",
+  "on": "Windows: Vitest 5.0 (example + brittle array/Map test)"
+ },
+ "sweng|التقدير": {
+  "hash": "061176902fcf",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "sweng|ترتيب المراجعة": {
+  "hash": "85c96715c4cb",
+  "date": "2026-10-08",
+  "on": "Windows: gh 2.97 read-only on a public PR + npm 11 + ava"
+ },
+ "sweng|تستقبل review": {
+  "hash": "65f78a51bec0",
+  "date": "2026-10-08",
+  "on": "Windows: Git 2.56 fixup/autosquash/force-with-lease; docs: gh pr commands"
+ },
+ "sweng|تعليق review": {
+  "hash": "7ef5261da993",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "sweng|هرم الاختبارات": {
+  "hash": "f917fa335a33",
+  "date": "2026-10-08",
+  "on": "Windows: Vitest 5.0 unit + integration (Express 5.2); docs: Playwright line"
+ },
  "swift|@Observable و @Environment": {
   "hash": "d42a5e23094f",
   "date": "2026-10-08",
