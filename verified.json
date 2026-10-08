@@ -2384,6 +2384,106 @@
   "date": "2026-10-06",
   "on": "win11 cmd (username masked later)"
  },
+ "cpp|arrays في C": {
+  "hash": "23766bc84a0e",
+  "date": "2026-10-08",
+  "on": "gcc:14 docker (gcc 14.4.0, ASan/UBSan)"
+ },
+ "cpp|compile و link": {
+  "hash": "99ba89260b2b",
+  "date": "2026-10-08",
+  "on": "gcc:14 docker (gcc 14.4.0)"
+ },
+ "cpp|enum و #define و const": {
+  "hash": "aae1c7e9bcf8",
+  "date": "2026-10-08",
+  "on": "gcc:14 docker (gcc 14.4.0)"
+ },
+ "cpp|file I/O في C": {
+  "hash": "63c0bebc715c",
+  "date": "2026-10-08",
+  "on": "gcc:14 docker (gcc 14.4.0)"
+ },
+ "cpp|gdb و sanitizers": {
+  "hash": "46704f43fa27",
+  "date": "2026-10-08",
+  "on": "gcc:14 docker (gcc 14.4.0, gdb 16.3, ASan/UBSan); docs: lldb, MSVC /fsanitize=address"
+ },
+ "cpp|if و switch و loops في C": {
+  "hash": "6d7c02afb788",
+  "date": "2026-10-08",
+  "on": "gcc:14 docker (gcc 14.4.0)"
+ },
+ "cpp|main و exit code": {
+  "hash": "316ce3c684fb",
+  "date": "2026-10-08",
+  "on": "gcc:14 docker (gcc 14.4.0); docs: Windows $LASTEXITCODE/%ERRORLEVEL%"
+ },
+ "cpp|pointer arithmetic": {
+  "hash": "b06ef377b2a3",
+  "date": "2026-10-08",
+  "on": "gcc:14 docker (gcc 14.4.0)"
+ },
+ "cpp|printf و scanf": {
+  "hash": "14c3024b007b",
+  "date": "2026-10-08",
+  "on": "gcc:14 docker (gcc 14.4.0)"
+ },
+ "cpp|strings في C": {
+  "hash": "3a466cdf267e",
+  "date": "2026-10-08",
+  "on": "gcc:14 docker (gcc 14.4.0, ASan)"
+ },
+ "cpp|struct و typedef": {
+  "hash": "42cc53064664",
+  "date": "2026-10-08",
+  "on": "gcc:14 docker (gcc 14.4.0)"
+ },
+ "cpp|undefined behavior": {
+  "hash": "f3a70daa9db3",
+  "date": "2026-10-08",
+  "on": "gcc:14 docker (gcc 14.4.0, -O0 and -O2)"
+ },
+ "cpp|أكتر من ملف و make": {
+  "hash": "837b0c56f395",
+  "date": "2026-10-08",
+  "on": "gcc:14 docker (gcc 14.4.0, GNU make)"
+ },
+ "cpp|إدارة الذاكرة: malloc و free": {
+  "hash": "2f93f73ae262",
+  "date": "2026-10-08",
+  "on": "gcc:14 docker (gcc 14.4.0, ASan/LeakSanitizer)"
+ },
+ "cpp|الدوال والـ prototypes": {
+  "hash": "91c3b0259f3a",
+  "date": "2026-10-08",
+  "on": "gcc:14 docker (gcc 14.4.0, UBSan)"
+ },
+ "cpp|العمليات في C": {
+  "hash": "9677173c158f",
+  "date": "2026-10-08",
+  "on": "gcc:14 docker (gcc 14.4.0)"
+ },
+ "cpp|المؤشرات Pointers والذاكرة": {
+  "hash": "408211007ebb",
+  "date": "2026-10-08",
+  "on": "gcc:14 docker (gcc 14.4.0)"
+ },
+ "cpp|المتغيرات والأنواع في C": {
+  "hash": "7492cd564468",
+  "date": "2026-10-08",
+  "on": "gcc:14 docker (gcc 14.4.0); docs: long=4 on Windows"
+ },
+ "cpp|تسطيب compiler": {
+  "hash": "e7a0375a7bfb",
+  "date": "2026-10-08",
+  "on": "ubuntu:24.04 docker (apt build-essential gdb) + gcc:14 docker; docs: dnf, xcode-select, MSYS2, Visual Studio"
+ },
+ "cpp|مقدمة C وكتابة أول برنامج": {
+  "hash": "4c96e9741b31",
+  "date": "2026-10-08",
+  "on": "gcc:14 docker (gcc 14.4.0)"
+ },
  "css|(id, class, type)": {
   "hash": "ec88ca39c1bb",
   "date": "2026-10-06",
