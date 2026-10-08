@@ -269,10 +269,20 @@
   "date": "2026-10-08",
   "on": "Windows 11, Node 24.19, Express 5.2.1, in-memory db, redis:8-alpine (planLimits), curl"
  },
+ "apis|DataLoader و N+1": {
+  "hash": "ace5650fc1a2",
+  "date": "2026-10-08",
+  "on": "win11 node24.19 dataloader2.2.3 graphql-yoga5.24.2 (query counter)"
+ },
  "apis|ETag و Cache-Control": {
   "hash": "7bc84175b2f3",
   "date": "2026-10-08",
   "on": "Windows 11: Express 5.2.1 / Node 24.19 + curl 8.22, curl.exe in pwsh 7.6 and powershell 5.1, Invoke-WebRequest"
+ },
+ "apis|GraphQL ولا REST": {
+  "hash": "f38013ada1f8",
+  "date": "2026-10-08",
+  "on": "win11 node24.19 graphql-yoga5.24.2 graphql16.14.2"
  },
  "apis|Idempotency-Key": {
   "hash": "c1182e02815e",
@@ -284,10 +294,35 @@
   "date": "2026-10-08",
   "on": "Windows 11: Express 5.2.1 / Node 24.19 + curl 8.22 + Zod 4.6 + solCode client, in-memory Prisma stand-in; docs: Prisma updateMany/update"
  },
+ "apis|OWASP API Top 10": {
+  "hash": "c8c332e374d9",
+  "date": "2026-10-08",
+  "on": "win11 node24.19 express5.2.1 zod4.6.5 curl (in-memory db with Prisma shape); docs: Prisma take semantics"
+ },
+ "apis|OpenAPI": {
+  "hash": "6c5d1c1fa9f4",
+  "date": "2026-10-08",
+  "on": "win11 node24.19 @redocly/cli 2.60 + yaml 2.9"
+ },
  "apis|PUT و PATCH": {
   "hash": "ca6ac570a2fe",
   "date": "2026-10-08",
   "on": "Windows 11: Express 5.2.1 / Node 24.19 + curl 8.22 + Zod 4.6, in-memory Prisma stand-in; docs: Prisma P2025"
+ },
+ "apis|Redis adapter": {
+  "hash": "4360433017b4",
+  "date": "2026-10-08",
+  "on": "win11 node24.19 socket.io4.8.4 @socket.io/redis-adapter8.3.0 + docker redis:8-alpine, two instances"
+ },
+ "apis|SSE في Express": {
+  "hash": "665fa8b82150",
+  "date": "2026-10-08",
+  "on": "win11 node24.19 express5.2.1 curl + EventSource in headless Chrome"
+ },
+ "apis|SSE في Route Handler": {
+  "hash": "af1bc530e19e",
+  "date": "2026-10-08",
+  "on": "win11 node24.19 next16.4.0 (build+start) curl"
  },
  "apis|SSO للشركات": {
   "hash": "90c3bc81ceac",
@@ -298,6 +333,16 @@
   "hash": "5f240fd621e1",
   "date": "2026-10-08",
   "on": "Windows 11, Node 24.19, undici 8.11.2 (live https://example.com)"
+ },
+ "apis|Swagger UI و openapi-typescript": {
+  "hash": "952785cfc5be",
+  "date": "2026-10-08",
+  "on": "win11 node24.19 express5.2.1 swagger-ui-express openapi-typescript7.13 openapi-fetch tsc5.9.3 + headless Chrome"
+ },
+ "apis|auth في resolvers": {
+  "hash": "b2ce465ee0ac",
+  "date": "2026-10-08",
+  "on": "win11 node24.19 graphql-yoga5.24.2 graphql-armor-max-depth2.4.2"
  },
  "apis|client credentials": {
   "hash": "1b1c13faa5e6",
@@ -328,6 +373,11 @@
   "hash": "ca50d0d43e88",
   "date": "2026-10-08",
   "on": "Windows 11, Node 24.19, @grpc/grpc-js 1.14.5, @grpc/proto-loader 0.8.1"
+ },
+ "apis|heartbeat و ping": {
+  "hash": "e59690e62a5a",
+  "date": "2026-10-08",
+  "on": "win11 node24.19 ws8.22.0"
  },
  "apis|id_token و nonce": {
   "hash": "04360348b51e",
@@ -374,10 +424,20 @@
   "date": "2026-10-08",
   "on": "Windows 11: Express 5.2.1 / Node 24.19 + curl 8.22; docs: browser resubmit warning"
  },
+ "apis|schema و resolvers": {
+  "hash": "dea5618249d7",
+  "date": "2026-10-08",
+  "on": "win11 node24.19 express5.2.1 graphql-yoga5.24.2 curl (in-memory db)"
+ },
  "apis|sliding window": {
   "hash": "25c5b76650d6",
   "date": "2026-10-08",
   "on": "Windows 11, Node 24.19, ioredis 6.0, redis:8-alpine (8.10.2)"
+ },
+ "apis|sticky sessions": {
+  "hash": "836c68fbe89e",
+  "date": "2026-10-08",
+  "on": "win11 docker nginx:alpine + 2 socket.io instances + socket.io-client4.8.4; docs: ssl lines"
  },
  "apis|tRPC": {
   "hash": "3d200a49dece",
@@ -403,6 +463,16 @@
   "hash": "5c0055f5c4ad",
   "date": "2026-10-08",
   "on": "Windows 11, Node 24.19, standardwebhooks 1.1.1, BullMQ 6.3.11, redis:8-alpine (8.10.2)"
+ },
+ "apis|ستريم رد LLM": {
+  "hash": "fea659e2d557",
+  "date": "2026-10-08",
+  "on": "win11 node24.19 next16.4.0 @anthropic-ai/sdk0.132.1 against a local mock of the streaming API; docs: real provider billing"
+ },
+ "apis|ستريم في React": {
+  "hash": "e7d8ea616890",
+  "date": "2026-10-08",
+  "on": "win11 next16.4.0 react19.3 headless Chrome via playwright-core (mock provider)"
  },
  "api|$transaction": {
   "hash": "c345ee4d16af",
