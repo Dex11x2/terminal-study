@@ -140,7 +140,7 @@
 | ٥٣ | `sweng/01-03.js` و `ai/01-03.js` (73) | [ ] |
 | ٥٤ | `interview/01-03.js` و `projects/01-03.js` (~75) | [ ] |
 | ٥٥ | `projects/04-07.js` (~21) | [ ] |
-| ٥٦ | `career/01-02.js` و `english/01-04.js` (89) | [ ] (مفيش كود: شرح مختصر للفكرة) |
+| ٥٦ | `career/01-02.js` و `english/01-04.js` (89) | [x] (career و english اتقسموا؛ ملاحظة git identity اتضافت) |
 | ٥٧ | `speak/01-03.js` (58) | [x] (speak اتقسم؛ IPA اتصلح لـ idempotent و query) |
 
 - **من الدفعة ١٨ (Python واللغات والفريموركات):** أرقام الملفات اتحسبت يوم ٦ أكتوبر قبل أي resplit، فلو التاب اتقسم هات الأرقام بـ `node tools/lesson.js`. TypeScript 7 بقى الـ latest و typescript-eslint لسه مش بيدعمه (ثبّت `typescript@6` لما الدرس يستخدم typescript-eslint). وفي الدروس اللي فيها تمرين بيتصحح لوحده (`check`) الشرح مايقولش حل التمرين.

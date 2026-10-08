@@ -2354,6 +2354,151 @@
   "date": "2026-10-06",
   "on": "ubuntu-24.04 docker (bash 5.2)"
  },
+ "career|ATS": {
+  "hash": "77260d3a217c",
+  "date": "2026-10-08",
+  "on": "docker ubuntu:24.04 (pdftotext + grep loop on test PDF)"
+ },
+ "career|CV صفحة واحدة": {
+  "hash": "fb83ebe4fb65",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "career|GitHub profile": {
+  "hash": "d967d752049a",
+  "date": "2026-10-08",
+  "on": "Windows gh 2.97 (auth status, --help, repo list on public org cli); docs: gh repo create/edit/archive"
+ },
+ "career|LinkedIn": {
+  "hash": "01819f4a66bb",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "career|README بيبيع": {
+  "hash": "673847c890db",
+  "date": "2026-10-08",
+  "on": "docs: concept (template commands not run)"
+ },
+ "career|bullets بأثر": {
+  "hash": "12de854121b9",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "career|burnout والتعلم": {
+  "hash": "c6e1a7eea767",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "career|commit history": {
+  "hash": "fe18c501073f",
+  "date": "2026-10-08",
+  "on": "Windows Git 2.56 throwaway repo (all 7 commands)"
+ },
+ "career|junior → mid": {
+  "hash": "81c532edcbbd",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "career|portfolio site": {
+  "hash": "560e02e73501",
+  "date": "2026-10-08",
+  "on": "docs: concept (static HTML)"
+ },
+ "career|remote لبرا": {
+  "hash": "7ab105814ea2",
+  "date": "2026-10-08",
+  "on": "docker ubuntu:24.04 + tzdata (both date commands)"
+ },
+ "career|scope creep": {
+  "hash": "6c03ede5849e",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "career|scope مكتوب": {
+  "hash": "89962f77302f",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "career|أول عميل": {
+  "hash": "8ba425ae5791",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "career|أول ٩٠ يوم": {
+  "hash": "aebb967db308",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "career|التسعير": {
+  "hash": "0e106fd7a38e",
+  "date": "2026-10-08",
+  "on": "Windows Node 24 (rate.mjs)"
+ },
+ "career|التفاوض": {
+  "hash": "1130813cf2a3",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "career|الشغل بييجي منين": {
+  "hash": "031effd27618",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "career|المرتبات بحذر": {
+  "hash": "ab5a244be367",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "career|تتأكد بنفسك": {
+  "hash": "6fefd16cfc14",
+  "date": "2026-10-08",
+  "on": "Windows Node 24 (tally.mjs + regex checks)"
+ },
+ "career|تتقبض وتصون": {
+  "hash": "e010073173f5",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "career|تزوّد إيه بعد JS": {
+  "hash": "0189e8232386",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "career|تسأل صح": {
+  "hash": "5491f3142c3e",
+  "date": "2026-10-08",
+  "on": "Windows Node 24 (ECONNREFUSED reproduced); docs: concept"
+ },
+ "career|تقييم العرض": {
+  "hash": "7c2e00a243b5",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "career|خريطة السوق": {
+  "hash": "486e19365337",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "career|رسالة باردة": {
+  "hash": "0e72afd7dbe0",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "career|شيت التقديمات": {
+  "hash": "012519a9bdad",
+  "date": "2026-10-08",
+  "on": "docker ubuntu:24.04 (heredoc, cut/sort/uniq, mawk)"
+ },
+ "career|محلي ولا برا": {
+  "hash": "338a052f6704",
+  "date": "2026-10-08",
+  "on": "docker ubuntu:24.04 (TZ offsets); docs: concept"
+ },
+ "career|٢–٣ مشاريع": {
+  "hash": "24b36c18d08a",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
  "cloud|Budgets و free tier": {
   "hash": "c465e341fb68",
   "date": "2026-10-08",
@@ -5033,6 +5178,306 @@
   "hash": "48d43e071148",
   "date": "2026-10-07",
   "on": "Node 24.19.0 on Windows (example + solCode + instrumented trace)"
+ },
+ "english|AI يشرح مش يترجم": {
+  "hash": "3e75984a0014",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "english|Arabizi والإملاء": {
+  "hash": "5634b10e0010",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "english|Conventional Commits": {
+  "hash": "1d74bf6e5f5b",
+  "date": "2026-10-08",
+  "on": "docker node:22-slim (@commitlint/cli 21.2.3, 4 messages)"
+ },
+ "english|GitHub issues search": {
+  "hash": "8fcfd0b01eb7",
+  "date": "2026-10-08",
+  "on": "Windows gh 2.97 (search issues on vitejs/vite); docs: qualifiers"
+ },
+ "english|Google للمبرمجين": {
+  "hash": "8b11d05cb664",
+  "date": "2026-10-08",
+  "on": "docs: Google search operators"
+ },
+ "english|README لمشروعك": {
+  "hash": "d6bd03a20d33",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "english|README و Getting started": {
+  "hash": "78d88ff93110",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "english|RFC و spec": {
+  "hash": "0220f69dc093",
+  "date": "2026-10-08",
+  "on": "docs: RFC 2119/8174/9110, Conventional Commits spec"
+ },
+ "english|Stack Overflow بعين ناقدة": {
+  "hash": "e6e3ed394df2",
+  "date": "2026-10-08",
+  "on": "docker node:22-slim (JSON clone vs structuredClone)"
+ },
+ "english|a / an / the": {
+  "hash": "79a49a4fcf0d",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "english|bug report": {
+  "hash": "160f5b8d1c7f",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "english|changelog و release notes": {
+  "hash": "7f070547ef90",
+  "date": "2026-10-08",
+  "on": "docker node:22-slim (semver ^5.2.0)"
+ },
+ "english|commit message كويس": {
+  "hash": "710bdda11ec7",
+  "date": "2026-10-08",
+  "on": "Windows Git 2.56 throwaway repo (commit with body, log)"
+ },
+ "english|create / update / delete": {
+  "hash": "303553e5f4f9",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "english|deprecated / invalid / required": {
+  "hash": "d3ad951b6ef1",
+  "date": "2026-10-08",
+  "on": "docker node:22-slim (JSON.parse error, npm i request@2.88.2 + audit)"
+ },
+ "english|enabled / available / allowed": {
+  "hash": "3cd207adc151",
+  "date": "2026-10-08",
+  "on": "docker ubuntu:24.04 (ssh -T git@github.com, curl 401)"
+ },
+ "english|follow up و تأخير": {
+  "hash": "46be7703067c",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "english|get / set / fetch / return": {
+  "hash": "eff58d26f869",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "english|if / unless / instead of": {
+  "hash": "dd325aba0e8e",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "english|imperative": {
+  "hash": "19709aee56a9",
+  "date": "2026-10-08",
+  "on": "Windows Git 2.56 (default Merge/Revert messages); docs: concept"
+ },
+ "english|informations و a feedback": {
+  "hash": "08078dceab83",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "english|is / has / can": {
+  "hash": "a842ae45b01c",
+  "date": "2026-10-08",
+  "on": "docker node:22-slim (boolean lines)"
+ },
+ "english|issue لمشروع open source": {
+  "hash": "64f4a0a5d0bc",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "english|optional و defaults to": {
+  "hash": "5edb94f96974",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "english|passive voice": {
+  "hash": "3c3a8b44fa8d",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "english|pending / failed / done": {
+  "hash": "0df889129e5b",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "english|present simple": {
+  "hash": "cdfc183dddd2",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "english|request / response / header": {
+  "hash": "2dd40210a80f",
+  "date": "2026-10-08",
+  "on": "docker ubuntu:24.04 (curl -i api.github.com)"
+ },
+ "english|root / path / directory": {
+  "hash": "ebd1727a0f6b",
+  "date": "2026-10-08",
+  "on": "docker node:22-slim (ENOENT readFileSync)"
+ },
+ "english|run / build / deploy": {
+  "hash": "771ae26b7ac6",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "english|scope / module / instance": {
+  "hash": "121d9319524a",
+  "date": "2026-10-08",
+  "on": "docker node:22-slim (Node errors, React 19.3 key warning, tsc 7.0.2)"
+ },
+ "english|skimming": {
+  "hash": "b99d8d4ac2df",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "english|status update": {
+  "hash": "e4ec4ab3c45c",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "english|throw / catch / handle": {
+  "hash": "1eab8d703e54",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "english|أخطاء Node و JS": {
+  "hash": "fe4217207b86",
+  "date": "2026-10-08",
+  "on": "docker node:22-slim (all 8 errors)"
+ },
+ "english|أخطاء PostgreSQL": {
+  "hash": "f8854b714512",
+  "date": "2026-10-08",
+  "on": "docker postgres:16 throwaway container (all errors)"
+ },
+ "english|أخطاء Python": {
+  "hash": "626e7cc0a9bf",
+  "date": "2026-10-08",
+  "on": "docker python:3.12-slim (all 10 errors + traceback)"
+ },
+ "english|أخطاء TypeScript": {
+  "hash": "e13267536b03",
+  "date": "2026-10-08",
+  "on": "docker node:22-slim (tsc 7.0.2 --strict on solCode)"
+ },
+ "english|أخطاء git": {
+  "hash": "feecdc923a8e",
+  "date": "2026-10-08",
+  "on": "Windows Git 2.56 throwaway repos (all messages)"
+ },
+ "english|أخطاء npm": {
+  "hash": "77cfad0a8c7a",
+  "date": "2026-10-08",
+  "on": "docker node:22-slim (npm 10.9: ENOENT, Missing script, E404, ERESOLVE)"
+ },
+ "english|أسماء الدوال والمتغيرات": {
+  "hash": "cca93e3f34b2",
+  "date": "2026-10-08",
+  "on": "docs: concept (TS fragments)"
+ },
+ "english|إيميل لعميل": {
+  "hash": "47dd30397800",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "english|اختبرني للكلمات": {
+  "hash": "810f06e71ba4",
+  "date": "2026-10-08",
+  "on": "docs: concept (site feature)"
+ },
+ "english|ترد على review": {
+  "hash": "8fe4df230d0b",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "english|تصحيح كتابتك": {
+  "hash": "eaecee9cbd4a",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "english|تطلب مساعدة": {
+  "hash": "e8fd28524951",
+  "date": "2026-10-08",
+  "on": "docker node:22-slim (stripe constructEvent signature error)"
+ },
+ "english|تعليقات review": {
+  "hash": "2a0460c138f1",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "english|تفك جملة طويلة": {
+  "hash": "9ff41f153a7a",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "english|تقول لأ بأدب": {
+  "hash": "e0284e975f2b",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "english|تقيس تقدمك": {
+  "hash": "e364fa735503",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "english|شكل رسالة الخطأ": {
+  "hash": "8087e3c9b71d",
+  "date": "2026-10-08",
+  "on": "docker node:22-slim (app.js TypeError)"
+ },
+ "english|صفحة API reference": {
+  "hash": "de10d63dec1c",
+  "date": "2026-10-08",
+  "on": "Windows Node 24 (readFileSync Buffer vs utf8)"
+ },
+ "english|غلطات المصريين": {
+  "hash": "f61e2f454437",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "english|كتابة Proposal مقنع على Upwork": {
+  "hash": "5fdf0abe2d14",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "english|مراجعة الكلمات": {
+  "hash": "05989da51051",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "english|مراسلات وتفاوض السعر مع العميل": {
+  "hash": "a181b6b55b18",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "english|مصطلحات الـ Agile والـ Scrum في فرق العمل الأجنبية": {
+  "hash": "872dea32c5ef",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "english|وصف PR": {
+  "hash": "b8c209ce43ba",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "english|٢٠ دقيقة في اليوم": {
+  "hash": "c416ea6c6ffb",
+  "date": "2026-10-08",
+  "on": "docs: concept"
+ },
+ "english|٢٤ commit قبل وبعد": {
+  "hash": "3871b625b46c",
+  "date": "2026-10-08",
+  "on": "docs: concept"
  },
  "files|.7z و .rar و .xz": {
   "hash": "2dcc0174e7a9",
