@@ -6144,15 +6144,55 @@
   "date": "2026-10-06",
   "on": "win11 Node 24.19 + Chrome 154 headless"
  },
+ "kotlin|Android بـ Java: كلاس Activity و XML": {
+  "hash": "edf71eabc424",
+  "date": "2026-10-08",
+  "on": "Android compile in cirruslabs/flutter (AGP 9.4.1) + javac lambda error reproduced; docs: running the screen"
+ },
+ "kotlin|Coil": {
+  "hash": "6d98ffd5df0a",
+  "date": "2026-10-08",
+  "on": "Android compile in cirruslabs/flutter (AGP 9.4.1) (compiled only); docs: image loading on device"
+ },
+ "kotlin|DataStore": {
+  "hash": "dea1ece152ed",
+  "date": "2026-10-08",
+  "on": "eclipse-temurin:21-jdk (kotlinc 2.4.20, datastore-preferences-core-jvm 1.2.0) + Android compile in cirruslabs/flutter (AGP 9.4.1); docs: on-device behaviour"
+ },
+ "kotlin|Flow": {
+  "hash": "1f64827b23ee",
+  "date": "2026-10-08",
+  "on": "eclipse-temurin:21-jdk (kotlinc 2.4.20 + kotlinx-coroutines 1.10.2)"
+ },
  "kotlin|List و Map و Set": {
   "hash": "daa427bcd53e",
   "date": "2026-10-07",
   "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20"
  },
+ "kotlin|Retrofit و serialization": {
+  "hash": "d089622c6fe3",
+  "date": "2026-10-08",
+  "on": "eclipse-temurin:21-jdk (kotlinc 2.4.20, Retrofit 3.0.0 + kotlinx.serialization 1.9.0) against local fake API; docs: jsonplaceholder, Logcat"
+ },
+ "kotlin|Room": {
+  "hash": "8e6e5b37b98c",
+  "date": "2026-10-08",
+  "on": "Android compile in cirruslabs/flutter (AGP 9.4.1) with KSP (Room 2.8.5) + generated SQL on SQLite 3.50.3 in eclipse-temurin:21-jdk; docs: on-device, Database Inspector"
+ },
+ "kotlin|ViewBinding": {
+  "hash": "de165acbe76d",
+  "date": "2026-10-08",
+  "on": "Android compile in cirruslabs/flutter (AGP 9.4.1) (generated binding + Unresolved reference error reproduced); docs: running the screen"
+ },
  "kotlin|class": {
   "hash": "42e0490c08d2",
   "date": "2026-10-07",
   "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20"
+ },
+ "kotlin|coroutines": {
+  "hash": "2689f5981a55",
+  "date": "2026-10-08",
+  "on": "eclipse-temurin:21-jdk (kotlinc 2.4.20 + kotlinx-coroutines 1.10.2); viewModelScope solCode compiled with AGP 9.4.1"
  },
  "kotlin|enum و sealed": {
   "hash": "2be57983e527",
@@ -6184,6 +6224,11 @@
   "date": "2026-10-07",
   "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20"
  },
+ "kotlin|loading و error": {
+  "hash": "d9d89ec89502",
+  "date": "2026-10-08",
+  "on": "eclipse-temurin:21-jdk (kotlinc 2.4.20, JVM port of the ViewModel logic vs fake API) + Android compile in cirruslabs/flutter (AGP 9.4.1); docs: screen rendering"
+ },
  "kotlin|map و filter و reduce": {
   "hash": "f0617fb48405",
   "date": "2026-10-07",
@@ -6193,6 +6238,11 @@
   "hash": "ea6623b306e5",
   "date": "2026-10-07",
   "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20"
+ },
+ "kotlin|permissions": {
+  "hash": "d0ec37f080f0",
+  "date": "2026-10-08",
+  "on": "Android compile in cirruslabs/flutter (AGP 9.4.1) (compiled only); docs: permission dialogs on device"
  },
  "kotlin|ranges و loops": {
   "hash": "b603a7e53531",
@@ -6213,6 +6263,11 @@
   "hash": "96d44ca7c27b",
   "date": "2026-10-07",
   "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20"
+ },
+ "kotlin|التكامل بين Java و Kotlin في أندرويد": {
+  "hash": "bd67725e7370",
+  "date": "2026-10-08",
+  "on": "eclipse-temurin:21-jdk (kotlinc 2.4.20 + javac 21, javap) + Android compile in cirruslabs/flutter (AGP 9.4.1)"
  },
  "kotlin|الدوال": {
   "hash": "71c3630011ff",
