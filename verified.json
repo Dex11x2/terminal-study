@@ -1884,10 +1884,55 @@
   "date": "2026-10-08",
   "on": "curl against real CloudFront (awsstatic.com); docs: aws cloudfront commands"
  },
+ "cloud|Cloudflare Pages": {
+  "hash": "376ea57097a9",
+  "date": "2026-10-08",
+  "on": "Windows Node 24: Vite build, wrangler 4.148.0 dev / pages dev; docs: login, deploy"
+ },
+ "cloud|Cloudflare Tunnel": {
+  "hash": "be96f4f8a554",
+  "date": "2026-10-08",
+  "on": "cloudflared 2026.10.0 in ubuntu:24.04 (ingress validate/rule); docs: tunnel run/service install"
+ },
+ "cloud|Cloudflare cache و WAF": {
+  "hash": "a056f3b6356d",
+  "date": "2026-10-08",
+  "on": "curl against live Cloudflare sites (cache status, WAF 403); docs: rules, real purge"
+ },
+ "cloud|Cloudflare proxy و SSL": {
+  "hash": "1a5f89f4d83d",
+  "date": "2026-10-08",
+  "on": "ubuntu:24.04 (dig, curl, openssl s_client vs live sites) + pwsh curl.exe; docs: ufw, SSL mode in dashboard"
+ },
+ "cloud|ConfigMap و Secret": {
+  "hash": "9f91cf98a7d2",
+  "date": "2026-10-08",
+  "on": "kind v0.33.0 (k8s v1.37.0) + kubectl v1.36.1 on Docker Desktop (configmap/secret, decode, already-exists, rollout restart)"
+ },
+ "cloud|Coolify / Dokploy": {
+  "hash": "774c7360296b",
+  "date": "2026-10-08",
+  "on": "install scripts downloaded and grepped (not run); docs: install, ufw"
+ },
+ "cloud|Deployment YAML": {
+  "hash": "738184d33b10",
+  "date": "2026-10-08",
+  "on": "kind v0.33.0 (k8s v1.37.0) + kubectl v1.36.1 on Docker Desktop (apply, scale, expose, DNS, port-forward, probe/env/selector errors)"
+ },
  "cloud|EBS": {
   "hash": "331f8cc9fbeb",
   "date": "2026-10-08",
   "on": "aws-cli 2.37 + LocalStack 4.9 (volumes, snapshot, modify-volume) + ubuntu:24.04 growpart/resize2fs on image files; docs: df on real server"
+ },
+ "cloud|ECR": {
+  "hash": "439c14ed70e4",
+  "date": "2026-10-08",
+  "on": "docker build --platform linux/amd64 + tag + inspect; docs: aws ecr create/login/push"
+ },
+ "cloud|ECS Fargate": {
+  "hash": "8b74b7700e24",
+  "date": "2026-10-08",
+  "on": "aws-cli 2.37 help + parameter validation; docs: real create/describe/delete"
  },
  "cloud|IAM policy JSON": {
   "hash": "f3fcda1bfb1c",
@@ -1914,10 +1959,25 @@
   "date": "2026-10-08",
   "on": "node:22-slim + LocalStack 4.9 Lambda nodejs22.x; docs: nodejs24.x"
  },
+ "cloud|PaaS ولا VPS: الحساب": {
+  "hash": "1a5739c3465d",
+  "date": "2026-10-08",
+  "on": "Node 24 (cost and break-even scripts)"
+ },
  "cloud|Parameter Store و Secrets Manager": {
   "hash": "98a604b945d3",
   "date": "2026-10-08",
   "on": "aws-cli 2.37 + LocalStack 4.9 (example + solCode); docs: AccessDenied message"
+ },
+ "cloud|R2": {
+  "hash": "bd52f70d926a",
+  "date": "2026-10-08",
+  "on": "Windows Node 24 + @aws-sdk 3.1147 (presigned URL signed headers); docs: real PUT to R2"
+ },
+ "cloud|Route 53": {
+  "hash": "fc6a9136a7ff",
+  "date": "2026-10-08",
+  "on": "LocalStack 4.9 + aws-cli; real dig + Resolve-DnsName; docs: real-AWS alias/TTL rejection"
  },
  "cloud|S3 + CloudFront": {
   "hash": "ba005a48ebba",
@@ -1929,10 +1989,20 @@
   "date": "2026-10-08",
   "on": "node:22-slim AWS SDK client-sesv2 (request captured); docs: actual sending, DKIM"
  },
+ "cloud|Supabase / Neon": {
+  "hash": "7c86ffcf625f",
+  "date": "2026-10-08",
+  "on": "Node 24 URL parsing + real dig; docs: connections, pg_stat_activity"
+ },
  "cloud|VPS ولا managed ولا PaaS": {
   "hash": "4eb630138d31",
   "date": "2026-10-08",
   "on": "node:22-slim (example + solCode)"
+ },
+ "cloud|Workers": {
+  "hash": "c98b6c40b392",
+  "date": "2026-10-08",
+  "on": "Node 24 test + wrangler 4.148.0 dev with local R2 in node:22-slim; docs: deploy"
  },
  "cloud|aws configure / login / sso": {
   "hash": "a6ddd6e4a332",
@@ -1949,15 +2019,35 @@
   "date": "2026-10-08",
   "on": "aws-cli 2.37 + LocalStack 4.9 (mb, public access block, cp, ls, presign, curl); docs: AccessDenied on unsigned URL"
  },
+ "cloud|fly launch": {
+  "hash": "2ec8734d19c9",
+  "date": "2026-10-08",
+  "on": "fly.toml parsed + flyctl v0.4.114 --help; docs: launch/deploy/secrets/scale"
+ },
+ "cloud|kubectl": {
+  "hash": "378e2487be6e",
+  "date": "2026-10-08",
+  "on": "kind v0.33.0 (k8s v1.37.0) + kubectl v1.36.1 on Docker Desktop (cluster, pods, describe, logs, exec, rollout undo)"
+ },
  "cloud|presigned URL": {
   "hash": "6ef8b33e7f07",
   "date": "2026-10-08",
   "on": "node:22-slim Express 5 + AWS SDK 3 against LocalStack 4.9, curl PUT; docs: real-S3 checksum rejection, CORS"
  },
+ "cloud|railway": {
+  "hash": "731203c795f5",
+  "date": "2026-10-08",
+  "on": "Railway CLI 5.64.0 --help + bash/pwsh quoting; docs: account commands"
+ },
  "cloud|regions و AZs": {
   "hash": "d3cfb42aef7c",
   "date": "2026-10-08",
   "on": "ubuntu docker bash + pwsh 7 curl.exe (real latency to AWS endpoints); LocalStack 4.9 AZs; docs: account list-regions"
+ },
+ "cloud|render.yaml": {
+  "hash": "90d11c7d28d0",
+  "date": "2026-10-08",
+  "on": "yaml parsed in Node 24 + Express with PORT=10000 in node:22-slim; docs: Blueprint deploy"
  },
  "cloud|root + MFA": {
   "hash": "4f3e86ee1a0a",
@@ -1968,6 +2058,11 @@
   "hash": "7a6f8eb179c2",
   "date": "2026-10-08",
   "on": "aws-cli 2.37 + LocalStack 4.9 (example + solCode)"
+ },
+ "cloud|vercel": {
+  "hash": "de8afb5521cd",
+  "date": "2026-10-08",
+  "on": "Vercel CLI 63.1.0 --version/--help only; docs: link/env/deploy/logs"
  },
  "cloud|الخدمات الأساسية": {
   "hash": "56104526c2f5",
