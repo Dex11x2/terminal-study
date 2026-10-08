@@ -206,6 +206,15 @@
 - [ ] Python: محتاج Pyodide، وحجمه كبير. القرار لسه متاخدش.
 - [ ] **تمارين حلها ظاهر قبل ما تحاول (لقيتها ٧ أكتوبر):** في 17 تمرين من 154 الـ `check.solution` (أو أغلبه) مكتوب في الأجزاء اللي بتظهر على طول (المثال أو الشرح)، مش في الحل المستخبي. الكامل: data «WHERE» و «HAVING» و «LEFT JOIN» و «EXISTS». ووكلاء الشرح لقوا كمان: dsa «monotonic stack» و «merge sort» و «search insert position» و «lower bound» و «binary search on answer» و «fast/slow pointers» و «sort comparator» (المثال أو نص «جرّب» قريب جدًا من الحل)، dsa «first unique (count + scan)» (نسخة الـ Map في المثال بتعدّي 3 tests من 6)، وdsa «group anagrams (key)» (مفتاح الـ sort في المثال بيعدّي كل الـ tests لأنها مش بتفرض مفتاح العدّ)، symbols «d  w  [ ]  ( )  {n}  |» (regex الموبايل في المثال هو الحل بالظبط)، و data «$queryRaw» (المثال هو الحل بتاريخ ثابت بدل المتغير) و «relation filters» (المثال + الحل المكتوب بيدّوا الإجابة). شبه كامل: data «ORDER BY و LIMIT» و «ON CONFLICT»، js «تمرين sumDigits» و «class» و «EventEmitter»، dsa «anagram (char count)» و «group anagrams (key)» و «queue و deque» و «lower bound (first/last)» و «search insert position» و «fast/slow pointers» و «merge (dummy head)» و «combination sum». **ملاحظة أكبر (٧ أكتوبر):** في DSA الـ solCode المستخبي ورا زرار «الحل» بتاع «جرّب» بيعدّي كل tests التمرين في أغلب الدروس (10 من 11 في dsa/06-07، ونفس الفكرة في 02). يعني اللي بيفتح حل «جرّب» بياخد حل التمرين. **اتحل (٧ أكتوبر، بقرارك):** حل «جرّب» بقى مقفول في أي درس فيه تمرين بيتصحح لوحده، لحد ما التمرين يعدّي أو الطالب يدوس «افتح الحل برضه» (`solHTML`/`solUnlock` في app.js، والمفتاح `reveal:` بيتحفظ في الباك أب). الحل: نغيّر المطلوب في التمرين (أعمدة أو شرط أو جدول تاني) بحيث المثال يعلّم الفكرة والتمرين يطلب تطبيقها بشكل مختلف، ونحدّث الـ tests والـ solution. في dsa المثال هو الـ pattern نفسه فالتشابه طبيعي جزئيًا: راجع كل واحد بعينك. ابعت كل تاب لوكيل واحد بعد ما شرح التاب يخلص. سكربت الفحص اتكتب في scratchpad الجلسة (leak.js)؛ الأحسن نضيفه تنبيه في `tools/check.js`.
 
+### ٤ب. ثغرات في كود دروس arch لسه مااتصلحتش (٨ أكتوبر)
+
+وكيل arch/03-04 لقاها وكتبها في الشرح بس من غير ما يغيّر الكود:
+- [ ] `resolveTenant` (byDomain) بيقبل دومين مش متأكد منه: لازم فلتر `domainVerifiedAt`.
+- [ ] `forTenant` مش بيغطي `$queryRaw`، و nested write على `Workspace` ممكن يعمل project في workspace تاني.
+- [ ] بحث Prisma `contains` مش بيعمل escape لـ `%` و `_`.
+- [ ] الكاش من Redis بيرجّع التواريخ strings.
+- [ ] `trust proxy 1` من غير proxy قدامه: header ‏`X-Forwarded-For` مزيف بيعدّي الـ rate limit.
+
 ### ٥. أسئلة مفتوحة
 
 - [ ] `df -h ~` فشل عند صاحب المشروع. ده اتجرّب في Git Bash و PowerShell و CMD على نفس الجهاز واشتغل. محتاجين نعرف اتشغّل فين بالظبط.

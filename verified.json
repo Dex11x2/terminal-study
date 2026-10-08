@@ -929,6 +929,11 @@
   "date": "2026-10-08",
   "on": "Windows 11 Node 24, Express 5 + ioredis 6 on redis:8-alpine + Cloudflare siteverify test keys; docs: widget UI"
  },
+ "arch|CDN و Core Web Vitals": {
+  "hash": "e4eafc576d8d",
+  "date": "2026-10-08",
+  "on": "Next.js 16.4 + web-vitals 6.2, headless Chrome with throttling; docs: Lighthouse/CrUX"
+ },
  "arch|ERD": {
   "hash": "056d1ffe00e7",
   "date": "2026-10-08",
@@ -949,6 +954,26 @@
   "date": "2026-10-08",
   "on": "Windows 11 Node 24, Express 5 + jose 6 with local fake token/JWKS server; docs: real Google"
  },
+ "arch|POST /orders": {
+  "hash": "4aaf31b1feda",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24, Express 5 + Prisma 7 on postgres:18 + Zod 4 (Paymob checkout faked)"
+ },
+ "arch|Paymob intention": {
+  "hash": "ba22c0b403a6",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24 against local fake Paymob server; docs: real Paymob API"
+ },
+ "arch|Prisma tenant extension": {
+  "hash": "1f5594f601c6",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24, Prisma 7 on postgres:18"
+ },
+ "arch|RLS و app.tenant_id": {
+  "hash": "2e4b7d0c2385",
+  "date": "2026-10-08",
+  "on": "psql on postgres:18 + Prisma 7 as app_user"
+ },
  "arch|access + refresh": {
   "hash": "ca4db58e40ec",
   "date": "2026-10-08",
@@ -958,6 +983,11 @@
   "hash": "cb4538db1f7e",
   "date": "2026-10-08",
   "on": "Windows 11, Playwright Chromium against local Express 5 API"
+ },
+ "arch|background jobs": {
+  "hash": "6e1411041945",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24, BullMQ 6.3 on redis:8-alpine, 2 worker processes"
  },
  "arch|definition of done": {
   "hash": "c6ebec214044",
@@ -969,10 +999,30 @@
   "date": "2026-10-08",
   "on": "Windows 11 Node 24, Vitest 5 + Prisma 7 on postgres:18 (Docker) + Express route via curl"
  },
+ "arch|i18n و RTL": {
+  "hash": "6e2f7799da0c",
+  "date": "2026-10-08",
+  "on": "Next.js 16.4 + next-intl 4.14 + Tailwind 4.3, curl + headless Chrome"
+ },
+ "arch|indexes و N+1": {
+  "hash": "da1d041297e1",
+  "date": "2026-10-08",
+  "on": "psql on postgres:18 (1M rows, pg_stat_statements) + Prisma query log"
+ },
  "arch|monorepo": {
   "hash": "7b2601b5658c",
   "date": "2026-10-08",
   "on": "Windows 11, pnpm 10.33 workspace + tsc typecheck"
+ },
+ "arch|ownership": {
+  "hash": "fa0505adf0ee",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24, Express 5 + Prisma 7 on postgres:18; docs: Supabase RLS part"
+ },
+ "arch|pagination": {
+  "hash": "59044b0dfbd0",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24, Prisma 7 on postgres:18 (solCode + route)"
  },
  "arch|passkeys": {
   "hash": "10db6b411f8c",
@@ -989,30 +1039,95 @@
   "date": "2026-10-08",
   "on": "Windows 11 Node 24, Express 5 + Prisma 7 on postgres:18 (Docker), curl"
  },
+ "arch|requireAuth و requireRole": {
+  "hash": "5e55491c6852",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24, Express 5 + jsonwebtoken 9"
+ },
  "arch|schema.prisma": {
   "hash": "8971938449bb",
   "date": "2026-10-08",
   "on": "Windows 11 Node 24, Prisma 7.10 migrate/generate on postgres:18 (Docker)"
+ },
+ "arch|security baseline": {
+  "hash": "715c906bd8e0",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24, Express 5 + helmet 8 + cors + express-rate-limit 8.7, curl"
+ },
+ "arch|signed upload URL": {
+  "hash": "66495dcf84cf",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24, AWS SDK v3 against localstack 4.9 S3 incl. CORS preflight; docs: real-S3 checksum rejection"
  },
  "arch|signup": {
   "hash": "d17630c280d6",
   "date": "2026-10-08",
   "on": "Windows 11 Node 24, Express 5 + argon2 0.45 + Prisma 7 on postgres:18 (Docker), curl"
  },
+ "arch|socket.io": {
+  "hash": "08dbee1229e9",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24, socket.io 4.8 + Prisma 7 on postgres:18"
+ },
  "arch|step-up auth": {
   "hash": "b4b3839d2b35",
   "date": "2026-10-08",
   "on": "Windows 11 Node 24, Express 5 + jsonwebtoken + Prisma 7 on postgres:18 (Docker)"
+ },
+ "arch|subdomain و custom domain": {
+  "hash": "9095e87dda33",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24, Express 5 + Prisma 7 on postgres:18 with curl Host headers; docs: Caddy on-demand TLS, DNS TXT"
+ },
+ "arch|tenant_id ولا schema": {
+  "hash": "fe14068ea9ea",
+  "date": "2026-10-08",
+  "on": "Prisma 7.10 validate + migrate diff"
+ },
+ "arch|transactional email": {
+  "hash": "b55a22911843",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24, BullMQ 6.3 on redis:8-alpine + resend SDK against local fake; docs: Resend error format, DNS/SPF"
  },
  "arch|user stories": {
   "hash": "05b05deb4654",
   "date": "2026-10-08",
   "on": "docs: concept"
  },
+ "arch|web push": {
+  "hash": "ab9666d4ddc2",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24, web-push 3.6 against local fake push service; docs: browser subscribe/service worker"
+ },
+ "arch|webhook الدفع": {
+  "hash": "6a75322956ba",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24, Express 5 + Prisma 7 on postgres:18, locally HMAC-signed webhooks incl. 5 parallel"
+ },
+ "arch|أعضاء ودعوات": {
+  "hash": "ec181577502a",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24, Express 5 + Prisma 7 on postgres:18 (supertest), parallel owner removal"
+ },
+ "arch|اختبار تسريب tenants": {
+  "hash": "d729c550652d",
+  "date": "2026-10-08",
+  "on": "Vitest 5 + supertest, Prisma 7 on postgres:18"
+ },
  "arch|اختيار الـ stack": {
   "hash": "780aef942b08",
   "date": "2026-10-08",
   "on": "docs: concept"
+ },
+ "arch|اشتراكات Stripe": {
+  "hash": "0e2b453878d7",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24, stripe-node 23 constructEvent + Prisma 7 on postgres:18; docs: Checkout/Portal/retrieve"
+ },
+ "arch|بحث وفلترة": {
+  "hash": "215888b4a87f",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24, Express 5 + Prisma 7 on postgres:18; psql on postgres:18 (100k rows, pg_trgm)"
  },
  "arch|تأكيد الإيميل": {
   "hash": "89c29d8a5e7c",
@@ -1039,10 +1154,30 @@
   "date": "2026-10-08",
   "on": "Windows 11 Node 24, Express 5.2 + Zod 4.6, curl"
  },
+ "arch|صفحة ما بعد الدفع": {
+  "hash": "e69e08ec8dfe",
+  "date": "2026-10-08",
+  "on": "Next.js 16.4 + headless Chrome, fake orders API"
+ },
+ "arch|طبقات الكاش": {
+  "hash": "690ee5caa29b",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24, ioredis 6 on redis:8-alpine + Prisma 7 on postgres:18"
+ },
  "arch|قايمة الـ endpoints": {
   "hash": "4ba3546e7781",
   "date": "2026-10-08",
   "on": "docs: concept"
+ },
+ "arch|لوحة الأدمن": {
+  "hash": "21f2adf482f1",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24, Express 5 + Prisma 7 on postgres:18 (supertest), fake gateway"
+ },
+ "arch|معالجة الصور": {
+  "hash": "6824a8add803",
+  "date": "2026-10-08",
+  "on": "Windows 11 Node 24, sharp 0.35"
  },
  "bash|#!/usr/bin/env bash": {
   "hash": "591d8dbbef8f",
