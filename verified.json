@@ -6299,10 +6299,20 @@
   "date": "2026-10-06",
   "on": "win11 Node 24.19 + Chrome 154 headless"
  },
+ "kotlin|Activity و lifecycle": {
+  "hash": "3d31db0d8175",
+  "date": "2026-10-08",
+  "on": "ghcr.io/cirruslabs/flutter:stable (assembleDebug + Robolectric ActivityScenario lifecycle order); docs: Back on Android 12+, Logcat"
+ },
  "kotlin|Android بـ Java: كلاس Activity و XML": {
   "hash": "edf71eabc424",
   "date": "2026-10-08",
   "on": "Android compile in cirruslabs/flutter (AGP 9.4.1) + javac lambda error reproduced; docs: running the screen"
+ },
+ "kotlin|AndroidManifest و res": {
+  "hash": "820fa457d8a9",
+  "date": "2026-10-08",
+  "on": "ghcr.io/cirruslabs/flutter:stable (merged manifest, R via javap, aapt2, resource/exported/INTERNET errors, lint, Robolectric en/ar/fr + RTL); docs: launcher on device, runtime network errors"
  },
  "kotlin|Coil": {
   "hash": "6d98ffd5df0a",
@@ -6329,10 +6339,20 @@
   "date": "2026-10-08",
   "on": "eclipse-temurin:21-jdk (kotlinc 2.4.20 + kotlinx-coroutines 1.10.2)"
  },
+ "kotlin|Gradle و libs.versions.toml": {
+  "hash": "20da9429626e",
+  "date": "2026-10-08",
+  "on": "ghcr.io/cirruslabs/flutter:stable (compileSdk 36 fails and 37 succeeds, dependencies, catalog errors); docs: Android Studio Sync"
+ },
  "kotlin|Hilt": {
   "hash": "ce9aa923adfd",
   "date": "2026-10-08",
   "on": "Android project in docker ghcr.io/cirruslabs/flutter:stable (AGP 9.4.1, SDK 36), Hilt 2.60.1, KSP: assembleDebug, MissingBinding error reproduced; docs: runtime on device"
+ },
+ "kotlin|Kotlin Multiplatform": {
+  "hash": "374bb3c68e34",
+  "date": "2026-10-08",
+  "on": "ghcr.io/cirruslabs/flutter:stable (Gradle KMP: Kotlin 2.4.20 + AGP 9.4.1, jvm target) + kotlinc 2.4.20; docs: iosMain/UIKit"
  },
  "kotlin|LazyColumn": {
   "hash": "d9eb2100cc9f",
@@ -6489,6 +6509,11 @@
   "date": "2026-10-08",
   "on": "Android project in docker ghcr.io/cirruslabs/flutter:stable (AGP 9.4.1, SDK 36): derivedStateOf recompositions under Robolectric, debug vs release sizes; docs: Profiler, Macrobenchmark"
  },
+ "kotlin|الانترفيو": {
+  "hash": "eb1f342e7901",
+  "date": "2026-10-08",
+  "on": "kotlinc 2.4.20 in eclipse-temurin:21-jdk"
+ },
  "kotlin|التكامل بين Java و Kotlin في أندرويد": {
   "hash": "bd67725e7370",
   "date": "2026-10-08",
@@ -6533,6 +6558,16 @@
   "hash": "6278f4c50d4f",
   "date": "2026-10-07",
   "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20; docs: sdk install kotlin, brew, Windows PATH"
+ },
+ "kotlin|مشروع Android": {
+  "hash": "be0dfa414965",
+  "date": "2026-10-08",
+  "on": "ghcr.io/cirruslabs/flutter:stable (Gradle 9.8.1, AGP 9.4.1: tasks, assembleDebug, aapt2, adb with no device) + pwsh 7; docs: adb with a device attached"
+ },
+ "kotlin|مشروع كامل: تطبيق ملاحظات": {
+  "hash": "9a535b1ef626",
+  "date": "2026-10-08",
+  "on": "ghcr.io/cirruslabs/flutter:stable (assembleDebug AGP 9.4.1, compileSdk 37, Hilt, Room, KSP; Robolectric Compose UI test); docs: device run, release/Play"
  },
  "kotlin|مقدمة Jetpack Compose": {
   "hash": "001c6f11ff39",

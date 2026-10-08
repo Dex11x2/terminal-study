@@ -1,6 +1,6 @@
 # الخطة: وصلنا لفين وفاضل إيه
 
-آخر تحديث: ٦ أكتوبر ٢٠٢٦ (TypeScript و HTML/CSS و React و Next.js و API و SQL خلصوا؛ و Python API والملفات والرموز والقاموس خلصوا،  و apps و DSA و real و Go و .NET و PHP و Spring و Angular و React Native خلصوا و Flutter خلصوا؛ kotlin و apis شغالين).
+آخر تحديث: ٦ أكتوبر ٢٠٢٦ (TypeScript و HTML/CSS و React و Next.js و API و SQL خلصوا؛ و Python API والملفات والرموز والقاموس خلصوا،  و apps و DSA و real و Go و .NET و PHP و Spring و Angular و React Native خلصوا و Flutter و Kotlin و APIs خلصوا؛ swift و cloud و arch شغالين).
 
 أي جلسة جديدة تقرا الملف ده الأول، وبعد أي دفعة شغل تحدّثه: تشيل اللي خلص من «الشغل الجاي» وتضيفه في «اتعمل»، وتكتب أي حاجة ناقصة اكتشفتها.
 
@@ -131,7 +131,7 @@
 | ٤٤ | `angular/01-03.js` (51) | [x] (angular اتقسم) |
 | ٤٥ | `rn/01-04.js` (56) | [x] (rn اتقسم) |
 | ٤٦ | `flutter/01-05.js` (61) | [x] (flutter اتقسم؛ dart:stable اتمسحت؛ image الـ flutter فيها Android SDK 36 فسايبينها لدروس Kotlin/Android وتتمسح بعدها) |
-| ٤٧ | `kotlin/01-06.js` (56) | [ ] (01-02 خلصوا؛ 03-04 اتوقفوا في النص؛ 05-06 لسه؛ eclipse-temurin:21-jdk و scratchpad/kotlin-tools لسه موجودين) |
+| ٤٧ | `kotlin/01-06.js` (56) | [x] (kotlin اتقسم؛ images الـ flutter و JDK اتمسحت. متابعة: دروس في kotlin بتقول compileSdk 36 مع activity-compose 1.13.0 ممكن تحتاج 37) |
 | ٤٨ | `swift/01-05.js` (49) | [ ] (macOS مش متاح: Swift على Linux في Docker، و iOS/SwiftUI من الـ docs) |
 | ٤٩ | `cpp/01-06.js` (54) | [ ] |
 | ٥٠ | `apis/01-04.js` (44) | [x] (apis اتقسم) |
@@ -172,7 +172,7 @@
 
 كل `sol` في الدروس دي بيقول إنه من الـ docs. نجرّبها لما يبقى فيه الجهاز المناسب.
 
-- [ ] **محتاجة Android SDK (٧ أكتوبر):** دروس kotlin «مشروع Android» و «Gradle و libs.versions.toml» و «AndroidManifest و res» و «Activity و lifecycle» اتشرحت من الـ docs ومش متعلّم عليها. ممكن تتجرب بـ `ghcr.io/cirruslabs/flutter:stable` (اتضح إن فيها Android SDK 36 و Gradle و Java 21).
+- [x] **محتاجة Android SDK (٧ أكتوبر، اتجربت ٨ أكتوبر بـ image الـ flutter):** دروس kotlin «مشروع Android» و «Gradle و libs.versions.toml» و «AndroidManifest و res» و «Activity و lifecycle» اتشرحت من الـ docs ومش متعلّم عليها. ممكن تتجرب بـ `ghcr.io/cirruslabs/flutter:stable` (اتضح إن فيها Android SDK 36 و Gradle و Java 21).
 - [x] **محتاجة toolchains مش متسطبة (٧ أكتوبر، اتجربت كلها في Docker نفس اليوم ما عدا AAPT2):** files «.java و .class و .jar» و «.c و .h و .cpp و .o» و «.go و go.mod» و «.php» و «.swift و .dart و .rs و .rb» و «pom.xml و build.gradle» و «AndroidManifest.xml و strings.xml» و «.csproj و .sln و appsettings.json»: الشرح اتكتب من الـ docs ومش متعلّم عليها في verified.json. تتجرب لما نوافق على images زي `eclipse-temurin` و `gcc` و `golang` و `php` و `rust` (ونفس القرار هيلزم لتابات اللغات: php و go و dotnet و spring و kotlin و swift و cpp و flutter). **القرار (٧ أكتوبر): وافقت تنزّل الـ images الرسمية لكل لغة، وتمسحها (docker rmi للـ tags اللي نزلت بس) بعد ما التاب يخلص.** وكيل كل تاب لغة: ينزّل الـ image اللي محتاجها، ويكتب في تقريره أسماء الـ images اللي نزّلها عشان القائد يمسحها بعد التاب.
 
 - [ ] **محتاجة ماك:** دروس zsh:
