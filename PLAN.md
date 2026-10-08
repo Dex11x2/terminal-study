@@ -1,6 +1,6 @@
 # الخطة: وصلنا لفين وفاضل إيه
 
-آخر تحديث: ٦ أكتوبر ٢٠٢٦ (TypeScript و HTML/CSS و React و Next.js و API و SQL خلصوا؛ و Python API والملفات والرموز والقاموس خلصوا،  و apps و DSA و real و Go و .NET و PHP و Spring و Angular و React Native خلصوا و Flutter و Kotlin و APIs خلصوا؛ swift و cloud و arch شغالين).
+آخر تحديث: ٦ أكتوبر ٢٠٢٦ (TypeScript و HTML/CSS و React و Next.js و API و SQL خلصوا؛ و Python API والملفات والرموز والقاموس خلصوا،  و apps و DSA و real و Go و .NET و PHP و Spring و Angular و React Native خلصوا و Flutter و Kotlin و APIs و Swift خلصوا؛ cpp و cloud و arch شغالين).
 
 أي جلسة جديدة تقرا الملف ده الأول، وبعد أي دفعة شغل تحدّثه: تشيل اللي خلص من «الشغل الجاي» وتضيفه في «اتعمل»، وتكتب أي حاجة ناقصة اكتشفتها.
 
@@ -132,7 +132,7 @@
 | ٤٥ | `rn/01-04.js` (56) | [x] (rn اتقسم) |
 | ٤٦ | `flutter/01-05.js` (61) | [x] (flutter اتقسم؛ dart:stable اتمسحت؛ image الـ flutter فيها Android SDK 36 فسايبينها لدروس Kotlin/Android وتتمسح بعدها) |
 | ٤٧ | `kotlin/01-06.js` (56) | [x] (kotlin اتقسم؛ images الـ flutter و JDK اتمسحت. متابعة: دروس في kotlin بتقول compileSdk 36 مع activity-compose 1.13.0 ممكن تحتاج 37) |
-| ٤٨ | `swift/01-05.js` (49) | [ ] (macOS مش متاح: Swift على Linux في Docker، و iOS/SwiftUI من الـ docs) |
+| ٤٨ | `swift/01-05.js` (49) | [x] (swift اتقسم؛ swift:latest اتمسحت. «VStack و HStack و ZStack» و «التوقيع و provisioning» من الـ docs بس: محتاجين ماك) |
 | ٤٩ | `cpp/01-06.js` (54) | [ ] |
 | ٥٠ | `apis/01-04.js` (44) | [x] (apis اتقسم) |
 | ٥١ | `cloud/01-04.js` (74) | [ ] (مفيش حسابات cloud: الأوامر من الـ docs إلا اللي يشتغل محلي) |

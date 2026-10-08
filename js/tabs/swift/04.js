@@ -1,905 +1,1182 @@
 // تكملة تاب swift: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/swift/01.js (شرح حقول الدرس في أوله)
 MORE("swift", [
     {
-      t: "النت والبيانات والتخزين",
-      l: 2,
-      n: "async و await و Task، و Codable و JSON، و URLSession بحالات التحميل والخطأ، والصور، و AppStorage، و SwiftData، و UIKit جوه SwiftUI",
+      t: "الأنواع بتاعتك: struct و class و enum و protocol",
+      l: 1,
+      n: "تبني أنواعك: value vs reference، والـ properties والـ methods، والـ enums بقيم مرفقة، والـ protocols والـ extensions، والـ generics",
       items: [
         {
-          cmd: "async و await و Task",
-          title: "async و await: تستنى شغل بطيء من غير ما الشاشة تقف، و async let للتوازي، و Task و cancel",
-          desc: R`أي شغل بياخد وقت (طلب من النت، قراية ملف كبير) لو اتعمل على الـ main thread الشاشة بتقف (freeze). الحل في Swift الحديثة: async/await.
+          cmd: "الـ Structs والـ Classes في Swift",
+          title: "struct ولا class: الفرق بين value type و reference type، وليه Swift بتبدأ بـ struct",
+          desc: R`الاتنين بيعملوا نوع جديد فيه properties (بيانات) و methods (دوال). بس فيه فرق واحد بيغيّر كل حاجة:
 
-• [[async]] في توقيع الدالة: «الدالة دي ممكن توقف في النص وتستنى». [[func load() async -> String]].
-• [[await]] قبل نداء دالة async: «هنا ممكن نستنى». وانت مستني، الـ thread مش واقف: بيشتغل على حاجات تانية (زي رسم الشاشة)، ولما النتيجة تيجي الكود بيكمّل من نفس السطر.
-• [[async throws]] لو ممكن تستنى وممكن تفشل، وبتتنادى [[try await]].
+1. [[struct]] value type: لما تنسخه ([[var b = a]]) أو تبعته لدالة، بياخد نسخة مستقلة. تعديل النسخة مش بيأثر على الأصل.
+2. [[class]] reference type: النسخ بيدّيك مرجع (reference) لنفس الـ object. الاتنين بيشاوروا على نفس الحاجة، فتعديل واحد بيظهر في التاني.
 
-[[await]] ورا [[await]] بيمشوا بالترتيب: التاني مبيبدأش غير لما الأول يخلص. لو مستقلين عن بعض، [[async let]] بيبدأهم مع بعض: [[async let a = f(); async let b = g()]] وبعدين [[await]] على الاتنين.
+فروق تانية:
+• الـ struct بياخد initializer جاهز (memberwise init) فيه كل الـ properties: [[User(id: 1, name: "سارة")]]. الـ class لازم تكتب [[init]] بنفسك (لو فيه properties من غير قيمة افتراضية).
+• الـ class بيدعم الوراثة (inheritance) بـ [[class Admin: User]]، والـ struct لأ.
+• [[let]] على struct بتقفل كل خصائصه. [[let]] على class بتقفل المرجع بس، وتقدر تعدّل الـ properties اللي [[var]].
+• [[===]] بتسأل هل اتنين references بيشاوروا على نفس الـ object (للـ classes بس).
 
-الدالة async لازم تتنادى من مكان async. من كود عادي (زرار مثلًا) بتعمل [[Task { await load() }]]: ده بيبدأ شغل async جديد. و [[Task]] بيرجّع object تقدر تستنى نتيجته بـ [[.value]] أو تلغيه بـ [[.cancel()]].
-
-في SwiftUI: [[.task { await load() }]] modifier بيبدأ الشغل لما الـ View يظهر، وبيلغيه لوحده لما يختفي. ده أحسن مكان لتحميل داتا الشاشة.
-
-[[Task.sleep(for: .seconds(1))]] بيستنى من غير ما يوقف الـ thread، وبيرمي [[CancellationError]] لو الـ Task اتلغى. والمثال ده بيشتغل على Linux كمان ([[swift main.swift]]: الـ top-level في [[main.swift]] ينفع فيه [[await]]).`,
-          example: R`func fetchUser(id: Int) async -> String {
-  try? await Task.sleep(for: .milliseconds(300))
-  return "مستخدم \(id)"
+القاعدة اللي Apple نفسها بتنصح بيها: ابدأ بـ [[struct]]. استخدم [[class]] لما محتاج identity مشتركة (حاجة واحدة أكتر من جزء في التطبيق شايفها ومعدّل فيها)، أو وراثة، أو لما API بيطلب class (زي [[@Observable]] و SwiftData [[@Model]]). أنواع Swift الأساسية نفسها (String و Array و Dictionary) structs.`,
+          example: R`struct Point {
+  var x: Int
+  var y: Int
 }
-func fetchOrders(for user: String) async throws -> [Int] {
-  try await Task.sleep(for: .milliseconds(100))
-  return user.isEmpty ? [] : [101, 102]
+var a = Point(x: 1, y: 2)
+var b = a
+b.x = 100
+print("struct: a.x = \(a.x), b.x = \(b.x)")
+final class Account {
+  var balance: Int
+  init(balance: Int) {
+    self.balance = balance
+  }
 }
-let clock = ContinuousClock()
-let t1 = clock.now
-let a = await fetchUser(id: 1)
-let b = await fetchUser(id: 2)
-print(a, b, "| ورا بعض أكتر من نص ثانية:", t1.duration(to: clock.now) > .milliseconds(500))
-let t2 = clock.now
-async let c = fetchUser(id: 3)
-async let d = fetchUser(id: 4)
-let both = await [c, d]
-print(both, "| مع بعض أقل من نص ثانية:", t2.duration(to: clock.now) < .milliseconds(500))
-let task = Task {
-  try await fetchOrders(for: a)
-}
-print(try await task.value)
-let slow = Task {
-  try await Task.sleep(for: .seconds(5))
-  return "خلص"
-}
-slow.cancel()
-do {
-  print(try await slow.value)
-} catch is CancellationError {
-  print("اتلغى قبل ما يخلص")
-}`,
-          try: R`اكتب [[let x = fetchUser(id: 9)]] من غير [[await]] واقرا الخطأ. وبعدين استخدم [[withTaskGroup]] أو [[async let]] عشان تجيب 5 مستخدمين مع بعض، وقيس الوقت: لازم يبقى قريب من 0.3 ثانية مش 1.5.`,
+let acc1 = Account(balance: 500)
+let acc2 = acc1
+acc2.balance = 0
+print("class: acc1 = \(acc1.balance), acc2 = \(acc2.balance)")
+print(acc1 === acc2)
+let fixed = Point(x: 0, y: 0)
+print(fixed.x)`,
+          try: R`حاول تكتب [[fixed.x = 5]] (struct بـ let) وشوف الخطأ، وبعدين لاحظ إن [[acc2.balance = 0]] اشتغل رغم إن [[acc2]] بـ [[let]]. وبعدين غيّر [[struct Point]] لـ [[class Point]] وشوف إيه اللي هيبوظ.`,
           flag: "script",
           deep: {
-            why: R`قبل async/await (Swift 5.5 سنة 2021) كان الكود بيتكتب بـ completion handlers: closure جوه closure جوه closure، وكل واحد ممكن ينسى ينادي الـ completion أو يناديه مرتين، والأخطاء بتتعامل يدوي في كل مستوى. الكود الـ async بيتقري من فوق لتحت زي الكود العادي، و [[try]] و [[catch]] شغالين عادي.`,
-            how: R`لما الدالة توصل لـ [[await]] وتحتاج تستنى، بتسيب الـ thread (suspension point)، والـ runtime بيستخدمه لشغل تاني. لما النتيجة تيجي، الدالة بتكمّل (ممكن على thread تاني، إلا لو الكود مربوط بـ actor زي [[@MainActor]]، درس الـ concurrency).
+            why: R`مع الـ classes، أي جزء من الكود عنده reference يقدر يغيّر الـ object، فلما قيمة تتغير فجأة لازم تدور في المشروع كله مين غيّرها. مع الـ structs، القيمة اللي في إيدك محدش غيرك يقدر يغيّرها. ده بيسهّل الفهم وبيشيل مشاكل الـ threads (كل thread معاه نسخته). وده سبب إن SwiftUI مبني على structs.`,
+            how: R`الـ class بيتعمل في الـ heap، والـ variable فيه pointer ليه، و Swift بتعد الـ references (ARC) عشان تعرف تمسحه إمتى. الـ struct ممكن يتخزن inline (في الـ stack أو جوه object تاني)، والنسخ بتاعه رخيص. والـ collections زي Array بتستخدم copy-on-write: النسخ الحقيقي بيحصل بس لما واحدة من النسختين تتعدل.
 
-الـ Tasks بتعمل شجرة: [[async let]] و task groups بيعملوا child tasks، ولو الأب اتلغى الأولاد بيتلغوا. الإلغاء cooperative: [[cancel()]] بيحط علامة بس، والكود لازم يشيك ([[Task.sleep]] و [[URLSession]] بيشيكوا لوحدهم، وفي الكود بتاعك [[try Task.checkCancellation()]]).
-
-[[ContinuousClock]] ساعة لقياس الوقت. و [[.duration(to:)]] الوقت بين لحظتين.`,
-            when: R`أي شغل بياخد وقت: شبكة، داتابيز، ملفات، معالجة صور. في SwiftUI ابدأه من [[.task]] (تحميل الشاشة) أو [[Task { }]] جوه زرار. و [[async let]] لما محتاج كذا حاجة مستقلة للشاشة (البروفايل والطلبات مع بعض).`,
-            mistakes: R`تعمل [[Task { }]] في كل حتة بدل [[.task]] فالشغل يكمّل بعد ما الشاشة تتقفل. وتعمل [[await]] ورا [[await]] لحاجات مستقلة فالشاشة تاخد ضعف الوقت. وتفتكر إن [[async]] لوحده بيشغّل الكود في الخلفية: الحسابات التقيلة من غير أي [[await]] جواها ممكن لسه تقفل الـ thread اللي هي عليه.`
+[[final class]] معناها مينفعش حد يورث منها، وده بيخلي الـ compiler ينادي الـ methods مباشرة (أسرع شوية) وبيوضح نيتك. و [[self.balance = balance]]: [[self]] هو الـ object الحالي، ومحتاجينه هنا عشان الـ parameter والـ property ليهم نفس الاسم.`,
+            when: R`struct: الـ models (منتج، رسالة، رد API)، والـ Views في SwiftUI، وأي قيمة. class: الحاجة اللي ليها هوية واحدة مشتركة (session المستخدم، cache، view model متشارك)، وكلاسات UIKit، و SwiftData models.`,
+            mistakes: R`تعمل كل حاجة class بحكم عادة Java: هتلاقي داتا بتتغير من حتة مش متوقعة. وتعدّل struct جوه array بـ for loop وتستغرب إن الأصل متغيرش ([[for var item in items]] بيعدّل نسخة). وتفتكر إن [[let]] على class بتخليه ثابت.`
           },
+          teach: R`## البرنامج بيعمل إيه؟
+
+بيعمل نفس التجربة مرتين: ينسخ قيمة ويعدّل النسخة. مرة بـ [[struct]] (الأصل مبيتأثرش) ومرة بـ [[class]] (الأصل بيتغير). الناتج من [[swift main.swift]] على Swift 6.4 في Docker.
+
+---
+
+## ١. [[struct Point]]
+
+~~~swift
+struct Point {
+  var x: Int
+  var y: Int
+}
+~~~
+
+- [[struct]] بيعرّف نوع جديد اسمه [[Point]]. الاسم بيبدأ بحرف capital (كل الأنواع كده: [[Int]] و [[String]]).
+- [[var x: Int]]: property (حقل) قابلة للتعديل. ومفيش قيمة، فلازم تتبعت وانت بتعمل النقطة.
+
+---
+
+## ٢. النسخ في الـ struct
+
+~~~swift
+var a = Point(x: 1, y: 2)
+var b = a
+b.x = 100
+print("struct: a.x = \(a.x), b.x = \(b.x)")
+~~~
+
+- [[Point(x: 1, y: 2)]]: memberwise initializer. Swift كتبته لوحدها، بـ label لكل property بالترتيب.
+- [[var b = a]]: [[b]] **نسخة كاملة مستقلة**. دلوقتي فيه نقطتين في الذاكرة.
+- [[b.x = 100]]: النقطة [[.]] بتوصل لـ property. التعديل على [[b]] بس.
+
+~~~text الناتج
+struct: a.x = 1, b.x = 100
+~~~
+
+---
+
+## ٣. [[final class Account]]
+
+~~~swift
+final class Account {
+  var balance: Int
+  init(balance: Int) {
+    self.balance = balance
+  }
+}
+~~~
+
+- [[class]] زي struct في الشكل، بس reference type.
+- [[final]]: محدش يقدر يورث من الكلاس ده (يعمل [[class X: Account]]).
+- [[init(...)]]: الـ initializer. الكلاس **مبياخدش** memberwise init جاهز، فلازم نكتبه.
+- [[self.balance = balance]]: [[self]] = «الـ object ده نفسه». الشمال الـ property، واليمين الـ parameter اللي بنفس الاسم.
+
+---
+
+## ٤. النسخ في الـ class
+
+~~~swift
+let acc1 = Account(balance: 500)
+let acc2 = acc1
+acc2.balance = 0
+print("class: acc1 = \(acc1.balance), acc2 = \(acc2.balance)")
+print(acc1 === acc2)
+~~~
+
+- [[Account(balance: 500)]] بيعمل **object واحد** في الذاكرة، و [[acc1]] فيه «عنوانه» (reference).
+- [[let acc2 = acc1]]: نسخنا العنوان بس. الاتنين بيشاوروا على نفس الـ object.
+- [[acc2.balance = 0]] اشتغل رغم [[let]]: الـ [[let]] بتقفل المتغير ([[acc2]] مش هيشاور على object تاني)، مش الـ object نفسه. و [[balance]] نفسها [[var]].
+- [[===]] (تلات علامات): «نفس الـ object بالظبط؟».
+
+~~~text الناتج
+class: acc1 = 0, acc2 = 0
+true
+~~~
+
+---
+
+## ٥. [[let]] على struct
+
+~~~swift
+let fixed = Point(x: 0, y: 0)
+print(fixed.x)
+~~~
+
+القراية عادي: **0**. لكن [[fixed.x = 5]] (التجربة):
+
+~~~text الناتج
+main.swift:22:7: error: cannot assign to property: 'fixed' is a 'let' constant
+~~~
+
+في الـ struct القيمة هي المتغير نفسه، فـ [[let]] بتقفل كل حاجة جواه حتى الـ [[var]].
+
+---
+
+## ٦. التجربة: [[struct Point]] ← [[class Point]]
+
+~~~text الناتج
+main.swift:1:7: error: class 'Point' has no initializers
+main.swift:5:9: error: 'Point' cannot be constructed because it has no accessible initializers
+main.swift:20:13: error: 'Point' cannot be constructed because it has no accessible initializers
+~~~
+
+ومع أول خطأ الـ compiler قال [[note: stored property 'x' without initial value prevents synthesized initializers]]: الكلاس فيه properties من غير قيمة ومن غير [[init]]. بعد ما تكتب [[init(x: Int, y: Int)]]، الـ [[a.x]] هتطبع 100 لأن [[b]] بقى reference لنفس النقطة. و [[fixed.x = 5]] هيشتغل.
+
+---
+
+## الخلاصة
+
+| | [[struct]] | [[class]] |
+|---|---|---|
+| النوع | value type | reference type |
+| [[b = a]] | نسخة مستقلة | نفس الـ object |
+| [[init]] جاهز | أيوه (memberwise) | لأ، تكتبه |
+| [[let]] | يقفل كل الـ properties | يقفل الـ reference بس |
+| وراثة | لأ | أيوه (إلا لو [[final]]) |
+| [[===]] | مش متاح | نفس الـ object؟ |
+
+ابدأ بـ [[struct]]، وخد [[class]] لما محتاج object واحد متشارك.`,
           lines: [
-            R`[[async]]: الدالة ممكن تستنى. بترجّع String.`,
-            R`[[await]] على sleep. [[try?]] عشان sleep بيرمي لو اتلغى.`,
-            "بترجّع النتيجة بعد الاستنا.",
+            R`[[struct]] اسمه Point.`,
+            "property قابلة للتعديل.",
+            "property تانية.",
             "قفلة.",
-            R`[[async throws]]: بتستنى وممكن تفشل.`,
-            R`[[try await]] مع بعض.`,
-            "ternary: لو الاسم فاضي array فاضية.",
-            "قفلة.",
-            "ساعة لقياس الوقت.",
-            "اللحظة دي.",
-            "بنستنى الأول (0.3 ثانية).",
-            "وبعدين التاني (0.3 كمان).",
-            "الاتنين ورا بعض = أكتر من 0.5.",
-            "لحظة جديدة.",
-            R`[[async let]] بيبدأ على طول من غير ما يستنى.`,
-            "والتاني بيبدأ معاه.",
-            R`[[await]] على الاتنين مع بعض.`,
-            "قريب من 0.3 بس.",
-            R`[[Task]] بيبدأ شغل async جديد.`,
-            "جواه نداء ممكن يرمي.",
-            "قفلة.",
-            R`[[task.value]] بيستنى النتيجة، و [[try]] لأنه ممكن يرمي.`,
-            "Task بطيء.",
-            "5 ثواني.",
-            "النتيجة.",
-            "قفلة.",
-            R`[[cancel()]]: بيلغيه.`,
-            "do.",
-            "هيرمي بدل ما يطبع.",
-            R`[[catch is CancellationError]]: بيمسك الإلغاء بس.`,
-            "رسالة الإلغاء.",
-            "قفلة."
-          ],
-          sol: R`من غير [[await]]: [[expression is 'async' but is not marked with 'await']].
-
-ناتج المثال:
-[[مستخدم 1 مستخدم 2 | ورا بعض أكتر من نص ثانية: true]]
-[[["مستخدم 3", "مستخدم 4"] | مع بعض أقل من نص ثانية: true]]
-[[[101, 102]]]
-[[اتلغى قبل ما يخلص]]
-
-جيب 5 مع بعض بـ task group:`,
-          solCode: R`let t3 = clock.now
-let users = await withTaskGroup(of: String.self) { group in
-  for id in 1...5 {
-    group.addTask { await fetchUser(id: id) }
-  }
-  var result: [String] = []
-  for await user in group {
-    result.append(user)
-  }
-  return result
-}
-print(users.count, t3.duration(to: clock.now) < .seconds(1))
-// 5 true  (والترتيب ممكن يختلف لأنهم بيخلصوا في أوقات مختلفة)`
-        },
-        {
-          cmd: "Codable و JSON",
-          title: "تحوّل JSON لـ struct والعكس بـ Codable و JSONDecoder، و snake_case والتواريخ و CodingKeys",
-          desc: R`أي struct بيتبع [[Codable]] يقدر يتحول من JSON ولـ JSON، و Swift بتكتب الكود لوحدها لو كل الـ properties نفسها Codable (String و Int و Double و Bool و Date و Array و Dictionary و optionals وأي struct تاني Codable). [[Codable]] = [[Decodable]] (من JSON) + [[Encodable]] (لـ JSON). لو بتقرا بس، [[Decodable]] كفاية.
-
-القراية: [[try JSONDecoder().decode(Post.self, from: data)]]. الـ [[Post.self]] معناها «النوع Post نفسه» مش قيمة منه. والـ [[data]] نوعها [[Data]] (bytes)، ومن String بتعملها [[Data(json.utf8)]].
-
-قواعد المطابقة:
-• اسم الـ property لازم يطابق المفتاح. لو السيرفر بيبعت [[author_name]] و Swift بتسمّي [[authorName]]: [[decoder.keyDecodingStrategy = .convertFromSnakeCase]].
-• أو تحدد الأسماء بنفسك بـ enum اسمه [[CodingKeys]] جوه الـ struct.
-• المفاتيح الزيادة في الـ JSON بتتجاهل. المفتاح الناقص = خطأ، إلا لو الـ property optional.
-• التواريخ: [[decoder.dateDecodingStrategy = .iso8601]] للشكل [["2026-03-15T10:30:00Z"]].
-
-الكتابة: [[try JSONEncoder().encode(value)]] بترجّع [[Data]]، و [[.outputFormatting = .sortedKeys]] أو [[.prettyPrinted]] للشكل.
-
-لو الـ JSON مش مطابق، الـ decode بيرمي [[DecodingError]] فيه بالظبط المفتاح الغلط والسبب. اطبعه وانت بتطوّر، هيوفر عليك ساعات.
-
-[[#"..."#]] raw string: النص بين العلامتين بيتاخد زي ما هو، فالـ [["]] جواه مش محتاجة escape.`,
-          example: R`import Foundation
-
-struct Post: Codable {
-  let id: Int
-  let title: String
-  let authorName: String
-  let publishedAt: Date
-  let tags: [String]?
-}
-let json = """
-{
-  "id": 7,
-  "title": "أول تطبيق SwiftUI",
-  "author_name": "سارة",
-  "published_at": "2026-03-15T10:30:00Z",
-  "views": 1200
-}
-"""
-let decoder = JSONDecoder()
-decoder.keyDecodingStrategy = .convertFromSnakeCase
-decoder.dateDecodingStrategy = .iso8601
-do {
-  let post = try decoder.decode(Post.self, from: Data(json.utf8))
-  print(post.title, "|", post.authorName, "|", post.tags ?? [])
-  print(post.publishedAt)
-} catch {
-  print("JSON بايظ:", error)
-}
-struct Settings: Codable {
-  var theme: String
-  var fontSize: Int
-  enum CodingKeys: String, CodingKey {
-    case theme
-    case fontSize = "font_px"
-  }
-}
-let encoder = JSONEncoder()
-encoder.outputFormatting = .sortedKeys
-let data = try encoder.encode(Settings(theme: "dark", fontSize: 16))
-print(String(decoding: data, as: UTF8.self))
-let bad = #"{"id": "سبعة", "title": "x"}"#
-do {
-  _ = try decoder.decode(Post.self, from: Data(bad.utf8))
-} catch DecodingError.typeMismatch(_, let context) {
-  print("نوع غلط في:", context.codingPath.map(\.stringValue))
-} catch {
-  print("مشكلة تانية:", error)
-}`,
-          try: R`امسح [[author_name]] من الـ JSON وشوف الخطأ اللي بيطبعه الـ catch (اسمه [[keyNotFound]]). وبعدين ضيف لـ [[Post]] property [[views: Int]] وتأكد إنها بتتقري 1200. وأخيرًا اعمل [[struct Comment: Codable]] وخلّي [[Post]] فيه [[comments: [Comment]?]].`,
-          flag: "script",
-          deep: {
-            why: R`كل تطبيق بيكلم API. من غير Codable كنت هتقرا كل مفتاح بإيدك من dictionary وتحوّل نوعه وتتعامل مع غيابه (ده اللي كان بيحصل في Objective-C). مع Codable الـ struct نفسه هو وصف الـ JSON، والـ compiler بيكتب الباقي.`,
-            how: R`الـ compiler بيولّد [[init(from decoder:)]] و [[encode(to:)]] و enum [[CodingKeys]] من أسماء الـ properties. لو كتبت [[CodingKeys]] بنفسك، بيستخدمه، والـ raw value هو اسم المفتاح في الـ JSON. ولو محتاج منطق خاص (قيمة افتراضية لمفتاح ناقص، أو شكل غريب)، تكتب [[init(from:)]] بنفسك.
-
-[[convertFromSnakeCase]] بيحوّل [[author_name]] لـ [[authorName]] قبل المطابقة. و [[DecodingError]] enum فيه [[keyNotFound]] و [[typeMismatch]] و [[valueNotFound]] و [[dataCorrupted]]، وكلهم معاهم [[codingPath]]: السكة للمفتاح الغلط.
-
-[[String(decoding: data, as: UTF8.self)]] بيحوّل bytes لنص. و [[try]] على [[encoder.encode]] من غير do: في [[main.swift]] لو رمى البرنامج هيقف برسالة الخطأ.`,
-            when: R`أي داتا جاية من API أو رايحة له، وأي داتا بتحفظها في ملف أو UserDefaults. ولو API بيبعت أشكال مختلفة لنفس المفتاح، اكتب [[init(from:)]] مخصوص بدل ما تخلي كل حاجة optional.`,
-            mistakes: R`تخلي كل الـ properties optional «احتياطي» فتلاقي الشاشة فاضية من غير ما تعرف ليه، بدل ما الـ decode يقولك المفتاح الناقص. وتعمل [[try?]] على الـ decode فتخسر رسالة الخطأ. وتنسى الـ dateDecodingStrategy فالتاريخ يفشل. وتستخدم [[Int]] لـ id بييجي من السيرفر كـ String.`
-          },
-          lines: [
-            "Foundation فيها JSONDecoder و Date.",
-            R`[[Codable]]: يتحول من وإلى JSON.`,
-            "id.",
-            "title.",
-            R`في الـ JSON [[author_name]].`,
-            "تاريخ.",
-            R`optional: لو مش موجود في الـ JSON يبقى nil من غير خطأ.`,
-            "قفلة.",
-            "نص JSON على كذا سطر.",
-            "{",
-            "رقم.",
-            "نص.",
-            "snake_case.",
-            "تاريخ ISO 8601.",
-            R`مفتاح زيادة ملوش property: بيتجاهل.`,
-            "}",
-            "قفلة النص.",
-            "decoder.",
-            R`[[author_name]] ← [[authorName]].`,
-            "شكل التاريخ.",
-            "do.",
-            R`[[Post.self]] النوع، و [[Data(json.utf8)]] النص كـ bytes.`,
-            R`[[tags]] مش موجودة فـ nil، و [[??]] بتدي array فاضية.`,
-            "التاريخ بعد ما اتحول.",
-            "catch.",
-            "أي خطأ.",
-            "قفلة.",
-            "struct تاني.",
-            "theme.",
-            "fontSize.",
-            R`[[CodingKeys]]: أسماء المفاتيح في الـ JSON.`,
-            "نفس الاسم.",
-            R`[[fontSize]] في الـ JSON اسمه [[font_px]].`,
-            "قفلة.",
-            "قفلة.",
-            "encoder.",
-            "المفاتيح بالترتيب عشان الناتج ثابت.",
-            R`[[encode]] بيرجّع Data.`,
-            "نحوّل الـ Data لنص ونطبعه.",
-            R`[[#"..."#]] raw string: id نص بدل رقم.`,
-            "do.",
-            R`[[_ =]] مش محتاجين النتيجة.`,
-            R`catch لنوع خطأ معين وبنفك الـ context.`,
-            R`[[codingPath]] السكة للمفتاح الغلط.`,
-            "أي خطأ تاني.",
-            "رسالة.",
-            "قفلة."
-          ],
-          sol: R`ناتج المثال (التاريخ بيتطبع بتوقيت UTC):
-[[أول تطبيق SwiftUI | سارة | []]]
-[[2026-03-15 10:30:00 +0000]]
-[[{"font_px":16,"theme":"dark"}]]
-[[نوع غلط في: ["id"]]]
-
-لما تمسح [[author_name]]: الـ catch بيطبع [[keyNotFound]] ومعاه [[CodingKeys(stringValue: "authorName"...)]] ورسالة [[No value associated with key]]: يعني المفتاح مش موجود.
-
-الإضافات:`,
-          solCode: R`struct Comment: Codable {
-  let id: Int
-  let body: String
-}
-
-struct Post: Codable {
-  let id: Int
-  let title: String
-  let authorName: String
-  let publishedAt: Date
-  let tags: [String]?
-  let views: Int
-  let comments: [Comment]?
-}
-// post.views == 1200 و post.comments == nil`
-        },
-        {
-          cmd: "الاتصال بالـ API بـ Async/Await و URLSession",
-          title: "تجيب داتا من API بـ URLSession و async/await، وتعرض حالة التحميل والخطأ والنتيجة في SwiftUI",
-          desc: R`[[URLSession.shared.data(from: url)]] بيعمل طلب GET وبيرجّع [[(Data, URLResponse)]]: tuple فيه البيانات والرد. وهي [[async throws]]: بتستنى، وبترمي لو مفيش نت أو الـ URL غلط.
-
-مهم: الـ URLSession مش بترمي لو السيرفر رد بـ 404 أو 500. ده رد ناجح من ناحية الشبكة. لازم انت تشيك الـ status: تحوّل الـ response لـ [[HTTPURLResponse]] بـ [[as?]] وتبص على [[statusCode]].
-
-[[as?]] اسمه conditional cast: «حاول تعامل القيمة دي كنوع كذا، ولو مش هو رجّع nil». و [[as!]] نفسها بس بتعمل crash لو فشل.
-
-الشاشة نفسها ليها 3 حالات: بتحمّل، خلصت بداتا، فشلت برسالة. أنظف طريقة: enum بـ associated values (اللي اتعلمته في المستوى الأول) في [[@State]]، و [[switch]] جوه [[body]] يعرض الشكل المناسب لكل حالة.
-
-• [[.task { await load() }]]: بيحمّل أول ما الشاشة تظهر.
-• [[.refreshable { await load() }]] على List: سحب لتحت للتحديث.
-• [[ContentUnavailableView]] (iOS 17): شاشة «مفيش داتا» أو «مفيش نت» بالشكل القياسي.
-
-iOS بيرفض [[http://]] من غير تشفير افتراضيًا (App Transport Security)، فاستخدم [[https://]].
-
-المثال بيستخدم API تجريبي مجاني ([[dummyjson.com]]) بيرجّع [[{ "posts": [...] }]]، عشان كده فيه struct للغلاف. (دالة [[fetchPosts]] نفسها اتجربت على Linux، والفرق الوحيد هناك إنك محتاج [[import FoundationNetworking]]).`,
-          example: R`import SwiftUI
-
-struct Post: Decodable, Identifiable {
-  let id: Int
-  let title: String
-}
-struct PostsPage: Decodable {
-  let posts: [Post]
-}
-enum APIError: Error {
-  case badStatus(Int)
-}
-
-func fetchPosts() async throws -> [Post] {
-  let url = URL(string: "https://dummyjson.com/posts?limit=20")!
-  let (data, response) = try await URLSession.shared.data(from: url)
-  guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
-    throw APIError.badStatus((response as? HTTPURLResponse)?.statusCode ?? -1)
-  }
-  return try JSONDecoder().decode(PostsPage.self, from: data).posts
-}
-
-struct PostsScreen: View {
-  enum Phase {
-    case loading
-    case loaded([Post])
-    case failed(String)
-  }
-  @State private var phase = Phase.loading
-  var body: some View {
-    Group {
-      switch phase {
-      case .loading:
-        ProgressView("بنحمّل...")
-      case .loaded(let posts):
-        List(posts) { Text($0.title) }
-          .refreshable { await load() }
-      case .failed(let message):
-        ContentUnavailableView {
-          Label("في مشكلة", systemImage: "wifi.slash")
-        } description: {
-          Text(message)
-        } actions: {
-          Button("جرّب تاني") { Task { await load() } }
-        }
-      }
-    }
-    .task { await load() }
-  }
-  private func load() async {
-    do {
-      phase = .loaded(try await fetchPosts())
-    } catch {
-      phase = .failed(error.localizedDescription)
-    }
-  }
-}`,
-          try: R`شغّل الـ Simulator، وبعدين اقفل النت من الماك (أو غيّر الـ URL لـ [[posts-x]]) وشوف شاشة الخطأ، ورجّعه ودوس «جرّب تاني». وبعدين ضيف حالة [[.loaded]] لما الـ array فاضية تعرض [[ContentUnavailableView("مفيش بوستات", systemImage: "tray")]].`,
-          flag: "script",
-          deep: {
-            why: R`أغلب شغل iOS في الشركات: شاشة بتجيب داتا من API وتعرضها. واللي بيفرق تطبيق محترف عن تطبيق مبتدئ هو التعامل مع الحالات التانية: النت فصل، السيرفر رد 500، الداتا فاضية، المستخدم سحب للتحديث. الـ enum بيجبرك تفكر في كل حالة لأن الـ switch لازم يغطيهم.`,
-            how: R`[[.task]] بيشتغل في context الـ View (الـ MainActor)، فـ [[phase = ...]] بيتكتب على الـ main thread بأمان. لما [[await fetchPosts()]] بيستنى، الـ main thread فاضي يرسم الـ ProgressView. ولو المستخدم خرج من الشاشة قبل ما الطلب يخلص، [[.task]] بيلغي الـ Task، و URLSession بيرمي error إلغاء.
-
-[[(200..<300).contains(http.statusCode)]]: range بيشيك الـ status من 200 لـ 299. والـ [[(response as? HTTPURLResponse)?.statusCode ?? -1]]: cast ثم optional chaining ثم قيمة افتراضية.
-
-[[List(posts) { Text($0.title) }]]: [[$0]] كل بوست. و [[Group]] container شفاف عشان نحط [[.task]] على أي حالة من الـ switch.`,
-            when: R`أي شاشة بتعرض داتا من السيرفر. ولما الطلبات تكتر، انقل [[fetchPosts]] وأخواتها لـ type واحد ([[APIClient]]) فيه الـ base URL والـ headers (زي التوكن) وفك الـ JSON بشكل generic، وده الدرس بتاع MVVM في المستوى 3.`,
-            mistakes: R`تفترض إن مفيش error يعني الرد 200. وتحط الطلب في [[.onAppear]] مع [[Task { }]] فبيتكرر كل ما ترجع للشاشة ومبيتلغيش. وتعرض [[error.localizedDescription]] الخام للمستخدم في تطبيق حقيقي (اعمل رسايل مفهومة بالعربي). وتنسى حالة «فاضي» فالمستخدم يشوف شاشة بيضا ويفتكرها باظت.`
-          },
-          lines: [
-            "SwiftUI (فيها Foundation).",
-            R`[[Decodable]] عشان نقراه بس، و [[Identifiable]] عشان List.`,
-            "id.",
-            "title.",
-            "قفلة.",
-            R`الغلاف: الـ JSON شكله [[{ "posts": [...] }]].`,
-            "array البوستات.",
-            "قفلة.",
-            "أخطاء بتاعتنا.",
-            "status غلط.",
-            "قفلة.",
-            R`دالة [[async throws]].`,
-            R`[[!]] هنا آمن لأن النص ثابت ومكتوب صح.`,
-            R`الطلب نفسه. بيرجّع tuple بنفكه في اسمين.`,
-            R`[[as?]] cast، وبعد الفاصلة شرط الـ status من 200 لـ 299.`,
-            "لو مش ناجح نرمي خطأ فيه الكود.",
-            "قفلة.",
-            R`نفك الغلاف ونرجّع [[.posts]].`,
-            "قفلة.",
-            "الشاشة.",
-            "enum للحالات جوه الـ View.",
-            "بتحمّل.",
-            "خلصت بداتا.",
-            "فشلت برسالة.",
-            "قفلة.",
-            R`[[@State]] بالحالة الأولى.`,
-            "body.",
-            R`[[Group]] حاوية شفافة.`,
-            "switch على الحالة.",
-            "بتحمّل.",
-            R`[[ProgressView]] دايرة بتلف.`,
-            "خلصت.",
-            R`قايمة، و [[$0]] كل بوست.`,
-            R`[[.refreshable]]: سحب لتحت بيحمّل تاني.`,
-            "فشلت.",
-            R`[[ContentUnavailableView]] بـ 3 أجزاء.`,
-            "العنوان والأيقونة.",
-            "الوصف.",
-            "الرسالة.",
-            "الأزرار.",
-            R`[[Task { }]] عشان الزرار مش async.`,
-            "قفلة.",
-            "قفلة الـ switch.",
-            "قفلة Group.",
-            R`[[.task]]: يحمّل لما الشاشة تظهر ويلغي لما تختفي.`,
-            "قفلة body.",
-            "دالة التحميل.",
-            "do.",
-            "لو نجح الحالة بقت loaded.",
-            "catch.",
-            "لو فشل الحالة بقت failed.",
-            "قفلة.",
-            "قفلة الدالة.",
-            "قفلة الـ struct."
-          ],
-          sol: R`لما النت يتقفل هتشوف [[ContentUnavailableView]] بأيقونة wifi.slash ورسالة زي [[The Internet connection appears to be offline.]] (أو ترجمتها حسب لغة الجهاز). ولما تغير الـ URL لمسار مش موجود، السيرفر بيرد 404 فهيظهر خطأ [[APIError]].
-
-حالة الفاضي:`,
-          solCode: R`case .loaded(let posts) where posts.isEmpty:
-  ContentUnavailableView("مفيش بوستات", systemImage: "tray")
-case .loaded(let posts):
-  List(posts) { Text($0.title) }
-    .refreshable { await load() }`
-        },
-        {
-          cmd: "الصور و AsyncImage",
-          title: "تعرض أيقونة SF Symbol وصورة من Assets وصورة من النت بـ AsyncImage، وتظبط حجمها",
-          desc: R`تلات مصادر للصور:
-1. [[Image(systemName: "heart.fill")]]: SF Symbols، أيقونات Apple الجاهزة. بتتعامل زي النص: حجمها بـ [[.font]] ولونها بـ [[.foregroundStyle]]، وبتتظبط مع Dynamic Type لوحدها.
-2. [[Image("logo")]]: صورة حطيتها في [[Assets.xcassets]] (اسحبها جوه Xcode). حطها بـ 3 أحجام (1x و 2x و 3x) أو PDF/SVG واحد.
-3. [[AsyncImage(url:)]]: صورة من النت، بتتحمّل لوحدها.
-
-الصورة افتراضيًا بتتعرض بحجمها الأصلي. عشان تتحكم:
-• [[.resizable()]] الأول (لازم قبل أي تحجيم).
-• [[.scaledToFit()]]: تبان كلها جوه المساحة. [[.scaledToFill()]]: تملا المساحة وممكن تتقص.
-• [[.frame(width:height:)]] و [[.clipShape(.circle)]] أو [[.clipShape(.rect(cornerRadius: 12))]].
-
-[[AsyncImage]] بالـ closure بتاعه بيدّيك [[phase]] فيه 3 حالات: [[.empty]] (لسه بيحمّل) و [[.success(let image)]] و [[.failure]]. تعرض لكل حالة شكل.
-
-حدود AsyncImage: الـ cache بتاعه ضعيف (ممكن يحمّل الصورة تاني لما الصف يرجع يظهر في List). في تطبيقات فيها صور كتير، الشركات بتستخدم مكتبات زي [[Kingfisher]] أو [[Nuke]] (عن طريق Swift Package Manager).
-
-Accessibility: الصور الزخرفية [[Image(decorative:)]] أو [[.accessibilityHidden(true)]]، والصور اللي ليها معنى [[.accessibilityLabel("...")]] عشان VoiceOver.`,
-          example: R`import SwiftUI
-
-struct AuthorRow: View {
-  let name: String
-  let avatarURL: URL?
-  var body: some View {
-    HStack(spacing: 12) {
-      AsyncImage(url: avatarURL) { phase in
-        switch phase {
-        case .success(let image):
-          image
-            .resizable()
-            .scaledToFill()
-        case .failure:
-          Image(systemName: "person.crop.circle.badge.exclamationmark")
-            .font(.title)
-        default:
-          ProgressView()
-        }
-      }
-      .frame(width: 56, height: 56)
-      .clipShape(.circle)
-      .accessibilityLabel("صورة \(name)")
-      Text(name).font(.headline)
-      Spacer()
-      Image(systemName: "checkmark.seal.fill")
-        .foregroundStyle(.blue)
-        .accessibilityLabel("حساب موثق")
-    }
-    .padding()
-  }
-}
-
-#Preview {
-  AuthorRow(name: "سارة", avatarURL: URL(string: "https://i.pravatar.cc/200"))
-}`,
-          try: R`غيّر الـ URL لحاجة غلط وشوف أيقونة الخطأ. وبعدين شيل [[.resizable()]] وشوف الصورة طلعت إزاي. وأخيرًا جرّب [[.scaledToFit()]] بدل [[.scaledToFill()]] مع صورة مستطيلة.`,
-          flag: "script",
-          deep: {
-            why: R`الصور أكتر حاجة بتخلي التطبيق شكله حلو أو شكله مكسور. ومن غير التعامل مع الحالات (بتحمّل، فشلت) هتلاقي أماكن فاضية بتقفز لما الصورة تظهر. الـ frame الثابت بيمنع القفزة دي.`,
-            how: R`[[AsyncImage]] بيستخدم URLSession عشان يحمّل، ومش بيبدأ غير لما يظهر. [[phase]] نوعه [[AsyncImagePhase]] (enum). استخدمنا [[default:]] بدل [[.empty]] لأن الـ enum ممكن تيجي له حالات جديدة في iOS أحدث، و Apple بتطلب تغطيتها ([[@unknown default]] هو الشكل الأدق).
-
-[[.resizable()]] لازم يتحط على [[Image]] نفسها مش على الـ View اللي حواليها، عشان كده جوه الـ case. و [[.clipShape(.circle)]] بتقص الصورة على شكل دايرة، والـ [[.frame]] قبلها بيحدد المساحة.
-
-[[URL(string:)]] بيرجّع [[URL?]]، والـ [[AsyncImage(url:)]] بياخد optional: لو nil بيروح لـ failure.`,
-            when: R`SF Symbols لكل الأيقونات (أول اختيار دايمًا قبل ما تطلب أيقونة من الديزاينر). Assets للوجو والصور الثابتة. AsyncImage للصور القليلة من النت، ومكتبة لما الصور كتير (feed أو متجر).`,
-            mistakes: R`تحط [[.frame]] من غير [[.resizable()]] فالصورة متتغيرش. وتستخدم [[scaledToFill]] من غير [[clipShape]] أو [[.clipped()]] فالصورة تطلع برة حدودها. وتحمّل صورة 4000 بكسل عشان تعرضها 56 نقطة: اطلب من الـ API حجم صغير (thumbnail).`
-          },
-          lines: [
-            "SwiftUI.",
-            "صف لكاتب.",
-            "الاسم.",
-            R`[[URL?]] لأن الـ URL ممكن يبقى غلط أو مش موجود.`,
-            "body.",
-            "صف.",
-            R`[[AsyncImage]] بـ closure بياخد الحالة.`,
-            "switch على الحالة.",
-            "اتحملت.",
-            "الصورة.",
-            "قابلة للتحجيم.",
-            "تملا المساحة.",
-            "فشلت.",
-            "أيقونة بديلة.",
-            "حجمها.",
-            R`أي حالة تانية (أهمها [[.empty]]: لسه بيحمّل).`,
-            "دايرة تحميل.",
-            "قفلة switch.",
-            "قفلة AsyncImage.",
-            "مساحة ثابتة، فمفيش قفزة.",
-            "قص دايري.",
-            R`وصف لـ VoiceOver.`,
-            "الاسم.",
-            "Spacer.",
-            "أيقونة SF Symbol.",
-            "لونها.",
-            "وصفها.",
-            "قفلة HStack.",
-            "مسافة.",
-            "قفلة body.",
-            "قفلة.",
-            R`جوه [[#Preview]]: URL لصورة تجريبية.`,
-            "قفلة."
-          ],
-          sol: R`بالـ URL الغلط بتظهر الأيقونة بعلامة التعجب. ومن غير [[.resizable()]] الصورة بتظهر بحجمها الأصلي (200 بكسل) وبتتقص من الدايرة فتشوف جزء صغير منها. و [[scaledToFit]] بيخلي الصورة المستطيلة كاملة جوه المربع وفيه مساحة فاضية فوق وتحت (أو على الجناب)، و [[scaledToFill]] بيملا المربع ويقص الزيادة.`
-        },
-        {
-          cmd: "AppStorage و UserDefaults",
-          title: "تحفظ إعدادات صغيرة بـ @AppStorage و UserDefaults، وإيه اللي مينفعش يتحفظ فيها",
-          desc: R`[[UserDefaults]] مخزن صغير key-value بيفضل محفوظ بعد ما التطبيق يتقفل. مناسب للإعدادات: الوضع الليلي، اللغة، شاف الـ onboarding ولا لأ، آخر تاب.
-
-في SwiftUI: [[@AppStorage("key") private var isDark = false]]. زي [[@State]] بالظبط (بيحدث الـ View وبيدّيك Binding بـ [[$]])، بس القيمة بتتخزن في UserDefaults تحت المفتاح ده. والقيمة اللي في التعريف افتراضية لو المفتاح لسه مش موجود. بيدعم Bool و Int و Double و String و URL و Data، و enums بـ raw value من النوع ده.
-
-برة SwiftUI: [[UserDefaults.standard.set(true, forKey: "seen")]] و [[.bool(forKey:)]] و [[.integer(forKey:)]] و [[.string(forKey:)]]. لاحظ إن [[bool]] و [[integer]] بيرجعوا [[false]] و [[0]] لو المفتاح مش موجود، و [[string]] بيرجّع optional.
-
-اللي مينفعش يتحفظ في UserDefaults:
-• أي حاجة سرية (توكن، باسورد): بتتخزن في ملف plist مش متشفر جوه التطبيق. السر مكانه الـ [[Keychain]].
-• داتا كبيرة أو قوايم بتكبر (المهام، الرسايل): بتتحمّل كلها في الذاكرة عند الفتح. ده مكانه SwiftData أو ملف.
-
-ملحوظة للنشر: [[UserDefaults]] من الـ APIs اللي Apple بتطلب تكتب سبب استخدامها في الـ privacy manifest (درس الخصوصية في المستوى 3).
-
-خلي أسماء المفاتيح في مكان واحد (enum أو static constants) عشان غلطة إملائية في المفتاح = قيمة مش بتتحفظ من غير أي خطأ.`,
-          example: R`import SwiftUI
-
-enum AppTheme: String, CaseIterable, Identifiable {
-  case system, light, dark
-  var id: Self { self }
-}
-
-struct SettingsScreen: View {
-  @AppStorage("username") private var username = ""
-  @AppStorage("theme") private var theme = AppTheme.system
-  @AppStorage("launchCount") private var launchCount = 0
-  private var colorScheme: ColorScheme? {
-    switch theme {
-    case .system: nil
-    case .light: .light
-    case .dark: .dark
-    }
-  }
-  var body: some View {
-    Form {
-      TextField("اسمك", text: $username)
-      Picker("المظهر", selection: $theme) {
-        ForEach(AppTheme.allCases) { Text($0.rawValue).tag($0) }
-      }
-      Text("فتحت الشاشة دي \(launchCount) مرة")
-    }
-    .preferredColorScheme(colorScheme)
-    .onAppear { launchCount += 1 }
-  }
-}
-
-func markOnboardingSeen() {
-  UserDefaults.standard.set(true, forKey: "seenOnboarding")
-  print(UserDefaults.standard.bool(forKey: "seenOnboarding"))
-}`,
-          try: R`اكتب اسمك واختار dark، واقفل التطبيق من الـ Simulator خالص (اسحبه من الـ app switcher) وافتحه تاني. لسه موجودين؟ وبعدين غيّر المفتاح [["username"]] لـ [["userName"]] وشوف القيمة راحت فين.`,
-          flag: "script",
-          deep: {
-            why: R`كل تطبيق محتاج يفتكر إعدادات صغيرة. [[@AppStorage]] بيخليها سطر واحد، ومربوطة بالواجهة مباشرة. بس لازم تعرف حدوده عشان متحطش فيه توكن (مشكلة أمان) أو 5000 عنصر (مشكلة أداء).`,
-            how: R`UserDefaults بيتخزن كملف plist في فولدر التطبيق، وبيتقري في الذاكرة عند أول استخدام. [[@AppStorage]] بيراقب المفتاح، فلو اتغير من أي حتة (حتى من [[UserDefaults.standard.set]]) كل الـ Views اللي بتقراه بتتحدث.
-
-[[preferredColorScheme]] بياخد [[ColorScheme?]]: [[nil]] = اتبع النظام، وعشان كده الـ computed property بترجّع optional. و [[.onAppear]] بيتنفذ كل ما الشاشة تظهر.
-
-لو عايز تشارك الإعدادات مع widget أو extension: [[UserDefaults(suiteName: "group.com.you.app")]] مع App Group.`,
-            when: R`[[@AppStorage]] لإعدادات المستخدم والـ flags الصغيرة. Keychain للتوكنات والباسوردات (مكتبات زي [[KeychainAccess]] بتسهلها). SwiftData للداتا الحقيقية. والملفات ([[FileManager]]) للحاجات الكبيرة (صور، ملفات PDF).`,
-            mistakes: R`تحفظ الـ access token في UserDefaults (أشهر غلطة أمان في تطبيقات المبتدئين). وتحفظ array كبيرة متحولة لـ JSON في UserDefaults وتحدّثها كل ثانية. وتكتب اسم المفتاح كنص في 5 أماكن. وتفتكر إن [[@AppStorage]] بيتشارك بين أجهزة المستخدم: لأ، ده محلي (للمزامنة فيه [[NSUbiquitousKeyValueStore]] أو CloudKit).`
-          },
-          lines: [
-            "SwiftUI.",
-            R`enum بـ raw value String، فـ [[@AppStorage]] يقدر يخزنه.`,
-            "3 حالات.",
-            "id للـ ForEach.",
-            "قفلة.",
-            "شاشة الإعدادات.",
-            R`[[@AppStorage]] بمفتاح، والقيمة الافتراضية فاضية.`,
-            "enum بيتخزن كـ raw value.",
-            "عداد.",
-            R`computed بتحوّل اختيارنا لـ [[ColorScheme?]]، و [[nil]] يعني زي النظام.`,
-            "switch كـ expression.",
-            "nil: اتبع إعداد الجهاز.",
-            "فاتح.",
-            "غامق.",
-            "قفلة switch.",
-            "قفلة.",
-            "body.",
-            "فورم.",
-            R`[[$username]] Binding زي State، بس بيتحفظ.`,
-            "Picker مربوط بالـ theme.",
-            "صف لكل اختيار.",
-            "قفلة.",
-            "العداد.",
-            "قفلة Form.",
-            "مظهر الشاشة دي واللي تحتها.",
-            "بيزود كل ما الشاشة تظهر.",
-            "قفلة body.",
-            "قفلة.",
-            "دالة عادية برة SwiftUI.",
-            R`[[set(_:forKey:)]] بيحفظ.`,
-            R`[[bool(forKey:)]] بيقرا، true.`,
-            "قفلة."
-          ],
-          sol: R`بعد قفل التطبيق وفتحه: الاسم والمظهر موجودين، والعداد كمّل. ولما تغير اسم المفتاح، الـ [[@AppStorage]] بيدور على [["userName"]] فمش لاقيه، فبيرجع للقيمة الافتراضية (فاضي)، والقيمة القديمة لسه متخزنة تحت [["username"]] بس محدش بيقراها. ده سبب إن أسماء المفاتيح لازم تبقى في مكان واحد:`,
-          solCode: R`enum StorageKey {
-  static let username = "username"
-  static let theme = "theme"
-}
-
-@AppStorage(StorageKey.username) private var username = ""`
-        },
-        {
-          cmd: "SwiftData",
-          title: "تحفظ داتا التطبيق على الجهاز بـ SwiftData: @Model و modelContainer و @Query و modelContext",
-          desc: R`SwiftData (iOS 17 وما بعده) طريقة Apple الحديثة لتخزين داتا التطبيق في داتابيز على الجهاز (تحتها SQLite). مبنية فوق Core Data القديمة، بس بكود Swift عادي من غير ملفات model.
-
-4 حاجات:
-1. [[@Model]] على [[class]]: [[@Model final class TaskItem { var title: String ... }]]. الـ macro بيخلي الـ class جدول، وكل property عمود. لازم class ولازم [[init]].
-2. [[.modelContainer(for: TaskItem.self)]] على الـ [[WindowGroup]] في الـ App: بيجهز الداتابيز وبيحطها في الـ environment.
-3. [[@Query]] في أي View: [[@Query(sort: \TaskItem.createdAt, order: .reverse) private var tasks: [TaskItem]]]. بيجيب الداتا ويحدث الـ View لوحده لما تتغير. وتقدر تفلتر بـ [[filter: #Predicate { !$0.isDone }]].
-4. [[@Environment(\.modelContext) private var context]]: للإضافة [[context.insert(item)]] والمسح [[context.delete(item)]]. والتعديل: غيّر الـ property مباشرة ([[task.isDone = true]]). الحفظ بيحصل لوحده (autosave)، وتقدر تنادي [[try context.save()]] لو عايز تضمن.
-
-الـ [[@Model]] classes بتتبع Observable، فتقدر تعمل منها bindings بـ [[@Bindable]] أو [[Bindable(task).isDone]].
-
-[[@Attribute(.unique)]] على property بيمنع التكرار، و [[@Relationship(deleteRule: .cascade)]] للعلاقات (مشروع فيه مهام، ولما يتمسح المهام تتمسح).
-
-صراحة: SwiftData لسه أصغر من Core Data في الإمكانيات وكان فيها bugs في أول نسخها، وفيه شركات كتير لسه على Core Data أو بتستخدم مكتبات زي [[GRDB]]. بس للمشاريع الجديدة وللتعلم هي البداية المنطقية.`,
-          example: R`import SwiftUI
-import SwiftData
-
-@Model
-final class TaskItem {
-  var title: String
-  var isDone: Bool
-  var createdAt: Date
-  init(title: String, isDone: Bool = false, createdAt: Date = .now) {
-    self.title = title
-    self.isDone = isDone
-    self.createdAt = createdAt
-  }
-}
-
-@main
-struct TasksApp: App {
-  var body: some Scene {
-    WindowGroup {
-      TasksScreen()
-    }
-    .modelContainer(for: TaskItem.self)
-  }
-}
-
-struct TasksScreen: View {
-  @Environment(\.modelContext) private var context
-  @Query(sort: \TaskItem.createdAt, order: .reverse) private var tasks: [TaskItem]
-  @State private var newTitle = ""
-  var body: some View {
-    NavigationStack {
-      List {
-        TextField("مهمة جديدة", text: $newTitle)
-          .onSubmit(add)
-        ForEach(tasks) { task in
-          Toggle(task.title, isOn: Bindable(task).isDone)
-        }
-        .onDelete { offsets in
-          for index in offsets { context.delete(tasks[index]) }
-        }
-      }
-      .navigationTitle("مهامي (\(tasks.count))")
-    }
-  }
-  private func add() {
-    let title = newTitle.trimmingCharacters(in: .whitespaces)
-    guard !title.isEmpty else { return }
-    context.insert(TaskItem(title: title))
-    newTitle = ""
-  }
-}`,
-          try: R`ضيف 3 مهام وعلّم واحدة، واقفل التطبيق خالص وافتحه: موجودين؟ وبعدين اعمل [[@Query]] تاني بـ [[filter: #Predicate<TaskItem> { !$0.isDone }]] واعرض عدد المتبقي في العنوان. وأخيرًا اعمل Preview بداتابيز في الذاكرة بس.`,
-          flag: "script",
-          deep: {
-            why: R`تطبيق مهام أو ملاحظات أو مصاريف لازم يحفظ الداتا على الجهاز ويشتغل من غير نت. قبل SwiftData كان Core Data هو الحل الرسمي، وكان محتاج ملف model بالرسم و [[NSManagedObject]] و [[NSFetchRequest]] وكود كتير. SwiftData بتعمل نفس الشغل بـ macros.`,
-            how: R`[[@Model]] بيحوّل كل stored property لحاجة بتتخزن وبتتراقب (زي [[@Observable]]). الـ [[ModelContainer]] بيمثل الداتابيز والـ schema، والـ [[ModelContext]] زي «مساحة شغل»: بتعمل فيها insert و delete وتعديلات، وبتتحفظ على الديسك على فترات أو مع [[save()]].
-
-[[@Query]] بيعمل fetch من الـ context اللي في الـ environment، وبيراقب أي تغيير، فلما تعمل insert القايمة بتتحدث من غير ما تعمل حاجة. و [[#Predicate]] macro بيحوّل الـ closure لشرط الداتابيز تفهمه (مش كل كود Swift ينفع جواه).
-
-[[Bindable(task).isDone]] بيعمل Binding لـ property في الـ object من غير ما نعمل View منفصل بـ [[@Bindable]]. و [[.onSubmit(add)]] بيبعت الدالة نفسها كـ closure.
-
-لو غيرت شكل الـ model بعد ما نزّلت التطبيق (ضفت property مثلًا)، SwiftData بتعمل migration خفيف لوحدها في الحالات البسيطة، وللتغييرات الكبيرة فيه [[VersionedSchema]] و [[SchemaMigrationPlan]].`,
-            when: R`داتا المستخدم المحلية اللي بتكبر: مهام، ملاحظات، مفضلة، cache لداتا من السيرفر. ولو التطبيق كله بيعرض داتا السيرفر ومش محتاج يشتغل offline، ممكن مش محتاج داتابيز خالص.`,
-            mistakes: R`تنسى [[.modelContainer]] فالتطبيق يقع أول ما [[@Query]] يشتغل. وتعمل [[@Model]] بـ struct (لازم class). وتعمل الـ Preview من غير container. وتعمل insert لعناصر كتير في loop على الـ main thread (لآلاف العناصر استخدم [[@ModelActor]] في الخلفية). وتفتكر إن SwiftData بتزامن مع السيرفر بتاعك: هي محلية (وفيها مزامنة iCloud عن طريق CloudKit لو فعّلتها، بشروط على شكل الـ model).`
-          },
-          lines: [
-            "SwiftUI.",
-            "SwiftData.",
-            R`[[@Model]]: الـ class ده بقى جدول.`,
-            R`لازم [[class]].`,
-            "عمود.",
-            "عمود.",
-            "عمود.",
-            R`[[init]] إجباري، والقيم الافتراضية بتسهّل الإنشاء. [[.now]] = [[Date.now]].`,
-            "بنحط القيم.",
-            "بنحط القيم.",
-            "بنحط القيم.",
+            R`memberwise init جاهز من غير ما نكتبه.`,
+            R`[[b]] نسخة مستقلة من [[a]].`,
+            "بنعدّل النسخة بس.",
+            R`[[a.x]] لسه 1.`,
+            R`[[final class]]: class مينفعش يتورث.`,
+            "property.",
+            R`[[init]] لازم نكتبه للـ class.`,
+            R`[[self.balance]] الـ property، و [[balance]] لوحدها الـ parameter.`,
             "قفلة الـ init.",
             "قفلة الـ class.",
-            "نقطة البداية.",
-            "الـ App.",
-            "body.",
-            "الشباك.",
-            "أول شاشة.",
-            "قفلة WindowGroup.",
-            R`[[.modelContainer]]: بيجهز الداتابيز للنوع ده ويحطها في الـ environment.`,
-            "قفلة body.",
-            "قفلة.",
-            "شاشة المهام.",
-            R`[[\.modelContext]]: للإضافة والمسح.`,
-            R`[[@Query]]: كل المهام، الأحدث فوق، وبتتحدث لوحدها.`,
-            "النص اللي بيتكتب.",
-            "body.",
-            "NavigationStack عشان العنوان.",
-            "قايمة.",
-            "خانة الإضافة.",
-            R`[[.onSubmit(add)]]: لما يدوس Enter.`,
-            "مهمة في كل صف.",
-            R`[[Bindable(task).isDone]] Binding للـ property، والتعديل بيتحفظ لوحده.`,
-            "قفلة ForEach.",
-            "المسح بالـ swipe.",
-            R`[[context.delete]] لكل عنصر اتمسح.`,
-            "قفلة.",
-            "قفلة List.",
-            "العدد في العنوان.",
-            "قفلة NavigationStack.",
-            "قفلة body.",
-            "دالة الإضافة.",
-            "نشيل المسافات.",
-            "منضيفش فاضي.",
-            R`[[context.insert]]: الـ @Query هيشوفها على طول.`,
-            "نفضّي الخانة.",
-            "قفلة الدالة.",
-            "قفلة."
+            "object واحد.",
+            R`[[acc2]] reference لنفس الـ object.`,
+            R`مسموح رغم [[let]]: الـ let على الـ reference مش على الـ object.`,
+            "الاتنين صفر.",
+            R`[[===]] نفس الـ object؟ true.`,
+            R`struct بـ [[let]]: مقفول بالكامل.`,
+            "قراية عادي."
           ],
-          sol: R`بعد القفل والفتح، المهام والعلامات موجودين: اتحفظوا تلقائيًا.
+          sol: R`[[fixed.x = 5]] بيطلّع: [[cannot assign to property: 'fixed' is a 'let' constant]].
 
-الفلتر والـ Preview:`,
-          solCode: R`@Query(filter: #Predicate<TaskItem> { !$0.isDone }) private var remaining: [TaskItem]
+ناتج المثال:
+[[struct: a.x = 1, b.x = 100]]
+[[class: acc1 = 0, acc2 = 0]]
+[[true]]
+[[0]]
 
-// العنوان
-.navigationTitle("مهامي (فاضل \(remaining.count))")
-
-#Preview {
-  TasksScreen()
-    .modelContainer(for: TaskItem.self, inMemory: true)
-}`
+لو غيّرت Point لـ class: محتاج تكتب [[init]] بنفسك وإلا [[class 'Point' has no initializers]]، وبعد ما تكتبه هتلاقي [[a.x]] بقت 100 كمان لأن [[b]] بقى reference لنفس الـ object.`
         },
         {
-          cmd: "UIKit مع SwiftUI",
-          title: "UIKit لسه موجود فين، وتستخدم view من UIKit جوه SwiftUI بـ UIViewRepresentable والعكس بـ UIHostingController",
-          desc: R`[[UIKit]] الـ framework القديم للواجهات (من 2008). SwiftUI طلع 2019، ودلوقتي هو الاختيار الطبيعي لأي شاشة جديدة. بس UIKit لسه في كل حتة:
-• تطبيقات الشركات الكبيرة اتكتبت بـ UIKit وبتتنقل لـ SwiftUI شاشة شاشة. هتلاقي في الإعلانات كتير «UIKit و SwiftUI».
-• حاجات مفيهاش بديل كامل في SwiftUI أو محتاجة تحكم أدق (بعض شاشات الكاميرا، و text editing متقدم، و collection layouts معقدة).
-• SwiftUI نفسه على iOS مبني جزء منه فوق UIKit.
+          cmd: "properties و methods و mutating",
+          title: "computed properties و didSet و static، وليه method الـ struct اللي بتعدّل محتاجة mutating",
+          desc: R`الـ properties نوعين:
+1. stored: قيمة متخزنة فعلًا ([[var name: String]]).
+2. computed: بتتحسب كل مرة تتقري: [[var total: Double { price * Double(quantity) }]]. مش متخزنة، فدايمًا مظبوطة.
 
-المفاهيم اللي لازم تعرفها من UIKit: [[UIViewController]] (شاشة)، و [[UIView]] (عنصر)، و [[UILabel]] و [[UIButton]] و [[UITableView]]، والـ delegate pattern (object بيبلغ object تاني بالأحداث، وبيبقى [[weak]])، والـ Auto Layout (constraints)، و Storyboards (تصميم بالسحب، أقل استخدامًا دلوقتي).
+[[didSet]] و [[willSet]] (property observers): كود بيتنفذ بعد أو قبل ما الـ stored property تتغير. جوه [[didSet]] فيه [[oldValue]] (القيمة القديمة).
 
-التوصيل في الاتجاهين:
-1. UIKit جوه SwiftUI: struct بيتبع [[UIViewRepresentable]] (أو [[UIViewControllerRepresentable]] لشاشة كاملة). بتكتب [[makeUIView]] (بتعمل الـ view مرة) و [[updateUIView]] (بتحدثه لما الـ state تتغير). ولو محتاج تستقبل أحداث من الـ view، بتعمل [[Coordinator]] يبقى الـ delegate.
-2. SwiftUI جوه UIKit: [[UIHostingController(rootView: MySwiftUIView())]] بيلف أي View في view controller، فتقدر تحطه في تطبيق UIKit قديم. وده الطريقة اللي الشركات بتدخل بيها SwiftUI تدريجيًا.
+الـ methods دوال جوه النوع. وفي الـ struct، أي method بتغيّر property لازم تتعلم [[mutating]]، لأن الـ struct value والـ methods العادية بتتعامل معاه كأنه [[let]]. ومش هتقدر تنادي method [[mutating]] على struct متعرّف بـ [[let]]. (في الـ class مفيش [[mutating]] لأن الـ object reference).
 
-المثال بيلف [[UITextView]] (SwiftUI فيه [[TextEditor]] بالفعل، بس الـ pattern نفسه هو اللي هتستخدمه مع أي view من UIKit).`,
-          example: R`import SwiftUI
-import UIKit
+[[static]] property أو method تابعة للنوع نفسه مش لكل نسخة: [[Product.taxRate]].
 
-struct RichTextView: UIViewRepresentable {
-  @Binding var text: String
-  func makeUIView(context: Context) -> UITextView {
-    let view = UITextView()
-    view.font = .preferredFont(forTextStyle: .body)
-    view.delegate = context.coordinator
-    return view
-  }
-  func updateUIView(_ uiView: UITextView, context: Context) {
-    if uiView.text != text {
-      uiView.text = text
+و [[private(set)]] معناها: الكل يقدر يقرا، بس التعديل من جوه النوع بس (تفاصيل في درس access control).
+
+[[init]] تقدر تكتبه بنفسك في الـ struct (ولو كتبته الـ memberwise init الجاهز بيختفي، إلا لو كتبت بتاعك في extension).`,
+          example: R`struct CartItem {
+  static let taxRate = 0.14
+  let name: String
+  let price: Double
+  private(set) var quantity: Int {
+    didSet {
+      print("\(name): \(oldValue) ← \(quantity)")
     }
   }
-  func makeCoordinator() -> Coordinator {
-    Coordinator(text: $text)
+  var total: Double {
+    price * Double(quantity) * (1 + Self.taxRate)
   }
-  final class Coordinator: NSObject, UITextViewDelegate {
-    var text: Binding<String>
-    init(text: Binding<String>) {
-      self.text = text
-    }
-    func textViewDidChange(_ textView: UITextView) {
-      text.wrappedValue = textView.text
-    }
+  mutating func add(_ n: Int = 1) {
+    quantity += n
   }
 }
-
-struct NoteScreen: View {
-  @State private var note = "اكتب هنا..."
-  var body: some View {
-    VStack {
-      RichTextView(text: $note)
-      Text("\(note.count) حرف")
-    }
-  }
-}
-
-func makeLegacyScreen() -> UIViewController {
-  UIHostingController(rootView: NoteScreen())
-}`,
-          try: R`شغّل [[NoteScreen]] واكتب: العداد بيتحدث مع كل حرف؟ وبعدين ضيف زرار «امسح» في SwiftUI بيعمل [[note = ""]] وشوف إن الـ UITextView اتفضّى (ده شغل [[updateUIView]]).`,
+var item = CartItem(name: "كشكول", price: 50, quantity: 1)
+item.add()
+item.add(3)
+print(item.quantity, item.total)
+print(CartItem.taxRate)`,
+          try: R`شيل كلمة [[mutating]] واقرا الخطأ. وبعدين جرّب [[item.quantity = 10]] من برة. وأخيرًا اعمل [[let fixedItem = CartItem(...)]] ونادي [[fixedItem.add()]].`,
           flag: "script",
           deep: {
-            why: R`أغلب الوظايف iOS في السوق في شركات عندها كود من 5 أو 10 سنين. لو بتعرف SwiftUI بس، هتتلخبط أول ما تفتح المشروع وتلاقي [[UIViewController]] و delegates. ولو بتعرف UIKit بس، هتتأخر عن الجديد. الربط بين الاتنين مهارة مطلوبة فعلًا في الانترفيوهات.`,
-            how: R`SwiftUI بتنادي [[makeUIView]] مرة لما الـ View يظهر أول مرة، و [[updateUIView]] كل ما state الـ struct تتغير (هنا [[text]]). الشرط [[if uiView.text != text]] بيمنع إعادة الكتابة كل مرة (اللي كانت هتحرك المؤشر).
+            why: R`[[mutating]] بتخلي التعديل ظاهر في الكود: لما تشوف method مش mutating انت متأكد إنها مش هتغيّر القيمة. والـ computed properties بتمنع الداتا المتناقضة (مفيش total متخزن ممكن ينسى يتحدث لما الكمية تتغير).`,
+            how: R`الـ mutating method بتاخد [[self]] كأنه [[inout]]: نسخة بتتعدل وبترجع مكان الأصل. عشان كده محتاجة [[var]].
 
-الـ [[Coordinator]] class لأن الـ delegate لازم يبقى object (UIKit بيمسكه [[weak]])، وبيورث [[NSObject]] لأن protocols الـ UIKit من Objective-C. وبيمسك [[Binding]] عشان يكتب في الـ state بتاعة SwiftUI. و [[text.wrappedValue]] هي القيمة اللي جوه الـ Binding.
+[[Self.taxRate]] بـ S كابيتال يعني «النوع الحالي». وينفع تكتب [[CartItem.taxRate]]. و [[didSet]] مش بيتنادى من جوه [[init]]، بس بيتنادى من أي تعديل بعد كده (حتى من جوه الـ methods).
 
-[[UIViewRepresentable]] و [[UITextViewDelegate]] الاتنين [[@MainActor]]، فالكود ده كله على الـ main thread، وده المطلوب لأي شغل UI.`,
-            when: R`لما تحتاج view من UIKit أو مكتبة قديمة مفيش بديلها في SwiftUI (خرايط مخصصة، محرر نصوص متقدم، كاميرا مخصصة). و [[UIHostingController]] لما بتضيف شاشات SwiftUI جديدة لتطبيق UIKit قديم.`,
-            mistakes: R`تعمل الـ view من جديد في [[updateUIView]] بدل ما تعدّله. وتكتب في الـ Binding من جوه [[updateUIView]] فتعمل loop تحديث. وتمسك الـ parent struct جوه الـ Coordinator وتتوقع إنه يتحدث (الـ struct نسخة قديمة). وتفتكر إن UIKit «مات»: لسه مطلوب في أغلب الشركات.`
+الـ memberwise init لسه موجود هنا وبياخد [[quantity]] رغم إنها [[private(set)]]، لأن الـ init نفسه internal.`,
+            when: R`computed properties لأي قيمة مشتقة من قيم تانية (المجموع، الاسم الكامل، هل الفورم سليم). و [[didSet]] للـ side effects البسيطة (حفظ، log). و [[static]] للثوابت المشتركة وللـ factory methods ([[User.preview]] في SwiftUI previews).`,
+            mistakes: R`تحط computed property تقيلة (حسابات كتير أو شبكة) وتقراها في loop. وتعمل [[didSet]] بيعدّل نفس الـ property فيعمل loop. وتنسى إن [[didSet]] مش بيشتغل في الـ init فتستغرب إن الـ log مطلعش.`
           },
-          lines: [
-            "SwiftUI.",
-            "UIKit.",
-            R`[[UIViewRepresentable]]: بيلف view من UIKit.`,
-            "Binding للنص من الأب.",
-            R`[[makeUIView]]: بتتنادى مرة واحدة.`,
-            R`[[UITextView]] من UIKit.`,
-            "خط بيتأقلم مع Dynamic Type.",
-            R`الـ delegate هو الـ coordinator.`,
-            "بنرجّع الـ view.",
-            "قفلة.",
-            R`[[updateUIView]]: لما الـ state تتغير.`,
-            "لو النص مختلف بس.",
-            "نحدث الـ view.",
-            "قفلة if.",
-            "قفلة.",
-            R`[[makeCoordinator]]: بيعمل الـ coordinator مرة.`,
-            "بنبعتله الـ Binding.",
-            "قفلة.",
-            R`[[Coordinator]]: class بيستقبل أحداث UIKit.`,
-            "بيمسك الـ Binding.",
-            "init.",
-            "بنحفظه.",
-            "قفلة.",
-            R`method من [[UITextViewDelegate]]: بتتنادى مع كل تغيير.`,
-            R`بنكتب في state بتاعة SwiftUI عن طريق [[wrappedValue]].`,
-            "قفلة.",
-            "قفلة الـ Coordinator.",
-            "قفلة الـ struct.",
-            "شاشة SwiftUI.",
-            "state.",
-            "body.",
-            "عمود.",
-            "الـ view بتاع UIKit زي أي View.",
-            "عداد بيتحدث مع الكتابة.",
-            "قفلة.",
-            "قفلة body.",
-            "قفلة.",
-            "دالة للتطبيقات القديمة.",
-            R`[[UIHostingController]]: View من SwiftUI جوه UIViewController.`,
-            "قفلة."
-          ],
-          sol: R`أيوه: كل حرف بينادي [[textViewDidChange]]، والـ coordinator بيكتب في [[note]]، فالعداد بيتحدث. وزرار المسح بيغيّر [[note]]، و SwiftUI بتنادي [[updateUIView]]، والنص مختلف فبيتكتب [[""]] في الـ UITextView.`,
-          solCode: R`VStack {
-  RichTextView(text: $note)
-  HStack {
-    Text("\(note.count) حرف")
-    Spacer()
-    Button("امسح") { note = "" }
+          teach: R`## البرنامج بيعمل إيه؟
+
+عنصر في سلة مشتريات: ليه اسم وسعر ثابتين، وكمية بتتغير من method واحدة بس وبتطبع كل تغيير، ومجموع بيتحسب لوحده بالضريبة. الناتج من [[swift main.swift]] على Swift 6.4 في Docker.
+
+---
+
+## ١. [[static]]: قيمة للنوع كله
+
+~~~swift
+struct CartItem {
+  static let taxRate = 0.14
+~~~
+
+[[static]] معناها إن [[taxRate]] تابعة لـ [[CartItem]] نفسه، مش لكل عنصر. نسخة واحدة بس مهما عملت عناصر، وبتتقري من اسم النوع: [[CartItem.taxRate]].
+
+---
+
+## ٢. stored properties
+
+~~~swift
+  let name: String
+  let price: Double
+~~~
+
+دول **stored**: قيمتهم متخزنة فعلًا جوه كل عنصر. و [[let]] يعني بعد ما العنصر يتعمل مش هيتغيروا.
+
+---
+
+## ٣. [[private(set)]] و [[didSet]]
+
+~~~swift
+  private(set) var quantity: Int {
+    didSet {
+      print("\(name): \(oldValue) ← \(quantity)")
+    }
   }
-  .padding()
-}`
+~~~
+
+- [[private(set)]]: أي حد يقدر **يقرا** [[quantity]]، بس **الكتابة** من جوه الـ struct بس.
+- [[{ didSet { ... } }]] بعد الـ property: property observer. الكود ده بيتنفذ **بعد** كل تغيير في القيمة.
+- [[oldValue]]: اسم جاهز جوه [[didSet]] للقيمة القديمة. و [[quantity]] جواه = الجديدة.
+- وفيه أخوه [[willSet]] بيتنفذ **قبل** التغيير، وجواه [[newValue]].
+
+---
+
+## ٤. computed property
+
+~~~swift
+  var total: Double {
+    price * Double(quantity) * (1 + Self.taxRate)
+  }
+~~~
+
+- مفيش [[=]]: فيه [[{ }]] على طول بعد النوع. ده معناه إن [[total]] مش متخزنة، **بتتحسب كل مرة تتقري**. فعمرها ما هتبقى قديمة.
+- [[Double(quantity)]]: الكمية Int، ولازم تتحول عشان تتضرب في Double.
+- [[Self.taxRate]]: [[Self]] بـ S كبيرة = «النوع الحالي» (هنا [[CartItem]]). بنستخدمها عشان نوصل للـ static من جوه.
+
+---
+
+## ٥. [[mutating]]
+
+~~~swift
+  mutating func add(_ n: Int = 1) {
+    quantity += n
+  }
+}
+~~~
+
+- [[func]] جوه النوع اسمها method.
+- الـ struct value، والـ methods العادية بتشوف [[self]] كأنه [[let]]. [[mutating]] بتقول: «الـ method دي بتعدّل الـ struct».
+- [[n: Int = 1]] قيمة افتراضية: [[add()]] = [[add(1)]].
+
+شلنا [[mutating]] (التجربة):
+
+~~~text الناتج
+main.swift:14:14: error: left side of mutating operator isn't mutable: 'self' is immutable
+~~~
+
+يعني: الشمال بتاع [[+=]] مش قابل للتعديل لأن [[self]] ثابت. والـ compiler بيقترح [[note: mark method 'mutating' to make 'self' mutable]].
+
+---
+
+## ٦. التشغيل
+
+~~~swift
+var item = CartItem(name: "كشكول", price: 50, quantity: 1)
+item.add()
+item.add(3)
+print(item.quantity, item.total)
+print(CartItem.taxRate)
+~~~
+
+- الـ memberwise init لسه موجود وبياخد [[quantity]].
+- [[var item]]: لازم [[var]] عشان ننادي mutating.
+- [[add()]]: 1 ← 2، و [[didSet]] طبع. [[add(3)]]: 2 ← 5.
+- [[total]] = 50 × 5 × 1.14 = 285 بالحساب... بس الطباعة [[285.00000000000006]]. الـ [[Double]] بيخزن الأرقام بالنظام الثنائي، و 1.14 مبتتكتبش فيه بالظبط، فبيطلع فرق صغير جدًا.
+
+~~~text الناتج
+كشكول: 1 ← 2
+كشكول: 2 ← 5
+5 285.00000000000006
+0.14
+~~~
+
+ملحوظة: [[didSet]] **مش** بيتنادى وقت الإنشاء (الـ init)، عشان كده مفيش سطر «لا شيء ← 1». جربناها في struct فيه [[init]] بيحط القيمة وبعدين غيّرناها مرة: [[didSet]] طبع مرة واحدة بس، للتغيير.
+
+---
+
+## ٧. باقي التجربة
+
+~~~swift
+item.quantity = 10
+let fixedItem = CartItem(name: "x", price: 1, quantity: 1)
+fixedItem.add()
+~~~
+
+~~~text الناتج
+main.swift:22:6: error: cannot assign to property: 'quantity' setter is inaccessible
+main.swift:24:11: error: cannot use mutating member on immutable value: 'fixedItem' is a 'let' constant
+~~~
+
+- الأول: الـ setter (جزء الكتابة) private بسبب [[private(set)]].
+- التاني: [[fixedItem]] [[let]]، فمينفعش mutating عليه.
+
+---
+
+## الخلاصة
+
+| الحاجة | الشكل | معناها |
+|---|---|---|
+| stored | [[let name: String]] | قيمة متخزنة |
+| computed | [[var total: Double { ... }]] | بتتحسب كل قراية |
+| observer | [[didSet { oldValue }]] | كود بعد كل تغيير (مش في الـ init) |
+| static | [[static let taxRate]] | للنوع كله: [[CartItem.taxRate]] |
+| mutating | [[mutating func add]] | method بتعدّل struct |
+| private(set) | [[private(set) var q]] | قراية للكل، كتابة من جوه |`,
+          lines: [
+            "struct لعنصر في السلة.",
+            R`[[static]]: ثابت واحد للنوع كله.`,
+            "stored property ثابتة.",
+            "stored property ثابتة.",
+            R`[[private(set)]]: القراية للكل والتعديل من جوه بس.`,
+            R`[[didSet]] بيتنفذ بعد كل تعديل.`,
+            R`[[oldValue]] القيمة القديمة متاحة جواه.`,
+            "قفلة didSet.",
+            "قفلة الـ property.",
+            R`computed: مش متخزنة، بتتحسب كل قراية.`,
+            R`[[Self.taxRate]]: الـ static بتاع النوع الحالي.`,
+            "قفلة.",
+            R`[[mutating]] لأنها بتغيّر [[quantity]]. و [[n]] افتراضيه 1.`,
+            "التعديل ده بيشغّل didSet.",
+            "قفلة.",
+            "قفلة الـ struct.",
+            R`memberwise init، و [[var]] عشان نقدر ننادي mutating.`,
+            "بيطبع 1 ← 2.",
+            "بيطبع 2 ← 5.",
+            "الكمية والمجموع بالضريبة.",
+            R`static بيتقري من اسم النوع.`
+          ],
+          sol: R`من غير [[mutating]]: [[left side of mutating operator isn't mutable: 'self' is immutable]].
+و [[item.quantity = 10]] من برة: [[cannot assign to property: 'quantity' setter is inaccessible]].
+و [[fixedItem.add()]] على [[let]]: [[cannot use mutating member on immutable value: 'fixedItem' is a 'let' constant]].
+
+ناتج المثال (لاحظ [[285.00000000000006]] بدل 285: ده خطأ الـ Double اللي اتكلمنا عنه في درس الأنواع، وعشان كده الفلوس في تطبيق حقيقي بتتحسب بـ [[Decimal]] أو بالقروش كـ Int، وبتتعرض بـ [[formatted()]]):`,
+          solCode: R`كشكول: 1 ← 2
+كشكول: 2 ← 5
+5 285.00000000000006
+0.14`
+        },
+        {
+          cmd: "enums و associated values",
+          title: "enum للحالات المحدودة، ومعاه قيم مرفقة (associated values)، وتفكه بـ switch",
+          desc: R`[[enum]] نوع قيمه محددة ومعروفة: [[enum Direction { case north, south, east, west }]]. القيمة بتتكتب [[Direction.north]]، ولو النوع معروف [[.north]] بس (النقطة في الأول اختصار).
+
+enums في Swift أقوى بكتير من C و Java:
+1. raw values: كل حالة ليها قيمة ثابتة من نوع واحد: [[enum Role: String { case admin, user }]]. [[Role.admin.rawValue]] = [["admin"]]. و [[Role(rawValue: "x")]] بترجّع optional.
+2. associated values: كل حالة ممكن تشيل داتا مختلفة: [[case failed(message: String)]] و [[case loaded([Item])]]. دي أهم ميزة، وبتوصف «الحالة» بالظبط من غير properties optional متلخبطة.
+3. methods و computed properties جوه الـ enum.
+4. [[CaseIterable]]: بيدّيك [[allCases]] بكل الحالات.
+
+[[switch]] على enum بيطلب تغطية كل الحالات، ولو ضفت حالة جديدة الـ compiler بيوريك كل مكان لازم يتعدل. وتفك الـ associated values جوه الـ case: [[case .failed(let message):]].
+
+و [[if case .failed(let msg) = state { }]] لو عايز تشيك حالة واحدة بس.`,
+          example: R`enum LoadState {
+  case idle
+  case loading
+  case loaded(items: [String])
+  case failed(message: String)
+}
+func describe(_ state: LoadState) -> String {
+  switch state {
+  case .idle: "لسه مبدأناش"
+  case .loading: "بنحمّل..."
+  case .loaded(let items) where items.isEmpty: "مفيش نتايج"
+  case .loaded(let items): "لقينا \(items.count)"
+  case .failed(let message): "حصلت مشكلة: \(message)"
+  }
+}
+print(describe(.loading))
+print(describe(.loaded(items: ["أ", "ب"])))
+print(describe(.loaded(items: [])))
+print(describe(.failed(message: "مفيش نت")))
+enum Plan: String, CaseIterable {
+  case free, pro, team
+  var price: Int {
+    switch self {
+    case .free: 0
+    case .pro: 99
+    case .team: 299
+    }
+  }
+}
+for plan in Plan.allCases {
+  print(plan.rawValue, plan.price)
+}
+print(Plan(rawValue: "pro")?.price ?? -1, Plan(rawValue: "gold") as Any)`,
+          try: R`ضيف [[case offline]] لـ [[LoadState]] من غير ما تعدّل الـ switch، وشوف الـ compiler بيقول إيه. وبعدين اكتب [[if case .failed(let m) = someState { print(m) }]].`,
+          flag: "script",
+          deep: {
+            why: R`الطريقة البدائية لوصف حالة شاشة: [[isLoading: Bool]] و [[error: String?]] و [[items: [Item]]]. وبكده ممكن تبقى في حالة مستحيلة (بتحمّل وفيه error وفيه داتا في نفس الوقت). الـ enum بـ associated values بيخلي الحالات المستحيلة مستحيلة فعلًا: يا loading يا loaded بداتا يا failed برسالة. هتستخدم ده في كل شاشة SwiftUI بتجيب داتا.`,
+            how: R`الـ enum value type. الحجم بتاعه = أكبر associated value + شوية للتمييز بين الحالات. والـ [[Optional]] نفسه enum: [[case none]] و [[case some(Wrapped)]]. و [[Result]] (درس الأخطاء) enum: [[case success]] و [[case failure]].
+
+[[where]] في الـ case بيضيف شرط، والـ cases بتتجرب بالترتيب، عشان كده [[items.isEmpty]] لازم قبل الـ case العام.`,
+            when: R`أي حاجة ليها مجموعة حالات محدودة: حالة تحميل، نوع اشتراك، تاب في التطبيق، نوع إشعار، أخطاء (enum بيتبع [[Error]]). و raw values لما الحالات بتتحفظ أو بتيجي من API كنص.`,
+            mistakes: R`تحط [[default:]] في switch على enum بتاعك فتخسر تنبيه الحالات الجديدة. وتستخدم [[String]] للحالات ([[status == "loadng"]] بغلطة إملائية محدش هيمسكها). وتنسى إن [[Plan(rawValue:)]] optional.`
+          },
+          teach: R`## البرنامج بيعمل إيه؟
+
+جزئين: enum بيوصف حالة تحميل شاشة، وبعض حالاته شايلة داتا (associated values) ودالة بتوصفها بـ [[switch]]. وenum تاني لخطط اشتراك ليه raw values وسعر لكل خطة. الناتج من [[swift main.swift]] على Swift 6.4 في Docker.
+
+---
+
+## ١. [[enum LoadState]] بـ associated values
+
+~~~swift
+enum LoadState {
+  case idle
+  case loading
+  case loaded(items: [String])
+  case failed(message: String)
+}
+~~~
+
+- [[enum]] نوع قيمه محددة: الحالة يا [[idle]] يا [[loading]] يا [[loaded]] يا [[failed]]. مفيش حاجة تانية ممكنة.
+- [[case idle]] و [[case loading]]: حالات فاضية.
+- [[case loaded(items: [String])]]: الحالة دي **شايلة** array من النصوص. ده associated value: كل قيمة من الحالة دي معاها داتا خاصة بيها.
+- [[case failed(message: String)]]: شايلة رسالة.
+
+فمستحيل يبقى عندك «فيه error وفيه items في نفس الوقت»: النوع نفسه بيمنعها.
+
+---
+
+## ٢. [[switch]] بيفك الداتا
+
+~~~swift
+func describe(_ state: LoadState) -> String {
+  switch state {
+  case .idle: "لسه مبدأناش"
+  case .loading: "بنحمّل..."
+  case .loaded(let items) where items.isEmpty: "مفيش نتايج"
+  case .loaded(let items): "لقينا \(items.count)"
+  case .failed(let message): "حصلت مشكلة: \(message)"
+  }
+}
+~~~
+
+- [[.idle]]: اختصار [[LoadState.idle]]. النقطة في الأول كفاية لأن Swift عارفة إن [[state]] نوعه [[LoadState]].
+- الـ switch هنا expression (من غير [[return]]): كل case فيه قيمة واحدة بترجع.
+- [[case .loaded(let items)]]: لو الحالة loaded، طلّع الـ array اللي جواها في اسم [[items]].
+- [[where items.isEmpty]]: شرط زيادة. لازم ييجي **قبل** [[.loaded]] العام، لأن الـ cases بتتجرب بالترتيب.
+- **مفيش [[default]]**: الـ ٤ حالات متغطية، والـ compiler عارف كده.
+
+---
+
+## ٣. النداءات
+
+~~~swift
+print(describe(.loading))
+print(describe(.loaded(items: ["أ", "ب"])))
+print(describe(.loaded(items: [])))
+print(describe(.failed(message: "مفيش نت")))
+~~~
+
+بتعمل القيمة بنفس شكل الـ case: [[.loaded(items: [...])]].
+
+~~~text الناتج
+بنحمّل...
+لقينا 2
+مفيش نتايج
+حصلت مشكلة: مفيش نت
+~~~
+
+**التجربة:** ضفنا [[case offline]] من غير ما نعدّل الـ switch:
+
+~~~text الناتج
+main.swift:9:3: error: switch must be exhaustive
+~~~
+
+ومعاه [[note: add missing case: '.offline']]: الـ compiler بيقولك بالظبط الحالة الناقصة. لو كان فيه [[default]] كان سكت والحالة الجديدة دخلت فيه من غير ما تاخد بالك.
+
+---
+
+## ٤. [[enum Plan]]: raw values و [[CaseIterable]]
+
+~~~swift
+enum Plan: String, CaseIterable {
+  case free, pro, team
+  var price: Int {
+    switch self {
+    case .free: 0
+    case .pro: 99
+    case .team: 299
+    }
+  }
+}
+~~~
+
+- [[: String]] بعد الاسم: كل حالة ليها raw value نصي. لو مكتبتهوش، بيبقى اسم الحالة نفسه: [[Plan.pro.rawValue]] = [["pro"]].
+- [[CaseIterable]]: protocol بيدّيك [[Plan.allCases]] = array بكل الحالات بالترتيب.
+- [[case free, pro, team]]: ٣ حالات في سطر واحد.
+- [[var price: Int { switch self { ... } }]]: computed property جوه الـ enum. [[self]] = الحالة الحالية.
+
+---
+
+## ٥. استخدامها
+
+~~~swift
+for plan in Plan.allCases {
+  print(plan.rawValue, plan.price)
+}
+print(Plan(rawValue: "pro")?.price ?? -1, Plan(rawValue: "gold") as Any)
+~~~
+
+- [[Plan(rawValue: "pro")]]: من نص لـ enum. بترجّع [[Plan?]] لأن النص ممكن ميطابقش أي حالة.
+- [[pro]] موجودة: [[?.price]] = 99. [["gold"]] مش موجودة: nil.
+
+~~~text الناتج
+free 0
+pro 99
+team 299
+99 nil
+~~~
+
+---
+
+## ٦. [[if case]] (التجربة)
+
+~~~swift
+let someState = LoadState.failed(message: "timeout")
+if case .failed(let m) = someState { print(m) }
+~~~
+
+~~~text الناتج
+timeout
+~~~
+
+[[if case pattern = value]]: زي case واحد من switch. لو الحالة failed، فك الرسالة واطبعها، ولو أي حالة تانية متعملش حاجة. مفيد لما يهمك حالة واحدة بس.
+
+---
+
+## الخلاصة
+
+| الحاجة | الشكل |
+|---|---|
+| حالات بسيطة | [[enum E { case a, b }]] |
+| قيمة مرفقة | [[case loaded(items: [String])]] |
+| فكها | [[case .loaded(let items):]] |
+| raw value | [[enum Plan: String]] و [[.rawValue]] |
+| من raw value | [[Plan(rawValue: "x")]] بترجّع optional |
+| كل الحالات | [[CaseIterable]] و [[allCases]] |
+| حالة واحدة | [[if case .failed(let m) = s]] |
+
+ومتحطش [[default]] في switch على enum بتاعك.`,
+          lines: [
+            "enum لحالة تحميل شاشة.",
+            "حالة من غير داتا.",
+            "حالة تانية.",
+            R`حالة شايلة array: associated value.`,
+            "حالة شايلة رسالة.",
+            "قفلة.",
+            "دالة بتوصف الحالة.",
+            R`switch كـ expression، ولازم يغطي كل الحالات.`,
+            R`[[.idle]] من غير اسم النوع لأنه معروف.`,
+            "حالة التحميل.",
+            R`[[let items]] بيفك الـ array، و [[where]] شرط.`,
+            R`أي loaded تاني.`,
+            R`بيفك الرسالة.`,
+            "قفلة الـ switch.",
+            "قفلة الدالة.",
+            "بنحمّل.",
+            "لقينا 2.",
+            "مفيش نتايج.",
+            "رسالة المشكلة.",
+            R`enum بـ raw value [[String]] و [[CaseIterable]].`,
+            R`تلات حالات. الـ rawValue بيبقى اسم الحالة نفسه.`,
+            "computed property جوه الـ enum.",
+            R`switch على [[self]].`,
+            "مجاني.",
+            "سعر.",
+            "سعر.",
+            "قفلة الـ switch.",
+            "قفلة الـ property.",
+            "قفلة الـ enum.",
+            R`[[allCases]] جاية من CaseIterable.`,
+            "الاسم والسعر.",
+            "قفلة.",
+            R`[[rawValue:]] بترجّع optional: pro موجودة، gold لأ.`
+          ],
+          sol: R`لما تضيف [[case offline]]: [[switch must be exhaustive]] ومعاه [[add missing case: '.offline']]. وده بالظبط الأمان اللي عايزه.
+
+ناتج المثال:`,
+          solCode: R`بنحمّل...
+لقينا 2
+مفيش نتايج
+حصلت مشكلة: مفيش نت
+free 0
+pro 99
+team 299
+99 nil`
+        },
+        {
+          cmd: "protocols و extensions",
+          title: "protocol زي عقد بيقول النوع لازم يعمل إيه، و extension تضيف بيها لأي نوع حتى لو مش بتاعك",
+          desc: R`[[protocol]] بيوصف مجموعة متطلبات (properties و methods) من غير تنفيذ. أي struct أو class أو enum يقدر يتبعه (conform) وينفذ المتطلبات: [[struct Circle: Shape]]. والـ [[:]] هنا معناها «بيتبع». (Java و C# بيسموها interface).
+
+[[extension]] بتضيف methods و computed properties لنوع موجود، حتى لو مش انت اللي كاتبه: [[extension String { var isEmail: Bool { ... } }]]. وكمان بتستخدم لتقسيم الكود: الـ struct في حتة، وتنفيذ كل protocol في extension لوحده.
+
+protocol extension: تقدر تدّي تنفيذ افتراضي لـ method في الـ protocol، فكل اللي بيتبعه ياخدها ببلاش.
+
+protocols مهمة جاهزة هتقابلها كل يوم:
+• [[Equatable]]: يقبل [[==]]. • [[Hashable]]: ينفع يبقى مفتاح dictionary أو في Set. • [[Comparable]]: يقبل [[<]] فينفع [[sorted()]]. • [[Codable]]: يتحول من وإلى JSON. • [[Identifiable]]: ليه [[id]] (لازم لـ SwiftUI List). • [[CustomStringConvertible]]: بيحدد شكل الطباعة.
+وللـ structs، Swift بتكتب [[Equatable]] و [[Hashable]] و [[Codable]] لوحدها لو كل الـ properties بتتبعهم.
+
+[[any Shape]] معناها «أي قيمة بتتبع Shape» (صندوق ممكن يشيل أنواع مختلفة)، و [[some Shape]] معناها «نوع واحد محدد بيتبع Shape بس مش هقولك هو إيه» (هتشوفها في [[some View]]).`,
+          example: R`protocol Shape {
+  var area: Double { get }
+  func describe() -> String
+}
+extension Shape {
+  func describe() -> String {
+    "مساحة: \(area)"
+  }
+}
+struct Square: Shape {
+  let side: Double
+  var area: Double { side * side }
+}
+struct Circle: Shape {
+  let radius: Double
+  var area: Double { (Double.pi * radius * radius).rounded() }
+  func describe() -> String { "دايرة مساحتها \(area)" }
+}
+let shapes: [any Shape] = [Square(side: 3), Circle(radius: 2)]
+for s in shapes {
+  print(s.describe())
+}
+extension Int {
+  var isEven: Bool { self % 2 == 0 }
+}
+print(4.isEven, 7.isEven)
+struct Version: Comparable {
+  let major: Int
+  static func < (a: Version, b: Version) -> Bool { a.major < b.major }
+}
+print(Version(major: 2) < Version(major: 5), Version(major: 3) == Version(major: 3))`,
+          try: R`اعمل [[struct Rectangle: Shape]] بعرض وطول، ومتكتبش [[describe]] فيه، وضيفه للـ array. وبعدين اعمل extension على [[String]] فيها [[var isBlank: Bool]] بترجّع true لو النص فاضي أو مسافات بس (استخدم [[trimmingCharacters(in: .whitespaces)]] ومعاها [[import Foundation]]).`,
+          flag: "script",
+          deep: {
+            why: R`Swift بيسموها «protocol-oriented language»: بدل شجرة وراثة كبيرة (Animal ← Dog ← Puppy)، بتعرّف قدرات صغيرة (protocols) وكل نوع ياخد اللي محتاجه، حتى الـ structs والـ enums اللي مبتورثش. و SwiftUI كلها مبنية كده: [[View]] protocol، وكل شاشة struct بتتبعه.`,
+            how: R`[[{ get }]] في الـ protocol معناها «لازم تتقري» (ممكن تبقى stored أو computed). [[{ get set }]] معناها لازم تتقري وتتكتب.
+
+[[Version]] اتبع [[Comparable]] وكتبنا [[<]] بس، و [[==]] اتعملت لوحدها (Comparable بيورث Equatable، و Swift بتكتب [[==]] للـ struct تلقائيًا)، و [[>]] و [[<=]] جاية من protocol extension جاهز.
+
+[[any Shape]] بيحط كل قيمة في صندوق (existential)، والنداء بيروح للنوع الحقيقي وقت التشغيل. [[some]] و الـ generics (الدرس الجاي) بيخلوا الـ compiler يعرف النوع الحقيقي، وده أسرع. ومن Swift 6 لازم تكتب [[any]] صريحة في أماكن كتير.`,
+            when: R`protocol لما عندك أكتر من نوع بيعمل نفس الحاجة (مصادر داتا: API حقيقي و fake للاختبار). extension لتنظيم الكود ولإضافة helpers على أنواع النظام. واتبع [[Equatable]] و [[Hashable]] و [[Codable]] و [[Identifiable]] لأي model.`,
+            mistakes: R`تعمل protocol لكل class «احتياطي» حتى لو مفيش غير تنفيذ واحد. وتضيف extensions على [[String]] لكل حاجة لحد ما النوع يتملي helpers. وتحط stored property في extension: مينفعش ([[extensions must not contain stored properties]]).`
+          },
+          teach: R`## البرنامج بيعمل إيه؟
+
+بيعرّف عقد [[Shape]] (لازم يبقى ليه مساحة ووصف)، ويدّي وصف افتراضي، ويعمل شكلين بيتبعوه، ويلف عليهم في array واحدة. وبعدين يضيف property جديدة لـ [[Int]] بتاع Swift، ويعمل نوع بيتقارن بـ [[<]]. الناتج من [[swift main.swift]] على Swift 6.4 في Docker.
+
+---
+
+## ١. [[protocol Shape]]
+
+~~~swift
+protocol Shape {
+  var area: Double { get }
+  func describe() -> String
+}
+~~~
+
+- [[protocol]]: قايمة متطلبات من غير تنفيذ.
+- [[var area: Double { get }]]: أي نوع بيتبع Shape لازم يبقى عنده [[area]] تتقري. [[{ get }]] = قراية بس مطلوبة (ممكن تبقى stored أو computed).
+- [[func describe() -> String]]: لازم method بالتوقيع ده. من غير جسم [[{ }]].
+
+---
+
+## ٢. protocol extension: تنفيذ افتراضي
+
+~~~swift
+extension Shape {
+  func describe() -> String {
+    "مساحة: \(area)"
+  }
+}
+~~~
+
+[[extension]] بتضيف كود لنوع موجود. هنا بنضيف **تنفيذ** لـ [[describe]] على مستوى الـ protocol، فأي نوع بيتبع Shape ومكتبش describe ياخد ده.
+
+---
+
+## ٣. [[Square]]: بيتبع وياخد الافتراضي
+
+~~~swift
+struct Square: Shape {
+  let side: Double
+  var area: Double { side * side }
+}
+~~~
+
+- [[: Shape]] = «بيتبع (conforms to) الـ protocol». الـ compiler هيتأكد إن كل المتطلبات موجودة.
+- [[area]] computed. و [[describe]] مش مكتوبة، فهتيجي من الـ extension.
+
+---
+
+## ٤. [[Circle]]: بيكتب نسخته
+
+~~~swift
+struct Circle: Shape {
+  let radius: Double
+  var area: Double { (Double.pi * radius * radius).rounded() }
+  func describe() -> String { "دايرة مساحتها \(area)" }
+}
+~~~
+
+- [[Double.pi]]: ثابت ط (3.14159...). π × 2 × 2 = 12.566...، و [[rounded()]] = **13.0**.
+- كتب [[describe]] بتاعه، فبتغطي على الافتراضية.
+
+---
+
+## ٥. [[any Shape]]: أنواع مختلفة في array واحدة
+
+~~~swift
+let shapes: [any Shape] = [Square(side: 3), Circle(radius: 2)]
+for s in shapes {
+  print(s.describe())
+}
+~~~
+
+- array عادي لازم كل عناصره نوع واحد. [[[any Shape]]] معناها «أي قيمة بتتبع Shape»، فينفع Square و Circle مع بعض.
+- [[s.describe()]] بتنادي نسخة النوع الحقيقي وقت التشغيل.
+
+~~~text الناتج
+مساحة: 9.0
+دايرة مساحتها 13.0
+~~~
+
+3 × 3 = 9 بالوصف الافتراضي، والدايرة بوصفها.
+
+---
+
+## ٦. extension على [[Int]]
+
+~~~swift
+extension Int {
+  var isEven: Bool { self % 2 == 0 }
+}
+print(4.isEven, 7.isEven)
+~~~
+
+[[Int]] نوع من Swift نفسها، ومع ذلك ضفنا عليه computed property. [[self]] هنا = الرقم نفسه. فبقى [[4.isEven]] شغال في البرنامج كله.
+
+~~~text الناتج
+true false
+~~~
+
+ولو حاولت تحط stored property في extension (جربنا [[var cache: Int = 0]] جوه [[extension Int]]):
+
+~~~text الناتج
+main.swift:6:21: error: extensions must not contain stored properties
+~~~
+
+الـ extension مينفعش يغيّر حجم النوع في الذاكرة، فـ computed بس.
+
+---
+
+## ٧. [[Comparable]]: تكتب [[<]] بس
+
+~~~swift
+struct Version: Comparable {
+  let major: Int
+  static func < (a: Version, b: Version) -> Bool { a.major < b.major }
+}
+print(Version(major: 2) < Version(major: 5), Version(major: 3) == Version(major: 3))
+~~~
+
+- [[Comparable]] بيطلب دالة [[<]]. والـ operators في Swift دوال [[static]] اسمها الرمز نفسه: [[static func < (a: Version, b: Version) -> Bool]].
+- [[==]] مكتبناهاش: [[Comparable]] بيورث [[Equatable]]، و Swift بتكتب [[==]] للـ struct لوحدها (بتقارن كل الـ properties).
+- و [[>]] و [[<=]] و [[>=]] جاهزين من الـ standard library على أساس [[<]].
+
+~~~text الناتج
+true true
+~~~
+
+---
+
+## ٨. حل التجربة
+
+~~~swift
+import Foundation
+
+struct Rectangle: Shape {
+  let width: Double
+  let height: Double
+  var area: Double { width * height }
+}
+print(Rectangle(width: 2, height: 5).describe())
+
+extension String {
+  var isBlank: Bool {
+    trimmingCharacters(in: .whitespaces).isEmpty
+  }
+}
+print("   ".isBlank, " a ".isBlank)
+~~~
+
+~~~text الناتج
+مساحة: 10.0
+true false
+~~~
+
+- [[Rectangle]] مكتبش describe، فخد الافتراضية.
+- [[import Foundation]]: [[trimmingCharacters]] جاية من مكتبة Foundation مش من Swift الأساسية.
+- [[trimmingCharacters(in: .whitespaces)]] بتشيل المسافات من الطرفين: [["   "]] بقت [[""]] فاضية = true، و [[" a "]] بقت [["a"]] = false.
+
+---
+
+## الخلاصة
+
+| الحاجة | الشكل | فايدتها |
+|---|---|---|
+| عقد | [[protocol P { var x: T { get } }]] | متطلبات من غير تنفيذ |
+| يتبعه | [[struct S: P]] | الـ compiler يتأكد من المتطلبات |
+| تنفيذ افتراضي | [[extension P { func f() {...} }]] | كل اللي بيتبعوا ياخدوه |
+| إضافة لنوع موجود | [[extension Int { var ... }]] | computed بس |
+| أنواع مختلفة مع بعض | [[[any P]]] | |
+| مقارنة | [[Comparable]] + [[static func <]] | [[==]] و [[>]] ببلاش |`,
+          lines: [
+            R`[[protocol]]: عقد.`,
+            R`لازم property [[area]] تتقري.`,
+            "ولازم method describe.",
+            "قفلة.",
+            R`[[extension]] على الـ protocol: تنفيذ افتراضي.`,
+            "describe الافتراضية.",
+            "بتستخدم area اللي كل نوع هيوفرها.",
+            "قفلة الدالة.",
+            "قفلة الـ extension.",
+            R`[[: Shape]] يعني بيتبع الـ protocol.`,
+            "property عادية.",
+            R`[[area]] computed، ومش كاتبين describe فهياخد الافتراضية.`,
+            "قفلة.",
+            "نوع تاني بيتبع Shape.",
+            "نصف القطر.",
+            R`[[Double.pi]] ثابت باي، و [[rounded()]] للتقريب.`,
+            "بيكتب describe بتاعته بدل الافتراضية.",
+            "قفلة.",
+            R`[[any Shape]]: array فيها أنواع مختلفة بتتبع نفس الـ protocol.`,
+            "بنلف عليهم.",
+            "كل واحد بينادي describe بتاعته.",
+            "قفلة.",
+            R`extension على [[Int]] بتاع Swift نفسها.`,
+            R`[[self]] هنا الرقم نفسه.`,
+            "قفلة.",
+            R`[[4.isEven]] بقت متاحة لأي Int.`,
+            R`struct بيتبع [[Comparable]].`,
+            "رقم الإصدار.",
+            R`بنكتب [[<]] بس كـ static function.`,
+            "قفلة.",
+            R`[[<]] من كتابتنا و [[==]] اتعملت لوحدها.`
+          ],
+          sol: R`ناتج المثال:
+[[مساحة: 9.0]]
+[[دايرة مساحتها 13.0]]
+[[true false]]
+[[true true]]
+
+الحل:`,
+          solCode: R`import Foundation
+
+struct Rectangle: Shape {
+  let width: Double
+  let height: Double
+  var area: Double { width * height }
+}
+print(Rectangle(width: 2, height: 5).describe())
+// مساحة: 10.0
+
+extension String {
+  var isBlank: Bool {
+    trimmingCharacters(in: .whitespaces).isEmpty
+  }
+}
+print("   ".isBlank, " a ".isBlank)
+// true false`
+        },
+        {
+          cmd: "الـ generics",
+          title: "generics: تكتب دالة أو نوع واحد يشتغل مع أي نوع، وتحط عليه شروط بـ where و some",
+          desc: R`الـ generics بتخليك تكتب كود مرة واحدة يشتغل مع أنواع كتير من غير ما تخسر أمان الأنواع. انت استخدمتها من غير ما تاخد بالك: [[Array<Int>]] (اللي بتتكتب [[[Int]]]) و [[Dictionary<String, Int>]] و [[Optional<String>]] كلهم generic types.
+
+دالة generic: [[func firstOrDefault<T>(_ items: [T], _ fallback: T) -> T]]. الـ [[<T>]] بعد الاسم معناها «فيه نوع اسمه T هيتحدد لما حد ينادي». لو ناديتها بـ [[[Int]]] يبقى T = Int، وبـ [[[String]]] يبقى T = String. والاسم [[T]] عادة، بس ينفع أي اسم ([[Element]] و [[Value]]).
+
+الشروط (constraints): [[<T: Comparable>]] يعني T لازم يتبع Comparable، فتقدر تستخدم [[<]] جواها. أو بـ [[where]] بعد التوقيع: [[where T: Equatable]].
+
+نوع generic: [[struct Stack<Element> { var items: [Element] }]].
+
+[[some Protocol]] في الـ parameter اختصار للـ generic: [[func printAll(_ items: some Collection)]] نفس [[func printAll<C: Collection>(_ items: C)]]. وفي الـ return type معناها «هرجّع نوع واحد محدد بيتبع الـ protocol»، وده بالظبط [[some View]] في SwiftUI.`,
+          example: R`func largest<T: Comparable>(_ items: [T]) -> T? {
+  guard var best = items.first else { return nil }
+  for item in items where item > best {
+    best = item
+  }
+  return best
+}
+print(largest([3, 9, 2]) ?? 0)
+print(largest(["موز", "تفاح", "مانجا"]) ?? "")
+print(largest([Double]()) as Any)
+struct Stack<Element> {
+  private var items: [Element] = []
+  mutating func push(_ item: Element) { items.append(item) }
+  mutating func pop() -> Element? { items.popLast() }
+  var isEmpty: Bool { items.isEmpty }
+}
+var history = Stack<String>()
+history.push("الرئيسية")
+history.push("المنتج")
+print(history.pop() ?? "-", history.isEmpty)
+func countMatches(in items: some Collection<String>, prefix: String) -> Int {
+  items.filter { $0.hasPrefix(prefix) }.count
+}
+print(countMatches(in: ["swift", "swiftui", "kotlin"], prefix: "swift"))`,
+          try: R`نادي [[largest]] على array من struct بتاعك مش [[Comparable]] وشوف الخطأ. وبعدين ضيف [[var peek: Element?]] لـ [[Stack]] بترجّع آخر عنصر من غير ما تشيله.`,
+          flag: "script",
+          deep: {
+            why: R`من غير generics كنت هتكتب [[largestInt]] و [[largestString]] و [[largestDouble]]، أو تستخدم نوع عام زي [[Any]] وتخسر الأمان (تحط Int وتطلع String). الـ generics بتديك الاتنين: كود واحد، والـ compiler عارف النوع بالظبط.`,
+            how: R`الـ compiler بيعمل specialization: بيولّد نسخة من الدالة لكل نوع بتستخدمه (لما يقدر)، فالأداء زي ما تكون كاتبها بإيدك. [[Stack<String>()]] بيحدد Element صريح. و [[popLast()]] بترجّع optional عشان الـ array ممكن تبقى فاضية.
+
+[[some Collection<String>]] بيستخدم primary associated type: [[Collection]] ليها نوع عنصر اسمه [[Element]]، والـ [[<String>]] بيحدده. ينفع تبعت Array أو Set أو أي collection فيها String.`,
+            when: R`لما تلاقي نفسك بتكتب نفس الدالة لأكتر من نوع. في التطبيقات هتستخدمها أكتر من ما تكتبها: [[[Item]]] و [[Result<Data, Error>]] و [[Binding<String>]]. وأشهر مكان تكتب فيه generic: network layer بيعمل decode لأي نوع [[Decodable]] ([[func get<T: Decodable>(_ url: URL) async throws -> T]]).`,
+            mistakes: R`تعمل كل حاجة generic من أول يوم قبل ما يبقى عندك حالتين حقيقيتين. وتنسى الـ constraint فتحاول تستخدم [[>]] على T عادي ([[binary operator '>' cannot be applied to two 'T' operands]]). وتخلط بين [[some]] (نوع واحد ثابت) و [[any]] (صندوق لأي نوع).`
+          },
+          teach: R`## البرنامج بيعمل إيه؟
+
+٣ حاجات generic: دالة [[largest]] بتجيب أكبر عنصر في أي array نوعها بيتقارن، ونوع [[Stack]] بيشيل أي نوع، ودالة بتاخد أي collection فيها نصوص بـ [[some]]. الناتج من [[swift main.swift]] على Swift 6.4 في Docker.
+
+---
+
+## ١. توقيع [[largest]]
+
+~~~swift
+func largest<T: Comparable>(_ items: [T]) -> T? {
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[<T: Comparable>]] | فيه نوع اسمه [[T]] هيتحدد عند النداء، بشرط يتبع [[Comparable]] (يقبل [[<]] و [[>]]) |
+| [[_ items: [T]]] | array من النوع ده |
+| [[-> T?]] | بترجّع عنصر من نفس النوع، أو nil |
+
+الـ [[T]] (Type) اسم متعارف عليه، وينفع أي اسم.
+
+---
+
+## ٢. جسم [[largest]]
+
+~~~swift
+  guard var best = items.first else { return nil }
+  for item in items where item > best {
+    best = item
+  }
+  return best
+}
+~~~
+
+- [[guard var]]: زي [[guard let]] بس الناتج [[var]] عشان هنغيّره. لو الـ array فاضية [[first]] = nil، فنرجّع nil.
+- [[where item > best]]: لف بس على العناصر الأكبر من الأفضل الحالي، وحدّث.
+- [[item > best]] مسموحة **بس** عشان [[T: Comparable]]. شلنا الشرط وكتبنا [[<T>]] بس:
+
+~~~text الناتج
+main.swift:3:32: error: binary operator '>' cannot be applied to two 'T' operands
+~~~
+
+يعني: [[T]] ممكن يبقى أي نوع، ومش كل الأنواع فيها [[>]].
+
+---
+
+## ٣. نداء بأنواع مختلفة
+
+~~~swift
+print(largest([3, 9, 2]) ?? 0)
+print(largest(["موز", "تفاح", "مانجا"]) ?? "")
+print(largest([Double]()) as Any)
+~~~
+
+- الأول: Swift استنتجت [[T = Int]]: **9**.
+- التاني: [[T = String]]، والمقارنة أبجدية: الحرف الأول ت ثم م ثم م، و «موز» بعد «مانجا» لأن تاني حرف و بعد ا. فـ **موز**.
+- [[[Double]()]]: array فاضية من Double (الأقواس [[()]] بتعمل instance جديد فاضي). [[T = Double]] والنتيجة **nil**.
+
+---
+
+## ٤. [[Stack<Element>]]: نوع generic
+
+~~~swift
+struct Stack<Element> {
+  private var items: [Element] = []
+  mutating func push(_ item: Element) { items.append(item) }
+  mutating func pop() -> Element? { items.popLast() }
+  var isEmpty: Bool { items.isEmpty }
+}
+~~~
+
+- [[<Element>]] بعد اسم الـ struct: نوع العناصر بيتحدد لما تعمل Stack.
+- [[private var items]]: الـ array الداخلية محدش برة يلمسها، فالطريقة الوحيدة [[push]] و [[pop]].
+- [[popLast()]]: بتشيل آخر عنصر وترجّعه، أو nil لو فاضية. (Stack = آخر حاجة دخلت أول حاجة تطلع، زي زرار Back في المتصفح).
+- [[mutating]] لأنهم بيعدّلوا الـ struct.
+
+~~~swift
+var history = Stack<String>()
+history.push("الرئيسية")
+history.push("المنتج")
+print(history.pop() ?? "-", history.isEmpty)
+~~~
+
+[[Stack<String>()]]: حددنا [[Element = String]] صريح (مفيش قيمة يتستنتج منها). [[pop]] رجّع آخر واحد **المنتج**، ولسه فيه «الرئيسية» فـ [[isEmpty]] = **false**.
+
+---
+
+## ٥. [[some Collection<String>]]
+
+~~~swift
+func countMatches(in items: some Collection<String>, prefix: String) -> Int {
+  items.filter { $0.hasPrefix(prefix) }.count
+}
+print(countMatches(in: ["swift", "swiftui", "kotlin"], prefix: "swift"))
+~~~
+
+- [[some Collection<String>]]: «أي نوع collection عناصره String» (Array أو Set أو غيرهم). ده اختصار لـ [[func countMatches<C: Collection>(...) where C.Element == String]].
+- [[hasPrefix(prefix)]]: النص بيبدأ بكده؟ swift و swiftui أيوه: **2**.
+
+~~~text الناتج كله
+9
+موز
+nil
+المنتج false
+2
+~~~
+
+---
+
+## ٦. التجربة
+
+**نوع مش Comparable** ([[struct Box { let v: Int }]] و [[largest([Box(v: 1)])]]):
+
+~~~text الناتج
+main.swift:26:7: error: global function 'largest' requires that 'Box' conform to 'Comparable'
+~~~
+
+ومعاه [[note: where 'T' = 'Box']]: الـ compiler بيقولك T اتحدد إيه وليه مش نافع.
+
+**الحل: [[peek]]** جوه [[struct Stack]]:
+
+~~~swift
+var peek: Element? { items.last }
+~~~
+
+ضفناها ونادينا [[history.peek]] بعد الـ pop: طبعت **الرئيسية**، والعنصر فضل مكانه.
+
+---
+
+## الخلاصة
+
+| الشكل | معناه |
+|---|---|
+| [[func f<T>(_ x: T)]] | دالة لأي نوع |
+| [[<T: Comparable>]] | بشرط النوع يتبع protocol |
+| [[struct Box<Element>]] | نوع generic |
+| [[Stack<String>()]] | تحديد النوع صريح |
+| [[some Collection<String>]] | أي collection من String (اختصار generic) |
+
+[[Array]] و [[Dictionary]] و [[Optional]] نفسهم generics: [[[Int]]] = [[Array<Int>]].`,
+          lines: [
+            R`[[<T: Comparable>]]: T أي نوع بيتقارن. والدالة بترجّع [[T?]].`,
+            R`[[guard var]]: لو الـ array فاضية نرجّع nil.`,
+            R`بنلف على العناصر الأكبر من الأفضل الحالي.`,
+            "بنحدّث الأفضل.",
+            "قفلة.",
+            "بنرجّعه.",
+            "قفلة.",
+            "T = Int، بيطبع 9.",
+            "T = String، بالترتيب الحرفي.",
+            R`[[[Double]()]] array فاضية من Double، فبترجّع nil.`,
+            R`نوع generic: [[Element]] هيتحدد عند الاستخدام.`,
+            R`[[private]]: محدش برة يلمس الـ array.`,
+            "push بتضيف.",
+            R`pop بترجّع optional.`,
+            "computed.",
+            "قفلة.",
+            R`Stack بـ Element = String.`,
+            "push.",
+            "push.",
+            "بيطبع المنتج false.",
+            R`[[some Collection<String>]]: أي collection فيها String.`,
+            R`[[hasPrefix]] بتشيك بداية النص.`,
+            "قفلة.",
+            "بيطبع 2."
+          ],
+          sol: R`لو struct مش Comparable: [[global function 'largest' requires that 'X' conform to 'Comparable']].
+
+ناتج المثال: [[9]] ثم [[موز]] (بالترتيب الحرفي: موز بعد مانجا لأن الواو بعد الألف، والاتنين بعد تفاح) ثم [[nil]] ثم [[المنتج false]] ثم [[2]].
+
+الـ peek:`,
+          solCode: R`// جوه struct Stack
+var peek: Element? { items.last }`
         }
       ]
     }

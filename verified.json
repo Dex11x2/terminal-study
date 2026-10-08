@@ -11774,20 +11774,90 @@
   "date": "2026-10-05",
   "on": "ubuntu-24.04, pwsh 7.6, powershell 5.1; docs: macOS sw_vers/Darwin, winver window"
  },
+ "swift|@Observable و @Environment": {
+  "hash": "d42a5e23094f",
+  "date": "2026-10-08",
+  "on": "swift:latest (Swift 6.4) Docker: @Observable + withObservationTracking; docs: @Environment/@Bindable"
+ },
  "swift|ARC و weak و retain cycles": {
   "hash": "acafbe288de6",
   "date": "2026-10-08",
   "on": "docker swift:latest (Swift 6.4, Linux)"
+ },
+ "swift|AppStorage و UserDefaults": {
+  "hash": "962854345c00",
+  "date": "2026-10-08",
+  "on": "swift:latest (Swift 6.4) Docker: UserDefaults persistence; docs: @AppStorage"
  },
  "swift|Array و Dictionary و Set": {
   "hash": "fa6a93dd4368",
   "date": "2026-10-08",
   "on": "docker swift:latest (Swift 6.4, Linux)"
  },
+ "swift|Codable و JSON": {
+  "hash": "09df10011a13",
+  "date": "2026-10-08",
+  "on": "swift:latest (Swift 6.4) Docker: full example + decoding error variants"
+ },
+ "swift|Form و TextField": {
+  "hash": "4a7f581993d9",
+  "date": "2026-10-08",
+  "on": "swift:latest (Swift 6.4) Docker: validation logic; docs: Form controls"
+ },
+ "swift|List و ForEach": {
+  "hash": "6a57ca73fed8",
+  "date": "2026-10-08",
+  "on": "swift:latest (Swift 6.4) Docker: Identifiable/IndexSet logic; docs: List/ForEach/onDelete"
+ },
+ "swift|MVVM بـ Observable": {
+  "hash": "7c0ebbc70bfa",
+  "date": "2026-10-08",
+  "on": "swift:latest (Swift 6.4) Docker: view model in SwiftPM + swift test; docs: SwiftUI view"
+ },
+ "swift|NavigationStack والتنقل": {
+  "hash": "7f21c1cfa997",
+  "date": "2026-10-08",
+  "on": "swift:latest (Swift 6.4) Docker: Hashable path logic; docs: NavigationStack UI"
+ },
+ "swift|Swift 6 strict concurrency": {
+  "hash": "f04808f041ff",
+  "date": "2026-10-08",
+  "on": "swift:latest (Swift 6.4) Docker: swift -swift-version 6 + 4 error variants"
+ },
+ "swift|Swift Package Manager": {
+  "hash": "65300b09b9f3",
+  "date": "2026-10-08",
+  "on": "swift:latest (Swift 6.4) Docker: package init, build with swift-algorithms, swift test; docs: Xcode UI"
+ },
+ "swift|Swift Testing": {
+  "hash": "33ead6f73adf",
+  "date": "2026-10-08",
+  "on": "swift:latest (Swift 6.4) Docker: swift test (Swift Testing + XCTest); docs: Xcode test"
+ },
+ "swift|SwiftData": {
+  "hash": "381526d696a2",
+  "date": "2026-10-08",
+  "on": "swift:latest (Swift 6.4) Docker: model logic without @Model; docs: SwiftData/@Query"
+ },
+ "swift|UIKit مع SwiftUI": {
+  "hash": "a7e7ce0f97e9",
+  "date": "2026-10-08",
+  "on": "swift:latest (Swift 6.4) Docker: delegate/Coordinator stand-ins; docs: UIKit/UIViewRepresentable"
+ },
  "swift|access control": {
   "hash": "095445c85d6d",
   "date": "2026-10-08",
   "on": "docker swift:latest (Swift 6.4, Linux)"
+ },
+ "swift|actors و MainActor و Sendable": {
+  "hash": "1b3a3476d2d0",
+  "date": "2026-10-08",
+  "on": "swift:latest (Swift 6.4) Docker: swift -swift-version 6 + error variants"
+ },
+ "swift|async و await و Task": {
+  "hash": "f7f3ebd53750",
+  "date": "2026-10-08",
+  "on": "swift:latest (Swift 6.4) Docker: full example + solCode + errors"
  },
  "swift|enums و associated values": {
   "hash": "c71dc0dfc886",
@@ -11824,10 +11894,20 @@
   "date": "2026-10-08",
   "on": "docker swift:latest (Swift 6.4, Linux)"
  },
+ "swift|sheet و alert": {
+  "hash": "59c49f431e69",
+  "date": "2026-10-08",
+  "on": "swift:latest (Swift 6.4) Docker: optional state stand-in; docs: sheet/alert/dismiss"
+ },
  "swift|switch والـ pattern matching": {
   "hash": "e69d77b5ccc3",
   "date": "2026-10-08",
   "on": "docker swift:latest (Swift 6.4, Linux)"
+ },
+ "swift|إدارة الحالة بـ State و Binding": {
+  "hash": "f829a96ceda9",
+  "date": "2026-10-08",
+  "on": "swift:latest (Swift 6.4) Docker: Binding stand-in, compiler error; docs: @State/@Binding UI"
  },
  "swift|الأخطاء throws و do catch": {
   "hash": "52fe11a14ac4",
@@ -11839,10 +11919,20 @@
   "date": "2026-10-08",
   "on": "docker swift:latest (Swift 6.4, Linux)"
  },
+ "swift|الاتصال بالـ API بـ Async/Await و URLSession": {
+  "hash": "d85c32627116",
+  "date": "2026-10-08",
+  "on": "swift:latest (Swift 6.4) Docker + Node fake API (200/404/500/refused); docs: SwiftUI view"
+ },
  "swift|الدوال و argument labels": {
   "hash": "4c7db5a87f3e",
   "date": "2026-10-08",
   "on": "docker swift:latest (Swift 6.4, Linux)"
+ },
+ "swift|الصور و AsyncImage": {
+  "hash": "1e5193a6f2d8",
+  "date": "2026-10-08",
+  "on": "swift:latest (Swift 6.4) Docker: URL(string:) optional; docs: AsyncImage/Image"
  },
  "swift|العمليات الحسابية والمقارنة": {
   "hash": "4225456d79bc",
@@ -11864,20 +11954,60 @@
   "date": "2026-10-08",
   "on": "docker swift:latest (Swift 6.4, Linux)"
  },
+ "swift|الـ debugging و Instruments": {
+  "hash": "cd69493912e7",
+  "date": "2026-10-08",
+  "on": "swift:latest (Swift 6.4) Docker: lldb po/p/v/bt/expr + conditional breakpoint; docs: Xcode debugger, Instruments"
+ },
  "swift|الـ generics": {
   "hash": "ee7eb8868589",
   "date": "2026-10-08",
   "on": "docker swift:latest (Swift 6.4, Linux)"
+ },
+ "swift|الـ modifiers وترتيبها": {
+  "hash": "b45be0a26431",
+  "date": "2026-10-08",
+  "on": "swift:latest (Swift 6.4) Docker: modifier-wrapping stand-in types; docs: SwiftUI rendering"
+ },
+ "swift|النشر على متجر App Store و TestFlight": {
+  "hash": "430611baee4f",
+  "date": "2026-10-08",
+  "on": "swift:latest (Swift 6.4) Docker: ExportOptions.plist parsed; docs: archive/export, TestFlight"
  },
  "swift|تجهيز Swift": {
   "hash": "3385cc518367",
   "date": "2026-10-08",
   "on": "docker swift:latest (Swift 6.4, Linux); docs: xcodebuild/macOS part"
  },
+ "swift|سوق iOS والانترفيو": {
+  "hash": "3128e0918e5d",
+  "date": "2026-10-08",
+  "on": "swift:latest (Swift 6.4) Docker: example + fixed openProfile; docs: market/interview text"
+ },
+ "swift|مراجعة App Store والخصوصية": {
+  "hash": "104852a29907",
+  "date": "2026-10-08",
+  "on": "swift:latest (Swift 6.4) Docker: PrivacyInfo.xcprivacy parsed; docs: App Review"
+ },
+ "swift|مشروع iOS في Xcode": {
+  "hash": "7b08dc04d2be",
+  "date": "2026-10-08",
+  "on": "swift:latest (Swift 6.4) Docker: @main via swiftc -parse-as-library; docs: Xcode, App/Scene, Simulator"
+ },
+ "swift|مشروع التخرج": {
+  "hash": "798970bf8e73",
+  "date": "2026-10-08",
+  "on": "swift:latest (Swift 6.4) Docker: streak() + Swift Testing; docs: App/TabView, @Model"
+ },
  "swift|مقدمة Swift والـ print": {
   "hash": "dd303d48d5a0",
   "date": "2026-10-08",
   "on": "docker swift:latest (Swift 6.4, Linux)"
+ },
+ "swift|مقدمة SwiftUI والـ View Protocol": {
+  "hash": "fe05fd085c23",
+  "date": "2026-10-08",
+  "on": "swift:latest (Swift 6.4) Docker: memberwise init, some-type demo; docs: SwiftUI views, #Preview"
  },
  "symbols|!  و  !!": {
   "hash": "d62abe085a09",
