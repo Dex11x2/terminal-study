@@ -264,6 +264,11 @@
   "date": "2026-10-08",
   "on": "Windows 11: Express 5.2.1 / Node 24.19 + curl 8.22 + Zod 4.6, in-memory db"
  },
+ "apis|API keys": {
+  "hash": "eccf13579746",
+  "date": "2026-10-08",
+  "on": "Windows 11, Node 24.19, Express 5.2.1, in-memory db, redis:8-alpine (planLimits), curl"
+ },
  "apis|ETag و Cache-Control": {
   "hash": "7bc84175b2f3",
   "date": "2026-10-08",
@@ -284,15 +289,55 @@
   "date": "2026-10-08",
   "on": "Windows 11: Express 5.2.1 / Node 24.19 + curl 8.22 + Zod 4.6, in-memory Prisma stand-in; docs: Prisma P2025"
  },
+ "apis|SSO للشركات": {
+  "hash": "90c3bc81ceac",
+  "date": "2026-10-08",
+  "on": "Windows 11, Node 24.19, Express 5.2.1, Zod 4.6, 2x local oidc-provider 9.12, in-memory db; docs: Prisma schema, IdP consoles"
+ },
+ "apis|SSRF في webhook URLs": {
+  "hash": "5f240fd621e1",
+  "date": "2026-10-08",
+  "on": "Windows 11, Node 24.19, undici 8.11.2 (live https://example.com)"
+ },
+ "apis|client credentials": {
+  "hash": "1b1c13faa5e6",
+  "date": "2026-10-08",
+  "on": "Windows 11, Node 24.19, local oidc-provider 9.12 + fake token endpoint; docs: IdP consoles"
+ },
  "apis|cursor pagination": {
   "hash": "38f144357fe1",
   "date": "2026-10-08",
   "on": "Windows 11: Express 5.2.1 / Node 24.19 + curl 8.22, in-memory Prisma stand-in; PostgreSQL 18.6 EXPLAIN ANALYZE"
  },
+ "apis|dead-letter queue": {
+  "hash": "d1f1c621736a",
+  "date": "2026-10-08",
+  "on": "Windows 11, Node 24.19, BullMQ 6.3.11, redis:8-alpine (8.10.2)"
+ },
+ "apis|discovery document": {
+  "hash": "b2223f69962e",
+  "date": "2026-10-08",
+  "on": "ubuntu:24.04 Docker (curl, jq, live Google/Microsoft endpoints) + pwsh 7.6 + powershell 5.1 + local oidc-provider 9.12"
+ },
  "apis|filter و sort": {
   "hash": "90263acb40d0",
   "date": "2026-10-08",
   "on": "Windows 11: Express 5.2.1 / Node 24.19 + curl 8.22 + Zod 4.6, in-memory Prisma stand-in; docs: Prisma insensitive ILIKE"
+ },
+ "apis|gRPC": {
+  "hash": "ca50d0d43e88",
+  "date": "2026-10-08",
+  "on": "Windows 11, Node 24.19, @grpc/grpc-js 1.14.5, @grpc/proto-loader 0.8.1"
+ },
+ "apis|id_token و nonce": {
+  "hash": "04360348b51e",
+  "date": "2026-10-08",
+  "on": "Windows 11, Node 24.19, Express 5.2.1, jose 6.2.12, local oidc-provider 9.12 (scripted browser)"
+ },
+ "apis|jose و JWKS": {
+  "hash": "ad44eb28e270",
+  "date": "2026-10-08",
+  "on": "Windows 11, Node 24.19, jose 6.2.12 vs local oidc-provider 9.12"
  },
  "apis|offset pagination": {
   "hash": "b5dfb13889fd",
@@ -304,20 +349,60 @@
   "date": "2026-10-08",
   "on": "Windows 11: Express 5.2.1 / Node 24.19 + curl 8.22 + Zod 4.6"
  },
+ "apis|queue ولا pub/sub ولا stream": {
+  "hash": "7f9eb7e13c6d",
+  "date": "2026-10-08",
+  "on": "redis:8-alpine (8.10.2) redis-cli via docker exec"
+ },
+ "apis|quota لكل plan": {
+  "hash": "5fecc13faa3c",
+  "date": "2026-10-08",
+  "on": "Windows 11, Node 24.19, Express 5.2.1, ioredis 6.0, redis:8-alpine (8.10.2), curl, pwsh 7.6"
+ },
  "apis|resources و URLs": {
   "hash": "818eed2a5339",
   "date": "2026-10-08",
   "on": "Windows 11: Express 5.2.1 / Node 24.19 + curl 8.22"
+ },
+ "apis|retries و delivery log": {
+  "hash": "ead4df347172",
+  "date": "2026-10-08",
+  "on": "Windows 11, Node 24.19, BullMQ 6.3.11, redis:8-alpine (8.10.2), local target server, in-memory db"
  },
  "apis|safe و idempotent": {
   "hash": "5b993489d4af",
   "date": "2026-10-08",
   "on": "Windows 11: Express 5.2.1 / Node 24.19 + curl 8.22; docs: browser resubmit warning"
  },
+ "apis|sliding window": {
+  "hash": "25c5b76650d6",
+  "date": "2026-10-08",
+  "on": "Windows 11, Node 24.19, ioredis 6.0, redis:8-alpine (8.10.2)"
+ },
+ "apis|tRPC": {
+  "hash": "3d200a49dece",
+  "date": "2026-10-08",
+  "on": "Windows 11, Node 24.19, @trpc/server+client 11.19, Zod 4.6, TypeScript 7.0.2"
+ },
+ "apis|token bucket في Redis": {
+  "hash": "72631483ca1b",
+  "date": "2026-10-08",
+  "on": "Windows 11, Node 24.19, ioredis 6.0, redis:8-alpine (8.10.2)"
+ },
+ "apis|transactional outbox": {
+  "hash": "f7a2a294a988",
+  "date": "2026-10-08",
+  "on": "Windows 11, Node 24.19, pg 8.23 (same SQL), postgres:16-alpine, BullMQ 6.3.11, redis:8-alpine (8.10.2); docs: Prisma parts"
+ },
  "apis|versioning": {
   "hash": "2be40368fda1",
   "date": "2026-10-08",
   "on": "Windows 11: Express 5.2.1 / Node 24.19 + curl 8.22, pwsh 7.6; ubuntu:24.04 (date); docs: macOS date -r"
+ },
+ "apis|توقيع webhooks صادرة": {
+  "hash": "5c0055f5c4ad",
+  "date": "2026-10-08",
+  "on": "Windows 11, Node 24.19, standardwebhooks 1.1.1, BullMQ 6.3.11, redis:8-alpine (8.10.2)"
  },
  "api|$transaction": {
   "hash": "c345ee4d16af",
