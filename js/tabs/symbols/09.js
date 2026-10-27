@@ -205,17 +205,18 @@ undefined 1
           check: {
             lang: "js",
             starter: R`// اكتب الاتنين arrow functions
-// toUser("Ali") ← { name: "Ali", active: true }
-// squares([1, 2, 3]) ← [1, 4, 9]
-const toUser = name => { name: name, active: true };
-const squares = nums => {
-  nums.map(n => n * n);
+// toProduct("Mug", 120) ← { name: "Mug", price: 120, cheap: false }   (cheap: السعر أقل من 100)
+// lengths(["hi", "hello"]) ← [2, 5]
+const toProduct = (name, price) => { name, price, cheap: price < 100 };
+const lengths = words => {
+  words.map(w => w.length);
 };`,
-            tests: R`test("toUser('Ali') ← { name: 'Ali', active: true }", () => expect(toUser("Ali")).toEqual({ name: "Ali", active: true }));
-test("squares([1, 2, 3]) ← [1, 4, 9]", () => expect(squares([1, 2, 3])).toEqual([1, 4, 9]));
-test("squares([]) ← []", () => expect(squares([])).toEqual([]));`,
-            solution: R`const toUser = name => ({ name, active: true });
-const squares = nums => nums.map(n => n * n);`
+            tests: R`test("toProduct('Mug', 120) ← { name: 'Mug', price: 120, cheap: false }", () => expect(toProduct("Mug", 120)).toEqual({ name: "Mug", price: 120, cheap: false }));
+test("toProduct('Pen', 15).cheap ← true", () => expect(toProduct("Pen", 15).cheap).toBe(true));
+test("lengths(['hi', 'hello']) ← [2, 5]", () => expect(lengths(["hi", "hello"])).toEqual([2, 5]));
+test("lengths([]) ← []", () => expect(lengths([])).toEqual([]));`,
+            solution: R`const toProduct = (name, price) => ({ name, price, cheap: price < 100 });
+const lengths = words => words.map(w => w.length);`
           }
         },
         {

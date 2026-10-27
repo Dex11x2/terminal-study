@@ -463,7 +463,7 @@ console.log(firstUniqChar("leetcode"));     // 0
 console.log(firstUniqChar("loveleetcode")); // 2
 console.log(firstUniqChar("aabb"));         // -1
 // O(n) time, O(k) space (k = alphabet size, so O(1) for a-z)`,
-          try: R`اعملها بـ array طولها 26 بدل Map (الحروف a-z بس). وبعدين النسخة الـ stream: الحروف جاية واحد واحد، وبعد كل حرف لازم ترد «أول حرف مش متكرر لحد دلوقتي» (فكّر في Map مع queue). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[firstUniqChar]] بـ array طولها 26، و [[FirstUnique]] فيها [[add(ch)]] بترجّع الرد بعد كل حرف (أو null).`,
+          try: R`اعملها بـ array طولها 26 بدل Map (الحروف a-z بس). وبعدين النسخة الـ stream: الحروف جاية واحد واحد، وبعد كل حرف لازم ترد «أول حرف مش متكرر لحد دلوقتي» (فكّر في Map مع queue). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: نسخة الـ stream: كلاس [[FirstUnique]] فيه [[add(ch)]] بترجّع أول حرف مش متكرر لحد دلوقتي بعد كل حرف (أو null لو مفيش).`,
           flag: "script",
           deep: {
             why: "بتعلّمك نمط «عدّ الأول، بعدين دوّر»، وبتختبر إنك بتحافظ على الترتيب. ولو عملتها بـ loop جوه loop (لكل حرف عدّ هو اتكرر كام مرة) هتبقى O(n^2).",
@@ -634,37 +634,23 @@ console.log([..."aabcbc"].map(ch => String(fu.add(ch))).join(" ")); // a null b 
 // array: O(n) time, O(1) space (26 slots); stream: amortized O(1) per char (head only moves forward)`,
           check: {
             lang: "js",
-            starter: R`function firstUniqChar(s) {
-  const count = new Array(26).fill(0);
-  // الـ index: ch.charCodeAt(0) - 97
-  return -1;
-}
-class FirstUnique {
-  constructor() { this.count = new Map(); this.queue = []; this.head = 0; }
+            starter: R`class FirstUnique {
+  constructor() {}
   add(ch) {
-    // زوّد العدّ وحط الحرف في الـ queue، وقدّم head طول ما الحرف اللي عنده متكرر
+    // الرد بعد الحرف ده
     return null;
   }
 }`,
-            tests: R`test("'leetcode' ← 0", () => expect(firstUniqChar("leetcode")).toBe(0));
-test("'loveleetcode' ← 2", () => expect(firstUniqChar("loveleetcode")).toBe(2));
-test("'aabb' و '' ← -1", () => expect([firstUniqChar("aabb"), firstUniqChar("")]).toEqual([-1, -1]));
-const stream = s => { const fu = new FirstUnique(); return [...s].map(ch => fu.add(ch)); };
+            tests: R`const stream = s => { const fu = new FirstUnique(); return [...s].map(ch => fu.add(ch)); };
 test("stream 'aabcbc' ← a null b b c null", () => expect(stream("aabcbc")).toEqual(["a", null, "b", "b", "c", null]));
+test("stream 'abcab' ← a a a b c", () => expect(stream("abcab")).toEqual(["a", "a", "a", "b", "c"]));
+test("الحرف اللي اتكرر ميرجعش تاني: 'aaa' ← a null null", () => expect(stream("aaa")).toEqual(["a", null, null]));
 test("كل FirstUnique ليها حالتها: 'ab' ← a a، و 'b' لوحدها ← b", () => expect([stream("ab"), stream("b")]).toEqual([["a", "a"], ["b"]]));
-test("١٠٠ ألف حرف: الـ head بيمشي لقدام بس (amortized O(1) لكل حرف)", () => {
-  const s = "ab".repeat(50000) + "c";
-  expect(firstUniqChar(s)).toBe(100000);
-  const r = stream(s);
-  expect([r.length, r[0], r[1], r.at(-1)]).toEqual([100001, "a", "a", "c"]);
+test("١٠٠ ألف حرف (amortized O(1) لكل حرف، مش تدوير من الأول كل مرة)", () => {
+  const r = stream("ab".repeat(50000) + "c");
+  expect([r.length, r[0], r[1], r[2], r[3], r.at(-1)]).toEqual([100001, "a", "a", "b", null, "c"]);
 });`,
-            solution: R`function firstUniqChar(s) {
-  const count = new Array(26).fill(0);
-  for (const ch of s) count[ch.charCodeAt(0) - 97]++;
-  for (let i = 0; i < s.length; i++) if (count[s.charCodeAt(i) - 97] === 1) return i;
-  return -1;
-}
-class FirstUnique {
+            solution: R`class FirstUnique {
   constructor() { this.count = new Map(); this.queue = []; this.head = 0; }
   add(ch) {
     this.count.set(ch, (this.count.get(ch) || 0) + 1);
@@ -696,7 +682,7 @@ console.log(groupAnagrams(["eat", "tea", "tan", "ate", "nat", "bat"]));
 // [["eat", "tea", "ate"], ["tan", "nat"], ["bat"]]
 console.log(groupAnagrams([""])); // [[""]]
 // O(n * k log k) time (k = longest word), O(n * k) space`,
-          try: R`غيّر المفتاح لعدّ الحروف: array من 26 صفر، زوّد عند كل حرف، و [[join("#")]]. اتأكد إن النتيجة زي ما هي. ليه الـ # مهمة؟ (من غيرها العدّين [1, 11] و [11, 1] الاتنين يبقوا 111). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[groupAnagrams]] بمفتاح العدّ و [[#]]، وترتيب المجموعات مش مهم.`,
+          try: R`غيّر المفتاح لعدّ الحروف: array من 26 صفر، زوّد عند كل حرف، و [[join("#")]]. اتأكد إن النتيجة زي ما هي. ليه الـ # مهمة؟ (من غيرها العدّين [1, 11] و [11, 1] الاتنين يبقوا 111). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[groupPhrases(phrases)]]: جمّع الجمل اللي anagram لبعض **من غير فرق بين الحروف الكبيرة والصغيرة ومن غير المسافات** ([["Dormitory"]] و [["dirty room"]] مجموعة واحدة)، ورجّع المجموعات اللي فيها جملتين أو أكتر بس، والجمل بشكلها الأصلي. ترتيب المجموعات واللي جواها مش مهم.`,
           flag: "script",
           deep: {
             why: "مسألة بتعلّمك أقوى استخدام للـ Map: التجميع بمفتاح محسوب. في الشغل هتعمله كل يوم: الطلبات حسب اليوم، والمنتجات حسب الفئة، واللوجات حسب نوع الـ error. وفي JS الجديد فيه [[Object.groupBy]] و [[Map.groupBy]] بيعملوا ده جاهز.",
@@ -819,7 +805,7 @@ undefined
 | الوقت | [[O(n × k log k)]] | n كلمة، ولكل كلمة sort لحروفها (k = طول أطول كلمة) بـ [[O(k log k)]]. باقي الشغل ([[has]] و [[get]] و [[push]]) [[O(1)]] تقريبًا |
 | الذاكرة | [[O(n × k)]] | الـ Map شايلة كل الكلمات ومفاتيحها |
 
-ولو مفتاح تاني اتعمل من غير sort، الـ log k هتختفي. ده اللي التمرين بيطلبه.
+ولو مفتاح تاني اتعمل من غير sort، الـ log k هتختفي. ده اللي «جرّب» بيطلبه.
 
 ---
 
@@ -871,33 +857,33 @@ console.log([1, 11].join(""), [11, 1].join(""), [1, 11].join("#"), [11, 1].join(
 // O(n * k) time (no sort), O(n * k) space`,
           check: {
             lang: "js",
-            starter: R`function groupAnagrams(words) {
+            starter: R`function groupPhrases(phrases) {
   const groups = new Map();
-  for (const w of words) {
-    const count = new Array(26).fill(0);
-    // زوّد العدّ لكل حرف، والمفتاح count.join("#")
+  for (const p of phrases) {
+    // المفتاح: الحروف بعد ما تصغّرها وتشيل المسافات
   }
   return [...groups.values()];
 }`,
             tests: R`const norm = gs => gs.map(g => JSON.stringify([...g].sort())).sort();
-test("eat tea tan ate nat bat ← ٣ مجموعات", () => expect(norm(groupAnagrams(["eat", "tea", "tan", "ate", "nat", "bat"]))).toEqual(norm([["eat", "tea", "ate"], ["tan", "nat"], ["bat"]])));
-test("[''] ← [['']]", () => expect(groupAnagrams([""])).toEqual([[""]]));
-test("[] ← []", () => expect(groupAnagrams([])).toEqual([]));
-test("فخ الـ #: a×11 + b و a + b×11 مجموعتين مش واحدة", () => expect(groupAnagrams(["aaaaaaaaaaab", "abbbbbbbbbbb"]).length).toBe(2));
-test("٢٠ ألف كلمة (O(n × k))", () => {
-  const words = Array.from({ length: 20000 }, (_, i) => (i % 2 ? "listen" : "silent") + "abcdefghij"[i % 10]);
-  expect(groupAnagrams(words).length).toBe(10);
+test("Dormitory و dirty room، و Listen و Silent و enlist، و abc لوحدها مش بتطلع", () => expect(norm(groupPhrases(["Dormitory", "Listen", "abc", "dirty room", "Silent", "enlist"]))).toEqual(norm([["Dormitory", "dirty room"], ["Listen", "Silent", "enlist"]])));
+test("الجمل بترجع بشكلها الأصلي", () => expect(groupPhrases(["A gentleman", "Elegant man"])).toEqual([["A gentleman", "Elegant man"]]));
+test("مفيش جملتين anagram ← []", () => expect(groupPhrases(["one", "two", "three"])).toEqual([]));
+test("[] ← []", () => expect(groupPhrases([])).toEqual([]));
+test("٢٠ ألف جملة (O(n × k))", () => {
+  const ps = Array.from({ length: 20000 }, (_, i) => (i % 2 ? "Listen " : "silent") + "abcdefghij"[i % 10]);
+  const g = groupPhrases(ps);
+  expect([g.length, g.every(x => x.length === 2000)]).toEqual([10, true]);
 });`,
-            solution: R`function groupAnagrams(words) {
+            solution: R`function groupPhrases(phrases) {
   const groups = new Map();
-  for (const w of words) {
+  for (const p of phrases) {
     const count = new Array(26).fill(0);
-    for (const ch of w) count[ch.charCodeAt(0) - 97]++;
+    for (const ch of p.toLowerCase()) if (ch >= "a" && ch <= "z") count[ch.charCodeAt(0) - 97]++;
     const key = count.join("#");
     if (!groups.has(key)) groups.set(key, []);
-    groups.get(key).push(w);
+    groups.get(key).push(p);
   }
-  return [...groups.values()];
+  return [...groups.values()].filter(g => g.length >= 2);
 }`
           }
         }

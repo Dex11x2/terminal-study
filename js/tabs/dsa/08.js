@@ -28,7 +28,7 @@ MORE("dsa", [
 console.log(mergeSort([5, 2, 9, 1, 5, 6])); // [1, 2, 5, 5, 6, 9]
 console.log(mergeSort([]));                 // []
 // O(n log n) time in every case, O(n) extra space; stable`,
-          try: R`اكتب دمج اتنين array مترتبين لوحده، ده سؤال انترفيو لوحده. وبعدين عدّ الـ inversions: كام زوج (i < j) العنصر الأول فيه أكبر من التاني؟ عدّل الدمج: كل ما تاخد من اليمين، زوّد العدّاد بعدد العناصر الفاضلة في الشمال. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[mergeSorted(a, b)]] و [[countInversions(a)]].`,
+          try: R`اكتب دمج اتنين array مترتبين لوحده، ده سؤال انترفيو لوحده. وبعدين عدّ الـ inversions: كام زوج (i < j) العنصر الأول فيه أكبر من التاني؟ عدّل الدمج: كل ما تاخد من اليمين، زوّد العدّاد بعدد العناصر الفاضلة في الشمال. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[countInversions(a)]] في O(n log n) (الـ brute force بـ loopين O(n^2) هيقف في آخر اختبار).`,
           flag: "script",
           deep: {
             why: "في الشغل مش هتكتب sort بإيدك، [[Array.prototype.sort]] موجودة. بس merge sort هو أوضح مثال على divide and conquer، والانترفيو بيسأل عنه («اشرح merge sort» أو «ليه O(n log n)»). وفكرة الدمج نفسها بتتكرر: دمج linked lists، ودمج نتايج من أكتر من سيرفر، و external sort لملف أكبر من الرام.",
@@ -234,30 +234,17 @@ console.log(countInversions([1, 2, 2])[1]);       // 0
 // merge: O(n + m); inversions: O(n log n) time, O(n) space (brute force over pairs = O(n^2))`,
           check: {
             lang: "js",
-            starter: R`function mergeSorted(a, b) {
-  const out = [];
-  let i = 0, j = 0;
-  // خد الأصغر كل مرة، وبعدين ضيف اللي فاضل
-  return out;
-}
-function countInversions(a) {
-  // merge sort بيرجّع [مترتبة، عدد]: لما تاخد من اليمين زوّد left.length - i
+            starter: R`function countInversions(a) {
+  // كام زوج (i < j) فيه a[i] > a[j]؟
   return 0;
 }`,
-            tests: R`test("mergeSorted([1, 4, 9], [2, 3, 10, 11]) ← [1, 2, 3, 4, 9, 10, 11]", () => expect(mergeSorted([1, 4, 9], [2, 3, 10, 11])).toEqual([1, 2, 3, 4, 9, 10, 11]));
-test("واحدة فاضية: ([], [1]) ← [1]، و ([], []) ← []", () => expect([mergeSorted([], [1]), mergeSorted([], [])]).toEqual([[1], []]));
-test("countInversions([2, 4, 1, 3, 5]) ← 3", () => expect(countInversions([2, 4, 1, 3, 5])).toBe(3));
+            tests: R`test("countInversions([2, 4, 1, 3, 5]) ← 3", () => expect(countInversions([2, 4, 1, 3, 5])).toBe(3));
 test("[5, 4, 3, 2, 1] ← 10", () => expect(countInversions([5, 4, 3, 2, 1])).toBe(10));
-test("المتساويين مش inversion: [1, 2, 2] ← 0 (<= مش <)", () => expect(countInversions([1, 2, 2])).toBe(0));
+test("المتساويين مش inversion: [1, 2, 2] ← 0", () => expect(countInversions([1, 2, 2])).toBe(0));
+test("[3, 3, 1] ← 2", () => expect(countInversions([3, 3, 1])).toBe(2));
 test("[] ← 0", () => expect(countInversions([])).toBe(0));
-test("3000 رقم نازلين ← 4498500 (O(n log n)، والـ brute force O(n^2))", () => expect(countInversions(Array.from({ length: 3000 }, (_, i) => 3000 - i))).toBe(4498500));`,
-            solution: R`function mergeSorted(a, b) {
-  const out = [];
-  let i = 0, j = 0;
-  while (i < a.length && j < b.length) out.push(a[i] <= b[j] ? a[i++] : b[j++]);
-  return out.concat(a.slice(i), b.slice(j));
-}
-function countInversions(a) {
+test("١٠٠ ألف رقم نازلين ← 4999950000 (O(n log n)، والـ brute force O(n^2) هيقف)", () => expect(countInversions(Array.from({ length: 100000 }, (_, i) => 100000 - i))).toBe(4999950000));`,
+            solution: R`function countInversions(a) {
   const sort = arr => {
     if (arr.length <= 1) return [arr, 0];
     const mid = arr.length >> 1;

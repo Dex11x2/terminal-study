@@ -786,7 +786,7 @@ start          بيمنع [3, 2] بعد [2, 3]
             starter: R`function combinationSum2(candidates, target) {
   const sorted = [...candidates].sort((a, b) => a - b);
   const out = [], path = [];
-  // backtrack(i + 1, ...) بدل backtrack(i, ...)، وفوّت التكرار في نفس المستوى
+  // كل رقم يتاخد مرة واحدة، ومن غير تركيبتين متطابقتين
   return out;
 }`,
             tests: R`const norm = xs => xs.map(x => JSON.stringify(x)).sort();

@@ -515,7 +515,7 @@ console.log(isAnagram("listen", "silent")); // true
 console.log(isAnagram("rat", "car"));       // false
 console.log(isAnagram("aab", "abb"));       // false
 // O(n) time, O(k) space (k = distinct chars); sorting both strings would be O(n log n)`,
-          try: R`حلّها بطريقة الـ sort في سطر واحد وقارن الـ Big-O. وبعدين خليها تتجاهل المسافات والحروف الكبيرة: [[isAnagram("Dormitory", "dirty room")]] تطلع true. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[isAnagram]] لازم تتجاهل المسافات والحروف الكبيرة.`,
+          try: R`حلّها بطريقة الـ sort في سطر واحد وقارن الـ Big-O. وبعدين خليها تتجاهل المسافات والحروف الكبيرة: [[isAnagram("Dormitory", "dirty room")]] تطلع true. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[minSteps(s, t)]]: [[s]] و [[t]] بنفس الطول، رجّع أقل عدد حروف في [[t]] لازم تتغيّر (كل حرف لحرف تاني) عشان [[t]] تبقى anagram لـ [[s]]. [[minSteps("bab", "aba")]] ← 1.`,
           flag: "script",
           deep: {
             why: "سؤال انترفيو كلاسيكي، والأهم إنه بيعلّمك تحوّل «نفس الحاجة بترتيب مختلف» لـ «نفس العدّ». نفس الفكرة في group anagrams، وفي «هل فيه permutation من الكلمة دي جوه string تانية» (sliding window مع عدّ).",
@@ -696,33 +696,29 @@ console.log(isAnagram("aab", "abb"));              // false
 // sort version: O(n log n) time, O(n) space; count version: O(n) time, O(k) space`,
           check: {
             lang: "js",
-            starter: R`function isAnagram(s, t) {
-  // نضّف الاتنين (حروف صغيرة ومن غير مسافات) قبل ما تشيّك على الطول
+            starter: R`function minSteps(s, t) {
+  // عدّ حروف s، وبعدين شوف حروف t اللي ملهاش مقابل
+  return 0;
 }`,
-            tests: R`test("('listen', 'silent') ← true", () => expect(isAnagram("listen", "silent")).toBe(true));
-test("('rat', 'car') ← false", () => expect(isAnagram("rat", "car")).toBe(false));
-test("('aab', 'abb') ← false: نفس الحروف بس بعدد مختلف", () => expect(isAnagram("aab", "abb")).toBe(false));
-test("('Dormitory', 'dirty room') ← true: نضّف قبل فحص الطول", () => expect(isAnagram("Dormitory", "dirty room")).toBe(true));
-test("('Listen', 'Silent') ← true: الحروف الكبيرة زي الصغيرة", () => expect(isAnagram("Listen", "Silent")).toBe(true));
-test("('', '') ← true", () => expect(isAnagram("", "")).toBe(true));
-test("نصين ٥٠ ألف حرف (O(n) بالعدّ، O(n log n) بالـ sort)", () => {
+            tests: R`test("('bab', 'aba') ← 1", () => expect(minSteps("bab", "aba")).toBe(1));
+test("('leetcode', 'practice') ← 5", () => expect(minSteps("leetcode", "practice")).toBe(5));
+test("('anagram', 'mangaar') ← 0: هما anagram أصلًا", () => expect(minSteps("anagram", "mangaar")).toBe(0));
+test("('aab', 'bbb') ← 2: الـ b الزيادة بتتحسب", () => expect(minSteps("aab", "bbb")).toBe(2));
+test("('', '') ← 0", () => expect(minSteps("", "")).toBe(0));
+test("نصين ٥٠ ألف حرف (O(n))", () => {
   const s = "abcde".repeat(10000);
-  expect(isAnagram(s, [...s].reverse().join(""))).toBe(true);
-  expect(isAnagram(s, s.slice(1) + "z")).toBe(false);
+  expect([minSteps(s, [...s].reverse().join("")), minSteps(s, "z".repeat(50000))]).toEqual([0, 50000]);
 });`,
-            solution: R`function isAnagram(s, t) {
-  const clean = x => x.toLowerCase().replace(/\s+/g, "");
-  s = clean(s);
-  t = clean(t);
-  if (s.length !== t.length) return false;
+            solution: R`function minSteps(s, t) {
   const count = new Map();
   for (const ch of s) count.set(ch, (count.get(ch) || 0) + 1);
+  let steps = 0;
   for (const ch of t) {
     const c = count.get(ch);
-    if (!c) return false;
-    count.set(ch, c - 1);
+    if (c) count.set(ch, c - 1);
+    else steps++;
   }
-  return true;
+  return steps;
 }`
           }
         },

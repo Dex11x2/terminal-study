@@ -243,7 +243,7 @@ acc.balance;          // 150
 acc.balance = 1e6;    // مفيش setter: بيتجاهل (وفي strict TypeError)
 BankAccount.count;    // 1
 typeof BankAccount;   // "function"`,
-          try: R`ضيف [[withdraw(amount)]] بترمي error لو الرصيد مش كفاية. وبعدين جرّب تكتب [[acc.#balance]] برا الكلاس: هتلاقي SyntaxError قبل ما الملف يشتغل أصلًا. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الكلاس جاهز في المربع، ضيف [[withdraw]].`,
+          try: R`ضيف [[withdraw(amount)]] بترمي error لو الرصيد مش كفاية. وبعدين جرّب تكتب [[acc.#balance]] برا الكلاس: هتلاقي SyntaxError قبل ما الملف يشتغل أصلًا. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الكلاس جاهز في المربع: ضيف [[withdraw]]، و getter اسمه [[history]] بيرجّع العمليات اللي نجحت بس بالترتيب، كل واحدة [[{ type: "deposit", amount: 100 }]] (أو [["withdraw"]]). خزّن السجل في field خاص [[#log]]، واللي بره ميقدرش يعدّل السجل حتى لو عمل push في الـ array اللي رجعتله.`,
           flag: "script",
           deep: {
             why: R`الـ classes في كل حتة: Error مخصص، و services في الباك، و SDKs زي [[new PrismaClient()]] و [[new Stripe()]]، و Web Components. ومع private fields بقى عندك encapsulation حقيقي، مش underscore بالاتفاق.`,
@@ -419,7 +419,7 @@ TypeError: Class constructor BankAccount cannot be invoked without 'new'
 
 - [[return this]] في آخر method = chaining.
 - getter من غير setter = خاصية للقراية بس.
-- في التمرين تحت هتضيف [[withdraw]]: بص على deposit كويس، وفكّر إيه الحالات الغلط اللي لازم ترفضها، وإيه اللي لازم ترجّعه عشان الـ chaining يفضل شغال.`,
+- في التمرين تحت هتضيف [[withdraw]] وسجل للعمليات: بص على deposit كويس، وفكّر إيه الحالات الغلط اللي لازم ترفضها، وإيه اللي لازم ترجّعه عشان الـ chaining يفضل شغال، وفين تخزّن السجل بحيث محدش من بره يقدر يعدّله.`,
           lines: [
             "بداية الكلاس.",
             R`[[static]]: خاصية على الكلاس نفسه، مشتركة.`,
@@ -483,39 +483,57 @@ try { acc.withdraw(500); } catch (e) { console.log(e.message); }`,
     // موجب، ومش أكبر من الرصيد، و return this
   }
   get balance() { return this.#balance; }
+  get history() {
+    return [];
+  }
 }`,
             tests: R`test("deposit(100).deposit(50).withdraw(30) ← balance 120", () => expect(new BankAccount("Sara").deposit(100).deposit(50).withdraw(30).balance).toBe(120));
-test("withdraw أكبر من الرصيد بترمي error", () => expect(() => new BankAccount("Ali").deposit(100).withdraw(500)).toThrow());
-test("المبلغ السالب أو الصفر بيترمي", () => {
+test("withdraw أكبر من الرصيد بترمي error، والرصيد ميتغيّرش", () => {
   const acc = new BankAccount("Ali").deposit(100);
-  expect(() => acc.withdraw(-5)).toThrow();
+  expect(() => acc.withdraw(500)).toThrow();
   expect(() => acc.withdraw(0)).toThrow();
-});
-test("السحب الفاشل ميغيّرش الرصيد", () => {
-  const acc = new BankAccount("Mona").deposit(100);
-  try { acc.withdraw(500); } catch {}
   expect(acc.balance).toBe(100);
+});
+test("history: العمليات اللي نجحت بس، بالترتيب", () => {
+  const acc = new BankAccount("Sara").deposit(100).withdraw(30);
+  try { acc.withdraw(500); } catch {}
+  try { acc.deposit(-1); } catch {}
+  acc.deposit(5);
+  expect(acc.history).toEqual([{ type: "deposit", amount: 100 }, { type: "withdraw", amount: 30 }, { type: "deposit", amount: 5 }]);
+});
+test("اللي بره ميقدرش يعدّل السجل", () => {
+  const acc = new BankAccount("Mona").deposit(10);
+  acc.history.push({ type: "deposit", amount: 1e6 });
+  acc.history.length = 0;
+  expect(acc.history).toEqual([{ type: "deposit", amount: 10 }]);
+});
+test("كل حساب ليه سجله", () => {
+  const a = new BankAccount("A").deposit(1), b = new BankAccount("B");
+  expect([a.history.length, b.history.length]).toEqual([1, 0]);
 });
 test("withdraw بترجّع this عشان الـ chaining", () => {
   const acc = new BankAccount("Omar").deposit(50);
   expect(acc.withdraw(10) === acc).toBe(true);
-});
-test("تسحب الرصيد كله بالظبط ← 0", () => expect(new BankAccount("Nour").deposit(70).withdraw(70).balance).toBe(0));`,
+});`,
             solution: R`class BankAccount {
   #balance = 0;
+  #log = [];
   constructor(owner) { this.owner = owner; }
   deposit(amount) {
     if (amount <= 0) throw new RangeError("المبلغ لازم يبقى موجب");
     this.#balance += amount;
+    this.#log.push({ type: "deposit", amount });
     return this;
   }
   withdraw(amount) {
     if (amount <= 0) throw new RangeError("المبلغ لازم يبقى موجب");
     if (amount > this.#balance) throw new Error($__btالرصيد مش كفاية: معاك $__{this.#balance} وعايز تسحب $__{amount}$__bt);
     this.#balance -= amount;
+    this.#log.push({ type: "withdraw", amount });
     return this;
   }
   get balance() { return this.#balance; }
+  get history() { return this.#log.map(e => ({ ...e })); }
 }`
           }
         },

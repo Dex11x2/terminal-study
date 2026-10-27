@@ -490,18 +490,19 @@ true
           sol: R`النمط هيعلّم على الإيميلين، زي [[ali@mail.com]] و [[sara@site.org]]. ([[\b]] حدود كلمة، و [[\.]] نقطة حرفية.)`,
           check: {
             lang: "js",
-            starter: R`// isPhone: رقم موبايل مصري: 11 رقم، بيبدأ بـ 010 أو 011 أو 012 أو 015
-function isPhone(s) {
-  return /01\d+/.test(s);
+            starter: R`// isTime: وقت بنظام 24 ساعة بالشكل HH:MM، من 00:00 لـ 23:59
+function isTime(s) {
+  return /\d+:\d+/.test(s);
 }`,
-            tests: R`test("isPhone('01012345678') ← true", () => expect(isPhone("01012345678")).toBe(true));
-test("isPhone('01512345678') ← true", () => expect(isPhone("01512345678")).toBe(true));
-test("isPhone('0101234567') ← false (10 أرقام)", () => expect(isPhone("0101234567")).toBe(false));
-test("isPhone('01312345678') ← false (013 مش موجودة)", () => expect(isPhone("01312345678")).toBe(false));
-test("isPhone('010123456789') ← false (12 رقم)", () => expect(isPhone("010123456789")).toBe(false));
-test("isPhone('x01012345678') ← false", () => expect(isPhone("x01012345678")).toBe(false));`,
-            solution: R`function isPhone(s) {
-  return /^01[0125]\d{8}$/.test(s);
+            tests: R`test("isTime('09:30') ← true", () => expect(isTime("09:30")).toBe(true));
+test("isTime('23:59') و isTime('00:00') ← true", () => expect([isTime("23:59"), isTime("00:00")]).toEqual([true, true]));
+test("isTime('19:05') ← true، و isTime('29:05') ← false", () => expect([isTime("19:05"), isTime("29:05")]).toEqual([true, false]));
+test("isTime('24:00') ← false (مفيش ساعة 24)", () => expect(isTime("24:00")).toBe(false));
+test("isTime('12:60') ← false (الدقايق لحد 59)", () => expect(isTime("12:60")).toBe(false));
+test("isTime('9:30') ← false (الساعة رقمين)", () => expect(isTime("9:30")).toBe(false));
+test("isTime('x12:30') و isTime('12:300') ← false", () => expect([isTime("x12:30"), isTime("12:300")]).toEqual([false, false]));`,
+            solution: R`function isTime(s) {
+  return /^([01]\d|2[0-3]):[0-5]\d$/.test(s);
 }`
           }
         }

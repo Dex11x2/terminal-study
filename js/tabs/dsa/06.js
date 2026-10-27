@@ -535,7 +535,7 @@ console.log(nextGreater([2, 1, 2, 4, 3])); // [4, 2, 4, -1, -1]
 console.log(nextGreater([5, 4, 3]));       // [-1, -1, -1]
 console.log(nextGreater([]));              // []
 // O(n) time (every index is pushed and popped at most once), O(n) space`,
-          try: R`حل daily temperatures: لكل يوم، كام يوم لحد ما الحرارة تبقى أعلى؟ [73, 74, 75, 71, 69, 72, 76, 73] ترجع [1, 1, 4, 2, 1, 1, 0, 0]. (نفس الكود، بس سجّل الفرق بين الـ indexes بدل القيمة، والافتراضي 0). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[dailyTemperatures]].`,
+          try: R`حل daily temperatures: لكل يوم، كام يوم لحد ما الحرارة تبقى أعلى؟ [73, 74, 75, 71, 69, 72, 76, 73] ترجع [1, 1, 4, 2, 1, 1, 0, 0]. (نفس الكود، بس سجّل الفرق بين الـ indexes بدل القيمة، والافتراضي 0). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[nextGreaterCircular(a)]]: نفس next greater بس الـ array دايرية، يعني بعد آخر عنصر بتكمّل تدوّر من أولها. [[[1, 2, 1]]] ترجع [[[2, -1, 2]]]. (فكّر: تلف على الـ array مرتين.)`,
           flag: "script",
           deep: {
             why: "الـ monotonic stack بيحل عيلة كاملة من المسائل في O(n) بدل O(n^2): أول أكبر أو أصغر على اليمين أو الشمال، وأيام لحد درجة حرارة أعلى، وأكبر مستطيل في histogram، و stock span. الحل البديهي لكل عنصر بيدوّر على يمينه: O(n^2).",
@@ -708,30 +708,32 @@ console.log(dailyTemperatures([30, 30, 30]).join(" "));                     // 0
 // O(n) time (each index is pushed and popped once), O(n) space`,
           check: {
             lang: "js",
-            starter: R`function dailyTemperatures(t) {
-  const res = new Array(t.length).fill(0);
+            starter: R`function nextGreaterCircular(a) {
+  const res = new Array(a.length).fill(-1);
   const stack = [];
-  // زي nextGreater، بس سجّل res[j] = i - j
+  // ...
   return res;
 }`,
-            tests: R`test("[73, 74, 75, 71, 69, 72, 76, 73] ← [1, 1, 4, 2, 1, 1, 0, 0]", () => expect(dailyTemperatures([73, 74, 75, 71, 69, 72, 76, 73])).toEqual([1, 1, 4, 2, 1, 1, 0, 0]));
-test("درجات متساوية ← أصفار (أعلى مش أعلى أو زي)", () => expect(dailyTemperatures([30, 30, 30])).toEqual([0, 0, 0]));
-test("[30, 40, 50, 60] ← [1, 1, 1, 0]", () => expect(dailyTemperatures([30, 40, 50, 60])).toEqual([1, 1, 1, 0]));
-test("[] ← []", () => expect(dailyTemperatures([])).toEqual([]));
-test("3000 يوم نازلين وبعدهم يوم حر (O(n): كل index بيدخل ويخرج مرة)", () => {
-  const t = [...Array.from({ length: 3000 }, (_, i) => 3000 - i), 5000];
-  const r = dailyTemperatures(t);
-  expect([r[0], r[2999], r[3000]]).toEqual([3000, 1, 0]);
+            tests: R`test("[1, 2, 1] ← [2, -1, 2]", () => expect(nextGreaterCircular([1, 2, 1])).toEqual([2, -1, 2]));
+test("[1, 2, 3, 4, 3] ← [2, 3, 4, -1, 4]", () => expect(nextGreaterCircular([1, 2, 3, 4, 3])).toEqual([2, 3, 4, -1, 4]));
+test("[5, 4, 3] ← [-1, 5, 5]: الأكبر جاي من أول الـ array", () => expect(nextGreaterCircular([5, 4, 3])).toEqual([-1, 5, 5]));
+test("متساويين ← -1 (أكبر، مش أكبر أو زي)", () => expect(nextGreaterCircular([7, 7, 7])).toEqual([-1, -1, -1]));
+test("[] ← []", () => expect(nextGreaterCircular([])).toEqual([]));
+test("١٠٠ ألف رقم نازلين (O(n): كل index بيدخل ويخرج مرة)", () => {
+  const a = Array.from({ length: 100000 }, (_, i) => 100000 - i);
+  const r = nextGreaterCircular(a);
+  expect([r[0], r[1], r[99999]]).toEqual([-1, 100000, 100000]);
 });`,
-            solution: R`function dailyTemperatures(t) {
-  const res = new Array(t.length).fill(0);
+            solution: R`function nextGreaterCircular(a) {
+  const n = a.length;
+  const res = new Array(n).fill(-1);
   const stack = [];
-  for (let i = 0; i < t.length; i++) {
-    while (stack.length && t[stack.at(-1)] < t[i]) {
-      const j = stack.pop();
-      res[j] = i - j;
+  for (let i = 0; i < 2 * n; i++) {
+    const x = a[i % n];
+    while (stack.length && a[stack.at(-1)] < x) {
+      res[stack.pop()] = x;
     }
-    stack.push(i);
+    if (i < n) stack.push(i);
   }
   return res;
 }`
@@ -760,7 +762,7 @@ const q = new Queue();
 q.enqueue("a"); q.enqueue("b"); q.enqueue("c");
 console.log(q.dequeue(), q.dequeue(), q.size); // a b 1
 // enqueue and dequeue are O(1); Array.prototype.shift is O(n) because every item moves down one index`,
-          try: R`قيس الفرق: ١٠٠ ألف عنصر بـ push و shift، وبعدين بالـ Queue دي، بـ [[console.time]]. وبعدين حوّلها deque: ضيف [[pushFront]] (بتقلّل head وتكتب فيه) و [[popBack]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[Deque]] بالأربع عمليات و [[size]].`,
+          try: R`قيس الفرق: ١٠٠ ألف عنصر بـ push و shift، وبعدين بالـ Queue دي، بـ [[console.time]]. وبعدين حوّلها deque: ضيف [[pushFront]] (بتقلّل head وتكتب فيه) و [[popBack]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[RingQueue(capacity)]]: queue بحجم ثابت (ring buffer) فوق array طولها [[capacity]]، من غير [[delete]] ومن غير ما الـ array تكبر. [[enqueue(x)]] بترجّع false لو مليانة و true لو دخل، و [[dequeue()]] بترجّع [[undefined]] لو فاضية، و [[size]]. ولما توصل لآخر الـ array ارجع لأولها بـ [[%]].`,
           flag: "script",
           deep: {
             why: "BFS، وطابور مهام (إيميلات بتتبعت واحد واحد)، و sliding window maximum، كلهم queue. ولو كتبته بـ shift الكود هيشتغل في التجربة ويبقى بطيء جدًا على بيانات حقيقية. قياس على Node 24: تفضية array فيها ١٠٠ ألف عنصر بـ shift خدت حوالي ٠.٧ ثانية، و ٤٠٠ ألف خدت أكتر من ٤٠ ثانية. ده شكل O(n^2).",
@@ -956,61 +958,60 @@ console.log(d.popFront(), d.popBack(), d.popBack(), d.size); // a c b 0
 // all four operations O(1); head can go negative, which is fine for object keys`,
           check: {
             lang: "js",
-            starter: R`class Deque {
-  constructor() { this.items = {}; this.head = 0; this.tail = 0; }
-  pushBack(x) { this.items[this.tail++] = x; }
-  popFront() {
-    if (this.head === this.tail) return undefined;
-    const x = this.items[this.head];
-    delete this.items[this.head++];
-    return x;
+            starter: R`class RingQueue {
+  constructor(capacity) {
+    this.items = new Array(capacity);
+    this.head = 0; // مكان أول عنصر
+    this.size = 0;
   }
-  pushFront(x) {
-    // قلّل head الأول وبعدين اكتب
+  enqueue(x) {
+    return false;
   }
-  popBack() {
-    // قلّل tail واقرا وامسح
+  dequeue() {
+    return undefined;
   }
-  get size() { return this.tail - this.head; }
 }`,
-            tests: R`test("pushBack b، pushFront a، pushBack c ← popFront a و popBack c و popBack b", () => {
-  const d = new Deque();
-  d.pushBack("b"); d.pushFront("a"); d.pushBack("c");
-  expect([d.size, d.popFront(), d.popBack(), d.popBack(), d.size]).toEqual([3, "a", "c", "b", 0]);
+            tests: R`test("capacity 3: a و b و c يدخلوا و d ترجع false", () => {
+  const q = new RingQueue(3);
+  expect([q.enqueue("a"), q.enqueue("b"), q.enqueue("c"), q.enqueue("d"), q.size]).toEqual([true, true, true, false, 3]);
 });
-test("--this.head مش this.head--: pushFront متكتبش فوق أول عنصر", () => {
-  const d = new Deque();
-  d.pushBack(1); d.pushFront(0);
-  expect([d.popFront(), d.popFront()]).toEqual([0, 1]);
+test("بتلف: dequeue a وبعدين d تدخل، والترتيب b c d", () => {
+  const q = new RingQueue(3);
+  ["a", "b", "c"].forEach(x => q.enqueue(x));
+  const first = q.dequeue();
+  q.enqueue("d");
+  expect([first, q.dequeue(), q.dequeue(), q.dequeue(), q.size]).toEqual(["a", "b", "c", "d", 0]);
 });
-test("فاضي: popFront و popBack ← undefined والـ size يفضل 0", () => {
-  const d = new Deque();
-  expect([d.popFront(), d.popBack(), d.size]).toEqual([undefined, undefined, 0]);
+test("فاضية: dequeue ← undefined والـ size يفضل 0", () => {
+  const q = new RingQueue(2);
+  expect([q.dequeue(), q.size]).toEqual([undefined, 0]);
 });
-test("١٠٠ ألف pushFront وبعدين popBack بنفس ترتيب الدخول (كله O(1))", () => {
-  const d = new Deque();
-  for (let i = 0; i < 100000; i++) d.pushFront(i);
+test("١٠٠ ألف enqueue و dequeue على capacity 2: الـ array طولها 2 على طول", () => {
+  const q = new RingQueue(2);
   let ok = true;
-  for (let i = 0; i < 100000; i++) if (d.popBack() !== i) ok = false;
-  expect([ok, d.size]).toEqual([true, 0]);
+  for (let i = 0; i < 100000; i++) { q.enqueue(i); if (q.dequeue() !== i) ok = false; }
+  expect([ok, q.size, q.items.length]).toEqual([true, 0, 2]);
 });`,
-            solution: R`class Deque {
-  constructor() { this.items = {}; this.head = 0; this.tail = 0; }
-  pushBack(x) { this.items[this.tail++] = x; }
-  popFront() {
-    if (this.head === this.tail) return undefined;
+            solution: R`class RingQueue {
+  constructor(capacity) {
+    this.items = new Array(capacity);
+    this.head = 0;
+    this.size = 0;
+  }
+  enqueue(x) {
+    if (this.size === this.items.length) return false;
+    this.items[(this.head + this.size) % this.items.length] = x;
+    this.size++;
+    return true;
+  }
+  dequeue() {
+    if (this.size === 0) return undefined;
     const x = this.items[this.head];
-    delete this.items[this.head++];
+    this.items[this.head] = undefined;
+    this.head = (this.head + 1) % this.items.length;
+    this.size--;
     return x;
   }
-  pushFront(x) { this.items[--this.head] = x; }
-  popBack() {
-    if (this.head === this.tail) return undefined;
-    const x = this.items[--this.tail];
-    delete this.items[this.tail];
-    return x;
-  }
-  get size() { return this.tail - this.head; }
 }`
           }
         }

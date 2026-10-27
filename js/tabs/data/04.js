@@ -267,7 +267,7 @@ SELECT date_trunc('day', created_at) AS day, sum(total) AS revenue
 FROM orders WHERE status = 'paid'
 GROUP BY day ORDER BY day;
 SELECT status, user_id FROM orders GROUP BY status;       -- error: user_id لازم يبقى في GROUP BY`,
-          try: R`غيّر [[date_trunc('day', ...)]] لـ [[date_trunc('month', ...)]]. وبعدين اعمل GROUP BY على [[created_at]] نفسه من غير date_trunc، وشوف ليه كل أوردر بقى مجموعة لوحده. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: إيراد كل شهر من الأوردرات [[paid]]: عمود الشهر بـ [[date_trunc('month', created_at)]] وعمود المجموع، مترتبين بالشهر.`,
+          try: R`غيّر [[date_trunc('day', ...)]] لـ [[date_trunc('month', ...)]]. وبعدين اعمل GROUP BY على [[created_at]] نفسه من غير date_trunc، وشوف ليه كل أوردر بقى مجموعة لوحده. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: لكل شهر ([[date_trunc('month', created_at)]]): عدد الأوردرات، وعدد اليوزرز المختلفين اللي طلبوا فيه ([[count(DISTINCT user_id)]] من درس SELECT)، من غير الأوردرات الملغية ([[cancelled]])، مترتبين بالشهر.`,
           flag: "script",
           deep: {
             why: "أغلب التقارير «لكل»: إيرادات لكل يوم، أوردرات لكل يوزر، مبيعات لكل منتج. GROUP BY بيعملها في استعلام واحد بدل loop على كل يوزر.",
@@ -485,15 +485,14 @@ INSERT INTO orders VALUES
   (6, 2, 'paid', 1200.00, '2026-09-05 14:00+00'),
   (7, 3, 'pending', 80.00, '2026-09-10 10:00+00'),
   (8, 1, 'paid', 60.00, '2026-09-12 16:45+00');`,
-            starter: R`SELECT created_at AS month, sum(total) AS revenue
+            starter: R`SELECT created_at AS month, count(*) AS orders
 FROM orders
-WHERE status = 'paid'
 GROUP BY created_at
 ORDER BY 1;`,
-            expectSql: R`SELECT date_trunc('month', created_at), sum(total) FROM orders WHERE status = 'paid' GROUP BY 1 ORDER BY 1;`,
-            solution: R`SELECT date_trunc('month', created_at) AS month, sum(total) AS revenue
+            expectSql: R`SELECT date_trunc('month', created_at), count(*), count(DISTINCT user_id) FROM orders WHERE status <> 'cancelled' GROUP BY 1 ORDER BY 1;`,
+            solution: R`SELECT date_trunc('month', created_at) AS month, count(*) AS orders, count(DISTINCT user_id) AS buyers
 FROM orders
-WHERE status = 'paid'
+WHERE status <> 'cancelled'
 GROUP BY 1
 ORDER BY 1;`,
             ordered: true
@@ -516,7 +515,7 @@ GROUP BY user_id
 HAVING sum(total) >= 1000
 ORDER BY spent DESC;
 SELECT user_id FROM orders WHERE count(*) > 3 GROUP BY user_id;   -- error: aggregate في WHERE`,
-          try: R`جرّب [[HAVING spent >= 1000]] بالاسم بدل [[sum(total)]]: Postgres هيرفض. وبعدين حط نفس الاسم في ORDER BY: هيقبله. ليه؟ الإجابة في ترتيب التنفيذ. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[user_id]] ومجموع اللي دفعه (أوردرات [[paid]] بس)، لليوزرز اللي دفعوا 1000 أو أكتر، من الأكبر للأصغر.`,
+          try: R`جرّب [[HAVING spent >= 1000]] بالاسم بدل [[sum(total)]]: Postgres هيرفض. وبعدين حط نفس الاسم في ORDER BY: هيقبله. ليه؟ الإجابة في ترتيب التنفيذ. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: لكل يوزر: [[user_id]] وعدد أوردراته ومجموعها، من غير الأوردرات الملغية ([[cancelled]])، لليوزرز اللي عندهم أوردرين أو أكتر (مش ملغيين) بس. الترتيب مش مهم.`,
           flag: "script",
           deep: {
             why: "أسئلة زي «اليوزرز الـ VIP» و «المنتجات اللي اتباعت أكتر من ١٠٠ مرة» شرطها على رقم متجمّع، ومفيش طريقة تكتبها في WHERE.",
@@ -706,21 +705,17 @@ INSERT INTO orders VALUES
   (5, 3, 'paid', 250.00, '2026-09-01 11:00+00'),
   (6, 2, 'paid', 1200.00, '2026-09-05 14:00+00'),
   (7, 3, 'pending', 80.00, '2026-09-10 10:00+00'),
-  (8, 1, 'paid', 60.00, '2026-09-12 16:45+00');`,
-            starter: R`SELECT user_id, sum(total) AS spent
+  (8, 1, 'paid', 60.00, '2026-09-12 16:45+00');
+INSERT INTO orders VALUES (9, 4, 'paid', 500.00, '2026-09-18 10:00+00');`,
+            starter: R`SELECT user_id, count(*) AS orders, sum(total) AS spent
 FROM orders
-WHERE status = 'paid'
-GROUP BY user_id
-HAVING spent >= 1000
-ORDER BY spent DESC;`,
-            expect: [[1,1410], [2,1200]],
-            solution: R`SELECT user_id, sum(total) AS spent
+GROUP BY user_id;`,
+            expect: [[1,3,1410], [2,2,1320], [3,2,330]],
+            solution: R`SELECT user_id, count(*) AS orders, sum(total) AS spent
 FROM orders
-WHERE status = 'paid'
+WHERE status <> 'cancelled'
 GROUP BY user_id
-HAVING sum(total) >= 1000
-ORDER BY spent DESC;`,
-            ordered: true
+HAVING count(*) >= 2;`
           }
         }
       ]

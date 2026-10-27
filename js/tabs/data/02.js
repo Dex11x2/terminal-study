@@ -234,7 +234,7 @@ SELECT id, status FROM orders WHERE status IN ('paid', 'shipped');
 SELECT id FROM orders WHERE created_at >= now() - interval '7 days';
 SELECT name FROM products WHERE price BETWEEN 100 AND 500;
 SELECT name FROM products WHERE is_active AND (stock > 0 OR price = 0);`,
-          try: R`شيل الأقواس من آخر سطر وقارن النتيجة. وبعدين جرّب [[WHERE status = "paid"]] بالتنصيص المزدوج واقرا الـ error. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: هات أسماء المنتجات النشطة ([[is_active]]) اللي يا إما في المخزون يا إما ببلاش. في الجدول منتج ببلاش ومش نشط، ومينفعش يظهر.`,
+          try: R`شيل الأقواس من آخر سطر وقارن النتيجة. وبعدين جرّب [[WHERE status = "paid"]] بالتنصيص المزدوج واقرا الـ error. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: هات أسماء المنتجات اللي في المخزون ([[stock > 0]]) وسعرها يا إما أقل من 100 يا إما أكتر من 500. في الجدول جاكيت غالي خلصان من المخزون، ومينفعش يظهر.`,
           flag: "script",
           deep: {
             why: "من غير WHERE هتجيب الجدول كله وتفلتر في الكود، يعني مليون صف بيعدّوا على الشبكة عشان تستخدم عشرة. الفلترة جوه القاعدة أسرع بمراحل، وممكن تستخدم index.",
@@ -458,12 +458,13 @@ INSERT INTO products VALUES
   (5, 'Sticker', 0.00, 0, true),
   (6, 'Old Poster', 0.00, 0, false),
   (7, 'Pen', 15.00, 100, true),
-  (8, 'Pin', 15.00, 40, true);`,
-            starter: R`SELECT name FROM products
-WHERE is_active AND stock > 0 OR price = 0;`,
-            expect: [["T-shirt"], ["Hoodie"], ["Sticker"], ["Pen"], ["Pin"]],
+  (8, 'Pin', 15.00, 40, true);
+INSERT INTO products VALUES (9, 'Jacket', 900.00, 0, true);`,
+            starter: R`-- المنتجات اللي في المخزون وسعرها أقل من 100 أو أكتر من 500
+SELECT name FROM products;`,
+            expect: [["Hoodie"], ["Pen"], ["Pin"]],
             solution: R`SELECT name FROM products
-WHERE is_active AND (stock > 0 OR price = 0);`
+WHERE stock > 0 AND (price < 100 OR price > 500);`
           }
         },
         {
@@ -476,7 +477,7 @@ WHERE is_active AND (stock > 0 OR price = 0);`
 SELECT name, price FROM products ORDER BY price DESC, name ASC;
 SELECT id, created_at FROM orders ORDER BY created_at DESC LIMIT 5;
 SELECT name, price FROM products ORDER BY price LIMIT 10 OFFSET 20;`,
-          try: R`ضيف منتجين بنفس السعر، واعمل [[ORDER BY price LIMIT 1]] كذا مرة بعد UPDATE على واحد منهم. وبعدين ضيف [[, id]] للترتيب وشوف النتيجة بقت ثابتة. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: أرخص ٣ منتجات بالاسم والسعر، ولو سعرين متساويين الأصغر [[id]] الأول. الترتيب جزء من الإجابة.`,
+          try: R`ضيف منتجين بنفس السعر، واعمل [[ORDER BY price LIMIT 1]] كذا مرة بعد UPDATE على واحد منهم. وبعدين ضيف [[, id]] للترتيب وشوف النتيجة بقت ثابتة. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الصفحة التانية من المنتجات النشطة ([[is_active]]) مترتبة من الأغلى، ٣ منتجات في الصفحة، بالاسم والسعر. ولو سعرين متساويين الأحدث (الـ [[id]] الأكبر) الأول. الترتيب جزء من الإجابة.`,
           flag: "script",
           deep: {
             why: "كل ليستة في التطبيق مترتبة بحاجة: الأحدث الأول، أو الأرخص، أو الأكتر مبيعًا. و LIMIT بيخليك تجيب صفحة واحدة بدل الجدول كله.",
@@ -686,12 +687,13 @@ INSERT INTO products VALUES
   (7, 'Pen', 15.00, 100, true),
   (8, 'Pin', 15.00, 40, true);`,
             starter: R`SELECT name, price FROM products
-ORDER BY price
+ORDER BY price DESC
 LIMIT 3;`,
-            expect: [["Sticker",0], ["Old Poster",0], ["Pen",15]],
+            expect: [["Pin",15], ["Pen",15], ["Sticker",0]],
             solution: R`SELECT name, price FROM products
-ORDER BY price, id
-LIMIT 3;`,
+WHERE is_active
+ORDER BY price DESC, id DESC
+LIMIT 3 OFFSET 3;`,
             ordered: true
           }
         },

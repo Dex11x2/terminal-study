@@ -4150,9 +4150,9 @@
   "on": "Chrome headless (playwright-core), example + solCode HTML, Windows 11"
  },
  "data|$queryRaw": {
-  "hash": "fc3058d2067b",
-  "date": "2026-10-07",
-  "on": "Windows + Node 24, Prisma 7.10.0 (adapter-pg) on postgres:18 in Docker"
+  "hash": "16ad9e141bae",
+  "date": "2026-10-27",
+  "on": "exercise redone: PGlite: solution passes (ordered by number); starter/old fail"
  },
  "data|ACID": {
   "hash": "91ececd64775",
@@ -4195,24 +4195,24 @@
   "on": "postgres:18 Docker + drizzle-orm 0.45 / drizzle-kit 0.31"
  },
  "data|EXISTS": {
-  "hash": "2508a89df266",
-  "date": "2026-10-07",
-  "on": "docker postgres:18 (psql)"
+  "hash": "b6b77a290bc4",
+  "date": "2026-10-27",
+  "on": "exercise redone: PGlite: solution passes; example, NOT IN starter, old solution fail"
  },
  "data|GROUP BY": {
-  "hash": "fe30695ed614",
-  "date": "2026-10-07",
-  "on": "docker postgres:18 (psql)"
+  "hash": "90ec18113eea",
+  "date": "2026-10-27",
+  "on": "exercise redone: PGlite: solution vs expectSql passes; example/starter/old fail"
  },
  "data|HAVING": {
-  "hash": "57d0b3304827",
-  "date": "2026-10-07",
-  "on": "docker postgres:18 (psql)"
+  "hash": "5b65cc6ee938",
+  "date": "2026-10-27",
+  "on": "exercise redone: PGlite: solution passes; example/starter/old solution fail"
  },
  "data|INNER JOIN": {
-  "hash": "c97a821e3cd7",
-  "date": "2026-10-07",
-  "on": "docker postgres:18 (psql)"
+  "hash": "b17620c31a92",
+  "date": "2026-10-27",
+  "on": "exercise redone: PGlite: solution passes; example/starter/old fail"
  },
  "data|INSERT": {
   "hash": "4986045fb028",
@@ -4225,9 +4225,9 @@
   "on": "postgres:18 in Docker (psql)"
  },
  "data|LEFT JOIN": {
-  "hash": "3fdc7255bc9e",
-  "date": "2026-10-07",
-  "on": "docker postgres:18 (psql)"
+  "hash": "66600aad97bd",
+  "date": "2026-10-27",
+  "on": "exercise redone: PGlite: solution passes; example/starter/old solution fail"
  },
  "data|LIKE و ILIKE": {
   "hash": "778a8ba6cbd9",
@@ -4245,9 +4245,9 @@
   "on": "docker postgres:18 (psql)"
  },
  "data|ON CONFLICT": {
-  "hash": "ca5ba118a426",
-  "date": "2026-10-07",
-  "on": "postgres:18 in Docker (psql)"
+  "hash": "5dcbc6617571",
+  "date": "2026-10-27",
+  "on": "exercise redone: PGlite: solution passes; starter/old fail"
  },
  "data|ON DELETE": {
   "hash": "e9ca19ee8212",
@@ -4255,9 +4255,9 @@
   "on": "docker postgres:18 (psql)"
  },
  "data|ORDER BY و LIMIT": {
-  "hash": "65f6137aa013",
-  "date": "2026-10-07",
-  "on": "docker postgres:18 (psql)"
+  "hash": "58af4aabab9a",
+  "date": "2026-10-27",
+  "on": "exercise redone: PGlite: solution passes (ordered); example/starter/old fail"
  },
  "data|PRIMARY KEY": {
   "hash": "f59e3a015d4b",
@@ -4300,14 +4300,14 @@
   "on": "Docker postgres:18 (psql)"
  },
  "data|WHERE": {
-  "hash": "70a05af72cb3",
-  "date": "2026-10-07",
-  "on": "docker postgres:18 (psql)"
+  "hash": "98c4591115b1",
+  "date": "2026-10-27",
+  "on": "exercise redone (rest unchanged): new check.solution run on PGlite (vendor) via check.js harness; example/starter/old solution fail"
  },
  "data|WITH (CTE)": {
-  "hash": "59eceb48be48",
-  "date": "2026-10-07",
-  "on": "docker postgres:18 (psql)"
+  "hash": "2d6f4d41dda5",
+  "date": "2026-10-27",
+  "on": "exercise redone: PGlite: solution passes; example (>= 1000) and starter now fail"
  },
  "data|atomic UPDATE": {
   "hash": "6250c251c2bd",
@@ -4375,9 +4375,9 @@
   "on": "docker postgres:18 (psql); disabled-seqscan cost on postgres:16"
  },
  "data|keyset pagination": {
-  "hash": "f443f6778039",
-  "date": "2026-10-07",
-  "on": "postgres:18 in Docker (psql)"
+  "hash": "769dc48465d0",
+  "date": "2026-10-27",
+  "on": "exercise redone: PGlite: solution passes (ordered); example/starter/old fail"
  },
  "data|many-to-many": {
   "hash": "262b76617102",
@@ -5250,9 +5250,9 @@
   "on": "Node 24.19.0 (Windows 11): example + solCode run, push-by-push trace"
  },
  "dsa|anagram (char count)": {
-  "hash": "8a57e9f320df",
-  "date": "2026-10-07",
-  "on": "Node 24.19.0 (Windows 11): example + solCode run, Map trace"
+  "hash": "1a299686b889",
+  "date": "2026-10-27",
+  "on": "exercise redone: node runJsCheck: solution passes; example renamed/starter/old fail"
  },
  "dsa|binary search": {
   "hash": "22996c84d621",
@@ -5285,9 +5285,9 @@
   "on": "Node 24.19.0 on Windows (example + solCode + instrumented trace)"
  },
  "dsa|combination sum": {
-  "hash": "8306f374bc44",
-  "date": "2026-10-07",
-  "on": "Node 24.19.0 on Windows (example + solCode + instrumented trace)"
+  "hash": "d6848b1e3d82",
+  "date": "2026-10-27",
+  "on": "starter hint removed: node runJsCheck: unchanged tests/solution pass; example renamed fails"
  },
  "dsa|contains duplicate (Set)": {
   "hash": "c86647ded537",
@@ -5305,14 +5305,14 @@
   "on": "Node 24.19.0 on Windows (example + solCode + instrumented trace)"
  },
  "dsa|fast/slow pointers": {
-  "hash": "447b5a1360a0",
-  "date": "2026-10-07",
-  "on": "Node 24.19.0 (Windows): example + solCode + instrumented trace"
+  "hash": "a2bf6f5ce08e",
+  "date": "2026-10-27",
+  "on": "exercise redone: node runJsCheck: solution passes; example renamed/starter/old fail"
  },
  "dsa|first unique (count + scan)": {
-  "hash": "8d459d71ef7f",
-  "date": "2026-10-07",
-  "on": "Node 24.19.0 on Windows (example + solCode + instrumented trace)"
+  "hash": "190c5850c8c7",
+  "date": "2026-10-27",
+  "on": "exercise redone: node runJsCheck: solution passes; example/starter fail, rescanning times out"
  },
  "dsa|fixed sliding window": {
   "hash": "7632605b8516",
@@ -5330,9 +5330,9 @@
   "on": "Node 24.19.0 on Windows (example + solCode + instrumented trace)"
  },
  "dsa|group anagrams (key)": {
-  "hash": "831286ab7712",
-  "date": "2026-10-07",
-  "on": "Node 24.19.0 on Windows (example + solCode + instrumented trace)"
+  "hash": "77bbe4d54dcd",
+  "date": "2026-10-27",
+  "on": "exercise redone: node runJsCheck: solution passes; example (which passed all before)/starter/old fail"
  },
  "dsa|interview framework": {
   "hash": "4c002a66c702",
@@ -5345,9 +5345,9 @@
   "on": "Node 24.19.0 on Windows (example + solCode + instrumented trace)"
  },
  "dsa|lower bound (first/last)": {
-  "hash": "035eeeacf64b",
-  "date": "2026-10-07",
-  "on": "Node 24.19.0 (Windows): example + solCode + instrumented trace"
+  "hash": "f83c6727e0b3",
+  "date": "2026-10-27",
+  "on": "exercise redone: node runJsCheck: solution passes; example/starter/old fail, linear scan times out"
  },
  "dsa|lowest common ancestor": {
   "hash": "075f2d618672",
@@ -5380,9 +5380,9 @@
   "on": "Node 24.19.0 on Windows (example + solCode + instrumented trace)"
  },
  "dsa|merge sort": {
-  "hash": "9121b02207c0",
-  "date": "2026-10-07",
-  "on": "Node 24.19.0 (Windows): example + solCode + instrumented trace"
+  "hash": "4e83a890aef5",
+  "date": "2026-10-27",
+  "on": "exercise redone: node runJsCheck: solution passes; example/starter fail, O(n^2) times out"
  },
  "dsa|min heap (by hand)": {
   "hash": "61b3bf99e456",
@@ -5395,9 +5395,9 @@
   "on": "Node 24.19.0 (Windows): example + solCode + instrumented trace"
  },
  "dsa|monotonic stack": {
-  "hash": "1db11f9ec797",
-  "date": "2026-10-07",
-  "on": "Node 24.19.0 (Windows): example + solCode + instrumented trace"
+  "hash": "07f56ddf5e78",
+  "date": "2026-10-27",
+  "on": "exercise redone: node runJsCheck: solution passes; example renamed/starter/brute force fail"
  },
  "dsa|number of islands": {
   "hash": "45859e779323",
@@ -5425,9 +5425,9 @@
   "on": "Node 24.19.0 on Windows (example + solCode + instrumented trace)"
  },
  "dsa|queue و deque": {
-  "hash": "b73e0c0088e2",
-  "date": "2026-10-07",
-  "on": "Node 24.19.0 (Windows): example + solCode + instrumented trace"
+  "hash": "cbb4e68d599e",
+  "date": "2026-10-27",
+  "on": "exercise redone: node runJsCheck: solution passes; example renamed/starter/old Deque fail"
  },
  "dsa|quick sort": {
   "hash": "fa0af3b1ffd8",
@@ -5455,9 +5455,9 @@
   "on": "Node 24.19.0 (Windows 11): example + solCode run, swap trace"
  },
  "dsa|search insert position": {
-  "hash": "c5fb2d744eab",
-  "date": "2026-10-07",
-  "on": "Node 24.19.0 (Windows): example + solCode + instrumented trace"
+  "hash": "aa6fd545c9d7",
+  "date": "2026-10-27",
+  "on": "exercise redone: node runJsCheck: solution passes; example renamed/starter/old fail"
  },
  "dsa|shortest path in grid (BFS)": {
   "hash": "ff585b75a27a",
@@ -6125,9 +6125,9 @@
   "on": "Windows (npx ajv-cli@5 + ajv-formats@3, draft2020)"
  },
  "files|JSON غلط": {
-  "hash": "415160aa6bea",
-  "date": "2026-10-07",
-  "on": "ubuntu-24.04 (docker) (jq 1.7, python 3.12) + windows node 24, windows pwsh 7.6/powershell 5.1"
+  "hash": "2b027a00988d",
+  "date": "2026-10-27",
+  "on": "exercise redone: node runJsCheck: solution passes; starter/old solution fail"
  },
  "files|JSON و YAML": {
   "hash": "07e146dfda65",
@@ -7920,9 +7920,9 @@
   "on": "win11 Node 24 pwsh 7 / ps 5.1 + docker node:22-slim TZ"
  },
  "js|EventEmitter": {
-  "hash": "fa0eb40cf959",
-  "date": "2026-10-06",
-  "on": "win11 Node 24.19"
+  "hash": "6ae5faadcea3",
+  "date": "2026-10-27",
+  "on": "exercise redone: node runJsCheck: solution passes (async tests); example/starter/old fail"
  },
  "js|FormData و URLSearchParams": {
   "hash": "6f7781fb0d85",
@@ -8040,9 +8040,9 @@
   "on": "win11 Node 24.19"
  },
  "js|class": {
-  "hash": "7477d17c65c1",
-  "date": "2026-10-06",
-  "on": "win11 Node 24.19 + Chrome headless"
+  "hash": "a0d4f9f1cfdb",
+  "date": "2026-10-27",
+  "on": "exercise redone: node runJsCheck: solution passes; example/starter/old withdraw-only fail"
  },
  "js|closure": {
   "hash": "c212ca7e53c7",
@@ -15235,9 +15235,9 @@
   "on": "Node 24 on Windows 11"
  },
  "symbols|=>": {
-  "hash": "62d3882daa51",
-  "date": "2026-10-07",
-  "on": "Node 24.19 on Windows"
+  "hash": "d5b6587b68c6",
+  "date": "2026-10-27",
+  "on": "exercise redone: node runJsCheck: solution passes; example/starter/old fail"
  },
  "symbols|=>  ضد  ->": {
   "hash": "7f8d532c5996",
@@ -15340,9 +15340,9 @@
   "on": "ubuntu:24.04 (Docker); docs: the docker run line itself"
  },
  "symbols|\\d  \\w  [ ]  ( )  {n}  |": {
-  "hash": "1da43f9a3301",
-  "date": "2026-10-07",
-  "on": "windows-11 node-24"
+  "hash": "0cb1629d165c",
+  "date": "2026-10-27",
+  "on": "exercise redone: node runJsCheck: solution passes; starter/old isPhone fail"
  },
  "symbols|^  $  .  *  +  ?": {
   "hash": "c8d651a9c61b",

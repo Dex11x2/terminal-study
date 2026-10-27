@@ -315,7 +315,7 @@ SELECT id, total, created_at FROM orders
 WHERE (created_at, id) < ('2026-03-01 10:00:00+00', 1234)
 ORDER BY created_at DESC, id DESC
 LIMIT 20;`,
-          try: R`قيس الاستعلام الأول بـ [[\timing]] مع OFFSET 0 و OFFSET 100000. وبعدين خد آخر صف من صفحة، وحط الـ created_at والـ id بتوعه في الاستعلام الأخير، وقيس. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: آخر صف في الصفحة اللي فاتت كان [[created_at = '2026-09-10 10:00+00']] و [[id = 11]]. هات [[id]] بتاع الـ ٣ صفوف اللي بعده بالترتيب [[created_at DESC, id DESC]]. فيه أوردرين تانيين في نفس اللحظة بالظبط (10 و 7)، ولازم ميضيعوش.`,
+          try: R`قيس الاستعلام الأول بـ [[\timing]] مع OFFSET 0 و OFFSET 100000. وبعدين خد آخر صف من صفحة، وحط الـ created_at والـ id بتوعه في الاستعلام الأخير، وقيس. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الـ API ده بيعرض الأقدم الأول ([[created_at, id]] تصاعدي). آخر صف في الصفحة اللي فاتت كان [[created_at = '2026-09-10 10:00+00']] و [[id = 7]]. هات [[id]] بتاع الـ ٣ صفوف اللي بعده بنفس الترتيب. فيه أوردرين تانيين في نفس اللحظة بالظبط (10 و 11)، ولازم ميضيعوش.`,
           flag: "script",
           deep: {
             why: "الـ infinite scroll والـ feeds والـ APIs اللي بتتقلّب بالصفحات بتوصل لصفحات بعيدة، والـ OFFSET بيخلي كل صفحة أبطأ من اللي قبلها، والـ database بتتعب على الفاضي.",
@@ -544,13 +544,13 @@ INSERT INTO orders VALUES
   (10, 2, 'paid', 40.00, '2026-09-10 10:00+00'),
   (11, 3, 'paid', 55.00, '2026-09-10 10:00+00');`,
             starter: R`SELECT id FROM orders
-WHERE created_at < '2026-09-10 10:00+00'
-ORDER BY created_at DESC, id DESC
+WHERE created_at > '2026-09-10 10:00+00'
+ORDER BY created_at, id
 LIMIT 3;`,
-            expect: [[10], [7], [6]],
+            expect: [[10], [11], [8]],
             solution: R`SELECT id FROM orders
-WHERE (created_at, id) < ('2026-09-10 10:00+00', 11)
-ORDER BY created_at DESC, id DESC
+WHERE (created_at, id) > ('2026-09-10 10:00+00', 7)
+ORDER BY created_at, id
 LIMIT 3;`,
             ordered: true
           }

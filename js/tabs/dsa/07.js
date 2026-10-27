@@ -286,7 +286,7 @@ function firstLast(a, x) {
 }
 console.log(firstLast([5, 7, 7, 8, 8, 8, 10], 8), firstLast([5, 7], 6)); // [3, 5] [-1, -1]
 // O(log n) time, O(1) space; x + 1 works for integers only (use an upperBound for anything else)`,
-          try: R`اكتب [[upperBound]] (أول مكان قيمته > x) بتغيير علامة واحدة، واستخدمها بدل [[x + 1]] عشان تشتغل مع أرقام عشرية و strings. وبعدين: عدد مرات ظهور x = [[upperBound - lowerBound]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[upperBound]] و [[firstLast]] من غير [[x + 1]]، و [[count]].`,
+          try: R`اكتب [[upperBound]] (أول مكان قيمته > x) بتغيير علامة واحدة، واستخدمها بدل [[x + 1]] عشان تشتغل مع أرقام عشرية و strings. وبعدين: عدد مرات ظهور x = [[upperBound - lowerBound]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[upperBound]]، و [[countInRange(a, lo, hi)]]: كام عنصر قيمته بين [[lo]] و [[hi]] (الطرفين داخلين)، في O(log n) ومن غير [[x + 1]] عشان تشتغل مع الكسور والـ strings.`,
           flag: "script",
           deep: {
             why: "الـ binary search العادية بترجّع «أي» مكان للقيمة، ودا مش كفاية لما فيه تكرار: أول طلب في يوم معين، أو عدد المستخدمين اللي عمرهم بين ٢٠ و ٣٠ في array مترتبة. الـ lower bound هو القالب اللي بيحل كل ده، وموجود جاهز في لغات تانية ([[bisect_left]] في Python، و [[std::lower_bound]] في C++).",
@@ -500,24 +500,23 @@ console.log(count([5, 7, 7, 8, 8, 8, 10], 8), count([5, 7], 6)); // 3 0
   return lo;
 }
 function upperBound(a, target) {
-  // نفس lowerBound بعلامة واحدة مختلفة
+  // أول مكان قيمته > target
 }
-function firstLast(a, x) {
-  return [-1, -1];
-}
-function count(a, x) {
+function countInRange(a, lo, hi) {
   return 0;
 }`,
             tests: R`test("upperBound([5, 7, 7, 8, 8, 8, 10], 8) ← 6", () => expect(upperBound([5, 7, 7, 8, 8, 8, 10], 8)).toBe(6));
 test("upperBound([1, 2], 5) ← 2 (بعد الآخر)", () => expect(upperBound([1, 2], 5)).toBe(2));
-test("firstLast([5, 7, 7, 8, 8, 8, 10], 8) ← [3, 5]", () => expect(firstLast([5, 7, 7, 8, 8, 8, 10], 8)).toEqual([3, 5]));
-test("أرقام عشرية: firstLast([1.5, 2.5, 2.5, 3], 2.5) ← [1, 2]", () => expect(firstLast([1.5, 2.5, 2.5, 3], 2.5)).toEqual([1, 2]));
-test("strings: firstLast(['ali', 'bob', 'bob', 'zed'], 'bob') ← [1, 2]", () => expect(firstLast(["ali", "bob", "bob", "zed"], "bob")).toEqual([1, 2]));
-test("مش موجود ← [-1, -1]", () => expect(firstLast([5, 7], 6)).toEqual([-1, -1]));
-test("count: 8 ← 3، و [] ← 0", () => expect([count([5, 7, 7, 8, 8, 8, 10], 8), count([], 1)]).toEqual([3, 0]));
-test("مليون عنصر (O(log n))", () => {
+test("countInRange([5, 7, 7, 8, 8, 8, 10], 7, 8) ← 5", () => expect(countInRange([5, 7, 7, 8, 8, 8, 10], 7, 8)).toBe(5));
+test("حدود برّه الـ array: (0, 100) ← 3، و (11, 20) ← 0", () => expect([countInRange([5, 7, 10], 0, 100), countInRange([5, 7, 10], 11, 20)]).toEqual([3, 0]));
+test("كسور: countInRange([1.5, 2.5, 2.5, 3, 3.5], 2.5, 3) ← 3", () => expect(countInRange([1.5, 2.5, 2.5, 3, 3.5], 2.5, 3)).toBe(3));
+test("strings: countInRange(['ali', 'bob', 'bob', 'zed'], 'b', 'c') ← 2", () => expect(countInRange(["ali", "bob", "bob", "zed"], "b", "c")).toBe(2));
+test("lo أكبر من hi ← 0 مش رقم سالب", () => expect(countInRange([1, 2, 3], 3, 1)).toBe(0));
+test("مليون عنصر و ١٠ آلاف سؤال (O(log n) لكل سؤال)", () => {
   const a = Array.from({ length: 1000000 }, (_, i) => Math.floor(i / 10));
-  expect([count(a, 4242), firstLast(a, 99999)]).toEqual([10, [999990, 999999]]);
+  let total = 0;
+  for (let q = 0; q < 10000; q++) total += countInRange(a, q * 10, q * 10 + 1);
+  expect([total, countInRange(a, -5, 99999)]).toEqual([200000, 1000000]);
 });`,
             solution: R`function lowerBound(a, target) {
   let lo = 0, hi = a.length;
@@ -537,13 +536,8 @@ function upperBound(a, target) {
   }
   return lo;
 }
-function firstLast(a, x) {
-  const first = lowerBound(a, x);
-  if (first === a.length || a[first] !== x) return [-1, -1];
-  return [first, upperBound(a, x) - 1];
-}
-function count(a, x) {
-  return upperBound(a, x) - lowerBound(a, x);
+function countInRange(a, lo, hi) {
+  return Math.max(0, upperBound(a, hi) - lowerBound(a, lo));
 }`
           }
         },
@@ -571,7 +565,7 @@ console.log(searchInsert([1, 3, 5, 6], 7)); // 4
 console.log(searchInsert([1, 3, 5, 6], 0)); // 0
 console.log(searchInsert([], 3));           // 0
 // O(log n) time, O(1) space`,
-          try: R`استخدمها عشان تضيف رقم لـ array مترتبة: [[a.splice(searchInsert(a, x), 0, x)]]. البحث [[O(log n)]]، بس الإضافة نفسها Big-O بتاعتها إيه؟ (O(n)، لأن splice بتحرّك اللي بعدها). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[insertSorted(a, x)]] بتضيف في نفس الـ array وترجّعها.`,
+          try: R`استخدمها عشان تضيف رقم لـ array مترتبة: [[a.splice(searchInsert(a, x), 0, x)]]. البحث [[O(log n)]]، بس الإضافة نفسها Big-O بتاعتها إيه؟ (O(n)، لأن splice بتحرّك اللي بعدها). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[addToBoard(board, player)]]: لوحة نتايج مترتبة **من الأعلى للأقل** بالـ [[score]] (كل لاعب [[{ name, score }]]). ضيف اللاعب في مكانه بـ binary search (مش sort) في نفس الـ array ورجّعها. ولو فيه حد بنفس النتيجة، الجديد ييجي **بعده** (اللي وصل الأول يفضل قدام).`,
           flag: "script",
           deep: {
             why: "«يتحط فين» سؤال بيتسأل كتير: leaderboard مترتب وعايز تضيف score جديد، أو مواعيد مترتبة وعايز تحط ميعاد، أو autocomplete بيدوّر على أول كلمة بتبدأ بحروف معينة. ولو فهمت ليه [[lo]] هو الإجابة، يبقى فهمت الـ binary search فعلًا.",
@@ -690,7 +684,7 @@ lo عمرها ما اتحركت، فرجّع **0**: يتحط في الأول. و
 | الوقت | [[O(log n)]] | نفس الـ binary search: المنطقة بتتنصّف |
 | الذاكرة | [[O(1)]] | lo و hi و mid |
 
-> البحث بس هو اللي [[O(log n)]]. لو هتضيف الرقم فعلًا في array، الإضافة نفسها ليها تمن، وده سؤال التمرين.
+> البحث بس هو اللي [[O(log n)]]. لو هتضيف الرقم فعلًا في array، الإضافة نفسها ليها تمن، وده سؤال «جرّب».
 
 ---
 
@@ -746,41 +740,36 @@ console.log(a.join(" ")); // 0 1 2 3 4 5 6
 // n inserts = O(n^2) in the worst case: to build a big sorted array, push everything then sort once (O(n log n))`,
           check: {
             lang: "js",
-            starter: R`function searchInsert(a, target) {
-  let lo = 0, hi = a.length - 1;
-  while (lo <= hi) {
-    const mid = (lo + hi) >>> 1;
-    if (a[mid] === target) return mid;
-    if (a[mid] < target) lo = mid + 1;
-    else hi = mid - 1;
-  }
-  return lo;
-}
-function insertSorted(a, x) {
-  // a.splice(مكان, 0, x)
-  return a;
+            starter: R`function addToBoard(board, player) {
+  // binary search على المكان، وبعدين board.splice(مكان, 0, player)
+  return board;
 }`,
-            tests: R`test("ضيف 5 و 1 و 4 و 2 و 3 و 0 و 6 لـ [] ← [0, 1, 2, 3, 4, 5, 6]", () => {
-  const a = [];
-  for (const x of [5, 1, 4, 2, 3, 0, 6]) insertSorted(a, x);
-  expect(a).toEqual([0, 1, 2, 3, 4, 5, 6]);
+            tests: R`const names = b => b.map(p => p.name);
+test("Mona (70) في [Ali 90, Sara 80, Omar 50] ← Ali, Sara, Mona, Omar", () => expect(names(addToBoard([{ name: "Ali", score: 90 }, { name: "Sara", score: 80 }, { name: "Omar", score: 50 }], { name: "Mona", score: 70 }))).toEqual(["Ali", "Sara", "Mona", "Omar"]));
+test("بترجّع نفس الـ array", () => { const b = [{ name: "Ali", score: 90 }]; expect(addToBoard(b, { name: "Sara", score: 10 }) === b).toBe(true); });
+test("نفس النتيجة: الجديد بعد اللي سبقوه", () => expect(names(addToBoard([{ name: "Ali", score: 90 }, { name: "Sara", score: 80 }, { name: "Omar", score: 80 }, { name: "Nour", score: 60 }], { name: "Mona", score: 80 }))).toEqual(["Ali", "Sara", "Omar", "Mona", "Nour"]));
+test("لوحة فاضية، والأعلى في الأول، والأقل في الآخر", () => {
+  const b = [];
+  addToBoard(b, { name: "A", score: 50 });
+  addToBoard(b, { name: "B", score: 99 });
+  addToBoard(b, { name: "C", score: 1 });
+  expect(names(b)).toEqual(["B", "A", "C"]);
 });
-test("بترجّع نفس الـ array", () => { const a = [1, 3]; expect(insertSorted(a, 2) === a).toBe(true); });
-test("رقم مكرر: insertSorted([1, 3, 3, 5], 3) ← [1, 3, 3, 3, 5]", () => expect(insertSorted([1, 3, 3, 5], 3)).toEqual([1, 3, 3, 3, 5]));
-test("في الأطراف: 0 في الأول و 9 في الآخر", () => expect(insertSorted(insertSorted([2, 4], 0), 9)).toEqual([0, 2, 4, 9]));`,
-            solution: R`function searchInsert(a, target) {
-  let lo = 0, hi = a.length - 1;
-  while (lo <= hi) {
+test("٢٠ ألف لاعب: اللوحة مترتبة، والمتساويين بترتيب الوصول", () => {
+  const b = [];
+  for (let i = 0; i < 20000; i++) addToBoard(b, { name: "p" + i, score: (i * 7919) % 1000 });
+  const ok = b.every((p, i) => i === 0 || b[i - 1].score > p.score || (b[i - 1].score === p.score && +b[i - 1].name.slice(1) < +p.name.slice(1)));
+  expect([b.length, ok]).toEqual([20000, true]);
+});`,
+            solution: R`function addToBoard(board, player) {
+  let lo = 0, hi = board.length;
+  while (lo < hi) {
     const mid = (lo + hi) >>> 1;
-    if (a[mid] === target) return mid;
-    if (a[mid] < target) lo = mid + 1;
-    else hi = mid - 1;
+    if (board[mid].score >= player.score) lo = mid + 1;
+    else hi = mid;
   }
-  return lo;
-}
-function insertSorted(a, x) {
-  a.splice(searchInsert(a, x), 0, x);
-  return a;
+  board.splice(lo, 0, player);
+  return board;
 }`
           }
         },

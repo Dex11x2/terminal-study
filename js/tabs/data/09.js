@@ -1354,7 +1354,7 @@ SET price = EXCLUDED.price, stock = products.stock + EXCLUDED.stock
 RETURNING id, price, stock;
 INSERT INTO products (sku, name, price) VALUES ('TS-BLK-M', 'T-shirt black M', 250)
 ON CONFLICT (sku) DO NOTHING;`,
-          try: R`شغّل أول INSERT تلات مرات، وشوف المخزون بيزيد ١٠ كل مرة والـ id ثابت. وبعدين حط نفس الـ sku مرتين في نفس الـ VALUES واقرا الـ error. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: شغّل نفس الـ upsert تلات مرات (sku [['TS-BLK-M']] وسعر 250 ومخزون 10)، بحيث المخزون يتجمع والسعر يتحدث، وفي الآخر [[SELECT sku, price, stock FROM products;]].`,
+          try: R`شغّل أول INSERT تلات مرات، وشوف المخزون بيزيد ١٠ كل مرة والـ id ثابت. وبعدين حط نفس الـ sku مرتين في نفس الـ VALUES واقرا الـ error. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: موردين بيبعتوا نفس المنتج بأسعار مختلفة. حوّل التلات INSERTs اللي في المربع لـ upsert، بحيث المخزون يتجمع والسعر يفضل **الأقل** اللي وصل (مش آخر سعر). الدالة [[LEAST(a, b)]] بترجّع الأصغر فيهم. وفي الآخر [[SELECT sku, price, stock FROM products;]].`,
           flag: "script",
           deep: {
             why: "استيراد كتالوج من مورّد كل يوم، أو «ضيف للسلة» (موجود؟ زوّد الكمية)، أو webhook من بوابة دفع بيتبعت مرتين. الحل الساذج SELECT وبعدين INSERT أو UPDATE في الكود، وده بيتكسر لما طلبين ييجوا مع بعض: الاتنين يلاقوا «مش موجود» والاتنين يعملوا INSERT.",
@@ -1558,16 +1558,16 @@ ON CONFLICT (sku) DO UPDATE SET stock = products.stock + EXCLUDED.stock;
   stock int NOT NULL DEFAULT 0
 );`,
             starter: R`INSERT INTO products (sku, name, price, stock) VALUES ('TS-BLK-M', 'T-shirt black M', 250, 10);
-INSERT INTO products (sku, name, price, stock) VALUES ('TS-BLK-M', 'T-shirt black M', 250, 10);
-INSERT INTO products (sku, name, price, stock) VALUES ('TS-BLK-M', 'T-shirt black M', 250, 10);
+INSERT INTO products (sku, name, price, stock) VALUES ('TS-BLK-M', 'T-shirt black M', 230, 5);
+INSERT INTO products (sku, name, price, stock) VALUES ('TS-BLK-M', 'T-shirt black M', 260, 8);
 SELECT sku, price, stock FROM products;`,
-            expect: [["TS-BLK-M",250,30]],
+            expect: [["TS-BLK-M",230,23]],
             solution: R`INSERT INTO products (sku, name, price, stock) VALUES ('TS-BLK-M', 'T-shirt black M', 250, 10)
-ON CONFLICT (sku) DO UPDATE SET price = EXCLUDED.price, stock = products.stock + EXCLUDED.stock;
-INSERT INTO products (sku, name, price, stock) VALUES ('TS-BLK-M', 'T-shirt black M', 250, 10)
-ON CONFLICT (sku) DO UPDATE SET price = EXCLUDED.price, stock = products.stock + EXCLUDED.stock;
-INSERT INTO products (sku, name, price, stock) VALUES ('TS-BLK-M', 'T-shirt black M', 250, 10)
-ON CONFLICT (sku) DO UPDATE SET price = EXCLUDED.price, stock = products.stock + EXCLUDED.stock;
+ON CONFLICT (sku) DO UPDATE SET price = LEAST(products.price, EXCLUDED.price), stock = products.stock + EXCLUDED.stock;
+INSERT INTO products (sku, name, price, stock) VALUES ('TS-BLK-M', 'T-shirt black M', 230, 5)
+ON CONFLICT (sku) DO UPDATE SET price = LEAST(products.price, EXCLUDED.price), stock = products.stock + EXCLUDED.stock;
+INSERT INTO products (sku, name, price, stock) VALUES ('TS-BLK-M', 'T-shirt black M', 260, 8)
+ON CONFLICT (sku) DO UPDATE SET price = LEAST(products.price, EXCLUDED.price), stock = products.stock + EXCLUDED.stock;
 SELECT sku, price, stock FROM products;`
           }
         }

@@ -319,7 +319,7 @@ cart.once("add", () => console.log("أول منتج!"));
 cart.emit("add", "mug");
 unsubscribe();
 cart.emit("add", "cap");`,
-          try: R`ضيف [[listenerCount(event)]]. وبعدين خلي handler يرمي error وشوف الـ handlers اللي بعده بتشتغل ولا لأ، وصلّحها بـ try/catch جوه emit. وقارن بـ [[EventTarget]] المدمج: [[class Cart extends EventTarget]] و [[dispatchEvent(new CustomEvent("add", { detail: "mug" }))]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الكلاس من المثال جاهز في المربع، ضيف [[listenerCount]] و try/catch جوه [[emit]].`,
+          try: R`ضيف [[listenerCount(event)]]. وبعدين خلي handler يرمي error وشوف الـ handlers اللي بعده بتشتغل ولا لأ، وصلّحها بـ try/catch جوه emit. وقارن بـ [[EventTarget]] المدمج: [[class Cart extends EventTarget]] و [[dispatchEvent(new CustomEvent("add", { detail: "mug" }))]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الكلاس من المثال جاهز في المربع: ضيف [[listenerCount(event)]]، و [[waitFor(event)]] اللي بترجّع Promise بتتحل بالـ arguments بتاعة أول [[emit]] للـ event ده (كـ array)، ومتسيبش listener وراها.`,
           flag: "script",
           deep: {
             why: "بيفصل اللي بيحصل عن اللي بيتفاعل معاه: السلة مش لازم تعرف إن فيه badge وإشعار و analytics مستنيين. وده أساس الـ events في المتصفح و Node و WebSockets والـ state management.",
@@ -433,7 +433,7 @@ Error: boom
     at Emitter.emit (...ee2.js:12:55)
 ~~~
 
-الـ handler التاني عمره ما اتنادى، والسطر اللي بعد [[emit]] كمان مشتغلش، لأن الـ error طلع لحد اللي نادى emit. ده بالظبط اللي التمرين بيطلب منك تصلّحه.
+الـ handler التاني عمره ما اتنادى، والسطر اللي بعد [[emit]] كمان مشتغلش، لأن الـ error طلع لحد اللي نادى emit. ده بالظبط اللي «جرّب» بيطلب منك تصلّحه.
 
 ---
 
@@ -555,6 +555,7 @@ cart.dispatchEvent(new CustomEvent("add", { detail: "mug" }));`,
     return off;
   }
   listenerCount(event) {}
+  waitFor(event) {}
 }`,
             tests: R`test("listenerCount: 2 وبعد الـ once 1 وبعد unsubscribe 0", () => {
   const cart = new Emitter(), counts = [];
@@ -568,19 +569,21 @@ cart.dispatchEvent(new CustomEvent("add", { detail: "mug" }));`,
   expect(counts).toEqual([2, 1, 0]);
 });
 test("event محدش سمعه ← 0 مش undefined", () => expect(new Emitter().listenerCount("nope")).toBe(0));
-test("handler بيرمي error: اللي بعده بيشتغل، و emit مبترميش", () => {
-  const e = new Emitter(), got = [];
-  e.on("x", () => { throw new Error("boom"); });
-  e.on("x", (v) => got.push(v));
-  e.emit("x", 42);
-  expect(got).toEqual([42]);
-});
-test("الـ arguments بتوصل للـ handlers", () => {
+test("waitFor بترجّع Promise", () => expect(new Emitter().waitFor("x") instanceof Promise).toBe(true));
+test("waitFor بتتحل بأول emit بس، والـ arguments كـ array", async () => {
   const e = new Emitter();
-  let sum = 0;
-  e.on("add", (a, b) => (sum = a + b));
-  e.emit("add", 2, 3);
-  expect(sum).toBe(5);
+  const p = e.waitFor("ready");
+  e.emit("ready", 1, 2);
+  e.emit("ready", 3);
+  expect(await p).toEqual([1, 2]);
+});
+test("waitFor متسيبش listener وراها", async () => {
+  const e = new Emitter();
+  const p = e.waitFor("ready");
+  const before = e.listenerCount("ready");
+  e.emit("ready", "ok");
+  await p;
+  expect([before, e.listenerCount("ready")]).toEqual([1, 0]);
 });`,
             solution: R`class Emitter {
   #handlers = new Map();
@@ -593,13 +596,7 @@ test("الـ arguments بتوصل للـ handlers", () => {
     this.#handlers.get(event)?.delete(fn);
   }
   emit(event, ...args) {
-    for (const fn of this.#handlers.get(event) ?? []) {
-      try {
-        fn(...args);
-      } catch (err) {
-        console.error($__bthandler لـ "$__{event}" وقع:$__bt, err.message);
-      }
-    }
+    for (const fn of this.#handlers.get(event) ?? []) fn(...args);
   }
   once(event, fn) {
     const off = this.on(event, (...args) => { off(); fn(...args); });
@@ -607,6 +604,9 @@ test("الـ arguments بتوصل للـ handlers", () => {
   }
   listenerCount(event) {
     return this.#handlers.get(event)?.size ?? 0;
+  }
+  waitFor(event) {
+    return new Promise((resolve) => this.once(event, (...args) => resolve(args)));
   }
 }`
           }

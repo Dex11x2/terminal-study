@@ -294,7 +294,7 @@ c.next = b;
 console.log(hasCycle(a));    // true
 console.log(hasCycle(null)); // false
 // O(n) time, O(1) space (a Set of visited nodes also works, with O(n) space)`,
-          try: R`اكتب [[middleNode(head)]] بنفس الفكرة: لما الـ fast يخلص، الـ slow في النص. وبعدين (أصعب): رجّع أول node في الدايرة. بعد ما يتقابلوا، رجّع مؤشر للـ head وحرّك الاتنين خطوة خطوة، هيتقابلوا عند بداية الدايرة. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[middleNode(head)]] و [[cycleStart(head)]] بيرجّعوا العقدة نفسها (أو null).`,
+          try: R`اكتب [[middleNode(head)]] بنفس الفكرة: لما الـ fast يخلص، الـ slow في النص. وبعدين (أصعب): رجّع أول node في الدايرة. بعد ما يتقابلوا، رجّع مؤشر للـ head وحرّك الاتنين خطوة خطوة، هيتقابلوا عند بداية الدايرة. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[firstMiddle(head)]] (زي middleNode بس لو الطول زوجي ترجّع النص **الأول**: [1, 2, 3, 4] ← 2) و [[cycleStart(head)]]، والاتنين بيرجّعوا العقدة نفسها (أو null).`,
           flag: "script",
           deep: {
             why: "bug حقيقي ممكن يحصل: بيانات فيها references دايرية (parent بيشاور على child والعكس)، وأي loop بيمشي عليها هيلف للأبد. والمؤشرين السريع والبطيء بيظهروا في مسائل تانية: نص الـ list، و palindrome linked list، و happy number، و find the duplicate number.",
@@ -494,28 +494,19 @@ console.log(cycleStart(fromArray([1, 2])));   // null
 // both: O(n) time, O(1) space`,
           check: {
             lang: "js",
-            starter: R`function middleNode(head) {
+            starter: R`function firstMiddle(head) {
   let slow = head, fast = head;
   // ...
   return slow;
 }
 function cycleStart(head) {
-  // اتقابلوا؟ رجّع مؤشر للـ head وحرّك الاتنين خطوة خطوة
   return null;
 }`,
             tests: R`const fromArray = arr => arr.reduceRight((next, val) => ({ val, next }), null);
-const toArray = head => {
-  const out = [];
-  for (let n = head; n; n = n.next) {
-    out.push(n.val);
-    if (out.length > 100000) throw new Error("الـ list فيها دايرة: عقدتين بيشاوروا على بعض");
-  }
-  return out;
-};
 const nodes = n => { const a = Array.from({ length: n }, (_, i) => ({ val: i + 1, next: null })); a.forEach((x, i) => (x.next = a[i + 1] || null)); return a; };
-test("middleNode([1..5]) ← 3", () => expect(middleNode(fromArray([1, 2, 3, 4, 5])).val).toBe(3));
-test("طول زوجي: middleNode([1..4]) ← 3 (النص التاني)", () => expect(middleNode(fromArray([1, 2, 3, 4])).val).toBe(3));
-test("عقدة واحدة ← نفسها", () => expect(middleNode(fromArray([9])).val).toBe(9));
+test("firstMiddle([1..5]) ← 3", () => expect(firstMiddle(fromArray([1, 2, 3, 4, 5])).val).toBe(3));
+test("طول زوجي: firstMiddle([1..4]) ← 2 (النص الأول)", () => expect(firstMiddle(fromArray([1, 2, 3, 4])).val).toBe(2));
+test("firstMiddle([1, 2]) ← 1، وعقدة واحدة ← نفسها، و null ← null", () => expect([firstMiddle(fromArray([1, 2])).val, firstMiddle(fromArray([9])).val, firstMiddle(null)]).toEqual([1, 9, null]));
 test("cycleStart: [1..5] وآخرها بيرجع لـ 3 ← العقدة 3", () => {
   const a = nodes(5);
   a[4].next = a[2];
@@ -532,9 +523,9 @@ test("١٠٠ ألف عقدة ودايرة من النص (O(n) و O(1) ذاكرة
   a[99999].next = a[31337];
   expect(cycleStart(a[0]) === a[31337]).toBe(true);
 });`,
-            solution: R`function middleNode(head) {
+            solution: R`function firstMiddle(head) {
   let slow = head, fast = head;
-  while (fast && fast.next) {
+  while (fast && fast.next && fast.next.next) {
     slow = slow.next;
     fast = fast.next.next;
   }

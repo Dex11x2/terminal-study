@@ -446,26 +446,26 @@ Invalid JSON primitive: True.
             starter: R`// النص ده مش JSON صالح. صلّحه لحد ما JSON.parse يقبله
 // من غير ما تغيّر البيانات نفسها: نفس المفاتيح ونفس القيم
 const configText = $__bt{
-  name: "api",
-  'port': 3000,
-  "debug": True,
-  "hosts": ["a.com", "b.com",],
-  "timeout": .5,
-  "owner": undefined,
+  'service': 'billing',
+  "workers": 04,
+  "ratio": -.25,
+  "tags": ['eu', "us"],
+  "enabled": False, // اتقفل مؤقتًا
+  "limits": { max: 10, },
 }$__bt;`,
             tests: R`const parse = () => JSON.parse(configText);
 test("JSON.parse بيقبل النص من غير error", () => { parse(); });
-test("القيم زي ما هي: name و port و debug", () => { const c = parse(); expect([c.name, c.port, c.debug]).toEqual(["api", 3000, true]); });
-test("hosts فيها عنصرين بس", () => expect(parse().hosts).toEqual(["a.com", "b.com"]));
-test("timeout رقم 0.5", () => expect(parse().timeout).toBe(0.5));
-test("owner بقت null (مفيش undefined في JSON)", () => expect(parse().owner).toBe(null));`,
+test("القيم زي ما هي: service و workers و ratio", () => { const c = parse(); expect([c.service, c.workers, c.ratio]).toEqual(["billing", 4, -0.25]); });
+test("tags فيها نصين", () => expect(parse().tags).toEqual(["eu", "us"]));
+test("enabled بقت false (boolean مش نص)", () => expect(parse().enabled).toBe(false));
+test("limits فيها max بس", () => expect(parse().limits).toEqual({ max: 10 }));`,
             solution: R`const configText = $__bt{
-  "name": "api",
-  "port": 3000,
-  "debug": true,
-  "hosts": ["a.com", "b.com"],
-  "timeout": 0.5,
-  "owner": null
+  "service": "billing",
+  "workers": 4,
+  "ratio": -0.25,
+  "tags": ["eu", "us"],
+  "enabled": false,
+  "limits": { "max": 10 }
 }$__bt;`
           }
         },

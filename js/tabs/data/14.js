@@ -1929,7 +1929,7 @@ const some = await prisma.$queryRaw$__btSELECT name FROM products WHERE id = ANY
 await prisma.$transaction(async (tx) => {
   await tx.$queryRaw$__btSELECT id FROM orders WHERE id = $__{orderId} FOR UPDATE$__bt;
 });`,
-          try: R`اعمل يوزر، وبعدين خلي [[email]] يساوي [["ali@example.com' OR '1'='1"]]، وشغّل الاستعلام مرة بـ [[$queryRaw]] (tagged) ومرة بـ [[$queryRawUnsafe]] وانت راكب الـ string بـ template literal عادي. كام صف رجع في كل مرة؟ وبعدين شغّل تقرير الإيراد من غير [[::int]] و [[::text]] وجرّب [[JSON.stringify]] على النتيجة. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: تقرير الإيراد اللي بيتبعت لـ [[$queryRaw]]: من أول أغسطس 2026، الشهر، والإيراد [[::text]]، وعدد الأوردرات [[::int]]، للأوردرات [[paid]]، مترتب بالشهر.`,
+          try: R`اعمل يوزر، وبعدين خلي [[email]] يساوي [["ali@example.com' OR '1'='1"]]، وشغّل الاستعلام مرة بـ [[$queryRaw]] (tagged) ومرة بـ [[$queryRawUnsafe]] وانت راكب الـ string بـ template literal عادي. كام صف رجع في كل مرة؟ وبعدين شغّل تقرير الإيراد من غير [[::int]] و [[::text]] وجرّب [[JSON.stringify]] على النتيجة. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: تقرير لكل يوزر بيتبعت لـ [[$queryRaw]]: للأوردرات [[paid]] من أول أغسطس 2026، [[user_id]] والإيراد [[::text]] وعدد الأوردرات [[::int]]، من الأكبر إيراد للأصغر. خلي بالك: رتّب بالرقم مش بالنص (كنص [["960.00"]] أكبر من [["1200.00"]]).`,
           sol: R`الـ tagged هيرجّع [[[]]]: الإيميل اتبعت parameter واحد كنص كامل، ومفيش يوزر إيميله كده. الـ Unsafe بالـ template literal هيرجّع كل اليوزرز، لأن النص بقى [[WHERE email = 'ali@example.com' OR '1'='1']]، والشرط التاني دايمًا صح. ده SQL injection بالظبط. ولو كتبت [[$queryRawUnsafe("... WHERE email = $1", email)]] هيرجّع [[[]]] برضه، لأن القيمة اتبعتت parameter.
 
 ومن غير الـ casts: [[count(*)]] نوعه bigint في Postgres، فبيرجع JavaScript [[BigInt]] ([[1n]])، و [[JSON.stringify]] هيقع بـ [[Do not know how to serialize a BigInt]]. و [[sum(total)]] بيرجع [[Decimal]] object. الحل الأسهل تحوّل جوه SQL: [[count(*)::int]] (لو العدد مش هيعدّي ٢ مليار) و [[sum(total)::text]] للفلوس عشان متضيعش دقة.
@@ -2238,17 +2238,16 @@ INSERT INTO orders VALUES
   (6, 2, 'paid', 1200.00, '2026-09-05 14:00+00'),
   (7, 3, 'pending', 80.00, '2026-09-10 10:00+00'),
   (8, 1, 'paid', 60.00, '2026-09-12 16:45+00');`,
-            starter: R`SELECT date_trunc('month', created_at) AS month, sum(total) AS revenue, count(*) AS orders
+            starter: R`SELECT user_id, sum(total) AS revenue, count(*) AS orders
 FROM orders
 WHERE status = 'paid'
-GROUP BY 1
-ORDER BY 1;`,
-            expectSql: R`SELECT date_trunc('month', created_at), sum(total), count(*) FROM orders WHERE status = 'paid' AND created_at >= '2026-08-01' GROUP BY 1 ORDER BY 1;`,
-            solution: R`SELECT date_trunc('month', created_at) AS month, sum(total)::text AS revenue, count(*)::int AS orders
+GROUP BY user_id;`,
+            expectSql: R`SELECT user_id, sum(total), count(*) FROM orders WHERE status = 'paid' AND created_at >= '2026-08-01' GROUP BY user_id ORDER BY sum(total) DESC;`,
+            solution: R`SELECT user_id, sum(total)::text AS revenue, count(*)::int AS orders
 FROM orders
 WHERE status = 'paid' AND created_at >= '2026-08-01'
-GROUP BY 1
-ORDER BY 1;`,
+GROUP BY user_id
+ORDER BY sum(total) DESC;`,
             ordered: true
           }
         },

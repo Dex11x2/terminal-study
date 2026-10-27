@@ -21,7 +21,7 @@ FROM orders o
 JOIN order_items oi ON oi.order_id = o.id
 JOIN products p ON p.id = oi.product_id
 WHERE o.id = 2;`,
-          try: R`اعمل أوردر جديد وضيفله بندين، وجرّب الاستعلام التاني عليه. وبعدين بدّل أول [[JOIN ... ON ...]] بـ [[CROSS JOIN users u]] من غير ON، وشوف عدد الصفوف بقى كام. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: بنود الأوردر رقم 6: اسم المنتج، والكمية، وسعر الوحدة، و [[line_total]] (الكمية × السعر).`,
+          try: R`اعمل أوردر جديد وضيفله بندين، وجرّب الاستعلام التاني عليه. وبعدين بدّل أول [[JOIN ... ON ...]] بـ [[CROSS JOIN users u]] من غير ON، وشوف عدد الصفوف بقى كام. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: كل بنود الأوردرات المدفوعة ([[paid]]) بتاعة [[sara@example.com]]: رقم الأوردر، واسم المنتج، والكمية. هتحتاج تربط ٤ جداول، والترتيب مش مهم.`,
           flag: "script",
           deep: {
             why: "الـ normalization قسّم الداتا على جداول عشان كل معلومة تتكتب مرة. JOIN هو اللي بيجمّعها تاني وقت العرض: شاشة الأوردر محتاجة إيميل اليوزر وأسماء المنتجات، وكلهم في جداول مختلفة.",
@@ -303,15 +303,15 @@ INSERT INTO order_items VALUES
   (5, 1, 1, 250.00),
   (6, 3, 1, 650.00), (6, 2, 2, 120.00), (6, 4, 1, 180.00),
   (8, 7, 4, 15.00);`,
-            starter: R`SELECT p.name, oi.quantity, oi.unit_price, oi.quantity * oi.unit_price AS line_total
-FROM order_items oi
-CROSS JOIN products p
-WHERE oi.order_id = 6;`,
-            expect: [["Mug",2,120,240], ["Hoodie",1,650,650], ["Cap",1,180,180]],
-            solution: R`SELECT p.name, oi.quantity, oi.unit_price, oi.quantity * oi.unit_price AS line_total
-FROM order_items oi
+            starter: R`SELECT oi.order_id, oi.product_id, oi.quantity
+FROM order_items oi;`,
+            expect: [[1,"T-shirt",1], [1,"Pen",2], [1,"Mug",1], [2,"Hoodie",1], [2,"T-shirt",1], [8,"Pen",4]],
+            solution: R`SELECT o.id, p.name, oi.quantity
+FROM orders o
+JOIN users u ON u.id = o.user_id
+JOIN order_items oi ON oi.order_id = o.id
 JOIN products p ON p.id = oi.product_id
-WHERE oi.order_id = 6;`
+WHERE u.email = 'sara@example.com' AND o.status = 'paid';`
           }
         },
         {
@@ -330,7 +330,7 @@ LEFT JOIN order_items oi ON oi.product_id = p.id
 WHERE oi.product_id IS NULL;
 SELECT u.email, o.id FROM users u
 LEFT JOIN orders o ON o.user_id = u.id AND o.status = 'paid';`,
-          try: R`ضيف يوزر جديد من غير أوردرات. في أول استعلام غيّر [[count(o.id)]] لـ [[count(*)]]: هتلاقي اليوزر الجديد بقى عنده «1». وفي آخر استعلام انقل شرط status من ON لـ WHERE: اليوزر الجديد هيختفي. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: كل اليوزرز بالإيميل وعدد أوردراتهم، حتى اللي ملوش أوردرات (لازم يطلع 0 مش 1).`,
+          try: R`ضيف يوزر جديد من غير أوردرات. في أول استعلام غيّر [[count(o.id)]] لـ [[count(*)]]: هتلاقي اليوزر الجديد بقى عنده «1». وفي آخر استعلام انقل شرط status من ON لـ WHERE: اليوزر الجديد هيختفي. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: كل اليوزرز بالإيميل ومجموع اللي دفعوه في أوردرات [[paid]] بس، حتى اللي مدفعش حاجة (يطلع 0 مش NULL: افتكر [[COALESCE]] من درس «count و sum و avg»). فيه يوزرة جديدة (Nour) عندها أوردر [[pending]] بس، ولازم تظهر بـ 0.`,
           flag: "script",
           deep: {
             why: "تقارير كتير عن «اللي ملوش»: يوزرز سجلوا ومشتروش، منتجات عمرها ما اتباعت، كورسات محدش اشترك فيها. INNER JOIN بيخفي الصفوف دي خالص، و LEFT JOIN بيظهرها.",
@@ -567,15 +567,17 @@ INSERT INTO orders VALUES
   (5, 3, 'paid', 250.00, '2026-09-01 11:00+00'),
   (6, 2, 'paid', 1200.00, '2026-09-05 14:00+00'),
   (7, 3, 'pending', 80.00, '2026-09-10 10:00+00'),
-  (8, 1, 'paid', 60.00, '2026-09-12 16:45+00');`,
-            starter: R`SELECT u.email, count(*) AS orders
+  (8, 1, 'paid', 60.00, '2026-09-12 16:45+00');
+INSERT INTO users VALUES (5, 'Nour', 'nour@example.com', NULL, '2026-09-25 08:00+00');
+INSERT INTO orders VALUES (9, 5, 'pending', 90.00, '2026-09-26 10:00+00');`,
+            starter: R`SELECT u.email, sum(o.total) AS paid_total
 FROM users u
 LEFT JOIN orders o ON o.user_id = u.id
 GROUP BY u.id;`,
-            expect: [["omar@gmail.com",0], ["ali@shop.eg",2], ["mona@example.com",2], ["sara@example.com",4]],
-            solution: R`SELECT u.email, count(o.id) AS orders
+            expect: [["sara@example.com",1410], ["ali@shop.eg",1200], ["mona@example.com",250], ["omar@gmail.com",0], ["nour@example.com",0]],
+            solution: R`SELECT u.email, COALESCE(sum(o.total), 0) AS paid_total
 FROM users u
-LEFT JOIN orders o ON o.user_id = u.id
+LEFT JOIN orders o ON o.user_id = u.id AND o.status = 'paid'
 GROUP BY u.id;`
           }
         },
@@ -595,7 +597,7 @@ SELECT email FROM users u
 WHERE NOT EXISTS (SELECT 1 FROM orders o WHERE o.user_id = u.id);
 SELECT name, price FROM products
 WHERE price > (SELECT avg(price) FROM products);`,
-          try: R`جرّب [[SELECT 1 WHERE 3 NOT IN (1, 2, NULL)]]: مش هترجع حاجة. وبعدين [[SELECT 1 WHERE 3 NOT IN (1, 2)]]: هترجع. NULL واحدة بوّظت الشرط كله. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: إيميلات اليوزرز اللي معملوش ولا أوردر. خلي بالك: فيه أوردر ضيف [[user_id]] بتاعه NULL.`,
+          try: R`جرّب [[SELECT 1 WHERE 3 NOT IN (1, 2, NULL)]]: مش هترجع حاجة. وبعدين [[SELECT 1 WHERE 3 NOT IN (1, 2)]]: هترجع. NULL واحدة بوّظت الشرط كله. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: إيميلات اليوزرز اللي معملوش ولا أوردر في أول 30 يوم من تسجيلهم (الأوردر قبل [[u.created_at + interval '30 days']]). خلي بالك: فيه أوردر ضيف [[user_id]] بتاعه NULL.`,
           flag: "script",
           deep: {
             why: "«مين اشترى X» بـ JOIN بيرجّع اليوزر مرة لكل أوردر فيه X، فتضطر تحط DISTINCT. EXISTS بيرجّع كل يوزر مرة واحدة ومش بيكمّل بعد أول تطابق.",
@@ -853,12 +855,18 @@ INSERT INTO orders VALUES
   (6, 2, 'paid', 1200.00, '2026-09-05 14:00+00'),
   (7, 3, 'pending', 80.00, '2026-09-10 10:00+00'),
   (8, 1, 'paid', 60.00, '2026-09-12 16:45+00');
-INSERT INTO orders VALUES (9, NULL, 'paid', 75.00, '2026-09-15 10:00+00');`,
-            starter: R`SELECT email FROM users
-WHERE id NOT IN (SELECT user_id FROM orders);`,
-            expect: [["omar@gmail.com"]],
+INSERT INTO orders VALUES (9, NULL, 'paid', 75.00, '2026-01-20 10:00+00');
+INSERT INTO orders VALUES (10, 4, 'pending', 50.00, '2026-09-25 10:00+00');`,
+            starter: R`SELECT email FROM users u
+WHERE id NOT IN (
+  SELECT user_id FROM orders o WHERE o.created_at < u.created_at + interval '30 days'
+);`,
+            expect: [["sara@example.com"], ["ali@shop.eg"], ["mona@example.com"]],
             solution: R`SELECT email FROM users u
-WHERE NOT EXISTS (SELECT 1 FROM orders o WHERE o.user_id = u.id);`
+WHERE NOT EXISTS (
+  SELECT 1 FROM orders o
+  WHERE o.user_id = u.id AND o.created_at < u.created_at + interval '30 days'
+);`
           }
         },
         {
@@ -880,7 +888,7 @@ FROM vip v
 JOIN users u ON u.id = v.user_id
 JOIN paid p ON p.user_id = v.user_id
 ORDER BY p.spent DESC;`,
-          try: R`اكتب نفس الاستعلام من غير WITH، بـ subqueries جوه بعض، وقارن أنهي أسهل في القراية. وبعدين حط [[EXPLAIN]] قدام الاتنين: في نسخة WITH هتلاقي [[CTE paid]] و [[CTE Scan]]، لأن paid متستخدمة مرتين فـ Postgres بيحسبها مرة ويحفظها، ونسخة الـ subqueries بتحسبها مرتين. وبعدين اكتب [[paid AS NOT MATERIALIZED (...)]] وشوف الخطة بقت زي الـ subqueries. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: بـ WITH: إيميل كل يوزر ومجموع اللي دفعه ([[paid]])، لليوزرز اللي دفعوا أكتر من متوسط الدفع بين اليوزرز اللي دفعوا.`,
+          try: R`اكتب نفس الاستعلام من غير WITH، بـ subqueries جوه بعض، وقارن أنهي أسهل في القراية. وبعدين حط [[EXPLAIN]] قدام الاتنين: في نسخة WITH هتلاقي [[CTE paid]] و [[CTE Scan]]، لأن paid متستخدمة مرتين فـ Postgres بيحسبها مرة ويحفظها، ونسخة الـ subqueries بتحسبها مرتين. وبعدين اكتب [[paid AS NOT MATERIALIZED (...)]] وشوف الخطة بقت زي الـ subqueries. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: بـ WITH: إيميل كل يوزر ومجموع اللي دفعه ([[paid]])، لليوزرز اللي دفعوا أكتر من متوسط الدفع بين اليوزرز اللي دفعوا. (المتوسط هنا أقل من 1000، فالـ 1000 اللي في المثال مش هتنفع.)`,
           flag: "script",
           deep: {
             why: "التقارير الحقيقية فيها ٣ و ٤ خطوات: احسب كذا، وفلتر، واربط، ورتّب. متداخلة جوه بعض بتبقى صعبة تتقري أو تتصلح. الـ CTE بيدّي كل خطوة اسم تفهمه.",
@@ -1123,7 +1131,8 @@ INSERT INTO orders VALUES
   (5, 3, 'paid', 250.00, '2026-09-01 11:00+00'),
   (6, 2, 'paid', 1200.00, '2026-09-05 14:00+00'),
   (7, 3, 'pending', 80.00, '2026-09-10 10:00+00'),
-  (8, 1, 'paid', 60.00, '2026-09-12 16:45+00');`,
+  (8, 1, 'paid', 60.00, '2026-09-12 16:45+00');
+INSERT INTO orders VALUES (9, 4, 'paid', 990.00, '2026-09-18 10:00+00');`,
             starter: R`WITH paid AS (
   SELECT user_id, sum(total) AS spent
   FROM orders WHERE status = 'paid'
@@ -1132,7 +1141,7 @@ INSERT INTO orders VALUES
 SELECT u.email, p.spent
 FROM paid p
 JOIN users u ON u.id = p.user_id;`,
-            expect: [["sara@example.com",1410], ["ali@shop.eg",1200]],
+            expect: [["sara@example.com",1410], ["ali@shop.eg",1200], ["omar@gmail.com",990]],
             solution: R`WITH paid AS (
   SELECT user_id, sum(total) AS spent
   FROM orders WHERE status = 'paid'
