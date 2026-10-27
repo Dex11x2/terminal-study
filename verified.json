@@ -4544,15 +4544,45 @@
   "date": "2026-10-06",
   "on": "ubuntu-24.04 systemd container lab nginx + docker compose Node 22 + Postgres 16"
  },
+ "diag|Too many open files": {
+  "hash": "169c81603b79",
+  "date": "2026-10-27",
+  "on": "docker node:24-alpine --ulimit nofile=256; Windows pwsh (HandleCount); docs: systemd LimitNOFILE"
+ },
  "diag|cron مشتغلش": {
   "hash": "af99371cdb33",
   "date": "2026-10-06",
   "on": "ubuntu-24.04 systemd container lab cron + rsyslog"
  },
+ "diag|exit code": {
+  "hash": "7082efed16cc",
+  "date": "2026-10-27",
+  "on": "docker alpine:3.22 + node:24-alpine, ubuntu:24.04 bash; Windows pwsh 7 + powershell 5.1; docs: 0xC0000005"
+ },
+ "diag|leak في الذاكرة": {
+  "hash": "50e3857f368c",
+  "date": "2026-10-27",
+  "on": "docker node:24-alpine (Node 24.22.1); docs: DevTools Comparison/Retainers UI"
+ },
+ "diag|load عالي والمعالج فاضي": {
+  "hash": "e11dd78ee9eb",
+  "date": "2026-10-27",
+  "on": "docker ubuntu:24.04 (procps 4.0.4, sysstat 12.6.1); Windows pwsh (Get-Counter)"
+ },
+ "diag|node --cpu-prof": {
+  "hash": "c903d10794d0",
+  "date": "2026-10-27",
+  "on": "docker node:24-alpine (Node 24.22.1); Windows pwsh (profile + top-funcs.js); docs: Windows Ctrl+C"
+ },
  "diag|smoke test": {
   "hash": "17f8b219a8ab",
   "date": "2026-10-06",
   "on": "client container -> nginx lab"
+ },
+ "diag|strace": {
+  "hash": "4743afcb7eff",
+  "date": "2026-10-27",
+  "on": "docker node:24-alpine + strace 6.19 (alpine); docs: Ubuntu ptrace_scope, macOS dtruss"
  },
  "diag|webhook مش واصل": {
   "hash": "92ccfa9a9064",
@@ -9399,6 +9429,11 @@
   "date": "2026-10-06",
   "on": "docker nginx:alpine 1.31; docs: real Let's Encrypt"
  },
+ "nginx|auth_request": {
+  "hash": "1634aba04d19",
+  "date": "2026-10-27",
+  "on": "docker nginx:alpine (nginx/1.31.6) + node:24-alpine auth backend"
+ },
  "nginx|basic auth": {
   "hash": "50e145207778",
   "date": "2026-10-06",
@@ -9408,6 +9443,11 @@
   "hash": "81f128f9baa0",
   "date": "2026-10-06",
   "on": "docker nginx:alpine 1.31 + 2x whoami; docs: systemctl reload"
+ },
+ "nginx|error_page": {
+  "hash": "7af1da09a2b5",
+  "date": "2026-10-27",
+  "on": "docker nginx:alpine (nginx/1.31.6) + node:24-alpine backend"
  },
  "nginx|gzip": {
   "hash": "351fbdb145a6",
@@ -9419,6 +9459,11 @@
   "date": "2026-10-06",
   "on": "docker ubuntu-24.04 nginx 1.24"
  },
+ "nginx|least_conn": {
+  "hash": "15877571482c",
+  "date": "2026-10-27",
+  "on": "docker nginx:alpine (nginx/1.31.6) + 3 node:24-alpine backends"
+ },
  "nginx|location ^~ /downloads/": {
   "hash": "6b89b4f7fedc",
   "date": "2026-10-06",
@@ -9429,6 +9474,11 @@
   "date": "2026-10-06",
   "on": "docker nginx:alpine 1.31.6 + node backend"
  },
+ "nginx|map": {
+  "hash": "b577f4df23e2",
+  "date": "2026-10-27",
+  "on": "docker nginx:alpine (nginx/1.31.6)"
+ },
  "nginx|nginx -t في container مؤقت": {
   "hash": "370feb69aff4",
   "date": "2026-10-06",
@@ -9438,6 +9488,26 @@
   "hash": "a7ab59383380",
   "date": "2026-10-06",
   "on": "docker nginx:alpine 1.31.6 + node backend"
+ },
+ "nginx|proxy_cache": {
+  "hash": "d1c6f98fdbb3",
+  "date": "2026-10-27",
+  "on": "docker nginx:alpine (nginx/1.31.6) + node:24-alpine backend"
+ },
+ "nginx|proxy_cache_bypass": {
+  "hash": "938887c412be",
+  "date": "2026-10-27",
+  "on": "docker nginx:alpine (nginx/1.31.6) + node:24-alpine backend"
+ },
+ "nginx|proxy_cache_use_stale": {
+  "hash": "6e49ec3f30d8",
+  "date": "2026-10-27",
+  "on": "docker nginx:alpine (nginx/1.31.6) + node:24-alpine backend"
+ },
+ "nginx|proxy_next_upstream": {
+  "hash": "0b09d8604b35",
+  "date": "2026-10-27",
+  "on": "docker nginx:alpine (nginx/1.31.6) + 3 node:24-alpine backends"
  },
  "nginx|rate limiting": {
   "hash": "8edd91564f5b",

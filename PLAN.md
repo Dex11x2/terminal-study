@@ -226,7 +226,7 @@
 - [ ] mongo (aggregation أعمق) و apps (Tauri)
 - [ ] pyapi (Django و Flask) و python (scraping بسيط لو مش في pydata)
 - [ ] vps: SELinux و AppArmor و Ansible
-- [ ] nginx و diag
+- [x] nginx و diag. اتعمل: 8 دروس nginx (كاش الـ proxy وتوزيع الحمل و map و auth_request و error_page) و 6 في diag (strace و cpu-prof و تسريب الذاكرة و EMFILE و iowait و exit codes)
 - [x] إصلاحات «٤ج» + التمارين اللي بتكشف حلها
 - [x] ترتيب المذاكرة في index.html للتابات الجديدة (vue و pydata و net و re)
 
