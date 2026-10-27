@@ -449,6 +449,16 @@
   "date": "2026-10-08",
   "on": "Windows 11, Node 24.19, Express 5.2.1, in-memory db, redis:8-alpine (planLimits), curl"
  },
+ "apis|BullMQ ولا RabbitMQ ولا Kafka": {
+  "hash": "2ba867c84013",
+  "date": "2026-10-27",
+  "on": "docker rabbitmq/kafka (earlier lessons); docs: SQS/SNS/PubSub, bullmq install not rerun"
+ },
+ "apis|CDC بـ logical decoding": {
+  "hash": "16fe95f94b25",
+  "date": "2026-10-27",
+  "on": "docker postgres:16-alpine (wal_level=logical); docs: Debezium"
+ },
  "apis|DataLoader و N+1": {
   "hash": "ace5650fc1a2",
   "date": "2026-10-08",
@@ -458,6 +468,11 @@
   "hash": "7bc84175b2f3",
   "date": "2026-10-08",
   "on": "Windows 11: Express 5.2.1 / Node 24.19 + curl 8.22, curl.exe in pwsh 7.6 and powershell 5.1, Invoke-WebRequest"
+ },
+ "apis|Elasticsearch: mapping و analyzers": {
+  "hash": "eed2fd274fd3",
+  "date": "2026-10-27",
+  "on": "docker elasticsearch:9.5.5 + curl (Git Bash win11); docs: OpenSearch"
  },
  "apis|GraphQL ولا REST": {
   "hash": "f38013ada1f8",
@@ -474,6 +489,21 @@
   "date": "2026-10-08",
   "on": "Windows 11: Express 5.2.1 / Node 24.19 + curl 8.22 + Zod 4.6 + solCode client, in-memory Prisma stand-in; docs: Prisma updateMany/update"
  },
+ "apis|Kafka idempotent consumer": {
+  "hash": "b713361d3d1a",
+  "date": "2026-10-27",
+  "on": "docker apache/kafka:4.4.0 + postgres:16-alpine + Node 24.22 (win11)"
+ },
+ "apis|Kafka: topics و partitions": {
+  "hash": "d902c4b8e114",
+  "date": "2026-10-27",
+  "on": "docker apache/kafka:4.4.0 + Node 24.22 (win11)"
+ },
+ "apis|Meilisearch": {
+  "hash": "c3891e1a5a06",
+  "date": "2026-10-27",
+  "on": "docker getmeili/meilisearch:v1.56.0 + Node 24.22 (win11)"
+ },
  "apis|OWASP API Top 10": {
   "hash": "c8c332e374d9",
   "date": "2026-10-08",
@@ -488,6 +518,21 @@
   "hash": "ca6ac570a2fe",
   "date": "2026-10-08",
   "on": "Windows 11: Express 5.2.1 / Node 24.19 + curl 8.22 + Zod 4.6, in-memory Prisma stand-in; docs: Prisma P2025"
+ },
+ "apis|Postgres ولا search engine": {
+  "hash": "1a9ce780138d",
+  "date": "2026-10-27",
+  "on": "docker postgres:16-alpine + meilisearch:v1.56.0 (100k rows)"
+ },
+ "apis|RabbitMQ dead-letter": {
+  "hash": "b965dbec34ff",
+  "date": "2026-10-27",
+  "on": "docker rabbitmq:4.4.0 + Node 24.22 (win11)"
+ },
+ "apis|RabbitMQ: exchanges و queues": {
+  "hash": "8649c629e3fd",
+  "date": "2026-10-27",
+  "on": "docker rabbitmq:4.4.0-management-alpine + Node 24.22 (win11)"
  },
  "apis|Redis adapter": {
   "hash": "4360433017b4",
@@ -519,6 +564,11 @@
   "date": "2026-10-08",
   "on": "win11 node24.19 express5.2.1 swagger-ui-express openapi-typescript7.13 openapi-fetch tsc5.9.3 + headless Chrome"
  },
+ "apis|ack و nack و prefetch": {
+  "hash": "4b68f20a21ad",
+  "date": "2026-10-27",
+  "on": "docker rabbitmq:4.4.0 + Node 24.22 (win11)"
+ },
  "apis|auth في resolvers": {
   "hash": "b2ce465ee0ac",
   "date": "2026-10-08",
@@ -528,6 +578,11 @@
   "hash": "1b1c13faa5e6",
   "date": "2026-10-08",
   "on": "Windows 11, Node 24.19, local oidc-provider 9.12 + fake token endpoint; docs: IdP consoles"
+ },
+ "apis|consumer groups و offsets": {
+  "hash": "406cbffaf214",
+  "date": "2026-10-27",
+  "on": "docker apache/kafka:4.4.0 + Node 24.22 (win11)"
  },
  "apis|cursor pagination": {
   "hash": "38f144357fe1",
@@ -568,6 +623,11 @@
   "hash": "ad44eb28e270",
   "date": "2026-10-08",
   "on": "Windows 11, Node 24.19, jose 6.2.12 vs local oidc-provider 9.12"
+ },
+ "apis|match و term و aggregations": {
+  "hash": "d1e200b1a4a0",
+  "date": "2026-10-27",
+  "on": "docker elasticsearch:9.5.5 + curl (Git Bash win11)"
  },
  "apis|offset pagination": {
   "hash": "b5dfb13889fd",
@@ -653,6 +713,11 @@
   "hash": "e7d8ea616890",
   "date": "2026-10-08",
   "on": "win11 next16.4.0 react19.3 headless Chrome via playwright-core (mock provider)"
+ },
+ "apis|مزامنة البحث من Postgres": {
+  "hash": "c621f0b7d7d5",
+  "date": "2026-10-27",
+  "on": "docker postgres:16-alpine + meilisearch:v1.56.0 + Node 24.22 (win11)"
  },
  "api|$transaction": {
   "hash": "c345ee4d16af",
@@ -1104,6 +1169,11 @@
   "date": "2026-10-08",
   "on": "Windows 11 Node 24, otplib 13.5 + Express 5 + Prisma 7 on postgres:18 (Docker)"
  },
+ "arch|API gateway و service discovery": {
+  "hash": "32b4bf3cae61",
+  "date": "2026-10-27",
+  "on": "docker compose: node:24-alpine + nginx:alpine (win11)"
+ },
  "arch|CAP و PACELC": {
   "hash": "06ddecaa171f",
   "date": "2026-10-08",
@@ -1123,6 +1193,11 @@
   "hash": "056d1ffe00e7",
   "date": "2026-10-08",
   "on": "Windows 11, Playwright Chromium + Mermaid 11 (parse/render)"
+ },
+ "arch|HTTP ولا events بين الخدمات": {
+  "hash": "2b6b17d9ca55",
+  "date": "2026-10-27",
+  "on": "docker compose (win11)"
  },
  "arch|MVP": {
   "hash": "61b5d7e6f25c",
@@ -1259,6 +1334,11 @@
   "date": "2026-10-08",
   "on": "Next.js 16.4 + next-intl 4.14 + Tailwind 4.3, curl + headless Chrome"
  },
+ "arch|idempotency بين الخدمات": {
+  "hash": "32483c92357d",
+  "date": "2026-10-27",
+  "on": "docker compose + RabbitMQ management API (win11)"
+ },
  "arch|indexes و N+1": {
   "hash": "da1d041297e1",
   "date": "2026-10-08",
@@ -1328,6 +1408,11 @@
   "hash": "5e55491c6852",
   "date": "2026-10-08",
   "on": "Windows 11 Node 24, Express 5 + jsonwebtoken 9"
+ },
+ "arch|saga و compensation": {
+  "hash": "b8b72108ef9c",
+  "date": "2026-10-27",
+  "on": "docker compose (win11); docs: Temporal/Step Functions"
  },
  "arch|scaling path": {
   "hash": "c5de9f3d7929",
@@ -1399,6 +1484,11 @@
   "date": "2026-10-08",
   "on": "Windows 11 Node 24 (slow local server)"
  },
+ "arch|tracing بين الخدمات": {
+  "hash": "1d32f514f50d",
+  "date": "2026-10-27",
+  "on": "docker compose (win11); docs: OpenTelemetry/Jaeger"
+ },
  "arch|transactional email": {
   "hash": "b55a22911843",
   "date": "2026-10-08",
@@ -1423,6 +1513,11 @@
   "hash": "ec181577502a",
   "date": "2026-10-08",
   "on": "Windows 11 Node 24, Express 5 + Prisma 7 on postgres:18 (supertest), parallel owner removal"
+ },
+ "arch|إمتى تقسّم لـ microservices": {
+  "hash": "66d39e94cbbf",
+  "date": "2026-10-27",
+  "on": "Git Bash win11 (test repo)"
  },
  "arch|اختبار تسريب tenants": {
   "hash": "d729c550652d",
@@ -1479,6 +1574,11 @@
   "date": "2026-10-08",
   "on": "Windows 11 Node 24, Express 5 + Prisma 7 on postgres:18 (Docker)"
  },
+ "arch|خدمتين بـ docker compose": {
+  "hash": "f3b304519a10",
+  "date": "2026-10-27",
+  "on": "docker compose: node:24-alpine + rabbitmq:4.4.0 + nginx:alpine (win11)"
+ },
  "arch|ربط الحسابات": {
   "hash": "b2801753fc3a",
   "date": "2026-10-08",
@@ -1508,6 +1608,11 @@
   "hash": "956a0f4ac33b",
   "date": "2026-10-08",
   "on": "Windows 11 k6 2.3 against local Express + Prisma 7 + PostgreSQL 18 Docker (50 VUs)"
+ },
+ "arch|كل خدمة تملك داتتها": {
+  "hash": "01586e981c1e",
+  "date": "2026-10-27",
+  "on": "docker postgres:16-alpine"
  },
  "arch|لوحة الأدمن": {
   "hash": "21f2adf482f1",
@@ -8644,6 +8749,146 @@
   "date": "2026-10-06",
   "on": "win11 Git Bash + docker mongo:8; docs: ssh/scp/Atlas"
  },
+ "net|IP": {
+  "hash": "50dd2a023369",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 + Windows 11 pwsh 7.6 / PS 5.1"
+ },
+ "net|allowed_ips": {
+  "hash": "2caf67c5c079",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 lab (kernel WireGuard)"
+ },
+ "net|arp": {
+  "hash": "3b5395ab1fbf",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 lab + Windows 11 pwsh 7.6"
+ },
+ "net|cidr": {
+  "hash": "b3098839c710",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 + Windows 11 pwsh 7.6 / PS 5.1"
+ },
+ "net|classify": {
+  "hash": "8be4187e31d6",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 + Windows 11 pwsh 7.6"
+ },
+ "net|dhcp": {
+  "hash": "2aa54eda6b26",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 lab (dnsmasq/dhclient) + Windows 11 pwsh 7.6"
+ },
+ "net|dns": {
+  "hash": "f0f06e356694",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 + Windows 11 pwsh 7.6"
+ },
+ "net|encap": {
+  "hash": "e1bc8c9e227c",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 + Windows 11 pwsh 7.6; docs: Mac ping -D"
+ },
+ "net|http": {
+  "hash": "ebf87b3b55fa",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 + Windows 11 pwsh 7.6 / PS 5.1"
+ },
+ "net|ipv6": {
+  "hash": "fc6fa9eddc49",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 lab + Windows 11 pwsh 7.6"
+ },
+ "net|journey": {
+  "hash": "ead0eeb0e406",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 + Windows 11 pwsh 7.6 / PS 5.1"
+ },
+ "net|kill_switch": {
+  "hash": "82d93948cb1a",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 + Windows 11 pwsh 7.6; docs: Mac pfctl"
+ },
+ "net|leak_protection": {
+  "hash": "b02562ceaa52",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 + Windows 11 pwsh 7.6; docs: Mac scutil"
+ },
+ "net|mtu": {
+  "hash": "63d8b4c7a61b",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 lab (WireGuard) + Windows 11 pwsh 7.6"
+ },
+ "net|nat": {
+  "hash": "a4c134473811",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 + Windows 11 pwsh 7.6; docs: Mac"
+ },
+ "net|pcap": {
+  "hash": "804b9b3d38bb",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 lab; docs: Windows pktmon"
+ },
+ "net|port": {
+  "hash": "91235b2fbe57",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 + Windows 11 pwsh 7.6; docs: Mac lsof"
+ },
+ "net|routing": {
+  "hash": "2926e8edbef6",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 (lab TUN) + Windows 11 pwsh 7.6; docs: Mac route"
+ },
+ "net|slaac": {
+  "hash": "11e6f2090d23",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 lab (radvd) + Windows 11 pwsh 7.6"
+ },
+ "net|socks_proxy": {
+  "hash": "c9b5ec792d6a",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 (microsocks/tinyproxy) + Windows 11 pwsh 7.6"
+ },
+ "net|subnetting": {
+  "hash": "9ad6674493e1",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04"
+ },
+ "net|tcp": {
+  "hash": "21b9293de50e",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 + Windows 11 pwsh 7.6; docs: Mac netstat"
+ },
+ "net|tls_sni": {
+  "hash": "ca5c7796475b",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 + Windows 11 pwsh 7.6 / PS 5.1"
+ },
+ "net|tshark": {
+  "hash": "325dc8f1ef33",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 lab; docs: Windows tshark/Wireshark GUI"
+ },
+ "net|tun": {
+  "hash": "bad18d6a75e4",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 (lab TUN) + Windows 11 pwsh 7.6; docs: Mac ifconfig"
+ },
+ "net|udp": {
+  "hash": "8fcdea089804",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 + Windows 11 pwsh 7.6; docs: Mac lsof"
+ },
+ "net|wireguard": {
+  "hash": "baa6a6321476",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 lab (kernel WireGuard)"
+ },
+ "net|الطبقات": {
+  "hash": "76d957269511",
+  "date": "2026-10-27",
+  "on": "docs: concept"
+ },
  "next|@slot و (.)": {
   "hash": "488e080503e8",
   "date": "2026-10-07",
@@ -12558,6 +12803,31 @@
   "hash": "7a18c6e2f1c7",
   "date": "2026-10-07",
   "on": "pwsh 7.6 and Windows PowerShell 5.1 with Docker Desktop (Docker down simulated with DOCKER_HOST)"
+ },
+ "re|apk_structure": {
+  "hash": "747e71c63fe1",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 (own sample APK) + Windows 11 pwsh 7.6 / PS 5.1"
+ },
+ "re|decompile_jadx": {
+  "hash": "42080eaf1817",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 (own sample APK); docs: jadx-gui"
+ },
+ "re|dex_smali": {
+  "hash": "e27f67176b7b",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 (own sample APK)"
+ },
+ "re|lab_ethics": {
+  "hash": "3ea0c9351bee",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 (build-tools 37, apktool 3.0.3, jadx 1.5.6, own sample APK); docs: adb with device"
+ },
+ "re|manifest": {
+  "hash": "425126868d03",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 (own sample APK)"
  },
  "rn|API client بالتوكن": {
   "hash": "4dfcbac30244",

@@ -157,7 +157,36 @@ APK بتاعك / عيّنتك
             R`بنسحب الـ base APK من الجهاز لجهازنا عشان نحلّله static.`,
             R`بنسحب split المعمارية بتاعتنا لو التطبيق متعدد الـ APKs.`,
             R`بنقرا اسم الحزمة والإصدار والصلاحيات من غير ما نفك أي حاجة.`
-          ]
+          ],
+          sol: R`اتشغّل في container أوبونتو 24.04 على تطبيق عيّنة أنا بنيته بإيدي (Activity و Service وكلاس واحد بـ Java، اتبنى بـ javac و d8 و aapt2 من build-tools 37 واتوقّع بـ apksigner). من غير محاكي، فأوامر [[adb]] اللي محتاجة جهاز وريتني الخطأ الحقيقي:
+
+~~~text الإصدارات
+openjdk version "21.0.12.1" 2026-08-18
+3.0.3                                   ← apktool --version
+1.5.6                                   ← jadx --version
+Android Asset Packaging Tool (aapt) 2.20-15087165   ← aapt2 version
+~~~
+
+~~~text adb من غير جهاز
+$ adb devices -l
+List of devices attached
+
+$ adb shell pm path com.example.myapp
+adb: no devices/emulators found
+~~~
+
+القايمة الفاضية معناها إن مفيش محاكي ولا موبايل متوصّل. مع محاكي شغّال [[pm path]] بيرجّع سطر [[package:/data/app/...]] لكل ملف، والمسار اللي في المثال شكله بس (الأسماء العشوائية بتتغير مع كل تثبيت).
+
+~~~text aapt dump badging myapp.apk (أول السطور)
+package: name='com.example.myapp' versionCode='1' versionName='1.0' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'
+sdkVersion:'24'
+targetSdkVersion:'36'
+uses-permission: name='android.permission.INTERNET'
+application-label:'MyApp'
+launchable-activity: name='com.example.myapp.MainActivity'  label='' icon=''
+~~~
+
+كل اللي كتبته في المانيفست ظهر: الباكدج والنسخة و [[minSdk 24]] (اسمه هنا [[sdkVersion]]) و [[targetSdk 36]] والصلاحية والشاشة اللي بتفتح.`
         },
         {
           cmd: "apk_structure",
@@ -166,7 +195,7 @@ APK بتاعك / عيّنتك
 
 جوّا الأرشيف فيه مكوّنات ثابتة: [[AndroidManifest.xml]] وده XML مُجمَّع ثنائي (binary) مش نص عادي، فلو فتحته بـ notepad هتلاقي رموز — محتاج أداة تفكّه. [[classes.dex]] (ومعاه [[classes2.dex]] و [[classes3.dex]]... في حالة الـ multidex لما عدد مراجع الميثودز في ملف dex واحد يعدّي حد الـ 65,536 — وده بيشمل كل ميثود بتستدعيها من المكتبات والـ framework كمان، مش بس ميثودز تطبيقك) ده بايتكود Dalvik، يعني الكود بتاع التطبيق نفسه. [[resources.arsc]] جدول الموارد المجمّع اللي بيربط الأسماء بالقيم والـ IDs. فولدر [[res/]] فيه الـ layouts والصور والـ strings، و [[assets/]] فيه ملفات خام بتتساب زي ما هي. [[lib/<abi>/*.so]] فيه المكتبات الـ native مقسّمة لكل معمارية: [[arm64-v8a]] و [[armeabi-v7a]] و [[x86_64]].
 
-التوقيع له قصة مهمة: [[META-INF/]] فيه توقيع الجيل الأول (v1 / JAR signature) بملفاته [[MANIFEST.MF]] و [[CERT.SF]] و [[CERT.RSA]]. لكن توقيع v2/v3 مش في META-INF خالص — هو قاعد في مكان اسمه الـ APK Signing Block، اللي بيتحط قبل الـ central directory بتاع الـ ZIP على طول. (أما v4، من أندرويد 11، فنظام مختلف مبني على fsverity، وتوقيعه بيتكتب في ملف منفصل جنب الـ APK اسمه [[<apk>.idsig]]، مش جوه الـ Signing Block.) ده السبب إن تعديل أي بايت في الملف بيكسر توقيع v2.
+التوقيع له قصة مهمة: [[META-INF/]] فيه توقيع الجيل الأول (v1 / JAR signature) بملفاته [[MANIFEST.MF]] و [[CERT.SF]] و [[CERT.RSA]] (اسم الـ SF/RSA بييجي من الموقِّع: لما وقّعت بـ apksigner بمفتاح الـ alias بتاعه [[myapp]] طلعوا [[MYAPP.SF]] و [[MYAPP.RSA]]). لكن توقيع v2/v3 مش في META-INF خالص — هو قاعد في مكان اسمه الـ APK Signing Block، اللي بيتحط قبل الـ central directory بتاع الـ ZIP على طول. (أما v4، من أندرويد 11، فنظام مختلف مبني على fsverity، وتوقيعه بيتكتب في ملف منفصل جنب الـ APK اسمه [[<apk>.idsig]]، مش جوه الـ Signing Block.) ده السبب إن تعديل أي بايت في الملف بيكسر توقيع v2.
 
 وفي الآخر، خلّي بالك إن [[.aab]] (App Bundle) دي صيغة النشر اللي بترفعها على Google Play — مش اللي بتتثبّت. Play هو اللي بيطلّع منها split APKs مفصّلة على جهاز المستخدم. المستخدم بيثبّت APKs، مش AAB. فهم التركيب ده كله هو الأساس اللي عليه تبني تحليلك وتأمين تطبيقك.`,
           example: R`# الهدف: نفك عيّنة أو تطبيقنا إحنا ونتفرّج على تركيبته (كله READ-ONLY)
@@ -186,7 +215,7 @@ ls myapp_out/lib
 aapt dump badging myapp.apk
 
 # ويندوز:
-# انسخه بامتداد .zip الأول لأن Expand-Archive بيطالب بكده
+# في Windows PowerShell 5.1 Expand-Archive بيرفض أي امتداد غير .zip، فانسخه .zip الأول
 Copy-Item myapp.apk myapp.zip
 # فكّه بـ PowerShell في فولدر
 Expand-Archive myapp.zip -DestinationPath myapp_out`,
@@ -279,9 +308,40 @@ developer ── يرفع ──> app.aab ── Google Play ──> split APKs 
             R`اتأكد إن classes.dex بايتكود Dalvik وبالتالي مش نص تقراه`,
             R`اعرض فولدرات lib عشان تعرف المعماريات (ABIs) المدعومة`,
             R`اقرا من الـ manifest المجمّع الباكدج والنسخة والصلاحيات في صيغة مقروءة`,
-            R`انسخ الـ APK بامتداد .zip لأن Expand-Archive محتاج الامتداد ده`,
+            R`انسخ الـ APK بامتداد .zip: في Windows PowerShell 5.1 بيقول «.apk is not a supported archive file format» (PowerShell 7.6 فكّه على طول من غير نسخ)`,
             R`فكّ ملف الـ zip في فولدر myapp_out على ويندوز`
-          ]
+          ],
+          sol: R`اتشغّل على الـ APK العيّنة بتاعي (12,790 بايت) في container أوبونتو 24.04، وعلى ويندوز 11:
+
+~~~text unzip -l myapp.apk
+  Length      Date    Time    Name
+---------  ---------- -----   ----
+     2192  1980-01-01 00:00   AndroidManifest.xml
+      916  1980-01-01 00:00   res/xml/network_security_config.xml
+      772  1980-01-01 00:00   resources.arsc
+     2228  2026-10-27 16:37   classes.dex
+      519  2026-10-27 16:37   META-INF/MYAPP.SF
+     1211  2026-10-27 16:37   META-INF/MYAPP.RSA
+      392  2026-10-27 16:37   META-INF/MANIFEST.MF
+---------                     -------
+     8230                     7 files
+~~~
+
+- تاريخ [[1980-01-01]] على ملفات aapt2: أداة البناء بتثبّت التاريخ عشان نفس الكود يطلع نفس الملف بالظبط (reproducible build).
+- مفيش [[lib/]] لأن التطبيق Java بس من غير كود native، و [[ls myapp_out/lib]] قال [[No such file or directory]]. ومفيش [[res/values]]: الـ strings اتحطت جوه [[resources.arsc]].
+- ملفات التوقيع v1 اسمها [[MYAPP.*]] لأن الـ alias بتاع المفتاح [[myapp]].
+
+~~~text file myapp_out/classes.dex
+myapp_out/classes.dex: Dalvik dex file version 037
+~~~
+
+وعلى ويندوز، في Windows PowerShell 5.1 [[Expand-Archive myapp.apk ...]] من غير نسخ رفض:
+
+~~~text
+.apk is not a supported archive file format. .zip is the only supported archive file format.
+~~~
+
+بعد [[Copy-Item myapp.apk myapp.zip]] اتفك عادي وطلع نفس الـ 7 ملفات. (في PowerShell 7.6 فكّ الـ .apk على طول.)`
         }
       ]
     },
@@ -415,7 +475,40 @@ apktool d          ──►  XML مقروء كامل تفتحه بأي editor �
             R`يفكّ الـ APK كله ويطلّع لك AndroidManifest.xml مقروء جوّه فولدر out.`,
             R`يعرض المانيفست المقروء على Linux/Mac.`,
             R`يعرض نفس الملف على ويندوز.`
-          ]
+          ],
+          sol: R`اتشغّل على الـ APK العيّنة بتاعي في container أوبونتو 24.04 (aapt و aapt2 من build-tools 37، و apktool 3.0.3):
+
+~~~text aapt dump permissions myapp.apk
+package: com.example.myapp
+uses-permission: name='android.permission.INTERNET'
+~~~
+
+~~~text aapt dump xmltree myapp.apk AndroidManifest.xml (جزء)
+      A: android:minSdkVersion(0x0101020c)=(type 0x10)0x18
+      A: android:targetSdkVersion(0x01010270)=(type 0x10)0x24
+    E: application (line=5)
+      A: android:label(0x01010001)=@0x7f010000
+      E: activity (line=7)
+        A: android:name(0x01010003)=".MainActivity" (Raw: ".MainActivity")
+        A: android:exported(0x01010010)=(type 0x12)0xffffffff
+      E: service (line=13)
+        A: android:exported(0x01010010)=(type 0x12)0x0
+~~~
+
+- [[E:]] = element (وسم)، و [[A:]] = attribute.
+- [[0x18]] = 24 و [[0x24]] = 36 بالـ hex. [[(type 0x12)0xffffffff]] = boolean [[true]] و [[0x0]] = [[false]].
+- [[@0x7f010000]] هو الـ resource ID الخام بتاع [[@string/app_name]] (aapt مش بيحلّه هنا).
+
+[[aapt2 dump xmltree ... --file AndroidManifest.xml]] طبع نفس الشجرة بس بالأرقام العشري ([[minSdkVersion...=24]] و [[exported...=true]]). و [[apktool d]] رجّع XML عادي:
+
+~~~text cat out/AndroidManifest.xml (جزء)
+<application android:label="@string/app_name" android:networkSecurityConfig="@xml/network_security_config">
+    <activity android:exported="true" android:name=".MainActivity">
+    ...
+    <service android:exported="false" android:name=".SyncService"/>
+~~~
+
+لاحظ إن apktool حلّ [[@string/app_name]] بالاسم. والمكوّن الوحيد المكشوف هو اللانشر [[MainActivity]]، والـ service مقفولة: ده المطلوب.`
         },
         {
           cmd: "dex_smali",
@@ -449,7 +542,7 @@ cat out/smali/com/example/myapp/MainActivity.smali`,
           try: R`هات APK من تطبيق إنت بنيته أو عيّنة sample عندك، شغّل [[apktool d myapp.apk -o out]]، وبعدين افتح أي ملف [[.smali]] جوه [[out/smali]]. دوّر على ميثود فيها [[const-string]] و[[invoke-virtual]]، واقرا سطر سطر واحزر الكود الأصلي اللي كتبته — هتلاقي كل [[v0]] و[[p0]] بيوصّفوا خطوة من اللي البرنامج بيعملها فعلاً.`,
           deep: {
             why: R`لأن الـ smali هو **أدق تمثيل** للكود اللي بيتنفّذ فعلاً. لما تعمل decompile لـ Java بأداة زي [[jadx]] بتاخد تقريب مريح للقراءة بس ممكن يكون ناقص أو غلط في تراكيب معيّنة؛ الـ smali بياخد كل تعليمة بايتكود زي ما هي واحدة واحدة من غير تخمين. فلو عايز تفهم تطبيقك بالظبط — إمتى سجلّ اتكتب، أي ميثود اتنادت، ترتيب الخطوات الحقيقي — الـ smali بيديك الحقيقة الكاملة. وكمان هو الأساس اللي كل أدوات التحليل بتبني فوقه، فإنك تعرف تقراه بيخلّيك تفهم مخرجات الأدوات التانية بدل ما تصدّقها على عماها.`,
-            how: R`المُجمّع [[d8]] بياخد الـ [[.class]] (بايتكود JVM stack-based) ويحوّله لـ [[classes.dex]] (بايتكود Dalvik register-based)، وده اللي بيتشحن جوه الـ APK. عكسيًا، [[baksmali]] بيفكّ الـ dex لنص smali، و[[smali]] بيعيد تجميعه. [[apktool d]] بيلفّ العملية دي ويضيف فكّ الموارد والـ manifest. الناتج فولدر [[out/smali]] فيه ملف [[.smali]] لكل كلاس، مرتّبين في فولدرات حسب الـ package (يعني [[com/example/myapp/MainActivity.smali]]). كل ملف بيبدأ بتوجيهات زي [[.class]], [[.super]], وكل ميثود بين [[.method]] و[[.end method]] مع [[.registers]] اللي بيحدد عدد السجلّات. على ويندوز استخدم [[dir]] و[[type]] بدل [[ls]] و[[cat]]، والمسارات بـ backslash. التنفيذ كله هنا read-only على تطبيقك أو عيّنة — مجرد فكّ وقراءة.`,
+            how: R`المُجمّع [[d8]] بياخد الـ [[.class]] (بايتكود JVM stack-based) ويحوّله لـ [[classes.dex]] (بايتكود Dalvik register-based)، وده اللي بيتشحن جوه الـ APK. عكسيًا، [[baksmali]] بيفكّ الـ dex لنص smali، و[[smali]] بيعيد تجميعه. [[apktool d]] بيلفّ العملية دي ويضيف فكّ الموارد والـ manifest. الناتج فولدر [[out/smali]] فيه ملف [[.smali]] لكل كلاس، مرتّبين في فولدرات حسب الـ package (يعني [[com/example/myapp/MainActivity.smali]]). كل ملف بيبدأ بتوجيهات زي [[.class]], [[.super]], وكل ميثود بين [[.method]] و[[.end method]] مع [[.locals]] (عدد السجلّات المحلية، وده اللي apktool بيكتبه) أو [[.registers]] (المحلية + الـ parameters) في أدوات تانية. على ويندوز استخدم [[dir]] و[[type]] بدل [[ls]] و[[cat]]، والمسارات بـ backslash. التنفيذ كله هنا read-only على تطبيقك أو عيّنة — مجرد فكّ وقراءة.`,
             when: R`استخدم الـ smali لما تحتاج **دقّة**: لما [[jadx]] يفشل أو يطلّع كود مش مظبوط، أو لما التطبيق معمول له obfuscation بـ [[R8]]/[[ProGuard]] والأسماء بقت [[a]], [[b]], [[c]] فالـ Java الناتجة صح-بس-مُبهمة؛ ساعتها قراءة الـ smali الحرفية أوضح من ديكومبايل مضلّل. استخدمه كمان لما تحب تفهم تدفّق تعليمة بتعليمة في تطبيقك، أو لما تبني أو تجرّب أداة تحليل بتشتغل على مستوى البايتكود. في المقابل، لو عايز تقرأ المنطق العام بسرعة، الـ Java من [[jadx]] أريح للعين. القاعدة: [[jadx]] للفهم السريع، smali للتأكّد الدقيق. وفضّل دايمًا عيّنة أو تطبيقك إنت (اسحبه بـ [[adb]] من جهازك) كموضوع للتحليل.`,
             mistakes: R`أشهر غلطة: الخلط بين [[p0]] و[[v0]] — الناس بتفتكر [[p0]] أول parameter، لكن في ميثود instance [[p0]] = **this** وأول argument هو [[p1]]. غلطة تانية: افتراض إن الـ dex stack-based زي الـ JVM؛ لأ، هو register-based والتعليمات بتذكر السجلّات صراحةً. كمان [[.registers]] بيعدّ السجلّات المحلية **و**الـ parameters مع بعض — لو افتكرته بيعدّ المحلية بس هتحسب غلط (ده [[.locals]]). فيه ناس بتفتكر إن [[AndroidManifest.xml]] جوه الـ APK نص عادي — لأ، هو binary XML مُجمّع ولازم [[apktool]] أو [[aapt]] يفكّه. وغلطة منتشرة: نسيان الـ multidex، فبتدوّر على كلاس في [[classes.dex]] وهو في [[classes2.dex]]. وأهمها حدًّا: إعادة التجميع بـ [[apktool b]] وتعديل smali على تطبيق مش بتاعك عشان تكسر حماية أو تعدّل سلوك — ده خارج نطاق التعلّم الدفاعي خالص؛ إعادة البناء تبقى لتطبيقك إنت أو عيّنة بتختبرها بإذن، لفهم السلوك مش لتحويره ضد غيرك.`
           },
@@ -504,11 +597,11 @@ public int greetLen() {
 }
 ~~~
 
-نفسها بالـ smali بعد [[apktool d]]:
+نفسها بالـ smali بعد [[apktool d]] (apktool 3.0.3، والـ dex متبني بـ [[d8 --debug]]؛ شلت سطور [[.line]] و [[nop]]):
 
 ~~~smali
 .method public greetLen()I
-    .registers 2
+    .locals 1
     const-string v0, "Hello"
     invoke-virtual {v0}, Ljava/lang/String;->length()I
     move-result v0
@@ -521,11 +614,23 @@ public int greetLen() {
 | السطر | معناه |
 |------|-------|
 | [[.method public greetLen()I]] | ميثود اسمها greetLen، بترجّع [[int]] (الرمز [[I]]) |
-| [[.registers 2]] | محتاجة سجلّين: [[v0]] (محلي) و[[v1]] اللي = [[p0]] = this |
+| [[.locals 1]] | سجلّ محلي واحد [[v0]]. ومعاه [[p0]] = this، فلو الأداة كتبتها بـ [[.registers]] كانت هتبقى [[.registers 2]] (apktool بيكتب [[.locals]]) |
 | [[const-string v0, "Hello"]] | حطّ ثابت نصي "Hello" في [[v0]] |
 | [[invoke-virtual {v0}, ...->length()I]] | نادِ [[length()]] على الكائن في [[v0]] |
 | [[move-result v0]] | خُد القيمة الراجعة وحطّها في [[v0]] |
 | [[return v0]] | رجّع اللي في [[v0]] |
+
+ونفس الميثود لما الـ dex اتبنى بـ [[d8 --release]] طلعت كده:
+
+~~~smali
+.method public greetLen()I
+    .locals 0
+    const/4 p0, 0x5
+    return p0
+.end method
+~~~
+
+الـ release build حسب [["Hello".length()]] وقت البناء ورجّع [[5]] على طول، واستخدم [[p0]] (اللي كان this) كمكان فاضي لأن this مش محتاجينه تاني. فالـ smali بيوريك الكود اللي **اتشحن**، مش اللي انت كتبته.
 
 لاحظ رموز الأنواع: [[I]] = int، [[Ljava/lang/String;]] = الكلاس String (الـ [[L...;]] بتلفّ اسم الكلاس). والكونستركتر بياخد اسم خاص بأقواس حرفية:
 
@@ -555,7 +660,47 @@ public int greetLen() {
             R`نفس العرض بس على ويندوز بأمر dir ومسار بـ backslash.`,
             R`بيلمّ كل ملفات .smali ويوريك أول كام واحد بس عشان تاخد فكرة.`,
             R`بيطبع محتوى ملف smali لكلاس واحد عشان تقرا الميثودز سطر بسطر.`
-          ]
+          ],
+          sol: R`اتشغّل على الـ APK العيّنة بتاعي (apktool 3.0.3 في container أوبونتو 24.04):
+
+~~~text apktool d myapp.apk -o out
+I: Using Apktool 3.0.3 on myapp.apk with 8 threads
+I: Loading resource table...
+I: Baksmaling classes.dex...
+I: Decoding AndroidManifest.xml with resources...
+I: Copying original files...
+~~~
+
+~~~text find out/smali -name '*.smali'
+out/smali/com/example/myapp/MainActivity.smali
+out/smali/com/example/myapp/SyncService.smali
+out/smali/com/example/myapp/LicenseManager.smali
+~~~
+
+~~~text من cat out/smali/com/example/myapp/MainActivity.smali
+.class public Lcom/example/myapp/MainActivity;
+.super Landroid/app/Activity;
+.source "MainActivity.java"
+
+.field private static final TAG:Ljava/lang/String; = "MyApp"
+
+.method protected onCreate(Landroid/os/Bundle;)V
+    .locals 1
+    invoke-super {p0, p1}, Landroid/app/Activity;->onCreate(Landroid/os/Bundle;)V
+    ...
+    const-string p1, "demo-user"
+    invoke-virtual {p0, p1}, Lcom/example/myapp/LicenseManager;->checkLicense(Ljava/lang/String;)Z
+    move-result p1
+    if-nez p1, :cond_0
+    invoke-virtual {p0}, Lcom/example/myapp/LicenseManager;->showError()V
+    :cond_0
+    return-void
+.end method
+~~~
+
+- [[p0]] = this و [[p1]] = الـ Bundle. والـ release build استعمل [[p0]] و [[p1]] تاني كأماكن فاضية بعد ما خلص منهم.
+- [[if-nez p1, :cond_0]] = «لو النتيجة مش صفر (true) نط على [[cond_0]]»، يعني [[showError()]] بتتنادى بس لو الفحص رجّع false.
+- [[.source "MainActivity.java"]] لسه موجود لأني مبنيتش بـ R8؛ R8 بيغيّره لـ [[SourceFile]].`
         },
         {
           cmd: "decompile_jadx",
@@ -657,7 +802,40 @@ jadx بيعيد بناء Java **مكافئة** للبايتكود، مش ملف�
             R`بيفتح الواجهة الرسومية للتصفّح والبحث عن كلاس أو نص.`,
             R`بيعرض ملفات الـ Java الناتجة في فولدر sources على Linux/Mac.`,
             R`بيعرض نفس الملفات على ويندوز.`
-          ]
+          ],
+          sol: R`اتشغّل بـ jadx 1.5.6 على الـ APK العيّنة بتاعي (container أوبونتو 24.04). [[jadx-gui]] واجهة رسومية فماتجرّبتش هنا.
+
+~~~text ls out_jadx و out_jadx/sources/com/example/myapp
+resources  sources
+LicenseManager.java  MainActivity.java  R.java  SyncService.java
+~~~
+
+[[R.java]] مش ملف كتبته: jadx بيولّده من جدول الموارد. وده الـ Java اللي طلع لـ [[MainActivity]]:
+
+~~~java
+public class MainActivity extends Activity {
+    private static final String TAG = "MyApp";
+
+    public int greetLen() {
+        return 5;
+    }
+
+    @Override // android.app.Activity
+    protected void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
+        Log.d(TAG, "onCreate, greetLen=" + greetLen());
+        LicenseManager licenseManager = new LicenseManager();
+        if (licenseManager.checkLicense("demo-user")) {
+            return;
+        }
+        licenseManager.showError();
+    }
+}
+~~~
+
+قارنه باللي كتبته: [[greetLen]] بقت [[return 5]] (الـ release build حسبها)، و [[savedInstanceState]] بقى [[bundle]] و [[lm]] بقى [[licenseManager]] (jadx بيخمّن أسماء من النوع لأن الأسماء المحلية مش في الـ dex)، و [[if (!...)]] اتقلبت لـ [[if (...) return]]. المنطق هو هو، والشكل اتغيّر.
+
+ولما بنيت نفس الكود بـ R8 (مع [[-dontoptimize]] عشان التعمية تبان لوحدها)، [[LicenseManager]] بقى كلاس اسمه [[a]] من غير package (jadx بيحطه في فولدر [[defpackage]]) وميثوداته [[a()]] و [[b()]]، والنصوص زي [["checking license for "]] فضلت زي ما هي. التفاصيل في درس R8 في المستوى التاني.`
         }
       ]
     }
