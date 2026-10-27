@@ -222,7 +222,7 @@
 - [x] node/09 و quality/07 و js/20: Bun و Deno و Hono، و Biome، و Web Components و WebAssembly. اتعمل: 14 درس في node و 6 في quality (Biome و knip) و 9 في js
 
 الدفعة التانية (بعد الأولى):
-- [ ] gha (reusable workflows، environments، matrix) و wsl و sshc
+- [x] gha (reusable workflows، environments، matrix) و wsl و sshc. اتعمل: 9 دروس gha (workflow_call و composite و act و actionlint و zizmor و script injection) و 7 wsl و 7 sshc (SOCKS والشهادات و ssh-audit و FIDO2)
 - [ ] mongo (aggregation أعمق) و apps (Tauri)
 - [ ] pyapi (Django و Flask) و python (scraping بسيط لو مش في pydata)
 - [ ] vps: SELinux و AppArmor و Ansible

@@ -6664,6 +6664,21 @@
   "date": "2026-10-06",
   "on": "act + docker ubuntu-24.04"
  },
+ "gha|OIDC": {
+  "hash": "a5eb2f937032",
+  "date": "2026-10-27",
+  "on": "docs: GitHub OIDC reference (no runnable part; LocalStack test lives in cloud tab)"
+ },
+ "gha|act": {
+  "hash": "b6b8b548d155",
+  "date": "2026-10-27",
+  "on": "act 0.2.89 on Windows Git Bash + Docker Desktop; docs: install, first-run prompt"
+ },
+ "gha|actionlint": {
+  "hash": "bb0a58767cca",
+  "date": "2026-10-27",
+  "on": "rhysd/actionlint 1.7.12 in Docker"
+ },
  "gha|base64 -d": {
   "hash": "028f01445eb7",
   "date": "2026-10-06",
@@ -6683,6 +6698,11 @@
   "hash": "aa223813f80b",
   "date": "2026-10-06",
   "on": "act 0.2.89 + actionlint 1.7.12; docs: Actions UI"
+ },
+ "gha|composite action": {
+  "hash": "99e172073fdf",
+  "date": "2026-10-27",
+  "on": "act 0.2.89 + actionlint 1.7.12; docs: shell required on GitHub"
  },
  "gha|debugging": {
   "hash": "3eba81ad3399",
@@ -6724,6 +6744,11 @@
   "date": "2026-10-06",
   "on": "act 0.2.89 + actionlint 1.7.12 (ubuntu only); docs: windows jobs"
  },
+ "gha|matrix ديناميكي": {
+  "hash": "23f4f45b25bc",
+  "date": "2026-10-27",
+  "on": "act 0.2.89 (Docker, node:22-slim); docs: 256-job limit"
+ },
  "gha|needs و if و concurrency": {
   "hash": "1529365c49ba",
   "date": "2026-10-06",
@@ -6734,10 +6759,20 @@
   "date": "2026-10-06",
   "on": "compose config + act 0.2.89 + actionlint 1.7.12; docs: real server"
  },
+ "gha|runners و container": {
+  "hash": "fbdbe4f9b899",
+  "date": "2026-10-27",
+  "on": "act 0.2.89 (container: python:3.13-slim); docs: self-hosted registration"
+ },
  "gha|schedule": {
   "hash": "2b935a6e24be",
   "date": "2026-10-06",
   "on": "docker ubuntu-24.04 + actionlint; docs: cron timing, Telegram"
+ },
+ "gha|script injection": {
+  "hash": "1b65eb93e9af",
+  "date": "2026-10-27",
+  "on": "act 0.2.89 with event.json + actionlint 1.7.12; docs: pull_request_target/fork table"
  },
  "gha|secrets و env": {
   "hash": "d596ef18437e",
@@ -6753,6 +6788,16 @@
   "hash": "b5913af15295",
   "date": "2026-10-06",
   "on": "act 0.2.89 + actionlint 1.7.12 + docker ubuntu-24.04; docs: Summary"
+ },
+ "gha|workflow_call": {
+  "hash": "60fb306b9b81",
+  "date": "2026-10-27",
+  "on": "act 0.2.89 (Docker, node:22-slim) + actionlint 1.7.12; docs: cross-repo, limits"
+ },
+ "gha|zizmor": {
+  "hash": "be870ba9e867",
+  "date": "2026-10-27",
+  "on": "zizmor 1.31.1 (pip in python:3.13-slim), --offline/--min-severity/--format sarif/--fix"
  },
  "gha|الأمان": {
   "hash": "014c5b7ab566",
@@ -14364,10 +14409,20 @@
   "date": "2026-10-06",
   "on": "ubuntu-24.04 containers (OpenSSH 9.6)"
  },
+ "sshc|Match و Include": {
+  "hash": "6af4fa1dbe39",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 OpenSSH 9.6 (ssh -G + real connect)"
+ },
  "sshc|ProxyJump": {
   "hash": "620c369e01a3",
   "date": "2026-10-06",
   "on": "ubuntu-24.04 containers (OpenSSH 9.6) (bastion + internal db) + win11 OpenSSH 9.5"
+ },
+ "sshc|authorized_keys options": {
+  "hash": "5bb4ea00da8c",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 OpenSSH 9.6 lab"
  },
  "sshc|keepalive و multiplexing": {
   "hash": "90686d4623b9",
@@ -14379,10 +14434,20 @@
   "date": "2026-10-06",
   "on": "ubuntu-24.04 containers (OpenSSH 9.6)"
  },
+ "sshc|ssh -D": {
+  "hash": "b2054d968212",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 + OpenSSH 9.6 lab (client/server/nginx)"
+ },
  "sshc|ssh-agent و forwarding": {
   "hash": "71bb4a34d1de",
   "date": "2026-10-06",
   "on": "ubuntu-24.04 containers (OpenSSH 9.6); docs: Windows ssh-agent service"
+ },
+ "sshc|sshd Match و ssh-audit": {
+  "hash": "15d34a7c365c",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 OpenSSH 9.6 + ssh-audit 3.9.0"
  },
  "sshc|الأدوات بتقرا الملف": {
   "hash": "11aa33490df3",
@@ -14393,6 +14458,21 @@
   "hash": "88fbe6c1f9e6",
   "date": "2026-10-06",
   "on": "ubuntu-24.04 containers (OpenSSH 9.6) + win11 OpenSSH 9.5"
+ },
+ "sshc|شهادات السيرفر": {
+  "hash": "d0ba9704e783",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 OpenSSH 9.6 lab"
+ },
+ "sshc|شهادات المستخدمين": {
+  "hash": "46499904bec7",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 OpenSSH 9.6 lab"
+ },
+ "sshc|مفاتيح FIDO2": {
+  "hash": "229e52723482",
+  "date": "2026-10-27",
+  "on": "Docker ubuntu:24.04 (ssh -Q, ssh-keygen error), pwsh Windows OpenSSH -V; docs: real key usage"
  },
  "sshc|مفاتيح متعددة": {
   "hash": "d494f508893d",
@@ -16854,6 +16934,11 @@
   "date": "2026-10-06",
   "on": "Chrome 154 headless (CDP) on local pages"
  },
+ "wsl|.wslconfig المتقدم": {
+  "hash": "9eccf56ca845",
+  "date": "2026-10-27",
+  "on": "pwsh Test-Path only; docs: wsl-config (Oct 2026)"
+ },
  "wsl|.wslconfig و wsl.conf": {
   "hash": "e4da4d55fe21",
   "date": "2026-10-06",
@@ -16864,15 +16949,30 @@
   "date": "2026-10-06",
   "on": "win11 docker version/context + ubuntu-24.04 docker; docs: systemctl"
  },
+ "wsl|GPU و CUDA": {
+  "hash": "3aae61312e18",
+  "date": "2026-10-27",
+  "on": "pwsh nvidia-smi + docker run --gpus all ubuntu:24.04 (WSL2 backend); docs: CUDA toolkit in Ubuntu"
+ },
  "wsl|Git و line endings": {
   "hash": "216ab2fc5e56",
   "date": "2026-10-06",
   "on": "ubuntu-24.04 docker + win11 git config"
  },
+ "wsl|USB بـ usbipd": {
+  "hash": "f22337ae1c2e",
+  "date": "2026-10-27",
+  "on": "docs: Connect USB devices (only winget show run)"
+ },
  "wsl|VS Code": {
   "hash": "70d792f565b1",
   "date": "2026-10-06",
   "on": "win11 code --list-extensions; docs: code . in WSL"
+ },
+ "wsl|WSLENV": {
+  "hash": "542ebbb681f4",
+  "date": "2026-10-27",
+  "on": "pwsh $env:WSLENV read only; docs: rest"
  },
  "wsl|systemd والخدمات": {
   "hash": "ef0e963e82dd",
@@ -16909,6 +17009,16 @@
   "date": "2026-10-06",
   "on": "ubuntu-24.04 + node:22-slim docker, win11 pwsh; docs: portproxy, mirrored"
  },
+ "wsl|تشخيص WSL": {
+  "hash": "74964e8c0dc3",
+  "date": "2026-10-27",
+  "on": "pwsh 7.6 on Windows 11 (WSL 2.7.14), read-only"
+ },
+ "wsl|توزيعة من Docker image": {
+  "hash": "104160b5ffba",
+  "date": "2026-10-27",
+  "on": "Docker Desktop (docker create/export ubuntu:24.04, tar -tf); docs: wsl --import/--install --from-file"
+ },
  "wsl|فين تحط المشروع": {
   "hash": "1a04415957c9",
   "date": "2026-10-06",
@@ -16923,6 +17033,11 @@
   "hash": "6b0d56a51c5d",
   "date": "2026-10-06",
   "on": "win11 pwsh + ubuntu-24.04 docker bind mount; docs: explorer.exe, wslpath (username masked later)"
+ },
+ "wsl|نقل التوزيعة وتوفير الديسك": {
+  "hash": "3cf845ae90d3",
+  "date": "2026-10-27",
+  "on": "pwsh read-only (registry, vhdx sizes, fsutil queryflag); docs: wsl --manage from wsl --help"
  },
  "zsh|*(.om[1,5])": {
   "hash": "0ab454528669",
