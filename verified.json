@@ -11844,6 +11844,151 @@
   "date": "2026-10-07",
   "on": "windows-11 python 3.14.3 (file + REPL), docker python:3.13-slim"
  },
+ "pydata|API و json_normalize": {
+  "hash": "de3363b49900",
+  "date": "2026-10-27",
+  "on": "Docker python:3.13-slim (local FastAPI mock API via uvicorn)"
+ },
+ "pydata|LinearRegression": {
+  "hash": "68ac5056d9e4",
+  "date": "2026-10-27",
+  "on": "Docker python:3.13-slim (scikit-learn 1.9)"
+ },
+ "pydata|LogisticRegression": {
+  "hash": "e7638ee069d5",
+  "date": "2026-10-27",
+  "on": "Docker python:3.13-slim (scikit-learn 1.9)"
+ },
+ "pydata|NaN و fillna": {
+  "hash": "f477a7bce0aa",
+  "date": "2026-10-27",
+  "on": "Docker python:3.13-slim (pandas 3.1)"
+ },
+ "pydata|Pipeline و ColumnTransformer": {
+  "hash": "6edfe6bb5332",
+  "date": "2026-10-27",
+  "on": "Docker python:3.13-slim (scikit-learn 1.9)"
+ },
+ "pydata|astype و to_datetime": {
+  "hash": "1f4dc50da086",
+  "date": "2026-10-27",
+  "on": "Docker python:3.13-slim (pandas 3.1)"
+ },
+ "pydata|cells و kernel": {
+  "hash": "69710732321a",
+  "date": "2026-10-27",
+  "on": "Docker python:3.13-slim (jupyter nbconvert --execute/--clear-output/--to html, %timeit, %%time, %pip)"
+ },
+ "pydata|groupby و agg": {
+  "hash": "fb80ccf9d2e5",
+  "date": "2026-10-27",
+  "on": "Docker python:3.13-slim (pandas 3.1)"
+ },
+ "pydata|head و info و describe": {
+  "hash": "80f1b56bf3c0",
+  "date": "2026-10-27",
+  "on": "Docker python:3.13-slim (pandas 3.1)"
+ },
+ "pydata|joblib و FastAPI": {
+  "hash": "698c3cd30394",
+  "date": "2026-10-27",
+  "on": "Docker python:3.13-slim (fastapi run + curl from host, TestClient for batch); docs: InconsistentVersionWarning"
+ },
+ "pydata|jupyter lab": {
+  "hash": "e61b4dbf0c88",
+  "date": "2026-10-27",
+  "on": "Docker python:3.13-slim (pip install jupyterlab, jupyter lab --ip=0.0.0.0, token 200/403 check); pwsh: docker run -v \"${PWD}:/work\" on prebuilt image; Windows pwsh Python 3.14: venv + Activate.ps1 + pip install + jupyter --version"
+ },
+ "pydata|loc و iloc و filter": {
+  "hash": "c322bca41926",
+  "date": "2026-10-27",
+  "on": "Docker python:3.13-slim (pandas 3.1)"
+ },
+ "pydata|matplotlib": {
+  "hash": "400ec051fb8e",
+  "date": "2026-10-27",
+  "on": "Docker python:3.13-slim (matplotlib 3.11, PNG output inspected)"
+ },
+ "pydata|merge و concat": {
+  "hash": "109f573de104",
+  "date": "2026-10-27",
+  "on": "Docker python:3.13-slim (pandas 3.1)"
+ },
+ "pydata|np.array": {
+  "hash": "bc108b84bd3f",
+  "date": "2026-10-27",
+  "on": "Docker python:3.13-slim (numpy 2.5)"
+ },
+ "pydata|overfitting و cross_val_score": {
+  "hash": "3238b234c236",
+  "date": "2026-10-27",
+  "on": "Docker python:3.13-slim (scikit-learn 1.9); docs: GridSearchCV/TimeSeriesSplit mention"
+ },
+ "pydata|pivot_table و melt": {
+  "hash": "7810c1b83a72",
+  "date": "2026-10-27",
+  "on": "Docker python:3.13-slim (pandas 3.1)"
+ },
+ "pydata|polars و DuckDB": {
+  "hash": "9ebffb2c10ad",
+  "date": "2026-10-27",
+  "on": "Docker python:3.13-slim (polars 2.1, duckdb 2.0, 5M-row CSV and Parquet)"
+ },
+ "pydata|read_csv": {
+  "hash": "6692a1af1af2",
+  "date": "2026-10-27",
+  "on": "Docker python:3.13-slim (pandas 3.1, openpyxl)"
+ },
+ "pydata|read_sql و to_sql": {
+  "hash": "e97540d05496",
+  "date": "2026-10-27",
+  "on": "Docker python:3.13-slim (sqlite3); docs: SQLAlchemy/PostgreSQL part"
+ },
+ "pydata|requests و BeautifulSoup": {
+  "hash": "4d5d2765a399",
+  "date": "2026-10-27",
+  "on": "Docker python:3.13-slim (local python -m http.server); docs: Playwright, pd.read_html"
+ },
+ "pydata|resample و rolling": {
+  "hash": "921a98708816",
+  "date": "2026-10-27",
+  "on": "Docker python:3.13-slim (pandas 3.1)"
+ },
+ "pydata|robots.txt و rate limiting": {
+  "hash": "930344359cc3",
+  "date": "2026-10-27",
+  "on": "Docker python:3.13-slim (local http.server + local 429 test server); docs: legal note"
+ },
+ "pydata|seaborn": {
+  "hash": "25c103ead92f",
+  "date": "2026-10-27",
+  "on": "Docker python:3.13-slim (seaborn 0.13, PNG output inspected)"
+ },
+ "pydata|to_excel و to_csv": {
+  "hash": "7b3ab3760d33",
+  "date": "2026-10-27",
+  "on": "Docker python:3.13-slim (pandas 3.1, openpyxl, pyarrow)"
+ },
+ "pydata|vectorize بدل apply": {
+  "hash": "5ec45ac735fe",
+  "date": "2026-10-27",
+  "on": "Docker python:3.13-slim (pandas 3.1, numpy 2.5)"
+ },
+ "pydata|vectorized و broadcasting": {
+  "hash": "ffe4696f0a03",
+  "date": "2026-10-27",
+  "on": "Docker python:3.13-slim (numpy 2.5)"
+ },
+ "pydata|تنضيف داتا حقيقية": {
+  "hash": "1360ac77cb99",
+  "date": "2026-10-27",
+  "on": "Docker python:3.13-slim (pandas 3.1)"
+ },
+ "pydata|مشروع تحليل مبيعات": {
+  "hash": "f778c57f1d7a",
+  "date": "2026-10-27",
+  "on": "Docker python:3.13-slim (pandas, matplotlib, openpyxl; xlsx inspected)"
+ },
  "python|# /// script": {
   "hash": "86a66969549f",
   "date": "2026-10-06",
