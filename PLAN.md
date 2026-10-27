@@ -228,7 +228,7 @@
 - [ ] vps: SELinux و AppArmor و Ansible
 - [ ] nginx و diag
 - [ ] إصلاحات «٤ج» + التمارين اللي بتكشف حلها
-- [ ] ترتيب المذاكرة في index.html للتابات الجديدة (vue و pydata و net و re)
+- [x] ترتيب المذاكرة في index.html للتابات الجديدة (vue و pydata و net و re)
 
 ### ٤. تمارين بتتصحح لوحدها في تابات أكتر
 
