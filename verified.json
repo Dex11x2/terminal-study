@@ -11719,6 +11719,16 @@
   "date": "2026-10-07",
   "on": "Windows 11, FastAPI 0.142 (Starlette 1.7); curl with Origin/preflight; docs: browser console message"
  },
+ "pyapi|DRF permissions و pagination": {
+  "hash": "17c480a4b7a3",
+  "date": "2026-10-27",
+  "on": "Linux docker + Postgres 16 (runserver + curl)"
+ },
+ "pyapi|DRF serializers و viewsets": {
+  "hash": "5af2c1785f93",
+  "date": "2026-10-27",
+  "on": "Linux docker + Postgres 16 (runserver + curl, APIClient)"
+ },
  "pyapi|Depends بيعمل إيه": {
   "hash": "214af11fee6f",
   "date": "2026-10-07",
@@ -11729,15 +11739,50 @@
   "date": "2026-10-07",
   "on": "Windows 11, FastAPI 0.142/uvicorn; curl (Git Bash) + Invoke-RestMethod in pwsh 7 and PowerShell 5.1"
  },
+ "pyapi|Django admin": {
+  "hash": "d5c74d40616f",
+  "date": "2026-10-27",
+  "on": "Linux docker + Postgres 16 (test Client)"
+ },
+ "pyapi|Django auth": {
+  "hash": "c46fc45618a3",
+  "date": "2026-10-27",
+  "on": "Linux docker (fresh project, SQLite)"
+ },
+ "pyapi|Django في الإنتاج": {
+  "hash": "546a2b51de9d",
+  "date": "2026-10-27",
+  "on": "Linux docker + Postgres 16 (check --deploy, collectstatic, gunicorn); Windows pwsh 7 (gunicorn fcntl error, waitress)"
+ },
  "pyapi|Enum": {
   "hash": "ed0004776928",
   "date": "2026-10-07",
   "on": "Windows 11 Python 3.14.3 + python:3.13-slim (Docker)"
  },
+ "pyapi|Flask request و response": {
+  "hash": "ac0a0a51333b",
+  "date": "2026-10-27",
+  "on": "Linux docker (flask run + curl, test_client)"
+ },
+ "pyapi|Flask ولا FastAPI ولا Django": {
+  "hash": "76d9ebbff265",
+  "date": "2026-10-27",
+  "on": "Linux docker (all three run side by side + curl)"
+ },
+ "pyapi|Flask-SQLAlchemy": {
+  "hash": "f520e586a736",
+  "date": "2026-10-27",
+  "on": "Linux docker (SQLite; migration failure also on Postgres 16) + Windows pwsh 7 (seed)"
+ },
  "pyapi|HTTPException": {
   "hash": "c8c60a50de2f",
   "date": "2026-10-07",
   "on": "Windows 11, FastAPI 0.142; curl + pwsh 7 and PowerShell 5.1"
+ },
+ "pyapi|Jinja templates": {
+  "hash": "8e044f8d199b",
+  "date": "2026-10-27",
+  "on": "Linux docker"
  },
  "pyapi|Protocol و ABC": {
   "hash": "f514d45fe488",
@@ -11748,6 +11793,11 @@
   "hash": "f0af24e4e6fd",
   "date": "2026-10-07",
   "on": "windows-pwsh py3.14 pydantic 2.13 (example, v1 deprecations, solCode, FastAPI 422)"
+ },
+ "pyapi|QuerySet و filter": {
+  "hash": "e710a62abdec",
+  "date": "2026-10-27",
+  "on": "Linux docker + Postgres 16"
  },
  "pyapi|SQLAlchemy async": {
   "hash": "3923a203c03f",
@@ -11854,6 +11904,11 @@
   "date": "2026-10-07",
   "on": "windows-11 python 3.14.3, docker python:3.13-slim"
  },
+ "pyapi|django-admin startproject": {
+  "hash": "07c194159dbf",
+  "date": "2026-10-27",
+  "on": "Linux docker python:3.13-slim + Windows pwsh 7 (venv, Activate.ps1, startproject, migrate, runserver); docs: Mac"
+ },
  "pyapi|dunder methods": {
   "hash": "bbd73cc921f2",
   "date": "2026-10-07",
@@ -11878,6 +11933,11 @@
   "hash": "50c7cdc3d413",
   "date": "2026-10-07",
   "on": "Windows 11, Pydantic 2.13.5 (example + solCode)"
+ },
+ "pyapi|flask run و create_app": {
+  "hash": "c3c5858c445f",
+  "date": "2026-10-27",
+  "on": "Linux docker + Windows pwsh 7 (venv, flask run --debug, Invoke-RestMethod)"
  },
  "pyapi|for و range": {
   "hash": "ef731cb9a6dd",
@@ -11949,6 +12009,11 @@
   "date": "2026-10-07",
   "on": "Windows 11, Pydantic 2.13.5"
  },
+ "pyapi|models و makemigrations": {
+  "hash": "d19114174fd2",
+  "date": "2026-10-27",
+  "on": "Linux docker (SQLite + Postgres 16)"
+ },
  "pyapi|mutable و immutable": {
   "hash": "0f3c6763860e",
   "date": "2026-10-07",
@@ -11973,6 +12038,11 @@
   "hash": "876bcaefaab7",
   "date": "2026-10-07",
   "on": "Windows 11, pydantic-settings 2.15.0 + FastAPI 0.142.2 (Git Bash and pwsh 7)"
+ },
+ "pyapi|pytest-django": {
+  "hash": "54613016ee8f",
+  "date": "2026-10-27",
+  "on": "Linux docker + Postgres 16"
  },
  "pyapi|re": {
   "hash": "10fb34dc8451",
@@ -12004,10 +12074,20 @@
   "date": "2026-10-07",
   "on": "Windows 11 Python 3.14.3 + python:3.13-slim (Docker)"
  },
+ "pyapi|select_related و prefetch_related": {
+  "hash": "937d2c00e7b8",
+  "date": "2026-10-27",
+  "on": "Linux docker + Postgres 16 and SQLite"
+ },
  "pyapi|set و tuple": {
   "hash": "d4165f965c21",
   "date": "2026-10-07",
   "on": "windows-11 python 3.14.3, docker python:3.13-slim"
+ },
+ "pyapi|settings من env": {
+  "hash": "b6e4ba812193",
+  "date": "2026-10-27",
+  "on": "Linux docker + Postgres 16 container; Windows pwsh 7 (.env loader, check, shell)"
  },
  "pyapi|subprocess": {
   "hash": "4ada56fcf5ef",
@@ -12033,6 +12113,11 @@
   "hash": "bea5a1785494",
   "date": "2026-10-07",
   "on": "Windows uv 0.10.7 + Python 3.14.3 (pwsh/Git Bash, local project); docs: install script lines"
+ },
+ "pyapi|views و urls": {
+  "hash": "41d2825ebaf0",
+  "date": "2026-10-27",
+  "on": "Linux docker + Postgres 16 (runserver + curl)"
  },
  "pyapi|while و break و continue": {
   "hash": "6fa77d75a768",
