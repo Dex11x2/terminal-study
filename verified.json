@@ -16009,15 +16009,45 @@
   "date": "2026-10-06",
   "on": "PromQL on Prometheus 3.13; docs: Grafana UI"
  },
+ "vps|LimitNOFILE": {
+  "hash": "cddb801d8561",
+  "date": "2026-10-27",
+  "on": "Linux: docker ubuntu:24.04 with systemd 255 (drop-in, /proc limits, Errno 24 in Python)"
+ },
+ "vps|MAC: AppArmor و SELinux": {
+  "hash": "bff018a0befd",
+  "date": "2026-10-27",
+  "on": "Linux: docker ubuntu:24.04 (apparmor 4.0.1) + almalinux:10 + docker info on Docker Desktop; docs: enabled aa-status/sestatus output"
+ },
  "vps|NodeSource": {
   "hash": "7d64900497d3",
   "date": "2026-10-06",
   "on": "ubuntu-24.04 docker"
  },
+ "vps|aa-complain / aa-enforce": {
+  "hash": "33385a78d57b",
+  "date": "2026-10-27",
+  "on": "Linux: docker ubuntu:24.04 apparmor_parser -Q, aa-enforce/aa-complain file edits; docs: kernel load, journalctl DENIED/ALLOWED, aa-logprof"
+ },
  "vps|adduser": {
   "hash": "3a7982ad6745",
   "date": "2026-10-06",
   "on": "ubuntu-24.04 systemd container (simulated VPS)"
+ },
+ "vps|ansible ping": {
+  "hash": "4399db4a00f5",
+  "date": "2026-10-27",
+  "on": "Linux: docker ubuntu:24.04 control + 2 ubuntu:24.04 sshd/systemd targets, ansible-core 2.21.5 (venv steps: docker build)"
+ },
+ "vps|ansible-playbook": {
+  "hash": "d78aeb4f687e",
+  "date": "2026-10-27",
+  "on": "Linux: same Ansible lab (site.yml run twice, --check --diff, shell vs lineinfile)"
+ },
+ "vps|ansible-vault": {
+  "hash": "6f24af3c9598",
+  "date": "2026-10-27",
+  "on": "Linux: same Ansible lab (encrypt/view/encrypt_string, no_log vs --diff); fake secrets only"
  },
  "vps|apt install / remove": {
   "hash": "741d20a2f4fa",
@@ -16028,6 +16058,11 @@
   "hash": "f37ea3217d87",
   "date": "2026-10-06",
   "on": "ubuntu-24.04 docker"
+ },
+ "vps|audit2why": {
+  "hash": "393286431ba2",
+  "date": "2026-10-27",
+  "on": "Linux: docker almalinux:10 (ausearch -if, audit2why -p, audit2allow, semanage boolean -l, sesearch, seinfo) on hand-written AVC lines; docs: getsebool/setsebool on enforcing RHEL"
  },
  "vps|certbot": {
   "hash": "2361f7f043c9",
@@ -16079,6 +16114,11 @@
   "date": "2026-10-06",
   "on": "ubuntu-24.04 docker"
  },
+ "vps|docker --security-opt apparmor": {
+  "hash": "69a45b2a0f9a",
+  "date": "2026-10-27",
+  "on": "Docker Desktop 29.6.1 (docker info/run/inspect/exec, profile syntax check in ubuntu:24.04); docs: behaviour with AppArmor enabled"
+ },
  "vps|docker compose": {
   "hash": "68f1e9583f50",
   "date": "2026-10-06",
@@ -16094,6 +16134,16 @@
   "date": "2026-10-06",
   "on": "ubuntu-24.04 systemd container (simulated VPS) + client"
  },
+ "vps|group_vars و template": {
+  "hash": "5a85b60f3b27",
+  "date": "2026-10-27",
+  "on": "Linux: same Ansible lab (ansible-inventory --host, template, -e --check --diff)"
+ },
+ "vps|handlers": {
+  "hash": "c8630c148690",
+  "date": "2026-10-27",
+  "on": "Linux: same Ansible lab (handlers once, failing nginx -t, check-mode behaviour)"
+ },
  "vps|hostnamectl": {
   "hash": "b68c800df967",
   "date": "2026-10-06",
@@ -16104,10 +16154,25 @@
   "date": "2026-10-06",
   "on": "ubuntu-24.04 docker (systemd 255)"
  },
+ "vps|journald.conf": {
+  "hash": "b5fd8a077644",
+  "date": "2026-10-27",
+  "on": "Linux: docker ubuntu:24.04 with systemd 255 (privileged)"
+ },
  "vps|list-timers": {
   "hash": "76fafbd5d8bd",
   "date": "2026-10-06",
   "on": "ubuntu-24.04 docker (systemd 255)"
+ },
+ "vps|logrotate": {
+  "hash": "c19fb5f02df7",
+  "date": "2026-10-27",
+  "on": "Linux: docker ubuntu:24.04 logrotate 3.21.0 (-d, -fv twice, status file); docs: logrotate.timer on a real Ubuntu server"
+ },
+ "vps|ls -Z / restorecon": {
+  "hash": "706a64edd1db",
+  "date": "2026-10-27",
+  "on": "Linux: docker almalinux:10 (matchpathcon, semanage fcontext, chcon error); docs: labelled ls -Z and restorecon output on RHEL"
  },
  "vps|lsblk / mount": {
   "hash": "4da645a813bf",
@@ -16149,6 +16214,11 @@
   "date": "2026-10-06",
   "on": "ubuntu-24.04 systemd container (simulated VPS) (restart as reboot)"
  },
+ "vps|roles": {
+  "hash": "bbd78b5087f5",
+  "date": "2026-10-27",
+  "on": "Linux: same Ansible lab (ansible-galaxy role init, site.yml with role, changed=0)"
+ },
  "vps|sha256sum": {
   "hash": "a77435e5c168",
   "date": "2026-10-06",
@@ -16173,6 +16243,11 @@
   "hash": "dc66acc1c7d2",
   "date": "2026-10-06",
   "on": "ubuntu-24.04 docker up to mkswap; docs: swapon"
+ },
+ "vps|sysctl": {
+  "hash": "1c9615e20824",
+  "date": "2026-10-27",
+  "on": "Linux: docker ubuntu:24.04 (reads, sysctl --system, net.* write in privileged netns); docs: vm.swappiness write"
  },
  "vps|systemd timer": {
   "hash": "df4e2749626a",

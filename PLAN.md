@@ -225,7 +225,7 @@
 - [x] gha (reusable workflows، environments، matrix) و wsl و sshc. اتعمل: 9 دروس gha (workflow_call و composite و act و actionlint و zizmor و script injection) و 7 wsl و 7 sshc (SOCKS والشهادات و ssh-audit و FIDO2)
 - [ ] mongo (aggregation أعمق) و apps (Tauri)
 - [ ] pyapi (Django و Flask) و python (scraping بسيط لو مش في pydata)
-- [ ] vps: SELinux و AppArmor و Ansible
+- [x] vps: SELinux و AppArmor و Ansible. اتعمل: 15 درس (Ansible 6، و AppArmor و SELinux 5 على Docker Desktop اللي الاتنين مقفولين فيه فجزء من الدوكس، و logrotate و journald و sysctl و LimitNOFILE)
 - [x] nginx و diag. اتعمل: 8 دروس nginx (كاش الـ proxy وتوزيع الحمل و map و auth_request و error_page) و 6 في diag (strace و cpu-prof و تسريب الذاكرة و EMFILE و iowait و exit codes)
 - [x] إصلاحات «٤ج» + التمارين اللي بتكشف حلها
 - [x] ترتيب المذاكرة في index.html للتابات الجديدة (vue و pydata و net و re)
