@@ -432437,6 +432437,12 @@ warm | load 0.00s | in 27 tok 0.01s | out 50 tok 0.66s 75.5 tok/s | total 0.69s
     }
 ]);
 
+/* ===== js/tabs/ai/11.js ===== */
+// ملف إضافي لتاب ai: الحقول نفس شكلها في 01.js.
+
+MORE("ai", [
+]);
+
 /* ===== js/tabs/arch/01.js ===== */
 // كل درس هنا في مكان واحد:
 //   cmd      اسم الأمر (ولازم يبقى فريد جوه التاب، لأن التقدم محفوظ بيه)
@@ -438999,7 +439005,7 @@ router.post("/uploads/cover", requireAuth, requireRole("INSTRUCTOR", "ADMIN"), a
           },
           teach: R`## السيرفر بيدّي «إذن» لملف واحد، والمتصفح بيرفع على S3 مباشرة
 
-الـ route بيتأكد من الصلاحية والنوع والحجم، ويعمل key عشوائي، ويرجّع رابط PUT موقّع عمره ٥ دقايق. جربناه بـ AWS SDK v3 ([[@aws-sdk/client-s3]] 3.1147) على Node 24 (ويندوز 11) قصاد LocalStack 4.9 في Docker (S3 وهمي على الجهاز، وشغّلناه بـ [[S3_SKIP_SIGNATURE_VALIDATION=0]] عشان يتحقق من التوقيعات زي S3 الحقيقي). الفرق الوحيد في التجربة إن العميل فيه [[endpoint: "http://localhost:6022"]] و [[forcePathStyle: true]] ومفاتيح [[test]].
+الـ route بيتأكد من الصلاحية والنوع والحجم، ويعمل key عشوائي، ويرجّع رابط PUT موقّع عمره ٥ دقايق. جربناه بـ AWS SDK v3 ([[@aws-sdk/client-s3]] 3.1147، والرابط والرفع اتعادوا بـ 3.1158.0 قصاد MinIO) على Node 24 (ويندوز 11) قصاد LocalStack 4.9 في Docker (S3 وهمي على الجهاز، وشغّلناه بـ [[S3_SKIP_SIGNATURE_VALIDATION=0]] عشان يتحقق من التوقيعات زي S3 الحقيقي). الفرق الوحيد في التجربة إن العميل فيه [[endpoint: "http://localhost:6022"]] و [[forcePathStyle: true]] ومفاتيح [[test]].
 
 ---
 
@@ -439019,7 +439025,19 @@ router.post("/uploads/cover", requireAuth, requireRole("INSTRUCTOR", "ADMIN"), a
 x-amz-checksum-crc32 = AAAAAA==      ← CRC32 لـ 0 byte
 ~~~
 
-S3 الحقيقي بيرفض أي ملف مش فاضي على الرابط ده لأن الـ checksum مش مطابق (LocalStack عدّاه، فالجزء ده من وثائق AWS). [[WHEN_REQUIRED]] بتشيله.
+[[AAAAAA==]] هو الـ CRC32 (رقم بيتحسب من البايتات عشان يكشف أي تغيير فيها) لصفر بايت، مكتوب base64. وبعدين عدنا التجربة بـ SDK 3.1158.0 قصاد MinIO (S3 تاني بيشتغل على الجهاز، في Docker) بنفس الـ [[getSignedUrl]]:
+
+~~~text الناتج (SDK 3.1158.0 قصاد MinIO)
+default         checksum params: x-amz-checksum-crc32=AAAAAA== x-amz-sdk-checksum-algorithm=CRC32
+WHEN_REQUIRED   checksum params: (none)
+PUT + header crc32 AAAAAA==   400 XAmzContentChecksumMismatch The provided 'x-amz-checksum' header does not match what was computed.
+~~~
+
+- من غير الخيار: الرابط فيه checksum لملف فاضي. ومع [[WHEN_REQUIRED]]: مفيش.
+- MinIO قبل الرفع على الرابطين ([[200]])، لأنه مبيبصّش على الـ checksum لو جه في الـ URL. بس لما بعتنا نفس القيمة كـ header مع ملف فيه ١٥ byte، رفض بـ [[XAmzContentChecksumMismatch]]: «الـ checksum اللي انت باعته مش مطابق للي حسبته».
+- S3 الحقيقي بيتعامل مع الـ [[x-amz-checksum-crc32]] اللي في الرابط زي الـ header، فبيرفض أي ملف مش فاضي (ده من وثائق AWS ومن مشاكل متسجلة على الـ SDK، مفيش حساب AWS هنا).
+
+[[WHEN_REQUIRED]] معناها «احسب checksum بس للعمليات اللي S3 بيطلبه فيها»، و PutObject مش منهم. وفيه خيار تاني [[responseChecksumValidation: "WHEN_REQUIRED"]] للردود: لو العميل ده بيعمل كمان روابط GET موقّعة، من غيره الرابط بيبقى فيه [[x-amz-checksum-mode=ENABLED]] (جربناها والرابط اشتغل على MinIO بالشكلين)، فمش لازم للرفع.
 
 ---
 
@@ -439147,7 +439165,7 @@ https://evil.example 403
 
 بعد ٦ دقايق S3 بيرجع [[403]] و XML فيه [[AccessDenied]] و [[Request has expired]]. وبـ Content-Type مختلف (مثلًا image/png على رابط اتعمل لـ webp) بيرجع [[403 SignatureDoesNotMatch]]. ولو شفت في الـ Console [[blocked by CORS policy]] قبل ما الطلب يوصل أصلًا، يبقى CORS الـ bucket مش متظبط: لازم [[AllowedOrigins]] فيه origin الموقع، و [[AllowedMethods]] فيه PUT، و [[AllowedHeaders]] فيه content-type.
 
-لو الرفع الصح نفسه رجع [[SignatureDoesNotMatch]]، اتأكد إنك باعت نفس الـ type بالظبط اللي طلبت بيه الرابط، ومن غير headers زيادة. و [[requestChecksumCalculation: "WHEN_REQUIRED"]] موجودة عشان النسخ الجديدة من SDK متضيفش checksum الـ متصفح مش بيبعته.`,
+لو الرفع الصح نفسه رجع [[SignatureDoesNotMatch]]، اتأكد إنك باعت نفس الـ type بالظبط اللي طلبت بيه الرابط، ومن غير headers زيادة. و [[requestChecksumCalculation: "WHEN_REQUIRED"]] موجودة عشان النسخ الجديدة من SDK متحطش في الرابط checksum لملف فاضي ([[x-amz-checksum-crc32=AAAAAA==]])، فـ S3 الحقيقي يرفض الملف الحقيقي. اتأكد إن الرابط مفيهوش [[x-amz-checksum]] خالص.`,
           solCode: R`// في الواجهة
 const file = input.files[0];
 const res = await apiFetch("/uploads/cover", { method: "POST", body: JSON.stringify({ type: file.type, size: file.size }) });
@@ -442855,6 +442873,12 @@ Sentry.init({
   release: process.env.GIT_SHA,
   tracesSampleRate: 0.1,
   dataCollection: { userInfo: false, cookies: false },
+  beforeSend(event) {
+    delete event.request?.cookies;
+    delete event.request?.headers?.cookie;
+    delete event.request?.headers?.authorization;
+    return event;
+  },
 });
 
 worker.on("failed", (job, err) => Sentry.captureException(err, { tags: { queue: job?.queueName, job: job?.name } }));`,
@@ -442866,7 +442890,7 @@ worker.on("failed", (job, err) => Sentry.captureException(err, { tags: { queue: 
 
 [[environment]] بيفصل أخطاء staging عن production. و [[release]] (رقم الـ commit) بيوريك الخطأ بدأ مع أنهي deploy، وبيربط الـ source maps. والـ source maps للواجهة بتترفع في CI، عشان الـ stack يبان بأسماء الملفات الحقيقية مش الكود المضغوط.
 
-[[tracesSampleRate: 0.1]] معناها إنه بيقيس أداء ١٠٪ من الطلبات بس، عشان الكوتة والتكلفة. و [[dataCollection: { userInfo: false, cookies: false }]] معناها إنه مش بيبعت IPs و cookies (ده في SDK نسخة 11. في نسخة 10 وقبلها كان الاختيار [[sendDefaultPii: false]] وكان هو الافتراضي، إنما في 11 الاختيار ده اتشال وبيتجاهل من غير أي تحذير، والافتراضي بقى إنه يبعت الـ IP والكوكيز، فلازم تقفلهم بنفسك). والـ [[Sentry.setUser({ id })]] في requireAuth بـ id بس، من غير إيميل.
+[[tracesSampleRate: 0.1]] معناها إنه بيقيس أداء ١٠٪ من الطلبات بس، عشان الكوتة والتكلفة. و [[dataCollection: { userInfo: false, cookies: false }]] معناها إنه مش بيبعت IPs و cookies (ده في SDK نسخة 11. في نسخة 10 وقبلها كان الاختيار [[sendDefaultPii: false]] وكان هو الافتراضي، إنما في 11 الاختيار ده اتشال وبيتجاهل من غير أي تحذير، والافتراضي بقى إنه يبعت الـ IP والكوكيز، فلازم تقفلهم بنفسك). و [[beforeSend]] دالة بتعدّي على كل خطأ قبل ما يتبعت، فبنشيل منه الـ cookies و headers الـ [[cookie]] و [[authorization]] بإيدنا: طبقة تانية لو نسخة جاية غيّرت اسم الإعداد تاني زي ما حصل مع [[sendDefaultPii]]. بس [[beforeSend]] للأخطاء بس، مش للـ traces، فـ [[dataCollection]] هو الأساس. والـ [[Sentry.setUser({ id })]] في requireAuth بـ id بس، من غير إيميل.
 
 والأخطاء اللي بتحصل برّه الـ requests، زي الـ jobs، لازم تبعتها بنفسك بـ [[captureException]]. المثال بيعمل ده لأي job فشلت.
 
@@ -442876,7 +442900,7 @@ worker.on("failed", (job, err) => Sentry.captureException(err, { tags: { queue: 
           },
           teach: R`## الإعداد في ملف لوحده بيتحمّل قبل التطبيق، وسطر للـ jobs
 
-المثال جزئين: [[Sentry.init]] (ده اللي بيتحط في [[instrument.mjs]])، وسطر في ملف الـ worker بيبعت أي job فشلت. جربناه بـ [[@sentry/node]] 11.5 و Express 5 و BullMQ 6 على Redis 8 (Docker، ويندوز 11، Node 24). ومفيش حساب Sentry هنا، فعملنا سيرفر صغير على [[127.0.0.1:6041]] بيستقبل اللي الـ SDK بيبعته ويطبعه، والـ DSN بيشاور عليه: [[http://pubkey@127.0.0.1:6041/1]]. يعني اللي تحت هو اللي الـ SDK بعته فعلًا، بس شكل الـ issue في لوحة Sentry من الـ docs.
+المثال جزئين: [[Sentry.init]] (ده اللي بيتحط في [[instrument.mjs]])، وسطر في ملف الـ worker بيبعت أي job فشلت. جربناه بـ [[@sentry/node]] 11.5 (وجزء الكوكيز اتعاد بـ 11.9.0) و Express 5 و BullMQ 6 على Redis 8 (Docker، ويندوز 11، Node 24). ومفيش حساب Sentry هنا، فعملنا سيرفر صغير على [[127.0.0.1:6041]] بيستقبل اللي الـ SDK بيبعته ويطبعه، والـ DSN بيشاور عليه: [[http://pubkey@127.0.0.1:6041/1]]. يعني اللي تحت هو اللي الـ SDK بعته فعلًا، بس شكل الـ issue في لوحة Sentry من الـ docs.
 
 ---
 
@@ -442914,19 +442938,47 @@ DSN = Data Source Name: عنوان المشروع في Sentry، فيه مفتا�
 
 ### [[dataCollection: { userInfo: false, cookies: false }]]
 
-في نسخة 11 الافتراضي إن الـ SDK يبعت بيانات الزائر. شغّلنا نفس الطلب ([[Cookie: rt=secret]] و [[Authorization: Bearer xyz]]) مرة من غير السطر ده ومرة بيه:
+في نسخة 11 الافتراضي إن الـ SDK يبعت بيانات الزائر. شغّلنا نفس الطلب ([[Cookie: rt=secret-refresh-token; theme=dark]] و [[Authorization: Bearer xyz]]) بـ 11.9.0 مرة من غير السطر ده ومرة بيه، وخلّينا [[tracesSampleRate: 1]] عشان نشوف الـ traces كمان:
 
 ~~~text الناتج (من غير dataCollection)
 "user":{"ip_address":"::1"}
-"request":{"cookies":{"rt":"secret"},"headers":{...,"cookie":"[Filtered]","authorization":"[Filtered]"}}
+"request":{"headers":{...,"cookie":"[Filtered]","authorization":"[Filtered]",...},"cookies":{"rt":"secret-refresh-token","theme":"dark"}}
+"http.request.header.cookie":{"value":["rt=secret-refresh-token","theme=dark"]}      ← في الـ trace
 ~~~
 
-~~~text الناتج (بـ dataCollection)
-"request":{"url":"http://localhost:6040/debug-sentry?email=a@b.c","headers":{...,"authorization":"[Filtered]"},"query":"email=a@b.c"}
+~~~text الناتج (بـ dataCollection بس)
+"request":{"headers":{...,"authorization":"[Filtered]",...},"url":"http://localhost:6040/debug-sentry?email=a@b.c","query_string":"email=a@b.c"}
 ~~~
 
-- من غيره: الـ IP اتبعت ([[::1]] هو localhost في IPv6)، والأخطر إن الـ header بتاع الـ cookie اتفلتر بس نفس القيمة اتبعتت في [[cookies]]: الـ refresh token بقى في Sentry.
-- بيه: مفيش [[user]] ولا [[cookies]]. بس الـ query string لسه بيتبعت ([[email=a@b.c]])، فمتحطش بيانات شخصية في الـ URLs.
+- من غيره: الـ IP اتبعت ([[::1]] هو localhost في IPv6)، والأخطر إن الـ header بتاع الـ cookie اتفلتر بس نفس القيمة اتبعتت في [[cookies]]، وكمان في الـ trace كـ [[http.request.header.cookie]]: الـ refresh token بقى في Sentry مرتين.
+- بيه: مفيش [[user]] ولا [[cookies]]، ولا cookie في الـ trace. بس الـ query string لسه بيتبعت ([[email=a@b.c]])، فمتحطش بيانات شخصية في الـ URLs. واسم الـ [[authorization]] لسه موجود وقيمته [[[Filtered]]].
+
+> [[dataCollection]] كمان بيقبل [[httpHeaders]] و [[urlQueryParams]] (لكل واحد [[false]] أو [[{ allow: [...] }]] أو [[{ deny: [...] }]]). جربنا [[httpHeaders: { request: { deny: ["cookie", "authorization"] } }]]: الـ header فضل موجود بقيمة [[[Filtered]]] برضه، و [[httpHeaders: false]] شال كل الـ headers (حتى [[user-agent]] اللي بيفيدك).
+
+### [[beforeSend(event) { ... }]]
+
+[[beforeSend]] دالة الـ SDK بيناديها مع كل خطأ قبل ما يبعته، وبيبعت اللي بترجّعه (ولو رجّعت [[null]] الحدث مبيتبعتش خالص).
+
+- [[event.request]]: بيانات الطلب اللي حصل فيه الخطأ.
+- [[delete event.request?.cookies]]: [[delete]] بيشيل الخانة من الـ object. و [[?.]] عشان الأخطاء اللي برّه أي طلب (زي الـ jobs) مفيهاش [[request]] أصلًا، فمنقعش.
+- [[headers?.cookie]] و [[headers?.authorization]]: نشيل الاتنين خالص، مش بس قيمتهم.
+- [[return event]]: ابعت الباقي.
+
+جربنا الـ [[beforeSend]] لوحده من غير [[dataCollection]]:
+
+~~~text الناتج (beforeSend بس)
+"user":{"ip_address":"::1"}
+"request":{"headers":{"host":"localhost:6040",...,"user-agent":"node",...},"url":"..."}      ← مفيش cookies ولا authorization
+"http.request.header.cookie":{"value":["rt=secret-refresh-token","theme=dark"]}      ← لسه في الـ trace
+~~~
+
+يعني [[beforeSend]] بيغطي الأخطاء بس، والـ traces ليها [[beforeSendTransaction]]. عشان كده الاتنين مع بعض: [[dataCollection]] بيقفل الجمع من الأول (أخطاء و traces)، و [[beforeSend]] ضمان تاني لو نسخة جاية غيّرت الأسماء تاني. وبالمثال كامل:
+
+~~~text الناتج (المثال كامل)
+"request":{"headers":{"host":"localhost:6040","connection":"keep-alive","x-api-key":"[Filtered]","accept":"*/*",...,"user-agent":"node",...},"method":"GET","url":"http://localhost:6040/debug-sentry?email=a@b.c","query_string":"email=a@b.c"}
+~~~
+
+مفيش [[user]] ولا [[cookies]] ولا [[cookie]] ولا [[authorization]]. و [[x-api-key]] اتفلتر لوحده لأن الـ SDK بيعرف أسامي الـ headers الحساسة.
 
 ### [[});]]
 
@@ -442975,7 +443027,8 @@ DSN = Data Source Name: عنوان المشروع في Sentry، فيه مفتا�
 |---|---|
 | [[dsn]] | الأحداث رايحة على [[/api/1/envelope/]] |
 | [[environment]] و [[release]] | [["staging"]] و [["abc123"]] مع كل خطأ |
-| [[dataCollection]] | من غيره الـ IP والـ cookies (فيها التوكن) بيتبعتوا |
+| [[dataCollection]] | من غيره الـ IP والـ cookies (فيها التوكن) بيتبعتوا، في الخطأ وفي الـ trace |
+| [[beforeSend]] | بيشيل [[cookies]] و [[cookie]] و [[authorization]] من الأخطاء، ضمان تاني |
 | [[--import]] | الـ init قبل أي حاجة |
 | [[captureException]] في [[failed]] | أخطاء الـ jobs بالـ queue واسم الـ job |`,
           lines: [
@@ -442986,6 +443039,12 @@ DSN = Data Source Name: عنوان المشروع في Sentry، فيه مفتا�
             "رقم الـ commit، عشان تعرف الخطأ بدأ مع أنهي deploy.",
             "قيس أداء ١٠٪ من الطلبات بس.",
             "متبعتش IPs و cookies (SDK نسخة 11).",
+            "قبل ما أي خطأ يتبعت، عدّيه على الدالة دي:",
+            "شيل الـ cookies من بيانات الطلب.",
+            "وشيل header الـ cookie،",
+            "و header الـ Authorization (فيه التوكن).",
+            "وابعت الباقي.",
+            "قفلة الدالة.",
             "قفلة.",
             "في ملف الـ worker: أي job فشلت، ابعتها لـ Sentry باسم الـ queue والـ job."
           ],
@@ -442996,7 +443055,8 @@ DSN = Data Source Name: عنوان المشروع في Sentry، فيه مفتا�
 الـ alert: في Alerts اعمل rule من نوع Issue alert، شرطها «A new issue is created» والفلتر [[environment = production]]، والـ action إيميل أو integration. وجرّبه بخطأ في staging بعد ما تشيل الفلتر مؤقتًا. ولو الـ stack فيه أسماء ملفات غريبة زي [[dist/index.js:1:23456]]، محتاج ترفع الـ source maps.`,
           solCode: R`// instrument.js: node --import ./instrument.js dist/server.js
 import * as Sentry from "@sentry/node";
-Sentry.init({ dsn: process.env.SENTRY_DSN, environment: process.env.APP_ENV, release: process.env.GIT_SHA, tracesSampleRate: 0.1, dataCollection: { userInfo: false, cookies: false } });
+Sentry.init({ dsn: process.env.SENTRY_DSN, environment: process.env.APP_ENV, release: process.env.GIT_SHA, tracesSampleRate: 0.1, dataCollection: { userInfo: false, cookies: false },
+  beforeSend(event) { delete event.request?.cookies; delete event.request?.headers?.cookie; delete event.request?.headers?.authorization; return event; } });
 
 // app.ts
 import * as Sentry from "@sentry/node";
@@ -496588,7 +496648,7 @@ app.post("/uploads/sign", requireAuth, async (req, res) => {
 المتصفح  ── PUT url + الملف ───────────────────►  S3       (يتأكد من التوقيع ويحفظ)
 ~~~
 
-اتجرّب فعلًا: نفس الكود في [[node:22-slim]] بـ Express 5 و AWS SDK 3.1147، والـ [[S3Client]] متوجّه لـ LocalStack (محاكي AWS في Docker) بـ [[endpoint]] و [[forcePathStyle]]، و [[requireAuth]] وهمي بيحط [[req.user.id = 42]]. والرفع بـ [[curl]].
+اتجرّب فعلًا: نفس الكود في [[node:22-slim]] بـ Express 5 و AWS SDK 3.1147 (وجزء الـ checksum اتعاد بـ 3.1158.0 قصاد MinIO)، والـ [[S3Client]] متوجّه لـ LocalStack (محاكي AWS في Docker) بـ [[endpoint]] و [[forcePathStyle]]، و [[requireAuth]] وهمي بيحط [[req.user.id = 42]]. والرفع بـ [[curl]].
 
 ---
 
@@ -496626,7 +496686,19 @@ const ALLOWED = ["image/png", "image/jpeg", "application/pdf"];
 &x-amz-checksum-crc32=AAAAAA%3D%3D&x-amz-sdk-checksum-algorithm=CRC32
 ~~~
 
-[[AAAAAA==]] ده الـ CRC32 لصفر بايت. S3 الحقيقي بيقارنه بالملف اللي اترفع فيرفضه (LocalStack قبله عادي، فدي من الـ docs ومن مشكلة معروفة في الـ SDK). ومع [[WHEN_REQUIRED]] السطرين دول اختفوا من الـ URL.
+[[AAAAAA==]] ده الـ CRC32 لصفر بايت. LocalStack قبل الرفع عليه عادي، فعدنا التجربة بـ SDK 3.1158.0 قصاد MinIO (S3 تاني بيشتغل على الجهاز في Docker):
+
+~~~text الناتج (MinIO)
+default         checksum params: x-amz-checksum-crc32=AAAAAA== x-amz-sdk-checksum-algorithm=CRC32
+WHEN_REQUIRED   checksum params: (none)
+PUT + header crc32 AAAAAA==   400 XAmzContentChecksumMismatch The provided 'x-amz-checksum' header does not match what was computed.
+~~~
+
+- MinIO كمان قبل الرفع على الرابط اللي فيه الـ checksum ([[200]])، لأنه مبيبصّش عليه لو جه في الـ URL.
+- بس لما بعتنا نفس الـ [[AAAAAA==]] كـ header مع ملف فيه بايتات، رفض بـ [[XAmzContentChecksumMismatch]]: الـ checksum مش مطابق للملف.
+- S3 الحقيقي بيعامل الـ checksum اللي في الرابط الموقّع زي الـ header، فبيرفض الملف (دي من الـ docs ومن مشكلة معروفة في الـ SDK، مفيش حساب AWS هنا).
+
+ومع [[WHEN_REQUIRED]] السطرين دول اختفوا من الـ URL، والرفع رجّع [[200]]. وفيه خيار جنبه [[responseChecksumValidation: "WHEN_REQUIRED"]] للردود: من غيره روابط GET الموقّعة بتطلع فيها [[x-amz-checksum-mode=ENABLED]] (اشتغلت عادي على MinIO)، فمش محتاجه للرفع.
 
 - [[ALLOWED]]: قايمة الـ MIME types المسموحة. الـ MIME type هو نوع الملف بالشكل اللي الويب فاهمه: [[image/png]] و [[application/pdf]].
 
@@ -496760,7 +496832,7 @@ curl -X PUT -H "Content-Type: image/png" --upload-file logo.png "URL"
           ],
           sol: R`الـ route بيرجّع JSON فيه [[key]] زي [[uploads/42/0e2027a6-...]] و [[url]] فيه [[X-Amz-SignedHeaders=content-type%3Bhost]]، يعني الـ Content-Type داخل في التوقيع. وطلب بنوع [[image/gif]] للـ route نفسه بيرجع [[400 {"error":"type"}]] من السيرفر. والرفع بـ curl بنوع [[image/png]] يرجّع 200 من غير body، والملف يظهر في [[aws s3 ls s3://myapp-assets/uploads/42/]]. ولو غيّرت الـ header في curl لـ [[image/gif]] على نفس الـ URL، S3 يرجّع 403 [[SignatureDoesNotMatch]].
 
-مهم: نسخ SDK v3 من أول 3.729 بتحسب checksum تلقائي، ومع الـ presign مفيش body وقت التوقيع، فالـ URL بيطلع فيه [[x-amz-checksum-crc32=AAAAAA%3D%3D]] (checksum لملف فاضي)، وأي رفع لملف حقيقي عليه بيفشل برسالة checksum. جرّبتها على 3.1143 والـ URL طلع فيه السطر ده فعلًا. الحل اللي في المثال دلوقتي: [[requestChecksumCalculation: "WHEN_REQUIRED"]] في الـ [[S3Client]]، وبعدها الـ URL بيطلع من غير checksum.
+مهم: نسخ SDK v3 من أول 3.729 بتحسب checksum تلقائي، ومع الـ presign مفيش body وقت التوقيع، فالـ URL بيطلع فيه [[x-amz-checksum-crc32=AAAAAA%3D%3D]] (checksum لملف فاضي)، وأي رفع لملف حقيقي عليه بيفشل برسالة checksum. جرّبتها على 3.1143 و 3.1158 والـ URL طلع فيه السطر ده فعلًا (MinIO قبله، بس نفس القيمة كـ header رجّعت [[400 XAmzContentChecksumMismatch]]). الحل اللي في المثال دلوقتي: [[requestChecksumCalculation: "WHEN_REQUIRED"]] في الـ [[S3Client]]، وبعدها الـ URL بيطلع من غير checksum.
 
 الـ CORS: من المتصفح من غير CORS هتشوف في الـ console [[blocked by CORS policy]] والطلب نفسه اتبعت كـ preflight [[OPTIONS]] واترفض. بعد [[put-bucket-cors]] بالملف اللي تحت، الـ fetch يعدّي. ولو حطيت [[AllowedOrigins: ["*"]]] هيشتغل برضه، بس ده بيسمح لأي موقع يستخدم روابطك.`,
           solCode: R`cat > cors.json <<'EOF'
@@ -522087,11 +522159,11 @@ it("sends the backlog after Last-Event-ID, then live questions from another conn
 
 [[lib/ai.ts]]: embedding بـ Gemini ([[gemini-embedding-001]] بـ ٧٦٨ بُعد، زي درس [[RAG]])، والرد بـ Claude: [[claude.messages.stream(...)]] بـ [[model: "claude-opus-5-5"]] و [[output_config: { effort: "low" }]] (سؤال طالب مش محتاج تفكير عميق)، و [[for await]] على الأحداث وناخد [[text_delta]]، وفي الآخر [[finalMessage()]] عشان [[stop_reason]] (لو [[refusal]] نقول للطالب) والـ usage للوج.
 
-الحد اليومي: [[AiUsage]] صف لكل سؤال، و [[count]] آخر ٢٤ ساعة قبل الطلب.
+الحد اليومي: [[AiUsage]] صف لكل سؤال، و [[count]] آخر ٢٤ ساعة ثم [[create]] جوه transaction فيها [[pg_advisory_xact_lock]] على الطالب، فالطلبات اللي جاية مع بعض بتعدّ واحد ورا التاني ومحدش يعدّي الـ ٣٠.
 
 وحقن الـ dependencies ([[AskDeps]]) هو اللي خلّى الاختبارات تشتغل من غير مفاتيح API: embedding وهمي بيحط 1 في بُعد لكل كلمة مفتاحية، و generate وهمي بيطلّع نصين.`,
             when: R`لما المحتوى عندك (دروس، أو مساعدة، أو مستندات) والسؤال عنه. لو المحتوى صغير (صفحة أو اتنين)، حطه كله في الـ prompt من غير RAG.`,
-            mistakes: R`البحث في كل الـ chunks من غير فلتر الكورس. أو مفيش minScore فالموديل يجاوب من حتت ملهاش علاقة. أو المفتاح في المتصفح. أو مفيش حد يومي. أو [[await]] الرد كله وبعدين ترجّعه (الطالب يستنى ١٥ ثانية). أو مفيش [[signal]] فالموديل يكمّل يكتب بعد ما الطالب قفل. أو تثق في الـ [N] اللي الموديل كتبها من غير ما تتأكد إن المصدر ده موجود. أو تحط سؤال الطالب في الـ system prompt.`
+            mistakes: R`البحث في كل الـ chunks من غير فلتر الكورس. أو مفيش minScore فالموديل يجاوب من حتت ملهاش علاقة. أو المفتاح في المتصفح. أو مفيش حد يومي، أو حد بـ [[count]] ثم [[create]] من غير قفل، فـ ٢٠ طلب مع بعض بيعدّوا كلهم. أو [[await]] الرد كله وبعدين ترجّعه (الطالب يستنى ١٥ ثانية). أو مفيش [[signal]] فالموديل يكمّل يكتب بعد ما الطالب قفل. أو تثق في الـ [N] اللي الموديل كتبها من غير ما تتأكد إن المصدر ده موجود. أو تحط سؤال الطالب في الـ system prompt.`
           },
           teach: R`## الفكرة: هات الحتت، وبعدين اسأل الموديل، وابعت الرد أول بأول
 
@@ -522239,12 +522311,36 @@ if (final.stop_reason === "refusal") yield "\n(مقدرش أجاوب على ال
 ~~~text app/api/courses/[slug]/ask/route.ts
 const Body = z.object({ question: z.string().trim().min(3).max(1000) });
 ...
-const used = await db.aiUsage.count({ where: { userId: session.user.id, createdAt: { gt: since } } });
-if (used >= DAILY_LIMIT) return Response.json({ error: "خلصت أسئلة النهارده" }, { status: 429 });
-await db.aiUsage.create({ data: { userId: session.user.id, courseId: course.id } });
+const allowed = await db.$transaction(async tx => {
+  await tx.$executeRaw$__btSELECT pg_advisory_xact_lock(hashtext($__{"ai:" + session.user.id}))$__bt;
+  const used = await tx.aiUsage.count({ where: { userId: session.user.id, createdAt: { gt: since } } });
+  if (used >= DAILY_LIMIT) return false;
+  await tx.aiUsage.create({ data: { userId: session.user.id, courseId: course.id } });
+  return true;
+});
+if (!allowed) return Response.json({ error: "خلصت أسئلة النهارده" }, { status: 429 });
 ~~~
 
-مشترك؟ وإلا 404. السؤال من ٣ لـ ١٠٠٠ حرف؟ وإلا 400. [[request.json().catch(() => null)]]: body مش JSON يبقى [[null]] فيفشل في Zod بـ 400 مش 500. وبعدين عدّ أسئلة آخر ٢٤ ساعة، و [[429 Too Many Requests]] بعد ٣٠. (العد والإنشاء خطوتين منفصلين، فطلبات كتير في نفس اللحظة ممكن نظريًا تعدّي الحد بكام سؤال. جرّبنا ١٠ طلبات مع بعض عند ٢٩: واحد بس عدّى. لو عايز ضمان، نفس قفل [[pg_advisory_xact_lock]] بتاع الدفع.)
+مشترك؟ وإلا 404. السؤال من ٣ لـ ١٠٠٠ حرف؟ وإلا 400. [[request.json().catch(() => null)]]: body مش JSON يبقى [[null]] فيفشل في Zod بـ 400 مش 500. وبعدين عدّ أسئلة آخر ٢٤ ساعة، و [[429 Too Many Requests]] بعد ٣٠.
+
+### الحد اليومي لازم يبقى atomic
+
+- [[db.$transaction(async tx => ...)]]: كل اللي جوه transaction واحدة على اتصال واحد، و [[tx]] هو الـ client بتاعها.
+- [[pg_advisory_xact_lock(hashtext("ai:" + userId))]]: نفس قفل الدفع (محطة «الـ order والـ checkout»). [[hashtext]] بيحوّل [[ai:u1]] لرقم، والقفل على الرقم ده بيتفك لوحده لما الـ transaction تخلص. طلب تاني لنفس الطالب بيستنى عند السطر ده لحد ما الأول يعدّ ويكتب. و [[ai:]] في الأول عشان ميبقاش نفس رقم قفل تاني لنفس اليوزر.
+- [[count]] وبعده [[create]]: دلوقتي محدش يقدر يعدّ في النص بينهم.
+- [[return false]] / [[return true]]: اللي الـ transaction بترجّعه بيبقى قيمة [[allowed]]، والـ 429 برّه الـ transaction عشان القفل ميفضلش ماسك.
+
+جربناه بـ Prisma 7.10.1 و [[@prisma/adapter-pg]] على Postgres 16 في Docker: ٢٠ طلب لنفس الطالب مع بعض بـ [[Promise.all]]، وعنده ٢٥ سؤال، ٥ جولات:
+
+~~~text الناتج
+count ثم create (القديم)         200 x 20, 429 x 0, rows now 45     ← كل جولة
+INSERT ... SELECT ... WHERE count < 30   200 x 10..14, rows now 35..39
+pg_advisory_xact_lock            200 x 5, 429 x 15, rows now 30     ← كل جولة
+~~~
+
+- القديم: الـ ٢٠ عدّوا في نفس اللحظة ولقوا ٢٥، فالكل اتسمح له ووصلنا ٤٥ بدل ٣٠. (و ١٠ طلبات عند ٢٩: الـ ١٠ عدّوا، ٣٩.)
+- [[INSERT ... SELECT ... WHERE (SELECT count(*) ...) < 30]] في جملة واحدة برضه عدّى الحد: في Postgres كل جملة شايفة الصفوف اللي اتأكدت قبلها، والصفوف اللي طلبات تانية لسه بتكتبها مش باينة لها. «جملة واحدة» مش معناها «محدش يدخل في النص».
+- بالقفل: ٥ بالظبط، والباقي 429، وفي كل الجولات.
 
 على الـ build (من غير مفاتيح API):
 
@@ -522303,7 +522399,7 @@ for (;;) {
 | الطالب مستني | NDJSON سطر بسطر |
 | قفل الصفحة | [[signal]] لحد الـ SDK |
 | الموديل واقع | سطر [[error]] |
-| التكلفة | ٣٠ في اليوم و 429 |
+| التكلفة | ٣٠ في اليوم و 429، والعد جوه [[pg_advisory_xact_lock]] |
 | الاختبار من غير مفاتيح | [[AskDeps]] وهمية |`,
           lines: [
             R`بتتنفذ أول ما الـ stream يتفتح:`,
@@ -522324,7 +522420,7 @@ for (;;) {
           ],
           sol: R`الـ ٣ اختبارات عدّت على Postgres 18 بـ pgvector 0.8.7: (١) سؤال «git branch» في كورس c1: السطور [[text]] بتتجمّع «اعمل branch جديد بـ git switch -c [1]»، وبعدها [[sources]] فيها حتة c1 بس، و [[done]]، والـ prompt اللي اتبعت للموديل مفيهوش «كورس تاني» (حتة c2 اللي فيها نفس الكلمات). (٢) «وصفة طبخ؟»: «مش لاقي ده في دروس الكورس.» والموديل متنادتش. (٣) موديل بيرمي [[529 overloaded]]: آخر سطر [[{type:"error"}]]. واختبار [[readNdjson]]: chunk مقطوع في نص حرف عربي بيتقري صح.
 
-وعلى build الإنتاج: طالب مش مشترك [[404]]، وسؤال حرف واحد [[400]] برسالة، وسؤال سليم [[200]] بـ [[application/x-ndjson]] وسطر [[error]] (لأن مفيش مفاتيح API حقيقية في التجربة).
+وعلى build الإنتاج: طالب مش مشترك [[404]]، وسؤال حرف واحد [[400]] برسالة، وسؤال سليم [[200]] بـ [[application/x-ndjson]] وسطر [[error]] (لأن مفيش مفاتيح API حقيقية في التجربة). والحد اليومي: ٢٠ طلب في نفس اللحظة لطالب عنده ٢٥ سؤال، ٥ بس بياخدوا [[200]] والباقي [[429]]، والجدول بيقف عند ٣٠ (من غير القفل كانوا هيعدّوا الـ ٢٠ كلهم).
 
 اللي متجرّبش: نداء Gemini و Claude الحقيقيين (محتاجين مفاتيح). الكود ماشي على نفس الـ API اللي في دروس [[RAG]] و [[streaming]] في تاب «الذكاء الاصطناعي»، و TypeScript بيعدّيه على الـ SDKs المتسطبة.`,
           solCode: R`// ── prisma/schema.prisma (الإضافات) ──
@@ -522464,9 +522560,14 @@ export async function POST(request: Request, ctx: RouteContext<"/api/courses/[sl
   if (!parsed.success) return Response.json({ error: "اكتب سؤال من ٣ لـ ١٠٠٠ حرف" }, { status: 400 });
 
   const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
-  const used = await db.aiUsage.count({ where: { userId: session.user.id, createdAt: { gt: since } } });
-  if (used >= DAILY_LIMIT) return Response.json({ error: "خلصت أسئلة النهارده" }, { status: 429 });
-  await db.aiUsage.create({ data: { userId: session.user.id, courseId: course.id } });
+  const allowed = await db.$transaction(async tx => {
+    await tx.$executeRaw$__btSELECT pg_advisory_xact_lock(hashtext($__{"ai:" + session.user.id}))$__bt;
+    const used = await tx.aiUsage.count({ where: { userId: session.user.id, createdAt: { gt: since } } });
+    if (used >= DAILY_LIMIT) return false;
+    await tx.aiUsage.create({ data: { userId: session.user.id, courseId: course.id } });
+    return true;
+  });
+  if (!allowed) return Response.json({ error: "خلصت أسئلة النهارده" }, { status: 429 });
 
   return new Response(answerStream(parsed.data.question, course.id, realDeps, request.signal), {
     headers: { "Content-Type": "application/x-ndjson; charset=utf-8", "Cache-Control": "no-store", "X-Accel-Buffering": "no" },
