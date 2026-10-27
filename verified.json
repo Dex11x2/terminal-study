@@ -15,24 +15,69 @@
   "on": "Win11 Node 24.19 @anthropic-ai/sdk 0.132 + mock 429"
  },
  "ai|@anthropic-ai/sdk": {
-  "hash": "2790a62645d1",
-  "date": "2026-10-08",
-  "on": "Win11 Node 24.19 @anthropic-ai/sdk 0.132 + mock"
+  "hash": "6d8c8fec6de9",
+  "date": "2026-10-27",
+  "on": "docs: models line updated to claude-haiku-5-5 (Anthropic models list); code unchanged since earlier run"
  },
  "ai|@google/genai": {
   "hash": "8b9b654e40c8",
   "date": "2026-10-08",
   "on": "Win11 Node 24.19 @google/genai 2.28 + mock"
  },
+ "ai|CLAUDE.md": {
+  "hash": "1a8294603918",
+  "date": "2026-10-27",
+  "on": "docs: concept (file content; loading rules from Claude Code docs)"
+ },
  "ai|LLM": {
   "hash": "2869878a85c2",
   "date": "2026-10-08",
   "on": "ubuntu:24.04 Docker (curl+jq) against local Gemini mock"
  },
+ "ai|MCP": {
+  "hash": "0ad95aa535cd",
+  "date": "2026-10-27",
+  "on": "Windows pwsh 7.6 + powershell 5.1 + Git Bash, node:22-slim (Docker); docs: 2026-07-28 spec notes"
+ },
+ "ai|MCP Inspector": {
+  "hash": "d7b910b511ea",
+  "date": "2026-10-27",
+  "on": "Windows Git Bash + pwsh 7.6 (CLI and web UI), CLI also in node:22-slim"
+ },
+ "ai|MCP server بـ Python": {
+  "hash": "246ea99dab89",
+  "date": "2026-10-27",
+  "on": "Windows Python 3.14 venv (client + Inspector CLI)"
+ },
+ "ai|MCP server بـ TypeScript": {
+  "hash": "0b9655a25c1c",
+  "date": "2026-10-27",
+  "on": "Windows Node 24.22 + node:22-slim (Docker)"
+ },
+ "ai|Ollama API": {
+  "hash": "ce121ffbf347",
+  "date": "2026-10-27",
+  "on": "Windows Git Bash curl + pwsh 7.6 against local Ollama"
+ },
+ "ai|OpenAI-compatible": {
+  "hash": "5049465a5e55",
+  "date": "2026-10-27",
+  "on": "Windows Node 24.22 (openai 7.45) + Python 3.14 (openai 3.40) against local Ollama"
+ },
  "ai|RAG": {
   "hash": "dd4d68048a34",
   "date": "2026-10-08",
   "on": "Win11 Node 24.19 pg + pgvector:pg18 Docker + mocks (local e5 embeddings)"
+ },
+ "ai|agent loop": {
+  "hash": "4d0f68b33c66",
+  "date": "2026-10-27",
+  "on": "Windows Node 24.22 against local mock Anthropic API"
+ },
+ "ai|agent ولا workflow؟": {
+  "hash": "de2b84230300",
+  "date": "2026-10-27",
+  "on": "Windows Node 24.22 against mock (messages.parse + zodOutputFormat)"
  },
  "ai|backend proxy": {
   "hash": "3f5602ba6711",
@@ -43,6 +88,11 @@
   "hash": "e50cb847e375",
   "date": "2026-10-08",
   "on": "Win11 Node 24.19"
+ },
+ "ai|claude mcp add": {
+  "hash": "a3b5c9c52155",
+  "date": "2026-10-27",
+  "on": "Windows Claude Code 2.1.247 with isolated CLAUDE_CONFIG_DIR; docs: interactive session, Claude Desktop"
  },
  "ai|context window": {
   "hash": "e965890cf319",
@@ -59,6 +109,16 @@
   "date": "2026-10-08",
   "on": "Win11 Node 24.19 @google/genai 2.28 + mock backed by local multilingual-e5-small"
  },
+ "ai|embeddings محلي": {
+  "hash": "7ce342789480",
+  "date": "2026-10-27",
+  "on": "Windows Node 24.22 against local Ollama all-minilm"
+ },
+ "ai|eval للـ agent": {
+  "hash": "a8dba628e31c",
+  "date": "2026-10-27",
+  "on": "Windows Node 24.22 against mock"
+ },
  "ai|evals": {
   "hash": "30cff06400de",
   "date": "2026-10-08",
@@ -74,10 +134,20 @@
   "date": "2026-10-08",
   "on": "Win11 Python 3.14 google-genai 2.29 + mock"
  },
+ "ai|hooks في Claude Code": {
+  "hash": "b8531132ebe3",
+  "date": "2026-10-27",
+  "on": "hook script on Windows Node 24.22 + node:22-slim with sample stdin; docs: settings and exit codes"
+ },
  "ai|latency ولا جودة": {
   "hash": "7d7a63777e38",
   "date": "2026-10-08",
   "on": "Win11 Node 24.19 @anthropic-ai/sdk 0.132 + mock; docs: real latency"
+ },
+ "ai|ollama في Docker": {
+  "hash": "911be3c0bf03",
+  "date": "2026-10-27",
+  "on": "Windows Docker Desktop, ollama/ollama 0.40.11 CPU, qwen3:0.6b"
  },
  "ai|output format": {
   "hash": "debf65e20853",
@@ -129,6 +199,11 @@
   "date": "2026-10-08",
   "on": "Win11 Node 24.19 @anthropic-ai/sdk 0.132 + mock + zod 4.6"
  },
+ "ai|toolRunner و MCP": {
+  "hash": "f80abd06e892",
+  "date": "2026-10-27",
+  "on": "Windows Node 24.22, mock Anthropic API + real MCP server"
+ },
  "ai|workflow مع المساعد": {
   "hash": "69438f07fa53",
   "date": "2026-10-08",
@@ -139,10 +214,20 @@
   "date": "2026-10-08",
   "on": "Win11 Node 24.19"
  },
+ "ai|أمان MCP": {
+  "hash": "4b617bb3a1b0",
+  "date": "2026-10-27",
+  "on": "node:22-slim (Docker) with symlinks"
+ },
  "ai|اختيار الموديل": {
   "hash": "b1415bbcb0d9",
   "date": "2026-10-08",
   "on": "Win11 Node 24.19 + Gemini mock; docs: model names"
+ },
+ "ai|الاختبار الأول": {
+  "hash": "2a8d863c4cb7",
+  "date": "2026-10-27",
+  "on": "node:22-slim (Docker) node --test; git part on Windows Git Bash"
  },
  "ai|تتحقق من الناتج": {
   "hash": "8026739a14b2",
@@ -173,6 +258,11 @@
   "hash": "48e4c64bd356",
   "date": "2026-10-08",
   "on": "Win11 Node 24.19"
+ },
+ "ai|محلي ولا hosted": {
+  "hash": "209c495b3d2b",
+  "date": "2026-10-27",
+  "on": "Windows Node 24.22 against local Ollama (CPU only)"
  },
  "ai|ميزانية لكل مستخدم": {
   "hash": "35ff61c0c6b3",

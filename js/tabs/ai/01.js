@@ -24,7 +24,7 @@ TAB("ai", {
 npm init -y && npm i @google/genai
 export GEMINI_API_KEY=YOUR_KEY`,
   labText: "أغلب الأمثلة محتاجة API key من خدمة (Gemini أو Claude أو OpenAI أو Deepgram). حطه في .env ومتعملوش commit أبدًا.",
-  levels: {"1":["الأساس","يعني إيه LLM و tokens و prompt، وأول طلب من الكود، وإزاي تبرمج مع مساعد AI من غير ما يبوّظ مشروعك"],"2":["تطبيق حقيقي","streaming، و structured output، و tool calling، و embeddings، و RAG على pgvector، وذاكرة المحادثة"],"3":["الإنتاج والأمان","prompt injection، ورد الموديل كمدخل مش موثوق، وأدوات بأقل صلاحية، و evals، والكاش والميزانية، واللوج، واختيار الموديل بالقياس"]},
+  levels: {"1":["الأساس","يعني إيه LLM و tokens و prompt، وأول طلب من الكود، وإزاي تبرمج مع مساعد AI من غير ما يبوّظ مشروعك"],"2":["تطبيق حقيقي","streaming، و structured output، و tool calling، و embeddings، و RAG على pgvector، وذاكرة المحادثة، و MCP و agents، وموديل محلي بـ Ollama"],"3":["الإنتاج والأمان","prompt injection، ورد الموديل كمدخل مش موثوق، وأدوات بأقل صلاحية، و evals، والكاش والميزانية، واللوج، واختيار الموديل بالقياس"]},
   categories: [
     {
       t: "يعني إيه LLM",
