@@ -1330,9 +1330,9 @@
   "on": "docs: teach wording updated after the tenant-extension fix; lesson code unchanged since its PostgreSQL 18 run"
  },
  "arch|Sentry": {
-  "hash": "ed19b8da4115",
-  "date": "2026-10-08",
-  "on": "Windows 11 Node 24, @sentry/node 11.5 + BullMQ on Redis 8, local fake Sentry endpoint; docs: dashboard/alerts"
+  "hash": "5214cc7e8640",
+  "date": "2026-10-27",
+  "on": "Windows 11, Node 24.22, @sentry/node 11.9.0 + Express 5 against a local fake ingest; docs: Sentry UI/alerts and BullMQ worker part not re-run"
  },
  "arch|URL shortener": {
   "hash": "27d89890bc3b",
@@ -1535,9 +1535,9 @@
   "on": "Windows 11 Node 24, aws-sdk presigner on LocalStack 4.9; docs: real S3 checksum"
  },
  "arch|signed upload URL": {
-  "hash": "66495dcf84cf",
-  "date": "2026-10-08",
-  "on": "Windows 11 Node 24, AWS SDK v3 against localstack 4.9 S3 incl. CORS preflight; docs: real-S3 checksum rejection"
+  "hash": "bf489cd8ac3e",
+  "date": "2026-10-27",
+  "on": "Windows 11, Node 24.22, @aws-sdk/client-s3 3.1158.0 against MinIO (pgsty/minio) in Docker; docs: real S3 rejecting the empty-body checksum"
  },
  "arch|signup": {
   "hash": "d17630c280d6",
@@ -2975,9 +2975,9 @@
   "on": "postgres:16-alpine Docker (lock_timeout, CREATE INDEX CONCURRENTLY); docs: template"
  },
  "cloud|presigned URL": {
-  "hash": "6ef8b33e7f07",
-  "date": "2026-10-08",
-  "on": "node:22-slim Express 5 + AWS SDK 3 against LocalStack 4.9, curl PUT; docs: real-S3 checksum rejection, CORS"
+  "hash": "232ea731e3ea",
+  "date": "2026-10-27",
+  "on": "Windows 11, Node 24.22, @aws-sdk/client-s3 3.1158.0 against MinIO (pgsty/minio) in Docker, checksum part only; docs: real S3 rejecting the empty-body checksum"
  },
  "cloud|railway": {
   "hash": "731203c795f5",
@@ -10880,9 +10880,9 @@
   "on": "Windows 11 curl on next start; docs: Lighthouse"
  },
  "projects|مشروع ٧ (AI): اسأل الكورس بـ RAG": {
-  "hash": "6b503b42c6a6",
-  "date": "2026-10-08",
-  "on": "Windows 11 Vitest (4) on postgres:18 Docker + pgvector 0.8.7; docs: real Gemini/Claude calls"
+  "hash": "ca7221ca0516",
+  "date": "2026-10-27",
+  "on": "Windows 11, Node 24.22, Prisma 7.10.1 + adapter-pg on postgres:16-alpine in Docker, daily-limit race test only (20 parallel x 5 rounds); rest unchanged"
  },
  "projects|مشروع ٧ (realtime): أسئلة لايف بـ SSE": {
   "hash": "e801a8d2b063",

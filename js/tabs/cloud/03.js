@@ -233,7 +233,7 @@ app.post("/uploads/sign", requireAuth, async (req, res) => {
 المتصفح  ── PUT url + الملف ───────────────────►  S3       (يتأكد من التوقيع ويحفظ)
 ~~~
 
-اتجرّب فعلًا: نفس الكود في [[node:22-slim]] بـ Express 5 و AWS SDK 3.1147، والـ [[S3Client]] متوجّه لـ LocalStack (محاكي AWS في Docker) بـ [[endpoint]] و [[forcePathStyle]]، و [[requireAuth]] وهمي بيحط [[req.user.id = 42]]. والرفع بـ [[curl]].
+اتجرّب فعلًا: نفس الكود في [[node:22-slim]] بـ Express 5 و AWS SDK 3.1147 (وجزء الـ checksum اتعاد بـ 3.1158.0 قصاد MinIO)، والـ [[S3Client]] متوجّه لـ LocalStack (محاكي AWS في Docker) بـ [[endpoint]] و [[forcePathStyle]]، و [[requireAuth]] وهمي بيحط [[req.user.id = 42]]. والرفع بـ [[curl]].
 
 ---
 
@@ -271,7 +271,19 @@ const ALLOWED = ["image/png", "image/jpeg", "application/pdf"];
 &x-amz-checksum-crc32=AAAAAA%3D%3D&x-amz-sdk-checksum-algorithm=CRC32
 ~~~
 
-[[AAAAAA==]] ده الـ CRC32 لصفر بايت. S3 الحقيقي بيقارنه بالملف اللي اترفع فيرفضه (LocalStack قبله عادي، فدي من الـ docs ومن مشكلة معروفة في الـ SDK). ومع [[WHEN_REQUIRED]] السطرين دول اختفوا من الـ URL.
+[[AAAAAA==]] ده الـ CRC32 لصفر بايت. LocalStack قبل الرفع عليه عادي، فعدنا التجربة بـ SDK 3.1158.0 قصاد MinIO (S3 تاني بيشتغل على الجهاز في Docker):
+
+~~~text الناتج (MinIO)
+default         checksum params: x-amz-checksum-crc32=AAAAAA== x-amz-sdk-checksum-algorithm=CRC32
+WHEN_REQUIRED   checksum params: (none)
+PUT + header crc32 AAAAAA==   400 XAmzContentChecksumMismatch The provided 'x-amz-checksum' header does not match what was computed.
+~~~
+
+- MinIO كمان قبل الرفع على الرابط اللي فيه الـ checksum ([[200]])، لأنه مبيبصّش عليه لو جه في الـ URL.
+- بس لما بعتنا نفس الـ [[AAAAAA==]] كـ header مع ملف فيه بايتات، رفض بـ [[XAmzContentChecksumMismatch]]: الـ checksum مش مطابق للملف.
+- S3 الحقيقي بيعامل الـ checksum اللي في الرابط الموقّع زي الـ header، فبيرفض الملف (دي من الـ docs ومن مشكلة معروفة في الـ SDK، مفيش حساب AWS هنا).
+
+ومع [[WHEN_REQUIRED]] السطرين دول اختفوا من الـ URL، والرفع رجّع [[200]]. وفيه خيار جنبه [[responseChecksumValidation: "WHEN_REQUIRED"]] للردود: من غيره روابط GET الموقّعة بتطلع فيها [[x-amz-checksum-mode=ENABLED]] (اشتغلت عادي على MinIO)، فمش محتاجه للرفع.
 
 - [[ALLOWED]]: قايمة الـ MIME types المسموحة. الـ MIME type هو نوع الملف بالشكل اللي الويب فاهمه: [[image/png]] و [[application/pdf]].
 
@@ -405,7 +417,7 @@ curl -X PUT -H "Content-Type: image/png" --upload-file logo.png "URL"
           ],
           sol: R`الـ route بيرجّع JSON فيه [[key]] زي [[uploads/42/0e2027a6-...]] و [[url]] فيه [[X-Amz-SignedHeaders=content-type%3Bhost]]، يعني الـ Content-Type داخل في التوقيع. وطلب بنوع [[image/gif]] للـ route نفسه بيرجع [[400 {"error":"type"}]] من السيرفر. والرفع بـ curl بنوع [[image/png]] يرجّع 200 من غير body، والملف يظهر في [[aws s3 ls s3://myapp-assets/uploads/42/]]. ولو غيّرت الـ header في curl لـ [[image/gif]] على نفس الـ URL، S3 يرجّع 403 [[SignatureDoesNotMatch]].
 
-مهم: نسخ SDK v3 من أول 3.729 بتحسب checksum تلقائي، ومع الـ presign مفيش body وقت التوقيع، فالـ URL بيطلع فيه [[x-amz-checksum-crc32=AAAAAA%3D%3D]] (checksum لملف فاضي)، وأي رفع لملف حقيقي عليه بيفشل برسالة checksum. جرّبتها على 3.1143 والـ URL طلع فيه السطر ده فعلًا. الحل اللي في المثال دلوقتي: [[requestChecksumCalculation: "WHEN_REQUIRED"]] في الـ [[S3Client]]، وبعدها الـ URL بيطلع من غير checksum.
+مهم: نسخ SDK v3 من أول 3.729 بتحسب checksum تلقائي، ومع الـ presign مفيش body وقت التوقيع، فالـ URL بيطلع فيه [[x-amz-checksum-crc32=AAAAAA%3D%3D]] (checksum لملف فاضي)، وأي رفع لملف حقيقي عليه بيفشل برسالة checksum. جرّبتها على 3.1143 و 3.1158 والـ URL طلع فيه السطر ده فعلًا (MinIO قبله، بس نفس القيمة كـ header رجّعت [[400 XAmzContentChecksumMismatch]]). الحل اللي في المثال دلوقتي: [[requestChecksumCalculation: "WHEN_REQUIRED"]] في الـ [[S3Client]]، وبعدها الـ URL بيطلع من غير checksum.
 
 الـ CORS: من المتصفح من غير CORS هتشوف في الـ console [[blocked by CORS policy]] والطلب نفسه اتبعت كـ preflight [[OPTIONS]] واترفض. بعد [[put-bucket-cors]] بالملف اللي تحت، الـ fetch يعدّي. ولو حطيت [[AllowedOrigins: ["*"]]] هيشتغل برضه، بس ده بيسمح لأي موقع يستخدم روابطك.`,
           solCode: R`cat > cors.json <<'EOF'

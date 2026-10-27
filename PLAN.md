@@ -227,7 +227,7 @@
 - [ ] pyapi (Django و Flask) و python (scraping بسيط لو مش في pydata)
 - [ ] vps: SELinux و AppArmor و Ansible
 - [ ] nginx و diag
-- [ ] إصلاحات «٤ج» + التمارين اللي بتكشف حلها
+- [x] إصلاحات «٤ج» + التمارين اللي بتكشف حلها
 - [x] ترتيب المذاكرة في index.html للتابات الجديدة (vue و pydata و net و re)
 
 ### ٤. تمارين بتتصحح لوحدها في تابات أكتر
@@ -247,10 +247,10 @@
 
 ### ٤ج. متابعات من arch (٨ أكتوبر)
 
-- [ ] Sentry v11 من غير `dataCollection` بيبعت قيمة كوكي الـ refresh token في `request.cookies` (درس Sentry في arch). محتاج يتضاف للمثال.
-- [ ] presigned URLs من aws-sdk الحالي فيها `x-amz-checksum-crc32` لجسم فاضي، و S3 الحقيقي ممكن يرفضها. الحل `requestChecksumCalculation: "WHEN_REQUIRED"`. يأثر على «signed upload URL» في arch و cloud.
+- [x] Sentry v11 من غير `dataCollection` بيبعت قيمة كوكي الـ refresh token في `request.cookies` (درس Sentry في arch). محتاج يتضاف للمثال. (اتصلح: `dataCollection` + `beforeSend` بيشيل `cookies` و header الـ `cookie` و `authorization`، واتجرّب بـ SDK 11.9.0 على ingest وهمي: من غيره التوكن كان في الخطأ وفي الـ trace)
+- [x] presigned URLs من aws-sdk الحالي فيها `x-amz-checksum-crc32` لجسم فاضي، و S3 الحقيقي ممكن يرفضها. الحل `requestChecksumCalculation: "WHEN_REQUIRED"`. يأثر على «signed upload URL» في arch و cloud. (اتصلح: الخيار في المثالين، واتجرّب بـ SDK 3.1158.0 على MinIO: الرابط من غير checksum والرفع 200، ونفس الـ checksum كـ header بيترفض `XAmzContentChecksumMismatch`)
 
-- [ ] مشروع ٧ (AI): الحد اليومي count-then-insert مش atomic نظريًا (١٠ طلبات متوازية معدّتوش في ٣ جولات). ممكن يتحول لـ advisory lock زي الـ order.
+- [x] مشروع ٧ (AI): الحد اليومي count-then-insert مش atomic نظريًا (١٠ طلبات متوازية معدّتوش في ٣ جولات). ممكن يتحول لـ advisory lock زي الـ order. (اتصلح: `pg_advisory_xact_lock` في transaction؛ ٢٠ طلب متوازي من ٢٥: القديم وصل ٤٥، و INSERT…SELECT الشرطي ٣٥–٣٩، والقفل ٣٠ بالظبط في ٥ جولات)
 
 ### ٥. أسئلة مفتوحة
 

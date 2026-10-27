@@ -41,7 +41,7 @@ router.post("/uploads/cover", requireAuth, requireRole("INSTRUCTOR", "ADMIN"), a
           },
           teach: R`## السيرفر بيدّي «إذن» لملف واحد، والمتصفح بيرفع على S3 مباشرة
 
-الـ route بيتأكد من الصلاحية والنوع والحجم، ويعمل key عشوائي، ويرجّع رابط PUT موقّع عمره ٥ دقايق. جربناه بـ AWS SDK v3 ([[@aws-sdk/client-s3]] 3.1147) على Node 24 (ويندوز 11) قصاد LocalStack 4.9 في Docker (S3 وهمي على الجهاز، وشغّلناه بـ [[S3_SKIP_SIGNATURE_VALIDATION=0]] عشان يتحقق من التوقيعات زي S3 الحقيقي). الفرق الوحيد في التجربة إن العميل فيه [[endpoint: "http://localhost:6022"]] و [[forcePathStyle: true]] ومفاتيح [[test]].
+الـ route بيتأكد من الصلاحية والنوع والحجم، ويعمل key عشوائي، ويرجّع رابط PUT موقّع عمره ٥ دقايق. جربناه بـ AWS SDK v3 ([[@aws-sdk/client-s3]] 3.1147، والرابط والرفع اتعادوا بـ 3.1158.0 قصاد MinIO) على Node 24 (ويندوز 11) قصاد LocalStack 4.9 في Docker (S3 وهمي على الجهاز، وشغّلناه بـ [[S3_SKIP_SIGNATURE_VALIDATION=0]] عشان يتحقق من التوقيعات زي S3 الحقيقي). الفرق الوحيد في التجربة إن العميل فيه [[endpoint: "http://localhost:6022"]] و [[forcePathStyle: true]] ومفاتيح [[test]].
 
 ---
 
@@ -61,7 +61,19 @@ router.post("/uploads/cover", requireAuth, requireRole("INSTRUCTOR", "ADMIN"), a
 x-amz-checksum-crc32 = AAAAAA==      ← CRC32 لـ 0 byte
 ~~~
 
-S3 الحقيقي بيرفض أي ملف مش فاضي على الرابط ده لأن الـ checksum مش مطابق (LocalStack عدّاه، فالجزء ده من وثائق AWS). [[WHEN_REQUIRED]] بتشيله.
+[[AAAAAA==]] هو الـ CRC32 (رقم بيتحسب من البايتات عشان يكشف أي تغيير فيها) لصفر بايت، مكتوب base64. وبعدين عدنا التجربة بـ SDK 3.1158.0 قصاد MinIO (S3 تاني بيشتغل على الجهاز، في Docker) بنفس الـ [[getSignedUrl]]:
+
+~~~text الناتج (SDK 3.1158.0 قصاد MinIO)
+default         checksum params: x-amz-checksum-crc32=AAAAAA== x-amz-sdk-checksum-algorithm=CRC32
+WHEN_REQUIRED   checksum params: (none)
+PUT + header crc32 AAAAAA==   400 XAmzContentChecksumMismatch The provided 'x-amz-checksum' header does not match what was computed.
+~~~
+
+- من غير الخيار: الرابط فيه checksum لملف فاضي. ومع [[WHEN_REQUIRED]]: مفيش.
+- MinIO قبل الرفع على الرابطين ([[200]])، لأنه مبيبصّش على الـ checksum لو جه في الـ URL. بس لما بعتنا نفس القيمة كـ header مع ملف فيه ١٥ byte، رفض بـ [[XAmzContentChecksumMismatch]]: «الـ checksum اللي انت باعته مش مطابق للي حسبته».
+- S3 الحقيقي بيتعامل مع الـ [[x-amz-checksum-crc32]] اللي في الرابط زي الـ header، فبيرفض أي ملف مش فاضي (ده من وثائق AWS ومن مشاكل متسجلة على الـ SDK، مفيش حساب AWS هنا).
+
+[[WHEN_REQUIRED]] معناها «احسب checksum بس للعمليات اللي S3 بيطلبه فيها»، و PutObject مش منهم. وفيه خيار تاني [[responseChecksumValidation: "WHEN_REQUIRED"]] للردود: لو العميل ده بيعمل كمان روابط GET موقّعة، من غيره الرابط بيبقى فيه [[x-amz-checksum-mode=ENABLED]] (جربناها والرابط اشتغل على MinIO بالشكلين)، فمش لازم للرفع.
 
 ---
 
@@ -189,7 +201,7 @@ https://evil.example 403
 
 بعد ٦ دقايق S3 بيرجع [[403]] و XML فيه [[AccessDenied]] و [[Request has expired]]. وبـ Content-Type مختلف (مثلًا image/png على رابط اتعمل لـ webp) بيرجع [[403 SignatureDoesNotMatch]]. ولو شفت في الـ Console [[blocked by CORS policy]] قبل ما الطلب يوصل أصلًا، يبقى CORS الـ bucket مش متظبط: لازم [[AllowedOrigins]] فيه origin الموقع، و [[AllowedMethods]] فيه PUT، و [[AllowedHeaders]] فيه content-type.
 
-لو الرفع الصح نفسه رجع [[SignatureDoesNotMatch]]، اتأكد إنك باعت نفس الـ type بالظبط اللي طلبت بيه الرابط، ومن غير headers زيادة. و [[requestChecksumCalculation: "WHEN_REQUIRED"]] موجودة عشان النسخ الجديدة من SDK متضيفش checksum الـ متصفح مش بيبعته.`,
+لو الرفع الصح نفسه رجع [[SignatureDoesNotMatch]]، اتأكد إنك باعت نفس الـ type بالظبط اللي طلبت بيه الرابط، ومن غير headers زيادة. و [[requestChecksumCalculation: "WHEN_REQUIRED"]] موجودة عشان النسخ الجديدة من SDK متحطش في الرابط checksum لملف فاضي ([[x-amz-checksum-crc32=AAAAAA==]])، فـ S3 الحقيقي يرفض الملف الحقيقي. اتأكد إن الرابط مفيهوش [[x-amz-checksum]] خالص.`,
           solCode: R`// في الواجهة
 const file = input.files[0];
 const res = await apiFetch("/uploads/cover", { method: "POST", body: JSON.stringify({ type: file.type, size: file.size }) });

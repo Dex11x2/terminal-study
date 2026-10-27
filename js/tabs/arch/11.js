@@ -19,6 +19,12 @@ Sentry.init({
   release: process.env.GIT_SHA,
   tracesSampleRate: 0.1,
   dataCollection: { userInfo: false, cookies: false },
+  beforeSend(event) {
+    delete event.request?.cookies;
+    delete event.request?.headers?.cookie;
+    delete event.request?.headers?.authorization;
+    return event;
+  },
 });
 
 worker.on("failed", (job, err) => Sentry.captureException(err, { tags: { queue: job?.queueName, job: job?.name } }));`,
@@ -30,7 +36,7 @@ worker.on("failed", (job, err) => Sentry.captureException(err, { tags: { queue: 
 
 [[environment]] بيفصل أخطاء staging عن production. و [[release]] (رقم الـ commit) بيوريك الخطأ بدأ مع أنهي deploy، وبيربط الـ source maps. والـ source maps للواجهة بتترفع في CI، عشان الـ stack يبان بأسماء الملفات الحقيقية مش الكود المضغوط.
 
-[[tracesSampleRate: 0.1]] معناها إنه بيقيس أداء ١٠٪ من الطلبات بس، عشان الكوتة والتكلفة. و [[dataCollection: { userInfo: false, cookies: false }]] معناها إنه مش بيبعت IPs و cookies (ده في SDK نسخة 11. في نسخة 10 وقبلها كان الاختيار [[sendDefaultPii: false]] وكان هو الافتراضي، إنما في 11 الاختيار ده اتشال وبيتجاهل من غير أي تحذير، والافتراضي بقى إنه يبعت الـ IP والكوكيز، فلازم تقفلهم بنفسك). والـ [[Sentry.setUser({ id })]] في requireAuth بـ id بس، من غير إيميل.
+[[tracesSampleRate: 0.1]] معناها إنه بيقيس أداء ١٠٪ من الطلبات بس، عشان الكوتة والتكلفة. و [[dataCollection: { userInfo: false, cookies: false }]] معناها إنه مش بيبعت IPs و cookies (ده في SDK نسخة 11. في نسخة 10 وقبلها كان الاختيار [[sendDefaultPii: false]] وكان هو الافتراضي، إنما في 11 الاختيار ده اتشال وبيتجاهل من غير أي تحذير، والافتراضي بقى إنه يبعت الـ IP والكوكيز، فلازم تقفلهم بنفسك). و [[beforeSend]] دالة بتعدّي على كل خطأ قبل ما يتبعت، فبنشيل منه الـ cookies و headers الـ [[cookie]] و [[authorization]] بإيدنا: طبقة تانية لو نسخة جاية غيّرت اسم الإعداد تاني زي ما حصل مع [[sendDefaultPii]]. بس [[beforeSend]] للأخطاء بس، مش للـ traces، فـ [[dataCollection]] هو الأساس. والـ [[Sentry.setUser({ id })]] في requireAuth بـ id بس، من غير إيميل.
 
 والأخطاء اللي بتحصل برّه الـ requests، زي الـ jobs، لازم تبعتها بنفسك بـ [[captureException]]. المثال بيعمل ده لأي job فشلت.
 
@@ -40,7 +46,7 @@ worker.on("failed", (job, err) => Sentry.captureException(err, { tags: { queue: 
           },
           teach: R`## الإعداد في ملف لوحده بيتحمّل قبل التطبيق، وسطر للـ jobs
 
-المثال جزئين: [[Sentry.init]] (ده اللي بيتحط في [[instrument.mjs]])، وسطر في ملف الـ worker بيبعت أي job فشلت. جربناه بـ [[@sentry/node]] 11.5 و Express 5 و BullMQ 6 على Redis 8 (Docker، ويندوز 11، Node 24). ومفيش حساب Sentry هنا، فعملنا سيرفر صغير على [[127.0.0.1:6041]] بيستقبل اللي الـ SDK بيبعته ويطبعه، والـ DSN بيشاور عليه: [[http://pubkey@127.0.0.1:6041/1]]. يعني اللي تحت هو اللي الـ SDK بعته فعلًا، بس شكل الـ issue في لوحة Sentry من الـ docs.
+المثال جزئين: [[Sentry.init]] (ده اللي بيتحط في [[instrument.mjs]])، وسطر في ملف الـ worker بيبعت أي job فشلت. جربناه بـ [[@sentry/node]] 11.5 (وجزء الكوكيز اتعاد بـ 11.9.0) و Express 5 و BullMQ 6 على Redis 8 (Docker، ويندوز 11، Node 24). ومفيش حساب Sentry هنا، فعملنا سيرفر صغير على [[127.0.0.1:6041]] بيستقبل اللي الـ SDK بيبعته ويطبعه، والـ DSN بيشاور عليه: [[http://pubkey@127.0.0.1:6041/1]]. يعني اللي تحت هو اللي الـ SDK بعته فعلًا، بس شكل الـ issue في لوحة Sentry من الـ docs.
 
 ---
 
@@ -78,19 +84,47 @@ DSN = Data Source Name: عنوان المشروع في Sentry، فيه مفتا�
 
 ### [[dataCollection: { userInfo: false, cookies: false }]]
 
-في نسخة 11 الافتراضي إن الـ SDK يبعت بيانات الزائر. شغّلنا نفس الطلب ([[Cookie: rt=secret]] و [[Authorization: Bearer xyz]]) مرة من غير السطر ده ومرة بيه:
+في نسخة 11 الافتراضي إن الـ SDK يبعت بيانات الزائر. شغّلنا نفس الطلب ([[Cookie: rt=secret-refresh-token; theme=dark]] و [[Authorization: Bearer xyz]]) بـ 11.9.0 مرة من غير السطر ده ومرة بيه، وخلّينا [[tracesSampleRate: 1]] عشان نشوف الـ traces كمان:
 
 ~~~text الناتج (من غير dataCollection)
 "user":{"ip_address":"::1"}
-"request":{"cookies":{"rt":"secret"},"headers":{...,"cookie":"[Filtered]","authorization":"[Filtered]"}}
+"request":{"headers":{...,"cookie":"[Filtered]","authorization":"[Filtered]",...},"cookies":{"rt":"secret-refresh-token","theme":"dark"}}
+"http.request.header.cookie":{"value":["rt=secret-refresh-token","theme=dark"]}      ← في الـ trace
 ~~~
 
-~~~text الناتج (بـ dataCollection)
-"request":{"url":"http://localhost:6040/debug-sentry?email=a@b.c","headers":{...,"authorization":"[Filtered]"},"query":"email=a@b.c"}
+~~~text الناتج (بـ dataCollection بس)
+"request":{"headers":{...,"authorization":"[Filtered]",...},"url":"http://localhost:6040/debug-sentry?email=a@b.c","query_string":"email=a@b.c"}
 ~~~
 
-- من غيره: الـ IP اتبعت ([[::1]] هو localhost في IPv6)، والأخطر إن الـ header بتاع الـ cookie اتفلتر بس نفس القيمة اتبعتت في [[cookies]]: الـ refresh token بقى في Sentry.
-- بيه: مفيش [[user]] ولا [[cookies]]. بس الـ query string لسه بيتبعت ([[email=a@b.c]])، فمتحطش بيانات شخصية في الـ URLs.
+- من غيره: الـ IP اتبعت ([[::1]] هو localhost في IPv6)، والأخطر إن الـ header بتاع الـ cookie اتفلتر بس نفس القيمة اتبعتت في [[cookies]]، وكمان في الـ trace كـ [[http.request.header.cookie]]: الـ refresh token بقى في Sentry مرتين.
+- بيه: مفيش [[user]] ولا [[cookies]]، ولا cookie في الـ trace. بس الـ query string لسه بيتبعت ([[email=a@b.c]])، فمتحطش بيانات شخصية في الـ URLs. واسم الـ [[authorization]] لسه موجود وقيمته [[[Filtered]]].
+
+> [[dataCollection]] كمان بيقبل [[httpHeaders]] و [[urlQueryParams]] (لكل واحد [[false]] أو [[{ allow: [...] }]] أو [[{ deny: [...] }]]). جربنا [[httpHeaders: { request: { deny: ["cookie", "authorization"] } }]]: الـ header فضل موجود بقيمة [[[Filtered]]] برضه، و [[httpHeaders: false]] شال كل الـ headers (حتى [[user-agent]] اللي بيفيدك).
+
+### [[beforeSend(event) { ... }]]
+
+[[beforeSend]] دالة الـ SDK بيناديها مع كل خطأ قبل ما يبعته، وبيبعت اللي بترجّعه (ولو رجّعت [[null]] الحدث مبيتبعتش خالص).
+
+- [[event.request]]: بيانات الطلب اللي حصل فيه الخطأ.
+- [[delete event.request?.cookies]]: [[delete]] بيشيل الخانة من الـ object. و [[?.]] عشان الأخطاء اللي برّه أي طلب (زي الـ jobs) مفيهاش [[request]] أصلًا، فمنقعش.
+- [[headers?.cookie]] و [[headers?.authorization]]: نشيل الاتنين خالص، مش بس قيمتهم.
+- [[return event]]: ابعت الباقي.
+
+جربنا الـ [[beforeSend]] لوحده من غير [[dataCollection]]:
+
+~~~text الناتج (beforeSend بس)
+"user":{"ip_address":"::1"}
+"request":{"headers":{"host":"localhost:6040",...,"user-agent":"node",...},"url":"..."}      ← مفيش cookies ولا authorization
+"http.request.header.cookie":{"value":["rt=secret-refresh-token","theme=dark"]}      ← لسه في الـ trace
+~~~
+
+يعني [[beforeSend]] بيغطي الأخطاء بس، والـ traces ليها [[beforeSendTransaction]]. عشان كده الاتنين مع بعض: [[dataCollection]] بيقفل الجمع من الأول (أخطاء و traces)، و [[beforeSend]] ضمان تاني لو نسخة جاية غيّرت الأسماء تاني. وبالمثال كامل:
+
+~~~text الناتج (المثال كامل)
+"request":{"headers":{"host":"localhost:6040","connection":"keep-alive","x-api-key":"[Filtered]","accept":"*/*",...,"user-agent":"node",...},"method":"GET","url":"http://localhost:6040/debug-sentry?email=a@b.c","query_string":"email=a@b.c"}
+~~~
+
+مفيش [[user]] ولا [[cookies]] ولا [[cookie]] ولا [[authorization]]. و [[x-api-key]] اتفلتر لوحده لأن الـ SDK بيعرف أسامي الـ headers الحساسة.
 
 ### [[});]]
 
@@ -139,7 +173,8 @@ DSN = Data Source Name: عنوان المشروع في Sentry، فيه مفتا�
 |---|---|
 | [[dsn]] | الأحداث رايحة على [[/api/1/envelope/]] |
 | [[environment]] و [[release]] | [["staging"]] و [["abc123"]] مع كل خطأ |
-| [[dataCollection]] | من غيره الـ IP والـ cookies (فيها التوكن) بيتبعتوا |
+| [[dataCollection]] | من غيره الـ IP والـ cookies (فيها التوكن) بيتبعتوا، في الخطأ وفي الـ trace |
+| [[beforeSend]] | بيشيل [[cookies]] و [[cookie]] و [[authorization]] من الأخطاء، ضمان تاني |
 | [[--import]] | الـ init قبل أي حاجة |
 | [[captureException]] في [[failed]] | أخطاء الـ jobs بالـ queue واسم الـ job |`,
           lines: [
@@ -150,6 +185,12 @@ DSN = Data Source Name: عنوان المشروع في Sentry، فيه مفتا�
             "رقم الـ commit، عشان تعرف الخطأ بدأ مع أنهي deploy.",
             "قيس أداء ١٠٪ من الطلبات بس.",
             "متبعتش IPs و cookies (SDK نسخة 11).",
+            "قبل ما أي خطأ يتبعت، عدّيه على الدالة دي:",
+            "شيل الـ cookies من بيانات الطلب.",
+            "وشيل header الـ cookie،",
+            "و header الـ Authorization (فيه التوكن).",
+            "وابعت الباقي.",
+            "قفلة الدالة.",
             "قفلة.",
             "في ملف الـ worker: أي job فشلت، ابعتها لـ Sentry باسم الـ queue والـ job."
           ],
@@ -160,7 +201,8 @@ DSN = Data Source Name: عنوان المشروع في Sentry، فيه مفتا�
 الـ alert: في Alerts اعمل rule من نوع Issue alert، شرطها «A new issue is created» والفلتر [[environment = production]]، والـ action إيميل أو integration. وجرّبه بخطأ في staging بعد ما تشيل الفلتر مؤقتًا. ولو الـ stack فيه أسماء ملفات غريبة زي [[dist/index.js:1:23456]]، محتاج ترفع الـ source maps.`,
           solCode: R`// instrument.js: node --import ./instrument.js dist/server.js
 import * as Sentry from "@sentry/node";
-Sentry.init({ dsn: process.env.SENTRY_DSN, environment: process.env.APP_ENV, release: process.env.GIT_SHA, tracesSampleRate: 0.1, dataCollection: { userInfo: false, cookies: false } });
+Sentry.init({ dsn: process.env.SENTRY_DSN, environment: process.env.APP_ENV, release: process.env.GIT_SHA, tracesSampleRate: 0.1, dataCollection: { userInfo: false, cookies: false },
+  beforeSend(event) { delete event.request?.cookies; delete event.request?.headers?.cookie; delete event.request?.headers?.authorization; return event; } });
 
 // app.ts
 import * as Sentry from "@sentry/node";

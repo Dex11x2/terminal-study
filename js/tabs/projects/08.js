@@ -1327,11 +1327,11 @@ it("sends the backlog after Last-Event-ID, then live questions from another conn
 
 [[lib/ai.ts]]: embedding بـ Gemini ([[gemini-embedding-001]] بـ ٧٦٨ بُعد، زي درس [[RAG]])، والرد بـ Claude: [[claude.messages.stream(...)]] بـ [[model: "claude-opus-5-5"]] و [[output_config: { effort: "low" }]] (سؤال طالب مش محتاج تفكير عميق)، و [[for await]] على الأحداث وناخد [[text_delta]]، وفي الآخر [[finalMessage()]] عشان [[stop_reason]] (لو [[refusal]] نقول للطالب) والـ usage للوج.
 
-الحد اليومي: [[AiUsage]] صف لكل سؤال، و [[count]] آخر ٢٤ ساعة قبل الطلب.
+الحد اليومي: [[AiUsage]] صف لكل سؤال، و [[count]] آخر ٢٤ ساعة ثم [[create]] جوه transaction فيها [[pg_advisory_xact_lock]] على الطالب، فالطلبات اللي جاية مع بعض بتعدّ واحد ورا التاني ومحدش يعدّي الـ ٣٠.
 
 وحقن الـ dependencies ([[AskDeps]]) هو اللي خلّى الاختبارات تشتغل من غير مفاتيح API: embedding وهمي بيحط 1 في بُعد لكل كلمة مفتاحية، و generate وهمي بيطلّع نصين.`,
             when: R`لما المحتوى عندك (دروس، أو مساعدة، أو مستندات) والسؤال عنه. لو المحتوى صغير (صفحة أو اتنين)، حطه كله في الـ prompt من غير RAG.`,
-            mistakes: R`البحث في كل الـ chunks من غير فلتر الكورس. أو مفيش minScore فالموديل يجاوب من حتت ملهاش علاقة. أو المفتاح في المتصفح. أو مفيش حد يومي. أو [[await]] الرد كله وبعدين ترجّعه (الطالب يستنى ١٥ ثانية). أو مفيش [[signal]] فالموديل يكمّل يكتب بعد ما الطالب قفل. أو تثق في الـ [N] اللي الموديل كتبها من غير ما تتأكد إن المصدر ده موجود. أو تحط سؤال الطالب في الـ system prompt.`
+            mistakes: R`البحث في كل الـ chunks من غير فلتر الكورس. أو مفيش minScore فالموديل يجاوب من حتت ملهاش علاقة. أو المفتاح في المتصفح. أو مفيش حد يومي، أو حد بـ [[count]] ثم [[create]] من غير قفل، فـ ٢٠ طلب مع بعض بيعدّوا كلهم. أو [[await]] الرد كله وبعدين ترجّعه (الطالب يستنى ١٥ ثانية). أو مفيش [[signal]] فالموديل يكمّل يكتب بعد ما الطالب قفل. أو تثق في الـ [N] اللي الموديل كتبها من غير ما تتأكد إن المصدر ده موجود. أو تحط سؤال الطالب في الـ system prompt.`
           },
           teach: R`## الفكرة: هات الحتت، وبعدين اسأل الموديل، وابعت الرد أول بأول
 
@@ -1479,12 +1479,36 @@ if (final.stop_reason === "refusal") yield "\n(مقدرش أجاوب على ال
 ~~~text app/api/courses/[slug]/ask/route.ts
 const Body = z.object({ question: z.string().trim().min(3).max(1000) });
 ...
-const used = await db.aiUsage.count({ where: { userId: session.user.id, createdAt: { gt: since } } });
-if (used >= DAILY_LIMIT) return Response.json({ error: "خلصت أسئلة النهارده" }, { status: 429 });
-await db.aiUsage.create({ data: { userId: session.user.id, courseId: course.id } });
+const allowed = await db.$transaction(async tx => {
+  await tx.$executeRaw$__btSELECT pg_advisory_xact_lock(hashtext($__{"ai:" + session.user.id}))$__bt;
+  const used = await tx.aiUsage.count({ where: { userId: session.user.id, createdAt: { gt: since } } });
+  if (used >= DAILY_LIMIT) return false;
+  await tx.aiUsage.create({ data: { userId: session.user.id, courseId: course.id } });
+  return true;
+});
+if (!allowed) return Response.json({ error: "خلصت أسئلة النهارده" }, { status: 429 });
 ~~~
 
-مشترك؟ وإلا 404. السؤال من ٣ لـ ١٠٠٠ حرف؟ وإلا 400. [[request.json().catch(() => null)]]: body مش JSON يبقى [[null]] فيفشل في Zod بـ 400 مش 500. وبعدين عدّ أسئلة آخر ٢٤ ساعة، و [[429 Too Many Requests]] بعد ٣٠. (العد والإنشاء خطوتين منفصلين، فطلبات كتير في نفس اللحظة ممكن نظريًا تعدّي الحد بكام سؤال. جرّبنا ١٠ طلبات مع بعض عند ٢٩: واحد بس عدّى. لو عايز ضمان، نفس قفل [[pg_advisory_xact_lock]] بتاع الدفع.)
+مشترك؟ وإلا 404. السؤال من ٣ لـ ١٠٠٠ حرف؟ وإلا 400. [[request.json().catch(() => null)]]: body مش JSON يبقى [[null]] فيفشل في Zod بـ 400 مش 500. وبعدين عدّ أسئلة آخر ٢٤ ساعة، و [[429 Too Many Requests]] بعد ٣٠.
+
+### الحد اليومي لازم يبقى atomic
+
+- [[db.$transaction(async tx => ...)]]: كل اللي جوه transaction واحدة على اتصال واحد، و [[tx]] هو الـ client بتاعها.
+- [[pg_advisory_xact_lock(hashtext("ai:" + userId))]]: نفس قفل الدفع (محطة «الـ order والـ checkout»). [[hashtext]] بيحوّل [[ai:u1]] لرقم، والقفل على الرقم ده بيتفك لوحده لما الـ transaction تخلص. طلب تاني لنفس الطالب بيستنى عند السطر ده لحد ما الأول يعدّ ويكتب. و [[ai:]] في الأول عشان ميبقاش نفس رقم قفل تاني لنفس اليوزر.
+- [[count]] وبعده [[create]]: دلوقتي محدش يقدر يعدّ في النص بينهم.
+- [[return false]] / [[return true]]: اللي الـ transaction بترجّعه بيبقى قيمة [[allowed]]، والـ 429 برّه الـ transaction عشان القفل ميفضلش ماسك.
+
+جربناه بـ Prisma 7.10.1 و [[@prisma/adapter-pg]] على Postgres 16 في Docker: ٢٠ طلب لنفس الطالب مع بعض بـ [[Promise.all]]، وعنده ٢٥ سؤال، ٥ جولات:
+
+~~~text الناتج
+count ثم create (القديم)         200 x 20, 429 x 0, rows now 45     ← كل جولة
+INSERT ... SELECT ... WHERE count < 30   200 x 10..14, rows now 35..39
+pg_advisory_xact_lock            200 x 5, 429 x 15, rows now 30     ← كل جولة
+~~~
+
+- القديم: الـ ٢٠ عدّوا في نفس اللحظة ولقوا ٢٥، فالكل اتسمح له ووصلنا ٤٥ بدل ٣٠. (و ١٠ طلبات عند ٢٩: الـ ١٠ عدّوا، ٣٩.)
+- [[INSERT ... SELECT ... WHERE (SELECT count(*) ...) < 30]] في جملة واحدة برضه عدّى الحد: في Postgres كل جملة شايفة الصفوف اللي اتأكدت قبلها، والصفوف اللي طلبات تانية لسه بتكتبها مش باينة لها. «جملة واحدة» مش معناها «محدش يدخل في النص».
+- بالقفل: ٥ بالظبط، والباقي 429، وفي كل الجولات.
 
 على الـ build (من غير مفاتيح API):
 
@@ -1543,7 +1567,7 @@ for (;;) {
 | الطالب مستني | NDJSON سطر بسطر |
 | قفل الصفحة | [[signal]] لحد الـ SDK |
 | الموديل واقع | سطر [[error]] |
-| التكلفة | ٣٠ في اليوم و 429 |
+| التكلفة | ٣٠ في اليوم و 429، والعد جوه [[pg_advisory_xact_lock]] |
 | الاختبار من غير مفاتيح | [[AskDeps]] وهمية |`,
           lines: [
             R`بتتنفذ أول ما الـ stream يتفتح:`,
@@ -1564,7 +1588,7 @@ for (;;) {
           ],
           sol: R`الـ ٣ اختبارات عدّت على Postgres 18 بـ pgvector 0.8.7: (١) سؤال «git branch» في كورس c1: السطور [[text]] بتتجمّع «اعمل branch جديد بـ git switch -c [1]»، وبعدها [[sources]] فيها حتة c1 بس، و [[done]]، والـ prompt اللي اتبعت للموديل مفيهوش «كورس تاني» (حتة c2 اللي فيها نفس الكلمات). (٢) «وصفة طبخ؟»: «مش لاقي ده في دروس الكورس.» والموديل متنادتش. (٣) موديل بيرمي [[529 overloaded]]: آخر سطر [[{type:"error"}]]. واختبار [[readNdjson]]: chunk مقطوع في نص حرف عربي بيتقري صح.
 
-وعلى build الإنتاج: طالب مش مشترك [[404]]، وسؤال حرف واحد [[400]] برسالة، وسؤال سليم [[200]] بـ [[application/x-ndjson]] وسطر [[error]] (لأن مفيش مفاتيح API حقيقية في التجربة).
+وعلى build الإنتاج: طالب مش مشترك [[404]]، وسؤال حرف واحد [[400]] برسالة، وسؤال سليم [[200]] بـ [[application/x-ndjson]] وسطر [[error]] (لأن مفيش مفاتيح API حقيقية في التجربة). والحد اليومي: ٢٠ طلب في نفس اللحظة لطالب عنده ٢٥ سؤال، ٥ بس بياخدوا [[200]] والباقي [[429]]، والجدول بيقف عند ٣٠ (من غير القفل كانوا هيعدّوا الـ ٢٠ كلهم).
 
 اللي متجرّبش: نداء Gemini و Claude الحقيقيين (محتاجين مفاتيح). الكود ماشي على نفس الـ API اللي في دروس [[RAG]] و [[streaming]] في تاب «الذكاء الاصطناعي»، و TypeScript بيعدّيه على الـ SDKs المتسطبة.`,
           solCode: R`// ── prisma/schema.prisma (الإضافات) ──
@@ -1704,9 +1728,14 @@ export async function POST(request: Request, ctx: RouteContext<"/api/courses/[sl
   if (!parsed.success) return Response.json({ error: "اكتب سؤال من ٣ لـ ١٠٠٠ حرف" }, { status: 400 });
 
   const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
-  const used = await db.aiUsage.count({ where: { userId: session.user.id, createdAt: { gt: since } } });
-  if (used >= DAILY_LIMIT) return Response.json({ error: "خلصت أسئلة النهارده" }, { status: 429 });
-  await db.aiUsage.create({ data: { userId: session.user.id, courseId: course.id } });
+  const allowed = await db.$transaction(async tx => {
+    await tx.$executeRaw$__btSELECT pg_advisory_xact_lock(hashtext($__{"ai:" + session.user.id}))$__bt;
+    const used = await tx.aiUsage.count({ where: { userId: session.user.id, createdAt: { gt: since } } });
+    if (used >= DAILY_LIMIT) return false;
+    await tx.aiUsage.create({ data: { userId: session.user.id, courseId: course.id } });
+    return true;
+  });
+  if (!allowed) return Response.json({ error: "خلصت أسئلة النهارده" }, { status: 429 });
 
   return new Response(answerStream(parsed.data.question, course.id, realDeps, request.signal), {
     headers: { "Content-Type": "application/x-ndjson; charset=utf-8", "Cache-Control": "no-store", "X-Accel-Buffering": "no" },
