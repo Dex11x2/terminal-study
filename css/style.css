@@ -543,3 +543,19 @@ body[data-shell="files"]{--accent:var(--a-files);--t-bg:#042f2e;--t-fg:#f0fdfa;-
 .sol .term[data-k="files"]{--t-bg:#042f2e;--t-fg:#f0fdfa;--t-pr:#5eead4;--t-cm:#99a8a6;--t-bar:#134e4a}
 /* lesson text keeps the line breaks it was written with: lists (• and 1.) and output lines inside one paragraph */
 .cmd .desc,.cmd .sum,.deep p,.try p,.trysol p,#fcAns p{white-space:pre-line}
+
+:root{--a-vue:#047857;--a-pydata:#1e40af;--a-net:#0e7490;--a-re:#9a3412}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--a-vue:#6ee7b7;--a-pydata:#93c5fd;--a-net:#67e8f9;--a-re:#fdba74}}
+:root[data-theme="dark"]{--a-vue:#6ee7b7;--a-pydata:#93c5fd;--a-net:#67e8f9;--a-re:#fdba74}
+body[data-shell="vue"]{--accent:var(--a-vue);--t-bg:#06281f;--t-fg:#eef0f3;--t-pr:#6ee7b7;--t-cm:#8b95a5;--t-bar:#06281f}
+.sw[data-s="vue"] .top{background:#06281f;color:#eef0f3}
+.sol .term[data-k="vue"]{--t-bg:#06281f;--t-fg:#eef0f3;--t-pr:#6ee7b7;--t-cm:#8b95a5;--t-bar:#06281f}
+body[data-shell="pydata"]{--accent:var(--a-pydata);--t-bg:#0b1a3a;--t-fg:#eef0f3;--t-pr:#93c5fd;--t-cm:#8b95a5;--t-bar:#0b1a3a}
+.sw[data-s="pydata"] .top{background:#0b1a3a;color:#eef0f3}
+.sol .term[data-k="pydata"]{--t-bg:#0b1a3a;--t-fg:#eef0f3;--t-pr:#93c5fd;--t-cm:#8b95a5;--t-bar:#0b1a3a}
+body[data-shell="net"]{--accent:var(--a-net);--t-bg:#062a33;--t-fg:#eef0f3;--t-pr:#67e8f9;--t-cm:#8b95a5;--t-bar:#062a33}
+.sw[data-s="net"] .top{background:#062a33;color:#eef0f3}
+.sol .term[data-k="net"]{--t-bg:#062a33;--t-fg:#eef0f3;--t-pr:#67e8f9;--t-cm:#8b95a5;--t-bar:#062a33}
+body[data-shell="re"]{--accent:var(--a-re);--t-bg:#2c1206;--t-fg:#eef0f3;--t-pr:#fdba74;--t-cm:#8b95a5;--t-bar:#2c1206}
+.sw[data-s="re"] .top{background:#2c1206;color:#eef0f3}
+.sol .term[data-k="re"]{--t-bg:#2c1206;--t-fg:#eef0f3;--t-pr:#fdba74;--t-cm:#8b95a5;--t-bar:#2c1206}
