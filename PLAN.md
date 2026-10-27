@@ -211,6 +211,25 @@
 - [ ] sshc (9)، و wsl (14)، و apps (15)، و mongo (23)، و gha (24)، و diag (28)، و nginx (28).
 - قبل أي دفعة: دوّر على المواضيع المهمة الناقصة في التاب واللي حواليه، وضيفها مع الطلب.
 
+### ٣ج. دفعة المحتوى الجديد (٢٧ أكتوبر، بقرارك «ضيفهم كلهم»)
+
+الدفعة الأولى (شغالة):
+- [ ] net و re: تجربة الـ 22 درس اللي اتكتبوا النهارده + net/05 (subnetting، ARP و DHCP، IPv6، tcpdump و Wireshark، WireGuard) + re/02 (المستوى التاني على تطبيقك بس)
+- [ ] ai/07: MCP، و agents و tool use، و Claude Code و Cursor، و Ollama محلي، و evals
+- [ ] تاب جديد pydata: Jupyter و numpy و pandas والرسوم و scikit-learn و scraping
+- [ ] تاب جديد vue: Vue 3 و Router و Pinia والاختبارات و Nuxt ومقارنة Svelte
+- [ ] apis/12 و arch/15: RabbitMQ و Kafka، و Meilisearch و Elasticsearch، و outbox، و microservices
+- [ ] node/09 و quality/07 و js/20: Bun و Deno و Hono، و Biome، و Web Components و WebAssembly
+
+الدفعة التانية (بعد الأولى):
+- [ ] gha (reusable workflows، environments، matrix) و wsl و sshc
+- [ ] mongo (aggregation أعمق) و apps (Tauri)
+- [ ] pyapi (Django و Flask) و python (scraping بسيط لو مش في pydata)
+- [ ] vps: SELinux و AppArmor و Ansible
+- [ ] nginx و diag
+- [ ] إصلاحات «٤ج» + التمارين اللي بتكشف حلها
+- [ ] ترتيب المذاكرة في index.html للتابات الجديدة (vue و pydata و net و re)
+
 ### ٤. تمارين بتتصحح لوحدها في تابات أكتر
 
 - [ ] TypeScript: ممكن تتحوّل JS وتشتغل على نفس المحرك من غير مكتبة كبيرة.
