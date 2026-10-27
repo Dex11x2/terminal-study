@@ -217,7 +217,7 @@
 - [x] net و re: تجربة الـ 22 درس اللي اتكتبوا النهارده + net/05 (subnetting، ARP و DHCP، IPv6، tcpdump و Wireshark، WireGuard) + re/02 (المستوى التاني على تطبيقك بس). اتعمل: الـ 22 درس اتجربوا واتصلح فيهم curl.exe في PS 5.1 و example.com على Cloudflare و MTU و smali apktool 3، و net/05 فيه 11 درس. re/02 ماتكتبش: فلتر الأمان وقّف الرد عند درس إعادة التوقيع والـ pinning، فالملف لسه فاضي ومحتاج خطة تانية (مواضيع دفاعية زي حماية تطبيقك من الـ reverse engineering)
 - [ ] ai/07: MCP، و agents و tool use، و Claude Code و Cursor، و Ollama محلي، و evals
 - [ ] تاب جديد pydata: Jupyter و numpy و pandas والرسوم و scikit-learn و scraping
-- [ ] تاب جديد vue: Vue 3 و Router و Pinia والاختبارات و Nuxt ومقارنة Svelte
+- [x] تاب جديد vue: Vue 3 و Router و Pinia والاختبارات و Nuxt ومقارنة Svelte. اتعمل: 42 درس في 11 قسم (Vue 3.5.44، Nuxt 4.6.3)
 - [x] apis/12 و arch/15: RabbitMQ و Kafka، و Meilisearch و Elasticsearch، و outbox، و microservices. اتعمل: 13 درس في apis (RabbitMQ و Kafka و CDC و Meilisearch و Elasticsearch) و 8 في arch (microservices و saga و tracing)
 - [ ] node/09 و quality/07 و js/20: Bun و Deno و Hono، و Biome، و Web Components و WebAssembly
 

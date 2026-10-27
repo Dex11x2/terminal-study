@@ -16014,6 +16014,216 @@
   "date": "2026-10-06",
   "on": "docker node:22-slim tsc error; JSON validated; docs: tasks UI"
  },
+ "vue|Nuxt": {
+  "hash": "57dca3fdfd84",
+  "date": "2026-10-27",
+  "on": "Win11: create-nuxt 4.0.1, Nuxt 4.6.3 dev/build/node .output; docs: other presets"
+ },
+ "vue|Options API": {
+  "hash": "85d2ac6a600a",
+  "date": "2026-10-27",
+  "on": "Win11: headless Chrome (both versions)"
+ },
+ "vue|Pinia": {
+  "hash": "fbf54c301211",
+  "date": "2026-10-27",
+  "on": "Win11: Pinia 4.1 in headless Chrome + Node"
+ },
+ "vue|SFC": {
+  "hash": "38c0f51f7c45",
+  "date": "2026-10-27",
+  "on": "Win11: Vite 8 dev + headless Chrome (playwright-core); compiler-sfc in Node"
+ },
+ "vue|SSR و SPA و static": {
+  "hash": "7af34cf164aa",
+  "date": "2026-10-27",
+  "on": "Win11: nuxt build/generate + curl + serve + headless Chrome"
+ },
+ "vue|Svelte و SvelteKit": {
+  "hash": "73efe8ca459c",
+  "date": "2026-10-27",
+  "on": "Win11: Vite vue-ts/svelte-ts builds + headless Chrome; sv create + SvelteKit preview; Vue 3.6.0-rc.13 vapor build"
+ },
+ "vue|Teleport و Transition": {
+  "hash": "8f54d058f5c7",
+  "date": "2026-10-27",
+  "on": "Win11: headless Chrome"
+ },
+ "vue|VeeValidate + zod": {
+  "hash": "eb3558a125f6",
+  "date": "2026-10-27",
+  "on": "Win11: headless Chrome (vee-validate 4.15.1, zod 3.25.76)"
+ },
+ "vue|Vitest + Vue Test Utils": {
+  "hash": "8683b5cd608e",
+  "date": "2026-10-27",
+  "on": "Win11: Vitest 4.1.11 + @vue/test-utils 2.5.1 + @pinia/testing 2.0.2 (exact example file)"
+ },
+ "vue|Vue Router": {
+  "hash": "478a1a75184c",
+  "date": "2026-10-27",
+  "on": "Win11: Vue Router 5.4 + headless Chrome"
+ },
+ "vue|Vue ولا React؟": {
+  "hash": "bc46205129d6",
+  "date": "2026-10-27",
+  "on": "Win11: Vite builds (Vue 3.5.44, React 19.3.1) + preview + headless Chrome"
+ },
+ "vue|a11y": {
+  "hash": "a956cebe1c18",
+  "date": "2026-10-27",
+  "on": "Win11: headless Chrome + axe-core 4.14"
+ },
+ "vue|beforeEach": {
+  "hash": "6fa1fb2bc782",
+  "date": "2026-10-27",
+  "on": "Win11: headless Chrome + vite build chunks"
+ },
+ "vue|composables": {
+  "hash": "d4b5c827e5d7",
+  "date": "2026-10-27",
+  "on": "Win11: headless Chrome (setOffline)"
+ },
+ "vue|computed": {
+  "hash": "1b30d136d8b8",
+  "date": "2026-10-27",
+  "on": "Win11: Node 24 + vue 3.5.44"
+ },
+ "vue|computed ولا watch؟": {
+  "hash": "72185adb44b1",
+  "date": "2026-10-27",
+  "on": "Win11: Node 24 + vue 3.5.44"
+ },
+ "vue|custom directives": {
+  "hash": "aab4852c2b0d",
+  "date": "2026-10-27",
+  "on": "Win11: headless Chrome + vue-tsc"
+ },
+ "vue|defineAsyncComponent و الـ bundle": {
+  "hash": "00b686cbf00e",
+  "date": "2026-10-27",
+  "on": "Win11: vite build + preview + headless Chrome; docs: visualizer, Nuxt Lazy prefix"
+ },
+ "vue|defineEmits و defineModel": {
+  "hash": "3a95b230ee03",
+  "date": "2026-10-27",
+  "on": "Win11: headless Chrome + vue-tsc + Vitest"
+ },
+ "vue|defineProps": {
+  "hash": "c2dae9d688b7",
+  "date": "2026-10-27",
+  "on": "Win11: headless Chrome + vue-tsc 3.3.13"
+ },
+ "vue|deploy": {
+  "hash": "4201aca90957",
+  "date": "2026-10-27",
+  "on": "Docker node:22-slim multi-stage build + run + curl; docs: NITRO_PRESET platforms"
+ },
+ "vue|loading و error": {
+  "hash": "bd398071e309",
+  "date": "2026-10-27",
+  "on": "Win11: headless Chrome + local Node mock API + Vite proxy"
+ },
+ "vue|npm create vue": {
+  "hash": "36cda376f4e4",
+  "date": "2026-10-27",
+  "on": "Win11: create-vue 3.24, npm run dev/build, vitest --run"
+ },
+ "vue|onMounted": {
+  "hash": "08cf035e9a54",
+  "date": "2026-10-27",
+  "on": "Win11: Vite dev + headless Chrome (timer leak reproduced)"
+ },
+ "vue|pages و layouts": {
+  "hash": "1ec4fcf80f2f",
+  "date": "2026-10-27",
+  "on": "Win11: nuxt dev + curl + headless Chrome; docs: optional/catch-all file names"
+ },
+ "vue|provide و inject": {
+  "hash": "c0c89774af12",
+  "date": "2026-10-27",
+  "on": "Win11: headless Chrome + Node (readonly)"
+ },
+ "vue|reactivity بتشتغل إزاي؟": {
+  "hash": "0ad6d1890039",
+  "date": "2026-10-27",
+  "on": "Win11: Node 24 (mini implementation + computed solCode)"
+ },
+ "vue|ref و reactive": {
+  "hash": "d6bd8f5abcaa",
+  "date": "2026-10-27",
+  "on": "Win11: Node 24 + vue 3.5.44"
+ },
+ "vue|ref ولا reactive؟": {
+  "hash": "3fa198f37ee9",
+  "date": "2026-10-27",
+  "on": "Win11: Node 24 + vue 3.5.44"
+ },
+ "vue|scoped CSS": {
+  "hash": "5801afb7aebd",
+  "date": "2026-10-27",
+  "on": "Win11: headless Chrome (DOM + injected CSS)"
+ },
+ "vue|slots": {
+  "hash": "5926b1d4ae41",
+  "date": "2026-10-27",
+  "on": "Win11: headless Chrome + vue-tsc"
+ },
+ "vue|useFetch": {
+  "hash": "3248a9ca8539",
+  "date": "2026-10-27",
+  "on": "Win11: nuxt dev + production build + curl + headless Chrome"
+ },
+ "vue|useQuery": {
+  "hash": "1391e1094a4b",
+  "date": "2026-10-27",
+  "on": "Win11: @tanstack/vue-query 5.105 + mock API + headless Chrome"
+ },
+ "vue|useSeoMeta": {
+  "hash": "08768a84458b",
+  "date": "2026-10-27",
+  "on": "Win11: Nuxt production build + curl; Docker container log"
+ },
+ "vue|v-for و key": {
+  "hash": "e502826f36ff",
+  "date": "2026-10-27",
+  "on": "Win11: Vite dev + headless Chrome (key-by-index bug reproduced)"
+ },
+ "vue|v-if و v-show": {
+  "hash": "7f5e1ce9bfed",
+  "date": "2026-10-27",
+  "on": "Win11: Vite dev + headless Chrome"
+ },
+ "vue|v-memo و shallowRef": {
+  "hash": "91f4682e45a8",
+  "date": "2026-10-27",
+  "on": "Win11: headless Chrome dev + vite preview; Node for shallowRef"
+ },
+ "vue|v-model": {
+  "hash": "401e089cebf2",
+  "date": "2026-10-27",
+  "on": "Win11: Vite dev + headless Chrome"
+ },
+ "vue|v-on": {
+  "hash": "2372f1c9ef74",
+  "date": "2026-10-27",
+  "on": "Win11: Vite dev + headless Chrome"
+ },
+ "vue|vue-i18n و RTL": {
+  "hash": "81a5a4ae6b90",
+  "date": "2026-10-27",
+  "on": "Win11: vue-i18n 11.4.16 in headless Chrome + Node"
+ },
+ "vue|watch و watchEffect": {
+  "hash": "57f0f6008c6b",
+  "date": "2026-10-27",
+  "on": "Win11: Node 24 + vue 3.5.44"
+ },
+ "vue|{{ }} و v-bind": {
+  "hash": "e1af510304e2",
+  "date": "2026-10-27",
+  "on": "Win11: Vite dev + headless Chrome"
+ },
  "web|CORS": {
   "hash": "52a963f04244",
   "date": "2026-10-06",
