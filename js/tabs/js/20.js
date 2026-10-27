@@ -1,4 +1,837 @@
-// ملف إضافي لتاب js: الحقول نفس شكلها في 01.js.
-
+// تكملة تاب js: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/js/01.js (شرح حقول الدرس في أوله)
 MORE("js", [
+    {
+      t: "Web Components",
+      l: 3,
+      n: "عناصر HTML بتعملها بنفسك (<user-card>) من غير framework: custom elements و shadow DOM و slots، وإزاي تستخدمها جوه React و Vue",
+      items: [
+        {
+          cmd: "customElements.define",
+          title: "تعمل tag HTML جديد بـ customElements.define (custom elements)",
+          desc: R`[[customElements.define("user-card", UserCard)]] بيسجّل tag جديد، و [[UserCard]] class بيورث [[HTMLElement]]. من ساعتها أي [[<user-card>]] في الصفحة (حتى اللي كان موجود قبل التسجيل) بيبقى instance من الـ class ده.
+
+الـ class ليه lifecycle callbacks: [[connectedCallback]] لما يدخل الصفحة، و [[disconnectedCallback]] لما يتشال، و [[attributeChangedCallback]] لما attribute من اللي في [[observedAttributes]] يتغير. والاسم **لازم** فيه [[-]].`,
+          example: R`class UserCard extends HTMLElement {
+  static observedAttributes = ["name", "role"];
+  constructor() {
+    super();
+    console.log("constructor");
+  }
+  connectedCallback() {
+    console.log("connected");
+    this.render();
+  }
+  disconnectedCallback() {
+    console.log("disconnected");
+  }
+  attributeChangedCallback(name, oldValue, newValue) {
+    console.log($__btattribute $__{name}: $__{oldValue} -> $__{newValue}$__bt);
+    this.render();
+  }
+  render() {
+    const name = this.getAttribute("name") ?? "Guest";
+    const role = this.getAttribute("role") ?? "member";
+    this.textContent = $__bt$__{name} ($__{role})$__bt;
+  }
+}
+customElements.define("user-card", UserCard);`,
+          try: R`احفظ المثال [[user-card.js]]، واعمل صفحة فيها [[<user-card name="Sara" role="admin"></user-card>]] و [[<script type="module" src="user-card.js">]]. افتح Console: الترتيب إيه؟ وبعدين في الـ Console: [[document.querySelector("user-card").setAttribute("role", "owner")]]، وبعدين [[.remove()]]، وبعدين جرّب [[customElements.define("usercard", class extends HTMLElement {})]].`,
+          flag: "script",
+          deep: {
+            why: R`عايز component (كارت، زرار، date picker) يشتغل في أي صفحة: React أو Vue أو HTML عادي أو CMS، من غير ما تعيد كتابته لكل framework. Web Components جزء من المتصفح نفسه، فمش محتاجة مكتبة ولا build. Design systems كبيرة (زي Shoelace/Web Awesome و Material Web) مبنية كده.`,
+            how: R`[[customElements]] هو الـ registry (السجل) بتاع الصفحة. [[define(name, Class)]] بيربط الاسم بالـ class، والمتصفح بيعمل «upgrade» لكل [[<user-card>]] موجود: يشغّل الـ [[constructor]]، وبعدين [[attributeChangedCallback]] لكل attribute متابَع موجود، وبعدين [[connectedCallback]].
+
+[[static observedAttributes]]: الـ attributes اللي عايز تتبلّغ بيها. أي attribute تاني (زي [[title]]) بيتغير من غير ما الـ callback يتنادى.
+
+[[super()]] لازم أول سطر في الـ constructor (عشان [[HTMLElement]] يتجهز). ومتقراش attributes ولا تضيف أولاد في الـ constructor: لو العنصر اتعمل بـ [[createElement]] لسه معندوش attributes. اعمل ده في [[connectedCallback]].
+
+الاسم لازم فيه [[-]] وحروف صغيرة: ده اللي بيفرّق الـ custom elements عن الـ tags الحقيقية (HTML عمره ما هيضيف tag فيه [[-]]). وكل اسم بيتسجّل مرة واحدة في الصفحة.`,
+            when: R`components لازم تشتغل في أكتر من framework أو في صفحات مش بتاعتك (widgets، embeds)، و design systems، وصفحات من غير build. لتطبيق React كامل جوه React، الـ components العادية أسهل.`,
+            mistakes: R`اسم من غير [[-]]: [[SyntaxError: ... is not a valid custom element name]]. وتسجّل نفس الاسم مرتين (ملف اتحمّل مرتين): [[NotSupportedError: ... has already been used with this registry]]. وتقرا [[getAttribute]] في الـ constructor. وتنسى [[observedAttributes]] فالـ callback عمره ما يتنادى. والصفحة بتظهر العنصر فاضي قبل التسجيل (FOUC): [[user-card:not(:defined) { visibility: hidden; }]].`
+          },
+          teach: R`## الصفحة اللي اتجرّبت
+
+اتجرّب في Chrome 156 headless (عن طريق playwright-core) وسيرفر static صغير على localhost.
+
+~~~text wc1.html
+<!doctype html>
+<style>user-card:not(:defined) { visibility: hidden; }</style>
+<user-card name="Sara" role="admin"></user-card>
+<script>console.log("before define:", document.querySelector("user-card").textContent === "" ? "empty" : "?", customElements.get("user-card"));</script>
+<script type="module" src="user-card.js"></script>
+~~~
+
+- [[<user-card>]] قبل التسجيل: المتصفح بيعتبره عنصر مجهول وفاضي، مش error.
+- [[:not(:defined)]]: CSS selector بيمسك الـ custom elements اللي لسه ماتسجّلتش، فمنظهرهاش فاضية.
+- [[customElements.get("user-card")]]: الـ class المسجّل بالاسم ده، أو [[undefined]].
+
+---
+
+## ١. [[class UserCard extends HTMLElement]]
+
+- [[extends HTMLElement]]: الـ class بيورث كل حاجة في أي عنصر: [[getAttribute]] و [[textContent]] و [[addEventListener]] و [[remove()]].
+- [[static observedAttributes = ["name", "role"]]]: [[static]] يعني الخاصية على الـ class نفسه مش على كل instance. المتصفح بيقراها مرة وقت [[define]].
+
+---
+
+## ٢. الـ callbacks
+
+| الـ callback | بيتنادى إمتى |
+|---|---|
+| [[constructor()]] | العنصر اتعمل أو اتعمله upgrade |
+| [[connectedCallback()]] | دخل الـ document |
+| [[disconnectedCallback()]] | اتشال من الـ document |
+| [[attributeChangedCallback(name, old, new)]] | attribute متابَع اتغير (أو اتحط أول مرة) |
+
+- [[render()]]: دالة بتاعتنا مش من المتصفح. [[?? "Guest"]]: لو [[getAttribute]] رجّع [[null]] خد [["Guest"]].
+- [[this.textContent = ...]]: [[this]] هو العنصر نفسه.
+
+---
+
+## ٣. الترتيب الحقيقي
+
+~~~text Console
+before define: empty undefined
+constructor
+attribute name: null -> Sara
+attribute role: null -> admin
+connected
+~~~
+
+قبل التسجيل: العنصر فاضي و [[get]] رجّع [[undefined]]. وبعد [[define]]: upgrade → [[constructor]] → [[attributeChangedCallback]] لكل attribute موجود (القيمة القديمة [[null]]) → [[connectedCallback]].
+
+---
+
+## ٤. اللي حصل بعدها (من الـ Console)
+
+~~~text الناتج
+text: Sara (admin)
+card.setAttribute("role", "owner")    → attribute role: admin -> owner     text: Sara (owner)
+card.setAttribute("title", "x")       → (ولا حاجة: مش في observedAttributes)
+card.remove()                          → disconnected
+~~~
+
+### بـ [[createElement]]
+
+~~~text الناتج
+const c2 = document.createElement("user-card");   → constructor
+c2.setAttribute("name", "Ali");                    → attribute name: null -> Ali
+document.body.append(c2);                          → connected
+c2: Ali (member) | instanceof HTMLElement: true
+~~~
+
+لاحظ: الـ constructor اتنادى **قبل** أي attribute. لو كنت قريت [[getAttribute("name")]] في الـ constructor كان رجع [[null]].
+
+---
+
+## ٥. الأخطاء
+
+~~~text الناتج
+SyntaxError: Failed to execute 'define' on 'CustomElementRegistry': "usercard" is not a valid custom element name
+NotSupportedError: Failed to execute 'define' on 'CustomElementRegistry': the name "user-card" has already been used with this registry
+~~~
+
+و [[await customElements.whenDefined("user-card")]] بيستنى لحد ما الاسم يتسجّل (لو الكود اللي بيستخدمه اشتغل قبل ملف الـ component).
+
+---
+
+## الخلاصة
+
+| الحاجة | معناها |
+|---|---|
+| [[customElements.define("x-y", Class)]] | سجّل tag، والاسم فيه [[-]] |
+| [[observedAttributes]] | الـ attributes اللي تتبلّغ بيها |
+| [[connectedCallback]] | المكان الصح للـ render والـ listeners |
+| [[disconnectedCallback]] | نضّف (timers، listeners على [[window]]) |
+| [[:not(:defined)]] | خبّي العنصر لحد ما يتسجّل |`,
+          lines: [
+            R`class بيورث [[HTMLElement]].`,
+            R`الـ attributes اللي عايزين نتبلّغ بتغييرها.`,
+            R`الـ constructor.`,
+            R`لازم الأول.`,
+            R`للتجربة: نشوف إمتى اتنادى.`,
+            R`قفلة.`,
+            R`العنصر دخل الصفحة.`,
+            R`للتجربة.`,
+            R`اعرض المحتوى.`,
+            R`قفلة.`,
+            R`العنصر اتشال (مكان التنضيف).`,
+            R`للتجربة.`,
+            R`قفلة.`,
+            R`attribute متابَع اتغير: الاسم والقيمة القديمة والجديدة.`,
+            R`اطبع التغيير.`,
+            R`اعرض من جديد.`,
+            R`قفلة.`,
+            R`دالة بتاعتنا بتكتب المحتوى.`,
+            R`الاسم أو [["Guest"]].`,
+            R`الدور أو [["member"]].`,
+            R`اكتب النص جوه العنصر.`,
+            R`قفلة.`,
+            R`قفلة الـ class.`,
+            R`سجّل الـ tag (الاسم فيه [[-]]).`
+          ],
+          sol: R`الترتيب الحقيقي في Chrome 156:
+[[constructor]] ← [[attribute name: null -> Sara]] ← [[attribute role: null -> admin]] ← [[connected]].
+[[setAttribute("role", "owner")]] ← [[attribute role: admin -> owner]] والنص بقى [[Sara (owner)]].
+[[remove()]] ← [[disconnected]].
+[[define("usercard", ...)]] ← [[SyntaxError: ... "usercard" is not a valid custom element name]].`
+        },
+        {
+          cmd: "shadow DOM",
+          title: "shadow DOM: CSS جوه الـ component ميهربش ومحدش يدخله",
+          desc: R`[[this.attachShadow({ mode: "open" })]] بيدّي العنصر DOM خاص بيه (shadow root): الـ CSS اللي جواه مبيأثرش على الصفحة، و CSS الصفحة مبيدخلوش. فـ [[p { color: red }]] في الصفحة مش هيلوّن الـ [[<p>]] اللي جوه الـ component.
+
+الطرق الرسمية للتخصيص من بره: CSS custom properties ([[--tag-bg]]) بتعدّي جوه، و [[::part(name)]] لعناصر الـ component علّم عليها بـ [[part]]، و [[:host]] جوه بيستايل العنصر نفسه.`,
+          example: R`const sheet = new CSSStyleSheet();
+sheet.replaceSync($__bt
+  :host { display: inline-block; padding: 4px 8px; border-radius: 6px; background: var(--tag-bg, #eee); }
+  :host([sale]) { background: #fde68a; }
+  p { margin: 0; color: green; font-weight: bold; }
+$__bt);
+class PriceTag extends HTMLElement {
+  constructor() {
+    super();
+    const root = this.attachShadow({ mode: "open" });
+    root.adoptedStyleSheets = [sheet];
+    root.innerHTML = $__bt<p part="amount"></p>$__bt;
+  }
+  connectedCallback() {
+    this.shadowRoot.querySelector("p").textContent = $__bt$__{this.getAttribute("amount") ?? 0} EGP$__bt;
+  }
+}
+customElements.define("price-tag", PriceTag);`,
+          try: R`احفظ المثال [[price-tag.js]]، واعمل صفحة فيها [[p { color: red; }]] و [[price-tag { --tag-bg: #dbeafe; }]] و [[price-tag::part(amount) { font-size: 20px; }]]، وفيها [[<p>]] عادي و [[<price-tag amount="250">]] و [[<price-tag amount="99" sale>]]. لون أنهي [[p]] أحمر؟ وجرّب [[document.querySelectorAll("p").length]] و [[getComputedStyle]] على الـ [[p]] اللي جوه.`,
+          flag: "script",
+          deep: {
+            why: R`أي component بيتحط في صفحة مش بتاعتك بيواجه مشكلتين: CSS الصفحة بيبوّظه ([[p { color: red }]] أو [[* { box-sizing }]] أو reset)، و CSS بتاعه بيبوّظ الصفحة. الـ shadow DOM بيحل الاتنين من غير BEM ولا CSS modules.`,
+            how: R`[[attachShadow]] بيعمل shadow root متعلّق بالعنصر (الـ host). اللي جوه shadow root ليه scope لوحده: الـ selectors اللي جوه مبتشوفش بره والعكس، و [[document.querySelector]] مبيدخلوش. [[mode: "open"]] معناها [[el.shadowRoot]] متاح من بره (للأدوات والاختبارات)، و [["closed"]] بيرجّع [[null]].
+
+اللي بيعدّي جوه: الخصائص اللي بتتورث (inherited) زي [[color]] و [[font-family]] بتتورث من الـ host عادي، والـ CSS custom properties ([[--x]]) كمان. فـ [[var(--tag-bg, #eee)]] بياخد القيمة من الصفحة أو [[#eee]].
+
+[[:host]] = العنصر نفسه من جوه، و [[:host([sale])]] = لو عليه attribute [[sale]]. وقواعد الصفحة على الـ host نفسه ([[price-tag { background: pink }]]) **بتكسب** على [[:host]]: الـ component بيحط افتراضي والصفحة تقدر تغيّره.
+
+[[CSSStyleSheet]] + [[replaceSync]] + [[adoptedStyleSheets]] (Constructable Stylesheets): الـ CSS بيتعمل parse مرة واحدة ويتشارك بين كل الـ instances، بدل [[<style>]] في كل واحد.`,
+            when: R`أي component هيتحط في صفحات تانية، أو design system. ولو component داخلي في تطبيقك والـ CSS بتاعك متحكم فيه، ممكن متحتاجش shadow DOM (وتستخدم الـ light DOM عادي).`,
+            mistakes: R`تحط [[<link rel="stylesheet">]] بتاع الموقع وتستغرب إنه مش بيأثر جوه. وفورمات جوه shadow DOM: [[<input>]] جوه shadow root مش بيتبعت مع [[<form>]] بره (محتاج form-associated custom elements و [[ElementInternals]]). و [[document.querySelector]] في الاختبارات مش لاقي العنصر: ادخل بـ [[el.shadowRoot.querySelector]] (و Playwright بيدخل الـ open shadow لوحده). و [[mode: "closed"]] فاكره حماية: مش أمان، بس بيصعّب الاختبار.`
+          },
+          teach: R`## الصفحة
+
+اتجرّب في Chrome 156 headless، والقيم من [[getComputedStyle]] (القيمة النهائية بعد كل الـ CSS).
+
+~~~text wc2.html
+<style>
+  p { color: red; }
+  price-tag { --tag-bg: #dbeafe; }
+  price-tag::part(amount) { font-size: 20px; }
+</style>
+<p id="page-p">paragraph in the page</p>
+<price-tag amount="250"></price-tag>
+<price-tag amount="99" sale></price-tag>
+~~~
+
+---
+
+## ١. الـ stylesheet المشترك
+
+~~~text price-tag.js
+const sheet = new CSSStyleSheet();
+sheet.replaceSync($__bt ... $__bt);
+~~~
+
+- [[new CSSStyleSheet()]]: stylesheet فاضي من JavaScript.
+- [[replaceSync(css)]]: حط فيه الـ CSS ده. بيتعمل مرة واحدة بره الـ class، فكل الـ [[price-tag]] بيشاوروا على نفس الـ object.
+- جوه الـ CSS:
+  - [[:host { ... background: var(--tag-bg, #eee); }]]: العنصر نفسه. [[var(--tag-bg, #eee)]] = قيمة المتغير لو موجود، وإلا [[#eee]].
+  - [[:host([sale])]]: العنصر لو عليه [[sale]].
+  - [[p { color: green }]]: الـ [[p]] اللي **جوه** الـ shadow root بس.
+
+---
+
+## ٢. الـ constructor
+
+- [[this.attachShadow({ mode: "open" })]]: اعمل shadow root ورجّعه. ومن ساعتها [[this.shadowRoot]] بيشاور عليه.
+- [[root.adoptedStyleSheets = [sheet]]]: استخدم الـ stylesheet المشترك جوه.
+- [[root.innerHTML = $__bt<p part="amount"></p>$__bt]]: محتوى الـ shadow. [[part="amount"]] بيعلّم العنصر ده إن الصفحة مسموحلها تستايله بـ [[::part(amount)]].
+
+و [[connectedCallback]] بيكتب [[250 EGP]] جوه الـ [[p]] اللي في الـ shadow.
+
+---
+
+## ٣. النتيجة
+
+~~~text الناتج
+page p color: rgb(255, 0, 0)
+shadow p color: rgb(0, 128, 0) | font-size: 20px
+host bg: rgb(219, 234, 254) | sale bg: rgb(253, 230, 138)
+querySelectorAll('p') from document: 1
+a.textContent: '' | shadow text: '250 EGP'
+shadowRoot mode: open
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[page p]] أحمر | قاعدة الصفحة اشتغلت على [[p]] الصفحة |
+| [[shadow p]] أخضر | [[p { color: red }]] ماعدّاش جوه، و [[green]] بتاع الـ component هو اللي اشتغل |
+| [[font-size: 20px]] | [[::part(amount)]] من الصفحة عدّى، لأن الـ component سمح بـ [[part]] |
+| [[host bg]] أزرق فاتح | [[--tag-bg]] من الصفحة عدّى جوه [[var()]] |
+| [[sale bg]] أصفر | [[:host([sale])]] |
+| [[querySelectorAll('p')]] = 1 | الـ document مش شايف الـ [[p]] اللي جوه الـ shadow |
+| [[textContent]] فاضي | النص في الـ shadow مش في العنصر نفسه |
+
+[[rgb(219, 234, 254)]] هو [[#dbeafe]]: [[getComputedStyle]] بيرجّع الألوان دايمًا بصيغة [[rgb()]].
+
+### مين يكسب؟
+
+ضفت للصفحة [[price-tag { background: pink; font-family: monospace; }]]:
+
+~~~text الناتج
+host bg with outer rule: rgb(255, 192, 203) | inner font-family (inherited): monospace
+~~~
+
+- قاعدة الصفحة على الـ host كسبت [[:host]]: الـ component بيدّي افتراضي، والصفحة تقدر تغيّره.
+- [[font-family]] بتتورث، فعدّت جوه الـ shadow عادي.
+
+---
+
+## الخلاصة
+
+| من بره الـ component | بيعدّي جوه؟ |
+|---|---|
+| [[p { color: red }]] (selector عادي) | لأ |
+| خصائص بتتورث ([[color]] و [[font-family]] على الـ host) | آه |
+| [[--custom-property]] | آه |
+| [[::part(name)]] | آه، للعناصر اللي عليها [[part]] |
+| [[document.querySelector]] | لأ، ادخل بـ [[el.shadowRoot]] |`,
+          lines: [
+            R`stylesheet واحد هيتشارك بين كل الـ instances.`,
+            R`حط فيه الـ CSS (بيبدأ template literal).`,
+            R`[[:host]]: العنصر نفسه، والخلفية من [[--tag-bg]] أو [[#eee]].`,
+            R`لو عليه attribute [[sale]].`,
+            R`الـ [[p]] اللي جوه الـ shadow بس.`,
+            R`قفلة الـ CSS.`,
+            R`الـ class.`,
+            R`الـ constructor.`,
+            R`لازم الأول.`,
+            R`اعمل shadow root مفتوح.`,
+            R`استخدم الـ stylesheet المشترك.`,
+            R`محتوى الـ shadow، و [[part]] بيسمح للصفحة تستايله.`,
+            R`قفلة.`,
+            R`لما يدخل الصفحة.`,
+            R`اكتب السعر جوه الـ [[p]] اللي في الـ shadow.`,
+            R`قفلة.`,
+            R`قفلة الـ class.`,
+            R`سجّله.`
+          ],
+          sol: R`الناتج الحقيقي في Chrome 156:
+[[p]] الصفحة: [[rgb(255, 0, 0)]] (أحمر). [[p]] اللي جوه: [[rgb(0, 128, 0)]] (أخضر) و [[font-size: 20px]] من [[::part]].
+خلفية الأول [[rgb(219, 234, 254)]] (من [[--tag-bg]])، والتاني [[rgb(253, 230, 138)]] (من [[:host([sale])]]).
+[[document.querySelectorAll("p").length]] = [[1]]: الـ document مش شايف اللي جوه الـ shadow.`
+        },
+        {
+          cmd: "slots",
+          title: "slots: المحتوى اللي جوه الـ tag يظهر في مكان تحدده",
+          desc: R`[[<slot>]] جوه الـ shadow DOM مكان فاضي بيتملي بالأولاد اللي اليوزر كتبهم جوه الـ tag. [[<slot name="title">]] بيتملي بالعنصر اللي عليه [[slot="title"]]، و [[<slot>]] من غير اسم بياخد الباقي. والمحتوى اللي جوه [[<slot>]] نفسه بيظهر لو مفيش حاجة اتحطت (fallback).
+
+العناصر دي بتفضل في الـ light DOM (بتاعة الصفحة)، فـ CSS الصفحة بيأثر عليها، والـ component بيستايلها بـ [[::slotted()]].`,
+          example: R`class AppCard extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" }).innerHTML = $__bt
+      <style>
+        article { border: 1px solid #ccc; border-radius: 8px; padding: 12px; }
+        ::slotted(h3) { margin: 0 0 8px; color: navy; }
+        footer { color: gray; font-size: 12px; }
+      </style>
+      <article>
+        <slot name="title"><h3>No title</h3></slot>
+        <slot></slot>
+        <footer><slot name="footer">default footer</slot></footer>
+      </article>$__bt;
+    this.shadowRoot.querySelector("slot:not([name])").addEventListener("slotchange", (e) => {
+      console.log("slotchange: body has", e.target.assignedElements().length, "element(s)");
+    });
+  }
+}
+customElements.define("app-card", AppCard);`,
+          try: R`احفظ المثال [[app-card.js]] واعمل كارتين: الأول فيه [[<h3 slot="title">Order #42</h3>]] و [[<p>]] و [[<button>]]، والتاني فيه [[<p>]] بس. إيه اللي ظهر في التاني مكان العنوان والفوتر؟ وبعدين ضيف للتاني [[<span slot="footer">paid</span>]] من الـ Console، وضيف [[<p>]] جديد للأول: إمتى [[slotchange]] بيتنادى؟`,
+          flag: "script",
+          deep: {
+            why: R`component زي كارت أو dialog أو layout محتاج ياخد محتوى من اللي بيستخدمه (عنوان، نص، أزرار) ويحطه في أماكن معينة جوه التصميم بتاعه. ده نفس فكرة [[children]] في React و [[<slot>]] في Vue (Vue أخدت الاسم والفكرة من هنا).`,
+            how: R`الأولاد اللي اليوزر كتبهم جوه [[<app-card>]] مش بيتنقلوا جوه الـ shadow: بيفضلوا أولاد العنصر في الـ light DOM، والمتصفح بس بيعرضهم (render) مكان الـ [[<slot>]] المناسب. عشان كده [[h3.parentNode === card]] و CSS الصفحة شغال عليهم.
+
+كل عنصر عليه [[slot="x"]] بيروح لـ [[<slot name="x">]]. الباقي (من غير [[slot]]) بيروح للـ slot اللي من غير اسم، ولو مفيش، مش بيظهر. لو slot ماجلوش حاجة، المحتوى اللي جواه هو اللي بيظهر (fallback).
+
+[[slot.assignedElements()]]: العناصر اللي اتحطت فيه. و [[slotchange]] event بيتنادى على الـ slot لما الليستة دي تتغير (وأول مرة كمان). و [[::slotted(h3)]]: من جوه الـ shadow، استايل للـ [[h3]] اللي اتحط في slot (العنصر نفسه بس، مش أولاده).`,
+            when: R`أي component بيغلّف محتوى: cards، و modals، و tabs، و layouts. ولو المحتوى داتا (array of items) مش HTML، مرّرها property (درس [[attributes و properties]]).`,
+            mistakes: R`تنسى [[slot="title"]] على العنصر فيروح للـ slot الافتراضي. وتحاول تستايل أولاد العنصر اللي في الـ slot بـ [[::slotted(div p)]]: مش شغال، [[::slotted]] بيمسك العنصر اللي في الـ slot مباشرة بس. وتدوّر على الـ [[h3]] في [[shadowRoot.querySelector]]: هو في الـ light DOM.`
+          },
+          teach: R`## الصفحة
+
+اتجرّب في Chrome 156 headless.
+
+~~~text wc3.html
+<app-card id="c1">
+  <h3 slot="title">Order #42</h3>
+  <p>3 items, 250 EGP</p>
+  <button>Pay</button>
+</app-card>
+<app-card id="c2"><p>no title, no footer</p></app-card>
+~~~
+
+---
+
+## ١. الـ template جوه الـ shadow
+
+- [[this.attachShadow({ mode: "open" }).innerHTML = ...]]: [[attachShadow]] بيرجّع الـ shadow root، فبنكتب فيه على طول.
+- [[<slot name="title"><h3>No title</h3></slot>]]: مكان للعنوان، ولو مفيش: [[No title]].
+- [[<slot></slot>]]: الـ slot الافتراضي: أي ابن من غير [[slot=]].
+- [[<slot name="footer">default footer</slot>]]: مكان للفوتر، وافتراضيًا [[default footer]].
+- [[::slotted(h3)]]: استايل للـ [[h3]] اللي اتحط في أي slot.
+
+---
+
+## ٢. مين راح فين
+
+~~~text الناتج
+c1 -> title: H3 | (default): P,BUTTON | footer: fallback
+c2 -> title: fallback | (default): P | footer: fallback
+h3 color: rgb(0, 0, 128) | still in light DOM: true
+~~~
+
+| | [[title]] | الافتراضي | [[footer]] |
+|---|---|---|---|
+| [[c1]] | الـ [[h3]] | [[p]] و [[button]] | [[default footer]] |
+| [[c2]] | [[No title]] | [[p]] | [[default footer]] |
+
+- [[assignedElements()]] رجّع العناصر اللي في كل slot، و [[fallback]] (كلمة من سكربت الاختبار) يعني ليستة فاضية فالمحتوى الافتراضي ظهر.
+- [[rgb(0, 0, 128)]] = [[navy]]: [[::slotted(h3)]] اشتغل.
+- [[still in light DOM: true]]: [[h3.parentNode]] لسه هو [[c1]] نفسه. اتعرض جوه، بس مكانه في الشجرة متغيرش.
+
+---
+
+## ٣. [[slotchange]]
+
+~~~text الناتج (Console)
+slotchange: body has 2 element(s)
+slotchange: body has 1 element(s)
+slotchange: body has 3 element(s)
+~~~
+
+| السطر | ليه |
+|---|---|
+| 2 | أول ما [[c1]] اتعمل: [[p]] و [[button]] |
+| 1 | [[c2]]: [[p]] |
+| 3 | ضفت [[<p>more</p>]] لـ [[c1]] بـ [[append]] |
+
+ولما ضفت [[<span slot="footer">paid</span>]] لـ [[c2]]: الفوتر بقى [[SPAN]] (بدل [[default footer]])، بس مفيش سطر [[slotchange]]، لأن الـ listener على الـ slot الافتراضي بس:
+
+~~~text الناتج
+c2 after append -> title: fallback | (default): P | footer: SPAN
+~~~
+
+- [[querySelector("slot:not([name])")]]: الـ slot اللي ملوش [[name]].
+- [[e.target]]: الـ slot نفسه. [[assignedElements()]]: العناصر (مش النصوص) اللي فيه.
+
+---
+
+## الخلاصة
+
+| الحاجة | معناها |
+|---|---|
+| [[<slot>]] | الأولاد اللي من غير [[slot=]] |
+| [[<slot name="x">]] + [[slot="x"]] | عنصر في مكان معين |
+| محتوى جوه [[<slot>]] | fallback لو مفيش حاجة |
+| [[::slotted(sel)]] | استايل للعنصر اللي في الـ slot (مش أولاده) |
+| [[slotchange]] و [[assignedElements()]] | اعرف إيه اللي اتحط |
+
+العناصر في الـ slots بتفضل في الـ light DOM: CSS الصفحة شغال عليها، و [[document.querySelector]] بيلاقيها.`,
+          lines: [
+            R`الـ class.`,
+            R`الـ constructor.`,
+            R`لازم الأول.`,
+            R`shadow root ونكتب فيه الـ template على طول.`,
+            R`استايل جوه الـ shadow.`,
+            R`شكل الكارت.`,
+            R`أي [[h3]] اتحط في slot.`,
+            R`الفوتر.`,
+            R`قفلة الاستايل.`,
+            R`الكارت.`,
+            R`slot للعنوان، و fallback لو مفيش.`,
+            R`الـ slot الافتراضي: باقي الأولاد.`,
+            R`slot للفوتر جوه [[<footer>]]، و fallback.`,
+            R`قفلة الكارت والـ template.`,
+            R`راقب التغيير في الـ slot الافتراضي.`,
+            R`اطبع عدد العناصر اللي فيه.`,
+            R`قفلة.`,
+            R`قفلة الـ constructor.`,
+            R`قفلة الـ class.`,
+            R`سجّله.`
+          ],
+          sol: R`في التاني ظهر [[No title]] و [[default footer]] (الـ fallback). وبعد ما ضفت [[<span slot="footer">paid</span>]] الفوتر بقى [[paid]].
+
+[[slotchange]] اتنادى ٣ مرات: [[2]] (أول [[c1]])، و [[1]] (أول [[c2]])، و [[3]] (لما ضفت [[p]] لـ [[c1]]). إضافة الـ [[span]] لـ [[c2]] ماطلّعتش سطر لأن الـ listener على الـ slot الافتراضي بس، مش [[footer]].`
+        },
+        {
+          cmd: "attributes و properties",
+          title: "attributes ولا properties، والـ events من الـ component",
+          desc: R`الـ attribute نص في الـ HTML ([[value="3"]])، والـ property قيمة JavaScript على العنصر ([[el.value = 3]]، أو array، أو object). الـ component الكويس بيعمل getter/setter يربط الاتنين للقيم البسيطة (reflect)، والـ boolean بيبقى «الـ attribute موجود ولا لأ» مش قيمته، والداتا المعقدة property بس.
+
+ولما حاجة تحصل جوه بيبعت [[CustomEvent]] بـ [[detail]]، و [[bubbles: true]] عشان يطلع لفوق، و [[composed: true]] عشان يعدّي حدود الـ shadow DOM.`,
+          example: R`class StarRating extends HTMLElement {
+  static observedAttributes = ["value", "disabled"];
+  #labels = ["bad", "ok", "good", "great", "perfect"];
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
+    this.shadowRoot.addEventListener("click", (e) => {
+      const btn = e.target.closest("button");
+      if (!btn || this.disabled) return;
+      this.value = Number(btn.dataset.v);
+      this.dispatchEvent(new CustomEvent("rating-change", {
+        detail: { value: this.value },
+        bubbles: true,
+        composed: true,
+      }));
+    });
+  }
+  get value() { return Number(this.getAttribute("value") ?? 0); }
+  set value(v) { this.setAttribute("value", String(v)); }
+  get disabled() { return this.hasAttribute("disabled"); }
+  set disabled(on) { this.toggleAttribute("disabled", Boolean(on)); }
+  get labels() { return this.#labels; }
+  set labels(list) { this.#labels = list; this.render(); }
+  attributeChangedCallback() { this.render(); }
+  connectedCallback() { this.render(); }
+  render() {
+    this.shadowRoot.innerHTML = this.#labels.map((label, i) =>
+      $__bt<button data-v="$__{i + 1}" title="$__{label}" $__{this.disabled ? "disabled" : ""}>$__{i < this.value ? "★" : "☆"}</button>$__bt
+    ).join("");
+  }
+}
+customElements.define("star-rating", StarRating);`,
+          try: R`احفظ المثال [[star-rating.js]] وحط [[<div id="box"><star-rating value="3"></star-rating></div>]]. من الـ Console: اقرا [[r.value]] ونوعه، واعمل [[r.value = 5]] وبص على الـ HTML، و [[r.disabled = true]]، و [[r.setAttribute("disabled", "false")]] واقرا [[r.disabled]]، و [[r.setAttribute("labels", "a,b,c")]] مقابل [[r.labels = ["no", "maybe", "yes"]]]. وحط listener على [[#box]] واضغط نجمة.`,
+          flag: "script",
+          deep: {
+            why: R`الـ HTML مبيعرفش غير نصوص: [[<star-rating value="3">]] قيمته [["3"]] مش 3. والـ frameworks (React و Vue) بتمرّر arrays و objects. لو الـ component فاهم attributes بس، مستحيل تديله ليستة. ولو فاهم properties بس، مينفعش يتكتب في HTML عادي. والـ events هي الطريقة الوحيدة يقول بيها للصفحة «اليوزر عمل حاجة».`,
+            how: R`[[get value()]] / [[set value(v)]]: لما حد يكتب [[el.value = 5]] الـ setter بيكتبها attribute، و [[attributeChangedCallback]] بيعيد الرسم. فالمصدر واحد (الـ attribute) والاتنين متطابقين: ده اسمه reflect.
+
+Boolean attributes في HTML: الوجود هو المعنى. [[disabled="false"]] لسه **disabled**، لأن [[hasAttribute]] بيسأل «موجود؟» مش «قيمته إيه؟». و [[toggleAttribute(name, force)]] بيحطه أو يشيله.
+
+[[#labels]]: الـ [[#]] = private field، محدش يوصله من بره الـ class. و [[labels]] property بس من غير attribute: array مينفعش يبقى attribute من غير ما تعمل parse لنص.
+
+الـ events: [[dispatchEvent(new CustomEvent(name, { detail, bubbles, composed }))]]. [[bubbles]] = يطلع للأب وأبوه. [[composed]] = يعدّي من shadow root للـ document. لو بتعمل dispatch على [[this]] (الـ host) و الـ host نفسه في الـ document، [[bubbles]] كفاية. لكن لو الـ component نفسه جوه shadow root تاني (component جوه component)، من غير [[composed]] الـ event بيقف عند الـ shadow root ده. وعشان كده بنحطها دايمًا.`,
+            when: R`أي component هيتستخدم من framework أو بداتا مش نص. اعمل reflect للقيم البسيطة (string و number و boolean)، و property بس للـ arrays والـ objects، وevent لكل تغيير بيعمله اليوزر.`,
+            mistakes: R`[[disabled="false"]] وتستغرب إنه disabled. وتقرا [[getAttribute("value")]] وتقارنه برقم: نص. وتعمل reflect لـ object فيبقى [["[object Object]"]] في الـ HTML. وتنسى [[composed: true]] والـ component هيتحط جوه component تاني. واسم event بحروف كبيرة ([[ratingChange]]): بعض الـ frameworks بتحوّل الأسامي لحروف صغيرة، فخليه [[rating-change]].`
+          },
+          teach: R`## الصفحة
+
+اتجرّب في Chrome 156 headless، والكود في الـ Console بتاع الصفحة.
+
+~~~text wc4.html
+<div id="box"><star-rating value="3"></star-rating></div>
+<script type="module" src="star-rating.js"></script>
+~~~
+
+---
+
+## ١. [[value]]: attribute ↔ property
+
+~~~text الناتج
+attr "3" -> property: 3 (number) | ★★★☆☆
+r.value = 5 -> attribute: "5" | ★★★★★
+~~~
+
+- [[get value()]]: [[getAttribute("value")]] نص أو [[null]]، و [[?? 0]] لو مش موجود، و [[Number()]] يحوّله. فـ [[r.value]] رقم.
+- [[set value(v)]]: [[setAttribute("value", String(v))]]: الـ property بتتكتب attribute.
+- الـ attribute اتغير ← [[attributeChangedCallback]] ← [[render()]]: النجوم اتحدّثت لوحدها.
+
+---
+
+## ٢. [[disabled]]: boolean attribute
+
+~~~text الناتج
+r.disabled = true -> outerHTML: <star-rating value="5" disabled=""></star-rating>
+setAttribute("disabled","false") -> r.disabled = true
+~~~
+
+- [[toggleAttribute("disabled", true)]] حط [[disabled=""]]: القيمة فاضية، المهم إنه موجود.
+- [[setAttribute("disabled", "false")]] لسه **true**: [[hasAttribute]] بيسأل عن الوجود. زي [[<button disabled="false">]] في HTML: الزرار disabled. عشان تلغيه: [[removeAttribute("disabled")]] أو [[r.disabled = false]].
+
+---
+
+## ٣. [[labels]]: property بس
+
+~~~text الناتج
+setAttribute("labels","a,b,c") -> buttons: 5
+r.labels = [3 items] -> buttons: 3 | attribute labels: a,b,c
+~~~
+
+- الـ attribute [[labels]] ملوش أي معنى عند الـ component (مش في [[observedAttributes]] ومحدش بيقراه)، فالأزرار فضلت 5.
+- [[r.labels = [...]]]: الـ setter حط الـ array في [[#labels]] وعمل render: 3 أزرار.
+- والـ attribute القديم [[a,b,c]] فضل في الـ HTML زي ما هو ملوش لازمة.
+
+---
+
+## ٤. الضغطة والـ event
+
+~~~text الناتج
+box got rating-change: {"value":2} | target: STAR-RATING | composedPath[0]: STAR-RATING
+document click target: STAR-RATING
+after click: value=2 | ★★☆
+~~~
+
+خطوات الـ click handler:
+
+1. [[e.target.closest("button")]]: أقرب [[button]] للمكان اللي اتضغط (أو هو نفسه). لو الضغطة بره الأزرار: [[null]].
+2. [[if (!btn || this.disabled) return]]: مفيش زرار أو الـ component disabled: متعملش حاجة.
+3. [[this.value = Number(btn.dataset.v)]]: [[dataset.v]] = قيمة [[data-v]] (نص). وده بيعدّي على الـ setter فبيتعمل reflect و render.
+4. [[dispatchEvent(new CustomEvent("rating-change", {...}))]]: [[detail]] الداتا اللي عايز تبعتها.
+
+- [[#box]] (الأب) استلم الـ event لأن [[bubbles: true]].
+- [[document click target: STAR-RATING]]: الـ click الأصلي حصل على [[button]] **جوه** الـ shadow، بس من بره الـ target بقى الـ host. ده اسمه retargeting: الصفحة مش بتشوف تفاصيل جوه الـ component.
+- النجوم 3 بس دلوقتي ([[★★☆]]) لأن [[labels]] بقت 3.
+
+### ليه [[composed: true]]؟
+
+حطيت [[<star-rating>]] جوه shadow root بتاع [[div]] تاني (component جوه component)، وبعت اتنين events من الـ star-rating:
+
+~~~text الناتج
+document got composed event, target=DIV
+shadow root got plain event
+~~~
+
+- [[composed: true]]: عدّى لحد الـ document، والـ target بقى [[DIV]] (الـ host الخارجي، retargeting تاني).
+- من غير [[composed]]: وقف عند الـ shadow root اللي فيه، والـ document ماشافهوش.
+
+---
+
+## الخلاصة
+
+| النوع | الطريقة | مثال |
+|---|---|---|
+| نص أو رقم | attribute ↔ property (reflect) | [[value]] |
+| boolean | الوجود: [[hasAttribute]] و [[toggleAttribute]] | [[disabled]] |
+| array أو object | property بس | [[labels]] |
+| حاجة حصلت | [[CustomEvent]] + [[detail]] + [[bubbles]] + [[composed]] | [[rating-change]] |`,
+          lines: [
+            R`الـ class.`,
+            R`attributes بنتابعها.`,
+            R`private field: أسامي النجوم (property بس).`,
+            R`الـ constructor.`,
+            R`لازم الأول.`,
+            R`shadow root.`,
+            R`listener واحد على كل الأزرار (event delegation).`,
+            R`أقرب زرار للضغطة.`,
+            R`مفيش زرار أو disabled: اخرج.`,
+            R`حدّث القيمة (بتعدّي على الـ setter).`,
+            R`ابعت event للصفحة.`,
+            R`الداتا.`,
+            R`يطلع للأب.`,
+            R`ويعدّي حدود الـ shadow.`,
+            R`قفلة الـ event.`,
+            R`قفلة الـ listener.`,
+            R`قفلة الـ constructor.`,
+            R`[[value]] property من الـ attribute، كرقم.`,
+            R`وكتابتها بتكتب الـ attribute (reflect).`,
+            R`[[disabled]]: الـ attribute موجود ولا لأ.`,
+            R`حطه أو شيله.`,
+            R`[[labels]] للقراية.`,
+            R`وكتابتها: array وأعد الرسم.`,
+            R`أي attribute متابَع اتغير: أعد الرسم.`,
+            R`دخل الصفحة: ارسم.`,
+            R`الرسم.`,
+            R`زرار لكل label.`,
+            R`رقمه، واسمه، و disabled لو لازم، ونجمة مليانة أو فاضية.`,
+            R`اجمعهم نص واحد.`,
+            R`قفلة.`,
+            R`قفلة الـ class.`,
+            R`سجّله.`
+          ],
+          sol: R`الناتج الحقيقي في Chrome 156:
+[[r.value]] ← [[3]] ونوعه [[number]]. [[r.value = 5]] ← الـ HTML بقى [[value="5"]].
+[[r.disabled = true]] ← [[<star-rating value="5" disabled="">]]. و [[setAttribute("disabled", "false")]] ← [[r.disabled]] لسه [[true]].
+[[setAttribute("labels", "a,b,c")]] ← لسه 5 أزرار. [[r.labels = ["no", "maybe", "yes"]]] ← 3 أزرار.
+ضغطة النجمة التانية ← [[#box]] استلم [[rating-change]] و [[detail]] = [[{"value":2}]] و [[target]] = [[STAR-RATING]].`
+        },
+        {
+          cmd: "Web Components في React و Vue",
+          title: "تستخدم custom element جوه React 19 و Vue",
+          desc: R`React 19 بيدعم الـ custom elements كاملة: لو العنصر عنده property بنفس الاسم بيحطها property (فالـ arrays والـ objects بتوصل صح)، وإلا attribute، و [[onrating-change]] بيسمع لـ event اسمه [[rating-change]]. React 18 كان بيحوّل كل حاجة attribute نص، ومكانش بيسمع للـ custom events.
+
+Vue بيدعمها من زمان: [[:labels="labels"]] و [[@rating-change="..."]] شغالين، بس لازم تقول للـ compiler إن الـ tag ده مش component بتاع Vue: [[compilerOptions.isCustomElement]].`,
+          example: R`import { useState } from "react";
+import { createRoot } from "react-dom/client";
+import "./star-rating.js";
+function App() {
+  const [rating, setRating] = useState(4);
+  return (
+    <>
+      <star-rating
+        value={rating}
+        labels={["bad", "ok", "great"]}
+        onrating-change={(e) => setRating(e.detail.value)}
+      />
+      <p id="react-out">rating in React: {rating}</p>
+    </>
+  );
+}
+createRoot(document.querySelector("#root")).render(<App />);`,
+          try: R`خد [[star-rating.js]] من الدرس اللي فات، واعمل المثال بـ React 19 (Vite أو esbuild). اضغط النجمة التانية: الرقم في الـ [[<p>]] اتغير؟ وكام زرار ظهر؟ وبعدين نفس الكود بـ React 18: إيه اللي اتغير في الـ HTML؟ وفي Vue اكتب [[<star-rating :value="rating" :labels="labels" @rating-change="rating = $event.detail.value" />]].`,
+          flag: "script",
+          deep: {
+            why: R`أغلب ما هتقابل Web Components هيبقى جوه تطبيق React أو Vue: design system الشركة، أو widget من طرف تالت (دفع، خرايط، chat). لازم تعرف تبعتلهم داتا وتسمع للـ events، والفروق بين النسخ بتعمل bugs غريبة (array بقى نص [["bad,ok,great"]]).`,
+            how: R`React 19: لما يرسم tag فيه [[-]]، لكل prop بيسأل «العنصر عنده property بالاسم ده؟» ([["labels" in el]]). لو آه بيعمل [[el.labels = value]]، وإلا [[setAttribute]]. والـ props اللي بتبدأ بـ [[on]] بتتحول [[addEventListener]] على اسم الـ event بعد [[on]] بالظبط ([[onrating-change]] ← [[rating-change]]). عشان كده الـ component لازم يتسجّل (يتعمل import) قبل الرسم.
+
+React 18 وأقدم: كل prop على custom element بيبقى attribute نص (فالـ array بقى [["bad,ok,great"]])، والـ events لازم [[ref]] و [[addEventListener]] بإيدك.
+
+Vue: الـ compiler لازم يعرف إن [[star-rating]] مش component. في Vite: [[vue({ template: { compilerOptions: { isCustomElement: (tag) => tag.includes("-") } } })]]. من غيرها بيحاول يعمل [[resolveComponent]] ويطلّع warning. و [[:prop]] بيحطها property لو العنصر عنده property بالاسم ده (زي React 19). و Vue كمان بيعمل Web Components: [[defineCustomElement]] بيحوّل component بتاع Vue لـ custom element يشتغل في أي صفحة.`,
+            when: R`design system مبني Web Components بيتستخدم في تطبيق React أو Vue، أو العكس: component بتاع Vue عايز تديه لفريق React (بـ [[defineCustomElement]]).`,
+            mistakes: R`React 18: تبعت array وتلاقيه نص في الـ attribute، أو [[onRatingChange]] ومحدش بينادي. React 19: [[onRatingChange]] بحروف كبيرة بيسمع لـ [[RatingChange]] مش [[rating-change]]، فاكتب اسم الـ event زي ما هو. Vue: تنسى [[isCustomElement]] مع SFC في Vite فيطلع [[Failed to resolve component]]. وتعمل import للـ component بعد ما React رسم فيتعامل كعنصر مجهول وقتها.`
+          },
+          teach: R`## React 19
+
+الـ bundle اتعمل بـ esbuild 0.28 (React 19.3.1)، واتجرّب في Chrome 156 headless. [[star-rating.js]] هو بتاع درس [[attributes و properties]].
+
+---
+
+## ١. الكود
+
+- [[import "./star-rating.js"]]: import من غير أسماء = شغّل الملف بس، فيسجّل [[<star-rating>]]. لازم قبل [[render]].
+- [[value={rating}]]: رقم. React شاف إن العنصر عنده property [[value]] (الـ getter/setter) فعمل [[el.value = 4]].
+- [[labels={["bad", "ok", "great"]}]]: array، و [[labels]] property، فوصل array.
+- [[onrating-change={(e) => setRating(e.detail.value)}]]: [[on]] + اسم الـ event بالظبط. [[e.detail.value]] الداتا اللي الـ component بعتها.
+- [[<>...</>]]: Fragment، أكتر من عنصر من غير div زيادة.
+
+## ٢. النتيجة
+
+~~~text الناتج (React 19.3.1)
+html: <star-rating value="4"></star-rating>
+buttons: 3 | value prop: 4
+rating in React: 2      (بعد الضغط على النجمة التانية)
+~~~
+
+- [[value="4"]] في الـ HTML: React حط الـ property، والـ setter عمل reflect.
+- 3 أزرار: الـ array وصل.
+- [[rating in React: 2]]: الـ event وصل و [[setRating]] اشتغل.
+
+## ٣. نفس الكود بـ React 18.3
+
+~~~text الناتج (React 18)
+html: <star-rating value="4" labels="bad,ok,great"></star-rating>
+buttons: 5 | value prop: 4
+rating in React: 4      (بعد نفس الضغطة)
+~~~
+
+- [[labels="bad,ok,great"]]: React 18 حوّل الـ array لنص وحطه attribute، والـ component مش بيقرا attribute اسمه [[labels]]، فـ 5 أزرار (الافتراضي).
+- [[rating in React: 4]]: [[onrating-change]] اتجاهل خالص.
+
+| | React 18 | React 19 |
+|---|---|---|
+| prop بسيط ([[value]]) | attribute نص | property لو موجودة |
+| array / object | attribute نص ([["bad,ok,great"]]) | property (الـ array نفسه) |
+| [[onxxx]] | متجاهل (محتاج ref و addEventListener) | [[addEventListener("xxx")]] |
+
+---
+
+## Vue 3.5
+
+~~~text vue-app.js (المهم)
+const app = createApp({
+  setup() {
+    const rating = ref(4);
+    const labels = ["bad", "ok", "great"];
+    return { rating, labels };
+  },
+  template: $__bt
+    <star-rating :value="rating" :labels="labels" @rating-change="rating = $event.detail.value" />
+    <p id="vue-out">rating in Vue: {{ rating }}</p>$__bt,
+});
+app.config.compilerOptions.isCustomElement = (tag) => tag.includes("-");
+app.mount("#app");
+~~~
+
+- [[:labels="labels"]]: الـ [[:]] = قيمة JavaScript مش نص. Vue شاف إن [[labels]] property على العنصر فحطها property.
+- [[@rating-change="..."]]: [[addEventListener("rating-change")]]، و [[$event]] هو الـ event نفسه.
+- [[isCustomElement]]: «أي tag فيه [[-]] اعتبره عنصر HTML، متدوّرش عليه كـ component».
+
+~~~text الناتج (Vue 3.5.44)
+html: <star-rating value="4"></star-rating>
+buttons: 3
+rating in Vue: 2
+~~~
+
+### من غير [[isCustomElement]]
+
+الـ compiler بيطلّع كود مختلف. جرّبته بـ [[@vue/compiler-dom]] على نفس الـ template:
+
+~~~text الناتج
+without isCustomElement: const _component_star_rating = _resolveComponent("star-rating") | return (_openBlock(), _createBlock(_component_star_rating, {
+with isCustomElement:    return (_openBlock(), _createElementBlock("star-rating", {
+~~~
+
+من غيره بيدوّر على component اسمه [[star-rating]]، ومش هيلاقيه:
+
+~~~text Console
+[Vue warn]: Failed to resolve component: star-rating
+If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement.
+~~~
+
+(في الـ template اللي بيتعمله compile في المتصفح، Vue بيسأل [[customElements.get(tag)]] لوحده فاشتغل من غير الإعداد. بس مع SFC في Vite، الـ compile بيحصل وقت الـ build ومحدش يعرف إيه المسجّل، فالإعداد لازم في [[vite.config]].)
+
+### Vue بيعمل Web Component
+
+~~~text vue-app.js
+const HelloBadge = defineCustomElement({
+  props: { name: String },
+  styles: ["span { color: purple; }"],
+  setup(props) {
+    return () => h("span", $__btHi $__{props.name} from a Vue-made element$__bt);
+  },
+});
+customElements.define("hello-badge", HelloBadge);
+~~~
+
+~~~text الناتج: hello-badge.shadowRoot.innerHTML
+<style>span { color: purple; }</style><span>Hi Sara from a Vue-made element</span>
+~~~
+
+component بتاع Vue بقى [[<hello-badge name="Sara">]] يشتغل في أي صفحة، بـ shadow DOM والـ styles جواه.
+
+---
+
+## الخلاصة
+
+| | React 19 | Vue 3 |
+|---|---|---|
+| تبعت array | [[labels={arr}]] | [[:labels="arr"]] |
+| تسمع لـ event | [[onrating-change={fn}]] | [[@rating-change="fn"]] |
+| إعداد | ولا حاجة | [[isCustomElement]] في الـ compiler |
+| تعمل Web Component | مكتبات بره React | [[defineCustomElement]] |
+
+وفي React 18 أو أقدم: [[ref]] و [[el.labels = ...]] و [[addEventListener]] بإيدك.`,
+          lines: [
+            R`[[useState]] من React.`,
+            R`[[createRoot]] للرسم.`,
+            R`سجّل [[<star-rating>]] قبل الرسم.`,
+            R`الـ component.`,
+            R`state للتقييم.`,
+            R`الرسم.`,
+            R`Fragment.`,
+            R`الـ custom element.`,
+            R`رقم: React 19 بيحطه property.`,
+            R`array: property، فبيوصل array.`,
+            R`اسمع لـ event [[rating-change]] وحدّث الـ state.`,
+            R`قفلة العنصر.`,
+            R`اعرض القيمة اللي في React.`,
+            R`قفلة الـ Fragment.`,
+            R`قفلة الـ return.`,
+            R`قفلة الـ component.`,
+            R`ارسم في [[#root]].`
+          ],
+          sol: R`React 19.3.1: [[<star-rating value="4">]] و 3 أزرار، وبعد الضغطة [[rating in React: 2]].
+React 18.3: [[<star-rating value="4" labels="bad,ok,great">]] و 5 أزرار، والرقم فضل [[4]] (الـ event متجاهل).
+Vue 3.5.44 بالـ template ده و [[isCustomElement]]: 3 أزرار و [[rating in Vue: 2]].`
+        }
+      ]
+    }
 ]);

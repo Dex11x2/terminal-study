@@ -7814,6 +7814,11 @@
   "date": "2026-10-06",
   "on": "win11 Node 24.19 + Chrome 154 headless"
  },
+ "js|AssemblyScript": {
+  "hash": "44a6f488afe3",
+  "date": "2026-10-27",
+  "on": "Windows 11 node 24.22, assemblyscript 0.28.20"
+ },
  "js|CommonJS و ESM": {
   "hash": "9414aeed5060",
   "date": "2026-10-06",
@@ -7889,6 +7894,16 @@
   "date": "2026-10-06",
   "on": "win11 Node 24 + docker node:22-slim"
  },
+ "js|Web Components في React و Vue": {
+  "hash": "8a714f5cb3c1",
+  "date": "2026-10-27",
+  "on": "Chrome 156 headless, React 19.3.1 / 18.3, Vue 3.5.44, esbuild 0.28"
+ },
+ "js|WebAssembly في المتصفح": {
+  "hash": "0fbb23821964",
+  "date": "2026-10-27",
+  "on": "docker alpine clang + Chrome 156 headless on Windows 11"
+ },
  "js|addEventListener": {
   "hash": "8c42a6f77b80",
   "date": "2026-10-06",
@@ -7913,6 +7928,11 @@
   "hash": "97b93eb7edf3",
   "date": "2026-10-06",
   "on": "win11 Node 24.19 + local server"
+ },
+ "js|attributes و properties": {
+  "hash": "f60caf2bf0e4",
+  "date": "2026-10-27",
+  "on": "Chrome 156 headless (playwright-core) on Windows 11"
  },
  "js|blocking و الـ main thread": {
   "hash": "4cd9a05a2148",
@@ -7953,6 +7973,11 @@
   "hash": "9a3e2de0f4b9",
   "date": "2026-10-06",
   "on": "win11 Node 24.19 (real ENOTFOUND + local server) + Chrome headless"
+ },
+ "js|customElements.define": {
+  "hash": "c012d22e411b",
+  "date": "2026-10-27",
+  "on": "Chrome 156 headless (playwright-core) on Windows 11"
  },
  "js|date-fns و dayjs و Temporal": {
   "hash": "c3e7ed114a67",
@@ -8169,6 +8194,16 @@
   "date": "2026-10-06",
   "on": "win11 Node 24.19 + Chrome headless (playwright-core)"
  },
+ "js|shadow DOM": {
+  "hash": "ae25274b077b",
+  "date": "2026-10-27",
+  "on": "Chrome 156 headless (playwright-core) on Windows 11"
+ },
+ "js|slots": {
+  "hash": "d9a95c312ac5",
+  "date": "2026-10-27",
+  "on": "Chrome 156 headless (playwright-core) on Windows 11"
+ },
  "js|sort و toSorted": {
   "hash": "d255a038681d",
   "date": "2026-10-06",
@@ -8228,6 +8263,16 @@
   "hash": "6c1d46291e64",
   "date": "2026-10-06",
   "on": "win11 Vite 8.3.3 + vite-plugin-pwa 2.0.0 + Chrome headless (playwright-core) on localhost; docs: Serwist, dev mode"
+ },
+ "js|wasm من C": {
+  "hash": "ee06e0f06b16",
+  "date": "2026-10-27",
+  "on": "docker alpine:3.22 clang 20.1.8 + Windows 11 node 24.22"
+ },
+ "js|wasm يستاهل إمتى": {
+  "hash": "0e1540db9d2f",
+  "date": "2026-10-27",
+  "on": "Windows 11 node 24.22 + docker alpine clang (-O2, -O3 -msimd128)"
  },
  "js|إمتى regex غلط": {
   "hash": "ce538ae762d2",
@@ -9369,6 +9414,16 @@
   "date": "2026-10-06",
   "on": "win11 Node 24 + docker node:22-slim"
  },
+ "node|Bun.serve": {
+  "hash": "5a51db2dd72f",
+  "date": "2026-10-27",
+  "on": "Windows 11 bun 1.4.4 (pwsh + curl.exe)"
+ },
+ "node|Deno.serve": {
+  "hash": "2ff47f3a12a2",
+  "date": "2026-10-27",
+  "on": "Windows 11 deno 2.9.8"
+ },
  "node|ERESOLVE و legacy-peer-deps": {
   "hash": "34c71f7c2627",
   "date": "2026-10-06",
@@ -9378,6 +9433,26 @@
   "hash": "f3dd897b68a6",
   "date": "2026-10-06",
   "on": "win11 Node 24 + docker node:22-slim"
+ },
+ "node|Hono": {
+  "hash": "7cf060a9b31a",
+  "date": "2026-10-27",
+  "on": "Windows 11 node 24.22, hono 4.13.14"
+ },
+ "node|Hono + zod": {
+  "hash": "1044610de9d7",
+  "date": "2026-10-27",
+  "on": "Windows 11 node 24.22, zod 4.6.7, tsc 7.0.2"
+ },
+ "node|Hono middleware": {
+  "hash": "527d12fd2c41",
+  "date": "2026-10-27",
+  "on": "Windows 11 node 24.22, hono 4.13.14"
+ },
+ "node|Hono على كل runtime": {
+  "hash": "6cc4ea860d6d",
+  "date": "2026-10-27",
+  "on": "Windows 11 node 24.22 / bun 1.4.4 / deno 2.9.8; docs: Cloudflare Workers (wrangler dev did not start in container)"
  },
  "node|NODE_ENV=production": {
   "hash": "5af9310ce0a1",
@@ -9394,6 +9469,11 @@
   "date": "2026-10-06",
   "on": "docker node:22-slim, Next.js 16.3.8 + win11 pwsh"
  },
+ "node|Node ولا Bun ولا Deno": {
+  "hash": "ab05a292051d",
+  "date": "2026-10-27",
+  "on": "Windows 11 autocannon 8 on node/bun/deno"
+ },
  "node|SIGINT و SIGTERM": {
   "hash": "387c5011b6b3",
   "date": "2026-10-06",
@@ -9403,6 +9483,21 @@
   "hash": "b66673bbc062",
   "date": "2026-10-06",
   "on": "win11 (Node 24.19, npm 11.17)"
+ },
+ "node|bun": {
+  "hash": "a0f6f77e6e6b",
+  "date": "2026-10-27",
+  "on": "Windows 11 bun 1.4.4 portable + docker oven/bun:slim + node:22-slim (install script, npm i -g bun); docs: Windows installer"
+ },
+ "node|bun install": {
+  "hash": "030574d8c7ea",
+  "date": "2026-10-27",
+  "on": "Windows 11 bun 1.4.4 + docker node:22-slim (timings)"
+ },
+ "node|bun test": {
+  "hash": "93809dcc4c62",
+  "date": "2026-10-27",
+  "on": "Windows 11 bun 1.4.4; docs: --watch"
  },
  "node|cloudflared": {
   "hash": "400e5807d621",
@@ -9418,6 +9513,21 @@
   "hash": "dbe9bcb1b4e1",
   "date": "2026-10-06",
   "on": "win11 (Node 24.19, npm 11.17) Vite 8.3"
+ },
+ "node|deno fmt و lint و test": {
+  "hash": "fbc77f99667c",
+  "date": "2026-10-27",
+  "on": "Windows 11 deno 2.9.8"
+ },
+ "node|deno run والصلاحيات": {
+  "hash": "fec5a7d98d86",
+  "date": "2026-10-27",
+  "on": "Windows 11 deno 2.9.8 + docker denoland/deno (prompt) + node:22-slim (install script); docs: Windows installer"
+ },
+ "node|deno.json و npm:": {
+  "hash": "a1c460636dff",
+  "date": "2026-10-27",
+  "on": "Windows 11 deno 2.9.8"
  },
  "node|execFile و spawn": {
   "hash": "59840fc5f64f",
@@ -9638,6 +9748,11 @@
   "hash": "0e089b8c0233",
   "date": "2026-10-06",
   "on": "docker node:22-slim Express 5 + win11 pwsh 7 / ps 5.1"
+ },
+ "node|توافق Bun مع Node": {
+  "hash": "b146ce457cd7",
+  "date": "2026-10-27",
+  "on": "Windows 11 node 24.22 / bun 1.4.4 / deno 2.9.8 + docker oven/bun:slim (better-sqlite3); docs: bun --inspect"
  },
  "node|سكربت Node كأداة": {
   "hash": "e2e608728278",
@@ -12044,6 +12159,11 @@
   "date": "2026-10-06",
   "on": "win11 scratch project, Playwright 1.63 + axe-core 4.13.0"
  },
+ "quality|Biome ولا ESLint": {
+  "hash": "f771424f9208",
+  "date": "2026-10-27",
+  "on": "Windows 11 biome 2.6.3 + eslint 9/typescript-eslint"
+ },
  "quality|HUSKY=0 و --no-verify": {
   "hash": "3a905984990c",
   "date": "2026-10-06",
@@ -12058,6 +12178,26 @@
   "hash": "1539c4ddbc9a",
   "date": "2026-10-06",
   "on": "docker postgres:18 + win11 scratch project, Playwright 1.63 CI=1; docs: real Actions run, prisma"
+ },
+ "quality|biome": {
+  "hash": "a85d06fd1b1b",
+  "date": "2026-10-27",
+  "on": "Windows 11 biome 2.6.3"
+ },
+ "quality|biome ci": {
+  "hash": "8b90a1b7cef9",
+  "date": "2026-10-27",
+  "on": "Windows 11 biome 2.6.3; docs: GitHub Actions YAML"
+ },
+ "quality|biome migrate": {
+  "hash": "70df5f8ee7dd",
+  "date": "2026-10-27",
+  "on": "Windows 11 biome 2.6.3 + eslint 9 + prettier"
+ },
+ "quality|biome.json": {
+  "hash": "1d169d25d01e",
+  "date": "2026-10-27",
+  "on": "Windows 11 biome 2.6.3"
  },
  "quality|commitlint": {
   "hash": "19ff3804f93d",
@@ -12098,6 +12238,11 @@
   "hash": "1e72ffb95d78",
   "date": "2026-10-06",
   "on": "win11 Git Bash (Node 24, npm 11) + pwsh 7 + ps 5.1 + cmd, Jest 30.5 + node:22-slim TTY"
+ },
+ "quality|knip": {
+  "hash": "161dd5592a88",
+  "date": "2026-10-27",
+  "on": "Windows 11 knip 6.43.0"
  },
  "quality|lint-staged": {
   "hash": "75f5f9e2696f",

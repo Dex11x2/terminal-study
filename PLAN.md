@@ -219,7 +219,7 @@
 - [ ] تاب جديد pydata: Jupyter و numpy و pandas والرسوم و scikit-learn و scraping
 - [x] تاب جديد vue: Vue 3 و Router و Pinia والاختبارات و Nuxt ومقارنة Svelte. اتعمل: 42 درس في 11 قسم (Vue 3.5.44، Nuxt 4.6.3)
 - [x] apis/12 و arch/15: RabbitMQ و Kafka، و Meilisearch و Elasticsearch، و outbox، و microservices. اتعمل: 13 درس في apis (RabbitMQ و Kafka و CDC و Meilisearch و Elasticsearch) و 8 في arch (microservices و saga و tracing)
-- [ ] node/09 و quality/07 و js/20: Bun و Deno و Hono، و Biome، و Web Components و WebAssembly
+- [x] node/09 و quality/07 و js/20: Bun و Deno و Hono، و Biome، و Web Components و WebAssembly. اتعمل: 14 درس في node و 6 في quality (Biome و knip) و 9 في js
 
 الدفعة التانية (بعد الأولى):
 - [ ] gha (reusable workflows، environments، matrix) و wsl و sshc
