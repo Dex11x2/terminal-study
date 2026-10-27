@@ -51,7 +51,8 @@ function lessonsIn(files){
     const open = m.index + m[0].length - 1;
     for (const cat of arrayElements(src, open).els){
       const body = src.slice(cat.start, cat.end);
-      const t = (body.match(/^\s*\{\s*t:\s*"((?:[^"\\]|\\.)*)"/) || [])[1];
+      const m = body.match(/^\s*\{\s*t:\s*(?:"((?:[^"\\]|\\.)*)"|R`([^`]*)`)/) || [];
+      const t = m[1] !== undefined ? m[1] : m[2];
       const im = body.match(/\bitems:\s*\[/);
       if (!im) continue;
       for (const it of arrayElements(body, im.index + im[0].length - 1).els){
