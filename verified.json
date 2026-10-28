@@ -5104,6 +5104,11 @@
   "date": "2026-10-06",
   "on": "Docker Desktop 29.6.1 (win11), Compose v5.3.0"
  },
+ "docker|docker --help والأوامر المجمّعة": {
+  "hash": "cd196e2f4697",
+  "date": "2026-10-28",
+  "on": "Docker 29.6.1 و Compose v5.3.0 على ويندوز 11؛ أوامر قراية بس (مفيش prune)"
+ },
  "docker|docker compose ولا docker-compose": {
   "hash": "877c0990acda",
   "date": "2026-10-06",
@@ -5113,6 +5118,11 @@
   "hash": "ae283f4731bf",
   "date": "2026-10-06",
   "on": "Docker Desktop 29.6.1 (win11, Git Bash) + pwsh 7"
+ },
+ "docker|docker inspect --format": {
+  "hash": "0bc081e06b5e",
+  "date": "2026-10-28",
+  "on": "Docker 29.6.1 و Compose v5.3.0 على ويندوز 11؛ أوامر قراية بس (مفيش prune)"
  },
  "docker|docker logs": {
   "hash": "e58420c9493f",
@@ -5254,6 +5264,11 @@
   "date": "2026-10-06",
   "on": "Docker Desktop 29.6.1 (win11, Git Bash)"
  },
+ "docker|المعاينة في docker": {
+  "hash": "ab1dbbe7634e",
+  "date": "2026-10-28",
+  "on": "Docker 29.6.1 و Compose v5.3.0 على ويندوز 11؛ أوامر قراية بس (مفيش prune)"
+ },
  "docker|تنضيف": {
   "hash": "38da5a5bd2aa",
   "date": "2026-10-06",
@@ -5269,6 +5284,11 @@
   "date": "2026-10-06",
   "on": "Docker Desktop 29.6.1 (win11), Compose v5.3.0"
  },
+ "docker|لما الكونتينر يقع": {
+  "hash": "9b918ebef30f",
+  "date": "2026-10-28",
+  "on": "Docker 29.6.1 و Compose v5.3.0 على ويندوز 11؛ أوامر قراية بس (مفيش prune)"
+ },
  "docker|ليه الـ container وقع": {
   "hash": "66f4caad9feb",
   "date": "2026-10-06",
@@ -5278,6 +5298,26 @@
   "hash": "d0dd2bc5946f",
   "date": "2026-10-06",
   "on": "Docker Desktop 29.6.1 (win11), Compose v5.3.0"
+ },
+ "docker|مشروع — compose والمعاينة": {
+  "hash": "9d09bd747fd6",
+  "date": "2026-10-28",
+  "on": "Docker 29.6.1 — الصورة اتبنت ٤ مرات واتقاست (الكاش، وسياق البناء 68.17MB->90B، والحجم، و healthy)، والتطبيق رد فعلًا، والصور اتمسحت بعدها"
+ },
+ "docker|مشروع — multi-stage و USER و HEALTHCHECK": {
+  "hash": "c99c1c6ce10c",
+  "date": "2026-10-28",
+  "on": "Docker 29.6.1 — الصورة اتبنت ٤ مرات واتقاست (الكاش، وسياق البناء 68.17MB->90B، والحجم، و healthy)، والتطبيق رد فعلًا، والصور اتمسحت بعدها"
+ },
+ "docker|مشروع — أول Dockerfile، والفخ اللي فيه": {
+  "hash": "4468e1fe681e",
+  "date": "2026-10-28",
+  "on": "Docker 29.6.1 — الصورة اتبنت ٤ مرات واتقاست (الكاش، وسياق البناء 68.17MB->90B، والحجم، و healthy)، والتطبيق رد فعلًا، والصور اتمسحت بعدها"
+ },
+ "docker|مشروع — الطبقات و .dockerignore": {
+  "hash": "23fcc35d2375",
+  "date": "2026-10-28",
+  "on": "Docker 29.6.1 — الصورة اتبنت ٤ مرات واتقاست (الكاش، وسياق البناء 68.17MB->90B، والحجم، و healthy)، والتطبيق رد فعلًا، والصور اتمسحت بعدها"
  },
  "docker|نسخ وباك أب": {
   "hash": "e9756b43f3a6",
