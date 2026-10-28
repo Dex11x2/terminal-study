@@ -6,7 +6,7 @@
 
 ## الحالة دلوقتي
 
-- **60 تاب، و 3590 درس، و 154 تمرين بيتصحح لوحده.** `npm run check` بيطلع 0 خطأ و 0 تنبيه، وكل الدروس فيها `teach`.
+- **60 تاب، و 3598 درس، و 154 تمرين بيتصحح لوحده.** `npm run check` بيطلع 0 خطأ و 0 تنبيه، وكل الدروس فيها `teach`.
 - **التمارين اللي بتتصحح لوحدها موجودة في 5 تابات بس:** js (38)، و dsa (59)، و data (29)، و symbols (15)، و files (13).
 - **أصغر التابات:** sshc (9)، و wsl (14)، و apps (15)، و mongo (23)، و gha (24)، و diag (28)، و nginx (28).
 
@@ -268,8 +268,12 @@
   - **ملاحظة للفاحص:** `tools/check.js` بيعدّ `[[`/`]]` عدّ أعمى، فنوع المصفوفة `[object[]]` في `example` بيكسره (`]]` من غير `[[`). استخدمنا `[array]` بدلها في الكود.
 - [ ] `ps` — مشروع ٣: من سكربت لموديول (`.psm1` و `.psd1` و comment-based help عشان `Get-Help` يشتغل على أمرك، و argument completers).
 - [ ] `ps` — مشروع ٤: مراقبة + إشعار + جدولة، ومشروع ٥: أداة idempotent لتجهيز جهاز.
-- [ ] `bash` — قسم «توصل للأمر بنفسك» (`man` sections و `/` للبحث جواه، و `apropos`/`man -k`، و `help` للـ builtins، وقراية سطر SYNOPSIS، و `type -a`، و `compgen`، و `tldr`)، ومشاريع متدرّجة بنفس الشكل.
-- [ ] `cmd` — `help` و `/?` و `where`، ومشروع batch متدرّج واحد.
+- [x] `bash/29.js` — قسم «توصل للأمر بنفسك» (٥ دروس، مستوى ١): الدورة الخماسية، و `man -k`/`whatis`، وأقسام man (و`man 5 crontab` مش `man crontab`)، وقراية SYNOPSIS (أشكال `cp` التلاتة وليه `cp -t` موجودة)، و`help`/`type -a` (ليه `man cd` بيفشل، و`printf` builtin وملف في نفس الوقت)، و`compgen`.
+  - اتجرّب في Docker على `ubuntu:24.04`. **ملاحظة مهمة للتجارب الجاية:** صورة أوبونتو فيها `man` stub (بيطبع رسالة «system has been minimized») و`dpkg` path-excludes بتمسح `/usr/share/man`. لتشغيل man حقيقي: امسح `/etc/dpkg/dpkg.cfg.d/excludes`، و`apt-get install --reinstall man-db manpages`، و`dpkg-divert --rename --remove /usr/bin/man`، و`mandb`. (الـ Dockerfile اتعمل في scratchpad الجلسة كـ `lab-man:24.04`.)
+  - والجزء الـ builtin اتجرّب كمان في Git Bash على ويندوز: فيه `help`/`type`/`compgen` ومفيش `man`/`apropos`/`whatis`، وده مكتوب في الدروس.
+- [x] `cmd/13.js` — قسم «توصل للأمر بنفسك» (٣ دروس، مستوى ١): `help` الفهرس (٨٣ أمر) و`/?`، وقراية سطر الاستخدام في ويندوز (`[drive:][path][filename]` والنقطتين الاختيارية)، والدورة + فخ `%errorlevel%` في سطر واحد + امتى تسيب CMD لـ PowerShell.
+- [ ] `bash` — مشاريع متدرّجة بنفس شكل مشاريع PowerShell.
+- [ ] `cmd` — مشروع batch متدرّج واحد.
 - [ ] بعد الترمنال: نفس الفكرة (الطريقة + مشاريع متدرّجة) على باقي التابات.
 
 ### ٤. تمارين بتتصحح لوحدها في تابات أكتر

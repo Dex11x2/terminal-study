@@ -3394,6 +3394,11 @@
   "date": "2026-10-06",
   "on": "win11 cmd (local bare origin)"
  },
+ "cmd|help و /?": {
+  "hash": "9ce5ef8f0eef",
+  "date": "2026-10-28",
+  "on": "windows-11, cmd"
+ },
  "cmd|hosts": {
   "hash": "fe80c7ed00f0",
   "date": "2026-10-06",
@@ -3664,10 +3669,20 @@
   "date": "2026-10-06",
   "on": "win11 cmd; docs: double-click (username masked later)"
  },
+ "cmd|الطريقة: من مهمة لأمر في CMD": {
+  "hash": "0913692a97c1",
+  "date": "2026-10-28",
+  "on": "windows-11, cmd"
+ },
  "cmd|رموز CMD": {
   "hash": "9b2d14a9bc2b",
   "date": "2026-10-06",
   "on": "win11 cmd (username masked later)"
+ },
+ "cmd|سطر الاستخدام في CMD": {
+  "hash": "cb3b8f0f0ea2",
+  "date": "2026-10-28",
+  "on": "windows-11, cmd"
  },
  "cpp|C++ في المسابقات": {
   "hash": "dbc4edee8a2a",
