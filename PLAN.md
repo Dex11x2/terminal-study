@@ -213,7 +213,7 @@
 
 ### ٣ج. دفعة المحتوى الجديد (٢٧ أكتوبر، بقرارك «ضيفهم كلهم»)
 
-الدفعة الأولى (شغالة):
+الدفعة الأولى (خلصت ٢٨ أكتوبر، كل الدروس اتجربت واتسجلت في verified.json، والصور اللي اتسحبت اتمسحت):
 - [x] net و re: تجربة الـ 22 درس اللي اتكتبوا النهارده + net/05 (subnetting، ARP و DHCP، IPv6، tcpdump و Wireshark، WireGuard) + re/02 (المستوى التاني على تطبيقك بس). اتعمل: الـ 22 درس اتجربوا واتصلح فيهم curl.exe في PS 5.1 و example.com على Cloudflare و MTU و smali apktool 3، و net/05 فيه 11 درس. re/02 اتكتب بعدين من ناحية الدفاع (٢٨ أكتوبر): 11 درس (الأسرار في الـ APK، وتقفيل المانيفست، و R8 و retrace، و network security config والـ pinning، والكلاينت مش مضمون، و Play Integrity، و Keystore)، واتغيّر وصف المستوى ٢ و ٣
 - [x] ai/07: MCP، و agents و tool use، و Claude Code و Cursor، و Ollama محلي، و evals. اتعمل: 18 درس في 4 أقسام. وبعدها ai/11: صور و PDF للموديل (5 دروس). متابعة: SDK 1.3.0 بيبعت المفتاح Authorization: Bearer، ودرس «@anthropic-ai/sdk» في ai/02 لسه بيقول x-api-key (اتجرّب على 0.132): يتراجع
 - [x] تاب جديد pydata: Jupyter و numpy و pandas والرسوم و scikit-learn و scraping. اتعمل: 29 درس في 9 أقسام (pandas 3.1، scikit-learn 1.9، polars و DuckDB)
@@ -221,7 +221,7 @@
 - [x] apis/12 و arch/15: RabbitMQ و Kafka، و Meilisearch و Elasticsearch، و outbox، و microservices. اتعمل: 13 درس في apis (RabbitMQ و Kafka و CDC و Meilisearch و Elasticsearch) و 8 في arch (microservices و saga و tracing)
 - [x] node/09 و quality/07 و js/20: Bun و Deno و Hono، و Biome، و Web Components و WebAssembly. اتعمل: 14 درس في node و 6 في quality (Biome و knip) و 9 في js
 
-الدفعة التانية (بعد الأولى):
+الدفعة التانية (خلصت ٢٨ أكتوبر):
 - [x] gha (reusable workflows، environments، matrix) و wsl و sshc. اتعمل: 9 دروس gha (workflow_call و composite و act و actionlint و zizmor و script injection) و 7 wsl و 7 sshc (SOCKS والشهادات و ssh-audit و FIDO2)
 - [x] mongo (aggregation أعمق) و apps (Tauri). اتعمل: 10 دروس mongo (aggregate متقدم و explain و replica set و change streams على mongo 8) و 6 apps (Tauri 2 والمقارنة مع Electron والتحديث الموقّع)
 - [x] pyapi (Django و Flask) و python (scraping بسيط لو مش في pydata). اتعمل: 17 درس (Django 6.1 و DRF و pytest-django و Flask 3.1 ومقارنة الـ 3). الـ scraping اتغطى في pydata
