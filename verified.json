@@ -1929,6 +1929,11 @@
   "date": "2026-10-06",
   "on": "ubuntu-24.04 docker; docs: zsh"
  },
+ "bash|SYNOPSIS: اقرا سطر الاستخدام": {
+  "hash": "42110589f96a",
+  "date": "2026-10-28",
+  "on": "ubuntu-24.04 (docker، صفحات man متسطبة) و Git Bash على ويندوز 11"
+ },
  "bash|VAR=value": {
   "hash": "144355df7173",
   "date": "2026-10-06",
@@ -2013,6 +2018,11 @@
   "hash": "567de1b1923b",
   "date": "2026-10-06",
   "on": "ubuntu-24.04 docker (normal user); docs: mac"
+ },
+ "bash|compgen": {
+  "hash": "7e7090febca2",
+  "date": "2026-10-28",
+  "on": "ubuntu-24.04 (docker، صفحات man متسطبة) و Git Bash على ويندوز 11"
  },
  "bash|convert-all.sh": {
   "hash": "98325321dc3f",
@@ -2173,6 +2183,11 @@
   "hash": "047e087b4fcc",
   "date": "2026-10-06",
   "on": "ubuntu-24.04 (user ali)"
+ },
+ "bash|help و type -a": {
+  "hash": "69c8f888ca81",
+  "date": "2026-10-28",
+  "on": "ubuntu-24.04 (docker، صفحات man متسطبة) و Git Bash على ويندوز 11"
  },
  "bash|heredoc و tee": {
   "hash": "0e1a7e879a3b",
@@ -2654,10 +2669,20 @@
   "date": "2026-10-06",
   "on": "ubuntu-24.04 (user ali)"
  },
+ "bash|أقسام man": {
+  "hash": "0efa8b7ff1f2",
+  "date": "2026-10-28",
+  "on": "ubuntu-24.04 (docker، صفحات man متسطبة) و Git Bash على ويندوز 11"
+ },
  "bash|أول سكربت": {
   "hash": "ca1335dc304d",
   "date": "2026-10-06",
   "on": "ubuntu-24.04 docker (bash 5.2)"
+ },
+ "bash|الطريقة: من مهمة لأمر": {
+  "hash": "cd13ba218526",
+  "date": "2026-10-28",
+  "on": "ubuntu-24.04 (docker، صفحات man متسطبة) و Git Bash على ويندوز 11"
  },
  "career|ATS": {
   "hash": "77260d3a217c",
