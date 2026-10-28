@@ -5189,6 +5189,11 @@
   "date": "2026-10-06",
   "on": "Docker Desktop 29.6.1 (win11)"
  },
+ "docker|nginx واحد قدام موقعين": {
+  "hash": "8114d8cecdfd",
+  "date": "2026-10-28",
+  "on": "Docker 29.6.1 (Docker Desktop، ويندوز) + Git Bash: معمل shop/blog/edge اتبنى واتكسر واتصلح، والناتج منسوخ. docs: prune وufw وNext.js NEXT_PUBLIC"
+ },
  "docker|nginx-proxy": {
   "hash": "68a5a6323d3c",
   "date": "2026-10-06",
@@ -5254,6 +5259,21 @@
   "date": "2026-10-06",
   "on": "Docker Desktop 29.6.1 (win11, Git Bash), trivy 0.75.0; docs: ufw/iptables bypass"
  },
+ "docker|الاسم اللي اتكرر": {
+  "hash": "eaaaaffa8f8c",
+  "date": "2026-10-28",
+  "on": "Docker 29.6.1 (Docker Desktop، ويندوز) + Git Bash: معمل shop/blog/edge اتبنى واتكسر واتصلح، والناتج منسوخ. docs: prune وufw وNext.js NEXT_PUBLIC"
+ },
+ "docker|الباك إند قام قبل الداتابيز": {
+  "hash": "e94f518722bf",
+  "date": "2026-10-28",
+  "on": "Docker 29.6.1 (Docker Desktop، ويندوز) + Git Bash: معمل shop/blog/edge اتبنى واتكسر واتصلح، والناتج منسوخ. docs: prune وufw وNext.js NEXT_PUBLIC"
+ },
+ "docker|البورت المفتوح للدنيا": {
+  "hash": "127f098b3994",
+  "date": "2026-10-28",
+  "on": "Docker 29.6.1 (Docker Desktop، ويندوز) + Git Bash: معمل shop/blog/edge اتبنى واتكسر واتصلح، والناتج منسوخ. docs: prune وufw وNext.js NEXT_PUBLIC"
+ },
  "docker|البورت متاخد": {
   "hash": "6c10c76a1ab2",
   "date": "2026-10-06",
@@ -5273,6 +5293,11 @@
   "hash": "41da8702553a",
   "date": "2026-10-06",
   "on": "Docker Desktop 29.6.1 (win11, Git Bash), Compose v5.3.0, local bare git remote; docs: unfiltered prune"
+ },
+ "docker|الشبكة ملك مين؟": {
+  "hash": "8aefb19f30a3",
+  "date": "2026-10-28",
+  "on": "Docker 29.6.1 (Docker Desktop، ويندوز) + Git Bash: معمل shop/blog/edge اتبنى واتكسر واتصلح، والناتج منسوخ. docs: prune وufw وNext.js NEXT_PUBLIC"
  },
  "docker|الطبقات والكاش": {
   "hash": "205b89cb99f4",
@@ -5349,10 +5374,20 @@
   "date": "2026-10-28",
   "on": "Docker 29.6.1 — الصورة اتبنت ٤ مرات واتقاست (الكاش، وسياق البناء 68.17MB->90B، والحجم، و healthy)، والتطبيق رد فعلًا، والصور اتمسحت بعدها"
  },
+ "docker|مشروعين على شبكة واحدة": {
+  "hash": "939a4d9002fc",
+  "date": "2026-10-28",
+  "on": "Docker 29.6.1 (Docker Desktop، ويندوز) + Git Bash: معمل shop/blog/edge اتبنى واتكسر واتصلح، والناتج منسوخ. docs: prune وufw وNext.js NEXT_PUBLIC"
+ },
  "docker|نسخ وباك أب": {
   "hash": "e9756b43f3a6",
   "date": "2026-10-06",
   "on": "Docker Desktop 29.6.1 (win11, Git Bash) + pwsh 7"
+ },
+ "docker|وقت البناء ووقت التشغيل": {
+  "hash": "22edb0a4802b",
+  "date": "2026-10-28",
+  "on": "Docker 29.6.1 (Docker Desktop، ويندوز) + Git Bash: معمل shop/blog/edge اتبنى واتكسر واتصلح، والناتج منسوخ. docs: prune وufw وNext.js NEXT_PUBLIC"
  },
  "dotnet|ASP.NET Core Identity": {
   "hash": "56256c32730b",
