@@ -13084,6 +13084,11 @@
   "date": "2026-10-06",
   "on": "docker python:3.13 + win11 pwsh 7 (Python 3.14.3)"
  },
+ "python|help() و dir()": {
+  "hash": "ff789ccd4ffd",
+  "date": "2026-10-28",
+  "on": "Python 3.14.3 على ويندوز 11"
+ },
  "python|if __name__ == \"__main__\":": {
   "hash": "eb00877ff8bc",
   "date": "2026-10-06",
@@ -13184,6 +13189,11 @@
   "date": "2026-10-06",
   "on": "win11 Python 3.14 venv + docker python:3.13-slim"
  },
+ "python|python -m pip والأدوات المدفونة": {
+  "hash": "7c37941dd19c",
+  "date": "2026-10-28",
+  "on": "Python 3.14.3 على ويندوز 11"
+ },
  "python|python3 - <<'PY'": {
   "hash": "3524d5bb8614",
   "date": "2026-10-06",
@@ -13263,6 +13273,31 @@
   "hash": "abc2ff5a0c66",
   "date": "2026-10-06",
   "on": "win11 Python 3.14 pwsh 7 PyYAML 6.0.3 + docker python:3.13-slim"
+ },
+ "python|اقرا الـ traceback": {
+  "hash": "632b471c2f1c",
+  "date": "2026-10-28",
+  "on": "Python 3.14.3 على ويندوز 11"
+ },
+ "python|مشروع — argparse بعمق": {
+  "hash": "81f5236dfdaf",
+  "date": "2026-10-28",
+  "on": "Python 3.14.3 — حزمة tally اتبنت واتسطّبت -e في venv محلي، والأمر اشتغل باسمه، و٥ اختبارات عدّوا، والـ wheel اتبنت واتفتحت"
+ },
+ "python|مشروع — venv و pyproject والأمر": {
+  "hash": "822515a22123",
+  "date": "2026-10-28",
+  "on": "Python 3.14.3 — حزمة tally اتبنت واتسطّبت -e في venv محلي، والأمر اشتغل باسمه، و٥ اختبارات عدّوا، والـ wheel اتبنت واتفتحت"
+ },
+ "python|مشروع — اختبارات وتغليف": {
+  "hash": "c62266038bed",
+  "date": "2026-10-28",
+  "on": "Python 3.14.3 — حزمة tally اتبنت واتسطّبت -e في venv محلي، والأمر اشتغل باسمه، و٥ اختبارات عدّوا، والـ wheel اتبنت واتفتحت"
+ },
+ "python|مشروع — المنطق منفصل عن الواجهة": {
+  "hash": "06e9947c223c",
+  "date": "2026-10-28",
+  "on": "Python 3.14.3 — حزمة tally اتبنت واتسطّبت -e في venv محلي، والأمر اشتغل باسمه، و٥ اختبارات عدّوا، والـ wheel اتبنت واتفتحت"
  },
  "quality|--coverage": {
   "hash": "d0acdc43d003",
