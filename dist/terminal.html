@@ -186543,6 +186543,1079 @@ same
 // ملف إضافي لتاب apps: الحقول نفس شكلها في 01.js.
 
 MORE("apps", [
+    {
+      t: "Tauri 2: برنامج ديسكتوب أخف",
+      l: 2,
+      n: "نفس واجهة الويب، بس من غير ما تشحن Chromium: الـ backend بـ Rust والنافذة من webview النظام",
+      items: [
+        {
+          cmd: "Electron ولا Tauri ولا native",
+          title: "تعمل برنامج ديسكتوب بإيه؟ الحجم والذاكرة والأمان",
+          desc: R`Electron بيشحن Chromium و Node جوه كل برنامج، فأصغر برنامج حوالي ١٠٠ ميجا. Tauri بيستخدم الـ webview اللي في النظام نفسه (WebView2 على ويندوز، و WebKit على الماك ولينكس) والـ backend بـ Rust، فالبرنامج بضعة ميجات. و native (C# على ويندوز، و Swift على الماك) أحسن تكامل مع النظام بس كود منفصل لكل نظام.
+
+جرّبت نفس الصفحة بـ Electron و Tauri على لينكس: الـ deb بتاع Electron ‏97 ميجا، وبتاع Tauri ‏2.3 ميجا. بس الذاكرة وقت التشغيل كانت قريبة من بعض.`,
+          example: R`# Tauri (في فولدر المشروع، بعد npm run tauri build):
+ls -lh src-tauri/target/release/bundle/deb/
+dpkg-deb -I src-tauri/target/release/bundle/deb/notes-app_0.1.0_amd64.deb | grep -E "Installed-Size|Depends"
+# Electron (نفس الصفحة بـ electron-builder --linux deb):
+ls -lh release/
+dpkg-deb -I release/notes-electron_0.1.0_amd64.deb | grep -E "Installed-Size|Depends"`,
+          try: R`على ويندوز من غير ما تسطّب حاجة: افتح PowerShell في فولدر أي مشروع Tauri (حتى لو لسه [[npm create tauri-app]] بس) وشغّل [[npx tauri info]]. هتلاقي سطر [[WebView2]] بالنسخة اللي على جهازك. ده المتصفح اللي برنامجك هيستخدمه. وفكّر: لو عندك برنامج داخلي للشركة فريقه كله JavaScript ومحتاج مكتبة Node معينة، هتختار إيه؟`,
+          deep: {
+            why: "أول سؤال في أي مشروع ديسكتوب، وبيتسأل في الانترفيو: «ليه VS Code و Slack و Discord معمولين بـ Electron؟» و «إيه اللي Tauri بيحله؟». الاختيار بيأثر على حجم التحميل، والذاكرة، واللغة اللي الفريق هيكتب بيها، وشكل الواجهة على كل نظام.",
+            how: R`Electron: كل برنامج معاه Chromium كامل (نفس نسخة المتصفح على كل الأنظمة) و Node.js في الـ main process. الواجهة شكلها واحد بالظبط في كل حتة، وتقدر تستخدم أي مكتبة npm. التمن: ١٠٠ ميجا تحميل وأكتر من ٢٥٠ ميجا بعد التسطيب، وكل برنامج بيحدّث Chromium بتاعه لوحده (أو مبيحدّثوش فيفضل فيه ثغرات).
+
+Tauri 2: الـ webview من النظام: WebView2 (مبني على Edge/Chromium) على ويندوز، و WKWebView (Safari) على الماك، و WebKitGTK على لينكس. الـ backend Rust بيتكلم مع الواجهة بـ commands، وكل حاجة الواجهة تقدر تعملها لازم تتسمح صراحةً (capabilities). التمن: لازم تتعلم شوية Rust، والواجهة ممكن تتصرف مختلف شوية بين Chromium و WebKit (CSS و APIs جديدة)، والبناء أبطأ أول مرة (أول build عندي أخد حوالي ٩ دقايق، والتعديلات بعده دقيقة ونص). وكمان بيبني Android و iOS من نفس المشروع.
+
+قياساتي (لينكس في Docker، Tauri 2.12 و Electron 45.1، صفحة HTML صغيرة): الـ deb ‏2.3 ميجا مقابل 97 ميجا، والمساحة بعد التسطيب حوالي 8 ميجا مقابل 273 ميجا (منهم ملف التشغيل نفسه 224 ميجا). الذاكرة (PSS لكل العمليات بعد ٨ ثواني): Tauri ‏277 ميجا (البرنامج + WebKitWebProcess + WebKitNetworkProcess)، و Electron ‏243 ميجا (٦ عمليات). يعني فرق الحجم حقيقي وضخم، لكن «Tauri بياكل رام أقل» مش مضمون: بيعتمد على الـ webview بتاع النظام.
+
+native: WinUI/WPF بـ C# (تاب «C# و .NET»)، و SwiftUI على الماك (تاب «Swift و iOS»)، و GTK أو Qt. أحسن أداء وتكامل (accessibility، وشكل النظام، والـ APIs)، بس كل نظام كود لوحده. و Flutter كمان بيعمل ديسكتوب برسم الواجهة بنفسه (تاب «Flutter و Dart»).`,
+            when: "Electron: فريق JavaScript، ومحتاج نفس الشكل بالظبط في كل نظام، أو مكتبات Node أو Chromium APIs (زي VS Code). Tauri: الحجم والأمان مهمين، أو أداة صغيرة، أو عايز ديسكتوب وموبايل من نفس الكود ومش خايف من Rust. native: برنامج لنظام واحد أو محتاج تكامل عميق معاه.",
+            mistakes: R`تختار Tauri عشان «أخف في الرام» من غير ما تقيس: على لينكس كان أتقل في تجربتي. وتختبر الواجهة على Chrome بس وتنزل Tauri على الماك فتلاقي CSS أو API مش شغال في Safari/WebKit. وتفتكر إن Tauri «مفيهوش backend»: كل حاجة حساسة (ملفات، مفاتيح، شبكة من غير CORS) مكانها Rust commands مش الـ JavaScript. وتفتكر إن Electron «غير آمن» في المطلق: المشكلة في الإعدادات (nodeIntegration و contextIsolation) مش في Electron نفسه.`
+          },
+          teach: R`## نفس الصفحة، طريقتين
+
+بنيت صفحة HTML صغيرة جدًا مرتين في container لينكس (Debian 12): مرة بـ Tauri 2.12 (قالب [[vanilla]] من [[create-tauri-app]]، من غير plugin updater)، ومرة بـ Electron 45.1 و electron-builder 26.18. وبعدين قريت الحجم والذاكرة.
+
+---
+
+## ١. حجم الـ installer
+
+### Tauri
+
+~~~bash
+ls -lh src-tauri/target/release/bundle/deb/
+~~~
+
+~~~text ناتج البناء
+Finished 2 bundles at:
+    .../bundle/deb/notes-app_0.1.0_amd64.deb (2.32 MiB)
+    .../bundle/rpm/notes-app-0.1.0-1.x86_64.rpm (2.32 MiB)
+~~~
+
+[[-l]] تفاصيل، و [[-h]] الحجم بالميجا (human). (بعد ما ضفت plugin الـ updater في درس جاي بقى 3.4M.)
+
+### Electron
+
+~~~bash
+ls -lh release/
+~~~
+
+~~~text الناتج
+-rw-r--r-- 1 root root  857 Oct 27 23:51 builder-debug.yml
+drwxr-xr-x 4 root root 4.0K Oct 27 23:50 linux-unpacked
+-rw-r--r-- 1 root root  97M Oct 27 23:51 notes-electron_0.1.0_amd64.deb
+~~~
+
+**2.3 ميجا مقابل 97 ميجا** لنفس الصفحة. وعلى ويندوز درس «electron-builder» طلّع Setup.exe بـ 111 ميجا.
+
+---
+
+## ٢. بعد التسطيب: [[dpkg-deb -I]]
+
+[[dpkg-deb]] أداة ملفات [[.deb]] (باكدجات Debian و Ubuntu)، و [[-I]] (Info) بيطبع بيانات الباكدج من غير ما يسطّبه. و [[grep -E "A|B"]] بيسيب السطور اللي فيها A أو B.
+
+~~~text Tauri
+ Installed-Size: 8149
+ Depends: libwebkit2gtk-4.1-0, libgtk-3-0
+~~~
+
+~~~text Electron
+ Installed-Size: 280014
+ Depends: libgtk-3-0, libnotify4, libnss3, libxss1, libxtst6, xdg-utils, libatspi2.0-0, libuuid1, libsecret-1-0
+~~~
+
+| | Tauri | Electron |
+|---|---|---|
+| [[Installed-Size]] (بالكيلوبايت) | 8149 ≈ 8 ميجا | 280014 ≈ 273 ميجا |
+| أكبر ملف | البرنامج نفسه 6 ميجا (8 مع الـ updater) | البرنامج 224 ميجا (Chromium جواه) |
+| [[Depends]] | الـ webview بتاع النظام ([[libwebkit2gtk-4.1-0]]) | مكتبات بيحتاجها Chromium |
+
+ده الفرق الأساسي: Electron **بيشحن** المتصفح، و Tauri **بيستلفه** من النظام. على ويندوز المتصفح ده WebView2، وموجود في ويندوز ١٠ و ١١ الحديثة. [[npx tauri info]] على ويندوز هنا قال:
+
+~~~text الناتج (مختصر)
+[✘] Environment
+    - OS: Windows 10.0.26300 x86_64 (X64)
+    ✔ WebView2: 155.0.4283.62
+    ✘ Couldn't detect any Visual Studio or VS Build Tools instance with MSVC and SDK components.
+    ✘ rustc: not installed!
+~~~
+
+WebView2 موجود، بس البناء على ويندوز محتاج Rust و Visual Studio Build Tools (مسطّبتهمش، فبناء ويندوز في الدروس دي من الـ docs).
+
+---
+
+## ٣. الذاكرة: النتيجة اللي ممكن متتوقعهاش
+
+شغّلت الاتنين تحت شاشة وهمية (Xvfb) وجمعت **PSS** لكل العمليات بعد ٨ ثواني. PSS = الذاكرة الخاصة بالعملية + نصيبها من الذاكرة المشتركة (أعدل رقم لما تجمع كذا عملية).
+
+~~~text الناتج
+tauri: 277 MB PSS, processes: notes-app WebKitNetworkPr WebKitWebProces
+electron: 243 MB PSS, processes: electron electron electron electron electron electron
+~~~
+
+- Tauri: البرنامج نفسه + عملية WebKit للصفحة + عملية للشبكة.
+- Electron: ٦ عمليات (main و renderer و GPU و utility...).
+
+على لينكس WebKitGTK مش أخف من Chromium. على ويندوز Tauri بيستخدم WebView2 (Chromium برضه)، فالفرق في الرام بيعتمد على النظام. **الحجم** هو المكسب المؤكد، مش الرام.
+
+---
+
+## ٤. الجدول
+
+| | Electron | Tauri 2 | native |
+|---|---|---|---|
+| الواجهة | HTML/CSS/JS في Chromium مشحون | HTML/CSS/JS في webview النظام | أدوات النظام (WinUI، SwiftUI، GTK) |
+| الـ backend | Node.js | Rust | نفس لغة الواجهة |
+| الحجم | ~100 ميجا | بضعة ميجات | صغير |
+| الشكل على كل نظام | واحد بالظبط | ممكن يختلف (WebKit مقابل Chromium) | مختلف (مقصود) |
+| الأمان الافتراضي | لازم تضبط الإعدادات | الواجهة مش بتقدر تعمل حاجة غير اللي مسموحلها | حسب الكود |
+| موبايل | لأ | Android و iOS | كود لوحده |
+| أمثلة | VS Code، Slack، Discord | أدوات أصغر وأحدث | برامج النظام |
+
+## الخلاصة
+
+- Electron = بتشحن متصفح كامل: أكبر، بس كل حاجة Node و Chromium متاحة وشكل واحد.
+- Tauri = بتستلف متصفح النظام: أصغر بمراحل، و Rust للـ backend، واختبر على كل نظام.
+- الرام قيسها بنفسك، متصدقش الجملة الشائعة.`,
+          lines: [
+            "Tauri: اعرض ملفات الـ deb اللي اتبنت وأحجامها بالميجا.",
+            "Tauri: بيانات الباكدج: الحجم بعد التسطيب بالكيلوبايت، والمكتبات اللي محتاجها من النظام.",
+            "Electron: ملفات الناتج من electron-builder وأحجامها.",
+            "Electron: نفس البيانات لباكدج Electron للمقارنة."
+          ],
+          sol: R`على الجهاز هنا [[npx tauri info]] طلّع [[✔ WebView2: 155.0.4283.62]]. ده Chromium بتاع Edge، وكل برامج Tauri على الجهاز بتستخدمه وبيتحدّث مع ويندوز. وفي نفس الناتج: [[✘ rustc: not installed!]] و [[✘ Couldn't detect any Visual Studio or VS Build Tools]]، يعني عشان تبني لازم Rust و Build Tools الأول (صفحة Prerequisites في docs بتاعة Tauri).
+
+البرنامج الداخلي لفريق JavaScript محتاج مكتبة Node: Electron غالبًا أسهل. الحجم مش مشكلة جوه شركة، والفريق مش هيتعلم Rust. Tauri يكسب لو هتوزّعه لناس كتير والحجم والأمان فارقين.`
+        },
+        {
+          cmd: "npm create tauri-app",
+          title: "أول مشروع Tauri: الفولدرات ومين بيعمل إيه",
+          desc: R`[[npm create tauri-app@latest]] بيعمل مشروع فيه حتتين: الواجهة (فولدر [[src]] أو مشروع Vite) والـ backend بـ Rust في [[src-tauri]]. [[npm run tauri dev]] بيفتح البرنامج ويعيد تحميله مع كل تعديل، و [[npm run tauri build]] بيطلّع installer.
+
+قبلها محتاج: Node، و Rust (rustup)، وعلى ويندوز Visual Studio Build Tools و WebView2، وعلى لينكس [[libwebkit2gtk-4.1-dev]] ومكتبات تانية.`,
+          example: R`npm create tauri-app@latest notes-app -- --template vanilla --manager npm --identifier com.example.notes --yes
+cd notes-app
+npm install
+npx tauri info
+npm run tauri dev
+# Linux (Debian/Ubuntu) قبل أول build:
+sudo apt install libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`,
+          try: R`اعمل المشروع بأول سطر (على ويندوز ده بيشتغل من غير Rust، بيعمل الملفات بس). افتح [[src-tauri/tauri.conf.json]] ولاقي: اسم البرنامج، والـ identifier، وحجم النافذة، وفولدر الواجهة. وبعدين غيّر [[--template vanilla]] لـ [[react-ts]] في مشروع تاني وقارن [[package.json]] بتاع الاتنين.`,
+          deep: {
+            why: "المشروع فيه لغتين وأدوات بناء اتنين (npm و cargo)، ولو مش فاهم مين بيعمل إيه هتتوه في أول error. [[create-tauri-app]] بيعمل الهيكل الصح، وبيقولك لو ناقصك حاجة من الـ prerequisites.",
+            how: R`[[npm create tauri-app@latest]] بيشغّل باكدج [[create-tauri-app]] (نسخة 4.7 وقت التجربة). الـ flags بعد [[--]] بتروح للأداة نفسها مش لـ npm: [[--template]] (vanilla و vanilla-ts و react-ts و vue-ts و svelte-ts و angular وغيرهم)، و [[--manager]] (npm أو pnpm أو cargo...)، و [[--identifier]] (اسم فريد بالدومين المعكوس، زي Capacitor و Android)، و [[--yes]] من غير أسئلة.
+
+الهيكل: [[src/]] الواجهة (في vanilla: index.html و main.js و styles.css). [[src-tauri/]] مشروع Rust: [[Cargo.toml]] (زي package.json بتاع Rust، وفيه [[tauri]] و [[serde]] و [[tauri-plugin-opener]])، و [[src/main.rs]] نقطة البداية وبيستدعي [[run()]] من [[src/lib.rs]] (هنا الـ commands)، و [[tauri.conf.json]] الإعدادات، و [[capabilities/default.json]] الصلاحيات، و [[icons/]]، و [[build.rs]].
+
+[[tauri.conf.json]]: [[productName]] و [[version]] و [[identifier]]، و [[build.frontendDist]] فولدر الواجهة الجاهزة، و [[app.windows]] (العنوان والمقاس)، و [[app.withGlobalTauri: true]] (في vanilla: الـ API متاح في [[window.__TAURI__]] من غير import)، و [[bundle]] (الأيقونات وأنواع الـ installers).
+
+[[npm run tauri dev]]: بيشغّل الـ dev server بتاع الواجهة لو فيه (Vite)، وبيعمل [[cargo build]] للـ debug، ويفتح النافذة. تعديل الواجهة بيتحدّث على طول، وتعديل Rust بيعيد البناء.
+
+[[npx tauri info]]: بيفحص البيئة (Rust و WebView2/WebKitGTK و Build Tools) ونسخ الباكدجات. أول حاجة تشغّلها لما حاجة متشتغلش.`,
+            when: "أول ما تبدأ برنامج ديسكتوب بـ Tauri. ولو عندك مشروع ويب موجود (React أو Vue)، فيه [[npx tauri init]] بيضيف [[src-tauri]] للمشروع الموجود بدل مشروع جديد.",
+            mistakes: R`تشغّل [[npm run tauri dev]] على ويندوز من غير Visual Studio Build Tools (مكوّن «Desktop development with C++»): الـ error بيبقى من الـ linker ومش واضح. [[npx tauri info]] بيقولك على طول. وتفتكر إن [[npm install]] كفاية: Rust بيتسطّب لوحده بـ rustup. وأول build بينزّل ويبني مئات الـ crates (عندي ٤٤٧ باكدج و ٩ دقايق)، فمتفتكرش إنه وقف. وفولدر [[src-tauri/target]] بيوصل ١.٥ جيجا: لازم يبقى في [[.gitignore]] (والقالب حاطه).`
+          },
+          teach: R`## مشروع فيه لغتين
+
+اتعمل المشروع على ويندوز ١١ بـ [[create-tauri-app]] من npm، واتبنى وجرّبته في container لينكس (Debian 12 + Rust 1.99 + WebKitGTK 2.50) لأن البناء على ويندوز محتاج Build Tools مش متسطبة هنا.
+
+---
+
+## ١. [[npm create tauri-app@latest notes-app -- ...]]
+
+| الحتة | معناها |
+|---|---|
+| [[npm create tauri-app@latest]] | شغّل أحدث [[create-tauri-app]] (npm بيحط [[create-]] قبل الاسم) |
+| [[notes-app]] | اسم المشروع والفولدر |
+| [[--]] | اللي بعدها للأداة مش لـ npm |
+| [[--template vanilla]] | واجهة HTML و JS عادي من غير framework |
+| [[--manager npm]] | الأوامر هتبقى npm |
+| [[--identifier com.example.notes]] | الاسم الفريد للبرنامج |
+| [[--yes]] | من غير أسئلة |
+
+~~~text الناتج على ويندوز
+Template created!
+
+Your system is missing dependencies (or they do not exist in $PATH):
+╭──────┬───────────────────────────────────────────────────────────────────╮
+│ Rust │ Visit https://www.rust-lang.org/learn/get-started#installing-rust │
+╰──────┴───────────────────────────────────────────────────────────────────╯
+
+For Desktop development, run:
+  npm run tauri dev
+~~~
+
+عمل الملفات، وقالك إن Rust ناقص.
+
+---
+
+## ٢. الملفات
+
+~~~text الشجرة (من غير الأيقونات)
+notes-app/
+  package.json              npm: فيه @tauri-apps/cli بس
+  src/                      الواجهة
+    index.html
+    main.js
+    styles.css
+  src-tauri/                الـ backend (مشروع Rust)
+    Cargo.toml              الـ dependencies بتاعة Rust
+    build.rs                بيتشغّل قبل البناء (tauri_build::build())
+    tauri.conf.json         إعدادات البرنامج
+    capabilities/
+      default.json          الواجهة مسموحلها تعمل إيه
+    src/
+      main.rs               نقطة البداية
+      lib.rs                الـ commands وتشغيل البرنامج
+    icons/
+~~~
+
+### [[package.json]]
+
+~~~text package.json
+"scripts": { "tauri": "tauri" },
+"devDependencies": { "@tauri-apps/cli": "^2" }
+~~~
+
+[[npm run tauri dev]] = شغّل الـ CLI بأمر [[dev]].
+
+### [[src-tauri/Cargo.toml]] (المهم منه)
+
+~~~text Cargo.toml
+[package]
+name = "notes-app"
+edition = "2024"
+
+[lib]
+name = "notes_app_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-opener = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = 3
+panic = "abort"
+strip = true
+~~~
+
+- [[edition = "2024"]]: نسخة لغة Rust، ومحتاجة Rust 1.85 أو أحدث.
+- [[[lib]]]: الكود في library عشان نفس الكود يتبني لموبايل كمان.
+- [[serde]]: تحويل بيانات Rust لـ JSON والعكس (بيه الـ commands بتكلم JavaScript).
+- [[[profile.release]]]: إعدادات بتصغّر البرنامج: [[lto]] (تحسين على كل الكود)، و [[strip]] (شيل رموز الـ debug)، و [[panic = "abort"]].
+
+### [[src-tauri/src/main.rs]]
+
+~~~text main.rs
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+
+fn main() {
+    notes_app_lib::run()
+}
+~~~
+
+السطر الأول: في نسخة الـ release على ويندوز متفتحش نافذة console سودا جنب البرنامج. و [[main]] بتنادي [[run()]] من [[lib.rs]].
+
+### [[tauri.conf.json]]
+
+~~~text tauri.conf.json
+"productName": "notes-app",
+"version": "0.1.0",
+"identifier": "com.example.notes",
+"build": { "frontendDist": "../src" },
+"app": {
+  "withGlobalTauri": true,
+  "windows": [ { "title": "notes-app", "width": 800, "height": 600 } ],
+  "security": { "csp": null }
+},
+"bundle": { "active": true, "targets": "all", "icon": [ ... ] }
+~~~
+
+| الخانة | معناها |
+|---|---|
+| [[frontendDist]] | فولدر الواجهة الجاهزة (في React/Vue بيبقى [[../dist]] ومعاه [[devUrl]]) |
+| [[withGlobalTauri]] | الـ API في [[window.__TAURI__]] من غير import |
+| [[windows]] | النوافذ اللي تفتح في الأول |
+| [[csp]] | Content Security Policy. [[null]] = مفيش، وفي الإنتاج حط واحدة (تاب «الأمان») |
+| [[targets: "all"]] | كل أنواع الـ installers المتاحة للنظام |
+
+---
+
+## ٣. [[npx tauri info]]
+
+على لينكس (الـ container بعد تسطيب المتطلبات):
+
+~~~text الناتج (مختصر)
+[✔] Environment
+    - OS: Debian 12.0.0 x86_64 (X64)
+    ✔ webkit2gtk-4.1: 2.50.6
+    ✔ rustc: 1.99.1 (58cf8f9c3 2026-10-13)
+    ✔ cargo: 1.99.1 (5f94df478 2026-08-27)
+    ✔ rustup: 1.29.2 (d8c92c676 2026-10-21)
+[-] Packages
+    - tauri 🦀: 2.12.5
+    - @tauri-apps/cli ⱼₛ: 2.12.4
+~~~
+
+[[🦀]] = باكدج Rust (crate)، و [[ⱼₛ]] = باكدج npm. وعلى ويندوز بنفس الأمر شفنا WebView2 موجود و Rust و Build Tools ناقصين (الدرس اللي فات).
+
+---
+
+## ٤. المتطلبات لكل نظام
+
+| النظام | المطلوب |
+|---|---|
+| ويندوز | Visual Studio Build Tools (Desktop development with C++)، و WebView2 (موجود في ١٠ و ١١)، و Rust بـ rustup |
+| لينكس | سطر [[apt install]] اللي في المثال، و Rust بـ rustup |
+| الماك | Xcode Command Line Tools ([[xcode-select --install]])، و Rust بـ rustup |
+
+سطر لينكس جربته جوه الـ container (من غير [[sudo]] لأنه root). و rustup: [[curl ... | sh]] بينزّل سكربت التسطيب ويشغّله، و [[--proto '=https' --tlsv1.2]] يجبر HTTPS حديث. ويندوز والماك من صفحة Prerequisites في docs بتاعة Tauri.
+
+## ٥. [[npm run tauri dev]]
+
+بيبني نسخة debug ويفتح النافذة. أول مرة بينزّل ويبني كل الـ crates (عندي [[Locking 447 packages]] وحوالي ٩ دقايق للـ release)، وبعدها التعديلات أسرع بكتير.
+
+## الخلاصة
+
+| الحاجة | مكانها |
+|---|---|
+| الواجهة | [[src/]] |
+| الـ commands بـ Rust | [[src-tauri/src/lib.rs]] |
+| الإعدادات | [[src-tauri/tauri.conf.json]] |
+| الصلاحيات | [[src-tauri/capabilities/]] |
+| فحص البيئة | [[npx tauri info]] |`,
+          lines: [
+            "اعمل مشروع Tauri اسمه notes-app بقالب vanilla و npm و identifier، من غير أسئلة.",
+            "ادخل الفولدر.",
+            "سطّب الـ CLI بتاع Tauri (من package.json).",
+            "افحص البيئة: Rust والـ webview و Build Tools ونسخ الباكدجات.",
+            "شغّل البرنامج في وضع التطوير: بيبني Rust ويفتح النافذة.",
+            "لينكس: المكتبات اللي Tauri محتاجها للبناء (WebKitGTK وغيرها).",
+            "لينكس والماك: سطّب Rust بـ rustup."
+          ],
+          sol: R`في [[tauri.conf.json]]: [[productName: "notes-app"]] و [[identifier: "com.example.notes"]] و النافذة [[800]] × [[600]] و [[frontendDist: "../src"]].
+
+مشروع [[react-ts]]: [[package.json]] فيه react و vite و typescript و [[@tauri-apps/api]]، و [[tauri.conf.json]] فيه [[devUrl]] (سيرفر Vite) و [[frontendDist: "../dist"]] و [[beforeDevCommand]] و [[beforeBuildCommand]] بيشغّلوا Vite. والـ invoke بيتعمل بـ [[import { invoke } from "@tauri-apps/api/core"]] بدل [[window.__TAURI__]].`
+        },
+        {
+          cmd: "#[tauri::command] و invoke",
+          title: "الواجهة تنادي دالة Rust وتاخد النتيجة",
+          desc: R`أي دالة Rust عليها [[#[tauri::command]]] وتتسجّل في [[generate_handler!]] تقدر تناديها من JavaScript بـ [[invoke("اسمها", { args })]]، وبترجع Promise. الـ arguments والنتيجة بتتحوّل JSON في الطريق، و [[Result<T, String>]] في Rust بيبقى resolve أو reject في JavaScript.
+
+ده الجسر الوحيد بين الواجهة والنظام: قراية ملفات، وقاعدة بيانات، وحسابات تقيلة، كلها commands.`,
+          example: R`// src-tauri/src/lib.rs
+#[derive(serde::Serialize)]
+struct Note { id: u32, title: String }
+
+#[tauri::command]
+fn add_note(title: String) -> Result<Note, String> {
+    if title.trim().is_empty() { return Err("title is empty".into()); }
+    Ok(Note { id: 1, title })
+}
+
+#[tauri::command]
+async fn word_count(text: String) -> usize { text.split_whitespace().count() }
+
+tauri::Builder::default().invoke_handler(tauri::generate_handler![add_note, word_count])
+// src/main.js
+const { invoke } = window.__TAURI__.core;
+const note = await invoke("add_note", { title: "shopping" });
+try { await invoke("add_note", { title: "  " }); } catch (e) { console.log("error:", e); }
+const n = await invoke("word_count", { text: "one two  three" });`,
+          try: R`ضيف command اسمه [[greet_user]] بياخد [[first_name: String]] ويرجّع ترحيب. نادِه من JavaScript بـ [[{ first_name: "Sara" }]] وشوف الـ error، وبعدين بـ [[{ firstName: "Sara" }]]. وجرّب [[invoke("missing_cmd")]].`,
+          deep: {
+            why: "الواجهة في Tauri صفحة ويب جوه webview: مفيهاش [[fs]] ولا [[child_process]] ولا وصول للنظام زي Node في Electron. أي حاجة محتاجة النظام بتعدّي على command بـ Rust، وده اللي بيخلي Tauri آمن: الواجهة تقدر تعمل اللي انت كاتبه بس.",
+            how: R`[[#[tauri::command]]] attribute (زي decorator) بيولّد كود يستقبل الـ JSON ويحوّله لـ arguments الدالة ويحوّل الناتج JSON. أي نوع بيرجع لازم يبقى [[Serialize]] (بـ [[#[derive(serde::Serialize)]]])، وأي argument لازم [[Deserialize]] (النصوص والأرقام جاهزين).
+
+[[generate_handler![a, b]]] بيسجّل الـ commands. command مش متسجّل: [[Command missing_cmd not found]] (جربتها).
+
+أسامي الـ arguments: Rust بتكتب [[snake_case]] و JavaScript بتبعت [[camelCase]]، و Tauri بيحوّل لوحده: [[first_name]] في Rust تتبعت [[firstName]] من JS. ناقص argument: [[invalid args ‹name› for command ‹greet›: command greet missing required key name]] (جربتها). ولو عايز snake_case من JS: [[#[tauri::command(rename_all = "snake_case")]]].
+
+الأخطاء: [[Result<Note, String>]]: [[Ok]] بيبقى قيمة الـ Promise، و [[Err]] بيبقى reject فبتمسكه بـ [[try/catch]]. الـ error type لازم يبقى Serialize (أسهل حاجة String، أو enum بـ thiserror).
+
+[[async fn]]: بيتنفّذ في thread تاني فميعلّقش الواجهة، استخدمه لأي حاجة بتاخد وقت (ملفات، شبكة). الـ command العادي بيتنفّذ على الـ main thread.
+
+حاجات تانية الـ command يقدر ياخدها كـ arguments من غير ما JS يبعتها: [[app: tauri::AppHandle]] و [[window: tauri::Window]] و [[state: tauri::State<'_, T>]] (بيانات مشتركة بتسجّلها بـ [[.manage()]]).`,
+            when: "أي حاجة الواجهة متقدرش أو مينفعش تعملها: الملفات والـ registry والعمليات، وقاعدة SQLite، والمفاتيح السرية (متحطهاش في JS أبدًا)، و requests من غير CORS، والحسابات التقيلة.",
+            mistakes: R`تكتب command وتنسى تضيفه في [[generate_handler!]]: الواجهة بتاخد «not found». وتبعت [[{ first_name }]] من JS وتستغرب الـ «missing required key». وتعمل command تقيل من غير [[async]] فالنافذة تهنج. وتسيب [[unwrap()]] جوه command: لو فشل، البرنامج كله بيقفل (panic) بدل ما يرجّع error للواجهة. وتثق في الـ arguments: الواجهة ممكن يتحقن فيها كود (XSS)، فاتحقق جوه Rust (مسار الملف جوه الفولدر المسموح مثلًا).`
+          },
+          teach: R`## الجسر بين الصفحة و Rust
+
+اتبنى في container لينكس (Tauri 2.12.5، Rust 1.99) واتشغّل تحت شاشة وهمية (Xvfb). عشان أشوف النتايج من غير ما أبص على النافذة، عملت command صغير [[log]] بيطبع اللي JavaScript بتبعته في الترمنال، فكل سطر [[[js]]] تحت ده ناتج حقيقي من الواجهة.
+
+---
+
+## ١. نوع البيانات: [[struct Note]]
+
+~~~text lib.rs
+#[derive(serde::Serialize)]
+struct Note { id: u32, title: String }
+~~~
+
+- [[struct]]: نوع فيه حقول (زي object بشكل ثابت).
+- [[u32]]: رقم صحيح موجب 32 بت. [[String]]: نص.
+- [[#[derive(serde::Serialize)]]]: «ولّد كود يحوّل النوع ده لـ JSON» تلقائي. من غيره مينفعش يرجع للواجهة.
+
+## ٢. command بيرجّع نجاح أو error
+
+~~~text lib.rs
+#[tauri::command]
+fn add_note(title: String) -> Result<Note, String> {
+    if title.trim().is_empty() { return Err("title is empty".into()); }
+    Ok(Note { id: 1, title })
+}
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[#[tauri::command]]] | الدالة دي تتنادى من JavaScript |
+| [[title: String]] | argument، وهيتاخد من [[{ title: ... }]] |
+| [[-> Result<Note, String>]] | بترجّع يا [[Ok(Note)]] يا [[Err(String)]] |
+| [[title.trim().is_empty()]] | النص فاضي بعد شيل المسافات؟ |
+| [[.into()]] | حوّل [["title is empty"]] (‏&str) لـ [[String]] |
+| [[Ok(Note { id: 1, title })]] | نجاح، والـ [[title]] لوحدها = [[title: title]] |
+
+## ٣. command [[async]]
+
+~~~text lib.rs
+#[tauri::command]
+async fn word_count(text: String) -> usize { text.split_whitespace().count() }
+~~~
+
+[[split_whitespace()]] بيقسم بأي مسافات (حتى لو اتنين ورا بعض)، و [[count()]] بيعدّ. [[usize]] رقم صحيح بحجم الجهاز. و [[async]] = يتنفّذ برّه الـ main thread.
+
+## ٤. التسجيل
+
+~~~text lib.rs
+tauri::Builder::default()
+    .plugin(tauri_plugin_opener::init())
+    .invoke_handler(tauri::generate_handler![greet, add_note, word_count, log])
+    .run(tauri::generate_context!())
+~~~
+
+[[generate_handler![...]]] هو الليستة اللي JavaScript تقدر تناديها. الـ [[!]] معناها macro (كود بيولّد كود وقت البناء).
+
+---
+
+## ٥. من JavaScript: [[invoke]]
+
+~~~javascript
+const { invoke } = window.__TAURI__.core;
+~~~
+
+في القالب vanilla، [[withGlobalTauri: true]] بيحط الـ API في [[window.__TAURI__]]. في مشروع Vite/React: [[import { invoke } from "@tauri-apps/api/core"]].
+
+### النجاح
+
+~~~javascript
+const note = await invoke("add_note", { title: "shopping" });
+~~~
+
+~~~text الناتج
+[js] {"id":1,"title":"shopping"}
+~~~
+
+الـ [[Note]] بتاع Rust وصل object عادي.
+
+### الـ error
+
+~~~javascript
+try { await invoke("add_note", { title: "  " }); } catch (e) { console.log("error:", e); }
+~~~
+
+~~~text الناتج
+[js] error: title is empty
+~~~
+
+[[Err]] في Rust = الـ Promise اترفض، والقيمة هي النص.
+
+### async
+
+~~~text الناتج
+[js] 3
+~~~
+
+[["one two  three"]] = ٣ كلمات رغم المسافتين.
+
+---
+
+## ٦. الأخطاء اللي هتقابلها (كلها اتجربت)
+
+~~~javascript
+await invoke("greet", {});        // ناقص argument
+await invoke("missing_cmd");      // مش متسجّل
+~~~
+
+~~~text الناتج
+[js] error: invalid args $__btname$__bt for command $__btgreet$__bt: command greet missing required key name
+[js] error: Command missing_cmd not found
+~~~
+
+والـ command اللي جه مع القالب شغال:
+
+~~~text الناتج
+[js] Hello, Sara! You've been greeted from Rust!
+~~~
+
+---
+
+## الخلاصة
+
+| Rust | JavaScript |
+|---|---|
+| [[#[tauri::command] fn x(a: String)]] | [[invoke("x", { a: "..." })]] |
+| [[first_name]] (snake_case) | [[firstName]] (camelCase) |
+| [[Ok(value)]] | الـ Promise بيرجع value |
+| [[Err(msg)]] | الـ Promise بيترفض بـ msg |
+| struct بـ [[Serialize]] | object |
+| [[async fn]] | نفس الشكل، بس مش بيعلّق النافذة |
+
+ومتنساش: كل command لازم في [[generate_handler!]].`,
+          lines: [
+            "struct اسمه Note فيه رقم وعنوان، والـ derive(serde::Serialize) اللي فوقه بيخليه يتحوّل JSON ويرجع للواجهة.",
+            "دالة add_note بتاخد العنوان وبترجّع Note أو رسالة error.",
+            "لو العنوان فاضي ارجع Err.",
+            "غير كده ارجع Ok بالـ Note.",
+            "قفلة الدالة.",
+            "command بـ async بيعدّ الكلمات برّه الـ main thread.",
+            "سجّل الاتنين عشان الواجهة تقدر تناديهم.",
+            "هات invoke من الـ API العام (withGlobalTauri).",
+            "نادي add_note واستنى الـ Note: {id: 1, title: 'shopping'}.",
+            "عنوان فاضي: الـ Promise بيترفض بـ 'title is empty'.",
+            "نادي word_count: بيرجّع 3."
+          ],
+          sol: R`[[invoke("greet_user", { first_name: "Sara" })]] بيترفض بـ [[missing required key firstName]]، لأن Tauri بيتوقع camelCase من JavaScript. [[{ firstName: "Sara" }]] بيشتغل.
+
+[[invoke("missing_cmd")]]: [[Command missing_cmd not found]]. ولو نسيت تضيف [[greet_user]] في [[generate_handler!]] هتاخد نفس الرسالة.`,
+          solCode: R`#[tauri::command]
+fn greet_user(first_name: String) -> String {
+    format!("Welcome, {}!", first_name)
+}
+// وضيفه: tauri::generate_handler![add_note, word_count, greet_user]
+// JavaScript:
+// await invoke("greet_user", { firstName: "Sara" })`
+        },
+        {
+          cmd: "capabilities",
+          title: "الواجهة مسموحلها تعمل إيه بالظبط",
+          desc: R`في Tauri 2 أي API من الـ core أو plugin (تغيير عنوان النافذة، قراية ملف، فتح لينك) ممنوع على الواجهة إلا لو مسموح في ملف capability جوه [[src-tauri/capabilities/]]. الملف بيقول: النوافذ دي، مسموحلها الـ permissions دي.
+
+[[npx tauri permission add]] بيضيف permission، و [[npx tauri permission ls]] بيعرض المتاح.`,
+          example: R`cat src-tauri/capabilities/default.json
+npx tauri permission ls core:window
+npx tauri permission add core:window:allow-set-title
+cat src-tauri/capabilities/default.json
+npm run tauri build -- --no-bundle`,
+          try: R`في الواجهة نادي [[window.__TAURI__.window.getCurrentWindow().setTitle("Notes")]] قبل ما تضيف الـ permission، واطبع الـ error. وبعدين ضيفها وابني تاني. وبعدين اعمل capability تانية لنافذة اسمها [[settings]] بس، وفكّر: ليه أفصلها عن [[main]]؟`,
+          deep: {
+            why: "لو حد قدر يحقن JavaScript في صفحتك (XSS من محتوى يوزر، أو مكتبة npm مخترقة)، في Electron المتساهل ده ممكن يبقى تحكم في الجهاز. في Tauri الكود المحقون يقدر يعمل اللي الـ capabilities سامحة بيه بس. فكل permission زيادة مساحة هجوم زيادة، وده مبدأ least privilege.",
+            how: R`ملف الـ capability JSON فيه: [[identifier]] (اسمه)، و [[windows]] (أسامي النوافذ اللي ينطبق عليها، أو [[*]])، و [[permissions]] (ليستة)، واختياري [[platforms]] (macOS و windows و linux و android و iOS) و [[remote]] (لو صفحة من URL برّه).
+
+اسم الـ permission: [[plugin:allow-command]] أو [[plugin:deny-command]] أو [[plugin:default]] (مجموعة الافتراضي). [[core:default]] بيسمح بحاجات القراية الآمنة (القالب حاطه): [[npx tauri permission ls core:window]] بيوري إن [[core:window:default]] فيه [[allow-title]] (قراية العنوان) بس مش [[allow-set-title]].
+
+جربت: من غير الـ permission، [[setTitle]] اترفض بـ [[Command plugin:window|set_title not allowed by ACL]] (ACL = Access Control List). بعد [[permission add]] وبناء تاني: [[title set]].
+
+الـ plugins (fs و dialog و shell و http...) كل واحد ليه permissions، وبعضهم بـ scope: [[fs:allow-read-text-file]] مع [[{ "path": "$APPDATA/*" }]] يعني قراية ملفات فولدر البرنامج بس. [[npx tauri add <plugin>]] بيضيف الـ crate والـ npm package والـ permission الافتراضي (جربته مع updater: عمل [[capabilities/desktop.json]] فيه [[updater:default]] لـ [[platforms]] الديسكتوب).
+
+الـ commands بتاعتك (اللي في [[generate_handler!]]) مسموحة لكل النوافذ افتراضيًا. لو عايز تتحكم فيها كمان، بتعرّفها في [[build.rs]] بـ [[AppManifest]] وتعمل لها permissions (من الـ docs، صفحة «Permissions»). الملفات بتتجمع وقت البناء: تعديل capability محتاج build جديد.`,
+            when: "مع كل plugin أو API جديد بتستخدمه. وافصل capabilities للنوافذ: نافذة بتعرض محتوى من النت أو من اليوزر تاخد أقل حاجة، ونافذة الإعدادات تاخد اللي محتاجاه بس.",
+            mistakes: R`تحط [[fs:default]] أو [[shell:allow-execute]] من غير scope عشان «الـ error يروح»: كده رجّعت مشكلة Electron. وتنسى إن [[windows: ["main"]]] بيطابق اسم النافذة (label) مش العنوان، فنافذة جديدة اسمها تاني مش هتاخد ولا permission. وتعدّل الـ JSON وتشغّل الـ build القديم وتستغرب إن لسه مرفوض.`
+          },
+          teach: R`## الواجهة ممنوعة من كل حاجة، إلا اللي انت سامحه
+
+اتجرّب في container لينكس على نفس مشروع [[notes-app]] (Tauri 2.12.5 و CLI 2.12.4)، والنتايج من الواجهة طالعة في الترمنال بالـ command [[log]] من الدرس اللي فات.
+
+---
+
+## ١. [[cat src-tauri/capabilities/default.json]]
+
+~~~text الناتج
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Capability for the main window",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "opener:default"
+  ]
+}
+~~~
+
+| الخانة | معناها |
+|---|---|
+| [[$schema]] | ملف بيخلي VS Code يكمّل لك أسامي الـ permissions ويعلّم الغلط |
+| [[identifier]] | اسم الـ capability |
+| [[windows: ["main"]]] | تنطبق على النافذة اللي الـ label بتاعها [[main]] (الافتراضي لأول نافذة) |
+| [[core:default]] | الحاجات الآمنة من الـ core (قراية معلومات النافذة والأحداث...) |
+| [[opener:default]] | الافتراضي من plugin الـ opener (فتح لينكات في المتصفح) |
+
+---
+
+## ٢. جرّب حاجة مش مسموحة
+
+في [[main.js]]:
+
+~~~javascript
+await window.__TAURI__.window.getCurrentWindow().setTitle("Notes");
+~~~
+
+~~~text الناتج
+[js] error: Command plugin:window|set_title not allowed by ACL
+~~~
+
+- [[plugin:window|set_title]]: الأمر الداخلي اللي [[setTitle]] بيناديه.
+- [[not allowed by ACL]]: مش موجود في أي capability للنافذة دي.
+
+---
+
+## ٣. [[npx tauri permission ls core:window]]
+
+بيعرض كل permissions الـ window. المهم منها:
+
+~~~text الناتج (مختصر)
+core:window:default
+Default permissions for the plugin.
+Permissions: allow-get-all-windows, allow-scale-factor, ..., allow-title, allow-current-monitor, ...
+core:window:allow-set-title
+Enables the set_title command without any pre-configured scope.
+Allow commands: set_title
+~~~
+
+[[default]] فيه [[allow-title]] (تقرا العنوان) بس، مش [[allow-set-title]] (تغيّره). أي حاجة بتغيّر لازم تطلبها.
+
+## ٤. [[npx tauri permission add core:window:allow-set-title]]
+
+~~~text الناتج
+Added permission $__btcore:window:allow-set-title$__bt to $__btdefault$__bt at /root/notes-app/src-tauri/capabilities/default.json
+~~~
+
+## ٥. [[cat]] تاني
+
+~~~text الناتج (الجزء اللي اتغير)
+  "permissions": [
+    "core:default",
+    "opener:default",
+    "core:window:allow-set-title"
+  ]
+~~~
+
+## ٦. [[npm run tauri build -- --no-bundle]]
+
+الـ capabilities بتتجمع جوه البرنامج وقت البناء، فلازم build. [[--no-bundle]] = ابني البرنامج من غير installers (أسرع: ٩٥ ثانية هنا لأن الـ crates متبنية). وشغّلته:
+
+~~~text الناتج
+[js] title set
+~~~
+
+---
+
+## ٧. capability للـ plugins: اللي [[tauri add]] بيعمله
+
+لما ضفت plugin الـ updater (درس جاي) بـ [[npx tauri add updater]]، عمل ملف تاني:
+
+~~~text src-tauri/capabilities/desktop.json
+{
+  "identifier": "desktop-capability",
+  "platforms": ["macOS", "windows", "linux"],
+  "windows": ["main"],
+  "permissions": ["updater:default"]
+}
+~~~
+
+[[platforms]]: الملف ده للديسكتوب بس (الـ updater مش شغال على الموبايل). كل الملفات في الفولدر بتتجمع مع بعض.
+
+## الخلاصة
+
+| الحاجة | الأمر/الشكل |
+|---|---|
+| شوف المتاح | [[npx tauri permission ls <plugin>]] |
+| ضيف | [[npx tauri permission add <permission>]] |
+| plugin جديد بـ permission الافتراضي | [[npx tauri add <plugin>]] |
+| الرفض شكله | [[... not allowed by ACL]] |
+| بعد التعديل | build جديد |
+
+خد أقل permission محتاجه، وبـ scope لو الـ plugin بيدعمه.`,
+          lines: [
+            "اعرض الـ capability الافتراضية: النافذة main و core:default و opener:default.",
+            "اعرض كل permissions الخاصة بالنوافذ وإيه اللي جوه core:window:default.",
+            "ضيف permission تغيير عنوان النافذة للـ capability.",
+            "اتأكد إنها اتضافت.",
+            "ابني البرنامج من غير installers عشان الصلاحيات الجديدة تدخل فيه."
+          ],
+          sol: R`قبل الـ permission: [[Command plugin:window|set_title not allowed by ACL]]. بعد [[permission add]] و build: العنوان اتغير.
+
+نافذة settings بـ capability لوحدها: لو نافذة [[main]] بتعرض محتوى من اليوزر (ملاحظات فيها HTML مثلًا) واتحقن فيها كود، مش هيقدر يعمل اللي settings مسموحلها بيه (زي كتابة ملف الإعدادات). كل نافذة بأقل صلاحيات تلزمها.`,
+          solCode: R`{
+  "identifier": "settings",
+  "windows": ["settings"],
+  "permissions": ["core:default", "core:window:allow-set-title"]
+}`
+        },
+        {
+          cmd: "tauri build",
+          title: "اعمل installer: deb و rpm و AppImage، و msi و exe، و dmg",
+          desc: R`[[npm run tauri build]] بيبني الواجهة، وبعدين نسخة release من Rust، وبعدين بيغلّفها installers للنظام اللي انت عليه: على لينكس [[.deb]] و [[.rpm]] و [[.AppImage]]، وعلى ويندوز [[-setup.exe]] (NSIS) و [[.msi]]، وعلى الماك [[.app]] و [[.dmg]]. كل نظام بيتبني على نفسه (أو في CI على runner بنفس النظام).
+
+[[--bundles]] بيختار أنواع معينة، و [[--no-bundle]] البرنامج بس من غير installer.`,
+          example: R`npm run tauri build -- --bundles deb,rpm
+ls -lh src-tauri/target/release/notes-app
+ls src-tauri/target/release/bundle/*/
+dpkg-deb -c src-tauri/target/release/bundle/deb/notes-app_0.1.0_amd64.deb
+du -sh src-tauri/target`,
+          try: R`غيّر [[version]] في [[tauri.conf.json]] لـ [[0.2.0]] وابني تاني. اسم الـ deb اتغير؟ وكام ثانية أخد البناء التاني مقارنة بالأول؟ وبعدين اقرا في [[Cargo.toml]] الـ [[[profile.release]]] وجرّب تشيل [[strip = true]] وقارن حجم البرنامج.`,
+          deep: {
+            why: "اليوزر مش هيعمل cargo build. محتاج ملف يسطّبه، باسم وأيقونة وإدخال في قايمة البرامج. وكل نظام ليه شكل installer مختلف، وكمان الـ updater (الدرس الجاي) بياخد منه الملف اللي ينزّله.",
+            how: R`[[npm run tauri build]] بيعمل بالترتيب: [[beforeBuildCommand]] لو موجود (زي [[npm run build]] بتاع Vite)، ثم [[cargo build --release]] بإعدادات [[[profile.release]]] (lto و strip...)، ثم الـ bundler. الـ [[--]] بيعدّي [[--bundles deb,rpm]] للـ CLI.
+
+جربت على لينكس (Docker): أول build ‏538 ثانية (منهم تنزيل وبناء ٤٤٧ crate)، والـ builds اللي بعده دقيقة ونص لـ ٣ دقايق. الناتج [[target/release/notes-app]] ‏6 ميجا (8 بعد plugin الـ updater)، والـ deb ‏2.3 ميجا. وفولدر [[target]] كله ‏1.5 جيجا (ملفات وسيطة، بيتمسح عادي).
+
+الـ deb فيه: البرنامج في [[/usr/bin]]، وملف [[.desktop]] (عشان يظهر في قايمة البرامج)، والأيقونات. و [[Depends]] بيقول للنظام يسطّب WebKitGTK لو مش موجود.
+
+AppImage: ملف واحد بيشتغل على أغلب التوزيعات، بس بيشحن WebKitGTK جواه فحجمه أكبر بكتير، والبناء بينزّل أدوات linuxdeploy (مبنيتهوش هنا).
+
+ويندوز (من الـ docs، مش متجرّب هنا لأن Build Tools مش متسطبة): NSIS بيطلّع [[*-setup.exe]] و WiX بيطلّع [[.msi]]، و [[bundle.windows.webviewInstallMode]] بيحدد يعمل إيه لو WebView2 مش موجود: [[downloadBootstrapper]] (الافتراضي، بينزّله وقت التسطيب)، أو [[embedBootstrapper]] (~1.8 ميجا زيادة)، أو [[offlineInstaller]]، أو [[fixedRuntime]] (~180 ميجا زيادة). والتوقيع: [[certificateThumbprint]] و [[timestampUrl]] تحت [[bundle.windows]]، وإلا SmartScreen هيحذّر زي Electron.
+
+الماك (من الـ docs): [[.app]] و [[.dmg]]، ولازم توقيع بـ Apple Developer ID و notarization وإلا Gatekeeper بيرفض يفتحه. والبناء لكل الأنظمة من GitHub Actions بـ [[tauri-apps/tauri-action]] على [[ubuntu-latest]] و [[windows-latest]] و [[macos-latest]].`,
+            when: "كل ما تجهّز نسخة لحد. وفي التطوير [[tauri dev]] أو [[build --no-bundle]] أسرع. ونزّل لكل نظام النوع المتعارف عليه: exe/msi لويندوز، و dmg للماك، و deb و AppImage للينكس.",
+            mistakes: R`تحاول تبني installer ويندوز من لينكس أو العكس: Tauri بيبني للنظام اللي انت عليه، والـ cross-compile تجريبي. استخدم CI. وتنسى تزوّد [[version]]: الـ updater والـ installers بيعتمدوا عليه. وتشيل [[strip]] و [[lto]] عشان البناء أسرع وتنسى ترجعهم، فالبرنامج يكبر. وتحط [[src-tauri/target]] في git (١.٥ جيجا).`
+          },
+          teach: R`## من كود لـ installer
+
+اتجرّب في container لينكس (Debian 12، Rust 1.99، Tauri CLI 2.12.4) على [[notes-app]].
+
+---
+
+## ١. [[npm run tauri build -- --bundles deb,rpm]]
+
+- [[npm run tauri build]]: شغّل [[tauri build]] من الـ CLI.
+- [[--]]: اللي بعده يروح لـ tauri مش لـ npm.
+- [[--bundles deb,rpm]]: الـ deb والـ rpm بس (من غير AppImage).
+
+~~~text الناتج (أول build، السطور المهمة)
+    Updating crates.io index
+     Locking 447 packages to highest Rust 1.99.1 compatible versions
+   Compiling webkit2gtk v2.0.2
+   Compiling tao v0.37.2
+    ...
+    Finished $__btrelease$__bt profile [optimized] target(s) in 8m 55s
+       Built application at: /root/notes-app/src-tauri/target/release/notes-app
+    Bundling notes-app_0.1.0_amd64.deb (.../bundle/deb/notes-app_0.1.0_amd64.deb)
+    Bundling notes-app-0.1.0-1.x86_64.rpm (.../bundle/rpm/notes-app-0.1.0-1.x86_64.rpm)
+    Finished 2 bundles at:
+        .../bundle/deb/notes-app_0.1.0_amd64.deb (2.32 MiB)
+        .../bundle/rpm/notes-app-0.1.0-1.x86_64.rpm (2.32 MiB)
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[Locking 447 packages]] | Rust حدد ٤٤٧ crate هيتبنوا (tauri و webview و gtk و serde...) |
+| [[Compiling ...]] | سطر لكل crate (بيتبنوا مرة، وبعدين بيتعادوا لو اتغيروا بس) |
+| [[profile [optimized]]] | release بإعدادات [[[profile.release]]] |
+| [[8m 55s]] | أول مرة بس. البناء التالت (بعد تعديل capability) أخد ٩٥ ثانية |
+| [[Bundling]] | تغليف البرنامج في deb و rpm |
+
+## ٢. [[ls -lh src-tauri/target/release/notes-app]]
+
+~~~text الناتج (أول build، قبل plugin الـ updater، بـ ls -la)
+-rwxr-xr-x 2 root root 6077112 Oct 27 22:44 notes-app
+~~~
+
+ده البرنامج نفسه: 6077112 بايت ≈ 5.8 ميجا (و [[-h]] بيكتبه [[5.8M]]). من غير WebKit جواه، لأنه بيستخدم بتاع النظام.
+
+## ٣. [[ls src-tauri/target/release/bundle/*/]]
+
+[[*]] أي فولدر: بيعرض محتوى [[deb/]] و [[rpm/]]:
+
+~~~text الناتج (بعد بنايات درس الـ updater، فيه نسختين و .sig)
+src-tauri/target/release/bundle/deb/:
+notes-app_0.1.0_amd64
+notes-app_0.1.0_amd64.deb
+notes-app_0.1.0_amd64.deb.sig
+
+src-tauri/target/release/bundle/rpm/:
+notes-app-0.1.0-1.x86_64
+notes-app-0.1.0-1.x86_64.rpm
+notes-app-0.1.0-1.x86_64.rpm.sig
+notes-app-0.2.0-1.x86_64
+notes-app-0.2.0-1.x86_64.rpm
+notes-app-0.2.0-1.x86_64.rpm.sig
+~~~
+
+الفولدرات اللي من غير امتداد هي الملفات قبل ما تتقفل في الباكدج، و [[.sig]] توقيع الـ updater (الدرس الجاي). اسم الملف = [[productName]] + [[version]] + المعمارية ([[amd64]] = [[x86_64]] = 64 بت).
+
+## ٤. [[dpkg-deb -c ...deb]]
+
+[[-c]] (contents) بيعرض الملفات اللي جوه الباكدج:
+
+~~~text الناتج (الحجم والمسار)
+8286944 usr/bin/notes-app
+150 usr/share/applications/notes-app.desktop
+567 usr/share/icons/hicolor/32x32/apps/notes-app.png
+1593 usr/share/icons/hicolor/128x128/apps/notes-app.png
+2861 usr/share/icons/hicolor/256x256@2/apps/notes-app.png
+~~~
+
+(ده بعد plugin الـ updater، فالبرنامج 8 ميجا.) البرنامج في [[/usr/bin]]، وملف [[.desktop]] بيحطه في قايمة البرامج، والأيقونات من [[src-tauri/icons]].
+
+## ٥. [[du -sh src-tauri/target]]
+
+~~~text الناتج
+1.5G	src-tauri/target
+~~~
+
+[[du]] (disk usage) و [[-s]] المجموع و [[-h]] بالجيجا. كل الملفات الوسيطة للبناء. بتتمسح عادي ([[cargo clean]])، ولازم في [[.gitignore]].
+
+---
+
+## ٦. ويندوز والماك (من الـ docs)
+
+| النظام | الأمر | الناتج |
+|---|---|---|
+| ويندوز | [[npm run tauri build]] | [[bundle/nsis/*-setup.exe]] و [[bundle/msi/*.msi]] |
+| الماك | [[npm run tauri build]] | [[bundle/macos/*.app]] و [[bundle/dmg/*.dmg]] |
+
+ويندوز محتاج Build Tools (الـ MSVC linker)، و WebView2 لو مش موجود عند اليوزر بيتنزّل وقت التسطيب (الافتراضي [[downloadBootstrapper]]). والتوقيع:
+
+~~~text tauri.conf.json (من الـ docs)
+"bundle": {
+  "windows": {
+    "certificateThumbprint": "A1B1A2B2...",
+    "digestAlgorithm": "sha256",
+    "timestampUrl": "http://timestamp.comodoca.com"
+  }
+}
+~~~
+
+## الخلاصة
+
+| الأمر | بيعمل |
+|---|---|
+| [[tauri build]] | كل الـ installers المتاحة للنظام |
+| [[tauri build -- --bundles deb,rpm]] | أنواع معينة |
+| [[tauri build -- --no-bundle]] | البرنامج بس |
+| [[target/release/bundle/]] | مكان الـ installers |
+
+كل نظام بيتبني على نفسه، فللتلاتة: GitHub Actions بـ runner لكل نظام.`,
+          lines: [
+            "ابني نسخة release واعمل منها deb و rpm بس.",
+            "حجم البرنامج نفسه (من غير installer).",
+            "الـ installers اللي اتعملت، كل نوع في فولدر.",
+            "الملفات اللي جوه الـ deb: البرنامج وملف القايمة والأيقونات.",
+            "مساحة فولدر البناء كله (ملفات وسيطة)."
+          ],
+          sol: R`بعد [[version: "0.2.0"]]: الملف بقى [[notes-app-0.2.0-1.x86_64.rpm]] (والـ deb [[notes-app_0.2.0_amd64.deb]]). البناء التاني بعد التعديل أخد دقايق قليلة مش ٩، لأن الـ crates متبنية والمتغير كود البرنامج بس.
+
+من غير [[strip = true]] البرنامج بيكبر، لأن رموز الـ debug (أسامي الدوال للـ stack traces) بتفضل جواه. (تجربة strip دي مش متجرّبة هنا، المعلومة من صفحة «App Size» في docs بتاعة Tauri.)`
+        },
+      ]
+    },
+    {
+      t: "Tauri: تحديث تلقائي موقّع",
+      l: 3,
+      n: "البرنامج يسأل سيرفرك عن نسخة جديدة وينزّلها، ومش بيقبل غير ملف موقّع بمفتاحك",
+      items: [
+        {
+          cmd: "tauri updater",
+          title: "التحديث التلقائي: مفتاح، و latest.json، و check() من الواجهة",
+          desc: R`plugin الـ updater بيخلي البرنامج يسأل URL انت حاطه عن آخر نسخة ([[latest.json]])، ولو أحدث ينزّلها ويسطّبها. كل ملف تحديث لازم يبقى موقّع بمفتاح خاص عندك انت بس، والبرنامج شايل المفتاح العام وبيرفض أي ملف توقيعه غلط، حتى لو حد سيطر على السيرفر.
+
+[[tauri signer generate]] بيعمل المفتاحين، و [[TAURI_SIGNING_PRIVATE_KEY]] وقت البناء بيطلّع ملف [[.sig]] جنب كل installer.`,
+          example: R`npx tauri add updater
+npx tauri signer generate -w ~/.tauri/notes.key
+export TAURI_SIGNING_PRIVATE_KEY=~/.tauri/notes.key TAURI_SIGNING_PRIVATE_KEY_PASSWORD=""
+npm run tauri build
+cat src-tauri/target/release/bundle/rpm/notes-app-0.2.0-1.x86_64.rpm.sig
+// src/main.js
+const update = await window.__TAURI__.updater.check();
+if (update) { await update.downloadAndInstall(); }`,
+          try: R`في نسخة 0.1.0 من البرنامج خلي [[check()]] يطبع [[update.version]] و [[update.body]]. اعمل [[latest.json]] بيقول [[0.2.0]] بس حط فيه ملف وتوقيع نسخة 0.1.0. إيه اللي حصل؟ وبعدين حط الملف والتوقيع الصح وزوّد بايت واحد في آخر الملف.`,
+          deep: {
+            why: "برنامج ديسكتوب من غير تحديث تلقائي = يوزرز على نسخ قديمة فيها bugs وثغرات للأبد. والتحديث نفسه أخطر feature في البرنامج: لو حد قدر يخلي البرنامج ينزّل ملفه هو، يبقى شغّل كود على كل أجهزة اليوزرز. عشان كده Tauri بيرفض يشتغل من غير توقيع.",
+            how: R`[[npx tauri add updater]] بيضيف [[tauri-plugin-updater]] في [[Cargo.toml]] (للديسكتوب بس)، و [[@tauri-apps/plugin-updater]] في npm، و [[.plugin(tauri_plugin_updater::Builder::new().build())]] في [[lib.rs]]، و capability [[updater:default]]. في نسختي (2.14) حط كمان [[requireSignedVersion: true]].
+
+[[tauri signer generate -w path]]: مفتاحين minisign: الخاص في [[path]] (اختياري بباسورد، و [[--ci -p ""]] من غير أسئلة)، والعام في [[path.pub]]. العام بيتحط **كنص** في [[plugins.updater.pubkey]] جوه [[tauri.conf.json]] (مش مسار ملف). والخاص يتحفظ كـ secret في CI ومتحطوش في git أبدًا.
+
+[[tauri.conf.json]]: [[bundle.createUpdaterArtifacts: true]]، و [[plugins.updater.endpoints]]: ليستة URLs بيجرّبهم بالترتيب (ممكن فيهم [[{{target}}]] و [[{{arch}}]] و [[{{current_version}}]]). HTTPS إجباري في الإنتاج، و [[dangerousInsecureTransportProtocol: true]] للتجربة على http محلي بس.
+
+[[latest.json]]: [[version]] و [[notes]] و [[pub_date]] و [[platforms]]، وكل platform ([[linux-x86_64]] و [[windows-x86_64]] و [[darwin-aarch64]]...) فيه [[url]] و [[signature]] (محتوى ملف الـ .sig نفسه، مش رابطه). Tauri بيتحقق من الملف كله قبل ما يقارن النسخة، فأي platform ناقص بيبوّظ الكل. و [[tauri-action]] في GitHub Actions بيعمله لوحده.
+
+جربت end-to-end في Docker: برنامج 0.1.0، و [[latest.json]] على سيرفر محلي بيقول 0.2.0. [[check()]] رجّع التحديث، و [[download()]] نزّل 3548351 بايت والتوقيع اتقبل. لما حطيت ملف 0.1.0 وتوقيعه: [[The update was signed for version 0.1.0 but the update endpoint announced version 0.2.0]] (الـ trusted comment في التوقيع فيه النسخة، وده اللي [[requireSignedVersion]] بيتحقق منه). ولما زوّدت بايت في الملف: [[The signature verification failed]].
+
+ده توقيع الـ updater، وهو غير توقيع النظام: ويندوز (SmartScreen) والماك (Gatekeeper و notarization) محتاجين شهادات code signing لوحدهم (درس «tauri build»).`,
+          when: "أي برنامج هيتوزّع برّه جهازك. حط الـ updater من أول نسخة، لأن اليوزرز اللي نزّلوا نسخة من غيره مش هيوصلهم التحديث أبدًا إلا لو نزّلوا بإيدهم.",
+          mistakes: R`تضيع المفتاح الخاص أو الباسورد: النسخ اللي اتوزعت مش هتقبل أي تحديث تاني أبدًا (الـ CLI نفسه بيحذّرك). وترفع المفتاح الخاص في git أو تحطه في [[.env]] (Tauri مش بيقرا .env للمتغير ده أصلًا). وتحط مسار الـ .sig أو رابطه في [[signature]] بدل محتواه. وتنسى تزوّد [[version]] فالبرنامج يفضل يقول مفيش تحديث. وتعمل [[downloadAndInstall()]] من غير ما تسأل اليوزر وهو شغال على حاجة.`
+          },
+          teach: R`## التحديث = ملف + توقيع + latest.json
+
+اتجرّب كله في container لينكس (Tauri 2.12.5، tauri-plugin-updater 2.14.0) بسيرفر HTTP محلي على [[127.0.0.1:8765]]. ما رفعتش حاجة على النت.
+
+---
+
+## ١. [[npx tauri add updater]]
+
+~~~text الناتج
+Info Installing Cargo dependency "tauri-plugin-updater"...
+Info Installing NPM dependency "@tauri-apps/plugin-updater@~2"...
+Info Capability matching platforms ["macOS", "windows", "linux"] not found, creating .../capabilities/desktop.json
+Added permission $__btupdater:default$__bt to $__btdesktop-capability$__bt at .../capabilities/desktop.json
+Info Enabled $__btplugins > updater > requireSignedVersion$__bt in .../tauri.conf.json
+Info Remember to set $__btplugins > updater > pubkey$__bt and $__btendpoints$__bt.
+Info Adding plugin to .../src/lib.rs
+~~~
+
+٤ حاجات في أمر واحد: الـ crate، والـ npm package، والـ permission (capability للديسكتوب بس)، وسطر [[.plugin(...)]] في [[lib.rs]].
+
+## ٢. [[npx tauri signer generate -w ~/.tauri/notes.key]]
+
+[[-w]] (write) = احفظ المفتاح الخاص هنا. هيسألك باسورد (في CI: [[--ci -p ""]]).
+
+~~~text الناتج
+Your keypair was generated successfully:
+Private: /root/keys/notes.key (Keep it secret!)
+Public: /root/keys/notes.key.pub
+---------------------------
+
+Environment variables used to sign:
+- $__btTAURI_SIGNING_PRIVATE_KEY$__bt: Your private key. For the $__btbuild$__bt and $__btbundle$__bt command it can be either a string or a path to the file
+- $__btTAURI_SIGNING_PRIVATE_KEY_PASSWORD$__bt:  Your private key password (optional if key has no password)
+
+ATTENTION: If you lose your private key OR password, you'll not be able to sign your update package and updates will not work
+~~~
+
+الملف العام نص base64، ولو فكيته أوله [[untrusted comment: minisign public key: 8DC5...]]: يعني ده مفتاح minisign (أداة توقيع صغيرة مبنية على Ed25519).
+
+### الإعدادات في [[tauri.conf.json]]
+
+~~~text tauri.conf.json
+"bundle": { "createUpdaterArtifacts": true, ... },
+"plugins": {
+  "updater": {
+    "requireSignedVersion": true,
+    "pubkey": "<محتوى notes.key.pub>",
+    "endpoints": ["http://127.0.0.1:8765/latest.json"],
+    "dangerousInsecureTransportProtocol": true
+  }
+}
+~~~
+
+| الخانة | معناها |
+|---|---|
+| [[createUpdaterArtifacts]] | اعمل .sig مع كل installer |
+| [[pubkey]] | المفتاح العام **كنص** |
+| [[endpoints]] | فين latest.json (في الإنتاج https، زي GitHub Releases) |
+| [[dangerousInsecureTransportProtocol]] | اسمح بـ http، للتجربة المحلية بس |
+
+## ٣. البناء بالتوقيع
+
+~~~bash
+export TAURI_SIGNING_PRIVATE_KEY=~/.tauri/notes.key TAURI_SIGNING_PRIVATE_KEY_PASSWORD=""
+npm run tauri build
+~~~
+
+[[export]] بيحط المتغيرين للأوامر اللي بعده (على ويندوز PowerShell: [[$env:TAURI_SIGNING_PRIVATE_KEY = "..."]]).
+
+~~~text الناتج (آخره)
+    Finished 1 updater signature at:
+        /root/notes-app/src-tauri/target/release/bundle/rpm/notes-app-0.2.0-1.x86_64.rpm.sig
+~~~
+
+## ٤. الـ [[.sig]]
+
+ملف base64 (‏436 بايت). لو فكيته:
+
+~~~text الناتج (التوقيع نفسه متشال)
+untrusted comment: signature from tauri secret key
+<التوقيع>
+trusted comment: timestamp:1793144861	file:notes-app-0.2.0-1.x86_64.rpm	version:0.2.0
+~~~
+
+الـ **trusted comment** موقّع هو كمان، وفيه اسم الملف والنسخة. ده اللي بيمنع حد يقدّم ملف قديم على إنه جديد.
+
+---
+
+## ٥. [[latest.json]] على السيرفر
+
+~~~text latest.json
+{
+  "version": "0.2.0",
+  "notes": "Faster search",
+  "pub_date": "2026-10-28T10:00:00Z",
+  "platforms": {
+    "linux-x86_64": {
+      "signature": "<محتوى الـ .sig كله>",
+      "url": "http://127.0.0.1:8765/notes-app-0.2.0.rpm"
+    }
+  }
+}
+~~~
+
+## ٦. من الواجهة
+
+~~~javascript
+const update = await window.__TAURI__.updater.check();
+if (update) { await update.downloadAndInstall(); }
+~~~
+
+- [[check()]]: بيجيب latest.json ويقارن [[version]] بنسخة البرنامج. لو أحدث بيرجّع object، لو لأ [[null]].
+- [[update.version]] و [[update.body]] (الـ notes) و [[update.currentVersion]].
+- [[downloadAndInstall()]]: ينزّل، ويتحقق من التوقيع، ويسطّب. وبعدها [[relaunch()]] من plugin الـ process يفتح النسخة الجديدة.
+
+في التجربة استخدمت [[download()]] بس (من غير تسطيب) وطبعت عدد البايتات، والبرنامج 0.1.0:
+
+~~~text الناتج
+[js] update 0.1.0 -> 0.2.0: Faster search
+[js] downloaded 3548351 bytes, signature ok
+~~~
+
+---
+
+## ٧. محاولتين غش (الاتنين اترفضوا)
+
+| المحاولة | الناتج |
+|---|---|
+| latest.json بيقول 0.2.0 بس الملف والتوقيع بتوع 0.1.0 | [[The update was signed for version 0.1.0 but the update endpoint announced version 0.2.0. The endpoint response may have been tampered with...]] |
+| الملف الصح بس اتزوّد فيه بايت واحد | [[The signature verification failed]] |
+
+والسيرفر لوج قال إن البرنامج طلب [[/latest.json]] وبعدين الملف، يعني الرفض بيحصل بعد التنزيل وقبل التسطيب.
+
+## الخلاصة
+
+1. [[tauri add updater]] + [[signer generate]].
+2. [[pubkey]] كنص و [[endpoints]] و [[createUpdaterArtifacts]].
+3. البناء بـ [[TAURI_SIGNING_PRIVATE_KEY]] بيطلّع [[.sig]].
+4. [[latest.json]] فيه النسخة و url ومحتوى الـ sig لكل platform.
+5. [[check()]] ثم [[downloadAndInstall()]].
+
+والمفتاح الخاص: secret في CI ونسخة احتياطي في مكان آمن. لو ضاع، مفيش تحديثات تاني.`,
+          lines: [
+            "ضيف plugin الـ updater: الـ crate والـ npm package والـ permission والسطر في lib.rs.",
+            "اعمل مفتاحين للتوقيع: الخاص في الملف ده والعام جنبه بـ .pub.",
+            "حط المفتاح الخاص (والباسورد) في متغيرات البيئة للبناء.",
+            "ابني: كل installer بيطلع معاه ملف .sig.",
+            "اعرض التوقيع: ده اللي بيتحط في signature جوه latest.json.",
+            "الواجهة: اسأل الـ endpoint فيه نسخة أحدث؟",
+            "لو فيه: نزّلها واتحقق من التوقيع وسطّبها."
+          ],
+          sol: R`ملف وتوقيع 0.1.0 مع [[version: "0.2.0"]] في latest.json: [[check()]] لقى التحديث، بس [[download()]] رجّع [[The update was signed for version 0.1.0 but the update endpoint announced version 0.2.0. The endpoint response may have been tampered with to force installing a different release.]]
+
+الملف الصح وفيه بايت زيادة: [[The signature verification failed]]. في الحالتين ولا حاجة اتسطبت.`,
+          solCode: R`const update = await window.__TAURI__.updater.check();
+if (update) {
+  console.log(update.currentVersion, "->", update.version, update.body);
+  try { await update.download(); console.log("signature ok"); }
+  catch (e) { console.log("error:", e); }
+}`
+        },
+      ]
+    }
 ]);
 
 /* ===== js/tabs/node/01.js ===== */
@@ -219942,9 +221015,1837 @@ docker exec mongo2 mongosh myapp -u admin -p secret2 --authenticationDatabase ad
 ]);
 
 /* ===== js/tabs/mongo/05.js ===== */
-// ملف إضافي لتاب mongo: الحقول نفس شكلها في 01.js.
-
+// تكملة تاب mongo: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/mongo/01.js (شرح حقول الدرس في أوله)
 MORE("mongo", [
+    {
+      t: "aggregate متقدم: تقارير في طلب واحد",
+      l: 2,
+      n: "$lookup بشروط، و $facet لصفحة بحث كاملة، و $setWindowFields للمجموع التراكمي، و accumulators زي $topN، و $merge يحفظ التقرير",
+      items: [
+        {
+          cmd: "$lookup بـ pipeline",
+          title: "join بشروط: آخر أوردرين مدفوعين لكل يوزر",
+          desc: R`الشكل البسيط لـ [[$lookup]] ([[localField]] و [[foreignField]]) بيجيب **كل** المستندات اللي بتساوي. لو محتاج شرط زيادة (المدفوع بس، فوق ٥٠٠)، أو ترتيب و [[$limit]]، أو حقول معينة، بتدّيله [[pipeline]]: aggregate صغير بيتنفّذ على الـ collection التانية لكل مستند داخل.
+
+[[let]] بيعرّف متغيرات من المستند الحالي، وجوه الـ pipeline بتقراها بـ [[$$اسم]] جوه [[$expr]].`,
+          example: R`use shop
+db.users.aggregate([
+  { $lookup: {
+      from: "orders",
+      let: { uid: "$_id" },
+      pipeline: [
+        { $match: { $expr: { $eq: ["$userId", "$$uid"] }, status: "paid", total: { $gte: 500 } } },
+        { $sort: { createdAt: -1 } },
+        { $limit: 2 },
+        { $project: { _id: 0, total: 1, createdAt: 1 } }
+      ],
+      as: "lastOrders"
+  } },
+  { $project: { _id: 0, name: 1, lastOrders: 1 } }
+])
+db.orders.createIndex({ userId: 1, status: 1, createdAt: -1 })
+db.users.aggregate([{ $lookup: { from: "orders", localField: "_id", foreignField: "userId", pipeline: [{ $match: { status: "paid" } }, { $group: { _id: null, n: { $sum: 1 }, spent: { $sum: "$total" } } }], as: "stats" } }, { $project: { _id: 0, name: 1, stats: { $first: "$stats" } } }])`,
+          try: R`حمّل بيانات الـ solCode (٣ يوزرز و ٦ منتجات و ٨ أوردرات). شغّل المثال، وبعدين غيّر [[$$uid]] لـ [[$uid]] (دولار واحد) وشوف [[lastOrders]] بقت إيه. وفي الآخر اكتب [[$lookup]] على [[products]] يجيب لكل منتج عدد الأوردرات المدفوعة اللي هو فيها (المنتج جوه [[items.productId]]).`,
+          flag: "script",
+          deep: {
+            why: "التقارير الحقيقية نادرًا ما تبقى «هات كل اللي بيساوي». «آخر أوردرين لكل عميل»، «المنتجات اللي اتباعت الشهر ده بس»، «عدد الأوردرات المدفوعة لكل يوزر» كلها join بشرط. من غير pipeline هتجيب كل الأوردرات في array ضخمة وبعدين تفلترها بـ [[$filter]]، أو تعمل query لكل يوزر من Node (N+1).",
+            how: R`[[let: { uid: "$_id" }]] بياخد [[_id]] بتاع اليوزر الحالي ويحطه في متغير. جوه الـ [[pipeline]] الحقول بـ [[$]] واحد بتشاور على مستند الأوردر، والمتغيرات بـ [[$$]]. والمقارنة بين حقل ومتغير لازم تبقى expression، فبتتكتب جوه [[$expr]]. باقي شروط [[$match]] العادية ([[status: "paid"]]) بتتكتب عادي جنبها.
+
+الـ pipeline بتتنفذ لكل يوزر لوحده، فـ [[$sort]] و [[$limit: 2]] معناهم «آخر اتنين لليوزر ده»، مش لكل الأوردرات.
+
+من MongoDB 5.0 فيه شكل مختصر: [[localField]] و [[foreignField]] للمساواة، ومعاهم [[pipeline]] للباقي (آخر سطر). أسهل في القراية ومش محتاج [[let]] ولا [[$expr]].
+
+السرعة: [[$expr]] مع [[$eq]] جوه pipeline الـ lookup بيستخدم index من MongoDB 5.0. جرّبت explain على mongo:8.3: من غير index كل يوزر عمل collection scan ([[collectionScans: 3]] و [[totalDocsExamined: 24]] لـ ٣ يوزرز × ٨ أوردرات)، وبعد [[{ userId: 1, status: 1, createdAt: -1 }]] بقى [[collectionScans: 0]] و ٥ مستندات بس.`,
+            when: "تقارير ولوحات إدارة: آخر N لكل حاجة، أو join بشرط مدى (تاريخ بين اتنين)، أو تجيب حقول قليلة من مستندات كبيرة. ولو نفس الـ join محتاجه في كل request عادي، فكّر تنسخ البيانات (درس «embed ولا reference»).",
+            mistakes: R`تكتب [[$uid]] بدل [[$$uid]]: Mongo هيدوّر على حقل اسمه [[uid]] في الأوردر ومش هيلاقيه، فالـ array بترجع فاضية من غير error (جربتها: [[n: 0]]). وتكتب [[{ $match: { userId: "$$uid" } }]] من غير [[$expr]]: ده بيقارن بالنص الحرفي "$$uid"، وبرضه بيرجّع صفر. وتنسى الـ index على الـ collection التانية، فكل مستند داخل بيعمل scan كامل.`
+          },
+          teach: R`## الفكرة: aggregate صغير جوه aggregate
+
+درس «$lookup و $unwind» (في قسم تصميم المستندات) كان join بالمساواة بس. هنا عايزين لكل يوزر: **آخر أوردرين مدفوعين قيمتهم ٥٠٠ أو أكتر**، بالمبلغ والتاريخ بس. ده محتاج فلتر وترتيب و limit جوه الـ join نفسه. كل اللي تحت اتشغّل في mongosh 2.14 على [[mongo:8]] (8.3) ببيانات الـ solCode.
+
+---
+
+## ١. [[from]] و [[let]]
+
+~~~javascript
+{ $lookup: {
+    from: "orders",
+    let: { uid: "$_id" },
+~~~
+
+- [[from]]: الـ collection اللي هنجيب منها.
+- [[let]]: متغيرات بتتاخد من **المستند الداخل** (اليوزر). [[uid]] اسم اخترناه، وقيمته [["$_id"]] بتاع اليوزر. لليوزر سارة [[uid]] = 1.
+
+ليه متغير؟ لأن جوه الـ pipeline إحنا «واقفين» على مستندات الأوردرات، و [[$_id]] هناك معناه id الأوردر. فلازم نشيل id اليوزر في متغير قبل ما ندخل.
+
+---
+
+## ٢. [[pipeline]]: بيتنفّذ لكل يوزر لوحده
+
+### الفلتر
+
+~~~javascript
+{ $match: { $expr: { $eq: ["$userId", "$$uid"] }, status: "paid", total: { $gte: 500 } } }
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [["$userId"]] | دولار واحد: حقل في الأوردر |
+| [["$$uid"]] | دولارين: المتغير اللي عرّفناه في [[let]] |
+| [[$eq: [a, b]]] | expression: a بتساوي b؟ |
+| [[$expr]] | «الشرط ده expression مش شكل find العادي»، ولازم عشان نقارن حقل بمتغير |
+| [[status: "paid"]] و [[total: { $gte: 500 }]] | شروط عادية بنفس شكل find |
+
+### الترتيب والعدد والشكل
+
+~~~javascript
+{ $sort: { createdAt: -1 } },
+{ $limit: 2 },
+{ $project: { _id: 0, total: 1, createdAt: 1 } }
+~~~
+
+الأحدث الأول، واتنين بس، والحقلين دول بس. وده لكل يوزر، مش للأوردرات كلها.
+
+### [[as]]
+
+الناتج بيتحط في array جديدة اسمها [[lastOrders]] جوه مستند اليوزر.
+
+---
+
+## ٣. الناتج
+
+~~~text الناتج
+[
+  { name: 'Sara', lastOrders: [
+      { createdAt: ISODate('2026-09-02T12:00:00.000Z'), total: 6600 },
+      { createdAt: ISODate('2026-09-01T10:00:00.000Z'), total: 1500 } ] },
+  { name: 'Omar', lastOrders: [ { createdAt: ISODate('2026-09-04T20:00:00.000Z'), total: 32000 } ] },
+  { name: 'Mona', lastOrders: [ { createdAt: ISODate('2026-09-03T09:00:00.000Z'), total: 890 } ] }
+]
+~~~
+
+نقراه:
+
+- سارة عندها ٣ أوردرات مدفوعة، بس أوردر الـ 270 أقل من ٥٠٠ فخرج، وفضل اتنين.
+- عمر عنده 300 (أقل من ٥٠٠) و 6000 (cancelled) و 32000، فطلع واحد بس.
+- منى عندها 890 مدفوع، و 1200 لسه pending فمش محسوب.
+
+---
+
+## ٤. الـ index: ليه مهم هنا بالذات
+
+الـ pipeline بتتنفّذ **مرة لكل يوزر**. ١٠ آلاف يوزر = ١٠ آلاف بحث في الأوردرات. فشغّلت explain:
+
+~~~javascript
+db.users.explain("executionStats").aggregate([ { $lookup: { ... } } ])
+~~~
+
+وقريت مرحلة [[$lookup]] من الناتج:
+
+| | من غير index | بعد [[createIndex({ userId: 1, status: 1, createdAt: -1 })]] |
+|---|---|---|
+| [[collectionScans]] | 3 (scan كامل لكل يوزر) | 0 |
+| [[totalDocsExamined]] | 24 (٣ × ٨ أوردرات) | 5 |
+| [[indexesUsed]] | [[[]]] | [[['userId_1_status_1_createdAt_-1']]] |
+
+ترتيب الـ index بقاعدة ESR (درس «compound index و ESR»): [[userId]] و [[status]] مساواة، وبعدين [[createdAt]] للترتيب، فالـ [[$sort]] بيمشي على الـ index ومش بيرتّب في الذاكرة.
+
+---
+
+## ٥. الشكل المختصر (MongoDB 5.0+)
+
+~~~javascript
+{ $lookup: { from: "orders", localField: "_id", foreignField: "userId",
+             pipeline: [{ $match: { status: "paid" } }, { $group: { _id: null, n: { $sum: 1 }, spent: { $sum: "$total" } } }],
+             as: "stats" } }
+~~~
+
+المساواة بـ [[localField]] و [[foreignField]] زي الشكل البسيط، والـ [[pipeline]] بتشتغل على الأوردرات اللي ساوت بس. هنا بتجمّعهم لرقمين: عددهم ومجموعهم. و [[$first: "$stats"]] في [[$project]] بياخد أول عنصر من الـ array عشان يبقى object:
+
+~~~text الناتج
+[
+  { name: 'Sara', stats: { _id: null, n: 3, spent: 8370 } },
+  { name: 'Omar', stats: { _id: null, n: 2, spent: 32300 } },
+  { name: 'Mona', stats: { _id: null, n: 1, spent: 890 } }
+]
+~~~
+
+---
+
+## ٦. الغلطتين اللي مش بيطلعوا error
+
+جرّبت الاتنين على أول يوزر:
+
+~~~text الناتج
+$eq: ["$userId", "$uid"]          →  n: 0   (دوّر على حقل اسمه uid في الأوردر)
+{ $match: { userId: "$$uid" } }    →  n: 0   (قارن بالنص "$$uid" حرفيًا)
+~~~
+
+الاتنين بيرجّعوا array فاضية في صمت، فالتقرير يطلع أصفار.
+
+## الخلاصة
+
+| عايز | اكتب |
+|---|---|
+| مساواة بس | [[localField]] + [[foreignField]] |
+| مساواة + فلتر/ترتيب/limit/حقول | [[localField]] + [[foreignField]] + [[pipeline]] |
+| شرط مش مساواة (مدى، أكبر من حقل) | [[let]] + [[pipeline]] + [[$expr]] |
+
+[[$field]] = حقل في المستند اللي واقف عليه، [[$$var]] = متغير من [[let]]. وحط index على حقول الشرط في الـ collection التانية.`,
+          lines: [
+            "ادخل قاعدة shop.",
+            "ابدأ pipeline على اليوزرز.",
+            "مرحلة join:",
+            "هات من collection الأوردرات.",
+            "عرّف متغير uid فيه _id بتاع اليوزر الحالي.",
+            "pipeline بتتنفذ على الأوردرات لكل يوزر:",
+            "فلتر: أوردرات اليوزر ده ($$uid)، المدفوعة، اللي 500 أو أكتر.",
+            "الأحدث الأول.",
+            "اتنين بس.",
+            "المبلغ والتاريخ بس.",
+            "قفلة الـ pipeline.",
+            "الناتج في array اسمها lastOrders.",
+            "قفلة الـ $lookup.",
+            "شكل الناتج: الاسم والأوردرات.",
+            "قفلة الـ aggregate.",
+            "index على الأوردرات بنفس ترتيب الشرط والترتيب، عشان كل بحث جوه الـ lookup يبقى IXSCAN.",
+            "الشكل المختصر: مساواة بـ localField/foreignField، و pipeline تجمّع عدد ومجموع المدفوع، و $first يحوّل الـ array لـ object."
+          ],
+          sol: R`بالبيانات دي: سارة [[6600]] و [[1500]]، وعمر [[32000]] بس، ومنى [[890]].
+
+بـ [[$uid]] (دولار واحد): كل [[lastOrders]] بترجع [[[]]]، لأن Mongo بيدوّر على حقل [[uid]] في الأوردر.
+
+عدد الأوردرات المدفوعة لكل منتج: [[localField: "_id"]] و [[foreignField: "items.productId"]] (المساواة مع array بتطابق لو أي عنصر ساوى)، و [[pipeline]] فيها [[$match]] على [[paid]] و [[$count]]. الناتج: Keyboard 2، و Mouse 2، و Monitor 1، و USB cable 2، و Laptop 1، و Webcam 0 (أوردرها pending).`,
+          solCode: R`use shop
+db.users.insertMany([{ _id: 1, name: "Sara", city: "Cairo" }, { _id: 2, name: "Omar", city: "Alex" }, { _id: 3, name: "Mona", city: "Cairo" }])
+db.products.insertMany([
+  { _id: 10, name: "Keyboard", category: "accessories", price: 750 },
+  { _id: 11, name: "Mouse", category: "accessories", price: 300 },
+  { _id: 12, name: "Monitor", category: "screens", price: 6000 },
+  { _id: 13, name: "Webcam", category: "accessories", price: 1200 },
+  { _id: 14, name: "Laptop", category: "computers", price: 32000 },
+  { _id: 15, name: "USB cable", category: "accessories", price: 90 }
+])
+db.orders.insertMany([
+  { _id: 101, userId: 1, status: "paid", createdAt: ISODate("2026-09-01T10:00:00Z"), items: [{ productId: 10, price: 750, qty: 2 }], total: 1500 },
+  { _id: 102, userId: 2, status: "paid", createdAt: ISODate("2026-09-01T15:00:00Z"), items: [{ productId: 11, price: 300, qty: 1 }], total: 300 },
+  { _id: 103, userId: 1, status: "paid", createdAt: ISODate("2026-09-02T12:00:00Z"), items: [{ productId: 12, price: 6000, qty: 1 }, { productId: 11, price: 300, qty: 2 }], total: 6600 },
+  { _id: 104, userId: 2, status: "cancelled", createdAt: ISODate("2026-09-02T13:00:00Z"), items: [{ productId: 12, price: 6000, qty: 1 }], total: 6000 },
+  { _id: 105, userId: 3, status: "paid", createdAt: ISODate("2026-09-03T09:00:00Z"), items: [{ productId: 10, price: 800, qty: 1 }, { productId: 15, price: 90, qty: 1 }], total: 890 },
+  { _id: 106, userId: 1, status: "paid", createdAt: ISODate("2026-09-03T18:00:00Z"), items: [{ productId: 15, price: 90, qty: 3 }], total: 270 },
+  { _id: 107, userId: 3, status: "pending", createdAt: ISODate("2026-09-04T11:00:00Z"), items: [{ productId: 13, price: 1200, qty: 1 }], total: 1200 },
+  { _id: 108, userId: 2, status: "paid", createdAt: ISODate("2026-09-04T20:00:00Z"), items: [{ productId: 14, price: 32000, qty: 1 }], total: 32000 }
+])
+db.products.aggregate([
+  { $lookup: { from: "orders", localField: "_id", foreignField: "items.productId", pipeline: [{ $match: { status: "paid" } }, { $count: "n" }], as: "paid" } },
+  { $project: { _id: 0, name: 1, paidOrders: { $ifNull: [{ $first: "$paid.n" }, 0] } } }
+])`
+        },
+        {
+          cmd: "$facet و $bucket",
+          title: "صفحة بحث كاملة في طلب واحد: النتايج والعدد والفلاتر",
+          desc: R`صفحة بحث المنتجات محتاجة ٤ حاجات من نفس الفلتر: الصفحة الحالية، والعدد الكلي (للـ pagination)، وعدد كل category، وعدد كل نطاق سعر. [[$facet]] بيشغّل كذا pipeline على نفس المستندات ويرجّع الناتج في مستند واحد.
+
+و [[$bucket]] بيقسّم قيمة رقمية لنطاقات انت بتحددها (0 لـ 500، و 500 لـ 2000...)، و [[$bucketAuto]] بيقسّمها لعدد نطاقات متساوية تقريبًا لوحده.`,
+          example: R`use shop
+db.products.aggregate([
+  { $match: { price: { $lte: 10000 } } },
+  { $facet: {
+      results: [{ $sort: { price: 1 } }, { $skip: 0 }, { $limit: 3 }, { $project: { _id: 0, name: 1, price: 1 } }],
+      total: [{ $count: "n" }],
+      byCategory: [{ $sortByCount: "$category" }],
+      byPrice: [{ $bucket: { groupBy: "$price", boundaries: [0, 500, 2000, 10000], default: "other", output: { count: { $sum: 1 }, names: { $push: "$name" } } } }]
+  } }
+])
+db.orders.aggregate([{ $match: { status: "paid" } }, { $bucketAuto: { groupBy: "$total", buckets: 3 } }])`,
+          try: R`بنفس بيانات الدرس الأول في القسم ده: هات الصفحة التانية ([[$skip: 3]]). وبعدين شيل [[default: "other"]] وغيّر الـ [[$match]] لـ [[price: { $gte: 0 }]] (يعني اللابتوب بـ 32000 هيدخل)، وشوف إيه اللي حصل.`,
+          flag: "script",
+          deep: {
+            why: "كل موقع فيه بحث (متجر، وظايف، عقارات) بيعرض جنب النتايج «Accessories (4)» و «من 500 لـ 2000 (2)». لو عملت ده بـ ٤ queries، الفلتر بيتنفّذ ٤ مرات، والأرقام ممكن متتطابقش لو حاجة اتغيرت بين query والتانية.",
+            how: R`[[$facet]] بياخد object: كل مفتاح اسم، وقيمته pipeline. المستندات اللي خارجة من المرحلة اللي قبله (هنا [[$match]]) بتدخل كل pipeline منهم، والناتج مستند **واحد** فيه array لكل مفتاح.
+
+[[$count: "n"]] بيعدّ ويحط الرقم في حقل [[n]]. و [[$sortByCount: "$category"]] اختصار لـ [[$group]] بالـ category و [[$sum: 1]] ثم [[$sort]] تنازلي.
+
+[[$bucket]]: [[groupBy]] القيمة، و [[boundaries]] حدود النطاقات بالترتيب (الحد الأدنى داخل، والأعلى لأ: [[[0, 500)]] و [[[500, 2000)]] و [[[2000, 10000)]]). أي قيمة برّه الحدود بتروح لـ [[default]]، ومن غيره الـ aggregate كله بيفشل. و [[output]] بيحدد الحقول (زي accumulators الـ [[$group]])، ومن غيره بيطلع [[count]] بس.
+
+[[$bucketAuto]] بتقوله عدد النطاقات بس، وهو بيختار الحدود عشان كل نطاق ياخد عدد قريب من المستندات. كويس لما متعرفش توزيع الأسعار.
+
+حدود: الـ pipelines جوه [[$facet]] مش بتستخدم indexes (بتشتغل على اللي داخل لها)، فالفلتر الأساسي لازم يبقى [[$match]] قبل [[$facet]]. والناتج مستند واحد، فلازم يبقى تحت ١٦ ميجا: ماتعملش [[$push]] لكل المستندات جوه facet.`,
+          when: "صفحات بحث فيها فلاتر وعدادات (faceted search)، وداشبورد فيه كذا رقم من نفس البيانات، وتوزيعات (histogram) لأسعار أو أعمار أو مدد. لو البحث نصي وكبير، Atlas Search أو Elasticsearch عندهم facets أسرع.",
+          mistakes: R`تحط الفلتر الأساسي جوه كل pipeline في [[$facet]] بدل [[$match]] قبله: كده كل facet بيقرا الـ collection كلها من غير index. وتنسى [[default]] في [[$bucket]] فأول منتج سعره برّه الحدود يكسر الصفحة كلها (جربتها: [[$switch could not find a matching branch for an input, and no default was specified]]). وتفتكر إن الحد الأعلى داخل: منتج بـ 10000 بالظبط مش في آخر نطاق، ده في [[default]].`
+          },
+          teach: R`## الفكرة: نفس المستندات، كذا سؤال
+
+اتشغّل على [[mongo:8]] ببيانات الدرس الأول في القسم (٦ منتجات). الـ [[$match]] بيسيب ٥ (اللابتوب بـ 32000 خرج). الـ ٥ دول بيدخلوا ٤ pipelines في نفس الوقت:
+
+~~~text المسار
+products (6) → $match (5) ─┬─ results     ترتيب + صفحة
+                            ├─ total       عدد
+                            ├─ byCategory  عدد لكل category
+                            └─ byPrice     عدد لكل نطاق سعر
+~~~
+
+---
+
+## ١. [[results]]: الصفحة نفسها
+
+~~~javascript
+results: [{ $sort: { price: 1 } }, { $skip: 0 }, { $limit: 3 }, { $project: { _id: 0, name: 1, price: 1 } }]
+~~~
+
+رتّب بالسعر، واتخطى صفر (الصفحة الأولى)، وخد ٣. الصفحة التانية [[$skip: 3]]، والقاعدة [[skip = (page - 1) × size]].
+
+## ٢. [[total]]: العدد الكلي
+
+~~~javascript
+total: [{ $count: "n" }]
+~~~
+
+[[$count]] بيرجّع مستند واحد [[{ n: 5 }]]. منه الواجهة بتحسب عدد الصفحات: ٥ ÷ ٣ = صفحتين.
+
+## ٣. [[byCategory]]: [[$sortByCount]]
+
+~~~javascript
+byCategory: [{ $sortByCount: "$category" }]
+~~~
+
+بيجمّع بالـ category ويعدّ ويرتّب الأكبر الأول. نفس:
+
+~~~javascript
+{ $group: { _id: "$category", count: { $sum: 1 } } }, { $sort: { count: -1 } }
+~~~
+
+## ٤. [[byPrice]]: [[$bucket]]
+
+~~~javascript
+{ $bucket: { groupBy: "$price", boundaries: [0, 500, 2000, 10000], default: "other",
+             output: { count: { $sum: 1 }, names: { $push: "$name" } } } }
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[groupBy: "$price"]] | القيمة اللي بنقسّم بيها |
+| [[boundaries]] | ٤ أرقام = ٣ نطاقات: [[0–499]] و [[500–1999]] و [[2000–9999]] |
+| [[default: "other"]] | اسم الصندوق لأي قيمة برّه الحدود |
+| [[output]] | الحقول لكل نطاق: العدد والأسامي |
+
+الـ [[_id]] بتاع كل نطاق هو **حده الأدنى** (0 و 500 و 2000).
+
+---
+
+## ٥. الناتج: مستند واحد
+
+~~~text الناتج
+[
+  {
+    results: [ { name: 'USB cable', price: 90 }, { name: 'Mouse', price: 300 }, { name: 'Keyboard', price: 750 } ],
+    total: [ { n: 5 } ],
+    byCategory: [ { _id: 'accessories', count: 4 }, { _id: 'screens', count: 1 } ],
+    byPrice: [
+      { _id: 0, count: 2, names: [ 'Mouse', 'USB cable' ] },
+      { _id: 500, count: 2, names: [ 'Keyboard', 'Webcam' ] },
+      { _id: 2000, count: 1, names: [ 'Monitor' ] }
+    ]
+  }
+]
+~~~
+
+لاحظ إن [[total]] array فيها مستند، فالواجهة تقراه [[res.total[0]?.n ?? 0]] (لو مفيش نتايج خالص الـ array بتبقى فاضية). و [[computers]] مش ظاهرة في [[byCategory]] لأن اللابتوب خرج في الـ [[$match]]: الـ facets بتعدّ بعد الفلتر، وده المطلوب في صفحة بحث.
+
+---
+
+## ٦. [[$bucketAuto]]: النطاقات لوحدها
+
+~~~javascript
+db.orders.aggregate([{ $match: { status: "paid" } }, { $bucketAuto: { groupBy: "$total", buckets: 3 } }])
+~~~
+
+~~~text الناتج
+{ _id: { min: 270, max: 890 }, count: 2 }
+{ _id: { min: 890, max: 6600 }, count: 2 }
+{ _id: { min: 6600, max: 32000 }, count: 2 }
+~~~
+
+٦ أوردرات مدفوعة اتقسموا ٣ نطاقات، كل واحد فيه ٢. الـ [[max]] مش داخل في النطاق، إلا في آخر نطاق (32000 جوه آخر واحد).
+
+---
+
+## ٧. من غير [[default]]
+
+شيلت [[default]] وخليت اللابتوب يدخل:
+
+~~~text الناتج
+Executor error during aggregate command on namespace: shop.products :: caused by :: $switch could not find a matching branch for an input, and no default was specified.
+~~~
+
+الـ aggregate كله وقع، مش المنتج ده بس. فـ [[default]] دايمًا، إلا لو متأكد إن الحدود مغطية كل القيم.
+
+## الخلاصة
+
+| المرحلة | بتعمل إيه |
+|---|---|
+| [[$facet]] | كذا pipeline على نفس المستندات، والناتج مستند واحد |
+| [[$count]] | عدد في حقل |
+| [[$sortByCount]] | group + count + sort تنازلي |
+| [[$bucket]] | نطاقات بحدود انت بتكتبها (الأدنى داخل والأعلى لأ) + [[default]] |
+| [[$bucketAuto]] | عدد نطاقات وهو يختار الحدود |
+
+الفلتر الأساسي [[$match]] قبل [[$facet]] عشان الـ index، لأن اللي جوه [[$facet]] مش بيستخدم indexes.`,
+          lines: [
+            "ادخل قاعدة shop.",
+            "ابدأ pipeline على المنتجات.",
+            "الفلتر الأساسي (هو اللي بيستخدم index): السعر 10000 أو أقل.",
+            "كذا pipeline على نفس المستندات:",
+            "الصفحة: رتّب بالسعر، واتخطى صفر، وخد 3، والاسم والسعر بس.",
+            "العدد الكلي في حقل n.",
+            "عدد كل category مترتب من الأكبر.",
+            "عدد وأسامي المنتجات في كل نطاق سعر، واللي برّه الحدود في other.",
+            "قفلة الـ $facet.",
+            "قفلة الـ aggregate.",
+            "قسّم الأوردرات المدفوعة لـ 3 نطاقات بالمبلغ، والحدود يختارها Mongo."
+          ],
+          sol: R`الصفحة التانية بـ [[$skip: 3]]: [[Webcam]] (1200) و [[Monitor]] (6000). [[total]] لسه [[5]]، والـ facets التانية زي ما هي لأنها مش متأثرة بالـ skip.
+
+من غير [[default]] ومع [[$gte: 0]]: الـ aggregate كله فشل بـ [[$switch could not find a matching branch for an input, and no default was specified]]، لأن 32000 برّه [[boundaries]]. رجّع [[default: "other"]] وهيطلع نطاق [[_id: 'other']] فيه [[Laptop]].`,
+          solCode: R`db.products.aggregate([
+  { $match: { price: { $lte: 10000 } } },
+  { $facet: {
+      results: [{ $sort: { price: 1 } }, { $skip: 3 }, { $limit: 3 }, { $project: { _id: 0, name: 1, price: 1 } }],
+      total: [{ $count: "n" }]
+  } }
+])`
+        },
+        {
+          cmd: "$setWindowFields",
+          title: "مجموع تراكمي ومتوسط متحرك وترتيب جوه كل مجموعة",
+          desc: R`[[$group]] بيقفل كل مجموعة في صف واحد. [[$setWindowFields]] بيسيب كل صف زي ما هو، ويضيف له حقل محسوب من الصفوف اللي «حواليه»: مجموع كل اللي قبله (running total)، أو متوسط آخر يومين، أو قيمة الصف اللي فات، أو ترتيبه جوه مجموعته.
+
+ده نفس window functions في SQL ([[SUM() OVER (ORDER BY ...)]] و [[RANK()]]).`,
+          example: R`use shop
+db.orders.aggregate([
+  { $match: { status: "paid" } },
+  { $group: { _id: { $dateTrunc: { date: "$createdAt", unit: "day" } }, revenue: { $sum: "$total" } } },
+  { $setWindowFields: {
+      sortBy: { _id: 1 },
+      output: {
+        runningTotal: { $sum: "$revenue", window: { documents: ["unbounded", "current"] } },
+        avg2Days: { $avg: "$revenue", window: { documents: [-1, "current"] } },
+        prevDay: { $shift: { output: "$revenue", by: -1, default: null } }
+      }
+  } },
+  { $project: { _id: 0, day: { $dateToString: { date: "$_id", format: "%m-%d" } }, revenue: 1, runningTotal: 1, avg2Days: 1, prevDay: 1 } }
+])
+db.orders.aggregate([{ $match: { status: "paid" } }, { $setWindowFields: { partitionBy: "$userId", sortBy: { total: -1 }, output: { rank: { $rank: {} }, userTotal: { $sum: "$total" } } } }, { $project: { userId: 1, total: 1, rank: 1, userTotal: 1 } }])`,
+          try: R`بنفس البيانات: امسح أوردر 103 (يوم 2 سبتمبر) من الـ [[$match]] بـ [[_id: { $ne: 103 }]]، وضيف حقل تاني [[days2]] بـ [[window: { range: [-1, "current"], unit: "day" }]] بدل [[documents]]. قارن [[avg2Days]] و [[days2]] يوم 3 سبتمبر. ليه اختلفوا؟`,
+          flag: "script",
+          deep: {
+            why: "داشبورد المبيعات بيسأل «وصلنا لكام من أول الشهر؟» و «النهارده أحسن من امبارح بكام؟» و «متوسط آخر ٧ أيام» عشان يشيل التذبذب. وفي الانترفيو «هات أكبر ٣ أوردرات لكل عميل» و «رتّب الموظفين جوه كل قسم». من غير window functions بتعمل ده بـ loop في Node بعد ما تجيب كل البيانات.",
+            how: R`[[sortBy]] بيرتّب الصفوف قبل الحساب، ولازم مع أي window بالـ documents أو range أو [[$shift]] أو [[$rank]]. [[partitionBy]] (اختياري) بيقسّم الصفوف لمجموعات، والحساب بيبدأ من الأول في كل مجموعة، زي [[PARTITION BY]].
+
+[[output]]: كل حقل فيه دالة (زي [[$sum]] و [[$avg]] و [[$min]] و [[$max]] و [[$push]]) و [[window]]:
+• [[documents: ["unbounded", "current"]]]: من أول صف لحد الحالي = تراكمي.
+• [[documents: [-1, "current"]]]: الصف اللي قبله والحالي.
+• [[range: [-6, "current"], unit: "day"]]: كل الصفوف اللي [[sortBy]] بتاعها في آخر ٧ أيام، حتى لو فيه أيام ناقصة. ده الفرق: documents بيعدّ صفوف، و range بيعدّ قيم.
+• من غير [[window]] خالص: المجموعة كلها (زي [[userTotal]] في السطر الأخير).
+
+دوال الترتيب ملهاش window: [[$rank]] (القيم المتساوية ليها نفس الرقم وبعدها فجوة: 1، 1، 3)، و [[$denseRank]] (من غير فجوة)، و [[$documentNumber]] (رقم مسلسل). و [[$shift]] بيجيب قيمة صف تاني بإزاحة ([[by: -1]] اللي فات، و [[by: 1]] اللي جاي)، و [[default]] لو مفيش.
+
+الذاكرة: كل partition بيتحسب في الذاكرة بحد ١٠٠ ميجا، وبيكتب على الديسك لو كبر (allowDiskUse شغال افتراضيًا من 6.0). وقلّل البيانات بـ [[$match]] و [[$group]] قبله.`,
+          when: "تقارير وداشبورد: تراكمي، ومتوسط متحرك، ونمو يوم عن يوم، و top-N لكل مجموعة، وترقيم صفوف. موجود من MongoDB 5.0.",
+          mistakes: R`تستخدم [[documents]] لمتوسط «آخر ٧ أيام» والبيانات فيها أيام من غير مبيعات: هتاخد آخر ٧ صفوف ممكن يبقوا ١٠ أيام. استخدم [[range]] مع [[unit]]. وتنسى [[sortBy]] مع window بالـ documents (جربتها: [[Document-based bounds require a sortBy]]). وتجمّع بالـ يوم من غير timezone ([[$dateTrunc]] بيقص بـ UTC افتراضيًا)، زي ما شفنا في درس «aggregate و $group».`
+          },
+          teach: R`## الفكرة: كل صف يفضل، ويضاف له حساب من جيرانه
+
+اتشغّل على [[mongo:8]] ببيانات الدرس الأول في القسم. هنعمل حاجتين: تقرير يومي فيه تراكمي ومتوسط وقيمة امبارح، وترتيب أوردرات كل يوزر.
+
+---
+
+## ١. نجهّز صف لكل يوم
+
+~~~javascript
+{ $match: { status: "paid" } },
+{ $group: { _id: { $dateTrunc: { date: "$createdAt", unit: "day" } }, revenue: { $sum: "$total" } } }
+~~~
+
+[[$dateTrunc]] بـ [[unit: "day"]] بيقص التاريخ لأول اليوم (بتوقيت UTC هنا، للتبسيط). الناتج ٤ صفوف: يوم 1 (1800) و 2 (6600) و 3 (1160) و 4 (32000).
+
+---
+
+## ٢. [[$setWindowFields]]
+
+### [[sortBy: { _id: 1 }]]
+
+رتّب الأيام تصاعدي. «اللي قبل» و «التراكمي» ملهمش معنى من غير ترتيب.
+
+### [[runningTotal]]: المجموع التراكمي
+
+~~~javascript
+runningTotal: { $sum: "$revenue", window: { documents: ["unbounded", "current"] } }
+~~~
+
+[[window]] بيحدد الصفوف اللي داخلة في الحساب، بالنسبة للصف الحالي:
+
+| القيمة | معناها |
+|---|---|
+| [["unbounded"]] | من أول صف خالص |
+| [["current"]] | الصف الحالي |
+| [[-1]] | صف واحد قبله |
+| [[1]] | صف واحد بعده |
+
+فـ [[["unbounded", "current"]]] = كل اللي فات + الحالي.
+
+### [[avg2Days]]: متوسط متحرك
+
+~~~javascript
+avg2Days: { $avg: "$revenue", window: { documents: [-1, "current"] } }
+~~~
+
+متوسط الصف اللي قبله والحالي. في أول صف مفيش «قبله» فبياخد الحالي بس.
+
+### [[prevDay]]: [[$shift]]
+
+~~~javascript
+prevDay: { $shift: { output: "$revenue", by: -1, default: null } }
+~~~
+
+هات [[revenue]] بتاع الصف اللي على بعد [[-1]] (اللي قبله). [[default: null]] لأول صف.
+
+---
+
+## ٣. الناتج
+
+~~~text الناتج
+[
+  { day: '09-01', revenue: 1800,  runningTotal: 1800,  avg2Days: 1800,  prevDay: null },
+  { day: '09-02', revenue: 6600,  runningTotal: 8400,  avg2Days: 4200,  prevDay: 1800 },
+  { day: '09-03', revenue: 1160,  runningTotal: 9560,  avg2Days: 3880,  prevDay: 6600 },
+  { day: '09-04', revenue: 32000, runningTotal: 41560, avg2Days: 16580, prevDay: 1160 }
+]
+~~~
+
+(رتّبت الحقول عشان تتقري. Mongo بيطبع [[day]] في الآخر.) نتأكد من يوم 3: التراكمي 1800 + 6600 + 1160 = 9560، والمتوسط (6600 + 1160) ÷ 2 = 3880.
+
+---
+
+## ٤. [[partitionBy]]: نفس الحساب جوه كل مجموعة
+
+~~~javascript
+{ $setWindowFields: { partitionBy: "$userId", sortBy: { total: -1 },
+    output: { rank: { $rank: {} }, userTotal: { $sum: "$total" } } } }
+~~~
+
+- [[partitionBy: "$userId"]]: كل يوزر لوحده، والترتيب يبدأ من 1 لكل واحد.
+- [[sortBy: { total: -1 }]]: الأكبر الأول.
+- [[$rank: {}]]: ترتيب الصف. [[{}]] لأن الدالة مش محتاجة إعدادات.
+- [[userTotal]] من غير [[window]]: مجموع الـ partition كله، ومتكرر على كل صف.
+
+~~~text الناتج
+{ _id: 103, userId: 1, total: 6600,  rank: 1, userTotal: 8370 }
+{ _id: 101, userId: 1, total: 1500,  rank: 2, userTotal: 8370 }
+{ _id: 106, userId: 1, total: 270,   rank: 3, userTotal: 8370 }
+{ _id: 108, userId: 2, total: 32000, rank: 1, userTotal: 32300 }
+{ _id: 102, userId: 2, total: 300,   rank: 2, userTotal: 32300 }
+{ _id: 105, userId: 3, total: 890,   rank: 1, userTotal: 890 }
+~~~
+
+«أكبر أوردرين لكل يوزر» = ضيف بعدها [[{ $match: { rank: { $lte: 2 } } }]]. وكل صف معاه نسبته من مجموع اليوزر: [[total / userTotal]].
+
+---
+
+## ٥. [[documents]] ولا [[range]]؟
+
+شلت يوم 2 (أوردر 103) وحسبت «آخر يومين» بالطريقتين:
+
+~~~text الناتج
+day 09-01  revenue 1800   documents[-1,current]: 1800   range[-1,current] day: 1800
+day 09-03  revenue 1160   documents[-1,current]: 2960   range[-1,current] day: 1160
+day 09-04  revenue 32000  documents[-1,current]: 33160  range[-1,current] day: 33160
+~~~
+
+يوم 3: [[documents]] أخد الصف اللي قبله، وهو يوم 1 (مش امبارح!). [[range]] مع [[unit: "day"]] أخد يوم 2 بس، ومفيهوش حاجة. للتقارير الزمنية [[range]] هو الصح.
+
+## الخلاصة
+
+| الحتة | معناها |
+|---|---|
+| [[sortBy]] | ترتيب الصفوف قبل الحساب (لازم) |
+| [[partitionBy]] | ابدأ من الأول لكل مجموعة |
+| [[window.documents]] | بعدد الصفوف |
+| [[window.range]] + [[unit]] | بالقيمة (أيام، ساعات) |
+| [[$shift]] | قيمة صف تاني |
+| [[$rank]] / [[$denseRank]] / [[$documentNumber]] | ترتيب |
+
+[[$group]] بيقفل الصفوف، و [[$setWindowFields]] بيسيبها ويضيف لها.`,
+          lines: [
+            "ادخل قاعدة shop.",
+            "ابدأ pipeline على الأوردرات.",
+            "المدفوع بس.",
+            "صف لكل يوم فيه مجموع الإيراد.",
+            "مرحلة window:",
+            "رتّب الأيام تصاعدي.",
+            "الحقول الجديدة:",
+            "المجموع من أول يوم لحد النهارده.",
+            "متوسط امبارح والنهارده.",
+            "إيراد اليوم اللي قبله، و null لأول يوم.",
+            "قفلة output.",
+            "قفلة المرحلة.",
+            "شكل الناتج: اليوم كنص شهر-يوم والأرقام.",
+            "قفلة الـ aggregate.",
+            "ترتيب أوردرات كل يوزر من الأكبر، ومجموع اليوزر على كل صف."
+          ],
+          sol: R`يوم 3 سبتمبر: [[avg2Days]] (بالـ documents) بقى متوسط يوم 1 ويوم 3، يعني [[(1800 + 1160) ÷ 2 = 1480]]، لأن الصف اللي قبله بقى يوم 1 بعد ما يوم 2 اختفى. و [[days2]] (بالـ range) = [[1160]] بس، لأن مفيش مبيعات يوم 2.
+
+يعني [[documents]] بيعدّ صفوف، و [[range]] بيعدّ أيام. للتقارير بالتاريخ استخدم [[range]].`,
+          solCode: R`db.orders.aggregate([
+  { $match: { status: "paid", _id: { $ne: 103 } } },
+  { $group: { _id: { $dateTrunc: { date: "$createdAt", unit: "day" } }, revenue: { $sum: "$total" } } },
+  { $setWindowFields: { sortBy: { _id: 1 }, output: {
+      avg2Days: { $avg: "$revenue", window: { documents: [-1, "current"] } },
+      days2: { $sum: "$revenue", window: { range: [-1, "current"], unit: "day" } }
+  } } }
+])`
+        },
+        {
+          cmd: "$topN و $addToSet",
+          title: "ملف كل عميل في صف: آخر أوردر، وأكبر اتنين، والحالات من غير تكرار",
+          desc: R`[[$group]] فيه accumulators أكتر من [[$sum]] و [[$avg]]. [[$addToSet]] بيجمع القيم من غير تكرار، و [[$top]] و [[$topN]] بيجيبوا أول صف أو أول N صفوف **بترتيب انت بتحدده** جوه المجموعة، و [[$maxN]] أكبر N قيم، و [[$sum]] مع [[$cond]] بيجمع بشرط.
+
+بيهم تعمل «ملف العميل» في صف واحد من غير [[$sort]] قبل الـ group ومن غير ما تجيب كل الأوردرات.`,
+          example: R`use shop
+db.orders.aggregate([
+  { $group: {
+      _id: "$userId",
+      orders: { $count: {} },
+      paidSpent: { $sum: { $cond: [{ $eq: ["$status", "paid"] }, "$total", 0] } },
+      statuses: { $addToSet: "$status" },
+      lastOrder: { $top: { sortBy: { createdAt: -1 }, output: { id: "$_id", at: "$createdAt" } } },
+      biggest2: { $topN: { n: 2, sortBy: { total: -1 }, output: "$total" } },
+      firstAt: { $min: "$createdAt" }
+  } },
+  { $sort: { paidSpent: -1 } }
+])
+db.orders.aggregate([{ $group: { _id: null, top3: { $maxN: { n: 3, input: "$total" } } } }])`,
+          try: R`بنفس بيانات الدرس الأول في القسم: جرّب [[firstTotal: { $first: "$total" }]] في [[$group]] من غير أي [[$sort]] قبله. القيمة اللي طلعت لسارة هي أول أوردر ليها فعلًا؟ وبعدين ضيف [[$sort: { createdAt: 1 }]] قبل الـ group وقارن. وفي الآخر خلي [[biggest2]] يحسب المدفوع بس.`,
+          flag: "script",
+          deep: {
+            why: "صفحة «العملاء» في أي لوحة إدارة فيها: عدد الأوردرات، والمدفوع، وآخر أوردر إمتى، وأكبر أوردرات. الطريقة الساذجة: [[$sort]] بالتاريخ ثم [[$group]] بـ [[$first]]، أو تجيب الأوردرات لكل عميل وتحسب في الكود. [[$top]] و [[$topN]] (من MongoDB 5.2) بيعملوا الترتيب جوه كل مجموعة لوحدها.",
+            how: R`[[$count: {}]] زي [[$sum: 1]] (عدد). [[$cond: [شرط, لو صح, لو غلط]]] if/else جوه expression، فـ [[$sum]] بيجمع [[$total]] للمدفوع وصفر للباقي: مجموع بشرط في نفس الـ group.
+
+[[$addToSet]] بيبني array من القيم من غير تكرار، وترتيبها مش مضمون. [[$push]] بيحتفظ بالتكرار.
+
+[[$top]]: [[sortBy]] الترتيب جوه المجموعة، و [[output]] الحاجة اللي ترجع (حقل أو object). بيرجّع واحد. [[$topN]] نفس الفكرة بـ [[n]] وبيرجّع array. و [[$bottom]] و [[$bottomN]] من الآخر. [[$maxN]] و [[$minN]] أبسط: أكبر أو أصغر N قيم من [[input]] من غير ما ترجّع حقول تانية.
+
+[[$first]] و [[$last]] بيرجّعوا أول وآخر مستند **دخل** المجموعة، والترتيب ده مش مضمون من غير [[$sort]] قبل الـ group. جربتها: [[$first: "$total"]] لسارة طلع 270 (أوردر يوم 3)، مش 1500 (أول أوردر ليها).`,
+          when: "أي «لكل X هات أحدث/أكبر/أول Y»: آخر رسالة في كل محادثة، وأعلى ٣ درجات لكل طالب، وآخر سعر لكل منتج. ومجموع بشرط لما عايز كذا رقم (مدفوع ومرتجع ومعلق) في نفس الصف.",
+          mistakes: R`تستخدم [[$first]] من غير [[$sort]] وتفتكره «الأقدم»: بيشتغل صح في التجربة الصغيرة وبيتلخبط لما الـ collection تكبر. وتنسى إن الـ group من غير [[$match]] بيحسب الـ cancelled كمان: [[biggest2]] لعمر طلع [[[32000, 6000]]] والـ 6000 دي أوردر ملغي. و [[$addToSet]] على قيم كتير جدًا (ids لكل الأوردرات) بيعمل array ضخمة في صف واحد، والصف ليه حد ١٠٠ ميجا رام للـ group.`
+          },
+          teach: R`## الفكرة: كل حقل في [[$group]] سؤال عن المجموعة
+
+اتشغّل على [[mongo:8]] ببيانات الدرس الأول في القسم: ٨ أوردرات لـ ٣ يوزرز، منهم واحد cancelled وواحد pending. المفتاح [[_id: "$userId"]]، فكل يوزر صف، وكل حقل تاني بيحسب حاجة على أوردرات اليوزر ده.
+
+---
+
+## ١. [[orders: { $count: {} }]]
+
+عدد المستندات في المجموعة. نفس [[$sum: 1]] بالظبط، بس أوضح. الـ [[{}]] لأنه مش محتاج إعدادات.
+
+## ٢. مجموع بشرط: [[$sum]] + [[$cond]]
+
+~~~javascript
+paidSpent: { $sum: { $cond: [{ $eq: ["$status", "paid"] }, "$total", 0] } }
+~~~
+
+من جوه لبرة:
+
+| الحتة | معناها |
+|---|---|
+| [[{ $eq: ["$status", "paid"] }]] | الأوردر ده مدفوع؟ true أو false |
+| [[$cond: [شرط, "$total", 0]]] | لو صح هات المبلغ، لو غلط صفر |
+| [[$sum: ...]] | اجمع الناتج على كل أوردرات اليوزر |
+
+يعني من غير [[$match]] قدرنا نعدّ **كل** الأوردرات ونجمع **المدفوع بس** في نفس الصف.
+
+## ٣. [[statuses: { $addToSet: "$status" }]]
+
+كل الحالات اللي ظهرت لليوزر، كل واحدة مرة. عمر عنده ٣ أوردرات (paid و cancelled و paid) فبتطلع [[['paid', 'cancelled']]]. والترتيب جوه الـ array مش مضمون.
+
+## ٤. [[$top]]: آخر أوردر
+
+~~~javascript
+lastOrder: { $top: { sortBy: { createdAt: -1 }, output: { id: "$_id", at: "$createdAt" } } }
+~~~
+
+- [[sortBy: { createdAt: -1 }]]: رتّب أوردرات **اليوزر ده** من الأحدث.
+- [[output]]: رجّع object فيه رقم الأوردر وتاريخه.
+- [[$top]]: خد أول واحد بعد الترتيب.
+
+## ٥. [[$topN]]: أكبر اتنين
+
+~~~javascript
+biggest2: { $topN: { n: 2, sortBy: { total: -1 }, output: "$total" } }
+~~~
+
+نفس الفكرة بـ [[n: 2]]، والناتج array.
+
+## ٦. [[firstAt: { $min: "$createdAt" }]]
+
+أقدم تاريخ. [[$min]] و [[$max]] بيشتغلوا على التواريخ والنصوص مش الأرقام بس.
+
+---
+
+## الناتج
+
+~~~text الناتج (بعد { $sort: { paidSpent: -1 } })
+{ _id: 2, orders: 3, paidSpent: 32300, statuses: [ 'paid', 'cancelled' ],
+  lastOrder: { id: 108, at: ISODate('2026-09-04T20:00:00.000Z') }, biggest2: [ 32000, 6000 ],
+  firstAt: ISODate('2026-09-01T15:00:00.000Z') }
+{ _id: 1, orders: 3, paidSpent: 8370, statuses: [ 'paid' ],
+  lastOrder: { id: 106, at: ISODate('2026-09-03T18:00:00.000Z') }, biggest2: [ 6600, 1500 ],
+  firstAt: ISODate('2026-09-01T10:00:00.000Z') }
+{ _id: 3, orders: 2, paidSpent: 890, statuses: [ 'pending', 'paid' ],
+  lastOrder: { id: 107, at: ISODate('2026-09-04T11:00:00.000Z') }, biggest2: [ 1200, 890 ],
+  firstAt: ISODate('2026-09-03T09:00:00.000Z') }
+~~~
+
+بص على عمر: [[paidSpent]] 32300 (300 + 32000) من غير الـ 6000 الملغي، بس [[biggest2]] فيه 6000 لأن [[$topN]] مفيهوش شرط. لو عايز المدفوع بس في كل الحقول، حط [[$match]] قبل الـ group.
+
+---
+
+## ٧. [[$maxN]]: أكبر N قيم من غير حقول تانية
+
+~~~javascript
+db.orders.aggregate([{ $group: { _id: null, top3: { $maxN: { n: 3, input: "$total" } } } }])
+~~~
+
+~~~text الناتج
+[ { _id: null, top3: [ 32000, 6600, 6000 ] } ]
+~~~
+
+[[_id: null]] يعني كل الـ collection مجموعة واحدة.
+
+---
+
+## ٨. ليه مش [[$first]]؟
+
+~~~javascript
+db.orders.aggregate([{ $group: { _id: "$userId", firstTotal: { $first: "$total" } } }])
+~~~
+
+~~~text الناتج
+{ _id: 1, firstTotal: 270 }   ← أوردر 106 (يوم 3)، مش 1500 (يوم 1)
+{ _id: 2, firstTotal: 6000 }
+{ _id: 3, firstTotal: 890 }
+~~~
+
+[[$first]] بياخد أول مستند **وصل** للـ group، وده بيعتمد على ترتيب القراية من الديسك أو الـ index. لازم [[$sort]] قبله، أو استخدم [[$top]] بـ [[sortBy]] وانت مطمّن.
+
+## الخلاصة
+
+| الـ accumulator | بيرجّع |
+|---|---|
+| [[$count: {}]] | عدد |
+| [[$sum: { $cond: [...] }]] | مجموع بشرط |
+| [[$addToSet]] | array من غير تكرار |
+| [[$push]] | array بالتكرار |
+| [[$top]] / [[$bottom]] | صف واحد بترتيب [[sortBy]] |
+| [[$topN]] / [[$bottomN]] | N صفوف بترتيب [[sortBy]] |
+| [[$maxN]] / [[$minN]] | أكبر/أصغر N قيم |
+| [[$first]] / [[$last]] | أول/آخر داخل، ومحتاج [[$sort]] قبله |`,
+          lines: [
+            "ادخل قاعدة shop.",
+            "ابدأ pipeline على كل الأوردرات (من غير فلتر).",
+            "جمّع:",
+            "صف لكل يوزر.",
+            "عدد الأوردرات.",
+            "مجموع المدفوع بس: المبلغ لو paid وإلا صفر.",
+            "الحالات اللي ظهرت من غير تكرار.",
+            "آخر أوردر: رتّب بالتاريخ تنازلي وخد الأول، ورجّع رقمه وتاريخه.",
+            "أكبر مبلغين.",
+            "أقدم تاريخ أوردر.",
+            "قفلة الـ group.",
+            "اللي دفع أكتر الأول.",
+            "قفلة الـ aggregate.",
+            "أكبر 3 مبالغ في الـ collection كلها."
+          ],
+          sol: R`من غير [[$sort]]: سارة طلع لها [[firstTotal: 270]] (أوردر 106 يوم 3 سبتمبر)، مع إن أول أوردر ليها 1500 يوم 1. بعد [[{ $sort: { createdAt: 1 } }]] قبل الـ group طلع 1500.
+
+[[biggest2]] للمدفوع بس: أسهل حل [[{ $match: { status: "paid" } }]] قبل الـ group، فعمر يطلع [[[32000, 300]]]. بس كده [[orders]] و [[statuses]] كمان هيبقوا للمدفوع بس. لو عايز الباقي يفضل على كل الأوردرات، خلي [[output]] جوه [[$topN]] [[$cond]] يرجّع null لغير المدفوع، أو اعمل [[$facet]].`,
+          solCode: R`db.orders.aggregate([
+  { $sort: { createdAt: 1 } },
+  { $group: { _id: "$userId", firstTotal: { $first: "$total" } } },
+  { $sort: { _id: 1 } }
+])`
+        },
+        {
+          cmd: "$merge و $out",
+          title: "احفظ ناتج التقرير في collection وحدّثه بدل ما تحسبه كل مرة",
+          desc: R`[[$merge]] في آخر الـ pipeline بيكتب الناتج في collection: يضيف الجديد، ويحدّث أو يستبدل الموجود بنفس المفتاح. ده «materialized view»: تقرير تقيل بيتحسب كل ساعة، والداشبورد يقرا الناتج الجاهز في ملّي ثانية.
+
+[[$out]] أبسط: بيستبدل الـ collection كلها بالناتج.`,
+          example: R`use shop
+db.orders.aggregate([
+  { $match: { status: "paid", createdAt: { $gte: ISODate("2026-09-03T00:00:00Z") } } },
+  { $group: { _id: { $dateToString: { date: "$createdAt", format: "%Y-%m-%d" } }, revenue: { $sum: "$total" }, orders: { $sum: 1 } } },
+  { $set: { updatedAt: "$NOW" } },
+  { $merge: { into: "daily_sales", on: "_id", whenMatched: "replace", whenNotMatched: "insert" } }
+])
+db.daily_sales.find().sort({ _id: 1 })
+db.orders.aggregate([{ $match: { status: "paid" } }, { $project: { total: 1 } }, { $out: "paid_snapshot" }])
+db.paid_snapshot.countDocuments()`,
+          try: R`بنفس بيانات الدرس الأول في القسم: شغّل الـ [[$merge]] مرتين ورا بعض، واتأكد إن [[daily_sales]] فيها نفس الأرقام (مش ضعفها). وبعدين غيّر [[whenMatched]] لـ pipeline بيجمع: [[[{ $set: { revenue: { $add: ["$revenue", "$new.revenue"] } } }]]] وشغّله مرتين. وفي الآخر شغّل [[$out]] على الأوردرات الـ [[cancelled]] لنفس [[paid_snapshot]] وعدّ.`,
+          flag: "script",
+          deep: {
+            why: "تقرير الإيراد على مليون أوردر بياخد ثواني، ولو الداشبورد بيحسبه مع كل فتحة صفحة، القاعدة بتتعب والصفحة بطيئة. الحل اللي بيتعمل في كل شركة: الحساب بيتعمل كل فترة (cron أو job) ويتحفظ، والصفحة تقرا الجاهز. ودرس «aggregate و $group» قال كده في الـ when، وده إزاي.",
+            how: R`[[$merge]] لازم يبقى **آخر** مرحلة. [[into]] اسم الـ collection (أو [[{ db, coll }]] لقاعدة تانية)، وبيتعمل لو مش موجود. [[on]] الحقل اللي بيتطابق بيه المستند الجديد مع القديم (الافتراضي [[_id]])، ولازم يبقى عليه unique index، وإلا: [[Cannot find index to verify that join fields will be unique]] (جربتها).
+
+[[whenMatched]] لو فيه مستند بنفس المفتاح: [[replace]] (استبدله)، أو [[merge]] (ادمج الحقول، وده الافتراضي)، أو [[keepExisting]]، أو [[fail]]، أو pipeline بتحسب المستند الجديد، وجواها [[$new]] هو الصف الجاي من التقرير. [[whenNotMatched]]: [[insert]] (الافتراضي) أو [[discard]] أو [[fail]].
+
+التحديث التزايدي: بدل ما تحسب السنة كلها كل ساعة، الـ [[$match]] بياخد آخر يوم أو اتنين بس، و [[replace]] بيكتب الأيام دي من جديد. ده **idempotent**: لو الـ job اشتغل مرتين، النتيجة نفسها. جربت مرتين: نفس الأرقام. أما pipeline بـ [[$add]] فلو اتشغّل مرتين الرقم بيتضاعف (جربتها: 32000 بقت 64000).
+
+[[$NOW]] متغير فيه وقت تشغيل الـ aggregate، مفيد عشان تعرف التقرير اتحدّث إمتى.
+
+[[$out]] برضه آخر مرحلة: بيكتب الناتج في collection مؤقتة وبعدين يبدّلها بالقديمة مرة واحدة، فمحدش بيشوف نص الناتج. الـ indexes اللي كانت على الـ collection القديمة بتفضل (جربت: [[total_1]] فضل). بس كل البيانات القديمة بتتمسح: شغّلت [[$out]] تاني على الـ cancelled فـ [[paid_snapshot]] بقت مستند واحد بدل ٦.`,
+          when: "داشبورد وتقارير بتتقري أكتر ما البيانات بتتغير، وملخصات يومية/شهرية، ونسخة مجهزة لـ export أو لـ BI. [[$merge]] للتحديث التزايدي، و [[$out]] لنسخة كاملة بتتعمل من الأول (snapshot).",
+          mistakes: R`whenMatched بيجمع ([[$inc]] أو [[$add]]) في job ممكن يتعاد بعد فشل: الأرقام بتتضاعف في صمت. خليه يحسب الفترة من جديد ويعمل replace. و [[on]] على حقل من غير unique index. و [[$out]] على اسم collection مهمة بالغلط: بتتمسح وتتبدل من غير سؤال. وتنسى إن الـ view المحفوظ متأخر عن البيانات بفترة الـ job، فاكتب [[updatedAt]] واعرضه في الصفحة.`
+          },
+          teach: R`## الفكرة: احسب مرة، واقرا كتير
+
+اتشغّل على [[mongo:8]] ببيانات الدرس الأول في القسم. هنعمل collection اسمها [[daily_sales]]: صف لكل يوم فيه الإيراد وعدد الأوردرات، والـ job بيحدّث آخر الأيام بس.
+
+---
+
+## ١. الـ pipeline العادي
+
+~~~javascript
+{ $match: { status: "paid", createdAt: { $gte: ISODate("2026-09-03T00:00:00Z") } } },
+{ $group: { _id: { $dateToString: { date: "$createdAt", format: "%Y-%m-%d" } }, revenue: { $sum: "$total" }, orders: { $sum: 1 } } },
+~~~
+
+المدفوع من أول يوم 3 (في الحقيقة: «من امبارح»)، وصف لكل يوم. الـ [[_id]] نص زي [['2026-09-03']]، وده هيبقى مفتاح المستند في [[daily_sales]].
+
+## ٢. [[{ $set: { updatedAt: "$NOW" } }]]
+
+[[$set]] بيضيف حقل (زي [[$addFields]]). [[$NOW]] بدولارين: **متغير** جاهز فيه وقت التشغيل، مش حقل.
+
+## ٣. [[$merge]]
+
+~~~javascript
+{ $merge: { into: "daily_sales", on: "_id", whenMatched: "replace", whenNotMatched: "insert" } }
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[into]] | اكتب هنا (بتتعمل لو مش موجودة) |
+| [[on: "_id"]] | قارن بالـ [[_id]] (اليوم) |
+| [[whenMatched: "replace"]] | اليوم موجود؟ استبدله بالرقم الجديد |
+| [[whenNotMatched: "insert"]] | مش موجود؟ ضيفه |
+
+الـ aggregate نفسه بيرجّع [[[]]]: الناتج راح للـ collection مش ليك.
+
+## ٤. [[db.daily_sales.find().sort({ _id: 1 })]]
+
+~~~text الناتج
+[
+  { _id: '2026-09-03', revenue: 1160, orders: 2, updatedAt: ISODate('2026-10-27T22:35:37.265Z') },
+  { _id: '2026-09-04', revenue: 32000, orders: 1, updatedAt: ISODate('2026-10-27T22:35:37.265Z') }
+]
+~~~
+
+يوم 3: 890 + 270 = 1160 من أوردرين. يوم 4: 32000 (والـ 1200 pending مش محسوب).
+
+### اتشغّل مرتين؟
+
+شغّلت نفس الـ [[$merge]] مرة تانية: نفس الأرقام بالظبط، لأن [[replace]] بيكتب الرقم المحسوب من جديد. ده اللي اسمه **idempotent**، وده المطلوب في job ممكن يتعاد.
+
+ولما خليت [[whenMatched]] pipeline بيجمع القديم على الجديد ([[$new]] = الصف الجاي):
+
+~~~javascript
+whenMatched: [{ $set: { revenue: { $add: ["$revenue", "$new.revenue"] } } }]
+~~~
+
+يوم 4 بقى [[64000]] بعد مرة واحدة زيادة. الجمع في الـ merge خطر.
+
+---
+
+## ٥. [[$out]]: استبدل الـ collection كلها
+
+~~~javascript
+db.orders.aggregate([{ $match: { status: "paid" } }, { $project: { total: 1 } }, { $out: "paid_snapshot" }])
+db.paid_snapshot.countDocuments()
+~~~
+
+~~~text الناتج
+6
+~~~
+
+٦ أوردرات مدفوعة. جرّبت ٣ حاجات:
+
+| التجربة | النتيجة |
+|---|---|
+| [[createIndex({ total: 1 })]] على [[paid_snapshot]] وبعدين [[$out]] تاني | الـ index فضل: [[_id_,total_1]] |
+| [[$out]] تاني بالـ cancelled بس | [[countDocuments()]] بقى [[1]]: القديم اتمسح كله |
+| [[$out]] مش آخر مرحلة | [[$out can only be the final stage in the pipeline]] |
+
+---
+
+## ٦. لو [[on]] على حقل مش unique
+
+~~~text الناتج
+Cannot find index to verify that join fields will be unique
+~~~
+
+[[$merge]] لازم يضمن إن كل صف جديد بيقابل مستند واحد بس، فمحتاج unique index على حقول [[on]] ([[_id]] عليه دايمًا).
+
+## الخلاصة
+
+| | [[$merge]] | [[$out]] |
+|---|---|---|
+| بيعمل إيه | يضيف/يحدّث صفوف | يستبدل الـ collection كلها |
+| مكانه | آخر مرحلة | آخر مرحلة |
+| مناسب لـ | تحديث آخر يوم كل ساعة | snapshot كامل |
+| خطر | الجمع في whenMatched يتضاعف لو اتعاد | يمسح القديم من غير سؤال |
+
+احسب الفترة من جديد واعمل [[replace]]، واكتب [[updatedAt]] بـ [[$NOW]].`,
+          lines: [
+            "ادخل قاعدة shop.",
+            "ابدأ pipeline على الأوردرات.",
+            "المدفوع من أول يوم 3 سبتمبر بس (الفترة اللي بتتحدّث).",
+            "صف لكل يوم: الإيراد والعدد، والمفتاح التاريخ كنص.",
+            "ضيف وقت التحديث.",
+            "اكتب في daily_sales: اليوم الموجود يتستبدل، والجديد يتضاف.",
+            "قفلة الـ aggregate.",
+            "اقرا التقرير الجاهز.",
+            "نسخة كاملة من الأوردرات المدفوعة بتستبدل paid_snapshot.",
+            "عدد المستندات في النسخة."
+          ],
+          sol: R`مرتين بـ [[replace]]: [[daily_sales]] فيها [[2026-09-03]] بـ 1160 و [[2026-09-04]] بـ 32000 زي ما هي.
+
+بالـ pipeline اللي بيجمع: كل تشغيل بيضيف الرقم على اللي موجود. أول تشغيل خلى يوم 4 [[64000]] ويوم 3 [[2320]]، والتاني يوصّل يوم 4 لـ 96000. ده الفرق بين job آمن يتعاد وواحد لأ.
+
+[[$out]] بالـ cancelled: [[paid_snapshot]] بقت مستند واحد (أوردر 104)، والـ ٦ القدام اتمسحوا.`,
+          solCode: R`db.orders.aggregate([
+  { $match: { status: "paid", createdAt: { $gte: ISODate("2026-09-03T00:00:00Z") } } },
+  { $group: { _id: { $dateToString: { date: "$createdAt", format: "%Y-%m-%d" } }, revenue: { $sum: "$total" } } },
+  { $merge: { into: "daily_sales", whenMatched: [{ $set: { revenue: { $add: ["$revenue", "$new.revenue"] } } }] } }
+])
+db.daily_sales.find({}, { revenue: 1 })
+db.orders.aggregate([{ $match: { status: "cancelled" } }, { $project: { total: 1 } }, { $out: "paid_snapshot" }])
+db.paid_snapshot.countDocuments()`
+        },
+      ]
+    }
+]);
+
+/* ===== js/tabs/mongo/06.js ===== */
+// تكملة تاب mongo: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/mongo/01.js (شرح حقول الدرس في أوله)
+MORE("mongo", [
+    {
+      t: "سرعة التقارير وأنماط تصميم متقدمة",
+      l: 3,
+      n: "تقرا explain بتاع الـ aggregate، و index يخلي التقرير covered، و attribute و computed patterns، وتغيّر شكل المستندات من غير ما توقف التطبيق",
+      items: [
+        {
+          cmd: "explain للـ aggregate",
+          title: "التقرير بطيء: اقرا explain وصلّحه بـ index",
+          desc: R`[[db.collection.explain("executionStats").aggregate([...])]] بيشغّل الـ pipeline ويقولك عمل إيه: قرا كام مستند ([[totalDocsExamined]])، وكام مفتاح index ([[totalKeysExamined]])، ورتّب في الذاكرة ([[SORT]]) ولا من الـ index، وأخد كام ملّي ثانية.
+
+القاعدة: [[$match]] و [[$sort]] في أول الـ pipeline بس هما اللي بيستخدموا indexes، وأحسن حالة إن الـ index يغطي كل الحقول المطلوبة فميقراش المستندات خالص ([[PROJECTION_COVERED]]).`,
+          example: R`use perf
+for (let b = 0; b < 20; b++) db.orders.insertMany(Array.from({ length: 10000 }, (_, j) => { const i = b * 10000 + j; return { userId: i % 5000, status: ["paid", "paid", "paid", "pending", "cancelled"][i % 5], createdAt: new Date(Date.UTC(2026, 0, 1) + i * 60000), total: (i * 37) % 5000 } }))
+db.orders.explain("executionStats").aggregate([{ $match: { status: "paid", userId: 42 } }, { $sort: { createdAt: -1 } }, { $limit: 5 }])
+db.orders.createIndex({ userId: 1, status: 1, createdAt: -1 })
+db.orders.explain("executionStats").aggregate([{ $match: { status: "paid", userId: 42 } }, { $sort: { createdAt: -1 } }, { $limit: 5 }])
+db.orders.explain("executionStats").aggregate([{ $match: { status: "paid" } }, { $group: { _id: "$userId", s: { $sum: "$total" } } }, { $match: { s: { $gt: 100000 } } }])
+db.orders.createIndex({ status: 1, userId: 1, total: 1 })
+db.orders.explain("executionStats").aggregate([{ $match: { status: "paid" } }, { $group: { _id: "$userId", s: { $sum: "$total" } } }, { $match: { s: { $gt: 100000 } } }])`,
+          try: R`في نفس قاعدة [[perf]]: شغّل explain على [[[{ $sort: { createdAt: -1 } }, { $match: { userId: 42 } }, { $limit: 5 }]]] (الـ sort قبل الـ match). Mongo عمل إيه في الترتيب؟ وبعدين على [[[{ $match: { userId: 42, status: "paid" } }, { $project: { _id: 0, userId: 1, status: 1, createdAt: 1 } }]]] وبص على [[totalDocsExamined]].`,
+          flag: "script",
+          deep: {
+            why: "«الداشبورد بطيء» أشهر شكوى بعد ما البيانات تكبر. من غير explain بتخمّن: تزوّد RAM، أو تعمل index على كل حقل فالكتابة تبطأ. explain بيوريك بالظبط المرحلة اللي بتقرا ٢٠٠ ألف مستند عشان ترجّع ٥.",
+            how: R`الناتج له شكلين. لو الـ pipeline كله اتحوّل لـ query واحدة (match و sort و limit و group بسيط)، بيبقى زي explain بتاع find: [[queryPlanner.winningPlan]] و [[executionStats]]. لو فيه مراحل مبتتحوّلش، بيبقى [[stages]]: أول عنصر [[$cursor]] (الجزء اللي راح للـ query engine وفيه الـ plan والأرقام) وبعده باقي المراحل.
+
+الـ stages اللي تقراها في الـ plan: [[COLLSCAN]] قرا الـ collection كلها، و [[IXSCAN]] مشي على index، و [[FETCH]] جاب المستند من الديسك بعد الـ index، و [[SORT]] رتّب في الذاكرة (حده ١٠٠ ميجا، [[memLimit: 104857600]])، و [[PROJECTION_COVERED]] الناتج كله من الـ index من غير FETCH، و [[GROUP]] تجميع.
+
+الأرقام: [[nReturned]] رجّع كام، و [[totalKeysExamined]] كام مفتاح index، و [[totalDocsExamined]] كام مستند، و [[executionTimeMillis]]. الهدف إن الاتنين قريبين من [[nReturned]].
+
+الـ optimizer بيعيد الترتيب لوحده أحيانًا: بيقدّم [[$match]] قبل [[$sort]]، وبيقدّم [[$match]] على [[_id]] بتاع الـ group لو هو حقل أصلي. بس [[$match]] على حاجة محسوبة ([[s]] = مجموع) لازم يفضل بعد الـ group ومبيستخدمش index.
+
+covered: لو الـ index فيه كل الحقول اللي الـ pipeline محتاجها ([[status]] للفلتر و [[userId]] و [[total]] للـ group)، Mongo بيقرا الـ index بس. جربت: [[totalDocsExamined]] نزل من 200000 لـ 0.`,
+          when: "قبل ما تضيف أي index (اعرف المشكلة الأول)، وبعده (اتأكد إنه اتستخدم)، ولأي تقرير بياخد أكتر من ١٠٠ ملّي ثانية. و Atlas و mongod عندهم slow query log ([[db.setProfilingLevel(1, { slowms: 100 })]]) يقولك مين البطيء من الأساس.",
+          mistakes: R`تقرا [[executionTimeMillis]] بس على collection صغيرة: ٢ ملّي ثانية مع ٨ مستندات مش معناها حاجة. اقرا [[totalDocsExamined]] مقابل [[nReturned]]. وتعمل index لكل حقل لوحده بدل compound بترتيب ESR. وتحط [[$project]] أو [[$addFields]] قبل [[$match]] على حقل محسوب فيه، فالـ match ميقدرش يستخدم index. وتنسى إن كل index بيبطّأ الكتابة وبياخد RAM: index الـ covered هنا اتعمل لتقرير مهم، مش لكل تقرير.`
+          },
+          teach: R`## الفكرة: explain بيقولك القاعدة عملت إيه فعلًا
+
+درس «createIndex و explain» كان على [[find]]. هنا على [[aggregate]]، وببيانات كبيرة كفاية عشان الأرقام تفرق: ٢٠٠ ألف أوردر لـ ٥٠٠٠ يوزر. اتشغّل على [[mongo:8]] (8.3) في mongosh.
+
+---
+
+## ١. البيانات
+
+~~~javascript
+for (let b = 0; b < 20; b++) db.orders.insertMany(Array.from({ length: 10000 }, (_, j) => { ... }))
+~~~
+
+- [[for]] بيلف ٢٠ مرة، وكل مرة [[insertMany]] بـ ١٠ آلاف مستند (أسرع بكتير من [[insertOne]] في loop).
+- [[Array.from({ length: 10000 }, fn)]]: بيعمل array فيها ١٠ آلاف عنصر، كل عنصر ناتج الدالة.
+- [[i % 5000]]: باقي القسمة، فالـ userId بيلف من 0 لـ 4999، يعني كل يوزر عنده ٤٠ أوردر.
+- الحالة بتتاخد من array فيها ٥ قيم بـ [[i % 5]]، ٣ منهم paid، فـ ١٢٠ ألف أوردر مدفوع. (وبالصدفة الحسابية كل أوردرات يوزر 42 الـ ٤٠ طلعوا paid، لأن 42 + 5000 × أي رقم باقي قسمته على 5 دايمًا 2.)
+
+---
+
+## ٢. أول explain: من غير index
+
+~~~javascript
+db.orders.explain("executionStats").aggregate([{ $match: { status: "paid", userId: 42 } }, { $sort: { createdAt: -1 } }, { $limit: 5 }])
+~~~
+
+[[explain("executionStats")]] قبل [[.aggregate]]: «شغّله وقولّي عملت إيه» بدل ما يرجّع النتايج. الـ pipeline ده كله اتحوّل لـ query واحدة، فالناتج زي explain بتاع find. أهم حتتين:
+
+~~~text queryPlanner.winningPlan (مختصر)
+{ stage: 'SORT', sortPattern: { createdAt: -1 }, memLimit: 104857600, limitAmount: 5,
+  inputStage: { stage: 'COLLSCAN', filter: { '$and': [ { status: { '$eq': 'paid' } }, { userId: { '$eq': 42 } } ] } } }
+~~~
+
+~~~text executionStats (مختصر)
+nReturned: 5, executionTimeMillis: 92, totalKeysExamined: 0, totalDocsExamined: 200000
+~~~
+
+بيتقري من جوه لبرة:
+
+| الـ stage | معناه |
+|---|---|
+| [[COLLSCAN]] | قرا كل المستندات وفلتر كل واحد بالـ filter |
+| [[SORT]] | رتّب اللي فضل **في الذاكرة** |
+| [[memLimit: 104857600]] | حد الذاكرة للترتيب: 100 × 1024 × 1024 = ١٠٠ ميجا |
+| [[limitAmount: 5]] | Mongo دمج الـ [[$limit]] في الـ sort: بيحتفظ بأحسن ٥ بس (top-k) |
+
+والأرقام: قرا **٢٠٠٠٠٠** مستند عشان يرجّع **٥**، في 92 ملّي ثانية.
+
+---
+
+## ٣. الـ index
+
+~~~javascript
+db.orders.createIndex({ userId: 1, status: 1, createdAt: -1 })
+~~~
+
+بترتيب ESR: [[userId]] و [[status]] مساواة (Equality)، وبعدين [[createdAt]] للترتيب (Sort). ونفس الـ explain تاني:
+
+~~~text queryPlanner.winningPlan (مختصر)
+{ stage: 'LIMIT', limitAmount: 5,
+  inputStage: { stage: 'FETCH',
+    inputStage: { stage: 'IXSCAN', indexName: 'userId_1_status_1_createdAt_-1',
+      indexBounds: { userId: [ '[42, 42]' ], status: [ '["paid", "paid"]' ], createdAt: [ '[MaxKey, MinKey]' ] } } } }
+~~~
+
+~~~text executionStats
+nReturned: 5, executionTimeMillis: 0, totalKeysExamined: 5, totalDocsExamined: 5
+~~~
+
+- [[IXSCAN]] بـ [[indexBounds]]: راح على طول لـ [[userId = 42]] و [[status = paid]]، والمفاتيح جوه مترتبة بـ [[createdAt]] تنازلي أصلًا.
+- مفيش [[SORT]]: الترتيب جه من الـ index.
+- [[FETCH]]: جاب ٥ مستندات بس من الديسك.
+- ٥ مفاتيح و ٥ مستندات و ٥ نتايج. ده الشكل المثالي.
+
+---
+
+## ٤. تقرير فيه [[$group]]
+
+~~~javascript
+db.orders.explain("executionStats").aggregate([{ $match: { status: "paid" } }, { $group: { _id: "$userId", s: { $sum: "$total" } } }, { $match: { s: { $gt: 100000 } } }])
+~~~
+
+«اليوزرز اللي دفعوا أكتر من ١٠٠ ألف». هنا الناتج شكله مختلف: [[explainVersion: '2']] وفيه [[stages]]:
+
+~~~text stages
+$cursor  →  $match
+~~~
+
+- [[$cursor]]: الجزء اللي اتنفّذ في الـ query engine: [[$match]] الأولاني و [[$group]] (جواه [[GROUP]] فوق [[COLLSCAN]]). قرا [[200000]] مستند في 88 ملّي ثانية.
+- [[$match]] التاني على [[s]] (مجموع محسوب) فضل مرحلة لوحده بعد الـ group، ورجّع [[1499]] يوزر. ده عمره ما يستخدم index، لأن [[s]] مش موجود في المستندات.
+
+## ٥. index بيغطّي التقرير (covered)
+
+~~~javascript
+db.orders.createIndex({ status: 1, userId: 1, total: 1 })
+~~~
+
+الـ group محتاج ٣ حقول بس: [[status]] للفلتر، و [[userId]] للمفتاح، و [[total]] للجمع. لو الـ index فيهم الـ ٣، القيم موجودة جوه الـ index نفسه:
+
+~~~text $cursor بعد الـ index (مختصر)
+GROUP ← PROJECTION_COVERED ← IXSCAN status_1_userId_1_total_1
+totalKeysExamined: 120000, totalDocsExamined: 0, executionTimeMillis: 56
+~~~
+
+| | قبل | بعد |
+|---|---|---|
+| القراية | [[COLLSCAN]] | [[IXSCAN]] + [[PROJECTION_COVERED]] |
+| مفاتيح | 0 | 120000 (الـ paid بس) |
+| مستندات | 200000 | **0** |
+| الوقت | 88ms | 56ms |
+
+[[PROJECTION_COVERED]] معناها مفيش [[FETCH]]: ولا مستند اتقري من الديسك. المكسب الحقيقي بيبان أكتر لما المستندات كبيرة (فيها items وعناوين) والـ index صغير.
+
+---
+
+## ٦. الـ optimizer بيصلّح ترتيبك أحيانًا
+
+| اللي كتبته | اللي Mongo عمله |
+|---|---|
+| [[$sort]] ثم [[$match: { userId: 42 }]] | قدّم الـ match: [[IXSCAN]] (40 مفتاح) ثم [[SORT]] |
+| [[$group]] بـ userId ثم [[$match: { _id: 42 }]] | قدّم الـ match قبل الـ group: [[IXSCAN]] 40 مفتاح |
+| [[$group]] ثم [[$match]] على مجموع | مينفعش يتقدّم: بعد الـ group |
+
+متعتمدش عليه: اكتب [[$match]] الأول دايمًا.
+
+## الخلاصة
+
+1. [[explain("executionStats")]] قبل [[.aggregate]].
+2. لو فيه [[stages]]: الأرقام جوه [[stages[0].$cursor]].
+3. دوّر على [[COLLSCAN]] و [[SORT]] في collection كبيرة.
+4. قارن [[totalDocsExamined]] بـ [[nReturned]].
+5. index بترتيب ESR، ولو التقرير مهم: index فيه كل حقوله (covered).`,
+          lines: [
+            "ادخل قاعدة perf (جديدة للتجربة).",
+            "ضيف 200 ألف أوردر على 20 دفعة: 5000 يوزر، 3 من كل 5 مدفوعين، وتاريخ بيزيد دقيقة كل أوردر.",
+            "explain لآخر 5 أوردرات مدفوعة ليوزر 42 من غير index: COLLSCAN و SORT في الذاكرة.",
+            "index بترتيب ESR: مساواة userId و status ثم ترتيب createdAt.",
+            "نفس الـ explain: IXSCAN، ومفيش SORT، و 5 مستندات بس.",
+            "explain لتقرير group: الـ $cursor فيه GROUP فوق COLLSCAN، والـ $match على المجموع بعده.",
+            "index فيه كل حقول التقرير: status و userId و total.",
+            "نفس التقرير: PROJECTION_COVERED، وصفر مستندات اتقرت."
+          ],
+          sol: R`[[$sort]] قبل [[$match]]: الـ optimizer قدّم الـ match، فالـ plan بقى [[FETCH]] ← [[SORT]] ← [[IXSCAN]] على index الـ userId: قرا 40 مفتاح (كل أوردرات يوزر 42) ورتّبهم في الذاكرة وجاب 5 مستندات بس ([[totalDocsExamined: 5]]). مفيش COLLSCAN، بس فيه SORT لأن [[status]] مش في الشرط فالـ index مش مترتب بـ createdAt للحالة دي.
+
+الـ [[$project]] على حقول الـ index بس: [[PROJECTION_COVERED]] ← [[IXSCAN]]، و [[totalKeysExamined: 40]] و [[totalDocsExamined: 0]]. لاحظ [[_id: 0]]: من غيره Mongo لازم يجيب [[_id]] من المستند، فمش هيبقى covered.`,
+          solCode: R`db.orders.explain("executionStats").aggregate([{ $sort: { createdAt: -1 } }, { $match: { userId: 42 } }, { $limit: 5 }])
+db.orders.explain("executionStats").aggregate([{ $match: { userId: 42, status: "paid" } }, { $project: { _id: 0, userId: 1, status: 1, createdAt: 1 } }])`
+        },
+        {
+          cmd: "attribute و computed",
+          title: "منتجات مواصفاتها مختلفة، وتقييم محسوب جاهز",
+          desc: R`**attribute pattern**: لما كل منتج ليه مواصفات مختلفة (الموبايل RAM، والشاشة بوصة)، بدل حقل لكل مواصفة (وindex لكل واحد)، حطهم array من [[{ k, v }]]، و index واحد على [[specs.k]] و [[specs.v]] يخدم البحث بأي مواصفة.
+
+**computed pattern**: الرقم اللي بيتقري كتير ويتحسب من بيانات كتير (متوسط التقييم، عدد التعليقات)، احسبه وقت الكتابة واحفظه في المستند بـ [[$inc]]، بدل ما تحسبه بـ aggregate مع كل فتحة صفحة.`,
+          example: R`use catalog
+db.items.insertMany([{ _id: 1, name: "Phone X", specs: [{ k: "ram", v: 8 }, { k: "color", v: "black" }], rating: { sum: 0, count: 0 } }, { _id: 2, name: "TV 55", specs: [{ k: "inch", v: 55 }, { k: "color", v: "black" }], rating: { sum: 0, count: 0 } }, { _id: 3, name: "Phone Y", specs: [{ k: "ram", v: 12 }, { k: "color", v: "blue" }], rating: { sum: 0, count: 0 } }])
+db.items.createIndex({ "specs.k": 1, "specs.v": 1 })
+db.items.find({ specs: { $elemMatch: { k: "color", v: "black" } } }, { name: 1 })
+db.items.find({ specs: { $elemMatch: { k: "ram", v: { $gte: 10 } } } }, { name: 1 })
+db.reviews.insertOne({ itemId: 1, userId: 7, stars: 4, text: "good" })
+db.items.updateOne({ _id: 1 }, { $inc: { "rating.sum": 4, "rating.count": 1 } })
+db.items.aggregate([{ $project: { _id: 0, name: 1, count: "$rating.count", avg: { $cond: [{ $eq: ["$rating.count", 0] }, null, { $round: [{ $divide: ["$rating.sum", "$rating.count"] }, 1] }] } } }])`,
+          try: R`شغّل المثال، وبعدين ضيف تقييم ٥ نجوم تاني للمنتج 1 (السطرين: review و [[$inc]]). المتوسط بقى كام؟ وبعدين جرّب البحث الغلط [[db.items.find({ "specs.k": "ram", "specs.v": "black" })]] من غير [[$elemMatch]]: طلع إيه، وليه؟`,
+          flag: "script",
+          deep: {
+            why: "متجر فيه موبايلات وشاشات وكتب: لو كل مواصفة حقل، هتلاقي عندك ٢٠٠ حقل، وكل فلتر جديد في صفحة البحث محتاج index جديد (وأقصى عدد ٦٤ index للـ collection). وصفحة المنتج اللي بتعرض «4.5 من 5 (230 تقييم)» لو بتحسبها من [[reviews]] مع كل زيارة، المنتج المشهور بيبقى أبطأ صفحة في الموقع.",
+            how: R`attribute: كل مواصفة عنصر [[{ k: "ram", v: 8 }]] في [[specs]]. الـ index على [[{ "specs.k": 1, "specs.v": 1 }]] بيبقى multikey: entry لكل عنصر في الـ array. البحث لازم بـ [[$elemMatch]] عشان الشرطين يتطبقوا على **نفس** العنصر. وقيم [[v]] ممكن تبقى أرقام أو نصوص، والمقارنة [[$gte: 10]] بتشتغل على الأرقام. جرّبت explain للبحث بالـ color: [[IXSCAN]] على [[specs.k_1_specs.v_1]].
+
+computed: مع كل review جديد، [[$inc]] بيزوّد [[rating.sum]] بعدد النجوم و [[rating.count]] بواحد، في نفس العملية (atomic على المستند). المتوسط = sum ÷ count وقت القراية، أو تخزّنه هو كمان. خزّن sum و count مش المتوسط بس، عشان تقدر تحدّث من غير ما تعيد الحساب، ولو اتمسح review تعمل [[$inc]] بالسالب.
+
+القسمة على صفر: منتج ملوش تقييمات [[count]] = 0، و [[$divide]] بيوقّع الـ aggregate كله: [[can't $divide by zero]] (جربتها)، عشان كده [[$cond]].
+
+الاتنين جزء من «أنماط تصميم» MongoDB الرسمية، ومعاهم اللي في دروس تانية: subset و bucket و outlier في «حد الـ 16MB و bucket»، و extended reference (نسخ الاسم والسعر) في «embed ولا reference».`,
+          when: "attribute: كتالوج منتجات متنوع، وأي حاجة فيها «حقول بيحددها اليوزر» (custom fields). computed: عدادات وإجماليات بتتقري أكتر بكتير ما بتتكتب: لايكات، وتقييمات، ورصيد، وعدد أعضاء. ولو التحديث لحظي مش لازم، احسبها بـ job و [[$merge]] (درس «$merge و $out»).",
+          mistakes: R`تبحث بـ [[{ "specs.k": "ram", "specs.v": "black" }]] من غير [[$elemMatch]]: الشرطين بيتطبقوا على أي عنصرين، فالموبايل الأسود اللي فيه ram طلع (جربتها: [[Phone X]] مع إن مفيش ram قيمتها black). وتكتب الـ review وتنسى [[$inc]] (أو العكس لو حصل error بينهم)، فالرقم يبعد عن الحقيقة: اعملهم في transaction، أو اعمل job بيعيد الحساب كل فترة يصلّح أي فرق. وتخزّن المتوسط بس من غير count، فمتقدرش تحدّثه صح.`
+          },
+          teach: R`## نمطين بيحلوا مشكلتين شائعين
+
+اتشغّل على [[mongo:8]] في قاعدة [[catalog]] جديدة.
+
+---
+
+## الجزء الأول: attribute pattern
+
+### المستند
+
+~~~javascript
+{ _id: 1, name: "Phone X", specs: [{ k: "ram", v: 8 }, { k: "color", v: "black" }], rating: { sum: 0, count: 0 } }
+~~~
+
+بدل [[ram: 8, color: "black"]] كحقول، المواصفات array:
+
+- [[k]] (key): اسم المواصفة.
+- [[v]] (value): قيمتها، رقم أو نص.
+
+الشاشة عندها [[inch]] والموبايل [[ram]]، ومفيش حقول فاضية ولا schema بتتغير مع كل نوع منتج جديد.
+
+### الـ index
+
+~~~javascript
+db.items.createIndex({ "specs.k": 1, "specs.v": 1 })
+~~~
+
+~~~text الناتج
+specs.k_1_specs.v_1
+~~~
+
+[[specs.k]] بالنقطة معناها «الحقل k جوه عناصر specs». ولأن [[specs]] array، ده **multikey index**: كل منتج بيتسجّل فيه مرة لكل مواصفة. index واحد بيخدم البحث بأي مواصفة، حتى اللي هتضيفها بكرة.
+
+### البحث بـ [[$elemMatch]]
+
+~~~javascript
+db.items.find({ specs: { $elemMatch: { k: "color", v: "black" } } }, { name: 1 })
+~~~
+
+~~~text الناتج
+[ { _id: 1, name: 'Phone X' }, { _id: 2, name: 'TV 55' } ]
+~~~
+
+[[$elemMatch]] = «فيه عنصر **واحد** في الـ array بيحقق كل الشروط دي مع بعض». و explain قال [[IXSCAN]].
+
+~~~javascript
+db.items.find({ specs: { $elemMatch: { k: "ram", v: { $gte: 10 } } } }, { name: 1 })
+~~~
+
+~~~text الناتج
+[ { _id: 3, name: 'Phone Y' } ]
+~~~
+
+مقارنة رقمية: ram 12 بس اللي فوق ١٠.
+
+### من غير [[$elemMatch]]: غلط في صمت
+
+~~~javascript
+db.items.find({ "specs.k": "ram", "specs.v": "black" }, { name: 1 })
+~~~
+
+~~~text الناتج
+[ { _id: 1, name: 'Phone X' } ]
+~~~
+
+مفيش ram قيمتها black! بس Mongo بيقرا الشرطين كده: «فيه عنصر k بتاعه ram» **و** «فيه عنصر v بتاعه black»، ومش لازم يبقى نفس العنصر. Phone X عنده الاتنين في عنصرين مختلفين.
+
+---
+
+## الجزء التاني: computed pattern
+
+### الكتابة: review + [[$inc]]
+
+~~~javascript
+db.reviews.insertOne({ itemId: 1, userId: 7, stars: 4, text: "good" })
+db.items.updateOne({ _id: 1 }, { $inc: { "rating.sum": 4, "rating.count": 1 } })
+~~~
+
+التقييم نفسه بيتحفظ في [[reviews]] (التفاصيل لصفحة «كل التقييمات»)، والمنتج بيشيل رقمين جاهزين:
+
+| الحقل | بيزيد بـ | ليه |
+|---|---|---|
+| [[rating.sum]] | عدد النجوم (4) | المجموع |
+| [[rating.count]] | 1 | العدد |
+
+[[$inc]] على مستند واحد atomic: لو ١٠٠ واحد قيّموا في نفس اللحظة، محدش بيدوس على التاني.
+
+### القراية: المتوسط
+
+~~~javascript
+{ $project: { _id: 0, name: 1, count: "$rating.count",
+    avg: { $cond: [{ $eq: ["$rating.count", 0] }, null, { $round: [{ $divide: ["$rating.sum", "$rating.count"] }, 1] }] } } }
+~~~
+
+من جوه لبرة: [[$divide]] يقسم، و [[$round: [..., 1]]] يقرّب لرقم عشري واحد، و [[$cond]] يرجّع [[null]] لو مفيش تقييمات. بعد تقييمين (4 و 5):
+
+~~~text الناتج
+[
+  { name: 'Phone X', count: 2, avg: 4.5 },
+  { name: 'TV 55', count: 0, avg: null },
+  { name: 'Phone Y', count: 0, avg: null }
+]
+~~~
+
+ومن غير [[$cond]]:
+
+~~~text الناتج
+can't $divide by zero
+~~~
+
+الـ aggregate كله وقع بسبب منتج واحد ملوش تقييمات.
+
+## الخلاصة
+
+| النمط | المشكلة | الحل |
+|---|---|---|
+| attribute | مواصفات مختلفة لكل نوع | [[specs: [{ k, v }]]] + index واحد + [[$elemMatch]] |
+| computed | رقم بيتقري كتير ومحسوب من كتير | [[$inc]] وقت الكتابة، وخزّن sum و count |
+
+وباقي الأنماط في دروس تانية: subset و bucket و outlier («حد الـ 16MB و bucket»)، و extended reference («embed ولا reference»)، و schema versioning (الدرس الجاي).`,
+          lines: [
+            "قاعدة catalog جديدة.",
+            "3 منتجات، كل واحد مواصفاته array من {k, v}، وتقييم sum و count بصفر.",
+            "index واحد multikey على اسم المواصفة وقيمتها.",
+            "المنتجات اللي ليها مواصفة color قيمتها black (في نفس العنصر).",
+            "المنتجات اللي ram بتاعتها 10 أو أكتر.",
+            "تقييم جديد في reviews.",
+            "حدّث الرقمين المحسوبين في المنتج في نفس اللحظة.",
+            "المتوسط وقت القراية: sum ÷ count مقرّب، و null لو مفيش تقييمات."
+          ],
+          sol: R`بعد التقييم التاني ([[stars: 5]] و [[$inc]] بـ 5 و 1): [[count: 2]] و [[avg: 4.5]] (9 ÷ 2).
+
+البحث من غير [[$elemMatch]] رجّع [[Phone X]]، مع إن مفيش مواصفة ram قيمتها black. [[specs.k: "ram"]] اتحقق في عنصر، و [[specs.v: "black"]] في عنصر تاني. [[$elemMatch]] بيلزم الاتنين في نفس العنصر.`,
+          solCode: R`db.reviews.insertOne({ itemId: 1, userId: 8, stars: 5, text: "great" })
+db.items.updateOne({ _id: 1 }, { $inc: { "rating.sum": 5, "rating.count": 1 } })
+db.items.findOne({ _id: 1 }, { rating: 1 })
+db.items.find({ "specs.k": "ram", "specs.v": "black" }, { name: 1 })`
+        },
+        {
+          cmd: "schemaVersion و migration",
+          title: "تغيّر شكل المستندات وهي شغالة: schemaVersion و update بـ pipeline",
+          desc: R`في SQL بتعمل [[ALTER TABLE]] وكل الصفوف تتغير مرة واحدة. في Mongo المستندات القديمة بتفضل بشكلها، فبتحط فيها [[schemaVersion]]: الكود يقرا الشكلين، والجديد يتكتب بالشكل الجديد، وفي الخلفية [[updateMany]] بـ **pipeline** يحوّل القديم.
+
+الـ pipeline في الـ update (array بدل object) بيخليك تحسب القيمة الجديدة من حقول المستند نفسه: تقسم [[name]] لـ [[firstName]] و [[lastName]]، وتحط [[phone]] جوه array.`,
+          example: R`use crm
+db.members.insertMany([{ _id: 1, name: "Sara Ali", phone: "01001234567" }, { _id: 2, name: "Mona", phone: "01005556666" }, { _id: 3, firstName: "Omar", lastName: "Hassan", phones: ["01112223333"], schemaVersion: 2 }])
+db.members.updateMany({ schemaVersion: { $exists: false } }, [
+  { $set: {
+      firstName: { $arrayElemAt: [{ $split: ["$name", " "] }, 0] },
+      lastName: { $ifNull: [{ $arrayElemAt: [{ $split: ["$name", " "] }, 1] }, ""] },
+      phones: ["$phone"],
+      schemaVersion: 2
+  } },
+  { $unset: ["name", "phone"] }
+])
+db.members.find()
+db.members.countDocuments({ schemaVersion: { $ne: 2 } })`,
+          try: R`قبل الـ [[updateMany]]: اكتب دالة JavaScript في mongosh اسمها [[toV2(doc)]] بترجّع المستند بالشكل الجديد سواء كان قديم أو جديد (ده اللي التطبيق بيعمله وقت القراية). وبعدين جرّب الفرق: [[db.t.updateOne({}, { $set: { b: "$a" } })]] و [[db.t.updateOne({}, [{ $set: { c: "$a" } }])]] على مستند [[{ a: 1 }]].`,
+          flag: "script",
+          deep: {
+            why: "المنتج بيتغير: الاسم بقى اسمين، والتليفون بقى أكتر من رقم. في Mongo مفيش migration تقفل الجدول، وده ميزة وخطر: لو غيّرت الكود بس، المستندات القديمة هتكسر الصفحات (undefined في كل حتة). schema versioning هو النمط الرسمي اللي بيخليك تغيّر من غير downtime.",
+            how: R`الخطة ٣ خطوات: (١) الكود الجديد يقرا الشكلين (لو [[schemaVersion]] مش موجود، حوّل وقت القراية)، ويكتب دايمًا v2. (٢) انشر الكود. (٣) شغّل [[updateMany]] يحوّل الباقي، وبعدين امسح كود القراية القديم.
+
+update بـ pipeline (من MongoDB 4.2): التاني في [[updateMany]] array من مراحل aggregate محدودة ([[$set]]/[[$addFields]] و [[$unset]]/[[$project]] و [[$replaceWith]]). جواها [["$name"]] معناها قيمة الحقل، زي aggregate. أما في الـ update العادي (object)، [["$name"]] نص عادي (جربتها: [[b: '$a']]).
+
+[[$split: ["$name", " "]]] بيقسم النص بالمسافة لـ array، و [[$arrayElemAt: [arr, 0]]] أول عنصر. منى ملهاش اسم تاني، فـ [[$arrayElemAt]] بيرجّع missing، و [[$ifNull]] يخليه [[""]]. و [[phones: ["$phone"]]] array فيها القيمة. و [[$unset]] يشيل الحقول القديمة.
+
+الفلتر [[schemaVersion: { $exists: false }]] بيخلي الأمر آمن لو اتشغّل مرتين: المستند اللي اتحوّل مش هيتلمس تاني. جربت: [[matchedCount: 2]] و [[modifiedCount: 2]] (عمر كان v2 أصلًا فمتلمسش). وعلى collection كبيرة اعمله على دفعات (بـ [[_id]] ranges) عشان متقفلش الـ replication.`,
+          when: "أي تغيير في شكل المستند في تطبيق شغال: تقسيم حقل، أو تحويل حقل لـ array، أو تغيير نوع (نص لتاريخ)، أو نقل حقول لـ object جوه. ولو التغيير بسيط (إضافة حقل اختياري)، default في الكود كفاية من غير version.",
+          mistakes: R`تكتب [[{ $set: { firstName: "$name" } }]] من غير الأقواس المربعة: كل المستندات بيبقى اسمها حرفيًا [[$name]]. وتشغّل التحويل قبل نشر الكود اللي بيكتب الشكل الجديد، فالمستندات اللي بتتكتب في النص بالشكل القديم تفضل قديمة. وتنسى [[$ifNull]] فالمستندات اللي فيها كلمة واحدة يبقى ملهاش [[lastName]] خالص. وتمسح كود قراية v1 قبل ما [[countDocuments({ schemaVersion: { $ne: 2 } })]] يبقى صفر. وتنسى الـ [[$jsonSchema]] (لو موجود) يقبل الشكل الجديد قبل التحويل.`
+          },
+          teach: R`## الموقف
+
+الـ collection فيها مستندات قديمة [[{ name, phone }]]، والتطبيق الجديد عايز [[{ firstName, lastName, phones: [] }]]. اتشغّل على [[mongo:8]] في قاعدة [[crm]] جديدة: سارة ومنى بالشكل القديم، وعمر بالجديد ومعاه [[schemaVersion: 2]].
+
+---
+
+## ١. الكود بيقرا الشكلين (قبل أي migration)
+
+ده مش في المثال، بس هو الخطوة الأولى في الحقيقة: دالة في التطبيق بتحوّل وقت القراية.
+
+~~~javascript
+function toV2(d) {
+  if (d.schemaVersion === 2) return d;
+  const [firstName, lastName = ""] = (d.name || "").split(" ");
+  return { _id: d._id, firstName, lastName, phones: d.phone ? [d.phone] : [], schemaVersion: 2 };
+}
+~~~
+
+والكتابة الجديدة دايمًا v2. كده الموقع شغال والمستندات خليط.
+
+---
+
+## ٢. [[updateMany]] بـ pipeline
+
+~~~javascript
+db.members.updateMany({ schemaVersion: { $exists: false } }, [ ...مراحل... ])
+~~~
+
+- الفلتر: اللي ملهوش [[schemaVersion]] بس، يعني القديم.
+- التاني **array** مش object: ده اللي بيقول لـ Mongo «ده pipeline، و [[$]] جواه معناها قيمة حقل».
+
+### المرحلة الأولى: [[$set]]
+
+~~~javascript
+firstName: { $arrayElemAt: [{ $split: ["$name", " "] }, 0] },
+~~~
+
+من جوه لبرة على سارة:
+
+~~~text خطوة خطوة
+"$name"                          →  "Sara Ali"
+{ $split: ["$name", " "] }       →  [ "Sara", "Ali" ]
+{ $arrayElemAt: [..., 0] }       →  "Sara"
+~~~
+
+~~~javascript
+lastName: { $ifNull: [{ $arrayElemAt: [{ $split: ["$name", " "] }, 1] }, ""] },
+~~~
+
+العنصر رقم 1 ([[Ali]]). منى اسمها كلمة واحدة، فـ [[$split]] بيرجّع [[["Mona"]]] والعنصر 1 مش موجود، و [[$ifNull]] بيحط [[""]] بدله.
+
+~~~javascript
+phones: ["$phone"],
+schemaVersion: 2
+~~~
+
+array فيها رقم التليفون القديم، والإصدار.
+
+### المرحلة التانية: [[{ $unset: ["name", "phone"] }]]
+
+شيل الحقلين القدام.
+
+### الناتج
+
+~~~text الناتج
+{ acknowledged: true, insertedId: null, matchedCount: 2, modifiedCount: 2, upsertedCount: 0 }
+~~~
+
+٢ اتطابقوا واتعدلوا: سارة ومنى. عمر متلمسش.
+
+---
+
+## ٣. [[db.members.find()]]
+
+~~~text الناتج
+[
+  { _id: 1, firstName: 'Sara', lastName: 'Ali', phones: [ '01001234567' ], schemaVersion: 2 },
+  { _id: 2, firstName: 'Mona', lastName: '', phones: [ '01005556666' ], schemaVersion: 2 },
+  { _id: 3, firstName: 'Omar', lastName: 'Hassan', phones: [ '01112223333' ], schemaVersion: 2 }
+]
+~~~
+
+## ٤. اتأكد إن مفيش حد فاضل
+
+~~~javascript
+db.members.countDocuments({ schemaVersion: { $ne: 2 } })
+~~~
+
+~~~text الناتج
+0
+~~~
+
+صفر = تقدر تمسح كود [[toV2]] من التطبيق. [[$ne]] = not equal (بيمسك كمان اللي ملهوش الحقل خالص).
+
+---
+
+## ٥. object ولا array: الفرق اللي بيبوّظ البيانات
+
+على مستند [[{ a: 1 }]]:
+
+| الأمر | الناتج |
+|---|---|
+| [[updateOne({}, { $set: { b: "$a" } })]] | [[b: '$a']]: نص حرفي |
+| [[updateOne({}, [{ $set: { c: "$a" } }])]] | [[c: 1]]: قيمة الحقل |
+
+نفس [[$set]]، بس جوه [[[ ]]] بقى pipeline.
+
+## الخلاصة
+
+1. ضيف [[schemaVersion]] وخلي الكود يقرا القديم والجديد ويكتب الجديد.
+2. انشر.
+3. [[updateMany]] بفلتر القديم و pipeline ([[$set]] + [[$unset]]).
+4. [[countDocuments]] لحد ما يبقى صفر، وبعدين امسح كود القديم.`,
+          lines: [
+            "قاعدة crm جديدة.",
+            "اتنين بالشكل القديم (name و phone)، وواحد بالجديد ومعاه schemaVersion: 2.",
+            "حوّل اللي ملهوش schemaVersion، والتعديل pipeline (array):",
+            "مرحلة $set:",
+            "الاسم الأول: أول كلمة من name.",
+            "الاسم التاني: تاني كلمة، أو نص فاضي لو مفيش.",
+            "التليفون بقى array فيها الرقم القديم.",
+            "علّم المستند إنه بقى v2.",
+            "قفلة الـ $set.",
+            "شيل الحقلين القدام.",
+            "قفلة الـ pipeline والأمر.",
+            "اعرض الكل: التلاتة بنفس الشكل.",
+            "عدد اللي لسه مش v2: لازم صفر قبل ما تمسح كود القراية القديم."
+          ],
+          sol: R`[[toV2]] لسارة القديمة بترجّع [[{ _id: 1, firstName: 'Sara', lastName: 'Ali', phones: ['01001234567'], schemaVersion: 2 }]]، ولعمر بترجّعه زي ما هو.
+
+الـ update العادي حط [[b: '$a']] (النص نفسه)، والـ pipeline حط [[c: 1]] (قيمة a). عشان كده أي update بيحسب من حقول المستند لازم يبقى array.`,
+          solCode: R`function toV2(d) {
+  if (d.schemaVersion === 2) return d;
+  const [firstName, lastName = ""] = (d.name || "").split(" ");
+  return { _id: d._id, firstName, lastName, phones: d.phone ? [d.phone] : [], schemaVersion: 2 };
+}
+db.members.find().toArray().map(toV2)
+db.t.insertOne({ a: 1 })
+db.t.updateOne({}, { $set: { b: "$a" } })
+db.t.updateOne({}, [{ $set: { c: "$a" } }])
+db.t.findOne()`
+        },
+      ]
+    },
+    {
+      t: "replica set: نسخ وتغييرات لحظية",
+      l: 3,
+      n: "٣ nodes في Docker، و failover بتشوفه بعينك، و writeConcern majority، و change streams تسمع كل تغيير من غير polling",
+      items: [
+        {
+          cmd: "replica set بـ 3 nodes",
+          title: "٣ نسخ من القاعدة: لو واحدة وقعت التانية تكمّل",
+          desc: R`replica set = كذا [[mongod]] شايلين نفس البيانات: واحد **PRIMARY** بيستقبل الكتابة، والباقيين **SECONDARY** بينسخوا منه أول بأول. لو الـ primary وقع، الباقيين بينتخبوا primary جديد في حوالي ١٠ ثواني، والتطبيق بيكمّل لوحده لو الـ connection string فيه كل الـ nodes.
+
+الانتخاب محتاج أغلبية (٢ من ٣)، عشان كده الإنتاج ٣ nodes مش ٢.`,
+          example: R`docker network create mongo-net
+docker run -d --name m1 --network mongo-net mongo:8 --replSet rs0
+docker run -d --name m2 --network mongo-net mongo:8 --replSet rs0
+docker run -d --name m3 --network mongo-net mongo:8 --replSet rs0
+docker exec m1 mongosh --quiet --eval 'rs.initiate({ _id: "rs0", members: [{ _id: 0, host: "m1:27017" }, { _id: 1, host: "m2:27017" }, { _id: 2, host: "m3:27017" }] })'
+docker exec m1 mongosh --quiet --eval 'rs.status().members.map(m => m.name + " " + m.stateStr)'
+docker exec m1 mongosh --quiet --eval 'db.getSiblingDB("shop").pings.insertOne({ at: new Date() }, { writeConcern: { w: "majority", wtimeout: 5000 } })'
+docker kill m1
+docker exec m2 mongosh --quiet --eval 'rs.status().members.map(m => m.name + " " + m.stateStr)'
+docker start m1`,
+          try: R`وانت الـ ٣ شغالين: اقفل اتنين منهم ([[docker kill]]) وجرّب [[insertOne]] على اللي فاضل. وبعدين رجّعهم بـ [[docker start]] وشوف مين بقى primary. وفي الآخر نضّف: [[docker rm -f -v m1 m2 m3]] و [[docker network rm mongo-net]].`,
+          deep: {
+            why: "Mongo واحد (standalone) لو السيرفر وقع أو اتعمله restart للتحديث، الموقع واقف. replica set بيدّيك: high availability (failover أوتوماتيك)، ونسخة لحظية من البيانات على سيرفر تاني، والـ transactions و change streams (مش شغالين على standalone خالص). Atlas وأي Mongo مُدار بيبقى replica set من أول يوم.",
+            how: R`[[--replSet rs0]] بيقول لكل [[mongod]] إنه عضو في set اسمها rs0، بس لسه مش عارف الباقيين. [[rs.initiate(config)]] مرة واحدة على أي واحد: بيسجّل الأعضاء بأساميهم اللي يوصلوا بيها لبعض ([[m1:27017]] = اسم الـ container على شبكة Docker). بعدها بثواني بيحصل انتخاب ويطلع primary.
+
+الـ primary بيكتب كل عملية في الـ [[oplog]] (collection خاصة في قاعدة [[local]])، والـ secondaries بيقروها وينفّذوها. [[rs.status()]] بيوريك حالة كل عضو ([[stateStr]]).
+
+الانتخاب: كل عضو بيبعت heartbeat كل ثانيتين. لو الـ primary مردّش لمدة [[electionTimeoutMillis]] (افتراضيًا 10000)، secondary بيرشّح نفسه، ولو أخد أغلبية الأصوات (٢ من ٣) بقى primary. جربت [[docker kill]] على الـ primary وتطبيق Node بيكتب كل ثانية: كتابة واحدة أخدت [[10346ms]] ونجحت (الـ driver استنى وأعاد المحاولة لوحده بـ retryable writes)، والباقي رجع ٦-١٠ ملّي ثانية على الـ primary الجديد. ولما قفلت اتنين من ٣: اللي فاضل نزل SECONDARY ورفض الكتابة بـ [[NotWritablePrimary]]، لأن ١ من ٣ مش أغلبية.
+
+[[writeConcern: { w: "majority" }]]: الكتابة ترجع نجاح بعد ما أغلبية الأعضاء يكتبوها، فلو الـ primary وقع بعدها مش هتضيع (rollback). ده الافتراضي من MongoDB 5.0. و [[wtimeout]] أقصى انتظار.
+
+التطبيق بيتصل بـ [[mongodb://m1:27017,m2:27017,m3:27017/?replicaSet=rs0]]: الـ driver بيكتشف مين الـ primary ويحوّل لوحده. و [[readPreference=secondaryPreferred]] يخلي القراية من الـ secondaries (ممكن تبقى متأخرة شوية).`,
+          when: "أي Mongo على الإنتاج (أقل حاجة ٣ أعضاء على ٣ سيرفرات أو zones مختلفة)، ولو هتستخدم transactions أو change streams حتى في التطوير (عضو واحد كفاية، زي درس «transactions و replica set»). ولو مش عايز تشيل الهم: Atlas.",
+          mistakes: R`replica set من ٢ أعضاء: لو واحد وقع، التاني ميقدرش ياخد أغلبية فيقف (أسوأ من standalone). لو مضطر، العضو التالت يبقى arbiter (بيصوّت بس). وتحط الـ ٣ على نفس السيرفر في الإنتاج: السيرفر يقع ياخدهم كلهم. و [[rs.initiate()]] من غير config في Docker بيسجّل الـ hostname العشوائي للـ container. وتوصل التطبيق بـ node واحدة من غير [[replicaSet=]] فميعرفش يحوّل. ومع auth لازم [[--keyFile]] بين الأعضاء (المثال من غير auth للتجربة بس، وبورتاته مش مفتوحة برّه Docker).`
+          },
+          teach: R`## الفكرة: ٣ نسخ ورئيس واحد
+
+اتشغّل على Docker Desktop (WSL2) بـ [[mongo:8]] (8.3). تحت كل أمر الناتج الحقيقي. (في التجربة سمّيت الـ containers بأسامي تانية ونفس الـ aliases [[m1]] و [[m2]] و [[m3]]، فالناتج زي ما هتشوفه.)
+
+---
+
+## ١. [[docker network create mongo-net]]
+
+شبكة Docker خاصة. أي container عليها يقدر يوصل للتاني **باسمه**: [[m2]] يوصل لـ [[m1:27017]]. من غيرها كانوا هيحتاجوا IPs بتتغير.
+
+## ٢. ٣ مرات [[docker run ... --replSet rs0]]
+
+~~~bash
+docker run -d --name m1 --network mongo-net mongo:8 --replSet rs0
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[-d]] | في الخلفية |
+| [[--name m1]] | اسم الـ container (وده اسمه على الشبكة) |
+| [[--network mongo-net]] | على الشبكة اللي عملناها |
+| [[mongo:8]] | الـ image |
+| [[--replSet rs0]] | أي حاجة بعد الـ image بتروح لـ [[mongod]]: «انت عضو في set اسمها rs0» |
+
+مفيش [[-p]]: البورتات مش مفتوحة على جهازك، الـ ٣ بيكلموا بعض جوه الشبكة بس.
+
+## ٣. [[rs.initiate(...)]]
+
+~~~bash
+docker exec m1 mongosh --quiet --eval 'rs.initiate({ _id: "rs0", members: [...] })'
+~~~
+
+- [[docker exec m1 mongosh]]: شغّل mongosh جوه m1.
+- [[--quiet]]: من غير رسالة الترحيب.
+- [[--eval '...']]: نفّذ الكود ده واخرج.
+- [[_id: "rs0"]]: لازم نفس اسم [[--replSet]].
+- [[members]]: كل عضو برقم و [[host]] بالاسم اللي الباقيين يوصلوله بيه.
+
+~~~text الناتج (مختصر)
+{ ok: 1, '$clusterTime': { ... }, operationTime: Timestamp({ t: 1793140611, i: 1 }) }
+~~~
+
+## ٤. [[rs.status()]]
+
+استنى ١٠ ثواني تقريبًا (الانتخاب الأول)، وبعدين:
+
+~~~bash
+docker exec m1 mongosh --quiet --eval 'rs.status().members.map(m => m.name + " " + m.stateStr)'
+~~~
+
+[[rs.status().members]] array فيها تفاصيل كتير لكل عضو، و [[.map(m => ...)]] بتطلّع منها سطر لكل واحد: الاسم والحالة.
+
+~~~text الناتج
+[ 'm1:27017 PRIMARY', 'm2:27017 SECONDARY', 'm3:27017 SECONDARY' ]
+~~~
+
+## ٥. كتابة بـ [[w: "majority"]]
+
+~~~javascript
+db.getSiblingDB("shop").pings.insertOne({ at: new Date() }, { writeConcern: { w: "majority", wtimeout: 5000 } })
+~~~
+
+- [[getSiblingDB("shop")]]: زي [[use shop]] بس جوه كود.
+- [[w: "majority"]]: متقولش «تمام» غير لما ٢ من ٣ يكونوا كتبوها.
+- [[wtimeout: 5000]]: لو مخلصتش في ٥ ثواني، ارجع بـ error (الكتابة نفسها مش بتتلغي).
+
+~~~text الناتج
+{ acknowledged: true, insertedId: ObjectId('...') }
+~~~
+
+---
+
+## ٦. [[docker kill m1]]: الـ primary وقع فجأة
+
+[[kill]] بيقفله فورًا من غير shutdown نضيف (زي ما الكهربا تقطع). [[docker stop]] كان هيخليه يسلّم الرئاسة بهدوء الأول.
+
+~~~bash
+docker exec m2 mongosh --quiet --eval 'rs.status().members.map(m => m.name + " " + m.stateStr)'
+~~~
+
+~~~text الناتج بعد ~١٠ ثواني
+[ 'm1:27017 (not reachable/healthy)', 'm2:27017 PRIMARY', 'm3:27017 SECONDARY' ]
+~~~
+
+(مين بيكسب الانتخاب، m2 ولا m3، مش ثابت.)
+
+### والتطبيق شايف إيه؟
+
+شغّلت سكربت Node (driver 7.7) على نفس الشبكة بيكتب كل ثانية بـ [[mongodb://m1:27017,m2:27017,m3:27017/?replicaSet=rs0]] ويطبع مين الـ primary، و [[docker kill]] للـ primary في النص:
+
+~~~text الناتج
+4 ok m2:27017 10ms
+5 ok m1:27017 10346ms
+6 ok m1:27017 7ms
+~~~
+
+الكتابة رقم ٥ استنت ١٠.٣ ثانية (مدة [[electionTimeoutMillis]] = 10000 + الانتخاب) **ونجحت**: الـ driver لقى الـ primary الجديد وأعاد الكتابة لوحده (retryable writes، شغالة افتراضيًا). ولا error وصل للكود.
+
+## ٧. [[docker start m1]]
+
+بيرجع كـ SECONDARY، ويكمّل النسخ من الـ oplog اللي فاته.
+
+---
+
+## ٨. لو وقع اتنين؟
+
+قفلت اتنين، وجرّبت أكتب على الفاضل:
+
+~~~text الناتج
+m1:27017 SECONDARY | m2:27017 (not reachable/healthy) | m3:27017 (not reachable/healthy)
+NotWritablePrimary | not primary
+~~~
+
+واحد من ٣ مش أغلبية، فنزل secondary بنفسه ورفض الكتابة. ده مقصود: لو الشبكة اتقسمت، ميبقاش فيه اتنين primary بيكتبوا بيانات مختلفة. والقراية من عليه لسه شغالة.
+
+## الخلاصة
+
+| الحاجة | معناها |
+|---|---|
+| [[--replSet rs0]] | اسم الـ set لكل عضو |
+| [[rs.initiate(config)]] | مرة واحدة، بأسامي يوصلوا بيها لبعض |
+| [[rs.status()]] | حالة كل عضو |
+| أغلبية | ٢ من ٣ عشان ينتخبوا ويكتبوا |
+| [[w: "majority"]] | الكتابة مش هتضيع لو الـ primary وقع |
+| connection string | كل الأعضاء + [[replicaSet=rs0]] |
+
+وفي الإنتاج: كل عضو على سيرفر لوحده، و auth + [[keyFile]]، أو Atlas.`,
+          lines: [
+            "شبكة Docker عشان الـ containers يوصلوا لبعض بالاسم.",
+            "أول عضو: mongod في set اسمها rs0.",
+            "تاني عضو.",
+            "تالت عضو.",
+            "ابدأ الـ set مرة واحدة: اسمها والأعضاء بأساميهم على الشبكة.",
+            "اسم وحالة كل عضو: واحد PRIMARY واتنين SECONDARY.",
+            "كتابة بترجع بعد ما أغلبية الأعضاء يكتبوها، وأقصى انتظار 5 ثواني.",
+            "اقفل الـ primary فجأة.",
+            "اسأل عضو تاني: بعد حوالي 10 ثواني فيه primary جديد.",
+            "رجّع العضو القديم: هيرجع SECONDARY ويلحق اللي فاته."
+          ],
+          sol: R`لما اتنين يقعوا، اللي فاضل بيبقى [[SECONDARY]] والكتابة بترجع [[NotWritablePrimary]] (not primary)، لأن ١ من ٣ مش أغلبية. بعد [[docker start]] للاتنين، في خلال ثواني بيحصل انتخاب ويطلع primary (مش لازم يبقى نفس القديم)، والكتابة ترجع تشتغل.
+
+التنضيف: [[docker rm -f -v m1 m2 m3]] بيشيل الـ containers ومعاها الـ volumes المجهولة اللي فيها البيانات، و [[docker network rm mongo-net]] يشيل الشبكة.`,
+          solCode: R`docker kill m2 m3
+docker exec m1 mongosh --quiet --eval 'try { db.getSiblingDB("shop").pings.insertOne({ x: 1 }) } catch (e) { print(e.codeName, e.message) }'
+docker start m2 m3
+docker exec m1 mongosh --quiet --eval 'rs.status().members.map(m => m.name + " " + m.stateStr)'
+docker rm -f -v m1 m2 m3
+docker network rm mongo-net`
+        },
+        {
+          cmd: "change streams",
+          title: "اسمع كل تغيير في الـ collection لحظة ما يحصل",
+          desc: R`[[db.collection.watch()]] بيفتح cursor بيوصلك منه كل insert و update و delete أول ما يحصل، من غير ما تسأل القاعدة كل ثانية (polling). تفلتر الأحداث بـ pipeline، وتطلب المستند كامل بعد التعديل بـ [[fullDocument: "updateLookup"]]، ولو التطبيق وقع ترجع تكمّل من آخر حدث بـ resume token.
+
+شغال على replica set بس (حتى عضو واحد)، لأنه بيقرا من الـ oplog.`,
+          example: R`use shop
+const cs = db.orders.watch([{ $match: { operationType: { $in: ["insert", "update"] } } }], { fullDocument: "updateLookup" })
+db.orders.insertOne({ _id: 202, userId: 2, status: "pending", total: 700 })
+db.orders.updateOne({ _id: 202 }, { $set: { status: "paid" } })
+const e1 = cs.tryNext()
+cs.tryNext()
+cs.tryNext()
+cs.close()
+db.orders.watch([], { resumeAfter: e1._id }).tryNext()`,
+          try: R`على replica set (زي [[mongo-rs]] في درس «transactions و replica set»): شغّل المثال. وبعدين جرّب: افتح stream جديد بـ [[updateLookup]]، واعمل update وبعده على طول [[deleteOne]] لنفس الأوردر، وبعدين اقرا حدث الـ update. [[fullDocument]] طلع إيه؟ وجرّب [[watch()]] على Mongo standalone.`,
+          flag: "script",
+          deep: {
+            why: "«ابعت إشعار لما الأوردر يتدفع»، «حدّث الداشبورد لايف»، «انسخ التغييرات لـ Elasticsearch أو cache». الحل الساذج: query كل ثانية على [[updatedAt]] (بطيء، وبيفوّت حاجات، وبيضغط على القاعدة). أو تحط الكود ده في كل مكان بيكتب (وتنسى مكان). change streams بيدّيك كل تغيير من القاعدة نفسها، بالترتيب، ومهما كان مين اللي كتب.",
+            how: R`[[watch(pipeline, options)]] على collection أو قاعدة ([[db.watch()]]) أو الـ cluster كله. الـ pipeline بيفلتر الأحداث بـ [[$match]] و [[$project]]. كل حدث فيه: [[_id]] (الـ resume token)، و [[operationType]] (insert/update/replace/delete...)، و [[documentKey]]، و [[ns]] (القاعدة والـ collection)، و [[clusterTime]]، وفي الـ insert [[fullDocument]]، وفي الـ update [[updateDescription.updatedFields]] (اللي اتغير بس).
+
+[[fullDocument: "updateLookup"]]: مع كل update، Mongo بيجيب المستند كامل **وقت ما انت بتقرا الحدث**، مش وقت التعديل. لو اتمسح في النص بيرجع [[null]] (جربتها). لو محتاج الشكل وقت التعديل بالظبط، فعّل [[changeStreamPreAndPostImages]] على الـ collection واستخدم [[fullDocument: "whenAvailable"]] أو [[fullDocumentBeforeChange]] (جربت الأخير: حدث الـ delete جه ومعاه المستند قبل ما يتمسح).
+
+الـ resume token: احفظ [[_id]] آخر حدث عالجته (في collection أو Redis). لو التطبيق اتقفل، [[watch([], { resumeAfter: token })]] بيكمّل من بعده بالظبط، ومش بيفوّت حاجة، طول ما الحدث لسه في الـ oplog (الـ oplog حجمه محدود، فلو وقفت أيام ممكن تلاقي error إن التاريخ اتمسح).
+
+في Node: [[for await (const change of collection.watch(...))]] بيستنى الأحداث، و [[stream.resumeToken]] آخر token، والـ driver بيعيد الاتصال لوحده بعد failover. جربته على replica set بـ ٣ أعضاء بـ mongodb driver 7.7.
+
+على standalone: [[The $changeStream stage is only supported on replica sets or mongos]] (جربتها).`,
+          when: "إشعارات و webhooks لما حاجة تتغير، و sync لـ cache أو search index أو data warehouse، و audit log، وداشبورد لايف (مع WebSocket للمتصفح). ولو محتاج يتنفّذ مرة واحدة بالظبط حتى لو عندك كذا نسخة من التطبيق، شغّل الـ watcher في process واحدة أو استخدم lock، وإلا كل نسخة هتبعت نفس الإيميل.",
+          mistakes: R`تفتكر إن [[fullDocument]] في الـ update هو المستند لحظة التعديل: هو المستند **دلوقتي**، وممكن يبقى null. وتعالج الحدث وتحفظ الـ token قبل ما المعالجة تنجح، فلو وقعت في النص الحدث ضاع: احفظ الـ token بعد النجاح. وتفتح stream لكل request أو لكل يوزر: كل stream cursor على السيرفر، فافتح واحد وفرّق الأحداث في التطبيق. وتنسى إن الـ stream مبيشوفش اللي حصل قبل ما يتفتح إلا بـ resume token أو [[startAtOperationTime]].`
+          },
+          teach: R`## الفكرة: القاعدة بتقولك «حصل كذا»
+
+اتشغّل على [[mongo:8]] (8.3) شغال كـ replica set بعضو واحد ([[--replSet rs0]] و [[rs.initiate()]])، في mongosh 2.14.
+
+---
+
+## ١. افتح الـ stream
+
+~~~javascript
+const cs = db.orders.watch([{ $match: { operationType: { $in: ["insert", "update"] } } }], { fullDocument: "updateLookup" })
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[db.orders.watch(...)]] | اسمع تغييرات [[orders]] من اللحظة دي |
+| [[[{ $match: ... }]]] | pipeline على **الأحداث** مش المستندات |
+| [[operationType: { $in: [...] }]] | الإضافة والتعديل بس، من غير المسح |
+| [[fullDocument: "updateLookup"]] | مع كل update هات المستند كامل |
+| [[const cs]] | الـ cursor اللي هنقرا منه |
+
+## ٢. نعمل تغييرين
+
+~~~javascript
+db.orders.insertOne({ _id: 202, userId: 2, status: "pending", total: 700 })
+db.orders.updateOne({ _id: 202 }, { $set: { status: "paid" } })
+~~~
+
+## ٣. [[cs.tryNext()]]: هات الحدث اللي جاي لو موجود
+
+[[tryNext()]] بيرجّع الحدث، أو [[null]] لو مفيش حاجة جديدة (من غير ما يستنى). أول واحد:
+
+~~~text الناتج (أول حدث)
+{
+  _id: { _data: '826AE12765000000012B042C0100296E5A1004...' },
+  operationType: 'insert',
+  clusterTime: Timestamp({ t: 1793140581, i: 1 }),
+  wallTime: ISODate('2026-10-27T22:36:21.880Z'),
+  fullDocument: { _id: 202, userId: 2, status: 'pending', total: 700 },
+  ns: { db: 'shop', coll: 'orders' },
+  documentKey: { _id: 202 }
+}
+~~~
+
+| الحقل | معناه |
+|---|---|
+| [[_id._data]] | **الـ resume token**: مكان الحدث ده في الـ oplog |
+| [[operationType]] | نوع العملية |
+| [[clusterTime]] / [[wallTime]] | إمتى حصلت |
+| [[fullDocument]] | المستند اللي اتضاف |
+| [[ns]] | namespace: القاعدة والـ collection |
+| [[documentKey]] | الـ [[_id]] بتاع المستند |
+
+التاني:
+
+~~~text الناتج (تاني حدث، مختصر)
+{
+  operationType: 'update',
+  documentKey: { _id: 202 },
+  updateDescription: { updatedFields: { status: 'paid' }, removedFields: [], truncatedArrays: [] },
+  fullDocument: { _id: 202, userId: 2, status: 'paid', total: 700 }
+}
+~~~
+
+[[updatedFields]] اللي اتغير بس، و [[fullDocument]] المستند كله بفضل [[updateLookup]]. والتالت [[null]]: مفيش أحداث تانية.
+
+## ٤. [[cs.close()]]
+
+اقفل الـ cursor على السيرفر.
+
+---
+
+## ٥. الـ resume token: كمّل من مكان ما وقفت
+
+~~~javascript
+db.orders.watch([], { resumeAfter: e1._id }).tryNext()
+~~~
+
+[[e1]] كان حدث الـ insert. [[resumeAfter: e1._id]] = ابدأ من **بعد** الحدث ده:
+
+~~~text الناتج (مختصر)
+{ operationType: 'update', updateDescription: { updatedFields: { status: 'paid' } } }
+~~~
+
+رجّع حدث الـ update اللي حصل وإحنا مش فاتحين stream. في التطبيق: بعد ما تعالج كل حدث احفظ الـ token، ولما يقوم تاني ابدأ بـ [[resumeAfter]].
+
+---
+
+## ٦. فخ [[updateLookup]]
+
+update وبعده على طول delete لنفس المستند، وبعدين قريت حدث الـ update:
+
+~~~text الناتج
+operationType: 'update', updateDescription: { updatedFields: { status: 'paid' } }, fullDocument: null
+~~~
+
+[[null]] لأن [[updateLookup]] بيدوّر على المستند **وقت القراية**، وهو كان اتمسح. لو محتاج النسخة وقت الحدث:
+
+~~~javascript
+db.runCommand({ collMod: "orders", changeStreamPreAndPostImages: { enabled: true } })
+db.orders.watch([], { fullDocumentBeforeChange: "whenAvailable" })
+~~~
+
+وجربتها على delete: الحدث جه ومعاه [[fullDocumentBeforeChange: { _id: 202, userId: 2, status: 'paid', total: 700 }]]. (بتاخد مساحة زيادة، ففعّلها على الـ collections اللي محتاجاها بس.)
+
+---
+
+## ٧. نفس الكلام من Node
+
+~~~javascript
+const stream = orders.watch([{ $match: { "fullDocument.status": "paid" } }], { fullDocument: "updateLookup" });
+for await (const change of stream) {
+  console.log(change.operationType, change.fullDocument._id, change.fullDocument.status);
+  break;
+}
+~~~
+
+[[for await]] بيستنى كل حدث جديد للأبد (مش [[tryNext]]). جربته (mongodb driver 7.7، replica set بـ ٣ أعضاء): insert لأوردر pending ثم update لـ paid. الفلتر على [[fullDocument.status]] عدّى الـ update بس:
+
+~~~text الناتج
+update 302 paid
+~~~
+
+و [[stream.resumeToken]] فيه آخر token تحفظه. ولاحظ: لما جربت [[stream.close()]] جوه الـ [[for await]] رمى [[ChangeStream is closed]]؛ اطلع بـ [[break]] (بيقفله لوحده).
+
+---
+
+## ٨. على standalone
+
+~~~text الناتج
+Location40573 | The $changeStream stage is only supported on replica sets or mongos
+~~~
+
+## الخلاصة
+
+| الحاجة | الشكل |
+|---|---|
+| افتح | [[coll.watch(pipeline, options)]] |
+| فلتر | [[$match]] على [[operationType]] أو [[fullDocument.x]] |
+| المستند بعد التعديل | [[fullDocument: "updateLookup"]] (وقت القراية) |
+| قبل التعديل | [[changeStreamPreAndPostImages]] + [[fullDocumentBeforeChange]] |
+| كمّل بعد وقوع | احفظ [[_id]] الحدث و [[resumeAfter]] |
+| الشرط | replica set |`,
+          lines: [
+            "ادخل قاعدة shop (على replica set).",
+            "افتح stream على الأوردرات: الإضافة والتعديل بس، ومع كل update المستند كامل.",
+            "اعمل أوردر جديد (حدث insert).",
+            "عدّله لـ paid (حدث update).",
+            "اقرا أول حدث (الـ insert) واحفظه في e1.",
+            "اقرا التاني: update ومعاه updatedFields و fullDocument.",
+            "التالت: null، مفيش أحداث تانية.",
+            "اقفل الـ stream.",
+            "stream جديد بيبدأ من بعد e1: بيرجّع حدث الـ update اللي فات."
+          ],
+          sol: R`update ثم delete ثم قراية حدث الـ update: [[fullDocument: null]]، لأن [[updateLookup]] دوّر على المستند وقت القراية ولقاه اتمسح. لكن [[updateDescription.updatedFields]] فيه التعديل صح.
+
+على standalone: [[The $changeStream stage is only supported on replica sets or mongos]].`,
+          solCode: R`const cs2 = db.orders.watch([], { fullDocument: "updateLookup" })
+db.orders.insertOne({ _id: 203, status: "pending", total: 100 })
+db.orders.updateOne({ _id: 203 }, { $set: { status: "paid" } })
+db.orders.deleteOne({ _id: 203 })
+cs2.tryNext()
+cs2.tryNext()
+cs2.close()`
+        },
+      ]
+    }
 ]);
 
 /* ===== js/tabs/diag/01.js ===== */
