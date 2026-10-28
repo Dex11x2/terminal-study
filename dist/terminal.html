@@ -532430,14 +532430,2041 @@ for i in 1 2 3 4; do curl -s -c jar -b jar localhost:8088/me; done`
 ]);
 
 /* ===== js/tabs/cloud/15.js ===== */
-// ملف إضافي لتاب cloud: الحقول نفس شكلها في 01.js.
-
+// تكملة تاب cloud: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/cloud/01.js (شرح حقول الدرس في أوله)
 MORE("cloud", [
+    {
+      t: "Kubernetes: تطبيقك على cluster محلي",
+      l: 3,
+      n: "من image على جهازك لحد URL شغال: kind، و Service و Ingress، و probes، و requests و limits، و HPA",
+      items: [
+        {
+          cmd: "kind load docker-image",
+          title: "شغّل الـ image بتاعتك على cluster محلي بـ kind",
+          desc: R`kind بيعمل cluster كامل (control plane و workers) كـ containers جوه Docker، و [[kind load docker-image]] بينقل الـ image اللي بنيتها على جهازك جوه الـ nodes، فتشغّلها من غير registry.
+
+ده بيكمّل دروس «Kubernetes: الأساسيات» (درس «kubectl» و «Deployment YAML» في التاب ده): هناك جرّبنا nginx جاهز، وهنا تطبيقك انت. وقبل ما تكمّل: لو مشروعك صغير، اقرا آخر جزء في الشرح «إمتى متستخدمش Kubernetes».`,
+          example: R`kind create cluster --name shop --config kind.yaml
+docker build -t myapp:1.0 .
+kind load docker-image myapp:1.0 --name shop
+kubectl apply -f k8s/app.yaml
+kubectl rollout status deploy/web
+kubectl port-forward deploy/web 8080:3000`,
+          try: R`ابني أي تطبيق صغير بيسمع على بورت 3000 (أو استخدم الـ [[server.js]] اللي في الشرح) بـ tag [[myapp:1.0]]، واعمل cluster بـ [[kind.yaml]] اللي في الشرح، وحمّل الـ image وطبّق [[k8s/app.yaml]]. افتح [[http://localhost:8080]] كذا مرة بعد الـ port-forward. وبعدين جرّب نفس الـ Deployment بـ [[image: myapp]] من غير tag وشوف إيه اللي بيحصل.`,
+          deep: {
+            why: R`عشان تتعلم k8s أو تجرّب الـ YAML بتاع شغلك من غير ما تدفع على EKS أو GKE. والـ cluster المحلي بيبوظ ويتعمل من الأول في دقيقة، فتقدر تجرّب الغلط براحتك. وفرق كتير بتستخدم kind في CI عشان تختبر الـ manifests و Helm charts قبل الـ deploy.`,
+            how: R`كل node في kind هو container من image اسمها [[kindest/node]]، جواه kubelet و containerd (مش Docker). عشان كده الـ images اللي على Docker عندك مش شايفها الـ cluster: ليه مخزن images لوحده جوه كل node. [[kind load docker-image]] بيعمل [[docker save]] للـ image وبيستوردها في containerd بتاع كل node.
+
+ولما الـ pod يطلب image، الـ kubelet بيشوف [[imagePullPolicy]]: [[IfNotPresent]] (الافتراضي لأي tag غير [[latest]]) يستخدم اللي موجود على الـ node، و [[Always]] (الافتراضي لـ [[latest]] أو من غير tag) يروح للـ registry كل مرة، فـ image محلية بتفشل بـ [[ErrImagePull]].
+
+[[kind.yaml]] بيحدد شكل الـ cluster: كام node وبأنهي دور، و [[extraPortMappings]] بتفتح بورت على جهازك يوصّل للـ node (هنحتاجها للـ Ingress في الدرس الجاي).`,
+            when: R`تعلّم، وتجربة manifests و charts، و CI. مش للإنتاج: كل الـ cluster على جهاز واحد. وبدائله المحلية: k3d (k3s جوه Docker، أخف)، و minikube، و Kubernetes اللي جوه Docker Desktop (النسخ الجديدة فيها اختيار cluster بـ kind).
+
+إمتى متستخدمش Kubernetes أصلًا: شوف درس «kubectl» (أول درس في «Kubernetes: الأساسيات») ودرس «orchestration» في «أسئلة انترفيو». باختصار: فريق صغير وخدمتين أو تلاتة، Docker Compose على VPS أو منصة جاهزة (درس «PaaS ولا VPS: الحساب») أو ECS Fargate أوفر في الوقت والفلوس.`,
+            mistakes: R`تبني image جديدة بنفس الـ tag وتنسى [[kind load]] تاني، فالـ cluster لسه شغال بالقديمة. وتستخدم [[latest]] فـ k8s يروح يدوّر عليها في Docker Hub ويطلع [[ErrImagePull]]. وتنسى إن kubectl بيكلّم أنهي cluster: شوف [[kubectl config current-context]] قبل أي [[delete]]. وتسيب الـ cluster شغال بعد ما تخلص: ٣ nodes بياكلوا رام Docker Desktop.`
+          },
+          teach: R`## الفكرة: تطبيقك انت، مش nginx
+
+في دروس الأساسيات شغّلنا [[nginx:alpine]] من Docker Hub. في الشغل الحقيقي الـ image بتاعتك، ولسه مرفعتهاش على registry. الأوامر الست دي: اعمل cluster، ابني الـ image، دخّلها جوه الـ cluster، طبّق الـ Deployment، استنى، وافتح التطبيق.
+
+كل ده اتشغّل فعلًا (أكتوبر ٢٠٢٦) على ويندوز 11 و Docker Desktop: kind v0.33.0 و kubectl v1.37.1، والـ cluster طلع Kubernetes v1.37.0. الأسامي عندنا كانت [[b3a]] للـ cluster و [[b3a-app]] للـ image بدل [[shop]] و [[myapp]]، وملف الإعدادات (kubeconfig) في فولدر التجربة عن طريق متغير [[KUBECONFIG]] عشان منلمسش إعدادات kubectl اللي على الجهاز. والأوامر هي هي في PowerShell و bash (جرّبنا [[kind get clusters]] و [[kubectl get nodes]] في pwsh وطلعوا نفس الناتج).
+
+> تسطيب kind (من الـ docs): ويندوز [[winget install Kubernetes.kind]]، ماك [[brew install kind]]، لينكس ملف واحد من [[https://kind.sigs.k8s.io/dl/v0.33.0/kind-linux-amd64]]. إحنا نزّلنا [[kind-windows-amd64]] من نفس الرابط وسمّيناه [[kind.exe]].
+
+---
+
+## التطبيق اللي هنشغّله
+
+سيرفر Node صغير (من غير مكتبات) فيه المسارات اللي هنحتاجها في الدروس الجاية:
+
+~~~js server.js
+const http = require("http");
+const os = require("os");
+
+const VERSION = process.env.APP_VERSION || "1.0";
+const START_DELAY = Number(process.env.START_DELAY || 0);
+const hog = [];
+let ready = true;
+
+if (process.env.CRASH === "1") {
+  console.error("DATABASE_URL is missing, exiting");
+  process.exit(1);
+}
+
+const server = http.createServer((req, res) => {
+  const url = new URL(req.url, "http://x");
+  if (url.pathname === "/healthz") return res.end("ok");
+  if (url.pathname === "/readyz") {
+    res.statusCode = ready ? 200 : 503;
+    return res.end(ready ? "ready" : "not ready");
+  }
+  if (url.pathname === "/toggle-ready") {
+    ready = !ready;
+    return res.end("ready=" + ready + "\n");
+  }
+  if (url.pathname === "/work") {
+    const end = Date.now() + 50;
+    while (Date.now() < end) {}
+    return res.end("done\n");
+  }
+  if (url.pathname === "/leak") {
+    const mb = Number(url.searchParams.get("mb") || 50);
+    hog.push(Buffer.alloc(mb * 1024 * 1024, 1));
+    return res.end("holding " + hog.length * mb + " MB\n");
+  }
+  res.setHeader("content-type", "application/json");
+  res.end(JSON.stringify({ version: VERSION, pod: os.hostname() }) + "\n");
+});
+
+console.log("v" + VERSION + " loading, " + START_DELAY + "s");
+setTimeout(() => {
+  server.listen(3000, "0.0.0.0", () => console.log("v" + VERSION + " listening on 3000"));
+}, START_DELAY * 1000);
+~~~
+
+| المسار | بيعمل إيه | هنستخدمه في |
+|---|---|---|
+| [[/]] | يرجّع النسخة واسم الـ pod (الـ [[hostname]] جوه الـ pod هو اسمه) | نشوف الطلب راح لأنهي pod |
+| [[/healthz]] | [[ok]] دايمًا لو الـ process عايش | liveness و startup |
+| [[/readyz]] و [[/toggle-ready]] | جاهز ولا لأ، وزرار يقلبه | readiness |
+| [[/work]] | يشغّل الـ CPU ٥٠ ms | HPA |
+| [[/leak?mb=50]] | يحجز ٥٠ ميجا ومش بيرجّعها | OOMKilled |
+| [[START_DELAY]] و [[CRASH]] | يأخّر الـ listen، أو يقع على طول | startupProbe و CrashLoopBackOff |
+
+و [[0.0.0.0]] مهمة: لو سمع على [[localhost]] بس، محدش من برا الـ container يوصله.
+
+~~~dockerfile Dockerfile
+FROM node:22-slim
+WORKDIR /app
+COPY server.js .
+ARG VERSION=1.0
+ENV APP_VERSION=$VERSION
+USER node
+CMD ["node", "server.js"]
+~~~
+
+[[ARG VERSION]] قيمة وقت البناء، و [[ENV APP_VERSION=$VERSION]] بيحطها متغير بيئة جوه الـ image، فنبني نسخة 2.0 بـ [[--build-arg VERSION=2.0]] من غير ما نغيّر الكود. و [[USER node]] عشان ميشتغلش root.
+
+---
+
+## ١. [[kind create cluster --name shop --config kind.yaml]]
+
+~~~yaml kind.yaml
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+  - role: control-plane
+    labels:
+      ingress-ready: "true"
+    extraPortMappings:
+      - containerPort: 80
+        hostPort: 80
+      - containerPort: 443
+        hostPort: 443
+  - role: worker
+  - role: worker
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[kind: Cluster]] و [[apiVersion]] | ملف إعدادات kind نفسه، مش object في k8s |
+| [[role: control-plane]] | الـ node اللي فيها «المخ» (API server و etcd و scheduler) |
+| [[role: worker]] مرتين | ٢ nodes للتطبيقات، عشان نشوف الـ pods بتتوزّع |
+| [[labels: ingress-ready]] | label على الـ node، هنستخدمه في الدرس الجاي نختار بيه مكان الـ ingress controller |
+| [[extraPortMappings]] | بورت 80 و 443 على جهازك يوصّلوا لنفس البورت جوه الـ node دي |
+
+> لو بورت 80 مشغول عندك (IIS أو Apache أو Skype قديم)، خلّي [[hostPort: 8081]] وافتح [[localhost:8081]] بعد كده.
+
+~~~text الناتج (آخره)
+ ✓ Starting control-plane 🕹️
+ ✓ Installing CNI 🔌
+ ✓ Installing StorageClass 💾
+ ✓ Joining worker nodes 🚜
+Set kubectl context to "kind-b3a"
+~~~
+
+أول مرة خدت ٥ دقايق و ١٥ ثانية، لأن kind بيسحب [[kindest/node:v1.37.0]] (١.٣٤ جيجا). المرات الجاية أسرع بكتير.
+
+الـ nodes نفسها containers:
+
+~~~text docker ps --filter name=b3a
+NAMES               IMAGE                  PORTS
+b3a-control-plane   kindest/node:v1.37.0   0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp, 127.0.0.1:57776->6443/tcp
+b3a-worker2         kindest/node:v1.37.0
+b3a-worker          kindest/node:v1.37.0
+~~~
+
+[[6443]] هو بورت الـ API server، و kubectl بيكلّمه على [[127.0.0.1:57776]] (رقم عشوائي، مكتوب في الـ kubeconfig).
+
+~~~text kubectl get nodes (أعمدة مختارة من -o wide)
+NAME                STATUS   ROLES           VERSION   INTERNAL-IP   CONTAINER-RUNTIME
+b3a-control-plane   Ready    control-plane   v1.37.0   172.19.0.4    containerd://2.3.4
+b3a-worker          Ready    <none>          v1.37.0   172.19.0.2    containerd://2.3.4
+b3a-worker2         Ready    <none>          v1.37.0   172.19.0.3    containerd://2.3.4
+~~~
+
+[[CONTAINER-RUNTIME]] هو containerd، مش Docker. وده سبب الخطوة ٣.
+
+---
+
+## ٢. [[docker build -t myapp:1.0 .]]
+
+[[-t]] = tag: الاسم والنسخة. [[.]] = ابني من الفولدر الحالي. والنسخة التانية:
+
+~~~bash
+docker build --build-arg VERSION=2.0 -t myapp:2.0 .
+~~~
+
+الـ image دلوقتي في Docker على جهازك بس. لو طبّقت الـ Deployment دلوقتي، الـ node هتدوّر عليها في Docker Hub.
+
+---
+
+## ٣. [[kind load docker-image myapp:1.0 --name shop]]
+
+~~~text الناتج (جزء)
+Image: "b3a-app:1.0" with ID "sha256:181a342224aa..." not yet present on node "b3a-worker2", loading...
+Image: "b3a-app:1.0" with ID "sha256:181a342224aa..." not yet present on node "b3a-worker", loading...
+~~~
+
+بيقارن الـ ID على كل node، ويحمّل بس لو مش موجودة أو اتغيرت. ممكن تدّيله أكتر من image مرة واحدة ([[kind load docker-image myapp:1.0 myapp:2.0]]): ٢ images × ٣ nodes خدت ٢٧ ثانية. و [[--name]] لازم يطابق اسم الـ cluster.
+
+وجوه الـ node، containerd شايفها باسمها الكامل:
+
+~~~text docker exec b3a-worker crictl images
+IMAGE                       TAG   IMAGE ID        SIZE
+docker.io/library/b3a-app   1.0   a646a24958c83   79.8MB
+docker.io/library/b3a-app   2.0   eba9b97ac66aa   79.8MB
+~~~
+
+[[myapp:1.0]] = [[docker.io/library/myapp:1.0]]. ده الاسم اللي الـ kubelet هيدوّر عليه.
+
+---
+
+## ٤. [[kubectl apply -f k8s/app.yaml]]
+
+~~~yaml k8s/app.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: web }
+spec:
+  replicas: 3
+  selector: { matchLabels: { app: web } }
+  template:
+    metadata: { labels: { app: web } }
+    spec:
+      containers:
+        - name: web
+          image: myapp:1.0
+          ports: [{ containerPort: 3000 }]
+~~~
+
+نفس شكل درس «Deployment YAML»، بس الـ image بتاعتنا. وفي الدروس الجاية هنزوّد عليه probes و resources.
+
+---
+
+## ٥. [[kubectl rollout status deploy/web]]
+
+~~~text الناتج
+Waiting for deployment "web" rollout to finish: 0 of 3 updated replicas are available...
+Waiting for deployment "web" rollout to finish: 1 of 3 updated replicas are available...
+Waiting for deployment "web" rollout to finish: 2 of 3 updated replicas are available...
+deployment "web" successfully rolled out
+~~~
+
+~~~text kubectl get pods -o wide (أعمدة مختارة)
+NAME                  READY   STATUS    IP           NODE
+web-6d4665c97-9v5ss   1/1     Running   10.244.3.2   b3a-worker2
+web-6d4665c97-gqzfq   1/1     Running   10.244.1.2   b3a-worker
+web-6d4665c97-k7m4s   1/1     Running   10.244.3.3   b3a-worker2
+~~~
+
+الـ scheduler وزّعهم على الـ workers بس. الـ control-plane عليها taint (علامة «ممنوع») بيمنع الـ pods العادية، وهنشوف أثرها في درس «requests و limits».
+
+---
+
+## ٦. [[kubectl port-forward deploy/web 8080:3000]]
+
+[[8080]] على جهازك، و [[3000]] جوه الـ pod. ومن ترمنال تاني:
+
+~~~text curl localhost:8080
+{"version":"1.0","pod":"web-6d4665c97-9v5ss"}
+~~~
+
+[[port-forward]] بيختار pod **واحد** ويفضل عليه، فكل الطلبات هتروح لنفس الـ pod. للتوزيع الحقيقي محتاج Service (الدرس الجاي).
+
+---
+
+## الغلطة المشهورة: [[latest]]
+
+عملنا tag [[latest]] لنفس الـ image وحمّلناها بـ [[kind load]]، وبعدين:
+
+~~~bash
+kubectl create deployment latest-demo --image=myapp
+~~~
+
+~~~text kubectl get pods -l app=latest-demo
+NAME                           READY   STATUS         RESTARTS   AGE
+latest-demo-5dcc8854cc-gl868   0/1     ErrImagePull   0          15s
+~~~
+
+~~~text kubectl describe pod (الـ Events)
+Normal   Pulling    15s   kubelet   Pulling image "b3a-app"
+Warning  Failed     11s   kubelet   Failed to pull image "b3a-app": ... "docker.io/library/b3a-app:latest": pull access denied, repository does not exist or may require authorization
+Normal   BackOff    11s   kubelet   Back-off pulling image "b3a-app"
+Warning  Failed     11s   kubelet   Error: ImagePullBackOff
+~~~
+
+الـ image **موجودة** على الـ node، وبرضه راح يسحبها. السبب:
+
+~~~text kubectl get deploy ... -o jsonpath='{.spec.template.spec.containers[0].imagePullPolicy}'
+latest-demo: Always
+web:         IfNotPresent
+~~~
+
+من غير tag أو بـ [[latest]]، k8s بيحط [[imagePullPolicy: Always]]. الحل: tag بنسخة (الأحسن)، أو [[imagePullPolicy: IfNotPresent]] صريح في الـ YAML (جرّبناه والـ pod بقى [[Running]] في ثانية).
+
+---
+
+## إمتى متستخدمش Kubernetes
+
+بعد كل ده، كلام بصراحة:
+
+| الوضع | الأنسب |
+|---|---|
+| مشروع لوحدك أو فريق ٢ أو ٣، وخدمتين | Docker Compose على VPS، أو PaaS (Render و Railway و Fly.io) |
+| على AWS ومش عايز تدير cluster | ECS Fargate (درس «ECS Fargate» في التاب ده) |
+| خدمات كتير، وفرق كتير، ومحتاجين منصة واحدة | هنا k8s بيكسب، وغالبًا managed (EKS أو GKE) |
+
+التمن مش الفلوس بس: ترقية الـ cluster كل كام شهر، و ingress وشهادات، و RBAC، ومراقبة الـ cluster نفسه. التفاصيل في درس «kubectl» ودرس «orchestration» (أسئلة انترفيو). تعلّمه عشان هتلاقيه في الشغل، مش عشان تحطه في كل مشروع.
+
+---
+
+## الخلاصة
+
+| الخطوة | الأمر |
+|---|---|
+| cluster بـ ٣ nodes وبورت 80 | [[kind create cluster --name shop --config kind.yaml]] |
+| الـ image | [[docker build -t myapp:1.0 .]] |
+| دخّلها الـ cluster | [[kind load docker-image myapp:1.0 --name shop]] (بعد **كل** build) |
+| شغّلها | [[kubectl apply -f k8s/app.yaml]] ثم [[rollout status]] |
+| جرّبها | [[kubectl port-forward deploy/web 8080:3000]] |
+| خلصت | [[kind delete cluster --name shop]] |
+
+> tag بنسخة دايمًا. [[latest]] = [[Always]] = k8s يروح للـ registry.`,
+          lines: [
+            "اعمل cluster اسمه shop بالشكل اللي في kind.yaml (control-plane و ٢ workers وبورت 80).",
+            "ابني الـ image بتاعتك بنسخة محددة.",
+            "انقل الـ image من Docker لكل nodes الـ cluster.",
+            "طبّق الـ Deployment اللي بيستخدم myapp:1.0.",
+            "استنى لحد ما الـ pods تبقى جاهزة.",
+            "افتح بورت 8080 على جهازك يوصّل لبورت 3000 في pod."
+          ],
+          sol: R`[[kind create cluster]] يطبع [[Joining worker nodes]] و [[Set kubectl context to "kind-shop"]]، و [[kind load]] يطبع [[not yet present on node ... loading...]] لكل node. بعد [[rollout status]] هتلاقي ٣ pods [[Running]] على الـ workers. ومع الـ port-forward، [[curl localhost:8080]] يرجّع [[{"version":"1.0","pod":"web-..."}]] ونفس اسم الـ pod كل مرة، لأن port-forward بيمسك pod واحد.
+
+وبـ [[image: myapp]] من غير tag: الـ pod يبقى [[ErrImagePull]] ثم [[ImagePullBackOff]]، وفي [[describe]] هتلاقي [[pull access denied]] على [[docker.io/library/myapp:latest]]، مع إن الـ image متحمّلة. السبب [[imagePullPolicy: Always]] الافتراضي مع [[latest]].
+
+(اتجرّب بـ kind v0.33.0 و kubectl v1.37.1 على Docker Desktop في ويندوز 11، بأسامي [[b3a]] و [[b3a-app]].)`,
+          solCode: R`kind create cluster --name shop --config kind.yaml
+docker build -t myapp:1.0 .
+docker build --build-arg VERSION=2.0 -t myapp:2.0 .
+kind load docker-image myapp:1.0 myapp:2.0 --name shop
+kubectl apply -f k8s/app.yaml
+kubectl rollout status deploy/web
+kubectl get pods -o wide
+kubectl port-forward deploy/web 8080:3000
+kind delete cluster --name shop`
+        },
+        {
+          cmd: "Service و Ingress",
+          title: "وصّل للتطبيق: أنواع الـ Service، و Ingress على localhost",
+          desc: R`الـ Service بيدّي الـ pods اسم وعنوان ثابت ويوزّع عليهم، وليه ٣ أنواع: [[ClusterIP]] (من جوه الـ cluster بس)، و [[NodePort]] (بورت على كل node)، و [[LoadBalancer]] (بيطلب load balancer من الـ cloud).
+
+والـ Ingress قواعد HTTP: «[[shop.localhost]] يروح لـ Service [[web]]، و [[beta.shop.localhost]] لـ [[beta]]»، وبيشتغل بس لو فيه ingress controller في الـ cluster. هنا استخدمنا ingress-nginx، وخد بالك إن المشروع ده اتقفل (archived) في ٢٠٢٦، فاقرا آخر الشرح قبل ما تختاره لمشروع جديد.`,
+          example: R`kubectl apply -f k8s/svc.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.15.1/deploy/static/provider/kind/deploy.yaml
+kubectl patch deploy -n ingress-nginx ingress-nginx-controller -p '{"spec":{"template":{"spec":{"nodeSelector":{"ingress-ready":"true"}}}}}'
+kubectl apply -f k8s/ingress.yaml
+kubectl get ingress
+curl http://shop.localhost/
+curl http://beta.shop.localhost/`,
+          try: R`على cluster الدرس اللي فات: اعمل Service لـ [[web]]، و Deployment تاني [[beta]] بـ [[myapp:2.0]] بـ Service ليه، وسطّب ingress-nginx واعمل الـ Ingress. افتح [[http://shop.localhost]] و [[http://beta.shop.localhost]] في المتصفح. وبعدين جرّب Ingress بيشاور على Service اسمها غلط: الرد هيبقى إيه؟`,
+          deep: {
+            why: R`الـ pods بتموت وتتعمل بـ IPs جديدة، فمحدش يقدر يكلّمهم مباشرة. الـ Service هو العنوان الثابت جوه الـ cluster، والـ Ingress هو الباب الواحد من برا: load balancer واحد (بفلوس واحدة في الـ cloud) قدام خدمات كتير، بدل LoadBalancer لكل Service.`,
+            how: R`[[ClusterIP]]: IP افتراضي (من [[10.96.x.x]]) واسم DNS [[web.default.svc.cluster.local]]، و kube-proxy على كل node بيحوّل الطلب لواحد من الـ pods الجاهزين في الـ EndpointSlice.
+
+[[NodePort]]: نفس ClusterIP + بورت بين 30000 و 32767 مفتوح على **كل** node، حتى اللي مفيهاش pod من التطبيق.
+
+[[LoadBalancer]]: NodePort + طلب للـ cloud يعمل load balancer حقيقي (ALB/NLB على AWS). على kind مفيش cloud، فالـ [[EXTERNAL-IP]] بيفضل [[<pending>]] (إلا لو شغّلت cloud-provider-kind).
+
+الـ Ingress object مجرد قواعد. اللي بينفّذها هو الـ ingress controller: pod فيه nginx (أو Traefik أو غيره) بيقرا كل الـ Ingresses ويعمل منها إعدادات، وبيستقبل على 80 و 443. نسخة kind من ingress-nginx بتستخدم [[hostPort]]، يعني بتسمع على بورت 80 بتاع الـ node نفسها، ومع [[extraPortMappings]] في [[kind.yaml]] بقى [[localhost:80]] على جهازك يوصل لها.`,
+            when: R`ClusterIP لكل حاجة داخلية (API بيكلّم API). Ingress (أو Gateway API) للـ HTTP من برا. LoadBalancer لحاجة مش HTTP (TCP زي قاعدة بيانات أو gRPC من غير ingress)، أو لو الـ ingress controller نفسه. NodePort نادر في الإنتاج.`,
+            mistakes: R`Service الـ [[selector]] بتاعه مش مطابق لـ labels الـ pods، فالـ endpoints فاضية والـ Ingress يرجّع 503. و Ingress من غير [[ingressClassName]] والـ controller مش بيلتقطه. و [[targetPort]] غلط (بورت الـ Service مكان بورت الـ container). وعلى kind بـ أكتر من node: الـ ingress controller ينزل على worker مفيهوش البورت، فـ [[localhost]] ميردّش خالص. وفي PowerShell: [[Invoke-WebRequest http://shop.localhost]] بيفشل بـ «No such host is known»، استخدم [[curl.exe]].`
+          },
+          teach: R`## الفكرة: عنوان ثابت جوه، وباب واحد من برا
+
+أول سطر بيعمل Service (العنوان الثابت)، والتاني والتالت بيسطّبوا ingress-nginx ويثبّتوه على الـ node اللي عليها البورت، والرابع بيعمل قواعد الـ Ingress، والباقي بيجرّب.
+
+اتشغّل على cluster الدرس اللي فات (kind v0.33.0، Kubernetes v1.37.0، ٣ nodes) على ويندوز 11، مع Deployment تاني اسمه [[beta]] بـ النسخة 2.0 و Service ليه ([[kubectl create deployment beta --image=myapp:2.0]] ثم [[kubectl expose deploy beta --port 80 --target-port 3000]]).
+
+---
+
+## ١. [[kubectl apply -f k8s/svc.yaml]]
+
+~~~yaml k8s/svc.yaml
+apiVersion: v1
+kind: Service
+metadata: { name: web }
+spec:
+  selector: { app: web }
+  ports: [{ port: 80, targetPort: 3000 }]
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[selector: { app: web }]] | الـ pods اللي عليها [[app: web]] هي اللي ورا الـ Service |
+| [[port: 80]] | البورت اللي الـ Service بيسمع عليه |
+| [[targetPort: 3000]] | البورت جوه الـ container |
+| مفيش [[type]] | يبقى [[ClusterIP]] |
+
+### الأنواع التلاتة جنب بعض
+
+عملنا نوعين زيادة بـ [[kubectl expose]] عشان نقارن:
+
+~~~bash
+kubectl expose deploy web --name web-np --type NodePort --port 80 --target-port 3000
+kubectl expose deploy web --name web-lb --type LoadBalancer --port 80 --target-port 3000
+~~~
+
+~~~text kubectl get svc
+NAME         TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+kubernetes   ClusterIP      10.96.0.1      <none>        443/TCP        2m25s
+web          ClusterIP      10.96.145.56   <none>        80/TCP         4s
+web-lb       LoadBalancer   10.96.135.58   <pending>     80:30692/TCP   3s
+web-np       NodePort       10.96.39.221   <none>        80:31631/TCP   3s
+~~~
+
+| النوع | اقرا السطر إزاي |
+|---|---|
+| [[ClusterIP]] | عنوان [[10.96.145.56]] بيشتغل من جوه الـ cluster بس |
+| [[NodePort]] | [[80:31631]]: بورت 31631 مفتوح على كل node |
+| [[LoadBalancer]] | فيه NodePort كمان ([[30692]])، و [[<pending>]] لأن مفيش cloud يدّيله IP |
+| [[kubernetes]] | Service بتاع الـ API server نفسه، موجود في أي cluster |
+
+والـ NodePort بيرد من أي node، حتى من الـ control-plane اللي مفيهاش pods من [[web]]:
+
+~~~text docker exec b3a-control-plane curl -s 172.19.0.3:31631/
+{"version":"1.0","pod":"web-6d4665c97-gqzfq"}
+~~~
+
+### الـ ClusterIP من جوه: اسم DNS وتوزيع
+
+~~~bash
+kubectl run tmp --image=busybox:1.37 --rm -i --restart=Never -- sh -c 'for i in 1 2 3 4 5 6; do wget -qO- http://web; done'
+~~~
+
+~~~text الناتج
+{"version":"1.0","pod":"web-6d4665c97-gqzfq"}
+{"version":"1.0","pod":"web-6d4665c97-k7m4s"}
+{"version":"1.0","pod":"web-6d4665c97-k7m4s"}
+{"version":"1.0","pod":"web-6d4665c97-gqzfq"}
+{"version":"1.0","pod":"web-6d4665c97-gqzfq"}
+{"version":"1.0","pod":"web-6d4665c97-9v5ss"}
+~~~
+
+[[http://web]] اشتغل لأن الـ pod في نفس الـ namespace، والـ ٦ طلبات اتوزّعوا على الـ ٣ pods (عشوائي، مش بالدور). و [[nslookup web.default.svc.cluster.local]] رجّع [[10.96.145.56]]، نفس الـ ClusterIP.
+
+> أول مرة [[kubectl run]] فشل بـ [[timed out waiting for the condition]]: سحب [[busybox]] خد أكتر من الدقيقة اللي kubectl بيستناها. زوّد [[--pod-running-timeout=3m]].
+
+---
+
+## ٢. [[kubectl apply -f .../provider/kind/deploy.yaml]]
+
+ده ملف ingress-nginx الجاهز لـ kind، بنسخة مثبتة [[controller-v1.15.1]] في الرابط (مش [[main]]، عشان الملف ميتغيرش تحتك). بيعمل namespace [[ingress-nginx]] وفيه الـ controller، و IngressClass اسمها [[nginx]]، و admission webhook بيرفض أي Ingress غلط قبل ما يتحفظ.
+
+~~~text الناتج (آخره)
+job.batch/ingress-nginx-admission-create created
+job.batch/ingress-nginx-admission-patch created
+ingressclass.networking.k8s.io/nginx created
+validatingwebhookconfiguration.admissionregistration.k8s.io/ingress-nginx-admission created
+~~~
+
+---
+
+## ٣. [[kubectl patch ... nodeSelector ingress-ready]]
+
+ده اللي محدش بيقولهولك. بعد الخطوة ٢:
+
+~~~text kubectl get pods -n ingress-nginx -o wide (أعمدة مختارة)
+NAME                                        READY   STATUS    NODE
+ingress-nginx-controller-596f5b6bcf-hfmpn   1/1     Running   b3a-worker
+~~~
+
+الـ controller نزل على [[b3a-worker]]، والبورت 80 اللي على جهازك متوصّل بـ [[b3a-control-plane]] بس (الـ [[extraPortMappings]]). والنتيجة: [[curl http://localhost/]] مفيش رد خالص (curl طلّع كود [[000]]). النسخة دي من الملف فيها [[nodeSelector: kubernetes.io/os: linux]] بس، وده بيقبل أي node.
+
+[[patch]] بيعدّل حتة من الـ object من غير ما تكتب الملف كله:
+
+| الحتة | معناها |
+|---|---|
+| [[-n ingress-nginx]] | في الـ namespace ده |
+| [[-p '{...}']] | الحتة اللي هتتدمج في الـ object (strategic merge patch) |
+| [[nodeSelector: ingress-ready: "true"]] | انزل بس على node عليها الـ label ده، اللي حطيناه في [[kind.yaml]] على الـ control-plane |
+
+~~~text الناتج
+deployment.apps/ingress-nginx-controller patched
+deployment "ingress-nginx-controller" successfully rolled out
+ingress-nginx-controller-575c4d8bc6-jc4m4   1/1   Running   0   58s   10.244.0.5   b3a-control-plane
+~~~
+
+ودلوقتي [[curl -i http://localhost/]] بيرد [[HTTP/1.1 404 Not Found]]. ده كويس: nginx بيرد، بس لسه مفيش قواعد.
+
+> الـ control-plane عليها taint بيمنع الـ pods، بس الـ controller ده معاه toleration ليها (موجود في الملف)، فقدر ينزل.
+
+### الـ JSON ده في PowerShell
+
+| الشل | يشتغل إزاي |
+|---|---|
+| bash و pwsh 7 | زي ما هو في المثال (جرّبناه في pwsh 7.6) |
+| Windows PowerShell 5.1 | رفض بـ [[invalid JSON patch]]، لأنه بيشيل علامات [[" "]] اللي جوه. الحل تكتبها [[\"]]: |
+
+~~~powershell
+kubectl patch deploy -n ingress-nginx ingress-nginx-controller -p '{\"spec\":{\"template\":{\"spec\":{\"nodeSelector\":{\"ingress-ready\":\"true\"}}}}}'
+~~~
+
+(والعكس: الشكل ده بالـ [[\"]] بيفشل في pwsh 7. فاعرف انت على أنهي واحد: [[$PSVersionTable.PSVersion]].)
+
+---
+
+## ٤. [[kubectl apply -f k8s/ingress.yaml]]
+
+~~~yaml k8s/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata: { name: web }
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: shop.localhost
+      http:
+        paths:
+          - { path: /, pathType: Prefix, backend: { service: { name: web, port: { number: 80 } } } }
+    - host: beta.shop.localhost
+      http:
+        paths:
+          - { path: /, pathType: Prefix, backend: { service: { name: beta, port: { number: 80 } } } }
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[ingressClassName: nginx]] | أنهي controller ينفّذ القواعد دي |
+| [[host: shop.localhost]] | الطلبات اللي الـ Host header بتاعها كده |
+| [[path: /]] و [[pathType: Prefix]] | أي مسار بيبدأ بـ [[/]] (يعني كله) |
+| [[backend.service]] | ابعتها لـ Service [[web]] على بورت 80 (بورت الـ Service، مش الـ container) |
+
+ليه [[.localhost]]؟ أي اسم بيخلص بـ [[.localhost]] معناه جهازك (127.0.0.1): المتصفحات و curl بيفهموه لوحدهم، من غير ما تعدّل ملف [[hosts]].
+
+---
+
+## ٥. [[kubectl get ingress]]
+
+~~~text الناتج
+NAME   CLASS   HOSTS                                ADDRESS     PORTS   AGE
+web    nginx   shop.localhost,beta.shop.localhost   localhost   80      21m
+~~~
+
+[[ADDRESS]] بيفضل فاضي أول كام ثانية لحد ما الـ controller يلتقط الـ Ingress. و [[kubectl describe ingress web]] بيوري كل قاعدة رايحة لأنهي pods:
+
+~~~text الناتج (جزء)
+  Host                 Path  Backends
+  shop.localhost
+                       /   web:80 (10.244.3.36:3000,10.244.3.37:3000,10.244.1.33:3000 + 1 more...)
+  beta.shop.localhost
+                       /   beta:80 (10.244.1.9:3000)
+~~~
+
+---
+
+## ٦. [[curl http://shop.localhost/]] و [[beta.shop.localhost]]
+
+~~~text الناتج
+{"version":"1.0","pod":"web-6d4665c97-k7m4s"}
+{"version":"2.0","pod":"beta-f98bb694-xfmx6"}
+~~~
+
+نفس البورت 80، ونفس الـ IP، والـ Host header هو اللي فرّق. وده نفس اللي curl بيعمله لو كتبته بإيدك: [[curl -H "Host: shop.localhost" http://localhost/]] رجّع نفس الرد. واسم مش في القواعد ([[other.localhost]]) رجّع [[404]] من nginx.
+
+### على ويندوز
+
+| الأداة | النتيجة |
+|---|---|
+| [[curl.exe http://shop.localhost/]] (في pwsh و 5.1) | اشتغل: curl نفسه بيحوّل [[.localhost]] لـ 127.0.0.1 |
+| [[Invoke-WebRequest http://shop.localhost/]] | فشل: [[No such host is known]]، لأنه بيسأل ويندوز، وويندوز مبيعرفش [[*.localhost]] |
+| [[Invoke-WebRequest http://localhost/ -Headers @{Host='shop.localhost'}]] | اشتغل في pwsh 7 و 5.1 (في 5.1 زوّد [[-UseBasicParsing]]) |
+
+---
+
+## لما الـ Service اسمها غلط
+
+~~~bash
+kubectl create ingress bad --class=nginx --rule="bad.localhost/*=nope:80"
+~~~
+
+[[curl http://bad.localhost/]] رجّع [[503]]، و [[describe]] قال السبب:
+
+~~~text الناتج
+  bad.localhost
+                 /   nope:80 (<error: services "nope" not found>)
+~~~
+
+| الرد | السبب الغالب |
+|---|---|
+| مفيش رد خالص | الـ controller مش على الـ node اللي عليها البورت، أو البورت مش متعمله mapping |
+| [[404]] من nginx | الـ host أو المسار مش في أي قاعدة، أو [[ingressClassName]] غلط |
+| [[503]] | القاعدة صح، بس الـ Service مش موجودة أو مفيهاش pods جاهزة |
+| [[502]] | فيه pods، بس [[targetPort]] غلط أو التطبيق بيسمع على [[localhost]] |
+
+---
+
+## ingress-nginx اتقفل: اختار إيه لمشروع جديد
+
+[[kubernetes/ingress-nginx]] على GitHub بقى archived (للقراية بس)، وآخر نسخة [[controller-v1.15.1]] في ١٩ مارس ٢٠٢٦ (شفناه من GitHub API وقت كتابة الدرس). يعني مفيش إصلاحات أمنية جاية. هو لسه شغال، وهتلاقيه في clusters كتير، فلازم تفهمه، بس لمشروع جديد:
+
+- الـ Ingress كـ API نفسه لسه موجود ومستقر، وفيه controllers تانية شغالة عليه (Traefik، و HAProxy، و NGINX Ingress Controller بتاع F5 وده مشروع تاني غير ده).
+- الاتجاه الرسمي هو **Gateway API** ([[Gateway]] و [[HTTPRoute]] بدل [[Ingress]])، مع implementation زي Envoy Gateway أو NGINX Gateway Fabric أو Traefik.
+- وعلى kind، الـ docs الحالية بتقول إن cloud-provider-kind (v0.9.0 وأحدث) بيدعم Ingress و Gateway API من غير controller منفصل. ده من الـ docs، ماتجرّبش هنا.
+
+---
+
+## الخلاصة
+
+| عايز | استخدم |
+|---|---|
+| خدمة تكلّم خدمة جوه الـ cluster | Service [[ClusterIP]] و [[http://NAME]] |
+| HTTP من برا لخدمات كتير | Ingress (أو Gateway API) + controller |
+| TCP مش HTTP من برا | Service [[LoadBalancer]] |
+| تجربة سريعة من جهازك | [[kubectl port-forward svc/NAME 8080:80]] |
+
+> على kind بـ أكتر من node: الـ ingress controller لازم يبقى على الـ node اللي عليها [[extraPortMappings]].`,
+          lines: [
+            "اعمل Service اسمه web قدام الـ pods اللي عليها app: web.",
+            "سطّب ingress-nginx بنسخة kind، بإصدار مثبت.",
+            "ثبّت الـ controller على الـ node اللي عليها label ingress-ready (اللي البورت 80 متوصّل بيها).",
+            "اعمل قواعد الـ Ingress: كل host لـ Service.",
+            "اتأكد إن الـ Ingress اتلقط (ADDRESS).",
+            "جرّب الـ host الأول: يروح لـ web.",
+            "جرّب الـ host التاني: يروح لـ beta."
+          ],
+          sol: R`[[http://shop.localhost]] بيرجّع [[{"version":"1.0",...}]] من pods الـ [[web]]، و [[http://beta.shop.localhost]] بيرجّع [[{"version":"2.0","pod":"beta-..."}]]. والـ Ingress اللي بيشاور على Service مش موجودة بيرجّع [[503]] من nginx، و [[kubectl describe ingress]] بيقول [[<error: services "nope" not found>]].
+
+لو [[curl http://localhost/]] مفيش رد خالص: شوف الـ controller نازل على أنهي node بـ [[kubectl get pods -n ingress-nginx -o wide]]؛ لازم يبقى [[shop-control-plane]] (اعمل الـ patch). ولو [[404]]: الـ host مش مكتوب صح أو نسيت [[ingressClassName: nginx]].
+
+(اتجرّب بـ ingress-nginx controller-v1.15.1 على kind v0.33.0، Kubernetes v1.37.0، في ويندوز 11 بـ Git Bash و pwsh 7.6 و PowerShell 5.1.)`,
+          solCode: R`kubectl create deployment beta --image=myapp:2.0
+kubectl expose deploy beta --port 80 --target-port 3000
+kubectl apply -f k8s/svc.yaml -f k8s/ingress.yaml
+kubectl get pods -n ingress-nginx -o wide
+kubectl describe ingress web
+kubectl create ingress bad --class=nginx --rule="bad.localhost/*=nope:80"
+curl -s -o /dev/null -w "%{http_code}\n" http://bad.localhost/
+kubectl delete ingress bad`
+        },
+        {
+          cmd: "probes",
+          title: "startup و readiness و liveness: مين بيسأل إيه، ولما يغلط بيحصل إيه",
+          desc: R`الـ probes أسئلة الـ kubelet بيسألها للـ container كل كام ثانية: [[startupProbe]] «خلصت تحميل؟»، و [[readinessProbe]] «أبعتلك ترافيك؟»، و [[livenessProbe]] «انت عايش ولا أعيد تشغيلك؟».
+
+لو readiness فشل، الـ pod بيخرج من الـ Service بس (مفيش restart). لو liveness فشل، الـ container بيتقتل ويقوم من الأول. ولو حطيت liveness غلط، انت اللي بتوقّع تطبيقك.`,
+          example: R`startupProbe:
+  httpGet: { path: /healthz, port: 3000 }
+  periodSeconds: 2
+  failureThreshold: 30
+readinessProbe:
+  httpGet: { path: /readyz, port: 3000 }
+  periodSeconds: 5
+livenessProbe:
+  httpGet: { path: /healthz, port: 3000 }
+  periodSeconds: 5
+  failureThreshold: 3`,
+          try: R`حط الـ ٣ probes دول تحت [[containers]] في Deployment للتطبيق بتاعك، مع [[START_DELAY=25]] (تطبيق بياخد ٢٥ ثانية يقوم). الأول جرّبه بالـ livenessProbe لوحده من غير startup وشوف [[RESTARTS]]. وبعدين بالتلاتة. وبعدين غيّر بورت الـ liveness لـ 8080 وسيبه ٥ دقايق.`,
+          flag: "script",
+          deep: {
+            why: R`k8s مش عارف حاجة عن تطبيقك غير إن الـ process شغال. process شغال ممكن يكون لسه بيحمّل، أو معلّق في deadlock، أو قاعدة البيانات بتاعته واقعة. الـ probes هي الطريقة اللي بتقوله بيها «جاهز» و «عايش»، وهي اللي بتخلّي الـ rolling update من غير أخطاء.`,
+            how: R`الـ kubelet على الـ node هو اللي بيسأل (مش الـ control plane). [[httpGet]] يعدّي لو الرد بين 200 و 399. وفيه كمان [[tcpSocket]] (البورت بيقبل اتصال؟) و [[exec]] (أمر جوه الـ container رجع 0؟) و [[grpc]].
+
+الترتيب: طول ما الـ startupProbe منجحتش، readiness و liveness واقفين. بعد ما تنجح مرة، مبتشتغلش تاني، والاتنين التانيين يبدأوا. فالـ startup بتدّي التطبيق البطيء وقت (هنا [[2 × 30 = 60]] ثانية) من غير ما تخلّي الـ liveness نفسها بطيئة.
+
+[[periodSeconds]] كل قد إيه، و [[failureThreshold]] كام فشل ورا بعض، و [[timeoutSeconds]] (افتراضي 1) الرد يتأخر قد إيه، و [[initialDelaySeconds]] استنى قبل أول سؤال (مع وجود startupProbe مش محتاجه).
+
+لما الـ liveness تفشل، الـ kubelet بيبعت SIGTERM ويستنى [[terminationGracePeriodSeconds]] (افتراضي 30) وبعدين SIGKILL. Node شغال كـ PID 1 من غير handler لـ SIGTERM مبيقفلش، فبياخد الـ ٣٠ ثانية كاملة ويخرج بـ [[Exit Code: 137]] (128 + 9 = SIGKILL).`,
+            when: R`readiness لأي تطبيق بياخد ترافيك، دايمًا. startup لأي تطبيق بياخد أكتر من كام ثانية يقوم (Java، و migrations، و cache warming). liveness بس لو التطبيق ممكن يعلّق وهو شغال ومفيش طريقة يخرج لوحده، وخليها بسيطة جدًا: «الـ event loop بيرد»، مش «قاعدة البيانات شغالة».`,
+            mistakes: R`liveness بتسأل قاعدة البيانات: القاعدة تقع دقيقة، فكل الـ pods تتعاد مع بعض وتضرب القاعدة وهي بتقوم. و liveness على بورت أو مسار غلط: التطبيق سليم وبيتقتل كل شوية. و liveness من غير startup لتطبيق بطيء: بيتقتل قبل ما يخلص تحميل، للأبد. ومفيش readiness خالص: الـ pod يبقى [[1/1]] وهو لسه مش بيسمع، والترافيك يروحله. و [[timeoutSeconds: 1]] الافتراضي على endpoint تقيل تحت ضغط.`
+          },
+          teach: R`## الفكرة: ٣ أسئلة مختلفة، وكل واحد ليه عقاب مختلف
+
+| الـ probe | السؤال | لو فشل |
+|---|---|---|
+| [[startupProbe]] | خلصت تحميل؟ | بعد [[failureThreshold]] مرة: restart. ولحد ما تنجح، التانيين واقفين |
+| [[readinessProbe]] | أبعتلك ترافيك؟ | يخرج من الـ Service. **مفيش restart** |
+| [[livenessProbe]] | عايش؟ | restart للـ container |
+
+اتجرّب على cluster kind (Kubernetes v1.37.0) على ويندوز 11، بتطبيق الدرس «kind load docker-image» ([[server.js]]): [[/healthz]] بيرد [[ok]] دايمًا، و [[/readyz]] بيرد 200 أو 503 حسب زرار [[/toggle-ready]]، و [[START_DELAY=25]] بيخلّيه يستنى ٢٥ ثانية قبل ما يفتح البورت.
+
+---
+
+## ١. التجربة الأولى: liveness لوحدها على تطبيق بطيء
+
+~~~yaml
+          env: [{ name: START_DELAY, value: "25" }]
+          livenessProbe:
+            httpGet: { path: /healthz, port: 3000 }
+            periodSeconds: 5
+            failureThreshold: 3
+~~~
+
+~~~text kubectl get pods -l app=slow (كل ١٠ ثواني)
+slow-5ff88cd458-2s48f   1/1   Running   0     10s
+slow-5ff88cd458-2s48f   1/1   Running   0     20s
+slow-5ff88cd458-2s48f   1/1   Running   0     31s
+slow-5ff88cd458-2s48f   1/1   Running   0     41s
+slow-5ff88cd458-2s48f   1/1   Running   1 (6s ago)   51s
+~~~
+
+حاجتين غلط هنا:
+
+1. [[1/1]] من أول ١٠ ثواني، والتطبيق لسه مفتحش البورت. من غير readinessProbe، k8s بيعتبر «الـ process قام» = جاهز، ولو فيه Service هيبعتله ترافيك يفشل.
+2. [[RESTARTS 1]]: الـ liveness قتلته.
+
+~~~text kubectl describe pod (جزء)
+    Last State:     Terminated
+      Reason:       Error
+      Exit Code:    137
+      Started:      Wed, 28 Oct 2026 03:35:10 +0300
+      Finished:     Wed, 28 Oct 2026 03:35:54 +0300
+Events:
+  Warning  Unhealthy  21s (x6 over 76s)  kubelet  Liveness probe failed: Get "http://10.244.3.8:3000/healthz": dial tcp 10.244.3.8:3000: connect: connection refused
+  Normal   Killing    21s (x2 over 66s)  kubelet  Container slow failed liveness probe, will be restarted
+~~~
+
+### الأرقام دي جت منين
+
+| الوقت من البداية | اللي حصل |
+|---|---|
+| ٥ و ١٠ و ١٥ ثانية | ٣ أسئلة، و [[connection refused]] (لسه مفيش حد بيسمع) |
+| ١٥ ثانية | [[failureThreshold: 3]] اتملى: SIGTERM |
+| ٢٥ ثانية | التطبيق فتح البورت (اللوج قال [[listening on 3000]]) بس خلاص، اتحكم عليه |
+| ٤٤ ثانية | SIGKILL: [[Exit Code 137]] |
+
+ليه ٤٤ مش ١٥؟ Node مكتوبلوش handler لـ SIGTERM، وهو PID 1 جوه الـ container، و PID 1 مبيموتش من SIGTERM لوحده. فالـ kubelet استنى [[terminationGracePeriodSeconds]] الافتراضي (٣٠ ثانية) وبعدين SIGKILL. و [[137]] = 128 + 9 (رقم SIGKILL). هنصلّح ده في درس «rolling update».
+
+وده هيفضل يتكرر للأبد: كل مرة يقوم، يتقتل قبل ما يخلص.
+
+---
+
+## ٢. الحل: [[startupProbe]] + [[readinessProbe]]
+
+ده المثال كله. الحتة بالحتة:
+
+~~~yaml
+startupProbe:
+  httpGet: { path: /healthz, port: 3000 }
+  periodSeconds: 2
+  failureThreshold: 30
+~~~
+
+اسأل كل ثانيتين، واستحمل ٣٠ فشل: يعني التطبيق عنده لحد ٦٠ ثانية يقوم. أول ما ترد 200 مرة واحدة، الـ startup خلصت ومش هتتسأل تاني.
+
+~~~yaml
+readinessProbe:
+  httpGet: { path: /readyz, port: 3000 }
+  periodSeconds: 5
+~~~
+
+مسار مختلف عن الـ liveness عمدًا: [[/readyz]] ممكن يقول «مش جاهز» (مثلًا وهو بيقفل، أو الـ cache لسه فاضي) من غير ما حد يقتله.
+
+~~~yaml
+livenessProbe:
+  httpGet: { path: /healthz, port: 3000 }
+  periodSeconds: 5
+  failureThreshold: 3
+~~~
+
+نفس اللي فات، بس دلوقتي مش هتبدأ غير بعد الـ startup.
+
+~~~text kubectl get pods -l app=slow (كل ٥ ثواني، النسخة الجديدة)
+slow-674565c7d-xt55q    0/1   Running   0     5s
+slow-674565c7d-xt55q    0/1   Running   0     15s
+slow-674565c7d-xt55q    0/1   Running   0     26s
+slow-674565c7d-xt55q    1/1   Running   0     31s
+slow-674565c7d-xt55q    1/1   Running   0     46s
+~~~
+
+[[0/1]] طول ما بيحمّل (صح: مش جاهز)، و [[1/1]] بعد ما فتح البورت، و [[RESTARTS 0]]. و [[describe]] بيوري القيم كلها، باللي مكتبنهوش بالافتراضي:
+
+~~~text الناتج
+    Liveness:   http-get http://:3000/healthz delay=0s timeout=1s period=5s successThreshold=1 failureThreshold=3
+    Readiness:  http-get http://:3000/readyz delay=0s timeout=1s period=5s successThreshold=1 failureThreshold=3
+    Startup:    http-get http://:3000/healthz delay=0s timeout=1s period=2s successThreshold=1 failureThreshold=30
+~~~
+
+وخد بالك: الـ Deployment القديم (اللي بيتقتل) فضل شغال لحد ما الجديد بقى Ready، لأن الـ rolling update بيستنى الـ readiness.
+
+---
+
+## ٣. readiness بتفشل: يخرج من الترافيك، ومحدش يقتله
+
+عملنا ٢ pods و Service، وقلبنا الزرار في واحد منهم بس (الـ image مفيهاش curl، فاستخدمنا [[node -e]] جوه الـ pod):
+
+~~~bash
+kubectl exec slow-674565c7d-6lxqh -- node -e "fetch('http://localhost:3000/toggle-ready').then(r=>r.text()).then(console.log)"
+~~~
+
+~~~text بعد ١٧ ثانية
+NAME                   READY   STATUS    RESTARTS   AGE
+slow-674565c7d-6lxqh   0/1     Running   0          44s
+slow-674565c7d-xt55q   1/1     Running   0          101s
+~~~
+
+~~~text kubectl get endpointslices -l kubernetes.io/service-name=slow -o jsonpath=...
+10.244.1.11  ready=true
+10.244.3.9   ready=false
+~~~
+
+| اللي شفناه | معناه |
+|---|---|
+| [[0/1]] و [[RESTARTS 0]] | مش جاهز، بس محدش قتله |
+| [[ready=false]] في الـ EndpointSlice | لسه في القايمة، بس متعلّم إنه مش جاهز |
+| [[kubectl describe svc slow]] قال [[Endpoints: 10.244.1.11:3000]] | الـ Service بيوزّع على الجاهز بس |
+| ٦ طلبات من pod تاني لـ [[http://slow]] | الستة راحوا لـ [[xt55q]] |
+| في الـ Events: [[Readiness probe failed: HTTP probe failed with statuscode: 503]] | ده السبب، مكتوب |
+
+> [[kubectl get endpointslices]] العادي بيعرض الـ IPs الاتنين في عمود [[ENDPOINTS]] حتى اللي مش جاهز. عشان تعرف مين جاهز، بص على [[conditions.ready]] أو على [[describe svc]].
+
+---
+
+## ٤. الـ probe الغلط: liveness على بورت 8080 والتطبيق على 3000
+
+~~~yaml
+          livenessProbe:
+            httpGet: { path: /healthz, port: 8080 }
+            periodSeconds: 5
+~~~
+
+التطبيق سليم ١٠٠٪. بعد ٥ دقايق ونص:
+
+~~~text kubectl get pods -l app=broken
+NAME                      READY   STATUS             RESTARTS      AGE
+broken-6585fdf478-xlmrl   0/1     CrashLoopBackOff   5 (68s ago)   5m38s
+~~~
+
+~~~text kubectl describe pod (الـ Events)
+  Warning  Unhealthy  8s (x18 over 4m3s)  kubelet  Liveness probe failed: Get "http://10.244.1.14:8080/healthz": dial tcp 10.244.1.14:8080: connect: connection refused
+  Normal   Killing    8s (x6 over 3m53s)  kubelet  Container broken failed liveness probe, will be restarted
+~~~
+
+| الرقم | معناه |
+|---|---|
+| [[x18]] | ١٨ فشل = ٦ مرات × [[failureThreshold]] ٣ |
+| [[x6]] | اتقتل ٦ مرات |
+| [[CrashLoopBackOff]] | k8s بقى يستنى أطول بين كل restart والتاني. في الـ status كان مكتوب [[back-off 2m40s restarting failed container]] |
+
+و [[kubectl logs --previous]] بيوري إن التطبيق كان سليم: [[v1.0 listening on 3000]]، ومفيش ولا error. لما تشوف restarts واللوجات نضيفة، أول حاجة تشك فيها هي الـ liveness نفسها.
+
+> مسار غلط مش دايمًا بيبان: أول ما جرّبنا [[path: /health]] (من غير z)، التطبيق رد 200 لأن أي مسار مش معروف عنده بيرجّع الـ JSON. فالـ probe «نجحت» وهي بتسأل مسار مالوش علاقة. اكتب endpoint للـ health بيرجّع 404 لأي حاجة غيره.
+
+---
+
+## الخلاصة
+
+| الإعداد | الحسبة |
+|---|---|
+| startup: [[period 2]] × [[failure 30]] | التطبيق عنده ٦٠ ثانية يقوم |
+| liveness: [[period 5]] × [[failure 3]] | معلّق ١٥ ثانية = يتقتل، وبعدين ٣٠ ثانية grace لو مبيقفلش لوحده |
+| readiness: [[period 5]] × [[failure 3]] (افتراضي) | ١٥ ثانية مش بيرد = يخرج من الـ Service |
+
+> readiness دايمًا. startup للبطيء. liveness بس لو التطبيق ممكن يعلّق، وتكون أبسط endpoint عندك، ومتسألش أي حاجة برا الـ process.`,
+          lines: [
+            "سؤال «خلصت تحميل؟»: لحد ما ينجح، التانيين واقفين.",
+            "GET على /healthz بورت 3000؛ أي رد 200 لـ 399 = نجح.",
+            "اسأل كل ثانيتين.",
+            "استحمل ٣٠ فشل (٦٠ ثانية) قبل ما تعيد التشغيل.",
+            "سؤال «أبعتلك ترافيك؟»: لو فشل يخرج من الـ Service بس.",
+            "مسار منفصل /readyz يقدر يقول «مش جاهز» من غير ما حد يقتله.",
+            "اسأل كل ٥ ثواني.",
+            "سؤال «انت عايش؟»: لو فشل، restart.",
+            "أبسط endpoint: الـ process بيرد ولا لأ.",
+            "اسأل كل ٥ ثواني.",
+            "٣ فشل ورا بعض (١٥ ثانية) = اقتله."
+          ],
+          sol: R`بالـ liveness لوحدها والتطبيق بياخد ٢٥ ثانية: [[RESTARTS]] بيزيد كل حوالي ٤٥ ثانية للأبد، و [[describe]] بيقول [[Liveness probe failed: ... connect: connection refused]] و [[Last State: Terminated, Exit Code: 137]]. والـ pod مكتوب [[1/1]] من أول ثواني وهو لسه مش بيسمع (مفيش readiness).
+
+بالتلاتة: [[0/1]] حوالي ٣٠ ثانية، وبعدين [[1/1]] و [[RESTARTS 0]].
+
+بالـ liveness على 8080: التطبيق سليم واللوجات نضيفة، بس [[RESTARTS]] بيزيد ويوصل [[CrashLoopBackOff]] بعد كام دقيقة، والـ Events فيها [[Killing ... failed liveness probe]]. الحل: نفس بورت الـ container، أو اسم البورت ([[port: http]] لو مسمّيه في [[ports]]).
+
+(اتجرّب على kind v0.33.0، Kubernetes v1.37.0، في ويندوز 11.)`,
+          solCode: R`apiVersion: apps/v1
+kind: Deployment
+metadata: { name: slow }
+spec:
+  replicas: 2
+  selector: { matchLabels: { app: slow } }
+  template:
+    metadata: { labels: { app: slow } }
+    spec:
+      containers:
+        - name: slow
+          image: myapp:1.0
+          env: [{ name: START_DELAY, value: "25" }]
+          startupProbe: { httpGet: { path: /healthz, port: 3000 }, periodSeconds: 2, failureThreshold: 30 }
+          readinessProbe: { httpGet: { path: /readyz, port: 3000 }, periodSeconds: 5 }
+          livenessProbe: { httpGet: { path: /healthz, port: 3000 }, periodSeconds: 5, failureThreshold: 3 }`
+        },
+        {
+          cmd: "requests و limits",
+          title: "الـ CPU والرام: الحجز والسقف، و OOMKilled و Pending",
+          desc: R`[[requests]] هو اللي الـ scheduler بيحجزه للـ pod على الـ node (من غيره بيرص pods أكتر من اللي السيرفر يشيله)، و [[limits]] هو السقف: لو الرام عدّته الـ container بيتقتل [[OOMKilled]]، ولو الـ CPU عدّاه بيتبطّأ بس.
+
+ولو طلبت [[requests]] أكبر من اللي فاضي في أي node، الـ pod يفضل [[Pending]] ومش هيتحط خالص.`,
+          example: R`kubectl apply -f k8s/hog.yaml
+kubectl get pod -l app=hog -o jsonpath='{.items[0].status.qosClass}'
+kubectl exec deploy/hog -- node -e "fetch('http://localhost:3000/leak?mb=50').then(r=>r.text()).then(console.log)"
+kubectl describe pod -l app=hog
+kubectl set resources deploy/big --requests=cpu=20,memory=64Mi
+kubectl top pods`,
+          try: R`طبّق [[hog.yaml]] اللي في الشرح (limit رام 128Mi)، ونفّذ سطر الـ [[/leak]] ٣ مرات ورا بعض، وبعدين [[kubectl get pods]] و [[describe]]. وبعدين اعمل Deployment [[big]] واطلب له [[cpu=20]] (أكتر من أي node) وشوف حالته والـ Events.`,
+          deep: {
+            why: R`الـ scheduler بيقرر بالـ requests، مش بالاستهلاك الحقيقي. لو مكتبتش requests، كل pod «بياخد صفر»، فيتحطوا كلهم على نفس الـ node لحد ما الرام تخلص والـ kernel يبدأ يقتل عشوائي. ولو مكتبتش limit رام، pod فيه memory leak ياكل الـ node كله ويوقّع جيرانه.`,
+            how: R`الوحدات: [[cpu: 100m]] = ١٠٠ milli-CPU = عُشر core، و [[cpu: 1]] = core كامل. [[64Mi]] = ٦٤ × ١٠٢٤ × ١٠٢٤ byte (Mi مش M).
+
+الرام: الـ limit بيتحط كـ cgroup على الـ container. أول ما يعدّيه، الـ kernel بيقتل (SIGKILL، [[Exit Code 137]])، والـ kubelet بيكتب [[Reason: OOMKilled]] ويعيد التشغيل. ده مش بيظهر كـ Event، بيظهر في [[Last State]] بتاع الـ container.
+
+الـ CPU: الـ limit بيعمل throttling: الـ container ياخد نصيبه كل ١٠٠ ms وبعدين يستنى. عشان كده فرق كتير بتسيب CPU من غير limit (requests بس)، و requests بتضمن النصيب العادل وقت الزحمة.
+
+QoS class بيتحسب لوحده: [[Guaranteed]] (requests = limits للاتنين في كل container)، و [[Burstable]] (فيه requests أو limits بس مش متساويين)، و [[BestEffort]] (مفيش أي حاجة). لما الـ node رامها تخلص، الـ kubelet بيطرد BestEffort الأول، وبعدين Burstable اللي عدّى الـ requests بتاعه.
+
+[[kubectl top]] محتاج metrics-server (الدرس الجاي)، وبيعرض الاستهلاك الحالي: ده اللي تبني عليه الأرقام، مش التخمين.`,
+            when: R`requests لـ CPU والرام في كل container في الإنتاج. limit للرام دايمًا (أعلى من الاستهلاك الطبيعي بهامش). limit للـ CPU لو عايز تمنع خدمة تخنق جيرانها، أو لو الـ namespace عليه quota بيطلبه. وحدّد الأرقام من [[kubectl top]] أو Prometheus بعد ما التطبيق يشتغل بترافيك حقيقي.`,
+            mistakes: R`limit رام قريب جدًا من الاستهلاك الطبيعي: OOMKilled كل ما الترافيك يزيد. و Node.js بـ heap افتراضي أكبر من الـ limit: [[--max-old-space-size]] لازم يبقى أقل من الـ limit. و requests كبيرة «احتياطي»: الـ nodes فاضية فعليًا بس الـ scheduler شايفها مليانة، فـ Pending وبتدفع على nodes زيادة. وتدوّر على OOM في [[kubectl get events]] ومتلاقيهوش (هو في [[describe pod]]).`
+          },
+          teach: R`## الفكرة: حجز وسقف
+
+| | [[requests]] | [[limits]] |
+|---|---|---|
+| مين بيستخدمه | الـ scheduler: «فيه node فاضي فيها كده؟» | الـ kernel على الـ node، وقت التشغيل |
+| الرام | محجوز ليك | لو عدّيته: تتقتل ([[OOMKilled]]) |
+| الـ CPU | نصيبك المضمون | لو عدّيته: تتبطّأ (throttling)، مش تتقتل |
+
+اتجرّب على cluster kind بـ ٣ nodes (Kubernetes v1.37.0) على Docker Desktop في ويندوز 11، بتطبيق درس «kind load docker-image» اللي فيه [[/leak?mb=50]]: كل طلب بيحجز ٥٠ ميجا ومش بيرجّعها.
+
+---
+
+## ١. [[kubectl apply -f k8s/hog.yaml]]
+
+~~~yaml k8s/hog.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: hog }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: hog } }
+  template:
+    metadata: { labels: { app: hog } }
+    spec:
+      containers:
+        - name: hog
+          image: myapp:1.0
+          resources:
+            requests: { cpu: 100m, memory: 64Mi }
+            limits: { memory: 128Mi }
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[cpu: 100m]] | [[m]] = milli: ١٠٠ من ١٠٠٠، يعني عُشر core |
+| [[memory: 64Mi]] | [[Mi]] = mebibyte = ١٠٤٨٥٧٦ byte. ([[64M]] من غير i = ٦٤ مليون، فرق صغير بس بيلخبط) |
+| [[limits: { memory: 128Mi }]] | سقف الرام. ومفيش سقف CPU عمدًا |
+
+---
+
+## ٢. [[kubectl get pod ... -o jsonpath='{.items[0].status.qosClass}']]
+
+[[-l app=hog]] بيرجّع **قايمة**، فـ [[.items[0].status.qosClass]] يعني: أول pod في القايمة، وجواه الخانة اللي k8s حسبها لوحده:
+
+~~~text الناتج
+Burstable
+~~~
+
+| الـ class | إمتى | لما رام الـ node تخلص |
+|---|---|---|
+| [[Guaranteed]] | requests = limits لـ CPU والرام في كل container | آخر واحد يتطرد |
+| [[Burstable]] | فيه requests، ومش متساوية مع limits (زي هنا) | في النص |
+| [[BestEffort]] | مفيش requests ولا limits خالص | أول واحد يتطرد |
+
+---
+
+## ٣. [[kubectl exec deploy/hog -- node -e "..."]] ٣ مرات
+
+الـ image مفيهاش curl، فبنستخدم [[fetch]] اللي في Node نفسه جوه الـ pod. [[--]] بيفصل flags kubectl عن الأمر اللي هيتنفذ جوه، و [[node -e]] = نفّذ الكود ده.
+
+~~~text الناتج
+holding 50 MB
+
+holding 100 MB
+
+command terminated with exit code 137
+~~~
+
+| المرة | الرام تقريبًا | اللي حصل |
+|---|---|---|
+| الأولى | ٥٠ ميجا + التطبيق نفسه | تمام |
+| التانية | ١٠٠ ميجا + التطبيق | تمام، لسه تحت ١٢٨ |
+| التالتة | ١٥٠ ميجا + التطبيق | عدّى ١٢٨Mi: الـ kernel قتل الـ container كله، ومعاه الـ [[node -e]] بتاعنا، فـ kubectl رجّع ١٣٧ |
+
+---
+
+## ٤. [[kubectl describe pod -l app=hog]]
+
+~~~text kubectl get pods -l app=hog
+NAME                   READY   STATUS    RESTARTS     AGE
+hog-64f69f984d-7gf7s   1/1     Running   1 (3s ago)   14s
+~~~
+
+~~~text kubectl describe pod (جزء)
+    Last State:     Terminated
+      Reason:       OOMKilled
+      Exit Code:    137
+      Started:      Wed, 28 Oct 2026 03:39:33 +0300
+      Finished:     Wed, 28 Oct 2026 03:39:43 +0300
+    Restart Count:  1
+~~~
+
+- [[Running]] تاني بعد ٣ ثواني: k8s عمل restart، والرام رجعت صفر (الـ leak اتمسح مع الـ process). عشان كده OOMKilled ممكن يعدّي عليك لو بصيت على [[STATUS]] بس: بص على [[RESTARTS]].
+- [[Reason: OOMKilled]] هو الدليل. و [[137]] لوحده مش كفاية (الـ liveness بتطلّع ١٣٧ برضه، شفناها في درس «probes»).
+- [[kubectl get events]] مكانش فيها أي حاجة عن OOM: بس [[Created]] و [[Started]]. المكان الوحيد هو [[Last State]].
+
+ولو عايزها في سطر: [[kubectl get pod -l app=hog -o jsonpath='{.items[0].status.containerStatuses[0].lastState.terminated.reason}']] طبع [[OOMKilled]].
+
+---
+
+## ٥. [[kubectl set resources deploy/big --requests=cpu=20,memory=64Mi]]
+
+[[set resources]] بيعدّل الـ resources من غير ما تفتح الـ YAML ([[big]] هنا Deployment عادي عملناه بـ [[kubectl create deployment big --image=myapp:1.0]]). طلبنا ٢٠ core:
+
+~~~text kubectl get pods -l app=big
+NAME                   READY   STATUS    RESTARTS   AGE
+big-79988dffbc-8jrpb   0/1     Pending   0          6s
+big-7fdf777595-j6kvr   1/1     Running   0          7s
+~~~
+
+~~~text kubectl describe pod big-79988dffbc-8jrpb (الـ Events)
+  Warning  FailedScheduling  18s  default-scheduler  0/3 nodes are available: 1 node(s) had untolerated taint(s), 2 Insufficient cpu. preemption: 0/3 nodes are available: 3 Preemption is not helpful for scheduling.
+~~~
+
+اقرا الرسالة حتة حتة:
+
+| الحتة | معناها |
+|---|---|
+| [[0/3 nodes are available]] | ولا node من التلاتة نفعت |
+| [[1 node(s) had untolerated taint(s)]] | الـ control-plane: عليها taint بيمنع الـ pods العادية |
+| [[2 Insufficient cpu]] | الـ ٢ workers: كل واحد allocatable بتاعه ١٦ core (نفس اللي Docker Desktop شايفه) والطلب ٢٠ |
+| [[Preemption is not helpful]] | حتى لو طرد pods أقل أولوية، برضه مش هيكفي |
+
+والـ pod القديم ([[j6kvr]]) فضل [[Running]]: الـ rolling update مبيقفلش القديم غير لما الجديد يبقى جاهز. فالغلطة دي مش هتوقّع الموقع، بس الـ deploy هيفضل معلّق.
+
+والأرقام اللي الـ scheduler بيحسب بيها:
+
+~~~text kubectl get nodes -o custom-columns=NAME:.metadata.name,CPU:.status.allocatable.cpu,MEM:.status.allocatable.memory
+NAME                CPU   MEM
+b3a-control-plane   16    16074392Ki
+b3a-worker          16    16074392Ki
+b3a-worker2         16    16074392Ki
+~~~
+
+(على kind كل الـ nodes شايفة نفس الجهاز، فالأرقام دي أكبر من الحقيقة. في الـ cloud كل node ليها أرقامها.)
+
+---
+
+## ٦. [[kubectl top pods]]
+
+محتاج metrics-server (هنسطّبه في الدرس الجاي). من غيره:
+
+~~~text الناتج
+error: Metrics API not available
+~~~
+
+وبعد ما اشتغل:
+
+~~~text الناتج
+NAME                      CPU(cores)   MEMORY(bytes)
+beta-766968dd86-64b62     1m           8Mi
+hog-64f69f984d-7gf7s      0m           8Mi
+web-6d7f7769f7-gklwd      1m           8Mi
+~~~
+
+التطبيق فاضي بياكل ٨ ميجا و ١ milli-CPU. فـ [[requests: 64Mi]] و [[limit: 128Mi]] فيهم هامش كبير وهو فاضي، وده اللي تعمله: تقيس تحت ترافيك حقيقي وتظبط.
+
+---
+
+## الخلاصة
+
+| اللي شفته | السبب | تعمل إيه |
+|---|---|---|
+| [[RESTARTS]] بيزيد و [[Reason: OOMKilled]] | عدّى limit الرام | ارفع الـ limit، أو صلّح الـ leak، أو قلّل [[--max-old-space-size]] |
+| [[Pending]] و [[Insufficient cpu]] أو [[memory]] | الـ requests أكبر من أي node فاضية | قلّل الـ requests، أو زوّد nodes |
+| [[untolerated taint]] | node مقفولة لنوع معين من الـ pods | طبيعي على الـ control-plane |
+| التطبيق بطيء و CPU قريب من الـ limit | throttling | شيل limit الـ CPU أو ارفعه |
+
+> requests = اللي الـ scheduler بيحسب بيه. limits = اللي الـ kernel بيعاقب بيه.`,
+          lines: [
+            "اعمل Deployment بـ requests (CPU ورام) و limit رام 128Mi.",
+            "اعرف الـ QoS class اللي k8s حسبه للـ pod.",
+            "خلّي التطبيق يحجز ٥٠ ميجا (كررها ٣ مرات لحد ما يعدّي الـ limit).",
+            "اقرا Last State: Reason OOMKilled و Exit Code 137.",
+            "اطلب ٢٠ core: أكبر من أي node، فالـ pod الجديد يفضل Pending.",
+            "الاستهلاك الحقيقي لكل pod (محتاج metrics-server)."
+          ],
+          sol: R`بعد التالتة: [[command terminated with exit code 137]]، و [[kubectl get pods]] يوري [[RESTARTS 1]] والحالة [[Running]] تاني، و [[describe]] فيه [[Last State: Terminated]] و [[Reason: OOMKilled]] و [[Exit Code: 137]]. والـ QoS [[Burstable]].
+
+و [[big]] بـ [[cpu=20]]: pod جديد [[Pending]] للأبد، والقديم [[Running]]، والـ Events: [[0/3 nodes are available: 1 node(s) had untolerated taint(s), 2 Insufficient cpu]]. رجّعه بـ [[kubectl set resources deploy/big --requests=cpu=100m]] أو امسحه.
+
+(اتجرّب على kind v0.33.0، Kubernetes v1.37.0، على Docker Desktop في ويندوز 11.)`,
+          solCode: R`kubectl apply -f k8s/hog.yaml
+kubectl exec deploy/hog -- node -e "fetch('http://localhost:3000/leak?mb=50').then(r=>r.text()).then(console.log)"
+kubectl exec deploy/hog -- node -e "fetch('http://localhost:3000/leak?mb=50').then(r=>r.text()).then(console.log)"
+kubectl exec deploy/hog -- node -e "fetch('http://localhost:3000/leak?mb=50').then(r=>r.text()).then(console.log)"
+kubectl get pod -l app=hog -o jsonpath='{.items[0].status.containerStatuses[0].lastState.terminated.reason}'
+kubectl create deployment big --image=myapp:1.0
+kubectl set resources deploy/big --requests=cpu=20,memory=64Mi
+kubectl describe pod -l app=big
+kubectl delete deploy hog big`
+        },
+        {
+          cmd: "HPA",
+          title: "HorizontalPodAutoscaler: زوّد الـ pods لوحدك تحت الضغط",
+          desc: R`الـ HPA بيبص على استهلاك الـ CPU (أو الرام أو أي metric) كل ١٥ ثانية، ويغيّر [[replicas]] بتاع الـ Deployment عشان المتوسط يقرب من الهدف، بين حد أدنى وحد أقصى.
+
+محتاج حاجتين: metrics-server في الـ cluster (مش موجود على kind لوحده)، و [[requests.cpu]] في الـ pods، لأن «٥٠٪» معناها ٥٠٪ من الـ requests.`,
+          example: R`kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.9.0/components.yaml
+kubectl patch deploy metrics-server -n kube-system --type=json -p='[{"op":"add","path":"/spec/template/spec/containers/0/args/-","value":"--kubelet-insecure-tls"}]'
+kubectl top pods
+kubectl autoscale deploy web --cpu=50% --min=2 --max=8
+kubectl run load --image=busybox:1.37 --restart=Never -- sh -c "while true; do wget -qO- http://web/work >/dev/null; done"
+kubectl get hpa web -w
+kubectl delete pod load`,
+          try: R`على cluster الدروس اللي فاتت: حط [[requests.cpu: 100m]] لـ [[web]]، وسطّب metrics-server، واعمل الـ HPA. شغّل الـ load وراقب [[kubectl get hpa web -w]] دقيقتين، وبعدين امسح الـ load وكمّل مراقبة ٧ دقايق. بعد كام دقيقة الـ pods رجعت؟`,
+          deep: {
+            why: R`الترافيك مش ثابت: الصبح غير بالليل، والعروض غير الأيام العادية. لو حجزت pods على أعلى ضغط هتدفع عليهم طول الوقت، ولو على المتوسط هتقع وقت الزحمة. الـ HPA بيخلّي العدد يتبع الضغط، ومع cluster autoscaler (أو Karpenter على EKS) الـ nodes نفسها بتزيد وتقل.`,
+            how: R`metrics-server بيسأل الـ kubelet على كل node عن استهلاك كل pod، وبيعرضه في Metrics API ([[kubectl top]] بيقرا منه، والـ HPA كمان).
+
+الحسبة: [[desired = ceil(current × currentUtilization ÷ target)]]. مثلًا ٣ pods والمتوسط ١٠٠٪ والهدف ٥٠٪: [[3 × 100 ÷ 50 = 6]]. والـ utilization = الاستهلاك ÷ [[requests.cpu]]، فـ pod بياكل ١٠٢m و requests بتاعه ١٠٠m = ١٠٢٪.
+
+الزيادة سريعة (الافتراضي يضاعف كل ١٥ ثانية أو يزوّد ٤، الأكبر فيهم). النقصان بطيء عمدًا: stabilization window ٥ دقايق، يعني ياخد أعلى توصية في آخر ٥ دقايق، عشان ميقفلش pods ويرجع يفتحها مع كل تذبذب. والاتنين بيتظبطوا في [[spec.behavior]].
+
+على kind، شهادات الـ kubelet مش موقّعة من CA يعرفه metrics-server، فبيرفض يكلّمه. [[--kubelet-insecure-tls]] بيتخطى الفحص ده: للـ cluster المحلي بس، مش للإنتاج.`,
+            when: R`أي خدمة stateless الضغط عليها بيتغير، والـ CPU بيعبّر عن الضغط (APIs). لو الضغط مش CPU (queue فيها رسايل مستنية، أو connections)، استخدم custom metrics أو KEDA (بيعمل scale على طول الـ queue، ولحد صفر). ومينفعش HPA على CPU ووقت نفسه VPA بيغيّر الـ requests على نفس الـ metric.`,
+            mistakes: R`pods من غير [[requests.cpu]]: الـ HPA يقول [[missing request for cpu]] ومبيعملش حاجة. ونسيان metrics-server: [[TARGETS]] تفضل [[<unknown>]]. و [[replicas: 3]] مكتوبة في YAML الـ Deployment والـ HPA شغال: كل [[kubectl apply]] يرجّع العدد ٣ لحد ما الـ HPA يصلّح تاني، فشيل [[replicas]] من الـ YAML. و [[max]] قليل: الـ HPA يوصل للسقف ويفضل CPU فوق الهدف ([[ScalingLimited]]). وتفتكر إنه مش شغال لأن الـ pods منزلتش على طول بعد الضغط: ده الـ ٥ دقايق.`
+          },
+          teach: R`## الفكرة: الـ replicas بتتحدد لوحدها
+
+أول سطرين بيسطّبوا metrics-server ويخلّوه يشتغل على kind، والتالت بيتأكد إن الأرقام بتوصل. الرابع بيعمل الـ HPA. الخامس بيعمل ضغط، والسادس بيتفرج، والسابع بيوقف الضغط.
+
+اتجرّب على cluster kind بـ ٣ nodes (Kubernetes v1.37.0، kubectl v1.37.1، metrics-server v0.9.0) على Docker Desktop في ويندوز 11، على Deployment [[web]] من الدروس اللي فاتت بعد [[kubectl set resources deploy/web --requests=cpu=100m,memory=64Mi --limits=memory=128Mi]]. المسار [[/work]] في التطبيق بيشغّل الـ CPU ٥٠ ms في كل طلب.
+
+---
+
+## ١. [[kubectl apply -f .../metrics-server/.../v0.9.0/components.yaml]]
+
+الملف الرسمي بنسخة مثبتة في الرابط. بيعمل Deployment في [[kube-system]]، و [[APIService]] اسمها [[v1beta1.metrics.k8s.io]]: دي اللي بتخلّي الـ API server يحوّل أي سؤال عن metrics لـ metrics-server.
+
+~~~text الناتج (آخره)
+deployment.apps/metrics-server created
+apiservice.apiregistration.k8s.io/v1beta1.metrics.k8s.io created
+~~~
+
+لو وقفت هنا، الـ pod بيفضل [[0/1]] على kind، لأنه بيرفض شهادة الـ kubelet.
+
+---
+
+## ٢. [[kubectl patch ... --type=json -p='[...]']]
+
+المرة دي [[--type=json]]: JSON Patch، قايمة عمليات بدل حتة تتدمج.
+
+| الحتة | معناها |
+|---|---|
+| [["op":"add"]] | زوّد |
+| [["path":"/spec/template/spec/containers/0/args/-"]] | في [[args]] بتاعة أول container. و [[-]] في الآخر = «آخر القايمة» |
+| [["value":"--kubelet-insecure-tls"]] | الـ flag اللي هيتزوّد |
+
+> نفس حكاية الدرس اللي فات في PowerShell: الشكل ده اشتغل في pwsh 7.6، و Windows PowerShell 5.1 محتاج [[\"]] بدل كل [["]] (وبالـ [[-p '...']] من غير [[=]]). جرّبنا الاتنين بـ [[--dry-run=server]].
+
+بعدها الـ Deployment عمل rollout، واستنينا لحد ما [[kubectl top]] اشتغل.
+
+---
+
+## ٣. [[kubectl top pods]]
+
+~~~text kubectl top nodes
+NAME                CPU(cores)   CPU(%)   MEMORY(bytes)   MEMORY(%)
+b3a-control-plane   204m         1%       949Mi           6%
+b3a-worker          302m         1%       370Mi           2%
+b3a-worker2         203m         1%       329Mi           2%
+~~~
+
+لو [[error: Metrics API not available]]، metrics-server لسه بيقوم (أول قراية بتاخد حوالي دقيقة) أو مش شغال.
+
+---
+
+## ٤. [[kubectl autoscale deploy web --cpu=50% --min=2 --max=8]]
+
+| الحتة | معناها |
+|---|---|
+| [[--cpu=50%]] | الهدف: متوسط الـ CPU = ٥٠٪ من [[requests.cpu]] (يعني ٥٠m هنا) |
+| [[--min=2]] | عمره ما ينزل تحت ٢ |
+| [[--max=8]] | عمره ما يطلع فوق ٨ |
+
+> [[--cpu-percent=50]] اللي في مقالات كتير بقى deprecated في kubectl v1.37: بيشتغل وبيطبع [[Flag --cpu-percent has been deprecated, Use --cpu with percentage or resource quantity format]].
+
+والأحسن تحطه YAML في Git. ده اللي الأمر بيعمله ([[--dry-run=client -o yaml]] طلّع نفس الـ spec ده بالظبط، وده اللي طبّقناه):
+
+~~~yaml k8s/hpa.yaml
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata: { name: web }
+spec:
+  scaleTargetRef: { apiVersion: apps/v1, kind: Deployment, name: web }
+  minReplicas: 2
+  maxReplicas: 8
+  metrics:
+    - type: Resource
+      resource: { name: cpu, target: { type: Utilization, averageUtilization: 50 } }
+~~~
+
+[[scaleTargetRef]] = هيغيّر [[replicas]] بتاع مين.
+
+### أول دقيقة
+
+~~~text kubectl get hpa web
+NAME   REFERENCE        TARGETS              MINPODS   MAXPODS   REPLICAS   AGE
+web    Deployment/web   cpu: <unknown>/50%   2         8         3          30s
+~~~
+
+[[<unknown>]] لحد ما يجمع قراية. وفي [[describe hpa]] لقينا رسالة مهمة من الثواني دي:
+
+~~~text الناتج
+Warning  FailedGetResourceMetric  3m27s  horizontal-pod-autoscaler  failed to get cpu utilization: missing request for cpu in container web of Pod web-6d7f7769f7-rzt7z
+~~~
+
+ده pod قديم من قبل ما نحط [[requests.cpu]] (كان لسه بيتقفل). pod واحد من غير requests كفاية يوقف الحسبة.
+
+---
+
+## ٥. [[kubectl run load --image=busybox:1.37 ... wget ... /work]]
+
+pod واحد فيه loop مبيقفش: [[wget -qO- http://web/work]] ([[-q]] من غير كلام، و [[-O-]] اطبع الرد) و [[>/dev/null]] ارمي الرد. [[--restart=Never]] = pod لوحده، مش Deployment.
+
+---
+
+## ٦. [[kubectl get hpa web -w]]
+
+~~~text كل ١٥ ثانية (الوقت، والـ TARGETS، والـ REPLICAS)
+03:42:05 cpu: 0%/50%   3
+03:42:20 cpu: 102%/50% 3
+03:42:35 cpu: 305%/50% 6
+03:42:51 cpu: 166%/50% 8
+03:43:06 cpu: 118%/50% 8
+03:44:22 cpu: 120%/50% 8
+~~~
+
+| السطر | اللي حصل |
+|---|---|
+| [[0%]] و [[3]] | قبل الضغط. ٣ مش ٢ (الـ min) لأن النقصان بيستنى ٥ دقايق |
+| [[102%]] | الضغط وصل: ٣ pods بياكلوا ١٠٢m في المتوسط من ١٠٠m |
+| [[6]] | [[3 × 100 ÷ 50 = 6]]. والـ Event: [[New size: 6; reason: cpu resource utilization (percentage of request) above target]] |
+| [[8]] | وصل للسقف |
+| [[118%]] و [[8]] | لسه فوق الهدف بس مش هيزوّد: [[ScalingLimited True TooManyReplicas]] |
+
+ليه فضل فوق ٥٠٪؟ الـ load pod واحد بيبعت طلب ورا طلب، فهو بيولّد حوالي core واحد ضغط (٨ × ١١٨m ≈ ٩٤٠m)، ومحتاج ١٩ pod عشان المتوسط يبقى ٥٠m. و [[kubectl top pods -l app=web]] وقتها كان كل pod بين ١٠٢m و ١٤٣m.
+
+---
+
+## ٧. [[kubectl delete pod load]] والنزول
+
+~~~text كل ٣٠ ثانية بعد ما وقفنا الضغط الساعة 03:44:33
+03:45:40 cpu: 8%/50%  8
+03:46:10 cpu: 1%/50%  8
+03:48:11 cpu: 0%/50%  8
+03:50:12 cpu: 0%/50%  8
+03:50:43 cpu: 1%/50%  2
+~~~
+
+دقيقة عشان الـ CPU ينزل، و ٥ دقايق كمان والـ replicas ثابتة على ٨، وبعدين مرة واحدة لـ ٢ (الـ min): [[New size: 2; reason: All metrics below target]]. ده الـ stabilization window: الـ HPA بياخد أعلى توصية في آخر ٥ دقايق قبل ما ينزّل.
+
+---
+
+## الخلاصة
+
+| اللي شفته | السبب |
+|---|---|
+| [[TARGETS <unknown>]] | metrics-server مش شغال، أو لسه بيجمع |
+| [[missing request for cpu]] | pod من غير [[requests.cpu]] |
+| واصل للـ max والـ CPU فوق الهدف | [[ScalingLimited]]: زوّد [[--max]] أو nodes |
+| مش بينزل بعد الضغط | طبيعي: ٥ دقايق ([[spec.behavior.scaleDown]]) |
+
+> الـ HPA بيحسب بالنسبة للـ requests، فـ requests غلط = autoscaling غلط.`,
+          lines: [
+            "سطّب metrics-server (نسخة مثبتة).",
+            "على kind بس: خلّيه يقبل شهادات الـ kubelet المحلية.",
+            "اتأكد إن الأرقام بتوصل.",
+            "اعمل HPA: متوسط CPU ٥٠٪ من الـ requests، بين ٢ و ٨ pods.",
+            "pod بيضرب /work من غير توقف عشان يعمل ضغط CPU.",
+            "اتفرّج على TARGETS و REPLICAS وهي بتتغير.",
+            "وقّف الضغط (والنزول بياخد حوالي ٥ دقايق)."
+          ],
+          sol: R`في أقل من دقيقة من الضغط: [[TARGETS]] بيطلع فوق [[100%/50%]] و [[REPLICAS]] من ٣ لـ ٦ لـ ٨ (السقف)، و [[kubectl describe hpa web]] فيه [[SuccessfulRescale ... New size: 6]] و [[New size: 8]]. وبعد ما تمسح الـ load: الـ CPU بينزل في دقيقة، والـ replicas تفضل ٨ حوالي ٥ دقايق، وبعدين [[New size: 2; reason: All metrics below target]].
+
+لو [[TARGETS]] فضل [[<unknown>]]: [[kubectl top pods]] بيشتغل؟ لو لأ، metrics-server (ناقصه [[--kubelet-insecure-tls]] على kind). ولو شغال: [[describe hpa]] هيقول [[missing request for cpu]].
+
+(اتجرّب بـ metrics-server v0.9.0 على kind v0.33.0، Kubernetes v1.37.0. وتوقيتات النزول من تشغيلنا: وقفنا 03:44:33 ونزل 03:50:43.)`,
+          solCode: R`kubectl set resources deploy/web --requests=cpu=100m,memory=64Mi --limits=memory=128Mi
+kubectl apply -f k8s/hpa.yaml
+kubectl run load --image=busybox:1.37 --restart=Never -- sh -c "while true; do wget -qO- http://web/work >/dev/null; done"
+kubectl get hpa web -w
+kubectl top pods -l app=web
+kubectl describe hpa web
+kubectl delete pod load`
+        }
+      ]
+    }
 ]);
 
 /* ===== js/tabs/cloud/16.js ===== */
-// ملف إضافي لتاب cloud: الحقول نفس شكلها في 01.js.
+// تكملة تاب cloud: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/cloud/01.js (شرح حقول الدرس في أوله)
+MORE("cloud", [
+    {
+      t: "Kubernetes: deploy وتشخيص و Helm",
+      l: 3,
+      n: "تنزّل نسخة جديدة من غير ما حد يحس وترجع في ثانية، وتعرف الـ pod ماله بالترتيب، وتسطّب وتحدّث بـ Helm",
+      items: [
+        {
+          cmd: "rolling update",
+          title: "نسخة جديدة من غير توقف، ولو باظت ترجع",
+          desc: R`لما تغيّر الـ image، الـ Deployment بيعمل ReplicaSet جديد ويبدّل الـ pods واحد واحد: يقوّم جديد، يستنى الـ readiness، يقفل قديم. و [[maxSurge]] و [[maxUnavailable]] بيحددوا السرعة، و [[progressDeadlineSeconds]] بيقول إمتى نعتبره فشل.
 
+k8s مش بيرجع لوحده لو النسخة باظت: [[kubectl rollout status]] بيرجّع error، وانت (أو الـ CI) اللي بتعمل [[kubectl rollout undo]].`,
+          example: R`kubectl apply -f k8s/web.yaml
+kubectl set image deploy/web web=myapp:2.0
+kubectl annotate deploy/web kubernetes.io/change-cause="v2.0" --overwrite
+kubectl rollout status deploy/web --timeout=120s
+kubectl rollout history deploy/web
+kubectl rollout undo deploy/web
+kubectl rollout undo deploy/web --to-revision=4`,
+          try: R`طبّق [[web.yaml]] اللي في الشرح، وفي ترمنال تاني شغّل loop بيعمل [[curl http://shop.localhost/]] كل ٠.٢ ثانية. نزّل 2.0 وعدّ كام طلب فشل. وبعدين نزّل [[myapp:3.0]] (مش موجودة) وشوف [[rollout status]] بيعمل إيه بعد دقيقة، وارجع بـ [[undo]].`,
+          deep: {
+            why: R`الـ deploy أكتر وقت الموقع بيقع فيه. الـ rolling update مع readinessProbe بيخلّي في كل لحظة فيه pods جاهزة بترد، والـ rollback بيبقى أمر واحد بدل «ابني النسخة القديمة تاني وارفعها». وده اللي بيخلّيك تعمل deploy كذا مرة في اليوم من غير خوف.`,
+            how: R`كل تغيير في [[spec.template]] (image، env، resources، annotation) بيعمل ReplicaSet جديد برقم revision جديد. الـ ReplicaSets القديمة بتفضل موجودة بصفر pods ([[revisionHistoryLimit]] الافتراضي ١٠)، وده اللي بيخلّي الـ undo سريع: مش بيبني حاجة، بيكبّر القديم ويصغّر الجديد.
+
+[[maxSurge: 1]] = مسموح pod زيادة واحد فوق [[replicas]] أثناء التبديل. [[maxUnavailable: 0]] = ممنوع ينزل عدد الجاهزين عن [[replicas]]. الافتراضي ٢٥٪ و ٢٥٪.
+
+[[progressDeadlineSeconds]] (افتراضي ٦٠٠): لو مفيش تقدّم المدة دي، الـ condition [[Progressing]] تبقى [[False]] بسبب [[ProgressDeadlineExceeded]]، و [[rollout status]] يخرج بكود 1. ده اللي الـ CI بيستخدمه.
+
+وقت قفل pod قديم: بيخرج من الـ Service، والـ kubelet يبعت SIGTERM، ويستنى لحد [[terminationGracePeriodSeconds]] (٣٠)، وبعدين SIGKILL. التطبيق لازم يقفل لوحده لما ييجي SIGTERM: يخلّص الطلبات اللي معاه ويخرج.`,
+            when: R`الـ RollingUpdate هو الافتراضي ومناسب لأغلب الـ APIs. [[Recreate]] (اقفل الكل وبعدين قوّم) لو النسختين مينفعش يشتغلوا مع بعض (migration مش متوافقة). و canary أو blue-green (درس «blue-green vs canary» في أسئلة انترفيو) بأدوات زي Argo Rollouts لو عايز تجرّب على نسبة صغيرة الأول.`,
+            mistakes: R`من غير readinessProbe: الـ pod الجديد يتحسب جاهز قبل ما يسمع، والطلبات تفشل وقت كل deploy. وتطبيق مبيسمعش SIGTERM: كل pod قديم ياخد ٣٠ ثانية يقفل والطلبات اللي عليه تتقطع. و [[latest]] في الـ image: [[set image]] لنفس الاسم مبيعملش rollout، والـ undo مالوش معنى. و [[rollout undo]] على الإنتاج ومتنساش ترجّع الـ YAML في Git، وإلا أول [[apply]] يرجّع النسخة البايظة (k8s v1.37 بيحذّرك من ده). وتعتمد على [[change-cause]] وانت مش بتكتبه، فالـ history كلها [[<none>]].`
+          },
+          teach: R`## الفكرة: بدّل واحد واحد، وخلّي طريق رجوع
+
+أول سطر بيطبّق Deployment متظبط للـ rolling update. التاني بيغيّر الـ image (وده اللي بيبدأ الـ rollout)، والتالت بيكتب سبب التغيير، والرابع بيستنى ويقولك نجح ولا لأ. والتلاتة الأخيرة: السجل، والرجوع خطوة، والرجوع لرقم معين.
+
+اتجرّب على cluster kind (Kubernetes v1.37.0، kubectl v1.37.1) على ويندوز 11، بتطبيق درس «kind load docker-image» بنسخه 1.0 و 2.0، ومع الـ Ingress بتاع درس «Service و Ingress» عشان نبعت طلبات من برا وقت الـ deploy.
+
+---
+
+## ١. [[kubectl apply -f k8s/web.yaml]]
+
+~~~yaml k8s/web.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  annotations: { kubernetes.io/change-cause: "v1.0" }
+spec:
+  replicas: 4
+  progressDeadlineSeconds: 60
+  strategy:
+    type: RollingUpdate
+    rollingUpdate: { maxSurge: 1, maxUnavailable: 0 }
+  selector: { matchLabels: { app: web } }
+  template:
+    metadata: { labels: { app: web } }
+    spec:
+      containers:
+        - name: web
+          image: myapp:1.0
+          ports: [{ containerPort: 3000 }]
+          readinessProbe: { httpGet: { path: /readyz, port: 3000 }, periodSeconds: 2 }
+          resources: { requests: { cpu: 100m, memory: 64Mi }, limits: { memory: 128Mi } }
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[kubernetes.io/change-cause]] | نص بيظهر في [[rollout history]]. من غيره السجل كله [[<none>]] |
+| [[progressDeadlineSeconds: 60]] | دقيقة من غير تقدّم = فشل (الافتراضي ١٠ دقايق، طويل على CI) |
+| [[maxSurge: 1]] | مسموح ٥ pods بدل ٤ أثناء التبديل |
+| [[maxUnavailable: 0]] | الجاهزين عمرهم ما يقلّوا عن ٤ |
+| [[readinessProbe]] | من غيرها، «جاهز» = الـ process قام، حتى لو لسه مش بيسمع |
+
+---
+
+## ٢. [[kubectl set image deploy/web web=myapp:2.0]]
+
+[[web=]] الأولى اسم الـ **container** جوه الـ template (مش اسم الـ Deployment). وفي نفس الوقت كان فيه loop من برا: [[curl http://shop.localhost/]] كل ٠.٢ ثانية، ٢٠٠ مرة:
+
+~~~text عدّ الردود
+     20 200 "version":"1.0"
+    180 200 "version":"2.0"
+~~~
+
+~~~text أول ٣٠ رد بالترتيب
+1.0 1.0 1.0 ... 1.0 2.0 1.0 2.0 2.0 2.0 2.0 2.0 ...
+~~~
+
+كل الـ ٢٠٠ رجعوا 200، ومفيش ولا طلب فشل. وفي النص 2.0 و 1.0 مع بعض: الاتنين شغالين لحظة التبديل، فلازم النسخة الجديدة تقدر تشتغل جنب القديمة (نفس الـ API، ونفس شكل قاعدة البيانات).
+
+---
+
+## ٣. [[kubectl annotate ... change-cause="v2.0" --overwrite]]
+
+[[--overwrite]] لأن الـ annotation موجودة من الـ YAML ([[v1.0]]). من غيرها بيرفض. ولأن الـ annotation دي على الـ Deployment مش الـ template، مش بتعمل rollout لوحدها.
+
+---
+
+## ٤. [[kubectl rollout status deploy/web --timeout=120s]]
+
+~~~text الناتج
+Waiting for deployment "web" rollout to finish: 1 out of 4 new replicas have been updated...
+Waiting for deployment "web" rollout to finish: 2 out of 4 new replicas have been updated...
+Waiting for deployment "web" rollout to finish: 3 out of 4 new replicas have been updated...
+Waiting for deployment "web" rollout to finish: 1 old replicas are pending termination...
+deployment "web" successfully rolled out
+~~~
+
+خد ٥ ثواني. [[--timeout]] = متستناش أكتر من كده (وارجع بكود 1).
+
+### ولما النسخة تبوظ
+
+~~~bash
+kubectl set image deploy/web web=myapp:3.0
+~~~
+
+([[3.0]] مش موجودة.)
+
+~~~text kubectl rollout status deploy/web (بعد ٦١ ثانية)
+Waiting for deployment "web" rollout to finish: 1 out of 4 new replicas have been updated...
+error: deployment "web" exceeded its progress deadline
+~~~
+
+وكود الخروج [[1]]: في CI ده اللي بيوقف الـ pipeline. والوضع وقتها:
+
+~~~text kubectl get pods -l app=web
+NAME                   READY   STATUS         RESTARTS   AGE
+web-6f5b57c766-jknrh   0/1     ErrImagePull   0          61s
+web-855d554b77-4826l   1/1     Running        0          2m53s
+web-855d554b77-975rl   1/1     Running        0          2m55s
+web-855d554b77-r6swq   1/1     Running        0          2m54s
+web-855d554b77-vrtgf   1/1     Running        0          2m56s
+~~~
+
+~~~text kubectl describe deploy web (جزء)
+  Available      True    MinimumReplicasAvailable
+  Progressing    False   ProgressDeadlineExceeded
+~~~
+
+pod جديد واحد بايظ (الـ [[maxSurge: 1]])، والـ ٤ القدام شغالين، و [[curl]] لسه بيرجّع [[2.0]]. الموقع مش واقع، بس الـ deploy واقف. و k8s **مش هيرجع لوحده**.
+
+---
+
+## ٥. [[kubectl rollout history deploy/web]]
+
+~~~text الناتج
+REVISION  CHANGE-CAUSE
+1         <none>
+2         <none>
+3         <none>
+4         v1.0
+5         v2.0
+6         v3.0
+~~~
+
+١ لـ ٣ تغييرات من الدروس اللي فاتت من غير change-cause. ولتفاصيل revision: [[kubectl rollout history deploy/web --revision=5]] بيطبع الـ template بتاعها ([[Image: b3a-app:2.0]] عندنا).
+
+---
+
+## ٦. [[kubectl rollout undo deploy/web]]
+
+~~~text الناتج
+Warning: resource deployments/web was previously managed with 'kubectl apply'. Rolling back will not update the kubectl.kubernetes.io/last-applied-configuration annotation, which may cause unexpected behavior on future 'kubectl apply' operations. Consider using 'kubectl apply' with your previous configuration file instead.
+deployment.apps/web rolled back
+deployment "web" successfully rolled out
+~~~
+
+التحذير ده مهم: الـ undo غيّر الـ cluster، بس ملفك لسه فيه [[3.0]]. أول [[kubectl apply -f k8s/web.yaml]] هيرجّع النسخة البايظة. الصح بعد الطوارئ: رجّع الملف في Git وطبّقه.
+
+~~~text kubectl rollout history deploy/web
+REVISION  CHANGE-CAUSE
+4         v1.0
+6         v3.0
+7         v2.0
+~~~
+
+(١ لـ ٣ لسه فوق.) revision 5 اختفى وبقى 7: الـ undo مش «رجوع في الزمن»، هو revision جديدة بنفس template الـ 5.
+
+---
+
+## ٧. [[kubectl rollout undo deploy/web --to-revision=4]]
+
+يرجع لرقم معين، مش للي قبله بس. بعدها [[v1.0]] بقت revision 8، و [[curl]] رجّع [[{"version":"1.0",...}]] (أول طلب بعدها مباشرة جه من pod قديم لسه بيتقفل؛ بعد ثواني كله بقى 1.0).
+
+---
+
+## SIGTERM: ليه كل pod قديم بياخد ٣٠ ثانية
+
+~~~text kubectl delete pod لـ pod شغال بـ 1.0
+pod "web-8574788c9b-29jbz" deleted from default namespace
+took 31s
+~~~
+
+Node كـ PID 1 من غير handler لـ SIGTERM مبيقفلش، فالـ kubelet بيستنى الـ ٣٠ ثانية كلها ويقتله. بنينا [[2.1]] بنفس الكود + السطور دي في آخر [[server.js]]:
+
+~~~js
+process.on("SIGTERM", () => {
+  console.log("SIGTERM: closing");
+  server.close(() => process.exit(0));
+});
+~~~
+
+[[server.close]] بيبطّل يقبل اتصالات جديدة، ويستنى اللي شغالة تخلص، وبعدين [[process.exit(0)]].
+
+~~~text نفس الأمر على pod بـ 2.1
+pod "web-5796dd45d6-957gt" deleted from default namespace
+took 2s
+~~~
+
+~~~text kubectl logs -f للـ pod ده
+v2.1 loading, 0s
+v2.1 listening on 3000
+SIGTERM: closing
+~~~
+
+من ٣١ ثانية لـ ٢. ونفس الحكاية في Docker Compose و ECS: أي orchestrator بيبعت SIGTERM الأول.
+
+---
+
+## الخلاصة
+
+| عايز | الأمر |
+|---|---|
+| نسخة جديدة | [[kubectl set image deploy/NAME CONTAINER=IMAGE:TAG]] (أو عدّل الـ YAML و [[apply]]) |
+| اكتب السبب | [[kubectl annotate deploy/NAME kubernetes.io/change-cause="..." --overwrite]] |
+| استنى وأعرف النتيجة | [[kubectl rollout status deploy/NAME --timeout=120s]]: كود 1 لو فشل |
+| السجل | [[kubectl rollout history deploy/NAME]] |
+| ارجع | [[kubectl rollout undo deploy/NAME]] أو [[--to-revision=N]] |
+
+> k8s مبيرجعش لوحده. الـ CI: [[rollout status]] ولو فشل [[rollout undo]]، وبعدها صلّح الـ YAML في Git.`,
+          lines: [
+            "طبّق Deployment فيه maxSurge 1 و maxUnavailable 0 و readinessProbe و deadline دقيقة.",
+            "غيّر image الـ container اللي اسمه web لـ 2.0: ده بيبدأ الـ rollout.",
+            "اكتب سبب التغيير عشان يظهر في السجل.",
+            "استنى لحد ما يخلص، ولو فشل أو عدّى دقيقتين اخرج بكود 1.",
+            "السجل: كل revision وسببها.",
+            "ارجع للـ revision اللي قبلها.",
+            "ارجع لـ revision معينة برقمها."
+          ],
+          sol: R`مع 2.0: كل الطلبات 200، وفي النص ردود 1.0 و 2.0 مخلوطة، و [[rollout status]] بيخلص في ثواني. مع 3.0: pod واحد [[ErrImagePull]] والـ ٤ القدام [[Running]]، والموقع لسه بيرد 2.0، وبعد حوالي ٦٠ ثانية [[error: deployment "web" exceeded its progress deadline]] بكود خروج 1. [[rollout undo]] يطبع [[rolled back]] وتحذير [[last-applied-configuration]]، والـ pod البايظ يتقفل.
+
+ولو الطلبات فشلت وقت الـ rollout (502 أو connection refused): غالبًا مفيش readinessProbe، أو [[maxUnavailable]] أكبر من صفر والـ pods الجديدة بطيئة.
+
+(اتجرّب على kind v0.33.0، Kubernetes v1.37.0، على ويندوز 11.)`,
+          solCode: R`while true; do curl -s --max-time 2 http://shop.localhost/; sleep 0.2; done
+kubectl set image deploy/web web=myapp:2.0
+kubectl rollout status deploy/web --timeout=120s
+kubectl set image deploy/web web=myapp:3.0
+kubectl rollout status deploy/web --timeout=180s || kubectl rollout undo deploy/web
+kubectl rollout history deploy/web`
+        },
+        {
+          cmd: "CrashLoopBackOff",
+          title: "الـ pod مش شغال: تشخّص بالترتيب",
+          desc: R`لما pod يبقى مش [[Running]] و [[1/1]]، فيه ترتيب ثابت: [[kubectl get pods]] (الحالة)، ثم [[describe]] (الـ Events والـ Exit Code)، ثم [[logs]] و [[logs --previous]] (التطبيق قال إيه قبل ما يقع)، ثم [[kubectl events]] للصورة كلها.
+
+[[CrashLoopBackOff]] مش السبب، هو النتيجة: «التطبيق بيقع، وأنا بستنى أطول كل مرة قبل ما أقوّمه». السبب في اللوج أو في الـ Exit Code.`,
+          example: R`kubectl get pods
+kubectl describe pod crash-78968799b4-74xxw
+kubectl logs deploy/crash
+kubectl logs deploy/crash --previous
+kubectl events --for pod/crash-78968799b4-74xxw
+kubectl get events --sort-by=.lastTimestamp
+kubectl debug web-8574788c9b-9kptp --image=busybox:1.37 --target=web -c dbg -- sh -c 'wget -qO- localhost:3000/healthz; ps'`,
+          try: R`اعمل Deployment بيقع على طول: [[kubectl create deployment crash --image=myapp:1.0]] ثم [[kubectl set env deploy/crash CRASH=1]]. راقبه بـ [[kubectl get pods -w]] دقيقتين، وبعدين امشي على الترتيب: [[describe]] و [[logs]] و [[logs --previous]]. هتلاقي السبب في أنهي واحد؟`,
+          deep: {
+            why: R`أغلب وقت الـ k8s في الشغل الحقيقي تشخيص، والمشكلة دايمًا واحدة من ٦ حالات معروفة. لو عارف كل حالة بتبان إزاي ومكانها فين، بتحل في دقيقة بدل ما تعيد الـ deploy وتدعي.`,
+            how: R`الحالة في [[STATUS]] بتقولك المشكلة في أنهي مرحلة:
+
+[[Pending]]: لسه متحطش على node (الـ scheduler). [[ErrImagePull]] و [[ImagePullBackOff]]: اتحط بس مش قادر يسحب الـ image (الـ kubelet). [[CreateContainerConfigError]]: الـ image موجودة بس الإعدادات ناقصة (ConfigMap أو Secret). [[CrashLoopBackOff]] و [[Error]]: الـ container قام ووقع (التطبيق). [[Running]] و [[0/1]]: شغال بس الـ readiness فاشلة.
+
+الـ Exit Code في [[describe]]: [[1]] (أو أي رقم صغير) التطبيق خرج بنفسه بـ error، فالسبب في اللوج. [[137]] = 128 + 9: اتقتل بـ SIGKILL (OOMKilled، أو liveness وعدّى الـ grace period). [[143]] = 128 + 15: خرج بسبب SIGTERM. [[0]]: خلص طبيعي، وده غلط لو هو سيرفر (الأمر في الـ CMD مش بيفضل شغال).
+
+الـ backoff بيبدأ ١٠ ثواني ويتضاعف لحد ٥ دقايق، وبيرجع صفر لو الـ container فضل شغال ١٠ دقايق.
+
+[[kubectl debug --target]] بيضيف ephemeral container (زي busybox فيه أدوات) جوه pod شغال، وبيشارك الـ process namespace بتاع الـ container المستهدف، فتقدر تشوف الـ processes وتكلّم [[localhost]] من غير ما تحط أدوات في الـ image بتاعتك.`,
+            when: R`أي pod مش [[Running 1/1]]، أو [[RESTARTS]] بيزيد. ولما الحالة كويسة بس التطبيق مش بيرد: الـ Service (الـ endpoints)، ثم الـ Ingress، زي جدول درس «Service و Ingress».`,
+            mistakes: R`تعيد الـ deploy أو تمسح الـ pod من غير ما تقرا [[describe]]: الـ pod الجديد هيقع بنفس السبب، وانت ضيّعت اللوج. وتقرا [[kubectl logs]] بس على pod اتعاد تشغيله فتلاقي لوج البداية النضيف، والسبب كان في [[--previous]]. وتدوّر في [[get events]] على OOMKilled (مش هناك، هو في [[Last State]]). والـ Events بتتمسح بعد ساعة افتراضيًا، فلو المشكلة من امبارح مش هتلاقيها: محتاج نظام لوجات برا الـ cluster (درس «المراقبة و SRE»).`
+          },
+          teach: R`## الفكرة: نفس الأسئلة، بنفس الترتيب، كل مرة
+
+اتجرّب على cluster kind (Kubernetes v1.37.0) على ويندوز 11، بـ Deployment اسمه [[crash]] من نفس الـ image بتاعت درس «kind load docker-image»، ومتغير [[CRASH=1]] بيخلّي التطبيق يطبع [[DATABASE_URL is missing, exiting]] ويخرج بـ [[process.exit(1)]] (زي تطبيق ناقصه إعداد):
+
+~~~bash
+kubectl create deployment crash --image=myapp:1.0
+kubectl set env deploy/crash CRASH=1
+~~~
+
+[[set env]] بيزوّد متغير بيئة في الـ template، فده rollout جديد بالمتغير.
+
+---
+
+## ١. [[kubectl get pods]]
+
+~~~text بعد ٥٠ ثانية
+NAME                     READY   STATUS   RESTARTS      AGE
+crash-78968799b4-74xxw   0/1     Error    3 (38s ago)   50s
+~~~
+
+و [[kubectl get pods -w]] بعدها:
+
+~~~text الناتج
+crash-78968799b4-74xxw   0/1     CrashLoopBackOff   3 (58s ago)   97s
+crash-78968799b4-74xxw   1/1     Running            4 (58s ago)   97s
+crash-78968799b4-74xxw   0/1     Error              4 (59s ago)   98s
+crash-78968799b4-74xxw   0/1     CrashLoopBackOff   4 (74s ago)   2m51s
+crash-78968799b4-74xxw   1/1     Running            5 (82s ago)   2m59s
+crash-78968799b4-74xxw   0/1     Error              5 (83s ago)   3m
+~~~
+
+الدايرة: [[Running]] ثانية، [[Error]] (وقع)، [[CrashLoopBackOff]] (مستني)، والانتظار بيطول (من ٤ لـ ٥ خد دقيقة وأكتر). فالـ STATUS بيتغير حسب اللحظة اللي بصيت فيها. اللي ثابت هو [[RESTARTS]] اللي بيزيد.
+
+### جدول الحالات
+
+| STATUS | المرحلة | أول مكان تبص فيه |
+|---|---|---|
+| [[Pending]] | الـ scheduler مش لاقي node | [[describe]]: [[FailedScheduling]] (درس «requests و limits») |
+| [[ErrImagePull]] و [[ImagePullBackOff]] | مش قادر يسحب الـ image | [[describe]]: الاسم، الـ tag، [[imagePullPolicy]]، صلاحيات الـ registry (درس «kind load docker-image») |
+| [[CreateContainerConfigError]] | ConfigMap أو Secret ناقص | [[describe]]: [[configmap "..." not found]] (درس «ConfigMap و Secret») |
+| [[Error]] و [[CrashLoopBackOff]] | التطبيق بيقع | [[logs]] و [[--previous]] و الـ Exit Code |
+| [[Running]] و [[0/1]] | الـ readiness فاشلة | [[describe]]: [[Readiness probe failed]] (درس «probes») |
+| [[Running]] و [[RESTARTS]] بيزيد | OOM أو liveness | [[describe]]: [[Last State]] |
+
+---
+
+## ٢. [[kubectl describe pod NAME]]
+
+~~~text الناتج (جزء)
+    State:          Terminated
+      Reason:       Error
+      Exit Code:    1
+    Last State:     Terminated
+      Reason:       Error
+      Exit Code:    1
+      Started:      Wed, 28 Oct 2026 03:45:08 +0300
+      Finished:     Wed, 28 Oct 2026 03:45:08 +0300
+    Restart Count:  3
+Events:
+  Normal   Pulled     11s (x4 over 50s)  kubelet  Container image "b3a-app:1.0" already present on machine ...
+  Normal   Started    11s (x4 over 50s)  kubelet  Container started
+  Warning  BackOff    10s (x3 over 48s)  kubelet  Back-off restarting failed container b3a-app in pod crash-78968799b4-74xxw_default(642a...)
+~~~
+
+| السطر | يقولك إيه |
+|---|---|
+| [[Exit Code: 1]] | التطبيق هو اللي خرج بـ error. يبقى السبب في اللوج |
+| [[Started]] و [[Finished]] نفس الثانية | بيقع أول ما يقوم: إعداد ناقص، مش مشكلة ضغط |
+| [[Pulled]] و [[Started]] [[x4]] | الـ image تمام والـ container قام ٤ مرات |
+| [[BackOff]] | k8s مستني قبل المرة الجاية |
+| [[container b3a-app]] | اسم الـ container. [[create deployment]] بيسمّيه على اسم الـ image (عندك هيبقى [[myapp]]) |
+
+### الـ Exit Codes
+
+| الكود | معناه |
+|---|---|
+| [[0]] | خلص طبيعي. لسيرفر ده غلط: الأمر مش بيفضل شغال |
+| [[1]] | التطبيق خرج بـ error: اقرا اللوج |
+| [[137]] | 128 + 9 (SIGKILL): [[OOMKilled]]، أو liveness وعدّى الـ ٣٠ ثانية |
+| [[143]] | 128 + 15 (SIGTERM): اتقفل بطلب وخرج |
+
+---
+
+## ٣. [[kubectl logs deploy/crash]] و [[--previous]]
+
+~~~text kubectl logs deploy/crash
+DATABASE_URL is missing, exiting
+~~~
+
+ده السبب. و [[--previous]] = لوج الـ container اللي **قبل** الحالي. جرّبناه كل ٥ ثواني:
+
+| الـ STATUS ساعتها | [[logs --previous]] |
+|---|---|
+| [[Error]] | [[unable to retrieve container logs for containerd://119f...]] |
+| [[CrashLoopBackOff]] | [[DATABASE_URL is missing, exiting]] |
+
+في v1.37 لما الحالة [[Error]]، الـ container اللي لسه واقع هو «الحالي»، واللي قبله اتمسح (الـ kubelet بيحتفظ بـ container ميت واحد بس)، فـ [[--previous]] ملوش لوج. فالقاعدة: جرّب [[logs]] الأول، ولو فاضي أو لوج بداية نضيف (الـ container قام تاني)، استخدم [[--previous]].
+
+و [[--previous]] مهم جدًا في الـ liveness و OOM: الـ container الحالي شغال ولوجه نضيف، والسبب كان في اللي قبله. في درس «probes» ده اللي ورّانا إن التطبيق كان سليم.
+
+---
+
+## ٤. [[kubectl events --for pod/NAME]]
+
+[[kubectl events]] أمر أحدث من [[get events]]، و [[--for]] بيفلتر على object واحد:
+
+~~~text الناتج
+LAST SEEN           TYPE      REASON      OBJECT                       MESSAGE
+51s                 Normal    Scheduled   Pod/crash-78968799b4-74xxw   Successfully assigned default/crash-78968799b4-74xxw to b3a-worker
+12s (x4 over 51s)   Normal    Pulled      Pod/crash-78968799b4-74xxw   Container image "b3a-app:1.0" already present on machine ...
+12s (x4 over 51s)   Normal    Started     Pod/crash-78968799b4-74xxw   Container started
+11s (x3 over 49s)   Warning   BackOff     Pod/crash-78968799b4-74xxw   Back-off restarting failed container ...
+~~~
+
+نفس الـ Events اللي في آخر [[describe]]، بس مترتبة بالوقت ولوحدها.
+
+---
+
+## ٥. [[kubectl get events --sort-by=.lastTimestamp]]
+
+كل الـ events في الـ namespace، مترتبة بالوقت ([[--sort-by]] بياخد مسار JSON زي jsonpath). مفيدة لما مش عارف أنهي object فيه المشكلة: ReplicaSet مش قادر يعمل pods، أو Ingress، أو HPA. ومثال من الـ cluster بتاعنا بعد OOM:
+
+~~~text الناتج (جزء)
+15s   Normal   SuccessfulCreate   replicaset/hog-64f69f984d    Created pod: hog-64f69f984d-7gf7s
+4s    Normal   Started            pod/hog-64f69f984d-7gf7s     Container started
+4s    Normal   Pulled             pod/hog-64f69f984d-7gf7s     Container image "b3a-app:1.0" already present on machine ...
+~~~
+
+ولاحظ: مفيش ولا كلمة عن OOM. الـ events مش كل حاجة.
+
+---
+
+## ٦. [[kubectl debug ... --target=web]]
+
+الـ image بتاعتنا ([[node:22-slim]]) مفيهاش curl ولا ps:
+
+~~~text kubectl exec POD -- curl --version
+exec: "curl": executable file not found in $PATH
+~~~
+
+[[kubectl debug]] بيضيف container مؤقت جوه نفس الـ pod:
+
+| الحتة | معناها |
+|---|---|
+| [[--image=busybox:1.37]] | image فيها أدوات (wget و ps و nslookup) |
+| [[--target=web]] | شارك الـ processes بتاعة container [[web]] |
+| [[-c dbg]] | اسم الـ container المؤقت، عشان نقرا لوجه |
+| [[-- sh -c '...']] | الأمر اللي هيتنفذ. ([[-it]] بدل كده = ترمنال تكتب فيه) |
+
+~~~text kubectl logs POD -c dbg
+ok
+PID   USER     TIME  COMMAND
+    1 1000      0:28 node server.js
+   18 root      0:00 ps
+~~~
+
+[[ok]] من [[localhost:3000/healthz]] (نفس الشبكة)، و [[ps]] شايف [[node server.js]] بتاع الـ container التاني (user [[1000]] = [[node]] من الـ Dockerfile). الـ ephemeral container مبيتشالش من الـ pod؛ بيختفي لما الـ pod نفسه يتمسح.
+
+---
+
+## الخلاصة
+
+1. [[get pods]]: الـ STATUS والـ RESTARTS.
+2. [[describe pod]]: Exit Code و Last State و Events (من تحت).
+3. [[logs]]، ولو اتعاد تشغيله [[logs --previous]].
+4. [[kubectl events --for pod/NAME]] أو [[get events --sort-by=.lastTimestamp]].
+5. محتاج أدوات جوه؟ [[kubectl debug --target]].
+
+> CrashLoopBackOff نتيجة. السبب في الـ Exit Code واللوج.`,
+          lines: [
+            "الحالة والـ RESTARTS لكل pod.",
+            "حالة الـ container والـ Exit Code والـ Events.",
+            "لوج الـ container الحالي (هنا: سبب الوقوع).",
+            "لوج الـ container اللي قبله (لو الحالي قام تاني ولوجه نضيف).",
+            "events الـ pod ده بس، مترتبة بالوقت.",
+            "كل events الـ namespace مترتبة بالوقت.",
+            "شغّل busybox جوه pod شغال وشارك processes الـ container web."
+          ],
+          sol: R`[[kubectl get pods -w]] بيوري الدايرة: [[Running]] ثم [[Error]] ثم [[CrashLoopBackOff]]، و [[RESTARTS]] بيزيد والانتظار بيطول. [[describe]] فيه [[Exit Code: 1]] و [[Started]] و [[Finished]] نفس الثانية، و [[Back-off restarting failed container]]. و [[kubectl logs deploy/crash]] بيطبع [[DATABASE_URL is missing, exiting]]: ده السبب.
+
+و [[logs --previous]] ممكن يرجّع [[unable to retrieve container logs]] لو بصيت والحالة [[Error]]؛ استنى ثواني لحد [[CrashLoopBackOff]] أو اقرا [[logs]] من غير [[--previous]]. الحل نفسه: [[kubectl set env deploy/crash CRASH-]] ([[-]] في الآخر = امسح المتغير)، أو في الحقيقة: حط الإعداد الناقص في Secret.
+
+(اتجرّب على kind v0.33.0، Kubernetes v1.37.0، في ويندوز 11.)`,
+          solCode: R`kubectl create deployment crash --image=myapp:1.0
+kubectl set env deploy/crash CRASH=1
+kubectl get pods -w
+kubectl describe pod -l app=crash
+kubectl logs deploy/crash
+kubectl set env deploy/crash CRASH-
+kubectl rollout status deploy/crash
+kubectl delete deploy crash`
+        },
+        {
+          cmd: "helm",
+          title: "Helm: سطّب تطبيق جاهز، وظبط الـ values، وحدّث وارجع",
+          desc: R`Helm مدير حزم لـ Kubernetes: الـ chart فولدر templates (Deployment و Service و Ingress...) فيها متغيرات، و [[values.yaml]] بيملا المتغيرات. [[helm install]] بيطبّق الكل مرة واحدة كـ release ليه اسم ورقم revision.
+
+و [[helm upgrade]] و [[helm rollback]] بيحدّثوا ويرجّعوا الـ release كله (مش Deployment واحد بس). وخد بالك: [[upgrade]] بياخد الـ values اللي في الأمر بس، مش اللي فاتت.`,
+          example: R`helm repo add podinfo https://stefanprodan.github.io/podinfo
+helm show values podinfo/podinfo --version 6.17.0
+helm install demo podinfo/podinfo --version 6.17.0 -f values.yaml
+helm upgrade demo podinfo/podinfo --version 6.17.0 -f values.yaml --set replicaCount=3
+helm history demo
+helm rollback demo 1
+helm uninstall demo`,
+          try: R`على cluster الدروس اللي فاتت (اللي فيه ingress-nginx): اعمل [[values.yaml]] اللي في الشرح وسطّب podinfo. افتح [[http://podinfo.localhost]]. وبعدين اعمل [[helm upgrade demo podinfo/podinfo --set ui.message=Bye]] **من غير** [[-f]] وشوف الـ Ingress وعدد الـ pods. رجّع بـ [[helm rollback]].`,
+          deep: {
+            why: R`تطبيق حقيقي على k8s = ٥ لـ ١٥ ملف YAML، ونفس الملفات بفروق بسيطة لكل بيئة (dev و staging و prod). Helm بيخلّيهم template واحد و values لكل بيئة، وبيعرف يحدّث ويرجّع الكل كوحدة. وأغلب الأدوات الجاهزة (Prometheus و cert-manager و ingress controllers و قواعد بيانات) بتتسطب بـ Helm chart.`,
+            how: R`الـ chart فيه [[Chart.yaml]] (الاسم والنسخة)، و [[values.yaml]] (القيم الافتراضية)، و [[templates/]] (YAML فيه [[{{ .Values.replicaCount }}]] وأخواتها بلغة Go templates). [[helm install]] = اقرا الـ values (الافتراضي، ثم [[-f]] بالترتيب، ثم [[--set]] وده الأقوى)، واعمل render، وطبّق على الـ cluster.
+
+كل release متخزّن كـ Secret في نفس الـ namespace ([[sh.helm.release.v1.demo.v1]] و [[v2]]...)، فيه الـ manifest والـ values بتوع كل revision. ده اللي [[history]] و [[rollback]] بيقروه. Helm مش محتاج حاجة تتسطب جوه الـ cluster.
+
+الـ charts بتتوزع بطريقتين: repo عادي ([[helm repo add]] ثم [[REPO/CHART]]) أو OCI registry ([[oci://ghcr.io/...]]) من غير [[repo add]]. و [[--version]] بيثبّت نسخة الـ chart، زي [[package-lock]].
+
+[[helm upgrade]] من غير [[-f]] أو [[--set]] اللي قبل كده بيرجع للـ defaults ([[--reuse-values]] بيغيّر ده، بس الأوضح دايمًا تبعت نفس [[-f values.yaml]]). و [[helm upgrade --install]] بيعمل install لو مش موجود: ده اللي بيتكتب في CI.`,
+            when: R`تسطيب أدوات جاهزة (دايمًا تقريبًا بـ Helm). ولتطبيقك: لو عندك بيئات كتير أو هتوزّعه لناس تانية. البديل الأبسط Kustomize (جوه kubectl: [[kubectl apply -k]]) بيعمل overlays من غير templates. ومع GitOps (Argo CD أو Flux) الاتنين مدعومين.`,
+            mistakes: R`[[helm upgrade]] من غير نفس الـ values: الـ Ingress يختفي والـ replicas ترجع ١ (جرّبناها). و [[helm install]] من غير [[--version]]: كل مرة chart مختلف. و [[kubectl edit]] على حاجة Helm عاملها: أول [[upgrade]] يمسح تعديلك. وأسرار في [[values.yaml]] على Git: Helm بيخزّنها في Secret الـ release كمان. واستخدام Bitnami charts القديمة من غير ما تقرا: Bitnami غيّرت سياسة الـ images المجانية في ٢٠٢٥، فناس كتير لقت images بتاعتها مش بتتسحب.`
+          },
+          teach: R`## الفكرة: release واحد بدل ١٠ ملفات
+
+السطر الأول بيضيف مكان الـ charts، والتاني بيوريك تقدر تغيّر إيه، والتالت بيسطّب بالـ values بتاعتك، والرابع بيحدّث، والخامس السجل، والسادس الرجوع، والسابع المسح.
+
+اتجرّب بـ Helm v4.3.1 (Helm 4، والأوامر دي هي هي في Helm 3) على cluster kind (Kubernetes v1.37.0) فيه ingress-nginx من درس «Service و Ingress»، على ويندوز 11. والـ chart هو podinfo v6.17.0: تطبيق Go صغير معمول مخصوص للتجارب. (Helm بيحفظ الـ repos والـ cache في فولدر المستخدم؛ إحنا وجّهناهم لفولدر التجربة بمتغيرات [[HELM_CONFIG_HOME]] و [[HELM_CACHE_HOME]] و [[HELM_DATA_HOME]].)
+
+---
+
+## ١. [[helm repo add podinfo https://stefanprodan.github.io/podinfo]]
+
+~~~text الناتج
+"podinfo" has been added to your repositories
+~~~
+
+[[podinfo]] الأولى اسم محلي انت بتختاره. وبعدها [[helm repo update]] (بينزّل الفهرس) و [[helm search repo podinfo]]:
+
+~~~text الناتج
+NAME            CHART VERSION   APP VERSION   DESCRIPTION
+podinfo/podinfo 6.17.0          6.17.0        Podinfo Helm chart for Kubernetes
+~~~
+
+[[CHART VERSION]] نسخة الـ chart (الـ templates)، و [[APP VERSION]] نسخة التطبيق جواه. ممكن يختلفوا.
+
+---
+
+## ٢. [[helm show values podinfo/podinfo --version 6.17.0]]
+
+بيطبع [[values.yaml]] الافتراضي كله: ده «دليل الإعدادات». حتت منه:
+
+~~~text الناتج (جزء)
+replicaCount: 1
+ui:
+  color: "#34577c"
+  message: ""
+ingress:
+  enabled: false
+  className: ""
+  hosts:
+    - host: podinfo.local
+~~~
+
+كل اللي هتكتبه في [[values.yaml]] بتاعك لازم يمشي على نفس الشكل ده. والـ chart ده فيه كمان [[httpRoute]] لـ Gateway API.
+
+---
+
+## ٣. [[helm install demo podinfo/podinfo --version 6.17.0 -f values.yaml]]
+
+~~~yaml values.yaml
+replicaCount: 2
+ui:
+  message: "Hello from Helm"
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+    - host: podinfo.localhost
+      paths:
+        - path: /
+          pathType: Prefix
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[demo]] | اسم الـ release. كل الـ objects بتتسمّى بيه ([[demo-podinfo]]) |
+| [[podinfo/podinfo]] | REPO/CHART |
+| [[--version 6.17.0]] | نسخة الـ chart، مثبتة |
+| [[-f values.yaml]] | قيمك فوق الافتراضي. اللي مكتبتهوش بياخد الافتراضي |
+
+~~~text الناتج (أول تسطيب، كان بـ --set replicaCount=2)
+NAME: demo
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+DESCRIPTION: Install complete
+NOTES:
+1. Get the application URL by running these commands:
+  echo "Visit http://127.0.0.1:8080 to use your application"
+  kubectl -n default port-forward deploy/demo-podinfo 8080:9898
+~~~
+
+[[NOTES]] جاية من [[templates/NOTES.txt]] في الـ chart. و [[curl http://podinfo.localhost/]]:
+
+~~~text الناتج (جزء)
+  "hostname": "demo-podinfo-8584fc4875-78tj2",
+  "version": "6.17.0",
+  "message": "Hello from Helm",
+~~~
+
+الـ [[message]] من الـ values بتاعتنا، والـ Ingress اتعمل لوحده. وتقدر تشوف الـ YAML النهائي قبل ما تطبّق: [[helm template demo podinfo/podinfo --version 6.17.0 -f values.yaml]] طبع Service و Deployment و Ingress (و ٣ Pods للاختبار في [[templates/tests]] مش بتتطبّق غير بـ [[helm test]]).
+
+---
+
+## ٤. [[helm upgrade ... -f values.yaml --set replicaCount=3]]
+
+[[--set]] أقوى من [[-f]]: الـ ٢ في الملف بقوا ٣.
+
+~~~text الناتج
+STATUS: deployed
+REVISION: 2
+NAME           READY   UP-TO-DATE   AVAILABLE   AGE
+demo-podinfo   3/3     3            3           5s
+~~~
+
+### الفخ: upgrade من غير نفس الـ values
+
+على release فيه Ingress و ٢ replicas، عملنا:
+
+~~~bash
+helm upgrade demo podinfo/podinfo --version 6.17.0 --set ui.message=Bye
+~~~
+
+~~~text الناتج
+REVISION: 3
+NAME           READY   UP-TO-DATE   AVAILABLE   AGE
+demo-podinfo   1/1     1            1           96s
+~~~
+
+| بعد الأمر ده | ليه |
+|---|---|
+| [[1/1]] بدل ٢ | [[replicaCount]] رجع للافتراضي (١) |
+| [[curl http://podinfo.localhost/]] رجّع [[404]] | [[ingress.enabled]] رجع [[false]] والـ Ingress اتمسح |
+| [[helm get values demo]] طبع [[ui: message: Bye]] بس | الـ release ده مافتكرش غير اللي في الأمر |
+
+القاعدة: كل [[upgrade]] ابعتله نفس [[-f values.yaml]]. والـ values الحالية لأي release: [[helm get values NAME]].
+
+---
+
+## ٥. [[helm history demo]]
+
+~~~text الناتج (التشغيل التاني)
+REVISION   STATUS       CHART            APP VERSION   DESCRIPTION
+1          superseded   podinfo-6.17.0   6.17.0        Install complete
+2          superseded   podinfo-6.17.0   6.17.0        Upgrade complete
+3          deployed     podinfo-6.17.0   6.17.0        Rollback to 1
+~~~
+
+(عمود [[UPDATED]] اتشال من هنا عشان العرض.) و [[deployed]] = الشغال دلوقتي، و [[superseded]] = قديم.
+
+كل revision متخزّن كـ Secret:
+
+~~~text kubectl get secrets -l owner=helm
+NAME                         TYPE                 DATA   AGE
+sh.helm.release.v1.demo.v1   helm.sh/release.v1   1      0s
+~~~
+
+---
+
+## ٦. [[helm rollback demo 1]]
+
+~~~text الناتج
+Rollback was a success! Happy Helming!
+NAME           READY   UP-TO-DATE   AVAILABLE   AGE
+demo-podinfo   2/2     2            2           6s
+~~~
+
+رجع لـ ٢ (قيم revision 1)، وزي [[rollout undo]]: الرجوع revision جديدة ([[3]] بوصف [[Rollback to 1]])، مش مسح للي بعده. وفي فخ الـ values فوق، [[helm rollback demo 2]] رجّع الـ Ingress والـ ٢ replicas، و [[curl]] رجع [[Hello from Helm]].
+
+والفرق عن [[kubectl rollout undo]]: ده بيرجّع Deployment واحد، و [[helm rollback]] بيرجّع **كل** اللي في الـ release (Ingress اتمسح؟ بيرجع).
+
+---
+
+## ٧. [[helm uninstall demo]]
+
+~~~text الناتج
+release "demo" uninstalled
+~~~
+
+بيمسح كل الـ objects وكل الـ Secrets بتاعة الـ revisions. [[kubectl get all -l app.kubernetes.io/instance=demo]] بعدها: [[No resources found]].
+
+---
+
+## chart لتطبيقك: [[helm create]]
+
+~~~text helm create myapp
+Creating myapp
+~~~
+
+~~~text الفولدر
+myapp/Chart.yaml  myapp/values.yaml  myapp/charts/
+myapp/templates/: NOTES.txt  _helpers.tpl  deployment.yaml  hpa.yaml  httproute.yaml
+                  ingress.yaml  service.yaml  serviceaccount.yaml  tests/
+~~~
+
+قالب كامل فيه كل اللي اتكلمنا عنه في الدروس اللي فاتت (Deployment و Service و Ingress و HPA و HTTPRoute)، و [[helm lint myapp]] طبع [[1 chart(s) linted, 0 chart(s) failed]]. غيّر الـ image في [[values.yaml]] وابدأ منه.
+
+وفي CI السطر المعتاد: [[helm upgrade --install demo CHART --version X -f values.yaml --wait]] (جرّبناه وطلّع [[Release "demo" has been upgraded]] و [[REVISION: 5]]). [[--install]] = اعمل install لو مش موجود، و [[--wait]] = استنى لحد ما الـ pods تبقى جاهزة.
+
+---
+
+## الخلاصة
+
+| عايز | الأمر |
+|---|---|
+| أشوف الإعدادات المتاحة | [[helm show values REPO/CHART --version X]] |
+| أشوف الـ YAML قبل التطبيق | [[helm template NAME REPO/CHART -f values.yaml]] |
+| أسطّب أو أحدّث (CI) | [[helm upgrade --install NAME REPO/CHART --version X -f values.yaml --wait]] |
+| القيم الحالية | [[helm get values NAME]] |
+| السجل والرجوع | [[helm history NAME]] و [[helm rollback NAME N]] |
+| أمسح | [[helm uninstall NAME]] |
+
+> كل [[upgrade]] بنفس [[-f values.yaml]] و [[--version]]. اللي مش في الأمر بيرجع للافتراضي.`,
+          lines: [
+            "ضيف repo الـ charts باسم محلي podinfo.",
+            "اعرض الـ values الافتراضية: كل اللي تقدر تغيّره.",
+            "سطّب release اسمه demo بنسخة chart مثبتة وقيمك.",
+            "حدّث بنفس الملف، و --set يغلب عليه (٣ replicas).",
+            "سجل الـ revisions.",
+            "ارجع لقيم revision 1 (بيعمل revision جديدة).",
+            "امسح الـ release وكل اللي عمله."
+          ],
+          sol: R`بعد [[install]]: [[STATUS: deployed]] و [[REVISION: 1]]، و [[http://podinfo.localhost]] بيرجّع JSON فيه [[Hello from Helm]]. بعد [[upgrade]] بـ [[--set ui.message=Bye]] لوحده: الـ pods بقت ١، و [[podinfo.localhost]] بقى [[404]] (الـ Ingress اتمسح)، و [[helm get values demo]] فيه [[message: Bye]] بس. و [[helm rollback demo 1]] (أو رقم آخر revision سليمة) يرجّع الـ Ingress والعدد، والـ history فيها سطر [[Rollback to 1]].
+
+لو [[podinfo.localhost]] بيرجّع [[404]] من الأول: [[ingress.className]] لازم [[nginx]]، و [[pathType: Prefix]]. ولو [[Error: INSTALLATION FAILED: cannot re-use a name that is still in use]]: الـ release موجود، استخدم [[upgrade --install]].
+
+(اتجرّب بـ Helm v4.3.1 و podinfo chart 6.17.0 على kind v0.33.0، Kubernetes v1.37.0، في ويندوز 11.)`,
+          solCode: R`helm install demo podinfo/podinfo --version 6.17.0 -f values.yaml --wait
+curl http://podinfo.localhost/
+helm upgrade demo podinfo/podinfo --version 6.17.0 --set ui.message=Bye --wait
+kubectl get deploy demo-podinfo
+helm get values demo
+helm rollback demo 1 --wait
+helm history demo
+helm uninstall demo`
+        }
+      ]
+    }
+]);
+
+/* ===== js/tabs/cloud/17.js ===== */
+// تكملة تاب cloud: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/cloud/01.js (شرح حقول الدرس في أوله)
 MORE("cloud", [
     {
       t: "Firebase: الفكرة والـ Emulator والـ Auth",
@@ -533159,7 +535186,12 @@ try { await adminAuth().verifyIdToken(await user.getIdToken(), true); } catch (e
 // شغّله: FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 node claims.mjs`
         }
       ]
-    },
+    }
+]);
+
+/* ===== js/tabs/cloud/18.js ===== */
+// تكملة تاب cloud: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/cloud/01.js (شرح حقول الدرس في أوله)
+MORE("cloud", [
     {
       t: "Firestore و Security Rules و Functions",
       l: 2,
