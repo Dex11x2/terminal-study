@@ -70,8 +70,14 @@ html{overflow-x:clip}
 .map tbody tr{cursor:pointer}
 .map tbody tr:hover td{background:color-mix(in srgb,var(--accent) 7%,transparent)}
 .map td>a{display:block;padding:9px 12px;color:inherit;text-decoration:none}
-.map td:first-child{width:52px}
-.map td:first-child>a{text-align:center;font-weight:700;color:var(--accent)}
+.map th:nth-child(1){width:46px}
+.map th:nth-child(2){width:23%}
+.map th:nth-child(3){width:24%}
+.map th:nth-child(4){width:25%}
+.map td:first-child>a{text-align:center;font-weight:700;color:var(--accent);padding-inline:4px}
+.map .t{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.map .go{font-style:normal;color:var(--accent);opacity:0;transition:opacity .12s}
+.map tbody tr:hover .go,.map tbody tr:focus-within .go{opacity:1}
 .map tr.done td:first-child>a::after{content:" ✓";color:var(--ok)}
 .map .t{font-weight:600}
 .map .go{color:var(--accent);font-size:13.5px;white-space:nowrap}
@@ -80,8 +86,8 @@ html{overflow-x:clip}
   .map th:nth-child(3),.map td:nth-child(3),
   .map th:nth-child(5),.map td:nth-child(5){display:none}
 }
-.rail{display:flex;gap:4px;margin:16px 0 0}
-.rail i{flex:1;height:6px;border-radius:3px;background:var(--line)}
+.rail{display:flex;gap:3px;margin:8px 0 6px}
+.rail i{flex:1;height:5px;border-radius:3px;background:var(--line)}
 .rail i.on{background:var(--accent)}
 .rail-lbl{font-size:13.5px;color:var(--muted);margin:6px 0 0}
 
@@ -237,10 +243,9 @@ html{overflow-x:clip}
         <h2 id="m-map" style="font-size:21px;margin:26px 0 4px;scroll-margin-top:120px">خريطة الوحدة</h2>
         <p style="margin:0 0 4px;color:var(--muted);font-size:14.5px"><b>دوس على أي درس يفتح لوحده</b> — مش هتنزل لتحت خالص</p>
         <table class="map">
-          <thead><tr><th>#</th><th>الدرس</th><th>هتتعلم إيه</th><th>النتيجة العملية</th><th>تستخدمها فين</th><th></th></tr></thead>
+          <thead><tr><th>#</th><th>الدرس</th><th>هتتعلم إيه</th><th>النتيجة العملية</th><th>تستخدمها فين</th></tr></thead>
           <tbody id="mapBody"></tbody>
         </table>
-        <div class="rail" id="rail"></div>
 
         <div class="two" style="margin-top:28px">
           <div>
@@ -736,7 +741,8 @@ function buildNav(){
       }).join('')
     + '<div class="foot"><a href="#projects" data-pg="list" style="padding:0;border:0;color:#8b5cf6;font-weight:600">★ مشاريع الوحدة (' + AR(PROJECTS.length) + ')</a><br>'
       + '<a href="#" data-go="map" style="padding:0;border:0;color:var(--accent)">▸ الخريطة</a><br>'
-      + '<span style="font-size:12.5px">خلصت ' + AR(done.size) + ' من ٦</span></div>';
+      + '<div class="rail">' + LESSONS.map((_, i) => '<i' + (done.has(i + 1) ? ' class="on"' : '') + '></i>').join('') + '</div>'
+      + '<span style="font-size:12.5px">خلصت ' + AR(done.size) + ' من ' + AR(LESSONS.length) + '</span></div>';
 }
 
 function buildMap(){
@@ -744,13 +750,11 @@ function buildMap(){
     const n = i + 1, h = '#lesson-' + n;
     return '<tr data-go="' + n + '"' + (done.has(n) ? ' class="done"' : '') + '>'
       + '<td><a href="' + h + '">' + AR(n) + '</a></td>'
-      + '<td><a href="' + h + '" class="t">' + L.t + '</a></td>'
+      + '<td><a href="' + h + '" class="t">' + L.t + '<i class="go">◂</i></a></td>'
       + '<td><a href="' + h + '">' + L.learn + '</a></td>'
       + '<td><a href="' + h + '">' + L.out + '</a></td>'
-      + '<td><a href="' + h + '" style="color:#8b5cf6">' + L.use + '</a></td>'
-      + '<td><a href="' + h + '" class="go">افتح ◂</a></td></tr>';
+      + '<td><a href="' + h + '" style="color:#8b5cf6">' + L.use + '</a></td></tr>';
   }).join('');
-  $('#rail').innerHTML = LESSONS.map((_, i) => '<i' + (done.has(i + 1) ? ' class="on"' : '') + '></i>').join('');
 }
 
 function buildToc(){
