@@ -7144,6 +7144,11 @@
   "date": "2026-10-06",
   "on": "win11 Git Bash (Git 2.56) + gh --version; docs: gh auth/pr"
  },
+ "git|git <أمر> -h": {
+  "hash": "3a299909167a",
+  "date": "2026-10-28",
+  "on": "git 2.56.0.windows.3 على ويندوز 11، في ريبو تجريبي في scratchpad"
+ },
  "git|git add / commit": {
   "hash": "895146ce3afb",
   "date": "2026-10-06",
@@ -7183,6 +7188,11 @@
   "hash": "20e5b4a42067",
   "date": "2026-10-06",
   "on": "win11 Git Bash (Git 2.56) + pwsh 7 + ps 5.1"
+ },
+ "git|git help -a و -g": {
+  "hash": "c0f15a73eef0",
+  "date": "2026-10-28",
+  "on": "git 2.56.0.windows.3 على ويندوز 11، في ريبو تجريبي في scratchpad"
  },
  "git|git init / clone": {
   "hash": "145a518cee16",
@@ -7269,6 +7279,11 @@
   "date": "2026-10-06",
   "on": "win11 Git Bash (Git 2.56) + cmd"
  },
+ "git|git بيقترح عليك الأمر": {
+  "hash": "753f9e03ec14",
+  "date": "2026-10-28",
+  "on": "git 2.56.0.windows.3 على ويندوز 11، في ريبو تجريبي في scratchpad"
+ },
  "git|ours و theirs في rebase": {
   "hash": "932555dfa5c2",
   "date": "2026-10-06",
@@ -7299,10 +7314,35 @@
   "date": "2026-10-06",
   "on": "win11 Git Bash (Git 2.56)"
  },
+ "git|المعاينة في git: -n و --dry-run": {
+  "hash": "af6dc501f18d",
+  "date": "2026-10-28",
+  "on": "git 2.56.0.windows.3 على ويندوز 11، في ريبو تجريبي في scratchpad"
+ },
  "git|تحديث PR قديم": {
   "hash": "1323e13fc26e",
   "date": "2026-10-06",
   "on": "win11 Git Bash (Git 2.56) local bare remote; docs: GitHub PR page"
+ },
+ "git|مشروع — الشجرة جاهزة؟": {
+  "hash": "a32114761f2c",
+  "date": "2026-10-28",
+  "on": "git 2.56.0.windows.3 — release.sh اتبنى واتشغّل بالكامل في ريبو تجريبي: الأربع حالات رفض، والمعاينة، والإصدار، والتراجع"
+ },
+ "git|مشروع — الـ changelog والـ tag": {
+  "hash": "55accf3b9725",
+  "date": "2026-10-28",
+  "on": "git 2.56.0.windows.3 — release.sh اتبنى واتشغّل بالكامل في ريبو تجريبي: الأربع حالات رفض، والمعاينة، والإصدار، والتراجع"
+ },
+ "git|مشروع — المعاينة والتراجع": {
+  "hash": "6a7996348673",
+  "date": "2026-10-28",
+  "on": "git 2.56.0.windows.3 — release.sh اتبنى واتشغّل بالكامل في ريبو تجريبي: الأربع حالات رفض، والمعاينة، والإصدار، والتراجع"
+ },
+ "git|مشروع — من آخر tag لحد دلوقتي": {
+  "hash": "adfba84dc9e7",
+  "date": "2026-10-28",
+  "on": "git 2.56.0.windows.3 — release.sh اتبنى واتشغّل بالكامل في ريبو تجريبي: الأربع حالات رفض، والمعاينة، والإصدار، والتراجع"
  },
  "git|مقدمة Git و GitHub": {
   "hash": "813e9ccb1874",
