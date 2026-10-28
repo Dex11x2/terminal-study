@@ -236,7 +236,7 @@
 - [ ] cloud/16: Firebase (Emulator Suite محلي: Auth و Firestore و rules و Functions و Storage)
 - [ ] apis/15: WebSockets (سيرفر و reconnect و scaling) و GraphQL (schema و resolvers و N+1 و DataLoader)
 - [ ] diag/05: Prometheus و Grafana (metrics من Node، node_exporter، PromQL، alerts)
-- [ ] react/15: Storybook
+- [x] react/15: Storybook. اتعمل: 5 دروس (init و controls و decorators و addon-vitest و addon-a11y، Storybook 10.6)
 
 بعدها: مراجعة بعين المبتدئ لدروس المستوى الأول في بداية الطريق.
 
