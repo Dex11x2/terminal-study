@@ -5079,6 +5079,11 @@
   "date": "2026-10-06",
   "on": "Docker Desktop 29.6.1 (win11, Git Bash) (renew --dry-run); docs: real certificates"
  },
+ "docker|commit مقابل Dockerfile": {
+  "hash": "0b1e0441beae",
+  "date": "2026-10-28",
+  "on": "Docker 29.6.1 / WSL2 على ويندوز 11 — كل أمر اتشغّل: ubuntu:24.04 و alpine:3.21، و diff و commit (211MB) مقابل Dockerfile (118MB)، و cp في الاتجاهين، و /dev/kvm مش موجود حتى بـ --privileged"
+ },
  "docker|compose run": {
   "hash": "c8f5ad75ab42",
   "date": "2026-10-06",
@@ -5229,10 +5234,20 @@
   "date": "2026-10-06",
   "on": "Docker Desktop 29.6.1 (win11, Git Bash)"
  },
+ "docker|أنظمة مختلفة جنب بعض": {
+  "hash": "66f6d1c0b440",
+  "date": "2026-10-28",
+  "on": "Docker 29.6.1 / WSL2 على ويندوز 11 — كل أمر اتشغّل: ubuntu:24.04 و alpine:3.21، و diff و commit (211MB) مقابل Dockerfile (118MB)، و cp في الاتجاهين، و /dev/kvm مش موجود حتى بـ --privileged"
+ },
  "docker|أوامر مفيدة": {
   "hash": "8546ca5aeda3",
   "date": "2026-10-06",
   "on": "Docker Desktop 29.6.1 (win11), Compose v5.3.0"
+ },
+ "docker|أول بيئة: docker run -it ubuntu": {
+  "hash": "fc32fdf7d28b",
+  "date": "2026-10-28",
+  "on": "Docker 29.6.1 / WSL2 على ويندوز 11 — كل أمر اتشغّل: ubuntu:24.04 و alpine:3.21، و diff و commit (211MB) مقابل Dockerfile (118MB)، و cp في الاتجاهين، و /dev/kvm مش موجود حتى بـ --privileged"
  },
  "docker|الأمان": {
   "hash": "40ff14b82b65",
@@ -5264,15 +5279,30 @@
   "date": "2026-10-06",
   "on": "Docker Desktop 29.6.1 (win11, Git Bash)"
  },
+ "docker|الكونتينر اللي بيفضل": {
+  "hash": "929184a7c487",
+  "date": "2026-10-28",
+  "on": "Docker 29.6.1 / WSL2 على ويندوز 11 — كل أمر اتشغّل: ubuntu:24.04 و alpine:3.21، و diff و commit (211MB) مقابل Dockerfile (118MB)، و cp في الاتجاهين، و /dev/kvm مش موجود حتى بـ --privileged"
+ },
  "docker|المعاينة في docker": {
   "hash": "ab1dbbe7634e",
   "date": "2026-10-28",
   "on": "Docker 29.6.1 و Compose v5.3.0 على ويندوز 11؛ أوامر قراية بس (مفيش prune)"
  },
+ "docker|الملفات رايحة جاية": {
+  "hash": "21f7a365909e",
+  "date": "2026-10-28",
+  "on": "Docker 29.6.1 / WSL2 على ويندوز 11 — كل أمر اتشغّل: ubuntu:24.04 و alpine:3.21، و diff و commit (211MB) مقابل Dockerfile (118MB)، و cp في الاتجاهين، و /dev/kvm مش موجود حتى بـ --privileged"
+ },
  "docker|تنضيف": {
   "hash": "38da5a5bd2aa",
   "date": "2026-10-06",
   "on": "Docker Desktop 29.6.1 (win11, Git Bash) system df; prune only with N or label filters"
+ },
+ "docker|حدود المعمل": {
+  "hash": "e056658ae7a3",
+  "date": "2026-10-28",
+  "on": "Docker 29.6.1 / WSL2 على ويندوز 11 — كل أمر اتشغّل: ubuntu:24.04 و alpine:3.21، و diff و commit (211MB) مقابل Dockerfile (118MB)، و cp في الاتجاهين، و /dev/kvm مش موجود حتى بـ --privileged"
  },
  "docker|حدود الموارد": {
   "hash": "816fe398ec98",
