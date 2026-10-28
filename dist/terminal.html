@@ -90412,6 +90412,5439 @@ Created .\my-shop
     }
 ]);
 
+/* ===== js/tabs/ps/20.js ===== */
+// تكملة تاب ps: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/ps/01.js (شرح حقول الدرس في أوله)
+MORE("ps", [
+    {
+      t: "توصل للأمر بنفسك",
+      l: 1,
+      n: R`مش هتحفظ ٥٠٠ أمر. هتحفظ الدورة اللي بتوصلك لأي أمر: تترجم المهمة لفعل واسم، تصطاد الأمر، تقرا شكله، تجرّبه من غير ما ينفّذ، وتفهم الخطأ لو وقع`,
+      items: [
+        {
+          cmd: "الطريقة: من مهمة لأمر",
+          title: "عندك مهمة ومش عارف الأمر؟ دي الدورة",
+          desc: R`أي مهمة في PowerShell بتتحل بنفس الخمس خطوات: ترجم المهمة لـ **فعل + اسم**، اصطاد الأمر بـ [[Get-Command]]، اقرا شكله بـ [[-Syntax]]، جرّبه بـ [[-WhatIf]]، وبصّ على الناتج. الدرس ده الدورة نفسها على مهمة حقيقية.
+
+المهمة: «عايز أوقّف خدمة الطابعة». مفيش حاجة تحفظها هنا، فيه طريقة تمشي عليها.
+
+**الخطوة ١ — المهمة بقت فعل واسم.** «أوقّف» فعل، و «خدمة» اسم. PowerShell كل أوامره بالشكل ده ([[Verb-Noun]])، والفعل من قايمة مقفولة تشوفها بـ [[Get-Verb]]. فعل الإيقاف المعتمد [[Stop]].
+
+**الخطوة ٢ — اصطاد الأمر.** [[Get-Command -Noun Service]] بيطلّع كل الأوامر اللي بتشتغل على الخدمات. مش محتاج تعرف الاسم الكامل، محتاج تعرف نص الاسم.
+
+**الخطوة ٣ — اقرا شكله.** [[Get-Command Stop-Service -Syntax]] بيطبع سطر الاستخدام: الـ parameters وأنواعها وإيه اللي إجباري.
+
+**الخطوة ٤ — جرّب من غير ما تنفّذ.** [[-WhatIf]] بيطبع «كنت هعمل كذا» وميعملش. دي أهم عادة: تجرّب الأول على الحقيقي من غير خسارة.
+
+**الخطوة ٥ — اتأكد.** بعد ما تنفّذ، شوف الحالة بنفسك ([[Get-Service]]) بدل ما تفترض إنه نجح.
+
+والخطوة الزيادة لما تحتاج تطلّع تفاصيل من الناتج: [[Get-Member]] بيوريك الـ object راجع فيه إيه بالظبط (درس «Get-Member»).`,
+          example: R`Get-Verb | Where-Object Verb -like 'St*'
+Get-Command -Noun Service
+Get-Command Stop-Service -Syntax
+Stop-Service -Name Spooler -WhatIf
+Get-Service -Name Spooler`,
+          try: R`امشي بنفس الدورة على مهمة تانية: «عايز أقفل برنامج شغّال». الفعل إيه؟ والاسم إيه؟ اصطاد الأمر بـ [[Get-Command -Noun Process]]، واقرا [[-Syntax]] بتاعه، وجرّب بـ [[-WhatIf]] على [[notepad]].`,
+          sol: R`الفعل [[Stop]] والاسم [[Process]]، فالأمر [[Stop-Process]].
+
+~~~text الناتج (PowerShell 7.6)
+PS> Get-Command -Noun Process
+
+CommandType Name         Version   Source
+----------- ----         -------   ------
+Cmdlet      Debug-Process 7.0.0.0  Microsoft.PowerShell.Management
+Cmdlet      Get-Process   7.0.0.0  Microsoft.PowerShell.Management
+Cmdlet      Start-Process 7.0.0.0  Microsoft.PowerShell.Management
+Cmdlet      Stop-Process  7.0.0.0  Microsoft.PowerShell.Management
+Cmdlet      Wait-Process  7.0.0.0  Microsoft.PowerShell.Management
+~~~
+
+و [[Stop-Process -Name notepad -WhatIf]] هيطبع سطر «What if» لكل نسخة من notepad مفتوحة، ومش هيقفل حاجة. لو مفيش notepad مفتوح هيطلّع error [[NoProcessFoundForGivenName]]، وده رد صحيح كمان: معناه الأمر شغال والاسم مش موجود.`,
+          deep: {
+            why: R`الفرق بين حد بيستخدم الترمنال وحد بيخاف منه مش عدد الأوامر اللي حافظها. الفرق إن الأول عنده طريقة يوصل بيها لأي أمر في دقيقة، والتاني بيدوّر في جوجل على أمر جاهز وينسخه من غير ما يفهمه. الدورة دي هي الطريقة.`,
+            how: R`الخطوات الخمسة بترد على خمس أسئلة بالترتيب:
+
+1. **الأمر اسمه إيه غالبًا؟** [[Get-Verb]] بيدّيك قايمة الأفعال المعتمدة (حوالي ١٠٠ فعل). الاسم بعدها بيبقى مفرد دايمًا ([[Service]] مش [[Services]]).
+2. **موجود ولا لأ؟** [[Get-Command -Noun Service]] أو [[Get-Command *service*]]. لو طلع فاضي يبقى الاسم غلط أو الموديول مش متحمّل.
+3. **بياخد إيه؟** [[-Syntax]] بيطبع السطر بدل ما تقرا صفحة كاملة.
+4. **هيعمل إيه لو شغّلته؟** [[-WhatIf]]. وده شغال على أي أمر بيغيّر حاجة، تعرفهم بـ [[Get-Command -ParameterName WhatIf]].
+5. **نجح؟** شوف بنفسك. [[Get-Service]] بعد [[Stop-Service]]، و [[Test-Path]] بعد [[New-Item]].
+
+وفي النص ده كله: [[Get-Help <الأمر> -Examples]] لو عايز مثال جاهز، و [[Get-Help <الأمر> -Online]] لو ملفات المساعدة مش متحمّلة على جهازك (درس «Get-Help»).`,
+            when: "كل مرة تقع في مهمة جديدة. وبالذات قبل ما تنسخ أمر من النت: امشي بالدورة على الأمر اللي نسخته، وهتعرف هو بيعمل إيه قبل ما تدوس Enter.",
+            mistakes: R`إنك تبدأ من جوجل بدل [[Get-Command]]. الأمر اللي هتلاقيه في النت ممكن يبقى لنسخة قديمة، أو لموديول مش متسطب عندك، أو لـ bash أصلًا.
+
+وغلطة تانية: تنفّذ وتفترض إنه نجح. PowerShell مش دايمًا بيصرّخ لما حاجة متتعملش.`
+          },
+          teach: R`## الفكرة
+
+مش هنتعلم أمر. هنتعلم إزاي نوصل لأي أمر. المهمة: **«أوقّف خدمة الطابعة»**. وهنمشي بخمس خطوات، كل واحدة بناتجها الحقيقي من PowerShell 7.6 على ويندوز 11.
+
+---
+
+## ١. [[Get-Verb | Where-Object Verb -like 'St*']]: الفعل اسمه إيه عندهم؟
+
+| الحتة | معناها |
+|---|---|
+| [[Get-Verb]] | هات قايمة الأفعال المعتمدة في PowerShell |
+| [[|]] | الـ pipe: وديها للي بعدها |
+| [[Where-Object]] | فلتر: سيب اللي بيحقق الشرط بس |
+| [[Verb]] | اسم العمود اللي هنفلتر بيه |
+| [[-like]] | مقارنة بنجمة (wildcard) |
+| [['St*']] | «أي حاجة بتبدأ بـ St» |
+
+~~~powershell
+Get-Verb | Where-Object Verb -like 'St*'
+~~~
+
+~~~text الناتج
+Verb  Group     Description
+----  -----     -----------
+Step  Common    Moves to the next point or resource in a sequence
+Start Lifecycle Initiates an operation
+Stop  Lifecycle Discontinues an activity
+~~~
+
+### نقرا الناتج
+
+- [[Stop]] وصفه [[Discontinues an activity]] (بيوقّف نشاط). ده فعلنا.
+- [[Start]] عكسه، هيلزمنا لو عايزين نشغّلها تاني.
+- [[Group]] تصنيف الفعل. [[Lifecycle]] يعني أفعال دورة حياة حاجة (ابدأ، وقّف، ريستارت، سطّب، شيل).
+
+**ليه القايمة مقفولة أصلًا؟** عشان لو كل واحد سمّى أمره باللي يعجبه، مكنتش هتعرف تخمّن. دلوقتي انت عارف إن اللي بيوقّف أي حاجة اسمه [[Stop-]]، واللي بيجيب اسمه [[Get-]]، واللي بيمسح [[Remove-]].
+
+> [[Get-Verb]] لوحده بيطبع الـ ١٠٠ فعل كلهم. الفلتر بس عشان الناتج يبقى قد الشاشة.
+
+---
+
+## ٢. [[Get-Command -Noun Service]]: الأمر موجود؟
+
+[[-Noun]] يعني «الجزء اللي بعد الشرطة». إحنا عارفين إننا عايزين حاجة عن [[Service]]، مش عارفين الاسم الكامل.
+
+~~~powershell
+Get-Command -Noun Service
+~~~
+
+~~~text الناتج
+CommandType Name            Source
+----------- ----            ------
+     Cmdlet Get-Service     Microsoft.PowerShell.Management
+     Cmdlet New-Service     Microsoft.PowerShell.Management
+     Cmdlet Remove-Service  Microsoft.PowerShell.Management
+     Cmdlet Restart-Service Microsoft.PowerShell.Management
+     Cmdlet Resume-Service  Microsoft.PowerShell.Management
+     Cmdlet Set-Service     Microsoft.PowerShell.Management
+     Cmdlet Start-Service   Microsoft.PowerShell.Management
+     Cmdlet Stop-Service    Microsoft.PowerShell.Management
+     Cmdlet Suspend-Service Microsoft.PowerShell.Management
+~~~
+
+### نقرا الناتج
+
+- تسع أوامر، كلهم [[<فعل>-Service]]. [[Stop-Service]] هو بتاعنا.
+- [[CommandType]] = [[Cmdlet]]: أمر مبني جوه PowerShell نفسه (مش برنامج .exe بره).
+- [[Source]] = [[Microsoft.PowerShell.Management]]: اسم الموديول اللي جايبهم. ده مهم: لو أمر مش ظاهر عندك، غالبًا موديوله مش متسطب.
+
+والمكسب التاني: شفت **كل اللي ممكن تعمله** بالخدمات في سطر واحد، مش بس اللي كنت بتدوّر عليه. [[Suspend-Service]] دي معرفتهاش قبل كده، ودلوقتي عارف إنها موجودة.
+
+> لو منتش عارف الاسم بالظبط، النجمة بتشتغل: [[Get-Command *service*]] بيجيب أي أمر فيه الكلمة دي في أي مكان.
+
+---
+
+## ٣. [[Get-Command Stop-Service -Syntax]]: بياخد إيه؟
+
+~~~powershell
+Get-Command Stop-Service -Syntax
+~~~
+
+~~~text الناتج
+Stop-Service [-InputObject] <ServiceController[]> [-Force] [-NoWait] [-PassThru] [-Include <string[]>] [-Exclude <string[]>] [-WhatIf] [-Confirm] [<CommonParameters>]
+
+Stop-Service [-Name] <string[]> [-Force] [-NoWait] [-PassThru] [-Include <string[]>] [-Exclude <string[]>] [-WhatIf] [-Confirm] [<CommonParameters>]
+
+Stop-Service -DisplayName <string[]> [-Force] [-NoWait] [-PassThru] [-Include <string[]>] [-Exclude <string[]>] [-WhatIf] [-Confirm] [<CommonParameters>]
+~~~
+
+### نقرا الناتج
+
+تلات سطور، يعني **تلات طرق** مختلفة تنادي بيها نفس الأمر (اسمها parameter sets):
+
+1. تديله الـ object نفسه ([[-InputObject]]) — ده اللي بيحصل لما تعمل [[Get-Service Spooler | Stop-Service]].
+2. تديله الاسم ([[-Name]]).
+3. تديله الاسم المعروض ([[-DisplayName]]).
+
+وتختار واحدة منهم بس. والمهم اللي هنستخدمه: السطر التاني، [[-Name]].
+
+ومنه كمان شفنا إن [[-WhatIf]] مدعومة. تفاصيل قراية السطر ده (الأقواس ومعانيها) في الدرس اللي بعده.
+
+---
+
+## ٤. [[Stop-Service -Name Spooler -WhatIf]]: جرّب من غير ما تنفّذ
+
+[[Spooler]] اسم خدمة الطابعة في ويندوز (الاسم المعروض [[Print Spooler]]).
+
+~~~powershell
+Stop-Service -Name Spooler -WhatIf
+~~~
+
+~~~text الناتج
+What if: Performing the operation "Stop-Service" on target "Print Spooler (Spooler)".
+~~~
+
+### نقرا الناتج
+
+- [[What if:]] يعني «لو كنت شغّلتني من غير [[-WhatIf]]، كنت هعمل الآتي».
+- [[Performing the operation "Stop-Service"]] العملية اللي كانت هتتعمل.
+- [[on target "Print Spooler (Spooler)"]] على مين بالظبط. ودي أهم حتة: بتأكدلك إنك ظبطت الاسم صح وإنه لقى الخدمة.
+
+**الخدمة لسه شغالة.** [[-WhatIf]] مبينفذش.
+
+---
+
+## ٥. [[Get-Service -Name Spooler]]: اتأكد بنفسك
+
+~~~powershell
+Get-Service -Name Spooler
+~~~
+
+~~~text الناتج
+ Status Name    DisplayName
+ ------ ----    -----------
+Running Spooler Print Spooler
+~~~
+
+[[Running]] يعني لسه شغالة — وده المتوقع، لأن اللي قبله كان [[-WhatIf]]. لو كنت شغّلت الأمر من غير [[-WhatIf]] (ومعاك صلاحية أدمن) الحالة كانت هتبقى [[Stopped]].
+
+ودي الخطوة اللي الناس بتنساها: **متفترضش، شوف**.
+
+---
+
+## الدورة في جدول
+
+| الخطوة | السؤال | الأمر |
+|---|---|---|
+| ١ | الفعل اسمه إيه عندهم؟ | [[Get-Verb]] |
+| ٢ | الأمر موجود؟ وإيه اللي حواليه؟ | [[Get-Command -Noun X]] |
+| ٣ | بياخد إيه؟ | [[Get-Command X -Syntax]] |
+| ٤ | هيعمل إيه؟ | [[X -WhatIf]] |
+| ٥ | نجح؟ | [[Get-X]] تاني |
+
+ولو احتجت مثال جاهز في النص: [[Get-Help X -Examples]]، ولو ملفات المساعدة مش متحمّلة: [[Get-Help X -Online]].
+
+---
+
+## الخلاصة
+
+- الأمر في PowerShell = **فعل من قايمة معروفة** + **اسم مفرد**. ده اللي بيخليك تخمّن.
+- [[Get-Command]] بيدوّر بالاسم أو بجزء منه أو بالفعل أو بالموديول. ابدأ منه مش من جوجل.
+- [[-Syntax]] بيديك سطر الاستخدام من غير ما تقرا صفحة.
+- [[-WhatIf]] بيخليك تجرّب على الحقيقي من غير خسارة. خليها عادة قبل أي أمر بيغيّر.
+- بعد التنفيذ، اتأكد بأمر [[Get-]] بدل ما تفترض.`,
+          lines: [
+            R`هات الأفعال المعتمدة وفلتر اللي بيبدأ بـ St: Stop هو اللي عايزينه`,
+            R`كل الأوامر اللي اسمها Service: من هنا عرفنا إن الاسم الكامل Stop-Service`,
+            R`سطر الاستخدام: الـ parameters وأنواعها، ومنه شفنا إن -WhatIf مدعومة`,
+            R`جرّب من غير ما تنفّذ: بيطبع «كنت هوقّف Print Spooler» والخدمة متتقفلش`,
+            R`اتأكد بنفسك من الحالة بعد الكلام ده: Running لأن اللي فات كان WhatIf`
+          ]
+        },
+
+        {
+          cmd: "Get-Command -Verb و -Noun",
+          title: "اصطاد الأمر من نص اسمه",
+          desc: R`[[Get-Command]] هو محرك البحث بتاع PowerShell جوه الترمنال. بتديله فعل أو اسم أو جزء من اسم، فيطلّعلك كل الأوامر اللي بتطابقه. ودي الطريقة اللي بتلاقي بيها أمر من غير ما تخرج من الترمنال.
+
+[[-Verb Stop]] كل اللي بيوقّف أي حاجة، و [[-Noun Service]] كل اللي بيشتغل على الخدمات، والاتنين مع بعض بيحددوا أمر واحد. و [[*word*]] من غير أي parameter بيدوّر بالنجمة في اسم الأمر كله.
+
+[[-Module <اسم>]] بيطلّع كل أوامر موديول معين، وده أسرع طريقة تعرف مكتبة جديدة سطّبتها بتقدّم إيه. و [[-CommandType Application]] بيطلّع البرامج اللي في الـ [[PATH]] (ملفات [[.exe]]) بدل أوامر PowerShell.
+
+وأقوى واحدة فيهم: [[-ParameterName WhatIf]] بيطلّع كل الأوامر اللي بتدعم parameter معين. يعني تقدر تسأل «مين الأوامر اللي بتدعم [[-WhatIf]]؟» وتلاقي الرد.
+
+وخد بالك: الاسم ([[Noun]]) في PowerShell **مفرد دايمًا**، [[Get-Service]] مش [[Get-Services]]، حتى وهو بيرجّع عشرين خدمة.`,
+          example: R`Get-Command -Verb Restart -Noun Computer
+Get-Command *shutdown*
+Get-Command -Module Microsoft.PowerShell.Management
+Get-Command -ParameterName WhatIf
+Get-Command -CommandType Application`,
+          try: R`دوّر على كل الأوامر اللي بتشتغل على الملفات بـ [[Get-Command -Noun Item]]، وبعدين عدّ كام أمر عندك في موديول [[Microsoft.PowerShell.Management]] بـ [[(Get-Command -Module Microsoft.PowerShell.Management).Count]].`,
+          sol: R`~~~text الناتج (PowerShell 7.6)
+PS> Get-Command -Noun Item
+
+CommandType Name           Version  Source
+----------- ----           -------  ------
+Cmdlet      Clear-Item     7.0.0.0  Microsoft.PowerShell.Management
+Cmdlet      Copy-Item      7.0.0.0  Microsoft.PowerShell.Management
+Cmdlet      Get-Item       7.0.0.0  Microsoft.PowerShell.Management
+Cmdlet      Invoke-Item    7.0.0.0  Microsoft.PowerShell.Management
+Cmdlet      Move-Item      7.0.0.0  Microsoft.PowerShell.Management
+Cmdlet      New-Item       7.0.0.0  Microsoft.PowerShell.Management
+Cmdlet      Remove-Item    7.0.0.0  Microsoft.PowerShell.Management
+Cmdlet      Rename-Item    7.0.0.0  Microsoft.PowerShell.Management
+Cmdlet      Set-Item       7.0.0.0  Microsoft.PowerShell.Management
+
+PS> (Get-Command -Module Microsoft.PowerShell.Management).Count
+61
+~~~
+
+الموديول الواحد ده فيه ٦١ أمر، وهو واحد من كذا موديول بييجوا مع PowerShell. ودي السبب إن الحفظ مش طريقة.`,
+          deep: {
+            why: R`عشان تبطّل تسأل «إيه الأمر اللي بيعمل كذا؟». الرد موجود جوه الترمنال اللي قدامك، وبيجاوب في أقل من ثانية، وبيجاوب بالنسبة اللي متسطبة عندك انت مش اللي في الـ docs.`,
+            how: R`[[Get-Command]] بيدور في كل الموديولات اللي في [[$env:PSModulePath]]، مش بس اللي محمّلة في الجلسة. فلو سطّبت موديول جديد وملقتوش، اقفل الترمنال وافتحه.
+
+الفرق بين الطرق:
+
+| تكتب | بيجيب |
+|---|---|
+| [[Get-Command Stop-Service]] | الأمر ده بالظبط |
+| [[Get-Command *service*]] | أي أمر اسمه فيه service |
+| [[Get-Command -Verb Stop]] | كل اللي بيوقّف |
+| [[Get-Command -Noun Service]] | كل اللي على الخدمات |
+| [[Get-Command -Module X]] | كل أوامر الموديول ده |
+| [[Get-Command -CommandType Application]] | برامج .exe في الـ PATH |
+| [[Get-Command -ParameterName WhatIf]] | كل أمر بيدعم -WhatIf |
+
+و [[-CommandType]] قيمه: [[Cmdlet]] (أمر مبني في PowerShell)، و [[Function]] (دالة متعرّفة بـ PowerShell نفسه)، و [[Alias]] (اختصار)، و [[Application]] (برنامج خارجي)، و [[Script]] و [[ExternalScript]].
+
+ولو عايز تشوف الأمر نفسه مكتوب إزاي (للـ [[Function]] بس): [[(Get-Command <الاسم>).Definition]] بيطبع الكود.`,
+            when: "أول حاجة تعملها في أي مهمة جديدة. وكمان بعد ما تسطّب موديول جديد، عشان تعرف جابلك إيه.",
+            mistakes: R`تكتب الاسم بالجمع ([[Get-Command -Noun Services]]) وميطلعش حاجة فتفتكر إنه مش موجود. الاسم مفرد دايمًا.
+
+وغلطة تانية: [[Get-Command -ParameterName WhatIf]] بيطلّع عندي ٨٣ أمر، ودي الأوامر المحمّلة في الجلسة دلوقتي بس، مش كل الموجود على الجهاز.`
+          },
+          teach: R`## الفكرة
+
+[[Get-Command]] بيرد على سؤال «فيه أمر بيعمل كذا؟». هنمشي على خمس طرق مختلفة تسأله بيهم، وكل واحدة بناتجها الحقيقي (PowerShell 7.6 على ويندوز 11).
+
+---
+
+## ١. [[Get-Command -Verb Restart -Noun Computer]]: الفعل والاسم مع بعض
+
+~~~powershell
+Get-Command -Verb Restart -Noun Computer
+~~~
+
+~~~text الناتج
+CommandType Name             Version Source
+----------- ----             ------- ------
+     Cmdlet Restart-Computer 7.0.0.0 Microsoft.PowerShell.Management
+~~~
+
+لما تدّي الاتنين، الناتج بيبقى أمر واحد غالبًا. ودي الطريقة لما تبقى متأكد من الفكرة ومش فاكر الإملاء.
+
+| الحتة | معناها |
+|---|---|
+| [[-Verb Restart]] | الفعل: «اعمل ريستارت» |
+| [[-Noun Computer]] | على إيه: الجهاز |
+| [[Version 7.0.0.0]] | نسخة الموديول اللي الأمر جاي منه |
+| [[Source]] | الموديول نفسه |
+
+---
+
+## ٢. [[Get-Command *shutdown*]]: دوّر بالنجمة
+
+النجمة ([[*]]) معناها «أي حاجة». [[*shutdown*]] = «أي اسم فيه كلمة shutdown في أي مكان».
+
+~~~powershell
+Get-Command *shutdown*
+~~~
+
+~~~text الناتج
+CommandType Name                Source
+----------- ----                ------
+Application shutdown.exe        C:\WINDOWS\system32\shutdown.exe
+Application SlideToShutDown.exe C:\WINDOWS\system32\SlideToShutDown.exe
+~~~
+
+### نقرا الناتج
+
+- [[CommandType]] = [[Application]] مش [[Cmdlet]]. يعني دول **برامج ويندوز عادية** مش أوامر PowerShell.
+- عشان كده [[Source]] هنا **مسار الملف** مش اسم موديول.
+- ومعلومة مهمة اتعلمناها من غير ما نقصد: مفيش cmdlet اسمه [[Stop-Shutdown]] ولا حاجة. اللي بيقفل الجهاز في PowerShell اسمه [[Stop-Computer]] (الاسم [[Computer]] مش [[Shutdown]]) — والبرنامج القديم [[shutdown.exe]] لسه موجود ومعاه مميزات مش في الـ cmdlet (زي المعاد).
+
+---
+
+## ٣. [[Get-Command -Module Microsoft.PowerShell.Management]]: موديول كامل
+
+~~~powershell
+(Get-Command -Module Microsoft.PowerShell.Management).Count
+~~~
+
+~~~text الناتج
+61
+~~~
+
+الأقواس [[( )]] عشان ناخد ناتج الأمر الأول وبعدين نقرا [[.Count]] منه (عدد العناصر).
+
+من غير [[.Count]] الأمر بيطبع الـ ٦١ أمر كلهم. ودي أحسن حاجة تعملها لما تسطّب موديول جديد: تشوف جابلك إيه بالظبط بدل ما تقرا صفحة الـ README.
+
+---
+
+## ٤. [[Get-Command -ParameterName WhatIf]]: مين بيدعم الـ parameter ده؟
+
+~~~powershell
+(Get-Command -ParameterName WhatIf).Count
+Get-Command -ParameterName WhatIf | Select-Object -First 8 -ExpandProperty Name
+~~~
+
+~~~text الناتج
+83
+mkdir
+Add-Content
+Clear-Content
+Clear-History
+Clear-Item
+Clear-ItemProperty
+Clear-RecycleBin
+Clear-Variable
+~~~
+
+### نقرا الناتج
+
+- [[83]] أمر في الجلسة دي بيدعم [[-WhatIf]]. يعني ٨٣ حاجة تقدر تجرّبها قبل ما تنفّذها.
+- [[Select-Object -First 8]] ياخد أول ٨ بس، و [[-ExpandProperty Name]] يطبع الاسم كنص بدل الجدول.
+- لاحظ [[mkdir]] في القايمة: دي مش cmdlet، دي [[Function]] معمولة في PowerShell بتنادي [[New-Item]]، وعشان كده ورثت منه [[-WhatIf]].
+
+ودي قلب الفكرة: مش بتسأل «الأمر ده بياخد إيه؟» بس، تقدر تسأل العكس — **«مين الأوامر اللي بتاخد الحاجة دي؟»**.
+
+---
+
+## ٥. [[Get-Command -CommandType Application]]: البرامج اللي في الـ PATH
+
+~~~powershell
+(Get-Command -CommandType Application).Count
+~~~
+
+~~~text الناتج (بيختلف من جهاز لجهاز)
+1083
+~~~
+
+دي كل البرامج التنفيذية اللي ويندوز يقدر يلاقيها من غير ما تكتب مسارها كامل (اللي في متغير [[PATH]]). الرقم عندك هيبقى مختلف حسب اللي متسطب.
+
+ولو عايز واحد بعينه: [[Get-Command git]] بيقولك [[git.exe]] موجود فين بالظبط (ده درس «Get-Command (which)»).
+
+---
+
+## الفرق بين [[Cmdlet]] و [[Function]] و [[Alias]] و [[Application]]
+
+| النوع | يعني إيه | مثال |
+|---|---|---|
+| [[Cmdlet]] | أمر مبني جوه PowerShell بـ C# | [[Get-Service]] |
+| [[Function]] | أمر متكتب بـ PowerShell نفسه | [[mkdir]] |
+| [[Alias]] | اختصار لأمر تاني | [[ls]] |
+| [[Application]] | برنامج [[.exe]] بره PowerShell | [[git.exe]] |
+
+الفرق ده مهم في حاجة واحدة بالذات: الـ [[Application]] بيرجّع **نص** و **exit code**، والـ [[Cmdlet]] بيرجّع **objects**. وده بيغيّر إزاي تتعامل مع ناتجه (درس «$? و $LASTEXITCODE»).
+
+---
+
+## الخلاصة
+
+- [[Get-Command]] بيدوّر بالفعل، أو بالاسم، أو بجزء من الاسم بالنجمة، أو بالموديول، أو بالنوع، أو حتى بالـ parameter.
+- الاسم ([[Noun]]) مفرد دايمًا.
+- [[-Module]] أسرع طريقة تعرف موديول جديد بيقدّم إيه.
+- [[-ParameterName]] بيقلب السؤال: مش «الأمر بياخد إيه» لكن «مين بياخد ده».
+- [[Application]] معناه برنامج خارجي، و [[Source]] ساعتها بيبقى مسار الملف.`,
+          lines: [
+            R`الفعل والاسم مع بعض: بيحددوا أمر واحد، كويس لما تبقى فاكر الفكرة مش الإملاء`,
+            R`دوّر بالنجمة: أي أمر أو برنامج فيه كلمة shutdown`,
+            R`كل أوامر موديول واحد: أسرع طريقة تعرف موديول جديد بيقدّم إيه`,
+            R`اقلب السؤال: مين الأوامر اللي بتدعم -WhatIf؟`,
+            R`البرامج الخارجية (.exe) اللي ويندوز يقدر يلاقيها من الـ PATH`
+          ]
+        },
+
+        {
+          cmd: "Get-Command -Syntax",
+          title: "اقرا سطر الاستخدام: الأقواس معناها إيه",
+          desc: R`[[-Syntax]] بيطبع سطر الاستخدام بتاع الأمر بدل صفحة المساعدة كلها. ولو عرفت تقرا الأقواس فيه، هتعرف تستخدم أي أمر من غير ما تقرا عنه حاجة تانية.
+
+القاعدة كلها أربع علامات:
+[[[ ]]] حوالين حاجة = **اختيارية**. [[[-Force]]] يعني ممكن تحطها وممكن لأ.
+[[< >]] = **نوع القيمة** اللي الـ parameter بياخدها. [[<string>]] نص، [[<int>]] رقم، [[<string[]>]] قايمة نصوص.
+[[[ ]]] جوه النوع = **قايمة**. [[<string[]>]] يعني ممكن تديله أكتر من قيمة بفاصلة.
+[[{ }]] = **قيم محددة** مسموح بيها بس، مفصولة بـ [[|]].
+
+وفيه حالة واحدة بتلخبط: [[[-Name] <string[]>]]، الاسم نفسه بين أقواس مربعة والنوع بعده من غير أقواس. ده معناه إن الـ parameter **إجباري** بس **اسمه** اختياري، يعني تقدر تكتب القيمة على طول من غير ما تكتب [[-Name]] (اسمها positional).
+
+ولو الأمر طبع أكتر من سطر، ده معناه إن ليه أكتر من طريقة استعمال (parameter sets)، وانت تختار واحدة منهم مش تخلط.
+
+و [[[<CommonParameters>]]] في آخر كل سطر هي الـ parameters اللي كل أمر بياخدها: [[-Verbose]] و [[-ErrorAction]] و [[-ErrorVariable]] وغيرهم.`,
+          example: R`Get-Command Get-ChildItem -Syntax
+Get-Command Stop-Service -Syntax
+(Get-Command Get-Process).ParameterSets | Select-Object Name, IsDefault
+Get-ChildItem C:\Windows -Filter *.ini
+Get-ChildItem -Path C:\Windows -Filter *.ini`,
+          try: R`اطبع [[Get-Command New-Item -Syntax]]، وجاوب من السطر: إيه الـ parameter الإجباري؟ وإيه القيم المسموحة لـ [[-ItemType]]؟`,
+          sol: R`~~~text الناتج (PowerShell 7.6)
+PS> Get-Command New-Item -Syntax
+
+New-Item [-Path] <string[]> [-ItemType <string>] [-Value <Object>] [-Force] [-Credential <pscredential>] [-WhatIf] [-Confirm] [<CommonParameters>]
+
+New-Item [[-Path] <string[]>] -Name <string> [-ItemType <string>] [-Value <Object>] [-Force] [-Credential <pscredential>] [-WhatIf] [-Confirm] [<CommonParameters>]
+~~~
+
+- في السطر الأول [[[-Path] <string[]>]]: الـ parameter **إجباري** (مفيش أقواس حوالين الحتة كلها)، بس اسمه اختياري، فـ [[New-Item x.txt]] شغالة.
+- [[-ItemType <string>]] نوعها [[<string>]] مش [[{ }]]، يعني السطر مش بيقولك القيم المسموحة. دي حالة لازم تروح فيها للمساعدة: [[Get-Help New-Item -Online]]. القيم المشهورة [[File]] و [[Directory]] و [[SymbolicLink]] و [[Junction]] و [[HardLink]].
+
+**الدرس المستفاد:** [[-Syntax]] بيقولك الشكل والأنواع، مش بيقولك القيم إلا لو كانت [[{ }]]. ساعتها كمّل بـ [[-Online]].`,
+          deep: {
+            why: R`صفحة المساعدة الكاملة ممكن تبقى ٣٠٠ سطر. سطر الـ Syntax بيدّيك ٩٠٪ من اللي محتاجه في سطر واحد: إيه الإجباري، إيه الاختياري، كل حاجة نوعها إيه، وإيه الطرق المختلفة للنداء.`,
+            how: R`اقرا السطر من الشمال:
+
+~~~text
+Get-ChildItem [[-Path] <string[]>] [[-Filter] <string>] [-Recurse] [-Depth <uint>] ...
+~~~
+
+- [[[-Path] <string[]>]]: قوسين مربعين برّانيين = الحتة كلها **اختيارية**. وقوسين جوّانيين على الاسم = الاسم نفسه اختياري كمان. يعني الاتنين شغالين: [[Get-ChildItem C:\]] و [[Get-ChildItem -Path C:\]].
+- [[[-Recurse]]]: من غير [[< >]] بعدها، يعني دي **switch**: موجودة أو لأ، مش بتاخد قيمة.
+- [[[-Depth <uint>]]]: اختيارية، وبتاخد رقم صحيح موجب ([[uint]] = unsigned integer).
+- [[-DisplayName <string[]>]] من غير أقواس خالص = **إجبارية** في الطريقة دي.
+
+والترتيب مهم في الـ positional بس. [[Get-ChildItem C:\Windows *.ini]] شغالة لأن [[-Path]] أول positional و [[-Filter]] تانيهم.
+
+ولو عايز تعرف كل parameter بالتفصيل: [[Get-Help <الأمر> -Parameter Recurse]] بيشرح واحد بس، و [[Get-Help <الأمر> -Full]] بيشرح الكل.
+
+وفي الكود المكتوب (مش في الترمنال) **اكتب أسامي الـ parameters دايمًا**، حتى الـ positional. [[Copy-Item -Path a -Destination b]] واضحة، و [[Copy-Item a b]] محتاجة اللي بعدك يفتح المساعدة.`,
+            when: "أول ما تشوف أمر جديد. وقبل ما تكتبه في سكربت، عشان تعرف الإجباري من الاختياري.",
+            mistakes: R`تخلط parameter sets. لو كتبت [[Stop-Service -Name Spooler -DisplayName "Print Spooler"]] هتاخد error [[AmbiguousParameterSet]]، لأن الاتنين من سطرين مختلفين.
+
+وغلطة تانية: تفتكر إن [[<string[]>]] معناها قايمة إجبارية. لأ، الأقواس المربعة جوه النوع معناها «**يقبل** أكتر من واحد»، وقيمة واحدة برضه شغالة.`
+          },
+          teach: R`## الفكرة
+
+سطر الـ Syntax لغة ليها أربع علامات بس. لما تحفظ الأربعة، أي أمر في PowerShell بقى مقروء. هنفك سطرين حقيقيين.
+
+---
+
+## ١. [[Get-Command Get-ChildItem -Syntax]]
+
+~~~powershell
+Get-Command Get-ChildItem -Syntax
+~~~
+
+~~~text الناتج (اتقص للوضوح)
+Get-ChildItem [[-Path] <string[]>] [[-Filter] <string>] [-Include <string[]>]
+  [-Exclude <string[]>] [-Recurse] [-Depth <uint>] [-Force] [-Name]
+  [-Attributes {None | ReadOnly | Hidden | System | Directory | Archive | ...}]
+  [-FollowSymlink] [-Directory] [-File] [-Hidden] [-ReadOnly] [-System]
+  [<CommonParameters>]
+~~~
+
+### العلامات الأربعة
+
+~~~text خريطة
+[ ]              اختياري
+< >              نوع القيمة
+<string[]>       الأقواس جوه النوع = يقبل أكتر من قيمة بفاصلة
+{ a | b | c }    القيم المسموحة بس، واختار واحدة
+~~~
+
+### نفكها حتة حتة
+
+**[[[-Path] <string[]>]]**
+
+قوسين جوه قوسين، وكل واحد معناه حاجة:
+
+| القوس | اللي جواه | معناه |
+|---|---|---|
+| البرّاني | [[[-Path] <string[]>]] كلها | الـ parameter **اختياري**، ممكن متكتبهوش خالص |
+| الجوّاني | [[-Path]] الاسم بس | **الاسم** اختياري، تقدر تكتب القيمة على طول |
+
+فالتلاتة دول شغالين:
+
+~~~powershell
+Get-ChildItem
+Get-ChildItem C:\Windows
+Get-ChildItem -Path C:\Windows
+~~~
+
+و [[<string[]>]]: نص، والأقواس المربعة معناها **ممكن تديله قايمة**:
+
+~~~powershell
+Get-ChildItem -Path C:\Windows, C:\Users
+~~~
+
+**[[[-Recurse]]]**
+
+مفيش [[< >]] بعدها. يعني **switch**: مش بتاخد قيمة، موجودة يعني «أيوه».
+
+~~~powershell
+Get-ChildItem -Recurse
+~~~
+
+**[[[-Depth <uint>]]]**
+
+بتاخد رقم، ونوعه [[uint]] يعني رقم صحيح **موجب** (unsigned integer). لو كتبت [[-Depth -1]] هياخد error.
+
+**[[[-Attributes {None | ReadOnly | Hidden | ...}]]]**
+
+الأقواس المعقوفة [[{ }]] معناها **دي القيم المسموحة وبس**، والـ [[|]] بينهم معناه «أو». فـ [[-Attributes Hidden]] شغالة و [[-Attributes Invisible]] هتاخد error.
+
+> والحتة الحلوة: الـ [[{ }]] دي بالظبط هي اللي بتخلي زرار Tab يعرف يكمّلك القيم.
+
+**[[[<CommonParameters>]]]**
+
+اختصار بيتكتب في آخر كل أمر. معناه إنه بياخد كمان الـ parameters العامة: [[-Verbose]] و [[-Debug]] و [[-ErrorAction]] و [[-ErrorVariable]] و [[-WarningAction]] و [[-OutVariable]] وغيرهم. مش بتتكتب كلها عشان ميبقاش كل سطر بطول الصفحة.
+
+---
+
+## ٢. [[Get-Command Stop-Service -Syntax]]: تلات سطور يعني تلات طرق
+
+~~~text الناتج
+Stop-Service [-InputObject] <ServiceController[]> [-Force] [-NoWait] ...
+
+Stop-Service [-Name] <string[]> [-Force] [-NoWait] ...
+
+Stop-Service -DisplayName <string[]> [-Force] [-NoWait] ...
+~~~
+
+كل سطر **parameter set**: طريقة كاملة ومستقلة لنداء الأمر. وانت تختار واحدة، متخلطش.
+
+| السطر | الـ parameter الأساسي | إجباري؟ | تستخدمه امتى |
+|---|---|---|---|
+| ١ | [[-InputObject <ServiceController[]>]] | أيوه | لما ييجي من pipeline |
+| ٢ | [[-Name <string[]>]] | أيوه | لما تعرف الاسم القصير |
+| ٣ | [[-DisplayName <string[]>]] | أيوه | لما تعرف الاسم المعروض |
+
+لاحظ الفرق في السطر التالت: [[-DisplayName]] **مش** بين أقواس مربعة، يعني لازم تكتب اسمها. أما [[[-Name]]] فاسمها اختياري، عشان كده [[Stop-Service Spooler]] شغالة.
+
+**لو خلطت:**
+
+~~~powershell
+Stop-Service -Name Spooler -DisplayName "Print Spooler"
+~~~
+
+~~~text الناتج (من الـ docs: Parameter set cannot be resolved)
+Stop-Service: Parameter set cannot be resolved using the specified named parameters.
+~~~
+
+---
+
+## ٣. تشوف الـ parameter sets بأساميها
+
+~~~powershell
+(Get-Command Get-Process).ParameterSets | Select-Object Name, IsDefault
+~~~
+
+~~~text الناتج
+Name                    IsDefault
+----                    ---------
+Name                         True
+NameWithUserName            False
+Id                          False
+IdWithUserName              False
+InputObject                 False
+IdWithUserName              False
+~~~
+
+- ستة أطقم. [[IsDefault = True]] على [[Name]] معناه: لو كتبت [[Get-Process]] من غير أي parameter، هو بيستخدم الطقم ده.
+- [[NameWithUserName]] طقم زيادة بيضيف عمود اليوزر، وده بيحتاج صلاحيات أعلى.
+
+---
+
+## ٤. الـ positional: ليه ده شغال؟
+
+~~~powershell
+Get-ChildItem C:\Windows -Filter *.ini
+Get-ChildItem -Path C:\Windows -Filter *.ini
+~~~
+
+الاتنين بيعملوا نفس الحاجة بالظبط. الأول بيعتمد على إن [[-Path]] هو الـ parameter رقم ٠ (أول positional)، فـ PowerShell فهم إن [[C:\Windows]] دي قيمته.
+
+~~~text الناتج (الاتنين)
+    Directory: C:\Windows
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---            5/8/2021  9:14 AM            111 system.ini
+-a---            5/8/2021  9:14 AM             92 win.ini
+~~~
+
+**القاعدة:** في الترمنال اكتب اللي يريّحك. في السكربت اكتب أسامي الـ parameters كاملة. السكربت بيتقرا أكتر ما بيتكتب.
+
+---
+
+## الخلاصة
+
+| العلامة | معناها |
+|---|---|
+| [[[-X]]] | اختياري |
+| [[-X]] من غير أقواس | إجباري |
+| [[[-X] <type>]] | إجباري، بس اسمه ممكن يتساب (positional) |
+| [[<string>]] | نوع القيمة |
+| [[<string[]>]] | يقبل قايمة بفاصلة |
+| [[-X]] من غير [[< >]] | switch: موجودة أو لأ |
+| [[{a | b}]] | القيم المسموحة بس |
+| أكتر من سطر | أكتر من طريقة نداء، اختار واحدة |
+| [[[<CommonParameters>]]] | [[-Verbose]] و [[-ErrorAction]] وإخواتهم |`,
+          lines: [
+            R`سطر الاستخدام بتاع Get-ChildItem: فيه كل أنواع الأقواس الأربعة`,
+            R`تلات سطور = تلات parameter sets، تختار واحد منهم مش تخلط`,
+            R`أسامي الأطقم وأنهي واحد الافتراضي لما متكتبش parameters`,
+            R`positional: C:\Windows راحت لـ -Path لوحدها لأنها أول parameter`,
+            R`نفس الأمر بالظبط بس بالاسم الصريح: ده اللي تكتبه في السكربتات`
+          ]
+        },
+
+        {
+          cmd: "-WhatIf و -Confirm",
+          title: "شوف الأمر هيعمل إيه قبل ما يعمله",
+          desc: R`[[-WhatIf]] بيخلي الأمر يطبع «كنت هعمل كذا على كذا» من غير ما ينفّذ حاجة. و [[-Confirm]] بيوقف ويسألك على كل عنصر قبل ما يلمسه. الاتنين دول اللي بيخلّوك تجرّب أوامر خطيرة على بياناتك الحقيقية من غير خوف.
+
+[[-WhatIf]] موجودة في أي أمر بيغيّر حاجة (بيمسح، بينقل، بيكتب، بيوقّف). تعرف مين بيدعمها بـ [[Get-Command -ParameterName WhatIf]] — عندي طلعوا ٨٣ أمر.
+
+الناتج بيبقى سطر زي: [[What if: Performing the operation "Remove File" on target "C:\...\a.txt"]]. وكل حتة فيه مهمة: اسم العملية، و **على مين بالظبط**. السطر ده هو اللي بيكشف إن الفلتر بتاعك واخد ملفات مكنتش قاصدها.
+
+و [[-Confirm]] بيطلّع سؤال فيه خمس اختيارات: [[Y]] أيوه للعنصر ده، و [[A]] أيوه للكل، و [[N]] لأ للعنصر ده، و [[L]] لأ للكل، و [[S]] وقّف وادخل جلسة فرعية أبص فيها وارجع.
+
+وتقدر تخلي [[-WhatIf]] الافتراضي في الجلسة كلها بـ [[$WhatIfPreference = $true]]، وساعتها لو عايز تنفّذ بجد تكتب [[-WhatIf:$false]].
+
+وفي سكربتاتك انت: [[[CmdletBinding(SupportsShouldProcess)]]] فوق [[param()]] بيدّي سكربتك نفس الـ parameters دي (درس «[CmdletBinding()]»).`,
+          example: R`Remove-Item *.txt -WhatIf
+Stop-Service -Name Spooler -WhatIf
+Restart-Computer -WhatIf
+$WhatIfPreference = $true
+$WhatIfPreference = $false`,
+          flag: "danger",
+          try: R`اعمل فولدر تجربة وحط فيه ملفات، وجرّب [[Get-ChildItem -Recurse | Remove-Item -WhatIf]] وعدّ كام سطر «What if» طلع. بعدين غيّر الفلتر لـ [[-Filter *.log]] وشوف الفرق.`,
+          sol: R`~~~text الناتج (PowerShell 7.6، فولدر فيه a.txt و b.txt و old.log)
+PS> Remove-Item *.txt -WhatIf
+What if: Performing the operation "Remove File" on target "C:\...\lab\a.txt".
+What if: Performing the operation "Remove File" on target "C:\...\lab\b.txt".
+
+PS> Get-ChildItem
+a.txt
+b.txt
+old.log
+~~~
+
+سطرين «What if» بس، لأن [[*.txt]] مطابقتش [[old.log]]. والتلات ملفات لسه موجودين بعد الأمر.
+
+**ودي الفايدة بالظبط:** لو كنت كتبت [[*]] بالغلط، كنت هتشوف تلات سطور بدل اتنين، وتعرف إنك غلطان **قبل** ما تمسح.`,
+          deep: {
+            why: R`في الترمنال مفيش «undo» ولا سلة مهملات (الافتراضي). [[Remove-Item]] غلط على فولدر غلط = البيانات راحت. [[-WhatIf]] بيكلفك ثانية واحدة وبيوفّر عليك ده.
+
+والأهم: هو مش بيحميك من الأمر، هو بيحميك من **الفلتر**. أغلب الكوارث مش من أمر غلط، من [[*]] أو [[-Recurse]] واخدة أكتر من المقصود.`,
+            how: R`الفكرة ورا [[-WhatIf]] اسمها [[ShouldProcess]]. أي أمر بيغيّر حاجة بيسأل جواه: «أنا مسموحلي أعمل العملية دي على الهدف ده؟». والرد بيتحدد من:
+
+| الحالة | بيحصل إيه |
+|---|---|
+| عادي | بينفّذ |
+| [[-WhatIf]] | بيطبع السطر ومبينفذش |
+| [[-Confirm]] | بيسأل ويستنى ردك |
+| [[$WhatIfPreference = $true]] | كل الأوامر في الجلسة بقت [[-WhatIf]] |
+| [[-WhatIf:$false]] | نفّذ بجد حتى لو الـ preference متفعّل |
+
+و [[-Confirm]] ليه أخ اسمه [[$ConfirmPreference]]، وده بياخد [[High]] (الافتراضي) أو [[Medium]] أو [[Low]] أو [[None]]. كل أمر عنده «خطورة» متسجّلة، ولو خطورته أعلى من الـ preference بيسأل لوحده من غير ما تكتب [[-Confirm]]. عشان كده [[Remove-Item]] على فولدر فيه حاجة بيسألك لوحده.
+
+**الفرق بين [[-WhatIf]] و [[-Confirm]]:**
+
+- [[-WhatIf]] للتجربة: شوف الليستة كلها الأول.
+- [[-Confirm]] للتنفيذ الحذر: امشي عنصر عنصر.
+- والمزيج العملي: [[-WhatIf]] الأول، تراجع الليستة، وبعدين شيلها وشغّل.
+
+**حاجة مهمة:** [[-WhatIf]] مش ضمان كامل. هو بيشتغل على الأوامر اللي داعماه بس. لو السكربت بتاعك فيه [[[System.IO.File]::Delete()]] أو بينادي [[.exe]] خارجي، [[-WhatIf]] مش هيوقّفهم.`,
+            when: "قبل أي [[Remove-]] أو [[Move-]] أو [[Set-]] أو [[Stop-]] على حاجة مش لعب. وبالذات لو فيه [[*]] أو [[-Recurse]] أو متغير في المسار.",
+            mistakes: R`تحط [[-WhatIf]] في نص الـ pipeline بدل آخره. [[Get-ChildItem -WhatIf | Remove-Item]] ملهاش معنى: [[Get-ChildItem]] مبيغيّرش حاجة أصلًا، والمسح هيتم. الصح [[Get-ChildItem | Remove-Item -WhatIf]].
+
+وتفتكر إن [[-WhatIf]] بتحمي من كل حاجة. أوامر زي [[Format-Volume]] و [[Clear-Disk]] بتدعمها، بس لو ناديت برنامج خارجي زي [[diskpart]] مفيش حماية.
+
+وتسيب [[$WhatIfPreference = $true]] متفعّل وتنسى، وبعدين تقعد تستغرب ليه الأوامر مش بتعمل حاجة.`
+          },
+          teach: R`## الفكرة
+
+[[-WhatIf]] بيحوّل أي أمر خطير لـ «معاينة». هنشوفه على ملفات، وعلى خدمة، وعلى أخطر أمر في الجهاز كله: قفل الجهاز.
+
+كل الناتج اللي تحت من تشغيل حقيقي على PowerShell 7.6 / ويندوز 11، **ومحصلش أي تغيير**.
+
+---
+
+## ١. [[Remove-Item *.txt -WhatIf]]: على الملفات
+
+الفولدر فيه تلات ملفات: [[a.txt]] و [[b.txt]] و [[old.log]].
+
+~~~powershell
+Remove-Item *.txt -WhatIf
+~~~
+
+~~~text الناتج
+What if: Performing the operation "Remove File" on target "C:\...\lab\a.txt".
+What if: Performing the operation "Remove File" on target "C:\...\lab\b.txt".
+~~~
+
+### نفك السطر
+
+| الحتة | معناها |
+|---|---|
+| [[What if:]] | «لو كنت نفّذت، كان هيحصل الآتي» |
+| [[Performing the operation "Remove File"]] | العملية: مسح ملف |
+| [[on target "C:\...\lab\a.txt"]] | على الملف ده بالظبط، بالمسار الكامل |
+
+**والحتة المهمة هي [[on target]].** هي اللي بتقولك الفلتر بتاعك مسك إيه فعلًا.
+
+### نتأكد إن مفيش حاجة اتمسحت
+
+~~~powershell
+Get-ChildItem | Select-Object -ExpandProperty Name
+~~~
+
+~~~text الناتج
+a.txt
+b.txt
+old.log
+~~~
+
+التلاتة موجودين. وعدد سطور الـ «What if» كان **اتنين** مش تلاتة، لأن [[old.log]] مش [[.txt]].
+
+> لو كنت كتبت [[Remove-Item *]] كنت هتشوف تلات سطور، وده كان هينبهك على طول.
+
+---
+
+## ٢. [[Stop-Service -Name Spooler -WhatIf]]: على خدمة
+
+~~~powershell
+Stop-Service -Name Spooler -WhatIf
+~~~
+
+~~~text الناتج
+What if: Performing the operation "Stop-Service" on target "Print Spooler (Spooler)".
+~~~
+
+- العملية [[Stop-Service]]، والهدف [[Print Spooler (Spooler)]].
+- الهدف هنا طلع بالاسمين: المعروض والقصير. فلو كنت كتبت اسم غلط، كنت هتاخد error بدل السطر ده.
+- الخدمة لسه [[Running]]. اتأكدنا بـ [[Get-Service Spooler]].
+
+---
+
+## ٣. [[Restart-Computer -WhatIf]]: على أخطر أمر عندك
+
+~~~powershell
+Restart-Computer -WhatIf
+~~~
+
+~~~text الناتج
+What if: Performing the operation "Enable the Local shutdown access rights and restart the computer." on target "localhost (Dexter)".
+~~~
+
+و [[Stop-Computer -WhatIf]]:
+
+~~~text الناتج
+What if: Performing the operation "Stop-Computer" on target "localhost (Dexter)".
+~~~
+
+### نقرا الناتج
+
+- [[localhost (Dexter)]]: الجهاز المحلي، واسمه [[Dexter]] (هيبقى اسم جهازك انت).
+- وصف العملية في [[Restart-Computer]] بيذكر [[Enable the Local shutdown access rights]]: يعني الأمر جواه بيفعّل صلاحية الإطفاء الأول وبعدين يعمل ريستارت.
+- **الجهاز معملش ريستارت.** ودي الحتة اللي بتخليك تقدر تختبر سكربت بيقفل الجهاز وانت مرتاح.
+
+> دي أهم استخدام لـ [[-WhatIf]] في الدروس دي كلها: لما نبني سكربت بيقفل الجهاز في «مشاريع PowerShell»، هنختبره كله بـ [[-WhatIf]] من غير ما الجهاز يقفل ولا مرة.
+
+---
+
+## ٤. [[-Confirm]]: يسألك على كل واحد
+
+~~~powershell
+Remove-Item *.txt -Confirm
+~~~
+
+~~~text الناتج (الشكل من الـ docs، لأنه محتاج رد منك)
+Confirm
+Are you sure you want to perform this action?
+Performing the operation "Remove File" on target "C:\...\lab\a.txt".
+[Y] Yes  [A] Yes to All  [N] No  [L] No to All  [S] Suspend  [?] Help (default is "Y"):
+~~~
+
+| الاختيار | معناه |
+|---|---|
+| [[Y]] | أيوه للعنصر ده بس |
+| [[A]] | أيوه لكل اللي جاي، بلاش تسألني تاني |
+| [[N]] | لأ للعنصر ده، كمّل للي بعده |
+| [[L]] | لأ لكل اللي جاي، وقّف |
+| [[S]] | وقّف مؤقتًا وافتحلي جلسة أبص فيها، ولما أكتب [[exit]] أرجع للسؤال |
+| [[?]] | اشرحلي الاختيارات دي |
+
+[[S]] دي الحلوة: تقدر توقف في نص عملية، تبص على الملف، وترجع تقرر.
+
+---
+
+## ٥. [[$WhatIfPreference]]: خلي الجلسة كلها «معاينة»
+
+~~~powershell
+$WhatIfPreference = $true
+Remove-Item old.log
+~~~
+
+~~~text الناتج
+What if: Performing the operation "Remove File" on target "C:\...\lab\old.log".
+~~~
+
+مكتبناش [[-WhatIf]] وبرضه اشتغل كمعاينة. مفيد لما تبقى بتجرّب سكربت طويل.
+
+وعشان تنفّذ أمر واحد بجد وانت في الوضع ده:
+
+~~~powershell
+Remove-Item old.log -WhatIf:$false
+~~~
+
+و عشان ترجع كل حاجة لطبيعتها:
+
+~~~powershell
+$WhatIfPreference = $false
+~~~
+
+> [[-WhatIf:$false]] بالنقطتين دي شكل كتابة الـ switch بقيمة صريحة. أي switch تقدر تكتبها [[-Force:$true]] أو [[-Force:$false]]، ودي بتلزمك لما القيمة جاية من متغير.
+
+---
+
+## إزاي تعرف مين بيدعمهم
+
+~~~powershell
+(Get-Command -ParameterName WhatIf).Count
+~~~
+
+~~~text الناتج
+83
+~~~
+
+٨٣ أمر في الجلسة. ولو أمر معين مش منهم، يبقى هو مش بيغيّر حاجة أصلًا (زي [[Get-]])، أو إنه مش بيدعم المعاينة فخد بالك منه.
+
+---
+
+## الخلاصة
+
+- [[-WhatIf]] = اطبع اللي كنت هعمله ومتعملش. مجاني، وبيكشف غلط الفلتر.
+- [[-Confirm]] = اسألني على كل واحد. و [[S]] بتوقف وتفتحلك جلسة تبص فيها.
+- السطر المهم في الناتج هو [[on target]]: هو اللي بيقولك مسكت إيه بالظبط.
+- [[$WhatIfPreference = $true]] بتعمّم المعاينة على الجلسة، و [[-WhatIf:$false]] بتكسرها لأمر واحد.
+- [[-WhatIf]] بتحمي من أوامر PowerShell اللي داعماها بس، مش من برامج خارجية ولا من [[[System.IO.File]::Delete()]].
+- حطها في آخر الـ pipeline، على الأمر اللي بيغيّر، مش في أوله.`,
+          lines: [
+            R`معاينة مسح: بيطبع سطر لكل ملف هيتمسح والملفات بتفضل مكانها`,
+            R`نفس الفكرة على خدمة: بيورّيك العملية والهدف بالاسمين`,
+            R`حتى الريستارت ليه معاينة: الجهاز مش بيعمل ريستارت`,
+            R`خلي كل أوامر الجلسة معاينة من غير ما تكتب -WhatIf كل مرة`,
+            R`رجّع الوضع الطبيعي: من غير السطر ده هتفضل تستغرب ليه مفيش حاجة بتتنفذ`
+          ]
+        },
+
+        {
+          cmd: "Get-Alias",
+          title: "الاختصارات: تفك كود غيرك وتكتب كود مفهوم",
+          desc: R`[[Get-Alias]] بيقولك الاختصار ده بيشاور على أمر إيه، و [[Get-Alias -Definition <الأمر>]] بيعمل العكس: يقولك الأمر ده ليه اختصارات إيه. ودي اللي بتخليك تقرا كود مكتوب بـ [[gci | ? Length -gt 1KB | % Name]] وتفهمه.
+
+PowerShell بييجي معاه حوالي ١٥٠ اختصار جاهز. منهم اللي جاي من ويندوز ([[dir]] و [[copy]] و [[cls]])، ومنهم اللي جاي من لينكس ([[ls]] و [[cat]] و [[pwd]])، ومنهم اختصارات PowerShell نفسه ([[gci]] و [[%]] و [[?]]).
+
+و [[Options]] في الناتج بيقول الاختصار محمي ولا لأ: [[ReadOnly]] يعني متقدرش تغيّره من غير [[-Force]]، و [[AllScope]] يعني شغال في كل الدوال والسكربتات.
+
+وتعمل اختصار بتاعك بـ [[Set-Alias]]، بس ده بيعيش في الجلسة دي بس؛ عشان يفضل حطه في [[$PROFILE]] (درس «$PROFILE»).
+
+**وقاعدة مهمة:** الاختصارات للترمنال بس. في السكربتات اكتب الاسم الكامل، لأن الاختصار ممكن يبقى متغيّر على جهاز تاني، و [[ls]] على لينكس في PowerShell بيتشال عشان يسيب مكان لـ [[ls]] الحقيقي.`,
+          example: R`Get-Alias ls, gci, cat, cd
+Get-Alias -Definition Get-ChildItem
+Get-Alias | Measure-Object
+Set-Alias gh Get-Help
+Get-Command gci | Select-Object CommandType, Name, ResolvedCommand`,
+          try: R`شوف [[%]] و [[?]] بيشاوروا على إيه بـ [[Get-Alias -Definition ForEach-Object]] و [[Get-Alias -Definition Where-Object]]. وبعدين حاول [[Get-Alias '?']] وشوف الناتج الغريب واعرف ليه.`,
+          sol: R`~~~text الناتج (PowerShell 7.6)
+PS> Get-Alias -Definition ForEach-Object
+
+CommandType     Name                      Definition
+-----------     ----                      ----------
+Alias           % -> ForEach-Object
+Alias           foreach -> ForEach-Object
+
+PS> Get-Alias -Definition Where-Object
+
+CommandType     Name                      Definition
+-----------     ----                      ----------
+Alias           ? -> Where-Object
+Alias           where -> Where-Object
+~~~
+
+أما [[Get-Alias '?']] فبيطلّع **كل الاختصارات اللي اسمها حرف واحد**:
+
+~~~text الناتج
+Name Definition     Options
+---- ----------     -------
+?    Where-Object   ReadOnly, AllScope
+%    ForEach-Object ReadOnly, AllScope
+h    Get-History
+r    Invoke-History
+~~~
+
+**ليه؟** لأن [[?]] في PowerShell wildcard معناها «أي حرف واحد»، و [[Get-Alias]] بيقبل wildcards في الاسم. فهو فهمها «هات أي اختصار طوله حرف واحد» مش «هات الاختصار المسمّى ؟».
+
+والحل لو عايز الاختصار ده بالذات: دوّر بالعكس ([[-Definition Where-Object]]) زي فوق.`,
+          deep: {
+            why: R`هتقرا أكواد في النت مكتوبة بالاختصارات، وهتلاقي [[gci]] و [[sls]] و [[iwr]] من غير ما تعرف دي إيه. [[Get-Alias]] بيفكها في ثانية.
+
+والاتجاه التاني مهم كمان: انت بتكتب في الترمنال طول اليوم، والاختصار بيوفّر وقت حقيقي.`,
+            how: R`الاختصارات في PowerShell مش مجرد «نسخ ولصق» زي [[doskey]] في CMD ولا [[alias]] في bash. هي **اسم تاني لنفس الأمر**، فبتاخد نفس الـ parameters بالظبط. [[gci -Recurse]] شغالة لأن [[gci]] هو [[Get-ChildItem]] بعينه.
+
+وعشان كده مينفعش تعمل alias فيه parameters: [[Set-Alias ll "Get-ChildItem -Force"]] **مش** هتشتغل. اللي بيعمل ده دالة:
+
+~~~powershell
+function ll { Get-ChildItem -Force @args }
+~~~
+
+[[@args]] بتمرّر أي حاجة كتبتها بعد [[ll]] للأمر اللي جوه.
+
+**الاختصارات اللي من ويندوز ولينكس:**
+
+| تكتب | في الحقيقة |
+|---|---|
+| [[dir]] / [[ls]] / [[gci]] | [[Get-ChildItem]] |
+| [[cat]] / [[type]] / [[gc]] | [[Get-Content]] |
+| [[cd]] / [[chdir]] / [[sl]] | [[Set-Location]] |
+| [[cls]] / [[clear]] | [[Clear-Host]] |
+| [[%]] | [[ForEach-Object]] |
+| [[?]] | [[Where-Object]] |
+| [[iwr]] | [[Invoke-WebRequest]] |
+| [[sls]] | [[Select-String]] |
+
+**تعرف الاختصار ورا الأمر:** [[Get-Command gci]] بيطلّع عمود [[ResolvedCommand]] فيه الاسم الحقيقي، و [[Get-Help <أمر>]] بيعرض قسم [[ALIASES]].
+
+**على لينكس وماك:** PowerShell بيشيل الاختصارات اللي بتتعارض مع أوامر النظام ([[ls]] و [[cat]] و [[man]] و [[mv]] و [[cp]] و [[rm]] و [[pwd]])، عشان لما تكتب [[ls]] هناك تاخد الأمر الحقيقي. وده السبب التاني إن السكربت ميعتمدش على اختصار.`,
+            when: "لما تقرا كود مش فاهمه. ولما تبقى بتكتب في الترمنال كتير وعايز توفّر ضغطات.",
+            mistakes: R`تستخدم الاختصارات في سكربت هيشتغل على جهاز تاني. ولا هتشتغل على لينكس، ولا اللي بعدك هيفهمها، و [[PSScriptAnalyzer]] هينبهك عليها بقاعدة [[PSAvoidUsingCmdletAliases]].
+
+وتحاول تحط parameters جوه [[Set-Alias]]. ده شغل دالة مش alias.
+
+وتنسى إن [[?]] و [[*]] wildcards، فتدوّر على اختصار باسمه وتاخد نتايج مش متوقعة.`
+          },
+          teach: R`## الفكرة
+
+الاختصار في PowerShell هو **اسم تاني لنفس الأمر**. هنشوف إزاي نفكه، وإزاي نعمل واحد، وإزاي ده بيختلف عن bash و CMD.
+
+كل الناتج من PowerShell 7.6 على ويندوز 11.
+
+---
+
+## ١. [[Get-Alias ls, gci, cat, cd]]: الاختصار ده إيه؟
+
+~~~powershell
+Get-Alias ls, gci, cat, cd
+~~~
+
+~~~text الناتج
+Name Definition    Options
+---- ----------    -------
+ls   Get-ChildItem    None
+gci  Get-ChildItem    ReadOnly
+cat  Get-Content      None
+cd   Set-Location  AllScope
+~~~
+
+### نقرا الناتج
+
+- [[ls]] و [[gci]] الاتنين على نفس الأمر. يعني [[ls]] هنا **مش** برنامج لينكس، ده اسم تاني لـ [[Get-ChildItem]].
+- [[Options]] بيقول الاختصار محمي قد إيه:
+
+| القيمة | معناها |
+|---|---|
+| [[None]] | عادي، تقدر تغيّره بـ [[Set-Alias]] |
+| [[ReadOnly]] | محمي، محتاج [[Set-Alias -Force]] عشان تغيّره |
+| [[AllScope]] | موجود في كل الدوال والسكربتات، مش بس المستوى الحالي |
+
+- [[gci]] [[ReadOnly]] لأنه اختصار رسمي من PowerShell، لكن [[ls]] [[None]] لأنه اختصار «راحة» ممكن تدوسه.
+
+---
+
+## ٢. [[Get-Alias -Definition Get-ChildItem]]: الاتجاه العكسي
+
+~~~powershell
+Get-Alias -Definition Get-ChildItem
+~~~
+
+~~~text الناتج
+CommandType     Name
+-----------     ----
+Alias           dir -> Get-ChildItem
+Alias           gci -> Get-ChildItem
+Alias           ls -> Get-ChildItem
+~~~
+
+تلات اختصارات لنفس الأمر: واحد من CMD ([[dir]])، وواحد من لينكس ([[ls]])، وواحد من PowerShell ([[gci]]).
+
+**ليه كده؟** عشان أي حد جاي من أي خلفية يكتب اللي اتعوّد عليه ويشتغل.
+
+> [[-Definition]] هي الطريقة الصح لما الاسم فيه رموز زي [[?]] و [[%]]، لأن دول wildcards لو كتبتهم في [[-Name]].
+
+---
+
+## ٣. كام اختصار عندي أصلًا؟
+
+~~~powershell
+Get-Alias | Measure-Object
+~~~
+
+~~~text الناتج (بيختلف حسب الموديولات المحمّلة)
+Count    : 154
+Average  :
+Sum      :
+Maximum  :
+Minimum  :
+Property :
+~~~
+
+[[Measure-Object]] بيعد العناصر. ١٥٤ اختصار جاهز من أول ما تفتح.
+
+---
+
+## ٤. [[Set-Alias gh Get-Help]]: اعمل اختصارك
+
+~~~powershell
+Set-Alias gh Get-Help
+Get-Alias gh
+~~~
+
+~~~text الناتج
+Name Definition Options
+---- ---------- -------
+gh   Get-Help      None
+~~~
+
+ودلوقتي [[gh Stop-Service]] = [[Get-Help Stop-Service]].
+
+**بس خد بالك:** ده عايش في الجلسة دي بس. اقفل الترمنال وهيروح. عشان يفضل، حطه في ملف [[$PROFILE]].
+
+### الحد اللي مينفعش تعدّيه
+
+~~~powershell
+Set-Alias ll "Get-ChildItem -Force"
+~~~
+
+~~~text الناتج
+Set-Alias: The term 'Get-ChildItem -Force' is not recognized as a name of a cmdlet...
+~~~
+
+**ليه؟** لأن الـ alias اسم لأمر، مش نص بيتلصق. هو دوّر على أمر **اسمه** [[Get-ChildItem -Force]] (بالمسافة والشرطة) وملقاهوش.
+
+**الحل: دالة.**
+
+~~~powershell
+function ll { Get-ChildItem -Force @args }
+ll
+~~~
+
+[[@args]] معناها «أي حاجة اتكتبت بعد [[ll]]، مرّرها زي ما هي». فـ [[ll C:\Windows]] بتشتغل.
+
+> ودي حتة بتفرّق PowerShell عن bash: في bash [[alias ll='ls -la']] شغالة لأن الـ alias هناك **نص بيتلصق** قبل التنفيذ. في PowerShell الـ alias **اسم لأمر**، فالحاجات اللي فيها parameters بتتعمل بدوال.
+
+---
+
+## ٥. الاختصار ده رايح لفين بالظبط؟
+
+~~~powershell
+Get-Command gci | Select-Object CommandType, Name, ResolvedCommand
+~~~
+
+~~~text الناتج
+CommandType Name ResolvedCommand
+----------- ---- ---------------
+      Alias gci  Get-ChildItem
+~~~
+
+[[ResolvedCommand]] هو الأمر النهائي بعد فك كل الاختصارات. مفيد لو فيه alias بيشاور على alias.
+
+---
+
+## جدول: الاختصارات اللي هتقابلها كتير
+
+| الاختصار | الأمر الكامل | جاي منين |
+|---|---|---|
+| [[gci]] / [[ls]] / [[dir]] | [[Get-ChildItem]] | PowerShell / لينكس / CMD |
+| [[gc]] / [[cat]] / [[type]] | [[Get-Content]] | PowerShell / لينكس / CMD |
+| [[sl]] / [[cd]] | [[Set-Location]] | PowerShell / الكل |
+| [[%]] | [[ForEach-Object]] | PowerShell |
+| [[?]] / [[where]] | [[Where-Object]] | PowerShell |
+| [[select]] | [[Select-Object]] | PowerShell |
+| [[sls]] | [[Select-String]] | PowerShell |
+| [[iwr]] | [[Invoke-WebRequest]] | PowerShell |
+| [[irm]] | [[Invoke-RestMethod]] | PowerShell |
+| [[cls]] / [[clear]] | [[Clear-Host]] | CMD / لينكس |
+
+---
+
+## الخلاصة
+
+- الـ alias في PowerShell **اسم تاني لأمر**، مش نص بيتلصق زي bash. فمفيش parameters جواه؛ اللي بيعمل كده دالة بـ [[@args]].
+- [[Get-Alias <اسم>]] بيفك الاختصار، و [[Get-Alias -Definition <أمر>]] بيعمل العكس.
+- [[?]] و [[*]] في الاسم بيتعاملوا كـ wildcards، فاستخدم [[-Definition]] معاهم.
+- [[Options]] بيقولك [[ReadOnly]] (محمي) و [[AllScope]] (في كل مكان).
+- [[Set-Alias]] عايش للجلسة بس؛ للدوام حطه في [[$PROFILE]].
+- **في السكربتات اكتب الاسم الكامل.** الاختصارات مش مضمونة على كل نظام، و [[PSScriptAnalyzer]] بينبّه عليها.`,
+          lines: [
+            R`الاختصارات دي بتشاور على إيه، وعمود Options بيقول محمية ولا لأ`,
+            R`الاتجاه العكسي: الأمر ده ليه اختصارات إيه (دي الطريقة الآمنة مع ? و %)`,
+            R`عدّ كل الاختصارات الجاهزة في الجلسة`,
+            R`اعمل اختصارك انت: عايش للجلسة دي بس لحد ما تحطه في $PROFILE`,
+            R`ResolvedCommand بيقولك الاختصار بيوصل لأنهي أمر في الآخر`
+          ]
+        },
+
+        {
+          cmd: "Update-Help و about_",
+          title: "صفحات المفاهيم، ولما المساعدة مش متحمّلة",
+          desc: R`غير مساعدة الأوامر، PowerShell فيه نوع تاني من الصفحات اسمه [[about_]]: صفحات بتشرح **مفهوم** مش أمر. زي [[about_Operators]] (كل العمليات) و [[about_If]] و [[about_Functions]] و [[about_Comparison_Operators]].
+
+بس فيه مفاجأة على ويندوز: **ملفات المساعدة مش بتيجي مسطّبة.** لو كتبت [[Get-Help about_Operators]] على جهاز جديد هتاخد رسالة «could not find about_Operators in a help file in this session».
+
+[[Update-Help]] بينزّلهم مرة واحدة. في PowerShell 7 بينزّل لليوزر بتاعك ومش محتاج أدمن؛ في 5.1 لازم تفتح PowerShell كأدمن. وبعدها [[Get-Help about_*]] بيطلّع أكتر من ١٠٠ موضوع.
+
+ولو مش عايز تنزّل: [[-Online]] بتفتح الصفحة على موقع Microsoft في المتصفح، وبتشتغل على طول.
+
+وبعد ما تنزّلهم، أقوى حاجة: [[Get-Help -Name "*" -Category HelpFile]] أو [[Get-Help about_* | Where-Object Synopsis -match "كلمة"]] عشان تدوّر جوه المواضيع نفسها.`,
+          example: R`Get-Help about_*
+Get-Help about_Operators
+Get-Help about_Operators -Online
+Update-Help -Scope CurrentUser -ErrorAction SilentlyContinue
+Get-Help Get-ChildItem -Examples`,
+          try: R`شغّل [[Get-Help about_*]] على جهازك وعدّ كام موضوع طلع. لو أقل من ٢٠، يبقى ملفات المساعدة مش متحمّلة. وجرّب [[Get-Help about_Comparison_Operators -Online]] من غير أي تحميل.`,
+          sol: R`~~~text الناتج على جهاز لسه مشغّلش Update-Help (PowerShell 7.6)
+PS> Get-Help about_*
+
+Name                     Category  Module   Synopsis
+----                     --------  ------   --------
+about_BeforeEach_AfterEach HelpFile
+about_Mocking              HelpFile
+about_Pester               HelpFile
+about_should               HelpFile
+about_TestDrive            HelpFile
+
+PS> (Get-Help about_*).Count
+5
+~~~
+
+**خمسة بس، وكلهم بتوع Pester** (مكتبة اختبارات اتسطبت مع حاجة تانية). مفيش ولا موضوع من بتوع PowerShell نفسه.
+
+و [[Get-Help about_Operators]]:
+
+~~~text الناتج
+Get-Help: Get-Help could not find about_Operators in a help file in this session. To download
+updated help topics type: "Update-Help". To get help online, search for the help topic in the
+TechNet library at https://go.microsoft.com/fwlink/?LinkID=107116.
+~~~
+
+الرسالة نفسها بتدّيك الحلّين: [[Update-Help]] أو تدوّر أونلاين. وبعد [[Update-Help]] العدد بيبقى أكتر من ١٠٠.`,
+          deep: {
+            why: R`فيه حاجات في PowerShell مش أوامر، فمش هتلاقيها بـ [[Get-Command]]: إزاي الـ operators شغالة، وإيه قواعد النطاقات (scopes)، وإزاي الـ pipeline بيربط. دي كلها في صفحات [[about_]].
+
+والسبب التاني: على جهاز جديد [[Get-Help X -Examples]] مش بيطلّع أمثلة، وناس كتير بتفتكر إن الأمر ده ملوش أمثلة، والحقيقة إن الملفات مش متحمّلة.`,
+            how: R`PowerShell بيشحن **من غير** ملفات مساعدة عشان يقلّل الحجم ويخلي المساعدة محدّثة. [[Update-Help]] بينزّلها من سيرفرات مايكروسوفت.
+
+~~~powershell
+Update-Help -Scope CurrentUser
+~~~
+
+- [[-Scope CurrentUser]] بينزّل في فولدر اليوزر، فمش محتاج أدمن (PowerShell 6 وأحدث).
+- [[-Force]] بيتجاهل الحد بتاع «مرة كل ٢٤ ساعة».
+- [[-UICulture en-US]] لو جهازك بلغة تانية وملفات لغتك مش موجودة.
+- بياخد دقيقة أو اتنين، ومن الطبيعي يطلّع تحذيرات لموديولات ملهاش ملفات مساعدة أونلاين.
+
+**المواضيع اللي تستاهل تقراها:**
+
+| الموضوع | بيشرح إيه |
+|---|---|
+| [[about_Operators]] | كل العمليات والرموز |
+| [[about_Comparison_Operators]] | [[-eq]] و [[-like]] و [[-match]] والفرق |
+| [[about_Pipelines]] | الـ pipeline بيشتغل إزاي من جوه |
+| [[about_Functions_Advanced_Parameters]] | [[[Parameter()]]] و الـ validation |
+| [[about_Scopes]] | المتغير شايفه مين |
+| [[about_Preference_Variables]] | [[$ErrorActionPreference]] وإخواتها |
+| [[about_Splatting]] | تمرير الـ parameters من hashtable |
+| [[about_Automatic_Variables]] | [[$_]] و [[$?]] و [[$PSItem]] وكل المتغيرات الجاهزة |
+
+**تدوّر جواهم:**
+
+~~~powershell
+Get-Help about_* | Where-Object Name -match "Operator"
+Get-Help about_Comparison_Operators | Out-String -Stream | Select-String "like"
+~~~
+
+[[Out-String -Stream]] بيحوّل الصفحة لسطور، و [[Select-String]] بيدوّر فيها زي [[grep]].`,
+            when: "أول حاجة تعملها على جهاز جديد: [[Update-Help -Scope CurrentUser]]. وبعدها كل ما تحتاج تفهم مفهوم مش أمر.",
+            mistakes: R`تفتكر إن الأمر ملوش أمثلة والحقيقة إن الملفات مش متحمّلة. اقرا [[REMARKS]] في آخر ناتج [[Get-Help]]، هو بيقولك.
+
+وتشغّل [[Update-Help]] من غير [[-Scope CurrentUser]] في PowerShell 5.1 من غير أدمن، فتاخد errors على كل موديول.
+
+وتتوقع إن [[about_]] فيها أمثلة كود كتير. لأ، دي صفحات مفاهيم طويلة ونصيّة؛ الأمثلة العملية في [[Get-Help <أمر> -Examples]].`
+          },
+          teach: R`## الفكرة
+
+مساعدة PowerShell نوعين: صفحة لكل **أمر**، وصفحة لكل **مفهوم** (اللي اسمها [[about_]]). وفي الاتنين فيه مفاجأة على ويندوز: مش متسطبين أصلًا. هنشوف ده بالناتج الحقيقي.
+
+جهاز الاختبار: ويندوز 11، PowerShell 7.6، **لسه مشغّلش [[Update-Help]]**.
+
+---
+
+## ١. [[Get-Help about_*]]: إيه الموجود عندي؟
+
+~~~powershell
+Get-Help about_*
+~~~
+
+~~~text الناتج
+Name                       Category  Module  Synopsis
+----                       --------  ------  --------
+about_BeforeEach_AfterEach HelpFile
+about_Mocking              HelpFile
+about_Pester               HelpFile
+about_should               HelpFile
+about_TestDrive            HelpFile
+~~~
+
+### نقرا الناتج
+
+خمس مواضيع بس، **وكلهم بتوع Pester** (مكتبة اختبارات اتسطبت مع أداة تانية وجابت ملفات مساعدتها معاها).
+
+مفيش [[about_Operators]]، ولا [[about_Functions]]، ولا أي حاجة من بتوع PowerShell نفسه. **ليه؟** لأن PowerShell بيتشحن من غير ملفات المساعدة.
+
+> المفروض العدد يبقى أكتر من ١٠٠. لو عندك ٥، يبقى انت في نفس الحالة.
+
+---
+
+## ٢. [[Get-Help about_Operators]]: الرسالة اللي بتلخبط
+
+~~~powershell
+Get-Help about_Operators
+~~~
+
+~~~text الناتج
+Get-Help: Get-Help could not find about_Operators in a help file in this session. To download
+updated help topics type: "Update-Help". To get help online, search for the help topic in the
+TechNet library at https://go.microsoft.com/fwlink/?LinkID=107116.
+~~~
+
+### نفك الرسالة
+
+| الحتة | معناها |
+|---|---|
+| [[could not find about_Operators in a help file]] | الملف نفسه مش موجود على الجهاز |
+| [[in this session]] | في الجلسة دي، يعني ممكن يبقى موجود بعد تحميل |
+| [[To download ... type: "Update-Help"]] | الحل الأول |
+| [[To get help online, search ...]] | الحل التاني |
+
+**الرسالة مش بتقول «الموضوع ده مش موجود».** بتقول «الملف مش عندي». فرق كبير.
+
+---
+
+## ٣. نفس المشكلة على مساعدة الأوامر
+
+~~~powershell
+Get-Help Get-ChildItem
+~~~
+
+~~~text الناتج (اتقص)
+NAME
+    Get-ChildItem
+
+SYNTAX
+    Get-ChildItem [[-Path] <string[]>] [[-Filter] <string>] [-Include <string[]>] ...
+
+ALIASES
+    gci
+    ls
+    dir
+
+REMARKS
+    Get-Help cannot find the Help files for this cmdlet on this computer. It is displaying
+    only partial help.
+        -- To download and install Help files for the module that includes this cmdlet, use
+    Update-Help.
+        -- To view the Help topic for this cmdlet online, type: "Get-Help Get-ChildItem
+    -Online" or go to https://go.microsoft.com/fwlink/?LinkID=2096492.
+~~~
+
+### نقرا الناتج
+
+- [[NAME]] و [[SYNTAX]] و [[ALIASES]] طلعوا. دول **محفورين جوه الأمر نفسه**، مش محتاجين ملف.
+- [[DESCRIPTION]] و [[EXAMPLES]] و [[PARAMETERS]] **مش** موجودين. دول في الملف.
+- [[REMARKS]] بيقول الحكاية صراحة: [[It is displaying only partial help]].
+
+**يعني من غير [[Update-Help]]:** [[-Syntax]] شغال تمام، و [[-Examples]] مش هيطلّع حاجة.
+
+---
+
+## ٤. [[-Online]]: الحل من غير تحميل
+
+~~~powershell
+Get-Help about_Operators -Online
+Get-Help Get-ChildItem -Online
+~~~
+
+مبيطبعش حاجة في الترمنال: بيفتح المتصفح على صفحة Microsoft Learn. ودي أحدث نسخة وفيها كل الأمثلة.
+
+الرابط في الرسالة فوق ([[LinkID=2096492]]) هو بالظبط اللي [[-Online]] بيفتحه.
+
+---
+
+## ٥. [[Update-Help]]: الحل الدائم
+
+~~~powershell
+Update-Help -Scope CurrentUser
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[Update-Help]] | نزّل ملفات المساعدة من سيرفرات مايكروسوفت |
+| [[-Scope CurrentUser]] | في فولدر اليوزر بتاعي، **فمش محتاج أدمن** |
+
+- في **PowerShell 7**: [[-Scope CurrentUser]] شغالة ومش محتاجة أدمن.
+- في **PowerShell 5.1**: مفيش [[-Scope]]، فلازم تفتح PowerShell كأدمن.
+- بياخد دقيقة أو اتنين على نت عادي.
+- طبيعي يطلّع تحذيرات صفرا لموديولات ملهاش ملفات مساعدة منشورة. دي مش أخطاء.
+
+> الأمر ده بينزّل ملفات على الجهاز، فمشغلتوش هنا. الكلام ده من دليل Microsoft ومن الرسالة نفسها اللي فوق.
+
+**بعده** [[Get-Help about_*]] بيطلّع أكتر من ١٠٠ موضوع، و [[Get-Help Get-ChildItem -Examples]] بيطلّع أمثلة مترقمة.
+
+---
+
+## ٦. تدوّر جوه المواضيع
+
+بعد التحميل:
+
+~~~powershell
+Get-Help about_* | Where-Object Name -match "Operator"
+~~~
+
+وعشان تدوّر جوه صفحة معينة زي [[grep]]:
+
+~~~powershell
+Get-Help about_Comparison_Operators | Out-String -Stream | Select-String "match"
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[Out-String -Stream]] | حوّل الصفحة الطويلة لسطور منفصلة |
+| [[Select-String "match"]] | طلّع السطور اللي فيها الكلمة دي |
+
+من غير [[-Stream]]، [[Out-String]] بيطلّع نص واحد كبير و [[Select-String]] هيرجّعه كله.
+
+---
+
+## المواضيع اللي تستاهل
+
+| الموضوع | ليه |
+|---|---|
+| [[about_Comparison_Operators]] | [[-eq]] و [[-like]] و [[-match]] والفرق بينهم |
+| [[about_Operators]] | كل الرموز في مكان واحد |
+| [[about_Automatic_Variables]] | [[$_]] و [[$?]] و [[$args]] وكل المتغيرات الجاهزة |
+| [[about_Preference_Variables]] | [[$ErrorActionPreference]] و [[$WhatIfPreference]] |
+| [[about_Splatting]] | تمرير parameters من hashtable |
+| [[about_Scopes]] | المتغير ده شايفه مين |
+| [[about_Pipelines]] | الـ pipeline من جوه |
+
+---
+
+## الخلاصة
+
+- مساعدة PowerShell نوعين: صفحة لكل **أمر**، و [[about_]] لكل **مفهوم**.
+- على ويندوز الملفات **مش بتيجي مسطّبة**. [[Get-Help about_*]] بيطلّع ٥ مواضيع بس عندي، كلهم من مكتبة تانية.
+- [[NAME]] و [[SYNTAX]] و [[ALIASES]] شغالين من غير تحميل؛ [[EXAMPLES]] و [[DESCRIPTION]] لأ.
+- [[Update-Help -Scope CurrentUser]] مرة واحدة بتحل المشكلة (أدمن مطلوب في 5.1 بس).
+- [[-Online]] شغال على طول من غير تحميل.
+- اقرا [[REMARKS]] في آخر المساعدة؛ هي بتقولك لو اللي قدامك ناقص.`,
+          lines: [
+            R`إيه مواضيع المفاهيم الموجودة عندي: لو أقل من ٢٠ يبقى المساعدة مش متحمّلة`,
+            R`صفحة مفهوم بعينها، ولو مش متحمّلة الرسالة بتقولك تعمل إيه`,
+            R`نفس الصفحة من النت في المتصفح، شغالة من غير أي تحميل`,
+            R`نزّل ملفات المساعدة لليوزر الحالي: مرة واحدة ومش محتاجة أدمن في PowerShell 7`,
+            R`بعد التحميل ده بيطلّع أمثلة مترقمة؛ قبله بيطلّع الاسم والـ syntax بس`
+          ]
+        },
+
+        {
+          cmd: "Tab و Ctrl+Space",
+          title: "الإكمال التلقائي: أسرع طريقة تكتشف",
+          desc: R`زرار [[Tab]] مش بس بيوفّر كتابة، ده أداة اكتشاف. اكتب جزء من اسم أمر ودوس Tab فيكمّله، واكتب [[-]] بعد الأمر ودوس Tab فيلف على كل الـ parameters واحدة واحدة.
+
+[[Ctrl+Space]] أقوى: بيفتح **قايمة** بكل الاحتمالات تحت السطر وتتحرك فيها بالأسهم، بدل ما تلف واحد واحد. وده بيوريك كل الخيارات مرة واحدة.
+
+والإكمال شغال على حاجات أكتر مما تتخيل: أسامي الأوامر، والـ parameters، و **قيم** الـ parameters لما تكون محددة (زي [[-ItemType]])، وأسامي الملفات والفولدرات، وأسامي الخدمات في [[-Name]]، وحتى خصائص الـ object بعد النقطة جوه [[{ }]].
+
+[[Shift+Tab]] بيرجّع للخيار اللي قبله لو عدّيت اللي انت عايزه.
+
+واللي ورا ده كله دالة اسمها [[TabExpansion2]]، وتقدر تناديها بنفسك عشان تشوف الاحتمالات كنص (مفيدة لما تبقى بتشرح أو بتكتب سكربت).`,
+          example: R`$r = TabExpansion2 -inputScript 'Get-Ch' -cursorColumn 6
+$r.CompletionMatches | Select-Object CompletionText, ResultType
+$s = 'Get-Service -'
+$r2 = TabExpansion2 -inputScript $s -cursorColumn $s.Length
+$r2.CompletionMatches | Select-Object -First 10 -ExpandProperty CompletionText
+Get-PSReadLineKeyHandler -Bound | Where-Object Function -like '*Complete*'`,
+          flag: "keys",
+          try: R`في الترمنال: اكتب [[Get-Ch]] ودوس Tab. وبعدين اكتب [[Get-Service -]] ودوس [[Ctrl+Space]] وشوف القايمة. وبعدين [[New-Item -ItemType ]] ودوس Tab كذا مرة.`,
+          sol: R`[[Get-Ch]] + Tab بتكمّل لـ [[Get-ChildItem]] على طول، لأن فيه احتمال واحد بس:
+
+~~~text ناتج TabExpansion2 (PowerShell 7.6)
+CompletionText ResultType
+-------------- ----------
+Get-ChildItem     Command
+~~~
+
+و [[Get-Service -]] + Ctrl+Space بيطلّع قايمة:
+
+~~~text
+-Name
+-DependentServices
+-RequiredServices
+-DisplayName
+-Include
+-Exclude
+-InputObject
+-Verbose
+-Debug
+-ErrorAction
+~~~
+
+لاحظ إن أول ٧ دول parameters بتاعة [[Get-Service]] نفسه، واللي بعدهم ([[-Verbose]] و [[-Debug]] و [[-ErrorAction]]) دول الـ [[CommonParameters]] اللي كل أمر بياخدهم.
+
+و [[New-Item -ItemType ]] + Tab بيلف على [[File]] و [[Directory]] و [[SymbolicLink]] و [[Junction]] و [[HardLink]] — وديل القيم اللي سطر الـ Syntax مكنش بيعرضها!`,
+          deep: {
+            why: R`الإكمال بيرد على أسئلة من غير ما تطلع من السطر اللي بتكتبه: الأمر اسمه كده ولا كده؟ الـ parameter دي موجودة؟ القيم المسموحة إيه؟ الخدمة اسمها إيه بالظبط؟
+
+وبيمنع غلطات الإملاء، وهي أكتر سبب لـ «الأمر مش شغال».`,
+            how: R`الإكمال في PowerShell مش قايمة ثابتة، ده **بيسأل النظام وقت ما تدوس**:
+
+| بتكتب | بيكمّل من |
+|---|---|
+| [[Get-Ch]] + Tab | أسامي الأوامر المحمّلة |
+| [[Get-Service -]] + Tab | parameters الأمر + CommonParameters |
+| [[Get-Service -Name ]] + Tab | **أسامي الخدمات الموجودة على جهازك دلوقتي** |
+| [[New-Item -ItemType ]] + Tab | القيم المسموحة من تعريف الـ parameter |
+| [[cd Doc]] + Tab | الفولدرات اللي في مكانك |
+| [[$x = Get-Date; $x.]] + Tab | خصائص وميثودز الـ object |
+
+الحتة التالتة دي هي السحر: هو بينادي [[Get-Service]] فعلًا عشان يجيبلك الأسامي.
+
+**الفرق بين Tab و Ctrl+Space:**
+
+| | Tab | Ctrl+Space |
+|---|---|---|
+| الشكل | بيبدّل الكلمة في السطر | بيفتح قايمة تحت السطر |
+| التنقل | Tab للي بعده، Shift+Tab للي قبله | الأسهم الأربعة |
+| امتى | عارف اللي عايزه تقريبًا | عايز تشوف كل الاحتمالات |
+
+والاتنين من مكتبة [[PSReadLine]] (نسخة 2.4.5 عندي)، وتقدر تشوف ربط الأزرار بـ [[Get-PSReadLineKeyHandler -Bound]].
+
+**تخلي Tab يفتح قايمة زي Ctrl+Space:**
+
+~~~powershell
+Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
+~~~
+
+حطها في [[$PROFILE]] لو عجبتك.
+
+**و [[TabExpansion2]]:** الدالة اللي بتشتغل تحت. [[-inputScript]] السطر، و [[-cursorColumn]] مكان المؤشر فيه. بترجّع object فيه [[CompletionMatches]]. ودي الطريقة الوحيدة تشوف الاحتمالات كنص في سكربت أو في درس زي ده.`,
+            when: "طول الوقت. ومخصوص لما تكون مش متأكد من إملاء، أو عايز تعرف القيم المسموحة لـ parameter.",
+            mistakes: R`تدوس Tab وتستنى قايمة فتتلخبط لما الكلمة تتبدّل. ده الفرق: Tab بيبدّل، Ctrl+Space بيعرض قايمة.
+
+وتفتكر إن الإكمال بيعرف كل الأوامر. هو بيعرف المحمّل في الجلسة والموجود في [[$env:PSModulePath]] بس. لو سطّبت موديول جديد، افتح ترمنال جديد.
+
+وفي CMD القديمة Tab بيكمّل **أسامي الملفات بس**، مش الأوامر ولا الـ parameters. ده فرق كبير لصالح PowerShell.`
+          },
+          teach: R`## الفكرة
+
+Tab مش اختصار كتابة، ده **سؤال للنظام**. هنشوف الاحتمالات اللي بيرجّعها فعلًا، بدالة [[TabExpansion2]] اللي شغالة تحته.
+
+كل الناتج من PowerShell 7.6 / PSReadLine 2.4.5 على ويندوز 11.
+
+---
+
+## ١. إكمال اسم أمر
+
+~~~powershell
+$r = TabExpansion2 -inputScript 'Get-Ch' -cursorColumn 6
+$r.CompletionMatches | Select-Object CompletionText, ResultType
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[TabExpansion2]] | الدالة اللي بتشتغل لما تدوس Tab |
+| [[-inputScript 'Get-Ch']] | السطر اللي مكتوب دلوقتي |
+| [[-cursorColumn 6]] | المؤشر بعد الحرف السادس (آخر السطر هنا) |
+| [[.CompletionMatches]] | قايمة الاحتمالات اللي لقاها |
+| [[CompletionText]] | النص اللي هيتحط |
+| [[ResultType]] | نوعه: أمر؟ parameter؟ ملف؟ |
+
+~~~text الناتج
+CompletionText ResultType
+-------------- ----------
+Get-ChildItem     Command
+~~~
+
+احتمال واحد بس، فـ Tab بيكمّله على طول من غير ما يسألك.
+
+---
+
+## ٢. إكمال الـ parameters
+
+~~~powershell
+$s = 'Get-Service -'
+$r2 = TabExpansion2 -inputScript $s -cursorColumn $s.Length
+$r2.CompletionMatches | Select-Object -First 10 -ExpandProperty CompletionText
+~~~
+
+[[$s.Length]] بيدّي طول النص، يعني المؤشر في آخره.
+
+~~~text الناتج
+-Name
+-DependentServices
+-RequiredServices
+-DisplayName
+-Include
+-Exclude
+-InputObject
+-Verbose
+-Debug
+-ErrorAction
+~~~
+
+### نقرا الناتج
+
+- أول ٧: parameters [[Get-Service]] نفسه.
+- [[-Verbose]] و [[-Debug]] و [[-ErrorAction]]: دول الـ [[<CommonParameters>]] اللي كل أمر بياخدهم.
+- الترتيب مش أبجدي: بيبدأ بالأهم (اللي في أول الـ parameter set).
+
+**يعني دوسة [[-]] + Tab = «الأمر ده بياخد إيه؟»** من غير ما تفتح مساعدة.
+
+---
+
+## ٣. الحتة اللي بتبهر: إكمال **القيم**
+
+~~~powershell
+Get-Service -Name <Tab>
+~~~
+
+هنا PowerShell **بينادي [[Get-Service]] فعلًا** ويجيب أسامي الخدمات اللي على جهازك، ويكمّل منها. فأول دوسة ممكن تجيب [[AarSvc_...]] والتانية خدمة تانية.
+
+ونفس الفكرة:
+
+~~~powershell
+New-Item -ItemType <Tab>
+~~~
+
+بيلف على: [[File]] و [[Directory]] و [[SymbolicLink]] و [[Junction]] و [[HardLink]].
+
+> افتكر إن سطر الـ Syntax بتاع [[New-Item]] كان بيقول [[-ItemType <string>]] بس، من غير ما يقول القيم إيه. **Tab عرف القيم والـ Syntax مكنش عارف.** دي حالة Tab بيكسب فيها المساعدة.
+
+ونفس الحاجة على خصائص الـ objects:
+
+~~~powershell
+$d = Get-Date
+$d.<Tab>
+~~~
+
+بيلف على [[Day]] و [[DayOfWeek]] و [[Hour]] و [[AddDays]] وكل اللي في الـ object.
+
+---
+
+## ٤. Tab ولا Ctrl+Space؟
+
+~~~powershell
+Get-PSReadLineKeyHandler -Bound | Where-Object Function -like '*Complete*'
+~~~
+
+~~~text الناتج
+Key           Function            Description
+---           --------            -----------
+Ctrl+@        MenuComplete        Complete the input if there is a single completion, otherwise...
+Ctrl+Spacebar MenuComplete        Complete the input if there is a single completion, otherwise...
+Tab           TabCompleteNext     Complete the input using the next completion
+Shift+Tab     TabCompletePrevious Complete the input using the previous completion
+~~~
+
+### نقرا الناتج
+
+| الزرار | الدالة | بيعمل إيه |
+|---|---|---|
+| [[Tab]] | [[TabCompleteNext]] | يحط الاحتمال اللي بعده **مكان** الكلمة |
+| [[Shift+Tab]] | [[TabCompletePrevious]] | يرجّع للي قبله |
+| [[Ctrl+Space]] | [[MenuComplete]] | يفتح **قايمة** تحت السطر |
+
+[[Ctrl+@]] هو نفسه [[Ctrl+Space]] (الترمنال بيبعتهم كنفس الكود).
+
+**القايمة بتاعة [[Ctrl+Space]]** بتظهر تحت السطر، وتتحرك فيها بالأسهم الأربعة، و Enter بتختار، و Esc بتقفل. وبتورّيك ١٠ أو ٢٠ احتمال مرة واحدة بدل ما تلف عليهم واحد واحد.
+
+### تخلي Tab يفتح قايمة كمان
+
+~~~powershell
+Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
+~~~
+
+حطها في [[$PROFILE]] لو عجبتك. (شغّلناهاش هنا لأنها بتغيّر إعدادات الجلسة.)
+
+---
+
+## ٥. جدول: Tab بيكمّل إيه
+
+| بتكتب | Tab بيجيب | من فين |
+|---|---|---|
+| [[Get-Ch]] | [[Get-ChildItem]] | الأوامر المحمّلة |
+| [[Get-Service -]] | الـ parameters | تعريف الأمر |
+| [[Get-Service -Name ]] | أسامي الخدمات | **بينادي الأمر فعلًا** |
+| [[New-Item -ItemType ]] | File, Directory... | القيم المسموحة |
+| [[cd Doc]] | [[Documents\]] | الملفات والفولدرات |
+| [[$d.]] | [[Day]], [[AddDays]]... | الـ object نفسه |
+| [[git che]] | [[checkout]] | لو الموديول متسطب |
+
+---
+
+## الخلاصة
+
+- [[Tab]] بيبدّل الكلمة بالاحتمال اللي بعده، و [[Shift+Tab]] بيرجّع، و [[Ctrl+Space]] بيفتح قايمة.
+- [[-]] + Tab = قايمة الـ parameters من غير ما تفتح مساعدة.
+- الإكمال بيعرف **القيم** كمان، وأحيانًا بيعرفها أكتر من سطر الـ Syntax.
+- في [[-Name]] بتاع الخدمات والعمليات، PowerShell بينادي الأمر فعلًا عشان يكمّل.
+- الأوامر اللي بيعرفها هي المحمّلة في الجلسة؛ بعد تسطيب موديول جديد افتح ترمنال جديد.
+- [[TabExpansion2]] هي الدالة اللي تحت، ومفيدة لو عايز تشوف الاحتمالات كنص.`,
+          lines: [
+            R`ناديت دالة الإكمال بنفسي على النص Get-Ch والمؤشر في آخره`,
+            R`اطبع الاحتمالات اللي لقاها ونوع كل واحد: هنا أمر واحد بس`,
+            R`النص المرة دي أمر وبعده شرطة: يعني «وريني الـ parameters»`,
+            R`المؤشر في آخر النص، وطول النص هو مكانه`,
+            R`أول ١٠ احتمالات: parameters الأمر وبعدهم الـ CommonParameters`,
+            R`إيه الأزرار المربوطة بالإكمال في PSReadLine على جهازك`
+          ]
+        },
+
+        {
+          cmd: "اقرا رسالة الخطأ",
+          title: "الخطأ مش حيطة، ده دليل استخدام",
+          desc: R`رسالة الخطأ في PowerShell مش سطر واحد، دي **object** كامل فيه: الرسالة، ونوع الاستثناء، وكود الخطأ، والسطر اللي وقع فيه ورقمه. ولما تعرف تقراها، أغلب الأخطاء بتحل نفسها.
+
+[[$Error]] قايمة بكل الأخطاء اللي حصلت في الجلسة، والأحدث [[$Error[0]]].
+
+وأهم أربع حاجات تقراهم:
+[[$Error[0].Exception.Message]] الرسالة نفسها.
+[[$Error[0].Exception.GetType().FullName]] نوع الخطأ، ودي بتفرق بين «الملف مش موجود» و «ممنوع تفتحه».
+[[$Error[0].FullyQualifiedErrorId]] كود الخطأ + الأمر اللي طلّعه. **ده أحسن حاجة تبحث بيها في جوجل.**
+[[$Error[0].InvocationInfo]] السطر ورقمه في السكربت.
+
+و [[$Error[0].CategoryInfo.Category]] بيصنّف الخطأ: [[ObjectNotFound]] أو [[PermissionDenied]] أو [[InvalidArgument]]...
+
+وفي PowerShell 7 الأخطاء بتتعرض بشكل مختصر افتراضيًا. [[$ErrorView = 'NormalView']] بيرجّع الشكل القديم الكامل، و [[Get-Error]] بيطبع كل تفاصيل آخر خطأ منسّقة.`,
+          example: R`Get-Item "C:\nope\missing.txt"
+$Error[0].Exception.Message
+$Error[0].Exception.GetType().FullName
+$Error[0].FullyQualifiedErrorId
+$Error[0].InvocationInfo.ScriptLineNumber
+Get-Error`,
+          try: R`غلّط بنفسك: شغّل [[Get-Content "C:\Windows\System32\config\SAM"]] (ملف محمي)، وبعدين [[Get-Content "C:\nope.txt"]] (ملف مش موجود). قارن [[$Error[0].Exception.GetType().FullName]] في الحالتين.`,
+          sol: R`الاتنين بيفشلوا، بس بنوعين مختلفين — وده بيحدد الحل:
+
+| الحالة | النوع | يعني |
+|---|---|---|
+| ملف مش موجود | [[System.Management.Automation.ItemNotFoundException]] | المسار غلط |
+| ملف محمي | [[System.UnauthorizedAccessException]] | المسار صح، الصلاحية ناقصة |
+
+~~~text الناتج لملف مش موجود (PowerShell 7.6)
+PS> Get-Item "C:\nope\missing.txt"
+Get-Item: Cannot find path 'C:\nope\missing.txt' because it does not exist.
+
+PS> $Error[0].Exception.GetType().FullName
+System.Management.Automation.ItemNotFoundException
+
+PS> $Error[0].FullyQualifiedErrorId
+PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand
+
+PS> $Error[0].CategoryInfo.Category
+ObjectNotFound
+~~~
+
+**الفايدة:** [[ItemNotFoundException]] معناها «صلّح المسار»، و [[UnauthorizedAccessException]] معناها «المسار صح، افتح كأدمن أو غيّر الصلاحيات». الرسالتين بالعين ممكن يشبهوا بعض، النوع بيفرق.`,
+          deep: {
+            why: R`أغلب الوقت الضايع في الترمنال بيروح في أخطاء مش مفهومة. والرسالة نفسها غالبًا فيها الحل: اسم الملف الغلط، أو الـ parameter اللي مش موجود، أو الصلاحية الناقصة. المشكلة إن الناس بتشوف الأحمر وتقفل.`,
+            how: R`**الأربع حتت اللي تقراهم بالترتيب:**
+
+1. [[.Exception.Message]] — الجملة بالإنجليزي. اقراها لآخرها، غالبًا فيها الاسم اللي غلط.
+2. [[.CategoryInfo.Category]] — التصنيف: [[ObjectNotFound]] (مش لاقيه)، [[PermissionDenied]] (ممنوع)، [[InvalidArgument]] (قيمة غلط)، [[InvalidOperation]] (العملية مش منطقية دلوقتي)، [[ResourceUnavailable]] (مش متاح).
+3. [[.Exception.GetType().FullName]] — النوع الدقيق. ده اللي تستخدمه في [[catch]] عشان تمسك نوع واحد بس:
+
+~~~powershell
+try { Get-Item "C:\nope.txt" -ErrorAction Stop }
+catch [System.Management.Automation.ItemNotFoundException] { "مش موجود" }
+~~~
+
+4. [[.FullyQualifiedErrorId]] — زي [[PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand]]. الجزء الأول كود الخطأ والتاني الأمر. **ده أحسن نص تحطه في جوجل**، لأنه فريد ومش بيختلف باختلاف لغة الجهاز.
+
+**وفي السكربتات:** [[.InvocationInfo]] فيه [[ScriptLineNumber]] و [[Line]] (السطر نفسه) و [[ScriptName]]. و [[.ScriptStackTrace]] بيدّي سلسلة النداءات كلها.
+
+**أدوات مساعدة:**
+
+| الأمر | بيعمل إيه |
+|---|---|
+| [[Get-Error]] | يطبع آخر خطأ بكل تفاصيله منسّقة (PowerShell 7) |
+| [[$Error.Clear()]] | يفضّي القايمة عشان تبدأ نضيف |
+| [[$Error.Count]] | كام خطأ حصل في الجلسة |
+| [[$ErrorView = 'NormalView']] | الشكل القديم الكامل بدل المختصر |
+| [[-ErrorVariable e]] | يحط الخطأ في [[$e]] من غير ما يأثر على [[$Error]] |
+
+**فخ مهم:** [[-ErrorAction SilentlyContinue]] بيخفي الرسالة بس **بيحط الخطأ في [[$Error]] برضه**. فلو بتسكّت أخطاء متوقعة، افتكر إن [[$Error[0]]] ممكن يبقى قديم.`,
+            when: "أول ما تشوف أحمر. وفي السكربتات، جوه [[catch]] عشان تعرف نوع المشكلة وترد عليها صح.",
+            mistakes: R`تبص على أول سطر وتقفل. الرسالة بتقول اسم الملف أو الـ parameter اللي غلط.
+
+وتكتب الرسالة كلها في جوجل بالمسارات بتاعتك. استخدم [[FullyQualifiedErrorId]] بدلها.
+
+وتفتكر إن [[$Error[0]]] هو خطأك الأخير دايمًا؛ أي أمر داخلي فشل بصمت بيحطّ نفسه هناك كمان.`
+          },
+          teach: R`## الفكرة
+
+في PowerShell الخطأ مش نص أحمر، ده **object** تقدر تسأله أسئلة. هنغلّط غلطة بسيطة ونفكّ الـ object اللي طلع منها.
+
+كل الناتج من تشغيل حقيقي على PowerShell 7.6 / ويندوز 11.
+
+---
+
+## ١. نغلّط
+
+~~~powershell
+Get-Item "C:\nope\missing.txt"
+~~~
+
+~~~text الناتج
+Get-Item: Cannot find path 'C:\nope\missing.txt' because it does not exist.
+~~~
+
+ده الشكل المختصر بتاع PowerShell 7. سطر واحد، وفيه المعلومة الأساسية: **المسار ده مش موجود**.
+
+> في PowerShell 5.1 نفس الخطأ بيطلع في ٥ سطور فيها [[+ CategoryInfo]] و [[+ FullyQualifiedErrorId]]. الاتنين نفس المعلومة بشكل مختلف.
+
+---
+
+## ٢. [[$Error[0]]]: نمسك الخطأ
+
+~~~powershell
+$Error[0].Exception.Message
+~~~
+
+~~~text الناتج
+Cannot find path 'C:\nope\missing.txt' because it does not exist.
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[$Error]] | متغير جاهز: قايمة بكل أخطاء الجلسة |
+| [[[0]]] | العنصر رقم صفر = **الأحدث** (مش الأقدم) |
+| [[.Exception]] | الاستثناء اللي جوه الخطأ |
+| [[.Message]] | نص الرسالة |
+
+> [[$Error]] بيتملى من الآخر للأول: [[$Error[0]]] آخر خطأ، و [[$Error[1]]] اللي قبله.
+
+---
+
+## ٣. [[.GetType().FullName]]: النوع، وده اللي بيحدد الحل
+
+~~~powershell
+$Error[0].Exception.GetType().FullName
+~~~
+
+~~~text الناتج
+System.Management.Automation.ItemNotFoundException
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[.GetType()]] | ميثود موجودة في أي object: «انت نوعك إيه؟» |
+| [[.FullName]] | الاسم الكامل بالمسار بتاعه |
+
+### ليه النوع أهم من الرسالة
+
+~~~text مقارنة
+الملف مش موجود    →  ItemNotFoundException        →  صلّح المسار
+الملف محمي         →  UnauthorizedAccessException  →  افتح كأدمن
+الملف مقفول ببرنامج →  IOException                  →  اقفل البرنامج
+~~~
+
+التلاتة ممكن يطلعوا رسايل متشابهة، والنوع بيفصل. وده كمان اللي بتمسك بيه نوع واحد في [[catch]]:
+
+~~~powershell
+try {
+    Get-Item "C:\nope.txt" -ErrorAction Stop
+}
+catch [System.Management.Automation.ItemNotFoundException] {
+    Write-Host "المسار غلط"
+}
+~~~
+
+> [[-ErrorAction Stop]] لازمة هنا: من غيرها [[Get-Item]] بيطلّع خطأ «غير منهي» (non-terminating) و [[catch]] مش بيمسكه.
+
+---
+
+## ٤. [[FullyQualifiedErrorId]]: النص اللي تبحث بيه
+
+~~~powershell
+$Error[0].FullyQualifiedErrorId
+~~~
+
+~~~text الناتج
+PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand
+~~~
+
+### نفكه
+
+| الجزء | معناه |
+|---|---|
+| [[PathNotFound]] | كود الخطأ نفسه |
+| [[,]] | فاصل |
+| [[Microsoft.PowerShell.Commands.GetItemCommand]] | الكلاس اللي طلّع الخطأ (يعني [[Get-Item]]) |
+
+**ليه ده أحسن نص للبحث؟** لأنه:
+
+- ثابت مهما اتغيرت لغة الجهاز (الرسالة بتترجم، الكود لأ).
+- مفيهوش مساراتك الشخصية.
+- بيحدد الأمر والمشكلة بالظبط.
+
+فبدل ما تبحث بـ [[Cannot find path 'C:\Users\7ossa\...' because it does not exist]]، ابحث بـ [[PathNotFound GetItemCommand]].
+
+---
+
+## ٥. [[CategoryInfo]]: التصنيف
+
+~~~powershell
+$Error[0].CategoryInfo.Category
+~~~
+
+~~~text الناتج
+ObjectNotFound
+~~~
+
+| التصنيف | معناه | تعمل إيه |
+|---|---|---|
+| [[ObjectNotFound]] | مش لاقي الحاجة | صلّح الاسم/المسار |
+| [[PermissionDenied]] | ممنوع | أدمن أو صلاحيات |
+| [[InvalidArgument]] | قيمة غلط | راجع الـ Syntax |
+| [[InvalidOperation]] | العملية مش منطقية دلوقتي | الحالة غلط (خدمة واقفة مثلًا) |
+| [[ResourceUnavailable]] | مش متاح | الشبكة أو الملف مقفول |
+| [[SecurityError]] | منع أمني | ExecutionPolicy مثلًا |
+
+---
+
+## ٦. [[InvocationInfo]]: وقع فين بالظبط
+
+~~~powershell
+$Error[0].InvocationInfo.Line.Trim()
+$Error[0].InvocationInfo.ScriptLineNumber
+~~~
+
+~~~text الناتج
+try { Get-Item "C:\nope\missing.txt" -ErrorAction Stop } catch { }
+2
+~~~
+
+- [[.Line]] السطر اللي وقع فيه الخطأ **بنصه**.
+- [[.Trim()]] بيشيل المسافات من حواليه.
+- [[.ScriptLineNumber]] رقم السطر.
+- وفيه كمان [[.ScriptName]] (اسم الملف) و [[.OffsetInLine]] (مكان الحرف).
+
+ودي أهم حتة لما السكربت يبقى ٢٠٠ سطر.
+
+---
+
+## ٧. [[Get-Error]]: كل ده مرة واحدة
+
+~~~powershell
+Get-Error
+~~~
+
+بيطبع آخر خطأ بكل حقوله منسّقة (موجود من PowerShell 7). الشكل تقريبًا:
+
+~~~text
+Exception             :
+    Type    : System.Management.Automation.ItemNotFoundException
+    Message : Cannot find path 'C:\nope\missing.txt' because it does not exist.
+    HResult : -2146233087
+CategoryInfo          : ObjectNotFound: (C:\nope\missing.txt:String) [Get-Item], ItemNotFoundException
+FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand
+InvocationInfo        :
+    MyCommand        : Get-Item
+    ScriptLineNumber : 2
+...
+~~~
+
+[[Get-Error -Newest 3]] بيطبع آخر تلاتة.
+
+---
+
+## ٨. الفخ: [[-ErrorAction SilentlyContinue]]
+
+~~~powershell
+Get-ChildItem C:\does-not-exist-xyz -ErrorAction SilentlyContinue
+$?
+~~~
+
+~~~text الناتج
+False
+~~~
+
+- الشاشة فاضية: الرسالة اتخبّت.
+- بس [[$?]] طلعت [[False]]، والخطأ **اتحط في [[$Error]] برضه**.
+
+**يعني [[SilentlyContinue]] بيخفي مش بيلغي.** لو عايز الأمر ميسجّلش الخطأ خالص استخدم [[-ErrorAction Ignore]].
+
+---
+
+## خريطة الـ object
+
+~~~text ErrorRecord
+$Error[0]
+├── Exception
+│   ├── Message        ← الرسالة
+│   ├── GetType()      ← النوع (للـ catch)
+│   └── InnerException ← الخطأ الأصلي لو فيه
+├── FullyQualifiedErrorId  ← للبحث في جوجل
+├── CategoryInfo
+│   └── Category       ← ObjectNotFound / PermissionDenied ...
+├── TargetObject       ← الحاجة اللي الأمر كان شغال عليها
+├── InvocationInfo
+│   ├── Line           ← السطر بنصه
+│   ├── ScriptLineNumber
+│   └── ScriptName
+└── ScriptStackTrace   ← سلسلة النداءات
+~~~
+
+---
+
+## الخلاصة
+
+- الخطأ object، و [[$Error[0]]] هو الأحدث.
+- اقرا بالترتيب: [[.Exception.Message]] ← [[.CategoryInfo.Category]] ← [[.Exception.GetType().FullName]] ← [[.FullyQualifiedErrorId]].
+- النوع هو اللي بيفرق بين «المسار غلط» و «الصلاحية ناقصة»، وهو اللي بتمسكه في [[catch]] بنوع محدد.
+- ابحث في جوجل بـ [[FullyQualifiedErrorId]] مش بالرسالة كاملة.
+- [[InvocationInfo.ScriptLineNumber]] بيقولك وقع فين في السكربت.
+- [[Get-Error]] بيطبع كل ده مرة واحدة.
+- [[-ErrorAction SilentlyContinue]] بيخفي الرسالة بس الخطأ بيفضل في [[$Error]] و [[$?]] بتبقى [[False]].`,
+          lines: [
+            R`نغلّط غلطة بسيطة: ملف في مسار مش موجود`,
+            R`الرسالة نفسها من آخر خطأ في الجلسة`,
+            R`نوع الخطأ: ده اللي بيفرق بين «مش موجود» و «ممنوع»`,
+            R`كود الخطأ + الأمر اللي طلّعه: ده اللي تبحث بيه في جوجل`,
+            R`رقم السطر اللي وقع فيه، ومهم جدًا في السكربتات الطويلة`,
+            R`كل التفاصيل دي مرة واحدة ومنسّقة (PowerShell 7 وأحدث)`
+          ]
+        }
+      ]
+    }
+]);
+
+/* ===== js/tabs/ps/21.js ===== */
+// تكملة تاب ps: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/ps/01.js (شرح حقول الدرس في أوله)
+MORE("ps", [
+    {
+      t: "أوامر ورا بعض",
+      l: 2,
+      n: R`تشغّل أمرين مع بعض، وتخلي التاني يشتغل بس لو الأول نجح، وتحشر ناتج أمر جوه أمر تاني. دي الحتة اللي بتحوّل أوامر متفرقة لشغل حقيقي`,
+      items: [
+        {
+          cmd: "; و && و ||",
+          title: "أمرين ورا بعض، وبشرط",
+          desc: R`تلات طرق تحط أكتر من أمر في سطر واحد، والفرق بينهم هو **امتى التاني يشتغل**:
+
+[[;]] فاصلة منقوطة: شغّل الاتنين، كل واحد لوحده، مهما حصل في الأول.
+[[&&]] شغّل التاني **بس لو الأول نجح**.
+[[||]] شغّل التاني **بس لو الأول فشل**.
+
+[[&&]] و [[||]] اسمهم [[pipeline chain operators]]، وده بيخليك تكتب «نزّل وبعدين فك الضغط، ولو فشل قولي» في سطر واحد بدل [[if]] من تلات سطور.
+
+**مهم:** الاتنين دول اتضافوا في **PowerShell 7**. في Windows PowerShell 5.1 بيدّوك error في السطر نفسه: [[The token '&&' is not a valid statement separator in this version]]. فلو السكربت هيشتغل على 5.1 استخدم [[if]] أو [[try/catch]].
+
+ومتخلطش بينهم وبين [[-and]] و [[-or]]: دول للشروط جوه [[if]]، مش لربط أوامر (الدرس الأخير في القسم).
+
+والمعيار اللي بيحكم «نجح ولا فشل» هو [[$?]]، والدرس اللي بعده عنه.`,
+          example: R`Write-Output "one"; Write-Output "two"
+cmd /c exit 0 && Write-Output "success chain ran"
+cmd /c exit 1 && Write-Output "this will NOT print"
+cmd /c exit 1 || Write-Output "fallback ran"
+Get-Item "C:\nope.txt" && Write-Output "also will NOT print"`,
+          try: R`جرّب [[Test-Path .\lab && Write-Output "موجود"]] في مكان فيه فولدر [[lab]] وفي مكان مفيهوش، وشوف الفرق. وبعدين جرّب نفس السطر في [[powershell -NoProfile]] (5.1) وشوف الرسالة.`,
+          sol: R`[[Test-Path]] بيرجّع [[True]] أو [[False]] **ومبيفشلش**، فـ [[&&]] هتشتغل في الحالتين — ودي أول فخ.
+
+~~~text الناتج (PowerShell 7.6)
+PS> Test-Path .\lab && Write-Output "موجود"
+False
+موجود
+~~~
+
+طبع [[False]] وبرضه كمّل! لأن [[Test-Path]] **نجح** في شغله (رد عليك بـ False)، مفشلش.
+
+**الصح** إنك تستخدم القيمة نفسها:
+
+~~~powershell
+if (Test-Path .\lab) { Write-Output "موجود" }
+~~~
+
+وفي 5.1:
+
+~~~text
+PS> powershell -NoProfile -Command "Write-Output 'a' && Write-Output 'b'"
+At line:1 char:18
++ Write-Output 'a' && Write-Output 'b'
++                  ~~
+The token '&&' is not a valid statement separator in this version.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : InvalidEndOfLine
+~~~
+
+النسخة اللي اتجرّب عليها: 5.1.26100.9711.`,
+          deep: {
+            why: R`أغلب الشغل الحقيقي مش أمر واحد: اعمل الفولدر **وبعدين** انقل فيه، نزّل **وبعدين** فك الضغط، ابني **وبعدين** ارفع. ولو الخطوة الأولى فشلت، الباقي لازم يقف — غير كده هترفع حاجة نص مبنية.
+
+[[;]] لوحدها خطر هنا: هي بتشغّل التاني مهما حصل.`,
+            how: R`الفرق في جملة: [[;]] «وبعدين»، [[&&]] «وبعدين لو نجح»، [[||]] «وإلا».
+
+| تكتب | التاني بيشتغل امتى |
+|---|---|
+| [[a; b]] | دايمًا |
+| [[a && b]] | لو [[a]] نجح ([[$?]] = True) |
+| [[a \|\| b]] | لو [[a]] فشل ([[$?]] = False) |
+
+**وتقدر تسلسلهم:**
+
+~~~powershell
+New-Item -ItemType Directory build && Copy-Item src\* build || Write-Warning "فشل"
+~~~
+
+التقييم من الشمال لليمين، ومفيش أولوية بين [[&&]] و [[||]] في PowerShell: بيتقرو بالترتيب.
+
+**بيشتغلوا مع إيه:**
+
+| النوع | «نجح» معناها |
+|---|---|
+| برنامج خارجي ([[.exe]]) | exit code = 0 |
+| cmdlet | مطلّعش error |
+| [[Write-Output]] وأي أمر عادي | دايمًا نجح |
+
+وده السبب إن [[Test-Path x && ...]] بتشتغل حتى لو الملف مش موجود: [[Test-Path]] **نجح** في إنه يرد عليك بـ False.
+
+**في 5.1 بدايل:**
+
+~~~powershell
+# بدل: a && b
+if (a) { b }
+
+# بدل: a && b || c
+try { a -ErrorAction Stop; b } catch { c }
+~~~
+
+**و [[&]] الواحدة حاجة تانية خالص:** في PowerShell دي [[call operator]] (شغّل اللي في المتغير ده كأمر)، مش «شغّل في الخلفية» زي bash. للخلفية استخدم [[Start-Job]] أو [[&]] في آخر السطر (PowerShell 7 بيدعمها كـ background operator، وبترجّع job).`,
+            when: "في الترمنال لما تبقى عايز خطوتين مربوطين. وفي السكربتات، [[if]] و [[try/catch]] أوضح لما الكلام يطول.",
+            mistakes: R`تستخدمهم على 5.1. الرسالة [[The token '&&' is not a valid statement separator in this version]] واضحة بس بتفاجئ الناس.
+
+وتفتكر إن [[&&]] بتشوف **القيمة** اللي رجعت. لأ، بتشوف **نجح ولا فشل**. [[Test-Path]] اللي رجع [[False]] نجح.
+
+وتسلسل كتير في سطر واحد لحد ما السطر يبقى مش مقروء. بعد تلات أوامر، اكتب سكربت.`
+          },
+          teach: R`## الفكرة
+
+تلات فواصل، والفرق بينهم هو شرط تشغيل التاني. هنجرّب التلاتة بناتج حقيقي من PowerShell 7.6 / ويندوز 11.
+
+وعشان نتحكم في «نجح ولا فشل» بالظبط، هنستخدم [[cmd /c exit N]]: ده بيشغّل CMD ويخليه يخرج بالكود [[N]]. الكود [[0]] معناه نجاح، وأي رقم تاني فشل.
+
+---
+
+## ١. [[;]]: شغّل الاتنين مهما حصل
+
+~~~powershell
+Write-Output "one"; Write-Output "two"
+~~~
+
+~~~text الناتج
+one
+two
+~~~
+
+[[;]] مش بتربط، هي بس بتفصل. زي ما تكون كاتبهم في سطرين. حتى لو الأول وقع، التاني بيشتغل.
+
+---
+
+## ٢. [[&&]]: التاني لو الأول نجح
+
+### الحالة اللي بتنجح
+
+~~~powershell
+cmd /c exit 0 && Write-Output "success chain ran"
+~~~
+
+~~~text الناتج
+success chain ran
+~~~
+
+[[exit 0]] = نجاح، فـ [[&&]] عدّت.
+
+### الحالة اللي بتفشل
+
+~~~powershell
+cmd /c exit 1 && Write-Output "this will NOT print"
+Write-Output "--- after ---"
+~~~
+
+~~~text الناتج
+--- after ---
+~~~
+
+مطبعش الجملة. [[exit 1]] = فشل، فـ [[&&]] وقفت السلسلة.
+
+> لاحظ إن السطر اللي بعده اشتغل عادي. [[&&]] بتوقف **السلسلة** بتاعتها بس، مش السكربت كله.
+
+---
+
+## ٣. [[||]]: التاني لو الأول فشل
+
+~~~powershell
+cmd /c exit 1 || Write-Output "fallback ran"
+~~~
+
+~~~text الناتج
+fallback ran
+~~~
+
+دي الـ «وإلا». مفيدة في: «جرّب كده، ولو مظبطش قولي» أو «ولو مظبطش جرّب الطريقة التانية».
+
+---
+
+## ٤. شغالين مع الـ cmdlets كمان
+
+[[&&]] مش للبرامج الخارجية بس:
+
+~~~powershell
+Get-Item "C:\nope.txt" && Write-Output "also will NOT print"
+~~~
+
+~~~text الناتج
+Get-Item:
+Line |
+   1 |  Get-Item "C:\nope.txt" && Write-Output "also will NOT print"
+     |  ~~~~~~~~~~~~~~~~~~~~~~
+     | Cannot find path 'C:\nope.txt' because it does not exist.
+~~~
+
+الخطأ ظهر، والجملة التانية **متطبعتش**.
+
+### وحتى لو خبّيت الخطأ
+
+~~~powershell
+Get-ChildItem C:\nope2 -ErrorAction SilentlyContinue && Write-Output "SECOND RAN"
+~~~
+
+~~~text الناتج
+~~~
+
+فاضي تمامًا. الرسالة اتخبّت، بس الأمر **فشل** برضه، فـ [[&&]] وقفت.
+
+ونفس الحاجة مع [[-ErrorAction Ignore]]. التفاصيل في الدرس اللي بعده ([[$?]]).
+
+---
+
+## ٥. الفخ: [[Test-Path]]
+
+~~~powershell
+Test-Path .\nothing-here && Write-Output "موجود"
+~~~
+
+~~~text الناتج
+False
+موجود
+~~~
+
+### ليه طبع «موجود» والملف مش موجود؟
+
+لأن [[&&]] بتسأل **«الأمر نجح؟»** مش **«الأمر رجّع True؟»**.
+
+| | |
+|---|---|
+| [[Test-Path]] عمل شغله؟ | أيوه، بص ورد عليك |
+| رد بإيه؟ | [[False]] |
+| يبقى نجح؟ | **أيوه** |
+| [[&&]] هتعدّي؟ | أيوه |
+
+**الصح لما القيمة هي اللي تهمك:**
+
+~~~powershell
+if (Test-Path .\nothing-here) { Write-Output "موجود" }
+~~~
+
+~~~text الناتج
+~~~
+
+مطبعش حاجة، وده المطلوب.
+
+**القاعدة:** [[&&]] للنجاح والفشل، و [[if]] للقيم.
+
+---
+
+## ٦. السلسلة الطويلة
+
+~~~powershell
+New-Item -ItemType Directory out -Force && Copy-Item a.txt out\ && Write-Output "تمام" || Write-Warning "فشل"
+~~~
+
+- التقييم من الشمال لليمين، أمر أمر.
+- لو أي واحدة فشلت، اللي بعد [[&&]] بيتسكّب، و [[||]] في الآخر بتمسك.
+- مفيش أولوية بين [[&&]] و [[||]] في PowerShell: بالترتيب.
+
+> بعد تلات أوامر في سطر واحد، السطر بيبقى صعب القراية. ساعتها اكتبه سكربت بـ [[if]] و [[try/catch]].
+
+---
+
+## ٧. على Windows PowerShell 5.1
+
+~~~powershell
+powershell -NoProfile -Command "Write-Output 'a' && Write-Output 'b'"
+~~~
+
+~~~text الناتج (5.1.26100.9711)
+At line:1 char:18
++ Write-Output 'a' && Write-Output 'b'
++                  ~~
+The token '&&' is not a valid statement separator in this version.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : InvalidEndOfLine
+~~~
+
+### نقرا الرسالة
+
+- [[ParserError]]: الغلط في **قراية** الكود، يعني الأمر محاولش يشتغل أصلًا.
+- [[not a valid statement separator in this version]]: الرمز ده مش موجود في النسخة دي.
+- [[char:18]]: مكان الرمز في السطر.
+
+**البديل في 5.1:**
+
+~~~powershell
+if (a) { b }
+~~~
+
+أو:
+
+~~~powershell
+try { a -ErrorAction Stop; b } catch { c }
+~~~
+
+---
+
+## مقارنة مع bash و CMD
+
+| | PowerShell 7 | bash | CMD |
+|---|---|---|---|
+| وبعدين | [[;]] | [[;]] | [[&]] |
+| لو نجح | [[&&]] | [[&&]] | [[&&]] |
+| لو فشل | [[\|\|]] | [[\|\|]] | [[\|\|]] |
+| «نجح» معناها | [[$?]] = True | exit code 0 | errorlevel 0 |
+| في الخلفية | [[Start-Job]] أو [[&]] في الآخر | [[&]] في الآخر | [[start]] |
+
+خد بالك من سطر «وبعدين»: في CMD [[&]] الواحدة معناها «وبعدين»، وفي PowerShell [[&]] الواحدة معناها «شغّل ده كأمر» (call operator). مختلفين تمامًا.
+
+---
+
+## الخلاصة
+
+- [[;]] = وبعدين (دايمًا). [[&&]] = وبعدين لو نجح. [[||]] = وإلا.
+- [[&&]] و [[||]] من **PowerShell 7 بس**؛ في 5.1 هتاخد [[ParserError]].
+- بيشتغلوا مع الـ cmdlets والبرامج الخارجية، والمعيار هو نجح/فشل مش القيمة اللي رجعت.
+- [[-ErrorAction SilentlyContinue]] بيخبّي الرسالة بس برضه بيوقّف [[&&]].
+- [[Test-Path x && y]] فخ: [[Test-Path]] بينجح حتى لما يرد [[False]]. استخدم [[if]].
+- لو السلسلة طولت، اكتبها سكربت.`,
+          lines: [
+            R`الفاصلة المنقوطة: الاتنين بيشتغلوا، ومفيش شرط بينهم`,
+            R`exit 0 معناه نجاح، فـ && عدّت وطبعت`,
+            R`exit 1 معناه فشل، فاللي بعد && اتسكّب`,
+            R`نفس الفشل، بس || بتشتغل في الحالة دي بالظبط`,
+            R`شغالة مع الـ cmdlets كمان: الأمر وقع فالسلسلة وقفت`
+          ]
+        },
+
+        {
+          cmd: "$?",
+          title: "الأمر اللي فات نجح ولا لأ؟",
+          desc: R`[[$?]] متغير جاهز فيه [[True]] أو [[False]]: نجح الأمر **اللي قبله على طول** ولا فشل. وده اللي [[&&]] و [[||]] بيعتمدوا عليه.
+
+وفيه فرق مهم بينه وبين [[$LASTEXITCODE]]:
+[[$?]] بيشتغل على **كل** حاجة: cmdlets وبرامج خارجية.
+[[$LASTEXITCODE]] رقم، وبيتملى من **البرامج الخارجية بس** ([[.exe]])، وبيفضل بقيمته القديمة لحد ما برنامج خارجي تاني يشتغل.
+
+وأهم حاجة فيه: **بيتغير بعد كل أمر**. حتى [[Write-Host]] بيصفّره لـ True. فلو عايز تستخدمه، استخدمه في السطر اللي بعد الأمر على طول، أو خزّنه في متغير:
+
+[[$ok = $?]]
+
+وفخ تاني: [[-ErrorAction SilentlyContinue]] و [[Ignore]] بيخبّوا رسالة الخطأ، بس [[$?]] بتفضل [[False]]، والسلسلة بـ [[&&]] بتقف. الفرق بينهم إن [[SilentlyContinue]] بيحط الخطأ في [[$Error]] و [[Ignore]] لأ.
+
+وفخ تالت: الأوامر اللي بترجّع [[False]] كقيمة (زي [[Test-Path]]) **نجحت**. [[$?]] بيقيس «اشتغل من غير مشاكل» مش «رد بأيوه».`,
+          example: R`Get-ChildItem C:\Windows | Out-Null; "success -> $?"
+Get-ChildItem C:\nopeA -ErrorAction SilentlyContinue; "SilentlyContinue -> $?"
+Get-ChildItem C:\nopeB -ErrorAction Ignore; "Ignore -> $?"
+cmd /c exit 3; "LASTEXITCODE=$LASTEXITCODE  Qmark=$?"
+$ok = $?; "saved: $ok"`,
+          try: R`شغّل [[Test-Path C:\nope]] وبعده على طول [[$?]]. إيه اللي طلع؟ وليه؟ وبعدين شغّل [[Get-Item C:\nope]] وبعده [[$?]] وقارن.`,
+          sol: R`~~~text الناتج (PowerShell 7.6)
+PS> Test-Path C:\nope
+False
+PS> $?
+True
+
+PS> Get-Item C:\nope
+Get-Item: Cannot find path 'C:\nope' because it does not exist.
+PS> $?
+False
+~~~
+
+**الفرق:**
+
+| الأمر | رد بإيه | [[$?]] | ليه |
+|---|---|---|---|
+| [[Test-Path C:\nope]] | [[False]] | [[True]] | شغله إنه يبص ويرد؛ ورد. نجح. |
+| [[Get-Item C:\nope]] | error | [[False]] | شغله إنه يجيب الملف؛ مجابوش. فشل. |
+
+[[Test-Path]] متصمّم يرد بـ True/False، فـ [[False]] عنده **إجابة** مش فشل. [[Get-Item]] متصمّم يجيب حاجة، فلما ميلاقيهاش ده فشل.
+
+**والنتيجة العملية:** [[Test-Path x && ...]] هتشتغل دايمًا. استخدم [[if (Test-Path x) { ... }]].`,
+          deep: {
+            why: R`أي سكربت محترم لازم يعرف الخطوة اللي فاتت نجحت ولا لأ قبل ما يكمّل. وده هو المفتاح: [[&&]] و [[||]] و [[if]] كلهم بيبنوا عليه.`,
+            how: R`**الفرق بين التلاتة:**
+
+| المتغير | نوعه | بيتملى من | بيتصفّر امتى |
+|---|---|---|---|
+| [[$?]] | [[True]]/[[False]] | أي أمر | بعد كل أمر |
+| [[$LASTEXITCODE]] | رقم | برامج خارجية بس | لما برنامج خارجي تاني يشتغل |
+| [[$Error[0]]] | ErrorRecord | أي خطأ | بيتراكم، مبيتصفرش لوحده |
+
+**[[$?]] بيتحدد إزاي:**
+
+- **cmdlet**: [[False]] لو طلّع أي error (حتى لو غير منهي، وحتى لو مخبّي).
+- **برنامج خارجي**: [[False]] لو الـ exit code مش صفر.
+- **تعبير عادي** زي [[2 + 2]] أو [[Write-Output]]: [[True]].
+
+**الفخ الكبير: بيتغير بسرعة.**
+
+~~~powershell
+Get-Item C:\nope
+Write-Host "checking..."
+if ($?) { "نجح" }     # دي بتقيس Write-Host مش Get-Item
+~~~
+
+الحل: خزّنه على طول.
+
+~~~powershell
+Get-Item C:\nope -ErrorAction SilentlyContinue
+$ok = $?
+# ... أي كلام
+if (-not $ok) { "فشل" }
+~~~
+
+**[[SilentlyContinue]] مقابل [[Ignore]]:**
+
+| | الرسالة بتظهر | [[$?]] | بيتسجل في [[$Error]] |
+|---|---|---|---|
+| (الافتراضي) [[Continue]] | أيوه | [[False]] | أيوه |
+| [[SilentlyContinue]] | لأ | [[False]] | **أيوه** |
+| [[Ignore]] | لأ | [[False]] | لأ |
+| [[Stop]] | أيوه، وبيوقف | — | أيوه |
+
+يعني الاتنين بيخبّوا الرسالة بس **مش** بيخلّوا الأمر «ناجح». لو عايز تكمّل مهما حصل، استخدم [[try/catch]] أو اتجاهل [[$?]] صراحة.
+
+**البرامج الخارجية:**
+
+~~~powershell
+cmd /c exit 3
+$LASTEXITCODE   # 3
+$?              # False
+~~~
+
+و [[$LASTEXITCODE]] **بيفضل 3** لحد ما تشغّل برنامج خارجي تاني. فلو كتبت cmdlets بعده وسألت عنه، هتاخد رقم قديم.`,
+            when: "في أي سكربت بينادي برنامج خارجي أو أمر ممكن يفشل. وقبل أي خطوة بتعتمد على اللي قبلها.",
+            mistakes: R`تسأل [[$?]] بعد سطرين من الأمر. هو بيقيس آخر أمر، وده بقى [[Write-Host]].
+
+وتستخدم [[$LASTEXITCODE]] بعد cmdlet. هو مش بيتغير من الـ cmdlets خالص، فهتقرا رقم قديم.
+
+وتفتكر إن [[-ErrorAction SilentlyContinue]] بتخلي الأمر «ناجح». لأ، بتخبّي الرسالة بس.`
+          },
+          teach: R`## الفكرة
+
+[[$?]] سؤال واحد: «الأمر اللي لسه خلص دلوقتي، نجح؟». هنجرّبه في كل الحالات اللي بتلخبط، بناتج حقيقي من PowerShell 7.6 / ويندوز 11.
+
+---
+
+## ١. بعد نجاح
+
+~~~powershell
+Get-ChildItem C:\Windows | Out-Null
+"success -> $?"
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[Out-Null]] | ارمي الناتج، مش عايزين نطبع ٢٩ ملف |
+| [["success -> $?"]] | نص فيه قيمة المتغير |
+
+~~~text الناتج
+success -> True
+~~~
+
+---
+
+## ٢. بعد فشل مخبّي بـ [[SilentlyContinue]]
+
+~~~powershell
+Get-ChildItem C:\nopeA -ErrorAction SilentlyContinue
+"SilentlyContinue -> $?"
+~~~
+
+~~~text الناتج
+SilentlyContinue -> False
+~~~
+
+**الشاشة مفيهاش أي أحمر، و [[$?]] برضه [[False]].**
+
+ودي أهم معلومة في الدرس: [[-ErrorAction SilentlyContinue]] بيخبّي **الرسالة**، مش بيخلّي الأمر ناجح.
+
+---
+
+## ٣. بعد فشل مخبّي بـ [[Ignore]]
+
+~~~powershell
+Get-ChildItem C:\nopeB -ErrorAction Ignore
+"Ignore -> $?"
+~~~
+
+~~~text الناتج
+Ignore -> False
+~~~
+
+نفس الحاجة. يبقى الفرق بينهم إيه؟ في [[$Error]]:
+
+~~~powershell
+$Error.Clear()
+Get-ChildItem C:\nopeC -ErrorAction Ignore | Out-Null
+"Ignore -> $__bt$Error.Count = $($Error.Count)"
+
+$Error.Clear()
+Get-ChildItem C:\nopeD -ErrorAction SilentlyContinue | Out-Null
+"SilentlyContinue -> $__bt$Error.Count = $($Error.Count)"
+~~~
+
+~~~text الناتج
+Ignore -> $Error.Count = 0
+SilentlyContinue -> $Error.Count = 1
+~~~
+
+### الخلاصة في جدول
+
+| [[-ErrorAction]] | الرسالة تظهر | [[$?]] | يتسجل في [[$Error]] |
+|---|---|---|---|
+| [[Continue]] (الافتراضي) | أيوه | [[False]] | أيوه |
+| [[SilentlyContinue]] | لأ | [[False]] | أيوه |
+| [[Ignore]] | لأ | [[False]] | لأ |
+
+> الـ backtick قبل [[$Error]] جوه النص معناه «اطبع الدولار نفسه متفسرهاش». و [[$( )]] بتحسب اللي جواها جوه النص.
+
+---
+
+## ٤. [[$?]] مقابل [[$LASTEXITCODE]]
+
+~~~powershell
+cmd /c exit 3
+"LASTEXITCODE=$LASTEXITCODE  Qmark=$?"
+~~~
+
+~~~text الناتج
+LASTEXITCODE=3  Qmark=False
+~~~
+
+| المتغير | القيمة | معناها |
+|---|---|---|
+| [[$LASTEXITCODE]] | [[3]] | البرنامج خرج بالكود ٣ |
+| [[$?]] | [[False]] | يعني فشل (أي كود غير صفر = فشل) |
+
+### الفرق المهم
+
+[[$LASTEXITCODE]] بيتملى من **البرامج الخارجية بس**. جرّب:
+
+~~~powershell
+cmd /c exit 3
+Get-ChildItem C:\does-not-exist-xyz -ErrorAction SilentlyContinue
+"after failed cmdlet: Qmark=$?  LASTEXITCODE=$LASTEXITCODE"
+~~~
+
+~~~text الناتج
+after failed cmdlet: Qmark=False  LASTEXITCODE=3
+~~~
+
+[[$LASTEXITCODE]] **لسه ٣** من [[cmd /c exit 3]] اللي فات! الـ cmdlet اللي فشل بعده مغيّرهوش.
+
+**يعني:** استخدم [[$LASTEXITCODE]] بعد برنامج خارجي بس، و [[$?]] مع أي حاجة.
+
+---
+
+## ٥. الفخ الأساسي: بيتغير بعد كل سطر
+
+~~~powershell
+Get-Item C:\nope -ErrorAction SilentlyContinue
+Write-Host "checking..."
+if ($?) { "نجح" } else { "فشل" }
+~~~
+
+~~~text الناتج
+checking...
+نجح
+~~~
+
+**«نجح»؟!** الملف مش موجود أصلًا. السبب إن [[$?]] دلوقتي بيقيس [[Write-Host]] مش [[Get-Item]]، و [[Write-Host]] نجح.
+
+### الحل: خزّنه على طول
+
+~~~powershell
+Get-Item C:\nope -ErrorAction SilentlyContinue
+$ok = $?
+Write-Host "checking..."
+if ($ok) { "نجح" } else { "فشل" }
+~~~
+
+~~~text الناتج
+checking...
+فشل
+~~~
+
+**قاعدة:** [[$?]] يا تستخدمه في السطر اللي بعد الأمر على طول، يا تخزّنه.
+
+---
+
+## ٦. الفخ التاني: [[Test-Path]] وإخواته
+
+~~~powershell
+Test-Path C:\nope
+$?
+~~~
+
+~~~text الناتج
+False
+True
+~~~
+
+- [[Test-Path]] **رد** بـ [[False]].
+- و [[$?]] [[True]] لأنه **نجح في إنه يرد**.
+
+### ليه مش غلط؟
+
+~~~text الفرق
+Test-Path   شغله: «بص وقولي موجود ولا لأ»   →  رد False  →  نجح ✔
+Get-Item    شغله: «هات الملف ده»             →  ملقاهوش  →  فشل ✘
+~~~
+
+الأمر بيفشل لما **ميعرفش يعمل شغله**، مش لما الإجابة تبقى «لأ».
+
+### القاعدة
+
+| عايز إيه | استخدم |
+|---|---|
+| الأمر نجح؟ | [[$?]] أو [[&&]] |
+| القيمة اللي رجعت | [[if (Test-Path x)]] |
+
+---
+
+## ٧. استخدام عملي: سكربت بيوقف عند أول فشل
+
+~~~powershell
+npm ci
+if (-not $?) { Write-Error "npm ci فشل"; exit 1 }
+
+npm run build
+if (-not $?) { Write-Error "البناء فشل"; exit 1 }
+
+Write-Host "تمام" -ForegroundColor Green
+~~~
+
+ولو السكربت كله لازم يقف عند أول خطأ، فيه طريقة أقصر:
+
+~~~powershell
+$ErrorActionPreference = "Stop"
+~~~
+
+بس دي بتشتغل على الـ cmdlets. للبرامج الخارجية في PowerShell 7.4 وأحدث فيه:
+
+~~~powershell
+$PSNativeCommandUseErrorActionPreference = $true
+~~~
+
+ودي بتخلي exit code غير صفر من [[.exe]] يطلّع error زي الـ cmdlets.
+
+---
+
+## الخلاصة
+
+- [[$?]] = «الأمر اللي قبلي على طول نجح؟»، [[True]] أو [[False]].
+- بيشتغل مع كل حاجة؛ [[$LASTEXITCODE]] للبرامج الخارجية بس وبيفضل بقيمته القديمة.
+- بيتغير **بعد كل أمر**، حتى بعد [[Write-Host]]. خزّنه في [[$ok = $?]].
+- [[-ErrorAction SilentlyContinue]] و [[Ignore]] بيخبّوا الرسالة بس [[$?]] تفضل [[False]].
+- الفرق بينهم: [[SilentlyContinue]] بيسجّل في [[$Error]]، و [[Ignore]] لأ.
+- الأمر «بيفشل» لما ميعرفش يعمل شغله، مش لما الإجابة تبقى «لأ». عشان كده [[Test-Path]] اللي رد [[False]] ناجح.`,
+          lines: [
+            R`أمر نجح: $? بتبقى True (و Out-Null عشان منطبعش الناتج)`,
+            R`الرسالة اتخبّت بس الأمر فشل: $? لسه False`,
+            R`Ignore زيها بالظبط في $?، والفرق إنه مبيسجلش في $Error`,
+            R`برنامج خارجي خرج بكود ٣: الرقم في LASTEXITCODE والحكم في $?`,
+            R`خزّن القيمة على طول، لأن أي أمر بعدها هيغيّرها`
+          ]
+        },
+
+        {
+          cmd: "( ) و $( )",
+          title: "حُط ناتج أمر جوه أمر تاني",
+          desc: R`لما تحتاج ناتج أمر **كقيمة** جوه أمر تاني، بتلفّه بأقواس. وفيه شكلين:
+
+[[( )]] قوسين عاديين: «نفّذ اللي جوايا الأول، وخد الناتج». بتستخدمها في أي مكان بتاخد قيمة: [[(Get-Date).Year]] و [[Remove-Item (Get-ChildItem *.tmp)]].
+
+[[$( )]] (دولار وقوسين): نفس الفكرة بالظبط، بس **جوه نص بين علامتين تنصيص مزدوجة**. [["النهارده $(Get-Date -Format 'yyyy-MM-dd')"]].
+
+القاعدة البسيطة: جوه النص استخدم [[$( )]]، وبره النص [[( )]].
+
+و [[( )]] كمان ضرورية قبل النقطة: [[(Get-Date).Year]] شغالة، لكن [[Get-Date.Year]] هتدوّر على أمر اسمه [[Get-Date.Year]].
+
+وفيه شكل تالت بتقابله: [[@( )]] معناها «خلي الناتج قايمة دايمًا»، حتى لو عنصر واحد أو مفيش. مفيدة قبل [[.Count]].
+
+وخد بالك: ده **مش** الـ pipeline. الـ pipeline ([[|]]) بيمرّر العناصر واحد واحد لأمر تاني؛ الأقواس بتاخد **الناتج كله كقيمة** وتحطه مكانها. لما الأمر التاني بياخد الحاجة كـ parameter، استخدم الأقواس؛ لما بياخدها من الـ pipeline، استخدم [[|]].`,
+          example: R`(Get-Date).Year
+$count = (Get-ChildItem C:\Windows -File).Count
+"files in C:\Windows = $count"
+"Today is $(Get-Date -Format 'yyyy-MM-dd') and there are $count files"
+@(Get-ChildItem *.nothing).Count`,
+          try: R`اطبع اسم أطول ملف في [[C:\Windows]] في جملة واحدة. تلميح: [[(Get-ChildItem C:\Windows -File | Sort-Object Length -Descending)[0].Name]]، وحطها جوه نص بـ [[$( )]].`,
+          sol: R`~~~powershell
+"أكبر ملف: $((Get-ChildItem C:\Windows -File | Sort-Object Length -Descending)[0].Name)"
+~~~
+
+~~~text الناتج (ويندوز 11، PowerShell 7.6)
+أكبر ملف: explorer.exe
+~~~
+
+**نفكها من جوه لبرة:**
+
+1. [[Get-ChildItem C:\Windows -File]] هات الملفات.
+2. [[| Sort-Object Length -Descending]] رتّبهم بالحجم من الأكبر.
+3. [[( ... )]] الأقواس عشان ناخد الناتج كله كقايمة.
+4. [[[0]]] أول عنصر = الأكبر.
+5. [[.Name]] اسمه.
+6. [[$( ... )]] عشان كل ده يتحسب جوه النص.
+
+لاحظ قوسين مع بعض في الأول: [[$((]]. الأولاني بتاع [[$( )]] والتاني بتاع [[( )]] اللي حوالين الـ pipeline.`,
+          deep: {
+            why: R`عمر ما هتكتب أمر لوحده. هتحتاج تحط اسم ملف طلع من أمر جوه أمر تاني، أو تحط رقم في رسالة، أو تاخد خاصية من ناتج. الأقواس هي اللي بتوصّل.`,
+            how: R`**الفرق بين التلاتة:**
+
+| الشكل | فين | بيعمل إيه |
+|---|---|---|
+| [[( )]] | بره النص | نفّذ وخد الناتج كقيمة |
+| [[$( )]] | جوه [[" "]] | نفّذ وحط الناتج في النص |
+| [[@( )]] | الاتنين | نفّذ وخد الناتج **كقايمة دايمًا** |
+
+**ليه [[$( )]] مش [[( )]] جوه النص؟**
+
+جوه [[" "]]، PowerShell بيفسّر [[$name]] بس (متغير بسيط). لو كتبت [["$(Get-Date)"]] من غير الدولار، هيطبع الكلام زي ما هو. والدولار هو اللي بيقول «اللي جوه الأقواس دي كود، نفّذه».
+
+~~~powershell
+"السنة $(Get-Date).Year"      # غلط: بيطبع التاريخ كامل وبعده .Year
+"السنة $((Get-Date).Year)"    # صح
+~~~
+
+**و [[' ']] (تنصيص مفرد) مش بتفسّر أي حاجة:**
+
+~~~powershell
+'السنة $(Get-Date)'   # بيطبع الكلام حرفيًا
+~~~
+
+**[[@( )]] امتى بتلزم:**
+
+~~~powershell
+(Get-ChildItem *.nothing).Count     # فاضي، مش 0
+@(Get-ChildItem *.nothing).Count    # 0
+~~~
+
+لو الأمر مرجّعش حاجة، [[( )]] بترجّع [[$null]] و [[$null.Count]] مش بيدّي ٠ في 5.1. و [[@( )]] بتضمن إن الناتج قايمة، فـ [[.Count]] شغالة دايمًا. (في PowerShell 7 الاتنين بيدّوا ٠، بس [[@( )]] أأمن لو الكود هيشتغل على 5.1 كمان.)
+
+**الأقواس مقابل الـ pipeline:**
+
+~~~powershell
+Remove-Item (Get-ChildItem *.tmp)       # الأقواس: الناتج كله كـ parameter
+Get-ChildItem *.tmp | Remove-Item       # الـ pipeline: واحد واحد
+~~~
+
+الاتنين شغالين، بس التاني أحسن على الكتير: بيمشي عنصر عنصر من غير ما يستنى القايمة كلها تتجمّع في الذاكرة.
+
+**والقاعدة العملية:** لو الأمر التاني بياخد الحاجة في [[-Parameter]]، استخدم الأقواس. لو بياخدها من الـ pipeline، استخدم [[|]].`,
+            when: "كل ما تحتاج قيمة من أمر داخل أمر تاني، أو خاصية من ناتج، أو رقم في رسالة.",
+            mistakes: R`[[Get-Date.Year]] من غير أقواس: PowerShell هيدوّر على أمر بالاسم ده.
+
+و [["$(Get-Date).Year"]] بالأقواس في المكان الغلط: هتطبع التاريخ كامل وبعده النص [[.Year]].
+
+و [[' ']] بدل [[" "]] فمفيش أي تفسير.
+
+وتفتكر إن [[( )]] و [[|]] نفس الحاجة. الأقواس بتجمّع الناتج كله في الذاكرة الأول؛ على ١٠٠ ألف ملف ده فرق حقيقي.`
+          },
+          teach: R`## الفكرة
+
+الأقواس بتقول لـ PowerShell: «نفّذ ده الأول، وحط ناتجه مكانه». هنشوف التلات أشكال وفين كل واحد.
+
+الناتج كله من PowerShell 7.6 على ويندوز 11.
+
+---
+
+## ١. [[( )]]: خد الناتج كقيمة
+
+~~~powershell
+(Get-Date).Year
+~~~
+
+~~~text الناتج
+2026
+~~~
+
+### ليه الأقواس لازمة؟
+
+~~~powershell
+Get-Date.Year
+~~~
+
+~~~text الناتج
+Get-Date.Year: The term 'Get-Date.Year' is not recognized as a name of a cmdlet, function,
+script file, or executable program.
+Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+~~~
+
+من غير الأقواس، PowerShell قرا [[Get-Date.Year]] كـ **اسم أمر واحد**. الأقواس بتفصل: «نفّذ [[Get-Date]]، وبعدين خد [[.Year]] من الناتج».
+
+| الترتيب | اللي بيحصل |
+|---|---|
+| ١ | [[Get-Date]] بيتنفذ، بيرجّع object تاريخ |
+| ٢ | [[.Year]] بتاخد خاصية السنة منه |
+
+---
+
+## ٢. [[( )]] عشان تاخد رقم في متغير
+
+~~~powershell
+$count = (Get-ChildItem C:\Windows -File).Count
+"files in C:\Windows = $count"
+~~~
+
+~~~text الناتج
+files in C:\Windows = 29
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[Get-ChildItem C:\Windows -File]] | الملفات بس، من غير الفولدرات |
+| [[( )]] | خد الناتج كله كقايمة |
+| [[.Count]] | عددهم |
+| [[$count = ]] | خزّنه |
+| [["... $count"]] | جوه النص، [[$count]] متغير بسيط فبيتفسّر لوحده |
+
+> لاحظ إن [[$count]] جوه النص اشتغلت **من غير** [[$( )]]. المتغير البسيط بيتفسّر لوحده؛ الـ [[$( )]] بتلزم للكود.
+
+---
+
+## ٣. [[$( )]]: جوه النص
+
+~~~powershell
+"Today is $(Get-Date -Format 'yyyy-MM-dd') and there are $count files"
+~~~
+
+~~~text الناتج
+Today is 2026-10-28 and there are 29 files
+~~~
+
+### ليه [[$( )]] مش [[( )]]؟
+
+جوه [[" "]]، PowerShell بيفسّر **المتغيرات البسيطة بس**. عشان يفسّر **كود**، لازم تقوله بـ [[$( )]].
+
+~~~powershell
+"بدون دولار: (Get-Date -Format 'yyyy-MM-dd')"
+~~~
+
+~~~text الناتج
+بدون دولار: (Get-Date -Format 'yyyy-MM-dd')
+~~~
+
+طبعها كلام عادي.
+
+### الفخ الشهير
+
+~~~powershell
+"السنة $(Get-Date).Year"
+~~~
+
+~~~text الناتج
+السنة 10/28/2026 04:02:34.Year
+~~~
+
+**إيه اللي حصل؟** [[$( )]] قفلت بعد [[Get-Date]]، فاتحسب التاريخ كله، و [[.Year]] فضلت نص عادي.
+
+**الصح:**
+
+~~~powershell
+"السنة $((Get-Date).Year)"
+~~~
+
+~~~text الناتج
+السنة 2026
+~~~
+
+القوسين الجوّانيين للأمر والنقطة، والدولار + القوسين البرّانيين عشان النص.
+
+---
+
+## ٤. التنصيص المفرد مبيفسّرش
+
+~~~powershell
+'النهارده $(Get-Date -Format yyyy-MM-dd)'
+~~~
+
+~~~text الناتج
+النهارده $(Get-Date -Format yyyy-MM-dd)
+~~~
+
+| علامة التنصيص | بتفسّر |
+|---|---|
+| [[" "]] | المتغيرات و [[$( )]] والـ backtick |
+| [[' ']] | **ولا حاجة**، كل حرف زي ما هو |
+
+ودي مفيدة لما يكون في النص دولارات حقيقية (زي باسورد أو regex).
+
+---
+
+## ٥. [[@( )]]: اضمن إنها قايمة
+
+~~~powershell
+@(Get-ChildItem *.nothing).Count
+~~~
+
+~~~text الناتج
+0
+~~~
+
+مفيش ملفات بالاسم ده، و [[@( )]] خلّت الناتج **قايمة فاضية**، فـ [[.Count]] طلعت ٠.
+
+من غير [[@( )]] في PowerShell 5.1 الناتج بيبقى [[$null]] و [[.Count]] مش بترد ٠، فالشرط [[if ($x.Count -eq 0)]] بيفشل. في PowerShell 7 الاتنين بيدّوا ٠، بس [[@( )]] أأمن لو الكود هيشتغل على الاتنين.
+
+**نفس المشكلة في الاتجاه التاني:**
+
+~~~powershell
+$files = Get-ChildItem C:\Windows\win.ini
+$files.Count
+~~~
+
+لو رجع ملف **واحد**، [[$files]] مش قايمة، هو الملف نفسه. و [[foreach]] عليه بتشتغل مرة واحدة (كويس)، لكن [[.Count]] ممكن تلخبط. [[@( )]] بتحسم الموضوع.
+
+---
+
+## ٦. الأقواس مقابل الـ pipeline
+
+الاتنين بيوصّلوا ناتج لأمر، بس بطريقتين:
+
+~~~powershell
+Remove-Item (Get-ChildItem *.tmp) -WhatIf
+~~~
+
+~~~powershell
+Get-ChildItem *.tmp | Remove-Item -WhatIf
+~~~
+
+| | الأقواس | الـ pipeline |
+|---|---|---|
+| إزاي بيوصّل | الناتج كله **كقيمة** في parameter | عنصر عنصر |
+| الذاكرة | بيجمّع الكل الأول | بيمشي واحد واحد |
+| على ١٠٠ ألف ملف | بطيء وبياكل ذاكرة | يبدأ على طول |
+| امتى تستخدمه | الأمر عايز قيمة في [[-Parameter]] | الأمر بياخد من الـ pipeline |
+
+**القاعدة:** لو الأمر التاني بيدعم الـ pipeline، استخدم [[|]].
+
+---
+
+## ٧. مثال مركّب: نفكه من جوه لبرة
+
+~~~powershell
+"أكبر ملف: $((Get-ChildItem C:\Windows -File | Sort-Object Length -Descending)[0].Name)"
+~~~
+
+~~~text الناتج
+أكبر ملف: explorer.exe
+~~~
+
+~~~text نفكها طبقة طبقة
+Get-ChildItem C:\Windows -File                               ← ١. هات الملفات
+... | Sort-Object Length -Descending                         ← ٢. رتّب بالحجم، الأكبر الأول
+( ... )                                                       ← ٣. خد الناتج كقايمة
+( ... )[0]                                                    ← ٤. أول واحد
+( ... )[0].Name                                               ← ٥. اسمه
+"أكبر ملف: $( ... )"                                          ← ٦. حطه في نص
+~~~
+
+القوسين المتلاصقين في [[$((]] مش غلطة: الأول بتاع [[$( )]] والتاني بتاع [[( )]].
+
+---
+
+## الخلاصة
+
+| الشكل | فين | ليه |
+|---|---|---|
+| [[( )]] | بره النص | نفّذ وخد الناتج كقيمة، ولازمة قبل النقطة |
+| [[$( )]] | جوه [[" "]] | عشان الكود يتنفّذ جوه النص |
+| [[@( )]] | الاتنين | يضمن إن الناتج قايمة، فـ [[.Count]] و [[foreach]] يشتغلوا |
+| [[" "]] | — | بتفسّر المتغيرات و [[$( )]] |
+| [[' ']] | — | مبتفسّرش حاجة |
+
+- [[Get-Date.Year]] غلط؛ [[(Get-Date).Year]] صح.
+- [["$(Get-Date).Year"]] فخ؛ [["$((Get-Date).Year)"]] صح.
+- الأقواس بتجمّع الناتج كله، و [[|]] بيمشي عنصر عنصر. على الكتير استخدم الـ pipeline.`,
+          lines: [
+            R`الأقواس بتنفّذ الأمر الأول عشان تقدر تاخد خاصية منه بالنقطة`,
+            R`ناتج أمر كرقم في متغير: Count على القايمة اللي رجعت`,
+            R`المتغير البسيط بيتفسّر جوه النص لوحده من غير أقواس`,
+            R`الكود جوه النص محتاج $( ) عشان يتنفّذ`,
+            R`@( ) بتضمن إن الناتج قايمة فـ Count بترد صفر بدل ما تلخبط`
+          ]
+        },
+
+        {
+          cmd: "-and و -or مقابل && و ||",
+          title: "اتنين شبه بعض وبيعملوا حاجتين مختلفتين",
+          desc: R`دي أكتر حاجة بتلخبط اللي جاي من bash: [[&&]] و [[-and]] **مش** نفس الحاجة في PowerShell.
+
+[[&&]] و [[||]] بيربطوا **أوامر**: «شغّل ده، وبعدين شغّل ده لو الأول نجح».
+[[-and]] و [[-or]] بيجمّعوا **شروط**: «لو الاتنين صح» — وبيرجّعوا [[True]] أو [[False]]، مش بيشغّلوا حاجة.
+
+يعني:
+[[cmd1 && cmd2]] = نفّذ، وبعدين نفّذ.
+[[($a -gt 5) -and ($b -lt 3)]] = قيمة واحدة: True أو False.
+
+ومعاهم [[-not]] (أو [[!]]) للعكس، و [[-xor]] لـ «واحد بس منهم صح».
+
+وفيه نسخ bitwise للأرقام: [[-band]] و [[-bor]] و [[-bxor]] و [[-bnot]]، دي بتشتغل على البِتّات مش على صح/غلط.
+
+وفي PowerShell المقارنات كلها كلمات بشرطة مش رموز: [[-eq]] بدل [[==]] و [[-gt]] بدل [[>]] و [[-ne]] بدل [[!=]]. السبب إن [[>]] و [[<]] محجوزين للكتابة في ملف (redirection) زي bash.
+
+**وأخطر غلطة:** [[if ($a > 5)]] مش بتقارن — دي بتكتب قيمة [[$a]] في ملف اسمه [[5]]!`,
+          example: R`$a = 10; $b = 2
+($a -gt 5) -and ($b -lt 3)
+($a -gt 50) -or ($b -lt 3)
+-not ($a -eq 10)
+if (($a -gt 5) -and ($b -lt 3)) { "الاتنين صح" }`,
+          flag: "danger",
+          try: R`احسب: [[(5 -gt 3) -and (2 -gt 7)]] هتطلّع إيه؟ وبعدين جرّب [[1 -eq 1 -and 2 -eq 2]] من غير أقواس وشوف هل بتشتغل.`,
+          sol: R`~~~text الناتج (PowerShell 7.6)
+PS> (5 -gt 3) -and (2 -gt 7)
+False
+
+PS> 1 -eq 1 -and 2 -eq 2
+True
+~~~
+
+**الأولى:** [[5 -gt 3]] صح، و [[2 -gt 7]] غلط، و [[-and]] محتاجة الاتنين صح → [[False]].
+
+**التانية اشتغلت من غير أقواس** لأن [[-eq]] أولويتها أعلى من [[-and]]، فـ PowerShell قراها [[(1 -eq 1) -and (2 -eq 2)]].
+
+**بس اكتب الأقواس برضه.** مش كل الحالات بتطلع زي ما تتوقع، وده بيبوّظ في حالات زي:
+
+~~~powershell
+$x = 5
+-not $x -eq 5
+~~~
+
+~~~text الناتج
+False
+~~~
+
+ليه؟ لأن [[-not]] أولويتها أعلى، فاتقرت [[(-not $x) -eq 5]] يعني [[$false -eq 5]] = [[False]]. المقصود كان [[-not ($x -eq 5)]] اللي برضه [[False]] هنا، بس بالصدفة. غيّر [[$x]] لـ ٧ وهتشوف الفرق: الأولى [[False]] والتانية [[True]].`,
+          deep: {
+            why: R`لو جاي من bash أو C، دماغك هتكتب [[&&]] في مكان [[-and]] و [[==]] في مكان [[-eq]]. الأول هيدّيك سلوك غريب، والتاني ممكن **يكتب ملف** من غير ما تاخد بالك.`,
+            how: R`**الفرق الجوهري:**
+
+| | بيربط | بيرجّع | بيستخدم فين |
+|---|---|---|---|
+| [[&&]] [[\|\|]] | أوامر | ناتج الأمر | بين أمرين |
+| [[-and]] [[-or]] | قيم True/False | [[True]]/[[False]] | جوه [[if]] و [[Where-Object]] |
+
+**كل عوامل المنطق:**
+
+| العامل | معناه |
+|---|---|
+| [[-and]] | الاتنين صح |
+| [[-or]] | واحد على الأقل صح |
+| [[-not]] أو [[!]] | العكس |
+| [[-xor]] | واحد بس صح (مش الاتنين) |
+
+**وكل عوامل المقارنة:**
+
+| العامل | معناه | البديل الغلط |
+|---|---|---|
+| [[-eq]] | يساوي | [[==]] |
+| [[-ne]] | لا يساوي | [[!=]] |
+| [[-gt]] [[-ge]] | أكبر / أكبر أو يساوي | [[>]] [[>=]] |
+| [[-lt]] [[-le]] | أصغر / أصغر أو يساوي | [[<]] [[<=]] |
+| [[-like]] | مطابقة بالنجمة | — |
+| [[-match]] | مطابقة regex | — |
+| [[-contains]] | القايمة فيها القيمة دي | — |
+| [[-in]] | القيمة دي في القايمة | — |
+
+**ليه مش رموز؟** لأن [[>]] و [[>>]] و [[<]] في PowerShell (زي bash) للكتابة في ملف. فـ [[if ($a > 5)]] مبتقارنش: بتكتب [[$a]] في ملف اسمه [[5]] في الفولدر اللي انت فيه، والشرط بيبقى على ناتج الكتابة.
+
+**الـ short-circuit:** [[-and]] مبتحسبش الطرف التاني لو الأول [[False]]، و [[-or]] مبتحسبوش لو الأول [[True]]. فده آمن:
+
+~~~powershell
+if ($path -and (Test-Path $path)) { ... }
+~~~
+
+لو [[$path]] فاضي، [[Test-Path]] مش هيتنفّذ أصلًا.
+
+**الأولوية:** المقارنة ([[-eq]]) أعلى من [[-and]]، و [[-not]] أعلى من الاتنين. **اكتب الأقواس دايمًا** بدل ما تحفظ الترتيب.`,
+            when: "[[-and]] و [[-or]] جوه [[if]] و [[while]] و [[Where-Object]]. و [[&&]] بين أمرين في الترمنال.",
+            mistakes: R`[[if ($a > 5)]]: بتعمل ملف اسمه [[5]]. دي أخطر غلطة في الدرس.
+
+و [[if ($a && $b)]]: في PowerShell 7 دي **بتشتغل** وبتدّي نتيجة غلط من غير أي تنبيه (شوف «الشرح خطوة بخطوة»)، وفي 5.1 رمز مش معروف. جوه [[if]] اكتب [[-and]].
+
+و [[-not $x -eq 5]] من غير أقواس: بتتقري [[(-not $x) -eq 5]].
+
+و [[$null -ne $x]] مقابل [[$x -ne $null]]: الترتيب بيفرق لما [[$x]] تبقى قايمة. الصح تحط [[$null]] على الشمال.`
+          },
+          teach: R`## الفكرة
+
+[[&&]] بتربط **أوامر**، و [[-and]] بتجمّع **شروط**. الاتنين بيترجموا «و» بالعربي، وده سبب اللخبطة. هنفرّق بينهم بالناتج الحقيقي.
+
+PowerShell 7.6 على ويندوز 11.
+
+---
+
+## ١. التعريف في سطرين
+
+~~~powershell
+cmd /c exit 0 && Write-Output "اتنفّذ"
+~~~
+
+~~~text الناتج
+اتنفّذ
+~~~
+
+ده **شغّل أمر، وبعدين شغّل أمر تاني**.
+
+~~~powershell
+$a = 10; $b = 2
+($a -gt 5) -and ($b -lt 3)
+~~~
+
+~~~text الناتج
+True
+~~~
+
+ده **حَسَب قيمة**. مشغّلش أي أمر، طلّع [[True]].
+
+| | [[&&]] | [[-and]] |
+|---|---|---|
+| على الشمال والـيمين | أوامر | قيم True/False |
+| بيرجّع | ناتج الأمر التاني | [[True]] أو [[False]] |
+| مكانه | بين أمرين | جوه [[if]] و [[Where-Object]] |
+
+---
+
+## ٢. [[-and]]: الاتنين لازم صح
+
+~~~powershell
+$a = 10; $b = 2
+($a -gt 5) -and ($b -lt 3)
+~~~
+
+~~~text الناتج
+True
+~~~
+
+| الطرف | الحساب | الناتج |
+|---|---|---|
+| [[$a -gt 5]] | 10 أكبر من 5؟ | [[True]] |
+| [[$b -lt 3]] | 2 أصغر من 3؟ | [[True]] |
+| [[-and]] | الاتنين True؟ | **[[True]]** |
+
+---
+
+## ٣. [[-or]]: واحد يكفي
+
+~~~powershell
+($a -gt 50) -or ($b -lt 3)
+~~~
+
+~~~text الناتج
+True
+~~~
+
+| الطرف | الناتج |
+|---|---|
+| [[$a -gt 50]] | [[False]] (10 مش أكبر من 50) |
+| [[$b -lt 3]] | [[True]] |
+| [[-or]] | **[[True]]** |
+
+---
+
+## ٤. [[-not]]: اعكس
+
+~~~powershell
+-not ($a -eq 10)
+~~~
+
+~~~text الناتج
+False
+~~~
+
+[[$a -eq 10]] = [[True]]، و [[-not]] قلبتها.
+
+و [[!]] نفس الحاجة بالظبط:
+
+~~~powershell
+!($a -eq 10)
+~~~
+
+~~~text الناتج
+False
+~~~
+
+---
+
+## ٥. في [[if]]
+
+~~~powershell
+if (($a -gt 5) -and ($b -lt 3)) { "الاتنين صح" }
+~~~
+
+~~~text الناتج
+الاتنين صح
+~~~
+
+ودي مكان [[-and]] الطبيعي.
+
+### ولو كتبت [[&&]] هنا؟ (الفخ الحقيقي)
+
+هنا الخطر: PowerShell 7 **مش** هيرمي error. هيشتغل، ويدّيك إجابة **غلط**.
+
+~~~powershell
+$a = 10; $b = 2
+if (($a -gt 50) -and ($b -lt 3)) { "ENTERED" } else { "not entered" }
+if (($a -gt 50) && ($b -lt 3))   { "ENTERED" } else { "not entered" }
+~~~
+
+~~~text الناتج
+not entered
+ENTERED
+~~~
+
+**نفس الشرط، ونتيجتين مختلفتين.** و [[-and]] هي الصح.
+
+### ليه؟
+
+~~~powershell
+($a -gt 50) -and ($b -lt 3)
+($a -gt 50) && ($b -lt 3)
+~~~
+
+~~~text الناتج
+False
+False
+True
+~~~
+
+- [[-and]] طلّعت **قيمة واحدة**: [[False]]. وده الصح.
+- [[&&]] طلّعت **سطرين**: [[False]] وبعدها [[True]].
+
+السبب إن [[($a -gt 50)]] **نجح** كأمر (طبع [[False]])، فـ [[&&]] شغّلت الطرف التاني اللي طبع [[True]]. فالناتج النهائي قايمة من عنصرين، و [[if]] بيعتبر أي قايمة فيها عناصر = [[True]].
+
+~~~text المقارنة
+-and  →  False                    →  if شاف False   →  مدخلش ✔
+&&    →  @(False, True)           →  if شاف قايمة   →  دخل    ✘
+~~~
+
+**الخلاصة: جوه [[if]] استخدم [[-and]] دايمًا.** [[&&]] جواه مش غلط نحوي، وده اللي بيخليها خطر: مفيش رسالة تنبهك.
+
+---
+
+## ٦. أخطر غلطة في PowerShell كله
+
+~~~powershell
+$a = 10
+if ($a > 5) { "أكبر" }
+~~~
+
+~~~text الناتج
+~~~
+
+**مطبعش حاجة، ومفيش أي رسالة خطأ.** والأسوأ: حصل حاجة تانية خالص.
+
+~~~text
+$a > 5
+ │   └── اسم ملف
+ └────── اكتب قيمة $a فيه
+~~~
+
+[[>]] في PowerShell **مش مقارنة**، دي كتابة في ملف. فالسطر ده:
+
+1. عمل ملف اسمه [[5]] (من غير امتداد) في الفولدر اللي انت فيه.
+2. كتب فيه [[10]].
+3. الكتابة مبترجّعش حاجة، فالشرط بقى فاضي يعني [[False]]، وعشان كده [[{ "أكبر" }]] متنفّذش.
+
+يعني السطر فشل **في صمت** وساب وراه ملف.
+
+### نتأكد
+
+~~~powershell
+Get-ChildItem 5
+Get-Content 5
+~~~
+
+~~~text الناتج
+    Directory: C:\...\lab
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          10/28/2026 12:14 AM              4 5
+
+10
+~~~
+
+**ملف اسمه [[5]] فعلًا، وجواه [[10]].**
+
+| تكتب | اللي بيحصل |
+|---|---|
+| [[if ($a > 5)]] | **بيعمل ملف** |
+| [[if ($a -gt 5)]] | بيقارن |
+
+عشان كده كل المقارنات في PowerShell كلمات بشرطة: الرموز [[>]] و [[<]] محجوزة للملفات.
+
+---
+
+## ٧. Short-circuit: الطرف التاني مش دايمًا بيتحسب
+
+~~~powershell
+$path = ""
+if ($path -and (Test-Path $path)) { "موجود" } else { "مفيش مسار" }
+~~~
+
+~~~text الناتج
+مفيش مسار
+~~~
+
+[[$path]] فاضي ([[False]])، فـ [[-and]] مكمّلتش و [[Test-Path]] **متنفّذش أصلًا**. ودي حماية مجانية: بتحط الشرط الرخيص الأول والغالي بعده.
+
+نفس الفكرة مع [[-or]]: لو الأول [[True]]، التاني مش بيتحسب.
+
+---
+
+## ٨. الأولوية: ليه تكتب الأقواس
+
+~~~powershell
+1 -eq 1 -and 2 -eq 2
+~~~
+
+~~~text الناتج
+True
+~~~
+
+اشتغلت من غير أقواس لأن [[-eq]] أولويتها أعلى من [[-and]].
+
+**بس:**
+
+~~~powershell
+$x = 7
+-not $x -eq 5
+-not ($x -eq 5)
+~~~
+
+~~~text الناتج
+False
+True
+~~~
+
+**سطرين مختلفين في النتيجة!**
+
+- الأول: [[-not]] أولويتها أعلى، فاتقرى [[(-not $x) -eq 5]] = [[$false -eq 5]] = [[False]].
+- التاني: اللي انت قاصده فعلًا = [[True]] (لأن 7 مش 5).
+
+**القاعدة: اكتب الأقواس حوالين كل مقارنة.** أرخص من إنك تحفظ جدول الأولويات.
+
+---
+
+## ٩. جدول: من bash لـ PowerShell
+
+| في bash / C | في PowerShell | ملاحظة |
+|---|---|---|
+| [[&&]] بين أوامر | [[&&]] | نفس الحاجة (PowerShell 7+) |
+| [[&&]] جوه شرط | [[-and]] | **مختلف** |
+| [[\|\|]] جوه شرط | [[-or]] | **مختلف** |
+| [[!]] | [[-not]] أو [[!]] | الاتنين شغالين |
+| [[==]] | [[-eq]] | |
+| [[!=]] | [[-ne]] | |
+| [[>]] | [[-gt]] | [[>]] **بتكتب ملف** |
+| [[<]] | [[-lt]] | |
+| [[>=]] [[<=]] | [[-ge]] [[-le]] | |
+
+---
+
+## الخلاصة
+
+- [[&&]] / [[||]] بيربطوا **أوامر**. [[-and]] / [[-or]] بيجمّعوا **شروط** ويرجّعوا True/False.
+- جوه [[if]] استخدم [[-and]]؛ [[&&]] هناك ParserError.
+- كل المقارنات كلمات بشرطة: [[-eq]] و [[-gt]] و [[-ne]].
+- [[if ($a > 5)]] **بتعمل ملف اسمه 5**. دي الغلطة اللي لازم تفتكرها.
+- [[-and]] و [[-or]] بيعملوا short-circuit، فحط الشرط الرخيص الأول.
+- اكتب الأقواس حوالين كل مقارنة بدل ما تعتمد على الأولوية.`,
+          lines: [
+            R`قيمتين نجرّب عليهم`,
+            R`-and: الاتنين صح فالناتج True`,
+            R`-or: الأول غلط والتاني صح، وده كفاية`,
+            R`-not بتقلب الناتج`,
+            R`ودي المكان الطبيعي لـ -and: جوه شرط if`
+          ]
+        }
+      ]
+    }
+]);
+
+/* ===== js/tabs/ps/22.js ===== */
+// تكملة تاب ps: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/ps/01.js (شرح حقول الدرس في أوله)
+MORE("ps", [
+    {
+      t: "مشروع ١: تتحكم في جهازك",
+      l: 3,
+      n: R`أداة [[pc.ps1]] بتقفل الجهاز أو تعمله restart بعد مهلة، وتلغي المعاد، وتقولك فيه معاد ولا لأ. هنبنيها على ٦ خطوات، كل خطوة بتضيف حاجة واحدة وبنشغّلها قبل ما نكمّل`,
+      items: [
+        {
+          cmd: "مشروع ١ — الواجهة الأول",
+          title: "اكتب شكل الاستخدام قبل أي كود",
+          desc: R`أول خطوة في أي أداة مش الكود، دي **شكل الاستخدام**. تكتب الأوامر اللي نفسك تكتبها، وبعدين تبني اللي يخليها تشتغل. ده بيمنعك تبني حاجة طلعت وحشة في الاستعمال.
+
+الأداة اللي هنبنيها اسمها [[pc.ps1]]، واللي عايزينه منها:
+
+[[.\pc.ps1 off -In 30]] اقفل بعد ٣٠ دقيقة.
+[[.\pc.ps1 restart -In 5]] اعمل restart بعد ٥ دقايق.
+[[.\pc.ps1 cancel]] الغي المعاد.
+[[.\pc.ps1 status]] فيه معاد متجدول؟
+
+لاحظ القرارات اللي اتاخدت في السطور دي قبل أي كود: الفعل جاي **الأول من غير شرطة** (أسهل في الكتابة)، والوقت **بالدقايق مش الثواني** (أقرب لطريقة تفكيرك)، وفيه [[status]] عشان تعرف الحالة من غير ما تخمّن.
+
+والخطوة الأولى في الكود هي **هيكل فاضي بيطبع اللي استقبله بس**. ده بيأكد إن PowerShell فهم الـ arguments زي ما انت قاصد، قبل ما تكتب أي منطق.
+
+[[param( )]] لازم تبقى أول حاجة في الملف (غير التعليقات)، وهي اللي بتعرّف المدخلات. و [[= 'status']] قيمة افتراضية لو اليوزر مكتبش حاجة.`,
+          example: R`param(
+    [string]$Action = 'status',
+    [int]$In = 0
+)
+
+Write-Host "Action = $Action"
+Write-Host "In     = $In"`,
+          flag: "script",
+          try: R`احفظه باسم [[pc.ps1]] في [[$HOME\lab]]، وشغّله تلات مرات: [[.\pc.ps1]] لوحده، وبعدين [[.\pc.ps1 -Action off -In 30]]، وبعدين [[.\pc.ps1 off -In 30]] من غير [[-Action]]. التالتة هتشتغل؟`,
+          sol: R`التلاتة بيشتغلوا:
+
+~~~text الناتج (PowerShell 7.6)
+PS> .\pc.ps1
+Action = status
+In     = 0
+
+PS> .\pc.ps1 -Action off -In 30
+Action = off
+In     = 30
+
+PS> .\pc.ps1 off -In 30
+Action = off
+In     = 30
+~~~
+
+**التالتة اشتغلت من غير [[-Action]]** لأن PowerShell بيدّي كل parameter رقم موقع حسب ترتيب كتابته في [[param()]]. [[$Action]] أول واحد، فأي قيمة من غير اسم بتروح له.
+
+ده شغال **بالصدفة** دلوقتي. في الخطوة الجاية هنكتبه صراحة بـ [[[Parameter(Position = 0)]]] عشان لو عدّلنا ترتيب الـ parameters بعدين، الأداة متبوظش.`,
+          deep: {
+            why: R`أغلب السكربتات الوحشة اتكتبت من الآخر للأول: الكود الأول، والاستعمال طلع لوحده. فبتلاقي نفسك بتكتب [[.\script.ps1 -Mode 2 -Seconds 1800 -DoIt $true]] وانت مش فاكر يعني إيه.
+
+لما تكتب شكل الاستخدام الأول، بتكتشف إن [[-In 30]] أحلى من [[-Seconds 1800]] وانت لسه مكتبتش سطر كود.`,
+            how: R`**الهيكل الفاضي بيأكد ٣ حاجات قبل ما تكمّل:**
+
+1. الملف بيشتغل أصلًا (مفيش مشكلة [[ExecutionPolicy]]).
+2. PowerShell فهم الـ arguments صح.
+3. القيم الافتراضية شغالة.
+
+**قواعد [[param()]]:**
+
+- لازم تبقى **أول كود** في الملف. التعليقات فوقها عادي، بس أي أمر قبلها بيخلي PowerShell يرفضها.
+- كل parameter: نوعه بين [[[ ]]]، وبعده [[$الاسم]]، وبعده [[=]] والقيمة الافتراضية لو عايز.
+- الفاصلة بين كل واحد والتاني، ومفيش فاصلة بعد الأخير.
+- النوع مش إجباري، بس اكتبه: [[[int]$In]] بيرفض [[-In abc]] لوحده، و [[$In]] من غير نوع هيقبلها كنص.
+
+**القيمة الافتراضية بتتحسب وقت التشغيل**، فتقدر تحط فيها أمر:
+
+~~~powershell
+param(
+    [string]$LogPath = "$env:LOCALAPPDATA\pc-tool\pc.log"
+)
+~~~
+
+**وعشان تشغّل سكربت في المكان اللي انت فيه لازم [[.\]]:** PowerShell مبيدوّرش على البرامج في الفولدر الحالي (عكس CMD)، وده أمان: عشان ملف اسمه [[git.ps1]] في فولدر نزّلته مياخدش مكان [[git]] الحقيقي.`,
+            when: "أول خطوة في أي سكربت هتكتبه. حتى لو ١٠ سطور.",
+            mistakes: R`تحط أي كود قبل [[param()]]، فتاخد error [[The term 'param' is not recognized]] أو ما شابه.
+
+وتنسى [[.\]] قدام اسم السكربت فتاخد [[not recognized as a name of a cmdlet]].
+
+وتبدأ بالكود وتسيب الواجهة تطلع لوحدها. اكتب الاستخدام الأول حتى لو في تعليق.`
+          },
+          teach: R`## الفكرة
+
+قبل أي كود: **إيه الشكل اللي نفسي أكتبه في الترمنال؟** نكتبه، وبعدين نبني اللي يخليه يشتغل.
+
+---
+
+## ١. الواجهة اللي اتفقنا عليها
+
+~~~text شكل الاستخدام
+.\pc.ps1 off -In 30        ← اقفل بعد ٣٠ دقيقة
+.\pc.ps1 restart -In 5     ← restart بعد ٥ دقايق
+.\pc.ps1 cancel            ← الغي المعاد
+.\pc.ps1 status            ← فيه معاد؟
+~~~
+
+### القرارات اللي جوه السطور دي
+
+| القرار | البديل اللي رفضناه | ليه |
+|---|---|---|
+| الفعل أول حاجة من غير شرطة | [[-Action off]] | أقصر، وشبه [[git commit]] و [[docker run]] |
+| [[-In]] بالدقايق | [[-Seconds 1800]] | دماغك بتفكّر بالدقايق |
+| فيه [[status]] | تخمّن | تعرف الحالة من غير ما تجرّب |
+| فيه [[cancel]] | تفتكر [[shutdown /a]] | الأداة تعرف تلغي نفسها |
+
+**كل ده اتقرر وإحنا لسه مكتبناش سطر كود.** لو بدأنا بالكود، كنا هنلاقي نفسنا بنكتب [[-Mode 2]] وخلاص.
+
+---
+
+## ٢. الهيكل الفاضي
+
+~~~powershell
+param(
+    [string]$Action = 'status',
+    [int]$In = 0
+)
+
+Write-Host "Action = $Action"
+Write-Host "In     = $In"
+~~~
+
+### نفكه سطر سطر
+
+**[[param(]]**
+
+بتفتح قايمة المدخلات. **لازم تبقى أول كود في الملف** (التعليقات فوقها عادي).
+
+**[[[string]$Action = 'status',]]**
+
+| الحتة | معناها |
+|---|---|
+| [[[string]]] | النوع: نص. لو اليوزر بعت رقم، PowerShell هيحوّله لنص |
+| [[$Action]] | الاسم. واليوزر بيكتبه [[-Action]] |
+| [[= 'status']] | القيمة لو اليوزر مكتبش حاجة |
+| [[,]] | فيه parameter تاني بعده |
+
+**[[[int]$In = 0]]**
+
+[[[int]]] رقم صحيح. لو اليوزر كتب [[-In abc]]، PowerShell هيرفض لوحده من غير ما نكتب أي تحقق.
+
+مفيش فاصلة بعده لأنه الأخير.
+
+**[[)]]**
+
+بتقفل الـ param.
+
+**[[Write-Host "Action = $Action"]]**
+
+بيطبع على الشاشة. و [[$Action]] جوه النص بيتفسّر لقيمته.
+
+> [[Write-Host]] بيطبع على الشاشة بس. لو عايز الناتج يعدّي في pipeline، استخدم [[Write-Output]] (درس «Write-Host والـ output»).
+
+---
+
+## ٣. نشغّله
+
+~~~powershell
+.\pc.ps1
+~~~
+
+~~~text الناتج
+Action = status
+In     = 0
+~~~
+
+القيم الافتراضية اشتغلت.
+
+~~~powershell
+.\pc.ps1 -Action off -In 30
+~~~
+
+~~~text الناتج
+Action = off
+In     = 30
+~~~
+
+استقبل الاتنين صح.
+
+~~~powershell
+.\pc.ps1 off -In 30
+~~~
+
+~~~text الناتج
+Action = off
+In     = 30
+~~~
+
+**من غير [[-Action]] وبرضه اشتغل.** ليه؟
+
+---
+
+## ٤. ليه [[off]] لوحدها اشتغلت؟
+
+PowerShell بيدّي كل parameter **رقم موقع** حسب ترتيبه في [[param()]]:
+
+~~~text
+param(
+    [string]$Action = 'status',   ← موقع 0
+    [int]$In = 0                  ← موقع 1
+)
+~~~
+
+فأي قيمة مكتوبة من غير اسم بتروح للموقع اللي فاضي بالترتيب.
+
+**بس ده شغال بالصدفة.** لو جيت بكرة وضفت parameter جديد في الأول، [[off]] هتروح له بدل [[$Action]] والأداة هتبوّظ من غير error.
+
+الحل في الخطوة الجاية: نكتب الموقع **صراحة**.
+
+---
+
+## ٥. ليه [[.\]] قدام الاسم؟
+
+~~~powershell
+pc.ps1
+~~~
+
+~~~text الناتج
+pc.ps1: The term 'pc.ps1' is not recognized as a name of a cmdlet, function, script file,
+or executable program.
+~~~
+
+PowerShell **مبيدوّرش** على البرامج في الفولدر اللي انت فيه (عكس CMD). ده أمان مقصود: لو نزّلت فولدر فيه ملف اسمه [[git.ps1]]، مش عايزينه ياخد مكان [[git]] الحقيقي.
+
+[[.\]] معناها «الملف ده، في الفولدر ده»، وبكتابتها انت بتقول صراحة إنك قاصده.
+
+---
+
+## ٦. لو السكربت مرفض يشتغل خالص
+
+~~~text رسالة محتملة
+.\pc.ps1 : File ...\pc.ps1 cannot be loaded because running scripts is disabled on this system.
+~~~
+
+دي [[ExecutionPolicy]]. الحل لليوزر بتاعك بس:
+
+~~~powershell
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+~~~
+
+(درس «ExecutionPolicy» فيه التفاصيل وليه [[RemoteSigned]] اختيار معقول.)
+
+---
+
+## الخلاصة
+
+- ابدأ بـ **شكل الاستخدام** مش بالكود. القرارات المهمة بتتاخد هناك.
+- [[param()]] أول كود في الملف، وكل parameter: نوع + اسم + قيمة افتراضية.
+- النوع ([[[int]]]) بيرفض المدخلات الغلط لوحده.
+- شغّل الهيكل الفاضي **قبل** ما تكتب أي منطق، عشان تتأكد إن المدخلات بتوصل صح.
+- الموقع (positional) شغال لوحده بالترتيب، بس خليه صريح — الخطوة الجاية.
+- [[.\]] لازمة قدام اسم السكربت.`,
+          lines: [
+            R`بداية قايمة المدخلات، ولازم تبقى أول كود في الملف`,
+            R`الفعل: نص، والافتراضي status لو اليوزر مكتبش حاجة`,
+            R`المهلة بالدقايق: رقم صحيح، والافتراضي صفر (حالًا)`,
+            R`قفل الـ param`,
+            R`اطبع اللي وصلنا عشان نتأكد إن PowerShell فهم صح`,
+            R`ونفس الحاجة للرقم: الهيكل ده مش بيعمل حاجة غير التأكيد`
+          ]
+        },
+
+        {
+          cmd: "مشروع ١ — التحقق من المدخلات",
+          title: "خلي الأداة ترفض الغلط قبل ما تشتغل",
+          desc: R`دلوقتي الأداة بتقبل أي حاجة: [[.\pc.ps1 sleep]] هتعدّي، و [[-In 99999]] كمان. الخطوة دي بتخلي PowerShell يرفض الغلط لوحده، من غير ما نكتب [[if]] واحدة.
+
+[[[ValidateSet('off','restart','cancel','status')]]] فوق الـ parameter: القيم المسموحة دي بس، وأي حاجة تانية بترفض برسالة بتعدّد المسموح.
+
+[[[ValidateRange(0, 10080)]]] للأرقام: من صفر لـ ١٠٠٨٠ دقيقة (أسبوع). الرقم بره المدى بيترفض.
+
+[[[Parameter(Position = 0)]]] بتكتب الموقع صراحة بدل ما تعتمد على الترتيب.
+
+والمكسب التاني اللي مش باين: الـ [[ValidateSet]] بتخلي **زرار Tab يكمّل القيم**. اكتب [[.\pc.ps1 ]] ودوس Tab، هيلف على [[off]] و [[restart]] و [[cancel]] و [[status]].
+
+وفيه إخوات تانيين: [[[ValidateNotNullOrEmpty()]]] و [[[ValidatePattern('^\d{4}$')]]] (regex) و [[[ValidateScript({ Test-Path $_ })]]] (شرط انت كاتبه).
+
+والقاعدة: **التحقق في الـ param، مش في جسم السكربت.** كده الرسالة بتطلع واضحة، و Tab بيساعد، والكود بيفضل نضيف.`,
+          example: R`param(
+    [Parameter(Position = 0)]
+    [ValidateSet('off', 'restart', 'cancel', 'status')]
+    [string]$Action = 'status',
+
+    [ValidateRange(0, 10080)]
+    [int]$In = 0
+)
+
+switch ($Action) {
+    'off'     { Write-Host "هقفل بعد $In دقيقة" }
+    'restart' { Write-Host "هعمل restart بعد $In دقيقة" }
+    'cancel'  { Write-Host 'هلغي المعاد' }
+    'status'  { Write-Host 'هقولك فيه معاد ولا لأ' }
+}`,
+          flag: "script",
+          try: R`جرّب [[.\pc.ps1 sleep]] و [[.\pc.ps1 off -In 99999]] وشوف الرسالتين. وبعدين اكتب [[.\pc.ps1 ]] ودوس Tab كذا مرة.`,
+          sol: R`~~~text الناتج (PowerShell 7.6)
+PS> .\pc.ps1 sleep
+pc.ps1: Cannot validate argument on parameter 'Action'. The argument "sleep" does not belong
+to the set "off,restart,cancel,status" specified by the ValidateSet attribute. Supply an
+argument that is in the set and then try the command again.
+
+PS> .\pc.ps1 off -In 99999
+pc.ps1: Cannot validate argument on parameter 'In'. The 99999 argument is greater than the
+maximum allowed range of 10080. Supply an argument that is less than or equal to 10080 and
+then try the command again.
+~~~
+
+**لاحظ الرسالتين:** الأولى **بتعدّد المسموح**، والتانية **بتقول الحد**. ودي رسايل PowerShell الجاهزة، مكتبناش حرف فيها.
+
+و [[.\pc.ps1 ]] + Tab بيلف على [[off]] ثم [[restart]] ثم [[cancel]] ثم [[status]]. الـ [[ValidateSet]] هي اللي علّمت الإكمال.
+
+**والأوامر الأربعة بقت شغالة:**
+
+~~~text
+PS> .\pc.ps1 off -In 30
+هقفل بعد 30 دقيقة
+
+PS> .\pc.ps1 cancel
+هلغي المعاد
+
+PS> .\pc.ps1
+هقولك فيه معاد ولا لأ
+~~~`,
+          deep: {
+            why: R`لو سبت الفحص لجسم السكربت، هتكتب [[if]] لكل مدخل، والرسايل هتبقى بتاعتك (وغالبًا أقل وضوحًا)، و Tab مش هيعرف يساعد، والغلط هيتكشف بعد ما السكربت يكون بدأ شغل.
+
+في الـ [[param]]، الغلط بيترفض **قبل** ما أول سطر يتنفذ.`,
+            how: R`**الـ attributes اللي هتستخدمها كتير:**
+
+| الـ attribute | بيعمل إيه |
+|---|---|
+| [[[Parameter(Mandatory)]]] | لازم يتكتب، ولو منساش PowerShell بيسأل عنه |
+| [[[Parameter(Position = 0)]]] | الموقع، عشان الكتابة من غير الاسم |
+| [[[ValidateSet('a','b')]]] | القيم دي بس + إكمال Tab |
+| [[[ValidateRange(0, 100)]]] | مدى للأرقام |
+| [[[ValidateNotNullOrEmpty()]]] | مش فاضي |
+| [[[ValidatePattern('^\d{4}$')]]] | يطابق regex |
+| [[[ValidateScript({ Test-Path $_ })]]] | شرط انت كاتبه، [[$_]] هي القيمة |
+| [[[ValidateLength(1, 50)]]] | طول النص |
+| [[[Alias('t')]]] | اسم تاني مختصر للـ parameter |
+
+**ترتيب السطور:** الـ attributes كلها فوق الـ parameter، كل واحدة في سطر، وآخر سطر هو النوع والاسم:
+
+~~~powershell
+[Parameter(Position = 0)]
+[ValidateSet('off', 'restart')]
+[string]$Action = 'status'
+~~~
+
+**[[switch]] مقابل [[if/elseif]]:**
+
+[[switch]] بتقارن القيمة بكل حالة. أنضف من سلسلة [[elseif]] لما يبقى فيه أكتر من ٣ احتمالات. و [[default]] بتمسك اللي مش مطابق (مش محتاجينها هنا لأن [[ValidateSet]] ضامنة).
+
+**الفخ:** القيمة الافتراضية **مبتتفحصش** في بعض الحالات لو الـ parameter مكتبش أصلًا. فخلي الافتراضي من ضمن الـ set دايمًا (هنا [[status]] موجودة في الـ set، فتمام).`,
+            when: "على كل parameter. التحقق أرخص حاجة تكتبها، وأغلى حاجة تنساها.",
+            mistakes: R`تحط الـ attribute تحت الـ parameter بدل فوقه.
+
+وتكتب [[[ValidateSet]]] بقيم فيها حروف كبيرة وتتوقع إنها حساسة لحالة الحروف. هي **مش** حساسة افتراضيًا: [[.\pc.ps1 OFF]] هتعدّي.
+
+وتحط قيمة افتراضية مش موجودة في الـ [[ValidateSet]].`
+          },
+          teach: R`## الفكرة
+
+بدل ما تكتب [[if]] لكل مدخل، بتعلّق **شروط** فوق الـ parameter، و PowerShell بيرفض الغلط قبل ما أول سطر يشتغل.
+
+---
+
+## ١. المشكلة في الخطوة اللي فاتت
+
+~~~powershell
+.\pc.ps1 sleep -In 99999
+~~~
+
+~~~text الناتج (قبل التحقق)
+Action = sleep
+In     = 99999
+~~~
+
+قَبِل كل حاجة. [[sleep]] مش فعل عندنا، و ٩٩٩٩٩ دقيقة = ٦٩ يوم.
+
+---
+
+## ٢. [[[ValidateSet]]]: القيم دي بس
+
+~~~powershell
+[Parameter(Position = 0)]
+[ValidateSet('off', 'restart', 'cancel', 'status')]
+[string]$Action = 'status',
+~~~
+
+### الترتيب مهم
+
+~~~text
+[Parameter(Position = 0)]                  ← attribute
+[ValidateSet('off','restart','cancel','status')]  ← attribute
+[string]$Action = 'status',                ← النوع والاسم والقيمة الافتراضية
+~~~
+
+كل الـ attributes **فوق**، وآخر سطر هو الـ parameter نفسه.
+
+### نجرّب
+
+~~~powershell
+.\pc.ps1 sleep
+~~~
+
+~~~text الناتج
+pc.ps1: Cannot validate argument on parameter 'Action'. The argument "sleep" does not belong
+to the set "off,restart,cancel,status" specified by the ValidateSet attribute. Supply an
+argument that is in the set and then try the command again.
+~~~
+
+### نقرا الرسالة
+
+| الحتة | معناها |
+|---|---|
+| [[Cannot validate argument on parameter 'Action']] | المشكلة في [[-Action]] |
+| [[does not belong to the set "off,restart,cancel,status"]] | **وبيعدّدلك المسموح** |
+| [[Supply an argument that is in the set]] | اعمل إيه |
+
+**مكتبناش الرسالة دي.** PowerShell بناها من الـ [[ValidateSet]].
+
+### والمكسب المخفي: Tab
+
+~~~powershell
+.\pc.ps1 <Tab>
+~~~
+
+بيلف على [[off]] ثم [[restart]] ثم [[cancel]] ثم [[status]]. الإكمال بيقرا الـ [[ValidateSet]].
+
+> ولو كتبتها [[if]] جوه السكربت، Tab مكنش هيعرف حاجة.
+
+---
+
+## ٣. [[[ValidateRange]]]: حدود للأرقام
+
+~~~powershell
+[ValidateRange(0, 10080)]
+[int]$In = 0
+~~~
+
+[[10080]] = ٧ أيام × ٢٤ ساعة × ٦٠ دقيقة. حد منطقي لأداة زي دي.
+
+~~~powershell
+.\pc.ps1 off -In 99999
+~~~
+
+~~~text الناتج
+pc.ps1: Cannot validate argument on parameter 'In'. The 99999 argument is greater than the
+maximum allowed range of 10080. Supply an argument that is less than or equal to 10080 and
+then try the command again.
+~~~
+
+**وطبقتين حماية هنا:**
+
+1. [[[int]]] بترفض [[-In abc]] (نوع غلط).
+2. [[[ValidateRange]]] بترفض [[-In 99999]] (رقم بره المدى).
+
+---
+
+## ٤. [[[Parameter(Position = 0)]]]: خلي الموقع صريح
+
+في الخطوة اللي فاتت [[off]] لوحدها اشتغلت بالصدفة (الترتيب). دلوقتي بقت **مكتوبة**:
+
+~~~powershell
+[Parameter(Position = 0)]
+~~~
+
+يعني: «الـ parameter ده هو الأول، مهما اتغيّر ترتيب السطور».
+
+ولو ضفت parameter جديد فوقه بكرة، [[off]] هتفضل رايحة لـ [[$Action]].
+
+---
+
+## ٥. [[switch]]: نوجّه كل فعل لمكانه
+
+~~~powershell
+switch ($Action) {
+    'off'     { Write-Host "هقفل بعد $In دقيقة" }
+    'restart' { Write-Host "هعمل restart بعد $In دقيقة" }
+    'cancel'  { Write-Host 'هلغي المعاد' }
+    'status'  { Write-Host 'هقولك فيه معاد ولا لأ' }
+}
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[switch ($Action)]] | قارن قيمة [[$Action]] باللي تحت |
+| [['off' { ... }]] | لو ساوت [[off]]، نفّذ اللي في الأقواس |
+| [[{ }]] | script block: الكود اللي هيتنفّذ |
+
+**ليه [[switch]] مش [[if/elseif]]؟** مع أربع احتمالات أو أكتر بتبقى أوضح، وإضافة فعل جديد بتبقى سطر واحد.
+
+> مفيش [[default]] هنا لأن [[ValidateSet]] ضامنة إن القيمة من الأربعة. لو مفيش [[ValidateSet]]، حط [[default]] دايمًا.
+
+---
+
+## ٦. نشغّلها
+
+~~~powershell
+.\pc.ps1 off -In 30
+.\pc.ps1 cancel
+.\pc.ps1
+~~~
+
+~~~text الناتج
+هقفل بعد 30 دقيقة
+هلغي المعاد
+هقولك فيه معاد ولا لأ
+~~~
+
+الأربعة بيوصلوا لمكانهم الصح. **لسه مفيش وظيفة حقيقية** — دي الخطوة الجاية.
+
+---
+
+## ٧. باقي أدوات التحقق
+
+| الـ attribute | مثال | بيرفض إيه |
+|---|---|---|
+| [[[Parameter(Mandatory)]]] | — | إنك تنساه (بيسألك عنه) |
+| [[[ValidateNotNullOrEmpty()]]] | — | النص الفاضي |
+| [[[ValidatePattern()]]] | [[[ValidatePattern('^\d{4}$')]]] | اللي مش ٤ أرقام |
+| [[[ValidateScript()]]] | [[[ValidateScript({ Test-Path $_ })]]] | المسار اللي مش موجود |
+| [[[ValidateLength()]]] | [[[ValidateLength(1, 50)]]] | النص الطويل أوي |
+| [[[Alias()]]] | [[[Alias('m')]]] | — (بيضيف اسم مختصر) |
+
+في [[ValidateScript]]، [[$_]] هي القيمة اللي اليوزر بعتها.
+
+---
+
+## الخلاصة
+
+- التحقق مكانه **فوق الـ parameter**، مش جوه السكربت.
+- [[ValidateSet]] بتدّيك تلاتة في واحد: رفض الغلط + رسالة بتعدّد المسموح + إكمال Tab.
+- [[ValidateRange]] للأرقام، و [[[int]]] نفسه طبقة حماية أولى.
+- [[Position = 0]] بيخلي الكتابة من غير اسم مضمونة مش بالصدفة.
+- [[switch]] أنضف من [[elseif]] لما الاحتمالات تعدّي تلاتة.
+- [[ValidateSet]] **مش** حساسة لحالة الحروف: [[OFF]] هتعدّي.`,
+          lines: [
+            R`بداية المدخلات`,
+            R`الفعل هو الـ parameter رقم صفر: يتكتب من غير اسم`,
+            R`القيم المسموحة بس، ودي كمان بتعلّم زرار Tab`,
+            R`النوع والاسم والقيمة الافتراضية، ولازم تبقى من ضمن الـ set`,
+            R`حد أقصى أسبوع بالدقايق: ٧ × ٢٤ × ٦٠`,
+            R`الرقم نفسه، و [int] بترفض الحروف قبل ما المدى يتفحص`,
+            R`قفل الـ param`,
+            R`وجّه كل فعل لمكانه: أنضف من سلسلة elseif`,
+            R`فرع القفل`,
+            R`فرع الريستارت`,
+            R`فرع الإلغاء`,
+            R`فرع الحالة`,
+            R`قفل الـ switch`
+          ]
+        },
+
+        {
+          cmd: "مشروع ١ — cancel و status",
+          title: "ابدأ بالوظايف الآمنة، واقرا الـ exit code",
+          desc: R`دلوقتي نكتب وظيفة حقيقية. وهنبدأ بالوظايف **الآمنة** ([[cancel]] و [[status]]) قبل القفل نفسه، عشان نتعلم ونجرّب من غير أي خطر. القفل هييجي في الخطوة الجاية بعد ما تبقى شبكة الأمان جاهزة.
+
+[[shutdown.exe /a]] بيلغي أي معاد قفل متجدول. ولو مفيش معاد، بيطبع [[Unable to abort the system shutdown because no shutdown was in progress.(1116)]] ويخرج بالكود [[1116]].
+
+ودي الحتة المهمة: [[shutdown.exe]] **برنامج خارجي** مش cmdlet، فمش بيرمي error بشكل PowerShell، بيرجّع **رقم** في [[$LASTEXITCODE]]. والسكربت المحترم بيقرا الرقم ده ويترجمه لرسالة مفهومة بدل ما يسيب اليوزر مع «(1116)».
+
+و [[status]] محتاج يعرف فيه معاد ولا لأ، وويندوز مش بيدّي طريقة مباشرة تسأله. الحل: **الأداة تفتكر بنفسها** — تكتب ملف JSON صغير فيه نوع المعاد ووقته، وتقراه بعدين.
+
+[[ConvertTo-Json]] بيحوّل object لنص، و [[ConvertFrom-Json]] بيعمل العكس. والتاريخ بيتخزّن بصيغة [[o]] (ISO 8601) عشان يترجع زي ما هو مهما كانت إعدادات اللغة.
+
+و [[$ErrorActionPreference$ErrorActionPreference = 'Stop']] فوق خالص: خلي أي error يوقّف السكربت بدل ما يكمّل وهو بايظ.`,
+          example: R`$ErrorActionPreference = 'Stop'
+$StatePath = "$env:LOCALAPPDATA\pc-tool\state.json"
+
+function Invoke-Cancel {
+    shutdown.exe /a 2>&1 | Out-Null
+    $code = $LASTEXITCODE
+    if (Test-Path $StatePath) { Remove-Item $StatePath -Force }
+    if ($code -eq 0)    { Write-Host 'OK: المعاد اتلغى' -ForegroundColor Green; return }
+    if ($code -eq 1116) { Write-Host 'مفيش معاد متجدول أصلًا' -ForegroundColor Yellow; return }
+    Write-Error "shutdown /a رجّع $code"
+}
+
+function Show-Status {
+    if (-not (Test-Path $StatePath)) {
+        Write-Host 'مفيش معاد متجدول' -ForegroundColor Yellow
+        return
+    }
+    $s  = Get-Content $StatePath -Raw -Encoding utf8 | ConvertFrom-Json
+    $at = [datetime]::Parse($s.at)
+    if ($at -lt (Get-Date)) {
+        Write-Host 'المعاد القديم عدّى' -ForegroundColor Yellow
+        return
+    }
+    $left = [int]($at - (Get-Date)).TotalMinutes
+    Write-Host "$($s.kind) الساعة $($at.ToString('HH:mm:ss')) (فاضل $left دقيقة)" -ForegroundColor Cyan
+}`,
+          flag: "script",
+          try: R`شغّل [[.\pc.ps1 cancel]] وانت متأكد إن مفيش معاد متجدول. إيه الرسالة؟ وبعدين اعمل ملف حالة بإيدك وشوف [[status]] بيقول إيه.`,
+          sol: R`~~~text الناتج (PowerShell 7.6 على ويندوز 11، اتشغّل فعلًا)
+PS> .\pc.ps1 status
+مفيش معاد متجدول
+
+PS> .\pc.ps1 cancel
+مفيش معاد متجدول أصلًا
+~~~
+
+[[cancel]] اشتغل فعلًا ونادى [[shutdown /a]]، ولأن مفيش معاد، الكود رجع [[1116]] والسكربت ترجمه لجملة مفهومة. **ومحصلش أي تغيير في الجهاز.**
+
+وعشان نشوف [[status]] بيشتغل، نعمل ملف حالة بإيدنا:
+
+~~~powershell
+New-Item -ItemType Directory "$env:LOCALAPPDATA\pc-tool" -Force | Out-Null
+[pscustomobject]@{ kind = 'off'; at = (Get-Date).AddMinutes(42).ToString('o') } |
+    ConvertTo-Json | Set-Content "$env:LOCALAPPDATA\pc-tool\state.json" -Encoding utf8
+.\pc.ps1 status
+~~~
+
+~~~text الناتج
+off الساعة 04:51:05 (فاضل 42 دقيقة)
+~~~
+
+والملف نفسه:
+
+~~~text state.json
+{
+  "kind": "off",
+  "at": "2026-10-28T04:51:05.2488457+03:00"
+}
+~~~
+
+لاحظ شكل التاريخ: [[2026-10-28T04:51:05.2488457+03:00]]. دي صيغة [[o]]، وفيها فرق التوقيت ([[+03:00]])، فبترجع صح مهما كانت لغة الجهاز.`,
+          deep: {
+            why: R`أي أداة بتنادي برنامج خارجي لازم تقرا الـ exit code بتاعه. من غير كده، السكربت هيكمّل وهو فاكر إنه نجح.
+
+و «الأداة تفتكر حالتها» فكرة بتتكرر في كل أداة تقريبًا: ملف صغير في مكان معروف، بتكتب فيه وتقرا منه.`,
+            how: R`**ليه [[2>&1 | Out-Null]] على [[shutdown.exe /a]]؟**
+
+[[shutdown.exe]] بيكتب رسالته على **stderr** مش stdout. و PowerShell 7 بيحوّل أي stderr من برنامج خارجي لـ error record، فكان هيطلّع أحمر قبل ما نقدر نتصرف.
+
+- [[2>&1]] حوّل stderr لـ stdout.
+- [[| Out-Null]] ارميه، لأن إحنا هنكتب رسالتنا.
+
+والـ exit code بيفضل في [[$LASTEXITCODE]] عادي.
+
+**ليه [[$code = $LASTEXITCODE]] على طول؟**
+
+لأن [[$LASTEXITCODE]] بيتغير مع أي برنامج خارجي تاني. والسطر اللي بعده فيه [[Test-Path]] و [[Remove-Item]] — دول cmdlets مش بيغيّروه، بس العادة دي بتنقذك لما تضيف سطر بعدين.
+
+**أكواد [[shutdown.exe]] اللي تهمك:**
+
+| الكود | معناه |
+|---|---|
+| [[0]] | تمام |
+| [[1116]] | مفيش shutdown شغال عشان تلغيه |
+| [[1190]] | فيه معاد متجدول بالفعل (الغيه الأول) |
+| [[5]] | Access denied (محتاج صلاحيات) |
+
+**ليه ملف JSON مش متغير بيئة أو registry؟**
+
+- المتغير بيروح لما الترمنال يقفل.
+- الـ registry محتاج صلاحيات وأصعب في التنظيف.
+- ملف JSON في [[$env:LOCALAPPDATA]] مكان ويندوز نفسه بيوصّي بيه لبيانات التطبيقات، مش محتاج أدمن، وتقدر تفتحه بعينك وتقراه.
+
+**ليه [[-Raw]] في [[Get-Content]]؟**
+
+من غيرها [[Get-Content]] بيرجّع **قايمة سطور**، و [[ConvertFrom-Json]] عايز **نص واحد**. [[-Raw]] بتجيب الملف كله كنص.
+
+**ليه [[[datetime]::Parse()]] مش [[[datetime]$s.at]]؟**
+
+الاتنين بيشتغلوا هنا، بس [[::Parse]] أوضح في النية وبيرمي error مفهوم لو النص بايظ.
+
+**و [[$at -lt (Get-Date)]]:** لو الوقت عدّى، الملف بقى قديم. بنعتبره «مفيش معاد» بدل ما نقول لليوزر إن فيه قفل بعد سالب ٥ دقايق.`,
+            when: "أي وظيفة بتنادي [[.exe]]، وأي أداة محتاجة تفتكر حاجة بين التشغيلتين.",
+            mistakes: R`تنسى [[2>&1]] فتاخد أحمر في الشاشة من برنامج نجح.
+
+وتقرا [[$LASTEXITCODE]] بعد سطرين، وتكون أي حاجة تانية غيّرته.
+
+وتنسى [[-Raw]] فـ [[ConvertFrom-Json]] يرمي error غريب.
+
+وتخزّن التاريخ بـ [[.ToString()]] العادي، فيتكتب بصيغة لغة الجهاز ويفشل في القراية على جهاز بلغة تانية. استخدم [[('o')]].`
+          },
+          teach: R`## الفكرة
+
+أول وظيفة حقيقية. وهنبدأ بالآمن: [[cancel]] و [[status]]. القفل نفسه في الخطوة الجاية، بعد ما نبني شبكة الأمان.
+
+**كل اللي تحت اتشغّل فعلًا على ويندوز 11 / PowerShell 7.6، ومحصلش أي تغيير في الجهاز.**
+
+---
+
+## ١. [[$ErrorActionPreference = 'Stop']]
+
+~~~powershell
+$ErrorActionPreference = 'Stop'
+~~~
+
+افتراضيًا، لما cmdlet يطلّع error، PowerShell **بيكمّل السطر اللي بعده**. في سكربت بيقفل جهاز، ده آخر حاجة تحتاجها.
+
+السطر ده بيقول: أي error = وقّف.
+
+| القيمة | السلوك |
+|---|---|
+| [[Continue]] (الافتراضي) | اطبع الخطأ وكمّل |
+| [[Stop]] | وقّف |
+| [[SilentlyContinue]] | اخفي وكمّل |
+
+---
+
+## ٢. [[$StatePath]]: فين الأداة هتفتكر
+
+~~~powershell
+$StatePath = "$env:LOCALAPPDATA\pc-tool\state.json"
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[$env:LOCALAPPDATA]] | فولدر بيانات البرامج لليوزر ده |
+| [[\pc-tool\]] | فولدر خاص بأداتنا |
+| [[state.json]] | الملف |
+
+على جهازي ده بيطلع [[C:\Users\7ossa\AppData\Local\pc-tool\state.json]].
+
+**ليه المكان ده؟** مش محتاج أدمن، وبيتمسح مع ملف تعريف اليوزر، وده المكان اللي ويندوز نفسه بيوصّي بيه.
+
+---
+
+## ٣. [[Invoke-Cancel]]: نلغي، ونترجم الكود
+
+~~~powershell
+shutdown.exe /a 2>&1 | Out-Null
+$code = $LASTEXITCODE
+~~~
+
+### ليه [[2>&1 | Out-Null]]؟
+
+لو كتبنا [[shutdown.exe /a]] لوحده وشغّلناه ومفيش معاد:
+
+~~~text الناتج
+Unable to abort the system shutdown because no shutdown was in progress.(1116)
+~~~
+
+والرسالة دي بتطلع على **stderr**، و PowerShell 7 بيحوّلها لـ error أحمر. إحنا مش عايزين اليوزر يشوف «(1116)»، عايزينه يشوف جملة مفهومة.
+
+| الحتة | معناها |
+|---|---|
+| [[2>&1]] | حوّل stderr (رقم 2) لـ stdout (رقم 1) |
+| [[\| Out-Null]] | ارمي الناتج |
+
+والـ exit code بيفضل في [[$LASTEXITCODE]] عادي.
+
+### ليه نخزّنه على طول؟
+
+~~~powershell
+$code = $LASTEXITCODE
+~~~
+
+[[$LASTEXITCODE]] بيتغير مع أي برنامج خارجي تاني. خزّنه قبل ما تعمل أي حاجة.
+
+### نترجم الأكواد
+
+~~~powershell
+if ($code -eq 0)    { Write-Host 'OK: المعاد اتلغى' -ForegroundColor Green; return }
+if ($code -eq 1116) { Write-Host 'مفيش معاد متجدول أصلًا' -ForegroundColor Yellow; return }
+Write-Error "shutdown /a رجّع $code"
+~~~
+
+| الكود | معناه | رسالتنا |
+|---|---|---|
+| [[0]] | اتلغى فعلًا | أخضر |
+| [[1116]] | مكانش فيه معاد | أصفر (مش خطأ، مجرد معلومة) |
+| أي حاجة تانية | مشكلة معرفهاش | [[Write-Error]] |
+
+[[return]] بتخرج من الدالة، فالسطور اللي تحت مبتتنفذش.
+
+### نشغّله
+
+~~~powershell
+.\pc.ps1 cancel
+~~~
+
+~~~text الناتج
+مفيش معاد متجدول أصلًا
+~~~
+
+**ده اتشغّل بجد.** [[shutdown /a]] اتنادى، رجّع 1116، والسكربت ترجمه. والجهاز متغيّرش.
+
+---
+
+## ٤. [[Show-Status]]: الأداة بتقرا اللي افتكرته
+
+### الملف مش موجود
+
+~~~powershell
+if (-not (Test-Path $StatePath)) {
+    Write-Host 'مفيش معاد متجدول' -ForegroundColor Yellow
+    return
+}
+~~~
+
+أول مرة تشغّل الأداة، مفيش ملف. مش خطأ، ده الوضع الطبيعي.
+
+### نقرا ونفك الـ JSON
+
+~~~powershell
+$s  = Get-Content $StatePath -Raw -Encoding utf8 | ConvertFrom-Json
+$at = [datetime]::Parse($s.at)
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[Get-Content]] | اقرا الملف |
+| [[-Raw]] | **كنص واحد**، مش قايمة سطور |
+| [[-Encoding utf8]] | الترميز، عشان العربي ميبوظش |
+| [[ConvertFrom-Json]] | حوّل النص لـ object |
+| [[$s.at]] | خاصية [[at]] من الـ object |
+| [[[datetime]::Parse()]] | حوّل النص لتاريخ |
+
+**[[-Raw]] مش اختيارية:** من غيرها [[Get-Content]] بيرجّع قايمة، و [[ConvertFrom-Json]] عايز نص واحد.
+
+### الملف القديم
+
+~~~powershell
+if ($at -lt (Get-Date)) {
+    Write-Host 'المعاد القديم عدّى' -ForegroundColor Yellow
+    return
+}
+~~~
+
+لو الوقت فات، الملف بايت. أحسن من إننا نقول «فاضل -٥ دقيقة».
+
+### الحساب والعرض
+
+~~~powershell
+$left = [int]($at - (Get-Date)).TotalMinutes
+Write-Host "$($s.kind) الساعة $($at.ToString('HH:mm:ss')) (فاضل $left دقيقة)" -ForegroundColor Cyan
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[$at - (Get-Date)]] | الفرق بين تاريخين = [[TimeSpan]] |
+| [[.TotalMinutes]] | الفرق بالدقايق (بكسور) |
+| [[[int]]] | قرّبه لرقم صحيح |
+| [[$($s.kind)]] | [[$( )]] عشان النقطة تشتغل جوه النص |
+| [[$at.ToString('HH:mm:ss')]] | الوقت بس من غير التاريخ |
+
+---
+
+## ٥. نجرّب [[status]] بملف حالة
+
+عشان نشوفه شغال، نعمل الملف بإيدنا:
+
+~~~powershell
+New-Item -ItemType Directory "$env:LOCALAPPDATA\pc-tool" -Force | Out-Null
+[pscustomobject]@{ kind = 'off'; at = (Get-Date).AddMinutes(42).ToString('o') } |
+    ConvertTo-Json | Set-Content "$env:LOCALAPPDATA\pc-tool\state.json" -Encoding utf8
+.\pc.ps1 status
+~~~
+
+~~~text الناتج
+off الساعة 04:51:05 (فاضل 42 دقيقة)
+~~~
+
+### الملف نفسه
+
+~~~text state.json
+{
+  "kind": "off",
+  "at": "2026-10-28T04:51:05.2488457+03:00"
+}
+~~~
+
+### ليه صيغة [[('o')]]؟
+
+| الصيغة | الشكل | المشكلة |
+|---|---|---|
+| [[.ToString()]] | [[10/28/2026 4:51:05 AM]] | بتتغير بلغة الجهاز، والقراية بتفشل |
+| [[.ToString('o')]] | [[2026-10-28T04:51:05.2488457+03:00]] | ثابتة، وفيها فرق التوقيت |
+
+[[o]] من [[round-trip]]: اكتب واقرا وهترجع نفس القيمة بالظبط. **استخدمها في أي ملف.**
+
+---
+
+## الخلاصة
+
+- ابدأ بالوظايف الآمنة. هتتعلم وتجرّب براحتك قبل ما تلمس الخطر.
+- البرنامج الخارجي بيرجّع **رقم** في [[$LASTEXITCODE]]، مش error. اقراه وترجمه.
+- خزّن [[$LASTEXITCODE]] في متغير على طول.
+- [[2>&1 | Out-Null]] بتسكّت رسالة البرنامج عشان تكتب رسالتك.
+- [[1116]] من [[shutdown /a]] = مفيش معاد. مش خطأ.
+- الأداة بتفتكر حالتها في JSON في [[$env:LOCALAPPDATA]].
+- [[-Raw]] لازمة قبل [[ConvertFrom-Json]]، و [[('o')]] لازمة للتواريخ.
+- [[$ErrorActionPreference = 'Stop']] فوق، عشان السكربت ميكملش وهو بايظ.`,
+          lines: [
+            R`أي error يوقّف السكربت بدل ما يكمّل وهو بايظ`,
+            R`مكان ملف الحالة: فولدر بيانات اليوزر، مش محتاج أدمن`,
+            R`دالة الإلغاء`,
+            R`نادي البرنامج، وحوّل رسالته من stderr وارميها عشان نكتب رسالتنا`,
+            R`خزّن الكود على طول قبل ما أي برنامج تاني يغيّره`,
+            R`امسح ملف الحالة لأن مفيش معاد بعد الإلغاء`,
+            R`كود صفر: اتلغى فعلًا`,
+            R`كود 1116: مكانش فيه معاد أصلًا، ودي معلومة مش خطأ`,
+            R`أي كود تاني معرفهوش: بلّغ كخطأ`,
+            R`قفل الدالة`,
+            R`دالة الحالة`,
+            R`الملف مش موجود يعني مفيش معاد، ودي الحالة الطبيعية أول مرة`,
+            R`اطبع ده`,
+            R`واخرج من الدالة`,
+            R`قفل الشرط`,
+            R`اقرا الملف كنص واحد (-Raw) وحوّله لـ object`,
+            R`حوّل نص التاريخ لتاريخ حقيقي`,
+            R`لو الوقت عدّى، الملف بقى قديم`,
+            R`اطبع ده`,
+            R`واخرج`,
+            R`قفل الشرط`,
+            R`الفرق بين التاريخين بالدقايق، مقرّب لرقم صحيح`,
+            R`اعرض النوع والوقت والباقي`,
+            R`قفل الدالة`
+          ]
+        },
+
+        {
+          cmd: "مشروع ١ — off و restart بـ WhatIf",
+          title: "الوظيفة الخطرة، ومعاها شبكة الأمان من أول سطر",
+          desc: R`دلوقتي بس نكتب القفل. و **مش هنكتبه لوحده**: هنكتبه هو و [[-WhatIf]] في نفس الخطوة، عشان تقدر تختبر الأداة كلها من غير ما جهازك يقفل ولا مرة.
+
+[[[CmdletBinding(SupportsShouldProcess)]]] فوق [[param()]] بتدّي سكربتك [[-WhatIf]] و [[-Confirm]] و [[-Verbose]] مجانًا، زي أي cmdlet أصلي.
+
+وبعدها بتسأل بنفسك قبل أي حاجة خطرة:
+
+[[if (-not $PSCmdlet.ShouldProcess($target, 'schedule')) { return }]]
+
+الدالة دي بترجّع [[True]] يعني «كمّل»، و [[False]] يعني «اليوزر طلب معاينة أو رفض». لو [[False]] بتخرج من غير ما تعمل حاجة، و PowerShell بيطبع سطر [[What if]] لوحده.
+
+[[$target]] هو **على مين** العملية، و [['schedule']] هي **العملية**. الاتنين بيظهروا في السطر: [[What if: Performing the operation "schedule" on target "off at 04:39:35"]].
+
+وفيه تفصيلة مهمة: أي cmdlet جوه سكربتك بيدعم [[-WhatIf]] **بيرث** الـ [[-WhatIf]] بتاعك. فلو عندك [[New-Item]] أو [[Set-Content]] لحاجة مش خطرة (زي ملف الحالة)، حطلها [[-WhatIf:$false]] عشان متظهرش في المعاينة.
+
+و [[shutdown.exe /s /t <ثواني>]] هو اللي بيجدول، و [[/r]] للريستارت، و [[/c "رسالة"]] بتظهر في تنبيه ويندوز.`,
+          example: R`[CmdletBinding(SupportsShouldProcess)]
+param(
+    [Parameter(Position = 0)]
+    [ValidateSet('off', 'restart', 'cancel', 'status')]
+    [string]$Action = 'status',
+
+    [ValidateRange(0, 10080)]
+    [int]$In = 0,
+
+    [string]$Message = 'الجهاز هيقفل. احفظ شغلك.'
+)
+
+function Invoke-Schedule {
+    param([ValidateSet('off', 'restart')][string]$Kind)
+
+    $seconds = $In * 60
+    $at      = (Get-Date).AddSeconds($seconds)
+    $flag    = if ($Kind -eq 'off') { '/s' } else { '/r' }
+    $target  = '{0} at {1:HH:mm:ss}' -f $Kind, $at
+
+    if (-not $PSCmdlet.ShouldProcess($target, 'schedule')) { return }
+
+    shutdown.exe $flag /t $seconds /c $Message
+    Save-State -Kind $Kind -At $at
+    Write-Host "OK: $Kind الساعة $($at.ToString('HH:mm:ss'))" -ForegroundColor Green
+}`,
+          flag: "script danger",
+          try: R`شغّل [[.\pc.ps1 off -In 30 -WhatIf]] وشوف السطر اللي بيطلع. وبعدين [[.\pc.ps1 restart -WhatIf]] من غير [[-In]]. وقارن الوقت اللي في السطرين. **متشغلهاش من غير [[-WhatIf]]** غير لما تكون متأكد.`,
+          sol: R`~~~text الناتج (PowerShell 7.6 على ويندوز 11، اتشغّل فعلًا)
+PS> .\pc.ps1 off -In 30 -WhatIf
+What if: Performing the operation "schedule" on target "off at 04:39:35".
+
+PS> .\pc.ps1 restart -WhatIf
+What if: Performing the operation "schedule" on target "restart at 04:09:35".
+~~~
+
+الساعة وقت التجربة كانت [[04:09:35]]:
+
+| الأمر | [[$In]] | الوقت المحسوب |
+|---|---|---|
+| [[off -In 30]] | 30 | [[04:39:35]] (+٣٠ دقيقة) |
+| [[restart]] | 0 (الافتراضي) | [[04:09:35]] (حالًا) |
+
+**الحساب مظبوط، والجهاز معملش حاجة.**
+
+ونتأكد إن ملف الحالة متكتبش:
+
+~~~powershell
+Test-Path "$env:LOCALAPPDATA\pc-tool\state.json"
+~~~
+
+~~~text الناتج
+False
+~~~
+
+لأن [[Save-State]] بعد الـ [[ShouldProcess]]، فمتنفّذش أصلًا.`,
+          deep: {
+            why: R`سكربت بيقفل الجهاز مينفعش تختبره بتشغيله. [[-WhatIf]] هو الفرق بين أداة تقدر تطوّرها وأداة بتخاف تلمسها.
+
+والأهم إنك بتحط الأمان **مع** الميزة مش بعدها. «هضيف -WhatIf بعدين» معناها إنك هتختبر على جهازك الحقيقي النهاردة.`,
+            how: R`**[[SupportsShouldProcess]] بتدّيك ٣ حاجات:**
+
+| الـ parameter | بيعمل إيه |
+|---|---|
+| [[-WhatIf]] | [[ShouldProcess]] بترجّع [[False]] وبتطبع سطر |
+| [[-Confirm]] | بتسأل اليوزر |
+| [[-Verbose]] | [[Write-Verbose]] تبقى ظاهرة |
+
+**[[$PSCmdlet]]** متغير جاهز بيظهر بمجرد ما تكتب [[CmdletBinding]]. منه بتوصل لـ [[.ShouldProcess()]] و [[.ShouldContinue()]] و [[.WriteVerbose()]].
+
+**شكل النداء:**
+
+~~~powershell
+$PSCmdlet.ShouldProcess($target, $operation)
+~~~
+
+- [[$target]]: الحاجة اللي هتتعمل عليها العملية.
+- [[$operation]]: اسم العملية.
+- بترجّع [[True]] = كمّل، [[False]] = متعملش.
+
+وفيه شكل بـ argument واحد ([[ShouldProcess($target)]])، بس التنين أوضح في الناتج.
+
+**[[-f]] (format operator):**
+
+~~~powershell
+$target = '{0} at {1:HH:mm:ss}' -f $Kind, $at
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[{0}]] | حط الحاجة رقم ٠ (أول حاجة بعد [[-f]]) |
+| [[{1:HH:mm:ss}]] | الحاجة رقم ١، بصيغة ساعة:دقيقة:ثانية |
+| [[-f]] | العامل اللي بيركّب |
+
+أنضف من [["$Kind at $($at.ToString('HH:mm:ss'))"]] لما التنسيق يطول.
+
+**[[if]] كـ قيمة:**
+
+~~~powershell
+$flag = if ($Kind -eq 'off') { '/s' } else { '/r' }
+~~~
+
+في PowerShell [[if]] بترجّع قيمة، فتقدر تحطها في متغير على طول. مفيش [[? :]] زي لغات تانية (فيه [[? :]] في PowerShell 7 بس [[if]] أوضح).
+
+**وراثة [[-WhatIf]]:** أي cmdlet جوه سكربتك بيدعم [[ShouldProcess]] بياخد الـ [[-WhatIf]] بتاعك تلقائيًا. ده كويس للحاجات الخطرة، ووحش للحاجات الداخلية زي كتابة ملف حالة. الحل [[-WhatIf:$false]] عليها.`,
+            when: "قبل أي سطر بيغيّر حاجة بره السكربت: ملف، خدمة، registry، جهاز.",
+            mistakes: R`تحط [[ShouldProcess]] **بعد** الحاجة الخطرة. ترتيبها قبلها.
+
+وتنسى [[-WhatIf:$false]] على الحاجات الداخلية، فالمعاينة تطلع مليانة سطور مالهاش لازمة.
+
+وتكتب [[SupportsShouldProcess]] من غير ما تنادي [[ShouldProcess]]. ساعتها [[-WhatIf]] هتتقبل كـ parameter **ومش هتعمل حاجة** — وده أخطر من إنها مش موجودة، لأن اليوزر هيثق فيها.`
+          },
+          teach: R`## الفكرة
+
+الوظيفة الخطرة والأمان بتوعها في نفس الخطوة. بعد الدرس ده هتقدر تختبر الأداة كلها وجهازك مفتوح.
+
+**كل الناتج اتشغّل فعلًا على ويندوز 11 / PowerShell 7.6، والجهاز معملش shutdown ولا restart.**
+
+---
+
+## ١. [[[CmdletBinding(SupportsShouldProcess)]]]
+
+~~~powershell
+[CmdletBinding(SupportsShouldProcess)]
+param(
+    ...
+)
+~~~
+
+السطر ده فوق [[param()]] بيحوّل السكربت من «ملف فيه أوامر» لحاجة بتتصرف زي cmdlet أصلي:
+
+| اللي بتاخده مجانًا | بيعمل إيه |
+|---|---|
+| [[-WhatIf]] | معاينة |
+| [[-Confirm]] | يسأل |
+| [[-Verbose]] | يظهر رسايل [[Write-Verbose]] |
+| [[-ErrorAction]] | تتحكم في التعامل مع الأخطاء |
+| [[$PSCmdlet]] | متغير بتوصل منه للدوال دي |
+
+> [[CmdletBinding()]] لوحدها (من غير [[SupportsShouldProcess]]) بتدّي [[-Verbose]] من غير [[-WhatIf]].
+
+---
+
+## ٢. نحسب الوقت والعَلَم
+
+~~~powershell
+$seconds = $In * 60
+$at      = (Get-Date).AddSeconds($seconds)
+$flag    = if ($Kind -eq 'off') { '/s' } else { '/r' }
+$target  = '{0} at {1:HH:mm:ss}' -f $Kind, $at
+~~~
+
+### [[$seconds = $In * 60]]
+
+اليوزر بيكتب دقايق، و [[shutdown]] عايز ثواني. التحويل في مكان واحد.
+
+### [[$at = (Get-Date).AddSeconds($seconds)]]
+
+إمتى الحدث هيحصل. الأقواس لازمة عشان [[.AddSeconds]] تشتغل على ناتج [[Get-Date]].
+
+### [[$flag = if (...) { '/s' } else { '/r' }]]
+
+**في PowerShell، [[if]] بترجّع قيمة.** فتقدر تحطها في متغير على طول من غير سطرين.
+
+| [[$Kind]] | [[$flag]] | معناه |
+|---|---|---|
+| [[off]] | [[/s]] | shutdown |
+| [[restart]] | [[/r]] | reboot |
+
+### [[$target = '{0} at {1:HH:mm:ss}' -f $Kind, $at]]
+
+| الحتة | معناها |
+|---|---|
+| [[{0}]] | أول قيمة بعد [[-f]]، يعني [[$Kind]] |
+| [[{1:HH:mm:ss}]] | تاني قيمة، معروضة كـ ساعة:دقيقة:ثانية |
+| [[-f]] | عامل التنسيق |
+
+النتيجة نص زي [[off at 04:39:35]]. ده اللي هيظهر لليوزر في المعاينة.
+
+---
+
+## ٣. البوابة: [[ShouldProcess]]
+
+~~~powershell
+if (-not $PSCmdlet.ShouldProcess($target, 'schedule')) { return }
+~~~
+
+### اللي بيحصل جواها
+
+~~~text
+المستخدم كتب -WhatIf؟
+   ├── أيوه  →  اطبع "What if: ..."  →  رجّع False  →  return (مفيش قفل)
+   └── لأ    →  رجّع True            →  كمّل للسطر اللي تحت
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[$PSCmdlet]] | المتغير اللي جه مع [[CmdletBinding]] |
+| [[.ShouldProcess($target, 'schedule')]] | «أعمل العملية دي على ده؟» |
+| [[-not]] | اعكس |
+| [[return]] | اخرج من الدالة من غير ما تعمل حاجة |
+
+**مكان السطر ده هو كل الحكاية:** قبل [[shutdown.exe]] بالظبط.
+
+---
+
+## ٤. التنفيذ
+
+~~~powershell
+shutdown.exe $flag /t $seconds /c $Message
+Save-State -Kind $Kind -At $at
+Write-Host "OK: $Kind الساعة $($at.ToString('HH:mm:ss'))" -ForegroundColor Green
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[$flag]] | [[/s]] أو [[/r]] |
+| [[/t $seconds]] | بعد كام ثانية |
+| [[/c $Message]] | رسالة تظهر في تنبيه ويندوز (لحد ٥١٢ حرف) |
+
+التلات سطور دول **مبيوصلهمش التنفيذ** لما تكتب [[-WhatIf]].
+
+---
+
+## ٥. نشغّلها بالمعاينة
+
+~~~powershell
+.\pc.ps1 off -In 30 -WhatIf
+~~~
+
+~~~text الناتج
+What if: Performing the operation "schedule" on target "off at 04:39:35".
+~~~
+
+~~~powershell
+.\pc.ps1 restart -WhatIf
+~~~
+
+~~~text الناتج
+What if: Performing the operation "schedule" on target "restart at 04:09:35".
+~~~
+
+### نقرا السطرين
+
+الساعة وقت التجربة كانت **04:09:35**.
+
+| الأمر | [[$In]] | الوقت | صح؟ |
+|---|---|---|---|
+| [[off -In 30]] | 30 | [[04:39:35]] | +٣٠ دقيقة ✔ |
+| [[restart]] | 0 | [[04:09:35]] | حالًا ✔ |
+
+ولاحظ إن [[schedule]] و [[off at ...]] اللي في السطر هما بالظبط [[$operation]] و [[$target]] اللي بعتناهم.
+
+### ونتأكد إن مفيش أثر
+
+~~~powershell
+Test-Path "$env:LOCALAPPDATA\pc-tool\state.json"
+~~~
+
+~~~text الناتج
+False
+~~~
+
+ملف الحالة متكتبش، لأن [[Save-State]] بعد البوابة.
+
+---
+
+## ٦. الفخ: الـ cmdlets الداخلية بترث [[-WhatIf]]
+
+[[Save-State]] جواها:
+
+~~~powershell
+New-Item -ItemType Directory -Path $dir -Force -WhatIf:$false | Out-Null
+... | Set-Content -Path $StatePath -Encoding utf8 -WhatIf:$false
+~~~
+
+### ليه [[-WhatIf:$false]]؟
+
+لأن [[New-Item]] و [[Set-Content]] بيدعموا [[ShouldProcess]]، فلما تكتب [[-WhatIf]] على السكربت، **هما كمان بياخدوها**.
+
+ونشوف الفرق بالظبط. نسخة **من غير** [[-WhatIf:$false]] (مع اللوج اللي هنضيفه في الخطوة الجاية):
+
+~~~text الناتج
+What if: Performing the operation "schedule" on target "off at 04:40:16".
+What if: Performing the operation "Create Directory" on target "Destination: C:\Users\...\pc-tool".
+What if: Performing the operation "Add Content" on target "Path: C:\Users\...\pc-tool\pc.log".
+~~~
+
+ونسخة **بـ** [[-WhatIf:$false]]:
+
+~~~text الناتج
+What if: Performing the operation "schedule" on target "off at 04:40:16".
+~~~
+
+**سطر واحد نضيف.**
+
+### القاعدة
+
+| نوع العملية | تعمل إيه |
+|---|---|
+| بتغيّر حاجة لليوزر (قفل، مسح، نقل) | سيبها ترث [[-WhatIf]] |
+| داخلية للأداة (لوج، ملف حالة، فولدر مؤقت) | [[-WhatIf:$false]] |
+
+واللوج بالذات مهم يفضل شغال في المعاينة، عشان تلاقي في اللوج إنك جرّبت.
+
+---
+
+## الخلاصة
+
+- [[[CmdletBinding(SupportsShouldProcess)]]] بتدّي سكربتك [[-WhatIf]] و [[-Confirm]] و [[-Verbose]].
+- [[if (-not $PSCmdlet.ShouldProcess($target, $op)) { return }]] قبل أي حاجة خطرة بالظبط.
+- [[$target]] و [[$op]] هما اللي بيظهروا في سطر [[What if]]، فخليهم مفهومين.
+- في PowerShell [[if]] بترجّع قيمة، فـ [[$flag = if (...) {...} else {...}]] شغالة.
+- [[-f]] بتركّب النصوص بتنسيق، و [[{1:HH:mm:ss}]] بتعرض الوقت بس.
+- الـ cmdlets الداخلية **بترث** [[-WhatIf]]. حطلها [[-WhatIf:$false]] عشان المعاينة تفضل نضيفة.
+- [[SupportsShouldProcess]] من غير نداء [[ShouldProcess]] = [[-WhatIf]] كدّابة. دي أخطر من إنها مش موجودة.`,
+          lines: [
+            R`بتدّي السكربت -WhatIf و -Confirm و -Verbose زي أي cmdlet`,
+            R`بداية المدخلات`,
+            R`الفعل في الموقع الأول`,
+            R`القيم المسموحة`,
+            R`النوع والافتراضي`,
+            R`حد أقصى أسبوع`,
+            R`المهلة بالدقايق`,
+            R`الرسالة اللي هتظهر في تنبيه ويندوز`,
+            R`قفل الـ param`,
+            R`دالة الجدولة`,
+            R`بتاخد نوع العملية، ومتحقّق منه برضه`,
+            R`دقايق لثواني في مكان واحد`,
+            R`إمتى الحدث هيحصل`,
+            R`/s للقفل و /r للريستارت، و if بترجّع قيمة`,
+            R`النص اللي هيظهر لليوزر في المعاينة`,
+            R`البوابة: لو -WhatIf مكتوبة، اطبع واخرج من غير ما تعمل حاجة`,
+            R`التنفيذ الحقيقي: جدوِل القفل مع رسالة`,
+            R`افتكر المعاد في ملف الحالة`,
+            R`وأكّد لليوزر بالأخضر`,
+            R`قفل الدالة`
+          ]
+        },
+
+        {
+          cmd: "مشروع ١ — التأكيد واللوج",
+          title: "اسأل قبل الخطر، وسجّل كل حاجة، وارجع بكود معبّر",
+          desc: R`الأداة شغالة. فاضل التلاتة اللي بيفرّقوا بين سكربت وأداة: **تأكيد** قبل الخطر، و **لوج** تعرف منه حصل إيه، و **exit code** يخلي غيرك يبني فوقك.
+
+**التأكيد:** [[$PSCmdlet.ShouldContinue($query, $caption)]] بتسأل اليوزر سؤال [[نعم/لا]] وبترجّع رده. وهي غير [[ShouldProcess]]: دي بتتحكم فيها [[-WhatIf]]، و [[ShouldContinue]] سؤال انت كاتبه. ومعاها [[switch]] اسمها [[-Force]] عشان اللي عايز يعدّي من غير سؤال (مهم للجدولة الأوتوماتيكية).
+
+**اللوج:** دالة [[Write-Log]] بتضيف سطر فيه الوقت والمستوى والرسالة في ملف نصي. و [[Write-Verbose]] جواها بتخلي نفس السطر يظهر على الشاشة لو شغّلت بـ [[-Verbose]]. **ولازم [[-WhatIf:$false]] على كتابة اللوج** عشان يتسجّل حتى في المعاينة.
+
+**الـ exit code:** كل دالة بترجّع رقم، والسطر الأخير [[exit (Invoke-Schedule ...)]]. و [[0]] نجاح، و [[1]] «اليوزر رفض»، و [[2]] «فشل حقيقي». الفرق ده بيخلي سكربت تاني يقدر يفرّق.
+
+وخلي بالك من فخ: الدالة في PowerShell بترجّع **كل** حاجة مكتوبة من غير ما تتاخد. فلو كتبت [[New-Item ...]] جوه دالة من غير [[| Out-Null]]، الـ object بتاعه هيتلزق في الناتج مع الرقم بتاعك.`,
+          example: R`function Write-Log {
+    param([string]$Text, [string]$Level = 'INFO')
+    $dir = Split-Path -Parent $LogPath
+    if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Path $dir -Force -WhatIf:$false | Out-Null }
+    $line = '{0} [{1}] {2}' -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'), $Level, $Text
+    Add-Content -Path $LogPath -Value $line -Encoding utf8 -WhatIf:$false
+    Write-Verbose $line
+}
+
+if (-not $PSCmdlet.ShouldProcess($target, 'schedule')) {
+    Write-Log "WhatIf: $target"
+    return 0
+}
+if (-not $Force -and -not $PSCmdlet.ShouldContinue("هيتعمل $target. أكمل؟", 'تأكيد')) {
+    Write-Log 'اليوزر رفض' 'WARN'
+    Write-Host 'اتلغى' -ForegroundColor Yellow
+    return 1
+}
+
+shutdown.exe $flag /t $seconds /c $Message
+$code = $LASTEXITCODE
+if ($code -ne 0) {
+    Write-Log "shutdown فشل بالكود $code" 'ERROR'
+    Write-Error "shutdown.exe رجّع $code"
+    return 2
+}`,
+          flag: "script danger",
+          try: R`شغّل [[.\pc.ps1 off -In 30 -WhatIf -Verbose]]، وبعدين افتح ملف اللوج [[$env:LOCALAPPDATA\pc-tool\pc.log]]. هتلاقي السطر متسجّل برغم إن مفيش قفل حصل. ليه ده مفيد؟`,
+          sol: R`~~~text الناتج (PowerShell 7.6، اتشغّل فعلًا)
+PS> .\pc.ps1 restart -In 10 -WhatIf -Verbose
+What if: Performing the operation "schedule" on target "restart at 04:17:10".
+VERBOSE: 2026-10-28 04:07:10 [INFO] WhatIf: restart at 04:17:10
+
+PS> Get-Content "$env:LOCALAPPDATA\pc-tool\pc.log"
+2026-10-28 04:07:10 [INFO] WhatIf: off at 05:37:10
+2026-10-28 04:07:10 [INFO] WhatIf: restart at 04:17:10
+2026-10-28 04:07:10 [WARN] مفيش معاد متجدول
+~~~
+
+**ليه مفيد إن المعاينة نفسها تتسجّل؟** لأن اللوج بيبقى سجل **لكل حاجة الأداة عملتها أو كانت هتعملها**. لما تيجي بعد أسبوع تسأل «أنا جرّبت ده قبل كده؟» الرد في الملف.
+
+ولاحظ إن [[-Verbose]] طبّعت نفس السطر على الشاشة. ده [[Write-Verbose]] جوه [[Write-Log]]: سطر واحد بيروح لمكانين.
+
+والسطر التالت ([[WARN]]) من [[cancel]] اللي شغّلناه قبل كده. المستوى بيخليك تفلتر:
+
+~~~powershell
+Get-Content "$env:LOCALAPPDATA\pc-tool\pc.log" | Select-String 'ERROR|WARN'
+~~~`,
+          deep: {
+            why: R`**اللوج:** الأداة دي هتشتغل وانت مش قدام الشاشة (مجدولة بالليل مثلًا). من غير لوج، لما حاجة تغلط مش هتعرف حصل إيه.
+
+**التأكيد:** [[-WhatIf]] للمطوّر، والتأكيد لليوزر. حد ممكن يكتب [[.\pc.ps1 off]] وهو قاصد [[status]].
+
+**الـ exit code:** عشان [[.\pc.ps1 off -Force && Write-Host "اتجدول"]] تشتغل صح، ولتعرف من Task Scheduler نجح ولا لأ.`,
+            how: R`**[[ShouldProcess]] مقابل [[ShouldContinue]]:**
+
+| | [[ShouldProcess]] | [[ShouldContinue]] |
+|---|---|---|
+| بيتحكم فيها | [[-WhatIf]] و [[-Confirm]] و [[$ConfirmPreference]] | انت بس |
+| بتطبع | [[What if: ...]] | سؤالك انت |
+| بتتجاوزها بـ | [[-Confirm:$false]] | [[-Force]] (انت بتكتبها) |
+| المعتاد | قبل أي تغيير | للخطر الزيادة بس |
+
+وترتيبهم: [[ShouldProcess]] الأول (عشان [[-WhatIf]] تمنع حتى السؤال)، وبعدها [[ShouldContinue]].
+
+**[[-Force]] بتتكتب كده:**
+
+~~~powershell
+param(
+    [switch]$Force
+)
+...
+if (-not $Force -and -not $PSCmdlet.ShouldContinue($q, $c)) { return 1 }
+~~~
+
+[[-and]] بتعمل short-circuit: لو [[$Force]] موجودة، [[ShouldContinue]] **متتنفذش أصلًا**. وده مهم لأنها بترمي error في جلسة غير تفاعلية (زي Task Scheduler).
+
+**[[-f]] في بناء سطر اللوج:**
+
+~~~powershell
+$line = '{0} [{1}] {2}' -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'), $Level, $Text
+~~~
+
+بيطلّع: [[2026-10-28 04:07:10 [INFO] WhatIf: off at 05:37:10]]. التاريخ بالصيغة دي بيترتب صح بالترتيب الأبجدي، وده بيخلي [[Sort-Object]] على اللوج شغال.
+
+**مستويات اللوج:** [[INFO]] و [[WARN]] و [[ERROR]] اتفاق شائع. الفايدة إنك تفلتر: [[Select-String 'ERROR']].
+
+**[[Add-Content]] مقابل [[Set-Content]]:** [[Add]] بتضيف في الآخر، و [[Set]] بتمسح وتكتب من الأول. للوج دايمًا [[Add-Content]].
+
+**الـ exit codes المتفق عليها:**
+
+| الكود | معناه |
+|---|---|
+| [[0]] | نجح |
+| [[1]] | فشل عام / اليوزر رفض |
+| [[2]] | فشل في عملية خارجية |
+
+ومهم: [[exit]] في سكربت PowerShell بتقفل **الجلسة كلها** لو شغّلته بـ [[.]] (dot-sourcing)، فاستخدم [[.\script.ps1]] عادي.
+
+**الفخ: الدالة بترجّع كل حاجة.**
+
+~~~powershell
+function Test-Me {
+    New-Item -ItemType Directory "x"
+    return 0
+}
+~~~
+
+دي بترجّع **اتنين**: الـ object بتاع الفولدر، والصفر. الحل [[| Out-Null]] أو [[$null = ...]].`,
+            when: "اللوج في أي أداة هتشتغل لوحدها. التأكيد في أي حاجة مش قابلة للرجوع. الـ exit code في أي سكربت حد تاني هيناديه.",
+            mistakes: R`تكتب اللوج من غير [[-WhatIf:$false]]، فلا بيتسجّل في المعاينة ولا الشاشة تفضل نضيفة.
+
+وتنسى [[-Force]]، فالأداة تعلّق في Task Scheduler مستنية رد مش جاي.
+
+وتستخدم [[Set-Content]] للوج، فكل تشغيل يمسح اللي قبله.
+
+وتسيب [[New-Item]] من غير [[Out-Null]] جوه دالة بترجّع رقم، فالرقم يرجع ومعاه زبالة.`
+          },
+          teach: R`## الفكرة
+
+تلات إضافات بتحوّل السكربت لأداة: **لوج** و **تأكيد** و **exit code**.
+
+كل الناتج اتشغّل فعلًا على ويندوز 11 / PowerShell 7.6، والجهاز معملش قفل ولا ريستارت.
+
+---
+
+## ١. [[Write-Log]]: دالة سطر واحد بتروح لمكانين
+
+~~~powershell
+function Write-Log {
+    param([string]$Text, [string]$Level = 'INFO')
+    $dir = Split-Path -Parent $LogPath
+    if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Path $dir -Force -WhatIf:$false | Out-Null }
+    $line = '{0} [{1}] {2}' -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'), $Level, $Text
+    Add-Content -Path $LogPath -Value $line -Encoding utf8 -WhatIf:$false
+    Write-Verbose $line
+}
+~~~
+
+### سطر سطر
+
+**[[param([string]$Text, [string]$Level = 'INFO')]]**
+
+الدوال بتاخد [[param]] زي السكربت. [[$Level]] افتراضيها [[INFO]]، فأغلب النداءات بتبقى [[Write-Log "حصل كذا"]].
+
+**[[$dir = Split-Path -Parent $LogPath]]**
+
+[[Split-Path -Parent]] بتاخد الفولدر من مسار ملف:
+
+~~~text
+C:\Users\7ossa\AppData\Local\pc-tool\pc.log
+└──────────── -Parent ──────────────┘
+~~~
+
+**[[if (-not (Test-Path $dir)) { New-Item ... }]]**
+
+اعمل الفولدر لو مش موجود. [[-Force]] عشان ميزعقش لو موجود، و [[| Out-Null]] عشان ميطبعش الـ object.
+
+**[[-WhatIf:$false]]** عشان اللوج يشتغل حتى في المعاينة (التفصيلة دي في الخطوة اللي فاتت).
+
+**[[$line = '{0} [{1}] {2}' -f ...]]**
+
+~~~text شكل السطر
+2026-10-28 04:07:10 [INFO] WhatIf: off at 05:37:10
+└── {0} التاريخ ──┘ └{1}┘ └──── {2} الرسالة ────┘
+~~~
+
+التاريخ بصيغة [[yyyy-MM-dd HH:mm:ss]]: بيترتب صح أبجديًا، فـ [[Sort-Object]] على اللوج شغال.
+
+**[[Add-Content]] مش [[Set-Content]]**
+
+| | بتعمل إيه |
+|---|---|
+| [[Add-Content]] | تضيف في الآخر |
+| [[Set-Content]] | تمسح الملف وتكتب من الأول |
+
+للوج دايمًا [[Add-Content]].
+
+**[[Write-Verbose $line]]**
+
+نفس السطر بيظهر على الشاشة **بس لو** شغّلت بـ [[-Verbose]]. سطر واحد، مكانين.
+
+---
+
+## ٢. التأكيد: [[ShouldContinue]]
+
+~~~powershell
+if (-not $PSCmdlet.ShouldProcess($target, 'schedule')) {
+    Write-Log "WhatIf: $target"
+    return 0
+}
+if (-not $Force -and -not $PSCmdlet.ShouldContinue("هيتعمل $target. أكمل؟", 'تأكيد')) {
+    Write-Log 'اليوزر رفض' 'WARN'
+    Write-Host 'اتلغى' -ForegroundColor Yellow
+    return 1
+}
+~~~
+
+### بوابتين بالترتيب
+
+~~~text
+١. ShouldProcess   →  فيه -WhatIf؟  →  سجّل واخرج بـ 0
+٢. ShouldContinue  →  اليوزر وافق؟  →  لأ: سجّل واخرج بـ 1
+٣. نفّذ
+~~~
+
+**ليه [[ShouldProcess]] الأول؟** عشان [[-WhatIf]] تمنع حتى **السؤال**. المعاينة مينفعش تسأل.
+
+### الفرق بينهم
+
+| | [[ShouldProcess]] | [[ShouldContinue]] |
+|---|---|---|
+| مين بيتحكم فيها | [[-WhatIf]] و [[-Confirm]] | انت |
+| النص | PowerShell بيبنيه | انت بتكتبه |
+| تتجاوزها بـ | [[-Confirm:$false]] | [[-Force]] |
+
+### ليه [[-not $Force -and ...]]؟
+
+[[-and]] بتعمل **short-circuit**: لو [[$Force]] موجودة، [[-not $Force]] تبقى [[False]]، والطرف التاني **مبيتنفذش أصلًا**.
+
+ودي مش تحسين، دي ضرورة: [[ShouldContinue]] بترمي error في جلسة غير تفاعلية. جرّبناها:
+
+~~~text الناتج في جلسة مش تفاعلية من غير -Force
+Exception calling "ShouldContinue" with "2" argument(s): "PowerShell is in NonInteractive
+mode. Read and Prompt functionality is not available."
+~~~
+
+فلما تجدول الأداة في Task Scheduler، **لازم** [[-Force]].
+
+---
+
+## ٣. الـ exit codes
+
+~~~powershell
+shutdown.exe $flag /t $seconds /c $Message
+$code = $LASTEXITCODE
+if ($code -ne 0) {
+    Write-Log "shutdown فشل بالكود $code" 'ERROR'
+    Write-Error "shutdown.exe رجّع $code"
+    return 2
+}
+~~~
+
+### الاتفاق اللي مشينا عليه
+
+| الكود | معناه | مين بيرجّعه |
+|---|---|---|
+| [[0]] | تمام (أو معاينة) | النجاح، و [[-WhatIf]] |
+| [[1]] | اليوزر رفض | [[ShouldContinue]] رجعت [[False]] |
+| [[2]] | عملية خارجية فشلت | [[shutdown.exe]] رجّع حاجة غير صفر |
+
+### وفي آخر الملف
+
+~~~powershell
+switch ($Action) {
+    'off'     { exit (Invoke-Schedule -Kind 'off') }
+    'restart' { exit (Invoke-Schedule -Kind 'restart') }
+    'cancel'  { exit (Invoke-Cancel) }
+    'status'  { exit (Show-Status) }
+}
+~~~
+
+[[exit]] بتخرج من السكربت بالرقم ده، والرقم بيوصل لـ [[$LASTEXITCODE]] بتاع اللي ناداه.
+
+### الفايدة
+
+~~~powershell
+.\pc.ps1 off -In 30 -Force && Write-Host "اتجدول"
+~~~
+
+[[&&]] بتشتغل بس لو الكود صفر. من غير exit codes، مفيش طريقة تعرف.
+
+---
+
+## ٤. الفخ: الدالة بترجّع كل حاجة
+
+في PowerShell، **أي حاجة الدالة بتطبعها بتبقى جزء من اللي بترجّعه**، مش بس اللي بعد [[return]].
+
+~~~powershell
+function Test-Me {
+    New-Item -ItemType Directory "x"
+    return 0
+}
+$r = Test-Me
+$r.Count
+~~~
+
+~~~text الناتج
+2
+~~~
+
+رجعت **اتنين**: الـ object بتاع الفولدر، وبعده الصفر.
+
+### الحل
+
+~~~powershell
+New-Item -ItemType Directory "x" | Out-Null
+# أو
+$null = New-Item -ItemType Directory "x"
+~~~
+
+عشان كده في [[Write-Log]] و [[Save-State]] كل [[New-Item]] عليها [[| Out-Null]].
+
+> [[Write-Host]] **استثناء**: بتكتب على الشاشة مباشرة ومبتدخلش في الناتج. عشان كده استخدمناها للرسايل.
+
+---
+
+## ٥. نشغّل الكل
+
+~~~powershell
+.\pc.ps1 restart -In 10 -WhatIf -Verbose
+~~~
+
+~~~text الناتج
+What if: Performing the operation "schedule" on target "restart at 04:17:10".
+VERBOSE: 2026-10-28 04:07:10 [INFO] WhatIf: restart at 04:17:10
+~~~
+
+سطرين: المعاينة من [[ShouldProcess]]، واللوج من [[Write-Verbose]].
+
+### واللوج نفسه
+
+~~~powershell
+Get-Content "$env:LOCALAPPDATA\pc-tool\pc.log"
+~~~
+
+~~~text الناتج
+2026-10-28 04:07:10 [INFO] WhatIf: off at 05:37:10
+2026-10-28 04:07:10 [INFO] WhatIf: restart at 04:17:10
+2026-10-28 04:07:10 [WARN] مفيش معاد متجدول
+~~~
+
+**تلات أسطر من تلات تشغيلات.** وكل سطر فيه الوقت والمستوى والتفصيلة.
+
+### تفلتر فيه
+
+~~~powershell
+Get-Content "$env:LOCALAPPDATA\pc-tool\pc.log" | Select-String 'ERROR|WARN'
+~~~
+
+~~~text الناتج
+2026-10-28 04:07:10 [WARN] مفيش معاد متجدول
+~~~
+
+دي فايدة المستويات: تقدر تجيب المشاكل بس.
+
+---
+
+## الخلاصة
+
+- [[Write-Log]] بتكتب في ملف و [[Write-Verbose]] جواها بتوديها الشاشة كمان لو [[-Verbose]].
+- [[Add-Content]] للوج، مش [[Set-Content]].
+- التاريخ [[yyyy-MM-dd HH:mm:ss]] بيترتب صح أبجديًا.
+- [[ShouldProcess]] الأول (للمعاينة)، وبعدها [[ShouldContinue]] (للتأكيد).
+- [[-Force]] **ضرورية** مش رفاهية: [[ShouldContinue]] بترمي error في الجلسات غير التفاعلية.
+- [[-and]] بتعمل short-circuit، وده اللي بيخلي [[-not $Force -and ...]] آمنة.
+- exit codes: [[0]] نجاح، [[1]] رفض، [[2]] فشل خارجي. وبتخلي [[&&]] تشتغل.
+- أي حاجة الدالة تطبعها بترجع معاها. [[| Out-Null]] على اللي مش عايزه.`,
+          lines: [
+            R`دالة اللوج`,
+            R`الدوال بتاخد param زي السكربت، والمستوى الافتراضي INFO`,
+            R`هات الفولدر من مسار الملف`,
+            R`اعمله لو مش موجود، و -WhatIf:$false عشان اللوج يشتغل في المعاينة`,
+            R`ركّب السطر: وقت ومستوى ورسالة، بصيغة بتترتب صح`,
+            R`ضيف في آخر الملف (مش Set-Content اللي بتمسح)`,
+            R`ونفس السطر على الشاشة لو شغّلت بـ -Verbose`,
+            R`قفل الدالة`,
+            R`البوابة الأولى: المعاينة`,
+            R`سجّل إنها كانت معاينة`,
+            R`واخرج بصفر: المعاينة مش فشل`,
+            R`قفل الشرط`,
+            R`البوابة التانية: التأكيد، و -Force بتتخطاها بفضل short-circuit`,
+            R`سجّل الرفض كتحذير`,
+            R`وقول لليوزر`,
+            R`واخرج بواحد: رفض مش فشل تقني`,
+            R`قفل الشرط`,
+            R`التنفيذ الحقيقي`,
+            R`خزّن كود الخروج على طول`,
+            R`أي حاجة غير صفر يعني مشكلة`,
+            R`سجّلها كخطأ`,
+            R`وبلّغ اليوزر`,
+            R`واخرج باتنين: فشل في عملية خارجية`,
+            R`قفل الشرط`
+          ]
+        },
+
+        {
+          cmd: "مشروع ١ — ناديه من أي مكان",
+          title: "خلي الأداة أمر بتكتبه، مش ملف بتدوّر عليه",
+          desc: R`الأداة خلصت، بس لسه محتاج تكون واقف في فولدرها وتكتب [[.\pc.ps1]]. الخطوة دي بتخليها **كلمة** تكتبها من أي مكان، زي [[git]].
+
+**الطريقة الأسهل: دالة في [[$PROFILE]].** الـ profile ملف بيتنفّذ أول ما تفتح PowerShell. تحط فيه:
+
+[[function pc { & "$HOME\tools\pc.ps1" @args }]]
+
+و [[@args]] بتمرّر **كل** اللي كتبته بعد [[pc]] للسكربت زي ما هو، فـ [[pc off -In 30 -WhatIf]] بتشتغل.
+
+**الطريقة التانية: حط الفولدر في [[PATH]].** ساعتها تكتب [[pc.ps1]] (بالامتداد) من أي مكان. أنضف لو عندك كذا أداة.
+
+**والتالتة: جدوله.** [[Register-ScheduledTask]] بيخلي ويندوز يشغّله لوحده. وهنا [[-Force]] بتبقى **ضرورية** لأن مفيش حد قدام الشاشة يرد على التأكيد.
+
+وملاحظة مهمة في النداء: [[& "المسار"]] بالـ ampersand. من غيرها، PowerShell بيعتبر النص اللي فيه مسافات **نص** مش أمر.
+
+ومكان [[$PROFILE]] بيختلف: اطبعه بنفسك. عندي طلع في فولدر [[OneDrive\Documents\PowerShell\]] لأن ويندوز بيزامن Documents.`,
+          example: R`$PROFILE
+Test-Path $PROFILE
+New-Item -ItemType File -Path $PROFILE -Force
+Add-Content $PROFILE 'function pc { & "$HOME\tools\pc.ps1" @args }'
+. $PROFILE`,
+          flag: "script",
+          try: R`اطبع [[$PROFILE]] و [[$PROFILE.CurrentUserAllHosts]] وشوف الفرق. وبعدين عرّف الدالة في الجلسة الحالية بس (من غير ما تعدّل أي ملف) وجرّبها من فولدر تاني.`,
+          sol: R`~~~text الناتج (PowerShell 7.6 على ويندوز 11)
+PS> $PROFILE
+C:\Users\7ossa\OneDrive\Documents\PowerShell\Microsoft.PowerShell_profile.ps1
+
+PS> Test-Path $PROFILE
+False
+
+PS> $PROFILE.CurrentUserAllHosts
+C:\Users\7ossa\OneDrive\Documents\PowerShell\profile.ps1
+~~~
+
+| المتغير | بيتنفّذ فين |
+|---|---|
+| [[$PROFILE]] | في الترمنال العادي بس |
+| [[$PROFILE.CurrentUserAllHosts]] | في الترمنال **و** في VS Code و ISE |
+
+[[Test-Path]] طلعت [[False]] يعني الملف لسه مش موجود، وده طبيعي على جهاز جديد. [[New-Item -Force]] بتعمله مع الفولدرات اللي ناقصة.
+
+**والتجربة في الجلسة الحالية من غير ما تلمس أي ملف:**
+
+~~~powershell
+function pc { & "C:\path\to\pc.ps1" @args }
+Set-Location C:\
+pc status
+pc off -In 15 -WhatIf
+~~~
+
+~~~text الناتج
+مفيش معاد متجدول
+What if: Performing the operation "schedule" on target "off at 04:25:28".
+~~~
+
+**اشتغلت من [[C:\]]**، يعني مش محتاج تبقى في فولدر السكربت.`,
+          deep: {
+            why: R`أداة بتكتب مسارها كل مرة = أداة مش هتستخدمها. الفرق بين [[pc off -In 30]] و [[& "C:\Users\me\tools\pc.ps1" off -In 30]] هو الفرق بين حاجة بتدخل في عادتك وحاجة بتنساها.`,
+            how: R`**[[$PROFILE]] أربع ملفات مش واحد:**
+
+| المتغير | لمين |
+|---|---|
+| [[$PROFILE]] | اليوزر ده، الترمنال ده |
+| [[$PROFILE.CurrentUserAllHosts]] | اليوزر ده، كل الواجهات (VS Code كمان) |
+| [[$PROFILE.AllUsersCurrentHost]] | كل اليوزرز (محتاج أدمن) |
+| [[$PROFILE.AllUsersAllHosts]] | كل اليوزرز وكل الواجهات (أدمن) |
+
+و PowerShell 7 و 5.1 ليهم ملفات **مختلفة** ([[Documents\PowerShell\]] مقابل [[Documents\WindowsPowerShell\]]).
+
+**[[@args]]:**
+
+~~~powershell
+function pc { & "$HOME\tools\pc.ps1" @args }
+~~~
+
+[[$args]] قايمة بكل اللي اتكتب بعد اسم الدالة. و [[@]] قدامها (اسمها splatting) بتفردها كـ arguments منفصلة بدل ما تبعتها كقايمة واحدة.
+
+| تكتب | بيوصل للسكربت |
+|---|---|
+| [[& $p $args]] | قيمة واحدة (قايمة) |
+| [[& $p @args]] | arguments منفصلة |
+
+**[[&]] (call operator):** لما يبقى الأمر في متغير أو نص فيه مسافات، لازم [[&]] قبله. من غيرها PowerShell بيطبع النص.
+
+**[[. $PROFILE]] (نقطة ومسافة):** بتنفّذ الملف **في الجلسة الحالية** بدل جلسة جديدة، فالدوال اللي جواه تفضل موجودة. من غير النقطة، الدالة هتتعرّف وتموت على طول.
+
+**طريقة الـ PATH:**
+
+~~~powershell
+$tools = "$HOME\tools"
+[Environment]::SetEnvironmentVariable(
+    'Path',
+    [Environment]::GetEnvironmentVariable('Path', 'User') + ";$tools",
+    'User'
+)
+~~~
+
+بتعدّل PATH بتاع اليوزر بشكل دائم. محتاج ترمنال جديد بعدها. (متشغلهاش من غير ما تبص على [[$env:Path]] الأول.)
+
+**الجدولة:**
+
+~~~powershell
+$action  = New-ScheduledTaskAction -Execute 'pwsh.exe' -Argument '-NoProfile -File "C:\tools\pc.ps1" off -In 0 -Force'
+$trigger = New-ScheduledTaskTrigger -Daily -At 2am
+Register-ScheduledTask -TaskName 'NightShutdown' -Action $action -Trigger $trigger
+~~~
+
+| الحتة | ليه |
+|---|---|
+| [[-NoProfile]] | أسرع، وميتأثرش بتعديلاتك في الـ profile |
+| [[-File]] | شغّل ملف (مش [[-Command]]) |
+| [[-Force]] | **ضرورية**: مفيش حد يرد على التأكيد |
+| [[-In 0]] | حالًا، لأن الـ trigger هو اللي بيحدد الوقت |
+
+(درس «Register-ScheduledTask» فيه التفاصيل.)`,
+            when: "أي أداة هتستخدمها أكتر من مرة في الأسبوع.",
+            mistakes: R`تحط [[$args]] بدل [[@args]]، فكل اللي كتبته يوصل كقيمة واحدة.
+
+وتعدّل [[$PROFILE]] بتاع PowerShell 7 وتتوقعه يشتغل في 5.1. ملفين مختلفين.
+
+وتنسى [[-Force]] في المهمة المجدولة، فالمهمة تعلّق مستنية رد.
+
+وتكتب [["$HOME\tools\pc.ps1"]] من غير [[&]] قدامها، فالنص يتطبع ومحصلش حاجة.`
+          },
+          teach: R`## الفكرة
+
+الأداة شغالة بس لسه بتكتب مسارها. هنخليها كلمة واحدة من أي مكان.
+
+كل الناتج من ويندوز 11 / PowerShell 7.6.
+
+---
+
+## ١. فين الـ profile بتاعي؟
+
+~~~powershell
+$PROFILE
+~~~
+
+~~~text الناتج
+C:\Users\7ossa\OneDrive\Documents\PowerShell\Microsoft.PowerShell_profile.ps1
+~~~
+
+### نقرا المسار
+
+| الحتة | معناها |
+|---|---|
+| [[C:\Users\7ossa]] | فولدر اليوزر |
+| [[OneDrive\Documents]] | Documents متزامن مع OneDrive على الجهاز ده |
+| [[PowerShell]] | يعني PowerShell 7 (الـ 5.1 بيستخدم [[WindowsPowerShell]]) |
+| [[Microsoft.PowerShell_profile.ps1]] | ملف الترمنال العادي |
+
+**المسار عندك هيبقى مختلف.** اطبعه، متنسخش بتاعي.
+
+~~~powershell
+Test-Path $PROFILE
+~~~
+
+~~~text الناتج
+False
+~~~
+
+لسه مش موجود، وده الوضع الطبيعي على جهاز جديد.
+
+---
+
+## ٢. [[$PROFILE]] فعلًا أربع ملفات
+
+~~~powershell
+$PROFILE.CurrentUserAllHosts
+~~~
+
+~~~text الناتج
+C:\Users\7ossa\OneDrive\Documents\PowerShell\profile.ps1
+~~~
+
+| المتغير | بيتنفّذ فين |
+|---|---|
+| [[$PROFILE]] | الترمنال العادي بس |
+| [[$PROFILE.CurrentUserAllHosts]] | الترمنال **و** VS Code **و** ISE |
+| [[$PROFILE.AllUsersCurrentHost]] | كل اليوزرز (أدمن) |
+| [[$PROFILE.AllUsersAllHosts]] | كل اليوزرز وكل الواجهات (أدمن) |
+
+لأدواتك الشخصية، [[CurrentUserAllHosts]] أحسن: هتلاقي [[pc]] شغالة في ترمنال VS Code كمان.
+
+---
+
+## ٣. نعمل الملف ونضيف الدالة
+
+~~~powershell
+New-Item -ItemType File -Path $PROFILE -Force
+~~~
+
+[[-Force]] هنا بتعمل **الفولدرات الناقصة** في الطريق كمان، مش بس الملف.
+
+~~~powershell
+Add-Content $PROFILE 'function pc { & "$HOME\tools\pc.ps1" @args }'
+~~~
+
+> التنصيص **المفرد** مقصود: عايزين [[$HOME]] و [[@args]] يتكتبوا في الملف **زي ما هم**، ويتفسّروا لما الدالة تتنادى. لو استخدمنا [[" "]]، [[$HOME]] كانت هتتحوّل لمسارك دلوقتي.
+
+### نفك الدالة
+
+~~~powershell
+function pc { & "$HOME\tools\pc.ps1" @args }
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[function pc]] | عرّف أمر اسمه [[pc]] |
+| [[{ }]] | جسم الدالة |
+| [[&]] | call operator: «شغّل ده كأمر» |
+| [["$HOME\tools\pc.ps1"]] | مسار السكربت |
+| [[@args]] | مرّر كل اللي اتكتب بعد [[pc]] |
+
+### ليه [[&]] لازمة؟
+
+من غيرها:
+
+~~~powershell
+"$HOME\tools\pc.ps1" off
+~~~
+
+PowerShell بيشوف نص، فبيطبعه. [[&]] بتقول «ده أمر، شغّله».
+
+### ليه [[@args]] مش [[$args]]؟
+
+| تكتب | [[pc off -In 30]] بيوصل إزاي |
+|---|---|
+| [[$args]] | قيمة **واحدة** = قايمة [[@('off','-In','30')]] |
+| [[@args]] | تلات arguments منفصلة: [[off]] و [[-In]] و [[30]] |
+
+[[@]] اسمها **splatting**: بتفرد القايمة لعناصر منفصلة. من غيرها السكربت هياخد كل حاجة في [[$Action]] ويزعق.
+
+---
+
+## ٤. نحمّل الـ profile من غير ما نقفل الترمنال
+
+~~~powershell
+. $PROFILE
+~~~
+
+**نقطة ومسافة وبعدين المسار.** دي اسمها [[dot-sourcing]]: نفّذ الملف **في الجلسة الحالية**.
+
+| تكتب | بيحصل إيه |
+|---|---|
+| [[& $PROFILE]] | يتنفّذ في نطاق منفصل، والدوال تموت بعده |
+| [[. $PROFILE]] | يتنفّذ هنا، والدوال تفضل موجودة |
+
+---
+
+## ٥. نجرّب من فولدر تاني
+
+من غير ما نلمس أي ملف، نعرّف الدالة في الجلسة ونجرّب:
+
+~~~powershell
+function pc { & "C:\...\pc.ps1" @args }
+Set-Location C:\
+pc status
+pc off -In 15 -WhatIf
+~~~
+
+~~~text الناتج
+مفيش معاد متجدول
+What if: Performing the operation "schedule" on target "off at 04:25:28".
+~~~
+
+**إحنا في [[C:\]] مش في فولدر السكربت، والأداة اشتغلت.** و [[-WhatIf]] عدّت كمان، يعني [[@args]] مرّرت كل حاجة صح.
+
+---
+
+## ٦. الطريقة التانية: الـ PATH
+
+لو عندك كذا أداة، أنضف تحط الفولدر كله في [[PATH]]:
+
+~~~powershell
+$tools = "$HOME\tools"
+[Environment]::SetEnvironmentVariable(
+    'Path',
+    [Environment]::GetEnvironmentVariable('Path', 'User') + ";$tools",
+    'User'
+)
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[[Environment]::GetEnvironmentVariable('Path','User')]] | PATH بتاع اليوزر الحالي |
+| [[+ ";$tools"]] | ضيف فولدرك بفاصلة منقوطة |
+| [[SetEnvironmentVariable(..., 'User')]] | احفظه بشكل دائم لليوزر |
+
+> الأمر ده بيعدّل إعدادات جهازك بشكل دائم، فمشغلتوش هنا. اطبع [[$env:Path]] وشوفه الأول، وافتح ترمنال جديد بعده.
+
+وبعدها تكتب [[pc.ps1]] (بالامتداد) من أي مكان.
+
+| الطريقة | تكتب | أحسن لـ |
+|---|---|---|
+| دالة في [[$PROFILE]] | [[pc]] | أداة أو اتنين |
+| فولدر في [[PATH]] | [[pc.ps1]] | مجموعة أدوات |
+
+---
+
+## ٧. التالتة: خليه يشتغل لوحده
+
+~~~powershell
+$action  = New-ScheduledTaskAction -Execute 'pwsh.exe' -Argument '-NoProfile -File "C:\tools\pc.ps1" off -In 0 -Force'
+$trigger = New-ScheduledTaskTrigger -Daily -At 2am
+Register-ScheduledTask -TaskName 'NightShutdown' -Action $action -Trigger $trigger
+~~~
+
+| الحتة | ليه |
+|---|---|
+| [[-NoProfile]] | أسرع، وميتأثرش بأي تعديل في الـ profile |
+| [[-File]] | شغّل ملف، مش [[-Command]] |
+| [[-In 0]] | حالًا، لأن الـ trigger هو اللي بيحدد الوقت |
+| [[-Force]] | **ضرورية جدًا** |
+
+### ليه [[-Force]] ضرورية هنا بالذات؟
+
+جرّبنا الأداة في جلسة غير تفاعلية من غيرها:
+
+~~~text الناتج
+Exception calling "ShouldContinue" with "2" argument(s): "PowerShell is in NonInteractive
+mode. Read and Prompt functionality is not available."
+~~~
+
+مفيش حد قدام الشاشة يرد على التأكيد، فالمهمة بتفشل. [[-Force]] بتتخطى السؤال.
+
+> [[Register-ScheduledTask]] بيسجّل مهمة في ويندوز، فمشغلتوش هنا. التفاصيل في درس «Register-ScheduledTask».
+
+---
+
+## المشروع خلص: اللي اتعلمناه
+
+| الخطوة | المهارة |
+|---|---|
+| ١ | صمّم الواجهة قبل الكود، و [[param()]] والقيم الافتراضية |
+| ٢ | [[ValidateSet]] و [[ValidateRange]] و [[Position]] و [[switch]] |
+| ٣ | قراية exit code من [[.exe]]، وحفظ الحالة في JSON |
+| ٤ | [[SupportsShouldProcess]] و [[ShouldProcess]] و [[-WhatIf:$false]] |
+| ٥ | اللوج، و [[ShouldContinue]] و [[-Force]]، و exit codes |
+| ٦ | [[$PROFILE]] و [[@args]] و [[&]] و dot-sourcing والجدولة |
+
+والأهم من كل ده: **الترتيب**. الواجهة، فالتحقق، فالآمن، فالخطر ومعاه الأمان، فالتسجيل، فالتوزيع. نفس الترتيب هيشتغل في أي أداة تبنيها.
+
+---
+
+## الخلاصة
+
+- [[$PROFILE]] ملف بيتنفّذ أول ما تفتح PowerShell، و [[CurrentUserAllHosts]] بيشتغل في VS Code كمان.
+- [[function pc { & "المسار" @args }]] بتحوّل السكربت لكلمة.
+- [[&]] لازمة قدام أي مسار فيه مسافات، و [[@args]] (مش [[$args]]) عشان الـ arguments تتمرّر منفصلة.
+- [[. $PROFILE]] بنقطة بتحمّل الملف في الجلسة الحالية.
+- PowerShell 7 و 5.1 ليهم profiles مختلفة.
+- للجدولة: [[-NoProfile]] و [[-File]] و [[-Force]]، والأخيرة ضرورية مش رفاهية.`,
+          lines: [
+            R`فين ملف الـ profile بتاعي: اطبعه، المسار بيختلف من جهاز لجهاز`,
+            R`موجود ولا لأ: على جهاز جديد الرد False وده طبيعي`,
+            R`اعمله، و -Force بتعمل الفولدرات الناقصة كمان`,
+            R`ضيف الدالة، وبتنصيص مفرد عشان $HOME و @args ميتفسروش دلوقتي`,
+            R`حمّل الملف في الجلسة الحالية بنقطة، من غير ما تقفل الترمنال`
+          ]
+        }
+      ]
+    }
+]);
+
 /* ===== js/tabs/cmd/01.js ===== */
 // كل درس هنا في مكان واحد:
 //   cmd      اسم الأمر (ولازم يبقى فريد جوه التاب، لأن التقدم محفوظ بيه)
