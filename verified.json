@@ -2684,6 +2684,31 @@
   "date": "2026-10-28",
   "on": "ubuntu-24.04 (docker، صفحات man متسطبة) و Git Bash على ويندوز 11"
  },
+ "bash|مشروع — find بشروط الصلاحيات": {
+  "hash": "68838f4b735e",
+  "date": "2026-10-28",
+  "on": "ubuntu-24.04 (docker)"
+ },
+ "bash|مشروع — set -euo pipefail": {
+  "hash": "3d3fccfc6238",
+  "date": "2026-10-28",
+  "on": "ubuntu-24.04 (docker)"
+ },
+ "bash|مشروع — التقرير والإصلاح": {
+  "hash": "9011adc8dc9c",
+  "date": "2026-10-28",
+  "on": "ubuntu-24.04 (docker)"
+ },
+ "bash|مشروع — الواجهة و --help": {
+  "hash": "2e5a0d353859",
+  "date": "2026-10-28",
+  "on": "ubuntu-24.04 (docker)"
+ },
+ "bash|مشروع — حلّل الـ arguments بإيدك": {
+  "hash": "6af19c9f8f0f",
+  "date": "2026-10-28",
+  "on": "ubuntu-24.04 (docker)"
+ },
  "career|ATS": {
   "hash": "77260d3a217c",
   "date": "2026-10-08",
