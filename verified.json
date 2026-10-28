@@ -13409,10 +13409,25 @@
   "date": "2026-10-07",
   "on": "pwsh 7.6 and Windows PowerShell 5.1 with Docker Desktop (Docker down simulated with DOCKER_HOST)"
  },
+ "re|apk_secrets": {
+  "hash": "fd1a53a6e65d",
+  "date": "2026-10-28",
+  "on": "Docker ubuntu:24.04 (unzip, strings, aapt2 bt37, jadx 1.5.6); pwsh 7.6.9 + powershell 5.1 (tar, Select-String)"
+ },
  "re|apk_structure": {
   "hash": "747e71c63fe1",
   "date": "2026-10-27",
   "on": "Docker ubuntu:24.04 (own sample APK) + Windows 11 pwsh 7.6 / PS 5.1"
+ },
+ "re|cert_pinning": {
+  "hash": "78a1a7bd093a",
+  "date": "2026-10-28",
+  "on": "Docker ubuntu:24.04 (OpenSSL 3.0.13, s_server/s_client); pwsh 7.6.9 + powershell 5.1 (Git OpenSSL 3.5.9); docs: runtime pin enforcement"
+ },
+ "re|client_untrusted": {
+  "hash": "744761b5d06a",
+  "date": "2026-10-28",
+  "on": "Docker node:24-alpine (Node 24.22, curl 8.23); Windows Node 24 + pwsh 7.6.9 (Invoke-RestMethod, curl.exe quoting)"
  },
  "re|decompile_jadx": {
   "hash": "42080eaf1817",
@@ -13424,6 +13439,11 @@
   "date": "2026-10-27",
   "on": "Docker ubuntu:24.04 (own sample APK)"
  },
+ "re|keystore_secrets": {
+  "hash": "5b07271f099b",
+  "date": "2026-10-28",
+  "on": "Docker ubuntu:24.04 (javac -Xlint:all against android-36 android.jar + d8; AES-GCM run on JVM); docs: on-device Keystore behaviour"
+ },
  "re|lab_ethics": {
   "hash": "3ea0c9351bee",
   "date": "2026-10-27",
@@ -13433,6 +13453,41 @@
   "hash": "425126868d03",
   "date": "2026-10-27",
   "on": "Docker ubuntu:24.04 (own sample APK)"
+ },
+ "re|manifest_hardening": {
+  "hash": "61902ccec715",
+  "date": "2026-10-28",
+  "on": "Docker ubuntu:24.04 (aapt2 bt37, jadx 1.5.6); pwsh 7.6.9 + powershell 5.1 (Select-String); docs: run-as/backup behaviour"
+ },
+ "re|network_config": {
+  "hash": "914726cba0f0",
+  "date": "2026-10-28",
+  "on": "Docker ubuntu:24.04 (aapt2 bt37 build + dump); docs: runtime behaviour, Certificate Transparency"
+ },
+ "re|play_integrity": {
+  "hash": "55d22b773caf",
+  "date": "2026-10-28",
+  "on": "Docker node:24-alpine (verdict check on sample payloads); docs: client API, decode endpoint"
+ },
+ "re|r8_before_after": {
+  "hash": "b0050a504370",
+  "date": "2026-10-28",
+  "on": "Docker ubuntu:24.04 (R8 9.2.4-dev bt37, jadx 1.5.6); pwsh 7.6.9 (Get-ChildItem); docs: Gradle config"
+ },
+ "re|r8_mapping_retrace": {
+  "hash": "571a81681e51",
+  "date": "2026-10-28",
+  "on": "Docker ubuntu:24.04 (R8 --classfile + Retrace 9.2.4-dev, JDK 21); docs: Windows command, Play upload"
+ },
+ "re|r8_strip_logs": {
+  "hash": "415156a1dad7",
+  "date": "2026-10-28",
+  "on": "Docker ubuntu:24.04 (R8 9.2.4-dev bt37, jadx 1.5.6, strings)"
+ },
+ "re|secrets_server": {
+  "hash": "ad18483f1eb3",
+  "date": "2026-10-28",
+  "on": "Docker node:24-alpine (Node 24.22, curl 8.23); Windows Node 24 + pwsh 7.6.9 + powershell 5.1 (Invoke-RestMethod)"
  },
  "rn|API client بالتوكن": {
   "hash": "4dfcbac30244",

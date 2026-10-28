@@ -214,7 +214,7 @@
 ### ٣ج. دفعة المحتوى الجديد (٢٧ أكتوبر، بقرارك «ضيفهم كلهم»)
 
 الدفعة الأولى (شغالة):
-- [x] net و re: تجربة الـ 22 درس اللي اتكتبوا النهارده + net/05 (subnetting، ARP و DHCP، IPv6، tcpdump و Wireshark، WireGuard) + re/02 (المستوى التاني على تطبيقك بس). اتعمل: الـ 22 درس اتجربوا واتصلح فيهم curl.exe في PS 5.1 و example.com على Cloudflare و MTU و smali apktool 3، و net/05 فيه 11 درس. re/02 ماتكتبش: فلتر الأمان وقّف الرد عند درس إعادة التوقيع والـ pinning، فالملف لسه فاضي ومحتاج خطة تانية (مواضيع دفاعية زي حماية تطبيقك من الـ reverse engineering)
+- [x] net و re: تجربة الـ 22 درس اللي اتكتبوا النهارده + net/05 (subnetting، ARP و DHCP، IPv6، tcpdump و Wireshark، WireGuard) + re/02 (المستوى التاني على تطبيقك بس). اتعمل: الـ 22 درس اتجربوا واتصلح فيهم curl.exe في PS 5.1 و example.com على Cloudflare و MTU و smali apktool 3، و net/05 فيه 11 درس. re/02 اتكتب بعدين من ناحية الدفاع (٢٨ أكتوبر): 11 درس (الأسرار في الـ APK، وتقفيل المانيفست، و R8 و retrace، و network security config والـ pinning، والكلاينت مش مضمون، و Play Integrity، و Keystore)، واتغيّر وصف المستوى ٢ و ٣
 - [x] ai/07: MCP، و agents و tool use، و Claude Code و Cursor، و Ollama محلي، و evals. اتعمل: 18 درس في 4 أقسام. وبعدها ai/11: صور و PDF للموديل (5 دروس). متابعة: SDK 1.3.0 بيبعت المفتاح Authorization: Bearer، ودرس «@anthropic-ai/sdk» في ai/02 لسه بيقول x-api-key (اتجرّب على 0.132): يتراجع
 - [x] تاب جديد pydata: Jupyter و numpy و pandas والرسوم و scikit-learn و scraping. اتعمل: 29 درس في 9 أقسام (pandas 3.1، scikit-learn 1.9، polars و DuckDB)
 - [x] تاب جديد vue: Vue 3 و Router و Pinia والاختبارات و Nuxt ومقارنة Svelte. اتعمل: 42 درس في 11 قسم (Vue 3.5.44، Nuxt 4.6.3)
