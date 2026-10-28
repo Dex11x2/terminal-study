@@ -2684,6 +2684,31 @@
   "date": "2026-10-28",
   "on": "ubuntu-24.04 (docker، صفحات man متسطبة) و Git Bash على ويندوز 11"
  },
+ "bash|مشروع ٢ — trap: نضّف مهما حصل": {
+  "hash": "6dda2a79ac52",
+  "date": "2026-10-28",
+  "on": "docker node:22-slim (Debian 12, bash 5.2.15) — السكربت اتشغّل بالكامل: نشر، فحص فاشل، rollback، trap بالتلات حالات"
+ },
+ "bash|مشروع ٢ — ابني في مكان مؤقت": {
+  "hash": "17911eb20ea9",
+  "date": "2026-10-28",
+  "on": "docker node:22-slim (Debian 12, bash 5.2.15) — السكربت اتشغّل بالكامل: نشر، فحص فاشل، rollback، trap بالتلات حالات"
+ },
+ "bash|مشروع ٢ — التقليم والخدمة": {
+  "hash": "f244befa5df4",
+  "date": "2026-10-28",
+  "on": "docker node:22-slim (Debian 12, bash 5.2.15) — prune اتجرّب (٥ نشرات، -k 3، فضل ٣)؛ docs: أوامر systemctl والـ unit file من توثيق systemd (مفيش systemd في الكونتينر)"
+ },
+ "bash|مشروع ٢ — الفحص والرجوع": {
+  "hash": "334f1c5055dd",
+  "date": "2026-10-28",
+  "on": "docker node:22-slim (Debian 12, bash 5.2.15) — السكربت اتشغّل بالكامل: نشر، فحص فاشل، rollback، trap بالتلات حالات"
+ },
+ "bash|مشروع ٢ — شكل النشر: نسخ ورابط": {
+  "hash": "3e672a3eba65",
+  "date": "2026-10-28",
+  "on": "docker node:22-slim (Debian 12, bash 5.2.15) — السكربت اتشغّل بالكامل: نشر، فحص فاشل، rollback، trap بالتلات حالات"
+ },
  "bash|مشروع — find بشروط الصلاحيات": {
   "hash": "68838f4b735e",
   "date": "2026-10-28",
