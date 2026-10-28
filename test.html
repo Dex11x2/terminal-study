@@ -124,7 +124,12 @@ main[hidden],.screen[hidden]{display:none}
 .use>h3{margin:0;padding:10px 16px;background:color-mix(in srgb,#8b5cf6 12%,transparent);color:#8b5cf6;font-size:17px}
 .use .ubody{padding:4px 16px 14px}
 .use .cards{display:grid;gap:14px;grid-template-columns:minmax(0,1fr);margin:14px 0 0}
-@media(min-width:760px){ .use .cards{grid-template-columns:1fr 1fr} }
+@media(min-width:760px){
+  .use .cards{grid-template-columns:1fr 1fr}
+  /* القاعدة: ٢ لـ ٤ كروت حسب الدرس. لو العدد فردي، الأخير بياخد العرض كله
+     عشان ميسيبش نص صف فاضي — فالعدد بيتحدد بالمحتوى مش بالشبكة */
+  .use .cards>.uc:last-child:nth-child(odd){grid-column:1/-1}
+}
 .uc{border:1px solid var(--line);border-radius:8px;padding:12px 14px;background:var(--surface)}
 .uc h4{margin:0 0 6px;font-size:15.5px}
 .uc .tag{display:inline-block;font-size:12px;padding:1px 9px;border-radius:999px;margin-inline-end:8px;vertical-align:2px;
@@ -153,6 +158,25 @@ main[hidden],.screen[hidden]{display:none}
 .pager .next{border-color:color-mix(in srgb,var(--accent) 45%,var(--line))}
 .pager .next .lbl{color:var(--accent)}
 .pager button[disabled]{opacity:.4;cursor:default}
+/* ⑭ مشاريع الوحدة */
+.pgrid{display:grid;gap:14px;grid-template-columns:minmax(0,1fr);margin:14px 0 0}
+@media(min-width:820px){ .pgrid{grid-template-columns:1fr 1fr} }
+.pcard{border:1px solid var(--line);border-radius:10px;padding:14px 16px;background:var(--surface);
+       display:block;color:inherit;text-decoration:none;min-width:0}
+.pcard:hover,.pcard:focus-visible{border-color:var(--accent)}
+.pcard h4{margin:0 0 6px;font-size:16.5px}
+.pcard h4 .done{color:var(--ok);font-size:14px}
+.pcard>p{margin:0 0 10px;font-size:15px;color:var(--muted)}
+.pmeta{display:flex;gap:6px;flex-wrap:wrap;font-size:12.5px}
+.pmeta span{border:1px solid var(--line);border-radius:999px;padding:1px 9px;color:var(--muted)}
+.pmeta .l1{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 45%,var(--line))}
+.pmeta .l2{color:#b45309;border-color:color-mix(in srgb,#b45309 45%,var(--line))}
+.pmeta .l3{color:var(--danger);border-color:color-mix(in srgb,var(--danger) 45%,var(--line))}
+.pbar{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px;font-size:13.5px}
+.pbar span{background:color-mix(in srgb,var(--accent) 10%,transparent);border-radius:6px;padding:3px 11px}
+.build{margin:18px 0;padding:12px 16px;border-inline-start:3.5px solid var(--ok);
+       background:color-mix(in srgb,var(--ok) 7%,transparent);border-radius:0 8px 8px 0}
+.build b{color:var(--ok)}
 .note-box{border:1px solid var(--line);border-radius:10px;padding:16px 20px;margin:0 0 22px;background:var(--surface)}
 .note-box h3{margin:0 0 8px;font-size:18px}
 .note-box ol{margin:0;padding-inline-start:22px;display:grid;gap:7px}
@@ -258,6 +282,13 @@ Set-Location "$HOME\lab\pc-tool"</pre>
         </nav>
         <div id="lessonSlot" class="narrow"></div>
         <div class="pager narrow" id="pager"></div>
+      </section>
+
+      <!-- ========== ⑭ شاشة المشاريع ========== -->
+      <section class="screen" id="sProjects" hidden>
+        <nav class="lnav"><button class="back" type="button" data-go="map">▸ الخريطة</button>
+          <span class="pos" id="projPos">مشاريع الوحدة</span></nav>
+        <div id="projSlot"></div>
       </section>
     </div>
 
@@ -512,8 +543,7 @@ PS&gt; .\\pc.ps1 status
  'كود الخروج هو <b>اللغة اللي البرامج بتتكلم بيها مع بعض</b>. كل أتمتة في الدنيا مبنية عليه، ومن غيره مفيش CI ولا مراقبة.',
  [
   {tag:'برمجة', h:'CI/CD كله مبني عليه', p:'<p>كل خطوة في GitHub Actions بتنجح أو تفشل بكود الخروج. <code>npm test</code> بيرجّع صفر لو عدّى، و <code>eslint</code> بيرجّع <code>1</code> لو لقى مشاكل. وعشان كده <code>npm test &amp;&amp; npm run build</code> شغالة: الـ <code>&amp;&amp;</code> بتقرا الكود.</p>'},
-  {tag:'شبكات', h:'المراقبة والتشخيص', p:'<p><code>ping</code> بيرجّع كود، و <code>curl</code> بيرجّع أكواد مختلفة (<code>6</code> فشل DNS، <code>7</code> فشل الاتصال، <code>28</code> timeout). أدوات المراقبة بتقرا الرقم ده عشان تفرّق بين «الدومين غلط» و «السيرفر واقع» — وده الفرق بين إنذار صح وإنذار كاذب.</p>'},
-  {tag:'شبكات', h:'Healthchecks', p:'<p><code>HEALTHCHECK</code> في Docker و <code>livenessProbe</code> في Kubernetes: أمر بيتنفّذ كل كام ثانية، والكود بتاعه بيحدد هل الكونتينر سليم ولا يتعاد تشغيله. سكربتك اللي بيرجّع <code>0</code> أو <code>1</code> صح يقدر يكون healthcheck.</p>'},
+  {tag:'شبكات وتشغيل', h:'المراقبة والـ healthchecks', p:'<p><code>curl</code> بيرجّع أكواد مختلفة (<code>6</code> فشل DNS، <code>7</code> فشل الاتصال، <code>28</code> timeout)، فأداة المراقبة تقدر تفرّق بين «الدومين غلط» و«السيرفر واقع» — وده الفرق بين إنذار صح وإنذار كاذب.</p><p>ونفس الرقم هو أساس <code>HEALTHCHECK</code> في Docker و <code>livenessProbe</code> في Kubernetes: أمر بيتنفّذ كل كام ثانية، وكوده بيحدد هل الكونتينر يتعاد تشغيله. سكربتك اللي بيرجّع <code>0</code> أو <code>1</code> صح يقدر يكون healthcheck من غير أي تعديل.</p>'},
   {tag:'علوم حاسب', h:'العملية وكود الخروج', p:'<p>أي عملية (process) لما تنتهي بترجّع رقم للعملية اللي شغّلتها. ده جزء من عقد نظام التشغيل نفسه (<code>exit status</code> في POSIX). والاتفاق: <b>صفر = نجاح</b>، وأي رقم تاني = نوع من الفشل. وده عكس المنطق العادي — بس له سبب: فيه طريقة واحدة تنجح وطرق كتير تفشل.</p>'}
  ],
  'عندك مهمة مجدولة بتعمل نسخة احتياطية كل ليلة. لو السكربت بيرجّع <code>0</code> دايمًا (حتى لما النسخ يفشل)، Task Scheduler هيقول «نجحت» كل يوم وانت مرتاح — لحد ما تحتاج النسخة وتكتشف إنها فاضية من شهرين. أكواد الخروج الصح هي اللي بتخلي المراقبة تعرف.')
@@ -692,6 +722,93 @@ What if: Performing the operation "schedule" on target "off at 04:25:28".</pre><
 }
 ];
 
+
+/* ============ ⑭ مشاريع الوحدة ============ */
+const PROJECTS = [
+{
+  t: 'زرار على سطح المكتب يقفل الجهاز',
+  what: 'أيقونة تدوس عليها مرتين فيقفل الجهاز بعد ٣٠ دقيقة — من غير ما تفتح ترمنال.',
+  lv: 1, time: '١٥ دقيقة', from: 'دروس ١ و ٤ و ٦',
+  skills: ['اختصارات ويندوز (.lnk)', 'COM و WScript.Shell', 'تمرير arguments لسكربت'],
+  html: `
+<p class="why">الأداة اللي بنيناها شغالة، بس لسه محتاجة ترمنال. المشروع ده بيحوّلها لحاجة <b>أي حد</b> يقدر يستخدمها: أيقونة على سطح المكتب.</p>
+
+<div class="build"><b>اللي هتطلع بيه:</b> ملف <code>اقفل بعد 30 دقيقة.lnk</code> على سطح مكتبك، بأيقونة زرار الباور، دوسة مرتين عليه = الجهاز هيقفل بعد نص ساعة.</div>
+
+<div class="step"><h3><span class="n">١</span>إزاي ويندوز بيعمل اختصار أصلًا؟</h3>
+<p>ملف <code>.lnk</code> مش نص — ده ملف ثنائي ويندوز بيقراه. مفيش أمر PowerShell جاهز يعمله، بس فيه <b>كائن COM</b> اسمه <code>WScript.Shell</code> موجود في ويندوز من زمان وبيعمل ده.</p>
+<p>COM (Component Object Model) هي الطريقة القديمة اللي برامج ويندوز بتتكلم بيها مع بعض. و <code>New-Object -ComObject</code> بتفتحلك واحد منهم.</p>
+<div class="term" data-k="ps"><div class="term-bar"><span>PowerShell</span><button class="copy" type="button">نسخ</button></div><pre>$ws = New-Object -ComObject WScript.Shell</pre></div></div>
+
+<div class="step"><h3><span class="n">٢</span>نعمل الاختصار ونحدد خصائصه</h3>
+<div class="term" data-k="ps"><div class="term-bar"><span>make-button.ps1</span><button class="copy" type="button">نسخ</button></div><pre>$tool = "$HOME\\tools\\pc.ps1"
+$desk = [Environment]::GetFolderPath('Desktop')
+
+$ws  = New-Object -ComObject WScript.Shell
+$lnk = $ws.CreateShortcut("$desk\\اقفل بعد 30 دقيقة.lnk")
+
+$lnk.TargetPath   = (Get-Command pwsh).Source
+$lnk.Arguments    = "-NoProfile -WindowStyle Hidden -File \`"$tool\`" off -In 30 -Force"
+$lnk.IconLocation = "shell32.dll,27"
+$lnk.Description  = "يقفل الجهاز بعد 30 دقيقة"
+$lnk.Save()</pre></div>
+<table class="k">
+<tr><th>الحتة</th><th>معناها</th></tr>
+<tr><td><code>[Environment]::GetFolderPath('Desktop')</code></td><td>مسار سطح المكتب الحقيقي. <b>متكتبوش بإيدك</b> — ممكن يكون في OneDrive أو بلغة تانية</td></tr>
+<tr><td><code>TargetPath</code></td><td>البرنامج اللي هيتشغّل. <code>(Get-Command pwsh).Source</code> بتجيب مساره بدل ما تخمّنه (درس ٦)</td></tr>
+<tr><td><code>Arguments</code></td><td>اللي بيتكتب بعد اسم البرنامج، بالظبط زي ما تكتبه في الترمنال</td></tr>
+<tr><td><code>-WindowStyle Hidden</code></td><td>من غيرها هتشوف نافذة سودا بتفتح وتقفل. دي اللي بتفرّق بين سكربت وأداة</td></tr>
+<tr><td><code>-Force</code></td><td><b>ضرورية</b>: مفيش حد هيرد على سؤال التأكيد (درس ٥)</td></tr>
+<tr><td><code>IconLocation</code></td><td><code>shell32.dll</code> فيه أيقونات ويندوز الجاهزة، و <code>27</code> رقم أيقونة الباور</td></tr>
+</table>
+<p>ولاحظ الـ backtick في <code>\`"$tool\`"</code>: ده الـ escape بتاع PowerShell. إحنا عايزين علامات التنصيص تتكتب <b>جوه</b> نص الـ Arguments، عشان المسار لو فيه مسافة ميتقسمش.</p></div>
+
+<div class="step"><h3><span class="n">٣</span>نتأكد إنه طلع صح</h3>
+<p>متفتحوش عشان تجرّب — اقراه بدل كده:</p>
+<div class="term" data-k="ps"><div class="term-bar"><span>PowerShell</span><button class="copy" type="button">نسخ</button></div><pre>$r = $ws.CreateShortcut("$desk\\اقفل بعد 30 دقيقة.lnk")
+$r.TargetPath
+$r.Arguments</pre></div>
+<div class="term out" data-k="ps"><div class="term-bar"><span>ويندوز 11 · PowerShell 7.6</span><span style="opacity:.6">اتشغّل فعلًا</span></div><pre>C:\\Users\\7ossa\\AppData\\Local\\Microsoft\\WindowsApps\\...\\pwsh.exe
+-NoProfile -WindowStyle Hidden -File "C:\\...\\pc.ps1" off -In 30 -Force</pre></div>
+<p><code>CreateShortcut</code> على ملف موجود <b>بيقراه</b> بدل ما يعمل واحد جديد — فنفس السطر بيعمل وبيفحص.</p></div>
+
+<div class="step"><h3><span class="n">٤</span>اختبره من غير ما الجهاز يقفل</h3>
+<p>غيّر <code>off</code> لـ <code>status</code> في <code>Arguments</code>، واعمل الاختصار تاني، ودوس عليه. لو الأداة اشتغلت، يبقى المسار والـ arguments مظبوطين — ترجّع <code>off</code> وانت مطمن.</p>
+<div class="warn"><b>وقبل ما تجرّب الزرار الحقيقي:</b> اعرف إزاي تلغي. <code>pc cancel</code> أو <code>shutdown /a</code>. اعملها مرة قبل ما تحتاجها.</div></div>
+
+<div class="use"><h3>تستخدمها فين؟</h3><div class="ubody">
+<p style="margin:12px 0 0">إنك تحوّل سكربت لحاجة <b>تتداس</b> هو نفس السؤال في كل مجال: إزاي الشغل يوصل لحد مش هيفتح ترمنال؟</p>
+<div class="cards">
+<div class="uc"><h4><span class="tag">برمجة</span>الواجهة فوق المنطق</h4><p>نفس الأداة بتتلبس أكتر من واجهة: سطر أوامر، زرار، endpoint، أو زرار في موقع. والمنطق واحد. ده السبب إن الفصل بين المنطق والواجهة (درس ١) مهم: لو كانا متلخبطين، كل واجهة جديدة = إعادة كتابة.</p></div>
+<div class="uc"><h4><span class="tag">تشغيل</span>الاختصار زي المهمة المجدولة</h4><p>الاختصار والمهمة المجدولة بيشغّلوا سكربتك في بيئة <b>مش بيئتك</b>: مفيش <code>$PROFILE</code>، والمجلد الحالي مختلف. عشان كده <code>-NoProfile</code> والمسارات الكاملة (درس ٦). أول سبب لفشل سكربت في الحالتين هو نفسه.</p></div>
+</div>
+<div class="scen"><b>سيناريو حقيقي:</b> عملت أداة للفريق وحطيتها على السيرفر. محدش استخدمها. لما عملت لها زرار (أو صفحة فيها زرار واحد) بقت بتتستخدم كل يوم. الأداة متغيرتش — اللي اتغير إن حد قدر يوصلها.</div>
+</div></div>
+
+<div class="ex"><h4>طوّره</h4><div class="bodyx"><ol>
+<li>اعمل تلات اختصارات: <code>بعد 15</code> و <code>بعد 30</code> و <code>الغي</code>.</li>
+<li>خلي السكربت يعمل الاختصارات دي بنفسه في لوب.</li>
+<li>ثبّت «الغي» في شريط المهام (كليك يمين على الاختصار ← Pin to taskbar).</li>
+<li>غيّر الأيقونة: جرّب أرقام تانية من <code>shell32.dll</code>.</li>
+</ol></div></div>`
+},
+{ t: 'منظّف الملفات المؤقتة', what: 'أداة بتقولك كام ميجا نايمة في فولدر Temp، وبتمسح الأقدم من N يوم بـ <code>-WhatIf</code> الأول.',
+  lv: 2, time: '٢٥ دقيقة', from: 'دروس ٢ و ٣ و ٤',
+  skills: ['<code>Measure-Object</code> للحجم', '<code>-WhatIf</code> قبل المسح', 'تقرير قبل وبعد'] },
+{ t: 'زرار «وضع التركيز»', what: 'دوسة واحدة: تقفل برامج التشتيت، تكتم الصوت، وتفتح اللي بتشتغل عليه، وتضبط مؤقّت.',
+  lv: 2, time: '٣٠ دقيقة', from: 'دروس ١ و ٢ و ٥',
+  skills: ['<code>Stop-Process</code> بأمان', 'قايمة برامج من ملف', 'اللوج عشان تعرف إيه اتقفل'] },
+{ t: 'تنبيه على الشاشة', what: 'سكربت بيطلّع إشعار ويندوز حقيقي — تستخدمه كنهاية لأي أداة طويلة.',
+  lv: 1, time: '١٥ دقيقة', from: 'دروس ١ و ٦',
+  skills: ['<code>[Windows.UI.Notifications]</code>', 'بديل بسيط بـ MessageBox', 'نهاية مرئية للمهام الطويلة'] },
+{ t: 'لعبة خمّن الرقم', what: 'لعبة في الترمنال: الجهاز بيفكر في رقم وانت بتخمّن، وهو بيقولك أكبر ولا أصغر.',
+  lv: 1, time: '٢٠ دقيقة', from: 'دروس ١ و ٢',
+  skills: ['<code>Get-Random</code> و <code>while</code>', '<code>Read-Host</code> والتحقق منه', 'عداد محاولات ورسالة نهاية'] },
+{ t: 'فكّك كود موجود', what: 'تاخد سكربت جاهز من النت مش انت كاتبه، وتشرحه سطر سطر، وتكتشف فيه مشكلة.',
+  lv: 3, time: '٣٠ دقيقة', from: 'كل دروس الوحدة',
+  skills: ['قراية كود غيرك', 'تدوّر على الخطر: مسح، صلاحيات، شبكة', 'تعيد كتابته بشكل أأمن'] }
+];
+
 /* ============ التنقل ============ */
 const $ = s => document.querySelector(s);
 const done = new Set();
@@ -704,7 +821,8 @@ function buildNav(){
         return '<a href="#lesson-' + n + '" data-go="' + n + '"' + (done.has(n) ? ' class="ok"' : '')
           + (cur === n ? ' aria-current="true"' : '') + '><span class="n">' + AR(n) + '</span><span>' + L.t + '</span></a>';
       }).join('')
-    + '<div class="foot"><a href="#" data-go="map" style="padding:0;border:0;color:var(--accent)">▸ الخريطة والمشروع</a><br>'
+    + '<div class="foot"><a href="#projects" data-pg="list" style="padding:0;border:0;color:#8b5cf6;font-weight:600">★ مشاريع الوحدة (' + AR(PROJECTS.length) + ')</a><br>'
+      + '<a href="#" data-go="map" style="padding:0;border:0;color:var(--accent)">▸ الخريطة</a><br>'
       + '<span style="font-size:12.5px">خلصت ' + AR(done.size) + ' من ٦</span></div>';
 }
 
@@ -743,7 +861,7 @@ function openLesson(n){
   const L = LESSONS[n - 1];
   if (!L) return showMap();
   cur = n;
-  $('#sMap').hidden = true;
+  $('#sMap').hidden = true; $('#sProjects').hidden = true;
   $('#sLesson').hidden = false;
   $('#posNow').textContent = AR(n);
   $('#dots').innerHTML = LESSONS.map((_, i) => {
@@ -775,9 +893,81 @@ function openLesson(n){
   window.scrollTo(0, 0);
 }
 
+const LV = ['', 'مبتدئ', 'متوسط', 'متقدم'];
+
+function showProjects(){
+  cur = 0;
+  $('#sMap').hidden = true; $('#sLesson').hidden = true; $('#sProjects').hidden = false;
+  $('#projPos').textContent = 'مشاريع الوحدة — ' + AR(PROJECTS.length) + ' مشاريع';
+  $('#projSlot').innerHTML =
+    '<h2 style="font-size:25px;margin:18px 0 4px"><span class="mk">١٤</span>مشاريع الوحدة</h2>'
+    + '<p style="margin:0 0 6px;color:var(--muted);font-size:16.5px">خلصت الستة دروس. دلوقتي تبني بيهم حاجات تستخدمها فعلًا — '
+    + 'منها اللي تبنيه من الصفر، ومنها اللي تفكّك فيه كود جاهز مش انت كاتبه.</p>'
+    + '<div class="pgrid">' + PROJECTS.map((P, i) => {
+        const n = i + 1;
+        return '<a class="pcard" href="#project-' + n + '" data-pg="' + n + '">'
+          + '<h4>' + P.t + (P.html ? '' : ' <span class="done">(القالب بس)</span>') + '</h4>'
+          + '<p>' + P.what + '</p>'
+          + '<div class="pmeta"><span class="l' + P.lv + '">' + LV[P.lv] + '</span>'
+          + '<span>' + P.time + '</span><span>' + P.from + '</span></div></a>';
+      }).join('') + '</div>';
+  $('#toc').innerHTML = '<h4>المشاريع</h4>' + PROJECTS.map((P, i) =>
+      '<a href="#project-' + (i + 1) + '" data-pg="' + (i + 1) + '">' + AR(i + 1) + '. ' + P.t + '</a>').join('')
+    + '<div class="pg">' + AR(PROJECTS.length) + ' مشاريع</div>';
+  buildNav();
+  if (location.hash !== '#projects') history.pushState(null, '', '#projects');
+  window.scrollTo(0, 0);
+}
+
+function openProject(n){
+  const P = PROJECTS[n - 1];
+  if (!P) return showProjects();
+  if (!P.html){
+    showProjects();
+    alertless(n);
+    return;
+  }
+  cur = 0;
+  $('#sMap').hidden = true; $('#sLesson').hidden = true; $('#sProjects').hidden = false;
+  $('#projPos').textContent = 'مشروع ' + AR(n) + ' من ' + AR(PROJECTS.length);
+  $('#projSlot').innerHTML =
+    '<article class="lesson narrow"><h2><span class="no">مشروع ' + AR(n) + '</span>' + P.t + '</h2>'
+    + '<div class="pbar"><span>' + LV[P.lv] + '</span><span>' + P.time + '</span><span>' + P.from + '</span>'
+    + P.skills.map(k => '<span>' + k + '</span>').join('') + '</div>'
+    + P.html
+    + '<div class="pager"><button type="button" data-pg="list"><span class="lbl">▸ رجوع</span>'
+    + '<span class="ttl">كل مشاريع الوحدة</span></button></div></article>';
+  $('#toc').innerHTML = '<h4>في المشروع ده</h4>'
+    + [...$('#projSlot').querySelectorAll('.step > h3')].map((h, i) => {
+        h.parentElement.id = 'ps-' + i;
+        const num = h.querySelector('.n');
+        const label = num ? num.textContent.trim() + ' ' + h.textContent.replace(num.textContent, '').trim() : h.textContent.trim();
+        return '<a href="#ps-' + i + '" data-jump="ps-' + i + '">' + label + '</a>';
+      }).join('')
+    + '<div class="pg">مشروع ' + AR(n) + '</div>';
+  buildNav();
+  if (location.hash !== '#project-' + n) history.pushState(null, '', '#project-' + n);
+  window.scrollTo(0, 0);
+}
+
+// المشاريع اللي لسه قالب: نوضّح ده جوه الكارت بدل نافذة منبثقة
+function alertless(n){
+  const card = $('#projSlot').querySelector('[data-pg="' + n + '"]');
+  if (!card) return;
+  card.style.borderColor = 'var(--accent)';
+  if (!card.querySelector('.soon')){
+    const s = document.createElement('p');
+    s.className = 'soon';
+    s.style.cssText = 'margin:10px 0 0;font-size:14px;color:var(--accent)';
+    s.textContent = 'المشروع ده مكتوب كقالب في النموذج ده. المشروع الأول هو اللي متكتب كامل عشان تشوف العمق.';
+    card.appendChild(s);
+  }
+  card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
 function showMap(){
   cur = 0;
-  $('#sLesson').hidden = true;
+  $('#sLesson').hidden = true; $('#sProjects').hidden = true;
   $('#sMap').hidden = false;
   $('#toc').innerHTML = '<h4>الوحدة</h4><a href="#" data-jump="top">الهدف</a><a href="#" data-jump="top">الخريطة</a><a href="#" data-jump="top">المعمل</a><div class="pg">اختار درس من الخريطة</div>';
   buildNav();
@@ -786,8 +976,13 @@ function showMap(){
 }
 
 function route(){
-  const m = /^#lesson-(\d+)$/.exec(location.hash);
-  m ? openLesson(+m[1]) : showMap();
+  const h = location.hash;
+  const l = /^#lesson-(\d+)$/.exec(h);
+  const g = /^#project-(\d+)$/.exec(h);
+  if (l) return openLesson(+l[1]);
+  if (g) return openProject(+g[1]);
+  if (h === '#projects') return showProjects();
+  showMap();
 }
 
 document.addEventListener('click', e => {
@@ -804,6 +999,12 @@ document.addEventListener('click', e => {
     e.preventDefault();
     const el = document.getElementById(jump.dataset.jump);
     el ? el.scrollIntoView({behavior:'smooth', block:'start'}) : window.scrollTo({top:0, behavior:'smooth'});
+    return;
+  }
+  const pg = e.target.closest('[data-pg]');
+  if (pg){
+    e.preventDefault();
+    pg.dataset.pg === 'list' ? showProjects() : openProject(+pg.dataset.pg);
     return;
   }
   const go = e.target.closest('[data-go]');
