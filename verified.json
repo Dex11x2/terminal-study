@@ -12169,6 +12169,31 @@
   "date": "2026-10-28",
   "on": "windows-11, pwsh-7.6 (اتشغّلوا بالكامل)"
  },
+ "ps|مشروع ٥ — الإعدادات بـ git config": {
+  "hash": "52acc598db5a",
+  "date": "2026-10-28",
+  "on": "windows-11, pwsh-7.6, winget-1.29.380 (الأداة اتشغّلت ٤ مرات؛ git config في ملف مؤقت مش --global، و winget install على id مش موجود فمسطّبش حاجة)"
+ },
+ "ps|مشروع ٥ — البرامج بـ winget": {
+  "hash": "85daa8448338",
+  "date": "2026-10-28",
+  "on": "windows-11, pwsh-7.6, winget-1.29.380 (الأداة اتشغّلت ٤ مرات؛ git config في ملف مؤقت مش --global، و winget install على id مش موجود فمسطّبش حاجة)"
+ },
+ "ps|مشروع ٥ — الخطة قبل التنفيذ": {
+  "hash": "ce181e8ae6cb",
+  "date": "2026-10-28",
+  "on": "windows-11, pwsh-7.6, winget-1.29.380 (الأداة اتشغّلت ٤ مرات؛ git config في ملف مؤقت مش --global، و winget install على id مش موجود فمسطّبش حاجة)"
+ },
+ "ps|مشروع ٥ — شغّله تاني": {
+  "hash": "fe8ade5be2e8",
+  "date": "2026-10-28",
+  "on": "windows-11, pwsh-7.6, winget-1.29.380 (الأداة اتشغّلت ٤ مرات؛ git config في ملف مؤقت مش --global، و winget install على id مش موجود فمسطّبش حاجة)"
+ },
+ "ps|مشروع ٥ — يعني إيه idempotent": {
+  "hash": "4058c08649e0",
+  "date": "2026-10-28",
+  "on": "windows-11, pwsh-7.6, winget-1.29.380 (الأداة اتشغّلت ٤ مرات؛ git config في ملف مؤقت مش --global، و winget install على id مش موجود فمسطّبش حاجة)"
+ },
  "pyapi|*args و **kwargs": {
   "hash": "308ff48c87e2",
   "date": "2026-10-07",
