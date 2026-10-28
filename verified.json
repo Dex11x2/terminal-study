@@ -10239,6 +10239,11 @@
   "date": "2026-10-06",
   "on": "win11 (Node 24.19, npm 11.17) tsx 4.23, TS 7.0; docs: nodemon"
  },
+ "node|node -p و node -e": {
+  "hash": "62b3b4139f2d",
+  "date": "2026-10-28",
+  "on": "Node 24.22.1 و npm 11.19.1 على ويندوز 11؛ فخ argv و install --dry-run و pack --dry-run و E404 كلهم اتجرّبوا"
+ },
  "node|node -v": {
   "hash": "eb93a3ccfc72",
   "date": "2026-10-06",
@@ -10273,6 +10278,11 @@
   "hash": "fae6a2c5f9fe",
   "date": "2026-10-06",
   "on": "win11 (Node 24.19, npm 11.17) Vite 8.3; docs: Next.js"
+ },
+ "node|npm بيوثّق نفسه": {
+  "hash": "b22bf0faa13f",
+  "date": "2026-10-28",
+  "on": "Node 24.22.1 و npm 11.19.1 على ويندوز 11؛ فخ argv و install --dry-run و pack --dry-run و E404 كلهم اتجرّبوا"
  },
  "node|npx": {
   "hash": "7263b1f2bec0",
@@ -10374,6 +10384,11 @@
   "date": "2026-10-06",
   "on": "docker node:22-slim + postgres:16, Prisma 7.10.0; docs: ngrok Replay UI"
  },
+ "node|اقرا خطأ npm": {
+  "hash": "27e7b1dc524c",
+  "date": "2026-10-28",
+  "on": "Node 24.22.1 و npm 11.19.1 على ويندوز 11؛ فخ argv و install --dry-run و pack --dry-run و E404 كلهم اتجرّبوا"
+ },
  "node|الإغلاق النضيف": {
   "hash": "3061d6c3a74c",
   "date": "2026-10-06",
@@ -10409,6 +10424,11 @@
   "date": "2026-10-06",
   "on": "docker node:22-slim Express 5 + win11 pwsh 7 / ps 5.1"
  },
+ "node|المعاينة في npm": {
+  "hash": "407be05dc727",
+  "date": "2026-10-28",
+  "on": "Node 24.22.1 و npm 11.19.1 على ويندوز 11؛ فخ argv و install --dry-run و pack --dry-run و E404 كلهم اتجرّبوا"
+ },
  "node|توافق Bun مع Node": {
   "hash": "b146ce457cd7",
   "date": "2026-10-27",
@@ -10423,6 +10443,26 @@
   "hash": "6a98514d01db",
   "date": "2026-10-06",
   "on": "docker node:22-slim + win11 pwsh 7 / ps 5.1"
+ },
+ "node|مشروع — parseArgs من غير مكتبة": {
+  "hash": "56ffece0bb4f",
+  "date": "2026-10-28",
+  "on": "Node 24.22.1 — أداة jl اتبنت واتشغّلت بكل خياراتها ومن stdin؛ npm link في prefix مؤقت (التسطيب العام متلمسش واتمسح بعدها)"
+ },
+ "node|مشروع — اقرا من ملف أو من أنبوبة": {
+  "hash": "9eb8c72027ab",
+  "date": "2026-10-28",
+  "on": "Node 24.22.1 — أداة jl اتبنت واتشغّلت بكل خياراتها ومن stdin؛ npm link في prefix مؤقت (التسطيب العام متلمسش واتمسح بعدها)"
+ },
+ "node|مشروع — جهّزها للنشر": {
+  "hash": "f2fdd2a1d864",
+  "date": "2026-10-28",
+  "on": "Node 24.22.1 — أداة jl اتبنت واتشغّلت بكل خياراتها ومن stdin؛ npm link في prefix مؤقت (التسطيب العام متلمسش واتمسح بعدها)"
+ },
+ "node|مشروع — من ملف لأمر": {
+  "hash": "a1c03c3bc629",
+  "date": "2026-10-28",
+  "on": "Node 24.22.1 — أداة jl اتبنت واتشغّلت بكل خياراتها ومن stdin؛ npm link في prefix مؤقت (التسطيب العام متلمسش واتمسح بعدها)"
  },
  "node|مقدمة Node.js وتشغيل الملفات": {
   "hash": "ad9e865ff6f3",
