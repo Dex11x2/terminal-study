@@ -3734,6 +3734,26 @@
   "date": "2026-10-28",
   "on": "windows-11, cmd"
  },
+ "cmd|مشروع — errorlevel: الفخ اللي بيضيّع وقت": {
+  "hash": "cfcad928c61a",
+  "date": "2026-10-28",
+  "on": "windows-11 cmd.exe (كل الأمثلة اتشغّلت: run.bat بالتلات أوضاع، وفخ %errorlevel% جوه بلوك، وفخ LF مقابل CRLF، وقراية JSON بـ batch مقابل PowerShell)"
+ },
+ "cmd|مشروع — for /f: اقرا ملف الخطوات": {
+  "hash": "167dfd6530ed",
+  "date": "2026-10-28",
+  "on": "windows-11 cmd.exe (كل الأمثلة اتشغّلت: run.bat بالتلات أوضاع، وفخ %errorlevel% جوه بلوك، وفخ LF مقابل CRLF، وقراية JSON بـ batch مقابل PowerShell)"
+ },
+ "cmd|مشروع — إمتى تسيب batch": {
+  "hash": "f0a8daeb7398",
+  "date": "2026-10-28",
+  "on": "windows-11 cmd.exe (كل الأمثلة اتشغّلت: run.bat بالتلات أوضاع، وفخ %errorlevel% جوه بلوك، وفخ LF مقابل CRLF، وقراية JSON بـ batch مقابل PowerShell)"
+ },
+ "cmd|مشروع — ملف بيتداس عليه ويشتغل من أي مكان": {
+  "hash": "c6884349d1ad",
+  "date": "2026-10-28",
+  "on": "windows-11 cmd.exe (كل الأمثلة اتشغّلت: run.bat بالتلات أوضاع، وفخ %errorlevel% جوه بلوك، وفخ LF مقابل CRLF، وقراية JSON بـ batch مقابل PowerShell)"
+ },
  "cpp|C++ في المسابقات": {
   "hash": "dbc4edee8a2a",
   "date": "2026-10-08",
