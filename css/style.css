@@ -559,3 +559,103 @@ body[data-shell="net"]{--accent:var(--a-net);--t-bg:#062a33;--t-fg:#eef0f3;--t-p
 body[data-shell="re"]{--accent:var(--a-re);--t-bg:#2c1206;--t-fg:#eef0f3;--t-pr:#fdba74;--t-cm:#8b95a5;--t-bar:#2c1206}
 .sw[data-s="re"] .top{background:#2c1206;color:#eef0f3}
 .sol .term[data-k="re"]{--t-bg:#2c1206;--t-fg:#eef0f3;--t-pr:#fdba74;--t-cm:#8b95a5;--t-bar:#2c1206}
+
+/* ===== the course view: a unit map, one lesson at a time, and the two side rails ===== */
+/* the rails live beside the content, so the middle column stays a readable width */
+main.shell{display:grid;gap:26px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:1150px){ main.shell{grid-template-columns:minmax(0,230px) minmax(0,1fr)} }
+@media (min-width:1560px){ main.shell{grid-template-columns:minmax(0,230px) minmax(0,1fr) minmax(0,240px)} }
+/* the left rail only indexes an open lesson, so on the map the grid gives that room back to the content */
+@media (min-width:1560px){ body:not(.reading) main.shell{grid-template-columns:minmax(0,230px) minmax(0,1fr)} }
+#list{min-width:0}
+.rail{min-width:0;font-size:14.5px}
+.rail-r,.rail-l{display:none}
+@media (min-width:1150px){ .rail-r{display:block} }
+@media (min-width:1560px){ .rail-l{display:block} }
+.rail .sticky{position:sticky;top:calc(env(safe-area-inset-top,0px) + 150px);max-height:calc(100vh - 170px);overflow:auto;scrollbar-width:thin}
+.rail h4{margin:0 0 8px;font-size:13px;letter-spacing:.04em;color:var(--muted);text-transform:none}
+.rail ol{list-style:none;margin:0;padding:0}
+.rail li{margin:0}
+.rail button{display:flex;gap:8px;align-items:baseline;width:100%;text-align:start;background:none;border:0;border-inline-start:2px solid var(--line);color:var(--ink);font:inherit;font-size:14px;line-height:1.5;padding:5px 10px;cursor:pointer;border-radius:0}
+.rail button:hover{background:var(--surface);border-inline-start-color:var(--accent)}
+.rail .rl em{margin-inline-start:auto;font-style:normal;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.rail .rl.num{counter-reset:rl}
+.rail .rl.num li{counter-increment:rl}
+.rail .rl.num button::before{content:counter(rl);color:var(--muted);font-size:12px;min-width:14px;font-variant-numeric:tabular-nums}
+.rail .rl li.on button{background:var(--surface);border-inline-start-color:var(--accent);font-weight:600;color:var(--accent)}
+.rail .rl li[data-done] button::after{content:"✓";color:var(--ok);font-size:12px;margin-inline-start:auto}
+.rail .rl-back{margin-top:12px;color:var(--muted);border-inline-start-color:transparent}
+.rail .tl button{font-size:13.5px;color:var(--muted)}
+.rail .tl .on{color:var(--accent);border-inline-start-color:var(--accent);background:var(--surface)}
+
+/* the unit map: every row is the lesson's door, so no one scrolls through a whole category to reach one */
+.maphint{margin:0 0 8px;color:var(--muted);font-size:14.5px}
+table.map{min-width:0;table-layout:fixed;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface);font-size:14.5px}
+.map th{text-align:start;font-size:12.5px;color:var(--muted);font-weight:600;padding:8px 12px;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--accent) 5%,transparent)}
+.map th:nth-child(1){width:42px}
+.map th:nth-child(2){width:26%}
+.map td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top;overflow-wrap:anywhere}
+.map tbody tr:last-child td{border-bottom:0}
+.map tbody tr{cursor:pointer}
+.map tbody tr:hover,.map tbody tr:focus-visible{background:color-mix(in srgb,var(--accent) 7%,transparent);outline:none}
+.map td.n{color:var(--muted);font-variant-numeric:tabular-nums}
+.map td.t .w{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px}
+.map .nm{font-family:var(--mono);font-size:14px;color:var(--accent);font-weight:600;direction:ltr;unicode-bidi:isolate;overflow-wrap:anywhere}
+.map .ti{font-weight:600}
+.map .go{margin-inline-start:auto;font-style:normal;color:var(--accent);opacity:0;transition:opacity .12s}
+.map tbody tr:hover .go,.map tbody tr:focus-visible .go{opacity:1}
+.map tr.is-done td.n::after{content:"✓";color:var(--ok);margin-inline-start:4px}
+body.todo .map tr.is-done{display:none}
+
+/* what the unit gives you, and which fields it serves */
+.unit-two{display:grid;gap:14px;margin:12px 0 18px}
+@media (min-width:860px){ .unit-two{grid-template-columns:1fr 1fr} }
+.goal{border-inline-start:3px solid var(--accent);background:color-mix(in srgb,var(--accent) 6%,transparent);padding:12px 16px;border-radius:0 8px 8px 0}
+.goal h4{margin:0 0 6px;font-size:15px;color:var(--accent)}
+.goal ul{margin:0;padding-inline-start:20px;font-size:15px;line-height:1.7}
+.goal.gu{border-inline-start-color:var(--muted);background:var(--surface)}
+.goal.gu h4{color:var(--ink)}
+.uf{margin-top:22px;align-items:start}
+.uf-h{margin:0 0 2px;font-size:17px}
+.uf-p{margin:0 0 8px;color:var(--muted);font-size:14.5px}
+.projbox{border:1px dashed var(--line);border-radius:8px;padding:12px 16px;background:var(--surface)}
+.projlist{margin:0;padding-inline-start:20px;font-size:15px}
+.projlist li{margin-bottom:6px}
+.projlist span{display:block;color:var(--muted);font-size:14px;line-height:1.6}
+
+/* the reader: the lesson on its own, with where it came from and where it goes next */
+.lnav{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;margin:14px 0 4px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.lnav .back{background:none;border:0;color:var(--accent);font:inherit;font-size:15px;font-weight:600;cursor:pointer;padding:4px 0}
+.lnav .back:hover{text-decoration:underline}
+.lnav .pos{color:var(--muted);font-size:14.5px}
+.reader{max-width:980px}
+.reader article.cmd{margin-top:10px}
+.pager{display:flex;gap:12px;justify-content:space-between;margin:22px 0 10px;max-width:980px}
+.pg-b{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:2px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 14px;color:var(--ink);font:inherit;cursor:pointer;text-align:start}
+.pg-b:hover{border-color:var(--accent)}
+.pg-b span{font-size:12.5px;color:var(--muted)}
+.pg-b b{font-size:15px;overflow-wrap:anywhere}
+.pg-b.nx{text-align:end}
+
+/* «تستخدمها فين؟»: only the fields the lesson really serves get a card */
+.use{margin:14px 0;border-top:1px solid var(--line);padding-top:12px}
+.use h4{margin:0 0 8px;font-size:16px}
+.ucards{display:grid;gap:10px;grid-template-columns:1fr}
+@media (min-width:720px){ .ucards{grid-template-columns:1fr 1fr} }
+.ucards>.uc:last-child:nth-child(odd){grid-column:1/-1}
+.uc{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 14px}
+.uc .tag{display:inline-block;font-size:11.5px;font-weight:700;color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent);border-radius:999px;padding:1px 9px;margin-bottom:4px}
+.uc p{margin:0;font-size:15px;line-height:1.7}
+.use .scen{margin:10px 0 0;font-size:15px;color:var(--muted);border-inline-start:3px solid var(--line);padding-inline-start:12px}
+body.brief .use,body.brief .goal.gu{display:none}
+/* the summary column is capped at two lines, so the map keeps an even rhythm */
+.map .w2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:var(--muted)}
+.maphint{margin:10px 0 0;color:var(--muted);font-size:14.5px}
+/* on a phone the map keeps the number and the lesson: three columns in 320px say nothing */
+@media (max-width:700px){
+  .map th:nth-child(n+3),.map td:nth-child(n+3){display:none}
+  .map th:nth-child(2){width:auto}
+  .map .go{display:none}
+  .pager{flex-direction:column}
+  .reader,.pager{max-width:none}
+}

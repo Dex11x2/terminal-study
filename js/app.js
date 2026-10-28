@@ -193,11 +193,75 @@ function noteHTML(c){
   return '<div class="notes"><button type="button" class="note-btn'+(v?' has':'')+'" aria-expanded="'+(v?'true':'false')+'">'+(v?'ملاحظتي':'اكتب ملاحظة')+'</button>'+
     '<textarea class="note'+(v?' open':'')+'" data-n="'+esc(nk)+'" placeholder="اكتب بكلامك انت: الأمر ده بيعمل إيه، وإمتى هتحتاجه، وأي غلطة وقعت فيها." aria-label="ملاحظتك على '+esc(c)+'">'+esc(v)+'</textarea></div>';
 }
-function render(){
-  const rawQ = $('#q').value.trim();
-  const q = normAr(rawQ);
+/* ---------- the course view: a unit map first, then one lesson at a time ----------
+   #list holds either the map (level headers + a compact table per category) or the reader
+   (one lesson with prev/next). The right rail lists the unit, the left rail indexes the open lesson. */
+let openCmd = null;                                   // the lesson open in the reader, null = the map
+const catOf = c => DATA[shell].find(x => x.items.some(it => it[0] === c));
+/* the first sentence of desc, for a lesson that has no learn of its own */
+function sumOf(d){
+  const p = (d || '').split(/\n\s*\n/)[0].trim();
+  const m = p.match(/^[\s\S]{0,120}?[.!؟](\s|$)/);
+  return (m ? m[0] : p).trim();
+}
+/* where the lesson is used, written per field so a lesson shows only the fields it really serves */
+const USE_F = [['prog','برمجة'], ['net','شبكات وسيرفرات'], ['cs','علوم حاسب'], ['work','شغل يومي']];
+function useHTML(c){
+  const u = USE[shell+'|'+c];
+  if (!u) return '';
+  const cards = USE_F.filter(([k]) => u[k]).map(([k, label]) =>
+    '<div class="uc"><span class="tag">'+label+'</span><p>'+fmt(u[k])+'</p></div>').join('');
+  return '<div class="use"><h4>تستخدمها فين؟</h4><div class="ucards">'+cards+'</div>'+
+    (u.scen ? '<p class="scen"><b>سيناريو حقيقي:</b> '+fmt(u.scen)+'</p>' : '')+'</div>';
+}
+/* one lesson's card: the same markup wherever it is shown */
+function articleHTML(it){
+  const [c, t, d, ex, tr, flag] = it;
+  const key = 'done:'+shell+':'+c;
+  const done = store.get(key) === '1';
+  return '<article class="cmd'+(done?' is-done':'')+'" data-c="'+esc(c)+'">'+
+    '<div class="cmd-h"><span class="name">'+esc(c)+'</span>'+(t?'<span class="title">'+esc(t)+'</span>':'')+(/\bdanger\b/.test(flag||'')?'<span class="tag-danger">خطر: اقرا الشرح قبل ما تنفّذ</span>':'')+osBadge(c)+'</div>'+
+    (d?descHTML(d):'')+teachHTML(c)+deepHTML(c)+useHTML(c)+osNote(c)+
+    (ex ? termBlock(ex, c, flag) : '')+breakHTML(c, ex)+
+    '<button type="button" class="reveal">اكشف الإجابة</button>'+
+    '<div class="try"><span class="lbl">'+(shell==='glossary'?'الشرح الكامل في':'جرّب')+'</span><p>'+fmt(tr)+'</p><label class="done"><input type="checkbox" data-k="'+esc(key)+'"'+(done?' checked':'')+'> جربتها</label></div>'+
+    chkHTML(c)+solHTML(c)+noteHTML(c)+
+  '</article>';
+}
+/* the unit head: what you can do when you finish it, and which fields it serves */
+const GOAL_F = [['prog','البرمجة'], ['net','الشبكات والسيرفرات'], ['cs','علوم الحاسب'], ['work','الشغل اليومي']];
+function unitHead(cat){
+  if (!cat.goal && !cat.use) return '';
+  const g = cat.goal ? '<div class="goal"><h4>هتقدر تعمل إيه لما تخلص</h4><ul>'+cat.goal.map(x => '<li>'+fmt(x)+'</li>').join('')+'</ul></div>' : '';
+  const u = cat.use ? '<div class="goal gu"><h4>وهتستخدمها فين؟</h4><ul>'+GOAL_F.filter(([k]) => cat.use[k]).map(([k, l]) => '<li><b>'+l+':</b> '+fmt(cat.use[k])+'</li>').join('')+'</ul></div>' : '';
+  return '<div class="unit-two">'+g+u+'</div>';
+}
+/* the setup box and the end-of-unit projects, under the map table */
+function unitFoot(cat, id){
+  if (!cat.lab && !cat.projects) return '';
+  const lab = cat.lab ? '<div><h4 class="uf-h">جهّز معملك</h4><p class="uf-p">متتعلمش الأوامر الخطيرة على ملفاتك الحقيقية.</p>'+termHTML(cat.lab, shell, false, '')+'</div>' : '';
+  const pr = cat.projects ? '<div class="projbox"><h4 class="uf-h">مشاريع القسم</h4><p class="uf-p">بعد ما تخلص الدروس، دي حاجات تبنيها بإيدك من اللي اتعلمته.</p><ol class="projlist">'+
+    cat.projects.map(p => '<li><b>'+fmt(p.t)+'</b>'+(p.what?'<span>'+fmt(p.what)+'</span>':'')+'</li>').join('')+'</ol></div>' : '';
+  return '<div class="unit-two uf" id="'+id+'-foot">'+lab+pr+'</div>';
+}
+/* a category's lessons as a compact table: the whole row opens the lesson */
+function mapTable(cat, items){
+  const out = items.some(it => (CARD[shell+'|'+it[0]] || {}).out);
+  let h = '<table class="map"><thead><tr><th>#</th><th>الدرس</th><th>هتتعلم إيه</th>'+(out?'<th>النتيجة العملية</th>':'')+'</tr></thead><tbody>';
+  items.forEach(it => {
+    const [c, t, d] = it, card = CARD[shell+'|'+c] || {}, n = cat.items.indexOf(it) + 1;
+    h += '<tr'+(store.get('done:'+shell+':'+c)==='1'?' class="is-done"':'')+' data-open="'+esc(c)+'" tabindex="0">'+
+      '<td class="n">'+AR(n)+'</td>'+
+      '<td class="t"><span class="w"><span class="nm">'+esc(c)+'</span>'+(t?'<span class="ti">'+esc(t)+'</span>':'')+'<i class="go">◂</i></span></td>'+
+      '<td><span class="w2">'+fmt(card.learn || sumOf(d))+'</span></td>'+
+      (out?'<td><span class="w2">'+fmt(card.out || '')+'</span></td>':'')+'</tr>';
+  });
+  return h+'</tbody></table>';
+}
+
+function renderMap(q, rawQ){
   const cats = DATA[shell].map((c, i) => Object.assign({i}, c)).sort((a, b) => a.l - b.l).filter(c => !level || c.l === level);
-  let html = '', chips = '', shown = 0, lastL = 0;
+  let html = '', chips = '', shown = 0, lastL = 0, shownHint = 0;
   cats.forEach(cat => {
     const items = cat.items.filter(it => !q || searchText(shell, it).includes(q));
     if (!items.length) return;
@@ -206,23 +270,12 @@ function render(){
       lastL = cat.l;
       html += '<div class="lvl"><span class="n">المستوى '+AR(cat.l)+'</span><h2>'+lvInfo(cat.l)[0]+'</h2><p>'+lvInfo(cat.l)[1]+'</p>'+examHTML(cat.l)+'</div>';
     }
+    if (!shownHint){ shownHint = 1; html += '<p class="maphint">دوس على أي درس يفتح لوحده في صفحته، وتتنقل منه للي بعده بالسهم أو بزرار «الدرس الجاي».</p>'; }
     const id = shell+'-c'+cat.i;
     chips += '<button class="chip" type="button" data-t="'+id+'">'+esc(cat.t)+'</button>';
-    const n = cat.items.length;
-    html += '<section class="cat" id="'+id+'"><h3>'+esc(cat.t)+'<small>'+countLabel(n)+'</small></h3>'+(cat.n?'<p class="cat-note">'+esc(cat.n)+'</p>':'');
-    items.forEach(([c,t,d,ex,tr,flag]) => {
-      const key = 'done:'+shell+':'+c;
-      const done = store.get(key)==='1';
-      html += '<article class="cmd'+(done?' is-done':'')+'">'+
-        '<div class="cmd-h"><span class="name">'+esc(c)+'</span>'+(t?'<span class="title">'+esc(t)+'</span>':'')+(/\bdanger\b/.test(flag||'')?'<span class="tag-danger">خطر: اقرا الشرح قبل ما تنفّذ</span>':'')+osBadge(c)+'</div>'+
-        (d?descHTML(d):'')+teachHTML(c)+deepHTML(c)+osNote(c)+
-        (ex ? termBlock(ex, c, flag) : '')+breakHTML(c, ex)+
-        '<button type="button" class="reveal">اكشف الإجابة</button>'+
-        '<div class="try"><span class="lbl">'+(shell==='glossary'?'الشرح الكامل في':'جرّب')+'</span><p>'+fmt(tr)+'</p><label class="done"><input type="checkbox" data-k="'+esc(key)+'"'+(done?' checked':'')+'> جربتها</label></div>'+
-        chkHTML(c)+solHTML(c)+noteHTML(c)+
-      '</article>';
-    });
-    html += '</section>';
+    html += '<section class="cat" id="'+id+'"><h3>'+esc(cat.t)+'<small>'+countLabel(cat.items.length)+(cat.time?' · '+esc(cat.time):'')+'</small></h3>'+
+      (cat.n?'<p class="cat-note">'+esc(cat.n)+'</p>':'')+unitHead(cat)+
+      mapTable(cat, items)+(q?'':unitFoot(cat, id))+'</section>';
   });
   if (!shown){
     const other = Object.keys(DATA).filter(k => k!==shell && DATA[k].some(c => c.items.some(it => searchText(k, it).includes(q))));
@@ -231,6 +284,94 @@ function render(){
   }
   $('#list').innerHTML = html;
   $('#chips').innerHTML = chips;
+  railMap(cats);
+  $('#toc').innerHTML = ''; $('#toc').hidden = true;
+}
+
+function renderReader(){
+  const cat = catOf(openCmd), idx = cat.items.findIndex(it => it[0] === openCmd);
+  const it = cat.items[idx], prev = cat.items[idx-1], next = cat.items[idx+1];
+  const btn = (x, cls, lbl) => '<button type="button" class="pg-b '+cls+'" data-open="'+esc(x[0])+'"><span>'+lbl+'</span><b>'+esc(x[1] || x[0])+'</b></button>';
+  $('#list').innerHTML =
+    '<nav class="lnav"><button type="button" class="back" data-map="1">▸ '+esc(cat.t)+'</button>'+
+    '<span class="pos">الدرس <b>'+AR(idx+1)+'</b> من '+AR(cat.items.length)+'</span></nav>'+
+    '<div class="reader">'+articleHTML(it)+'</div>'+
+    '<div class="pager">'+
+      (prev ? btn(prev, 'pv', 'الدرس اللي فات') : '<span></span>')+
+      (next ? btn(next, 'nx', 'الدرس الجاي') : '<button type="button" class="pg-b nx" data-map="1"><span>خلصت القسم</span><b>ارجع للخريطة</b></button>')+
+    '</div>';
+  $('#chips').innerHTML = DATA[shell].map((c, i) => '<button class="chip" type="button" data-t="'+shell+'-c'+i+'">'+esc(c.t)+'</button>').join('');
+  railUnit(cat);
+  buildToc();
+}
+
+/* right rail: the categories in map view, the open unit's lessons in the reader */
+function railMap(cats){
+  $('#unitnav').innerHTML = '<h4>الأقسام</h4><ol class="rl">'+cats.map(c => {
+    const d = c.items.filter(it => store.get('done:'+shell+':'+it[0])==='1').length;
+    return '<li><button type="button" data-t="'+shell+'-c'+c.i+'">'+esc(c.t)+'<em>'+AR(d)+'/'+AR(c.items.length)+'</em></button></li>';
+  }).join('')+'</ol>';
+}
+function railUnit(cat){
+  $('#unitnav').innerHTML = '<h4>'+esc(cat.t)+'</h4><ol class="rl num">'+cat.items.map(it =>
+    '<li'+(it[0]===openCmd?' class="on"':'')+(store.get('done:'+shell+':'+it[0])==='1'?' data-done="1"':'')+
+    '><button type="button" data-open="'+esc(it[0])+'">'+esc(it[1] || it[0])+'</button></li>').join('')+'</ol>'+
+    '<button type="button" class="rl-back" data-map="1">▸ كل الأقسام</button>';
+}
+/* left rail: the open lesson's own sections, so a long lesson is still one glance */
+let tocObs = null;
+function buildToc(){
+  const toc = $('#toc'), art = $('#list .reader article');
+  const heads = art ? [...art.querySelectorAll('.teach h4, .deep h4, .use h4, .bd h4, .try .lbl, .trysol summary')] : [];
+  if (tocObs){ tocObs.disconnect(); tocObs = null; }
+  if (heads.length < 3){ toc.innerHTML = ''; toc.hidden = true; return; }
+  toc.hidden = false;
+  toc.innerHTML = '<h4>في الدرس ده</h4><ol class="tl">'+heads.map((h, i) => {
+    h.id = 'h'+i;
+    const txt = (h.textContent || '').replace(/\s*\(.*\)\s*$/, '').trim();
+    return '<li><button type="button" data-h="h'+i+'">'+esc(txt.length > 46 ? txt.slice(0, 44)+'…' : txt)+'</button></li>';
+  }).join('')+'</ol>';
+  const links = {};
+  toc.querySelectorAll('[data-h]').forEach(a => links[a.dataset.h] = a);
+  tocObs = new IntersectionObserver(es => {
+    es.forEach(e => { if (e.isIntersecting){ toc.querySelectorAll('.on').forEach(a => a.classList.remove('on')); if (links[e.target.id]) links[e.target.id].classList.add('on'); } });
+  }, {rootMargin: '-130px 0px -70% 0px'});
+  heads.forEach(h => tocObs.observe(h));
+}
+
+function openLesson(c){
+  if (!catOf(c)) return;
+  if ($('#q').value.trim()) $('#q').value = '';
+  openCmd = c;
+  render();
+  // scrollTo(0, 0) would also reset the horizontal scroll, and on an RTL page that jumps to the far left
+  window.scrollTo({top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'});
+}
+function backToMap(to){
+  const c = openCmd;
+  openCmd = null;
+  render();
+  const el = to && document.getElementById(to);
+  if (el) return el.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+  // back on the map, the lesson you were just reading is the row you look for
+  const row = c && [...$('#list').querySelectorAll('tr[data-open]')].find(r => r.dataset.open === c);
+  row ? row.scrollIntoView({block:'center', behavior:'auto'}) : window.scrollTo({top: 0});
+}
+/* the address bar carries the tab and the open lesson, so a lesson can be bookmarked and shared */
+let hashMine = '';
+function hashSet(){
+  hashMine = '#'+shell+(openCmd ? '/'+encodeURIComponent(openCmd) : '');
+  try{ if (location.hash !== hashMine) history.replaceState(null, '', hashMine); }catch(e){}
+}
+const hashParse = h => { const i = h.indexOf('/'); return i < 0 ? [decodeURIComponent(h.slice(1)), null] : [decodeURIComponent(h.slice(1, i)), decodeURIComponent(h.slice(i+1))]; };
+
+function render(){
+  const rawQ = $('#q').value.trim(), q = normAr(rawQ);
+  // a search always lands on the map, and a lesson the level filter hides can't stay open
+  if (q || (openCmd && !DATA[shell].some(c => (!level || c.l === level) && c.items.some(it => it[0] === openCmd)))) openCmd = null;
+  document.body.classList.toggle('reading', !!openCmd);
+  openCmd ? renderReader() : renderMap(q, rawQ);
+  hashSet();
   $('#labBox').innerHTML = termHTML(LAB[shell], shell, shell==='vps' || shell==='web' || shell==='os', shell==='vps' ? 'على جهازك' : shell==='web' || shell==='os' ? 'اختصارات' : '');
   $('#labTxt').textContent = LABTXT[shell] || LABDEF;
   updateProgress();
@@ -266,12 +407,12 @@ function markLevel(){
   document.querySelectorAll('.lv').forEach(b => b.setAttribute('aria-pressed', +b.dataset.l===level ? 'true':'false'));
   store.set('level', String(level));
 }
-function setShell(s){
+function setShell(s, cmd){
   shell = s;
+  openCmd = cmd && DATA[s].some(c => c.items.some(it => it[0] === cmd)) ? cmd : null;
   document.body.dataset.shell = s;
   document.querySelectorAll('.sw').forEach(b => b.setAttribute('aria-selected', b.dataset.s===s ? 'true':'false'));
   store.set('shell', s);
-  try{ history.replaceState(null, '', '#'+s); }catch(e){}
   render();
 }
 
@@ -574,6 +715,14 @@ $('#q').addEventListener('input', () => {
   qTm = setTimeout(render, 120);
 });
 document.addEventListener('keydown', e => {
+  const inField = /^(TEXTAREA|INPUT|SELECT)$/.test(document.activeElement.tagName);
+  if (e.key === 'Enter' && e.target.matches && e.target.matches('tr[data-open]')){ e.preventDefault(); openLesson(e.target.dataset.open); return; }
+  if (openCmd && !inField && !$('#fc').open){
+    // the page is RTL, so the right arrow is the lesson before this one
+    const b = e.key === 'ArrowLeft' ? $('#list .pg-b.nx') : e.key === 'ArrowRight' ? $('#list .pg-b.pv') : null;
+    if (b && b.dataset.open){ e.preventDefault(); openLesson(b.dataset.open); return; }
+    if (e.key === 'Escape'){ e.preventDefault(); backToMap(); return; }
+  }
   if ((e.code === 'Slash' || e.key === '/' || e.key === 'ظ') && document.activeElement !== $('#q') && !/^(TEXTAREA|INPUT)$/.test(document.activeElement.tagName) && !$('#fc').open){ e.preventDefault(); $('#q').focus(); }
 });
 document.addEventListener('click', e => {
@@ -636,8 +785,17 @@ document.addEventListener('click', e => {
     }
     return;
   }
-  const chip = e.target.closest('.chip');
-  if (chip){ const el=document.getElementById(chip.dataset.t); if (el) el.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}); return; }
+  const th = e.target.closest('[data-h]');
+  if (th){ const el=document.getElementById(th.dataset.h); if (el) el.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth', block:'start'}); return; }
+  const op = e.target.closest('[data-open]');
+  if (op){ openLesson(op.dataset.open); return; }
+  if (e.target.closest('[data-map]')){ backToMap(); return; }
+  const chip = e.target.closest('.chip, #unitnav [data-t]');
+  if (chip){
+    // a chip from inside the reader goes back to the map and lands on that category
+    if (openCmd) return backToMap(chip.dataset.t);
+    const el=document.getElementById(chip.dataset.t); if (el) el.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}); return;
+  }
   const rv = e.target.closest('.reveal');
   if (rv){ rv.closest('article').classList.add('shown'); return; }
   if (e.target.closest('#briefBtn')){
@@ -701,9 +859,15 @@ if (store.get('todo')==='1'){ document.body.classList.add('todo'); $('#todoBtn')
 if (store.get('brief')==='1'){ document.body.classList.add('brief'); $('#briefBtn').setAttribute('aria-pressed','true'); }
 const savedL = +(store.get('level') || 0);
 if ([0,1,2,3].includes(savedL)){ level = savedL; markLevel(); }
-const fromHash = decodeURIComponent(location.hash.slice(1)), saved = store.get('shell');
-setShell(DATA[fromHash] ? fromHash : DATA[saved] ? saved : 'start');
-window.addEventListener('hashchange', () => { const h = decodeURIComponent(location.hash.slice(1)); if (DATA[h] && h !== shell) setShell(h); });
+const [fromHash, fromCmd] = hashParse(location.hash), saved = store.get('shell');
+setShell(DATA[fromHash] ? fromHash : DATA[saved] ? saved : 'start', fromCmd);
+window.addEventListener('hashchange', () => {
+  if (location.hash === hashMine) return;
+  const [tab, cmd] = hashParse(location.hash);
+  if (!DATA[tab]) return;
+  if (tab !== shell) setShell(tab, cmd);
+  else if ((cmd || null) !== openCmd){ openCmd = cmd && catOf(cmd) ? cmd : null; render(); }
+});
 
 /* ---------- offline (PWA) ---------- */
 // only on the hosted site: the single-file copy in dist/ has no manifest, and file:// can't run service workers

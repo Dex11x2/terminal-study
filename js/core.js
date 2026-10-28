@@ -1,6 +1,8 @@
 // الأساس المشترك: كل ملف في tabs/ بينادي TAB() فيتسجّل في الأماكن اللي الصفحة بتقرا منها
 const R = String.raw;
 const SHELLS = {}, LAB = {}, LABTXT = {}, LEVEL_TAB = {}, DATA = {}, DEEP = {}, BREAK = {}, SOL = {}, BASH_OS = {}, CHECK = {}, TEACH = {};
+/* the course view: USE is the lesson's «تستخدمها فين؟», CARD is its row in the unit map */
+const USE = {}, CARD = {};
 const LEVEL_INFO = {
   "1": ["البداية", "تتحرك بين الفولدرات وتتعامل مع الملفات وتقراها بثقة"],
   "2": ["المتوسط", "توصّل الأوامر ببعض، وتدير الصلاحيات والعمليات والشبكة"],
@@ -30,7 +32,9 @@ function MORE(key, categories){
 function cats(key, list){
   return list.map(c => {
     const cat = {t:c.t, l:c.l};
-    if (c.n !== undefined) cat.n = c.n;
+    // optional, for a category written as a course unit: n note, goal outcomes, use fields it serves,
+    // time how long it takes, lab the setup box, projects the end-of-unit builds
+    ['n','goal','use','time','lab','projects'].forEach(k => { if (c[k] !== undefined) cat[k] = c[k]; });
     cat.items = c.items.map(it => {
       const id = key+'|'+it.cmd;
       if (it.deep) DEEP[id] = it.deep;
@@ -39,6 +43,8 @@ function cats(key, list){
       if (it.sol) SOL[id] = {text: it.sol, code: it.solCode};
       if (it.mac) BASH_OS[it.cmd] = it.mac;
       if (it.check) CHECK[id] = it.check;
+      if (it.use) USE[id] = it.use;
+      if (it.learn || it.out) CARD[id] = {learn: it.learn, out: it.out};
       const row = [it.cmd, it.title, it.desc, it.example, it.try];
       if (it.flag !== undefined) row.push(it.flag);
       return row;

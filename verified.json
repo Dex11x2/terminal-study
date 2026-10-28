@@ -11355,9 +11355,9 @@
   "on": "Windows 11 local build (DB restart, AI no-key + limit); docs: Stripe CLI, prompt injection"
  },
  "ps|$?": {
-  "hash": "6949850f3716",
+  "hash": "ad6a0c8ef0da",
   "date": "2026-10-28",
-  "on": "windows-11, pwsh-7.6 و powershell-5.1.26100.9711"
+  "on": "windows-11, pwsh-7.6 (الأوامر زي ما هي؛ التعديل حقول عرض بس: learn و out و use)"
  },
  "ps|$LASTEXITCODE": {
   "hash": "5f92172f28f3",
@@ -11390,9 +11390,9 @@
   "on": "win11 pwsh 7.6.6 + ps 5.1"
  },
  "ps|( ) و $( )": {
-  "hash": "4345a66eb507",
+  "hash": "c5d4b4959d13",
   "date": "2026-10-28",
-  "on": "windows-11, pwsh-7.6 و powershell-5.1.26100.9711"
+  "on": "windows-11, pwsh-7.6 (الأوامر زي ما هي؛ التعديل حقول عرض بس: learn و out و use)"
  },
  "ps|-ErrorAction و $Error": {
   "hash": "46ec60a98f8c",
@@ -11400,19 +11400,19 @@
   "on": "win11 pwsh-7.6 + ps-5.1"
  },
  "ps|-WhatIf و -Confirm": {
-  "hash": "5a030d6aa569",
+  "hash": "39e0719cc3e8",
   "date": "2026-10-28",
-  "on": "windows-11, pwsh-7.6"
+  "on": "windows-11, pwsh-7.6 (الأوامر زي ما هي؛ التعديل حقول عرض بس: learn و out و use)"
  },
  "ps|-and و -or مقابل && و ||": {
-  "hash": "ecec523cbeb6",
+  "hash": "573577c9c7df",
   "date": "2026-10-28",
-  "on": "windows-11, pwsh-7.6 و powershell-5.1.26100.9711"
+  "on": "windows-11, pwsh-7.6 (الأوامر زي ما هي؛ التعديل حقول عرض بس: learn و out و use)"
  },
  "ps|; و && و ||": {
-  "hash": "0801318fa241",
+  "hash": "73250e4c801a",
   "date": "2026-10-28",
-  "on": "windows-11, pwsh-7.6 و powershell-5.1.26100.9711"
+  "on": "windows-11, pwsh-7.6 (الأوامر زي ما هي؛ التعديل حقول عرض بس: learn و out و use)"
  },
  "ps|Add-LocalGroupMember": {
   "hash": "b9c682600e2a",
@@ -11480,9 +11480,9 @@
   "on": "win11 pwsh 7.6 + ps 5.1 (scratch folder)"
  },
  "ps|Get-Alias": {
-  "hash": "a7cd0c511a6d",
+  "hash": "0ec18ce96bfd",
   "date": "2026-10-28",
-  "on": "windows-11, pwsh-7.6"
+  "on": "windows-11, pwsh-7.6 (الأوامر زي ما هي؛ التعديل حقول عرض بس: learn و out و use)"
  },
  "ps|Get-BitLockerVolume": {
   "hash": "f8030833a791",
@@ -11510,14 +11510,14 @@
   "on": "win11 pwsh 7.6.6; ubuntu-24.04"
  },
  "ps|Get-Command -Syntax": {
-  "hash": "fac35eef7f0d",
+  "hash": "4c171a652123",
   "date": "2026-10-28",
-  "on": "windows-11, pwsh-7.6"
+  "on": "windows-11, pwsh-7.6 (الأوامر زي ما هي؛ التعديل حقول عرض بس: learn و out و use)"
  },
  "ps|Get-Command -Verb و -Noun": {
-  "hash": "a74eb53e9831",
+  "hash": "691f57e77a64",
   "date": "2026-10-28",
-  "on": "windows-11, pwsh-7.6"
+  "on": "windows-11, pwsh-7.6 (الأوامر زي ما هي؛ التعديل حقول عرض بس: learn و out و use)"
  },
  "ps|Get-Content": {
   "hash": "b957045d74ae",
@@ -11815,9 +11815,9 @@
   "on": "win11 pwsh-7.6 + ps-5.1 (username masked later)"
  },
  "ps|Tab و Ctrl+Space": {
-  "hash": "eaaa2692ec87",
+  "hash": "a454795926e5",
   "date": "2026-10-28",
-  "on": "windows-11, pwsh-7.6"
+  "on": "windows-11, pwsh-7.6 (الأوامر زي ما هي؛ التعديل حقول عرض بس: learn و out و use)"
  },
  "ps|Terminal-Icons": {
   "hash": "c881da35901d",
@@ -11840,9 +11840,9 @@
   "on": "win11 pwsh 7.6.6; ubuntu-24.04"
  },
  "ps|Update-Help و about_": {
-  "hash": "d5e771d0d6ee",
+  "hash": "f5b27b61ca54",
   "date": "2026-10-28",
-  "on": "windows-11, pwsh-7.6 (Update-Help نفسه من الـ docs: بينزّل ملفات على الجهاز)"
+  "on": "windows-11, pwsh-7.6 (الأوامر زي ما هي؛ التعديل حقول عرض بس: learn و out و use)"
  },
  "ps|Verb-Noun": {
   "hash": "2c024b2b7e78",
@@ -12025,14 +12025,14 @@
   "on": "win11 pwsh-7.6 + ps-5.1; docs: Set-ExecutionPolicy (username masked later)"
  },
  "ps|اقرا رسالة الخطأ": {
-  "hash": "5e9af8044d3e",
+  "hash": "37b380fad18c",
   "date": "2026-10-28",
-  "on": "windows-11, pwsh-7.6"
+  "on": "windows-11, pwsh-7.6 (الأوامر زي ما هي؛ التعديل حقول عرض بس: learn و out و use)"
  },
  "ps|الطريقة: من مهمة لأمر": {
-  "hash": "b86e3d157322",
+  "hash": "df63d65ba3d2",
   "date": "2026-10-28",
-  "on": "windows-11, pwsh-7.6"
+  "on": "windows-11, pwsh-7.6 (الأوامر زي ما هي؛ التعديل حقول عرض بس: learn و out و use)"
  },
  "ps|المتغيرات": {
   "hash": "8344bcce0253",
@@ -12060,64 +12060,64 @@
   "on": "win11 pwsh-7.6 + ps-5.1"
  },
  "ps|مشروع ١ — cancel و status": {
-  "hash": "20a8011a548b",
+  "hash": "2599bf44fe6f",
   "date": "2026-10-28",
-  "on": "windows-11, pwsh-7.6"
+  "on": "windows-11, pwsh-7.6 (الأوامر زي ما هي؛ التعديل حقول عرض بس: learn و out و use)"
  },
  "ps|مشروع ١ — off و restart بـ WhatIf": {
-  "hash": "de42f396a4bc",
+  "hash": "bf70aa9d48a1",
   "date": "2026-10-28",
-  "on": "windows-11, pwsh-7.6 (كله بـ -WhatIf؛ القفل الحقيقي متشغّلش)"
+  "on": "windows-11, pwsh-7.6 (الأوامر زي ما هي؛ التعديل حقول عرض بس: learn و out و use)"
  },
  "ps|مشروع ١ — التأكيد واللوج": {
-  "hash": "7477577dd455",
+  "hash": "89fa92329c72",
   "date": "2026-10-28",
-  "on": "windows-11, pwsh-7.6 (كله بـ -WhatIf؛ القفل الحقيقي متشغّلش)"
+  "on": "windows-11, pwsh-7.6 (الأوامر زي ما هي؛ التعديل حقول عرض بس: learn و out و use)"
  },
  "ps|مشروع ١ — التحقق من المدخلات": {
-  "hash": "005a733c51e0",
+  "hash": "492e93d0c604",
   "date": "2026-10-28",
-  "on": "windows-11, pwsh-7.6"
+  "on": "windows-11, pwsh-7.6 (الأوامر زي ما هي؛ التعديل حقول عرض بس: learn و out و use)"
  },
  "ps|مشروع ١ — الواجهة الأول": {
-  "hash": "e4c4dd7b5cb0",
+  "hash": "8216729da238",
   "date": "2026-10-28",
-  "on": "windows-11, pwsh-7.6"
+  "on": "windows-11, pwsh-7.6 (الأوامر زي ما هي؛ التعديل حقول عرض بس: learn و out و use)"
  },
  "ps|مشروع ١ — ناديه من أي مكان": {
-  "hash": "7d0340cf7b60",
+  "hash": "43af6737353e",
   "date": "2026-10-28",
-  "on": "windows-11, pwsh-7.6 (الدالة و $PROFILE اتجربوا؛ تعديل PATH و Register-ScheduledTask من الـ docs)"
+  "on": "windows-11, pwsh-7.6 (الأوامر زي ما هي؛ التعديل حقول عرض بس: learn و out و use)"
  },
  "ps|مشروع ٢ — add وفخ المصفوفة": {
-  "hash": "3190202d5be3",
+  "hash": "00a6fa1f1f85",
   "date": "2026-10-28",
-  "on": "windows-11, pwsh-7.6"
+  "on": "windows-11, pwsh-7.6 (الأوامر زي ما هي؛ التعديل حقول عرض بس: learn و out و use)"
  },
  "ps|مشروع ٢ — done و rm والأخطاء": {
-  "hash": "e6bc68944ad6",
+  "hash": "c55eadc96b4a",
   "date": "2026-10-28",
-  "on": "windows-11, pwsh-7.6"
+  "on": "windows-11, pwsh-7.6 (الأوامر زي ما هي؛ التعديل حقول عرض بس: learn و out و use)"
  },
  "ps|مشروع ٢ — اختبر أداتك": {
-  "hash": "b4daf72b7d5d",
+  "hash": "1b7d48a0876d",
   "date": "2026-10-28",
-  "on": "windows-11, pwsh-7.6"
+  "on": "windows-11, pwsh-7.6 (الأوامر زي ما هي؛ التعديل حقول عرض بس: learn و out و use)"
  },
  "ps|مشروع ٢ — التصميم والتخزين": {
-  "hash": "a72b964629f4",
+  "hash": "64f137e6e051",
   "date": "2026-10-28",
-  "on": "windows-11, pwsh-7.6"
+  "on": "windows-11, pwsh-7.6 (الأوامر زي ما هي؛ التعديل حقول عرض بس: learn و out و use)"
  },
  "ps|مشروع ٢ — رجّع objects مش نصوص": {
-  "hash": "1bf32a77ed6b",
+  "hash": "dfdd71615696",
   "date": "2026-10-28",
-  "on": "windows-11, pwsh-7.6"
+  "on": "windows-11, pwsh-7.6 (الأوامر زي ما هي؛ التعديل حقول عرض بس: learn و out و use)"
  },
  "ps|مشروع ٢ — فخ النطاق": {
-  "hash": "50d76dce0172",
+  "hash": "93fb3b5ec77d",
   "date": "2026-10-28",
-  "on": "windows-11, pwsh-7.6"
+  "on": "windows-11, pwsh-7.6 (الأوامر زي ما هي؛ التعديل حقول عرض بس: learn و out و use)"
  },
  "pyapi|*args و **kwargs": {
   "hash": "308ff48c87e2",
