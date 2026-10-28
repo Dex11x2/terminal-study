@@ -3314,6 +3314,11 @@
   "date": "2026-10-06",
   "on": "win11 cmd"
  },
+ "cmd|%time% فيه مسافة و %date% فيه /": {
+  "hash": "73f55ecbe973",
+  "date": "2026-10-28",
+  "on": "ويندوز 11، cmd.exe (ملفات .bat بـ CRLF) + pwsh 7 و powershell 5.1 للمقارنة. docs: أكواد xcopy، و ping مع Destination host unreachable، وشيل wmic"
+ },
  "cmd|%~dp0 و %~nx1": {
   "hash": "56c584c47699",
   "date": "2026-10-06",
@@ -3323,6 +3328,16 @@
   "hash": "525c9ddf0ac7",
   "date": "2026-10-06",
   "on": "win11 cmd"
+ },
+ "cmd|08 و 09 مش أرقام": {
+  "hash": "eb5cc2b73004",
+  "date": "2026-10-28",
+  "on": "ويندوز 11، cmd.exe (ملفات .bat بـ CRLF) + pwsh 7 و powershell 5.1 للمقارنة. docs: أكواد xcopy، و ping مع Destination host unreachable، وشيل wmic"
+ },
+ "cmd|2>&1 قبل ولا بعد >nul": {
+  "hash": "9e74a811bef8",
+  "date": "2026-10-28",
+  "on": "ويندوز 11، cmd.exe (ملفات .bat بـ CRLF) + pwsh 7 و powershell 5.1 للمقارنة. docs: أكواد xcopy، و ping مع Destination host unreachable، وشيل wmic"
  },
  "cmd|arp / route": {
   "hash": "f86d1487f986",
@@ -3399,6 +3414,11 @@
   "date": "2026-10-06",
   "on": "win11 cmd (System32 curl 8.21.0) + certutil"
  },
+ "cmd|del *.htm بيمسح .html كمان": {
+  "hash": "0d89e69d6a23",
+  "date": "2026-10-28",
+  "on": "ويندوز 11، cmd.exe (ملفات .bat بـ CRLF) + pwsh 7 و powershell 5.1 للمقارنة. docs: أكواد xcopy، و ping مع Destination host unreachable، وشيل wmic"
+ },
  "cmd|del / rd": {
   "hash": "b96ac0aa84d5",
   "date": "2026-10-06",
@@ -3424,10 +3444,20 @@
   "date": "2026-10-06",
   "on": "win11 cmd"
  },
+ "cmd|findstr مش regex كامل": {
+  "hash": "b4c6d6e3f453",
+  "date": "2026-10-28",
+  "on": "ويندوز 11، cmd.exe (ملفات .bat بـ CRLF) + pwsh 7 و powershell 5.1 للمقارنة. docs: أكواد xcopy، و ping مع Destination host unreachable، وشيل wmic"
+ },
  "cmd|for /f": {
   "hash": "d067fed3ed4c",
   "date": "2026-10-06",
   "on": "win11 cmd, git 2.56"
+ },
+ "cmd|for /f بياكل سطور": {
+  "hash": "741ce229d38e",
+  "date": "2026-10-28",
+  "on": "ويندوز 11، cmd.exe (ملفات .bat بـ CRLF) + pwsh 7 و powershell 5.1 للمقارنة. docs: أكواد xcopy، و ping مع Destination host unreachable، وشيل wmic"
  },
  "cmd|for على الملفات": {
   "hash": "ed58460caa5e",
@@ -3559,6 +3589,11 @@
   "date": "2026-10-06",
   "on": "win11 cmd"
  },
+ "cmd|ping نجح ومفيش جهاز": {
+  "hash": "0c41eb7b8a40",
+  "date": "2026-10-28",
+  "on": "ويندوز 11، cmd.exe (ملفات .bat بـ CRLF) + pwsh 7 و powershell 5.1 للمقارنة. docs: أكواد xcopy، و ping مع Destination host unreachable، وشيل wmic"
+ },
  "cmd|pnputil و driverquery": {
   "hash": "148721e1065e",
   "date": "2026-10-06",
@@ -3583,6 +3618,11 @@
   "hash": "29beee2610e7",
   "date": "2026-10-06",
   "on": "win11 cmd (local target)"
+ },
+ "cmd|robocopy نجح وسكربتك قال فشل": {
+  "hash": "4e4d8fad8be8",
+  "date": "2026-10-28",
+  "on": "ويندوز 11، cmd.exe (ملفات .bat بـ CRLF) + pwsh 7 و powershell 5.1 للمقارنة. docs: أكواد xcopy، و ping مع Destination host unreachable، وشيل wmic"
  },
  "cmd|runas": {
   "hash": "87440cbd5ab6",
@@ -3723,6 +3763,11 @@
   "hash": "0913692a97c1",
   "date": "2026-10-28",
   "on": "windows-11, cmd"
+ },
+ "cmd|المتغير الفاضي وقّف السكربت": {
+  "hash": "4235c3f72071",
+  "date": "2026-10-28",
+  "on": "ويندوز 11، cmd.exe (ملفات .bat بـ CRLF) + pwsh 7 و powershell 5.1 للمقارنة. docs: أكواد xcopy، و ping مع Destination host unreachable، وشيل wmic"
  },
  "cmd|رموز CMD": {
   "hash": "9b2d14a9bc2b",

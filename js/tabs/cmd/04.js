@@ -4,6 +4,11 @@ MORE("cmd", [
       t: "العمليات",
       l: 2,
       n: "",
+      time: R`حوالي نص ساعة`,
+      goal: [R`تعرف إيه اللي شغال على الجهاز، وتقفل برنامج معلّق.`, R`تعرف مين ماسك بورت معين.`, R`تفتح برامج وملفات من CMD.`],
+      use: { prog: R`«Port 3000 is already in use» — [[netstat -ano | findstr :3000]] وبعدين [[taskkill /pid]].`, work: R`برنامج معلّق على سيرفر من غير واجهة.` },
+      lab: R`mkdir %TEMP%\cmdlab & cd /d %TEMP%\cmdlab`,
+      projects: [{ t: R`مين ماسك البورت؟`, what: R`شغّل سيرفر على بورت (مثلًا [[python -m http.server 8000]])، ولاقيه بـ [[netstat -ano]]، واعرف اسمه بـ [[tasklist /fi "PID eq ..."]]، واقفله.` }],
       items: [
         {
           cmd: "tasklist / taskkill",
@@ -414,6 +419,11 @@ errorlevel after /wait = 3
       t: "الشبكة والنظام",
       l: 2,
       n: "",
+      time: R`حوالي نص ساعة`,
+      goal: [R`تعرف IP جهازك والـ DNS والـ gateway.`, R`تجرّب توصل لجهاز أو دومين، وتعرف الطريق.`, R`تعرف معلومات الجهاز واليوزر بسرعة.`],
+      use: { net: R`أول تلات أوامر في أي تشخيص شبكة. بس ping مش دليل لوحده (درس «ping نجح ومفيش جهاز»).`, work: R`«النت مش شغال» — [[ipconfig]] و [[nslookup]] بيفرّقوا بين «مفيش شبكة» و«DNS واقع».` },
+      lab: R`mkdir %TEMP%\cmdlab & cd /d %TEMP%\cmdlab`,
+      projects: [{ t: R`كارت الجهاز`, what: R`سكربت بيطبع اسم الجهاز واليوزر والـ IP والـ gateway والـ DNS في شاشة واحدة، من [[hostname]] و [[whoami]] و [[ipconfig]] و [[findstr]].` }],
       items: [
         {
           cmd: "ipconfig",
