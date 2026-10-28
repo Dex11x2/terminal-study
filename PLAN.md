@@ -208,7 +208,7 @@
 
 ### ٣. تكبير التابات الصغيرة
 
-- [ ] sshc (9)، و wsl (14)، و apps (15)، و mongo (23)، و gha (24)، و diag (28)، و nginx (28).
+- [x] sshc (9)، و wsl (14)، و apps (15)، و mongo (23)، و gha (24)، و diag (28)، و nginx (28). (اتكبّروا في دفعة ٢٨ أكتوبر)
 - قبل أي دفعة: دوّر على المواضيع المهمة الناقصة في التاب واللي حواليه، وضيفها مع الطلب.
 
 ### ٣ج. دفعة المحتوى الجديد (٢٧ أكتوبر، بقرارك «ضيفهم كلهم»)
@@ -229,6 +229,16 @@
 - [x] nginx و diag. اتعمل: 8 دروس nginx (كاش الـ proxy وتوزيع الحمل و map و auth_request و error_page) و 6 في diag (strace و cpu-prof و تسريب الذاكرة و EMFILE و iowait و exit codes)
 - [x] إصلاحات «٤ج» + التمارين اللي بتكشف حلها
 - [x] ترتيب المذاكرة في index.html للتابات الجديدة (vue و pydata و net و re)
+
+### ٣د. دفعة المواضيع الناقصة (٢٨ أكتوبر، بقرارك)
+
+- [ ] cloud/15: Kubernetes أعمق (kind محلي، Service و Ingress، probes، resources و HPA، rolling update و rollback، Helm)
+- [ ] cloud/16: Firebase (Emulator Suite محلي: Auth و Firestore و rules و Functions و Storage)
+- [ ] apis/15: WebSockets (سيرفر و reconnect و scaling) و GraphQL (schema و resolvers و N+1 و DataLoader)
+- [ ] diag/05: Prometheus و Grafana (metrics من Node، node_exporter، PromQL، alerts)
+- [ ] react/15: Storybook
+
+بعدها: مراجعة بعين المبتدئ لدروس المستوى الأول في بداية الطريق.
 
 ### ٤. تمارين بتتصحح لوحدها في تابات أكتر
 
