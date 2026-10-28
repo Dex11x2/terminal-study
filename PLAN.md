@@ -233,9 +233,9 @@
 ### ٣د. دفعة المواضيع الناقصة (٢٨ أكتوبر، بقرارك)
 
 - [ ] cloud/15: Kubernetes أعمق (kind محلي، Service و Ingress، probes، resources و HPA، rolling update و rollback، Helm)
-- [ ] cloud/16: Firebase (Emulator Suite محلي: Auth و Firestore و rules و Functions و Storage)
+- [x] cloud/16: Firebase (Emulator Suite محلي: Auth و Firestore و rules و Functions و Storage). اتعمل: 7 دروس (firebase-tools 15.34، كله على الـ emulator من غير login؛ FCM و deploy من الـ docs)
 - [x] apis/15: WebSockets (سيرفر و reconnect و scaling) و GraphQL (schema و resolvers و N+1 و DataLoader). اتعمل: 11 درس (ws 8.22 و graphql-yoga 6)، واتصلح درس «auth في resolvers»: graphql-yoga 6 شالت createGraphQLError
-- [ ] diag/05: Prometheus و Grafana (metrics من Node، node_exporter، PromQL، alerts)
+- [x] diag/05: Prometheus و Grafana (metrics من Node، node_exporter، PromQL، alerts). اتعمل: 6 دروس (Prometheus 3.15 و Alertmanager 0.34 و Grafana 13.3، التنبيهات اشتغلت فعلًا)
 - [x] react/15: Storybook. اتعمل: 5 دروس (init و controls و decorators و addon-vitest و addon-a11y، Storybook 10.6)
 
 بعدها: مراجعة بعين المبتدئ لدروس المستوى الأول في بداية الطريق.
