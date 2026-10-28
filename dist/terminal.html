@@ -507431,10 +507431,11 @@ loadMany: [ 'SELECT users WHERE id IN (u1,u2,u3)' ]
           desc: R`في REST بتحمي endpoint. في GraphQL فيه endpoint واحد، والبيانات نفسها بتتوصل من طرق كتير: الإيميل ممكن يوصله من [[me]] أو من [[post.author]] أو من [[comment.author]]. فالصلاحية لازم تبقى على الحقل أو النوع نفسه، مش على الـ query.
 
 وكمان العميل ممكن يكتب query متداخل ١٠ مستويات (منشور، كاتبه، منشوراته، كاتبها...) يوقّع السيرفر. الحل حد أقصى للعمق والحجم.`,
-          example: R`import { createYoga, createGraphQLError } from "graphql-yoga";
+          example: R`import { createYoga } from "graphql-yoga";
+import { GraphQLError } from "graphql";
 import { maxDepthPlugin } from "@escape.tech/graphql-armor-max-depth";
 export function requireUser(ctx: Ctx) {
-  if (!ctx.user) throw createGraphQLError("Login required", { extensions: { code: "UNAUTHENTICATED", http: { status: 401 } } });
+  if (!ctx.user) throw new GraphQLError("Login required", { extensions: { code: "UNAUTHENTICATED", http: { status: 401 } } });
   return ctx.user;
 }
 const resolvers = {
@@ -507445,7 +507446,7 @@ const resolvers = {
     deletePost: async (_p: unknown, args: { id: string }, ctx: Ctx) => {
       const me = requireUser(ctx);
       const { count } = await db.post.deleteMany({ where: { id: args.id, ...(me.role === "admin" ? {} : { authorId: me.id }) } });
-      if (count === 0) throw createGraphQLError("Post not found", { extensions: { code: "NOT_FOUND" } });
+      if (count === 0) throw new GraphQLError("Post not found", { extensions: { code: "NOT_FOUND" } });
       return true;
     },
   },
@@ -507455,7 +507456,7 @@ export const yoga = createYoga({ schema, context, plugins: [maxDepthPlugin({ n: 
           flag: "script",
           deep: {
             why: "BOPLA (تاب APIs المستوى ١، درس [[OWASP API Top 10]]) أسهل بكتير في GraphQL: حد يكتشف إن [[author]] بيرجّع [[email]] و [[phone]]، ويلف على كل المنشورات ويجمع بيانات كل الكتّاب. والـ introspection بيوريله كل الحقول الموجودة. والاستعلام العميق هجوم DoS بسطر واحد.",
-            how: R`المستخدم بيتعرف مرة في الـ context (من الكوكي أو التوكن)، وكل resolver يقرر بنفسه. [[requireUser]] helper بيرمي لو مش مسجّل. [[createGraphQLError]] بيعمل خطأ بـ [[extensions.code]] العميل يقدر يتعامل معاه (UNAUTHENTICATED يروح لـ login، و FORBIDDEN يعرض رسالة). و [[http.status]] في الـ extensions بيخلي Yoga يرجّع 401 بدل 200.
+            how: R`المستخدم بيتعرف مرة في الـ context (من الكوكي أو التوكن)، وكل resolver يقرر بنفسه. [[requireUser]] helper بيرمي لو مش مسجّل. [[new GraphQLError]] بيعمل خطأ بـ [[extensions.code]] العميل يقدر يتعامل معاه (UNAUTHENTICATED يروح لـ login، و FORBIDDEN يعرض رسالة). و [[http.status]] في الـ extensions بيخلي Yoga يرجّع 401 بدل 200.
 
 صلاحية على الحقل ([[User.email]]): الـ resolver بيرجّع null للغريب. ده ليه الحقل في الـ schema [[String]] مش [[String!]]، عشان null مسموح. البديل إنك ترمي error، بس ده بيبوّظ باقي الرد لو الحقل مش بيقبل null.
 
@@ -507473,25 +507474,26 @@ export const yoga = createYoga({ schema, context, plugins: [maxDepthPlugin({ n: 
 
 في GraphQL مفيش endpoint لكل حاجة تحميه. نفس الـ [[User]] بيوصل من [[me]] ومن [[post.author]] ومن أي علاقة تانية. فالمثال بيحط الصلاحية في الـ resolver بتاع الحقل ([[User.email]])، وشرط الملكية جوه استعلام المسح، و plugin بيرفض أي query أعمق من ٦ قبل ما يتنفّذ.
 
-اتجرّب على ويندوز 11: graphql-yoga 5.24.2 و graphql 16.14.2 و [[@escape.tech/graphql-armor-max-depth]] 2.4.2 على Node 24.19. الـ schema هي بتاعة درس [[schema و resolvers]] ومعاها [[deletePost(id: ID!): Boolean!]]، والـ resolvers زي المثال بالظبط، و [[db]] في الذاكرة بشكل Prisma: ٥٠ منشور، والمنشور رقم n كاتبه [[u((n-1)%10+1)]]، و [[u10]] هو الـ admin. التوكن [[Bearer tok-u9]] يعني «أنا u9». الطلبات اتبعتت لـ [[yoga.fetch]].
+اتجرّب على ويندوز 11: graphql-yoga 5.24.2 (والأخطاء اتجرّبت تاني على graphql-yoga 6.0.1، اللي شالت [[createGraphQLError]] فبقينا نستخدم [[GraphQLError]] من [[graphql]]: الـ 401 لسه بيرجع) و graphql 16.14.2 و [[@escape.tech/graphql-armor-max-depth]] 2.4.2 على Node 24.19. الـ schema هي بتاعة درس [[schema و resolvers]] ومعاها [[deletePost(id: ID!): Boolean!]]، والـ resolvers زي المثال بالظبط، و [[db]] في الذاكرة بشكل Prisma: ٥٠ منشور، والمنشور رقم n كاتبه [[u((n-1)%10+1)]]، و [[u10]] هو الـ admin. التوكن [[Bearer tok-u9]] يعني «أنا u9». الطلبات اتبعتت لـ [[yoga.fetch]].
 
 ---
 
 ## ١. الـ imports
 
 ~~~ts
-import { createYoga, createGraphQLError } from "graphql-yoga";
+import { createYoga } from "graphql-yoga";
+import { GraphQLError } from "graphql";
 import { maxDepthPlugin } from "@escape.tech/graphql-armor-max-depth";
 ~~~
 
-- [[createGraphQLError]]: بيعمل خطأ GraphQL برسالة و [[extensions]] (معلومات زيادة بتوصل للعميل زي ما هي).
+- [[GraphQLError]] من مكتبة [[graphql]] نفسها: بيعمل خطأ GraphQL برسالة و [[extensions]] (معلومات زيادة بتوصل للعميل زي ما هي).
 - [[maxDepthPlugin]]: من مجموعة GraphQL Armor. بيحسب عمق الـ query ويرفضه لو عدّى الحد.
 
 ## ٢. [[requireUser]]
 
 ~~~ts
 export function requireUser(ctx: Ctx) {
-  if (!ctx.user) throw createGraphQLError("Login required", { extensions: { code: "UNAUTHENTICATED", http: { status: 401 } } });
+  if (!ctx.user) throw new GraphQLError("Login required", { extensions: { code: "UNAUTHENTICATED", http: { status: 401 } } });
   return ctx.user;
 }
 ~~~
@@ -507552,7 +507554,7 @@ export function requireUser(ctx: Ctx) {
 3. [[deleteMany]] بيرجّع [[{ count }]] زي [[updateMany]] في درس OWASP.
 
 ~~~ts
-      if (count === 0) throw createGraphQLError("Post not found", { extensions: { code: "NOT_FOUND" } });
+      if (count === 0) throw new GraphQLError("Post not found", { extensions: { code: "NOT_FOUND" } });
       return true;
 ~~~
 
@@ -507610,7 +507612,8 @@ introspection   200 {"data":{"__schema":{"queryType":{"fields":[{"name":"posts"}
 - الصلاحية على **النوع والحقل**، مش على [[Query.me]] بس.
 - حد العمق لوحده مش كفاية: aliases و introspection وحد لـ [[first]] و rate limit.`,
           lines: [
-            "السيرفر، و helper لأخطاء GraphQL بكود ومعلومات زيادة.",
+            "السيرفر من graphql-yoga.",
+            "كلاس الخطأ من مكتبة graphql نفسها (graphql-yoga 6 شالت createGraphQLError).",
             "plugin بيرفض الـ queries العميقة (من GraphQL Armor).",
             "helper: لازم يكون مسجّل.",
             "مش مسجّل؟ خطأ بكود UNAUTHENTICATED و HTTP 401.",
@@ -514456,9 +514459,2237 @@ SELECT round(100.0 * count(*) FILTER (WHERE results = 0) / count(*), 1) AS zero_
 ]);
 
 /* ===== js/tabs/apis/15.js ===== */
-// ملف إضافي لتاب apis: الحقول نفس شكلها في 01.js.
-
+// تكملة تاب apis: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/apis/01.js (شرح حقول الدرس في أوله)
 MORE("apis", [
+    {
+      t: "WebSockets بمكتبة ws: من الـ upgrade للإنتاج",
+      l: 2,
+      n: "تكملة لقسم «WebSockets على أكتر من سيرفر»: تتحقق من المستخدم والـ Origin قبل ما الاتصال يتفتح، وعميل بيرجع لوحده من غير ما يفوّت رسايل، وسيرفرين بـ Redis، وعميل بطيء ميوقّعش السيرفر، وإمتى SSE أو Socket.IO أحسن",
+      items: [
+        {
+          cmd: "auth على الـ upgrade",
+          title: "اتحقق من المستخدم والـ Origin قبل ما الاتصال يتفتح",
+          desc: R`الـ WebSocket بيبدأ بطلب HTTP عادي فيه [[Upgrade: websocket]]، والسيرفر بيرد [[101 Switching Protocols]]. ده آخر طلب HTTP في عمر الاتصال كله، فهو المكان الطبيعي اللي تتحقق فيه من الكوكي (أو التوكن) ومن الـ [[Origin]]، وترفض بـ 401 أو 403 قبل ما الاتصال يتفتح أصلًا.
+
+ليه الـ Origin؟ المتصفح بيبعت الكوكيز مع الـ handshake لوحده، و CORS مش بيحمي WebSocket. يعني أي صفحة تانية تقدر تفتح اتصال لسيرفرك باسم المستخدم وتقرا رسايله. الهجوم ده اسمه CSWSH (Cross-Site WebSocket Hijacking)، وحمايته قايمة Origins مسموحة على السيرفر.`,
+          example: R`import { createServer, type IncomingMessage } from "node:http";
+import type { Duplex } from "node:stream";
+import { WebSocketServer, type WebSocket } from "ws";
+const ALLOWED_ORIGINS = new Set(["https://app.example.com", "http://localhost:5173"]);
+const server = createServer(app);
+const wss = new WebSocketServer({ noServer: true, maxPayload: 64 * 1024 });
+function reject(socket: Duplex, status: number, text: string) {
+  socket.end($__btHTTP/1.1 $__{status} $__{text}\r\nConnection: close\r\nContent-Length: 0\r\n\r\n$__bt);
+}
+server.on("upgrade", async (req: IncomingMessage, socket: Duplex, head: Buffer) => {
+  const onError = () => socket.destroy();
+  socket.on("error", onError);
+  if (new URL(req.url ?? "/", "http://x").pathname !== "/ws") return reject(socket, 404, "Not Found");
+  if (!ALLOWED_ORIGINS.has(req.headers.origin ?? "")) return reject(socket, 403, "Forbidden");
+  const user = await userFromCookie(req.headers.cookie);
+  if (!user) return reject(socket, 401, "Unauthorized");
+  socket.off("error", onError);
+  wss.handleUpgrade(req, socket, head, (ws) => wss.emit("connection", ws, req, user));
+});
+wss.on("connection", (ws: WebSocket, _req: IncomingMessage, user: User) => {
+  ws.send(JSON.stringify({ type: "hello", name: user.name }));
+});
+server.listen(3000);`,
+          try: R`شغّل السيرفر على بورت 7001 و [[ALLOWED_ORIGINS]] فيها [[http://localhost:7001]] بس، وصفحة على نفس البورت بتعمل login (كوكي [[SameSite=Lax]]) وبعدين [[new WebSocket("ws://localhost:7001/ws")]]. اعمل سيرفر تاني على 7002 فيه صفحة «شريرة» بتفتح نفس الـ URL. افتح الصفحتين في نفس المتصفح وشوف: الكوكي وصل في الحالتين؟ ومين اتفتحله الاتصال؟ وبعدين علّق سطر الـ Origin وكرر.`,
+          flag: "script",
+          deep: {
+            why: R`الـ WebSocket مفيهوش «طلب» بعد الـ handshake: رسايل رايحة جاية على نفس الاتصال. لو مفحصتش هنا، هتلاقي نفسك بتفحص المستخدم جوه كل رسالة، أو أسوأ، بتفتح الاتصال لأي حد وتستنى أول رسالة فيها توكن. وفي الوقت ده أي حد يقدر يفتح آلاف الاتصالات ويحجز ذاكرة.
+
+و CSWSH هجوم حقيقي ومعروف: CORS بيمنع صفحة تقرا رد [[fetch]] من موقع تاني، بس WebSocket مش تحت CORS خالص. المتصفح بيبعت الـ handshake ومعاه الكوكيز، والسيرفر لو قبل، الصفحة الغريبة بتقرا كل الرسايل.`,
+            how: R`[[noServer: true]] بيقول لـ ws «متمسكش سيرفر HTTP، أنا هسلّمك الاتصال بإيدي». وبعدين انت بتسمع لحدث [[upgrade]] على سيرفر HTTP نفسه: Node بيدّيك الطلب ([[req]] بالـ headers) والـ socket الخام (TCP) وأول بايتات وصلت بعد الـ headers ([[head]]). لو كله تمام، [[handleUpgrade]] بيكمّل الـ handshake (يرد 101)، ويديك object الـ [[WebSocket]]. لو لأ، انت بتكتب رد HTTP بإيدك على الـ socket وتقفله.
+
+الـ Origin: المتصفح بيحطه في كل handshake ومحدش في JavaScript يقدر يغيّره. أداة زي curl أو script تقدر تبعت أي Origin، بس دي مش مشكلة: الهجوم محتاج كوكيز ضحية، والكوكيز موجودة في متصفح الضحية بس.
+
+ليه [[SameSite]] مش كفاية؟ لأن «site» مش «origin». [[localhost:7002]] و [[localhost:7001]] نفس الـ site (البورت مش جزء منه)، وكذلك [[evil.example.com]] و [[app.example.com]]. فالكوكي [[Lax]] بيتبعت من subdomain تاني أو بورت تاني. وكوكي [[SameSite=None]] بيتبعت من أي حتة.
+
+طرق تانية غير الكوكي: المتصفح مش بيسمح تحط [[Authorization]] header في [[new WebSocket()]]. فلو الـ API بتوكن: اعمل endpoint عادي ([[POST /ws-ticket]]) محمي بالتوكن، بيرجّع ticket عشوائي يعيش ٣٠ ثانية ويتستخدم مرة واحدة، والعميل يفتح [[wss://.../ws?ticket=...]]. ليه مش التوكن نفسه في الـ URL؟ لأن الـ URLs بتتسجل في logs الـ proxy والسيرفر. وفيه ناس بيحطوا التوكن في [[Sec-WebSocket-Protocol]] (الـ argument التاني لـ [[new WebSocket(url, protocols)]])، وده شغال بس شكله hack.
+
+والتوكن بيخلص وانت متصل: السيرفر يحفظ وقت انتهاء الصلاحية مع الاتصال، ولما ييجي يقفل بكود من بتوعك (من 4000 لـ 4999، زي [[4401]]) فالعميل يعرف إنه يجدد قبل ما يرجع (الدرس الجاي).`,
+            when: R`أي WebSocket فيه بيانات مستخدم. والفحص ده نفسه موجود في socket.io كـ middleware ([[io.use]] في درس «Redis adapter»)، و socket.io بيقبل كل الـ Origins افتراضيًا لحد ما تحط [[cors.origin]] أو [[allowRequest]].`,
+            mistakes: R`تفحص الـ Origin بـ [[includes]] أو [[endsWith("example.com")]] (يعدّي [[evil-example.com]]). وتسيب الـ Origin فاضي يعدّي (المتصفح دايمًا بيبعته، فاللي من غيره مش متصفح، وده قرار لازم تاخده بوعي حسب عملائك). وتقبل الاتصال وتستنى أول رسالة فيها التوكن. وتحط التوكن طويل العمر في الـ query string. وتنسى listener الـ [[error]] على الـ socket الخام قبل الـ upgrade، فـ client بيقفل في النص يوقّع الـ process. وتعمل [[socket.destroy()]] من غير ما تكتب رد، فالعميل يشوف قطع مش 401.`
+          },
+          teach: R`## الفكرة: بوّابة واحدة قبل الاتصال
+
+كل اتصال WebSocket بيبدأ بطلب HTTP واحد. السيرفر بيقرا الـ headers بتوعه، ويقرر: يكمّل (101) ولا يرفض (403 أو 401). بعد الـ 101 مفيش HTTP تاني، فده المكان الوحيد اللي الفحص فيه رخيص ونضيف.
+
+اتجرّب على ويندوز 11: Node 24.22.1 (بيشغّل ملف [[.ts]] على طول من غير build) و [[ws]] 8.22.0. السيرفر على [[localhost:7001]] و [[ALLOWED_ORIGINS]] فيها [[http://localhost:7001]]، وصفحة «شريرة» على سيرفر تاني (بورت 7002). والمتصفح Chrome 156 headless متشغّل من [[playwright-core]] 1.64.1. و [[userFromCookie]] بيدوّر على [[sid]] في Map بسيطة في الذاكرة.
+
+---
+
+## ١. الـ handshake بعينك
+
+قبل الكود، شوف الطلب نفسه بـ curl (Git Bash):
+
+~~~bash
+curl -si --max-time 2 \
+  -H "Origin: http://localhost:7001" -H "Cookie: sid=..." \
+  -H "Connection: Upgrade" -H "Upgrade: websocket" \
+  -H "Sec-WebSocket-Version: 13" -H "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==" \
+  http://localhost:7001/ws
+~~~
+
+- [[Connection: Upgrade]] و [[Upgrade: websocket]]: «عايز أغيّر البروتوكول على نفس الاتصال».
+- [[Sec-WebSocket-Version: 13]]: النسخة الوحيدة المستخدمة (RFC 6455).
+- [[Sec-WebSocket-Key]]: ١٦ بايت عشوائيين بـ base64. المتصفح بيولّده لوحده كل مرة.
+
+الرد (اتطبع بـ [[od -c]] عشان البايتات تبان):
+
+~~~text الناتج
+HTTP/1.1 101 Switching Protocols
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=
+
+201 035 {"type":"hello","name":"ali"}
+~~~
+
+- [[Sec-WebSocket-Accept]] = base64 لـ SHA-1 بتاع (الـ key + نص ثابت [[258EAFA5-E914-47DA-95CA-C5AB0DC85B11]]). حسبناها بـ Node وطلعت نفس القيمة. دي **مش** حماية: بس دليل إن اللي رد فاهم WebSocket فعلًا، مش سيرفر HTTP قديم رد بالغلط.
+- بعد السطر الفاضي الكلام بقى WebSocket frames: [[201]] بالـ octal = [[0x81]] = آخر جزء في الرسالة (FIN) + نوعها نص. و [[035]] = 29 = طول الرسالة، و [[{"type":"hello","name":"ali"}]] فعلًا ٢٩ حرف.
+
+ونفس الطلب من غير Origin، وبعدين بـ Origin صح ومن غير كوكي:
+
+~~~text الناتج
+HTTP/1.1 403 Forbidden
+Connection: close
+Content-Length: 0
+
+HTTP/1.1 401 Unauthorized
+Connection: close
+Content-Length: 0
+~~~
+
+---
+
+## ٢. [[noServer]]
+
+~~~ts
+const server = createServer(app);
+const wss = new WebSocketServer({ noServer: true, maxPayload: 64 * 1024 });
+~~~
+
+- [[createServer(app)]]: سيرفر HTTP من [[node:http]] وجواه الـ app (Express مثلًا). نفس البورت هيخدم الـ API والـ WebSocket.
+- [[noServer: true]]: ws مش هيسمع لوحده على حاجة. احنا اللي هنسلّمه كل اتصال بعد ما نفحصه. (في درس «heartbeat و ping» كان [[server: httpServer]]، وده بيقبل أي upgrade من غير ما تتدخل.)
+- [[maxPayload]]: أقصى رسالة 64KB (اتشرح في «heartbeat و ping»).
+
+## ٣. [[reject]]: رد HTTP بإيدك
+
+~~~ts
+function reject(socket: Duplex, status: number, text: string) {
+  socket.end($__btHTTP/1.1 $__{status} $__{text}\r\nConnection: close\r\nContent-Length: 0\r\n\r\n$__bt);
+}
+~~~
+
+في حدث [[upgrade]] مفيش [[res]]. عندك [[socket]] خام بس ([[Duplex]] = stream بتقرا منه وتكتب فيه)، فبتكتب الرد كنص:
+
+- [[\r\n]]: نهاية سطر في HTTP (CR ثم LF).
+- [[Connection: close]] و [[Content-Length: 0]]: مفيش body، والاتصال هيتقفل.
+- السطر الفاضي ([[\r\n\r\n]]) = آخر الـ headers.
+- [[end(...)]]: اكتب وبعدين اقفل.
+
+## ٤. حدث [[upgrade]] بالترتيب
+
+~~~ts
+server.on("upgrade", async (req: IncomingMessage, socket: Duplex, head: Buffer) => {
+  const onError = () => socket.destroy();
+  socket.on("error", onError);
+~~~
+
+- [[req]]: الطلب بالـ headers ([[req.headers.origin]] و [[req.headers.cookie]]).
+- [[head]]: أي بايتات وصلت بعد الـ headers. مش بتلمسها، بتديها لـ [[handleUpgrade]].
+- [[onError]]: لو العميل قفل في النص والـ socket رمى error من غير listener، الـ process كله يقع. (ده النمط اللي في README مكتبة ws.)
+
+~~~ts
+  if (new URL(req.url ?? "/", "http://x").pathname !== "/ws") return reject(socket, 404, "Not Found");
+~~~
+
+[[req.url]] فيه المسار والـ query بس (زي [[/ws?ticket=abc]])، و [[URL]] محتاج أصل كامل، فـ [[http://x]] أصل وهمي عشان يتفك. ولو المسار مش [[/ws]]: 404.
+
+~~~ts
+  if (!ALLOWED_ORIGINS.has(req.headers.origin ?? "")) return reject(socket, 403, "Forbidden");
+~~~
+
+[[Set.has]] مقارنة **بالظبط**: [[https://app.example.com]] بس، مش أي حاجة فيها الكلمة. و [[?? ""]]: لو مفيش Origin خالص يبقى نص فاضي، ومش في القايمة ← 403. الـ Origin قبل الكوكي: أرخص، ومش بتدوّر على session لطلب جاي من صفحة غريبة.
+
+~~~ts
+  const user = await userFromCookie(req.headers.cookie);
+  if (!user) return reject(socket, 401, "Unauthorized");
+  socket.off("error", onError);
+  wss.handleUpgrade(req, socket, head, (ws) => wss.emit("connection", ws, req, user));
+});
+~~~
+
+- [[userFromCookie]]: نفس الكود اللي بيعرف المستخدم في الـ API العادي (session من القاعدة أو Redis).
+- [[socket.off("error", onError)]]: من هنا ws هو اللي مسؤول عن الأخطاء.
+- [[handleUpgrade]]: بيرد 101 ويعمل [[WebSocket]]. وبعدين احنا بنطلق [[connection]] بإيدنا ومعاه [[user]] كـ argument تالت، فكل handler بعد كده عارف المستخدم من غير ما يسأل تاني.
+
+## ٥. [[connection]]
+
+~~~ts
+wss.on("connection", (ws: WebSocket, _req: IncomingMessage, user: User) => {
+  ws.send(JSON.stringify({ type: "hello", name: user.name }));
+});
+~~~
+
+[[_req]] بشرطة في أوله: عرف في TypeScript معناه «مش هستخدمه». و [[user]] هو اللي بعتناه في [[emit]].
+
+---
+
+## ٦. التجربة في Chrome
+
+| الصفحة | نوع الكوكي | الكوكي وصل؟ | النتيجة |
+|---|---|---|---|
+| [[localhost:7001]] (التطبيق) | [[Lax]] | أيوه | [[{"type":"hello","name":"ali"}]] |
+| [[127.0.0.1:7002]] | [[Lax]] | لأ | 403 (Origin) |
+| [[localhost:7002]] | [[Lax]] | **أيوه** | 403 (Origin) |
+| [[127.0.0.1:7002]] | [[None; Secure]] | **أيوه** | 403 (Origin) |
+| [[localhost:7002]] من غير سطر الـ Origin | [[Lax]] | أيوه | [[STOLEN {"type":"hello","name":"ali"}]] |
+
+اقرا الجدول كده:
+
+- [[127.0.0.1]] و [[localhost]] hosts مختلفين = sites مختلفة، فـ [[Lax]] منع الكوكي.
+- [[localhost:7002]] نفس الـ site بتاع [[localhost:7001]] (البورت مش جزء من الـ site)، فالكوكي اتبعت عادي. نفس الكلام لـ subdomain تاني على نفس الدومين.
+- [[SameSite=None]] بيتبعت من أي حتة.
+- آخر سطر: من غير فحص الـ Origin، صفحة البورت التاني قرت رسالة المستخدم. ده CSWSH بالظبط.
+
+والمتصفح شاف كل الرفض كـ [[error]] وبعده [[close]] بكود [[1006]]. المتصفح **مش** بيوري JavaScript الـ status (403 ولا 401)، عشان كده لو العميل محتاج يفرّق (يروح لـ login مثلًا)، اسأل endpoint عادي زي [[GET /me]] قبل ما تعيد المحاولة.
+
+---
+
+## الخلاصة
+
+| الحتة | ليه |
+|---|---|
+| [[noServer: true]] + [[on("upgrade")]] | انت اللي بتقرر قبل الـ 101 |
+| المسار ← Origin ← المستخدم | الأرخص الأول |
+| [[Set.has(origin)]] | مقارنة بالظبط، مش [[includes]] |
+| [[reject]] بنص HTTP | العميل ياخد 403/401 مش قطع |
+| [[emit("connection", ws, req, user)]] | المستخدم يمشي مع الاتصال |
+| ticket قصير بدل التوكن في الـ URL | الـ URLs بتتسجل في logs |
+
+- CORS مش بيحمي WebSocket. الـ Origin check هو الحماية.
+- [[SameSite]] بيحمي من sites تانية بس، مش من subdomain أو بورت تاني.`,
+          lines: [
+            "سيرفر HTTP من Node، ونوع الطلب.",
+            "نوع الـ socket الخام (stream في الاتجاهين).",
+            "مكتبة ws: السيرفر ونوع الاتصال.",
+            "الـ Origins المسموحة بالظبط.",
+            "سيرفر HTTP واحد للـ API والـ WebSocket.",
+            "ws من غير سيرفر خاص بيه: احنا اللي بنسلّمه الاتصالات، وأقصى رسالة 64KB.",
+            "دالة ترفض الـ upgrade برد HTTP:",
+            "تكتب status line و headers على الـ socket وتقفله.",
+            "قفلة.",
+            "كل طلب upgrade بيعدّي من هنا الأول:",
+            "لو الـ socket رمى error...",
+            "...اقفله بدل ما يوقّع الـ process.",
+            "مسار غلط: 404.",
+            "Origin مش في القايمة: 403 (ضد CSWSH).",
+            "هات المستخدم من كوكي الـ session.",
+            "مفيش مستخدم: 401.",
+            "من هنا ws هو اللي بيتعامل مع الأخطاء.",
+            "كمّل الـ handshake (101)، وابعت الاتصال ومعاه المستخدم.",
+            "قفلة.",
+            "اتصال جديد مفحوص:",
+            "رسالة ترحيب باسم المستخدم.",
+            "قفلة.",
+            "شغّل السيرفر."
+          ],
+          sol: R`اتجرّب في Chrome 156 headless (playwright-core) على ويندوز 11:
+
+- صفحة التطبيق ([[localhost:7001]]): الكوكي وصل والاتصال اتفتح، والرسالة [[{"type":"hello","name":"ali"}]].
+- الصفحة الشريرة على [[localhost:7002]]: الكوكي **وصل** (نفس الـ site)، بس السيرفر رد 403 بسبب الـ Origin، والصفحة شافت [[error]] و [[close]] بكود 1006.
+- على [[127.0.0.1:7002]]: الكوكي [[Lax]] موصلش أصلًا، و 403 برضه.
+- من غير سطر الـ Origin: صفحة [[localhost:7002]] قرت [[{"type":"hello","name":"ali"}]]. ده الهجوم.
+
+ولو جربت curl من غير [[Origin]] header: [[HTTP/1.1 403 Forbidden]]. وبـ Origin صح ومن غير كوكي: [[401 Unauthorized]].`,
+          solCode: R`// السجل اللي السيرفر طبعه في حدث upgrade (Lax، الصفحة الشريرة على localhost:7002)
+// upgrade from http://localhost:7001 cookie: yes
+// upgrade from http://localhost:7002 cookie: yes   <- اترفض 403 بسبب الـ Origin
+const evil = new WebSocket("ws://localhost:7001/ws");
+evil.onmessage = (e) => { document.title = "STOLEN " + e.data; };
+evil.onclose = (e) => { document.title += " close:" + e.code; };`
+        },
+        {
+          cmd: "reconnect و backoff",
+          title: "عميل بيرجع لوحده ومبيفوّتش رسايل",
+          desc: R`الـ [[WebSocket]] في المتصفح مبيعملش reconnect لوحده: لو الاتصال اتقطع خلاص. فانت بتكتب [[onclose]] بيعيد المحاولة، والانتظار بين المحاولات بيزيد للضعف كل مرة (exponential backoff) ومعاه عشوائية (jitter)، عشان آلاف العملاء ميرجعوش في نفس الثانية بعد deploy.
+
+والرسايل اللي اتبعتت وانت مقطوع؟ كل رسالة ليها رقم متسلسل ([[seq]])، والعميل بيفتكر آخر رقم وصله ويبعته مع الاتصال الجديد ([[?since=23]]). السيرفر بيعيد اللي بعده من history، ولو اللي فاته أقدم من اللي محفوظ، بيقوله [[reset]] فيعمل refetch.`,
+          example: R`// المتصفح (client.js):
+export function connect(url, onEvent) {
+  let lastSeq = 0, attempt = 0, stopped = false, ws;
+  function open() {
+    ws = new WebSocket($__bt$__{url}?since=$__{lastSeq}$__bt);
+    ws.onopen = () => { attempt = 0; };
+    ws.onmessage = (m) => {
+      const msg = JSON.parse(m.data);
+      if (msg.type === "reset") { lastSeq = msg.seq; return onEvent(msg); }
+      if (msg.seq <= lastSeq) return;
+      lastSeq = msg.seq;
+      onEvent(msg);
+    };
+    ws.onclose = (e) => {
+      if (stopped || e.code === 4401) return;
+      const delay = Math.random() * Math.min(30_000, 500 * 2 ** attempt++);
+      setTimeout(open, delay);
+    };
+  }
+  open();
+  return () => { stopped = true; ws.close(1000, "bye"); };
+}
+// السيرفر:
+const history = [];
+let seq = 0;
+function publish(event) {
+  const data = JSON.stringify({ seq: ++seq, ...event });
+  history.push({ seq, data });
+  if (history.length > 1000) history.shift();
+  for (const c of wss.clients) c.send(data);
+}
+wss.on("connection", (ws, req) => {
+  const since = Number(new URL(req.url, "http://x").searchParams.get("since") ?? 0);
+  const oldest = history[0]?.seq ?? seq + 1;
+  if (since > 0 && since < oldest - 1) return ws.send(JSON.stringify({ type: "reset", seq }));
+  for (const h of history) if (h.seq > since) ws.send(h.data);
+});`,
+          try: R`خلّي السيرفر يعمل [[publish]] كل ١٠٠ مللي ثانية، وافتح الصفحة. بعد ثانية اقفل كل الاتصالات بـ [[terminate()]] وارفض أي upgrade لمدة ثانيتين (رد 503). سجّل في المتصفح كل [[onclose]] والـ delay اللي اتحسب، وفي الآخر اتأكد إن الأرقام اللي وصلت متسلسلة من غير فراغ. وبعدين صغّر الـ history لـ ١٠ رسايل وكرر: لازم يوصلك [[reset]].`,
+          flag: "script",
+          deep: {
+            why: R`الموبايل بيقطع كل شوية (أسانسير، تغيير من Wi-Fi لـ 4G)، والسيرفر بيعمل restart في كل deploy. من غير reconnect، اليوزر لازم يعمل refresh عشان يرجع. ومن غير backoff مع jitter، أول ما السيرفر يقوم بيلاقي كل العملاء بيضربوه في نفس الثانية (thundering herd)، فيقع تاني، وهكذا. ومن غير seq، اللي اتبعت وانت مقطوع بيضيع، واليوزر شايف حالة غلط (طلب «مدفوع» ظاهر «مستني»).`,
+            how: R`الـ backoff هنا اسمه «full jitter»: الحد الأقصى بيتضاعف (500، 1000، 2000، ... لحد 30 ثانية)، والانتظار الفعلي رقم عشوائي من صفر للحد ده. ده بيوزّع العملاء على الفترة كلها بدل ما يتجمعوا على نفس اللحظة. و [[attempt = 0]] في [[onopen]] عشان أول قطع بعد اتصال ناجح يبدأ من الأول.
+
+ليه مبيرجعش مع كود [[4401]]؟ دي أكواد التطبيق (4000-4999) اللي السيرفر بيقفل بيها بإيده، هنا معناها «الـ session خلصت». الرجوع مش هيفيد، العميل يروح يجدد الـ login الأول. وكود [[1000]] في [[close(1000, "bye")]] معناه إغلاق عادي.
+
+الـ resume: السيرفر بيدّي كل رسالة رقم بيزيد، ويحتفظ بآخر ١٠٠٠. العميل بيبعت آخر رقم شافه. لو الرقم ده جوه الـ history: بيعيد اللي بعده بس. لو أقدم: [[reset]] ومعاه الرقم الحالي، والعميل يعمل refetch للحالة كلها من REST، ويكمّل من الرقم ده. ونفس الفكرة موجودة جاهزة في SSE باسم [[Last-Event-ID]] (درس «SSE في Express»).
+
+[[msg.seq <= lastSeq]]: لو نفس الرسالة وصلت مرتين (مثلًا اتعادت في الـ replay ووصلت live)، اتجاهلها. ده اسمه dedupe، ومن غيره الإشعار يظهر مرتين.
+
+مفيش race بين الـ replay والرسايل الجديدة هنا: ws بيضيف الاتصال لـ [[wss.clients]] قبل حدث [[connection]]، والـ replay بيحصل في نفس الـ tick من غير [[await]]، فمفيش رسالة تقدر تتبعت في النص. لو الـ history في Redis (الدرس الجاي) فيه [[await]]، وساعتها لازم تعمل buffer.
+
+والسيرفر الميت؟ المتصفح مش بيقدر يبعت ping frames، فلو السيرفر وقع من غير ما يقفل الاتصال (كابل اتشال)، [[onclose]] ممكن يتأخر دقايق. الحل: السيرفر يبعت رسالة صغيرة كل ٢٥ ثانية، والعميل لو معداش عليه ٦٠ ثانية من غير أي رسالة يعمل [[ws.close()]] بنفسه ويعيد. (ناحية السيرفر: درس «heartbeat و ping».)`,
+            when: "أي عميل WebSocket في متصفح أو موبايل. لو بتستخدم socket.io، الـ reconnect والـ backoff جاهزين (reconnectionDelay و randomizationFactor)، والـ resume عندهم اسمه Connection State Recovery.",
+            mistakes: R`[[setTimeout(open, 1000)]] ثابت من غير jitter. و [[attempt]] مبيرجعش صفر بعد ما الاتصال ينجح، فبعد شوية كل قطع بيستنى ٣٠ ثانية. وتعيد المحاولة مع خطأ صلاحية (loop لا نهائي). وتحط الـ seq في الذاكرة بس والسيرفر يعمل restart: الأرقام ترجع من ١ والعميل عنده ٥٠٠، فكل حاجة بتتجاهل كـ «قديمة». الحل history برا الـ process (Redis) أو [[reset]] لو [[since]] أكبر من [[seq]] الحالي. والعكس كمان: رسايل العميل اللي اتبعتت لحظة القطع ممكن تكون وصلت أو لأ، فمتعيدش بعتها إلا لو ليها id والسيرفر بيرد ack وبيتجاهل الـ id المكرر.`
+          },
+          teach: R`## الفكرة: ارجع بالراحة، وقول للسيرفر وقفت فين
+
+جزئين: العميل بيعيد الاتصال بانتظار بيكبر وعشوائي، وكل رسالة ليها رقم، فالعميل يقدر يقول «آخر حاجة شفتها رقم ٢٣»، والسيرفر يكمّل من ٢٤.
+
+اتجرّب على ويندوز 11: Node 24.22.1 و ws 8.22.0 للسيرفر (بورت 7003)، والعميل ده بالظبط (زودنا عليه سطر log) في Chrome 156 headless من playwright-core 1.64.1. السيرفر بيعمل [[publish]] كل ١٠٠ مللي ثانية. بعد ثانية من فتح الصفحة: [[terminate()]] لكل الاتصالات، ورفض أي upgrade بـ 503 لمدة ثانيتين.
+
+---
+
+## ١. حالة العميل
+
+~~~js
+export function connect(url, onEvent) {
+  let lastSeq = 0, attempt = 0, stopped = false, ws;
+~~~
+
+- [[connect]] بتاخد الـ URL ودالة [[onEvent]] تتنادى مع كل رسالة جديدة.
+- [[lastSeq]]: آخر رقم وصل. [[attempt]]: كام محاولة فشلت ورا بعض. [[stopped]]: اليوزر قفل بنفسه (متعيدش). [[ws]]: الاتصال الحالي.
+- كل دول متغيرات جوه الدالة (closure)، فكل [[open()]] جديد شايفهم.
+
+## ٢. [[open]]
+
+~~~js
+    ws = new WebSocket($__bt$__{url}?since=$__{lastSeq}$__bt);
+    ws.onopen = () => { attempt = 0; };
+~~~
+
+- [[?since=...]]: أول مرة 0، وبعد القطع آخر رقم وصل.
+- اتصال نجح ← [[attempt]] يرجع صفر.
+
+## ٣. [[onmessage]]
+
+~~~js
+    ws.onmessage = (m) => {
+      const msg = JSON.parse(m.data);
+      if (msg.type === "reset") { lastSeq = msg.seq; return onEvent(msg); }
+      if (msg.seq <= lastSeq) return;
+      lastSeq = msg.seq;
+      onEvent(msg);
+    };
+~~~
+
+- [[m.data]]: نص الرسالة. [[JSON.parse]] بيحوّله object.
+- [[reset]]: «اللي فاتك كتير، هات الحالة من الأول». بنبدأ العد من رقم السيرفر الحالي، و [[onEvent]] هيعمل refetch.
+- [[<=]]: رسالة شفناها قبل كده ← تجاهل (dedupe).
+- غير كده: احفظ الرقم وسلّم الرسالة.
+
+## ٤. [[onclose]] والـ backoff
+
+~~~js
+    ws.onclose = (e) => {
+      if (stopped || e.code === 4401) return;
+      const delay = Math.random() * Math.min(30_000, 500 * 2 ** attempt++);
+      setTimeout(open, delay);
+    };
+~~~
+
+فك الـ delay من جوه لبرة:
+
+| الحتة | المعنى |
+|---|---|
+| [[attempt++]] | استخدم القيمة الحالية، وبعدين زوّدها ١ |
+| [[2 ** attempt]] | ٢ أس attempt: 1، 2، 4، 8... ([[**]] = أس) |
+| [[500 * ...]] | 500، 1000، 2000، 4000 مللي ثانية |
+| [[Math.min(30_000, ...)]] | ميعدّيش ٣٠ ثانية ([[_]] في الرقم للقراية بس) |
+| [[Math.random() * ...]] | رقم عشوائي من صفر للحد ده (full jitter) |
+
+## ٥. [[return]]
+
+~~~js
+  open();
+  return () => { stopped = true; ws.close(1000, "bye"); };
+~~~
+
+[[connect]] بترجّع دالة «اقفل». في React مثلًا بتحطها في cleanup بتاع [[useEffect]].
+
+---
+
+## ٦. السيرفر: الأرقام والـ history
+
+~~~js
+function publish(event) {
+  const data = JSON.stringify({ seq: ++seq, ...event });
+  history.push({ seq, data });
+  if (history.length > 1000) history.shift();
+  for (const c of wss.clients) c.send(data);
+}
+~~~
+
+- [[++seq]]: زوّد الأول وبعدين استخدم (فأول رسالة ١).
+- [[...event]]: انسخ حقول الحدث جنب [[seq]].
+- [[shift()]]: شيل الأقدم لما يعدّي ١٠٠٠، فالذاكرة ثابتة.
+- [[data]] بيتعمل [[stringify]] مرة واحدة ويتبعت لكل العملاء.
+
+~~~js
+wss.on("connection", (ws, req) => {
+  const since = Number(new URL(req.url, "http://x").searchParams.get("since") ?? 0);
+  const oldest = history[0]?.seq ?? seq + 1;
+  if (since > 0 && since < oldest - 1) return ws.send(JSON.stringify({ type: "reset", seq }));
+  for (const h of history) if (h.seq > since) ws.send(h.data);
+});
+~~~
+
+- [[searchParams.get("since")]]: قيمة [[?since=]] كنص، و [[Number]] تحوّلها رقم.
+- [[history[0]?.seq]]: أقدم رقم محفوظ. [[?.]] = لو الـ history فاضي متقعش، رجّع undefined، و [[??]] يحط [[seq + 1]].
+- [[since < oldest - 1]]: الرسالة اللي بعد [[since]] مبقتش محفوظة ← [[reset]].
+- غير كده: ابعت كل اللي رقمه أكبر من [[since]].
+
+---
+
+## ٧. التجربة: history ١٠٠٠
+
+~~~text سجل المتصفح (الوقت من فتح الصفحة)
+0.78 open since=0
+1.78 closed 1006, retry #1 in 63ms
+1.86 closed 1006, retry #2 in 704ms
+2.57 closed 1006, retry #3 in 1376ms
+3.97 open since=23
+~~~
+
+~~~text سجل السيرفر
+1.53s connected since=0, replayed 14
+2.52s drop all clients, refuse for 2s
+2.60s upgrade refused (down)
+3.32s upgrade refused (down)
+4.54s back up
+4.72s connected since=23, replayed 21
+received 80 first 1 last 80 gaps 0 server seq 80
+~~~
+
+- الـ delays: 63 من [[0..500]]، و 704 من [[0..1000]]، و 1376 من [[0..2000]]. كل واحد عشوائي، والحد بيتضاعف.
+- الرفض بـ 503 ظهر في المتصفح [[1006]] برضه (المتصفح مبيورّيش الـ status).
+- العميل رجع بـ [[since=23]]، والسيرفر أعاد ٢١ رسالة فاتته (24 لـ 44). وفي الآخر ٨٠ رسالة من ١ لـ ٨٠ من غير ولا فراغ ([[gaps 0]]).
+
+## ٨. التجربة: history ١٠ بس
+
+~~~text الناتج
+2.63 closed 1006, retry #3 in 1457ms
+4.11 open since=23
+received 55 first 5 last 80 gaps 1 server seq 80 [ 'reset@45' ]
+~~~
+
+- أقدم محفوظ كان أكبر من 24، فالسيرفر بعت [[reset]] ومعاه 45، والعميل كمّل من 46. الفراغ الوحيد ([[gaps 1]]) هو مكان الـ reset، وده المكان اللي العميل فيه بيعمل refetch.
+- [[first 5]]: أول اتصال وصّله الـ history اللي كان محفوظ ساعتها (آخر ١٠ بس).
+
+---
+
+## الخلاصة
+
+| الحتة | ليه |
+|---|---|
+| [[Math.random() * Math.min(cap, base * 2 ** n)]] | backoff بيكبر ومتوزّع |
+| [[attempt = 0]] في [[onopen]] | القطع الجاي يبدأ من الأول |
+| [[4401]] ← متعيدش | خطأ صلاحية مش هيتصلح بالمحاولة |
+| [[?since=lastSeq]] | السيرفر يكمّل من مكانك |
+| [[seq <= lastSeq]] ← تجاهل | مفيش تكرار |
+| [[reset]] | فاتك كتير: refetch |
+
+- [[1006]] في المتصفح = اتقطع، ومش هتعرف السبب من JavaScript.
+- الـ history في الذاكرة بيضيع مع restart السيرفر. الدرس الجاي بيحطه في Redis.`,
+          lines: [
+            "دالة بتفتح اتصال وتسلّم كل رسالة لـ onEvent.",
+            "آخر رقم وصل، وعدد المحاولات، واليوزر قفل ولا لأ، والاتصال الحالي.",
+            "فتح اتصال (أول مرة وبعد كل قطع):",
+            "افتح وقول للسيرفر آخر رقم شفته.",
+            "نجح: صفّر عدد المحاولات.",
+            "مع كل رسالة:",
+            "حوّلها object.",
+            "reset: ابدأ من رقم السيرفر وخلي التطبيق يعمل refetch.",
+            "رسالة شفتها قبل كده: تجاهلها.",
+            "احفظ رقمها.",
+            "وسلّمها للتطبيق.",
+            "قفلة.",
+            "الاتصال اتقفل:",
+            "اليوزر قفل أو الـ session خلصت (4401): متعيدش.",
+            "استنى رقم عشوائي من صفر لحد بيتضاعف كل مرة (أقصاه ٣٠ ثانية).",
+            "وبعدين افتح تاني.",
+            "قفلة.",
+            "قفلة.",
+            "أول اتصال.",
+            "رجّع دالة تقفل الاتصال وتمنع الرجوع.",
+            "قفلة.",
+            "آخر رسايل اتبعتت (في الذاكرة).",
+            "آخر رقم.",
+            "ابعت حدث لكل المتصلين:",
+            "ادّيله الرقم الجاي وحوّله نص مرة واحدة.",
+            "احفظه في الـ history.",
+            "خلّي آخر ١٠٠٠ بس.",
+            "ابعته لكل اتصال.",
+            "قفلة.",
+            "اتصال جديد:",
+            "اقرا آخر رقم العميل شافه من ?since.",
+            "أقدم رقم لسه محفوظ.",
+            "اللي فاته مبقاش محفوظ: ابعت reset.",
+            "غير كده ابعت كل اللي بعد since.",
+            "قفلة."
+          ],
+          sol: R`اتجرّب في Chrome 156 headless على ويندوز 11 (Node 24.22.1 و ws 8.22.0):
+
+- ٣ محاولات فشلت بـ delays عشوائية (63 ثم 704 ثم 1376 مللي ثانية، كل واحدة جوه حد بيتضاعف)، وبعدين [[open since=23]].
+- السيرفر أعاد ٢١ رسالة، والمتصفح استلم ٨٠ رسالة من ١ لـ ٨٠ من غير فراغ.
+- بـ history ١٠ بس: وصل [[reset]] بالرقم 45 بدل الرسايل، والعميل كمّل من 46.
+
+لو لقيت رسايل مكررة: شرط [[msg.seq <= lastSeq]] مش موجود. ولو لقيت فراغ من غير reset: الـ replay بيبعت [[>= since]] غلط، أو [[lastSeq]] بيتحدّث قبل ما الرسالة توصل.`,
+          solCode: R`// في السيرفر: افصل الكل وارفض لمدة ثانيتين
+down = true;
+for (const c of wss.clients) c.terminate();
+setTimeout(() => { down = false; }, 2000);
+// وفي حدث upgrade:
+// if (down) return socket.end("HTTP/1.1 503 Service Unavailable\r\nConnection: close\r\nContent-Length: 0\r\n\r\n");`
+        },
+        {
+          cmd: "ws على سيرفرين بـ Redis",
+          title: "رسالة من أي سيرفر توصل لليوزر فين ما كان متصل",
+          desc: R`مع سيرفرين، اليوزر متصل بواحد بس منهم، والحدث (طلب اتدفع مثلًا) ممكن يحصل على التاني. الحل بـ ws الخام زي فكرة الـ Redis adapter بتاع socket.io بالظبط: كل حدث بيتنشر في Redis بـ [[PUBLISH]]، وكل سيرفر مشترك ([[PSUBSCRIBE]])، ويبعته للاتصالات اللي عنده هو بس.
+
+والـ history (الدرس اللي فات) بيتنقل لـ Redis برضه، فلو اليوزر رجع على السيرفر التاني، يلاقي اللي فاته. وبكده مش محتاج sticky sessions مع ws الخام.`,
+          example: R`import { createClient } from "redis";
+import type { WebSocket } from "ws";
+const pub = createClient({ url: process.env.REDIS_URL });
+const sub = pub.duplicate();
+await Promise.all([pub.connect(), sub.connect()]);
+type Conn = { ws: WebSocket; queue: string[] | null };
+const local = new Map<string, Set<Conn>>();
+await sub.pSubscribe("user:*", (message, channel) => {
+  for (const c of local.get(channel.slice(5)) ?? []) c.queue ? c.queue.push(message) : c.ws.send(message);
+});
+export async function notify(userId: string, event: object) {
+  const seq = await pub.incr($__btseq:$__{userId}$__bt);
+  const data = JSON.stringify({ seq, ...event });
+  await pub.multi().rPush($__bthist:$__{userId}$__bt, data).lTrim($__bthist:$__{userId}$__bt, -1000, -1).publish($__btuser:$__{userId}$__bt, data).exec();
+}
+wss.on("connection", async (ws: WebSocket, req: IncomingMessage, userId: string) => {
+  const since = Number(new URL(req.url ?? "/", "http://x").searchParams.get("since") ?? 0);
+  const conn: Conn = { ws, queue: [] };
+  const set = local.get(userId) ?? new Set<Conn>();
+  local.set(userId, set.add(conn));
+  ws.on("close", () => { set.delete(conn); if (set.size === 0) local.delete(userId); });
+  let last = since;
+  for (const d of await pub.lRange($__bthist:$__{userId}$__bt, 0, -1)) {
+    const s = JSON.parse(d).seq;
+    if (s > last) { ws.send(d); last = s; }
+  }
+  for (const d of conn.queue!) if (JSON.parse(d).seq > last) ws.send(d);
+  conn.queue = null;
+});`,
+          try: R`شغّل Redis في Docker ([[docker run -d --name lab-redis -p 6391:6379 redis:8-alpine]]) ونسختين من السيرفر على 7101 و 7102 بنفس [[REDIS_URL]]، وكل نسخة فيها [[POST /notify?user=u1&text=...]] بينادي [[notify]]. وصّل عميل على 7101، وابعت notify من 7102. اقفل العميل، وابعت رسالتين (واحدة من كل سيرفر)، ووصّله على 7102 بـ [[since]] آخر رقم: لازم الرسالتين يوصلوا. في الآخر [[docker rm -f -v lab-redis]].`,
+          flag: "script",
+          deep: {
+            why: R`أول ما تشغّل نسختين (عشان الـ uptime أو الحمل)، أي كود بيعمل [[for (const ws of wss.clients)]] بقى شايف نص المستخدمين بس. والمشكلة مبتبانش وانت شغال على جهازك بنسخة واحدة، وبتظهر في الإنتاج كـ «الإشعارات بتوصل أحيانًا».`,
+            how: R`Redis pub/sub: [[PUBLISH channel message]] بيوصّل الرسالة لكل اللي عامل [[SUBSCRIBE]] على الـ channel ده في اللحظة دي، ومش بيخزنها. و [[PSUBSCRIBE user:*]] اشتراك بـ pattern: أي channel بيبدأ بـ [[user:]].
+
+ليه اتصالين؟ الاتصال اللي عمل subscribe بيدخل «subscriber mode» ومينفعش يعمل أوامر عادية زي [[INCR]]. فـ [[duplicate()]] بيعمل اتصال تاني بنفس الإعدادات.
+
+[[local]]: كل سيرفر عارف مين متصل **عنده**: userId ← Set اتصالات (اليوزر ممكن يفتح من تابين أو جهازين). لما رسالة توصل من Redis، السيرفر بيدوّر في الـ Map بتاعته، ولو اليوزر مش عنده، مبيعملش حاجة.
+
+[[notify]]: [[INCR seq:u1]] بيدّي رقم متسلسل ذري (atomic) حتى لو السيرفرين بيبعتوا في نفس اللحظة. وبعدين [[MULTI]]: الأوامر التلاتة بيتنفذوا مع بعض: [[RPUSH]] يضيف للـ history، و [[LTRIM -1000 -1]] يسيب آخر ١٠٠٠ بس، و [[PUBLISH]] يبعت live.
+
+الـ [[queue]]: الـ replay هنا فيه [[await]] (بيقرا من Redis)، وفي الوقت ده ممكن رسالة جديدة توصل live. لو اتبعتت على طول، ممكن توصل قبل رسايل الـ replay، والعميل (اللي بيتجاهل أي رقم أصغر من آخر رقم) هيرمي رسايل الـ replay. فالرسايل اللي بتوصل أثناء الـ replay بتستنى في [[queue]]، وبعد الـ replay بتتبعت (اللي رقمها أكبر من آخر رقم اتبعت بس).
+
+Sticky sessions: مع ws الخام، الاتصال بعد الـ upgrade TCP واحد مربوط بسيرفر واحد لحد ما يتقفل، فالـ load balancer مش محتاج يفتكر حاجة. الـ sticky بيبقى ضروري لو: socket.io بالـ long-polling (درس «sticky sessions»: كذا طلب HTTP لازم يروحوا لنفس السيرفر)، أو لو حالة الاتصال (زي الـ history في الدرس اللي فات) في ذاكرة سيرفر واحد. الحل التاني أحسن: الحالة في Redis، فأي سيرفر يكمّل. والـ sticky ليه تمن: لو سيرفر وقع، كل عملاؤه بيتنقلوا مرة واحدة، والتوزيع بيبقى مش متساوي.
+
+Redis pub/sub «fire and forget»: لو سيرفر اتقطع عن Redis ثانيتين، الرسايل اللي اتنشرت في الثانيتين دول ضاعت بالنسبة لعملاؤه. الـ seq بيكشف ده: لو العميل استلم 12 بعد 9، يعرف إن فيه فراغ، فيقفل ويرجع بـ [[since=9]] والسيرفر يكمّل من الـ history. ولو محتاج ضمان أقوى، Redis Streams ([[XADD]] و [[XREAD]]) بتخزن وكل سيرفر يقرا من آخر مكان (تاب APIs المستوى ٣، قسم «Queues والأحداث»).`,
+            when: R`من أول ما يبقى عندك أكتر من process واحد بيخدم WebSockets (حتى على نفس السيرفر: PM2 cluster أو كذا container). ولو بتستخدم socket.io، استخدم الـ Redis adapter الجاهز بدل الكود ده.`,
+            mistakes: R`نفس اتصال Redis للـ subscribe والأوامر. و [[PUBLISH]] و [[RPUSH]] من غير [[MULTI]] (لو السيرفر وقع بينهم، رسالة تتبعت live ومتتحفظش أو العكس). والـ replay من غير queue (رسايل تضيع عشوائيًا تحت الحمل). و [[SUBSCRIBE]] لكل اتصال بدل كل يوزر أو pattern (آلاف الاشتراكات). وتفتكر Redis pub/sub بيخزن الرسايل. وتنسى تشيل الاتصال من [[local]] في [[close]] فالـ Map بتكبر للأبد.`
+          },
+          teach: R`## الفكرة: كل سيرفر يسمع Redis، ويبعت للي عنده
+
+~~~text الصورة
+العميل ── ws ──> سيرفر A ──┐
+                            ├── Redis: PUBLISH user:u1
+POST /notify ──> سيرفر B ──┘
+~~~
+
+اتجرّب على ويندوز 11: Node 24.22.1 و ws 8.22.0 و redis (المكتبة) 6.3.0، و Redis 8 في container ([[redis:8-alpine]]) على بورت 6391. سيرفرين بنفس الكود: A على 7101 و B على 7102، وكل واحد فيه [[POST /notify?user=u1&text=...]]. والـ upgrade بيبعت [[userId]] من [[?user=]] بدل الكوكي، عشان التجربة بس (في الحقيقة: الفحص اللي في درس «auth على الـ upgrade» وبيبعت [[user.id]]). والعميل Node 24 بالـ [[WebSocket]] المدمج فيه (نفس API المتصفح)، ومعاه نفس الـ dedupe بتاع الدرس اللي فات.
+
+---
+
+## ١. اتصالين بـ Redis
+
+~~~ts
+const pub = createClient({ url: process.env.REDIS_URL });
+const sub = pub.duplicate();
+await Promise.all([pub.connect(), sub.connect()]);
+~~~
+
+- [[REDIS_URL]] زي [[redis://localhost:6391]].
+- [[sub]] هيبقى في subscriber mode (مينفعش يعمل [[INCR]] ولا [[LRANGE]])، فـ [[pub]] للأوامر.
+- [[Promise.all]]: الاتنين يتصلوا في نفس الوقت، و [[await]] لحد ما الاتنين يخلصوا. ([[await]] على أول مستوى في الملف شغال في ES modules.)
+
+## ٢. مين متصل هنا
+
+~~~ts
+type Conn = { ws: WebSocket; queue: string[] | null };
+const local = new Map<string, Set<Conn>>();
+~~~
+
+- [[Conn]]: الاتصال، ومعاه [[queue]]: لو array يبقى لسه بنعمل replay، ولو [[null]] يبقى live.
+- [[local]]: userId ← كل اتصالاته على السيرفر **ده**.
+
+## ٣. الاشتراك
+
+~~~ts
+await sub.pSubscribe("user:*", (message, channel) => {
+  for (const c of local.get(channel.slice(5)) ?? []) c.queue ? c.queue.push(message) : c.ws.send(message);
+});
+~~~
+
+- [[pSubscribe]] = [[PSUBSCRIBE]]. الـ callback بياخد الرسالة واسم الـ channel الحقيقي (زي [[user:u1]]).
+- [[channel.slice(5)]]: شيل أول ٥ حروف ([[user:]]) يفضل [[u1]].
+- [[?? []]]: اليوزر مش متصل هنا ← loop على array فاضي ← ولا حاجة.
+- [[c.queue ? push : send]]: بيعمل replay؟ خليها تستنى. غير كده ابعت.
+
+## ٤. [[notify]]
+
+~~~ts
+  const seq = await pub.incr($__btseq:$__{userId}$__bt);
+  const data = JSON.stringify({ seq, ...event });
+  await pub.multi().rPush($__bthist:$__{userId}$__bt, data).lTrim($__bthist:$__{userId}$__bt, -1000, -1).publish($__btuser:$__{userId}$__bt, data).exec();
+~~~
+
+| الأمر | بيعمل إيه |
+|---|---|
+| [[INCR seq:u1]] | الرقم الجاي لليوزر ده (ذري: سيرفرين في نفس اللحظة ياخدوا رقمين مختلفين) |
+| [[MULTI]] ... [[EXEC]] | التلاتة اللي جوه يتنفذوا مع بعض، ومحدش يدخل في النص |
+| [[RPUSH hist:u1]] | ضيف في آخر الـ list |
+| [[LTRIM hist:u1 -1000 -1]] | سيب من العنصر ١٠٠٠ من الآخر لآخر عنصر ([[-1]] = الأخير) |
+| [[PUBLISH user:u1]] | ابعتها لكل السيرفرات المشتركة دلوقتي |
+
+## ٥. اتصال جديد: سجّل، وبعدين replay
+
+~~~ts
+  const conn: Conn = { ws, queue: [] };
+  const set = local.get(userId) ?? new Set<Conn>();
+  local.set(userId, set.add(conn));
+  ws.on("close", () => { set.delete(conn); if (set.size === 0) local.delete(userId); });
+~~~
+
+- بيتسجل **قبل** الـ replay و [[queue: []]]: أي رسالة تيجي من دلوقتي متضيعش، بس تستنى.
+- [[set.add(conn)]] بيرجّع الـ Set نفسه، فـ [[local.set]] بياخده على طول.
+- [[close]]: شيله، ولو آخر اتصال لليوزر شيل اليوزر من الـ Map.
+
+~~~ts
+  let last = since;
+  for (const d of await pub.lRange($__bthist:$__{userId}$__bt, 0, -1)) {
+    const s = JSON.parse(d).seq;
+    if (s > last) { ws.send(d); last = s; }
+  }
+  for (const d of conn.queue!) if (JSON.parse(d).seq > last) ws.send(d);
+  conn.queue = null;
+~~~
+
+- [[LRANGE 0 -1]]: الـ list كلها (لحد ١٠٠٠).
+- ابعت اللي بعد [[since]]، و [[last]] = آخر رقم اتبعت.
+- بعدها الـ queue: اللي وصل أثناء الـ [[await]]. اللي رقمه أكبر من [[last]] بس (لو نفس الرسالة اتحفظت في الـ list ووصلت live، متتبعتش مرتين).
+- [[!]] بعد [[queue]]: بيقول لـ TypeScript «أنا متأكد إنها مش null هنا».
+- [[queue = null]]: من دلوقتي live.
+
+(وشرط الـ [[reset]] بتاع الدرس اللي فات لو [[since]] أقدم من أول عنصر في الـ list: نفس الفكرة بالظبط، شلناه هنا عشان الكود يبقى أقصر.)
+
+---
+
+## ٦. التجربة
+
+~~~text سجل العميل
+[client] POST :7102 -> queued by B
+[client] got seq=1 "hello" from B (connected to :7101)
+[client] disconnected
+[client] POST :7102 -> queued by B
+[client] POST :7101 -> queued by A
+[client] got seq=2 "while-away-1" from B (connected to :7102)
+[client] got seq=3 "while-away-2" from A (connected to :7102)
+[client] POST :7101 -> queued by A
+[client] got seq=4 "live-again" from A (connected to :7102)
+~~~
+
+~~~text سجل السيرفرين
+[A] u1 connected since=0, replayed 0
+[B] u1 connected since=1, replayed 2
+~~~
+
+- السطر التاني: الرسالة اتعملت على B ووصلت للعميل المتصل بـ A. ده الـ pub/sub.
+- العميل رجع على **سيرفر تاني** (B) بـ [[since=1]]، و B أعاد رسالتين من Redis، منهم واحدة اتعملت على A. ده الـ history في Redis، ومن غير sticky.
+- [[live-again]] اتعملت على A ووصلت للعميل على B.
+
+وجوه Redis:
+
+~~~text redis-cli LRANGE hist:u1 0 -1
+{"seq":1,"type":"msg","text":"hello","from":"B"}
+{"seq":2,"type":"msg","text":"while-away-1","from":"B"}
+{"seq":3,"type":"msg","text":"while-away-2","from":"A"}
+{"seq":4,"type":"msg","text":"live-again","from":"A"}
+~~~
+
+و [[PUBSUB NUMPAT]] طلّع [[1]]: ده عدد الـ **patterns** المختلفة ([[user:*]])، مش عدد السيرفرات المشتركين فيها.
+
+---
+
+## ٧. Sticky sessions: إمتى؟
+
+| الحالة | محتاج sticky؟ |
+|---|---|
+| ws الخام، والحالة في Redis (الدرس ده) | لأ: الاتصال بعد الـ upgrade مربوط بسيرفر لوحده |
+| ws الخام، والـ history في ذاكرة السيرفر (الدرس اللي فات) | أيوه، أو انقلها لـ Redis (أحسن) |
+| socket.io بالـ polling (الافتراضي) | أيوه (درس «sticky sessions») |
+| socket.io بـ [[transports: ["websocket"]]] بس | لأ للـ handshake، والـ adapter لسه لازم |
+
+---
+
+## الخلاصة
+
+| الحتة | ليه |
+|---|---|
+| [[pub]] و [[sub]] منفصلين | الـ subscriber مبيعملش أوامر |
+| [[PSUBSCRIBE user:*]] + [[local]] | كل سيرفر يبعت للي عنده |
+| [[INCR]] | رقم متسلسل واحد لكل السيرفرات |
+| [[MULTI]]: [[RPUSH]] + [[LTRIM]] + [[PUBLISH]] | يتحفظ ويتبعت مع بعض |
+| [[queue]] أثناء الـ replay | مفيش رسالة تسبق رسايل الـ replay |
+| الحالة في Redis | أي سيرفر يكمّل، من غير sticky |
+
+- Redis pub/sub مش بيخزن: الـ history هو اللي بيغطي القطع.`,
+          lines: [
+            "مكتبة redis الرسمية.",
+            "نوع الاتصال من ws.",
+            "اتصال للأوامر.",
+            "اتصال تاني للاشتراك (نفس الإعدادات).",
+            "وصّل الاتنين مع بعض.",
+            "الاتصال، ومعاه طابور رسايل وهو بيعمل replay (null = live).",
+            "اليوزر ← اتصالاته على السيرفر ده.",
+            "اشترك في كل channel بيبدأ بـ user:",
+            "لكل اتصال لليوزر ده هنا: لو بيعمل replay خلّيها تستنى، غير كده ابعتها.",
+            "قفلة.",
+            "ابعت حدث ليوزر من أي سيرفر:",
+            "رقم متسلسل ذري لليوزر.",
+            "الرسالة كنص.",
+            "مع بعض: احفظ في الـ history، وسيب آخر ١٠٠٠، وانشر.",
+            "قفلة.",
+            "اتصال جديد (الـ upgrade بعت الـ userId):",
+            "آخر رقم العميل شافه.",
+            "الاتصال في وضع replay.",
+            "اتصالات اليوزر هنا أو Set جديد.",
+            "سجّل الاتصال قبل الـ replay.",
+            "لما يتقفل شيله، ولو آخر واحد شيل اليوزر.",
+            "آخر رقم اتبعت.",
+            "اقرا الـ history من Redis:",
+            "رقم الرسالة.",
+            "لو بعد اللي العميل شافه ابعتها.",
+            "قفلة.",
+            "وبعدين اللي وصل live أثناء الـ replay، من غير تكرار.",
+            "من هنا live.",
+            "قفلة."
+          ],
+          sol: R`اتجرّب على ويندوز 11 بـ Redis 8 في Docker ونسختين Node 24.22.1:
+
+[[got seq=1 "hello" from B (connected to :7101)]]: اتعملت على B ووصلت للعميل على A. وبعد ما رجع على 7102 بـ [[since=1]]: [[seq=2]] من B و [[seq=3]] من A وصلوا من الـ history ([[replayed 2]] في سجل B)، و [[seq=4]] اتعملت على A ووصلت live.
+
+لو مفيش حاجة وصلت للعميل من السيرفر التاني: يا [[sub]] مش مشترك قبل ما تبعت ([[await sub.pSubscribe]])، يا اسم الـ channel مختلف بين [[publish]] و [[pSubscribe]]. ولو الرسايل اللي فاتت موصلتش: [[since]] مش بيتبعت، أو [[LRANGE]] على key غلط. ومتنساش [[docker rm -f -v lab-redis]].`,
+          solCode: R`docker run -d --name lab-redis -p 6391:6379 redis:8-alpine
+REDIS_URL=redis://localhost:6391 NAME=A PORT=7101 node server.ts &
+REDIS_URL=redis://localhost:6391 NAME=B PORT=7102 node server.ts &
+curl -X POST "localhost:7102/notify?user=u1&text=hello"
+docker exec lab-redis redis-cli LRANGE hist:u1 0 -1
+docker rm -f -v lab-redis`
+        },
+        {
+          cmd: "backpressure و bufferedAmount",
+          title: "عميل بطيء ميوقّعش السيرفر",
+          desc: R`[[ws.send()]] مبيستناش الرسالة توصل: بيحطها في buffer في ذاكرة السيرفر ويرجع على طول. لو العميل على نت بطيء ومبيلحقش يقرا، الـ buffer ده بيكبر من غير حد لحد ما الذاكرة تخلص. ده اسمه backpressure.
+
+[[ws.bufferedAmount]] بيقولك كام بايت مستنية تتبعت للاتصال ده. افحصه قبل كل [[send]]: الرسايل اللي ينفع تتشال (سعر بيتحدث كل ثانية) اتجاهلها لو عدّى حد، ولو عدّى حد أكبر اقفل الاتصال، والعميل يرجع ويعمل resume.`,
+          example: R`import { WebSocket } from "ws";
+const HIGH = 1024 * 1024;
+const KILL = 8 * 1024 * 1024;
+export function sendTo(ws: WebSocket, data: string, droppable: boolean) {
+  if (ws.readyState !== WebSocket.OPEN) return;
+  if (ws.bufferedAmount > KILL) { ws.terminate(); return; }
+  if (droppable && ws.bufferedAmount > HIGH) { metrics.dropped++; return; }
+  ws.send(data);
+}
+for (const ws of wss.clients) sendTo(ws, priceTick, true);`,
+          try: R`اعمل سيرفر بيبعت لكل عميل رسالة 1KB تقريبًا بأسرع ما يقدر ([[setInterval]] كل مللي ثانية، ٢٠ رسالة كل مرة). وصّل عميلين بمكتبة [[ws]]: واحد عادي، والتاني يعمل [[ws.pause()]] أول ما يتفتح (بطّل يقرا من الـ socket، كأنه على 3G وحش). اطبع كل ثانية [[bufferedAmount]] لكل اتصال و [[process.memoryUsage().rss]]، مرة بـ [[ws.send]] على طول، ومرة بـ [[sendTo]].`,
+          flag: "script",
+          deep: {
+            why: R`سيرفر واحد عليه آلاف الاتصالات، وكفاية كام عميل بطيء (أو عميل بيعمل كده قصد) عشان كل واحد فيهم يحجز ميجات في الذاكرة. ومن غير حد، الـ process يقع بـ out of memory ومعاه كل العملاء التانيين. والمشكلة مبتبانش في التطوير لأن الـ localhost سريع.`,
+            how: R`فيه ٣ أماكن البيانات بتستنى فيها: buffer الـ socket في Node (ده اللي [[bufferedAmount]] بيعدّه)، وbuffer الكيرنل للـ TCP، والشبكة نفسها. لما العميل مبيقراش، الكيرنل عنده بيتملي، فـ TCP بيقول للسيرفر «استنى» (الـ window بتبقى صفر)، فالكيرنل عند السيرفر يتملي، وبعدين Node يبدأ يكوّم في الذاكرة. فـ [[bufferedAmount]] بيبدأ يزيد بعد ما الكيرنلين يتملوا.
+
+[[ws.pause()]] في التجربة: بيوقّف قراية الـ socket عند العميل، فده بيعمل بالظبط اللي بيعمله عميل بطيء.
+
+التلات قرارات:
+1. رسايل ينفع تضيع (أسعار، مكان عربية على الخريطة، «فلان بيكتب»): لو الـ buffer عدّى [[HIGH]] متبعتش، الرسالة الجاية هتجيب أحدث قيمة. أحسن منها: coalescing، تحفظ آخر قيمة لكل key وتبعتها لما الـ buffer يفضى.
+2. رسايل مهمة (طلب اتدفع): متتشالش، بتتبعت. ولو الـ buffer عدّى [[KILL]]: [[terminate()]]. العميل هيرجع بـ [[since]] (درس «reconnect و backoff») وياخد اللي فاته من الـ history، فمفيش حاجة ضاعت بجد.
+3. الأرقام: [[HIGH]] و [[KILL]] على حسب حجم رسايلك وعدد الاتصالات والذاكرة. ١٠ آلاف اتصال × 8MB = 80GB، فالحد لازم يتحسب.
+
+الاتجاه التاني (العميل بيبعت): في المتصفح [[ws.bufferedAmount]] موجود برضه، والعميل اللي بيرفع ملف حتت يستنى لحد ما يقل قبل ما يبعت الحتة الجاية. والسيرفر بيحمي نفسه من عميل بيغرقه بـ [[maxPayload]] و rate limit لكل اتصال.
+
+وفيه في المتصفح [[WebSocketStream]] (API بـ streams فيه backpressure جوه)، بس لسه مش في كل المتصفحات وقت كتابة الدرس، فراجع MDN قبل ما تعتمد عليه.`,
+            when: "أي broadcast لكتير من العملاء أو أي stream بيانات سريع (أسعار، logs لايف، ألعاب). وفي أي سيرفر عام، عشان عميل واحد ميقدرش يحجز ذاكرة من غير حد.",
+            mistakes: R`[[ws.send()]] في loop من غير ما تبص على [[bufferedAmount]]. وتقفل الاتصال مع أول ارتفاع (الـ buffer بيعلى ويوطى طبيعي). وتشيل رسايل مهمة عشان الـ buffer مليان. و [[KILL]] من غير resume عند العميل (الرسايل تضيع بجد). وتفتكر إن الـ RSS بتاع الـ process هيقولك المشكلة بدري: الذاكرة بتكبر ببطء والـ GC بيخبيها، و [[bufferedAmount]] لكل اتصال أوضح بكتير.`
+          },
+          teach: R`## الفكرة: بص على الطابور قبل ما تزوّد فيه
+
+[[bufferedAmount]] = حجم الطابور اللي مستني يتبعت لاتصال واحد. قبل كل [[send]] بتسأل: الطابور ده كبر أكتر من اللازم؟
+
+اتجرّب على ويندوز 11: Node 24.22.1 و ws 8.22.0، السيرفر والعميلين في نفس الـ script (بورت 7201). الرسالة [[{"type":"tick","data":"xxx...(1000 حرف)"}]] حوالي 1KB. [[fast]] عميل عادي، و [[slow]] عمل [[pause()]] أول ما اتفتح. كل ثانية بنطبع [[bufferedAmount]] لكل اتصال بالميجا و RSS الـ process.
+
+---
+
+## ١. الحدود
+
+~~~ts
+const HIGH = 1024 * 1024;
+const KILL = 8 * 1024 * 1024;
+~~~
+
+[[1024 * 1024]] = 1MB، و [[8 * 1024 * 1024]] = 8MB. الأرقام دي للتجربة.
+
+## ٢. [[sendTo]] سطر سطر
+
+~~~ts
+  if (ws.readyState !== WebSocket.OPEN) return;
+~~~
+
+[[readyState]]: حالة الاتصال: [[CONNECTING]] (0) و [[OPEN]] (1) و [[CLOSING]] (2) و [[CLOSED]] (3). لو مش مفتوح، مفيش داعي.
+
+~~~ts
+  if (ws.bufferedAmount > KILL) { ws.terminate(); return; }
+~~~
+
+الطابور عدّى 8MB: العميل ده مش هيلحق. [[terminate()]] مش [[close()]]: [[close]] بيحط close frame **في آخر نفس الطابور** ويستنى، و [[terminate]] بيقفل الـ socket فورًا ويرمي الطابور.
+
+~~~ts
+  if (droppable && ws.bufferedAmount > HIGH) { metrics.dropped++; return; }
+  ws.send(data);
+~~~
+
+- [[droppable]]: انت اللي بتقول الرسالة دي ينفع تضيع ولا لأ.
+- [[metrics.dropped++]]: عدّاد (Prometheus مثلًا) عشان تشوف ده بيحصل قد إيه.
+
+~~~ts
+for (const ws of wss.clients) sendTo(ws, priceTick, true);
+~~~
+
+الـ broadcast بقى بيعدّي على [[sendTo]] بدل [[ws.send]].
+
+---
+
+## ٣. التجربة: [[ws.send]] على طول
+
+~~~text الناتج
+1.0s slow=5.5MB fast=0.0MB rss=88MB fastGot=5740 dropped=0
+2.0s slow=9.3MB fast=0.0MB rss=89MB fastGot=9680 dropped=0
+3.0s slow=12.4MB fast=0.0MB rss=90MB fastGot=12840 dropped=0
+4.0s slow=15.0MB fast=0.0MB rss=93MB fastGot=15480 dropped=0
+5.0s slow=17.8MB fast=0.0MB rss=97MB fastGot=18260 dropped=0
+~~~
+
+- [[fast]] طابوره صفر طول الوقت: بيقرا أول بأول (استلم 18260 رسالة في ٥ ثواني).
+- [[slow]] بيزيد حوالي 3MB كل ثانية، ومش هيقف. سيبه ساعة = حوالي 10GB.
+- RSS زاد 9MB بس في ٥ ثواني، فلو بتراقب الذاكرة الكلية بس مش هتاخد بالك بدري. الرقم اللي بيفضح المشكلة هو [[bufferedAmount]].
+- أول ثانية الطابور 5.5MB مرة واحدة: الكيرنلين اتملوا الأول (مش ظاهرين في الرقم ده)، وبعدها كل حاجة اتكوّمت في Node.
+
+## ٤. التجربة: [[sendTo(..., true)]]
+
+~~~text الناتج
+1.0s slow=1.0MB fast=0.0MB rss=85MB fastGot=4840 dropped=3649
+3.0s slow=1.0MB fast=0.0MB rss=86MB fastGot=15080 dropped=13889
+5.0s slow=1.0MB fast=0.0MB rss=86MB fastGot=22780 dropped=21589
+~~~
+
+الطابور وقف عند 1MB، والذاكرة ثابتة، والعميل السريع مأثرش عليه حاجة. والرسايل الزيادة اتشالت ([[dropped]]) للعميل البطيء بس.
+
+## ٥. التجربة: [[sendTo(..., false)]] (رسايل مهمة)
+
+~~~text الناتج
+1.0s fast=0.0MB slow=4.4MB rss=86MB fastGot=4660 dropped=0
+2.0s fast=0.0MB slow=7.6MB rss=89MB fastGot=7940 dropped=0
+terminated slow client at 8389437
+3.0s fast=0.0MB rss=90MB fastGot=11020 dropped=0
+~~~
+
+متشالش حاجة، والطابور كبر لحد ما عدّى 8MB (8389437 بايت > 8388608)، فاتقفل. من الثانية ٣ [[slow]] مش في القايمة. لو العميل ده بيعمل reconnect و resume، هيرجع ياخد اللي فاته من الـ history.
+
+---
+
+## الخلاصة
+
+| الحتة | ليه |
+|---|---|
+| [[bufferedAmount]] | حجم الطابور لاتصال واحد |
+| [[> HIGH]] + droppable ← متبعتش | الأحدث هييجي بعدها |
+| [[> KILL]] ← [[terminate()]] | الطابور ميكبرش للأبد |
+| [[terminate]] مش [[close]] | الـ close frame هيستنى في نفس الطابور |
+| resume عند العميل | القفل ميضيّعش رسايل مهمة |
+
+- الـ RSS الكلي بيتأخر في إنه يبيّن المشكلة. راقب [[bufferedAmount]] لكل اتصال.`,
+          lines: [
+            "مكتبة ws.",
+            "حد «اتجاهل الرسايل الغير مهمة»: 1MB.",
+            "حد «اقفل الاتصال»: 8MB.",
+            "ابعت لاتصال واحد بأمان:",
+            "مش مفتوح: متعملش حاجة.",
+            "الطابور عدّى 8MB: اقفل فورًا (العميل هيرجع ويعمل resume).",
+            "رسالة ينفع تضيع والطابور عدّى 1MB: اتجاهلها وعدّها.",
+            "غير كده ابعت.",
+            "قفلة.",
+            "الـ broadcast بقى بيعدّي على sendTo."
+          ],
+          sol: R`اتجرّب على ويندوز 11 (Node 24.22.1 و ws 8.22.0):
+
+- من غير حماية: [[slow]] وصل 17.8MB في ٥ ثواني ولسه بيزيد (حوالي 3MB/ثانية)، و [[fast]] صفر.
+- بـ [[sendTo(..., true)]]: [[slow]] ثابت عند 1.0MB، و 21589 رسالة اتشالت ليه هو بس، و RSS ثابت حوالي 86MB.
+- بـ [[sendTo(..., false)]]: اتقفل عند 8389437 بايت ([[terminated slow client]]).
+
+لو [[bufferedAmount]] عند البطيء فضل صفر: العميل مش واقف فعلًا ([[pause()]] اتنادت قبل [[open]]؟)، أو الرسايل صغيرة وبطيئة لدرجة إن الكيرنل شايلها.`,
+          solCode: R`const slow = new WebSocket("ws://localhost:7201/slow");
+slow.on("open", () => slow.pause());
+setInterval(() => {
+  for (const ws of wss.clients) console.log((ws.bufferedAmount / 1024 / 1024).toFixed(1) + "MB");
+}, 1000);`
+        },
+        {
+          cmd: "ws ولا SSE ولا Socket.IO",
+          title: "تختار أنهي واحد للـ realtime",
+          desc: R`لو السيرفر بس هو اللي بيبعت (إشعارات، حالة طلب، رد AI بيتكتب): SSE أبسط، شغال على HTTP عادي، وفيه reconnect و [[Last-Event-ID]] جاهزين في المتصفح. لو الاتنين بيبعتوا كتير وبسرعة (شات، لعبة، تعديل مشترك): WebSocket.
+
+وبين ws الخام و Socket.IO: Socket.IO مكتبة فوق WebSocket بتديك reconnect و rooms و acks و Redis adapter جاهزين، بس ليها بروتوكول خاص بيها: عميل WebSocket عادي مش بيكلّم سيرفر Socket.IO ولا العكس.`,
+          example: R`// ws: الرسالة زي ما هي
+ws.send(JSON.stringify({ id: 7, text: "paid" }));
+// SSE: سطور نص على رد HTTP مفتوح
+res.write($__btid: 7\nevent: notification\ndata: $__{JSON.stringify({ id: 7, text: "paid" })}\n\n$__bt);
+// Socket.IO: event باسم، والمكتبة بتغلّفه
+socket.emit("notification", { id: 7, text: "paid" });`,
+          try: R`اعمل سيرفر Socket.IO بيعمل [[socket.emit("notification", { id: 7, text: "paid" })]] لأي حد يتصل، ووصّل عليه بمكتبة [[ws]] الخام على [[ws://localhost:7301/socket.io/?EIO=4&transport=websocket]]، واطبع كل frame وطوله. (لما توصلك رسالة بتبدأ بـ [[0]]، رد بـ [[40]] عشان تدخل الـ namespace.) قارن بنفس الرسالة بـ ws و SSE.`,
+          flag: "script",
+          deep: {
+            why: R`الاختيار ده بيتعمل مرة وبيفضل معاك: الـ infrastructure (proxy و CDN و load balancer)، والعملاء (موبايل native، أجهزة IoT)، والـ scaling كلهم بيتبنوا عليه. وناس كتير بتبدأ بـ Socket.IO أو WebSocket لحاجة كانت SSE هتكفيها بربع الكود.`,
+            how: R`SSE: رد HTTP عادي بـ [[text/event-stream]] (درس «SSE في Express»). المتصفح بيعيد الاتصال لوحده وبيبعت [[Last-Event-ID]]، والـ proxies والـ CDNs فاهمينه لأنه HTTP. عيوبه: اتجاه واحد (العميل يبعت بـ [[fetch]] عادي)، ونص بس، وعلى HTTP/1.1 المتصفح بيسمح بـ ٦ اتصالات للدومين الواحد (التابات بتتقاسمهم)، والمشكلة دي بتختفي مع HTTP/2 لأن كل الـ streams على اتصال واحد. و [[EventSource]] مبيقبلش headers، فالـ auth بالكوكي (أو ticket زي WebSocket).
+
+WebSocket الخام ([[ws]]): اتجاهين، نص أو binary، وأقل overhead (frame بـ ٢ لـ ١٤ بايت header). بس كل حاجة عليك: reconnect و resume و heartbeat و rooms و scaling (الدروس اللي فاتت كلها). ويشتغل مع أي عميل بيفهم RFC 6455 (موبايل، Go، Python...).
+
+Socket.IO: بيبدأ بـ HTTP long-polling وبعدين يرقّي لـ WebSocket (فيشتغل ورا proxies قديمة بتمنع WebSocket)، وفيه reconnect بـ backoff، و rooms، و acks (رد على رسالة معينة)، و Redis adapter، و Connection State Recovery (resume لفترة قصيرة). التمن: عميل حوالي 14.8KB gzip، وبروتوكول خاص (أي عميل لازم يستخدم مكتبة Socket.IO للغة دي)، و sticky sessions لو الـ polling شغال.
+
+وفيه حاجتين بيتسألوا عليهم: WebTransport (فوق HTTP/3، datagrams و streams) لسه مش مدعوم في كل المتصفحات والسيرفرات، فراجع حالته قبل ما تختاره. و polling عادي (طلب كل ١٠ ثواني) لسه اختيار محترم لو التحديثات قليلة ومش مستعجلة.`,
+            when: R`إشعارات وحالة طلبات وتقدم job وستريم AI: SSE. شات ولعبة وتعديل مشترك ومؤشرات «بيكتب»: WebSocket. فريق عايز يخلص بسرعة والعملاء كلهم web أو موبايل بمكتبة Socket.IO: Socket.IO. عملاء native أو IoT أو لغات تانية: ws خام (أو أي سيرفر بيتكلم RFC 6455).`,
+            mistakes: R`WebSocket لإشعارات اتجاه واحد (كود وتعقيد على الفاضي). وتفتكر Socket.IO «WebSocket أسهل» وتحاول توصل له بـ [[new WebSocket()]]. و SSE على HTTP/1.1 مع تابات كتير (الاتصالات بتخلص والصفحة تعلّق). وتختار حاجة من غير ما تتأكد إن الـ proxy أو الـ CDN اللي قدامك بيعدّيها ومبيعملش buffering للرد (nginx: [[proxy_buffering off]] للـ SSE، و [[Upgrade]] headers للـ WebSocket، تاب Nginx).`
+          },
+          teach: R`## الفكرة: مين بيبعت، وقد إيه، ولمين
+
+السؤال الأول: العميل محتاج **يبعت** للسيرفر كتير وبسرعة؟ لو لأ: SSE. لو أيوه: WebSocket. وبعدين: تكتب الحاجات الجاهزة بنفسك (ws) ولا تاخدها من مكتبة (Socket.IO)؟
+
+اتجرّب على ويندوز 11: Node 24.22.1، و socket.io 4.8.4، و ws 8.22.0 كعميل خام على سيرفر Socket.IO (بورت 7301)، عشان نشوف الـ frames الحقيقية.
+
+---
+
+## ١. نفس الرسالة على السلك
+
+~~~ts
+ws.send(JSON.stringify({ id: 7, text: "paid" }));
+~~~
+
+ws: البايتات هي الـ JSON بالظبط: [[{"id":7,"text":"paid"}]] = 22 بايت (وفوقهم header الـ frame: ٢ بايت للرسايل الصغيرة من السيرفر).
+
+~~~ts
+res.write($__btid: 7\nevent: notification\ndata: $__{JSON.stringify({ id: 7, text: "paid" })}\n\n$__bt);
+~~~
+
+SSE: سطور نص. [[\n]] نهاية سطر، و [[\n\n]] (سطر فاضي) نهاية الحدث. نفس الرسالة بقت 56 بايت: الزيادة هي [[id:]] و [[event:]] و [[data:]]، وهي اللي بتدّيك الـ resume والـ events بالاسم من غير كود.
+
+~~~ts
+socket.emit("notification", { id: 7, text: "paid" });
+~~~
+
+Socket.IO: شفنا الـ frames بالعميل الخام:
+
+~~~text الناتج
+frame (107 bytes): 0{"sid":"RSy7kVADRZ8iK06eAAAA","upgrades":[],"pingInterval":25000,"pingTimeout":20000,"maxPayload":1000000}
+frame (32 bytes): 40{"sid":"3reuEGKS48DxMv70AAAA"}
+frame (41 bytes): 42["notification",{"id":7,"text":"paid"}]
+~~~
+
+| الـ frame | معناه |
+|---|---|
+| [[0{...}]] | Engine.IO «open»: الـ session id والـ heartbeat ([[pingInterval]] و [[pingTimeout]]) |
+| [[40]] (احنا بعتناها) ثم [[40{"sid":...}]] | Socket.IO «connect» للـ namespace الرئيسي [[/]] |
+| [[42[...]]] | [[4]] = رسالة Engine.IO، و [[2]] = EVENT في Socket.IO، وبعدها array: اسم الـ event ثم البيانات |
+
+يعني Socket.IO بروتوكول **فوق** WebSocket: عميل [[new WebSocket()]] عادي لو اتصل بسيرفر Socket.IO هيشوف الكلام ده، مش الـ JSON بتاعك. وعميل Socket.IO مش هيعرف يتكلم مع سيرفر ws عادي.
+
+وحجم عميل Socket.IO في المتصفح: [[socket.io.min.js]] من الباكدج 47295 بايت، وبعد gzip حوالي 14805 (حوالي 14.8KB). الـ [[WebSocket]] و [[EventSource]] جوه المتصفح ومش بيكلفوا ولا بايت.
+
+---
+
+## ٢. المقارنة
+
+| | SSE | ws الخام | Socket.IO |
+|---|---|---|---|
+| الاتجاه | سيرفر ← عميل | الاتنين | الاتنين |
+| البيانات | نص | نص و binary | نص و binary |
+| reconnect | جاهز في المتصفح | تكتبه (درس «reconnect و backoff») | جاهز |
+| resume | [[Last-Event-ID]] جاهز | تكتبه ([[seq]] و history) | Connection State Recovery (فترة قصيرة) |
+| heartbeat | تبعت comment كل شوية | تكتبه (درس «heartbeat و ping») | جاهز |
+| أكتر من سيرفر | Redis pub/sub | Redis pub/sub (درس «ws على سيرفرين بـ Redis») | Redis adapter |
+| sticky | لأ | لأ | أيوه مع الـ polling |
+| ورا proxy/CDN | HTTP عادي (اقفل الـ buffering) | محتاج دعم [[Upgrade]] | بيرجع لـ polling لوحده |
+| auth | كوكي | كوكي أو ticket (درس «auth على الـ upgrade») | كوكي أو [[auth]] في الـ handshake |
+| العملاء | أي HTTP client | أي عميل RFC 6455 | مكتبة Socket.IO بس |
+
+---
+
+## ٣. القرار بسرعة
+
+1. السيرفر بس بيبعت؟ **SSE**. (إشعارات، تقدم job، ستريم رد LLM في درس «ستريم رد LLM».)
+2. الاتنين بيبعتوا والعملاء web وموبايل بمكتبة Socket.IO، وعايز rooms و acks جاهزين؟ **Socket.IO**.
+3. عملاء native أو IoT أو لغات تانية، أو محتاج أقل overhead وتحكم كامل؟ **ws** والدروس اللي في القسم ده.
+4. التحديثات كل دقيقة ومش مستعجلة؟ polling عادي بـ [[ETag]] (تاب APIs المستوى ١) ممكن يكفي.
+
+---
+
+## الخلاصة
+
+- SSE = HTTP عادي في اتجاه واحد، وفيه الـ reconnect والـ resume جاهزين.
+- WebSocket = اتجاهين، والباقي عليك.
+- Socket.IO = WebSocket + بروتوكول + الحاجات الجاهزة، ومش متوافق مع WebSocket الخام.`,
+          lines: [
+            "ws: ابعت الـ JSON على الاتصال.",
+            "SSE: اكتب الحدث كسطور نص (id و event و data) وسطر فاضي في الآخر.",
+            "Socket.IO: event باسم وبيانات، والمكتبة بتعمله frame بشكلها."
+          ],
+          sol: R`اتجرّب على ويندوز 11 (Node 24.22.1 و socket.io 4.8.4 و ws 8.22.0 كعميل خام):
+
+- أول frame: [[0{"sid":...,"pingInterval":25000,"pingTimeout":20000,"maxPayload":1000000}]] (107 بايت).
+- بعد ما بعتنا [[40]]: [[40{"sid":...}]].
+- الرسالة نفسها: [[42["notification",{"id":7,"text":"paid"}]]] = 41 بايت، قصاد 22 بايت بـ ws و 56 بايت بـ SSE (بالـ id والـ event).
+
+يعني الفرق في الحجم صغير. الفرق الحقيقي في اللي جاهز واللي عليك، وفي مين يقدر يتصل.`,
+          solCode: R`import WebSocket from "ws";
+const raw = new WebSocket("ws://localhost:7301/socket.io/?EIO=4&transport=websocket");
+raw.on("message", (d) => {
+  const s = d.toString();
+  console.log($__btframe ($__{Buffer.byteLength(s)} bytes): $__{s}$__bt);
+  if (s.startsWith("0")) raw.send("40");
+});`
+        }
+      ]
+    }
+]);
+
+/* ===== js/tabs/apis/16.js ===== */
+// تكملة تاب apis: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/apis/01.js (شرح حقول الدرس في أوله)
+MORE("apis", [
+    {
+      t: "GraphQL أعمق: operations وأخطاء و pagination وحماية",
+      l: 2,
+      n: "تكملة لقسم «GraphQL»: variables و fragments، والأخطاء والـ null، و connections بـ cursor، و N+1 متقاس على Postgres، وحدود التكلفة و persisted queries، والمقارنة بـ REST و tRPC",
+      items: [
+        {
+          cmd: "variables و fragments",
+          title: "query بـ variables و input و enum و fragment",
+          desc: R`الـ query الحقيقي مبيتكتبش فيه القيم: بيبقى ليه اسم ([[query PostPage]])، و variables بنوعها ([[$id: ID!]])، والقيم بتتبعت لوحدها في [[variables]]. السيرفر بيتأكد من الأنواع قبل ما أي resolver يشتغل، والـ query نفسه نص ثابت ينفع يتخزن ويتعمله hash.
+
+وفيه أدوات تانية في نفس اللغة: [[input]] (object كـ argument) و [[enum]] (قيم محددة)، و aliases (نفس الحقل مرتين باسمين)، و fragments (مجموعة حقول بتتكرر)، و [[@include(if:)]] (حقل بشرط).`,
+          example: R`const typeDefs = /* GraphQL */ $__bt
+  enum PostStatus { DRAFT PUBLISHED }
+  type Post { id: ID! title: String! status: PostStatus! author: User! }
+  input CreatePostInput { title: String!, status: PostStatus = DRAFT }
+  type Query { posts(status: PostStatus): [Post!]!  post(id: ID!): Post }
+  type Mutation { createPost(input: CreatePostInput!): Post! }
+$__bt;
+const PostPage = /* GraphQL */ $__bt
+  query PostPage($id: ID!, $withAuthor: Boolean = false) {
+    post(id: $id) { ...PostCard author @include(if: $withAuthor) { name } }
+    drafts: posts(status: DRAFT) { ...PostCard }
+  }
+  fragment PostCard on Post { id title status }
+$__bt;
+const res = await fetch("/graphql", {
+  method: "POST",
+  headers: { "content-type": "application/json" },
+  body: JSON.stringify({ query: PostPage, operationName: "PostPage", variables: { id: "10", withAuthor: true } }),
+});
+const { data, errors } = await res.json();`,
+          try: R`اعمل السيرفر ده بـ GraphQL Yoga و arrays في الذاكرة (منشورين وكاتبين)، وابعت [[PostPage]] بـ curl. وبعدين: ابعت [[id: null]]، و mutation بـ [[status: "ARCHIVED"]]، و mutation من غير [[status]] (شوف القيمة الافتراضية)، و query بـ GET، و mutation بـ GET. سجّل الـ status code لكل واحد بـ [[curl -w ' [%{http_code}]']].`,
+          flag: "script",
+          deep: {
+            why: R`لو بتبني الـ query بـ string concatenation ([[$__bt{ post(id: "$__{id}") }$__bt]]) فانت عملت injection بإيدك، وكل query مختلف فمفيش كاش ولا persisted queries ولا إحصائيات لكل operation. والـ variables بتخلي الـ query نص ثابت والقيم بس هي اللي بتتغير، زي prepared statements في SQL بالظبط.`,
+            how: R`الـ operation: [[query]] أو [[mutation]] (أو [[subscription]])، وبعدها اسم. الاسم مش إجباري بس مهم: بيظهر في الـ logs والـ tracing، و [[operationName]] بيختار أنهي operation يتنفذ لو المستند فيه أكتر من واحد.
+
+الـ variables: [[$id: ID!]] يعني variable اسمه [[id]] نوعه [[ID]] ومش null. و [[= false]] قيمة افتراضية. السيرفر بيقارن الـ variables بالـ schema **قبل** التنفيذ (validation)، فـ [[null]] لـ [[ID!]] أو [[ARCHIVED]] لـ enum مش فيه القيمة دي بيترفض من غير ما أي resolver يتنادى.
+
+[[input]]: نوع مخصوص للـ arguments بس (مينفعش يبقى نتيجة). بيجمع حقول الـ mutation في object واحد، ويقبل قيم افتراضية ([[status: PostStatus = DRAFT]]). ده أحسن من ١٠ arguments منفصلين لأنك تقدر تضيف حقل اختياري من غير ما تكسر العملاء.
+
+[[enum]]: قيم محددة، بتتكتب من غير quotes جوه الـ query ([[status: DRAFT]]) وكنص في الـ variables ([[{ "status": "DRAFT" }]]).
+
+alias: [[drafts: posts(status: DRAFT)]] بيرجّع نتيجة [[posts]] تحت اسم [[drafts]]. من غيره مينفعش تطلب نفس الحقل مرتين بـ arguments مختلفة.
+
+fragment: [[fragment PostCard on Post { id title status }]] مجموعة حقول على نوع، وبتستخدمها بـ [[...PostCard]]. في React بيبقى كل component معاه الـ fragment بتاعه (الحقول اللي هو محتاجها)، والصفحة بتجمعهم.
+
+[[@include(if: $withAuthor)]]: directive، الحقل بيتطلب لو الشرط true بس. وعكسه [[@skip(if:)]].
+
+GET و POST: الـ queries ينفع تتبعت GET ([[?query=...&variables=...]])، وده بيخليها تتكاش في المتصفح أو CDN. الـ mutations POST بس، والسبب نفسه في REST: GET لازم يبقى safe (تاب APIs المستوى ١، درس «safe و idempotent»).`,
+            when: "دايمًا. كل query في الفرونت ليه اسم و variables، ومفيش قيم بتتلزق جوه النص. والأدوات (GraphQL Codegen مثلًا) بتولّد الأنواع في TypeScript من الـ operations دي.",
+            mistakes: R`قيم جوه نص الـ query بـ template string. و operations من غير أسماء (الـ logs كلها «anonymous»). و arguments كتير منفصلة بدل [[input]]. وفاكر إن [[status: String]] زي enum (أي نص بيعدّي، والغلطة بتظهر في القاعدة). و mutation بـ GET (Yoga بيرفضها بـ 405، بس سيرفرات تانية ممكن لأ). و fragment واحد ضخم بيستخدمه كل مكان، فبترجع للـ overfetching اللي GraphQL جه يحله.`
+          },
+          teach: R`## الفكرة: الـ query نص ثابت، والقيم لوحدها
+
+اتجرّب على ويندوز 11: Node 24.22.1 و [[graphql-yoga]] 6.0.1 و [[graphql]] 16.14.2، سيرفر لوحده ([[createServer(yoga)]] على بورت 7501) و arrays في الذاكرة: منشور 10 ([[PUBLISHED]]، كاتبه Mona) ومنشور 11 ([[DRAFT]]، كاتبه Omar). والطلبات بـ curl من Git Bash.
+
+---
+
+## ١. الـ schema
+
+~~~graphql
+  enum PostStatus { DRAFT PUBLISHED }
+  input CreatePostInput { title: String!, status: PostStatus = DRAFT }
+  type Query { posts(status: PostStatus): [Post!]!  post(id: ID!): Post }
+~~~
+
+- [[enum PostStatus]]: الحالة واحدة من الاتنين دول بس.
+- [[input CreatePostInput]]: argument على شكل object. [[status]] ليه قيمة افتراضية [[DRAFT]].
+- [[posts(status: PostStatus)]]: argument اختياري (مفيش [[!]]).
+- [[post(id: ID!): Post]]: النتيجة [[Post]] من غير [[!]]، يعني ممكن ترجع null لو مش موجود.
+
+## ٢. الـ operation
+
+~~~graphql
+  query PostPage($id: ID!, $withAuthor: Boolean = false) {
+~~~
+
+- [[query]]: قراية. [[PostPage]]: الاسم.
+- [[$id: ID!]]: لازم يتبعت ومش null. [[$withAuthor: Boolean = false]]: اختياري.
+
+~~~graphql
+    post(id: $id) { ...PostCard author @include(if: $withAuthor) { name } }
+    drafts: posts(status: DRAFT) { ...PostCard }
+  }
+  fragment PostCard on Post { id title status }
+~~~
+
+- [[post(id: $id)]]: الـ variable بيتحط مكان القيمة.
+- [[...PostCard]]: «حط هنا حقول الـ fragment» (التلات نقط اسمها spread، زي JavaScript).
+- [[author @include(if: $withAuthor)]]: الكاتب يتطلب لو [[withAuthor]] بـ true بس.
+- [[drafts:]]: alias، النتيجة هتيجي تحت [[drafts]] مش [[posts]].
+- [[status: DRAFT]]: قيمة enum من غير quotes.
+
+## ٣. الطلب
+
+~~~ts
+  body: JSON.stringify({ query: PostPage, operationName: "PostPage", variables: { id: "10", withAuthor: true } }),
+~~~
+
+تلات حاجات: النص، واسم الـ operation، والقيم. ونفس الكلام بـ curl (الـ JSON في ملف [[q1.json]]):
+
+~~~bash
+curl -s localhost:7501/graphql -H 'content-type: application/json' --data @q1.json
+~~~
+
+~~~text الناتج
+{"data":{"post":{"id":"10","title":"Hello GraphQL","status":"PUBLISHED","author":{"name":"Mona"}},"drafts":[{"id":"11","title":"Draft notes","status":"DRAFT"}]}}
+~~~
+
+الرد نفس شكل الـ query: [[post]] بحقول الـ fragment ومعاه [[author]] (لأن [[withAuthor]] true)، و [[drafts]] باسم الـ alias. ولو بعتنا [[withAuthor: false]]، [[author]] مش هيظهر خالص (مش null: مش موجود).
+
+---
+
+## ٤. الـ validation قبل التنفيذ
+
+| الطلب | الرد | الـ status |
+|---|---|---|
+| [[variables: { id: null }]] | [[Variable "$id" of non-null type "ID!" must not be null.]] | 400 |
+| [[status: "ARCHIVED"]] | [[Value "ARCHIVED" does not exist in "PostStatus" enum.]] | 400 |
+| [[{ posts { price } }]] | [[Cannot query field "price" on type "Post".]] كود [[GRAPHQL_VALIDATION_FAILED]] | 200 |
+| نفس اللي فوق ومعاه [[accept: application/graphql-response+json]] | نفس الرسالة | 400 |
+
+ولا resolver اتنادى في أي واحد فيهم. ولاحظ السطرين الأخيرين: الـ status بيتغير حسب الـ [[accept]] header. ده من spec اسمه «GraphQL over HTTP»: مع [[application/graphql-response+json]] الطلب اللي مش valid بياخد 4xx. ومع [[application/json]] القديم، Yoga بيرد 200 (عشان عملاء قدام كانوا بيعتبروا أي حاجة غير 200 فشل في الشبكة). أخطاء الـ variables طلعت 400 في الحالتين.
+
+## ٥. الـ mutation والقيمة الافتراضية
+
+~~~text الناتج
+{"data":{"createPost":{"id":"12","title":"Cursor pagination","status":"DRAFT"}}}
+~~~
+
+بعتنا [[title]] بس، و [[status]] اتحط [[DRAFT]] من الـ [[input]].
+
+## ٦. GET و POST
+
+~~~bash
+curl -s -i -G localhost:7501/graphql --data-urlencode 'query={ posts { id } }'
+curl -s -i -G localhost:7501/graphql --data-urlencode 'query=mutation { createPost(input:{title:"via GET"}) { id } }'
+~~~
+
+- [[-G]]: ابعت البيانات في الـ URL كـ GET. [[--data-urlencode]]: اعمل encoding للمسافات والأقواس.
+
+~~~text الناتج
+HTTP/1.1 200 OK
+{"data":{"posts":[{"id":"10"},{"id":"11"},{"id":"12"}]}}
+
+HTTP/1.1 405 Method Not Allowed
+Allow: POST
+{"errors":[{"message":"Can only perform a mutation operation from a POST request.","extensions":{"code":"BAD_REQUEST"}}]}
+~~~
+
+الـ query بـ GET اشتغل، والـ mutation اترفض بـ 405 و [[Allow: POST]].
+
+---
+
+## الخلاصة
+
+| الأداة | بتعمل إيه |
+|---|---|
+| [[query Name($v: Type!)]] | operation باسم و variables بأنواع |
+| [[variables]] في الـ JSON | القيم لوحدها، والنص ثابت |
+| [[input]] | object كـ argument، بقيم افتراضية |
+| [[enum]] | قيم محددة، والغلط يترفض قبل التنفيذ |
+| [[alias:]] | نفس الحقل مرتين باسمين |
+| [[fragment X on T]] + [[...X]] | حقول بتتكرر في مكان واحد |
+| [[@include(if:)]] و [[@skip(if:)]] | حقل بشرط |
+
+- queries بـ GET تنفع تتكاش، و mutations بـ POST بس.
+- [[application/graphql-response+json]] بيخلي الطلب الغلط يرجع 4xx بدل 200.`,
+          lines: [
+            "الـ schema:",
+            "enum: الحالة واحدة من الاتنين.",
+            "المنشور وحالته وكاتبه.",
+            "input للـ mutation، و status افتراضيها DRAFT.",
+            "قايمة منشورات بفلتر اختياري، ومنشور واحد ممكن يبقى null.",
+            "mutation بياخد input.",
+            "قفلة الـ schema.",
+            "الـ operation كنص ثابت:",
+            "query باسم، و variable إجباري وواحد اختياري.",
+            "منشور بالـ id، بحقول الـ fragment، والكاتب لو withAuthor بـ true.",
+            "نفس حقل posts تاني باسم drafts (alias).",
+            "قفلة الـ query.",
+            "fragment: الحقول اللي بتتكرر.",
+            "قفلة النص.",
+            "ابعت للـ endpoint:",
+            "POST.",
+            "الـ body JSON.",
+            "النص، واسم الـ operation، والقيم لوحدها.",
+            "قفلة.",
+            "الرد: data أو errors أو الاتنين."
+          ],
+          sol: R`اتجرّب على ويندوز 11 بـ graphql-yoga 6.0.1 و graphql 16.14.2:
+
+- [[PostPage]]: [[{"data":{"post":{"id":"10","title":"Hello GraphQL","status":"PUBLISHED","author":{"name":"Mona"}},"drafts":[{"id":"11",...,"status":"DRAFT"}]}}]].
+- [[id: null]]: 400، [[must not be null]].
+- [[ARCHIVED]]: 400، [[does not exist in "PostStatus" enum]].
+- mutation من غير status: [[{"status":"DRAFT"}]] (القيمة الافتراضية).
+- query بـ GET: 200. mutation بـ GET: 405 و [[Allow: POST]].`,
+          solCode: R`curl -s -w ' [%{http_code}]' localhost:7501/graphql -H 'content-type: application/json' \
+  -d '{"query":"query($id: ID!){ post(id:$id){ title } }","variables":{"id":null}}'
+# {"errors":[{"message":"Variable \"$id\" of non-null type \"ID!\" must not be null.",...}]} [400]
+curl -s -i -G localhost:7501/graphql --data-urlencode 'query=mutation { createPost(input:{title:"via GET"}) { id } }'
+# HTTP/1.1 405 Method Not Allowed`
+        },
+        {
+          cmd: "أخطاء GraphQL و null",
+          title: "رد فيه data و errors مع بعض، والـ null بيطلع لفوق",
+          desc: R`في GraphQL الرد ممكن يبقى نصه ناجح ونصه فاشل: [[data]] فيها اللي اتجاب، و [[errors]] فيها كل خطأ ومعاه [[path]] (مكانه بالظبط). الحقل اللي وقع بيبقى [[null]]، ولو نوعه مش بيقبل null ([[User!]])، الـ null بيطلع للأب، ولو الأب كمان [[!]] يطلع للي فوقه، لحد ما يلاقي حاجة تقبل null، أو [[data]] كلها تبقى [[null]].
+
+وفيه نوعين أخطاء: غير متوقعة (القاعدة وقعت) دي Yoga بيخبي رسالتها ([[Unexpected error.]])، ومتوقعة من الـ business (عنوان قصير) دي الأحسن ترجع كـ نوع في الـ schema ([[union]])، مش في [[errors]].`,
+          example: R`import { GraphQLError } from "graphql";
+const typeDefs = /* GraphQL */ $__bt
+  type Post { id: ID! title: String! author: User! authorOrNull: User views: Int! }
+  type Query { posts: [Post!]!  postsSafe: [Post]! }
+  type ValidationError { field: String! message: String! }
+  type CreatePostSuccess { post: Post! }
+  union CreatePostResult = CreatePostSuccess | ValidationError
+  type Mutation { createPost(title: String!): CreatePostResult! }
+$__bt;
+const authorOf = (p: Post) => {
+  const u = users.get(p.authorId);
+  if (!u) throw new GraphQLError($__btauthor $__{p.authorId} not found$__bt, { extensions: { code: "NOT_FOUND" } });
+  return u;
+};
+const resolvers = {
+  Post: {
+    author: authorOf,
+    authorOrNull: authorOf,
+    views: () => { throw new Error("connect ECONNREFUSED 10.0.0.5:6379"); },
+  },
+  CreatePostResult: { __resolveType: (r: object) => ("post" in r ? "CreatePostSuccess" : "ValidationError") },
+  Mutation: {
+    createPost: (_: unknown, { title }: { title: string }) =>
+      title.length < 3 ? { field: "title", message: "at least 3 characters" } : { post: savePost(title) },
+  },
+};
+const yoga = createYoga({ schema: createSchema({ typeDefs, resolvers }), maskedErrors: true });`,
+          try: R`حط منشورين، واحد منهم كاتبه مش موجود ([[authorId: "99"]]). اطلب [[{ posts { title authorOrNull { name } } }]]، وبعدين [[author]] بدل [[authorOrNull]]، وبعدين [[postsSafe]] بـ [[author]]. قارن [[data]] في التلاتة. واطلب [[views]] وشوف الرسالة اللي وصلت للعميل واللي اتسجلت في الـ log. وآخر حاجة ابعت [[createPost(title: "ab")]] واطلب [[__typename]].`,
+          flag: "script",
+          deep: {
+            why: R`في REST الـ endpoint يا نجح يا فشل. في GraphQL query واحد ممكن يجمع ١٠ حاجات من ٥ مصادر، ولو واحدة وقعت مش عايز الصفحة كلها تقع. بس لو مفهمتش الـ null propagation، حقل واحد [[!]] في مكان غلط يخلي خطأ صغير (صورة الكاتب) يمسح الصفحة كلها ([[data: null]]).
+
+وأخطاء القاعدة والـ stack traces فيها IPs وأسماء جداول وأحيانًا باسوردات. لو طلعت للعميل، ده تسريب معلومات.`,
+            how: R`الـ null propagation: لما resolver يرمي، GraphQL بيحط [[null]] مكان الحقل ويضيف خطأ في [[errors]] بالـ [[path]] (زي [[path: ["posts", 1, "author"] ]]: الحقل [[author]] في العنصر رقم ١ في [[posts]]). لو نوع الحقل [[User!]]، مينفعش null، فالأب ([[Post]] رقم ١) يبقى null. لو العنصر نفسه [[Post!]] جوه [[[Post!]!]]، القايمة كلها null، وهي كمان [[!]]، فـ [[data]] كلها null. القاعدة: الـ null بيطلع لحد أول مكان بيقبله.
+
+فالقرار في الـ schema: [[!]] على الحاجات اللي مستحيل تبقى null فعلًا (id، title)، ومن غيره على العلاقات اللي ممكن تفشل لوحدها (حاجة جاية من service تاني). و [[[Post]!]] (القايمة موجودة، والعناصر ممكن null) بتخلي عنصر واحد يقع من غير ما القايمة كلها تقع.
+
+الـ masking: Yoga افتراضيًا ([[maskedErrors: true]]) بيحوّل أي error مش [[GraphQLError]] لـ [[Unexpected error.]] بكود [[INTERNAL_SERVER_ERROR]]، والرسالة الأصلية بتروح الـ log بس. ولو رميت [[GraphQLError]] بنفسك، رسالته و [[extensions]] بتوصل للعميل كما هي. ملحوظة: Yoga 6 مبقاش بيصدّر [[createGraphQLError]]، فاستخدم [[new GraphQLError()]] من مكتبة [[graphql]].
+
+[[extensions.code]]: الفرونت بيقرر بالكود مش بالرسالة ([[UNAUTHENTICATED]] يروح لـ login، و [[NOT_FOUND]] يعرض صفحة 404).
+
+الأخطاء المتوقعة كنوع: [[union CreatePostResult = CreatePostSuccess | ValidationError]]. الـ mutation دايمًا بيرجع حاجة، والعميل بيسأل [[__typename]] ويستخدم [[... on ValidationError]] (inline fragment: الحقول دي لو النوع ده). الميزة: الخطأ ليه شكل في الـ schema (field و message)، والأدوات بتولّد أنواع ليه، والعميل مجبر يتعامل معاه. و [[__resolveType]] بيقول لـ GraphQL الـ object ده من أنهي نوع.`,
+            when: R`[[GraphQLError]] بـ [[code]] للحاجات اللي مش جزء من الـ business (مش مسجّل، مش لاقي، rate limit). و [[union]] لنتايج الـ mutations اللي اليوزر ممكن يغلط فيها (validation، رصيد مش كفاية، اسم متاخد). والـ masking سيبه شغال دايمًا.`,
+            mistakes: R`[[!]] على كل حاجة «عشان الأنواع في TypeScript تبقى أنضف»، وأول خطأ في حقل فرعي يمسح الصفحة. و [[maskedErrors: false]] في الإنتاج. والفرونت بيفحص [[errors]] بس ويتجاهل [[data]] الجزئية (أو العكس: بيعرض [[data]] ومش واخد باله إن فيه null بسبب خطأ). وتعتمد على نص الرسالة بدل [[extensions.code]]. و validation errors في [[errors]] من غير [[field]]، فالفورم ميعرفش يعلّم أنهي خانة.`
+          },
+          teach: R`## الفكرة: كل حقل بيفشل لوحده، والـ [[!]] بيقرر الخسارة قد إيه
+
+اتجرّب على ويندوز 11: Node 24.22.1 و graphql-yoga 6.0.1 و graphql 16.14.2. منشورين: [[1]] كاتبه Mona موجود، و [[2]] ([[orphan]]) كاتبه [[99]] مش موجود. وكل الطلبات بـ curl.
+
+---
+
+## ١. الـ schema وأنواع الـ null
+
+~~~graphql
+  type Post { id: ID! title: String! author: User! authorOrNull: User views: Int! }
+  type Query { posts: [Post!]!  postsSafe: [Post]! }
+~~~
+
+| الحقل | يقبل null؟ |
+|---|---|
+| [[author: User!]] | لأ |
+| [[authorOrNull: User]] | أيوه |
+| [[posts: [Post!]!]] | القايمة لأ، وكل عنصر لأ |
+| [[postsSafe: [Post]!]] | القايمة لأ، بس العنصر أيوه |
+
+[[authorOf]] بيرمي [[GraphQLError]] بكود [[NOT_FOUND]] لو الكاتب مش موجود، والاتنين [[author]] و [[authorOrNull]] بيستخدموه.
+
+## ٢. حقل بيقبل null
+
+~~~text { posts { title authorOrNull { name } } }
+{"errors":[{"message":"author 99 not found","locations":[{"line":1,"column":17}],"path":["posts",1,"authorOrNull"],"extensions":{"code":"NOT_FOUND"}}],
+ "data":{"posts":[{"title":"ok","authorOrNull":{"name":"Mona"}},{"title":"orphan","authorOrNull":null}]}}
+~~~
+
+- [[path]]: [[posts]] ← العنصر رقم [[1]] (العد من صفر، يعني التاني) ← [[authorOrNull]].
+- [[locations]]: السطر والعمود في نص الـ query.
+- الخسارة: حقل واحد بقى null، والباقي كله وصل.
+
+## ٣. نفس الخطأ بس الحقل [[!]]
+
+~~~text { posts { title author { name } } }
+{"errors":[{"message":"author 99 not found",...,"path":["posts",1,"author"],...}],"data":null}
+~~~
+
+[[author]] مينفعش null ← المنشور [[1]] null ← بس [[Post!]] مينفعش ← القايمة null ← بس [[!]] برضه ← [[data: null]]. خطأ في كاتب منشور واحد مسح المنشور الكويس كمان.
+
+## ٤. قايمة عناصرها بتقبل null
+
+~~~text { postsSafe { title author { name } } }
+{"errors":[{...,"path":["postsSafe",1,"author"],...}],"data":{"postsSafe":[{"title":"ok","author":{"name":"Mona"}},null]}}
+~~~
+
+الـ null وقف عند العنصر: [[[Post]!]] بيقبل عنصر null. المنشور الأول وصل.
+
+---
+
+## ٥. الـ masking
+
+~~~ts
+    views: () => { throw new Error("connect ECONNREFUSED 10.0.0.5:6379"); },
+~~~
+
+في التجربة رسالة الـ error كان فيها كمان [[password=devpass]]، عشان نشوف هتطلع ولا لأ:
+
+~~~text اللي وصل للعميل
+{"errors":[{"message":"Unexpected error.","locations":[{"line":1,"column":11}],"path":["posts",0,"views"],"extensions":{"code":"INTERNAL_SERVER_ERROR"}}],"data":null}
+~~~
+
+~~~text اللي اتسجل في الـ log (Yoga بـ logging مفتوح)
+ERR
+  requestId: "3e65ca39-..."
+  err: {
+    message: "connect ECONNREFUSED 10.0.0.5:6379 (redis password=devpass)"
+~~~
+
+العميل شاف [[Unexpected error.]] بس، والتفاصيل في الـ log ومعاها [[requestId]] تربط بيه شكوى اليوزر بالسطر ده. و [[data: null]] هنا لأن [[views: Int!]] جوه [[[Post!]!]]، نفس سلسلة الـ null اللي فوق.
+
+---
+
+## ٦. الأخطاء المتوقعة كنوع: [[union]]
+
+~~~graphql
+  type ValidationError { field: String! message: String! }
+  type CreatePostSuccess { post: Post! }
+  union CreatePostResult = CreatePostSuccess | ValidationError
+~~~
+
+[[union]]: النتيجة يا ده يا ده. و [[__resolveType]] بيقرر:
+
+~~~ts
+  CreatePostResult: { __resolveType: (r: object) => ("post" in r ? "CreatePostSuccess" : "ValidationError") },
+~~~
+
+[[("post" in r)]]: الـ object فيه حقل [[post]]؟ يبقى نجاح.
+
+والطلب:
+
+~~~graphql
+mutation {
+  createPost(title: "ab") {
+    __typename
+    ... on CreatePostSuccess { post { id } }
+    ... on ValidationError { field message }
+  }
+}
+~~~
+
+- [[__typename]]: حقل موجود في كل نوع، بيرجّع اسم النوع.
+- [[... on X { }]]: inline fragment: الحقول دي لو النتيجة من النوع ده.
+
+~~~text الناتج
+title "Hello": {"data":{"createPost":{"__typename":"CreatePostSuccess","post":{"id":"3","title":"Hello"}}}}
+title "ab":    {"data":{"createPost":{"__typename":"ValidationError","field":"title","message":"at least 3 characters"}}}
+~~~
+
+مفيش [[errors]] خالص: الـ validation جزء عادي من الرد، والفورم يعرف أنهي خانة من [[field]].
+
+---
+
+## الخلاصة
+
+| الحالة | الطريقة |
+|---|---|
+| حقل ممكن يفشل لوحده | من غير [[!]] |
+| قايمة ومش عايز عنصر واحد يوقعها | [[[T]!]] |
+| مش مسجّل، مش موجود | [[GraphQLError]] + [[extensions.code]] |
+| validation و business errors | [[union]] + [[__typename]] |
+| خطأ مش متوقع | سيبه للـ masking، وشوفه في الـ log |
+
+- الـ null بيطلع لحد أول مكان بيقبله، و [[!]] زيادة ممكن تخليه يوصل لـ [[data: null]].
+- [[path]] بيقولك الخطأ فين بالظبط، و [[code]] بيقول للفرونت يعمل إيه.`,
+          lines: [
+            "الخطأ الرسمي اللي رسالته بتوصل للعميل.",
+            "الـ schema:",
+            "منشور: author مش بيقبل null، و authorOrNull بيقبل، و views رقم إجباري.",
+            "قايمة عناصرها إجبارية، وقايمة عناصرها ممكن null.",
+            "نوع لخطأ validation.",
+            "نوع للنجاح.",
+            "النتيجة يا ده يا ده.",
+            "الـ mutation بيرجّع الـ union دايمًا.",
+            "قفلة الـ schema.",
+            "هات الكاتب:",
+            "دوّر عليه.",
+            "مش موجود: خطأ بكود NOT_FOUND يوصل للعميل.",
+            "رجّعه.",
+            "قفلة.",
+            "الـ resolvers:",
+            "حقول المنشور:",
+            "الكاتب (لو فشل، الـ null يطلع للأب).",
+            "نفس الدالة، بس الحقل بيقبل null.",
+            "خطأ مش متوقع: Yoga هيخبي رسالته.",
+            "قفلة.",
+            "النتيجة من أنهي نوع: فيها post يبقى نجاح.",
+            "الـ mutations:",
+            "إنشاء منشور:",
+            "عنوان قصير: رجّع ValidationError كبيانات، غير كده النجاح.",
+            "قفلة.",
+            "قفلة.",
+            "السيرفر، والـ masking شغال (ده الافتراضي)."
+          ],
+          sol: R`اتجرّب على ويندوز 11 (graphql-yoga 6.0.1):
+
+- [[authorOrNull]]: [[data.posts[1].authorOrNull = null]]، وخطأ [[path]] بتاعه [[posts › 1 › authorOrNull]].
+- [[author]]: [[data: null]] كلها، نفس الخطأ.
+- [[postsSafe]] بـ [[author]]: العنصر الأول وصل والتاني [[null]].
+- [[views]]: العميل شاف [[Unexpected error.]] و [[INTERNAL_SERVER_ERROR]] بس، والـ log فيه الرسالة الأصلية.
+- [[createPost(title: "ab")]]: [[{"__typename":"ValidationError","field":"title","message":"at least 3 characters"}]] من غير [[errors]].`,
+          solCode: R`curl -s localhost:7502/graphql -H 'content-type: application/json' \
+  -d '{"query":"{ posts { title author { name } } }"}'
+# {"errors":[{"message":"author 99 not found",...,"path":["posts",1,"author"],"extensions":{"code":"NOT_FOUND"}}],"data":null}`
+        },
+        {
+          cmd: "connections و cursors",
+          title: "pagination بشكل Connection: edges و pageInfo و after",
+          desc: R`الشكل المتعارف عليه للقوايم في GraphQL اسمه Connection (من Relay): بدل ما [[posts]] ترجّع array، بترجّع [[edges]] (كل عنصر [[node]] ومعاه [[cursor]] بتاعه) و [[pageInfo]] فيها [[hasNextPage]] و [[endCursor]]. الصفحة الجاية: [[posts(first: 10, after: endCursor)]].
+
+جوه السيرفر ده نفس الـ keyset pagination بتاع REST (درس «cursor pagination»): الـ cursor بيشاور على آخر صف، والاستعلام [[WHERE id < $1 ORDER BY id DESC LIMIT first + 1]]. الصف الزيادة بيقولك فيه صفحة جاية ولا لأ.`,
+          example: R`const typeDefs = /* GraphQL */ $__bt
+  type PostEdge { cursor: String! node: Post! }
+  type PageInfo { hasNextPage: Boolean! endCursor: String }
+  type PostConnection { edges: [PostEdge!]! pageInfo: PageInfo! }
+  type Query { posts(first: Int = 10, after: String): PostConnection! }
+$__bt;
+const encode = (id: number) => Buffer.from(JSON.stringify({ id })).toString("base64url");
+function decode(cursor: string): number {
+  try { const { id } = JSON.parse(Buffer.from(cursor, "base64url").toString()); if (Number.isInteger(id)) return id; } catch {}
+  throw new GraphQLError("invalid cursor", { extensions: { code: "BAD_USER_INPUT" } });
+}
+const resolvers = {
+  Query: {
+    posts: async (_: unknown, { first, after }: { first: number; after?: string }) => {
+      if (first < 1 || first > 50) throw new GraphQLError("first must be 1..50", { extensions: { code: "BAD_USER_INPUT" } });
+      const afterId = after ? decode(after) : null;
+      const { rows } = await pool.query(
+        "select id, title from posts where status = 'PUBLISHED' and ($1::int is null or id < $1) order by id desc limit $2",
+        [afterId, first + 1]);
+      const page = rows.slice(0, first);
+      const edges = page.map((p) => ({ cursor: encode(p.id), node: p }));
+      return { edges, pageInfo: { hasNextPage: rows.length > first, endCursor: edges.at(-1)?.cursor ?? null } };
+    },
+  },
+};`,
+          try: R`شغّل Postgres في Docker، واعمل جدول [[posts]] فيه ١٠٠٠ صف (كل عاشر واحد [[DRAFT]]). اطلب [[posts(first: 3)]]، وخد [[endCursor]] واطلب الصفحة اللي بعدها. فك الـ cursor بـ [[Buffer.from(c, "base64url").toString()]] وشوف جواه إيه. وبعدين ابعت [[after: "abc"]] و [[first: 500]]، وشغّل [[EXPLAIN ANALYZE]] على الاستعلام.`,
+          flag: "script",
+          deep: {
+            why: R`لو [[posts(offset: 1000, limit: 10)]]: القاعدة بتعدّي ١٠٠٠ صف وترميهم في كل صفحة، ولو حد أضاف منشور وانت بتقلّب، هتشوف عنصر مرتين أو تفوّت عنصر (درس «offset pagination»). والـ Connection شكل واحد كل القوايم في الـ API بتمشي عليه، والمكتبات (Relay و Apollo Client و urql) فاهماه وبتعمل «load more» لوحدها.`,
+            how: R`الـ cursor «opaque»: العميل مش المفروض يفهم جواه إيه، بس يرجّعه زي ما هو. هنا JSON صغير ([[{"id":997}]]) معمول له base64url (base64 من غير [[+]] و [[/]] و [[=]]، فينفع في URL). ده **مش** تشفير: أي حد يقدر يفكه ويغيّره، عشان كده [[decode]] بيتأكد إنه رقم صحيح، وأي حاجة تانية ← [[BAD_USER_INPUT]]. ولو مش عايز العميل يعدّل فيه، اعمله HMAC.
+
+[[first + 1]]: بتطلب صف زيادة. لو رجع، يبقى فيه صفحة جاية ([[hasNextPage: true]])، وبتشيله قبل ما ترجّع. ده أرخص من [[count(*)]].
+
+[[$1::int is null or id < $1]]: نفس الاستعلام للصفحة الأولى ([[after]] مش موجود، [[$1]] بـ null) والصفحات التانية. [[::int]] بيقول لـ Postgres نوع الـ parameter، عشان من غيرها مش هيعرف نوع null.
+
+الترتيب لازم يبقى على حاجة فريدة. هنا [[id]]. لو بترتب بـ [[created_at]]، اتنين ممكن يبقوا نفس الوقت، فالـ cursor يبقى [[(created_at, id)]] والشرط [[(created_at, id) < ($1, $2)]] (row comparison في Postgres)، و index على العمودين.
+
+الـ index: [[EXPLAIN]] بيوري [[Index Scan Backward using posts_pkey]]: Postgres بيمشي على الـ primary key من الآخر، ويقف بعد ما يلاقي ٤ صفوف. مش بيقرا الجدول كله، فالصفحة رقم ١ زي الصفحة رقم ١٠٠ في السرعة.
+
+Relay spec فيه كمان [[last]] و [[before]] (رجوع لورا) و [[hasPreviousPage]] و [[startCursor]]. ضيفهم لو الواجهة محتاجاهم بس. و [[totalCount]] حقل منفصل اختياري، لأن [[count(*)]] على جدول كبير غالي، فيتحسب بس لو العميل طلبه (resolver لوحده على [[PostConnection]]).`,
+            when: "أي قايمة ممكن تكبر (منشورات، تعليقات، طلبات، إشعارات) في GraphQL API. القوايم الصغيرة الثابتة (تصنيفات، أدوار) array عادي كفاية.",
+            mistakes: R`[[first]] من غير حد أقصى (حد يطلب مليون). و cursor فيه offset ([[{"offset":1000}]]): نفس مشاكل offset بشكل تاني. وترتيب على عمود مش فريد من غير tiebreaker، فعناصر بتتكرر أو تضيع بين الصفحات. و [[count(*)]] في كل طلب عشان [[hasNextPage]]. وتفك الـ cursor من غير validation (crash أو SQL غريب). وتنسى إن الفلتر ([[status]]) لازم يبقى نفسه في كل الصفحات.`
+          },
+          teach: R`## الفكرة: قايمة + مكانك فيها
+
+العميل بيطلب «أول ٣»، وياخد معاهم «علامة» عند آخر واحد. المرة الجاية بيقول «٣ بعد العلامة دي». العلامة هي الـ cursor.
+
+اتجرّب على ويندوز 11: Node 24.22.1 و graphql-yoga 6.0.1 و pg 8.23.1، و Postgres 16.13 في container ([[postgres:16-alpine]]). جدول [[posts]] فيه ١٠٠٠ صف: [[id]] من ١ لـ ١٠٠٠، وكل رقم بيقبل القسمة على ١٠ [[DRAFT]] والباقي [[PUBLISHED]].
+
+---
+
+## ١. أنواع الـ Connection
+
+~~~graphql
+  type PostEdge { cursor: String! node: Post! }
+  type PageInfo { hasNextPage: Boolean! endCursor: String }
+  type PostConnection { edges: [PostEdge!]! pageInfo: PageInfo! }
+  type Query { posts(first: Int = 10, after: String): PostConnection! }
+~~~
+
+- [[edge]]: «حافة» بتوصل للعنصر: [[node]] (العنصر نفسه) و [[cursor]] (مكانه).
+- [[endCursor: String]] من غير [[!]]: لو الصفحة فاضية مفيش آخر عنصر.
+- [[first]] و [[after]]: الأسماء دي من Relay spec، والمكتبات مستنياها بالظبط.
+
+## ٢. الـ cursor
+
+~~~ts
+const encode = (id: number) => Buffer.from(JSON.stringify({ id })).toString("base64url");
+~~~
+
+[[{id: 997}]] ← نص [[{"id":997}]] ← بايتات ([[Buffer.from]]) ← base64url:
+
+~~~text الناتج
+cursor: eyJpZCI6OTk3fQ   decoded: {"id":997}
+~~~
+
+~~~ts
+function decode(cursor: string): number {
+  try { const { id } = JSON.parse(Buffer.from(cursor, "base64url").toString()); if (Number.isInteger(id)) return id; } catch {}
+  throw new GraphQLError("invalid cursor", { extensions: { code: "BAD_USER_INPUT" } });
+}
+~~~
+
+- العكس: base64url ← بايتات ← نص ← JSON ← [[{ id }]] (destructuring: خد الحقل [[id]]).
+- [[Number.isInteger(id)]]: لازم رقم صحيح، مش نص ولا [[1.5]].
+- [[catch {}]]: الـ JSON بايظ؟ متعملش حاجة وكمّل للسطر اللي بعده: الـ throw.
+
+## ٣. الـ resolver
+
+~~~ts
+      if (first < 1 || first > 50) throw new GraphQLError("first must be 1..50", { extensions: { code: "BAD_USER_INPUT" } });
+      const afterId = after ? decode(after) : null;
+~~~
+
+حد للحجم، وبعدين: فيه [[after]]؟ فكّه. مفيش؟ [[null]] (الصفحة الأولى).
+
+~~~sql
+select id, title from posts
+where status = 'PUBLISHED' and ($1::int is null or id < $1)
+order by id desc limit $2
+~~~
+
+- [[$1]] = [[afterId]]، و [[$2]] = [[first + 1]].
+- [[id < $1]]: اللي بعد الـ cursor (أصغر، لأن الترتيب تنازلي).
+
+~~~ts
+      const page = rows.slice(0, first);
+      const edges = page.map((p) => ({ cursor: encode(p.id), node: p }));
+      return { edges, pageInfo: { hasNextPage: rows.length > first, endCursor: edges.at(-1)?.cursor ?? null } };
+~~~
+
+- [[slice(0, first)]]: شيل الصف الزيادة.
+- [[rows.length > first]]: الصف الزيادة رجع؟ يبقى فيه صفحة جاية.
+- [[edges.at(-1)]]: آخر عنصر ([[-1]] = من الآخر). [[?.cursor ?? null]]: لو مفيش عناصر، null.
+
+---
+
+## ٤. التجربة
+
+~~~graphql
+query Feed($first: Int, $after: String) {
+  posts(first: $first, after: $after) { edges { cursor node { id title } } pageInfo { hasNextPage endCursor } }
+}
+~~~
+
+~~~text الصفحة الأولى (first: 3)
+{"data":{"posts":{"edges":[{"cursor":"eyJpZCI6OTk5fQ","node":{"id":"999","title":"post 999"}},
+  {"cursor":"eyJpZCI6OTk4fQ","node":{"id":"998",...}},{"cursor":"eyJpZCI6OTk3fQ","node":{"id":"997",...}}],
+  "pageInfo":{"hasNextPage":true,"endCursor":"eyJpZCI6OTk3fQ"}}}}
+~~~
+
+بدأت من 999 مش 1000، لأن 1000 [[DRAFT]].
+
+~~~text الصفحة التانية (after: eyJpZCI6OTk3fQ)
+page2 ids 996,995,994 {"hasNextPage":true,"endCursor":"eyJpZCI6OTk0fQ"}
+~~~
+
+~~~text آخر صفحة (after = cursor لـ id 4)
+["3","2","1"] {"hasNextPage":false,"endCursor":"eyJpZCI6MX0"}
+~~~
+
+[[hasNextPage: false]]: طلبنا ٤ ورجع ٣ بس.
+
+~~~text cursor بايظ، و first كبير
+{"errors":[{"message":"invalid cursor",...,"path":["posts"],"extensions":{"code":"BAD_USER_INPUT"}}],"data":null}
+{"errors":[{"message":"first must be 1..50",...,"extensions":{"code":"BAD_USER_INPUT"}}],"data":null}
+~~~
+
+## ٥. القاعدة بتعمل إيه
+
+~~~text EXPLAIN ANALYZE ... where status = 'PUBLISHED' and id < 500 order by id desc limit 4
+Limit  (cost=0.28..0.54 rows=4 width=12) (actual time=0.026..0.027 rows=4 loops=1)
+  ->  Index Scan Backward using posts_pkey on posts  (cost=0.28..30.25 rows=449 width=12) (actual time=0.024..0.026 rows=4 loops=1)
+        Index Cond: (id < 500)
+        Filter: (status = 'PUBLISHED'::text)
+Execution Time: 0.067 ms
+~~~
+
+- [[Index Scan Backward using posts_pkey]]: ماشي على الـ primary key من الكبير للصغير.
+- [[Index Cond: (id < 500)]]: بيبدأ من عند الـ cursor على طول.
+- [[rows=4]] و [[0.067 ms]]: قرا ٤ صفوف بس ووقف. ونفس الكلام لو الـ cursor عند 5 أو عند 999.
+
+> جربنا نفس الجدول في container جديد ونفّذنا [[EXPLAIN]] على طول بعد الـ [[INSERT]]: طلع [[Seq Scan on posts]] و [[Sort]] (قرا ٤٥٠ صف ورتّبهم)، لأن Postgres لسه معندوش إحصائيات عن الجدول. بعد [[ANALYZE posts]] رجع [[Index Scan Backward]]. فبعد ما تملا جدول تجربة، اعمل [[ANALYZE]] قبل ما تحكم على الـ plan.
+
+---
+
+## الخلاصة
+
+| الحتة | ليه |
+|---|---|
+| [[edges { cursor node }]] + [[pageInfo]] | الشكل اللي المكتبات فاهماه |
+| cursor = base64url لـ [[{"id":...}]] | العميل يرجّعه زي ما هو |
+| [[decode]] بـ validation | الـ cursor مش سر وممكن يتلعب فيه |
+| [[limit first + 1]] | [[hasNextPage]] من غير [[count(*)]] |
+| [[id < $1]] على index | كل صفحة نفس السرعة |
+| حد لـ [[first]] | محدش يطلب مليون |`,
+          lines: [
+            "أنواع الـ Connection:",
+            "حافة: الـ cursor والعنصر.",
+            "فيه صفحة جاية؟ وآخر cursor.",
+            "الصفحة: الحواف ومعلومات الصفحة.",
+            "القايمة بقت Connection وبتاخد first و after.",
+            "قفلة الـ schema.",
+            "الـ cursor: JSON صغير فيه الـ id معمول له base64url.",
+            "فك الـ cursor:",
+            "حاول تفكه، ولو طلع رقم صحيح رجّعه.",
+            "غير كده: خطأ BAD_USER_INPUT.",
+            "قفلة.",
+            "الـ resolvers:",
+            "الـ queries:",
+            "القايمة:",
+            "حد للحجم.",
+            "فيه after؟ فكّه، مفيش يبقى الصفحة الأولى.",
+            "الاستعلام:",
+            "اللي بعد الـ cursor بس، بالترتيب، وصف زيادة.",
+            "القيم: الـ id و first + 1.",
+            "شيل الصف الزيادة.",
+            "كل صف: cursor و node.",
+            "رجّع الحواف، و hasNextPage من الصف الزيادة، و endCursor آخر واحد.",
+            "قفلة.",
+            "قفلة.",
+            "قفلة."
+          ],
+          sol: R`اتجرّب على ويندوز 11 بـ Postgres 16.13 في Docker:
+
+- الصفحة الأولى: 999 و 998 و 997 (1000 [[DRAFT]])، و [[endCursor: "eyJpZCI6OTk3fQ"]] = [[{"id":997}]].
+- الصفحة التانية: 996 و 995 و 994.
+- [[after: "abc"]] و [[first: 500]]: [[BAD_USER_INPUT]] و [[data: null]].
+- [[EXPLAIN ANALYZE]] (بعد [[ANALYZE posts]]): [[Index Scan Backward using posts_pkey]]، ٤ صفوف بس. من غير [[ANALYZE]] على جدول لسه متملي: [[Seq Scan]] و [[Sort]].
+
+لو الصفحة التانية فيها عنصر من الأولى: الشرط [[<=]] بدل [[<]]. ولو [[hasNextPage]] دايمًا [[false]]: بتطلب [[first]] مش [[first + 1]].`,
+          solCode: R`docker run -d --name lab-pg -e POSTGRES_PASSWORD=devpass -p 5491:5432 postgres:16-alpine
+docker exec -i lab-pg psql -U postgres -c "create table posts (id int primary key, author_id int, title text, status text)"
+docker exec -i lab-pg psql -U postgres -c "insert into posts select i, 1 + i % 40, 'post '||i, case when i%10=0 then 'DRAFT' else 'PUBLISHED' end from generate_series(1,1000) i"
+docker exec -i lab-pg psql -U postgres -c "analyze posts"
+docker exec -i lab-pg psql -U postgres -c "explain analyze select id, title from posts where status = 'PUBLISHED' and id < 500 order by id desc limit 4"
+docker rm -f -v lab-pg`
+        },
+        {
+          cmd: "N+1 على Postgres",
+          title: "عدّ الاستعلامات بجد، و «آخر ٣ لكل كاتب» في استعلام واحد",
+          desc: R`درس «DataLoader و N+1» شرح الفكرة. هنا بنقيسها على Postgres حقيقي: query فيه ٣ مستويات ([[posts]] ← [[author]] ← [[latestPosts]]) عمل ١٠١ استعلام من غير loaders، و ٣ بس بيهم.
+
+والحتة اللي الـ loader العادي مبيحلهاش: «آخر ٣ منشورات **لكل** كاتب». [[LIMIT]] على استعلام واحد بيتطبق على المجموع. الحل [[CROSS JOIN LATERAL]]: Postgres بيشغّل الاستعلام الصغير مرة لكل كاتب جوه نفس الاستعلام، ومعاه [[unnest($1::int[])]] بيحوّل الـ ids لجدول.`,
+          example: R`function makeLoaders(ctx: Ctx) {
+  return {
+    user: new DataLoader(async (ids: readonly number[]) => {
+      const rows = await ctx.sql("select id, name from users where id = any($1)", [ids]);
+      const byId = new Map(rows.map((u) => [u.id, u]));
+      return ids.map((id) => byId.get(id) ?? new Error($__btuser $__{id} not found$__bt));
+    }),
+    latestPosts: new DataLoader(async (authorIds: readonly number[]) => {
+      const rows = await ctx.sql(
+        $__btselect a.author_id, p.id, p.title from unnest($1::int[]) as a(author_id)
+         cross join lateral (select id, title from posts where author_id = a.author_id order by id desc limit 3) p$__bt,
+        [authorIds]);
+      return authorIds.map((id) => rows.filter((r) => r.author_id === id));
+    }),
+  };
+}
+const yoga = createYoga<{}, Ctx>({
+  schema,
+  context: () => {
+    const ctx = { stats: { queries: 0 } } as Ctx;
+    ctx.sql = async (text, params) => { ctx.stats.queries++; return (await pool.query(text, params)).rows; };
+    ctx.loaders = makeLoaders(ctx);
+    return ctx;
+  },
+  plugins: [{ onExecute: () => ({ onExecuteDone: ({ args }) => log.info({ queries: (args.contextValue as Ctx).stats.queries }, "graphql done") }) }],
+});`,
+          try: R`في Postgres اعمل [[users]] (٤٠ صف) و [[posts]] (١٠٠٠ صف، و index على [[(author_id, id desc)]]). اكتب الـ resolvers مرة بـ [[ctx.sql]] مباشرة ([[Post.author]] بـ [[where id = $1]] و [[User.latestPosts]] بـ [[limit 3]])، ومرة بالـ loaders. ابعت [[{ posts(first: 50) { title author { name latestPosts { title } } } }]] مرتين لكل نسخة، وقارن عدد الاستعلامات والوقت. وتأكد إن الرد نفسه زي بعضه.`,
+          flag: "script",
+          deep: {
+            why: R`على جهازك القاعدة على بعد ٠.٢ مللي ثانية، فـ ١٠١ استعلام بيبانوا «سريعين». في الإنتاج القاعدة على سيرفر تاني (١ لـ ٢ مللي ثانية لكل رحلة)، والـ pool فيه ١٠ اتصالات، فالطلب ده لوحده ممكن ياخد ١٠٠ مللي ثانية وزيادة ويحجز الـ pool كله على حساب الطلبات التانية. والـ query ده (قايمة، كاتب، آخر منشوراته) شكل عادي جدًا في أي feed.`,
+            how: R`العدّ: [[ctx.sql]] wrapper حوالين [[pool.query]] بيزوّد عداد في الـ context. الـ context بيتعمل جديد لكل طلب، فالعداد لكل طلب. ملحوظة: Yoga بيدمج الـ object اللي بترجّعه من [[context]] في object تاني، فلو العداد رقم عادي ([[ctx.queries++]]) الـ closure هيزوّد نسخة والـ plugin يقرا نسخة تانية (جربناها وطلعت 0). عشان كده [[stats]] object: الاتنين بيشاوروا على نفس الـ object.
+
+الـ plugin: [[onExecute]] بيتنادى قبل التنفيذ، وبيرجّع [[onExecuteDone]] اللي بيتنادى بعد ما كل الـ resolvers تخلص. [[args.contextValue]] هو الـ context بتاع الطلب. في الإنتاج بتبعت الرقم ده لـ metrics أو تحطه على الـ span في OpenTelemetry.
+
+[[= any($1)]]: [[$1]] array، و [[any]] بتقارن بأي عنصر فيه. ده أحسن من بناء [[IN ($1, $2, ...)]] بإيدك: استعلام واحد ثابت مهما كان عدد الـ ids، فـ Postgres بيكاش الـ plan.
+
+[[unnest($1::int[]) as a(author_id)]]: بيحوّل الـ array لجدول مؤقت بعمود اسمه [[author_id]]، صف لكل كاتب. [[::int[]]]: نوع الـ parameter array أرقام.
+
+[[cross join lateral (...) p]]: [[LATERAL]] معناها الاستعلام اللي جوه الأقواس يقدر يشوف أعمدة اللي قبله ([[a.author_id]]). فـ Postgres لكل صف في [[a]] بيشغّل [[select ... where author_id = a.author_id order by id desc limit 3]] (على الـ index، ٣ صفوف بس)، ويجمع النتايج. يعني «top-N لكل مجموعة» في رحلة واحدة. البديل window function ([[row_number() over (partition by author_id order by id desc)]] وبعدين [[where rn <= 3]])، بس ده بيقرا كل منشورات الكتّاب دول قبل ما يفلتر.
+
+[[rows.filter]]: بيقسّم النتيجة لكل كاتب بنفس ترتيب [[authorIds]] (شرط DataLoader). مع آلاف الصفوف اعمل Map بدل filter جوه map.
+
+ليه ٣ بالظبط؟ استعلام للمنشورات، واحد لكل الكتّاب المختلفين (٤٠ id في [[any]])، وواحد لـ «آخر ٣» لكل الكتّاب دول. ده عدد المستويات في الـ query، مش عدد الصفوف.`,
+            when: R`أي resolver على علاقة تحت قايمة. ولو الـ ORM عندك بيعمل batching لوحده (Prisma بيجمع [[findUnique]] في نفس الـ tick)، لسه لازم تقيس، وتعمل «top-N لكل مجموعة» بـ SQL بإيدك لأن ده مش هيتعمل لوحده.`,
+            mistakes: R`تقيس على قاعدة فاضية أو على localhost وتقول «مش مشكلة». وعداد رقم في الـ context بدل object (يطلع صفر دايمًا مع Yoga). و [[limit]] جوه batch عادي بدل LATERAL (أول كاتب ياخد الـ ٣ والباقي مياخدوش حاجة). ومفيش index على [[(author_id, id desc)]] فالـ LATERAL بيعمل scan لكل كاتب. وتنسى [[::int[]]] فـ Postgres يرمي خطأ نوع.`
+          },
+          teach: R`## الفكرة: عدّ، وبعدين صلّح
+
+اتجرّب على ويندوز 11: Node 24.22.1 و graphql-yoga 6.0.1 و dataloader 2.2.3 و pg 8.23.1، و Postgres 16.13 في container. [[users]] فيه ٤٠ كاتب، و [[posts]] فيه ١٠٠٠ منشور موزعين عليهم، و index على [[posts (author_id, id desc)]]. الـ schema:
+
+~~~graphql
+type User { id: ID! name: String! latestPosts: [Post!]! }
+type Post { id: ID! title: String! author: User! }
+type Query { posts(first: Int = 10): [Post!]! }
+~~~
+
+والـ query:
+
+~~~graphql
+{ posts(first: 50) { title author { name latestPosts { title } } } }
+~~~
+
+---
+
+## ١. العداد في الـ context
+
+~~~ts
+  context: () => {
+    const ctx = { stats: { queries: 0 } } as Ctx;
+    ctx.sql = async (text, params) => { ctx.stats.queries++; return (await pool.query(text, params)).rows; };
+    ctx.loaders = makeLoaders(ctx);
+    return ctx;
+  },
+~~~
+
+- كل طلب ليه [[ctx]] جديد، فيه عداد و [[sql]] و loaders.
+- [[as Ctx]]: بنقول لـ TypeScript «ده هيبقى Ctx» (لسه ناقصه [[sql]] و [[loaders]] في السطر ده).
+- [[ctx.sql]]: كل استعلام بيعدّي من هنا، يزوّد العداد ويرجّع [[rows]].
+- [[makeLoaders(ctx)]]: الـ loaders بتستخدم [[ctx.sql]] فبتتعد هي كمان.
+
+> جربناها الأول بـ [[{ queries: 0 }]] و [[ctx.queries++]] والـ plugin طبع [[SQL queries: 0]] مع إن الرد كان صح. السبب إن Yoga بيدمج الـ context في object جديد، فالرقم اتنسخ. الـ [[stats]] object بيتشارك بالـ reference.
+
+## ٢. الـ plugin اللي بيطبع العدد
+
+~~~ts
+  plugins: [{ onExecute: () => ({ onExecuteDone: ({ args }) => log.info({ queries: (args.contextValue as Ctx).stats.queries }, "graphql done") }) }],
+~~~
+
+plugin هو object فيه hooks. [[onExecute]] قبل التنفيذ، وبيرجّع [[onExecuteDone]] بعده. في التجربة كان [[console.log]].
+
+---
+
+## ٣. من غير loaders
+
+~~~ts
+Post: { author: (p, _, ctx) => ctx.sql("select id, name from users where id = $1", [p.author_id]).then((r) => r[0]) },
+User: { latestPosts: (u, _, ctx) => ctx.sql("select id, title from posts where author_id = $1 order by id desc limit 3", [u.id]) },
+~~~
+
+~~~text الناتج (مرتين ورا بعض)
+SQL queries: 101
+run 1: 108ms
+SQL queries: 101
+run 2: 29ms
+~~~
+
+١ للمنشورات + ٥٠ كاتب (واحد لكل منشور، حتى لو نفس الكاتب) + ٥٠ «آخر ٣» = ١٠١. والـ ٥٠ منشور دول كتّابهم ٤٠ بس، يعني ١٠ استعلامات منهم مكررة بالظبط.
+
+## ٤. loader الكتّاب
+
+~~~ts
+    user: new DataLoader(async (ids: readonly number[]) => {
+      const rows = await ctx.sql("select id, name from users where id = any($1)", [ids]);
+      const byId = new Map(rows.map((u) => [u.id, u]));
+      return ids.map((id) => byId.get(id) ?? new Error($__btuser $__{id} not found$__bt));
+    }),
+~~~
+
+- [[readonly number[]]]: DataLoader بيدّيك array متقدرش تعدّل فيه.
+- [[id = any($1)]]: [[$1]] هو الـ array كله ([[pg]] بيحوّل array الـ JavaScript لـ array في Postgres).
+- الـ Map والـ [[ids.map]]: نفس الترتيب ونفس الطول (اتشرحت في «DataLoader و N+1»).
+- والـ resolver بقى [[ctx.loaders.user.load(p.author_id)]].
+
+## ٥. loader «آخر ٣ لكل كاتب»
+
+~~~sql
+select a.author_id, p.id, p.title
+from unnest($1::int[]) as a(author_id)
+cross join lateral (
+  select id, title from posts where author_id = a.author_id order by id desc limit 3
+) p
+~~~
+
+من جوه لبرة:
+
+| الحتة | بتعمل إيه |
+|---|---|
+| [[$1::int[]]] | الـ ids كـ array أرقام، زي [[{1,8,15,...}]] |
+| [[unnest(...) as a(author_id)]] | array ← جدول، صف لكل كاتب، والعمود اسمه [[author_id]] |
+| [[(select ... where author_id = a.author_id ... limit 3)]] | آخر ٣ للكاتب ده بس |
+| [[lateral]] | يسمح للاستعلام اللي جوه يشوف [[a.author_id]] |
+| [[cross join]] | كل كاتب مع منشوراته (٣ صفوف أو أقل) |
+
+~~~ts
+      return authorIds.map((id) => rows.filter((r) => r.author_id === id));
+~~~
+
+لكل كاتب بنفس الترتيب: منشوراته من النتيجة.
+
+---
+
+## ٦. بالـ loaders
+
+~~~text الناتج (مرتين ورا بعض)
+SQL queries: 3
+run 1: 78ms
+SQL queries: 3
+run 2: 13ms
+~~~
+
+| | من غير loaders | بالـ loaders |
+|---|---|---|
+| استعلامات | 101 | 3 |
+| الوقت (تاني مرة) | 29ms | 13ms |
+| أول منشور في الرد | [[post 1000]]، كاتبه [[user1]]، وآخر ٣ ليه [[post 1000]] و [[post 960]] و [[post 920]] | نفس الرد بالظبط |
+
+- ٣ = عدد المستويات: منشورات، كتّاب (٤٠ id في استعلام)، «آخر ٣» لكل الـ ٤٠ في استعلام.
+- الوقت هنا والقاعدة على نفس الجهاز (رحلة أقل من مللي ثانية). كل رحلة زيادة في الإنتاج بتتضرب في ٩٨.
+- أول مرة أبطأ في الحالتين: اتصالات الـ pool لسه بتتفتح.
+
+---
+
+## الخلاصة
+
+| الحتة | ليه |
+|---|---|
+| [[ctx.sql]] بعداد في [[stats]] | تعرف كل طلب عمل كام استعلام |
+| [[onExecuteDone]] | تطبع/تبعت الرقم بعد التنفيذ |
+| [[= any($1)]] | batch بـ استعلام ثابت |
+| [[unnest]] + [[cross join lateral]] + [[limit]] | top-N لكل مجموعة في رحلة واحدة |
+| loaders جوه الـ context | كاش لكل طلب، والعداد شغال |
+
+- عدد الاستعلامات لازم يبقى قد عدد مستويات الـ query، مش قد عدد الصفوف.`,
+          lines: [
+            "الـ loaders لكل طلب، وبتستخدم ctx.sql عشان تتعد:",
+            "رجّع:",
+            "loader الكتّاب:",
+            "كل الـ ids في استعلام واحد بـ any.",
+            "Map من الـ id للصف.",
+            "نفس ترتيب وطول الـ ids، والمفقود Error.",
+            "قفلة.",
+            "loader «آخر ٣ لكل كاتب»:",
+            "استعلام واحد:",
+            "الـ ids كجدول...",
+            "...ولكل كاتب آخر ٣ منشورات بـ LATERAL.",
+            "القيمة: array الـ ids.",
+            "قسّم النتيجة لكل كاتب بنفس الترتيب.",
+            "قفلة.",
+            "قفلة.",
+            "قفلة.",
+            "السيرفر:",
+            "الـ schema.",
+            "context جديد لكل طلب:",
+            "العداد جوه object (Yoga بيدمج الـ context فالرقم العادي بيتنسخ).",
+            "كل استعلام بيعدّي من هنا ويزوّد العداد.",
+            "الـ loaders بتاعة الطلب ده.",
+            "رجّعه.",
+            "قفلة.",
+            "plugin بيسجّل عدد الاستعلامات بعد ما التنفيذ يخلص.",
+            "قفلة."
+          ],
+          sol: R`اتجرّب على ويندوز 11 بـ Postgres 16.13 في Docker (٤٠ كاتب و ١٠٠٠ منشور، والـ ٥٠ منشور الأخيرين كتّابهم ٤٠):
+
+- من غير loaders: [[SQL queries: 101]] في المرتين، والوقت 108 ثم 29 مللي ثانية.
+- بالـ loaders: [[SQL queries: 3]]، والوقت 78 ثم 13 مللي ثانية.
+- الرد نفسه زي بعضه: أول منشور [[post 1000]] وكاتبه [[user1]] وآخر ٣ ليه [[post 1000]] و [[post 960]] و [[post 920]].
+
+والـ solCode على الكتّاب 1 و 8 و 15 رجّع ٩ صفوف: [[1 | 1000]] و [[1 | 960]] و [[1 | 920]]، و [[8 | 961]] و [[8 | 921]] و [[8 | 881]]، و [[15 | 962]] و [[15 | 922]] و [[15 | 882]].
+
+لو العدد طلع 0: العداد رقم في الـ context مش object. ولو الـ loaders عملت أكتر من ٣: فيه [[await]] جوه loop في resolver، أو الـ loaders معمولة برا الـ context.`,
+          solCode: R`create index on posts (author_id, id desc);
+select a.author_id, p.id, p.title
+from unnest(array[1, 8, 15]::int[]) as a(author_id)
+cross join lateral (select id, title from posts where author_id = a.author_id order by id desc limit 3) p;`
+        },
+        {
+          cmd: "cost limit و persisted queries",
+          title: "حدود للـ aliases والتكلفة، و introspection مقفول، و queries مسجلة بس",
+          desc: R`حد العمق (درس «auth في resolvers») لوحده مش كفاية: query عمقه ٣ بس فيه ١٠٠ alias لنفس الحقل التقيل بيعدّي. فبتحط حدود تانية من GraphQL Armor: عدد الـ aliases، وعدد الـ tokens، وتكلفة محسوبة لكل query.
+
+وأقوى حماية لـ API الفرونت بتاعك بس: persisted queries. وقت الـ build بتسجّل كل query الفرونت بيستخدمه بالـ hash بتاعه، والسيرفر في الإنتاج بيقبل الـ hash بس ويرفض أي نص query. ومعاها introspection مقفول، فمحدش يعرف الـ schema ولا يبعت query من عنده.`,
+          example: R`import { createHash } from "node:crypto";
+import { maxAliasesPlugin } from "@escape.tech/graphql-armor-max-aliases";
+import { costLimitPlugin } from "@escape.tech/graphql-armor-cost-limit";
+import { maxDepthPlugin } from "@escape.tech/graphql-armor-max-depth";
+import { maxTokensPlugin } from "@escape.tech/graphql-armor-max-tokens";
+import { useDisableIntrospection } from "@graphql-yoga/plugin-disable-introspection";
+import { usePersistedOperations } from "@graphql-yoga/plugin-persisted-operations";
+const sha256 = (s: string) => createHash("sha256").update(s).digest("hex");
+const store = new Map(operationsFromBuild.map((q) => [sha256(q), q]));
+const isProd = process.env.NODE_ENV === "production";
+export const yoga = createYoga({
+  schema,
+  graphiql: !isProd,
+  plugins: [
+    maxDepthPlugin({ n: 6 }),
+    maxAliasesPlugin({ n: 5 }),
+    maxTokensPlugin({ n: 1000 }),
+    costLimitPlugin({ maxCost: 100, objectCost: 2, scalarCost: 1, depthCostFactor: 1.5 }),
+    ...(isProd ? [useDisableIntrospection(), usePersistedOperations({ getPersistedOperation: (hash: string) => store.get(hash) ?? null })] : []),
+  ],
+});`,
+          try: R`شغّل نسختين من السيرفر: واحدة عادي (7505) وواحدة بـ [[NODE_ENV=production]] (7506)، و [[operationsFromBuild]] فيها query واحد بس: [[query Feed { posts(first: 10) { id title author { name } } }]]. على نسخة التطوير ابعت query فيه ١٠٠ alias، و query عمقه ٧، وتلات aliases لـ query تقيل. وعلى نسخة الإنتاج ابعت [[__schema]]، و query عادي، والـ hash بتاع Feed بـ POST وبـ GET، و hash مش موجود.`,
+          flag: "script",
+          deep: {
+            why: R`endpoint الـ GraphQL بيقبل أي query أي حد يكتبه، وده معناه إن أي حد يقدر يكتب أتقل query ممكن على الـ schema بتاعتك ويبعته ١٠٠ مرة في الثانية. الـ rate limit بعدد الطلبات مش بيحميك: طلب واحد ممكن يساوي ١٠٠٠ طلب عادي. والـ introspection بيدّي المهاجم خريطة كاملة (كل الأنواع، والحقول، وكل mutation حتى اللي الفرونت مش بيستخدمها).`,
+            how: R`الـ plugins كلها بتشتغل وقت الـ validation، يعني بعد ما الـ query يتفك (parse) وقبل ما أي resolver يتنادى. فالرفض بيكلف تقريبًا ولا حاجة.
+
+[[maxAliasesPlugin]]: عدد الـ aliases في الـ query كله. من غيره [[a1: posts { ... } a2: posts { ... } ...]] بيضاعف الشغل وهو لسه عمقه ٢.
+
+[[maxTokensPlugin]]: عدد الـ tokens (الكلمات والأقواس) في النص. بيوقف queries ضخمة قبل حتى ما تتفك كاملة.
+
+[[costLimitPlugin]]: بيدّي كل حقل تكلفة: object (زي [[author]]) بـ [[objectCost]]، و scalar (زي [[title]]) بـ [[scalarCost]]، وكل ما الحقل يبقى أعمق التكلفة بتتضرب في [[depthCostFactor]]. والمجموع لو عدّى [[maxCost]] الـ query بيترفض. **مهم:** التكلفة دي ثابتة من شكل الـ query، ومش عارفة القايمة هترجع كام عنصر. query تكلفته 66 رجّع 31500 بايت في التجربة. عشان كده لازم كمان حد لـ [[first]] في كل resolver قايمة (درس «connections و cursors»). وفيه spec اسمه GraphQL Cost Directives فيه [[@cost]] و [[@listSize]] بتعرّف فيها حجم القوايم، ومدعوم في بعض الـ gateways (من الـ docs، متجربش هنا).
+
+[[useDisableIntrospection]]: أي query فيه [[__schema]] أو [[__type]] بيترفض. الفرونت مش محتاج introspection وقت التشغيل: الأنواع بتتولد وقت الـ build من ملف الـ schema.
+
+[[usePersistedOperations]]: العميل بيبعت [[extensions.persistedQuery.sha256Hash]] بدل [[query]]. السيرفر بينادي [[getPersistedOperation(hash)]]: لو رجع نص، بيتنفذ. لو [[null]]: [[PersistedQueryNotFound]]. ولو العميل بعت [[query]] نص: [[PersistedQueryOnly]]، لأن [[allowArbitraryOperations]] افتراضيًا false. والـ store بيتبني وقت الـ build: أداة زي GraphQL Codegen (client preset) بتطلّع ملف JSON فيه كل operations الفرونت بالـ hash، والسيرفر بيقراه وقت التشغيل.
+
+ميزة جانبية: الطلب بقى صغير ([[hash]] بدل نص طويل)، و GET بالـ hash بيتكاش في CDN زي أي GET.
+
+الترتيب في الإنتاج: persisted operations قفلت الباب على أي query من برا. الحدود التانية لسه مفيدة لو فيه عملاء تانيين (API عام) أو لو حد غلط في الفرونت.`,
+            when: R`persisted queries + introspection مقفول: أي GraphQL API الفرونت بتاعك بس اللي بيستخدمه (أغلب الحالات). API عام لمطوّرين تانيين (زي GitHub): مينفعش persisted (هما بيكتبوا queries)، فالحماية cost limit بقوايم محسوبة و rate limit بالتكلفة مش بعدد الطلبات.`,
+            mistakes: R`حد عمق بس وتفتكر انت محمي. و cost limit من غير حد لـ [[first]] (التكلفة مش شايفة الأحجام). و introspection مقفول وتفتكره حماية لوحده (أسماء الحقول بتتعرف من الفرونت نفسه أو من رسايل «Did you mean...»). و persisted queries بـ [[allowArbitraryOperations: true]] «مؤقتًا» وتنساها. و store الـ hashes من الإنتاج القديم بعد deploy جديد (الفرونت الجديد يبعت hash مش موجود): انشر الـ store قبل أو مع الفرونت.`
+          },
+          teach: R`## الفكرة: ارفض قبل ما تنفّذ
+
+كل الحدود دي بتشتغل على **نص** الـ query قبل التنفيذ. والـ persisted queries بتقفل الموضوع من أوله: مفيش نص من برا خالص.
+
+اتجرّب على ويندوز 11: Node 24.22.1 و graphql-yoga 6.0.1 و graphql 16.14.2، و GraphQL Armor (max-depth 2.4.2 و max-aliases 2.6.2 و max-tokens 2.5.1 و cost-limit 2.4.3)، و [[@graphql-yoga/plugin-disable-introspection]] 3.0.1 و [[plugin-persisted-operations]] 4.0.1. الـ schema [[User { posts }]] و [[Post { author }]]، وكل قايمة بترجع ١٠ عناصر. نسخة تطوير على 7505 ونسخة [[NODE_ENV=production]] على 7506.
+
+> plugins الـ Armor بتطلب [[graphql]] 16 (في الـ dependencies بتاعتها [[^16.10.0]])، و Yoga 6 بيقبل 16 أو 17، فخليك على 16 لحد ما تتأكد.
+
+---
+
+## ١. الـ store
+
+~~~ts
+const sha256 = (s: string) => createHash("sha256").update(s).digest("hex");
+const store = new Map(operationsFromBuild.map((q) => [sha256(q), q]));
+~~~
+
+- [[createHash("sha256").update(s).digest("hex")]]: SHA-256 للنص كـ hex (٦٤ حرف).
+- [[operationsFromBuild]]: array بكل نصوص الـ operations اللي الفرونت بيستخدمها (في التجربة: [[Feed]] بس). الـ Map: hash ← نص.
+
+نفس الـ hash بـ Git Bash:
+
+~~~bash
+printf '%s' "query Feed { posts(first: 10) { id title author { name } } }" | sha256sum
+~~~
+
+أول ١٦ حرف طلعوا [[17cb0b1084a77d6e]] من الاتنين. لازم النص **بالظبط** نفسه: مسافة زيادة = hash تاني.
+
+## ٢. الحدود
+
+~~~ts
+    maxDepthPlugin({ n: 6 }),
+    maxAliasesPlugin({ n: 5 }),
+    maxTokensPlugin({ n: 1000 }),
+    costLimitPlugin({ maxCost: 100, objectCost: 2, scalarCost: 1, depthCostFactor: 1.5 }),
+~~~
+
+~~~text ١٠٠ alias ([[p0: posts { id } p1: posts { id } ...]])
+{"errors":[{"message":"Syntax Error: Aliases limit of 5 exceeded, found 100."}]} [200]
+~~~
+
+~~~text عمق ٧
+{"errors":[{"message":"Syntax Error: Query depth limit of 6 exceeded, found 7."}]} [200]
+~~~
+
+(الـ plugins دي بترمي الخطأ كـ syntax error، عشان كده الرسالة بتبدأ بـ [[Syntax Error:]] والـ status 200.)
+
+التكلفة: شغّلنا السيرفر بـ [[maxCost: 1]] عشان الرسالة تقول التكلفة الحقيقية لكل query:
+
+| الـ query | التكلفة |
+|---|---|
+| [[{ posts { id title author { name } } }]] | 10.25 |
+| [[posts]] ← [[author]] ← [[posts]] ← [[author]] ← [[posts]] (عمق ٥، بكل الحقول) | 65.94 |
+| تلات aliases ([[a:]] و [[b:]] و [[c:]]) كل واحد عمق ٤ | 121.88 |
+
+وبـ [[maxCost: 100]]:
+
+~~~text الناتج
+عمق ٥:          [200] 31500B   (عدّى، ورجّع 31500 بايت: ١٠ × ١٠ × ١٠ منشور)
+تلات aliases:   {"errors":[{"message":"Syntax Error: Query Cost limit of 100 exceeded, found 121.875."}]}
+~~~
+
+لاحظ: التكلفة 66 رجّعت ألف منشور. الـ plugin بيعدّ الحقول في النص، ومش عارف إن [[posts]] بترجع ١٠ (أو ١٠٠٠). الحماية من الأحجام هي حد [[first]] في الـ resolvers.
+
+## ٣. الإنتاج: introspection و persisted
+
+~~~ts
+    ...(isProd ? [useDisableIntrospection(), usePersistedOperations({ getPersistedOperation: (hash: string) => store.get(hash) ?? null })] : []),
+~~~
+
+- [[...(cond ? [a, b] : [])]]: لو إنتاج، فك الـ array جوه قايمة الـ plugins، غير كده فك array فاضي (ولا حاجة).
+- [[getPersistedOperation]]: hash ← نص أو [[null]].
+
+~~~text الناتج على نسخة الإنتاج
+{ __schema { types { name } } }          {"errors":[{"message":"PersistedQueryOnly","extensions":{"code":"CANNOT_SEND_PQ_ID_AND_BODY"}}]}
+{ posts { id } }                         {"errors":[{"message":"PersistedQueryOnly","extensions":{"code":"CANNOT_SEND_PQ_ID_AND_BODY"}}]}
+hash بتاع Feed (POST)                   {"data":{"posts":[{"id":"0","title":"t0","author":{"name":"Mona"}},...
+hash بتاع Feed (GET)                    {"data":{"posts":[{"id":"0","title":"t0","author":{"name":"Mona"}},...
+hash "0000"                              {"errors":[{"message":"PersistedQueryNotFound","extensions":{"code":"PERSISTED_QUERY_NOT_IN_LIST"}}]}
+~~~
+
+- أي نص query اترفض بـ [[PersistedQueryOnly]] قبل ما يوصل حتى للـ introspection plugin. و introspection على نسخة التطوير رجّع كل الأنواع ([[User]] و [[Post]] و [[__Schema]] ...).
+- الـ hash الصح اشتغل بـ POST وبـ GET.
+
+شكل الطلب بالـ hash:
+
+~~~bash
+curl -s localhost:7506/graphql -H 'content-type: application/json' \
+  -d '{"extensions":{"persistedQuery":{"version":1,"sha256Hash":"17cb0b10...(٦٤ حرف)"}}}'
+curl -s -G localhost:7506/graphql --data-urlencode 'extensions={"persistedQuery":{"version":1,"sha256Hash":"17cb0b10..."}}'
+~~~
+
+مفيش [[query]] خالص: [[extensions.persistedQuery]] فيها النسخة والـ hash.
+
+---
+
+## الخلاصة
+
+| الحماية | بتمنع إيه | متى |
+|---|---|---|
+| [[maxDepthPlugin]] | queries متداخلة | دايمًا |
+| [[maxAliasesPlugin]] | نفس الحقل ١٠٠ مرة | دايمًا |
+| [[maxTokensPlugin]] | نص ضخم | دايمًا |
+| [[costLimitPlugin]] | queries عريضة وعميقة | دايمًا، ومعاها حد [[first]] |
+| [[useDisableIntrospection]] | خريطة الـ schema | الإنتاج |
+| [[usePersistedOperations]] | أي query مش من الفرونت | الإنتاج، لو الفرونت بتاعك بس |
+
+- الحدود بتشتغل قبل الـ resolvers، فالرفض رخيص.
+- التكلفة الثابتة مش شايفة أحجام القوايم.`,
+          lines: [
+            "SHA-256 من Node.",
+            "حد عدد الـ aliases.",
+            "حد التكلفة.",
+            "حد العمق.",
+            "حد عدد الـ tokens.",
+            "قفل الـ introspection.",
+            "persisted operations.",
+            "دالة hash للنص (hex).",
+            "hash ← نص لكل operation اتولّد وقت الـ build.",
+            "إنتاج ولا تطوير.",
+            "السيرفر:",
+            "الـ schema.",
+            "GraphiQL في التطوير بس.",
+            "الـ plugins:",
+            "عمق أقصاه ٦.",
+            "٥ aliases بالكتير.",
+            "١٠٠٠ token بالكتير.",
+            "تكلفة أقصاها ١٠٠: object بـ ٢، و scalar بـ ١، وكل مستوى يضرب في ١.٥.",
+            "في الإنتاج بس: introspection مقفول، ومفيش غير الـ hashes المسجلة.",
+            "قفلة.",
+            "قفلة."
+          ],
+          sol: R`اتجرّب على ويندوز 11 (graphql-yoga 6.0.1 و GraphQL Armor):
+
+- ١٠٠ alias: [[Aliases limit of 5 exceeded, found 100.]]
+- عمق ٧: [[Query depth limit of 6 exceeded, found 7.]]
+- تلات aliases تقيلة: [[Query Cost limit of 100 exceeded, found 121.875.]]، والـ query العميق لوحده (تكلفة 65.94) عدّى ورجّع 31500 بايت.
+- الإنتاج: [[__schema]] و [[{ posts { id } }]] اترفضوا بـ [[PersistedQueryOnly]]، والـ hash بتاع Feed اشتغل بـ POST و GET، و hash مش موجود: [[PersistedQueryNotFound]].`,
+          solCode: R`H=$(printf '%s' "query Feed { posts(first: 10) { id title author { name } } }" | sha256sum | cut -d' ' -f1)
+curl -s localhost:7506/graphql -H 'content-type: application/json' \
+  -d "{\"extensions\":{\"persistedQuery\":{\"version\":1,\"sha256Hash\":\"$H\"}}}"`
+        },
+        {
+          cmd: "REST ولا GraphQL ولا tRPC",
+          title: "تختار شكل الـ API بصراحة",
+          desc: R`REST: كل resource ليه URL، والـ HTTP نفسه (methods و status codes و cache) شغال معاك، وأي عميل في أي لغة يفهمه. GraphQL: endpoint واحد والعميل بيختار الحقول، ومفيد لما عملاء كتير مختلفين بيطلبوا أشكال مختلفة من نفس البيانات، بس بيجيب معاه N+1 وحدود التكلفة والكاش. tRPC: دوال TypeScript بتتنادى من الفرونت والأنواع بتوصل لوحدها، بس الاتنين لازم TypeScript وفي نفس الـ repo.
+
+مفيش واحد أحسن دايمًا. السؤال: مين العملاء، ومين بيكتبهم، ومحتاج كاش HTTP قد إيه.`,
+          example: R`// REST
+const post = await (await fetch("/api/posts/10?include=author")).json();
+// GraphQL
+const { data } = await gql(PostPage, { id: "10", withAuthor: true });
+// tRPC
+const post = await trpc.postById.query({ id: "10" });`,
+          try: R`خد شاشة واحدة من مشروعك (صفحة منشور فيها الكاتب وآخر ٣ تعليقات) واكتب الطلبات اللي محتاجاها بالتلاتة على ورقة: كام طلب؟ مين بيقرر الحقول؟ الرد بيتكاش في CDN إزاي؟ لو حقل اتشال من السيرفر، العميل بيعرف إمتى (وقت الـ build ولا لما يقع في الإنتاج)؟ وبعدين قرر واكتب السبب في سطرين.`,
+          deep: {
+            why: R`الاختيار ده بيحدد شكل الكود في الفرونت والباك لسنين، وتغييره بعدين مكلف. وناس كتير بتختار GraphQL «عشان مودرن» لـ API عميله الوحيد صفحة React واحدة، فيدفعوا تمن N+1 والحماية والكاش من غير ما يستفيدوا من المرونة. وناس تانية بتختار tRPC وبعدين يحتاجوا تطبيق موبايل native أو شريك خارجي، فيكتبوا REST جنبه.`,
+            how: R`الكاش: REST بـ GET و [[ETag]] و [[Cache-Control]] (تاب APIs المستوى ١، «ETag و Cache-Control») بيتكاش في المتصفح والـ CDN من غير أي كود. GraphQL غالبًا POST، فمفيش كاش HTTP، والكاش بيتنقل للعميل (Apollo Client و urql بيعملوا normalized cache). ولو عايز CDN: persisted queries بـ GET (درس «cost limit و persisted queries»: الـ hash اشتغل بـ GET). tRPC بيبعت الـ queries بـ GET، فممكن تحط headers للكاش، بس الـ batching بيجمع كذا procedure في URL واحد.
+
+الأخطاء: REST بالـ status code (404 و 409 و 422) والأدوات كلها (monitoring، retries) فاهماه. GraphQL الرد غالبًا 200 وفيه [[errors]] (درس «أخطاء GraphQL و null»: حتى الـ validation errors بـ 200 مع [[application/json]])، فالـ monitoring لازم يقرا الـ body. tRPC بيرجّع status codes حسب [[TRPCError]] code.
+
+العقد والأنواع: REST بـ OpenAPI و codegen (درس «Swagger UI و openapi-typescript»). GraphQL الـ schema هي العقد، و codegen من الـ operations. tRPC من غير عقد مكتوب: نوع الـ router نفسه. ده أسرع في monorepo، بس مفيش عقد لحد برا TypeScript.
+
+الأداء: GraphQL بيقلل الـ overfetching وعدد الرحلات للعميل، بس الشغل بيتنقل للسيرفر (resolvers و DataLoader، درس «N+1 على Postgres»: ١٠١ استعلام لـ ٣). REST بـ [[?include=]] أو [[?fields=]] بيحل جزء كبير من ده في الحالات البسيطة.
+
+الأمان: REST بتحمي كل endpoint، و rate limit بعدد الطلبات. GraphQL محتاج حماية على مستوى الحقل، وحدود عمق وتكلفة، وغالبًا persisted queries. tRPC زي REST (كل procedure endpoint)، بس سهل تنسى إنه API عام على الإنترنت مش «دالة داخلية».
+
+حاجات تانية: رفع الملفات أسهل بكتير في REST (multipart عادي أو presigned URL). والـ versioning: REST بـ [[/v2]] أو headers، و GraphQL بيضيف حقول ويعمل [[@deprecated]] للقديمة من غير versions.`,
+            when: R`API عام لمطوّرين تانيين أو عملاء بلغات مختلفة: REST (و OpenAPI). فرونت واحد + باك TypeScript في نفس الـ repo وفريق صغير: tRPC. عملاء كتير (web و iOS و Android و شركاء) بيطلبوا أشكال مختلفة من بيانات مترابطة، أو gateway بيجمع كذا service: GraphQL. وفيه مشاريع كتير بتجمع: REST للعام و tRPC أو GraphQL للفرونت.`,
+            mistakes: R`تختار GraphQL لـ CRUD بسيط بعميل واحد. وتحط tRPC في API هيستخدمه موبايل native أو شريك. وتفتكر GraphQL بيحل الأداء لوحده (المشكلة اتنقلت للسيرفر). وتقارن على «الحجم على السلك» بس: الفرق الحقيقي في الكاش والأخطاء والعقد ومين العملاء. وتغيّر شكل الـ API في نص المشروع من غير سبب قوي.`
+          },
+          teach: R`## الفكرة: التلاتة بيحلوا نفس المشكلة لعملاء مختلفين
+
+الدرس ده مقارنة مفيهاش كود جديد يتشغّل: الأرقام اللي فيه جاية من الدروس اللي فاتت في القسم ده (اتشغّلت على ويندوز 11 بـ Node 24.22.1)، وتفاصيل tRPC من درس «tRPC» ومن الـ docs الرسمية (tRPC 11).
+
+---
+
+## ١. نفس الشاشة بالتلاتة
+
+~~~ts
+const post = await (await fetch("/api/posts/10?include=author")).json();
+~~~
+
+REST: URL للـ resource، و [[?include=author]] بيقول «هات الكاتب معاه» (اختيار شائع، مش standard). الرد شكله ثابت يحدده السيرفر.
+
+~~~ts
+const { data } = await gql(PostPage, { id: "10", withAuthor: true });
+~~~
+
+GraphQL: [[PostPage]] الـ operation من درس «variables و fragments»، و [[gql]] أي دالة بتعمل POST لـ [[/graphql]]. العميل بيحدد الحقول.
+
+~~~ts
+const post = await trpc.postById.query({ id: "10" });
+~~~
+
+tRPC: نداء دالة. [[trpc]] client معمول بـ [[createTRPCClient<AppRouter>]]، والنوع بتاع [[post]] جاي من السيرفر نفسه.
+
+---
+
+## ٢. المقارنة
+
+| | REST | GraphQL | tRPC |
+|---|---|---|---|
+| العملاء | أي لغة | أي لغة (بمكتبة أو [[fetch]]) | TypeScript، ونفس الـ repo عمليًا |
+| مين يحدد الحقول | السيرفر | العميل | السيرفر |
+| العقد | OpenAPI (بتكتبه أو بيتولّد) | الـ schema | نوع الـ router |
+| كاش HTTP/CDN | جاهز بـ GET | محتاج persisted GET | GET للـ queries |
+| الأخطاء | status codes | 200 + [[errors]] غالبًا | status من [[TRPCError]] |
+| N+1 | في الكود بتاعك | الوضع الافتراضي لو مخدتش بالك | في الكود بتاعك |
+| الحماية من query تقيل | مش موجودة كمشكلة | عمق و aliases وتكلفة و persisted | مش موجودة كمشكلة |
+| رفع ملفات | سهل | مش مريح | ممكن، مش أفضل حاجة فيه |
+| versioning | [[/v2]] أو header | حقول جديدة و [[@deprecated]] | مع الكود (الاتنين بيتنشروا مع بعض) |
+
+---
+
+## ٣. أسئلة القرار
+
+1. **فيه عملاء مش TypeScript أو برا الـ repo** (موبايل native، شركاء، API عام)؟ لو أيوه: tRPC خرج. REST أو GraphQL.
+2. **العملاء محتاجين أشكال مختلفة جدًا من نفس البيانات المترابطة**، أو عندك كذا service عايز تجمعهم في endpoint؟ GraphQL بيستاهل تمنه.
+3. **الكاش في CDN مهم** (محتوى عام، ترافيك كبير)؟ REST أسهل. GraphQL بس بـ persisted GET.
+4. **فريق صغير، Next أو monorepo، والفرونت هو العميل الوحيد**؟ tRPC أسرع حاجة في الكتابة.
+5. لسه مش متأكد؟ REST بـ OpenAPI: أي حد يفهمه، وتقدر تضيف GraphQL أو tRPC جنبه بعدين لعميل معين.
+
+---
+
+## الخلاصة
+
+- REST: الـ HTTP بيشتغل معاك (كاش، status، أي عميل).
+- GraphQL: مرونة للعميل، وتمنها على السيرفر (N+1، حدود، كاش).
+- tRPC: أسرع تجربة لما الاتنين TypeScript في مكان واحد، ومش لـ API عام.
+- مشاريع كتير بتجمع اتنين: REST للعام، وواحد من التانيين للفرونت.`,
+          lines: [
+            "REST: GET للـ resource، والكاتب معاه بـ include.",
+            "GraphQL: operation باسم و variables، والعميل اختار الحقول.",
+            "tRPC: نداء procedure كأنها دالة، والنوع جاي من السيرفر."
+          ],
+          sol: R`مفيش إجابة واحدة. مثال لقرار مكتوب صح: «الفرونت Next والباك في نفس الـ repo، ومفيش موبايل في الخطة: tRPC. لو جه شريك خارجي هنعمله REST بـ OpenAPI جنبه.» أو: «عندنا web و iOS و Android بيعرضوا نفس البيانات بأشكال مختلفة: GraphQL، ومعاه DataLoader و persisted queries من أول يوم.»
+
+اللي ميعدّيش: «GraphQL عشان أحدث» أو «REST عشان متعودين» من غير ما ترد على أسئلة العملاء والكاش.`
+        }
+      ]
+    }
 ]);
 
 /* ===== js/tabs/cloud/01.js ===== */
