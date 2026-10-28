@@ -2864,6 +2864,11 @@
   "date": "2026-10-08",
   "on": "install scripts downloaded and grepped (not run); docs: install, ufw"
  },
+ "cloud|CrashLoopBackOff": {
+  "hash": "e178876b1b00",
+  "date": "2026-10-28",
+  "on": "kind k8s v1.37.0 on Docker Desktop Win11 (describe, logs/--previous, kubectl events, kubectl debug)"
+ },
  "cloud|Deployment YAML": {
   "hash": "738184d33b10",
   "date": "2026-10-08",
@@ -2913,6 +2918,11 @@
   "hash": "53d21e269761",
   "date": "2026-10-08",
   "on": "bucket versioning on LocalStack 4.9; psql failover loop on postgres:16-alpine; docs: RDS multi-az, autoscaling"
+ },
+ "cloud|HPA": {
+  "hash": "075700ca68c0",
+  "date": "2026-10-28",
+  "on": "kind k8s v1.37.0 + metrics-server v0.9.0, Win11 Git Bash; patch quoting tested in pwsh 7.6 + PowerShell 5.1"
  },
  "cloud|IAM policy JSON": {
   "hash": "f3fcda1bfb1c",
@@ -3004,6 +3014,11 @@
   "date": "2026-10-08",
   "on": "@sentry/node 11.5 + Express 5 (Windows Node 24), local fake DSN; docs: Sentry UI"
  },
+ "cloud|Service و Ingress": {
+  "hash": "bcd46d549aa3",
+  "date": "2026-10-28",
+  "on": "kind k8s v1.37.0 + ingress-nginx controller-v1.15.1, Win11 Git Bash + pwsh 7.6 + PowerShell 5.1; docs: Gateway API / cloud-provider-kind"
+ },
  "cloud|Storage rules": {
   "hash": "7b3d01655368",
   "date": "2026-10-28",
@@ -3089,6 +3104,11 @@
   "date": "2026-10-08",
   "on": "fly.toml parsed + flyctl v0.4.114 --help; docs: launch/deploy/secrets/scale"
  },
+ "cloud|helm": {
+  "hash": "57121d2068ca",
+  "date": "2026-10-28",
+  "on": "Helm v4.3.1 + podinfo chart 6.17.0 on kind k8s v1.37.0, Win11 Git Bash"
+ },
  "cloud|incident response": {
   "hash": "b5fe656324eb",
   "date": "2026-10-08",
@@ -3098,6 +3118,11 @@
   "hash": "c776221f2e0b",
   "date": "2026-10-08",
   "on": "Next.js 16.4 + @vercel/otel 2.1.3 in node:22-slim, traces to Jaeger v2.22; docs: NodeSDK variant"
+ },
+ "cloud|kind load docker-image": {
+  "hash": "05330bb220ef",
+  "date": "2026-10-28",
+  "on": "kind v0.33.0 + kubectl v1.37.1 (k8s v1.37.0, 3 nodes) on Docker Desktop Win11, Git Bash + pwsh 7.6; docs: winget/brew install"
  },
  "cloud|kubectl": {
   "hash": "378e2487be6e",
@@ -3124,6 +3149,11 @@
   "date": "2026-10-27",
   "on": "Windows 11, Node 24.22, @aws-sdk/client-s3 3.1158.0 against MinIO (pgsty/minio) in Docker, checksum part only; docs: real S3 rejecting the empty-body checksum"
  },
+ "cloud|probes": {
+  "hash": "742e2be34fee",
+  "date": "2026-10-28",
+  "on": "kind k8s v1.37.0 on Docker Desktop Win11 (startup/readiness/liveness, broken liveness on 8080)"
+ },
  "cloud|railway": {
   "hash": "731203c795f5",
   "date": "2026-10-08",
@@ -3139,10 +3169,20 @@
   "date": "2026-10-08",
   "on": "yaml parsed in Node 24 + Express with PORT=10000 in node:22-slim; docs: Blueprint deploy"
  },
+ "cloud|requests و limits": {
+  "hash": "b748533423f1",
+  "date": "2026-10-28",
+  "on": "kind k8s v1.37.0 on Docker Desktop Win11 (OOMKilled, Pending, QoS, kubectl top), commands also in pwsh 7.6 + PowerShell 5.1"
+ },
  "cloud|rightsize + commit + clean": {
   "hash": "b70c15ae76fb",
   "date": "2026-10-08",
   "on": "docs: concept"
+ },
+ "cloud|rolling update": {
+  "hash": "1f281afbf319",
+  "date": "2026-10-28",
+  "on": "kind k8s v1.37.0 + ingress-nginx, Win11 Git Bash (rollout/undo/progress deadline, SIGTERM 31s vs 2s)"
  },
  "cloud|root + MFA": {
   "hash": "4f3e86ee1a0a",

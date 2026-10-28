@@ -232,7 +232,7 @@
 
 ### ٣د. دفعة المواضيع الناقصة (٢٨ أكتوبر، بقرارك)
 
-- [ ] cloud/15: Kubernetes أعمق (kind محلي، Service و Ingress، probes، resources و HPA، rolling update و rollback، Helm)
+- [x] cloud/15: Kubernetes أعمق (kind محلي، Service و Ingress، probes، resources و HPA، rolling update و rollback، Helm). اتعمل: 8 دروس على cluster حقيقي (kind 0.33 و k8s 1.37 و Helm 4.3). ملاحظة: ingress-nginx بقى archived، والدرس بيقول كده وبيشاور على Gateway API
 - [x] cloud/16: Firebase (Emulator Suite محلي: Auth و Firestore و rules و Functions و Storage). اتعمل: 7 دروس (firebase-tools 15.34، كله على الـ emulator من غير login؛ FCM و deploy من الـ docs)
 - [x] apis/15: WebSockets (سيرفر و reconnect و scaling) و GraphQL (schema و resolvers و N+1 و DataLoader). اتعمل: 11 درس (ws 8.22 و graphql-yoga 6)، واتصلح درس «auth في resolvers»: graphql-yoga 6 شالت createGraphQLError
 - [x] diag/05: Prometheus و Grafana (metrics من Node، node_exporter، PromQL، alerts). اتعمل: 6 دروس (Prometheus 3.15 و Alertmanager 0.34 و Grafana 13.3، التنبيهات اشتغلت فعلًا)
