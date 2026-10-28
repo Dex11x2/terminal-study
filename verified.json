@@ -12024,6 +12024,36 @@
   "date": "2026-10-28",
   "on": "windows-11, pwsh-7.6 (الدالة و $PROFILE اتجربوا؛ تعديل PATH و Register-ScheduledTask من الـ docs)"
  },
+ "ps|مشروع ٢ — add وفخ المصفوفة": {
+  "hash": "3190202d5be3",
+  "date": "2026-10-28",
+  "on": "windows-11, pwsh-7.6"
+ },
+ "ps|مشروع ٢ — done و rm والأخطاء": {
+  "hash": "e6bc68944ad6",
+  "date": "2026-10-28",
+  "on": "windows-11, pwsh-7.6"
+ },
+ "ps|مشروع ٢ — اختبر أداتك": {
+  "hash": "b4daf72b7d5d",
+  "date": "2026-10-28",
+  "on": "windows-11, pwsh-7.6"
+ },
+ "ps|مشروع ٢ — التصميم والتخزين": {
+  "hash": "a72b964629f4",
+  "date": "2026-10-28",
+  "on": "windows-11, pwsh-7.6"
+ },
+ "ps|مشروع ٢ — رجّع objects مش نصوص": {
+  "hash": "1bf32a77ed6b",
+  "date": "2026-10-28",
+  "on": "windows-11, pwsh-7.6"
+ },
+ "ps|مشروع ٢ — فخ النطاق": {
+  "hash": "50d76dce0172",
+  "date": "2026-10-28",
+  "on": "windows-11, pwsh-7.6"
+ },
  "pyapi|*args و **kwargs": {
   "hash": "308ff48c87e2",
   "date": "2026-10-07",
