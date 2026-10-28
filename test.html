@@ -74,6 +74,11 @@ main[hidden],.screen[hidden]{display:none}
 .map tr.done td:first-child>a::after{content:" ✓";color:var(--ok)}
 .map .t{font-weight:600}
 .map .go{color:var(--accent);font-size:13.5px;white-space:nowrap}
+/* على الموبايل الخريطة بـ ٦ أعمدة بتبقى مزنوقة: نخفي عمودين أقل أهمية */
+@media(max-width:700px){
+  .map th:nth-child(3),.map td:nth-child(3),
+  .map th:nth-child(5),.map td:nth-child(5){display:none}
+}
 .rail{display:flex;gap:4px;margin:16px 0 0}
 .rail i{flex:1;height:6px;border-radius:3px;background:var(--line)}
 .rail i.on{background:var(--accent)}
@@ -98,9 +103,19 @@ main[hidden],.screen[hidden]{display:none}
 .step{margin:22px 0;scroll-margin-top:120px}
 .step>h3{font-size:18.5px;margin:0 0 8px}
 .step>h3 .n{font-family:var(--mono);color:var(--accent);font-size:16px;margin-inline-end:8px}
-.k{width:100%;border-collapse:collapse;margin:10px 0;font-size:15.5px}
-.k th,.k td{border:1px solid var(--line);padding:7px 11px;text-align:start;vertical-align:top}
+.k{width:100%;max-width:100%;table-layout:fixed;border-collapse:collapse;margin:10px 0;font-size:15.5px}
+.k th,.k td{border:1px solid var(--line);padding:7px 11px;text-align:start;vertical-align:top;overflow-wrap:anywhere}
 .k th{background:color-mix(in srgb,var(--accent) 9%,transparent)}
+/* css/style.css بتاع الموقع فيه table{min-width:760px} لكل جدول — جداول الموقع شغالة
+   لأنها ملفوفة في .tbl بـ overflow-x:auto. هنا الجداول جوه العمود، فلازم نلغي الحد ده
+   وإلا الجدول بيدفع الشبكة والصفحة تعمل سكرول أفقي والعمود اليمين يتقطع */
+.k,.map{min-width:0}
+/* والكود جوه الخلايا لازم يلف بدل ما يفرض عرض */
+.k code,.map code{white-space:normal;overflow-wrap:anywhere;max-width:100%}
+.map{max-width:100%;table-layout:fixed}
+.map th,.map td{overflow-wrap:anywhere}
+/* كل حاوية في العمود الأوسط تقدر تصغّر بدل ما تدفع الشبكة */
+.lesson,.step,.use,.ex,.wrapup,.uc,.use .cards,#lessonSlot,.note-box,.unit-head{min-width:0}
 .out{margin:8px 0}
 .out .term-bar{justify-content:flex-start;gap:8px}
 

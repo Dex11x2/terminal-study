@@ -299,6 +299,7 @@
 - **`${` في ملفات الدروس لازم تتكتب `$__{`**، والـ backtick `$__bt`. غلطة متكررة وبتطلّع «Missing } in template expression» أو «Unexpected identifier».
 - **`#!/usr/bin/env bash` بيتعدّ كتعليق** في `exampleLines`، فمش بياخد سطر في `lines`.
 - **`dist/` لازم يتبني من worktree على جهاز صاحب المشروع** (مكتوب في القواعد تحت): شجرة العمل CRLF والـ CI بيبني LF.
+- **`css/style.css` فيه `table{min-width:760px}` لكل جدول (اتكشف ٢٨ أكتوبر).** جداول الموقع شغالة بس لأنها ملفوفة في `.tbl` بـ `overflow-x:auto`. أي تخطيط جديد بأعمدة جانبية لازم يلغي الحد ده (`min-width:0` + `table-layout:fixed`) وإلا الجدول بيدفع الصفحة وتعمل سكرول أفقي والعمود الجانبي يتقطع.
 - **صورة `ubuntu:24.04` فيها `man` stub** وبتمسح `/usr/share/man`. لتشغيل man حقيقي: امسح `/etc/dpkg/dpkg.cfg.d/excludes`، و `apt-get install --reinstall man-db manpages`، و `dpkg-divert --rename --remove /usr/bin/man`، و `mandb`.
 
 ### ٤. تمارين بتتصحح لوحدها في تابات أكتر
