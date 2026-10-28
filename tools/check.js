@@ -32,6 +32,8 @@ const hashComment = (tab, ex, flag) => {
   const l = ex.split('\n').find(l => /^\s*#\s/.test(l));
   return l ? l.trim() : null;
 };
+// code inside ~~~ fences is shown as is (مش بيتفسر)، فالعد بيتم على الكلام اللي حواليه بس
+const noFence = s => typeof s === 'string' ? s.replace(/^~~~[^\n]*\n[\s\S]*?^~~~\s*$/gm, '') : s;
 const brackets = (where, s) => {
   if (typeof s !== 'string') return;
   const o = (s.match(/\[\[/g) || []).length, c = (s.match(/\]\]/g) || []).length;
@@ -59,12 +61,11 @@ for (const tab in DATA) {
       const hc = hashComment(tab, ex, flag) || hashComment(tab, (SOL[tab + '|' + cmd] || {}).code, 'script');
       if (hc) err(w, `تعليق بـ # في كود مش بيفهمه: «${hc.slice(0, 50)}». استخدم // (الطالب هينسخ المثال ويشغّله)`);
       const d = DEEP[tab + '|' + cmd];
-      if (d) ['why', 'how', 'when', 'mistakes'].forEach(k => { if (!d[k]) warn(w, `deep ناقصه ${k}`); brackets(w + ' (deep)', d[k]); });
+      if (d) ['why', 'how', 'when', 'mistakes'].forEach(k => { if (!d[k]) warn(w, `deep ناقصه ${k}`); brackets(w + ' (deep)', noFence(d[k])); });
       const sol = SOL[tab + '|' + cmd];
       const te = TEACH[tab + '|' + cmd];
-      // code inside ~~~ fences is shown as is, so only the prose around it is checked for [[ ]]
-      if (te !== undefined) { if (typeof te !== 'string' || !te.trim()) err(w, 'teach لازم يبقى نص'); else { brackets(w + ' (teach)', te.replace(/^~~~[^\n]*\n[\s\S]*?^~~~\s*$/gm, '')); if ((te.match(/^~~~/gm) || []).length % 2) err(w, 'teach: ~~~ مش مقفول'); } }
-      if (sol) { if (typeof sol.text !== 'string' || !sol.text.trim()) err(w, 'sol لازم يبقى نص'); brackets(w + ' (sol)', sol.text); if (sol.code !== undefined && typeof sol.code !== 'string') err(w, 'solCode لازم يبقى نص'); }
+      if (te !== undefined) { if (typeof te !== 'string' || !te.trim()) err(w, 'teach لازم يبقى نص'); else { brackets(w + ' (teach)', noFence(te)); if ((te.match(/^~~~/gm) || []).length % 2) err(w, 'teach: ~~~ مش مقفول'); } }
+      if (sol) { if (typeof sol.text !== 'string' || !sol.text.trim()) err(w, 'sol لازم يبقى نص'); brackets(w + ' (sol)', noFence(sol.text)); if (sol.code !== undefined && typeof sol.code !== 'string') err(w, 'solCode لازم يبقى نص'); }
       const b = BREAK[tab + '|' + cmd];
       if (b) {
         b.forEach(s => brackets(w + ' (lines)', s));

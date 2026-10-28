@@ -11289,6 +11289,11 @@
   "date": "2026-10-08",
   "on": "Windows 11 local build (DB restart, AI no-key + limit); docs: Stripe CLI, prompt injection"
  },
+ "ps|$?": {
+  "hash": "6949850f3716",
+  "date": "2026-10-28",
+  "on": "windows-11, pwsh-7.6 و powershell-5.1.26100.9711"
+ },
  "ps|$LASTEXITCODE": {
   "hash": "5f92172f28f3",
   "date": "2026-10-06",
@@ -11319,10 +11324,30 @@
   "date": "2026-10-06",
   "on": "win11 pwsh 7.6.6 + ps 5.1"
  },
+ "ps|( ) و $( )": {
+  "hash": "4345a66eb507",
+  "date": "2026-10-28",
+  "on": "windows-11, pwsh-7.6 و powershell-5.1.26100.9711"
+ },
  "ps|-ErrorAction و $Error": {
   "hash": "46ec60a98f8c",
   "date": "2026-10-06",
   "on": "win11 pwsh-7.6 + ps-5.1"
+ },
+ "ps|-WhatIf و -Confirm": {
+  "hash": "5a030d6aa569",
+  "date": "2026-10-28",
+  "on": "windows-11, pwsh-7.6"
+ },
+ "ps|-and و -or مقابل && و ||": {
+  "hash": "ecec523cbeb6",
+  "date": "2026-10-28",
+  "on": "windows-11, pwsh-7.6 و powershell-5.1.26100.9711"
+ },
+ "ps|; و && و ||": {
+  "hash": "0801318fa241",
+  "date": "2026-10-28",
+  "on": "windows-11, pwsh-7.6 و powershell-5.1.26100.9711"
  },
  "ps|Add-LocalGroupMember": {
   "hash": "b9c682600e2a",
@@ -11389,6 +11414,11 @@
   "date": "2026-10-06",
   "on": "win11 pwsh 7.6 + ps 5.1 (scratch folder)"
  },
+ "ps|Get-Alias": {
+  "hash": "a7cd0c511a6d",
+  "date": "2026-10-28",
+  "on": "windows-11, pwsh-7.6"
+ },
  "ps|Get-BitLockerVolume": {
   "hash": "f8030833a791",
   "date": "2026-10-06",
@@ -11413,6 +11443,16 @@
   "hash": "3bdb37f47a01",
   "date": "2026-10-06",
   "on": "win11 pwsh 7.6.6; ubuntu-24.04"
+ },
+ "ps|Get-Command -Syntax": {
+  "hash": "fac35eef7f0d",
+  "date": "2026-10-28",
+  "on": "windows-11, pwsh-7.6"
+ },
+ "ps|Get-Command -Verb و -Noun": {
+  "hash": "a74eb53e9831",
+  "date": "2026-10-28",
+  "on": "windows-11, pwsh-7.6"
  },
  "ps|Get-Content": {
   "hash": "b957045d74ae",
@@ -11709,6 +11749,11 @@
   "date": "2026-10-06",
   "on": "win11 pwsh-7.6 + ps-5.1 (username masked later)"
  },
+ "ps|Tab و Ctrl+Space": {
+  "hash": "eaaa2692ec87",
+  "date": "2026-10-28",
+  "on": "windows-11, pwsh-7.6"
+ },
  "ps|Terminal-Icons": {
   "hash": "c881da35901d",
   "date": "2026-10-06",
@@ -11728,6 +11773,11 @@
   "hash": "47c3bd710fbb",
   "date": "2026-10-06",
   "on": "win11 pwsh 7.6.6; ubuntu-24.04"
+ },
+ "ps|Update-Help و about_": {
+  "hash": "d5e771d0d6ee",
+  "date": "2026-10-28",
+  "on": "windows-11, pwsh-7.6 (Update-Help نفسه من الـ docs: بينزّل ملفات على الجهاز)"
  },
  "ps|Verb-Noun": {
   "hash": "2c024b2b7e78",
@@ -11909,6 +11959,16 @@
   "date": "2026-10-06",
   "on": "win11 pwsh-7.6 + ps-5.1; docs: Set-ExecutionPolicy (username masked later)"
  },
+ "ps|اقرا رسالة الخطأ": {
+  "hash": "5e9af8044d3e",
+  "date": "2026-10-28",
+  "on": "windows-11, pwsh-7.6"
+ },
+ "ps|الطريقة: من مهمة لأمر": {
+  "hash": "b86e3d157322",
+  "date": "2026-10-28",
+  "on": "windows-11, pwsh-7.6"
+ },
  "ps|المتغيرات": {
   "hash": "8344bcce0253",
   "date": "2026-10-06",
@@ -11933,6 +11993,36 @@
   "hash": "07dde670140b",
   "date": "2026-10-06",
   "on": "win11 pwsh-7.6 + ps-5.1"
+ },
+ "ps|مشروع ١ — cancel و status": {
+  "hash": "20a8011a548b",
+  "date": "2026-10-28",
+  "on": "windows-11, pwsh-7.6"
+ },
+ "ps|مشروع ١ — off و restart بـ WhatIf": {
+  "hash": "de42f396a4bc",
+  "date": "2026-10-28",
+  "on": "windows-11, pwsh-7.6 (كله بـ -WhatIf؛ القفل الحقيقي متشغّلش)"
+ },
+ "ps|مشروع ١ — التأكيد واللوج": {
+  "hash": "7477577dd455",
+  "date": "2026-10-28",
+  "on": "windows-11, pwsh-7.6 (كله بـ -WhatIf؛ القفل الحقيقي متشغّلش)"
+ },
+ "ps|مشروع ١ — التحقق من المدخلات": {
+  "hash": "005a733c51e0",
+  "date": "2026-10-28",
+  "on": "windows-11, pwsh-7.6"
+ },
+ "ps|مشروع ١ — الواجهة الأول": {
+  "hash": "e4c4dd7b5cb0",
+  "date": "2026-10-28",
+  "on": "windows-11, pwsh-7.6"
+ },
+ "ps|مشروع ١ — ناديه من أي مكان": {
+  "hash": "7d0340cf7b60",
+  "date": "2026-10-28",
+  "on": "windows-11, pwsh-7.6 (الدالة و $PROFILE اتجربوا؛ تعديل PATH و Register-ScheduledTask من الـ docs)"
  },
  "pyapi|*args و **kwargs": {
   "hash": "308ff48c87e2",
