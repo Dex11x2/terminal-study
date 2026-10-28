@@ -686,7 +686,7 @@ body[data-shell="re"]{--accent:var(--a-re);--t-bg:#2c1206;--t-fg:#eef0f3;--t-pr:
       <button class="sw" role="tab" data-s="diag" aria-selected="false"><div class="top"><b>التشخيص</b><span>$ curl -sI https://... | head -1</span></div><div class="bot">الموقع واقع: ٢٨ سيناريو بخطوات مرتبة، من 502 والديسك المليان لحد الاختراق والـ rollback</div></button>
       <button class="sw" role="tab" data-s="sec" aria-selected="false"><div class="top"><b>أمان الموقع</b><span># تأمين مشاريعك</span></div><div class="bot">OWASP Top 10 بالكود الصح، وأدوات الفحص، وتشيك ليست قبل الرفع</div></button>
       <button class="sw" role="tab" data-s="net" aria-selected="false"><div class="top"><b>الشبكات بعمق</b><span>$ dig +short example.com</span></div><div class="bot">إزاي البيانات بتوصل: الطبقات و IP والبورت و TCP/UDP و DNS، والتوجيه و NAT و TLS، وإزاي الـ VPN شغّال من جوه</div></button>
-      <button class="sw" role="tab" data-s="re" aria-selected="false"><div class="top"><b>هندسة عكسية (أندرويد)</b><span>$ apktool d myapp.apk</span></div><div class="bot">تحليل تطبيقاتك للفهم والدفاع: تركيب APK، والمانيفست، و DEX/smali، و jadx — على تطبيقك أو عيّنة بس</div></button>
+      <button class="sw" role="tab" data-s="re" aria-selected="false"><div class="top"><b>هندسة عكسية (أندرويد)</b><span>$ apktool d myapp.apk</span></div><div class="bot">تحليل تطبيقاتك للفهم والدفاع: تركيب APK والمانيفست و jadx، وبعدين تحمي تطبيقك (الأسرار و R8 والـ pinning و Play Integrity). على تطبيقك أو عيّنة بس</div></button>
       <button class="sw" role="tab" data-s="real" aria-selected="false"><div class="top"><b>من مشاريعي</b><span>$ ./deploy.sh</span></div><div class="bot">سكربتات حقيقية من مشاريعك متشرحة سطر سطر: تجهيز سيرفر ونشر و SSL وباك أب، وغلطاتها</div></button>
     </div>
   </section>
@@ -146012,8 +146012,8 @@ aapt dump badging myapp.apk`,
   labText: R`التاب ده عن تحليل تطبيقات أندرويد للفهم والدفاع — على تطبيق إنت بنيته، أو تطبيقك الخاص، أو عيّنة، مش على تطبيق حد تاني ولا لكسر حماية أو ترخيص. الأوامر بتتنفّذ على جهازك وبتحتاج أدوات (JDK و apktool و jadx و aapt و adb) على محاكي أو جهاز اختبار.`,
   levels: {
     "1": ["الأساس", "المعمل والحدود، وتركيب APK، والمانيفست، والـ DEX/smali، و jadx"],
-    "2": ["تحليل ساكن أعمق", "smali بعمق، والمكتبات native و JNI، وأطر زي Unity و Flutter، والتوقيع"],
-    "3": ["تحليل ديناميكي ودفاع", "Frida، واعتراض الشبكة، و ARM64، وتدقيق OWASP MASTG"]
+    "2": ["تطبيقك من عين اللي فكّه", "الأسرار اللي بتبان في الـ APK، وتقفيل المانيفست، و R8 من ناحية الدفاع و retrace"],
+    "3": ["الدفاع عن تطبيقك", "network security config والـ pinning، والكلاينت مش مضمون، و Play Integrity، و Keystore"]
   },
   categories: [
     {
@@ -146844,9 +146844,1962 @@ public class MainActivity extends Activity {
 });
 
 /* ===== js/tabs/re/02.js ===== */
-// ملف إضافي لتاب re: الحقول نفس شكلها في 01.js.
-
+// تكملة تاب re: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/re/01.js (شرح حقول الدرس في أوله)
 MORE("re", [
+  {
+    t: R`تطبيقك من عين اللي فكّه: الأسرار والمانيفست`,
+    l: 2,
+    n: R`أي حاجة جوه الـ APK بتتقري: المفاتيح في الكود والموارد والـ assets، وإعدادات المانيفست اللي بتفتح أبواب. نلاقيها في تطبيقنا ونقفلها`,
+    items: [
+      {
+        cmd: "apk_secrets",
+        title: R`دوّر على الأسرار في الـ APK بتاعك قبل ما حد تاني يدوّر`,
+        desc: R`أي مفتاح أو token أو URL داخلي مكتوب في الكود أو في [[strings.xml]] أو في [[assets/]] أو في [[BuildConfig]] بيتشحن جوه الـ APK زي ما هو، وأي حد معاه نسخة من التطبيق يطلّعه في دقيقة بـ [[unzip]] و [[strings]] و [[grep]] أو بـ [[jadx]]. الدرس ده بيعمل كده على تطبيقك إنت عشان تعرف إيه المكشوف.
+
+القاعدة اللي هتطلع بيها: **الـ APK مش مكان سر**. مفيش حاجة في التطبيق تقدر تخبّيها عن صاحب الجهاز: لا R8، ولا التشفير بمفتاح جوه نفس التطبيق، ولا الكود الـ native. اللي ينفع يتحط في التطبيق هو المفاتيح اللي متصممة تبقى عامة (زي مفتاح Google Maps المقفول على الـ package والتوقيع)، أما المفاتيح السرية (مفتاح دفع، مفتاح API بفلوس) فمكانها السيرفر (الدرس اللي بعده).`,
+        example: R`# Linux (and WSL):
+unzip -l myapp.apk
+unzip -p myapp.apk classes.dex | strings | grep -iE "key|secret|token|https?://"
+unzip -p myapp.apk assets/config.json
+aapt2 dump strings myapp.apk
+jadx -d out_jadx myapp.apk
+grep -rniE "key|secret|token|https?://" out_jadx/
+# Windows (PowerShell):
+New-Item -ItemType Directory apk_x
+tar -xf myapp.apk -C apk_x
+Select-String -Path apk_x\classes.dex -Pattern '[\x20-\x7e]{6,}' -AllMatches | ForEach-Object { $_.Matches.Value } | Select-String -Pattern 'key|secret|token|https?://'
+Get-Content apk_x\assets\config.json
+Get-ChildItem out_jadx -Recurse -File | Select-String -Pattern 'key|secret|token|https?://'`,
+        try: R`في تطبيقك (أو العيّنة من المستوى الأول) حط مفتاح مزيّف واضح زي [[FAKE-test-key-1234]] في ٣ أماكن: constant في كلاس، و [[strings.xml]]، وملف في [[assets/]]. ابني الـ release ودوّر عليه بالأوامر دي. بعدين شيله من الأماكن التلاتة، وابني تاني، وتأكد إن [[grep]] مبقاش يلاقي حاجة. آخر خطوة: دوّر على كلمة [[http://]] لوحدها، عشان تلاقي أي endpoint من غير HTTPS.`,
+        deep: {
+          why: R`لأن ده أول حاجة أي حد بيعملها لما يفك تطبيق: يدوّر على مفاتيح. مفتاح دفع أو مفتاح API مدفوع اتسرّب معناه فاتورة على حسابك أو بيانات عملاء مكشوفة، والبوتات بتفك التطبيقات المنشورة وتدوّر أوتوماتيك. لو لقيته إنت الأول تقدر تغيّره وتنقله للسيرفر قبل ما يتسرّب.`,
+          how: R`الـ APK ملف ZIP. الكود في [[classes.dex]]، وكل النصوص الثابتة في الكود (string literals) متخزّنة فيه في جدول اسمه string pool كنص عادي، فـ [[strings]] بيطلّعها. الموارد زي [[strings.xml]] بتتجمع في [[resources.arsc]]، و [[aapt2 dump strings]] بيطبع جدولها. والـ [[assets/]] بتتحط في الـ ZIP زي ما هي من غير أي تحويل. و [[jadx]] بيرجّع كل ده كملفات تقدر تعمل عليها [[grep]]. وأي [[buildConfigField]] في Gradle بيبقى constant في كلاس [[BuildConfig]]، يعني كود عادي بيتقري زي أي كود.`,
+          when: R`قبل كل release، وكخطوة في الـ CI: ابني الـ APK ودوّر فيه على patterns زي [[key]] و [[secret]] و [[token]] و [[http://]]. وكمان لما تضيف SDK جديد بيطلب مفتاح: اسأل نفسك المفتاح ده متصمم يبقى عام (ومقفول بقيود في لوحة التحكم بتاعته) ولا سري.`,
+          mistakes: R`إنك تفتكر إن [[local.properties]] أو secrets-gradle-plugin بيحموا المفتاح: هما بيبعدوه عن Git بس، وبعدها بيتحط في الـ APK عادي. وإنك تفتكر R8 بيخبّي النصوص: بيغيّر الأسماء بس والنصوص بتفضل زي ما هي. وإنك "تشفّر" المفتاح في التطبيق ومفتاح فك التشفير جنبه في نفس التطبيق: ده تأخير لدقايق مش حماية. وإنك تنقل المفتاح لكود C في [[.so]]: [[strings]] بيشتغل على الـ [[.so]] برضه.`
+        },
+        teach: R`## الفكرة: الـ APK بيتشحن لكل الناس
+
+كل نسخة من تطبيقك على أي موبايل فيها كل الكود والموارد. فاللي هنعمله دلوقتي هو نفس اللي أي حد هيعمله: نفك تطبيقنا ونشوف إيه النصوص اللي جواه.
+
+### اتجرّب فين؟
+
+تطبيق عيّنة أنا كاتبه بـ Java (package اسمه [[com.example.myapp]])، اتبنى في container أوبونتو 24.04 بـ [[javac]] و [[d8]] و [[aapt2]] من build-tools 37، واتوقّع بـ [[apksigner]]. حطيت فيه مفاتيح **مزيّفة** في ٤ أماكن:
+
+| المكان | الكود اللي في المشروع |
+|---|---|
+| constant في كلاس [[ApiClient]] | [[API_KEY = "FAKE-api-key-0000-not-real"]] |
+| كلاس [[BuildConfig]] (زي اللي [[buildConfigField]] بيولّده) | [[PAYMENTS_KEY = "FAKE_sk_test_0000_not_real"]] |
+| [[res/values/strings.xml]] | [[maps_api_key]] |
+| [[assets/config.json]] | [[analytics_secret]] |
+
+أوامر لينكس اتشغّلت في نفس الـ container ([[jadx]] 1.5.6)، وأوامر ويندوز اتشغّلت على نفس الملفات في PowerShell 7.6 و Windows PowerShell 5.1.
+
+---
+
+## ١. إيه اللي جوه الـ ZIP؟ [[unzip -l]]
+
+~~~bash
+unzip -l myapp.apk
+~~~
+
+- [[unzip]]: برنامج فك ZIP، والـ APK ZIP عادي.
+- [[-l]] = list: اعرض المحتوى من غير ما تفك.
+
+~~~text الناتج
+  Length      Date    Time    Name
+---------  ---------- -----   ----
+     2472  1980-01-01 00:00   AndroidManifest.xml
+      636  1980-01-01 00:00   resources.arsc
+       65  1980-01-01 00:00   assets/config.json
+     3680  2026-10-27 22:46   classes.dex
+      502  2026-10-27 22:46   META-INF/MYAPP.SF
+     1104  2026-10-27 22:46   META-INF/MYAPP.RSA
+      375  2026-10-27 22:46   META-INF/MANIFEST.MF
+~~~
+
+٣ أماكن ممكن يبقى فيها نص: [[classes.dex]] (الكود)، و [[resources.arsc]] (جدول الموارد)، و [[assets/]] (ملفات زي ما هي).
+
+---
+
+## ٢. النصوص اللي في الكود: [[strings]] على [[classes.dex]]
+
+~~~bash
+unzip -p myapp.apk classes.dex | strings | grep -iE "key|secret|token|https?://"
+~~~
+
+الأمر ٣ حتت بيتنفّذوا ورا بعض، وعلامة [[|]] (pipe) بتودّي ناتج كل واحد للي بعده:
+
+| الحتة | بتعمل إيه |
+|---|---|
+| [[unzip -p myapp.apk classes.dex]] | [[-p]] = pipe: افتح الملف ده بس واطبعه على الشاشة بدل ما تكتبه على الديسك |
+| [[strings]] | بيدوّر في أي ملف binary على أي ٤ حروف مقروءة أو أكتر ورا بعض ويطبعهم سطر سطر |
+| [[grep -iE "..."]] | [[-i]] = متفرقش بين capital و small، و [[-E]] = regex ممتد عشان [[|]] تبقى «أو»، و [[s?]] = حرف s اختياري (http أو https) |
+
+~~~text الناتج
+$ with key FAKE-api-key-0000-not-real
+&key=FAKE-api-key-0000-not-real
+API_KEY
+FAKE-api-key-0000-not-real
+PAYMENTS_KEY
+https://api.example.com/v1/
+(https://api.example.com/v1/weather?city=
+maps_api_key
+~~~
+
+### ليه في رموز زي [[$]] و [[&]] و [[(]] في أول السطر؟
+
+الـ dex بيخزّن قبل كل نص طوله في بايت. النص [[" with key FAKE-api-key-0000-not-real"]] طوله ٣٦ حرف، والرقم ٣٦ في جدول ASCII هو الحرف [[$]]، فـ [[strings]] شافه حرف مقروء وطبعه. و [[&]] = ٣٨، و [[(]] = ٤٠. يعني دي مش جزء من النص.
+
+### ليه المفتاح ظهر أكتر من مرة؟
+
+لأن [[javac]] بيعمل **constant folding**: لما تكتب [[" with key " + API_KEY]] والاتنين ثابتين، بيحسب النص الكامل وقت الترجمة ويحطه في مكان الاستخدام. فالمفتاح بقى مكتوب في ٣ نصوص مختلفة. و [[PAYMENTS_KEY]] ظهر اسمه بس، لأن قيمته [[FAKE_sk_test...]] مفيهاش كلمة key. عشان كده الـ grep بالكلمات **مش كفاية**: اقرا الناتج كله لو صغير، أو دوّر بالـ prefixes المعروفة ([[sk_live_]] و [[AIza]] و [[ghp_]]).
+
+---
+
+## ٣. الـ assets والموارد
+
+~~~bash
+unzip -p myapp.apk assets/config.json
+aapt2 dump strings myapp.apk
+~~~
+
+~~~text الناتج
+{"env": "prod", "analytics_secret": "FAKE-analytics-secret-xyz"}
+String pool of 2 unique UTF-8 non-sorted strings, 2 entries and 0 styles using 76 bytes:
+String #0 : MyApp
+String #1 : FAKE-maps-key-1234-not-real
+~~~
+
+- ملف [[assets/]] اتطبع زي ما كتبته بالظبط: مفيش أي تحويل.
+- [[aapt2]] (من build-tools) و [[dump strings]] بيطبع الـ string pool بتاع [[resources.arsc]]: كل قيم [[strings.xml]].
+
+---
+
+## ٤. الصورة الكاملة: [[jadx]] و [[grep -r]]
+
+~~~bash
+jadx -d out_jadx myapp.apk
+grep -rniE "key|secret|token|https?://" out_jadx/
+~~~
+
+[[grep -r]] = دوّر في كل الملفات جوه الفولدر، و [[-n]] = اطبع رقم السطر.
+
+~~~text الناتج
+out_jadx/resources/AndroidManifest.xml:2:<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+out_jadx/resources/assets/config.json:1:{"env": "prod", "analytics_secret": "FAKE-analytics-secret-xyz"}
+out_jadx/resources/res/values/public.xml:4:    <public type="string" name="maps_api_key" id="0x7f010001" />
+out_jadx/resources/res/values/strings.xml:4:    <string name="maps_api_key">FAKE-maps-key-1234-not-real</string>
+out_jadx/sources/com/example/myapp/ApiClient.java:7:    private static final String API_KEY = "FAKE-api-key-0000-not-real";
+out_jadx/sources/com/example/myapp/ApiClient.java:8:    private static final String BASE_URL = "https://api.example.com/v1/";
+out_jadx/sources/com/example/myapp/ApiClient.java:11:        Log.d("ApiClient", "building url for " + str + " with key FAKE-api-key-0000-not-real");
+out_jadx/sources/com/example/myapp/ApiClient.java:12:        return "https://api.example.com/v1/weather?city=" + str + "&key=FAKE-api-key-0000-not-real";
+out_jadx/sources/com/example/myapp/BuildConfig.java:7:    public static final String PAYMENTS_KEY = "FAKE_sk_test_0000_not_real";
+out_jadx/sources/com/example/myapp/R.java:8:        public static final int maps_api_key = 0x7f010001;
+~~~
+
+هنا بقى واضح: الـ ٤ مفاتيح، والسطر اللي بيستخدم كل واحد، وكمان [[Log.d]] بيطبع المفتاح في الـ log. أول سطر ([[schemas.android.com]]) طبيعي في أي manifest ومش مشكلة.
+
+---
+
+## ٥. نفس الكلام على ويندوز
+
+PowerShell مفيهوش [[unzip -p]] ولا [[strings]]، فبنستخدم بدايلهم:
+
+| لينكس | PowerShell | ملاحظة |
+|---|---|---|
+| [[unzip]] | [[tar -xf myapp.apk -C apk_x]] | [[tar]] موجود في ويندوز ١٠ و ١١ وبيفك ZIP، و [[-C]] = فك جوه الفولدر ده (لازم يبقى موجود، عشان كده [[New-Item]] الأول) |
+| [[strings]] | [[Select-String -Pattern '[\x20-\x7e]{6,}' -AllMatches]] | regex معناه: ٦ حروف أو أكتر من المدى المقروء في ASCII (من المسافة [[0x20]] لـ [[~]] اللي هو [[0x7e]]). [[-AllMatches]] = كل اللي في السطر مش أول واحد بس |
+| [[$_.Matches.Value]] | | [[$_]] = العنصر الحالي في الـ pipeline، و [[.Matches.Value]] = النص اللي اتطابق |
+| [[grep -r]] | [[Get-ChildItem -Recurse -File]] ثم [[Select-String]] | [[Select-String -Path]] لوحده مبيدخلش جوه الفولدرات، فبنجيب الملفات الأول |
+
+الناتج طلع نفس الـ ٨ نصوص من الـ dex، ونفس الـ ١٠ أماكن في [[out_jadx]] (في PowerShell 7.6 و 5.1). [[jadx]] على ويندوز نفس الأمر (فيه [[jadx.bat]] في الـ zip بتاعه).
+
+---
+
+## ٦. طب أعمل إيه؟
+
+| النوع | مثال | المكان الصح |
+|---|---|---|
+| مفتاح متصمم يبقى عام | Google Maps، إعدادات Firebase | في التطبيق عادي، بس **اقفله** من لوحة التحكم على الـ package name و SHA-1 بتاع التوقيع والـ APIs اللي محتاجها بس |
+| مفتاح سري | مفتاح دفع، مفتاح API مدفوع، باسورد قاعدة بيانات | **السيرفر بس**. التطبيق ياخد token قصير العمر من سيرفرك (الدرس اللي بعده) |
+| URLs داخلية | staging أو admin | متتحطش في نسخة الـ release أصلًا |
+
+ولو مفتاح سري اتنشر في نسخة قبل كده: **غيّره (rotate) فورًا**، لأن النسخ القديمة لسه على موبايلات الناس. نفس فكرة درس «أسرار مكشوفة» في تاب الأمان.
+
+## الخلاصة
+
+- الـ APK = ZIP، والنصوص في [[classes.dex]] و [[resources.arsc]] و [[assets/]] بتتقري بأوامر بسيطة.
+- [[javac]] بيكرر الـ constants في كل مكان بتتستخدم فيه، و [[Log.d]] ممكن يكشف المفتاح كمان.
+- الـ grep بالكلمات بيفوّت قيم من غير اسم واضح: اقرا الناتج كله.
+- المفتاح السري مكانه السيرفر، والمفتاح العام يتقفل بقيود.`,
+        lines: [
+          R`بيعرض الملفات اللي جوه الـ APK (هو ZIP) من غير ما يفكها.`,
+          R`بيطبع classes.dex، ويطلّع منه كل النصوص المقروءة، ويفلتر اللي فيها key أو secret أو token أو رابط.`,
+          R`بيطبع ملف config.json اللي في الـ assets زي ما هو.`,
+          R`بيطبع جدول النصوص بتاع resources.arsc (قيم strings.xml).`,
+          R`بيفك التطبيق لـ Java مقروءة وموارد في فولدر out_jadx.`,
+          R`بيدوّر في كل ملفات out_jadx على نفس الكلمات ويطبع اسم الملف ورقم السطر.`,
+          R`بيعمل فولدر apk_x على ويندوز عشان نفك فيه.`,
+          R`بيفك الـ APK جوه apk_x بـ tar اللي موجود في ويندوز.`,
+          R`بديل strings: بيطلّع النصوص المقروءة من classes.dex ويفلترها بنفس الكلمات.`,
+          R`بيطبع config.json على ويندوز.`,
+          R`بيدوّر في كل ملفات out_jadx على الكلمات دي (بديل grep -r).`
+        ],
+        sol: R`اتشغّل على العيّنة بتاعتي ([[jadx]] 1.5.6 و [[aapt2]] من build-tools 37 في container أوبونتو 24.04، والجزء بتاع ويندوز في PowerShell 7.6 و 5.1). بعد ما شلت المفاتيح ونقلت الشغل لـ token من السيرفر، نفس الدوّارة على النسخة الجديدة:
+
+~~~bash
+unzip -p fixed.apk classes.dex | strings | grep -ciE "FAKE"
+~~~
+
+~~~text الناتج
+0
+~~~
+
+[[-c]] = اطبع العدد بس. وفي النسخة الجديدة النصوص اللي فيها [[http]] بقت [[https://api.myapp.test/]] و [[https://api.myapp.test/weather?city=]] بس (عنوان السيرفر بتاعي، ودي حاجة عادي تبان) ومفيش [[http://]] خالص. وأي مفتاح كان في نسخة اتنشرت قبل كده لازم يتغيّر، مش يتشال بس.`
+      },
+      {
+        cmd: "secrets_server",
+        title: R`المفتاح على السيرفر، والتطبيق ياخد token قصير العمر`,
+        desc: R`الحل الصح للمفتاح السري: التطبيق ميعرفوش خالص. سيرفرك هو اللي شايل المفتاح وبينادي الـ API المدفوع، والتطبيق بيكلّم سيرفرك بـ **token قصير العمر** (دقايق) مربوط بالمستخدم. لو حد طلّع الـ token من الموبايل، هيخلص لوحده بعد شوية، ومش هيوصل للمفتاح الحقيقي أبدًا.
+
+في الدرس ده بنشغّل سيرفر صغير بـ Node على جهازنا بيعمل كده بالظبط (proxy)، ونجرّب بـ [[curl]]: من غير token، وبـ token سليم، وبعد ما يخلص، وبـ token متعدّل.`,
+        example: R`# Linux (and WSL):
+curl -s "localhost:8080/weather?city=Cairo"
+curl -s -X POST localhost:8080/token
+TOKEN=$(curl -s -X POST localhost:8080/token | sed -E 's/.*"token":"([^"]+)".*/\1/')
+curl -s -H "Authorization: Bearer $TOKEN" "localhost:8080/weather?city=Cairo"
+# Windows (PowerShell):
+$t = (Invoke-RestMethod -Method Post -Uri http://localhost:8080/token).token
+Invoke-RestMethod -Uri "http://localhost:8080/weather?city=Cairo" -Headers @{ Authorization = "Bearer $t" }`,
+        try: R`شغّل السيرفر اللي في الشرح بـ [[TOKEN_TTL=5]]، خد token، استنى ٦ ثواني، وجرّب تاني: لازم يرجع 401. بعدين غيّر حرف واحد في آخر الـ token وجرّب: برضه 401. وفي الآخر بص في لوج السيرفر وتأكد إن المفتاح الحقيقي مكتوب [[***]] ومبيوصلش للتطبيق في أي رد.`,
+        deep: {
+          why: R`لأن أي حاجة في التطبيق بتتقري (الدرس اللي قبله). فلو المفتاح في التطبيق، هو مكشوف مهما عملت. لو على السيرفر: تقدر تغيّره في أي وقت من غير ما تنزّل نسخة جديدة، وتحط حد لكل مستخدم (rate limit)، وتوقف مستخدم بعينه، وتشوف مين بيستخدم إيه.`,
+          how: R`السيرفر بيدي التطبيق token بعد ما يتأكد من المستخدم (login). الـ token فيه بيانات صغيرة (مين المستخدم وإمتى يخلص [[exp]]) وتوقيع HMAC بسر عند السيرفر بس. أي تعديل في البيانات بيبوّظ التوقيع، وبعد [[exp]] السيرفر بيرفضه. ولما التطبيق يطلب حاجة، السيرفر يتأكد من الـ token وينادي الـ API الحقيقي بمفتاحه هو، ويرجّع النتيجة بس. في الشغل الحقيقي ده بيبقى JWT أو OAuth access token (عمره دقايق) ومعاه refresh token بيتخزّن بأمان (درس الـ Keystore).`,
+          when: R`مع أي مفتاح بيكلّف فلوس أو بيفتح بيانات: مفاتيح الدفع، ومفاتيح AI أو SMS أو خرايط مدفوعة، وأي admin API. ولو الخدمة نفسها بتدعم tokens مؤقتة أو مقيّدة (زي ephemeral keys في بعض بوابات الدفع)، سيرفرك يطلبها ويديها للتطبيق بدل المفتاح الأصلي.`,
+          mistakes: R`إنك تعمل endpoint في سيرفرك بيرجّع المفتاح الحقيقي للتطبيق «عشان مش مكتوب في الكود»: كده المفتاح لسه بيوصل للموبايل. وإن الـ proxy يبقى مفتوح من غير ما يعرف مين المستخدم: أي حد يستخدمه على حسابك. وإن الـ token يعيش شهور. وإنك تقارن التوقيع بـ [[===]] بدل مقارنة ثابتة الوقت ([[timingSafeEqual]]). وإنك تنسى rate limit لكل مستخدم.`
+        },
+        teach: R`## الفكرة في رسمة واحدة
+
+~~~text
+ التطبيق                    سيرفرك (proxy)                 الـ API المدفوع
+    |   POST /token  ------->  يتأكد من المستخدم
+    |  <-------  token (٥ دقايق)
+    |   GET /weather + token -> يتأكد من الـ token
+    |                          ينادي بالمفتاح بتاعه  ------->  key=*****
+    |  <-------  النتيجة بس    <-------------------------------
+~~~
+
+المفتاح الحقيقي عمره ما بيعدّي السهم اللي ناحية التطبيق.
+
+### اتجرّب فين؟
+
+السيرفر ملف واحد [[proxy.js]] من غير أي مكتبة، اتشغّل بـ Node 24 في container [[node:24-alpine]] و [[curl]] 8.23 جوه نفس الـ container. ونفس الملف اتشغّل على ويندوز بـ Node 24 واتجرّب بـ [[Invoke-RestMethod]] في PowerShell 7.6 و 5.1. المفاتيح كلها مزيّفة وبتتقري من متغيرات البيئة:
+
+~~~bash
+UPSTREAM_KEY=FAKE-upstream-key-not-real SIGNING_SECRET=demo-signing-secret TOKEN_TTL=5 node proxy.js
+~~~
+
+---
+
+## ١. السيرفر: أهم حتتين
+
+### عمل الـ token وتوقيعه
+
+~~~js
+function sign(payload) {
+  const body = Buffer.from(JSON.stringify(payload)).toString("base64url");
+  const mac = crypto.createHmac("sha256", SIGNING_SECRET).update(body).digest("base64url");
+  return body + "." + mac;
+}
+~~~
+
+- [[payload]] = بيانات صغيرة: [[{ sub: "user-42", exp }]]. [[sub]] = subject يعني المستخدم، و [[exp]] = expiry وقت الانتهاء بالثواني من ١٩٧٠.
+- [[base64url]] = طريقة تحويل bytes لحروف آمنة في الـ URL والـ headers.
+- [[createHmac("sha256", SIGNING_SECRET)]] = HMAC: بصمة للنص محسوبة بسر. اللي معهوش السر ميقدرش يعمل بصمة صح لنص متعدّل.
+- النتيجة [[body.mac]]، نفس فكرة الـ JWT بشكل مبسّط.
+
+### التأكد منه
+
+~~~js
+const good = crypto.createHmac("sha256", SIGNING_SECRET).update(body).digest("base64url");
+if (mac.length !== good.length || !crypto.timingSafeEqual(Buffer.from(mac), Buffer.from(good))) return null;
+const p = JSON.parse(Buffer.from(body, "base64url").toString());
+return p.exp > Date.now() / 1000 ? p : null;
+~~~
+
+- بيحسب البصمة تاني ويقارن بـ [[timingSafeEqual]]: مقارنة بتاخد نفس الوقت مهما كان أول حرف غلط فين، عشان محدش يخمّن البصمة حرف حرف من سرعة الرد.
+- [[Date.now() / 1000]] = الوقت دلوقتي بالثواني. لو [[exp]] عدّى يرجع [[null]] يعني مرفوض.
+
+وبعدها الـ endpoint بينادي الـ API بالمفتاح ويرجّع النتيجة بس، وبيكتب في اللوج المفتاح [[***]].
+
+---
+
+## ٢. التجربة بـ [[curl]]
+
+### من غير token
+
+~~~bash
+curl -s "localhost:8080/weather?city=Cairo"
+~~~
+
+[[-s]] = silent (من غير شريط التقدم). وحطينا الرابط بين [[""]] عشان علامة [[?]] متتفهمش غلط في الـ shell.
+
+~~~text الناتج (401)
+{"error":"invalid or expired token"}
+~~~
+
+### نطلب token
+
+~~~bash
+curl -s -X POST localhost:8080/token
+~~~
+
+[[-X POST]] = نوع الطلب POST بدل GET.
+
+~~~text الناتج
+{"token":"eyJzdWIiOiJ1c2VyLTQyIiwiZXhwIjoxNzkzMTQxMDEyfQ.7pcr-VwzPkLfSh44zgYgSWO4MQKm6QzmJTD8gzbpaME","expires_in":5}
+~~~
+
+الجزء اللي قبل النقطة لو فكّيته من base64url هتلاقيه [[{"sub":"user-42","exp":1793141012}]]: يعني الـ token **مش مشفّر**، أي حد يقراه. هو **موقّع** بس. عشان كده متحطش فيه حاجة سرية.
+
+### نحفظه في متغير ونستخدمه
+
+~~~bash
+TOKEN=$(curl -s -X POST localhost:8080/token | sed -E 's/.*"token":"([^"]+)".*/\1/')
+curl -s -H "Authorization: Bearer $TOKEN" "localhost:8080/weather?city=Cairo"
+~~~
+
+- [[$( ... )]] = نفّذ الأمر اللي جوه وحط ناتجه مكانه.
+- [[sed -E 's/.../\1/']] = استبدل السطر كله بالحتة اللي بين القوسين [[([^"]+)]]، يعني أي حروف لحد أول [["]]: ده الـ token.
+- [[-H "Authorization: Bearer ..."]] = header بالشكل المعروف لإرسال token.
+
+~~~text الناتج (200)
+{"city":"Cairo","temp_c":31}
+~~~
+
+ولوج السيرفر:
+
+~~~text لوج السيرفر
+upstream call for user-42 -> https://api.example.com/v1/weather?city=Cairo&key=***
+~~~
+
+### بعد ما يخلص، ولو اتعدّل
+
+| التجربة | النتيجة |
+|---|---|
+| نفس الـ token بعد ٦ ثواني ([[TOKEN_TTL=5]]) | [[401]] و [[invalid or expired token]] |
+| غيّرت الـ payload لـ [[{"sub":"admin","exp":9999999999}]] وسبت نفس التوقيع | [[401]]: البصمة مبقتش مطابقة |
+| token جديد سليم | [[200]] |
+
+---
+
+## ٣. على ويندوز
+
+~~~powershell
+$t = (Invoke-RestMethod -Method Post -Uri http://localhost:8080/token).token
+Invoke-RestMethod -Uri "http://localhost:8080/weather?city=Cairo" -Headers @{ Authorization = "Bearer $t" }
+~~~
+
+- [[Invoke-RestMethod]] بيبعت الطلب ويحوّل الـ JSON اللي راجع لـ object، فـ [[.token]] بتجيب الخانة على طول من غير [[sed]].
+- [[@{ ... }]] = hashtable، وهنا فيها الـ headers.
+
+~~~text الناتج
+city  temp_c
+----  ------
+Cairo     31
+~~~
+
+ومن غير token بيرمي error فيه [[401]].
+
+---
+
+## الخلاصة
+
+| الحاجة | فين |
+|---|---|
+| المفتاح الحقيقي | متغيرات البيئة على السيرفر بس |
+| سر التوقيع | السيرفر بس |
+| الـ token | التطبيق، وعمره دقايق، ومربوط بمستخدم |
+
+- الـ token موقّع مش مشفّر: متحطش فيه أسرار.
+- اللي بيسرق token بياخد دقايق على حساب مستخدم واحد، مش المفتاح كله.
+- مع ده: rate limit لكل مستخدم، و HTTPS (درس الـ network security config).`,
+        lines: [
+          R`بيطلب الطقس من غير token: السيرفر بيرجّع 401.`,
+          R`بيطلب token جديد من السيرفر (POST).`,
+          R`بيطلب token ويطلّع قيمته من الـ JSON بـ sed ويحطها في متغير TOKEN.`,
+          R`بيطلب الطقس ومعاه الـ token في header اسمه Authorization: بيرجع 200.`,
+          R`على ويندوز: بيطلب token و Invoke-RestMethod بيحوّل الرد لـ object فبناخد .token على طول.`,
+          R`بيطلب الطقس بالـ token في الـ headers.`
+        ],
+        sol: R`اتشغّل بـ Node 24.22 في container [[node:24-alpine]] و [[curl]] 8.23، وعلى ويندوز بـ Node 24 و PowerShell 7.6 و 5.1. بـ [[TOKEN_TTL=5]]:
+
+~~~text الناتج
+## with token
+{"city":"Cairo","temp_c":31} [200]
+## last character changed
+{"error":"invalid or expired token"} [401]
+## after 6 seconds
+{"error":"invalid or expired token"} [401]
+~~~
+
+الرقم اللي بين الأقواس هو الـ status، طبعته بـ [[curl -w " [%{http_code}]\n"]]. وفي لوج السيرفر المفتاح ظاهر [[***]] بس، ومفيش أي رد للتطبيق فيه [[FAKE-upstream-key]].`
+      },
+      {
+        cmd: "manifest_hardening",
+        title: R`المانيفست: debuggable و allowBackup و exported وإزاي تقفلهم`,
+        desc: R`المانيفست بيقول للنظام مين يقدر يكلّم تطبيقك وإزاي. ٤ سمات فيه بتفتح أبواب لو اتسابت غلط: [[android:debuggable="true"]] (أي حد معاه الموبايل يقرا بيانات التطبيق ويوصل له بـ debugger)، و [[android:allowBackup]] (بيانات التطبيق تتنسخ بره)، و [[android:exported="true"]] على service أو receiver من غير permission (أي تطبيق تاني على الموبايل يشغّله)، و [[usesCleartextTraffic="true"]] (HTTP من غير تشفير).
+
+الدرس ده بيدوّر عليهم في APK تطبيقك بـ [[aapt2]] و [[jadx]] و [[grep]]، وبعدين يصلّحهم ويتأكد من النسخة الجديدة.`,
+        example: R`# Linux (and WSL):
+aapt2 dump badging myapp.apk | grep -E "debuggable|targetSdk"
+jadx -d out_jadx myapp.apk
+grep -nE 'debuggable|allowBackup|Cleartext|exported="true"|permission=' out_jadx/resources/AndroidManifest.xml
+# Windows (PowerShell):
+jadx -d out_jadx myapp.apk
+Select-String -Path out_jadx\resources\AndroidManifest.xml -Pattern 'debuggable|allowBackup|Cleartext|exported="true"|permission='`,
+        try: R`شغّل الأوامر على الـ release بتاع تطبيقك. لكل [[exported="true"]] اسأل: مين المفروض يفتح الحتة دي؟ لو تطبيقك بس، خليها [[false]]. لو تطبيقاتك إنت بس، حط permission بـ [[protectionLevel="signature"]]. وتأكد إن [[debuggable]] مش ظاهر خالص في الـ release.`,
+        deep: {
+          why: R`لأن الغلطات دي مش محتاجة أي مهارة عشان تتستغل. receiver مفتوح بيمسح الداتا ممكن أي تطبيق تاني على نفس الموبايل يبعتله broadcast. و debuggable في الـ release معناه إن صاحب الموبايل (أو أي حد مسك الموبايل مفتوح) يقرا ملفات التطبيق الخاصة بـ [[run-as]] من غير root. والـ backup ممكن ينقل tokens لجهاز تاني.`,
+          how: R`[[aapt2 dump badging]] بيطبع سطر [[application-debuggable]] لو السمة دي true. و [[jadx]] بيرجّع [[AndroidManifest.xml]] لـ XML مقروء فتقدر تعمل عليه [[grep]]. التصليح: الـ release من Gradle بيبقى [[debuggable=false]] لوحده، فمتكتبهاش بإيدك في المانيفست. والـ backup: [[allowBackup="false"]] أو تحدد الملفات المسموحة بـ [[dataExtractionRules]] (أندرويد ١٢ وبعده) و [[fullBackupContent]] (أقدم). والـ components: [[exported="false"]] أو [[android:permission]] بـ permission إنت معرّفها بـ [[protectionLevel="signature"]]، يعني بس التطبيقات الموقّعة بنفس مفتاحك.`,
+          when: R`كل release، وأوتوماتيك في الـ CI. وكل ما تضيف activity أو service أو receiver أو provider. ومن أندرويد ١٢ (targetSdk 31) أي component فيه [[intent-filter]] لازم تكتب له [[exported]] صريح وإلا البناء يفشل، فدي فرصة تفكّر فيها.`,
+          mistakes: R`إنك تحط [[exported="true"]] على كل حاجة عشان «الـ build اشتكى». وإنك تفتكر إن [[intent-filter]] بيحمي (بالعكس: هو اللي بيخلي الـ component مفتوح لو exported). وإنك تحط permission بـ [[protectionLevel="normal"]]: أي تطبيق يطلبها ياخدها. وإنك تفتكر إن [[allowBackup="false"]] بيمنع root من قراية الداتا: هو بيقفل طرق الـ backup بس. والـ activity اللي عليها LAUNCHER لازم تفضل exported، وده طبيعي.`
+        },
+        teach: R`## الفكرة: المانيفست = قايمة الأبواب
+
+كل activity و service و receiver و provider في المانيفست باب. [[exported]] بيقول الباب ده مفتوح لتطبيقات تانية ولا لأ. وسمات الـ [[<application>]] بتحدد حاجات للتطبيق كله: هل ينفع يتعمله debug؟ هل بياناته تتعمل لها backup؟ هل HTTP العادي مسموح؟
+
+### اتجرّب فين؟
+
+على نفس العيّنة ([[com.example.myapp]]) في container أوبونتو 24.04 ([[aapt2]] من build-tools 37، و [[jadx]] 1.5.6). كتبت المانيفست بالغلطات دي عمدًا، وفيه [[AdminReceiver]] بيمسح قاعدة البيانات لما يوصله broadcast اسمه [[com.example.myapp.RESET]]. سطر [[Select-String]] اتشغّل على نفس الملف في PowerShell 7.6 و 5.1.
+
+---
+
+## ١. [[aapt2 dump badging]]: ملخص سريع
+
+~~~bash
+aapt2 dump badging myapp.apk | grep -E "debuggable|targetSdk"
+~~~
+
+~~~text الناتج
+targetSdkVersion:'36'
+application-debuggable
+~~~
+
+- [[targetSdkVersion:'36']]: التطبيق بيستهدف أندرويد ١٦، فكل الحمايات الافتراضية الجديدة شغّالة (منها منع HTTP و [[exported]] الإجباري).
+- [[application-debuggable]]: السطر ده بيظهر **بس** لو [[debuggable=true]]. في APK الـ release لازم ميبقاش موجود.
+
+---
+
+## ٢. المانيفست كـ XML: [[jadx]] و [[grep]]
+
+~~~bash
+jadx -d out_jadx myapp.apk
+grep -nE 'debuggable|allowBackup|Cleartext|exported="true"|permission=' out_jadx/resources/AndroidManifest.xml
+~~~
+
+[[jadx]] بيكتب المانيفست مقروء في [[out_jadx/resources/AndroidManifest.xml]]. والـ pattern بين [['...']] (single quotes) عشان فيه [["]] جواه.
+
+~~~text الناتج
+16:        android:debuggable="true"
+17:        android:allowBackup="true"
+18:        android:usesCleartextTraffic="true">
+21:            android:exported="true">
+29:            android:exported="true"/>
+32:            android:exported="true"/>
+~~~
+
+الـ grep بيطبع السطر اللي فيه السمة بس، والاسم في السطر اللي قبله، فنفتح الملف عند السطور دي:
+
+~~~text out_jadx/resources/AndroidManifest.xml (السطور 19 لـ 32 من غير الـ intent-filter)
+        <activity
+            android:name="com.example.myapp.MainActivity"
+            android:exported="true">
+        ...
+        <service
+            android:name="com.example.myapp.SyncService"
+            android:exported="true"/>
+        <receiver
+            android:name="com.example.myapp.AdminReceiver"
+            android:exported="true"/>
+~~~
+
+ومعنى كل واحدة:
+
+| السطر | الخطر | ليه |
+|---|---|---|
+| [[debuggable="true"]] | عالي | على موبايل عادي من غير root، [[adb shell run-as com.example.myapp]] بيدخل جوه فولدر التطبيق الخاص ويقرا قاعدة البيانات والـ tokens، وأي debugger يقدر يتوصّل بالتطبيق ويغيّر قيمه وهو شغّال (من الـ docs) |
+| [[allowBackup="true"]] | متوسط | بيانات التطبيق تدخل في backup السحابة والنقل لجهاز جديد. و [[adb backup]] القديم (deprecated) مبقاش بيشمل بيانات التطبيقات اللي targetSdk بتاعها 31 أو أكتر (من الـ docs) |
+| [[usesCleartextTraffic="true"]] | عالي | بيرجّع HTTP العادي اللي أندرويد ٩ وبعده بيمنعه افتراضيًا. التفاصيل في درس network security config |
+| [[MainActivity]] exported | طبيعي | عليها LAUNCHER، فلازم تبقى مفتوحة عشان الـ launcher يفتحها |
+| [[SyncService]] exported | عالي | أي تطبيق يقدر يشغّلها بـ [[startService]] |
+| [[AdminReceiver]] exported | عالي جدًا | أي تطبيق يبعت [[com.example.myapp.RESET]] فيتمسح [[notes.db]] |
+
+---
+
+## ٣. التصليح
+
+~~~xml
+<permission android:name="com.example.myapp.permission.RESET"
+    android:protectionLevel="signature" />
+<application android:label="MyApp"
+    android:allowBackup="false"
+    android:networkSecurityConfig="@xml/network_security_config">
+    ...
+    <service android:name=".SyncService" android:exported="false" />
+    <receiver android:name=".AdminReceiver" android:exported="true"
+        android:permission="com.example.myapp.permission.RESET" />
+</application>
+~~~
+
+- شلت [[debuggable]] خالص: Gradle بيحطها true في الـ debug و false في الـ release لوحده. لو كتبتها بإيدك في المانيفست بتغطّي على ده.
+- [[allowBackup="false"]]: بيقفل الـ backup على السحابة. بس الـ docs بتقول إن مع targetSdk 31 أو أكتر، بعض الشركات المصنّعة مش بتسمح تقفل النقل من جهاز لجهاز (D2D) بالسمة دي. عشان كده الأضمن كمان ملف [[dataExtractionRules]] يستثني الملفات الحساسة (الـ tokens والكاش) بالاسم.
+- شلت [[usesCleartextTraffic]] وحطيت [[networkSecurityConfig]] (درس جاي). السمة القديمة دي أصلًا بتتجاهل على أندرويد ٧ وبعده لما يكون فيه network security config، والـ docs بتقول إنها هتتجاهل خالص للتطبيقات اللي targetSdk بتاعها 38 أو أكتر.
+- [[SyncService]]: [[exported="false"]] لأن محدش بره التطبيق محتاجها.
+- [[AdminReceiver]]: لو تطبيق تاني **ليك** محتاج يبعتله، خليه exported بس بـ [[android:permission]]. الـ permission دي [[protectionLevel="signature"]]: النظام بيديها بس للتطبيقات الموقّعة بنفس الشهادة.
+
+---
+
+## ٤. نتأكد من النسخة الجديدة
+
+~~~text الناتج (نفس الـ grep على النسخة المصلّحة)
+16:        android:protectionLevel="signature"/>
+19:        android:allowBackup="false"
+20:        android:networkSecurityConfig="@xml/network_security_config">
+23:            android:exported="true">
+34:            android:permission="com.example.myapp.permission.RESET"
+35:            android:exported="true"/>
+~~~
+
+و [[aapt2 dump badging]] مبقاش فيه سطر [[application-debuggable]]. الـ [[exported="true"]] اللي فضلوا: الـ launcher activity، والـ receiver المحمي بـ permission.
+
+---
+
+## ٥. على ويندوز
+
+[[Select-String -Path ... -Pattern '...']] هو [[grep -n]]: بيطبع رقم السطر والسطر. طلع نفس الـ ٦ سطور في PowerShell 7.6 و 5.1. و [[jadx]] و [[aapt2]] نفس الأوامر على ويندوز ([[aapt2.exe]] جوه [[build-tools]] في الـ Android SDK).
+
+## الخلاصة
+
+| السمة | في الـ release |
+|---|---|
+| [[debuggable]] | متكتبهاش. Gradle يتصرف |
+| [[allowBackup]] | [[false]]، أو [[dataExtractionRules]] تستثني الحساس |
+| [[usesCleartextTraffic]] | شيلها، واستخدم network security config |
+| [[exported]] | [[false]] إلا لو حد بره محتاجه فعلًا، ووقتها permission بـ [[signature]] |`,
+        lines: [
+          R`بيطبع ملخص الـ APK ويفلتر سطر debuggable (لو موجود) والـ targetSdk.`,
+          R`بيفك الـ APK فيطلع المانيفست XML مقروء.`,
+          R`بيدوّر في المانيفست على السمات الخطرة ويطبع رقم كل سطر.`,
+          R`على ويندوز: نفس أمر jadx.`,
+          R`بديل grep -n: بيطبع السطور اللي فيها السمات دي بأرقامها.`
+        ],
+        sol: R`اتشغّل على العيّنة في container أوبونتو 24.04 ([[aapt2]] من build-tools 37 و [[jadx]] 1.5.6)، وسطر [[Select-String]] في PowerShell 7.6 و 5.1 على نفس الملف. في النسخة الأولى طلع [[application-debuggable]] و ٦ سطور (فوق في الشرح). وفي النسخة المصلّحة:
+
+~~~text الناتج
+targetSdkVersion:'36'
+~~~
+
+مفيش [[application-debuggable]]، والـ grep طلّع [[allowBackup="false"]] و [[exported="false"]] على الـ service، والـ receiver محمي بـ [[permission="com.example.myapp.permission.RESET"]].`
+      }
+    ]
+  },
+  {
+    t: R`R8 من ناحية الدفاع: بيخبّي إيه وميخبّيش إيه`,
+    l: 2,
+    n: R`نقارن نفس التطبيق قبل وبعد R8 بـ jadx: الأسماء بتروح، لكن النصوص والمنطق والمانيفست بيفضلوا. ونشيل اللوجات، ونحمي ملف الـ mapping`,
+    items: [
+      {
+        cmd: "r8_before_after",
+        title: R`نفس التطبيق قبل وبعد R8: إيه اللي اتغيّر في jadx فعلًا`,
+        desc: R`[[R8]] (اللي بيشتغل في الـ release لما [[isMinifyEnabled = true]]) بيشيل الكود اللي مش مستخدم، وبيحط الدوال الصغيرة جوه اللي بيناديها (inlining)، وبيغيّر أسماء الكلاسات اللي فاضلة لحروف. لما تفك النسخة بـ [[jadx]] هتلاقي الكود أصغر وأسماؤه أقل معنى، **بس النصوص كلها لسه موجودة**، والمانيفست بأسماء الـ components الحقيقية، ونداءات أندرويد ([[Log.d]] و [[getIntent]]) بأسمائها.
+
+يعني R8 بيصعّب القراية شوية ويصغّر التطبيق كتير، لكنه مش حماية لأسرار. إعدادات Gradle وقواعد keep متشرحة بالتفصيل في درس «R8 و ProGuard» في تاب Kotlin، وهنا بنبص على الناتج بعين اللي فاكك التطبيق.`,
+        example: R`# Linux (and WSL):
+jadx -d out_plain plain.apk
+jadx -d out_min min.apk
+find out_plain/sources out_min/sources -name "*.java" ! -name "R.java"
+unzip -p min.apk classes.dex | strings | grep -E "FAKE|https://"
+# Windows (PowerShell):
+jadx -d out_min min.apk
+Get-ChildItem out_min\sources -Recurse -Filter *.java | Select-Object -ExpandProperty Name`,
+        try: R`ابني تطبيقك release مرة بـ [[isMinifyEnabled = false]] ومرة بـ [[true]]، وافك الاتنين بـ [[jadx]]. اعمل جدول: كلاسات اختفت، وكلاسات اسمها اتغيّر، وكلاسات فضلت باسمها، وليه (ارجع لـ [[mapping.txt]]). وبعدين دوّر على أي نص حساس في نسخة R8: لسه موجود؟`,
+        deep: {
+          why: R`عشان متعتمدش على R8 في حاجة هو مش معمول لها. R8 معمول للحجم والسرعة أساسًا، والتعمية (تغيير الأسماء) أثر جانبي بيأخّر اللي بيقرا بس. لو فاكر إنه بيخبّي المفتاح أو منطق الـ license، هتنشر حاجة مكشوفة وانت مطمّن.`,
+          how: R`R8 بيبدأ من «نقط الدخول»: الـ components اللي في المانيفست (aapt2 بيكتب لها قواعد keep أوتوماتيك) وأي قاعدة keep منك. اللي مش واصل له حد بيتشال. الدوال اللي بتتنادى من مكان واحد أو صغيرة بتتحط مكان النداء. اللي فضل ومش محتاج اسمه بيتسمّى [[a]] و [[b]]. لكن النصوص لازم تفضل زي ما هي عشان البرنامج يشتغل، وأسماء كلاسات أندرويد نفسها (اللي في [[android.jar]]) متتغيرش لأنها مش جوه تطبيقك.`,
+          when: R`دايمًا شغّله في الـ release، عشان الحجم أصلًا. وبعد ما تشغّله أول مرة، افك الناتج بـ jadx مرة واحدة على الأقل عشان تشوف بعينك إيه اللي لسه ظاهر.`,
+          mistakes: R`إنك تفتكر إن [[a.a()]] معناه إن المنطق اتخبّى: المنطق نفسه مقروء، والاسم بس اللي راح. وإنك تحط [[-keep class com.example.** { *; }]] «عشان تبطّل مشاكل» فتلغي التعمية كلها. وإنك تقيس التعمية على تطبيق صغير: R8 ممكن يحط كل حاجة جوه الـ Activity زي ما هتشوف هنا، ومفيش أسماء تتغير أصلًا. ومكتبات «string encryption» بتأخّر بس: المفتاح والكود اللي بيفك موجودين في نفس التطبيق.`
+        },
+        teach: R`## إيه اللي بنقارنه؟
+
+نفس الكود متبني مرتين:
+
+| النسخة | اتبنت بـ | حجم [[classes.dex]] |
+|---|---|---|
+| [[plain.apk]] | [[d8 --release]] (من غير R8) | 5252 byte |
+| [[min.apk]] | [[R8 --release]] بقواعد keep اللي [[aapt2]] بيولّدها من المانيفست | 3660 byte |
+
+### اتجرّب فين؟
+
+container أوبونتو 24.04: [[javac]] من JDK 21، و [[d8]] و R8 9.2.4-dev من [[build-tools/37.0.0/lib/d8.jar]] (نفس اللي Gradle بيعمله، بس متنادي بإيدي: [[java -cp d8.jar com.android.tools.r8.R8]])، و [[jadx]] 1.5.6. الكود: [[MainActivity]] بتستخدم [[ApiClient]] (فيه المفتاح المزيّف) و [[CartManager]]، و [[SyncService]] بتستخدم [[CartManager]] كمان. الجزء بتاع ويندوز اتشغّل على فولدر [[out_min]] في PowerShell 7.6.
+
+في Gradle نفس الكلام بيتعمل بـ:
+
+~~~kotlin
+buildTypes {
+    release {
+        isMinifyEnabled = true
+        proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+    }
+}
+~~~
+
+(التفاصيل والأرقام على مشروع حقيقي في درس «R8 و ProGuard» في تاب Kotlin.)
+
+---
+
+## ١. القواعد اللي R8 بدأ منها
+
+[[aapt2 link --proguard aapt_rules.txt]] بيكتب keep لكل component في المانيفست، لأن النظام بيفتحهم بالاسم:
+
+~~~text aapt_rules.txt
+# Referenced at /work/app/AndroidManifest.xml:17
+-keep class com.example.myapp.AdminReceiver { <init>(); }
+# Referenced at /work/app/AndroidManifest.xml:10
+-keep class com.example.myapp.MainActivity { <init>(); }
+# Referenced at /work/app/AndroidManifest.xml:16
+-keep class com.example.myapp.SyncService { <init>(); }
+~~~
+
+[[<init>()]] = الـ constructor الفاضي. يعني: الكلاس ده واسمه يفضلوا، والـ constructor اللي النظام بيستخدمه يفضل.
+
+---
+
+## ٢. الكلاسات قبل وبعد
+
+~~~bash
+jadx -d out_plain plain.apk
+jadx -d out_min min.apk
+find out_plain/sources out_min/sources -name "*.java" ! -name "R.java"
+~~~
+
+- [[find <فولدرات> -name "*.java"]] = هات الملفات اللي اسمها بينتهي بـ [[.java]].
+- [[! -name "R.java"]] = [[!]] معناها «مش»: استبعد [[R.java]] (jadx بيولّده من جدول الموارد).
+
+~~~text الناتج
+out_plain/sources/com/example/myapp/AdminReceiver.java
+out_plain/sources/com/example/myapp/ApiClient.java
+out_plain/sources/com/example/myapp/BuildConfig.java
+out_plain/sources/com/example/myapp/CartManager.java
+out_plain/sources/com/example/myapp/MainActivity.java
+out_plain/sources/com/example/myapp/SyncService.java
+out_min/sources/com/example/myapp/AdminReceiver.java
+out_min/sources/com/example/myapp/MainActivity.java
+out_min/sources/com/example/myapp/SyncService.java
+~~~
+
+٣ كلاسات اختفوا. [[mapping.txt]] بيقول حصل لهم إيه:
+
+~~~text mapping.txt (جزء)
+com.example.myapp.ApiClient -> R8$$REMOVED$$CLASS$$0:
+com.example.myapp.CartManager -> R8$$REMOVED$$CLASS$$1:
+com.example.myapp.MainActivity -> com.example.myapp.MainActivity:
+    3:4:java.lang.String com.example.myapp.ApiClient.weatherUrl(java.lang.String):10:11 -> onCreate
+    7:7:void com.example.myapp.CartManager.add(java.lang.String,int):13:13 -> onCreate
+~~~
+
+- [[REMOVED]]: الكلاس اتشال، بس كوده **متشالش**: اتنقل جوه [[onCreate]] (السطور اللي تحت بتقول [[weatherUrl]] بقت جزء من [[onCreate]]). ده الـ inlining.
+- [[BuildConfig]] مش في الـ mapping خالص: محدش بيستخدمه، فاتشال من غير ما يتسجّل. وقيمته [[PAYMENTS_KEY]] كانت مستخدمة في دالة محدش بيناديها، فاختفت معاه. ده حظ، مش حماية.
+
+---
+
+## ٣. الكود اللي فضل
+
+~~~java
+public final void onCreate(Bundle bundle) {
+    super.onCreate(bundle);
+    String stringExtra = getIntent().getStringExtra("city");
+    Log.d("ApiClient", "building url for " + stringExtra + " with key FAKE-api-key-0000-not-real");
+    String str = "https://api.example.com/v1/weather?city=" + stringExtra + "&key=FAKE-api-key-0000-not-real";
+    Log.d("MainActivity", "url=".concat(str));
+    HashMap map = new HashMap();
+    map.put("pro-month", 99);
+    map.put("sticker", 5);
+    ...
+~~~
+
+لاحظ ٣ حاجات:
+
+1. **المفتاح لسه موجود**، بل بقى في نفس الدالة اللي بتفتح الشاشة، أسهل في القراية.
+2. [[CartManager]] اتفكّ لـ [[HashMap]] عادي جوه الدالة، وفحص [[if (price < 0)]] اتشال هنا لأن R8 عارف إن 99 و 5 موجبين. لكن في [[SyncService]] الفحص فضل لأن السعر جاي من [[Intent]].
+3. [[getIntent]] و [[Log.d]] و [[HashMap]] بأسمائها: دي كلاسات أندرويد و Java، مش جوه تطبيقك، فمحدش يقدر يغيّر اسمها.
+
+---
+
+## ٤. وفين الـ [[a]] و [[b]]؟
+
+التطبيق صغير، فـ R8 حط كل حاجة جوه الـ components ومفضلش كلاس يتسمّى. عشان تشوف التعمية لوحدها بنيت نسخة تالتة بقاعدة [[-dontoptimize]] (بتوقف الـ inlining):
+
+~~~text mapping.txt (نسخة -dontoptimize)
+com.example.myapp.ApiClient -> a:
+com.example.myapp.CartManager -> b:
+    java.util.Map items -> a
+~~~
+
+~~~java
+public class b {
+    private final Map a = new HashMap();
+
+    public void a(String str, int i) {
+        if (i >= 0) {
+            this.a.put(str, Integer.valueOf(i));
+        } else {
+            throw new IllegalArgumentException("negative price for " + str);
+        }
+    }
+~~~
+
+الاسم راح ([[CartManager.add]] بقت [[b.a]])، لكن المنطق كامل، ونص الـ exception بيقول بالظبط الدالة بتعمل إيه. في تطبيق حقيقي كبير هتشوف الشكل ده كتير.
+
+---
+
+## ٥. النصوص في الـ dex
+
+~~~bash
+unzip -p min.apk classes.dex | strings | grep -E "FAKE|https://"
+~~~
+
+~~~text الناتج
+$ with key FAKE-api-key-0000-not-real
+&key=FAKE-api-key-0000-not-real
+(https://api.example.com/v1/weather?city=
+~~~
+
+نفس النصوص اللي كانت في النسخة اللي من غير R8 (الحرف اللي في أول السطر هو طول النص زي ما شرحنا في درس الأسرار). والمانيفست في [[min.apk]] هو هو بأسماء [[MainActivity]] و [[SyncService]] و [[AdminReceiver]].
+
+## ٦. على ويندوز
+
+~~~powershell
+Get-ChildItem out_min\sources -Recurse -Filter *.java | Select-Object -ExpandProperty Name
+~~~
+
+[[-Filter *.java]] = الملفات اللي بتنتهي بـ [[.java]]، و [[-ExpandProperty Name]] = اطبع الاسم بس. الناتج: [[AdminReceiver.java]] و [[MainActivity.java]] و [[R.java]] و [[SyncService.java]].
+
+## الخلاصة
+
+| R8 بيعمل | R8 مبيعملش |
+|---|---|
+| يشيل الكود اللي محدش بيستخدمه | يخبّي النصوص |
+| يدمج الدوال الصغيرة في اللي بيناديها | يغيّر أسماء الـ components اللي في المانيفست |
+| يسمّي الكلاسات الفاضلة [[a]] و [[b]] | يغيّر أسماء أندرويد و Java |
+| يصغّر الـ dex (هنا من 5252 لـ 3660 byte) | يخبّي المنطق |`,
+        lines: [
+          R`بيفك النسخة اللي من غير R8 في out_plain.`,
+          R`بيفك نسخة R8 في out_min.`,
+          R`بيعرض ملفات الـ Java في النسختين ما عدا R.java عشان نقارن الكلاسات.`,
+          R`بيدوّر في dex نسخة R8 على المفتاح المزيّف والروابط: لسه موجودين.`,
+          R`على ويندوز: نفس فك نسخة R8.`,
+          R`بيعرض أسماء ملفات الـ Java اللي في نسخة R8.`
+        ],
+        sol: R`اتشغّل في container أوبونتو 24.04 (R8 9.2.4-dev من build-tools 37، و jadx 1.5.6)، وسطر ويندوز في PowerShell 7.6. الخلاصة الرقمية:
+
+~~~text الناتج
+plain.apk  classes.dex  5252 byte  6 كلاسات (+ R)
+min.apk    classes.dex  3660 byte  3 كلاسات (+ R)   المفتاح FAKE-api-key... لسه موجود
+~~~
+
+أي كلاس اختفى تلاقي سببه في [[mapping.txt]]: [[REMOVED]] مع سطور بتقول كوده اتنقل فين، أو مش موجود خالص لو محدش كان بيستخدمه.`
+      },
+      {
+        cmd: "r8_strip_logs",
+        title: R`شيل Log.d من الـ release، وخبّي أسماء ملفات السورس`,
+        desc: R`[[Log.d]] و [[Log.v]] في الـ release بيطبعوا حاجات المفروض متتشافش (URLs وقيم وأحيانًا tokens) في [[logcat]]، ونصوصهم كمان بتفضل جوه الـ dex فبتشرح الكود لأي حد فاكه. قاعدة [[-assumenosideeffects]] في [[proguard-rules.pro]] بتخلي R8 يشيل النداءات دي من الـ release بالكامل.
+
+ومعاها قاعدتين للـ stack traces: [[-keepattributes SourceFile,LineNumberTable]] تحافظ على أرقام السطور (عشان تقدر تفك الـ crash)، و [[-renamesourcefileattribute SourceFile]] تخلي اسم الملف [[SourceFile]] بدل [[CartManager.java]].`,
+        example: R`# proguard-rules.pro
+-assumenosideeffects class android.util.Log {
+    public static int v(...);
+    public static int d(...);
+}
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile`,
+        try: R`ضيف القواعد دي لـ [[proguard-rules.pro]] في تطبيقك، وابني release، ودوّر في الـ dex على نص من رسالة [[Log.d]] عندك ([[unzip -p app-release.apk classes.dex | strings | grep "النص"]]). لازم ميلاقيهوش. وبعدين دوّر على نص من [[Log.e]]: المفروض يفضل، لأنك محتاج الأخطاء.`,
+        flag: "script",
+        deep: {
+          why: R`اللوجات من أسهل طرق التسريب: أي حد موصّل الموبايل بـ [[adb logcat]] يشوفها، ونصوصها بتشرح الكود المتعمّي ([[Log.d("PaymentFlow", "verifying receipt...")]] بتقول الدالة دي بتعمل إيه مهما كان اسمها). وأسماء ملفات السورس بتدّي معنى لكلاس اسمه [[a]].`,
+          how: R`[[-assumenosideeffects]] بتقول لـ R8: «الدوال دي ملهاش أي أثر غير القيمة اللي بترجّعها». فلو محدش بيستخدم القيمة (وده حال [[Log.d]] دايمًا)، R8 بيعتبر النداء ملوش لازمة ويشيله، ومعاه النصوص اللي كانت بتتبني عشانه. [[(...)]] = أي parameters. و [[-keepattributes]] بتحافظ على معلومات في الـ bytecode R8 بيشيلها افتراضيًا، و [[-renamesourcefileattribute]] بيغيّر قيمة اسم الملف لكلمة ثابتة.`,
+          when: R`في كل تطبيق فيه [[Log.d]] أو [[Log.v]] (يعني كل تطبيق). البديل اللي بيشتغل من غير R8: [[if (BuildConfig.DEBUG) Log.d(...)]]، وفي الـ release [[DEBUG]] = [[false]] ثابتة فالكود كله بيتشال. أو مكتبة logging بتتقفل في الـ release.`,
+          mistakes: R`إنك تكتب [[Log.e]] و [[Log.w]] في نفس القاعدة فتخسر أخطاء الـ production. وإنك تكتب القاعدة من غير [[isMinifyEnabled = true]] فمتعملش حاجة. وإنك تفتكر إن القاعدة بتشيل أي حاجة جوه الـ arguments: لو بتنادي دالة ليها أثر جوه الـ Log، R8 بيسيبها. وإنك تبعت tokens أو بيانات شخصية لـ [[Log.e]] أو لـ crash reporting: دي بتفضل.`
+        },
+        teach: R`## إيه اللي بنقيسه؟
+
+نفس الكود بالـ R8 مرتين: [[min.apk]] (قواعد المانيفست بس) و [[min-logs.apk]] (نفس القواعد + الـ ٦ سطور دول). اتبنوا في container أوبونتو 24.04 بـ R8 9.2.4-dev من build-tools 37 واتفكّوا بـ [[jadx]] 1.5.6.
+
+---
+
+## ١. القواعد سطر سطر
+
+### [[-assumenosideeffects class android.util.Log { ... }]]
+
+~~~text proguard-rules.pro
+-assumenosideeffects class android.util.Log {
+    public static int v(...);
+    public static int d(...);
+}
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[-assumenosideeffects]] | افترض إن الدوال دي ملهاش side effects، يعني متعملش حاجة غير إنها ترجّع قيمة |
+| [[class android.util.Log]] | الكلاس بتاع أندرويد اللي فيه [[Log.d]] وإخواتها |
+| [[public static int d(...)]] | [[Log.d]] بترجّع [[int]] (عدد البايتات اللي اتكتبت). [[(...)]] = أي عدد وأي نوع parameters، فبتمسك [[d(tag, msg)]] و [[d(tag, msg, throwable)]] |
+
+إحنا بنكدب على R8 بقصد: [[Log.d]] **ليها** أثر (بتكتب في الـ log). بس ده بالظبط اللي عايزينه يختفي. ولأن محدش بيستخدم الـ [[int]] اللي بترجعه، R8 بيشيل النداء كله.
+
+### [[-keepattributes SourceFile,LineNumberTable]]
+
+الـ bytecode فيه attributes إضافية: [[SourceFile]] (اسم ملف السورس) و [[LineNumberTable]] (كل تعليمة جاية من سطر كام). من غيرهم الـ stack trace بيبقى من غير أرقام سطور مفيدة. القاعدة بتقول لـ R8 يسيبهم.
+
+### [[-renamesourcefileattribute SourceFile]]
+
+خلي قيمة [[SourceFile]] في كل الكلاسات الكلمة [[SourceFile]] بدل [[CartManager.java]]. أرقام السطور فضلت، واسم الملف (اللي بيكشف الاسم الأصلي للكلاس) راح. و [[mapping.txt]] بيرجّع الاتنين وقت ما تفك الـ crash (الدرس اللي بعده).
+
+---
+
+## ٢. الفرق في الكود
+
+~~~java
+// min.apk
+String stringExtra = getIntent().getStringExtra("city");
+Log.d("ApiClient", "building url for " + stringExtra + " with key FAKE-api-key-0000-not-real");
+String str = "https://api.example.com/v1/weather?city=" + stringExtra + "&key=FAKE-api-key-0000-not-real";
+Log.d("MainActivity", "url=".concat(str));
+
+// min-logs.apk
+String str = "https://api.example.com/v1/weather?city=" + getIntent().getStringExtra("city") + "&key=FAKE-api-key-0000-not-real";
+~~~
+
+النداءين اتشالوا، ومعاهم النص [["building url for "]] اللي كان بيشرح الدالة. لكن **المفتاح لسه موجود** لأنه جزء من الـ URL اللي التطبيق محتاجه فعلًا. القاعدة دي بتقفل تسريب الـ logcat، مش بتحل مشكلة المفتاح (ده درس السيرفر).
+
+---
+
+## ٣. الفرق في نصوص الـ dex
+
+~~~bash
+unzip -p min.apk classes.dex | strings | grep -E "FAKE|building|synced|url=|SourceFile|\.java"
+unzip -p min-logs.apk classes.dex | strings | grep -E "FAKE|building|synced|url=|SourceFile|\.java"
+~~~
+
+[[\.java]] = نقطة حقيقية (من غير [[\]] النقطة في regex معناها «أي حرف»).
+
+~~~text الناتج
+== min
+$ with key FAKE-api-key-0000-not-real
+&key=FAKE-api-key-0000-not-real
+building url for
+synced cart total=
+url=
+== min-logs
+&key=FAKE-api-key-0000-not-real
+SourceFile
+~~~
+
+| النص | [[min]] | [[min-logs]] |
+|---|---|---|
+| رسايل [[Log.d]] ([[building url for]] و [[synced cart total=]] و [[url=]]) | موجودة | اتشالت |
+| المفتاح في الـ URL | موجود | موجود |
+| اسم الملف | [[r8-map-id-fc95...]] | [[SourceFile]] |
+| حجم [[classes.dex]] | 3660 byte | 3232 byte |
+
+في [[min]] من غير القاعدة، R8 كتب مكان اسم الملف [[r8-map-id-]] وبعدها هاش الـ mapping: ده بيقولك الـ crash ده جاي من أنهي build، فتعرف تختار أنهي [[mapping.txt]].
+
+---
+
+## الخلاصة
+
+- [[-assumenosideeffects]] على [[Log.v]] و [[Log.d]] بس: الأخطاء ([[Log.e]]) تفضل.
+- بيقفل تسريب الـ logcat ويشيل نصوص بتشرح الكود، بس مش بيشيل البيانات اللي التطبيق محتاجها.
+- [[-keepattributes SourceFile,LineNumberTable]] + [[-renamesourcefileattribute SourceFile]] = أرقام سطور للـ crash من غير ما تكشف أسماء الملفات.
+- كل ده محتاج [[isMinifyEnabled = true]].`,
+        lines: [
+          R`بتقول لـ R8: الدوال اللي جوه كلاس Log دي ملهاش أثر، فشيل أي نداء ليها محدش بيستخدم نتيجته.`,
+          R`Log.v (verbose) تتشال.`,
+          R`Log.d (debug) تتشال.`,
+          R`قفلة القاعدة.`,
+          R`حافظ على اسم الملف وأرقام السطور في الـ bytecode عشان الـ stack traces.`,
+          R`خلي اسم الملف في كل الكلاسات الكلمة SourceFile بدل الاسم الحقيقي.`
+        ],
+        sol: R`اتشغّل بـ R8 9.2.4-dev (build-tools 37) في container أوبونتو 24.04. بعد القواعد، [[strings]] على dex نسخة [[min-logs]]:
+
+~~~text الناتج
+&key=FAKE-api-key-0000-not-real
+SourceFile
+~~~
+
+رسايل [[Log.d]] اختفت، والـ dex صغر من 3660 لـ 3232 byte. ولو عندك [[Log.e]] هتلاقي نصه لسه موجود، وده المطلوب.`
+      },
+      {
+        cmd: "r8_mapping_retrace",
+        title: R`mapping.txt: المفتاح اللي بيفك تعميتك، وفك الـ crash بـ retrace`,
+        desc: R`كل build بـ R8 بيطلّع [[mapping.txt]]: جدول بيقول [[a.a]] كان اسمه [[CartManager]] وسطر ٢ كان سطر ١١. الملف ده **مش بيتحط في الـ APK** وده اللي بيخلي التعمية ليها معنى، وفي نفس الوقت من غيره مش هتعرف تقرا الـ crash reports بتاعتك.
+
+فالقاعدة: احفظه لكل نسخة بتنشرها (مربوط بالـ versionCode)، وارفعه على Play Console أو أداة الـ crash reporting، ومتحطوش في repo عام أو جوه التطبيق. والأداة [[retrace]] (جوه R8 نفسه) بتستخدمه عشان ترجّع الـ stack trace لأسمائه الحقيقية.`,
+        example: R`# Linux (and WSL):
+unzip -l min.apk | grep -i mapping
+java -cp app-min.jar com.example.shop.Main sticker -1 2> trace.txt
+cat trace.txt
+java -cp "$ANDROID_HOME/build-tools/37.0.0/lib/d8.jar" com.android.tools.r8.retrace.Retrace mapping.txt trace.txt
+# Windows (PowerShell):
+java -cp "$env:ANDROID_HOME\build-tools\37.0.0\lib\d8.jar" com.android.tools.r8.retrace.Retrace mapping.txt trace.txt`,
+        try: R`في تطبيقك: اعمل crash مقصود في الـ release (زرار بيرمي exception)، خد الـ stack trace من [[adb logcat]]، وافكه بـ [[retrace]] و [[mapping.txt]] بتاع نفس الـ build. بعدين ابني تاني بعد تعديل صغير وجرّب الـ trace القديم مع الـ mapping الجديد: هتلاقي الأسماء أو السطور ممكن تطلع غلط، وده سبب إنك تحفظ mapping لكل نسخة.`,
+        deep: {
+          why: R`الـ mapping هو عكس التعمية بالظبط. لو اتسرّب مع الـ APK، أي حد يرجّع كل الأسماء. ولو ضاع منك، كل crash من الـ production هيبقى [[a.a(SourceFile:2)]] ومش هتعرف تصلّح. فهو ملف لازم تحتفظ بيه وتحميه في نفس الوقت.`,
+          how: R`R8 بيكتب في [[mapping.txt]] لكل كلاس [[الاسم الأصلي -> الاسم الجديد:]] وتحته الـ fields والدوال بأرقام سطورها القديمة والجديدة، وكمان الدوال اللي اتحطت جوه دوال تانية (inlining). وفي أوله [[pg_map_id]]: هاش بيميّز الـ build ده. [[retrace]] بيقرا الـ trace سطر سطر ويرجّع كل [[a.a(SourceFile:2)]] لاسمه وسطره الأصلي. Gradle بيكتبه في [[app/build/outputs/mapping/release/mapping.txt]]، والـ AAB بيشيله جواه فـ Play Console بيستخدمه لوحده في Android vitals.`,
+          when: R`كل release: ارفع الـ mapping كـ artifact في الـ CI باسم فيه الـ versionCode، أو اتأكد إنه وصل لـ Play Console وأداة الـ crash reporting اللي بتستخدمها. وكل ما يجيلك crash من الـ production.`,
+          mistakes: R`إنك تعمل commit للـ mapping في repo عام. وإنك تنساه ومتحفظوش فتبقى الـ crashes القديمة مستحيل تتقري. وإنك تفك trace بـ mapping من build تاني. وإنك تشيل [[LineNumberTable]] فيبقى retrace مش عارف أنهي سطر. وإنك تفتكر إن الـ mapping مطلوب عشان التطبيق يشتغل: التطبيق مش محتاجه خالص.`
+        },
+        teach: R`## ١. الـ mapping مش في الـ APK
+
+~~~bash
+unzip -l min.apk | grep -i mapping
+~~~
+
+مفيش ناتج: الملف مش جوه التطبيق. هو بيطلع جنبه وقت البناء بس، وده سبب إن التعمية ليها قيمة.
+
+---
+
+## ٢. نعمل crash حقيقي
+
+المحاكي مش متاح جوه الـ container، فعشان أشوف stack trace حقيقي متعمّي عملت نفس الكود ([[CartManager]] و [[Main]]) كبرنامج Java عادي، وشغّلت عليه نفس R8 بس بـ [[--classfile]] (يطلّع [[.class]] بدل [[.dex]]) عشان يشتغل على JVM. القواعد:
+
+~~~text rules.pro
+-keep class com.example.shop.Main { public static void main(java.lang.String[]); }
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
+~~~
+
+[[Main.main]] هي نقطة الدخول زي الـ Activity في أندرويد، فلازم keep. ونخلّي السعر سالب عشان [[add]] ترمي exception:
+
+~~~bash
+java -cp app-min.jar com.example.shop.Main sticker -1 2> trace.txt
+cat trace.txt
+~~~
+
+- [[java -cp app-min.jar]] = شغّل من الـ jar ده ([[-cp]] = classpath، فين الكلاسات).
+- [[sticker -1]] = الـ arguments: اسم المنتج وسعره.
+- [[2> trace.txt]] = [[2]] هو stderr (مكان الأخطاء)، و [[>]] = اكتبه في ملف.
+
+~~~text trace.txt
+Exception in thread "main" java.lang.IllegalArgumentException: negative price for sticker
+	at a.a.a(SourceFile:2)
+	at com.example.shop.Main.main(SourceFile:3)
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[a.a.a]] | package [[a]]، كلاس [[a]]، دالة [[a]]. ملهاش أي معنى |
+| [[SourceFile:2]] | اسم الملف متخبّي، والسطر ٢ ده سطر في الكود **بعد** R8 مش السطر الأصلي |
+| [[Main.main]] | فضل باسمه بسبب الـ keep |
+
+---
+
+## ٣. الـ mapping بيقول إيه
+
+~~~text mapping.txt (من غير سطور التعليقات)
+com.example.shop.CartManager -> a.a:
+    java.util.Map items -> a
+    1:2:void <init>():6:7 -> <init>
+    1:1:void add(java.lang.String,int):13:13 -> a
+    2:2:void add(java.lang.String,int):11:11 -> a
+com.example.shop.Main -> com.example.shop.Main:
+    1:4:void main(java.lang.String[]):5:8 -> main
+    5:5:int com.example.shop.CartManager.total():18:18 -> main
+~~~
+
+نقرا سطر واحد: [[2:2:void add(java.lang.String,int):11:11 -> a]]
+
+| الحتة | معناها |
+|---|---|
+| [[2:2]] | السطور من ٢ لـ ٢ في الكود الجديد |
+| [[void add(java.lang.String,int)]] | الدالة الأصلية بالـ parameters |
+| [[11:11]] | بتقابل السطر ١١ في الملف الأصلي |
+| [[-> a]] | واسمها الجديد [[a]] |
+
+يعني [[a.a.a(SourceFile:2)]] = [[CartManager.add]] سطر ١١، وده سطر [[throw new IllegalArgumentException]]. وسطر [[5:5:int ...CartManager.total()]] بيقول إن [[total]] اتحطت جوه [[main]] (inlining).
+
+---
+
+## ٤. [[retrace]] يعمل ده أوتوماتيك
+
+~~~bash
+java -cp "$ANDROID_HOME/build-tools/37.0.0/lib/d8.jar" com.android.tools.r8.retrace.Retrace mapping.txt trace.txt
+~~~
+
+- [[d8.jar]] اللي في build-tools فيه R8 كله، ومنه أداة [[Retrace]].
+- [[$ANDROID_HOME]] = متغير بيشاور على فولدر الـ Android SDK.
+- البرنامج بياخد الـ mapping الأول وبعده ملف الـ trace.
+
+~~~text الناتج
+Exception in thread "main" java.lang.IllegalArgumentException: negative price for sticker
+	at com.example.shop.CartManager.add(CartManager.java:11)
+	at com.example.shop.Main.main(Main.java:7)
+~~~
+
+طابق **بالظبط** الـ trace اللي بيطلع من النسخة اللي من غير R8. ولو عندك cmdline-tools، فيها سكريبت جاهز اسمه [[retrace]] بيعمل نفس الحاجة: [[retrace mapping.txt trace.txt]] (مستخدم في درس «R8 و ProGuard» في تاب Kotlin).
+
+على ويندوز نفس الأمر، بس المتغير [[$env:ANDROID_HOME]] والمسار بـ [[\]].
+
+---
+
+## ٥. احفظه صح
+
+أول سطور الـ mapping:
+
+~~~text mapping.txt
+# compiler: R8
+# compiler_version: 9.2.4-dev
+# pg_map_id: 9253a11e6fe97a72ab50a9227df5c85524590e05e9080a3aa38636ad3462dab4
+~~~
+
+[[pg_map_id]] هاش بيميّز الـ build ده. ولما الـ build ميكونش فيه أي قاعدة [[-keepattributes SourceFile]] (زي نسخة [[min.apk]] في الدرس اللي فات)، R8 بيكتب اسم الملف في الـ dex [[r8-map-id-<الهاش>]]، فالـ crash نفسه بيقولك محتاج أنهي mapping.
+
+| اعمل | متعملش |
+|---|---|
+| ارفعه artifact في الـ CI باسم فيه الـ versionCode | تحطه في repo عام |
+| اتأكد إنه وصل Play Console (بيتشال جوه الـ AAB) وأداة الـ crashes | تحطه جوه [[assets/]] أو أي حتة في التطبيق |
+| استخدم mapping نفس الـ build بالظبط | تفك trace بـ mapping من build تاني |
+
+## الخلاصة
+
+- [[mapping.txt]] = عكس التعمية. مش في الـ APK، وخليه كده.
+- من غيره الـ crashes بتاعتك مش مقروءة، فاحفظه لكل نسخة.
+- [[retrace mapping.txt trace.txt]] بيرجّع الأسماء وأرقام السطور، بشرط [[LineNumberTable]].`,
+        lines: [
+          R`بيدوّر على أي ملف mapping جوه الـ APK: مفيش.`,
+          R`بيشغّل البرنامج المتعمّي بسعر سالب فيرمي exception، والـ stack trace بيتكتب في trace.txt.`,
+          R`بيعرض الـ stack trace المتعمّي.`,
+          R`بيشغّل Retrace اللي جوه d8.jar على الـ mapping والـ trace فيرجّع الأسماء والسطور الأصلية.`,
+          R`على ويندوز: نفس الأمر بمتغير PowerShell ومسار ويندوز.`
+        ],
+        sol: R`اتشغّل في container أوبونتو 24.04: JDK 21، و R8 و Retrace 9.2.4-dev من [[build-tools/37.0.0/lib/d8.jar]] (R8 بـ [[--classfile]] عشان يشتغل على JVM). أمر ويندوز هو نفس البرنامج بمسار مختلف، ومتجرّبش على ويندوز.
+
+~~~text الناتج (قبل retrace)
+	at a.a.a(SourceFile:2)
+	at com.example.shop.Main.main(SourceFile:3)
+~~~
+
+~~~text الناتج (بعد retrace)
+	at com.example.shop.CartManager.add(CartManager.java:11)
+	at com.example.shop.Main.main(Main.java:7)
+~~~
+
+ونفس البرنامج من غير R8 طلّع [[CartManager.java:11]] و [[Main.java:7]] بالظبط.`
+      }
+    ]
+  }
+]);
+
+/* ===== js/tabs/re/03.js ===== */
+// تكملة تاب re: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/re/01.js (شرح حقول الدرس في أوله)
+MORE("re", [
+  {
+    t: R`أمان الشبكة: cleartext والـ pinning`,
+    l: 3,
+    n: R`ملف network_security_config.xml: نمنع HTTP، ونحدد مين نثق فيه، ونسمح بالتجربة المحلية في الـ debug بس. وبعدين certificate pinning: بيحمي من إيه، وإزاي تحسب الـ pin، وليه ممكن يقفل تطبيقك لو اتعمل غلط`,
+    items: [
+      {
+        cmd: "network_config",
+        title: R`network_security_config.xml: امنع HTTP وحدد مين تثق فيه`,
+        desc: R`ملف XML في [[res/xml/]] بتشاور عليه من المانيفست بـ [[android:networkSecurityConfig]]، وبيتحكم في اتصالات تطبيقك من غير ما تغيّر سطر كود: هل HTTP العادي (cleartext) مسموح؟ وأنهي شهادات (CAs) التطبيق يثق فيها؟ ولأنهي دومين؟
+
+من أندرويد ٩ (targetSdk 28) الـ cleartext ممنوع افتراضيًا، ومن أندرويد ٧ (targetSdk 24) التطبيق مش بيثق في الشهادات اللي المستخدم ضافها بإيده. الملف بيخليك تكتب ده صريح، وتفتح استثناء للتجربة على جهازك في نسخة الـ debug بس.`,
+        example: R`<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>`,
+        try: R`ضيف الملف ده لتطبيقك في [[app/src/main/res/xml/]] وشاور عليه من المانيفست. اعمل نسخة تانية في [[app/src/debug/res/xml/]] بنفس الاسم تسمح بـ cleartext لـ [[10.0.2.2]] بس (سيرفرك المحلي من المحاكي). ابني الـ debug والـ release، وافكهم بـ [[aapt2 dump xmltree --file res/xml/network_security_config.xml]]: لازم تلاقي الاستثناء في الـ debug بس.`,
+        flag: "script",
+        deep: {
+          why: R`HTTP العادي بيتقري ويتعدّل من أي حد على نفس الشبكة (واي فاي عام مثلًا): tokens وبيانات. والثقة في شهادات المستخدم معناها إن أي حد يقنع المستخدم يسطّب شهادة (أو برنامج بيعمل كده) يقدر يقرا HTTPS بتاعك. الملف بيخلي ده قرار مكتوب ومتراجع، مش افتراض.`,
+          how: R`[[base-config]] = القاعدة لكل الاتصالات. [[domain-config]] = استثناء أو تشديد لدومينات معيّنة (زي pinning أو cleartext لـ localhost). [[trust-anchors]] = مين التطبيق يثق فيه: [[system]] (شهادات النظام) أو [[user]] (اللي المستخدم ضافها) أو ملف شهادة في [[res/raw]]. و [[debug-overrides]] = إعدادات بتشتغل **بس** لو التطبيق [[debuggable]]. النظام بيطبّق الملف على [[HttpURLConnection]] و OkHttp و WebView وأي مكتبة بتستخدم TLS العادي بتاع أندرويد.`,
+          when: R`في كل تطبيق بيكلّم الشبكة. خلّي الـ release صارم ([[cleartextTrafficPermitted="false"]] و [[system]] بس)، وحط الاستثناءات اللي محتاجها للتطوير في ملف الـ debug. ولو محتاج pinning، بيتحط في نفس الملف (الدرس اللي بعده).`,
+          mistakes: R`إنك تحط [[cleartextTrafficPermitted="true"]] في [[base-config]] عشان سيرفر التطوير ويتنشر كده. وإنك تضيف [[certificates src="user"]] في الـ release عشان أداة تجربة. وإنك تكتب الملف ومتشاورش عليه من المانيفست (مش هيتطبق). وإنك تفتكر إن الملف بيحمي من صاحب الجهاز: هو بيحمي المستخدم من الشبكة، لكن اللي متحكم في الموبايل بالكامل (root) يقدر يعدّل التطبيق نفسه.`
+        },
+        teach: R`## الملف بيتحط فين؟
+
+~~~text
+app/src/main/res/xml/network_security_config.xml    <-- الـ release (والـ debug لو مفيش غيره)
+app/src/debug/res/xml/network_security_config.xml   <-- نسخة الـ debug بس (بتغطي على اللي فوق)
+~~~
+
+وفي المانيفست:
+
+~~~xml
+<application
+    android:networkSecurityConfig="@xml/network_security_config"
+    ...>
+~~~
+
+[[@xml/network_security_config]] = المورد اللي اسمه كده في فولدر [[res/xml]]، من غير [[.xml]].
+
+### اتجرّب فين؟
+
+بنيت العيّنة بالملف ده في container أوبونتو 24.04 ([[aapt2]] من build-tools 37) وقريته من الـ APK. سلوك أندرويد وقت التشغيل (إيه اللي بيترفض) من الـ docs الرسمية، لأن مفيش محاكي هنا.
+
+---
+
+## ١. الملف سطر سطر
+
+| السطر | معناه |
+|---|---|
+| [[<?xml version="1.0" encoding="utf-8"?>]] | أول سطر في أي ملف XML |
+| [[<network-security-config>]] | العنصر الأساسي، وكل حاجة جواه |
+| [[<base-config cleartextTrafficPermitted="false">]] | القاعدة العامة لكل الدومينات: HTTP العادي ممنوع |
+| [[<trust-anchors>]] | «جذور الثقة»: الجهات اللي هنصدّق الشهادات اللي هي موقّعاها |
+| [[<certificates src="system" />]] | شهادات النظام بس (اللي جاية مع أندرويد)، مش [[user]] |
+| آخر ٣ سطور | قفل العناصر |
+
+ده بالظبط الافتراضي لتطبيق targetSdk 28 أو أكتر. كتابته صريح بتخلي أي تغيير بعدين يبان في الـ code review.
+
+### الافتراضي حسب الـ targetSdk (من الـ docs)
+
+| targetSdk | cleartext | شهادات المستخدم |
+|---|---|---|
+| 23 أو أقل | مسموح | بيثق فيها |
+| 24 لـ 27 | مسموح | مش بيثق |
+| 28 أو أكتر | ممنوع | مش بيثق |
+
+---
+
+## ٢. نقرا الملف من الـ APK
+
+~~~bash
+aapt2 dump xmltree --file res/xml/network_security_config.xml nsc.apk
+~~~
+
+~~~text الناتج
+E: network-security-config (line=2)
+    E: base-config (line=3)
+      A: cleartextTrafficPermitted=false
+        E: trust-anchors (line=4)
+            E: certificates (line=5)
+              A: src="system" (Raw: "system")
+~~~
+
+[[E:]] = element، و [[A:]] = attribute. والمانيفست بيشاور عليه برقم مورد:
+
+~~~text الناتج (aapt2 dump xmltree --file AndroidManifest.xml)
+A: http://schemas.android.com/apk/res/android:networkSecurityConfig(0x01010527)=@0x7f020000
+~~~
+
+[[0x7f020000]] = رقم المورد [[xml/network_security_config]] في جدول الموارد. يعني أي حد فاكك تطبيقك بيشوف الإعدادات دي، وده عادي: هي مش أسرار.
+
+---
+
+## ٣. نسخة الـ debug
+
+السيرفر المحلي بتاعك غالبًا HTTP. من المحاكي، جهازك اسمه [[10.0.2.2]]. فبنفتح الاستثناء ده في الـ debug بس:
+
+~~~xml
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false" />
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">10.0.2.2</domain>
+        <domain includeSubdomains="false">localhost</domain>
+    </domain-config>
+    <debug-overrides>
+        <trust-anchors>
+            <certificates src="user" />
+        </trust-anchors>
+    </debug-overrides>
+</network-security-config>
+~~~
+
+- [[domain-config]] = قواعد لدومينات بعينها بتغطي على [[base-config]].
+- [[includeSubdomains="false"]] = الدومين ده بالظبط، مش أي حاجة تحته.
+- [[debug-overrides]] = بيشتغل بس لو التطبيق [[debuggable]]. هنا بيسمح بشهادات المستخدم، عشان لو بتراقب traffic تطبيقك إنت بأداة proxy على جهازك. والـ docs بتقول إن ده أأمن من كود بـ if، لأن المتاجر مش بتقبل تطبيق [[debuggable]] أصلًا.
+
+بنيت النسخة دي وقريتها بـ [[aapt2]] واتأكدت إن الاستثناء موجود فيها، وإن نسخة الـ release ملهاش غير [[base-config]].
+
+---
+
+## ٤. Certificate Transparency (جديد)
+
+من الـ docs: أندرويد ١٦ (API 36) فيه عنصر [[<certificateTransparency enabled="true"/>]] تشغّله بإيدك، ومن أندرويد ١٧ (API 37) بقى شغّال افتراضيًا. بيتأكد إن شهادة السيرفر متسجّلة في سجلات CT العامة، فشهادة اتعملت غلط من CA مش بتعدّي بسهولة. ومش بيشتغل مع الشهادات اللي إنت حاططها كـ trust anchors بنفسك.
+
+## الخلاصة
+
+| عايز | اكتب |
+|---|---|
+| تمنع HTTP | [[base-config cleartextTrafficPermitted="false"]] |
+| تثق في النظام بس | [[trust-anchors]] فيه [[certificates src="system"]] |
+| HTTP لسيرفرك المحلي | [[domain-config]] لـ [[10.0.2.2]] في [[src/debug]] بس |
+| أداة proxy على تطبيقك | [[debug-overrides]] |`,
+        lines: [
+          R`أول سطر في ملف XML: الإصدار والـ encoding.`,
+          R`العنصر الأساسي اللي فيه كل الإعدادات.`,
+          R`القاعدة لكل الاتصالات: HTTP من غير تشفير ممنوع.`,
+          R`بداية قايمة الجهات اللي التطبيق يثق في شهاداتها.`,
+          R`شهادات النظام بس، من غير الشهادات اللي المستخدم ضافها.`,
+          R`قفل قايمة الثقة.`,
+          R`قفل القاعدة العامة.`,
+          R`قفل الملف.`
+        ],
+        sol: R`اتبنى في container أوبونتو 24.04 ([[aapt2]] من build-tools 37) وده الناتج من الـ APK:
+
+~~~text الناتج
+E: network-security-config (line=2)
+    E: base-config (line=3)
+      A: cleartextTrafficPermitted=false
+        E: trust-anchors (line=4)
+            E: certificates (line=5)
+              A: src="system" (Raw: "system")
+~~~
+
+ونسخة الـ debug فيها زيادة [[domain-config]] بـ [[cleartextTrafficPermitted=true]] لـ [[10.0.2.2]] و [[localhost]]، و [[debug-overrides]] بـ [[src="user"]]. السلوك وقت التشغيل (طلب [[http://]] لدومين تاني بيترفض بـ exception) من الـ docs، مش متجرّب على جهاز هنا.`
+      },
+      {
+        cmd: "cert_pinning",
+        title: R`Certificate pinning: احسب الـ pin، وحط backup، وافهم الخطر`,
+        desc: R`عادي التطبيق بيصدّق أي شهادة موقّعة من أي CA من مئات الـ CAs اللي في النظام. الـ **pinning** معناه إنك تقول للتطبيق: لـ [[api.myapp.test]] صدّق بس الشهادة اللي مفتاحها العام بصمته كذا. لو CA اتخترقت أو حد عمل شهادة مزيّفة لدومينك، التطبيق يرفض.
+
+الـ pin هو SHA-256 للمفتاح العام (SPKI) متحوّل base64، وبتحسبه بـ [[openssl]]. ولازم يكون معاه **backup pin** لمفتاح تاني جاهز عندك، وإلا لو غيّرت مفتاح السيرفر التطبيق كله يقف لحد ما المستخدمين يحدّثوا. الـ pinning بيحمي المستخدم من الشبكة، مش بيحمي الـ API بتاعك من صاحب الموبايل.`,
+        example: R`# Linux (and WSL):
+openssl x509 -in api.crt -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64
+openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:P-256 -out backup.key
+openssl pkey -in backup.key -pubout -outform der | openssl dgst -sha256 -binary | openssl enc -base64
+openssl s_client -connect localhost:8443 -servername api.myapp.test </dev/null 2>/dev/null | openssl x509 -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64
+# Windows (PowerShell 7.4 or newer, openssl from Git for Windows):
+$env:Path = "C:\Program Files\Git\usr\bin;" + $env:Path
+openssl x509 -in api.crt -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64`,
+        try: R`اعمل لنفسك شهادة تجربة بـ [[openssl req -x509]] ومفتاح backup، واحسب الـ pin للاتنين. بعدين جدّد الشهادة **بنفس المفتاح** ([[openssl req -x509 -key api.key -new ...]]) واحسب تاني: لازم الـ pin ميتغيّرش. وبعدين اعمل شهادة بمفتاح جديد: الـ pin اتغيّر، وده اللي بيقفل التطبيق لو مفيش backup.`,
+        deep: {
+          why: R`الـ HTTPS العادي بيعتمد إن كل الـ CAs اللي في النظام محترمة. لو واحدة منهم غلطت أو اتخترقت، أو جهاز في شبكة شركة أو بلد بيعمل اعتراض بشهادة مقبولة، الاتصال يبان سليم. الـ pinning بيقفل ده لدومينك. بس في المقابل بيربط التطبيق المنشور بمفتاح السيرفر، فأي غلطة في تغيير المفاتيح بتقطع كل المستخدمين.`,
+          how: R`الشهادة بتتغيّر كل كام شهر، لكن المفتاح العام ممكن يفضل هو هو مع التجديد. عشان كده بنثبّت بصمة المفتاح العام (SPKI = SubjectPublicKeyInfo، المفتاح ونوعه) مش الشهادة كلها. في [[network_security_config.xml]] بتحط [[pin-set]] جوه [[domain-config]] فيه [[pin digest="SHA-256"]] لكل مفتاح، والتطبيق بيقبل الاتصال لو أي مفتاح في سلسلة الشهادات (السيرفر أو الـ intermediate أو الـ root) بصمته في القايمة. و [[expiration]] = تاريخ بعده الـ pinning يتلغي، عشان النسخ القديمة اللي محدش حدّثها متقفش للأبد. وفي OkHttp فيه [[CertificatePinner]] بنفس الفكرة بصيغة [[sha256/...]].`,
+          when: R`لما يكون عندك تهديد حقيقي من اعتراض الشبكة (تطبيقات بنوك ومحافظ وصحة)، ولما الفريق عنده عملية واضحة لتغيير المفاتيح: backup key محفوظ offline، وتنزيل نسخة بالـ pin الجديد **قبل** ما تغيّر مفتاح السيرفر بفترة. لو مفيش عملية زي دي، الـ pinning ممكن يضر أكتر ما ينفع، و Certificate Transparency (الدرس اللي قبله) بيدي جزء من الحماية من غير الخطر ده.`,
+          mistakes: R`pin واحد من غير backup. وإنك تثبّت مفتاح شهادة بيتغيّر مع كل تجديد (زي بعض إعدادات Let's Encrypt اللي بتعمل مفتاح جديد كل مرة). وإنك تحسب البصمة على الشهادة كلها بدل المفتاح العام. وإنك تنسى [[expiration]] أو تحطه بعيد جدًا. وإنك تفتكر إن الـ pinning بيمنع حد يدرس الـ API بتاعك: صاحب الجهاز الـ rooted يقدر يعدّل أي فحص جوه التطبيق، فالـ API لازم يتحمي على السيرفر (درس الكلاينت).`
+        },
+        teach: R`## الـ pin = بصمة المفتاح العام
+
+~~~text
+api.crt (الشهادة)
+  └── المفتاح العام (SPKI)  --DER-->  91 byte  --SHA-256-->  32 byte  --base64-->  U6NvWMfE...TtEKI=
+~~~
+
+### اتجرّب فين؟
+
+كله على شهادة تجربة عملتها لنفسي لدومين وهمي [[api.myapp.test]]، في container أوبونتو 24.04 (OpenSSL 3.0.13). وعلى ويندوز بـ [[openssl]] 3.5.9 اللي جاي مع Git for Windows في PowerShell 7.6 و Windows PowerShell 5.1. الشهادة والمفتاح اتعملوا كده:
+
+~~~bash
+openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:P-256 -nodes -keyout api.key -out api.crt -days 90 -subj /CN=api.myapp.test
+~~~
+
+[[req -x509]] = اعمل شهادة self-signed، و [[-newkey ec]] بمفتاح EC جديد على منحنى [[P-256]]، و [[-nodes]] = متشفّرش المفتاح بباسورد (تجربة بس)، و [[-subj /CN=...]] = اسم الدومين.
+
+---
+
+## ١. الـ pin من ملف الشهادة
+
+~~~bash
+openssl x509 -in api.crt -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64
+~~~
+
+٤ أوامر في pipe، بالترتيب:
+
+### [[openssl x509 -in api.crt -pubkey -noout]]
+
+[[x509]] = أداة الشهادات. [[-pubkey]] = اطبع المفتاح العام، و [[-noout]] = متطبعش الشهادة نفسها.
+
+~~~text الناتج
+-----BEGIN PUBLIC KEY-----
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAENrWxFLmB3kdZM7AKthTjSaNEJipg
+2TJtbM2PhV2JhI55oeiJeBh9eRlrBRE9P+hjzBBkvxmJDorruZC0fQng6A==
+-----END PUBLIC KEY-----
+~~~
+
+ده الـ SPKI بصيغة PEM (base64 بين سطرين).
+
+### [[openssl pkey -pubin -outform der]]
+
+[[pkey]] = أداة المفاتيح، [[-pubin]] = الداخل مفتاح عام، و [[-outform der]] = طلّعه binary (DER) مش PEM. الحجم: **91 byte** (عدّيته بـ [[wc -c]]): نوع المفتاح والمنحنى + نقطة الـ P-256 (65 byte).
+
+### [[openssl dgst -sha256 -binary]]
+
+البصمة SHA-256: دايمًا 32 byte مهما كان حجم الداخل. [[-binary]] = طلّعها bytes مش hex.
+
+### [[openssl enc -base64]]
+
+حوّل الـ 32 byte لنص: 44 حرف بينتهوا بـ [[=]].
+
+~~~text الناتج
+U6NvWMfENHSLltziGO9rr5PLsDjJus+wiLdh50TtEKI=
+~~~
+
+---
+
+## ٢. الـ backup pin
+
+~~~bash
+openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:P-256 -out backup.key
+openssl pkey -in backup.key -pubout -outform der | openssl dgst -sha256 -binary | openssl enc -base64
+~~~
+
+- [[genpkey]] = اعمل مفتاح خاص جديد، وهنا مفيش شهادة لسه: المفتاح ده بيتحفظ offline لحد ما تحتاجه.
+- [[-pubout]] = من المفتاح الخاص طلّع العام.
+
+~~~text الناتج
+6GoLcWPzvobHpZfo+PxzSvpeGWMJ+iQ2PNR8ecihJkE=
+~~~
+
+---
+
+## ٣. الـ pin من السيرفر وهو شغّال
+
+عشان تتأكد إن السيرفر الحقيقي بيقدّم المفتاح اللي إنت فاكره. هنا السيرفر [[openssl s_server]] على جهازي بنفس الشهادة:
+
+~~~bash
+openssl s_server -accept 8443 -cert api.crt -key api.key -quiet &
+openssl s_client -connect localhost:8443 -servername api.myapp.test </dev/null 2>/dev/null | openssl x509 -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64
+~~~
+
+- [[s_client -connect host:port]] = اتصل TLS، و [[-servername]] = الدومين اللي بنطلبه (SNI).
+- [[</dev/null]] = مدخل فاضي عشان يقفل الاتصال على طول، و [[2>/dev/null]] = اخفي رسايل التشخيص.
+- وبعدها نفس السلسلة. في الحقيقة هتكتب دومين الـ API بتاعك وبورت 443.
+
+~~~text الناتج
+U6NvWMfENHSLltziGO9rr5PLsDjJus+wiLdh50TtEKI=
+~~~
+
+نفس اللي حسبناه من الملف.
+
+### التجديد بنفس المفتاح
+
+~~~bash
+openssl req -x509 -key api.key -new -days 365 -subj /CN=api.myapp.test -out api-renewed.crt
+~~~
+
+الـ pin للشهادة الجديدة طلع **نفس** [[U6NvWMfE...TtEKI=]]: الشهادة اتغيّرت والمفتاح لأ. عشان كده بنثبّت المفتاح.
+
+---
+
+## ٤. نحطهم في الـ config
+
+~~~xml
+<domain-config>
+    <domain includeSubdomains="true">api.myapp.test</domain>
+    <pin-set expiration="2027-06-30">
+        <pin digest="SHA-256">U6NvWMfENHSLltziGO9rr5PLsDjJus+wiLdh50TtEKI=</pin>
+        <pin digest="SHA-256">6GoLcWPzvobHpZfo+PxzSvpeGWMJ+iQ2PNR8ecihJkE=</pin>
+    </pin-set>
+</domain-config>
+~~~
+
+- [[expiration="2027-06-30"]] = بعد التاريخ ده الـ pinning بيتلغي للنسخة دي. الـ docs بتنبّه إن ده بيقلل خطر قفل التطبيق، بس بيدّي فرصة لتخطّي الـ pin بعد التاريخ، فخليه قريب وجدّده مع كل release.
+- بنيت التطبيق بالملف ده وفكيته بـ [[jadx]]: الـ pins ظاهرة زي ما هي. عادي، دي بصمات مفاتيح **عامة** مش أسرار.
+
+---
+
+## ٥. على ويندوز
+
+[[openssl]] مش جاي مع ويندوز، بس موجود مع Git for Windows في [[C:\Program Files\Git\usr\bin]]، فبنضيفه للـ [[$env:Path]] في الجلسة دي بس.
+
+| الشيل | الناتج |
+|---|---|
+| PowerShell 7.6 | [[U6NvWMfE...TtEKI=]] صح |
+| Windows PowerShell 5.1 | [[77u/GD9aPyU/...]] **غلط** |
+| 5.1 بـ [[cmd /c '... | ... | ...']] | صح |
+
+ليه؟ PowerShell 5.1 بيحوّل اللي معدّي في الـ pipe بين برنامجين لنص (وبيضيف BOM)، فالـ bytes بتبوظ قبل الـ SHA-256. من PowerShell 7.4 الـ bytes بتعدّي زي ما هي. في 5.1 شغّل السلسلة كلها جوه [[cmd /c]] أو Git Bash.
+
+---
+
+## ٦. الخطر اللي لازم تفهمه
+
+| السيناريو | اللي بيحصل |
+|---|---|
+| غيّرت مفتاح السيرفر والمفتاح الجديد هو الـ backup | التطبيق شغّال، وتنزّل نسخة فيها backup جديد |
+| غيّرت المفتاح لمفتاح مش في القايمة | كل النسخ المنشورة تقف عن الاتصال لحد ما المستخدم يحدّث |
+| مستخدم على موبايل rooted بيدرس تطبيقك | يقدر يعدّل التطبيق ويتخطّى أي فحص في الكلاينت، الـ pinning مش حماية للـ API منه |
+
+## الخلاصة
+
+- الـ pin = base64 لـ SHA-256 المفتاح العام، مش الشهادة.
+- دايمًا pin تاني لمفتاح backup محفوظ offline، و [[expiration]] قريب.
+- احسبه من السيرفر الحقيقي قبل ما تنشر.
+- في PowerShell 5.1 الـ pipe بيبوّظ الـ binary: استخدم 7.4+ أو [[cmd /c]].`,
+        lines: [
+          R`بيطلّع المفتاح العام من الشهادة، يحوّله DER، يحسب SHA-256، ويكتبه base64: ده الـ pin.`,
+          R`بيعمل مفتاح EC جديد للـ backup يتحفظ offline.`,
+          R`بيحسب الـ pin بتاع مفتاح الـ backup من المفتاح الخاص.`,
+          R`بيتصل بالسيرفر وهو شغّال، وياخد شهادته، ويحسب الـ pin منها عشان تتأكد إنه زي اللي في الملف.`,
+          R`على ويندوز: بيضيف فولدر openssl بتاع Git for Windows للـ Path في الجلسة دي بس.`,
+          R`نفس سلسلة حساب الـ pin (صح في PowerShell 7.4+ بس).`
+        ],
+        sol: R`اتشغّل في container أوبونتو 24.04 (OpenSSL 3.0.13) على شهادة تجربة عملتها لـ [[api.myapp.test]]، وعلى ويندوز بـ OpenSSL 3.5.9 من Git for Windows:
+
+~~~text الناتج
+pin من الشهادة       U6NvWMfENHSLltziGO9rr5PLsDjJus+wiLdh50TtEKI=
+pin الـ backup        6GoLcWPzvobHpZfo+PxzSvpeGWMJ+iQ2PNR8ecihJkE=
+pin من السيرفر       U6NvWMfENHSLltziGO9rr5PLsDjJus+wiLdh50TtEKI=
+بعد التجديد بنفس المفتاح  U6NvWMfENHSLltziGO9rr5PLsDjJus+wiLdh50TtEKI=
+~~~
+
+والقيم بتاعتك هتبقى مختلفة لأن المفاتيح بتتعمل عشوائي. الرفض وقت التشغيل لما الـ pin ميطابقش من الـ docs، مش متجرّب على جهاز هنا.`
+      }
+    ]
+  },
+  {
+    t: R`الكلاينت مش مضمون: السيرفر يحكم، والـ Keystore يحفظ`,
+    l: 3,
+    n: R`أي فحص في التطبيق صاحب الموبايل يقدر يغيّره، فالقرار الحقيقي على السيرفر. Play Integrity بيدّي السيرفر إشارة عن الجهاز والتطبيق، والـ Android Keystore بيحفظ المفاتيح على الجهاز من غير ما تتنسخ`,
+    items: [
+      {
+        cmd: "client_untrusted",
+        title: R`متصدّقش التطبيق: السعر والصلاحية بيتقرروا على السيرفر`,
+        desc: R`أي حاجة التطبيق بيبعتها للسيرفر (سعر، [[isPremium: true]]، «أنا أدمن»، «الموبايل مش rooted») ممكن تتغيّر قبل ما توصل، لأن صاحب الموبايل متحكم في التطبيق والشبكة اللي عليه. فالسيرفر لازم يحسب السعر بنفسه، ويعرف مين دفع من قاعدة بياناته، ويعامل أي فحص في الكلاينت (زي root detection) كإشارة بس، مش قرار.
+
+الدرس ده بيشغّل سيرفر صغير بـ Node على جهازك فيه endpoints غلط بتصدّق التطبيق و endpoints صح، ونبعت لهم نفس الطلب بـ [[curl]].`,
+        example: R`# Linux (and WSL):
+curl -s -H "content-type: application/json" -d '{"item":"pro-month","price":1}' localhost:8081/bad/order
+curl -s -H "content-type: application/json" -d '{"item":"pro-month","price":1}' localhost:8081/good/order
+curl -s -H "content-type: application/json" -H "x-user: user-42" -d '{"isPremium":true}' localhost:8081/bad/premium
+curl -s -H "content-type: application/json" -H "x-user: user-42" -d '{"isPremium":true}' localhost:8081/good/premium
+# Windows (PowerShell):
+Invoke-RestMethod -Method Post -Uri http://localhost:8081/bad/order -ContentType application/json -Body '{"item":"pro-month","price":1}'
+Invoke-RestMethod -Method Post -Uri http://localhost:8081/good/order -ContentType application/json -Body '{"item":"pro-month","price":1}'`,
+        try: R`في الـ API بتاعك دوّر على أي endpoint بياخد من التطبيق قيمة المفروض السيرفر يعرفها لوحده: سعر، خصم، كمية نقاط، دور المستخدم، «الاشتراك شغّال». ابعتله بـ [[curl]] قيمة غلط على سيرفر التطوير بتاعك. لو قبلها، انقل الحساب للسيرفر.`,
+        deep: {
+          why: R`لأن التطبيق على موبايل حد تاني. صاحبه يقدر يعدّل الطلبات بأداة proxy على جهازه، أو يعدّل التطبيق نفسه على موبايل rooted، أو يكتب سكريبت بيكلّم الـ API من غير التطبيق خالص. أي قرار مبني على حاجة جاية من الكلاينت هو قرار المستخدم مش قرارك.`,
+          how: R`السيرفر شايل الحقيقة: جدول الأسعار، والمدفوعات (اللي جاية من webhook بوابة الدفع أو تأكيد Google Play Billing على السيرفر)، والأدوار. التطبيق يبعت **إيه اللي المستخدم عايزه** (المنتج [[pro-month]])، والسيرفر يقرر **السعر والصلاحية**. والمستخدم نفسه بيتعرف من الـ session أو الـ token الموقّع، مش من header بيبعته. وأي فحص في التطبيق (root أو emulator أو debugger) يتعامل كإشارة تزوّد الحذر، لأن نفس الشخص اللي عامل root يقدر يخلي الفحص يرجّع «سليم».`,
+          when: R`في كل endpoint فيه فلوس أو صلاحيات أو بيانات مستخدم تاني. وفي مراجعة أي feature جديدة: اسأل «لو الطلب ده اتغيّر، إيه أسوأ حاجة؟». نفس فكرة Broken Access Control في تاب الأمان، بس من ناحية الموبايل.`,
+          mistakes: R`إن السيرفر ياخد السعر من الطلب. وإن التطبيق يقرر إن المستخدم premium ويبعت ده. وإن الـ user id يبقى header عادي (زي الـ [[x-user]] اللي في الديمو، اللي معمول للتبسيط بس) بدل token موقّع. وإنك تعتمد على root detection كحماية: هو بيمنع المستخدم العادي اللي عامل root لأسباب تانية، ومش بيوقف حد قاصد. وإنك تتحقق من الشراء جوه التطبيق بس من غير ما السيرفر يأكده.`
+        },
+        teach: R`## السيرفر اللي بنجرّب عليه
+
+ملف [[shop.js]] من غير مكتبات، فيه ٤ endpoints:
+
+~~~js
+const PRICES = { "pro-month": 99 };            // the price list lives on the server
+const PAID = new Set();                        // users who really paid (filled by the payment webhook)
+
+// BAD: trusts what the app sends
+if (req.url === "/bad/order") return send(200, { charged: body.price, item: body.item });
+if (req.url === "/bad/premium") return send(200, { premium: body.isPremium === true });
+
+// GOOD: the server decides
+if (req.url === "/good/order") {
+  const price = PRICES[body.item];
+  if (price === undefined) return send(400, { error: "unknown item" });
+  return send(200, { charged: price, item: body.item });
+}
+if (req.url === "/good/premium") return send(200, { premium: PAID.has(user) });
+~~~
+
+- [[PRICES]] = جدول الأسعار عند السيرفر. [[PRICES[body.item]]] = هات سعر المنتج اللي اسمه جاي في الطلب.
+- [[PAID]] = [[Set]] (مجموعة من غير تكرار) فيها المستخدمين اللي دفعوا فعلًا، بتتملي من الـ webhook بتاع الدفع. هنا فاضية.
+- [[user]] جاي من header [[x-user]] للتبسيط بس. في الحقيقة بيتعرف من الـ token الموقّع (درس «المفتاح على السيرفر»).
+
+### اتجرّب فين؟
+
+Node 24 و [[curl]] 8.23 في container [[node:24-alpine]]. والـ endpoints نفسها اتجرّبت على ويندوز بـ Node 24 و [[Invoke-RestMethod]] في PowerShell 7.6.
+
+---
+
+## ١. الطلب بسعر متغيّر
+
+~~~bash
+curl -s -H "content-type: application/json" -d '{"item":"pro-month","price":1}' localhost:8081/bad/order
+~~~
+
+- [[-H "content-type: application/json"]] = بنقول للسيرفر إن الجسم JSON.
+- [[-d '...']] = data: جسم الطلب، ووجوده بيخلي [[curl]] يبعت POST لوحده. حطيناه بين [['...']] عشان الـ [["]] اللي جواه.
+
+~~~text الناتج
+{"charged":1,"item":"pro-month"}
+~~~
+
+جنيه واحد بدل 99: السيرفر صدّق الرقم اللي في الطلب. وده مش محتاج أي فك للتطبيق: أي أداة proxy على موبايل المستخدم نفسه بتغيّر الطلب.
+
+~~~bash
+curl -s -H "content-type: application/json" -d '{"item":"pro-month","price":1}' localhost:8081/good/order
+~~~
+
+~~~text الناتج
+{"charged":99,"item":"pro-month"}
+~~~
+
+نفس الطلب بالظبط، و [[price]] اتجاهل. ومنتج مش موجود:
+
+~~~text الناتج (item = free-stuff)
+{"error":"unknown item"} [400]
+~~~
+
+---
+
+## ٢. «أنا premium»
+
+~~~bash
+curl -s -H "content-type: application/json" -H "x-user: user-42" -d '{"isPremium":true}' localhost:8081/bad/premium
+curl -s -H "content-type: application/json" -H "x-user: user-42" -d '{"isPremium":true}' localhost:8081/good/premium
+~~~
+
+~~~text الناتج
+{"premium":true}
+{"premium":false}
+~~~
+
+الأول صدّق. التاني بص في [[PAID]]: [[user-42]] مدفعش.
+
+---
+
+## ٣. على ويندوز
+
+~~~powershell
+Invoke-RestMethod -Method Post -Uri http://localhost:8081/bad/order -ContentType application/json -Body '{"item":"pro-month","price":1}'
+~~~
+
+[[-ContentType]] = نفس الـ header، و [[-Body]] = الجسم. الناتج اتعرض كـ object:
+
+~~~text الناتج
+charged item
+------- ----
+      1 pro-month
+~~~
+
+و [[/good/order]] رجّع [[charged = 99]].
+
+> في PowerShell 7.3 وبعده، [[curl.exe]] بـ [[-d '{\"item\"...}']] بيوصل للسيرفر بـ [[\]] فعلًا وبيبوّظ الـ JSON، فاستخدم [[Invoke-RestMethod]].
+
+---
+
+## ٤. وفحص الـ root؟
+
+| الفحص في التطبيق | اللي بيعمله فعلًا |
+|---|---|
+| root detection (يدوّر على [[su]] أو تطبيقات معروفة) | بيوقف المستخدم العادي، والقاصد بيخلي الفحص يرجّع «سليم» |
+| فحص توقيع التطبيق جوه التطبيق | نفس الحكاية: الكود اللي بيفحص جوه نفس التطبيق اللي اتعدّل |
+| Play Integrity (الدرس اللي بعده) | الإجابة موقّعة من Google وبيفكها **السيرفر**، فأصعب في التزوير، ومع ده إشارة مش ضمان |
+
+## الخلاصة
+
+- التطبيق يقول **عايز إيه**، والسيرفر يقرر **بكام** و **مسموح ولا لأ**.
+- المستخدم بيتعرف من token موقّع، مش من قيمة بيبعتها.
+- أي فحص في الكلاينت إشارة، والقرار على السيرفر.`,
+        lines: [
+          R`بيبعت طلب شرا بسعر 1 للـ endpoint الغلط: السيرفر بيصدّقه.`,
+          R`نفس الطلب للـ endpoint الصح: السيرفر بيحسب السعر من عنده (99).`,
+          R`بيقول للـ endpoint الغلط «أنا premium»: بيصدّق.`,
+          R`نفس الكلام للـ endpoint الصح: بيبص في قايمة اللي دفعوا فعلًا ويرجّع false.`,
+          R`على ويندوز: نفس طلب السعر المتغيّر بـ Invoke-RestMethod.`,
+          R`ونفس الطلب للـ endpoint الصح.`
+        ],
+        sol: R`اتشغّل بـ Node 24.22 و [[curl]] 8.23 في container [[node:24-alpine]]، وجزء ويندوز في PowerShell 7.6:
+
+~~~text الناتج
+## bad order
+{"charged":1,"item":"pro-month"}
+## bad premium
+{"premium":true}
+## good order
+{"charged":99,"item":"pro-month"}
+## good premium
+{"premium":false}
+## unknown
+{"error":"unknown item"} [400]
+~~~`
+      },
+      {
+        cmd: "play_integrity",
+        title: R`Play Integrity: السيرفر يسأل Google عن الجهاز والتطبيق`,
+        desc: R`Play Integrity API بيخلي التطبيق يطلب **token** من Google Play، والسيرفر بتاعك (مش التطبيق) يفكه عن طريق Google ويقرا الإجابة: التطبيق ده هو اللي إنت نشرته على Play؟ الجهاز أصلي ومش متعدّل؟ المستخدم نزّله من Play؟ وكمان الـ token مربوط بالطلب نفسه عن طريق [[requestHash]]، فمينفعش يتاخد من عملية ويتستخدم في عملية تانية.
+
+الدرس ده من الـ docs الرسمية (محتاج حساب Play Console و Google Cloud)، والجزء اللي بيتشغّل هنا هو منطق السيرفر اللي بيقرا الإجابة، على payload بنفس الشكل اللي في الـ docs.`,
+        example: R`// server side: decide from the decoded verdict
+function checkVerdict(p, action, now = Date.now()) {
+  const problems = [];
+  const d = p.requestDetails || {};
+  if (d.requestPackageName !== "com.example.myapp") problems.push("wrong package");
+  if (d.requestHash !== requestHash(action)) problems.push("hash mismatch (token is for another request)");
+  if (now - Number(d.timestampMillis) > 60_000) problems.push("token too old");
+  if (p.appIntegrity?.appRecognitionVerdict !== "PLAY_RECOGNIZED") problems.push("app not recognized by Play");
+  if (!(p.deviceIntegrity?.deviceRecognitionVerdict || []).includes("MEETS_DEVICE_INTEGRITY")) problems.push("device integrity not met");
+  if (p.accountDetails?.appLicensingVerdict !== "LICENSED") problems.push("not licensed");
+  return problems.length ? { allow: false, problems } : { allow: true };
+}`,
+        try: R`اكتب الدالة دي (ومعاها [[requestHash]]) في ملف Node وجرّبها على ٣ payloads بإيدك: واحد سليم، وواحد [[deviceRecognitionVerdict]] فيه فاضي، وواحد [[requestHash]] بتاعه لعملية تانية. بعدين قرر لكل feature في تطبيقك: لو الإجابة سيئة، ترفض؟ ولا تطلب تأكيد زيادة؟ ولا تكمّل وتسجّل بس؟`,
+        flag: "script",
+        deep: {
+          why: R`لأن الفحوصات اللي جوه التطبيق بتتعدّل (الدرس اللي قبله). هنا الإجابة موقّعة ومشفّرة من Google، والتطبيق مش بيقدر يقراها ولا يعدّلها، والسيرفر هو اللي بيفكها. ده بيصعّب جدًا إن سكريبت أو نسخة متعدّلة من تطبيقك أو جهاز متعدّل يعدّوا من غير ما تحس، في العمليات المهمة زي الدفع وتسجيل الحسابات واستخدام الكوبونات.`,
+          how: R`من الـ docs: في التطبيق [[IntegrityManagerFactory.createStandard(context)]] وبعدها [[prepareIntegrityToken]] برقم مشروع Google Cloud (مرة كل فترة، ومش أكتر من ٥ مرات في الدقيقة)، وبعدين لكل عملية مهمة [[request(StandardIntegrityTokenRequest.builder().setRequestHash(hash).build())]]. التطبيق يبعت الـ token لسيرفرك مع الطلب. السيرفر يبعته لـ [[playintegrity.googleapis.com/v1/PACKAGE_NAME:decodeIntegrityToken]] بحساب service account، ويرجعله JSON فيه [[requestDetails]] و [[appIntegrity]] و [[deviceIntegrity]] و [[accountDetails]]. السيرفر يحسب الـ hash بنفسه من الطلب ويقارن، وبعدين يقرر.`,
+          when: R`في العمليات اللي فيها فلوس أو إساءة استخدام: الشرا، والكوبونات، وإنشاء حسابات كتير، والمسابقات، والـ API اللي بتتسرق من سكريبتات. مش في كل طلب (فيه حدود وتكلفة وقت)، ومش كبديل عن الـ authentication والفحوصات العادية على السيرفر.`,
+          mistakes: R`إنك تفك الـ token جوه التطبيق أو تثق في التطبيق لما يقول «الـ verdict سليم». وإنك متقارنش [[requestHash]] و [[requestPackageName]] و [[timestampMillis]] (فالـ token يتعاد استخدامه). وإنك تحط بيانات حساسة في الـ requestHash كنص بدل hash. وإنك تقفل أي جهاز مش [[MEETS_DEVICE_INTEGRITY]] من غير تفكير: فيه مستخدمين حقيقيين على أجهزة قديمة أو ROMs، فقرر حسب خطورة العملية. وإنك تعتبره ضمان: هو إشارة قوية بس.`
+        },
+        teach: R`## الرحلة
+
+~~~text
+التطبيق                         سيرفرك                              Google
+  |  requestHash = sha256(الطلب)
+  |  request(requestHash) ------------------------------------->  Play Integrity
+  |  <------------------------------------------- token (مشفّر)
+  |  الطلب + الـ token ------->  decodeIntegrityToken(token) ---->  playintegrity.googleapis.com
+  |                              <----------------------------  JSON (الـ verdict)
+  |                              checkVerdict(...)  -> اقبل / ارفض
+  |  <------------- النتيجة
+~~~
+
+### اتجرّب فين؟
+
+الجزء بتاع التطبيق و Google من الـ docs الرسمية (محتاج حساب Play Console ومشروع Google Cloud، ومش متجرّب هنا). الدالة [[checkVerdict]] اتشغّلت بـ Node 24 في container [[node:24-alpine]] على payloads عملتها بإيدي بنفس شكل الـ docs.
+
+---
+
+## ١. في التطبيق (من الـ docs)
+
+~~~java
+StandardIntegrityManager standardIntegrityManager =
+    IntegrityManagerFactory.createStandard(applicationContext);
+
+standardIntegrityManager.prepareIntegrityToken(
+    PrepareIntegrityTokenRequest.builder()
+        .setCloudProjectNumber(cloudProjectNumber)
+        .build())
+    .addOnSuccessListener(tokenProvider -> { integrityTokenProvider = tokenProvider; });
+
+integrityTokenProvider.request(
+    StandardIntegrityTokenRequest.builder()
+        .setRequestHash(requestHash)
+        .build())
+    .addOnSuccessListener(response -> sendToServer(response.token()));
+~~~
+
+- [[prepareIntegrityToken]] = تجهيز (warm-up) بياخد ثواني، تعمله مرة وتحتفظ بالـ provider. الـ docs: مش أكتر من ٥ مرات في الدقيقة لكل نسخة من التطبيق.
+- [[setRequestHash]] = hash للطلب اللي هتبعته (مثلًا SHA-256 لـ JSON العملية). أقصى طول ٥٠٠ byte، ومتحطش فيه بيانات كنص.
+- [[response.token()]] = الـ token مشفّر: التطبيق مش بيفهمه، بيبعته وخلاص.
+
+## ٢. على السيرفر: الفك
+
+السيرفر بياخد access token من service account بصلاحية [[playintegrity]]، ويبعت:
+
+~~~text POST https://playintegrity.googleapis.com/v1/com.example.myapp:decodeIntegrityToken
+{ "integrity_token": "<الـ token اللي جه من التطبيق>" }
+~~~
+
+والرد JSON (الحقول الأساسية من الـ docs):
+
+| الحقل | القيم | معناها |
+|---|---|---|
+| [[requestDetails.requestPackageName]] | [[com.example.myapp]] | الـ token اتطلب لأنهي تطبيق |
+| [[requestDetails.requestHash]] | نفس اللي التطبيق حطه | لازم يطابق الـ hash اللي السيرفر يحسبه |
+| [[requestDetails.timestampMillis]] | وقت الطلب | عشان ترفض القديم |
+| [[appIntegrity.appRecognitionVerdict]] | [[PLAY_RECOGNIZED]] / [[UNRECOGNIZED_VERSION]] / [[UNEVALUATED]] | التطبيق وتوقيعه زي اللي على Play؟ |
+| [[deviceIntegrity.deviceRecognitionVerdict]] | قايمة فيها [[MEETS_DEVICE_INTEGRITY]] أو فاضية | جهاز أندرويد أصلي معتمد؟ ومن أندرويد ١٣ فيه إثبات hardware إن الـ bootloader مقفول. الفاضية = علامات root أو hooking أو مش جهاز حقيقي |
+| [[accountDetails.appLicensingVerdict]] | [[LICENSED]] / [[UNLICENSED]] / [[UNEVALUATED]] | المستخدم نزّل التطبيق من Play؟ |
+
+وفيه labels اختيارية: [[MEETS_STRONG_INTEGRITY]] (من أندرويد ١٣: جهاز معتمد + تحديث أمني في آخر سنة) و [[MEETS_BASIC_INTEGRITY]] (فحوصات أساسية بس)، و [[environmentDetails]] (تطبيقات ممكن تشوف الشاشة أو تتحكم فيها، وحالة Play Protect) لو فعّلتها من Play Console.
+
+---
+
+## ٣. القرار: [[checkVerdict]] سطر سطر
+
+- [[p]] = الـ payload بعد الفك، و [[action]] = الطلب اللي التطبيق بعته، و [[now]] = الوقت (parameter عشان نجرّب بسهولة).
+- [[problems]] = قايمة بكل سبب رفض، أحسن من [[false]] لوحده عشان اللوج.
+- [[p.requestDetails || {}]] = لو الحقل مش موجود خد object فاضي بدل ما الكود يقع.
+- [[requestHash(action)]] = السيرفر بيحسب الـ hash **بنفسه** من الطلب اللي وصله:
+
+~~~js
+function requestHash(action) {
+  return crypto.createHash("sha256").update(JSON.stringify(action)).digest("hex");
+}
+~~~
+
+لو الـ token جاي من عملية تانية، الـ hash مش هيطابق.
+- [[60_000]] = ٦٠ ألف ملّي ثانية = دقيقة ([[_]] فاصل للقراية بس).
+- [[?.]] = optional chaining: لو اللي قبلها مش موجود رجّع [[undefined]] بدل error.
+- [[.includes("MEETS_DEVICE_INTEGRITY")]] = القايمة فيها الـ label ده؟
+
+### ٣ تجارب
+
+~~~js
+const action = { op: "redeem", coupon: "WELCOME10", user: "user-42" };
+console.log("genuine :", checkVerdict(good, action, now));
+console.log("modified:", checkVerdict(rooted, action, now));
+console.log("replayed:", checkVerdict(reused, { ...action, coupon: "VIP100" }, now));
+~~~
+
+- [[good]] = payload كل حاجة فيه سليمة.
+- [[rooted]] = [[deviceIntegrity]] فاضي و [[UNRECOGNIZED_VERSION]] (شكل جهاز متعدّل عليه نسخة متعدّلة).
+- [[reused]] = نفس الـ token السليم، بس اتبعت مع طلب كوبون تاني [[VIP100]]. ([[{ ...action, coupon }]] = نسخة من [[action]] بكوبون مختلف.)
+
+~~~text الناتج
+genuine : { allow: true }
+modified: {
+  allow: false,
+  problems: [ 'app not recognized by Play', 'device integrity not met' ]
+}
+replayed: {
+  allow: false,
+  problems: [ 'hash mismatch (token is for another request)' ]
+}
+~~~
+
+التالتة هي الأهم: الـ token سليم ١٠٠٪ بس مش للطلب ده.
+
+---
+
+## ٤. اعمل إيه لو الإجابة سيئة؟
+
+| الخطورة | مثال | رد فعل معقول |
+|---|---|---|
+| عالية | سحب فلوس، كوبون غالي | ارفض، أو اطلب تأكيد زيادة (OTP) |
+| متوسطة | إنشاء حساب | كمّل بحدود أقل وراقب |
+| قليلة | فتح محتوى مجاني | كمّل وسجّل بس |
+
+## الخلاصة
+
+- التطبيق بيطلب الـ token، و**السيرفر** بس اللي بيفكه ويقرر.
+- قارن [[requestHash]] والـ package والوقت قبل أي verdict.
+- النتيجة إشارة قوية مش ضمان، وقرر حسب خطورة العملية.`,
+        lines: [
+          R`دالة على السيرفر بتاخد الـ payload المفكوك والطلب والوقت.`,
+          R`قايمة فاضية نجمّع فيها أسباب الرفض.`,
+          R`بياخد requestDetails، ولو مش موجود object فاضي.`,
+          R`الـ token لازم يكون متطلب لتطبيقنا إحنا.`,
+          R`الـ hash اللي في الـ token لازم يطابق hash الطلب اللي وصل فعلًا.`,
+          R`الـ token لازم يكون اتطلب في آخر دقيقة.`,
+          R`التطبيق لازم يكون هو النسخة اللي Play يعرفها.`,
+          R`الجهاز لازم يكون عليه MEETS_DEVICE_INTEGRITY.`,
+          R`المستخدم لازم يكون نزّل التطبيق من Play.`,
+          R`لو فيه أي مشكلة: ارفض ورجّع الأسباب، غير كده اقبل.`,
+          R`قفلة الدالة.`
+        ],
+        sol: R`[[checkVerdict]] اتشغّلت بـ Node 24.22 في container [[node:24-alpine]] على ٣ payloads بشكل الـ docs:
+
+~~~text الناتج
+genuine : { allow: true }
+modified: {
+  allow: false,
+  problems: [ 'app not recognized by Play', 'device integrity not met' ]
+}
+replayed: {
+  allow: false,
+  problems: [ 'hash mismatch (token is for another request)' ]
+}
+~~~
+
+الكود بتاع التطبيق وطلب الفك من Google من الـ docs الرسمية لـ Play Integrity (standard requests)، ومتجرّبوش هنا لأنهم محتاجين حساب Play Console ومشروع Google Cloud.`
+      },
+      {
+        cmd: "keystore_secrets",
+        title: R`Android Keystore: احفظ الـ token مشفّر بمفتاح مبيطلعش من الجهاز`,
+        desc: R`لو تطبيقك لازم يحفظ حاجة حساسة على الموبايل (refresh token مثلًا)، متحطهاش نص عادي في [[SharedPreferences]] أو DataStore. اعمل مفتاح AES في **Android Keystore**: المفتاح بيتعمل جوه النظام (وغالبًا جوه hardware آمن)، ومينفعش يتنسخ بره، وانت بتطلب منه يشفّر ويفك بس. وبعدين خزّن الناتج المشفّر في أي مكان.
+
+ومكتبة [[androidx.security:security-crypto]] ([[EncryptedSharedPreferences]] و [[MasterKey]]) بقت deprecated: الـ docs بتاعتها بتقول «Deprecated all APIs in favour of existing platform APIs and direct use of Android Keystore» من 1.1.0-alpha07 (أبريل ٢٠٢٥)، والنسخة المستقرة 1.1.0 (يوليو ٢٠٢٥) نزلت كده. فالطريقة الحالية هي الـ Keystore مباشرة، زي الكود ده.`,
+        example: R`public class TokenVault {
+    private static final String ALIAS = "myapp_token_key";
+
+    private SecretKey key() throws Exception {
+        KeyStore ks = KeyStore.getInstance("AndroidKeyStore");
+        ks.load(null);
+        if (ks.containsAlias(ALIAS)) {
+            return ((KeyStore.SecretKeyEntry) ks.getEntry(ALIAS, null)).getSecretKey();
+        }
+        KeyGenerator gen = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore");
+        gen.init(new KeyGenParameterSpec.Builder(ALIAS,
+                KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
+                .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+                .setKeySize(256)
+                .build());
+        return gen.generateKey();
+    }
+
+    public byte[][] encrypt(String token) throws Exception {
+        Cipher c = Cipher.getInstance("AES/GCM/NoPadding");
+        c.init(Cipher.ENCRYPT_MODE, key());
+        byte[] ct = c.doFinal(token.getBytes(StandardCharsets.UTF_8));
+        return new byte[][] { c.getIV(), ct };
+    }
+
+    public String decrypt(byte[] iv, byte[] ct) throws Exception {
+        Cipher c = Cipher.getInstance("AES/GCM/NoPadding");
+        c.init(Cipher.DECRYPT_MODE, key(), new GCMParameterSpec(128, iv));
+        return new String(c.doFinal(ct), StandardCharsets.UTF_8);
+    }
+}`,
+        try: R`ضيف [[TokenVault]] لتطبيقك، شفّر token تجريبي ([[FAKE-refresh-token]])، وخزّن الـ IV والـ ciphertext في DataStore كـ Base64. اقفل التطبيق وافتحه وفك. بعدين غيّر byte واحد في الـ ciphertext المتخزّن وجرّب تفك: لازم يرمي [[AEADBadTagException]]. ولو عندك تطبيق بيستخدم [[EncryptedSharedPreferences]]، اكتب خطة نقل: اقرا القيم القديمة مرة، وشفّرها بالطريقة دي، وامسح القديم.`,
+        flag: "script",
+        deep: {
+          why: R`أي حاجة متخزّنة نص عادي في ملفات التطبيق بتتقري لو الموبايل rooted، أو التطبيق كان [[debuggable]]، أو الملف دخل في backup. ولو شفّرتها بمفتاح مكتوب في الكود، المفتاح في الـ APK (أول درس). الـ Keystore بيحل ده: المفتاح نفسه مش في ملفاتك ومش في الكود، ولو الجهاز فيه TEE أو StrongBox المفتاح مبيخرجش منه حتى للنظام.`,
+          how: R`[[KeyStore.getInstance("AndroidKeyStore")]] = الـ provider بتاع أندرويد. [[KeyGenParameterSpec]] بيوصف المفتاح: اسمه (alias)، وبيستخدم في إيه، وأنهي mode، وحجمه. المفتاح بيتعمل مرة وبيفضل بنفس الاسم لحد ما التطبيق يتمسح. التشفير AES-GCM: بيشفّر ويضيف tag (16 byte) بيكشف أي تعديل. الـ Keystore هو اللي بيختار IV عشوائي (12 byte) لكل تشفير، فلازم تخزّنه جنب الـ ciphertext. وتقدر تشدّد: [[setUserAuthenticationRequired(true)]] (المفتاح يشتغل بعد بصمة أو PIN بس) و [[setIsStrongBoxBacked(true)]] (أندرويد ٩ وبعده على الأجهزة اللي فيها StrongBox).`,
+          when: R`لأي سر لازم يتخزّن على الجهاز: refresh token، مفتاح تشفير لقاعدة بيانات محلية، بيانات حساسة offline. والأحسن تقلل اللي بتخزّنه أصلًا: access token في الذاكرة بس، و refresh token واحد مشفّر.`,
+          mistakes: R`إنك تحفظ الـ token نص عادي «عشان الملفات private». وإنك تعمل مفتاح AES بنفسك وتحطه في SharedPreferences جنب البيانات. وإنك تنسى تخزّن الـ IV أو تستخدم نفس الـ IV مرتين. وإنك تفتكر إن الـ Keystore بيحميك من root كامل: المفتاح مبيتنسخش، بس اللي متحكم في الجهاز يقدر يشغّل كود جوه تطبيقك ويطلب من الـ Keystore يفك. يعني هو بيمنع سرقة المفتاح ونقله لجهاز تاني، مش استخدامه على نفس الجهاز. وإنك تبدأ مشروع جديد بـ [[EncryptedSharedPreferences]] وهي deprecated.`
+        },
+        teach: R`## الفكرة
+
+~~~text
+ التطبيق                         Android Keystore (TEE / StrongBox لو موجود)
+   | "شفّر لي ده بالمفتاح myapp_token_key"  -->  [المفتاح جوه، مبيخرجش]
+   | <--  IV (12 byte) + ciphertext + tag (16 byte)
+   | يخزّنهم في DataStore أو ملف
+~~~
+
+التطبيق عمره ما بيشوف المفتاح نفسه. معاه **اسم** المفتاح بس.
+
+### اتجرّب فين؟
+
+الكلاس اتعمله compile بـ [[javac]] (JDK 21) على [[android.jar]] بتاع API 36، واتحوّل dex بـ [[d8]] من build-tools 37، من غير أخطاء ولا تحذيرات ([[-Xlint:all]]). ده بيأكد إن كل الكلاسات والدوال موجودة بنفس الأسماء. التشغيل الفعلي محتاج جهاز أو محاكي، ومفيش هنا: السلوك من الـ docs. وجزء AES-GCM (نفس [[Cipher]] بنفس الإعدادات) اتشغّل على JVM عادي بمفتاح software عشان نشوف الأرقام.
+
+---
+
+## ١. [[key()]]: هات المفتاح أو اعمله
+
+~~~java
+KeyStore ks = KeyStore.getInstance("AndroidKeyStore");
+ks.load(null);
+~~~
+
+- [[AndroidKeyStore]] = اسم الـ provider بتاع أندرويد. على JVM عادي مش موجود:
+
+~~~text الناتج (على JVM)
+java.security.KeyStoreException: AndroidKeyStore not found
+~~~
+
+- [[load(null)]] = مطلوب قبل أي استخدام، و [[null]] لأن مفيش ملف ولا باسورد: النظام هو اللي شايله.
+
+~~~java
+if (ks.containsAlias(ALIAS)) {
+    return ((KeyStore.SecretKeyEntry) ks.getEntry(ALIAS, null)).getSecretKey();
+}
+~~~
+
+لو المفتاح اتعمل قبل كده (من تشغيل فات) رجّعه. [[(KeyStore.SecretKeyEntry)]] = cast: بنقول للـ compiler إن الـ entry ده مفتاح سري. اللي بيرجع [[SecretKey]] بس هو «مقبض» (handle)، مش الـ bytes بتاعة المفتاح.
+
+~~~java
+KeyGenerator gen = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore");
+gen.init(new KeyGenParameterSpec.Builder(ALIAS,
+        KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
+        .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+        .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+        .setKeySize(256)
+        .build());
+return gen.generateKey();
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[KeyGenerator.getInstance(AES, "AndroidKeyStore")]] | اعمل مفتاح AES **جوه** الـ Keystore |
+| [[PURPOSE_ENCRYPT | PURPOSE_DECRYPT]] | المفتاح ده للتشفير والفك بس. [[|]] هنا OR على البتات: بيجمع الاتنين |
+| [[BLOCK_MODE_GCM]] | الطريقة GCM: تشفير + tag بيكشف التعديل |
+| [[ENCRYPTION_PADDING_NONE]] | GCM مش محتاج padding |
+| [[setKeySize(256)]] | مفتاح ٢٥٦ bit |
+| [[build()]] ثم [[generateKey()]] | اعمله واحفظه باسم [[ALIAS]] |
+
+أي استخدام للمفتاح بغير اللي اتكتب هنا (mode تاني مثلًا) الـ Keystore بيرفضه.
+
+---
+
+## ٢. [[encrypt]]
+
+~~~java
+Cipher c = Cipher.getInstance("AES/GCM/NoPadding");
+c.init(Cipher.ENCRYPT_MODE, key());
+byte[] ct = c.doFinal(token.getBytes(StandardCharsets.UTF_8));
+return new byte[][] { c.getIV(), ct };
+~~~
+
+- [[Cipher.getInstance("AES/GCM/NoPadding")]] = الخوارزمية/الـ mode/الـ padding.
+- [[init(ENCRYPT_MODE, key())]] من غير IV: الـ Keystore بيختار IV عشوائي لوحده (افتراضيًا مش بيسمحلك تدّيه IV للتشفير، عشان محدش يعيد نفس الـ IV).
+- [[doFinal]] = شفّر النص كله.
+- بنرجّع الاتنين: [[getIV()]] والـ ciphertext. [[byte[][]]] = array فيه arrays.
+
+نفس الإعدادات على JVM بمفتاح software:
+
+~~~text الناتج (JVM، token تجريبي 23 حرف)
+plain=23 bytes, iv=12 bytes, ciphertext+tag=39 bytes
+decrypted=FAKE-refresh-token-0001
+tampered: javax.crypto.AEADBadTagException: Tag mismatch
+~~~
+
+- الـ IV ١٢ byte: الحجم القياسي لـ GCM.
+- 39 = 23 (نفس طول النص، GCM مش بيزوّد) + 16 (الـ tag).
+- غيّرت bit واحد في أول byte: الفك رفض خالص بـ [[AEADBadTagException]] بدل ما يرجّع كلام غلط.
+
+---
+
+## ٣. [[decrypt]]
+
+~~~java
+c.init(Cipher.DECRYPT_MODE, key(), new GCMParameterSpec(128, iv));
+return new String(c.doFinal(ct), StandardCharsets.UTF_8);
+~~~
+
+[[GCMParameterSpec(128, iv)]] = طول الـ tag بالـ bits (128 = 16 byte) والـ IV اللي اتخزّن. و [[doFinal]] بيفك ويتأكد من الـ tag في نفس الخطوة.
+
+---
+
+## ٤. تخزّن فين؟
+
+الـ IV والـ ciphertext مش أسرار من غير المفتاح، فحوّلهم Base64 وخزّنهم في Jetpack DataStore (درس «DataStore» في تاب Kotlin) أو ملف في [[filesDir]]. واستثنيهم من الـ backup ([[dataExtractionRules]])، لأن المفتاح مش بيتنقل مع الـ backup، فالبيانات هتبقى مش مقروءة على الجهاز الجديد أصلًا.
+
+## ٥. إيه اللي بيحميه وإيه لأ
+
+| الهجوم | النتيجة |
+|---|---|
+| حد نسخ ملفات التطبيق (backup، أو root، أو debuggable) | معاه ciphertext من غير مفتاح |
+| حد عايز ينقل المفتاح لجهاز تاني | المفتاح مبيتصدّرش |
+| حد متحكم في الجهاز (root) وبيشغّل كود جوه تطبيقك | يقدر يطلب من الـ Keystore يفك وانت شغّال. عشان كده [[setUserAuthenticationRequired(true)]] للحاجات الأهم |
+
+## الخلاصة
+
+- المفتاح في الـ Keystore، والتطبيق معاه الاسم بس.
+- AES-GCM: خزّن الـ IV جنب الـ ciphertext، والـ tag بيكشف التعديل.
+- [[EncryptedSharedPreferences]] deprecated من ٢٠٢٥: المشاريع الجديدة تستخدم الـ Keystore مباشرة.
+- خزّن أقل حاجة ممكنة، والأسرار الحقيقية تفضل على السيرفر.`,
+        lines: [
+          R`كلاس بيشفّر ويفك token بمفتاح في Android Keystore.`,
+          R`اسم المفتاح جوه الـ Keystore (التطبيق معاه الاسم بس).`,
+          R`دالة بترجّع المفتاح، وبتعمله لو مش موجود.`,
+          R`بيفتح Keystore أندرويد.`,
+          R`لازم load قبل الاستخدام، و null لأن النظام شايل كل حاجة.`,
+          R`لو المفتاح موجود من قبل كده...`,
+          R`...رجّع مقبض المفتاح (مش الـ bytes بتاعته).`,
+          R`قفلة الـ if.`,
+          R`بيجهّز مولّد مفاتيح AES جوه الـ Keystore.`,
+          R`بيبدأ وصف المفتاح: اسمه...`,
+          R`...وإنه للتشفير والفك بس.`,
+          R`الـ mode: GCM.`,
+          R`من غير padding (GCM مش محتاجه).`,
+          R`حجم المفتاح 256 bit.`,
+          R`خلّص الوصف.`,
+          R`اعمل المفتاح واحفظه باسمه ورجّعه.`,
+          R`قفلة key().`,
+          R`دالة بتشفّر الـ token.`,
+          R`بتجهّز Cipher بـ AES/GCM من غير padding.`,
+          R`وضع التشفير بالمفتاح، والـ Keystore بيختار IV عشوائي.`,
+          R`بيشفّر الـ token (بعد ما يحوّله bytes بـ UTF-8): الناتج ciphertext + tag.`,
+          R`بيرجّع الـ IV والـ ciphertext عشان يتخزّنوا مع بعض.`,
+          R`قفلة encrypt.`,
+          R`دالة بتفك.`,
+          R`نفس الـ Cipher.`,
+          R`وضع الفك بنفس المفتاح والـ IV المتخزّن وطول tag 128 bit.`,
+          R`بيفك ويتأكد من الـ tag، ويرجّع النص.`,
+          R`قفلة decrypt.`,
+          R`قفلة الكلاس.`
+        ],
+        sol: R`الكلاس (بالـ imports: [[android.security.keystore.KeyGenParameterSpec]] و [[KeyProperties]] و [[java.security.KeyStore]] و [[javax.crypto.*]] و [[GCMParameterSpec]] و [[StandardCharsets]]) اتعمله compile بـ [[javac -Xlint:all]] على [[android.jar]] بتاع API 36 واتحوّل dex بـ [[d8]] من build-tools 37 من غير أخطاء ولا تحذيرات. التشغيل على جهاز من الـ docs. ونفس AES-GCM على JVM بمفتاح software:
+
+~~~text الناتج
+plain=23 bytes, iv=12 bytes, ciphertext+tag=39 bytes
+decrypted=FAKE-refresh-token-0001
+tampered: javax.crypto.AEADBadTagException: Tag mismatch
+~~~`
+      }
+    ]
+  }
 ]);
 
 /* ===== js/tabs/real/01.js ===== */
