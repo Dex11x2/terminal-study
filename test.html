@@ -12,64 +12,90 @@
 <style>
 /* ===== ستايل الصفحة التجريبية بس — مش بيمس الموقع ===== */
 .tbar{position:sticky;top:0;z-index:60;background:var(--surface);border-bottom:1px solid var(--line);padding:10px 0}
-.tbar .in{max-width:min(1100px,94vw);margin:0 auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.tbar .in{max-width:min(1700px,96vw);margin:0 auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .tbar b{font-size:15px}
 .tbar .sp{margin-inline-start:auto;color:var(--muted);font-size:13.5px}
 .sw2{all:unset;cursor:pointer;font-size:14.5px;padding:6px 14px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--muted)}
 .sw2[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
 .sw2:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.page{max-width:min(1100px,94vw);margin:0 auto;padding:0 0 80px}
 main[hidden],.screen[hidden]{display:none}
 
-/* علامة مرقّمة عشان تقدر تقولي «غيّر رقم ٣» */
-.mk{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;border-radius:999px;background:var(--accent);color:#fff;font-size:12.5px;font-weight:700;font-family:var(--sans);margin-inline-end:8px;vertical-align:2px}
+/* ⑫ تخطيط بيستغل الجوانب */
+.shell{max-width:min(1700px,96vw);margin:0 auto;padding:0 0 70px;display:grid;gap:26px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:1150px){ .shell{grid-template-columns:240px minmax(0,1fr)} }
+@media(min-width:1560px){ .shell{grid-template-columns:240px minmax(0,1fr) 250px} }
+.side{min-width:0}
+.side-l{display:none}
+@media(min-width:1560px){ .side-l{display:block} }
+.sticky{position:sticky;top:70px}
+.narrow{max-width:900px}
+
+/* قايمة الوحدة الجانبية */
+.unitnav{border:1px solid var(--line);border-radius:10px;background:var(--surface);padding:12px 0;font-size:15px}
+.unitnav h4{margin:0 0 8px;padding:0 14px;font-size:13px;color:var(--muted);font-weight:600}
+.unitnav a{display:flex;gap:8px;align-items:baseline;padding:7px 14px;color:inherit;text-decoration:none;border-inline-start:3px solid transparent}
+.unitnav a:hover{background:color-mix(in srgb,var(--accent) 7%,transparent)}
+.unitnav a[aria-current="true"]{border-inline-start-color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,transparent);font-weight:600}
+.unitnav .n{color:var(--muted);font-size:13px;min-width:14px}
+.unitnav a.ok .n::before{content:"✓ ";color:var(--ok)}
+.unitnav .foot{padding:10px 14px 0;margin-top:6px;border-top:1px solid var(--line);font-size:13.5px;color:var(--muted)}
+
+/* فهرس الدرس الجانبي */
+.toc{border:1px solid var(--line);border-radius:10px;background:var(--surface);padding:12px 14px;font-size:14.5px}
+.toc h4{margin:0 0 8px;font-size:13px;color:var(--muted);font-weight:600}
+.toc a{display:block;padding:5px 0;color:inherit;text-decoration:none;border-inline-start:2px solid transparent;padding-inline-start:10px}
+.toc a:hover{color:var(--accent)}
+.toc a.on{border-inline-start-color:var(--accent);color:var(--accent);font-weight:600}
+.toc .pg{margin-top:12px;padding-top:10px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+
+/* علامة مرقّمة */
+.mk{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;border-radius:999px;background:var(--accent);color:#fff;font-size:12.5px;font-weight:700;margin-inline-end:8px;vertical-align:2px}
 .mk-note{font-size:13px;color:var(--muted);border:1px dashed var(--line);border-radius:6px;padding:2px 10px;display:inline-block;margin-inline-start:8px}
 
 /* رأس الوحدة */
-.unit-head{border:1px solid var(--line);border-top:4px solid var(--accent);border-radius:10px;padding:20px 22px;margin:22px 0;background:var(--surface)}
+.unit-head{border:1px solid var(--line);border-top:4px solid var(--accent);border-radius:10px;padding:20px 22px;margin:0 0 22px;background:var(--surface)}
 .unit-head h1{margin:0 0 6px;font-size:27px;line-height:1.3}
 .unit-head .sub{margin:0 0 14px;color:var(--muted)}
+.two{display:grid;gap:18px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:900px){ .two{grid-template-columns:1fr 1fr} }
 .goal{margin:0;padding:12px 16px;border-radius:8px;background:color-mix(in srgb,var(--accent) 8%,transparent);border-inline-start:3.5px solid var(--accent)}
 .goal h3{margin:0 0 6px;font-size:16px;color:var(--accent)}
 .goal ul{margin:0;padding-inline-start:22px}
 
-/* ⑪ خريطة الوحدة — كل صف زرار */
+/* خريطة الوحدة */
 .map{width:100%;border-collapse:collapse;margin:12px 0 0;font-size:15.5px}
 .map th,.map td{border:1px solid var(--line);padding:0;text-align:start;vertical-align:top}
 .map th{background:color-mix(in srgb,var(--accent) 10%,transparent);font-size:15px;padding:8px 12px}
 .map tbody tr{cursor:pointer}
-.map tbody tr:hover td,.map tbody tr:focus-within td{background:color-mix(in srgb,var(--accent) 7%,transparent)}
+.map tbody tr:hover td{background:color-mix(in srgb,var(--accent) 7%,transparent)}
 .map td>a{display:block;padding:9px 12px;color:inherit;text-decoration:none}
 .map td:first-child{width:52px}
 .map td:first-child>a{text-align:center;font-weight:700;color:var(--accent)}
 .map tr.done td:first-child>a::after{content:" ✓";color:var(--ok)}
 .map .t{font-weight:600}
 .map .go{color:var(--accent);font-size:13.5px;white-space:nowrap}
-
-/* شريط تقدم */
 .rail{display:flex;gap:4px;margin:16px 0 0}
 .rail i{flex:1;height:6px;border-radius:3px;background:var(--line)}
 .rail i.on{background:var(--accent)}
 .rail-lbl{font-size:13.5px;color:var(--muted);margin:6px 0 0}
 
-/* ⑪ شريط التنقل جوه الدرس */
+/* شريط التنقل جوه الدرس (للموبايل والشاشات الصغيرة) */
 .lnav{position:sticky;top:51px;z-index:50;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
-      background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin:18px 0 0}
+      background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin:0 0 4px}
+@media(min-width:1150px){ .lnav .dots{display:none} }
 .lnav .pos{color:var(--muted);font-size:14px}
 .lnav .dots{display:flex;gap:4px;margin-inline-start:auto}
-.lnav .d{all:unset;cursor:pointer;min-width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;
-         border-radius:6px;border:1px solid var(--line);font-size:13.5px;color:var(--muted)}
+.lnav .d{all:unset;cursor:pointer;min-width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;border-radius:6px;border:1px solid var(--line);font-size:13.5px;color:var(--muted)}
 .lnav .d[aria-current="true"]{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
 .lnav .d.ok{border-color:var(--ok);color:var(--ok)}
-.lnav .d:focus-visible,.back:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .back{all:unset;cursor:pointer;font-size:14px;color:var(--accent);border-bottom:1px dashed currentColor}
 
 /* الدرس */
-.lesson{padding:22px 0 10px}
+.lesson{padding:18px 0 10px}
 .lesson>h2{font-size:25px;margin:0 0 4px;line-height:1.3}
 .lesson>h2 .no{color:var(--accent);font-size:19px;font-weight:600;margin-inline-end:10px}
 .lesson>.why{margin:0 0 18px;color:var(--muted);font-size:16.5px}
-.step{margin:22px 0}
+.step{margin:22px 0;scroll-margin-top:120px}
 .step>h3{font-size:18.5px;margin:0 0 8px}
 .step>h3 .n{font-family:var(--mono);color:var(--accent);font-size:16px;margin-inline-end:8px}
 .k{width:100%;border-collapse:collapse;margin:10px 0;font-size:15.5px}
@@ -78,32 +104,41 @@ main[hidden],.screen[hidden]{display:none}
 .out{margin:8px 0}
 .out .term-bar{justify-content:flex-start;gap:8px}
 
-/* التمرين */
-.ex{margin:18px 0 0;border:1px solid color-mix(in srgb,var(--ok) 35%,var(--line));border-radius:8px;overflow:hidden}
+/* ⑬ تستخدمها فين */
+.use{margin:26px 0 0;border:1px solid color-mix(in srgb,#8b5cf6 40%,var(--line));border-radius:10px;overflow:hidden;scroll-margin-top:120px}
+.use>h3{margin:0;padding:10px 16px;background:color-mix(in srgb,#8b5cf6 12%,transparent);color:#8b5cf6;font-size:17px}
+.use .ubody{padding:4px 16px 14px}
+.use .cards{display:grid;gap:14px;grid-template-columns:minmax(0,1fr);margin:14px 0 0}
+@media(min-width:760px){ .use .cards{grid-template-columns:1fr 1fr} }
+.uc{border:1px solid var(--line);border-radius:8px;padding:12px 14px;background:var(--surface)}
+.uc h4{margin:0 0 6px;font-size:15.5px}
+.uc .tag{display:inline-block;font-size:12px;padding:1px 9px;border-radius:999px;margin-inline-end:8px;vertical-align:2px;
+         background:color-mix(in srgb,#8b5cf6 14%,transparent);color:#8b5cf6}
+.uc p{margin:0 0 6px;font-size:15.5px;line-height:1.75}
+.uc p:last-child{margin-bottom:0}
+.scen{margin:16px 0 0;padding:12px 16px;border-inline-start:3.5px solid #8b5cf6;background:color-mix(in srgb,#8b5cf6 7%,transparent);border-radius:0 8px 8px 0}
+.scen b{color:#8b5cf6}
+
+.ex{margin:22px 0 0;border:1px solid color-mix(in srgb,var(--ok) 35%,var(--line));border-radius:8px;overflow:hidden}
 .ex>h4{margin:0;padding:8px 14px;background:color-mix(in srgb,var(--ok) 12%,transparent);color:var(--ok);font-size:15.5px}
 .ex .bodyx{padding:12px 16px}
 .ex ol{margin:0;padding-inline-start:22px}
 .ex details{margin-top:10px}
 .ex summary{cursor:pointer;font-weight:600;color:var(--ok)}
-.ex .mark{margin-top:12px;font-size:14.5px;display:flex;align-items:center;gap:8px}
-
 .warn{margin:14px 0;padding:10px 14px;border-inline-start:3.5px solid var(--danger);background:var(--danger-bg);border-radius:0 6px 6px 0}
 .warn b{color:var(--danger)}
-.wrapup{margin:20px 0 0;padding:12px 16px;border:1px dashed var(--accent);border-radius:8px}
+.wrapup{margin:22px 0 0;padding:12px 16px;border:1px dashed var(--accent);border-radius:8px}
 .wrapup h4{margin:0 0 6px;font-size:15.5px;color:var(--accent)}
 .wrapup ul{margin:0;padding-inline-start:22px}
-
-/* ⑪ التنقل تحت */
 .pager{display:flex;gap:10px;flex-wrap:wrap;margin:26px 0 0;padding-top:16px;border-top:1px solid var(--line)}
-.pager button{all:unset;cursor:pointer;flex:1;min-width:230px;border:1px solid var(--line);border-radius:8px;padding:12px 16px;background:var(--surface)}
-.pager button:hover,.pager button:focus-visible{border-color:var(--accent)}
+.pager button{all:unset;cursor:pointer;flex:1;min-width:220px;border:1px solid var(--line);border-radius:8px;padding:12px 16px;background:var(--surface)}
+.pager button:hover{border-color:var(--accent)}
 .pager .lbl{display:block;font-size:13px;color:var(--muted);margin-bottom:2px}
 .pager .ttl{font-weight:600}
 .pager .next{border-color:color-mix(in srgb,var(--accent) 45%,var(--line))}
 .pager .next .lbl{color:var(--accent)}
 .pager button[disabled]{opacity:.4;cursor:default}
-
-.note-box{border:1px solid var(--line);border-radius:10px;padding:16px 20px;margin:26px 0;background:var(--surface)}
+.note-box{border:1px solid var(--line);border-radius:10px;padding:16px 20px;margin:0 0 22px;background:var(--surface)}
 .note-box h3{margin:0 0 8px;font-size:18px}
 .note-box ol{margin:0;padding-inline-start:22px;display:grid;gap:7px}
 </style>
@@ -112,7 +147,7 @@ main[hidden],.screen[hidden]{display:none}
 
 <div class="tbar">
   <div class="in">
-    <b>صفحة تجربة — نفس المحتوى بشكلين</b>
+    <b>صفحة تجربة</b>
     <button class="sw2" type="button" id="bNew" aria-pressed="true">المقترح الجديد</button>
     <button class="sw2" type="button" id="bOld" aria-pressed="false">الشكل الحالي</button>
     <span class="sp">الموضوع: مشروع <code>pc.ps1</code></span>
@@ -120,107 +155,125 @@ main[hidden],.screen[hidden]{display:none}
 </div>
 
 <!-- ===================== المقترح الجديد ===================== -->
-<main class="page" id="vNew">
+<main id="vNew">
+  <div class="shell">
 
-  <!-- ========== شاشة الخريطة ========== -->
-  <section class="screen" id="sMap">
-
-    <div class="note-box">
-      <h3>اقرا ده الأول</h3>
-      <p style="margin:0 0 10px">الصفحة دي مش جزء من الموقع. دي عرض لـ <b>شكل مقترح</b> لنفس المحتوى الموجود دلوقتي.</p>
-      <p style="margin:0">كل قرار عليه <span class="mk">٠</span> رقم. قول <b>«رقم ٤ شيله»</b> أو <b>«رقم ٦ خليه أقصر»</b> وكده نمشي بسرعة.</p>
-    </div>
-
-    <!-- ① -->
-    <div class="unit-head">
-      <p style="margin:0 0 4px;color:var(--muted);font-size:14px"><span class="mk">١</span>رأس الوحدة: هدف واضح قبل أي أمر <span class="mk-note">دلوقتي: التاب بيبدأ بقايمة أقسام على طول</span></p>
-      <h1>الوحدة ٣ — تتحكم في جهازك من الترمنال</h1>
-      <p class="sub"><bdi>PowerShell</bdi> — <bdi>المستوى ٢</bdi> — <bdi>٦ دروس</bdi> — <bdi>حوالي ساعة ونص</bdi></p>
-      <div class="goal">
-        <h3>هتقدر تعمل إيه لما تخلص الوحدة دي</h3>
-        <ul>
-          <li>تقفل جهازك أو تعمله restart بعد مهلة تحددها، وتلغي المعاد لو غيّرت رأيك.</li>
-          <li>تكتب أداة اسمها <code>pc.ps1</code> تناديها من أي مكان زي أي أمر.</li>
-          <li>تجرّب أي أمر خطير <b>من غير ما ينفّذ</b> قبل ما تثق فيه.</li>
-          <li>تخلي الأداة تشتغل لوحدها كل يوم في معاد.</li>
-        </ul>
+    <!-- العمود اليمين: قايمة الوحدة -->
+    <aside class="side">
+      <div class="sticky">
+        <nav class="unitnav" id="unitnav"></nav>
+        <p style="font-size:13px;color:var(--muted);margin:10px 2px 0"><span class="mk">١٢</span>الجوانب مستغلة: القايمة ثابتة هنا، والفهرس على الشمال</p>
       </div>
-    </div>
+    </aside>
 
-    <!-- ② + ⑪ -->
-    <h2 style="font-size:21px;margin:26px 0 4px"><span class="mk">٢</span>خريطة الوحدة</h2>
-    <p style="margin:0 0 4px;color:var(--muted);font-size:14.5px"><span class="mk">١١</span><b>دوس على أي درس يفتح لوحده في الشاشة</b> — مش هتنزل لتحت خالص <span class="mk-note">دلوقتي: الدروس كلها تحت بعض في صفحة واحدة طويلة</span></p>
-    <table class="map">
-      <thead><tr><th>#</th><th>الدرس</th><th>هتتعلم إيه</th><th>النتيجة العملية</th><th></th></tr></thead>
-      <tbody id="mapBody"></tbody>
-    </table>
+    <!-- العمود الأوسط -->
+    <div class="side">
 
-    <div class="rail" id="rail" title="تقدمك في الوحدة"></div>
-    <p class="rail-lbl"><span class="mk">٤</span>شريط تقدم للوحدة، والدرس اللي خلصته بياخد ✓</p>
+      <!-- ========== شاشة الخريطة ========== -->
+      <section class="screen" id="sMap">
+        <div class="note-box">
+          <h3>اقرا ده الأول</h3>
+          <p style="margin:0 0 10px">الصفحة دي مش جزء من الموقع. دي عرض لـ <b>شكل مقترح</b> لنفس المحتوى الموجود دلوقتي.</p>
+          <p style="margin:0">كل قرار عليه <span class="mk">٠</span> رقم. قول <b>«رقم ١٣ خليه أطول»</b> أو <b>«رقم ٤ شيله»</b> وكده نمشي بسرعة.</p>
+        </div>
 
-    <!-- ③ -->
-    <h2 style="font-size:21px;margin:30px 0 4px"><span class="mk">٣</span>قبل أول أمر: جهّز معملك</h2>
-    <p style="margin:0 0 8px;color:var(--muted);font-size:14.5px">القاعدة: متتعلمش الأوامر الخطيرة على ملفاتك الحقيقية.</p>
-    <div class="term" data-k="ps">
-      <div class="term-bar"><span>PowerShell</span><button class="copy" type="button">نسخ</button></div>
-      <pre>New-Item -ItemType Directory "$HOME\lab\pc-tool" -Force
+        <div class="unit-head">
+          <p style="margin:0 0 4px;color:var(--muted);font-size:14px"><span class="mk">١</span>رأس الوحدة: هدف واضح قبل أي أمر</p>
+          <h1>الوحدة ٣ — تتحكم في جهازك من الترمنال</h1>
+          <p class="sub"><bdi>PowerShell</bdi> — <bdi>المستوى ٢</bdi> — <bdi>٦ دروس</bdi> — <bdi>حوالي ساعة ونص</bdi></p>
+          <div class="two">
+            <div class="goal">
+              <h3>هتقدر تعمل إيه لما تخلص</h3>
+              <ul>
+                <li>تقفل جهازك أو تعمله restart بعد مهلة، وتلغي المعاد.</li>
+                <li>تكتب أداة تناديها من أي مكان زي أي أمر.</li>
+                <li>تجرّب أي أمر خطير <b>من غير ما ينفّذ</b>.</li>
+                <li>تخلي الأداة تشتغل لوحدها في معاد.</li>
+              </ul>
+            </div>
+            <div class="goal" style="border-inline-start-color:#8b5cf6;background:color-mix(in srgb,#8b5cf6 7%,transparent)">
+              <h3 style="color:#8b5cf6"><span class="mk" style="background:#8b5cf6">١٣</span>وهتستخدمها فين؟</h3>
+              <ul>
+                <li><b>البرمجة:</b> تصميم CLI، والتحقق من المدخلات، وأكواد الخروج في CI.</li>
+                <li><b>الشبكات والسيرفرات:</b> أدوات تشخيص، ومهام مجدولة، وإعادة تشغيل آمنة عن بُعد.</li>
+                <li><b>علوم الحاسب:</b> العملية وكود الخروج، وفصل الواجهة عن التنفيذ.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <h2 style="font-size:21px;margin:26px 0 4px"><span class="mk">٢</span>خريطة الوحدة</h2>
+        <p style="margin:0 0 4px;color:var(--muted);font-size:14.5px"><span class="mk">١١</span><b>دوس على أي درس يفتح لوحده</b> — مش هتنزل لتحت خالص</p>
+        <table class="map">
+          <thead><tr><th>#</th><th>الدرس</th><th>هتتعلم إيه</th><th>النتيجة العملية</th><th>تستخدمها فين</th><th></th></tr></thead>
+          <tbody id="mapBody"></tbody>
+        </table>
+        <div class="rail" id="rail"></div>
+        <p class="rail-lbl"><span class="mk">٤</span>شريط تقدم، والدرس اللي خلصته بياخد ✓</p>
+
+        <div class="two" style="margin-top:28px">
+          <div>
+            <h2 style="font-size:21px;margin:0 0 4px"><span class="mk">٣</span>جهّز معملك</h2>
+            <p style="margin:0 0 8px;color:var(--muted);font-size:14.5px">متتعلمش الأوامر الخطيرة على ملفاتك الحقيقية.</p>
+            <div class="term" data-k="ps">
+              <div class="term-bar"><span>PowerShell</span><button class="copy" type="button">نسخ</button></div>
+              <pre>New-Item -ItemType Directory "$HOME\lab\pc-tool" -Force
 Set-Location "$HOME\lab\pc-tool"</pre>
-    </div>
-    <p style="margin:10px 0 0;font-size:15.5px">كل أوامر الوحدة هتشتغل جوه الفولدر ده. وأي حاجة بتقفل الجهاز هنجرّبها بـ <code>-WhatIf</code> بس، فجهازك مش هيقفل ولا مرة طول الوحدة.</p>
+            </div>
+            <p style="margin:10px 0 0;font-size:15px">أي حاجة بتقفل الجهاز هنجرّبها بـ <code>-WhatIf</code> بس.</p>
+          </div>
+          <div class="note-box" style="margin:0">
+            <h3><span class="mk">٩</span>المشروع المجمّع &nbsp; <span class="mk">١٠</span>الواجب</h3>
+            <p style="margin:0 0 8px;font-size:15.5px">بعد الدرس ٦: شاشة فيها الأداة كاملة مع جدول بيربط كل جزء بالدرس اللي شرحه، وتحتها واجب:</p>
+            <ol style="font-size:15.5px">
+              <li>ضيف فعل <code>sleep</code> لوضع السكون.</li>
+              <li>خلي <code>status</code> يعرض آخر ٣ سطور من اللوج.</li>
+              <li>اكتب ٣ اختبارات للأداة.</li>
+            </ol>
+          </div>
+        </div>
+      </section>
 
-    <!-- ⑨ ⑩ -->
-    <div class="note-box">
-      <h3><span class="mk">٩</span>آخر الوحدة: المشروع المجمّع &nbsp; <span class="mk">١٠</span>الواجب</h3>
-      <p style="margin:0 0 8px">بعد الدرس ٦، شاشة فيها <b>الأداة كاملة</b> مع جدول بيربط كل جزء بالدرس اللي شرحه. وتحتها واجب:</p>
-      <ol>
-        <li>ضيف فعل <code>sleep</code> يحوّل الجهاز لوضع السكون.</li>
-        <li>خلي <code>status</code> يعرض آخر ٣ سطور من اللوج.</li>
-        <li>اكتب ٣ اختبارات للأداة.</li>
-      </ol>
+      <!-- ========== شاشة الدرس ========== -->
+      <section class="screen" id="sLesson" hidden>
+        <nav class="lnav">
+          <button class="back" type="button" data-go="map">▸ الخريطة</button>
+          <span class="pos">الدرس <b id="posNow">١</b> من ٦</span>
+          <span class="dots" id="dots"></span>
+        </nav>
+        <div id="lessonSlot" class="narrow"></div>
+        <div class="pager narrow" id="pager"></div>
+      </section>
     </div>
-  </section>
 
-  <!-- ========== شاشات الدروس ========== -->
-  <section class="screen" id="sLesson" hidden>
-    <nav class="lnav">
-      <button class="back" type="button" data-go="map">▸ الخريطة</button>
-      <span class="pos">الدرس <b id="posNow">١</b> من ٦</span>
-      <span class="dots" id="dots"></span>
-    </nav>
-    <div id="lessonSlot"></div>
-    <div class="pager" id="pager"></div>
-  </section>
+    <!-- العمود الشمال: فهرس الدرس -->
+    <aside class="side side-l">
+      <div class="sticky"><div class="toc" id="toc"></div></div>
+    </aside>
+  </div>
 </main>
 
 <!-- ===================== الشكل الحالي ===================== -->
-<main class="page" id="vOld" hidden>
-  <div class="note-box">
+<main id="vOld" hidden>
+ <div style="max-width:min(1100px,94vw);margin:0 auto;padding:0 0 70px">
+  <div class="note-box" style="margin-top:22px">
     <h3>ده الشكل الموجود دلوقتي على الموقع</h3>
-    <p style="margin:0">نفس المحتوى، بالبطاقات الحالية. لاحظ إنك لازم تنزل بالعجلة لحد ما توصل للدرس اللي عايزه، والترتيب جوه البطاقة: الاسم ← الشرح ← «الشرح خطوة بخطوة» ← «الأعمق» ← المثال ← شرح السطور ← «جرّب».</p>
+    <p style="margin:0">نفس المحتوى، بالبطاقات الحالية: صفحة واحدة طويلة، الجوانب فاضية، ومفيش «تستخدمها فين».</p>
   </div>
-
   <div class="lvl"><span class="n">المستوى ٣</span><h2>بتبني حاجات</h2><p>سكربتات وأدوات تستخدمها في شغلك</p></div>
-
   <section class="cat">
     <h3>مشروع ١: تتحكم في جهازك<small>٦ دروس</small></h3>
-    <p class="cat-note">أداة <code>pc.ps1</code> بتقفل الجهاز أو تعمله restart بعد مهلة، وتلغي المعاد، وتقولك فيه معاد ولا لأ. هنبنيها على ٦ خطوات.</p>
-
+    <p class="cat-note">أداة <code>pc.ps1</code> بتقفل الجهاز أو تعمله restart بعد مهلة، وتلغي المعاد، وتقولك فيه معاد ولا لأ.</p>
     <article class="cmd">
       <div class="cmd-h"><span class="name">مشروع ١ — الواجهة الأول</span><span class="title">اكتب شكل الاستخدام قبل أي كود</span></div>
       <p class="desc">أول خطوة في أي أداة مش الكود، دي <b>شكل الاستخدام</b>. تكتب الأوامر اللي نفسك تكتبها، وبعدين تبني اللي يخليها تشتغل.</p>
-      <p class="desc more">الأداة اللي هنبنيها اسمها <code>pc.ps1</code>: <code>.\pc.ps1 off -In 30</code> اقفل بعد ٣٠ دقيقة. <code>.\pc.ps1 cancel</code> الغي المعاد. <code>.\pc.ps1 status</code> فيه معاد متجدول؟</p>
-      <p class="desc more">والخطوة الأولى في الكود هي <b>هيكل فاضي بيطبع اللي استقبله بس</b>، عشان تتأكد إن PowerShell فهم الـ arguments زي ما انت قاصد.</p>
+      <p class="desc more">الأداة اللي هنبنيها اسمها <code>pc.ps1</code>: <code>.\pc.ps1 off -In 30</code> اقفل بعد ٣٠ دقيقة. <code>.\pc.ps1 cancel</code> الغي المعاد.</p>
       <details class="teach" open>
         <summary>الشرح خطوة بخطوة</summary>
         <h4>الفكرة</h4>
         <p>قبل أي كود: إيه الشكل اللي نفسي أكتبه في الترمنال؟</p>
         <hr>
-        <h4>١. الواجهة اللي اتفقنا عليها</h4>
-        <div class="term tcode" data-k="ps"><div class="term-bar"><span>شكل الاستخدام</span></div><pre>.\pc.ps1 off -In 30
-.\pc.ps1 cancel
-.\pc.ps1 status</pre></div>
-        <hr>
-        <h4>٢. الهيكل الفاضي</h4>
+        <h4>١. الهيكل الفاضي</h4>
         <div class="term tcode" data-k="ps"><div class="term-bar"><span>powershell</span></div><pre>param(
     [string]$Action = 'status',
     [int]$In = 0
@@ -228,18 +281,14 @@ Set-Location "$HOME\lab\pc-tool"</pre>
 
 Write-Host "Action = $Action"</pre></div>
         <p><code>param(</code> بتفتح قايمة المدخلات. لازم تبقى أول كود في الملف.</p>
-        <hr>
-        <h4>٣. نشغّله</h4>
-        <div class="term tcode" data-k="ps"><div class="term-bar"><span>الناتج</span></div><pre>Action = status
-In     = 0</pre></div>
         <h4>الخلاصة</h4>
         <ul><li>ابدأ بشكل الاستخدام مش بالكود.</li><li><code>param()</code> أول كود في الملف.</li></ul>
       </details>
       <div class="deep">
         <section><h4>ليه</h4><p>أغلب السكربتات الوحشة اتكتبت من الآخر للأول: الكود الأول، والاستعمال طلع لوحده.</p></section>
-        <section><h4>إزاي</h4><p>الهيكل الفاضي بيأكد ٣ حاجات: الملف بيشتغل، و PowerShell فهم الـ arguments صح، والقيم الافتراضية شغالة.</p></section>
-        <section><h4>امتى</h4><p>أول خطوة في أي سكربت هتكتبه. حتى لو ١٠ سطور.</p></section>
-        <section><h4>غلطات شائعة</h4><p>تحط أي كود قبل <code>param()</code>. وتنسى <code>.\</code> قدام اسم السكربت.</p></section>
+        <section><h4>إزاي</h4><p>الهيكل الفاضي بيأكد إن PowerShell فهم الـ arguments صح.</p></section>
+        <section><h4>امتى</h4><p>أول خطوة في أي سكربت هتكتبه.</p></section>
+        <section><h4>غلطات شائعة</h4><p>تحط أي كود قبل <code>param()</code>.</p></section>
       </div>
       <div class="term" data-k="ps"><div class="term-bar"><span>مثال</span><button class="copy" type="button">نسخ</button></div><pre>param(
     [string]$Action = 'status',
@@ -251,35 +300,24 @@ Write-Host "In     = $In"</pre></div>
       <div class="bd">
         <h4>شرح السطور</h4>
         <ol>
-          <li><code>param(</code><span>بداية قايمة المدخلات، ولازم تبقى أول كود في الملف</span></li>
+          <li><code>param(</code><span>بداية قايمة المدخلات</span></li>
           <li><code>[string]$Action = 'status',</code><span>الفعل: نص، والافتراضي status</span></li>
-          <li><code>[int]$In = 0</code><span>المهلة بالدقايق: رقم صحيح، والافتراضي صفر</span></li>
+          <li><code>[int]$In = 0</code><span>المهلة بالدقايق</span></li>
           <li><code>)</code><span>قفل الـ param</span></li>
-          <li><code>Write-Host "Action = $Action"</code><span>اطبع اللي وصلنا عشان نتأكد</span></li>
+          <li><code>Write-Host "Action = $Action"</code><span>اطبع اللي وصلنا</span></li>
           <li><code>Write-Host "In     = $In"</code><span>ونفس الحاجة للرقم</span></li>
         </ol>
       </div>
-      <div class="try"><span class="lbl">جرّب</span><p>احفظه باسم <code>pc.ps1</code>، وشغّله تلات مرات: لوحده، وبـ <code>-Action off -In 30</code>، وبـ <code>off -In 30</code>.</p><label class="done"><input type="checkbox"> جربتها</label></div>
+      <div class="try"><span class="lbl">جرّب</span><p>احفظه باسم <code>pc.ps1</code> وشغّله تلات مرات.</p><label class="done"><input type="checkbox"> جربتها</label></div>
     </article>
-
     <article class="cmd">
       <div class="cmd-h"><span class="name">مشروع ١ — التحقق من المدخلات</span><span class="title">خلي الأداة ترفض الغلط قبل ما تشتغل</span></div>
-      <p class="desc">دلوقتي الأداة بتقبل أي حاجة: <code>.\pc.ps1 sleep</code> هتعدّي، و <code>-In 99999</code> كمان. الخطوة دي بتخلي PowerShell يرفض الغلط لوحده.</p>
-      <p class="desc more"><code>[ValidateSet(...)]</code> فوق الـ parameter: القيم المسموحة دي بس. <code>[ValidateRange(0, 10080)]</code> للأرقام.</p>
-      <details class="teach" open>
-        <summary>الشرح خطوة بخطوة</summary>
-        <h4>الفكرة</h4>
-        <p>بدل ما تكتب <code>if</code> لكل مدخل، بتعلّق شروط فوق الـ parameter.</p>
-        <hr>
-        <h4>١. المشكلة</h4>
-        <div class="term tcode" data-k="ps"><div class="term-bar"><span>الناتج</span></div><pre>Action = sleep
-In     = 99999</pre></div>
-      </details>
+      <p class="desc">دلوقتي الأداة بتقبل أي حاجة: <code>.\pc.ps1 sleep</code> هتعدّي. الخطوة دي بتخلي PowerShell يرفض الغلط لوحده.</p>
       <div class="deep">
         <section><h4>ليه</h4><p>لو سبت الفحص لجسم السكربت، Tab مش هيعرف يساعد.</p></section>
         <section><h4>إزاي</h4><p>كل الـ attributes فوق الـ parameter.</p></section>
         <section><h4>امتى</h4><p>على كل parameter.</p></section>
-        <section><h4>غلطات شائعة</h4><p>تحط الـ attribute تحت الـ parameter بدل فوقه.</p></section>
+        <section><h4>غلطات شائعة</h4><p>تحط الـ attribute تحت الـ parameter.</p></section>
       </div>
       <div class="term" data-k="ps"><div class="term-bar"><span>مثال</span><button class="copy" type="button">نسخ</button></div><pre>param(
     [Parameter(Position = 0)]
@@ -289,311 +327,258 @@ In     = 99999</pre></div>
     [ValidateRange(0, 10080)]
     [int]$In = 0
 )</pre></div>
-      <div class="try"><span class="lbl">جرّب</span><p>جرّب <code>.\pc.ps1 sleep</code> و <code>.\pc.ps1 off -In 99999</code> وشوف الرسالتين.</p><label class="done"><input type="checkbox"> جربتها</label></div>
+      <div class="try"><span class="lbl">جرّب</span><p>جرّب <code>.\pc.ps1 sleep</code> وشوف الرسالة.</p><label class="done"><input type="checkbox"> جربتها</label></div>
     </article>
   </section>
+ </div>
 </main>
 
 <script>
-/* ============ محتوى الدروس ============ */
 const AR = n => String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
 
+/* قالب قسم «تستخدمها فين» */
+function USE(intro, cards, scen){
+  return '<section class="use" id="use"><h3><span class="mk" style="background:#8b5cf6">١٣</span>تستخدمها فين؟</h3><div class="ubody">'
+    + '<p style="margin:12px 0 0">' + intro + '</p>'
+    + '<div class="cards">' + cards.map(c =>
+        '<div class="uc"><h4><span class="tag">' + c.tag + '</span>' + c.h + '</h4>' + c.p + '</div>').join('') + '</div>'
+    + '<div class="scen"><b>سيناريو حقيقي:</b> ' + scen + '</div>'
+    + '</div></section>';
+}
+
 const LESSONS = [
-  {
-    t: 'الواجهة قبل الكود',
-    learn: '<code>param()</code> والقيم الافتراضية',
-    out: 'سكربت بيستقبل مدخلاتك صح',
-    prev: null,
-    next: 'الأداة دلوقتي بتقبل أي حاجة — <code>.\\pc.ps1 sleep</code> هتعدّي. الدرس ٢ بيخليها ترفض.',
-    html: `
+{
+  t:'الواجهة قبل الكود', learn:'<code>param()</code> والقيم الافتراضية',
+  out:'سكربت بيستقبل مدخلاتك صح', use:'تصميم أي أداة أو API',
+  html:`
 <p class="why"><span class="mk">٥</span><b>ليه الدرس ده أول واحد؟</b> لأن أغلب الأدوات الوحشة اتكتبت من الآخر للأول: الكود الأول، والاستعمال طلع لوحده. لما تكتب شكل الاستخدام الأول، بتكتشف إن <code>-In 30</code> أحلى من <code>-Seconds 1800</code> وانت لسه مكتبتش سطر كود.</p>
 
-<div class="step">
-  <h3><span class="n">١.١</span>الشكل اللي نفسنا نكتبه</h3>
-  <div class="term" data-k="ps"><div class="term-bar"><span>الواجهة المطلوبة</span></div><pre>.\\pc.ps1 off -In 30        # اقفل بعد ٣٠ دقيقة
+<div class="step"><h3><span class="n">١.١</span>الشكل اللي نفسنا نكتبه</h3>
+<div class="term" data-k="ps"><div class="term-bar"><span>الواجهة المطلوبة</span></div><pre>.\\pc.ps1 off -In 30        # اقفل بعد ٣٠ دقيقة
 .\\pc.ps1 restart -In 5     # restart بعد ٥ دقايق
 .\\pc.ps1 cancel            # الغي المعاد
 .\\pc.ps1 status            # فيه معاد متجدول؟</pre></div>
-  <p>في السطور دي اتاخدت ٤ قرارات قبل أي كود:</p>
-  <table class="k">
-    <tr><th>القرار</th><th>البديل اللي رفضناه</th><th>ليه</th></tr>
-    <tr><td>الفعل أول حاجة من غير شرطة</td><td><code>-Action off</code></td><td>أقصر، وشبه <code>git commit</code></td></tr>
-    <tr><td><code>-In</code> بالدقايق</td><td><code>-Seconds 1800</code></td><td>دماغك بتفكّر بالدقايق</td></tr>
-    <tr><td>فيه <code>status</code></td><td>تخمّن</td><td>تعرف الحالة من غير ما تجرّب</td></tr>
-    <tr><td>فيه <code>cancel</code></td><td>تفتكر <code>shutdown /a</code></td><td>الأداة تعرف تلغي نفسها</td></tr>
-  </table>
-</div>
+<table class="k">
+<tr><th>القرار</th><th>البديل اللي رفضناه</th><th>ليه</th></tr>
+<tr><td>الفعل أول حاجة من غير شرطة</td><td><code>-Action off</code></td><td>أقصر، وشبه <code>git commit</code></td></tr>
+<tr><td><code>-In</code> بالدقايق</td><td><code>-Seconds 1800</code></td><td>دماغك بتفكّر بالدقايق</td></tr>
+<tr><td>فيه <code>status</code></td><td>تخمّن</td><td>تعرف الحالة من غير ما تجرّب</td></tr>
+</table></div>
 
-<div class="step">
-  <h3><span class="n">١.٢</span>يعني إيه <code>param()</code>؟</h3>
-  <p><code>param()</code> هي اللي بتعرّف <b>المدخلات</b> اللي السكربت بياخدها. ولازم تبقى أول كود في الملف.</p>
-  <div class="term" data-k="ps"><div class="term-bar"><span>pc.ps1</span><button class="copy" type="button">نسخ</button></div><pre>param(
+<div class="step"><h3><span class="n">١.٢</span>يعني إيه <code>param()</code>؟</h3>
+<p><code>param()</code> بتعرّف <b>المدخلات</b> اللي السكربت بياخدها، ولازم تبقى أول كود في الملف.</p>
+<div class="term" data-k="ps"><div class="term-bar"><span>pc.ps1</span><button class="copy" type="button">نسخ</button></div><pre>param(
     [string]$Action = 'status',
     [int]$In = 0
 )
 
 Write-Host "Action = $Action"
 Write-Host "In     = $In"</pre></div>
-  <table class="k">
-    <tr><th>الحتة</th><th>معناها</th></tr>
-    <tr><td><code>[string]</code></td><td>النوع: نص</td></tr>
-    <tr><td><code>$Action</code></td><td>الاسم، واليوزر بيكتبه <code>-Action</code></td></tr>
-    <tr><td><code>= 'status'</code></td><td>القيمة لو اليوزر مكتبش حاجة</td></tr>
-    <tr><td><code>[int]$In</code></td><td>رقم صحيح. <code>-In abc</code> بترفض لوحدها</td></tr>
-  </table>
-</div>
+<table class="k">
+<tr><th>الحتة</th><th>معناها</th></tr>
+<tr><td><code>[string]</code></td><td>النوع: نص</td></tr>
+<tr><td><code>$Action</code></td><td>الاسم، واليوزر بيكتبه <code>-Action</code></td></tr>
+<tr><td><code>= 'status'</code></td><td>القيمة لو اليوزر مكتبش حاجة</td></tr>
+<tr><td><code>[int]$In</code></td><td>رقم صحيح. <code>-In abc</code> بترفض لوحدها</td></tr>
+</table></div>
 
-<div class="step">
-  <h3><span class="n">١.٣</span>نشغّله ونشوف</h3>
-  <div class="term out" data-k="ps"><div class="term-bar"><span>PowerShell 7.6 · ويندوز 11</span><span style="opacity:.6">اتشغّل فعلًا</span></div><pre>PS&gt; .\\pc.ps1
+<div class="step"><h3><span class="n">١.٣</span>نشغّله ونشوف</h3>
+<div class="term out" data-k="ps"><div class="term-bar"><span>PowerShell 7.6 · ويندوز 11</span><span style="opacity:.6">اتشغّل فعلًا</span></div><pre>PS&gt; .\\pc.ps1
 Action = status
 In     = 0
-
-PS&gt; .\\pc.ps1 -Action off -In 30
-Action = off
-In     = 30
 
 PS&gt; .\\pc.ps1 off -In 30
 Action = off
 In     = 30</pre></div>
-  <p><b>التالتة اشتغلت من غير <code>-Action</code>.</b> لأن PowerShell بيدّي كل parameter رقم موقع حسب ترتيب كتابته. بس ده شغال <b>بالصدفة</b>: لو ضفت parameter جديد فوقه بكرة، <code>off</code> هتروح له والأداة هتبوّظ من غير error. نصلّحها في الدرس اللي بعده.</p>
-</div>
+<p><b>التانية اشتغلت من غير <code>-Action</code></b> لأن PowerShell بيدّي كل parameter رقم موقع حسب ترتيب كتابته. بس ده شغال <b>بالصدفة</b>، ونصلّحها في الدرس اللي بعده.</p></div>
+`+USE(
+ 'الفكرة هنا مش «أمر PowerShell». الفكرة هي <b>تصميم الواجهة قبل التنفيذ</b> — ودي نفس المبدأ اللي بتشتغل بيه في البرمجة والشبكات.',
+ [
+  {tag:'برمجة', h:'تصميم API و الدوال', p:'<p>قبل ما تكتب endpoint، اكتب شكل النداء: <code>POST /orders {items, address}</code>. ولما تكتب دالة، اكتب سطر استدعائها الأول. ده اللي بيسموه <b>API-first</b>، وهو نفس سبب إن TDD بيبدأ بالاختبار: الاختبار هو أول «مستخدم» للواجهة.</p>'},
+  {tag:'برمجة', h:'أدوات سطر الأوامر', p:'<p>كل أداة بتستخدمها اتصممت كده: <code>git commit -m</code> و <code>docker run -p</code> و <code>npm run</code>. الفعل الأول، والتفاصيل بعدها. ولما تكتب سكربت للفريق، نفس القاعدة بتحدد هل هيستخدموه ولا لأ.</p>'},
+  {tag:'شبكات', h:'أدوات التشخيص بتاعتك', p:'<p>لما تكتب أداة تفحص اتصال أو بورت، انت هتستخدمها وانت <b>مضغوط</b> والسيرفر واقع. <code>net check api.example.com 443</code> تتكتب في ثانية؛ <code>check.ps1 -Target ... -Port ... -Protocol TCP</code> هتفتح المساعدة عشان تفتكرها.</p>'},
+  {tag:'علوم حاسب', h:'فصل الواجهة عن التنفيذ', p:'<p>ده <b>interface vs implementation</b>: الواجهة عقد ثابت، والتنفيذ ورا العقد ده يتغير زي ما تحب. نفس المبدأ في الـ OOP، وفي الـ protocols في الشبكات (HTTP عقد، والسيرفر اللي وراه يتغير).</p>'}
+ ],
+ 'بتبني خدمة وبتحتاج أداة نشر. لو بدأت بالكود، هتطلع <code>deploy.ps1 -Mode 2 -Target prod -Verify $true</code> وهتفتح المساعدة كل مرة. لو بدأت بالواجهة، هتطلع <code>deploy prod</code> و <code>deploy prod --check</code> — وده الفرق بين أداة الفريق بيستخدمها وأداة بتتنسى.')
++`
+<div class="warn"><b>لو السكربت مرفض يشتغل:</b> ده <code>ExecutionPolicy</code>. شغّل <code>Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned</code> مرة واحدة.</div>
 
-<div class="warn"><b>لو السكربت مرفض يشتغل خالص:</b> ده <code>ExecutionPolicy</code>. شغّل <code>Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned</code> مرة واحدة.</div>
+<div class="wrapup"><h4><span class="mk">٨</span>الخلاصة</h4><ul>
+<li>ابدأ بشكل الاستخدام مش بالكود.</li>
+<li><code>param()</code> أول كود في الملف.</li>
+<li>النوع (<code>[int]</code>) بيرفض المدخلات الغلط لوحده.</li>
+</ul></div>
 
-<div class="wrapup">
-  <h4><span class="mk">٨</span>الخلاصة في ٤ نقط</h4>
-  <ul>
-    <li>ابدأ بشكل الاستخدام مش بالكود.</li>
-    <li><code>param()</code> أول كود في الملف.</li>
-    <li>النوع (<code>[int]</code>) بيرفض المدخلات الغلط لوحده.</li>
-    <li>شغّل الهيكل الفاضي قبل أي منطق.</li>
-  </ul>
-</div>
+<div class="ex"><h4><span class="mk">٧</span>تمرين الدرس ١</h4><div class="bodyx"><ol>
+<li>احفظ الكود باسم <code>pc.ps1</code> وشغّله لوحده وبـ <code>off -In 30</code>.</li>
+<li>جرّب <code>.\\pc.ps1 -In abc</code> — ليه بترفض؟</li>
+<li><b>اربطها بشغلك:</b> اكتب شكل الاستخدام (من غير كود) لأداة بتفحص هل خدمة شغالة على بورت معيّن.</li>
+</ol><details><summary>شوف الإجابة</summary><p style="margin:8px 0 0"><code>[int]</code> بترفض <code>abc</code> قبل ما أول سطر يشتغل. وشكل معقول للأداة التانية: <code>svc check api.example.com:443</code>.</p></details></div></div>`
+},
+{
+  t:'التحقق من المدخلات', learn:'<code>ValidateSet</code> و <code>ValidateRange</code>',
+  out:'الأداة بترفض الغلط لوحدها', use:'أمان المدخلات في أي نظام',
+  html:`
+<p class="why"><b>ليه؟</b> لأن الفحص لو اتساب لجسم السكربت، هتكتب <code>if</code> لكل مدخل، والرسايل هتبقى أقل وضوحًا، و Tab مش هيعرف يساعد، والغلط هيتكشف بعد ما السكربت يكون بدأ شغل.</p>
 
-<div class="ex">
-  <h4><span class="mk">٧</span>تمرين الدرس ١</h4>
-  <div class="bodyx">
-    <ol>
-      <li>احفظ الكود باسم <code>pc.ps1</code> في <code>$HOME\\lab\\pc-tool</code>.</li>
-      <li>شغّله تلات مرات: لوحده، وبـ <code>-Action off -In 30</code>، وبـ <code>off -In 30</code>.</li>
-      <li>جرّب <code>.\\pc.ps1 -In abc</code> — ليه بترفض؟</li>
-    </ol>
-    <details><summary>شوف الإجابة</summary>
-      <p style="margin:8px 0 0"><code>[int]</code> بترفض <code>abc</code> قبل ما أول سطر يشتغل، والرسالة بتقول <code>Cannot convert value "abc" to type "System.Int32"</code>. حماية مجانية من غير أي <code>if</code>.</p>
-    </details>
-  </div>
-</div>`
-  },
-  {
-    t: 'التحقق من المدخلات',
-    learn: '<code>ValidateSet</code> و <code>ValidateRange</code>',
-    out: 'الأداة بترفض الغلط لوحدها',
-    prev: 'الأداة بقت بتستقبل مدخلات صح.',
-    next: 'لسه مفيش وظيفة حقيقية. الدرس ٣ بيعمل <code>cancel</code> و <code>status</code> — الآمن الأول.',
-    html: `
-<p class="why"><b>ليه؟</b> لأن الفحص لو اتساب لجسم السكربت، هتكتب <code>if</code> لكل مدخل، والرسايل هتبقى بتاعتك (وأقل وضوحًا)، و Tab مش هيعرف يساعد، والغلط هيتكشف بعد ما السكربت يكون بدأ شغل.</p>
-
-<div class="step">
-  <h3><span class="n">٢.١</span>المشكلة</h3>
-  <div class="term out" data-k="ps"><div class="term-bar"><span>قبل التحقق</span></div><pre>PS&gt; .\\pc.ps1 sleep -In 99999
+<div class="step"><h3><span class="n">٢.١</span>المشكلة</h3>
+<div class="term out" data-k="ps"><div class="term-bar"><span>قبل التحقق</span></div><pre>PS&gt; .\\pc.ps1 sleep -In 99999
 Action = sleep
 In     = 99999</pre></div>
-  <p>قَبِل كل حاجة. <code>sleep</code> مش فعل عندنا، و ٩٩٩٩٩ دقيقة = ٦٩ يوم.</p>
-</div>
+<p>قَبِل كل حاجة. <code>sleep</code> مش فعل عندنا، و ٩٩٩٩٩ دقيقة = ٦٩ يوم.</p></div>
 
-<div class="step">
-  <h3><span class="n">٢.٢</span>الحل: شروط فوق الـ parameter</h3>
-  <div class="term" data-k="ps"><div class="term-bar"><span>pc.ps1</span><button class="copy" type="button">نسخ</button></div><pre>param(
+<div class="step"><h3><span class="n">٢.٢</span>الحل: شروط فوق الـ parameter</h3>
+<div class="term" data-k="ps"><div class="term-bar"><span>pc.ps1</span><button class="copy" type="button">نسخ</button></div><pre>param(
     [Parameter(Position = 0)]
     [ValidateSet('off', 'restart', 'cancel', 'status')]
     [string]$Action = 'status',
 
     [ValidateRange(0, 10080)]
     [int]$In = 0
-)</pre></div>
-  <p>كل الـ attributes <b>فوق</b> الـ parameter، وآخر سطر هو النوع والاسم والقيمة الافتراضية.</p>
-</div>
+)</pre></div></div>
 
-<div class="step">
-  <h3><span class="n">٢.٣</span>الناتج</h3>
-  <div class="term out" data-k="ps"><div class="term-bar"><span>PowerShell 7.6</span><span style="opacity:.6">اتشغّل فعلًا</span></div><pre>PS&gt; .\\pc.ps1 sleep
+<div class="step"><h3><span class="n">٢.٣</span>الناتج</h3>
+<div class="term out" data-k="ps"><div class="term-bar"><span>PowerShell 7.6</span><span style="opacity:.6">اتشغّل فعلًا</span></div><pre>PS&gt; .\\pc.ps1 sleep
 pc.ps1: Cannot validate argument on parameter 'Action'. The argument "sleep"
-does not belong to the set "off,restart,cancel,status" specified by the
-ValidateSet attribute.
+does not belong to the set "off,restart,cancel,status".
 
 PS&gt; .\\pc.ps1 off -In 99999
-pc.ps1: Cannot validate argument on parameter 'In'. The 99999 argument is
-greater than the maximum allowed range of 10080.</pre></div>
-  <p><b>مكتبناش الرسايل دي.</b> PowerShell بناها من الـ attributes. الأولى بتعدّد المسموح، والتانية بتقول الحد.</p>
-  <p>ومكسب مخفي: اكتب <code>.\\pc.ps1 </code> ودوس <kbd>Tab</kbd> — هيلف على <code>off</code> و <code>restart</code> و <code>cancel</code> و <code>status</code>. الـ <code>ValidateSet</code> هي اللي علّمت الإكمال.</p>
-</div>
+pc.ps1: The 99999 argument is greater than the maximum allowed range of 10080.</pre></div>
+<p><b>مكتبناش الرسايل دي.</b> PowerShell بناها من الـ attributes. وكمان: اكتب <code>.\\pc.ps1 </code> ودوس <kbd>Tab</kbd> — هيلف على القيم المسموحة.</p></div>
+`+USE(
+ 'التحقق من المدخلات مش تفصيلة في سكربت — ده <b>أول خط دفاع</b> في أي نظام، ومنه بتيجي أغلب الثغرات لما يتساب.',
+ [
+  {tag:'برمجة', h:'نفس الفكرة في كل لغة', p:'<p><code>zod</code> و <code>joi</code> في JavaScript، و <code>pydantic</code> في Python، و <code>class-validator</code> في NestJS، وأنواع TypeScript نفسها. كلها بتقول: <b>اتحقق على الحدود</b> (عند دخول البيانات)، وبعد كده الكود جوه يشتغل وهو واثق.</p>'},
+  {tag:'أمان', h:'من هنا بتيجي الثغرات', p:'<p>SQL injection و command injection و path traversal كلهم نفس السبب: <b>مدخل من بره دخل جوه من غير ما يتفحص</b>. <code>ValidateSet</code> هي أقوى شكل: قايمة مقفولة (allow-list) بدل ما تحاول تمنع الحاجات الوحشة واحدة واحدة (deny-list) — والـ allow-list دايمًا أأمن.</p>'},
+  {tag:'شبكات', h:'بورتات وعناوين', p:'<p>أداة بتاخد بورت: <code>[ValidateRange(1, 65535)]</code> بتمنع نص الأخطاء قبل ما تبدأ. وأداة بتاخد بروتوكول: <code>[ValidateSet(&#39;TCP&#39;,&#39;UDP&#39;)]</code>. ونفس المنطق في إعدادات الفايروول والـ routing: القيمة الغلط هنا بتقطع الاتصال.</p>'},
+  {tag:'علوم حاسب', h:'Fail fast', p:'<p>مبدأ اسمه <b>اكتشف الخطأ في أقرب نقطة ممكنة</b>. الخطأ اللي بيظهر عند المدخل تكلفته سطر؛ نفس الخطأ لو ظهر بعد ما النظام عمل نص الشغل، تكلفته rollback. ومرتبط بمبدأ تاني: <b>Parse, don&#39;t validate</b> — حوّل المدخل لنوع مضمون بدل ما تفحصه كل مرة.</p>'}
+ ],
+ 'سكربت نشر بياخد اسم البيئة. من غير <code>ValidateSet</code>، حد يكتب <code>deploy prodction</code> (غلطة إملائية) فالسكربت ينشر على بيئة اسمها كده مش موجودة — أو الأسوأ، يعتبرها قيمة فاضية وينشر على الافتراضي اللي هو <code>prod</code>. القايمة المقفولة بتمنع ده قبل أول سطر.')
++`
+<div class="wrapup"><h4>الخلاصة</h4><ul>
+<li>التحقق مكانه فوق الـ parameter مش جوه السكربت.</li>
+<li><code>ValidateSet</code> = رفض + رسالة تعدّد المسموح + إكمال Tab.</li>
+<li>القايمة المقفولة (allow-list) أأمن من منع الوحش واحد واحد.</li>
+</ul></div>
 
-<div class="wrapup">
-  <h4>الخلاصة في ٤ نقط</h4>
-  <ul>
-    <li>التحقق مكانه فوق الـ parameter مش جوه السكربت.</li>
-    <li><code>ValidateSet</code> = رفض + رسالة تعدّد المسموح + إكمال Tab.</li>
-    <li><code>Position = 0</code> بيخلي الكتابة من غير اسم مضمونة.</li>
-    <li><code>ValidateSet</code> مش حساسة لحالة الحروف: <code>OFF</code> هتعدّي.</li>
-  </ul>
-</div>
-
-<div class="ex">
-  <h4>تمرين الدرس ٢</h4>
-  <div class="bodyx">
-    <ol>
-      <li>جرّب <code>.\\pc.ps1 sleep</code> و <code>.\\pc.ps1 off -In 99999</code> واقرا الرسالتين.</li>
-      <li>اكتب <code>.\\pc.ps1 </code> ودوس Tab كذا مرة.</li>
-      <li>ضيف فعل خامس للـ <code>ValidateSet</code> وشوف Tab بيعرفه على طول.</li>
-    </ol>
-  </div>
-</div>`
-  },
-  {
-    t: 'الوظايف الآمنة: cancel و status',
-    learn: 'قراية exit code وحفظ حالة',
-    out: '<code>cancel</code> و <code>status</code> شغالين',
-    prev: 'الأداة بترفض الغلط لوحدها.',
-    next: 'لسه القفل نفسه مش متعمل. الدرس ٤ بيعمله — ومعاه شبكة الأمان في نفس الخطوة.',
-    html: `
+<div class="ex"><h4>تمرين الدرس ٢</h4><div class="bodyx"><ol>
+<li>جرّب <code>.\\pc.ps1 sleep</code> و <code>-In 99999</code> واقرا الرسالتين.</li>
+<li>اكتب <code>.\\pc.ps1 </code> ودوس Tab كذا مرة.</li>
+<li><b>اربطها بشغلك:</b> هات آخر فورم كتبته، وعدّ كام مدخل فيه مفيهوش allow-list.</li>
+</ol></div></div>`
+},
+{
+  t:'الوظايف الآمنة و exit codes', learn:'قراية exit code وحفظ حالة',
+  out:'<code>cancel</code> و <code>status</code> شغالين', use:'CI و المراقبة والأتمتة',
+  html:`
 <p class="why"><b>ليه نبدأ بالآمن؟</b> عشان تتعلم وتجرّب براحتك قبل ما تلمس حاجة بتقفل جهازك. <code>cancel</code> و <code>status</code> ملهمش أي خطر، فهنشغّلهم بجد.</p>
 
-<div class="step">
-  <h3><span class="n">٣.١</span>البرنامج الخارجي بيرجّع <b>رقم</b> مش error</h3>
-  <p><code>shutdown.exe /a</code> بيلغي أي معاد متجدول. ولو مفيش معاد، بيخرج بالكود <code>1116</code>. وده مش استثناء PowerShell — ده رقم لازم <b>انت</b> تقراه.</p>
-  <div class="term" data-k="ps"><div class="term-bar"><span>pc.ps1</span><button class="copy" type="button">نسخ</button></div><pre>shutdown.exe /a 2&gt;&amp;1 | Out-Null
+<div class="step"><h3><span class="n">٣.١</span>البرنامج الخارجي بيرجّع <b>رقم</b> مش error</h3>
+<p><code>shutdown.exe /a</code> بيلغي أي معاد متجدول. ولو مفيش معاد، بيخرج بالكود <code>1116</code> — ده رقم لازم <b>انت</b> تقراه.</p>
+<div class="term" data-k="ps"><div class="term-bar"><span>pc.ps1</span><button class="copy" type="button">نسخ</button></div><pre>shutdown.exe /a 2&gt;&amp;1 | Out-Null
 $code = $LASTEXITCODE
 if ($code -eq 0)    { Write-Host 'OK: المعاد اتلغى' -ForegroundColor Green; return }
 if ($code -eq 1116) { Write-Host 'مفيش معاد متجدول أصلًا' -ForegroundColor Yellow; return }
 Write-Error "shutdown /a رجّع $code"</pre></div>
-  <table class="k">
-    <tr><th>الحتة</th><th>ليه</th></tr>
-    <tr><td><code>2&gt;&amp;1 | Out-Null</code></td><td>البرنامج بيكتب رسالته على stderr، و PowerShell 7 بيحوّلها لأحمر. بنسكّتها عشان نكتب رسالتنا</td></tr>
-    <tr><td><code>$code = $LASTEXITCODE</code></td><td>خزّنه <b>على طول</b>، لأن أي برنامج خارجي تاني بيغيّره</td></tr>
-    <tr><td><code>1116</code></td><td>«مفيش shutdown شغال عشان ألغيه» — دي <b>معلومة</b> مش خطأ</td></tr>
-  </table>
-</div>
+<table class="k">
+<tr><th>الحتة</th><th>ليه</th></tr>
+<tr><td><code>2&gt;&amp;1 | Out-Null</code></td><td>البرنامج بيكتب رسالته على stderr فبتطلع أحمر. بنسكّتها عشان نكتب رسالتنا</td></tr>
+<tr><td><code>$code = $LASTEXITCODE</code></td><td>خزّنه <b>على طول</b>، لأن أي برنامج خارجي تاني بيغيّره</td></tr>
+<tr><td><code>1116</code></td><td>«مفيش shutdown عشان ألغيه» — دي <b>معلومة</b> مش خطأ</td></tr>
+</table></div>
 
-<div class="step">
-  <h3><span class="n">٣.٢</span>نشغّله بجد</h3>
-  <div class="term out" data-k="ps"><div class="term-bar"><span>PowerShell 7.6 · ويندوز 11</span><span style="opacity:.6">اتشغّل فعلًا، والجهاز متغيّرش</span></div><pre>PS&gt; .\\pc.ps1 cancel
+<div class="step"><h3><span class="n">٣.٢</span>نشغّله بجد</h3>
+<div class="term out" data-k="ps"><div class="term-bar"><span>ويندوز 11</span><span style="opacity:.6">اتشغّل فعلًا، والجهاز متغيّرش</span></div><pre>PS&gt; .\\pc.ps1 cancel
 مفيش معاد متجدول أصلًا
 
 PS&gt; .\\pc.ps1 status
-مفيش معاد متجدول</pre></div>
-  <p><code>shutdown /a</code> اتنادى فعلًا، رجّع 1116، والسكربت ترجمه لجملة مفهومة بدل ما يسيبك مع «(1116)».</p>
-</div>
+مفيش معاد متجدول</pre></div></div>
+`+USE(
+ 'كود الخروج هو <b>اللغة اللي البرامج بتتكلم بيها مع بعض</b>. كل أتمتة في الدنيا مبنية عليه، ومن غيره مفيش CI ولا مراقبة.',
+ [
+  {tag:'برمجة', h:'CI/CD كله مبني عليه', p:'<p>كل خطوة في GitHub Actions بتنجح أو تفشل بكود الخروج. <code>npm test</code> بيرجّع صفر لو عدّى، و <code>eslint</code> بيرجّع <code>1</code> لو لقى مشاكل. وعشان كده <code>npm test &amp;&amp; npm run build</code> شغالة: الـ <code>&amp;&amp;</code> بتقرا الكود.</p>'},
+  {tag:'شبكات', h:'المراقبة والتشخيص', p:'<p><code>ping</code> بيرجّع كود، و <code>curl</code> بيرجّع أكواد مختلفة (<code>6</code> فشل DNS، <code>7</code> فشل الاتصال، <code>28</code> timeout). أدوات المراقبة بتقرا الرقم ده عشان تفرّق بين «الدومين غلط» و «السيرفر واقع» — وده الفرق بين إنذار صح وإنذار كاذب.</p>'},
+  {tag:'شبكات', h:'Healthchecks', p:'<p><code>HEALTHCHECK</code> في Docker و <code>livenessProbe</code> في Kubernetes: أمر بيتنفّذ كل كام ثانية، والكود بتاعه بيحدد هل الكونتينر سليم ولا يتعاد تشغيله. سكربتك اللي بيرجّع <code>0</code> أو <code>1</code> صح يقدر يكون healthcheck.</p>'},
+  {tag:'علوم حاسب', h:'العملية وكود الخروج', p:'<p>أي عملية (process) لما تنتهي بترجّع رقم للعملية اللي شغّلتها. ده جزء من عقد نظام التشغيل نفسه (<code>exit status</code> في POSIX). والاتفاق: <b>صفر = نجاح</b>، وأي رقم تاني = نوع من الفشل. وده عكس المنطق العادي — بس له سبب: فيه طريقة واحدة تنجح وطرق كتير تفشل.</p>'}
+ ],
+ 'عندك مهمة مجدولة بتعمل نسخة احتياطية كل ليلة. لو السكربت بيرجّع <code>0</code> دايمًا (حتى لما النسخ يفشل)، Task Scheduler هيقول «نجحت» كل يوم وانت مرتاح — لحد ما تحتاج النسخة وتكتشف إنها فاضية من شهرين. أكواد الخروج الصح هي اللي بتخلي المراقبة تعرف.')
++`
+<div class="wrapup"><h4>الخلاصة</h4><ul>
+<li>ابدأ بالوظايف الآمنة.</li>
+<li>البرنامج الخارجي بيرجّع <b>رقم</b> في <code>$LASTEXITCODE</code>، اقراه وترجمه.</li>
+<li>خزّن الكود في متغير على طول.</li>
+</ul></div>
 
-<div class="step">
-  <h3><span class="n">٣.٣</span>الأداة بتفتكر حالتها</h3>
-  <p>ويندوز مش بيدّي طريقة تسأله «فيه معاد؟». فالأداة بتكتب ملف JSON صغير لما تجدول، وتقراه في <code>status</code>.</p>
-  <div class="term out" data-k="ps"><div class="term-bar"><span>state.json</span></div><pre>{
-  "kind": "off",
-  "at": "2026-10-28T04:51:05.2488457+03:00"
-}</pre></div>
-  <p>التاريخ بصيغة <code>('o')</code> مش <code>.ToString()</code> العادية — عشان يترجع زي ما هو مهما كانت لغة الجهاز.</p>
-</div>
-
-<div class="wrapup">
-  <h4>الخلاصة في ٤ نقط</h4>
-  <ul>
-    <li>ابدأ بالوظايف الآمنة؛ هتتعلم من غير خوف.</li>
-    <li>البرنامج الخارجي بيرجّع <b>رقم</b> في <code>$LASTEXITCODE</code>. اقراه وترجمه.</li>
-    <li>خزّن الكود في متغير على طول.</li>
-    <li>التواريخ في الملفات بصيغة <code>('o')</code> دايمًا.</li>
-  </ul>
-</div>
-
-<div class="ex">
-  <h4>تمرين الدرس ٣</h4>
-  <div class="bodyx">
-    <ol>
-      <li>شغّل <code>.\\pc.ps1 cancel</code> وانت متأكد إن مفيش معاد. إيه الرسالة؟</li>
-      <li>اعمل ملف حالة بإيدك وشوف <code>status</code> بيقول إيه.</li>
-      <li>غيّر التاريخ في الملف لوقت عدّى — الأداة تتصرف إزاي؟</li>
-    </ol>
-  </div>
-</div>`
-  },
-  {
-    t: 'القفل نفسه + شبكة الأمان',
-    learn: '<code>ShouldProcess</code> و <code>-WhatIf</code>',
-    out: 'تجرّب القفل من غير ما الجهاز يقفل',
-    prev: 'الوظايف الآمنة شغالة، والأداة بتقرا أكواد الخروج.',
-    next: 'الأداة شغالة بس مش بتسجّل ولا بتسأل. الدرس ٥ بيضيف اللوج والتأكيد.',
-    html: `
+<div class="ex"><h4>تمرين الدرس ٣</h4><div class="bodyx"><ol>
+<li>شغّل <code>.\\pc.ps1 cancel</code> وانت متأكد إن مفيش معاد.</li>
+<li>شغّل <code>curl.exe https://nope.invalid</code> واطبع <code>$LASTEXITCODE</code>.</li>
+<li><b>اربطها بشغلك:</b> هات آخر سكربت كتبته — هو بيرجّع كود مختلف لما يفشل؟</li>
+</ol></div></div>`
+},
+{
+  t:'القفل نفسه + شبكة الأمان', learn:'<code>ShouldProcess</code> و <code>-WhatIf</code>',
+  out:'تجرّب الخطر من غير ما يحصل', use:'أي عملية مش قابلة للرجوع',
+  html:`
 <p class="why"><b>القاعدة هنا:</b> الوظيفة الخطرة <b>متتكتبش لوحدها</b>. بتتكتب هي وشبكة الأمان بتاعتها في نفس الخطوة — عشان تقدر تختبر الأداة كلها وجهازك مفتوح.</p>
 
-<div class="step">
-  <h3><span class="n">٤.١</span><code>SupportsShouldProcess</code> بتدّيك ٣ حاجات مجانًا</h3>
-  <div class="term" data-k="ps"><div class="term-bar"><span>pc.ps1</span><button class="copy" type="button">نسخ</button></div><pre>[CmdletBinding(SupportsShouldProcess)]
+<div class="step"><h3><span class="n">٤.١</span><code>SupportsShouldProcess</code> بتدّيك ٣ حاجات مجانًا</h3>
+<div class="term" data-k="ps"><div class="term-bar"><span>pc.ps1</span><button class="copy" type="button">نسخ</button></div><pre>[CmdletBinding(SupportsShouldProcess)]
 param(
     ...
 )</pre></div>
-  <table class="k">
-    <tr><th>بتاخد</th><th>بتعمل إيه</th></tr>
-    <tr><td><code>-WhatIf</code></td><td>معاينة: اطبع اللي كنت هعمله ومتعملش</td></tr>
-    <tr><td><code>-Confirm</code></td><td>اسألني قبل التنفيذ</td></tr>
-    <tr><td><code>-Verbose</code></td><td>وريني التفاصيل</td></tr>
-  </table>
-</div>
+<table class="k">
+<tr><th>بتاخد</th><th>بتعمل إيه</th></tr>
+<tr><td><code>-WhatIf</code></td><td>معاينة: اطبع اللي كنت هعمله ومتعملش</td></tr>
+<tr><td><code>-Confirm</code></td><td>اسألني قبل التنفيذ</td></tr>
+<tr><td><code>-Verbose</code></td><td>وريني التفاصيل</td></tr>
+</table></div>
 
-<div class="step">
-  <h3><span class="n">٤.٢</span>البوابة قبل السطر الخطر بالظبط</h3>
-  <div class="term" data-k="ps"><div class="term-bar"><span>pc.ps1</span><button class="copy" type="button">نسخ</button></div><pre>$target = '{0} at {1:HH:mm:ss}' -f $Kind, $at
+<div class="step"><h3><span class="n">٤.٢</span>البوابة قبل السطر الخطر بالظبط</h3>
+<div class="term" data-k="ps"><div class="term-bar"><span>pc.ps1</span><button class="copy" type="button">نسخ</button></div><pre>$target = '{0} at {1:HH:mm:ss}' -f $Kind, $at
 
 if (-not $PSCmdlet.ShouldProcess($target, 'schedule')) { return }
 
-shutdown.exe $flag /t $seconds /c $Message</pre></div>
-  <p><code>$target</code> هو <b>على مين</b> العملية، و <code>'schedule'</code> هي <b>العملية</b>. الاتنين بيظهروا في سطر الـ What if، فخليهم مفهومين.</p>
-</div>
+shutdown.exe $flag /t $seconds /c $Message</pre></div></div>
 
-<div class="step">
-  <h3><span class="n">٤.٣</span>نجرّب القفل من غير ما يقفل</h3>
-  <div class="term out" data-k="ps"><div class="term-bar"><span>PowerShell 7.6 · ويندوز 11</span><span style="opacity:.6">اتشغّل فعلًا، والجهاز معملش shutdown</span></div><pre>PS&gt; .\\pc.ps1 off -In 30 -WhatIf
+<div class="step"><h3><span class="n">٤.٣</span>نجرّب القفل من غير ما يقفل</h3>
+<div class="term out" data-k="ps"><div class="term-bar"><span>ويندوز 11</span><span style="opacity:.6">اتشغّل فعلًا، والجهاز معملش shutdown</span></div><pre>PS&gt; .\\pc.ps1 off -In 30 -WhatIf
 What if: Performing the operation "schedule" on target "off at 04:39:35".
 
 PS&gt; .\\pc.ps1 restart -WhatIf
 What if: Performing the operation "schedule" on target "restart at 04:09:35".</pre></div>
-  <p>الساعة وقت التجربة كانت <b>04:09:35</b>. الأول حسب +٣٠ دقيقة، والتاني حالًا (لأن <code>-In</code> افتراضيها صفر). <b>الحساب مظبوط، والجهاز معملش حاجة.</b></p>
-</div>
+<p>الساعة وقت التجربة كانت <b>04:09:35</b>. الأول حسب +٣٠ دقيقة، والتاني حالًا. <b>الحساب مظبوط، والجهاز معملش حاجة.</b></p></div>
+`+USE(
+ 'الفكرة اسمها <b>dry run</b>: نفّذ كل حاجة ما عدا التغيير نفسه، وورّيني النتيجة. ودي موجودة في كل أداة محترمة بتلمس حاجة مش قابلة للرجوع.',
+ [
+  {tag:'برمجة', h:'موجودة في كل أداة بتعرفها', p:'<p><code>terraform plan</code> قبل <code>apply</code>، و <code>git clean -n</code> قبل <code>-f</code>، و <code>rsync --dry-run</code>، و <code>npm publish --dry-run</code>، و migrations اللي بتطبع الـ SQL قبل ما تشغّله. <b>كلها نفس المبدأ</b> — ولما تعرفه، بتدوّر عليه في أي أداة جديدة.</p>'},
+  {tag:'شبكات', h:'التغيير اللي بيقطع عليك الاتصال', p:'<p>أخطر لحظة في إدارة سيرفر بعيد: تغيّر قاعدة فايروول أو routing، والقاعدة الغلط بتقطع الـ SSH بتاعك وانت بعيد عن الجهاز. عشان كده أدوات زي <code>iptables-apply</code> بتطبّق التغيير <b>مؤقتًا</b> وترجّعه لو مأكدتش. الفكرة واحدة: شوف الأثر قبل ما يبقى دائم.</p>'},
+  {tag:'قواعد بيانات', h:'Transactions', p:'<p>الـ <code>BEGIN ... ROLLBACK</code> هو dry run بتاع قواعد البيانات: شغّل الـ UPDATE، شوف كام صف اتغيّر، وارجع. وأي حد خبط <code>UPDATE</code> من غير <code>WHERE</code> على production مرة، بيفتح transaction بعدها طول عمره.</p>'},
+  {tag:'علوم حاسب', h:'Idempotency والعمليات الآمنة', p:'<p>العملية الـ <b>idempotent</b> هي اللي لو كررتها مية مرة تدّي نفس النتيجة (زي <code>PUT</code> في HTTP، عكس <code>POST</code>). و <code>-WhatIf</code> أقصى درجة أمان: عملية <b>بلا أي أثر</b> (side-effect free). والتفرقة دي أساس تصميم الـ APIs وأنظمة التوزيع.</p>'}
+ ],
+ 'سكربت تنضيف بيمسح الملفات الأقدم من ٣٠ يوم. شغّلته على <code>/var/log</code> وكان المفروض <code>/var/log/myapp</code>. مع <code>-WhatIf</code> كنت هتشوف ٨٠٠ ملف هيتمسحوا بدل ٢٠ وتوقف. من غيرها، السيرفر فقد كل لوجاته — واللحظة اللي هتحتاجهم فيها هي بالظبط اللحظة اللي بعدها.')
++`
+<div class="warn"><b>فخ:</b> لو كتبت <code>SupportsShouldProcess</code> ونسيت تنادي <code>ShouldProcess</code>، الـ <code>-WhatIf</code> هتتقبل و<b>مش هتعمل حاجة</b> — أخطر من إنها مش موجودة، لأن اليوزر هيثق فيها.</div>
 
-<div class="warn"><b>فخ:</b> لو كتبت <code>SupportsShouldProcess</code> ونسيت تنادي <code>ShouldProcess</code>، الـ <code>-WhatIf</code> هتتقبل كـ parameter و<b>مش هتعمل حاجة</b> — وده أخطر من إنها مش موجودة، لأن اليوزر هيثق فيها.</div>
+<div class="wrapup"><h4>الخلاصة</h4><ul>
+<li>الخطر وشبكة الأمان في نفس الخطوة، مش «هضيفها بعدين».</li>
+<li>البوابة قبل السطر الخطر بالظبط.</li>
+<li>دوّر على <code>--dry-run</code> في أي أداة جديدة بتلمس بياناتك.</li>
+</ul></div>
 
-<div class="wrapup">
-  <h4>الخلاصة في ٤ نقط</h4>
-  <ul>
-    <li>الخطر وشبكة الأمان في نفس الخطوة، مش «هضيفها بعدين».</li>
-    <li><code>if (-not $PSCmdlet.ShouldProcess(...)) { return }</code> قبل السطر الخطر بالظبط.</li>
-    <li>خلي <code>$target</code> يقول حاجة يعرفها اليوزر.</li>
-    <li>الـ cmdlets الداخلية (اللوج) <b>بترث</b> <code>-WhatIf</code>. حطلها <code>-WhatIf:$false</code>.</li>
-  </ul>
-</div>
-
-<div class="ex">
-  <h4>تمرين الدرس ٤</h4>
-  <div class="bodyx">
-    <ol>
-      <li>شغّل <code>.\\pc.ps1 off -In 30 -WhatIf</code> وقارن الوقت بساعتك.</li>
-      <li>اتأكد إن ملف الحالة <b>متكتبش</b> بـ <code>Test-Path</code>.</li>
-      <li>شيل سطر <code>ShouldProcess</code> وشغّل بـ <code>-WhatIf</code> تاني — إيه اللي حصل؟ (<b>متعملهاش</b> غير على فولدر تجربة.)</li>
-    </ol>
-  </div>
-</div>`
-  },
-  {
-    t: 'التأكيد واللوج وأكواد الخروج',
-    learn: '<code>ShouldContinue</code> و <code>-Force</code>',
-    out: 'أداة تسجّل كل حاجة عملتها',
-    prev: 'تقدر تجرّب القفل من غير ما ينفّذ.',
-    next: 'فاضل تناديها من أي مكان بدل ما تكتب مسارها. الدرس ٦.',
-    html: `
+<div class="ex"><h4>تمرين الدرس ٤</h4><div class="bodyx"><ol>
+<li>شغّل <code>.\\pc.ps1 off -In 30 -WhatIf</code> وقارن الوقت بساعتك.</li>
+<li>اتأكد إن ملف الحالة <b>متكتبش</b> بـ <code>Test-Path</code>.</li>
+<li><b>اربطها بشغلك:</b> هات أمر بتستخدمه وبيمسح أو بينقل، ودوّر في <code>--help</code> بتاعه على dry run.</li>
+</ol></div></div>`
+},
+{
+  t:'التأكيد واللوج', learn:'<code>ShouldContinue</code> و <code>-Force</code>',
+  out:'أداة تسجّل كل حاجة عملتها', use:'المراقبة وتتبّع الأعطال',
+  html:`
 <p class="why"><b>التلاتة اللي بيفرّقوا بين سكربت وأداة:</b> تأكيد قبل الخطر، ولوج تعرف منه حصل إيه، و exit code يخلي غيرك يبني فوقك.</p>
 
-<div class="step">
-  <h3><span class="n">٥.١</span>بوابتين بالترتيب</h3>
-  <div class="term" data-k="ps"><div class="term-bar"><span>pc.ps1</span><button class="copy" type="button">نسخ</button></div><pre>if (-not $PSCmdlet.ShouldProcess($target, 'schedule')) {
+<div class="step"><h3><span class="n">٥.١</span>بوابتين بالترتيب</h3>
+<div class="term" data-k="ps"><div class="term-bar"><span>pc.ps1</span><button class="copy" type="button">نسخ</button></div><pre>if (-not $PSCmdlet.ShouldProcess($target, 'schedule')) {
     Write-Log "WhatIf: $target"
     return 0
 }
@@ -601,156 +586,148 @@ if (-not $Force -and -not $PSCmdlet.ShouldContinue("هيتعمل $target. أكم
     Write-Log 'اليوزر رفض' 'WARN'
     return 1
 }</pre></div>
-  <table class="k">
-    <tr><th></th><th><code>ShouldProcess</code></th><th><code>ShouldContinue</code></th></tr>
-    <tr><td>مين بيتحكم فيها</td><td><code>-WhatIf</code> و <code>-Confirm</code></td><td>انت</td></tr>
-    <tr><td>النص</td><td>PowerShell بيبنيه</td><td>انت بتكتبه</td></tr>
-    <tr><td>تتجاوزها بـ</td><td><code>-Confirm:$false</code></td><td><code>-Force</code></td></tr>
-  </table>
-  <p><b>ليه <code>ShouldProcess</code> الأول؟</b> عشان <code>-WhatIf</code> تمنع حتى <b>السؤال</b>. المعاينة مينفعش تسأل.</p>
-</div>
+<p><b>ليه <code>ShouldProcess</code> الأول؟</b> عشان <code>-WhatIf</code> تمنع حتى <b>السؤال</b>. المعاينة مينفعش تسأل.</p></div>
 
-<div class="step">
-  <h3><span class="n">٥.٢</span><code>-Force</code> مش رفاهية</h3>
-  <p><code>ShouldContinue</code> بترمي error في الجلسات غير التفاعلية. جرّبناها:</p>
-  <div class="term out" data-k="ps"><div class="term-bar"><span>من غير -Force في جلسة مش تفاعلية</span><span style="opacity:.6">اتشغّل فعلًا</span></div><pre>Exception calling "ShouldContinue" with "2" argument(s): "PowerShell is in
+<div class="step"><h3><span class="n">٥.٢</span><code>-Force</code> مش رفاهية</h3>
+<div class="term out" data-k="ps"><div class="term-bar"><span>من غير -Force في جلسة مش تفاعلية</span><span style="opacity:.6">اتشغّل فعلًا</span></div><pre>Exception calling "ShouldContinue" with "2" argument(s): "PowerShell is in
 NonInteractive mode. Read and Prompt functionality is not available."</pre></div>
-  <p>يعني لما تجدول الأداة في Task Scheduler، <b>لازم</b> <code>-Force</code>. من غيرها المهمة هتعلّق مستنية رد مش جاي.</p>
-  <p>و <code>-not $Force -and ...</code> بتعمل short-circuit: لو <code>-Force</code> موجودة، <code>ShouldContinue</code> <b>متتنفذش أصلًا</b>.</p>
-</div>
+<p>يعني لما تجدول الأداة، <b>لازم</b> <code>-Force</code>. من غيرها المهمة هتعلّق مستنية رد مش جاي.</p></div>
 
-<div class="step">
-  <h3><span class="n">٥.٣</span>اللوج بيشتغل حتى في المعاينة</h3>
-  <div class="term out" data-k="ps"><div class="term-bar"><span>PowerShell 7.6</span><span style="opacity:.6">اتشغّل فعلًا</span></div><pre>PS&gt; .\\pc.ps1 restart -In 10 -WhatIf -Verbose
+<div class="step"><h3><span class="n">٥.٣</span>اللوج بيشتغل حتى في المعاينة</h3>
+<div class="term out" data-k="ps"><div class="term-bar"><span>PowerShell 7.6</span><span style="opacity:.6">اتشغّل فعلًا</span></div><pre>PS&gt; .\\pc.ps1 restart -In 10 -WhatIf -Verbose
 What if: Performing the operation "schedule" on target "restart at 04:17:10".
 VERBOSE: 2026-10-28 04:07:10 [INFO] WhatIf: restart at 04:17:10
 
 PS&gt; Get-Content "$env:LOCALAPPDATA\\pc-tool\\pc.log"
 2026-10-28 04:07:10 [INFO] WhatIf: off at 05:37:10
 2026-10-28 04:07:10 [INFO] WhatIf: restart at 04:17:10
-2026-10-28 04:07:10 [WARN] مفيش معاد متجدول</pre></div>
-  <p>ده شغال لأن سطور اللوج عليها <code>-WhatIf:$false</code>. من غيرها، المعاينة كانت بتطلّع سطور زيادة <b>واللوج مكانش بيتكتب</b> — وده بالظبط اللي حصل معانا أول مرة.</p>
-</div>
+2026-10-28 04:07:10 [WARN] مفيش معاد متجدول</pre></div></div>
+`+USE(
+ 'اللوج مش «رسايل للطباعة». ده <b>الأثر اللي بتتبعه لما حاجة تقع وانت مش قدام الشاشة</b> — وده نص شغل أي حد بيشتغل على سيرفرات.',
+ [
+  {tag:'برمجة', h:'Structured logging', p:'<p>التاريخ + المستوى + الرسالة هو أبسط شكل من <b>structured logging</b>. والمكتبات الكبيرة (<code>pino</code> و <code>winston</code> و <code>serilog</code>) بتعمل نفس الحاجة بـ JSON عشان الآلة تقراها. والمستويات (<code>INFO</code>/<code>WARN</code>/<code>ERROR</code>) بتخليك تفلتر: <code>grep ERROR</code> بدل ما تقرا ١٠ آلاف سطر.</p>'},
+  {tag:'شبكات', h:'syslog و المركزية', p:'<p>على السيرفرات، اللوج مش بيفضل على الجهاز: بيتبعت لمكان مركزي (<code>syslog</code>، ELK، Loki). وده بيخليك تجاوب على سؤال زي «إيه اللي حصل على الـ ٥ سيرفرات الساعة ٣ الصبح؟» في استعلام واحد. والتاريخ بصيغة <code>yyyy-MM-dd HH:mm:ss</code> مهم هنا عشان الترتيب يشتغل.</p>'},
+  {tag:'أمان', h:'Audit trail', p:'<p>مين عمل إيه وامتى. ده مطلب قانوني في أنظمة كتير (بنوك، صحة)، وأول حاجة بتتسأل عنها بعد أي اختراق. وملاحظة مهمة: <b>متسجّلش أسرار</b> — الباسوردات والتوكنات والبيانات الشخصية مش بتتكتب في اللوج أبدًا.</p>'},
+  {tag:'علوم حاسب', h:'Observability', p:'<p>اللوج واحد من تلاتة: <b>logs</b> (إيه اللي حصل)، <b>metrics</b> (كام مرة وبسرعة قد إيه)، <b>traces</b> (الطلب عدّى منين لمنين). والتلاتة مع بعض بيردوا على السؤال اللي الكود لوحده مش بيرد عليه: <b>النظام بيتصرف إزاي وهو شغال؟</b></p>'}
+ ],
+ 'المهمة المجدولة بتاعتك فشلت الساعة ٣ الصبح. من غير لوج، كل اللي عندك إن Task Scheduler بيقول «فشلت» وكود رقم. مع لوج فيه وقت ومستوى ورسالة، بتفتح الملف وتلاقي السطر: <code>[ERROR] shutdown فشل بالكود 1190</code> — ومن الرقم ده تعرف إن كان فيه معاد متجدول بالفعل. دقيقة بدل ساعة.')
++`
+<div class="wrapup"><h4>الخلاصة</h4><ul>
+<li><code>ShouldProcess</code> الأول (معاينة)، وبعدها <code>ShouldContinue</code> (تأكيد).</li>
+<li><code>-Force</code> ضرورية لأي مهمة مجدولة.</li>
+<li>اللوج: وقت + مستوى + رسالة، ومن غير أسرار.</li>
+</ul></div>
 
-<div class="wrapup">
-  <h4>الخلاصة في ٤ نقط</h4>
-  <ul>
-    <li><code>ShouldProcess</code> الأول (معاينة)، وبعدها <code>ShouldContinue</code> (تأكيد).</li>
-    <li><code>-Force</code> ضرورية لأي مهمة مجدولة.</li>
-    <li>اللوج عليه <code>-WhatIf:$false</code> عشان يشتغل في المعاينة كمان.</li>
-    <li>exit codes: <code>0</code> نجاح، <code>1</code> رفض، <code>2</code> فشل خارجي — وبتخلي <code>&amp;&amp;</code> تشتغل.</li>
-  </ul>
-</div>
-
-<div class="ex">
-  <h4>تمرين الدرس ٥</h4>
-  <div class="bodyx">
-    <ol>
-      <li>شغّل <code>.\\pc.ps1 off -In 30 -WhatIf -Verbose</code> وافتح ملف اللوج.</li>
-      <li>ليه مفيد إن المعاينة نفسها تتسجّل في اللوج؟</li>
-      <li>فلتر اللوج على التحذيرات بس بـ <code>Select-String</code>.</li>
-    </ol>
-  </div>
-</div>`
-  },
-  {
-    t: 'ناديها من أي مكان',
-    learn: '<code>$PROFILE</code> والجدولة',
-    out: 'تكتب <code>pc off -In 30</code> وخلاص',
-    prev: 'الأداة كاملة وبتسجّل كل حاجة.',
-    next: null,
-    html: `
+<div class="ex"><h4>تمرين الدرس ٥</h4><div class="bodyx"><ol>
+<li>شغّل بـ <code>-WhatIf -Verbose</code> وافتح ملف اللوج.</li>
+<li>فلتر اللوج على التحذيرات بـ <code>Select-String</code>.</li>
+<li><b>اربطها بشغلك:</b> افتح لوج أي خدمة شغالة عندك واعرف شكل السطر فيها: فيه وقت؟ مستوى؟</li>
+</ol></div></div>`
+},
+{
+  t:'ناديها من أي مكان', learn:'<code>$PROFILE</code> والجدولة',
+  out:'تكتب <code>pc off -In 30</code> وخلاص', use:'PATH والبيئة والأتمتة',
+  html:`
 <p class="why"><b>ليه الدرس ده مهم؟</b> أداة بتكتب مسارها كل مرة = أداة مش هتستخدمها. الفرق بين <code>pc off -In 30</code> و <code>&amp; "C:\\Users\\me\\tools\\pc.ps1" off -In 30</code> هو الفرق بين حاجة بتدخل في عادتك وحاجة بتنساها.</p>
 
-<div class="step">
-  <h3><span class="n">٦.١</span>فين الـ profile بتاعك؟</h3>
-  <div class="term out" data-k="ps"><div class="term-bar"><span>PowerShell 7.6 · ويندوز 11</span><span style="opacity:.6">اتشغّل فعلًا</span></div><pre>PS&gt; $PROFILE
+<div class="step"><h3><span class="n">٦.١</span>فين الـ profile بتاعك؟</h3>
+<div class="term out" data-k="ps"><div class="term-bar"><span>ويندوز 11</span><span style="opacity:.6">اتشغّل فعلًا</span></div><pre>PS&gt; $PROFILE
 C:\\Users\\7ossa\\OneDrive\\Documents\\PowerShell\\Microsoft.PowerShell_profile.ps1
 
 PS&gt; Test-Path $PROFILE
 False</pre></div>
-  <p><code>False</code> يعني الملف لسه مش موجود — وده طبيعي على جهاز جديد. والمسار عندك هيبقى مختلف، فاطبعه متنسخش بتاعي.</p>
-  <table class="k">
-    <tr><th>المتغير</th><th>بيتنفّذ فين</th></tr>
-    <tr><td><code>$PROFILE</code></td><td>الترمنال العادي بس</td></tr>
-    <tr><td><code>$PROFILE.CurrentUserAllHosts</code></td><td>الترمنال <b>و</b> VS Code</td></tr>
-  </table>
-</div>
+<p><code>False</code> يعني الملف لسه مش موجود — طبيعي على جهاز جديد.</p></div>
 
-<div class="step">
-  <h3><span class="n">٦.٢</span>حوّلها لكلمة</h3>
-  <div class="term" data-k="ps"><div class="term-bar"><span>$PROFILE</span><button class="copy" type="button">نسخ</button></div><pre>function pc { &amp; "$HOME\\tools\\pc.ps1" @args }</pre></div>
-  <table class="k">
-    <tr><th>الحتة</th><th>معناها</th></tr>
-    <tr><td><code>&amp;</code></td><td>call operator: «شغّل ده كأمر». من غيرها PowerShell بيطبع النص</td></tr>
-    <tr><td><code>@args</code></td><td>مرّر كل اللي اتكتب بعد <code>pc</code> كـ arguments <b>منفصلة</b></td></tr>
-  </table>
-  <p><b>ليه <code>@args</code> مش <code>$args</code>؟</b> لأن <code>$args</code> بتوصّل قيمة واحدة (قايمة)، فالسكربت هياخد كل حاجة في <code>$Action</code> ويزعق. الـ <code>@</code> بتفردها.</p>
-</div>
+<div class="step"><h3><span class="n">٦.٢</span>حوّلها لكلمة</h3>
+<div class="term" data-k="ps"><div class="term-bar"><span>$PROFILE</span><button class="copy" type="button">نسخ</button></div><pre>function pc { &amp; "$HOME\\tools\\pc.ps1" @args }</pre></div>
+<table class="k">
+<tr><th>الحتة</th><th>معناها</th></tr>
+<tr><td><code>&amp;</code></td><td>call operator. من غيرها PowerShell بيطبع النص</td></tr>
+<tr><td><code>@args</code></td><td>مرّر اللي اتكتب بعد <code>pc</code> كـ arguments <b>منفصلة</b></td></tr>
+</table></div>
 
-<div class="step">
-  <h3><span class="n">٦.٣</span>نجرّب من فولدر تاني</h3>
-  <div class="term out" data-k="ps"><div class="term-bar"><span>PowerShell 7.6</span><span style="opacity:.6">اتشغّل فعلًا</span></div><pre>PS&gt; Set-Location C:\\
+<div class="step"><h3><span class="n">٦.٣</span>نجرّب من فولدر تاني</h3>
+<div class="term out" data-k="ps"><div class="term-bar"><span>PowerShell 7.6</span><span style="opacity:.6">اتشغّل فعلًا</span></div><pre>PS&gt; Set-Location C:\\
 PS C:\\&gt; pc status
 مفيش معاد متجدول
 
 PS C:\\&gt; pc off -In 15 -WhatIf
-What if: Performing the operation "schedule" on target "off at 04:25:28".</pre></div>
-  <p><b>إحنا في <code>C:\\</code> مش في فولدر السكربت، والأداة اشتغلت</b> — و <code>-WhatIf</code> عدّت كمان، يعني <code>@args</code> مرّرت كل حاجة صح.</p>
-</div>
+What if: Performing the operation "schedule" on target "off at 04:25:28".</pre></div></div>
+`+USE(
+ 'السؤال الحقيقي هنا: <b>إزاي النظام بيلاقي البرامج أصلًا؟</b> والإجابة (الـ PATH والبيئة) هي نفسها سبب نص مشاكل «الأمر مش موجود» اللي بتقابلك.',
+ [
+  {tag:'برمجة', h:'ليه npm و git شغالين من أي مكان', p:'<p>لأن مساراتهم في متغير <code>PATH</code>. ولما تعمل <code>npm install -g</code>، الحزمة بتحط ملف في فولدر موجود في الـ PATH. ولما <code>npm run</code> بتلاقي أداة مش متسطبة عندك عالميًا، ده لأنها بتضيف <code>node_modules/.bin</code> للـ PATH مؤقتًا. <b>نفس الآلية.</b></p>'},
+  {tag:'برمجة', h:'«الأمر مش موجود» و النسخة الغلط', p:'<p>أشهر مشكلتين: الأداة مش في الـ PATH، أو فيه نسختين والنظام بياخد الأولى. <code>Get-Command node</code> (أو <code>which node</code>) بيقولك المسار اللي اتاخد فعلًا. ونفس السبب ورا «شغال عندي ومش شغال عندك»: بيئة مختلفة.</p>'},
+  {tag:'شبكات', h:'cron و systemd timers', p:'<p>على لينكس، <code>cron</code> بيشغّل مهامك ببيئة <b>شبه فاضية</b> — عشان كده السكربت اللي شغال في الترمنال بيفشل في cron. الحل: مسارات كاملة، أو تحميل البيئة في أول السكربت. ونفس الدرس هنا: <code>-NoProfile</code> في المهمة المجدولة عشان متتأثرش بإعداداتك.</p>'},
+  {tag:'علوم حاسب', h:'البيئة والعملية', p:'<p>كل عملية بتورث <b>environment</b> من اللي شغّلها: متغيرات، ومجلد حالي، وصلاحيات. فهم ده بيفسّر حاجات كتير: ليه <code>cd</code> جوه سكربت مش بتأثر على الترمنال، وليه <code>export</code> موجودة أصلًا، وليه الكونتينر بيحتاج <code>ENV</code> في الـ Dockerfile.</p>'}
+ ],
+ 'كتبت سكربت نسخ احتياطي وجدولته. شغال تمام لما تشغّله بإيدك، وبيفشل كل ليلة في المهمة المجدولة. السبب غالبًا واحد من اتنين: مسار نسبي (السكربت بيفترض إنك في فولدر معيّن) أو أداة مش في الـ PATH بتاع المهمة. الحل: مسارات كاملة، و <code>-NoProfile</code>، وتجرّب المهمة مرة وانت صاحي بدل ما تكتشف بعد شهر.')
++`
+<div class="wrapup"><h4>الخلاصة</h4><ul>
+<li><code>function pc { &amp; "المسار" @args }</code> بتحوّل السكربت لكلمة.</li>
+<li><code>&amp;</code> لازمة قدام أي مسار فيه مسافات، و <code>@args</code> مش <code>$args</code>.</li>
+<li>المهمة المجدولة بيئتها مختلفة: مسارات كاملة و <code>-NoProfile</code>.</li>
+</ul></div>
 
-<div class="step">
-  <h3><span class="n">٦.٤</span>خليها تشتغل لوحدها</h3>
-  <div class="term" data-k="ps"><div class="term-bar"><span>مهمة مجدولة</span><button class="copy" type="button">نسخ</button></div><pre>$action  = New-ScheduledTaskAction -Execute 'pwsh.exe' -Argument '-NoProfile -File "C:\\tools\\pc.ps1" off -In 0 -Force'
-$trigger = New-ScheduledTaskTrigger -Daily -At 2am
-Register-ScheduledTask -TaskName 'NightShutdown' -Action $action -Trigger $trigger</pre></div>
-  <p><code>-NoProfile</code> أسرع، و <code>-Force</code> <b>ضرورية</b> (الدرس ٥)، و <code>-In 0</code> لأن الـ trigger هو اللي بيحدد الوقت.</p>
-</div>
-
-<div class="wrapup">
-  <h4>الخلاصة في ٤ نقط</h4>
-  <ul>
-    <li><code>function pc { &amp; "المسار" @args }</code> في <code>$PROFILE</code> بتحوّل السكربت لكلمة.</li>
-    <li><code>&amp;</code> لازمة قدام أي مسار فيه مسافات.</li>
-    <li><code>@args</code> مش <code>$args</code>.</li>
-    <li>PowerShell 7 و 5.1 ليهم profiles مختلفة.</li>
-  </ul>
-</div>
-
-<div class="ex">
-  <h4>تمرين الدرس ٦ (والواجب)</h4>
-  <div class="bodyx">
-    <ol>
-      <li>اطبع <code>$PROFILE</code> و <code>$PROFILE.CurrentUserAllHosts</code> وشوف الفرق.</li>
-      <li>عرّف الدالة في الجلسة الحالية بس وجرّبها من فولدر تاني.</li>
-      <li><b>الواجب:</b> ضيف فعل <code>sleep</code>، وخلي <code>status</code> يعرض آخر ٣ سطور من اللوج.</li>
-    </ol>
-  </div>
-</div>`
-  }
+<div class="ex"><h4>تمرين الدرس ٦ (والواجب)</h4><div class="bodyx"><ol>
+<li>اطبع <code>$PROFILE</code> و <code>$PROFILE.CurrentUserAllHosts</code> وشوف الفرق.</li>
+<li>اطبع <code>$env:Path</code> وعدّ كام فولدر فيه.</li>
+<li><b>الواجب:</b> ضيف فعل <code>sleep</code>، وخلي <code>status</code> يعرض آخر ٣ سطور من اللوج.</li>
+</ol></div></div>`
+}
 ];
 
 /* ============ التنقل ============ */
 const $ = s => document.querySelector(s);
 const done = new Set();
+let cur = 0;
+
+function buildNav(){
+  $('#unitnav').innerHTML = '<h4>الوحدة ٣ — ٦ دروس</h4>'
+    + LESSONS.map((L, i) => {
+        const n = i + 1;
+        return '<a href="#lesson-' + n + '" data-go="' + n + '"' + (done.has(n) ? ' class="ok"' : '')
+          + (cur === n ? ' aria-current="true"' : '') + '><span class="n">' + AR(n) + '</span><span>' + L.t + '</span></a>';
+      }).join('')
+    + '<div class="foot"><a href="#" data-go="map" style="padding:0;border:0;color:var(--accent)">▸ الخريطة والمشروع</a><br>'
+      + '<span style="font-size:12.5px">خلصت ' + AR(done.size) + ' من ٦</span></div>';
+}
 
 function buildMap(){
   $('#mapBody').innerHTML = LESSONS.map((L, i) => {
-    const n = i + 1;
+    const n = i + 1, h = '#lesson-' + n;
     return '<tr data-go="' + n + '"' + (done.has(n) ? ' class="done"' : '') + '>'
-      + '<td><a href="#lesson-' + n + '">' + AR(n) + '</a></td>'
-      + '<td><a href="#lesson-' + n + '" class="t">' + L.t + '</a></td>'
-      + '<td><a href="#lesson-' + n + '">' + L.learn + '</a></td>'
-      + '<td><a href="#lesson-' + n + '">' + L.out + '</a></td>'
-      + '<td><a href="#lesson-' + n + '" class="go">افتح ◂</a></td>'
-      + '</tr>';
+      + '<td><a href="' + h + '">' + AR(n) + '</a></td>'
+      + '<td><a href="' + h + '" class="t">' + L.t + '</a></td>'
+      + '<td><a href="' + h + '">' + L.learn + '</a></td>'
+      + '<td><a href="' + h + '">' + L.out + '</a></td>'
+      + '<td><a href="' + h + '" style="color:#8b5cf6">' + L.use + '</a></td>'
+      + '<td><a href="' + h + '" class="go">افتح ◂</a></td></tr>';
   }).join('');
   $('#rail').innerHTML = LESSONS.map((_, i) => '<i' + (done.has(i + 1) ? ' class="on"' : '') + '></i>').join('');
+}
+
+function buildToc(){
+  const steps = [...document.querySelectorAll('#lessonSlot .step > h3')];
+  const useSec = document.querySelector('#lessonSlot .use');
+  let html = '<h4>في الدرس ده</h4>';
+  steps.forEach((h, i) => {
+    const id = 'st-' + i;
+    h.parentElement.id = id;
+    const num = h.querySelector('.n');
+    const label = num ? num.textContent.trim() + ' ' + h.textContent.replace(num.textContent, '').replace(/\s+/g, ' ').trim()
+                      : h.textContent.replace(/\s+/g, ' ').trim();
+    html += '<a href="#' + id + '" data-jump="' + id + '">' + label + '</a>';
+  });
+  if (useSec) html += '<a href="#use" data-jump="use" style="color:#8b5cf6">تستخدمها فين؟</a>';
+  html += '<div class="pg">الدرس ' + AR(cur) + ' من ٦</div>';
+  $('#toc').innerHTML = html;
 }
 
 function openLesson(n){
   const L = LESSONS[n - 1];
   if (!L) return showMap();
+  cur = n;
   $('#sMap').hidden = true;
   $('#sLesson').hidden = false;
   $('#posNow').textContent = AR(n);
@@ -763,8 +740,7 @@ function openLesson(n){
   $('#lessonSlot').innerHTML =
     '<article class="lesson"><h2><span class="no">الدرس ' + AR(n) + '</span>' + L.t + '</h2>' + L.html
     + '<div class="ex" style="border-color:color-mix(in srgb,var(--accent) 35%,var(--line))">'
-    + '<div class="bodyx mark"><label><input type="checkbox" id="chkDone"' + (done.has(n) ? ' checked' : '') + '> خلصت الدرس ده</label></div></div>'
-    + '</article>';
+    + '<div class="bodyx"><label><input type="checkbox" id="chkDone"' + (done.has(n) ? ' checked' : '') + '> خلصت الدرس ده</label></div></div></article>';
 
   const prev = LESSONS[n - 2], next = LESSONS[n];
   $('#pager').innerHTML =
@@ -775,17 +751,21 @@ function openLesson(n){
 
   $('#chkDone').addEventListener('change', e => {
     e.target.checked ? done.add(n) : done.delete(n);
-    buildMap();
+    buildMap(); buildNav();
     $('#dots').querySelectorAll('.d').forEach((b, i) => b.classList.toggle('ok', done.has(i + 1)));
   });
 
+  buildToc(); buildNav();
   if (location.hash !== '#lesson-' + n) history.pushState(null, '', '#lesson-' + n);
   window.scrollTo(0, 0);
 }
 
 function showMap(){
+  cur = 0;
   $('#sLesson').hidden = true;
   $('#sMap').hidden = false;
+  $('#toc').innerHTML = '<h4>الوحدة</h4><a href="#" data-jump="top">الهدف</a><a href="#" data-jump="top">الخريطة</a><a href="#" data-jump="top">المعمل</a><div class="pg">اختار درس من الخريطة</div>';
+  buildNav();
   if (location.hash) history.pushState(null, '', location.pathname);
   window.scrollTo(0, 0);
 }
@@ -804,14 +784,30 @@ document.addEventListener('click', e => {
     setTimeout(() => { copy.textContent = 'نسخ'; }, 1200);
     return;
   }
+  const jump = e.target.closest('[data-jump]');
+  if (jump){
+    e.preventDefault();
+    const el = document.getElementById(jump.dataset.jump);
+    el ? el.scrollIntoView({behavior:'smooth', block:'start'}) : window.scrollTo({top:0, behavior:'smooth'});
+    return;
+  }
   const go = e.target.closest('[data-go]');
   if (!go) return;
   e.preventDefault();
-  const v = go.dataset.go;
-  v === 'map' ? showMap() : openLesson(+v);
+  go.dataset.go === 'map' ? showMap() : openLesson(+go.dataset.go);
 });
 
 window.addEventListener('popstate', route);
+window.addEventListener('scroll', () => {
+  if ($('#sLesson').hidden) return;
+  const links = [...document.querySelectorAll('#toc a[data-jump]')];
+  let on = null;
+  links.forEach(a => {
+    const el = document.getElementById(a.dataset.jump);
+    if (el && el.getBoundingClientRect().top < 160) on = a;
+  });
+  links.forEach(a => a.classList.toggle('on', a === on));
+}, {passive:true});
 
 const bNew = $('#bNew'), bOld = $('#bOld'), vNew = $('#vNew'), vOld = $('#vOld');
 function view(isNew){
@@ -823,8 +819,7 @@ function view(isNew){
 bNew.addEventListener('click', () => view(true));
 bOld.addEventListener('click', () => view(false));
 
-buildMap();
-route();
+buildMap(); route();
 </script>
 </body>
 </html>
