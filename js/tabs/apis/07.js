@@ -633,10 +633,11 @@ loadMany: [ 'SELECT users WHERE id IN (u1,u2,u3)' ]
           desc: R`في REST بتحمي endpoint. في GraphQL فيه endpoint واحد، والبيانات نفسها بتتوصل من طرق كتير: الإيميل ممكن يوصله من [[me]] أو من [[post.author]] أو من [[comment.author]]. فالصلاحية لازم تبقى على الحقل أو النوع نفسه، مش على الـ query.
 
 وكمان العميل ممكن يكتب query متداخل ١٠ مستويات (منشور، كاتبه، منشوراته، كاتبها...) يوقّع السيرفر. الحل حد أقصى للعمق والحجم.`,
-          example: R`import { createYoga, createGraphQLError } from "graphql-yoga";
+          example: R`import { createYoga } from "graphql-yoga";
+import { GraphQLError } from "graphql";
 import { maxDepthPlugin } from "@escape.tech/graphql-armor-max-depth";
 export function requireUser(ctx: Ctx) {
-  if (!ctx.user) throw createGraphQLError("Login required", { extensions: { code: "UNAUTHENTICATED", http: { status: 401 } } });
+  if (!ctx.user) throw new GraphQLError("Login required", { extensions: { code: "UNAUTHENTICATED", http: { status: 401 } } });
   return ctx.user;
 }
 const resolvers = {
@@ -647,7 +648,7 @@ const resolvers = {
     deletePost: async (_p: unknown, args: { id: string }, ctx: Ctx) => {
       const me = requireUser(ctx);
       const { count } = await db.post.deleteMany({ where: { id: args.id, ...(me.role === "admin" ? {} : { authorId: me.id }) } });
-      if (count === 0) throw createGraphQLError("Post not found", { extensions: { code: "NOT_FOUND" } });
+      if (count === 0) throw new GraphQLError("Post not found", { extensions: { code: "NOT_FOUND" } });
       return true;
     },
   },
@@ -657,7 +658,7 @@ export const yoga = createYoga({ schema, context, plugins: [maxDepthPlugin({ n: 
           flag: "script",
           deep: {
             why: "BOPLA (تاب APIs المستوى ١، درس [[OWASP API Top 10]]) أسهل بكتير في GraphQL: حد يكتشف إن [[author]] بيرجّع [[email]] و [[phone]]، ويلف على كل المنشورات ويجمع بيانات كل الكتّاب. والـ introspection بيوريله كل الحقول الموجودة. والاستعلام العميق هجوم DoS بسطر واحد.",
-            how: R`المستخدم بيتعرف مرة في الـ context (من الكوكي أو التوكن)، وكل resolver يقرر بنفسه. [[requireUser]] helper بيرمي لو مش مسجّل. [[createGraphQLError]] بيعمل خطأ بـ [[extensions.code]] العميل يقدر يتعامل معاه (UNAUTHENTICATED يروح لـ login، و FORBIDDEN يعرض رسالة). و [[http.status]] في الـ extensions بيخلي Yoga يرجّع 401 بدل 200.
+            how: R`المستخدم بيتعرف مرة في الـ context (من الكوكي أو التوكن)، وكل resolver يقرر بنفسه. [[requireUser]] helper بيرمي لو مش مسجّل. [[new GraphQLError]] بيعمل خطأ بـ [[extensions.code]] العميل يقدر يتعامل معاه (UNAUTHENTICATED يروح لـ login، و FORBIDDEN يعرض رسالة). و [[http.status]] في الـ extensions بيخلي Yoga يرجّع 401 بدل 200.
 
 صلاحية على الحقل ([[User.email]]): الـ resolver بيرجّع null للغريب. ده ليه الحقل في الـ schema [[String]] مش [[String!]]، عشان null مسموح. البديل إنك ترمي error، بس ده بيبوّظ باقي الرد لو الحقل مش بيقبل null.
 
@@ -675,25 +676,26 @@ export const yoga = createYoga({ schema, context, plugins: [maxDepthPlugin({ n: 
 
 في GraphQL مفيش endpoint لكل حاجة تحميه. نفس الـ [[User]] بيوصل من [[me]] ومن [[post.author]] ومن أي علاقة تانية. فالمثال بيحط الصلاحية في الـ resolver بتاع الحقل ([[User.email]])، وشرط الملكية جوه استعلام المسح، و plugin بيرفض أي query أعمق من ٦ قبل ما يتنفّذ.
 
-اتجرّب على ويندوز 11: graphql-yoga 5.24.2 و graphql 16.14.2 و [[@escape.tech/graphql-armor-max-depth]] 2.4.2 على Node 24.19. الـ schema هي بتاعة درس [[schema و resolvers]] ومعاها [[deletePost(id: ID!): Boolean!]]، والـ resolvers زي المثال بالظبط، و [[db]] في الذاكرة بشكل Prisma: ٥٠ منشور، والمنشور رقم n كاتبه [[u((n-1)%10+1)]]، و [[u10]] هو الـ admin. التوكن [[Bearer tok-u9]] يعني «أنا u9». الطلبات اتبعتت لـ [[yoga.fetch]].
+اتجرّب على ويندوز 11: graphql-yoga 5.24.2 (والأخطاء اتجرّبت تاني على graphql-yoga 6.0.1، اللي شالت [[createGraphQLError]] فبقينا نستخدم [[GraphQLError]] من [[graphql]]: الـ 401 لسه بيرجع) و graphql 16.14.2 و [[@escape.tech/graphql-armor-max-depth]] 2.4.2 على Node 24.19. الـ schema هي بتاعة درس [[schema و resolvers]] ومعاها [[deletePost(id: ID!): Boolean!]]، والـ resolvers زي المثال بالظبط، و [[db]] في الذاكرة بشكل Prisma: ٥٠ منشور، والمنشور رقم n كاتبه [[u((n-1)%10+1)]]، و [[u10]] هو الـ admin. التوكن [[Bearer tok-u9]] يعني «أنا u9». الطلبات اتبعتت لـ [[yoga.fetch]].
 
 ---
 
 ## ١. الـ imports
 
 ~~~ts
-import { createYoga, createGraphQLError } from "graphql-yoga";
+import { createYoga } from "graphql-yoga";
+import { GraphQLError } from "graphql";
 import { maxDepthPlugin } from "@escape.tech/graphql-armor-max-depth";
 ~~~
 
-- [[createGraphQLError]]: بيعمل خطأ GraphQL برسالة و [[extensions]] (معلومات زيادة بتوصل للعميل زي ما هي).
+- [[GraphQLError]] من مكتبة [[graphql]] نفسها: بيعمل خطأ GraphQL برسالة و [[extensions]] (معلومات زيادة بتوصل للعميل زي ما هي).
 - [[maxDepthPlugin]]: من مجموعة GraphQL Armor. بيحسب عمق الـ query ويرفضه لو عدّى الحد.
 
 ## ٢. [[requireUser]]
 
 ~~~ts
 export function requireUser(ctx: Ctx) {
-  if (!ctx.user) throw createGraphQLError("Login required", { extensions: { code: "UNAUTHENTICATED", http: { status: 401 } } });
+  if (!ctx.user) throw new GraphQLError("Login required", { extensions: { code: "UNAUTHENTICATED", http: { status: 401 } } });
   return ctx.user;
 }
 ~~~
@@ -754,7 +756,7 @@ export function requireUser(ctx: Ctx) {
 3. [[deleteMany]] بيرجّع [[{ count }]] زي [[updateMany]] في درس OWASP.
 
 ~~~ts
-      if (count === 0) throw createGraphQLError("Post not found", { extensions: { code: "NOT_FOUND" } });
+      if (count === 0) throw new GraphQLError("Post not found", { extensions: { code: "NOT_FOUND" } });
       return true;
 ~~~
 
@@ -812,7 +814,8 @@ introspection   200 {"data":{"__schema":{"queryType":{"fields":[{"name":"posts"}
 - الصلاحية على **النوع والحقل**، مش على [[Query.me]] بس.
 - حد العمق لوحده مش كفاية: aliases و introspection وحد لـ [[first]] و rate limit.`,
           lines: [
-            "السيرفر، و helper لأخطاء GraphQL بكود ومعلومات زيادة.",
+            "السيرفر من graphql-yoga.",
+            "كلاس الخطأ من مكتبة graphql نفسها (graphql-yoga 6 شالت createGraphQLError).",
             "plugin بيرفض الـ queries العميقة (من GraphQL Armor).",
             "helper: لازم يكون مسجّل.",
             "مش مسجّل؟ خطأ بكود UNAUTHENTICATED و HTTP 401.",

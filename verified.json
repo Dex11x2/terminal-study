@@ -619,6 +619,11 @@
   "date": "2026-10-27",
   "on": "docker getmeili/meilisearch:v1.56.0 + Node 24.22 (win11)"
  },
+ "apis|N+1 على Postgres": {
+  "hash": "0e6b08c37b8c",
+  "date": "2026-10-28",
+  "on": "Windows 11 Node 24.22.1 graphql-yoga 6.0.1 dataloader 2.2.3 + Postgres 16.13 in Docker; docs: Prisma batching"
+ },
  "apis|OWASP API Top 10": {
   "hash": "c8c332e374d9",
   "date": "2026-10-08",
@@ -638,6 +643,11 @@
   "hash": "1a9ce780138d",
   "date": "2026-10-27",
   "on": "docker postgres:16-alpine + meilisearch:v1.56.0 (100k rows)"
+ },
+ "apis|REST ولا GraphQL ولا tRPC": {
+  "hash": "327b82996101",
+  "date": "2026-10-28",
+  "on": "docs: concept (numbers from the lessons above)"
  },
  "apis|RabbitMQ dead-letter": {
   "hash": "b965dbec34ff",
@@ -684,20 +694,40 @@
   "date": "2026-10-27",
   "on": "docker rabbitmq:4.4.0 + Node 24.22 (win11)"
  },
+ "apis|auth على الـ upgrade": {
+  "hash": "d3da5d7f43f4",
+  "date": "2026-10-28",
+  "on": "Windows 11 Node 24.22.1 + ws 8.22.0, Chrome 156 headless (playwright-core), curl in Git Bash"
+ },
  "apis|auth في resolvers": {
-  "hash": "b2ce465ee0ac",
-  "date": "2026-10-08",
-  "on": "win11 node24.19 graphql-yoga5.24.2 graphql-armor-max-depth2.4.2"
+  "hash": "1f1905ca53bf",
+  "date": "2026-10-28",
+  "on": "earlier run on graphql-yoga 5.24.2; error part re-run on Windows 11 Node 24.22 graphql-yoga 6.0.1 + graphql 16.14.2 (new GraphQLError: 401 for UNAUTHENTICATED, 200 + NOT_FOUND)"
+ },
+ "apis|backpressure و bufferedAmount": {
+  "hash": "d33a774f12ad",
+  "date": "2026-10-28",
+  "on": "Windows 11 Node 24.22.1 + ws 8.22.0; docs: WebSocketStream"
  },
  "apis|client credentials": {
   "hash": "1b1c13faa5e6",
   "date": "2026-10-08",
   "on": "Windows 11, Node 24.19, local oidc-provider 9.12 + fake token endpoint; docs: IdP consoles"
  },
+ "apis|connections و cursors": {
+  "hash": "866af8bd12b8",
+  "date": "2026-10-28",
+  "on": "Windows 11 Node 24.22.1 graphql-yoga 6.0.1 + Postgres 16.13 in Docker"
+ },
  "apis|consumer groups و offsets": {
   "hash": "406cbffaf214",
   "date": "2026-10-27",
   "on": "docker apache/kafka:4.4.0 + Node 24.22 (win11)"
+ },
+ "apis|cost limit و persisted queries": {
+  "hash": "ce30aa452ca4",
+  "date": "2026-10-28",
+  "on": "Windows 11 Node 24.22.1 graphql-yoga 6.0.1 + GraphQL Armor + curl; docs: @cost/@listSize"
  },
  "apis|cursor pagination": {
   "hash": "38f144357fe1",
@@ -764,6 +794,11 @@
   "date": "2026-10-08",
   "on": "Windows 11, Node 24.19, Express 5.2.1, ioredis 6.0, redis:8-alpine (8.10.2), curl, pwsh 7.6"
  },
+ "apis|reconnect و backoff": {
+  "hash": "d670e966d5c5",
+  "date": "2026-10-28",
+  "on": "Windows 11 Node 24.22.1 + ws 8.22.0, client in Chrome 156 headless (playwright-core)"
+ },
  "apis|resources و URLs": {
   "hash": "818eed2a5339",
   "date": "2026-10-08",
@@ -809,10 +844,30 @@
   "date": "2026-10-08",
   "on": "Windows 11, Node 24.19, pg 8.23 (same SQL), postgres:16-alpine, BullMQ 6.3.11, redis:8-alpine (8.10.2); docs: Prisma parts"
  },
+ "apis|variables و fragments": {
+  "hash": "f96a235fa5b0",
+  "date": "2026-10-28",
+  "on": "Windows 11 Node 24.22.1 graphql-yoga 6.0.1 + curl"
+ },
  "apis|versioning": {
   "hash": "2be40368fda1",
   "date": "2026-10-08",
   "on": "Windows 11: Express 5.2.1 / Node 24.19 + curl 8.22, pwsh 7.6; ubuntu:24.04 (date); docs: macOS date -r"
+ },
+ "apis|ws على سيرفرين بـ Redis": {
+  "hash": "3d576d53cb4b",
+  "date": "2026-10-28",
+  "on": "Windows 11 Node 24.22.1 (2 processes) + Redis 8 in Docker (redis:8-alpine)"
+ },
+ "apis|ws ولا SSE ولا Socket.IO": {
+  "hash": "af72db8db1a2",
+  "date": "2026-10-28",
+  "on": "Windows 11 Node 24.22.1 socket.io 4.8.4 + raw ws client; docs: WebTransport"
+ },
+ "apis|أخطاء GraphQL و null": {
+  "hash": "f65be708124f",
+  "date": "2026-10-28",
+  "on": "Windows 11 Node 24.22.1 graphql-yoga 6.0.1 + curl"
  },
  "apis|توقيع webhooks صادرة": {
   "hash": "5c0055f5c4ad",
