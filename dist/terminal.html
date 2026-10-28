@@ -101936,6 +101936,1106 @@ Describe 'task' {
     }
 ]);
 
+/* ===== js/tabs/ps/24.js ===== */
+// تكملة تاب ps: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/ps/01.js (شرح حقول الدرس في أوله)
+MORE("ps", [
+    {
+      t: "مشروع ٣: من سكربت لموديول",
+      l: 3,
+      time: R`حوالي ساعة ونص`,
+      goal: [
+        R`تحوّل [[pc.ps1]] لتلات أوامر بأسماء زي أوامر النظام: [[Set-PcSchedule]] و [[Get-PcSchedule]] و [[Stop-PcSchedule]].`,
+        R`تخلي [[Get-Help]] يشتغل على أوامرك انت بالأمثلة والشرح، زي أي أمر أصلي.`,
+        R`تعمل ملف [[.psd1]] فيه نسخة الأداة ومتطلباتها.`,
+        R`تخلي Tab يقترح قيم انت حددتها.`,
+        R`تسطّبه مرة، فيشتغل في أي نافذة من غير [[Import-Module]].`,
+      ],
+      use: {
+        prog: R`ده الفرق بين سكربت وبين **حزمة**: اسم، ونسخة، وواجهة معلنة، وتوثيق جواها. نفس اللي بيفرّق بين ملف [[.js]] وبين package على npm.`,
+        net: R`أدوات السيرفر بتتسطب مرة وتتنادى من أي سكربت أو مهمة مجدولة. الموديول هو شكل التوزيع الرسمي في PowerShell، و [[Install-Module]] بياخد نفس الشكل ده.`,
+        cs: R`الموديول بيفرض حدود: إيه اللي بره (الواجهة) وإيه اللي جوه (التفاصيل). ده الـ encapsulation بالظبط، ومن غيره أي حد هيعتمد على تفاصيلك ومش هتقدر تغيّرها بعد كده.`,
+        work: R`الأداة اللي محتاجة مسار كامل ومحتاج تفتكر اسم ملفها مش هتتستخدم. اللي بتتكتب باسمها وبيكمّلها الـ Tab بتبقى جزء من يومك.`,
+      },
+      lab: R`New-Item -ItemType Directory "$HOME\lab\PcTool" -Force
+Set-Location "$HOME\lab"`,
+      projects: [
+        { t: R`موديول أدواتك الشخصي`, what: R`موديول اسمه [[MyTools]] تحط فيه كل دالة بتكررها: [[Get-Stamp]] و [[Write-Log]] و [[Test-Port]]. سطّبه مرة، وشيل الدوال دي من [[$PROFILE]]. من دروس ١ و ٥.` },
+        { t: R`نسختين جنب بعض`, what: R`خلي عندك [[PcTool\1.0.0]] و [[PcTool\1.1.0]] في نفس الفولدر، وجرّب [[Import-Module PcTool -RequiredVersion 1.0.0]]. هتفهم ليه الـ manifest لازم يبقى فيه نسخة. من درس ٣.` },
+        { t: R`إكمال من الواقع`, what: R`[[ArgumentCompleter]] بيقرا أسماء حقيقية من جهازك — أسماء الخدمات، أو أسماء الفولدرات في مشروعك — بدل قايمة ثابتة. من درس ٤.` },
+        { t: R`وزّعه على حد تاني`, what: R`اضغط فولدر الموديول في [[.zip]]، وابعته لزميلك، وخليه يفك الضغط في [[Documents\PowerShell\Modules]]. لو اشتغل عنده من غير ما تشرحله حاجة، يبقى الموديول متكامل. من درس ٥.` },
+      ],
+      n: R`الأداة شغالة، بس لسه ملف. في القسم ده بتبقى **أوامر**: ليها أسماء زي أوامر النظام، ومساعدة بتتقري بـ [[Get-Help]]، ونسخة، وإكمال تلقائي، وبتتحمّل لوحدها. ٥ خطوات على الأداة اللي بنيناها في مشروع ١`,
+      items: [
+        {
+          cmd: "مشروع ٣ — من سكربت لموديول",
+          title: "حوّل الأداة لأوامر بأسماء زي أوامر النظام",
+          learn: R`الفرق بين سكربت بيتشغّل وبين دالة بتتنادى، وإزاي تختار اسم الأمر.`,
+          out: R`[[Set-PcSchedule off -In 30]] بدل [[.\pc.ps1 off -In 30]].`,
+          use: {
+            prog: R`السكربت بيخرج بكود، والدالة بترجّع قيمة أو ترمي error. ده نفس الفرق بين process وبين function call: الأول بيتكلم بأرقام، والتاني بيتكلم بقيم وأنواع.`,
+            cs: R`[[Export-ModuleMember]] هي الواجهة المعلنة. اللي مش مكتوب فيها تفصيلة داخلية، تقدر تغيّرها بكرة من غير ما تكسر حد.`,
+          },
+          desc: R`الأداة في مشروع ١ ملف [[.ps1]]. عشان تشغّلها لازم تعرف مسارها، والمسار ده بيتغيّر من جهاز لجهاز. الموديول بيحلّ ده: بتكتب الوظايف كـ **دوال**، وبتنادي الدوال بأسمائها من أي مكان.
+
+بس مش مجرد نسخ ولزق. فيه تلات حاجات بتتغيّر:
+
+**١. الاسم بقى فعل-اسم.** السكربت كان ليه [[-Action off]]، وده كان صح للسكربت. في الموديول الفعل بيبقى جزء من **اسم الأمر** نفسه، زي كل أوامر PowerShell: [[Set-PcSchedule]] و [[Get-PcSchedule]] و [[Stop-PcSchedule]]. والفعل لازم يكون من القايمة المعتمدة ([[Get-Verb]])، وإلا [[Import-Module]] هيطلّع تحذير.
+
+**٢. مفيش [[exit]].** [[exit]] جوه دالة في موديول بيقفل **الجلسة كلها**، مش الدالة. بدالها: [[return]] للخروج، و [[throw]] للفشل، و**ترجّع object** للنجاح.
+
+**٣. اللي مش في [[Export-ModuleMember]] مبيبانش.** [[Write-PcLog]] و [[Save-PcState]] دوال داخلية، مش محتاج حد بره يشوفها. ودي ميزة مش نقص: لو محدش شايفها، تقدر تغيّرها بكرة.
+
+وملاحظة في التخزين: جوه موديول، المتغيرات المشتركة بتتكتب [[$script:StatePath]] بدل [[$StatePath]]. الـ [[$script:]] معناها «واحد لكل الموديول»، فكل الدوال بتشوف نفس القيمة.`,
+          example: R`# PcTool\PcTool.psm1
+$script:StatePath = "$env:LOCALAPPDATA\pc-tool\state.json"
+
+function Write-PcLog {
+    param([string]$Text)
+    Add-Content "$env:LOCALAPPDATA\pc-tool\pc.log" $Text -Encoding utf8
+}
+
+function Set-PcSchedule {
+    [CmdletBinding(SupportsShouldProcess)]
+    param(
+        [Parameter(Mandatory, Position = 0)]
+        [ValidateSet('off', 'restart')]
+        [string]$Kind,
+
+        [ValidateRange(0, 10080)]
+        [int]$In = 0
+    )
+    $at   = (Get-Date).AddSeconds($In * 60)
+    $flag = if ($Kind -eq 'off') { '/s' } else { '/r' }
+    if (-not $PSCmdlet.ShouldProcess("$Kind at $at", 'schedule')) { return }
+
+    shutdown.exe $flag /t ($In * 60)
+    if ($LASTEXITCODE -ne 0) { throw "shutdown.exe رجّع $LASTEXITCODE" }
+
+    Write-PcLog "اتجدول $Kind"
+    [pscustomobject]@{ Kind = $Kind; At = $at }
+}
+
+Export-ModuleMember -Function Set-PcSchedule`,
+          lines: [
+            R`متغير بيشوفه كل الموديول. من غير [[$script:]] كل دالة هتعمل نسخة لنفسها.`,
+            R`دالة داخلية: مش هتتكتب في [[Export-ModuleMember]]، فمحدش بره هيشوفها.`,
+            R`بتاخد نص واحد.`,
+            R`بتكتبه في اللوج. [[-Encoding utf8]] عشان العربي.`,
+            R`قفلة الدالة الداخلية.`,
+            R`الأمر الأول: فعل [[Set]] واسم [[PcSchedule]]. ده اللي اليوزر هيكتبه.`,
+            R`[[SupportsShouldProcess]] بتدّي [[-WhatIf]] و [[-Confirm]] مجانًا (درس «الوظيفة الخطرة» في مشروع ١).`,
+            R`بداية الـ parameters.`,
+            R`[[Mandatory]] يعني لازم، و [[Position = 0]] يعني ينفع تكتبه من غير [[-Kind]].`,
+            R`القيم المسموحة بس. ودي كمان اللي الـ Tab هيقترحها.`,
+            R`نوعه نص.`,
+            R`من صفر لأسبوع بالدقايق.`,
+            R`عدد الدقايق، والافتراضي حالًا.`,
+            R`قفلة الـ parameters.`,
+            R`الوقت اللي هيحصل فيه.`,
+            R`[[/s]] تقفل و [[/r]] تعمل restart.`,
+            R`بوابة المعاينة. لو [[-WhatIf]] اتكتبت، بترجع من هنا من غير ما تعمل حاجة.`,
+            R`السطر الخطر.`,
+            R`[[throw]] مش [[exit]]: جوه موديول، [[exit]] بيقفل الجلسة كلها.`,
+            R`اللوج بينادي الدالة الداخلية.`,
+            R`ترجّع **object**، مش تطبع نص. اللي مناديها يقدر يفلتره ويصدّره.`,
+            R`قفلة الدالة.`,
+            R`دي الواجهة: [[Set-PcSchedule]] بس اللي هيبان بره.`,
+          ],
+          try: R`اعمل الملف، وشغّل [[Import-Module .\PcTool\PcTool.psm1 -Force]]، وبعدين [[Get-Command -Module PcTool]]. وبعدين جرّب [[Get-Command Write-PcLog]] وشوف هيلاقيها ولا لأ. وجرّب تسمّي دالة [[Cancel-PcSchedule]] وشوف التحذير اللي هيطلع.`,
+          flag: "script",
+          deep: {
+            why: R`السكربت بيحل مشكلة واحدة. الموديول بيحل مشكلة التوزيع: اسم ثابت، وواجهة معلنة، وتفاصيل مخبّية. ولما تيجي تغيّر اسم ملف الحالة بعد شهر، هتغيّره في مكان واحد ومحدش هيحس، لأن محدش كان شايفه أصلًا.`,
+            how: R`[[Import-Module]] بيشغّل ملف الـ [[.psm1]] في **نطاق خاص بالموديول**. كل دالة ومتغير بيتعرّفوا هناك، مش في جلستك. وبعدين بيشوف [[Export-ModuleMember]] ويطلّع اللي فيها بس لجلستك.
+
+من غير [[Export-ModuleMember]] خالص، كل الدوال بتبان. أول ما تكتب السطر ده، بتبقى بتقول «دول بس»، والباقي بيتخبّي.
+
+[[$script:]] في موديول معناها «على مستوى الموديول»، مش على مستوى الملف اللي بتشغّله. فلو عندك تلات دوال بتقرا [[$script:StatePath]]، كلهم بيشوفوا نفس القيمة، وتقدر تغيّرها من دالة وتشوفها في التانية.
+
+الأفعال المعتمدة ([[Get-Verb]]) ٩٨ فعل مقسومين على مجموعات: [[Common]] زي [[Get]] و [[Set]]، و [[Lifecycle]] زي [[Start]] و [[Stop]]، و [[Data]] زي [[Import]] و [[Export]]. الفكرة إن اللي شايف اسم أمرك لأول مرة يبقى متوقّع هو بيعمل إيه.`,
+            when: R`أول ما الأداة تبقى حاجة هتستخدمها كل يوم، أو حاجة هتدّيها لحد تاني، أو لما يبقى عندك أكتر من سكربت بيشاركوا نفس الدوال.`,
+            mistakes: R`تكتب [[exit 1]] جوه دالة في موديول فتقفل جلسة اللي بينادي. أو تنسى [[Export-ModuleMember]] فتلاقي دوالك الداخلية كلها ظاهرة. أو تسمّي الدالة بفعل مش معتمد ([[Cancel-]] أو [[Delete-]]) فتاخد تحذير ومحدش يلاقي أمرك. أو تستخدم [[$StatePath]] من غير [[$script:]] فكل دالة تشتغل على نسخة فاضية.`
+          },
+          teach: R`## من فين لفين
+
+قبل، في مشروع ١، كنت بتكتب:
+
+~~~powershell السكربت
+.\pc.ps1 off -In 30
+~~~
+
+ولازم تكون واقف في الفولدر الصح، أو تكتب المسار كامل. بعد القسم ده:
+
+~~~powershell الموديول
+Set-PcSchedule off -In 30
+~~~
+
+من أي مكان، وبإكمال تلقائي، وبـ [[Get-Help]] شغالة عليه.
+
+---
+
+## ١. الاسم: فعل-اسم مش [[-Action]]
+
+السكربت كان بياخد [[-Action off]]. ده كان منطقي: ملف واحد بيعمل أكتر من حاجة، فمحتاج يعرف أنهي حاجة.
+
+الموديول مش ملف واحد — ده **مجموعة أوامر**. فالفعل بيطلع برّه ويبقى جزء من الاسم:
+
+| السكربت | الموديول |
+|---|---|
+| [[.\pc.ps1 off -In 30]] | [[Set-PcSchedule off -In 30]] |
+| [[.\pc.ps1 cancel]] | [[Stop-PcSchedule]] |
+| [[.\pc.ps1 status]] | [[Get-PcSchedule]] |
+
+ودي مش حاجة شكلية. دلوقتي [[Get-Command -Noun PcSchedule]] بتوريك كل اللي ممكن تعمله بالمعاد ده، و [[Get-Command -Verb Get]] بتحطّ أمرك مع كل أوامر القراية في النظام.
+
+> الفعل لازم يكون من القايمة المعتمدة. شوفها بـ [[Get-Verb]].
+
+---
+
+## ٢. الفعل اللي مش معتمد بيطلّع تحذير
+
+جرّبت أسمّي دالة [[Cancel-PcSchedule]] — [[Cancel]] مش فعل معتمد:
+
+~~~powershell PowerShell 7.6 · ويندوز 11
+Import-Module .\Bad\Bad.psm1 -Force
+~~~
+
+~~~text الناتج (اتشغّل فعلًا)
+WARNING: The names of some imported commands from the module 'Bad' include
+unapproved verbs that might make them less discoverable. To find the commands
+with unapproved verbs, run the Import-Module command again with the Verbose
+parameter. For a list of approved verbs, type Get-Verb.
+~~~
+
+الموديول بيشتغل، بس اللي بيدوّر مش هيلاقيك. والأفعال اللي معناها «ألغي»:
+
+~~~text Get-Verb | Where-Object Verb -in "Stop","Remove","Disable","Clear"  (اتشغّل فعلًا)
+Verb     Group       Description
+----     -----       -----------
+Clear    Common      Removes all the resources from a container but does not delete the container
+Remove   Common      Deletes a resource from a container
+Disable  Lifecycle   Configures a resource to an unavailable or inactive state
+Stop     Lifecycle   Discontinues an activity
+~~~
+
+إحنا بنوقف نشاط متجدول، يبقى [[Stop]].
+
+---
+
+## ٣. [[exit]] ممنوعة جوه موديول
+
+في السكربت كان آخر سطر:
+
+~~~powershell مشروع ١
+switch ($Action) {
+    'cancel' { exit (Invoke-Cancel) }
+}
+~~~
+
+جوه موديول ده **كارثة**: [[exit]] مش بتخرج من الدالة، دي بتقفل نافذة PowerShell كلها. اللي بينادي أمرك هيلاقي الجلسة بتاعته اتقفلت.
+
+البديل تلاتة، كل واحد لحالة:
+
+| الحالة | في السكربت | في الموديول |
+|---|---|---|
+| خلصت بنجاح | [[exit 0]] | [[return]] أو ترجّع object |
+| فشلت | [[exit 2]] | [[throw "السبب"]] |
+| مفيش حاجة تتعمل | [[exit 0]] | [[return]] من غير قيمة |
+
+و [[throw]] أحسن من [[exit 2]]: الرقم ٢ لازم اللي مناديك يعرف معناه، أما رسالة الـ error فبتقول السبب لأي حد.
+
+---
+
+## ٤. اللي بره واللي جوه
+
+~~~powershell آخر سطر في PcTool.psm1
+Export-ModuleMember -Function Set-PcSchedule, Get-PcSchedule, Stop-PcSchedule
+~~~
+
+[[Write-PcLog]] و [[Save-PcState]] مش في القايمة، فمش هيبانوا. جرّبت:
+
+~~~text بعد Import-Module (اتشغّل فعلًا)
+Get-Command -Module PcTool
+
+Name              CommandType
+----              -----------
+Get-PcSchedule       Function
+Set-PcSchedule       Function
+Stop-PcSchedule      Function
+
+Get-Command Write-PcLog  ->  مفيش
+~~~
+
+ودي الفايدة الحقيقية: [[Write-PcLog]] بتاعتي، أقدر أغيّرها أو أشيلها بكرة. لو كانت ظاهرة، يمكن حد بنى عليها وبقيت مربوط بيها.
+
+---
+
+## ٥. [[$script:]] للمتغيرات المشتركة
+
+~~~powershell أول سطر في الموديول
+$script:StatePath = "$env:LOCALAPPDATA\pc-tool\state.json"
+~~~
+
+من غير [[$script:]]، كل دالة بتشوف متغير فاضي وبتعمل واحد جديد لنفسها. مع [[$script:]]، التلات دوال بيشوفوا نفس الملف.
+
+---
+
+## الخلاصة
+
+- الاسم فعل-اسم من [[Get-Verb]]، وإلا محدش هيلاقيك.
+- [[exit]] تتشال: [[return]] للخروج، [[throw]] للفشل، object للنجاح.
+- [[Export-ModuleMember]] هي الواجهة؛ اللي مش فيها تفصيلة داخلية.
+- [[$script:]] للمتغير اللي كل الدوال بتشاركه.`,
+          sol: R`الأمر اللي بيحمّل الموديول ويوريك إيه اللي ظاهر منه، والنتيجة الحقيقية. و [[Get-Command Write-PcLog]] بيرجع فاضي، لأنها مش في [[Export-ModuleMember]].`,
+          solCode: R`Import-Module .\PcTool\PcTool.psm1 -Force
+Get-Command -Module PcTool | Format-Table -AutoSize Name, CommandType
+
+# الناتج (اتشغّل فعلًا على ويندوز 11 و PowerShell 7.6):
+# Name              CommandType
+# ----              -----------
+# Get-PcSchedule       Function
+# Set-PcSchedule       Function
+# Stop-PcSchedule      Function`
+        },
+
+        {
+          cmd: "مشروع ٣ — المساعدة بتتكتب في الكود",
+          title: "خلي Get-Help يشتغل على أوامرك انت",
+          learn: R`تكتب المساعدة كتعليق فوق الدالة، فـ [[Get-Help]] يقراها زي أي أمر أصلي.`,
+          out: R`[[Get-Help Set-PcSchedule -Examples]] بتطلّع أمثلتك انت.`,
+          use: {
+            prog: R`التوثيق اللي جنب الكود بيتحدّث معاه؛ اللي في ملف تاني بيبقى كداب بعد شهر. دي نفس فكرة docstrings في Python و JSDoc في JavaScript.`,
+            work: R`بعد ٦ شهور انت هتبقى «حد تاني» على كودك. المساعدة دي ليك انت قبل ما تبقى لحد غيرك.`,
+            cs: R`المساعدة جزء من الواجهة زي التوقيع بالظبط: الاتنين بيقولوا للمستخدم يعمل إيه من غير ما يفتح الكود.`,
+          },
+          desc: R`في درس «[[Update-Help]] و [[about_]]» اتعلمت تقرا مساعدة الأوامر. دلوقتي هتكتب واحدة.
+
+PowerShell بيقرا **تعليق بشكل معيّن** فوق الدالة ويحوّله لمساعدة كاملة. التعليق ده بيتكتب بين [[<#]] و [[#>]]، وجواه أقسام بتبدأ بنقطة:
+
+[[.SYNOPSIS]] سطر واحد: الأمر بيعمل إيه.
+[[.DESCRIPTION]] الشرح الكامل.
+[[.PARAMETER Kind]] شرح لكل parameter (الاسم لازم يطابق).
+[[.EXAMPLE]] مثال، وتحته سطر بيشرحه.
+[[.OUTPUTS]] بيرجّع إيه.
+[[.LINK]] أوامر ليها علاقة.
+
+واللي بيحصل بعدها إن [[Get-Help Set-PcSchedule]] بتشتغل زي ما بتشتغل على [[Get-ChildItem]] بالظبط. ومعاها [[-Examples]] و [[-Detailed]] و [[-Full]].
+
+والجزء اللي مش بتكتبه: [[SYNTAX]]. ده PowerShell بيولّده لوحده من الـ [[param]] بتاعك. يعني لو غيّرت parameter، سطر الاستخدام بيتحدّث من غير ما تلمس التعليق.`,
+          example: R`# PcTool\PcTool.psm1
+function Set-PcSchedule {
+<#
+.SYNOPSIS
+    يجدول قفل الجهاز أو إعادة تشغيله بعد مهلة.
+.DESCRIPTION
+    بينادي shutdown.exe ويسجّل المعاد في ملف حالة، عشان Get-PcSchedule يعرف يقراه.
+    بيدعم -WhatIf و -Confirm، وبيرمي error لو shutdown.exe فشل.
+.PARAMETER Kind
+    off لقفل الجهاز، أو restart لإعادة التشغيل.
+.PARAMETER In
+    بعد كام دقيقة. 0 يعني حالًا، والحد الأقصى 10080 دقيقة (أسبوع).
+.PARAMETER Force
+    متسألش قبل التنفيذ. ضرورية في أي مهمة مجدولة.
+.EXAMPLE
+    Set-PcSchedule off -In 30
+    يقفل الجهاز بعد نص ساعة.
+.EXAMPLE
+    Set-PcSchedule restart -In 5 -WhatIf
+    يقولك هيعمل إيه من غير ما ينفّذ.
+.OUTPUTS
+    PcTool.Schedule
+.LINK
+    Get-PcSchedule
+#>
+    [CmdletBinding(SupportsShouldProcess)]
+    [OutputType('PcTool.Schedule')]
+    param(
+        [Parameter(Mandatory, Position = 0)]
+        [ValidateSet('off', 'restart')]
+        [string]$Kind
+    )
+}`,
+          lines: [
+            R`بداية الدالة.`,
+            R`[[<#]] بتفتح التعليق، و [[#>]] بتقفله. لازم يكون **جوه** الدالة وقبل [[CmdletBinding]].`,
+            R`سطر واحد بس، وده اللي بيظهر في [[Get-Command]] وفي نتايج البحث.`,
+            R`نص الـ SYNOPSIS.`,
+            R`الشرح الكامل، بيظهر في [[Get-Help]] العادية.`,
+            R`أول سطر من الشرح.`,
+            R`تاني سطر منه.`,
+            R`شرح parameter اسمه [[Kind]] — الاسم لازم يطابق اللي في [[param]].`,
+            R`نص شرحه.`,
+            R`شرح [[In]].`,
+            R`نص شرحه.`,
+            R`شرح [[Force]].`,
+            R`نص شرحه.`,
+            R`مثال. بيظهر مع [[-Examples]].`,
+            R`سطر المثال نفسه.`,
+            R`السطر اللي بعده بيبقى شرح المثال.`,
+            R`مثال تاني. حط دايمًا واحد بـ [[-WhatIf]].`,
+            R`سطر المثال.`,
+            R`شرحه.`,
+            R`بيرجّع إيه.`,
+            R`اسم النوع اللي بنرجّعه.`,
+            R`أوامر ليها علاقة، بتظهر في RELATED LINKS.`,
+            R`اسم الأمر التاني.`,
+            R`[[CmdletBinding]] بعد التعليق على طول.`,
+            R`[[OutputType]] بتعلن النوع للأدوات. مش بتفرض حاجة، بس [[Get-Command -OutputType]] بتقراها.`,
+            R`بداية الـ parameters.`,
+            R`لازم، والموقع الأول.`,
+            R`القيم المسموحة.`,
+            R`نوعه نص.`,
+            R`قفلة الـ parameters.`,
+            R`قفلة الدالة.`,
+          ],
+          try: R`ضيف التعليق ده، واعمل [[Import-Module ... -Force]]، وشغّل [[Get-Help Set-PcSchedule]] وبعدين [[Get-Help Set-PcSchedule -Examples]]. وبعدين **شيل** parameter من [[param]] وشوف قسم [[SYNTAX]] اتغيّر لوحده ولا لأ.`,
+          flag: "script",
+          deep: {
+            why: R`الأداة اللي محدش عارف يستخدمها مش موجودة. والتوثيق اللي في ملف منفصل بيتنسى، فبيبقى كداب بعد تعديلين. التعليق ده جنب الكود، فبيتعدّل معاه.`,
+            how: R`PowerShell بيحلّل الـ AST بتاع الدالة ويدوّر على تعليق [[<# ... #>]] في واحد من تلات أماكن: أول حاجة جوه الدالة، أو قبل كلمة [[function]] على طول، أو في آخر الدالة. الأشهر والأوضح هو الأول.
+
+الأقسام اللي بيعرفها: [[.SYNOPSIS]] و [[.DESCRIPTION]] و [[.PARAMETER]] و [[.EXAMPLE]] و [[.INPUTS]] و [[.OUTPUTS]] و [[.NOTES]] و [[.LINK]] و [[.COMPONENT]] و [[.ROLE]] و [[.FUNCTIONALITY]] و [[.FORWARDHELPTARGETNAME]].
+
+في [[.EXAMPLE]]: أول سطر هو الأمر، وأي سطر بعده بيبقى الشرح. ومتكتبش [[PS>]] قدام الأمر — PowerShell بيحطها لوحده في العرض.
+
+قسم [[SYNTAX]] متولّد من الـ [[param]]، مش من التعليق. فلو ضفت parameter جديد هيظهر في السطر على طول من غير ما تكتبه تاني. ده معناه إن أهم جزء في المساعدة مستحيل يبقى قديم.
+
+و [[Get-Help]] بتبحث كمان: [[Get-Help *Pc*]] بتلاقي أوامرك من الـ SYNOPSIS.`,
+            when: R`أي دالة هتبقى في موديول. ولو الدالة داخلية ومش هتتصدّر، تعليق عادي بسطر واحد يكفي.`,
+            mistakes: R`تحط التعليق **فوق** [[function]] بمسافة سطر فاضي بينهم، فمبيتقراش (لازم يكون ملزوق). أو تكتب [[.PARAMETER Kinds]] والـ parameter اسمه [[Kind]] فالشرح بيتجاهل. أو تكتب [[PS>]] في المثال فتطلع مرتين. أو تكتب [[.SYNOPSIS]] في فقرتين — ده سطر واحد، والباقي مكانه [[.DESCRIPTION]].`
+          },
+          teach: R`## الفكرة في سطر
+
+تعليق بشكل متفق عليه فوق الدالة = مساعدة كاملة من غير أي ملف زيادة.
+
+---
+
+## ١. الشكل
+
+~~~powershell القالب
+function Set-PcSchedule {
+<#
+.SYNOPSIS
+    سطر واحد.
+.DESCRIPTION
+    الشرح الكامل.
+.PARAMETER Kind
+    شرح الـ parameter ده.
+.EXAMPLE
+    Set-PcSchedule off -In 30
+    السطر ده شرح المثال اللي فوقه.
+#>
+    [CmdletBinding()]
+    param([string]$Kind)
+}
+~~~
+
+تلات شروط بس:
+
+- التعليق **جوه** الدالة، وأول حاجة فيها.
+- كل قسم بيبدأ بنقطة في أول السطر.
+- اسم الـ [[.PARAMETER]] يطابق اللي في [[param]] بالحرف.
+
+---
+
+## ٢. الناتج الحقيقي
+
+شغّلت [[Get-Help Set-PcSchedule]] بعد ما كتبت التعليق:
+
+~~~text اتشغّل فعلًا · PowerShell 7.6
+NAME
+    Set-PcSchedule
+
+SYNOPSIS
+    يجدول قفل الجهاز أو إعادة تشغيله بعد مهلة.
+
+SYNTAX
+    Set-PcSchedule [-Kind] <String> [-In <Int32>] [-Message <String>] [-Force]
+    [-WhatIf] [-Confirm] [<CommonParameters>]
+
+DESCRIPTION
+    بينادي shutdown.exe ويسجّل المعاد في ملف حالة، عشان Get-PcSchedule يعرف يقراه.
+    بيدعم -WhatIf و -Confirm، وبيرمي error لو shutdown.exe فشل.
+
+RELATED LINKS
+    Get-PcSchedule
+
+REMARKS
+    To see the examples, type: "Get-Help Set-PcSchedule -Examples"
+~~~
+
+**بص على [[SYNTAX]]:** أنا مكتبتهوش. ده اتولّد من الـ [[param]] بتاعي، وفيه [[-WhatIf]] و [[-Confirm]] اللي جايين من [[SupportsShouldProcess]]. يعني أهم سطر في المساعدة مستحيل يبقى قديم.
+
+---
+
+## ٣. الأمثلة
+
+~~~text Get-Help Set-PcSchedule -Examples  (اتشغّل فعلًا)
+    -------------------------- EXAMPLE 1 --------------------------
+
+    PS > Set-PcSchedule off -In 30
+    يقفل الجهاز بعد نص ساعة.
+
+    -------------------------- EXAMPLE 2 --------------------------
+
+    PS > Set-PcSchedule restart -In 5 -WhatIf
+    يقولك هيعمل إيه من غير ما ينفّذ.
+~~~
+
+الـ [[PS >]] دي PowerShell حطّها لوحده. **متكتبهاش انت** وإلا هتطلع مرتين.
+
+> خلي تاني مثال دايمًا بـ [[-WhatIf]]. اللي بيقرا مساعدة أمر خطير أول سؤال عنده: أجرّبه إزاي من غير ما أقع؟
+
+---
+
+## ٤. اللي بيفرق في الاستخدام
+
+| تكتب | تاخد |
+|---|---|
+| [[Get-Help Set-PcSchedule]] | الشرح وسطر الاستخدام |
+| [[Get-Help Set-PcSchedule -Examples]] | أمثلتك بس |
+| [[Get-Help Set-PcSchedule -Full]] | كل حاجة، ومعاها شرح كل parameter |
+| [[Get-Help *Pc*]] | بيدوّر في الـ SYNOPSIS ويلاقي أوامرك |
+| [[Set-PcSchedule -?]] | نفس [[Get-Help]] بالظبط |
+
+---
+
+## ٥. الفخ: مسافة سطر
+
+~~~powershell ده مش هيشتغل
+<#
+.SYNOPSIS
+    سطر واحد.
+#>
+
+function Set-PcSchedule { }
+~~~
+
+السطر الفاضي بين التعليق و [[function]] بيكسر الربط. يا إما ملزوقين، يا إما التعليق جوه الدالة. والتاني أأمن.
+
+---
+
+## الخلاصة
+
+- التعليق جوه الدالة وأول حاجة فيها.
+- [[.SYNOPSIS]] سطر واحد؛ الباقي في [[.DESCRIPTION]].
+- أسماء [[.PARAMETER]] لازم تطابق [[param]] بالحرف.
+- [[SYNTAX]] متولّد لوحده — ومش محتاج تكتبه ولا تحدّثه.
+- مثال بـ [[-WhatIf]] في أي أمر خطير.`,
+          sol: R`الأمرين اللي بتفحص بيهم، وناتجهم الحقيقي. لاحظ إن [[SYNTAX]] فيه [[-WhatIf]] و [[-Confirm]] وانا مكتبتهمش في التعليق — جايين من [[SupportsShouldProcess]].`,
+          solCode: R`Get-Help Set-PcSchedule
+Get-Help Set-PcSchedule -Examples
+
+# من الناتج (اتشغّل فعلًا على PowerShell 7.6):
+# SYNTAX
+#     Set-PcSchedule [-Kind] <String> [-In <Int32>] [-Message <String>] [-Force]
+#     [-WhatIf] [-Confirm] [<CommonParameters>]
+#
+#     -------------------------- EXAMPLE 1 --------------------------
+#     PS > Set-PcSchedule off -In 30
+#     يقفل الجهاز بعد نص ساعة.`
+        },
+
+        {
+          cmd: "مشروع ٣ — الـ manifest",
+          title: "ملف .psd1: بطاقة هوية الموديول",
+          learn: R`تعمل ملف [[.psd1]] فيه نسخة الأداة ومتطلباتها وقايمة اللي بتصدّره.`,
+          out: R`[[Get-Module -ListAvailable]] بتوريك اسم أداتك ونسختها.`,
+          use: {
+            prog: R`ده الـ [[package.json]] بتاع PowerShell: اسم، ونسخة، واعتماديات، ونقطة دخول. ومن غيره مفيش طريقة تقول «أنا عايز نسخة ١.٠ مش ٢.٠».`,
+            net: R`[[PowerShellVersion]] و [[RequiredModules]] بيخلّوا الأداة ترفض تشتغل على سيرفر ناقصه حاجة، بدل ما تفشل في النص.`,
+            cs: R`الإصدار الدلالي (major.minor.patch) عقد: الرقم الأول بيتغيّر لما تكسر حاجة. وده اللي بيخلي حد يعتمد عليك.`,
+          },
+          desc: R`الموديول ينفع يشتغل بملف [[.psm1]] لوحده. بس ساعتها مفيش نسخة، ومفيش وصف، ومفيش طريقة تقول «ده محتاج PowerShell 7».
+
+الـ manifest ملف [[.psd1]] — ده مجرد **hashtable** مكتوبة في ملف. أهم حاجات فيه:
+
+[[RootModule]] الملف اللي فيه الكود ([[PcTool.psm1]]).
+[[ModuleVersion]] نسخة الأداة، وده اللي بيخلي [[-RequiredVersion]] تشتغل.
+[[GUID]] معرّف فريد بيتولّد لوحده، بيفرّق موديولك عن أي موديول تاني بنفس الاسم.
+[[Author]] و [[Description]] — الوصف بيظهر في البحث.
+[[PowerShellVersion]] أقل نسخة لازمة.
+[[FunctionsToExport]] قايمة الدوال الظاهرة.
+
+ومتعملوش بإيدك: [[New-ModuleManifest]] بتعمله بكل المفاتيح ومعاها تعليقات.
+
+وفيه حاجة مهمة في [[FunctionsToExport]]: اكتب الأسماء صريحة، **متكتبش** [[*]]. السبب إن PowerShell بيقرا الـ manifest عشان يعرف أي موديول فيه الأمر اللي انت كتبته، من غير ما يشغّل الموديول. ولو لقى نجمة، هيضطر يحمّل الموديول كله عشان يعرف. يعني النجمة بتبطّأ فتح كل نافذة جديدة.`,
+          example: R`# شغّله مرة واحدة جوه فولدر PcTool
+$params = @{
+    Path              = '.\PcTool\PcTool.psd1'
+    RootModule        = 'PcTool.psm1'
+    ModuleVersion     = '1.0.0'
+    Author            = 'انت'
+    Description       = 'تجدول قفل الجهاز أو إعادة تشغيله، وتلغي المعاد، وتقولك فيه معاد ولا لأ.'
+    PowerShellVersion = '7.0'
+    FunctionsToExport = @('Set-PcSchedule', 'Get-PcSchedule', 'Stop-PcSchedule')
+    CmdletsToExport   = @()
+    VariablesToExport = @()
+    AliasesToExport   = @()
+}
+New-ModuleManifest @params
+
+Test-ModuleManifest .\PcTool\PcTool.psd1`,
+          lines: [
+            R`hashtable فيها كل الإعدادات. ده الـ **splatting**، وبيغنيك عن سطور طويلة أو علامات استمرار.`,
+            R`مكان الملف. اسمه لازم يطابق اسم الفولدر.`,
+            R`ملف الكود اللي الـ manifest بيشاور عليه.`,
+            R`النسخة. غيّرها كل ما تعدّل حاجة.`,
+            R`اسمك.`,
+            R`الوصف، وبيظهر في [[Get-Module -ListAvailable]] وفي البحث.`,
+            R`أقل نسخة PowerShell. لو الجهاز أقل، الموديول بيرفض يتحمّل.`,
+            R`الدوال الظاهرة، **صريحة** مش [[*]].`,
+            R`مفيش cmdlets (دي بتتكتب بـ C#).`,
+            R`مفيش متغيرات مصدّرة.`,
+            R`مفيش اختصارات.`,
+            R`قفلة الـ hashtable.`,
+            R`الـ [[@]] قبل الاسم معناها «فك الـ hashtable دي كـ parameters».`,
+            R`بيتأكد إن الملف سليم وإن [[RootModule]] موجود فعلًا.`,
+          ],
+          try: R`شغّل الأمر، وافتح [[PcTool.psd1]] واقراه — ده نص عادي. وبعدين غيّر [[ModuleVersion]] لـ [[1.1.0]]، وشغّل [[Test-ModuleManifest]] تاني. وبعدين جرّب تحط [[RootModule = 'مش-موجود.psm1']] وشوف [[Test-ModuleManifest]] هتقول إيه.`,
+          flag: "script",
+          deep: {
+            why: R`من غير manifest، موديولك ملف كود. مفيش طريقة حد يقول «أنا شغّال على ١.٠» ولا طريقة تقول «ده محتاج ٧». وأول ما تبقى عايز توزّعه أو تخلي حاجة تانية تعتمد عليه، النسخة بتبقى أول حاجة محتاجها.`,
+            how: R`الـ [[.psd1]] عبارة عن hashtable بتتقري في **وضع مقيّد**: PowerShell بيقراها من غير ما ينفّذ أي كود فيها. عشان كده آمن إنه يقرا manifest لموديول مش واثق فيه.
+
+ولما تكتب [[Import-Module PcTool]]، PowerShell بيدوّر على فولدر اسمه [[PcTool]]، وجواه بيدوّر على [[PcTool.psd1]] الأول. لو لقاه، بيقراه، وبيحمّل الـ [[RootModule]] اللي فيه. لو ملقهوش، بيحمّل [[PcTool.psm1]] على طول.
+
+[[FunctionsToExport]] بالأسماء الصريحة هي اللي بتخلي الـ autoloading رخيص: PowerShell بيعمل فهرس من كل الـ manifests مرة واحدة، فلما تكتب [[Set-PcSchedule]] بيعرف على طول هو في أنهي موديول. مع [[*]] مش هيعرف غير لما يحمّل الموديول، فبيحمّل كل الموديولات.
+
+مفاتيح تانية مفيدة: [[RequiredModules]] (موديولات لازم تتحمّل الأول)، و [[RequiredAssemblies]]، و [[PrivateData.PSData.Tags]] و [[ProjectUri]] (للنشر على PowerShell Gallery)، و [[CompatiblePSEditions]].
+
+و [[Test-ModuleManifest]] بترجّع object فيه كل ده، فينفع تستخدمه في اختبار: [[(Test-ModuleManifest .\PcTool.psd1).Version]].`,
+            when: R`أول ما الموديول يخرج من جهازك، أو أول ما تبقى عايز تعرف أنهي نسخة شغالة. وعمليًا: من أول يوم، لأن إضافته بعدين معناها إن اللي سطّبوه الأول عندهم نسخة من غير رقم.`,
+            mistakes: R`اسم الملف مش زي اسم الفولدر، فـ [[Import-Module PcTool]] مش بيلاقيه. أو [[FunctionsToExport = '*']] فبتبطّأ كل نافذة جديدة. أو تنسى تزوّد [[ModuleVersion]] بعد ما تعدّل، فاللي عنده النسخة القديمة مش هياخد الجديدة. أو تكتب كود حقيقي جوه الـ [[.psd1]] — ده بيتقري في وضع مقيّد ومش بينفّذ.`
+          },
+          teach: R`## الفكرة في سطر
+
+[[.psd1]] هو [[package.json]] بتاع PowerShell: اسم، ونسخة، ومتطلبات، وقايمة اللي بتصدّره.
+
+---
+
+## ١. اعمله بأمر، متكتبوش
+
+~~~powershell PowerShell 7.6
+$params = @{
+    Path              = '.\PcTool\PcTool.psd1'
+    RootModule        = 'PcTool.psm1'
+    ModuleVersion     = '1.0.0'
+    Description       = 'تجدول قفل الجهاز أو إعادة تشغيله.'
+    PowerShellVersion = '7.0'
+    FunctionsToExport = @('Set-PcSchedule', 'Get-PcSchedule', 'Stop-PcSchedule')
+}
+New-ModuleManifest @params
+~~~
+
+الـ [[@params]] دي **splatting**: بتاخد الـ hashtable وتفكّها كـ parameters. بتستخدمها لما الأمر ياخد مفاتيح كتير، بدل سطر طويل أوي.
+
+---
+
+## ٢. اللي اتكتب فعلًا
+
+الملف بيطلع طويل ومليان تعليقات، بس السطور اللي بتفرق:
+
+~~~text من PcTool.psd1 (اتشغّل فعلًا)
+RootModule = 'PcTool.psm1'
+ModuleVersion = '1.0.0'
+GUID = '4e5b04a9-3f4e-4e00-a589-617ca46bf522'
+Author = 'انت'
+Description = 'تجدول قفل الجهاز أو إعادة تشغيله، وتلغي المعاد، وتقولك فيه معاد ولا لأ.'
+PowerShellVersion = '7.0'
+FunctionsToExport = 'Set-PcSchedule', 'Get-PcSchedule', 'Stop-PcSchedule'
+CmdletsToExport = @()
+AliasesToExport = @()
+~~~
+
+الـ [[GUID]] اتولّد لوحده. ده معرّف فريد، بيفرّق موديولك عن أي موديول تاني بنفس الاسم على نفس الجهاز.
+
+---
+
+## ٣. اتأكد إنه سليم
+
+~~~powershell PowerShell 7.6
+$m = Test-ModuleManifest .\PcTool\PcTool.psd1
+'{0} v{1} — بيصدّر {2} دالة' -f $m.Name, $m.Version, $m.ExportedFunctions.Count
+~~~
+
+~~~text الناتج (اتشغّل فعلًا)
+PcTool v1.0.0 — بيصدّر 3 دالة
+~~~
+
+[[Test-ModuleManifest]] مش بتقرا بس، دي **بتتأكد**: إن [[RootModule]] موجود، وإن الدوال اللي في [[FunctionsToExport]] موجودة فعلًا. حطّها في اختباراتك.
+
+---
+
+## ٤. ليه متكتبش نجمة
+
+~~~powershell بطيء
+FunctionsToExport = '*'
+~~~
+
+~~~powershell صح
+FunctionsToExport = 'Set-PcSchedule', 'Get-PcSchedule', 'Stop-PcSchedule'
+~~~
+
+PowerShell بيعمل فهرس من كل الـ manifests عشان يعرف أي أمر في أي موديول — **من غير ما يشغّل أي موديول**. لما يلاقي نجمة، مبيعرفش، فمضطر يحمّل الموديول كله عشان يسأله.
+
+واحد ولا اتنين مش هيبان. عشرين موديول بنجمة = كل نافذة جديدة بتاخد تانية زيادة في الفتح.
+
+---
+
+## ٥. المفاتيح اللي هتحتاجها بعدين
+
+| المفتاح | بيعمل إيه |
+|---|---|
+| [[RequiredModules]] | موديولات لازم تتحمّل قبل موديولك |
+| [[CompatiblePSEditions]] | [[Core]] (نسخة 7) ولا [[Desktop]] (نسخة 5.1) |
+| [[PrivateData.PSData.Tags]] | كلمات للبحث على PowerShell Gallery |
+| [[ProjectUri]] | لينك الريبو |
+| [[FileList]] | الملفات اللي جوه الموديول |
+
+---
+
+## ٦. النسخة مش رقم عشوائي
+
+[[1.4.2]] = major.minor.patch:
+
+- **patch**: صلّحت غلطة، والاستخدام زي ما هو.
+- **minor**: ضفت حاجة جديدة، واللي شغّال هيفضل شغّال.
+- **major**: كسرت حاجة — غيّرت اسم parameter أو شلت دالة.
+
+الرقم الأول هو العقد. لو حد كاتب في سكربته [[-RequiredVersion 1.0.0]]، انت ضامن له إن مفيش حاجة هتتكسر.
+
+---
+
+## الخلاصة
+
+- [[New-ModuleManifest]] بتعمله؛ متكتبوش بإيدك.
+- اسم الـ [[.psd1]] لازم يطابق اسم الفولدر.
+- [[FunctionsToExport]] صريحة، مش [[*]].
+- [[Test-ModuleManifest]] بتتأكد، مش بتقرا بس — حطّها في اختباراتك.
+- زوّد [[ModuleVersion]] مع كل تعديل.`,
+          sol: R`الأمر اللي بيتأكد إن الـ manifest سليم، وناتجه. و [[Test-ModuleManifest]] بترجّع object، فتقدر تقرا منه أي مفتاح.`,
+          solCode: R`$m = Test-ModuleManifest .\PcTool\PcTool.psd1
+'{0} v{1} — بيصدّر {2} دالة' -f $m.Name, $m.Version, $m.ExportedFunctions.Count
+
+# الناتج (اتشغّل فعلًا على PowerShell 7.6):
+# PcTool v1.0.0 — بيصدّر 3 دالة`
+        },
+
+        {
+          cmd: "مشروع ٣ — إكمال تلقائي لقيمك",
+          title: "Register-ArgumentCompleter: خلي Tab يقترح قيمك انت",
+          learn: R`تكتب كود بيقرر الـ Tab يقترح إيه لـ parameter معيّن في أمرك.`,
+          out: R`[[Set-PcSchedule off -In]] + Tab بيقترح 5 و 15 و 30 و 60.`,
+          use: {
+            prog: R`ده نفس الـ IntelliSense، بس انت اللي بتكتب مصدره. والفرق إن الاقتراح هنا ممكن يبقى **حي**: أسماء ملفات موجودة دلوقتي، أو خدمات شغالة دلوقتي.`,
+            net: R`إكمال بأسماء السيرفرات من ملف inventory، أو بأسماء الخدمات الشغالة فعلًا، بيمنع نص الأخطاء على السيرفر قبل ما تحصل.`,
+            work: R`الاقتراح بيوفّر عليك تفتكر. والأداة اللي الـ Tab بيكمّلها بتبقى أسهل من أداة محتاجة تفتح مساعدتها.`,
+          },
+          desc: R`في درس «[[Tab]] و [[Ctrl+Space]]» شفت إن PowerShell بيكمّل أسماء الأوامر والـ parameters وقيم الـ [[ValidateSet]]. دلوقتي هتضيف اقتراحاتك انت.
+
+الفرق بين الاتنين مهم:
+
+[[ValidateSet]] قايمة **ثابتة** ومقفولة: دي القيم المسموحة وبس، وأي حاجة تانية الأداة ترفضها. الـ Tab بيكمّلها مجانًا.
+[[Register-ArgumentCompleter]] اقتراحات **مفتوحة**: دي حاجات مقترحة، وممكن تكتب غيرها. والقايمة بتتحسب وانت بتضغط Tab، فتقدر تجيبها من أي مكان: ملف، أو أمر تاني، أو الشبكة.
+
+في أداتنا: [[-Kind]] فيه [[ValidateSet]] لأن القيم الوحيدة [[off]] و [[restart]]. لكن [[-In]] رقم من ٠ لـ ١٠٠٨٠، ومينفعش تحطه في قايمة — بس تقدر **تقترح** الأرقام اللي الناس بتستخدمها.
+
+الدالة اللي بتكتبها بتاخد تلات حاجات مهمة: اسم الأمر، واسم الـ parameter، و**اللي اليوزر كتبه لحد دلوقتي**. وبترجّع كائنات [[CompletionResult]]، كل واحد فيه: القيمة اللي هتتكتب، والنص اللي هيبان في القايمة، ونوعه، وتلميح.`,
+          example: R`# في آخر PcTool.psm1، قبل Export-ModuleMember
+Register-ArgumentCompleter -CommandName Set-PcSchedule -ParameterName In -ScriptBlock {
+    param($cmd, $param, $word)
+    5, 15, 30, 60, 120 |
+        Where-Object { "$_".StartsWith($word) } |
+        ForEach-Object {
+            [System.Management.Automation.CompletionResult]::new(
+                "$_", "$_ دقيقة", 'ParameterValue', "بعد $_ دقيقة")
+        }
+}`,
+          lines: [
+            R`[[-CommandName]] الأمر، و [[-ParameterName]] الـ parameter اللي هنكمّله (من غير شرطة).`,
+            R`PowerShell بيبعت ٥ حاجات؛ إحنا محتاجين التلاتة الأولى: الأمر، والـ parameter، واللي اتكتب لحد دلوقتي.`,
+            R`القايمة اللي هنقترح منها. ممكن تبقى من ملف أو من أمر تاني.`,
+            R`فلترة: اللي بدأ باللي اليوزر كتبه بس. من غير السطر ده هتقترح كل حاجة مهما كتب.`,
+            R`لكل قيمة فاضلة.`,
+            R`بنعمل [[CompletionResult]]. لازم الاسم الكامل بتاعه.`,
+            R`بالترتيب: اللي هيتكتب، واللي هيبان في القايمة، والنوع، والتلميح.`,
+            R`قفلة [[ForEach-Object]].`,
+            R`قفلة الـ scriptblock.`,
+          ],
+          try: R`ضيف السطور دي، [[Import-Module ... -Force]]، وبعدين اكتب [[Set-PcSchedule off -In ]] (بمسافة في الآخر) ودوس Tab. وبعدين اكتب [[1]] ودوس Tab تاني وشوف الفرق. وبعدين غيّر القايمة تجيب أسماء الخدمات: [[(Get-Service).Name]].`,
+          flag: "script",
+          deep: {
+            why: R`[[ValidateSet]] بتحل نص المشكلة: قايمة مقفولة. لكن أغلب القيم مش مقفولة — رقم، أو اسم ملف، أو اسم خدمة. الـ completer بيدّي اقتراح من غير ما يمنع، وبيقدر يقرا الواقع وقت الكتابة.`,
+            how: R`لما تدوس Tab، PowerShell بينادي [[TabExpansion2]]، اللي بيحلّل السطر ويعرف انت واقف فين. لو انت في قيمة parameter وفيه completer مسجّل للأمر ده والـ parameter ده، بيشغّل الـ scriptblock بتاعك **في جلستك** ويستنى الناتج.
+
+الـ scriptblock بياخد ٥ parameters بالترتيب: [[$commandName]] و [[$parameterName]] و [[$wordToComplete]] و [[$commandAst]] و [[$fakeBoundParameters]]. التلاتة الأولى اللي بتستخدمهم عادة. والأخير مفيد أوي: فيه الـ parameters اللي اليوزر كتبها بالفعل، فتقدر تخلي اقتراحاتك تتغيّر حسبها.
+
+[[CompletionResult]] بياخد ٤ حاجات: [[completionText]] (اللي هيتحط في السطر)، و [[listItemText]] (اللي بيبان في القايمة لما تدوس Ctrl+Space)، و [[resultType]] ([[ParameterValue]] أو [[Command]] أو [[ProviderItem]]...)، و [[toolTip]].
+
+والفلترة بـ [[StartsWith($word)]] مسؤوليتك انت. PowerShell بيديك اللي اتكتب وبيستنى منك ترجّع المناسب؛ مش بيفلتر بعدك.
+
+وفيه طريقة تانية أقصر لو الاقتراحات جوه نفس الدالة: [[[ArgumentCompleter({...})]]] كـ attribute فوق الـ parameter مباشرة. الفرق إن [[Register-ArgumentCompleter]] تنفع تسجّلها لأوامر **مش بتاعتك** كمان، حتى أوامر النظام.
+
+ولازم يتسجّل جوه الموديول، عشان يتسجّل أول ما الموديول يتحمّل.`,
+            when: R`أي parameter قيمته مش مقفولة بس ليها قيم شائعة أو مصدر تقدر تقراه: أسماء ملفات، أو فروع git، أو خدمات، أو أرقام متكررة.`,
+            mistakes: R`تنسى الفلترة بـ [[$word]]، فتلاقي الاقتراحات مش بتتقلّل وانت بتكتب. أو تكتب [[-ParameterName -In]] بشرطة — الاسم من غير شرطة. أو تحط كود بطيء جوه (نداء شبكة)، فالـ Tab يعلّق. أو تسجّله بره الموديول فميشتغلش غير في الجلسة اللي سجّلته فيها.`
+          },
+          teach: R`## [[ValidateSet]] ولا completer؟
+
+| | [[ValidateSet]] | [[Register-ArgumentCompleter]] |
+|---|---|---|
+| القايمة | مقفولة: غيرها يترفض | مفتوحة: اقتراح بس |
+| بتتحسب | مرة واحدة، ثابتة | كل مرة تدوس Tab |
+| مصدرها | مكتوبة في الكود | أي حاجة: ملف، أمر، شبكة |
+| الـ Tab | شغال مجانًا | محتاج تكتبه |
+
+في أداتنا الاتنين موجودين: [[-Kind]] مقفول ([[off]] أو [[restart]])، و [[-In]] مفتوح (أي رقم من ٠ لـ ١٠٠٨٠) بس ليه أرقام شائعة.
+
+---
+
+## ١. الشكل
+
+~~~powershell في آخر PcTool.psm1
+Register-ArgumentCompleter -CommandName Set-PcSchedule -ParameterName In -ScriptBlock {
+    param($cmd, $param, $word)
+    5, 15, 30, 60, 120 |
+        Where-Object { "$_".StartsWith($word) } |
+        ForEach-Object {
+            [System.Management.Automation.CompletionResult]::new(
+                "$_", "$_ دقيقة", 'ParameterValue', "بعد $_ دقيقة")
+        }
+}
+~~~
+
+تلات حاجات تلاحظها:
+
+- [[-ParameterName In]] **من غير شرطة**.
+- [[$word]] هو اللي اليوزر كتبه لحد دلوقتي، و**انت** اللي بتفلتر بيه.
+- [[CompletionResult]] بياخد ٤: اللي هيتكتب، واللي هيبان، والنوع، والتلميح.
+
+---
+
+## ٢. جرّبته فعلًا
+
+عشان أجرّب من غير ما أضغط Tab بإيدي، ناديت [[TabExpansion2]] — ده الأمر اللي PowerShell نفسه بيناديه:
+
+~~~powershell PowerShell 7.6
+$line = "Set-PcSchedule off -In "
+$r = TabExpansion2 -inputScript $line -cursorColumn $line.Length
+$r.CompletionMatches | Format-Table -AutoSize CompletionText, ListItemText, ToolTip
+~~~
+
+~~~text الناتج (اتشغّل فعلًا)
+CompletionText ListItemText ToolTip
+-------------- ------------ -------
+5              5 دقيقة      بعد 5 دقيقة
+15             15 دقيقة     بعد 15 دقيقة
+30             30 دقيقة     بعد 30 دقيقة
+60             60 دقيقة     بعد 60 دقيقة
+120            120 دقيقة    بعد 120 دقيقة
+~~~
+
+ولما كتبت [[1]] قبل ما أدوس Tab:
+
+~~~text Set-PcSchedule off -In 1  (اتشغّل فعلًا)
+15  120
+~~~
+
+دي الفلترة بـ [[$word]] شغالة: [[5]] و [[30]] و [[60]] اختفوا لأنهم مش بيبدأوا بـ [[1]].
+
+---
+
+## ٣. و [[-Kind]] شغال مجانًا
+
+~~~text Set-PcSchedule   (اتشغّل فعلًا)
+off  restart
+~~~
+
+دي من [[ValidateSet]] نفسها. مكتبتش ولا سطر عشانها.
+
+---
+
+## ٤. الاقتراح الحي
+
+أقوى حاجة في الـ completer إن الكود بيشتغل **وقت ما تدوس Tab**، يعني يقدر يبص على الواقع:
+
+~~~powershell أمثلة
+# أسماء الخدمات الشغالة دلوقتي
+(Get-Service | Where-Object Status -eq 'Running').Name
+
+# فروع git في المشروع اللي انت فيه
+git branch --format='%(refname:short)'
+
+# أسماء من ملف
+Get-Content .\servers.txt
+~~~
+
+> خلي الكود **سريع**. لو حطيت نداء شبكة جواه، الـ Tab هيعلّق كل مرة. اقرا من ملف أو من كاش.
+
+---
+
+## ٥. الـ parameters الخمسة
+
+الـ scriptblock بياخد ٥ بالترتيب:
+
+| # | الاسم | فيه إيه |
+|---|---|---|
+| ١ | [[$commandName]] | اسم الأمر |
+| ٢ | [[$parameterName]] | الـ parameter اللي بيتكمّل |
+| ٣ | [[$wordToComplete]] | اللي اليوزر كتبه لحد دلوقتي |
+| ٤ | [[$commandAst]] | السطر كله محلّل |
+| ٥ | [[$fakeBoundParameters]] | الـ parameters اللي اتكتبت بالفعل |
+
+الخامس بيخليك تعمل اقتراح **بيعتمد على اللي قبله**: لو اليوزر كتب [[-Kind restart]]، تقترح أرقام أقصر.
+
+---
+
+## الخلاصة
+
+- [[ValidateSet]] للقيم المقفولة، والـ completer للمفتوحة.
+- [[-ParameterName]] من غير شرطة.
+- فلتر بـ [[$word]] بنفسك — محدش هيفلتر بعدك.
+- سجّله جوه الـ [[.psm1]] عشان يتسجّل مع الموديول.
+- خلي الكود سريع: الـ Tab بيستناه.`,
+          sol: R`الطريقة اللي تجرّب بيها الإكمال من غير ما تضغط Tab بإيدك — مفيدة في الاختبارات. [[TabExpansion2]] هو نفس الأمر اللي PowerShell بيناديه لما تدوس Tab.`,
+          solCode: R`Import-Module .\PcTool\PcTool.psd1 -Force
+$line = "Set-PcSchedule off -In "
+$r = TabExpansion2 -inputScript $line -cursorColumn $line.Length
+$r.CompletionMatches | Format-Table -AutoSize CompletionText, ListItemText
+
+# الناتج (اتشغّل فعلًا على PowerShell 7.6):
+# CompletionText ListItemText
+# -------------- ------------
+# 5              5 دقيقة
+# 15             15 دقيقة
+# 30             30 دقيقة
+# 60             60 دقيقة
+# 120            120 دقيقة`
+        },
+
+        {
+          cmd: "مشروع ٣ — سطّبه وخليه يتحمّل لوحده",
+          title: "PSModulePath: حطّه مرة، يشتغل في أي نافذة",
+          learn: R`تحط الموديول في المكان اللي PowerShell بيدوّر فيه، فيتحمّل لوحده أول نداء.`,
+          out: R`تفتح نافذة جديدة وتكتب [[Get-PcSchedule]] على طول.`,
+          use: {
+            prog: R`ده الـ [[node_modules]] / [[site-packages]] بتاع PowerShell: مسارات بحث متفق عليها، والاستيراد بيحصل لوحده. وفهم مسار البحث هو اللي بيخليك تفك «الأمر ده مش موجود».`,
+            net: R`على سيرفر، الأدوات بتتحط في المسار على مستوى الجهاز، فأي حساب وأي مهمة مجدولة بتلاقيها.`,
+            cs: R`الـ dynamic loading: الكود مبيتحملش لحد ما يتطلب. ده نفس الـ lazy loading في أي نظام، وبيقايض وقت الفتح بوقت أول نداء.`,
+          },
+          desc: R`لحد دلوقتي بتكتب [[Import-Module .\PcTool\PcTool.psd1]]. ده شغال، بس لسه محتاج مسار.
+
+PowerShell بيدوّر على الموديولات في مسارات محددة، مكتوبة في [[$env:PSModulePath]]. لو حطيت الموديول في واحد منهم، هيتحمّل **لوحده** أول ما تنادي أي أمر منه — من غير [[Import-Module]] خالص. الحاجة دي اسمها autoloading.
+
+وفيه شرط واحد مهم: **اسم الفولدر لازم يطابق اسم الموديول**. يعني [[PcTool\PcTool.psd1]]، مش [[tools\PcTool.psd1]]. لو خالفته، [[Import-Module PcTool]] مش هيلاقيه.
+
+والمسارات الافتراضية في PowerShell 7 على ويندوز تلاتة:
+
+[[$HOME\Documents\PowerShell\Modules]] — بتاعك انت بس. ده اللي تستخدمه.
+[[$env:ProgramFiles\PowerShell\Modules]] — لكل اليوزرز، ومحتاج صلاحيات admin.
+مسار PowerShell نفسه — للموديولات اللي جاية مع النظام. **متحطش فيه حاجة**.
+
+وللتجربة من غير ما تنقل حاجة، تقدر تزوّد فولدر للمسار **للجلسة الحالية بس**: ده بيختفي أول ما تقفل النافذة، فمفيد وانت بتطوّر.`,
+          example: R`# للتجربة: زوّد فولدر المعمل للمسار، في الجلسة دي بس
+$env:PSModulePath = "$HOME\lab" + [IO.Path]::PathSeparator + $env:PSModulePath
+
+Get-Module -ListAvailable PcTool
+
+# من غير أي Import: نادي الأمر على طول
+Get-PcSchedule
+Get-Module PcTool
+
+# وللتسطيب الدائم (لما تخلص تطوير)
+$dest = "$HOME\Documents\PowerShell\Modules\PcTool"
+New-Item -ItemType Directory $dest -Force
+Copy-Item "$HOME\lab\PcTool\*" $dest -Recurse -Force`,
+          lines: [
+            R`بنزوّد فولدر المعمل **قدام** المسار، فالنسخة بتاعتك هي اللي تتلاقي الأول. والفاصل في ويندوز [[;]] وفي لينكس [[:]]، و [[PathSeparator]] بتجيبه صح في الاتنين.`,
+            R`بيوريك الموديولات اللي PowerShell **يقدر** يلاقيها، من غير ما يحمّل حاجة.`,
+            R`ودي اللحظة المهمة: مفيش [[Import-Module]]، والأمر بيشتغل.`,
+            R`بيأكد إن الموديول اتحمّل دلوقتي لوحده.`,
+            R`فولدر التسطيب الدائم، واسمه لازم يطابق اسم الموديول.`,
+            R`بيعمله لو مش موجود.`,
+            R`بينسخ محتوى الموديول جواه.`,
+          ],
+          try: R`زوّد المسار وجرّب [[Get-Module -ListAvailable PcTool]]. وبعدين **اقفل النافذة وافتح واحدة جديدة** وجرّب [[Get-PcSchedule]] — المفروض متشتغلش، لأن تعديل [[$env:PSModulePath]] بيضيع. وبعدين سطّبه في [[Documents\PowerShell\Modules]] وجرّب تاني من نافذة جديدة.`,
+          flag: "script",
+          deep: {
+            why: R`الأداة اللي محتاجة مسار مش أداة، دي ملف. أول ما تتسطّب، بتبقى جزء من النظام بتاعك: بتتكتب باسمها، والـ Tab بيكمّلها، و [[Get-Help]] بتشتغل عليها، وأي سكربت تاني يقدر يناديها.`,
+            how: R`[[$env:PSModulePath]] قايمة مسارات مفصولة بـ [[;]] على ويندوز. PowerShell بيفحصها بالترتيب، فاللي قدام بيكسب.
+
+الـ autoloading بيشتغل كده: أول نافذة، PowerShell بيعمل فهرس من الـ manifests في المسارات دي — **اسم كل أمر → أنهي موديول**. لما تكتب أمر مش موجود في جلستك، بيبص في الفهرس، ولو لقاه بيحمّل الموديول ويشغّل الأمر. وعشان كده [[FunctionsToExport]] الصريحة مهمة (درس ٣): من غيرها الفهرس مبيتعملش والموديول بيتحمّل كله.
+
+الـ autoloading بيشتغل مع: نداء الأمر، و [[Get-Command]]، و [[Get-Help]]. وبيتقفل بـ [[$PSModuleAutoloadingPreference = 'None']].
+
+ونسخ متعددة: لو حطيت [[PcTool\1.0.0\PcTool.psd1]] و [[PcTool\1.1.0\PcTool.psd1]]، PowerShell بياخد الأحدث افتراضيًا، وتقدر تطلب نسخة بـ [[Import-Module PcTool -RequiredVersion 1.0.0]].
+
+وانت بتطوّر، [[Import-Module -Force]] ضرورية: PowerShell بيحمّل الموديول مرة واحدة في الجلسة، فتعديلك مش هيبان. أو [[Remove-Module PcTool]] وبعدين نادي الأمر تاني.
+
+و PowerShell 5.1 ليه مسار تاني ([[Documents\WindowsPowerShell\Modules]]) — النسختين منفصلتين تمامًا.`,
+            when: R`أول ما تخلص تطوير وتبقى هتستخدم الأداة فعلًا. وقبل كده، زوّد المسار للجلسة بس.`,
+            mistakes: R`اسم الفولدر مش زي اسم الموديول، فمش بيتلاقى أبدًا. أو تعدّل [[$env:PSModulePath]] وتستنى إنه يفضل بعد ما تقفل النافذة. أو تعدّل الموديول وتنسى [[-Force]] وتفضل تستغرب إن التعديل مش ظاهر. أو تحطه في فولدر PowerShell نفسه فيضيع مع أول تحديث. أو تحطه في [[WindowsPowerShell\Modules]] وانت شغال على نسخة 7.`
+          },
+          teach: R`## الفكرة في سطر
+
+حط الموديول في فولدر PowerShell بيدوّر فيه، وبنفس اسم الموديول — وهو هيتحمّل لوحده.
+
+---
+
+## ١. المسارات
+
+~~~powershell PowerShell 7.6
+$env:PSModulePath -split [IO.Path]::PathSeparator
+~~~
+
+على ويندوز هتلاقي تلاتة مهمين:
+
+| المسار | لمين | تحط فيه؟ |
+|---|---|---|
+| [[$HOME\Documents\PowerShell\Modules]] | ليك انت | **أيوه** |
+| [[$env:ProgramFiles\PowerShell\Modules]] | لكل اليوزرز (محتاج admin) | على سيرفر |
+| مسار PowerShell نفسه | موديولات النظام | **لأ** — بيتمسح مع التحديث |
+
+> نسخة 5.1 بتستخدم [[Documents\WindowsPowerShell\Modules]]. النسختين منفصلتين خالص.
+
+---
+
+## ٢. الشرط اللي بيوقّع الناس
+
+~~~text الشكل الصح
+Modules\
+  PcTool\              <-- اسم الفولدر = اسم الموديول
+    PcTool.psd1
+    PcTool.psm1
+~~~
+
+~~~text مش هيتلاقى
+Modules\
+  tools\
+    PcTool.psd1
+~~~
+
+لو اسم الفولدر مش زي اسم الموديول، [[Import-Module PcTool]] مش هيلاقيه مهما عملت.
+
+---
+
+## ٣. للتجربة: زوّد المسار للجلسة بس
+
+~~~powershell PowerShell 7.6
+$env:PSModulePath = "$HOME\lab" + [IO.Path]::PathSeparator + $env:PSModulePath
+Get-Module -ListAvailable PcTool
+~~~
+
+~~~text الناتج (اتشغّل فعلًا)
+Name   Version ModuleType Path
+----   ------- ---------- ----
+PcTool 1.0.0       Script  C:\Users\...\lab\PcTool\PcTool.psd1
+~~~
+
+> ده **للجلسة الحالية بس**، وبيضيع أول ما تقفل النافذة. وده بالظبط اللي انت عايزه وانت بتطوّر.
+
+---
+
+## ٤. الـ autoloading شغّال
+
+جرّبت من غير أي [[Import-Module]]:
+
+~~~powershell PowerShell 7.6
+'محمّل؟ ' + [bool](Get-Module PcTool)
+Get-PcSchedule | Out-Null
+'محمّل دلوقتي؟ ' + [bool](Get-Module PcTool)
+~~~
+
+~~~text الناتج (اتشغّل فعلًا)
+محمّل؟ False
+محمّل دلوقتي؟ True
+1.0.0
+~~~
+
+نداء الأمر لوحده حمّل الموديول. ودي اللحظة اللي الأداة بتبقى فيها جزء من النظام.
+
+---
+
+## ٥. فخ التطوير: التعديل مش بيبان
+
+ده أكتر حاجة بتضيّع وقت. عملت موديول صغير وعدّلته:
+
+~~~powershell PowerShell 7.6
+Set-Content .\demo.psm1 'function Get-Demo { "النسخة الأولى" }'
+Import-Module .\demo.psm1
+'أول مرة:     ' + (Get-Demo)
+
+Set-Content .\demo.psm1 'function Get-Demo { "النسخة التانية" }'
+Import-Module .\demo.psm1
+'بعد التعديل: ' + (Get-Demo)
+
+Import-Module .\demo.psm1 -Force
+'بـ -Force:    ' + (Get-Demo)
+~~~
+
+~~~text الناتج (اتشغّل فعلًا)
+أول مرة:     النسخة الأولى
+بعد التعديل: النسخة الأولى
+بـ -Force:    النسخة التانية
+~~~
+
+**السطر التاني هو المشكلة:** عدّلت الملف، وعملت [[Import-Module]] تاني، والناتج القديم. PowerShell شايف إن الموديول متحمّل خلاص فمش بيعيد قرايته.
+
+الحل: [[-Force]]، أو [[Remove-Module demo]] الأول.
+
+---
+
+## ٦. التسطيب الدائم
+
+~~~powershell مرة واحدة
+$dest = "$HOME\Documents\PowerShell\Modules\PcTool"
+New-Item -ItemType Directory $dest -Force
+Copy-Item "$HOME\lab\PcTool\*" $dest -Recurse -Force
+~~~
+
+اقفل النافذة، افتح واحدة جديدة، واكتب [[Get-PcSchedule]]. لو اشتغل، خلاص — الأداة بقت أمر.
+
+---
+
+## ٧. نسختين جنب بعض
+
+~~~text الشكل
+Modules\PcTool\
+  1.0.0\PcTool.psd1
+  1.1.0\PcTool.psd1
+~~~
+
+PowerShell بياخد الأحدث لوحده، وتقدر تطلب واحدة بعينها:
+
+~~~powershell
+Import-Module PcTool -RequiredVersion 1.0.0
+~~~
+
+وده السبب اللي [[ModuleVersion]] في الـ manifest موجود عشانه.
+
+---
+
+## الخلاصة
+
+- اسم الفولدر = اسم الموديول، وإلا مش هيتلاقى.
+- [[Documents\PowerShell\Modules]] للتسطيب، و [[$env:PSModulePath]] المؤقت للتطوير.
+- الـ autoloading بيحصل أول نداء، ومحتاج [[FunctionsToExport]] صريحة عشان يفضل سريع.
+- [[-Force]] وانت بتعدّل، وإلا هتفضل تشوف النسخة القديمة.
+- [[ModuleVersion]] بتخليك تشغّل نسختين جنب بعض.`,
+          sol: R`السطرين اللي بيثبتوا إن الـ autoloading شغّال: الموديول مش محمّل، وبعد نداء واحد بقى محمّل — من غير [[Import-Module]] خالص.`,
+          solCode: R`$env:PSModulePath = "$HOME\lab" + [IO.Path]::PathSeparator + $env:PSModulePath
+'محمّل؟ ' + [bool](Get-Module PcTool)
+Get-PcSchedule | Out-Null
+'محمّل دلوقتي؟ ' + [bool](Get-Module PcTool)
+
+# الناتج (اتشغّل فعلًا على ويندوز 11 و PowerShell 7.6):
+# محمّل؟ False
+# محمّل دلوقتي؟ True`
+        }
+      ]
+    }
+]);
+
 /* ===== js/tabs/cmd/01.js ===== */
 // كل درس هنا في مكان واحد:
 //   cmd      اسم الأمر (ولازم يبقى فريد جوه التاب، لأن التقدم محفوظ بيه)
