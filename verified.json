@@ -1194,10 +1194,20 @@
   "date": "2026-10-07",
   "on": "Windows 11, Node 24.19, vitest 5.0.3, Prisma 7.10, Postgres 16 (Docker), dotenv 18 CLI; pwsh 7.6"
  },
+ "apps|#[tauri::command] و invoke": {
+  "hash": "d5e54a82fca2",
+  "date": "2026-10-28",
+  "on": "Docker Debian 12, release build run under Xvfb (Tauri 2.12.5)"
+ },
  "apps|./gradlew assembleDebug": {
   "hash": "efa094435d81",
   "date": "2026-10-07",
   "on": "docker ubuntu:24.04 + OpenJDK 21 + Windows pwsh/powershell; docs: successful build"
+ },
+ "apps|Electron ولا Tauri ولا native": {
+  "hash": "d473cf537ca2",
+  "date": "2026-10-28",
+  "on": "Docker Debian 12 (Tauri 2.12.5, Electron 45.1.0, electron-builder 26.18), npx tauri info on Windows 11"
  },
  "apps|adb": {
   "hash": "ecc5cfc11811",
@@ -1219,6 +1229,11 @@
   "date": "2026-10-07",
   "on": "Windows 11 pwsh 7 + powershell 5.1"
  },
+ "apps|capabilities": {
+  "hash": "dfd8fadd0edf",
+  "date": "2026-10-28",
+  "on": "Docker Debian 12, tauri permission ls/add + rebuild under Xvfb; docs: AppManifest for app commands"
+ },
  "apps|electron-builder": {
   "hash": "280114414b84",
   "date": "2026-10-07",
@@ -1238,6 +1253,11 @@
   "hash": "dc4907831973",
   "date": "2026-10-07",
   "on": "Windows 11 pwsh 7 (Electron 44.6.0, dev and packaged)"
+ },
+ "apps|npm create tauri-app": {
+  "hash": "a581853a4a08",
+  "date": "2026-10-28",
+  "on": "create-tauri-app on Windows 11 (pwsh/npm 11), tauri info on Windows + Docker Debian 12 (Rust 1.99.1, webkit2gtk 2.50.6); docs: Windows/macOS prerequisites"
  },
  "apps|npm run dev": {
   "hash": "7652a17c5a60",
@@ -1263,6 +1283,16 @@
   "hash": "b7fb2efacb72",
   "date": "2026-10-07",
   "on": "Windows 11 pwsh 7 (Electron 44.6.0, hidden window)"
+ },
+ "apps|tauri build": {
+  "hash": "aca3c8b7497a",
+  "date": "2026-10-28",
+  "on": "Docker Debian 12 (deb/rpm); docs: Windows NSIS/MSI, macOS dmg, signing, AppImage, strip"
+ },
+ "apps|tauri updater": {
+  "hash": "6e457b282743",
+  "date": "2026-10-28",
+  "on": "Docker Debian 12, signer generate + signed rpm + local latest.json, check()/download() under Xvfb (plugin-updater 2.14.0); docs: downloadAndInstall/relaunch, OS code signing"
  },
  "apps|versionCode": {
   "hash": "f7309312791e",
@@ -8869,15 +8899,40 @@
   "date": "2026-10-07",
   "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20"
  },
+ "mongo|$facet و $bucket": {
+  "hash": "679d4c8ef240",
+  "date": "2026-10-28",
+  "on": "mongo:8 (8.3.13) mongosh 2.14 in Docker"
+ },
  "mongo|$jsonSchema": {
   "hash": "1c118dd1b5e7",
   "date": "2026-10-06",
   "on": "docker mongo:8 (8.3.11), mongosh 2.12"
  },
+ "mongo|$lookup بـ pipeline": {
+  "hash": "cfc29a90bfcd",
+  "date": "2026-10-28",
+  "on": "mongo:8 (8.3.13) mongosh 2.14 in Docker (b2b-mongo)"
+ },
  "mongo|$lookup و $unwind": {
   "hash": "4ab7ee8a44f2",
   "date": "2026-10-06",
   "on": "docker mongo:8 (8.3.11), mongosh 2.12"
+ },
+ "mongo|$merge و $out": {
+  "hash": "0ace4df44a2b",
+  "date": "2026-10-28",
+  "on": "mongo:8 (8.3.13) mongosh 2.14 in Docker"
+ },
+ "mongo|$setWindowFields": {
+  "hash": "6d22563d230c",
+  "date": "2026-10-28",
+  "on": "mongo:8 (8.3.13) mongosh 2.14 in Docker"
+ },
+ "mongo|$topN و $addToSet": {
+  "hash": "fc297c1552c5",
+  "date": "2026-10-28",
+  "on": "mongo:8 (8.3.13) mongosh 2.14 in Docker"
  },
  "mongo|MONGO_INITDB_ROOT_USERNAME": {
   "hash": "d644c47187e4",
@@ -8888,6 +8943,16 @@
   "hash": "f2ed4e30509b",
   "date": "2026-10-06",
   "on": "docker mongo:8 (8.3.11), mongosh 2.12"
+ },
+ "mongo|attribute و computed": {
+  "hash": "6efc38ba5e8c",
+  "date": "2026-10-28",
+  "on": "mongo:8 (8.3.13) mongosh 2.14 in Docker"
+ },
+ "mongo|change streams": {
+  "hash": "9714de923bcc",
+  "date": "2026-10-28",
+  "on": "mongo:8 single-node replica set + standalone (mongosh 2.14), Node driver 7.7 on a 3-node RS"
  },
  "mongo|compound index و ESR": {
   "hash": "bb940b0da862",
@@ -8913,6 +8978,11 @@
   "hash": "e16f83604ebd",
   "date": "2026-10-06",
   "on": "docker mongo:8 (8.3.11), mongosh 2.12"
+ },
+ "mongo|explain للـ aggregate": {
+  "hash": "687e79838113",
+  "date": "2026-10-28",
+  "on": "mongo:8 (8.3.13) mongosh 2.14 in Docker, 200k docs"
  },
  "mongo|healthcheck بـ ping": {
   "hash": "fc46a186d2a3",
@@ -8948,6 +9018,16 @@
   "hash": "45e238f1e510",
   "date": "2026-10-06",
   "on": "win11 Node 24 + Mongoose 9.11 + mongo:8"
+ },
+ "mongo|replica set بـ 3 nodes": {
+  "hash": "6f1ecbf1c52b",
+  "date": "2026-10-28",
+  "on": "Docker Desktop, 3x mongo:8 on a user network + Node driver 7.7 (node:22-slim)"
+ },
+ "mongo|schemaVersion و migration": {
+  "hash": "300bcf283982",
+  "date": "2026-10-28",
+  "on": "mongo:8 (8.3.13) mongosh 2.14 in Docker"
  },
  "mongo|show dbs و use": {
   "hash": "a12522612ade",

@@ -223,7 +223,7 @@
 
 الدفعة التانية (بعد الأولى):
 - [x] gha (reusable workflows، environments، matrix) و wsl و sshc. اتعمل: 9 دروس gha (workflow_call و composite و act و actionlint و zizmor و script injection) و 7 wsl و 7 sshc (SOCKS والشهادات و ssh-audit و FIDO2)
-- [ ] mongo (aggregation أعمق) و apps (Tauri)
+- [x] mongo (aggregation أعمق) و apps (Tauri). اتعمل: 10 دروس mongo (aggregate متقدم و explain و replica set و change streams على mongo 8) و 6 apps (Tauri 2 والمقارنة مع Electron والتحديث الموقّع)
 - [x] pyapi (Django و Flask) و python (scraping بسيط لو مش في pydata). اتعمل: 17 درس (Django 6.1 و DRF و pytest-django و Flask 3.1 ومقارنة الـ 3). الـ scraping اتغطى في pydata
 - [x] vps: SELinux و AppArmor و Ansible. اتعمل: 15 درس (Ansible 6، و AppArmor و SELinux 5 على Docker Desktop اللي الاتنين مقفولين فيه فجزء من الدوكس، و logrotate و journald و sysctl و LimitNOFILE)
 - [x] nginx و diag. اتعمل: 8 دروس nginx (كاش الـ proxy وتوزيع الحمل و map و auth_request و error_page) و 6 في diag (strace و cpu-prof و تسريب الذاكرة و EMFILE و iowait و exit codes)
