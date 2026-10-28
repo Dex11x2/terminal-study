@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>صفحة تجربة: شكل العرض</title>
+<title>نموذج عرض الدروس</title>
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,9 +21,10 @@
 main[hidden],.screen[hidden]{display:none}
 
 /* ⑫ تخطيط بيستغل الجوانب */
+html{overflow-x:clip}
 .shell{max-width:min(1700px,96vw);margin:0 auto;padding:0 0 70px;display:grid;gap:26px;grid-template-columns:minmax(0,1fr)}
-@media(min-width:1150px){ .shell{grid-template-columns:240px minmax(0,1fr)} }
-@media(min-width:1560px){ .shell{grid-template-columns:240px minmax(0,1fr) 250px} }
+@media(min-width:1150px){ .shell{grid-template-columns:minmax(0,240px) minmax(0,1fr)} }
+@media(min-width:1560px){ .shell{grid-template-columns:minmax(0,240px) minmax(0,1fr) minmax(0,250px)} }
 .side{min-width:0}
 .side-l{display:none}
 @media(min-width:1560px){ .side-l{display:block} }
@@ -161,6 +162,7 @@ main[hidden],.screen[hidden]{display:none}
 /* ⑭ مشاريع الوحدة */
 .pgrid{display:grid;gap:14px;grid-template-columns:minmax(0,1fr);margin:14px 0 0}
 @media(min-width:820px){ .pgrid{grid-template-columns:1fr 1fr} }
+.pgrid,.pcard,#projSlot,#sProjects{min-width:0}
 .pcard{border:1px solid var(--line);border-radius:10px;padding:14px 16px;background:var(--surface);
        display:block;color:inherit;text-decoration:none;min-width:0}
 .pcard:hover,.pcard:focus-visible{border-color:var(--accent)}
@@ -186,22 +188,19 @@ main[hidden],.screen[hidden]{display:none}
 
 <div class="tbar">
   <div class="in">
-    <b>صفحة تجربة</b>
-    <button class="sw2" type="button" id="bNew" aria-pressed="true">المقترح الجديد</button>
-    <button class="sw2" type="button" id="bOld" aria-pressed="false">الشكل الحالي</button>
-    <span class="sp">الموضوع: مشروع <code>pc.ps1</code></span>
+    <b>الترمنال والبرمجة بإيدك</b>
+    <span class="sp">PowerShell — المستوى ٢</span>
   </div>
 </div>
 
 <!-- ===================== المقترح الجديد ===================== -->
-<main id="vNew">
+<main>
   <div class="shell">
 
     <!-- العمود اليمين: قايمة الوحدة -->
     <aside class="side">
       <div class="sticky">
         <nav class="unitnav" id="unitnav"></nav>
-        <p style="font-size:13px;color:var(--muted);margin:10px 2px 0"><span class="mk">١٢</span>الجوانب مستغلة: القايمة ثابتة هنا، والفهرس على الشمال</p>
       </div>
     </aside>
 
@@ -210,14 +209,8 @@ main[hidden],.screen[hidden]{display:none}
 
       <!-- ========== شاشة الخريطة ========== -->
       <section class="screen" id="sMap">
-        <div class="note-box">
-          <h3>اقرا ده الأول</h3>
-          <p style="margin:0 0 10px">الصفحة دي مش جزء من الموقع. دي عرض لـ <b>شكل مقترح</b> لنفس المحتوى الموجود دلوقتي.</p>
-          <p style="margin:0">كل قرار عليه <span class="mk">٠</span> رقم. قول <b>«رقم ١٣ خليه أطول»</b> أو <b>«رقم ٤ شيله»</b> وكده نمشي بسرعة.</p>
-        </div>
 
-        <div class="unit-head">
-          <p style="margin:0 0 4px;color:var(--muted);font-size:14px"><span class="mk">١</span>رأس الوحدة: هدف واضح قبل أي أمر</p>
+        <div class="unit-head" id="m-goal" style="scroll-margin-top:120px">
           <h1>الوحدة ٣ — تتحكم في جهازك من الترمنال</h1>
           <p class="sub"><bdi>PowerShell</bdi> — <bdi>المستوى ٢</bdi> — <bdi>٦ دروس</bdi> — <bdi>حوالي ساعة ونص</bdi></p>
           <div class="two">
@@ -231,7 +224,7 @@ main[hidden],.screen[hidden]{display:none}
               </ul>
             </div>
             <div class="goal" style="border-inline-start-color:#8b5cf6;background:color-mix(in srgb,#8b5cf6 7%,transparent)">
-              <h3 style="color:#8b5cf6"><span class="mk" style="background:#8b5cf6">١٣</span>وهتستخدمها فين؟</h3>
+              <h3 style="color:#8b5cf6">وهتستخدمها فين؟</h3>
               <ul>
                 <li><b>البرمجة:</b> تصميم CLI، والتحقق من المدخلات، وأكواد الخروج في CI.</li>
                 <li><b>الشبكات والسيرفرات:</b> أدوات تشخيص، ومهام مجدولة، وإعادة تشغيل آمنة عن بُعد.</li>
@@ -241,18 +234,17 @@ main[hidden],.screen[hidden]{display:none}
           </div>
         </div>
 
-        <h2 style="font-size:21px;margin:26px 0 4px"><span class="mk">٢</span>خريطة الوحدة</h2>
-        <p style="margin:0 0 4px;color:var(--muted);font-size:14.5px"><span class="mk">١١</span><b>دوس على أي درس يفتح لوحده</b> — مش هتنزل لتحت خالص</p>
+        <h2 id="m-map" style="font-size:21px;margin:26px 0 4px;scroll-margin-top:120px">خريطة الوحدة</h2>
+        <p style="margin:0 0 4px;color:var(--muted);font-size:14.5px"><b>دوس على أي درس يفتح لوحده</b> — مش هتنزل لتحت خالص</p>
         <table class="map">
           <thead><tr><th>#</th><th>الدرس</th><th>هتتعلم إيه</th><th>النتيجة العملية</th><th>تستخدمها فين</th><th></th></tr></thead>
           <tbody id="mapBody"></tbody>
         </table>
         <div class="rail" id="rail"></div>
-        <p class="rail-lbl"><span class="mk">٤</span>شريط تقدم، والدرس اللي خلصته بياخد ✓</p>
 
         <div class="two" style="margin-top:28px">
           <div>
-            <h2 style="font-size:21px;margin:0 0 4px"><span class="mk">٣</span>جهّز معملك</h2>
+            <h2 id="m-lab" style="font-size:21px;margin:0 0 4px;scroll-margin-top:120px">جهّز معملك</h2>
             <p style="margin:0 0 8px;color:var(--muted);font-size:14.5px">متتعلمش الأوامر الخطيرة على ملفاتك الحقيقية.</p>
             <div class="term" data-k="ps">
               <div class="term-bar"><span>PowerShell</span><button class="copy" type="button">نسخ</button></div>
@@ -262,7 +254,7 @@ Set-Location "$HOME\lab\pc-tool"</pre>
             <p style="margin:10px 0 0;font-size:15px">أي حاجة بتقفل الجهاز هنجرّبها بـ <code>-WhatIf</code> بس.</p>
           </div>
           <div class="note-box" style="margin:0">
-            <h3><span class="mk">٩</span>المشروع المجمّع &nbsp; <span class="mk">١٠</span>الواجب</h3>
+            <h3>المشروع المجمّع والواجب</h3>
             <p style="margin:0 0 8px;font-size:15.5px">بعد الدرس ٦: شاشة فيها الأداة كاملة مع جدول بيربط كل جزء بالدرس اللي شرحه، وتحتها واجب:</p>
             <ol style="font-size:15.5px">
               <li>ضيف فعل <code>sleep</code> لوضع السكون.</li>
@@ -299,92 +291,13 @@ Set-Location "$HOME\lab\pc-tool"</pre>
   </div>
 </main>
 
-<!-- ===================== الشكل الحالي ===================== -->
-<main id="vOld" hidden>
- <div style="max-width:min(1100px,94vw);margin:0 auto;padding:0 0 70px">
-  <div class="note-box" style="margin-top:22px">
-    <h3>ده الشكل الموجود دلوقتي على الموقع</h3>
-    <p style="margin:0">نفس المحتوى، بالبطاقات الحالية: صفحة واحدة طويلة، الجوانب فاضية، ومفيش «تستخدمها فين».</p>
-  </div>
-  <div class="lvl"><span class="n">المستوى ٣</span><h2>بتبني حاجات</h2><p>سكربتات وأدوات تستخدمها في شغلك</p></div>
-  <section class="cat">
-    <h3>مشروع ١: تتحكم في جهازك<small>٦ دروس</small></h3>
-    <p class="cat-note">أداة <code>pc.ps1</code> بتقفل الجهاز أو تعمله restart بعد مهلة، وتلغي المعاد، وتقولك فيه معاد ولا لأ.</p>
-    <article class="cmd">
-      <div class="cmd-h"><span class="name">مشروع ١ — الواجهة الأول</span><span class="title">اكتب شكل الاستخدام قبل أي كود</span></div>
-      <p class="desc">أول خطوة في أي أداة مش الكود، دي <b>شكل الاستخدام</b>. تكتب الأوامر اللي نفسك تكتبها، وبعدين تبني اللي يخليها تشتغل.</p>
-      <p class="desc more">الأداة اللي هنبنيها اسمها <code>pc.ps1</code>: <code>.\pc.ps1 off -In 30</code> اقفل بعد ٣٠ دقيقة. <code>.\pc.ps1 cancel</code> الغي المعاد.</p>
-      <details class="teach" open>
-        <summary>الشرح خطوة بخطوة</summary>
-        <h4>الفكرة</h4>
-        <p>قبل أي كود: إيه الشكل اللي نفسي أكتبه في الترمنال؟</p>
-        <hr>
-        <h4>١. الهيكل الفاضي</h4>
-        <div class="term tcode" data-k="ps"><div class="term-bar"><span>powershell</span></div><pre>param(
-    [string]$Action = 'status',
-    [int]$In = 0
-)
-
-Write-Host "Action = $Action"</pre></div>
-        <p><code>param(</code> بتفتح قايمة المدخلات. لازم تبقى أول كود في الملف.</p>
-        <h4>الخلاصة</h4>
-        <ul><li>ابدأ بشكل الاستخدام مش بالكود.</li><li><code>param()</code> أول كود في الملف.</li></ul>
-      </details>
-      <div class="deep">
-        <section><h4>ليه</h4><p>أغلب السكربتات الوحشة اتكتبت من الآخر للأول: الكود الأول، والاستعمال طلع لوحده.</p></section>
-        <section><h4>إزاي</h4><p>الهيكل الفاضي بيأكد إن PowerShell فهم الـ arguments صح.</p></section>
-        <section><h4>امتى</h4><p>أول خطوة في أي سكربت هتكتبه.</p></section>
-        <section><h4>غلطات شائعة</h4><p>تحط أي كود قبل <code>param()</code>.</p></section>
-      </div>
-      <div class="term" data-k="ps"><div class="term-bar"><span>مثال</span><button class="copy" type="button">نسخ</button></div><pre>param(
-    [string]$Action = 'status',
-    [int]$In = 0
-)
-
-Write-Host "Action = $Action"
-Write-Host "In     = $In"</pre></div>
-      <div class="bd">
-        <h4>شرح السطور</h4>
-        <ol>
-          <li><code>param(</code><span>بداية قايمة المدخلات</span></li>
-          <li><code>[string]$Action = 'status',</code><span>الفعل: نص، والافتراضي status</span></li>
-          <li><code>[int]$In = 0</code><span>المهلة بالدقايق</span></li>
-          <li><code>)</code><span>قفل الـ param</span></li>
-          <li><code>Write-Host "Action = $Action"</code><span>اطبع اللي وصلنا</span></li>
-          <li><code>Write-Host "In     = $In"</code><span>ونفس الحاجة للرقم</span></li>
-        </ol>
-      </div>
-      <div class="try"><span class="lbl">جرّب</span><p>احفظه باسم <code>pc.ps1</code> وشغّله تلات مرات.</p><label class="done"><input type="checkbox"> جربتها</label></div>
-    </article>
-    <article class="cmd">
-      <div class="cmd-h"><span class="name">مشروع ١ — التحقق من المدخلات</span><span class="title">خلي الأداة ترفض الغلط قبل ما تشتغل</span></div>
-      <p class="desc">دلوقتي الأداة بتقبل أي حاجة: <code>.\pc.ps1 sleep</code> هتعدّي. الخطوة دي بتخلي PowerShell يرفض الغلط لوحده.</p>
-      <div class="deep">
-        <section><h4>ليه</h4><p>لو سبت الفحص لجسم السكربت، Tab مش هيعرف يساعد.</p></section>
-        <section><h4>إزاي</h4><p>كل الـ attributes فوق الـ parameter.</p></section>
-        <section><h4>امتى</h4><p>على كل parameter.</p></section>
-        <section><h4>غلطات شائعة</h4><p>تحط الـ attribute تحت الـ parameter.</p></section>
-      </div>
-      <div class="term" data-k="ps"><div class="term-bar"><span>مثال</span><button class="copy" type="button">نسخ</button></div><pre>param(
-    [Parameter(Position = 0)]
-    [ValidateSet('off', 'restart', 'cancel', 'status')]
-    [string]$Action = 'status',
-
-    [ValidateRange(0, 10080)]
-    [int]$In = 0
-)</pre></div>
-      <div class="try"><span class="lbl">جرّب</span><p>جرّب <code>.\pc.ps1 sleep</code> وشوف الرسالة.</p><label class="done"><input type="checkbox"> جربتها</label></div>
-    </article>
-  </section>
- </div>
-</main>
 
 <script>
 const AR = n => String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
 
 /* قالب قسم «تستخدمها فين» */
 function USE(intro, cards, scen){
-  return '<section class="use" id="use"><h3><span class="mk" style="background:#8b5cf6">١٣</span>تستخدمها فين؟</h3><div class="ubody">'
+  return '<section class="use" id="use"><h3>تستخدمها فين؟</h3><div class="ubody">'
     + '<p style="margin:12px 0 0">' + intro + '</p>'
     + '<div class="cards">' + cards.map(c =>
         '<div class="uc"><h4><span class="tag">' + c.tag + '</span>' + c.h + '</h4>' + c.p + '</div>').join('') + '</div>'
@@ -397,7 +310,7 @@ const LESSONS = [
   t:'الواجهة قبل الكود', learn:'<code>param()</code> والقيم الافتراضية',
   out:'سكربت بيستقبل مدخلاتك صح', use:'تصميم أي أداة أو API',
   html:`
-<p class="why"><span class="mk">٥</span><b>ليه الدرس ده أول واحد؟</b> لأن أغلب الأدوات الوحشة اتكتبت من الآخر للأول: الكود الأول، والاستعمال طلع لوحده. لما تكتب شكل الاستخدام الأول، بتكتشف إن <code>-In 30</code> أحلى من <code>-Seconds 1800</code> وانت لسه مكتبتش سطر كود.</p>
+<p class="why"><b>ليه الدرس ده أول واحد؟</b> لأن أغلب الأدوات الوحشة اتكتبت من الآخر للأول: الكود الأول، والاستعمال طلع لوحده. لما تكتب شكل الاستخدام الأول، بتكتشف إن <code>-In 30</code> أحلى من <code>-Seconds 1800</code> وانت لسه مكتبتش سطر كود.</p>
 
 <div class="step"><h3><span class="n">١.١</span>الشكل اللي نفسنا نكتبه</h3>
 <div class="term" data-k="ps"><div class="term-bar"><span>الواجهة المطلوبة</span></div><pre>.\\pc.ps1 off -In 30        # اقفل بعد ٣٠ دقيقة
@@ -449,13 +362,13 @@ In     = 30</pre></div>
 +`
 <div class="warn"><b>لو السكربت مرفض يشتغل:</b> ده <code>ExecutionPolicy</code>. شغّل <code>Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned</code> مرة واحدة.</div>
 
-<div class="wrapup"><h4><span class="mk">٨</span>الخلاصة</h4><ul>
+<div class="wrapup"><h4>الخلاصة</h4><ul>
 <li>ابدأ بشكل الاستخدام مش بالكود.</li>
 <li><code>param()</code> أول كود في الملف.</li>
 <li>النوع (<code>[int]</code>) بيرفض المدخلات الغلط لوحده.</li>
 </ul></div>
 
-<div class="ex"><h4><span class="mk">٧</span>تمرين الدرس ١</h4><div class="bodyx"><ol>
+<div class="ex"><h4>تمرين الدرس ١</h4><div class="bodyx"><ol>
 <li>احفظ الكود باسم <code>pc.ps1</code> وشغّله لوحده وبـ <code>off -In 30</code>.</li>
 <li>جرّب <code>.\\pc.ps1 -In abc</code> — ليه بترفض؟</li>
 <li><b>اربطها بشغلك:</b> اكتب شكل الاستخدام (من غير كود) لأداة بتفحص هل خدمة شغالة على بورت معيّن.</li>
@@ -792,18 +705,18 @@ $r.Arguments</pre></div>
 <li>غيّر الأيقونة: جرّب أرقام تانية من <code>shell32.dll</code>.</li>
 </ol></div></div>`
 },
-{ t: 'منظّف الملفات المؤقتة', what: 'أداة بتقولك كام ميجا نايمة في فولدر Temp، وبتمسح الأقدم من N يوم بـ <code>-WhatIf</code> الأول.',
-  lv: 2, time: '٢٥ دقيقة', from: 'دروس ٢ و ٣ و ٤',
-  skills: ['<code>Measure-Object</code> للحجم', '<code>-WhatIf</code> قبل المسح', 'تقرير قبل وبعد'] },
-{ t: 'زرار «وضع التركيز»', what: 'دوسة واحدة: تقفل برامج التشتيت، تكتم الصوت، وتفتح اللي بتشتغل عليه، وتضبط مؤقّت.',
-  lv: 2, time: '٣٠ دقيقة', from: 'دروس ١ و ٢ و ٥',
-  skills: ['<code>Stop-Process</code> بأمان', 'قايمة برامج من ملف', 'اللوج عشان تعرف إيه اتقفل'] },
 { t: 'تنبيه على الشاشة', what: 'سكربت بيطلّع إشعار ويندوز حقيقي — تستخدمه كنهاية لأي أداة طويلة.',
   lv: 1, time: '١٥ دقيقة', from: 'دروس ١ و ٦',
   skills: ['<code>[Windows.UI.Notifications]</code>', 'بديل بسيط بـ MessageBox', 'نهاية مرئية للمهام الطويلة'] },
 { t: 'لعبة خمّن الرقم', what: 'لعبة في الترمنال: الجهاز بيفكر في رقم وانت بتخمّن، وهو بيقولك أكبر ولا أصغر.',
   lv: 1, time: '٢٠ دقيقة', from: 'دروس ١ و ٢',
   skills: ['<code>Get-Random</code> و <code>while</code>', '<code>Read-Host</code> والتحقق منه', 'عداد محاولات ورسالة نهاية'] },
+{ t: 'منظّف الملفات المؤقتة', what: 'أداة بتقولك كام ميجا نايمة في فولدر Temp، وبتمسح الأقدم من N يوم بـ <code>-WhatIf</code> الأول.',
+  lv: 2, time: '٢٥ دقيقة', from: 'دروس ٢ و ٣ و ٤',
+  skills: ['<code>Measure-Object</code> للحجم', '<code>-WhatIf</code> قبل المسح', 'تقرير قبل وبعد'] },
+{ t: 'زرار «وضع التركيز»', what: 'دوسة واحدة: تقفل برامج التشتيت، تكتم الصوت، وتفتح اللي بتشتغل عليه، وتضبط مؤقّت.',
+  lv: 2, time: '٣٠ دقيقة', from: 'دروس ١ و ٢ و ٥',
+  skills: ['<code>Stop-Process</code> بأمان', 'قايمة برامج من ملف', 'اللوج عشان تعرف إيه اتقفل'] },
 { t: 'فكّك كود موجود', what: 'تاخد سكربت جاهز من النت مش انت كاتبه، وتشرحه سطر سطر، وتكتشف فيه مشكلة.',
   lv: 3, time: '٣٠ دقيقة', from: 'كل دروس الوحدة',
   skills: ['قراية كود غيرك', 'تدوّر على الخطر: مسح، صلاحيات، شبكة', 'تعيد كتابته بشكل أأمن'] }
@@ -890,7 +803,7 @@ function openLesson(n){
 
   buildToc(); buildNav();
   if (location.hash !== '#lesson-' + n) history.pushState(null, '', '#lesson-' + n);
-  window.scrollTo(0, 0);
+  window.scrollTo({ top: 0 });
 }
 
 const LV = ['', 'مبتدئ', 'متوسط', 'متقدم'];
@@ -900,13 +813,13 @@ function showProjects(){
   $('#sMap').hidden = true; $('#sLesson').hidden = true; $('#sProjects').hidden = false;
   $('#projPos').textContent = 'مشاريع الوحدة — ' + AR(PROJECTS.length) + ' مشاريع';
   $('#projSlot').innerHTML =
-    '<h2 style="font-size:25px;margin:18px 0 4px"><span class="mk">١٤</span>مشاريع الوحدة</h2>'
+    '<h2 style="font-size:25px;margin:18px 0 4px">مشاريع الوحدة</h2>'
     + '<p style="margin:0 0 6px;color:var(--muted);font-size:16.5px">خلصت الستة دروس. دلوقتي تبني بيهم حاجات تستخدمها فعلًا — '
     + 'منها اللي تبنيه من الصفر، ومنها اللي تفكّك فيه كود جاهز مش انت كاتبه.</p>'
     + '<div class="pgrid">' + PROJECTS.map((P, i) => {
         const n = i + 1;
         return '<a class="pcard" href="#project-' + n + '" data-pg="' + n + '">'
-          + '<h4>' + P.t + (P.html ? '' : ' <span class="done">(القالب بس)</span>') + '</h4>'
+          + '<h4>' + P.t + (P.html ? '' : ' <span class="done">(لسه مش مكتوب في النموذج)</span>') + '</h4>'
           + '<p>' + P.what + '</p>'
           + '<div class="pmeta"><span class="l' + P.lv + '">' + LV[P.lv] + '</span>'
           + '<span>' + P.time + '</span><span>' + P.from + '</span></div></a>';
@@ -916,7 +829,7 @@ function showProjects(){
     + '<div class="pg">' + AR(PROJECTS.length) + ' مشاريع</div>';
   buildNav();
   if (location.hash !== '#projects') history.pushState(null, '', '#projects');
-  window.scrollTo(0, 0);
+  window.scrollTo({ top: 0 });
 }
 
 function openProject(n){
@@ -947,7 +860,7 @@ function openProject(n){
     + '<div class="pg">مشروع ' + AR(n) + '</div>';
   buildNav();
   if (location.hash !== '#project-' + n) history.pushState(null, '', '#project-' + n);
-  window.scrollTo(0, 0);
+  window.scrollTo({ top: 0 });
 }
 
 // المشاريع اللي لسه قالب: نوضّح ده جوه الكارت بدل نافذة منبثقة
@@ -969,10 +882,15 @@ function showMap(){
   cur = 0;
   $('#sLesson').hidden = true; $('#sProjects').hidden = true;
   $('#sMap').hidden = false;
-  $('#toc').innerHTML = '<h4>الوحدة</h4><a href="#" data-jump="top">الهدف</a><a href="#" data-jump="top">الخريطة</a><a href="#" data-jump="top">المعمل</a><div class="pg">اختار درس من الخريطة</div>';
+  $('#toc').innerHTML = '<h4>الوحدة</h4>'
+    + '<a href="#m-goal" data-jump="m-goal">الهدف</a>'
+    + '<a href="#m-map" data-jump="m-map">خريطة الدروس</a>'
+    + '<a href="#m-lab" data-jump="m-lab">جهّز معملك</a>'
+    + '<a href="#projects" data-pg="list" style="color:#8b5cf6">مشاريع الوحدة</a>'
+    + '<div class="pg">اختار درس من الخريطة</div>';
   buildNav();
   if (location.hash) history.pushState(null, '', location.pathname);
-  window.scrollTo(0, 0);
+  window.scrollTo({ top: 0 });
 }
 
 function route(){
@@ -1025,15 +943,6 @@ window.addEventListener('scroll', () => {
   links.forEach(a => a.classList.toggle('on', a === on));
 }, {passive:true});
 
-const bNew = $('#bNew'), bOld = $('#bOld'), vNew = $('#vNew'), vOld = $('#vOld');
-function view(isNew){
-  vNew.hidden = !isNew; vOld.hidden = isNew;
-  bNew.setAttribute('aria-pressed', String(isNew));
-  bOld.setAttribute('aria-pressed', String(!isNew));
-  window.scrollTo(0, 0);
-}
-bNew.addEventListener('click', () => view(true));
-bOld.addEventListener('click', () => view(false));
 
 buildMap(); route();
 </script>
