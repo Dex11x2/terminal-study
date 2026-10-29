@@ -613,8 +613,10 @@ table.map{min-width:0;table-layout:fixed;border:1px solid var(--line);border-rad
 body.todo .map tr.is-done{display:none}
 
 /* what the unit gives you, and which fields it serves */
-.unit-two{display:grid;gap:14px;margin:12px 0 18px}
-@media (min-width:860px){ .unit-two{grid-template-columns:1fr 1fr} }
+/* minmax(0,…) and min-width:0 keep a long lab command from stretching the column past the screen */
+.unit-two{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;margin:12px 0 18px}
+.unit-two>*{min-width:0}
+@media (min-width:860px){ .unit-two{grid-template-columns:minmax(0,1fr) minmax(0,1fr)} }
 .goal{border-inline-start:3px solid var(--accent);background:color-mix(in srgb,var(--accent) 6%,transparent);padding:12px 16px;border-radius:0 8px 8px 0}
 .goal h4{margin:0 0 6px;font-size:15px;color:var(--accent)}
 .goal ul{margin:0;padding-inline-start:20px;font-size:15px;line-height:1.7}
@@ -627,6 +629,11 @@ body.todo .map tr.is-done{display:none}
 .projlist{margin:0;padding-inline-start:20px;font-size:15px}
 .projlist li{margin-bottom:6px}
 .projlist span{display:block;color:var(--muted);font-size:14px;line-height:1.6}
+.projlist span.pdone{color:var(--ink);margin-top:4px}
+.projlist .lv{font-style:normal;font-size:12px;font-weight:600;border-radius:4px;padding:1px 7px;margin-inline-end:8px;border:1px solid var(--line)}
+.projlist .lv1{color:var(--a-tools,var(--accent))}
+.projlist .lv2{color:var(--a-ps)}
+.projlist .lv3{color:var(--a-bash)}
 
 /* the reader: the lesson on its own, with where it came from and where it goes next */
 .lnav{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;margin:14px 0 4px;padding-bottom:10px;border-bottom:1px solid var(--line)}

@@ -25,8 +25,12 @@ for (const [tab, cats] of Object.entries(DATA)) {
     self: names.some(n => /بنفسك/.test(n)) ? 'Y' : '-',
     proj: names.filter(n => /^مشروع|ابني/.test(n)).length,
     ranPct: lessons ? Math.round(100 * ran / lessons) : 0,
+    // all of a unit's projects, and the units whose projects climb صغير → متوسط → كبير
+    projs: cats.reduce((n, c) => n + (c.projects || []).length, 0),
+    ladder: cats.filter(c => ['صغير', 'متوسط', 'كبير'].every(l => (c.projects || []).some(p => p.lvl === l))).length,
   });
 }
 rows.sort((a, b) => a.ranPct - b.ranPct);
-console.log('tab'.padEnd(12), 'دروس'.padStart(5), 'وحدات'.padStart(6), 'بنفسك', 'مشروع', '٪اتشغّل');
-for (const r of rows) console.log(r.tab.padEnd(12), String(r.lessons).padStart(5), String(r.unit).padStart(6), '  ' + r.self + '  ', String(r.proj).padStart(4), String(r.ranPct).padStart(6) + '%');
+console.log('tab'.padEnd(12), 'دروس'.padStart(5), 'وحدات'.padStart(6), 'بنفسك', 'مشروع', '٪اتشغّل', 'مشاريع', 'سلّمة');
+for (const r of rows) console.log(r.tab.padEnd(12), String(r.lessons).padStart(5), String(r.unit).padStart(6), '  ' + r.self + '  ', String(r.proj).padStart(4), String(r.ranPct).padStart(6) + '%', String(r.projs).padStart(6), String(r.ladder).padStart(5));
+console.log('\nمشاريع =كل المشاريع في حقول projects. سلّمة = الوحدات اللي مشاريعها فيها صغير ومتوسط وكبير (القاعدة ٩).');

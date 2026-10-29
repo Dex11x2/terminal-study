@@ -253,8 +253,11 @@ function unitHead(cat){
 function unitFoot(cat, id){
   if (!cat.lab && !cat.projects) return '';
   const lab = cat.lab ? '<div><h4 class="uf-h">جهّز معملك</h4><p class="uf-p">متتعلمش الأوامر الخطيرة على ملفاتك الحقيقية.</p>'+termHTML(cat.lab, shell, false, '')+'</div>' : '';
-  const pr = cat.projects ? '<div class="projbox"><h4 class="uf-h">مشاريع القسم</h4><p class="uf-p">بعد ما تخلص الدروس، دي حاجات تبنيها بإيدك من اللي اتعلمته.</p><ol class="projlist">'+
-    cat.projects.map(p => '<li><b>'+fmt(p.t)+'</b>'+(p.what?'<span>'+fmt(p.what)+'</span>':'')+'</li>').join('')+'</ol></div>' : '';
+  // lvl: صغير/متوسط/كبير, shown as a badge and kept in that order; done: how you know the project works
+  const LV = {'صغير': 1, 'متوسط': 2, 'كبير': 3};
+  const projs = cat.projects ? cat.projects.slice().sort((a, b) => (LV[a.lvl] || 2) - (LV[b.lvl] || 2)) : [];
+  const pr = cat.projects ? '<div class="projbox"><h4 class="uf-h">مشاريع القسم</h4><p class="uf-p">بعد ما تخلص الدروس، دي حاجات تبنيها بإيدك من اللي اتعلمته، من الصغير للكبير.</p><ol class="projlist">'+
+    projs.map(p => '<li>'+(p.lvl?'<em class="lv lv'+(LV[p.lvl]||2)+'">'+esc(p.lvl)+'</em>':'')+'<b>'+fmt(p.t)+'</b>'+(p.what?'<span>'+fmt(p.what)+'</span>':'')+(p.done?'<span class="pdone"><b>تعرف إنك خلصت لما:</b> '+fmt(p.done)+'</span>':'')+'</li>').join('')+'</ol></div>' : '';
   return '<div class="unit-two uf" id="'+id+'-foot">'+lab+pr+'</div>';
 }
 /* a category's lessons as a compact table: the whole row opens the lesson */

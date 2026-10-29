@@ -48,6 +48,10 @@ for (const tab in DATA) {
   const seen = new Set();
   DATA[tab].forEach(cat => {
     if (![1, 2, 3].includes(cat.l)) err(`${tab} › ${cat.t}`, 'المستوى (l) لازم يبقى 1 أو 2 أو 3');
+    (cat.projects || []).forEach(p => {
+      if (!p.t) err(`${tab} › ${cat.t}`, 'مشروع من غير t');
+      if (p.lvl && !['صغير', 'متوسط', 'كبير'].includes(p.lvl)) err(`${tab} › ${cat.t} › ${p.t}`, 'lvl لازم يبقى صغير أو متوسط أو كبير');
+    });
     cat.items.forEach(it => {
       total++;
       const [cmd, title, desc, ex, tr, flag] = it, w = `${tab} › ${cmd}`;
