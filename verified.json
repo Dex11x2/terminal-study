@@ -11814,6 +11814,11 @@
   "date": "2026-10-29",
   "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
  },
+ "ps|Compare-Object": {
+  "hash": "c3ab86467f07",
+  "date": "2026-10-29",
+  "on": "pwsh-7.6.9 و powershell-5.1 على ويندوز 11 (من غير أدمن): whoami /groups و IsInRole و #Requires -RunAsAdministrator و sudo -h، و Export-Clixml بين النسختين، و Save-Module لـ SecretManagement في فولدر مؤقت، و -Parallel بالتوقيتات، و Compare-Object و Set-StrictMode. docs: اللي جوه نافذة الأدمن (UAC و High level)، وتفعيل sudo وأوضاعه، و Get-Credential prompt، و Register-SecretVault"
+ },
  "ps|Compress-Archive": {
   "hash": "30d1751f6093",
   "date": "2026-10-29",
@@ -11858,6 +11863,11 @@
   "hash": "4b425bd6d108",
   "date": "2026-10-29",
   "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+ },
+ "ps|ForEach-Object -Parallel": {
+  "hash": "d2498be66a67",
+  "date": "2026-10-29",
+  "on": "pwsh-7.6.9 و powershell-5.1 على ويندوز 11 (من غير أدمن): whoami /groups و IsInRole و #Requires -RunAsAdministrator و sudo -h، و Export-Clixml بين النسختين، و Save-Module لـ SecretManagement في فولدر مؤقت، و -Parallel بالتوقيتات، و Compare-Object و Set-StrictMode. docs: اللي جوه نافذة الأدمن (UAC و High level)، وتفعيل sudo وأوضاعه، و Get-Credential prompt، و Register-SecretVault"
  },
  "ps|Format-Volume / Clear-Disk": {
   "hash": "0484eadeead6",
@@ -11918,6 +11928,11 @@
   "hash": "b11b8fa21b4e",
   "date": "2026-10-29",
   "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+ },
+ "ps|Get-Credential و الأسرار": {
+  "hash": "9e8b99ab75cd",
+  "date": "2026-10-29",
+  "on": "pwsh-7.6.9 و powershell-5.1 على ويندوز 11 (من غير أدمن): whoami /groups و IsInRole و #Requires -RunAsAdministrator و sudo -h، و Export-Clixml بين النسختين، و Save-Module لـ SecretManagement في فولدر مؤقت، و -Parallel بالتوقيتات، و Compare-Object و Set-StrictMode. docs: اللي جوه نافذة الأدمن (UAC و High level)، وتفعيل sudo وأوضاعه، و Get-Credential prompt، و Register-SecretVault"
  },
  "ps|Get-FileHash": {
   "hash": "4483418c6455",
@@ -12179,6 +12194,11 @@
   "date": "2026-10-06",
   "on": "win11 pwsh 7.6.6 (PSReadLine 2.4.5) + 5.1 (2.0.0)"
  },
+ "ps|Set-StrictMode": {
+  "hash": "210513be6e49",
+  "date": "2026-10-29",
+  "on": "pwsh-7.6.9 و powershell-5.1 على ويندوز 11 (من غير أدمن): whoami /groups و IsInRole و #Requires -RunAsAdministrator و sudo -h، و Export-Clixml بين النسختين، و Save-Module لـ SecretManagement في فولدر مؤقت، و -Parallel بالتوقيتات، و Compare-Object و Set-StrictMode. docs: اللي جوه نافذة الأدمن (UAC و High level)، وتفعيل sudo وأوضاعه، و Get-Credential prompt، و Register-SecretVault"
+ },
  "ps|Sort-Object": {
   "hash": "e99b5a505ee9",
   "date": "2026-10-29",
@@ -12198,6 +12218,11 @@
   "hash": "2ad9e9224dca",
   "date": "2026-10-29",
   "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+ },
+ "ps|Start-Process -Verb RunAs": {
+  "hash": "fc3183020d57",
+  "date": "2026-10-29",
+  "on": "pwsh-7.6.9 و powershell-5.1 على ويندوز 11 (من غير أدمن): whoami /groups و IsInRole و #Requires -RunAsAdministrator و sudo -h، و Export-Clixml بين النسختين، و Save-Module لـ SecretManagement في فولدر مؤقت، و -Parallel بالتوقيتات، و Compare-Object و Set-StrictMode. docs: اللي جوه نافذة الأدمن (UAC و High level)، وتفعيل sudo وأوضاعه، و Get-Credential prompt، و Register-SecretVault"
  },
  "ps|Start-Transcript": {
   "hash": "f19cb6f8b34f",
