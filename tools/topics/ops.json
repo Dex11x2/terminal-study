@@ -1,0 +1,3198 @@
+{
+ "docker": [
+  {
+   "topic": "image و container",
+   "find": [
+    "image و container"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "docker run",
+   "find": [
+    "docker run"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "ps/stop/start/rm",
+   "find": [
+    "ps / stop"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "logs",
+   "find": [
+    "docker logs"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "exec",
+   "find": [
+    "docker exec"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "images و tags",
+   "find": [
+    "images / tags"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "inspect و stats",
+   "find": [
+    "inspect / stats"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Dockerfile",
+   "find": [
+    "dockerfile"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "الطبقات والكاش",
+   "find": [
+    "الطبقات والكاش"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": ".dockerignore",
+   "find": [
+    ".dockerignore"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "multi-stage",
+   "find": [
+    "multi-stage"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "ENV و ARG",
+   "find": [
+    "env و arg"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "USER و HEALTHCHECK",
+   "find": [
+    "user و healthcheck"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "build/tag/push",
+   "find": [
+    "build / tag / push"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "buildx multi-platform",
+   "find": [
+    "buildx"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "CMD و ENTRYPOINT",
+   "find": [
+    "cmd و entrypoint"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "أسرار وقت الـ build",
+   "find": [
+    "أسرار وقت الـ build"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "volumes",
+   "find": [
+    "volumes"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "bind mount",
+   "find": [
+    "bind mount"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "networks",
+   "find": [
+    "networks"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "env file",
+   "find": [
+    "env file"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "compose.yml",
+   "find": [
+    "compose.yml"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "compose up/down",
+   "find": [
+    "compose up"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "compose watch",
+   "find": [
+    "compose watch"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "profiles",
+   "find": [
+    "profiles"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "healthchecks في compose",
+   "find": [
+    "healthchecks"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "restart policies",
+   "find": [
+    "restart policies"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "حدود الموارد",
+   "find": [
+    "حدود الموارد"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "باك أب volumes",
+   "find": [
+    "نسخ وباك أب"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "تنضيف",
+   "find": [
+    "تنضيف"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "أمان الكونتينر عام",
+   "find": [
+    "الأمان"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "cap-drop و no-new-privileges و pids-limit",
+   "find": [
+    "cap-drop",
+    "no-new-privileges",
+    "pids-limit"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "log rotation max-size",
+   "find": [
+    "max-size",
+    "log rotation",
+    "log-opt"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "docker context",
+   "find": [
+    "docker context"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "save و load",
+   "find": [
+    "docker save",
+    "save / load",
+    "save و load"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "rootless docker",
+   "find": [
+    "rootless"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "registry خاص",
+   "find": [
+    "registry خاص",
+    "docker registry",
+    "registry:2"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "reverse proxy قدام compose",
+   "find": [
+    "nginx-proxy",
+    "traefik"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "تشخيص container بيقع",
+   "find": [
+    "ليه الـ container وقع"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "docker scan / trivy",
+   "find": [
+    "trivy",
+    "docker scout"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "read-only filesystem",
+   "find": [
+    "read-only",
+    "--read-only"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "docker system df",
+   "find": [
+    "system df"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "init و signals (PID 1)",
+   "find": [
+    "pid 1",
+    "tini",
+    "--init"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "compose override و -f",
+   "find": [
+    "-f و -p"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "DNS داخلي بين الكونتينرات",
+   "find": [
+    "الاسم اللي اتكرر",
+    "dns داخلي"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "depends_on و ترتيب الإقلاع",
+   "find": [
+    "قام قبل الداتابيز",
+    "depends_on"
+   ],
+   "lvl": "يومي"
+  }
+ ],
+ "vps": [
+  {
+   "topic": "ssh أول دخول",
+   "find": [
+    "ssh / exit"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "hostnamectl",
+   "find": [
+    "hostnamectl"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "timedatectl",
+   "find": [
+    "timedatectl"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "apt",
+   "find": [
+    "apt update"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "تسطيب Node",
+   "find": [
+    "nodesource"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "reboot",
+   "find": [
+    "reboot"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "tmux",
+   "find": [
+    "tmux"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "vim",
+   "find": [
+    "vim"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "adduser",
+   "find": [
+    "adduser"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "نقل مفتاح SSH",
+   "find": [
+    "نقل مفتاح ssh"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "sshd_config",
+   "find": [
+    "sshd_config"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "ufw",
+   "find": [
+    "ufw"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "fail2ban",
+   "find": [
+    "fail2ban"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "unattended-upgrades",
+   "find": [
+    "unattended-upgrades"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "nginx site",
+   "find": [
+    "sites-available"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "certbot",
+   "find": [
+    "certbot"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "docker على السيرفر",
+   "find": [
+    "تسطيب docker"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "pm2",
+   "find": [
+    "pm2"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "cron",
+   "find": [
+    "crontab"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "systemd timer",
+   "find": [
+    "systemd timer"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "pg_dump",
+   "find": [
+    "pg_dump"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "systemd service",
+   "find": [
+    "myapp.service"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "journalctl",
+   "find": [
+    "journalctl"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "ncdu و الديسك",
+   "find": [
+    "ncdu"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "swap",
+   "find": [
+    "swap"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "monitoring و alerts",
+   "find": [
+    "تنبيه telegram",
+    "node_exporter"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "Ansible",
+   "find": [
+    "ansible"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "AppArmor/SELinux",
+   "find": [
+    "apparmor"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "logrotate",
+   "find": [
+    "logrotate"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "sysctl",
+   "find": [
+    "sysctl"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "sudo و visudo",
+   "find": [
+    "visudo"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "باك أب off-site بـ restic",
+   "find": [
+    "restic",
+    "off-site"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "scp و rsync",
+   "find": [
+    "scp و rsync",
+    "scp -",
+    "rsync -az"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "chmod/chown على السيرفر",
+   "find": [
+    "chmod و chown",
+    "صلاحيات الملفات"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "dmesg و lsof و vmstat",
+   "find": [
+    "dmesg",
+    "lsof",
+    "vmstat"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "lastb و auth.log",
+   "find": [
+    "lastb",
+    "auth.log"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "LVM",
+   "find": [
+    "lvm"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "deploy بدون توقف",
+   "find": [
+    "بدون توقف",
+    "zero downtime",
+    "zero-downtime"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "باك أب 3-2-1 واختبار الرجوع",
+   "find": [
+    "3-2-1",
+    "اختبار الرجوع"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "top/htop و ps",
+   "find": [
+    "top و htop",
+    "htop و top"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "ss و البورتات",
+   "find": [
+    "ss -tl"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "systemd-analyze و ترتيب الإقلاع",
+   "find": [
+    "systemd-analyze"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "فحص ثغرات (lynis)",
+   "find": [
+    "lynis"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "استضافة مشتركة",
+   "find": [
+    "cpanel",
+    "استضافة مشتركة"
+   ],
+   "lvl": "يومي"
+  }
+ ],
+ "nginx": [
+  {
+   "topic": "الملفات والهيكل",
+   "find": [
+    "الملفات"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "موقع static",
+   "find": [
+    "موقع static"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "SPA",
+   "find": [
+    "spa"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "reverse proxy",
+   "find": [
+    "reverse proxy"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "أوامر nginx -t/reload",
+   "find": [
+    "الأوامر"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "gzip",
+   "find": [
+    "gzip"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "كاش الملفات الثابتة",
+   "find": [
+    "كاش الملفات الثابتة"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "redirects",
+   "find": [
+    "redirects"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "كذا موقع (server_name)",
+   "find": [
+    "كذا موقع"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "location matching",
+   "find": [
+    "location matching"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "rate limiting",
+   "find": [
+    "rate limiting"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "security headers",
+   "find": [
+    "security headers"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "timeouts و client_max_body_size",
+   "find": [
+    "حدود و timeouts"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "proxy_buffers",
+   "find": [
+    "proxy_buffer"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "WebSockets",
+   "find": [
+    "websockets"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "blue-green",
+   "find": [
+    "blue-green"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "basic auth",
+   "find": [
+    "basic auth"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "لوجات مخصصة",
+   "find": [
+    "لوجات مخصصة"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "HTTP/2 و HTTP/3",
+   "find": [
+    "http/2"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "IP الزائر ورا Cloudflare",
+   "find": [
+    "cloudflare"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "تشخيص nginx",
+   "find": [
+    "تشخيص nginx"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "nginx جوه docker",
+   "find": [
+    "acme-challenge",
+    "nginx -t في container"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Caddy",
+   "find": [
+    "caddy"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "proxy_cache",
+   "find": [
+    "proxy_cache"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "upstream و load balancing",
+   "find": [
+    "least_conn",
+    "upstream"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "map",
+   "find": [
+    "map"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "auth_request",
+   "find": [
+    "auth_request"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "error_page",
+   "find": [
+    "error_page"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "fastcgi_pass و php-fpm",
+   "find": [
+    "fastcgi",
+    "php-fpm"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "CORS",
+   "find": [
+    "cors"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "stub_status",
+   "find": [
+    "stub_status"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "worker tuning و open_file_cache",
+   "find": [
+    "worker_processes",
+    "open_file_cache",
+    "worker tuning"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "X-Accel-Redirect",
+   "find": [
+    "x-accel"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "stream TCP proxy",
+   "find": [
+    "stream {",
+    "tcp proxy",
+    "udp proxy"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "TLS hardening",
+   "find": [
+    "tls hardening",
+    "ssl_protocols",
+    "hsts"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "limit_conn و حماية من DDoS",
+   "find": [
+    "limit_conn"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "try_files",
+   "find": [
+    "try_files"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "proxy_set_header و Host",
+   "find": [
+    "proxy_set_header"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "rewrite",
+   "find": [
+    "rewrite"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "ssl certificate config",
+   "find": [
+    "ssl_certificate",
+    "شهادات"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "اختبار الأداء (ab/wrk)",
+   "find": [
+    "wrk",
+    "apache bench",
+    "benchmark"
+   ],
+   "lvl": "متقدم"
+  }
+ ],
+ "sshc": [
+  {
+   "topic": "~/.ssh/config",
+   "find": [
+    "الملف الأساسي"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "Host و wildcard",
+   "find": [
+    "host *"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "ProxyJump",
+   "find": [
+    "proxyjump"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "مفاتيح متعددة",
+   "find": [
+    "مفاتيح متعددة"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "keepalive و multiplexing",
+   "find": [
+    "keepalive"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "LocalForward",
+   "find": [
+    "localforward"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "ssh-agent و forwarding",
+   "find": [
+    "ssh-agent"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "known_hosts",
+   "find": [
+    "known_hosts"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "SOCKS (ssh -D)",
+   "find": [
+    "ssh -d"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "شهادات المستخدمين",
+   "find": [
+    "شهادات المستخدمين"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "شهادات السيرفر",
+   "find": [
+    "شهادات السيرفر"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "authorized_keys options",
+   "find": [
+    "authorized_keys"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "Match و Include",
+   "find": [
+    "match و include"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "sshd Match و ssh-audit",
+   "find": [
+    "ssh-audit"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "FIDO2",
+   "find": [
+    "fido2"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "ssh-keygen أنواع المفاتيح",
+   "find": [
+    "ssh-keygen",
+    "ed25519"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "scp و sftp و rsync",
+   "find": [
+    "scp",
+    "sftp",
+    "rsync"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "ssh-copy-id",
+   "find": [
+    "ssh-copy-id"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "ssh -vvv و Permission denied",
+   "find": [
+    "ssh -vvv",
+    "permission denied"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "RemoteForward",
+   "find": [
+    "remoteforward"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "autossh",
+   "find": [
+    "autossh"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "2FA للـ SSH",
+   "find": [
+    "2fa",
+    "totp"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "bastion",
+   "find": [
+    "bastion"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "tunnel دايم",
+   "find": [
+    "systemd tunnel",
+    "tunnel دايم"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "sshfs",
+   "find": [
+    "sshfs"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "صلاحيات ~/.ssh",
+   "find": [
+    "chmod 600",
+    "صلاحيات المفاتيح"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "هاردننج sshd (PasswordAuthentication)",
+   "find": [
+    "passwordauthentication",
+    "هاردننج"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "ssh على ويندوز",
+   "find": [
+    "openssh على ويندوز",
+    "ssh على ويندوز"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "git عبر ssh",
+   "find": [
+    "git عبر ssh",
+    "github ssh"
+   ],
+   "lvl": "يومي"
+  }
+ ],
+ "net": [
+  {
+   "topic": "الطبقات",
+   "find": [
+    "الطبقات"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "IP",
+   "find": [
+    "ip"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "port",
+   "find": [
+    "port"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "TCP",
+   "find": [
+    "tcp"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "UDP",
+   "find": [
+    "udp"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "DNS",
+   "find": [
+    "dns"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "رحلة الطلب",
+   "find": [
+    "journey"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "routing",
+   "find": [
+    "routing"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "NAT",
+   "find": [
+    "nat"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "HTTP",
+   "find": [
+    "http"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "TLS و SNI",
+   "find": [
+    "tls_sni"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "TUN و بروكسي",
+   "find": [
+    "tun"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "SOCKS proxy",
+   "find": [
+    "socks_proxy"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "تغليف VPN",
+   "find": [
+    "encap"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "kill switch",
+   "find": [
+    "kill_switch"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "CIDR و subnetting",
+   "find": [
+    "cidr"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "ARP",
+   "find": [
+    "arp"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "DHCP",
+   "find": [
+    "dhcp"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "IPv6",
+   "find": [
+    "ipv6"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "pcap و tshark",
+   "find": [
+    "pcap",
+    "tshark"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "WireGuard",
+   "find": [
+    "wireguard"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "MTU",
+   "find": [
+    "mtu"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "قراءة refused/timeout/unreachable",
+   "find": [
+    "refused"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "mtr و iperf",
+   "find": [
+    "mtr",
+    "iperf"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "سجلات DNS للإيميل MX/SPF/DKIM",
+   "find": [
+    "mx",
+    "spf",
+    "dkim"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "hosts و resolv.conf",
+   "find": [
+    "/etc/hosts",
+    "resolv.conf"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "load balancing L4/L7",
+   "find": [
+    "load balanc",
+    "l4"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "nftables / iptables",
+   "find": [
+    "nftables",
+    "iptables"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "ping و traceroute",
+   "find": [
+    "traceroute",
+    "ping و"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "ss و netstat",
+   "find": [
+    "ss -",
+    "netstat"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "curl للتشخيص",
+   "find": [
+    "curl"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "dig و nslookup",
+   "find": [
+    "dig",
+    "nslookup"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "port forwarding",
+   "find": [
+    "port forwarding"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "TTL في DNS و الكاش",
+   "find": [
+    "ttl"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "CDN و anycast",
+   "find": [
+    "anycast",
+    "cdn"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "firewall قواعد وحالة",
+   "find": [
+    "firewall",
+    "فايروول"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "VPN مقابل proxy",
+   "find": [
+    "vpn"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "HTTP/3 و QUIC",
+   "find": [
+    "http/3 و quic",
+    "http3"
+   ],
+   "lvl": "متقدم"
+  }
+ ],
+ "sec": [
+  {
+   "topic": "القاعدة القانونية",
+   "find": [
+    "القاعدة القانونية"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "threat modeling",
+   "find": [
+    "إزاي تفكّر"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "أسرار مكشوفة",
+   "find": [
+    "أسرار مكشوفة"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "Broken Access Control",
+   "find": [
+    "broken access control"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "SQL Injection",
+   "find": [
+    "sql injection"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "XSS",
+   "find": [
+    "xss"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "Command Injection",
+   "find": [
+    "command injection"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Path Traversal",
+   "find": [
+    "path traversal"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Zip Slip",
+   "find": [
+    "zip slip"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "CSRF",
+   "find": [
+    "csrf"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "مصادقة سليمة",
+   "find": [
+    "مصادقة سليمة"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "إعدادات غلط",
+   "find": [
+    "إعدادات غلط"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "مكتبات فيها ثغرات",
+   "find": [
+    "مكتبات فيها ثغرات"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "SSRF",
+   "find": [
+    "ssrf"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "Rate limiting",
+   "find": [
+    "rate limiting"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Supply chain",
+   "find": [
+    "supply chain"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "PII",
+   "find": [
+    "pii"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "القانون المصري و GDPR",
+   "find": [
+    "gdpr"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "تشفير عمود حساس",
+   "find": [
+    "تشفير عمود"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "فحص headers",
+   "find": [
+    "فحص الـ headers"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "OWASP ZAP",
+   "find": [
+    "zap"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "nmap",
+   "find": [
+    "nmap"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "سكانرات في CI",
+   "find": [
+    "السكانرات في ci"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "أسرار في build args",
+   "find": [
+    "build args"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "ss -tlnp والبورتات",
+   "find": [
+    "ss -tlnp"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "تشيك ليست قبل الرفع",
+   "find": [
+    "تشيك ليست",
+    "الأساسيات"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "2FA/TOTP و OAuth",
+   "find": [
+    "totp",
+    "oauth",
+    "2fa"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "أمان رفع الملفات",
+   "find": [
+    "رفع الملفات",
+    "file upload"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "open redirect",
+   "find": [
+    "open redirect"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "XXE",
+   "find": [
+    "xxe"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "mass assignment",
+   "find": [
+    "mass assignment"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "timing attacks",
+   "find": [
+    "timing attack"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "اتسرّب سر: rotate و filter-repo",
+   "find": [
+    "rotate",
+    "filter-repo"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "lynis و SUID",
+   "find": [
+    "lynis",
+    "suid"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "CORS",
+   "find": [
+    "cors"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "SBOM",
+   "find": [
+    "sbom"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "hashing الباسورد (bcrypt/argon2)",
+   "find": [
+    "bcrypt",
+    "argon2",
+    "hash الباسورد"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "JWT وأمانه",
+   "find": [
+    "jwt "
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "CSP",
+   "find": [
+    "csp",
+    "content-security-policy"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "cookies flags (HttpOnly/Secure/SameSite)",
+   "find": [
+    "httponly",
+    "samesite"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "logging و كشف الاختراق",
+   "find": [
+    "audit log",
+    "كشف الاختراق",
+    "security logging"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "incident response للأمان",
+   "find": [
+    "incident response",
+    "رد على اختراق"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "secrets manager و vault",
+   "find": [
+    "vault",
+    "secrets manager"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "تأمين سيرفر",
+   "find": [
+    "hardening",
+    "تأمين السيرفر"
+   ],
+   "lvl": "إنتاج"
+  }
+ ],
+ "cloud": [
+  {
+   "topic": "IaaS/PaaS/SaaS",
+   "find": [
+    "iaas"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "VPS ولا managed ولا PaaS",
+   "find": [
+    "vps ولا managed"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "root + MFA",
+   "find": [
+    "root + mfa"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "Budgets و free tier",
+   "find": [
+    "budgets"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "aws cli login",
+   "find": [
+    "aws configure"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "IAM users و roles",
+   "find": [
+    "iam users"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "IAM policy",
+   "find": [
+    "iam policy"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "regions و AZs",
+   "find": [
+    "regions و azs"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "S3",
+   "find": [
+    "aws s3"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "presigned URL",
+   "find": [
+    "presigned"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "CloudFront",
+   "find": [
+    "cloudfront"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "security groups",
+   "find": [
+    "security groups"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "EC2",
+   "find": [
+    "run-instances"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "EBS",
+   "find": [
+    "ebs"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "RDS",
+   "find": [
+    "rds create"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "RDS snapshots و PITR",
+   "find": [
+    "rds snapshots"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "Lambda",
+   "find": [
+    "lambda handler"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "API Gateway",
+   "find": [
+    "api gateway"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "SES",
+   "find": [
+    "إيميلات من تطبيقك"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "Parameter Store و Secrets Manager",
+   "find": [
+    "parameter store"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "Route 53",
+   "find": [
+    "route 53"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Cloudflare proxy و WAF",
+   "find": [
+    "cloudflare proxy",
+    "waf"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Cloudflare Pages/R2/Workers/Tunnel",
+   "find": [
+    "cloudflare pages",
+    "cloudflare tunnel"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "Vercel/Supabase/Neon",
+   "find": [
+    "vercel",
+    "supabase"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "PaaS: Render/Railway/Fly",
+   "find": [
+    "render.yaml",
+    "railway",
+    "fly launch"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "ECR و ECS Fargate",
+   "find": [
+    "ecr ",
+    "fargate"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "kubectl",
+   "find": [
+    "kubectl"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Deployment YAML",
+   "find": [
+    "deployment yaml"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "ConfigMap و Secret",
+   "find": [
+    "configmap"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Terraform",
+   "find": [
+    "terraform resource"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "Terraform plan/apply",
+   "find": [
+    "terraform plan"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "Terraform state",
+   "find": [
+    "terraform state"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "GitHub OIDC",
+   "find": [
+    "oidc"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "CloudWatch",
+   "find": [
+    "cloudwatch"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Prometheus + Grafana",
+   "find": [
+    "prometheus"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "SLI/SLO",
+   "find": [
+    "slo"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "postmortem",
+   "find": [
+    "postmortem"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "OpenTelemetry",
+   "find": [
+    "opentelemetry"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "cost optimization",
+   "find": [
+    "cost optimization"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "HA و DR",
+   "find": [
+    "ha و dr"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "kind cluster",
+   "find": [
+    "kind load"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Service و Ingress",
+   "find": [
+    "service و ingress"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "probes",
+   "find": [
+    "probes"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "requests و limits",
+   "find": [
+    "requests و limits"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "HPA",
+   "find": [
+    "hpa"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "rolling update",
+   "find": [
+    "rolling update"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "CrashLoopBackOff",
+   "find": [
+    "crashloopbackoff"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Helm",
+   "find": [
+    "helm"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "PVC و StatefulSet",
+   "find": [
+    "pvc",
+    "statefulset"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "NetworkPolicy",
+   "find": [
+    "networkpolicy"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "CronJob",
+   "find": [
+    "cronjob"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "ArgoCD و Kustomize",
+   "find": [
+    "argocd",
+    "kustomize"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "SQS و DynamoDB",
+   "find": [
+    "sqs",
+    "dynamodb"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "مقارنة Azure و GCP",
+   "find": [
+    "azure",
+    "gcp"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "tags والتكلفة",
+   "find": [
+    "tags"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "Firebase",
+   "find": [
+    "firebase"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Firestore rules",
+   "find": [
+    "firestore"
+   ],
+   "lvl": "يومي"
+  }
+ ],
+ "gha": [
+  {
+   "topic": "أول workflow",
+   "find": [
+    "ci.yml"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "المفاهيم",
+   "find": [
+    "المفاهيم"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "uses و run",
+   "find": [
+    "uses و run"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "gh CLI",
+   "find": [
+    "gh cli"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "قراية الفشل",
+   "find": [
+    "قراية الفشل"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "secrets و env",
+   "find": [
+    "secrets و env"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "matrix",
+   "find": [
+    "matrix"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "services",
+   "find": [
+    "services"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "cache و artifacts",
+   "find": [
+    "cache و artifacts"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "GITHUB_ENV و GITHUB_OUTPUT",
+   "find": [
+    "github_output"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "needs و if و concurrency",
+   "find": [
+    "needs و if"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "jobs متوازية",
+   "find": [
+    "jobs متوازية"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "الأمان في workflows",
+   "find": [
+    "الأمان"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "build و push image",
+   "find": [
+    "build و push image"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "deploy عبر SSH",
+   "find": [
+    "deploy عبر ssh"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "environments و approval",
+   "find": [
+    "environments"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "deploy على tag",
+   "find": [
+    "deploy على tag"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "rollback",
+   "find": [
+    "rollback"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "schedule",
+   "find": [
+    "schedule"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "debugging",
+   "find": [
+    "debugging"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "workflow_call",
+   "find": [
+    "workflow_call"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "composite action",
+   "find": [
+    "composite action"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "matrix ديناميكي",
+   "find": [
+    "matrix ديناميكي"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "runners و container",
+   "find": [
+    "runners"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "act",
+   "find": [
+    "act ",
+    "nektos"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "actionlint",
+   "find": [
+    "actionlint"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "script injection",
+   "find": [
+    "script injection"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "zizmor",
+   "find": [
+    "zizmor"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "OIDC",
+   "find": [
+    "oidc"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "branch protection و CODEOWNERS",
+   "find": [
+    "branch protection",
+    "codeowners"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "release automation",
+   "find": [
+    "release automation",
+    "release-please",
+    "semantic-release"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "paths و continue-on-error",
+   "find": [
+    "paths",
+    "continue-on-error"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "CodeQL و attestations",
+   "find": [
+    "codeql",
+    "attestation"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "permissions للـ GITHUB_TOKEN",
+   "find": [
+    "permissions",
+    "github_token"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "pin actions بـ SHA",
+   "find": [
+    "pin actions",
+    "pinning"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "Dependabot لـ actions",
+   "find": [
+    "dependabot"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "workflow_dispatch و inputs",
+   "find": [
+    "workflow_dispatch"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "pull_request vs pull_request_target",
+   "find": [
+    "pull_request_target"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "self-hosted runners",
+   "find": [
+    "self-hosted"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "reusable cache للـ docker",
+   "find": [
+    "buildx cache",
+    "cache-from"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "notifications من الـ workflow",
+   "find": [
+    "slack",
+    "telegram",
+    "notification"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "timeout-minutes و تكلفة الدقائق",
+   "find": [
+    "timeout-minutes"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "خطوط الإنتاج: staging ثم prod",
+   "find": [
+    "staging"
+   ],
+   "lvl": "إنتاج"
+  }
+ ],
+ "diag": [
+  {
+   "topic": "منهج السلّم",
+   "find": [
+    "السلّم"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "الموقع مش بيفتح",
+   "find": [
+    "الموقع مش بيفتح"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "البورت مقفول من بره",
+   "find": [
+    "البورت مقفول"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "بيفتح عند ناس ومش عند ناس",
+   "find": [
+    "بيفتح عند ناس"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "شهادة SSL",
+   "find": [
+    "شهادة ssl"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "DNS بيشاور على مين",
+   "find": [
+    "الدومين بيشاور"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "502",
+   "find": [
+    "502"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "504",
+   "find": [
+    "504"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "500 من التطبيق",
+   "find": [
+    "500 من التطبيق"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "الديسك اتملى",
+   "find": [
+    "الديسك اتملى"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "No space (inodes)",
+   "find": [
+    "no space"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "CPU 100٪",
+   "find": [
+    "المعالج 100"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "الرام خلصت",
+   "find": [
+    "الرام خلصت"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "مش قادر أعمل SSH",
+   "find": [
+    "مش قادر أعمل ssh"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "قاعدة البيانات مش بترد",
+   "find": [
+    "قاعدة البيانات مش بترد"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "container بيقع ويقوم",
+   "find": [
+    "بيقع ويقوم"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "الموقع بطيء",
+   "find": [
+    "الموقع بطيء"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "deploy كسر الموقع",
+   "find": [
+    "deploy كسر"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "smoke test",
+   "find": [
+    "smoke test"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "بوت بيضرب الموقع",
+   "find": [
+    "بوت بيضرب"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "شك في اختراق",
+   "find": [
+    "شك في اختراق"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "cron مشتغلش",
+   "find": [
+    "cron مشتغلش"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "الإيميلات مش بتوصل",
+   "find": [
+    "الإيميلات"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "الساعة غلط",
+   "find": [
+    "الساعة غلط"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "webhook مش واصل",
+   "find": [
+    "webhook"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "بعد reboot",
+   "find": [
+    "reboot"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "قبل ما تطلب مساعدة",
+   "find": [
+    "قبل ما تطلب مساعدة"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "strace",
+   "find": [
+    "strace"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "node --cpu-prof",
+   "find": [
+    "cpu-prof"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "memory leak",
+   "find": [
+    "leak"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "Too many open files",
+   "find": [
+    "too many open files"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "load عالي والمعالج فاضي",
+   "find": [
+    "load عالي"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "exit code",
+   "find": [
+    "exit code"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "logs/metrics/traces",
+   "find": [
+    "logs و metrics"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "prom-client",
+   "find": [
+    "prom-client"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "Prometheus targets",
+   "find": [
+    "prometheus targets"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "PromQL",
+   "find": [
+    "promql"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "Grafana provisioning",
+   "find": [
+    "grafana provisioning"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "Alertmanager",
+   "find": [
+    "alertmanager"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "CORS و mixed content",
+   "find": [
+    "cors",
+    "mixed content"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "redirect loop",
+   "find": [
+    "redirect loop",
+    "too many redirects"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "WebSocket بيفشل",
+   "find": [
+    "websocket"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "slow query و TIME_WAIT",
+   "find": [
+    "slow query",
+    "time_wait"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "git bisect",
+   "find": [
+    "bisect"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "runbook و postmortem",
+   "find": [
+    "runbook",
+    "postmortem"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "tcpdump",
+   "find": [
+    "tcpdump"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "docker logs/inspect للتشخيص",
+   "find": [
+    "docker logs",
+    "docker inspect"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "OOM killer",
+   "find": [
+    "oom"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "incident response (severity)",
+   "find": [
+    "incident",
+    "severity"
+   ],
+   "lvl": "إنتاج"
+  }
+ ],
+ "quality": [
+  {
+   "topic": "سكربتات الفحص",
+   "find": [
+    "سكربتات الفحص"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "eslint",
+   "find": [
+    "eslint"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "eslint.config",
+   "find": [
+    "eslint.config"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "prettier",
+   "find": [
+    "prettier"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "tsc --noEmit",
+   "find": [
+    "tsc --noemit"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": ".editorconfig",
+   "find": [
+    ".editorconfig"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "vitest",
+   "find": [
+    "vitest"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "coverage",
+   "find": [
+    "--coverage"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "jest",
+   "find": [
+    "jest"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "خريطة الاختبارات",
+   "find": [
+    "خريطة الاختبارات"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "describe/it/expect",
+   "find": [
+    "describe و it"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "matchers و rejects",
+   "find": [
+    "toequal"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "mocks (vi.fn/spyOn)",
+   "find": [
+    "vi.fn"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "vi.mock",
+   "find": [
+    "vi.mock"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "fake timers",
+   "find": [
+    "usefaketimers"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "test.each و beforeEach",
+   "find": [
+    "test.each"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "اختبار كويس",
+   "find": [
+    "اختبار كويس"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "husky",
+   "find": [
+    "husky"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "lint-staged",
+   "find": [
+    "lint-staged"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "commitlint",
+   "find": [
+    "commitlint"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "ترتيب الفحص في CI",
+   "find": [
+    "ترتيب الفحص"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "monorepo pnpm filter",
+   "find": [
+    "pnpm -r"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "Playwright",
+   "find": [
+    "playwright.config"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "getByRole",
+   "find": [
+    "getbyrole"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "storageState",
+   "find": [
+    "storagestate"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "trace viewer و flaky",
+   "find": [
+    "trace viewer"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "Playwright في CI",
+   "find": [
+    "playwright في github"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "axe accessibility",
+   "find": [
+    "axe"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "Lighthouse CI",
+   "find": [
+    "lighthouse"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "Biome",
+   "find": [
+    "biome.json"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "knip",
+   "find": [
+    "knip"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "MSW",
+   "find": [
+    "msw"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "testcontainers",
+   "find": [
+    "testcontainers"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "Testing Library",
+   "find": [
+    "testing library"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Dependabot و Renovate",
+   "find": [
+    "dependabot",
+    "renovate"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "k6 load testing",
+   "find": [
+    "k6"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "bundle size و madge",
+   "find": [
+    "bundle size",
+    "madge"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "TDD",
+   "find": [
+    "tdd"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "اختبار API بقاعدة حقيقية",
+   "find": [
+    "supertest",
+    "قاعدة حقيقية"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "code review checklist",
+   "find": [
+    "code review",
+    "مراجعة الكود"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "pre-commit مقابل CI",
+   "find": [
+    "pre-commit"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "snapshot testing",
+   "find": [
+    "snapshot"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "contract testing",
+   "find": [
+    "contract"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "flaky tests",
+   "find": [
+    "flaky"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "coverage thresholds",
+   "find": [
+    "threshold"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "mutation testing",
+   "find": [
+    "mutation",
+    "stryker"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "type coverage و strict",
+   "find": [
+    "strict"
+   ],
+   "lvl": "يومي"
+  }
+ ]
+}

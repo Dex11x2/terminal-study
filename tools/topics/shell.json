@@ -1,0 +1,4494 @@
+{
+ "bash": [
+  {
+   "topic": "cat/less/head/tail",
+   "find": [
+    "اطبع الملف كله",
+    "اقرا ملف كبير",
+    "head / tail"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "grep",
+   "find": [
+    "دوّر على نص"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "find",
+   "find": [
+    "دوّر على ملفات"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "wildcards",
+   "find": [
+    "* و ?"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "pipes",
+   "find": [
+    "وصّل خرج أمر"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "redirect > >>",
+   "find": [
+    "> و >>"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "2>&1 و /dev/null",
+   "find": [
+    "2>&1"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "&& و || و ;",
+   "find": [
+    "&& و"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "command substitution",
+   "find": [
+    "$( )"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "xargs",
+   "find": [
+    "xargs"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "chmod",
+   "find": [
+    "غيّر الصلاحيات"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "chown",
+   "find": [
+    "غيّر المالك"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "sudo",
+   "find": [
+    "نفّذ كـ root"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "users useradd",
+   "find": [
+    "useradd و usermod"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "visudo/sudoers",
+   "find": [
+    "visudo",
+    "sudoers"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "setuid/sticky",
+   "find": [
+    "setuid",
+    "sticky"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "umask",
+   "find": [
+    "umask"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "ACL setfacl",
+   "find": [
+    "setfacl"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "ps/top",
+   "find": [
+    "العمليات الشغالة",
+    "top / htop"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "kill",
+   "find": [
+    "وقّف عملية"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "background jobs",
+   "find": [
+    "& و jobs",
+    "nohup"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "systemctl",
+   "find": [
+    "systemctl"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "journalctl logs",
+   "find": [
+    "journalctl"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "cron",
+   "find": [
+    "cron للسكربت",
+    "crontab"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "df/du",
+   "find": [
+    "df / du"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "tar/zip",
+   "find": [
+    "اضغط وفك",
+    "zip / unzip"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "curl",
+   "find": [
+    "كلّم أي API"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "ssh",
+   "find": [
+    "ادخل السيرفر"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "scp/rsync",
+   "find": [
+    "scp / rsync"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "ss/lsof ports",
+   "find": [
+    "ss / lsof"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "dig/DNS",
+   "find": [
+    "الـ DNS بالتفصيل"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "ip addr/route",
+   "find": [
+    "ip a / ip route"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "iptables/nft firewall",
+   "find": [
+    "nft و iptables"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "alias/.bashrc",
+   "find": [
+    "alias و .bashrc"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "export/env",
+   "find": [
+    "export و env"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "sort/uniq/cut",
+   "find": [
+    "sort و uniq",
+    "خد عمود"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "awk",
+   "find": [
+    "لغة صغيرة للأعمدة"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "sed",
+   "find": [
+    "استبدل نص"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "jq",
+   "find": [
+    "اقرا JSON في الترمنال"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "script shebang",
+   "find": [
+    "#!/usr/bin/env",
+    "أول سكربت"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "variables",
+   "find": [
+    "VAR=value"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "read input",
+   "find": [
+    "خد مدخلات من اليوزر"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "args positional",
+   "find": [
+    "$1 و $#"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "if/test",
+   "find": [
+    "الشرط"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "case",
+   "find": [
+    "اختيارات كتير"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "for/while loops",
+   "find": [
+    "لوب",
+    "while read"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "functions",
+   "find": [
+    "فانكشنز"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "arrays",
+   "find": [
+    "arrays",
+    "declare -a"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "parameter expansion",
+   "find": [
+    "${var:-default}",
+    "${#var}"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "getopts",
+   "find": [
+    "getopts"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "set -euo pipefail",
+   "find": [
+    "set -euo pipefail"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "trap",
+   "find": [
+    "trap"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "mktemp",
+   "find": [
+    "mktemp"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "shellcheck",
+   "find": [
+    "shellcheck"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "set -x debug",
+   "find": [
+    "set -x"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "flock lock",
+   "find": [
+    "flock"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "retry/timeout",
+   "find": [
+    "timeout"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "secrets in scripts",
+   "find": [
+    "الأسرار في السكربت"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "Makefile",
+   "find": [
+    "make"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "logrotate",
+   "find": [
+    "logrotate -",
+    "تدوير اللوجات"
+   ],
+   "lvl": "إنتاج"
+  }
+ ],
+ "ps": [
+  {
+   "topic": "Get-Help",
+   "find": [
+    "Get-Help"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "Get-Command",
+   "find": [
+    "Get-Command"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "Get-Member",
+   "find": [
+    "Get-Member"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "Set-Location/Get-ChildItem",
+   "find": [
+    "Set-Location",
+    "Get-ChildItem"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "New-Item/Copy/Move/Remove",
+   "find": [
+    "New-Item",
+    "Copy-Item",
+    "Remove-Item"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "Test-Path",
+   "find": [
+    "Test-Path"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "Get-Content/Set-Content",
+   "find": [
+    "Get-Content"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "Select-String",
+   "find": [
+    "Select-String"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Where-Object",
+   "find": [
+    "Where-Object"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "Select-Object",
+   "find": [
+    "Select-Object"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "Sort-Object",
+   "find": [
+    "Sort-Object"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "Group/Measure",
+   "find": [
+    "Group-Object",
+    "Measure-Object"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "ForEach-Object",
+   "find": [
+    "ForEach-Object"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "Export-Csv/ConvertTo-Json",
+   "find": [
+    "Export-Csv",
+    "ConvertTo-Json"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Import-Csv/ConvertFrom-Json",
+   "find": [
+    "Import-Csv",
+    "ConvertFrom-Json"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Get-Process/Stop-Process",
+   "find": [
+    "Get-Process / Stop-Process"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "Get-Service",
+   "find": [
+    "Get-Service"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Start-Process",
+   "find": [
+    "Start-Process"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Test-NetConnection",
+   "find": [
+    "Test-NetConnection"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Invoke-RestMethod",
+   "find": [
+    "Invoke-RestMethod"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Invoke-WebRequest",
+   "find": [
+    "Invoke-WebRequest"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Resolve-DnsName",
+   "find": [
+    "Resolve-DnsName"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "Get-NetIPAddress",
+   "find": [
+    "Get-NetIPAddress"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "firewall rules",
+   "find": [
+    "New-NetFirewallRule"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "$env:",
+   "find": [
+    "$env:"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "variables and types",
+   "find": [
+    "المتغيرات والأنواع"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "$PROFILE",
+   "find": [
+    "$PROFILE"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "ExecutionPolicy",
+   "find": [
+    "ExecutionPolicy"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "if/switch",
+   "find": [
+    "if / switch"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "loops",
+   "find": [
+    "foreach / for"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "functions",
+   "find": [
+    "فانكشنز"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "array/hashtable",
+   "find": [
+    "array و hashtable"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "comparison operators",
+   "find": [
+    "عوامل المقارنة"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "param()",
+   "find": [
+    "param()"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "CmdletBinding",
+   "find": [
+    "CmdletBinding"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "splatting",
+   "find": [
+    "splatting"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "try/catch",
+   "find": [
+    "try / catch"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "ErrorAction",
+   "find": [
+    "-ErrorAction"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "LASTEXITCODE",
+   "find": [
+    "$LASTEXITCODE"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "PSScriptRoot",
+   "find": [
+    "$PSScriptRoot"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "modules",
+   "find": [
+    "Import-Module"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "Start-Transcript",
+   "find": [
+    "Start-Transcript"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "PSScriptAnalyzer",
+   "find": [
+    "PSScriptAnalyzer"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "Register-ScheduledTask",
+   "find": [
+    "Register-ScheduledTask"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Start-Job",
+   "find": [
+    "Start-Job"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "parallel",
+   "find": [
+    "-Parallel"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "Get-Credential/secrets",
+   "find": [
+    "Get-Credential"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "Compare-Object",
+   "find": [
+    "Compare-Object"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Set-StrictMode",
+   "find": [
+    "Set-StrictMode"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "Compress-Archive",
+   "find": [
+    "Compress-Archive"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Get-FileHash",
+   "find": [
+    "Get-FileHash"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Get-WinEvent",
+   "find": [
+    "Get-WinEvent"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "Get-CimInstance",
+   "find": [
+    "Get-CimInstance"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "local users",
+   "find": [
+    "Get-LocalUser"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "Get-Acl",
+   "find": [
+    "Get-Acl"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "admin check/RunAs",
+   "find": [
+    "IsInRole",
+    "RunAs"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Invoke-Command remoting",
+   "find": [
+    "Invoke-Command",
+    "Enter-PSSession"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "winget",
+   "find": [
+    "winget"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "WhatIf/Confirm",
+   "find": [
+    "-WhatIf"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Pester tests",
+   "find": [
+    "Pester"
+   ],
+   "lvl": "إنتاج"
+  }
+ ],
+ "cmd": [
+  {
+   "topic": "cd/dir",
+   "find": [
+    "اتنقل واعرف",
+    "اعرض الملفات"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "mkdir/type nul",
+   "find": [
+    "mkdir",
+    "type nul"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "copy/xcopy",
+   "find": [
+    "copy / xcopy"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "robocopy",
+   "find": [
+    "robocopy"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "move/ren",
+   "find": [
+    "move / ren"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "del/rd",
+   "find": [
+    "del / rd"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "attrib",
+   "find": [
+    "attrib"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "type/more",
+   "find": [
+    "type / more"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "findstr",
+   "find": [
+    "findstr"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "where",
+   "find": [
+    "البرنامج فين"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "pipes & redirect",
+   "find": [
+    "pipe وتوجيه"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "&& || &",
+   "find": [
+    "&& و || و &"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "clip",
+   "find": [
+    "انسخ ناتج أمر"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "tasklist/taskkill",
+   "find": [
+    "tasklist / taskkill"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "netstat",
+   "find": [
+    "netstat -ano"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "start",
+   "find": [
+    "افتح حاجة"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "ipconfig",
+   "find": [
+    "ipconfig"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "ping/tracert",
+   "find": [
+    "ping / tracert"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "systeminfo/whoami",
+   "find": [
+    "systeminfo / whoami"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "arp/route",
+   "find": [
+    "arp / route"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "netsh",
+   "find": [
+    "netsh"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "hosts",
+   "find": [
+    "ملف hosts"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "firewall netsh",
+   "find": [
+    "advfirewall"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "set/setx",
+   "find": [
+    "set / setx"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "color/prompt",
+   "find": [
+    "لوّن شاشة CMD",
+    "غيّر شكل الـ prompt"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "shutdown",
+   "find": [
+    "اقفل الجهاز"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "schtasks",
+   "find": [
+    "schtasks"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "powercfg",
+   "find": [
+    "powercfg"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "curl.exe",
+   "find": [
+    "curl.exe"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "winget",
+   "find": [
+    "winget"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "mklink",
+   "find": [
+    "mklink"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "sfc/DISM",
+   "find": [
+    "sfc و DISM"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "chkdsk",
+   "find": [
+    "chkdsk"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "diskpart",
+   "find": [
+    "diskpart"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "sc/net start",
+   "find": [
+    "sc و net start"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "w32tm",
+   "find": [
+    "w32tm"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "net user/localgroup",
+   "find": [
+    "net user",
+    "net localgroup"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "icacls/takeown",
+   "find": [
+    "icacls",
+    "takeown"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "runas",
+   "find": [
+    "شغّل برنامج كيوزر"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "first .bat",
+   "find": [
+    "أول ملف .bat"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "%1 args",
+   "find": [
+    "set و %1"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "set /a /p",
+   "find": [
+    "set /a",
+    "set /p"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "if/errorlevel",
+   "find": [
+    "if و errorlevel"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "setlocal",
+   "find": [
+    "setlocal"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "for loops",
+   "find": [
+    "for /f",
+    "for على الملفات"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "call :label",
+   "find": [
+    "call :label"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "%~dp0",
+   "find": [
+    "%~dp0"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "timeout",
+   "find": [
+    "timeout و ping"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "chcp UTF-8",
+   "find": [
+    "chcp"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "reg query/add",
+   "find": [
+    "reg query",
+    "reg export"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "Run as Administrator",
+   "find": [
+    "run as administrator",
+    "كـ Administrator"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "net session admin check",
+   "find": [
+    "net session"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "pushd/popd",
+   "find": [
+    "pushd",
+    "popd"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "subst",
+   "find": [
+    "subst"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "wevtutil",
+   "find": [
+    "wevtutil"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "getmac",
+   "find": [
+    "getmac"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "gpresult",
+   "find": [
+    "gpresult"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "cmdkey",
+   "find": [
+    "cmdkey"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "assoc/ftype",
+   "find": [
+    "assoc",
+    "ftype"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "help /?",
+   "find": [
+    "help و /?"
+   ],
+   "lvl": "أساسي"
+  }
+ ],
+ "zsh": [
+  {
+   "topic": "echo $SHELL",
+   "find": [
+    "echo $SHELL"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": ".zshrc",
+   "find": [
+    "~/.zshrc"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "globbing **",
+   "find": [
+    "**/*.js"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "no matches found",
+   "find": [
+    "no matches found"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "Oh My Zsh",
+   "find": [
+    "Oh My Zsh"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "PROMPT",
+   "find": [
+    "اكتب الـ prompt"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Powerlevel10k",
+   "find": [
+    "Powerlevel10k"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "brew install",
+   "find": [
+    "brew install"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "brew cask",
+   "find": [
+    "brew --cask"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "brew upgrade",
+   "find": [
+    "brew upgrade"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "brew services",
+   "find": [
+    "brew services"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "brew bundle",
+   "find": [
+    "brew bundle"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "open",
+   "find": [
+    "افتح أي حاجة"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "pbcopy",
+   "find": [
+    "pbcopy"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "mdfind",
+   "find": [
+    "mdfind"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "caffeinate",
+   "find": [
+    "caffeinate"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "pmset",
+   "find": [
+    "pmset"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "defaults",
+   "find": [
+    "إعدادات مخفية"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "sw_vers",
+   "find": [
+    "sw_vers"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "osascript",
+   "find": [
+    "osascript"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "sed -i ''",
+   "find": [
+    "sed -i"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "BSD vs GNU",
+   "find": [
+    "lsof -i",
+    "coreutils"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "date -v",
+   "find": [
+    "date -v"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "shasum",
+   "find": [
+    "shasum"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "networkQuality",
+   "find": [
+    "networkQuality"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "ifconfig",
+   "find": [
+    "ifconfig / route"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "flush DNS",
+   "find": [
+    "flush DNS"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "networksetup",
+   "find": [
+    "networksetup"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "dscl",
+   "find": [
+    "dscl"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "xattr quarantine",
+   "find": [
+    "xattr"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "socketfilterfw",
+   "find": [
+    "socketfilterfw"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "fdesetup",
+   "find": [
+    "fdesetup"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "diskutil",
+   "find": [
+    "diskutil"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "softwareupdate",
+   "find": [
+    "softwareupdate"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "tmutil",
+   "find": [
+    "tmutil"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "system_profiler",
+   "find": [
+    "system_profiler"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "launchd/launchctl",
+   "find": [
+    "launchd",
+    "launchctl"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "zsh arrays",
+   "find": [
+    "zsh arrays"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "autoload/compinit",
+   "find": [
+    "autoload",
+    "compinit"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "bindkey",
+   "find": [
+    "bindkey"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "history options",
+   "find": [
+    "HISTSIZE",
+    "share_history",
+    "setopt hist"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "SIP csrutil",
+   "find": [
+    "csrutil",
+    "System Integrity"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "sudo Touch ID",
+   "find": [
+    "pam_tid",
+    "Touch ID"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "zshenv/zprofile order",
+   "find": [
+    ".zshenv",
+    ".zprofile"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "path_helper",
+   "find": [
+    "path_helper"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "log show",
+   "find": [
+    "log show"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "hdiutil/pkgutil",
+   "find": [
+    "hdiutil",
+    "pkgutil"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "setopt",
+   "find": [
+    "setopt"
+   ],
+   "lvl": "متقدم"
+  }
+ ],
+ "wsl": [
+  {
+   "topic": "wsl --install",
+   "find": [
+    "wsl --install"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "wsl -l -v",
+   "find": [
+    "wsl -l"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "first login",
+   "find": [
+    "أول دخول"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "Windows files from Linux",
+   "find": [
+    "ملفات ويندوز"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "project location",
+   "find": [
+    "فين تحط المشروع"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "VS Code with WSL",
+   "find": [
+    "VS Code"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "Windows commands from Linux",
+   "find": [
+    "أوامر ويندوز"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "wsl --shutdown/terminate",
+   "find": [
+    "إدارة WSL"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": ".wslconfig",
+   "find": [
+    ".wslconfig"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "wsl.conf",
+   "find": [
+    "wsl.conf"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Docker with WSL",
+   "find": [
+    "Docker"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "networking/ports",
+   "find": [
+    "الشبكة والبورتات"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "git line endings",
+   "find": [
+    "line endings"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "systemd",
+   "find": [
+    "systemd"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "common problems",
+   "find": [
+    "مشاكل شائعة"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "diagnose WSL",
+   "find": [
+    "تشخيص WSL"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "move distro export/import",
+   "find": [
+    "نقل التوزيعة"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "compact vhdx",
+   "find": [
+    "توفير الديسك"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "GPU CUDA",
+   "find": [
+    "GPU"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "usbipd",
+   "find": [
+    "usbipd"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "WSLENV",
+   "find": [
+    "WSLENV"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "wsl -u root",
+   "find": [
+    "wsl -u root",
+    "-u root"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "reset password",
+   "find": [
+    "فك الباسورد",
+    "reset password"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "WSL1 vs WSL2",
+   "find": [
+    "WSL1",
+    "WSL2"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "vmmem RAM",
+   "find": [
+    "vmmem"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "wsl --mount",
+   "find": [
+    "wsl --mount"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "cron in WSL",
+   "find": [
+    "cron"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Windows Terminal profiles",
+   "find": [
+    "Windows Terminal"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "mirrored networking",
+   "find": [
+    "mirrored"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "wsl --update",
+   "find": [
+    "wsl --update"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "interop",
+   "find": [
+    "interop"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "distro from image",
+   "find": [
+    "توزيعة من Docker"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "backup distro",
+   "find": [
+    "wsl --export"
+   ],
+   "lvl": "إنتاج"
+  }
+ ],
+ "os": [
+  {
+   "topic": "Win key shortcuts",
+   "find": [
+    "Win+"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "clipboard history",
+   "find": [
+    "Win+V"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "screenshot",
+   "find": [
+    "Win+Shift+S"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "Task Manager",
+   "find": [
+    "Ctrl+Shift+Esc"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "Win+X",
+   "find": [
+    "Win+X"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Windows Terminal",
+   "find": [
+    "wt -d"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Run dialog",
+   "find": [
+    "Win+R"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "%appdata% paths",
+   "find": [
+    "%localappdata%",
+    "%temp%"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "shell:startup",
+   "find": [
+    "shell:startup"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "env vars dialog",
+   "find": [
+    "EditEnvironmentVariables"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "optional features",
+   "find": [
+    "optionalfeatures"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "ms-settings URIs",
+   "find": [
+    "ms-settings:"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "services.msc",
+   "find": [
+    "services.msc"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "eventvwr",
+   "find": [
+    "eventvwr"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "resmon",
+   "find": [
+    "resmon"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "wf.msc firewall",
+   "find": [
+    "wf.msc"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "devmgmt",
+   "find": [
+    "devmgmt"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "regedit",
+   "find": [
+    "regedit"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "PowerToys",
+   "find": [
+    "PowerToys"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "developer mode",
+   "find": [
+    "ms-settings:developers"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Dev Drive",
+   "find": [
+    "Dev Drive"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "Nerd Font",
+   "find": [
+    "Nerd Font"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Terminal settings.json",
+   "find": [
+    "settings.json"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Ubuntu Super key",
+   "find": [
+    "Super"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "Ubuntu terminal shortcut",
+   "find": [
+    "Ctrl+Alt+T"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "Ubuntu workspaces",
+   "find": [
+    "Super+PageDown"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "xdg-open",
+   "find": [
+    "xdg-open"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "gnome-system-monitor",
+   "find": [
+    "gnome-system-monitor"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "gnome-disks",
+   "find": [
+    "gnome-disks"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "gsettings",
+   "find": [
+    "gsettings"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "Mac Spotlight",
+   "find": [
+    "Cmd+Space"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "Cmd+Tab",
+   "find": [
+    "Cmd+Tab"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "Force quit",
+   "find": [
+    "Cmd+Option+Esc"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "Mac screenshot",
+   "find": [
+    "Cmd+Shift+4"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "Go to folder",
+   "find": [
+    "Cmd+Shift+G"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Activity Monitor",
+   "find": [
+    "Activity Monitor"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Keychain",
+   "find": [
+    "Keychain Access"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "Full Disk Access",
+   "find": [
+    "Full Disk Access"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "Console app",
+   "find": [
+    "Console"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "Task Scheduler",
+   "find": [
+    "Task Scheduler",
+    "taskschd"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "msconfig",
+   "find": [
+    "msconfig"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "msinfo32",
+   "find": [
+    "msinfo32"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "Safe Mode",
+   "find": [
+    "Safe Mode"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "Recovery",
+   "find": [
+    "Recovery"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "Disk Utility",
+   "find": [
+    "Disk Utility"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "diskmgmt",
+   "find": [
+    "diskmgmt"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "lusrmgr",
+   "find": [
+    "lusrmgr"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "gpedit",
+   "find": [
+    "gpedit"
+   ],
+   "lvl": "متقدم"
+  }
+ ],
+ "files": [
+  {
+   "topic": "extension",
+   "find": [
+    "الامتداد"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "show extensions",
+   "find": [
+    "إظهار الامتدادات"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "text vs binary",
+   "find": [
+    "نصي ولا ثنائي"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "UTF-8",
+   "find": [
+    "UTF-8"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "LF/CRLF",
+   "find": [
+    "LF و CRLF"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "hidden files",
+   "find": [
+    "الملفات المخفية"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": ".txt/.md/.log",
+   "find": [
+    ".txt",
+    ".md",
+    ".log"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "JSON",
+   "find": [
+    ".json"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "jq",
+   "find": [
+    "jq"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "JSONL",
+   "find": [
+    ".jsonl"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "CSV/TSV",
+   "find": [
+    ".csv"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "XML",
+   "find": [
+    ".xml"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "YAML",
+   "find": [
+    ".yaml"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "YAML pitfalls",
+   "find": [
+    "مشكلة النرويج",
+    "YAML anchors"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "TOML/INI",
+   "find": [
+    ".toml",
+    ".ini"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": ".env",
+   "find": [
+    ".env"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "HTML/CSS/JS",
+   "find": [
+    ".html",
+    ".css"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "TypeScript",
+   "find": [
+    ".ts و"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "min.js/map",
+   "find": [
+    ".min.js"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": ".py/.pyc",
+   "find": [
+    ".py"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": ".c/.cpp",
+   "find": [
+    ".c و .h"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": ".sql",
+   "find": [
+    ".sql"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": ".sh/.ps1/.bat",
+   "find": [
+    ".sh",
+    ".ps1",
+    ".bat"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "package.json",
+   "find": [
+    "package.json"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "lock files",
+   "find": [
+    "package-lock"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "tsconfig",
+   "find": [
+    "tsconfig.json"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": ".npmrc/.nvmrc",
+   "find": [
+    ".npmrc"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": ".gitignore",
+   "find": [
+    ".gitignore"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": ".gitattributes",
+   "find": [
+    ".gitattributes"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": ".editorconfig",
+   "find": [
+    ".editorconfig"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Dockerfile",
+   "find": [
+    "Dockerfile"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "compose.yaml",
+   "find": [
+    "compose.yaml"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Makefile",
+   "find": [
+    "Makefile"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "nginx.conf",
+   "find": [
+    "nginx.conf"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": ".service systemd",
+   "find": [
+    ".service"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "crontab",
+   "find": [
+    "crontab"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "README/LICENSE",
+   "find": [
+    "README"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": ".exe/.msi",
+   "find": [
+    ".exe"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "dll/so",
+   "find": [
+    ".dll"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": ".deb/.rpm",
+   "find": [
+    ".deb"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": ".apk",
+   "find": [
+    ".apk"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "zip/tar/gz",
+   "find": [
+    ".zip",
+    ".tar"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "images",
+   "find": [
+    ".png"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "svg",
+   "find": [
+    ".svg"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "fonts",
+   "find": [
+    ".woff2"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": ".pdf",
+   "find": [
+    ".pdf"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "docx/xlsx",
+   "find": [
+    ".docx"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "sqlite",
+   "find": [
+    ".sqlite"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "pem/key",
+   "find": [
+    ".pem"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "ssh id_ed25519",
+   "find": [
+    "id_ed25519"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "p12/jks",
+   "find": [
+    ".p12"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "MIME",
+   "find": [
+    "MIME type"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "magic bytes",
+   "find": [
+    "magic bytes"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "format conversion",
+   "find": [
+    "التحويل"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "symlink and .lnk",
+   "find": [
+    "symlink",
+    ".lnk",
+    "ln -s"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "github workflows yml",
+   "find": [
+    ".github/workflows",
+    "workflows"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "ssh config/known_hosts",
+   "find": [
+    "ssh/config",
+    "known_hosts"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "eslint/prettier config",
+   "find": [
+    "eslint.config",
+    ".prettierrc"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "temp/swap/bak/DS_Store",
+   "find": [
+    ".DS_Store",
+    ".swp",
+    ".bak"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "file permissions",
+   "find": [
+    "صلاحيات الملفات"
+   ],
+   "lvl": "يومي"
+  }
+ ],
+ "start": [
+  {
+   "topic": "how to study",
+   "find": [
+    "إزاي تذاكر"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "CPU RAM disk",
+   "find": [
+    "CPU و RAM"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "operating system",
+   "find": [
+    "نظام التشغيل"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "program vs process",
+   "find": [
+    "البرنامج والعملية"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "64-bit/ARM",
+   "find": [
+    "64-bit"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "keyboard for dev",
+   "find": [
+    "الكيبورد للمبرمج"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "terminal and shell",
+   "find": [
+    "الترمنال والشيل"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "prompt",
+   "find": [
+    "الـ prompt"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "command anatomy",
+   "find": [
+    "تشريح الأمر"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "shortcuts",
+   "find": [
+    "اختصارات"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "--help/man",
+   "find": [
+    "--help"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "errors",
+   "find": [
+    "لما حاجة تغلط"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "folder tree",
+   "find": [
+    "شجرة الفولدرات"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "path",
+   "find": [
+    "المسار (path)"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "Windows paths",
+   "find": [
+    "مسارات ويندوز"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "home folder",
+   "find": [
+    "فولدرك الحقيقي"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "extension",
+   "find": [
+    "الملف والامتداد"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "hidden files",
+   "find": [
+    "الملفات المخفية"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "file names",
+   "find": [
+    "أسامي الملفات"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "package manager",
+   "find": [
+    "مدير الحزم"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "PATH",
+   "find": [
+    "PATH"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "root/sudo",
+   "find": [
+    "root و sudo"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "text editor",
+   "find": [
+    "محرر النصوص"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "VS Code",
+   "find": [
+    "VS Code"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "file.txt.txt",
+   "find": [
+    "file.txt.txt"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "code and language",
+   "find": [
+    "الكود واللغة"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "compiler/interpreter",
+   "find": [
+    "compiler"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "library/framework",
+   "find": [
+    "المكتبة"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "API",
+   "find": [
+    "الـ API"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "website map",
+   "find": [
+    "خريطة أي موقع"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "server/VPS",
+   "find": [
+    "السيرفر والـ VPS"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "IP/domain/DNS",
+   "find": [
+    "IP و"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "port",
+   "find": [
+    "البورت"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "HTTP",
+   "find": [
+    "HTTP"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "rwx permissions",
+   "find": [
+    "rwx"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "pipe/redirect",
+   "find": [
+    "pipe"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "env vars",
+   "find": [
+    "متغيرات البيئة"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Git basics",
+   "find": [
+    "Git ببساطة"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "script",
+   "find": [
+    "السكربت"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "stack trace",
+   "find": [
+    "stack trace"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "search errors",
+   "find": [
+    "تدوّر على الخطأ"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "docs reading",
+   "find": [
+    "الدوكيومنتيشن"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "ask good question",
+   "find": [
+    "تسأل سؤال"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "AI assistant",
+   "find": [
+    "مساعد AI"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "notes",
+   "find": [
+    "ملاحظاتك"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "backup",
+   "find": [
+    "الباك أب"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "dangerous commands",
+   "find": [
+    "أوامر متشغّلهاش"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "secrets",
+   "find": [
+    "الأسرار"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "run as administrator",
+   "find": [
+    "Administrator",
+    "كـ أدمن"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "copy paste in terminal",
+   "find": [
+    "نسخ ولصق"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "regex basics",
+   "find": [
+    "regex"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "firewall and VPN",
+   "find": [
+    "فاير وول",
+    "VPN"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "passwords and 2FA",
+   "find": [
+    "2FA",
+    "الباسورد"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "first terminal session project",
+   "find": [
+    "أول جلسة"
+   ],
+   "lvl": "يومي"
+  }
+ ],
+ "tools": [
+  {
+   "topic": "terminal colors",
+   "find": [
+    "ألوان في الترمنال"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "prompt",
+   "find": [
+    "الـ prompt"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "persist changes",
+   "find": [
+    "خلّي التغيير يفضل"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "find command",
+   "find": [
+    "لاقي الأمر"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "device info",
+   "find": [
+    "معلومات الجهاز"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "disk space/health",
+   "find": [
+    "الديسك"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "battery",
+   "find": [
+    "البطارية"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "what eats resources",
+   "find": [
+    "مين واكل"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "antivirus scan",
+   "find": [
+    "فحص فيروسات"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "system file check",
+   "find": [
+    "ملفات النظام"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "safe cleanup",
+   "find": [
+    "نضّف"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "USB drive info",
+   "find": [
+    "اعرف الفلاشة"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "format USB",
+   "find": [
+    "فرمت فلاشة"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "network devices",
+   "find": [
+    "الأجهزة اللي على شبكتك"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "open ports",
+   "find": [
+    "البورتات المفتوحة"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "script per language",
+   "find": [
+    "سكربت واحد بكل لغة"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "script not found",
+   "find": [
+    "ليه مش لاقي السكربت"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "double click",
+   "find": [
+    "الدبل كليك"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "PS execution policy",
+   "find": [
+    "رافض يشغّل"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "bash from Windows",
+   "find": [
+    "سكربت bash من ويندوز"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "health report project",
+   "find": [
+    "health.ps1"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Arabic in PS 5.1",
+   "find": [
+    "العربي في سكربتات"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "winget/scoop/choco/brew",
+   "find": [
+    "winget",
+    "scoop",
+    "choco",
+    "brew"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "file hash verify",
+   "find": [
+    "hash",
+    "sha256"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "curl download",
+   "find": [
+    "curl"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "scheduled backup script",
+   "find": [
+    "باك أب مجدول",
+    "backup"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "ffmpeg",
+   "find": [
+    "ffmpeg"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "bootstrap new machine",
+   "find": [
+    "جهاز جديد",
+    "bootstrap"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "speed test",
+   "find": [
+    "networkQuality",
+    "speedtest"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "rsync/robocopy",
+   "find": [
+    "rsync",
+    "robocopy"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "search files fast",
+   "find": [
+    "fd",
+    "everything",
+    "ripgrep"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "dotfiles",
+   "find": [
+    "dotfiles"
+   ],
+   "lvl": "متقدم"
+  }
+ ],
+ "symbols": [
+  {
+   "topic": "Alt+Shift keyboard layout",
+   "find": [
+    "Alt+Shift"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "syntax notation <file> [opt]",
+   "find": [
+    "<file>"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "Ctrl+C/D/Z",
+   "find": [
+    "^C"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "/ and \\",
+   "find": [
+    "/  و  \\"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "- and --",
+   "find": [
+    "-  و  --"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "* and ?",
+   "find": [
+    "*  و  ?"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "[abc]",
+   "find": [
+    "[abc]"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "{a,b}",
+   "find": [
+    "{a",
+    "b}"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "quotes",
+   "find": [
+    "\"  و  '"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "backslash escape",
+   "find": [
+    "الـ backslash"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "# comments",
+   "find": [
+    "#  و  #!"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "pipe",
+   "find": [
+    "|"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "> >>",
+   "find": [
+    ">  و  >>"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "< <<<",
+   "find": [
+    "<  و  <<<"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "2>&1",
+   "find": [
+    "2>"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "heredoc",
+   "find": [
+    "<<EOF"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "&& ||",
+   "find": [
+    "&&  و"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": ";",
+   "find": [
+    ";"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "& background",
+   "find": [
+    "&"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "! and !!",
+   "find": [
+    "!  و  !!"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "( ) { }",
+   "find": [
+    "( )  و  { }"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "name=value",
+   "find": [
+    "name=value"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "$VAR",
+   "find": [
+    "$VAR"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "$( )",
+   "find": [
+    "$( )"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "$? $! $$",
+   "find": [
+    "$?"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "positional args",
+   "find": [
+    "$1"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "[ ] [[ ]]",
+   "find": [
+    "[ ]  و  [[ ]]"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "(( ))",
+   "find": [
+    "(( ))"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "%VAR% $env:VAR",
+   "find": [
+    "%VAR%"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "= == ===",
+   "find": [
+    "=  و  =="
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "?? ??=",
+   "find": [
+    "??"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "?.",
+   "find": [
+    "?."
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "template literal",
+   "find": [
+    "الـ backtick"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "=>",
+   "find": [
+    "=>"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "...",
+   "find": [
+    "..."
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "//",
+   "find": [
+    "//  و"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "bitwise",
+   "find": [
+    "&  |  ^"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "TS types",
+   "find": [
+    "x: number"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "<T>",
+   "find": [
+    "<T>"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "A | B",
+   "find": [
+    "A | B"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "name?:",
+   "find": [
+    "name?:"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "@decorator",
+   "find": [
+    "@decorator"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "f-string",
+   "find": [
+    "f\"{x}\""
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "JSON",
+   "find": [
+    "{ \"key\""
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "regex symbols",
+   "find": [
+    "^  $  ."
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "regex classes",
+   "find": [
+    "\\d"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "C pointers",
+   "find": [
+    "int *p"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "Go :=",
+   "find": [
+    ":= في Go"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "SELECT *",
+   "find": [
+    "SELECT *"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Markdown symbols",
+   "find": [
+    "Markdown"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "YAML symbols",
+   "find": [
+    "key: value"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "HEAD~1",
+   "find": [
+    "HEAD~1"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "URL symbols",
+   "find": [
+    "://"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "semver ^ ~",
+   "find": [
+    "^1.2.3"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "cron symbols",
+   "find": [
+    "* * * * *"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "@scope/pkg",
+   "find": [
+    "@scope"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "PowerShell symbols $_ @() @{}",
+   "find": [
+    "$_",
+    "@()",
+    "رموز PowerShell"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "parameter expansion",
+   "find": [
+    "${VAR"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "unicode/Arabic text",
+   "find": [
+    "يونيكود",
+    "unicode"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "long line reading",
+   "find": [
+    "سطر حقيقي"
+   ],
+   "lvl": "يومي"
+  }
+ ],
+ "vscode": [
+  {
+   "topic": "Command Palette",
+   "find": [
+    "Ctrl+Shift+P"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "Quick Open",
+   "find": [
+    "Ctrl+P"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "Go to line",
+   "find": [
+    "Ctrl+G"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "Go to symbol",
+   "find": [
+    "Ctrl+Shift+O"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Switch tabs",
+   "find": [
+    "Ctrl+Tab"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "Navigate back",
+   "find": [
+    "Alt+Left"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "sidebar toggle",
+   "find": [
+    "Ctrl+B"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "split editor",
+   "find": [
+    "Ctrl+\\"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "move line",
+   "find": [
+    "Alt+Up"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "delete line",
+   "find": [
+    "Ctrl+Shift+K"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "comment",
+   "find": [
+    "Ctrl+/"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "format document",
+   "find": [
+    "Shift+Alt+F"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "multi cursor Ctrl+D",
+   "find": [
+    "Ctrl+D"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Alt+Click",
+   "find": [
+    "Alt+Click"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "expand selection",
+   "find": [
+    "Shift+Alt+Right"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Emmet",
+   "find": [
+    "Emmet"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "search in files",
+   "find": [
+    "Ctrl+Shift+F"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "replace in files",
+   "find": [
+    "Ctrl+Shift+H"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Go to definition",
+   "find": [
+    "F12"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "Find references",
+   "find": [
+    "Shift+F12"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "rename symbol",
+   "find": [
+    "F2"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "quick fix",
+   "find": [
+    "Ctrl+."
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "IntelliSense",
+   "find": [
+    "Ctrl+Space"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "Problems panel",
+   "find": [
+    "Ctrl+Shift+M"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "terminal",
+   "find": [
+    "Ctrl+`"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "ports",
+   "find": [
+    "وصّل بورت"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Source Control",
+   "find": [
+    "Ctrl+Shift+G"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "Merge Editor",
+   "find": [
+    "Merge Editor"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Timeline",
+   "find": [
+    "Timeline"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "breakpoints",
+   "find": [
+    "F9"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "Start debugging",
+   "find": [
+    "F5"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "JS Debug Terminal",
+   "find": [
+    "JavaScript Debug Terminal"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Markdown preview",
+   "find": [
+    "Ctrl+Shift+V"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Copilot chat",
+   "find": [
+    "Ctrl+Alt+I"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Settings",
+   "find": [
+    "Ctrl+",
+    ""
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "settings.json",
+   "find": [
+    "settings.json"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "files.exclude",
+   "find": [
+    "files.exclude"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "extensions.json",
+   "find": [
+    "extensions.json"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "launch.json",
+   "find": [
+    "launch.json"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "tasks.json",
+   "find": [
+    "tasks.json"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "keybindings.json",
+   "find": [
+    "keybindings.json"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "snippets",
+   "find": [
+    ".code-snippets"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Profiles",
+   "find": [
+    "Profiles"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "Remote-SSH",
+   "find": [
+    "Remote-SSH"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "devcontainer",
+   "find": [
+    "devcontainer"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "workspace file",
+   "find": [
+    ".code-workspace"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "code CLI",
+   "find": [
+    "code ."
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "code --diff",
+   "find": [
+    "code --diff"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "list-extensions",
+   "find": [
+    "code --list-extensions"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Reload Window",
+   "find": [
+    "Reload Window"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "disable extensions",
+   "find": [
+    "--disable-extensions"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "install extensions",
+   "find": [
+    "Ctrl+Shift+X"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "Testing / Test Explorer",
+   "find": [
+    "Testing",
+    "Test Explorer"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Workspace Trust",
+   "find": [
+    "Workspace Trust"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Prettier",
+   "find": [
+    "Prettier"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "ESLint",
+   "find": [
+    "ESLint extension",
+    "dbaeumer"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "Live Share",
+   "find": [
+    "Live Share"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "Outline",
+   "find": [
+    "Outline",
+    "Breadcrumbs"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "format on save",
+   "find": [
+    "formatOnSave",
+    "format on save"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "extension security",
+   "find": [
+    "أمان الإضافات",
+    "publisher"
+   ],
+   "lvl": "متقدم"
+  }
+ ],
+ "git": [
+  {
+   "topic": "intro git/github",
+   "find": [
+    "مقدمة Git"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "git config",
+   "find": [
+    "git config"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "init/clone",
+   "find": [
+    "git init"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "status",
+   "find": [
+    "git status"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "add/commit",
+   "find": [
+    "git add"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "log",
+   "find": [
+    "git log"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "diff",
+   "find": [
+    "git diff"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": ".gitignore",
+   "find": [
+    ".gitignore"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "branch/switch",
+   "find": [
+    "git switch"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "merge",
+   "find": [
+    "git merge"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "conflicts",
+   "find": [
+    "conflicts"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "remote/push/pull",
+   "find": [
+    "git remote"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "ssh key GitHub",
+   "find": [
+    "ssh key"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "gh pr",
+   "find": [
+    "gh pr"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "stash",
+   "find": [
+    "git stash"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "restore",
+   "find": [
+    "git restore"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "clean",
+   "find": [
+    "git clean"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "amend",
+   "find": [
+    "--amend"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "reset",
+   "find": [
+    "git reset"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "revert",
+   "find": [
+    "git revert"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "reflog",
+   "find": [
+    "git reflog"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "rebase",
+   "find": [
+    "git rebase"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "blame/-S",
+   "find": [
+    "blame"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "bisect",
+   "find": [
+    "git bisect"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "tag",
+   "find": [
+    "git tag"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "cherry-pick",
+   "find": [
+    "cherry-pick"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "worktree",
+   "find": [
+    "worktree"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "alias",
+   "find": [
+    "git alias"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "pull --rebase",
+   "find": [
+    "pull --rebase"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "rerere",
+   "find": [
+    "rerere"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "fork/upstream",
+   "find": [
+    "fork"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "submodule/lfs",
+   "find": [
+    "submodule",
+    "lfs"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "git help",
+   "find": [
+    "git help"
+   ],
+   "lvl": "أساسي"
+  },
+  {
+   "topic": "safe.directory",
+   "find": [
+    "safe.directory"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "gitattributes",
+   "find": [
+    ".gitattributes"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "update old PR",
+   "find": [
+    "تحديث PR"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "GitHub Actions basics",
+   "find": [
+    "GitHub Actions"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "leaked secret filter-repo",
+   "find": [
+    "filter-repo"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "HTTPS auth PAT",
+   "find": [
+    "PAT",
+    "Credential Manager",
+    "gh auth"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "git hooks",
+   "find": [
+    "git hooks",
+    "pre-commit"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "shallow clone depth",
+   "find": [
+    "--depth",
+    "sparse-checkout"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "branch protection CODEOWNERS",
+   "find": [
+    "CODEOWNERS",
+    "branch protection"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "includeIf",
+   "find": [
+    "includeIf"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "conventional commits",
+   "find": [
+    "Conventional Commits"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "git flow/trunk based",
+   "find": [
+    "trunk",
+    "git flow"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "squash merge",
+   "find": [
+    "squash"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "interactive rebase",
+   "find": [
+    "rebase -i"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "git show",
+   "find": [
+    "git show"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": ".git folder internals",
+   "find": [
+    ".git/",
+    "internals"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "git grep",
+   "find": [
+    "git grep"
+   ],
+   "lvl": "يومي"
+  }
+ ]
+}

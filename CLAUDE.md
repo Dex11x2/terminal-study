@@ -10,7 +10,7 @@ Read `PLAN.md` first: current state, ordered remaining work, agreed rules. Updat
 - Review log: `verified.json` via `node tools/verify.js` (summary), `todo <tab>` (lessons never verified or edited since), `mark <tab> "<cmd>"… --on "<where it ran>"` after actually running a lesson. Mark only what was really run; write `docs:` for doc-only parts.
 - `js/core.js`: `TAB()` registration. `js/app.js`: rendering, search, progress, OS boxes (`osBoxes`, `RUNS_IN`). `css/style.css`. `index.html`: tab cards and script list.
 - `tools/check.js` (content lint), `tools/build.js` (single file `dist/terminal.html`). Never read `dist/` or `vendor/`.
-- `tools/standard.js .` (per-tab standard: units, projects, ladders, drills), `tools/thin.js` (weak explanations), `tools/ci-run.js [tab|--list]` (lesson `ci` checks), `tools/render-check.js` (renders every lesson in Chromium at 400px; in CI, or paste `--print` output in the page console), `GAPS.md` (missing topics/projects per tab).
+- `tools/standard.js .` (per-tab standard: units, projects, ladders, drills), `tools/thin.js` (weak explanations), `tools/ci-run.js [tab|--list]` (lesson `ci` checks), `tools/render-check.js` (renders every lesson in Chromium at 400px; in CI, or paste `--print` output in the page console), `GAPS.md` (missing topics/projects per tab), `tools/coverage.js [tab]` (topic checklist per tab from `tools/topics/*.json`).
 
 ## Lesson format (details: README.md «شكل الدرس» and «قواعد كتابة الدروس»)
 
