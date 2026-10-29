@@ -634,8 +634,10 @@ table.map{min-width:0;table-layout:fixed;border:1px solid var(--line);border-rad
 body.todo .map tr.is-done{display:none}
 
 /* what the unit gives you, and which fields it serves */
-.unit-two{display:grid;gap:14px;margin:12px 0 18px}
-@media (min-width:860px){ .unit-two{grid-template-columns:1fr 1fr} }
+/* minmax(0,…) and min-width:0 keep a long lab command from stretching the column past the screen */
+.unit-two{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;margin:12px 0 18px}
+.unit-two>*{min-width:0}
+@media (min-width:860px){ .unit-two{grid-template-columns:minmax(0,1fr) minmax(0,1fr)} }
 .goal{border-inline-start:3px solid var(--accent);background:color-mix(in srgb,var(--accent) 6%,transparent);padding:12px 16px;border-radius:0 8px 8px 0}
 .goal h4{margin:0 0 6px;font-size:15px;color:var(--accent)}
 .goal ul{margin:0;padding-inline-start:20px;font-size:15px;line-height:1.7}
@@ -648,6 +650,11 @@ body.todo .map tr.is-done{display:none}
 .projlist{margin:0;padding-inline-start:20px;font-size:15px}
 .projlist li{margin-bottom:6px}
 .projlist span{display:block;color:var(--muted);font-size:14px;line-height:1.6}
+.projlist span.pdone{color:var(--ink);margin-top:4px}
+.projlist .lv{font-style:normal;font-size:12px;font-weight:600;border-radius:4px;padding:1px 7px;margin-inline-end:8px;border:1px solid var(--line)}
+.projlist .lv1{color:var(--a-tools,var(--accent))}
+.projlist .lv2{color:var(--a-ps)}
+.projlist .lv3{color:var(--a-bash)}
 
 /* the reader: the lesson on its own, with where it came from and where it goes next */
 .lnav{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;margin:14px 0 4px;padding-bottom:10px;border-bottom:1px solid var(--line)}
@@ -77166,10 +77173,12 @@ MORE("bash", [
       lab: R`# Linux (and WSL):
 mkdir -p ~/lab/power && cd ~/lab/power`,
       projects: [
-        { t: R`سكربت تجهيز سيرفر`, what: R`[[setup.sh]] بيرفع نفسه بـ sudo لو مش root، ويطلب باسورد قاعدة البيانات بـ [[read -rs]] ويكتبه في [[.env]] بصلاحيات 600، ويقفل نفسه بـ [[flock]] عشان ميتشغّلش مرتين. من دروس ١ و ٢ و ٥.` },
-        { t: R`فاحص سيرفرات بالتوازي`, what: R`لستة hosts في ملف، وكل واحد بيتفحص بـ [[timeout 5 curl]]، بحد أقصى ٨ في نفس الوقت، وفي الآخر تقرير بالواقعين بس وكود خروج 1 لو فيه واحد واقع. من دروس ٣ و ٤.` },
-        { t: R`مقارنة سيرفرين`, what: R`سكربت بياخد ملفين فيهم ناتج [[dpkg-query]] (أو [[pip freeze]]) من سيرفرين، ويطبع تلات أقسام: في الاتنين، وناقص في التاني، وزيادة فيه. من درس ٦.` },
-        { t: R`نشر بأمان`, what: R`خد [[deploy.sh]] من «مشروع ٢» وزوّد عليه: قفل [[flock -w 60]]، و [[retry]] حوالين الـ health check، و [[timeout]] على كل خطوة شبكة.` },
+        { lvl: 'صغير', t: R`prompt أحمر للـ root`, what: R`في [[~/.bashrc]] خلّي [[PS1]] يتلوّن أحمر ويخلص بـ [[#]] لو [[$EUID]] بصفر (درس ١)، عشان تعرف من نظرة إنك root.`, done: R`[[sudo -i]] بيطلّع prompt أحمر، و [[exit]] بيرجّعك للـ prompt العادي، و [[bash -n ~/.bashrc]] مبيطلّعش أخطاء.` },
+        { lvl: 'صغير', t: R`شوف الباسورد بيتسرّب بعينك`, what: R`في ترمنال شغّل أمر طويل والباسورد الوهمي في الـ arguments (زي [[sleep 300 --pass=demo123]] جوه [[bash -c]])، ومن ترمنال تاني دوّر عليه بـ [[ps -ef]]. وبعدين اكتبه تاني بالباسورد من ملف أو stdin (درس ٢).`, done: R`[[ps -ef | grep demo123]]\| grep demo123]] بيلاقيه في النسخة الأولى، ومبيلاقيش غير سطر الـ grep نفسه في النسخة التانية.` },
+        { lvl: 'متوسط', t: R`مقارنة سيرفرين`, what: R`سكربت بياخد ملفين فيهم ناتج [[dpkg-query]] (أو [[pip freeze]]) من سيرفرين، ويطبع تلات أقسام: في الاتنين، وناقص في التاني، وزيادة فيه. من درس ٦.`, done: R`ملفين بينهم ٣ باكدجات مختلفة بيطلعوا في القسم الصح، والسكربت بيرتّب الملفين بنفسه قبل [[comm]] فمفيش تحذير «not in sorted order».` },
+        { lvl: 'متوسط', t: R`فاحص سيرفرات بالتوازي`, what: R`لستة hosts في ملف، وكل واحد بيتفحص بـ [[timeout 5 curl]]، بحد أقصى ٨ في نفس الوقت، وفي الآخر تقرير بالواقعين بس وكود خروج 1 لو فيه واحد واقع. من دروس ٣ و ٤.`, done: R`٢٠ host بيخلصوا في وقت قريب من أبطأ واحد، والـ host اللي مبيردش بيتقفل بعد ٥ ثواني بالظبط، و [[echo $?]] بيطبع 1 لو فيه واحد واقع و 0 لو كلهم شغالين.` },
+        { lvl: 'كبير', t: R`سكربت تجهيز سيرفر`, what: R`[[setup.sh]] بيرفع نفسه بـ sudo لو مش root، ويطلب باسورد قاعدة البيانات بـ [[read -rs]] ويكتبه في [[.env]] بصلاحيات 600، ويقفل نفسه بـ [[flock]] عشان ميتشغّلش مرتين، وكل خطوة بتعدّي لو متعملة قبل كده. من دروس ١ و ٢ و ٥.`, done: R`تشغيلتين في نفس الوقت: التانية بتطبع «شغال بالفعل» وتخرج. و [[stat -c %a .env]] بيطبع 600. والباسورد مش في [[history]] ولا في [[ps]]. وتشغيله مرة تانية بعد ما خلص مبيغيّرش حاجة.` },
+        { lvl: 'كبير', t: R`نشر بأمان`, what: R`خد [[deploy.sh]] من «مشروع ٢» وزوّد عليه: قفل [[flock -w 60]]، و [[retry]] حوالين الـ health check، و [[timeout]] على كل خطوة شبكة، ورجوع للنسخة القديمة لو الـ health check فشل.`, done: R`لو السيرفر الجديد مردّش ٣ مرات، النشر بيرجع للنسخة القديمة لوحده والموقع فضل شغال. تشغيلتين مع بعض: واحدة بتستنى أو بتقف برسالة. وخطوة شبكة علّقت بتتقفل بالـ timeout ومبتعلّقش السكربت.` },
       ],
       n: R`الحاجات اللي بتحتاجها لما السكربت يبقى بيتشغّل على سيرفر حقيقي: الصلاحيات، والأسرار، والتوازي، والوقت، والقفل، والمقارنة. وكل حاجة هنا اتشغّلت على أوبونتو 24.04 جوه Docker، كـ root وكيوزر عادي ليه sudo`,
       items: [
@@ -112057,10 +112066,12 @@ Add-Content .\backup\d.jpg 'changed'
 Set-Content .\before.env 'PORT=3000', 'DEBUG=false', 'DB_HOST=localhost'
 Set-Content .\after.env 'PORT=8080', 'DEBUG=false', 'DB_HOST=localhost', 'CACHE=on'`,
       projects: [
-        { t: R`سكربت صيانة بيرفع نفسه`, what: R`سكربت [[fix-net.ps1]] أوله [[Set-StrictMode -Version Latest]] و [[$ErrorActionPreference = 'Stop']]، وبعدهم فحص الأدمن اللي بيفتح نفسه تاني بـ [[-Verb RunAs]] (درس ١)، وبعدها أوامر محتاجة أدمن زي [[ipconfig /flushdns]] و [[netstat -abno]]. من دروس ١ و ٥.` },
-        { t: R`باك أب بيتأكد من نفسه`, what: R`بعد ما تنسخ فولدر، قارن الأسامي والـ hash بين الأصل والنسخة بـ [[Compare-Object]] واطبع الناقص والمختلف بس. ولو فيه فرق، السكربت يخرج بكود ١ عشان المهمة المجدولة تبان فاشلة. من درس ٤.` },
-        { t: R`فاحص سيرفرات بالتوازي`, what: R`ملف [[hosts.txt]] فيه اسم وبورت في كل سطر، وسكربت بيفحصهم كلهم بـ [[ForEach-Object -Parallel]] و [[-ThrottleLimit 20]] ويطلّع جدول متترتب. والتوكن بتاع الإشعار جاي من [[Import-Clixml]] على جهازك ومن [[$env:]] في الـ CI. من دروس ٢ و ٣.` },
-        { t: R`لقطة قبل وبعد`, what: R`سكربت [[snapshot.ps1]] بيحفظ البرامج المتسطّبة والخدمات ومتغير [[PATH]] في CSV، وسكربت تاني بيقارن أي لقطتين ويقولك التسطيب الأخير غيّر إيه. من درس ٤ (وانتبه لفخ الـ CSV و [[$null]] اللي في الدرس).` },
+        { lvl: 'صغير', t: R`علامة الأدمن في الـ prompt`, what: R`دالة [[prompt]] في [[$PROFILE]] بتسأل [[IsInRole(...Administrator)]] (درس ١)، ولو النافذة أدمن تكتب كلمة [[ADMIN]] بين قوسين مربعين قبل المسار بالأحمر، عشان متنساش انت في نافذة خطيرة.`, done: R`نافذة عادية مفيهاش العلامة، ونافذة فتحتها بـ [[Start-Process pwsh -Verb RunAs]] فيها العلامة، والـ prompt لسه بيطبع المسار.` },
+        { lvl: 'صغير', t: R`صياد الغلطات الإملائية`, what: R`خد أي سكربت قديم كتبته، وحط في أوله [[Set-StrictMode -Version Latest]] (درس ٥)، وشغّله، وصلّح كل error بيطلع واحدة واحدة.`, done: R`السكربت بيشتغل للآخر من غير ولا error والـ strict mode شغال، وكاتب في تعليق فوق كل تصليح الغلطة اللي اتمسكت كانت إيه.` },
+        { lvl: 'متوسط', t: R`باك أب بيتأكد من نفسه`, what: R`بعد ما تنسخ فولدر، قارن الأسامي والـ hash بين الأصل والنسخة بـ [[Compare-Object]] واطبع الناقص والمختلف بس. ولو فيه فرق، السكربت يخرج بكود ١ عشان المهمة المجدولة تبان فاشلة. من درس ٤.`, done: R`لو مسحت ملف من النسخة أو غيّرت حرف في ملف، السكربت بيطبع اسمه بالظبط و [[$LASTEXITCODE]] بيبقى ١. ولو النسخة سليمة بيطبع «سليم» ويخرج بـ ٠.` },
+        { lvl: 'متوسط', t: R`لقطة قبل وبعد`, what: R`سكربت [[snapshot.ps1]] بيحفظ البرامج المتسطّبة والخدمات ومتغير [[PATH]] في CSV، وسكربت تاني بيقارن أي لقطتين ويقولك التسطيب الأخير غيّر إيه. من درس ٤ (وانتبه لفخ الـ CSV و [[$null]] اللي في الدرس).`, done: R`تاخد لقطة، وتزوّد فولدر لـ [[PATH]] بتاع الجلسة أو تشغّل خدمة، وتاخد لقطة تانية: المقارنة بتطلّع التغيير ده بس، ومفيش ولا فرق وهمي من [[$null]] و [['']].` },
+        { lvl: 'كبير', t: R`سكربت صيانة بيرفع نفسه`, what: R`سكربت [[fix-net.ps1]] أوله [[Set-StrictMode -Version Latest]] و [[$ErrorActionPreference = 'Stop']]، وبعدهم فحص الأدمن اللي بيفتح نفسه تاني بـ [[-Verb RunAs]] (درس ١)، وبعدها أوامر محتاجة أدمن زي [[ipconfig /flushdns]] و [[netstat -abno]]، وكل خطوة بتتكتب في لوج بالوقت. من دروس ١ و ٥.`, done: R`من نافذة عادية بيطلب UAC مرة واحدة ويكمّل في نافذة الأدمن. لو رفضت UAC بيطبع رسالة مفهومة ويخرج بكود غير صفر. واللوج فيه سطر لكل خطوة، واتشغّل مرتين ورا بعض من غير مشاكل.` },
+        { lvl: 'كبير', t: R`فاحص سيرفرات بالتوازي`, what: R`ملف [[hosts.txt]] فيه اسم وبورت في كل سطر، وسكربت بيفحصهم كلهم بـ [[ForEach-Object -Parallel]] و [[-ThrottleLimit 20]] ويطلّع جدول متترتب. والتوكن بتاع الإشعار جاي من [[Import-Clixml]] على جهازك ومن [[$env:]] في الـ CI. من دروس ٢ و ٣ و ٥.`, done: R`٢٠ سطر بيخلصوا في وقت قريب من أبطأ واحد مش مجموعهم. السطر الغلط (من غير بورت) بيتطبع كتحذير ومبيوقّفش الباقي. والتوكن مش مكتوب في أي ملف جوه المشروع، و [[git grep]] على اسمه مبيلاقيش حاجة.` },
       ],
       n: R`خمس أوامر مالهاش غنى عنها في أي سكربت جد: الأدمن من الترمنال، والأسرار برا الملف، والتوازي، والمقارنة، والـ strict mode. كله اتجرّب في PowerShell 7.6 و Windows PowerShell 5.1 على ويندوز ١١، وأي حاجة مينفعش تتجرّب (سؤال UAC، و [[Get-Credential]]، وتسجيل vault) مكتوب إنها من الـ docs`,
       items: [
@@ -729050,8 +729061,11 @@ function unitHead(cat){
 function unitFoot(cat, id){
   if (!cat.lab && !cat.projects) return '';
   const lab = cat.lab ? '<div><h4 class="uf-h">جهّز معملك</h4><p class="uf-p">متتعلمش الأوامر الخطيرة على ملفاتك الحقيقية.</p>'+termHTML(cat.lab, shell, false, '')+'</div>' : '';
-  const pr = cat.projects ? '<div class="projbox"><h4 class="uf-h">مشاريع القسم</h4><p class="uf-p">بعد ما تخلص الدروس، دي حاجات تبنيها بإيدك من اللي اتعلمته.</p><ol class="projlist">'+
-    cat.projects.map(p => '<li><b>'+fmt(p.t)+'</b>'+(p.what?'<span>'+fmt(p.what)+'</span>':'')+'</li>').join('')+'</ol></div>' : '';
+  // lvl: صغير/متوسط/كبير, shown as a badge and kept in that order; done: how you know the project works
+  const LV = {'صغير': 1, 'متوسط': 2, 'كبير': 3};
+  const projs = cat.projects ? cat.projects.slice().sort((a, b) => (LV[a.lvl] || 2) - (LV[b.lvl] || 2)) : [];
+  const pr = cat.projects ? '<div class="projbox"><h4 class="uf-h">مشاريع القسم</h4><p class="uf-p">بعد ما تخلص الدروس، دي حاجات تبنيها بإيدك من اللي اتعلمته، من الصغير للكبير.</p><ol class="projlist">'+
+    projs.map(p => '<li>'+(p.lvl?'<em class="lv lv'+(LV[p.lvl]||2)+'">'+esc(p.lvl)+'</em>':'')+'<b>'+fmt(p.t)+'</b>'+(p.what?'<span>'+fmt(p.what)+'</span>':'')+(p.done?'<span class="pdone"><b>تعرف إنك خلصت لما:</b> '+fmt(p.done)+'</span>':'')+'</li>').join('')+'</ol></div>' : '';
   return '<div class="unit-two uf" id="'+id+'-foot">'+lab+pr+'</div>';
 }
 /* a category's lessons as a compact table: the whole row opens the lesson */
