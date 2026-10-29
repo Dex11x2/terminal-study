@@ -655,10 +655,10 @@ with open("report.csv", newline="", encoding="utf-8") as f:
 - [[next(...)]] هات أول صف بس. و [[list(dict)]] بترجّع المفاتيح.
 
 ~~~text الناتج
-['﻿name', 'city', 'total']
+['\ufeffname', 'city', 'total']
 ~~~
 
-قرينا بـ [[utf-8]] العادي، فالـ BOM فضل لازق في أول اسم عمود: [[﻿]] هو الحرف ده. ولو طبعته عادي مش هيبان، فهتكتب [[row["name"] ]] وتاخد [[KeyError: 'name']] وانت شايف الاسم صح.
+قرينا بـ [[utf-8]] العادي، فالـ BOM فضل لازق في أول اسم عمود: [[\ufeff]] هو الحرف ده. ولو طبعته عادي مش هيبان، فهتكتب [[row["name"] ]] وتاخد [[KeyError: 'name']] وانت شايف الاسم صح.
 
 ---
 
@@ -688,7 +688,7 @@ printf '\xef\xbb\xbfname;city;total\r\nسارة;القاهرة;150,5\r\nOmar;Ale
 ~~~
 
 ~~~powershell
-python -c "open('excel_export.csv','wb').write('﻿name;city;total\r\nسارة;القاهرة;150,5\r\nOmar;Alex;80\r\n'.encode())"
+python -c "open('excel_export.csv','wb').write('\ufeffname;city;total\r\nسارة;القاهرة;150,5\r\nOmar;Alex;80\r\n'.encode())"
 ~~~
 
 ~~~python csv_report.py

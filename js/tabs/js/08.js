@@ -4,6 +4,14 @@ MORE("js", [
       t: "scope و closures",
       l: 2,
       n: "المتغير شايفه مين، والـ hoisting، وليه الدالة بتفتكر متغيرات اتعملت برّاها",
+      projects: [
+        { lvl: 'صغير', t: R`عدّاد لكل زرار`, what: R`٣ أزرار في صفحة، وكل واحد معاه counter من [[createCounter()]] بتاعة درس closure، وبيكتب عدد ضغطاته جنبه. ومفيش ولا متغير global للأعداد.`, done: R`كل زرار بيعد لوحده، وفي Console مش لاقي أي متغير اسمه count أو clicks على [[window]]، وزرار رابع بيتضاف بسطر واحد.` },
+        { lvl: 'صغير', t: R`زرار الدفع مرة واحدة`, what: R`زرار «ادفع» الـ handler بتاعه ملفوف في [[once(fn)]] اللي كتبتها في درس closure، فالضغط المكرر مبيدفعش تاني. من درس closure.`, done: R`٥ ضغطات ورا بعض بيطبعوا «اتدفع» مرة واحدة بس، والضغطات اللي بعدها بترجّع نفس الناتج الأول من غير ما الدالة تشتغل.` },
+        { lvl: 'متوسط', t: R`store صغير بـ subscribe`, what: R`[[createStore(initial)]] فيها state خاصة، وبترجّع [[getState()]] و [[setState(changes)]] (بتعمل object جديد بـ spread) و [[subscribe(fn)]] اللي بترجّع دالة [[unsubscribe]]. ده نفس شكل الـ stores في React و Vue. من دروس closure و scope ودرس destructuring و spread.`, done: R`بعد [[subscribe]] كل [[setState]] بيندهلك بالـ state الجديدة، وبعد [[unsubscribe()]] مبيندهلكش، و [[getState()]] قبل وبعد مش نفس الـ object، واتنين stores مش شايفين بعض.` },
+        { lvl: 'متوسط', t: R`كاش بعمر`, what: R`[[cached(fn, ms)]] بترجّع دالة بتفتكر الناتج لكل argument في Map جوه الـ closure لمدة [[ms]] بس، وبعدها بتنادي fn تاني. استخدم [[Date.now()]]. من دروس closure و Map و Set.`, done: R`نداء مرتين في نفس الثانية بيشغّل fn مرة واحدة، وبعد المدة بيشغّلها تاني (العدّاد بيزيد)، و [[arguments]] مختلفة ليها كاش مختلف.` },
+        { lvl: 'كبير', t: R`todo app كـ factory`, what: R`[[createTodoApp(root, storageKey)]] بتبني todo list كاملة جوه العنصر اللي اتبعتلها: الحالة كلها في الـ closure (مش global)، وevent delegation على الـ root، والحفظ في localStorage تحت [[storageKey]] بـ [[safeParse]]. اعمل نسختين في نفس الصفحة («البيت» و «الشغل»). التحقق: نص فاضي أو أطول من ١٠٠ حرف بيترفض برسالة جنب الفورم. وفي [[tests.js]] شوية [[console.assert]] على الدوال اللي مش DOM (add و toggle و remove). من الوحدة دي ووحدة الـ DOM والـ objects.`, done: R`النسختين مستقلين: مهمة في واحدة مبتظهرش في التانية، و refresh بيرجّع كل واحدة ببياناتها، و [[window]] مفيهوش أي متغير للحالة، والـ asserts كلها بتعدّي، و JSON بايظ في مفتاح واحد بيفتح النسخة دي فاضية والتانية سليمة.`, ext: R`زوّد [[destroy()]] بتشيل الـ listeners وتفضّي الـ root، و undo لآخر عملية، وسحب وإفلات للترتيب بعد درس drag and drop.` },
+        { lvl: 'فكرة', t: R`مكتبة utilities بتاعتك`, what: R`لم كل الدوال اللي فيها closure واللي محتاجها في مشاريعك ([[once]] و [[memoize]] و [[createCounter]] و [[cached]]، أو حاجات جديدة زي [[after(n, fn)]] أو [[limit(fn, max)]]) في ملف واحد، وكل دالة معاها مثال تشغيل. انت اللي بتختار الدوال.`, done: R`كل دالة ليها ٣ أمثلة على الأقل بـ [[console.assert]]، والملف بيشتغل بـ [[node utils.js]] من غير ولا assertion فاشلة.`, ext: R`حوّله لـ module بـ export بعد قسم modules، وانشره كـ package صغير، وزوّد debounce و throttle بعد درسهم.` },
+      ],
       items: [
         {
           cmd: "scope",
@@ -30,6 +38,11 @@ function outer() {
 checkout();
 outer(); // "x"`,
           try: R`عرّف [[const app = "admin"]] جوه [[checkout]] قبل الـ if، وشوف الـ console.log بيطبع أنهي app (الأقرب بيكسب، ودي اسمها shadowing). وبعدين نادي [[inner()]] من برا outer واقرا الـ error.`,
+          practice: [
+            { lvl: 'سريع', t: R`قبل ما تشغّل خمّن: [[let x = 1; { let x = 2; console.log(x); } console.log(x);]]`, done: R`بيطبع [[2]] وبعدين [[1]]: الـ x اللي جوه الـ block متغير تاني خالص (shadowing) والبرّاني متلمسش.` },
+            { lvl: 'تطبيق', t: R`الدالة دي فيها bug: [[function sum(prices) { let total = 0; for (const p of prices) { let total = total + p; } return total; }]]. شغّلها على [[[10, 20] ]] واقرا الـ error، وصلّحها.`, done: R`قبل التصليح بتطلع [[ReferenceError: Cannot access 'total' before initialization]] (الـ total الجديد جوه الـ block بيغطي البرّاني وهو لسه في الـ TDZ). وبعد ما تشيل [[let]] اللي جوه بترجّع [[30]].` },
+            { lvl: 'تحدي', t: R`اكتب [[function leak() { count = 5; }]] من غير [[let]]، ونادي [[leak()]] واطبع [[count]] برّه. وبعدين حط [["use strict";]] في أول الملف وجرّب تاني. وبعدها ارسم الـ scope chain لدالة جوه دالة جوه دالة، وكل واحدة بتقرا متغير من مستوى مختلف.`, done: R`من غير strict mode [[count]] بيطبع [[5]] (اتعمل global من غير ما تقصد)، ومع strict بيطلع [[ReferenceError: count is not defined]]. والرسمة بتقول كل متغير اتلقى في أنهي مستوى، والكود بيطبع اللي الرسمة قالته.` },
+          ],
           flag: "script",
           deep: {
             why: "أي bug من نوع «المتغير ده undefined ليه؟» أو «مين اللي غيّر القيمة دي؟» بيرجع للـ scope. وهو الأساس اللي الـ closures مبنية عليه، ودي أشهر سؤال انترفيو JS.",
@@ -203,6 +216,11 @@ var greet = () => console.log("hey");
 console.log(b);                 // ReferenceError: Cannot access 'b' before initialization
 let b = 2;`,
           try: R`شغّل الكود في ملف بـ Node، هتلاقيه وقف عند [[greet()]]. علّق السطر ده وشغّل تاني عشان توصل للـ ReferenceError. وبعدين غيّر [[var greet]] لـ [[const greet]] وشوف الرسالة اتغيرت لإيه.`,
+          practice: [
+            { lvl: 'سريع', t: R`قارن [[console.log(typeof x); let x;]] بـ [[console.log(typeof y);]] (y مش متعرّف خالص).`, done: R`الأول بيطلع [[ReferenceError: Cannot access 'x' before initialization]]، والتاني بيطبع [["undefined"]] عادي: الـ TDZ أشد من متغير مش موجود أصلًا.` },
+            { lvl: 'تطبيق', t: R`[[function show() { return LIMIT; }]] وبعدها [[show();]] وبعدها [[const LIMIT = 5;]]. شغّل، وبعدين انقل سطر [[show()]] تحت الـ const.`, done: R`الترتيب الأول بيطلع [[ReferenceError: Cannot access 'LIMIT' before initialization]]، والتاني بيرجّع [[5]] مع إن الدالة مكتوبة فوق الـ const: الـ TDZ بتتحسب بوقت التنفيذ مش بمكان السطر.` },
+            { lvl: 'تحدي', t: R`خمّن الناتج قبل ما تشغّل: [[console.log(typeof foo); var foo = 1; function foo() {} console.log(typeof foo);]]. وبعدين جرّب [[new A(); class A {}]].`, done: R`الأول بيطبع [["function"]] وبعدين [["number"]] (الـ function declaration متسجّلة كاملة، وسطر [[var foo = 1]] هو اللي غيّرها وقت التنفيذ)، و [[new A()]] بتطلع [[ReferenceError: Cannot access 'A' before initialization]]، وتقدر تشرح الاتنين في سطرين.` },
+          ],
           flag: "script",
           deep: {
             why: "بيفسّر رسايل errors غريبة زي «Cannot access before initialization» و «is not a function» على حاجة انت شايفها متعرّفة. ومن أشهر أسئلة «اتوقع الناتج».",
@@ -373,6 +391,11 @@ c2.increment();          // 11: كل counter ليه count بتاعه
 console.log(c1.count);   // undefined: مفيش طريقة توصله غير من الدوال
 console.log(c1.get());   // 2`,
           try: R`اكتب [[once(fn)]] بترجّع دالة بتنادي fn أول مرة بس، وبعد كده بترجّع نفس الناتج الأول. هتحتاج متغيرين في الـ closure: [[called]] و [[result]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
+          practice: [
+            { lvl: 'سريع', t: R`اكتب [[makeGreeter(greeting)]] بترجّع دالة بتاخد [[name]] وترجّع التحية والاسم.`, done: R`[[const hi = makeGreeter("أهلا"); hi("Sara")]] بترجّع [["أهلا Sara"]]، و [[makeGreeter("صباح الخير")("Omar")]] بترجّع جملتها هي، والاتنين مش بيأثروا على بعض.` },
+            { lvl: 'تطبيق', t: R`اكتب [[createTodoStore()]] فيها array خاصة في الـ closure، وبترجّع [[add(text)]] و [[remove(index)]] و [[list()]]. و [[list()]] بترجّع نسخة مش الـ array نفسها (درس reference و copy).`, done: R`[[store.list().push("hack")]] مبيغيرش اللي جوه ([[store.list().length]] زي ما هو)، ومفيش طريقة توصل للـ array من برّه، واتنين store منفصلين كل واحد ليه مهامه.` },
+            { lvl: 'تحدي', t: R`اكتب [[memoize(fn)]]: Map في الـ closure بتخزّن الناتج لكل argument، فلو اتندهت بنفس القيمة تاني ترجّع المتخزّن من غير ما تنادي fn. جرّبها على دالة بطيئة بتزوّد عدّاد كل ما تشتغل.`, done: R`[[memo(5)]] مرتين و [[memo(6)]] مرة: العدّاد بيبقى [[2]] مش [[3]]، والنتيجة صح في المرات التلاتة، و memoize على دالتين مختلفتين كل واحدة ليها Map لوحدها.` },
+          ],
           flag: "script",
           deep: {
             why: "ده السؤال رقم واحد في انترفيوهات JS. وهو اللي بيفسّر ليه الـ callbacks بتشتغل، وليه React hooks بتقرا قيم «قديمة» ساعات (stale closure)، وإزاي تعمل private state من غير classes.",
@@ -572,6 +595,11 @@ for (var k = 0; k < 3; k++) {
   ((n) => setTimeout(() => console.log("iife", n), 0))(k);
 }`,
           try: R`قبل ما تشغّل، اكتب الناتج اللي متوقعه على ورقة (٩ سطور). شغّل وقارن. وبعدين غيّر الـ [[0]] في أول setTimeout لـ [[1000]]: سطور var اتأخرت للآخر، بس قيمتها لسه 3 3 3؟ ليه؟`,
+          practice: [
+            { lvl: 'سريع', t: R`[[const fns = []; for (var i = 0; i < 3; i++) fns.push(() => i);]] واطبع [[fns.map((f) => f())]]. وبعدين غيّر var لـ let.`, done: R`مع var بيطبع [[[ 3, 3, 3 ] ]] ومع let بيطبع [[[ 0, 1, 2 ] ]].` },
+            { lvl: 'تطبيق', t: R`في صفحة: loop بيعمل ٣ أزرار بـ [[createElement]]، وكل زرار listener بيكتب رقمه في [[<p>]]. اكتبه بـ [[var i]] الأول، وبعدين صلّحه.`, done: R`مع [[var]] أي زرار بيكتب [[3]]، وبعد التصليح (let، أو [[forEach]] على array أرقام) كل زرار بيكتب رقمه هو: ٠ و ١ و ٢.` },
+            { lvl: 'تحدي', t: R`عدّ تنازلي: [[for (var i = 3; i >= 1; i--) setTimeout(() => console.log(i), (4 - i) * 1000);]]. خمّن، شغّل، وبعدين صلّحه من غير ما تغيّر var: ابعت [[i]] كـ argument تالت لـ [[setTimeout]].`, done: R`قبل التصليح بيطبع [[0]] تلات مرات (ثانية بين كل واحدة)، وبعد [[setTimeout(console.log, (4 - i) * 1000, i)]] بيطبع [[3]] ثم [[2]] ثم [[1]]، وتقدر تقول ليه ده شغال (القيمة اتنسخت وقت النداء).` },
+          ],
           flag: "script",
           deep: {
             why: "السؤال ده بيختبر ٣ حاجات مع بعض: الـ scope بتاع var و let، والـ closures، وإن setTimeout بيشتغل بعد الكود المتزامن (event loop، المستوى ٣). ونفس المشكلة بتحصل في الحقيقة مع event listeners جوه loops.",

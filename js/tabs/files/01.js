@@ -697,7 +697,7 @@ xxd bom.json
 
 | الأداة | النتيجة |
 |---|---|
-| Node 24 ([[JSON.parse]]) | [[SyntaxError: Unexpected token '﻿', "﻿{"a":1}" is not valid JSON]] |
+| Node 24 ([[JSON.parse]]) | [[SyntaxError: Unexpected token '\ufeff', "\ufeff{"a":1}" is not valid JSON]] |
 | Python 3.12 ([[json.load]]) | [[Unexpected UTF-8 BOM (decode using utf-8-sig)]] |
 | [[jq]] 1.7 | قراه عادي وطبع [[{"a": 1}]] منسق |
 
@@ -731,7 +731,7 @@ xxd bom.json
 [[سلام]]
 
 [[cat old.txt]] قبل التحويل بيطبع [[����]] لأن الترمنال بيقرا UTF-8 والـ bytes [[d3 e1 c7 e3]] مش UTF-8 سليم. وتجربة الـ BOM بتطلّع:
-[[SyntaxError: Unexpected token '﻿', "﻿{"a":1}" is not valid JSON]]
+[[SyntaxError: Unexpected token '\ufeff', "\ufeff{"a":1}" is not valid JSON]]
 والحرف «المخفي» في الرسالة هو الـ BOM نفسه. Python بيقول [[Unexpected UTF-8 BOM (decode using utf-8-sig)]]، و [[jq]] بيقراه عادي. الحل: VS Code ثم [[Save with Encoding]] ثم [[UTF-8]] (مش [[UTF-8 with BOM]]).`
         },
         {

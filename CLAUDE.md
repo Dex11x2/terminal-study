@@ -18,6 +18,8 @@ Read `PLAN.md` first: current state, ordered remaining work, agreed rules. Updat
 
 ## Rules
 
+- **Every lesson batch follows `LESSON-CHECKLIST.md` in full** (topic coverage, explanation, varied practice kinds, project ladder, tab coverage) without waiting for the owner to name items. Every agent brief points to it.
+
 - Run every command before writing it (Linux: `docker run --rm ubuntu:24.04`; Windows: `pwsh -NoProfile` and `powershell -NoProfile`). If it can't be run, the sol says it's from official docs.
 - Per-OS sections: comment lines that are only an OS header ending in `:` (`# Linux (and WSL):`, `# Windows (PowerShell):`, `# Mac:`). Don't use `flag: "script"` on them.
 - Before a content batch, audit related tabs for important missing topics and add them.

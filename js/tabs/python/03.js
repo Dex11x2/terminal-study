@@ -643,11 +643,11 @@ UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-3: cha
 ### الـ BOM
 
 ~~~text الناتج
-encoding="utf-8"      →  '﻿name\n'
+encoding="utf-8"      →  '\ufeffname\n'
 encoding="utf-8-sig"  →  'name\n'
 ~~~
 
-الـ 3 bytes [[\xef\xbb\xbf]] (اسمهم BOM) Notepad القديم و Excel بيحطوهم في أول الملف. [[utf-8]] بيقراهم حرف خفي [[﻿]] لازق في أول كلمة، و [[utf-8-sig]] بيشيلهم.
+الـ 3 bytes [[\xef\xbb\xbf]] (اسمهم BOM) Notepad القديم و Excel بيحطوهم في أول الملف. [[utf-8]] بيقراهم حرف خفي [[\ufeff]] لازق في أول كلمة، و [[utf-8-sig]] بيشيلهم.
 
 ### الـ encoding الافتراضي على الجهاز ده
 
@@ -658,7 +658,7 @@ encoding="utf-8-sig"  →  'name\n'
 ## الخلاصة
 
 - الملف bytes، والـ encoding هو اللي بيحوّل. اكتب [[encoding="utf-8"]] في **كل** open و read_text و write_text.
-- [[ط§ظ„]] = UTF-8 اتقرا بـ cp1256. و [[﻿]] في أول كلمة = BOM، استخدم [[utf-8-sig]].
+- [[ط§ظ„]] = UTF-8 اتقرا بـ cp1256. و [[\ufeff]] في أول كلمة = BOM، استخدم [[utf-8-sig]].
 - [["w"]] بيمسح، و [["a"]] بيضيف، و [["x"]] بيحمي.`,
           lines: [
             R`[[Path]] عشان نعمل مسار الملف مرة واحدة ونستخدمه مع [[open()]] و [[read_bytes()]] و [[read_text()]]. و [[open()]] بتقبل Path أو نص عادي.`,

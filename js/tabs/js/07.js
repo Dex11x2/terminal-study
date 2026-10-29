@@ -4,6 +4,14 @@ MORE("js", [
       t: "الـ DOM",
       l: 1,
       n: "تمسك عناصر الصفحة وتعدّلها، وتسمع للـ events، و event delegation",
+      projects: [
+        { lvl: 'صغير', t: R`عدّاد كلمات حي`, what: R`صفحة فيها textarea وتحتها عدد الحروف والكلمات والسطور، وبيتحدث وانت بتكتب بـ event [[input]]، ولو عدّيت ٢٨٠ حرف الرقم يبقى أحمر بـ [[classList]]. من دروس querySelector و textContent و addEventListener.`, done: R`الأرقام صح على نص فاضي (٠ كلمات مش ١)، وعلى مسافات كتير ورا بعض، وعلى لصق نص طويل، واللون بيرجع عادي لما تمسح تحت ٢٨٠.` },
+        { lvl: 'صغير', t: R`الوضع الليلي اللي بيفتكر`, what: R`زرار بيعمل toggle لكلاس [[dark]] على الـ body، والاختيار بيتخزّن في [[localStorage]] وبيتقري أول ما الصفحة تفتح، والسكربت بـ [[defer]]. من دروس textContent و classList و defer و async و module، و JSON.`, done: R`تختار غامق وتعمل refresh: الصفحة بتفتح غامقة ونص الزرار صح. ولو مسحت الـ localStorage من DevTools بتفتح فاتحة من غير error.` },
+        { lvl: 'متوسط', t: R`todo list كاملة`, what: R`فورم بيضيف مهمة (submit و [[preventDefault]] و [[FormData]])، وكل مهمة ليها done و delete بـ event delegation، وعدّاد «فاضل كام»، وفلتر الكل والمتبقي واللي خلص، وحالة empty لما الليستة فاضية. كل النصوص بـ [[textContent]]. من كل دروس الوحدة.`, done: R`مهمة فاضية أو مسافات بس مبتتضافش، و [[<img src=x onerror=alert(1)>]] بتظهر كنص ومفيش alert، والعدّاد صح بعد أي خليط عمليات، وفي الكود listener واحد بس للضغطات على الليستة.` },
+        { lvl: 'متوسط', t: R`دليل يوزرز بفلتر في الـ URL`, what: R`صفحة بتجيب يوزرز من API بـ [[fetch]] وبتعرضهم بـ [[<template>]]، مع حالات loading و empty و error وزرار «جرّب تاني»، وفورم بحث وترتيب بيقرا بـ [[FormData]] ويحط الاختيار في الـ URL بـ [[URLSearchParams]]. من دروس اعرض داتا من fetch و FormData و URLSearchParams.`, done: R`اللينك [[?q=le&sort=name]] بيفتح الليستة متفلترة ومترتبة، والـ Offline بيطلع رسالة وزرار جرّب تاني شغال لما الشبكة ترجع، والبحث مبيعملش request جديد.` },
+        { lvl: 'كبير', t: R`صفحة منتجات وسلة متينة`, what: R`[[products.json]] محلي بتجيبه بـ [[fetch]] من سيرفر محلي، وبتعرض الكروت من [[<template>]]، وفلتر بالقسم والسعر من فورم متزامن مع الـ URL، و «ضيف للسلة» بـ event delegation، والسلة (object أو Map من الـ id للكمية) بتتحفظ في localStorage بـ [[safeParse]]. التحقق: الكمية من ١ لـ ١٠، والسعر في الـ JSON لازم رقم (المنتج اللي سعره مش رقم بيتساب وبيطبع [[console.warn]]). وكل خطوة مهمة بتتكتب في Console بـ [[console.info]]. من الوحدة دي ووحدة الـ objects.`, done: R`الحالات دي كلها شغالة ومتجرّبة بإيدك: [[products.json]] مش موجود (404) بيطلع رسالة و «جرّب تاني»؛ JSON بايظ في localStorage الصفحة بتفتح بسلة فاضية؛ منتج اسمه [[<script>]] بيظهر كنص؛ refresh بيرجّع نفس الفلتر ونفس السلة؛ ومجموع السلة صح بعد ما تزوّد وتشيل.`, ext: R`زوّد صفحة «السلة» بـ [[pushState]] (هتيجي في APIs المتصفح)، وكود خصم، وتحويل العملة بـ [[Intl.NumberFormat]].` },
+        { lvl: 'فكرة', t: R`أداة صغيرة لحاجة بتعملها كل يوم`, what: R`اختار حاجة بتعملها بإيدك على الويب (تحسب حاجة، تنظّم لينكات، تتابع مذاكرة، تعمل قايمة مشتريات) واعملها صفحة واحدة: فورم للإدخال، وليستة بـ delegation، وفلتر، وبتفتكر بعد الـ refresh. انت اللي بتقرر الشكل والخصايص.`, done: R`بتستخدمها فعلًا أسبوع، ومفيش ولا [[innerHTML]] فيه داتا من اليوزر، وبتشتغل من سيرفر محلي من غير errors في Console.`, ext: R`زوّد تصدير واستيراد JSON بملف، واختصارات كيبورد بـ [[keydown]]، وخلّيها PWA بعد قسم PWA.` },
+      ],
       items: [
         {
           cmd: "querySelector",
@@ -22,6 +30,11 @@ document.getElementById("app")
 const form = document.querySelector("form"); form?.querySelector("input[name=email]")
 $0`,
           try: R`افتح أي موقع، واعمل Inspect على عنصر، وبعدين في Console اكتب [[$0]] (العنصر اللي اخترته). جرّب [[[...document.querySelectorAll("a")].map((a) => a.href)]] عشان تجيب كل لينكات الصفحة.`,
+          practice: [
+            { lvl: 'سريع', t: R`افتح أي موقع، وفي Console اعدّ الصور اللي مالهاش alt: [[document.querySelectorAll("img:not([alt])").length]]. وبعدين جرّب [[.map]] مباشرة على نتيجة [[querySelectorAll]].`, done: R`بيطلع رقم، ولو حطيت [[alt]] لصورة منهم من تاب Elements العدد بيقل واحد. و [[.map]] بتطلع [[TypeError: document.querySelectorAll(...).map is not a function]]: الـ NodeList فيها forEach بس، فلازم [[[...list] ]] الأول.` },
+            { lvl: 'تطبيق', t: R`صفحة فيها كروت منتجات [[<div class="card" data-price="120">]] (اعمل ٤). اجمع الأسعار كلها بـ [[querySelectorAll]] و [[dataset.price]] و [[reduce]]، وطلّع اسم أغلى كارت.`, done: R`المجموع اللي بيتطبع بيساوي مجموع الأرقام اللي كاتبها في الـ HTML (مش نصوص متلزقة جنب بعض زي [["12080"]])، ولو زوّدت كارت خامس الرقم بيتغير لوحده.` },
+            { lvl: 'تحدي', t: R`اكتب helper [[qs(selector, root = document)]] بترمي Error فيه الـ selector لو مفيش عنصر بدل ما ترجّع null، و [[qsa(selector, root)]] بترجّع array حقيقية. واستخدمهم في صفحة فيها فورم وجواه inputs.`, done: R`[[qs("#nope")]] بترمي Error رسالته فيها [[#nope]] (فبتعرف فورًا أنهي selector غلط)، و [[qsa("li").map((li) => li.textContent)]] شغالة، و [[qs("input", form)]] بتدوّر جوه الفورم بس.` },
+          ],
           flag: "console",
           deep: {
             why: "أي تفاعل في صفحة من غير framework بيبدأ إنك تمسك العنصر: الزرار اللي هتسمع له، والـ div اللي هتعرض فيه النتيجة. وحتى مع React هتحتاجه في الـ tests (Testing Library) وفي سكربتات Console والـ extensions.",
@@ -214,6 +227,11 @@ const userInput = "<img src=x onerror=alert(1)>";
 list.innerHTML += $__bt<li>$__{userInput}</li>$__bt;
 list.querySelector("li").remove();`,
           try: R`اعمل ملف [[index.html]] فيه [[<h1>]] و [[<ul id="todos">]] و [[<script src="app.js" defer>]]، وحط الكود في [[app.js]]، وافتحه بسيرفر محلي (تاب المتصفح). شوف الـ alert بيطلع من السطر الخطر، وبعدين غيّره لـ createElement و textContent وشوفه بيظهر كنص.`,
+          practice: [
+            { lvl: 'سريع', t: R`زرار «الوضع الليلي»: كل ضغطة بتعمل [[classList.toggle("dark")]] على [[document.body]] وبتغيّر نص الزرار بـ [[textContent]] لـ «فاتح» أو «غامق».`, done: R`الألوان بتتبدل مع كل ضغطة، و [[document.body.classList.contains("dark")]] في Console بترجّع [[true]] و [[false]] بالتبادل، ونص الزرار دايمًا عكس الوضع الحالي.` },
+            { lvl: 'تطبيق', t: R`todo صغيرة: input وزرار «ضيف» بيعملوا [[li]] جديد بـ [[createElement]] و [[textContent]] و [[append]]. جرّب تكتب [[<b>hi</b>]] في الـ input.`, done: R`الـ li بيظهر فيه [[<b>hi</b>]] كنص بالحروف مش bold، و [[li.children.length]] بترجّع [[0]]. ولو غيّرتها لـ [[innerHTML]] الكلمة بتبقى bold: يعني أي حد يقدر يحط HTML في صفحتك.` },
+            { lvl: 'تحدي', t: R`على ليستة مهام، كل [[li]] جنبه زرار ✓ بيعمل toggle لكلاس [[done]]، وفوق الليستة عدّاد «٢ من ٥ خلصوا» بيتحسب من [[querySelectorAll("li.done").length]]، وبيتخزّن في [[data-count]] على العنوان.`, done: R`العدّاد بيتحدث مع كل ضغطة ومع كل مهمة جديدة، و [[h1.dataset.count]] بيساوي الرقم اللي في النص، ولو شلت كلاس done من Elements بإيدك وضغطت أي زرار العدّاد بيصلّح نفسه.` },
+          ],
           flag: "script",
           deep: {
             why: "ده كل اللي React بيعمله من تحت: بيغيّر نصوص وكلاسات ويضيف ويشيل عناصر. لما تفهمه هتفهم ليه React موجود أصلًا، وهتعرف تكتب صفحة صغيرة من غير framework.",
@@ -427,6 +445,11 @@ form.querySelector("input").addEventListener("input", (e) => {
   console.log(e.target.value);
 });`,
           try: R`اعمل فورم فيه input اسمه email وزرار submit. شيل [[e.preventDefault()]] وشوف الصفحة بتعمل reload والـ URL اتغير. وبعدين جرّب [[{ once: true }]] واضغط الزرار مرتين.`,
+          practice: [
+            { lvl: 'سريع', t: R`textarea وتحتها [[<p>]] بيكتب عدد الحروف وانت بتكتب، باستخدام event [[input]].`, done: R`الرقم بيتغير مع كل حرف، ومع المسح، ومع اللصق بالماوس (اللي [[keydown]] كان هيفوّته).` },
+            { lvl: 'تطبيق', t: R`modal: زرار «افتح» بيشيل [[hidden]] من الـ dialog، وزرار × بيرجّعه. وأول ما يتفتح ضيف [[keydown]] على [[document]] بيقفله لما [[e.key === "Escape"]]، وشيل الـ listener ده بـ [[removeEventListener]] لما يتقفل.`, done: R`Esc بتقفل المودال، وحط [[console.log]] في handler الـ keydown: وهو مقفول مبيطبعش حاجة لو دوست أي زرار، يعني الـ listener اتشال فعلًا (لأنك بعت نفس الدالة مش arrow جديدة).` },
+            { lvl: 'تحدي', t: R`فورم تسجيل فيه باسورد وتأكيد باسورد: الـ submit بيعمل [[preventDefault]] لو الباسورد أقل من ٨ حروف أو التأكيد مختلف، وبيكتب رسالة الغلط تحت الـ input نفسه، والرسالة بتختفي أول ما تصلّح (event [[input]]) من غير ما تدوس submit تاني.`, done: R`فورم غلط مبيعملش reload والـ URL متغيرش، والرسالة بتظهر تحت الحقل الغلط بس، وبتختفي وانت بتكتب أول ما الشرط يتحقق، وفورم صح بيطبع الداتا في Console.` },
+          ],
           flag: "script",
           deep: {
             why: "أي تفاعل مع اليوزر حدث: ضغطة، كتابة، scroll، إرسال فورم. ده الأساس اللي [[onClick]] في React مبني عليه، و React نفسه بيعمل listener واحد على الـ root (درس event delegation).",
@@ -608,6 +631,11 @@ list.addEventListener("click", (e) => {
 });
 list.insertAdjacentHTML("beforeend", '<li data-id="9">جديد <button data-action="delete">x</button></li>');`,
           try: R`ضيف ٣ عناصر بـ insertAdjacentHTML، واضغط delete على الأخير: شغال من غير ما تضيف listener. وبعدين حط [[<span>]] جوه الزرار واضغط عليه، وجرّب تشيل [[closest]] وتستخدم [[e.target.dataset]] مباشرة وشوف ليه بيبوظ.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[ul]] فيها ٥ [[li]]: حط listener واحد على الـ ul بيطبع [[textContent]] بتاع الـ li اللي اتضغط بـ [[e.target.closest("li")]]. وبعدين ضيف li سادس من Console.`, done: R`الضغط على أي واحد بيطبع نصه، والسادس اللي اتضاف بعدين بيطبع برضه، والضغط على الفراغ في الـ ul برّه أي li مبيطبعش حاجة ومبيطلعش error.` },
+            { lvl: 'تطبيق', t: R`todo list: كل li فيه زرارين [[data-action="done"]] و [[data-action="delete"]]، وفورم بيضيف مهام جديدة. كل الضغطات بـ listener واحد على الـ ul.`, done: R`delete على مهمة لسه مضافة بيشيلها، و done بيعمل toggle للكلاس، وفي الكود كله [[addEventListener("click"]] مكتوبة مرة واحدة بس.` },
+            { lvl: 'تحدي', t: R`tabs: أزرار [[button[data-tab="..."]]] جوه [[nav]]، وكل زرار جواه [[<span>]] أيقونة ونص. listener واحد على الـ nav بيدّي كلاس [[active]] للزرار اللي اتضغط ويظهر اللوحة اللي الـ id بتاعها زي [[data-tab]] ويخفي الباقي.`, done: R`الضغط على الأيقونة نفسها بيشتغل زي الضغط على الزرار (لأن [[e.target]] هنا الـ span و [[closest]] بتطلع للزرار)، وفي أي وقت فيه لوحة واحدة بس ظاهرة وزرار واحد بس عليه [[active]].` },
+          ],
           flag: "script",
           deep: {
             why: "ليستات بتتغير (todos، سلة، تعليقات، جدول) بتتعب لو كل عنصر ليه listener: لازم تضيف وتشيل مع كل تغيير، والذاكرة بتكبر. ودي من أشهر أسئلة انترفيو الفرونت.",
@@ -713,6 +741,43 @@ list.insertAdjacentHTML("beforeend", '<li data-id="9">جديد <button data-acti
 
 ---
 
+## ٥. تفاصيل الـ delegation: اللي بيكسرها واللي بيصلّحها
+
+ليستة فيها زرار جواه [[<b>]]، وخانة [[input]]. وعلى الـ [[ul]] أربع listeners. اتشغّل فعلًا على jsdom 30 و Node 24.22.1:
+
+~~~js
+list.addEventListener('click', (e) => {
+  const btn = e.target.closest('button[data-action]');
+  log.push($__btclick: target=$__{e.target.tagName} currentTarget=$__{e.currentTarget.id} btn=$__{btn?.dataset.action}$__bt);
+});
+list.addEventListener('focus', () => log.push('focus على الأب (bubble)'));
+list.addEventListener('focusin', (e) => log.push('focusin: ' + e.target.name));
+list.addEventListener('focus', (e) => log.push('focus بـ capture: ' + e.target.name), { capture: true });
+
+document.querySelector('b').click();
+document.querySelector('button').addEventListener('click', (e) => e.stopPropagation());
+document.querySelector('b').click();
+document.querySelector('input').focus();
+~~~
+
+~~~text الناتج
+click: target=B currentTarget=list btn=delete
+focus بـ capture: qty
+focusin: qty
+~~~
+
+| اللي اتشاف | معناه |
+|---|---|
+| [[target=B]] و [[currentTarget=list]] | [[e.target]] أعمق عنصر اتضغط، و [[e.currentTarget]] العنصر اللي عليه الـ listener (الـ ul). عشان كده [[closest]] بتبدأ من [[target]] |
+| تاني ضغطة **مطلعتش** سطر | [[stopPropagation]] على الزرار وقفت الـ bubbling قبل ما يوصل للـ ul، فالـ delegation بطلت تشتغل من غير أي error |
+| [[focus]] العادي ماوصلش للأب | [[focus]] و [[blur]] مبيعملوش bubble |
+| [[focusin]] وصل | ده الـ focus اللي بيعمل bubble، واستخدمه مع الـ delegation |
+| [[focus]] بـ [[{ capture: true }]] وصل | الـ capture بيمسك الحدث وهو **نازل** للعنصر، فبيشتغل حتى مع الأحداث اللي مبتطلعش |
+
+**والقاعدة في [[stopPropagation]]:** متستخدمهاش عشان «تمنع الضغطة توصل لحتة تانية» إلا لو مفيش حل تاني، لأن أي delegation فوق (بتاعتك، أو analytics، أو فريمورك) بتقف من غير ما حد يعرف. لو عايز تمنع سلوك المتصفح (submit أو فتح لينك) فده [[preventDefault]] مش [[stopPropagation]]. ولو عايز الـ listener اللي فوق يتجاهل حاجة، خليه هو يفحص بـ [[closest]].
+
+---
+
 ## الخلاصة
 
 | الحتة | ليه |
@@ -783,6 +848,11 @@ async function load() {
 document.querySelector("#reload").addEventListener("click", load);
 load();`,
           try: R`اعمل [[index.html]] بالـ HTML اللي في أول سطرين و [[<script src="app.js" defer>]]، وافتحه بسيرفر محلي ([[npx serve]] أو Live Server). جرّب الحالات الأربعة: عادي، وغيّر الـ URL لـ [[/users?id=999]] (empty)، وغيّره لـ [[/nope]] (error بـ 404)، وافصل النت من DevTools ← Network ← Offline واضغط «حدّث». وبعدين زوّد: الزرار يتعطّل وهو بيحمّل، وفي حالة الـ error يظهر زرار «جرّب تاني».`,
+          practice: [
+            { lvl: 'سريع', t: R`بعد ما الليستة تتحمّل، اكتب في [[#status]] عدد اليوزرز اللي اتعرضوا («١٠ يوزر» مثلًا)، وزوّد في كل سطر اسم الشركة من [[u.company.name]].`, done: R`الرقم اللي في الـ status بيساوي [[users.length]] (اطبعه في Console وقارن)، وكل سطر فيه اسم الشركة، ولو الـ API رجّع لستة فاضية الـ status بيقول «مفيش يوزرز لسه» مش «٠ يوزر».` },
+            { lvl: 'تطبيق', t: R`زوّد input بحث فوق الليستة بيفلتر اليوزرز المتحمّلين بالاسم وانت بتكتب، من غير fetch جديد: خزّن الداتا في متغير مرة واحدة، و [[render]] الجزء المفلتر بس.`, done: R`الكتابة مبتعملش ولا request جديد في تاب Network، والبحث مش حسّاس للحروف الكبيرة، ولو مفيش نتيجة بيظهر «مفيش نتايج لـ «الكلمة»» والكلمة مكتوبة فيه بـ [[textContent]].` },
+            { lvl: 'تحدي', t: R`لما تضغط على يوزر (event delegation على الليستة) هات بوستاته من [[/posts?userId=ID]] واعرضهم تحته، بحالات loading و error لليوزر ده لوحده، والزرار يبقى [[disabled]] وهو بيحمّل عشان الضغطتين ورا بعض ميبعتوش طلبين.`, done: R`ضغطتين بسرعة بيعملوا request واحد بس في Network، و Offline من DevTools بيطلّع رسالة error تحت اليوزر ده بس والباقي سليم، وضغطة تانية بعد ما الشبكة ترجع بتجيب البوستات.` },
+          ],
           flag: "script",
           deep: {
             why: "الـ DOM لوحده (querySelector و textContent) مبيعملش تطبيق. التطبيق الحقيقي بيجيب داتا من سيرفر ويعرضها، والجزء اللي المبتدئين بينسوه هو الحالات اللي مش «كله تمام». ده بالظبط اللي React و TanStack Query بيعملوه (isLoading و isError و data)، فلما تكتبه بإيدك مرة هتفهم هما بيحلوا إيه.",
@@ -1032,6 +1102,11 @@ form.addEventListener("submit", async (e) => {
   }
 });`,
           try: R`اعمل الفورم ده، واكتب «قهوة سادة»، وعلّم الاتنين checkboxes، واضغط Enter. بص على الـ URL وعلى تاب Network: شكل الـ query string إيه؟ اعمل refresh: الـ input لسه فيه الكلمة؟ وبعدين في Node جرّب [[new URLSearchParams({ q: "قهوة سادة", sort: "price&desc" }).toString()]] وشوف الـ encoding.`,
+          practice: [
+            { lvl: 'سريع', t: R`في Node أو Console: [[const p = new URLSearchParams("?q=js&tag=a&tag=b")]] واطبع [[p.get("tag")]] و [[p.getAll("tag")]] و [[p.toString()]].`, done: R`[[get]] بترجّع [["a"]] (أول واحدة بس)، و [[getAll]] بترجّع [[[ 'a', 'b' ] ]]، و [[toString()]] بترجّع [["q=js&tag=a&tag=b"]] من غير علامة الاستفهام.` },
+            { lvl: 'تطبيق', t: R`فلتر منتجات في صفحة: فورم فيه [[select]] للقسم و checkbox «المتاح بس». الـ submit بيقرا القيم بـ [[FormData]]، ويخفي الكروت اللي مش مطابقة بـ [[hidden]]، ويحط الفلتر في الـ URL بـ [[history.replaceState]]، ولما الصفحة تفتح بيقرا الـ URL ويطبّق الفلتر.`, done: R`بعد الفلتر الـ URL شكله [[?cat=cups&available=on]]، و refresh بيرجّع نفس الكروت ونفس اختيارات الفورم، ولو بعت اللينك لنفسك في تاب جديد بيفتح متفلتر.` },
+            { lvl: 'تحدي', t: R`[[Object.fromEntries(fd)]] بتضيّع الـ checkboxes اللي ليها نفس الاسم. اكتب [[formToObject(fd)]] بتخلي أي اسم متكرر array، والأسامي اللي ظاهرة مرة واحدة تفضل string.`, done: R`على FormData فيها [[q=x]] و [[tag=hot]] و [[tag=new]]: [[Object.fromEntries(fd)]] بترجّع [[{ q: 'x', tag: 'new' }]] (آخر واحدة كسبت)، و [[formToObject(fd)]] بترجّع [[{ q: 'x', tag: [ 'hot', 'new' ] }]].` },
+          ],
           flag: "script",
           deep: {
             why: "كل فورم في أي موقع (login، بحث، checkout) محتاج نفس الخطوات: امنع الـ reload، واقرا القيم، واتأكد منها، وابعتها، وامنع الضغط المزدوج. ولو البحث والفلاتر في الـ URL، اليوزر يقدر يعمل refresh أو يبعت اللينك لحد ويشوف نفس النتيجة.",
@@ -1262,6 +1337,11 @@ console.log(new URLSearchParams(fd).toString(), Object.fromEntries(fd));`
   window.addEventListener("load", () => console.log("load"));
 </script>`,
           try: R`اعمل [[index.html]] فيه السطور دي في الـ [[<head>]] (شيل سطر analytics)، واعمل [[app.js]] فيه [[console.log("app.js", document.querySelector("h1"))]] و [[main.js]] فيه نفس السطر بـ "main.js"، وحط [[<h1>]] في الـ body. خمّن ترتيب الـ logs، وبعدين افتح Console. وبعدين شيل [[defer]] من app.js وشوف إيه اللي اتغير.`,
+          practice: [
+            { lvl: 'سريع', t: R`حط [[<script src="app.js">]] من غير [[defer]] في الـ [[<head>]]، و [[app.js]] فيه [[document.querySelector("h1").textContent = "اتغيّر"]]. افتح Console. وبعدين زوّد [[defer]].`, done: R`من غير defer بيطلع [[TypeError: Cannot set properties of null (setting 'textContent')]] والعنوان زي ما هو، ومع defer العنوان بيتغير ومفيش error.` },
+            { lvl: 'تطبيق', t: R`اعمل [[greet.js]] فيه [[export function greet(name)]]، و [[main.js]] بيعمل import ليها وبيكتب التحية في الصفحة، بـ [[<script type="module" src="main.js">]]. افتحه مرة بدبل كليك على الملف ([[file://]]) ومرة من سيرفر محلي. وجرّب [[const secret = 1]] في main.js وبعدين [[window.secret]] في Console.`, done: R`من [[file://]] بيطلع error في Console فيه كلمة CORS ومفيش تحية، ومن [[localhost]] التحية بتظهر. و [[window.secret]] بترجّع [[undefined]] لأن متغيرات الـ module مش global.` },
+            { lvl: 'تحدي', t: R`٣ سكربتات [[a.js]] و [[b.js]] و [[c.js]]، كل واحد بيعمل [[console.log]] لاسمه، و [[b.js]] بيستخدم متغير [[window.config]] اللي [[a.js]] بيعرّفه. جرّبهم بـ [[defer]] وبعدين بـ [[async]]، مع Network throttling «Slow 4G» و [[a.js]] أكبر حجمًا (حط فيه كومنت طويل).`, done: R`مع defer الترتيب دايمًا a ثم b ثم c و b شايف الـ config، ومع async الترتيب بيتغير بين reload وتاني وأحيانًا b بيطبع [[undefined]] أو error، وتقدر تكتب في سطر ليه defer هو الصح لكود بيعتمد على بعضه.` },
+          ],
           flag: "script",
           deep: {
             why: "«الكود شغال لو حطيته في آخر الـ body ومش شغال في الـ head» من أشهر حيرات المبتدئين. ولما الصفحة بطيئة، أول حاجة بيبص عليها أي حد في الأداء هي السكربتات اللي بتوقف الـ parsing (render-blocking).",

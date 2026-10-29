@@ -35,6 +35,7 @@
 
 - **web:** [ ] CSRF و SameSite · [ ] WebSocket و SSE في Network · [ ] صيغ الصور · [ ] الكاش و 304. مشروع: تشخيص موقع بطيء ومكسور.
 - **css:** [ ] تنظيم CSS (BEM و Modules) · [ ] popover و dialog · [ ] scroll-driven animations · [ ] @property · [ ] gradients و shadows و filter · [ ] @media print · [ ] subgrid. مشاريع: landing page، dashboard layout، فورم تسجيل accessible.
+- **js (مواضيع فرعية جوه دروس موجودة، من مراجعة js/11–15):** [ ] `exports`/`imports` في package.json و import maps و `import.meta.resolve` · [ ] الـ handlers العامة (`unhandledrejection` و `process.on('uncaughtException')`) و `AggregateError` · [ ] `AbortSignal.any` و `Promise.try` · [ ] `RegExp.escape` · [ ] مراحل event loop في Node (`setImmediate` و `nextTick`) و `scheduler.yield` · [ ] `WeakRef` و `FinalizationRegistry` و heap snapshot.
 - **js:** [ ] Proxy و Reflect · [ ] WebSocket و SSE · [ ] Web Workers · [ ] Clipboard و Geolocation و Share · [ ] Streams · [ ] ESLint و Prettier و Vitest · [ ] requestAnimationFrame. مشاريع: expense tracker، بحث بـ debounce و AbortController، لعبة كتابة.
 - **ts:** [ ] function overloads · [ ] template literal types · [ ] typescript-eslint · [ ] Result type · [ ] tRPC · [ ] تحويل مشروع JS لـ TS. مشاريع: migration، API client بـ Zod، event emitter typed.
 - **react:** [ ] drag and drop (dnd-kit) · [ ] رفع ملفات بـ progress · [ ] الستايل في React · [ ] e2e. مشاريع: Kanban، admin dashboard، قايمة بـ URL state و infinite scroll.

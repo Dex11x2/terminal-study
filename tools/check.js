@@ -10,6 +10,12 @@ const ctx = vm.createContext({ console }, { microtaskMode: 'afterEvaluate' });
 const tabOrigin = {};
 for (const f of files) {
   const code = fs.readFileSync(path.join(ROOT, f), 'utf8');
+  // an invisible BOM or zero-width space in a lesson shows as nothing on the page; write it as the text ﻿ instead
+  // (built from char codes: some tools turn a typed escape back into the real character)
+  for (const [ch, name] of [[String.fromCharCode(0xFEFF), 'BOM (U+FEFF)'], [String.fromCharCode(0x200B), 'zero-width space (U+200B)']]) {
+    const at = code.indexOf(ch);
+    if (at >= 0) { console.error(`✗ ${f}:${code.slice(0, at).split('\n').length}: فيه حرف ${name} مخفي. اكتبه نص (backslash و ufeff) لو الدرس بيشرحه`); process.exitCode = 1; }
+  }
   try { vm.runInContext(code, ctx, { filename: f }); }
   catch (e) { console.error('✗ ' + f + ': الملف فيه غلطة JavaScript ومش هيتقري:\n  ' + e.message); process.exit(1); }
 }

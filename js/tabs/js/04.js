@@ -4,6 +4,14 @@ MORE("js", [
       t: "الدوال",
       l: 1,
       n: "تكتب دالة بأكتر من شكل، وتتعامل مع الباراميترات، وتبعت دوال لدوال",
+      projects: [
+        { lvl: 'صغير', t: R`آلة حاسبة بـ object دوال`, what: R`object مفاتيحه العمليات ([["+"]] و [["-"]] و [["*"]] و [["/"]] و [["%"]]) وقيمه arrow functions، ودالة [[calc(a, op, b)]] بتدوّر عليه بدل switch. من دروس «function و arrow» و «switch ولا object lookup».`, done: R`[[calc(6, "*", 7)]] 42، والعملية المش موجودة بترجّع رسالة، وإضافة عملية جديدة ([["**"]]) سطر واحد في الـ object من غير ما تلمس [[calc]].` },
+        { lvl: 'صغير', t: R`logger بمستويات`, what: R`[[log(level = "info", ...parts)]] بتطبع الوقت ([[new Date().toISOString()]]) والمستوى بحروف كبيرة وكل الـ parts جنب بعض. من درس «default و rest و spread».`, done: R`[[log("warn", "disk", 91, "%")]] بيطبع سطر فيه [[WARN]] و [[disk 91 %]]، و [[log(undefined, "hi")]] بيطبع [[INFO]].` },
+        { lvl: 'متوسط', t: R`مصنع خصومات`, what: R`[[makeDiscount(percent)]] و [[makeCoupon(code, amount, minOrder)]] بيرجّعوا دوال بتاخد الإجمالي وترجّع الجديد، و [[applyAll(total, ...rules)]] بتطبقهم بالترتيب. من درس «higher-order functions» و «default و rest و spread».`, done: R`[[applyAll(1000, makeDiscount(10), makeCoupon("EID", 50, 500))]] بترجّع 850. الكوبون على طلب 300 مبيطبقش، والإجمالي عمره ما بيبقى سالب.` },
+        { lvl: 'متوسط', t: R`validator بيتركّب`, what: R`دوال صغيرة زي [[required]] و [[minLength(n)]] و [[isEmail]]، كل واحدة بترجّع رسالة أو null، و [[rules(...fns)]] بترجّع دالة بتشغّلهم كلهم على قيمة وتجمع الرسايل. من وحدة «الدوال» كلها و «string methods».`, done: R`[[rules(required, minLength(8))("")]] بترجّع array فيها رسالة «مطلوب»، و [[rules(required, minLength(8))("abc")]] فيها رسالة «قصير» بس، وقيمة سليمة بترجّع [[[]]]. وتقدر تزود قاعدة جديدة من غير ما تعدّل [[rules]].` },
+        { lvl: 'كبير', t: R`pipeline لتنضيف طلب`, what: R`[[pipe(...fns)]] بتاخد دوال وترجّع دالة واحدة بتعدّي القيمة عليهم بالترتيب. اعمل خطوات: [[trimFields]] و [[toNumbers]] و [[addTotal]] و [[validate]]، وكل خطوة بترجّع object جديد من غير ما تعدّل القديم (spread). ولفّ كل خطوة بـ [[withLog]] من الدرس. واختبرها بـ [[check]] على طلب سليم وطلب ناقص وطلب كميته نص. من وحدة «الدوال» و «القيم والأنواع» و «المتغيرات والنصوص».`, done: R`الطلب السليم بيطلع وفيه total صح، والطلب الأصلي لسه زي ما هو بعد الـ pipeline، والطلب البايظ بيطلع وفيه [[errors]] بتقول أنهي حقل، واللوج فيه سطر لكل خطوة. و [[pipe()]] من غير دوال بترجّع القيمة زي ما هي.`, ext: R`زوّد [[once]] لخطوة مكلفة، وخلي [[validate]] يوقّف الـ pipeline بدري، وعدّ وقت كل خطوة.` },
+        { lvl: 'فكرة', t: R`أدواتك الصغيرة`, what: R`فكّر في ٣ حاجات بتتكرر في كودك (تقريب فلوس، تنسيق تاريخ، اختصار نص طويل بـ «…»، تحويل أرقام عربي لإنجليزي) واعملهم دوال صغيرة بـ defaults معقولة، وواحدة منهم على الأقل higher-order.`, done: R`كل دالة ليها ٣ اختبارات بتعدّي، وكلها بتشتغل من غير ما تبعت كل الـ arguments.`, ext: R`اجمعهم في ملف واحد واستخدمه في مشاريع الوحدات الجاية.` }
+      ],
       items: [
         {
           cmd: "function و arrow",
@@ -28,6 +36,11 @@ add(2, 3);        // 5
 square(4);        // 16
 toUser("Sara");   // { name: "Sara", active: true }`,
           try: R`حوّل [[add]] لـ arrow في سطر واحد. وبعدين امسح القوسين اللي حوالين الـ object في [[toUser]] وشغّل: هيطلع SyntaxError (Unexpected token ':')، لأن JS فهم الـ [[{]] بداية جسم دالة. ولو سبت جوه [[{ name }]] بس، مش هيطلع error، بس الدالة هترجّع undefined. فكّر ليه.`,
+          practice: [
+            { lvl: 'سريع', t: R`حوّل [[function triple(n) { return n * 3; }]] لـ arrow في سطر واحد.`, done: R`[[triple(4)]] بترجّع 12، ومفيش [[return]] ولا [[{ }]] في السطر.` },
+            { lvl: 'تطبيق', t: R`[[toProduct(name, price)]] arrow بترجّع object، في سطر واحد.`, done: R`[[toProduct("Mug", 120)]] بترجّع [[{ name: 'Mug', price: 120 }]]، ومن غير القوسين حوالين الـ object بترجّع undefined.` },
+            { lvl: 'تحدي', t: R`نادي [[sayHi()]] قبل ما تعرّفها، مرة وهي [[function sayHi() {}]] ومرة [[const sayHi = () => {}]].`, done: R`الأولى بتشتغل، والتانية بتوقع بـ [[ReferenceError: Cannot access 'sayHi' before initialization]].` }
+          ],
           flag: "script",
           deep: {
             why: "هتشوف الأشكال التلاتة في كل كود، ولازم تعرف تقراهم. والاختيار بينهم مش ذوق بس: فرق الـ this بيكسر كود حقيقي، والـ hoisting بيفرق في ترتيب الكود.",
@@ -192,6 +205,83 @@ TypeError: Arr is not a constructor
 
 ---
 
+## ٨. recursion: دالة بتنادي نفسها
+
+الدالة ممكن تنادي نفسها. ده اسمه **recursion**، وبيبقى أوضح من اللوب لما الداتا نفسها متداخلة (فولدر جواه فولدرات، تعليق عليه ردود، قايمة جواها قوايم).
+
+~~~js recursion.js
+function sumTo(n) {
+  if (n <= 0) return 0;          // الـ base case: هنا بنقف
+  return n + sumTo(n - 1);       // نفس المشكلة بس أصغر بواحد
+}
+console.log(sumTo(100));
+~~~
+
+~~~text الناتج · Node 24.22.1
+5050
+~~~
+
+**أي recursion محتاج حاجتين:**
+
+| الحتة | بتعمل إيه | لو نسيتها |
+|---|---|---|
+| الـ base case ([[if (n <= 0) return 0]]) | أصغر حالة، إجابتها معروفة من غير نداء تاني | الدالة بتنادي نفسها للأبد لحد ما الـ stack يتملي |
+| الخطوة ([[n + sumTo(n - 1)]]) | بتحل جزء وبتدّي الباقي لنفس الدالة بمدخل **أصغر** | لو المدخل مبيصغرش (مثلًا [[sumTo(n)]])، نفس النتيجة: مبتقفش |
+
+### بتمشي إزاي من جوه
+
+كل نداء بيستنى اللي بعده يخلص. فـ [[sumTo(3)]] بتبقى:
+
+~~~text
+sumTo(3) = 3 + sumTo(2)
+               2 + sumTo(1)
+                   1 + sumTo(0)
+                       0          <- base case، ومن هنا بنرجع لفوق
+               2 + 1 = 3
+3 + 3 = 6
+~~~
+
+كل نداء مستني بيتحفظ في الـ **call stack** (نفس السطور اللي بتشوفها في الـ stack trace، درس «اقرا الـ error»).
+
+### والـ stack ليه حد
+
+~~~js
+let depth = 0;
+function dive() { depth++; dive(); }      // مفيش base case
+try { dive(); } catch (e) { console.log(e.name + ':', e.message, '| depth', depth); }
+try { sumTo(100000); } catch (e) { console.log('sumTo(100000):', e.name, e.message); }
+~~~
+
+~~~text الناتج · Node 24.22.1
+RangeError: Maximum call stack size exceeded | depth 12502
+sumTo(100000): RangeError Maximum call stack size exceeded
+~~~
+
+- **حوالي ١٢ ألف نداء** على Node 24 وبعدها [[RangeError]]. الرقم بيختلف حسب حجم كل نداء والمتصفح، فمتعتمدش عليه.
+- يعني [[sumTo]] الـ recursive **أضعف** من اللوب اللي في تمرين sumTo: اللوب عدّ لـ ١٠٠ مليون في حوالي 68ms من غير أي مشكلة. فلما المشكلة «عدّ لحد n» استخدم لوب. و V8 مبيعملش tail call optimization: جرّبت نسخة [[tail(n, acc)]] النداء فيها آخر حاجة، و [[tail(100000)]] وقعت بنفس الـ [[RangeError]].
+
+### فين recursion بيكسب فعلًا: الداتا المتداخلة
+
+~~~js
+const tree = { name: 'src', children: [
+  { name: 'a.js' },
+  { name: 'lib', children: [{ name: 'b.js' }, { name: 'c.js' }] },
+] };
+const files = (node) => node.children ? node.children.flatMap(files) : [node.name];
+console.log(files(tree));
+~~~
+
+~~~text الناتج
+[ 'a.js', 'b.js', 'c.js' ]
+~~~
+
+- لو العنصر فيه [[children]]: هات الملفات من كل واحد منهم (بنفس الدالة) و [[flatMap]] بتلمّهم في array واحدة.
+- لو مفيهوش: ده ملف، والإجابة [[[node.name]]]. ده الـ base case.
+
+بلوب عادي كنت هتحتاج stack بإيدك. والعمق هنا عمق الفولدرات (عشرات مثلًا)، مش آلاف، فالـ stack مش مشكلة. وهتقابل نفس الشكل في الـ deep copy (درس «reference و copy») و deep equal (وحدة أسئلة انترفيو).
+
+---
+
 ## الخلاصة
 
 | | declaration | expression | arrow |
@@ -202,7 +292,8 @@ TypeError: Arr is not a constructor
 | [[new]] | أيوة | أيوة | لأ |
 | [[this]] بتاعتها | أيوة | أيوة | لأ، بتاخدها من برّه |
 
-arrow للـ callbacks والدوال الصغيرة، و declaration للدوال الكبيرة. ولو بترجّع object من arrow: [[({ ... })]].`,
+arrow للـ callbacks والدوال الصغيرة، و declaration للدوال الكبيرة. ولو بترجّع object من arrow: [[({ ... })]].
+- recursion: base case وخطوة بتصغّر، والـ stack بيقع بعد حوالي ١٢ ألف نداء، فاستخدمه للداتا المتداخلة مش للعدّ.`,
           lines: [
             R`function declaration: بتعرّف دالة اسمها [[add]] بتاخد باراميترين. ولأنها declaration، JS بيسجّلها كاملة قبل ما ينفّذ أي سطر (hoisting)، فتقدر تناديها حتى من سطر قبل السطر ده.`,
             R`بترجّع ناتج الجمع للي نادى الدالة. في الجسم اللي بين [[{ }]] الـ [[return]] لازمة: من غيرها الدالة بتشتغل عادي بس بترجّع [[undefined]].`,
@@ -246,6 +337,11 @@ function createUser({ name, role = "user", active = true } = {}) {
 }
 createUser({ name: "Sara", active: false });`,
           try: R`نادي [[createUser()]] من غير أي حاجة، وبعدين امسح [[= {}]] من الباراميتر ونادي تاني واقرا الـ error. وبعدين جرّب [[Math.max(...[])]] وشوف بترجّع إيه.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[greet(name = "ضيف")]] وجرّب [[greet()]] و [[greet(undefined)]] و [[greet(null)]].`, done: R`الأولتين بيرجعوا «أهلًا يا ضيف»، و [[greet(null)]] بترجّع «أهلًا يا null» (الـ default للـ undefined بس).` },
+            { lvl: 'تطبيق', t: R`[[sumAll(...nums)]] بتجمع أي عدد أرقام.`, done: R`[[sumAll()]] 0، و [[sumAll(1, 2, 3)]] 6، و [[sumAll(...[4, 5])]] 9.` },
+            { lvl: 'تحدي', t: R`[[createUser({ name, role = "user", active = true } = {})]] بترجّع object. جرّب [[createUser()]] و [[createUser({ name: "Ali", role: null })]] و [[Math.max(...[])]].`, done: R`[[createUser()]] بيرجّع role "user" و active true من غير error، والتانية role بتاعها null مش "user"، و [[Math.max(...[])]] بترجّع [[-Infinity]].` }
+          ],
           flag: "script",
           deep: {
             why: "دوال بباراميترات اختيارية في كل حتة: pagination (صفحة وحجم)، و fetch helpers، و formatters. من غير defaults هتكتب [[if (x === undefined) x = ...]] في أول كل دالة.",
@@ -434,6 +530,11 @@ triple(5);                 // 15
 const pipe = (...fns) => (x) => fns.reduce((v, f) => f(v), x);
 pipe(double, triple)(1);   // 6`,
           try: R`اكتب [[withLog(fn)]] بترجّع دالة جديدة، بتطبع الـ arguments قبل ما تنادي fn وبتطبع الناتج بعدها. جرّبها على [[add]].`,
+          practice: [
+            { lvl: 'سريع', t: R`[[repeat(n, fn)]] بتنادي fn عدد n مرة وبتبعتلها رقم اللفة.`, done: R`[[repeat(3, i => console.log(i))]] بيطبع 0 و 1 و 2.` },
+            { lvl: 'تطبيق', t: R`[[makeDiscount(percent)]] بترجّع دالة بتاخد السعر.`, done: R`[[const sale = makeDiscount(20);]] وبعدين [[sale(500)]] بترجّع 400، وتقدر تعمل خصمين مختلفين من نفس الدالة.` },
+            { lvl: 'تحدي', t: R`[[once(fn)]] بترجّع دالة بتشغّل fn أول مرة بس، وبعد كده بترجّع نفس النتيجة الأولى.`, done: R`[[const init = once(() => { console.log("init"); return 42; });]] وبعدين [[init(); init();]]: «init» بتتطبع مرة واحدة، والمرتين بيرجعوا 42.` }
+          ],
           flag: "script",
           deep: {
             why: "بتخليك تفصل «إيه اللي بيتعمل» عن «امتى وإزاي»: [[repeat]] بتعرف تكرر، والـ callback بيقرر يعمل إيه. ودي أساس React (الـ handlers والـ hooks)، و middleware في Express، و debounce و memoize في المستوى ٣.",

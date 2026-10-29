@@ -4,6 +4,14 @@ MORE("js", [
       t: "this",
       l: 2,
       n: "this بتتحدد وقت النداء مش وقت الكتابة، والـ arrow بتاخدها من برّه، و call و bind بيحددوها بإيدك",
+      projects: [
+        { lvl: 'صغير', t: R`ساعة إيقاف`, what: R`object فيه [[start]] و [[stop]] و [[reset]] بيعرض الوقت في الصفحة، والـ interval جواه arrow عشان تشوف this بتاعة الـ object. من درس arrow و this.`, done: R`start و stop و reset شغالين بأي ترتيب، و start مرتين مبتعدّش الضعف، والأزرار متربوطة صح ([[btn.addEventListener("click", () => sw.start())]] مش [[sw.start]] لوحدها).` },
+        { lvl: 'صغير', t: R`loggers بأسامي`, what: R`[[makeLogger(name)]] بترجّع [[{ info, warn, error }]] كل واحدة [[console.x.bind(console, "[" + name + "]")]]، واستخدمها في جزئين من الكود. من درس call و apply و bind.`, done: R`[[db.info("connected")]] بيطبع [[[db] connected]] و [[ui.warn("slow")]] بيطلع تحذير أصفر فيه [[[ui] slow]]، ورقم السطر في Console بيشاور على مكان النداء مش على ملف الـ logger.` },
+        { lvl: 'متوسط', t: R`jQuery صغير بتاعك`, what: R`[[$(selector)]] بترجّع object فيه [[els]] (array العناصر) و methods بترجّع [[this]] عشان تتسلسل: [[addClass]] و [[text]] و [[on(event, fn)]]، و [[on]] بتنادي fn بـ [[fn.call(el, e)]] عشان this جوه الـ handler يبقى العنصر. من دروس this و call و apply و bind، والـ DOM.`, done: R`[[$("li").addClass("x").text("hi")]] بتشتغل في سطر واحد على كل العناصر، وجوه [[on("click", function () { ... })]] الـ [[this]] هو العنصر اللي اتضغط، و [[$("#nope")]] مبيقعش وبيعمل ولا حاجة.` },
+        { lvl: 'متوسط', t: R`widget tabs بيتشال نضيف`, what: R`object [[tabs]] فيه [[init(root)]] بيضيف listeners و [[destroy()]] بيشيلهم. الـ handlers methods على الـ object، فبتربطها بـ bind مرة واحدة في init وتخزّنها. من دروس this و call و apply و bind، و event delegation.`, done: R`بعد [[destroy()]] الضغط على أي tab مبيعملش حاجة، و [[init]] تاني بيرجّعه شغال، و [[init]] على اتنين root مختلفين كل واحد بيشتغل لوحده (اعمل نسخة object لكل واحد).` },
+        { lvl: 'كبير', t: R`modal بيتعمل لأي حاجة`, what: R`[[createModal({ title, body, onConfirm })]] بترجّع object فيه [[open]] و [[close]] و [[destroy]]. وهو مفتوح: Esc والضغط على الخلفية بيقفلوه، والـ listeners دول بيتضافوا في [[open]] ويتشالوا في [[close]] (بنسخ مربوطة متخزنة)، والفوكس بيرجع للزرار اللي فتحه. التحقق: [[title]] لازم string مش فاضية وإلا [[TypeError]] برسالة واضحة، والنصوص بـ [[textContent]]، و [[onConfirm]] لو رمت error المودال ميتقفلش وبيعرض الرسالة. وكل open و close بيتكتبوا بـ [[console.debug]]. من الوحدة دي و scope و closures والـ DOM.`, done: R`مودالين في نفس الصفحة كل واحد بيقفل لوحده، و ١٠ مرات فتح وقفل وبعدهم Esc بيشغّل handler واحد بس (حط log واتأكد)، وبعد [[destroy()]] مفيش عنصر باقي في الـ DOM، و [[createModal({})]] بيرمي TypeError، و title فيه [[<b>]] بيظهر كنص.`, ext: R`زوّد trap للفوكس جوه المودال بـ Tab، وأنيميشن فتح وقفل، وحوّله لـ [[<dialog>]] الحقيقي وقارن الكود.` },
+        { lvl: 'فكرة', t: R`لعبة صغيرة بـ objects`, what: R`لعبة بسيطة (XO، أو اضرب الخلد، أو memory cards) فيها object للعبة نفسها بـ methods ([[start]] و [[move]] و [[reset]])، و timers و listeners كتير بيستخدموا this. انت اللي بتختار اللعبة وقواعدها.`, done: R`بتتلعب من الأول للآخر وبتعرف مين كسب، و reset بيرجّعها من غير ما تعمل refresh ومن غير timers زيادة شغالة، ومفيش ولا [[TypeError]] بتاع this في Console.`, ext: R`زوّد أعلى سكور في localStorage، ومستويات صعوبة، وصوت، وحوّلها لـ classes بعد الوحدة الجاية.` },
+      ],
       items: [
         {
           cmd: "this",
@@ -30,6 +38,11 @@ const p = new Person("Omar");    // this = الـ object الجديد
 const btn = { label: "Save", click() { console.log(this?.label); } };
 setTimeout(btn.click, 0);        // undefined: اتبعتت من غير btn`,
           try: R`شيل [[?.]] من [[hi]] وشغّل تاني واقرا الـ TypeError. وبعدين صلّح سطر setTimeout بطريقتين: [[() => btn.click()]] و [[btn.click.bind(btn)]].`,
+          practice: [
+            { lvl: 'سريع', t: R`[[const counter = { n: 0, inc() { this.n++; return this.n; } }]]: نادي [[counter.inc()]] مرتين، وبعدين [[const inc = counter.inc; inc();]] في ملف [[.mjs]] (strict).`, done: R`النداء التاني بيرجّع [[2]]، و [[inc()]] بتطلع [[TypeError: Cannot read properties of undefined (reading 'n')]]. ولو شغّلته في ملف [[.js]] عادي في Node من غير strict بيرجّع [[NaN]] بهدوء (this بقت الـ global object)، ودي أوحش.` },
+            { lvl: 'تطبيق', t: R`في صفحة: زرار عليه [[addEventListener("click", function () { this.textContent = "اتضغط"; })]]. وبعدين نفس الحاجة بـ arrow جوه [[<script type="module">]].`, done: R`مع function نص الزرار بيتغير (this هي الزرار، زي [[e.currentTarget]])، ومع الـ arrow بيطلع TypeError في Console فيه [[setting 'textContent']] والزرار زي ما هو، لأن this في الـ module بـ [[undefined]].` },
+            { lvl: 'تحدي', t: R`دالة واحدة [[function who() { return this?.tag; }]] ونادِها بست طرق: [[obj.who()]]، و متخزّنة في متغير، و [[who.call({ tag: "C" })]]، و [[new]] (اطبع الـ object نفسه)، وجوه [[setTimeout(obj.who)]]، و [[[1].forEach(function () {...}, { tag: "F" })]] بالـ thisArg. اكتب توقعك الأول.`, done: R`عندك جدول ٦ سطور فيه توقعك والناتج الحقيقي جنب بعض، وكل سطر مختلف مكتوب جنبه أنهي قاعدة من الأربعة اتطبّقت. مثلًا الـ forEach بيرجّع [["F"]] لأن التاني بتاعها هو this.` },
+          ],
           flag: "script",
           deep: {
             why: R`[[this]] أكتر حاجة بتلخبط اللي جايين من Java أو Python، وسبب bugs زي «Cannot read properties of undefined (reading 'name')» لما تبعت method كـ callback. وسؤال انترفيو مضمون تقريبًا.`,
@@ -250,6 +263,11 @@ setTimeout(btn.click.bind(btn), 0);   // ثبّت this بـ bind
 timer.startBroken();
 timer.start();`,
           try: R`قبل الـ arrows كان الحل [[const self = this;]] قبل الـ callback. صلّح [[startBroken]] بالطريقة دي، وبعدين بـ [[.bind(this)]] بعد الـ function.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[const o = { a: () => this, b() { return this; } }]] واطبع [[o.b() === o]] و [[o.a() === o]].`, done: R`الأول [[true]] والتاني [[false]]: الـ arrow كـ method أخدت this من برّه الـ object.` },
+            { lvl: 'تطبيق', t: R`stopwatch object: [[seconds]] و [[start()]] بـ [[this.id = setInterval(() => this.seconds++, 1000)]] و [[stop()]] بـ [[clearInterval(this.id)]] و [[reset()]]. اعرض الثواني في صفحة.`, done: R`بعد [[start()]] بحوالي ٣ ثواني [[seconds]] بقت [[3]]، و [[stop()]] بيوقفها فعلًا، و [[start()]] مرتين ورا بعض مبيعدّش أسرع (اتأكد إن مفيش interval شغال قبل ما تعمل واحد جديد).` },
+            { lvl: 'تحدي', t: R`[[const scaler = { factor: 2, scale(arr) { return arr.map(function (x) { return x * this.factor; }); } }]]. شغّل [[scaler.scale([1, 2, 3])]] في ملف [[.mjs]] وبعدين في [[.js]] عادي، وصلّحها بتلات طرق: arrow، و thisArg التاني بتاع [[map]]، و [[const self = this]].`, done: R`في [[.mjs]] بتطلع [[TypeError: Cannot read properties of undefined (reading 'factor')]]، وفي [[.js]] من غير strict بترجّع [[[ NaN, NaN, NaN ] ]]. والتلات تصليحات بيرجّعوا [[[ 2, 4, 6 ] ]].` },
+          ],
           flag: "script",
           deep: {
             why: "مشكلة this جوه callbacks كانت أشهر مشكلة في JS قبل ES2015، وكان الحل [[var self = this]] في كل حتة. الـ arrows حلّتها، بس لو مش فاهم ليه، هتستخدمها في المكان الغلط.",
@@ -473,6 +491,11 @@ saraIntro.call({ name: "Ali" }, "!"); // "Hello, I'm Sara!": bind مبيتغير
 const btn = { label: "Save", click() { console.log(this.label); } };
 setTimeout(btn.click.bind(btn), 0);   // "Save"`,
           try: R`اكتب [[myBind(fn, ctx, ...args)]] بإيدك: بترجّع دالة بتنادي [[fn.apply(ctx, [...args, ...newArgs])]]. ده سؤال انترفيو مشهور (المستوى ٣ فيه نسخة كاملة). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
+          practice: [
+            { lvl: 'سريع', t: R`[[Math.max.apply(null, [3, 9, 2])]] وقارنها بـ [[Math.max(...[3, 9, 2])]]. وجرّب الاتنين على array فاضية.`, done: R`الاتنين بيرجّعوا [[9]]، ومع array فاضية الاتنين بيرجّعوا [[-Infinity]] (فاتأكد إن الـ array مش فاضية قبلها).` },
+            { lvl: 'تطبيق', t: R`اعمل logger بـ prefix: [[const log = console.log.bind(console, "[app]")]]، و [[const add5 = add.bind(null, 5)]] لـ [[add = (a, b) => a + b]].`, done: R`[[log("started")]] بيطبع [[[app] started]]، و [[add5(3)]] بترجّع [[8]]: الـ bind ثبّت أول argument، و [[null]] مكان this عشان add مش بتستخدمها.` },
+            { lvl: 'تحدي', t: R`widget فيه [[onClick() { console.log(this.name); }]]. ضيفه على زرار بـ [[btn.addEventListener("click", widget.onClick.bind(widget))]] وحاول تشيله بـ [[removeEventListener]] بنفس الكتابة. وبعدين صلّحه.`, done: R`الشيل مبيشتغلش والضغط لسه بيطبع، لأن [[widget.onClick.bind(widget) === widget.onClick.bind(widget)]] بترجّع [[false]] (كل bind دالة جديدة). وبعد ما تخزّن النسخة المربوطة في متغير وتبعته للاتنين، الضغط بعد الشيل مبيطبعش حاجة.` },
+          ],
           flag: "script",
           deep: {
             why: "بتحتاجهم لما تبعت method كـ callback (bind)، أو تستعير method من object لـ object تاني (call). و bind بالذات بيحل مشكلة this الضايعة في setTimeout و addEventListener.",

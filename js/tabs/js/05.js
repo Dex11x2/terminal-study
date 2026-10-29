@@ -4,6 +4,14 @@ MORE("js", [
       t: "المصفوفات",
       l: 1,
       n: "map و filter و reduce بدل اللوبات، و find و some، ومين بيعدّل الـ array ومين بيرجّع واحدة جديدة",
+      projects: [
+        { lvl: 'صغير', t: R`لوحة طلبات اليوم`, what: R`array طلبات ([[{ id, total, status }]]): عدد كل status، وإجمالي المدفوع، ومتوسط الطلب، وأكبر طلب. كله بـ [[filter]] و [[map]] و [[reduce]] من غير for. من درس «map و filter و reduce».`, done: R`على طلبات الدرس (250 paid و 900 pending و 400 paid) إجمالي المدفوع 650 وأكبر طلب 900. ولو الـ array فاضية مفيش NaN ولا [[TypeError: Reduce of empty array with no initial value]].` },
+        { lvl: 'صغير', t: R`ترتيب الطلاب`, what: R`array طلاب ([[{ name, score }]]): رتّبهم بالدرجة تنازلي، واللي درجاتهم زي بعض بالاسم أبجدي، من غير ما تبوّظ الأصل. من درس «sort و toSorted».`, done: R`المترتب صح، والـ array الأصلية لسه بنفس ترتيبها (اطبعها بعد الترتيب واتأكد).` },
+        { lvl: 'متوسط', t: R`سلة مشتريات immutable`, what: R`[[addItem]] و [[removeItem]] و [[updateQty]] و [[cartTotal]]، كل دالة بترجّع سلة جديدة بـ spread و [[map]] و [[filter]] ومبتعدّلش القديمة. وإضافة منتج موجود بتزوّد الكمية. من وحدة «المصفوفات» و «default و rest و spread».`, done: R`لو عملت [[Object.freeze(cart)]] الأول كل الدوال لسه شغالة (لو دالة بتعمل push هتوقع بـ [[TypeError: Cannot add property ...]]). و [[updateQty(cart, id, 0)]] بتشيل المنتج، وإضافة نفس المنتج مرتين بتخلي الكمية 2 مش سطرين.` },
+        { lvl: 'متوسط', t: R`بحث وفلترة منتجات`, what: R`[[search(products, { q, min, max, inStock, sortBy, page })]]: بحث بالاسم من غير ما يفرق في الحروف الكبيرة ([[includes]])، ومدى سعر، والمتاح بس، وترتيب، وصفحة ٥ منتجات بـ [[slice]]. كل الـ options ليها defaults. من وحدة «المصفوفات» و «default و rest و spread» و «string methods».`, done: R`[[search(products)]] من غير options بيرجّع أول ٥، والبحث بـ [["MUG"]] بيلاقي "Mug"، والصفحة بعد الآخر بترجّع [[[]]]، والـ products الأصلية مبتتغيّرش.` },
+        { lvl: 'كبير', t: R`تقرير مبيعات من داتا API`, what: R`الصق JSON مبيعات (٢٠ عملية: id و product و qty و price و date زي [["2026-03-14"]]) في متغير، وفيهم ٣ بايظين (qty نص، price سالب، date ناقص). [[report(sales)]] بتفصل البايظ مع سببه، وتجمع الإجمالي لكل شهر (من [[date.slice(0, 7)]])، وأكتر ٣ منتجات بيعًا، وتعرض بـ [[console.table]]. واختبارات بـ [[check]]. من وحدة «المصفوفات» و «القيم والأنواع» و «الدوال».`, done: R`الـ ٣ البايظين ظاهرين في جدول لوحدهم بسبب كل واحد، والإجمالي الكلي = مجموع الشهور بالظبط (بالقروش)، والـ top 3 مترتبين تنازلي، و [[report([])]] بيطبع «مفيش مبيعات» من غير error، والـ sales الأصلية زي ما هي.`, ext: R`زوّد مقارنة كل شهر باللي قبله بالنسبة المئوية، وخلّيه يقبل فلتر بمدى تاريخ.` },
+        { lvl: 'فكرة', t: R`داتا من حياتك`, what: R`اختار لستة حقيقية عندك: مصاريف الشهر، أفلام اتفرجت عليها، ماتشات فريقك، ساعات مذاكرة. اكتبها array objects وطلّع منها ٥ أسئلة ليها إجابة بـ map و filter و reduce و sort و find.`, done: R`كل سؤال إجابته دالة لوحدها ورقمها مطابق لحسبتك بإيدك على الأقل في سؤالين.`, ext: R`اعرضها في صفحة HTML بعد وحدة الـ DOM، وزوّد رسم بسيط بالـ CSS.` }
+      ],
       items: [
         {
           cmd: "map و filter و reduce",
@@ -27,6 +35,11 @@ const revenue2 = orders
   .reduce((sum, o) => sum + o.total, 0);
 const byStatus = Object.groupBy(orders, (o) => o.status);`,
           try: R`من نفس الـ orders اطلع: عدد الطلبات الـ pending، وأكبر total، و object شكله [[{ 1: 250, 2: 900, 3: 400 }]] بـ reduce. وبعدين اطبع [[byStatus]] وشوف شكله.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[[1, 2, 3, 4].map(n => n * 10)]] و [[[1, 2, 3, 4].filter(n => n % 2 === 0)]].`, done: R`[[[10, 20, 30, 40]]] و [[[2, 4]]]، والأصل لسه [[[1, 2, 3, 4]]].` },
+            { lvl: 'تطبيق', t: R`منتجات جاية من API فيها [[{ name, price, inStock }]]: طلّع أسامي المتاح اللي أقل من 200، وإجمالي أسعار المتاح بس، في سلسلة filter و map و reduce.`, done: R`على Mug 120 متاح و Shirt 300 متاح و Cap 90 مش متاح: الأسامي [[["Mug"]]] والإجمالي 420.` },
+            { lvl: 'تحدي', t: R`جمّع الطلبات حسب الـ status بـ reduce في object من الـ ids: [[{ paid: [1, 3], pending: [2] }]]، وبعدين قارن بـ [[Object.groupBy]].`, done: R`الـ reduce بيرجّع [[{ paid: [1, 3], pending: [2] }]]، و [[Object.groupBy(orders, o => o.status)]] بيجمع الـ objects كاملة مش الـ ids، و Node بيطبعه [[[Object: null prototype]]].` }
+          ],
           flag: "script",
           deep: {
             why: "أغلب الشغل على الداتا: فلتر المنتجات المتاحة، واعرض أسماء المستخدمين، واحسب إجمالي السلة. بالـ for هتكتب متغيرات مؤقتة و push و if، وبالدوال دي الكود بيقول «عايز إيه» مش «اعمله إزاي».",
@@ -249,6 +262,11 @@ users.every((u) => u.admin);         // false: مش كلهم
 [NaN].includes(NaN);                 // true
 [NaN].indexOf(NaN);                  // -1`,
           try: R`اكتب [[const user = users.find(...)]] على id مش موجود، وبعدين [[user.name]] واقرا الـ error. صلّحه بـ [[user?.name]]. وبعدين جرّب [[users.includes({ id: 1, name: "Sara", admin: true })]] وفكّر ليه false.`,
+          practice: [
+            { lvl: 'سريع', t: R`على [[[5, 12, 8]]]: [[find(n => n > 10)]] و [[findIndex(n => n > 10)]] و [[find(n => n > 100)]].`, done: R`12 و 1 و undefined.` },
+            { lvl: 'تطبيق', t: R`سلة: [[hasOutOfStock]] بـ some (فيه منتج stock بتاعه 0؟)، و [[allPaid]] بـ every على الطلبات.`, done: R`لو منتج واحد stock بتاعه 0 [[hasOutOfStock]] true، و [[[].every(...)]] على array فاضية بترجّع true (فكّر ليه ده ممكن يبقى bug).` },
+            { lvl: 'تحدي', t: R`[[hasAll(perms, required)]] بترجّع true لو اليوزر عنده كل الصلاحيات المطلوبة. وجرّب [[[NaN].includes(NaN)]] و [[[NaN].indexOf(NaN)]].`, done: R`[[hasAll(["read", "write"], ["read"])]] true، و [[hasAll(["read"], ["read", "delete"])]] false. و includes بترجّع true و indexOf بترجّع -1.` }
+          ],
           flag: "script",
           deep: {
             why: "«هات المنتج ده من السلة»، «فيه منتج خلص؟»، «اليوزر ده admin؟»: أسئلة بتتسأل في كل شاشة. واستخدام filter وأخد [0] بيلف على الـ array كلها من غير لزمة.",
@@ -421,6 +439,11 @@ const products = [{ name: "B", price: 50 }, { name: "A", price: 50 }];
 products.toSorted((a, b) => a.price - b.price || a.name.localeCompare(b.name));
 prices.with(0, 999);                     // [999, 100, 200]`,
           try: R`رتّب [[products]] بالسعر تنازلي. وبعدين اعمل [[const x = prices.sort()]] واطبع [[prices]] و [[x === prices]]: هتلاقي sort عدّلت الأصل ورجّعت نفس الـ array.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[[10, 1, 2].sort()]] وبعدين [[[10, 1, 2].sort((a, b) => a - b)]].`, done: R`[[[1, 10, 2]]] و [[[1, 2, 10]]].` },
+            { lvl: 'تطبيق', t: R`رتّب منتجات بالسعر تصاعدي، واللي سعرهم زي بعض بالاسم ([[localeCompare]])، بـ toSorted.`, done: R`المنتجين اللي بنفس السعر مترتبين أبجدي، والـ array الأصلية بنفس ترتيبها القديم.` },
+            { lvl: 'تحدي', t: R`رتّب [[["file10", "file2", "file1"]]] بـ [[sort()]] عادي، وبعدين بـ [[localeCompare(b, undefined, { numeric: true })]]. وجرّب [[["Sara", "omar", "Ali"]]] بالطريقتين.`, done: R`العادي [[["file1", "file10", "file2"]]] والـ numeric [[["file1", "file2", "file10"]]]. والأسامي: [[sort()]] بيحط "omar" في الآخر (الحروف الكبيرة الأول)، و [[localeCompare]] بيرتّب Ali ثم omar ثم Sara.` }
+          ],
           flag: "script",
           deep: {
             why: "الترتيب في كل جدول وليستة. و sort اللي بتعدّل الأصل سبب bugs كتير في React: الـ state اتعدّلت في مكانها، فـ React مش شايف تغيير ومبيعملش render، أو الترتيب بيتغير في مكان تاني بيستخدم نفس الـ array.",
@@ -560,12 +583,12 @@ products.toSorted((a, b) => a.price - b.price || a.name.localeCompare(b.name));
 
 ## الخلاصة
 
-| بتعدّل الأصل | النسخة اللي مبتعدّلش |
-|---|---|
-| [[sort(fn)]] | [[toSorted(fn)]] |
-| [[reverse()]] | [[toReversed()]] |
-| [[splice(i, n)]] | [[toSpliced(i, n)]] |
-| [[arr[i] = v]] | [[with(i, v)]] |
+| بتعدّل الأصل | النسخة اللي مبتعدّلش | بترجّع إيه |
+|---|---|---|
+| [[sort(fn)]] | [[toSorted(fn)]] | array جديدة مترتبة |
+| [[reverse()]] | [[toReversed()]] | array جديدة معكوسة |
+| [[splice(i, n)]] | [[toSpliced(i, n)]] | array جديدة من غير العناصر دي (و [[splice]] بترجّع **المشال**) |
+| [[arr[i] = v]] | [[with(i, v)]] | array جديدة بعنصر واحد متغيّر |
 
 - أرقام: [[(a, b) => a - b]] تصاعدي و [[b - a]] تنازلي. نصوص: [[localeCompare]].
 - مع state أو داتا مشتركة استخدم النسخ اللي على اليمين.`,
@@ -605,6 +628,11 @@ const withNew = [...merged, 6];            // إضافة من غير push
 const rows = [[1, 2], [3, 4]];
 rows.flat();                               // [1, 2, 3, 4]`,
           try: R`اكتب دالة [[removeAt(arr, i)]] بترجّع array جديدة من غير العنصر رقم i، بـ spread و slice (من غير splice). وبعدين اعملها بـ [[toSpliced]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[removeAt]] (النسخة بتاعة spread و slice).`,
+          practice: [
+            { lvl: 'سريع', t: R`[[const [first, , third] = ["a", "b", "c"];]] واطبع الاتنين.`, done: R`"a" و "c".` },
+            { lvl: 'تطبيق', t: R`فك تاريخ جاي كنص: [[const [y, m, d] = "2026-10-29".split("-").map(Number);]].`, done: R`y بـ 2026 و m بـ 10 و d بـ 29، و [[typeof m]] "number" مش "string".` },
+            { lvl: 'تحدي', t: R`[[const a = [ [1], [2] ]; const b = [...a]; b[0].push(9);]] واطبع [[a[0]]]. وبعدين صلّح بـ [[structuredClone]].`, done: R`قبل التصليح [[a[0]]] بقت [[[1, 9]]] (الـ spread نسخ الـ array من برا بس)، وبعد [[structuredClone(a)]] بتفضل [[[1]]].` }
+          ],
           flag: "script",
           deep: {
             why: R`destructuring بيخلّي الكود أقصر وأوضح من [[arr[0]]] و [[arr[1]]]، وهو أساس الـ hooks في React. والـ spread هو الطريقة المعتادة تضيف أو تشيل من array من غير ما تعدّل الأصل.`,

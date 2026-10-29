@@ -8520,679 +8520,864 @@
   "on": "Node 24 Windows"
  },
  "js|&& و || و !": {
-  "hash": "ab7eb57ce1ab",
+  "hash": "a6e3faf17954",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|== و ===": {
-  "hash": "bd7e57ec0bae",
+  "hash": "ada9557e0e9b",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|AssemblyScript": {
-  "hash": "e5d0a451f2c4",
+  "hash": "11a141f63b54",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|Clipboard و Geolocation و Share": {
+  "hash": "d18f29aa3559",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|CommonJS و ESM": {
-  "hash": "77f0e1e29dcc",
+  "hash": "6c253e9ca0c6",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|Date ومطبّاته": {
-  "hash": "8f413b8211ec",
+  "hash": "1db8ceb7fa6c",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|Declarative Shadow DOM و :defined": {
+  "hash": "cdb189476479",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|ESLint و Prettier": {
+  "hash": "f6ef3bbcbf1f",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|EventEmitter": {
-  "hash": "ce5c3d54feb2",
+  "hash": "edad18036e99",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|FormData و URLSearchParams": {
-  "hash": "0441ccb14614",
+  "hash": "ad65d3648f20",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|IndexedDB و BroadcastChannel": {
-  "hash": "ffb634c4c79d",
+  "hash": "7803c90be75f",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|IntersectionObserver": {
-  "hash": "9cf2053465ac",
+  "hash": "3c9c842ec083",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|Intl.RelativeTimeFormat": {
-  "hash": "fdfe21e60ae4",
+  "hash": "19281fea86a0",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|JSON": {
-  "hash": "5230f3e7c9f9",
+  "hash": "4ef645d603b2",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|Map و Set": {
-  "hash": "a1f97228cf6f",
+  "hash": "5fc0476656e5",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|MutationObserver": {
+  "hash": "14d558ed74e9",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|Notification و permissions": {
+  "hash": "617f2d1ecfcb",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|Object.keys و entries": {
-  "hash": "546f0c17678d",
+  "hash": "6522612e419c",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|Promise": {
-  "hash": "fa2656873a06",
+  "hash": "23fc25e94031",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|Promise.all بإيدك": {
-  "hash": "e1db11e7deaf",
+  "hash": "d6f99c2ff8b0",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|Promise.all و allSettled": {
-  "hash": "e9ee127623ad",
+  "hash": "04412385e904",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|Proxy و Reflect": {
+  "hash": "eead9300bb9c",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|ResizeObserver": {
-  "hash": "a46d97c45aa9",
+  "hash": "294a5b14da08",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|Strategy pattern": {
+  "hash": "2dd6d97e7f11",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|Streams": {
+  "hash": "b89b921df023",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|UTC و Intl.DateTimeFormat": {
-  "hash": "9453d8c5e8a4",
+  "hash": "2b48446dfb4c",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|WASI و node:wasi": {
+  "hash": "692d69f476a1",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|Web Components في React و Vue": {
-  "hash": "970a5ec3ec8b",
+  "hash": "3727f68bd278",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|WebAssembly في المتصفح": {
-  "hash": "97608f73c4e0",
+  "hash": "da7d806fc3b2",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|WebSocket و SSE": {
+  "hash": "53a14a51fa70",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|addEventListener": {
-  "hash": "1259f15b8d8d",
+  "hash": "b5f3c23b55d4",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|array destructuring و spread": {
-  "hash": "3bffb58dbc3c",
+  "hash": "b9619fba1a76",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|arrow و this": {
-  "hash": "8a8658fd14a0",
+  "hash": "f87cdbc0fd29",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|async في loops": {
-  "hash": "f6c4c4825b70",
+  "hash": "f8fdf9fa3fa5",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|async و await": {
-  "hash": "f9d3786682ef",
+  "hash": "4191933674ff",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|attributes و properties": {
-  "hash": "e17dd76d2af2",
+  "hash": "4db4b2d90825",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|blocking و الـ main thread": {
-  "hash": "26d2b5585fff",
+  "hash": "c6dbbb980cea",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|break و continue": {
-  "hash": "db57c4324b32",
+  "hash": "ad4e402a4fbb",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|breakpoints و node --inspect و source maps": {
+  "hash": "b7b3759e6d82",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|call و apply و bind": {
-  "hash": "f88a209e9a4c",
+  "hash": "be050cdf5c6b",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|canvas: ارسم أشكال وحرّكها": {
+  "hash": "83c28433f46c",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|class": {
-  "hash": "b7b621dbf229",
+  "hash": "60aa32478270",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|closure": {
-  "hash": "52e7e654c94b",
+  "hash": "bce26b8f8148",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|closures في loop": {
-  "hash": "d118f161e3dd",
+  "hash": "9cac4d2d2f9e",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|curry": {
-  "hash": "2d298faa178b",
+  "hash": "79e4243b8fc6",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|custom errors و cause": {
-  "hash": "b6e7598d59f1",
+  "hash": "5500d4d3eec6",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|customElements.define": {
-  "hash": "8362181ee042",
+  "hash": "c2c7ec3daecb",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|date-fns و dayjs و Temporal": {
-  "hash": "d8ee79e82601",
+  "hash": "b1b57682a287",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|debounce و throttle": {
-  "hash": "a793e2f6a66a",
+  "hash": "394491a151dd",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|debounce و throttle في الانترفيو": {
+  "hash": "f91455ababbe",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|debugger": {
-  "hash": "5309f0b619a3",
+  "hash": "92daca33e24c",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|deep equal": {
-  "hash": "641b6d2ce726",
+  "hash": "ddfadebd76c5",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|deepClone و structuredClone": {
+  "hash": "9dd753f238a2",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|default و rest و spread": {
-  "hash": "a441ae91ff7c",
+  "hash": "14d01ae6e89f",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|defer و async و module": {
-  "hash": "a79466e02300",
+  "hash": "ee48c473f09f",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|drag and drop و progress": {
-  "hash": "0d84a9e0ad26",
+  "hash": "e046f749db14",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|dynamic import()": {
-  "hash": "a256bde0a4d9",
+  "hash": "b1d00639e27a",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|event delegation": {
-  "hash": "0fdfd3921791",
+  "hash": "d853e41d9ae1",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|event loop": {
-  "hash": "3c0a7031caf8",
+  "hash": "f08913368283",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|extends و super": {
-  "hash": "ab5c182c26df",
+  "hash": "3ab2d12e7860",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|fetch و AbortController": {
-  "hash": "21165ca2be4e",
+  "hash": "a71be16ced6e",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|find و some و includes": {
-  "hash": "c222f56f17ab",
+  "hash": "8ff83f6342cb",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|for و while": {
-  "hash": "dc0cfe141562",
+  "hash": "3def55067590",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|for...of و for...in": {
-  "hash": "80c5ca853b09",
+  "hash": "a903a4539123",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|form-associated و ElementInternals": {
+  "hash": "9f83857424ac",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|function و arrow": {
-  "hash": "88750286a69c",
+  "hash": "a5285eb664af",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|groups و flags": {
-  "hash": "158aee69c1fa",
+  "hash": "144e9ed35229",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|higher-order functions": {
-  "hash": "a9bea6a95193",
+  "hash": "ade5dd74785a",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|hoisting و TDZ": {
-  "hash": "6014e847ae7d",
+  "hash": "f8df1a8b51a1",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|if و else if": {
-  "hash": "76f8fac874e4",
+  "hash": "b42b71fcf8a6",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|immutability": {
-  "hash": "8d6d0f7ef221",
+  "hash": "2f13bfdd4350",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|import و export": {
-  "hash": "3a18239e7a3c",
+  "hash": "c059d630c7a6",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|innerHTML هي الباب": {
-  "hash": "81b61050c651",
+  "hash": "66f152021f9f",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|input type=file": {
-  "hash": "34aafe343be1",
+  "hash": "f9e408541197",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|iterators و generators": {
-  "hash": "d44388463b4e",
+  "hash": "ae03f44ec1c9",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|let و const و var": {
-  "hash": "60e4f92b6dac",
+  "hash": "9f18a6d22224",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|manifest.webmanifest": {
-  "hash": "f0a8554ee5d7",
+  "hash": "6dc8107cb6de",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|map و filter و reduce": {
-  "hash": "1548a90fac63",
+  "hash": "4d6e63b0394d",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|memoize": {
+  "hash": "f8a887e7c85c",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|memory leaks": {
-  "hash": "63be8c7d3392",
+  "hash": "c4af8012df16",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|microtasks و macrotasks": {
-  "hash": "7be72c1de327",
+  "hash": "8906deca05c8",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|module pattern و IIFE": {
-  "hash": "016860d35947",
+  "hash": "f045b09629fb",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|null و undefined": {
-  "hash": "203d11bf306a",
+  "hash": "bd33665ec040",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|number و NaN": {
-  "hash": "fca96d3c253c",
+  "hash": "27150533a366",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|object destructuring و spread": {
-  "hash": "70c92604fe4a",
+  "hash": "cf7ba5196716",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|object literal": {
-  "hash": "13df3768b7cb",
+  "hash": "3302718886c4",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|polyfills: map و bind": {
-  "hash": "21fe52fba0ae",
+  "hash": "0393a45ea7fb",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|primitives و objects": {
-  "hash": "7d68e8c71c04",
+  "hash": "253507f00a5e",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|prototype chain": {
-  "hash": "18fbfc60115c",
+  "hash": "8e5a54ecb222",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|pseudocode": {
-  "hash": "71eca707a3b2",
+  "hash": "ed272a0f8509",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|push و Background Sync": {
+  "hash": "9df545afff2d",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|pushState و popstate": {
-  "hash": "14f3055f7e2a",
+  "hash": "02b8aabd9531",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|querySelector": {
-  "hash": "136e9775f529",
+  "hash": "6878569901b4",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|reference و copy": {
-  "hash": "e186bb74bf3b",
+  "hash": "e6613256adde",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|regex: classes و quantifiers": {
-  "hash": "17688d193ae3",
+  "hash": "b80553689e87",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|scope": {
-  "hash": "daa7ea7c6852",
+  "hash": "65745661e82a",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|shadow DOM": {
-  "hash": "3757a0a90164",
+  "hash": "fe335aa06c45",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|slots": {
-  "hash": "ac9eb90669ec",
+  "hash": "f9641c53e0d4",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|sort و toSorted": {
-  "hash": "91a81bd2998a",
+  "hash": "9e86fa6a8b32",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|string methods": {
-  "hash": "65d762b3f1b8",
+  "hash": "cbe7b7b5ad21",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|switch ولا object lookup": {
-  "hash": "dcc6834c09ff",
+  "hash": "f4855727bae7",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|template literals": {
-  "hash": "278edfaa6c05",
+  "hash": "1dbe17e4c1d1",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|test و match و matchAll و replace": {
-  "hash": "cb973b7d7ff9",
+  "hash": "dad215df0c04",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|textContent و classList": {
-  "hash": "24c6501d3698",
+  "hash": "4e7627969d47",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|this": {
-  "hash": "40948b708305",
+  "hash": "49a27d1a8bb2",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|truthy و falsy": {
-  "hash": "fee2cf0fe917",
+  "hash": "df924d922bed",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|try و catch و finally": {
-  "hash": "af6b64c21c05",
+  "hash": "222264692aae",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|typeof": {
-  "hash": "e61dfe5f9302",
+  "hash": "054527e722f1",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|visibilitychange و bfcache": {
-  "hash": "5fa199f0b13d",
+  "hash": "77cca2ac4062",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|vite-plugin-pwa و Serwist": {
-  "hash": "1a3cdc974e83",
+  "hash": "14ec512f30bc",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|wasm من C": {
-  "hash": "b608d693f396",
+  "hash": "c536033010b9",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|wasm يستاهل إمتى": {
-  "hash": "9c6b8e62585d",
+  "hash": "8afa09a6c5c7",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|أشكال بالـ loops": {
+  "hash": "eeb33eff63f3",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|إمتى regex غلط": {
-  "hash": "b32c49930648",
+  "hash": "5cb8b5cfd971",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|ابدأ بأبسط حاجة تشتغل": {
-  "hash": "4085f384a9ea",
+  "hash": "e54cb929394c",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|اتوقع الناتج": {
-  "hash": "338c8102ada3",
+  "hash": "33d3cc5cfed1",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|اختار التركيبة الصح": {
-  "hash": "a108dbb57c46",
+  "hash": "37ebe4bdcecd",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|اختبار JS بـ Vitest": {
+  "hash": "101731eb886a",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|استراتيجيات الكاش": {
-  "hash": "4544602564e5",
+  "hash": "68c83f9d2761",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|اعرض داتا من fetch": {
-  "hash": "d663794964f3",
+  "hash": "815dc7a0c052",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|اقرا الـ error": {
-  "hash": "5ba29eda5e67",
+  "hash": "e7a774065ff3",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|اقرا رسالة الخطأ في JavaScript": {
-  "hash": "2dfd3deedefd",
+  "hash": "7c6e430708e7",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|الأخطاء العامة: unhandledrejection و uncaughtException": {
+  "hash": "47937054d1c7",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|التحقق قبل ما الحالة تتغيّر": {
-  "hash": "86442b71ef74",
+  "hash": "78af57c9f9ee",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|الـ DOM مش مكان الحالة": {
-  "hash": "20bb724879b6",
+  "hash": "06ee8d900513",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|الـ console أكبر من log": {
-  "hash": "e91189d14883",
+  "hash": "7e5e3acd902d",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|المتغيرات والأنواع والعمليات": {
-  "hash": "46c4124083af",
+  "hash": "1b250cdaae76",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|تمارين أساسيات ١": {
-  "hash": "3b939fc56062",
+  "hash": "73edd8c075a7",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|تمارين أساسيات ٢": {
-  "hash": "4629b5361f47",
+  "hash": "a108906032e0",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|تمرين charCount": {
-  "hash": "c94df4a12d68",
+  "hash": "f8002153c44a",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|تمرين countEvens": {
-  "hash": "6097735ef143",
+  "hash": "3c6fc9da3a46",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|تمرين countVowels": {
-  "hash": "4950e360b431",
+  "hash": "3a9712be3d56",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|تمرين factorial": {
-  "hash": "0ac7e4a3d33c",
+  "hash": "4bf3c9d07a6f",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|تمرين fibonacci": {
-  "hash": "93a994598b2d",
+  "hash": "66006c83f824",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|تمرين isPrime": {
-  "hash": "32922b213df4",
+  "hash": "fe96752976e6",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|تمرين maxOf": {
-  "hash": "78e2f7d83c6c",
+  "hash": "f039515d15e7",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|تمرين reverse": {
-  "hash": "15c3f0076cab",
+  "hash": "2b39db05f3dc",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|تمرين secondLargest": {
-  "hash": "c7f69cc96754",
+  "hash": "ce896d9c63ca",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|تمرين sumDigits": {
-  "hash": "d1f2ad1cb3c2",
+  "hash": "0a013cc0709b",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|تمرين sumTo": {
-  "hash": "063ecd7f190f",
+  "hash": "4a68f1fcb23a",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|تمرين table": {
-  "hash": "55533363fc45",
+  "hash": "711b36969cd6",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|تمرين unique": {
-  "hash": "dffb55123515",
+  "hash": "369a40be3d95",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|خريطة مشاريع JS": {
+  "hash": "3b7abc47e724",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|خلّي التطبيق يفتكر": {
-  "hash": "8a426533e813",
+  "hash": "f721081a791d",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|دورة حياة الـ SW": {
-  "hash": "47d12baf7549",
+  "hash": "a84a9b0d8a90",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|شاشات من غير إعادة تحميل": {
-  "hash": "7f5cf4161052",
+  "hash": "fabfd78baf3c",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|صفحة: آلة حاسبة": {
+  "hash": "ca63f33a946d",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|صفحة: تبويبات و accordion و slider": {
+  "hash": "f10ceaed8736",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|صفحة: ساعة وعدّاد تنازلي": {
+  "hash": "74e45032f530",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|صفحة: فورم تسجيل بالتحقق": {
+  "hash": "eec5808d7d43",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|قسّمه لملفات": {
-  "hash": "0afbc5555aab",
+  "hash": "efe9edd13b44",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|لما تعلق: صغّر المشكلة": {
-  "hash": "da51057e842b",
+  "hash": "44221c6aee2e",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|مسائل أرقام": {
+  "hash": "799644c2ad64",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|مسائل مصفوفات": {
+  "hash": "4d4be10211fe",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|مسائل منطق ومحاكاة": {
+  "hash": "c88d8baa7923",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|مسائل نصوص": {
+  "hash": "98ff33f29d41",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|مشروع التخرّج ١: الهيكل والحالة": {
+  "hash": "f363826d26c1",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|مشروع التخرّج ٢: الشاشات والفورم": {
+  "hash": "43e6dfbf866e",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|مشروع التخرّج ٣: البيانات والأخطاء": {
+  "hash": "c7dab67a6364",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|مشروع التخرّج ٤: الاختبارات والنشر": {
+  "hash": "8f431eae8c0b",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|مشروع — CORS والكوكيز": {
+  "hash": "373f059b8656",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|مشروع — fetch مش بترمي على 404": {
-  "hash": "314fe4fb93a1",
+  "hash": "533f63005947",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|مشروع — إعادة المحاولة الذكية": {
-  "hash": "0e5ce387d829",
+  "hash": "f0b859edb87b",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|مشروع — اختبرها من غير شبكة": {
-  "hash": "ba386c876e54",
+  "hash": "ddd36261ac87",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|مشروع — المهلة والإلغاء": {
-  "hash": "cd7e94383b39",
+  "hash": "50250584b811",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|مشروع: expense tracker": {
+  "hash": "9d560f3936dd",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|مشروع: بحث بـ debounce": {
+  "hash": "ec4b7de9acb0",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|مشروع: لعبة كتابة": {
+  "hash": "909bcc5f843a",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|مقدمة الدوال function": {
-  "hash": "5ea34f3018ec",
+  "hash": "06e9feb5ecb8",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|من جملة لتوقيع دالة": {
-  "hash": "14a7e400697a",
-  "date": "2026-10-28",
-  "on": "Node 24.22.1 على ويندوز — الأربع نسخ والباج والقياس كلهم اتشغّلوا والناتج منسوخ من التشغيل"
+  "hash": "9664232e6d5a",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|نسخة جديدة، حدّث": {
-  "hash": "f09acb962250",
+  "hash": "e396ac628ccd",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|يعني إيه برنامج": {
-  "hash": "4e9508ef53cb",
+  "hash": "e53f3503312d",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) بس — الأمثلة والشرح والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك JS اتجرّب بـ node -e على Node 24.22.1 حيث أمكن؛ سلوك المتصفح (DOM و Service Worker و drag/drop) وكود C/AssemblyScript من الوثائق"
+  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "kotlin|Activity و lifecycle": {
   "hash": "3d31db0d8175",

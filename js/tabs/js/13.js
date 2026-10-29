@@ -1,983 +1,1293 @@
 // تكملة تاب js: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/js/01.js (شرح حقول الدرس في أوله)
 MORE("js", [
     {
-      t: "التواريخ والوقت",
+      t: "async: الـ Promises و await",
       l: 2,
-      n: "Date ومطبّاته، وتخزّن UTC وتعرض بتوقيت اليوزر بـ Intl، و «من ٥ دقايق»، و date-fns ولا Temporal في 2026",
+      n: "callbacks ثم Promises ثم async/await، و Promise.all وأخواتها، و fetch صح، و async جوه loops",
+      projects: [
+        { lvl: 'صغير', t: R`retry بسيط`, what: R`[[retry(fn, { times = 3, delay = 200 } = {})]] بتنادي fn، ولو فشلت تستنى delay وتحاول تاني لحد times، وتطبع رقم كل محاولة. من دروس Promise و async و await.`, done: R`دالة بتفشل مرتين وتنجح التالتة ← retry بترجّع قيمتها بعد ٣ محاولات في حوالي 400ms. دالة بتفشل دايمًا ← بيترمي آخر error بعد [[times]] محاولات بالظبط. و [[times: 1]] ← محاولة واحدة ومفيش استنا.` },
+        { lvl: 'صغير', t: R`عدّاد تنازلي بـ await`, what: R`صفحة فيها زرار «ابدأ» بيعد من 5 لـ 0 في عنصر بـ [[for]] و [[await wait(1000)]]، والزرار بيتقفل ([[disabled]]) لحد ما يخلص، وفي الآخر «يلا!». من درس async و await ووحدة الـ DOM.`, done: R`الأرقام بتتغير كل ثانية تقريبًا، والضغط على الزرار وهو شغال مبيبدأش عدّاد تاني، وبعد ما يخلص الزرار بيرجع يشتغل والعد بيبدأ من 5 تاني.` },
+        { lvl: 'متوسط', t: R`بروفايل GitHub`, what: R`input لاسم يوزر وزرار، بيجيب [[https://api.github.com/users/NAME]] و [[https://api.github.com/users/NAME/repos]] بـ [[Promise.all]]، ويعرض الاسم والصورة وأعلى ٥ repos بالنجوم، مع «بيحمّل...»، و 404 بتطلع «اليوزر مش موجود»، وأي error تاني رسالة عامة، والضغط مرة تانية بيلغي الطلب القديم بـ AbortController. من دروس الوحدة ووحدة الـ DOM.`, done: R`يوزر موجود ← طلبين بيبدأوا مع بعض في Network. يوزر مش موجود ← «اليوزر مش موجود» مش صفحة فاضية. ضغطتين ورا بعض ← طلبات الأولى canceled والنتيجة بتاعة التانية. والنت مقطوع (Offline في DevTools) ← رسالة مفهومة.` },
+        { lvl: 'متوسط', t: R`بحث بيلغي القديم`, what: R`input بحث على API منتجات (زي [[https://dummyjson.com/products/search?q=]] أو أي API عندك)، كل حرف بيلغي الطلب اللي قبله بـ AbortController، والنتايج بتتعرض في لستة مع «بيحمّل...» و «مفيش نتايج». من دروس fetch و AbortController و async و await.`, done: R`كتابة [[phone]] بسرعة ← في Network الطلبات القديمة canceled، والنتيجة اللي ظاهرة دايمًا بتاعة آخر نص. الـ AbortError مبيظهرش كرسالة غلط. والـ input الفاضي بيمسح النتايج من غير request.` },
+        { lvl: 'كبير', t: R`downloader بحد أقصى ومحاولات`, what: R`سكربت Node بياخد لستة URLs من ملف JSON، ويجيبهم بـ [[pool]] (٣ في نفس الوقت بالكتير)، ولكل طلب [[AbortSignal.timeout]]، و retry مرتين لو الشبكة فشلت أو 5xx بس (مش 4xx). كل نتيجة [[{ url, ok, status, ms, error }]]، وفي الآخر جدول بـ [[console.table]] وكود خروج ١ لو فيه فشل. وكل خطوة بتتكتب في لوج بالوقت، والأخطاء [[HttpError]] بـ status و cause. من الوحدة دي ووحدة الأخطاء.`, done: R`لستة فيها URL سليم و 404 ودومين مش موجود وواحد أبطأ من الـ timeout: الجدول بيقول ١ نجح و ٣ فشلوا وسبب كل واحد، والـ 404 اتجرب مرة واحدة بس، والدومين الغلط ٣ مرات. عدّاد [[active]] مبيعدّيش ٣. ملف JSON بايظ أو لستة فاضية ← رسالة واضحة وكود ١. والتشغيل مرتين بيدّي نفس الجدول.`, ext: R`خلّي الـ retry يستنى أكتر كل مرة (exponential backoff)، واحفظ الـ responses في ملفات، ولو التشغيل اتقطع في النص يكمّل من اللي فاضل بس.` },
+        { lvl: 'فكرة', t: R`لوحة بيانات لحاجة بتحبها`, what: R`اختار API مجاني (طقس، أو أسعار عملات، أو ماتشات، أو أفلام) واعمل صفحة بتجيب أكتر من endpoint مع بعض، وبتعرض اللي نجح حتى لو حاجة فشلت (allSettled)، وزرار تحديث بيلغي القديم. انت اللي بتختار الـ API والشكل.`, done: R`الصفحة بتشتغل لما endpoint واحد يفشل (غيّر الـ URL بتاعه وجرّب)، ومفيش [[await]] جوه forEach، وكل fetch بيفحص [[res.ok]].`, ext: R`زوّد cache في [[Map]] بحيث نفس الطلب في خلال ٣٠ ثانية ميتبعتش تاني، وزرار «جرّب تاني» للحتة اللي فشلت لوحدها.` },
+      ],
       items: [
         {
-          cmd: "Date ومطبّاته",
-          title: "ليه الشهر في Date بيبدأ من 0، وليه new Date(string) خطر؟",
-          desc: R`[[Date]] في JavaScript قيمة واحدة من جوه: عدد الـ milliseconds من [[1970-01-01T00:00:00Z]] (الـ epoch)، ومفيش time zone متخزّن جواه. الـ time zone بيظهر بس لما تقرا ([[getHours]]) أو تطبع: الـ methods العادية بتستخدم توقيت الجهاز، واللي فيها [[UTC]] ([[getUTCHours]]) بتستخدم UTC.
+          cmd: "Promise",
+          title: "يعني إيه Promise؟",
+          desc: R`الـ Promise object بيمثّل نتيجة لسه مجتش: طلب شبكة، أو قراية ملف، أو timer. ليه ٣ حالات: pending (لسه)، و fulfilled (نجح وفيه قيمة)، و rejected (فشل وفيه سبب). ولما يخلص مبيتغيرش تاني.
 
-والمطبّات المشهورة: الشهر من 0 ([[new Date(2026, 0, 31)]] يعني ٣١ يناير)، واليوم من 1. و Date بيتعدّل في مكانه ([[setMonth]] بتغيّر نفس الـ object). و الـ overflow: ٣١ يناير + شهر = ٣ مارس مش ٢٨ فبراير. و الـ parsing: [["2026-03-01"]] لوحدها بتتفهم UTC، بس [["2026-03-01T00:00"]] من غير Z بتتفهم بتوقيت الجهاز، وأي شكل تاني ([["01/02/2026"]]) مش standard وكل engine بيفهمه بمزاجه.`,
-          example: R`const d = new Date(2026, 0, 31);
-console.log(d.getMonth(), d.getDate());
-d.setMonth(1);
-console.log(d.toDateString());
-console.log(new Date("2026-03-01").toISOString());
-console.log(new Date("2026-03-01T00:00").toISOString());
-console.log(new Date("01/02/2026").getMonth());
-console.log(new Date("32/01/2026").getTime());
-const a = new Date("2026-09-29T10:00:00Z");
-const b = new Date(a);
-b.setDate(b.getDate() + 3);
-console.log(a.getDate(), b.getDate(), b - a);`,
-          try: R`شغّل الملف مرتين: [[TZ=Africa/Cairo node dates.js]] و [[TZ=America/New_York node dates.js]] (على Windows في PowerShell: [[$env:TZ = "America/New_York"; node dates.js]]، أو WSL. Git Bash مش بيعدّي [[TZ]] لـ node). أنهي سطور اتغيرت وليه؟ وبعدين اكتب [[addMonths(date, n)]] ترجّع Date جديد ولو اليوم مش موجود في الشهر الجديد تقف على آخر يوم ([[2026-01-31]] + 1 ← [[2026-02-28]]). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[addMonths]].`,
+بتسجّل اللي هيحصل بعد كده بـ [[.then(onSuccess)]] و [[.catch(onError)]] و [[.finally()]]، وكل واحدة بترجّع Promise جديد، فتقدر توصّلهم سلسلة. وده كان الحل لـ «callback hell»: callbacks جوه callbacks جوه callbacks.`,
+          example: R`function wait(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+function getUser(id) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (id <= 0) reject(new Error("id غلط"));
+      else resolve({ id, name: "Sara" });
+    }, 300);
+  });
+}
+getUser(1)
+  .then((user) => user.name)
+  .then((name) => console.log("الاسم:", name))
+  .catch((err) => console.log("فشل:", err.message))
+  .finally(() => console.log("خلص"));
+wait(500).then(() => console.log("بعد نص ثانية"));
+const { promise, resolve } = Promise.withResolvers();`,
+          try: R`نادي [[getUser(0)]] وشوف أنهي then اتخطت. وبعدين ارمي error جوه أول then ([[throw new Error("x")]]) وشوف الـ catch مسكته.`,
+          practice: [
+            { lvl: 'سريع', t: R`اقرا وتوقّع: [[console.log("1"); new Promise((r) => { console.log("2"); r(); }).then(() => console.log("3")); console.log("4");]]. اكتب الترتيب على ورقة وبعدين شغّله.`, done: R`الترتيب [[1 2 4 3]]: الـ executor اللي جوه [[new Promise]] بيشتغل فورًا (sync)، والـ then بس هي اللي بتستنى. ولو كتبت [[1 4 2 3]] ارجع لجملة «الـ executor بيتنادي على طول».` },
+            { lvl: 'تطبيق', t: R`refactor: عندك دالة قديمة بـ callback: [[loadUser(id, cb)]] بتستنى 300ms بـ setTimeout وبتنادي [[cb(new Error("id غلط"))]] لو [[id <= 0]] أو [[cb(null, { id, name: "Sara" })]]. اكتب [[loadUserP(id)]] بترجّع Promise بتلفها بـ [[new Promise]] من غير ما تغيّر loadUser نفسها.`, done: R`[[loadUserP(1).then((u) => console.log(u.name))]] بيطبع [[Sara]] بعد حوالي 300ms، و [[loadUserP(0).catch((e) => console.log(e.message))]] بيطبع [[id غلط]]، و [[loadUser]] الأصلية لسه شغالة بالـ callback زي الأول.` },
+            { lvl: 'تحدي', t: R`محاكاة بوابة ماتش: اكتب [[createGate()]] بـ [[Promise.withResolvers()]] بترجّع [[{ wait, open }]]. ٣ مشجعين بينادوا [[gate.wait().then(() => console.log("دخل", name))]]، وبعد ثانية [[gate.open()]]، وبعدها [[gate.open()]] تاني، وبعدها مشجع رابع بيوصل متأخر وبينادي wait.`, done: R`محدش بيطبع قبل الثانية. بعد أول open التلاتة بيطبعوا «دخل» بنفس ترتيب ما وصلوا، و open التانية مبتعملش حاجة ومفيش error (الـ Promise بيتحسم مرة واحدة). والرابع بيدخل على طول لأن الـ Promise خلص خلاص.` },
+          ],
           flag: "script",
           deep: {
-            why: "كل مشروع فيه تواريخ: created_at، وطلبات النهارده، ومواعيد الحجز، وانتهاء الاشتراك. وأخطاء التواريخ خبيثة: الكود بيشتغل تمام على جهازك وعلى السيرفر بيطلع يوم قبله، أو بيبوظ مرتين في السنة بس (التوقيت الصيفي).",
-            how: R`[[new Date(y, m, d)]] بيفهم الأرقام بتوقيت الجهاز، والشهر من 0 (ورث ده من Java سنة 1995). ولو الرقم برّه الحدود بيرحّله: [[new Date(2026, 1, 31)]] (٣١ فبراير) بتبقى ٣ مارس. ده اللي حصل مع [[setMonth(1)]] على ٣١ يناير.
+            why: "كل حاجة بتاخد وقت في JS async: fetch، و قاعدة البيانات، والملفات. وأي مكتبة حديثة بترجّع Promises، و async/await نفسها مبنية عليهم. من غير ما تفهمهم هتقابل bugs زي «الداتا undefined» لأنك قريتها قبل ما توصل.",
+            how: R`[[new Promise(executor)]]: الـ executor بيشتغل فورًا ومعاه دالتين، [[resolve(value)]] و [[reject(reason)]]. أول واحدة تتنادي بس هي اللي بتفرق.
 
-الـ parsing حسب المواصفات: [["YYYY-MM-DD"]] لوحدها UTC، وتاريخ + وقت من غير offset محلي، وبـ [[Z]] أو [[+03:00]] محدد. عشان كده السطر الخامس نفس الناتج في أي بلد، والسادس بيتغير: في القاهرة [[2026-02-28T22:00:00.000Z]] (القاهرة UTC+2 في مارس)، وفي نيويورك [[2026-03-01T05:00:00.000Z]]. و [["01/02/2026"]] V8 فهمها أمريكي (MM/DD) فالشهر 0، ومتصفح أو مكتبة تانية ممكن تفهمها ١ فبراير. و [["32/01/2026"]] بتدّي Invalid Date و [[getTime()]] بـ NaN، ومفيش error: لازم تفحص [[Number.isNaN(d.getTime())]] بنفسك.
+[[then]] بترجّع Promise جديد قيمته اللي الـ callback رجّعه. لو الـ callback رجّع Promise، السلسلة بتستناه (flattening). ولو رمى error، الـ Promise الجديد بيبقى rejected، والسلسلة بتتخطى لأقرب catch.
 
-الطرح [[b - a]] بيحوّلهم milliseconds، فالفرق [[259200000]] (٣ أيام). و [[new Date(a)]] بتعمل نسخة، ومن غيرها [[b = a]] هيبقى نفس الـ object.`,
-            when: R`Date لسه موجود في كل API وكل مكتبة، فلازم تعرفه. استخدمه للـ timestamps ([[Date.now()]] و [[toISOString()]])، وللحسابات والعرض استخدم Intl ومكتبة أو Temporal (الدروس الجاية).`,
-            mistakes: R`[[new Date(2026, 9, 1)]] وانت فاكرها سبتمبر (دي أكتوبر). وتعمل parse لتاريخ من اليوزر بشكل [["DD/MM/YYYY"]]. وتعدّل Date جاي من برّه ([[setDate]]) فتبوّظه عند الـ caller. وتحسب الأيام بـ [[/ 86400000]] وتنسى إن يوم التوقيت الصيفي ٢٣ أو ٢٥ ساعة. وفي الانترفيو: «ليه [[new Date("2026-03-01")]] ممكن تطبع ٢٨ فبراير؟» الإجابة: اتفهمت UTC منتصف الليل، ولما اتعرضت بتوقيت أمريكا بقت اليوم اللي قبله.`
+الـ callbacks بتاعة then مبتشتغلش فورًا حتى لو الـ Promise خلص أصلًا: بتتحط في microtask queue وتشتغل بعد الكود المتزامن الحالي (درس event loop في المستوى ٣).
+
+Promise اترفض ومحدش عمله catch: المتصفح بيطبع «Uncaught (in promise)»، و Node من نسخة 15 بيقفل البرنامج كله (unhandled rejection).
+
+[[Promise.withResolvers()]] (ES2024) بترجّع promise و resolve و reject برّه الـ executor، مفيدة لما الـ resolve هيتنادي من مكان تاني (event مثلًا).`,
+            when: R`هتستخدم Promises جاهزة (fetch وغيره) كل يوم، غالبًا بـ await. و [[new Promise]] بنفسك لما تلف API قديم شغال بـ callbacks (زي setTimeout أو events).`,
+            mistakes: R`تنسى [[return]] جوه then فالـ then اللي بعدها تاخد undefined. وتنسى catch. وتلف Promise جاهز في [[new Promise]] من غير لزمة (explicit construction anti-pattern). وفي الانترفيو: «إيه حالات الـ Promise؟» و «callback vs promise؟».`
           },
-          teach: R`## الأول: Date من جوه رقم واحد
+          teach: R`## الكود ده بيعمل إيه؟
 
-المثال ١٢ سطر، وكل سطر بيوريك مطبّ من مطبّات [[Date]]. قبل ما نفكّه، لازم تعرف حاجة واحدة: الـ Date مش «تاريخ» متخزّن كيوم وشهر وسنة. هو **رقم واحد**: عدد الـ milliseconds (جزء من ألف من الثانية، اختصارها ms) من لحظة اسمها الـ **epoch**: أول يناير 1970 الساعة 12 بالليل بتوقيت UTC.
-
-~~~text app.js
-console.log(new Date(0).toISOString(), typeof Date.now());
-~~~
-
-~~~text الناتج (Node 24 على Windows)
-1970-01-01T00:00:00.000Z number
-~~~
-
-[[new Date(0)]] يعني «صفر ms من الـ epoch»، فطلعت اللحظة نفسها. و [[Date.now()]] بيرجّع اللحظة الحالية كرقم ([[number]]). والـ [[Z]] في الآخر معناها UTC (اختصار Zulu، اسم UTC في الطيران).
-
-والـ time zone؟ **مش متخزّن جوه الـ Date خالص.** هو بيظهر بس لما تسأل «الساعة كام؟» أو «النهارده كام؟»، ساعتها الـ methods العادية بتحسب بتوقيت الجهاز اللي الكود شغال عليه. كل الشرح تحت مبني على الجملة دي.
-
-> الناتج كله تحت اتشغّل بـ Node 24 على Windows والجهاز مضبوط على توقيت القاهرة، إلا لو مكتوب غير كده.
+بيعمل دالتين بيرجّعوا Promises بإيدنا: [[wait]] (استنى وقت معيّن)، و [[getUser]] (API وهمي بياخد 300ms وينجح أو يفشل). وبعدين بيوصّل سلسلة [[then]] و [[catch]] و [[finally]] على getUser. اتشغّل في Node 24، وزوّدنا قدام كل سطر مطبوع الوقت من أول البرنامج بالملي ثانية (ms) عشان تشوف الترتيب.
 
 ---
 
-## ١. [[new Date(2026, 0, 31)]]: الشهر بيبدأ من 0
+## ١. [[wait]]: أبسط Promise
 
 ~~~text app.js
-const d = new Date(2026, 0, 31);
-console.log(d.getMonth(), d.getDate());
+function wait(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 ~~~
 
-- [[const d]]: متغير اسمه d مش هيتغير يشاور على حاجة تانية (بس الـ object نفسه ممكن يتعدّل، وده هيفرق في الخطوة الجاية).
-- [[new Date(...)]]: [[new]] بتعمل object جديد من النوع Date.
-- الأرقام التلاتة: السنة، و **رقم الشهر من 0** (يناير 0، فبراير 1، ... ديسمبر 11)، واليوم من 1 عادي.
-- [[getMonth()]]: بيرجّع رقم الشهر (من 0 برضه)، و [[getDate()]]: رقم اليوم في الشهر. (لاحظ: [[getDay()]] حاجة تانية خالص، يوم الأسبوع من 0 للحد.)
+- [[new Promise(executor)]]: بيعمل Promise جديد. الـ **executor** هو الدالة اللي بتديهاله، وبتشتغل **فورًا**، وبياخد منه دالة اسمها [[resolve]].
+- [[resolve]]: لما تناديها، الـ Promise بيخلص بنجاح (fulfilled).
+- [[setTimeout(resolve, ms)]]: نادي resolve بعد ms ملي ثانية.
 
-~~~text الناتج
-0 31
-~~~
-
-يعني ٣١ يناير. والأرقام دي متفسّرة **بتوقيت الجهاز**: نص ليل ٣١ يناير في القاهرة. شوف الرقم الحقيقي اللي جوه:
-
-~~~text app.js
-console.log(d.getTime(), d.toISOString());
-~~~
-
-~~~text الناتج
-1769810400000 2026-01-30T22:00:00.000Z
-~~~
-
-[[getTime()]] بيطلّع الرقم الخام، و [[toISOString()]] بيكتبه بتوقيت UTC: الساعة ١٠ بالليل يوم ٣٠. ليه؟ لأن القاهرة في يناير UTC+2، فنص الليل عندنا هو ١٠ بالليل في UTC. نفس اللحظة، مكتوبة بتوقيتين.
+يعني [[wait(500)]] بيرجّع Promise بيخلص بعد نص ثانية.
 
 ---
 
-## ٢. [[setMonth(1)]]: التعديل في نفس الـ object، والـ overflow
+## ٢. [[getUser]]: نجاح أو فشل
 
 ~~~text app.js
-d.setMonth(1);
-console.log(d.toDateString());
+function getUser(id) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (id <= 0) reject(new Error("id غلط"));
+      else resolve({ id, name: "Sara" });
+    }, 300);
+  });
+}
 ~~~
 
-[[setMonth(1)]] معناها «خلي الشهر فبراير» (1 = فبراير). حاجتين بيحصلوا:
+- الـ executor هنا بياخد دالتين: [[resolve]] و [[reject]]. [[reject]] بتخلّي الـ Promise يفشل (rejected) بالسبب اللي تديهوله.
+- [[setTimeout(() => { ... }, 300)]]: بنقلّد طلب شبكة بياخد 300ms.
+- [[reject(new Error("id غلط"))]] لو id صفر أو سالب، و [[resolve({ id, name: "Sara" })]] غير كده. و [[{ id, name: "Sara" }]] اختصار [[{ id: id, name: "Sara" }]].
 
-1. **التعديل في مكانه (mutable):** مفيش Date جديد، الـ object اللي في [[d]] نفسه اتغيّر. عشان كده [[const]] مامنعتش ده: const بتمنع إنك تكتب [[d = ...]]، مش إنك تعدّل جوه الـ object.
-2. **الـ overflow:** اليوم لسه 31، فالتاريخ بقى «٣١ فبراير 2026». ده مش موجود (فبراير 2026 فيه 28 يوم بس، مش سنة كبيسة)، فـ Date مش بيرمي error، بيرحّل الزيادة: 31 − 28 = 3 أيام زيادة، يعني ٣ مارس.
+### الـ Promise ليه ٣ حالات
 
-و [[toDateString()]] بيكتب التاريخ بشكل إنجليزي مختصر من غير الساعة:
+طبعنا Promise من getUser في ٣ أوقات:
 
 ~~~text الناتج
-Tue Mar 03 2026
+   0ms Promise { <pending> }                        ← لحظة النداء
+ 407ms Promise { { id: 1, name: 'Sara' } }          ← بعد ما نجح
+ 407ms Promise { <rejected> Error: id غلط ... }     ← getUser(0) بعد ما فشل
 ~~~
 
-| الحتة | معناها |
+| الحالة | معناها |
 |---|---|
-| [[Tue]] | يوم الأسبوع (Tuesday، التلات) |
-| [[Mar]] | الشهر (March، مارس) |
-| [[03]] | اليوم |
-| [[2026]] | السنة |
+| pending | لسه مخلصش |
+| fulfilled | نجح ومعاه قيمة |
+| rejected | فشل ومعاه سبب (error) |
 
-نفس الترحيل بيحصل لو كتبتها مباشرة: [[new Date(2026, 1, 31).toDateString()]] بيطلع [[Tue Mar 03 2026]] برضه.
-
----
-
-## ٣. الـ parsing: النص اللي بتديه لـ Date بيتفهم إزاي؟
-
-ده أخطر جزء. [[new Date("...")]] بنص بيعمل parse (يقرا النص ويحوّله لحظة)، والقاعدة في المواصفات:
-
-| شكل النص | بيتفهم بتوقيت إيه |
-|---|---|
-| [["2026-03-01"]] (تاريخ بس) | UTC |
-| [["2026-03-01T00:00"]] (تاريخ + وقت من غير Z) | توقيت الجهاز |
-| [["2026-03-01T00:00Z"]] أو [[+02:00]] في الآخر | المكتوب بالظبط |
-| أي شكل تاني ([["01/02/2026"]]) | مش standard، كل engine على مزاجه |
-
-### السطر الخامس: تاريخ بس
-
-~~~text app.js
-console.log(new Date("2026-03-01").toISOString());
-~~~
-
-~~~text الناتج
-2026-03-01T00:00:00.000Z
-~~~
-
-اتفهمت نص الليل UTC، و [[toISOString()]] بيكتب بـ UTC، فطلعت زي ما هي في أي بلد.
-
-### السطر السادس: تاريخ ووقت من غير Z
-
-~~~text app.js
-console.log(new Date("2026-03-01T00:00").toISOString());
-~~~
-
-هنا اتفهمت «نص الليل بتوقيت الجهاز». جرّبنا نفس الملف على توقيتين:
-
-~~~text الناتج (القاهرة)
-2026-02-28T22:00:00.000Z
-~~~
-
-~~~text الناتج (نيويورك)
-2026-03-01T05:00:00.000Z
-~~~
-
-القاهرة في مارس UTC+2، فنص الليل عندها هو ١٠ بالليل يوم ٢٨ فبراير في UTC. ونيويورك في أول مارس 2026 لسه UTC−5 (التوقيت الصيفي عندهم بيبدأ ٨ مارس)، فنص الليل عندها هو ٥ الصبح UTC. نفس السطر، نفس الكود، لحظتين مختلفتين.
-
-### السطرين السابع والتامن: أشكال مش standard
-
-~~~text app.js
-console.log(new Date("01/02/2026").getMonth());
-console.log(new Date("32/01/2026").getTime());
-~~~
-
-~~~text الناتج
-0
-NaN
-~~~
-
-- [["01/02/2026"]]: V8 (الـ engine بتاع Node و Chrome) قراها بالطريقة الأمريكية MM/DD، فالشهر يناير (0). اللي كاتبها مصري كان قاصد ١ فبراير. ومتصفح تاني ممكن يقراها بشكل تالت.
-- [["32/01/2026"]]: مفيش شهر 32، فالنتيجة **Invalid Date**. ومفيش error بيترمي، الرقم اللي جوه بقى [[NaN]] (Not a Number) وخلاص:
-
-~~~text app.js
-console.log(String(new Date("32/01/2026")), Number.isNaN(new Date("32/01/2026").getTime()));
-~~~
-
-~~~text الناتج
-Invalid Date true
-~~~
-
-فلو بتعمل parse لتاريخ جاي من برّه، افحصه بنفسك بـ [[Number.isNaN(d.getTime())]].
+ولما يخلص (نجح أو فشل) **مبيتغيرش تاني**. ولو ناديت resolve أو reject تاني، بيتجاهلهم.
 
 ---
 
-## ٤. النسخ والطرح
+## ٣. السلسلة
 
 ~~~text app.js
-const a = new Date("2026-09-29T10:00:00Z");
-const b = new Date(a);
-b.setDate(b.getDate() + 3);
-console.log(a.getDate(), b.getDate(), b - a);
+getUser(1)
+  .then((user) => user.name)
+  .then((name) => console.log("الاسم:", name))
+  .catch((err) => console.log("فشل:", err.message))
+  .finally(() => console.log("خلص"));
 ~~~
 
-- السطر الأول: لحظة محددة بـ [[Z]]، فمش هتختلف من جهاز لجهاز.
-- [[new Date(a)]]: Date **جديد** بنفس اللحظة، يعني نسخة. ليه مش [[const b = a]]؟ لأن ده مش نسخ، ده اسم تاني لنفس الـ object. جرّبناها: [[const same = a; same.setDate(1);]] وبعدها [[a.getDate()]] طلع [[1]]، الأصل باظ.
-- [[b.getDate() + 3]]: اليوم الحالي (29) + 3 = 32، و [[setDate(32)]] بيرحّل زي ما شفنا: ٢ أكتوبر.
-- [[b - a]]: الطرح بيحوّل الاتنين للرقم اللي جوه (ms) ويطرح.
+نمشيها حلقة حلقة:
 
-~~~text الناتج
-29 2 259200000
-~~~
-
-[[a]] لسه ٢٩ (النسخة حمته)، و [[b]] بقت ٢ (أكتوبر). والفرق: 3 أيام × 24 ساعة × 60 دقيقة × 60 ثانية × 1000 = 259,200,000 ms.
+1. [[getUser(1)]]: بيرجّع Promise pending **على طول**، والكود بيكمّل.
+2. [[.then((user) => user.name)]]: «لما ينجح، خد القيمة (user) ورجّع name منها». كل then بترجّع **Promise جديد** قيمته اللي الـ callback رجّعه، يعني هنا [["Sara"]].
+3. [[.then((name) => console.log(...))]]: اللي بعدها بتاخد [["Sara"]] وتطبعها.
+4. [[.catch((err) => ...)]]: لو **أي** حلقة قبلها فشلت (الـ Promise الأصلي أو throw جوه then)، التنفيذ بينط هنا على طول.
+5. [[.finally(() => ...)]]: بتشتغل في الحالتين، ومبتاخدش قيمة.
 
 ---
 
-## تشغّله بتوقيت تاني إزاي؟
+## ٤. الترتيب الحقيقي
 
-Node بيقرا متغير البيئة [[TZ]] (Time Zone) عشان يعرف توقيت الجهاز:
-
-~~~powershell
-$env:TZ = "America/New_York"; node dates.js
+~~~text app.js
+wait(500).then(() => console.log("بعد نص ثانية"));
+const { promise, resolve } = Promise.withResolvers();
 ~~~
 
-ده اتجرّب في PowerShell 7 و Windows PowerShell 5.1 وطلّع سطر نيويورك اللي فوق. والمتغير ده بيفضل في نافذة الترمنال دي بس، وتشيله بـ [[Remove-Item Env:TZ]].
+- [[Promise.withResolvers()]] (ES2024): بترجّع object فيه [[promise]] و [[resolve]] و [[reject]] جاهزين، فتقدر تنادي resolve **من برّه** الـ executor (من event مثلًا). جرّبنا نعمل resolve بعد 700ms من setTimeout تانية.
 
-~~~bash
-TZ=America/New_York node dates.js
+~~~text الناتج
+   2ms آخر سطر متزامن
+ 312ms الاسم: Sara
+ 313ms خلص
+ 502ms بعد نص ثانية
+ 705ms withResolvers: اتحلّت من برّه
 ~~~
 
-ده الشكل في لينكس و WSL والماك (اتجرّب على Linux في Docker بصورة [[node:22-slim]]). **على Git Bash في Windows مش بيشتغل:** جرّبناه وفضل يطلّع توقيت القاهرة، لأن Git Bash بيشيل قيمة زي [[America/New_York]] من [[TZ]] قبل ما يشغّل برنامج Windows زي node ([[process.env.TZ]] طلع [[undefined]]، و [[TZ=UTC]] بس هي اللي عدّت).
+لاحظ إن [[آخر سطر متزامن]] (console.log عادي في آخر الملف) اتطبع **الأول**: كل الـ Promises بتسجّل اللي هيحصل وتسيب الكود يكمّل، والـ callbacks بتشتغل بعدين.
+
+---
+
+## ٥. الفشل (التجربة)
+
+مع [[getUser(0)]] بنفس السلسلة:
+
+~~~text الناتج
+فشل: id غلط
+خلص
+~~~
+
+الاتنين then اتخطّوا خالص، والـ catch مسك. ولما رمينا [[throw new Error("x")]] جوه أول then (مع getUser(1)):
+
+~~~text الناتج
+فشل: x
+خلص
+~~~
+
+نفس الـ catch مسك الاتنين: الرفض الأصلي وأي throw جوه then.
+
+### Promise فشل ومحدش عمله catch
+
+جرّبنا [[getUser(0)]] لوحده من غير catch (في ملف تجربة getUser فيه في أول سطر):
+
+~~~text الناتج
+C:\Users\ali\code\app.js:4
+      if (id <= 0) reject(new Error("id غلط"));
+                          ^
+
+Error: id غلط
+    at Timeout._onTimeout (C:\Users\ali\code\app.js:4:27)
+
+Node.js v24.19.0
+~~~
+
+ده اسمه **unhandled rejection**، و Node بيقفل البرنامج كله بـ exit code 1. في المتصفح بيظهر [[Uncaught (in promise)]] أحمر في Console.
+
+---
+
+## ٦. unhandled rejection: ليه Node بيوقّع البرنامج كله
+
+من Node 15 الوضع الافتراضي إن أي Promise اترفض ومحدش مسكه **بيوقّع الـ process**، زي throw محدش مسكه بالظبط. قبل كده كان بيطبع تحذير ويكمّل، وده كان بيخبّي bugs لحد ما السيرفر يبقى في حالة غريبة. Node بيقرر إن الـ Promise «ملوش handler» بعد ما الكود المتزامن والـ microtasks يخلصوا، فـ [[.catch]] لازم يتحط قبل كده.
+
+الوضع ده بيتغيّر بـ flag اسمه [[--unhandled-rejections]]. جرّبت كل وضع على [[Promise.reject(new Error("x"))]] وبعده timer بيطبع «كمّل»، من غير أي listener:
+
+| الوضع | اللي حصل (Node 24) | كود الخروج |
+|---|---|---|
+| [[throw]] (الافتراضي) | البرنامج وقع بالـ stack، و «كمّل» متطبعتش | 1 |
+| [[warn]] | طبع [[UnhandledPromiseRejectionWarning: Error: x]] على stderr وكمّل | 0 |
+| [[none]] | ساكت خالص وكمّل، ودي أخطر حاجة | 0 |
+| [[strict]] | وقع حتى لو فيه [[unhandledRejection]] listener | 1 |
+
+> متغيّرش الافتراضي عشان «التحذير يختفي». الصح إنك تمسك الـ rejection في مكانه ([[.catch]] أو [[await]] جوه try)، وتحط handler عام يسجّل أي حاجة فلتت ويخرج. ده درس «الأخطاء العامة: unhandledrejection و uncaughtException» في وحدة الأخطاء.
+
+والمتصفح مختلف: الصفحة **مبتقعش**، بس بيكتب [[Uncaught (in promise)]] في Console وبيطلّع event اسمه [[unhandledrejection]] على [[window]] (نفس الدرس).
+
+---
+
+## ٧. Promise.try: كود ممكن يرمي sync أو async في سلسلة واحدة
+
+مشكلة: دالة بترجّع Promise، بس جواها سطر ممكن يرمي **قبل** ما الـ Promise يتعمل. الـ [[.catch]] مش هيشوفه:
+
+~~~text pt.mjs
+function readConfig(text) {
+  return JSON.parse(text);
+}
+function readConfigAsync(text) {
+  return Promise.resolve(readConfig(text));
+}
+try {
+  readConfigAsync("{").catch((e) => console.log("catch اتنادت؟"));
+} catch (e) { console.log("لأ: اترمى sync:", e.name); }
+~~~
+
+~~~text الناتج (Node 24)
+لأ: اترمى sync: SyntaxError
+~~~
+
+[[readConfig("{")]] رمت وهي بتتحسب كـ argument لـ [[Promise.resolve]]، يعني قبل ما يبقى فيه Promise أصلًا، فالـ [[.catch]] عمره ما اتنادى. اللي بينادي الدالة لازم يحط try **و** catch، وده سهل يتنسي.
+
+[[Promise.try(fn, ...args)]] (ES2025، موجودة في Node 24 والمتصفحات الحديثة) بتنادي [[fn]] **على طول** وتحوّل أي نتيجة لـ Promise: لو رجّعت قيمة يبقى fulfilled، ولو رمت يبقى rejected، ولو رجّعت Promise بتستناه:
+
+~~~text pt.mjs
+Promise.try(readConfig, "{").catch((e) => console.log("Promise.try:", e.name));
+Promise.try(readConfig, '{"port":3000}').then((c) => console.log("port", c.port));
+Promise.try(async () => { throw new Error("async"); }).catch((e) => console.log("async:", e.message));
+console.log(Promise.try(() => 5) instanceof Promise);
+console.log("sync انتهى");
+~~~
+
+~~~text الناتج (Node 24)
+true
+sync انتهى
+Promise.try: SyntaxError
+port 3000
+async: async
+~~~
+
+- [[Promise.try(readConfig, "{")]]: الـ arguments بعد الدالة بتتبعتلها، فده زي [[readConfig("{")]] بس الـ throw بقى rejection.
+- الدالة اتنادت **فورًا** (sync)، بس الـ [[then]] و [[catch]] بيتنادوا بعدين كـ microtasks، عشان كده «sync انتهى» اتطبعت الأول.
+- الفرق عن [[Promise.resolve().then(fn)]] (الحيلة القديمة، وبتمسك الـ throw برضه): هناك [[fn]] بتتأجّل لـ microtask، وهنا بتتنفّذ في نفس اللحظة.
+
+| الطريقة | الـ throw المتزامن | [[fn]] بتتنفّذ إمتى |
+|---|---|---|
+| [[Promise.resolve(fn())]] | بيطلع برّه كـ throw عادي، والـ catch مش شايفه | فورًا |
+| [[Promise.resolve().then(fn)]] | بيبقى rejection | بعدين، في microtask |
+| [[Promise.try(fn)]] | بيبقى rejection | فورًا |
+| [[async () => fn()]] ونداها | بيبقى rejection | فورًا |
+
+آخر سطر: أي دالة [[async]] بتعمل نفس الحماية، فـ [[Promise.try]] مفيدة بالذات لما مش عايز تكتب wrapper، أو مع مكتبات بتاخد callback ممكن يرجّع قيمة أو Promise.
 
 ---
 
 ## الخلاصة
 
-| المطبّ | الصح |
+| الحتة | بتعمل إيه |
 |---|---|
-| الشهر من 0 | [[new Date(2026, 0, 31)]] = ٣١ يناير |
-| [[setMonth]] و [[setDate]] بيعدّلوا الأصل | اعمل نسخة بـ [[new Date(a)]] الأول |
-| تاريخ مش موجود بيترحّل من غير error | ٣١ فبراير = ٣ مارس |
-| [["YYYY-MM-DD"]] = UTC، ومع وقت من غير Z = توقيت الجهاز | ابعت وخزّن بـ Z دايمًا |
-| أي شكل تاني مش standard | متعملش parse لـ [["DD/MM/YYYY"]] بـ Date |
-| Invalid Date مش بترمي error | افحص [[Number.isNaN(d.getTime())]] |
+| [[new Promise((resolve, reject) => ...)]] | تعمل Promise وتقرر إمتى ينجح أو يفشل |
+| [[.then(fn)]] | لما ينجح. اللي fn بترجّعه يروح للحلقة اللي بعدها |
+| [[.catch(fn)]] | لو أي حاجة قبلها فشلت |
+| [[.finally(fn)]] | في الحالتين |
+| [[Promise.withResolvers()]] | promise و resolve و reject في متغيرات |
 
-والـ Date جواه رقم ms واحد بس، والتوقيت بيدخل في الحساب لحظة ما تقرا أو تطبع.`,
+- كل then بترجّع Promise جديد، فالسلسلة ممكن تطول. **ولو نسيت return جوه then، الحلقة اللي بعدها هتاخد undefined**.
+- حط catch في آخر كل سلسلة، وإلا Node هيقفل البرنامج (الافتراضي من Node 15، ويتغيّر بـ [[--unhandled-rejections]] بس متغيّروش).
+- [[Promise.try(fn)]] بتخلّي الـ throw المتزامن rejection، فـ [[.catch]] واحد يمسك الاتنين.`,
           lines: [
-            R`بيعمل Date لـ ٣١ يناير ٢٠٢٦ بتوقيت الجهاز. الشهر هنا بيبدأ من 0، فـ [[0]] يعني يناير و [[11]] يعني ديسمبر، أما اليوم فبيبدأ من 1 عادي. لو كتبت [[1]] وانت قاصد يناير هتلاقي نفسك في فبراير.`,
-            R`بيطبع [[0 31]]: [[getMonth]] بترجّع الشهر بنفس العدّ من صفر، و [[getDate]] بترجّع رقم اليوم في الشهر (مش [[getDay]] اللي بترجّع يوم الأسبوع). عشان تعرض الشهر لليوزر لازم تزوّد عليه 1.`,
-            R`بيغيّر الشهر لفبراير ([[1]]) **في نفس الـ object**، مش بيرجّع نسخة جديدة. يعني أي كود تاني شايل [[d]] هيشوف التغيير، وده مطب لو الـ Date جايلك من برّه.`,
-            R`بيطبع [[Tue Mar 03 2026]] مش فبراير: اليوم لسه 31، وفبراير ٢٠٢٦ فيه ٢٨ يوم بس، فالـ ٣ أيام الزيادة بتترحّل للشهر اللي بعده من غير أي error. عشان كده «زوّد شهر» محتاجة تتعمل بحرص.`,
-            R`نص فيه تاريخ بس من غير وقت، والمواصفات بتقول يتفهم UTC نص الليل، فالناتج [[2026-03-01T00:00:00.000Z]] في أي بلد. و [[toISOString]] دايمًا بتطبع بتوقيت UTC وآخرها [[Z]].`,
-            R`نفس اليوم بس معاه وقت ومن غير [[Z]]: هنا بيتفهم بتوقيت الجهاز. في القاهرة (UTC+2 في مارس) نص الليل المحلي = [[2026-02-28T22:00:00.000Z]]، وفي نيويورك هيطلع رقم تاني. مجرد إضافة الوقت غيّرت المعنى.`,
-            R`الشكل [["01/02/2026"]] مش من المواصفات، فكل engine بيفهمه بمزاجه. V8 (Node و Chrome) فهمه بالأمريكي (شهر/يوم) فطلع الشهر [[0]] يعني يناير، واحنا في مصر بنقراه ١ فبراير. متعملش parse لنص بالشكل ده أبدًا.`,
-            R`مفيش شهر ٣٢، فالناتج Invalid Date و [[getTime()]] بترجّع [[NaN]]، **من غير ما يرمي error**. الكود هيكمّل عادي بقيمة بايظة، فلازم تفحص بنفسك بـ [[Number.isNaN(d.getTime())]] قبل ما تستخدم أي تاريخ جاي من يوزر.`,
-            R`لحظة محددة بالظبط: الـ [[Z]] في الآخر معناها UTC، فالنص ده يعني نفس اللحظة على أي جهاز. ده الشكل اللي المفروض تخزّن وتبعت بيه التواريخ.`,
-            R`[[new Date(a)]] بتعمل Date جديد بنفس اللحظة: نسخة مستقلة. لو كتبت [[const b = a]] بدلها، الاتنين هيشاوروا على نفس الـ object، والسطر اللي بعده هيعدّل [[a]] كمان.`,
-            R`بيزوّد ٣ أيام على النسخة: [[getDate()]] بترجّع ٢٩ فبنحط ٣٢. ومع إن سبتمبر ٣٠ يوم بس، الـ overflow هنا مفيد: [[setDate(32)]] بتترحّل لوحدها لـ ٢ أكتوبر.`,
-            R`بيطبع [[29 2 259200000]] في القاهرة: [[a]] لسه ٢٩ لأننا عدّلنا النسخة بس، و [[b]] بقت ٢ أكتوبر. والطرح [[b - a]] بيحوّل الاتنين milliseconds، فالفرق ٣ × ٢٤ ساعة بالـ ms.`,
+            R`دالة [[wait]] بتاخد عدد milliseconds وبترجّع Promise بيخلص بعد المدة دي. هي نسخة من [[setTimeout]] تقدر تعمل عليها [[then]] أو [[await]].`,
+            R`[[new Promise]] بياخد دالة (executor) بتتنفذ على طول، وبيدّيها [[resolve]]. بنسلّم [[resolve]] نفسها للـ [[setTimeout]]، فأول ما الوقت يخلص بتتنادى والـ Promise يبقى fulfilled. مفيش [[reject]] هنا لأن الاستنا مبيفشلش.`,
+            R`نهاية [[wait]].`,
+            R`[[getUser]] بتمثّل API وهمي: بترجّع Promise فيه يوزر بعد شوية، أو بتفشل لو الـ id غلط. كده نجرّب حالة النجاح وحالة الفشل من غير شبكة.`,
+            R`الـ executor هنا بياخد [[resolve]] (نجاح) و [[reject]] (فشل). الـ Promise بيفضل pending لحد ما واحدة منهم تتنادى، وأول واحدة بس هي اللي بتحسب: أي نداء بعدها بيتجاهَل.`,
+            R`[[setTimeout]] بيأجّل الرد ٣٠٠ms عشان يقلّد وقت الطلب على الشبكة. من غيره الـ Promise هيخلص بسرعة جدًا ومش هتحس إن فيه استنا.`,
+            R`لو الـ id صفر أو سالب بننادي [[reject]] ومعاها [[Error]] (مش نص)، عشان اللي يمسكه يلاقي [[message]] و stack trace يعرف منهم الغلط حصل فين.`,
+            R`غير كده بننادي [[resolve]] بالـ object بتاع اليوزر، والقيمة دي هي اللي هتوصل لأول [[then]].`,
+            R`نهاية دالة الـ [[setTimeout]]، و [[300]] هي المدة بالـ milliseconds.`,
+            R`نهاية الـ executor والـ [[new Promise]].`,
+            R`نهاية [[getUser]].`,
+            R`النداء نفسه مبيستناش حاجة: بيرجّع Promise لسه pending على طول، والكود بيكمّل. اللي بعده بيقول «لما يخلص اعمل كذا».`,
+            R`[[then]] بتتنادى لما الـ Promise ينجح ومعاها القيمة (اليوزر). اللي الدالة بترجّعه (الاسم) بيبقى قيمة Promise جديد، وده اللي بيخلّي السلسلة تكمّل.`,
+            R`[[then]] التانية بتستلم الاسم اللي رجع من اللي قبلها وتطبعه: «الاسم: Sara». كل [[then]] بتشتغل بس بعد ما اللي قبلها تخلص.`,
+            R`[[catch]] بتمسك أي reject أو error اترمى في أي خطوة قبلها في السلسلة. جرّب [[getUser(0)]] وهتلاقي الـ [[then]] الاتنين اتخطّوا ووصلنا هنا على طول بـ «فشل: id غلط».`,
+            R`[[finally]] بتتنادى في الحالتين، نجاح أو فشل، ومبتاخدش القيمة. مكانها الطبيعي إنك تقفل loading spinner أو تنضّف حاجة.`,
+            R`استخدام [[wait]]: بعد ٥٠٠ms الـ Promise بيخلص والـ [[then]] تطبع. ولأن الكود مبيقفش، أي سطر بعده هيتنفذ قبل الطباعة دي.`,
+            R`[[Promise.withResolvers]] بترجّع Promise ومعاه [[resolve]] و [[reject]] بتوعه برّه الـ executor، فتقدر تخلّصه من مكان تاني خالص (زي event listener). موجودة في Node 22 والمتصفحات الحديثة.`
           ],
-          sol: R`بين القاهرة ونيويورك اتغير السطر السادس بس: [[2026-02-28T22:00:00.000Z]] مقابل [[2026-03-01T05:00:00.000Z]]، لأن نص الليل «المحلي» لحظة مختلفة في كل بلد. الباقي ثابت: السطر الخامس UTC بالمواصفات، والأرقام اللي بعده متحسبة من لحظة بـ Z. (لو غيّرت [[a]] لـ [["2026-09-29T02:00:00Z"]] هتلاقي [[a.getDate()]] بقت 28 في نيويورك.)
+          sol: R`[[getUser(0)]] بتطبع [[فشل: id غلط]] وبعدين [[خلص]]: الـ promise اترفضت، فالاتنين then اتخطوا ونطّت على طول للـ catch، والـ finally اشتغلت في الآخر.
 
-[[addMonths]]: اعمل نسخة، وخد اليوم الأصلي، وحط اليوم 1 قبل ما تغيّر الشهر (عشان متحصلش الترحيلة)، وبعدين رجّع اليوم بـ [[Math.min]] مع آخر يوم في الشهر الجديد. وآخر يوم في أي شهر حيلة معروفة: اليوم 0 من الشهر اللي بعده. [[addMonths(new Date(2026, 0, 31), 1)]] ← ٢٨ فبراير، و 2028 ← ٢٩ فبراير (كبيسة).`,
-          solCode: R`function addMonths(date, n) {
-  const d = new Date(date);
-  const day = d.getDate();
-  d.setDate(1);
-  d.setMonth(d.getMonth() + n);
-  const lastDay = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
-  d.setDate(Math.min(day, lastDay));
-  return d;
+لما ترمي [[throw new Error("x")]] جوه أول then (مع [[getUser(1)]])، التانية اتخطت والـ catch طبعت [[فشل: x]]: أي error جوه then بيحوّل الـ promise اللي بعدها لـ rejected. فـ catch واحدة في آخر السلسلة بتمسك الاتنين: الرفض الأصلي وأي throw بعده. لو ملقتش الرسالة خالص، غالبًا حطيت الـ catch قبل الـ then اللي فيها الـ throw.`
+        },
+        {
+          cmd: "async و await",
+          title: "تكتب كود async كأنه سطر ورا سطر",
+          desc: R`[[async function]] دايمًا بترجّع Promise. وجواها [[await promise]] بتوقف الدالة دي بس (مش البرنامج) لحد ما الـ Promise يخلص، وترجّع قيمته، أو ترمي الـ error لو اترفض.
+
+فبدل سلسلة then، بتكتب كود شكله متزامن، وبتمسك الأخطاء بـ try/catch عادي. وفي ES modules تقدر تستخدم await في أول الملف من غير async (top-level await).`,
+          example: R`async function loadDashboard(userId) {
+  try {
+    const res = await fetch($__bthttps://api.example.com/users/$__{userId}$__bt);
+    if (!res.ok) throw new Error($__btHTTP $__{res.status}$__bt);
+    const user = await res.json();
+    const ordersRes = await fetch($__bthttps://api.example.com/orders?user=$__{user.id}$__bt);
+    return { user, orders: await ordersRes.json() };
+  } catch (err) {
+    console.error("فشل التحميل:", err);
+    return null;
+  }
 }
-const jan31 = new Date(2026, 0, 31);
-console.log(addMonths(jan31, 1).toDateString(), jan31.toDateString());
-console.log(addMonths(new Date(2028, 0, 31), 1).toDateString(), addMonths(jan31, 12).toDateString());`,
-          check: {
-            lang: "js",
-            starter: R`function addMonths(date, n) {
-  const d = new Date(date);
-  d.setMonth(d.getMonth() + n);
-  return d;
+const data = await loadDashboard(1);
+const p = loadDashboard(2);
+console.log(p instanceof Promise); // true`,
+          try: R`امسح [[await]] من قدام [[res.json()]] واطبع [[user]]: هتلاقي [[Promise { <pending> }]]. وبعدين نادي [[loadDashboard]] من غير await وشوف إيه اللي بيتطبع الأول.`,
+          practice: [
+            { lvl: 'سريع', t: R`ابني زرار «حمّل البروفايل» و [[<p id="out">]]: الـ click بينادي [[async function load()]] بتكتب «بيحمّل...» وبعدين [[await getUser(1)]] (من درس Promise) وتكتب الاسم، ولو [[getUser(0)]] تكتب «فشل: » والرسالة. وجرّب [[console.log(load())]].`, done: R`النص بيبقى «بيحمّل...» حوالي 300ms وبعدين [[Sara]]، ومع id صفر «فشل: id غلط». و [[console.log(load())]] بيطبع [[Promise { <pending> }]] مش الاسم: async دايمًا بترجّع Promise.` },
+            { lvl: 'تطبيق', t: R`refactor: حوّل سلسلة [[getUser(1).then(...).then(...).catch(...).finally(...)]] اللي في درس Promise لـ [[async function show(id)]] بـ await و try/catch/finally، ونادي [[await show(1)]] وبعدها [[await show(0)]].`, done: R`[[show(1)]] بتطبع [[الاسم: Sara]] وبعدين [[خلص]]، و [[show(0)]] بتطبع [[فشل: id غلط]] وبعدين [[خلص]]: نفس ناتج سلسلة الـ then بالظبط، ومفيش ولا then فاضلة في الكود.` },
+            { lvl: 'تحدي', t: R`قارن وقيس بـ [[console.time]]: (أ) [[await wait(300); await wait(300);]] ورا بعض، و (ب) [[const a = wait(300), b = wait(300); await a; await b;]]. وبعدين في (ب) خلّي [[a]] يترفض بعد 100ms و [[b]] 500ms، وحط الكل جوه try/catch.`, done: R`(أ) حوالي 600ms و (ب) حوالي 300ms لأن الاتنين بدأوا مع بعض. والفخ: لما a يترفض وانت لسه مستني b، Node بيقع ويخرج بكود ١ حتى إن فيه try/catch، لأن محدش كان عامل await على a ساعة ما اترفض (unhandled rejection). و [[await Promise.all([a, b])]] بتمسكه صح في الـ catch.` },
+          ],
+          flag: "script",
+          deep: {
+            why: "ده الشكل اللي هتكتب بيه كل كود async تقريبًا في 2026: fetch و Prisma و fs و أي SDK. أسهل في القراية من then، والـ try/catch والـ loops والـ if بيشتغلوا عادي.",
+            how: R`[[async]] بتخلي الدالة ترجّع Promise دايمًا: لو رجّعت قيمة بتتلف في Promise fulfilled، ولو رمت error بيبقى rejected.
+
+[[await x]] بيوقف تنفيذ الدالة الحالية، ويرجّع التحكم للي ناداها، والـ event loop يكمّل شغل تاني. لما الـ Promise يخلص، الدالة بتكمّل من نفس المكان (كأنها generator من جوه). عشان كده await مبتجمّدش الصفحة.
+
+كل [[await]] ورا التاني بيستنى اللي قبله. في المثال طلب الـ orders محتاج [[user.id]] فلازم يستنى، بس لو الطلبين مستقلين، شغّلهم مع بعض بـ [[Promise.all]] (الدرس الجاي).
+
+[[return await]] جوه try بيفرق: من غير await، الـ Promise بيترجع قبل ما يخلص، ولو اترفض الـ catch اللي في الدالة مش هتمسكه.
+
+الـ top-level await شغال في ES modules بس (المتصفح بـ type=module، و Node مع ESM)، وبيخلّي أي module بيعمل import للملف ده يستناه.`,
+            when: "أي كود async جديد. then لسه مفيدة في سلسلة قصيرة أو لما مش عايز توقف الدالة.",
+            mistakes: R`تنسى await فتاخد Promise بدل القيمة. و await جوه [[forEach]] (الدرس الأخير هنا). و awaits ورا بعض لحاجات مستقلة فالصفحة تبقى أبطأ من غير سبب (waterfall). وتنسى إن fetch مبترميش error على 404 و 500، لازم تفحص [[res.ok]]. وفي الانترفيو: «async/await بيعمل إيه من تحت؟» (Promises و microtasks).`
+          },
+          teach: R`## الكود ده بيعمل إيه؟
+
+دالة [[loadDashboard]] بتجيب يوزر، وبعده طلباته (محتاجة id اليوزر)، وبترجّعهم مع بعض. لو أي حاجة فشلت، بتسجّل الـ error وترجّع [[null]]. مكتوبة بـ [[async]] و [[await]] فشكلها سطر ورا سطر، بس من تحت كلها Promises.
+
+اتشغّل في Node 24 كملف [[.mjs]] (عشان الـ await اللي في أول الملف). و [[api.example.com]] مش API حقيقي، فجرّبنا عليه مرة، ومرة على سيرفر صغير محلي فيه [[/users/1]] و [[/orders]].
+
+---
+
+## ١. [[async function]]
+
+~~~text app.mjs
+async function loadDashboard(userId) {
+~~~
+
+كلمة [[async]] قبل function بتعمل حاجتين:
+
+1. الدالة **دايمًا بترجّع Promise**. لو رجّعت قيمة عادية، بتتلف في Promise ناجح. ولو رمت error، الـ Promise بيفشل.
+2. بتسمح تستخدم [[await]] جواها.
+
+---
+
+## ٢. الطلب الأول
+
+~~~text app.mjs
+  try {
+    const res = await fetch($__bthttps://api.example.com/users/$__{userId}$__bt);
+    if (!res.ok) throw new Error($__btHTTP $__{res.status}$__bt);
+~~~
+
+- [[try {]]: أي await جواه يفشل، التنفيذ ينط على الـ catch.
+- [[fetch(url)]]: بتبعت طلب HTTP وبترجّع Promise بالرد (Response).
+- [[await]]: «وقّف **الدالة دي** لحد ما الـ Promise يخلص، وهات قيمته». الدالة بس هي اللي بتقف، باقي البرنامج شغال عادي.
+- [[res.ok]]: [[true]] لو الـ status بين 200 و 299. fetch **مبترميش** error على 404 أو 500، فبنفحص بنفسنا.
+- [[res.status]]: الرقم نفسه (404 مثلًا).
+
+~~~text app.mjs
+    const user = await res.json();
+~~~
+
+[[res.json()]] بتقرا جسم الرد وتحوّله لـ object، وده كمان Promise (الجسم ممكن يكون لسه بيوصل)، فمحتاج await تاني.
+
+---
+
+## ٣. الطلب التاني
+
+~~~text app.mjs
+    const ordersRes = await fetch($__bthttps://api.example.com/orders?user=$__{user.id}$__bt);
+    return { user, orders: await ordersRes.json() };
+~~~
+
+- الطلب ده **محتاج** [[user.id]]، فلازم يستنى الأول. لو الطلبين مستقلين كنا هنشغّلهم مع بعض بـ Promise.all (الدرس الجاي).
+- [[?user=...]]: الـ query string: بيانات زيادة في الـ URL بعد [[?]].
+- [[{ user, orders: await ordersRes.json() }]]: [[await]] ينفع جوه أي expression، حتى جوه object.
+
+اللي السيرفر المحلي شافه:
+
+~~~text الناتج
+[server] /users/1
+[server] /orders?user=1
+~~~
+
+طلبين ورا بعض، والتاني فيه id من الأول.
+
+---
+
+## ٤. الـ catch
+
+~~~text app.mjs
+  } catch (err) {
+    console.error("فشل التحميل:", err);
+    return null;
+  }
+}
+~~~
+
+- [[console.error]]: زي console.log بس على قناة الأخطاء (stderr).
+- [[return null]]: رجّع قيمة واضحة معناها «مفيش داتا»، بدل ما الـ error يطلع للي نادى.
+
+---
+
+## ٥. النداء
+
+~~~text app.mjs
+const data = await loadDashboard(1);
+~~~
+
+ده **top-level await**: await في أول الملف من غير async function، شغال في ES modules بس (ملف [[.mjs]] أو [[type="module"]]).
+
+~~~text الناتج: على api.example.com
+فشل التحميل: [TypeError: fetch failed] {
+  [cause]: Error: getaddrinfo ENOTFOUND api.example.com
+      at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+    errno: -3008,
+    code: 'ENOTFOUND',
+    syscall: 'getaddrinfo',
+    hostname: 'api.example.com'
+  }
+}
+null
+~~~
+
+الدومين مش موجود: الـ DNS (اللي بيحوّل اسم الدومين لـ IP) رد بـ [[ENOTFOUND]]، فـ fetch رمت [[TypeError: fetch failed]] وجواها السبب في [[cause]]. والـ catch طبعه ورجّع null.
+
+~~~text الناتج: على السيرفر المحلي
+{"user":{"id":1,"name":"Sara"},"orders":[{"id":10,"total":250}]}
+~~~
+
+---
+
+## ٦. من غير await
+
+~~~text app.mjs
+const p = loadDashboard(2);
+console.log(p instanceof Promise);
+~~~
+
+~~~text الناتج
+true
+فشل التحميل: Error: HTTP 404
+    at loadDashboard (file:///C:/Users/ali/code/app.mjs:...)
+    ...
+~~~
+
+- من غير await، [[p]] هو الـ **Promise** نفسه مش النتيجة. و [[instanceof Promise]] بـ true.
+- لاحظ الترتيب: [[true]] اتطبعت **قبل** رسالة الفشل. الدالة اشتغلت لحد أول await ورجعت Promise فورًا، والسطر اللي بعدها كمّل، وباقي الدالة اشتغل بعدين.
+- [[/users/2]] مش موجود في السيرفر المحلي، فرجع 404، و [[!res.ok]] رمت.
+
+---
+
+## ٧. نسيت await (التجربة)
+
+~~~text app.mjs
+const user = res.json();
+console.log(user, user.id);
+~~~
+
+~~~text الناتج
+Promise { <pending> } undefined
+~~~
+
+[[user]] بقى Promise مش object، و [[user.id]] بـ undefined. والكود **مبيقعش**: الـ URL التاني هيبقى [[orders?user=undefined]]. ده أشهر bug في الـ async.
+
+---
+
+## الخلاصة
+
+| الكتابة | معناها |
+|---|---|
+| [[async function f()]] | f بترجّع Promise دايمًا |
+| [[await p]] | وقّف الدالة دي لحد ما p يخلص، وهات قيمته، أو ارمي الـ error |
+| [[try/catch]] حوالين await | بيمسك أي Promise فشل |
+| [[await]] في أول ملف ESM | top-level await |
+| نداء async من غير await | بتاخد Promise مش النتيجة |
+
+- كل await ورا التاني بيستنى اللي قبله. ده صح لو التاني محتاج الأول، وبطء من غير لازمة لو مستقلين.
+- [[res.ok]] لازم تتفحص، fetch مبترميش على 404 و 500.`,
+          lines: [
+            R`[[async]] قبل الدالة بتخليها ترجّع Promise دايمًا: اللي بترجّعه بـ [[return]] بيبقى قيمة الـ Promise، وأي error بيترمي جواها بيبقى reject. وكمان بتسمح تستخدم [[await]] جواها.`,
+            R`[[try]] بيلف كل الخطوات، فلو أي [[await]] اترفض أو أي [[throw]] حصل، التنفيذ ينط على [[catch]] بدل ما الـ error يطلع برّه الدالة.`,
+            R`[[await]] بيوقف الدالة دي بس (مش البرنامج كله) لحد ما الـ [[fetch]] يرجّع الرد، و [[res]] بيبقى object الـ Response. الـ body نفسه لسه مقريناهوش.`,
+            R`[[fetch]] بيترفض بس لو الشبكة وقعت؛ لو السيرفر رد بـ 404 أو 500 بيعتبرها نجاح. فبنفحص [[res.ok]] (true للـ status من 200 لـ 299) ونرمي error بنفسنا عشان يروح للـ [[catch]].`,
+            R`[[res.json]] بتقرا الـ body وتحوّله لـ object، وهي كمان بترجّع Promise فلازم [[await]]. لو الرد مش JSON صالح هترمي SyntaxError وهيوصل للـ [[catch]] برضه.`,
+            R`الطلب ده محتاج [[user.id]] من اللي قبله، فلازم يستناه. ده المكان الصح للـ [[await]] ورا بعض؛ لو الطلبين مستقلين يبقى [[Promise.all]] أسرع.`,
+            R`[[await]] ينفع في أي حتة في expression، فهنا بنقرا الـ JSON بتاع الطلبات جوه الـ object اللي راجع على طول. الدالة بترجّع Promise قيمته object فيه اليوزر وطلباته.`,
+            R`[[catch]] بيستلم الـ error من أي خطوة فوق: شبكة وقعت، أو status غلط، أو JSON بايظ.`,
+            R`[[console.error]] بيسجّل الـ error كامل (رسالة و stack) في الـ console كـ error مش log عادي، عشان تلاقيه وانت بتعمل debug.`,
+            R`بدل ما نرمي الـ error لبرّه، بنرجّع [[null]] كقيمة واضحة معناها «فشل». اللي نادى الدالة يفحص [[null]] بدل ما يحتاج [[try]] بنفسه. ده اختيار تصميم: أحيانًا الأحسن ترمي.`,
+            R`نهاية [[catch]].`,
+            R`نهاية [[loadDashboard]].`,
+            R`top-level await: [[await]] برّه أي دالة. شغال بس في ES modules (ملف [[.mjs]] أو [[type="module"]])، وفي script عادي هيدّي SyntaxError.`,
+            R`من غير [[await]] مش بتاخد النتيجة، بتاخد الـ Promise نفسه وهو لسه pending. ده غلط شائع: تنسى [[await]] وتلاقي [[Promise { pending }]] بدل الداتا.`,
+            R`بيطبع [[true]]: دليل إن أي دالة [[async]] بترجّع Promise مهما كانت بترجّع إيه جوّاها.`
+          ],
+          sol: R`من غير [[await]] قدام [[res.json()]]، [[user]] بيطبع [[Promise { <pending> }]]، و [[user.id]] بـ undefined، فالـ URL التاني بيبقى [[orders?user=undefined]]. ده أشهر bug في async: الكود مبيقعش، بس بيبعت داتا غلط.
+
+من غير await قدام loadDashboard، السطر اللي بعدها بيتطبع الأول ([[true]] من [[instanceof Promise]])، وبعدين النتيجة أو رسالة «فشل التحميل». الدالة الـ async بتشتغل لحد أول await وترجع promise فورًا، والباقي بيكمّل بعدين. ولو [[api.example.com]] مش شغال عندك، هتشوف «فشل التحميل» و [[null]]، وده برضه صح: الـ catch شغالة.`
+        },
+        {
+          cmd: "Promise.all و allSettled",
+          title: "تشغّل كذا طلب مع بعض بدل ورا بعض",
+          desc: R`[[await Promise.all([a, b, c])]] بتستنى كلهم مع بعض، وترجّع array بالنتايج بنفس الترتيب. لو واحد فشل، الكل بيفشل فورًا بالـ error بتاعه.
+
+[[Promise.allSettled]] بتستنى كلهم مهما حصل، وترجّع لكل واحد [[{ status, value }]] أو [[{ status, reason }]]. و [[Promise.race]] بترجّع أول واحد يخلص (نجح أو فشل)، و [[Promise.any]] أول واحد ينجح.`,
+          example: R`const api = (path) => fetch($__bthttps://api.example.com$__{path}$__bt).then((r) => r.json());
+const [user, orders, settings] = await Promise.all([
+  api("/me"),
+  api("/orders"),
+  api("/settings"),
+]);
+const results = await Promise.allSettled([api("/a"), api("/b")]);
+const ok = results.filter((r) => r.status === "fulfilled").map((r) => r.value);
+const failed = results.filter((r) => r.status === "rejected").map((r) => r.reason);
+const timeout = (ms) => new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), ms));
+const fast = await Promise.race([api("/slow"), timeout(3000)]);
+const first = await Promise.any([api("/mirror1"), api("/mirror2")]);`,
+          try: R`اعمل ٣ دوال بـ [[wait]] (500 و 1000 و 1500 ms). استناهم ورا بعض واحسب الوقت بـ [[console.time]]، وبعدين بـ Promise.all وقارن (3 ثواني مقابل 1.5).`,
+          practice: [
+            { lvl: 'سريع', t: R`اقرا وتوقّع: [[await Promise.all([1, wait(100).then(() => 2), Promise.resolve(3)])]] و [[await Promise.all([])]] هيرجّعوا إيه؟ وبعدين شغّلهم في ملف [[.mjs]] (بـ wait بتاعة درس Promise).`, done: R`الأول [[[ 1, 2, 3 ]]] بنفس ترتيب الـ array مش ترتيب الخلصان، والقيمة العادية [[1]] بتتعامل كأنها Promise خلص. والتاني [[[]]] على طول.` },
+            { lvl: 'تطبيق', t: R`محاكاة dashboard: ٣ دوال وهمية: [[getUser]] تنجح بعد 200ms، و [[getOrders]] تنجح بعد 300ms، و [[getAds]] تفشل بعد 100ms. حمّلهم مرة بـ [[Promise.all]] ومرة بـ [[Promise.allSettled]]، واعرض اللي نجح، وللي فشل «الإعلانات مش متاحة».`, done: R`الـ all بيترفض بعد حوالي 100ms برسالة getAds ومبيرجّعش ولا قيمة حتى اللي نجحوا. والـ allSettled بيخلص بعد حوالي 300ms ومعاك الـ user والـ orders، و [[status: 'rejected']] للـ ads ومعاه [[reason.message]]، والصفحة بتعرض الاتنين و «الإعلانات مش متاحة».` },
+            { lvl: 'تحدي', t: R`مسألة: اكتب [[withTimeout(promise, ms)]] بـ [[Promise.race]]، وبعدين [[firstOk(fns, ms)]] بتنادي كل الدوال وتاخد أول واحدة تنجح في خلال ms بـ [[Promise.any]] و withTimeout. جرّبها لما واحدة بس تنجح، ولما كلهم يفشلوا، ولما [[fns]] فاضية.`, done: R`لما واحدة تنجح بترجّع قيمتها حتى لو التانيين فشلوا قبلها. لما كلهم يفشلوا بيترمي [[AggregateError]] رسالته [[All promises were rejected]] و [[e.errors.length]] بيساوي عدد الدوال (وفيهم [[timeout]] للي اتأخرت). ومع لستة فاضية برضه AggregateError على طول، مش Promise بيستنى للأبد.` },
+          ],
+          flag: "script",
+          deep: {
+            why: R`صفحة dashboard بتجيب ٥ حاجات مستقلة: لو عملتهم await ورا بعض، كل طلب 300ms، يبقى 1.5 ثانية. مع Promise.all يبقوا 300ms. ده من أسهل تحسينات الأداء وأكترها تأثير، وسؤال انترفيو مشهور: «اكتب Promise.all بإيدك» (المستوى ٣).`,
+            how: R`الطلبات بتبدأ لحظة ما تنادي الدوال (وانت بتبني الـ array)، مش لما تعمل await. Promise.all بس بتستنى. عشان كده [[const a = api("/a"); const b = api("/b"); await a; await b;]] برضه بيشغّلهم مع بعض، بس خطر: لو b اترفض وانت لسه مستني a، الرفض بيبقى unhandled و Node بيقفل البرنامج حتى لو جوه try/catch. فاستخدم Promise.all.
+
+[[all]] بتفشل مع أول rejection (fail-fast)، بس الطلبات التانية مبتتلغيش، بتكمّل ونتايجها بتترمي. لو محتاج تلغيها فعلًا استخدم AbortController (الدرس الجاي).
+
+[[race]] مفيدة للـ timeout، بس الطلب الأصلي بيفضل شغال. [[any]] بتتجاهل الفشل لحد ما واحد ينجح، ولو كلهم فشلوا ترمي [[AggregateError]] فيه كل الأسباب.
+
+كل دول بيقبلوا أي iterable، والقيم اللي مش Promises بتتعامل كأنها نجحت.`,
+            when: R`[[all]] لما كلهم لازم ينجحوا (الصفحة محتاجة الكل). [[allSettled]] لما كل واحد مستقل (رفع صور متعددة، إشعارات). [[race]] للـ timeout. [[any]] لـ mirrors أو fallback.`,
+            mistakes: R`await ورا بعض لحاجات مستقلة. و Promise.all على آلاف الطلبات مرة واحدة فتضرب السيرفر أو الـ rate limit: قسّمهم batches أو استخدم مكتبة زي p-limit. وتفتكر إن race بتلغي الخاسر.`
+          },
+          teach: R`## الكود ده بيعمل إيه؟
+
+٤ طرق تستنى كذا Promise مع بعض: [[Promise.all]] (كلهم لازم ينجحوا)، و [[Promise.allSettled]] (هات نتيجة كل واحد مهما حصل)، و [[Promise.race]] (أول واحد يخلص)، و [[Promise.any]] (أول واحد ينجح).
+
+اتشغّل في Node 24 كملف [[.mjs]] على سيرفر صغير محلي بدل [[api.example.com]]، وكل مسار بيرد بعد وقت محدد: [[/me]] و [[/orders]] و [[/settings]] 300ms، و [[/a]] و [[/b]] 100ms (و [[/b]] بيرد 500 بنص مش JSON)، و [[/slow]] 5 ثواني، و [[/mirror1]] 400ms و [[/mirror2]] 200ms. وقِسنا الوقت حوالين كل خطوة.
+
+---
+
+## ١. الـ helper
+
+~~~text app.mjs
+const api = (path) => fetch($__bthttps://api.example.com$__{path}$__bt).then((r) => r.json());
+~~~
+
+- arrow function بتاخد path، وتعمل fetch، و [[.then((r) => r.json())]] تحوّل الرد لـ object.
+- بترجّع Promise. ولاحظ إنها **مبتفحصش** [[r.ok]]، وده هيبان تحت.
+
+---
+
+## ٢. [[Promise.all]]
+
+~~~text app.mjs
+const [user, orders, settings] = await Promise.all([
+  api("/me"),
+  api("/orders"),
+  api("/settings"),
+]);
+~~~
+
+من جوه لبرّه:
+
+1. **وانت بتبني الـ array**، كل [[api(...)]] بيتنادي، فالـ ٣ طلبات **بيبدأوا فورًا مع بعض**. الـ array فيها ٣ Promises.
+2. [[Promise.all([...])]]: بترجّع Promise واحد بيخلص لما **كلهم** يخلصوا، وقيمته array بالنتايج **بنفس ترتيب** الـ array، مش بترتيب الوصول.
+3. [[await]]: استنى.
+4. [[const [user, orders, settings] = ...]]: array destructuring: أول نتيجة في user، والتانية في orders، والتالتة في settings.
+
+~~~text الناتج
+all: 362ms { path: '/me' } { path: '/orders' } { path: '/settings' }
+ورا بعض: 955ms
+~~~
+
+الـ ٣ مع بعض خدوا وقت **واحد** منهم تقريبًا (300ms + شوية). ولما جرّبنا [[await]] ورا بعض للـ ٣، خدوا 300 + 300 + 300.
+
+### لو واحد فشل
+
+جرّبنا [[Promise.all([api("/a"), api("/b")])]]: [[/b]] رجّع 500 ونص مش JSON، و api مبتفحصش ok، فـ [[r.json()]] وقعت:
+
+~~~text الناتج
+SyntaxError: Unexpected token 'o', "not json" is not valid JSON
+~~~
+
+all **فشلت كلها** بالـ error ده، ونتيجة [[/a]] الناجحة ضاعت. ده اسمه **fail-fast**.
+
+---
+
+## ٣. [[Promise.allSettled]]
+
+~~~text app.mjs
+const results = await Promise.allSettled([api("/a"), api("/b")]);
+~~~
+
+بتستنى الكل مهما حصل، **ومبتفشلش أبدًا**. بترجّع لكل Promise object بيوصف حصله إيه:
+
+~~~text الناتج: console.log(results)
+[
+  { status: 'fulfilled', value: { path: '/a' } },
+  {
+    status: 'rejected',
+    reason: SyntaxError: Unexpected token 'o', "not json" is not valid JSON
+        at JSON.parse (<anonymous>)
+        ...
+  }
+]
+~~~
+
+- [[status]]: [["fulfilled"]] (نجح) أو [["rejected"]] (فشل).
+- [[value]]: القيمة لو نجح. [[reason]]: الـ error لو فشل.
+
+~~~text app.mjs
+const ok = results.filter((r) => r.status === "fulfilled").map((r) => r.value);
+const failed = results.filter((r) => r.status === "rejected").map((r) => r.reason);
+~~~
+
+- [[filter]]: سيب العناصر اللي الشرط عليها true بس. و [[map]]: حوّل كل عنصر لحاجة تانية.
+- فـ ok = قيم الناجحين، و failed = أسباب الفاشلين. طبعناهم (وحوّلنا كل reason لنص بـ [[e.name + ": " + e.message]]):
+
+~~~text الناتج
+ok: [ { path: '/a' } ] failed: [ $__btSyntaxError: Unexpected token 'o', "not json" is not valid JSON$__bt ]
+~~~
+
+---
+
+## ٤. [[Promise.race]] للـ timeout
+
+~~~text app.mjs
+const timeout = (ms) => new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), ms));
+const fast = await Promise.race([api("/slow"), timeout(3000)]);
+~~~
+
+- [[timeout(ms)]]: Promise **بيفشل** بعد ms. و [[_]] اسم باراميتر معناه «مش محتاجه» (resolve مش مستخدمة).
+- [[Promise.race([...])]]: بتاخد نتيجة **أول واحد يخلص**، نجح أو فشل.
+- [[/slow]] بياخد 5 ثواني، و timeout بعد 3، فالـ timeout كسب:
+
+~~~text الناتج
+race: timeout 3011ms
+~~~
+
+خلي بالك: الطلب نفسه **فضل شغال** في الخلفية لحد ما خلص. race مبتلغيش حاجة (الإلغاء الحقيقي بـ AbortController، الدرس الجاي).
+
+---
+
+## ٥. [[Promise.any]]
+
+~~~text app.mjs
+const first = await Promise.any([api("/mirror1"), api("/mirror2")]);
+~~~
+
+أول واحد **ينجح**، وبتتجاهل الفاشلين:
+
+~~~text الناتج
+any: { path: '/mirror2' } 217ms
+~~~
+
+[[/mirror2]] أسرع (200ms) فكسب. ولو **كلهم** فشلوا:
+
+~~~text الناتج: Promise.any على اتنين rejected
+AggregateError: All promises were rejected [ 'x1', 'x2' ]
+~~~
+
+[[AggregateError]] error فيه [[errors]]: array بكل الأسباب.
+
+---
+
+## ٦. المقارنة بالوقت (الـ solCode)
+
+~~~text app.mjs
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+const a = () => wait(500), b = () => wait(1000), c = () => wait(1500);
+console.time("ورا بعض");
+await a(); await b(); await c();
+console.timeEnd("ورا بعض");
+console.time("Promise.all");
+await Promise.all([a(), b(), c()]);
+console.timeEnd("Promise.all");
+~~~
+
+- [[console.time("اسم")]] بيبدأ ساعة بالاسم ده، و [[console.timeEnd("اسم")]] بيطبع الوقت من ساعتها.
+
+~~~text الناتج
+ورا بعض: 3.020s
+Promise.all: 1.509s
+~~~
+
+ورا بعض = 0.5 + 1 + 1.5 = 3 ثواني. مع بعض = وقت **أطولهم** بس (1.5).
+
+---
+
+## الخلاصة
+
+| الدالة | بتخلص إمتى | لو فيه فشل |
+|---|---|---|
+| [[Promise.all]] | لما كلهم ينجحوا | بتفشل فورًا بأول error |
+| [[Promise.allSettled]] | لما كلهم يخلصوا | مبتفشلش، كل واحد ليه status |
+| [[Promise.race]] | أول واحد يخلص | لو الأول فشل، بتفشل |
+| [[Promise.any]] | أول واحد ينجح | بتفشل بـ AggregateError لو كلهم فشلوا |
+
+- الطلبات بتبدأ **لحظة ما تنادي الدالة**، مش لحظة الـ await. والدوال دي بتستنى بس، ومبتلغيش حاجة.
+- وكمان القيم اللي مش Promises بتتقبل عادي: [[Promise.all([1, Promise.resolve(2), "three"])]] رجّعت 1 و 2 و [['three']] بالترتيب.`,
+          lines: [
+            R`helper صغير: بياخد path، يعمل [[fetch]]، ويحوّل الرد لـ JSON. كل نداء ليه بيرجّع Promise، وده اللي هنبعته لـ [[Promise.all]] تحت. (مش بيفحص [[res.ok]]، فده للتجربة بس.)`,
+            R`[[Promise.all]] بتاخد array من Promises بقت شغالة بالفعل، وتستنى الكل يخلص. النتيجة array بنفس ترتيب الطلبات (مش ترتيب اللي خلص الأول)، فبنفكها لـ ٣ متغيرات بالـ destructuring.`,
+            R`الطلب الأول ([[/me]]): بيبدأ فورًا أول ما السطر يتنفذ، مش لما [[Promise.all]] تتنادى. قيمته هتروح لـ [[user]].`,
+            R`الطلب التاني ([[/orders]]) بيتبعت في نفس الوقت من غير ما يستنى الأول، وقيمته تروح لـ [[orders]].`,
+            R`الطلب التالت ([[/settings]])، وقيمته تروح لـ [[settings]]. الوقت الكلي بقى وقت أبطأ طلب، مش مجموع التلاتة.`,
+            R`نهاية الـ array. لو أي طلب فشل، [[Promise.all]] بتترفض فورًا بالـ error بتاعه ومش هتدّيك نتايج الباقيين (رغم إنهم بيكمّلوا في الخلفية).`,
+            R`[[Promise.allSettled]] بتستنى الكل مهما حصل ومبتترفضش أبدًا. كل عنصر في النتيجة object فيه [[status]] ([[fulfilled]] أو [[rejected]]) ومعاه [[value]] أو [[reason]].`,
+            R`بنسيب الناجحين بس ([[status]] بـ [[fulfilled]])، ونطلّع من كل واحد [[value]] بتاعه، يعني الداتا اللي رجعت.`,
+            R`ونفس الفكرة للفاشلين: [[reason]] هو الـ error اللي اترفض بيه، فتقدر تسجّله أو تعرضه من غير ما يبوّظ الناجحين.`,
+            R`[[timeout]] بترجّع Promise ملوش غير نهاية واحدة: يترفض بـ Error بعد ms. الـ [[_]] معناها إننا مش محتاجين [[resolve]].`,
+            R`[[Promise.race]] بتاخد نتيجة أول واحد يخلص، نجاح أو فشل. لو الطلب أبطأ من ٣ ثواني الـ [[timeout]] يكسب ويرمي error. بس خلي بالك: الطلب مش بيتلغي وبيكمّل في الخلفية؛ عشان تلغيه فعلًا محتاج AbortController.`,
+            R`[[Promise.any]] بتاخد أول واحد **ينجح** وبتتجاهل الفشل. مفيدة مع سيرفرات بديلة (mirrors). لو كلهم فشلوا بترمي AggregateError فيه [[errors]] بكل الأسباب.`
+          ],
+          sol: R`الناتج حاجة زي [[ورا بعض: 3.004s]] و [[Promise.all: 1.500s]]. ورا بعض كل await بتستنى اللي قبلها (500 + 1000 + 1500)، و Promise.all بتبدأهم مع بعض فالوقت بيبقى وقت أطولهم بس.
+
+خلي بالك إن الـ promises بتبدأ لحظة ما تنادي الدالة، مش لحظة الـ await. لو كتبت [[const pa = a(), pb = b(), pc = c();]] وبعدين [[await pa; await pb; await pc;]] هتاخد 1.5 ثانية برضه. والغلطة الشائعة العكس: تكتب [[Promise.all([await a(), await b()])]] فتستنى كل واحدة قبل ما Promise.all تشوفها وترجع لـ 3 ثواني.`,
+          solCode: R`const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+const a = () => wait(500), b = () => wait(1000), c = () => wait(1500);
+console.time("ورا بعض");
+await a(); await b(); await c();
+console.timeEnd("ورا بعض");      // ~3s
+console.time("Promise.all");
+await Promise.all([a(), b(), c()]);
+console.timeEnd("Promise.all");  // ~1.5s`
+        },
+        {
+          cmd: "fetch و AbortController",
+          title: "تعمل fetch صح: تفحص الرد وتلغي الطلب",
+          desc: R`[[fetch(url, options)]] بترجّع Promise بالـ Response. خد بالك من حاجتين: fetch بتترفض بس لو النت فشل، أما 404 و 500 بيعدّوا عادي، فلازم تفحص [[res.ok]]. والـ body بيتقري مرة واحدة بـ [[res.json()]] أو [[res.text()]].
+
+وعشان تلغي طلب (اليوزر خرج من الصفحة، أو كتب حرف جديد في البحث)، ابعت [[signal]] من [[AbortController]]، أو [[AbortSignal.timeout(ms)]] لـ timeout جاهز.`,
+          example: R`async function api(path, { body, ...options } = {}) {
+  const res = await fetch($__bthttps://api.example.com$__{path}$__bt, {
+    ...options,
+    headers: { "Content-Type": "application/json", ...options.headers },
+    body: body ? JSON.stringify(body) : undefined,
+    signal: options.signal ?? AbortSignal.timeout(8000),
+  });
+  if (!res.ok) throw new Error($__btHTTP $__{res.status}: $__{await res.text()}$__bt);
+  return res.status === 204 ? null : res.json();
+}
+await api("/orders", { method: "POST", body: { productId: 5 } });
+let controller;
+async function search(q) {
+  controller?.abort();
+  controller = new AbortController();
+  try {
+    return await api($__bt/search?q=$__{encodeURIComponent(q)}$__bt, { signal: controller.signal });
+  } catch (err) {
+    if (err.name === "AbortError") return;
+    throw err;
+  }
 }`,
-            tests: R`const ymd = d => [d.getFullYear(), d.getMonth() + 1, d.getDate()];
-test("31 يناير 2026 + شهر ← 28 فبراير (مش 3 مارس)", () => expect(ymd(addMonths(new Date(2026, 0, 31), 1))).toEqual([2026, 2, 28]));
-test("2028 كبيسة ← 29 فبراير", () => expect(ymd(addMonths(new Date(2028, 0, 31), 1))).toEqual([2028, 2, 29]));
-test("15 مارس + شهر ← 15 أبريل (اليوم العادي زي ما هو)", () => expect(ymd(addMonths(new Date(2026, 2, 15), 1))).toEqual([2026, 4, 15]));
-test("بتعدّي السنة: 30 نوفمبر 2026 + 3 ← 28 فبراير 2027", () => expect(ymd(addMonths(new Date(2026, 10, 30), 3))).toEqual([2027, 2, 28]));
-test("n سالب: 31 مارس - 1 ← 28 فبراير", () => expect(ymd(addMonths(new Date(2026, 2, 31), -1))).toEqual([2026, 2, 28]));
-test("الأصل ميتغيرش", () => {
-  const jan31 = new Date(2026, 0, 31);
-  addMonths(jan31, 1);
-  expect(ymd(jan31)).toEqual([2026, 1, 31]);
-});`,
-            solution: R`function addMonths(date, n) {
-  const d = new Date(date);
-  const day = d.getDate();
-  d.setDate(1);
-  d.setMonth(d.getMonth() + n);
-  const lastDay = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
-  d.setDate(Math.min(day, lastDay));
-  return d;
-}`
-          }
-        },
-        {
-          cmd: "UTC و Intl.DateTimeFormat",
-          title: "تخزّن الوقت إزاي، وتعرضه بتوقيت اليوزر ولغته إزاي؟",
-          desc: R`القاعدة: خزّن وابعت UTC، واعرض بتوقيت اليوزر. في الداتابيز [[timestamptz]] (تاب SQL و Prisma)، وفي الـ JSON نص ISO بـ Z زي [["2026-09-29T21:30:00.000Z"]] ([[toISOString()]]، و [[JSON.stringify]] بيعملها لوحده). ومتحوّلش لتوقيت محلي غير في آخر لحظة: وانت بترسم على الشاشة.
-
-والعرض بـ [[Intl.DateTimeFormat(locale, options)]]: الـ locale زي [["ar-EG"]] أو [["en-GB"]] بيحدد اللغة والترتيب والأرقام، و [[timeZone]] زي [["Africa/Cairo"]] بيحدد التوقيت، و [[dateStyle]] و [[timeStyle]] ([["full"]] و [["long"]] و [["medium"]] و [["short"]]) بيختاروا الشكل. و [[date.toLocaleString(locale, options)]] نفس الكلام في سطر.`,
-          example: R`const createdAt = new Date("2026-09-29T21:30:00Z");
-console.log(createdAt.toISOString(), JSON.stringify({ createdAt }));
-const cairo = new Intl.DateTimeFormat("ar-EG", { dateStyle: "full", timeStyle: "short", timeZone: "Africa/Cairo" });
-console.log(cairo.format(createdAt));
-const riyadh = new Intl.DateTimeFormat("en-GB", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Riyadh" });
-console.log(riyadh.format(createdAt));
-console.log(createdAt.toLocaleString("ar-EG-u-nu-latn", { timeZone: "Africa/Cairo", day: "numeric", month: "long", hour: "numeric", minute: "2-digit" }));
-const dayInCairo = new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Cairo" }).format(createdAt);
-console.log(dayInCairo, createdAt.toISOString().slice(0, 10));
-console.log(Intl.DateTimeFormat().resolvedOptions().timeZone);`,
-          try: R`اعرض نفس اللحظة بـ ٣ توقيتات: [["Africa/Cairo"]] و [["Europe/London"]] و [["America/New_York"]] بالعربي والأرقام اللاتيني. وبعدين غيّر اللحظة لـ [["2026-01-15T21:30:00Z"]] (شتا): الفرق بين القاهرة و UTC بقى كام؟ وآخر حاجة: اكتب [[isTodayInCairo(date)]] بترجّع true لو اللحظة دي في نفس يوم «النهارده» بتوقيت القاهرة.`,
+          try: R`في Console على أي موقع، اعمل [[fetch("/not-found")]] واطبع [[res.ok]] و [[res.status]]: هتلاقيه نجح عادي بـ 404. وبعدين جرّب [[fetch(url, { signal: AbortSignal.timeout(1) })]] واقرا الـ error.`,
+          practice: [
+            { lvl: 'سريع', t: R`اقرا وتوقّع وبعدين جرّب في ملف [[.mjs]]: [[const r = await fetch("https://example.com/nope")]]، هل هيترمي error؟ اطبع [[r.ok]] و [[r.status]]، وبعدين اقرا [[await r.text()]] مرتين ورا بعض.`, done: R`مفيش error: بيطبع [[false 404]]. والقراية التانية بتقع بـ [[TypeError: Body is unusable: Body has already been read]]: الـ body بيتقري مرة واحدة.` },
+            { lvl: 'تطبيق', t: R`ابني [[getJSON(url, { timeout = 5000 } = {})]]: بتعمل fetch بـ [[AbortSignal.timeout(timeout)]]، وترمي [[HttpError]] فيه [[status]] لو [[!res.ok]]، وفي الـ catch تفرّق بين ٣ أنواع بـ [[err.name]]. جرّبها على 404، وعلى [[timeout: 1]]، وعلى دومين مش موجود.`, done: R`الـ 404 بيطلع HttpError فيه [[status: 404]]. الـ timeout بيطلع [[err.name === "TimeoutError"]] (مش AbortError). والدومين الغلط بيطلع [[TypeError]] رسالته [[fetch failed]] والسبب الحقيقي في [[err.cause]]. والتلاتة رسايلهم لليوزر مختلفة.` },
+            { lvl: 'تحدي', t: R`محاكاة بحث وانت بتكتب: استخدم [[search(q)]] اللي في الدرس، ونادي [[search("a")]] و [[search("ab")]] و [[search("abc")]] ورا بعض من غير await، وخزّن الـ ٣ Promises واطبع [[await Promise.all]] بتاعتهم. جرّبها على endpoint بيتأخر (مثلًا سيرفر Node صغير على localhost بيرد بعد 300ms).`, done: R`أول اتنين [[undefined]] (اتلغوا والـ catch رجّع من غير قيمة) والتالت بس فيه نتيجة [["abc"]]. وفي المتصفح، تاب Network بيكتب canceled جنب أول طلبين. ولو شلت [[controller?.abort()]] التلاتة بيرجعوا وأي واحد ممكن يوصل الأخير ويكتب فوق النتيجة الصح.` },
+          ],
           flag: "script",
           deep: {
-            why: "السيرفر غالبًا شغال UTC (Docker و VPS و Vercel)، واليوزر في القاهرة، وفريق الدعم في الرياض. لو خزّنت «الساعة 12:30» من غير توقيت محدش هيعرف دي 12:30 فين. ولو حسبت «طلبات النهارده» بتوقيت السيرفر، طلب الساعة 1 بالليل في القاهرة هيتحسب على امبارح.",
-            how: R`[[21:30Z]] في القاهرة [[00:30]] اليوم اللي بعده (٣٠ سبتمبر)، لأن مصر رجّعت التوقيت الصيفي من 2023 فهي UTC+3 من آخر جمعة في أبريل لآخر خميس في أكتوبر، و UTC+2 باقي السنة. انت مش محتاج تحفظ ده: [[timeZone: "Africa/Cairo"]] بيستخدم قاعدة بيانات IANA اللي في المتصفح و Node وبتتحدّث معاهم. عشان كده متكتبش offset بإيدك ([[+2]] أو [[+3]]): هيبقى غلط نص السنة.
+            why: R`كل تطبيق بيكلّم API. ومشاكل زي «بيعرض داتا قديمة لما أكتب بسرعة في البحث» (race condition) و «الطلب واقف دقيقة» و «بيعرض صفحة 500 كأنها داتا» كلها من fetch مكتوب من غير فحص ولا إلغاء.`,
+            how: R`الـ Promise بتاع fetch بيخلص أول ما الـ headers توصل، والـ body لسه بيتقري. عشان كده [[res.json()]] Promise تاني. والـ body stream بيتقري مرة واحدة، فلو قريته بـ text مينفعش تقراه بـ json.
 
-[[ar-EG]] بيطلع أرقام عربية مشرقية (٣٠) افتراضيًا، و [[-u-nu-latn]] في آخر الـ locale بيخليها لاتيني (30). و [[en-CA]] حيلة معروفة: شكله [[YYYY-MM-DD]]، فبيدّيك التاريخ في توقيت معيّن كنص، وده اللي تستخدمه لـ «طلبات النهارده في القاهرة». لاحظ إن [[toISOString().slice(0, 10)]] بيدّي تاريخ UTC (29) مش تاريخ القاهرة (30).
+[[AbortController]] عنده [[signal]] بتتبعت للـ fetch، و [[abort()]] بترفض الـ Promise بـ error اسمه AbortError، والمتصفح بيقفل الـ connection فعلًا. و [[AbortSignal.timeout(ms)]] signal جاهزة بتعمل abort بعد وقت (الـ error اسمه TimeoutError). و [[AbortSignal.any([a, b])]] بتجمع اتنين.
 
-عمل [[new Intl.DateTimeFormat]] مكلف شوية، فلو بتعرض ليستة طويلة اعمله مرة واحدة برّه الـ loop واستخدم [[format]]. و [[resolvedOptions().timeZone]] بيقولك توقيت الجهاز ([["UTC"]] على أغلب السيرفرات)، وتقدر تبعته من المتصفح للسيرفر لو محتاج تحسب بتوقيت اليوزر هناك.`,
-            when: R`أي عرض لتاريخ أو وقت. وفي Next.js/SSR خلي بالك: السيرفر UTC والمتصفح القاهرة، فلو عملت format في الاتنين من غير [[timeZone]] محدد هيطلع نص مختلف وتاخد hydration error (تاب Next.js). حدّد timeZone صريح أو اعرض الوقت في client component.`,
-            mistakes: R`تخزّن التاريخ كنص محلي ([["29/09/2026 12:30"]]). و [[toISOString().slice(0, 10)]] على إنه «النهارده» فيطلع امبارح بعد نص الليل في القاهرة. و offset ثابت بإيدك. و [[toLocaleString()]] من غير locale ولا timeZone فالناتج يختلف من جهاز لجهاز. وفي الانترفيو: «إزاي تتعامل مع time zones في تطبيق فيه يوزرز من بلاد مختلفة؟» الإجابة: UTC في التخزين والـ API، والتحويل عند العرض بـ IANA zone، والـ zone بتاع اليوزر محفوظ في البروفايل لو محتاجه في السيرفر (إيميلات، تقارير).`
+في البحث: كل حرف بيلغي الطلب اللي قبله. من غير كده، رد قديم بطيء ممكن يوصل بعد رد جديد ويكتب فوقه.
+
+الكوكيز: في نفس الدومين بتتبعت لوحدها. لو دومين تاني محتاج [[credentials: "include"]] والسيرفر يسمح بـ CORS (تاب المتصفح وتاب الانترفيو). و Node 18+ فيه fetch مدمج.
+
+وفي React، مكتبة زي TanStack Query بتعمل الإلغاء والكاش وإعادة المحاولة بدالك (تاب React).`,
+            when: R`helper واحد زي [[api()]] في المشروع كله بدل fetch متكررة. و AbortController في البحث والـ autocomplete و useEffect cleanup. و timeout لأي طلب لسيرفر خارجي.`,
+            mistakes: R`متفحصش [[res.ok]]. وتنسى [[JSON.stringify]] أو الـ Content-Type. وتبني URL بـ query من اليوزر من غير [[encodeURIComponent]] أو [[URLSearchParams]]. وتعرض AbortError كـ error لليوزر. وتقرا الـ body مرتين.`
           },
-          teach: R`## الفكرة في سطرين
+          teach: R`## الكود ده بيعمل إيه؟
 
-اللحظة بتتخزّن وتتبعت بـ UTC (نص بـ [[Z]] في الآخر)، وبتتحوّل لتوقيت ولغة اليوزر في آخر خطوة بس، وهي بتتعرض. والأداة اللي بتعمل التحويل ده جوه اللغة نفسها اسمها [[Intl.DateTimeFormat]]. المثال بياخد لحظة واحدة ويعرضها بكذا شكل. الناتج كله من Node 24 على Windows.
+جزئين: دالة [[api]] واحدة تستخدمها في المشروع كله بدل fetch مكررة (بتبعت JSON، وبتحط timeout، وبترمي error على 404 و 500)، ودالة [[search]] بتلغي طلب البحث القديم كل ما اليوزر يكتب حرف جديد.
 
----
-
-## ١. اللحظة نفسها
-
-~~~text app.js
-const createdAt = new Date("2026-09-29T21:30:00Z");
-console.log(createdAt.toISOString(), JSON.stringify({ createdAt }));
-~~~
-
-- [["2026-09-29T21:30:00Z"]]: شكل اسمه **ISO 8601**: السنة-الشهر-اليوم، وبعدين [[T]] (فاصل بين التاريخ والوقت)، والوقت، و [[Z]] = UTC. ده الشكل اللي بييجي من أي API أو داتابيز.
-- [[toISOString()]]: بيكتب اللحظة بنفس الشكل ده، بـ UTC دايمًا، ومعاه الـ ms ([[.000]]).
-- [[JSON.stringify({ createdAt })]]: [[{ createdAt }]] اختصار لـ [[{ createdAt: createdAt }]]. و JSON مالوش نوع «تاريخ»، فـ JSON.stringify بينادي [[toJSON()]] بتاع الـ Date، وده بيرجّع نفس نص [[toISOString()]].
-
-~~~text الناتج
-2026-09-29T21:30:00.000Z {"createdAt":"2026-09-29T21:30:00.000Z"}
-~~~
-
-النص ده هو اللي يتخزّن ويتبعت. محدش يقدر يفهمه غلط، لأن الـ Z بتقول هو بتوقيت إيه.
+اتشغّل في Node 24 كملف [[.mjs]] على سيرفر صغير محلي بدل [[api.example.com]]، والسيرفر بيطبع كل طلب بيوصله: الـ method والمسار والـ Content-Type والـ body. وجزء [[res.ok]] والـ timeout اتجرّب كمان في Chrome.
 
 ---
 
-## ٢. formatter بالعربي وتوقيت القاهرة
+## ١. توقيع الدالة
 
-~~~text app.js
-const cairo = new Intl.DateTimeFormat("ar-EG", { dateStyle: "full", timeStyle: "short", timeZone: "Africa/Cairo" });
-console.log(cairo.format(createdAt));
+~~~text app.mjs
+async function api(path, { body, ...options } = {}) {
 ~~~
 
-[[Intl]] (اختصار Internationalization) object جوه JavaScript فيه أدوات لكل حاجة بتختلف من بلد لبلد: تواريخ وأرقام وعملات وجمع. و [[new Intl.DateTimeFormat(locale, options)]] بيعمل **formatter**: حاجة بتحفظ الإعدادات، وبعدين [[format(date)]] بتطبّقها على أي تاريخ.
-
-### الـ locale: [["ar-EG"]]
-
-نص بيقول اللغة والبلد: [[ar]] = عربي، و [[EG]] = مصر. بيحدد أسماء الأيام والشهور، وترتيب اليوم والشهر، وشكل الأرقام.
-
-### الـ options
-
-| الخيار | القيمة هنا | معناه |
-|---|---|---|
-| [[dateStyle]] | [["full"]] | التاريخ كامل باسم اليوم (فيه كمان [["long"]] و [["medium"]] و [["short"]]) |
-| [[timeStyle]] | [["short"]] | الساعة والدقيقة من غير ثواني |
-| [[timeZone]] | [["Africa/Cairo"]] | اعرض بتوقيت القاهرة، مهما كان توقيت الجهاز |
-
-~~~text الناتج
-الأربعاء، ٣٠ سبتمبر ٢٠٢٦ في ١٢:٣٠ ص
-~~~
-
-ليه ٣٠ مش ٢٩؟ اللحظة ٩:٣٠ بالليل UTC، ومصر في سبتمبر UTC+3 (التوقيت الصيفي)، فعندنا ١٢:٣٠ بعد نص الليل، يعني اليوم اللي بعده. و [[ص]] يعني صباحًا (AM). والأرقام طلعت مشرقية (٣٠) لأن ده الافتراضي في [["ar-EG"]].
-
-[["Africa/Cairo"]] اسم من قاعدة بيانات اسمها **IANA time zone database**، وفيها لكل بلد تاريخ تغييرات التوقيت الصيفي كله. فمش محتاج تعرف إمتى مصر بتبقى +2 وإمتى +3: Node والمتصفح عارفين.
+- [[path]]: المسار، زي [["/orders"]].
+- التاني object خيارات، وبنفكّه:
+- [[body]]: الداتا اللي هتتبعت، كـ object عادي.
+- [[...options]]: اسمها **rest**: «كل الخصايص الباقية (method و headers و signal...) حطها في object اسمه options». فـ body اتشالت منه.
+- [[= {}]]: لو مبعتش خيارات خالص.
 
 ---
 
-## ٣. نفس اللحظة بلغة وتوقيت تانيين
+## ٢. نداء fetch
 
-~~~text app.js
-const riyadh = new Intl.DateTimeFormat("en-GB", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Riyadh" });
-console.log(riyadh.format(createdAt));
+~~~text app.mjs
+  const res = await fetch($__bthttps://api.example.com$__{path}$__bt, {
+    ...options,
+    headers: { "Content-Type": "application/json", ...options.headers },
+    body: body ? JSON.stringify(body) : undefined,
+    signal: options.signal ?? AbortSignal.timeout(8000),
+  });
 ~~~
 
-[["en-GB"]] = إنجليزي بريطاني (اليوم قبل الشهر، و 24 ساعة)، و [["medium"]] = اسم الشهر مختصر. والرياض UTC+3 طول السنة.
+fetch بتاخد URL و object خيارات. نبنيه سطر سطر:
 
-~~~text الناتج
-30 Sept 2026, 00:30
-~~~
+| السطر | معناه |
+|---|---|
+| [[...options]] | **spread**: انسخ كل الخيارات اللي اتبعتت (زي [[method: "POST"]]) |
+| [[headers: { ... }]] | الـ headers: معلومات زيادة مع الطلب |
+| [[Content-Type: application/json]] | قول للسيرفر «الـ body ده JSON» |
+| [[...options.headers]] | وزوّد أي headers اتبعتت (ولو فيها Content-Type تغطّي على الافتراضي) |
+| [[body ? JSON.stringify(body) : undefined]] | لو فيه body حوّله لنص JSON. fetch مبتبعتش object، بتبعت نص |
+| [[options.signal ?? AbortSignal.timeout(8000)]] | استخدم الـ signal اللي اتبعت، ولو مفيش، اعمل واحدة بتلغي بعد 8 ثواني. خلي بالك: لو اتبعت signal الـ timeout بيضيع، والحل بـ [[AbortSignal.any]] في الجزء ٦ |
+
+- [[??]] اسمها **nullish coalescing**: «لو اللي على الشمال null أو undefined، خد اللي على اليمين».
+- [[AbortSignal.timeout(ms)]]: signal جاهزة بتلغي الطلب لوحدها بعد الوقت ده.
 
 ---
 
-## ٤. [[toLocaleString]]: نفس الحكاية في سطر
+## ٣. فحص الرد
 
-~~~text app.js
-console.log(createdAt.toLocaleString("ar-EG-u-nu-latn", { timeZone: "Africa/Cairo", day: "numeric", month: "long", hour: "numeric", minute: "2-digit" }));
-~~~
-
-[[date.toLocaleString(locale, options)]] بيعمل formatter ويستخدمه مرة واحدة. وفيه حاجتين جداد:
-
-**١. [[-u-nu-latn]] في آخر الـ locale.** [[u]] = Unicode extension (إضافة على الـ locale)، و [[nu]] = numbering system (نظام الأرقام)، و [[latn]] = لاتيني (0123). يعني «عربي، بس بأرقام 30 مش ٣٠».
-
-**٢. بدل [[dateStyle]]، حدّدنا كل حتة لوحدها:**
-
-| الخيار | القيمة | النتيجة |
-|---|---|---|
-| [[day]] | [["numeric"]] | 30 |
-| [[month]] | [["long"]] | سبتمبر (اسم كامل) |
-| [[hour]] | [["numeric"]] | 12 |
-| [[minute]] | [["2-digit"]] | 30 (دايمًا رقمين: 05 مش 5) |
-
-اللي محدّدتوش (السنة، اسم اليوم) مش بيظهر.
-
-~~~text الناتج
-30 سبتمبر في 12:30 ص
-~~~
-
-> [[dateStyle]] و [[timeStyle]] مينفعوش مع [[day]] و [[month]] وأخواتهم في نفس الـ options (جرّبناها: [[TypeError: Invalid option : option]]): اختار طريقة من الاتنين.
-
----
-
-## ٥. حيلة [["en-CA"]]: «التاريخ ده في القاهرة كام؟»
-
-~~~text app.js
-const dayInCairo = new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Cairo" }).format(createdAt);
-console.log(dayInCairo, createdAt.toISOString().slice(0, 10));
-~~~
-
-[["en-CA"]] = إنجليزي كندي، والشكل الافتراضي للتاريخ فيه [[YYYY-MM-DD]]. فمن غير options غير الـ zone، بيطلّعلك تاريخ اللحظة دي في القاهرة كنص تقدر تقارنه أو تستخدمه كـ key.
-
-والجزء التاني: [[toISOString()]] بيدّي النص الـ UTC كله، و [[.slice(0, 10)]] بياخد أول 10 حروف (من index 0 لحد 10 من غير ما ياخده)، يعني [[2026-09-29]].
-
-~~~text الناتج
-2026-09-30 2026-09-29
-~~~
-
-ده الفخ: تاريخ القاهرة ٣٠، وتاريخ UTC ٢٩. لو حسبت «طلبات النهارده» بـ [[toISOString().slice(0, 10)]] على سيرفر، الطلب ده هيتحسب على امبارح.
-
----
-
-## ٦. الجهاز ده توقيته إيه؟
-
-~~~text app.js
-console.log(Intl.DateTimeFormat().resolvedOptions().timeZone);
-~~~
-
-[[Intl.DateTimeFormat()]] من غير أي حاجة بيستخدم الإعدادات الافتراضية للجهاز، و [[resolvedOptions()]] بيقولك الإعدادات اللي اتختارت فعلًا، ومنها [[timeZone]].
-
-~~~text الناتج (جهاز في مصر)
-Africa/Cairo
-~~~
-
-~~~text الناتج (Linux في Docker، صورة node:22-slim)
-UTC
-~~~
-
-وده بالظبط شكل الموضوع في الحقيقة: جهازك القاهرة، والسيرفر UTC.
-
----
-
-## ٧. الحل (solCode): لحظة واحدة في ٣ مدن، و [[isTodayInCairo]]
-
-~~~text app.js
-const cairoDay = new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Cairo" });
-const isTodayInCairo = (date, now = new Date()) => cairoDay.format(date) === cairoDay.format(now);
-const t = new Date("2026-09-29T21:30:00Z");
-for (const tz of ["Africa/Cairo", "Europe/London", "America/New_York"]) {
-  console.log(tz, t.toLocaleString("ar-EG-u-nu-latn", { timeZone: tz, dateStyle: "medium", timeStyle: "short" }));
+~~~text app.mjs
+  if (!res.ok) throw new Error($__btHTTP $__{res.status}: $__{await res.text()}$__bt);
+  return res.status === 204 ? null : res.json();
 }
-console.log(isTodayInCairo(t, new Date("2026-09-30T08:00:00Z")), isTodayInCairo(t, new Date("2026-09-29T20:00:00Z")));
 ~~~
 
-- [[cairoDay]]: formatter واحد بيتعمل **مرة واحدة** برّه الدالة، لأن عمل formatter جديد مكلف نسبيًا.
-- [[(date, now = new Date()) => ...]]: arrow function بـ parameter تاني ليه قيمة افتراضية: لو منادتهوش، [[now]] = اللحظة الحالية. وده بيخلّينا نجرّبها بـ «دلوقتي» وهمي.
-- [[===]]: بتقارن النصين ([["2026-09-30"]] مع [["2026-09-30"]]).
-- [[for (const tz of [...])]]: بيلف على الـ ٣ zones.
+- [[res.ok]]: true لو الـ status من 200 لـ 299. fetch **مبترميش** error على 404 أو 500، الرد بيوصل عادي. جرّبنا [[fetch("/nope")]] من غير الدالة:
 
 ~~~text الناتج
-Africa/Cairo 30/09/2026، 12:30 ص
-Europe/London 29/09/2026، 10:30 م
-America/New_York 29/09/2026، 5:30 م
-true false
+fetch 404 بس: false 404 Not Found
 ~~~
 
-لندن UTC+1 صيفًا، ونيويورك UTC−4. وأول نداء true: الساعة 8 الصبح UTC يوم ٣٠ في القاهرة يوم ٣٠، زي اللحظة. والتاني false: ٨ بالليل UTC يوم ٢٩ في القاهرة لسه ٢٩.
+يعني [[ok]] = false، و [[status]] = 404، و [[statusText]] = Not Found، ومفيش error. ونفس الحاجة في Chrome: ok بـ [[false]] و status بـ [[404]] من غير error.
 
-> لو هتقارن نص الناتج ده بنص كتبته بإيدك: العربي بيحط علامة اتجاه مخفية (U+200F) جنب الـ [[/]]، فـ [["30/09/2026"]] اللي انت كتبتها مش هتساوي اللي طالع. قارن نصوص [[en-CA]] زي ما عملنا، مش نصوص عرض.
+- [[await res.text()]]: اقرا نص الرد وحطه في رسالة الـ error، عشان تعرف السيرفر قال إيه.
+- [[res.status === 204]]: 204 = «No Content»، نجح بس مفيش body. لو ناديت json عليه هيقع، فبنرجّع null.
+
+~~~text الناتج: await api("/nope")
+HTTP 404: {"error":"Not found"}
+~~~
+
+ومن الحاجات اللي اتجرّبت: الـ body **بيتقري مرة واحدة**. بعد [[res.text()]] جرّبنا [[res.json()]]:
+
+~~~text الناتج
+TypeError: Body is unusable: Body has already been read
+~~~
+
+---
+
+## ٤. POST
+
+~~~text app.mjs
+await api("/orders", { method: "POST", body: { productId: 5 } });
+~~~
+
+~~~text الناتج
+[server] POST /orders application/json {"productId":5}
+POST: { id: 7, productId: 5 }
+~~~
+
+السيرفر استلم method = POST، و Content-Type = JSON، والـ body نص JSON. وجرّبنا [[DELETE]] على مسار بيرد 204: الدالة رجّعت [[null]] من غير ما تقع.
+
+### الـ timeout
+
+جرّبنا [[api("/slow", { signal: AbortSignal.timeout(300) })]] على مسار بياخد 10 ثواني:
+
+~~~text الناتج
+timeout: TimeoutError: The operation was aborted due to timeout
+~~~
+
+اسمه [[TimeoutError]]. وفي Chrome نفس التجربة طلّعت [[TimeoutError: signal timed out]].
+
+---
+
+## ٥. [[search]]: الغي القديم
+
+~~~text app.mjs
+let controller;
+async function search(q) {
+  controller?.abort();
+  controller = new AbortController();
+~~~
+
+- [[let controller;]]: متغير برّه الدالة، بيفتكر الـ controller بتاع **آخر** بحث. [[let]] مش const لأننا هنغيّره.
+- [[controller?.abort()]]: لو فيه بحث قبل كده، الغيه. و [[?.]] عشان أول مرة controller بـ undefined.
+- [[new AbortController()]]: object فيه حاجتين: [[signal]] (بتتبعت مع الطلب)، و [[abort()]] (بتلغيه).
+
+~~~text app.mjs
+  try {
+    return await api($__bt/search?q=$__{encodeURIComponent(q)}$__bt, { signal: controller.signal });
+~~~
+
+- [[encodeURIComponent(q)]]: بيحوّل أي حروف خاصة أو عربي لشكل آمن في الـ URL. جرّبنا:
+
+~~~text الناتج: encodeURIComponent("قهوة & شاي")
+%D9%82%D9%87%D9%88%D8%A9%20%26%20%D8%B4%D8%A7%D9%8A
+~~~
+
+المسافة بقت [[%20]]، و [[&]] بقت [[%26]]. من غيرها، الـ [[&]] كانت هتقطع الـ query لحتتين.
+
+- [[{ signal: controller.signal }]]: اربط الطلب ده بالـ controller، فلو حد عمل abort، الطلب يتلغي.
+- [[return await]]: await هنا مهمة: من غيرها، لو الطلب اتلغى، الـ catch اللي تحت مش هيمسكه.
+
+~~~text app.mjs
+  } catch (err) {
+    if (err.name === "AbortError") return;
+    throw err;
+  }
+}
+~~~
+
+- الإلغاء بيرمي error اسمه [[AbortError]]. ده مش مشكلة، احنا اللي لغيناه، فرجّع من غير حاجة.
+- أي error تاني (404، timeout) ارميه عادي.
+
+### التجربة
+
+نادينا ٣ بحوث ورا بعض بسرعة: [["ق"]] ثم [["قه"]] ثم [["قهوة & شاي"]]:
+
+~~~text الناتج
+   اتلغى: ق | This operation was aborted
+   اتلغى: قه | This operation was aborted
+   [server] GET /search?q=قهوة & شاي application/json -
+results: undefined undefined { q: 'قهوة & شاي' }
+~~~
+
+أول اتنين اتلغوا قبل ما يوصلوا للسيرفر أصلًا، ورجّعوا undefined. وآخر واحد بس هو اللي وصل ورجع. ده بالظبط اللي محتاجه في autocomplete: رد قديم بطيء ميكتبش فوق رد جديد.
+
+---
+
+## ٦. AbortSignal.any: timeout وإلغاء مع بعض
+
+فيه مشكلة في [[api]] فوق: [[signal: options.signal ?? AbortSignal.timeout(8000)]]. لو اللي نادى بعت signal (زي [[search]])، الـ timeout **بيضيع**، فطلب البحث ممكن يفضل معلّق للأبد. محتاج signal واحد بيتلغي لو **أي** واحد من الاتنين حصل. ده [[AbortSignal.any([...])]] (Node 20.3+ وكل المتصفحات الحديثة):
+
+~~~text any.mjs
+const user = new AbortController();
+const signal = AbortSignal.any([user.signal, AbortSignal.timeout(300)]);
+await fetch(url, { signal });
+~~~
+
+- [[AbortSignal.any(signals)]]: بتاخد array من الـ signals وترجّع signal جديد بيتعمله abort أول ما **أول** واحد فيهم يتلغي.
+- [[signal.reason]]: سبب الإلغاء، بياخده من الـ signal اللي اتلغى الأول.
+
+جرّبتها على سيرفر محلي بيرد بعد ٢ ثانية، ٣ مرات: مرة سيبت الـ timeout يخلص، ومرة عملت [[user.abort()]] بعد 100ms، ومرة [[user.abort(new Error("اليوزر قفل الصفحة"))]] بعد 50ms:
+
+~~~text الناتج (Node 24)
+TimeoutError | The operation was aborted due to timeout | 316 ms | reason: TimeoutError
+AbortError | This operation was aborted | 108 ms | reason: AbortError
+Error | اليوزر قفل الصفحة | 63 ms | reason: Error
+~~~
+
+- الأول: محدش لغى، فالـ timeout كسب بعد حوالي 300ms، والـ error اسمه [[TimeoutError]].
+- التاني: اليوزر لغى الأول، والـ error [[AbortError]].
+- التالت: [[abort(reason)]] بسبب بتاعك: الـ fetch بيرمي **السبب نفسه** (Error برسالتك)، فـ [[err.name === "AbortError"]] مش هتمسكه. افحص [[signal.aborted]] بدل الاسم لو بتبعت أسباب.
+
+والتصليح في [[api]]:
+
+~~~text app.mjs
+const timeout = AbortSignal.timeout(8000);
+const signal = options.signal ? AbortSignal.any([options.signal, timeout]) : timeout;
+~~~
+
+وكده [[search]] بيقدر يلغي الطلب القديم، وكل طلب برضه ليه حد أقصى ٨ ثواني. ولو signal من اللي في الـ array كان متلغي من الأول، الناتج بيبقى متلغي على طول ([[AbortSignal.any([AbortSignal.abort()]).aborted]] بـ [[true]]).
 
 ---
 
 ## الخلاصة
 
-| عايز | استخدم |
+| الحتة | ليه |
 |---|---|
-| تخزّن أو تبعت لحظة | [[toISOString()]] (أو JSON.stringify لوحده) |
-| تعرضها لليوزر | [[Intl.DateTimeFormat(locale, { timeZone, ... })]] |
-| أرقام لاتيني مع العربي | [[-u-nu-latn]] في الـ locale |
-| تاريخ اللحظة في zone معيّن | [[en-CA]] + [[timeZone]] |
-| تعرف توقيت الجهاز | [[resolvedOptions().timeZone]] |
-
-ومتكتبش offset بإيدك (+2 أو +3): اكتب اسم الـ zone وسيب IANA يعرف التوقيت الصيفي.`,
+| [[if (!res.ok) throw]] | fetch مبترميش على 404 و 500 |
+| [[JSON.stringify(body)]] و Content-Type | fetch بتبعت نص، والسيرفر لازم يعرف إنه JSON |
+| [[AbortSignal.timeout(ms)]] | الطلب ميفضلش معلّق للأبد ([[TimeoutError]]) |
+| [[new AbortController()]] و [[abort()]] | تلغي طلب بإيدك ([[AbortError]]) |
+| [[encodeURIComponent]] | أي input من اليوزر في الـ URL |
+| [[res.json()]] أو [[res.text()]] | مرة واحدة بس للـ body |
+| [[AbortSignal.any([a, b])]] | signal بيتلغي مع أول واحد فيهم: إلغاء اليوزر والـ timeout مع بعض |`,
           lines: [
-            R`لحظة جاية بـ [[Z]] في آخرها، يعني UTC: ٩:٣٠ بالليل يوم ٢٩ سبتمبر بتوقيت جرينتش. ده الشكل اللي بييجي عادة من API أو داتابيز، وهو لحظة واحدة مش مربوطة بأي بلد.`,
-            R`بيطبع نفس النص مرتين: [[toISOString()]] بتطبع بـ UTC وآخرها [[Z]]، و [[JSON.stringify]] لما يلاقي Date بينادي [[toJSON]] اللي بترجّع نفس الشكل. فالـ Date بيوصل في JSON كـ **string** مش Date، والطرف التاني لازم يعمل [[new Date(...)]] تاني.`,
-            R`بيعمل formatter مرة واحدة: [[ar-EG]] عربي بشكل مصر (أسماء أيام وأرقام عربية)، و [[dateStyle]] و [[timeStyle]] أشكال جاهزة بدل ما تختار كل جزء، و [[timeZone]] بيحدد التوقيت اللي يتعرض بيه بدل توقيت الجهاز. ومتخلطش [[dateStyle]] مع [[day]] أو [[month]] في نفس الـ options، ده بيرمي TypeError.`,
-            R`بيطبع [[الأربعاء، ٣٠ سبتمبر ٢٠٢٦ في ١٢:٣٠ ص]]: نفس اللحظة اللي كانت يوم ٢٩ في UTC بقت ٣٠ بعد نص الليل في القاهرة (UTC+3 وقتها). ده سبب إن التاريخ «بيتزحلق يوم» لو عرضته بتوقيت غلط.`,
-            R`formatter تاني لنفس اللحظة: لغة [[en-GB]] (اليوم قبل الشهر) وتوقيت الرياض. الـ Date نفسه مبيتغيرش، اللي بيتغير طريقة العرض بس، فتقدر تعرض نفس اللحظة لكل يوزر بلغته وبلده.`,
-            R`بيطبع [[30 Sept 2026, 00:30]]: الرياض UTC+3 طول السنة، فطلعت نفس ساعة القاهرة في سبتمبر. والساعة بنظام ٢٤ ساعة لأن ده عُرف [[en-GB]].`,
-            R`[[toLocaleString]] بتاخد نفس الـ options من غير ما تعمل formatter بإيدك، وهنا اخترنا الأجزاء واحد واحد ([[day]] و [[month]] و [[hour]] و [[minute]]). والإضافة [[-u-nu-latn]] في آخر اللغة معناها «numbering system لاتيني»: كلام عربي بأرقام [[0-9]]، فيطبع [[30 سبتمبر في 12:30 ص]].`,
-            R`حيلة معروفة: [[en-CA]] بتطبع التاريخ بشكل [[YYYY-MM-DD]]، فبتاخد «تاريخ اللحظة دي في القاهرة» كنص جاهز للمقارنة أو كمفتاح. من غير [[timeZone]] هتاخد تاريخ الجهاز، وده على السيرفر غالبًا UTC.`,
-            R`بيطبع [[2026-09-30 2026-09-29]]: الأول تاريخ القاهرة، والتاني أول ١٠ حروف من الـ ISO يعني تاريخ UTC. الغلطة المشهورة إنك تاخد [[toISOString().slice(0, 10)]] على إنه «النهارده»، فطلبات بعد نص الليل في مصر تتحسب على اليوم اللي قبله.`,
-            R`[[resolvedOptions().timeZone]] بترجّع الـ time zone اللي الجهاز شغّال بيه: على السيرفرات و Docker غالبًا [["UTC"]]، وعلى جهازك [["Africa/Cairo"]]. اطبعه أول حاجة لما تلاقي تاريخ مختلف بين جهازك والسيرفر.`,
+            R`helper للـ API: بياخد path وخيارات. الـ destructuring بيطلّع [[body]] لوحده (عشان هنحوّله لنص)، والباقي كله في [[options]]. و [[= {}]] بتخلي نداءه من غير خيارات ميرميش error.`,
+            R`بيعمل الطلب على عنوان الـ API ومعاه object الإعدادات اللي جاي، و [[await]] بيستنى الرد.`,
+            R`بيفرد كل الخيارات اللي اتبعتت ([[method]] وغيرها) جوه إعدادات [[fetch]]. لازم ييجي الأول عشان اللي تحته يكتب فوقه.`,
+            R`بنحط [[Content-Type]] بـ JSON كافتراضي، وبعدين نفرد [[options.headers]]، فأي header بعته اللي نادى الدالة (زي Authorization) يتضاف أو يغطّي الافتراضي.`,
+            R`[[fetch]] مبيفهمش objects في الـ body، لازم نص. فلو فيه [[body]] بنحوّله بـ [[JSON.stringify]]، ولو مفيش بنبعت [[undefined]] (طلب GET ملوش body أصلًا).`,
+            R`لو اللي نادى بعت [[signal]] بتاعه بنستخدمه، وغير كده [[AbortSignal.timeout]] بيلغي الطلب بعد ٨ ثواني. من غيره طلب معلّق ممكن يفضل مستني للأبد. (الإلغاء بالـ timeout الـ error بتاعه اسمه [[TimeoutError]].) ولو اتبعت signal الـ timeout مبيتحطش خالص، فلو عايز الاتنين ادمجهم بـ [[AbortSignal.any([options.signal, AbortSignal.timeout(8000)])]].`,
+            R`نهاية إعدادات [[fetch]].`,
+            R`404 و 500 مبيرفضوش الـ Promise، فبنرمي error بنفسنا، ومعاه الـ status ونص الرد اللي غالبًا فيه سبب المشكلة من السيرفر، فالـ debugging يبقى أسهل.`,
+            R`الـ status [[204]] (No Content) معناه مفيش body، و [[res.json]] عليه بترمي SyntaxError، فبنرجّع [[null]]. غير كده بنحوّل الرد لـ JSON.`,
+            R`نهاية [[api]].`,
+            R`استخدامه: POST والـ body object عادي، والـ helper بيحوّله لنص ويضيف الـ header. لو مكانش الـ [[await]] هنا، أي error هيبقى unhandled rejection.`,
+            R`[[controller]] برّه الدالة عشان يفضل موجود بين كل نداء والتاني، ويشاور على controller آخر بحث لسه شغال.`,
+            R`[[search]] بتتنادى مع كل حرف بيكتبه اليوزر في خانة البحث، فممكن طلبات كتير تبقى شغالة في نفس الوقت.`,
+            R`قبل أي طلب جديد بنلغي القديم. من غير كده رد قديم بطيء ممكن يوصل بعد الجديد ويكتب فوقه نتايج غلط. و [[?.]] عشان أول مرة [[controller]] لسه [[undefined]].`,
+            R`controller جديد للطلب ده بالذات. الـ controller بيتلغي مرة واحدة بس، فمينفعش نعيد استخدام القديم.`,
+            R`[[try]] عشان نفرّق بين الإلغاء المقصود وبين الـ errors الحقيقية.`,
+            R`[[encodeURIComponent]] بيحوّل المسافات والـ [[&]] والعربي لشكل آمن في الـ URL، وإلا [[&]] في كلمة البحث هتتقري parameter جديد. وبنبعت [[controller.signal]]، فده بيغطّي الـ timeout الافتراضي (الطلب ده مبقاش ليه حد ٨ ثواني).`,
+            R`لو حصل error (شبكة، status غلط، أو إلغاء) بييجي هنا.`,
+            R`لما بنعمل [[abort]]، [[fetch]] بيترفض بـ error اسمه [[AbortError]]. ده إحنا اللي عملناه عن قصد، فبنرجع بهدوء من غير ما نعرض رسالة غلط لليوزر.`,
+            R`أي error تاني (شبكة أو 500) حقيقي، فبنرميه تاني عشان اللي نادى [[search]] يتعامل معاه.`,
+            R`نهاية [[catch]].`,
+            R`نهاية [[search]].`
           ],
-          sol: R`لـ [[21:30Z]] يوم ٢٩ سبتمبر: القاهرة ٣٠ سبتمبر 12:30 ص، ولندن ٢٩ سبتمبر 10:30 م (لندن UTC+1 صيفًا)، ونيويورك ٢٩ سبتمبر 5:30 م (UTC-4). وفي ١٥ يناير القاهرة بقت 11:30 م نفس اليوم: الفرق بقى ساعتين مش ٣، لأن التوقيت الصيفي خلص. ولا سطر في الكود اتغير، و Intl هو اللي عارف.
+          sol: R`[[const res = await fetch("/not-found")]] بعدها [[res.ok]] بـ false و [[res.status]] بـ 404، ومفيش error اترمى: fetch بترفض بس لو الطلب نفسه موصلش (نت واقع، DNS، CORS). أي رد من السيرفر، حتى 404 أو 500، يعتبر نجاح. عشان كده الـ [[if (!res.ok) throw]] في الدالة ضروري.
 
-[[isTodayInCairo]]: حوّل اللحظة واللحظة الحالية لنص تاريخ بتوقيت القاهرة بـ [[en-CA]] وقارن النصين. متقارنش بـ [[getDate()]]: ده بتوقيت الجهاز. ومتطرحش [[Date.now() - date < 86400000]]: دي «آخر ٢٤ ساعة» مش «النهارده».`,
-          solCode: R`const cairoDay = new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Cairo" });
-const isTodayInCairo = (date, now = new Date()) => cairoDay.format(date) === cairoDay.format(now);
-const t = new Date("2026-09-29T21:30:00Z");
-for (const tz of ["Africa/Cairo", "Europe/London", "America/New_York"]) {
-  console.log(tz, t.toLocaleString("ar-EG-u-nu-latn", { timeZone: tz, dateStyle: "medium", timeStyle: "short" }));
-}
-console.log(isTodayInCairo(t, new Date("2026-09-30T08:00:00Z")), isTodayInCairo(t, new Date("2026-09-29T20:00:00Z")));`
+[[AbortSignal.timeout(1)]] بتطلع error اسمه [[TimeoutError]] (في Node الرسالة [[The operation was aborted due to timeout]]، وفي Chrome [[signal timed out]]). لاحظ إنه مش [[AbortError]]: الـ catch في search بيتجاهل AbortError بس، فالـ timeout هيوصل لليوزر كـ error، وده المطلوب (إلغاء مقصود ≠ timeout).`
         },
         {
-          cmd: "Intl.RelativeTimeFormat",
-          title: "تكتب «من ٥ دقايق» و «امبارح» إزاي من غير مكتبة؟",
-          desc: R`[[Intl.RelativeTimeFormat(locale, { numeric: "auto" })]] بيحوّل رقم ووحدة لجملة: [[format(-1, "day")]] بالعربي «أمس»، و [[format(-3, "hour")]] «قبل 3 ساعات»، و [[format(2, "week")]] «خلال أسبوعين». السالب للماضي والموجب للمستقبل. و [[numeric: "auto"]] هو اللي بيخلي -1 day «أمس» بدل «قبل يوم واحد».
+          cmd: "async في loops",
+          title: "ليه await جوه forEach مش بيستنى؟",
+          desc: R`[[arr.forEach(async (x) => await save(x))]] مبتستناش حاجة: forEach بتنادي الـ callback وبتتجاهل الـ Promise اللي راجع، فالكود اللي بعدها بيشتغل قبل ما أي save يخلص، والأخطاء بتضيع.
 
-هو مبيحسبش الفرق، انت اللي بتحسبه: الفرق بالثواني، وبعدين تختار أكبر وحدة مناسبة (سنة، شهر، أسبوع، يوم، ساعة، دقيقة)، وتقسم عليها. ده كل اللي [[timeAgo]] بتعمله.`,
-          example: R`const rtf = new Intl.RelativeTimeFormat("ar", { numeric: "auto" });
-console.log(rtf.format(-1, "day"), "|", rtf.format(-3, "hour"), "|", rtf.format(2, "week"));
-const UNITS = [["year", 31536000], ["month", 2592000], ["week", 604800], ["day", 86400], ["hour", 3600], ["minute", 60]];
-function timeAgo(date, now = Date.now()) {
-  const sec = Math.round((date - now) / 1000);
-  for (const [unit, size] of UNITS) {
-    if (Math.abs(sec) >= size) return rtf.format(Math.round(sec / size), unit);
-  }
-  return rtf.format(sec, "second");
+لو عايز واحد ورا واحد: [[for...of]] مع await. ولو عايزهم مع بعض: [[Promise.all(arr.map(async ...))]]. ولو كتير وعايز حد أقصى في نفس الوقت: batches أو مكتبة زي p-limit.`,
+          example: R`const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+const save = async (id) => { await wait(100); console.log("saved", id); return id; };
+const ids = [1, 2, 3];
+ids.forEach(async (id) => { await save(id); });
+console.log("forEach خلصت؟ لأ، لسه محدش اتحفظ");
+for (const id of ids) {
+  await save(id);
 }
-const now = Date.now();
-console.log(timeAgo(now - 5 * 60 * 1000), "|", timeAgo(now - 26 * 3600 * 1000));
-console.log(timeAgo(now + 3 * 86400 * 1000), "|", timeAgo(now - 10 * 1000));`,
-          try: R`عدّل [[timeAgo]] بحيث أي حاجة أقل من 45 ثانية تطلع «الآن» (جرّب [[rtf.format(0, "second")]]). وبعدين خليها ترجّع التاريخ نفسه (بـ Intl.DateTimeFormat) لو الفرق أكتر من أسبوع، زي ما السوشيال ميديا بتعمل. وجرّب [[new Intl.RelativeTimeFormat("ar-EG", { numeric: "auto" })]] بدل [["ar"]]: إيه الفرق في الأرقام؟`,
+const saved = await Promise.all(ids.map((id) => save(id)));
+for (let i = 0; i < ids.length; i += 2) {
+  await Promise.all(ids.slice(i, i + 2).map(save));
+}
+const all = await Array.fromAsync(ids, async (id) => save(id));`,
+          try: R`حط [[console.time("t")]] و [[console.timeEnd("t")]] حوالين كل طريقة وقارن الوقت: for...of حوالي 300ms، و Promise.all حوالي 100ms. وبعدين خلي save ترمي error لـ id 2 وشوف مين بيمسكه ومين لأ.`,
+          practice: [
+            { lvl: 'سريع', t: R`صلّح الكود البايظ: [[async function saveAll(ids) { ids.forEach(async (id) => { await save(id); }); console.log("تم حفظ الكل"); }]] (بـ save اللي في الدرس). اليوزر بيشوف «تم حفظ الكل» قبل ما أي حاجة تتحفظ. صلّحها مرة ورا بعض ومرة مع بعض.`, done: R`قبل التصليح «تم حفظ الكل» أول سطر وبعدها [[saved 1]] و [[saved 2]] و [[saved 3]]. بعد التصليح «تم حفظ الكل» آخر سطر في الحالتين: بـ [[for...of]] في حوالي 300ms، وبـ [[await Promise.all(ids.map(save))]] في حوالي 100ms.` },
+            { lvl: 'تطبيق', t: R`ابني [[inBatches(items, size, fn)]] بتشغّل كل [[size]] مع بعض بـ Promise.all، والدفعة اللي بعدها بعد ما اللي قبلها تخلص، وترجّع كل النتايج بنفس ترتيب الـ input. جرّبها على 5 عناصر و size 2، و fn بتستنى 100ms وترجّع [[x * 10]]، وعلى array فاضية.`, done: R`النتيجة [[[ 10, 20, 30, 40, 50 ]]] بالترتيب في حوالي 300ms (٣ دفعات: ٢ و ٢ و ١)، مش 500 ولا 100. والـ array الفاضية بترجّع [[[]]] من غير ما تنادي fn.` },
+            { lvl: 'تحدي', t: R`محاكاة كاشير: اكتب [[pool(items, limit, fn)]]: أول ما واحد يخلص اللي بعده يبدأ على طول، فدايمًا شغالين [[limit]] (زي ٣ كاشير قدامهم طابور). حط عدّاد [[active]] بيزيد قبل الـ await ويقل بعده واحفظ أكبر قيمة. خلّي الزباين الفردي ياخدوا 150ms والزوجي 100ms.`, done: R`النتايج بنفس ترتيب الـ input حتى لو الزباين خلصوا بترتيب تاني، وأكبر [[active]] بيساوي [[limit]] بالظبط ومبيعدّيهوش. ومع [[limit]] أكبر من عدد العناصر، أكبر active بيساوي عدد العناصر ومفيش worker بيعلّق.` },
+          ],
           flag: "script",
           deep: {
-            why: "«من ٥ دقايق» أسهل في القراية من «29/09/2026 23:25» في التعليقات والإشعارات والرسايل. وزمان كان الحل moment.js كلها (مكتبة ضخمة) عشان الجملة دي. دلوقتي هي جوه اللغة، ومترجمة لكل لغة صح (المثنى في العربي: «خلال أسبوعين» مش «خلال 2 أسبوع»).",
-            how: R`الوحدات المسموحة: [[year]] و [[quarter]] و [[month]] و [[week]] و [[day]] و [[hour]] و [[minute]] و [[second]]. والرسالة متبنية من قواعد اللغة في ICU (نفس اللي تحت Intl.DateTimeFormat)، فالعربي بيطلع «قبل 5 دقائق» و «قبل 10 ثوانِ» بالمفرد والجمع الصح.
+            why: "bug منتشر جدًا: «بحفظ كل العناصر وبعدين أبعت رسالة نجاح»، والرسالة بتطلع قبل الحفظ، أو الـ error بيضيع ومحدش يعرف إن نص العناصر متحفظتش.",
+            how: R`[[forEach]] و [[map]] و [[filter]] مبيعرفوش حاجة عن Promises. الـ async callback بيرجّع Promise، و forEach بترميه. و [[filter(async ...)]] أسوأ: كل Promise object truthy، فكل العناصر بتعدّي.
 
-الـ locale [["ar"]] في Node بيطلع أرقام لاتيني، و [["ar-EG"]] بيطلع أرقام مشرقية (٥)، وتقدر تفرض أي واحد بـ [[-u-nu-latn]] أو [[-u-nu-arab]].
+[[for...of]] جوه async function بيستنى كل لفة، فالعمليات ورا بعض. مفيد لما الترتيب مهم، أو كل واحدة معتمدة على اللي قبلها، أو عايز ترحم السيرفر.
 
-[[timeAgo]] بتفترض إن الشهر ٣٠ يوم والسنة ٣٦٥: تقريب مقبول للعرض بس مش للحسابات. و [[Math.round]] بتخلي ٢٦ ساعة «أمس» (يوم واحد)، و ٣٦ ساعة «قبل يومين»، وده غالبًا اللي اليوزر متوقعه. لو عايز «أمس» تبقى أمس بالتقويم فعلًا (مش ٢٤ ساعة) محتاج تقارن التواريخ بتوقيت اليوزر (الدرس اللي فات).
+[[Promise.all(arr.map(...))]] بيبدأ الكل مرة واحدة ويستناهم. أسرع، بس ممكن يضرب rate limit أو connection pool في قاعدة البيانات.
 
-والنص ده بيتغير مع الوقت، فلو الصفحة مفتوحة ساعة لازم تحدّثه ([[setInterval]] كل دقيقة)، ويُفضّل تحط التاريخ الكامل في [[<time datetime="...">]] و [[title]] عشان اليوزر يعرف الوقت بالظبط.`,
-            when: R`تعليقات، وإشعارات، و «آخر ظهور»، و «اتعدّل من ...». وللمواعيد المهمة (فاتورة، حجز، مهلة) اعرض التاريخ الكامل، مش «من ٣ أيام».`,
-            mistakes: R`تحسبه في السيرفر (SSR) وتبعته نص ثابت: هيبقى قديم، وهيعمل hydration mismatch في Next.js لو اتحسب تاني في المتصفح بثانية مختلفة. وتكتب الجملة بإيدك ([[$__bt منذ $__{n} دقيقة$__bt]]) فتطلع «منذ 2 دقيقة» و «منذ 11 دقيقة» غلط نحويًا. وتنسى المستقبل (مواعيد جاية) فتطلع «قبل -3 أيام».`
+الـ batches حل وسط: كل مرة n بس. و [[Array.fromAsync]] (ES2026، بس موجودة في Node 22 والمتصفحات الحديثة من بدري) بتعمل array من async iterable أو بتستنى كل عنصر بالترتيب.
+
+و [[for await (const x of stream)]] للـ async iterables زي streams وقراية ملف سطر سطر.`,
+            when: R`for...of للترتيب أو الاعتمادية. Promise.all للعمليات المستقلة القليلة. batches للكتير. ومتستخدمش forEach مع async أبدًا.`,
+            mistakes: R`async في forEach أو filter. و [[await]] جوه for...of لعمليات مستقلة فتبطّأ من غير سبب. و Promise.all على ١٠ آلاف insert. وفي الانترفيو: «إيه المشكلة في الكود ده؟» على forEach مع await.`
           },
-          teach: R`## المثال بيعمل إيه
+          teach: R`## الكود ده بيعمل إيه؟
 
-جزئين: الأول بيوريك [[Intl.RelativeTimeFormat]] لوحده (رقم + وحدة ← جملة)، والتاني دالة [[timeAgo]] بتحسب الفرق بين لحظتين وتختار الوحدة المناسبة. الناتج كله من Node 24 على Windows.
+بيحفظ ٣ عناصر بدالة [[save]] بتاخد 100ms، بـ ٥ طرق: [[forEach]] (غلط)، و [[for...of]] (واحد ورا واحد)، و [[Promise.all]] (كلهم مع بعض)، و batches (اتنين اتنين)، و [[Array.fromAsync]]. اتشغّل في Node 24 كملف [[.mjs]]، وقدام كل سطر مطبوع الوقت من أول البرنامج.
 
 ---
 
-## ١. الـ formatter
+## ١. التجهيز
 
-~~~text app.js
-const rtf = new Intl.RelativeTimeFormat("ar", { numeric: "auto" });
-console.log(rtf.format(-1, "day"), "|", rtf.format(-3, "hour"), "|", rtf.format(2, "week"));
+~~~text app.mjs
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+const save = async (id) => { await wait(100); console.log("saved", id); return id; };
+const ids = [1, 2, 3];
 ~~~
 
-- [[Intl.RelativeTimeFormat]]: من عيلة [[Intl]] (الأدوات اللي بتختلف من لغة للغة). «Relative» يعني نسبي: الوقت بالنسبة لدلوقتي.
-- [["ar"]]: الـ locale، عربي من غير بلد.
-- [[numeric: "auto"]]: لو فيه كلمة خاصة للرقم ده استخدمها («أمس» و «غدًا» و «الآن»). الافتراضي [["always"]]: رقم دايمًا.
-- [[rtf.format(رقم, وحدة)]]: السالب ماضي، والموجب مستقبل.
+- [[wait(ms)]]: Promise بيخلص بعد ms (درس Promise).
+- [[save]]: async arrow function: بتستنى 100ms (كأنها بتكلم قاعدة بيانات)، وتطبع، وترجّع الـ id.
+
+---
+
+## ٢. [[forEach]]: مبتستناش
+
+~~~text app.mjs
+ids.forEach(async (id) => { await save(id); });
+console.log("forEach خلصت؟ لأ، لسه محدش اتحفظ");
+~~~
+
+- [[forEach]] بتنادي الـ callback لكل عنصر. الـ callback هنا [[async]]، فبيرجّع Promise.
+- بس forEach **بترمي** اللي الـ callback بيرجّعه، ومبتستناش حاجة. هي نفسها بترجّع [[undefined]] (طبعناها).
 
 ~~~text الناتج
-أمس | قبل 3 ساعات | خلال أسبوعين
+   2ms forEach خلصت؟ لأ، لسه محدش اتحفظ | forEach رجّعت: undefined
+ 109ms saved 1
+ 110ms saved 2
+ 110ms saved 3
 ~~~
 
-لاحظ [["خلال أسبوعين"]]: الـ formatter عارف المثنى في العربي، مش [["خلال 2 أسبوع"]]. وده سبب إنك متكتبش الجملة بإيدك.
-
-### الفرق بتاع [[numeric]]
-
-~~~text app.js
-const rtfA = new Intl.RelativeTimeFormat("ar");
-console.log(rtfA.format(-1, "day"), "|", rtf.format(0, "second"), "|", rtfA.format(0, "second"), "|", rtf.format(-2, "day"));
-~~~
-
-~~~text الناتج
-قبل يوم واحد | الآن | خلال 0 ثانية | أول أمس
-~~~
-
-من غير [["auto"]] بتطلع «قبل يوم واحد» و «خلال 0 ثانية». ومعاه «الآن» و «أول أمس».
-
-### الوحدات
-
-[[year]] و [[quarter]] و [[month]] و [[week]] و [[day]] و [[hour]] و [[minute]] و [[second]] (والجمع زي [["days"]] بيتقبل كمان). أي حاجة تانية بترمي error:
-
-~~~text الناتج لـ rtf.format(-1, "decade")
-RangeError: Invalid unit argument for Intl.RelativeTimeFormat.prototype.format() 'decade'
-~~~
+السطر اللي بعد forEach اتطبع عند 2ms، قبل أي حفظ. والـ ٣ اتحفظوا مع بعض بعد كده، ومحدش استناهم.
 
 ---
 
-## ٢. جدول الوحدات
+## ٣. [[for...of]]: واحد ورا واحد
 
-~~~text app.js
-const UNITS = [["year", 31536000], ["month", 2592000], ["week", 604800], ["day", 86400], ["hour", 3600], ["minute", 60]];
-~~~
-
-array فيها arrays صغيرة، كل واحدة [[[اسم الوحدة, حجمها بالثواني]]]، **من الأكبر للأصغر** (الترتيب مهم، هتشوف ليه).
-
-| الوحدة | الحساب | ثواني |
-|---|---|---|
-| minute | 60 | 60 |
-| hour | 60 × 60 | 3,600 |
-| day | 24 × 3600 | 86,400 |
-| week | 7 × 86400 | 604,800 |
-| month | 30 × 86400 | 2,592,000 |
-| year | 365 × 86400 | 31,536,000 |
-
-الشهر ٣٠ يوم والسنة ٣٦٥ تقريب. مقبول لجملة زي «قبل ٣ شهور»، مش لحسابات.
-
----
-
-## ٣. دالة [[timeAgo]] سطر سطر
-
-~~~text app.js
-function timeAgo(date, now = Date.now()) {
-  const sec = Math.round((date - now) / 1000);
-  for (const [unit, size] of UNITS) {
-    if (Math.abs(sec) >= size) return rtf.format(Math.round(sec / size), unit);
-  }
-  return rtf.format(sec, "second");
+~~~text app.mjs
+for (const id of ids) {
+  await save(id);
 }
 ~~~
 
-1. **[[now = Date.now()]]**: parameter بقيمة افتراضية. لو مبعتّوش، بياخد اللحظة الحالية كرقم ms. ولو بعته (في التجارب) تقدر تثبّت «دلوقتي».
-2. **[[(date - now) / 1000]]**: الطرح بيحوّل الاتنين لـ ms (حتى لو [[date]] كان Date، الطرح بيحوّله رقم). والقسمة على 1000 = ثواني. و [[Math.round]] بتقرّب لأقرب رقم صحيح. الماضي بيطلع **سالب**.
-3. **[[for (const [unit, size] of UNITS)]]**: بيلف على الجدول، وكل عنصر بيتفك (destructuring) لاسمين: [[unit]] و [[size]].
-4. **[[Math.abs(sec) >= size]]**: [[Math.abs]] بتشيل السالب (abs = absolute، القيمة المطلقة)، عشان الماضي والمستقبل يتقارنوا بنفس الطريقة. أول وحدة الفرق أكبر منها أو يساويها هي اللي نختارها، وعشان كده الجدول من الأكبر.
-5. **[[Math.round(sec / size)]]**: كام وحدة؟ والإشارة (سالب أو موجب) بتفضل زي ما هي، فالـ formatter يعرف ماضي ولا مستقبل.
-6. **[[return]]**: أول ما نلاقي الوحدة نرجع على طول، والـ loop بيقف.
-7. **السطر الأخير**: لو ولا وحدة نفعت (أقل من دقيقة)، رجّع بالثواني.
-
----
-
-## ٤. التجربة
-
-~~~text app.js
-const now = Date.now();
-console.log(timeAgo(now - 5 * 60 * 1000), "|", timeAgo(now - 26 * 3600 * 1000));
-console.log(timeAgo(now + 3 * 86400 * 1000), "|", timeAgo(now - 10 * 1000));
-~~~
-
-بنثبّت [[now]] مرة واحدة، ونعمل لحظات قبلها وبعدها بالـ ms ([[5 * 60 * 1000]] = ٥ دقايق). نتتبّع الـ ٤ نداءات:
-
-| النداء | [[sec]] | أول وحدة تنفع | [[Math.round(sec / size)]] | الناتج |
-|---|---|---|---|---|
-| قبل ٥ دقايق | −300 | minute (60) | −5 | قبل 5 دقائق |
-| قبل ٢٦ ساعة | −93,600 | day (86,400) | −1.08 ← −1 | أمس |
-| بعد ٣ أيام | 259,200 | day | 3 | خلال 3 أيام |
-| قبل ١٠ ثواني | −10 | ولا واحدة | (بالثواني) −10 | قبل 10 ثوانِ |
+- [[for (const id of ids)]]: لف على عناصر الـ array، وكل لفة id بقيمة عنصر.
+- [[await]] جوه الـ loop: الـ loop **نفسها** بتقف لحد ما save تخلص، وبعدين تروح للفة اللي بعدها.
 
 ~~~text الناتج
-قبل 5 دقائق | أمس
-خلال 3 أيام | قبل 10 ثوانِ
+ 266ms saved 1
+ 376ms saved 2
+ 484ms saved 3
 ~~~
 
-لاحظ إن ٢٦ ساعة طلعت «أمس» بسبب [[Math.round]]. و «أمس» هنا معناها «حوالي يوم»، مش «امبارح في التقويم».
+كل واحد بعد اللي قبله بـ 100ms تقريبًا: 300ms كلهم. ده الصح لو الترتيب مهم، أو كل عملية محتاجة اللي قبلها.
 
 ---
 
-## ٥. الحل (solCode): «الآن» وتاريخ كامل بعد أسبوع
+## ٤. [[Promise.all]] مع [[map]]: كلهم مع بعض
 
-~~~text app.js
-const rtf = new Intl.RelativeTimeFormat("ar-EG", { numeric: "auto" });
-const dateFmt = new Intl.DateTimeFormat("ar-EG", { dateStyle: "long", timeZone: "Africa/Cairo" });
-const UNITS = [["day", 86400], ["hour", 3600], ["minute", 60]];
-function timeAgo(date, now = Date.now()) {
-  const sec = Math.round((date - now) / 1000);
-  if (Math.abs(sec) < 45) return rtf.format(0, "second");
-  if (Math.abs(sec) >= 604800) return dateFmt.format(date);
-  for (const [unit, size] of UNITS) {
-    if (Math.abs(sec) >= size) return rtf.format(Math.round(sec / size), unit);
-  }
-  return rtf.format(Math.round(sec / 60), "minute");
+~~~text app.mjs
+const saved = await Promise.all(ids.map((id) => save(id)));
+~~~
+
+من جوه لبرّه:
+
+1. [[ids.map((id) => save(id))]]: map بتنادي save لكل عنصر **فورًا**، وبترجّع array فيها ٣ Promises. (map زي forEach مبتستناش، بس على الأقل بترجّع الـ Promises.)
+2. [[Promise.all([...])]]: Promise واحد بيستنى الـ ٣.
+3. [[await]]: استنى، وهات النتايج بالترتيب.
+
+~~~text الناتج
+ 592ms saved 1
+ 592ms saved 2
+ 593ms saved 3
+ 593ms saved = [ 1, 2, 3 ]
+~~~
+
+الـ ٣ في نفس اللحظة: 100ms كلهم. أسرع، بس لو عندك ١٠ آلاف عنصر، هتبعت ١٠ آلاف طلب في نفس الوقت.
+
+---
+
+## ٥. batches: اتنين اتنين
+
+~~~text app.mjs
+for (let i = 0; i < ids.length; i += 2) {
+  await Promise.all(ids.slice(i, i + 2).map(save));
 }
 ~~~
 
-الفرق عن المثال:
+- [[for (let i = 0; i < ids.length; i += 2)]]: loop عادية بس بتزوّد i اتنين كل لفة: i = 0 ثم 2.
+- [[ids.slice(i, i + 2)]]: هات العناصر من i لحد قبل i + 2. فأول لفة [[slice(0, 2)]] = 1 و 2، والتانية [[slice(2, 4)]] = 3 بس (مفيش رابع).
+- [[.map(save)]]: نفس [[.map((id) => save(id))]]، بنبعت الدالة نفسها.
+- [[await Promise.all(...)]]: استنى الدفعة كلها قبل اللي بعدها.
 
-- [["ar-EG"]] بدل [["ar"]]: أرقام مشرقية (٥ مش 5).
-- أقل من 45 ثانية: [[rtf.format(0, "second")]] = «الآن».
-- أسبوع أو أكتر: التاريخ نفسه بـ [[Intl.DateTimeFormat]]، فالجدول بقى فيه day و hour و minute بس.
-- من 45 لـ 59 ثانية: مفيش وحدة تنفع في الـ loop، فالسطر الأخير بيقرّبها لدقيقة.
+~~~text الناتج
+ 702ms saved 1
+ 702ms saved 2
+ 812ms saved 3
+~~~
 
-~~~text app.js
-const now = Date.now();
-console.log(timeAgo(now - 20 * 1000), "|", timeAgo(now - 50 * 1000), "|", timeAgo(now - 5 * 3600 * 1000));
-console.log(timeAgo(new Date("2026-09-12T10:00:00Z"), new Date("2026-09-29T10:00:00Z")));
+1 و 2 مع بعض، وبعد 100ms الـ 3. حل وسط: سريع، ومش بتضرب السيرفر بكل حاجة مرة واحدة.
+
+---
+
+## ٦. [[Array.fromAsync]]
+
+~~~text app.mjs
+const all = await Array.fromAsync(ids, async (id) => save(id));
+~~~
+
+بتلف على ids، وتنادي الدالة لكل عنصر، و**تستنى كل واحد قبل اللي بعده**، وترجّع array بالنتايج:
+
+~~~text الناتج
+ 921ms saved 1
+1030ms saved 2
+1139ms saved 3
+1139ms all = [ 1, 2, 3 ]
+~~~
+
+يعني زي for...of بالظبط، بس بترجّع array في سطر واحد.
+
+---
+
+## ٧. لو save فشلت (التجربة والـ solCode)
+
+خلّينا save ترمي error لـ id 2:
+
+~~~text app.mjs
+try {
+  for (const id of ids) await save(id);
+} catch (e) { console.log("for...of:", e.message); }
+try {
+  await Promise.all(ids.map(save));
+} catch (e) { console.log("Promise.all:", e.message); }
 ~~~
 
 ~~~text الناتج
-الآن | قبل دقيقة واحدة | قبل ٥ ساعات
-١٢ سبتمبر ٢٠٢٦
+saved 1
+for...of: فشل حفظ 2
+saved 1
+Promise.all: فشل حفظ 2
+saved 3
 ~~~
 
-50 ثانية: [[Math.round(-50 / 60)]] = −1، فطلعت «قبل دقيقة واحدة». والسطر التاني: الفرق ١٧ يوم (أكتر من أسبوع)، فطلع التاريخ.
+- **for...of**: الـ catch مسك الـ error، والـ loop وقفت، فـ 3 **متحفظش**.
+- **Promise.all**: الـ catch مسك أول فشل، بس [[saved 3]] اتطبعت **بعده**: الـ ٣ كانوا بدأوا خلاص، و Promise.all بتفشل من غير ما تلغي الباقي.
+
+وجرّبنا **forEach** بنفس الـ save جوه try:
+
+~~~text الناتج: Node
+مفيش error هنا
+saved 1
+file:///C:/Users/ali/code/app.mjs:2
+...
+Error: فشل حفظ 2
+
+Node.js v24.19.0
+~~~
+
+الـ try **مامسكش حاجة** (السطر اللي بعد forEach اتطبع عادي)، والـ error طلع unhandled rejection، و Node قفل البرنامج بـ exit code 1 قبل ما يوصل لـ saved 3. وفي Chrome نفس الكود طبع [[saved 1]] و [[saved 3]]، والـ error ظهر أحمر في Console ومحدش مسكه.
 
 ---
 
 ## الخلاصة
 
-| الحتة | دورها |
-|---|---|
-| [[Intl.RelativeTimeFormat(locale, { numeric: "auto" })]] | رقم + وحدة ← جملة صح نحويًا |
-| السالب / الموجب | ماضي / مستقبل |
-| [[timeAgo]] | انت اللي بتحسب الفرق وتختار الوحدة، الـ formatter بيكتب بس |
-| الجدول من الأكبر للأصغر | عشان أول وحدة تنفع تبقى الأنسب |
+| الطريقة | الوقت (3 × 100ms) | الترتيب | الـ error |
+|---|---|---|---|
+| [[forEach(async ...)]] | مبتستناش خالص | مع بعض ومحدش مستني | بيضيع (unhandled) |
+| [[for...of]] + await | ~300ms | واحد ورا واحد | try بيمسكه والباقي يقف |
+| [[Promise.all(map)]] | ~100ms | مع بعض | try بيمسكه، والباقي يكمّل |
+| batches | ~200ms | n في المرة | زي Promise.all جوه كل دفعة |
+| [[Array.fromAsync]] | ~300ms | واحد ورا واحد | try بيمسكه والباقي يقف (اتجرّبت) |
 
-والجملة دي بتقدم مع الوقت: لو الصفحة مفتوحة، حدّثها كل دقيقة.`,
+- **متستخدمش forEach مع async أبدًا**. ونفس المشكلة في [[filter(async ...)]]: جرّبناها و رجّعت الـ ٣ عناصر كلهم، لأن كل Promise بيعتبر true.`,
           lines: [
-            R`بيعمل formatter للوقت النسبي بالعربي. [[numeric: "auto"]] بيخليه يستخدم كلمات زي «أمس» و«غدًا» و«الآن» لما تنفع، ومن غيره (الافتراضي [["always"]]) هيقول «قبل يوم واحد».`,
-            R`[[format]] بتاخد رقم ووحدة: السالب ماضي والموجب مستقبل. فبيطبع [[أمس | قبل 3 ساعات | خلال أسبوعين]]، والمثنى والجمع بيتظبطوا لوحدهم. بس هو مبيحسبش فرق بين تاريخين: انت اللي لازم تديله الرقم والوحدة، وده شغل الدالة اللي تحت.`,
-            R`جدول الوحدات من الأكبر للأصغر، وجنب كل وحدة عدد ثوانيها: السنة ٣٦٥ يوم والشهر ٣٠ يوم. الأرقام دي **تقريبية**، وكفاية لـ «من قد إيه» في كومنت أو إشعار، مش لحساب فواتير أو أعمار.`,
-            R`[[timeAgo]] بتاخد التاريخ اللي عايزين نوصفه، و [[now]] قيمتها الافتراضية [[Date.now()]]. خلّيناها باراميتر عشان في الاختبارات تقدر تثبّت «دلوقتي» وتاخد نفس الناتج كل مرة.`,
-            R`الفرق بالثواني: طرح تاريخ من تاريخ بيدّي milliseconds، فبنقسم على ١٠٠٠ ونقرّب. والإشارة مهمة: سالب لو التاريخ في الماضي وموجب لو في المستقبل، وده بالظبط اللي [[format]] مستنياه.`,
-            R`بنلف على الوحدات بالترتيب، وكل عنصر بنفكّه لاسم الوحدة ([[unit]]) وعدد ثوانيها ([[size]]). البداية من الأكبر مهمة: لو بدأنا بالدقيقة كان أي فرق هيطلع «قبل ٣٠٠٠ دقيقة».`,
-            R`أول وحدة الفرق أكبر منها أو يساويها (بـ [[Math.abs]] عشان السالب) هي الوحدة المناسبة: بنقسم عليها ونقرّب ونرجّع النص على طول. فـ ٢٦ ساعة بتبقى يوم واحد وتطلع «أمس».`,
-            R`نهاية الـ [[for]].`,
-            R`لو اللفة خلصت من غير ما نرجع، يبقى الفرق أقل من دقيقة فبنعرضه بالثواني. ولو الفرق صفر بالظبط هيطبع «الآن» بسبب [[auto]].`,
-            R`نهاية [[timeAgo]].`,
-            R`بناخد «دلوقتي» مرة واحدة كرقم milliseconds، وكل التجارب تحت بتطرح منه أو تزوّد عليه، فكلها بتتقاس من نفس اللحظة.`,
-            R`بيطبع [[قبل 5 دقائق | أمس]]: ٥ دقايق في الماضي وقفت عند وحدة الدقيقة، و ٢٦ ساعة اتقرّبت ليوم واحد فطلعت «أمس» مش «قبل 26 ساعة».`,
-            R`بيطبع [[خلال 3 أيام | قبل 10 ثوانِ]]: الموجب بيدّي «خلال» للمستقبل، و ١٠ ثواني أقل من دقيقة فوصلت للسطر الأخير في [[timeAgo]].`,
+            R`[[wait]] بترجّع Promise بيخلص بعد ms، وبنستخدمها نقلّد وقت حفظ حقيقي على سيرفر.`,
+            R`[[save]] حفظ وهمي: بيستنى ١٠٠ms، يطبع «saved» والـ id، ويرجّعه. كده نشوف بالطباعة الترتيب والوقت لكل طريقة loop.`,
+            R`٣ ids هنحفظهم بأكتر من طريقة ونقارن.`,
+            R`[[forEach]] بتنادي الدالة لكل عنصر بس مبتستناش الـ Promise اللي بترجّعه، فالتلاتة بيبدأوا مع بعض والـ loop بتخلص على طول. ومينفعش تعمل [[await]] على [[forEach]] نفسها لأنها بترجّع [[undefined]].`,
+            R`السطر ده بيتطبع قبل أي «saved»، وده الدليل إن [[forEach]] مستنتش. لو بعدها كود معتمد إن الحفظ خلص، هيشتغل على داتا لسه متحفظتش.`,
+            R`[[for...of]] بتحترم [[await]]: اللفة الجاية مش بتبدأ غير لما اللي قبلها تخلص. استخدمها لما الترتيب مهم أو السيرفر مش هيستحمل طلبات كتير مع بعض.`,
+            R`كل حفظ بيستنى اللي قبله، فالتلاتة بياخدوا ٣٠٠ms تقريبًا، وبيتطبعوا 1 و 2 و 3 بالترتيب.`,
+            R`نهاية [[for...of]].`,
+            R`[[map]] بتبدأ التلاتة مع بعض وترجّع array Promises، و [[Promise.all]] تستناهم. الوقت ١٠٠ms تقريبًا بدل ٣٠٠، والنتايج بترتيب الـ ids. بس لو واحد فشل الكل بيترفض.`,
+            R`batches: [[i]] بيزيد ٢ كل لفة، فبنشتغل على دفعات ٢ في المرة. ده الحل الوسط لما الـ ids كتير وعايز سرعة من غير ما تضرب السيرفر بألف طلب مرة واحدة.`,
+            R`[[slice]] بتاخد الدفعة الحالية (عنصرين)، و [[Promise.all]] بتشغّلهم مع بعض، و [[await]] بيستناهم قبل الدفعة اللي بعدها.`,
+            R`نهاية loop الـ batches.`,
+            R`[[Array.fromAsync]] بتعدّي على العناصر وتستنى دالة الـ map لكل عنصر قبل اللي بعده (ورا بعض زي [[for...of]])، وترجّع array النتايج. موجودة في Node 22 والمتصفحات الحديثة.`
           ],
-          sol: R`[[rtf.format(0, "second")]] مع [[numeric: "auto"]] بتطلع «الآن». فحط في أول الدالة [[if (Math.abs(sec) < 45) return rtf.format(0, "second");]].
+          sol: R`مع [[console.time]]: forEach بتقول حوالي 0ms لأنها مبتستناش أي حاجة (الحفظ بيحصل بعدين)، و for...of حوالي 300ms، و Promise.all حوالي 100ms.
 
-وللأسبوع: [[if (Math.abs(sec) >= 604800) return dateFmt.format(date)]] قبل الـ loop، والناتج مع [[dateStyle: "long"]] مثلًا «١٢ سبتمبر ٢٠٢٦» (مع [["medium"]] بالعربي بيطلع أرقام بس «١٢‏/٠٩‏/٢٠٢٦»).
-
-[[ar-EG]] بيطلع «قبل ٥ دقائق» بأرقام مشرقية، و [["ar"]] بيطلع «قبل 5 دقائق». الاتنين صح، اختار حسب تصميم موقعك وخليه ثابت في كل الصفحات.`,
-          solCode: R`const rtf = new Intl.RelativeTimeFormat("ar-EG", { numeric: "auto" });
-const dateFmt = new Intl.DateTimeFormat("ar-EG", { dateStyle: "long", timeZone: "Africa/Cairo" });
-const UNITS = [["day", 86400], ["hour", 3600], ["minute", 60]];
-function timeAgo(date, now = Date.now()) {
-  const sec = Math.round((date - now) / 1000);
-  if (Math.abs(sec) < 45) return rtf.format(0, "second");
-  if (Math.abs(sec) >= 604800) return dateFmt.format(date);
-  for (const [unit, size] of UNITS) {
-    if (Math.abs(sec) >= size) return rtf.format(Math.round(sec / size), unit);
-  }
-  return rtf.format(Math.round(sec / 60), "minute");
-}
-const now = Date.now();
-console.log(timeAgo(now - 20 * 1000), "|", timeAgo(now - 50 * 1000), "|", timeAgo(now - 5 * 3600 * 1000));
-console.log(timeAgo(new Date("2026-09-12T10:00:00Z"), new Date("2026-09-29T10:00:00Z")));`
-        },
-        {
-          cmd: "date-fns و dayjs و Temporal",
-          title: "date-fns ولا dayjs ولا Temporal في 2026؟",
-          desc: R`Date مبيعرفش يعمل حسابات تقويم صح (زوّد شهر، أول الأسبوع، الفرق بالأيام) ومبيعرفش time zones غير توقيت الجهاز و UTC. عشان كده كان فيه مكتبات:
-
-[[date-fns]]: دوال صغيرة بتاخد Date وترجّع Date جديد ([[addMonths]] و [[format]] و [[differenceInCalendarDays]])، وبتستورد اللي محتاجه بس. و [[date-fns-tz]] أو [[@date-fns/tz]] للـ time zones. [[dayjs]]: API شبه moment.js القديمة ([[dayjs().add(1, "month")]]) وحجمها صغير، والـ time zones بـ plugin.
-
-و Temporal: الـ API الجديد جوه اللغة نفسها، بدل Date. أنواع منفصلة لكل معنى: [[Temporal.Instant]] (لحظة)، و [[PlainDate]] (تاريخ من غير وقت ولا zone، زي عيد ميلاد)، و [[ZonedDateTime]] (لحظة + zone، بيفهم التوقيت الصيفي)، و [[Duration]]. وكله immutable، والشهر من 1. وصل Stage 4 في TC39 سنة 2026 (جزء من ES2026)، وشغال في Firefox (من 139) و Chrome و Edge (من 144)، و Node 26 شغّله افتراضيًا. Safari وقت كتابة الدرس لسه مش في النسخة المستقرة، فللمتصفحات محتاج polyfill ([[@js-temporal/polyfill]] أو [[temporal-polyfill]]). اتأكد من caniuse قبل ما تعتمد عليه من غير polyfill.`,
-          example: R`import { Temporal } from "@js-temporal/polyfill";
-const jan31 = Temporal.PlainDate.from("2026-01-31");
-console.log(jan31.add({ months: 1 }).toString());
-const meeting = Temporal.ZonedDateTime.from("2026-10-29T12:00[Africa/Cairo]");
-console.log(meeting.add({ hours: 24 }).toString());
-console.log(meeting.add({ days: 1 }).toString());
-const created = Temporal.Instant.from("2026-09-29T21:30:00Z");
-console.log(created.toZonedDateTimeISO("Africa/Cairo").toPlainDate().toString());
-const left = Temporal.PlainDate.from("2026-09-29").until("2026-12-25");
-console.log(left.days, left.toString());`,
-          try: R`في فولدر تجربة: [[npm i @js-temporal/polyfill date-fns dayjs]]، واحفظ المثال كـ [[temporal.mjs]] وشغّله. وبعدين اكتب نفس الـ ٣ حسابات (٣١ يناير + شهر، والأيام لحد ٢٥ ديسمبر، وتاريخ اللحظة [[21:30Z]] في القاهرة) بـ date-fns، وقارن الكود.`,
-          flag: "script",
-          deep: {
-            why: "Date اتصمم في ١٠ أيام سنة 1995 ومليان مشاكل (الشهر من 0، mutable، مفيش zones). المكتبات حلّت ده لسنين، و Temporal هو الحل الرسمي. في 2026 انت في فترة انتقالية: لازم تعرف Date لأنه في كل حتة، ومكتبة للمشاريع اللي شغالة، و Temporal للي جاي.",
-            how: R`في المثال: [[PlainDate]] + شهر على ٣١ يناير بيقف على ٢٨ فبراير ([[overflow: "constrain"]] الافتراضي) مش ٣ مارس زي Date. وتقدر تقول [[{ overflow: "reject" }]] يرمي error بدل ما يخمّن.
-
-السطرين بتوع الاجتماع بيوضّحوا الفرق بين «٢٤ ساعة» و «يوم»: مصر بترجع من التوقيت الصيفي نص ليل الخميس ٢٩ أكتوبر 2026، فاليوم ده ٢٥ ساعة. [[add({ hours: 24 })]] بتوصل ١١ الصبح يوم ٣٠، و [[add({ days: 1 })]] بتوصل ١٢ الضهر زي ما اليوزر متوقع. Date مبيقدرش يفرق بينهم لأنه مش عارف الـ zone أصلًا.
-
-[[Instant]] ← [[toZonedDateTimeISO("Africa/Cairo")]] ← [[toPlainDate()]]: نفس «التاريخ في القاهرة» اللي عملناه بحيلة en-CA، بس صريح. و [[until]] بترجّع [[Duration]] ([[P87D]] بصيغة ISO 8601).
-
-الـ polyfill حجمه مش صغير، فلو المشروع بيتحمّل في Safari وهيحتاج حاجات بسيطة، date-fns لسه اختيار عملي. وفي Node 22 و 24 مفيش Temporal جوّه، فالـ polyfill لازم.`,
-            when: R`مشروع جديد في 2026: Temporal (مع polyfill للمتصفحات لحد ما Safari يدعمه) لو فيه حسابات zones ومواعيد بجد (حجوزات، جداول). مشروع شغال: خليك على المكتبة اللي فيه. حاجات بسيطة (عرض تاريخ، timeAgo): Intl لوحده كفاية ومفيش مكتبة. و moment.js في maintenance mode من 2020، متبدأش بيها.`,
-            mistakes: R`تخلط Date و Temporal في نفس الكود من غير تحويل واضح (بيتحوّلوا عن طريق [[Instant]] و [[epochMilliseconds]]). وتستخدم [[PlainDateTime]] لحاجة ليها توقيت (اجتماع): استخدم ZonedDateTime. وتعتمد إن Temporal موجود في المتصفح من غير ما تفحص. وتخزّن ZonedDateTime في الداتابيز كنص وتتوقع timestamptz يفهمه: خزّن [[Instant]] ([[toString()]] بـ Z) والـ zone في عمود لوحده لو محتاجه.`
-          },
-          teach: R`## المثال بيعمل إيه
-
-٣ حسابات Date بيغلط فيها أو مبيعرفش يعملها: «٣١ يناير + شهر»، و «بكرة نفس الميعاد» في يوم التوقيت الصيفي اتغيّر فيه، و «اللحظة دي في القاهرة يوم كام». وكلها بـ Temporal. وبعدين الحل بيعمل نفس الحسابات بـ date-fns و dayjs عشان تقارن.
-
-الكل اتشغّل بـ Node 24 على Windows، في فولدر تجربة فيه:
-
-~~~powershell
-npm i @js-temporal/polyfill date-fns dayjs
-~~~
-
-والنسخ اللي اتسطّبت: [[@js-temporal/polyfill@0.5.1]] و [[date-fns@4.4.0]] و [[dayjs@1.11.23]].
-
----
-
-## ١. [[import]]: ليه polyfill؟
-
-~~~text app.js
-import { Temporal } from "@js-temporal/polyfill";
-~~~
-
-- [[import { Temporal } from "..."]]: بيجيب حاجة اسمها [[Temporal]] من package. الأقواس [[{ }]] معناها «هات الحاجة اللي بالاسم ده بالظبط» (named import، درس [[import و export]]).
-- **polyfill** يعني كود مكتوب بـ JavaScript عادي بيعمل نفس الـ API الجديد، للأماكن اللي لسه مفيهاش. في Node 24 جرّبنا [[typeof Temporal]] وطلع [[undefined]]، يعني مش موجود، فلازم الـ polyfill.
-- الملف لازم يبقى ES module عشان [[import]] تشتغل: سمّيه [[.mjs]] (أو حط [["type": "module"]] في [[package.json]]).
-
----
-
-## ٢. [[PlainDate]]: تاريخ وبس
-
-~~~text app.js
-const jan31 = Temporal.PlainDate.from("2026-01-31");
-console.log(jan31.add({ months: 1 }).toString());
-~~~
-
-- [[Temporal.PlainDate]]: نوع معناه «تاريخ في التقويم»: من غير ساعة ومن غير time zone. زي عيد ميلاد: ٣١ يناير هو ٣١ يناير في أي بلد.
-- [[.from("2026-01-31")]]: بيعمله من نص ISO. والشهر هنا من **1** مش 0: جرّبنا [[jan31.month]] وطلع [[1]].
-- [[.add({ months: 1 })]]: زوّد شهر. الـ object اللي بتبعته بيقول تزوّد إيه وقد إيه ([[{ days: 3 }]] و [[{ years: 1, months: 2 }]] وهكذا).
-- [[.toString()]]: يكتبه نص ISO.
-
-~~~text الناتج
-2026-02-28
-~~~
-
-٣١ فبراير مش موجود، فـ Temporal **وقف على آخر الشهر** (ده اسمه constrain، الافتراضي). Date في الدرس الأول رحّلها لـ ٣ مارس. ولو عايز error بدل التخمين:
-
-~~~text الناتج لـ jan31.add({ months: 1 }, { overflow: "reject" })
-RangeError: value out of range: 1 <= 31 <= 28
-~~~
-
-يعني «اليوم لازم يبقى بين 1 و 28، وانت جايب 31».
-
-وكمان: [[add]] بترجّع object **جديد**، و [[jan31]] نفسه متغيرش (طبعناه بعدها وطلع [[2026-01-31]]). وكل أنواع Temporal كده (immutable): حتى [[jan31.month = 5]] في module بترمي:
-
-~~~text الناتج
-TypeError: Cannot set property month of [object Temporal.PlainDate] which has only a getter
-~~~
-
----
-
-## ٣. [[ZonedDateTime]]: «٢٤ ساعة» مش زي «يوم»
-
-~~~text app.js
-const meeting = Temporal.ZonedDateTime.from("2026-10-29T12:00[Africa/Cairo]");
-console.log(meeting.add({ hours: 24 }).toString());
-console.log(meeting.add({ days: 1 }).toString());
-~~~
-
-- [[ZonedDateTime]]: لحظة **ومعاها** time zone. ده النوع الصح لاجتماع أو حجز.
-- النص: تاريخ ووقت، وبعدين اسم الـ zone بين [[[ ]]]. وده شكل ISO الجديد (اسمه RFC 9557) اللي بيحفظ اسم الـ zone مش بس الـ offset.
-
-الـ ٢٩ أكتوبر 2026 يوم خميس، وهو آخر يوم في التوقيت الصيفي في مصر: آخر الليلة دي الساعة بترجع ساعة. شوف:
-
-~~~text الناتج (meeting.toString() و offset و hoursInDay)
-2026-10-29T12:00:00+03:00[Africa/Cairo] +03:00 25
-~~~
-
-الاجتماع الساعة 12 والقاهرة [[+03:00]]، واليوم ده [[hoursInDay]] = **25 ساعة**. ويوم ٣٠ طلع [[+02:00]] و 24 ساعة.
-
-~~~text الناتج
-2026-10-30T11:00:00+02:00[Africa/Cairo]
-2026-10-30T12:00:00+02:00[Africa/Cairo]
-~~~
-
-- [[add({ hours: 24 })]]: ٢٤ ساعة بالظبط من الزمن. بس اليوم كان ٢٥ ساعة، فوصلنا ١١ الصبح.
-- [[add({ days: 1 })]]: «نفس الساعة بكرة» على الحيطة، فوصلنا ١٢ الضهر، وده اللي اليوزر قاصده لما يقول «كرر الاجتماع كل يوم».
-
----
-
-## ٤. [[Instant]]: لحظة جاية من API
-
-~~~text app.js
-const created = Temporal.Instant.from("2026-09-29T21:30:00Z");
-console.log(created.toZonedDateTimeISO("Africa/Cairo").toPlainDate().toString());
-~~~
-
-- [[Instant]]: نقطة على خط الزمن وبس، زي Date من جوه، ولازم النص يكون فيه [[Z]] أو offset.
-- السطر التاني ٣ خطوات من الشمال لليمين:
-
-| الخطوة | الناتج |
-|---|---|
-| [[created]] | اللحظة [[2026-09-29T21:30:00Z]] |
-| [[.toZonedDateTimeISO("Africa/Cairo")]] | [[2026-09-30T00:30:00+03:00[Africa/Cairo]]] |
-| [[.toPlainDate()]] | خُد التاريخ بس: [[2026-09-30]] |
-
-([[ISO]] في اسم الدالة معناها التقويم الميلادي العادي.)
-
-~~~text الناتج
-2026-09-30
-~~~
-
-ده نفس اللي عملناه في الدرس اللي فات بحيلة [[en-CA]]، بس هنا كل خطوة نوعها واضح.
-
----
-
-## ٥. [[until]] و [[Duration]]
-
-~~~text app.js
-const left = Temporal.PlainDate.from("2026-09-29").until("2026-12-25");
-console.log(left.days, left.toString());
-~~~
-
-[[a.until(b)]]: المدة من a لحد b، وبترجّع [[Temporal.Duration]].
-
-~~~text الناتج
-87 P87D
-~~~
-
-[[P87D]] شكل ISO 8601 للمدة: [[P]] = Period، و [[87D]] = 87 يوم. والافتراضي إن أكبر وحدة الأيام. ولو عايز شهور: [[until("2026-12-25", { largestUnit: "months" })]] طلّع [[P2M26D]] (شهرين و ٢٦ يوم).
-
----
-
-## ٦. الحل (solCode): نفس الحسابات بـ date-fns و dayjs
-
-~~~text app.js
-import { addMonths, format, differenceInCalendarDays } from "date-fns";
-import dayjs from "dayjs";
-console.log(format(addMonths(new Date(2026, 0, 31), 1), "yyyy-MM-dd"));
-console.log(differenceInCalendarDays(new Date(2026, 11, 25), new Date(2026, 8, 29)));
-console.log(new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Cairo" }).format(new Date("2026-09-29T21:30:00Z")));
-console.log(dayjs("2026-01-31").add(1, "month").format("YYYY-MM-DD"));
-~~~
-
-- **date-fns**: [[import { ... }]] بتجيب الدوال اللي محتاجها بس. كلها بتاخد Date وترجّع Date جديد. [[addMonths(date, 1)]]، و [[format(date, "yyyy-MM-dd")]] (في date-fns [[yyyy]] السنة و [[MM]] الشهر و [[dd]] اليوم، بحروف صغيرة للسنة واليوم). و [[differenceInCalendarDays(b, a)]]: كام يوم في التقويم من a لـ b. ولاحظ إن الشهر في [[new Date(2026, 11, 25)]] لسه من 0 (11 = ديسمبر)، لأن date-fns شغالة فوق Date.
-- **dayjs**: [[import dayjs from "dayjs"]] من غير أقواس = default import. وكل حاجة بتتسلسل: [[dayjs(نص).add(1, "month").format(...)]]. والـ format هنا [[YYYY]] و [[DD]] كابيتال.
-- سطر Intl: تاريخ القاهرة من غير مكتبة.
-
-~~~text الناتج
-2026-02-28
-87
-2026-09-30
-2026-02-28
-~~~
-
-الـ ٣ وصلوا لنفس الإجابات.
-
----
-
-## الخلاصة
-
-| النوع في Temporal | معناه | مثال |
-|---|---|---|
-| [[PlainDate]] | تاريخ من غير وقت ولا zone | عيد ميلاد |
-| [[ZonedDateTime]] | لحظة + zone (بيفهم التوقيت الصيفي) | اجتماع، حجز |
-| [[Instant]] | لحظة بس | [[created_at]] من API |
-| [[Duration]] | مدة | [[P87D]] |
-
-والشهر من 1، وكل حاجة immutable، و [[days: 1]] غير [[hours: 24]]. وفي Node 24 محتاج polyfill.`,
-          lines: [
-            R`بيستورد [[Temporal]] من الـ polyfill الرسمي، عشان الكود يشتغل في أي بيئة لسه معندهاش Temporal. في Node 26 و Chrome و Firefox الحديثين [[Temporal]] موجود global، فتقدر تشيل السطر ده.`,
-            R`[[PlainDate]] تاريخ بس: يوم وشهر وسنة، من غير ساعة ولا time zone. ده المناسب لعيد ميلاد أو ميعاد استحقاق، لأنه مش «لحظة» فمش هيتزحلق يوم لما يتعرض في بلد تاني. والشهور هنا من 1 عادي، مش من 0 زي Date.`,
-            R`[[add]] بترجّع object **جديد** (Temporal كله immutable) و [[jan31]] نفسه متغيرش. وبيطبع [[2026-02-28]]: لما اليوم مش موجود في الشهر الجديد بيقف على آخر يوم، مش بيرحّل لـ ٣ مارس زي Date. ولو عايز error بدل كده ادّيله [[overflow: "reject"]].`,
-            R`[[ZonedDateTime]] لحظة ومعاها time zone باسمه، والاسم بيتكتب بين قوسين مربعين بعد الوقت. الفرق عن offset ثابت زي [[+03:00]] إنه عارف قواعد التوقيت الصيفي في مصر، فالحسابات بعد كده بتتظبط لوحدها.`,
-            R`بيزوّد ٢٤ ساعة حقيقية. ليلة ٢٩ أكتوبر ٢٠٢٦ التوقيت الصيفي في مصر بيخلص، فبعد ٢٤ ساعة الساعة بقت ١١ مش ١٢ والـ offset بقى [[+02:00]]: [[2026-10-30T11:00:00+02:00]] وبعده اسم الـ zone بين قوسين مربعين. ده الصح لو بتحسب مدة (زي «الـ token يخلص بعد ٢٤ ساعة»).`,
-            R`[[days: 1]] معناها «نفس الساعة بكرة» على التقويم، فبيطبع ١٢:٠٠ يوم ٣٠ بـ [[+02:00]] مع إن اللي عدّى فعليًا ٢٥ ساعة. ده الصح لمواعيد زي «الاجتماع بكرة نفس الميعاد». والفرق بين السطرين هو الفرق بين مدة وتقويم.`,
-            R`[[Instant]] لحظة بس، من غير time zone ولا تقويم، زي اللي جاية من API بـ [[Z]]. هو أقرب حاجة لـ Date القديم، بس مبيعرضش بتوقيت الجهاز من ورا ضهرك.`,
-            R`بيحوّل اللحظة لتوقيت القاهرة، وبعدين ياخد الجزء التاريخ بس. فبيطبع [[2026-09-30]] (اليوم اللي بعد تاريخ UTC، زي ما شفنا مع Intl)، وكل خطوة مكتوب فيها انت عايز إيه بدل حيلة [[en-CA]].`,
-            R`[[until]] بتحسب المدة من التاريخ الأول لحد التاني وبترجّع [[Duration]]، وبتقبل نص زي [["2026-12-25"]] مش لازم PlainDate. ومن غير options أكبر وحدة بترجعها مع PlainDate هي الأيام، فمش هتلاقي شهور.`,
-            R`بيطبع [[87 P87D]]: [[days]] عدد الأيام كرقم، و [[toString()]] بيطبع المدة بصيغة ISO 8601 ([[P]] = period و [[D]] = أيام). لو عايزها شهور وأيام ادّي [[until]] الـ option [[largestUnit: "month"]] فتبقى [[P2M26D]].`,
-          ],
-          sol: R`ناتج [[temporal.mjs]]: [[2026-02-28]]، و [[2026-10-30T11:00:00+02:00[Africa/Cairo]]]، و [[2026-10-30T12:00:00+02:00[Africa/Cairo]]]، و [[2026-09-30]]، و [[87 P87D]].
-
-بـ date-fns: [[addMonths(new Date(2026, 0, 31), 1)]] بترجّع ٢٨ فبراير كمان (date-fns بتعمل clamp زي Temporal)، و [[differenceInCalendarDays(new Date(2026, 11, 25), new Date(2026, 8, 29))]] بـ 87. لاحظ الشهر من 0 لسه، لأن date-fns شغالة على Date. وتاريخ القاهرة محتاج [[@date-fns/tz]] أو حيلة en-CA.
-
-و dayjs: [[dayjs("2026-01-31").add(1, "month").format("YYYY-MM-DD")]] بـ [["2026-02-28"]]. الـ ٣ وصلوا لنفس الإجابة، الفرق في الوضوح: Temporal بيقولك نوع كل قيمة (تاريخ، لحظة، لحظة في zone).`,
-          solCode: R`import { addMonths, format, differenceInCalendarDays } from "date-fns";
-import dayjs from "dayjs";
-console.log(format(addMonths(new Date(2026, 0, 31), 1), "yyyy-MM-dd"));
-console.log(differenceInCalendarDays(new Date(2026, 11, 25), new Date(2026, 8, 29)));
-console.log(new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Cairo" }).format(new Date("2026-09-29T21:30:00Z")));
-console.log(dayjs("2026-01-31").add(1, "month").format("YYYY-MM-DD"));`
+لما save ترمي لـ id 2: مع forEach الـ error مش بيتمسك بأي try/catch حواليها، وبيطلع unhandled rejection: Node بيقفل البرنامج بـ exit code 1 قبل ما id 3 يتحفظ، وفي المتصفح id 3 بيتحفظ عادي والـ error بيظهر أحمر في Console. مع for...of الـ try/catch بيمسكه، و id 3 مبيتحفظش لأن الـ loop وقفت. مع Promise.all الـ catch بيمسكه بعد 100ms، بس id 3 بيتحفظ برضه لأن الـ promises كانت بدأت كلها، و Promise.all بترفض عند أول فشل من غير ما تلغي الباقي. لو عايز كل النتايج استخدم allSettled.`,
+          solCode: R`const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+const save = async (id) => {
+  await wait(100);
+  if (id === 2) throw new Error("فشل حفظ " + id);
+  console.log("saved", id);
+};
+const ids = [1, 2, 3];
+try {
+  for (const id of ids) await save(id); // saved 1 ثم يقف
+} catch (e) { console.log("for...of:", e.message); }
+try {
+  await Promise.all(ids.map(save));     // saved 1 و saved 3، والـ catch بيمسك 2
+} catch (e) { console.log("Promise.all:", e.message); }`
         }
       ]
     }

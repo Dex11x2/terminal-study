@@ -4,6 +4,14 @@ MORE("js", [
       t: "الـ objects",
       l: 1,
       n: "تبني objects وتقرا منها وتنسخها وتلف عليها، و Map و Set و JSON، وليه التعديل في مكان بيظهر في مكان تاني",
+      projects: [
+        { lvl: 'صغير', t: R`كارت منتج في الـ console`, what: R`object لمنتج فيه اسم وسعر ومفتاح [["in-stock"]] وخصم ممكن يبقى موجود أو لأ، و method [[describe()]] بتطبع جملة فيها السعر بعد الخصم لو فيه. من درس object literal: الأقواس والـ shorthand و [[?.]].`, done: R`مع خصم ومن غير خصم [[describe()]] بتطلع جملة صح ومفيش TypeError، ولو [[in-stock]] بـ [[false]] الجملة بتقول «خلصان».` },
+        { lvl: 'صغير', t: R`منظّف لستة الإيميلات`, what: R`دالة بتاخد array إيميلات فيها تكرار ومسافات وحروف كبيرة ([[" A@x.com"]] و [["a@x.com"]])، وترجّع array نضيفة من غير تكرار بـ [[trim]] و [[toLowerCase]] و Set. من درس Map و Set.`, done: R`[[[" A@x.com", "a@x.com", "b@x.com "] ]] بترجّع [[[ 'a@x.com', 'b@x.com' ] ]]، و array فاضية بترجّع array فاضية.` },
+        { lvl: 'متوسط', t: R`سلة مشتريات من غير تعديل في مكان`, what: R`موديول فيه [[addItem(cart, item)]] و [[removeItem(cart, id)]] و [[changeQty(cart, id, qty)]] و [[total(cart)]]، كل واحدة بترجّع cart جديدة بـ spread (درس destructuring و spread، ودرس reference و copy)، وبعدين [[JSON.stringify]] للسلة و [[JSON.parse]] ليها تاني (درس JSON).`, done: R`بعد ٣ عمليات الـ cart الأصلية زي ما هي ([[cart !== next]])، و [[total]] صح بعد ما المنتج اتضاف مرتين (الكمية زادت مش سطر جديد)، والسلة بعد الـ JSON وراجعة بتطلع نفس [[total]].` },
+        { lvl: 'متوسط', t: R`قارن إعدادين`, what: R`دالة [[diffConfig(oldCfg, newCfg)]] بترجّع [[{ added, removed, changed }]]: المفاتيح الجديدة، واللي اتشالت، واللي قيمتها اتغيرت ومعاها القيمة القديمة والجديدة. من دروس Object.keys و entries و Map و Set ([[difference]]).`, done: R`على [[{ port: 3000, debug: false }]] و [[{ port: 8080, debug: false, cache: true }]]: [[added]] فيها [[cache]] بس، و [[removed]] فاضية، و [[changed]] فيها [[port]] من 3000 لـ 8080، و [[debug]] مش ظاهرة في أي حتة.` },
+        { lvl: 'كبير', t: R`مخزن بضاعة بيتحفظ في ملف`, what: R`سكربت Node [[inventory.js]] فيه دوال [[add]] و [[sell]] و [[report]] على object منتجات (المفتاح الـ SKU)، والحالة بتتحفظ في [[inventory.json]] وبتتقري منه في أول التشغيل بـ [[safeParse]] (درس JSON). كل دالة بتتحقق من المدخلات: الكمية رقم صحيح موجب، والبيع مش أكتر من المخزون، والـ SKU موجود؛ ولو فيه غلط بترمي Error برسالة واضحة والحالة متتغيرش (اشتغل على نسخة بـ [[structuredClone]] وبعدها بدّل). و [[report]] بيطلّع المنتجات الخلصانة بـ [[Object.entries]]. وفي ملف [[test.js]] شوية [[console.assert]] على كل حالة. من كل دروس الوحدة.`, done: R`[[node test.js]] بيخلص من غير ولا assertion فاشلة. بيع كمية أكبر من المخزون بيطبع رسالة والملف متغيّرش. ولو كتبت كلام بايظ في [[inventory.json]] السكربت بيبدأ بمخزن فاضي وبيطبع تحذير بدل ما يقع. وبتشغّله مرتين ورا بعض والأرقام بتكمّل من آخر مرة.`, ext: R`زوّد سجل عمليات (Map من التاريخ للعمليات)، و [[undo]] لآخر عملية، وتصدير CSV للتقرير.` },
+        { lvl: 'فكرة', t: R`دفتر حاجتك انت`, what: R`اختار حاجة بتتابعها بنفسك (مصاريفك، الكتب اللي قريتها، الأفلام، تمارين الجيم) واعملها كـ objects: كل سجل object، والكل في Map أو object بمفتاح، وفيه بحث وتجميع وإحصائيات بـ [[Object.entries]]، وبيتحفظ JSON. انت اللي بتقرر الخصايص.`, done: R`فيه ٣ أسئلة على الأقل الكود بيجاوبها (أكتر حاجة صرفت عليها، مجموع الشهر، إلخ)، والبيانات بتفضل بعد ما تقفل وتفتح، والملف البايظ مبيوقّعش البرنامج.`, ext: R`حوّله لصفحة بعد وحدة الـ DOM، وخلّيه يستورد CSV، وزوّد مقارنة بين شهرين بـ [[diffConfig]] بتاعتك.` },
+      ],
       items: [
         {
           cmd: "object literal",
@@ -32,6 +40,11 @@ delete product.size;      // مسح خاصية
 "price" in product;       // true
 product.discount?.value;  // undefined من غير error`,
           try: R`اطبع [[product.describe()]]. وبعدين جرّب [[product.discount.value]] من غير [[?.]] واقرا الـ error. وآخر حاجة: اعمل [[const f = product.describe; f()]] وشوف this راحت فين (هتفهمها في درس this).`,
+          practice: [
+            { lvl: 'سريع', t: R`اعمل object اسمه [[phone]] فيه [[brand]] و [[price]] ومفتاح [["in-stock"]]. اقرا كل واحد مرة بالنقطة ومرة بالأقواس، وجرّب [[phone.in-stock]] بالنقطة. وبعدين امسح [[price]] بـ [[delete]] واسأل [["price" in phone]].`, done: R`[[phone["in-stock"]]] بترجّع [[true]]، و [[phone.in-stock]] بتطلع [[ReferenceError: stock is not defined]] (JS قراها طرح: [[phone.in]] ناقص [[stock]])، و [["price" in phone]] بعد المسح بترجّع [[false]].` },
+            { lvl: 'تطبيق', t: R`اكتب [[makeProduct(name, price, field, value)]] بترجّع object فيه [[name]] و [[price]] بالـ shorthand، ومفتاح اسمه جاي في [[field]] (computed)، و method اسمها [[label()]] بترجّع الاسم والسعر في جملة.`, done: R`[[makeProduct("Mug", 120, "color", "red")]] بيرجّع object فيه [[color: 'red']] مش [[field]]، و [[.label()]] بترجّع [["Mug — 120 جنيه"]]، ونفس الدالة مع [["size", "L"]] بتعمل مفتاح [[size]].` },
+            { lvl: 'تحدي', t: R`اكتب [[getPath(obj, path)]] بتقرا خاصية متداخلة من نص فيه نقط زي [["user.address.city"]]، وترجّع [[undefined]] لو أي مستوى في النص ناقص. استخدم [[split(".")]] و [[reduce]] و [[?.]].`, done: R`[[getPath({ user: { address: { city: "Cairo" } } }, "user.address.city")]] بترجّع [["Cairo"]]، و [[getPath({}, "user.address.city")]] بترجّع [[undefined]] من غير TypeError، و [[getPath({ a: 0 }, "a")]] بترجّع [[0]] مش [[undefined]].` },
+          ],
           flag: "script",
           deep: {
             why: "كل حاجة تقريبًا objects: الـ user، والـ request، والـ props، والـ config، ورد الـ API. ومعظم الكود بيقرا ويبني objects.",
@@ -207,6 +220,61 @@ product.describe()   →  Mug بـ 120
 
 ---
 
+## ٨. فخاخ [[?.]] و [[??]]
+
+[[?.]] و [[??]] بيختصروا كتير، وليهم خمس حالات بتلخبط. كلهم اتجرّبوا على Node 24.22.1:
+
+~~~js opt.js
+const u1 = { profile: null };
+const u2 = { profile: {} };
+console.log(u1.profile?.address.city);
+console.log(u2.profile?.address.city);
+~~~
+
+~~~text الناتج (السطر التاني بيرمي)
+undefined
+TypeError: Cannot read properties of undefined (reading 'city')
+~~~
+
+### ١. [[?.]] بتحمي **اللي قبلها** بس
+
+في [[u1]]: [[profile]] بـ [[null]] فـ [[?.]] وقفت السلسلة **كلها** ورجّعت [[undefined]]، و [[.city]] متنفذتش أصلًا (اسمها short-circuit).
+
+في [[u2]]: [[profile]] موجود ({})، فـ [[?.]] عدّت، و [[.address]] طلعت [[undefined]]، و [[.city]] اتقرت منها من غير حماية. لو [[address]] ممكن تبقى ناقصة كمان: [[u2.profile?.address?.city]] (طلعت [[undefined]]).
+
+### ٢. مينفعش تكتب بيها
+
+~~~text user?.name = "x"
+SyntaxError: Invalid left-hand side in assignment
+~~~
+
+[[?.]] للقراية والنداء بس. لو عايز تكتب لو موجود: [[if (user) user.name = "x"]].
+
+### ٣. [[??]] مع [[||]] من غير أقواس ممنوعة
+
+~~~text null ?? 0 || 5
+SyntaxError: Unexpected token '||'
+~~~
+
+اللغة رافضة تخمّن الأولوية. حط الأقواس: [[(null ?? 0) || 5]] طلعت [[5]].
+
+### ٤. [[??]] و [[||]] مش نفس الحاجة مع الصفر والنص الفاضي
+
+| التعبير | الناتج | ليه |
+|---|---|---|
+| [[0 \|\| 'd']] | [['d']] | [[0]] falsy، فـ [[\|\|]] عدّتها |
+| [[0 ?? 'd']] | [[0]] | [[0]] مش null ولا undefined |
+| [['' ?? 'd']] | [['']] | النص الفاضي مش nullish |
+| [[NaN ?? 'd']] | [[NaN]] | [[NaN]] رقم، فـ [[??]] مبتلمسهوش |
+
+يعني [[??]] **مبتنضّفش** القيم الغلط، بتملا الناقص بس. لو [[NaN]] ممكن ييجي (رقم من فورم مثلًا) افحصه بـ [[Number.isNaN]].
+
+### ٥. [[?.]] ممكن تخبّي الباج
+
+[[order?.items?.length ?? 0]] بيطلع [[0]] بهدوء سواء الطلب مفيهوش بنود فعلًا أو الـ API بعت [[item]] بدل [[items]] بالغلط. الصفحة بتقول «مفيش بنود» والباج مستخبي. استخدم [[?.]] لما الحاجة **مسموح** تكون ناقصة، مش في كل نقطة «احتياطي» (درس «اقرا رسالة الخطأ في JavaScript» فيه الحالة دي بالتفصيل).
+
+---
+
 ## الخلاصة
 
 | الحاجة | الشكل | تفتكر إيه |
@@ -220,7 +288,8 @@ product.describe()   →  Mug بـ 120
 | موجود؟ | [["x" in obj]] | true حتى لو القيمة undefined |
 | ممكن ناقص | [[obj.a?.b]] | undefined بدل TypeError |
 
-> المفاتيح دايمًا strings (أو symbols): [[Object.keys({ 1: "a" })]] طلعت [[[ '1' ]]] والنوع string.`,
+> المفاتيح دايمًا strings (أو symbols): [[Object.keys({ 1: "a" })]] طلعت [[[ '1' ]]] والنوع string.
+- [[?.]] بتحمي اللي قبلها بس، ومينفعش تكتب بيها، و [[??]] مع [[||]] لازمها أقواس.`,
           lines: [
             R`اسم مفتاح محفوظ في متغير. هنستخدمه تحت كـ computed key، يعني اسم الخاصية نفسه هيتحدد وقت التشغيل من قيمة المتغير ده، مش وقت ما تكتب الكود.`,
             R`متغير عادي اسمه [[name]]. موجود هنا عشان نشوف الـ shorthand في السطر الرابع: لما اسم المتغير هو هو اسم الخاصية اللي عايز تعملها.`,
@@ -263,6 +332,11 @@ function show({ name, address: { city } = {} }) {
 }
 show(user);   // "Sara من مكان مش معروف"`,
           try: R`اطبع [[safeUser]] واتأكد إن password مش فيه. وبعدين حط [[...userSettings]] في أول الـ object بدل آخره وشوف [[lang]] بقت إيه.`,
+          practice: [
+            { lvl: 'سريع', t: R`من [[const movie = { title: "Up", year: 2009 }]] طلّع [[title]] في متغير اسمه [[name]]، و [[lang]] بـ default [["en"]]، في سطر destructuring واحد.`, done: R`[[name]] بيطبع [["Up"]] و [[lang]] بيطبع [["en"]]، و [[movie]] لسه فيه مفتاحين بس ومفيش [[lang]] اتضاف له.` },
+            { lvl: 'تطبيق', t: R`اكتب [[updateTodo(todos, id, changes)]] بترجّع array جديدة: الـ todo اللي الـ id بتاعه مطابق بيبقى [[{ ...todo, ...changes }]]، والباقي زي ما هو، ومن غير ما تلمس الـ array الأصلية.`, done: R`بعد [[const next = updateTodo(todos, 2, { done: true })]]: الـ todo رقم ٢ في [[todos]] لسه [[done: false]] وفي [[next]] بقى [[true]]، و [[next === todos]] بترجّع [[false]]، والعناصر اللي متعدّلتش هي هي ([[next.at(0) === todos.at(0)]] بترجّع [[true]]).` },
+            { lvl: 'تحدي', t: R`اكتب [[omit(obj, key)]] بسطر destructuring واحد فيه computed key و rest ([[const { [key]: _, ...rest } = obj]]). وبعدين عمّمها لـ [[omit(obj, ...keys)]]، واكتب العكس [[pick(obj, ...keys)]].`, done: R`[[omit({ a: 1, b: 2, c: 3 }, "a", "c")]] بترجّع [[{ b: 2 }]]، و [[pick({ a: 1, b: 2 }, "a", "z")]] بترجّع [[{ a: 1 }]] من غير [[z: undefined]]، والـ object الأصلي متغيّرش في الحالتين.` },
+          ],
           flag: "script",
           deep: {
             why: R`بتقلل التكرار ([[user.name]] و [[user.email]] في كل سطر)، وبتخلي باراميترات الدوال والـ props في React واضحة من أول سطر. و [[...rest]] أنضف طريقة تشيل خاصية حساسة قبل ما تبعت الداتا.`,
@@ -457,6 +531,11 @@ function rename(obj) { obj.name = "X"; }
 rename(a);
 console.log(a.name);            // "X": الدالة عدّلت الأصل`,
           try: R`جرّب [[structuredClone({ date: new Date(), fn() {} })]] واقرا الـ error: الدوال مبتتنسخش. وبعدين جرّبها من غير [[fn]] واتأكد إن الـ Date رجعت Date. قارن ده بـ [[JSON.parse(JSON.stringify(...))]].`,
+          practice: [
+            { lvl: 'سريع', t: R`قبل ما تشغّل، خمّن: [[const cart = { items: ["mug"] }; const copy = { ...cart }; copy.items.push("cap");]] وبعدها اطبع [[cart.items]] و [[copy === cart]] و [[copy.items === cart.items]].`, done: R`[[cart.items]] بيطبع [[[ 'mug', 'cap' ] ]] (الأصل اتغيّر)، و [[copy === cart]] بترجّع [[false]] بس [[copy.items === cart.items]] بترجّع [[true]]: النسخة جديدة والـ array اللي جواها مشتركة.` },
+            { lvl: 'تطبيق', t: R`اكتب [[addTag(user, tag)]] بترجّع user جديد فيه الـ tag زيادة في [[tags]]، من غير ما تلمس الأصل: spread على الـ object وعلى الـ array اللي جواه.`, done: R`بعد [[const u2 = addTag(u1, "vip")]]: [[u1.tags]] لسه زي ما كانت، و [[u2.tags]] فيها [["vip"]] في الآخر، و [[u2.tags === u1.tags]] بترجّع [[false]].` },
+            { lvl: 'تحدي', t: R`اكتب [[deepCopy(value)]] بنفسك بـ recursion: لو array انسخ كل عنصر، ولو object انسخ كل مفتاح، ولو Date اعمل Date جديدة بنفس الوقت، وغير كده رجّع القيمة زي ما هي. قارنها بـ [[structuredClone]].`, done: R`[[deepCopy({ a: { b: [1] } })]] لما تعدّل [[a.b]] في النسخة الأصل مبيتغيرش، و [[deepCopy({ d: new Date(0) }).d instanceof Date]] بترجّع [[true]] و [[.getTime()]] بتاعها [[0]]، ونفس النتايج بتطلع من [[structuredClone]].` },
+          ],
           flag: "script",
           deep: {
             why: R`أشهر مصدر bugs غريبة: «أنا معدّلتش الليستة دي!» بس عدّلت نسخة شايلة نفس الـ reference. وفي React الـ state لازم تتعمل جديدة، لأن React بيقارن بالـ reference ([[Object.is]])، فلو عدّلت في مكانها مش هيعمل render.`,
@@ -630,6 +709,11 @@ const discounted = Object.fromEntries(
 const cheap = Object.fromEntries(Object.entries(prices).filter(([, v]) => v < 200));
 Object.hasOwn(prices, "mug"); // true`,
           try: R`حوّل [[prices]] لـ array objects شكلها [[{ name: "mug", price: 120 }]]. وبعدين اعمل العكس. وجرّب [[for (const k in prices)]] وقارنها بـ Object.keys.`,
+          practice: [
+            { lvl: 'سريع', t: R`من [[const stock = { mug: 5, cap: 0, shirt: 2 }]] اطبع عدد المنتجات بـ [[Object.keys]]، ومجموع القطع بـ [[Object.values]] و [[reduce]].`, done: R`العدد [[3]] والمجموع [[7]]، والكود بيشتغل من غير تعديل لو زوّدت منتج رابع في الـ object.` },
+            { lvl: 'تطبيق', t: R`عندك درجات [[{ sara: 85, omar: 42, ali: 67 }]]. طلّع object فيه الناجحين بس (٥٠ أو أكتر) بـ entries و filter و fromEntries، وطلّع اسم أعلى واحد بـ [[Object.entries]] و [[reduce]].`, done: R`الناجحين [[{ sara: 85, ali: 67 }]]، وأعلى واحد [["sara"]]، والـ object الأصلي لسه فيه [[omar]].` },
+            { lvl: 'تحدي', t: R`اكتب [[groupBy(items, key)]] بترجّع object كل مفتاح فيه array العناصر اللي ليها القيمة دي (مثلًا منتجات مجمّعة بالـ [[category]]). وبعدين قارنها بـ [[Object.groupBy(items, (i) => i.category)]] اللي في Node 21 والمتصفحات الحديثة.`, done: R`الاتنين بيرجّعوا نفس المفاتيح ونفس الـ arrays بنفس الترتيب ([[JSON.stringify]] بتاعهم واحد)، و Node بيطبع بتاع [[Object.groupBy]] [[[Object: null prototype] ]] لأنه object مالوش prototype، فـ [[toString]] مش موجودة عليه.` },
+          ],
           flag: "script",
           deep: {
             why: "الـ objects مفيهاش map و filter. ولما تيجيلك داتا شكلها dictionary (إعدادات، أو ترجمات، أو عدد لكل حالة)، دي الطريقة اللي تحوّلها بيها وتعرضها.",
@@ -850,6 +934,11 @@ a.intersection(b);               // Set {2, 3}
 a.union(b);                      // Set {1, 2, 3, 4}
 a.difference(b);                 // Set {1}`,
           try: R`اكتب دالة [[countWords(text)]] بترجّع Map فيها كل كلمة وعدد مرات ظهورها. وبعدين حوّل الناتج لـ object بـ [[Object.fromEntries]] واطبعه. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[countWords]] بترجّع Map، وبتتجاهل الحروف الكبيرة والمسافات الزيادة.`,
+          practice: [
+            { lvl: 'سريع', t: R`شيل التكرار من لستة إيميلات: [[new Set(["a@x.com", "b@x.com", "a@x.com"])]]، واطبع [[size]]، ورجّعها array بـ [[[...set] ]].`, done: R`[[size]] بيطبع [[2]] والـ array [[[ 'a@x.com', 'b@x.com' ] ]] بنفس ترتيب أول ظهور.` },
+            { lvl: 'تطبيق', t: R`عندك لوج زيارات: array فيها [[{ user, page }]]. طلّع Map فيها كل صفحة وعدد زياراتها، و Set فيها اليوزرز المختلفين، واطبع الصفحات من الأكتر للأقل.`, done: R`على لوج فيه ٥ زيارات منهم ٣ لـ [["/"]] من يوزرين: [[map.get("/")]] بيرجّع [[3]]، و [[users.size]] بيرجّع عدد اليوزرز المختلفين بس، والصفحة اللي فيها ٣ زيارات بتطلع الأولى.` },
+            { lvl: 'تحدي', t: R`صلاحيات: [[required = new Set(["read", "write"])]] و [[userPerms = new Set(["read"])]]. استخدم [[isSubsetOf]] و [[difference]] عشان تقول اليوزر يقدر يدخل ولا لأ وناقصه إيه. وبعدين جرّب [[map.set({ id: 1 }, "x")]] وبعده [[map.get({ id: 1 })]].`, done: R`[[required.isSubsetOf(userPerms)]] بترجّع [[false]] و [[[...required.difference(userPerms)] ]] بترجّع [[[ 'write' ] ]]. و [[map.get({ id: 1 })]] بترجّع [[undefined]]، وتقدر تشرح ليه: الـ Map بتقارن الـ objects بالـ reference، فلازم تخزّن الـ object في متغير وتستخدمه هو.` },
+          ],
           flag: "script",
           deep: {
             why: "مسائل كتير (في الشغل وفي الانترفيو) بتبقى «اتأكد إن ده مكررش» أو «عدّ كل حاجة ظهرت كام مرة» أو «هات العنصر بالـ id بسرعة». Set و Map بيحوّلوا حلول O(n²) لـ O(n) (تاب DSA).",
@@ -1085,6 +1174,11 @@ try {
   console.log("JSON بايظ:", err.message);
 }`,
           try: R`خزّن object في [[localStorage.setItem("cart", ...)]] من Console المتصفح، وقفل الصفحة وافتحها، ورجّعه بـ [[JSON.parse(localStorage.getItem("cart"))]]. وبعدين جرّب [[JSON.stringify({ a: 1n })]] واقرا الـ error.`,
+          practice: [
+            { lvl: 'سريع', t: R`خمّن الأول، وبعدين شغّل [[JSON.stringify({ a: 1, b: undefined, c: () => 1, d: NaN })]] و [[JSON.stringify(new Map([ ["a", 1] ]))]].`, done: R`الأول بيطلع [['{"a":1,"d":null}']] (الـ undefined والدالة اختفوا، والـ NaN بقت null)، والتاني بيطلع [['{}']]: الـ Map بتضيع لو مش حوّلتها بـ [[Object.fromEntries]] الأول.` },
+            { lvl: 'تطبيق', t: R`اكتب [[safeParse(text, fallback)]]: بترجّع الـ object لو النص JSON سليم، وترجّع [[fallback]] لو النص بايظ أو الناتج [[null]]. ودي اللي هتستخدمها مع [[localStorage.getItem]].`, done: R`[[safeParse('{"x":1}', {})]] بترجّع [[{ x: 1 }]]، و [[safeParse("{bad", [ ])]] بترجّع [[[ ] ]] من غير error، و [[safeParse(null, [ ])]] بترجّع [[[ ] ]] (لأن [[JSON.parse(null)]] لوحدها بترجّع [[null]]).` },
+            { lvl: 'تحدي', t: R`استخدم التاني بتاع [[JSON.parse(text, reviver)]]: دالة [[(key, value) => ...]] بتشوف أي string شكلها تاريخ ISO ([[/^\d{4}-\d{2}-\d{2}T/]]) وترجّعها [[new Date(value)]]. جرّبها على order فيه [[createdAt]] و [[note: "hello"]].`, done: R`بعد الـ parse [[back.createdAt instanceof Date]] بترجّع [[true]] و [[back.createdAt.getUTCFullYear()]] بترجّع السنة الصح، و [[back.note]] لسه string [["hello"]].` },
+          ],
           flag: "script",
           deep: {
             why: "كل request و response بين الفرونت والباك JSON، و localStorage بيخزّن strings بس، والإعدادات والـ package.json JSON. والفرق بين JSON و JS objects سبب bugs كتير (الـ Dates بالذات).",

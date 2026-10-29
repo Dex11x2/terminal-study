@@ -261,7 +261,7 @@ safe_load مش load              للملفات اللي من بره
 • Excel نفسه أو Google Sheets: File ثم Download ثم CSV.
 
 مشاكل لازم تاخد بالك منها:
-• الـ BOM: ملف Excel محفوظ «CSV UTF-8» بيبدأ بـ BOM، فأول مفتاح بيبقى [["﻿id"]] مش [["id"]] وكل [[row["id"]]] يرجع فاضي. الحل في Python: [[encoding="utf-8-sig"]].
+• الـ BOM: ملف Excel محفوظ «CSV UTF-8» بيبدأ بـ BOM، فأول مفتاح بيبقى [["\ufeffid"]] مش [["id"]] وكل [[row["id"]]] يرجع فاضي. الحل في Python: [[encoding="utf-8-sig"]].
 • الأنواع: CSV مفيهوش أنواع، فكل القيم بتطلع نصوص ([["1"]] مش [[1]]). حوّل الأعمدة اللي محتاجها بنفسك، ومتحوّلش التليفونات والأكواد لأرقام (الصفر هيضيع).
 • القيم الفاضية: [[""]] ولا [[null]]؟ قرر وكون ثابت.
 • الفاصل: ملفات Excel من بلاد بتستخدم الفاصلة في الكسور بتطلع بـ [[;]]. و [[csv.Sniffer]] في Python بيخمّن.
@@ -335,10 +335,10 @@ python3 -c 'import csv; print(list(csv.DictReader(open("excel.csv", encoding="ut
 هنا قرينا بـ [[utf-8]] العادية (من غير [[-sig]]):
 
 ~~~text الناتج
-dict_keys(['﻿id', 'name', 'city', 'phone', 'notes'])
+dict_keys(['\ufeffid', 'name', 'city', 'phone', 'notes'])
 ~~~
 
-اسم أول مفتاح بقى [['﻿id']] مش [['id']]: الـ BOM ([[﻿]]) اتعجن في أول المفتاح! يعني [[row["id"]]] هيرجع [[None]] لأن المفتاح الحقيقي اسمه [[﻿id]]، والعمود كأنه اختفى من غير أي error. بـ [[utf-8-sig]] المفتاح بيطلع [['id']] نضيف.
+اسم أول مفتاح بقى [['\ufeffid']] مش [['id']]: الـ BOM ([[\ufeff]]) اتعجن في أول المفتاح! يعني [[row["id"]]] هيرجع [[None]] لأن المفتاح الحقيقي اسمه [[\ufeffid]]، والعمود كأنه اختفى من غير أي error. بـ [[utf-8-sig]] المفتاح بيطلع [['id']] نضيف.
 
 على ويندوز PowerShell فيه [[Import-Csv]] جاهز بيعمل نفس الحاجة ويتعامل مع الـ BOM لوحده:
 
@@ -434,7 +434,7 @@ utf-8-sig       عشان الـ BOM ميخربش أول عمود
 [[    "city": "القاهرة",]]
 [[    "phone": "01012345678",]]
 [[    "notes": "عميلة جديدة"]]
-[[dict_keys(['﻿id', 'name', 'city', 'phone', 'notes'])]] (شايف الـ [[﻿]]؟)
+[[dict_keys(['\ufeffid', 'name', 'city', 'phone', 'notes'])]] (شايف الـ [[\ufeff]]؟)
 [[1]]
 [["1","سارة أحمد","القاهرة"]]
 [["2","Ali, Jr.","الجيزة"]]
@@ -453,7 +453,7 @@ function csvToObjects(text) {
             tests: R`test("ملف بسيط", () => expect(csvToObjects("id,name\n1,سارة\n2,علي")).toEqual([{ id: "1", name: "سارة" }, { id: "2", name: "علي" }]));
 test("السطر الفاضي في الآخر يتجاهل", () => expect(csvToObjects("id,name\n1,سارة\n").length).toBe(1));
 test("فاصلة و \"\" جوه التنصيص", () => expect(csvToObjects('id,name,notes\n2,"Ali, Jr.","قال ""شكرًا"""')).toEqual([{ id: "2", name: "Ali, Jr.", notes: 'قال "شكرًا"' }]));
-test("BOM في أول الملف ميدخلش في اسم أول مفتاح", () => expect(Object.keys(csvToObjects("﻿id,name\n1,x")[0])).toEqual(["id", "name"]));
+test("BOM في أول الملف ميدخلش في اسم أول مفتاح", () => expect(Object.keys(csvToObjects("\ufeffid,name\n1,x")[0])).toEqual(["id", "name"]));
 test("نهايات سطور ويندوز", () => expect(csvToObjects("id,city\r\n1,القاهرة\r\n")).toEqual([{ id: "1", city: "القاهرة" }]));
 test("قيم فاضية تفضل \"\"", () => expect(csvToObjects("a,b,c\n1,,\n")).toEqual([{ a: "1", b: "", c: "" }]));`,
             solution: R`function csvToObjects(text) {

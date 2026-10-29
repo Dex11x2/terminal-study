@@ -4,6 +4,14 @@ MORE("js", [
       t: "prototypes و classes",
       l: 2,
       n: "الوراثة في JS بالـ prototype chain، و class شكل أوضح لنفس الفكرة، و extends و super و private fields",
+      projects: [
+        { lvl: 'صغير', t: R`كلاس فلوس`, what: R`[[class Money]] بتخزّن المبلغ بالقروش في [[#cents]] (عدد صحيح)، وفيها [[add(other)]] بترجّع Money جديدة، و [[format()]] بترجّع [["12.50 جنيه"]]، و [[static from(pounds)]]. من درس class.`, done: R`[[Money.from(0.1).add(Money.from(0.2)).format()]] بترجّع [["0.30 جنيه"]] (مش [[0.30000000000000004]])، و [[add]] مبتغيرش الأصل، ومبلغ سالب أو مش رقم بيرمي RangeError.` },
+        { lvl: 'صغير', t: R`Stack بـ private field`, what: R`[[class Stack]] فيها [[#items]] و [[push]] و [[pop]] و [[peek]] و getter [[size]]، و [[pop]] على stack فاضي بيرمي Error برسالة. من درس class.`, done: R`[[push(1).push(2)]] بتتسلسل (لأنها بترجّع this)، و [[pop()]] بترجّع [[2]]، و [[size]] صح، و [[stack.items]] بترجّع [[undefined]] من برّه.` },
+        { lvl: 'متوسط', t: R`عيلة errors للـ API`, what: R`[[class AppError extends Error]] فيها [[status]]، ومنها [[NotFoundError]] (404) و [[ValidationError]] (400 ومعاها [[field]]) و [[AuthError]] (401). ودالة [[toResponse(err)]] بترجّع [[{ status, body }]] حسب النوع بـ [[instanceof]]، وأي error مش معروف بيبقى 500 من غير تفاصيله. من درس extends و super ودرس class.`, done: R`كل نوع بيطلع الـ status بتاعه، و [[new TypeError("x")]] بيطلع 500 والـ body مفيهوش [["x"]]، و [[err.name]] صح لكل نوع، وكل ده متجرّب بـ [[console.assert]].` },
+        { lvl: 'متوسط', t: R`أشكال على الصفحة`, what: R`[[Shape]] وتحتها [[Circle]] و [[Rect]] و [[Square extends Rect]]، كل واحدة بتعرف [[area()]] و [[render(root)]] بترسم [[div]] بالمقاس الصح بـ [[style]]. فورم بتختار منه الشكل والمقاسات وبيضيفه. من دروس الوحدة ووحدة الـ DOM.`, done: R`[[new Square(3) instanceof Rect]] بترجّع [[true]]، والمساحة الكلية تحت الرسمة بتتحدث مع كل شكل جديد، والمقاس السالب أو الفاضي بيطلع رسالة ومبيرسمش.` },
+        { lvl: 'كبير', t: R`نظام مكتبة كتب`, what: R`classes [[Book]] و [[Member]] و [[Library]]: الـ Library فيها Maps خاصة للكتب والأعضاء والاستعارات، و [[borrow(memberId, isbn)]] و [[returnBook]] بيرموا errors من عيلة [[LibraryError]] ([[NotFoundError]] و [[AlreadyBorrowedError]] و [[LimitError]] لو العضو عنده ٣ كتب). و [[toJSON]] و [[static fromJSON]] عشان الحالة تتحفظ في ملف وترجع. وفي [[test.js]] حالات بـ [[console.assert]] لكل error ولرحلة حفظ وتحميل كاملة، وكل عملية بتتكتب في لوج بـ [[console.info]]. من الوحدة دي، و JSON و Map من وحدة الـ objects، و this.`, done: R`[[node test.js]] بيعدّي كل الـ asserts: استعارة كتاب مستعار بترمي [[AlreadyBorrowedError]] والحالة متغيرتش، والكتاب الرابع بيرمي [[LimitError]]، وبعد [[fromJSON(JSON.stringify(lib))]] كل الاستعارات زي ما هي و [[borrow]] شغالة على النسخة الجديدة، وملف JSON بايظ بيطلع error واضح مش crash غامض.`, ext: R`زوّد مواعيد إرجاع وغرامات بالتواريخ، وواجهة DOM فوقه، وبحث بالعنوان والمؤلف.` },
+        { lvl: 'فكرة', t: R`موديل لحاجة حقيقية`, what: R`اختار حاجة فيها أنواع ووراثة حقيقية (حسابات بنك بأنواعها، أو موظفين ومديرين، أو وسائل مواصلات، أو عناصر في لعبة)، واعملها classes بـ private fields و validation و errors خاصة بيها. وقبل أي extends اسأل نفسك: ينفع تركيب أحسن؟ انت اللي بتختار.`, done: R`فيه مكان واحد على الأقل اخترت فيه composition بدل الوراثة وكاتب ليه في كومنت، ومفيش field مهم يتعدل من برّه غير من method بتتحقق، وفيه ٥ asserts على الأقل بتعدّي.`, ext: R`اربطه بصفحة، واحفظه JSON، وبعد قسم TypeScript اكتب الـ types بتاعته.` },
+      ],
       items: [
         {
           cmd: "prototype chain",
@@ -24,6 +32,11 @@ Object.getPrototypeOf(cat) === animal;  // true
 cat.speak = () => "مياو";      // shadowing: بقت على cat نفسه
 animal.speak.call(cat);        // لسه موجودة على الـ prototype`,
           try: R`في Console اكتب [[console.dir([1, 2])]] وافتح [[[[Prototype]]]] جوه بعض لحد ما توصل null. وبعدين جرّب [[Object.create(null)]] وشوف مفيهوش [[toString]] خالص.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[const base = { greet() { return "hi " + this.name; } }; const u = Object.create(base); u.name = "Sara";]] واطبع [[u.greet()]] و [[Object.hasOwn(u, "greet")]] و [["greet" in u]].`, done: R`[["hi Sara"]] ثم [[false]] ثم [[true]]: الـ method مش على u، اتلقت في الـ prototype.` },
+            { lvl: 'تطبيق', t: R`اكتب [[chainOf(obj)]] بتلف بـ [[Object.getPrototypeOf]] لحد null، وترجّع أسامي الـ constructors اللي في السلسلة ([[proto.constructor.name]]).`, done: R`[[chainOf([ ])]] بترجّع [[[ 'Array', 'Object' ] ]]، و [[chainOf(new Map())]] بترجّع [[[ 'Map', 'Object' ] ]]، و [[chainOf(Object.create(null))]] بترجّع array فاضية.` },
+            { lvl: 'تحدي', t: R`عدّاد كلمات بـ object عادي: [[const c = {}; for (const w of text.split(" ")) c[w] = (c[w] || 0) + 1;]]. جرّبه على [["constructor constructor"]]. وصلّحه بطريقتين: [[Object.create(null)]] و [[Object.hasOwn]].`, done: R`قبل التصليح [[c.constructor]] بتطلع نص غريب فيه [[native code]] و [[11]] بدل [[2]]، لأن [[c["constructor"] ]] لقت [[Object]] في الـ prototype. وبعد أي تصليح [[c.constructor]] بترجّع [[2]].` },
+          ],
           flag: "script",
           deep: {
             why: "ده نظام الوراثة الحقيقي في JS، والـ class مجرد syntax فوقه. لو فاهمه، هتفهم instanceof، وليه methods الـ class مش بتتنسخ لكل instance، وإيه هو prototype pollution، وسؤال انترفيو ثابت: «اشرح prototypal inheritance».",
@@ -244,6 +257,11 @@ acc.balance = 1e6;    // مفيش setter: بيتجاهل (وفي strict TypeErro
 BankAccount.count;    // 1
 typeof BankAccount;   // "function"`,
           try: R`ضيف [[withdraw(amount)]] بترمي error لو الرصيد مش كفاية. وبعدين جرّب تكتب [[acc.#balance]] برا الكلاس: هتلاقي SyntaxError قبل ما الملف يشتغل أصلًا. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الكلاس جاهز في المربع: ضيف [[withdraw]]، و getter اسمه [[history]] بيرجّع العمليات اللي نجحت بس بالترتيب، كل واحدة [[{ type: "deposit", amount: 100 }]] (أو [["withdraw"]]). خزّن السجل في field خاص [[#log]]، واللي بره ميقدرش يعدّل السجل حتى لو عمل push في الـ array اللي رجعتله.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[class Temperature]] فيها [[#celsius]] من الـ constructor، و getter [[fahrenheit]]، و [[static fromFahrenheit(f)]] بترجّع instance جديدة.`, done: R`[[new Temperature(100).fahrenheit]] بترجّع [[212]]، و [[Temperature.fromFahrenheit(32)]] بترجّع instance الـ fahrenheit بتاعها [[32]]، و [[new Temperature(0).fromFahrenheit]] بترجّع [[undefined]] (الـ static على الكلاس مش الـ instance).` },
+            { lvl: 'تطبيق', t: R`[[class Cart]] فيها [[#items]] (Map)، و [[add(name, price, qty = 1)]] بترمي [[TypeError]] لو السعر مش رقم و [[RangeError]] لو الكمية صفر أو سالبة، و [[remove(name)]]، و getters [[total]] و [[count]].`, done: R`بعد [[add("mug", 120, 2)]] و [[add("cap", 90)]]: [[total]] بترجّع [[330]] و [[count]] بترجّع [[3]]، و [[add("x", "10")]] بترمي TypeError والسلة متغيرتش، و [[cart.#items]] برّه الكلاس SyntaxError.` },
+            { lvl: 'تحدي', t: R`[[JSON.stringify(acc)]] على الـ BankAccount بتاعة الدرس. وبعدين زوّد [[toJSON()]] بترجّع [[{ owner, balance }]] و [[static fromJSON(text)]] بترجّع instance حقيقية بنفس الرصيد (من غير ما تكسر الـ private field).`, done: R`من غير toJSON بيطلع [['{"owner":"Sara"}']] بس (الـ private fields مش بتتحفظ). وبعدها [[BankAccount.fromJSON(JSON.stringify(acc))]] بترجّع object [[instanceof BankAccount]] بـ [[true]]، والرصيد نفسه، و [[deposit]] شغالة عليه.` },
+          ],
           flag: "script",
           deep: {
             why: R`الـ classes في كل حتة: Error مخصص، و services في الباك، و SDKs زي [[new PrismaClient()]] و [[new Stripe()]]، و Web Components. ومع private fields بقى عندك encapsulation حقيقي، مش underscore بالاتفاق.`,
@@ -408,6 +426,74 @@ TypeError: Class constructor BankAccount cannot be invoked without 'new'
 
 ---
 
+## ٩. setter: الكتابة بتعدّي على فحص
+
+الـ getter بيخلي القراية تبان خاصية. والـ **setter** هو الجزء التاني: [[obj.price = 50]] شكلها كتابة عادية، بس بتنادي دالة بتفحص الأول.
+
+~~~js setter.mjs
+class Product {
+  #price = 0;
+  constructor(name, price) {
+    this.name = name;
+    this.price = price;            // بيعدّي على الـ setter كمان
+  }
+  get price() { return this.#price; }
+  set price(value) {
+    if (!Number.isFinite(value) || value < 0) throw new RangeError($__btسعر غلط: $__{value}$__bt);
+    this.#price = Math.round(value * 100) / 100;
+  }
+}
+const p = new Product('mug', 120);
+p.price = 99.999;
+console.log(p.price);
+try { p.price = -5; } catch (e) { console.log(e.name + ':', e.message); }
+try { new Product('cap', '90'); } catch (e) { console.log(e.name + ':', e.message); }
+console.log(Object.keys(p), JSON.stringify(p));
+~~~
+
+~~~text الناتج · Node 24.22.1
+100
+RangeError: سعر غلط: -5
+RangeError: سعر غلط: 90
+[ 'name' ] {"name":"mug"}
+~~~
+
+- [[set price(value)]]: دالة بتاخد parameter واحد بالظبط، القيمة اللي على يمين الـ [[=]].
+- الـ constructor نفسه بيكتب [[this.price = price]]، فالفحص بيحصل **من أول لحظة**. لو كتب في [[this.#price]] مباشرة، [[new Product('cap', -5)]] كانت هتعدّي.
+- [['90']] اترفضت لأن [[Number.isFinite('90')]] بـ [[false]] (مبتحوّلش نصوص، عكس [[isFinite]] القديمة).
+- [[99.999]] اتقرّبت لـ [[100]]: الـ setter مش بس بيفحص، ممكن **ينضّف** كمان.
+- [[Object.keys]] و [[JSON.stringify]] مبيشوفوش [[price]]، لأن الـ getter والـ setter متعرّفين على [[Product.prototype]] مش على الـ object. فـ [[Object.hasOwn(p, 'price')]] بـ [[false]] و [['price' in p]] بـ [[true]]. ولو محتاجها في الـ JSON، [[toJSON()]] (التحدي اللي تحت).
+
+### الفخ الكلاسيكي: setter بيكتب في نفسه
+
+~~~js
+class Bad { set price(v) { this.price = v; } }
+new Bad().price = 1;
+~~~
+
+~~~text الناتج
+RangeError: Maximum call stack size exceeded
+~~~
+
+[[this.price = v]] جوه الـ setter بتنادي الـ setter تاني، وهكذا للأبد (recursion من غير base case، درس «function و arrow»). عشان كده القيمة نفسها بتتخزن في اسم تاني: [[#price]] أو [[_price]].
+
+### ونفس الكلام في object عادي
+
+~~~js
+const temp = { c: 0, get f() { return this.c * 9 / 5 + 32; }, set f(v) { this.c = (v - 32) * 5 / 9; } };
+temp.f = 212;
+console.log(temp.c, temp.f);   // 100 212
+~~~
+
+| الشكل | امتى |
+|---|---|
+| خاصية عادية | مفيش قاعدة، أي قيمة مقبولة |
+| [[get]] لوحده | قيمة محسوبة أو للقراية بس |
+| [[get]] و [[set]] | الكتابة لازم تتفحص أو تتحوّل (سعر، درجة حرارة، إيميل) |
+| method زي [[setPrice(v)]] | لو العملية تقيلة أو ممكن تفشل كتير، عشان اللي بيقرا الكود يعرف إنها مش مجرد كتابة |
+
+---
+
 ## الخلاصة
 
 | الحتة | مكانها | مين يوصلها |
@@ -419,7 +505,8 @@ TypeError: Class constructor BankAccount cannot be invoked without 'new'
 
 - [[return this]] في آخر method = chaining.
 - getter من غير setter = خاصية للقراية بس.
-- في التمرين تحت هتضيف [[withdraw]] وسجل للعمليات: بص على deposit كويس، وفكّر إيه الحالات الغلط اللي لازم ترفضها، وإيه اللي لازم ترجّعه عشان الـ chaining يفضل شغال، وفين تخزّن السجل بحيث محدش من بره يقدر يعدّله.`,
+- في التمرين تحت هتضيف [[withdraw]] وسجل للعمليات: بص على deposit كويس، وفكّر إيه الحالات الغلط اللي لازم ترفضها، وإيه اللي لازم ترجّعه عشان الـ chaining يفضل شغال، وفين تخزّن السجل بحيث محدش من بره يقدر يعدّله.
+- setter بيفحص وينضّف قبل ما يكتب، والقيمة نفسها في [[#field]] تاني، وإلا recursion للأبد.`,
           lines: [
             R`بيعرّف كلاس: قالب نعمل منه حسابات بـ [[new BankAccount(...)]]. كل حساب object ليه رصيده، والـ methods متشاركة بينهم.`,
             R`[[static]] معناها الخاصية دي على الكلاس **نفسه** مش على كل حساب. فيه [[count]] واحد بس للكل ([[BankAccount.count]])، ومش هتلاقيه في [[acc.count]].`,
@@ -567,6 +654,11 @@ a.describe();          // "User: Sara (admin: users, billing)"
 a instanceof Admin;    // true
 a instanceof User;     // true`,
           try: R`امسح سطر [[super(name)]] وشغّل واقرا الـ error. وبعدين اعمل [[class Guest extends User]] من غير constructor خالص وجرّب [[new Guest("x").describe()]].`,
+          practice: [
+            { lvl: 'سريع', t: R`[[class Shape]] فيها [[area()]] بترجّع 0 و [[describe()]] بترجّع [[this.constructor.name]] والمساحة. ورّث منها [[Circle]] و [[Rect]] وغيّر [[area]] في كل واحد.`, done: R`[[new Circle(1).describe()]] بترجّع [["Circle: 3.14"]] (لو قرّبت بـ [[Number(area.toFixed(2))]])، و [[new Rect(2, 3).describe()]] بترجّع [["Rect: 6"]]، و [[describe]] نفسها مكتوبة مرة واحدة في Shape.` },
+            { lvl: 'تطبيق', t: R`[[class ValidationError extends Error]] بتاخد [[(message, field)]]، وبتنادي [[super(message)]]، وبتحط [[this.name]] و [[this.field]]. ارميها من [[validateUser(user)]] لو الإيميل مفيهوش [[@]]، وامسكها في [[try]] وفرّق بـ [[instanceof]].`, done: R`[[err instanceof ValidationError]] و [[err instanceof Error]] الاتنين [[true]]، و [[err.field]] بترجّع [["email"]]، و [[String(err)]] بترجّع [["ValidationError: "]] وبعدها الرسالة، وأي error تاني (زي TypeError) مبيتمسكش في نفس الفرع.` },
+            { lvl: 'تحدي', t: R`[[class Store extends EventTarget]] فيها Map خاصة و [[set(key, value)]] بتعمل [[dispatchEvent(new CustomEvent("change", { detail: { key, value } }))]]. وبعدين اكتبها تاني بالتركيب (composition): [[#events = new EventTarget()]] جواها و [[on(fn)]] بتاعتك.`, done: R`في Node والمتصفح: [[store.addEventListener("change", (e) => console.log(e.detail))]] وبعدها [[store.set("theme", "dark")]] بيطبع [[{ key: 'theme', value: 'dark' }]]. والنسخة اللي بالتركيب بتطبع نفس الحاجة، بس من برّه مفيش [[dispatchEvent]] تقدر تناديها، وتقدر تقول أنهي أأمن وليه.` },
+          ],
           flag: "script",
           deep: {
             why: "هتقابلها في الـ Errors المخصصة، وفي مكتبات بتطلب إنك تورّث من كلاس بتاعها (Web Components بـ HTMLElement مثلًا)، وفي أسئلة OOP في الانترفيو (تاب الانترفيو فيه OOP بالتفصيل).",

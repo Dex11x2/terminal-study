@@ -4,6 +4,14 @@ MORE("js", [
       t: "القيم والأنواع",
       l: 1,
       n: "كل قيمة يا primitive يا object، و typeof بيقولك النوع، والمقارنة والـ truthy ليهم قواعد لازم تحفظها",
+      projects: [
+        { lvl: 'صغير', t: R`جدول المقارنات`, what: R`array فيها ٨ أزواج قيم (زي [[0]] و [[""]]، و [[null]] و [[undefined]]، و [["1"]] و [[1]]، و [[NaN]] و [[NaN]])، ولكل زوج اعمل object فيه نتيجة [[==]] و [[===]] و [[Object.is]]، واعرضهم بـ [[console.table]]. من دروس «== و ===» و «number و NaN».`, done: R`الجدول فيه ٨ صفوف، وصف [[null]] و [[undefined]] فيه true و false و false، وصف [[NaN]] فيه false و false و true.` },
+        { lvl: 'صغير', t: R`حارس الأرقام`, what: R`[[toNumber(input)]] بتحوّل نص من input لرقم أو ترجّع [[null]] لو مش رقم سليم. خلي بالك إن [[Number("")]] بيرجّع 0. من درس «number و NaN» و «truthy و falsy».`, done: R`[["12"]] بترجّع 12، و [["1e3"]] بترجّع 1000، و [[""]] و [["  "]] و [["12px"]] و [["abc"]] بيرجعوا null، و [["0"]] بترجّع 0 مش null.` },
+        { lvl: 'متوسط', t: R`فاحص فورم تسجيل`, what: R`[[validate(form)]] بتاخد object كل قيمه strings (زي ما الفورم بيبعتها): name و age و email و agree، وبترجّع array رسايل غلط بالعربي. استخدم typeof والـ truthy والتحويل لرقم و [[Number.isInteger]]. من وحدة «القيم والأنواع» كلها و «if و else if».`, done: R`فورم سليم بيرجّع [[[]]]. و age [["0"]] بيقول «السن صغير» مش «السن مطلوب»، و age [["abc"]] بيقول «السن لازم رقم»، والإيميل من غير [["@"]] له رسالة، والـ agree [["false"]] (نص) بيتعامل كإنه مش موافق.` },
+        { lvl: 'متوسط', t: R`حاسبة فلوس بالقروش`, what: R`سلة أسعارها بالجنيه زي [[[29.9, 0.2, 10.1]]]. حوّل كل سعر لقروش بـ [[Math.round(p * 100)]]، واجمع، وطبّق خصم ١٠٪ وضريبة ١٤٪ على القروش، وارجع للجنيه بس وانت بتعرض بـ [[toFixed(2)]]. من دروس «number و NaN» و «for...of و for...in».`, done: R`الجمع العادي بيطلع 40.199999999999996 وحسبتك بتطلع "40.20". وأي سعر مش رقم في السلة بيوقّف الحسبة برسالة فيها مكانه بدل NaN في الآخر.` },
+        { lvl: 'كبير', t: R`[[describe(value)]]: قول لي دي إيه`, what: R`دالة بترجّع object فيه: النوع الحقيقي (null و array و nan و date و function وباقي typeof)، و truthy ولا falsy، وبتتنسخ بالقيمة ولا بالـ reference. ومعاها اختبارات على ١٥ قيمة على الأقل من الغرائب ([[NaN]] و [[-0]] و [[[]]] و [[{}]] و [[""]] و [["0"]] و [[new Date()]]...) بدالة [[check]] زي مشروع الوحدة اللي فاتت. من وحدة «القيم والأنواع» كلها.`, done: R`كل الاختبارات بتعدّي، و [[describe(null).type]] بيرجّع "null" مش "object"، و [[describe([]).truthy]] true، والدالة عمرها ما بتوقع بـ error مهما بعتلها حتى من غير أي argument.`, ext: R`زوّد Map و Set و BigInt و Symbol، وخلّيها تطبع وصف عربي بجملة («ده array فاضي بس truthy»).` },
+        { lvl: 'فكرة', t: R`كويز غرائب JavaScript`, what: R`برنامج بيعرض عليك تعبيرات زي [[[] + {}]] و [["5" - 2]] و [[null >= 0]] واحد واحد بـ [[prompt]]، وبيسألك الناتج، وبيقارن بإجابتك، ويشرح ليه في سطر. انت اللي تختار الأسئلة من غلطاتك انت.`, done: R`فيه ١٠ أسئلة على الأقل، والإجابة الصح بتتحسب بتشغيل التعبير نفسه مش مكتوبة بإيدك، والسكور بيتطبع في الآخر.`, ext: R`رتّب الأسئلة عشوائي كل مرة، وخلي السؤال اللي غلطت فيه يتسأل تاني في الآخر.` }
+      ],
       items: [
         {
           cmd: "primitives و objects",
@@ -27,6 +35,11 @@ let s = "hi";
 s[0] = "H";
 console.log(s.toUpperCase(), s);`,
           try: R`افتح Node (اكتب [[node]] في الترمنال) والصق السطور واحد واحد، وبعد كل سطر اكتب [[typeof]] واسم المتغير. وبعدين جرّب [["hi".length]]: إزاي primitive عنده خاصية؟ الإجابة في «ازاي بيشتغل».`,
+          practice: [
+            { lvl: 'سريع', t: R`[[let a = 5; let b = a; b = 10;]] واطبع a. وبعدين [[const o1 = { n: 5 }; const o2 = o1; o2.n = 10;]] واطبع [[o1.n]].`, done: R`a بتفضل 5، و [[o1.n]] بتبقى 10. وتقدر تقول ليه في جملة.` },
+            { lvl: 'تطبيق', t: R`[[addItem(cart, item)]] بتعمل [[cart.push(item)]] ومبترجّعش حاجة. نادي عليها على [[const myCart = []]] واطبع [[myCart.length]].`, done: R`بيطبع 1 مع إنك مكتبتش [[myCart = ...]] خالص، لأن الدالة استلمت نفس الـ array مش نسخة منها.` },
+            { lvl: 'تحدي', t: R`[[const s = "hi"; s.x = 1;]] واطبع [[s.x]]، مرة في [[node -e]] ومرة في ملف [[.mjs]].`, done: R`في [[node -e]] بيطبع undefined من غير error، وفي الـ [[.mjs]] (strict mode) بيوقع بـ [[TypeError: Cannot create property 'x' on string 'hi']]. والسبب إن الـ primitive مش object حقيقي.` }
+          ],
           flag: "script",
           deep: {
             why: "كل حاجة بعد كده مبنية على الفرق ده: ليه المقارنة بين objects بتطلع false، وليه تعديل object جوه دالة بيظهر برّاها، وليه React بتطلب منك تعمل object جديد بدل ما تعدّل القديم. لو الفرق ده واضح في دماغك، نص أسئلة الانترفيو هتبقى سهلة.",
@@ -222,6 +235,11 @@ typeof notDeclared     // "undefined" من غير ReferenceError
 Array.isArray([])      // true
 new Date() instanceof Date  // true`,
           try: R`افتح Console في المتصفح (F12) وجرّب كل سطر. وبعدين اكتب دالة [[getType(v)]] بترجّع [["null"]] و [["array"]] صح وباقي الأنواع من typeof. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
+          practice: [
+            { lvl: 'سريع', t: R`اطبع typeof لـ [[42]] و [["42"]] و [[true]] و [[undefined]] و [[null]] و [[NaN]] و [[[]]].`, done: R`"number" و "string" و "boolean" و "undefined" و "object" و "number" و "object".` },
+            { lvl: 'تطبيق', t: R`[[safeAdd(a, b)]] بتجمع لو الاتنين numbers وغير NaN، وإلا ترجّع «مش أرقام».`, done: R`[[safeAdd(2, 3)]] 5، و [[safeAdd(2, "3")]] «مش أرقام» مش "23"، و [[safeAdd(NaN, 1)]] «مش أرقام».` },
+            { lvl: 'تحدي', t: R`طوّر [[getType(v)]] بتاعة الـ try تفرّق كمان بين NaN و Date (بـ [[instanceof Date]]).`, done: R`[[getType(NaN)]] "nan"، و [[getType(new Date())]] "date"، و [[getType([])]] "array"، و [[getType(null)]] "null"، و [[getType(() => 1)]] "function".` }
+          ],
           flag: "console",
           deep: {
             why: "JS مبيفحصش الأنواع قبل التشغيل، فساعات لازم تفحص بنفسك: الباراميتر ده string ولا array؟ القيمة دي جت من API ولا undefined؟ وأسئلة typeof من أشهر أسئلة «اتوقع الناتج» في الانترفيو.",
@@ -398,6 +416,11 @@ Object.is(NaN, NaN)   // true
 [] === []             // false: arrays مختلفين
 const a = []; a === a // true: نفس الـ reference`,
           try: R`خمّن ناتج كل سطر قبل ما تشغّله في Console، وعدّ غلطت في كام. وبعدين جرّب [[[1, 2] == "1,2"]] وفكّر ليه طلعت true.`,
+          practice: [
+            { lvl: 'سريع', t: R`خمّن وجرّب: [["1" == 1]] و [["1" === 1]] و [[null == undefined]] و [[null === undefined]] و [[NaN === NaN]].`, done: R`true و false و true و false و false.` },
+            { lvl: 'تطبيق', t: R`قيمة من input: [[const qty = "3";]]. اكتب [[if (qty === 3)]] وشوف ليه مبتدخلش، وصلّح بالتحويل مش بـ [[==]].`, done: R`[[qty === 3]] false، و [[Number(qty) === 3]] true، والكود بيدخل الـ if بعد التحويل.` },
+            { lvl: 'تحدي', t: R`[[[] == ![]]] بتطلع إيه؟ وجرّب [[Object.is(NaN, NaN)]] و [[Object.is(0, -0)]]، واشرح خطوات التحويل في الأولى.`, done: R`[[[] == ![]]] true (اليمين بقى false، والاتنين اتحوّلوا لـ 0)، و [[Object.is(NaN, NaN)]] true، و [[Object.is(0, -0)]] false.` }
+          ],
           flag: "console",
           deep: {
             why: "مقارنة غلط = if بيدخل في حالة مكانش المفروض يدخلها، والـ bug ده صعب تلاقيه لأن الكود شكله سليم. وأسئلة == من أكتر أسئلة «اتوقع الناتج» في انترفيوهات JS.",
@@ -579,6 +602,11 @@ if (items) console.log("[] truthy دايمًا");
 if (items.length) console.log("فيه عناصر");
 const isLoggedIn = !!"token";    // true`,
           try: R`اكتب دالة [[pageSize(n)]] بترجّع 20 لو n مش متبعت، وجرّبها بـ [[pageSize(0)]]: لازم ترجّع 0 مش 20. جرّبها بـ [[||]] وبعدين بـ [[??]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[pageSize]].`,
+          practice: [
+            { lvl: 'سريع', t: R`اطبع [[Boolean]] لـ [[0]] و [[""]] و [["0"]] و [[" "]] و [[[]]] و [[{}]] و [[null]] و [[NaN]].`, done: R`false و false و true و true و true و true و false و false.` },
+            { lvl: 'تطبيق', t: R`[[getConfig(opts)]] بترجّع [[retries]] (افتراضي 3) و [[verbose]] (افتراضي false). اكتبها بـ [[||]] الأول وجرّب [[getConfig({ retries: 0 })]].`, done: R`بـ [[||]] الـ retries بتطلع 3 (غلط، اليوزر طلب 0)، وبـ [[??]] بتطلع 0، و [[getConfig({})]] بترجّع 3 و false.` },
+            { lvl: 'تحدي', t: R`[[isEmpty(v)]] true لـ [[""]] والمسافات بس و [[[]]] و [[{}]] و [[null]] و [[undefined]]، و false لـ [[0]] و [[false]].`, done: R`[[isEmpty("  ")]] true، و [[isEmpty({})]] true، و [[isEmpty(0)]] false، و [[isEmpty([0])]] false. ولو اعتمدت على [[!v]] بس هتلاقي [[[]]] و [[{}]] بيرجعوا false.` }
+          ],
           flag: "script",
           deep: {
             why: "الكود الحقيقي مليان [[if (user)]] و [[name || \"Guest\"]] و [[{count && <Badge />}]]. لو مش حافظ القايمة، هتقع في bugs زي إن الصفحة رقم 0 بتتحوّل 1، أو React بيعرض 0 على الشاشة.",
@@ -790,6 +818,11 @@ Number.MAX_SAFE_INTEGER          // 9007199254740991
 Math.round(19.99 * 100)          // 1999: السعر بالقروش
 new Intl.NumberFormat("ar-EG", { style: "currency", currency: "EGP" }).format(1999 / 100)`,
           try: R`اجمع [[0.1]] عشر مرات في loop وشوف الناتج. وبعدين جرّب [[19.99 * 100]] من غير round. وآخر حاجة: [[[1, 10, 2].map(parseInt)]]، وحاول تفهم ليه طلعت [[[1, NaN, NaN]]] (مساعدة: map بتبعت الـ index كتاني argument، و parseInt بتعتبره الـ radix).`,
+          practice: [
+            { lvl: 'سريع', t: R`اطبع [[0.1 + 0.2]] و [[(0.1 + 0.2).toFixed(2)]] و [[typeof (0.1 + 0.2).toFixed(2)]].`, done: R`0.30000000000000004، و "0.30"، و "string" (toFixed بترجّع نص).` },
+            { lvl: 'تطبيق', t: R`اجمع سلة [[[29.9, 0.2, 10.1]]] عادي، وبعدين بالقروش ([[Math.round(p * 100)]]) واقسم على 100 في الآخر.`, done: R`العادي 40.199999999999996، وبالقروش 40.2.` },
+            { lvl: 'تحدي', t: R`[[parseQty(input)]] من فورم: ترجّع رقم صحيح موجب أو null. جرّب [["12"]] و [["12px"]] و [[""]] و [["  "]] و [["2.5"]] و [["-1"]]، وقارن [[isNaN("abc")]] بـ [[Number.isNaN("abc")]].`, done: R`[["12"]] 12 وكل الباقي null (خلي بالك [[Number("")]] و [[Number("  ")]] بيرجعوا 0 مش NaN). و [[isNaN("abc")]] true بس [[Number.isNaN("abc")]] false.` }
+          ],
           flag: "console",
           deep: {
             why: "حسابات الفلوس والنسب وتحويل الـ inputs بتحصل في كل مشروع. سلة مشتريات بتجمع أسعار عشرية ممكن تطلع إجمالي فيه ...0000004، وفورم بيبعت [[\"\"]] يتحوّل 0 من غير ما تاخد بالك.",

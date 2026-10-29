@@ -1,4070 +1,4243 @@
 {
- "web": [
-  {
-   "topic": "View Source و Inspect",
-   "find": [
-    "view page source"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Elements و DOM لايف",
-   "find": [
-    "elements"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Device Toolbar",
-   "find": [
-    "device toolbar"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Hard Reload والكاش",
-   "find": [
-    "hard reload"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "قراءة أخطاء Console",
-   "find": [
-    "قراءة الأخطاء"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "أوامر Console",
-   "find": [
-    "أوامر console"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Network panel",
-   "find": [
-    "network"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "تفاصيل الطلب",
-   "find": [
-    "تفاصيل الطلب"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Throttling و Offline",
-   "find": [
-    "throttling"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Status codes",
-   "find": [
-    "status codes"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "HTTP Headers",
-   "find": [
-    "headers"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "JSON.parse و Unexpected token <",
-   "find": [
-    "unexpected token"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "CORS",
-   "find": [
-    "cors"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Cookies",
-   "find": [
-    "cookies"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "localStorage و JWT",
-   "find": [
-    "localstorage"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Clear site data",
-   "find": [
-    "clear site data"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "سيرفر محلي بدل file://",
-   "find": [
-    "سيرفر محلي"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "fetch من Console",
-   "find": [
-    "fetch من console"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Copy as cURL",
-   "find": [
-    "copy as curl"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "curl -i و -v",
-   "find": [
-    "curl -i"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Recorder",
-   "find": [
-    "recorder"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Breakpoints في Sources",
-   "find": [
-    "breakpoints"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Remote debugging",
-   "find": [
-    "chrome://inspect"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Lighthouse",
-   "find": [
-    "lighthouse"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Performance و Coverage",
-   "find": [
-    "coverage"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Local Overrides",
-   "find": [
-    "overrides"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Playwright screenshot",
-   "find": [
-    "playwright"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Command Menu",
-   "find": [
-    "command menu"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Security headers و SSL",
-   "find": [
-    "security headers"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "SEO من الترمنال",
-   "find": [
-    "seo من"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "أدوات جوجل",
-   "find": [
-    "أدوات جوجل"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "CSRF و SameSite",
-   "find": [
-    "csrf",
-    "samesite"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "WebSocket و SSE في Network",
-   "find": [
-    "websocket",
-    "server-sent",
-    "eventsource"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "صيغ الصور WebP و AVIF",
-   "find": [
-    "webp",
-    "avif"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "الكاش و 304 و ETag",
-   "find": [
-    "304",
-    "etag",
-    "cache-control"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Content Security Policy",
-   "find": [
-    "csp",
-    "content-security-policy"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "Preflight و OPTIONS",
-   "find": [
-    "preflight"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Redirects 301 و 302",
-   "find": [
-    "redirect"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Service Worker في Application tab",
-   "find": [
-    "service worker"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Memory و heap snapshot",
-   "find": [
-    "heap snapshot"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Core Web Vitals (LCP/INP)",
-   "find": [
-    "web vitals",
-    "lcp"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Source maps",
-   "find": [
-    "source map"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "HTTP/2 و HTTP/3",
-   "find": [
-    "http/2",
-    "http2"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Mixed content و HTTPS",
-   "find": [
-    "mixed content"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "مشروع تشخيص موقع بطيء ومكسور",
-   "find": [
-    "تشخيص موقع"
-   ],
-   "lvl": "إنتاج"
-  }
- ],
- "css": [
-  {
-   "topic": "HTML structure و doctype",
-   "find": [
-    "doctype"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "lang و dir للعربي",
-   "find": [
-    "lang و dir"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Semantic HTML",
-   "find": [
-    "semantic html"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "لينك ولا زرار",
-   "find": [
-    "a و button"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "الفورم و label",
-   "find": [
-    "form و label"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "أنواع حقول الفورم",
-   "find": [
-    "textarea و date",
-    "fieldset"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Constraint Validation",
-   "find": [
-    "constraint validation"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "الجداول",
-   "find": [
-    "table"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Selectors",
-   "find": [
-    "selectors"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Specificity و Cascade",
-   "find": [
-    "specificity",
-    "cascade"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Box model",
-   "find": [
-    "box model"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "display",
-   "find": [
-    "display"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "وحدات rem و em",
-   "find": [
-    "rem و em"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "dvh و viewport units",
-   "find": [
-    "dvh"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "clamp و fluid typography",
-   "find": [
-    "clamp"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "CSS variables",
-   "find": [
-    "css variables"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Flexbox",
-   "find": [
-    "flexbox"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Grid",
-   "find": [
-    "grid"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Grid areas و auto-fit",
-   "find": [
-    "auto-fit",
-    "grid-template-areas"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "position و z-index",
-   "find": [
-    "position: absolute",
-    "z-index"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "sticky و fixed",
-   "find": [
-    "sticky"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Media queries و mobile-first",
-   "find": [
-    "media queries"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "الصور و object-fit و picture",
-   "find": [
-    "object-fit",
-    "picture"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "SVG",
-   "find": [
-    "svg"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Tailwind",
-   "find": [
-    "tailwind"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "shadcn/ui و component libraries",
-   "find": [
-    "shadcn"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Dark mode",
-   "find": [
-    "dark mode"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Logical properties و RTL",
-   "find": [
-    "logical properties"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "ARIA",
-   "find": [
-    "aria"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "focus-visible و الكيبورد",
-   "find": [
-    "focus-visible"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Contrast و WCAG",
-   "find": [
-    "contrast ratio",
-    "wcag"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "اختبار accessibility (axe)",
-   "find": [
-    "axe"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Animations و transitions",
-   "find": [
-    "transition و @keyframes"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "CLS و Core Web Vitals",
-   "find": [
-    "cls"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "Critical CSS و الأداء",
-   "find": [
-    "critical css"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "Layout thrashing",
-   "find": [
-    "layout thrashing"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Container queries",
-   "find": [
-    "container queries"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": ":has() و Nesting",
-   "find": [
-    ":has",
-    "nesting"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Open Graph و meta",
-   "find": [
-    "open graph"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Dialog و popover",
-   "find": [
-    "dialog",
-    "popover"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "View Transitions",
-   "find": [
-    "view transitions"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Scroll snap",
-   "find": [
-    "scroll-snap"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "@supports و Baseline",
-   "find": [
-    "@supports"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Stacking context",
-   "find": [
-    "stacking context"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Reflow و Repaint",
-   "find": [
-    "مراحل الرسم"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Subgrid",
-   "find": [
-    "subgrid"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "@property",
-   "find": [
-    "@property"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Scroll-driven animations",
-   "find": [
-    "scroll-driven",
-    "animation-timeline"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Gradients و shadows و filter",
-   "find": [
-    "gradient",
-    "box-shadow",
-    "filter"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "تنظيم CSS (BEM / CSS Modules)",
-   "find": [
-    "bem",
-    "css modules"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "@media print",
-   "find": [
-    "@media print"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "مشروع landing page",
-   "find": [
-    "landing page"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "مشروع فورم accessible",
-   "find": [
-    "فورم تسجيل"
-   ],
-   "lvl": "إنتاج"
-  }
- ],
- "js": [
-  {
-   "topic": "المتغيرات والأنواع",
-   "find": [
-    "المتغيرات والأنواع"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "الشروط if و switch",
-   "find": [
-    "if و else if"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Loops",
-   "find": [
-    "for و while"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "الدوال و arrow functions",
-   "find": [
-    "مقدمة الدوال",
-    "function و arrow"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Scope و hoisting",
-   "find": [
-    "scope"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Closures",
-   "find": [
-    "closure"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "this و call/apply/bind",
-   "find": [
-    "this",
-    "call و apply"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Prototype و classes",
-   "find": [
-    "prototype chain",
-    "class"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "== و === و truthy",
-   "find": [
-    "== و ===",
-    "truthy"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Arrays: map/filter/reduce",
-   "find": [
-    "map و filter و reduce"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Objects و destructuring",
-   "find": [
-    "object destructuring"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Reference و copy و immutability",
-   "find": [
-    "reference و copy",
-    "immutability"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Map و Set",
-   "find": [
-    "map و set"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "JSON",
-   "find": [
-    "json"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "DOM selection و events",
-   "find": [
-    "queryselector",
-    "addeventlistener"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Event delegation",
-   "find": [
-    "event delegation"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Forms و FormData",
-   "find": [
-    "formdata"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "ES Modules",
-   "find": [
-    "import و export"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "try/catch و errors",
-   "find": [
-    "try و catch"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Promises",
-   "find": [
-    "promise"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "async/await",
-   "find": [
-    "async و await"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "fetch و AbortController",
-   "find": [
-    "fetch و abortcontroller"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Event loop و microtasks",
-   "find": [
-    "event loop",
-    "microtasks"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Debounce و throttle",
-   "find": [
-    "debounce"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Dates و Intl",
-   "find": [
-    "intl.datetimeformat",
-    "date ومطبّاته"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Regex",
-   "find": [
-    "regex"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Iterators و generators",
-   "find": [
-    "generators"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Proxy و Reflect",
-   "find": [
-    "proxy و reflect",
-    "proxy"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "WebSocket و SSE",
-   "find": [
-    "websocket",
-    "server-sent"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Web Workers",
-   "find": [
-    "web worker"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Clipboard و Geolocation و Share",
-   "find": [
-    "clipboard",
-    "geolocation"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Streams",
-   "find": [
-    "streams"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "requestAnimationFrame",
-   "find": [
-    "requestanimationframe"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "IntersectionObserver",
-   "find": [
-    "intersectionobserver"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "File input و drag/drop",
-   "find": [
-    "input type=file",
-    "drag and drop"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "History API و routing",
-   "find": [
-    "pushstate"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "localStorage و IndexedDB",
-   "find": [
-    "indexeddb",
-    "localstorage"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "PWA و Service Worker",
-   "find": [
-    "service worker",
-    "دورة حياة",
-    "manifest.webmanifest"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Web Components",
-   "find": [
-    "customelements",
-    "shadow dom"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "WebAssembly",
-   "find": [
-    "webassembly"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Memory leaks",
-   "find": [
-    "memory leaks"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Debugging (debugger و stack trace)",
-   "find": [
-    "debugger",
-    "اقرا الـ error"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "ESLint و Prettier",
-   "find": [
-    "eslint",
-    "prettier"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "اختبار JS (Vitest/Jest)",
-   "find": [
-    "vitest",
-    "jest"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "تقسيم مشروع لملفات",
-   "find": [
-    "قسّمه لملفات"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "أمان DOM و XSS",
-   "find": [
-    "innerhtml"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "مشروع expense tracker",
-   "find": [
-    "expense tracker"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "مشروع بحث بـ debounce",
-   "find": [
-    "بحث بـ debounce"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "مشروع لعبة كتابة",
-   "find": [
-    "لعبة كتابة"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "Retry والـ timeout للـ fetch",
-   "find": [
-    "المهلة والإلغاء",
-    "إعادة المحاولة"
-   ],
-   "lvl": "إنتاج"
-  }
- ],
- "ts": [
-  {
-   "topic": "مقدمة TypeScript و tsc",
-   "find": [
-    "مقدمة typescript",
-    "tsc و tsx"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Type annotations و inference",
-   "find": [
-    "type annotations",
-    "type inference"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Arrays و tuples و objects",
-   "find": [
-    "arrays و tuples",
-    "object types"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "type و interface",
-   "find": [
-    "type و interface"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Union و literal types",
-   "find": [
-    "union types",
-    "literal types"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "any و unknown و never",
-   "find": [
-    "any و unknown"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "enum ولا union",
-   "find": [
-    "enum"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Narrowing",
-   "find": [
-    "narrowing"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Discriminated unions",
-   "find": [
-    "discriminated"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Type predicates",
-   "find": [
-    "type predicates"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Generics",
-   "find": [
-    "generics"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Generic constraints",
-   "find": [
-    "generic constraints"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "keyof و typeof",
-   "find": [
-    "keyof"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Utility types",
-   "find": [
-    "partial و required",
-    "pick و omit"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "ReturnType و Awaited",
-   "find": [
-    "returntype"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Mapped types",
-   "find": [
-    "mapped types"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Conditional types",
-   "find": [
-    "conditional types"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "as const و satisfies",
-   "find": [
-    "as const",
-    "satisfies"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Type assertions و non-null",
-   "find": [
-    "(non-null)"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "d.ts و @types",
-   "find": [
-    ".d.ts"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Classes: access modifiers",
-   "find": [
-    "public و private"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "abstract و implements",
-   "find": [
-    "abstract"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Decorators",
-   "find": [
-    "decorators"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "tsconfig strict",
-   "find": [
-    "strict"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "module و moduleResolution",
-   "find": [
-    "moduleresolution"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "paths aliases",
-   "find": [
-    "paths"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Zod",
-   "find": [
-    "z.object",
-    "safeparse"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "env validation",
-   "find": [
-    "env بـ zod"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Types في React",
-   "find": [
-    "props و componentprops"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Express + Zod",
-   "find": [
-    "express + zod"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "declare global",
-   "find": [
-    "declare global"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Prisma types",
-   "find": [
-    "prisma types"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Typed fetch",
-   "find": [
-    "typed fetch"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Branded types",
-   "find": [
-    "branded"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Function overloads",
-   "find": [
-    "overload"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Template literal types",
-   "find": [
-    "template literal"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "typescript-eslint",
-   "find": [
-    "typescript-eslint"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Result type",
-   "find": [
-    "result type"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "tRPC",
-   "find": [
-    "trpc"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "تحويل مشروع JS لـ TS",
-   "find": [
-    "migration",
-    "تحويل مشروع"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "مشروع API client بـ Zod",
-   "find": [
-    "api client"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "مشروع typed event emitter",
-   "find": [
-    "event emitter"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Control flow analysis",
-   "find": [
-    "control flow"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "type erasure و runtime",
-   "find": [
-    "type erasure",
-    "الأنواع بتتمسح"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "اختبار الأنواع (tsd/expectTypeOf)",
-   "find": [
-    "expecttypeof",
-    "tsd"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Structural typing",
-   "find": [
-    "structural",
-    "الشكل مش الاسم"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "افحص عند الحدود",
-   "find": [
-    "عند الحدود"
-   ],
-   "lvl": "إنتاج"
-  }
- ],
- "react": [
-  {
-   "topic": "UI = f(state) و components",
-   "find": [
-    "ui = f(state)",
-    "مقدمة react"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Vite setup",
-   "find": [
-    "npm create vite"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "JSX",
-   "find": [
-    "jsx"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "props و children",
-   "find": [
-    "props",
-    "children"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "useState",
-   "find": [
-    "usestate"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Events",
-   "find": [
-    "events"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Immutable updates",
-   "find": [
-    "immutable updates"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Conditional rendering و lists/key",
-   "find": [
-    "conditional rendering",
-    "key"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Controlled inputs",
-   "find": [
-    "controlled input"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Lifting state up",
-   "find": [
-    "lifting state"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Derived state",
-   "find": [
-    "derived state"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "useEffect و dependencies",
-   "find": [
-    "useeffect"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "You Might Not Need an Effect",
-   "find": [
-    "might not need an effect"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Race conditions",
-   "find": [
-    "race condition"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "useRef",
-   "find": [
-    "useref"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "useMemo و useCallback",
-   "find": [
-    "usememo"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "useContext",
-   "find": [
-    "usecontext"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "useReducer",
-   "find": [
-    "usereducer"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Custom hooks",
-   "find": [
-    "custom hook"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "React Hook Form + Zod",
-   "find": [
-    "react-hook-form"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "useFieldArray",
-   "find": [
-    "usefieldarray"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Form actions (React 19)",
-   "find": [
-    "form actions"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "React Router",
-   "find": [
-    "react router"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Protected routes",
-   "find": [
-    "protected route"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "TanStack Query",
-   "find": [
-    "usequery"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "useMutation و optimistic updates",
-   "find": [
-    "usemutation",
-    "optimistic"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Zustand",
-   "find": [
-    "zustand"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Redux Toolkit",
-   "find": [
-    "redux toolkit"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Infinite query",
-   "find": [
-    "useinfinitequery"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "i18n و RTL",
-   "find": [
-    "react-i18next",
-    "rtl"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "ErrorBoundary",
-   "find": [
-    "errorboundary"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "lazy و Suspense",
-   "find": [
-    "lazy و suspense"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Portals و modals",
-   "find": [
-    "createportal"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Testing Library",
-   "find": [
-    "testing library"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "getByRole و user-event",
-   "find": [
-    "getbyrole",
-    "user-event"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "MSW",
-   "find": [
-    "msw"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Testing hooks",
-   "find": [
-    "renderhook"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "e2e (Playwright)",
-   "find": [
-    "e2e",
-    "playwright"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "React.memo و Profiler",
-   "find": [
-    "react.memo",
-    "profiler"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "useTransition",
-   "find": [
-    "usetransition"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Virtualization",
-   "find": [
-    "tanstack virtual"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Compound components",
-   "find": [
-    "compound components"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "URL state",
-   "find": [
-    "url state"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "XSS و dangerouslySetInnerHTML",
-   "find": [
-    "dangerouslysetinnerhtml"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "TanStack Table",
-   "find": [
-    "tanstack table"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Charts",
-   "find": [
-    "recharts"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Storybook",
-   "find": [
-    "storybook"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Reconciliation و rendering",
-   "find": [
-    "reconciliation"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Stale closure",
-   "find": [
-    "stale closure"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "SSR و hydration",
-   "find": [
-    "ssr و hydration"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Drag and drop (dnd-kit)",
-   "find": [
-    "dnd-kit",
-    "drag and drop"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "رفع ملفات مع progress",
-   "find": [
-    "رفع ملفات",
-    "upload"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "الستايل في React (CSS Modules/Tailwind)",
-   "find": [
-    "css modules",
-    "tailwind",
-    "الستايل في react"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Accessibility في React",
-   "find": [
-    "jsx-a11y",
-    "addon-a11y"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "مشروع Kanban",
-   "find": [
-    "kanban"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "مشروع admin dashboard",
-   "find": [
-    "admin dashboard"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "مشروع قايمة بـ infinite scroll",
-   "find": [
-    "infinite scroll"
-   ],
-   "lvl": "إنتاج"
-  }
- ],
- "next": [
-  {
-   "topic": "create-next-app و App Router",
-   "find": [
-    "create-next-app",
-    "app router"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Routing: page و dynamic segments",
-   "find": [
-    "page.tsx",
-    "[slug]"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "searchParams",
-   "find": [
-    "searchparams"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Link و navigation",
-   "find": [
-    "link و userouter"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Layouts",
-   "find": [
-    "layout.tsx"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "loading و error و not-found",
-   "find": [
-    "loading.tsx",
-    "error.tsx"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Parallel و intercepting routes",
-   "find": [
-    "@slot"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Server Components",
-   "find": [
-    "server components"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "use client",
-   "find": [
-    "use client"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "server-only",
-   "find": [
-    "server-only"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Data fetching في async components",
-   "find": [
-    "async component"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Suspense و streaming",
-   "find": [
-    "suspense و streaming"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Static و dynamic rendering",
-   "find": [
-    "static و dynamic"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "generateStaticParams",
-   "find": [
-    "generatestaticparams"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "ISR و revalidate",
-   "find": [
-    "revalidate و isr"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Caching و use cache",
-   "find": [
-    "use cache",
-    "الكاش من"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "revalidateTag",
-   "find": [
-    "revalidatetag",
-    "updatetag"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Server Actions",
-   "find": [
-    "use server"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "useActionState و فورم",
-   "find": [
-    "useactionstate"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "useOptimistic و redirect",
-   "find": [
-    "useoptimistic"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Route Handlers",
-   "find": [
-    "route.ts"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Webhooks",
-   "find": [
-    "webhook"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Proxy (middleware)",
-   "find": [
-    "proxy.ts"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Auth: session cookie",
-   "find": [
-    "session cookie"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Data Access Layer",
-   "find": [
-    "dal"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "Better Auth",
-   "find": [
-    "better-auth"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Social login",
-   "find": [
-    "social login"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Roles و permissions",
-   "find": [
-    "أدوار وصلاحيات"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Metadata و SEO",
-   "find": [
-    "metadata"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "sitemap و robots",
-   "find": [
-    "sitemap.ts"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Open Graph images",
-   "find": [
-    "opengraph-image"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "JSON-LD",
-   "find": [
-    "json-ld"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "i18n (next-intl)",
-   "find": [
-    "next-intl"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "next/image",
-   "find": [
-    "next/image"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "next/font",
-   "find": [
-    "next/font"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "next/dynamic",
-   "find": [
-    "next/dynamic"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "CSP nonce",
-   "find": [
-    "csp nonce"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "next/script و analytics",
-   "find": [
-    "next/script"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Deploy",
-   "find": [
-    "فين تنشر"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "Environment variables",
-   "find": [
-    "env في next"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Multi-instance و cache handler",
-   "find": [
-    "أكتر من نسخة"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "Upgrade",
-   "find": [
-    "next upgrade"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "RSC مش SSR",
-   "find": [
-    "rsc مش ssr"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Hydration mismatch",
-   "find": [
-    "hydration mismatch"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Redirects و rewrites و headers",
-   "find": [
-    "redirects",
-    "rewrites"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "رفع الملفات",
-   "find": [
-    "رفع ملفات",
-    "upload"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Node ولا Edge runtime",
-   "find": [
-    "edge runtime",
-    "node ولا edge"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "مراقبة الأخطاء (Sentry)",
-   "find": [
-    "sentry",
-    "instrumentation"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "اختبار Next (unit/e2e)",
-   "find": [
-    "unit ولا e2e"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Performance تشخيص",
-   "find": [
-    "صفحة بطيئة"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "مشروع blog/CMS",
-   "find": [
-    "blog",
-    "cms"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "مشروع متجر بـ Stripe",
-   "find": [
-    "stripe"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "مشروع عربي/إنجليزي",
-   "find": [
-    "موقع عربي"
-   ],
-   "lvl": "إنتاج"
-  }
- ],
- "vue": [
-  {
-   "topic": "npm create vue و SFC",
-   "find": [
-    "npm create vue",
-    "sfc"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Interpolation و v-bind",
-   "find": [
-    "{{ }} و v-bind"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Events v-on",
-   "find": [
-    "v-on"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "v-if و v-show",
-   "find": [
-    "v-if"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "v-for و key",
-   "find": [
-    "v-for"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "v-model",
-   "find": [
-    "v-model"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "ref و reactive",
-   "find": [
-    "ref و reactive"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "computed",
-   "find": [
-    "computed"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "watch و watchEffect",
-   "find": [
-    "watch و watcheffect"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Lifecycle hooks",
-   "find": [
-    "onmounted"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "props",
-   "find": [
-    "defineprops"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "emits و defineModel",
-   "find": [
-    "defineemits"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Slots",
-   "find": [
-    "slots"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Scoped CSS",
-   "find": [
-    "scoped css"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Options API",
-   "find": [
-    "options api"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Vue Router",
-   "find": [
-    "vue router"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Navigation guards",
-   "find": [
-    "beforeeach"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Pinia",
-   "find": [
-    "pinia"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "provide و inject",
-   "find": [
-    "provide و inject"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Composables",
-   "find": [
-    "composables"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Custom directives",
-   "find": [
-    "custom directives"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Teleport و Transition",
-   "find": [
-    "teleport"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Forms و validation",
-   "find": [
-    "veevalidate"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Data fetching و TanStack Query",
-   "find": [
-    "usequery",
-    "loading و error"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "اختبار Vue",
-   "find": [
-    "vue test utils"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "i18n و RTL",
-   "find": [
-    "vue-i18n"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Accessibility",
-   "find": [
-    "a11y"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Nuxt",
-   "find": [
-    "nuxt يعني"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Nuxt pages و layouts",
-   "find": [
-    "pages و layouts"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "useFetch و server/api",
-   "find": [
-    "usefetch"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "SSR و SPA و static",
-   "find": [
-    "ssr و spa"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "SEO في Nuxt",
-   "find": [
-    "useseometa"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Deploy",
-   "find": [
-    "deploy"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "v-memo و shallowRef",
-   "find": [
-    "v-memo"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "defineAsyncComponent",
-   "find": [
-    "defineasynccomponent"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Svelte",
-   "find": [
-    "svelte"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Reactivity internals",
-   "find": [
-    "reactivity بتشتغل"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Suspense",
-   "find": [
-    "suspense"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Template refs و defineExpose",
-   "find": [
-    "template refs",
-    "defineexpose"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Nuxt route middleware",
-   "find": [
-    "route middleware"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "useAsyncData",
-   "find": [
-    "useasyncdata"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "runtimeConfig",
-   "find": [
-    "runtimeconfig"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "KeepAlive و TransitionGroup",
-   "find": [
-    "keepalive",
-    "transitiongroup"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Auth في Nuxt/Vue",
-   "find": [
-    "auth",
-    "تسجيل الدخول"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "TypeScript في Vue",
-   "find": [
-    "vue-tsc",
-    "typescript في vue"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Error handling",
-   "find": [
-    "errorcaptured",
-    "onerrorcaptured",
-    "onerror"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Performance profiling",
-   "find": [
-    "devtools"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "مشروع notes app",
-   "find": [
-    "notes app"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "مشروع Nuxt blog",
-   "find": [
-    "nuxt blog"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "مشروع dashboard بـ i18n",
-   "find": [
-    "dashboard"
-   ],
-   "lvl": "إنتاج"
-  }
- ],
- "angular": [
-  {
-   "topic": "ng new و CLI",
-   "find": [
-    "ng new"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "ng generate",
-   "find": [
-    "ng generate"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Component",
-   "find": [
-    "@component"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Template bindings",
-   "find": [
-    "bindings"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "input و output",
-   "find": [
-    "input() و output()"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "model و two-way",
-   "find": [
-    "model()"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "signals",
-   "find": [
-    "signal و computed"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "effect و linkedSignal",
-   "find": [
-    "effect"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Control flow @if @for",
-   "find": [
-    "@if",
-    "@for"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "@defer",
-   "find": [
-    "@defer"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Services و inject()",
-   "find": [
-    "services"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Pipes",
-   "find": [
-    "pipes"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Directives",
-   "find": [
-    "directives"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Routing",
-   "find": [
-    "providerouter"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Lazy routes",
-   "find": [
-    "lazy routes"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Route params",
-   "find": [
-    "route params"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Guards",
-   "find": [
-    "guards"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Resolvers",
-   "find": [
-    "resolvers"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "HttpClient",
-   "find": [
-    "httpclient"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Interceptors",
-   "find": [
-    "interceptors"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "httpResource",
-   "find": [
-    "httpresource"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Reactive forms",
-   "find": [
-    "reactive forms"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "FormArray و typed forms",
-   "find": [
-    "formarray"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Signal forms",
-   "find": [
-    "signal forms"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Observables",
-   "find": [
-    "observable"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "RxJS operators",
-   "find": [
-    "pipe و operators"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "switchMap و debounceTime",
-   "find": [
-    "switchmap"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "async pipe و toSignal",
-   "find": [
-    "async pipe"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "State: service و signals",
-   "find": [
-    "store بـ service"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "NgRx Signal Store",
-   "find": [
-    "ngrx"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Angular Material",
-   "find": [
-    "angular material"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "CDK",
-   "find": [
-    "cdk"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "i18n",
-   "find": [
-    "i18n"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "RTL",
-   "find": [
-    "rtl"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "OnPush و zoneless",
-   "find": [
-    "onpush"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "SSR و hydration",
-   "find": [
-    "ssr"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Performance",
-   "find": [
-    "الأداء"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "Testing: ng test",
-   "find": [
-    "ng test"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "TestBed",
-   "find": [
-    "testbed"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "HttpTestingController",
-   "find": [
-    "httptestingcontroller"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Build و environments",
-   "find": [
-    "ng build"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Deploy",
-   "find": [
-    "deploy"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "NgModule",
-   "find": [
-    "ngmodule"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "ng update",
-   "find": [
-    "ng update"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Change detection",
-   "find": [
-    "change detection"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "DI hierarchy",
-   "find": [
-    "di hierarchy"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Lifecycle hooks",
-   "find": [
-    "lifecycle hooks"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "ControlValueAccessor",
-   "find": [
-    "controlvalueaccessor"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Content projection",
-   "find": [
-    "ng-content",
-    "content projection"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "ErrorHandler",
-   "find": [
-    "errorhandler"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Animations",
-   "find": [
-    "animations"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "angular-eslint",
-   "find": [
-    "angular-eslint"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "e2e testing",
-   "find": [
-    "e2e",
-    "playwright",
-    "cypress"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Security و XSS (sanitization)",
-   "find": [
-    "sanitiz",
-    "domsanitizer"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "مشروع task manager",
-   "find": [
-    "task manager"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "مشروع admin panel",
-   "find": [
-    "admin panel"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "مشروع بحث بـ RxJS",
-   "find": [
-    "بحث بـ rxjs"
-   ],
-   "lvl": "إنتاج"
-  }
- ],
- "rn": [
-  {
-   "topic": "React Native مش ويب",
-   "find": [
-    "rn مش ويب"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "New Architecture",
-   "find": [
-    "new architecture"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Expo setup",
-   "find": [
-    "create-expo-app"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Expo Go و development build",
-   "find": [
-    "expo go"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Core components",
-   "find": [
-    "view و text"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Image",
-   "find": [
-    "image و expo-image"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Pressable و TextInput",
-   "find": [
-    "pressable",
-    "textinput"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "ScrollView و SafeArea",
-   "find": [
-    "scrollview"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "FlatList",
-   "find": [
-    "flatlist"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "StyleSheet و flexbox",
-   "find": [
-    "stylesheet",
-    "flexbox"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Platform و الأبعاد",
-   "find": [
-    "platform"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "NativeWind",
-   "find": [
-    "nativewind"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Expo Router",
-   "find": [
-    "file-based routing"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Stack و Tabs",
-   "find": [
-    "stack",
-    "tabs"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Route params",
-   "find": [
-    "params"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Protected routes",
-   "find": [
-    "stack.protected"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "TanStack Query",
-   "find": [
-    "usequery"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Mutations",
-   "find": [
-    "usemutation"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Pull to refresh و infinite",
-   "find": [
-    "pull to refresh"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Forms",
-   "find": [
-    "react-hook-form"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Keyboard handling",
-   "find": [
-    "الكيبورد"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "AsyncStorage",
-   "find": [
-    "asyncstorage"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "SecureStore",
-   "find": [
-    "securestore"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "expo-sqlite",
-   "find": [
-    "expo-sqlite"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "API client و auth token",
-   "find": [
-    "api client"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Refresh token",
-   "find": [
-    "refresh token"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Login flow",
-   "find": [
-    "login من التطبيق"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Permissions",
-   "find": [
-    "permissions"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Image picker",
-   "find": [
-    "image picker"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Location",
-   "find": [
-    "location"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Notifications",
-   "find": [
-    "notifications"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "RTL و عربي",
-   "find": [
-    "i18nmanager"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "FlashList",
-   "find": [
-    "flashlist"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Re-renders",
-   "find": [
-    "re-renders"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Reanimated",
-   "find": [
-    "reanimated"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Testing",
-   "find": [
-    "jest-expo"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "EAS Build",
-   "find": [
-    "eas build"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "EAS Submit",
-   "find": [
-    "eas submit"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "EAS Update و OTA",
-   "find": [
-    "eas update"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "Env و variants",
-   "find": [
-    "env و app variants"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Gesture handler",
-   "find": [
-    "gesture handler",
-    "gesture"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Bottom sheet",
-   "find": [
-    "bottom sheet"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Firebase",
-   "find": [
-    "firebase"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Universal links و deep links",
-   "find": [
-    "universal links",
-    "deep link"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Biometric",
-   "find": [
-    "biometric"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Maps و SVG",
-   "find": [
-    "maps",
-    "react-native-svg"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Maestro e2e",
-   "find": [
-    "maestro"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Crash reporting (Sentry)",
-   "find": [
-    "sentry"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "Performance و Hermes",
-   "find": [
-    "hermes"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "مشروع notes",
-   "find": [
-    "notes"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "مشروع متجر",
-   "find": [
-    "متجر"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "مشروع مشاركة صور",
-   "find": [
-    "مشاركة صور"
-   ],
-   "lvl": "إنتاج"
-  }
- ],
- "flutter": [
-  {
-   "topic": "flutter doctor و create",
-   "find": [
-    "flutter doctor",
-    "flutter create"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "flutter run و hot reload",
-   "find": [
-    "hot reload"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Dart basics",
-   "find": [
-    "مقدمة dart"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "final و const",
-   "find": [
-    "final و const"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "null safety",
-   "find": [
-    "null safety"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Functions و named parameters",
-   "find": [
-    "named parameters"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Collections",
-   "find": [
-    "list و map"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Classes",
-   "find": [
-    "class"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Records و patterns",
-   "find": [
-    "records"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "async و Future",
-   "find": [
-    "async و await"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Streams",
-   "find": [
-    "stream"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Error handling",
-   "find": [
-    "try و on"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Generics",
-   "find": [
-    "generics"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Mixins و extensions",
-   "find": [
-    "mixin",
-    "extension"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Widgets الأساسية",
-   "find": [
-    "runapp",
-    "statelesswidget"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "setState",
-   "find": [
-    "setstate"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "initState و dispose",
-   "find": [
-    "initstate"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Layout: Row و Column",
-   "find": [
-    "row و column"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Expanded و Stack",
-   "find": [
-    "expanded",
-    "stack"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "ListView",
-   "find": [
-    "listview"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Navigation go_router",
-   "find": [
-    "go_router"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Form و validation",
-   "find": [
-    "form و validator"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "HTTP",
-   "find": [
-    "http"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "JSON و freezed",
-   "find": [
-    "fromjson",
-    "json_serializable"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "FutureBuilder",
-   "find": [
-    "futurebuilder"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Riverpod",
-   "find": [
-    "providerscope",
-    "notifier"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Loading و error states",
-   "find": [
-    "loading و error"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Provider و Bloc",
-   "find": [
-    "bloc"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "shared_preferences",
-   "find": [
-    "shared_preferences"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "sqflite",
-   "find": [
-    "sqflite"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Secure storage",
-   "find": [
-    "flutter_secure_storage"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "API client و token",
-   "find": [
-    "api client"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Widget tests",
-   "find": [
-    "flutter test"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Integration tests",
-   "find": [
-    "integration_test"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Flavors و dart-define",
-   "find": [
-    "dart-define"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "App icon و splash",
-   "find": [
-    "أيقونة و splash"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Build appbundle",
-   "find": [
-    "appbundle"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "Signing",
-   "find": [
-    "key.properties"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "Play internal testing",
-   "find": [
-    "internal testing"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "iOS",
-   "find": [
-    "ios"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "DevTools",
-   "find": [
-    "devtools"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Rebuilds و const",
-   "find": [
-    "const و rebuilds"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Widget/Element/Render tree",
-   "find": [
-    "widget و element"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Hero و animations",
-   "find": [
-    "hero",
-    "animation"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "CustomPaint",
-   "find": [
-    "custompaint"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "permission_handler",
-   "find": [
-    "permission_handler"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "camera و url_launcher و webview",
-   "find": [
-    "camera",
-    "url_launcher",
-    "webview"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Gestures",
-   "find": [
-    "gesture"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Slivers",
-   "find": [
-    "sliver"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "mocktail",
-   "find": [
-    "mocktail"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Semantics و l10n",
-   "find": [
-    "semantics",
-    "l10n"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "مشروع notes",
-   "find": [
-    "notes"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "مشروع متجر",
-   "find": [
-    "متجر"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "مشروع weather",
-   "find": [
-    "weather"
-   ],
-   "lvl": "إنتاج"
-  }
- ],
- "apps": [
-  {
-   "topic": "Electron basics",
-   "find": [
-    "npx electron",
-    "main.js"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Electron + Vite dev",
-   "find": [
-    "npm run dev"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Electron IPC و contextBridge",
-   "find": [
-    "ipc",
-    "contextbridge"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Electron security",
-   "find": [
-    "nodeintegration",
-    "contextisolation",
-    "sandbox"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "electron-builder installer",
-   "find": [
-    "electron-builder"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Build exe script",
-   "find": [
-    "build-exe"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "isPackaged و config",
-   "find": [
-    "app.ispackaged"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "electron-updater",
-   "find": [
-    "electron-updater",
-    "autoupdater"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Windows signing",
-   "find": [
-    "signtool",
-    "توقيع windows",
-    "code signing"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "macOS notarization",
-   "find": [
-    "notarization",
-    "notarytool"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "Tray و menu",
-   "find": [
-    "tray",
-    "menu"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Deep links",
-   "find": [
-    "deep link",
-    "protocol"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Electron ولا Tauri",
-   "find": [
-    "electron ولا tauri"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Tauri setup",
-   "find": [
-    "npm create tauri-app"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Tauri commands و invoke",
-   "find": [
-    "invoke"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Tauri capabilities",
-   "find": [
-    "capabilities"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Tauri build",
-   "find": [
-    "tauri build"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Tauri updater",
-   "find": [
-    "tauri updater"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Capacitor add platform",
-   "find": [
-    "npx cap add"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Capacitor sync",
-   "find": [
-    "cap sync"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Capacitor open IDE",
-   "find": [
-    "cap open"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Capacitor plugins (camera/push)",
-   "find": [
-    "@capacitor/camera",
-    "@capacitor/push",
-    "push notifications"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Gradle assemble APK",
-   "find": [
-    "gradlew assemble"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "adb",
-   "find": [
-    "adb"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "keytool و signing",
-   "find": [
-    "keytool"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "versionCode",
-   "find": [
-    "versioncode"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "CI APK",
-   "find": [
-    "android.yml"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "TestFlight",
-   "find": [
-    "testflight"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "App Store/Play Store release",
-   "find": [
-    "play store",
-    "app store"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "Launcher",
-   "find": [
-    "launcher"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "PWA كبديل",
-   "find": [
-    "pwa"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Auto-update strategy",
-   "find": [
-    "auto-update",
-    "تحديث تلقائي"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Crash reporting",
-   "find": [
-    "crash",
-    "sentry"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "App permissions",
-   "find": [
-    "permissions",
-    "manifest"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Native plugin development",
-   "find": [
-    "plugin development",
-    "tauri plugin",
-    "capacitor plugin"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Performance و حجم التطبيق",
-   "find": [
-    "bundle size",
-    "app size",
-    "حجم التطبيق"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "اختبار تطبيق Electron (Playwright)",
-   "find": [
-    "playwright"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Local storage في التطبيق (sqlite/store)",
-   "find": [
-    "sqlite",
-    "electron-store"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Logging و debugging",
-   "find": [
-    "devtools",
-    "logging"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "مشروع الموقع كـ exe و APK",
-   "find": [
-    "exe و apk"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "مشروع notes بـ Tauri",
-   "find": [
-    "notes"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "مشروع Capacitor بكاميرا وpush",
-   "find": [
-    "capacitor بكاميرا"
-   ],
-   "lvl": "إنتاج"
-  }
- ]
+  "web": [
+    {
+      "topic": "View Source و Inspect",
+      "find": [
+        "view page source"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Elements و DOM لايف",
+      "find": [
+        "elements"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Device Toolbar",
+      "find": [
+        "device toolbar"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Hard Reload والكاش",
+      "find": [
+        "hard reload"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "قراءة أخطاء Console",
+      "find": [
+        "قراءة الأخطاء"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "أوامر Console",
+      "find": [
+        "أوامر console"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Network panel",
+      "find": [
+        "network"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "تفاصيل الطلب",
+      "find": [
+        "تفاصيل الطلب"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Throttling و Offline",
+      "find": [
+        "throttling"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Status codes",
+      "find": [
+        "status codes"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "HTTP Headers",
+      "find": [
+        "headers"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "JSON.parse و Unexpected token <",
+      "find": [
+        "unexpected token"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "CORS",
+      "find": [
+        "cors"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Cookies",
+      "find": [
+        "cookies"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "localStorage و JWT",
+      "find": [
+        "localstorage"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Clear site data",
+      "find": [
+        "clear site data"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "سيرفر محلي بدل file://",
+      "find": [
+        "سيرفر محلي"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "fetch من Console",
+      "find": [
+        "fetch من console"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Copy as cURL",
+      "find": [
+        "copy as curl"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "curl -i و -v",
+      "find": [
+        "curl -i"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Recorder",
+      "find": [
+        "recorder"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Breakpoints في Sources",
+      "find": [
+        "breakpoints"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Remote debugging",
+      "find": [
+        "chrome://inspect"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Lighthouse",
+      "find": [
+        "lighthouse"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Performance و Coverage",
+      "find": [
+        "coverage"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Local Overrides",
+      "find": [
+        "overrides"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Playwright screenshot",
+      "find": [
+        "playwright"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Command Menu",
+      "find": [
+        "command menu"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Security headers و SSL",
+      "find": [
+        "security headers"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "SEO من الترمنال",
+      "find": [
+        "seo من"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "أدوات جوجل",
+      "find": [
+        "أدوات جوجل"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "CSRF و SameSite",
+      "find": [
+        "csrf",
+        "samesite"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "WebSocket و SSE في Network",
+      "find": [
+        "websocket",
+        "server-sent",
+        "eventsource"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "صيغ الصور WebP و AVIF",
+      "find": [
+        "webp",
+        "avif"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "الكاش و 304 و ETag",
+      "find": [
+        "304",
+        "etag",
+        "cache-control"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Content Security Policy",
+      "find": [
+        "csp",
+        "content-security-policy"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "Preflight و OPTIONS",
+      "find": [
+        "preflight"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Redirects 301 و 302",
+      "find": [
+        "redirect"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Service Worker في Application tab",
+      "find": [
+        "service worker"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Memory و heap snapshot",
+      "find": [
+        "heap snapshot"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Core Web Vitals (LCP/INP)",
+      "find": [
+        "web vitals",
+        "lcp"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Source maps",
+      "find": [
+        "source map"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "HTTP/2 و HTTP/3",
+      "find": [
+        "http/2",
+        "http2"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Mixed content و HTTPS",
+      "find": [
+        "mixed content"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "مشروع تشخيص موقع بطيء ومكسور",
+      "find": [
+        "تشخيص موقع"
+      ],
+      "lvl": "إنتاج"
+    }
+  ],
+  "css": [
+    {
+      "topic": "HTML structure و doctype",
+      "find": [
+        "doctype"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "lang و dir للعربي",
+      "find": [
+        "lang و dir"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Semantic HTML",
+      "find": [
+        "semantic html"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "لينك ولا زرار",
+      "find": [
+        "a و button"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "الفورم و label",
+      "find": [
+        "form و label"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "أنواع حقول الفورم",
+      "find": [
+        "textarea و date",
+        "fieldset"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Constraint Validation",
+      "find": [
+        "constraint validation"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "الجداول",
+      "find": [
+        "table"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Selectors",
+      "find": [
+        "selectors"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Specificity و Cascade",
+      "find": [
+        "specificity",
+        "cascade"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Box model",
+      "find": [
+        "box model"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "display",
+      "find": [
+        "display"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "وحدات rem و em",
+      "find": [
+        "rem و em"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "dvh و viewport units",
+      "find": [
+        "dvh"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "clamp و fluid typography",
+      "find": [
+        "clamp"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "CSS variables",
+      "find": [
+        "css variables"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Flexbox",
+      "find": [
+        "flexbox"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Grid",
+      "find": [
+        "grid"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Grid areas و auto-fit",
+      "find": [
+        "auto-fit",
+        "grid-template-areas"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "position و z-index",
+      "find": [
+        "position: absolute",
+        "z-index"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "sticky و fixed",
+      "find": [
+        "sticky"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Media queries و mobile-first",
+      "find": [
+        "media queries"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "الصور و object-fit و picture",
+      "find": [
+        "object-fit",
+        "picture"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "SVG",
+      "find": [
+        "svg"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Tailwind",
+      "find": [
+        "tailwind"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "shadcn/ui و component libraries",
+      "find": [
+        "shadcn"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Dark mode",
+      "find": [
+        "dark mode"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Logical properties و RTL",
+      "find": [
+        "logical properties"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "ARIA",
+      "find": [
+        "aria"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "focus-visible و الكيبورد",
+      "find": [
+        "focus-visible"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Contrast و WCAG",
+      "find": [
+        "contrast ratio",
+        "wcag"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "اختبار accessibility (axe)",
+      "find": [
+        "axe"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Animations و transitions",
+      "find": [
+        "transition و @keyframes"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "CLS و Core Web Vitals",
+      "find": [
+        "cls"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "Critical CSS و الأداء",
+      "find": [
+        "critical css"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "Layout thrashing",
+      "find": [
+        "layout thrashing"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Container queries",
+      "find": [
+        "container queries"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": ":has() و Nesting",
+      "find": [
+        ":has",
+        "nesting"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Open Graph و meta",
+      "find": [
+        "open graph"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Dialog و popover",
+      "find": [
+        "dialog",
+        "popover"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "View Transitions",
+      "find": [
+        "view transitions"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Scroll snap",
+      "find": [
+        "scroll-snap"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "@supports و Baseline",
+      "find": [
+        "@supports"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Stacking context",
+      "find": [
+        "stacking context"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Reflow و Repaint",
+      "find": [
+        "مراحل الرسم"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Subgrid",
+      "find": [
+        "subgrid"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "@property",
+      "find": [
+        "@property"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Scroll-driven animations",
+      "find": [
+        "scroll-driven",
+        "animation-timeline"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Gradients و shadows و filter",
+      "find": [
+        "gradient",
+        "box-shadow",
+        "filter"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "تنظيم CSS (BEM / CSS Modules)",
+      "find": [
+        "bem",
+        "css modules"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "@media print",
+      "find": [
+        "@media print"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "مشروع landing page",
+      "find": [
+        "landing page"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "مشروع فورم accessible",
+      "find": [
+        "فورم تسجيل"
+      ],
+      "lvl": "إنتاج"
+    }
+  ],
+  "js": [
+    {
+      "topic": "المتغيرات والأنواع",
+      "find": [
+        "المتغيرات والأنواع"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "الشروط if و switch",
+      "find": [
+        "if و else if"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Loops",
+      "find": [
+        "for و while"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "الدوال و arrow functions",
+      "find": [
+        "مقدمة الدوال",
+        "function و arrow"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Scope و hoisting",
+      "find": [
+        "scope"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Closures",
+      "find": [
+        "closure"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "this و call/apply/bind",
+      "find": [
+        "this",
+        "call و apply"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Prototype و classes",
+      "find": [
+        "prototype",
+        "class و constructor",
+        "extends"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "== و === و truthy",
+      "find": [
+        "== و ===",
+        "truthy"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Arrays: map/filter/reduce",
+      "find": [
+        "map و filter و reduce"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Objects و destructuring",
+      "find": [
+        "object destructuring"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Reference و copy و immutability",
+      "find": [
+        "reference و copy",
+        "immutability"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Map و Set",
+      "find": [
+        "map و set"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "JSON",
+      "find": [
+        "json"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "DOM selection و events",
+      "find": [
+        "queryselector",
+        "addeventlistener"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Event delegation",
+      "find": [
+        "event delegation"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Forms و FormData",
+      "find": [
+        "formdata"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "ES Modules",
+      "find": [
+        "import و export"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "try/catch و errors",
+      "find": [
+        "try و catch"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Promises",
+      "find": [
+        "promise"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "async/await",
+      "find": [
+        "async و await"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "fetch و AbortController",
+      "find": [
+        "fetch و abortcontroller"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Event loop و microtasks",
+      "find": [
+        "event loop",
+        "microtasks"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Debounce و throttle",
+      "find": [
+        "debounce"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Dates و Intl",
+      "find": [
+        "intl.datetimeformat",
+        "date ومطبّاته"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Regex",
+      "find": [
+        "regex"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Iterators و generators",
+      "find": [
+        "generators"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Proxy و Reflect",
+      "find": [
+        "proxy و reflect",
+        "proxy"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "WebSocket و SSE",
+      "find": [
+        "websocket",
+        "server-sent"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Web Workers",
+      "find": [
+        "web worker"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Clipboard و Geolocation و Share",
+      "find": [
+        "clipboard",
+        "geolocation"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Streams",
+      "find": [
+        "streams"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "requestAnimationFrame",
+      "find": [
+        "requestanimationframe"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "IntersectionObserver",
+      "find": [
+        "intersectionobserver"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "File input و drag/drop",
+      "find": [
+        "input type=file",
+        "drag and drop"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "History API و routing",
+      "find": [
+        "pushstate"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "localStorage و IndexedDB",
+      "find": [
+        "indexeddb",
+        "localstorage"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "PWA و Service Worker",
+      "find": [
+        "service worker",
+        "دورة حياة",
+        "manifest.webmanifest"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Web Components",
+      "find": [
+        "customelements",
+        "shadow dom"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "WebAssembly",
+      "find": [
+        "webassembly"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Memory leaks",
+      "find": [
+        "memory leaks"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Debugging (debugger و stack trace)",
+      "find": [
+        "debugger",
+        "اقرا الـ error"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "ESLint و Prettier",
+      "find": [
+        "eslint",
+        "prettier"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "اختبار JS (Vitest/Jest)",
+      "find": [
+        "vitest",
+        "jest"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "تقسيم مشروع لملفات",
+      "find": [
+        "قسّمه لملفات"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "أمان DOM و XSS",
+      "find": [
+        "innerhtml"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "مشروع expense tracker",
+      "find": [
+        "expense tracker"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "مشروع بحث بـ debounce",
+      "find": [
+        "بحث بـ debounce"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "مشروع لعبة كتابة",
+      "find": [
+        "لعبة كتابة"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "Retry والـ timeout للـ fetch",
+      "find": [
+        "المهلة والإلغاء",
+        "إعادة المحاولة"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "package exports و import maps",
+      "find": [
+        "import map",
+        "exports و imports"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "الأخطاء العامة unhandledrejection",
+      "find": [
+        "unhandledrejection",
+        "uncaughtException"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "AbortSignal.any و Promise.try",
+      "find": [
+        "AbortSignal.any",
+        "Promise.try"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "RegExp.escape",
+      "find": [
+        "RegExp.escape"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "event loop في Node: setImmediate و nextTick",
+      "find": [
+        "setImmediate",
+        "nextTick"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "WeakRef و heap snapshot",
+      "find": [
+        "WeakRef",
+        "heap snapshot"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "recursion",
+      "find": [
+        "recursion",
+        "الـ recursion"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "CORS في fetch",
+      "find": [
+        "CORS"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "WASI",
+      "find": [
+        "WASI"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "source maps و node --inspect",
+      "find": [
+        "source map",
+        "--inspect"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "CSP",
+      "find": [
+        "CSP"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "TDD",
+      "find": [
+        "TDD"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Big-O",
+      "find": [
+        "Big-O"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "IndexedDB",
+      "find": [
+        "IndexedDB"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Strategy pattern",
+      "find": [
+        "Strategy"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "MutationObserver",
+      "find": [
+        "MutationObserver"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Notification و permissions",
+      "find": [
+        "Notification"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "push و Background Sync",
+      "find": [
+        "Background Sync",
+        "push"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "storage quota",
+      "find": [
+        "storage.estimate",
+        "quota"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "ElementInternals",
+      "find": [
+        "ElementInternals",
+        "form-associated"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Declarative Shadow DOM",
+      "find": [
+        "Declarative Shadow DOM"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "memoize",
+      "find": [
+        "memoize"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "deepClone و structuredClone",
+      "find": [
+        "deepClone",
+        "structuredClone"
+      ],
+      "lvl": "متقدم"
+    }
+  ],
+  "ts": [
+    {
+      "topic": "مقدمة TypeScript و tsc",
+      "find": [
+        "مقدمة typescript",
+        "tsc و tsx"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Type annotations و inference",
+      "find": [
+        "type annotations",
+        "type inference"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Arrays و tuples و objects",
+      "find": [
+        "arrays و tuples",
+        "object types"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "type و interface",
+      "find": [
+        "type و interface"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Union و literal types",
+      "find": [
+        "union types",
+        "literal types"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "any و unknown و never",
+      "find": [
+        "any و unknown"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "enum ولا union",
+      "find": [
+        "enum"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Narrowing",
+      "find": [
+        "narrowing"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Discriminated unions",
+      "find": [
+        "discriminated"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Type predicates",
+      "find": [
+        "type predicates"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Generics",
+      "find": [
+        "generics"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Generic constraints",
+      "find": [
+        "generic constraints"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "keyof و typeof",
+      "find": [
+        "keyof"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Utility types",
+      "find": [
+        "partial و required",
+        "pick و omit"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "ReturnType و Awaited",
+      "find": [
+        "returntype"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Mapped types",
+      "find": [
+        "mapped types"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Conditional types",
+      "find": [
+        "conditional types"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "as const و satisfies",
+      "find": [
+        "as const",
+        "satisfies"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Type assertions و non-null",
+      "find": [
+        "(non-null)"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "d.ts و @types",
+      "find": [
+        ".d.ts"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Classes: access modifiers",
+      "find": [
+        "public و private"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "abstract و implements",
+      "find": [
+        "abstract"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Decorators",
+      "find": [
+        "decorators"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "tsconfig strict",
+      "find": [
+        "strict"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "module و moduleResolution",
+      "find": [
+        "moduleresolution"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "paths aliases",
+      "find": [
+        "paths"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Zod",
+      "find": [
+        "z.object",
+        "safeparse"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "env validation",
+      "find": [
+        "env بـ zod"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Types في React",
+      "find": [
+        "props و componentprops"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Express + Zod",
+      "find": [
+        "express + zod"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "declare global",
+      "find": [
+        "declare global"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Prisma types",
+      "find": [
+        "prisma types"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Typed fetch",
+      "find": [
+        "typed fetch"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Branded types",
+      "find": [
+        "branded"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Function overloads",
+      "find": [
+        "overload"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Template literal types",
+      "find": [
+        "template literal"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "typescript-eslint",
+      "find": [
+        "typescript-eslint"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Result type",
+      "find": [
+        "result type"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "tRPC",
+      "find": [
+        "trpc"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "تحويل مشروع JS لـ TS",
+      "find": [
+        "migration",
+        "تحويل مشروع"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "مشروع API client بـ Zod",
+      "find": [
+        "api client"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "مشروع typed event emitter",
+      "find": [
+        "event emitter"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Control flow analysis",
+      "find": [
+        "control flow"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "type erasure و runtime",
+      "find": [
+        "type erasure",
+        "الأنواع بتتمسح"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "اختبار الأنواع (tsd/expectTypeOf)",
+      "find": [
+        "expecttypeof",
+        "tsd"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Structural typing",
+      "find": [
+        "structural",
+        "الشكل مش الاسم"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "افحص عند الحدود",
+      "find": [
+        "عند الحدود"
+      ],
+      "lvl": "إنتاج"
+    }
+  ],
+  "react": [
+    {
+      "topic": "UI = f(state) و components",
+      "find": [
+        "ui = f(state)",
+        "مقدمة react"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Vite setup",
+      "find": [
+        "npm create vite"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "JSX",
+      "find": [
+        "jsx"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "props و children",
+      "find": [
+        "props",
+        "children"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "useState",
+      "find": [
+        "usestate"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Events",
+      "find": [
+        "events"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Immutable updates",
+      "find": [
+        "immutable updates"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Conditional rendering و lists/key",
+      "find": [
+        "conditional rendering",
+        "key"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Controlled inputs",
+      "find": [
+        "controlled input"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Lifting state up",
+      "find": [
+        "lifting state"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Derived state",
+      "find": [
+        "derived state"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "useEffect و dependencies",
+      "find": [
+        "useeffect"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "You Might Not Need an Effect",
+      "find": [
+        "might not need an effect"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Race conditions",
+      "find": [
+        "race condition"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "useRef",
+      "find": [
+        "useref"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "useMemo و useCallback",
+      "find": [
+        "usememo"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "useContext",
+      "find": [
+        "usecontext"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "useReducer",
+      "find": [
+        "usereducer"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Custom hooks",
+      "find": [
+        "custom hook"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "React Hook Form + Zod",
+      "find": [
+        "react-hook-form"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "useFieldArray",
+      "find": [
+        "usefieldarray"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Form actions (React 19)",
+      "find": [
+        "form actions"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "React Router",
+      "find": [
+        "react router"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Protected routes",
+      "find": [
+        "protected route"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "TanStack Query",
+      "find": [
+        "usequery"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "useMutation و optimistic updates",
+      "find": [
+        "usemutation",
+        "optimistic"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Zustand",
+      "find": [
+        "zustand"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Redux Toolkit",
+      "find": [
+        "redux toolkit"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Infinite query",
+      "find": [
+        "useinfinitequery"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "i18n و RTL",
+      "find": [
+        "react-i18next",
+        "rtl"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "ErrorBoundary",
+      "find": [
+        "errorboundary"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "lazy و Suspense",
+      "find": [
+        "lazy و suspense"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Portals و modals",
+      "find": [
+        "createportal"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Testing Library",
+      "find": [
+        "testing library"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "getByRole و user-event",
+      "find": [
+        "getbyrole",
+        "user-event"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "MSW",
+      "find": [
+        "msw"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Testing hooks",
+      "find": [
+        "renderhook"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "e2e (Playwright)",
+      "find": [
+        "e2e",
+        "playwright"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "React.memo و Profiler",
+      "find": [
+        "react.memo",
+        "profiler"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "useTransition",
+      "find": [
+        "usetransition"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Virtualization",
+      "find": [
+        "tanstack virtual"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Compound components",
+      "find": [
+        "compound components"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "URL state",
+      "find": [
+        "url state"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "XSS و dangerouslySetInnerHTML",
+      "find": [
+        "dangerouslysetinnerhtml"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "TanStack Table",
+      "find": [
+        "tanstack table"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Charts",
+      "find": [
+        "recharts"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Storybook",
+      "find": [
+        "storybook"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Reconciliation و rendering",
+      "find": [
+        "reconciliation"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Stale closure",
+      "find": [
+        "stale closure"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "SSR و hydration",
+      "find": [
+        "ssr و hydration"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Drag and drop (dnd-kit)",
+      "find": [
+        "dnd-kit",
+        "drag and drop"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "رفع ملفات مع progress",
+      "find": [
+        "رفع ملفات",
+        "upload"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "الستايل في React (CSS Modules/Tailwind)",
+      "find": [
+        "css modules",
+        "tailwind",
+        "الستايل في react"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Accessibility في React",
+      "find": [
+        "jsx-a11y",
+        "addon-a11y"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "مشروع Kanban",
+      "find": [
+        "kanban"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "مشروع admin dashboard",
+      "find": [
+        "admin dashboard"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "مشروع قايمة بـ infinite scroll",
+      "find": [
+        "infinite scroll"
+      ],
+      "lvl": "إنتاج"
+    }
+  ],
+  "next": [
+    {
+      "topic": "create-next-app و App Router",
+      "find": [
+        "create-next-app",
+        "app router"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Routing: page و dynamic segments",
+      "find": [
+        "page.tsx",
+        "[slug]"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "searchParams",
+      "find": [
+        "searchparams"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Link و navigation",
+      "find": [
+        "link و userouter"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Layouts",
+      "find": [
+        "layout.tsx"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "loading و error و not-found",
+      "find": [
+        "loading.tsx",
+        "error.tsx"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Parallel و intercepting routes",
+      "find": [
+        "@slot"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Server Components",
+      "find": [
+        "server components"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "use client",
+      "find": [
+        "use client"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "server-only",
+      "find": [
+        "server-only"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Data fetching في async components",
+      "find": [
+        "async component"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Suspense و streaming",
+      "find": [
+        "suspense و streaming"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Static و dynamic rendering",
+      "find": [
+        "static و dynamic"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "generateStaticParams",
+      "find": [
+        "generatestaticparams"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "ISR و revalidate",
+      "find": [
+        "revalidate و isr"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Caching و use cache",
+      "find": [
+        "use cache",
+        "الكاش من"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "revalidateTag",
+      "find": [
+        "revalidatetag",
+        "updatetag"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Server Actions",
+      "find": [
+        "use server"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "useActionState و فورم",
+      "find": [
+        "useactionstate"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "useOptimistic و redirect",
+      "find": [
+        "useoptimistic"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Route Handlers",
+      "find": [
+        "route.ts"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Webhooks",
+      "find": [
+        "webhook"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Proxy (middleware)",
+      "find": [
+        "proxy.ts"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Auth: session cookie",
+      "find": [
+        "session cookie"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Data Access Layer",
+      "find": [
+        "dal"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "Better Auth",
+      "find": [
+        "better-auth"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Social login",
+      "find": [
+        "social login"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Roles و permissions",
+      "find": [
+        "أدوار وصلاحيات"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Metadata و SEO",
+      "find": [
+        "metadata"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "sitemap و robots",
+      "find": [
+        "sitemap.ts"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Open Graph images",
+      "find": [
+        "opengraph-image"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "JSON-LD",
+      "find": [
+        "json-ld"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "i18n (next-intl)",
+      "find": [
+        "next-intl"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "next/image",
+      "find": [
+        "next/image"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "next/font",
+      "find": [
+        "next/font"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "next/dynamic",
+      "find": [
+        "next/dynamic"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "CSP nonce",
+      "find": [
+        "csp nonce"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "next/script و analytics",
+      "find": [
+        "next/script"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Deploy",
+      "find": [
+        "فين تنشر"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "Environment variables",
+      "find": [
+        "env في next"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Multi-instance و cache handler",
+      "find": [
+        "أكتر من نسخة"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "Upgrade",
+      "find": [
+        "next upgrade"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "RSC مش SSR",
+      "find": [
+        "rsc مش ssr"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Hydration mismatch",
+      "find": [
+        "hydration mismatch"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Redirects و rewrites و headers",
+      "find": [
+        "redirects",
+        "rewrites"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "رفع الملفات",
+      "find": [
+        "رفع ملفات",
+        "upload"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Node ولا Edge runtime",
+      "find": [
+        "edge runtime",
+        "node ولا edge"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "مراقبة الأخطاء (Sentry)",
+      "find": [
+        "sentry",
+        "instrumentation"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "اختبار Next (unit/e2e)",
+      "find": [
+        "unit ولا e2e"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Performance تشخيص",
+      "find": [
+        "صفحة بطيئة"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "مشروع blog/CMS",
+      "find": [
+        "blog",
+        "cms"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "مشروع متجر بـ Stripe",
+      "find": [
+        "stripe"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "مشروع عربي/إنجليزي",
+      "find": [
+        "موقع عربي"
+      ],
+      "lvl": "إنتاج"
+    }
+  ],
+  "vue": [
+    {
+      "topic": "npm create vue و SFC",
+      "find": [
+        "npm create vue",
+        "sfc"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Interpolation و v-bind",
+      "find": [
+        "{{ }} و v-bind"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Events v-on",
+      "find": [
+        "v-on"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "v-if و v-show",
+      "find": [
+        "v-if"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "v-for و key",
+      "find": [
+        "v-for"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "v-model",
+      "find": [
+        "v-model"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "ref و reactive",
+      "find": [
+        "ref و reactive"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "computed",
+      "find": [
+        "computed"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "watch و watchEffect",
+      "find": [
+        "watch و watcheffect"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Lifecycle hooks",
+      "find": [
+        "onmounted"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "props",
+      "find": [
+        "defineprops"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "emits و defineModel",
+      "find": [
+        "defineemits"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Slots",
+      "find": [
+        "slots"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Scoped CSS",
+      "find": [
+        "scoped css"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Options API",
+      "find": [
+        "options api"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Vue Router",
+      "find": [
+        "vue router"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Navigation guards",
+      "find": [
+        "beforeeach"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Pinia",
+      "find": [
+        "pinia"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "provide و inject",
+      "find": [
+        "provide و inject"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Composables",
+      "find": [
+        "composables"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Custom directives",
+      "find": [
+        "custom directives"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Teleport و Transition",
+      "find": [
+        "teleport"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Forms و validation",
+      "find": [
+        "veevalidate"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Data fetching و TanStack Query",
+      "find": [
+        "usequery",
+        "loading و error"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "اختبار Vue",
+      "find": [
+        "vue test utils"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "i18n و RTL",
+      "find": [
+        "vue-i18n"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Accessibility",
+      "find": [
+        "a11y"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Nuxt",
+      "find": [
+        "nuxt يعني"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Nuxt pages و layouts",
+      "find": [
+        "pages و layouts"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "useFetch و server/api",
+      "find": [
+        "usefetch"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "SSR و SPA و static",
+      "find": [
+        "ssr و spa"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "SEO في Nuxt",
+      "find": [
+        "useseometa"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Deploy",
+      "find": [
+        "deploy"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "v-memo و shallowRef",
+      "find": [
+        "v-memo"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "defineAsyncComponent",
+      "find": [
+        "defineasynccomponent"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Svelte",
+      "find": [
+        "svelte"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Reactivity internals",
+      "find": [
+        "reactivity بتشتغل"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Suspense",
+      "find": [
+        "suspense"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Template refs و defineExpose",
+      "find": [
+        "template refs",
+        "defineexpose"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Nuxt route middleware",
+      "find": [
+        "route middleware"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "useAsyncData",
+      "find": [
+        "useasyncdata"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "runtimeConfig",
+      "find": [
+        "runtimeconfig"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "KeepAlive و TransitionGroup",
+      "find": [
+        "keepalive",
+        "transitiongroup"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Auth في Nuxt/Vue",
+      "find": [
+        "auth",
+        "تسجيل الدخول"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "TypeScript في Vue",
+      "find": [
+        "vue-tsc",
+        "typescript في vue"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Error handling",
+      "find": [
+        "errorcaptured",
+        "onerrorcaptured",
+        "onerror"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Performance profiling",
+      "find": [
+        "devtools"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "مشروع notes app",
+      "find": [
+        "notes app"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "مشروع Nuxt blog",
+      "find": [
+        "nuxt blog"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "مشروع dashboard بـ i18n",
+      "find": [
+        "dashboard"
+      ],
+      "lvl": "إنتاج"
+    }
+  ],
+  "angular": [
+    {
+      "topic": "ng new و CLI",
+      "find": [
+        "ng new"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "ng generate",
+      "find": [
+        "ng generate"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Component",
+      "find": [
+        "@component"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Template bindings",
+      "find": [
+        "bindings"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "input و output",
+      "find": [
+        "input() و output()"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "model و two-way",
+      "find": [
+        "model()"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "signals",
+      "find": [
+        "signal و computed"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "effect و linkedSignal",
+      "find": [
+        "effect"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Control flow @if @for",
+      "find": [
+        "@if",
+        "@for"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "@defer",
+      "find": [
+        "@defer"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Services و inject()",
+      "find": [
+        "services"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Pipes",
+      "find": [
+        "pipes"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Directives",
+      "find": [
+        "directives"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Routing",
+      "find": [
+        "providerouter"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Lazy routes",
+      "find": [
+        "lazy routes"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Route params",
+      "find": [
+        "route params"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Guards",
+      "find": [
+        "guards"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Resolvers",
+      "find": [
+        "resolvers"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "HttpClient",
+      "find": [
+        "httpclient"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Interceptors",
+      "find": [
+        "interceptors"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "httpResource",
+      "find": [
+        "httpresource"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Reactive forms",
+      "find": [
+        "reactive forms"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "FormArray و typed forms",
+      "find": [
+        "formarray"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Signal forms",
+      "find": [
+        "signal forms"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Observables",
+      "find": [
+        "observable"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "RxJS operators",
+      "find": [
+        "pipe و operators"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "switchMap و debounceTime",
+      "find": [
+        "switchmap"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "async pipe و toSignal",
+      "find": [
+        "async pipe"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "State: service و signals",
+      "find": [
+        "store بـ service"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "NgRx Signal Store",
+      "find": [
+        "ngrx"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Angular Material",
+      "find": [
+        "angular material"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "CDK",
+      "find": [
+        "cdk"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "i18n",
+      "find": [
+        "i18n"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "RTL",
+      "find": [
+        "rtl"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "OnPush و zoneless",
+      "find": [
+        "onpush"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "SSR و hydration",
+      "find": [
+        "ssr"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Performance",
+      "find": [
+        "الأداء"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "Testing: ng test",
+      "find": [
+        "ng test"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "TestBed",
+      "find": [
+        "testbed"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "HttpTestingController",
+      "find": [
+        "httptestingcontroller"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Build و environments",
+      "find": [
+        "ng build"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Deploy",
+      "find": [
+        "deploy"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "NgModule",
+      "find": [
+        "ngmodule"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "ng update",
+      "find": [
+        "ng update"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Change detection",
+      "find": [
+        "change detection"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "DI hierarchy",
+      "find": [
+        "di hierarchy"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Lifecycle hooks",
+      "find": [
+        "lifecycle hooks"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "ControlValueAccessor",
+      "find": [
+        "controlvalueaccessor"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Content projection",
+      "find": [
+        "ng-content",
+        "content projection"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "ErrorHandler",
+      "find": [
+        "errorhandler"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Animations",
+      "find": [
+        "animations"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "angular-eslint",
+      "find": [
+        "angular-eslint"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "e2e testing",
+      "find": [
+        "e2e",
+        "playwright",
+        "cypress"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Security و XSS (sanitization)",
+      "find": [
+        "sanitiz",
+        "domsanitizer"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "مشروع task manager",
+      "find": [
+        "task manager"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "مشروع admin panel",
+      "find": [
+        "admin panel"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "مشروع بحث بـ RxJS",
+      "find": [
+        "بحث بـ rxjs"
+      ],
+      "lvl": "إنتاج"
+    }
+  ],
+  "rn": [
+    {
+      "topic": "React Native مش ويب",
+      "find": [
+        "rn مش ويب"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "New Architecture",
+      "find": [
+        "new architecture"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Expo setup",
+      "find": [
+        "create-expo-app"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Expo Go و development build",
+      "find": [
+        "expo go"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Core components",
+      "find": [
+        "view و text"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Image",
+      "find": [
+        "image و expo-image"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Pressable و TextInput",
+      "find": [
+        "pressable",
+        "textinput"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "ScrollView و SafeArea",
+      "find": [
+        "scrollview"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "FlatList",
+      "find": [
+        "flatlist"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "StyleSheet و flexbox",
+      "find": [
+        "stylesheet",
+        "flexbox"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Platform و الأبعاد",
+      "find": [
+        "platform"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "NativeWind",
+      "find": [
+        "nativewind"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Expo Router",
+      "find": [
+        "file-based routing"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Stack و Tabs",
+      "find": [
+        "stack",
+        "tabs"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Route params",
+      "find": [
+        "params"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Protected routes",
+      "find": [
+        "stack.protected"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "TanStack Query",
+      "find": [
+        "usequery"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Mutations",
+      "find": [
+        "usemutation"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Pull to refresh و infinite",
+      "find": [
+        "pull to refresh"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Forms",
+      "find": [
+        "react-hook-form"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Keyboard handling",
+      "find": [
+        "الكيبورد"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "AsyncStorage",
+      "find": [
+        "asyncstorage"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "SecureStore",
+      "find": [
+        "securestore"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "expo-sqlite",
+      "find": [
+        "expo-sqlite"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "API client و auth token",
+      "find": [
+        "api client"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Refresh token",
+      "find": [
+        "refresh token"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Login flow",
+      "find": [
+        "login من التطبيق"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Permissions",
+      "find": [
+        "permissions"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Image picker",
+      "find": [
+        "image picker"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Location",
+      "find": [
+        "location"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Notifications",
+      "find": [
+        "notifications"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "RTL و عربي",
+      "find": [
+        "i18nmanager"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "FlashList",
+      "find": [
+        "flashlist"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Re-renders",
+      "find": [
+        "re-renders"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Reanimated",
+      "find": [
+        "reanimated"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Testing",
+      "find": [
+        "jest-expo"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "EAS Build",
+      "find": [
+        "eas build"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "EAS Submit",
+      "find": [
+        "eas submit"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "EAS Update و OTA",
+      "find": [
+        "eas update"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "Env و variants",
+      "find": [
+        "env و app variants"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Gesture handler",
+      "find": [
+        "gesture handler",
+        "gesture"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Bottom sheet",
+      "find": [
+        "bottom sheet"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Firebase",
+      "find": [
+        "firebase"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Universal links و deep links",
+      "find": [
+        "universal links",
+        "deep link"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Biometric",
+      "find": [
+        "biometric"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Maps و SVG",
+      "find": [
+        "maps",
+        "react-native-svg"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Maestro e2e",
+      "find": [
+        "maestro"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Crash reporting (Sentry)",
+      "find": [
+        "sentry"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "Performance و Hermes",
+      "find": [
+        "hermes"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "مشروع notes",
+      "find": [
+        "notes"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "مشروع متجر",
+      "find": [
+        "متجر"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "مشروع مشاركة صور",
+      "find": [
+        "مشاركة صور"
+      ],
+      "lvl": "إنتاج"
+    }
+  ],
+  "flutter": [
+    {
+      "topic": "flutter doctor و create",
+      "find": [
+        "flutter doctor",
+        "flutter create"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "flutter run و hot reload",
+      "find": [
+        "hot reload"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Dart basics",
+      "find": [
+        "مقدمة dart"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "final و const",
+      "find": [
+        "final و const"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "null safety",
+      "find": [
+        "null safety"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Functions و named parameters",
+      "find": [
+        "named parameters"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Collections",
+      "find": [
+        "list و map"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Classes",
+      "find": [
+        "class"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Records و patterns",
+      "find": [
+        "records"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "async و Future",
+      "find": [
+        "async و await"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Streams",
+      "find": [
+        "stream"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Error handling",
+      "find": [
+        "try و on"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Generics",
+      "find": [
+        "generics"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Mixins و extensions",
+      "find": [
+        "mixin",
+        "extension"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Widgets الأساسية",
+      "find": [
+        "runapp",
+        "statelesswidget"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "setState",
+      "find": [
+        "setstate"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "initState و dispose",
+      "find": [
+        "initstate"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Layout: Row و Column",
+      "find": [
+        "row و column"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Expanded و Stack",
+      "find": [
+        "expanded",
+        "stack"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "ListView",
+      "find": [
+        "listview"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Navigation go_router",
+      "find": [
+        "go_router"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Form و validation",
+      "find": [
+        "form و validator"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "HTTP",
+      "find": [
+        "http"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "JSON و freezed",
+      "find": [
+        "fromjson",
+        "json_serializable"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "FutureBuilder",
+      "find": [
+        "futurebuilder"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Riverpod",
+      "find": [
+        "providerscope",
+        "notifier"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Loading و error states",
+      "find": [
+        "loading و error"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Provider و Bloc",
+      "find": [
+        "bloc"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "shared_preferences",
+      "find": [
+        "shared_preferences"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "sqflite",
+      "find": [
+        "sqflite"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Secure storage",
+      "find": [
+        "flutter_secure_storage"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "API client و token",
+      "find": [
+        "api client"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Widget tests",
+      "find": [
+        "flutter test"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Integration tests",
+      "find": [
+        "integration_test"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Flavors و dart-define",
+      "find": [
+        "dart-define"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "App icon و splash",
+      "find": [
+        "أيقونة و splash"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Build appbundle",
+      "find": [
+        "appbundle"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "Signing",
+      "find": [
+        "key.properties"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "Play internal testing",
+      "find": [
+        "internal testing"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "iOS",
+      "find": [
+        "ios"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "DevTools",
+      "find": [
+        "devtools"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Rebuilds و const",
+      "find": [
+        "const و rebuilds"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Widget/Element/Render tree",
+      "find": [
+        "widget و element"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Hero و animations",
+      "find": [
+        "hero",
+        "animation"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "CustomPaint",
+      "find": [
+        "custompaint"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "permission_handler",
+      "find": [
+        "permission_handler"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "camera و url_launcher و webview",
+      "find": [
+        "camera",
+        "url_launcher",
+        "webview"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Gestures",
+      "find": [
+        "gesture"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Slivers",
+      "find": [
+        "sliver"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "mocktail",
+      "find": [
+        "mocktail"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Semantics و l10n",
+      "find": [
+        "semantics",
+        "l10n"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "مشروع notes",
+      "find": [
+        "notes"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "مشروع متجر",
+      "find": [
+        "متجر"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "مشروع weather",
+      "find": [
+        "weather"
+      ],
+      "lvl": "إنتاج"
+    }
+  ],
+  "apps": [
+    {
+      "topic": "Electron basics",
+      "find": [
+        "npx electron",
+        "main.js"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Electron + Vite dev",
+      "find": [
+        "npm run dev"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Electron IPC و contextBridge",
+      "find": [
+        "ipc",
+        "contextbridge"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Electron security",
+      "find": [
+        "nodeintegration",
+        "contextisolation",
+        "sandbox"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "electron-builder installer",
+      "find": [
+        "electron-builder"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Build exe script",
+      "find": [
+        "build-exe"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "isPackaged و config",
+      "find": [
+        "app.ispackaged"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "electron-updater",
+      "find": [
+        "electron-updater",
+        "autoupdater"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Windows signing",
+      "find": [
+        "signtool",
+        "توقيع windows",
+        "code signing"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "macOS notarization",
+      "find": [
+        "notarization",
+        "notarytool"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "Tray و menu",
+      "find": [
+        "tray",
+        "menu"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Deep links",
+      "find": [
+        "deep link",
+        "protocol"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Electron ولا Tauri",
+      "find": [
+        "electron ولا tauri"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Tauri setup",
+      "find": [
+        "npm create tauri-app"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Tauri commands و invoke",
+      "find": [
+        "invoke"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Tauri capabilities",
+      "find": [
+        "capabilities"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Tauri build",
+      "find": [
+        "tauri build"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Tauri updater",
+      "find": [
+        "tauri updater"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Capacitor add platform",
+      "find": [
+        "npx cap add"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Capacitor sync",
+      "find": [
+        "cap sync"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Capacitor open IDE",
+      "find": [
+        "cap open"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Capacitor plugins (camera/push)",
+      "find": [
+        "@capacitor/camera",
+        "@capacitor/push",
+        "push notifications"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Gradle assemble APK",
+      "find": [
+        "gradlew assemble"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "adb",
+      "find": [
+        "adb"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "keytool و signing",
+      "find": [
+        "keytool"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "versionCode",
+      "find": [
+        "versioncode"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "CI APK",
+      "find": [
+        "android.yml"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "TestFlight",
+      "find": [
+        "testflight"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "App Store/Play Store release",
+      "find": [
+        "play store",
+        "app store"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "Launcher",
+      "find": [
+        "launcher"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "PWA كبديل",
+      "find": [
+        "pwa"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Auto-update strategy",
+      "find": [
+        "auto-update",
+        "تحديث تلقائي"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Crash reporting",
+      "find": [
+        "crash",
+        "sentry"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "App permissions",
+      "find": [
+        "permissions",
+        "manifest"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Native plugin development",
+      "find": [
+        "plugin development",
+        "tauri plugin",
+        "capacitor plugin"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Performance و حجم التطبيق",
+      "find": [
+        "bundle size",
+        "app size",
+        "حجم التطبيق"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "اختبار تطبيق Electron (Playwright)",
+      "find": [
+        "playwright"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Local storage في التطبيق (sqlite/store)",
+      "find": [
+        "sqlite",
+        "electron-store"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Logging و debugging",
+      "find": [
+        "devtools",
+        "logging"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "مشروع الموقع كـ exe و APK",
+      "find": [
+        "exe و apk"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "مشروع notes بـ Tauri",
+      "find": [
+        "notes"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "مشروع Capacitor بكاميرا وpush",
+      "find": [
+        "capacitor بكاميرا"
+      ],
+      "lvl": "إنتاج"
+    }
+  ]
 }
