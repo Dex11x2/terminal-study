@@ -4,6 +4,15 @@ MORE("bash", [
       t: "سكربت محترم",
       l: 3,
       n: "الفرق بين سكربت اشتغل عندك مرة، وسكربت تثق فيه على السيرفر",
+      projects: [
+        { lvl: 'صغير', t: R`قالب سكربت جديد`, what: R`[[new-script NAME]] بيعمل [[~/bin/NAME]] فيه [[set -euo pipefail]] (درس ١)، و trap على ERR بيطبع السطر و trap على EXIT بينضّف فولدر [[mktemp -d]] (دروس ٢ و ٣)، و usage، و [[chmod +x]]، ويرفض لو الاسم موجود.`, done: R`[[new-script hello && hello --help]] شغال، و [[shellcheck ~/bin/hello]] مبيطلّعش تحذيرات، وأمر فاشل جواه بيطبع رقم سطره، والفولدر المؤقت مش موجود بعد ما يخلص حتى لو فشل.` },
+        { lvl: 'صغير', t: R`حط القيمة دي في الـ config`, what: R`[[set-key.sh FILE KEY VALUE]]: لو KEY موجود يبدّل قيمته، ولو لأ يزوّده (درس ٥)، والكتابة في ملف [[mktemp]] جنب الأصلي و [[chmod --reference]] و [[mv]] (درس ٣)، فالملف عمره ما يبقى نص مكتوب.`, done: R`٣ تشغيلات بنفس القيمة: [[grep -c '^KEY=' FILE]] بيطبع 1 و [[md5sum]] بعد التانية والتالتة زي ما هو. و [[stat -c %a FILE]] قبل وبعد نفس الرقم. ومفيش ملفات [[FILE.*]] فاضلة حتى لو قفلته بـ Ctrl+C في النص.` },
+        { lvl: 'متوسط', t: R`جهّز المشروع على جهاز جديد`, what: R`[[bootstrap.sh]]: يفحص الأدوات زي preflight (درس ٧)، ويعمل [[.env]] بالأسئلة لو مش موجود (درس ٦)، ويتأكد من الفولدرات والسطور المطلوبة بـ grep -q || (درس ٥)، ويكتب config بـ heredoc (درس ٤)، وفي الآخر ملخص بـ changed و ok لكل خطوة.`, done: R`على فولدر فاضي أول تشغيلة فيها changed وبتسأل، والتانية كلها ok ومبتسألش، و [[md5sum]] لكل الملفات قبل التانية وبعدها زي ما هو. أداة ناقصة بتوقفه في الأول برسالة قبل ما يعمل أي ملف.` },
+        { lvl: 'متوسط', t: R`باك أب بيتأكد من نفسه`, what: R`طوّر [[backup.sh]] (درس ٨): [[gzip -t]] و [[tar -tzf]] بعد الأرشيف، وتجربة استرجاع في [[mktemp -d]] و [[diff -r]] مع الأصل، و trap بينضّف، والمسح بالعدد (آخر N) بعد ما الفحص ينجح بس، وسطر لكل تشغيلة في لوج.`, done: R`تشغيلة عادية بتكتب في اللوج [[verified]]. لو بوّظت الأرشيف بإيدك قبل الفحص (أو خلّيت السكربت يبوّظه للتجربة) بيخرج 1 والنسخ القديمة كلها لسه موجودة. ومفيش فولدرات مؤقتة فاضلة في [[/tmp]] بعد أي تشغيلة.` },
+        { lvl: 'كبير', t: R`provision.sh لسيرفر تجربة`, what: R`على VM أو container (مش جهازك): [[provision.sh]] بيعمل يوزر للتطبيق لو مش موجود ([[id]] قبل [[useradd]])، وفولدرات [[/opt/myapp]] و [[/var/log/myapp]] بصلاحيات وصاحب صح، وملف config بـ [[sudo tee]] و heredoc، وسطر في [[/etc/hosts]] بـ [[grep -qxF || tee -a]]، و preflight في الآخر. [[set -euo pipefail]] و trap ERR بيكتب السطر، وكل خطوة بتتكتب بـ [[tee -a]] في [[/var/log/provision.log]] (دروس ١ و ٢ و ٤ و ٥ و ٧).`, done: R`أول تشغيلة بتعمل كل حاجة والـ preflight كله ok. التانية كل خطواتها ok ومفيش سطر في [[/etc/hosts]] اتكرر ([[grep -c]] بيطبع 1)، و [[stat -c '%U %a' /var/log/myapp]] صح. وخطوة بايظة (اسم باكدج غلط مثلًا) بتوقفه برقم السطر في اللوج، والتشغيلة اللي بعدها بتكمّل من غير ما تعمل حاجة مرتين.`, ext: R`زوّد [[--dry-run]]، وفحص إن السكربت شغال كـ root في الأول، وخليه ياخد اسم التطبيق من argument.` },
+        { lvl: 'كبير', t: R`deploy.sh بيرجع لوحده`, what: R`طوّر [[deploy.sh]] (درس ٩): preflight الأول كبوابة (درس ٧)، وقفل بـ [[mkdir]] و trap EXIT (درس ٢)، وحفظ [[git rev-parse HEAD]] قبل أي حاجة، و health check بيحاول ١٠ مرات، ولو فشل يرجع للـ commit المحفوظ ويعمل build تاني ويكتب [[ROLLED BACK]] في اللوج ويخرج 1. وفي [[DRY=1]] بيطبع بس.`, done: R`نشر commit سليم: [[Deploy OK]] و exit 0. نشر commit بيكسر [[/health]]: اللوج فيه [[ROLLED BACK]] و [[git rev-parse HEAD]] رجع للقديم والموقع بيرد. تشغيلتين مع بعض: التانية بتقول already running. و branch مش موجود بيخرج قبل ما يلمس أي حاجة.`, ext: R`بدل git checkout في نفس الفولدر، انشر كل نسخة في فولدر لوحده وبدّل [[current]] symlink (مشروع ٢ في نفس التاب بيعمل كده).` },
+        { lvl: 'فكرة', t: R`سكربت تثق فيه على سيرفر حد تاني`, what: R`خد أي سكربت كتبته واسأل: «لو اتشغّل مرتين؟ لو الشبكة وقعت في النص؟ لو حد ضغط Ctrl+C؟ لو الديسك مليان؟ لو اتشغّل من cron من غير ترمنال؟». صلّح كل إجابة وحشة بحاجة من الوحدة دي.`, done: R`عندك لستة بالأسئلة دي جنب كل واحدة جرّبتها إزاي وإيه اللي حصل، و [[shellcheck]] نضيف، والسكربت بيعدّي كلهم.`, ext: R`اكتب تست صغير بـ bash بيشغّل السكربت في [[mktemp -d]] بالحالات دي ويتأكد من الـ exit code والملفات.` },
+      ],
       items: [
         {
           cmd: "set -euo pipefail",
@@ -16,6 +25,11 @@ echo "Start"
 cp nothing.txt /tmp/
 echo "This never prints"`,
           try: "شغّله بسطر set ومن غيره وقارن.",
+          practice: [
+            { lvl: 'سريع', t: R`سكربت فيه [[set -u]] وبعده [[echo "$UNDEFINED_VAR"]] وسطر تاني بيطبع after.`, done: R`بيطبع [[UNDEFINED_VAR: unbound variable]] ومبيطبعش after، و [[echo $?]] بيطبع [[1]]. ومن غير [[set -u]] بيطبع سطر فاضي ويكمّل عادي.` },
+            { lvl: 'تطبيق', t: R`[[grep nothing /etc/passwd | wc -l; echo $?]] مرة عادي ومرة بعد [[set -o pipefail]].`, done: R`الاتنين بيطبعوا العدد [[0]]، بس exit code الأول [[0]] والتاني [[1]]. يعني من غير pipefail سكربت بيعمل [[grep ... | wc -l]] عمره ما هيعرف إن grep فشل أو إن الملف مش موجود.` },
+            { lvl: 'تحدي', t: R`فخ [[((n++))]]: سكربت فيه [[set -e]] و [[n=0]] ولوب على ٣ حاجات بيعمل [[((n++))]] ويطبع counted، وفي الآخر total.`, done: R`بيخرج بـ [[1]] من غير ما يطبع ولا سطر: أول [[((n++))]] قيمته صفر، وده عند bash فشل. بعد ما تبدّلها بـ [[n=$((n + 1))]] بيطبع التلات سطور و [[total 3]] و exit 0.` },
+          ],
           flag: "script",
           deep: {
             why: "bash افتراضيًا «متسامح» بشكل خطير: لو أمر فشل، بيكمّل عادي للي بعده. في سكربت deploy، يعني [[git pull]] فشل، والسكربت كمّل وعمل build وريستارت بالكود القديم أو المتبوّظ، وانت فاكر إن كله تمام.",
@@ -201,6 +215,11 @@ cd "$TMP"
 curl -fsSL https://example.com -o page.html
 wc -c page.html`,
           try: "غيّر الرابط لرابط غلط، وشوف رسالة الـ ERR، واتأكد إن الفولدر المؤقت اتمسح.",
+          practice: [
+            { lvl: 'سريع', t: R`[[bash -c 'trap "echo bye" EXIT; exit 3'; echo $?]].`, done: R`بيطبع [[bye]] وبعدين [[3]]: الـ trap اشتغل ومغيّرش exit code.` },
+            { lvl: 'تطبيق', t: R`قفل بسيط بـ [[mkdir]]: السكربت يعمل [[/tmp/myjob.lock]] أو يطبع already running ويخرج 1، وبعدها [[trap 'rmdir /tmp/myjob.lock' EXIT]] و [[sleep 30]]. شغّله في ترمنالين.`, done: R`التاني بيطبع already running و [[1]]. ولما تقفل الأول بـ Ctrl+C، [[ls -d /tmp/myjob.lock]] بيقول No such file: الـ EXIT trap اشتغل حتى مع Ctrl+C.` },
+            { lvl: 'تحدي', t: R`trap على ERR بيطبع [[$LINENO]] و [[$BASH_COMMAND]] في سكربت فيه [[set -euo pipefail]]، وفانكشن فيها [[false]] في النص.`, done: R`من غير [[-E]] الـ trap مبيطبعش حاجة خالص والسكربت بيخرج 1 ساكت. بعد [[set -Eeuo pipefail]] بيطبع [[ERR at line N: false]] برقم السطر اللي جوه الفانكشن.` },
+          ],
           flag: "script",
           deep: {
             why: "السكربت عمل ملفات مؤقتة، أو بدأ حاجة. ولو وقف في النص (error، أو Ctrl+C)، الحاجات دي بتفضل متسابة. [[trap]] بيضمن إن التنضيف يحصل مهما حصل.",
@@ -372,6 +391,11 @@ cp "$WORK/sorted.txt" "$NEW"
 chmod 644 "$NEW"
 mv "$NEW" config.txt`,
           try: R`اعمل [[printf '# comment\nb\na\nb\nc\n' > config.txt]] وشغّل السكربت جنبه، وبعدين [[cat config.txt]] و [[ls -l]]، واتأكد إن الفولدر اللي اتطبع اتمسح. وبعدين شيل سطر chmod وكرر وبص على الصلاحيات.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[f=$(mktemp); d=$(mktemp -d); ls -ld "$f" "$d"]].`, done: R`الملف [[-rw-------]] والفولدر [[drwx------]]: محدش غيرك يقدر يقراهم، وده الفرق عن ملف بتعمله بإيدك في [[/tmp]]. على الماك المسار هيبقى جوه [[$TMPDIR]] زي ما الملاحظة بتقول.` },
+            { lvl: 'تطبيق', t: R`غيّر [[PORT=3000]] لـ [[PORT=8080]] في ملف [[config]] صلاحياته 644، عن طريق ملف [[mktemp config.XXXXXX]] و sed و [[mv]].`, done: R`بعد mv، [[stat -c %a config]] بيطبع [[600]] مش 644: mv بياخد صلاحيات الملف المؤقت. بعد ما تزوّد [[chmod --reference=config "$T"]] قبل mv بيفضل [[644]].` },
+            { lvl: 'تحدي', t: R`[[update-list.sh URL FILE]]: نزّل نسخة جديدة بـ [[curl -fsS URL -o "$T"]] في ملف مؤقت جنب FILE، واستبدل القديم بس لو التحميل نجح والملف مش فاضي ([[test -s]])، و trap يمسح المؤقت. جرّب بسيرفر [[python3 -m http.server 8000]].`, done: R`برابط مش موجود curl بيقول [[The requested URL returned error: 404]] ويخرج [[22]]، و [[md5sum FILE]] قبل وبعد زي ما هو، ومفيش ملفات مؤقتة فاضلة جنبه. وبرابط صح المحتوى اتغير.` },
+          ],
           flag: "script",
           mac: ["both", R`[[mktemp]] و [[mktemp -d]] شغالين على الماك، بس بيعملوا الملفات في فولدر مؤقت تاني غير [[/tmp]] (اللي في [[$TMPDIR]]). والقالب اللي فيه X شغال زي ما هو.`],
           deep: {
@@ -551,6 +575,11 @@ sudo tee /etc/logrotate.d/myapp > /dev/null <<'EOF'
 }
 EOF`,
           try: "اعمل .env بالطريقة دي وافتحه.",
+          practice: [
+            { lvl: 'سريع', t: R`[[cat <<EOF]] فيه سطر [[home=$HOME]]، ونفس الكلام بـ [[<<'EOF']].`, done: R`الأول بيطبع المسار الحقيقي زي [[home=/home/ali]]، والتاني بيطبع [[home=$HOME]] زي ما هو.` },
+            { lvl: 'تطبيق', t: R`سكربت بيولّد سكربت: [[APP=/opt/myapp]]، وheredoc من غير علامات تنصيص بيكتب [[run.sh]] فيه [[cd $APP]] و [[echo "arg: \$1"]].`, done: R`[[cat run.sh]] فيه [[cd /opt/myapp]] (اتبدّل) و [[echo "arg: $1"]] (فضل زي ما هو بسبب [[\$]])، و [[bash -n run.sh]] مبيطبعش أخطاء.` },
+            { lvl: 'تحدي', t: R`كيوزر عادي ليه sudo (في VM أو container مش على جهازك)، اكتب ملف في [[/etc]] مرة بـ [[sudo cat > /etc/myapp.conf <<EOF]] ومرة بـ [[sudo tee /etc/myapp.conf > /dev/null <<EOF]].`, done: R`الأولى بتقول [[/etc/myapp.conf: Permission denied]] و exit 1، لأن الـ [[>]] بيعمله الـ shell بتاعك مش sudo. التانية بتنجح و [[ls -l /etc/myapp.conf]] بيبين root صاحبه. امسحه بعدها بـ [[sudo rm]].` },
+          ],
           flag: "script",
           mac: ["both", "المثال التاني (logrotate) لسيرفر لينكس بس."],
           deep: {
@@ -723,6 +752,11 @@ docker stop myapp 2>/dev/null || true
 docker rm myapp 2>/dev/null || true
 command -v jq >/dev/null || sudo apt install -y jq`,
           try: "اعمل ملف فيه سطرين، واكتب سطر [[grep -qxF ... || echo ... >>]] يضيف سطر تالت، وشغّله ٣ مرات، واتأكد بـ [[cat]] إنه اتضاف مرة واحدة.",
+          practice: [
+            { lvl: 'سريع', t: R`[[grep -qxF "alias gs='git status'" ~/lab/rc || echo "alias gs='git status'" >> ~/lab/rc]] تلات مرات (بعد [[touch ~/lab/rc]]).`, done: R`[[grep -c "alias gs=" ~/lab/rc]] بيطبع [[1]]. ولما يعجبك حطه بنفس الطريقة في [[~/.bashrc]].` },
+            { lvl: 'تطبيق', t: R`«حط القيمة دي» في .env: لو فيه سطر [[PORT=]] بدّل قيمته بـ [[sed -i]]، ولو مفيش زوّده. في سطر واحد: [[grep -q '^PORT=' .env && sed -i 's/^PORT=.*/PORT=8080/' .env || echo 'PORT=8080' >> .env]].`, done: R`شغّله ٣ مرات على ملف فيه [[PORT=3000]] و ٣ مرات على ملف مفيهوش PORT: في الاتنين [[grep -c '^PORT=' .env]] بيطبع [[1]] والقيمة 8080. وعلى الماك [[sed -i]] محتاج [[sed -i '']].` },
+            { lvl: 'تحدي', t: R`[[ensure.sh]] بيتأكد من ٣ حاجات ويطبع لكل واحدة changed أو ok: فولدر [[logs]] موجود، و [[.env]] اتنسخ من [[.env.example]] لو مش موجود، وسطر [[LOG_DIR=./logs]] موجود في .env.`, done: R`أول تشغيلة فيها changed، والتانية كلها ok و exit 0، و [[md5sum .env]] قبل التانية وبعدها زي ما هو.` },
+          ],
           mac: ["diff", "[[/etc/fstab]] والـ swap و apt لسيرفر لينكس. الفكرة نفسها ([[grep -q ... ||]]) شغالة على الماك عادي."],
           deep: {
             why: "سكربت تجهيز السيرفر مش بيتشغّل مرة واحدة: بيقع في النص فتصلّح وتشغّله تاني، أو تضيف له خطوة وتعيده. لو كل مرة بيضيف نفس السطر في [[/etc/fstab]] تاني، أو بيقع لأن الـ container موجود، يبقى مش ينفع تثق فيه.",
@@ -929,6 +963,11 @@ EOF
 )
 ls -l .env`,
           try: "شغّله في فولدر فاضي، وبص على [[ls -l .env]] (لازم [[-rw-------]])، وبعدين شغّله تاني واتأكد إنه ملمسش الملف.",
+          practice: [
+            { lvl: 'سريع', t: R`شغّله من غير أسئلة زي ما هيحصل في CI: [[printf 'example.com\nkey123\n' | bash setup-env.sh]] والسكربت لوحده في فولدر فاضي.`, done: R`[[.env]] اتعمل جنب السكربت فيه [[DOMAIN=example.com]] و [[API_KEY=key123]] و [[DB_PASSWORD]] طويل، و [[ls -l .env]] بيبدأ بـ [[-rw-------]].` },
+            { lvl: 'تطبيق', t: R`ضيف [[--force]]: لو .env موجود خد منه نسخة [[.env.bak-$(date +%F_%H-%M)]] بـ cp واعمل واحد جديد.`, done: R`بعد [[--force]] فيه ملف [[.env.bak-...]] بالقيم القديمة، والاتنين [[-rw-------]] (cp بياخد صلاحيات الملف الأصلي). ومن غير --force لسه بيقول already exists.` },
+            { lvl: 'تحدي', t: R`اسأل تاني لو الإجابة غلط: الدومين لازم يطابق regex بـ =~، والـ API key مينفعش يبقى فاضي، بحد أقصى ٣ محاولات وبعدها exit 1 من غير ما يتعمل .env. وزوّد [[.env]] في [[.gitignore]] لو مش موجود فيه (درس «grep -q || echo >>»).`, done: R`٣ إجابات فاضية للـ key بيخرج [[1]] و [[ls .env]] مبيلاقيهوش. و [[git check-ignore .env]] بيطبع [[.env]]، والـ key مبيظهرش في الترمنال وانت بتكتبه.` },
+          ],
           flag: "script",
           mac: ["both", "شغال زي ما هو، و [[openssl]] موجود على الماك."],
           deep: {
@@ -1135,6 +1174,11 @@ done
 echo "passed $PASS, failed $FAIL"
 [ "$FAIL" -eq 0 ]`,
           try: "شغّله على سيرفر التجربة، وبعدين امسح قيمة DOMAIN من .env وشغّله تاني، واطبع [[echo $?]] بعده.",
+          practice: [
+            { lvl: 'سريع', t: R`ضيف فحص للرامات: [[awk '/MemTotal/ {print int($2/1024)}' /proc/meminfo]] لازم 1024 ميجا أو أكتر.`, done: R`سطر جديد ok أو FAIL فيه الرقم، والرقم نفس عمود total في [[free -m]].` },
+            { lvl: 'تطبيق', t: R`ضيف فحص إن بورت 80 فاضي ([[ss -ltn | grep -q ':80 ']] معناها مشغول)، وجرّبه وانت شغّال [[sudo python3 -m http.server 80]] في ترمنال تاني.`, done: R`والسيرفر شغال، [[ss -ltn]] فيه [[0.0.0.0:80]] وسطر البورت FAIL و [[echo $?]] بعد السكربت [[1]]. ولما توقفه بيبقى ok.` },
+            { lvl: 'تحدي', t: R`استخدمه كبوابة: [[./preflight.sh && ./deploy.sh]]، وزوّد [[--json]] بيطبع سطر واحد زي [[{"passed":5,"failed":1}]] بدل الألوان.`, done: R`لو فحص فشل، deploy مبيبدأش. و [[./preflight.sh --json | python3 -m json.tool]] بيطلّع JSON صالح، والـ exit code زي ما هو في الوضعين.` },
+          ],
           flag: "script",
           mac: ["diff", "سكربت سيرفر لينكس: [[nproc]] و [[df -BG]] و [[ss]] مش موجودين على الماك (البدايل [[sysctl -n hw.ncpu]] و [[df -g]] و [[lsof -i]])."],
           deep: {
@@ -1339,6 +1383,11 @@ tar -czf "$DEST/$NAME" -C "$(dirname "$SRC")" "$(basename "$SRC")"
 find "$DEST" -name "*.tar.gz" -mtime +"$KEEP_DAYS" -delete
 echo "Saved $DEST/$NAME"`,
           try: "شغّله على ~/lab/app، وبعدين شغّل shellcheck عليه.",
+          practice: [
+            { lvl: 'سريع', t: R`بعد ما تعمل باك أب، [[tar -tzf ~/backups/app-*.tar.gz | head]].`, done: R`المسارات بتبدأ بـ [[app/]] مش [[/home/...]]، بسبب [[-C "$(dirname "$SRC")"]]: لما تفك الأرشيف في أي مكان بيعمل فولدر app بس.` },
+            { lvl: 'تطبيق', t: R`ضيف [[--exclude=node_modules --exclude=.git]] للـ tar، وجرّبه على مشروع فيه الاتنين.`, done: R`[[tar -tzf ... | grep -c node_modules]] بيطبع [[0]]، والأرشيف في [[ls -lh ~/backups]] أصغر بكتير من اللي قبله.` },
+            { lvl: 'تحدي', t: R`اتأكد إن الباك أب سليم قبل ما تمسح القديم: بعد tar شغّل [[gzip -t]] على الأرشيف، ولو فشل امسحه واخرج 1. وبدل [[-mtime]] سيب آخر ٥ نسخ بالعدد ([[ls -1t ... | tail -n +6]]).`, done: R`أرشيف بوّظته بـ [[truncate -s 100]] بيخلّي [[gzip -t]] يقول [[unexpected end of file]] و exit 1، والسكربت مبيمسحش القديم. وبعد ١٠ باك أبات [[ls ~/backups | wc -l]] بيطبع [[5]] والأحدث هم اللي فاضلين.` },
+          ],
           flag: "script",
           deep: {
             why: "باك أب يدوي بيتنسي. سكربت باك أب يتشغّل كل يوم من cron، ويمسح القديم لوحده، فالديسك ميتملاش.",
@@ -1510,6 +1559,11 @@ else
   exit 1
 fi`,
           try: "اعمل endpoint اسمه /health في تطبيقك، وجرّب السكربت على سيرفر التجربة.",
+          practice: [
+            { lvl: 'سريع', t: R`ضيف وضع تجربة: [[run() { if [ -n "$__{DRY:-}" ]; then log "would run: $*"; else "$@"; fi; }]]، وحط [[run]] قبل أوامر git و docker.`, done: R`[[DRY=1 ./deploy.sh]] بيطبع سطر would run لكل أمر، و [[git log -1]] في فولدر التطبيق قبل وبعد زي ما هو.` },
+            { lvl: 'تطبيق', t: R`جرّب طريق الفشل على نسخة تجربة: [[./deploy.sh nosuch]] (branch مش موجود).`, done: R`git بيقول [[pathspec 'nosuch' did not match]]، و [[tail -n 2 ~/deploy.log]] فيه [[Deploying nosuch]] وبعده [[Deploy FAILED at line N]]، و [[echo $?]] بيطبع [[1]]، و docker ماتلمسش.` },
+            { lvl: 'تحدي', t: R`بدل [[sleep 5]] مرة واحدة، الـ health check بيحاول لحد ١٠ مرات كل ثانيتين ويكتب رقم المحاولة. وقبل أي حاجة اتأكد إن الـ branch موجود على الـ remote بـ [[git ls-remote --exit-code --heads origin "$BRANCH"]].`, done: R`branch مش موجود بيخرج قبل ما يلمس الفولدر (ls-remote بيرجع [[2]] لما ميلاقيش). وتطبيق بيقوم بعد ٦ ثواني بيعدّي في محاولة من الأوايل بدل ما النشر يفشل.` },
+          ],
           flag: "script",
           mac: ["both", "معمول للسيرفر، بس هيشتغل على الماك عادي لو عندك نفس الفولدر و Docker."],
           deep: {

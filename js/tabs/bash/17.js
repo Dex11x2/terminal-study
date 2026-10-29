@@ -3,6 +3,14 @@ MORE("bash", [
     {
       t: "تحكّم في الشبكة",
       l: 3,
+      projects: [
+        { lvl: 'صغير', t: R`بروفايلين للشبكة`, what: R`اعمل بـ [[nmcli con add]] أو [[con clone]] connection تاني لنفس الكارت فيه IP ثابت، وسيب الأصلي DHCP، وبدّل بينهم بـ [[nmcli con up]]. من درس «nmcli».`, done: R`[[nmcli con show]] فيه الاتنين، و [[nmcli -g ipv4.method con show]] بيطبع [[manual]] لواحد و [[auto]] للتاني، والتبديل مش محتاج ريستارت.` },
+        { lvl: 'صغير', t: R`مين أسرع DNS عندك`, what: R`سكربت بيسأل نفس ٥ دومينات من [[1.1.1.1]] و [[8.8.8.8]] و DNS الراوتر (من [[resolvectl dns]]) بـ [[dig]]، ويطلّع [[Query time]] بـ [[awk]] ويحسب المتوسط لكل واحد. من درسين «resolvectl» و «dig».`, done: R`٣ سطور، كل سطر IP الـ DNS ومتوسط الوقت بالـ ms، ومترتبين من الأسرع. ولو شغّلته مرتين ورا بعض الراوتر غالبًا هيبان أسرع في التانية عشان الكاش.` },
+        { lvl: 'متوسط', t: R`IP مؤقت للتجربة`, what: R`سكربت [[tmp-ip.sh add|del IFACE ADDR]] بيزوّد أو يشيل عنوان بـ [[ip addr]]، ويتأكد قبلها إن الكارت موجود ([[ip link show]]) وإن العنوان مش موجود قبل كده، ويطبع [[ip -br a show]] بعدها. من درس «ip link و ip addr add».`, done: R`[[add]] مرتين ورا بعض التانية بتقول «موجود» ومش بتطلع error من ip، و [[del]] على عنوان مش موجود بيقول كده وكوده 1، واسم كارت غلط بيتمسك قبل ما يحصل حاجة.` },
+        { lvl: 'متوسط', t: R`لقطة فايروول`, what: R`سكربت بيحفظ [[sudo nft list ruleset]] في [[fw/$(date +%F-%H%M).nft]]، ويقارنه بآخر لقطة بـ [[diff -u]]، ويطبع «اتغيّر» أو «زي ما هو». من دروس «nft و iptables -L» و «diff».`, done: R`أول مرة بيحفظ بس، والتانية من غير تغيير بتطبع «زي ما هو»، ولو زوّدت قاعدة في كونتينر التجربة الـ diff بيوريها بـ [[+]].` },
+        { lvl: 'كبير', t: R`فايروول بزرار رجوع`, what: R`سكربت [[apply-fw.sh FILE]] أوله [[set -euo pipefail]]: بيرفض لو مش root، ويفحص الملف بـ [[nft -c -f]] قبل أي حاجة، ويحفظ الـ ruleset الحالي، ويشغّل رجوع تلقائي في الخلفية بعد ٦٠ ثانية، ويطبّق، ويسأل «لسه شايفني؟» بـ [[read -t 50]]. لو جاوبت [[y]] يلغي الرجوع، ولو لأ أو مفيش رد الرجوع بيحصل لوحده. وكل خطوة في [[/var/log/apply-fw.log]]. جرّبه في كونتينر [[--privileged]] بس.`, done: R`ملف فيه غلطة syntax بيترفض والـ ruleset ما اتلمسش. ملف سليم مع [[y]] بيفضل مطبّق بعد دقيقتين، ومن غير رد بيرجع للقديم ([[nft list ruleset]] زي اللقطة)، وتطبيقه مرتين ورا بعض مبيكررش القواعد (الملف أوله [[delete table]] زي الدرس).`, ext: R`خلّيه يحفظ آخر ٥ نسخ ويرجع لأي واحدة بالاسم، ويطبع [[diff]] بين الحالي والجديد قبل التطبيق ويسألك.` },
+        { lvl: 'فكرة', t: R`شبكة الكونتينرات بتاعتك`, what: R`ابني بـ docker شبكة صغيرة فيها ٣ كونتينرات: «سيرفر» عليه فايروول بـ nft، و «عميل» مسموحله، و «غريب» مش مسموحله (بالـ IP). انت اللي بتقرر القواعد، والهدف تثبت بالتجربة إن كل قاعدة بتعمل اللي انت فاكره.`, done: R`فيه سكربت بيبني كل حاجة وسكربت بيمسحها (الكونتينرات والشبكة اللي عملتها بس)، وجدول بيقول كل محاولة اتصال المفروض تنجح ولا لأ، والنتيجة الفعلية من [[nc -zw 3]] مطابقة.`, ext: R`زوّد [[tcpdump]] على السيرفر يثبت إن الـ packets المرفوضة وصلت الكارت واتشالت، وجرّب [[reject]] و [[drop]] وقارن الوقت.` },
+      ],
       n: "الواي فاي و IP ثابت، والـ DNS اللي جهازك بيستخدمه فعلًا، وتشغيل الكارت وإطفاؤه، وقراية الفايروول وكتابته",
       items: [
         {
@@ -34,6 +42,11 @@ ip -br a
 sudo nmcli con mod "Wired connection 1" ipv4.method auto ipv4.addresses "" ipv4.gateway "" ipv4.dns ""
 sudo nmcli con up "Wired connection 1"`,
           try: R`على جهازك (مش سيرفر بتدخله بـ ssh): اعرض الكروت والشبكات اللي حواليك. اعرف اسم الـ connection اللي انت عليه، وحط IP ثابت في نفس شبكتك (برّه مدى الـ DHCP)، واتأكد بـ [[ip -br a]] و [[ping 1.1.1.1]]، ورجّعه DHCP.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[nmcli device status]]، وبعدين نفس الحاجة بشكل ينفع لسكربت: [[nmcli -t -f DEVICE,TYPE,STATE device]].`, done: R`الأول جدول بعناوين، والتاني من غير عناوين والحقول مفصولة بـ [[:]] من غير مسافات، فـ [[nmcli -t -f DEVICE,STATE device | cut -d: -f1]] بيطبع أسامي الكروت بس.` },
+            { lvl: 'تطبيق', t: R`على لابتوب: [[nmcli -f IN-USE,SSID,SIGNAL,SECURITY dev wifi list]]، واعرف الشبكة اللي انت عليها وأقوى شبكة حواليك.`, done: R`الشبكة اللي انت عليها قدامها [[*]] في عمود [[IN-USE]]، وتقدر تقول رقم الإشارة بتاعها، وأنهي شبكة رقمها أعلى ونوع التأمين بتاعها (WPA2 أو WPA3).` },
+            { lvl: 'تحدي', t: R`على جهازك (مش جهاز داخله بـ ssh): حط IP ثابت زي الدرس، واقرا الطريقة بـ [[nmcli -g ipv4.method con show "اسم-الـ-connection"]]، واتأكد بـ [[ping -c 2 1.1.1.1]]، ورجّعه DHCP واقرا الطريقة تاني.`, done: R`[[-g]] بيطبع [[manual]] وانت على الثابت و [[auto]] بعد الرجوع، و [[ip -br a]] بيوري العنوان اللي اخترته وبعدين عنوان DHCP، والـ ping شغال في الحالتين.` },
+          ],
           mac: ["diff", R`مفيش nmcli على الماك: [[networksetup -listallhardwareports]] الكروت، و [[networksetup -setmanual "Wi-Fi" 192.168.1.50 255.255.255.0 192.168.1.1]] IP ثابت، و [[networksetup -setdhcp "Wi-Fi"]] رجوع، و [[networksetup -setdnsservers "Wi-Fi" 1.1.1.1]] الـ DNS، و [[networksetup -setairportnetwork en0 HomeWiFi]] يدخل واي فاي.`],
           deep: {
             why: R`سيرفر في البيت أو المكتب (Raspberry Pi، NAS، جهاز Home Assistant) لازم IP بتاعه ميتغيّرش عشان تعمله ssh أو port forwarding. وجهاز من غير واجهة أو بتدخله بـ ssh مفيهوش أيقونة واي فاي تدوس عليها. ولما الشبكة «مش شغالة»، [[nmcli device status]] أسرع تشخيص: الكارت شايف السلك؟ متوصل بأنهي profile؟`,
@@ -279,6 +292,11 @@ sudo resolvectl flush-caches
 sudo resolvectl dns eth0 9.9.9.9
 sudo resolvectl revert eth0`,
           try: R`اعرف جهازك بيسأل أنهي DNS على الواي فاي. اسأل عن [[example.com]] مرتين ورا بعض وقارن [[Data from]] والوقت. امسح الكاش واتأكد من [[resolvectl statistics]] إن [[Current Cache Size]] بقى صفر. (استبدل [[eth0]] باسم كارتك من [[ip -br a]].)`,
+          practice: [
+            { lvl: 'سريع', t: R`[[resolvectl dns]] و [[cat /etc/resolv.conf | grep nameserver]].`, done: R`[[resolvectl dns]] بيطبع سطر لكل كارت ومعاه الـ DNS بتاعه (غالبًا IP الراوتر على الواي فاي)، و [[resolv.conf]] فيه [[nameserver 127.0.0.53]]: البرامج بتسأل systemd-resolved المحلي، وهو اللي بيسأل الراوتر.` },
+            { lvl: 'تطبيق', t: R`اقرا [[Cache Hits]] من [[resolvectl statistics]]، واسأل عن دومين جديد بـ [[resolvectl query]] مرتين، واقرا الإحصائيات تاني.`, done: R`[[Current Cache Size]] زاد بعد أول سؤال، و [[Cache Hits]] زاد واحد على الأقل بعد التاني، والسؤال التاني آخره [[Data from: cache]].` },
+            { lvl: 'تحدي', t: R`غيّر الـ DNS مؤقتًا على كارتك لـ [[9.9.9.9]] بـ [[sudo resolvectl dns IFACE 9.9.9.9]]، واتأكد بـ [[resolvectl dns IFACE]]، واسأل عن [[example.com]]، وبعدين [[sudo resolvectl revert IFACE]].`, done: R`بعد التغيير الكارت جنبه [[9.9.9.9]] بس، والسؤال شغال. وبعد الـ revert بيرجع الـ DNS القديم اللي شفته في التمرين الأول بالظبط (قارنه بعينك).` },
+          ],
           mac: ["diff", R`مفيش resolvectl على الماك: [[scutil --dns]] بيعرض الـ DNS لكل كارت، و [[dscacheutil -q host -a name example.com]] بيسأل زي البرامج، والكاش: [[sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder]].`],
           deep: {
             why: R`«الموقع بيفتح من الموبايل ومش من اللابتوب»، «غيّرت الـ DNS ولسه الدومين بيروح للسيرفر القديم»، «شغّلت VPN وبطّلت أوصل للمواقع الداخلية». كل دول أسئلة: جهازي بيسأل مين؟ والرد جاي من كاش ولا لأ؟ resolvectl بيجاوبهم من غير تخمين.`,
@@ -477,6 +495,11 @@ sudo ip link set dev eth0 down
 sudo ip link set dev eth0 up
 ip route`,
           try: R`على جهازك (استبدل eth0 باسم كارتك من [[ip -br a]]): زوّد عنوان [[10.0.0.5/24]] واتأكد إنه ظهر جنب الأصلي، وشيله. واقرا عدّادات الكارت مرتين بينهم [[curl]] لملف كبير وقارن RX.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[ip -br link]] و [[ip -s -h link show lo]].`, done: R`[[lo]] حالته [[UNKNOWN]] (عادي لـ loopback)، والكارت الحقيقي [[UP]] وجنبه الـ MAC. و [[-s -h]] بيطبع سطر RX وسطر TX، والأرقام مختصرة بحرف زي [[1.28M]] بدل عدد البايتات الطويل.` },
+            { lvl: 'تطبيق', t: R`زوّد [[10.0.0.5/24]] على كارتك، وبعدين [[ip route | grep 10.0.0]] و [[ping -c 1 10.0.0.5]]، وبعدين [[ip addr del]] واقرا [[ip route]] تاني.`, done: R`وهو موجود فيه سطر route [[10.0.0.0/24 dev ... proto kernel scope link src 10.0.0.5]] اتعمل لوحده، والـ ping بيرد. وبعد المسح العنوان والـ route الاتنين اختفوا.` },
+            { lvl: 'تحدي', t: R`قيس الاستلام بالبايت: اقرا [[cat /sys/class/net/IFACE/statistics/rx_bytes]]، وحمّل [[curl -so /dev/null https://proof.ovh.net/files/10Mb.dat]]، واقرا تاني، واطرح بـ [[awk]].`, done: R`الفرق أكبر من [[10485760]] (حجم الملف) بشوية، والزيادة دي headers و TCP و TLS. نفس الرقم بيطلع في [[ip -s link]] بس من غير ما تحتاج تقرا جدول.` },
+          ],
           mac: ["diff", R`مفيش ip على الماك: [[sudo ifconfig en0 alias 10.0.0.5 255.255.255.0]] يضيف عنوان، و [[sudo ifconfig en0 -alias 10.0.0.5]] يشيله، و [[sudo ifconfig en0 down]] و [[up]]، والعدّادات [[netstat -ibn]].`],
           deep: {
             why: R`ساعات محتاج تغيير سريع للتجربة من غير ما تلمس الإعدادات المحفوظة: توصل لجهاز جديد على شبكة تانية، أو تعيد تشغيل كارت معلّق، أو تتأكد إن السلك نفسه فيه errors. و [[ip]] بيعمل ده فورًا، والريستارت بيرجّع كل حاجة زي ما كانت، وده أمان في التجارب.`,
@@ -706,6 +729,11 @@ sudo nft -f myfw.nft
 sudo nft list table inet myfw
 kill %1`,
           try: R`في VM أو container بـ [[--privileged]] (مش السيرفر الحقيقي ولا جهازك): اقرا الجداول الموجودة. اعمل الملف وطبّقه، وشغّل برنامج بيسمع على بورت مش في اللستة ([[nc -lk -p 8080]]) وجرّب توصله من جهاز تاني، وقارن بـ 22. واقرا الـ counters بعدها.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[iptables -V]] و [[sudo nft list tables]].`, done: R`[[iptables -V]] بيطبع رقم النسخة وبعده [[(nf_tables)]] أو [[(legacy)]]: لو nf_tables، أي قاعدة بتكتبها بـ iptables هتظهر في [[nft list ruleset]] كمان. و [[nft list tables]] بيطبع جدول في كل سطر، أو مفيش ولا سطر لو مفيش فايروول خالص.` },
+            { lvl: 'تطبيق', t: R`في كونتينر بـ [[--privileged]] على شبكة docker انت عاملها: شغّل سيرفر على 80 وسيرفر على 8080، وطبّق [[myfw.nft]] بتاع الدرس، ومن كونتينر تاني [[nc -zv -w 3 الأول 80]] و [[nc -zv -w 3 الأول 8080]].`, done: R`80 بيقول [[succeeded!]] على طول، و 8080 بيستنى ٣ ثواني ويقول [[timed out]]: الـ [[policy drop]] بيرمي الـ packet ساكت، فاللي بره مبيعرفش إن فيه حد.` },
+            { lvl: 'تحدي', t: R`زوّد في الـ chain سطر [[tcp dport 8080 counter reject with tcp reset]] قبل آخر القواعد، وطبّق، وجرّب الـ nc على 8080 تاني، وبعدين [[sudo nft list table inet myfw]].`, done: R`8080 بقى بيرد على طول بـ [[Connection refused]] بدل ما يستنى. وقدام قاعدة 8080 [[counter packets]] برقم أكبر من صفر، وقاعدة 80 كمان عدّت.` },
+          ],
           flag: "script danger",
           mac: ["diff", R`الماك فايروول تاني اسمه pf: [[sudo pfctl -s rules]] القواعد و [[sudo pfctl -s info]] الحالة. وفايروول الإعدادات (Application Firewall): [[/usr/libexec/ApplicationFirewall/socketfilterfw --getglobalstate]].`],
           deep: {

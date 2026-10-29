@@ -4,6 +4,14 @@ MORE("bash", [
       t: "الصلاحيات",
       l: 2,
       n: "أكتر حاجة بتعمل مشاكل على السيرفر",
+      projects: [
+        { lvl: 'صغير', t: R`اقفل أسرارك`, what: R`لاقي كل ملفات [[.env]] في مشاريعك بـ [[find ~ -name ".env" -not -path "*/node_modules/*"]]، واقرا صلاحياتها بـ [[ls -l]]، وخلّيها [[600]] بـ [[chmod]]. ومفاتيح ssh في [[~/.ssh]]: الخاص [[600]] والفولدر [[700]]. من دروس ls -l و chmod.`, done: R`[[stat -c '%a %n']] على كل [[.env]] بيطبع [[600]]، و [[find ~ -name ".env" -perm /077]] مبيطلّعش ولا ملف، و [[ls -ld ~/.ssh]] بيبدأ بـ [[drwx------]].` },
+        { lvl: 'صغير', t: R`أوامرك الخاصة في ~/bin`, what: R`اعمل [[~/bin/hello]] فيه سطرين ([[#!/usr/bin/env bash]] و [[echo "hello $USER"]])، واعمله [[chmod +x]]، وزوّد [[export PATH="$HOME/bin:$PATH"]] في آخر [[~/.bashrc]]. من دروس chmod و > و >>.`, done: R`في ترمنال جديد، [[hello]] من أي فولدر بيطبع اسمك، و [[type hello]] بيقول مساره في [[~/bin]]، و [[ls -l ~/bin/hello]] فيه [[x]] لصاحبه.` },
+        { lvl: 'متوسط', t: R`فولدر موقع جاهز على السيرفر`, what: R`على جهاز تجربة: [[/var/www/site]] فيه [[index.html]] و [[css/style.css]] و [[.env]]. المالك [[www-data:www-data]] بـ [[chown -R]]، والفولدرات [[755]] والملفات [[644]] بأمر واحد [[chmod -R u=rwX,go=rX]]، و [[.env]] بعدها [[640]]. بيجمع chown و chmod و sudo.`, done: R`[[ls -la /var/www/site]] كله [[www-data www-data]]، و [[find /var/www/site -type f ! -perm 644]] مبيطلّعش غير [[.env]]، و [[find /var/www/site -type d ! -perm 755]] مبيطلّعش حاجة، و [[cat /var/www/site/.env]] كيوزرك العادي بيقول [[Permission denied]].` },
+        { lvl: 'متوسط', t: R`ملف إعدادات في /etc بالطريقة الصح`, what: R`اعمل [[/etc/myapp/app.conf]] من غير editor: [[sudo mkdir -p /etc/myapp]] و [[printf 'PORT=3000\n' | sudo tee /etc/myapp/app.conf]]، وزوّد سطر بـ [[sudo tee -a]]، واتأكد إن مالكه [[root:root]] وصلاحياته [[644]]. وجرّب الطريقة الغلط [[sudo echo x > /etc/myapp/app.conf]] الأول. من دروس sudo و > و |.`, done: R`الطريقة الغلط طلّعت [[Permission denied]] والملف متغيّرش، و [[cat /etc/myapp/app.conf]] فيه السطرين، و [[stat -c '%a %U:%G']] بيطبع [[644 root:root]]، و [[echo y >> /etc/myapp/app.conf]] من غير sudo اترفض.` },
+        { lvl: 'كبير', t: R`سكربت إصلاح صلاحيات المواقع`, what: R`[[fix-perms.sh DIR]]: أوله [[set -euo pipefail]]. لو مش root ([[test "$(id -u)" -ne 0]]) بيطبع «شغّله بـ sudo» على stderr ويخرج بـ 1، ولو [[DIR]] مش فولدر يخرج بـ 1. بيعد الملفات الغلط الأول بـ [[find ! -perm]]، وبعدين: المالك [[www-data]]، والفولدرات [[755]]، والملفات [[644]]، و [[.env]] و [[*.key]] [[600]]. بيكتب في [[fix-perms.log]] سطر فيه الوقت والفولدر وعدد اللي اتصلّح. ولو اتشغّل بـ [[--check]] تاني argument، بيطبع الغلط بس ومبيغيّرش حاجة، ويخرج بـ 1 لو لقى غلط. بيجمع الوحدة دي مع «البحث» و «Pipes».`, done: R`كيوزر عادي بيخرج بـ 1 والرسالة. بعد ما تخرّب صلاحيات ٣ ملفات بـ [[chmod 777]]، [[--check]] بيطلّعهم ويخرج بـ 1، والتشغيل العادي بيصلّحهم واللوج بيقول 3، وتشغيله تاني بيقول 0 ومبيغيّرش حاجة، و [[--check]] بعدها بيخرج بـ 0.`, ext: R`لما توصل لـ [[setfacl]] زوّد صلاحية لجروب المطوّرين من غير ما تكسر صلاحيات [[www-data]]، ولما توصل لـ cron خلّي [[--check]] يشتغل كل ساعة ويكتب في اللوج لو حاجة اتغيّرت.` },
+        { lvl: 'فكرة', t: R`سياسة صلاحيات لمشروعك`, what: R`اكتب «مين يقدر يعمل إيه» لمشروع حقيقي: الكود، والـ uploads، واللوجات، والأسرار، والسكربتات. لكل نوع: المالك، والجروب، والرقم، وليه. وبعدين طبّقها على نسخة. انت اللي بتقرر القواعد.`, done: R`عندك جدول فيه كل نوع ورقمه وسبب الرقم، والنسخة متطبّق عليها الجدول واتأكدت منه بـ [[stat]] أو [[find -perm]]، ومفيش ملف عليه [[777]].`, ext: R`لما توصل لوحدة اليوزرز والجروبات، اعمل يوزر للتطبيق وجروب للفريق وخلّي السياسة تستخدمهم، ولما توصل لـ [[umask]] خلّي الملفات الجديدة تتعمل صح من الأول.` },
+      ],
       items: [
         {
           cmd: "ls -l",
@@ -17,6 +25,11 @@ MORE("bash", [
 whoami
 id`,
           try: "اعمل [[ls -l]] على ملف واحسب الرقم بتاعه، مثلًا [[rw-r--r--]] يبقى 644.",
+          practice: [
+            { lvl: 'سريع', t: R`[[ls -l /etc/passwd]]، واحسب رقم الصلاحيات بإيدك، وبعدين اتأكد بـ [[stat -c %a /etc/passwd]].`, done: R`[[rw-r--r--]] = 6 و 4 و 4، و [[stat]] طبع [[644]] نفس حسابك.` },
+            { lvl: 'تطبيق', t: R`[[ls -l /etc/shadow]] وبعدين، كيوزر عادي، [[cat /etc/shadow; echo $?]].`, done: R`السطر [[-rw-r----- 1 root shadow]] يعني [[640]]: root يكتب، وجروب [[shadow]] يقرا، والباقي ولا حاجة. و [[cat]] طلّع [[Permission denied]] و [[$?]] بـ 1.` },
+            { lvl: 'تحدي', t: R`[[ls -ld /tmp ~ /root]] واحسب الأرقام التلاتة، وفسّر ليه كل واحد كده.`, done: R`[[/tmp]] [[drwxrwxrwt]] = 1777 (كله يكتب، والـ [[t]] بتمنع حد يمسح ملف غيره)، و [[/root]] [[drwx------]] = 700. والـ home بتاعك على أوبونتو 24.04 بيطلع [[drwxr-x---]] = 750 لليوزرز اللي اتعملوا بـ [[useradd -m]]: اليوزرز التانيين ميقدروش يدخلوا.` },
+          ],
           deep: {
             why: "نص مشاكل السيرفر أول مرة بتبقى «Permission denied». عشان تحلها لازم تعرف تقرا مين صاحب الملف، ومين مسموحله يعمل إيه، وانت مين.",
             how: R`في لينكس كل حاجة ليها صاحب (يوزر) وجروب. والجروب مجموعة يوزرز شايلين نفس الصلاحيات، زي «فريق الموقع».
@@ -145,6 +158,11 @@ chmod 644 index.html
 chmod 600 ~/.ssh/id_ed25519
 chmod -R u=rwX,go=rX public/`,
           try: "اعمل سكربت فيه [[echo hi]]، جرب [[./script.sh]] (هيرفض)، اعمله [[chmod +x]] وجرب تاني.",
+          practice: [
+            { lvl: 'سريع', t: R`اعمل [[s.sh]] فيه [[echo hi]]، وجرّب [[./s.sh; echo $?]]، وبعدين [[chmod +x s.sh]] و [[./s.sh]].`, done: R`الأولى طلّعت [[Permission denied]] و [[$?]] بـ 126، وبعد [[chmod +x]] طبع [[hi]] و [[ls -l s.sh]] بقى فيه [[x]].` },
+            { lvl: 'تطبيق', t: R`[[chmod 600 .env]] و [[stat -c '%a %A' .env]]، وبعدين حاول تقراه من يوزر تاني على نفس الجهاز.`, done: R`[[stat]] طبع [[600 -rw-------]]، واليوزر التاني خد [[Permission denied]] من [[cat]].` },
+            { lvl: 'تحدي', t: R`كيوزر عادي (مش root، لأن root بيعدّي الصلاحيات): فولدر [[d]] فيه ملف [[a]]. [[chmod 644 d]]، وجرّب [[ls d]] و [[cd d]] و [[cat d/a]]. ورجّعه بـ [[chmod 755 d]]. وبعدين على فولدر فيه ملفات وفولدرات: [[chmod -R u=rwX,go=rX]].`, done: R`[[ls d]] طبع اسم [[a]] (الـ [[r]] بتقرا الأسامي)، بس [[cd d]] و [[cat d/a]] الاتنين [[Permission denied]]: الـ [[x]] على الفولدر هي اللي بتدخّلك. وبعد [[-R u=rwX,go=rX]] [[stat]] بيقول [[755]] على الفولدرات و [[644]] على الملفات: [[X]] الكبيرة بتحط x للفولدرات بس.` },
+          ],
           deep: {
             why: "عشان تغيّر مين يقدر يقرا أو يكتب أو يشغّل ملف. أشهر استخدامين: سكربت مش راضي يشتغل، ومفتاح SSH السيرفر رافض يستخدمه.",
             how: R`فيه طريقتين تكتب بيهم الصلاحيات.
@@ -292,6 +310,11 @@ drwxr-xr-x css
           example: R`sudo chown -R www-data:www-data /var/www/myapp
 sudo chown $USER:$USER file.txt`,
           try: "على سيرفرك اعمل [[ls -l /var/www]] واعرف مين مالك كل موقع.",
+          practice: [
+            { lvl: 'سريع', t: R`[[sudo touch rootfile]] و [[ls -l rootfile]]، وبعدين [[sudo chown $USER:$USER rootfile]] و [[ls -l rootfile]] تاني.`, done: R`الأول [[root root]]، والتاني اسمك واسم جروبك: دلوقتي تقدر تعدّله من غير sudo.` },
+            { lvl: 'تطبيق', t: R`على جهاز تجربة: [[sudo mkdir -p /var/www/myapp]] و [[sudo chown -R www-data:www-data /var/www/myapp]] و [[ls -ld /var/www/myapp]] و [[id www-data]].`, done: R`[[ls -ld]] بيقول [[www-data www-data]]، و [[id www-data]] بيقول [[uid=33(www-data)]] على أوبونتو: ده اليوزر اللي Nginx و PHP بيشتغلوا بيه.` },
+            { lvl: 'تحدي', t: R`كيوزر عادي: [[touch f]]، وجرّب [[chown root f; echo $?]]، وبعدين [[chgrp root f; echo $?]]، وبعدين [[chgrp]] لجروب انت فيه (من [[id -nG]]).`, done: R`[[chown root]] و [[chgrp root]] الاتنين [[Operation not permitted]] و [[$?]] بـ 1: مينفعش تدّي ملفك لحد تاني. بس [[chgrp]] لجروب انت عضو فيه نجح و [[ls -l f]] بيوريه.` },
+          ],
           mac: ["both", "اليوزر [[www-data]] موجود على سيرفرات لينكس بس."],
           deep: {
             why: "ساعات الصلاحيات نفسها صح، بس الملف ملك يوزر غلط. زي ملفات موقع ملك root و Nginx مش قادر يقراها، أو ملفات في مشروعك بقت ملك root من غير ما تاخد بالك.",
@@ -408,6 +431,11 @@ file.txt: Permission denied
 sudo systemctl restart nginx
 sudo !!`,
           try: "اكتب [[apt update]] من غير sudo، هيرفض، وبعدين [[sudo !!]].",
+          practice: [
+            { lvl: 'سريع', t: R`كيوزر عادي: [[apt update]]، وبعدين [[sudo !!]].`, done: R`الأول طلّع [[Could not open lock file /var/lib/apt/lists/lock]] و [[Permission denied]]، و [[sudo !!]] كتب [[sudo apt update]] لوحده واشتغل بعد الباسورد.` },
+            { lvl: 'تطبيق', t: R`اكتب في ملف ملك root: جرّب [[sudo echo hi > /etc/myapp.conf]] الأول، وبعدين [[echo hi | sudo tee /etc/myapp.conf]]. وفي الآخر [[sudo rm /etc/myapp.conf]].`, done: R`الأولى طلّعت [[Permission denied]] (الـ [[>]] بيعمله الشيل بتاعك انت مش sudo)، والتانية طبعت [[hi]] و [[cat /etc/myapp.conf]] فيه [[hi]] و [[ls -l]] بيقول [[root root]].` },
+            { lvl: 'تحدي', t: R`اعرف sudo مسموحلك بإيه: [[sudo -l]]. وبعدين اكتب سطرين في ملف root بطريقتين: [[printf 'a\nb\n' | sudo tee -a /etc/myapp.conf]] و [[sudo sh -c 'echo c >> /etc/myapp.conf']].`, done: R`لو انت في جروب [[sudo]] على أوبونتو، [[sudo -l]] فيه [[(ALL : ALL) ALL]]. و آخر ٣ سطور في [[cat /etc/myapp.conf]] هم [[a]] و [[b]] و [[c]] بالترتيب، و [[-a]] و [[>>]] ضافوا من غير ما يمسحوا. امسحه في الآخر.` },
+          ],
           mac: ["both", "[[apt]] لأوبونتو بس، على الماك [[brew]] ومن غير sudo."],
           deep: {
             why: "حاجات كتير محتاجة صلاحيات المدير (root): تسطيب برامج، وتعديل إعدادات السيستم، وتشغيل الخدمات. بس الشغل كـ root طول الوقت خطير، فـ sudo بيديك صلاحيات المدير لأمر واحد بس.",

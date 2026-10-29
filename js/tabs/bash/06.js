@@ -4,6 +4,15 @@ MORE("bash", [
       t: "اليوزرز والجروبات والصلاحيات بعمق",
       l: 3,
       n: "يوزرز وجروبات بالأوامر الأصلية، و sudo لأمر واحد بس، وصلاحيات أدق من rwx: setgid و umask و ACL و chattr",
+      projects: [
+        { lvl: 'صغير', t: R`يوزر للتطبيق`, what: R`على جهاز تجربة: يوزر سيستم [[myapp]] بـ [[useradd -r -M -s /usr/sbin/nologin]]، وفولدر [[/opt/myapp]] ملكه بـ [[chown]] وصلاحياته [[750]]. ده اليوزر اللي الخدمة هتشتغل بيه بدل root. من دروس useradd و id و chown.`, done: R`[[id myapp]] رقمه أقل من 1000، و [[sudo su - myapp]] بيقول [[This account is currently not available.]]، و [[ls -ld /opt/myapp]] بيبدأ بـ [[drwxr-x---]] ومالكه [[myapp]]، ويوزرك العادي ميقدرش يعمل [[ls]] جواه.` },
+        { lvl: 'صغير', t: R`مين عنده sudo؟`, what: R`طلّع كل اليوزرز اللي يقدروا يبقوا root: أعضاء جروب [[sudo]] من [[getent group sudo]]، وأي ملف في [[/etc/sudoers.d]] بـ [[sudo grep -r ALL /etc/sudoers.d]]، وكل يوزر رقمه 0 بـ [[awk -F: '$3 == 0' /etc/passwd]]. من دروس getent و visudo.`, done: R`عندك لستة بالأسامي، وكل اسم فيها [[sudo -l -U اسمه]] بيأكّد إن عنده صلاحية، ولستة الرقم 0 فيها [[root]] بس (لو فيها غيره ده إنذار).` },
+        { lvl: 'متوسط', t: R`فولدر فريق مشترك صح`, what: R`جروب [[webteam]] فيه يوزرين، وفولدر [[/srv/webteam]] بـ [[chgrp webteam]] و [[chmod 3775]] (setgid عشان الجروب يتورّث، و sticky عشان محدش يمسح ملف زميله)، و default ACL للجروب بـ [[setfacl -d -m g:webteam:rwX]] عشان الملفات الجديدة تتعدّل من الفريق كله مهما كان umask صاحبها. بيجمع groupadd و setuid/setgid و setfacl و umask.`, done: R`ملف عمله اليوزر الأول جروبه [[webteam]]، والتاني يقدر يزوّد فيه سطر بـ [[>>]] بس ميقدرش يمسحه ([[Operation not permitted]])، وده شغال حتى لو الأول عامل [[umask 077]]، و [[stat -c '%a %A' /srv/webteam]] بيطبع [[3775 drwxrwsr-t]].` },
+        { lvl: 'متوسط', t: R`يوزر deploy بصلاحية واحدة`, what: R`يوزر [[deploy]] وملف [[/etc/sudoers.d/deploy]] معمول بـ [[visudo -f]] بيسمحله يعمل restart و status لخدمة واحدة بس من غير باسورد، وباسورده مقفول بـ [[passwd -l]] (هيدخل بمفتاح ssh بس). بيجمع useradd و visudo و passwd -l.`, done: R`[[sudo visudo -c]] بيقول [[parsed OK]] لكل الملفات، و [[stat -c %a /etc/sudoers.d/deploy]] بـ [[440]]، و [[sudo -l -U deploy]] فيه السطرين بس، و [[sudo -u deploy sudo -n whoami]] بيقول [[a password is required]]، و [[passwd -S deploy]] فيه [[L]].` },
+        { lvl: 'كبير', t: R`سكربت استقبال وتوديع الموظفين`, what: R`[[onboard.sh users.txt]]: كل سطر في الملف [[اسم جروبات]] (زي [[sara webteam,docker]]). أوله [[set -euo pipefail]]، ولو مش root يخرج بـ 1. لكل سطر: لو اليوزر مش موجود ([[getent passwd]] رجّع 2) يعمله بـ [[useradd -m -s /bin/bash]] ويجبره يغيّر الباسورد أول دخول بـ [[chage -d 0]]، والجروب الناقص يتعمل بـ [[groupadd]]، والإضافة دايمًا بـ [[usermod -aG]] (أبدًا من غير [[-a]]). و [[offboard.sh اسم]] بيقفل الحساب بـ [[usermod -L]] و [[chage -E 0]] من غير ما يمسح الـ home. وكل خطوة سطر في [[/var/log/onboard.log]] فيه الوقت. بيجمع الوحدة كلها مع «Pipes» و «البحث».`, done: R`تشغيله على ملف فيه ٣ يوزرز بيعملهم، و [[id -nG]] لكل واحد فيه جروباته بالظبط. تشغيله تاني بيكتب «موجود» لكل واحد ومبيغيّرش [[id -nG]] ولا بيشيل جروب. بعد [[offboard.sh sara]]: [[passwd -S sara]] فيه [[L]] و [[chage -l sara]] بيقول إن الحساب منتهي، والـ home لسه موجود. واللوج فيه سطر لكل خطوة في التشغيلات كلها.`, ext: R`زوّد عمود في الملف لـ shell مختلف أو مفتاح ssh عام يتحط في [[~/.ssh/authorized_keys]] بصلاحيات [[600]]، وخلّي offboard يعمل أرشيف للـ home قبل ما تقرّر تمسحه بعد ٣٠ يوم.` },
+        { lvl: 'كبير', t: R`تدقيق أمان اليوزرز والصلاحيات`, what: R`[[audit.sh]] بيدوّر على: أي يوزر غير root رقمه 0، وأي حساب الحقل التاني بتاعه في [[/etc/shadow]] فاضي (من غير باسورد)، وأي ملف setuid خارج لستة معروفة بـ [[find / -xdev -perm -4000]]، وأي ملف في [[/etc]] كله يكتب فيه بـ [[find /etc -perm -o+w -type f]]، وأي ملف في [[/etc/sudoers.d]] صلاحياته مش [[440]]، وأي ملف عليه [[chattr +i]] في [[/etc]] بـ [[lsattr]]. أوله [[set -euo pipefail]]، وخلي بالك إن [[grep]] و [[find]] الفاضيين مش أخطاء. بيكتب النتايج في لوج بالتاريخ ويخرج بـ 1 لو لقى حاجة. بيجمع الوحدة كلها مع «البحث» و «Pipes».`, done: R`على جهاز تجربة نضيف بيخرج بـ 0. لما تزرع مشكلتين عن قصد (يوزر [[useradd -o -u 0 toor]]، ونسخة من [[/usr/bin/id]] عليها [[chmod 4755]] في [[/usr/local/bin]]) بيطلّعهم الاتنين بالاسم ويخرج بـ 1. بعد ما تشيلهم بيرجع 0. وتشغيله مرتين بيدي نفس النتيجة واللوج فيه الاتنين.`, ext: R`زوّد فحص لليوزرز اللي ليهم shell حقيقي ومدخلوش من ٩٠ يوم ([[lastlog]])، وابعته مع تقرير السيرفر اليومي لما توصل لـ cron.` },
+        { lvl: 'فكرة', t: R`سياسة الحسابات بتاعتك`, what: R`اكتب سياسة لسيرفر فريق صغير: مين ياخد sudo كامل ومين ياخد أوامر محددة، ومدة الباسورد، وإيه اللي بيحصل لما حد يمشي، والفولدرات المشتركة شكلها إيه، و [[umask]] كام. وبعدين طبّقها على جهاز تجربة. انت اللي بتقرر القواعد.`, done: R`عندك السياسة مكتوبة في صفحة، وكل قاعدة جنبها الأمر اللي بيطبّقها والأمر اللي بيتأكد منها ([[chage -l]] و [[sudo -l -U]] و [[getfacl]] و [[stat]])، وجرّبتها على ٣ يوزرز تجربة.`, ext: R`حوّل السياسة لسكربت بيطبّقها وسكربت تاني بيفحصها، ولما توصل لـ Ansible اكتبها playbook تتطبّق على كذا سيرفر.` },
+      ],
       items: [
         {
           cmd: "useradd و usermod",
@@ -39,6 +48,11 @@ sudo usermod -L sara
 sudo usermod -U sara
 sudo userdel -r olduser`,
           try: R`اعمل يوزر sara بالأمر الأول، وضيفها لجروب docker (لو الجروب مش موجود: [[sudo groupadd docker]]). اعمل جروب devs، وجرّب [[usermod -G devs]] من غير [[-a]] وقارن [[id sara]] قبل وبعد، ورجّع جروباتها. وفي الآخر امسحها بـ [[userdel -r]].`,
+          practice: [
+            { lvl: 'سريع', t: R`على جهاز تجربة: [[sudo useradd -m -s /bin/bash sara]] و [[getent passwd sara]] و [[ls -ld /home/sara]].`, done: R`سطر [[getent]] آخره [[:/home/sara:/bin/bash]]، والفولدر [[/home/sara]] موجود ومالكه [[sara]].` },
+            { lvl: 'تطبيق', t: R`يوزر لخدمة: [[sudo useradd -r -M -s /usr/sbin/nologin myapp]]، وبعدين [[id myapp]] و [[sudo su - myapp]].`, done: R`[[id]] رقمه أقل من 1000 (يوزرز السيستم بتبدأ من 999 لتحت)، و [[su -]] رد بـ [[This account is currently not available.]] لأن الـ shell بتاعه [[nologin]]، و [[ls /home/myapp]] مش موجود ([[-M]]).` },
+            { lvl: 'تحدي', t: R`الفخ الأشهر: sara في جروبات [[sudo]] و [[docker]]. اعمل [[sudo usermod -G devs sara]] من غير [[-a]] وشوف [[id -nG sara]]، ورجّع كل حاجة بأمر واحد. وفي الآخر امسحها بـ [[sudo userdel -r sara]].`, done: R`بعد [[-G devs]] [[id -nG sara]] بقى [[sara devs]] بس: [[sudo]] و [[docker]] راحوا. بعد [[sudo usermod -aG sudo,docker sara]] رجعوا ومعاهم [[devs]]. وبعد [[userdel -r]]، [[getent passwd sara; echo $?]] مبيطبعش سطر و [[$?]] بـ 2، و [[/home/sara]] اتمسح.` },
+          ],
           flag: "danger",
           mac: ["linux", R`على الماك اليوزرز في Directory Services مش في [[/etc/passwd]]: [[sudo sysadminctl -addUser sara -fullName "Sara" -password -]] (الشرطة يعني اسألني الباسورد)، و [[sudo dseditgroup -o edit -a sara -t user admin]] بدل [[usermod -aG sudo]]، و [[sudo sysadminctl -deleteUser sara]] للمسح.`],
           deep: {
@@ -279,6 +293,11 @@ getent passwd nosuchuser; echo "exit: $?"
 awk -F: '$3 >= 1000 && $3 < 60000 {print $1, $3, $7}' /etc/passwd
 sudo grep -E '^(root|sara):' /etc/shadow`,
           try: R`اعرف جروباتك انت بـ [[id]]، وبعدين اطبع كل اليوزرز «الحقيقيين» على جهازك بالـ awk، وفك سطرك في [[/etc/passwd]] و [[/etc/shadow]] حقل حقل: الـ hash بتاعك نوعه إيه، وآخر مرة غيّرت الباسورد إمتى؟`,
+          practice: [
+            { lvl: 'سريع', t: R`[[id]] وبعدين [[id -nG]].`, done: R`الأول فيه [[uid=]] و [[gid=]] و [[groups=]] بالأرقام والأسامي، والتاني أسامي الجروبات بس في سطر واحد، وأول اسم فيه جروبك الأساسي.` },
+            { lvl: 'تطبيق', t: R`طلّع اليوزرز «الحقيقيين» بس: [[awk -F: '$3 >= 1000 && $3 < 60000 {print $1, $3, $7}' /etc/passwd]].`, done: R`كل سطر [[اسم رقم shell]]، و [[root]] مش فيهم (رقمه 0) و [[nobody]] مش فيهم (رقمه 65534)، واسمك موجود.` },
+            { lvl: 'تحدي', t: R`[[getent passwd nosuchuser; echo $?]]. وبعدين اقرا سطرك في [[/etc/shadow]] بـ [[sudo getent shadow $USER]] وفك الحقل التاني والتالت.`, done: R`[[getent]] مطبعش حاجة و [[$?]] بـ 2 (يعني «مش موجود»، تقدر تبني عليه في سكربت). والحقل التاني على أوبونتو 24.04 بيبدأ بـ [[$y$]] (yescrypt)، والتالت رقم حوالي ٢٠ ألف: عدد الأيام من ١ يناير ١٩٧٠ لآخر مرة غيّرت فيها الباسورد.` },
+          ],
           mac: ["diff", R`[[id]] و [[groups]] موجودين، بس مفيش [[getent]] ولا [[/etc/shadow]]: اليوزرز في Directory Services. [[dscl . -read /Users/ali]] بيانات يوزر، و [[dscl . -list /Users UniqueID]] كل اليوزرز وأرقامهم، و [[dscacheutil -q group -a name admin]] أعضاء جروب. ويوزرز الماك بيبدأوا من 501 مش 1000.`],
           deep: {
             why: R`نص مشاكل الصلاحيات سؤالها «اليوزر ده في الجروب ده ولا لأ؟»: Nginx بيقرا ملفات الموقع؟ اليوزر يقدر يستخدم docker؟ و Permission denied على ملف جروبه www-data. ولما تفهم الملفات التلاتة دول، هتفهم إيه اللي useradd و usermod و passwd بيعملوه بالظبط، وتعرف تكتشف حساب غريب اتضاف لسيرفرك.`,
@@ -522,6 +541,11 @@ sudo chmod 2775 /srv/webteam
 ls -ld /srv/webteam
 sudo gpasswd -d mona webteam`,
           try: R`اعمل اليوزرين ali و mona (درس «useradd و usermod») والجروب والفولدر. ادخل كـ ali بـ [[sudo su - ali]] واعمل [[echo v1 > /srv/webteam/plan.txt]] واخرج، وبعدين ادخل كـ mona وزوّد سطر بـ [[>>]]. وبعدين كرر نفس الكلام في فولدر تاني [[chmod 775]] من غير الـ 2 وقارن.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[sudo groupadd webteam]] و [[sudo gpasswd -a ali webteam]] و [[getent group webteam]].`, done: R`[[gpasswd]] طبع [[Adding user ali to group webteam]]، و [[getent]] طبع سطر بالشكل [[webteam:x:رقم:ali]].` },
+            { lvl: 'تطبيق', t: R`فولدر للفريق: [[/srv/webteam]] بـ [[chgrp webteam]] و [[chmod 2775]]. كـ ali اعمل [[echo v1 > /srv/webteam/plan.txt]]. وكرّر في فولدر تاني [[775]] من غير الـ 2.`, done: R`[[ls -l /srv/webteam/plan.txt]] جروبه [[webteam]]، أما الملف في الفولدر التاني جروبه جروب ali الشخصي، فـ mona ممكن متقدرش تعدّله.` },
+            { lvl: 'تحدي', t: R`ali فاتح ترمنال. ضيفه لجروب جديد من ترمنال تاني، وفي الترمنال القديم بتاعه اكتب [[id -nG]]، وبعدين [[id -nG ali]]، وبعدين ادخل من جديد ([[su - ali]]) واكتب [[id -nG]].`, done: R`في الترمنال القديم الجروب الجديد مش ظاهر في [[id -nG]] (الجروبات بتتحدد ساعة الدخول)، بس [[id -nG ali]] بيوريه لأنه بيقرا من [[/etc/group]]، وبعد الدخول من جديد ظهر. عشان كده بعد [[usermod -aG docker]] لازم تخرج وتدخل.` },
+          ],
           mac: ["linux", R`على الماك: [[sudo dseditgroup -o create webteam]] و [[sudo dseditgroup -o edit -a ali -t user webteam]]. والـ setgid على الفولدرات مش محتاجينه هناك: الماك (زي BSD) بيدّي الملف الجديد جروب الفولدر اللي هو فيه دايمًا.`],
           deep: {
             why: R`الحل السهل الغلط لمشكلة «اتنين محتاجين يعدّلوا نفس الملفات» هو [[chmod 777]]، وده بيفتح الملفات لأي يوزر وأي خدمة على الجهاز. الجروب بيقول «الناس دول بس»، والـ setgid بيخلي الملفات الجديدة تفضل تبع الجروب لوحدها، فمحدش يحتاج يفتكر يعمل chgrp.`,
@@ -701,6 +725,11 @@ sudo chage -l ali
 sudo usermod -e 1 ali
 sudo usermod -e "" ali`,
           try: R`على يوزر تجربة: اقفله وشوف [[passwd -S]]، وافتحه. وبعدين [[passwd -e]] وادخل بيه من ترمنال تاني ([[su - ali]] من يوزر عادي، أو ssh) وشوف بيطلب منك إيه. وفي الآخر حط تاريخ انتهاء للحساب واقرا [[chage -l]].`,
+          practice: [
+            { lvl: 'سريع', t: R`على يوزر تجربة ليه باسورد: [[sudo passwd -S ali]]، وبعدين [[sudo passwd -l ali]] و [[-S]] تاني، وبعدين [[sudo passwd -u ali]] و [[-S]].`, done: R`الحرف التاني في السطر بقى [[P]] ثم [[L]] ثم [[P]]: الحساب اتقفل واتفتح والباسورد نفسه متغيّرش.` },
+            { lvl: 'تطبيق', t: R`سياسة باسورد: [[sudo chage -M 90 -m 1 -W 7 ali]] وتاريخ انتهاء للحساب في السنة الجاية بـ [[-E]]، وبعدين [[sudo chage -l ali]].`, done: R`[[chage -l]] فيه [[Maximum number of days between password change]] بـ 90، و [[Minimum]] بـ 1، و [[warning]] بـ 7، و [[Account expires]] بالتاريخ اللي حطيته، و [[Password expires]] بعد ٩٠ يوم من آخر تغيير.` },
+            { lvl: 'تحدي', t: R`(١) يوزر جديد عمرك ما حطيتله باسورد: [[sudo passwd -u newuser; echo $?]]. (٢) [[sudo usermod -e 1 ali]] و [[chage -l ali]]، وبعدين [[sudo usermod -e "" ali]] و [[chage -l ali]].`, done: R`(١) رفض بـ [[unlocking the password would result in a passwordless account]] و [[$?]] بـ 3: بيحميك من حساب يدخل من غير باسورد. (٢) [[Account expires]] بقى تاريخ في يناير ١٩٧٠ (يعني منتهي من زمان، والحساب مقفول)، وبعد [[-e ""]] رجع [[never]].` },
+          ],
           flag: "danger",
           mac: ["linux", R`مفيش [[chage]] ولا [[passwd -l]] على الماك. سياسات الباسورد بـ [[pwpolicy]]، وتعطيل حساب: [[sudo pwpolicy -u ali disableuser]]، والأسهل من System Settings ← Users & Groups.`],
           deep: {
@@ -914,6 +943,11 @@ sudo -u sara whoami
 sudo -l
 sudo passwd -S root`,
           try: R`من فولدر زي [[/tmp]] اعمل [[export MYVAR=hello]]، وبعدين قارن: [[su sara]] و [[su - sara]] و [[sudo -i]] و [[sudo -s]]، وفي كل واحد اكتب [[whoami; pwd; echo $MYVAR]] وبعدين [[exit]].`,
+          practice: [
+            { lvl: 'سريع', t: R`[[sudo -u sara whoami]] و [[sudo whoami]].`, done: R`الأول طبع [[sara]] والتاني [[root]]: [[-u]] بيختار اليوزر اللي الأمر يتنفّذ بيه، ومن غيرها root.` },
+            { lvl: 'تطبيق', t: R`من [[/tmp]] اعمل [[export MYVAR=hello]]، وبعدين [[sudo su sara -c 'echo $(whoami) $(pwd) MYVAR=$MYVAR']]، ونفس الأمر بـ [[sudo su - sara -c]].`, done: R`بدون الشرطة: [[sara /tmp MYVAR=hello]]: فضلت في نفس الفولدر والمتغير عدّى. بالشرطة: [[sara /home/sara MYVAR=]]: دخول نضيف كأنها فتحت ترمنال جديد. عشان كده [[su -]] هو الصح.` },
+            { lvl: 'تحدي', t: R`وانت في [[/tmp]] قارن التلاتة: [[sudo -i pwd]] و [[sudo -s pwd]] و [[sudo -u sara -i pwd]]، وتوقّع كل واحد قبل ما تشغّله.`, done: R`[[sudo -i pwd]] طبع [[/root]] (دخول كامل كـ root)، و [[sudo -s pwd]] طبع [[/tmp]] (shell بصلاحيات root في نفس مكانك)، و [[sudo -u sara -i pwd]] طبع [[/home/sara]]: [[-i]] مع [[-u]] دخول كامل لأي يوزر من غير باسورده.` },
+          ],
           mac: ["both", R`نفس الأوامر على الماك، و root مقفول هناك كمان، فـ [[sudo -i]] هو الطريق. والفرق إن جروب المديرين اسمه [[admin]].`],
           deep: {
             why: R`محتاج تجرّب حاجة كيوزر تاني (هل deploy يقدر يقرا الملف ده؟)، أو تعمل كذا أمر ورا بعض كـ root من غير ما تكتب sudo كل مرة، أو تشغّل أداة بيوزر خدمتها (postgres، www-data). والاختيار الغلط بين الأشكال دي بيعمل مشاكل غريبة: أمر بيشتغل مع [[sudo -i]] وبيفشل مع [[sudo]]، أو ملفات بتتعمل ملك root في فولدر يوزر.`,
@@ -1092,6 +1126,11 @@ sudo -l -U deploy
 sudo -u deploy sudo -n systemctl restart myapp
 sudo -u deploy sudo -n whoami`,
           try: R`على جهاز تجربة: اعمل يوزر deploy، وادّيله بالقاعدة دي صلاحية [[systemctl restart]] لخدمة واحدة بس من غير باسورد. اتأكد بـ [[sudo -l -U deploy]]، وجرّب كـ deploy أمر مسموح وأمر مش مسموح. وجرّب تحفظ قاعدة غلط (امسح النقطتين بعد NOPASSWD) وشوف visudo بيعمل إيه.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[sudo visudo -c]] و [[ls -l /etc/sudoers.d/]].`, done: R`كل ملف طلعله سطر [[parsed OK]]، والملفات اللي في [[sudoers.d]] صلاحياتها [[-r--r-----]] (440) ومالكها [[root root]].` },
+            { lvl: 'تطبيق', t: R`اعمل يوزر deploy وقاعدة الدرس في [[/etc/sudoers.d/deploy]] بـ [[visudo -f]]، وبعدين [[sudo -l -U deploy]] و [[sudo -u deploy sudo -n whoami; echo $?]].`, done: R`[[sudo -l -U deploy]] آخره [[(root) NOPASSWD: /usr/bin/systemctl restart myapp, /usr/bin/systemctl status myapp]]، و [[whoami]] اترفض بـ [[sudo: a password is required]] و [[$?]] بـ 1، أما [[systemctl status myapp]] كـ deploy مبيسألش عن باسورد خالص.` },
+            { lvl: 'تحدي', t: R`(١) اكتب القاعدة غلط في ملف تجربة (امسح النقطتين بعد [[NOPASSWD]]) واختبره بـ [[sudo visudo -cf الملف]]. (٢) انسخ القاعدة الصح باسم [[/etc/sudoers.d/deploy.conf]] بدل [[deploy]] وشوف [[sudo -l -U deploy]].`, done: R`(١) طلّع [[syntax error]] ومعاه رقم السطر والعمود وعلامة [[^]] تحت الغلط، و [[$?]] بـ 1. (٢) القاعدة مبتشتغلش: sudo بيتجاهل أي ملف في [[sudoers.d]] اسمه فيه نقطة أو آخره [[~]]، فـ [[deploy]] مبقاش عنده صلاحية. امسح الملف ده بعدها.` },
+          ],
           flag: "danger",
           mac: ["diff", R`[[visudo]] موجود على الماك ونفس الـ syntax، والفولدر [[/private/etc/sudoers.d]] (و [[/etc]] على الماك اختصار لـ [[/private/etc]]). وجروب المديرين [[%admin]] مش [[%sudo]].`],
           deep: {
@@ -1298,6 +1337,11 @@ sudo chmod g-s,-t /srv/shared
 sudo find / -xdev -perm -4000 -type f 2>/dev/null
 sudo find / -xdev -perm -2000 -type f 2>/dev/null`,
           try: R`اعمل الفولدر وحط عليه setgid و sticky واقرا الأرقام بـ [[stat]]. وبعدين جرّب [[chmod 755]] عليه وشوف الـ s اتشالت ولا لأ، وجرّب [[chmod 00755]]. وفي الآخر اعمل الـ find على جهازك وقارن باللستة اللي في الحل.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[ls -l /usr/bin/passwd]] و [[stat -c '%a %A' /usr/bin/passwd]].`, done: R`فيه [[s]] مكان x بتاع المالك ([[-rwsr-xr-x]])، و [[stat]] طبع [[4755]]: الـ 4 هي setuid، وعشان كده اليوزر العادي يقدر يغيّر باسورده في [[/etc/shadow]].` },
+            { lvl: 'تطبيق', t: R`[[sudo mkdir -p /srv/shared]] و [[sudo chmod 1777 /srv/shared]]. كـ ali اعمل [[/srv/shared/a.txt]]، وكـ mona حاول [[rm -f /srv/shared/a.txt]].`, done: R`mona خدت [[cannot remove '/srv/shared/a.txt': Operation not permitted]] رغم إن الفولدر 777: الـ sticky bit (الـ 1) بيخلّي كل واحد يمسح ملفاته بس، زي [[/tmp]].` },
+            { lvl: 'تحدي', t: R`[[chmod 2775]] و [[chmod +t]] على [[/srv/shared]] واقرا [[stat -c '%a %A']]، وبعدين [[chmod 755]] واقرا تاني، وبعدين [[chmod 00755]].`, done: R`الأول [[3775 drwxrwsr-t]]. بعد [[chmod 755]]: [[2755 drwxr-sr-x]]: الـ sticky راح بس الـ setgid **فضل** (على الفولدرات GNU chmod مبيشيلهاش بالأرقام). بعد [[00755]]: [[755 drwxr-xr-x]].` },
+          ],
           mac: ["both", R`نفس الفكرة والحروف على الماك، و [[find / -perm -4000 -type f 2>/dev/null]] شغال (من غير [[-xdev]] هياخد وقت). و [[/tmp]] هناك اختصار لـ [[/private/tmp]] وعليه t.`],
           deep: {
             why: R`فيه حاجات اليوزر العادي لازم يعملها بس محتاجة root: يغيّر باسورده (يكتب في shadow)، يستخدم sudo، يركّب فلاشة. setuid بيحلها من غير ما تدّيه root. والـ setgid والـ sticky بيحلوا مشكلتين في الفولدرات المشتركة: الجروب، ومين يمسح إيه. ونفس القوة دي هي اللي بتخلي setuid على البرنامج الغلط ثغرة.`,
@@ -1516,6 +1560,11 @@ touch key.txt && ls -l key.txt
 umask 022
 echo 'umask 027' >> ~/.bashrc`,
           try: R`في [[~/lab]] جرّب ٤ قيم (022 و 002 و 027 و 077)، وفي كل مرة اعمل ملف وفولدر واقرا صلاحياتهم. وبعدين جرّب [[umask 033]] وتوقّع النتيجة قبل ما تشوفها.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[umask 027]]، وبعدين [[touch f]] و [[mkdir d]] و [[stat -c '%a %n' f d]].`, done: R`[[f]] بـ [[640]] و [[d]] بـ [[750]]: الملفات بتبدأ من 666 والفولدرات من 777 والـ umask بيشيل منهم.` },
+            { lvl: 'تطبيق', t: R`اعمل ملف مفتاح محمي من أول لحظة من غير ما تغيّر الـ umask بتاع الترمنال: [[(umask 077; touch key.txt)]] وبعدين [[umask]] و [[stat -c %a key.txt]].`, done: R`[[key.txt]] بـ [[600]] من غير [[chmod]]، و [[umask]] بعدها لسه القيمة القديمة: القوسين شغّلوا subshell والتغيير مات معاه.` },
+            { lvl: 'تحدي', t: R`توقّع الأول، وبعدين جرّب [[umask 033]] وملف وفولدر.`, done: R`الملف [[644]] والفولدر [[744]]: الفولدر من غير x للجروب والباقي، فمحدش غيرك يقدر يدخله رغم إن عنده [[r]]. عشان كده الـ umask بيبقى 022 أو 027 أو 077، مش أرقام فردية.` },
+          ],
           mac: ["both", R`نفس الكلام، والافتراضي على الماك [[0022]]. ولو عايزها ثابتة لكل البرامج مش الترمنال بس: [[sudo launchctl config user umask 027]] وبعدين ريستارت.`],
           deep: {
             why: R`كل ملف بيتعمل على السيرفر (لوج، أو باك أب، أو ملف رفعه يوزر) بياخد صلاحياته من الـ umask بتاع البرنامج اللي عمله. umask 022 معناه أي يوزر على الجهاز يقدر يقرا الباك أب بتاع قاعدة البيانات. والعكس: umask 077 في فولدر مشترك معناه زمايلك مش هيشوفوا ملفاتك.`,
@@ -1694,6 +1743,11 @@ sudo setfacl -R -m g:webteam:rX /srv/reports
 sudo setfacl -x u:ali /srv/reports/q3.txt
 sudo setfacl -b /srv/reports`,
           try: R`اعمل [[/srv/reports]] ملك mona بـ [[chmod 750]] واتأكد إن ali مش قادر يعمل [[ls]] فيه. ادّيله ACL واتأكد إنه بقى يقدر. وبعدين خلّي mona تعمل ملف جديد جوه وشوف ali عنده صلاحية عليه ولا لأ، قبل [[-d]] وبعدها. وفي الآخر اعمل [[chmod 750]] تاني على الفولدر واقرا [[getfacl]].`,
+          practice: [
+            { lvl: 'سريع', t: R`[[/srv/reports]] ملك mona و [[750]]. كـ ali [[ls /srv/reports]]، وبعدين [[sudo setfacl -m u:ali:rwx /srv/reports]] وجرّب تاني و [[ls -ld /srv/reports]].`, done: R`الأول [[Permission denied]]، وبعد الـ ACL نجح، و [[ls -ld]] آخر الصلاحيات فيه [[+]] ([[drwxrwx---+]]): العلامة اللي بتقولك «فيه ACL، اقرا [[getfacl]]».` },
+            { lvl: 'تطبيق', t: R`خلّي mona تعمل ملف [[n1]] جوه واقرا [[getfacl n1]]، وبعدين [[sudo setfacl -d -m u:ali:rwx /srv/reports]] وتعمل [[n2]] واقرا [[getfacl n2]].`, done: R`[[n1]] مفيهوش سطر لـ ali (الـ ACL على الفولدر مش بيتورّث لوحده)، و [[n2]] فيه [[user:ali:rwx]] وجنبه [[#effective:rw-]] لأن الملفات الجديدة مبتاخدش x.` },
+            { lvl: 'تحدي', t: R`بعد الـ ACL اعمل [[sudo chmod 750 /srv/reports]] واقرا [[getfacl /srv/reports]]، وجرّب كـ ali تعمل ملف جوه. وبعدين صلّحها بـ [[sudo setfacl -m m::rwx /srv/reports]]، وفي الآخر [[sudo setfacl -b /srv/reports]].`, done: R`بعد [[chmod 750]] السطر بقى [[user:ali:rwx #effective:r-x]] و [[mask::r-x]]، و ali مقدرش يعمل ملف: [[chmod]] على ملف عليه ACL بيغيّر الـ mask مش الجروب. بعد [[m::rwx]] رجع يقدر، وبعد [[-b]] الـ [[+]] اختفت من [[ls -ld]].` },
+          ],
           mac: ["diff", R`الماك عنده ACL بشكل تاني ومفيش setfacl: [[chmod +a "ali allow read,write,execute" dir]] يضيف، و [[ls -le]] يعرضها، و [[chmod -a "ali allow read,write,execute" dir]] يشيل.`],
           deep: {
             why: R`أحيانًا الحل بجروب تقيل: تعمل جروب جديد عشان يوزر واحد، وتغيّر جروب الفولدر فتبوّظ الصلاحيات اللي كانت شغالة. الـ ACL بيضيف استثناء من غير ما يلمس الموجود: يوزر الـ backup يقرا فولدر التطبيق، أو Nginx ([[www-data]]) يقرا فولدر جوه home يوزر، أو زميل يكتب في فولدر واحد بس.`,
@@ -1919,6 +1973,11 @@ echo "started" | sudo tee -a /var/log/myapp.log
 echo "wipe" | sudo tee /var/log/myapp.log
 sudo chattr -a /var/log/myapp.log`,
           try: R`في [[~/lab]]: اعمل ملف وحط عليه [[+i]]، وجرّب تمسحه وتعدّله وتغيّر اسمه وتعمله chmod، حتى بـ sudo. شيلها وامسحه. وبعدين جرّب [[+a]] على ملف لوج: ضيف سطر بـ [[>>]] واكتب فوقه بـ [[>]]. ومتنساش [[-a]] في الآخر.`,
+          practice: [
+            { lvl: 'سريع', t: R`في [[~/lab]]: [[sudo chattr +i .env]] و [[lsattr .env]] و [[sudo rm -f .env]]، وبعدين [[sudo chattr -i .env]].`, done: R`[[lsattr]] فيه حرف [[i]] وسط الشرطات (على ext4 بيبقى [[----i---------e-------]])، و [[rm]] حتى بـ sudo و [[-f]] طلّع [[Operation not permitted]]، وبعد [[-i]] [[lsattr]] رجع من غير [[i]].` },
+            { lvl: 'تطبيق', t: R`لوج append-only: [[sudo touch /var/log/myapp.log]] و [[sudo chattr +a]] عليه، وبعدين [[echo ok | sudo tee -a /var/log/myapp.log]] و [[echo wipe | sudo tee /var/log/myapp.log]]. وفي الآخر [[sudo chattr -a]].`, done: R`[[tee -a]] نجح والسطر اتضاف، و [[tee]] من غير [[-a]] طلّع [[Operation not permitted]] والسطور القديمة لسه موجودة: حتى root ميقدرش يمسح اللوج.` },
+            { lvl: 'تحدي', t: R`على [[.env]] عليه [[+i]] جرّب كيوزرك صاحب الملف: [[chmod 600 .env]] و [[mv .env x]] و [[echo x >> .env]]. وقارن الرسالة برسالة [[cat /etc/shadow]].`, done: R`التلاتة [[Operation not permitted]] حتى وانت صاحب الملف، أما [[cat /etc/shadow]] [[Permission denied]]. الأولى «ممنوع على أي حد» والتانية «انت معندكش صلاحية». ولو root قالك [[Operation not permitted]] على ملف عادي، أول أمر [[lsattr]]. وفي الآخر [[sudo chattr -i .env]].` },
+          ],
           flag: "danger",
           mac: ["diff", R`الماك مفيهوش chattr: [[sudo chflags schg file]] (system immutable، زي [[+i]]) و [[chflags uchg file]] (صاحبه يقدر يشيلها)، و [[ls -lO]] بيعرض الـ flags، و [[chflags noschg]] تشيلها. و [[schg]] في الوضع العادي محتاجة sudo بس، أما لو الجهاز في securelevel أعلى فمش هتتشال غير من recovery.`],
           deep: {

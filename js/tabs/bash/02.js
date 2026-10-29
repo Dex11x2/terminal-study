@@ -4,6 +4,14 @@ MORE("bash", [
       t: "ملفات وفولدرات",
       l: 1,
       n: "إنشاء ونسخ ونقل ومسح",
+      projects: [
+        { lvl: 'صغير', t: R`هيكل مشروع في أمر واحد`, what: R`أمر [[mkdir -p]] واحد بالأقواس يعمل [[shop/src/routes]] و [[shop/src/models]] و [[shop/public/css]] و [[shop/public/js]] و [[shop/tests]]، وبعده [[touch]] واحد يعمل [[shop/src/server.js]] و [[shop/.env.example]] و [[shop/README.md]]. من دروس mkdir و touch.`, done: R`[[tree -a shop]] بيوريك الهيكل كامل وآخر سطر [[8 directories, 3 files]]، وتشغيل نفس الأمرين تاني مبيطلّعش ولا error ومبيغيّرش حاجة.` },
+        { lvl: 'صغير', t: R`رتّب فولدر التحميلات (على نسخة)`, what: R`اعمل فولدر تجربة فيه ملفات وهمية بـ [[touch]] ([[a.pdf b.pdf c.jpg d.png e.zip]])، وبالـ wildcards و [[mv]] انقل كل نوع لفولدره: [[docs]] و [[images]] و [[archives]]. وقبل كل [[mv]] شوف هيلمس إيه بـ [[echo mv *.pdf docs/]]. من دروس mv و الـ wildcards.`, done: R`[[ls]] في الفولدر الرئيسي مبقاش فيه غير التلات فولدرات، و [[ls images]] فيه [[c.jpg]] و [[d.png]] بس، وعدد الملفات قبل وبعد واحد (مفيش ملف ضاع).` },
+        { lvl: 'متوسط', t: R`نظام إصدارات زي السيرفرات`, what: R`[[releases/v1]] و [[releases/v2]] و [[releases/v3]] كل واحد فيه [[version.txt]]، و [[current]] لينك على الإصدار الشغال. حوّل بـ [[ln -sfn]]، وارجع لإصدار قديم (rollback) بنفس الأمر، وامسح أقدم إصدار بـ [[rm -r]] بشرط ميكونش هو اللي [[current]] بيشاور عليه. بيجمع دروس ln -s و mkdir و touch و rm.`, done: R`[[readlink current]] بيطبع الإصدار اللي اخترته، و [[ls current/]] بيوريك ملفاته، والرجوع لإصدار قديم أمر واحد. ومفيش لينك اتعمل جوه فولدر إصدار بالغلط ([[ls releases/v1]] فيه [[version.txt]] بس).` },
+        { lvl: 'متوسط', t: R`نسخة احتياطي قبل أي تعديل كبير`, what: R`قبل ما تعدّل مشروع: [[cp -r project project.bak]]، وبعدين امسح ملف وغيّر اسم ملف في الأصل، ورجّعهم من النسخة بـ [[cp]]. وفي الآخر امسح النسخة بـ [[rm -ri]] عشان تشوف بتمسح إيه. بيجمع cp و mv و rm.`, done: R`الملفين رجعوا مكانهم بنفس الأسامي، و [[ls -la project]] شبه [[ls -la project.bak]] بالظبط قبل المسح، وبعد [[rm -ri]] [[ls]] مبقاش فيه [[project.bak]]، ومفيش [[project.bak/project]] اتعمل بالغلط من [[cp -r]] مرتين.` },
+        { lvl: 'كبير', t: R`سكربت تجهيز مشروع جديد`, what: R`[[new-project.sh]] بتشغّله بـ [[bash new-project.sh shop]]. أوله [[set -euo pipefail]]، ولو مفيش اسم ([[$1]] فاضي) بيطبع طريقة الاستخدام ويخرج بـ 1. بيعمل الهيكل بـ [[mkdir -p]] والملفات الفاضية بـ [[touch]]، وبيعمل [[.env]] من [[.env.example]] بـ [[cp -n]] عشان لو موجود ميتكتبش فوقه، و [[current]] لينك على الفولدر بـ [[ln -sfn]]. وكل خطوة بتكتب سطر في [[setup.log]] بـ [[>>]] (هتفهمه بالتفصيل في وحدة Pipes). بيجمع الوحدة دي مع «التنقل».`, done: R`[[bash new-project.sh]] من غير اسم بيطبع الاستخدام و [[echo $?]] بـ 1. تشغيله مرتين بنفس الاسم: التانية مفيهاش ولا error، والسطر اللي كتبته في [[.env]] بعد الأولى لسه موجود، و [[readlink current]] بيشاور على المشروع، و [[setup.log]] فيه سطور التشغيلتين.`, ext: R`زوّد خيار لنوع المشروع (node أو python) يغيّر الهيكل، ولما توصل لـ [[$( )]] حط التاريخ في اللوج، ولما توصل لـ [[chmod]] خلّيه executable وحطه في [[~/bin]].` },
+        { lvl: 'فكرة', t: R`نظام الترتيب بتاعك`, what: R`صمّم قواعد ترتيب لملفاتك انت (مشاريع، وكورسات، وفواتير، وصور): كل نوع يروح فين واسمه شكله إيه. وبعدين طبّقها على نسخة من فولدر حقيقي بـ [[mkdir -p]] و [[mv]] والـ wildcards، وكل [[mv]] تشوفه الأول بـ [[echo]]. انت اللي بتقرر القواعد.`, done: R`عندك ملف فيه القواعد، وكل أمر اتجرّب بـ [[echo]] قبل ما يتنفّذ، وعدد الملفات قبل وبعد واحد.`, ext: R`لما توصل لـ [[find]] خلّي القواعد تشتغل على الفولدرات الفرعية كمان، ولما توصل لـ cron خلّيها تشتغل لوحدها كل أسبوع.` },
+      ],
       items: [
         {
           cmd: "mkdir",
@@ -17,6 +25,11 @@ MORE("bash", [
 mkdir -p app/src/components
 mkdir -p app/{public,logs,tests}`,
           try: "جوه lab اعمل [[mkdir -p app/{src,public,logs}]] وبعدين [[ls app]].",
+          practice: [
+            { lvl: 'سريع', t: R`[[mkdir -p app/{src,public,logs}]]، وبعدين [[mkdir app]] و [[echo $?]]، وبعدين [[mkdir -p app]] و [[echo $?]].`, done: R`[[mkdir app]] طلّع [[cannot create directory 'app': File exists]] و [[$?]] طبع 1، و [[mkdir -p app]] سكت و [[$?]] طبع 0. عشان كده [[-p]] هو اللي بيتكتب في السكربتات.` },
+            { lvl: 'تطبيق', t: R`اعمل هيكل API كامل في أمر واحد: [[mkdir -p shop/{src/{routes,models},public/{css,js},tests}]].`, done: R`[[tree shop]] بيوريك الفولدرات متداخلة صح، وآخر سطر [[8 directories, 0 files]] (tree بيعدّ [[shop]] نفسه).` },
+            { lvl: 'تحدي', t: R`اعمل فولدر لكل شهر في السنة بأمر واحد: [[mkdir -p backups/2026-{01..12}]]. وبعدين جرّب [[mkdir my project]] من غير تنصيص.`, done: R`[[ls backups]] فيه ١٢ فولدر من [[2026-01]] لـ [[2026-12]] والصفر اللي على الشمال موجود. و [[mkdir my project]] عمل فولدرين اسمهم [[my]] و [[project]]، والصح كان [[mkdir "my project"]].` },
+          ],
           deep: {
             why: "بتعمل فولدر جديد، زي كليك يمين ثم New Folder. بس في الترمنال تقدر تعمل هيكل كامل من فولدرات جوه فولدرات في سطر واحد.",
             how: R`[[mkdir]] (من make directory) بيطلب من النظام يعمل فولدر فاضي في المسار اللي قلته. لو الفولدر اللي فوقه مش موجود، هيفشل. يعني [[mkdir app/src]] هيفشل لو app مش موجود.
@@ -134,6 +147,11 @@ echo {a, b}
           example: R`touch index.js .env
 touch app/src/{server,routes}.js`,
           try: "اعمل [[app/src/server.js]] و [[.env]] وتأكد إن [[.env]] مش باين غير بـ [[ls -a]].",
+          practice: [
+            { lvl: 'سريع', t: R`[[touch app/src/server.js .env]] وقارن [[ls]] و [[ls -a]] جوه نفس الفولدر.`, done: R`[[.env]] ظاهر في [[ls -a]] بس، و [[ls app/src]] فيه [[server.js]]، و [[ls -l]] بيقول إن حجمهم 0.` },
+            { lvl: 'تطبيق', t: R`اعمل [[touch notes.txt]] واقرا الوقت بـ [[ls -l notes.txt]]، واستنى دقيقة، واعمل [[touch notes.txt]] تاني.`, done: R`الوقت في [[ls -l]] اتغيّر للدقيقة الحالية، والملف فضل موجود بنفس الحجم: [[touch]] على ملف موجود بيحدّث الوقت بس ومبيفضّيهوش.` },
+            { lvl: 'تحدي', t: R`[[touch nodir/x]] والفولدر مش موجود، وصلّحها. وبعدين اعمل ملف بتاريخ قديم: [[touch -d "10 days ago" old.log]].`, done: R`الأول طلّع [[cannot touch 'nodir/x': No such file or directory]] (touch مبيعملش فولدرات)، وبعد [[mkdir -p nodir]] نجح. و [[ls -l old.log]] تاريخه من ١٠ أيام: دي الطريقة اللي هتجرّب بيها [[find -mtime]] بعدين من غير ما تستنى.` },
+          ],
           deep: {
             why: "الاسم غريب، بس هو أسرع طريقة تعمل ملف فاضي. ومفيد لما تحتاج ملف يكون موجود وبعدين تكتب فيه، زي [[.env]] أو ملف كود جديد.",
             how: R`الوظيفة الأصلية لـ [[touch]] حاجة تانية خالص: إنه «يلمس» الملف فيحدّث وقت آخر تعديل عليه للحظة دي، من غير ما يغيّر محتواه. ومن هنا الاسم.
@@ -212,6 +230,11 @@ touch: cannot touch 'nope/x.js': No such file or directory
 cp -r src src_backup
 cp -i *.js backup/`,
           try: "انسخ فولدر app كله لـ [[app_copy]]، واتأكد إن الملفات اتنسخت جواه.",
+          practice: [
+            { lvl: 'سريع', t: R`[[touch .env.example]] وبعدين [[cp .env.example .env]].`, done: R`[[ls -a]] فيه الملفين، والأصل لسه موجود: [[cp]] مبيحرّكش الأصل زي [[mv]].` },
+            { lvl: 'تطبيق', t: R`قبل ما تعدّل فولدر، خد نسخة: [[cp -r src src_backup]]. وبعدين امسح ملف من [[src]] ورجّعه من النسخة.`, done: R`[[ls src_backup]] فيه نفس ملفات [[src]]، والملف اللي مسحته رجع بـ [[cp src_backup/اسمه src/]] و [[ls src]] بقى زي الأول.` },
+            { lvl: 'تحدي', t: R`اعمل [[cp -r src backup]] مرتين ورا بعض واكتب [[ls backup]]. وبعدين في فولدر فيه [[.env]] وفولدر جواه، اعمل [[cp * dest/]].`, done: R`بعد المرة التانية [[ls backup]] فيه فولدر اسمه [[src]] جواه: النسخة التانية دخلت جوه الأولى بدل ما تكتب فوقها. و [[cp *]] طلّع [[-r not specified; omitting directory]] و [[$?]] بـ 1، و [[.env]] متنسخش أصلًا لأن [[*]] مبيطابقش الملفات اللي بتبدأ بنقطة.` },
+          ],
           deep: {
             why: "بتعمل نسخة من ملف أو فولدر، زي Copy ثم Paste. أشهر استخدام عند المطورين: [[cp .env.example .env]]، لما تنزّل مشروع وتعمل ملف الإعدادات بتاعك من النموذج.",
             how: R`[[cp]] (من copy) بيقرا الملف الأصلي ويكتب نسخة منه بايت ببايت في المكان الجديد. أول اسم المصدر، وآخر اسم الهدف، ودايمًا بالترتيب ده.
@@ -307,6 +330,11 @@ cp: overwrite 'backup/a.js'?
 mv *.log logs/
 mv app_copy app_v2`,
           try: "غيّر اسم [[app_copy]] لـ [[app_v2]]، وبعدين انقل أي ملف جواه لـ lab.",
+          practice: [
+            { lvl: 'سريع', t: R`[[touch old.js]] وبعدين غيّر اسمه بـ [[mv old.js new.js]].`, done: R`[[ls]] فيه [[new.js]] بس ومفيش [[old.js]].` },
+            { lvl: 'تطبيق', t: R`نضّف فولدر فيه لوجات: [[touch a.log b.log c.log]] و [[mkdir -p logs]] و [[mv *.log logs/]].`, done: R`[[ls *.log]] في الفولدر الأصلي بيقول [[No such file or directory]]، و [[ls logs]] فيه التلات لوجات.` },
+            { lvl: 'تحدي', t: R`[[cp /etc/hostname a.txt]] و [[cp /etc/os-release b.txt]]، وبعدين [[mv a.txt b.txt]] و [[cat b.txt]]. وبعدين [[touch f1]] و [[mv f1 nofolder]] و [[nofolder]] مش موجود.`, done: R`[[cat b.txt]] بقى فيه سطر الـ hostname بس، ومحتوى [[os-release]] راح من غير ولا سؤال ([[mv -i]] كانت هتسألك). و [[ls -l nofolder]] بيوريك ملف عادي (أول حرف [[-]]): [[mv]] غيّر الاسم بدل ما ينقل لأن الفولدر مش موجود.` },
+          ],
           deep: {
             why: "بيعمل حاجتين بأمر واحد: ينقل ملف لمكان تاني، أو يغيّر اسمه. وده منطقي لو فكرت فيها: تغيير الاسم هو «نقل للمكان نفسه باسم جديد».",
             how: R`هنا فيه حاجة تشرح ليه [[mv]] سريع جدًا. لو بتنقل في نفس الديسك، [[mv]] مش بيحرّك البيانات خالص. هو بيشيل الاسم من لستة الفولدر القديم ويحطه في لستة الفولدر الجديد، والبيانات فاضلة في مكانها على الديسك. عشان كده نقل ملف ١٠ جيجا بياخد جزء من الثانية.
@@ -390,6 +418,11 @@ rm -i *.log
 rm -r old_folder
 rm -rf node_modules`,
           try: "امسح [[app_v2]] بـ [[rm -ri]] ورد بـ y على كل سؤال عشان تحس هو بيمسح إيه بالظبط.",
+          practice: [
+            { lvl: 'سريع', t: R`[[touch a.log b.log]] وبعدين [[rm -i *.log]]، ورد بـ [[y]] على الأول و [[n]] على التاني.`, done: R`[[ls]] فيه [[b.log]] بس: اللي رديت عليه بـ [[n]] فضل.` },
+            { lvl: 'تطبيق', t: R`[[mkdir old]] وبعدين [[rm old]]، وبعدين امسحه بالطريقة الصح.`, done: R`[[rm old]] قال [[cannot remove 'old': Is a directory]]، و [[rm -r old]] مسحه و [[ls]] مبقاش فيه [[old]].` },
+            { lvl: 'تحدي', t: R`ملف اسمه بيبدأ بشرطة: [[touch ./-x.txt]]، وحاول تمسحه بـ [[rm -x.txt]]. وقبل ما تمسح حاجة بنجمة، شوفها الأول بـ [[echo rm *.log]].`, done: R`[[rm -x.txt]] قال [[invalid option -- 'x']] و [[$?]] بـ 1 (فاكره خيار)، و [[rm -- -x.txt]] أو [[rm ./-x.txt]] مسحه. و [[echo rm *.log]] طبع الأمر بالأسامي الحقيقية من غير ما يمسح ولا ملف.` },
+          ],
           flag: "danger",
           deep: {
             why: "بيمسح ملفات وفولدرات. ولازم تفهمه كويس، لأنه أخطر أمر هتستخدمه في المستوى ده.",
@@ -498,6 +531,11 @@ rm y.log
 ls -l current
 sudo ln -s /etc/nginx/sites-available/myapp /etc/nginx/sites-enabled/`,
           try: "اعمل لينك اسمه current بيشاور على app، وادخله بـ [[cd current]] ولاحظ [[ls -l]] بيوريك السهم.",
+          practice: [
+            { lvl: 'سريع', t: R`[[ln -s app current]] و [[ls -l current]]، وبعدين [[cd current]] و [[pwd]] و [[pwd -P]].`, done: R`سطر [[ls -l]] بيبدأ بـ [[l]] وآخره [[current -> app]]، و [[pwd]] بيطبع مسار فيه [[current]] و [[pwd -P]] بيطبع المسار الحقيقي اللي فيه [[app]].` },
+            { lvl: 'تطبيق', t: R`زي السيرفرات: [[mkdir -p releases/v1 releases/v2]] و [[ln -s releases/v1 current]]، وحوّل للإصدار الجديد بـ [[ln -sfn releases/v2 current]].`, done: R`[[readlink current]] بيطبع [[releases/v2]]، والتحويل حصل بأمر واحد من غير ما تمسح اللينك الأول.` },
+            { lvl: 'تحدي', t: R`فخّين: (١) [[mkdir sub]] و [[ln -s app sub/link]] و [[ls sub/link/]]. (٢) [[ln -s releases/v1 cur2]] وبعدين [[ln -sf releases/v2 cur2]] من غير [[-n]].`, done: R`(١) [[ls -l sub/link]] بيقول [[sub/link -> app]] بس [[ls sub/link/]] بيقول [[No such file or directory]]: المسار النسبي بيتحسب من مكان اللينك ([[sub/app]])، والحل [[ln -s ../app sub/link]]. (٢) [[readlink cur2]] لسه [[releases/v1]]، و [[ls releases/v1]] فيه لينك جديد اسمه [[v2]]: من غير [[-n]] الأمر دخل جوه الفولدر اللي اللينك بيشاور عليه.` },
+          ],
           mac: ["both", "المثال بتاع Nginx للسيرفر بس، لكن الأمر نفسه زي ما هو."],
           deep: {
             why: "بيعمل «اختصار» لملف أو فولدر، زي Shortcut على الديسكتوب في ويندوز. الملف واحد، بس تقدر توصله من مكانين.",
@@ -591,6 +629,11 @@ ls img[0-9].png
 echo rm *.log
 ls "*.js"`,
           try: R`في lab اعمل [[touch a1.log a2.log b10.log]]، وجرّب [[ls a?.log]] و [[ls *.log]] و [[ls "*.log"]] ولاحظ الفرق.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[touch a1.log a2.log b10.log]]، وبعدين [[ls a?.log]] و [[ls ?10.log]].`, done: R`الأول طلّع [[a1.log a2.log]] بس، والتاني طلّع [[b10.log]] بس: [[?]] حرف واحد بالظبط.` },
+            { lvl: 'تطبيق', t: R`[[touch img1.png img2.png img10.png]] وطلّع الصور اللي رقمها رقم واحد بس: [[ls img[0-9].png]].`, done: R`طلّع [[img1.png img2.png]] من غير [[img10.png]]، لأن الأقواس المربعة بتطابق حرف واحد من اللي جواها.` },
+            { lvl: 'تحدي', t: R`في فولدر فاضي اكتب [[ls *.log]] و [[echo $?]]، وبعدين [[echo *.log]]، وبعدين [[rm *.log]]. وفكّر: ليه كل واحد قال اللي قاله؟`, done: R`[[ls]] قال [[cannot access '*.log': No such file or directory]] و [[$?]] بـ 2، و [[echo]] طبع [[*.log]] زي ما هي، و [[rm]] اشتكى إنه مش لاقي ملف اسمه [[*.log]]: لما مفيش تطابق، bash بيبعت النجمة نفسها للأمر كاسم ملف.` },
+          ],
           deep: {
             why: "عايز تشتغل على مجموعة ملفات مرة واحدة من غير ما تكتب أساميهم: كل ملفات js، أو كل اللوجات.",
             how: R`الشيل بيقرا الأمر قبل ما ينفّذه، ولو لقى [[*]] أو [[?]] أو أقواس مربعة بيدوّر في الفولدر على الأسامي اللي بتطابق ويحطها مكانها. يعني [[rm *.log]] بتوصل لـ rm كده: [[rm a.log b.log]]. عشان كده rm نفسه عمره ما شاف النجمة.

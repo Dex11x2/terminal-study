@@ -3,6 +3,14 @@ MORE("bash", [
     {
       t: "Makefile: أوامر المشروع في مكان واحد",
       l: 3,
+      projects: [
+        { lvl: 'صغير', t: R`Makefile لمشروع صغير`, what: R`لمشروع Python أو Node عندك: targets [[install]] و [[test]] و [[run]] و [[clean]]، كلهم في [[.PHONY]]، و [[clean]] بيمسح [[__pycache__]] أو [[dist]]. من درس «make».`, done: R`[[make -n test]] بيطبع الأمر من غير ما يشغّله، و [[make clean]] مرتين ورا بعض مبيطلّعش error في التانية، و [[cat -A Makefile]] بيبيّن [[^I]] في أول كل سطر أمر.` },
+        { lvl: 'صغير', t: R`[[make backup]] بتاريخ`, what: R`target بيعمل [[mkdir -p backups]] و [[tar -czf backups/app-$$(date +%F).tar.gz src]]، و [[KEEP ?= 7]] بيمسح الأقدم من آخر 7. من درسين «make VAR=value» و «$$ في Makefile».`, done: R`[[ls backups]] فيه ملف باسم تاريخ النهارده، و [[tar -tzf]] عليه بيعرض ملفات [[src]]، ولو فيه ٣ نسخ قديمة، [[make backup KEEP=2]] بيسيب أحدث ٢ بس.` },
+        { lvl: 'متوسط', t: R`Makefile لـ stack بـ docker compose`, what: R`[[ENV ?= dev]] بيختار [[compose.$(ENV).yml]]، و targets [[up]] و [[down]] و [[logs]] و [[shell]] و [[migrate]] (لوب على [[db/migrations/*.sql]] بـ [[$$f]] و [[ON_ERROR_STOP=1]] و [[|| exit 1]])، و [[make help]] هو الافتراضي. من دروس الوحدة كلها.`, done: R`[[make]] لوحدها بتعرض القايمة، و [[make -n up ENV=prod]] بيطبع [[compose.prod.yml]]، و migration فيها غلطة بتوقف اللوب و [[echo $?]] بيطبع 2، والـ migrations اللي بعدها متنفّذتش.` },
+        { lvl: 'متوسط', t: R`Makefile بيرفض الحاجات الخطيرة`, what: R`[[deploy]] محتاج [[TAG]]، ولو [[ENV=prod]] محتاج كمان [[CONFIRM=yes]]، وأي توكن في الأوامر جاي من [[.env]] وقدامه [[@]] عشان ميتطبعش. من دروس «make VAR=value» و «$$ في Makefile».`, done: R`[[make deploy ENV=prod TAG=v1]] من غير [[CONFIRM]] بيقف برسالة واضحة و [[echo $?]] بيطبع 2، ومعاها بيكمّل. و [[make deploy ... 2>&1 | grep -c TOKEN_VALUE]] بيطبع 0.` },
+        { lvl: 'كبير', t: R`Makefile + سكربتات متينة`, what: R`الـ Makefile بيبقى واجهة رفيعة: كل target بينادي سكربت في [[scripts/]] أوله [[set -euo pipefail]] وبيكتب سطر بالوقت في [[logs/make.log]]. و [[make check]] بيعمل [[bash -n]] على كل السكربتات، و [[make ci]] = [[check]] + [[test]]، و [[make help]] الافتراضي. من الوحدة دي ومن وحدة «سكربتات السيرفر» ومن درس «مشروع — set -euo pipefail».`, done: R`سكربت فيه syntax error بيخلّي [[make check]] يفشل و [[echo $?]] يطبع 2 ومعاه اسم الملف. [[make ci]] على مشروع سليم بيرجّع 0. و [[logs/make.log]] فيه سطر لكل تشغيل بالوقت والـ target والنتيجة، وتشغيل [[make ci]] مرتين ورا بعض بيطلّع نفس النتيجة.`, ext: R`زوّد [[make doctor]] بيفحص إن docker و git والنسخ المطلوبة موجودين قبل أي حاجة، وشغّل [[make ci]] في GitHub Actions بنفس الأمر بالظبط اللي بتشغّله على جهازك.` },
+        { lvl: 'فكرة', t: R`Makefile لجهازك انت`, what: R`فولدر [[~/dotfiles]] فيه Makefile: [[make install]] بيعمل [[ln -sfn]] لملفات الإعدادات بتاعتك (bashrc، gitconfig...) وبياخد نسخة من أي ملف موجود قبل كده، و [[make update]] و [[make doctor]] بالشكل اللي تحبه. انت اللي تختار الـ targets.`, done: R`[[make -C ~/dotfiles install]] على جهاز جديد بيجهّز إعداداتك في أمر واحد، وتشغيله مرة تانية مبيغيّرش حاجة، و [[make]] لوحدها بتشرح كل target.`, ext: R`خليه يشتغل على لينكس والماك (اكتشف [[uname]] في الـ Makefile)، وحط الفولدر على GitHub عشان أي جهاز جديد يبقى جاهز في دقيقة.` },
+      ],
       n: "ملف واحد فيه كل أوامر المشروع، وأي حد يكتب make help يعرفها",
       items: [
         {
@@ -26,6 +34,11 @@ build:
 	$(COMPOSE) build app
 # من الترمنال:  make build && make up && make logs`,
           try: "اعمل Makefile فيه target اسمه hello بيعمل [[date]]، وشغّله بـ [[make hello]]، وبعدين حط مسافات بدل الـ Tab وشوف الـ error.",
+          practice: [
+            { lvl: 'سريع', t: R`اعمل Makefile فيه target اسمه [[hello]] الأول وتحته [[clean]]، وشغّل [[make]] لوحدها، وبعدين [[make nope]].`, done: R`[[make]] لوحدها شغّلت [[hello]] (أول target في الملف)، و [[make nope]] طبعت [[make: *** No rule to make target 'nope'.  Stop.]] و [[echo $?]] بعدها طبع 2.` },
+            { lvl: 'تطبيق', t: R`في فولدر مشروع اعمل ملف فاضي اسمه [[test]] بـ [[touch test]]، وفي الـ Makefile target اسمه [[test]] بيطبع «running tests». شغّل [[make test]]، وبعدين زوّد [[.PHONY: test]] وشغّله تاني.`, done: R`من غير [[.PHONY]] طبع [[make: 'test' is up to date.]] ومنفّذش حاجة (لأن فيه ملف بنفس الاسم)، وبعد [[.PHONY: test]] طبع «running tests».` },
+            { lvl: 'تحدي', t: R`target اسمه [[ci]] بيعتمد على [[lint]] و [[test]] ([[ci: lint test]])، وخلّي [[lint]] يفشل بـ [[false]]. شغّل [[make ci]]، وشوف [[make -n ci]] قبل ما تصلّح.`, done: R`[[make ci]] وقف عند [[lint]] بسطر زي [[make: *** [Makefile:3: lint] Error 1]] ومشغّلش [[test]]، و [[echo $?]] طبع 2. و [[make -n ci]] بيطبع الأوامر من غير ما ينفّذها، وبعد ما تصلّح [[lint]] الاتنين بيشتغلوا ورا بعض.` },
+          ],
           flag: "script",
           mac: ["both", "make بييجي مع [[xcode-select --install]]، بس نسخته قديمة (3.81)، وده بيفرق في حاجات قليلة زي [[.ONESHELL]]. وعلى ويندوز استخدمه من WSL."],
           deep: {
@@ -225,6 +238,11 @@ import:
 # make logs ENV=prod         -> compose.prod.yml
 # make import FOLDER=A1 ARGS=--dry-run`,
           try: "ضيف target اسمه greet بيعمل [[echo Hello $(NAME)]] وفوقه [[NAME ?= world]]، وشغّله بـ [[make greet]] و [[make greet NAME=Ali]].",
+          practice: [
+            { lvl: 'سريع', t: R`[[ENV ?= dev]] و target [[show]] بيعمل [[@echo ENV=$(ENV)]]. شغّل [[make show]] و [[make show ENV=prod]] و [[ENV=staging make show]].`, done: R`التلاتة طبعوا بالترتيب [[ENV=dev]] و [[ENV=prod]] و [[ENV=staging]]: متغير البيئة كسب [[?=]] كمان، مش سطر الأوامر بس.` },
+            { lvl: 'تطبيق', t: R`target [[import]] بيضيف [[--dry-run]] بس لو [[DRY]] اتبعت: [[$(if $(DRY),--dry-run)]]. اتأكد من غير ما تشغّل حاجة بـ [[make -n import]] و [[make -n import DRY=1]].`, done: R`الأولى طبعت الأمر من غير [[--dry-run]]، والتانية طبعته وفي آخره [[--dry-run]]، ومفيش أمر اتنفّذ فعلًا في الحالتين.` },
+            { lvl: 'تحدي', t: R`target [[deploy]] بيرفض يشتغل من غير [[TAG]]: أول سطر فيه [[@test -n "$(TAG)" || { echo "لازم TAG=..." >&2; exit 1; }]]. جرّب [[make deploy]] و [[make deploy TAG=]] و [[make deploy TAG=v1.2]].`, done: R`الأولى والتانية طبعوا رسالتك وسطر [[Error 1]] و [[echo $?]] طبع 2، يعني [[TAG]] الفاضي اترفض زي المش موجود. والتالتة كمّلت و [[echo $?]] طبع 0.` },
+          ],
           flag: "script",
           mac: ["both", "زي ما هو."],
           deep: {
@@ -391,6 +409,11 @@ migrate:
 ping-api:
 	@source .env && curl -sS -H "Authorization: Bearer $$API_TOKEN" http://localhost:8080/health`,
           try: "اعمل target فيه سطر [[cd /tmp]] وتحته سطر [[pwd]]، وشوف إنه طبع فولدر المشروع مش /tmp، وبعدين حطهم في سطر واحد بـ [[&&]].",
+          practice: [
+            { lvl: 'سريع', t: R`target فيه سطرين: [[@echo $HOME]] و [[@echo $$HOME]]. شغّله.`, done: R`الأول طبع [[OME]] (make فهمها [[$H]] فاضي وبعدها [[OME]])، والتاني طبع الـ home بتاعك زي [[/root]] أو [[/home/ali]].` },
+            { lvl: 'تطبيق', t: R`target [[count]] بيلف على كل [[*.txt]] في الفولدر ويطبع اسم الملف وعدد سطوره، بـ [[for]] و [[$$(wc -l < $$f)]] في سطر واحد.`, done: R`لو عندك [[a.txt]] فيه سطرين و [[b.txt]] فيه سطر، [[make count]] طبع [[a.txt: 2]] و [[b.txt: 1]]. ولو نسيت [[$$]] في أي حتة هتلاقي اسم فاضي أو رقم ناقص.` },
+            { lvl: 'تحدي', t: R`حط [[.ONESHELL:]] و target فيه تلات سطور: [[cd sub]] و [[false]] و [[pwd]]. شغّله، وبعدين زوّد [[SHELL := /bin/bash]] و [[.SHELLFLAGS := -eu -o pipefail -c]] وشغّله تاني (GNU make 3.82 أو أحدث، مش نسخة الماك).`, done: R`في الأول طبع فولدر [[sub]] و [[echo $?]] طبع 0 رغم إن [[false]] فشل في النص (مع [[.ONESHELL]] آخر سطر بس هو اللي بيتحسب). وبعد [[.SHELLFLAGS]] وقف عند [[false]] بـ [[Error 1]] و [[echo $?]] طبع 2.` },
+          ],
           flag: "script",
           mac: ["diff", "على أوبونتو [[/bin/sh]] هو dash ومبيعرفش [[source]]، على الماك بيعرفها. عشان كده [[SHELL := /bin/bash]]، أو استخدم [[.]] بدل source."],
           deep: {
@@ -605,6 +628,11 @@ logs: ## تابع لوجات التطبيق
 migrate: ## طبّق الـ migrations بالترتيب
 	@./scripts/migrate.sh`,
           try: "ضيف الـ help ده لأي Makefile عندك، وحط [[##]] جنب ٣ targets، واكتب [[make]] لوحدها.",
+          practice: [
+            { lvl: 'سريع', t: R`ضيف الـ help لـ Makefile فيه ٣ targets جنبهم [[##]] و target رابع من غيرها، واكتب [[make]] لوحدها و [[make | wc -l]].`, done: R`القايمة فيها [[help]] والتلاتة اللي عليهم [[##]] بس، والرابع مش ظاهر، و [[make | wc -l]] طبع 4.` },
+            { lvl: 'تطبيق', t: R`ضيف target اسمه [[build2]] جنبه [[## بيلد]]، وشوف هيظهر في [[make help]] ولا لأ، وصلّح النمط.`, done: R`[[build2]] مش ظاهر لأن الحروف المسموحة جوه القوسين في النمط [[a-zA-Z_-]] مفيهاش أرقام. بعد ما تخليها [[a-zA-Z0-9_-]] بقى ظاهر في القايمة.` },
+            { lvl: 'تحدي', t: R`قسّم الـ Makefile: حط targets الداتابيز في [[mk/db.mk]] واعمل [[include mk/db.mk]] في الملف الأساسي، وشغّل [[make help]].`, done: R`في الأول كل الأسامي في العمود الأول بقت [[Makefile]] و [[mk/db.mk]] بدل اسم الـ target، لأن [[$(MAKEFILE_LIST)]] بقى فيه ملفين و [[grep]] بيكتب اسم الملف قبل كل سطر. بعد [[grep -hE]] الأسامي رجعت صح، والـ targets من الملفين ظاهرين.` },
+          ],
           flag: "script",
           mac: ["both", "شغال زي ما هو."],
           deep: {

@@ -3,6 +3,14 @@ MORE("bash", [
     {
       t: "توصل للأمر بنفسك",
       l: 1,
+      projects: [
+        { lvl: 'صغير', t: R`[[cheat.sh]]: الخلاصة من الدليل`, what: R`[[./cheat.sh mkdir]] بيطبع سطر [[whatis]] وقسم الـ SYNOPSIS بس من [[man]] (بـ [[sed -n '/^SYNOPSIS/,/^DESCRIPTION/p']]). من دروس «الطريقة» و «SYNOPSIS».`, done: R`[[./cheat.sh mkdir]] بيطبع [[mkdir [OPTION]... DIRECTORY...]] من غير حروف غريبة ([[man]] وهو بيكتب في pipe بيطلّع نص عادي)، و [[./cheat.sh nope]] بيطبع رسالة على stderr و [[echo $?]] مش صفر.` },
+        { lvl: 'صغير', t: R`أمر جديد كل يوم`, what: R`سكربت بيختار أمر عشوائي من [[compgen -c | sort -u | shuf -n 1]] ويطبع [[whatis]] بتاعه، ولو مالوش صفحة يختار غيره. حطه في آخر [[~/.bashrc]]. من دروس «compgen» و «الطريقة».`, done: R`كل ترمنال جديد بيطبع سطر واحد فيه اسم أمر وشرحه، وعمره ما بيطبع [[nothing appropriate]]، و [[bash -n ~/.bashrc]] مبيطلّعش أخطاء.` },
+        { lvl: 'متوسط', t: R`[[what]]: الدليل المناسب لأي كلمة`, what: R`دالة [[what NAME...]] بتشوف [[type -t]] لكل اسم وتفتح الدليل الصح: [[help]] للـ builtin والـ keyword، و [[man]] (أو [[--help]] لو مفيش صفحة) للملف، و [[alias NAME]] للـ alias، و [[declare -f]] للدالة. من دروس «help و type -a» و «أقسام man».`, done: R`[[what cd ls if ll what]] بيطلّع لكل واحد النوع والدليل الصح، و [[what nope]] بيطبع «مش معروف» على stderr و [[echo $?]] بيطبع 1، والدالة شغالة في [[~/.bashrc]] بعد [[source]].` },
+        { lvl: 'متوسط', t: R`مين بيغطّي على مين في الـ PATH`, what: R`سكربت بيلف على كل فولدر في [[$PATH]] بالترتيب (مع [[realpath]] عشان [[/bin]] و [[/usr/bin]] ميتعدّوش مرتين) ويطبع كل اسم موجود في أكتر من فولدر حقيقي، وجنبه كل المسارات من [[type -a]]. من دروس «help و type -a» و «compgen».`, done: R`على جهاز نضيف مبيطلّعش حاجة غلط بسبب [[/bin]] الرابط. ولو عملت [[~/bin/ls]] وحطيته أول الـ [[PATH]]، السكربت بيطلّع [[ls]] وجنبه المسارين بالترتيب. وفي الآخر بيفكّرك بـ [[hash -r]].` },
+        { lvl: 'كبير', t: R`[[offline-docs.sh]]: دوّر في الدليل بمهمة`, what: R`[[./offline-docs.sh "compress files"]] بيعمل [[man -k]] بالكلمات، ولو مفيش نتيجة بيجرّب كل كلمة لوحدها، وبيطبع لكل نتيجة سطر الـ whatis والـ SYNOPSIS وأول مثال من قسم EXAMPLES لو موجود. أوله [[set -euo pipefail]]، وبيتعامل مع كود 16 بتاع [[man]] من غير ما يقع، وبيكتب كل بحث في [[~/.cache/offline-docs/log]]، وبيخزّن النتايج عشان التشغيلة التانية تبقى أسرع. من الوحدة دي ومن درس «مشروع — set -euo pipefail».`, done: R`[[./offline-docs.sh "split a file"]] بيطلّع [[split]] و [[csplit]] بالـ SYNOPSIS بتاعهم. كلمات ملهاش أي نتيجة بتطبع «ملقتش» و [[echo $?]] بيطبع 1 من غير رسالة [[unbound variable]] ولا خروج مفاجئ. التشغيلة التانية لنفس البحث بتقرا من الكاش (اللوج بيقول كده)، و [[bash -n]] على السكربت مبيطلّعش أخطاء.`, ext: R`زوّد [[--section 8]] عشان تدوّر في أوامر الأدمن بس، ولون للأسامي، و [[--open]] بيفتح أول نتيجة في [[man]] على طول.` },
+        { lvl: 'فكرة', t: R`الكتيّب بتاعك`, what: R`من الـ history بتاعك طلّع أكتر ٣٠ أمر بتستخدمهم ([[history | awk '{print $2}' | sort | uniq -c | sort -rn]])، ولكل واحد اعرف بالدورة نوعه وأهم ٣ فلاجات انت مش عارفهم، واكتبهم في ملف واحد بأمثلة من شغلك انت.`, done: R`ملف فيه ٣٠ أمر، لكل واحد سطر الـ whatis والنوع من [[type -t]] و ٣ أمثلة جربتها بنفسك، وكل مثال جنبه الكود اللي رجع.`, ext: R`خليه سكربت بيحدّث نفسه كل شهر من الـ history، ويعلّمك على الأوامر الجديدة اللي بقيت بتستخدمها.` },
+      ],
       n: R`لينكس فيه آلاف الأوامر ومستحيل تحفظهم. بس الدليل كله موجود على جهازك: تدوّر فيه بالموضوع، وتقرا سطر الاستخدام، وتعرف الأمر ده أصلًا إيه. القسم ده الطريقة`,
       items: [
         {
@@ -30,6 +38,11 @@ ls --help | head
 ls /nope 2>/dev/null; echo $?`,
           mac: ["both", "نفس الأوامر شغالة على الماك. بس أول [[man -k]] ممكن تحتاج [[sudo /usr/libexec/makewhatis]] عشان الفهرس يتبني."],
           try: R`امشي بالدورة على مهمة: «عايز أعرف المساحة الفاضية على الديسك». دوّر بـ [[man -k "disk space"]]، وبعدين [[whatis]] على اللي لقيته، وبعدين [[--help]] بتاعه.`,
+          practice: [
+            { lvl: 'سريع', t: R`المهمة: «عايز أعرف الفولدر ده واخد مساحة قد إيه». دوّر بـ [[man -k "disk usage"]] الأول، ولو مطلعش حاجة غيّر الكلمات لـ [[man -k "file space"]].`, done: R`على ubuntu:24.04 الكلمتين الأولانيين طلّعوا [[disk usage: nothing appropriate.]]، والتانيين طلّعوا [[du (1) - estimate file space usage]]. وبعدها [[du -sh ~/lab]] بيطبع رقم بوحدة زي [[K]] أو [[M]]، يعني الدليل بيتكلم بكلماته هو مش كلماتك، فجرّب أكتر من صيغة.` },
+            { lvl: 'تطبيق', t: R`المهمة: «عندي ملف ٢٥٠ سطر وعايز أقسمه لحتت كل حتة ١٠٠ سطر». لاقي الأمر بـ [[man -k split]]، والفلاج من [[--help]] بتاعه، وقسّم ملف [[seq 250 > big.txt]].`, done: R`[[man -k split]] طلّع [[split (1) - split a file into pieces]] (ومعاه [[csplit]])، و [[ls part_*]] بعد [[split -l 100 big.txt part_]] بيطبع [[part_aa]] و [[part_ab]] و [[part_ac]]، و [[cat part_* | wc -l]] بيطبع 250.` },
+            { lvl: 'تحدي', t: R`المهمة من غير إنترنت: «أنهي ملفات في [[/etc]] اتعدّلت آخر ٧ أيام؟». امشي الدورة كلها: [[man -k]] لحد ما تلاقي الأمر، وجوه [[man]] بتاعه دوّر بـ [[/-mtime]] و [[n]]، وبعدين شغّل الأمر، واتأكد من كود الخروج.`, done: R`[[man -k "search for files"]] وصّلك لـ [[find (1) - search for files in a directory hierarchy]]، والأمر النهائي زي [[find /etc -type f -mtime -7 2>/dev/null]] بيطبع لستة (ممكن تبقى فاضية) و [[echo $?]] بعده 0. ولو كيوزر عادي فيه فولدر مقفول زي [[/etc/ssl/private]]، شيل [[2>/dev/null]] هتشوف [[Permission denied]]، والكود بيبقى 1 حتى لو الرسايل متخبّية: [[find]] بيحسب أي فولدر مقدرش يدخله فشل.` },
+          ],
           sol: R`~~~text الناتج (ubuntu:24.04 في Docker)
 root@lab:/# man -k "list directory"
 dir (1)              - list directory contents
@@ -389,6 +402,11 @@ man 3 printf
 man 5 crontab`,
           mac: ["both", "نفس الأقسام على الماك، وكمان [[man -a]] و [[man -aw]]. بس [[man 5 crontab]] على الماك بيشرح نسخة BSD من الـ crontab."],
           try: R`اعرف كام قسم فيه صفحة اسمها [[passwd]] بـ [[whatis passwd]]، وافتح صفحة **صيغة الملف** بتاعتها (القسم 5) واقرا أول خمس سطور.`,
+          practice: [
+            { lvl: 'سريع', t: R`شغّل [[whatis passwd]] و [[man -aw passwd]]، وافتح القسم اللي بيشرح صيغة الملف بـ [[man 5 passwd]].`, done: R`[[whatis]] طلّع [[passwd (1) - change user password]] و [[passwd (5) - the password file]]، و [[man -aw]] طلّع مسارين، واحد في [[man1]] وواحد في [[man5]]. وصفحة القسم 5 بتشرح الحقول السبعة اللي بين النقطتين.` },
+            { lvl: 'تطبيق', t: R`من [[man 5 passwd]] اعرف رقم الحقل اللي فيه الـ UID، واطبع اليوزرز الحقيقيين بس (UID من 1000 وفوق) بـ [[awk -F:]].`, done: R`[[awk -F: '$3>=1000 {print $1, $3}' /etc/passwd]] على ubuntu:24.04 طبع [[ubuntu 1000]] و [[nobody 65534]]. وبعد ما تزوّد [[&& $3<65534]] بيفضل [[ubuntu]] بس، لأن [[nobody]] مش يوزر حقيقي رغم إن رقمه كبير.` },
+            { lvl: 'تحدي', t: R`اكتب دالة [[mansec]] بتاخد اسم وتطبع أرقام الأقسام اللي ليه صفحة فيها، كل رقم في سطر، من [[man -aw]] و [[sed]]. وخلّيها ترجّع كود غير صفر لو الاسم مالوش صفحة.`, done: R`[[mansec passwd]] بيطبع [[1]] وتحته [[5]]، و [[mansec nope]] بيطبع [[No manual entry for nope]] على stderr و [[echo $?]] بيطبع 16 (ده كود [[man]] لما مفيش صفحة).` },
+          ],
           sol: R`~~~text الناتج (ubuntu:24.04)
 root@lab:/# whatis printf
 printf (1)           - format and print data
@@ -712,6 +730,11 @@ ls --help | head -1
 printf --help | head -3`,
           mac: ["both", "نفس اللغة على الماك، بس صفحات BSD أقصر وأحيانًا بتستخدم حروف صغيرة للقيم ([[file]] بدل [[FILE]])."],
           try: R`افتح [[man tar]] واقرا الـ SYNOPSIS: كام شكل مختلف فيه؟ وبعدين [[man mkdir]] واعرف إيه الإجباري فيه.`,
+          practice: [
+            { lvl: 'سريع', t: R`اقرا الـ SYNOPSIS في [[man mv]]، وقبل ما تجرّب قول [[mv]] لوحده هيعمل إيه، وبعدين شغّله.`, done: R`[[mv]] لوحده طبع [[mv: missing file operand]] وتحته [[Try 'mv --help' for more information.]] و [[echo $?]] طبع 1، لأن [[SOURCE]] و [[DEST]] مكتوبين من غير أقواس، يعني إجباريين.` },
+            { lvl: 'تطبيق', t: R`في [[man cp]] فيه شكل فيه [[-t DIRECTORY]] قبل الملفات. استخدمه عشان تنسخ كل ملفات [[*.log]] من فولدر [[logs]] لـ [[backup/]] بـ [[find ... -exec cp -t backup/ {} +]].`, done: R`[[ls backup]] فيه كل ملفات الـ log، والأمر اشتغل مرة واحدة لكل الملفات ([[+]] مش [[\;]]). والشكل ده هو اللي بيخلي [[{}]] تيجي في الآخر، وده اللي [[-exec ... +]] محتاجه.` },
+            { lvl: 'تحدي', t: R`سكربت عندك (باك أب مثلًا) اكتبله سطر SYNOPSIS بنفس اللغة: [[Usage: backup.sh [-k N] SOURCE... DEST]]، وخلّيه يرفض لو ناقصه حاجة إجبارية بنفس أسلوب [[mkdir]].`, done: R`[[./backup.sh]] لوحده بيطبع [[backup.sh: missing operand]] وسطر الـ Usage على stderr و [[echo $?]] بيطبع 2، و [[./backup.sh --help | head -1]] بيبدأ بـ [[Usage:]] زي [[ls --help | head -1]] بالظبط.` },
+          ],
           sol: R`[[mkdir]] الـ SYNOPSIS بتاعه سطر واحد:
 
 ~~~text
@@ -1047,6 +1070,11 @@ help -d cd pwd
 command -v ls`,
           mac: ["both", "نفس الأوامر. بس bash على الماك نسخة 3.2 قديمة، فناتج [[help]] فيه options أقل."],
           try: R`شغّل [[type -a printf]] وبعدين قارن: [[printf '%s\\n' hello]] و [[/usr/bin/printf '%s\\n' hello]]. وبعدين [[type -t]] على [[if]] و [[echo]] و [[grep]].`,
+          practice: [
+            { lvl: 'سريع', t: R`اعمل [[alias ll='ls -l']] وبعدين [[type ll]] و [[type -t ll]].`, done: R`[[type ll]] طبع [[ll is aliased to $__btls -l']] و [[type -t ll]] طبع [[alias]] بس، وده اللي بيخليه سهل تستخدمه جوه [[if]].` },
+            { lvl: 'تطبيق', t: R`اعمل دالة [[ls() { echo fake; }]] وبعدين [[type -a ls]] و [[ls]] و [[command ls]]، وفي الآخر [[unset -f ls]].`, done: R`[[type -a ls]] أول سطر فيه [[ls is a function]] وبعده [[ls is /usr/bin/ls]]، و [[ls]] طبع [[fake]]، و [[command ls]] عرض الملفات بجد، وبعد [[unset -f ls]] رجع [[type -t ls]] يطبع [[file]].` },
+            { lvl: 'تحدي', t: R`شغّل [[ls]] مرة، وبعدين اعمل سكربت اسمه [[ls]] في [[~/bin]] بيطبع [[mine]] وحط [[~/bin]] أول الـ [[PATH]]. شغّل [[type ls]] و [[ls]]، وبعدين [[hash -r]] وكرّر.`, done: R`قبل [[hash -r]]: [[type ls]] طبع [[ls is hashed (/usr/bin/ls)]] و [[ls]] شغّل الأصلي رغم إن سكربتك أول الـ [[PATH]]. بعد [[hash -r]]: [[type ls]] طبع [[ls is /root/bin/ls]] (أو home بتاعك) و [[ls]] طبع [[mine]]. امسح السكربت في الآخر.` },
+          ],
           sol: R`~~~text الناتج (ubuntu:24.04)
 root@lab:/# type -a printf
 printf is a shell builtin
@@ -1422,6 +1450,11 @@ compgen -c ch | sort -u | head -8
 compgen -v | head -5`,
           mac: ["both", "شغال على الماك كمان، بس bash 3.2 بتاع الماك عدد الـ builtins فيه أقل."],
           try: R`اعرف كام أمر الشيل عندك يقدر يشغّله بـ [[compgen -c | sort -u | wc -l]]. وبعدين دوّر على كل الأوامر اللي فيها كلمة [[zip]] بـ [[compgen -c | grep zip]].`,
+          practice: [
+            { lvl: 'سريع', t: R`اطبع كل الأوامر اللي بتبدأ بـ [[apt]] بـ [[compgen -c apt | sort -u]].`, done: R`على ubuntu:24.04 طلّع [[apt]] و [[apt-cache]] و [[apt-cdrom]] و [[apt-config]] و [[apt-get]] و [[apt-key]] و [[apt-mark]]، يعني نفس اللي Tab-Tab كان هيعرضه بس في لستة تقدر تعمل عليها [[grep]] و [[wc]].` },
+            { lvl: 'تطبيق', t: R`قارن [[compgen -u]] (اليوزرز) بأول حقل في [[/etc/passwd]]: [[diff <(compgen -u | sort) <(cut -d: -f1 /etc/passwd | sort)]].`, done: R`[[diff]] مطبعش حاجة و [[echo $?]] طبع 0، يعني [[compgen -u]] بيقرا نفس الملف. وبنفس الطريقة [[compgen -g]] للجروبات و [[compgen -e]] للمتغيرات المصدّرة.` },
+            { lvl: 'تحدي', t: R`عايز الأوامر اللي ليها builtin وملف في نفس الوقت. جرّب الأول [[compgen -c | sort | uniq -d]] وشوف ليه مش نافع، وبعدين لف على [[compgen -b]] واسأل [[type -P]] عن كل واحد.`, done: R`[[uniq -d]] طلّع مئات الأسامي لأن [[/bin]] و [[/usr/bin]] الاتنين في الـ [[PATH]] و [[/bin]] رابط لـ [[/usr/bin]]، فكل ملف بيتعد مرتين (عندي [[compgen -c | wc -l]] طلّع 909 و [[sort -u]] طلّع 488). واللوب على [[compgen -b]] طلّع [[[]] و [[echo]] و [[false]] و [[kill]] و [[printf]] و [[pwd]] و [[test]] و [[true]]، و [[type -a echo]] بيأكد إن الـ builtin هو الأول.` },
+          ],
           sol: R`~~~text الناتج (ubuntu:24.04)
 root@lab:/# compgen -b | wc -l
 61

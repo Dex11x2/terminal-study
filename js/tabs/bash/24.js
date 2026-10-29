@@ -4,6 +4,14 @@ MORE("bash", [
       t: "سكربت بيتكلم مع اليوزر",
       l: 3,
       n: "options زي أي أمر حقيقي، و --help، وسؤال «متأكد؟»، ورسايل ملوّنة واضحة",
+      projects: [
+        { lvl: 'صغير', t: R`--help لسكربت قديم`, what: R`خد أي سكربت كتبته قبل كده وزوّده [[usage()]] بـ heredoc، و [[-h|--help]] بيخرج 0، وأي option مش معروفة بتطبع الـ usage على stderr وتخرج 2 (درسين ١ و ٢).`, done: R`[[./old.sh --help; echo $?]] بيطبع الاستخدام و 0، و [[./old.sh --wat; echo $?]] بيطبع [[Unknown option: --wat]] و 2، و [[./old.sh --help | head -1]] بيبدأ بـ [[Usage:]].` },
+        { lvl: 'صغير', t: R`قايمة أدوات السيرفر`, what: R`[[menu.sh]] بـ select (درس ٣): مساحة الديسك ([[df -h]])، وأكتر ٥ عمليات بتاكل رامات، والبورتات المفتوحة ([[ss -ltn]])، وآخر ٢٠ سطر من لوج، و quit. ورسايل ملوّنة بـ info و warn (درس ٤).`, done: R`كل اختيار بيطبع ناتجه ويرجع للقايمة، و 9 بيطبع Invalid، و quit بيخرج 0، و [[bash menu.sh < /dev/null]] بيخرج من غير ما يعلّق.` },
+        { lvl: 'متوسط', t: R`أداة تنضيف بـ options`, what: R`[[clean.sh [options] DIR]]: [[-n|--dry-run]] و [[-k|--keep DAYS]] و [[-p|--pattern GLOB]] و [[-y|--yes]] (درس ٢)، و confirm قبل المسح إلا مع [[--yes]] (درس ٣)، ورفض لو stdin مش ترمنال ومفيش [[--yes]]، وألوان بس لو [[-t 2]] (درس ٤).`, done: R`[[clean.sh -n -k 7 logs]] بيطبع اللستة ومبيمسحش. من غير [[-n]] بيسأل، و n بيلغي و exit 1. و [[clean.sh -k 7 logs < /dev/null]] بيرفض، و [[--yes]] بيمسح. و [[clean.sh -k 7 logs 2>err.txt]] و [[cat -v err.txt]] مفيهوش ألوان.` },
+        { lvl: 'متوسط', t: R`مولّد مشروع: تفاعلي وفي CI`, what: R`[[make-app.sh]] بيسأل عن الاسم (ويعيد لو فيه مسافة) والنوع بـ select و «متأكد؟» (درس ٣)، وكمان بيشتغل من غير أسئلة بـ [[-n NAME -t TYPE -y]] (درس ١) عشان CI. الاتنين بينادوا نفس الفانكشن اللي بتعمل الفولدر.`, done: R`[[make-app.sh -n api -t node -y]] و [[printf 'api\n1\ny\n' | make-app.sh]] بيعملوا نفس الفولدر بالظبط ([[diff -r]] بين نسختين مبيطبعش حاجة). ونوع غلط بـ [[-t]] exit 2.` },
+        { lvl: 'كبير', t: R`bk: أداة باك أب بأوامر فرعية`, what: R`[[bk create|list|restore|prune]] بـ case على أول argument، ولكل أمر options بتاعته بـ getopts أو shift (دروس ١ و ٢): [[create -s SRC]]، و [[restore -f FILE -t DIR]]، و [[prune --keep N]]. restore و prune بيسألوا قبل ما يكتبوا أو يمسحوا إلا مع [[-y]] (درس ٣). رسايل info/warn/error ملوّنة في الترمنال وعادية في [[~/logs/bk.log]] بالتاريخ (درس ٤). exit codes: 0 تمام، 1 فشل، 2 استخدام غلط. وزوّد [[set -euo pipefail]] و trap لما توصل للوحدة الجاية.`, done: R`[[bk --help]] و [[bk create --help]] كل واحد بيطبع الـ usage بتاعه. [[bk create -s ~/lab/app]] مرتين بيعمل أرشيفين باسمين مختلفين. [[bk list]] بيطبعهم بالأحدث الأول. [[bk restore -f ... -t /tmp/r -y]] و [[diff -r ~/lab/app /tmp/r/app]] مبيطبعش حاجة. [[bk prune --keep 1 < /dev/null]] بيرفض من غير [[-y]]. و [[bk wat; echo $?]] بيطبع 2.`, ext: R`زوّد [[bk verify]] بيعمل [[gzip -t]] على كل أرشيف، و tab completion بسيط بـ [[complete -W]]، و [[--json]] لـ list.` },
+        { lvl: 'فكرة', t: R`واجهة لشغلك اليومي`, what: R`فيه أوامر بتكتبها كل يوم بـ flags بتنساها (docker compose بملف معين، ssh لسيرفر، تشغيل تستات لجزء من المشروع). اعملها أداة واحدة بـ subcommands و options و --help، تسأل لما يكون فيه حاجة خطيرة، وتتكلم بألوان مفهومة.`, done: R`زميلك يقدر يستخدمها من [[--help]] بس من غير ما يسألك، وأي أمر خطير بيسأل قبله، وفيه طريقة تشغيل من غير أسئلة.`, ext: R`خلّيها تقرا إعداداتها من [[~/.config/<الاسم>/config]] بـ source، وزوّد [[--version]] و [[NO_COLOR]].` },
+      ],
       items: [
         {
           cmd: "getopts",
@@ -33,6 +41,11 @@ if [[ $# -eq 0 ]]; then usage >&2; exit 2; fi
 echo "verbose=$VERBOSE name=$NAME"
 for f in "$@"; do echo "file: $f"; done`,
           try: R`احفظه باسم opts.sh وشغّله بـ [[-v -n Ali a.txt "my file.txt"]]، وبـ [[-n]] من غير قيمة، وبـ [[-x a]]، وبـ [[a.txt -v]] (الـ option بعد الملف)، واطبع [[echo $?]] كل مرة.`,
+          practice: [
+            { lvl: 'سريع', t: R`شغّل opts.sh بـ [[-vn Ali a.txt]] (الـ options لازقين في بعض).`, done: R`بيطبع [[verbose=1 name=Ali]] و [[file: a.txt]]: getopts فك [[-vn Ali]] لوحده لـ [[-v]] و [[-n Ali]].` },
+            { lvl: 'تطبيق', t: R`خلّي [[-v]] تتعد: [[-vvv]] يبقى verbose=3 ([[VERBOSE=$((VERBOSE + 1))]])، وجرّب [[-- -v]] و [[-n]] لوحدها.`, done: R`[[bash opts.sh -vvv a.txt]] بيطبع [[verbose=3 name=world]]، و [[bash opts.sh -- -v]] بيطبع [[file: -v]] (بعد [[--]] مفيش options)، و [[bash opts.sh -n; echo $?]] بيطبع [[-n needs a value]] و [[2]].` },
+            { lvl: 'تحدي', t: R`[[big-files.sh -d DIR -s SIZE -q]] بيطبع الملفات اللي أكبر من SIZE ميجا في DIR ([[find "$DIR" -type f -size +"$SIZE"M]]). الافتراضي [[.]] و 10، و SIZE لازم رقم (=~)، و [[-q]] بيطبع العدد بس.`, done: R`[[-s abc]] بيخرج 2 برسالة، و [[-d]] من غير قيمة بيقول [[-d needs a value]] و 2. وبعد [[head -c 3000000 /dev/zero > big.bin]]، [[bash big-files.sh -s 2 -q]] بيطبع [[1]].` },
+          ],
           flag: "script",
           mac: ["both", R`[[getopts]] جزء من bash فشغال زي ما هو. متتلخبطش مع [[getopt]] (من غير s): ده برنامج منفصل، ونسخة الماك منه قديمة ومختلفة.`],
           deep: {
@@ -249,6 +262,11 @@ SOURCE="$__{1:-}"
 [[ -n "$SOURCE" ]] || { usage >&2; exit 2; }
 echo "source=$SOURCE keep=$KEEP dry_run=$DRY_RUN"`,
           try: R`احفظه باسم clean.sh وشغّله بـ [[--dry-run -k 3 logs/]] و [[--keep=14 logs]] و [[--help]] و [[-k]] لوحدها و [[--wat x]]. وبعدين ضيف option جديدة [[-v|--verbose]].`,
+          practice: [
+            { lvl: 'سريع', t: R`ضيف [[--version]] بيطبع [[clean.sh 1.0]] ويخرج 0، وسطر له في الـ usage.`, done: R`[[bash clean.sh --version; echo $?]] بيطبع النسخة و [[0]]، و [[bash clean.sh --help | grep -c version]] بيطبع [[1]].` },
+            { lvl: 'تطبيق', t: R`[[--keep]] لازم يبقى رقم: بعد اللوب افحصه بـ =~ واخرج 2 لو مش رقم. وجرّب [[-k]] لوحدها.`, done: R`[[bash clean.sh --keep=abc logs; echo $?]] بيطبع [[--keep must be a number]] و [[2]]، و [[--keep 14 logs]] بيطبع [[keep=14]]. و [[-k]] لوحدها بتطبع [[--keep needs a number]] بس exit code بتاعها [[1]] مش 2 (ده [[$__{2:?}]] في سكربت)، فلو عايزه 2 افحصها بإيدك.` },
+            { lvl: 'تحدي', t: R`options في أي مكان: بدل [[break]] عند أول argument عادي، جمّعه في [[ARGS+=("$1")]] وكمّل اللوب، وخلّي [[--]] يحط الباقي كله في ARGS ويقف.`, done: R`[[bash clean.sh logs -n --keep 3]] و [[bash clean.sh -n -k 3 logs]] بيطبعوا نفس السطر [[source=logs keep=3 dry_run=1]]، و [[bash clean.sh -- -weird]] بيطبع [[source=-weird]].` },
+          ],
           flag: "script",
           mac: ["both", "شغال في bash 3.2 بتاع الماك زي ما هو."],
           deep: {
@@ -476,6 +494,11 @@ select env in dev staging prod quit; do
   esac
 done`,
           try: R`شغّله ورد على السؤال بـ yes، وفي القايمة اكتب 9 وبعدين 2. وبعدين شغّله تاني ودوس Enter بس على السؤال.`,
+          practice: [
+            { lvl: 'سريع', t: R`اعمل نسخة من confirm الافتراضي فيها «أيوه» ([[Y/n]]): Enter لوحده موافقة، و n أو no بس هما الرفض.`, done: R`[[echo | bash c.sh]] بيطبع Deleting، و [[echo n | bash c.sh]] بيطبع Cancelled.` },
+            { lvl: 'تطبيق', t: R`شوف خطر الافتراضي «أيوه» لما محدش بيرد (cron مثلًا): [[bash c.sh < /dev/null]]. وبعدين خلّي السكربت يرفض يكمّل لو stdin مش ترمنال ([[test -t 0]]) إلا لو اتبعتله [[--yes]].`, done: R`قبل التصليح [[bash c.sh < /dev/null]] بيطبع Deleting: نهاية الـ input اتحسبت موافقة! بعد التصليح بيطبع رسالة ويخرج [[1]]، و [[bash c.sh --yes < /dev/null]] بيكمّل.` },
+            { lvl: 'تحدي', t: R`[[pick.sh]]: [[select f in *.log]] (مع nullglob)، واللي يختاره يطبع آخر ٥ سطور منه، ولو مفيش لوجات يقول كده ويخرج 0، ولو الـ input خلص من غير اختيار يخرج 1.`, done: R`[[printf '9\n2\n' | bash pick.sh]] بيطبع رسالة Invalid مرة، وبعدين آخر ٥ سطور من تاني لوج. و [[bash pick.sh < /dev/null; echo $?]] بيطبع [[1]]: select خلص و [[$f]] فاضي.` },
+          ],
           flag: "script",
           mac: ["both", "[[select]] و [[read -p]] شغالين في bash 3.2 بتاع الماك."],
           deep: {
@@ -698,6 +721,11 @@ warn "Disk is 85% full"
 [[ -d /var/www ]] || die "/var/www not found"
 info "Found /var/www"`,
           try: R`احفظه باسم colors.sh وشغّله في الترمنال وشوف الألوان، وبعدين [[bash colors.sh 2> out.txt]] و [[cat -v out.txt]]، وبعدين [[NO_COLOR=1 bash colors.sh]].`,
+          practice: [
+            { lvl: 'سريع', t: R`ضيف [[debug()]] بنفس الشكل، بتطبع بس لو [[DEBUG=1]].`, done: R`[[DEBUG=1 bash colors.sh]] فيه سطور DEBUG، و [[bash colors.sh 2>&1 | grep -c DEBUG]] بيطبع [[0]].` },
+            { lvl: 'تطبيق', t: R`خلّي [[info]] و [[warn]] يكتبوا كمان في [[app.log]] سطر بالتاريخ والوقت، من غير ألوان.`, done: R`الترمنال ملوّن، و [[cat -v app.log]] مفيهوش أي escape code (اللي cat -v بيبينه كـ ^[ وبعده رقم)، وكل سطر فيه [[date '+%F %T']].` },
+            { lvl: 'تحدي', t: R`[[LOG_LEVEL]]: [[LOG_LEVEL=warn]] يخفي info، و [[LOG_LEVEL=error]] يخفي warn كمان، والافتراضي info. والـ die تطلع دايمًا.`, done: R`[[LOG_LEVEL=warn bash colors.sh 2>&1 | grep -c INFO]] بيطبع [[0]] وسطر WARN لسه موجود. و die لسه بتخرج بـ 1 لو [[/var/www]] مش موجود. و [[bash colors.sh 2>/dev/null]] مبيطبعش ولا رسالة، لأنهم كلهم على stderr.` },
+          ],
           flag: "script",
           mac: ["both", R`[[$'\e[31m']] والفانكشنز شغالين في bash 3.2 وفي ترمنال الماك.`],
           deep: {

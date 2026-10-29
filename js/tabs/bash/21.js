@@ -4,6 +4,14 @@ MORE("bash", [
       t: "الشروط",
       l: 3,
       n: "",
+      projects: [
+        { lvl: 'صغير', t: R`أدواتي موجودة؟`, what: R`[[check-tools.sh]] فيه لستة أدوات بتحتاجها (git و curl و tar و ssh مثلًا)، ولكل واحدة [[command -v]] وبعدها [[$?]] (درس ١)، ويطبع ok أو missing جنب الاسم، ويخرج 1 لو فيه ناقص (درس ٥).`, done: R`لو زوّدت [[nosuchtool]] للستة بيطبع سطر missing واحد و [[echo $?]] بيطبع 1، ولو شلته 0. و [[bash check-tools.sh && echo ready]] بيطبع ready بس لما كله موجود.` },
+        { lvl: 'صغير', t: R`النسخة كفاية؟`, what: R`[[need-bash.sh MIN]]: بياخد نسخة زي [[4.0]] ويطلّع major و minor من [[$BASH_VERSION]] بـ =~ و BASH_REMATCH (درس ٣)، ويقارن بـ [[-gt]] و [[-eq]] (درس ٢). ده اللي بتحتاجه قبل ما تستخدم [[declare -A]].`, done: R`على أوبونتو 24.04 (bash 5.2) [[bash need-bash.sh 4.0; echo $?]] بيطبع 0، و [[9.0]] بيطبع رسالة فيها النسختين و 1، و [[abc]] بيطبع Usage و 2. وعلى bash 3.2 بتاع الماك [[4.0]] بيطلع 1.` },
+        { lvl: 'متوسط', t: R`فاحص ملف .env`, what: R`[[env-check.sh FILE KEY...]]: لكل KEY يتأكد إنه موجود وقيمته مش فاضية ([[grep -qE "^$KEY=.+"]])، وبـ case على اسم الـ key يفحص الشكل: [[PORT]] رقم من 1 لـ 65535، و [[*_URL]] بيبدأ بـ http أو https، و [[*_EMAIL]] فيه [[@]] (دروس ٢ و ٣ و ٤). والـ exit codes بمعنى (درس ٥).`, done: R`ملف فيه [[PORT=abc]] بيطبع [[bad PORT: abc]]، و key ناقص بيطبع [[missing: KEY]]، وفي الحالتين exit 1. ملف سليم exit 0 من غير ولا سطر، ومن غير arguments Usage و 2. والسكربت عمره ما بيطبع قيمة سر.` },
+        { lvl: 'متوسط', t: R`حارس قبل الـ commit`, what: R`[[.git/hooks/pre-commit]] (و [[chmod +x]]): لكل ملف في [[git diff --cached --name-only]] بـ case على الاسم يرفض [[.env]] و [[*.pem]] و [[id_rsa*]]، وبـ if يرفض أي ملف أكبر من 1M، ويطبع السبب ويخرج 1 عشان git يوقف الـ commit (دروس ٢ و ٤ و ٥).`, done: R`[[git add .env && git commit -m test]] بيطبع السبب والـ commit مبيتعملش ([[git log]] زي ما هو). ملف عادي بيعدّي. و [[git commit --no-verify]] بيعدّي الحارس (عشان تعرف إنه حماية مش قفل).` },
+        { lvl: 'كبير', t: R`فحص صحة السيرفر`, what: R`[[health-check.sh]] بيجمّع فحوصات حقيقية: نسبة الديسك من [[df -P /]]، والـ load من [[/proc/loadavg]] قصاد [[nproc]]، وكل اسم في لستة خدمات شغال بـ [[pgrep -x]]، و URL بيرد بـ [[curl -s -o /dev/null -w '%{http_code}']]. كل فحص بيطلّع OK أو WARN أو FAIL، وكل تشغيلة بتكتب سطر بالتاريخ في [[~/logs/health.log]]، والـ exit code بيلخّص أسوأ نتيجة: 0 تمام، 1 تحذير، 2 فيه حاجة واقعة (case على النتايج). لما توصل لدرس [[set -euo pipefail]] (وحدة «سكربت محترم») ارجع زوّده.`, done: R`وقّف [[python3 -m http.server]] اللي بتفحصه: [[echo $?]] بيطبع 2 وسطر FAIL في اللوج. حد ديسك 1٪ بيطلّع WARN و 1. وكله تمام 0. و [[health-check.sh && echo ok]] شغال في cron. والتشغيل عشر مرات بيزوّد عشر سطور في اللوج بس ومبيغيّرش أي حاجة تانية.`, ext: R`زوّد فحص شهادة SSL فاضلها كام يوم، وخلّي الحدود (الديسك و الـ load) تتغير من متغيرات env، واطبع ملخص ملوّن في الترمنال وعادي في اللوج.` },
+        { lvl: 'فكرة', t: R`سكربت بيقرر بدالك`, what: R`فكّر في قرار بتاخده بعينك كل يوم: «الـ VPN شغال؟»، «فيه تحديثات؟»، «أنا على أنهي branch وفيه حاجة مش متعملها commit؟»، «البورت ده فاضي؟». حوّله لسكربت بيسأل الأسئلة دي بـ if و case و =~ ويرد بجملة واضحة و exit code ليه معنى، عشان تقدر تكتب [[./ready.sh && ./start-work.sh]].`, done: R`السكربت بيجاوب في أقل من ثانية، وكل exit code متوثّق في [[--help]] أو تعليق فوق، وفيه حالة واحدة على الأقل بتطلع غير صفر وجرّبتها بإيدك.`, ext: R`خلّيه يشتغل لوحده أول ما تفتح الترمنال (من [[~/.bashrc]]) بس يطبع لما فيه مشكلة بس.` },
+      ],
       items: [
         {
           cmd: "$?",
@@ -19,6 +27,11 @@ ls /nope
 echo $?
 grep -q root /etc/passwd && echo "found"`,
           try: "اعرف exit code بتاع [[curl https://nope.invalid]].",
+          practice: [
+            { lvl: 'سريع', t: R`شغّل ورا بعض [[ls /tmp]] و [[ls /nope]] و [[false]]، واطبع [[echo $?]] بعد كل واحد.`, done: R`الأرقام بالترتيب [[0]] و [[2]] و [[1]]. يعني ls بيستخدم 2 لـ «الملف مش موجود» مش 1، فمتفترضش إن الفشل دايمًا 1.` },
+            { lvl: 'تطبيق', t: R`اعرف يوزر موجود على الجهاز ولا لأ من غير ما تقرا [[/etc/passwd]] بعينك: [[id nobody > /dev/null 2>&1 && echo yes || echo no]]، وبعدين نفس السطر بيوزر مش موجود زي [[ghost]].`, done: R`الأول بيطبع [[yes]] والتاني [[no]]، و [[id ghost; echo $?]] بيطبع [[id: 'ghost': no such user]] وبعده [[1]].` },
+            { lvl: 'تحدي', t: R`في السطر [[grep -c ghost /etc/passwd | tee count.txt]] اطبع exit code بتاع grep نفسه مش بتاع tee. دوّر على [[PIPESTATUS]] في [[man bash]].`, done: R`[[echo $?]] بعد الـ pipe بيطبع [[0]] (ده بتاع tee). و [[echo "$__{PIPESTATUS[@]}"]] على طول بعد الـ pipe بيطبع [[1 0]]: grep ملقاش (1) و tee نجح (0). و [[cat count.txt]] فيه [[0]]. ولو كتبت أي أمر قبل ما تقرا PIPESTATUS بيتمسح.` },
+          ],
           deep: {
             why: "السكربت محتاج يعرف: الأمر اللي فات نجح ولا فشل؟ عشان يكمّل ولا يوقف ولا يجرّب حاجة تانية.",
             how: R`كل أمر لما بيخلص بيرجع رقم من 0 لـ 255 اسمه exit code. مش بيتطبع، بس الشيل بيحفظه في [[$?]].
@@ -154,6 +167,11 @@ if ! command -v docker > /dev/null; then
   echo "Docker not installed"
 fi`,
           try: "اعمل سكربت بيشوف لو في package.json، ولو node_modules مش موجود يعمل npm install.",
+          practice: [
+            { lvl: 'سريع', t: R`اعمل [[check.sh]] زي المثال بس الملف جاي من أول argument ([[FILE="$1"]])، وجرّبه على [[/etc/passwd]] و [[/tmp]] و [[nope]].`, done: R`بيطبع بالترتيب [[/etc/passwd exists]] و [[/tmp is a folder]] و [[nope missing]].` },
+            { lvl: 'تطبيق', t: R`[[fix-perms.sh DIR]] زي اللي بتعمله لـ [[~/.ssh]]: لو الفولدر مش موجود اعمله، ولو صلاحياته (من [[stat -c %a "$DIR"]]) مش [[700]] صلّحها واطبع fixed، ولو تمام اطبع ok. جرّبه على [[~/lab/ssh-test]] مش على [[~/.ssh]] الحقيقي.`, done: R`بعد [[chmod 755 ~/lab/ssh-test]] التشغيلة الأولى بتطبع fixed و [[stat -c %a ~/lab/ssh-test]] بيطبع [[700]]، والتشغيلة التانية بتطبع ok بس.` },
+            { lvl: 'تحدي', t: R`[[big-logs.sh DIR]]: لو الفولدر مش موجود اخرج بـ 2، ولو فيه ملفات [[.log]] أكبر من 1M (حط ناتج [[find "$DIR" -name '*.log' -size +1M]] في متغير وافحصه بـ [[-n]]) اطبعهم واخرج بـ 1، ولو مفيش اطبع OK واخرج بـ 0.`, done: R`بعد [[mkdir lg && head -c 2000000 /dev/zero > lg/big.log]]، [[bash big-logs.sh lg; echo $?]] بيطبع [[lg/big.log]] و [[1]]. بعد ما تمسحه بيطبع OK و [[0]]. و [[bash big-logs.sh nope; echo $?]] بيطبع [[2]].` },
+          ],
           flag: "script",
           deep: {
             why: "السكربت محتاج ياخد قرارات: لو الملف موجود اعمل كذا، لو مش موجود اعمل حاجة تانية.",
@@ -326,6 +344,11 @@ if [[ $FILE == *.pdf || $FILE == *.PDF ]]; then
   echo "PDF file"
 fi`,
           try: R`غيّر VERSION لـ [[2.14]] وبعدين [[v10.0.1-beta]] وشوف النتيجة، وبعدين حط الـ regex بتاع النسخة بين علامات تنصيص وشغّله تاني على [[v2.14.3]].`,
+          practice: [
+            { lvl: 'سريع', t: R`[[isnum.sh]] بيخرج بـ 0 لو أول argument رقم صحيح موجب، و 1 لو لأ، بشرط =~ و regex [[^[0-9]+$]].`, done: R`[[bash isnum.sh 42; echo $?]] بيطبع [[0]]، و [[bash isnum.sh 4a2]] و [[bash isnum.sh ""]] (فاضي) بيطبعوا [[1]].` },
+            { lvl: 'تطبيق', t: R`سطر لوج زي [[2026-10-29 14:03:11 ERROR db timeout]]: طلّع منه التاريخ والمستوى والرسالة بـ regex في متغير فيه ٤ أقواس: [[re='^([0-9-]+) ([0-9:]+) ([A-Z]+) (.*)$']].`, done: R`[[echo "level=$__{BASH_REMATCH[3]} msg=$__{BASH_REMATCH[4]}"]] بيطبع [[level=ERROR msg=db timeout]]، والرسالة كاملة بالمسافة اللي جواها.` },
+            { lvl: 'تحدي', t: R`[[bump.sh VERSION patch|minor|major]]: بياخد [[v2.14.3]] ويطبع النسخة الجاية. الأرقام من BASH_REMATCH والحساب بـ [[$(( ))]]، والنسخة الغلط رسالة على stderr و exit 2.`, done: R`[[bash bump.sh v2.14.3 minor]] بيطبع [[v2.15.0]]، و [[major]] بيطبع [[v3.0.0]]، و [[patch]] بيطبع [[v2.14.4]]. و [[bash bump.sh 2.14 patch; echo $?]] بيطبع الرسالة و [[2]].` },
+          ],
           flag: "script",
           mac: ["both", "[[=~]] و [[BASH_REMATCH]] شغالين في bash 3.2 بتاع الماك زي ما هم."],
           deep: {
@@ -464,6 +487,11 @@ case "$1" in
   *)     echo "Usage: $0 {start|stop|logs}"; exit 1 ;;
 esac`,
           try: "اعمل السكربت ده وشغّله بـ [[./ctl.sh start]] و [[./ctl.sh xyz]]، وبعدين ضيف اختيار restart بيعمل down وبعده up.",
+          practice: [
+            { lvl: 'سريع', t: R`[[type.sh]] بيطبع image لـ [[*.jpg|*.png]]، و text لـ [[*.txt|*.md]]، و other لأي حاجة تانية. جرّبه على [[a.png]] و [[a.txt]] و [[a.PNG]].`, done: R`[[a.PNG]] بيطلع other، لأن أنماط case حساسة للحروف الكابيتال. صلّحها بـ [[case "$__{1,,}" in]] لحد ما [[a.PNG]] يطلع image.` },
+            { lvl: 'تطبيق', t: R`[[arch.sh]] زي أي installer حقيقي: حوّل ناتج [[uname -m]] لاسم المعمارية اللي في اسم الملف اللي هتنزّله. [[x86_64]] تبقى amd64، و [[aarch64|arm64]] تبقى arm64، وأي حاجة تانية unsupported و exit 1. خلّي الـ argument اختياري عشان تجرّب: [[ARCH="$__{1:-$(uname -m)}"]].`, done: R`على جهاز Intel أو AMD عادي [[bash arch.sh]] بيطبع amd64، و [[bash arch.sh arm64]] بيطبع arm64، و [[bash arch.sh armv7l; echo $?]] بيطبع unsupported و [[1]].` },
+            { lvl: 'تحدي', t: R`[[ctl.sh start|stop|status|restart]] لسيرفر تجربة [[python3 -m http.server 8000]]: start بيشغّله في الخلفية ويكتب [[$!]] في [[app.pid]]، و stop بيعمل kill ويمسح الملف، و status بيخرج 0 لو شغال و 1 لو لأ (بـ [[kill -0]])، ومن غير argument يطبع Usage ويخرج 2.`, done: R`بعد [[./ctl.sh start]]، [[curl -s -o /dev/null -w '%{http_code}' localhost:8000]] بيطبع [[200]] و [[./ctl.sh status; echo $?]] بيطبع running و [[0]]. بعد stop، status بيطبع [[1]] والـ curl بيطبع [[000]] (موصلش للسيرفر خالص). و restart بيشتغل حتى لو السيرفر كان واقف.` },
+          ],
           flag: "script",
           deep: {
             why: "لما عندك قيمة واحدة وعايز تعمل حاجة مختلفة لكل احتمال (start و stop و logs)، سلسلة [[if/elif]] بتبقى طويلة ومزحومة. [[case]] أنضف.",
@@ -589,6 +617,11 @@ if [[ ! -r "$1" ]]; then
 fi
 wc -l < "$1"`,
           try: R`شغّله من غير arguments، وبملف مش موجود، وبملف موجود، واطبع [[echo $?]] بعد كل مرة. وبعدين جرّب [[./count.sh notes.txt && echo OK]] بملف موجود ومش موجود.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[port-ok.sh N]]: بيخرج 0 لو N رقم من 1 لـ 65535، و 1 لو رقم برا الرينج، و 2 لو مش رقم أو مفيش argument، والرسالة على stderr.`, done: R`[[80]] بيدي [[0]]، و [[70000]] بيدي [[1]]، و [[abc]] ومن غير argument بيدوا [[2]]. و [[bash port-ok.sh abc 2>/dev/null]] مبيطبعش حاجة خالص.` },
+            { lvl: 'تطبيق', t: R`[[fresh.sh FILE MINUTES]] لـ cron: بيخرج 0 لو الملف اتعدّل في آخر MINUTES دقيقة (يعني الباك أب اتعمل)، و 1 لو أقدم أو مش موجود، و 2 لو الاستخدام غلط. استخدم [[find "$1" -mmin -"$2"]]: بيطبع الاسم لو الملف جديد ومبيطبعش حاجة لو قديم.`, done: R`بعد [[touch -d "2 hours ago" b.tar.gz]]، [[bash fresh.sh b.tar.gz 60; echo $?]] بيطبع [[1]]، وبعد [[touch b.tar.gz]] بيطبع [[0]]، ومن غير arguments [[2]]. والفخ: find بيرجع 0 حتى لو الملف قديم، فالشرط على الناتج اللي طبعه مش على [[$?]].` },
+            { lvl: 'تحدي', t: R`[[has-word.sh WORD FILE]] بيطبع found أو «not found» أو error حسب exit code بتاع [[grep -qs]] (0 و 1 و 2)، بـ case على [[$?]]، ويخرج بنفس الرقم.`, done: R`كلمة موجودة: found و [[0]]. مش موجودة: «not found» و [[1]]. ملف مش موجود: error و [[2]]. وكده اللي بيستخدم السكربت يقدر يفرق بين «ملقتش» و «حصلت مشكلة».` },
+          ],
           flag: "script",
           mac: ["both", "نفس الأرقام والكلام على الماك."],
           deep: {

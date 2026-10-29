@@ -1830,939 +1830,944 @@
   "on": "docs: concept"
  },
  "bash|#!/usr/bin/env bash": {
-  "hash": "f3cc39e4c66a",
+  "hash": "c1408668ae50",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|$$ في Makefile": {
-  "hash": "31fa00cd260f",
+  "hash": "7a80d288d58f",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|$( )": {
-  "hash": "94a0d0a582f2",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 (user ali)"
+  "hash": "9366a6c9f4ff",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|$(( ))": {
-  "hash": "34fbcf412e39",
+  "hash": "490dd928c305",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|$1 و $# و $@": {
-  "hash": "740b2e675136",
+  "hash": "996bc305172b",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|$?": {
-  "hash": "b94724606db0",
+  "hash": "edea2762fc73",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|$__{#VAR} و $__{VAR:0:3}": {
-  "hash": "5309b8d48ffb",
+  "hash": "7df48cd4dede",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|$__{VAR%.*} و $__{VAR##*.}": {
-  "hash": "2124731cdff8",
+  "hash": "7e8644c959f7",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|$__{VAR/old/new} و $__{VAR,,}": {
-  "hash": "2996610702c3",
+  "hash": "a29a287492de",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|$__{VAR:-default}": {
-  "hash": "74b07b33aa9a",
+  "hash": "30b260b56c48",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|& و jobs و fg": {
-  "hash": "1150ae5efef8",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (interactive via script)"
+  "hash": "7634c3047fa4",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|&& و || و ;": {
-  "hash": "9428b84edb7d",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 (user ali); docs: npm line"
+  "hash": "12c3a08bf812",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|* و ? و [ ]": {
-  "hash": "46cb76eb1bce",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 (user ali); docs: zsh nomatch"
+  "hash": "64ad0545534f",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|/etc/hosts": {
-  "hash": "110b49c7c70d",
+  "hash": "821f337bb4e1",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|127.0.0.1 و 0.0.0.0": {
-  "hash": "efd7d5efc6ed",
+  "hash": "118f4dcea660",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|2>&1": {
-  "hash": "29b4ae5d3338",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 (user ali); docs: npm build line"
+  "hash": "92d59136b42f",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|=~ و BASH_REMATCH": {
-  "hash": "fb5bceb5897a",
+  "hash": "666a0beed575",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|> و >>": {
-  "hash": "ba6c20d286ab",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 (user ali)"
+  "hash": "2379b404b262",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|LS_COLORS و --color": {
-  "hash": "686cc5287abf",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker; win11 pwsh; docs: Mac"
+  "hash": "e62d5fd5bf56",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|PS1": {
-  "hash": "e8f017e0ed84",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker; docs: zsh"
+  "hash": "f51236f1b473",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|SYNOPSIS: اقرا سطر الاستخدام": {
-  "hash": "b9cd8330dcb8",
+  "hash": "49cdd42785a7",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|VAR=value": {
-  "hash": "1c54e6485c80",
+  "hash": "77f607c27af4",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|alias و .bashrc": {
-  "hash": "b069ea908511",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker"
+  "hash": "003131b5c585",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|arrays": {
-  "hash": "b021999a425a",
+  "hash": "fe710c41bac3",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|at": {
-  "hash": "4094bcb8220d",
+  "hash": "1cae152f4ffe",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|avahi-browse و .local": {
-  "hash": "07f6f2acdf73",
+  "hash": "ce834e144c26",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|awk": {
-  "hash": "0003036b5640",
+  "hash": "decb62bc4f18",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|backup.sh": {
-  "hash": "634fdc7c7910",
+  "hash": "fd8e3d105bd2",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|bat و eza": {
-  "hash": "541ef958beec",
+  "hash": "b76eb3a6a36c",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|case": {
-  "hash": "cb20a27e946f",
+  "hash": "bc0af1cd4ddb",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|cat": {
-  "hash": "d835bfa68ddd",
+  "hash": "f7781df92958",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|cat > (نفس الـ inode)": {
-  "hash": "8dd0909264f9",
+  "hash": "f94ab27ef666",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|cd": {
-  "hash": "246c38c6ab9e",
+  "hash": "94dcb271fc36",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|chattr و lsattr": {
-  "hash": "2779ef9910b4",
+  "hash": "6b286fdc974e",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|chmod": {
-  "hash": "a88fbd4361eb",
+  "hash": "550f7f7fdbe6",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|chmod +x و ./": {
-  "hash": "447c24bf19b5",
+  "hash": "f0acc535470e",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|chown": {
-  "hash": "0501f7b9f7e4",
+  "hash": "d2de3cda7d28",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|cleanup-old.sh": {
-  "hash": "82121d4efb44",
+  "hash": "ea653e9f86a8",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|compgen": {
-  "hash": "fa2d2ef9ce4d",
+  "hash": "a7889517b461",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|convert-all.sh": {
-  "hash": "a8e9d5511fbb",
+  "hash": "4bfe64ba4e72",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|cp": {
-  "hash": "261f437fcc2c",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 (user ali); docs: mac message"
+  "hash": "9dd29eb808ef",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|cron للسكربت": {
-  "hash": "87c2d06befe4",
+  "hash": "2b67ea6598b8",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|curl": {
-  "hash": "e9ee1f780cf5",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker; win11 ps 5.1 + pwsh 7"
+  "hash": "b2a3861610a3",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|curl -w '%{http_code}'": {
-  "hash": "8b6470007b9f",
+  "hash": "53f64d58779e",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|cut": {
-  "hash": "f2526d38788e",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker"
+  "hash": "97fd08f479cc",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|date +%F": {
-  "hash": "252d4fad8a2d",
+  "hash": "45fcd1e743de",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|declare -A": {
-  "hash": "c484f0a2d8fa",
+  "hash": "fd4feb03bcff",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|deploy.sh": {
-  "hash": "c5c1cb38e453",
+  "hash": "cad39969a9c0",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|df / du": {
-  "hash": "3c651de5d051",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker; docs: Mac"
+  "hash": "0488d01dfd3f",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|diff": {
-  "hash": "77548b907426",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker"
+  "hash": "e9cc0fd9babf",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|diff <( ) و comm و cmp": {
-  "hash": "8f41da0393ef",
+  "hash": "ce55495c4246",
   "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2) كـ root وكـ يوزر sudo بباسورد ويوزر تاني يشوف ps من بره: exec sudo و --preserve-env و sudo -v/-k و keepalive، وتسريب الأسرار في ps و /proc و set -x، و pass بمفتاح GPG تجريبي، و xargs -P و wait -n، و timeout -k و retry، و flock، و diff <( ) و comm و cmp. docs: docker login --password-stdin و secret-tool وملاحظات الماك و parallel exit codes"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|dig": {
-  "hash": "1b1c882c0001",
+  "hash": "c6518d347dc8",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|disk-alert.sh": {
-  "hash": "4e2336663929",
+  "hash": "99c73fc79b36",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|echo": {
-  "hash": "7294a16a8d0f",
+  "hash": "e2560a2aee6d",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|envsubst": {
-  "hash": "5933b29fce62",
+  "hash": "336cd8e409cb",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|exec 9> و flock": {
-  "hash": "402de499b47c",
+  "hash": "b66db2c202e2",
   "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2) كـ root وكـ يوزر sudo بباسورد ويوزر تاني يشوف ps من بره: exec sudo و --preserve-env و sudo -v/-k و keepalive، وتسريب الأسرار في ps و /proc و set -x، و pass بمفتاح GPG تجريبي، و xargs -P و wait -n، و timeout -k و retry، و flock، و diff <( ) و comm و cmp. docs: docker login --password-stdin و secret-tool وملاحظات الماك و parallel exit codes"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|exec sudo و sudo -v": {
-  "hash": "a3bc45fdf9c3",
+  "hash": "03dfeb77c49a",
   "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2) كـ root وكـ يوزر sudo بباسورد ويوزر تاني يشوف ps من بره: exec sudo و --preserve-env و sudo -v/-k و keepalive، وتسريب الأسرار في ps و /proc و set -x، و pass بمفتاح GPG تجريبي، و xargs -P و wait -n، و timeout -k و retry، و flock، و diff <( ) و comm و cmp. docs: docker login --password-stdin و secret-tool وملاحظات الماك و parallel exit codes"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|exit 0 و 1 و 2": {
-  "hash": "95c0873ed3cc",
+  "hash": "59267b391f96",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|export و env": {
-  "hash": "31160a2b4977",
+  "hash": "32a191b53580",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|fastfetch": {
-  "hash": "2ad22978dc92",
+  "hash": "ee56a641386e",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|fdisk و mkfs و dd": {
-  "hash": "f91f880698d8",
+  "hash": "7c58e5fb6b6e",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|ffmpeg": {
-  "hash": "19b192b48974",
+  "hash": "483fec94c3a9",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|file / stat": {
-  "hash": "3b9b499e7f37",
+  "hash": "401c3e004346",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|find": {
-  "hash": "829155cfc302",
+  "hash": "dff2b0938891",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|find -print0 | while read": {
-  "hash": "2b81ae83b990",
+  "hash": "3fc82b8f6331",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|for": {
-  "hash": "1c50df49673b",
+  "hash": "e49883cabe0f",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|free -h": {
-  "hash": "6bb478b07b93",
+  "hash": "0b99a750351e",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|function": {
-  "hash": "19d285ad0a5f",
+  "hash": "973badcaa8ad",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|fzf": {
-  "hash": "9a9879d41c4b",
+  "hash": "bd74cae1d25c",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|getopts": {
-  "hash": "828482303496",
+  "hash": "9d1f71416b44",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|grep": {
-  "hash": "0eca2a4cf200",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 (user ali)"
+  "hash": "4b74ea973d71",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|grep -q || echo >>": {
-  "hash": "8cfd5cd640cb",
+  "hash": "c079b7e5f18b",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|groupadd و gpasswd": {
-  "hash": "9615593d149b",
+  "hash": "6eb50ccbaac3",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|head / tail": {
-  "hash": "047e087b4fcc",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 (user ali)"
+  "hash": "8ead2e86c35d",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|help و type -a": {
-  "hash": "062c3f1ddd5b",
+  "hash": "77ff303ca7f7",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|heredoc و tee": {
-  "hash": "6cc27a4810df",
+  "hash": "ba85d8cf1da8",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|history": {
-  "hash": "04b219949d05",
+  "hash": "3c5e3068192c",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|id و groups و getent": {
-  "hash": "f1b1c9363960",
+  "hash": "f1583a7cb1a4",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|if": {
-  "hash": "e1dfde7f9832",
+  "hash": "e5d5c2d9b2e8",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|inotifywait": {
-  "hash": "593490a70885",
+  "hash": "4f91619ac0c5",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|ip a / ip route": {
-  "hash": "3a89c6166bb7",
+  "hash": "9167ac74fa70",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|ip link و ip addr add": {
-  "hash": "4445c3272c77",
+  "hash": "82625004f2c9",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|jq": {
-  "hash": "6c7bd9dfad4e",
+  "hash": "851d912ab387",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|kill": {
-  "hash": "cd0f69ca8746",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker"
+  "hash": "81f78971a823",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|less": {
-  "hash": "6f9144902924",
-  "date": "2026-10-06",
-  "on": "docs: interactive keys (less 590 checked)"
+  "hash": "49f5a967e04c",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|ln -s": {
-  "hash": "e1c014ed7e46",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 (user ali); docs: nginx line"
+  "hash": "4fab034518a1",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|log() والألوان": {
-  "hash": "345061422a8d",
+  "hash": "4cb32a95d495",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|log-cleanup.sh": {
-  "hash": "4d073abc05e5",
+  "hash": "a40a692562e0",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+ },
+ "bash|logrotate": {
+  "hash": "9353ad945c30",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|ls": {
-  "hash": "cc1b862b3b9c",
+  "hash": "4c35404d671d",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|ls -l": {
-  "hash": "210d1535fa07",
+  "hash": "d2ab9a5a0e29",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|lsusb و lspci و lshw": {
-  "hash": "b2db4c3d5943",
+  "hash": "0208fabf833f",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|make": {
-  "hash": "a37702528db3",
+  "hash": "6adb86518e93",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|make VAR=value": {
-  "hash": "a95474b23bdd",
+  "hash": "5a5e5424c3c5",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|make help": {
-  "hash": "b46f1b0f7464",
+  "hash": "2ee22f92fbb2",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|man / --help": {
-  "hash": "575abce5a925",
+  "hash": "ac440c7df07e",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|mkdir": {
-  "hash": "c6c14721074c",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 (user ali)"
+  "hash": "3821b68440bb",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|mktemp": {
-  "hash": "d96d21223a13",
+  "hash": "8eb2bb94f36a",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|mv": {
-  "hash": "09153e955b82",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 (user ali)"
+  "hash": "a577fe31935a",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|nano": {
-  "hash": "7b65faed683c",
-  "date": "2026-10-06",
-  "on": "docs: interactive (nano 7.2 checked)"
+  "hash": "9a7b4d1dafb1",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|nc": {
-  "hash": "216558325ddf",
+  "hash": "2dbe33aa4079",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|nethogs": {
-  "hash": "2b3eaddd5893",
+  "hash": "ce96b60c7df8",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|new-project.sh": {
-  "hash": "662fc3118b98",
+  "hash": "0d52ee3e305a",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|nft و iptables -L": {
-  "hash": "d9560b7680b0",
+  "hash": "5eef12734fad",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|nice و renice و ionice": {
-  "hash": "7759a7861a47",
+  "hash": "2823a0a2eda6",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|nmap": {
-  "hash": "169eae320dbe",
+  "hash": "d7a7051f8f51",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|nmap -sn و arp-scan": {
-  "hash": "0be5b4ca1a25",
+  "hash": "00f730cb2e26",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|nmcli": {
-  "hash": "591711cacb48",
+  "hash": "e0b08ff082cc",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|nohup": {
-  "hash": "f91749fcc292",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (pm2 7.0.4)"
+  "hash": "7b5a7a7b60dc",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|notify-send و spd-say": {
-  "hash": "6329e27cd780",
+  "hash": "73dc2c4eb5b2",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|openssl enc": {
-  "hash": "3272c9e33273",
+  "hash": "17fc0f29bfa3",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|openssl s_client": {
-  "hash": "2111be34d96c",
+  "hash": "dd081709567e",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|organize.sh": {
-  "hash": "33c28936c1d0",
+  "hash": "1726c57dc3c3",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|passwd -l و chage": {
-  "hash": "5f6c5f9d3198",
+  "hash": "ffbccbfac3b9",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|ping": {
-  "hash": "e2dfc798de71",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker; docs: Mac/Windows flags"
+  "hash": "2551497fe1ea",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|preflight.sh": {
-  "hash": "ffcc596d262c",
+  "hash": "bb39a2405069",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|printf": {
-  "hash": "1d1daf9b87ef",
+  "hash": "040d53992bd3",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|ps": {
-  "hash": "a19572ce8b1d",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker; docs: macOS"
+  "hash": "af15ad22284a",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|pwd": {
-  "hash": "c82fdfa1ca12",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 (user ali)"
+  "hash": "e0cc813b0ced",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|read": {
-  "hash": "49bfb6ee407e",
+  "hash": "323653d3a6cd",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|rename.sh": {
-  "hash": "9e6c156b17db",
+  "hash": "0d699f83e84b",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|resolvectl": {
-  "hash": "9d32f6bc1385",
+  "hash": "16665332e8b1",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|rm": {
-  "hash": "57cde877bfce",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 (user ali)"
+  "hash": "12034cdeb0f2",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|scp / rsync": {
-  "hash": "4c60e3c3e6dc",
+  "hash": "b53954a9673b",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|sed": {
-  "hash": "ee9de65d8768",
+  "hash": "5429ef5ff340",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|select و confirm": {
-  "hash": "3aa7651abe5a",
+  "hash": "4efbb7c7ec55",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|set -a و .env": {
-  "hash": "f76dd2809de2",
+  "hash": "a0ecfc1ab603",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|set -euo pipefail": {
-  "hash": "531ccd8a4449",
+  "hash": "a0eb14ce3913",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|set -x و PS4": {
-  "hash": "94566f32ad05",
+  "hash": "fa68f6d3fa41",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|setfacl و getfacl": {
-  "hash": "0de9a6bc6504",
+  "hash": "11528961f84f",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|setuid و setgid و sticky bit": {
-  "hash": "8b9890e355c8",
+  "hash": "0932e274b329",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|setup-env.sh": {
-  "hash": "2f420f0bba13",
+  "hash": "47bee9c5f785",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|shellcheck": {
-  "hash": "ae8892b3084b",
+  "hash": "e30fda360d3f",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|shift و --help": {
-  "hash": "45995129be44",
+  "hash": "8d0cbeddb165",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|shopt -s nullglob": {
-  "hash": "3914e4058f59",
+  "hash": "3cb5e41db94f",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|shutdown": {
-  "hash": "dda8a5439fc9",
+  "hash": "801cdbe50704",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|site-check.sh": {
-  "hash": "fa837d78dbe5",
+  "hash": "eec80faae08c",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|sleep & wait": {
-  "hash": "b2b2772ca926",
+  "hash": "f2f5812dbfa2",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|smbclient و mount -t cifs": {
-  "hash": "3f58dacab6b1",
+  "hash": "c67e5ff2712f",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|sort و uniq": {
-  "hash": "09b20e1d1da1",
+  "hash": "344fadf599a3",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|source lib.sh": {
-  "hash": "0f4011fb003e",
+  "hash": "7d60cc271acc",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|ss / lsof": {
-  "hash": "b6eb284aca14",
+  "hash": "f506c814da57",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|ssh": {
-  "hash": "43ecb21e7dba",
+  "hash": "6dffdb0c7a34",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|ssh -L": {
-  "hash": "feaba3cb32fb",
+  "hash": "d398a2bf4595",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|starship": {
-  "hash": "205fadfc8005",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (starship 1.26.0); docs: zsh/PowerShell"
+  "hash": "8dfd3c2ad80a",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|su - و sudo -i": {
-  "hash": "1d2f974eb92e",
+  "hash": "a04570874e3d",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|sudo": {
-  "hash": "e85bd6ce1739",
+  "hash": "36bf05953777",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|systemctl": {
-  "hash": "0a1c873baee5",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker with systemd + nginx; docs: macOS"
+  "hash": "d41a5f86d50f",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|tar": {
-  "hash": "1287019930d1",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker; win11 tar.exe; docs: Mac"
+  "hash": "8d12d438b86d",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|tcpdump": {
-  "hash": "1725228b296d",
+  "hash": "4f95af65afe7",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|timeout و retry": {
-  "hash": "497d417ed55c",
+  "hash": "748a739371ec",
   "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2) كـ root وكـ يوزر sudo بباسورد ويوزر تاني يشوف ps من بره: exec sudo و --preserve-env و sudo -v/-k و keepalive، وتسريب الأسرار في ps و /proc و set -x، و pass بمفتاح GPG تجريبي، و xargs -P و wait -n، و timeout -k و retry، و flock، و diff <( ) و comm و cmp. docs: docker login --password-stdin و secret-tool وملاحظات الماك و parallel exit codes"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|top / htop": {
-  "hash": "a05fc8b01ec3",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker; docs: htop keys, macOS"
+  "hash": "1444a8f043c1",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|touch": {
-  "hash": "61bc34f27ae8",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 (user ali)"
+  "hash": "afa95d33a367",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|tr": {
-  "hash": "4e3b30943b67",
+  "hash": "f0db7695ec05",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|traceroute / mtr": {
-  "hash": "bb75ab645367",
+  "hash": "8e25ca50f89b",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|trap": {
-  "hash": "403ab8da47d2",
+  "hash": "94a93c86c20b",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|tree": {
-  "hash": "f9502a2d60b0",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 (user ali); docs: mac brew"
+  "hash": "a367b88a9fda",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|umask": {
-  "hash": "3afb239d4450",
+  "hash": "94ac0333b6e4",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|useradd و usermod": {
-  "hash": "c22a30417643",
+  "hash": "c02032e2e94e",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|visudo و sudoers.d": {
-  "hash": "725953157fff",
+  "hash": "0a4f79f20b7f",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|vmstat و iostat": {
-  "hash": "ca9739d76e1e",
+  "hash": "7b8c0c8a1dae",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|wakeonlan و ethtool": {
-  "hash": "759ed5d03187",
+  "hash": "98958ae9aadd",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|watch": {
-  "hash": "eee19dde370a",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker; docs: macOS"
+  "hash": "32ceffbf10a1",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|wc": {
-  "hash": "fb78d2b847e6",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 (user ali)"
+  "hash": "963b13631dde",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|wget": {
-  "hash": "20e4b1506ccb",
+  "hash": "973db512fca9",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|wget -i و --limit-rate": {
-  "hash": "6677c1141765",
+  "hash": "d8129e5e08f7",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|which / type": {
-  "hash": "13092bd7dff5",
+  "hash": "0da22d539039",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|while read": {
-  "hash": "514173b941d4",
+  "hash": "9462969845d5",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|xargs": {
-  "hash": "df1b6aa2fbac",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 (user ali)"
+  "hash": "ed9e54ad07ad",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|xargs -P و wait -n": {
-  "hash": "6990a1e6203c",
+  "hash": "a4db1e16dc69",
   "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2) كـ root وكـ يوزر sudo بباسورد ويوزر تاني يشوف ps من بره: exec sudo و --preserve-env و sudo -v/-k و keepalive، وتسريب الأسرار في ps و /proc و set -x، و pass بمفتاح GPG تجريبي، و xargs -P و wait -n، و timeout -k و retry، و flock، و diff <( ) و comm و cmp. docs: docker login --password-stdin و secret-tool وملاحظات الماك و parallel exit codes"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|zgrep / zcat": {
-  "hash": "89838ca4f496",
+  "hash": "e1e25a40cc3e",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|zip / unzip": {
-  "hash": "07828fe88d47",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker; win11 pwsh; docs: Mac"
+  "hash": "54b89249fa42",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|zoxide": {
-  "hash": "4da02e066cce",
+  "hash": "b8f4aa3bde02",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash||": {
-  "hash": "b5be5c60dca1",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 (user ali)"
+  "hash": "331b9caf3377",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|أقسام man": {
-  "hash": "a1d9fc8150e9",
+  "hash": "a09d6de40963",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|أول سكربت": {
-  "hash": "021a34d3f6a8",
+  "hash": "12df01180a72",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|الأسرار في السكربت": {
-  "hash": "76f4b56c6144",
+  "hash": "f79e144f2e2c",
   "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2) كـ root وكـ يوزر sudo بباسورد ويوزر تاني يشوف ps من بره: exec sudo و --preserve-env و sudo -v/-k و keepalive، وتسريب الأسرار في ps و /proc و set -x، و pass بمفتاح GPG تجريبي، و xargs -P و wait -n، و timeout -k و retry، و flock، و diff <( ) و comm و cmp. docs: docker login --password-stdin و secret-tool وملاحظات الماك و parallel exit codes"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|الطريقة: من مهمة لأمر": {
-  "hash": "e53e87106aae",
+  "hash": "e8bb01dd37a3",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|مشروع ٢ — trap: نضّف مهما حصل": {
-  "hash": "4f4b9a9baece",
+  "hash": "26c9f84d9ece",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|مشروع ٢ — ابني في مكان مؤقت": {
-  "hash": "0dc2dc996121",
+  "hash": "3ab9c1b6e258",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|مشروع ٢ — التقليم والخدمة": {
-  "hash": "1028d50ffb65",
+  "hash": "18d29c94ab00",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|مشروع ٢ — الفحص والرجوع": {
-  "hash": "9ca970eee564",
+  "hash": "c19e0d207339",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|مشروع ٢ — شكل النشر: نسخ ورابط": {
-  "hash": "cd98f7283dd4",
+  "hash": "bf0515e1d93f",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|مشروع — find بشروط الصلاحيات": {
-  "hash": "ce28fee0aec3",
+  "hash": "df26c6d3ab0e",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|مشروع — set -euo pipefail": {
-  "hash": "738219f61a8a",
+  "hash": "e07d5b55ea36",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|مشروع — التقرير والإصلاح": {
-  "hash": "ed4e7bb54353",
+  "hash": "bfb8b3a22268",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|مشروع — الواجهة و --help": {
-  "hash": "97a95d80064c",
+  "hash": "12bbe10a72bc",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|مشروع — حلّل الـ arguments بإيدك": {
-  "hash": "9afdd247aa8b",
+  "hash": "3cc87f8c7793",
   "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "career|ATS": {
   "hash": "77260d3a217c",

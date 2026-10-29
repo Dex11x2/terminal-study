@@ -4,6 +4,14 @@ MORE("bash", [
       t: "سكربتات أتمتة جاهزة",
       l: 3,
       n: "سكربتات كاملة ومجرّبة لمهام بتتكرر: انسخها في ~/bin، وعدّلها على مزاجك، وجدولها بـ cron",
+      projects: [
+        { lvl: 'صغير', t: R`جدول الصبح`, what: R`حط [[disk-alert.sh]] و [[site-check.sh]] في crontab: الديسك كل ساعة والموقع كل ٥ دقايق، والناتج في [[~/logs]] (درس cron). جرّب كل سطر بـ [[env -i]] قبل ما تحطه.`, done: R`[[crontab -l]] فيه السطرين، وبعد ١٠ دقايق [[~/logs/site.log]] فيه سطرين على الأقل، و [[env -i HOME="$HOME" PATH=/usr/bin:/bin bash ~/bin/disk-alert.sh 90]] بيشتغل من غير [[command not found]].` },
+        { lvl: 'صغير', t: R`logrotate للوجات سكربتاتك`, what: R`[[/etc/logrotate.d/my-scripts]] لـ [[/home/USER/logs/*.log]]: [[weekly]] و [[rotate 4]] و [[compress]] و [[missingok]] و [[notifempty]] و [[copytruncate]] (لأن cron بيفتح الملف ويقفله كل مرة، بس الأمان أحسن)، وجرّبه بـ [[-d]] وبعدين [[-f]] (درس logrotate).`, done: R`[[sudo logrotate -d /etc/logrotate.d/my-scripts]] مفيهوش [[error]]، وبعد [[-f]] فيه [[.1]] لكل لوج مش فاضي، و [[ls -l ~/logs]] اللوج الأصلي لسه صاحبه انت (copytruncate مبيغيّرش الملف نفسه). ولو الفولدر بتاعك writable للجروب هتشوف رسالة [[insecure permissions]] وهتحتاج [[su USER USER]].` },
+        { lvl: 'متوسط', t: R`مراقب موقع كامل`, what: R`[[site-check.sh]] من cron كل ٥ دقايق على ٣ مواقع من ملف، بتنبيه بعد ٣ مرات فشل ورا بعض وتنبيه لما يرجع، ولوجه بيتلف بـ logrotate، و [[disk-alert.sh]] كل ساعة بتنبيه مرة في اليوم. التنبيه بيتكتب في [[alerts.log]] (أو Telegram لو عملته في تاب VPS).`, done: R`وقّف سيرفر التجربة ١٥ دقيقة: سطر DOWN واحد بس، ولما يرجع سطر RECOVERED واحد. [[crontab -l]] فيه ٣ سطور بالظبط. و [[logrotate -d]] بيقول إنه بيعتبر لوج الموقع.` },
+        { lvl: 'متوسط', t: R`تنضيف أسبوعي للـ Downloads`, what: R`[[weekly-tidy.sh]]: بيشغّل [[organize.sh]] على [[~/Downloads]]، وبعدين [[cleanup-old.sh ~/Downloads/Other 30 --delete]]، و [[rename.sh]] على Images، ويكتب سطر ملخص (اتنقل كام واتمسح كام) في [[~/logs/tidy.log]]. من cron كل جمعة بـ [[flock -n]] عشان ميتشغّلش مرتين.`, done: R`على نسخة تجربة من فولدر Downloads: الملفات في فولدراتها، والقديم في Other اتمسح، والجديد لأ. تشغيلة تانية على طول: السطر في اللوج بيقول صفر. وتشغيلتين مع بعض: التانية بتخرج على طول من غير ما تعمل حاجة.` },
+        { lvl: 'كبير', t: R`ops-kit: تسطيب أدواتك على أي سيرفر`, what: R`[[install.sh]] بينسخ سكربتات الوحدة دي لـ [[~/bin]] لو اتغيرت بس ([[cmp -s]])، ويضيف سطور crontab من غير تكرار ([[crontab -l | grep -qF]] وبعدين [[(crontab -l; echo ...) | crontab -]])، ويكتب config لـ logrotate بـ [[sudo tee]] ويجرّبه بـ [[logrotate -d]]، وكل cron job بـ [[flock -n]] ولوج، و [[--uninstall]] بيشيل كل ده. [[set -euo pipefail]]، و trap ERR، ولوج للتسطيب نفسه.`, done: R`تشغيل [[install.sh]] تلات مرات: [[crontab -l | sort | uniq -d]] مبيطبعش حاجة (مفيش سطر متكرر)، و [[~/bin]] نفس الملفات. [[logrotate -d]] من غير error. و [[install.sh --uninstall]] بيرجّع [[crontab -l]] زي ما كان قبل التسطيب ([[diff]] على نسخة حفظتها). وخطوة فاشلة بتطبع رقم سطرها ومبتسيبش crontab نص متعدّل.`, ext: R`خليه يشتغل على سيرفر تاني بـ [[ssh host 'bash -s' < install.sh]]، وزوّد [[--check]] بيقولك إيه اللي مش متسطب من غير ما يغيّر حاجة.` },
+        { lvl: 'فكرة', t: R`أتمت أكتر حاجة بتزهق منها`, what: R`اختار مهمة بتتكرر عندك كل أسبوع (تنضيف، باك أب، تقارير، تحويل ملفات، فحص حاجة) وحوّلها لسكربت بنفس شكل سكربتات الوحدة: وضع تجربة، ولوج، وآمن لو اتشغّل مرتين، ومتجدول بـ cron، ولوجه بيتلف.`, done: R`السكربت اشتغل لوحده من cron أسبوع كامل من غير ما تلمسه، ولوجه بيقول عمل إيه كل مرة، ولما كسرته بقصد (ديسك مليان، ملف مش موجود) طلع رسالة مفهومة و exit code غير صفر.`, ext: R`زوّد تنبيه لو فشل (إيميل أو Telegram)، و README صغير لزميلك يسطّبه بنفسه.` },
+      ],
       items: [
         {
           cmd: "rename.sh",
@@ -34,6 +42,11 @@ for f in *; do
   [[ $DRY_RUN -eq 1 ]] || mv -n -- "$f" "$new"
 done`,
           try: R`في فولدر تجربة اعمل [[touch "My Trip Photo.JPG" "Report Final.PDF" notes.txt]]، وشغّل [[bash ~/bin/rename.sh -n]] الأول، وبعدين من غير [[-n]]، وبعدين تاني وشوف إنه معملش حاجة.`,
+          practice: [
+            { lvl: 'سريع', t: R`غيّر شكل التاريخ في أول الاسم لـ [[20261029_]] ([[date -r "$f" +%Y%m%d]])، وغيّر الـ regex اللي بيعدّي الملفات المتغيرة قبل كده بنفس الشكل.`, done: R`التشغيلة التانية مبتطبعش حاجة. ولو نسيت الـ regex، التشغيلة التانية بتزوّد تاريخ تاني قدام الاسم، وده الفخ اللي بتختبره.` },
+            { lvl: 'تطبيق', t: R`undo: كل [[mv]] يكتب سطر في [[rename-undo.sh]] بـ [[printf 'mv -n -- %q %q\n' "$new" "$f"]].`, done: R`[[cat rename-undo.sh]] فيه أسامي زي [[My\ Trip\ Photo.JPG]]، و [[bash rename-undo.sh]] بيرجّع الأسامي الأصلية و [[ls]] زي ما كان قبل خالص. [[%q]] هو اللي بيحمي المسافات وعلامات التنصيص.` },
+            { lvl: 'تحدي', t: R`شغّله على كل الفولدرات اللي جوه (الملفات بس) بـ [[find . -type f -print0]] و [[while read -d '']]، والتغيير على اسم الملف من غير الفولدر ([[$__{p##*/}]] و [[$__{p%/*}]]).`, done: R`[[find . -type f -name '* *']] مبيطبعش حاجة، وعدد الملفات قبل وبعد زي ما هو. وملفين هيبقوا نفس الاسم (زي [["A B.txt"]] و [[a-b.txt]] في نفس الفولدر ونفس اليوم) واحد منهم بيطلع skip ومحدش بيتمسح.` },
+          ],
           flag: "script",
           mac: ["diff", R`[[$__{new,,}]] محتاج bash 4 (على الماك [[brew install bash]]، أو بدّلها بـ [[tr '[:upper:]' '[:lower:]']]). و [[date -r ملف]] موجودة في date بتاع الماك كمان.`],
           deep: {
@@ -240,6 +253,11 @@ for f in *.*; do
   fi
 done`,
           try: R`جرّبه على نسخة الأول: [[mkdir ~/lab/dl]] وجواه [[touch "Cat Pic.JPG" invoice.pdf backup.tar.gz song.mp3 weird.xyz README]]، وشغّل [[bash organize.sh ~/lab/dl]]، وبعدين [[find ~/lab/dl | sort]].`,
+          practice: [
+            { lvl: 'سريع', t: R`ضيف فولدر Code لـ [[py|js|json|html|css]].`, done: R`بعد [[touch app.py index.html]] وتشغيله، [[ls Code]] فيه الاتنين.` },
+            { lvl: 'تطبيق', t: R`ضيف [[-n]]: بيطبع [[file -> Folder/]] من غير ما يعمل فولدرات ولا ينقل حاجة.`, done: R`بعد [[bash organize.sh -n ~/lab/dl]]، [[find ~/lab/dl -mindepth 1 -type d]] مبيطبعش حاجة، و [[ls ~/lab/dl]] زي ما هو.` },
+            { lvl: 'تحدي', t: R`بدل skip لو الاسم موجود، سمّيه [[invoice (1).pdf]] وبعده [[invoice (2).pdf]] (الاسم من [[$__{f%.*}]] والامتداد من [[$__{f##*.}]]). شغّله، واعمل [[invoice.pdf]] تاني وشغّله تاني.`, done: R`[[ls Documents]] فيه [[invoice.pdf]] و [[invoice (1).pdf]]، ومحدش اتكتب فوقه (عدد الملفات قبل وبعد زي ما هو). وملف من غير امتداد زي README لسه بيروح Other.` },
+          ],
           flag: "script",
           mac: ["diff", R`[[$__{ext,,}]] محتاج bash 4 ([[brew install bash]]). وعلى الماك ضيف [[heic]] للصور و [[pkg]] للـ Installers.`],
           deep: {
@@ -437,6 +455,11 @@ else
   echo "$COUNT files would be deleted. Run again with --delete to delete them."
 fi`,
           try: R`في [[~/lab]] اعمل فولدر files وجواه ملفات بتواريخ قديمة: [[touch -d "40 days ago" files/old.log]] و [[touch -d "8 days ago" files/eight.log]] و [[touch files/new.log]]. شغّل [[bash cleanup-old.sh files 7]]، وبعدين [[bash cleanup-old.sh files 30 --delete]]، وبعدين [[ls files]].`,
+          practice: [
+            { lvl: 'سريع', t: R`جرّب الحمايات: [[bash cleanup-old.sh / 1]] و [[bash cleanup-old.sh files abc]] ومن غير arguments، واطبع [[echo $?]] بعد كل واحد.`, done: R`الأول [[Refusing to touch /]] و [[2]] (وكمان [[/etc/..]] بيترفض لأن cd بيوصل لـ /)، والتاني [[DAYS must be a number]] و [[2]]، والتالت رسالة الـ Usage و [[1]] لأن [[$__{1:?}]] بيخرج بـ 1.` },
+            { lvl: 'تطبيق', t: R`بعد المسح، امسح الفولدرات اللي فضيت: [[find "$DIR" -mindepth 1 -type d -empty -delete]].`, done: R`لملف قديم في [[files/a/b/old.log]]: بعد [[--delete]]، [[find files]] بيطبع [[files]] بس. الفولدر نفسه لسه موجود لأن [[-mindepth 1]] بتحميه.` },
+            { lvl: 'تحدي', t: R`[[shrink.sh DIR MB]]: امسح الأقدم الأول لحد ما الفولدر يبقى MB ميجا أو أقل ([[du -sm]] و [[ls -1tr | head -1]]). جرّبه على ١٠ ملفات كل واحد 1 ميجا بتواريخ مختلفة ([[touch -d]]).`, done: R`بحد 5: [[du -sm DIR]] بعدها 5 أو أقل، والملفات اللي فاضلة هي الأحدث (قارن بـ [[ls -lt]]). وخد بالك إن [[du]] بيقرّب لفوق، فـ ١٠ ملفات 1 ميجا ممكن يطلعوا 11.` },
+          ],
           flag: "script danger",
           mac: ["both", R`[[find -mtime]] و [[-delete]] شغالين على الماك. و [[touch -d]] في التجربة لينكس بس؛ على الماك [[touch -t 202608200000 files/old.log]] (السنة والشهر واليوم والساعة والدقيقة).`],
           deep: {
@@ -622,6 +645,11 @@ for f in *.png *.jpg *.jpeg *.webp; do
 done
 echo "converted $count files"`,
           try: R`سطّب ImageMagick، وحط ٣ صور في فولدر تجربة (واحدة على الأقل اسمها فيه مسافة وامتدادها كابيتال)، وشغّل السكربت، وقارن الأحجام بـ [[du -sh *.* out]]. وبعدين شغّله تاني وشوف [[converted 0 files]].`,
+          practice: [
+            { lvl: 'سريع', t: R`غيّر المقاس لـ [[800x800>]] والجودة 70، وجرّب على صورة كبيرة وصورة أصغر من 800.`, done: R`[[identify -format '%f %w %h\n' out/*.jpg]] مفيهوش رقم أكبر من 800، والصورة الصغيرة فضلت بمقاسها بسبب [[>]].` },
+            { lvl: 'تطبيق', t: R`options بـ getopts (الوحدة اللي فاتت): [[-s SIZE]] و [[-o DIR]] و [[-q]].`, done: R`[[bash convert-all.sh -s 640 -o small]] بيعمل [[small/]] فيه صور أكبر ضلع فيها 640، و [[-s abc]] بيخرج [[2]].` },
+            { lvl: 'تحدي', t: R`ملخص و exit code: عدّ converted و skipped و failed، وحط صورة بايظة ([[echo x > bad.png]]). كمّل لو صورة فشلت بدل ما set -e يوقف كله، واخرج 1 لو فيه failed.`, done: R`ImageMagick بيقول [[improper image header]] على bad.png، والسكربت بيعدّها failed ويكمّل الباقي، و [[echo $?]] بيطبع [[1]]. والتشغيلة التانية converted 0 و failed لسه 1.` },
+          ],
           flag: "script",
           mac: ["diff", R`على الماك [[brew install imagemagick]]، واسم الأمر هناك [[magick]] والسكربت بيلاقيه لوحده. ولو مش عايز تسطّب حاجة، [[sips]] اللي جاي مع الماك بيصغّر: [[sips -Z 1600 photo.png --out out/]].`],
           deep: {
@@ -817,6 +845,11 @@ git commit -q -m "Initial commit"
 echo "Created $NAME:"
 git log --oneline`,
           try: R`حطه في [[~/bin/new-project]] و [[chmod +x]]، وفي [[~/lab]] اكتب [[new-project my-app]]، وبعدين [[cd my-app && git status && cat .gitignore]]. وجرّب نفس الاسم تاني، واسم فيه مسافة.`,
+          practice: [
+            { lvl: 'سريع', t: R`ضيف [[.editorconfig]] بـ heredoc للمشروع الجديد.`, done: R`[[git -C my-app show --stat HEAD]] فيه [[.editorconfig]]، و [[git -C my-app status --short]] فاضي.` },
+            { lvl: 'تطبيق', t: R`[[-t node|python]]: node بيزوّد [[package.json]] بسيط، و python بيزوّد [[requirements.txt]] و [[.venv/]] في الـ gitignore.`, done: R`بعد [[new-project -t python api]]، [[grep -c venv api/.gitignore]] بيطبع [[1]] و [[git -C api log --oneline | wc -l]] بيطبع [[1]].` },
+            { lvl: 'تحدي', t: R`لو أي خطوة فشلت، امسح الفولدر اللي اتعمل نصه (trap على ERR). جرّبه في container جديد مفيهوش [[user.name]] لـ git.`, done: R`git commit بيفشل بـ [[Author identity unknown]] و [[unable to auto-detect email address]]، و [[ls my-app]] بيقول No such file (الـ trap مسحه)، و exit code مش 0. بعد [[git config --global user.name]] و [[user.email]] بيشتغل عادي.` },
+          ],
           flag: "script",
           mac: ["both", R`شغال على الماك. [[git init -b]] محتاج git 2.28 أو أحدث (اللي مع Xcode حديث كفاية). و [[.DS_Store]] في الـ gitignore مخصوص للماك.`],
           deep: {
@@ -1025,6 +1058,11 @@ else
   exit 1
 fi`,
           try: R`شغّل سيرفر تجربة [[python3 -m http.server 8765]] في ترمنال، وفي التاني [[bash site-check.sh http://127.0.0.1:8765/]]. وقّف السيرفر بـ Ctrl+C وشغّل السكربت مرتين، وبعدين شغّل السيرفر تاني وشغّل السكربت، وبص على [[~/.cache/site-check/alerts.log]].`,
+          practice: [
+            { lvl: 'سريع', t: R`شغّله على [[http://127.0.0.1:9/]] (مفيش حاجة شغالة على البورت ده).`, done: R`بيطبع [[DOWN 000 http://127.0.0.1:9/]] و exit 1. الكود [[000]] معناه curl موصلش للسيرفر خالص (curl نفسه بيخرج بـ 7)، مش إن السيرفر رد بخطأ.` },
+            { lvl: 'تطبيق', t: R`[[sites.txt]] فيه ٣ URLs منهم واحد واقع، ولوب [[while read]] بيشغّل site-check.sh على كل واحد ويخرج 1 لو أي واحد واقع. امسح [[alerts.log]] قبل التجربة.`, done: R`سطر DOWN واحد و exit 1. وبعد ما تشغّله مرتين، [[grep -c DOWN ~/.cache/site-check/alerts.log]] بيطبع [[1]] مش 2: التنبيه مرة واحدة.` },
+            { lvl: 'تحدي', t: R`متنبّهش غير بعد ٣ مرات فشل ورا بعض (عشان الشبكة ممكن تهنّج ثانية): خلّي ملف الحالة فيه عدّاد.`, done: R`وقّف السيرفر وشغّل السكربت مرتين: مفيش DOWN في alerts.log. التالتة: سطر DOWN واحد. شغّل السيرفر تاني: سطر RECOVERED، والعدّاد رجع صفر.` },
+          ],
           flag: "script",
           mac: ["both", R`شغال على الماك. بدل [[notify-send]] استخدم [[osascript -e 'display notification "down" with title "site-check"']].`],
           deep: {
@@ -1220,6 +1258,11 @@ done < <(df -P | awk 'NR > 1 && $1 ~ /^\/dev\// && $1 !~ /loop/ {print $5, $6}')
 [[ $status -eq 0 ]] && echo "All disks below $__{LIMIT}%"
 exit $status`,
           try: R`شغّله عادي، وبعدين بحد صغير جدًا زي [[bash disk-alert.sh 5]] عشان تشوف شكل التحذير، واطبع [[echo $?]] بعد كل مرة.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[bash disk-alert.sh 100; echo $?]] وبعده [[bash disk-alert.sh 1; echo $?]].`, done: R`الأول [[All disks below 100%]] و [[0]] (إلا لو ديسك مليان على الآخر)، والتاني سطر WARNING لكل ديسك مستخدم ١٪ أو أكتر و [[1]].` },
+            { lvl: 'تطبيق', t: R`نفس الفحص للـ inodes بـ [[df -iP]]: الديسك ممكن يبقى فيه مساحة والـ inodes خلصت من ملايين الملفات الصغيرة.`, done: R`أول سطر في [[df -iP]] بيبين إن العمود الخامس [[IUse%]]، و [[bash disk-alert.sh 1]] بيطبع سطور فيها كلمة inodes جنب سطور المساحة.` },
+            { lvl: 'تحدي', t: R`نبّه مرة واحدة في اليوم لكل mount: ملف حالة باسم الـ mount فيه التاريخ، زي site-check.`, done: R`شغّله مرتين بحد 1: [[alerts.log]] فيه سطر واحد لكل mount مش اتنين، والـ exit code [[1]] في المرتين (الحالة لسه وحشة). ولو غيّرت التاريخ اللي في ملف الحالة لامبارح بينبّه تاني.` },
+          ],
           flag: "script",
           mac: ["both", R`[[df -P]] موجود على الماك والأعمدة نفس الترتيب، والديسكات اسمها زي [[/dev/disk3s1]]. على الماك هتلاقي كذا volume من نفس الديسك، وده طبيعي.`],
           deep: {
@@ -1386,6 +1429,11 @@ find "$LOG_DIR" -type f -name "*.log" -mtime +"$COMPRESS_AFTER" -print -exec gzi
 find "$LOG_DIR" -type f -name "*.log.gz" -mtime +"$DELETE_AFTER" -print -delete
 echo "after:  $(du -sh "$LOG_DIR" | cut -f1)"`,
           try: R`اعمل لوجات تجربة بتواريخ قديمة: [[for d in 1 3 10 45; do f="logs/app-$d.log"; seq 1 50000 > "$f"; touch -d "$d days ago" "$f"; done]] (بعد [[mkdir logs]])، وشغّل [[bash log-cleanup.sh logs]] وبعدين [[ls -l logs]].`,
+          practice: [
+            { lvl: 'سريع', t: R`خلّي المدد تتغير من env: [[COMPRESS_AFTER="$__{COMPRESS_AFTER:-1}"]] و [[DELETE_AFTER="$__{DELETE_AFTER:-30}"]].`, done: R`على لوجات التجربة الجديدة، [[DELETE_AFTER=5 bash log-cleanup.sh logs]] بيمسح [[app-10.log.gz]] كمان، و [[ls logs]] فيه [[app-1.log]] و [[app-3.log.gz]] بس.` },
+            { lvl: 'تطبيق', t: R`ضيف [[-n]]: بيطبع اللي هيتضغط واللي هيتمسح من غير ما يعمل حاجة ([[-print]] من غير [[-exec]] ولا [[-delete]]).`, done: R`[[ls -l logs > /tmp/before.txt]]، وبعد التشغيل بـ [[-n]]، [[ls -l logs | diff /tmp/before.txt -]] مبيطبعش حاجة. وخد بالك إن [[app-45.log]] هيظهر في «هيتضغط» بس مش في «هيتمسح»، لأن المضغوط لسه مااتعملش: اكتب ده في الرسالة.` },
+            { lvl: 'تحدي', t: R`اعتمد على التاريخ اللي في الاسم مش الـ mtime: لوجات اسمها زي [[app-2026-09-01.log]]، اضغط اللي التاريخ في اسمه أقدم من يومين حتى لو حد عمله [[touch]] النهارده (BASH_REMATCH يطلّع التاريخ، و [[date -d "$d" +%s]] للمقارنة).`, done: R`ملف اسمه من شهر و mtime بتاعه النهارده بيتضغط. وملف باسم النهارده ([[app-$(date +%F).log]]) مبيتلمسش، وملف اسمه مش على الشكل ده مبيتلمسش.` },
+          ],
           flag: "script danger",
           mac: ["both", R`[[find -exec ... +]] و [[gzip]] و [[du -sh]] زي ما هم على الماك. و [[touch -d]] و [[seq]] في التجربة: [[seq]] موجود، و [[touch -d]] بدّله بـ [[touch -t]].`],
           deep: {
@@ -1516,6 +1564,324 @@ after:  504K
 التشغيلة التانية مبتطبعش أسامي والحجم مبيتغيرش، لأن مفيش جديد. ولو [[app-1.log]] اتضغط، يبقى [[touch -d]] اتكتب غلط والتاريخ أقدم من المقصود.`
         },
         {
+          cmd: "logrotate",
+          title: "سيب اللوج يتلف لوحده",
+          desc: R`logrotate هو الأداة اللي لينكس نفسه بيستخدمها عشان لوجات [[/var/log]] متملاش الديسك: كل يوم أو أسبوع بيغيّر اسم اللوج لـ [[app.log.1]]، ويضغط القديم، ويسيب عدد نسخ انت بتحدده، ويمسح الأقدم، ويعمل لوج جديد فاضي بالصاحب والصلاحيات الصح. انت بتكتب ملف صغير في [[/etc/logrotate.d/myapp]] والباقي بيحصل لوحده من الـ timer أو cron.
+
+الفرق عن [[log-cleanup.sh]] (الدرس اللي فات): السكربت ده بيشتغل على لوجات التطبيق بيقفلها (ملف لكل يوم). أما logrotate فمعمول للوج اللي التطبيق لسه فاتحه وبيكتب فيه: بعد ما يغيّر الاسم بيقول للتطبيق «افتح الملف من جديد» ([[postrotate]])، أو بينسخ الملف ويفضّيه مكانه ([[copytruncate]]) لو التطبيق مبيعرفش يفتحه تاني.
+
+وبتجرّب من غير ما تلمس حاجة بـ [[logrotate -d]]، وتجبره يلف دلوقتي بـ [[logrotate -f]]، وتعرف آخر مرة لف إمتى من [[/var/lib/logrotate/status]].`,
+          example: R`sudo tee /etc/logrotate.d/myapp > /dev/null <<'EOF'
+/var/log/myapp/*.log {
+    daily
+    rotate 7
+    compress
+    delaycompress
+    missingok
+    notifempty
+    create 0640 www-data adm
+    sharedscripts
+    postrotate
+        [ -f /run/myapp.pid ] && kill -HUP "$(cat /run/myapp.pid)" || true
+    endscript
+}
+EOF
+sudo logrotate -d /etc/logrotate.d/myapp
+sudo logrotate -f /etc/logrotate.d/myapp
+ls -l /var/log/myapp
+sudo cat /var/lib/logrotate/status`,
+          try: R`في container ([[docker run --rm -it ubuntu:24.04]] وبعدين [[apt-get update && apt-get install -y logrotate]]) أو سيرفر تجربة: اعمل [[mkdir -p /var/log/myapp]] و [[seq 1 2000 > /var/log/myapp/app.log]] و [[chown www-data:adm /var/log/myapp/app.log]]، واكتب الـ config اللي في المثال. شغّل [[logrotate -d]] الأول، وبعدين [[logrotate -f]]، وبعدين [[echo hi >> /var/log/myapp/app.log]] و [[logrotate -f]] تاني، وبص على [[ls -l]] والـ status بعد كل خطوة.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[sudo logrotate -d /etc/logrotate.d/myapp]] على الـ config بتاعك قبل أي حاجة، و [[ls -l /var/log/myapp]] قبله وبعده.`, done: R`الناتج فيه [[considering log /var/log/myapp/app.log]]، و [[ls -l]] قبل وبعد زي ما هو بالظبط: [[-d]] مبيلمسش حاجة. ولو أول مرة هتلاقي [[log does not need rotating (log has already been rotated)]]، لأن logrotate بيعتبر أي لوج جديد عليه كأنه لسه لافف.` },
+            { lvl: 'تطبيق', t: R`تطبيق مبيعرفش يفتح اللوج تاني: شغّل «تطبيق» بيكتب سطر كل نص ثانية بـ [[exec 3>> /var/log/myapp/app.log]] من غير trap، واعمل config فيه [[copytruncate]] بدل postrotate و create، و [[sudo logrotate -f]]. وبعدين جرّب نفس التطبيق على config من غير copytruncate ولا postrotate.`, done: R`مع copytruncate: بعد ثانيتين [[stat -c %s /var/log/myapp/app.log]] بيكبر تاني و [[app.log.1]] فيه السطور القديمة. من غير الاتنين: [[app.log]] بيفضل [[0]] و [[app.log.1]] هو اللي بيكبر، يعني التطبيق بيكتب في الملف القديم.` },
+            { lvl: 'تحدي', t: R`config فيه [[rotate 3]]، ولوب ٦ مرات: [[echo "run $i" > /var/log/myapp/app.log; logrotate -f /etc/logrotate.d/myapp]]. وبعدين خلّي logrotate يلف لوحده من غير [[-f]]: غيّر تاريخ السطر بتاع اللوج في [[/var/lib/logrotate/status]] لامبارح (زي [[2026-10-28-0:0:0]]) وشغّل [[logrotate -v]].`, done: R`بعد اللوب [[ls /var/log/myapp]] فيه [[app.log]] و [[app.log.1]] و [[app.log.2.gz]] و [[app.log.3.gz]] بس، و [[zcat /var/log/myapp/app.log.2.gz]] بيطبع [[run 5]]. وبعد تعديل الـ status الناتج فيه [[Last rotated at 2026-10-28 00:00]] و [[log needs rotating]]: logrotate بيقرر من ملف الحالة مش من تاريخ الملف.` },
+          ],
+          flag: "script",
+          mac: ["linux", R`logrotate لسيرفرات لينكس. الماك فيه أداة تانية اسمها [[newsyslog]] بإعدادات في [[/etc/newsyslog.conf]] و [[/etc/newsyslog.d]] (من الـ docs الرسمية، مش مجرّبة هنا). جرّب الدرس ده في Docker أو على السيرفر.`],
+          deep: {
+            why: R`اللوج اللي محدش بيلفه بيكبر لحد ما الديسك يتملي، والسيرفر كله بيقف: الداتابيز مبتعرفش تكتب، و Docker مبيعرفش يعمل container. وكتابة سكربت بـ [[find -mtime]] و [[gzip]] بإيدك بتنفع للوجات اللي اتقفلت، بس مش للوج اللي التطبيق ماسكه: لو ضغطته أو مسحته التطبيق بيفضل يكتب في ملف ممسوح والمساحة مبترجعش. logrotate بيحل ده، وهو أصلًا متسطب على أغلب سيرفرات لينكس وبيلف لوجات apt و dpkg و nginx من غير ما تكتب حاجة.`,
+            how: R`الـ timer ([[logrotate.timer]] على أوبونتو، أو [[/etc/cron.daily/logrotate]] لو مفيش systemd) بيشغّل [[logrotate /etc/logrotate.conf]] مرة في اليوم. الملف ده فيه الإعدادات العامة ([[weekly]] و [[rotate 4]] و [[create]]) وبيعمل [[include /etc/logrotate.d]]، فكل ملف هناك بيتقري.
+
+لكل لوج، logrotate بيبص في [[/var/lib/logrotate/status]] على آخر مرة لفه. لو عدّت المدة (يوم مع [[daily]]) بيلف: [[app.log.6.gz]] يبقى [[app.log.7.gz]]، وكده لحد [[app.log]] اللي يبقى [[app.log.1]]، واللي بعد [[rotate N]] بيتمسح. وبعدين [[create]] بيعمل [[app.log]] جديد، و [[postrotate]] بيبعت للتطبيق إشارة يفتح الملف الجديد.
+
+مع [[copytruncate]] مفيش تغيير اسم: بينسخ [[app.log]] لـ [[app.log.1]] ويفضّي الأصلي مكانه، فالتطبيق بيكمّل في نفس الملف.`,
+            when: R`أي تطبيق انت بتشغّله بنفسك على سيرفر وبيكتب في ملف لوج: تطبيق Node أو Python بـ systemd بيكتب في [[/var/log/myapp]]، أو سكربتات cron بتاعتك اللي بتكتب في [[~/logs]]. ولو التطبيق في Docker وبيكتب على stdout، اللوجات بيلفها Docker نفسه بـ [[max-size]] في إعدادات الـ logging (تاب Docker) مش logrotate.`,
+            mistakes: R`الأشهر: postrotate بيبعت [[HUP]] لتطبيق مبيتعاملش معاه: [[HUP]] من غير trap بيقفل البرنامج («Hangup»)، فاتأكد إن تطبيقك بيفهمه، أو استخدم أمر الـ reload بتاعه، أو copytruncate.
+
+ونسيان postrotate و copytruncate الاتنين: التطبيق بيفضل يكتب في [[app.log.1]] (وبعدين في الملف المضغوط اللي اتمسح) و [[app.log]] الجديد فاضي.
+
+و copytruncate مع تطبيق فاتح الملف من غير append ([[>]] مش [[>>]]): بعد ما يتفضّى التطبيق بيكمّل من نفس المكان، والملف بيبقى أوله أصفار ([[\0]]).
+
+وغلطة إملائية في الـ config: [[logrotate -d]] بيقول [[unknown option 'dailyy' -- ignoring line]] بس بيخرج بـ 0، فاقرا الناتج مش [[$?]] بس. وفولدر اللوج writable لجروب أو لأي حد بيخلي logrotate يرفض ([[parent directory has insecure permissions]]) لحد ما تظبط الصلاحيات أو تزوّد [[su]].`
+          },
+          teach: R`## الفكرة: تدوير اللوجات
+
+«تدوير» (rotation) يعني: اللوج الحالي يتغيّر اسمه ويتحفظ كنسخة قديمة، ويبدأ لوج جديد فاضي، والنسخ القديمة تتضغط، والأقدم من عدد معين يتمسح. logrotate بيعمل ده من ملف إعدادات صغير. كل اللي تحت اتجرب في container أوبونتو 24.04 بعد [[apt-get install -y logrotate]].
+
+---
+
+## ١. اللي موجود أصلًا
+
+~~~text logrotate --version
+logrotate 3.21.0
+~~~
+
+والإعدادات العامة في [[/etc/logrotate.conf]] (من غير التعليقات):
+
+~~~text الناتج
+weekly
+su root adm
+rotate 4
+create
+include /etc/logrotate.d
+~~~
+
+وفي [[/etc/logrotate.d]] ملفات جاهزة لـ [[apt]] و [[dpkg]] و [[btmp]] و [[wtmp]]، يعني لوجات النظام بتتلف من غير ما تعمل حاجة. والباكدج بيجيب معاه [[logrotate.timer]] (يومي) و [[/etc/cron.daily/logrotate]] اللي بيخرج على طول لو systemd شغال، فمش هيلفوا مرتين. وعلى سيرفر حقيقي [[systemctl list-timers logrotate.timer]] بيوريك المرة الجاية (مفيش systemd في Docker، فده من الـ docs).
+
+---
+
+## ٢. ملف الإعدادات سطر سطر
+
+~~~text /etc/logrotate.d/myapp
+/var/log/myapp/*.log {
+    daily
+    rotate 7
+    compress
+    delaycompress
+    missingok
+    notifempty
+    create 0640 www-data adm
+    sharedscripts
+    postrotate
+        [ -f /run/myapp.pid ] && kill -HUP "$(cat /run/myapp.pid)" || true
+    endscript
+}
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[daily]] (أو [[weekly]] أو [[monthly]]) | كل قد إيه يلف |
+| [[rotate 7]] | سيب ٧ نسخ قديمة، والتامنة تتمسح |
+| [[compress]] | اضغط النسخ القديمة بـ gzip |
+| [[delaycompress]] | متضغطش [[app.log.1]]، استنى للفة الجاية |
+| [[missingok]] | لو اللوج مش موجود متطلعش error |
+| [[notifempty]] | لو اللوج فاضي متلفوش |
+| [[create 0640 www-data adm]] | اعمل [[app.log]] جديد بالصلاحيات والصاحب والجروب دول |
+| [[sharedscripts]] | شغّل postrotate مرة واحدة لكل اللوجات اللي في النمط، مش مرة لكل ملف |
+| [[postrotate]] ... [[endscript]] | أوامر shell بتتنفذ بعد اللف |
+
+و [[delaycompress]] مهم مع postrotate: لحظة اللف التطبيق ممكن يكون لسه بيكتب كام سطر في [[app.log.1]] قبل ما يفتح الجديد، فلو اتضغط على طول السطور دي تضيع.
+
+---
+
+## ٣. جرّب من غير ما تلمس حاجة: [[logrotate -d]]
+
+~~~bash
+sudo logrotate -d /etc/logrotate.d/myapp
+~~~
+
+[[-d]] (debug) بيقولك هيعمل إيه ومبيعملش حاجة. أول مرة على لوج جديد:
+
+~~~text الناتج
+warning: logrotate in debug mode does nothing except printing debug messages!  Consider using verbose mode (-v) instead if this is not what you want.
+
+reading config file /etc/logrotate.d/myapp
+Reading state from file: /var/lib/logrotate/status
+state file /var/lib/logrotate/status does not exist
+Allocating hash table for state file, size 64 entries
+
+Handling 1 logs
+
+rotating pattern: /var/log/myapp/*.log  after 1 days (7 rotations)
+empty log files are not rotated, old logs are removed
+considering log /var/log/myapp/app.log
+Creating new state
+  Now: 2026-10-29 19:10
+  Last rotated at 2026-10-29 19:00
+  log does not need rotating (log has already been rotated)
+not running postrotate script, since no logs were rotated
+~~~
+
+المفاجأة: أول مرة بيقول «already rotated». logrotate لما بيقابل لوج مش في ملف الحالة بيسجّله كأنه اتلف أول الساعة دي، فاللفة الحقيقية الأولى بتحصل بكرة مع [[daily]]. و [[ls -l]] بعدها زي ما هو: [[-d]] ملمسش الملف.
+
+وخد بالك: [[logrotate -d /etc/logrotate.d/myapp]] بيقرا الملف ده بس من غير الإعدادات العامة. عشان تختبر اللي الـ timer هيعمله بالظبط: [[logrotate -d /etc/logrotate.conf]]، وفي الناتج [[including /etc/logrotate.d]] و [[reading config file myapp]] و [[Handling 7 logs]].
+
+---
+
+## ٤. لف دلوقتي: [[logrotate -f]]
+
+~~~bash
+sudo logrotate -f /etc/logrotate.d/myapp
+ls -l /var/log/myapp
+~~~
+
+[[-f]] (force) بيلف حتى لو المدة معدّتش:
+
+~~~text الناتج
+-rw-r----- 1 www-data adm     0 Oct 29 19:10 app.log
+-rw-r--r-- 1 www-data adm 18893 Oct 29 19:10 app.log.1
+~~~
+
+[[app.log]] الجديد فاضي و [[-rw-r-----]] (0640) زي ما [[create]] قال، و [[app.log.1]] هو القديم بصلاحياته القديمة ومش مضغوط بسبب [[delaycompress]]. لفة كمان على طول من غير ما حاجة تتكتب:
+
+~~~text الناتج
+  log does not need rotating (log is empty)
+~~~
+
+حتى [[-f]] مبيلفش لوج فاضي بسبب [[notifempty]]. بعد [[echo hi >> /var/log/myapp/app.log]] و [[-f]] تاني:
+
+~~~text الناتج
+-rw-r----- 1 www-data adm    0 Oct 29 19:10 app.log
+-rw-r----- 1 www-data adm    3 Oct 29 19:10 app.log.1
+-rw-r--r-- 1 www-data adm 4515 Oct 29 19:10 app.log.2.gz
+~~~
+
+النسخة القديمة زقّت لـ [[.2]] واتضغطت (من 18893 لـ 4515 بايت). ولما جرّبت [[rotate 3]] وست لفات ورا بعض، فضل [[app.log]] و [[app.log.1]] و [[app.log.2.gz]] و [[app.log.3.gz]] بس، والأقدم اتمسح لوحده.
+
+---
+
+## ٥. ملف الحالة: [[/var/lib/logrotate/status]]
+
+~~~text sudo cat /var/lib/logrotate/status
+logrotate state -- version 2
+"/var/log/myapp/app.log" 2026-10-29-19:10:27
+~~~
+
+سطر لكل لوج فيه آخر مرة اتلف. ده اللي logrotate بيقرر بيه، مش تاريخ الملف. ولما غيّرت السطر لـ [[2026-10-28-0:0:0]] وشغّلته من غير [[-f]]:
+
+~~~text logrotate -v /etc/logrotate.d/myapp
+  Last rotated at 2026-10-28 00:00
+  log needs rotating
+renaming /var/log/myapp/app.log to /var/log/myapp/app.log.1
+~~~
+
+فلو اللوج «مش بيتلف»، أول حاجة تبص عليها السطر بتاعه هنا. و [[-s FILE]] بيخليك تستخدم ملف حالة تاني (مفيد لو بتشغّل logrotate كيوزر عادي على لوجاتك).
+
+---
+
+## ٦. postrotate ولا copytruncate؟
+
+بعد ما اللوج يتغيّر اسمه، التطبيق لسه ماسك الملف القديم: لينكس بيربط البرنامج بالملف نفسه (الـ inode) مش بالاسم. فيه ٣ حالات، كلها بتطبيق تجربة بيكتب سطر كل نص ثانية:
+
+~~~bash
+#!/usr/bin/env bash
+# /usr/local/bin/myapp: تطبيق تجربة
+echo $$ > /run/myapp.pid
+exec 3>> /var/log/myapp/app.log
+trap 'exec 3>> /var/log/myapp/app.log' HUP
+i=0
+while true; do i=$((i+1)); echo "$(date +%T) request $i" >&3; sleep 0.5; done
+~~~
+
+السطر بتاع [[trap ... HUP]] معناه «لما توصلك إشارة HUP افتح اللوج من جديد»، وده اللي nginx وأغلب السيرفرات بيعملوه.
+
+**أ. postrotate بيبعت HUP، والتطبيق بيفهمه:** حجم الملفين بعد اللف بلحظة وبعد ثانيتين:
+
+~~~text الناتج
+app.log=19 app.log.1=76
+app.log=95 app.log.1=76
+~~~
+
+[[app.log]] الجديد بيكبر و [[app.log.1]] وقف: صح.
+
+**ب. من غير postrotate، والتطبيق مبيفتحش تاني:**
+
+~~~text الناتج
+app.log=0 app.log.1=95
+app.log=0 app.log.1=171
+~~~
+
+التطبيق لسه بيكتب في [[app.log.1]]، وبكرة لما يتضغط ويتمسح الكلام هيروح في ملف ممسوح. ولو بعتّ HUP لنفس التطبيق من غير سطر الـ trap، bash قفله ([[Hangup]]): الـ HUP من غير ما البرنامج يتعامل معاه بيقفله.
+
+**ج. [[copytruncate]] (من غير create ولا postrotate):**
+
+~~~text logrotate -fv
+copying /var/log/myapp/app.log to /var/log/myapp/app.log.1
+truncating /var/log/myapp/app.log
+~~~
+
+~~~text الناتج
+app.log=19 app.log.1=76
+app.log=95 app.log.1=76
+~~~
+
+التطبيق مكمّل في نفس الملف من غير ما يعرف حاجة. التمن: السطور اللي اتكتبت بين النسخ والتفضية بتضيع، والملف بيتنسخ كله (تقيل لو كبير).
+
+| الحالة | استخدم |
+|---|---|
+| التطبيق بيفهم إشارة أو عنده reload (nginx، و rsyslog، وتطبيقك لو كتبتله handler) | [[postrotate]] + [[create]] |
+| التطبيق مبيعرفش يفتح اللوج تاني ومش في إيدك تعدّله | [[copytruncate]] |
+| التطبيق بيكتب ملف لكل يوم بنفسه | سكربت [[log-cleanup.sh]] من الدرس اللي فات |
+
+---
+
+## ٧. أخطاء هتقابلها
+
+فولدر اللوج writable لأي حد ([[chmod 777]]):
+
+~~~text الناتج
+error: skipping "/var/log/myapp/app.log" because parent directory has insecure permissions (It's world writable or writable by group which is not "root") Set "su" directive in config file to tell logrotate which user/group should be used for rotation.
+~~~
+
+و exit 1. الحل صلاحيات صح للفولدر (755)، أو [[su USER GROUP]] جوه الـ config. ولوج مش موجود من غير [[missingok]]: [[error: stat of /var/log/myapp/app.log failed: No such file or directory]] و exit 1. وغلطة إملائية زي [[dailyy]]: [[error: /tmp/bad.conf:2 unknown option 'dailyy' -- ignoring line]] بس exit 0، فاقرا الناتج.
+
+---
+
+## ٨. ليه أحسن من [[find -mtime]] بإيدك؟
+
+- بيعرف يتعامل مع لوج التطبيق فاتحه (postrotate أو copytruncate)، و find مبيعرفش.
+- بيعد النسخ ([[rotate 7]]) مش الأيام، فلو السيرفر كان واقف أسبوع مش هيمسح كل حاجة مرة واحدة.
+- [[create]] بيعمل الملف الجديد بالصاحب والصلاحيات الصح، فالتطبيق ميقعش لأنه مش قادر يكتب.
+- ملف حالة بيمنع إنه يلف مرتين في نفس اليوم لو اتشغّل مرتين.
+- متسطب ومتجدول أصلًا، وكل حاجة بـ [[-d]] تتجرب قبلها.
+
+---
+
+## الخلاصة
+
+- ملف في [[/etc/logrotate.d/]]: المدة و [[rotate N]] و [[compress]] و [[delaycompress]] و [[missingok]] و [[notifempty]] و [[create MODE USER GROUP]].
+- postrotate لو التطبيق بيفتح اللوج تاني، و copytruncate لو لأ.
+- [[logrotate -d]] تجربة، و [[logrotate -f]] لف دلوقتي، و [[logrotate -d /etc/logrotate.conf]] زي الـ timer بالظبط.
+- [[/var/lib/logrotate/status]] فيه آخر مرة لكل لوج، وأول مرة بيتسجّل كأنه لسه لافف.`,
+          lines: [
+            R`[[sudo tee]] بيكتب في [[/etc/logrotate.d/myapp]] بصلاحيات root (درس «heredoc و tee»)، و [[> /dev/null]] عشان tee ميطبعش الكلام على الشاشة كمان، و [[<<'EOF']] بعلامات تنصيص عشان [[$(cat ...)]] اللي جوه يتكتب زي ما هو ومايتنفذش دلوقتي.`,
+            R`النمط: كل ملف بينتهي بـ [[.log]] في [[/var/log/myapp]]، وكل الإعدادات بين القوسين بتتطبق عليهم. ممكن تكتب أكتر من مسار قبل القوس.`,
+            R`لف كل يوم. البدايل [[weekly]] و [[monthly]] و [[yearly]]، و [[maxsize 100M]] كمان بيلف بدري لو اللوج كبر قبل المعاد.`,
+            R`سيب ٧ نسخ قديمة ([[app.log.1]] لحد [[app.log.7.gz]])، ولما تيجي التامنة الأقدم بيتمسح. مع daily ده أسبوع لوجات.`,
+            R`اضغط النسخ القديمة بـ gzip ([[.gz]]). اللوجات نصوص متكررة فبتصغر كتير، وتقراها بعدين بـ [[zcat]] و [[zgrep]].`,
+            R`أجّل ضغط [[app.log.1]] للفة الجاية، عشان لو التطبيق كتب فيه كام سطر قبل ما يفتح الجديد ميضيعوش. وكمان تقدر تقراه بـ [[tail]] عادي.`,
+            R`لو مفيش ملفات بتطابق النمط (التطبيق لسه مااشتغلش)، كمّل من غير error. من غيرها logrotate بيطبع [[stat of ... failed]] ويخرج بـ 1.`,
+            R`لو اللوج فاضي متلفوش، حتى مع [[-f]]. فمتطلعش نسخ قديمة فاضية تاخد مكان من الـ ٧.`,
+            R`بعد ما يغيّر الاسم، اعمل [[app.log]] جديد صلاحياته [[0640]] (صاحبه يقرا ويكتب، والجروب يقرا بس)، وصاحبه [[www-data]] (اليوزر اللي التطبيق شغال بيه) والجروب [[adm]] (جروب أوبونتو اللي بيقرا اللوجات). لو اليوزر مش موجود logrotate بيقول [[unknown user]] ويعدّي اللوج ده خالص ([[found error in ... skipping]]) ويخرج بـ 1.`,
+            R`شغّل postrotate مرة واحدة بعد ما كل الملفات اللي في النمط تتلف، بدل مرة لكل ملف. مهم مع [[*.log]] لو فيه أكتر من لوج.`,
+            R`[[postrotate]] بيفتح بلوك أوامر shell بتتنفذ بـ [[/bin/sh]] بعد ما الملفات تتلف وقبل الضغط. هنا بتقول للتطبيق يسيب الملف القديم. وفيه كمان [[prerotate]] لأوامر قبل اللف.`,
+            R`لو ملف الـ PID موجود، ابعت للتطبيق إشارة [[HUP]] عشان يقفل اللوج القديم ويفتح [[app.log]] الجديد. و [[|| true]] عشان لو التطبيق مش شغال اللفة متتحسبش فاشلة. بدّلها بأمر تطبيقك لو عنده (زي [[systemctl reload myapp]]).`,
+            R`[[endscript]] لازم يبقى في سطر لوحده عشان يقفل بلوك postrotate. لو نسيته logrotate هيعتبر باقي الملف كله أوامر shell والـ config هيبوظ، و [[logrotate -d]] هيقولك.`,
+            R`القوس ده بيقفل إعدادات النمط [[/var/log/myapp/*.log]]. أي سطر بعده برا القوس بيبقى إعداد عام أو نمط جديد بقوس بتاعه.`,
+            R`[[EOF]] لوحده في أول السطر بيقفل الـ heredoc، فـ tee بيكتب كل اللي فوقه في الملف ويقفله. لو قبله مسافة bash مش هيعرفه وهيكمّل يقرا.`,
+            R`تجربة: [[-d]] بيقرا الـ config ويقولك هيعمل إيه لكل لوج، من غير ما يغيّر ولا ملف ولا حتى ملف الحالة. لو فيه غلطة في الإعدادات هتظهر هنا.`,
+            R`لف دلوقتي حتى لو المدة معدّتش ([[-f]] = force). ده للتجربة أو لو اللوج كبر فجأة، والعادي إن الـ timer هو اللي يشغّله.`,
+            R`شوف النتيجة: [[app.log]] جديد فاضي بصلاحيات [[-rw-r-----]]، و [[app.log.1]] النسخة القديمة.`,
+            R`ملف الحالة: سطر لكل لوج فيه آخر مرة اتلف. ده اللي logrotate بيقرر بيه إن المدة عدّت ولا لأ.`,
+          ],
+          sol: R`[[logrotate -d]] بيطبع [[considering log /var/log/myapp/app.log]] وفي الآخر [[log does not need rotating (log has already been rotated)]] لأنها أول مرة، و [[ls -l]] زي ما هو. بعد [[logrotate -f]]: [[app.log]] حجمه 0 وصلاحياته [[-rw-r-----]] وصاحبه [[www-data adm]]، و [[app.log.1]] فيه الـ 2000 سطر. [[logrotate -f]] تاني من غير ما تكتب بيقول [[log is empty]] ومبيعملش حاجة. وبعد [[echo hi >>]] و [[-f]]: [[app.log.1]] فيه [[hi]] (3 بايت) والقديم بقى [[app.log.2.gz]].
+
+وملف الحالة فيه سطر زي [[2026-10-29-19:10:27]] جنب اسم اللوج، والوقت بيتغير مع كل [[-f]].`,
+          solCode: R`apt-get update && apt-get install -y logrotate
+mkdir -p /var/log/myapp
+seq 1 2000 > /var/log/myapp/app.log
+chown www-data:adm /var/log/myapp/app.log
+# اكتب الـ config اللي في المثال (من غير sudo لو انت root في الـ container)
+logrotate -d /etc/logrotate.d/myapp
+logrotate -f /etc/logrotate.d/myapp
+ls -l /var/log/myapp
+logrotate -f /etc/logrotate.d/myapp
+echo hi >> /var/log/myapp/app.log
+logrotate -f /etc/logrotate.d/myapp
+ls -l /var/log/myapp
+cat /var/lib/logrotate/status`
+        },
+        {
           cmd: "cron للسكربت",
           title: "شغّل سكربتاتك لوحدها بمواعيد",
           desc: R`آخر خطوة في الأتمتة إن السكربت يشتغل لوحده: الباك أب كل يوم الساعة ٣، وفحص الموقع كل ٥ دقايق. ده شغل cron: [[crontab -e]] بيفتح جدول مهامك، وكل سطر فيه ٥ خانات للوقت (دقيقة، ساعة، يوم في الشهر، شهر، يوم في الأسبوع) وبعدين الأمر. [[0 3 * * *]] كل يوم ٣:٠٠، و [[*/5 * * * *]] كل ٥ دقايق، و [[0 * * * *]] أول كل ساعة. والصيغة بالتفصيل في دروس crontab في تاب VPS.
@@ -1533,6 +1899,11 @@ crontab -e
 crontab -l
 tail -n 20 ~/logs/backup.log`,
           try: R`جرّب backup.sh بـ [[env -i]] الأول. وبعدين ضيف سطر مؤقت [[* * * * * $HOME/bin/disk-alert.sh 5 >> $HOME/logs/disk.log 2>&1]]، واستنى دقيقتين، و [[cat ~/logs/disk.log]]، وبعدين امسح السطر من [[crontab -e]].`,
+          practice: [
+            { lvl: 'سريع', t: R`اكتب الخمس خانات لـ: كل يوم اتنين ٩:٣٠ الصبح، وكل ربع ساعة، وأول يوم في الشهر الساعة ٢ بالليل.`, done: R`[[30 9 * * 1]] و [[*/15 * * * *]] و [[0 2 1 * *]]. لو حطيت أي واحد فيهم في [[crontab -e]] للتجربة، امسحه بعدها و [[crontab -l]] يأكد.` },
+            { lvl: 'تطبيق', t: R`[[cron-run.sh NAME CMD...]]: غلاف لأي أمر في cron، بيظبط [[PATH]]، ويكتب في [[~/logs/NAME.log]] سطر بداية وسطر نهاية فيه [[exit=N]] والمدة.`, done: R`[[env -i HOME="$HOME" bash cron-run.sh test false]] وبعدين [[tail -n 1 ~/logs/test.log]] فيه [[exit=1]]، ونفس الكلام بـ [[true]] فيه [[exit=0]].` },
+            { lvl: 'تحدي', t: R`شوف بيئة cron الحقيقية: سطر مؤقت [[* * * * * env > /tmp/cron-env.txt]]، استنى دقيقة، وقارن [[wc -l /tmp/cron-env.txt]] بـ [[env | wc -l]] في الترمنال بتاعك.`, done: R`ملف cron فيه سطور قليلة جدًا (حوالي ٦)، و [[grep ^PATH /tmp/cron-env.txt]] بيطبع [[PATH=/usr/bin:/bin]] على أوبونتو، و [[SHELL=/bin/sh]] مش bash. امسح السطر بعدها و [[crontab -l]] مفيهوش.` },
+          ],
           flag: "script",
           mac: ["diff", R`crontab موجود على الماك، بس macOS ممكن يمنع cron من فولدرات زي Documents و Desktop إلا لو اديته Full Disk Access، والطريقة الرسمية هناك launchd. و [[flock]] مش موجود على الماك افتراضيًا.`],
           deep: {

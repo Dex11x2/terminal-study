@@ -4,6 +4,14 @@ MORE("bash", [
       t: "البيئة والسرعة",
       l: 2,
       n: "اختصارات هتوفر عليك ساعات",
+      projects: [
+        { lvl: 'صغير', t: R`ملف اختصاراتي`, what: R`[[~/.bash_aliases]] فيه ١٠ aliases من أكتر أوامرك (من التمرين بتاع [[history]])، و ٣ فانكشنز: [[mkcd]]، و [[up N]] (تطلع N فولدرات لفوق)، و [[bak FILE]] (تعمل نسخة [[FILE.bak-DATE]]). من درسي «alias و .bashrc» و «history».`, done: R`[[bash -n ~/.bash_aliases]] ساكت. في ترمنال جديد [[type up]] بيقول function، و [[up 2]] من [[~/lab/a/b]] بيوديك [[~/lab]]، و [[bak notes.txt]] بيعمل نسخة جنبه.` },
+        { lvl: 'صغير', t: R`أكتر أوامرك`, what: R`[[topcmds.sh N]] بيقرا [[~/.bash_history]] (من غير سطور [[#]] اللي فيها الوقت)، ويشيل [[sudo]] من أول الأمر، ويطبع أكتر N أوامر وعددهم ونسبتهم. من درس «history».`, done: R`[[./topcmds.sh 5]] بيطبع ٥ سطور، و [[sudo apt]] بتتعد [[apt]]. والنسب مجموعها مش أكتر من ١٠٠. و [[./topcmds.sh]] من غير رقم بيستخدم ١٠.` },
+        { lvl: 'متوسط', t: R`[[loadenv]]: حمّل .env صح`, what: R`فانكشن [[loadenv FILE VAR...]]: بتتجاهل السطور الفاضية والتعليقات، وبتشيل [[\r]] لو الملف جاي من ويندوز، وبتعمل export لكل متغير، وبتطلع بغلط لو أي VAR من اللي طلبتهم مش موجود. من دروس «export و env» و «alias و .bashrc».`, done: R`ملف بنهايات ويندوز ([[printf 'PORT=3000\r\n']]) بعد [[loadenv .env PORT]] [[printf '%s' "$PORT" | od -c]] مفيهوش [[\r]]. و [[loadenv .env DB_URL]] من غير DB_URL بيطبع اسمه ويرجع 1. و [[bash -c 'echo $PORT']] بعدها بيطبع 3000.` },
+        { lvl: 'متوسط', t: R`[[cheat]]: ورقة الغش بتاعتك`, what: R`[[cheat CMD]] بيطبع ملاحظاتك انت من [[~/cheats/CMD.md]] لو موجودة، ولو لأ يجرّب [[tldr CMD]]، ولو مش متسطّب يطبع أول ٣٠ سطر من [[CMD --help]]. و [[cheat -e CMD]] بيفتح ملفك في المحرر. من درس «man / --help».`, done: R`أمر ليه ملف عندك بيطبع ملفك. أمر ملوش ملف ولا tldr بيطبع أول ٣٠ سطر من [[--help]]. أمر مش موجود خالص بيقول كده ويخرج 1. و [[-e]] بيعمل الملف لو مش موجود.` },
+        { lvl: 'كبير', t: R`dotfiles في repo وسكربت تركيب`, what: R`فولدر [[~/dotfiles]] (git repo) فيه [[bash_aliases]] و [[bashrc.local]] و [[inputrc]]، و [[install.sh]] بـ [[set -euo pipefail]]: لكل ملف، لو فيه ملف حقيقي مكانه ياخد منه نسخة [[.bak-DATE]] وبعدين يعمل symlink، ويضيف سطر [[source ~/.bashrc.local]] لـ [[.bashrc]] **مرة واحدة بس** ([[grep -qxF]])، ويعمل [[bash -n]] على كل ملف قبل ما يربطه، وفيه [[--dry-run]] ولوج. من دروس الوحدة كلها ودروس الملفات والـ [[ln -s]].`, done: R`تشغيل [[install.sh]] مرتين: التانية بتطبع «كله مظبوط» ومبتعملش نسخ احتياطي جديدة، و [[grep -c 'bashrc.local' ~/.bashrc]] بيطبع 1. ملف فيه syntax error بيوقف التركيب قبل ما يغيّر حاجة. [[--dry-run]] مبيغيّرش [[ls -la ~]]. وجرّبه في container جديد ([[docker run --rm -it ubuntu:24.04]] وانسخ الفولدر): ترمنال جديد بيفتح من غير أخطاء والاختصارات شغالة.`, ext: R`زوّد [[uninstall.sh]] بيرجّع النسخ الاحتياطي، أو ملفات خاصة بكل جهاز ([[bashrc.$(hostname)]])، أو GitHub Action بيعمل [[bash -n]] و [[shellcheck]] على كل push.` },
+        { lvl: 'فكرة', t: R`مساعد الترمنال`, what: R`حاجة بتراقب الـ history بتاعك وتقترح: أوامر طويلة بتكتبها كتير محتاجة alias، وأوامر بتغلط فيها كتير (زي [[gti]])، وتطبع اقتراح أسبوعي.`, done: R`كل أسبوع بتطلعلك ٣ اقتراحات alias حقيقية من استخدامك، وتقدر تقبل واحد فيتضاف لـ [[~/.bash_aliases]] لوحده.`, ext: R`خلّيه يحسب الوقت اللي وفّرته (عدد الحروف × عدد المرات)، أو يكتشف الأوامر اللي فيها باسوردات في الـ history وينبّهك تمسحها.` },
+      ],
       items: [
         {
           cmd: "export و env",
@@ -18,6 +26,11 @@ echo $PATH
 export API_URL=http://localhost:3000
 env | grep NODE`,
           try: "اعمل export لمتغير، اطبعه، اقفل الترمنال وافتح تاني ولاحظ إنه راح.",
+          practice: [
+            { lvl: 'سريع', t: R`الفرق بين متغير عادي ومتغير بيئة: [[X=1; bash -c 'echo "<$X>"']]، وبعدين [[export X=1; bash -c 'echo "<$X>"']].`, done: R`الأولى بتطبع [[<>]] (البرنامج الابن مشافش X)، والتانية بتطبع [[<1>]]. يعني [[export]] هو اللي بيخلّي البرامج اللي بتشغّلها (node و python و docker) تشوف المتغير.` },
+            { lvl: 'تطبيق', t: R`متغير لأمر واحد بس من غير ما يفضل في الشل: [[PORT=4000 python3 -c 'import os; print(os.environ["PORT"])']]، وبعدين [[echo "<$PORT>"]].`, done: R`الأول بيطبع 4000، والتاني بيطبع [[<>]]: المتغير وصل للأمر ده بس ومفضلش في الترمنال. ده اللي بتعمله لما تشغّل [[NODE_ENV=production npm start]].` },
+            { lvl: 'تحدي', t: R`سكربت [[run.sh]] بيحمّل [[.env]] بـ [[set -a; . ./.env; set +a]]، وبيتأكد إن المتغيرات المهمة موجودة بسطر زي [[: "$__{DB_URL:?missing}"]] قبل ما يكمّل، وبعدين يطبع [[env | grep -E '^(DB_URL|PORT)=']].`, done: R`من غير [[DB_URL]] في الملف، [[bash run.sh]] بيقف عند السطر ده برسالة فيها [[DB_URL: missing]] و [[echo $?]] = 1 ومبيطبعش حاجة بعدها. ومع [[DB_URL]] بيكمّل والـ grep بيطلّع السطرين، يعني المتغيرات بقت export للبرامج اللي السكربت هيشغّلها.` },
+          ],
           deep: {
             why: "البرامج محتاجة إعدادات: أنهي قاعدة بيانات تتصل بيها، وأنهي بورت، وشغالة development ولا production. متغيرات البيئة هي الطريقة اللي بتدّي بيها الإعدادات دي من غير ما تكتبها جوه الكود.",
             how: R`فيه نوعين متغيرات في الشيل، والفرق بينهم مهم.
@@ -178,6 +191,11 @@ alias gs='git status'
 echo "alias ll='ls -lah'" >> ~/.bashrc
 source ~/.bashrc`,
           try: "اعمل alias اسمه dc لـ [[docker compose]] وحطه في .bashrc.",
+          practice: [
+            { lvl: 'سريع', t: R`[[alias ll='ls -lah']]، وبعدين [[type ll]]، وبعدين [[unalias ll]] و [[type ll]] تاني.`, done: R`الأولى بتطبع [[ll is aliased to]] وبعدها [[ls -lah]] بين علامتين. بعد [[unalias]] بتطبع [[type: ll: not found]]. و [[type]] ده اللي تستخدمه لما أمر يعمل حاجة غريبة وعايز تعرف هو alias ولا برنامج.` },
+            { lvl: 'تطبيق', t: R`الـ alias مبياخدش arguments في النص، فاعمل فانكشن: [[mkcd() { mkdir -p "$1" && cd "$1"; }]] في [[~/.bashrc]]، و [[source ~/.bashrc]]، وجرّبها.`, done: R`[[mkcd ~/lab/a/b]] بيعمل الفولدرين ويدخلك جوه، و [[pwd]] بيطبع المسار ده. و [[type mkcd]] أول سطر فيه [[mkcd is a function]] وتحته الكود.` },
+            { lvl: 'تحدي', t: R`نظّم اختصاراتك في [[~/.bash_aliases]] بدل ما تحطها في [[.bashrc]] نفسه: ٥ aliases وفانكشن [[mkcd]]. واتأكد إن الملف بيتحمّل، وجرّب تعدّي الـ alias وتشغّل الأمر الأصلي.`, done: R`[[grep -n bash_aliases ~/.bashrc]] بيلاقي سطر [[if [ -f ~/.bash_aliases ]; then]] (موجود في .bashrc الافتراضي في أوبونتو). [[bash -n ~/.bash_aliases]] مبيطبعش حاجة. في ترمنال جديد [[alias]] فيه اختصاراتك، و [[\ls]] أو [[command ls]] بيشغّل [[ls]] الأصلي من غير الـ alias.` },
+          ],
           mac: ["diff", "على الماك الملف اسمه [[~/.zshrc]]."],
           deep: {
             why: "فيه أوامر طويلة بتكتبها عشرين مرة في اليوم. alias بيخليك تكتبها بكلمتين.",
@@ -319,6 +337,11 @@ alias ls='ls --color=auto'
 !!
 !42`,
           try: "اضغط Ctrl+R واكتب [[mkdir]]، هيجيبلك آخر mkdir كتبته. اضغط Ctrl+R تاني للي قبله.",
+          practice: [
+            { lvl: 'سريع', t: R`[[cat /etc/shadow]] (هيقول Permission denied)، وبعدين [[sudo !!]].`, done: R`bash بيطبع الأمر كامل [[sudo cat /etc/shadow]] قبل ما ينفّذه (عشان تشوف إيه اللي هيتشغّل)، والمرة دي بيشتغل بعد الباسورد. و [[history | tail -2]] فيه الأمر الكامل مش [[!!]].` },
+            { lvl: 'تطبيق', t: R`أكتر ١٠ أوامر بتستخدمها: [[history | awk '{print $2}' | sort | uniq -c | sort -rn | head]].`, done: R`١٠ سطور، كل سطر رقم واسم أمر، مترتبين من الأكتر للأقل. ودول أول ناس تعملهم alias. (لو عندك [[HISTTIMEFORMAT]] الخانة التانية هتبقى التاريخ، فاستخدم [[$4]] بدل [[$2]].)` },
+            { lvl: 'تحدي', t: R`ظبّط الـ history في [[~/.bashrc]]: [[HISTCONTROL=ignoreboth]] و [[HISTSIZE=10000]] و [[HISTTIMEFORMAT='%F %T ']] و [[shopt -s histappend]] و [[PROMPT_COMMAND='history -a']]. وافتح ترمنالين.`, done: R`[[history | tail -3]] كل سطر فيه تاريخ ووقت قبل الأمر. أمر بادئ بمسافة (زي [[ echo secret]]) مبيظهرش في [[history]] خالص. وأمر كتبته في ترمنال بيظهر في [[tail -2 ~/.bash_history]] على طول من غير ما تقفل (وقبله سطر [[#]] ورقم، وده الوقت).` },
+          ],
           mac: ["diff", "في zsh [[history]] بتعرض آخر 16 بس، اكتب [[history 1]] عشان الكل."],
           deep: {
             why: "عشان متكتبش أوامر طويلة تاني، وعشان تفتكر كتبت إيه امبارح لما حاجة اشتغلت وعايز تكررها.",
@@ -446,6 +469,11 @@ echo $HISTCONTROL $HISTSIZE $HISTFILESIZE $HISTFILE
 ls --help
 tldr tar`,
           try: "سطّب tldr واقرا أمثلة [[find]].",
+          practice: [
+            { lvl: 'سريع', t: R`لاقي معنى خيار من غير ما تفتح الـ manual كله: [[ls --help | grep -- ' -S ']].`, done: R`سطر واحد: [[-S]] وجنبه [[sort by file size, largest first]]. و [[--]] قبل الكلمة مهمة: من غيرها [[grep]] هيفتكر [[-S]] خيار ليه هو.` },
+            { lvl: 'تطبيق', t: R`لاقي أمر من غير ما تعرف اسمه: [[man -k partition]] (أو [[apropos partition]]). وبعدين قارن [[man crontab]] بـ [[man 5 crontab]].`, done: R`[[man -k]] بيطلّع سطور شكلها اسم أمر وجنبه رقم بين قوسين وشرح قصير (زي [[fdisk (8)]]). و [[man 5 crontab]] بيفتح شرح **شكل الملف** (الخمس خانات)، مش شرح الأمر اللي في section 1.` },
+            { lvl: 'تحدي', t: R`الأوامر اللي جوه bash نفسه: [[type -a echo]] و [[type cd]]، وبعدين [[help cd]] بدل [[man cd]]، ولاقي فيه الفرق بين [[-P]] و [[-L]].`, done: R`[[type -a echo]] بيطبع [[echo is a shell builtin]] وبعدها مسار أو اتنين زي [[/usr/bin/echo]]، يعني فيه نسختين والـ builtin هو اللي بيشتغل. [[type cd]] بيقول builtin بس (مفيش برنامج اسمه cd)، و [[help cd]] بيشرح [[-L]] (يمشي ورا الـ symlinks) و [[-P]] (المسار الحقيقي).` },
+          ],
           mac: ["diff", "أوامر كتير على الماك مش بتفهم [[--help]]، استخدم [[man]]."],
           deep: {
             why: "مستحيل تحفظ كل flag لكل أمر. ومش محتاج. محتاج تعرف تلاقي المعلومة بسرعة، حتى من غير نت.",

@@ -4,6 +4,14 @@ MORE("bash", [
       t: "اللوب والفانكشنز",
       l: 3,
       n: "",
+      projects: [
+        { lvl: 'صغير', t: R`عدّاد الامتدادات`, what: R`[[ext-count.sh DIR]]: [[find "$DIR" -type f -print0]] و [[while read -d '']] (درس ٤)، والامتداد بـ [[$__{f##*.}]]، والعد في [[declare -A]] (درس ٨)، والطباعة مترتبة من الأكتر.`, done: R`رقم [[js]] اللي طلع نفس [[find DIR -type f -name '*.js' | wc -l]]، وملف اسمه فيه مسافة اتعد صح، وملف من غير امتداد بيتعد تحت اسم واضح زي [[(none)]] مش باسم الملف كله.` },
+        { lvl: 'صغير', t: R`مكتبة log و die`, what: R`[[~/bin/lib/common.sh]] فيه [[log]] و [[warn]] و [[die]] و [[need]] (دروس ٥ و ٦)، وسكربتين بيعملوله source بـ [[SCRIPT_DIR]]، والمكتبة بترفض تتشغّل لوحدها.`, done: R`[[cd /tmp && ~/bin/a.sh]] شغال، و [[bash ~/bin/lib/common.sh; echo $?]] بيطبع رسالة و 1، و [[need nosuchtool]] جوه السكربت بيوقفه برسالة [[missing: nosuchtool]].` },
+        { lvl: 'متوسط', t: R`users.csv لسكربت حسابات`, what: R`[[csv-to-users.sh users.csv]]: بيقرا [[name,email,group]] بـ [[while IFS=, read -r]] (درس ٣)، ويعدّي الـ header والسطور الفاضية وآخر سطر من غير newline، ويفحص الإيميل بـ =~، ويكتب في [[create-users.sh]] سطر [[useradd]] لكل سطر سليم بـ [[printf '%q']] (مش بيشغّلهم)، والسطور الغلط في stderr برقم السطر. اللستة في array (درس ٧).`, done: R`ملف فيه ٥ سطور منهم ٢ إيميلهم غلط: [[create-users.sh]] فيه ٣ سطور، و stderr فيه رقمين السطور الغلط، و [[bash -n create-users.sh]] مبيطبعش أخطاء، واسم فيه مسافة متحاط بين علامات تنصيص صح.` },
+        { lvl: 'متوسط', t: R`لقّي الملفات المتكررة`, what: R`[[dupes.sh DIR]]: [[find -print0]] و [[md5sum]] لكل ملف (درس ٤)، و [[declare -A]] من الـ hash للأسامي (درس ٨)، ويطبع كل مجموعة ملفات نفس المحتوى، والحجم اللي هيتوفّر لو مسحت النسخ.`, done: R`ملفين نفس المحتوى بأسامي مختلفة (واحد فيه مسافة) بيطلعوا في مجموعة واحدة، والملفات اللي مالهاش نسخة مبتتطبعش، وعدد المجموعات نفس [[find DIR -type f -exec md5sum {} + | sort | uniq -w32 -d | wc -l]].` },
+        { lvl: 'كبير', t: R`فاحص سيرفرات من ملف إعدادات`, what: R`[[servers.conf]] كل سطر فيه [[name host port]] وفيه تعليقات بـ [[#]] وسطور فاضية. [[check-servers.sh]] بيقراه بـ while read، ولكل سيرفر فانكشن [[check_tcp]] بتجرّب البورت بـ [[timeout 3 bash -c "echo > /dev/tcp/$host/$port"]] وترجع 0 أو 1، والنتايج في [[declare -A]]، وفي الآخر جدول مترتب وعدد الواقعين. log و die من المكتبة اللي عملتها ([[source]]). وبيكتب سطر لكل تشغيلة في [[~/logs/servers.log]]، و exit code = عدد الواقعين (بحد أقصى 100). وزوّد [[set -euo pipefail]] لما توصل للدرس بتاعه، وخد بالك من [[((n++))]].`, done: R`٥ سيرفرات منهم واحد بورته مقفول: الجدول فيه DOWN واحد و [[echo $?]] بيطبع 1. البورت المقفول على localhost بيطلع DOWN على طول، و host مبيردش خالص (زي [[10.255.255.1]]) بيطلع DOWN بعد ٣ ثواني ومبيعلّقش السكربت. سطر تعليق أو سطر فاضي في الملف مبيتفحصش. وسطر ناقص البورت بيطلع تحذير برقم السطر ومبيوقّفش الباقي.`, ext: R`خلّيه يفحص بالتوازي ([[&]] و [[wait]])، ويقبل [[-f FILE]]، ويبعت تنبيه بس لما الحالة تتغير (زي site-check).` },
+        { lvl: 'فكرة', t: R`أتمت حاجة بتعملها على كل ملف`, what: R`فكّر في حاجة بتعملها على ملفات كتير بإيدك: تغيير أسامي، تصغير، نقل، تحويل، عدّ، مقارنة. اكتبها كفانكشنز في مكتبة، ولوب آمن بـ find -print0، ولستات بدل متغيرات متكررة.`, done: R`السكربت شغال على فولدر فيه أسامي بمسافات وفولدرات جوه فولدرات من غير ما يبوّظ حاجة، وفيه وضع تجربة بيطبع بس.`, ext: R`زوّد ملخص في الآخر (كام ملف اتعمل واتعدّى وفشل) بـ declare -A، و exit code غير صفر لو فيه فشل.` },
+      ],
       items: [
         {
           cmd: "for",
@@ -26,6 +34,11 @@ for server in web1 web2 db; do
   echo "Checking $server"
 done`,
           try: "اعمل لوب بيعمل 5 فولدرات day1 لـ day5.",
+          practice: [
+            { lvl: 'سريع', t: R`لوب على [[/etc/*.conf]] بيطبع اسم كل ملف وعدد سطوره ([[wc -l < "$f"]]).`, done: R`سطر لكل ملف فيه رقم، وعدد السطور اللي اتطبعت هو نفس [[ls /etc/*.conf | wc -l]].` },
+            { lvl: 'تطبيق', t: R`من template واحد اعمل config لكل بيئة: [[app.conf.tpl]] فيه [[env=__ENV__]]، ولوب على [[dev staging prod]] بـ [[sed "s/__ENV__/$env/" app.conf.tpl > "app.$env.conf"]].`, done: R`٣ ملفات، و [[grep -l prod app.*.conf]] بيطبع [[app.prod.conf]] بس.` },
+            { lvl: 'تحدي', t: R`استنى لحد ما حاجة تجهز بحد أقصى: [[for i in {1..10}]] بيبص كل ثانية لو [[ready.flag]] موجود ويعمل break، ولو العشر مرات خلصوا يطبع timeout ويخرج 1. جرّبه بعد [[(sleep 3; touch ready.flag) &]]، وامسح الـ flag بين التجارب.`, done: R`مع الـ flag بيخلص في حوالي ٣ ثواني (قيس بـ [[time]]) ويخرج 0، ومن غيره بيخلص بعد ١٠ ثواني ويطبع timeout و [[echo $?]] بيطبع [[1]]. وده نفس شكل «استنى الداتابيز تقوم» في سكربتات الديبلوي.` },
+          ],
           flag: "script",
           deep: {
             why: "عايز تعمل نفس الحاجة على حاجات كتير: على كل ملف log، أو لكل سيرفر، أو ١٠ مرات.",
@@ -256,6 +269,11 @@ for f in "$__{photos[@]}"; do
 done
 echo "Total: $__{#photos[@]}"`,
           try: R`شغّله في فولدر فاضي، وبعدين اعمل [[touch "a b.JPG" c.png notes.txt]] وشغّله تاني. وبعدين امسح سطر shopt وشغّله في فولدر فاضي.`,
+          practice: [
+            { lvl: 'سريع', t: R`في فولدر فاضي: [[for f in *.xyz; do echo "got: $f"; done]] مرة عادي ومرة بعد [[shopt -s nullglob]].`, done: R`الأولى بتطبع [[got: *.xyz]] (النمط نفسه كأنه اسم ملف)، والتانية مبتطبعش حاجة.` },
+            { lvl: 'تطبيق', t: R`[[archive-logs.sh]]: لو فيه [[*.log]] في الفولدر حطهم في [[logs.tar.gz]] بـ array زي المثال، ولو مفيش اطبع «nothing to archive» واخرج 0 من غير ما تعمل أرشيف فاضي.`, done: R`في فولدر فاضي بيطبع nothing to archive و [[ls logs.tar.gz]] بيقول No such file. ومع لوجين [[tar -tzf logs.tar.gz]] بيطبع الاتنين.` },
+            { lvl: 'تحدي', t: R`عدّ ملفات [[.md]] في كل الفولدرات اللي جوه بـ [[shopt -s globstar nullglob]] و [[**/*.md]]، وقارن بـ [[find . -name '*.md' | wc -l]]. اعمل فولدر مخفي فيه ملف [[.md]] كمان.`, done: R`الرقمين مختلفين بملف الفولدر المخفي: [[**]] مبيدخلش الفولدرات اللي اسمها بيبدأ بنقطة و find بيدخلها. بعد [[shopt -s dotglob]] الرقمين بيبقوا زي بعض. و [[globstar]] محتاج bash 4، فعلى الماك [[brew install bash]].` },
+          ],
           flag: "script",
           mac: ["both", R`[[nullglob]] و [[nocaseglob]] شغالين في bash 3.2 بتاع الماك. أما [[globstar]] (اللي بيخلي [[**]] تدخل جوه الفولدرات) محتاج bash 4.`],
           deep: {
@@ -456,6 +474,11 @@ p2.sh
   fi
 done < servers.txt`,
           try: "اكتب 3 دومينات في servers.txt (منهم واحد غلط) وشغّله.",
+          practice: [
+            { lvl: 'سريع', t: R`اطبع اليوزرز اللي الـ shell بتاعهم [[/bin/bash]] من [[/etc/passwd]] بـ [[while IFS=: read -r u _ _ _ _ _ sh]].`, done: R`فيه سطر [[root /bin/bash]]، وعدد السطور نفس [[grep -c ':/bin/bash$' /etc/passwd]].` },
+            { lvl: 'تطبيق', t: R`[[users.csv]] أول سطر فيه [[name,email]]، وفي النص سطر فاضي، وآخر سطر من غير newline (اعمله بـ [[printf]]). اطبع [[Ali <ali@example.com>]] لكل يوزر.`, done: R`الـ header والسطر الفاضي مبيتطبعوش، وآخر يوزر بيتطبع. ولو شلت [[|| [ -n "$name" ] ]] بعد read، آخر سطر بيضيع من غير أي error.` },
+            { lvl: 'تحدي', t: R`لستة ٥ سطور، وجوه اللوب أمر بيقرا من stdin (زي [[wc -l > /dev/null]]، أو [[ssh]] في الحقيقة). عدّ اللوب لف كام مرة، وبعدين صلّحه.`, done: R`من غير تصليح بيطبع أول سطر بس، لأن الأمر اللي جوه أكل باقي اللستة من stdin. بعد [[< /dev/null]] على الأمر اللي جوه (أو [[ssh -n]]) بيطبع الخمسة.` },
+          ],
           flag: "script",
           mac: [
             "diff",
@@ -656,6 +679,11 @@ while IFS= read -r -d '' f; do
 done < <(find . -type f -size +1M -print0)
 echo "Total: $count"`,
           try: R`في فولدر تجربة اعمل [[mkdir "sub dir"]] و [[head -c 2000000 /dev/zero > "sub dir/big file.bin"]] وشغّل السكربت. وبعدين غيّر آخر سطرين في اللوب لـ [[find ... | while ...]] وشوف الـ Total.`,
+          practice: [
+            { lvl: 'سريع', t: R`عدّ ملفات [[.log]] في فولدر فيه فولدرات فرعية بأسامي فيها مسافات بالطريقة دي، وقارن بـ [[find . -name '*.log' | wc -l]].`, done: R`الـ Total بتاعك نفس رقم wc بالظبط، حتى في الفولدر اللي اسمه فيه مسافة.` },
+            { lvl: 'تطبيق', t: R`صلّح صلاحيات موقع: كل ملف جوه [[site/]] صلاحياته مش 644 ([[find site -type f ! -perm 644 -print0]]) خلّيه 644 واطبع اسمه.`, done: R`الملفات اللي اتغيرت بس هي اللي اتطبعت، و [[find site -type f ! -perm 644 | wc -l]] بعدها بيطبع [[0]]، والتشغيلة التانية مبتطبعش حاجة.` },
+            { lvl: 'تحدي', t: R`غيّر كل مسافة لـ [[-]] في أسامي الملفات والفولدرات جوه [[r/]] في كل المستويات، بـ [[find r -depth -name '* *' -print0]]، والتغيير على الجزء الأخير من المسار بس ([[$__{p##*/}]] و [[$__{p%/*}]] من الوحدة اللي فاتت).`, done: R`[[find r -name '* *']] مبيطبعش حاجة، وعدد الملفات قبل وبعد زي ما هو. ومن غير [[-depth]] الفولدر بيتغير اسمه قبل اللي جواه، و mv بيقول [[cannot stat]] على المسار القديم.` },
+          ],
           flag: "script",
           mac: ["both", R`[[-print0]] و [[read -d '']] شغالين على الماك. بس [[find]] هناك لازم تديله فولدر البداية صريح ([[find .]] مش [[find]] لوحدها).`],
           deep: {
@@ -862,6 +890,11 @@ check_dir /var/www || exit 1
 SIZE=$(folder_size /var/www)
 log "Size is $SIZE"`,
           try: "اعمل فانكشن بتاخد اسم برنامج وتقولك متسطب ولا لأ.",
+          practice: [
+            { lvl: 'سريع', t: R`حط [[mkcd() { mkdir -p "$1" && cd "$1"; }]] في [[~/.bashrc]]، وافتح ترمنال جديد.`, done: R`[[mkcd /tmp/x/y && pwd]] بيطبع [[/tmp/x/y]]، و [[type mkcd]] أول سطره [[mkcd is a function]]. ولو كان سكربت عادي، الـ cd مكانش هيفضل بعد ما يخلص، وعشان كده فانكشن.` },
+            { lvl: 'تطبيق', t: R`[[require_cmd]] بتاخد أسامي برامج كتير، وتطبع [[missing: NAME]] لكل واحد ناقص (مش أول واحد بس)، وترجع 1 لو فيه ناقص.`, done: R`[[require_cmd bash tar nosuchtool; echo $?]] بيطبع [[missing: nosuchtool]] و [[1]]، و [[require_cmd bash tar]] مبيطبعش حاجة و [[0]].` },
+            { lvl: 'تحدي', t: R`شوف [[local]] بيبلع exit code: [[f() { local out=$(false); echo $?; }]] ونسخة تانية فيها [[local out; out=$(false)]].`, done: R`الأولى بتطبع [[0]] والتانية [[1]]، لأن [[$?]] في الأولى بتاع [[local]] نفسه. ومع [[set -e]] النسخة الأولى بتكمّل عادي لو الأمر فشل، فاكتب [[local]] في سطر لوحده.` },
+          ],
           flag: "script",
           deep: {
             why: "لو فيه كود بيتكرر في السكربت (زي طباعة رسالة بالوقت، أو التأكد من فولدر)، تكتبه مرة واحدة كفانكشن وتناديه باسمه. السكربت يبقى أقصر وأوضح.",
@@ -1084,6 +1117,11 @@ source "$SCRIPT_DIR/lib/common.sh"
 need tar
 log "Starting backup"`,
           try: R`اعمل الملفين وشغّل backup.sh من فولدر تاني خالص (مثلًا [[cd /tmp]] وبعدين المسار الكامل للسكربت). وبعدين بدّل سطر source بـ [[source lib/common.sh]] وشغّله تاني من /tmp.`,
+          practice: [
+            { lvl: 'سريع', t: R`حط [[log()]] في [[lib/common.sh]]، واعمل سكربتين بيعملوله source بـ [[SCRIPT_DIR]] زي المثال.`, done: R`الاتنين بيطبعوا السطر بالوقت من أي فولدر تشغّلهم منه، و [[bash a.sh 2>/dev/null]] مبيطبعش حاجة (لأن log بتكتب على stderr).` },
+            { lvl: 'تطبيق', t: R`إعدادات من ملف: [[config.env]] فيه [[KEEP_DAYS=7]]، والسكربت بيعمل source لو الملف موجود، وبعدها [[: "$__{KEEP_DAYS:=14}"]] كقيمة افتراضية.`, done: R`بالملف بيطبع 7، ولو غيّرت اسم الملف بيطبع 14، و [[KEEP_DAYS=3 bash x.sh]] من غير الملف بيطبع 3.` },
+            { lvl: 'تحدي', t: R`خلّي [[lib/common.sh]] يرفض يتشغّل لوحده: لو [[$__{BASH_SOURCE[0]}]] هو نفسه [[$0]] اطبع «source me, don't run me» واخرج 1. وخلّيه ميتحمّلش مرتين (متغير زي [[_COMMON_LOADED]] و [[return 0]]).`, done: R`[[bash lib/common.sh; echo $?]] بيطبع الرسالة و [[1]]. و [[source lib/common.sh]] مرتين ورا بعض بيطبع «loaded» مرة واحدة بس.` },
+          ],
           flag: "script",
           mac: ["both", R`[[BASH_SOURCE]] شغال في bash 3.2 بتاع الماك. وفي zsh الطريقة مختلفة، بس السكربت ده bash فشغّله بـ bash.`],
           deep: {
@@ -1269,6 +1307,11 @@ for s in "$__{SERVERS[@]}"; do
   echo "Deploy to $s"
 done`,
           try: "اعمل array بأسامي 3 فولدرات واعملهم في لوب.",
+          practice: [
+            { lvl: 'سريع', t: R`[[SERVERS=(web1 web2 db)]]: اطبع العدد وآخر واحد بـ [[$__{SERVERS[-1]}]].`, done: R`[[3]] و [[db]].` },
+            { lvl: 'تطبيق', t: R`ابني arguments أمر في array: [[ARGS=(-czf backup.tar.gz)]]، ولو [[EXCLUDE]] مش فاضي زوّد [[ARGS+=(--exclude="$EXCLUDE")]]، وبعدين [[tar "$__{ARGS[@]}" proj]] على فولدر فيه [[my notes.txt]] و [[node_modules]].`, done: R`[[tar -tzf backup.tar.gz]] فيه [[proj/my notes.txt]] كامل بالمسافة، ومفيهوش node_modules خالص.` },
+            { lvl: 'تحدي', t: R`[[mapfile -t lines < file.txt]] واطبعهم مترقمين من 1 باستخدام [[$__{!lines[@]}]]، وبعدين [[unset 'lines[1]']] واطبع العدد والـ indexes.`, done: R`بعد unset العدد [[2]] بس الـ indexes [[0 2]] مش [[0 1]]: الـ array في bash ممكن يبقى فيه فراغات، فاللف بـ [[$__{!lines[@]}]] أأمن من عدّاد من صفر لـ العدد.` },
+          ],
           flag: "script",
           deep: {
             why: "محتاج تحفظ لستة في متغير واحد: أسامي سيرفرات، أو فولدرات تتعملها باك أب.",
@@ -1418,6 +1461,11 @@ for name in "$__{!PORTS[@]}"; do
 done
 [[ -v PORTS[cache] ]] || echo "no cache service"`,
           try: "اعدّ كل كلمة اتكررت كام مرة في لستة كلمات باستخدام declare -A، واطبع النتيجة مترتبة بالعدد من الأكبر.",
+          practice: [
+            { lvl: 'سريع', t: R`[[declare -A URLS=([prod]=https://example.com [dev]=http://localhost:3000)]]، وسكربت بيطبع URL البيئة اللي في أول argument، ويخرج 2 لو مش موجودة ([[test -v "URLS[$1]"]]).`, done: R`[[bash url.sh prod]] بيطبع [[https://example.com]]، و [[bash url.sh qa; echo $?]] بيطبع [[2]]. على الماك محتاج bash من brew زي ما الملاحظة بتقول.` },
+            { lvl: 'تطبيق', t: R`عدّ status codes من لوج كل سطر فيه زي [[GET /a 200]]: [[while read -r _ _ code]] و [[count[$code]=$(( $__{count[$code]:-0} + 1 ))]]، واطبع كل كود وعدده مترتب.`, done: R`لملف فيه ٣ مرات 200 ومرتين 404 ومرة 500 بيطبع [[200 3]] و [[404 2]] و [[500 1]].` },
+            { lvl: 'تحدي', t: R`جمّع حجم الملفات حسب الامتداد في فولدر كامل (find -print0 من الدرس اللي فات، و [[stat -c %s]])، واطبع الامتدادات مترتبة من الأكبر. ولو السكربت فيه [[set -e]] استخدم [[x=$(( x + 1 ))]] مش [[((x++))]].`, done: R`مجموع [[.log]] بتاعك نفس [[find . -name '*.log' -printf '%s\n' | awk '{s+=$1} END {print s}']]. و [[bash -c 'set -e; n=0; ((n++)); echo ok']] مبيطبعش ok وبيخرج 1: [[((n++))]] وهي صفر بيرجع فشل و set -e بيوقف.` },
+          ],
           flag: "script",
           mac: ["diff", R`مش موجود في bash 3.2 بتاع الماك: [[declare: -A: invalid option]]. سطّب [[brew install bash]]، والـ shebang [[#!/usr/bin/env bash]] هيستخدم الجديد لوحده.`],
           deep: {
