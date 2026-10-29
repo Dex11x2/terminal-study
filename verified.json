@@ -2079,6 +2079,11 @@
   "date": "2026-10-06",
   "on": "ubuntu-24.04 docker"
  },
+ "bash|diff <( ) و comm و cmp": {
+  "hash": "8f41da0393ef",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2) كـ root وكـ يوزر sudo بباسورد ويوزر تاني يشوف ps من بره: exec sudo و --preserve-env و sudo -v/-k و keepalive، وتسريب الأسرار في ps و /proc و set -x، و pass بمفتاح GPG تجريبي، و xargs -P و wait -n، و timeout -k و retry، و flock، و diff <( ) و comm و cmp. docs: docker login --password-stdin و secret-tool وملاحظات الماك و parallel exit codes"
+ },
  "bash|dig": {
   "hash": "1b1c882c0001",
   "date": "2026-10-29",
@@ -2098,6 +2103,16 @@
   "hash": "5933b29fce62",
   "date": "2026-10-29",
   "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+ },
+ "bash|exec 9> و flock": {
+  "hash": "402de499b47c",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2) كـ root وكـ يوزر sudo بباسورد ويوزر تاني يشوف ps من بره: exec sudo و --preserve-env و sudo -v/-k و keepalive، وتسريب الأسرار في ps و /proc و set -x، و pass بمفتاح GPG تجريبي، و xargs -P و wait -n، و timeout -k و retry، و flock، و diff <( ) و comm و cmp. docs: docker login --password-stdin و secret-tool وملاحظات الماك و parallel exit codes"
+ },
+ "bash|exec sudo و sudo -v": {
+  "hash": "a3bc45fdf9c3",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2) كـ root وكـ يوزر sudo بباسورد ويوزر تاني يشوف ps من بره: exec sudo و --preserve-env و sudo -v/-k و keepalive، وتسريب الأسرار في ps و /proc و set -x، و pass بمفتاح GPG تجريبي، و xargs -P و wait -n، و timeout -k و retry، و flock، و diff <( ) و comm و cmp. docs: docker login --password-stdin و secret-tool وملاحظات الماك و parallel exit codes"
  },
  "bash|exit 0 و 1 و 2": {
   "hash": "95c0873ed3cc",
@@ -2559,6 +2574,11 @@
   "date": "2026-10-29",
   "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
+ "bash|timeout و retry": {
+  "hash": "497d417ed55c",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2) كـ root وكـ يوزر sudo بباسورد ويوزر تاني يشوف ps من بره: exec sudo و --preserve-env و sudo -v/-k و keepalive، وتسريب الأسرار في ps و /proc و set -x، و pass بمفتاح GPG تجريبي، و xargs -P و wait -n، و timeout -k و retry، و flock، و diff <( ) و comm و cmp. docs: docker login --password-stdin و secret-tool وملاحظات الماك و parallel exit codes"
+ },
  "bash|top / htop": {
   "hash": "a05fc8b01ec3",
   "date": "2026-10-06",
@@ -2649,6 +2669,11 @@
   "date": "2026-10-06",
   "on": "ubuntu-24.04 (user ali)"
  },
+ "bash|xargs -P و wait -n": {
+  "hash": "6990a1e6203c",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2) كـ root وكـ يوزر sudo بباسورد ويوزر تاني يشوف ps من بره: exec sudo و --preserve-env و sudo -v/-k و keepalive، وتسريب الأسرار في ps و /proc و set -x، و pass بمفتاح GPG تجريبي، و xargs -P و wait -n، و timeout -k و retry، و flock، و diff <( ) و comm و cmp. docs: docker login --password-stdin و secret-tool وملاحظات الماك و parallel exit codes"
+ },
  "bash|zgrep / zcat": {
   "hash": "89838ca4f496",
   "date": "2026-10-29",
@@ -2678,6 +2703,11 @@
   "hash": "021a34d3f6a8",
   "date": "2026-10-29",
   "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
+ },
+ "bash|الأسرار في السكربت": {
+  "hash": "76f4b56c6144",
+  "date": "2026-10-29",
+  "on": "docker ubuntu:24.04 (bash 5.2) كـ root وكـ يوزر sudo بباسورد ويوزر تاني يشوف ps من بره: exec sudo و --preserve-env و sudo -v/-k و keepalive، وتسريب الأسرار في ps و /proc و set -x، و pass بمفتاح GPG تجريبي، و xargs -P و wait -n، و timeout -k و retry، و flock، و diff <( ) و comm و cmp. docs: docker login --password-stdin و secret-tool وملاحظات الماك و parallel exit codes"
  },
  "bash|الطريقة: من مهمة لأمر": {
   "hash": "e53e87106aae",
