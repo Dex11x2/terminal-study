@@ -36,7 +36,7 @@ node .output/server/index.mjs`,
 
 | الحتة | معناها |
 |---|---|
-| [[npm create nuxt@latest]] | بيشغّل [[create-nuxt]] |
+| [[npm create nuxt@latest]] | بيشغّل [[create-nuxt]] بآخر نسخة، وهي الأداة اللي بتعمل المشروع |
 | [[--template minimal]] | أصغر template (من غير أمثلة) |
 | [[--packageManager npm]] | متسألنيش أنهي package manager |
 | [[--no-gitInit]] | متعملش git repo |
@@ -140,12 +140,12 @@ Listening on http://[::]:3000
 | [[node .output/server/index.mjs]] | السيرفر في الإنتاج، و [[PORT]] للبورت |
 | [[npm run generate]] | موقع static (درس [[SSR و SPA و static]]) |`,
           lines: [
-            "اعمل مشروع Nuxt بأصغر template ومن غير أسئلة.",
-            "ادخل الفولدر.",
-            R`نزّل الباكدجات (لو [[create-nuxt]] منزّلهاش).`,
-            R`سيرفر التطوير على [[localhost:3000]].`,
-            R`build للإنتاج في [[.output/]].`,
-            "شغّل سيرفر الإنتاج."
+            R`[[npm create nuxt@latest shop]] بيعمل مشروع Nuxt جديد في فولدر [[shop]]. والـ [[--]] بيعدّي باقي الـ flags لـ [[create-nuxt]]: [[minimal]] أصغر template، و npm كـ package manager، ومن غير git، و [[--modules=]] فاضي، فمش هيسألك أي سؤال.`,
+            R`ادخل فولدر المشروع اللي اتعمل، عشان كل الأوامر اللي بعده تشتغل جواه.`,
+            R`نزّل الباكدجات اللي في [[package.json]]. [[create-nuxt]] بيحاول ينزّلها لوحده، بس بيوقف لو فضل ٣٠ ثانية من غير output (حصلت عندنا)، فالسطر ده بيكمّل، ولو كانت نزلت مش هيضر. وفي الآخر [[postinstall]] بيشغّل [[nuxt prepare]] يولّد الأنواع في [[.nuxt/]].`,
+            R`[[npm run dev]] بيشغّل سيرفر التطوير على [[localhost:3000]]: Vite للمتصفح والسيرفر، و Nitro للـ SSR والـ API، وأي تعديل بيظهر على طول (HMR). ده للتطوير بس، مش للإنتاج.`,
+            R`[[npm run build]] بيعمل نسخة الإنتاج في [[.output/]]: [[public]] للملفات اللي المتصفح بينزّلها، و [[server]] سيرفر Node كامل ومعاه الـ [[node_modules]] اللي محتاجها بس.`,
+            R`بيشغّل سيرفر الإنتاج بـ Node مباشرة، من غير [[npm install]] ولا Nuxt نفسه. البورت 3000 إلا لو غيّرته بمتغير البيئة [[PORT]].`
           ],
           sol: R`[[curl localhost:3000]] بيرجّع HTML فيه [[<h1>...</h1>]] بتاعك جوه [[<div id="__nuxt">]]. قارنه بـ [[dist/index.html]] في مشروع create-vue: هناك [[<div id="app"></div>]] فاضي. ده الـ SSR: الصفحة اترسمت على السيرفر.`
         },
@@ -213,7 +213,7 @@ onMounted(() => (width.value = window.innerWidth))
 |---|---|
 | [[<NuxtRouteAnnouncer />]] | بيعلن للـ screen reader عن الصفحة الجديدة |
 | [[<NuxtLayout>]] | الـ layout (default لو الصفحة مقالتش غيره) |
-| [[<NuxtPage />]] | الصفحة الحالية |
+| [[<NuxtPage />]] | الصفحة الحالية من [[pages/]] حسب الـ URL (زي [[<RouterView />]]) |
 
 ---
 
@@ -276,40 +276,40 @@ GET /products/3/_payload.json
 
 | الملف | المسار |
 |---|---|
-| [[pages/index.vue]] | [[/]] |
-| [[pages/a/index.vue]] | [[/a]] |
-| [[pages/a/[id].vue]] | [[/a/:id]] |
+| [[pages/index.vue]] | [[/]]: الصفحة الرئيسية |
+| [[pages/a/index.vue]] | [[/a]]: [[index]] معناها مسار الفولدر نفسه |
+| [[pages/a/[id].vue]] | [[/a/:id]]: الأقواس param، زي [[/a/7]] |
 | [[pages/[...slug].vue]] | أي حاجة (404 مثلًا) |
 | [[layouts/default.vue]] + [[<slot />]] | يلف كل الصفحات |
 | [[definePageMeta({ layout: 'x' })]] | layout تاني لصفحة |
 | [[<NuxtLink to>]] | رابط + prefetch |`,
           lines: [
-            "الأساس.",
-            "بيعلن عن تغيير الصفحة للـ screen reader.",
-            "الـ layout...",
-            "وجواه الصفحة الحالية.",
-            R`قفلة [[NuxtLayout]].`,
-            "قفلة الـ template.",
-            "الـ layout الافتراضي.",
-            "عنصر واحد بيلف كله.",
-            "الهيدر.",
-            "رابط للرئيسية.",
-            "رابط للمنتجات.",
-            "قفلة الهيدر.",
-            "الصفحة بتتحط هنا.",
-            "قفلة الـ div.",
-            "قفلة الـ template.",
-            R`صفحة [[/]].`,
-            "عنوان.",
-            "قفلة الـ template.",
-            R`صفحة [[/admin]]: script من غير imports.`,
-            R`[[ref]] متاح لوحده.`,
-            R`[[window]] جوه [[onMounted]] بس.`,
-            "قفلة الـ script.",
-            "بداية الـ template.",
-            "عنوان.",
-            "العرض.",
-            "قفلة الـ template."
+            R`الـ template بتاع [[app.vue]]: أعلى component في المشروع، وكل صفحة بتترسم جواه. مفيش script لأنه بيرتّب الأماكن بس.`,
+            R`[[<NuxtRouteAnnouncer />]] عنصر مخفي بيقول للـ screen reader «الصفحة اتغيرت» واسمها لما تتنقل، لأن التنقل في Nuxt من غير reload فالـ screen reader مش هيعرف لوحده.`,
+            R`[[<NuxtLayout>]] بيحط الـ layout بتاع الصفحة الحالية: [[layouts/default.vue]]، إلا لو الصفحة اختارت غيره بـ [[definePageMeta({ layout })]].`,
+            R`[[<NuxtPage />]] مكان الصفحة اللي الـ URL بيشاور عليها من [[pages/]] (زي [[<RouterView />]]). ولأنه جوه [[<NuxtLayout>]] بيوصل للـ layout كـ slot ويظهر مكان [[<slot />]]. من غيره مفيش ولا صفحة هتظهر.`,
+            R`قفلة [[<NuxtLayout>]]، فالصفحة كلها جوه الـ layout.`,
+            R`قفلة الـ template بتاع [[app.vue]].`,
+            R`بداية [[layouts/default.vue]]: الـ layout اللي بيلف كل صفحة مختارتش layout تاني، فالـ header بيتكتب مرة هنا بدل ما يتكرر في كل صفحة.`,
+            R`عنصر واحد بيلف الـ layout كله. Nuxt عايز الـ layout يبقى ليه root element واحد، خصوصًا لو فيه transitions بين الصفحات.`,
+            R`الـ [[<header>]] اللي هيظهر فوق في كل الصفحات.`,
+            R`[[<NuxtLink to="/">]] رابط للرئيسية: بيطلع في الـ HTML [[<a href="/">]] عادي (فجوجل بيتبعه)، بس لما تضغطه Nuxt بيغيّر الصفحة من غير reload. والـ [[|]] بعده مجرد نص فاصل.`,
+            R`رابط لصفحة المنتجات. لما يظهر في الشاشة [[NuxtLink]] بيعمل prefetch للـ JS والبيانات بتاعتها، فلما تضغط تفتح فورًا. وعلى الصفحة الحالية بياخد [[aria-current="page"]] وكلاسات الـ active.`,
+            R`قفلة الـ [[<header>]] بعد الرابطين.`,
+            R`[[<slot />]] جوه [[<main>]]: هنا الصفحة الحالية بتتحط. يعني الـ header ثابت، والجزء ده بس اللي بيتغير مع كل URL.`,
+            R`قفلة الـ [[div]] اللي بيلف الـ layout.`,
+            R`قفلة الـ template بتاع الـ layout.`,
+            R`[[pages/index.vue]] = صفحة [[/]]. مجرد ما الملف موجود بقى route، من غير ما تكتب أي routes بإيدك.`,
+            R`محتوى الرئيسية: هيتحط مكان [[<slot />]] في الـ layout، تحت الـ header.`,
+            R`قفلة الـ template بتاع الرئيسية.`,
+            R`[[pages/admin/index.vue]] = [[/admin]]. والـ script مفيهوش ولا [[import]]: Nuxt بيعمل auto-import لـ [[ref]] و [[onMounted]] وغيرهم.`,
+            R`[[ref(0)]] من غير import. بيبدأ صفر لأن عرض الشاشة مش معروف لحد ما الصفحة تفتح في المتصفح.`,
+            R`[[onMounted]] بيشتغل في المتصفح بس، بعد ما الـ component يترسم، فـ [[window]] موجود هناك. لو قريت [[window.innerWidth]] برا [[onMounted]] في صفحة بتترسم على السيرفر، الكود هيتنفّذ وقت الـ SSR ويرمي [[window is not defined]].`,
+            R`قفلة الـ script بتاع صفحة الأدمن.`,
+            R`بداية الـ template بتاع صفحة الأدمن.`,
+            R`عنوان صفحة لوحة التحكم، بيظهر تحت الـ header بتاع الـ layout.`,
+            R`[[{{ width }}]] بيعرض الـ ref من غير [[.value]] (الـ template بيفكه لوحده). بيظهر 0 الأول، وبعد [[onMounted]] بيتحدّث بالعرض الحقيقي (1280 عندنا).`,
+            R`قفلة الـ template بتاع صفحة الأدمن.`
           ],
           sol: R`[[/about]] بيفتح لوحده بمجرد ما الملف اتعمل، ومعاه الـ header من [[default]]. ومع [[definePageMeta({ layout: 'plain' })]] الـ header بيختفي في about بس. جربناها: الـ HTML بتاع [[/about]] طلع [[<main><h1>عن المحل</h1></main>]] من غير [[<header>]]، و [[/]] لسه فيها الـ header:`,
           solCode: R`// app/layouts/plain.vue
@@ -393,8 +393,8 @@ const { data: products, status, error } = await useFetch('/api/products', {
 
 | الملف | الـ endpoint |
 |---|---|
-| [[server/api/products/index.get.ts]] | [[GET /api/products]] |
-| [[server/api/products/[id].get.ts]] | [[GET /api/products/:id]] |
+| [[server/api/products/index.get.ts]] | [[GET /api/products]]: كل المنتجات، و [[index]] = الفولدر نفسه |
+| [[server/api/products/[id].get.ts]] | [[GET /api/products/:id]]: منتج واحد، والـ id من اسم الملف |
 | [[server/utils/db.ts]] | مش endpoint: كود مشترك، وبيتعمله auto-import في السيرفر |
 
 - [[defineEventHandler((event) => ...)]]: اللي ترجّعه بيتحوّل JSON.
@@ -474,44 +474,44 @@ products/9 status: 404
 
 | تكتب | معناها |
 |---|---|
-| [[server/api/x.get.ts]] | [[GET /api/x]] |
-| [[server/api/x/[id].get.ts]] | [[GET /api/x/:id]] |
-| [[getQuery]] و [[getRouterParam]] و [[readBody]] | المدخلات |
-| [[createError({ statusCode })]] | رد خطأ |
+| [[server/api/x.get.ts]] | [[GET /api/x]]، والـ [[.get]] في الاسم هو الـ method |
+| [[server/api/x/[id].get.ts]] | [[GET /api/x/:id]]، والأقواس في الاسم param |
+| [[getQuery]] و [[getRouterParam]] و [[readBody]] | المدخلات: الـ query، والـ param، وجسم الـ POST |
+| [[createError({ statusCode })]] | رد خطأ بـ status حقيقي (404 مثلًا) و JSON |
 | [[await useFetch(url, { query })]] | بيانات وقت الـ SSR، وبتيجي مع الصفحة |
 | [[$fetch]] | لطلبات بعد ضغطة |`,
           lines: [
-            "البيانات (مكان قاعدة البيانات).",
-            "كيبورد.",
-            "ماوس.",
-            "شاشة.",
-            "قفلة الـ array.",
-            R`[[GET /api/products]].`,
-            "الـ q من الـ query أو فاضي.",
-            "المنتجات اللي اسمها فيه q.",
-            "قفلة الـ handler.",
-            R`[[GET /api/products/:id]].`,
-            "الـ id من اسم الملف، رقم.",
-            "دوّر عليه.",
-            "مش موجود: 404.",
-            "رجّعه.",
-            "قفلة الـ handler.",
-            "script صفحة المنتجات (من غير imports).",
-            "نص البحث.",
-            R`هات المنتجات (على السيرفر وقت الـ SSR)...`,
-            R`ومعاها [[?q=]]، وبيتعاد لما q يتغير.`,
-            R`قفلة [[useFetch]].`,
-            "قفلة الـ script.",
-            "بداية الـ template.",
-            "البحث.",
-            "بيحمّل.",
-            "خطأ.",
-            "البيانات...",
-            "سطر لكل منتج.",
-            "رابط لصفحته.",
-            "قفلة السطر.",
-            "قفلة الـ list.",
-            "قفلة الـ template."
+            R`array منتجات في [[server/utils/db.ts]] بتلعب دور قاعدة البيانات. أي حاجة بتتعمل [[export]] من [[server/utils/]] بيتعملها auto-import في كود السيرفر بس، فالـ handlers بتستخدم [[products]] من غير import.`,
+            R`أول منتج: [[id]] رقم بنستخدمه في الـ URL، و [[name]] و [[price]] اللي بيتعرضوا.`,
+            R`تاني منتج، الماوس. ده اللي هيرجع لو دوّرت بـ «ما».`,
+            R`تالت منتج، الشاشة. هيرجع لو دوّرت بـ «شا».`,
+            R`قفلة الـ array.`,
+            R`[[server/api/products/index.get.ts]] = [[GET /api/products]]، والـ [[.get]] في اسم الملف هو الـ method. [[defineEventHandler]] بيلف الدالة اللي بتتنادى مع كل طلب، و [[event]] فيه الطلب كله، واللي ترجّعه بيتحوّل JSON لوحده.`,
+            R`[[getQuery(event)]] بيرجّع الـ query string كـ object ([[?q=ما]] بيبقى [[{ q: 'ما' }]])، و [[q = '']] قيمة افتراضية لو مفيش [[q]] في الـ URL.`,
+            R`رجّع المنتجات اللي اسمها فيه [[q]]. [[String(q)]] لأن الـ query ممكن تبقى array لو اتكررت ([[?q=a&q=b]]). ولو [[q]] فاضي، [[includes('')]] دايمًا true فبيرجع الكل.`,
+            R`قفلة الـ handler.`,
+            R`ملف [[[id].get.ts]] = [[GET /api/products/:id]]: الأقواس المربعة في اسم الملف معناها param، فـ [[/api/products/2]] بيوصل هنا والـ id بـ 2.`,
+            R`[[getRouterParam(event, 'id')]] بيجيب الـ param من الـ URL، وبيرجّعه string دايمًا، فـ [[Number()]] بيحوّله رقم عشان المقارنة بـ [[===]] مع [[p.id]] تنجح.`,
+            R`[[find]] بيرجّع أول منتج الـ id بتاعه مطابق، أو [[undefined]] لو مفيش.`,
+            R`لو مش موجود، [[throw createError]] بيوقف الـ handler ويرد بـ status 404 و JSON فيه الرسالة، فالصفحة اللي طلبت تعرف إن المنتج مش موجود وتعرض صفحة 404.`,
+            R`رجّع المنتج، و Nitro بيحوّله JSON.`,
+            R`قفلة الـ handler.`,
+            R`script صفحة [[/products]] ([[pages/products/index.vue]]). مفيهوش imports: [[ref]] و [[useFetch]] auto-import.`,
+            R`[[q]] نص البحث كـ ref، مربوط بالـ input تحت. ولأنه ref هنديه لـ [[useFetch]] فيراقبه.`,
+            R`[[await useFetch]] بيجيب [[/api/products]] على السيرفر وقت الـ SSR، ويحط النتيجة في الـ payload جوه الـ HTML، فالمتصفح مش بيطلبها تاني. وبيرجّع refs: [[data]] (سمّيناه [[products]]) و [[status]] و [[error]]. والـ [[await]] بيخلي الصفحة متترسمش على السيرفر غير لما البيانات توصل.`,
+            R`[[query: { q }]] بيزوّد [[?q=...]] على الـ URL. ولأننا ادّيناه الـ ref نفسه (مش [[q.value]])، [[useFetch]] بيراقبه ويعيد الطلب من المتصفح كل ما [[q]] يتغير.`,
+            R`قفلة خيارات [[useFetch]].`,
+            R`قفلة الـ script بتاع الصفحة.`,
+            R`بداية الـ template بتاع صفحة المنتجات.`,
+            R`[[v-model="q"]] بيربط الكتابة بـ [[q]]: كل حرف بيغيّر [[q]]، فـ [[useFetch]] بيعمل طلب جديد. و [[placeholder]] نص باهت لحد ما تكتب (مش بديل عن [[<label>]]).`,
+            R`[[v-if]]: لو [[status]] لسه [[pending]] (الطلب شغال)، اعرض «بيحمّل...».`,
+            R`[[v-else-if]]: لو فيه [[error]]، اعرض رسالته بدل الـ list.`,
+            R`[[v-else]]: لا بيحمّل ولا فيه خطأ، يبقى اعرض الـ list. والتلاتة ([[v-if]] و [[v-else-if]] و [[v-else]]) لازم يبقوا عناصر ورا بعض على طول.`,
+            R`[[v-for]] بيعمل [[<li>]] لكل منتج، و [[:key="p.id"]] بيعرّف Vue كل صف، فلما الـ list تتغير مع البحث يحرّك الصفوف الصح بدل ما يعيد رسمها كلها.`,
+            R`[[NuxtLink]] لصفحة المنتج، و [[:to]] بـ template string بيعمل [[/products/1]] مثلًا. الـ [[:]] معناها إن القيمة JavaScript مش نص ثابت.`,
+            R`قفلة الـ [[<li>]] بتاع المنتج.`,
+            R`قفلة الـ [[<ul>]] بتاع الـ list.`,
+            R`قفلة الـ template بتاع الصفحة.`
           ],
           sol: R`[[?q=ما]] بيرجّع الماوس بس، و [[/api/products/9]] بيرجّع [[HTTP/1.1 404 Product not found]] و JSON فيه [[statusCode: 404]].
 
@@ -565,7 +565,7 @@ npm run generate`,
 |---|---|
 | [['/': { prerender: true }]] | الرئيسية HTML جاهز وقت الـ build |
 | [['/products/**': { swr: 60 }]] | المنتجات تترسم وتتخزن ٦٠ ثانية. [[**]] = أي حاجة تحت |
-| [['/admin/**': { ssr: false }]] | الأدمن SPA |
+| [['/admin/**': { ssr: false }]] | الأدمن SPA: السيرفر بيبعت صفحة فاضية والمتصفح بيرسم |
 
 و [[app.head.htmlAttrs]]: [[lang="ar"]] و [[dir="rtl"]] على [[<html>]] في كل الصفحات.
 
@@ -702,21 +702,21 @@ export function useVisitsSafe() {
 | SPA | [[ssr: false]] | فاضي | لأ للصفحة دي | لوحات تحكم |
 | static | [[nuxt generate]] | كل الصفحات | لأ، بس مفيش API | موقع محتواه ثابت |`,
           lines: [
-            "إعدادات Nuxt.",
-            "نسخة سلوك Nuxt/Nitro اللي المشروع متثبّت عليها.",
-            "DevTools في التطوير.",
-            "إعدادات الـ app...",
-            R`[[lang]] و [[dir]] على [[<html>]].`,
-            "قفلة.",
-            "طريقة الرسم لكل route...",
-            "الرئيسية: HTML وقت الـ build.",
-            "المنتجات: تتخزن ٦٠ ثانية.",
-            "الأدمن: SPA.",
+            R`[[nuxt.config.ts]] بيصدّر الإعدادات، و [[defineNuxtConfig]] بيدّيك types و autocomplete لكل خيار (ومتاح من غير import).`,
+            R`[[compatibilityDate]] بيثبّت سلوك Nuxt و Nitro على التاريخ ده: لما تحدّث النسخة، السلوك الجديد اللي اتغير بعد التاريخ ده مش بيتطبق عليك لحد ما تغيّر التاريخ بإيدك، فالتحديث ميكسرش حاجة فجأة.`,
+            R`[[devtools]] بيفعّل Nuxt DevTools في [[npm run dev]] بس (Shift + Alt + D في المتصفح): بتشوف منه الصفحات والـ components والـ payload. ومش بيدخل الـ build.`,
+            R`[[app]] إعدادات الـ app كله، وهنا بنستخدم [[head]] بتاعه: حاجات بتتحط في [[<head>]] و [[<html>]] لكل الصفحات.`,
+            R`[[htmlAttrs]] بيحط [[lang="ar"]] و [[dir="rtl"]] على [[<html>]] في كل صفحة وقت الـ SSR، فالـ HTML بيوصل من السيرفر عربي ومن اليمين قبل أي JS.`,
+            R`قفلة [[app]].`,
+            R`[[routeRules]] بيختار طريقة الرسم لكل مسار: المفتاح pattern للـ URL، والقيمة القاعدة. أي مسار مش مكتوب هنا بيبقى SSR عادي مع كل طلب.`,
+            R`الرئيسية [[prerender]]: الـ build بيزورها مرة ويحفظها [[index.html]] جاهز، والسيرفر بيرجّعها كملف من غير ما يرسم حاجة. أي تغيير في بياناتها محتاج build جديد.`,
+            R`[[**]] = أي حاجة تحت [[/products]]. و [[swr: 60]] بيرسم الصفحة مرة ويخزّنها ٦٠ ثانية ويرد بـ [[cache-control: s-maxage=60, stale-while-revalidate]]، وبعد الوقت ده بيرد بالقديم ويحدّث في الخلفية. متستخدمهوش لصفحة فيها بيانات يوزر.`,
+            R`[[ssr: false]] على الأدمن: السيرفر بيرجّع [[<div id="__nuxt"></div>]] فاضي والمتصفح هو اللي بيرسم (SPA). مناسب لصفحات ورا login مش محتاجة SEO.`,
             R`قفلة [[routeRules]].`,
-            "قفلة الإعدادات.",
-            "build للإنتاج.",
-            "شغّل السيرفر.",
-            "أو: موقع static كامل."
+            R`قفلة [[defineNuxtConfig]].`,
+            R`[[npm run build]] بيعمل الـ build وبيطبّق [[routeRules]]: هنا بيعمل prerender للرئيسية وقتها.`,
+            R`شغّل سيرفر الإنتاج، فتقدر تطلب الصفحات بـ curl وتشوف الفرق بين التلات قواعد في الـ headers والـ HTML.`,
+            R`[[npm run generate]] بديل للسطرين اللي فوق: بيعمل HTML لكل صفحة يلاقيها في [[.output/public]] ترفعه على أي استضافة static، بس [[server/api]] مش بيبقى موجود بعدها.`
           ],
           sol: R`[[/products/2]] فيه [[cache-control: s-maxage=60, stale-while-revalidate]]، و [[/admin]] بيرجّع [[<div id="__nuxt"></div>]] فاضي.
 
@@ -779,10 +779,10 @@ useSeoMeta({
 
 | الخيار | التاج اللي بيطلع |
 |---|---|
-| [[title]] | [[<title>]] |
-| [[description]] | [[<meta name="description">]] |
-| [[ogTitle]] | [[<meta property="og:title">]] |
-| [[ogImage]] | [[<meta property="og:image">]] |
+| [[title]] | [[<title>]]: العنوان في التاب وفي نتايج جوجل |
+| [[description]] | [[<meta name="description">]]: الوصف تحت العنوان في جوجل |
+| [[ogTitle]] | [[<meta property="og:title">]]: عنوان كارت اللينك في السوشيال |
+| [[ogImage]] | [[<meta property="og:image">]]: صورة كارت اللينك، بـ URL كامل |
 
 والقيم دوال [[() => ...]] عشان [[product]] ref ممكن يتغير. و [[?.]] و [[??]]: لو [[product.value]] لسه [[null]]، [[title]] يبقى «منتج».
 
@@ -833,31 +833,31 @@ curl -o /dev/null -w "%{http_code}" /products/99
 |---|---|
 | [[useSeoMeta({ title, description })]] | title و meta description |
 | [[ogTitle]] و [[ogImage]] و [[ogDescription]] | Open Graph للسوشيال |
-| [[twitterCard]] | كارت تويتر/X |
+| [[twitterCard]] | شكل كارت اللينك على تويتر/X ([[summary_large_image]] = صورة كبيرة) |
 | قيمة كدالة | بتتحدّث مع البيانات |
 | [[useHead({ link, htmlAttrs, titleTemplate })]] | أي حاجة تانية في الـ head |
 | [[app.head]] في [[nuxt.config]] | ثابت لكل الصفحات |
 | [[createError({ statusCode: 404 })]] | status حقيقي للصفحات الناقصة |`,
           lines: [
-            "script صفحة المنتج.",
-            "الـ route الحالي.",
-            "هات المنتج على السيرفر.",
-            "لو مش موجود...",
-            "الصفحة 404.",
+            R`script صفحة [[pages/products/[id].vue]]: صفحة منتج واحد، والـ id من الـ URL.`,
+            R`[[useRoute()]] (auto-import) بيرجّع الـ route الحالي، و [[route.params.id]] فيه الجزء اللي مكان الأقواس في اسم الملف: في [[/products/2]] بيبقى النص 2.`,
+            R`[[await useFetch]] بيجيب المنتج من الـ API على السيرفر قبل ما الصفحة تترسم، فالـ title والمحتوى يطلعوا في الـ HTML. و [[data: product]] إعادة تسمية، و [[error]] ref فيه الخطأ لو الـ API رجّعت 404.`,
+            R`[[error.value]] (في الـ script لازم [[.value]]): لو الـ API رجّعت خطأ، يبقى المنتج مش موجود.`,
+            R`[[throw createError]] بيوقف الصفحة ويرد بـ status 404 حقيقي، فجوجل ميفهرسش صفحة فاضية. و [[fatal: true]] بيعرض صفحة الخطأ الكاملة حتى لو الخطأ حصل في المتصفح. واستخدمنا [[message]] مش [[statusMessage]] لأن h3 بيطلّع warning للرسايل الطويلة في [[statusMessage]].`,
             R`قفلة [[if]].`,
-            "الـ meta...",
-            "العنوان من الاسم.",
-            "الوصف من الاسم والسعر.",
-            "عنوان السوشيال.",
-            "صورة السوشيال (URL كامل).",
+            R`[[useSeoMeta]] (auto-import) بيسجّل الـ title والـ meta tags للصفحة دي، وبيترسموا في [[<head>]] على السيرفر، فواتساب وفيسبوك وجوجل بيشوفوهم من غير JS.`,
+            R`[[title]] بيبقى [[<title>]]. القيمة دالة عشان تتحسب من [[product]] كل ما يتغير، و [[?.]] و [[??]] بيرجّعوا «منتج» لو [[product.value]] لسه [[null]] بدل ما يرمي error.`,
+            R`[[description]] بيبقى [[<meta name="description">]]، وده النص اللي جوجل بيعرضه تحت العنوان. بنبنيه من الاسم والسعر بـ template string.`,
+            R`[[ogTitle]] بيبقى [[<meta property="og:title">]]: العنوان اللي بيظهر في كارت اللينك لما حد يبعته على واتساب أو فيسبوك.`,
+            R`[[ogImage]] صورة كارت اللينك. لازم URL كامل بـ [[https://]]، لأن المنصات مبتعرفش تكمّل مسار نسبي زي [[/og.png]].`,
             R`قفلة [[useSeoMeta]].`,
-            "قفلة الـ script.",
-            "بداية الـ template.",
-            "المنتج لو موجود.",
-            "الاسم.",
-            "السعر.",
-            "قفلة.",
-            "قفلة الـ template."
+            R`قفلة الـ script بتاع صفحة المنتج.`,
+            R`بداية الـ template بتاع صفحة المنتج.`,
+            R`[[v-if="product"]]: ارسم المنتج بس لو البيانات موجودة، عشان [[product.name]] ميرميش error لو [[product]] لسه [[null]].`,
+            R`اسم المنتج في [[<h1>]]. في الـ template [[product]] من غير [[.value]] لأن Vue بيفك الـ ref لوحده.`,
+            R`السعر وجنبه [[EGP]]، من نفس بيانات [[useFetch]].`,
+            R`قفلة الـ [[<article>]] بتاع المنتج.`,
+            R`قفلة الـ template بتاع صفحة المنتج.`
           ],
           sol: R`في الـ HTML: [[<title>ماوس</title>]] و [[<meta name="description" content="ماوس بسعر 350 جنيه">]] و [[og:title]] و [[og:image]]. و [[/products/9]] بيرجع [[404]]. وده شكل الإضافات:`,
           solCode: R`useSeoMeta({
@@ -912,11 +912,11 @@ CMD ["node", ".output/server/index.mjs"]`,
 | السطر | معناه |
 |---|---|
 | [[FROM node:22-slim AS build]] | image فيها Node 22 (slim = من غير أدوات زيادة)، واسم المرحلة [[build]] |
-| [[WORKDIR /app]] | اشتغل في [[/app]] |
+| [[WORKDIR /app]] | اعمل [[/app]] واشتغل جواه، فكل اللي بعده بيتنسخ ويتنفّذ هناك |
 | [[COPY package.json package-lock.json ./]] | ملفات الباكدجات بس الأول |
 | [[RUN npm ci]] | سطّب من الـ lock بالظبط |
 | [[COPY . .]] | باقي المشروع (ماعدا اللي في [[.dockerignore]]) |
-| [[RUN npm run build]] | [[.output/]] |
+| [[RUN npm run build]] | ابني نسخة الإنتاج في [[.output/]]: سيرفر كامل |
 
 و [[.dockerignore]]:
 
@@ -933,11 +933,11 @@ node_modules
 
 | السطر | معناه |
 |---|---|
-| [[FROM node:22-slim]] | image نضيفة |
+| [[FROM node:22-slim]] | image نضيفة من غير أي حاجة من المرحلة الأولى |
 | [[COPY --from=build /app/.output ./.output]] | الناتج بس من المرحلة الأولى |
 | [[ENV NODE_ENV=production PORT=3000]] | متغيرات البيئة. Nitro بيقرا [[PORT]] |
 | [[EXPOSE 3000]] | توثيق: الـ container بيسمع على 3000 |
-| [[USER node]] | مش root |
+| [[USER node]] | شغّل كيوزر عادي مش root، عشان أي ثغرة متبقاش admin |
 | [[CMD ["node", ".output/server/index.mjs"]]] | الأمر اللي بيشتغل |
 
 ---
@@ -995,25 +995,25 @@ docker run --rm --entrypoint sh vue-lesson-nuxtshop -c "du -sh /app/.output"
 | الحاجة | ليه |
 |---|---|
 | مرحلتين | الـ image الأخيرة فيها Node و [[.output]] بس |
-| [[COPY package*.json]] قبل [[COPY . .]] | cache للـ [[npm ci]] |
+| [[COPY package*.json]] قبل [[COPY . .]] | الـ [[npm ci]] ميتعادش لو الكود بس اللي اتغير |
 | [[.dockerignore]] | متنسخش [[node_modules]] بتاعة جهازك |
-| [[USER node]] | مش root |
+| [[USER node]] | شغّل كيوزر عادي مش root، عشان أي ثغرة متبقاش admin |
 | [[PORT]] | Nitro بيسمع عليه |
 | [[NITRO_PRESET]] | Vercel و Netlify و Cloudflare من غير Docker |`,
           lines: [
-            R`مرحلة البناء من Node 22 slim، اسمها [[build]].`,
-            R`اشتغل في [[/app]].`,
-            "انسخ ملفات الباكدجات الأول (cache).",
-            "سطّب من الـ lock بالظبط.",
-            "انسخ باقي المشروع.",
-            R`ابني [[.output]].`,
-            "مرحلة التشغيل: image نضيفة.",
-            R`اشتغل في [[/app]].`,
-            R`انسخ [[.output]] بس من مرحلة البناء.`,
-            "وضع الإنتاج والبورت.",
-            "توثيق البورت.",
-            "شغّل كيوزر عادي مش root.",
-            "شغّل السيرفر."
+            R`[[FROM node:22-slim]] بيبدأ من image فيها Node 22 على Debian صغير (slim = من غير أدوات زيادة). و [[AS build]] اسم للمرحلة دي، عشان المرحلة التانية تنسخ منها بالاسم.`,
+            R`[[WORKDIR /app]] بيعمل فولدر [[/app]] لو مش موجود ويخليه الفولدر الحالي، فكل [[COPY]] و [[RUN]] بعده بيشتغلوا جواه بدل ما يتبعتروا في [[/]].`,
+            R`بننسخ ملفات الباكدجات بس الأول. Docker بيعمل cache لكل طبقة، فلو غيّرت كود من غير ما تغيّر الملفين دول، الـ [[npm ci]] اللي بعده مش بيتعاد، وده بيوفّر دقايق في كل build.`,
+            R`[[npm ci]] بيسطّب النسخ اللي في [[package-lock.json]] بالظبط (ويقع لو الملفين مش متطابقين)، فالـ build هنا هو نفسه اللي على جهازك. والـ devDependencies بتتسطّب هنا لأن الـ build محتاج Nuxt و Vite.`,
+            R`[[COPY . .]] بينسخ باقي المشروع لـ [[/app]]، ماعدا اللي في [[.dockerignore]] ([[node_modules]] و [[.nuxt]] و [[.output]] بتوع جهازك).`,
+            R`[[npm run build]] بيطلّع [[.output/]] جوه الـ image: سيرفر Node كامل ومعاه الـ [[node_modules]] اللي محتاجها بس. ده الحاجة الوحيدة اللي هناخدها من المرحلة دي.`,
+            R`مرحلة تانية من image نضيفة: مفيش فيها source ولا [[node_modules]] بتاعة التطوير ولا أدوات build. كل اللي اتعمل في المرحلة الأولى بيترمي، ماعدا اللي هننسخه صريح.`,
+            R`[[WORKDIR /app]] تاني، لأن كل مرحلة بتبدأ من الصفر ومش بتورث حاجة من اللي قبلها.`,
+            R`[[--from=build]] بينسخ من المرحلة اللي اسمها [[build]] مش من جهازك، و [[.output]] بس. فالـ image الأخيرة فيها حوالي 3 MB من التطبيق فوق الـ Node.`,
+            R`[[NODE_ENV=production]] بيخلي المكتبات تشتغل بوضع الإنتاج، و [[PORT=3000]] البورت اللي Nitro بيسمع عليه. متحطش secrets هنا: [[ENV]] بيتسجّل جوه الـ image، ابعتها وقت التشغيل بـ [[docker run -e]].`,
+            R`[[EXPOSE 3000]] توثيق إن الـ container بيسمع على 3000، بس مش بيفتح البورت. اللي بيفتحه فعلًا [[-p]] في [[docker run]].`,
+            R`[[USER node]] (يوزر موجود جاهز في images الـ node) بيشغّل السيرفر من غير صلاحيات root، فلو حد لقى ثغرة في التطبيق ميبقاش admin على الـ container.`,
+            R`[[CMD]] الأمر اللي بيشتغل لما الـ container يقوم. مكتوب كـ JSON array (exec form) فـ Node بيشتغل مباشرة من غير shell في النص، وبيستقبل إشارة الإيقاف من [[docker stop]] بنفسه.`
           ],
           sol: R`الصفحة بتفتح من الـ container، والـ image حوالي 330 MB (أغلبها Node نفسه: [[node:22-slim]] لوحدها 329 MB)، و [[.output]] جواها حوالي 3 MB. ولو عايز أصغر، فيه [[node:22-alpine]] (أصغر بكتير، بس musl بدل glibc فبعض الباكدجات الـ native ممكن تتعبك).`
         }

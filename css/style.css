@@ -245,6 +245,8 @@ table{border-collapse:collapse;width:100%;min-width:760px;font-size:14px}
 th,td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top;text-align:start}
 th{font-size:14px;background:color-mix(in srgb,var(--ink) 4%,transparent)}
 th.b{color:var(--a-bash)} th.p{color:var(--a-ps)} th.c{color:var(--a-cmd)}
+/* the command cells are LTR and left-aligned, so their headers sit at the same edge */
+th.b,th.p,th.c{direction:ltr;text-align:left}
 td.m{font-family:var(--mono);direction:ltr;text-align:left;font-size:13px;white-space:nowrap}
 tr:last-child td{border-bottom:0}
 

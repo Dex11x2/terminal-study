@@ -19,6 +19,8 @@ const CMP = [
     "Get-NetTCPConnection -LocalPort 3000 -State Listen",
     "netstat -ano | findstr :3000"
   ],
+  ["أنا أدمن؟", "id -u   (0 = root)", R`whoami /groups | Select-String "High Mandatory"`, R`whoami /groups | findstr /c:"High Mandatory"`],
+  ["افتح ترمنال أدمن", "sudo -i", "Start-Process pwsh -Verb RunAs", R`powershell -c "Start-Process cmd -Verb RunAs"`],
   ["متغير مؤقت", "export X=1", R`$env:X = "1"`, "set X=1"],
   ["طباعة متغير", "echo $X", "$env:X", "echo %X%"],
   ["مسح الشاشة", "clear", "cls", "cls"],

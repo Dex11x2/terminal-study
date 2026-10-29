@@ -74,8 +74,8 @@ const { name, price, currency = 'EGP', tags = [] } = defineProps<{
 | الحتة | معناها |
 |---|---|
 | [[defineProps<{ ... }>()]] | macro: الـ compiler بيقرا النوع ويعمل منه تعريف الـ props. مش محتاج import |
-| [[name: string]] | إجباري |
-| [[currency?: string]] | [[?]] = اختياري |
+| [[name: string]] | prop إجباري نوعه نص: لو الأب مبعتهوش [[vue-tsc]] بيدّي error، و Vue بيطبع warning في الـ console |
+| [[currency?: string]] | الـ [[?]] بتخليه اختياري: الأب ممكن ميبعتهوش، وساعتها قيمته [[undefined]] لو مفيش default |
 | [[tags?: string[]]] | array من النصوص، اختياري |
 | [[const { name, price, ... } =]] | destructuring (Vue 3.5): كل prop متغير، ولسه reactive |
 | [[currency = 'EGP']] | قيمة لو الأب مبعتهاش |
@@ -94,11 +94,11 @@ const { name, price, currency = 'EGP', tags = [] } = defineProps<{
 
 | الكتابة | اللي بيوصل |
 |---|---|
-| [[name="كيبورد"]] | string |
+| [[name="كيبورد"]] | النص [[كيبورد]] زي ما هو، لأن من غير [[:]] القيمة دايمًا string |
 | [[:price="price"]] | قيمة الـ ref (1500)، وبتتحدّث معاه |
 | [[:price="350"]] | رقم 350، عشان [[:]] |
-| [[currency="USD"]] | string |
-| [[:tags="['جديد', 'خصم']"]] | array |
+| [[currency="USD"]] | النص [[USD]]، وبيغطّي على القيمة الافتراضية [[EGP]] |
+| [[:tags="['جديد', 'خصم']"]] | array فيه نصين، لأن [[:]] بتخلي اللي بين علامات التنصيص كود JavaScript |
 
 ---
 
@@ -153,37 +153,37 @@ src/lab/Bad.vue(7,25): error TS2322: Type 'string' is not assignable to type 'nu
 | تكتب | معناها |
 |---|---|
 | [[defineProps<{ x: T }>()]] | الـ props بنوع TypeScript |
-| [[x?: T]] | اختياري |
+| [[x?: T]] | prop اختياري: الأب ممكن ميبعتهوش، وقيمته [[undefined]] لو مفيش default |
 | [[const { x = 1 } = defineProps...]] | destructuring بقيمة افتراضية، reactive (3.5+) |
 | [[:x="..."]] | أي قيمة مش نص |
-| [[watch(() => x, ...)]] | راقب prop |
+| [[watch(() => x, ...)]] | راقب prop اتعمله destructuring: لازم getter، لأن [[watch(x)]] بيبعت القيمة نفسها مش حاجة متراقبة |
 | [[withDefaults(...)]] | الشكل القديم للقيم الافتراضية |`,
           lines: [
-            "بداية الـ script بتاع الكارت.",
-            "destructuring للـ props بقيم افتراضية.",
-            "الاسم: نص إجباري.",
-            "السعر: رقم إجباري.",
-            "العملة: اختياري.",
-            "الـ tags: اختياري.",
-            "قفلة النوع والنداء.",
-            "قفلة الـ script.",
-            "بداية الـ template.",
-            "الكارت.",
-            "الاسم.",
-            "السعر بفواصل والعملة.",
-            "الـ tags لو فيه.",
-            "قفلة الكارت.",
-            "قفلة الـ template.",
-            "بداية الـ script بتاع الأب.",
-            R`استورد [[ref]].`,
-            "استورد الكارت.",
-            "سعر متغير.",
-            "قفلة الـ script.",
-            "بداية الـ template.",
-            R`كارت بسعر من ref، والعملة الافتراضية.`,
-            R`كارت تاني: رقم بـ [[:]]، وعملة، و array.`,
-            "زرار بيزوّد السعر.",
-            "قفلة الـ template."
+            R`بداية الـ script بتاع [[ProductCard.vue]]، الـ component الابن اللي بيستقبل البيانات من الأب.`,
+            R`[[defineProps]] بيعلن الـ props اللي الكارت بيقبلها، وهو macro: الـ compiler بيقراه وقت الـ build، فمش محتاج تعمله import. والـ destructuring هنا (من Vue 3.5) بيدّيك كل prop كمتغير وهو لسه reactive، لأن الـ compiler بيحوّل كل [[name]] لقراية من الـ props. و [[currency = 'EGP']] و [[tags = []]] قيم افتراضية لو الأب مبعتهمش.`,
+            R`[[name]] prop نوعه [[string]] ومن غير [[?]]، يعني إجباري: لو الأب مبعتهوش [[vue-tsc]] بيدّي error، وفي المتصفح Vue بيطبع warning [[Missing required prop]].`,
+            R`[[price]] prop إجباري نوعه [[number]]. لو الأب كتب [[price="100"]] من غير [[:]] هيبعت النص [[100]] مش الرقم، و TypeScript هيمسك الغلطة دي.`,
+            R`[[currency]] اختياري بسبب الـ [[?]]: الأب ممكن ميبعتهوش، وساعتها بياخد [[EGP]] من القيمة الافتراضية في سطر الـ destructuring.`,
+            R`[[tags]] array نصوص اختياري. القيمة الافتراضية (array فاضية) بتخلي [[tags.length]] تحت تشتغل من غير error حتى لو الأب مبعتش tags.`,
+            R`قفلة نوع الـ props، والأقواس [[()]] هي نداء [[defineProps]] نفسه. النوع اتكتب بين [[<>]] كـ TypeScript generic بدل ما يتبعت كـ argument.`,
+            R`قفلة الـ [[<script setup>]] بتاع الكارت، وبعده شكله.`,
+            R`بداية template الكارت: هنا بنعرض الـ props اللي جت من الأب.`,
+            R`[[<article>]] بيلف الكارت كله. ده الـ root element بتاع الـ component.`,
+            R`بيعرض اسم المنتج من الـ prop [[name]]، ومن غير [[props.]] قدامه لأننا عملناه destructuring.`,
+            R`[[toLocaleString('en')]] بيكتب الرقم بفواصل الآلاف ([[1,500]])، وبعده العملة. ولو الأب غيّر [[price]] الرقم هنا بيتحدّث لوحده، لأن الـ props reactive.`,
+            R`[[<small>]] بيترسم بس لو فيه tag واحد على الأقل: [[tags.length]] بـ 0 تبقى false فـ [[v-if]] مبيرسمهوش. و [[join('، ')]] بيحوّل الـ array لنص بفاصلة عربي بين كل tag والتاني.`,
+            R`قفلة الـ [[<article>]] اللي لاف الكارت كله.`,
+            R`قفلة template الكارت، وده آخر ملف [[ProductCard.vue]].`,
+            R`بداية الـ script بتاع [[App.vue]]، الأب اللي بيستخدم الكارت.`,
+            R`بيستورد [[ref]] عشان نعمل سعر بيتغير ونشوف إن الابن بيتحدّث معاه.`,
+            R`بيستورد الكارت. في [[<script setup>]] أي component بتعمله import بيبقى متاح في الـ template على طول باسمه ([[<ProductCard>]]) من غير تسجيل.`,
+            R`[[price]] ref بـ 1500. هيتبعت للكارت الأول، والزرار هيزوّده.`,
+            R`قفلة الـ [[<script setup>]] بتاع الأب.`,
+            R`بداية template الأب: هنا بنستخدم الكارت مرتين ببيانات مختلفة.`,
+            R`كارت أول: [[name]] من غير [[:]] فبيوصل نص ثابت، و [[:price="price"]] بيبعت قيمة الـ ref (1500) وبيتحدّث كل ما يتغير. ومبعتناش [[currency]] فهتبقى [[EGP]].`,
+            R`كارت تاني: [[:price="350"]] بالـ [[:]] عشان يوصل رقم مش نص، و [[currency="USD"]] نص عادي بيغطّي على الافتراضي، و [[:tags]] بيبعت array (من غير [[:]] كان هيوصل النص ده كله كـ string).`,
+            R`زرار بيزوّد [[price]] 100 كل ضغطة (من غير [[.value]] لأننا في الـ template)، فالكارت الأول يبقى [[1,600]] ثم [[1,700]]. ده بيثبت إن الأب بيغيّر والابن بيعرض، والابن نفسه ميكتبش في الـ prop.`,
+            R`قفلة template الأب، وده آخر ملف [[App.vue]].`
           ],
           sol: R`«زوّد» بيغيّر الكيبورد لـ [[1,600 EGP]] ثم [[1,700 EGP]]: الابن شايف التغيير.
 
@@ -339,46 +339,46 @@ error TS2322: Type '(id: string) => string' is not assignable to type '(id: numb
 | تكتب | معناها |
 |---|---|
 | [[defineEmits<{ x: [a: T] }>()]] | event اسمه x بيبعت T |
-| [[emit('x', value)]] | ابعته |
-| [[@x="handler"]] | الأب بيسمعه |
+| [[emit('x', value)]] | ابعت الـ event للأب ومعاه [[value]]، والابن مبيعرفش مين بيسمع ولا هيعمل إيه |
+| [[@x="handler"]] | الأب بيسمع الـ event، و [[handler]] بيتنادى بالـ value اللي الابن بعتها |
 | [[defineModel()]] | [[v-model]] على الـ component |
-| [[defineModel('qty')]] | [[v-model:qty]] |
+| [[defineModel('qty')]] | ref مربوط بـ [[v-model:qty]] عند الأب: تقرا منه القيمة، وتكتب فيه فيتبعت [[update:qty]] |
 | الكتابة في الـ model | بتبعت [[update:qty]] |`,
           lines: [
-            "بداية الـ script بتاع الصف.",
-            "الـ props: id واسم.",
-            R`ref مربوط بـ [[v-model:qty]] عند الأب.`,
-            "تعريف الـ events...",
-            R`[[remove]] بيبعت رقم.`,
-            "قفلة الـ events.",
-            "قفلة الـ script.",
-            "بداية الـ template.",
-            "الصف.",
-            "الاسم.",
-            "ناقص: بيكتب في الـ model، ومتعطّل لو 1.",
-            "الكمية.",
-            "زايد.",
-            R`امسح: ابعت [[remove]] بالـ id.`,
-            "قفلة الصف.",
-            "قفلة الـ template.",
-            "بداية الـ script بتاع الأب.",
-            R`استورد [[ref]].`,
-            "استورد الصف.",
-            "السلة.",
-            "كيبورد.",
-            "ماوس.",
-            "قفلة السلة.",
-            "دالة المسح...",
-            "array جديد من غير العنصر ده.",
-            "قفلة الدالة.",
-            "قفلة الـ script.",
-            "بداية الـ template.",
-            "الـ list.",
-            R`صف لكل منتج: props و [[key]]...`,
-            R`...و [[v-model:qty]] و [[@remove]].`,
-            "قفلة الـ list.",
-            "سطر بيبيّن الحالة.",
-            "قفلة الـ template."
+            R`بداية الـ script بتاع [[CartRow.vue]]، الصف اللي بيعرض منتج في السلة.`,
+            R`[[defineProps]] بيعلن prop رقم [[id]] و prop نص [[name]]. حفظناهم في [[props]] بدل destructuring، فبنقراهم تحت كـ [[props.name]] و [[props.id]]، والاتنين شغالين.`,
+            R`[[defineModel]] بيعمل ref مربوط بـ [[v-model:qty]] عند الأب: لما تقراه بتاخد قيمة الأب، ولما تكتب فيه ([[qty++]]) Vue بيبعت للأب event اسمه [[update:qty]] والأب يحدّث بياناته. و [[required: true]] بيقول إن الأب لازم يبعته، فنوعه [[number]] مش [[number | undefined]].`,
+            R`[[defineEmits]] بيعلن الـ events اللي الصف ده بيبعتها للأب، وبيرجّع دالة [[emit]] اللي بتبعت بيها. التعريف بالنوع بيخلي TypeScript يمسك أي event مكتوب اسمه غلط أو بيبعت نوع غلط.`,
+            R`event اسمه [[remove]] بيبعت argument واحد رقم اسمه [[id]]. الشكل ده (أسماء وأنواع بين قوسين مربعين) اسمه tuple: كل خانة فيه argument بترتيبه، والاسم [[id]] للتوضيح بس.`,
+            R`قفلة نوع الـ events ونداء [[defineEmits]].`,
+            R`قفلة الـ [[<script setup>]] بتاع الصف، وبعده شكله.`,
+            R`بداية template الصف: الاسم والكمية وزراير التحكم.`,
+            R`[[<li>]] هو الصف نفسه، لأن الأب هيحط الصفوف دي جوه [[<ul>]].`,
+            R`بيعرض اسم المنتج من [[props.name]]. في الـ template ينفع تكتب [[name]] بس كمان، بس [[props.]] بتوضّح إنه جاي من الأب.`,
+            R`زرار الناقص: [[qty--]] بيكتب في الـ model فيتبعت [[update:qty]] للأب. و [[:disabled="qty <= 1"]] بيعطّل الزرار لما الكمية 1، عشان متنزلش لـ 0 أو سالب.`,
+            R`بيعرض الكمية الحالية، وبتتحدّث لما الأب يحدّث [[item.qty]].`,
+            R`زرار الزايد: [[qty++]] بيبعت [[update:qty]] بالقيمة الجديدة للأب.`,
+            R`زرار المسح: الصف مبيمسحش نفسه، لأن السلة بتاعة الأب. فبيبعت [[remove]] ومعاه [[props.id]]، والأب هو اللي يقرر يمسح.`,
+            R`قفلة الـ [[<li>]] اللي فيه الصف كله.`,
+            R`قفلة template الصف، وده آخر ملف [[CartRow.vue]].`,
+            R`بداية الـ script بتاع [[App.vue]]، الأب اللي ماسك السلة.`,
+            R`بيستورد [[ref]] عشان السلة تبقى reactive، وأي تغيير فيها يحدّث الصفوف والسطر اللي تحت.`,
+            R`بيستورد [[CartRow]]، ويبقى متاح في الـ template على طول.`,
+            R`[[cart]] ref فيه array المنتجات. هو مصدر البيانات الوحيد: الصفوف بتعرض وتطلب تغيير، والأب هو اللي بيغيّر.`,
+            R`أول منتج: كيبورد بالـ [[id: 1]] والكمية 1، فزرار «-» بتاعه هيبدأ متعطّل.`,
+            R`تاني منتج: ماوس بالـ [[id: 2]] والكمية 2.`,
+            R`قفلة الـ array والـ [[ref]].`,
+            R`[[onRemove]] هتتنادى لما أي صف يبعت [[remove]]، والـ [[id]] اللي الصف بعته هو الـ argument.`,
+            R`[[filter]] بيعمل array جديد فيه كل المنتجات ما عدا اللي [[id]] بتاعها بيساوي اللي اتبعت، وبنحطه مكان القديم في [[cart.value]]. الـ [[v-for]] بيتحدّث والصف ده يختفي.`,
+            R`قفلة [[onRemove]].`,
+            R`قفلة الـ [[<script setup>]] بتاع الأب.`,
+            R`بداية template الأب: الصفوف وسطر بيبيّن حالة السلة.`,
+            R`[[<ul>]]: الـ list اللي الصفوف هتتحط جواها، لأن كل [[CartRow]] بيرسم [[<li>]].`,
+            R`[[v-for]] بيعمل [[CartRow]] لكل منتج، و [[:key="item.id"]] بيخلي كل صف مربوط بمنتجه لما واحد يتمسح. و [[:id]] و [[:name]] بيبعتوا الـ props بالـ [[:]] عشان يوصلوا قيم مش نصوص ثابتة. التاج مكمّل في السطر الجاي.`,
+            R`[[v-model:qty="item.qty"]] بيربط الـ [[defineModel('qty')]] اللي في الصف بـ [[item.qty]] هنا: الأب بيبعت القيمة، ولما الصف يكتب فيها بيتبعت [[update:qty]] و Vue يحدّث [[item.qty]] لوحده. و [[@remove="onRemove"]] بيسمع الـ event وبينادي الدالة بالـ id. والـ [[/>]] قفلة التاج.`,
+            R`قفلة الـ [[<ul>]] اللي فيه كل الصفوف.`,
+            R`سطر بيبيّن حالة السلة عند الأب، زي [[كيبورد x1 | ماوس x2]]: [[map]] بيعمل نص لكل منتج و [[join]] بيلزقهم. لما تضغط «+» في صف هتشوف الرقم هنا بيتغير، وده دليل إن البيانات اتغيرت عند الأب مش في الصف بس.`,
+            R`قفلة template الأب، وده آخر ملف [[App.vue]].`
           ],
           sol: R`بعد «+» مرتين: [[كيبورد x3 | ماوس x2]]، وبعد «امسح» على الماوس: [[كيبورد x3]]. ولاحظ إن «-» على الكيبورد كان متعطّل في الأول لأن الكمية 1.
 
@@ -524,7 +524,7 @@ defineSlots<{ item(props: { item: T; index: number }): any }>()
 
 | الحتة | ليه |
 |---|---|
-| [[<header>المستخدمين</header>]] | الأب بعت [[#header]] |
+| [[<header>المستخدمين</header>]] | الأب بعت [[#header]]، فـ [[$slots.header]] موجود والـ [[v-if]] رسم الـ [[<header>]] |
 | [[<ul>]] وجواها الصفوف | [[DataList]] راح للـ slot الافتراضي، والـ [[#item]] اتعرض لكل عنصر |
 | [[آخر تحديث 2026]] | [[year]] جه من الابن |
 | الكارت التاني: [[<!--v-if-->]] | مفيش header، فالـ [[<header>]] متعملش خالص |
@@ -537,50 +537,50 @@ defineSlots<{ item(props: { item: T; index: number }): any }>()
 | عند الابن | عند الأب |
 |---|---|
 | [[<slot />]] | أي محتوى بين التاجين |
-| [[<slot name="x" />]] | [[<template #x>...</template>]] |
-| [[<slot name="x" :a="1" />]] | [[<template #x="{ a }">]] |
+| [[<slot name="x" />]] | الأب بيملاه بـ [[<template #x>...</template>]]، و [[#x]] اختصار [[v-slot:x]] |
+| [[<slot name="x" :a="1" />]] | الأب بياخد البيانات بـ [[<template #x="{ a }">]] (scoped slot)، فيستخدم [[a]] جوه المحتوى بتاعه |
 | كلام جوه [[<slot>]] | fallback لو مبعتش |
 | [[$slots.x]] | هل الأب بعت x؟ |
 | [[generic="T"]] + [[defineSlots]] | أنواع للـ slot من البيانات |`,
           lines: [
-            "بداية template الكارت.",
-            "الكارت.",
-            R`[[<header>]] بس لو الأب بعت header.`,
-            "الـ slot الافتراضي، وفيه fallback.",
-            "footer بيبعت السنة، وفيه fallback.",
-            "قفلة الكارت.",
-            "قفلة الـ template.",
-            R`script بتاع الـ list: generic، و [[T]] لازم فيه [[id]].`,
-            "prop: array من T.",
-            R`نوع الـ slot [[item]].`,
-            "قفلة الـ script.",
-            "بداية الـ template.",
-            "الـ list.",
-            "صف لكل عنصر.",
-            "اعرض محتوى الأب، وابعتله العنصر ورقمه.",
-            "قفلة الصف.",
-            "قفلة الـ list.",
-            "قفلة الـ template.",
-            "بداية script الأب.",
-            "استورد الكارت.",
-            "استورد الـ list.",
-            "البيانات.",
-            "Sara أدمن.",
-            "Ali لأ.",
-            "قفلة الـ array.",
-            "قفلة الـ script.",
-            "بداية الـ template.",
-            "الكارت.",
-            "محتوى الـ header.",
-            "الـ list جوه الـ slot الافتراضي.",
-            "شكل كل صف، والبيانات من الابن.",
-            "الرقم والاسم، و admin لو أدمن.",
-            R`قفلة [[#item]].`,
-            "قفلة الـ list.",
-            R`الـ footer بياخد [[year]] من الكارت.`,
-            "قفلة الكارت.",
-            "كارت فاضي: هيعرض الـ fallback.",
-            "قفلة الـ template."
+            R`بداية template [[BaseCard.vue]]. الـ component ده مالوش script، لأنه بيرسم برواز بس والمحتوى كله جاي من الأب عن طريق الـ slots.`,
+            R`[[<section>]] بكلاس [[card]]: ده برواز الكارت اللي هيلف أي محتوى الأب يبعته.`,
+            R`[[<slot name="header" />]] مكان اسمه [[header]] الأب يقدر يملاه. و [[$slots.header]] بتقول هل الأب بعت محتوى للـ slot ده ولا لأ، فالـ [[v-if]] مبيرسمش [[<header>]] فاضي لو مفيش عنوان.`,
+            R`[[<slot>]] من غير [[name]] هو الـ slot الافتراضي: أي حاجة الأب يكتبها بين [[<BaseCard>]] و [[</BaseCard>]] برّه أي [[<template #...>]] بتتحط هنا. والكلام اللي جواه «مفيش محتوى» fallback بيظهر بس لو الأب مبعتش حاجة.`,
+            R`slot اسمه [[footer]] جوه [[<footer>]]، و [[:year="2026"]] بتبعت بيانات من الكارت للأب (ده اسمه scoped slot)، فالأب يقدر يستخدم [[year]] في المحتوى اللي بيبعته. و «© شركتنا» الـ fallback.`,
+            R`قفلة الـ [[<section>]] اللي هو برواز الكارت.`,
+            R`قفلة template الكارت، وده آخر ملف [[BaseCard.vue]].`,
+            R`بداية الـ script بتاع [[DataList.vue]]. [[generic="T extends { id: number }"]] بيخلي الـ component ده generic زي دالة TypeScript: [[T]] هو نوع العناصر اللي الأب هيبعتها، ولازم يكون فيه [[id]] رقم عشان نستخدمه كـ key. كده الـ list تشتغل مع يوزرز أو منتجات أو أي حاجة.`,
+            R`prop واحد [[items]] نوعه array من [[T]]. لما الأب يبعت [[users]]، TypeScript بيستنتج إن [[T]] هو شكل اليوزر.`,
+            R`[[defineSlots]] بيعرّف نوع الـ slots: slot اسمه [[item]] بيبعت للأب [[item]] من نوع [[T]] و [[index]] رقم. ده للـ type-check بس، ومن غيره الأب ميعرفش نوع [[item]] فيكتب [[item.email]] ومحدش يمسكه.`,
+            R`قفلة الـ script بتاع الـ list.`,
+            R`بداية template الـ list: هنا بنلف على العناصر ونسيب شكلها للأب.`,
+            R`[[<ul>]]: الـ list اللي هتلف الصفوف.`,
+            R`[[v-for]] بيعمل [[<li>]] لكل عنصر، و [[:key="item.id"]] من الـ [[id]] اللي الـ generic ضمن وجوده.`,
+            R`الـ list مبتعرفش شكل الصف، فبتسيبه للأب: [[<slot name="item">]] بيعرض المحتوى اللي الأب بعته لـ [[#item]]، وبيبعتله العنصر ورقمه كـ props للـ slot. كده نفس الـ list تتعرض بأشكال مختلفة.`,
+            R`قفلة الـ [[<li>]] اللي بيتكرر لكل عنصر.`,
+            R`قفلة الـ [[<ul>]] اللي فيه كل الصفوف.`,
+            R`قفلة template الـ list، وده آخر ملف [[DataList.vue]].`,
+            R`بداية الـ script بتاع [[App.vue]]، الأب اللي بيستخدم الاتنين.`,
+            R`بيستورد [[BaseCard]]، ويبقى متاح في الـ template على طول.`,
+            R`بيستورد [[DataList]]، ويبقى متاح في الـ template على طول.`,
+            R`[[users]] array عادي (مش ref لأنه مش هيتغير) فيه يوزرين. هيتبعت لـ [[DataList]] ومنه هيتعرف [[T]].`,
+            R`يوزر أول: [[Sara]] و [[admin: true]]، فهيظهر جنبها كلمة admin.`,
+            R`يوزر تاني: [[Ali]] مش أدمن، فالـ [[v-if]] مش هيرسم الكلمة.`,
+            R`قفلة الـ array.`,
+            R`قفلة الـ [[<script setup>]] بتاع الأب.`,
+            R`بداية template الأب: هنا بنملا الـ slots بتاعة الكارت والـ list.`,
+            R`أول كارت. كل اللي بين التاجين هيتوزّع على الـ slots بتاعته.`,
+            R`[[<template #header>]] بيبعت «المستخدمين» للـ slot اللي اسمه [[header]]. الـ [[#header]] اختصار [[v-slot:header]]، والـ [[<template>]] نفسه مش بيترسم كعنصر.`,
+            R`[[DataList]] مش جوه أي [[<template #...>]]، فبيروح للـ slot الافتراضي في الكارت. و [[:items="users"]] بيبعت الـ array.`,
+            R`[[#item="{ item, index }"]] بيملا slot [[item]] بتاع [[DataList]]، والـ destructuring بياخد [[item]] و [[index]] اللي الـ list بعتهم. المحتوى ده بيتكرر مرة لكل صف.`,
+            R`شكل الصف اللي الأب اختاره: [[index + 1]] عشان الترقيم يبدأ من 1، والاسم، و [[<b>admin</b>]] بس لو [[item.admin]] true. ولأن [[item]] نوعه معروف من الـ generic، كتابة خانة مش موجودة بتطلع error في [[vue-tsc]].`,
+            R`قفلة [[<template #item>]]: ده آخر شكل الصف.`,
+            R`قفلة [[DataList]]، وبكده خلص محتوى الـ slot الافتراضي.`,
+            R`بيملا slot [[footer]] وبياخد [[year]] اللي الكارت بعته بـ [[:year]]، فيعرض «آخر تحديث 2026» بدل الـ fallback.`,
+            R`قفلة الكارت الأول، بعد ما ملينا الـ slots الـ ٣.`,
+            R`كارت تاني من غير أي محتوى: مفيش header فـ [[v-if]] مبيرسمش [[<header>]]، والـ slot الافتراضي والـ footer بيعرضوا الـ fallback «مفيش محتوى» و «© شركتنا». ده بيبيّن فايدة الـ fallback.`,
+            R`قفلة template الأب، وده آخر ملف [[App.vue]].`
           ],
           sol: R`مع [[{{ item.email }}]]، [[vue-tsc]] بيقول: [[error TS2339: Property 'email' does not exist on type '{ id: number; name: string; admin: boolean; }']]. الـ [[generic]] عرف نوع العنصر من [[users]].
 
@@ -732,39 +732,39 @@ color after: rgb(220, 20, 60) | var: --475666b2-brand: crimson;
 | [[<style module>]] و [[$style.x]] | أسماء كلاسات فريدة |
 | [[main.css]] | الـ CSS العام |`,
           lines: [
-            "template الـ Badge.",
-            "span فيه نقطة والمحتوى من الأب.",
-            "قفلة الـ template.",
-            "CSS للـ Badge بس.",
-            "مسافة جوه الـ badge.",
-            "قفلة الـ style.",
-            "script الأب.",
-            R`استورد [[ref]].`,
-            "استورد الـ Badge.",
-            "لون reactive.",
-            "قفلة الـ script.",
-            "template الأب.",
-            "صندوق.",
-            "عنوان لونه من المتغير.",
-            "component ابن.",
-            R`كلاس من [[<style module>]].`,
-            "قفلة الصندوق.",
-            "زرار بيغيّر اللون.",
-            "قفلة الـ template.",
-            "CSS للأب بس.",
-            R`[[.title]] في الأب...`,
-            R`...لونها من [[brand]].`,
-            "قفلة القاعدة.",
-            R`[[:deep]]: امسك [[.dot]] جوه أي ابن جوه [[.box]].`,
-            "عرض inline-block...",
-            "وعرض 8px.",
-            "قفلة القاعدة.",
-            "قفلة الـ style.",
-            "CSS module: أسماء فريدة.",
-            R`[[.warn]]...`,
-            "بخط تقيل.",
-            "قفلة القاعدة.",
-            "قفلة الـ style."
+            R`بداية template [[Badge.vue]]، component صغير لعلامة زي «جديد».`,
+            R`[[<span>]] بكلاس [[badge]] جواه [[<i class="dot">]] فاضي هيتلوّن كنقطة، و [[<slot />]] اللي بيتحط فيه الكلام اللي الأب كتبه بين [[<Badge>]] و [[</Badge>]].`,
+            R`قفلة template الـ Badge، وبعده الـ CSS بتاعه.`,
+            R`بلوك CSS بـ [[scoped]]: Vite بيحط attribute زي [[data-v-xxxx]] على كل عناصر الـ Badge، ويضيف الـ attribute ده لـ selector [[.badge]] عشان القاعدة متمسكش أي [[.badge]] تاني في الموقع.`,
+            R`[[padding]] مسافة جوه الـ badge: 2px فوق وتحت و 8px يمين وشمال، عشان الكلام ميلزقش في الحافة.`,
+            R`قفلة [[<style>]] بتاع الـ Badge، وده آخر ملف [[Badge.vue]].`,
+            R`بداية الـ script بتاع [[App.vue]]، الأب اللي هيجرّب فيه ٣ حاجات: [[v-bind()]] في CSS، و [[:deep()]]، و CSS modules.`,
+            R`بيستورد [[ref]] عشان اللون يبقى reactive، فلما يتغير الـ CSS اللي بيستخدمه يتغير معاه.`,
+            R`بيستورد [[Badge]]، ويبقى متاح في الـ template على طول.`,
+            R`[[brand]] ref فيه لون Vue الأخضر. هيتقري جوه الـ CSS بـ [[v-bind(brand)]] تحت.`,
+            R`قفلة الـ [[<script setup>]] بتاع الأب.`,
+            R`بداية template الأب: العناصر اللي هنجرّب عليها الـ CSS.`,
+            R`[[<div class="box">]] بيلف العناصر. هنستخدم [[.box]] في الـ CSS عشان نوصل لعنصر جوه الـ Badge.`,
+            R`[[<p class="title">]] لونه هييجي من [[brand]] عن طريق قاعدة [[.title]] في الـ CSS، فلما تغيّر [[brand]] لونه يتغير من غير ما تلمس الـ template.`,
+            R`[[<Badge>]] component ابن، و «جديد» هيتحط في الـ [[<slot />]] بتاعه. عناصره الداخلية (زي [[.dot]]) عليها hash الـ Badge بس، مش hash الأب.`,
+            R`[[$style]] object بيعمله [[<style module>]] اللي تحت، فيه اسم الكلاس الحقيقي بعد ما اتغير لاسم فريد زي [[_warn_1a2b]]. بنحطه بـ [[:class]] لأنه قيمة JavaScript، ومش هنقدر نكتب [[class="warn"]] لأن الكلاس ده مش موجود بالاسم ده.`,
+            R`قفلة الـ [[<div class="box">]] اللي فيه العنوان والـ Badge والتحذير.`,
+            R`زرار بيغيّر [[brand]] لـ [[crimson]] (أحمر). أول ما تضغط لون العنوان يتغير، لأن Vue بيحدّث CSS variable مربوط بـ [[brand]].`,
+            R`قفلة template الأب، وبعده بلوكات الـ CSS.`,
+            R`بلوك CSS scoped للأب: القواعد دي بتمسك عناصر [[App.vue]] بس.`,
+            R`قاعدة للـ [[.title]] اللي في template الأب.`,
+            R`[[v-bind(brand)]] بيقرا ref من الـ script جوه الـ CSS. Vue بيحوّله لـ CSS variable (زي [[var(--xxxx-brand)]]) ويحط قيمته inline على عناصر الـ component، فلما [[brand]] يتغير Vue يغيّر الـ variable والمتصفح يعيد التلوين.`,
+            R`قفلة قاعدة [[.title]].`,
+            R`[[:deep(.dot)]] بيخلي الـ selector يعدّي لجوه component ابن: بيتحوّل لـ [[.box[data-v-الأب] .dot]]، فالـ hash على [[.box]] بس و [[.dot]] جوه الـ Badge يتمسك. من غير [[:deep]] الـ hash بتاع الأب بيتحط على [[.dot]] نفسه، و [[.dot]] مش عليه الـ hash ده، فالقاعدة متمسكش حاجة.`,
+            R`[[inline-block]] بيخلي الـ [[<i>]] الفاضي ياخد عرض وطول، لأن العناصر الـ inline بتتجاهل [[width]].`,
+            R`[[width]] عرض النقطة 8px، وده بيشتغل بس عشان [[inline-block]] اللي فوق.`,
+            R`قفلة قاعدة [[:deep]].`,
+            R`قفلة بلوك الـ CSS الـ scoped.`,
+            R`بلوك [[<style module>]]: طريقة تانية لعزل الـ CSS. بدل الـ attribute، كل كلاس بيتغير اسمه لاسم فريد، والأسماء الحقيقية بتوصل للـ template في [[$style]].`,
+            R`كلاس [[warn]] اللي بنستخدمه بـ [[$style.warn]] في الـ template.`,
+            R`[[font-weight: bold]] بيخلي الكلام تقيل، فالتحذير يبان.`,
+            R`قفلة قاعدة [[.warn]].`,
+            R`قفلة [[<style module>]]، وده آخر ملف [[App.vue]].`
           ],
           sol: R`الـ [[<span class="badge">]] عليه اتنين: [[data-v]] بتاع Badge و [[data-v]] بتاع الأب (لأنه الـ root بتاع الابن). والـ [[<i class="dot">]] عليه واحد بس: بتاع Badge.
 
@@ -899,50 +899,50 @@ onMounted(() => console.log('mounted, count =', count.value))
 
 | Options API | Composition API |
 |---|---|
-| [[data()]] | [[ref]] و [[reactive]] |
-| [[computed: {}]] | [[computed()]] |
-| [[watch: {}]] | [[watch()]] |
-| [[methods: {}]] | دوال |
-| [[created()]] | كود في [[setup]] |
-| [[mounted()]] | [[onMounted()]] |
-| [[beforeUnmount()]] ([[beforeDestroy]] في Vue 2) | [[onBeforeUnmount()]] |
-| [[this.$emit]] | [[emit]] |
-| [[this.$refs.x]] | [[useTemplateRef('x')]] |
+| [[data()]] | [[ref]] و [[reactive]]: كل قيمة متغير لوحده بدل object واحد بترجّعه |
+| [[computed: {}]] | [[computed()]]: دالة بترجّع ref للقراية، بدل خانة في object |
+| [[watch: {}]] | [[watch()]]: بتديله الـ ref أو getter نفسه، بدل اسم الخانة كنص |
+| [[methods: {}]] | دوال عادية في [[<script setup>]]، والـ template بيشوفها على طول من غير [[this]] |
+| [[created()]] | كود مكتوب على طول في [[setup]]، لأنه بيتنفّذ في نفس الوقت تقريبًا |
+| [[mounted()]] | [[onMounted()]]: نفس التوقيت بعد أول رسم، وتقدر تناديها أكتر من مرة |
+| [[beforeUnmount()]] ([[beforeDestroy]] في Vue 2) | [[onBeforeUnmount()]]: قبل ما الـ component يتشال، والعناصر لسه موجودة |
+| [[this.$emit]] | [[emit]] اللي راجع من [[defineEmits]]، وبأنواع TypeScript للـ events |
+| [[this.$refs.x]] | [[useTemplateRef('x')]]: ref بيتملى بالعنصر بعد الرسم، بدل object فيه كل الـ refs |
 | mixins | composables |`,
           lines: [
-            R`script عادي من غير [[setup]].`,
-            R`[[defineComponent]] عشان TypeScript يفهم [[this]].`,
-            "الـ component object.",
-            "prop رقم افتراضيه 0.",
-            "الـ events.",
-            R`[[data]]: دالة بترجّع الـ state.`,
-            R`[[count]] من الـ prop، و [[history]] array أرقام.`,
+            R`[[<script>]] عادي من غير [[setup]]: ده شكل Options API، والـ component بيتعرّف كـ object واحد بيتعمله [[export default]]. متاح في Vue 3 عادي وكتير من المشاريع القديمة مكتوبة بيه.`,
+            R`[[defineComponent]] تقريبًا مبتعملش حاجة وقت التشغيل، وظيفتها لـ TypeScript: بتلف الـ object عشان يستنتج نوع [[this]] جواه وأنواع [[count]] و [[double]] والـ props. ودي الطريقة اللي docs Vue بتقولها لـ Options API مع TypeScript.`,
+            R`[[export default]] بيصدّر الـ component object، وجواه كل جزء في «option» باسمه: props و data و computed و watch و methods و hooks.`,
+            R`[[props]] بتتعرّف هنا كـ object: prop اسمه [[start]] نوعه [[Number]] (constructor بتاع JavaScript مش نوع TypeScript)، وقيمته الافتراضية 0 لو الأب مبعتهوش.`,
+            R`[[emits]] بيعلن إن الـ component بيبعت event اسمه [[change]]. من غيره Vue بيعتبر أي [[@change]] من الأب listener عادي على الـ root element، و TypeScript ميعرفش الـ event.`,
+            R`[[data]] لازم تبقى دالة بترجّع object جديد، عشان كل نسخة من الـ component تاخد state بتاعها. لو كانت object واحد كل النسخ هتشارك نفس البيانات.`,
+            R`الـ state: [[count]] بيبدأ من الـ prop [[this.start]] (الـ props متاحة جوه [[data]])، و [[history]] array فاضية. الـ [[as]] بتقول لـ TypeScript إنها array أرقام، وإلا هيستنتج إنها array من [[never]] ومش هيسمح تضيف فيها. كل الخانات دي reactive لوحدها ومتاحة بـ [[this.count]].`,
             R`قفلة [[data]].`,
-            "القيم المحسوبة.",
-            "الضعف...",
-            R`[[this.count]].`,
+            R`[[computed]] object فيه القيم المحسوبة، كل واحدة دالة اسمها هو اسم القيمة. Vue بيعمل لها cache زي [[computed()]] بالظبط.`,
+            R`[[double]] قيمة محسوبة. الـ [[: number]] نوع الرجوع، و docs Vue بتنصح تكتبه للـ computed في Options API، لأن الـ computed بيقرا [[this]] و [[this]] نفسه نوعه معتمد على الـ computed، فـ TypeScript ساعات ميعرفش يستنتج.`,
+            R`بترجّع [[count]] مضروب في 2، و [[this.count]] هي الطريقة الوحيدة للوصول للـ state هنا. Vue بيعيد الحساب بس لما [[count]] يتغير.`,
             R`قفلة [[double]].`,
             R`قفلة [[computed]].`,
-            "الـ watchers.",
-            R`لما [[count]] يتغير...`,
-            "سجّل القديم.",
-            "وابعت event.",
-            "قفلة الـ watcher.",
+            R`[[watch]] object: كل مفتاح اسم خانة بتتراقب، وقيمته الدالة اللي تشتغل لما تتغير.`,
+            R`watcher على [[count]]: بياخد القيمة الجديدة والقديمة زي [[watch()]] في Composition API، ومبيشتغلش غير لما [[count]] يتغير فعلًا.`,
+            R`بيضيف القيمة القديمة لـ [[history]]. [[push]] على array في [[data]] بيحدّث الشاشة عادي، لأنه reactive.`,
+            R`[[this.$emit]] بيبعت [[change]] للأب ومعاه القيمة الجديدة، فالأب يقدر يكتب [[@change="..."]] ويعرف كل تغيير.`,
+            R`قفلة الـ watcher بتاع [[count]].`,
             R`قفلة [[watch]].`,
-            "الدوال.",
-            R`[[inc]]...`,
-            R`زوّد [[count]].`,
+            R`[[methods]] فيه الدوال اللي الـ template والـ hooks بيستخدموها، وكلها شايفة [[this]].`,
+            R`دالة [[inc]] اللي الزرار بيناديها. أوعى تكتبها arrow function ([[inc: () => ...]]) لأن [[this]] جواها مش هيبقى الـ component.`,
+            R`بيزوّد [[count]] بواحد، وده بيشغّل 3 حاجات: الشاشة تتحدّث، و [[double]] يتحسب، والـ watcher يشتغل.`,
             R`قفلة [[inc]].`,
             R`قفلة [[methods]].`,
-            "بعد الرسم...",
-            "اطبع.",
+            R`[[mounted]] hook بيتنادى بعد أول رسم للـ component، نفس [[onMounted()]] في Composition API.`,
+            R`بيطبع [[mounted, count = 0]] (أو قيمة [[start]] لو الأب بعتها)، عشان تشوف إن [[this.count]] متاح في الـ hook.`,
             R`قفلة [[mounted]].`,
-            "قفلة الـ object.",
-            "قفلة الـ script.",
-            "بداية الـ template.",
-            R`زرار بينادي [[inc]] ويعرض العدد وضعفه.`,
-            "القيم القديمة.",
-            "قفلة الـ template."
+            R`قفلة الـ object وقفلة [[defineComponent(]].`,
+            R`قفلة الـ [[<script>]]، وبعده الـ template اللي بيستخدم الـ options دي.`,
+            R`بداية الـ template، وهو زي ما هو في Composition API.`,
+            R`زرار بينادي [[inc]] من [[methods]]، وبيعرض [[count]] و [[double]] من غير [[this]]: الـ template بيشوف كل خانات [[data]] و [[computed]] و [[methods]] بأسمائها على طول.`,
+            R`بيعرض [[history]]: القيم القديمة اللي الـ watcher سجّلها، فبعد ٣ ضغطات تبقى 0 و 1 و 2.`,
+            R`قفلة الـ [[<template>]]، وده آخر الـ component.`
           ],
           sol: R`بعد ٣ ضغطات: [[3 × 2 = 6]] و [[history]] فيها [[0, 1, 2]]. وده نفس الـ component بـ [[<script setup>]]: [[data]] بقت [[ref]]، و [[computed]] و [[watch]] دوال، و [[methods]] دوال عادية، و [[this.$emit]] بقت [[emit]].`,
           solCode: R`<script setup lang="ts">

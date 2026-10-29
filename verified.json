@@ -17865,214 +17865,214 @@
   "on": "docker node:22-slim tsc error; JSON validated; docs: tasks UI"
  },
  "vue|Nuxt": {
-  "hash": "57dca3fdfd84",
-  "date": "2026-10-27",
-  "on": "Win11: create-nuxt 4.0.1, Nuxt 4.6.3 dev/build/node .output; docs: other presets"
+  "hash": "90b2a8996a95",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|Options API": {
-  "hash": "85d2ac6a600a",
-  "date": "2026-10-27",
-  "on": "Win11: headless Chrome (both versions)"
+  "hash": "30c416229304",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|Pinia": {
-  "hash": "fbf54c301211",
-  "date": "2026-10-27",
-  "on": "Win11: Pinia 4.1 in headless Chrome + Node"
+  "hash": "f39d29f8c673",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|SFC": {
-  "hash": "38c0f51f7c45",
-  "date": "2026-10-27",
-  "on": "Win11: Vite 8 dev + headless Chrome (playwright-core); compiler-sfc in Node"
+  "hash": "4d840d4587dc",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|SSR و SPA و static": {
-  "hash": "7af34cf164aa",
-  "date": "2026-10-27",
-  "on": "Win11: nuxt build/generate + curl + serve + headless Chrome"
+  "hash": "4e59ab53647f",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|Svelte و SvelteKit": {
-  "hash": "73efe8ca459c",
-  "date": "2026-10-27",
-  "on": "Win11: Vite vue-ts/svelte-ts builds + headless Chrome; sv create + SvelteKit preview; Vue 3.6.0-rc.13 vapor build"
+  "hash": "1d9b41ad5c74",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|Teleport و Transition": {
-  "hash": "8f54d058f5c7",
-  "date": "2026-10-27",
-  "on": "Win11: headless Chrome"
+  "hash": "5ab6541aaa26",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|VeeValidate + zod": {
-  "hash": "eb3558a125f6",
-  "date": "2026-10-27",
-  "on": "Win11: headless Chrome (vee-validate 4.15.1, zod 3.25.76)"
+  "hash": "df26e4a03a14",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|Vitest + Vue Test Utils": {
-  "hash": "8683b5cd608e",
-  "date": "2026-10-27",
-  "on": "Win11: Vitest 4.1.11 + @vue/test-utils 2.5.1 + @pinia/testing 2.0.2 (exact example file)"
+  "hash": "274d8c5b164f",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|Vue Router": {
-  "hash": "478a1a75184c",
-  "date": "2026-10-27",
-  "on": "Win11: Vue Router 5.4 + headless Chrome"
+  "hash": "26ddd93198b1",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|Vue ولا React؟": {
-  "hash": "bc46205129d6",
-  "date": "2026-10-27",
-  "on": "Win11: Vite builds (Vue 3.5.44, React 19.3.1) + preview + headless Chrome"
+  "hash": "8eab242b3e65",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|a11y": {
-  "hash": "a956cebe1c18",
-  "date": "2026-10-27",
-  "on": "Win11: headless Chrome + axe-core 4.14"
+  "hash": "98181299a295",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|beforeEach": {
-  "hash": "6fa1fb2bc782",
-  "date": "2026-10-27",
-  "on": "Win11: headless Chrome + vite build chunks"
+  "hash": "4c8fb2bf3e85",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|composables": {
-  "hash": "d4b5c827e5d7",
-  "date": "2026-10-27",
-  "on": "Win11: headless Chrome (setOffline)"
+  "hash": "d9b7a0089d0d",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|computed": {
-  "hash": "1b30d136d8b8",
-  "date": "2026-10-27",
-  "on": "Win11: Node 24 + vue 3.5.44"
+  "hash": "970eeebd1325",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|computed ولا watch؟": {
-  "hash": "72185adb44b1",
-  "date": "2026-10-27",
-  "on": "Win11: Node 24 + vue 3.5.44"
+  "hash": "722be3a6dfd2",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|custom directives": {
-  "hash": "aab4852c2b0d",
-  "date": "2026-10-27",
-  "on": "Win11: headless Chrome + vue-tsc"
+  "hash": "80c78a97dcef",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|defineAsyncComponent و الـ bundle": {
-  "hash": "00b686cbf00e",
-  "date": "2026-10-27",
-  "on": "Win11: vite build + preview + headless Chrome; docs: visualizer, Nuxt Lazy prefix"
+  "hash": "c4841b797861",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|defineEmits و defineModel": {
-  "hash": "3a95b230ee03",
-  "date": "2026-10-27",
-  "on": "Win11: headless Chrome + vue-tsc + Vitest"
+  "hash": "400e048affa5",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|defineProps": {
-  "hash": "c2dae9d688b7",
-  "date": "2026-10-27",
-  "on": "Win11: headless Chrome + vue-tsc 3.3.13"
+  "hash": "b0c1f68eb06f",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|deploy": {
-  "hash": "4201aca90957",
-  "date": "2026-10-27",
-  "on": "Docker node:22-slim multi-stage build + run + curl; docs: NITRO_PRESET platforms"
+  "hash": "1b098e0e0c5d",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|loading و error": {
-  "hash": "bd398071e309",
-  "date": "2026-10-27",
-  "on": "Win11: headless Chrome + local Node mock API + Vite proxy"
+  "hash": "eb9df1d9cce9",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|npm create vue": {
-  "hash": "36cda376f4e4",
-  "date": "2026-10-27",
-  "on": "Win11: create-vue 3.24, npm run dev/build, vitest --run"
+  "hash": "4b2d2edc6888",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|onMounted": {
-  "hash": "08cf035e9a54",
-  "date": "2026-10-27",
-  "on": "Win11: Vite dev + headless Chrome (timer leak reproduced)"
+  "hash": "a961a7d01663",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|pages و layouts": {
-  "hash": "1ec4fcf80f2f",
-  "date": "2026-10-27",
-  "on": "Win11: nuxt dev + curl + headless Chrome; docs: optional/catch-all file names"
+  "hash": "cd5069ec1645",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|provide و inject": {
-  "hash": "c0c89774af12",
-  "date": "2026-10-27",
-  "on": "Win11: headless Chrome + Node (readonly)"
+  "hash": "ccafe818056b",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|reactivity بتشتغل إزاي؟": {
-  "hash": "0ad6d1890039",
-  "date": "2026-10-27",
-  "on": "Win11: Node 24 (mini implementation + computed solCode)"
+  "hash": "b3cef2b14501",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|ref و reactive": {
-  "hash": "d6bd8f5abcaa",
-  "date": "2026-10-27",
-  "on": "Win11: Node 24 + vue 3.5.44"
+  "hash": "2accbd066ab8",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|ref ولا reactive؟": {
-  "hash": "3fa198f37ee9",
-  "date": "2026-10-27",
-  "on": "Win11: Node 24 + vue 3.5.44"
+  "hash": "4cb58db44154",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|scoped CSS": {
-  "hash": "5801afb7aebd",
-  "date": "2026-10-27",
-  "on": "Win11: headless Chrome (DOM + injected CSS)"
+  "hash": "3e29af17e0df",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|slots": {
-  "hash": "5926b1d4ae41",
-  "date": "2026-10-27",
-  "on": "Win11: headless Chrome + vue-tsc"
+  "hash": "9b4fe701d1ec",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|useFetch": {
-  "hash": "3248a9ca8539",
-  "date": "2026-10-27",
-  "on": "Win11: nuxt dev + production build + curl + headless Chrome"
+  "hash": "e19ae3d28b88",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|useQuery": {
-  "hash": "1391e1094a4b",
-  "date": "2026-10-27",
-  "on": "Win11: @tanstack/vue-query 5.105 + mock API + headless Chrome"
+  "hash": "e75f23705f6f",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|useSeoMeta": {
-  "hash": "08768a84458b",
-  "date": "2026-10-27",
-  "on": "Win11: Nuxt production build + curl; Docker container log"
+  "hash": "5d991456b875",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|v-for و key": {
-  "hash": "e502826f36ff",
-  "date": "2026-10-27",
-  "on": "Win11: Vite dev + headless Chrome (key-by-index bug reproduced)"
+  "hash": "cac5a258e187",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|v-if و v-show": {
-  "hash": "7f5e1ce9bfed",
-  "date": "2026-10-27",
-  "on": "Win11: Vite dev + headless Chrome"
+  "hash": "3fac70c81c0e",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|v-memo و shallowRef": {
-  "hash": "91f4682e45a8",
-  "date": "2026-10-27",
-  "on": "Win11: headless Chrome dev + vite preview; Node for shallowRef"
+  "hash": "09b9ac48715a",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|v-model": {
-  "hash": "401e089cebf2",
-  "date": "2026-10-27",
-  "on": "Win11: Vite dev + headless Chrome"
+  "hash": "51f5718f2e01",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|v-on": {
-  "hash": "2372f1c9ef74",
-  "date": "2026-10-27",
-  "on": "Win11: Vite dev + headless Chrome"
+  "hash": "94ae8acd37d8",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|vue-i18n و RTL": {
-  "hash": "81a5a4ae6b90",
-  "date": "2026-10-27",
-  "on": "Win11: vue-i18n 11.4.16 in headless Chrome + Node"
+  "hash": "caf4745862d7",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|watch و watchEffect": {
-  "hash": "57f0f6008c6b",
-  "date": "2026-10-27",
-  "on": "Win11: Node 24 + vue 3.5.44"
+  "hash": "b7b43f01d87e",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "vue|{{ }} و v-bind": {
-  "hash": "e1af510304e2",
-  "date": "2026-10-27",
-  "on": "Win11: Vite dev + headless Chrome"
+  "hash": "a29750259ed4",
+  "date": "2026-10-29",
+  "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "web|CORS": {
   "hash": "52a963f04244",
