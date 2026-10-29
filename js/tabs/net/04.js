@@ -4,6 +4,13 @@ MORE("net", [
     t: R`IPv6`,
     l: 2,
     n: R`العناوين الطويلة، الـ link-local، الـ SLAAC، وإزاي IPv4 و IPv6 بيعيشوا مع بعض`,
+    time: R`حوالي ساعة`,
+    goal: [R`تقرا عنوان IPv6 وتعرف أنواعه.`, R`تعرف ليه مفيش NAT عادة، فالحماية كلها على الـ firewall.`],
+    use: { net: R`شبكات كتير بقى فيها IPv6 جنب IPv4، والتسريب بيحصل من الناحية اللي محدش فاكرها.`, work: R`«قفلت البورت» على IPv4 بس، وهو مفتوح على IPv6.` },
+    lab: R`docker run -it --rm --cap-add NET_ADMIN nettools sh
+# الصورة: قسم «مشروع: شبكة حقيقية جوه Docker»
+ip -6 -br addr`,
+    projects: [{ t: R`شوف IPv6 عندك`, what: R`[[ip -6 addr]] على جهازك (أو [[Get-NetIPAddress -AddressFamily IPv6]])، واعرف كل عنوان نوعه إيه. وفي Docker: [[ip -6 -br addr]] جوه كونتينر — هتلاقي [[::1]] بس، لأن IPv6 مقفول افتراضيًا.` }],
     items: [
       {
         cmd: "ipv6",
@@ -304,6 +311,11 @@ fc00::/7               3    13
     t: R`التقاط الترافيك وقراءته`,
     l: 2,
     n: R`tcpdump و tshark على ترافيكك إنت أو containers المعمل: تحفظ، وتقرا، وتطلّع اللي محتاجه`,
+    time: R`حوالي ساعة`,
+    goal: [R`تلتقط ترافيك بـ [[tcpdump]] وتقراه.`, R`تفلتر اللي محتاجه بس، وتحفظه وتفتحه بعدين.`],
+    use: { net: R`آخر خطوة في أي تشخيص: لما الأدوات التانية مش كفاية، الباكت نفسها بتقول الحقيقة.`, prog: R`تشوف الـ API بيبعت إيه فعلًا، مش اللي الكود فاكره.` },
+    lab: R`bash up.sh      # المعمل: قسم «مشروع: شبكة حقيقية جوه Docker»`,
+    projects: [{ t: R`التقط وحلّل`, what: R`في المعمل: [[tcpdump -w /tmp/c.pcap]] على الراوتر وقت تحميل ملف، وبعدين انسخه بـ [[docker cp]] وافتحه في Wireshark.` }],
     items: [
       {
         cmd: "pcap",
@@ -578,6 +590,11 @@ tshark -r tls.pcap -Y "tls.handshake.type == 1" -T fields -e ip.dst -e tls.hands
     t: R`WireGuard و MTU`,
     l: 3,
     n: R`VPN حقيقي بين اتنين containers: المفاتيح، و AllowedIPs، والنفق الكامل، والـ MTU بالأرقام`,
+    time: R`حوالي ساعة ونص`,
+    goal: [R`تفهم WireGuard: مفاتيح، و [[AllowedIPs]]، ونفق على UDP.`, R`تحسب الـ MTU الصح للنفق، وتعرف إيه اللي بيحصل لو غلط.`],
+    use: { net: R`أبسط VPN حديث، وموجود في الكيرنل.`, work: R`«الـ VPN بيتوصل والتحميلات بتقف» = MTU.` },
+    lab: R`bash up.sh      # المعمل: قسم «مشروع: شبكة حقيقية جوه Docker»`,
+    projects: [{ t: R`VPN فوق المعمل`, what: R`ركّب WireGuard بين [[pc-a]] و [[web-b]] فوق المعمل، وصغّر الـ MTU وشوف الـ black hole (درس «MTU والـ black hole»).` }],
     items: [
       {
         cmd: "wireguard",

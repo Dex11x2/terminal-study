@@ -30,6 +30,14 @@ Get-NetRoute -AddressFamily IPv4 | Sort-Object RouteMetric | Select-Object -Firs
       t: "إزاي البيانات بتوصل",
       l: 1,
       n: "قبل أي أداة شبكة: البيانات بتتقسّم وبتتغلّف وبتعدّي على طبقات لحد ما توصل وترجع",
+      time: R`حوالي ساعة`,
+      goal: [R`تعرف الطبقات وكل طبقة مسؤولة عن إيه، فتعرف المشكلة في أنهي طبقة.`, R`تفرّق بين IP (أنهي جهاز) والبورت (أنهي برنامج على الجهاز).`],
+      use: { net: R`كل أداة شبكة بتشتغل على طبقة. ولما تعرف الطبقات، بتعرف تختار الأداة.`, prog: R`«Port already in use» و«Connection refused» كلام عن البورت. و«No route to host» كلام عن IP.` },
+      lab: R`docker run -it --rm --cap-add NET_ADMIN nettools sh
+# الصورة: قسم «مشروع: شبكة حقيقية جوه Docker»
+ip -4 -br addr
+ss -tln`,
+      projects: [{ t: R`ارسم رحلة طلب`, what: R`افتح أي موقع، وارسم على ورقة الطبقات اللي الطلب عدّى عليها، ولكل طبقة أداة تشوفها بيها. وبعدين قارن بدرس «السؤال ← الأداة».` }],
       items: [
         {
           cmd: "الطبقات",
@@ -252,6 +260,13 @@ Connection to example.com (104.20.23.154) 23 port [tcp/telnet] succeeded!
     t: R`طبقة النقل: TCP و UDP`,
     l: 1,
     n: R`البورت بيوصّلك للبرنامج، بس إزاي البايتات بتعدّي؟ اختيارين: TCP بيضمن، و UDP بيسرّع`,
+    time: R`حوالي ساعة`,
+    goal: [R`تفهم الـ handshake بتاع TCP، وليه UDP مالوش.`, R`تعرف أنهي بروتوكول بيستخدم أنهي واحد وليه.`],
+    use: { net: R`DNS و VPN و الألعاب بيستخدموا UDP. والويب والـ SSH بيستخدموا TCP. والفرق بيبان لما حاجة تقع.`, cs: R`TCP بيضمن الترتيب والوصول على حساب السرعة. UDP بيسيب ده للبرنامج.` },
+    lab: R`docker run -it --rm --cap-add NET_ADMIN nettools sh
+# الصورة: قسم «مشروع: شبكة حقيقية جوه Docker»
+nc -zv -w 2 example.com 443`,
+    projects: [{ t: R`شوف الـ handshake`, what: R`في المعمل: [[tcpdump]] على الراوتر وقت [[curl]]، ولاقي [[S]] و [[S.]] و [[.]] — وبعدين نفس الحاجة لبورت مقفول ولاقي [[R.]] (درس «اقرا الفشل»).` }],
     items: [
         {
           cmd: "tcp",
@@ -577,6 +592,14 @@ LocalAddress                             LocalPort
     t: R`DNS والرحلة الكاملة`,
     l: 1,
     n: R`الأسماء بتتحوّل لـ IP، وبعدين كل اللي اتعلمناه بيشتغل مع بعض في طلب واحد`,
+    time: R`حوالي ساعة`,
+    goal: [R`تتبع اسم من أول ما تكتبه لحد ما يبقى IP.`, R`تفرّق بين اللي البرنامج شايفه ([[getent]]) واللي DNS بيقوله ([[dig]]).`],
+    use: { net: R`نص مشاكل «الموقع مش بيفتح» DNS.`, work: R`«شغال عندي ومش عند العميل» — كاش DNS، أو سطر في hosts، أو resolver مختلف.` },
+    lab: R`docker run -it --rm --cap-add NET_ADMIN nettools sh
+# الصورة: قسم «مشروع: شبكة حقيقية جوه Docker»
+dig +short example.com
+getent hosts example.com`,
+    projects: [{ t: R`الاسم اللي مالوش IP`, what: R`في المعمل: [[getent hosts web-b]] من [[pc-a]] بيفشل مع إن الـ IP بيوصل. اعرف ليه، وصلّحها بـ [[--add-host]] أو بشبكة مشتركة.` }],
     items: [
         {
           cmd: "dns",

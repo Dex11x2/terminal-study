@@ -525,7 +525,8 @@
 **الترتيب:** المواقع والشبكات الأول لأنهم طلبك الأساسي، وبعدهم اللغات، وبعدهم الباقي. العلامة `[x]` معناها إن كل الوحدات فيها الحقول، وفيه «بنفسك»، وقسم مواقف من التشغيل، ومشروع. والدروس القديمة اللي شرحها مفيهوش ناتج حقيقي بتتعمل على مراحل، ونسبتها في عمود «٪اتشغّل».
 
 - [x] **cmd** (٢٩ أكتوبر): `cmd/15.js` «مطبّات CMD: اللي بيحصل فعلًا» (٩ دروس، كلهم اتشغّلوا)، وحقول الوحدة لكل الأقسام الـ ١٦ القديمة. فاضل: ٨٩ درس قديم شرحهم من غير ناتج حقيقي.
-- [ ] net · nginx · vps · sshc · sec · web · css · react · next · api · apis
+- [x] **net** (٢٩ أكتوبر): `net/05.js` قسمين — «مشروع: شبكة حقيقية جوه Docker» (٥ دروس: شبكتين وراوتر، asymmetric routing، NAT، port forwarding وثغرته، MTU والـ black hole) و«توصل للإجابة بنفسك في الشبكات» (درسين: اقرا الفشل، السؤال ← الأداة). وحقول الوحدة لكل الأقسام الـ ١٣ القديمة. **مفتوح: اسم NetPilot موجود ١٤٨ مرة في net/01-04 و re/01 (اتبنى قبل قاعدة «من غير بيانات حقيقية») — مستني قرار صاحب المشروع.**
+- [ ] nginx · vps · sshc · sec · web · css · react · next · api · apis
 - [ ] pg · data · mongo · cloud · gha · diag · quality
 - [ ] bash · ps · git · docker · os · wsl · zsh · files · vscode · start (bash و ps و git و docker فيهم أجزاء من المعيار، وناقصهم حقول الوحدات للأقسام القديمة)
 - [ ] js · ts · node · python · pyapi · pydata
@@ -539,6 +540,17 @@
 - **`fsutil 8dot3name query` محتاج Admin** (`Error 5`).
 - **`cmd //c file.bat` من Git Bash مبيلاقيش الملف.** شغّل batch من PowerShell بـ `cmd /c "<مسار كامل>"`.
 - **الـ service worker بيعرض نسخة قديمة في Playwright** حتى مع `-c-1`: امسح `caches` واعمل `unregister` وبعدين reload.
+
+**اكتشافات من دفعة net (معمل `netlab2/` في scratchpad: `up.sh` و `down.sh`):**
+- **`docker network create --internal`** بيضيف `DOCKER-INTERNAL ! -d <subnet> -i br-… -j DROP`: أي باكت داخلة الـ bridge ووجهتها بره الـ subnet بتترمي، حتى لو رايحة لراوتر على نفس الشبكة. مينفعش لمعمل توجيه.
+- **من غير `enable_ip_masquerade=false`** Docker بيعمل MASQUERADE للباكتات المعدّية الـ bridge (على Docker Desktop، br_netfilter شغال): الـ DNAT وصل لـ pc-a من `10.10.1.1` واترمى `RST`.
+- **asymmetric routing**: من غير firewall شغّال؛ مع `--ctstate NEW` بيقع (`SYN_SENT [UNREPLIED]`)؛ مع قاعدة من غير حالة بيعدّي.
+- **قاعدة FORWARD بعد DNAT من غير `--ctstate DNAT`** بتفتح البورت الأصلي للكل (اتجرّب).
+- **كاش الـ PMTU** (`cache expires 594sec mtu 1400`) بيبوّظ تجربة الـ black hole لو عملت ping الأول، و `ip route flush cache` جوه الكونتينر `Read-only file system` — اعمل المعمل من جديد.
+- **curl 8.14** بيطلّع `Could not connect to server` لـ refused و REJECT و host-unreachable مع بعض؛ `nc` و Python errno بيفرّقوا.
+- **Docker DNS** بيرد بأسماء الكونتينرات على نفس الشبكة بس: `getent hosts web-b` من pc-a `exit=2` والـ IP بيوصل.
+- **busybox `date +%s%N`** مش بيدعم `%N` — استخدم Python `time.monotonic()` للتوقيت جوه alpine.
+- اتمسح: الكونتينرات التلاتة، و `lan-a` و `lan-b`، وصورة `nettools`.
 
 ### ٤. تمارين بتتصحح لوحدها في تابات أكتر
 
