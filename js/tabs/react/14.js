@@ -211,14 +211,14 @@ src/i/l6.tsx:5:43: error react-hooks(exhaustive-deps): React Hook useEffect has 
 - الحل الأنضف هنا الـ updater، لأنه مش محتاج يقرا القيمة.
 - تسكيت [[exhaustive-deps]] بيخبّي الـ bug مش بيصلّحه.`,
           lines: [
-            "effect بيشتغل مرة واحدة.",
-            "count هنا 0 للأبد (closure أول render)، فكل ثانية «خليها 1».",
-            "cleanup.",
-            "الـ deps فاضية، والـ linter كان هيحذّر.",
-            "الصح:",
-            "الـ updater بياخد آخر قيمة، فمش محتاج count خالص.",
-            "cleanup.",
-            "فاضية وصح هنا، لأن مفيش قيمة من الـ render جوه."
+            R`الـ effect ده هيشتغل مرة واحدة بعد أول render بس، لأن الـ deps تحت فاضية. والدالة اللي جواه شايلة (closure) قيم أول render.`,
+            R`كل ثانية [[setInterval]] بينادي الدالة دي. بس [[count]] اللي جواها هو اللي كان موجود في أول render (يعني 0) ومبيتحدّثش أبدًا، فكل مرة بتقول «خليها 0 + 1»: العداد بيوصل 1 ويقف هناك. ده الـ stale closure: دالة شايلة قيمة قديمة من render فات.`,
+            R`الـ cleanup: React بينادي [[clearInterval]] لما الـ component يتشال، فالـ interval ميفضلش شغال وينادي [[setCount]] على component مش موجود.`,
+            R`الـ deps فاضية، فالـ effect مش بيتعاد ومش بياخد [[count]] الجديد. الـ linter ([[react-hooks/exhaustive-deps]]) كان هيحذّرك إن [[count]] ناقصة. ولو ضفتها هيشتغل صح، بس الـ interval هيتلغي ويتعمل من جديد كل ثانية.`,
+            R`الحل الصح: نفس الـ effect، بس من غير ما الدالة اللي جواه تحتاج [[count]] خالص.`,
+            R`[[c => c + 1]] اسمها updater function: React بيناديها بآخر قيمة حقيقية للـ state وقت التحديث، مش القيمة اللي الـ closure شايلها. فالعداد بيزيد كل ثانية رغم إن الـ effect اتعمل مرة واحدة.`,
+            R`نفس الـ cleanup: بيوقف الـ interval لما الـ component يتشال (وفي Strict Mode بيتنادى بين التشغيلتين وقت التطوير).`,
+            R`الـ deps فاضية وده صح هنا، لأن الدالة جوه الـ effect مبتقراش أي قيمة من الـ render، فمفيش حاجة تبقى قديمة. والـ linter مش هيشتكي.`,
           ],
           sol: R`الأول بيعرض 1 ويقف: كل ثانية بيحط [[0 + 1]]. التاني بيعد 1، 2، 3. تسكيت الـ linter على الأول كان هيشيل التحذير بس والـ bug يفضل، لأن المشكلة إن الـ effect بيقرا قيمة من الـ render ومش معلن عنها. الإجابة في الانترفيو: «الـ closure بتاع أول render، والحل الـ updater لأنه مش محتاج يقرا القيمة».`
         },
@@ -325,13 +325,13 @@ render 2 0 0
 - [[count + 1]] مرتين = 1، والـ updater بس هو اللي بيبني على اللي قبله، فالنتيجة 2.
 - من React 18 ده في كل مكان، حتى [[setTimeout]] و promises.`,
           lines: [
-            "handler واحد.",
-            "«خليها count + 1»، و count هنا 0.",
-            "نفس الكلام: لسه 0 + 1.",
-            "updater: آخر قيمة في الطابور + 1.",
-            "لسه القيمة القديمة: التحديث مستني آخر الـ handler.",
-            "قفلة.",
-            "من React 18: الاتنين في render واحد حتى جوه setTimeout."
+            R`event handler واحد (زي [[onClick]]) فيه كذا تحديث state، عشان نشوف React بيتعامل معاهم إزاي: كلهم بيتجمّعوا في render واحد بعد ما الـ handler يخلص، مش render مع كل [[setCount]].`,
+            R`بيقول لـ React «خلي count تبقى count + 1». و [[count]] هنا قيمة الـ render الحالي (لو 0 يبقى «خليها 1»)، ومش بيتغير جوه الـ handler مهما ناديت [[setCount]].`,
+            R`نفس الطلب بالظبط: لسه [[count]] بـ 0، فده «خليها 1» تاني مش 2. ده سبب إن تكرار [[setCount(count + 1)]] مبيزوّدش مرتين.`,
+            R`updater function: React بيحطها في الطابور ويناديها بنتيجة اللي قبلها، فبتاخد 1 وترجّع 2. النتيجة النهائية بعد الـ render الواحد 2، مش 3 ولا 1.`,
+            R`بيطبع القيمة القديمة (0)، لأن [[setCount]] مبيغيّرش المتغير فورًا: بيطلب render جديد، والقيمة الجديدة هتبان في الـ render الجاي بس.`,
+            R`قفلة الـ handler. هنا بس React بيعمل render واحد بكل التحديثات اللي اتجمعت.`,
+            R`من React 18 (مع [[createRoot]]) الـ batching شغال في أي حتة: جوه [[setTimeout]] و promises و native events كمان، فـ [[setA]] و [[setB]] بيعملوا render واحد. قبل كده كان بيتجمّع جوه React event handlers بس. ولو محتاج الـ DOM يتحدّث فورًا بين تحديثين في حالة نادرة، فيه [[flushSync]].`,
           ],
           sol: R`Render واحد، والقيمة النهائية 2 (مش 3)، والـ console بيطبع 0. (ده نفس مثال درس useState في المستوى الأول.) في Strict Mode هتشوف «render» مرتين، بس ده نفس الـ render متنادي مرتين للكشف، مش تلاتة.`
         },
@@ -529,11 +529,11 @@ store: coupon input:   6
 - الـ store بالـ selector بيعيد رسم اللي اتأثر بس.
 - الـ URL مكان state كمان، وناس كتير بتنساه.`,
           lines: [
-            "بيانات سيرفر: React Query.",
-            "حاجة قليلة التغيير وكل التطبيق محتاجها: context.",
-            "client state مشتركة بتتغير كتير: store بـ selector.",
-            "state محلية: جوه الـ component.",
-            "حاجة المستخدم يشاركها: الـ URL."
+            R`بيانات جاية من السيرفر (المنتجات) مكانها React Query مش state ولا context: هو اللي بيكيّش، ويعيد الطلب لما البيانات تقدم، ويدّيك [[isPending]] و [[error]]. و [[productQueries.list(filters)]] بترجّع الـ key والـ queryFn جاهزين من مكان واحد.`,
+            R`الـ theme حاجة قليلة التغيير وكل التطبيق محتاجها، فـ context مناسب. لما تتغير كل اللي بيقرا الـ context بيترسم تاني، وده مقبول لأنها بتتغير نادرًا.`,
+            R`client state مشتركة بتتغير كتير (السلة): store زي Zustand بـ selector. الـ [[s => s.items.length]] بيخلي الـ component يترسم تاني بس لو العدد اتغير، مش مع أي تغيير في الـ store؛ و context مبيعرفش يعمل كده.`,
+            R`state محلية (القايمة مفتوحة ولا لأ) مكانها جوه الـ component بـ [[useState]]. محدش تاني محتاجها، فمفيش داعي تطلّعها لـ store أو context.`,
+            R`حاجة المستخدم ممكن يشاركها أو يرجع لها (فلتر، صفحة، تاب) مكانها الـ URL بـ [[useSearchParams]]، عشان تفضل بعد refresh وتتبعت كلينك.`,
           ],
           sol: R`جدول كويس بيطلع فيه غالبًا حاجة من دول: بيانات API محفوظة في useState أو store (لازم تروح React Query)، أو فلاتر في state بتضيع مع الـ refresh (لازم تروح الـ URL)، أو state في App محدش بيستخدمها غير component واحد تحت (لازم تنزل له)، أو context واحد كبير فيه حاجات بتتغير بسرعات مختلفة (يتقسم). لو ملقتش ولا حاجة، يا إما التطبيق صغير يا إما بص تاني.`
         },
@@ -545,7 +545,7 @@ store: coupon input:   6
 const html = renderToString(<App url={req.url} />)
 res.send($__bt<div id="root">$__{html}</div><script src="/client.js"></script>$__bt)
 // client
-hydrateRoot(document.getElementById('root')!, <App url={location.pathname} />)
+hydrateRoot(document.getElementById('root')!, <App url={location.pathname + location.search} />)
 // SPA: createRoot(document.getElementById('root')!).render(<App />)`,
           try: R`افتح موقع Next.js ومشروع Vite، واعمل View Source على الاتنين: فين المحتوى؟ وبعدين في Next، اقفل JavaScript من DevTools (Command menu > Disable JavaScript) واعمل refresh: إيه اللي شغال وإيه اللي لأ؟`,
           flag: "script",
@@ -596,11 +596,11 @@ res.send($__bt<div id="root">$__{html}</div><script src="/client.js"></script>$_
 
 ~~~text المثال
 // client
-hydrateRoot(document.getElementById('root')!, <App url={location.pathname} />)
+hydrateRoot(document.getElementById('root')!, <App url={location.pathname + location.search} />)
 ~~~
 
 - [[document.getElementById('root')!]]: الـ div اللي فيه الـ HTML الجاهز. [[!]] بتقول لـ TypeScript «مش null».
-- [[location.pathname]]: نفس الـ path اللي السيرفر شافه، عشان الناتج يطلع **نفس** الـ HTML.
+- [[location.pathname + location.search]]: نفس اللي السيرفر شافه في [[req.url]] (الـ path ومعاه الـ query، زي [[/orders?page=2]])، عشان الناتج يطلع **نفس** الـ HTML. لو بعتنا [[location.pathname]] بس، المتصفح هيرسم [[Page /orders]] والسيرفر رسم [[Page /orders?page=2]]: جربناها بـ [[renderToString]] و [[hydrateRoot]] في jsdom، وطلع hydration error و [[same <button> node: false]]، ومع [[+ location.search]] مفيش error والزرار نفس العنصر.
 - [[hydrateRoot]] بترسم الـ components في الذاكرة، وبدل ما تعمل DOM جديد بتمشي على الـ DOM الموجود وتربط فيه الـ events. ده الـ hydration.
 
 جربنا: دوسنا الزرار قبل الـ hydration، وبعدين عملنا hydration، ودوسنا تاني:
@@ -650,9 +650,9 @@ React لاقت الناتج مختلف، فرمت الـ HTML ورسمت الج�
 | شرط | السيرفر والمتصفح يطلّعوا نفس الناتج | مفيش |
 | من غير JS | المحتوى ظاهر واللينكات شغالة | صفحة بيضا |`,
           lines: [
-            "على السيرفر: ارسم التطبيق HTML.",
-            "ابعته جوه الصفحة ومعاه الـ JS.",
-            "في المتصفح: نفس الـ App، وربط الـ events بالـ HTML الموجود. (في SPA بدلها createRoot بيرسم من الصفر.)"
+            R`على السيرفر: [[renderToString]] بيشغّل الـ components ويطلّع HTML جاهز كنص. بنبعتله [[req.url]] عشان يرسم الصفحة اللي اتطلبت. المستخدم بيشوف المحتوى قبل ما الـ JS ينزل، بس الزراير لسه مش شغالة. (الـ effects مبتشتغلش على السيرفر.)`,
+            R`بيبعت HTML الصفحة وجواه الـ HTML اللي اترسم، ومعاه [[<script>]] بتاع الـ client اللي هيشغّل React في المتصفح. والـ id لازم يبقى [[root]] لأن ده اللي الـ client هيدوّر عليه.`,
+            R`في المتصفح: [[hydrateRoot]] بيرسم نفس الـ App ويمشي على الـ HTML الموجود بدل ما يبنيه من الأول، ويربط الـ events بالعناصر اللي موجودة. لازم أول render في المتصفح يطلع نفس HTML السيرفر، وإلا React بيطلّع hydration error؛ عشان كده بنبعت [[location.pathname + location.search]]، وده نفس [[req.url]] اللي السيرفر رسم بيه (الـ path والـ query). لو بعتنا [[pathname]] بس والـ URL فيه [[?page=2]]، النص هيختلف و React يرمي الـ HTML ويرسم من الأول. وفي SPA من غير SSR بتستخدم [[createRoot]] اللي بيرسم من الصفر.`,
           ],
           sol: R`View Source في Next: المحتوى كله موجود كـ HTML. في Vite: [[<div id="root"></div>]] فاضي وملفات JS بس. من غير JavaScript: صفحة Next بتظهر بالمحتوى واللينكات العادية شغالة (تنقل كامل)، بس أي زرار بيعتمد على onClick مش شغال (إلا الفورمات اللي بـ Server Actions، بتتبعت كفورم عادي). وموقع Vite صفحة بيضا.`
         },
@@ -663,11 +663,13 @@ React لاقت الناتج مختلف، فرمت الـ HTML ورسمت الج�
           example: R`function Tooltip({ anchor, children }: { anchor: DOMRect; children: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null)
   const [top, setTop] = useState(anchor.bottom)
+  const { top: anchorTop, bottom: anchorBottom, left } = anchor
   useLayoutEffect(() => {
     const height = ref.current!.getBoundingClientRect().height
-    if (anchor.bottom + height > window.innerHeight) setTop(anchor.top - height)
-  }, [anchor])
-  return <div ref={ref} style={{ position: 'fixed', top, left: anchor.left }}>{children}</div>
+    const fitsBelow = anchorBottom + height <= window.innerHeight
+    setTop(fitsBelow ? anchorBottom : anchorTop - height)
+  }, [anchorTop, anchorBottom])
+  return <div ref={ref} style={{ position: 'fixed', top, left }}>{children}</div>
 }`,
           try: R`حط الـ Tooltip ده قريب من آخر الشاشة، وغيّر [[useLayoutEffect]] لـ [[useEffect]]، واعمل CPU throttling 6x: هتلاقي الـ tooltip بيظهر تحت لحظة وبعدين ينط فوق.`,
           flag: "script",
@@ -675,7 +677,7 @@ React لاقت الناتج مختلف، فرمت الـ HTML ورسمت الج�
             why: "بيختبر إنك فاهم دورة render ثم commit ثم paint، وإن الأداة الأقوى مش دايمًا الأحسن.",
             how: R`الترتيب: render (حساب الـ JSX)، و commit (تعديل الـ DOM)، و useLayoutEffect (sync، والمتصفح لسه مرسمش)، و paint، و useEffect. أي setState جوه useLayoutEffect بيعمل render تاني sync قبل الـ paint، فالمستخدم بيشوف النتيجة النهائية بس. ومكتبات الـ positioning (Floating UI) بتستخدمه. وفي SSR بيطبع warning زمان (React 18) لأنه مبيشتغلش على السيرفر، و [[useInsertionEffect]] نوع تالت لمكتبات CSS-in-JS بس.`,
             when: R`«ليه الـ tooltip بيومض؟»، و «ترتيب الـ effects إيه؟»، و «useLayoutEffect في Next.js بيعمل إيه؟».`,
-            mistakes: R`«useLayoutEffect أسرع فاستخدمه دايمًا» (هو بيوقف الرسم). وجلب بيانات جواه. ونسيان إنه مش بيشتغل على السيرفر.`
+            mistakes: R`«useLayoutEffect أسرع فاستخدمه دايمًا» (هو بيوقف الرسم). وجلب بيانات جواه. ونسيان إنه مش بيشتغل على السيرفر. وتحط object زي [[DOMRect]] في الـ deps، فالـ effect يتعاد مع كل render لأن الأب بيبعت object جديد؛ حط الأرقام نفسها. وتصحح المكان في اتجاه واحد بس ([[if (...) setTop(...)]])، فلو العنصر اتحرك الـ tooltip يفضل في المكان القديم.`
           },
           teach: R`## الفكرة: نقيس قبل ما المستخدم يشوف
 
@@ -691,35 +693,39 @@ React لاقت الناتج مختلف، فرمت الـ HTML ورسمت الج�
 function Tooltip({ anchor, children }: { anchor: DOMRect; children: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null)
   const [top, setTop] = useState(anchor.bottom)
+  const { top: anchorTop, bottom: anchorBottom, left } = anchor
 ~~~
 
 - [[anchor: DOMRect]]: مكان العنصر اللي بيشاور عليه، من [[getBoundingClientRect()]]: فيه [[top]] و [[bottom]] و [[left]] بالبكسل من أول الشاشة.
 - [[ref]]: عشان نوصل لـ div الـ tooltip نفسه ونقيسه (درس useRef).
-- [[top]]: المكان الرأسي، ومبدئيًا [[anchor.bottom]] يعني تحت العنصر على طول.
+- [[top]]: المكان الرأسي، ومبدئيًا [[anchor.bottom]] يعني تحت العنصر على طول. الـ [[useState]] بيقرا القيمة دي أول render بس، فالـ effect تحت هو اللي بيحسب المكان الصح كل مرة.
+- [[const { top: anchorTop, bottom: anchorBottom, left } = anchor]]: بنطلّع الأرقام من الـ [[DOMRect]] في متغيرات (و [[top: anchorTop]] بيغيّر الاسم عشان ميتلخبطش مع الـ state [[top]]). ليه؟ عشان نحط **أرقام** في الـ deps مش الـ object: الأب غالبًا بينادي [[getBoundingClientRect()]] في كل render، وده بيرجّع object جديد كل مرة حتى لو العنصر مكانه زي ما هو، فلو الـ deps فيها [[anchor]] نفسه كان الـ effect هيتعاد مع كل render. الأرقام بتتقارن بقيمتها، فالـ effect بيتعاد بس لو العنصر اتحرك فعلًا.
 
 ## ٢. القياس
 
 ~~~text المثال
   useLayoutEffect(() => {
     const height = ref.current!.getBoundingClientRect().height
-    if (anchor.bottom + height > window.innerHeight) setTop(anchor.top - height)
-  }, [anchor])
+    const fitsBelow = anchorBottom + height <= window.innerHeight
+    setTop(fitsBelow ? anchorBottom : anchorTop - height)
+  }, [anchorTop, anchorBottom])
 ~~~
 
 - [[ref.current!]]: الـ div، و [[!]] لأننا متأكدين إنه اترسم (الـ effect بيشتغل بعد تعديل الـ DOM).
 - [[.height]]: ارتفاع الـ tooltip الحقيقي بعد ما اترسم بالنص بتاعه.
 - [[window.innerHeight]]: ارتفاع الشاشة الظاهرة.
-- الشرط: لو تحت العنصر + ارتفاع الـ tooltip أكبر من الشاشة، حطه فوق: [[anchor.top - height]].
-- [[[anchor]]]: اتعاد لو العنصر اتحرك.
+- [[fitsBelow]]: هل تحت العنصر + ارتفاع الـ tooltip لسه جوه الشاشة؟
+- [[setTop(...)]]: لو فيه مكان تحت حطه تحت ([[anchorBottom]])، غير كده فوق ([[anchorTop - height]]). بنحدد المكان **في الحالتين** كل مرة: لو كتبنا [[setTop]] للحالة اللي فوق بس، والعنصر اتحرك بعد كده لمكان فيه مساحة تحت، الـ tooltip هيفضل في المكان القديم. ولو القيمة الجديدة هي نفس القديمة، React مبيعملش render تاني.
+- الـ deps فيها [[anchorTop]] و [[anchorBottom]]: الـ effect بيتعاد لما العنصر يتحرك لفوق أو لتحت بس.
 
 ## ٣. الرسم
 
 ~~~text المثال
-  return <div ref={ref} style={{ position: 'fixed', top, left: anchor.left }}>{children}</div>
+  return <div ref={ref} style={{ position: 'fixed', top, left }}>{children}</div>
 }
 ~~~
 
-[[position: 'fixed']] يعني [[top]] و [[left]] محسوبين من الشاشة نفسها، زي أرقام [[DOMRect]] بالظبط. و [[top]] لوحدها اختصار [[top: top]].
+[[position: 'fixed']] يعني [[top]] و [[left]] محسوبين من الشاشة نفسها، زي أرقام [[DOMRect]] بالظبط. و [[top]] لوحدها اختصار [[top: top]] (الـ state)، و [[left]] اختصار [[left: left]] (اللي طلّعناه من [[anchor]]).
 
 ---
 
@@ -764,15 +770,17 @@ useLayoutEffect [497, 497, 497, ...]
 - قياس وتعديل مكان أو حجم = [[useLayoutEffect]]، فمفيش وميض.
 - أي حاجة تانية = [[useEffect]].`,
           lines: [
-            "tooltip بياخد مكان العنصر اللي بيشاور عليه.",
-            "ref عشان نقيس الـ tooltip نفسه.",
-            "مبدئيًا تحت العنصر.",
-            "قبل ما المتصفح يرسم:",
-            "قيس ارتفاع الـ tooltip.",
-            "لو هيخرج برا الشاشة، حطه فوق. الـ render ده بيحصل قبل الرسم، فمفيش وميض.",
-            "كل ما العنصر يتحرك.",
-            "الـ tooltip في مكانه.",
-            "قفلة."
+            R`tooltip بياخد [[anchor]]، وده مكان ومقاس العنصر اللي بيشاور عليه (نتيجة [[getBoundingClientRect()]])، و [[children]] المحتوى اللي جواه.`,
+            R`ref عشان نقيس ارتفاع الـ tooltip نفسه بعد ما يترسم في الـ DOM، لأن الارتفاع بيعتمد على المحتوى ومنقدرش نعرفه قبل الرسم.`,
+            R`مكان الـ tooltip الرأسي، وبيبدأ تحت العنصر مباشرة ([[anchor.bottom]]). الـ [[useState]] بيقرا القيمة دي أول render بس، فالـ effect تحت هو اللي بيحسب المكان الصح كل ما العنصر يتحرك.`,
+            R`بنطلّع الأرقام من الـ [[DOMRect]] في متغيرات ([[top: anchorTop]] بيغيّر الاسم عشان ميتلخبطش مع الـ state [[top]]). ليه؟ عشان نحط أرقام في الـ deps مش الـ object: الأب غالبًا بينادي [[getBoundingClientRect()]] في كل render وده بيرجّع object جديد كل مرة، فالـ effect كان هيتعاد مع كل render حتى لو العنصر مكانه زي ما هو.`,
+            R`[[useLayoutEffect]] بيشتغل بعد ما React يحدّث الـ DOM وقبل ما المتصفح يرسم الشاشة. فلو غيّرنا الـ state جواه، الـ render الجديد بيحصل قبل ما المستخدم يشوف أي حاجة. مع [[useEffect]] كان المستخدم هيشوف الـ tooltip تحت لحظة وبعدين ينط فوق (وميض).`,
+            R`بيقيس ارتفاع الـ tooltip الحقيقي. [[!]] بيقول لـ TypeScript إن [[current]] مش [[null]]، وده صح هنا لأن React بيربط الـ ref بالعنصر قبل ما الـ layout effect يشتغل.`,
+            R`هل فيه مكان تحت؟ لو طرف العنصر التحتاني + ارتفاع الـ tooltip لسه أقل من أو يساوي [[window.innerHeight]] (ارتفاع الجزء الظاهر من الشاشة)، يبقى الـ tooltip هيظهر كله تحت.`,
+            R`بنحدد المكان في الحالتين كل مرة: تحت العنصر لو فيه مكان، غير كده فوقه ([[anchorTop - height]]). لو كنا بنكتب [[setTop]] للحالة اللي فوق بس، والعنصر اتحرك بعد كده لمكان فيه مساحة تحت، الـ tooltip كان هيفضل فوق في المكان القديم. ولو القيمة نفس القديمة React مبيعملش render تاني، ولو اتغيرت الـ render ده بيحصل قبل الرسم فمفيش وميض.`,
+            R`الـ deps أرقام مش object، فبتتقارن بقيمتها: الـ effect بيتعاد بس لما العنصر يتحرك لفوق أو لتحت فعلًا، مش مع كل render للأب.`,
+            R`الـ tooltip بـ [[position: 'fixed']]، يعني مكانه بالنسبة للشاشة نفسها، وده نفس النظام اللي [[getBoundingClientRect()]] بيرجّع بيه الأرقام. و [[top]] جاي من الـ state، و [[left]] اختصار [[left: left]] من العنصر. والـ [[ref]] عليه عشان القياس اللي فوق.`,
+            R`قفلة [[Tooltip]].`,
           ],
           sol: R`بـ useEffect والـ throttling: فريم أو اتنين الـ tooltip تحت العنصر ومقصوص من الشاشة، وبعدين ينط فوق. بـ useLayoutEffect: بيظهر فوق على طول. الإجابة: «useLayoutEffect بيشتغل بعد تعديل الـ DOM وقبل الـ paint، فالتصحيح بيبان في نفس الفريم».`
         },
@@ -886,16 +894,16 @@ info  ->  orders  ->  Sign in  ->  orders
 - كل الـ hooks فوق، والشروط بعدها.
 - [[react-hooks/rules-of-hooks]] بيمسكها قبل ما تشغّل.`,
           lines: [
-            "component فيه early return.",
-            "لو مفيش user، ارجع بدري...",
-            "...فالـ useState ده ساعات بيتنادى وساعات لأ: الترتيب بيتكسر.",
-            "بيرسم.",
-            "قفلة.",
-            "الصح:",
-            "كل الـ hooks فوق، قبل أي return.",
-            "وبعدين الشرط.",
-            "بيرسم.",
-            "قفلة."
+            R`component فيه early return (بيرجع بدري قبل آخره)، وده مثال على الغلطة اللي بتكسر قواعد الـ hooks.`,
+            R`لو مفيش [[userId]] الـ component بيرجّع رسالة ويخلص هنا، فأي سطر تحته مش بيتنفّذ في الـ render ده.`,
+            R`الـ [[useState]] ده بيتنادى في الـ renders اللي فيها [[userId]] بس. React بيفتكر الـ hooks بترتيب ندائها (أول hook، تاني hook...) مش بأسمائها، فلو العدد اتغير بين render والتاني بيلخبط الـ state أو يرمي «Rendered more hooks than during the previous render». والـ linter ([[react-hooks/rules-of-hooks]]) بيمسكها.`,
+            R`بيرسم التابات بالـ state. السطر نفسه سليم؛ المشكلة إنه بيعتمد على [[useState]] اللي مش بيتنادى كل مرة.`,
+            R`قفلة [[Profile]].`,
+            R`النسخة الصح: نفس الـ component بنفس السلوك للمستخدم، بس الـ hooks بتتنادى كل مرة.`,
+            R`الـ [[useState]] في أول الـ component قبل أي [[return]] أو [[if]]، فبيتنادى في كل render بنفس الترتيب. حتى في الـ render اللي هيرجع فيه بدري، الـ hook اتنادى ومحدش اتضرر.`,
+            R`الشرط بييجي بعد كل الـ hooks: الـ early return هنا آمن لأن مفيش hooks بعده.`,
+            R`بيرسم التابات بالـ state زي الأول؛ [[value]] التاب الحالي و [[onChange={setTab}]] بنبعت الدالة نفسها (من غير ما ننادي عليها) فالتابات تغيّر الـ state لما المستخدم يدوس.`,
+            R`قفلة [[ProfileFixed]].`,
           ],
           sol: R`في المثال زي ما هو: غيّر الـ tab لـ orders، وخلّي userId undefined (يظهر «Sign in»)، ورجّعه: مفيش error، بس الـ tab رجع info. الـ render اللي فيه «Sign in» منادش ولا hook، فـ React اعتبرت الـ component ملوش state وعملت الـ useState من الأول. ولو فيه hook تاني قبل الـ if (زي [[const [theme] = useState('light')]])، React بترمي «Rendered fewer hooks than expected. This may be caused by an accidental early return statement.» وهو بيختفي، و «Rendered more hooks than during the previous render.» وهو بيرجع (متجرّب في Chrome بـ React 19.3). و ProfileFixed بيحتفظ بـ orders. و [[ids.map(id => useQuery(...))]] بيكسر نفس القاعدة لما عدد الـ ids يتغير، و [[useQueries]] hook واحد بياخد array، فالعدد بتاع الـ hooks ثابت مهما كان عدد الـ queries.`
         }

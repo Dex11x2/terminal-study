@@ -34,6 +34,7 @@ export function OrdersTable() {
     features, columns,
     data: query.data?.rows ?? EMPTY,
     rowCount: query.data?.rowCount,
+    getRowId: row => row.id,
     state: { sorting, pagination, columnFilters },
     onSortingChange: updater => { setSorting(updater); toFirstPage() },
     onPaginationChange: setPagination,
@@ -183,11 +184,13 @@ const table = useTable({
   features, columns,
   data: query.data?.rows ?? EMPTY,
   rowCount: query.data?.rowCount,
+  getRowId: row => row.id,
 ~~~
 
 - [[features, columns]]: اختصار [[features: features, columns: columns]].
 - [[query.data?.rows]]: [[?.]] (optional chaining) معناها «لو [[query.data]] لسه [[undefined]] (أول تحميل) متقعش، رجّع [[undefined]]». و [[?? EMPTY]] معناها «لو اللي على الشمال [[undefined]] أو [[null]] خد [[EMPTY]]».
 - [[rowCount]]: العدد الكلي اللي على السيرفر (٤٥ هنا). الجدول مش شايف غير ٢٠ صف، فمن غير الرقم ده ميعرفش يحسب عدد الصفحات.
+- [[getRowId]]: بيقول للجدول id كل صف يتاخد منين. من غيره الـ id بيبقى ترتيب الصف في [[data]] ([["0"]] و [["1"]]...)، فالصف اللي في أول الصفحة بياخد نفس الـ id أيًا كان الطلب اللي فيه. معاه الـ id بيبقى [[id]] الطلب نفسه ([["a"]] و [["b"]] في تجربتنا بدل [["0"]] و [["1"]])، فـ [[key={row.id}]] تحت بيمشي مع الطلب لما الترتيب أو الصفحة تتغير، وأي state جوه الصف (checkbox مختار مثلًا) متتنقلش لطلب تاني.
 
 ~~~text OrdersTable.tsx
   state: { sorting, pagination, columnFilters },
@@ -244,7 +247,7 @@ const table = useTable({
 <tbody>{table.getRowModel().rows.map(row => <tr key={row.id}>{row.getAllCells().map(cell => <td key={cell.id}><table.FlexRender cell={cell} /></td>)}</tr>)}</tbody>
 ~~~
 
-[[getRowModel().rows]] الصفوف النهائية اللي هتترسم (مع [[manual]] هي نفس [[data]]). و [[row.getAllCells()]] خلية لكل عمود، و [[FlexRender cell]] بينادي الـ [[cell]] اللي في تعريف العمود (عشان كده Total طالع بالعربي).
+[[getRowModel().rows]] الصفوف النهائية اللي هتترسم (مع [[manual]] هي نفس [[data]]). و [[key={row.id}]] هو [[id]] الطلب بفضل [[getRowId]] اللي فوق. و [[row.getAllCells()]] خلية لكل عمود، و [[FlexRender cell]] بينادي الـ [[cell]] اللي في تعريف العمود (عشان كده Total طالع بالعربي).
 
 ### الصفحات
 
@@ -350,47 +353,48 @@ filterFn 'includesString' (auto) for column 'customer' is not registered
 | [[toFirstPage()]] | ترتيب أو فلتر جديد يرجّعك لأول صفحة |
 | [[EMPTY]] والأعمدة برا الـ component | مراجع ثابتة، فمفيش حساب على الفاضي |`,
           lines: [
-            "state الجدول.",
-            "React Query، و keepPreviousData.",
-            "v9: الـ helper، والـ features اللي هنسجّلها، و useTable، وأنواع الـ state.",
-            "شكل الصف.",
-            "سجّل الترتيب والصفحات والفلترة بس.",
-            "helper بيعرف الـ features ونوع الصف.",
-            "الأعمدة، برا الـ component عشان مرجعها ثابت:",
-            "العميل.",
-            "الإجمالي، ومتنسّق بالأرقام العربي.",
-            "الحالة، ومش بتترتب.",
-            "قفلة.",
-            "array فاضية ثابتة وقت ما مفيش بيانات.",
-            "الجدول.",
-            "الترتيب.",
-            "الصفحة: رقمها (من 0) وحجمها.",
-            "الفلاتر.",
-            "رجوع لأول صفحة.",
-            "الطلب: كل الـ state في الـ key، والصفحة القديمة تفضل لحد ما الجديدة توصل.",
-            "الجدول:",
-            "الـ features والأعمدة.",
-            "الصفوف من السيرفر.",
-            "العدد الكلي عشان حساب الصفحات.",
-            "الـ state متحكم فيها من هنا.",
-            "ترتيب جديد: حدّث وارجع لأول صفحة.",
-            "تغيير الصفحة.",
-            "فلتر جديد: حدّث وارجع لأول صفحة.",
-            "السيرفر هو اللي بيرتّب ويقسّم ويفلتر.",
-            "قفلة.",
-            "بداية الـ JSX.",
-            "Fragment.",
-            "خانة الفلتر مربوطة بعمود العميل.",
-            "الجدول.",
-            "الـ headers: كل واحد زرار بيقلب الترتيب، ومقفول لو العمود مش بيترتب.",
-            "الصفوف: كل خلية بترسم الـ cell بتاعة العمود.",
-            "قفلة الجدول.",
-            "السابق.",
-            "رقم الصفحة من عدد الصفحات.",
-            "التالي.",
-            "قفلة الـ Fragment.",
-            "قفلة القوس.",
-            "قفلة."
+            R`[[useState]] هيمسك state الجدول التلاتة: الترتيب والصفحة والفلاتر. احنا اللي ماسكينها مش الجدول، عشان نقدر نحطها في الـ queryKey ونبعتها للسيرفر.`,
+            R`[[useQuery]] بيجيب صفحة البيانات من السيرفر ويكيّشها، و [[keepPreviousData]] دالة جاهزة بتسيب الصفحة القديمة ظاهرة وانت مستني الجديدة، فالجدول ميفضاش ويرعش مع كل ضغطة.`,
+            R`من TanStack Table v9: [[createColumnHelper]] لتعريف الأعمدة بأنواع صح، والـ features التلاتة اللي هنسجّلها، و [[tableFeatures]] اللي بتجمعها، و [[useTable]] الـ hook نفسه. والأنواع التلاتة هي شكل كل state: [[SortingState]] الأعمدة واتجاه ترتيبها، و [[PaginationState]] رقم الصفحة وحجمها، و [[ColumnFiltersState]] الفلاتر.`,
+            R`شكل الصف الواحد اللي جاي من السيرفر. الـ helper بيستخدمه عشان [[col.accessor('customer')]] يتأكد إن الحقل موجود فعلًا، و [[info.getValue()]] يعرف إن [[total]] رقم.`,
+            R`بيسجّل الـ features اللي الجدول محتاجها بس: الترتيب والصفحات والفلترة. v9 مبيحطش أي feature لوحده عشان الـ bundle يفضل صغير، فمن غير [[rowSortingFeature]] مثلًا دالة [[getToggleSortingHandler]] مش هتبقى موجودة أصلًا. ومعمول برّه الـ component عشان مرجعه يفضل ثابت.`,
+            R`helper بيعرف الـ features ونوع الصف [[Order]]، فكل عمود بتعرّفه بيه بيتأكد من اسم الحقل ونوع قيمته وانت بتكتب، مش لما الصفحة تقع.`,
+            R`قايمة الأعمدة، معمولة برّه الـ component عشان مرجعها يفضل ثابت. لو اتعرّفت جوه هتتعمل array جديدة مع كل render، والجدول يفتكر إن الأعمدة اتغيرت ويعيد حساب كل حاجة.`,
+            R`عمود بيقرا [[customer]] من كل صف، و [[header]] النص اللي فوقه. ومن غير [[cell]] الخلية بتعرض القيمة زي ما هي. ده العمود اللي هنربط بيه خانة الفلتر تحت.`,
+            R`عمود [[total]]، و [[cell]] دالة بتقرر الخلية تتعرض إزاي: [[info.getValue()]] بيرجّع الرقم، و [[toLocaleString('ar-EG')]] بيكتبه بأرقام عربي وفاصل آلاف (12500 تبقى ١٢٬٥٠٠). القيمة نفسها بتفضل رقم، فالترتيب مبيتأثرش بالتنسيق.`,
+            R`عمود الحالة، و [[enableSorting: false]] بيقفل الترتيب عليه، فـ [[getCanSort()]] بترجّع [[false]] وزرار العنوان بتاعه هيبقى مقفول تحت. مفيد لعمود السيرفر مبيعرفش يرتّب بيه.`,
+            R`قفلة قايمة الأعمدة.`,
+            R`array فاضية ثابتة برّه الـ component، نستخدمها لحد ما البيانات توصل. لو كتبنا array فاضية جديدة جوه الـ render هتبقى array مختلفة مع كل render، والجدول بيقارن بالمرجع فيفتكر إن الـ data اتغيرت ويعيد حساب الصفوف كل مرة.`,
+            R`الـ component اللي بيجمع كل حاجة: الـ state والطلب والجدول والرسم.`,
+            R`الترتيب الحالي، بيبدأ فاضي يعني «زي ما السيرفر يرجّع». لما المستخدم يدوس عنوان عمود بيبقى فيه عنصر زي [[{ id: 'total', desc: true }]].`,
+            R`الصفحة الحالية: [[pageIndex]] بيبدأ من 0 (عشان كده المعروض للمستخدم [[pageIndex + 1]])، و [[pageSize]] عدد الصفوف في الصفحة. الاتنين بيتبعتوا للسيرفر.`,
+            R`الفلاتر الحالية، فاضية في الأول. لما حد يكتب في خانة الفلتر بيبقى فيها عنصر فيه id العمود والكلام المكتوب.`,
+            R`دالة صغيرة بترجّع لأول صفحة وتسيب [[pageSize]] زي ما هو، وبتستخدم updater ([[p => ...]]) عشان تبني على آخر قيمة. محتاجينها لأن مع [[manualPagination]] الجدول مبيرجّعش لصفحة 0 لوحده لما الترتيب أو الفلتر يتغير.`,
+            R`الـ queryKey فيه الـ state التلاتة، فأي تغيير في الترتيب أو الصفحة أو الفلتر يبقى key جديد وطلب جديد، ولو رجعت لصفحة شفتها قبل كده بتيجي من الكاش فورًا. و [[placeholderData: keepPreviousData]] بيسيب الصفحة القديمة ظاهرة لحد ما الجديدة توصل بدل ما الجدول يفضى.`,
+            R`بيبني الجدول من الإعدادات اللي جاية ويرجّع object فيه كل اللي محتاجينه للرسم: الـ headers والصفوف ودوال الصفحات. مبيرسمش أي HTML (headless)، والرسم علينا تحت.`,
+            R`الـ features المسجّلة والأعمدة، والاتنين ثابتين برّه الـ component.`,
+            R`الصفوف اللي السيرفر رجّعها للصفحة الحالية، ولو لسه مفيش رد بنبعت [[EMPTY]] الثابتة. و [[?.]] لأن [[query.data]] بيبقى [[undefined]] في أول تحميل.`,
+            R`العدد الكلي للصفوف عند السيرفر، مش عدد الصفحة دي بس. من غيره الجدول ميعرفش في كام صفحة، فـ [[getPageCount()]] و [[getCanNextPage()]] يطلعوا غلط.`,
+            R`بيقول للجدول ياخد id كل صف من [[id]] الطلب. من غيره الـ id بيبقى ترتيب الصف في [[data]] (0 و 1 و...)، فلما الصفحة أو الترتيب يتغير، [[key]] بتاع أول صف يفضل [["0"]] مع إن الطلب اللي فيه اتغير، و React يعيد استخدام نفس الـ [[<tr>]] وأي state جواه لطلب تاني.`,
+            R`بنقول للجدول إن الـ state دي احنا اللي ماسكينها (controlled)، فهو بيقراها من هنا بدل ما يمسك نسخة جواه. وده اللي بيخلي نفس القيم تروح للجدول وللـ queryKey.`,
+            R`لما المستخدم يغيّر الترتيب الجدول بينادي الدالة دي بـ updater (قيمة أو دالة)، و [[setSorting]] بتاعة React بتقبل الاتنين. وبعدها بنرجع لأول صفحة، لأن صفحة 5 من ترتيب قديم ملهاش معنى في الترتيب الجديد.`,
+            R`تغيير الصفحة (Next و Previous) بيروح لـ [[setPagination]] مباشرة، ومن غير رجوع لأول صفحة طبعًا.`,
+            R`فلتر جديد: حدّث الفلاتر وارجع لأول صفحة، عشان لو كنت في صفحة 7 والفلتر الجديد نتايجه صفحتين متشوفش صفحة فاضية.`,
+            R`بنقول للجدول «متعملش انت الترتيب ولا التقسيم ولا الفلترة، الـ data اللي جاية دي جاهزة من السيرفر». من غيرهم الجدول هيرتّب ويقسّم ويفلتر الـ 20 صف اللي عنده بس، والنتيجة تبقى غلط.`,
+            R`قفلة إعدادات [[useTable]].`,
+            R`بداية الـ JSX، والقوس عشان يتكتب على كذا سطر.`,
+            R`Fragment بيلم الفلتر والجدول وزراير الصفحات من غير ما يزوّد عنصر في الـ DOM، لأن الـ component لازم يرجّع حاجة واحدة.`,
+            R`خانة controlled مربوطة بعمود العميل: [[getFilterValue()]] بيرجّع الفلتر الحالي، ولو مفيش بيرجّع [[undefined]] فـ [[?? '']] بتخليها نص فاضي. و [[setFilterValue]] بتنادي [[onColumnFiltersChange]] اللي فوق مع كل حرف، فيتعمل طلب جديد (في مشروع حقيقي حط debounce). و [[aria-label]] اسم للخانة يقراه قارئ الشاشة.`,
+            R`عنصر الجدول العادي في HTML. TanStack مبيرسمش حاجة، فاحنا اللي بنكتب [[<table>]] و [[<thead>]] و [[<tbody>]].`,
+            R`[[getHeaderGroups()]] بيرجّع صفوف العناوين (صف واحد هنا)، ولكل عنوان [[<th>]] جواه زرار. [[getToggleSortingHandler()]] بتتنادى وقت الرسم عشان ترجّع handler جاهز، والـ handler ده هو اللي بيتحط في [[onClick]] ويقلب الترتيب (تصاعدي، تنازلي، من غير). و [[disabled]] لو [[getCanSort()]] رجّعت [[false]] زي عمود الحالة. و [[<table.FlexRender header={h} />]] بيرسم العنوان زي ما اتعرّف في العمود. والـ [[key]] على كل [[tr]] و [[th]] عشان React يعرف كل عنصر لما القايمة تتغير.`,
+            R`[[getRowModel().rows]] صفوف الصفحة الحالية، ولكل صف [[getAllCells()]] بترجّع خلاياه بترتيب الأعمدة، و [[<table.FlexRender cell={cell} />]] بيرسم الخلية بالـ [[cell]] اللي في تعريف العمود (زي الرقم العربي). و [[key={row.id}]] هنا [[id]] الطلب نفسه بفضل [[getRowId]] اللي فوق، فكل [[<tr>]] بيمشي مع طلبه، و [[cell.id]] فريد لكل خلية في الصف.`,
+            R`قفلة الجدول. زراير الصفحات اللي تحت برّه الـ [[<table>]] عشان مش صفوف بيانات.`,
+            R`[[previousPage()]] بترجع صفحة واحدة عن طريق [[onPaginationChange]]. و [[disabled]] لما [[getCanPreviousPage()]] تبقى [[false]]، يعني احنا في أول صفحة. والـ arrow function عشان تتنادى مع الضغطة مش وقت الرسم.`,
+            R`[[pageIndex + 1]] لأن العدّ بيبدأ من 0 والمستخدم بيعد من 1. و [[getPageCount()]] بيتحسب من [[rowCount]] و [[pageSize]]: 45 صف على 20 يبقوا 3 صفحات.`,
+            R`[[nextPage()]] بتروح للصفحة اللي بعدها، والزرار مقفول لما [[getCanNextPage()]] تبقى [[false]] (آخر صفحة)، وده بيتحسب صح بس عشان بعتنا [[rowCount]].`,
+            R`قفلة الـ Fragment اللي لافف الفلتر والجدول والزراير.`,
+            R`قفلة قوس الـ [[return]].`,
+            R`قفلة [[OrdersTable]].`,
           ],
           sol: R`الطلبات بالترتيب (متجرّبة في اختبار بـ MSW):
 [[?page=1&size=20]] ثم Next [[?page=2&size=20]] ثم دوسة Total [[?page=1&size=20&sort=total%3Adesc]] (رجع لصفحة 1، وأول دوسة على رقم desc، و [[%3A]] هي الـ [[:]] بعد الـ encoding)، ثم حرف في الفلتر [[...&customer=a]]. ومع [[rowCount: 45]] بيكتب «Page 1 of 3».
@@ -598,25 +602,25 @@ sales : ٤٢ ألف
 | [[Intl.NumberFormat('ar-EG', { notation: 'compact' })]] | «٤٢ ألف» بدل 42000 |
 | [[var(--chart-1)]] | الألوان من الثيم |`,
           lines: [
-            "الـ components اللي هنستخدمها.",
-            "شكل النقطة.",
-            "تنسيق عربي مختصر للأرقام.",
-            "الـ chart بياخد الـ data والاتجاه.",
-            "RTL؟",
-            "بداية الـ JSX.",
-            "أب بارتفاع ثابت، و ltr عشان حسابات الـ SVG.",
-            "ياخد مقاس الأب.",
-            "chart أعمدة، ومسافة من الناحيتين.",
-            "خطوط أفقية بس.",
-            "المحور الأفقي، ومقلوب في العربي.",
-            "محور القيم يمين في العربي، وأرقام عربي.",
-            "tooltip بنفس التنسيق.",
-            "الأعمدة بلون من CSS variable وأطراف مدورة.",
-            "قفلة الـ chart.",
-            "قفلة الـ container.",
-            "قفلة الـ div.",
-            "قفلة القوس.",
-            "قفلة."
+            R`الـ components اللي هنبني بيها الـ chart: [[ResponsiveContainer]] بيقيس الأب، و [[BarChart]] الـ chart نفسه، و [[Bar]] الأعمدة، و [[XAxis]] و [[YAxis]] المحورين، و [[Tooltip]] المربع اللي بيظهر وقت الـ hover، و [[CartesianGrid]] خطوط الخلفية. Recharts بيبني الـ chart من components بتتحط جوه بعض زي HTML.`,
+            R`شكل النقطة الواحدة في الـ data: [[month]] اسم الشهر اللي هيتكتب تحت العمود، و [[sales]] الرقم اللي بيحدد طول العمود. لازم يبقى رقم فعلًا؛ لو الـ API رجّع [["1500"]] كنص حوّله الأول.`,
+            R`بيعمل منسّق أرقام مرة واحدة برّه الـ component (عمله جوه كل render تقيل). [[ar-EG]] بيكتب بأرقام عربي، و [[notation: 'compact']] بيختصر: 12000 تبقى «١٢ ألف» و 1500000 تبقى «١٫٥ مليون»، فالأرقام متاخدش مساحة كبيرة على المحور.`,
+            R`الـ component بياخد [[data]] (قايمة النقط) و [[dir]] اتجاه الصفحة. بنبعت الاتجاه كـ prop صريح لأن الـ SVG مبيقلبش لوحده مع [[dir="rtl"]]، فلازم نقلب المحاور بنفسنا.`,
+            R`[[rtl]] بقت [[true]] أو [[false]]، عشان نستخدمها في المحورين تحت بدل ما نكرر المقارنة [[dir === 'rtl']] مرتين.`,
+            R`بداية الـ JSX، والقوس عشان يتكتب على كذا سطر.`,
+            R`الأب لازم يبقى ليه ارتفاع ثابت (هنا 300px)، لأن [[ResponsiveContainer]] بياخد مقاس الأب، ولو الأب ارتفاعه صفر الـ chart مش هيظهر ومن غير أي error. و [[dir="ltr"]] بيمنع اتجاه الصفحة العربي يلخبط حسابات الـ SVG والـ tooltip جوه، والقلب الحقيقي بنعمله تحت بالـ props. (القوسين في [[style]]: الأولانيين «JS جوه JSX» والتانيين الـ object.)`,
+            R`بيقيس الأب (بـ ResizeObserver) ويدّي الـ chart العرض والطول، ولما الشاشة تصغر أو تكبر الـ chart يترسم تاني بالمقاس الجديد. هو مش بيرسم حاجة بنفسه.`,
+            R`chart أعمدة بيرسم [[data]]. و [[margin]] مسافة جوه الـ SVG من كل ناحية، ومتساوية يمين وشمال عشان الأرقام والأسماء متتقصش في أي اتجاه.`,
+            R`خطوط خلفية متقطعة ([[strokeDasharray="3 3"]] يعني 3px خط و 3px فراغ)، و [[vertical={false}]] بيشيل الخطوط الرأسية ويسيب الأفقية بس، فالعين تقارن ارتفاع الأعمدة من غير زحمة.`,
+            R`المحور الأفقي، و [[dataKey="month"]] بيقول له يكتب [[month]] بتاعة كل نقطة تحت عمودها. و [[reversed={rtl}]] بيعكس الترتيب في العربي، فأول شهر يبقى على اليمين وأحدث شهر على الشمال زي ما القارئ العربي متوقع.`,
+            R`محور القيم: [[orientation]] بيحطه يمين في العربي وشمال في الإنجليزي. و [[tickFormatter]] دالة بتتنادى على كل رقم مكتوب على المحور، فيتكتب بالتنسيق العربي المختصر. و [[width={56}]] عرض ثابت للمحور عشان الأرقام الطويلة متتقصش.`,
+            R`المربع اللي بيظهر لما تقف على عمود، و [[formatter]] بيكتب القيمة فيه بنفس تنسيق المحور. [[Number(v)]] لأن Recharts بيبعت القيمة بنوع عام (ممكن تبقى نص)، فبنحوّلها رقم قبل ما ننسّقها.`,
+            R`الأعمدة نفسها: [[dataKey="sales"]] بيحدد طول كل عمود، و [[fill]] لونه من CSS variable فيتغير مع الـ theme (light و dark) من غير ما تعدّل الـ chart. و [[radius]] بيدوّر الركنين اللي فوق بس (فوق شمال، فوق يمين، تحت يمين، تحت شمال).`,
+            R`قفلة [[BarChart]]، وكل اللي جواه (المحاور والأعمدة والـ tooltip) بيترسم في نفس الـ SVG.`,
+            R`قفلة [[ResponsiveContainer]] اللي بيدّي الـ chart مقاس الأب.`,
+            R`قفلة الـ div الأب.`,
+            R`قفلة قوس الـ [[return]].`,
+            R`قفلة [[SalesChart]].`,
           ],
           sol: R`في [[ltr]]: يناير على الشمال ومحور الأرقام شمال. في [[rtl]]: يناير على اليمين وآخر شهر على الشمال، ومحور الأرقام على اليمين، والأرقام «٥٠ ألف» بدل 50000. في عرض موبايل الـ chart بيصغر مع الشاشة.
 
@@ -645,14 +649,14 @@ type Order = { id: string; status: string }
 type OrderEvent = { type: 'order.updated'; order: Order } | { type: 'order.created'; order: Order }
 export function useLiveOrders(url = '/api/orders/stream') {
   const queryClient = useQueryClient()
-  const [status, setStatus] = useState<'connecting' | 'open' | 'reconnecting'>('connecting')
+  const [status, setStatus] = useState<'connecting' | 'open' | 'reconnecting' | 'closed'>('connecting')
   useEffect(() => {
     const source = new EventSource(url, { withCredentials: true })
     source.onopen = () => {
       setStatus('open')
       queryClient.invalidateQueries({ queryKey: ['orders'] })
     }
-    source.onerror = () => setStatus('reconnecting')
+    source.onerror = () => setStatus(source.readyState === EventSource.CLOSED ? 'closed' : 'reconnecting')
     source.onmessage = e => {
       const event = JSON.parse(e.data) as OrderEvent
       if (event.type === 'order.updated') queryClient.setQueryData<Order>(['orders', 'detail', event.order.id], event.order)
@@ -662,7 +666,7 @@ export function useLiveOrders(url = '/api/orders/stream') {
   }, [url, queryClient])
   return status
 }
-// في الـ layout: const status = useLiveOrders(); {status === 'reconnecting' && <Banner>Reconnecting…</Banner>}`,
+// في الـ layout: const status = useLiveOrders(); {status === 'reconnecting' && <Banner>Reconnecting…</Banner>} {status === 'closed' && <Banner>Live updates stopped. Refresh the page.</Banner>}`,
           try: R`اعمل endpoint SSE بسيط (تاب «APIs متقدمة» أو Express: [[res.setHeader('Content-Type', 'text/event-stream')]] و [[res.write('data: ...\n\n')]] كل ٣ ثواني). نادي الـ hook في الـ layout، وافتح صفحة الطلبات وصفحة تفاصيل طلب في تابين. اقفل السيرفر وشغّله تاني وشوف الـ status. وبعدين اكتب اختبار بـ [[renderHook]] و [[vi.stubGlobal('EventSource', FakeEventSource)]].`,
           flag: "script",
           deep: {
@@ -707,11 +711,11 @@ type OrderEvent = { type: 'order.updated'; order: Order } | { type: 'order.creat
 ~~~text useLiveOrders.ts
 export function useLiveOrders(url = '/api/orders/stream') {
   const queryClient = useQueryClient()
-  const [status, setStatus] = useState<'connecting' | 'open' | 'reconnecting'>('connecting')
+  const [status, setStatus] = useState<'connecting' | 'open' | 'reconnecting' | 'closed'>('connecting')
 ~~~
 
 - [[url = '/api/orders/stream']]: قيمة افتراضية لو ناديته من غير argument.
-- [[status]]: حالة الاتصال، تلات قيم بس، وبتبدأ [[connecting]].
+- [[status]]: حالة الاتصال، أربع قيم بس، وبتبدأ [[connecting]]. و [[closed]] للحالة اللي EventSource بيقفل فيها نهائي (تحت في ٤ و ٥).
 
 ---
 
@@ -750,10 +754,10 @@ data: {"type":"order.updated","order":{"id":"7","status":"delivered"}}
 [[onopen]] بيتنادى أول ما الاتصال يفتح، **وكمان** كل مرة يرجع بعد انقطاع. [[invalidateQueries({ queryKey: ['orders'] })]] بيعلّم كل query الـ key بتاعها بيبدأ بـ [[orders]] إنها قديمة، واللي معروض منها على الشاشة بيتجاب تاني. ليه؟ لو الاتصال كان مقطوع، أي event حصل في الوقت ده ضاع، فنجيب الحقيقة من الأول.
 
 ~~~text useLiveOrders.ts
-    source.onerror = () => setStatus('reconnecting')
+    source.onerror = () => setStatus(source.readyState === EventSource.CLOSED ? 'closed' : 'reconnecting')
 ~~~
 
-[[onerror]]: الاتصال وقع. EventSource هيحاول لوحده، واحنا بنعرض الحالة بس.
+[[onerror]]: الاتصال وقع، بس فيه حالتين. لو [[readyState]] لسه [[CONNECTING]] (0)، EventSource هيحاول لوحده، فالحالة [[reconnecting]]. ولو بقى [[CLOSED]] (2)، يعني السيرفر رد بـ status مش 200 أو content type غلط، EventSource قفل نهائي ومش هيحاول تاني، فالحالة [[closed]] والـ layout يقول للمستخدم يعمل refresh بدل banner «Reconnecting» للأبد.
 
 ~~~text useLiveOrders.ts
     source.onmessage = e => {
@@ -816,7 +820,7 @@ after 4s readyState=2
 requests to /api/fail: 1
 ~~~
 
-[[readyState]] بـ [[2]] يعني [[CLOSED]]: لو الرد مش 200 أو مش [[text/event-stream]]، EventSource بيقفل نهائي ومبيحاولش تاني، والـ hook هيفضل [[reconnecting]] للأبد. الـ reconnect التلقائي بيحصل بس لما الاتصال نفسه يقع.
+[[readyState]] بـ [[2]] يعني [[CLOSED]]: لو الرد مش 200 أو مش [[text/event-stream]]، EventSource بيقفل نهائي ومبيحاولش تاني. الـ reconnect التلقائي بيحصل بس لما الاتصال نفسه يقع. عشان كده [[onerror]] بيبص على [[readyState]]: هنا الـ hook بيرجّع [[closed]] مش [[reconnecting]].
 
 ---
 
@@ -829,13 +833,14 @@ class FakeEventSource {
   onerror: (() => void) | null = null
   onmessage: ((e: { data: string }) => void) | null = null
   close = vi.fn()
+  readyState = 0
   url: string
   constructor(url: string) { this.url = url; FakeEventSource.last = this }
 }
 vi.stubGlobal('EventSource', FakeEventSource)
 ~~~
 
-- class بنفس شكل EventSource اللي الـ hook بيستخدمه: تلات خانات للـ handlers، و [[close]].
+- class بنفس شكل EventSource اللي الـ hook بيستخدمه: تلات خانات للـ handlers، و [[close]]، و [[readyState]] (0 يعني بيحاول يتصل) عشان [[onerror]] يقراه لو اختبرته.
 - [[static last]]: خانة على الـ class نفسها مش على كل نسخة. الـ constructor بيحط فيها آخر نسخة اتعملت، عشان الاختبار يوصل للنسخة اللي الـ hook عملها جواه.
 - [[vi.fn()]]: دالة فاضية بتسجّل اتنادت كام مرة (spy).
 - [[vi.stubGlobal('EventSource', ...)]]: بدّل [[EventSource]] الحقيقي بتاعنا في الاختبار ده.
@@ -881,33 +886,33 @@ it('updates the cache from events', () => {
 | [[invalidateQueries]] للـ lists | أأمن من تعديلها بإيدك |
 | invalidate في [[onopen]] | يغطي اللي ضاع وقت الانقطاع |
 | [[return () => source.close()]] | من غيره الاتصالات بتتراكم |
-| رد مش 200 | EventSource بيقفل نهائي، مش بيعيد |`,
+| رد مش 200 | EventSource بيقفل نهائي، فالـ hook بيرجّع [[closed]] |`,
           lines: [
-            "effect للاتصال، و state للحالة.",
-            "الكاش.",
-            "شكل الطلب.",
-            "الأحداث اللي ممكن تيجي.",
-            "hook بيتنادى مرة في الـ layout.",
-            "الكاش.",
-            "حالة الاتصال عشان نعرضها.",
-            "افتح الاتصال:",
-            "EventSource بالـ cookies.",
-            "اتصل (أول مرة أو بعد انقطاع):",
-            "علّم إنه شغال.",
-            "هات كل الطلبات من جديد، عشان أي حدث ضاع وانت مقطوع.",
-            "قفلة.",
-            "انقطع: EventSource بيحاول لوحده، واحنا نعرض الحالة.",
-            "event وصل:",
-            "اقراه.",
-            "الطلب جه كامل: حطه في كاش صفحة التفاصيل مباشرة.",
-            "والـ lists تتجاب تاني.",
-            "قفلة.",
-            "اقفل الاتصال لما الـ component يتشال.",
-            "مرة واحدة لكل url.",
-            "رجّع الحالة.",
-            "قفلة."
+            R`[[useEffect]] عشان فتح الاتصال بالسيرفر حاجة برّه React (side effect) لازم تتفتح بعد الرسم وتتقفل لما الـ component يتشال، و [[useState]] لحالة الاتصال اللي هنعرضها للمستخدم.`,
+            R`[[useQueryClient]] بيدّيك الـ [[QueryClient]] اللي فيه كاش React Query كله، فنقدر نعدّل الكاش أو نعلّمه قديم لما حدث يوصل، بدل ما نمسك نسخة تانية من البيانات في state.`,
+            R`شكل الطلب اللي بيوصل في الأحداث: [[id]] عشان نعرف نحطه في الكاش الصح، و [[status]] حالته.`,
+            R`الأحداث اللي السيرفر ممكن يبعتها، كـ union: كل حدث ليه [[type]] مختلف، فلما تكتب [[if (event.type === 'order.updated')]] TypeScript يعرف شكل الحدث جوه الـ if.`,
+            R`custom hook بيتنادى مرة واحدة في الـ layout (مش في كل صفحة)، عشان يبقى فيه اتصال واحد مفتوح للتطبيق كله. والـ [[url]] ليه قيمة افتراضية، فتقدر تبعت غيره في الاختبارات.`,
+            R`نفس الـ [[QueryClient]] اللي في الـ [[QueryClientProvider]]. مرجعه ثابت، فوجوده في الـ deps تحت مش هيفتح الاتصال تاني مع كل render.`,
+            R`حالة الاتصال عشان نعرضها (زي نقطة خضرا أو «بيحاول يتصل...»)، وليها أربع قيم بس، و [[closed]] معناها إن الاتصال وقف نهائي. بتبدأ [[connecting]]، وكل [[setStatus]] بتعمل re-render للـ component اللي نادى الـ hook.`,
+            R`effect بيفتح الاتصال بعد أول render. React بيشغّله تاني بس لو حاجة في الـ deps اتغيرت، فالاتصال مش بيتفتح مع كل render.`,
+            R`[[EventSource]] بيفتح اتصال SSE: طلب HTTP واحد بيفضل مفتوح والسيرفر يبعت فيه أحداث كل ما يحب. و [[withCredentials: true]] بيبعت الـ cookies مع الطلب حتى لو الـ stream على domain تاني، عشان السيرفر يعرف المستخدم مين (على نفس الـ origin الـ cookies بتتبعت لوحدها).`,
+            R`[[onopen]] بيتنادى كل ما الاتصال يتفتح، أول مرة وكمان بعد كل مرة يرجع فيها بعد انقطاع.`,
+            R`بنعلّم الحالة إنها [[open]]، فالـ UI يعرض إن التحديثات اللحظية شغالة.`,
+            R`بنعلّم كل الكاش اللي الـ key بتاعه بيبدأ بـ [[orders]] إنه قديم، فالـ queries الظاهرة دلوقتي بتتجاب تاني. ده مهم بعد الانقطاع: أي حدث اتبعت وانت مقطوع ضاع، فبنجيب الحقيقة من السيرفر بدل ما نعتمد على الأحداث.`,
+            R`قفلة [[onopen]].`,
+            R`لما الاتصال يقطع [[onerror]] بيتنادى، وبنبص على [[readyState]]. لو لسه بيحاول ([[CONNECTING]])، EventSource هيرجع لوحده بعد شوية فبنعرض «reconnecting». لو [[CLOSED]]، يعني السيرفر رد بـ status غلط (زي 401 أو 502) أو content type مش [[text/event-stream]]، والمتصفح قفل الاتصال نهائي ومش هيحاول تاني، فبنرجّع [[closed]] بدل ما نفضل نقول «reconnecting» للأبد.`,
+            R`[[onmessage]] بيتنادى مع كل حدث من غير اسم يوصل (الأحداث اللي السيرفر بعتها بـ [[event:]] اسمها لازم تسمعلها بـ [[addEventListener]]). و [[e]] هو الـ MessageEvent.`,
+            R`[[e.data]] دايمًا نص، فبنحوّله object بـ [[JSON.parse]]. و [[as OrderEvent]] بيقول لـ TypeScript الشكل بس ومبيتحققش منه وقت التشغيل؛ لو مش واثق في السيرفر اتحقق بـ zod.`,
+            R`لو الحدث تحديث لطلب والطلب جه كامل، بنحطه مباشرة في كاش صفحة تفاصيله بـ [[setQueryData]]، فاللي فاتح الصفحة دي يشوف التغيير فورًا من غير طلب جديد. الـ key لازم يبقى هو نفسه اللي صفحة التفاصيل بتستخدمه بالظبط.`,
+            R`وفي أي حدث، بنعلّم كل الـ lists قديمة فتتجاب تاني. القايمة ممكن تكون مترتبة أو متفلترة على السيرفر، فتعديلها بإيدنا صعب ومعرّض للغلط، والأسهل نسيب السيرفر يرجّعها صح.`,
+            R`قفلة [[onmessage]].`,
+            R`الـ cleanup: بيقفل الاتصال لما الـ component يتشال أو قبل ما الـ effect يشتغل تاني بـ [[url]] جديد. من غيره هتفضل اتصالات قديمة مفتوحة، وكل حدث يتعالج مرتين. (في Strict Mode وقت التطوير هتشوف اتصال يتفتح ويتقفل ويتفتح تاني، وده طبيعي.)`,
+            R`الـ deps: الاتصال بيتقفل ويتفتح من جديد بس لو [[url]] اتغير. و [[queryClient]] موجود عشان الـ linter، بس مرجعه ثابت فمبيعملش إعادة اتصال.`,
+            R`بيرجّع حالة الاتصال، فالـ layout يعرضها للمستخدم.`,
+            R`قفلة [[useLiveOrders]].`,
           ],
-          sol: R`مع السيرفر شغال: الـ status [[open]]، وأي event [[order.updated]] بيغيّر صفحة التفاصيل فورًا من غير طلب في Network، وصفحة الـ list بتعمل GET لوحدها. لما تقفل السيرفر: الـ status [[reconnecting]] والـ banner يظهر، ولما يرجع [[open]] وطلب جديد للطلبات.
+          sol: R`مع السيرفر شغال: الـ status [[open]]، وأي event [[order.updated]] بيغيّر صفحة التفاصيل فورًا من غير طلب في Network، وصفحة الـ list بتعمل GET لوحدها. لما تقفل السيرفر: الـ status [[reconnecting]] والـ banner يظهر، ولما يرجع [[open]] وطلب جديد للطلبات. ولو الـ endpoint رد بـ 502: الـ status [[closed]] على طول، ومفيش محاولة تانية.
 
 الاختبار (متجرّب): الـ FakeEventSource بيحفظ نفسه في متغير static، فالاختبار ينادي [[onopen]] و [[onmessage]] بإيده جوه [[act]]، ويتأكد إن [[getQueryData(['orders','detail','7'])]] اتحدثت، وإن [[close]] اتنادت بعد [[unmount]].`,
           solCode: R`class FakeEventSource {
@@ -916,6 +921,7 @@ it('updates the cache from events', () => {
   onerror: (() => void) | null = null
   onmessage: ((e: { data: string }) => void) | null = null
   close = vi.fn()
+  readyState = 0
   url: string
   constructor(url: string) { this.url = url; FakeEventSource.last = this }
 }
@@ -1174,28 +1180,28 @@ npx playwright test e2e/visual.spec.ts
 | [[toHaveScreenshot]] على العنصر | يمسك أي تغيير بصري فوق الـ ١٪ |
 | [[-win32]] و [[-linux]] | الصور المرجعية خاصة بالنظام، فاعملها في بيئة الـ CI |`,
           lines: [
-            "أنواع Storybook لـ React مع Vite.",
-            "fn للـ spies، و expect للـ play.",
-            "الـ component.",
-            "الإعداد المشترك:",
-            "الـ component.",
-            "props مشتركة لكل الـ stories، و onClick spy.",
-            "satisfies عشان التحقق من غير ما النوع يضيع.",
-            "Storybook بيقرا الـ default export.",
-            "نوع الـ stories.",
-            "story بالـ args الافتراضية.",
-            "story تانية بتغيّر prop واحدة.",
-            "story فيها اختبار تفاعل:",
-            "play بيشتغل بعد ما الـ story تترسم، وبياخد canvas و userEvent والـ args.",
-            "دوس الزرار.",
-            "واتأكد إن الـ spy اتنادى.",
-            "قفلة play.",
-            "قفلة.",
-            "Playwright.",
-            "اختبار بصري.",
-            "افتح الـ story لوحدها.",
-            "صوّر الـ story بس (مش الصفحة كلها) وقارن بالصورة المحفوظة، ومسموح فرق ١٪.",
-            "قفلة."
+            R`أنواع TypeScript بس (بتتمسح وقت الـ build) من الـ framework بتاع Storybook لـ React مع Vite: [[Meta]] نوع الإعداد المشترك للملف، و [[StoryObj]] نوع الـ story الواحدة.`,
+            R`[[fn()]] بتعمل spy: دالة وهمية بتسجّل كل مرة اتنادت وبإيه، وبتظهر في تاب Actions. و [[expect]] بتتأكد من حاجة جوه [[play]]. الاتنين من [[storybook/test]] المدمجة في Storybook.`,
+            R`الـ component اللي الملف ده بيعرض حالاته.`,
+            R`الإعداد المشترك لكل الـ stories في الملف، وبيتبعت كـ default export تحت.`,
+            R`الـ component اللي هيترسم، ومنه Storybook بيقرا نوع الـ props عشان يعمل الـ controls وصفحة التوثيق.`,
+            R`[[args]] هي الـ props اللي بتتبعت للـ component في كل الـ stories، وأي story تقدر تكتب فوقها. و [[onClick: fn()]] بيدّي الزرار spy بدل دالة حقيقية، فتشوف الضغطات في تاب Actions وتتأكد منها في [[play]].`,
+            R`[[satisfies]] بيخلي TypeScript يتأكد إن الـ object ماشي على شكل [[Meta]] من غير ما يغيّر نوعه للنوع العام، فـ [[StoryObj<typeof meta>]] تحت يفضل عارف إن [[label]] و [[onClick]] اتبعتوا هنا.`,
+            R`Storybook بيقرا الـ default export عشان يعرف الـ component والإعدادات، وكل named export تاني في الملف بيبقى story.`,
+            R`نوع الـ stories مبني من الـ meta نفسه: لأن [[label]] و [[onClick]] اتبعتوا في [[args]] فوق، الـ stories مش مطلوب منها تكتبهم تاني ومش هتطلع error.`,
+            R`story اسمها Primary (من اسم الـ export)، و [[{}]] معناها «استخدم الـ args المشتركة زي ما هي»: زرار Save عادي.`,
+            R`story تانية بتكتب فوق prop واحدة بس ([[variant: 'ghost']]) والباقي جاي من الـ meta، فتشوف نفس الزرار بشكل تاني.`,
+            R`story فيها اختبار تفاعل بيشتغل لوحده.`,
+            R`[[play]] بتشتغل بعد ما الـ story تترسم. بتاخد [[canvas]] (أدوات بحث زي Testing Library جوه الـ story بس)، و [[userEvent]] اللي بيقلّد المستخدم، و [[args]] اللي فيها الـ spy. وبتشتغل في المتصفح وفي الـ tests.`,
+            R`[[getByRole('button', { name: 'Save' })]] بيدوّر على الزرار زي ما قارئ الشاشة شايفه (دوره واسمه)، و [[userEvent.click]] بيدوس عليه بأحداث حقيقية. والـ [[await]] لأن كل تفاعل بياخد وقت.`,
+            R`بنتأكد إن الـ spy اللي في [[args.onClick]] اتنادى، يعني الضغطة وصلت للـ prop فعلًا. لو حد فك [[onClick]] من الزرار الاختبار ده هيفشل.`,
+            R`قفلة [[play]].`,
+            R`قفلة الـ story.`,
+            R`Playwright، بيفتح متصفح حقيقي. هنستخدمه هنا عشان نصوّر الـ story ونقارنها بصورة محفوظة.`,
+            R`اختبار بصري: بيتأكد إن شكل الزرار متغيرش بالغلط (لون أو مسافة) بعد أي تعديل في الـ CSS.`,
+            R`بيفتح [[iframe.html]] بتاعة Storybook، اللي بترسم story واحدة من غير الـ sidebar والـ toolbar. والـ [[id]] مبني من الـ title واسم الـ export ([[components-button--primary]])، ولازم Storybook يكون شغال على البورت 6006.`,
+            R`بيصوّر عنصر [[#storybook-root]] بس (اللي الـ story مترسومة جواه) مش الصفحة كلها، ويقارنه بـ [[button-primary.png]] المحفوظة. أول مرة مفيش صورة، فبيحفظها والاختبار بيفشل المرة دي، وبعدها بيقارن. و [[maxDiffPixelRatio: 0.01]] بيسمح إن ١٪ من البيكسلات يختلفوا، عشان فروق رسم الخطوط الصغيرة متفشّلش الاختبار.`,
+            R`قفلة الاختبار.`,
           ],
           sol: R`[[npm run storybook]] بيفتح على [[localhost:6006]]، وفي الشمال COMPONENTS وتحته Button وتحته Primary و Ghost و Clicks. تاب Interactions في Clicks بيكتب PASS وتحته الخطوتين: [[userEvent.click(...getByRole("button", { name: "Save" }))]] و [[expect(onClick).toHaveBeenCalled()]]، وتاب Actions فيه [[onClick: (1)]].
 

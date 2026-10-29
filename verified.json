@@ -13725,159 +13725,159 @@
   "on": "win11 Git Bash + pwsh 7 / ps 5.1"
  },
  "react|ErrorBoundary": {
-  "hash": "233d0a1a4588",
-  "date": "2026-10-07",
-  "on": "Vite + React 19.3 + react-error-boundary 6.1 + React Router 8.4, headless Chrome (Win11)"
+  "hash": "c8dcf2527962",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|HydrationBoundary": {
-  "hash": "22e701a4a775",
-  "date": "2026-10-07",
-  "on": "Next.js 16.4 (build + start) + TanStack Query 5.104, curl + Chrome headless (Windows)"
+  "hash": "912b04c7145c",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|JSX": {
-  "hash": "b5a84dd09a74",
-  "date": "2026-10-06",
-  "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome; tsc 6.0"
+  "hash": "353993f6d31b",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|MSW": {
-  "hash": "71e295944b5c",
-  "date": "2026-10-07",
-  "on": "msw 3.0.2: setupServer in Vitest 5.0/jsdom; setupWorker in Vite dev, headless Chrome (Win11)"
+  "hash": "c79b89ef49c6",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|Profiler": {
-  "hash": "f214fedc0f08",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3 dev + build/preview, Chrome headless with CPU throttling 1x/4x; docs: DevTools Profiler UI, Performance Tracks"
+  "hash": "727bf3955a6c",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|RTK Query": {
-  "hash": "3b3fa0b7fd97",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3 + RTK 2.13 + react-redux 9.3, Chrome headless (Windows)"
+  "hash": "268d3b8a73cd",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|RTL": {
-  "hash": "0f3daedb35bb",
-  "date": "2026-10-07",
-  "on": "Vite + React 19.3 + react-i18next 17 + Tailwind 4.3, headless Chrome (Win11)"
+  "hash": "da2189429826",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|React Compiler": {
-  "hash": "f901d12991a4",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + @vitejs/plugin-react 6.1.2 + babel-plugin-react-compiler 1.0 (dev + build), Chrome headless; eslint-plugin-react-hooks 7.1.1; docs: Next.js reactCompiler, DevTools Memo badge"
+  "hash": "88be6a4ccf7c",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|React Router": {
-  "hash": "5bc4db97ba89",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3 + react-router 8.4.0, headless Chrome; docs: Nginx fallback"
+  "hash": "3262be0d2b64",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|React.memo": {
-  "hash": "2b5627b9104f",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3 dev, Chrome headless + Node Object.is; React Compiler run; docs: DevTools Why did this render"
+  "hash": "444d76536ca8",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|Recharts": {
-  "hash": "a97cf85c1f27",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3 + Recharts 3.10, headless Chrome on Windows (rtl/ltr, 375px, without dir=ltr)"
+  "hash": "90d08bbec96d",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|Redux Toolkit": {
-  "hash": "dceba127c12b",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3 + RTK 2.13 + react-redux 9.3, Chrome headless + tsx (Windows)"
+  "hash": "bd5e1c3319d3",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|SSR و hydration": {
-  "hash": "1487f294824f",
-  "date": "2026-10-07",
-  "on": "renderToString in Node 24 + hydrateRoot in headless Chrome, React 19.3; docs: Next.js View Source / disable-JS parts"
+  "hash": "a589e43625f6",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|Storybook": {
-  "hash": "d9ccdd3c0c54",
-  "date": "2026-10-07",
-  "on": "create-storybook 10.6.1 (react-vite) + @playwright/test 1.63 with Chrome on Windows; docs: npx playwright install chromium"
+  "hash": "7e4330386bbf",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|TanStack Table": {
-  "hash": "371b491c1bd4",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3 + TanStack Table 9.2.6 + React Query 5.104, headless Chrome on Windows (fake fetch with 45 rows; solCode)"
+  "hash": "2956a0e913b9",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|TanStack Virtual": {
-  "hash": "9c61589c62b8",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + @tanstack/react-virtual 3.14, Chrome headless; Vitest 5 jsdom"
+  "hash": "0d9d1dca8bab",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|UI = f(state)": {
-  "hash": "696d432acf06",
-  "date": "2026-10-06",
-  "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome; vanilla part in Node 24 + jsdom"
+  "hash": "c33f3b0b2334",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|URL state": {
-  "hash": "aa7a9a07f3ac",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3 + React Router 8.4, Chrome headless"
+  "hash": "110a7c6a0904",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|Vitest + Testing Library": {
-  "hash": "711f19905d00",
-  "date": "2026-10-07",
-  "on": "Vitest 5.0 + jsdom 30 + RTL 16.3 + jest-dom 7.0 (Win11)"
+  "hash": "cb0739cb69f2",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|You Might Not Need an Effect": {
-  "hash": "6a1087a3f1cb",
-  "date": "2026-10-06",
-  "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome; docs: submitted/handler case"
+  "hash": "f8bfe1b86eb2",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|Zustand": {
-  "hash": "6a010bf964c7",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3 + Zustand 5.0.15, Chrome headless (Windows)"
+  "hash": "967ed00e0574",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|addon-a11y": {
-  "hash": "644fe0e8e6f3",
-  "date": "2026-10-28",
-  "on": "Windows 11, addon-a11y 10.6.5 (axe 4.14) via vitest --project=storybook (todo/error/rules off/per-story todo)"
+  "hash": "9ea2a426adf0",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|addon-vitest": {
-  "hash": "3d31e54acd99",
-  "date": "2026-10-28",
-  "on": "Windows 11 vitest 4.1.10 browser mode (Playwright 1.64.1 headless); Linux docker node:22-slim; workflow actionlint 1.7.12; docs: GitHub Pages deploy"
+  "hash": "ca26e58cd169",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|argTypes و controls": {
-  "hash": "4941a481ed53",
-  "date": "2026-10-28",
-  "on": "Windows 11, Storybook 10.6.5 dev server, Controls/Docs/URL args read with Playwright headless Chromium; vitest --project=storybook"
+  "hash": "b24f41fa636c",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|batching": {
-  "hash": "e23e3ed11f18",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3, headless Chrome on Windows (with and without StrictMode)"
+  "hash": "3f1fb702ff89",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|children": {
-  "hash": "e419e1ddf6df",
-  "date": "2026-10-06",
-  "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome; tsc 6.0"
+  "hash": "c6b206497985",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|compound components": {
-  "hash": "db25b10fecea",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3, Chrome headless; Vitest 5 + Testing Library + user-event"
+  "hash": "5eedd2475d55",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|conditional rendering": {
-  "hash": "a25a43284b5e",
-  "date": "2026-10-06",
-  "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome"
+  "hash": "c8a78dd2bd6f",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|context ولا store": {
-  "hash": "d4b3b89a2c3d",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3 + Zustand 5, headless Chrome (Context vs selector render-count demo); docs: example snippets"
+  "hash": "fc57833e68f7",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|controlled input": {
-  "hash": "b3f5d32cf2a4",
-  "date": "2026-10-06",
-  "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome"
+  "hash": "d0b313de774e",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|controlled ولا uncontrolled API": {
-  "hash": "a2f53ea1f635",
-  "date": "2026-10-07",
-  "on": "Vitest 5 + Testing Library + user-event (React 19.3)"
+  "hash": "da638494a9bc",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|controlled ولا uncontrolled؟": {
   "hash": "65636261e572",
@@ -13885,124 +13885,124 @@
   "on": "Vite 8.3 + React 19.3, headless Chrome on Windows"
  },
  "react|createPortal": {
-  "hash": "48398c4abda2",
-  "date": "2026-10-07",
-  "on": "Vite + React 19.3, headless Chrome (Win11)"
+  "hash": "eb0ff0ff90da",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|custom hook": {
-  "hash": "34a345396a2f",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3 dev, headless Chrome (delay 500 and 0)"
+  "hash": "4e92b917ab3c",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|dangerouslySetInnerHTML": {
-  "hash": "9b67e4b34a8e",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3 + dompurify 3.4, Chrome headless"
+  "hash": "84c766f1792e",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|decorators و globals": {
-  "hash": "1682d44958c9",
-  "date": "2026-10-28",
-  "on": "Windows 11, Storybook 10.6.5 + react-router 8.5.1, vitest --project=storybook (with/without providers), toolbar read with Playwright headless"
+  "hash": "d8ce627b4eca",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|dependency array": {
-  "hash": "89557418532e",
-  "date": "2026-10-06",
-  "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome; oxlint"
+  "hash": "42323132d3a6",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|derived state": {
-  "hash": "72a7017f5b13",
-  "date": "2026-10-06",
-  "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome"
+  "hash": "68579f8573aa",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|enabled و useQueries": {
-  "hash": "53f13bddb30a",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3 + TanStack Query 5.104, Chrome headless (Windows)"
+  "hash": "1a754f8bfbfb",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|events": {
-  "hash": "79f4bd314667",
-  "date": "2026-10-06",
-  "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome"
+  "hash": "494f034f3c2d",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|form actions": {
-  "hash": "9185bdfe6c12",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3, Chrome headless"
+  "hash": "a028c1227d2b",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|getByRole و findBy": {
-  "hash": "5984030060e5",
-  "date": "2026-10-07",
-  "on": "Vitest 5.0 + jsdom + RTL 16.3 + TanStack Query 5.104 + msw 3.0 (Win11); docs: findBy timing"
+  "hash": "1f9fe9176c37",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|immutable updates": {
-  "hash": "da549eec446f",
-  "date": "2026-10-06",
-  "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome; Node 24"
+  "hash": "24aadf581240",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|key": {
-  "hash": "98b5959efa2a",
-  "date": "2026-10-06",
-  "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome"
+  "hash": "8941f7e40ce5",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|lazy و Suspense": {
-  "hash": "952cd33db3a6",
-  "date": "2026-10-07",
-  "on": "vite build (8.3) + vite preview + React Router 8.4 + recharts 3.10, headless Chrome (Win11)"
+  "hash": "fafdefe7f270",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|lifting state up": {
-  "hash": "353f1d6b3158",
-  "date": "2026-10-06",
-  "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome"
+  "hash": "4e26631c4cf4",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|live updates": {
-  "hash": "979d397b5dda",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3 + React Query 5.104, headless Chrome against a Node SSE server (drop/reconnect, 502); solCode test in Vitest 5 + jsdom"
+  "hash": "f15e31da4203",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|npm create vite": {
-  "hash": "d92445373f8c",
-  "date": "2026-10-06",
-  "on": "Windows 11 PowerShell, Node 24.19 / npm 11.17, create-vite 9.2.1 (create, install, dev, build, preview)"
+  "hash": "62cc0282959b",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|optimistic update": {
-  "hash": "5d6113f54cff",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3 + TanStack Query 5.104, Chrome headless (Windows)"
+  "hash": "2b494d29691e",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|persist": {
-  "hash": "a5304e200ab0",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3 + Zustand 5.0.15, Chrome headless (Windows)"
+  "hash": "cbbf17de4518",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|props": {
-  "hash": "e7ea1734051a",
-  "date": "2026-10-06",
-  "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome; tsc 6.0"
+  "hash": "20e13dfc32c3",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|protected route": {
-  "hash": "d1bd78b9bedd",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3 + react-router 8.4.0, headless Chrome"
+  "hash": "5a801d9a9f7d",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|query key factory": {
-  "hash": "c4f4de489f57",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3 + TanStack Query 5.104 + React Router 8.4, Chrome headless + tsc (Windows)"
+  "hash": "55e5536391d8",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|race condition": {
-  "hash": "1cb2c5ea2cc0",
-  "date": "2026-10-06",
-  "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome with a local delayed Node API"
+  "hash": "e6df4966086d",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|react-hook-form + zod": {
-  "hash": "1333a364f25d",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3 + RHF 7.89 + zod 4.6.5, headless Chrome (401 and 500)"
+  "hash": "aa58f6837e03",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|react-i18next": {
-  "hash": "15500d1e06a3",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3 + i18next 26.4 / react-i18next 17, headless Chrome (Win11); Intl.PluralRules in Node 24"
+  "hash": "a72b48423ba9",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|reconciliation": {
   "hash": "3bd639c45b31",
@@ -14010,34 +14010,34 @@
   "on": "Vite 8.3 + React 19.3, headless Chrome on Windows"
  },
  "react|reducer + context": {
-  "hash": "89f4b1806e88",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3 dev, headless Chrome (full wizard from solCode)"
+  "hash": "e5480448199b",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|ref كـ prop": {
-  "hash": "a7d0f10b0853",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3 + react-hook-form 7.89 + zod 4.6, Chrome headless"
+  "hash": "b15f18fde8da",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|render props و HOCs": {
-  "hash": "cd2e41f2af98",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3 + React Router 8.4, Chrome headless; docs: DevTools tree names"
+  "hash": "fb8dfe807a7e",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|renderHook": {
-  "hash": "a495741089b4",
-  "date": "2026-10-07",
-  "on": "Vitest 5.0 + jsdom + RTL 16.3 (fake timers) + TanStack Query 5.104 (Win11)"
+  "hash": "1d4826e2c815",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|stale closure": {
-  "hash": "057a91db1572",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3, headless Chrome on Windows + oxlint 1.87 react-hooks/exhaustive-deps"
+  "hash": "5f7c42e205ef",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|staleTime و gcTime": {
-  "hash": "6ad771a87e49",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3 + TanStack Query 5.104, Chrome headless (Windows), tab switch simulated with visibilitychange"
+  "hash": "558b091ba9e5",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|storybook init": {
   "hash": "0054bb0011f4",
@@ -14045,119 +14045,119 @@
   "on": "Windows 11 Git Bash/pwsh, Node 24.22.1, Storybook 10.6.5 (init, remove addon, dev, build, build --test, vite preview --base checked with headless Chromium); Linux node:22-slim build"
  },
  "react|uncontrolled و FormData": {
-  "hash": "b30d83bc74b8",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3 dev, headless Chrome"
+  "hash": "c8486c1ff1e4",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|unit ولا e2e في Next": {
-  "hash": "0ccc1fcbc6ef",
-  "date": "2026-10-07",
-  "on": "Vitest 5.0 (Node) + zod 4.6; @playwright/test 1.63 against a Node stub server, Chrome (Win11); docs: Next.js Server Action / next start"
+  "hash": "314b7bd59cdd",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|useContext": {
-  "hash": "49620a35b67e",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3 dev, headless Chrome via Playwright"
+  "hash": "c44cf6eba382",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|useEffect": {
-  "hash": "ef1da6768d87",
-  "date": "2026-10-06",
-  "on": "Windows 11, Vite 8.3 + React 19.2 dev and vite preview, headless Chrome"
+  "hash": "8e92958f075f",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|useFieldArray و Controller": {
-  "hash": "13dad4e9b2f2",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3 + RHF 7.89 + zod 4.6.5, headless Chrome; schema in Node"
+  "hash": "9cd432faa643",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|useInfiniteQuery": {
-  "hash": "50ec13945b4b",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3 + TanStack Query 5.104, Chrome headless (Windows); MSW 3 handler in Node"
+  "hash": "a0c790f277ab",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|useLayoutEffect": {
-  "hash": "0c9a43be376a",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3, headless Chrome on Windows with CDP CPU throttling 6x"
+  "hash": "6c170bc9cb98",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|useLocalStorage": {
-  "hash": "9784e0a37456",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3 dev, headless Chrome (refresh, bad JSON)"
+  "hash": "d6b7361c9aaa",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|useMemo و useCallback": {
-  "hash": "6986f042f8e5",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3 dev (no StrictMode), headless Chrome via Playwright"
+  "hash": "47180cca0050",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|useMutation": {
-  "hash": "a45d3361e093",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3 + TanStack Query 5.104, Chrome headless (Windows)"
+  "hash": "a4e5bbbadc66",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|useQuery": {
-  "hash": "e476107cef49",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3 + TanStack Query 5.104, Chrome headless (Windows)"
+  "hash": "26a8ef4359ea",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|useReducer": {
-  "hash": "b4644d1bf42d",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3 dev, headless Chrome; Vitest 5.0.3; tsc 6.0.3 --strict"
+  "hash": "c88ec7231e65",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|useRef": {
-  "hash": "b1b606e5d76a",
-  "date": "2026-10-06",
-  "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome; tsc 6.0"
+  "hash": "5b7452e91316",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|useState": {
-  "hash": "710f0b840cbf",
-  "date": "2026-10-06",
-  "on": "Windows 11, Vite 8.3 + React 19.2 dev and vite preview, headless Chrome"
+  "hash": "238c73db651e",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|useSuspenseQuery": {
-  "hash": "cd8af06f243f",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3 + TanStack Query 5.104 + react-error-boundary 6.1, Chrome headless (Windows)"
+  "hash": "adb423efa51b",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|useTransition و useDeferredValue": {
-  "hash": "a93106004a56",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3 dev, Chrome headless (per-key latency measured)"
+  "hash": "6575f543bedf",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|user-event": {
-  "hash": "2f49855748d6",
-  "date": "2026-10-07",
-  "on": "Vitest 5.0 + jsdom + user-event 14.6 + react-hook-form 7.89 + zod 4.6 + msw 3.0 (Win11)"
+  "hash": "c67b5a4e13d3",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|vite.config": {
-  "hash": "6ba6dea4524b",
-  "date": "2026-10-06",
-  "on": "Windows 11, Vite 8.3.3 (build, --mode staging, ANALYZE=1, dev proxy against a local Node API); docs: Sentry upload"
+  "hash": "3905fbd86a1e",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|wrapper بالـ providers": {
-  "hash": "2faec7105898",
-  "date": "2026-10-07",
-  "on": "Vitest 5.0 + jsdom + TanStack Query 5.104 + React Router 8.4 + msw 3.0 (Win11)"
+  "hash": "5e9783efc47a",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|zod مشتركة مع الـ API": {
-  "hash": "fb2dcebaced0",
-  "date": "2026-10-07",
-  "on": "Express 5.2 (tsx) + curl; Vite 8.3 + React 19.3 + RHF 7.89 + zod 4.6.5 via proxy, headless Chrome; docs: MSW handler in solCode"
+  "hash": "0af1f6244d8a",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|إمتى بيعيد الرسم": {
-  "hash": "de013aac5f77",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3 dev, Chrome headless (Playwright); StrictMode and React Compiler runs; docs: React DevTools Highlight updates"
+  "hash": "bfc526fd237e",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|قواعد الـ hooks": {
-  "hash": "3ca71f7400be",
-  "date": "2026-10-07",
-  "on": "Vite 8.3 + React 19.3, headless Chrome on Windows + oxlint 1.87 react-hooks/rules-of-hooks"
+  "hash": "aae22f5a7403",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "react|مقدمة React والـ Components": {
-  "hash": "0c85bd6c888b",
-  "date": "2026-10-06",
-  "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome; tsc 6.0"
+  "hash": "39f7bd4bf763",
+  "date": "2026-10-29",
+  "on": "React 19.3 و Vite 8.3 في مشروع تجربة (renderToString و jsdom و hydrateRoot): اتجرّب الكود اللي اتغيّر — useLayoutEffect بالأرقام (497 ثم 130)، و getRowId في TanStack Table 9.3، و hydrate بـ pathname + search، و EventSource بـ readyState CLOSED على سيرفر Node محلي. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Storybook و Playwright و Recharts من الوثائق"
  },
  "real|Capacitor: موقع لـ APK": {
   "hash": "15539c216c1f",
