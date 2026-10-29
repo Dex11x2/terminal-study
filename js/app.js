@@ -3,7 +3,14 @@
 const $ = s => document.querySelector(s);
 const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 // [[code]] → <code>; the \]* keeps closing brackets that belong to the code, e.g. [[arr[0]]] → arr[0]
-const fmt = s => esc(s).replace(/\[\[(.+?\]*)\]\]/g, '<code>$1</code>');
+// [[code]] becomes <code>, and **bold** becomes <b>. The code is set aside first so a ** inside it ([[2 ** 53]])
+// stays as written, while bold can still wrap code (**[[27]]**)
+const fmt = s => {
+  const codes = [];
+  return esc(s).replace(/\[\[(.+?\]*)\]\]/g, (_, c) => '\u0000' + (codes.push(c) - 1) + '\u0000')
+    .replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
+    .replace(/\u0000(\d+)\u0000/g, (_, i) => '<code>' + codes[i] + '</code>');
+};
 const store = {
   get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } },
   set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} },
@@ -78,7 +85,7 @@ const FENCE = {powershell:['ps','PowerShell'], ps:['ps','PowerShell'], bash:['ba
 function teachHTML(c){
   const t = TEACH[shell+'|'+c];
   if (!t) return '';
-  const inl = s => fmt(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+  const inl = fmt;
   const src = t.split('\n'), out = [];
   for (let i = 0; i < src.length; i++){
     const l = src[i];
@@ -215,13 +222,19 @@ function useHTML(c){
     (u.scen ? '<p class="scen"><b>سيناريو حقيقي:</b> '+fmt(u.scen)+'</p>' : '')+'</div>';
 }
 /* one lesson's card: the same markup wherever it is shown */
+/* what the lesson's name stands for (js/names.js): «cd = change directory = غيّر الفولدر» */
+function nameHTML(c){
+  const notes = typeof cmdNameNotes === 'function' ? cmdNameNotes(shell, c) : [];
+  if (!notes.length) return '';
+  return '<p class="nm"><b>الاسم</b> '+notes.map(([w, n]) => '<span><code>'+esc(w)+'</code> '+fmt(n)+'</span>').join('')+'</p>';
+}
 function articleHTML(it){
   const [c, t, d, ex, tr, flag] = it;
   const key = 'done:'+shell+':'+c;
   const done = store.get(key) === '1';
   return '<article class="cmd'+(done?' is-done':'')+'" data-c="'+esc(c)+'">'+
     '<div class="cmd-h"><span class="name">'+esc(c)+'</span>'+(t?'<span class="title">'+esc(t)+'</span>':'')+(/\bdanger\b/.test(flag||'')?'<span class="tag-danger">خطر: اقرا الشرح قبل ما تنفّذ</span>':'')+osBadge(c)+'</div>'+
-    (d?descHTML(d):'')+teachHTML(c)+deepHTML(c)+useHTML(c)+osNote(c)+
+    nameHTML(c)+(d?descHTML(d):'')+teachHTML(c)+deepHTML(c)+useHTML(c)+osNote(c)+
     (ex ? termBlock(ex, c, flag) : '')+breakHTML(c, ex)+
     '<button type="button" class="reveal">اكشف الإجابة</button>'+
     '<div class="try"><span class="lbl">'+(shell==='glossary'?'الشرح الكامل في':'جرّب')+'</span><p>'+fmt(tr)+'</p><label class="done"><input type="checkbox" data-k="'+esc(key)+'"'+(done?' checked':'')+'> جربتها</label></div>'+
@@ -270,7 +283,10 @@ function renderMap(q, rawQ){
       lastL = cat.l;
       html += '<div class="lvl"><span class="n">المستوى '+AR(cat.l)+'</span><h2>'+lvInfo(cat.l)[0]+'</h2><p>'+lvInfo(cat.l)[1]+'</p>'+examHTML(cat.l)+'</div>';
     }
-    if (!shownHint){ shownHint = 1; html += '<p class="maphint">دوس على أي درس يفتح لوحده في صفحته، وتتنقل منه للي بعده بالسهم أو بزرار «الدرس الجاي».</p>'; }
+    if (!shownHint){ shownHint = 1;
+      // what the tab's own name means (js/names.js), once, above the first unit
+      if (!q && typeof TAB_ABOUT !== 'undefined' && TAB_ABOUT[shell]) html += '<div class="tab-about"><b>'+esc(SHELLS[shell].label)+' يعني إيه؟</b><p>'+fmt(TAB_ABOUT[shell])+'</p></div>';
+      html += '<p class="maphint">دوس على أي درس يفتح لوحده في صفحته، وتتنقل منه للي بعده بالسهم أو بزرار «الدرس الجاي».</p>'; }
     const id = shell+'-c'+cat.i;
     chips += '<button class="chip" type="button" data-t="'+id+'">'+esc(cat.t)+'</button>';
     html += '<section class="cat" id="'+id+'"><h3>'+esc(cat.t)+'<small>'+countLabel(cat.items.length)+(cat.time?' · '+esc(cat.time):'')+'</small></h3>'+

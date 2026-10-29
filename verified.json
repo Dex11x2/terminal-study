@@ -16604,6 +16604,11 @@
   "date": "2026-10-07",
   "on": "ubuntu:24.04 (Docker); docs: the docker run line itself"
  },
+ "symbols|\\ و / في كل مكان": {
+  "hash": "e3d382118980",
+  "date": "2026-10-29",
+  "on": "Git Bash و CMD و PowerShell 7.6 و 5.1 على ويندوز 11، Node 24.22.1، Python 3.14.3. docs: about_Parsing / PSNativeCommandArgumentPassing، تاريخ MS-DOS، سلوك CMD مع العلامات المفردة"
+ },
  "symbols|\\d  \\w  [ ]  ( )  {n}  |": {
   "hash": "0cb1629d165c",
   "date": "2026-10-27",
@@ -16748,6 +16753,21 @@
   "hash": "c45f9c789b73",
   "date": "2026-10-07",
   "on": "docker gcc:14 (gcc 14.4, linux)"
+ },
+ "symbols|اكتب سطر زيه": {
+  "hash": "98f1c0ed5f17",
+  "date": "2026-10-29",
+  "on": "Git Bash و CMD و PowerShell 7.6 و 5.1 على ويندوز 11، Node 24.22.1، Python 3.14.3. docs: about_Parsing / PSNativeCommandArgumentPassing، تاريخ MS-DOS، سلوك CMD مع العلامات المفردة"
+ },
+ "symbols|سطر حقيقي حتة حتة": {
+  "hash": "f060ec318a41",
+  "date": "2026-10-29",
+  "on": "Git Bash و CMD و PowerShell 7.6 و 5.1 على ويندوز 11، Node 24.22.1، Python 3.14.3. docs: about_Parsing / PSNativeCommandArgumentPassing، تاريخ MS-DOS، سلوك CMD مع العلامات المفردة"
+ },
+ "symbols|مين بيقرا علامة التنصيص": {
+  "hash": "084511b74c08",
+  "date": "2026-10-29",
+  "on": "Git Bash و CMD و PowerShell 7.6 و 5.1 على ويندوز 11، Node 24.22.1، Python 3.14.3. docs: about_Parsing / PSNativeCommandArgumentPassing، تاريخ MS-DOS، سلوك CMD مع العلامات المفردة"
  },
  "tools|PowerShell رافض يشغّل السكربت": {
   "hash": "c32ebe08ede4",
