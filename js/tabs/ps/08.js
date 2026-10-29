@@ -183,12 +183,12 @@ LinkSpeed    للراوتر بس، مش سرعة النت
 -WhatIf      شوف هيحصل إيه قبل ما يحصل
 ~~~`,
           lines: [
-            "كل الكروت: الاسم والوصف والحالة والسرعة والـ MAC.",
-            "الكروت الحقيقية بس، بالأعمدة المهمة.",
-            "البايتات اللي اتستقبلت واتبعتت على الواي فاي.",
-            "اطفي الواي فاي وشغّله تاني (أدمن). النت هيقطع ثواني.",
-            "اقفل كارت الـ Ethernet من غير سؤال تأكيد (أدمن).",
-            "شغّله تاني."
+            R`[[Get-NetAdapter]] بيعرض كل كروت الشبكة: [[Name]] الاسم اللي هتستخدمه في باقي الأوامر (زي Wi-Fi أو Ethernet)، و [[InterfaceDescription]] اسم الكارت الحقيقي، و [[Status]] (Up متوصل، Disconnected مفيش كابل أو شبكة، Disabled متقفل)، و [[LinkSpeed]] و [[MacAddress]]. القراية مش محتاجة أدمن.`,
+            R`[[-Physical]] بيشيل الكروت الوهمية (زي vEthernet بتاع WSL و Docker، وكروت الـ VPN) ويسيب الحقيقية بس، و [[Select-Object]] بيختار ٤ أعمدة: الاسم والحالة والسرعة والـ MAC. ده أسرع رد على «الواي فاي متوصل ولا لأ، وبسرعة كام؟».`,
+            R`[[Get-NetAdapterStatistics]] بيعدّ البايتات من ساعة ما الكارت اشتغل: [[ReceivedBytes]] اللي نزل و [[SentBytes]] اللي اترفع. و [[-Name "Wi-Fi"]] لازم يطابق Name من أول سطر بالظبط، وإلا بيطلع error إنه ملقاش الكارت.`,
+            R`[[Restart-NetAdapter]] بيطفي الكارت ويشغّله تاني، زي ما تقفل الواي فاي وترجّعه من الإعدادات، وده بيحل مشاكل كتير لما النت يعلّق. محتاج نافذة أدمن، والنت هيقطع ثواني، فمتعملهوش على جهاز انت متوصل بيه عن بعد.`,
+            R`[[Disable-NetAdapter]] بيقفل الكارت لحد ما تشغّله تاني بنفسك. [[-Confirm:$false]] بيلغي سؤال التأكيد اللي بيطلع افتراضيًا، فمفيد في سكربت. محتاج أدمن، ولو ده الكارت الوحيد اللي انت متوصل بيه هتفصل نفسك عن النت.`,
+            R`[[Enable-NetAdapter]] بيرجّع الكارت يشتغل، وده عكس السطر اللي قبله. محتاج أدمن برضه، وبعدها الكارت بياخد ثواني لحد ما يتوصل ويجيب IP، فلو [[Get-NetAdapter]] لسه بيقول Disconnected استنى شوية.`,
           ],
           sol: R`جربت أوامر العرض على لابتوب ويندوز 11 Home من غير أدمن. [[Get-NetAdapter]] طلع 6 كروت: [[Ethernet]] حالته [[Disconnected]] و [[0 bps]]، و [[Wi-Fi]] حالته [[Up]] و [[130 Mbps]]، وكروت افتراضية زي [[vEthernet (WSL (Hyper-V firewall))]] بـ [[10 Gbps]] واتنين TAP بتوع VPN و [[Bluetooth Network Connection]]. و [[-Physical]] قصّرهم لاتنين بس: Ethernet و Wi-Fi. والـ MAC بيظهر بالشكل [[84-1B-77-XX-XX-XX]] (خبّيت آخر 3 بايتات).
 
@@ -532,12 +532,12 @@ DohTemplate        : https://cloudflare-dns.com/dns-query
 
 | الأمر | أدمن؟ |
 |---|---|
-| [[Get-DnsClientServerAddress]] | لأ |
-| [[Set-DnsClientServerAddress -ServerAddresses]] | أيوه |
+| [[Get-DnsClientServerAddress]] | لأ، القراية متاحة لأي يوزر |
+| [[Set-DnsClientServerAddress -ServerAddresses]] | أيوه، لأنه بيغيّر إعدادات الكارت |
 | [[Clear-DnsClientCache]] | لأ (جربته من نافذة عادية) |
-| [[Resolve-DnsName]] | لأ |
-| [[Get-DnsClientDohServerAddress]] | لأ |
-| [[-ResetServerAddresses]] | أيوه |
+| [[Resolve-DnsName]] | لأ، ده سؤال للـ DNS بس |
+| [[Get-DnsClientDohServerAddress]] | لأ، بيقرا الإعداد بس |
+| [[-ResetServerAddresses]] | أيوه، لأنه بيغيّر الإعداد برضه |
 
 ## على الأنظمة التانية
 
@@ -758,12 +758,12 @@ python.exe                   Inbound  Public  Allow
 Block بتكسب على Allow
 ~~~`,
           lines: [
-            "الفايروول شغال في أنهي بروفايل؟",
-            "اسمح بالدخول على 5173 و 3000 TCP، على الشبكات الـ Private بس (أدمن).",
-            "امنع برنامج يكلّم النت: rule خارجة Block بمساره (أدمن).",
-            "الـ rules اللي اسمها بيبدأ بـ dev، والبورتات اللي فيها.",
-            "وقّف الـ rule من غير ما تمسحها.",
-            "امسحها."
+            R`[[Get-NetFirewallProfile]] بيرجّع البروفايلات التلاتة: Domain (شبكة شركة)، و Private (البيت)، و Public (كافيه أو مطار)، و [[Enabled]] بيقولك الفايروول شغال في كل واحد ولا لأ. الـ rules بتتربط ببروفايل، فلازم تعرف شبكتك نوعها إيه.`,
+            R`[[New-NetFirewallRule]] بيعمل rule جديدة: [[-DisplayName]] اسم تعرفها بيه، و [[-Direction Inbound]] للاتصالات الداخلة لجهازك، و [[-Protocol TCP -LocalPort 5173, 3000]] البورتين دول، و [[-Action Allow]] اسمح، و [[-Profile Private]] على شبكات البيت بس. كده موبايلك على نفس الواي فاي يفتح سيرفر الـ dev، وفي الكافيه يفضل مقفول. محتاج أدمن.`,
+            R`[[-Direction Outbound]] للاتصالات الخارجة من جهازك، و [[-Program]] المسار الكامل للبرنامج، و [[-Action Block]] امنع، فالبرنامج ده مش هيقدر يكلّم النت خالص. المسار لازم يبقى صح بالظبط، وإلا الـ rule هتتعمل عادي بس مش هتمسك حاجة. محتاج أدمن.`,
+            R`[[Get-NetFirewallRule -DisplayName "dev*"]] بيجيب الـ rules اللي اسمها بيبدأ بـ dev، بس الـ rule نفسها مفيهاش البورتات: [[Get-NetFirewallPortFilter]] بيجيب الجزء الخاص بالبورتات لكل rule جاية من الـ pipe، و [[Select-Object]] بيعرض البروتوكول والبورتات. القراية دي مش محتاجة أدمن.`,
+            R`[[Disable-NetFirewallRule]] بيوقّف الـ rule من غير ما يمسحها، فتقدر ترجّعها بـ [[Enable-NetFirewallRule]] بنفس الاسم وكل إعداداتها زي ما هي. مفيد وانت بتجرّب: هل المشكلة من الـ rule دي؟ محتاج أدمن.`,
+            R`[[Remove-NetFirewallRule]] بيمسح الـ rule نهائي. خلي بالك إن [[DisplayName]] مش فريد (ويندوز نفسه فيه rules متكررة الاسم)، فلو فيه كذا rule بالاسم ده هيمسحهم كلهم. جرّب الأول بـ [[-WhatIf]] يوريك هيمسح إيه. محتاج أدمن.`,
           ],
           sol: R`الحل في الـ solCode، وجربته من غير أدمن (العرض مش محتاج). [[Get-NetFirewallProfile]] طلع التلاتة [[Enabled True]]. والعد طلع [[158]] rule بتسمح بالدخول وهي شغالة على Public أو Any، وأغلبها بتاعة ويندوز نفسه (Core Networking و Cast to Device). والسطر التاني طلع [[Node.js JavaScript Runtime  Inbound  Public  Allow]] مرتين (واحدة TCP وواحدة UDP)، و [[python.exe  Inbound  Public  Allow]] مرتين، ودول اتعملوا من نافذة «Allow access» أول مرة شغّلت سيرفر.
 

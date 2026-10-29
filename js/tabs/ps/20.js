@@ -249,11 +249,11 @@ Running Spooler Print Spooler
 - [[-WhatIf]] بيخليك تجرّب على الحقيقي من غير خسارة. خليها عادة قبل أي أمر بيغيّر.
 - بعد التنفيذ، اتأكد بأمر [[Get-]] بدل ما تفترض.`,
           lines: [
-            R`هات الأفعال المعتمدة وفلتر اللي بيبدأ بـ St: Stop هو اللي عايزينه`,
-            R`كل الأوامر اللي اسمها Service: من هنا عرفنا إن الاسم الكامل Stop-Service`,
-            R`سطر الاستخدام: الـ parameters وأنواعها، ومنه شفنا إن -WhatIf مدعومة`,
-            R`جرّب من غير ما تنفّذ: بيطبع «كنت هوقّف Print Spooler» والخدمة متتقفلش`,
-            R`اتأكد بنفسك من الحالة بعد الكلام ده: Running لأن اللي فات كان WhatIf`
+            R`[[Get-Verb]] بيرجّع لستة الأفعال المعتمدة اللي كل أوامر PowerShell بتبدأ بيها (Get و Set و Stop...). [[Where-Object Verb -like 'St*']] بيسيب اللي بيبدأ بـ St بس، فيطلع [[Step]] و [[Start]] و [[Stop]]، ومنهم عرفنا إن الفعل اللي يوقّف حاجة اسمه [[Stop]] مش End أو Kill.`,
+            R`[[-Noun Service]] بيجيب كل الأوامر اللي الجزء التاني من اسمها [[Service]] (Get-Service و Start-Service و Stop-Service...). كده الفعل من السطر اللي فات والاسم من هنا بيدّوا الأمر الكامل [[Stop-Service]] من غير ما تكون حافظه.`,
+            R`[[-Syntax]] بيطبع سطر الاستخدام بدل جدول المعلومات: كل parameter وقيمته من نوع إيه، وكل سطر طريقة استخدام (parameter set). لقينا فيه [[[-WhatIf]]] بين أقواس، يعني اختياري ومدعوم، فنقدر نجرّب بأمان قبل التنفيذ.`,
+            R`[[-Name Spooler]] اسم الخدمة (خدمة الطباعة)، و [[-WhatIf]] بيخلي الأمر يطبع «What if: Performing the operation "Stop-Service" on target "Print Spooler (Spooler)"» من غير ما يوقّفها. دي أأمن طريقة تتأكد إن الأمر هيمسك الحاجة الصح، وكمان مش محتاجة أدمن عشان مفيش تنفيذ.`,
+            R`[[Get-Service -Name Spooler]] بيعرض حالة الخدمة: [[Status]] لسه [[Running]]، وده بيثبت إن [[-WhatIf]] معملش حاجة فعلًا. خطوة التأكد دي عادة كويسة بعد أي أمر مش متأكد من تأثيره.`
           ]
         },
 
@@ -459,11 +459,11 @@ Clear-Variable
 - [[-ParameterName]] بيقلب السؤال: مش «الأمر بياخد إيه» لكن «مين بياخد ده».
 - [[Application]] معناه برنامج خارجي، و [[Source]] ساعتها بيبقى مسار الملف.`,
           lines: [
-            R`الفعل والاسم مع بعض: بيحددوا أمر واحد، كويس لما تبقى فاكر الفكرة مش الإملاء`,
-            R`دوّر بالنجمة: أي أمر أو برنامج فيه كلمة shutdown`,
-            R`كل أوامر موديول واحد: أسرع طريقة تعرف موديول جديد بيقدّم إيه`,
-            R`اقلب السؤال: مين الأوامر اللي بتدعم -WhatIf؟`,
-            R`البرامج الخارجية (.exe) اللي ويندوز يقدر يلاقيها من الـ PATH`
+            R`[[-Verb Restart]] و [[-Noun Computer]] مع بعض بيحددوا الأمر بالجزئين: الفعل والاسم، فيطلع [[Restart-Computer]] بس ومعاه اسم الموديول اللي جاي منه. مفيد لما تبقى عارف عايز تعمل إيه وعلى إيه بس مش فاكر الاسم مكتوب إزاي بالظبط.`,
+            R`النجوم wildcard يعني «أي حروف قبل وبعد»، فبيدوّر على أي اسم فيه shutdown في أي حتة: cmdlets و functions و aliases وبرامج خارجية زي [[shutdown.exe]]. وعمود [[CommandType]] بيقولك ده إيه، فتعرف إن [[shutdown.exe]] برنامج ويندوز مش أمر PowerShell.`,
+            R`[[-Module]] بيجيب كل الأوامر اللي جوه موديول واحد بالاسم. [[Microsoft.PowerShell.Management]] الموديول اللي فيه أوامر الملفات والعمليات والخدمات، فده زي فهرس: لما تسطّب موديول جديد، الأمر ده بيوريك كل اللي يقدر يعمله.`,
+            R`[[-ParameterName WhatIf]] بيقلب البحث: بدل ما تسأل «الأمر ده بيدعم إيه»، بتسأل «مين الأوامر اللي عندها parameter اسمه WhatIf». الناتج هو الأوامر اللي تقدر تعاينها قبل ما تنفّذها، وغالبًا هي اللي بتغيّر حاجة.`,
+            R`[[-CommandType Application]] بيجيب البرامج الخارجية بس (.exe و .cmd وغيرهم) اللي موجودة في الفولدرات اللي في متغير [[PATH]]. لو برنامج سطّبته ومش ظاهر هنا، يبقى فولدره مش في الـ PATH وده سبب إن الترمنال مش لاقيه.`
           ]
         },
 
@@ -688,21 +688,21 @@ Mode                 LastWriteTime         Length Name
 
 | العلامة | معناها |
 |---|---|
-| [[[-X]]] | اختياري |
-| [[-X]] من غير أقواس | إجباري |
+| [[[-X]]] | اختياري: تقدر تكتبه أو تسيبه خالص والأمر يشتغل |
+| [[-X]] من غير أقواس | إجباري: لو مكتبتوش الأمر هيسألك عليه أو يرفض يشتغل |
 | [[[-X] <type>]] | إجباري، بس اسمه ممكن يتساب (positional) |
-| [[<string>]] | نوع القيمة |
+| [[<string>]] | نوع القيمة اللي بتتكتب بعد الـ parameter، هنا نص |
 | [[<string[]>]] | يقبل قايمة بفاصلة |
 | [[-X]] من غير [[< >]] | switch: موجودة أو لأ |
-| [[{a | b}]] | القيم المسموحة بس |
+| قيم جوه [[{ }]] بينها خط رأسي | القيم المسموحة بس، اختار واحدة منهم؛ أي قيمة تانية الأمر يرفضها |
 | أكتر من سطر | أكتر من طريقة نداء، اختار واحدة |
-| [[[<CommonParameters>]]] | [[-Verbose]] و [[-ErrorAction]] وإخواتهم |`,
+| [[[<CommonParameters>]]] | parameters موجودة في كل الأوامر، زي [[-Verbose]] و [[-ErrorAction]] و [[-WarningAction]] |`,
           lines: [
-            R`سطر الاستخدام بتاع Get-ChildItem: فيه كل أنواع الأقواس الأربعة`,
-            R`تلات سطور = تلات parameter sets، تختار واحد منهم مش تخلط`,
-            R`أسامي الأطقم وأنهي واحد الافتراضي لما متكتبش parameters`,
-            R`positional: C:\Windows راحت لـ -Path لوحدها لأنها أول parameter`,
-            R`نفس الأمر بالظبط بس بالاسم الصريح: ده اللي تكتبه في السكربتات`
+            R`[[-Syntax]] على [[Get-ChildItem]] بيطبع سطرين (طريقة بـ [[-Path]] وطريقة بـ [[-LiteralPath]])، وفيهم كل أشكال الأقواس: [[-Path]] جاي جوه قوسين مربعين جوه قوسين تانيين، يعني الـ parameter كله اختياري واسمه نفسه ممكن يتشال، و [[-Recurse]] بين قوسين لوحده ومن غير نوع يعني switch اختياري، و [[<string>]] نوع القيمة، والقوسين الفاضيين بعد النوع (string[]) معناهم إنك تقدر تبعت أكتر من قيمة بالفاصلة.`,
+            R`[[Stop-Service]] بيطبع 3 سطور: كل سطر parameter set، يعني طريقة مستقلة تحدد بيها الخدمة: بـ [[-InputObject]] (object خدمة من الـ pipe)، أو [[-Name]]، أو [[-DisplayName]]. تختار طريقة واحدة؛ لو كتبت [[-Name]] و [[-DisplayName]] مع بعض PowerShell هيرفض لأنه مش عارف تقصد انهي سطر.`,
+            R`[[(Get-Command Get-Process)]] بين قوسين بيرجّع object الأمر، و [[.ParameterSets]] كل الأطقم بتاعته. [[Name]] اسم كل طقم، و [[IsDefault]] بيقولك انهي واحد PowerShell بيختاره لما متحددش (هنا [[Name]])، فـ [[Get-Process]] لوحده بيشتغل بالطقم ده ويجيب كل العمليات.`,
+            R`positional: [[C:\Windows]] من غير اسم parameter راحت لـ [[-Path]] لأنه أول parameter بالترتيب في سطر الاستخدام (الأقواس حوالين [[-Path]] بس كانت معناها إن الاسم مش لازم). و [[-Filter *.ini]] بيسيب الملفات اللي آخرها .ini.`,
+            R`نفس الأمر بالظبط بالاسم الصريح [[-Path]]. في السكربتات اكتب الأسامي دايمًا: اللي بيقرا بعدك يفهم من غير ما يحفظ الترتيب، ولو الأمر اتغيّر في نسخة جديدة الكود مش هيتلخبط.`
           ]
         },
 
@@ -947,11 +947,11 @@ $WhatIfPreference = $false
 - [[-WhatIf]] بتحمي من أوامر PowerShell اللي داعماها بس، مش من برامج خارجية ولا من [[[System.IO.File]::Delete()]].
 - حطها في آخر الـ pipeline، على الأمر اللي بيغيّر، مش في أوله.`,
           lines: [
-            R`معاينة مسح: بيطبع سطر لكل ملف هيتمسح والملفات بتفضل مكانها`,
-            R`نفس الفكرة على خدمة: بيورّيك العملية والهدف بالاسمين`,
-            R`حتى الريستارت ليه معاينة: الجهاز مش بيعمل ريستارت`,
-            R`خلي كل أوامر الجلسة معاينة من غير ما تكتب -WhatIf كل مرة`,
-            R`رجّع الوضع الطبيعي: من غير السطر ده هتفضل تستغرب ليه مفيش حاجة بتتنفذ`
+            R`[[*.txt]] wildcard بيمسك كل ملف آخره .txt في الفولدر الحالي، و [[-WhatIf]] بيخلي [[Remove-Item]] يطبع سطر «What if: Performing the operation "Remove File" on target ...» لكل ملف بدل ما يمسحه. اقرا اللستة: لو فيها ملف مش متوقع، غيّر الـ wildcard قبل ما تشيل [[-WhatIf]].`,
+            R`[[-Name Spooler]] خدمة الطباعة، و [[-WhatIf]] بيطبع اسم العملية ([[Stop-Service]]) والهدف بالاسمين: الاسم اللي بيظهر [[Print Spooler]] والاسم القصير [[Spooler]] بين قوسين، فتتأكد إنك ماسك الخدمة الصح.`,
+            R`[[Restart-Computer]] من غير [[-ComputerName]] معناه جهازك انت، و [[-WhatIf]] بيطبع سطر «What if:» بس والجهاز مش بيعمل restart. ده بيوريك إن حتى أخطر الأوامر بتدعم المعاينة، فجرّبها قبل ما تشغّل سكربت بيقفل أجهزة.`,
+            R`[[$WhatIfPreference]] متغير بيتحكم في كل الأوامر اللي بتدعم [[-WhatIf]] في الجلسة دي: لما يبقى [[$true]] كأنك كاتب [[-WhatIf]] على كل أمر، فتقدر تشغّل سكربت كامل كمعاينة. البرامج الخارجية زي [[git]] مش بتتأثر بيه، فهي بتتنفّذ عادي.`,
+            R`بيرجّع المتغير لـ [[$false]] فالأوامر تتنفّذ تاني. التأثير بيفضل لحد آخر الجلسة، فلو نسيت السطر ده هتلاقي [[Remove-Item]] و [[Stop-Service]] بيطبعوا «What if» ومش بيعملوا حاجة، ولو قفلت الترمنال وفتحته بيرجع [[$false]] لوحده.`
           ]
         },
 
@@ -977,7 +977,7 @@ PowerShell بييجي معاه حوالي ١٥٠ اختصار جاهز. منهم
 Get-Alias -Definition Get-ChildItem
 Get-Alias | Measure-Object
 Set-Alias gh Get-Help
-Get-Command gci | Select-Object CommandType, Name, ResolvedCommand`,
+Get-Command gci | Select-Object CommandType, Name, Definition`,
           try: R`شوف [[%]] و [[?]] بيشاوروا على إيه بـ [[Get-Alias -Definition ForEach-Object]] و [[Get-Alias -Definition Where-Object]]. وبعدين حاول [[Get-Alias '?']] وشوف الناتج الغريب واعرف ليه.`,
           sol: R`~~~text الناتج (PowerShell 7.6)
 PS> Get-Alias -Definition ForEach-Object
@@ -1027,16 +1027,16 @@ function ll { Get-ChildItem -Force @args }
 
 | تكتب | في الحقيقة |
 |---|---|
-| [[dir]] / [[ls]] / [[gci]] | [[Get-ChildItem]] |
-| [[cat]] / [[type]] / [[gc]] | [[Get-Content]] |
-| [[cd]] / [[chdir]] / [[sl]] | [[Set-Location]] |
-| [[cls]] / [[clear]] | [[Clear-Host]] |
-| [[%]] | [[ForEach-Object]] |
-| [[?]] | [[Where-Object]] |
-| [[iwr]] | [[Invoke-WebRequest]] |
-| [[sls]] | [[Select-String]] |
+| [[dir]] / [[ls]] / [[gci]] | [[Get-ChildItem]]: يعرض الملفات والفولدرات اللي في مكان |
+| [[cat]] / [[type]] / [[gc]] | [[Get-Content]]: يقرا محتوى ملف سطر سطر |
+| [[cd]] / [[chdir]] / [[sl]] | [[Set-Location]]: ينقلك لفولدر تاني |
+| [[cls]] / [[clear]] | [[Clear-Host]]: يمسح الشاشة بس، مش الـ history |
+| [[%]] | [[ForEach-Object]]: يشغّل بلوك لكل object جاي في الـ pipe |
+| [[?]] | [[Where-Object]]: يسيب الـ objects اللي ماشية مع الشرط بس |
+| [[iwr]] | [[Invoke-WebRequest]]: يطلب صفحة أو API من النت |
+| [[sls]] | [[Select-String]]: يدوّر على نص جوه ملفات أو ناتج، زي grep |
 
-**تعرف الاختصار ورا الأمر:** [[Get-Command gci]] بيطلّع عمود [[ResolvedCommand]] فيه الاسم الحقيقي، و [[Get-Help <أمر>]] بيعرض قسم [[ALIASES]].
+**تعرف الاختصار ورا الأمر:** [[Get-Command gci]] بيطلّع الاسم الحقيقي في العمود [[Name]] نفسه ([[gci -> Get-ChildItem]]) وفي خاصية [[Definition]]، و [[Get-Help <أمر>]] بيعرض قسم [[ALIASES]].
 
 **على لينكس وماك:** PowerShell بيشيل الاختصارات اللي بتتعارض مع أوامر النظام ([[ls]] و [[cat]] و [[man]] و [[mv]] و [[cp]] و [[rm]] و [[pwd]])، عشان لما تكتب [[ls]] هناك تاخد الأمر الحقيقي. وده السبب التاني إن السكربت ميعتمدش على اختصار.`,
             when: "لما تقرا كود مش فاهمه. ولما تبقى بتكتب في الترمنال كتير وعايز توفّر ضغطات.",
@@ -1170,16 +1170,16 @@ ll
 ## ٥. الاختصار ده رايح لفين بالظبط؟
 
 ~~~powershell
-Get-Command gci | Select-Object CommandType, Name, ResolvedCommand
+Get-Command gci | Select-Object CommandType, Name, Definition
 ~~~
 
 ~~~text الناتج
-CommandType Name ResolvedCommand
------------ ---- ---------------
+CommandType Name Definition
+----------- ---- ----------
       Alias gci  Get-ChildItem
 ~~~
 
-[[ResolvedCommand]] هو الأمر النهائي بعد فك كل الاختصارات. مفيد لو فيه alias بيشاور على alias.
+[[Definition]] في الـ alias هو الأمر اللي بيشاور عليه. وفيه كمان خاصية [[ResolvedCommand]] (الأمر النهائي بعد فك كل الاختصارات، مفيدة لو alias بيشاور على alias)، بس اتجرّبت في جلسة جديدة في 5.1 و 7 وطلعت **فاضية** لحد ما موديول الأمر يتحمّل (بعد أول [[Get-ChildItem]]). عشان كده المثال بيستخدم [[Definition]]: بتطلع على طول.
 
 ---
 
@@ -1209,11 +1209,11 @@ CommandType Name ResolvedCommand
 - [[Set-Alias]] عايش للجلسة بس؛ للدوام حطه في [[$PROFILE]].
 - **في السكربتات اكتب الاسم الكامل.** الاختصارات مش مضمونة على كل نظام، و [[PSScriptAnalyzer]] بينبّه عليها.`,
           lines: [
-            R`الاختصارات دي بتشاور على إيه، وعمود Options بيقول محمية ولا لأ`,
-            R`الاتجاه العكسي: الأمر ده ليه اختصارات إيه (دي الطريقة الآمنة مع ? و %)`,
-            R`عدّ كل الاختصارات الجاهزة في الجلسة`,
-            R`اعمل اختصارك انت: عايش للجلسة دي بس لحد ما تحطه في $PROFILE`,
-            R`ResolvedCommand بيقولك الاختصار بيوصل لأنهي أمر في الآخر`
+            R`[[Get-Alias]] بياخد كذا اسم بالفاصلة ويرجّع لكل واحد [[Definition]] (الأمر الحقيقي اللي بيشاور عليه، زي [[ls]] بيروح لـ [[Get-ChildItem]]) و [[Options]]: [[ReadOnly]] يعني مينفعش تغيّره من غير [[-Force]]، و [[AllScope]] (زي [[cd]]) يعني موجود في كل scope ومينفعش تشيل الخاصية دي. والقيم بتختلف بين 5.1 و 7.`,
+            R`[[-Definition]] بيقلب السؤال: بدل «الاختصار ده إيه»، «الأمر ده ليه اختصارات إيه»، فيطلع [[dir]] و [[gci]] و [[ls]]. وده الطريقة الآمنة مع اختصارات زي [[?]] و [[%]]: لو كتبتهم كأسامي في [[Get-Alias]] هيتفهموا wildcard ويجيبوا حاجات كتير.`,
+            R`[[Get-Alias]] من غير أسامي بيجيب كل الاختصارات، و [[Measure-Object]] بيعدّهم ويطلّع [[Count]]. العدد بيختلف حسب النسخة (5.1 فيه اختصارات أكتر، زي [[curl]] و [[wget]] اللي اتشالوا من 7) وحسب الموديولات اللي اتحمّلت.`,
+            R`[[Set-Alias]] بيعمل اختصار جديد: الاسم الأول ([[gh]]) والأمر اللي بيشاور عليه ([[Get-Help]]). بيعيش لحد ما تقفل الترمنال بس؛ عشان يفضل حطه في ملف [[$PROFILE]]. خلي بالك: الاختصار بيكسب على البرامج الخارجية، فلو عندك GitHub CLI اسمه [[gh]] كمان، [[gh]] هيفتح Get-Help بداله.`,
+            R`[[Get-Command]] على اختصار بيرجّع [[CommandType]] = [[Alias]]، و [[Definition]] فيها الأمر اللي الاختصار بيشاور عليه ([[Get-ChildItem]]). اخترنا [[Definition]] مش [[ResolvedCommand]] لأن التانية اتجرّبت في جلسة جديدة (5.1 و 7) وطلعت فاضية لحد ما موديول الأمر يتحمّل.`
           ]
         },
 
@@ -1291,7 +1291,7 @@ Update-Help -Scope CurrentUser
 | [[about_Pipelines]] | الـ pipeline بيشتغل إزاي من جوه |
 | [[about_Functions_Advanced_Parameters]] | [[[Parameter()]]] و الـ validation |
 | [[about_Scopes]] | المتغير شايفه مين |
-| [[about_Preference_Variables]] | [[$ErrorActionPreference]] وإخواتها |
+| [[about_Preference_Variables]] | المتغيرات اللي بتغيّر سلوك كل الأوامر، زي [[$ErrorActionPreference]] وإخواتها |
 | [[about_Splatting]] | تمرير الـ parameters من hashtable |
 | [[about_Automatic_Variables]] | [[$_]] و [[$?]] و [[$PSItem]] وكل المتغيرات الجاهزة |
 
@@ -1362,8 +1362,8 @@ TechNet library at https://go.microsoft.com/fwlink/?LinkID=107116.
 |---|---|
 | [[could not find about_Operators in a help file]] | الملف نفسه مش موجود على الجهاز |
 | [[in this session]] | في الجلسة دي، يعني ممكن يبقى موجود بعد تحميل |
-| [[To download ... type: "Update-Help"]] | الحل الأول |
-| [[To get help online, search ...]] | الحل التاني |
+| [[To download ... type: "Update-Help"]] | الحل الأول: شغّل [[Update-Help]] ينزّل الملفات على جهازك |
+| [[To get help online, search ...]] | الحل التاني: اقرا نفس الصفحة على النت من غير تحميل |
 
 **الرسالة مش بتقول «الموضوع ده مش موجود».** بتقول «الملف مش عندي». فرق كبير.
 
@@ -1471,7 +1471,7 @@ Get-Help about_Comparison_Operators | Out-String -Stream | Select-String "match"
 | [[about_Comparison_Operators]] | [[-eq]] و [[-like]] و [[-match]] والفرق بينهم |
 | [[about_Operators]] | كل الرموز في مكان واحد |
 | [[about_Automatic_Variables]] | [[$_]] و [[$?]] و [[$args]] وكل المتغيرات الجاهزة |
-| [[about_Preference_Variables]] | [[$ErrorActionPreference]] و [[$WhatIfPreference]] |
+| [[about_Preference_Variables]] | المتغيرات اللي بتغيّر سلوك كل الأوامر في الجلسة، زي [[$ErrorActionPreference]] و [[$WhatIfPreference]] |
 | [[about_Splatting]] | تمرير parameters من hashtable |
 | [[about_Scopes]] | المتغير ده شايفه مين |
 | [[about_Pipelines]] | الـ pipeline من جوه |
@@ -1487,11 +1487,11 @@ Get-Help about_Comparison_Operators | Out-String -Stream | Select-String "match"
 - [[-Online]] شغال على طول من غير تحميل.
 - اقرا [[REMARKS]] في آخر المساعدة؛ هي بتقولك لو اللي قدامك ناقص.`,
           lines: [
-            R`إيه مواضيع المفاهيم الموجودة عندي: لو أقل من ٢٠ يبقى المساعدة مش متحمّلة`,
-            R`صفحة مفهوم بعينها، ولو مش متحمّلة الرسالة بتقولك تعمل إيه`,
-            R`نفس الصفحة من النت في المتصفح، شغالة من غير أي تحميل`,
-            R`نزّل ملفات المساعدة لليوزر الحالي: مرة واحدة ومش محتاجة أدمن في PowerShell 7`,
-            R`بعد التحميل ده بيطلّع أمثلة مترقمة؛ قبله بيطلّع الاسم والـ syntax بس`
+            R`[[about_*]] بالنجمة بيعرض كل صفحات المفاهيم (اللي بتشرح فكرة زي الـ operators أو الـ variables، مش أمر معين) الموجودة على جهازك. على تسطيبة جديدة بيطلع كام صفحة بس، ولو أقل من 20 يبقى ملفات المساعدة لسه متنزلتش.`,
+            R`بيعرض صفحة مفهوم واحدة بالاسم: [[about_Operators]] بتشرح كل العوامل ([[-eq]] و [[-and]] و [[-replace]]...). لو المساعدة مش متحمّلة، بيطلع error «could not find about_Operators in a help file» وبيقترح تشغّل [[Update-Help]] أو تدوّر على الصفحة على النت.`,
+            R`[[-Online]] بيفتح نفس الصفحة على موقع Microsoft في المتصفح، فبيشتغل من غير ما تنزّل حاجة ودايمًا أحدث نسخة. محتاج نت ومتصفح، فمش هينفع على سيرفر من غير واجهة.`,
+            R`[[Update-Help]] بينزّل ملفات المساعدة الكاملة من النت. [[-Scope CurrentUser]] (PowerShell 7 بس) بيحطها في فولدر يوزرك فمش محتاج أدمن، وفي 5.1 الـ parameter ده مش موجود والأمر محتاج ترمنال أدمن. [[-ErrorAction SilentlyContinue]] لأن موديولات قليلة ملهاش مساعدة على النت فبتطلّع errors حمرا مالهاش لازمة.`,
+            R`[[-Examples]] بيعرض الأمثلة بس من صفحة الأمر، مترقمة وكل واحد معاه شرحه، وده غالبًا أسرع طريق تفهم بيه أمر جديد. قبل [[Update-Help]] بيطلّع الاسم والـ syntax بس لأن الأمثلة جوه الملفات اللي بتتنزل.`
           ]
         },
 
@@ -1746,12 +1746,12 @@ Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
 - الأوامر اللي بيعرفها هي المحمّلة في الجلسة؛ بعد تسطيب موديول جديد افتح ترمنال جديد.
 - [[TabExpansion2]] هي الدالة اللي تحت، ومفيدة لو عايز تشوف الاحتمالات كنص.`,
           lines: [
-            R`ناديت دالة الإكمال بنفسي على النص Get-Ch والمؤشر في آخره`,
-            R`اطبع الاحتمالات اللي لقاها ونوع كل واحد: هنا أمر واحد بس`,
-            R`النص المرة دي أمر وبعده شرطة: يعني «وريني الـ parameters»`,
-            R`المؤشر في آخر النص، وطول النص هو مكانه`,
-            R`أول ١٠ احتمالات: parameters الأمر وبعدهم الـ CommonParameters`,
-            R`إيه الأزرار المربوطة بالإكمال في PSReadLine على جهازك`
+            R`[[TabExpansion2]] هي الدالة اللي PowerShell بينادي عليها لما تدوس Tab، وهنا بنناديها بإيدينا عشان نشوف هي بتفكر إزاي. [[-inputScript]] النص المكتوب، و [[-cursorColumn 6]] مكان المؤشر (بعد 6 حروف، يعني في آخر [[Get-Ch]]). النتيجة object بنحفظه في [[$r]].`,
+            R`[[CompletionMatches]] لستة الاحتمالات اللي لقتها، و [[CompletionText]] النص اللي هيتكتب لو اخترته، و [[ResultType]] نوعه ([[Command]] أو [[ParameterName]] أو [[ProviderItem]] للملفات). هنا طلع احتمال واحد [[Get-ChildItem]]، فـ Tab بيكمّله على طول.`,
+            R`نص فيه اسم أمر وبعده مسافة وشرطة. الشرطة بتقول لدالة الإكمال إنك بتكتب اسم parameter، فهي هتقترح parameters الأمر ده بالذات مش أوامر.`,
+            R`المرة دي مكان المؤشر هو طول النص ([[$s.Length]])، يعني آخره، بدل ما نعدّ الحروف بإيدينا. لو حطيت المؤشر في نص الكلام، الإكمال بيشتغل على الكلمة اللي هو فيها.`,
+            R`[[-First 10]] أول 10 احتمالات بس، و [[-ExpandProperty CompletionText]] بيطلّع النص نفسه بدل جدول. هتلاقي parameters [[Get-Service]] الأول زي [[-Name]] و [[-DisplayName]]، وبعدها الـ CommonParameters زي [[-Verbose]] و [[-ErrorAction]] اللي موجودة في كل الأوامر.`,
+            R`[[Get-PSReadLineKeyHandler -Bound]] بيعرض الأزرار المربوطة بوظايف في PSReadLine (الموديول اللي بيتحكم في الكتابة في الترمنال)، والفلتر بيسيب وظايف الإكمال. هتلاقي [[Tab]] مربوط بـ [[TabCompleteNext]] (يلف على الاحتمالات واحد واحد)، و [[Ctrl+Spacebar]] بـ [[MenuComplete]] (يعرضهم كلهم كقايمة تختار منها).`
           ]
         },
 
@@ -1948,7 +1948,7 @@ PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand
 - مفيهوش مساراتك الشخصية.
 - بيحدد الأمر والمشكلة بالظبط.
 
-فبدل ما تبحث بـ [[Cannot find path 'C:\Users\7ossa\...' because it does not exist]]، ابحث بـ [[PathNotFound GetItemCommand]].
+فبدل ما تبحث بـ [[Cannot find path 'C:\Users\you\...' because it does not exist]]، ابحث بـ [[PathNotFound GetItemCommand]].
 
 ---
 
@@ -2068,12 +2068,12 @@ $Error[0]
 - [[Get-Error]] بيطبع كل ده مرة واحدة.
 - [[-ErrorAction SilentlyContinue]] بيخفي الرسالة بس الخطأ بيفضل في [[$Error]] و [[$?]] بتبقى [[False]].`,
           lines: [
-            R`نغلّط غلطة بسيطة: ملف في مسار مش موجود`,
-            R`الرسالة نفسها من آخر خطأ في الجلسة`,
-            R`نوع الخطأ: ده اللي بيفرق بين «مش موجود» و «ممنوع»`,
-            R`كود الخطأ + الأمر اللي طلّعه: ده اللي تبحث بيه في جوجل`,
-            R`رقم السطر اللي وقع فيه، ومهم جدًا في السكربتات الطويلة`,
-            R`كل التفاصيل دي مرة واحدة ومنسّقة (PowerShell 7 وأحدث)`
+            R`بنعمل غلطة عمدًا: [[Get-Item]] على ملف في فولدر مش موجود. هيطبع رسالة حمرا «Cannot find path ... because it does not exist»، والـ error ده بيتسجل في [[$Error]] حتى لو الرسالة اختفت من الشاشة.`,
+            R`[[$Error]] array فيها كل الأخطاء اللي حصلت في الجلسة، والأحدث في [[$Error[0]]]. [[.Exception.Message]] النص بس من غير المسار والألوان، وده اللي تحطه في لوج أو تقارنه في سكربت.`,
+            R`[[GetType().FullName]] بيطلّع نوع الـ exception بالاسم الكامل، هنا [[System.Management.Automation.ItemNotFoundException]]. النوع ده اللي بيفرّق بين «مش موجود» و«مفيش صلاحية» ([[UnauthorizedAccessException]])، وتقدر تمسك نوع معين بـ [[catch]] لوحده.`,
+            R`[[FullyQualifiedErrorId]] كود ثابت بالإنجليزي على شكل [[PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand]]: سبب الخطأ وبعده الأمر اللي طلّعه. مش بيتترجم مع لغة ويندوز، فلو بحثت بيه هتلاقي نتايج أكتر من البحث بالرسالة.`,
+            R`[[InvocationInfo]] فيه معلومات عن المكان اللي الخطأ حصل فيه، و [[ScriptLineNumber]] رقم السطر. في ترمنال تفاعلي الرقم قليل مالوش معنى، بس في سكربت طويل ده اللي يوديك على السطر اللي وقع على طول.`,
+            R`[[Get-Error]] (PowerShell 7 وأحدث، مش موجود في 5.1) بيعرض آخر error بكل تفاصيله منسّقة: الـ exception والنوع والسطر والـ inner exceptions لو فيه. لو عايز أخطاء أقدم: [[Get-Error -Newest 3]].`
           ]
         }
       ]

@@ -19,11 +19,11 @@ Get-Service | Where-Object Status -eq Running`,
           try: "اعرض الملفات اللي اتعدلت النهارده بس: [[Where-Object LastWriteTime -gt (Get-Date).Date]].",
           deep: {
             why: "فلترة الـ objects اللي طالعة من أمر قبله. زي grep بس بيفهم الـ properties مش النص.",
-            how: R`[[Where-Object { $_.CPU -gt 10 }]] فيه [[$_]] هو اللي اسمه pipeline variable، يمثّل كل object جاي من اليسار.
+            how: R`[[Where-Object { $_.CPU -gt 10 }]]: الكود بين الأقواس بيتنفّذ مرة لكل object جاي من الشمال، و [[$_]] (أو [[$PSItem]]) هو الـ object ده. لو الكود رجّع True الـ object بيعدّي، لو False بيتشال.
 
-الاختصارات: [[-gt]] أكبر، [[-lt]] أصغر، [[-eq]] يساوي، [[-ne]] مش يساوي، [[-like "text*"]] wildcard match. ولو الـ property اسمه بسيط: [[Where-Object Name -eq "chrome"]].
+عوامل المقارنة: [[-gt]] أكبر، و [[-lt]] أصغر، و [[-eq]] يساوي، و [[-ne]] مش يساوي، و [[-like "text*"]] wildcard، و [[-match]] regex. وكلهم مش بيفرّقوا كابيتال من سمول إلا لو حطيت c قبلهم زي [[-ceq]]. ولو الشرط خاصية واحدة ومقارنة واحدة، الشكل المختصر أوضح: [[Where-Object Name -eq "chrome"]].
 
-وفيه shorthand: بدل [[Where-Object { ... }]] ممكن تكتب [[Where { ... }]] أو [[? { ... }]].`,
+واختصاراته [[where]] و [[?]]. ولو الأمر نفسه عنده فلتر زي [[-Filter]] أو [[-Name]] استخدمه الأول، لأنه بيفلتر قبل ما يعمل objects فبيبقى أسرع بكتير.`,
             when: "تلاقي processes بتاكل أكتر من X رام. تلاقي services واقفة. تفلتر ملفات بحجم معين.",
             mistakes: "نسيان [[$_]] جوه الـ block. [[.CPU]] لوحدها مش شايلة حاجة."
           },
@@ -118,9 +118,9 @@ Running  AnyDesk            AnyDesk Service
 
 ليه مش [[>]]؟ لأن [[>]] في الشيل معناها «اكتب في ملف»: [[CPU > 100]] هتعمل ملف اسمه 100.`,
           lines: [
-            "العمليات اللي استهلاكها للمعالج أكبر من 100. الشكل المختصر: property وبعدين المقارنة.",
-            "الملفات اللي أكبر من ميجا. الشكل الكامل بالأقواس و [[$_]] لما الشرط أعقد.",
-            "الخدمات الشغالة بس."
+            R`[[Get-Process]] بيبعت object لكل عملية، و [[Where-Object]] بيسيب اللي الشرط عليها صح بس. [[CPU -gt 100]] الشكل المختصر: اسم الخاصية وبعدين المقارنة. وخلي بالك إن [[CPU]] هنا مش نسبة مئوية: ده إجمالي ثواني المعالج اللي العملية استهلكتها من ساعة ما اشتغلت، فـ 100 يعني ١٠٠ ثانية.`,
+            R`[[-File]] بيجيب الملفات بس، و [[Where-Object { }]] الشكل الكامل: الكود بين الأقواس بيتنفّذ لكل ملف، و [[$_]] هو الملف الحالي، و [[$_.Length]] حجمه بالبايت. [[1MB]] = 1048576. الشكل ده لازم لما الشرط أعقد، زي شرطين مع [[-and]]: [[{ $_.Length -gt 1MB -and $_.Extension -eq ".log" }]].`,
+            R`[[Status]] خاصية في كل خدمة، و [[-eq Running]] بيسيب الشغالة بس. الـ Status مش نص، ده enum (قيمة من لستة ثابتة: Running و Stopped و Paused...)، بس PowerShell بيحوّل كلمة Running لوحده عشان المقارنة تشتغل. ولو كتبتها غلط زي Runing مش هيطلع error خالص، هيرجع فاضي (جربتها في 5.1 و 7.6)، فلو الناتج فاضي راجع الكلمة الأول.`,
           ],
           sol: R`[[Get-ChildItem -File | Where-Object LastWriteTime -gt (Get-Date).Date]] بيعرض الملفات اللي اتعدلت النهارده بس. جربتها بعد ما عملت كام ملف فظهروا هما بس. [[(Get-Date).Date]] معناها النهارده الساعة 12 بالليل، فأي حاجة اتعدلت بعدها تبقى من النهارده.
 
@@ -139,11 +139,11 @@ Get-ChildItem | Select-Object -ExpandProperty Name`,
           try: "اعرض اسم وحجم كل ملف في فولدر.",
           deep: {
             why: "اختيار properties معينة من object أو تحديد عدد النتايج. زي [[cut]] في bash بس لـ objects.",
-            how: R`[[Select-Object Name, CPU]] بيعرض العمودين دول بس. [[-First 5]] أول ٥. [[-Last 5]] آخر ٥. [[-Unique]] بيشيل المتكرر.
+            how: R`[[Select-Object Name, CPU]] بيعمل objects جديدة فيها الخانات دي بس، وده بيحدد إيه اللي يظهر في الجدول وإيه اللي يتحفظ في CSV أو JSON. [[-First 5]] أول ٥، و [[-Last 5]] آخر ٥، و [[-Skip 2]] اتخطى أول اتنين، و [[-Unique]] بيشيل المتكرر.
 
-[[-ExpandProperty Name]] بيجيب قيمة property بس (String مش object)، مفيد لما بتحتاج النص نفسه مش الـ object.
+[[-ExpandProperty Name]] بيرجّع قيمة الخاصية نفسها (نص أو رقم) مش object، وده اللي محتاجه لما عايز لستة أسامي تستخدمها في لوب أو تبعتها لأمر تاني.
 
-[[Select-Object *]] بيعرض كل properties، مفيد لما Format-Table بيختصر وانت عايز الكل.`,
+[[Select-Object *]] بيعرض كل الخصائص، مفيد لما العرض العادي بيختصر. وتقدر تعمل خانة محسوبة: [[Select-Object Name, @{n="MB"; e={$_.Length / 1MB}}]] بتضيف عمود اسمه MB قيمته الحجم بالميجا.`,
             when: "تعمل output نضيف بأعمدة معينة. تاخد أول N نتايج. تجيب قيمة property كنص.",
             mistakes: "الخلط بين Select-Object وWhere-Object. Select بيختار أعمدة، Where بيفلتر صفوف."
           },
@@ -220,7 +220,10 @@ src
 - [[Select-Object]] أعمدة وعدد، [[Where-Object]] صفوف بشرط.
 - [[-ExpandProperty]] لما عايز القيمة نفسها مش جدول.
 - اسم عمود غلط بيطلع عمود فاضي من غير error، فـ [[Get-Member]] الأول.`,
-          lines: ["٣ أعمدة بس، وأول ٥ صفوف.", "الأسامي كنصوص عادية بدل objects ([[-ExpandProperty]])."],
+          lines: [
+            R`[[Select-Object Name, Id, CPU]] بيعمل لكل عملية object جديد فيه التلات خانات دول بس، والباقي بيتشال. و [[-First 5]] بياخد أول ٥ وبيوقف. لاحظ إن أول ٥ هنا بالترتيب اللي Get-Process طلّعهم بيه (أبجدي بالاسم)، مش الأكتر استهلاكًا: لو عايز الأكبر رتّب الأول بـ [[Sort-Object]].`,
+            R`[[-ExpandProperty Name]] بيطلّع **قيمة** الخاصية نفسها: نص زي "app.js" لكل ملف. من غيرها، [[Select-Object Name]] بيرجّع object فيه خانة اسمها Name، وده لما تحطه في نص أو تبعته لبرنامج تاني بيطلع [[@{Name=app.js}]] بدل الاسم.`,
+          ],
           sol: R`[[Get-ChildItem -File | Select-Object Name, Length]] بيطبع جدول بعمودين. جربتها فطلع مثلًا [[b.txt  5]] و [[package.json  85]] (الحجم بالبايت).
 
 لو شلت [[-File]] الفولدرات هتظهر وعمود Length جنبها فاضي، لأن الفولدر مفيهوش حجم. وخلي بالك: لو كتبت [[Select-Object Name, Size]] مش هيطلع error، هيطلعلك عمود Size فاضي، لأن الاسم الصح Length. استخدم [[Get-Member]] لو مش متأكد من اسم الـ property.`
@@ -238,9 +241,11 @@ Get-Process | Sort-Object WorkingSet -Descending | Select-Object -First 5`,
           try: "اعرف أكتر 5 برامج بتاكل رام.",
           deep: {
             why: R`«أكبر ١٠ ملفات»، «أكتر ٥ برامج بتاكل رام»، «آخر الملفات اللي اتعدلت». أي سؤال فيه «أكتر» أو «آخر» محتاج ترتيب، و Sort-Object بيرتب بأي خاصية من غير ما تقص نص زي [[sort -k]] في bash.`,
-            how: R`[[Sort-Object Name]] ترتيب أبجدي. [[Sort-Object CPU -Descending]] من الأكبر للأصغر (أكتر CPU أول). [[Sort-Object @{e="CPU";d=$true}, Name]] ترتيب بأكتر من property.
+            how: R`[[Sort-Object Name]] ترتيب أبجدي، و [[Sort-Object CPU -Descending]] من الأكبر للأصغر. وتقدر ترتّب بأكتر من خاصية: [[Sort-Object Status, Name]] بالحالة الأول، وجوه كل حالة بالاسم. و [[-Unique]] بيرتّب ويشيل المتكرر.
 
-أول تفصيلة مهمة: Sort-Object بيعمل الترتيب على كل الـ objects الجاية، يعني بيجمعها الأول في الذاكرة. على pipeline طويل ده ممكن يأكل رام.`,
+خلي بالك من نوع القيمة: الأرقام اللي متخزنة كنص بتترتّب كنص، فـ "10" و "100" و "9" بتطلع بالترتيب ده. حوّلها رقم: [[Sort-Object { [int]$_ }]].
+
+و Sort-Object لازم يستنى كل الـ objects توصل عشان يرتّبهم، فبيجمعهم كلهم في الذاكرة الأول. على pipeline فيه ملايين العناصر ده ممكن ياكل رام، فلو تقدر فلتر بـ [[Where-Object]] قبله.`,
             when: "ترتيب processes بالـ CPU. ترتيب ملفات بالحجم.",
             mistakes: "ترتيب نص رقمي بدون [[-Property { [int]$_ }]] فـ «10» تيجي قبل «9»."
           },
@@ -342,8 +347,8 @@ Get-Process | Sort-Object WorkingSet -Descending | Select-Object -First 5
 
 في bash: [[du -a | sort -rn | head]]، بس هناك بتقصّ نص. هنا بتقول اسم الخاصية.`,
           lines: [
-            "كل الملفات، مرتبة بالحجم من الأكبر، وخد أكبر ١٠ بالاسم والحجم.",
-            "أكتر ٥ عمليات استهلاكًا للرام."
+            R`[[-Recurse -File]] بيجيب كل الملفات في كل الفولدرات، و [[Sort-Object Length -Descending]] بيرتّبهم بالحجم من الأكبر للأصغر (من غير [[-Descending]] الترتيب من الأصغر). وبعدين [[Select-Object -First 10 Name, Length]] بياخد أول ١٠ بالاسم والحجم بس. يعني «فين أكبر ١٠ ملفات؟»، ومفيد لما الديسك يتملي.`,
+            R`[[WorkingSet]] الرام اللي العملية ماسكاها دلوقتي بالبايت، فده «أكتر ٥ برامج بياكلوا رام». الترتيب لازم يحصل **قبل** [[-First 5]]، لأن لو اخترت الأول هتاخد أي ٥ وترتّبهم هم بس. والأدق [[WS]] أو [[WorkingSet64]]: [[WorkingSet]] نسخة قديمة رقمها 32 بت.`,
           ],
           sol: R`[[Get-Process | Sort-Object WorkingSet -Descending | Select-Object -First 5]] بيطلع أكتر 5 عمليات بتاكل رام. غالبًا هتلاقي chrome أو msedge أو Code أو MsMpEng (Defender)، والعمود [[WS(M)]] في PowerShell 7 بالميجا (في 5.1 اسمه [[WS(K)]] وبالكيلو).
 
@@ -365,9 +370,11 @@ Get-ChildItem -Recurse -File | Measure-Object Length -Sum`,
           try: "اعرف حجم فولدر node_modules بالميجا: قسّم الـ Sum على [[1MB]].",
           deep: {
             why: "إحصاءات على مجموعة من القيم: العد، والمجموع، والمتوسط. زي wc -l في bash بس أقوى.",
-            how: R`[[Get-Process | Measure-Object]] بيعدّهم. [[Measure-Object -Property CPU -Sum -Average -Maximum]] بيحسب إحصاءات على property معينة.
+            how: R`[[Measure-Object]] بيعدّ ويحسب على اللي جاي من الـ pipe. من غير أي إضافات بيعدّ بس: [[Get-Process | Measure-Object]] بيرجّع [[Count]] بعدد العمليات.
 
-[[(Get-ChildItem -Recurse | Measure-Object -Property Length -Sum).Sum / 1MB]] حجم الفولدر بالميجا.`,
+ولو اديته اسم خاصية مع [[-Sum]] أو [[-Average]] أو [[-Maximum]] أو [[-Minimum]] بيحسبهم عليها: [[Measure-Object -Property CPU -Sum -Average -Maximum]]. الناتج object واحد فيه Count و Sum و Average و Maximum، والخانات اللي مطلبتهاش بتفضل فاضية.
+
+[[(Get-ChildItem -Recurse -File | Measure-Object -Property Length -Sum).Sum / 1MB]] بيدّيك حجم الفولدر بالميجا. وللنصوص فيه [[-Line]] و [[-Word]] و [[-Character]]: [[Get-Content app.log | Measure-Object -Line]] بيعدّ السطور زي [[wc -l]].`,
             when: "عد الملفات. إجمالي حجم فولدر. متوسط أو أعلى استهلاك CPU.",
             mistakes: "نسيان property اسمها [[-Property]] لما بتعمل Sum أو Average."
           },
@@ -452,7 +459,10 @@ Minimum           : 3
 | بالميجا | [[(...).Sum / 1MB]] | [[du -sh]] |
 
 لازم تقوله **أنهي خاصية** ([[Length]])، وإلا هيحاول يجمع الملفات نفسها ويطلع [[is not numeric]].`,
-          lines: ["عدد الملفات (الأقواس تجمع الناتج الأول وبعدين .Count).", "مجموع أحجام كل الملفات."],
+          lines: [
+            R`[[Get-ChildItem -Recurse -File]] بيرجّع array فيها كل الملفات، والأقواس حواليه بتخليه يخلص الأول ويرجّع الـ array كلها، وبعدين [[.Count]] بتقرا عددها. ده أسرع طريقة تعرف كام ملف في المشروع، ولو مفيش ملفات خالص بيرجّع 0 مش error.`,
+            R`[[Measure-Object Length -Sum]] بيجمع خاصية [[Length]] (الحجم بالبايت) لكل الملفات اللي جاية من الـ pipe، وبيطلّع object فيه [[Count]] (عددهم) و [[Sum]] (المجموع). لحجم بالميجا: [[(... | Measure-Object Length -Sum).Sum / 1MB]]. وتقدر تضيف [[-Average -Maximum -Minimum]] في نفس الأمر.`,
+          ],
           sol: R`[[Get-ChildItem node_modules -Recurse -File | Measure-Object Length -Sum]] بيطبع [[Count]] (عدد الملفات) و [[Sum]] (الحجم بالبايت)، وبعدين تقسم على [[1MB]]. جربتها على فولدر node_modules فيه 8463 ملف فطلع Sum بـ 229935708 والقسمة طلعت [[219.28]] ميجا.
 
 الرقم ممكن يختلف شوية عن «Size on disk» في Explorer، لأن Explorer بيحسب حجم الـ clusters على الديسك. وعلى لينكس والماك ضيف [[-Force]] عشان الملفات اللي بتبدأ بنقطة متتشالش من الحساب. ولو كتبت [[Measure-Object -Sum]] من غير [[Length]] بيحاول يجمع الملفات نفسها فيطلع [[Input object "..." is not numeric.]] (جربتها في 7.6 و 5.1).`,
@@ -529,8 +539,8 @@ Item 5
 
 | الحتة | قيمتها لأول ملف |
 |---|---|
-| [[$_]] | object الملف [[app.log]] |
-| [[$_.Name]] | النص [["app.log"]] |
+| [[$_]] | object الملف [[app.log]] كله، بكل خصائصه |
+| [[$_.Name]] | اسم الملف بس، كنص عادي: [["app.log"]] |
 | [[.ToUpper()]] | method على النص: حوّل لكابيتال. الأقواس [[()]] لازمة مع أي method حتى لو فاضية |
 
 ~~~text الناتج
@@ -548,7 +558,7 @@ WEB.LOG
 | [[| ForEach-Object { كود }]] | الكود لكل عنصر |
 | [[| % { كود }]] | نفس الكلام مختصر |
 | [[| ForEach-Object Name]] | هات خاصية من كل عنصر |
-| [[$_]] | العنصر الحالي |
+| [[$_]] | العنصر الحالي اللي واصل من الـ pipe دلوقتي |
 | [["... $_ ..."]] | حط القيمة جوه نص (double quotes بس) |
 
 في bash أقرب حاجة [[for i in {1..5}; do echo "Item $i"; done]] أو [[xargs]]. وفي 5.1 مفيش [[-Parallel]] (جربتها: [[Parameter set cannot be resolved using the specified named parameters.]]).`,
@@ -574,11 +584,11 @@ Get-ChildItem test*.txt | Select-Object Name`
           try: "اعرف أكتر نوع ملفات في مشروعك.",
           deep: {
             why: "تجميع النتايج بـ property. زي [[uniq -c]] في bash بس بيجيب groups كاملة.",
-            how: R`[[Get-Process | Group-Object Name]] بيجمع كل processes بنفس الاسم في group، وبيقولك العدد.
+            how: R`[[Get-Process | Group-Object Name]] بيجمع كل العمليات اللي ليها نفس الاسم في مجموعة، فتعرف مثلًا chrome فاتح كام عملية. كل مجموعة object فيه [[Count]] (العدد)، و [[Name]] (القيمة المشتركة)، و [[Group]] (العناصر نفسها كاملة).
 
-الناتج objects بيها [[Count]] وعدد العناصر و[[Group]] قايمة العناصر نفسها. فتقدر تعمل فلترة بعدين.
+عشان [[Group]] فيه العناصر الأصلية، تقدر تكمّل عليها: [[(Get-ChildItem | Group-Object Extension | Where-Object Name -eq ".log").Group]] بيرجّع ملفات اللوج بس. ولو مش محتاج العناصر، [[-NoElement]] بيشيلها والناتج بيبقى أخف.
 
-[[Get-WinEvent -LogName Application -MaxEvents 100 | Group-Object LevelDisplayName | Sort-Object Count -Descending]] إحصاء لأنواع events.`,
+وتقدر تجمع بأكتر من خاصية: [[Group-Object Extension, Directory]]. ومثال من النظام: [[Get-WinEvent -LogName Application -MaxEvents 100 | Group-Object LevelDisplayName]] بيقولك من آخر ١٠٠ حدث كام Error وكام Warning.`,
             when: "كام process بكل اسم. إيه أكتر نوع لوج بيتكرر.",
             mistakes: "استخدامه من غير Sort-Object بعده. عادة الناتج محتاج ترتيب."
           },
@@ -653,7 +663,9 @@ Count Name
 | ٣ | [[Sort-Object Count -Descending]] | الأكبر الأول |
 
 نفس الفكرة على أي خاصية: [[Get-Process | Group-Object Name]] كام عملية من كل برنامج. وفي bash: [[sort | uniq -c | sort -rn]] على نص.`,
-          lines: ["جمّع الملفات حسب الامتداد، ورتّب المجموعات من الأكتر عددًا."],
+          lines: [
+            R`[[Group-Object Extension]] بيحط الملفات اللي ليها نفس الامتداد في مجموعة واحدة، ولكل مجموعة object فيه [[Count]] (عددها) و [[Name]] (الامتداد) و [[Group]] (الملفات نفسها). وبعدين [[Sort-Object Count -Descending]] بيرتّب المجموعات من الأكتر عددًا. الملفات اللي من غير امتداد بتتجمع في مجموعة اسمها فاضي، و .TXT و .txt بيتحسبوا مجموعة واحدة إلا مع [[-CaseSensitive]].`,
+          ],
           sol: R`[[Get-ChildItem -Recurse -File | Group-Object Extension | Sort-Object Count -Descending]] بيطلع جدول [[Count  Name  Group]]. جربته على مشروع صغير فطلع [[2 .js]] و [[1 .ts]]. في مشروع حقيقي أول سطر غالبًا [[.js]] بآلاف، وده لأن node_modules داخل في الحساب.
 
 عشان تشوف كودك انت بس، فلتر node_modules الأول بـ [[Where-Object FullName -notmatch 'node_modules']]. الملفات اللي ملهاش امتداد بتتجمع تحت Name فاضي. وعمود Group فيه الملفات نفسها لو عايز تفتحها، ولو مش محتاجها ضيف [[-NoElement]] يبقى الجدول أنضف.`
@@ -782,9 +794,9 @@ AMDRSSrcExt         14972
 | [[-EnumsAsStrings]] | مش موجود | موجود |
 | مسافات JSON | [["Status":  1]] (مسافتين) | [["Status": 1]] |`,
           lines: [
-            "اعرض جدول مضبوط الأعمدة (للشاشة بس).",
-            "احفظ كـ CSV تفتحه في Excel. [[-NoTypeInformation]] يشيل سطر أول غريب.",
-            "حوّل لـ JSON."
+            R`[[Select-Object Name, Id -First 5]] بياخد خانتين من أول ٥ عمليات، و [[Format-Table -AutoSize]] بيظبط عرض كل عمود على أطول قيمة فيه. Format-Table للشاشة بس: ناتجه objects تنسيق مش بيانات، فلو بعته لـ [[Export-Csv]] أو [[ConvertTo-Json]] هتطلع زبالة. خليه دايمًا آخر حاجة في السطر.`,
+            R`[[Export-Csv procs.csv]] بيكتب كل object كصف وكل خاصية كعمود، وأول سطر أسامي الأعمدة، فتفتحه في Excel على طول. في 5.1 من غير [[-NoTypeInformation]] أول سطر بيبقى [[#TYPE Selected.System.Diagnostics.Process]]؛ في PowerShell 7 السطر ده مش بيتكتب أصلًا، والـ parameter فاضل عشان السكربتات القديمة. حط [[Select-Object]] قبله، وإلا هيكتب عشرات الأعمدة.`,
+            R`[[ConvertTo-Json]] بيحوّل الـ objects لنص JSON: array فيها object لكل خدمة بالخانتين Name و Status. خلي بالك إن [[Status]] بيطلع رقم (1 يعني Stopped و 4 يعني Running) مش كلمة، لأنه enum؛ في PowerShell 7 ضيف [[-EnumsAsStrings]] لو عايز الكلمة. ولو الـ objects متداخلة أكتر من مستويين زوّد [[-Depth]].`,
           ],
           sol: R`الحل في الـ solCode. جربته فطلع ملف أوله [["Name","Length"]] وبعدين سطر لكل ملف زي [["b.txt","5"]]. [[ii files.csv]] بيفتحه في Excel لو متسطب.
 

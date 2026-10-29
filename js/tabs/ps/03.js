@@ -20,13 +20,11 @@ Get-Content app.log -Tail 5 -Wait
           try: R`في نافذة [[Get-Content app.log -Wait]]، وفي نافذة تانية [[Add-Content app.log "hello"]].`,
           deep: {
             why: R`قراية ملف هي أكتر حاجة بتعملها بعد ls: تشوف .env، أو config، أو آخر سطور في لوج وقع فيه السيرفر. Get-Content بيعمل شغل cat و head و tail و tail -f في أمر واحد.`,
-            how: R`[[Get-Content file.txt]] بيرجع array من السطور. كل سطر object منفصل (String).
+            how: R`[[Get-Content file.txt]] بيرجّع array من السطور: كل سطر عنصر نصي (String) لوحده، ومن غير علامة السطر الجديد. ولو الملف سطر واحد بيرجّع نص واحد مش array، ولو فاضي بيرجّع [[$null]]، و [[.Count]] بتشتغل صح في الحالات التلاتة (1 و 0).
 
-[[-Tail 20]] آخر ٢٠ سطر (زي tail -n). [[-Wait]] بيفضل يراقب الملف وياخد السطور الجديدة (زي tail -f).
+[[-Tail 20]] آخر ٢٠ سطر (زي [[tail -n 20]])، و [[-TotalCount 5]] أول ٥ (زي [[head]]). و [[-Wait]] بيفضل فاتح الملف ويطبع أي سطر جديد يتكتب فيه (زي [[tail -f]]) لحد ما تدوس Ctrl+C.
 
-[[Get-Content file.json | ConvertFrom-Json]] بيقرا JSON مباشرة لـ object.
-
-[[Get-Content]] بيحمّل الملف كله في الذاكرة. للملفات الضخمة: [[Switch -File]] أسرع.`,
+و [[-Raw]] بيرجّع الملف كله كنص واحد بدل سطور، وده اللي محتاجه قبل [[ConvertFrom-Json]]. وخلي بالك إن Get-Content من غير [[-Tail]] بيقرا الملف كله، فعلى لوج حجمه جيجات استخدم [[-Tail]] أو [[-TotalCount]].`,
             when: "قراية .env. قراية config.json. مراقبة لوج.",
             mistakes: "تستخدمه على لوج ضخم بـ -Wait وتحمّله كله. استخدم -Tail مع -Wait."
           },
@@ -238,11 +236,11 @@ $pkg.dependencies`,
           try: "اطبع اسم ونسخة أي مشروع Node عندك.",
           deep: {
             why: "تتعامل مع JSON response من API أو تقرا ملف JSON. PowerShell بيحوّله لـ objects تقدر توصل لـ properties بسهولة.",
-            how: R`[[ConvertFrom-Json]] بياخد نص JSON ويرجع object. [[ConvertTo-Json]] بيعمل العكس.
+            how: R`[[ConvertFrom-Json]] بياخد نص JSON ويرجّع object: كل مفتاح بيبقى property، وكل array بتبقى array، والأرقام والـ true/false بيبقوا أنواعهم الحقيقية مش نص. و [[ConvertTo-Json]] بيعمل العكس.
 
-مع curl أو Invoke-WebRequest: الـ response جاي كنص، فتعمل [[| ConvertFrom-Json]] تحوّله.
+مع [[Invoke-WebRequest]] الرد جاي نص، فتعمل [[| ConvertFrom-Json]]. أما [[Invoke-RestMethod]] فبيحوّل الـ JSON لوحده.
 
-[[-Depth]] في ConvertTo-Json مهمة: افتراضيًا بيتعمق بس ٢ مستوى. لو عندك JSON معقّد، زوّد الرقم: [[-Depth 10]].`,
+[[-Depth]] في [[ConvertTo-Json]] مهمة: الافتراضي ٢ مستوى بس، واللي أعمق بيتحول لنص زي [[@{d=1}]] أو اسم النوع [[System.Collections.Hashtable]] بدل JSON. لو عندك JSON متداخل، زوّد الرقم: [[-Depth 10]]. وفي PowerShell 7 فيه [[ConvertFrom-Json -AsHashtable]] لو عايز hashtable بدل object، ودي مش موجودة في 5.1.`,
             when: "أي تعامل مع API responses أو قراية package.json أو config.json.",
             mistakes: "ConvertTo-Json بـ Depth قليل يقطع الـ objects العميقة ويحوّل بعضها لنص زي «System.Object»."
           },
@@ -349,9 +347,9 @@ myapp@1.2.0
 
 في bash ده محتاج أداة [[jq]]: [[jq -r .version package.json]]. في PowerShell مبني جوّاه.`,
           lines: [
-            "اقرا الملف كنص واحد ([[-Raw]])، وحوّله لـ object.",
-            "دلوقتي تقدر تقرا أي حقل بالنقطة.",
-            "حتى الحقول اللي جواها حقول."
+            R`[[Get-Content -Raw]] بيقرا [[package.json]] كنص واحد بدل array سطور، والـ pipe بيسلّمه لـ [[ConvertFrom-Json]] اللي بيحوّل الـ JSON لـ object حقيقي (PSCustomObject)، والناتج بيتحفظ في [[$pkg]]. [[-Raw]] هو الطريقة المضمونة والأسرع، لأن الـ JSON وحدة واحدة مش سطور منفصلة.`,
+            R`دلوقتي كل مفتاح في الـ JSON بقى property تقراه بالنقطة: [[$pkg.version]] بيطبع 1.2.3 مثلًا. ولو كتبت اسم مش موجود زي [[$pkg.versoin]] مش هيطلع error، هيرجع فاضي، فراجع الاسم كويس.`,
+            R`[[dependencies]] جواه object تاني (اسم كل باكدج وقدامه نسخته)، فبيتعرض كجدول اسم وقيمة. وتقدر تكمّل بالنقطة لجوه: [[$pkg.dependencies.express]]. ولو اسم الباكدج فيه شرطة أو @، حطه بين علامات تنصيص: [[$pkg.dependencies.'@types/node']].`,
           ],
           sol: R`في فولدر مشروع Node: [[$pkg = Get-Content package.json -Raw | ConvertFrom-Json]] وبعدين [[$pkg.name]] و [[$pkg.version]]. جربتها على package.json فيه name بـ myapp و version بـ 1.2.0، وسطر [["$($pkg.name)@$($pkg.version)"]] طبع [[myapp@1.2.0]]. و [[$pkg.dependencies]] بيطبع جدول فيه اسم كل مكتبة ونسختها.
 
@@ -378,11 +376,11 @@ Get-ChildItem -Recurse -File -Include *.js,*.ts | Where-Object FullName -notmatc
           try: "دوّر على كل console.log في مشروع من غير node_modules.",
           deep: {
             why: R`بتدوّر على كل مكان فيه TODO أو اسم متغير في المشروع، أو على كلمة error في لوج من ١٠ آلاف سطر. Select-String هو grep بتاع PowerShell، وكمان بيرجع objects فيها اسم الملف ورقم السطر تقدر تفلترها.`,
-            how: R`[[Select-String -Pattern "error" -Path "*.log"]] بيدوّر في كل ملفات .log. بيرجع objects فيها المسار والسطر والرقم.
+            how: R`[[Select-String -Pattern "error" -Path "*.log"]] بيدوّر في كل ملفات .log، وبيرجّع object من نوع MatchInfo لكل سطر لقاه، فيه [[Filename]] و [[LineNumber]] و [[Line]] (السطر نفسه). عشان كده تقدر تكمّل بالـ pipe: [[Select-String "function" *.js | Select-Object Filename, LineNumber]].
 
-[[-CaseSensitive]] للبحث بفرق الحروف. [[-NotMatch]] يجيب السطور اللي مش فيها. [[-List]] يجيب الملفات اللي فيها الكلمة بس (مش كل السطور).
+الـ Pattern regex افتراضيًا، و [[-SimpleMatch]] يخليه نص حرفي. البحث مش بيفرّق كابيتال من سمول إلا مع [[-CaseSensitive]]. و [[-NotMatch]] يجيب السطور اللي **مش** فيها الكلمة، و [[-List]] يقف عند أول نتيجة في كل ملف (مفيد لو عايز أسامي الملفات بس)، و [[-Context 2]] يوريك سطرين قبل وبعد كل نتيجة.
 
-[[Select-String "function" *.js | Select-Object Filename, LineNumber, Line]] بيطلعلك كل function مع مكانها.`,
+وتقدر تبعتله نص من أمر تاني بدل ملف: [[Get-Process | Out-String -Stream | Select-String chrome]].`,
             when: "البحث عن كل استخدامات function. إيجاد error في لوجات.",
             mistakes: "الـ Pattern هو regex مش نص عادي. لو عايز نص حرفي بس استخدم [[-SimpleMatch]]."
           },
@@ -486,9 +484,9 @@ a.js:1:console.log("a") // TODO: rename
 | السطور اللي مفيهاش | [[-NotMatch]] | [[grep -v]] |
 | في ناتج أمر | [[أمر | sls "x"]] | [[أمر | grep x]] |`,
           lines: [
-            "دوّر على TODO في كل ملفات .js (زي grep).",
-            "الاختصار [[sls]]: دوّر على error في اللوج.",
-            "كل ملفات js و ts، من غير node_modules، ودوّر فيهم على console.log كنص حرفي ([[-SimpleMatch]] مش regex)."
+            R`[[Select-String]] بيدوّر جوه الملفات (زي grep): [[-Path *.js]] كل ملفات js في الفولدر الحالي، و [[-Pattern "TODO"]] الكلمة اللي بتدوّر عليها. الـ Pattern ده regex، والبحث افتراضيًا مش بيفرّق كابيتال من سمول، فـ todo هتطلع كمان. كل نتيجة بتطلع كده: [[a.js:1:line one TODO]]، يعني اسم الملف ورقم السطر والسطر نفسه.`,
+            R`[[sls]] alias لـ Select-String. أول كلمة من غير اسم parameter بتبقى الـ Pattern، والتانية الـ Path، فده يعني «دوّر على error في [[app.log]]». مفيد جدًا مع اللوجات: تطلع السطور اللي فيها مشكلة بس من وسط آلاف السطور.`,
+            R`[[Get-ChildItem -Recurse -File -Include *.js,*.ts]] بيجيب ملفات js و ts في كل الفولدرات. [[Where-Object FullName -notmatch 'node_modules']] بيشيل أي ملف مساره فيه node_modules (بس بعد ما الـ Recurse لف عليها، فممكن ياخد وقت). وفي الآخر [[Select-String "console.log" -SimpleMatch]] بيدوّر كنص حرفي: من غير [[-SimpleMatch]] النقطة في regex معناها «أي حرف»، فـ consoleXlog كانت هتطلع كمان.`,
           ],
           sol: R`الأمر التالت في المثال هو الحل. جربته على مشروع فيه [[src\a.js]] و [[src\b.ts]] و [[node_modules\x\i.js]]، فطلع سطرين بس: [[src\a.js:1:console.log("a")]] و [[src\b.ts:1:const b=1; console.log(b)]]، والملف اللي جوه node_modules اتشال. الشكل: مسار الملف : رقم السطر : السطر نفسه.
 
@@ -508,11 +506,11 @@ where.exe node`,
           try: "اعرف مسار node و git و npm عندك. لو أي واحد طلع أكتر من مسار، يبقى عندك أكتر من نسخة والـ PATH بيقرر أنهي واحدة بتشتغل.",
           deep: {
             why: "إيجاد مكان برنامج أو الـ alias اللي بيستخدمه. زي [[which]] أو [[type]] في bash.",
-            how: R`[[Get-Command node]] بيقولك المسار الكامل. [[Get-Command ls]] بيقولك إنه alias لـ Get-ChildItem.
+            how: R`[[Get-Command node]] بيقولك الاسم ده هيتنفّذ إزاي: برنامج exe ومساره، أو cmdlet والموديول بتاعه، أو alias والأمر اللي بيشاور عليه. مثلًا [[Get-Command ls]] بيقولك إنه alias لـ Get-ChildItem.
 
-[[-All]] يوريك كل النسخ لو عندك أكتر من واحدة في PATH.
+[[-All]] يوريك كل النسخ لو فيه أكتر من واحدة بنفس الاسم، والأولى في القايمة هي اللي بتكسب. ودي مفيدة لما تسطّب نسخة جديدة وتلاقي القديمة لسه هي اللي بتشتغل.
 
-[[$env:PATH -split ";"]] بيعرض كل المسارات في PATH منفصلين.`,
+PowerShell بيدوّر على البرامج في الفولدرات اللي في PATH بالترتيب، و [[$env:PATH -split ";"]] بيعرضهم سطر سطر، فتعرف أنهي فولدر بيتقري الأول.`,
             when: "مش عارف ليه نسخة node أو python غير المتوقعة. تتأكد إن برنامج متسطب.",
             mistakes: "على ويندوز PATH بيفصل بـ ; مش : زي لينكس."
           },
@@ -600,9 +598,9 @@ Node بيحط npm بكذا شكل: [[npm.ps1]] لـ PowerShell، و [[npm.cmd]] 
 
 وأي alias كمان: [[Get-Command ls]] طبع [[ls -> Get-ChildItem]].`,
           lines: [
-            "node ده جاي منين؟",
-            "المسار بس كنص.",
-            "أمر where بتاع CMD، بس لازم [[.exe]] لأن where في PowerShell اختصار لـ Where-Object."
+            R`لما تكتب [[node]] في الترمنال، [[Get-Command node]] بيقولك PowerShell هيشغّل إيه بالظبط: نوعه في [[CommandType]] (هنا Application، يعني برنامج exe)، ونسخته، ومساره في [[Source]]. ولو مش متسطب أو مش على الـ PATH بيطلع error «is not recognized»، ودي أسرع طريقة تعرف ده.`,
+            R`الأقواس بتنفّذ الأمر وتجيب الـ object، والنقطة بتقرا منه خاصية [[Source]] بس: المسار الكامل كنص زي [[C:\Program Files\nodejs\node.exe]]. ولأنه نص عادي تقدر تحطه في متغير أو تستخدمه مع [[&]] أو [[Split-Path]] في سكربت.`,
+            R`[[where.exe]] هو أمر where بتاع CMD، وبيطبع **كل** نسخ البرنامج اللي على الـ PATH بالترتيب، مش أول واحدة بس. لازم تكتب [[.exe]] لأن [[where]] لوحدها في PowerShell alias لـ Where-Object، فهتفتكرها فلتر ومش هتطبع حاجة مفيدة.`,
           ],
           sol: R`[[Get-Command node]] بيطبع سطر فيه [[Application]] و [[node.exe]] والمسار زي [[C:\Program Files\nodejs\node.exe]]، و [[(Get-Command node).Source]] بيطبع المسار بس. [[Get-Command npm]] غالبًا هيطلع [[npm.ps1]] من نوع ExternalScript، لأن Node على ويندوز بيحط npm.ps1 و npm.cmd، و [[where.exe npm]] هيطبعلك الاتنين (مع [[npm]] من غير امتداد).
 

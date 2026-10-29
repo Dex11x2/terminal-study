@@ -20,11 +20,11 @@ Get-NetRoute -DestinationPrefix 0.0.0.0/0
           try: "اعرف الـ IP المحلي والعام والـ gateway.",
           deep: {
             why: R`عايز تفتح موقعك من الموبايل على نفس الواي فاي (محتاج IP جهازك)، أو تتأكد إن الجهاز واخد IP من الراوتر، أو تعرف الـ IP العام عشان تحطه في firewall سيرفر. زي [[ip a]] و [[ip route]] في لينكس.`,
-            how: R`[[Get-NetIPAddress]] بيعرض كل عناوين IPv4 وIPv6. [[-AddressFamily IPv4]] بس IPv4. [[-InterfaceAlias "Wi-Fi"]] لكارت معين.
+            how: R`[[Get-NetIPAddress]] بيعرض كل العناوين على كل الكروت، IPv4 و IPv6، ومعاهم كروت وهمية كتير (Loopback و vEthernet بتاع WSL و Docker). [[-AddressFamily IPv4]] بيسيب IPv4 بس، و [[-InterfaceAlias "Wi-Fi"]] كارت واحد. وكل عنوان معاه [[PrefixLength]]: 24 يعني الماسك 255.255.255.0.
 
-[[Get-NetAdapter]] بيعرض الكروت نفسها: حالتها وسرعتها والـ MAC (درس Get-NetAdapter في «تحكّم في الشبكة من PowerShell»).
+[[Get-NetIPConfiguration]] أسهل للقراية لأنه بيجمع العنوان والـ gateway والـ DNS لكل كارت في مكان واحد. و [[Get-NetAdapter]] بيعرض الكروت نفسها: حالتها وسرعتها والـ MAC (درس Get-NetAdapter في «تحكّم في الشبكة من PowerShell»).
 
-والعنوان الخاص: [[Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.IPAddress -like "192.168.*"}]].`,
+وعشان تلاقي عنوانك على شبكة البيت بس: [[Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.IPAddress -like "192.168.*" }]].`,
             when: "تعرف عنوانك على الشبكة. تتأكد إن كارت معين شغال.",
             mistakes: "إنك تنسى إن ويندوز بييجي بـ Loopback وTunneling adapters كتير، فيه زحمة في النتايج. فلتر بـ -InterfaceAlias."
           },
@@ -197,9 +197,11 @@ Clear-DnsClientCache`,
           try: "قارن رد 1.1.1.1 و 8.8.8.8 لدومين عندك.",
           deep: {
             why: R`غيّرت الـ DNS بتاع دومين ولسه بيفتح السيرفر القديم، أو الإيميل مش واصل، أو عايز تتأكد إن الدومين بيشاور على السيرفر الصح قبل ما تعمل شهادة SSL. Resolve-DnsName بيوريك الرد بالظبط ومن أنهي DNS، زي [[dig]] في لينكس.`,
-            how: R`[[Resolve-DnsName example.com]] بيجيب الـ A records (IPs). [[-Type MX]] لسيرفرات الإيميل. [[-Type TXT]] للتحقق. [[-Server 8.8.8.8]] يسأل سيرفر محدد.
+            how: R`[[Resolve-DnsName example.com]] بيسأل الـ DNS اللي جهازك متظبط عليه وبيرجّع الـ A و AAAA records. [[-Type]] بيحدد النوع: [[MX]] لسيرفرات الإيميل، و [[TXT]] للنصوص (SPF وتأكيد ملكية الدومين)، و [[CNAME]] لو الاسم بيشاور على اسم تاني، و [[NS]] للسيرفرات المسؤولة عن الدومين.
 
-[[Resolve-DnsName example.com -Server 1.1.1.1]] يسأل Cloudflare وتقارن بالنتيجة من DNS الـ default.`,
+[[-Server 8.8.8.8]] بيسأل سيرفر معين مباشرة، فتقارن رده برد الـ DNS بتاعك. ولو الاسم مش موجود بيطلع error «DNS name does not exist».
+
+[[-DnsOnly]] بيسأل الـ DNS بس من غير ما يبص في ملف hosts أو الأسامي المحلية، مفيد لو بتشك إن hosts هو اللي مغيّر الرد. والأمر ده على ويندوز بس؛ في لينكس والماك [[dig]] بيعمل نفس الشغل.`,
             when: "نفس استخدامات dig في bash. DNS لسه مش منتشر. تتأكد من MX records.",
             mistakes: "nslookup كمان موجود في PowerShell وأسهل بس أقل تفصيل."
           },
@@ -228,7 +230,7 @@ example.com   A      300   Answer     172.66.147.243
 | [[Type]] | نوع السجل (record): [[A]] عنوان IPv4، و [[AAAA]] عنوان IPv6 |
 | [[TTL]] | Time To Live: الرد ده يتحفظ قد إيه بالثواني قبل ما يتسأل تاني. 300 = ٥ دقايق |
 | [[Section]] | [[Answer]] يعني ده رد مباشر على سؤالك |
-| [[IPAddress]] | العنوان نفسه |
+| [[IPAddress]] | العنوان نفسه اللي المتصفح هيكلّمه |
 
 ليه عنوانين IPv4؟ الموقع على أكتر من سيرفر، والمتصفح بياخد أي واحد. وده شائع مع الـ CDN (شبكة سيرفرات بتوزّع الموقع على أماكن كتير).
 
@@ -289,10 +291,10 @@ nosuch-domain-xyz-91827.com : DNS name does not exist.
 
 ## أنواع السجلات اللي هتقابلها
 
-| [[-Type]] | بيجيب |
+| [[-Type]] | بيجيب أنهي نوع سجل |
 |---|---|
 | [[A]] / [[AAAA]] | عنوان IPv4 / IPv6 (الافتراضي الاتنين) |
-| [[MX]] | سيرفرات الإيميل |
+| [[MX]] | سيرفرات الإيميل اللي بتستقبل للدومين |
 | [[TXT]] | نصوص للتحقق (SPF، تأكيد ملكية الدومين) |
 | [[CNAME]] | الاسم ده اسم تاني لاسم تاني |
 
@@ -313,10 +315,10 @@ TTL        الرد يتحفظ قد إيه (بالثواني)
 MX         مين بيستلم الإيميل، والـ Preference الأصغر الأول
 ~~~`,
           lines: [
-            "الدومين بيشاور على أنهي IP (زي dig).",
-            "اسأل Cloudflare بدل الـ DNS بتاعك، للمقارنة.",
-            "سيرفرات الإيميل.",
-            "امسح كاش الـ DNS (زي ipconfig /flushdns)."
+            R`[[Resolve-DnsName]] بيسأل الـ DNS: الاسم ده عنوانه إيه؟ وبيرجّع سجل لكل عنوان: [[A]] لـ IPv4 و [[AAAA]] لـ IPv6، ومعاه TTL (الرد ده يتحفظ قد إيه). ممكن يرجع أكتر من IP لنفس الدومين، وده طبيعي مع المواقع الكبيرة.`,
+            R`[[-Server 1.1.1.1]] بيسأل Cloudflare مباشرة بدل الـ DNS اللي جهازك متظبط عليه (غالبًا الراوتر). لو الإجابتين مختلفين، يبقى الـ DNS بتاعك عنده نسخة قديمة، أو تغيير DNS عملته لسه موصلش لكل السيرفرات.`,
+            R`[[-Type MX]] بيجيب سجلات الإيميل: [[NameExchange]] اسم السيرفر اللي بيستقبل إيميلات الدومين، و [[Preference]] الأولوية (الأصغر بيتجرّب الأول). example.com بيرجّع [[.]] يعني الدومين ده مش بيستقبل إيميل أصلًا؛ جرّب [[gmail.com]] تشوف سيرفرات حقيقية.`,
+            R`[[Clear-DnsClientCache]] بيمسح الردود اللي ويندوز حافظها، فالسؤال الجاي يروح للسيرفر من جديد. مفيد بعد ما تغيّر DNS دومين أو ملف hosts وجهازك لسه بيستخدم الرد القديم.`,
           ],
           sol: R`[[Resolve-DnsName yourdomain.com -Server 1.1.1.1]] و [[-Server 8.8.8.8]] المفروض الاتنين يطلعوا جدول [[Name  Type  TTL  Section  IPAddress]] بنفس الـ IPAddress. الـ TTL ممكن يختلف لأن كل واحد عنده الكاش بتاعه وفاضله وقت مختلف.
 
@@ -443,7 +445,10 @@ hosts     بيتقري قبل الـ DNS
 #         تعليق
 القراية   أي حد      الكتابة   أدمن بس
 ~~~`,
-          lines: ["اعرض ملف hosts.", "افتحه في Notepad كمدير عشان تقدر تحفظ."],
+          lines: [
+            R`[[Get-Content]] بيطبع ملف [[hosts]]: ملف نصي ويندوز بيبص فيه **قبل** ما يسأل الـ DNS. كل سطر فيه IP وبعده اسم، والسطور اللي بتبدأ بـ [[#]] تعليقات. القراية مش محتاجة أدمن، والملف ملوش امتداد.`,
+            R`[[Start-Process notepad]] بيفتح الملف في Notepad، و [[-Verb RunAs]] بيفتحه كمدير (هيطلع UAC)، لأن الكتابة في System32 محتاجة أدمن. من غيرها هتعدّل عادي، بس لما تيجي تحفظ هيرفض. واحذر Notepad يحفظه [[hosts.txt]]، ساعتها ويندوز مش هيقراه.`,
+          ],
           sol: R`افتح notepad كأدمن بالأمر التاني، ضيف في الآخر سطر [[127.0.0.1 myapp.local]] واحفظ. بعدها [[ping myapp.local]] المفروض يرد من 127.0.0.1، و http://myapp.local:3000 يفتح نفس اللي بيفتحه localhost:3000.
 
 لو notepad رفض الحفظ، يبقى مفتحتوش كأدمن. ولو حفظته واتسمّى [[hosts.txt]] يبقى notepad زوّد الامتداد، اختار All Files. ولو ping شغال والمتصفح لأ، امسح الكاش بـ [[Clear-DnsClientCache]] أو جرب نافذة Incognito. ولو Vite رد بـ [[Blocked request. This host ("myapp.local") is not allowed.]]، ده حماية في Vite، ضيف الاسم في [[server.allowedHosts]] في vite.config.`
@@ -461,9 +466,11 @@ Test-NetConnection 203.0.113.10 -Port 443 -InformationLevel Quiet`,
           try: "اعمل سكربت بيجرب 3 بورتات على سيرفرك ويطبع المقفول بس.",
           deep: {
             why: "تعرف الطريق اللي البيانات بتمر بيه لوصل سيرفر. زي traceroute في لينكس.",
-            how: R`[[Test-NetConnection google.com -TraceRoute]] بيعرض كل hop في الطريق. [[-Hops]] يحدد العدد الأقصى.
+            how: R`[[Test-NetConnection google.com -TraceRoute]] بيبعت رسايل لحد السيرفر، وكل راوتر في السكة بيرد، فبيطلعلك لستة IPs بالترتيب: أول واحد غالبًا راوتر البيت، وبعده سيرفرات مزود النت، لحد السيرفر نفسه. لو الطريق وقف عند hop معين، المشكلة غالبًا من عنده.
 
-الأمر القديم [[tracert google.com]] كمان شغال في PowerShell.`,
+[[-Hops 15]] بيحدد أقصى عدد راوترات يجرّبه، فالأمر يخلص أسرع. وبعض الراوترات في السكة مش بترد على الرسايل دي أصلًا، فوقوف الرد عند hop مش معناه دايمًا إن الطريق مقطوع: بص هل السيرفر نفسه بيرد في الآخر.
+
+[[-InformationLevel Quiet]] بيرجّع True أو False بس، مناسب جوه [[if]]. والأمر القديم [[tracert google.com]] لسه شغال في PowerShell وبيطبع وقت كل hop كمان.`,
             when: "الموقع بطيء من مكان معين وعايز تعرف فين المشكلة.",
             mistakes: "النجوم في نص المسار مش معناها مشكلة بالضرورة، بعض الـ routers مش بتردش."
           },
@@ -608,9 +615,11 @@ Get-NetTCPConnection -State Listen | ForEach-Object { [pscustomobject]@{ Port = 
           try: "اعرف أسامي البرامج اللي فاتحة بورتات عندك.",
           deep: {
             why: R`تعرف كل البرامج اللي فاتحة بورتات على جهازك، ومين فيهم مكشوف لأي حد على نفس الشبكة (مهم على واي فاي كافيه أو شغل). زي [[ss -tlnp]] في لينكس.`,
-            how: R`[[-State Listen]] بيفلتر على البورتات اللي بتستمع بس. [[LocalPort]] البورت. [[OwningProcess]] الـ PID اللي ماسكه.
+            how: R`[[-State Listen]] بيسيب البورتات اللي فيها برنامج مستني اتصالات، يعني السيرفرات اللي على جهازك. كل object فيه [[LocalAddress]] (بيسمع على أنهي عنوان)، و [[LocalPort]] (البورت)، و [[OwningProcess]] (رقم العملية اللي ماسكاه).
 
-[[Get-NetTCPConnection -State Listen | Select LocalPort, OwningProcess | Sort LocalPort | ForEach-Object { $p = Get-Process -Id $_.OwningProcess -ErrorAction SilentlyContinue; [PSCustomObject]@{Port=$_.LocalPort; Process=$p.Name} }]] بيوريك البورت واسم البرنامج.`,
+الرقم لوحده مش بيقولك حاجة، فبنحوّله لاسم بـ [[Get-Process -Id]]. ونفس البورت ممكن يظهر مرتين (مرة لـ IPv4 ومرة لـ IPv6)، وعشان كده المثال بيستخدم [[Sort-Object Port -Unique]].
+
+ولو عملية قفلت بين الأمرين [[Get-Process]] بيطلع error، فضيف [[-ErrorAction SilentlyContinue]]: [[Get-NetTCPConnection -State Listen | ForEach-Object { $p = Get-Process -Id $_.OwningProcess -ErrorAction SilentlyContinue; [PSCustomObject]@{ Port = $_.LocalPort; Process = $p.Name } }]].`,
             when: "EADDRINUSE. تشوف مين ماسك أي بورت.",
             mistakes: "OwningProcess = 4 ده System، و0 ده Idle. عاديين."
           },
@@ -772,9 +781,11 @@ PID 4              ويندوز نفسه (System)
           try: "افتح tunnel ووصّل بيه DBeaver على localhost:5433.",
           deep: {
             why: "SSH tunnel من ويندوز. نفس الفكرة بالظبط زي bash: بتتصل بسيرفر وبيفتح بورت محلي بيوصلك لخدمة داخلية.",
-            how: R`[[ssh -N -L 5433:127.0.0.1:5432 deploy@203.0.113.10]] نفس الأمر بالظبط زي لينكس. OpenSSH في ويندوز بيدعم كل الـ options.
+            how: R`[[ssh -N -L 5433:127.0.0.1:5432 deploy@203.0.113.10]] نفس الأمر بالظبط زي لينكس، لأن ويندوز جاي معاه OpenSSH. [[-L]] شكله [[بورت_عندك:العنوان:بورت_هناك]]: أي اتصال على 5433 عندك بيتبعت جوه SSH، والسيرفر بيوصّله لـ 127.0.0.1:5432، و 127.0.0.1 هنا معناها السيرفر نفسه مش جهازك.
 
-افتح في PowerShell، واتركه شغال، وافتح DB client على localhost:5433.`,
+[[-N]] يعني متفتحش ترمنال على السيرفر، اعمل الممر بس، فالنافذة هتفضل واقفة من غير prompt وده طبيعي. سيبها مفتوحة، وافتح الـ DB client على [[localhost:5433]]. ولما تخلص، Ctrl+C بيقفل الممر.
+
+ولو 5433 مستخدم عندك، ssh مش هيقدر يفتح الممر عليه وهيطبع تحذير فيه كلمة bind، فاختار رقم تاني فاضي (اتأكد بـ [[Get-NetTCPConnection -LocalPort 5433]]).`,
             when: "تفتح قاعدة بيانات سيرفر من pgAdmin أو DBeaver على ويندوز.",
             mistakes: "نفس غلطات bash: تنسى -N فيفتح terminal على السيرفر. وتنسى إنه شغال في الخلفية."
           },

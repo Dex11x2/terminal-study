@@ -134,7 +134,7 @@ Host
 | القيمة | الألوان بتطلع إمتى |
 |---|---|
 | [[Host]] | على الشاشة بس. لو الناتج رايح لملف بيتشال |
-| [[PlainText]] | أبدًا |
+| [[PlainText]] | أبدًا، حتى على الشاشة: كل الألوان بتتشال |
 | [[Ansi]] | دايمًا، حتى في الملف (ده اللي استخدمته عشان أطلّع الأكواد فوق) |
 
 ---
@@ -143,8 +143,8 @@ Host
 
 | الكود | معناه |
 |---|---|
-| [[ESC[0m]] | Reset |
-| [[ESC[1m]] | Bold |
+| [[ESC[0m]] | Reset: رجّع كل حاجة للشكل العادي |
+| [[ESC[1m]] | Bold: خط عريض |
 | [[ESC[31m]] لـ [[ESC[37m]] | لون الكلام (أحمر، أخضر، أصفر، أزرق، Magenta، Cyan، أبيض) |
 | [[ESC[90m]] لـ [[ESC[97m]] | نفس الألوان فاتحة (Bright) |
 | [[ESC[44m]] | خلفية زرقا (40 لـ 47 خلفيات) |
@@ -257,8 +257,8 @@ function prompt {
 |---|---|
 | [[[Security.Principal.WindowsIdentity]::GetCurrent()]] | اليوزر اللي شغّال النافذة دي. [[::]] بتنادي method تبع النوع نفسه |
 | [[[Security.Principal.WindowsPrincipal]...]] | حوّله لنوع يقدر يجاوب على «ليك دور كذا؟» |
-| [[.IsInRole(...)]] | السؤال نفسه |
-| [[[Security.Principal.WindowsBuiltInRole]::Administrator]] | الدور: Administrator |
+| [[.IsInRole(...)]] | السؤال نفسه: اليوزر ده ليه الدور ده؟ والإجابة True أو False |
+| [[[Security.Principal.WindowsBuiltInRole]::Administrator]] | الدور اللي بنسأل عليه: Administrator، يعني أدمن الجهاز |
 
 النتيجة True أو False. في نافذة عادية طلع [[IsAdmin=False]].
 
@@ -350,7 +350,7 @@ ESC[90m09:46 ESC[36maliESC[32m > ESC[0m
 | [[$code = $LASTEXITCODE]] ... [[$global:LASTEXITCODE = $code]] | git ميبوّظش الـ exit code |
 | [[Split-Path -Leaf]] | اسم الفولدر بس |
 | [[git branch --show-current 2>$null]] | الـ branch، ومن غير error بره repo |
-| [[WindowTitle]] | عنوان التاب |
+| [[WindowTitle]] | عنوان التاب أو النافذة، وبنكتب فيه اسم الفولدر |
 | آخر سطر نص | ده الـ prompt |
 
 ## على bash
@@ -582,10 +582,10 @@ PredictionSource PredictionViewStyle
 
 | القيمة | الاقتراحات من |
 |---|---|
-| [[None]] | مفيش اقتراحات |
+| [[None]] | مفيش اقتراحات خالص وانت بتكتب |
 | [[History]] | الأوامر اللي كتبتها قبل كده |
 | [[Plugin]] | موديولات بتقترح (محتاج 7.2+) |
-| [[HistoryAndPlugin]] | الاتنين |
+| [[HistoryAndPlugin]] | الاتنين مع بعض: التاريخ والموديولات |
 
 وده الـ error اللي طلع في السكربت:
 
@@ -610,7 +610,7 @@ The predictive suggestion feature cannot be enabled because the console output d
 
 | الحتة | معناها |
 |---|---|
-| [[-Key Tab]] | الزرار |
+| [[-Key Tab]] | الزرار اللي هتغيّر وظيفته |
 | [[-Function MenuComplete]] | الوظيفة اللي هيعملها |
 
 بعد التلات سطور، [[Get-PSReadLineKeyHandler -Bound]] (الأزرار المربوطة) طلع:

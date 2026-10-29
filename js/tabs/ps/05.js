@@ -10,7 +10,7 @@ MORE("ps", [
           title: "العمليات",
           desc: R`[[Get-Process]] بيعرض البرامج الشغالة، زي [[ps]] في bash و [[tasklist]] في CMD، واختصاره [[ps]] و [[gps]]. لو كتبت اسم بعده ([[Get-Process node]]) بيجيب العمليات اللي بالاسم ده بس، وكل واحدة ليها [[Id]] (رقم العملية أو PID) و [[CPU]] (ثواني معالج) و [[WS]] (الرام).
 
-[[Stop-Process]] بيقفل عملية، واختصاره [[kill]]. [[-Name node]] بيقفل كل العمليات اللي اسمها node مرة واحدة (من غير .exe)، و [[-Id 1234]] بيقفل عملية واحدة برقمها، وده أدق لو فيه أكتر من نسخة. و [[-Force]] بيقفل غصب من غير أسئلة، زي [[kill -9]].
+[[Stop-Process]] بيقفل عملية، واختصاره [[kill]]. [[-Name node]] بيقفل كل العمليات اللي اسمها node مرة واحدة (من غير .exe)، و [[-Id 1234]] بيقفل عملية واحدة برقمها، وده أدق لو فيه أكتر من نسخة. وهو بيقفل **فورًا** من غير ما البرنامج يلحق يحفظ، زي [[kill -9]] على Linux، حتى من غير [[-Force]] (اتجرّب في 5.1 و 7: العملية ماتت في أقل من ٢٠ ms بكود [[-1]]). و [[-Force]] معناها «متسألنيش»: بتلغي سؤال التأكيد اللي بيظهر لما تقفل عملية مش بتاعتك (حسب الوثائق).
 
 تحذير: Stop-Process مش بيسأل البرنامج «تحب تحفظ؟»، أي شغل مش محفوظ بيضيع. ولو قالك Access is denied، العملية شغالة بصلاحيات أدمن وانت لأ. ولو الاسم مش موجود هيطلع error، فـ [[-ErrorAction SilentlyContinue]] لو مش فارق معاك.`,
           example: R`Get-Process node
@@ -20,11 +20,11 @@ Stop-Process -Id 1234 -Force`,
           flag: "danger",
           deep: {
             why: R`برنامج معلّق، أو سيرفر node قديم لسه ماسك البورت، أو عايز تعرف مين بياكل الرام. زي ps و kill في bash.`,
-            how: R`[[Get-Process]] بدون حاجة كل العمليات. [[Get-Process chrome]] بيفلتر. الـ objects بيها CPU، ورام [[WorkingSet64]]، والـ Id، والاسم.
+            how: R`[[Get-Process]] لوحده بيرجّع كل العمليات، و [[Get-Process chrome]] بيفلتر بالاسم، والـ wildcard شغال: [[Get-Process *code*]]. كل object فيه [[Id]] (رقم العملية)، و [[CPU]] (ثواني المعالج من ساعة ما بدأت، مش نسبة)، و [[WorkingSet64]] أو [[WS]] (الرام بالبايت)، و [[Path]] (مسار الـ exe).
 
-[[Stop-Process -Name "notepad"]] أو [[-Id 1234]]. [[-Force]] لو مش قافل لوحده.
+[[Stop-Process -Name "notepad"]] أو [[-Id 1234]] بيقفلوا العملية فورًا، زي End task في Task Manager: البرنامج مبيلحقش يحفظ شغله. و [[-Force]] مش «أقوى» في القفل نفسه؛ حسب الدوكيومنتيشن الرسمية هو بيلغي سؤال التأكيد للعمليات اللي مش بتاعتك، واللي غالبًا محتاجة أدمن أصلًا.
 
-[[Get-Process | Where-Object WorkingSet64 -gt 500MB | Select Name, Id, WorkingSet64]] عمليات تاكل أكتر من ٥٠٠MB.`,
+وبالـ pipe: [[Get-Process | Where-Object WorkingSet64 -gt 500MB | Select-Object Name, Id, WorkingSet64]] العمليات اللي بتاكل أكتر من ٥٠٠ ميجا رام.`,
             when: "عملية معلّقة. تطبيق ماسك resources. تعرف الـ PID عشان تربطه ببورت.",
             mistakes: "Stop-Process على اسم غلط بيطلع error. استخدم -ErrorAction SilentlyContinue لو مش مهم."
           },
@@ -77,7 +77,7 @@ Cannot find a process with the name "notepadxyz". Verify the process name and ca
 
 ## ٣. [[Stop-Process -Id 1234 -Force]]
 
-[[-Id]] = اقفل العملية دي بالظبط برقمها. ده الأأمن. و [[-Force]] = اقفلها غصب من غير سؤال.
+[[-Id]] = اقفل العملية دي بالظبط برقمها. ده الأأمن. و [[-Force]] = متسألنيش تأكيد (بيفرق مع عملية مش بتاعتك). القفل نفسه فوري في الحالتين.
 
 جربتها على السيرفر بتاعي:
 
@@ -101,15 +101,15 @@ Cannot find a process with the process identifier 39080.
 | كل البرامج | [[Get-Process]] | [[ps aux]] |
 | بالاسم | [[Get-Process node]] | [[pgrep -a node]] |
 | اقفل بالرقم | [[Stop-Process -Id 1234]] | [[kill 1234]] |
-| اقفل غصب | [[... -Force]] | [[kill -9 1234]] |
+| اقفل من غير سؤال تأكيد | [[... -Force]] | [[kill -9 1234]] (والاتنين بيقفلوا فورًا، حتى من غير [[-Force]]) |
 | اقفل بالاسم | [[Stop-Process -Name node]] | [[pkill node]] |
 
 - اقفل بالـ [[Id]] لما تقدر، والـ [[-Name]] بيقفل كل اللي بنفس الاسم.
 - Stop-Process مش بيسأل البرنامج يحفظ: أي شغل مش محفوظ بيضيع.`,
           lines: [
-            "عمليات node الشغالة (زي pgrep).",
-            "اقفلهم كلهم بالاسم.",
-            "اقفل عملية برقمها، غصب ([[-Force]] زي kill -9)."
+            R`[[Get-Process node]] بيرجّع object لكل عملية اسمها node شغالة دلوقتي (الاسم من غير .exe)، والجدول فيه الـ Id والرام ووقت المعالج. ولو مفيش ولا واحدة بيطلع error «Cannot find a process with the name»، وده في حد ذاته إجابة: مفيش node شغال.`,
+            R`[[Stop-Process -Name node]] بيقفل **كل** العمليات اللي اسمها node مرة واحدة: سيرفر المشروع ده، وأي سيرفر أو watcher شغال بـ node في مشروع تاني. القفل فوري والبرنامج مبيلحقش يحفظ حاجة. لو عايز واحدة بس استخدم [[-Id]]، ولو الاسم مش موجود بيطلع نفس error «Cannot find a process».`,
+            R`[[-Id 1234]] بيقفل العملية اللي رقمها ده بالظبط (الرقم من عمود Id في Get-Process)، وده الأأمن لو فيه كذا نسخة بنفس الاسم. Stop-Process بيقفل فورًا حتى من غير [[-Force]] (جربتها: العملية قفلت وكود خروجها -1)؛ [[-Force]] حسب الدوكيومنتيشن الرسمية بيلغي سؤال التأكيد اللي بيطلع لما العملية مش بتاعتك.`,
           ],
           sol: R`[[Start-Process notepad]] وبعدين [[Get-Process notepad]] هيطلع سطر فيه Id و ProcessName، و [[Stop-Process -Name notepad]] يقفله من غير أي رسالة. تأكد بـ [[Get-Process notepad]] تاني، المفروض يقولك [[Cannot find a process with the name "notepad"]].
 
@@ -129,11 +129,11 @@ Stop-Process -Id (Get-NetTCPConnection -LocalPort 3000 -State Listen).OwningProc
           try: "شغّل [[npx http-server -p 3000]] واقفله من نافذة تانية بالبورت.",
           deep: {
             why: R`أشهر error لأي حد بيشغّل سيرفر محلي: [[EADDRINUSE]]، يعني سيرفر قديم لسه ماسك البورت (غالبًا node في نافذة نسيتها). الأمر ده بيوصلك للبرنامج ويقفله في سطر، زي [[lsof -i]] و [[ss -tlnp]] في لينكس.`,
-            how: R`[[-LocalPort 3000]] بيدوّر على البورت ده. [[-State Listen]] العمليات اللي بتستمع. الناتج بيه LocalPort وRemoteAddress والـ State وOwningProcess (الـ PID).
+            how: R`[[Get-NetTCPConnection]] بيرجّع object لكل اتصال TCP: [[LocalAddress]] و [[LocalPort]] (عندك)، و [[RemoteAddress]] و [[RemotePort]] (الطرف التاني)، و [[State]]، و [[OwningProcess]] (رقم العملية). [[-LocalPort 3000]] بيفلتر بالبورت، و [[-State Listen]] بيسيب السيرفرات اللي مستنية اتصالات، و [[-State Established]] الاتصالات المفتوحة دلوقتي.
 
-[[Get-NetTCPConnection -LocalPort 3000 | Select-Object *]] وبعدين [[Get-Process -Id PID]] تعرف اسم العملية.
+[[LocalAddress]] بيفرق: [[127.0.0.1]] يعني السيرفر بيسمع لجهازك بس، و [[0.0.0.0]] أو [[::]] يعني بيسمع لأي حد على الشبكة.
 
-[[netstat -ano]] كمان شغال في PowerShell وبياخد نفس المعلومات بأسلوب قديم.`,
+الأمر ده موجود على ويندوز بس (في 5.1 و 7). و [[netstat -ano]] الأمر القديم بيدّيك نفس المعلومات كنص، ورقم العملية في آخر عمود.`,
             when: "EADDRINUSE: بورت مشغول. تتأكد إن التطبيق شغال ومستمع.",
             mistakes: "تنسى [[-State Listen]] فيطلعلك اتصالات TIME_WAIT قديمة رقم عمليتها 0، وتقفل الغلط."
           },
@@ -223,9 +223,9 @@ No matching MSFT_NetTCPConnection objects found by CIM query for instances of th
 | لينكس | [[ss -tlnp]] أو [[lsof -i :3000]] |
 | الماك | [[lsof -i :3000]] |`,
           lines: [
-            "مين بيسمع على بورت 3000 (زي ss -tlnp). OwningProcess هو رقم العملية.",
-            "هات العملية نفسها برقمها (الأقواس بتنفّذ الجوّاني الأول).",
-            "واقفلها. الحل الكامل لـ EADDRINUSE في سطر."
+            R`[[Get-NetTCPConnection]] بيعرض اتصالات TCP على الجهاز، و [[-LocalPort 3000]] بيحصرها على البورت ده عندك، و [[-State Listen]] بيسيب اللي **مستني** اتصالات بس (السيرفر نفسه) مش اللي متوصلين بيه. عمود [[OwningProcess]] رقم العملية (PID) اللي ماسكة البورت. ولو مفيش حد بيسمع بيطلع error «No matching MSFT_NetTCPConnection objects found».`,
+            R`الأقواس بتنفّذ الجوّاني الأول وتقرا منه [[.OwningProcess]]، والرقم ده بيتبعت لـ [[Get-Process -Id]] فيرجّعلك العملية نفسها: اسمها (node؟ python؟ docker؟) ورامها. لو البورت فاضي، الجوّاني بيرجّع ولا حاجة والخارجي بيطلع error «Cannot bind argument to parameter 'Id' because it is null».`,
+            R`نفس الفكرة بس مع [[Stop-Process -Force]]: بيقفل العملية اللي ماسكة 3000 فورًا، فالبورت يفضى وتقدر تشغّل سيرفرك. ده حل EADDRINUSE في سطر واحد، بس شغّل السطر اللي قبله الأول وشوف اسم العملية، عشان متقفلش حاجة مهمة بالغلط.`,
           ],
           sol: R`في نافذة: [[npx http-server -p 3000]]. في التانية [[Get-NetTCPConnection -LocalPort 3000 -State Listen]] هيطلع سطر أو اتنين (IPv4 و IPv6) فيهم [[LocalPort 3000]] و [[State Listen]] و [[OwningProcess]] رقم زي 12345، وبعدين [[Stop-Process -Id (Get-NetTCPConnection -LocalPort 3000 -State Listen).OwningProcess -Force]]. النافذة الأولى هترجع للـ prompt والسيرفر وقف.
 
@@ -246,11 +246,11 @@ ii .`,
           try: "افتح الفولدر الحالي في Explorer بـ [[ii .]].",
           deep: {
             why: R`عايز تفتح لينك أو ملف بالبرنامج بتاعه، أو تفتح PowerShell كأدمن من غير ما تقفل اللي انت فيه، أو سكربت يشغّل برنامج ويستناه يخلص. Start-Process بيعمل الحاجات دي كلها، زي [[start]] في CMD و [[xdg-open]] في لينكس.`,
-            how: R`[[Start-Process notepad.exe]] بيشغّل Notepad. [[-Verb RunAs]] تشغيل كـ Administrator (هيطلع UAC prompt). [[-Wait]] بيستنى يخلص قبل ما يكمّل.
+            how: R`[[Start-Process notepad.exe]] بيشغّل البرنامج في عملية منفصلة ويرجع على طول. [[-ArgumentList]] بيبعتله arguments، و [[-Wait]] بيستنى لحد ما يقفل قبل ما يكمّل، و [[-PassThru]] بيرجّع object العملية (ومع [[-Wait]] تقدر تقرا [[.ExitCode]]).
 
-[[Start-Process -FilePath "cmd.exe" -Verb RunAs]] بيفتح CMD كمدير.
+[[-Verb RunAs]] تشغيل كمدير (هيطلع UAC)، و [[-WindowStyle Hidden]] من غير نافذة، و [[-RedirectStandardOutput out.txt]] بيحفظ الـ output في ملف، و [[-NoNewWindow]] بيخلي برنامج الكونسول يكتب في نفس النافذة.
 
-[[-WindowStyle Hidden]] بيشغّل من غير نافذة. [[-RedirectStandardOutput out.txt]] بيحفظ الـ output.`,
+خلي بالك: لو عنصر في [[-ArgumentList]] فيه مسافة، Start-Process مش بيحطه بين علامات تنصيص، فبيوصل للبرنامج كلمتين (جربتها في 5.1 و 7.6). ولبرامج الكونسول اللي عايز ناتجها في نفس الترمنال، [[&]] أبسط وبيظبط التنصيص لوحده.`,
             when: "تشغيل أمر بصلاحيات مرتفعة. تشغيل عملية في الخلفية من سكربت.",
             mistakes: "تنسى -Wait فالسكربت يكمّل قبل ما البرنامج يخلص."
           },
@@ -336,10 +336,10 @@ $r.ExitCode
 | الماك | [[open file]] |
 | WSL | [[explorer.exe .]] |`,
           lines: [
-            "افتح Notepad.",
-            "افتح لينك في المتصفح الافتراضي.",
-            "افتح PowerShell كمدير (هيطلع سؤال UAC).",
-            "[[ii]] اختصار Invoke-Item: افتح الفولدر الحالي في Explorer."
+            R`[[Start-Process]] بيفتح البرنامج في عملية جديدة ويرجعلك الترمنال على طول من غير ما يستنى البرنامج يقفل. [[notepad]] بيتلاقي لأنه في فولدر على الـ PATH. ومن غير [[-PassThru]] الأمر مبيطبعش حاجة؛ معاه بيرجّع object العملية فتعرف رقمها.`,
+            R`لو اديته لينك بدل برنامج، ويندوز بيفتحه بالبرنامج الافتراضي للنوع ده، يعني المتصفح الافتراضي. وبنفس الطريقة [[Start-Process report.pdf]] بيفتح الملف في قارئ الـ PDF اللي عندك.`,
+            R`[[-Verb RunAs]] يعني «شغّله كمدير»: ويندوز بيطلّع شاشة UAC تسألك، ولو وافقت تتفتح نافذة PowerShell **جديدة** بصلاحيات أدمن. النافذة اللي انت فيها بتفضل عادية، فالأوامر اللي محتاجة أدمن تكتبها في الجديدة.`,
+            R`[[ii]] اختصار [[Invoke-Item]]: بيفتح أي ملف أو فولدر بالبرنامج الافتراضي بتاعه، و [[.]] هو الفولدر الحالي، فده بيفتحه في Explorer زي [[explorer .]]. مفيد لما تبقى في الترمنال وعايز تشوف الملفات أو تسحبها بالماوس.`,
           ],
           sol: R`[[ii .]] بيفتح نافذة File Explorer على الفولدر اللي انت واقف فيه، ومش بيطبع حاجة في الترمنال. [[ii]] اختصار Invoke-Item، وبيفتح أي حاجة بالبرنامج الافتراضي بتاعها: [[ii .\report.pdf]] يفتح الـ PDF، و [[ii .\files.csv]] يفتح Excel.
 
@@ -444,9 +444,9 @@ $chromeArgs = @("--headless=new", "--screenshot=$env:TEMP\page.png", "http://loc
 
 | اللي كتبته | اللي وصل للبرنامج |
 |---|---|
-| [[& $node -e "..." "a b" c]] | [[[ 'a b', 'c' ]]] |
-| [[$a = @("x y", "--flag")]] ثم [[& $node -e "..." $a]] | [[[ 'x y', '--flag' ]]] |
-| [[& $node -e "..." "x y --flag"]] | [[[ 'x y --flag' ]]] |
+| [[& $node -e "..." "a b" c]] | [[[ 'a b', 'c' ]]]: اللي بين علامات تنصيص بيوصل argument واحد |
+| [[$a = @("x y", "--flag")]] ثم [[& $node -e "..." $a]] | [[[ 'x y', '--flag' ]]]: كل عنصر في الـ array بيوصل argument لوحده |
+| [[& $node -e "..." "x y --flag"]] | [[[ 'x y --flag' ]]]: نص واحد طويل بيوصل argument واحد مش تلاتة |
 
 السطر التاني: كل عنصر في الـ array وصل لوحده، و [["x y"]] فضل argument واحد رغم المسافة. والتالت: string واحد = argument واحد طويل، والبرنامج مش هيفهم إن فيه flag جوّاه.
 
@@ -456,20 +456,20 @@ $chromeArgs = @("--headless=new", "--screenshot=$env:TEMP\page.png", "http://loc
 
 | السطر بيبدأ بـ | محتاج [[&]]؟ |
 |---|---|
-| كلمة عادية: [[node]] [[git]] | لأ |
-| مسار من غير مسافات ولا علامات تنصيص: [[C:\tools\x.exe]] | لأ |
-| علامات تنصيص: [["C:\Program Files\..."]] | **أيوه** |
-| متغير: [[$node]] | **أيوه** |
+| كلمة عادية: [[node]] [[git]] | لأ، PowerShell بيعرف إنها أمر لوحده |
+| مسار من غير مسافات ولا علامات تنصيص: [[C:\tools\x.exe]] | لأ، بيتشغّل زي الكلمة العادية |
+| علامات تنصيص: [["C:\Program Files\..."]] | **أيوه**، وإلا هيتعامل معاه كنص يطبعه |
+| متغير: [[$node]] | **أيوه**، وإلا هيطبع قيمته أو يطلع error |
 
 و [[&]] بيشغّل البرنامج **في نفس النافذة** وناتجه قدامك، عكس [[Start-Process]] اللي بيفتحه لوحده. ومتسمّيش الـ array [[$args]]: ده متغير محجوز في PowerShell.`,
           lines: [
-            "مسار node في متغير.",
-            "من غير [[&]]: PowerShell شايف نص وبعده كلام مش مفهوم، فيطلع error.",
-            "بـ [[&]]: شغّل البرنامج اللي في المسار ده.",
-            "نفس الحاجة من متغير.",
-            "مسار Chrome.",
-            "array فيها الـ arguments، كل واحد عنصر لوحده.",
-            "شغّل Chrome وابعتله كل عناصر الـ array كـ arguments منفصلة."
+            R`بنحط المسار الكامل لـ node.exe في متغير عشان منكتبوش كل مرة. علامات التنصيص لازمة لأن [[Program Files]] فيه مسافة. السطر ده بيحفظ نص بس، مبيشغّلش حاجة.`,
+            R`لما السطر يبدأ بنص بين علامات تنصيص، PowerShell بيعتبره قيمة عايز يطبعها مش أمر يشغّله، فلما يلاقي [[--version]] بعده بيطلع error «Unexpected token 'version'». ده أشهر error لما تنسخ مسار برنامج من Explorer وتلزقه في الترمنال.`,
+            R`[[&]] (اسمه call operator) بيقول لـ PowerShell «اللي بعدي ده برنامج شغّله، والباقي arguments ليه». فبيشغّل node ويطبع نسخته. أي سطر أوله نص أو متغير وعايزه يتنفّذ كأمر، لازم [[&]] في أوله.`,
+            R`نفس الحاجة بالمتغير: من غير [[&]]، [[$node --version]] بيطلع نفس error «Unexpected token» لأن PowerShell شايف متغير وبعده كلام. مع [[&]] قيمة المتغير بتبقى البرنامج اللي يتشغّل.`,
+            R`مسار Chrome في متغير بنفس الفكرة: فيه مسافات فلازم علامات تنصيص، وهنشغّله بـ [[&]] بعد سطرين. ده المكان المعتاد لنسخة 64 بت؛ لو Chrome متسطّب في مكان تاني، [[Test-Path $chrome]] هيرجّع False وتعرف تصلّح المسار.`,
+            R`array فيها الـ arguments، كل واحد عنصر لوحده: [[--headless=new]] من غير نافذة، و [[--screenshot=...]] مكان الصورة، وآخر واحد اللينك. و [[$env:TEMP]] جوه النص بيتبدّل بفولدر الملفات المؤقتة لأن علامات التنصيص double.`,
+            R`[[&]] لما يلاقي array بعد البرنامج بيبعت كل عنصر كـ argument منفصل، والعنصر اللي فيه مسافة بيتحط بين علامات تنصيص لوحده، فالبرنامج بيستلمه زي ما هو. ده أنضف من إنك تبني نص واحد طويل بالـ arguments وتتلخبط في التنصيص.`,
           ],
           sol: R`من غير [[&]]: جربتها على PowerShell 7.6 والمسار بين علامات تنصيص، فطلع ParserError: [[Unexpected token 'version' in expression or statement.]]، وفي 5.1 ومعاه سطر تاني [[The '--' operator works only on variables or on properties.]]، لأن PowerShell شاف نص وبعده حاجة مش مفهومة. ولو كتبت المسار لوحده من غير أي arguments هيطبعه كنص وخلاص.
 
@@ -563,10 +563,10 @@ $pages = @(
 
 | الحتة | معناها |
 |---|---|
-| [[@( ... )]] | array: لستة |
+| [[@( ... )]] | array: لستة الصفحات بالترتيب |
 | [[@{ ... }]] | hashtable: صفحة واحدة، فيها مفاتيح وقيم |
-| [[file]] | اسم الصورة |
-| [[url]] | اللينك |
+| [[file]] | اسم ملف الصورة اللي هتتحفظ |
+| [[url]] | لينك الصفحة اللي هتتصوّر |
 | [[w]] / [[h]] | العرض والطول بالـ pixel |
 | [[,]] بين الـ hashtables | فاصل بين عناصر اللستة |
 
@@ -604,7 +604,7 @@ $chromeArgs = @("--headless=new", "--disable-gpu", "--hide-scrollbars",
 | [[--disable-gpu]] | من غير كارت الشاشة |
 | [[--hide-scrollbars]] | من غير شريط التمرير في الصورة |
 | [[--user-data-dir=...]] | بروفايل منفصل، عشان ميتخانقش مع Chrome بتاعك لو مفتوح |
-| [[--window-size=W,H]] | مقاس الصفحة |
+| [[--window-size=W,H]] | مقاس النافذة بالـ pixel: العرض وبعدين الطول |
 | [[--virtual-time-budget=4000]] | ادّي الصفحة ٤٠٠٠ ملي ثانية «افتراضية» تحمّل فيها قبل التصوير |
 | [[--screenshot=path]] | صوّر واحفظ هنا، واقفل |
 | [[$p.url]] | اللينك (آخر argument) |
@@ -675,25 +675,25 @@ contact.png   9727 bytes   1440x1000
 
 على لينكس والماك نفس الفكرة شغالة بـ [[google-chrome]] أو [[chromium]] بنفس الـ flags، والسكربت محتاج يتغير فيه مسار Chrome بس (من دليل Chrome headless، مش متجرب هنا).`,
           lines: [
-            "فولدر الصور في الـ TEMP بدل مسار ثابت من جهازك.",
-            "اعمله لو مش موجود، و [[Out-Null]] يخفي الناتج.",
-            "مكان Chrome المعتاد.",
-            "لو مش هناك، جرّب مكان نسخة الـ 32 بت.",
-            "لستة الصفحات، كل واحدة hashtable.",
-            "الرئيسية بمقاس لابتوب.",
-            "نفس الصفحة بمقاس موبايل.",
-            "صفحة التواصل.",
-            "قفلة اللستة.",
-            "لكل صفحة...",
-            "مسار الصورة.",
-            "امسح الصورة القديمة لو موجودة، عشان الفحص بعدين ميتخدعش.",
-            "arguments الـ Chrome: من غير نافذة، ومن غير GPU، ومن غير scrollbar...",
-            "...وبروفايل منفصل، والمقاس من الـ hashtable...",
-            "...و ٤ ثواني تحميل، ومكان الصورة، واللينك.",
-            "شغّل Chrome واستنى لحد ما يخلص.",
-            "الصورة اتعملت؟ اطبع OK، أو FAIL بالأحمر.",
-            "آخر اللوب.",
-            "افتح فولدر الصور في Explorer."
+            R`[[Join-Path]] بيركّب مسار من حتتين وبيحط [[\]] بينهم صح: [[$env:TEMP]] فولدر الملفات المؤقتة لليوزر الحالي، و shots فولدر جواه. كده السكربت يشتغل على أي جهاز من غير ما تكتب مسار فيه اسم يوزر معين.`,
+            R`[[-ItemType Directory -Force]] بيعمل الفولدر، ولو موجود مبيطلعش error، فالسكربت يتشغّل كذا مرة عادي. و [[| Out-Null]] بيرمي السطر اللي New-Item بيطبعه عشان الشاشة تفضل نضيفة.`,
+            R`المكان المعتاد لـ Chrome على ويندوز 64 بت. بنحطه في متغير بين علامات تنصيص عشان المسافات في [[Program Files]]، وهنشغّله بعدين بـ [[Start-Process]].`,
+            R`[[Test-Path]] بيسأل الملف موجود؟ و [[-not]] بتقلب الإجابة، فلو Chrome مش في المكان الأول المتغير بياخد مسار [[Program Files (x86)]]، اللي فيه النسخ القديمة أو الـ 32 بت. الأقواس حوالين [[Test-Path $chrome]] لازمة عشان [[-not]] تشتغل على الناتج.`,
+            R`بداية array بـ [[@(]]. ولأن القوس لسه مفتوح، PowerShell بيكمّل قراية السطور اللي تحت لحد ما يتقفل، فمش محتاج backtick. كل عنصر فيها hashtable بيوصف صورة واحدة.`,
+            R`أول صفحة: hashtable فيها [[file]] اسم الصورة، و [[url]] الصفحة، و [[w]] و [[h]] المقاس بالـ pixel. و 1440×900 مقاس لابتوب معتاد. والفاصلة في الآخر بتفصل العنصر ده عن اللي بعده.`,
+            R`نفس الصفحة الرئيسية بمقاس موبايل 390×844، عشان تشوف الـ responsive design، وباسم صورة مختلف [[home-m.png]] عشان متتكتبش فوق الأولى.`,
+            R`صفحة التواصل بمقاس لابتوب وطول أكبر (1000) عشان الفورم كله يبان في الصورة. ده آخر عنصر، فمفيش فاصلة بعده.`,
+            R`[[)]] بيقفل الـ array، ودلوقتي [[$pages]] فيها ٣ hashtables.`,
+            R`[[foreach]] بيلف على [[$pages]]، وفي كل لفة [[$p]] بيبقى hashtable صفحة واحدة، فتقرا منه [[$p.file]] و [[$p.url]]. الكود اللي بين [[{ }]] بيتكرر ٣ مرات، مرة لكل صفحة.`,
+            R`مسار الصورة الكامل: فولدر الصور + اسم الملف من الـ hashtable، مثلًا [[...\shots\home.png]]. بنحسبه مرة واحدة ونستخدمه في المسح والتصوير والفحص.`,
+            R`بيمسح الصورة القديمة لو موجودة، و [[-ErrorAction SilentlyContinue]] بيسكّت الـ error لو مش موجودة (زي أول تشغيل). من غير المسح، لو Chrome فشل المرة دي، الفحص اللي تحت هيلاقي صورة المرة اللي فاتت ويقول OK.`,
+            R`بداية array الـ arguments: [[--headless=new]] يشغّل Chrome من غير نافذة، و [[--disable-gpu]] من غير كارت الشاشة، و [[--hide-scrollbars]] عشان شريط التمرير ميطلعش في الصورة. السطر بيخلص بفاصلة والقوس مفتوح، فالـ array مكمّلة تحت.`,
+            R`[[--user-data-dir]] بروفايل منفصل في TEMP، عشان ميتخانقش مع Chrome بتاعك لو مفتوح. و [[--window-size=$($p.w),$($p.h)]] المقاس من الـ hashtable: [[$( )]] لازمة جوه النص، لأن [[$p.w]] لوحدها جوه علامات التنصيص بتطلع [[System.Collections.Hashtable.w]] بدل الرقم.`,
+            R`[[--virtual-time-budget=4000]] بيدّي الصفحة ٤ ثواني «افتراضية» تحمّل فيها الـ JavaScript والصور قبل التصوير، و [[--screenshot=$out]] مكان الحفظ، وآخر عنصر اللينك نفسه. القوس هنا بيقفل الـ array.`,
+            R`[[Start-Process]] بيشغّل Chrome و [[-ArgumentList]] بيبعتله الـ array، و [[-Wait]] بيستنى لحد ما يصوّر ويقفل قبل السطر اللي بعده. من غير [[-Wait]] الفحص هيحصل قبل ما الصورة تتعمل ويقول FAIL. وخلي بالك: Start-Process مش بيحط علامات تنصيص حوالين عنصر فيه مسافة، فلو مسار TEMP فيه مسافة الـ argument هيتقسم.`,
+            R`[[Test-Path $out]] الصورة اتعملت فعلًا؟ لو آه يطبع OK واسم الملف، لو لأ يطبع FAIL بالأحمر بـ [[-ForegroundColor Red]]. و [[$($p.file)]] بنفس سبب [[$( )]] اللي فوق.`,
+            R`[[}]] بيقفل لوب الـ foreach.`,
+            R`[[ii]] اختصار Invoke-Item: بيفتح فولدر الصور في Explorer عشان تبص على الصور على طول.`,
           ],
           sol: R`شغّل موقعك ([[npm run dev]] مثلًا على 3000) وبعدين السكربت. هيطبع [[OK   home.png]] و [[OK   home-m.png]] و [[OK   contact.png]] بالأخضر، وفي الآخر يفتح فولدر [[%TEMP%\shots]]. Chrome نفسه ممكن يطبع سطر زيادة فيه «written to file»، ده طبيعي.
 
@@ -713,13 +713,11 @@ Restart-Service com.docker.service`,
           try: "اعرف حالة خدمة Docker أو أي خدمة عندك.",
           deep: {
             why: R`Docker مش شغال، أو Postgres المتسطب على الجهاز ماسك بورت 5432، أو الطباعة واقفة: كلها خدمات ويندوز. Get-Service بيوريك حالتها، و Restart-Service يعيد تشغيلها، زي [[systemctl status]] و [[systemctl restart]] في لينكس.`,
-            how: R`[[Get-Service]] كل الخدمات. [[Get-Service -Name "wuauserv"]] خدمة معينة. الـ Status بيه Running وStopped وPaused.
+            how: R`[[Get-Service]] بيرجّع كل الخدمات، و [[Get-Service -Name "wuauserv"]] خدمة معينة بالاسم القصير، و [[-DisplayName "*Update*"]] بيدوّر بالاسم الطويل. [[Status]] قيمته Running أو Stopped أو Paused، و [[StartType]] بيقولك بتقوم إمتى: Automatic مع ويندوز، أو Manual لما حد يطلبها، أو Disabled متقفلة.
 
-[[Start-Service]]، [[Stop-Service]]، [[Restart-Service]] محتاجوا صلاحيات Admin.
+[[Start-Service]] و [[Stop-Service]] و [[Restart-Service]] محتاجين نافذة أدمن، وكلهم بيقبلوا [[-WhatIf]] تجرّب بيه الأول. و [[Set-Service اسم -StartupType Automatic]] بيخلي الخدمة تقوم مع ويندوز.
 
-[[Set-Service -StartupType Automatic]] يخلي الخدمة تبدأ مع ويندوز.
-
-وكمان: [[sc.exe query]] و[[sc.exe start]] أوامر CMD بتشتغل في PowerShell وبعض الناس تعوّدت عليهم.`,
+وكمان [[sc.exe query]] و [[sc.exe start]] أوامر قديمة بتشتغل في PowerShell. لازم تكتب [[.exe]]، لأن [[sc]] لوحدها في 5.1 alias لـ [[Set-Content]].`,
             when: "تشغيل وإيقاف خدمات ويندوز. تجهيز سيرفر ويندوز.",
             mistakes: "محاولة تشغيل أو إيقاف خدمة من PowerShell عادي. لازم RunAs Administrator."
           },
@@ -744,7 +742,7 @@ Running  AnyDesk            AnyDesk Service
 
 | العمود | معناه |
 |---|---|
-| [[Status]] | [[Running]] شغالة، [[Stopped]] واقفة |
+| [[Status]] | حالتها دلوقتي: [[Running]] شغالة، [[Stopped]] واقفة |
 | [[Name]] | الاسم القصير: ده اللي بتكتبه في الأوامر |
 | [[DisplayName]] | الاسم الطويل اللي بيظهر في [[services.msc]] |
 
@@ -790,9 +788,9 @@ StartType   : Automatic
 
 | الأمر | بيعمل إيه |
 |---|---|
-| [[Start-Service اسم]] | شغّل |
-| [[Stop-Service اسم]] | وقّف |
-| [[Restart-Service اسم]] | وقّف وشغّل |
+| [[Start-Service اسم]] | شغّل خدمة واقفة (أدمن) |
+| [[Stop-Service اسم]] | وقّف خدمة شغالة (أدمن) |
+| [[Restart-Service اسم]] | وقّفها وشغّلها تاني في أمر واحد (أدمن) |
 | [[Set-Service اسم -StartupType Manual]] | غيّر إمتى تقوم |
 
 ---
@@ -807,9 +805,9 @@ StartType   : Automatic
 
 اكتب الـ [[Name]] مش الـ [[DisplayName]] في الأوامر، واقرا الـ DisplayName قبل ما توقف حاجة متعرفهاش.`,
           lines: [
-            "الخدمات الشغالة بس.",
-            "أي خدمة اسمها فيه docker.",
-            "اعمل ريستارت لخدمة Docker (محتاج PowerShell كمدير)."
+            R`[[Get-Service]] بيرجّع object لكل خدمة على الجهاز (برامج شغالة في الخلفية من غير نافذة)، و [[Where-Object Status -eq Running]] بيسيب الشغالة بس. الناتج جدول فيه Status و Name و DisplayName، والقراية مش محتاجة أدمن.`,
+            R`الـ wildcard [[*docker*]] بيجيب أي خدمة اسمها فيه docker، زي [[com.docker.service]]، فمش لازم تبقى فاكر الاسم بالظبط. ولو مفيش ولا واحدة بترجع فاضي من غير error؛ إنما اسم من غير wildcard مش موجود بيطلع error «Cannot find any service».`,
+            R`[[Restart-Service]] بيوقّف الخدمة ويشغّلها تاني، وده بيحل مشاكل كتير لما Docker Desktop يعلّق. محتاج نافذة PowerShell كمدير، وإلا بيطلع error إنه مش قادر يفتح الخدمة. والاسم هنا هو Name القصير مش DisplayName.`,
           ],
           sol: R`[[Get-Service *docker*]] بيطلع جدول [[Status  Name  DisplayName]]، زي [[Running  com.docker.service  Docker Desktop Service]]. لو مطلعش حاجة يبقى Docker Desktop مش متسطب أو نسختك مش بتسطب خدمة بالاسم ده، جرب أي خدمة موجودة زي [[Get-Service Spooler]] (خدمة الطباعة) أو [[Get-Service wuauserv]] (Windows Update).
 

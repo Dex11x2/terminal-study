@@ -19,13 +19,11 @@ tar -czf app.tar.gz app`,
           try: "اضغط فولدر وفكه في مكان تاني.",
           deep: {
             why: R`باك أب سريع لفولدر، أو تجهيز ملف ترفعه على سيرفر أو تبعته لحد، من غير ما تسطّب WinRAR أو 7-Zip. Compress-Archive مبني جوه PowerShell، و tar موجود جنبه لو محتاج tar.gz.`,
-            how: R`[[Compress-Archive -Path ".\folder" -DestinationPath "archive.zip"]] يعمل zip. [[-Update]] يضيف لـ zip موجود.
+            how: R`[[Compress-Archive -Path ".\folder" -DestinationPath "archive.zip"]] بيعمل zip. لو الملف موجود بيطلع error، و [[-Force]] بيكتب فوقه، و [[-Update]] بيضيف ويحدّث الملفات جوه الـ zip الموجود. و [[-Path]] بياخد كذا مسار: [[Compress-Archive -Path .\a.txt, .\b.txt -DestinationPath files.zip]].
 
-[[Expand-Archive -Path "archive.zip" -DestinationPath ".\output"]] يفكّه. [[-Force]] يكتب فوق لو الفولدر موجود.
+[[Expand-Archive -Path "archive.zip" -DestinationPath ".\output"]] بيفكه، و [[-Force]] بيكتب فوق الملفات الموجودة.
 
-[[Compress-Archive -Path ".\file1.txt", ".\file2.txt" -Destination "files.zip"]] ملفات متعددة.
-
-بس PowerShell Compress-Archive بطيء على ملفات كتير. لو عندك 7-Zip: [[7z a archive.7z folder\]] أسرع بكتير.`,
+وخلي بالك من حاجتين: Compress-Archive بطيء على آلاف الملفات، و 7-Zip أو [[tar]] أسرع بكتير. وفي Windows PowerShell 5.1 الأسامي جوه الـ zip بتتكتب بـ [[\]] بين الفولدرات (جربتها: [[assets\a.js]])، وده ممكن يبوّظ الفك على لينكس؛ PowerShell 7.6 كتبها [[assets/a.js]] صح.`,
             when: "باك أب. إرسال مشروع. نقل ملفات.",
             mistakes: R`Path ممكن تاخد * : [[Compress-Archive ".\logs\*.log"]] بس الـ wildcards مش شغالة في كل الأحوال. خليها بين quotes.`
           },
@@ -139,7 +137,11 @@ dist        الفولدر نفسه جوه الـ zip
 -Force      اكتب فوق الموجود
 tar -czf    موجود في ويندوز 10/11 بنفس حروف لينكس
 ~~~`,
-          lines: ["اضغط محتوى dist في zip.", "فك zip في فولدر out.", "tar موجود في ويندوز 10 وأحدث، بنفس حروف لينكس."],
+          lines: [
+            R`[[-Path dist\*]] النجمة معناها «محتوى الفولدر»، فجوه الـ zip هتلاقي index.html و assets على طول من غير فولدر dist حواليهم، وده اللي أغلب الاستضافات عايزاه. لو كتبت [[-Path dist]] من غير النجمة، الـ zip هيبقى جواه فولدر dist واللي فيه. ولو [[dist.zip]] موجود بيطلع error إلا مع [[-Force]] أو [[-Update]].`,
+            R`[[Expand-Archive]] بيفك الـ zip في فولدر [[out]]، وبيعمل الفولدر لو مش موجود. ولو فيه ملفات بنفس الأسامي جوه out بيطلع error ومبيكتبش فوقها إلا مع [[-Force]].`,
+            R`[[tar]] برنامج جاي مع ويندوز 10 و 11، بنفس حروف لينكس: [[-c]] اعمل أرشيف، و [[-z]] اضغطه gzip، و [[-f app.tar.gz]] اسم الملف، وفي الآخر [[app]] الفولدر اللي هيتضغط. مفيد لما ترفع لسيرفر لينكس متعوّد على tar.gz.`,
+          ],
           sol: R`[[Compress-Archive -Path app\* -DestinationPath app.zip]] وبعدين [[Expand-Archive app.zip -DestinationPath out]]. جربتها فـ [[Get-ChildItem out -Recurse -Name]] طلع [[src]] و [[src\server.js]] زي الأصل.
 
 لو كتبت [[-Path app]] من غير [[\*]]، الـ zip هيبقى جواه فولدر app، فبعد الفك هتلاقي [[out\app\src]]. ولو شغلت الضغط تاني على نفس اسم الـ zip هيطلع [[The archive file ... already exists. Use the -Update parameter ... or use the -Force parameter]]، ونفس الحكاية Expand-Archive على فولدر فيه نفس الملفات محتاج [[-Force]].`,
@@ -159,11 +161,11 @@ Get-ChildItem out -Recurse -Name`
           try: "اطلع الهاش لأي ملف عندك.",
           deep: {
             why: "التأكد إن ملف وصل سليم بعد النقل أو نزل بدون تعديل. زي sha256sum في bash.",
-            how: R`[[Get-FileHash file.zip]] بيحسب SHA256 افتراضيًا. [[-Algorithm MD5]] أو [[-Algorithm SHA512]] لو محتاج.
+            how: R`[[Get-FileHash file.zip]] بيحسب SHA256 افتراضيًا، والناتج object فيه [[Algorithm]] و [[Hash]] (بحروف كابيتال) و [[Path]]. و [[-Algorithm SHA512]] أو [[SHA1]] أو [[MD5]] لو الموقع حاطط نوع تاني، بس MD5 و SHA1 ضعاف ومينفعوش يثبتوا إن محدش لعب في الملف.
 
-[[(Get-FileHash file.zip).Hash]] الـ hash بس كنص.
+[[(Get-FileHash file.zip).Hash]] بيرجّع البصمة كنص بس، فتقارنها على طول: [[(Get-FileHash file.zip).Hash -eq "abc123..."]] بيرجّع True أو False. و [[-eq]] مش بيفرّق كابيتال من سمول، فلو الموقع كاتبها بحروف سمول هتطابق عادي.
 
-قارن: [[Get-FileHash file.zip -Algorithm SHA256]] وبعدين قارن الـ Hash بالقيمة على الموقع.`,
+ومتقارنش 64 حرف بعينك: انسخ البصمة من الموقع وحطها في الـ [[-eq]].`,
             when: "بعد تحميل برنامج. بعد نسخ ملفات مهمة. للتأكد من سلامة باك أب.",
             mistakes: "نسيان إن الأحرف lowercase وuppercase ممكن تختلف في الـ hash المعروض وذاك. PowerShell بيطبع uppercase."
           },
@@ -257,7 +259,9 @@ SHA256          64 حرف hex، الافتراضي
 حرف واحد اتغير   هاش مختلف كله
 -eq             مش بيفرّق كابيتال وسمول، فقارن على طول
 ~~~`,
-          lines: ["بصمة SHA256 للملف، قارنها باللي على موقع التحميل."],
+          lines: [
+            R`[[Get-FileHash]] بيقرا الملف كله ويحسب بصمة (hash): نص hex طوله 64 حرف مع SHA256. أي تغيير ولو بايت واحد في الملف بيطلّع بصمة مختلفة تمامًا، فلو بصمتك زي اللي على موقع التحميل يبقى الملف وصلك سليم ومحدش لعب فيه. [[-Algorithm SHA256]] هو الافتراضي أصلًا، بس كتابته بتوضح انت بتقارن بإيه.`,
+          ],
           sol: R`[[Get-FileHash .\setup.exe -Algorithm SHA256]] بيطبع 3 حاجات: [[Algorithm SHA256]] و [[Hash]] (64 حرف hex كابيتال) و [[Path]]. جربتها على ملف وقارنتها بـ [[sha256sum]] على لينكس، طلعوا نفس الرقم بالظبط بس sha256sum بيكتبه حروف صغيرة.
 
 الفرق في الكابيتال مش مهم، و [[-eq]] في PowerShell مش بيفرق بين كابيتال وسمول، فتقدر تقارن: [[(Get-FileHash .\setup.exe).Hash -eq "abc..."]]. لو رجع False يبقى الملف اتعدل أو التحميل بايظ، أو انت بتقارن بهاش نسخة تانية. [[SHA256]] هو الافتراضي أصلًا، فممكن تشيل [[-Algorithm]].`
