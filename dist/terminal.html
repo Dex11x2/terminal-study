@@ -63,7 +63,7 @@ body[data-shell="start"]{--accent:var(--a-start);--t-bg:#1f2430;--t-fg:#e8eaf0;-
 body[data-shell="zsh"]{--accent:var(--a-zsh);--t-bg:#fbfbfd;--t-fg:#1d1d1f;--t-pr:#0f766e;--t-cm:#8e8e93;--t-bar:#e6e6eb}
 body[data-shell="cmd"]{--accent:var(--a-cmd);--t-bg:#0c0c0c;--t-fg:#cccccc;--t-pr:#f2f2f2;--t-cm:#7a7a7a;--t-bar:#262626}
 .wrap{max-width:min(1600px, 95vw);margin:0 auto;padding:0 24px}
-code{font-family:var(--mono);font-size:.86em;background:color-mix(in srgb,var(--accent) 12%,transparent);padding:1px 6px;border-radius:4px;unicode-bidi:isolate;direction:ltr;display:inline-block}
+code{font-family:var(--mono);font-size:.86em;background:color-mix(in srgb,var(--accent) 12%,transparent);padding:1px 6px;border-radius:4px;unicode-bidi:isolate;direction:ltr;display:inline-block;max-width:100%;overflow-wrap:anywhere}
 a{color:var(--accent)}
 
 /* hero */
@@ -170,7 +170,8 @@ article.cmd{border-inline-start:3px solid var(--accent);background:var(--surface
 .osnote{font-size:15px;margin:-4px 0 12px;padding:6px 12px;border-inline-start:3px solid var(--a-zsh);background:color-mix(in srgb,var(--a-zsh) 9%,transparent);border-radius:4px;max-width:100%}
 .osnote b{color:var(--a-zsh)}
 .cmd .desc + .desc{margin-top:-2px}
-.deep{display:grid;gap:12px;margin:4px 0 14px}
+.deep{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;margin:4px 0 14px}
+.deep>section{min-width:0}
 .deep section{border-inline-start:3.5px solid color-mix(in srgb,var(--accent) 55%,transparent);padding:2px 14px 2px 0}
 [dir="rtl"] .deep section{padding:2px 14px 2px 0}
 .deep h4{margin:0 0 4px;font-size:16px;color:var(--accent)}
@@ -27052,7 +27053,7 @@ jq -r '.[] | [.id, .name, .city] | @csv' customers.json
 | [[json.dumps(list(...), ensure_ascii=False)]] | يطلّعهم JSON |
 | [[Import-Csv]] | نفس الحاجة على ويندوز |
 | [[jq 'map(select(...))']] | فلترة على الـ JSON |
-| [[jq -r '.[] | [...] | @csv']] | يرجّع CSV بتنصيص صح |
+| [[jq -r '.[] \| [...] \| @csv']] | يرجّع CSV بتنصيص صح |
 
 ~~~text خلي بالك من
 utf-8-sig       عشان الـ BOM ميخربش أول عمود
@@ -77190,7 +77191,7 @@ MORE("bash", [
 mkdir -p ~/lab/power && cd ~/lab/power`,
       projects: [
         { lvl: 'صغير', t: R`prompt أحمر للـ root`, what: R`في [[~/.bashrc]] خلّي [[PS1]] يتلوّن أحمر ويخلص بـ [[#]] لو [[$EUID]] بصفر (درس ١)، عشان تعرف من نظرة إنك root.`, done: R`[[sudo -i]] بيطلّع prompt أحمر، و [[exit]] بيرجّعك للـ prompt العادي، و [[bash -n ~/.bashrc]] مبيطلّعش أخطاء.` },
-        { lvl: 'صغير', t: R`شوف الباسورد بيتسرّب بعينك`, what: R`في ترمنال شغّل أمر طويل والباسورد الوهمي في الـ arguments (زي [[sleep 300 --pass=demo123]] جوه [[bash -c]])، ومن ترمنال تاني دوّر عليه بـ [[ps -ef]]. وبعدين اكتبه تاني بالباسورد من ملف أو stdin (درس ٢).`, done: R`[[ps -ef | grep demo123]]\| grep demo123]] بيلاقيه في النسخة الأولى، ومبيلاقيش غير سطر الـ grep نفسه في النسخة التانية.` },
+        { lvl: 'صغير', t: R`شوف الباسورد بيتسرّب بعينك`, what: R`في ترمنال شغّل أمر طويل والباسورد الوهمي في الـ arguments (زي [[sleep 300 --pass=demo123]] جوه [[bash -c]])، ومن ترمنال تاني دوّر عليه بـ [[ps -ef]]. وبعدين اكتبه تاني بالباسورد من ملف أو stdin (درس ٢).`, done: R`[[ps -ef | grep demo123]] بيلاقيه في النسخة الأولى، ومبيلاقيش غير سطر الـ grep نفسه في النسخة التانية.` },
         { lvl: 'متوسط', t: R`مقارنة سيرفرين`, what: R`سكربت بياخد ملفين فيهم ناتج [[dpkg-query]] (أو [[pip freeze]]) من سيرفرين، ويطبع تلات أقسام: في الاتنين، وناقص في التاني، وزيادة فيه. من درس ٦.`, done: R`ملفين بينهم ٣ باكدجات مختلفة بيطلعوا في القسم الصح، والسكربت بيرتّب الملفين بنفسه قبل [[comm]] فمفيش تحذير «not in sorted order».` },
         { lvl: 'متوسط', t: R`فاحص سيرفرات بالتوازي`, what: R`لستة hosts في ملف، وكل واحد بيتفحص بـ [[timeout 5 curl]]، بحد أقصى ٨ في نفس الوقت، وفي الآخر تقرير بالواقعين بس وكود خروج 1 لو فيه واحد واقع. من دروس ٣ و ٤.`, done: R`٢٠ host بيخلصوا في وقت قريب من أبطأ واحد، والـ host اللي مبيردش بيتقفل بعد ٥ ثواني بالظبط، و [[echo $?]] بيطبع 1 لو فيه واحد واقع و 0 لو كلهم شغالين.` },
         { lvl: 'كبير', t: R`سكربت تجهيز سيرفر`, what: R`[[setup.sh]] بيرفع نفسه بـ sudo لو مش root، ويطلب باسورد قاعدة البيانات بـ [[read -rs]] ويكتبه في [[.env]] بصلاحيات 600، ويقفل نفسه بـ [[flock]] عشان ميتشغّلش مرتين، وكل خطوة بتعدّي لو متعملة قبل كده. من دروس ١ و ٢ و ٥.`, done: R`تشغيلتين في نفس الوقت: التانية بتطبع «شغال بالفعل» وتخرج. و [[stat -c %a .env]] بيطبع 600. والباسورد مش في [[history]] ولا في [[ps]]. وتشغيله مرة تانية بعد ما خلص مبيغيّرش حاجة.` },
@@ -127752,7 +127753,9 @@ dir /? | find /i "subdirect"
           title: "الأقواس والشرطة المايلة والنقطتين",
           desc: R`سطر الـ [[Usage]] في ويندوز بيستخدم نفس فكرة لينكس بس بعلامات مختلفة شوية. وأغرب واحدة فيهم موجودة في [[dir /?]]:
 
-[[DIR [drive:][path][filename] [/A[[:]attributes]] [/B] ...]]
+~~~text
+DIR [drive:][path][filename] [/A[[:]attributes]] [/B] ...
+~~~
 
 **العلامات:**
 [[[ ]]] اختياري، زي لينكس.
@@ -127808,7 +127811,7 @@ Description:
 | [[[x]]] | اختياري | [[[/S]]] |
 | [[x]] | إجباري | [[target_name]] |
 | [[x...]] | ممكن يتكرر | [[pattern...]] |
-| [[a \| b]] | أو | [[[-j list] \| [-k list]]] |
+| [[a \| b]] | أو | [[ [-j list] \| [-k list] ]] |
 | [[[a][b][c]]] | تلاتة اختيارية ملزوقين | [[[drive:][path][filename]]] |
 | نقطتين جوه أقواس | النقطتين نفسها اختيارية | [[dir /A:H]] زي [[dir /AH]] |
 
@@ -451477,7 +451480,7 @@ print(sales * np.array([[10], [100]]))
 | [[(3,)]] و [[(3, 1)]] | أيوه (وغالبًا مش قصدك) | [[(3, 3)]] |
 | [[(2, 3)]] و [[(2,)]] | لأ | خطأ (آخر سطر في المثال) |
 
-السطر التالت في الجدول ده فخ: جرّبنا [[np.array([1,2,3]) + np.array([[10],[20],[30]])]] وطلع جدول ٣×٣ كامل من غير أي خطأ.
+السطر التالت في الجدول ده فخ: جرّبنا [[np.array([1,2,3]) + np.array([ [10],[20],[30] ])]] وطلع جدول ٣×٣ كامل من غير أي خطأ.
 
 ---
 
@@ -451543,7 +451546,7 @@ sales + np.array([1, 2])
 ValueError: operands could not be broadcast together with shapes (2,3) (2,)
 ~~~
 
-من اليمين: ٣ و ٢، مش متساويين ومفيش واحد منهم ١. لو قصدك تزوّد رقم لكل **صف**، اعملها عمود: [[np.array([[1], [2]])]] (شكلها [[(2, 1)]]).
+من اليمين: ٣ و ٢، مش متساويين ومفيش واحد منهم ١. لو قصدك تزوّد رقم لكل **صف**، اعملها عمود: [[np.array([ [1], [2] ])]] (شكلها [[(2, 1)]]).
 
 ---
 
@@ -460144,7 +460147,7 @@ Warning:  Cannot modify header information - headers already sent by (output sta
 
 ---
 
-> جربنا كمان [[name[]=x]]: الاسم بقى النص [[Array]] وعدّى التحقق، ومعاه [[Warning: Array to string conversion]]، والـ Warning ده نفسه اتطبع قبل [[header()]] فبوّظ التحويل. لو الحقل لازم يبقى نص، الأدق [[is_string]] زي درس [[]].
+> جربنا كمان [[name[]=x]]: الاسم بقى النص [[Array]] وعدّى التحقق، ومعاه [[Warning: Array to string conversion]]، والـ Warning ده نفسه اتطبع قبل [[header()]] فبوّظ التحويل. لو الحقل لازم يبقى نص، الأدق [[is_string]].
 
 ---
 
@@ -510424,12 +510427,12 @@ middleware: بياخد الطلب والرد و [[next]] (كمّل للي بعد
 - [[req.reader]]: بنحط المصدر على الطلب، والـ routes بتستخدمه.
 
 > النسخة الأولى من المثال كانت [[req.read]]. الاسم ده محجوز: الطلب في Node stream، و [[req.read]] هي الدالة اللي Node بيقرا بيها الـ body. لما كتبنا عليها، أول [[POST]] وقّع السيرفر كله:
->
-> ~~~text الناتج
-> TypeError: stream.read is not a function
->     at resume_ (node:internal/streams/readable:1264:12)
-> ~~~
->
+
+~~~text الناتج
+TypeError: stream.read is not a function
+    at resume_ (node:internal/streams/readable:1264:12)
+~~~
+
 > عشان كده [[req.reader]]. ومتحطش على [[req]] أي اسم موجود في Node أو Express ([[read]] و [[body]] و [[params]] و [[query]]...).
 
 ### [[if (!["GET", "HEAD"].includes(req.method)) { res.cookie("lw", String(Date.now()), { ... }); }]]
@@ -511308,7 +511311,7 @@ UTC في القاعدة والعرض بتوقيت المكان، والـ no-sho
 - [[INSERT]] الحجز، و [[COMMIT]].
 - [[catch]]: أي خطأ ROLLBACK ورمي. و [[finally { c.release(); }]]: رجّع الاتصال للـ pool في كل الحالات.
 
-### اللفة: [[for (const [name, fn] of [["naive", naive], ["conditional", conditional]])]]
+### اللفة: [[for (const [name, fn] of [ ["naive", naive], ["conditional", conditional] ])]]
 
 لكل طريقة: صفّر الجداول، وابعت ٥٠ طلب مع بعض:
 
@@ -532639,7 +532642,7 @@ edge w-v: { x: [y,z], y: [x,z], z: [y,x], w: [v], v: [w] }
 
 كل edge بيظهر مرتين: [[x-y]] خلّت y في جيران x، و x في جيران y. والعقد x و y و z عاملين مثلث (دايرة)، و w و v لوحدهم.
 
-ولو [[directed = true]]: [[buildGraph([["a","b"]], true)]] بيطلّع [[Map(2) { 'a' => [ 'b' ], 'b' => [] }]]. السهم من a لـ b بس، و b ليها مكان فاضي.
+ولو [[directed = true]]: [[buildGraph([ ["a","b"] ], true)]] بيطلّع [[Map(2) { 'a' => [ 'b' ], 'b' => [] }]]. السهم من a لـ b بس، و b ليها مكان فاضي.
 
 ---
 
@@ -533236,7 +533239,7 @@ dist[sr][sc] = 0;
 - [[const [sr, sc] = start]]: destructuring، [[sr]] = start row و [[sc]] = start column.
 - المسافة من البداية لنفسها 0.
 
-### [[const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]];]]
+### [[const dirs = [ [1, 0], [-1, 0], [0, 1], [0, -1] ];]]
 
 الاتجاهات الأربعة كـ «كام صف وكام عمود»: [[[1, 0]]] تحت، [[[-1, 0]]] فوق، [[[0, 1]]] يمين، [[[0, -1]]] شمال. كده بنكتب كود الجار مرة واحدة جوه loop بدل ٤ مرات.
 
@@ -533609,7 +533612,7 @@ for (let head = 0; head < queue.length; head++) {
 
 ## ٢. التتبع: ٥ كورسات من غير دايرة
 
-[[courseOrder(5, [[1, 0], [2, 0], [3, 1], [4, 2], [4, 3]])]]: 1 و 2 محتاجين 0، و 3 محتاج 1، و 4 محتاج 2 و 3.
+[[courseOrder(5, [ [1, 0], [2, 0], [3, 1], [4, 2], [4, 3] ])]]: 1 و 2 محتاجين 0، و 3 محتاج 1، و 4 محتاج 2 و 3.
 
 ~~~text الأسهم
 0 → 1 → 3 → 4
@@ -533642,7 +533645,7 @@ take 4  no edges  | indegree = [0,0,0,0,0] queue = [] order = [0,1,2,3,4]
 
 ## ٣. التتبع: فيه دايرة
 
-[[courseOrder(3, [[1, 0], [2, 1], [1, 2]])]]: 1 محتاج 0 و 2، و 2 محتاج 1. يعني 1 و 2 كل واحد مستني التاني.
+[[courseOrder(3, [ [1, 0], [2, 1], [1, 2] ])]]: 1 محتاج 0 و 2، و 2 محتاج 1. يعني 1 و 2 كل واحد مستني التاني.
 
 ~~~text الناتج (Node 24 على ويندوز)
 graph = [[1],[2],[1]]  indegree = [0,2,1]
@@ -538510,7 +538513,7 @@ object: كل عقدة → array من أزواج [[[الجار، الوزن]]]. �
 
 ## ٢. الكود سطر سطر
 
-### [[const dist = new Map([[source, 0]]);]]
+### [[const dist = new Map([ [source, 0] ]);]]
 
 Map بتبدأ بزوج واحد: المصدر مسافته 0. أي عقدة مش في الـ Map = لسه موصلناهاش (مسافتها Infinity).
 
@@ -728961,7 +728964,14 @@ function countLabel(n){
 }
 /* every paragraph of desc is shown; after the first they get .more, which the brief mode hides */
 function descHTML(d){
-  return d.split(/\n\s*\n/).map((p, i) => '<p class="desc'+(i?' more':'')+'">'+fmt(p.trim())+'</p>').join('');
+  // the first paragraph is the summary; the rest may hold fences, tables and lists, so it goes through mdHTML
+  // the summary ends at the first blank line, or earlier where a fence, table or list starts right under it
+  // a solution may open straight with a fence or a table: then all of it is markdown
+  if (/^(~~~|\||- |\d+\. |#{2,3} |> )/.test(d)) return '<div class="desc">'+mdHTML(d.trim())+'</div>';
+  const blank = d.search(/\n\s*\n/), block = d.search(/\n(~~~|\||- |\d+\. |#{2,3} |> )/);
+  const cut = blank < 0 ? block : block < 0 ? blank : Math.min(blank, block);
+  if (cut < 0) return '<p class="desc">'+fmt(d.trim())+'</p>';
+  return '<p class="desc">'+fmt(d.slice(0, cut).trim())+'</p><div class="desc more">'+mdHTML(d.slice(cut).trim())+'</div>';
 }
 /* the long step-by-step explanation (lesson field teach), written in a small markdown:
    ## and ### headings, ~~~lang label fences (~~~ because lesson text can't hold backticks), - and 1. lists, | tables |, > notes, --- separators, **bold**, [[code]] */
@@ -728969,6 +728979,10 @@ const FENCE = {powershell:['ps','PowerShell'], ps:['ps','PowerShell'], bash:['ba
 function teachHTML(c){
   const t = TEACH[shell+'|'+c];
   if (!t) return '';
+  return '<details class="teach" open><summary>الشرح خطوة بخطوة</summary>'+mdHTML(t)+'</details>';
+}
+/* the mini-markdown of teach (and deep): ~~~ fences, ## headings, ---, > quotes, - and 1. lists, | tables, paragraphs */
+function mdHTML(t){
   const inl = fmt;
   const src = t.split('\n'), out = [];
   for (let i = 0; i < src.length; i++){
@@ -729001,7 +729015,7 @@ function teachHTML(c){
       i--; out.push((ol?'<ol>':'<ul>')+items.map(x => '<li>'+x.text+(x.sub.length ? '<ul>'+x.sub.join('')+'</ul>' : '')+'</li>').join('')+(ol?'</ol>':'</ul>'));
     } else if (l.startsWith('|')){
       const rows = [];
-      for (; i < src.length && src[i].startsWith('|'); i++) if (!/^\|[\s:|-]+\|\s*$/.test(src[i])) rows.push(src[i].trim().replace(/^\||\|$/g, '').split(/\|(?![^[]*\]\])/).map(x => inl(x.trim()))); // a | inside [[code]] isn't a cell border
+      for (; i < src.length && src[i].startsWith('|'); i++) if (!/^\|[\s:|-]+\|\s*$/.test(src[i])) rows.push(src[i].trim().replace(/^\||\|$/g, '').split(/(?<!\\)\|(?![^[]*\]\])/).map(x => inl(x.trim().replace(/\\\|/g, '|')))); // a | inside [[code]] or written \| isn't a cell border
       i--; out.push('<div class="tbl"><table>'+rows.map((r, j) => '<tr>'+r.map(x => j ? '<td>'+x+'</td>' : '<th>'+x+'</th>').join('')+'</tr>').join('')+'</table></div>');
     } else {
       const p = [];
@@ -729009,12 +729023,12 @@ function teachHTML(c){
       i--; out.push('<p>'+p.join('<br>')+'</p>');
     }
   }
-  return '<details class="teach" open><summary>الشرح خطوة بخطوة</summary>'+out.join('')+'</details>';
+  return out.join('');
 }
 function deepHTML(c){
   const d = DEEP[shell+'|'+c];
   if (!d) return '';
-  const part = (h, t) => t ? '<section><h4>'+h+'</h4>'+t.split(/\n\s*\n/).map(x => '<p>'+fmt(x.trim())+'</p>').join('')+'</section>' : '';
+  const part = (h, t) => t ? '<section><h4>'+h+'</h4>'+mdHTML(t)+'</section>' : '';
   return '<div class="deep">'+part('ليه موجود؟', d.why)+part('بيحصل إيه من جوه؟', d.how)+part('هتستخدمه إمتى؟', d.when)+part('غلطات شائعة', d.mistakes)+'</div>';
 }
 /* reference solution for the try task: hidden until the learner opens it.
