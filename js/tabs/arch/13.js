@@ -319,7 +319,7 @@ UTC في القاعدة والعرض بتوقيت المكان، والـ no-sho
 - [[INSERT]] الحجز، و [[COMMIT]].
 - [[catch]]: أي خطأ ROLLBACK ورمي. و [[finally { c.release(); }]]: رجّع الاتصال للـ pool في كل الحالات.
 
-### اللفة: [[for (const [name, fn] of [["naive", naive], ["conditional", conditional]])]]
+### اللفة: [[for (const [name, fn] of [ ["naive", naive], ["conditional", conditional] ])]]
 
 لكل طريقة: صفّر الجداول، وابعت ٥٠ طلب مع بعض:
 

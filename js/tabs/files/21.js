@@ -411,7 +411,7 @@ jq -r '.[] | [.id, .name, .city] | @csv' customers.json
 | [[json.dumps(list(...), ensure_ascii=False)]] | يطلّعهم JSON |
 | [[Import-Csv]] | نفس الحاجة على ويندوز |
 | [[jq 'map(select(...))']] | فلترة على الـ JSON |
-| [[jq -r '.[] | [...] | @csv']] | يرجّع CSV بتنصيص صح |
+| [[jq -r '.[] \| [...] \| @csv']] | يرجّع CSV بتنصيص صح |
 
 ~~~text خلي بالك من
 utf-8-sig       عشان الـ BOM ميخربش أول عمود

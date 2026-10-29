@@ -592,12 +592,12 @@ middleware: بياخد الطلب والرد و [[next]] (كمّل للي بعد
 - [[req.reader]]: بنحط المصدر على الطلب، والـ routes بتستخدمه.
 
 > النسخة الأولى من المثال كانت [[req.read]]. الاسم ده محجوز: الطلب في Node stream، و [[req.read]] هي الدالة اللي Node بيقرا بيها الـ body. لما كتبنا عليها، أول [[POST]] وقّع السيرفر كله:
->
-> ~~~text الناتج
-> TypeError: stream.read is not a function
->     at resume_ (node:internal/streams/readable:1264:12)
-> ~~~
->
+
+~~~text الناتج
+TypeError: stream.read is not a function
+    at resume_ (node:internal/streams/readable:1264:12)
+~~~
+
 > عشان كده [[req.reader]]. ومتحطش على [[req]] أي اسم موجود في Node أو Express ([[read]] و [[body]] و [[params]] و [[query]]...).
 
 ### [[if (!["GET", "HEAD"].includes(req.method)) { res.cookie("lw", String(Date.now()), { ... }); }]]

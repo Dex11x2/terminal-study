@@ -3,7 +3,7 @@ name: lessons
 # runs every lesson's `ci` checks (tools/ci-run.js) on a real Linux, macOS and Windows machine
 on:
   push:
-    paths: ['js/**', 'tools/ci-run.js', '.github/workflows/lessons.yml']
+    paths: ['js/**', 'css/**', 'index.html', 'tools/ci-run.js', 'tools/render-check.js', '.github/workflows/lessons.yml']
   workflow_dispatch:
 
 jobs:
@@ -20,3 +20,16 @@ jobs:
           node-version: 24
       - name: Run the lesson checks
         run: node tools/ci-run.js
+
+  # draws every lesson and unit in Chromium at phone width and fails on raw [[ ]], **, ~~~, \|, undefined or anything wider than the screen
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Install Playwright for this run only (the repo keeps no node_modules)
+        run: npm i --no-save playwright@1.47.2 && npx playwright install --with-deps chromium
+      - name: Check how every lesson renders
+        run: node tools/render-check.js

@@ -785,7 +785,7 @@ Warning:  Cannot modify header information - headers already sent by (output sta
 
 ---
 
-> جربنا كمان [[name[]=x]]: الاسم بقى النص [[Array]] وعدّى التحقق، ومعاه [[Warning: Array to string conversion]]، والـ Warning ده نفسه اتطبع قبل [[header()]] فبوّظ التحويل. لو الحقل لازم يبقى نص، الأدق [[is_string]] زي درس [[]].
+> جربنا كمان [[name[]=x]]: الاسم بقى النص [[Array]] وعدّى التحقق، ومعاه [[Warning: Array to string conversion]]، والـ Warning ده نفسه اتطبع قبل [[header()]] فبوّظ التحويل. لو الحقل لازم يبقى نص، الأدق [[is_string]].
 
 ---
 

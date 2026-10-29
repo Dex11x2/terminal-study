@@ -77,7 +77,14 @@ function countLabel(n){
 }
 /* every paragraph of desc is shown; after the first they get .more, which the brief mode hides */
 function descHTML(d){
-  return d.split(/\n\s*\n/).map((p, i) => '<p class="desc'+(i?' more':'')+'">'+fmt(p.trim())+'</p>').join('');
+  // the first paragraph is the summary; the rest may hold fences, tables and lists, so it goes through mdHTML
+  // the summary ends at the first blank line, or earlier where a fence, table or list starts right under it
+  // a solution may open straight with a fence or a table: then all of it is markdown
+  if (/^(~~~|\||- |\d+\. |#{2,3} |> )/.test(d)) return '<div class="desc">'+mdHTML(d.trim())+'</div>';
+  const blank = d.search(/\n\s*\n/), block = d.search(/\n(~~~|\||- |\d+\. |#{2,3} |> )/);
+  const cut = blank < 0 ? block : block < 0 ? blank : Math.min(blank, block);
+  if (cut < 0) return '<p class="desc">'+fmt(d.trim())+'</p>';
+  return '<p class="desc">'+fmt(d.slice(0, cut).trim())+'</p><div class="desc more">'+mdHTML(d.slice(cut).trim())+'</div>';
 }
 /* the long step-by-step explanation (lesson field teach), written in a small markdown:
    ## and ### headings, ~~~lang label fences (~~~ because lesson text can't hold backticks), - and 1. lists, | tables |, > notes, --- separators, **bold**, [[code]] */
@@ -85,6 +92,10 @@ const FENCE = {powershell:['ps','PowerShell'], ps:['ps','PowerShell'], bash:['ba
 function teachHTML(c){
   const t = TEACH[shell+'|'+c];
   if (!t) return '';
+  return '<details class="teach" open><summary>الشرح خطوة بخطوة</summary>'+mdHTML(t)+'</details>';
+}
+/* the mini-markdown of teach (and deep): ~~~ fences, ## headings, ---, > quotes, - and 1. lists, | tables, paragraphs */
+function mdHTML(t){
   const inl = fmt;
   const src = t.split('\n'), out = [];
   for (let i = 0; i < src.length; i++){
@@ -117,7 +128,7 @@ function teachHTML(c){
       i--; out.push((ol?'<ol>':'<ul>')+items.map(x => '<li>'+x.text+(x.sub.length ? '<ul>'+x.sub.join('')+'</ul>' : '')+'</li>').join('')+(ol?'</ol>':'</ul>'));
     } else if (l.startsWith('|')){
       const rows = [];
-      for (; i < src.length && src[i].startsWith('|'); i++) if (!/^\|[\s:|-]+\|\s*$/.test(src[i])) rows.push(src[i].trim().replace(/^\||\|$/g, '').split(/\|(?![^[]*\]\])/).map(x => inl(x.trim()))); // a | inside [[code]] isn't a cell border
+      for (; i < src.length && src[i].startsWith('|'); i++) if (!/^\|[\s:|-]+\|\s*$/.test(src[i])) rows.push(src[i].trim().replace(/^\||\|$/g, '').split(/(?<!\\)\|(?![^[]*\]\])/).map(x => inl(x.trim().replace(/\\\|/g, '|')))); // a | inside [[code]] or written \| isn't a cell border
       i--; out.push('<div class="tbl"><table>'+rows.map((r, j) => '<tr>'+r.map(x => j ? '<td>'+x+'</td>' : '<th>'+x+'</th>').join('')+'</tr>').join('')+'</table></div>');
     } else {
       const p = [];
@@ -125,12 +136,12 @@ function teachHTML(c){
       i--; out.push('<p>'+p.join('<br>')+'</p>');
     }
   }
-  return '<details class="teach" open><summary>الشرح خطوة بخطوة</summary>'+out.join('')+'</details>';
+  return out.join('');
 }
 function deepHTML(c){
   const d = DEEP[shell+'|'+c];
   if (!d) return '';
-  const part = (h, t) => t ? '<section><h4>'+h+'</h4>'+t.split(/\n\s*\n/).map(x => '<p>'+fmt(x.trim())+'</p>').join('')+'</section>' : '';
+  const part = (h, t) => t ? '<section><h4>'+h+'</h4>'+mdHTML(t)+'</section>' : '';
   return '<div class="deep">'+part('ليه موجود؟', d.why)+part('بيحصل إيه من جوه؟', d.how)+part('هتستخدمه إمتى؟', d.when)+part('غلطات شائعة', d.mistakes)+'</div>';
 }
 /* reference solution for the try task: hidden until the learner opens it.

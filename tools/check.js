@@ -34,11 +34,17 @@ const hashComment = (tab, ex, flag) => {
 };
 // code inside ~~~ fences is shown as is (مش بيتفسر)، فالعد بيتم على الكلام اللي حواليه بس
 const noFence = s => typeof s === 'string' ? s.replace(/^~~~[^\n]*\n[\s\S]*?^~~~\s*$/gm, '') : s;
-const brackets = (where, s) => {
+const brackets = (where, s, shown = true) => {
   if (typeof s !== 'string') return;
   const o = (s.match(/\[\[/g) || []).length, c = (s.match(/\]\]/g) || []).length;
   if (o !== c) err(where, `عدد [[ (${o}) مش زي عدد ]] (${c})`);
   if (/\[\[[^\]]*\n[^\]]*\]\]/.test(s)) err(where, '[[...]] مينفعش يعدّي على أكتر من سطر');
+  // the page pairs [[ ]] with the same regex as fmt in app.js: whatever is left over shows on the page as raw brackets
+  // (code that itself holds [[ or ]], like a[b[0]] or [[ -f x ]]: write it in a ~~~ fence or rephrase)
+  else if (o === c && shown) for (const line of s.split('\n')) {
+    const left = line.replace(/\[\[(.+?\]*)\]\]/g, '');
+    if (/\[\[|\]\]/.test(left)) { err(where, '[[ ]] مش متقفلة صح، هتبان على الصفحة: «' + line.trim().slice(0, 80) + '»'); break; }
+  }
   if (s.includes('$__{')) err(where, '$__{ فضلت زي ما هي');
   if (s.includes("$__bt")) err(where, "$__bt فضلت زي ما هي");
 };
@@ -81,7 +87,8 @@ for (const tab in DATA) {
       if (!title) warn(w, 'مفيش title (هيظهر فاضي في «اختبرني»)');
       if (!tr) warn(w, 'مفيش try');
       if (flag !== undefined && !String(flag).split(' ').every(f => FLAGS.includes(f))) err(w, `flag غير معروف: ${flag}`);
-      [title, desc, ex, tr].forEach(s => brackets(w, s));
+      // title and example are shown as written (no [[ ]] pairing); desc and try go through fmt
+      brackets(w, title, false); brackets(w, ex, false); brackets(w, noFence(desc)); brackets(w, tr);
       const hc = hashComment(tab, ex, flag) || hashComment(tab, (SOL[tab + '|' + cmd] || {}).code, 'script');
       if (hc) err(w, `تعليق بـ # في كود مش بيفهمه: «${hc.slice(0, 50)}». استخدم // (الطالب هينسخ المثال ويشغّله)`);
       const d = DEEP[tab + '|' + cmd];
