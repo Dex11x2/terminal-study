@@ -10280,419 +10280,419 @@
   "on": "docker ubuntu-24.04 + nginx 1.24.0"
  },
  "node|--host و Network URL": {
-  "hash": "3b4822d8c712",
-  "date": "2026-10-06",
-  "on": "win11 (Node 24.19, npm 11.17) Vite 8.3; docs: Next -H, firewall rule"
+  "hash": "619c6c3b6d16",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|.env و متغيرات البيئة": {
-  "hash": "604bdaa4ab4d",
-  "date": "2026-10-06",
-  "on": "win11 (Node 24.19, npm 11.17) + docker node:22-slim"
+  "hash": "863d1517a30a",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|.npmrc": {
-  "hash": "73e5d75b6105",
-  "date": "2026-10-06",
-  "on": "docker node:22-slim + win11"
+  "hash": "129216efcb2b",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|Buffer و encoding": {
-  "hash": "3a4ece1cc2f5",
-  "date": "2026-10-06",
-  "on": "win11 Node 24 + docker node:22-slim"
+  "hash": "520c77c4cd4c",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|Bun.serve": {
-  "hash": "5a51db2dd72f",
-  "date": "2026-10-27",
-  "on": "Windows 11 bun 1.4.4 (pwsh + curl.exe)"
+  "hash": "ca4568bfd229",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|Deno.serve": {
-  "hash": "2ff47f3a12a2",
-  "date": "2026-10-27",
-  "on": "Windows 11 deno 2.9.8"
+  "hash": "4c10f21b92f1",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|ERESOLVE و legacy-peer-deps": {
-  "hash": "34c71f7c2627",
-  "date": "2026-10-06",
-  "on": "win11 (Node 24.19, npm 11.17)"
+  "hash": "68a4692124ff",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|EventEmitter في Node": {
-  "hash": "f3dd897b68a6",
-  "date": "2026-10-06",
-  "on": "win11 Node 24 + docker node:22-slim"
+  "hash": "9b3aba39e089",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|Hono": {
-  "hash": "7cf060a9b31a",
-  "date": "2026-10-27",
-  "on": "Windows 11 node 24.22, hono 4.13.14"
+  "hash": "41eb6daba98c",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|Hono + zod": {
-  "hash": "1044610de9d7",
-  "date": "2026-10-27",
-  "on": "Windows 11 node 24.22, zod 4.6.7, tsc 7.0.2"
+  "hash": "4e3e953ab79e",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|Hono middleware": {
-  "hash": "527d12fd2c41",
-  "date": "2026-10-27",
-  "on": "Windows 11 node 24.22, hono 4.13.14"
+  "hash": "72de2e31c79e",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|Hono على كل runtime": {
-  "hash": "6cc4ea860d6d",
-  "date": "2026-10-27",
-  "on": "Windows 11 node 24.22 / bun 1.4.4 / deno 2.9.8; docs: Cloudflare Workers (wrangler dev did not start in container)"
+  "hash": "52c723c7ece3",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|NODE_ENV=production": {
-  "hash": "5af9310ce0a1",
-  "date": "2026-10-06",
-  "on": "docker node:22-slim Express 5.2.1 + win11 pwsh 7 / ps 5.1 / cmd"
+  "hash": "201c90779235",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|Next.js CLI": {
-  "hash": "520763fd08a6",
-  "date": "2026-10-06",
-  "on": "docker node:22-slim, Next.js 16.3.8"
+  "hash": "81e7966e2cf0",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|Next.js standalone": {
-  "hash": "b33a6e1bf374",
-  "date": "2026-10-06",
-  "on": "docker node:22-slim, Next.js 16.3.8 + win11 pwsh"
+  "hash": "ef7a1305f8a3",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|Node ولا Bun ولا Deno": {
-  "hash": "ab05a292051d",
-  "date": "2026-10-27",
-  "on": "Windows 11 autocannon 8 on node/bun/deno"
+  "hash": "8e45517b70de",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|SIGINT و SIGTERM": {
-  "hash": "387c5011b6b3",
-  "date": "2026-10-06",
-  "on": "docker node:22-slim + win11 process.kill; docs: Ctrl+C on Windows"
+  "hash": "80093a534ae0",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|^ و ~ في النسخ": {
-  "hash": "b66673bbc062",
-  "date": "2026-10-06",
-  "on": "win11 (Node 24.19, npm 11.17)"
+  "hash": "a0fc03872a4b",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|bun": {
-  "hash": "a0f6f77e6e6b",
-  "date": "2026-10-27",
-  "on": "Windows 11 bun 1.4.4 portable + docker oven/bun:slim + node:22-slim (install script, npm i -g bun); docs: Windows installer"
+  "hash": "ec61d345e3df",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|bun install": {
-  "hash": "030574d8c7ea",
-  "date": "2026-10-27",
-  "on": "Windows 11 bun 1.4.4 + docker node:22-slim (timings)"
+  "hash": "98254b9544d1",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|bun test": {
-  "hash": "93809dcc4c62",
-  "date": "2026-10-27",
-  "on": "Windows 11 bun 1.4.4; docs: --watch"
+  "hash": "3206a9b8fbab",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|cloudflared": {
-  "hash": "400e5807d621",
-  "date": "2026-10-06",
-  "on": "docs: all (not run)"
+  "hash": "284c1c456e66",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|command injection": {
-  "hash": "2dbada6b71c8",
-  "date": "2026-10-06",
-  "on": "docker node:22-slim + win11 cmd.exe exec"
+  "hash": "7f3cb03ee07b",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|concurrently و wait-on": {
-  "hash": "dbe9bcb1b4e1",
-  "date": "2026-10-06",
-  "on": "win11 (Node 24.19, npm 11.17) Vite 8.3"
+  "hash": "ee56ce30d0ee",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|deno fmt و lint و test": {
-  "hash": "fbc77f99667c",
-  "date": "2026-10-27",
-  "on": "Windows 11 deno 2.9.8"
+  "hash": "1519ef794033",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|deno run والصلاحيات": {
-  "hash": "fec5a7d98d86",
-  "date": "2026-10-27",
-  "on": "Windows 11 deno 2.9.8 + docker denoland/deno (prompt) + node:22-slim (install script); docs: Windows installer"
+  "hash": "d3ade640a533",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|deno.json و npm:": {
-  "hash": "a1c460636dff",
-  "date": "2026-10-27",
-  "on": "Windows 11 deno 2.9.8"
+  "hash": "0a9bcf189081",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|execFile و spawn": {
-  "hash": "59840fc5f64f",
-  "date": "2026-10-06",
-  "on": "win11 Node 24 + docker node:22-slim"
+  "hash": "6f3c77c424ee",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|exit codes و process.exitCode": {
-  "hash": "8b67b5b78be8",
-  "date": "2026-10-06",
-  "on": "docker node:22-slim + win11"
+  "hash": "e998b38c5284",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|fs.watch": {
-  "hash": "9184b6a43618",
-  "date": "2026-10-06",
-  "on": "win11 Node 24 + docker node:22-slim"
+  "hash": "40ee9d473943",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|fs/promises": {
-  "hash": "bcdd0e5809bc",
-  "date": "2026-10-06",
-  "on": "win11 Node 24 + docker node:22-slim"
+  "hash": "ed0b6aa4470c",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|ls / why / dedupe": {
-  "hash": "3a00b7e21b2a",
-  "date": "2026-10-06",
-  "on": "win11 (Node 24.19, npm 11.17)"
+  "hash": "35d778bde7e3",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|migrate deploy قبل السيرفر": {
-  "hash": "32f6575b763e",
-  "date": "2026-10-06",
-  "on": "docker compose postgres:16 + node:22-slim, Prisma 7.10.0"
+  "hash": "19290bb21fda",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|ngrok": {
-  "hash": "1d93b25b497e",
-  "date": "2026-10-06",
-  "on": "docs: ngrok; jq/PowerShell lines on docs-shaped JSON"
+  "hash": "74824e62704c",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|node --run": {
-  "hash": "a6ab339b5986",
-  "date": "2026-10-06",
-  "on": "win11 (Node 24.19, npm 11.17)"
+  "hash": "7f4058d8db40",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|node --test": {
-  "hash": "574f458e0a8c",
-  "date": "2026-10-06",
-  "on": "win11 (Node 24.19, npm 11.17) + docker node:22-slim"
+  "hash": "8964969b946a",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|node --watch --env-file": {
-  "hash": "20f6d89029a7",
-  "date": "2026-10-06",
-  "on": "win11 (Node 24.19, npm 11.17) tsx 4.23, TS 7.0; docs: nodemon"
+  "hash": "055116eb5c83",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|node -p و node -e": {
-  "hash": "62b3b4139f2d",
-  "date": "2026-10-28",
-  "on": "Node 24.22.1 و npm 11.19.1 على ويندوز 11؛ فخ argv و install --dry-run و pack --dry-run و E404 كلهم اتجرّبوا"
+  "hash": "0cf0304ec311",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|node -v": {
-  "hash": "eb93a3ccfc72",
-  "date": "2026-10-06",
-  "on": "win11 (Node 24.19, npm 11.17) pwsh 7 + ps 5.1 + docker node:22-slim; docs: Mac"
+  "hash": "d99911824838",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|node مباشرة": {
-  "hash": "1546fd617f31",
-  "date": "2026-10-06",
-  "on": "win11 (Node 24.19, npm 11.17) Git Bash + pwsh 7 + ps 5.1"
+  "hash": "f600c60a3783",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|node_modules بايظ": {
-  "hash": "738ea8851c92",
-  "date": "2026-10-06",
-  "on": "docker ubuntu-24.04 nvm Node 22/24; docs: NODE_MODULE_VERSION error"
+  "hash": "99c0c16b22b0",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|npm install": {
-  "hash": "739e24863bc4",
-  "date": "2026-10-06",
-  "on": "win11 (Node 24.19, npm 11.17) + docker node:22-slim; docs: -g"
+  "hash": "b4527c77df50",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|npm publish": {
-  "hash": "4ba0809092c2",
-  "date": "2026-10-06",
-  "on": "docker node:22-slim npm 10.9 dry-run; docs: npm login, real publish"
+  "hash": "6e2d7a405eee",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|npm scripts": {
-  "hash": "6b11fad0678a",
-  "date": "2026-10-06",
-  "on": "win11 (Node 24.19, npm 11.17) + cmd"
+  "hash": "9769fa7a574d",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|npm start ولا npm run dev": {
-  "hash": "fae6a2c5f9fe",
-  "date": "2026-10-06",
-  "on": "win11 (Node 24.19, npm 11.17) Vite 8.3; docs: Next.js"
+  "hash": "8f7c8927ac45",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|npm بيوثّق نفسه": {
-  "hash": "b22bf0faa13f",
-  "date": "2026-10-28",
-  "on": "Node 24.22.1 و npm 11.19.1 على ويندوز 11؛ فخ argv و install --dry-run و pack --dry-run و E404 كلهم اتجرّبوا"
+  "hash": "d02245e638d9",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|npx": {
-  "hash": "7263b1f2bec0",
-  "date": "2026-10-06",
-  "on": "win11 (Node 24.19, npm 11.17) + docker node:22-slim; docs: create-next-app"
+  "hash": "b2dae940f3d8",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|npx tsx": {
-  "hash": "cf8794ea5761",
-  "date": "2026-10-06",
-  "on": "win11 (Node 24.19, npm 11.17) + docker node:22-slim; docs: compose exec"
+  "hash": "04e9f763e3a9",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|nvm": {
-  "hash": "3538da9a4fef",
-  "date": "2026-10-06",
-  "on": "docker ubuntu-24.04 nvm 0.40.3; docs: nvm-windows, Mac"
+  "hash": "9b5f3e9f287f",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|outdated / update / audit": {
-  "hash": "aa8a74a0b83b",
-  "date": "2026-10-06",
-  "on": "win11 (Node 24.19, npm 11.17)"
+  "hash": "f81b1a4d9902",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|package-lock و npm ci": {
-  "hash": "55cbd366179e",
-  "date": "2026-10-06",
-  "on": "win11 (Node 24.19, npm 11.17)"
+  "hash": "aec147f32bf5",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|package.json": {
-  "hash": "2a729e97a9a7",
-  "date": "2026-10-06",
-  "on": "win11 (Node 24.19, npm 11.17) Git Bash + pwsh 7 + ps 5.1"
+  "hash": "20cb7bcb6b5f",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|path و import.meta.dirname": {
-  "hash": "04d005127e00",
-  "date": "2026-10-06",
-  "on": "win11 Node 24 + docker node:22-slim"
+  "hash": "fe8e76c41bfe",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|pnpm --filter": {
-  "hash": "55e61aab3913",
-  "date": "2026-10-06",
-  "on": "docker node:22-slim pnpm 10.33.2; docs: origin/main form"
+  "hash": "1ef4a357eea2",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|pnpm -r و --parallel": {
-  "hash": "ddff806476ba",
-  "date": "2026-10-06",
-  "on": "docker node:22-slim pnpm 10.33.2; docs: --stream"
+  "hash": "bf20781a367b",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|pnpm approve-builds": {
-  "hash": "886d1e8f0fd0",
-  "date": "2026-10-06",
-  "on": "docker node:22-slim pnpm 10.33.2; docs: pnpm 11"
+  "hash": "fffa4e8fdd66",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|pnpm و yarn": {
-  "hash": "c759b5451f5a",
-  "date": "2026-10-06",
-  "on": "docker node:22-slim corepack; docs: yarn"
+  "hash": "f495e65903de",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|pnpm-workspace.yaml و workspace:*": {
-  "hash": "a4c6f88a9520",
-  "date": "2026-10-06",
-  "on": "docker node:22-slim pnpm 10.33.2 + win11 junction check"
+  "hash": "9d54c35e75ca",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|prisma db push": {
-  "hash": "6323ab969d89",
-  "date": "2026-10-06",
-  "on": "docker node:22-slim + postgres:16, Prisma 7.10.0"
+  "hash": "1860937bff55",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|prisma db seed و studio": {
-  "hash": "0b2bdccb5eee",
-  "date": "2026-10-06",
-  "on": "docker node:22-slim + postgres:16, Prisma 7.10.0; docs: ssh -L"
+  "hash": "8424dfd600f2",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|prisma generate": {
-  "hash": "4862054d4dde",
-  "date": "2026-10-06",
-  "on": "docker node:22-slim, Prisma 7.10.0 + win11 pwsh"
+  "hash": "8b9391a78399",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|process.argv و parseArgs": {
-  "hash": "c84c7ca8088d",
-  "date": "2026-10-06",
-  "on": "docker node:22-slim + win11 pwsh 7 / ps 5.1"
+  "hash": "14d09674a93f",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|webhook تيليجرام": {
-  "hash": "d40b4d44c482",
-  "date": "2026-10-06",
-  "on": "docker node:22-slim + win11 pwsh with fake token; docs: success responses"
+  "hash": "5d028b383970",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|worker_threads": {
-  "hash": "10094472d995",
-  "date": "2026-10-06",
-  "on": "win11 Node 24 + docker node:22-slim"
+  "hash": "88ffee2ccdb7",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|workspaces و link": {
-  "hash": "3cb52c0f26e9",
-  "date": "2026-10-06",
-  "on": "win11 (Node 24.19, npm 11.17) + docker node:22-slim"
+  "hash": "1365b209fd92",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|إعادة الإرسال والتكرار": {
-  "hash": "3a533b27bceb",
-  "date": "2026-10-06",
-  "on": "docker node:22-slim + postgres:16, Prisma 7.10.0; docs: ngrok Replay UI"
+  "hash": "efd1601e2cd2",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|اقرا خطأ npm": {
-  "hash": "27e7b1dc524c",
-  "date": "2026-10-28",
-  "on": "Node 24.22.1 و npm 11.19.1 على ويندوز 11؛ فخ argv و install --dry-run و pack --dry-run و E404 كلهم اتجرّبوا"
+  "hash": "5513bc85d57a",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|الإغلاق النضيف": {
-  "hash": "3061d6c3a74c",
-  "date": "2026-10-06",
-  "on": "docker node:22-slim"
+  "hash": "8988a0aa6fe2",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|البورت مشغول": {
-  "hash": "35cac09e6e94",
-  "date": "2026-10-06",
-  "on": "docker node:22-slim + win11 pwsh 7 + cmd"
+  "hash": "01543ea47469",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|التحقق من التوقيع": {
-  "hash": "c8d8882a1daf",
-  "date": "2026-10-06",
-  "on": "docker node:22-slim"
+  "hash": "bcd84adee757",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|الذاكرة": {
-  "hash": "e86460d733c5",
-  "date": "2026-10-06",
-  "on": "docker node:22-slim + win11 pwsh 7"
+  "hash": "be111aa235a2",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|الـ debugger": {
-  "hash": "66d9622ae960",
-  "date": "2026-10-06",
-  "on": "docker node:22-slim + win11 --inspect; docs: inspector UI"
+  "hash": "ef7663b1ab29",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|الفولدرات: mkdir و readdir و rm": {
-  "hash": "8508e358d47e",
-  "date": "2026-10-06",
-  "on": "win11 Node 24 + docker node:22-slim"
+  "hash": "3b9f149d3b5c",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|المشكلة": {
-  "hash": "0e089b8c0233",
-  "date": "2026-10-06",
-  "on": "docker node:22-slim Express 5 + win11 pwsh 7 / ps 5.1"
+  "hash": "ddc65207d2fc",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|المعاينة في npm": {
-  "hash": "407be05dc727",
-  "date": "2026-10-28",
-  "on": "Node 24.22.1 و npm 11.19.1 على ويندوز 11؛ فخ argv و install --dry-run و pack --dry-run و E404 كلهم اتجرّبوا"
+  "hash": "e8195724ed5a",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|توافق Bun مع Node": {
-  "hash": "b146ce457cd7",
-  "date": "2026-10-27",
-  "on": "Windows 11 node 24.22 / bun 1.4.4 / deno 2.9.8 + docker oven/bun:slim (better-sqlite3); docs: bun --inspect"
+  "hash": "a9288f63e8bf",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|سكربت Node كأداة": {
-  "hash": "e2e608728278",
-  "date": "2026-10-06",
-  "on": "docker node:22-slim + win11 pwsh 7 / ps 5.1"
+  "hash": "0b7ca3178844",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|لوج الـ webhooks": {
-  "hash": "6a98514d01db",
-  "date": "2026-10-06",
-  "on": "docker node:22-slim + win11 pwsh 7 / ps 5.1"
+  "hash": "51d224fcfea8",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|مشروع — parseArgs من غير مكتبة": {
-  "hash": "56ffece0bb4f",
-  "date": "2026-10-28",
-  "on": "Node 24.22.1 — أداة jl اتبنت واتشغّلت بكل خياراتها ومن stdin؛ npm link في prefix مؤقت (التسطيب العام متلمسش واتمسح بعدها)"
+  "hash": "9b9b2bc66239",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|مشروع — اقرا من ملف أو من أنبوبة": {
-  "hash": "9eb8c72027ab",
-  "date": "2026-10-28",
-  "on": "Node 24.22.1 — أداة jl اتبنت واتشغّلت بكل خياراتها ومن stdin؛ npm link في prefix مؤقت (التسطيب العام متلمسش واتمسح بعدها)"
+  "hash": "b00c63799e7d",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|مشروع — جهّزها للنشر": {
-  "hash": "f2fdd2a1d864",
-  "date": "2026-10-28",
-  "on": "Node 24.22.1 — أداة jl اتبنت واتشغّلت بكل خياراتها ومن stdin؛ npm link في prefix مؤقت (التسطيب العام متلمسش واتمسح بعدها)"
+  "hash": "9cdb6b014d57",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|مشروع — من ملف لأمر": {
-  "hash": "a1c03c3bc629",
-  "date": "2026-10-28",
-  "on": "Node 24.22.1 — أداة jl اتبنت واتشغّلت بكل خياراتها ومن stdin؛ npm link في prefix مؤقت (التسطيب العام متلمسش واتمسح بعدها)"
+  "hash": "2b2a8ae56839",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "node|مقدمة Node.js وتشغيل الملفات": {
-  "hash": "ad9e865ff6f3",
-  "date": "2026-10-06",
-  "on": "win11 (Node 24.19, npm 11.17) + docker node:22-slim"
+  "hash": "e9713e54aed2",
+  "date": "2026-10-29",
+  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
  },
  "os|%localappdata%": {
   "hash": "4bdefc3b131d",

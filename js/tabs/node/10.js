@@ -138,12 +138,12 @@ NotCapable: Requires net access to "example.org:443", run again with the --allow
 
 من غير ترمنال: مفيش سؤال، [[NotCapable]] على طول.`,
           lines: [
-            R`من غير صلاحيات: بيقع عند أول ملف.`,
-            R`اسمح بقراية الملف ده بس.`,
-            R`الملف، والمتغيرين دول، والدومين ده بس: بيشتغل.`,
-            R`كل الصلاحيات (للتجربة بس).`,
-            R`التسطيب الرسمي على لينكس والماك (اتجرّب جوه container).`,
-            R`التسطيب الرسمي على ويندوز (من الـ docs).`
+            R`بيشغّل [[main.ts]] من غير ولا صلاحية. أول ما الكود يحاول يقرا [[data.txt]]: في ترمنال تفاعلي Deno بيوقف ويسألك [[Allow? [y/n/A]]]، ومن غير ترمنال (CI أو Docker) بيقع على طول بـ [[NotCapable]] و exit code 1. ده مقصود: الكود معندوش أي حاجة لحد ما انت تسمح.`,
+            R`[[--allow-read=data.txt]] بيسمح بقراية الملف ده بالاسم وبس، أي ملف تاني (زي [[~/.ssh]]) لسه ممنوع. الكود هيعدّي القراية ويقع عند أول حاجة تانية محتاجة صلاحية (متغير البيئة أو النت).`,
+            R`بيدّي كل اللي الكود محتاجه بالظبط: قراية [[data.txt]]، وقراية متغيرين البيئة [[USERNAME]] (ويندوز) و [[USER]] (لينكس والماك) بس، والكلام مع [[example.com]] بس. كده بيشتغل، ولو مكتبة جواه حاولت تكلّم دومين تاني هتتمنع.`,
+            R`[[-A]] = [[--allow-all]]: كل الصلاحيات من غير أي قيود، يعني زي Node بالظبط. مريح وانت بتجرّب كود بتاعك، بس بيلغي الحماية كلها، فمتستخدموش مع كود أو مكتبات مش واثق فيها ولا في الإنتاج.`,
+            R`السكربت الرسمي للينكس والماك: [[curl -fsSL]] بينزّله بهدوء ويعتبر أي HTTP error فشل، و [[| sh]] بيشغّله. بيسطّب Deno في [[~/.deno/bin]]، فافتح ترمنال جديد عشان الـ PATH يتحدّث.`,
+            R`السكربت الرسمي لويندوز (من الـ docs): [[irm]] (Invoke-RestMethod) بينزّل السكربت و [[iex]] (Invoke-Expression) بيشغّله في PowerShell. بيسطّب Deno لليوزر الحالي ويضيفه للـ PATH.`,
           ],
           sol: R`بالترتيب، على Deno 2.9.8:
 • من غير flags: [[NotCapable: Requires read access to "data.txt"]].
@@ -316,18 +316,18 @@ NotCapable: Requires read access to "data\users.json", run again with the --allo
 
 | npm | Deno |
 |---|---|
-| [[package.json → dependencies]] | [[deno.json → imports]] |
-| [[package.json → scripts]] | [[deno.json → tasks]] |
-| [[npm i zod]] | [[deno add npm:zod]] |
-| [[npm run x]] | [[deno task x]] |
-| [[package-lock.json]] | [[deno.lock]] |
+| [[package.json → dependencies]] | [[deno.json → imports]]: خريطة من اسم المكتبة لمكانها ([[npm:]] أو [[jsr:]]) |
+| [[package.json → scripts]] | [[deno.json → tasks]]: أوامر بأسامي، وكل واحد بصلاحياته |
+| [[npm i zod]] | [[deno add npm:zod]]: يكتبها في [[imports]] ويقفل النسخة في [[deno.lock]] |
+| [[npm run x]] | [[deno task x]]: يطبع الأمر الأول وبعدين يشغّله |
+| [[package-lock.json]] | [[deno.lock]]: النسخة بالظبط والـ hash لكل مكتبة من npm و JSR |
 | مفيش | [[permissions]] + [[-P]] |`,
           lines: [
-            R`مشروع جديد: [[deno.json]] و [[main.ts]] و [[main_test.ts]].`,
-            R`ضيف مكتبة من npm وواحدة من JSR في [[imports]].`,
-            R`شغّل task من [[deno.json]] (هنا بـ [[-P]]).`,
-            R`من غير [[-P]]: الصلاحيات اللي في الملف مش بتتقري.`,
-            R`في مشروع فيه [[package.json]]: اعمل [[node_modules]].`
+            R`بيعمل مشروع جديد في الفولدر: [[deno.json]] (الإعدادات و tasks و imports)، و [[main.ts]] (سيرفر صغير)، و [[main_test.ts]] (اختبار ليه)، وبيطبع الأوامر اللي تشغّلهم بيها.`,
+            R`بيضيف [[zod]] من npm و [[@std/path]] من JSR (registry بتاع Deno للـ TypeScript) في [[imports]] جوه [[deno.json]] بنسخة [[^]]، ويكتب النسخ بالظبط في [[deno.lock]]. بعدها الكود يكتب [[from "zod"]] بالاسم القصير، ومفيش [[node_modules]].`,
+            R`بيشغّل الـ task اللي اسمه [[app]] من [[tasks]] في [[deno.json]] (زي [[npm run app]])، وبيطبع الأمر قبل ما يشغّله. الـ task هنا [[deno run -P app.ts]]، و [[-P]] بيقول خد الصلاحيات من [[permissions]] اللي في الملف (قراية [[data]] بس).`,
+            R`نفس الملف من غير [[-P]]: الصلاحيات اللي في [[deno.json]] مبتتقريش لوحدها، فالكود مالوش أي صلاحية ويقع بـ [[NotCapable: Requires read access]]. يعني لازم يا [[-P]] يا [[--allow-read]] صريح في الأمر.`,
+            R`في مشروع Node فيه [[package.json]]: بيقرا الـ dependencies ويعمل [[node_modules]] (المكتبات الحقيقية جوه [[node_modules/.deno]] زي فكرة pnpm)، عشان الكود اللي بيستورد بالأسامي يلاقيها. كده تقدر تشغّل مشروع Node موجود بـ Deno.`,
           ],
           sol: R`[[app.ts]] بالـ imports دي بيشتغل بـ [[deno task app]] وبيطبع:
 [[false]] (zod رفض) ثم [[data\users.json]] ثم [[7200000]] ثم [[2 users]].
@@ -475,11 +475,11 @@ ok | 2 passed | 0 failed (16ms)
 | [[deno check]] | [[tsc --noEmit]] | [[deno check .]] |
 | [[deno test]] | vitest / [[node --test]] | [[deno test]] + الصلاحيات |`,
           lines: [
-            R`افحص الشكل بس، ومتعدّلش (للـ CI).`,
-            R`صلّح الشكل في الملف.`,
-            R`افحص الأخطاء المنطقية (من غير الأنواع).`,
-            R`افحص الأنواع بـ TypeScript.`,
-            R`شغّل الاختبارات (وبيعمل check الأول).`
+            R`[[--check]] بيفحص شكل الملف (المسافات والفواصل وعلامات التنصيص) ويطبع الفرق من غير ما يعدّل حاجة، ويخرج بـ exit code 1 لو الشكل مش مظبوط. ده اللي يتحط في CI، عشان يقع لو حد رفع كود مش متنسّق.`,
+            R`نفس الفحص بس المرة دي بيعدّل الملف نفسه للشكل الموحّد (زي prettier). شغّله على جهازك قبل الـ commit، مش في CI.`,
+            R`بيدوّر على أخطاء منطقية في الكود من غير ما يشغّله: متغير متعرّف ومش مستخدم، و [[let]] المفروض [[const]]، ودالة [[async]] مفيهاش [[await]]. هو بيشوف الملف لوحده من غير الأنواع، فمبيعرفش إن [[fetch]] من غير [[await]] غلطة.`,
+            R`بيشغّل TypeScript الحقيقي على الملف ويطلّع أخطاء الأنواع زي [[tsc --noEmit]]. لازم لأن [[deno run]] بيشغّل الكود من غير ما يفحص الأنواع.`,
+            R`بيدوّر على [[*_test.ts]] و [[*.test.ts]] ويعمل [[check]] للأنواع الأول، وبعدين يشغّل الاختبارات ويطبع [[ok]] أو [[FAILED]] لكل واحد. والاختبارات ليها صلاحيات زي أي كود: اختبار بيقرا ملف محتاج [[--allow-read]].`,
           ],
           sol: R`[[deno lint]] لقى 3: [[no-unused-vars]] و [[prefer-const]] على [[unused]]، و [[require-await]] على [[load]]. ومحدش مسك [[fetch(...)]] اللي من غير [[await]]: لا [[deno lint]] ولا [[deno check]] (الأنواع سليمة). ده محتاج قاعدة [[no-floating-promises]] اللي بتعرف الأنواع (typescript-eslint، أو nursery في Biome، شوف تاب فحص الكود).
 
@@ -613,31 +613,31 @@ curl http://localhost:8001/hello  →  {"path":"/hello"}
 
 | Bun | Deno |
 |---|---|
-| [[Bun.serve({ routes, fetch })]] | [[Deno.serve(opts, handler)]] |
-| [[routes]] جاهزة و [[req.params.id]] | [[URLPattern]] و [[match.pathname.groups.id]] |
+| [[Bun.serve({ routes, fetch })]] | [[Deno.serve(opts, handler)]]: دالة واحدة لكل الطلبات، والتفريق عليك |
+| [[routes]] جاهزة و [[req.params.id]] | [[URLPattern]] و [[match.pathname.groups.id]]: بتطابق المسار بنفسك، والـ id نص |
 | من غير صلاحيات | [[--allow-net]] (أو [[deno serve]]) |
-| [[export default { fetch }]] | [[deno serve file.ts]] |`,
+| [[export default { fetch }]] | [[deno serve file.ts]]: نفس شكل الملف، وصلاحية السماع بتيجي لوحدها |`,
           lines: [
-            R`داتا للتجربة في الذاكرة.`,
-            R`شكل مسار فيه [[:id]]، بيتعمل مرة واحدة.`,
-            R`شغّل السيرفر على 8000، و handler واحد لكل الطلبات.`,
-            R`فكّ الـ URL عشان ناخد [[pathname]].`,
-            R`[[GET /api/users]].`,
-            R`رجّع الليستة.`,
-            R`قفلة.`,
-            R`[[POST /api/users]].`,
-            R`اقرا الـ JSON.`,
-            R`user جديد، والاسم متحوّل نص.`,
-            R`ضيفه.`,
-            R`[[201 Created]].`,
-            R`قفلة.`,
-            R`المسار شكله [[/api/users/:id]]؟`,
-            R`لو آه.`,
-            R`دوّر بالـ id (نص فبنحوّله رقم).`,
-            R`لقيته رجّعه، وإلا 404.`,
-            R`قفلة.`,
-            R`أي حاجة تانية: 404.`,
-            R`قفلة الـ handler و [[Deno.serve]].`
+            R`داتا تجربة في array في الذاكرة بدل قاعدة بيانات عشان المثال يبقى ملف واحد. أي حاجة تتضاف بتضيع لما السيرفر يقفل.`,
+            R`[[URLPattern]] بيوصف شكل مسار فيه جزء متغير [[:id]]، وبيتعمل مرة واحدة بره الـ handler عشان ميتبنيش من الأول مع كل طلب. ده API قياسي موجود في المتصفحات و Node 24 كمان.`,
+            R`[[Deno.serve]] بيشغّل سيرفر على بورت 8000 ويدّيله دالة واحدة لكل الطلبات: بتاخد [[Request]] وترجّع [[Response]]. محتاج [[--allow-net]] وانت بتشغّله، وإلا يقع قبل ما يسمع على البورت.`,
+            R`[[req.url]] نص فيه العنوان كامل ([[http://localhost:8000/api/users?x=1]])، و [[new URL]] بيفكّه لأجزاء، فناخد منه [[pathname]] ([[/api/users]]) من غير الـ query string.`,
+            R`مفيش routing جاهز زي Bun، فبنفرّق بنفسنا: المسار [[/api/users]] **و** الـ method [[GET]]. لازم الاتنين، وإلا [[POST]] على نفس المسار هيدخل هنا.`,
+            R`بيرجّع الليستة JSON. [[Response.json]] بيعمل [[JSON.stringify]] ويحط [[Content-Type: application/json]]، و [[return]] بتنهي الـ handler فمحدش من الشروط اللي تحت يتنفّذ.`,
+            R`قفلة شرط [[GET]].`,
+            R`نفس المسار بس [[POST]]: إضافة user جديد.`,
+            R`بيقرا الـ body ويحوّله object. لو الـ body مش JSON بيرمي exception، و [[Deno.serve]] بيمسكه ويطبعه ويرجّع 500 بدل ما السيرفر يقع.`,
+            R`بيعمل user جديد: الـ id من طول الليستة + 1، و [[String(body.name)]] بيضمن إن الاسم نص حتى لو العميل بعت رقم. (لو مبعتش [[name]] خالص هيبقى النص [[undefined]]، فالتحقق الحقيقي محتاج zod زي درس Hono.)`,
+            R`بيضيف الـ user للـ array، فالـ [[GET]] الجاي هيرجّعه.`,
+            R`بيرجّع الـ user الجديد بـ [[201 Created]]، المعنى الصح لـ «اتعمل حاجة جديدة» بدل 200.`,
+            R`قفلة شرط [[POST]].`,
+            R`[[exec]] بيطابق الـ URL كله مع الشكل [[/api/users/:id]]: لو مطابق بيرجّع object فيه الأجزاء المتغيرة، ولو لأ بيرجّع [[null]].`,
+            R`لو [[match]] مش [[null]] يبقى المسار شكله [[/api/users/<حاجة>]].`,
+            R`الـ id بيبقى في [[match.pathname.groups.id]] كنص دايمًا ([["2"]])، فـ [[Number()]] لازم قبل [[===]] مع الـ id الرقمي، وإلا عمره ما هيلاقي حاجة.`,
+            R`لو لقاه بيرجّعه، ولو لأ بيرجّع [[404]] بـ JSON فيه سبب واضح.`,
+            R`قفلة شرط [[match]].`,
+            R`أي مسار أو method تانية وصلت لحد هنا ملهاش handler، فبنرجّع [[404]]. من غير السطر ده الدالة ترجّع [[undefined]] و Deno يعتبرها error ويرد 500.`,
+            R`قفلة الـ handler ونداء [[Deno.serve]].`,
           ],
           sol: R`الردود الحقيقية بـ Deno 2.9.8 على ويندوز:
 [[GET /api/users]] ← [[[{"id":1,"name":"Sara"},{"id":2,"name":"Ali"}]]]

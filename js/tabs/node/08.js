@@ -118,7 +118,9 @@ OK
 - الـ webhook = POST من سيرفر البوابة لسيرفرك، و localhost مش على النت.
 - قبل أي tunnel: حاكي الطلب بـ curl لحد ما السيرفر يطبع الـ body صح ويرد 200.
 - لما ده يشتغل، أي مشكلة بعد كده تبقى في الـ tunnel أو إعدادات البوابة، مش في الكود.`,
-          lines: ["حاكي webhook من Paymob على جهازك: POST بـ JSON بنفس شكل اللي بيبعتوه."],
+          lines: [
+            R`[[curl]] بيبعت طلب لسيرفرك بنفسك: [[-X POST]] الـ method، و [[-H "Content-Type: application/json"]] بيقول للسيرفر إن الـ body JSON (من غيره [[express.json()]] مش هيقراه و [[req.body]] يفضل فاضي)، و [[-d]] الـ body نفسه بنفس شكل اللي Paymob بتبعته. كده بتجرّب الـ route على جهازك، بس Paymob نفسها مش هتقدر توصل لـ [[localhost]]، ودي المشكلة اللي الدروس الجاية بتحلها.`,
+          ],
           sol: R`الـ route البسيط: [[app.post("/webhooks/paymob", (req, res) => { console.log(req.body); res.sendStatus(200); })]] مع [[app.use(express.json())]]. الـ curl بيرجّع [[OK]]، والترمنال بتاع السيرفر بيطبع:
 
 [[{ type: 'TRANSACTION', obj: { success: true, amount_cents: 10000 } }]].
@@ -138,7 +140,7 @@ app.listen(3000);`
         {
           cmd: "ngrok",
           title: "tunnel في ثانية",
-          desc: "[[ngrok http 3000]] بيديك URL عام زي [[https://a1b2.ngrok-free.app]] بيوصّل لبورت 3000 عندك. تحطه في إعدادات Paymob كـ callback. وعلى [[localhost:4040]] لوحة بتوريك كل طلب وصل وبتعيد إرساله.",
+          desc: "[[ngrok http 3000]] بيديك URL عام زي [[https://a1b2.ngrok-free.app]] بيوصّل لبورت 3000 عندك. تحطه في إعدادات Paymob كـ callback. وعلى [[localhost:4040]] لوحة بتوريك كل طلب وصل وبتعيد إرساله، فتجرّب نفس الـ webhook كذا مرة من غير ما تعمل دفعة جديدة كل مرة.",
           example: R`ngrok config add-authtoken TOKEN
 ngrok http 3000
 ngrok http 3000 --url=https://myapp.ngrok-free.dev
@@ -271,10 +273,10 @@ Web Interface  http://127.0.0.1:4040
 - الـ URL عايش طول ما الترمنال مفتوح بس.
 - الطلبات بتعدّي على سيرفرات ngrok: للتطوير، مش لبيانات حقيقية.`,
           lines: [
-            "التوكن مرة واحدة بعد التسجيل.",
-            "افتح tunnel لبورت 3000، وخد الـ URL اللي يطلع.",
-            "بدومين ثابت من ngrok بدل العشوائي.",
-            "من API اللوحة: مسار آخر طلب وصل."
+            R`بيحفظ التوكن بتاع حسابك (من لوحة ngrok بعد التسجيل المجاني) في ملف إعدادات ngrok على جهازك. بتعملها مرة واحدة بس، ومن غيرها ngrok بيرفض يفتح أي tunnel.`,
+            R`بيفتح tunnel من سيرفرات ngrok لبورت 3000 عندك ويطبع URL عام بـ HTTPS. أي طلب على الـ URL ده بيوصل لسيرفرك كأنه جاي على [[localhost:3000]]، فتحطه في إعدادات Paymob كـ callback. سيرفرك لازم يكون شغال على 3000 الأول، وإلا ngrok يرد بخطأ بدل ما يوصّل.`,
+            R`نفس الـ tunnel بس على الـ dev domain الثابت اللي حسابك المجاني بياخده (تلاقيه في لوحة ngrok). [[--url]] بيقول «استخدم الدومين ده» بدل عنوان عشوائي بيتغيّر كل تشغيلة، فتحطه في Paymob مرة واحدة ومتغيّروش تاني.`,
+            R`بيسأل الـ API بتاعة لوحة ngrok المحلية (على [[localhost:4040]] طول ما ngrok شغال) عن الطلبات اللي عدّت، و [[-s]] بيشيل شريط التقدم. و [[jq]] بيطلّع من الـ JSON مسار أول طلب في الليستة ومعاه الـ query string، فتتأكد إن Paymob وصلت فعلًا وبعتت الـ [[hmac]].`,
           ],
           sol: R`[[ngrok http 3000]] بيفتح شاشة فيها [[Forwarding https://xxxx.ngrok-free.app -> http://localhost:3000]] (الدومين ممكن يبقى ngrok-free.app أو ngrok-free.dev حسب الحساب)، و [[Web Interface http://127.0.0.1:4040]].
 
@@ -402,11 +404,11 @@ ingress:
 - 404 من Cloudflare = الـ [[hostname]] في [[ingress]] مش مطابق، أو ناقص.
 - الفرق عن ngrok المجاني: عنوان ثابت على دومينك، بس محتاج دومين على Cloudflare.`,
           lines: [
-            "tunnel سريع بعنوان عشوائي من غير حساب.",
-            "اربط بحسابك على Cloudflare.",
-            "اعمل tunnel اسمه dev.",
-            "اعمل سجل DNS يشاور عليه.",
-            "شغّله (بعد ملف config فيه ingress)."
+            R`tunnel سريع من غير حساب ولا تسطيب إعدادات: [[--url]] بيقول وصّل لسيرفري على [[localhost:3000]]، و cloudflared بيطبع عنوان عشوائي على [[trycloudflare.com]]. كويس لتجربة دقايق، بس العنوان بيتغيّر كل مرة تشغّله.`,
+            R`بيفتح المتصفح عشان تسجّل دخول في Cloudflare وتختار الدومين بتاعك، وبيحفظ شهادة على جهازك. محتاجها مرة واحدة قبل أي named tunnel، والدومين لازم يكون متضاف في حسابك على Cloudflare.`,
+            R`بيعمل tunnel دائم اسمه [[dev]] في حسابك، وبيكتب ملف credentials (JSON فيه سر الـ tunnel) على جهازك. الملف ده زي الباسورد: ميتحطش في Git.`,
+            R`بيضيف سجل DNS في Cloudflare يخلي [[dev.example.com]] يشاور على الـ tunnel اسمه [[dev]]. بتعملها مرة، والعنوان بيفضل ثابت، فتحطه في Paymob ومتلمسوش تاني.`,
+            R`بيشغّل الـ tunnel ويوصّل الطلبات لسيرفرك. هو بيعرف يوصّل فين من ملف [[config.yml]] (فيه [[ingress]] بيقول الدومين ده يروح لـ [[http://localhost:3000]])؛ من غير الملف ده الـ tunnel يقوم بس مش هيعرف يبعت الطلبات فين.`,
           ],
           sol: R`الخطوات: [[cloudflared tunnel login]] (بتختار الدومين من المتصفح)، [[cloudflared tunnel create dev]] بيطبع [[Created tunnel dev with id <uuid>]] وبيعمل ملف credentials [[~/.cloudflared/<uuid>.json]]، و [[cloudflared tunnel route dns dev dev.example.com]] بيعمل CNAME في Cloudflare. وبعدين [[~/.cloudflared/config.yml]]:
 
@@ -432,7 +434,7 @@ export function verifyPaymob(obj, receivedHmac, secret) {
   const get = (o, path) => path.split(".").reduce((a, k) => (a == null ? a : a[k]), o);
   const concat = fields.map((f) => String(get(obj, f))).join("");
   const expected = crypto.createHmac("sha512", secret).update(concat).digest("hex");
-  if (typeof receivedHmac !== "string" || receivedHmac.length !== expected.length) return false;
+  if (typeof receivedHmac !== "string" || !/^[0-9a-f]{128}$/.test(receivedHmac)) return false;
   return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(receivedHmac));
 }`,
           try: "ابعت webhook بدون hmac أو بـ hmac غلط واتأكد إن الـ route بيرفض بـ 401 مش بيفعّل الطلب.",
@@ -527,22 +529,33 @@ SHA-512 ناتجه 512 bit = 64 byte، وكل byte بيتكتب حرفين hex،
 
 ---
 
-## ٧. فحص الطول
+## ٧. فحص الشكل: hex بطول 128
 
 ~~~text verify.js
-if (typeof receivedHmac !== "string" || receivedHmac.length !== expected.length) return false;
+if (typeof receivedHmac !== "string" || !/^[0-9a-f]{128}$/.test(receivedHmac)) return false;
 ~~~
 
 - [[typeof receivedHmac !== "string"]]: لو مفيش [[?hmac]] خالص، القيمة [[undefined]]، فارفض.
-- [[receivedHmac.length !== expected.length]]: لو طوله مش 128، أكيد غلط.
+- [[/^[0-9a-f]{128}$/.test(receivedHmac)]]: لازم يبقى بالظبط 128 حرف، وكلهم من [[0-9]] و [[a-f]] (hex صغير زي اللي [[digest("hex")]] بيطلّعه). [[^]] و [[$]] يعني من أول النص لآخره، فمفيش حاجة زيادة قبله ولا بعده.
 
-ليه السطر ده لازم قبل اللي بعده؟ لأن [[timingSafeEqual]] بيرمي error لو الطولين مختلفين. جربناه:
+ليه السطر ده لازم قبل اللي بعده؟ لأن [[timingSafeEqual]] بيرمي error لو الـ **bytes** مختلفة في الطول. جربناه:
 
 ~~~text الناتج
 ERR_CRYPTO_TIMING_SAFE_EQUAL_LENGTH Input buffers must have the same byte length
 ~~~
 
 من غير الفحص، أي حد يبعت [[?hmac=abc]] كان هيوقّع الـ route بـ 500 بدل 401.
+
+**وليه مش بس [[receivedHmac.length !== expected.length]]؟** النسخة الأولى من الدرس كانت كده، وفيها ثغرة: [[length]] بيعدّ **حروف** مش bytes. hmac فيه حرف عربي واحد و 127 حرف hex طوله 128 حرف، فعدّى الفحص، بس [[Buffer.from]] حوّل الحرف العربي لـ 2 bytes فبقى 129 byte، و [[timingSafeEqual]] رمى نفس الـ error ده. الـ regex بيقبل hex بس، وكل حرف hex = byte واحد، فالطولين مضمونين متساويين.
+
+~~~text الناتج بعد التعديل (Node 24)
+الـ hmac الصح        true
+hmac غلط (hex)        false
+[[abc]]                false
+من غير hmac            false
+حرف عربي + 127 hex     false (من غير error)
+نفس الصح بحروف كبيرة  false
+~~~
 
 ---
 
@@ -587,24 +600,24 @@ curl -s -o /dev/null -w "%{http_code}\n" -X POST "http://localhost:3000/webhooks
 | اقرا الحقول المتداخلة بأمان | [[get]] |
 | الزق القيم كنصوص | [[map(String).join("")]] |
 | احسب HMAC-SHA512 | [[createHmac("sha512", secret)]] |
-| ارفض لو ناقص أو طوله غلط | [[typeof]] و [[length]] |
+| ارفض لو ناقص أو مش hex بطول 128 | [[typeof]] و [[/^[0-9a-f]{128}$/]] |
 | قارن بوقت ثابت | [[timingSafeEqual]] |
 
 والكود ده JavaScript عادي، فبيشتغل زي ما هو على ويندوز ولينكس والماك.`,
           lines: [
-            "مكتبة التشفير المبنية في Node.",
-            "الدالة: بيانات المعاملة، والتوقيع اللي وصل، والمفتاح السري.",
-            "الحقول بالترتيب اللي Paymob بتحدده (من وثائقهم، حرفيًا).",
-            "دالة تقرا حقل متداخل زي order.id بأمان.",
-            "الزق قيم الحقول كنصوص من غير فواصل.",
-            "احسب HMAC-SHA512 بالمفتاح.",
-            "لو الـ hmac مش موجود أو طوله غلط ارفض على طول، لأن timingSafeEqual بيضرب error لو الطولين مختلفين.",
-            "قارن بطريقة بتاخد وقت ثابت (مش ===).",
-            "قفلة."
+            R`بيجيب مكتبة [[crypto]] المبنية جوه Node (من غير تسطيب)، ومنها هنستخدم [[createHmac]] عشان نحسب التوقيع و [[timingSafeEqual]] عشان نقارنه.`,
+            R`الدالة بتاخد ٣ حاجات: [[obj]] بيانات المعاملة اللي في الـ body، و [[receivedHmac]] التوقيع اللي Paymob بعتته (في الـ query string)، و [[secret]] مفتاح HMAC من لوحة Paymob. بترجّع [[true]] أو [[false]] بس، والـ route هو اللي يقرر يرفض.`,
+            R`أسماء الحقول اللي داخلة في التوقيع، بالترتيب الأبجدي اللي Paymob كاتباه في وثائقها حرفيًا. لو نسيت حقل أو غيّرت الترتيب، النص اللي بتحسب عليه يختلف، فالتوقيع عمره ما هيطابق حتى للدفعات الحقيقية.`,
+            R`دالة صغيرة بتقرا حقل متداخل من اسمه: [[order.id]] بتتقسم لـ [[order]] وبعدين [[id]]. و [[a == null ? a]] بتوقف لو حاجة في النص ناقصة بدل ما ترمي error زي [[Cannot read properties of undefined]].`,
+            R`بتجيب قيمة كل حقل بالترتيب، وتحوّلها نص بـ [[String()]] ([[true]] تبقى [[true]]، والرقم يبقى أرقام)، وتلزقهم في نص واحد من غير فواصل، وده بالظبط اللي Paymob بتوقّع عليه. خلي بالك: حقل ناقص بيبقى النص [[undefined]] فالتوقيع مش هيطابق.`,
+            R`بيحسب التوقيع اللي المفروض يوصل: [[createHmac("sha512", secret)]] بيعمل HMAC بخوارزمية SHA-512 والمفتاح السري، و [[update(concat)]] بيدّيله النص، و [[digest("hex")]] بيطلّع الناتج نص hex طوله 128 حرف. من غير المفتاح محدش يقدر يحسب الرقم ده، وده اللي بيمنع حد يزوّر webhook.`,
+            R`لو مفيش [[hmac]] أصلًا (مش نص)، أو مش بالظبط 128 حرف hex صغير ([[0-9]] و [[a-f]])، ده أكيد مش توقيع صح فارفض على طول. الـ regex مش فحص طول بس: [[timingSafeEqual]] بيرمي error لو الـ bytes مختلفة في الطول، و [[length]] بيعدّ حروف، فحرف عربي (2 bytes) كان هيعدّي فحص الطول ويوقّع الـ route بـ 500. مع hex بس كل حرف byte واحد.`,
+            R`بيقارن الاتنين byte بـ byte في وقت ثابت مهما كان أول اختلاف فين. [[===]] بتقف عند أول حرف مختلف، فاللي بيجرّب توقيعات كتير يقدر يقيس الوقت ويخمّن التوقيع حرف حرف؛ المقارنة الثابتة بتقفل الباب ده.`,
+            R`قفلة الدالة [[verifyPaymob]].`,
           ],
           sol: R`جرّبتها على route فيه [[verifyPaymob]] والـ secret [[test-secret]]، وحسبت الـ hmac الصح بنفس الدالة للـ body ده. النتيجة بالترتيب: من غير [[?hmac]] [[401]]، بـ [[?hmac=abc]] [[401]]، بالـ hmac الصح [[200]] وطبع [[activate order 777]].
 
-من غير hmac الدالة بترجع false قبل ما تحسب حاجة ([[typeof receivedHmac !== "string"]])، و [[abc]] بترجع false من فحص الطول قبل [[timingSafeEqual]] (اللي بيرمي error لو الأطوال مختلفة). والمهم إن الـ route بيرجع 401 وبيخرج قبل أي تعديل في القاعدة.
+من غير hmac الدالة بترجع false قبل ما تحسب حاجة ([[typeof receivedHmac !== "string"]])، و [[abc]] بترجع false من فحص الشكل (لازم 128 حرف hex) قبل [[timingSafeEqual]] (اللي بيرمي error لو الـ bytes مختلفة في الطول). ونفس الفحص بيرجّع false لـ hmac فيه حرف عربي من غير ما يرمي. والمهم إن الـ route بيرجع 401 وبيخرج قبل أي تعديل في القاعدة.
 
 الأخطاء الشائعة: تستخدم الـ API key بدل الـ HMAC secret من لوحة Paymob فكل الطلبات الحقيقية تطلع 401. أو تغيّر ترتيب الحقول أو تنسى [[order.id]] المتداخل. أو تقارن بـ [[===]] وتنسى إن الرد 200 لازم ميبقاش قبل التحقق.`,
           solCode: R`// sign.js: يحسب الـ hmac الصح لـ body تجربة (نفس خوارزمية verifyPaymob)
@@ -632,10 +645,15 @@ curl -s -o /dev/null -w "%{http_code}\n" -X POST "http://localhost:3000/webhooks
     return res.status(401).end();
   }
   res.status(200).end();
-  const seen = await db.payment.findUnique({ where: { gatewayId: String(tx.id) } });
-  if (seen) return;
-  await db.payment.create({ data: { gatewayId: String(tx.id), amount: tx.amount_cents, ok: tx.success } });
-  if (tx.success) await activateOrder(tx.order.id);
+  try {
+    const seen = await db.payment.findUnique({ where: { gatewayId: String(tx.id) } });
+    if (seen) return;
+    await db.payment.create({ data: { gatewayId: String(tx.id), amount: tx.amount_cents, ok: tx.success } });
+    if (tx.success) await activateOrder(tx.order.id);
+  } catch (err) {
+    if (err.code === "P2002") return;
+    console.error("webhook failed", tx.id, err);
+  }
 });`,
           try: "من لوحة ngrok (localhost:4040) اعمل Replay لنفس الطلب ٣ مرات واتأكد إن الطلب اتفعّل مرة واحدة.",
           flag: "script",
@@ -647,7 +665,7 @@ curl -s -o /dev/null -w "%{http_code}\n" -X POST "http://localhost:3000/webhooks
 
 الـ idempotency: كل معاملة ليها [[id]] فريد من البوابة. قبل ما تعمل أي حاجة، دوّر عليه في جدول payments. لو موجود، ده تكرار، اطلع. لو لأ، سجّله وكمّل. الجدول ده هو الحماية من التكرار وهو كمان سجل كامل للدفعات.
 
-و [[gatewayId]] لازم يبقى unique في الـ schema، عشان لو webhookين وصلوا في نفس اللحظة، القاعدة ترفض التاني.
+و [[gatewayId]] لازم يبقى unique في الـ schema، عشان لو webhookين وصلوا في نفس اللحظة، القاعدة ترفض التاني بـ P2002. والـ [[try/catch]] بيمسك P2002 ده ويعتبره «اتعالج»، وبيسجّل أي error تاني، لأن الرد 200 اتبعت خلاص ومحدش تاني هيشوف الغلط.
 
 [[tx.success]] بيتفحص بعد التسجيل: الدفعات الفاشلة كمان بتتسجّل، مفيدة في الدعم.`,
             when: "كل webhook handler. والفكرة نفسها لأي عملية ممكن تتكرر: إيميلات، وتفعيل اشتراكات.",
@@ -726,6 +744,23 @@ if (tx.success) await activateOrder(tx.order.id);
 
 ---
 
+## ٧. [[try/catch]] حوالين الشغل اللي بعد الرد
+
+~~~text الكود
+try {
+  ...
+} catch (err) {
+  if (err.code === "P2002") return;
+  console.error("webhook failed", tx.id, err);
+}
+~~~
+
+- الرد 200 اتبعت خلاص، فأي error بعد كده Paymob مش هتشوفه ومش هتعيد بسببه. يبقى انت اللي لازم تمسكه وتسجّله.
+- [[err.code === "P2002"]]: ده كود Prisma لـ «Unique constraint failed». معناه إن webhook تاني لنفس المعاملة سبقنا وسجّلها (التجربة ٢ تحت)، يعني اتعالجت خلاص، فنخرج بهدوء.
+- أي error تاني (القاعدة واقعة، أو [[activateOrder]] فشل) بيتطبع ومعاه [[tx.id]]، عشان تعرف أنهي دفعة محتاجة تتراجع بإيدك.
+
+---
+
 ## التجربة ١: نفس الطلب ٤ مرات ورا بعض
 
 نفس الـ body ونفس الـ hmac الصح ٤ مرات (زي Replay من لوحة ngrok):
@@ -757,7 +792,23 @@ duplicate 12345
 
 في ٥ مرات الطلبين عملوا [[findUnique]] قبل ما أي واحد يعمل [[create]]، فالاتنين شافوا «مش موجود». اللي أنقذ الموقف [[@unique]] على [[gatewayId]]: Postgres رفض الـ create التاني (P2002)، فالـ handler بتاعه وقع قبل [[activateOrder]]. والنتيجة ١٠ تفعيلات بالظبط لـ ١٠ معاملات. Express 5 مسك الـ error وطبعه في اللوج، والـ 200 كان اتبعت خلاص.
 
-يعني [[findUnique]] بيمنع التكرار العادي، و [[@unique]] هو الضمان الحقيقي. ولو عايز اللوج نضيف، امسك [[P2002]] بـ try/catch وتجاهله.
+يعني [[findUnique]] بيمنع التكرار العادي، و [[@unique]] هو الضمان الحقيقي. والـ [[try/catch]] في المثال (الخطوة ٧) بيمسك [[P2002]] ده ويعتبره «اتعالج قبل كده»، فاللوج يفضل نضيف، والـ handler ميعتمدش إن Express يمسك الـ error.
+
+جربنا الشكل ده بمحاكاة (Express 5.3.0 و [[db]] وهمي بيرمي error بـ [[code: "P2002"]] لو [[gatewayId]] اتسجّل قبل كده، زي Prisma بالظبط، من غير Postgres):
+
+~~~text الناتج
+same tx twice at once: [ 200, 200 ]
+replay later: 200
+activate fails: 200
+activate order 777
+activate order 999
+webhook failed 555 orders service down
+activations: 2 rows: 2
+~~~
+
+- نفس المعاملة مرتين في نفس اللحظة: الاتنين 200، وتفعيل واحد بس، والتاني اتمسك كـ P2002 ومطبعش حاجة.
+- الـ Replay بعدها: [[findUnique]] لقاه وخرج.
+- [[activateOrder]] لما وقع: اتسجّل [[webhook failed 555]] في اللوج بدل ما يضيع.
 
 ---
 
@@ -770,26 +821,32 @@ duplicate 12345
 | [[findUnique]] بالـ [[gatewayId]] | التكرار العادي يخرج بدري |
 | [[create]] حتى للفاشل | سجل كامل للدعم |
 | [[@unique]] على [[gatewayId]] | يمنع التكرار لو طلبين وصلوا مع بعض |
+| [[try/catch]] و [[P2002]] | التاني يخرج بهدوء، وأي error تاني يتسجّل بالـ [[tx.id]] |
 
 - الـ id بتاع **المعاملة**، مش الطلب (order): العميل ممكن يحاول يدفع نفس الطلب مرتين، والمحاولة التانية معاملة جديدة.`,
           lines: [
-            "مسار الـ webhook.",
-            "بيانات المعاملة.",
-            "لو التوقيع غلط (Paymob بتبعته في query string)...",
-            "...ارفض من غير أي شغل.",
-            "قفلة.",
-            "رد 200 فورًا عشان ميعيدوش، والشغل بعدين.",
-            "دوّرنا على المعاملة دي قبل كده؟",
-            "لو أيوه، تكرار، خلاص.",
-            "سجّلها (gatewayId لازم unique في الـ schema).",
-            "لو نجحت، فعّل الطلب.",
-            "قفلة."
+            R`بيعرّف route لـ [[POST /webhooks/paymob]]، ده الـ URL اللي بتحطه في لوحة Paymob كـ callback. الـ handler [[async]] عشان جواه [[await]] على القاعدة.`,
+            R`بياخد بيانات المعاملة من الـ body: Paymob بتبعت [[{ type, obj }]] والمعاملة نفسها (الـ id والمبلغ والنجاح) جوه [[obj]]. ده محتاج [[express.json()]] متسجّل قبل الـ route، وإلا [[req.body]] يبقى [[undefined]].`,
+            R`أول حاجة قبل أي شغل: احسب التوقيع وقارنه بالـ [[hmac]] اللي Paymob بتبعته في الـ query string ([[?hmac=...]])، بالمفتاح اللي في متغير البيئة [[PAYMOB_HMAC]]. لو مش مطابق، الطلب ده مش من Paymob.`,
+            R`بيرد [[401]] ويقفل الرد من غير ما يلمس القاعدة. و [[return]] مهمة: من غيرها الكود يكمّل تحت ويفعّل الطلب المزوّر برضه.`,
+            R`قفلة شرط التوقيع.`,
+            R`بيرد [[200]] فورًا قبل الشغل التقيل. Paymob بتعتبر 200 «وصلني»، ولو استنيت لحد ما القاعدة تخلص وعدّيت مهلتهم بيعيدوا الإرسال. الكود بيكمّل يشتغل بعد الرد عادي، بس أي error بعد كده مش هيوصل لـ Paymob، وعشان كده الـ [[try]] اللي جاي.`,
+            R`بيلف كل الشغل اللي بعد الرد في [[try]]. الرد اتبعت خلاص، فأي error هنا (القاعدة، أو التفعيل، أو تكرار) لازم احنا اللي نمسكه ونقرر نعمل فيه إيه، بدل ما يطلع من الـ handler من غير ما حد يتعامل معاه.`,
+            R`بيدوّر في جدول الدفعات على id المعاملة اللي جاي من Paymob. [[String()]] لأن الـ id جاي رقم والعمود نص، و [[findUnique]] محتاج العمود يكون [[@unique]] في الـ schema.`,
+            R`لو لقيناها، يبقى ده إعادة إرسال لنفس الدفعة اتعالجت قبل كده، فاخرج من غير ما تعمل حاجة. ده اللي بيمنع إن الطلب يتفعّل ٣ مرات لما Paymob تعيد.`,
+            R`سجّل الدفعة: الـ id والمبلغ بالقروش ([[amount_cents]]) ونجحت ولا لأ. لأن [[gatewayId]] [[@unique]]، لو webhookين لنفس الدفعة وصلوا في نفس اللحظة وعدّوا الفحص اللي فوق، القاعدة بترفض التاني بـ error كوده [[P2002]] بدل ما تسجّله مرتين، والتاني مبيوصلش للتفعيل.`,
+            R`لو المعاملة ناجحة بس، فعّل الطلب بالـ id بتاع الأوردر اللي جوه [[tx.order]]. المعاملة الفاشلة بتتسجّل برضه (عشان السجل يبقى كامل) بس مبتفعّلش حاجة.`,
+            R`قفلة الـ [[try]]، وبداية [[catch]] اللي بيستلم أي error حصل جواه في [[err]].`,
+            R`[[P2002]] هو كود Prisma لـ «Unique constraint failed»: webhook تاني لنفس المعاملة سبقنا وسجّلها، يعني الدفعة اتعالجت خلاص، فنخرج بهدوء من غير ما نسجّل ده كمشكلة.`,
+            R`أي error تاني (القاعدة واقعة، أو [[activateOrder]] فشل) بيتطبع في اللوج ومعاه [[tx.id]]، عشان تعرف أنهي دفعة اتسجّلت ومتفعّلتش وتراجعها بإيدك، لأن Paymob مش هتعيد بعد الـ 200.`,
+            R`قفلة الـ [[catch]].`,
+            R`قفلة الـ handler و [[app.post]].`,
           ],
           sol: R`بعد الطلب الأصلي و ٣ Replay من [[localhost:4040]]: كلهم بيرجعوا [[200]] (ودا المطلوب، عشان Paymob يبطّل يعيد)، بس التفعيل حصل مرة واحدة. في تجربتي بنفس الـ id طبع [[activate order 777]] أول مرة، وبعدين [[duplicate 12345]] في كل مرة بعدها، وجدول [[payment]] فيه صف واحد بـ [[gatewayId = "12345"]].
 
 لو الطلب اتفعّل كذا مرة: الـ [[findUnique]] بيدوّر على حقل تاني، أو [[gatewayId]] مش متخزن كنص فالمقارنة فشلت. ولو Replay رجّع 401: ngrok بيعيد نفس الـ URL بالـ query، فغالبًا الـ secret اتغير أو الطلب الأصلي كان 401 أصلًا.
 
-وفيه حالة الـ Replay مش بتمسكها: طلبين في نفس اللحظة، الاتنين يعملوا findUnique قبل ما أي واحد يعمل create. الحماية الحقيقية [[@unique]] على [[gatewayId]] في الـ schema، فالتاني يقع بـ P2002 وتتجاهله.`
+وفيه حالة الـ Replay مش بتمسكها: طلبين في نفس اللحظة، الاتنين يعملوا findUnique قبل ما أي واحد يعمل create. الحماية الحقيقية [[@unique]] على [[gatewayId]] في الـ schema، فالتاني يقع بـ P2002، والـ [[catch]] اللي في المثال بيرجع بهدوء لما [[err.code === "P2002"]].`
         },
         {
           cmd: "لوج الـ webhooks",
@@ -954,9 +1011,9 @@ at                          id success hmacOk
 - اكتب السطر **قبل** التحقق، عشان المرفوض يتسجّل كمان.
 - متسجّلش بيانات كارت ولا الـ hmac كامل، وحط [[logs/]] في [[.gitignore]].`,
           lines: [
-            "تابع اللوج لايف منسّق.",
-            "لاقي دفعة بالـ id.",
-            "من لوحة ngrok: كل الطلبات ومساراتها والرد اللي رجّعته."
+            R`[[tail -f]] بيفضل فاتح الملف ويطبع أي سطر جديد يتكتب فيه لحد ما تدوس Ctrl+C، و [[jq .]] بياخد كل سطر JSON وينسّقه بألوان ومسافات. كده بتشوف كل webhook وهو بيوصل وانت بتجرّب.`,
+            R`[[grep]] بيطلّع السطور اللي فيها النص ده بالظبط، فبتلاقي كل الـ webhooks الخاصة بدفعة معينة، و [[jq .]] بيفكّها. خلي بالك إن [[12345]] بيطابق [[123456]] كمان، فاكتب بعده [[,]] لو عايز id بالظبط.`,
+            R`بيسأل لوحة ngrok عن كل الطلبات اللي عدّت، و [[.requests[] |]] بيلف عليهم واحد واحد، ويطلّع من كل واحد object صغير فيه المسار وكود الرد اللي سيرفرك رجّعه. كده تشوف بسرعة أنهي webhook رجع له 401 أو 500.`,
           ],
           sol: R`الحل: سطر [[appendFile("logs/webhooks.log", JSON.stringify({...}) + "\n")]] في أول الـ route قبل أي تحقق، فكل طلب، حتى المرفوض، بيتسجل. في تجربتي ٥ طلبات بنفس الـ id طلّعوا ٥ سطور، و [[grep '"id":12345' logs/webhooks.log | jq .]] بيعرضهم كـ JSON منسّق:
 
@@ -1116,10 +1173,10 @@ curl.exe -sS "https://api.telegram.org/bot$env:TELEGRAM_BOT_TOKEN/getWebhookInfo
 - [[pending_update_count]] بيزيد = سيرفرك مش بيرد 200.
 - URL الـ tunnel بيتغير، فبعد كل تشغيل جديد لـ ngrok لازم [[setWebhook]] تاني.`,
           lines: [
-            "حمّل التوكن والسر من .env من غير ما تكتبهم في الأمر.",
-            "سجّل الـ URL والسر اللي هيرجع في header مع كل طلب.",
-            "الحالة: الـ URL، والرسايل المتراكمة، وآخر خطأ.",
-            "شيل الـ webhook (ارجع لـ polling) وارمي الرسايل القديمة."
+            R`بيقرا ملف [[.env]] جوه الـ shell الحالي، فـ [[$TELEGRAM_BOT_TOKEN]] و [[$WEBHOOK_SECRET]] يبقوا متاحين للأوامر اللي بعده من غير ما تكتبهم في الأمر ويتحفظوا في الـ history. ده bash وبيشتغل بس لو الملف سطور [[KEY=value]] من غير مسافات حوالين [[=]].`,
+            R`بينادي [[setWebhook]] في Bot API: [[-d]] بيبعت الخانات كـ POST، [[url]] العنوان اللي تيليجرام هيبعت عليه كل رسالة (لازم HTTPS)، و [[secret_token]] سر تيليجرام هيرجّعه في header [[X-Telegram-Bot-Api-Secret-Token]] مع كل طلب، فسيرفرك يرفض أي طلب مش جايب السر ده. و [[-sS]] ساكت بس بيطبع الأخطاء.`,
+            R`بيسأل تيليجرام عن حالة الـ webhook، و [[jq .result]] بيطلّع الجزء المهم: [[url]] المتسجّل، و [[pending_update_count]] عدد الرسايل المستنية، و [[last_error_message]] آخر خطأ رجع من سيرفرك. ده أول أمر لما البوت ميردش.`,
+            R`بيشيل الـ webhook فالبوت يرجع يشتغل بـ polling ([[getUpdates]] مبيشتغلش طول ما فيه webhook). و [[drop_pending_updates=true]] بيرمي الرسايل اللي اتراكمت وقت ما السيرفر كان واقع بدل ما تنزل عليك كلها مرة واحدة.`,
           ],
           sol: R`[[setWebhook]] بيرد [[{"ok":true,"result":true,"description":"Webhook was set"}]]. ولما تبعت رسالة للبوت، سيرفرك بيستقبل POST فيه [[message.text]]، وتيليجرام بيبعت header [[X-Telegram-Bot-Api-Secret-Token]] بنفس الـ [[secret_token]].
 
