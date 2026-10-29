@@ -416,18 +416,32 @@ function setShell(s, cmd){
   document.querySelectorAll('.sw').forEach(b => b.setAttribute('aria-selected', b.dataset.s===s ? 'true':'false'));
   store.set('shell', s);
   render();
+  // the two blocks under the lessons belong to the tab: the bash/PowerShell/CMD table to the terminal tabs,
+  // and each challenge to the tabs it has a solution for
+  $('#compare').hidden = !COMPARE_TABS.includes(s);
+  renderMissions();
 }
+
+const COMPARE_TABS = ['start', 'bash', 'ps', 'cmd', 'zsh', 'wsl'];
 
 function renderStatic(){
   let t = '<thead><tr><th>المهمة</th><th class="b">bash</th><th class="p">PowerShell</th><th class="c">CMD</th></tr></thead><tbody>';
   CMP.forEach(r => { t += '<tr><td>'+esc(r[0])+'</td><td class="m">'+esc(r[1])+'</td><td class="m">'+esc(r[2])+'</td><td class="m">'+esc(r[3])+'</td></tr>'; });
   $('#cmpT').innerHTML = t+'</tbody>';
+}
+/* a challenge shows on a tab when it has a solution written for that tab, or when its topic belongs there
+   (tabs: git, docker, python...); on a topic tab every solution shows, since that tab isn't a shell */
+function renderMissions(){
+  const list = MISSIONS.filter(m => m.s[shell] !== undefined || (m.tabs || []).includes(shell));
+  $('#missions').hidden = !list.length;
+  if (!list.length) return $('#mBox').innerHTML = '';
+  $('#missions h2').textContent = 'تحديات ' + (SHELLS[shell].label || shell);
   // d و e فقرات فيها [[code]]، و c كود البداية (اختياري). مفاتيح s اللي هي تابات دروس (react، data...) بتتعرض كود مش أوامر
   const paras = s => s.split(/\n\s*\n/).map(p => '<p>'+fmt(p.trim())+'</p>').join('');
   const code = (src, k, label) => LESSON_TABS.includes(k) ? termHTML(src, k, true, label || SHELLS[k].label) : termHTML(src, k, false);
-  $('#mBox').innerHTML = MISSIONS.map((m,i) =>
-    '<div class="mission"><h3><span class="n">'+(i+1)+'</span>'+esc(m.t)+'</h3>'+paras(m.d)+(m.c ? code(m.c, Object.keys(m.s)[0], 'الكود اللي هتبدأ منه') : '')+'<details><summary>اعرض الحل بعد ما تجرب</summary><div class="sol">'+
-    (m.e ? paras(m.e) : '')+Object.keys(m.s).map(k => code(m.s[k], k)).join('')+'</div></details></div>').join('');
+  $('#mBox').innerHTML = list.map((m,i) =>
+    '<div class="mission"><h3><span class="n">'+(i+1)+'</span>'+esc(m.t)+'</h3>'+paras(m.d)+(m.c ? code(m.c, m.s[shell] !== undefined ? shell : Object.keys(m.s)[0], 'الكود اللي هتبدأ منه') : '')+'<details><summary>اعرض الحل بعد ما تجرب</summary><div class="sol">'+
+    (m.e ? paras(m.e) : '')+(m.s[shell] !== undefined ? code(m.s[shell], shell) : Object.keys(m.s).map(k => code(m.s[k], k)).join(''))+'</div></details></div>').join('');
 }
 
 /* ---------- study tools ---------- */

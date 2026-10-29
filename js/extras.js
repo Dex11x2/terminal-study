@@ -61,6 +61,7 @@ const MISSIONS = fixDollar([
   },
   {
     t: "البورت مشغول (EADDRINUSE)",
+    tabs: ["node", "diag"],
     d: "شغّل سيرفر على بورت 3000 بـ python -m http.server 3000 (أو python3 على لينكس) في نافذة. من نافذة تانية اعرف مين ماسك البورت واقفله.",
     s: {
       bash: R`lsof -i :3000
@@ -76,6 +77,7 @@ kill $(lsof -t -iTCP:3000 -sTCP:LISTEN)`
   },
   {
     t: "حلّل لوج",
+    tabs: ["diag"],
     d: "اعمل ملف app.log فيه 4 سطور منهم سطرين فيهم ERROR. اعرف عدد الأخطاء، واحفظ سطورها بأرقامها في errors.txt.",
     s: {
       bash: R`printf "INFO start\nERROR db down\nINFO ok\nERROR timeout\n" > app.log
@@ -118,6 +120,7 @@ dir backup*`,
   },
   {
     t: "فحص السيرفر (bash بس)",
+    tabs: ["vps", "diag"],
     d: "ادخل الـ VPS بتاعك، اتأكد إن Nginx شغال والكونفج سليم، شوف آخر أخطاء، والمساحة والرام، وأكتر 10 IPs بيزوروا الموقع.",
     s: {
       bash: R`ssh deploy@203.0.113.10
@@ -130,6 +133,7 @@ sudo awk '{print $1}' /var/log/nginx/access.log | sort | uniq -c | sort -rn | he
   },
   {
     t: "الموقع مش بيفتح: شخّص طبقة طبقة",
+    tabs: ["diag", "net"],
     d: "امشي بالترتيب ده بدل ما تخمّن: DNS، بعدين السيرفر بيرد، بعدين البورت مفتوح، بعدين Nginx، بعدين التطبيق. أول خطوة تفشل هي مكان المشكلة. جرّبه على موقعك وهو شغال عشان تعرف شكل النتيجة السليمة.",
     s: {
       bash: R`# 1. DNS: does the domain point to the server?
@@ -158,6 +162,7 @@ ssh deploy@203.0.113.10`
   },
   {
     t: "افتح قاعدة بيانات السيرفر من جهازك بأمان",
+    tabs: ["sshc", "pg"],
     d: "قاعدة البيانات على السيرفر سامعة على 127.0.0.1 بس، ومفيش أي بورت مفتوح لها. وصّلها بجهازك من غير ما تفتح حاجة للنت.",
     s: {
       bash: R`ssh -N -L 5433:127.0.0.1:5432 deploy@203.0.113.10
@@ -171,6 +176,7 @@ psql -h localhost -p 5433 -U postgres`
   },
   {
     t: "API بترجع خطأ: اعرف السبب",
+    tabs: ["apis", "diag"],
     d: "من Network انسخ الطلب اللي فشل (Copy as cURL أو Copy as PowerShell)، وشغّله من الترمنال، واقرا الـ status والـ headers والبودي. الأمثلة تحت طلب login بسيط تقدر تعدّل فيه. مثال PowerShell محتاج PowerShell 7 ([[pwsh]])، لأن -SkipHttpErrorCheck مش موجود في 5.1.",
     s: {
       bash: R`curl -i -X POST https://example.com/api/login -H "Content-Type: application/json" -d '{"email":"a@b.com","password":"wrong"}'`,
@@ -183,6 +189,7 @@ $r.Content`,
   },
   {
     t: "اقفل SSH من غير ما تقفل على نفسك (bash بس)",
+    tabs: ["vps", "sshc", "sec"],
     d: "على سيرفر التجربة: اتأكد إن deploy بيدخل بالمفتاح وعنده sudo، اكتب إعدادات الأمان في ملف drop-in عشان ميتغطّاش عليها، طبّقها، وجرّب من نافذة جديدة إن الدخول بالباسورد بقى مرفوض. سيب النافذة الأولى مفتوحة لحد الآخر.",
     s: {
       bash: R`ssh deploy@203.0.113.10 'sudo -v && echo sudo-ok'
@@ -197,6 +204,7 @@ ssh root@203.0.113.10`
   },
   {
     t: "الديسك اتملى: فضّي مكان بأمان (bash بس)",
+    tabs: ["vps", "diag"],
     d: "السيرفر بيقول No space left on device. اعرف المساحة، ولاقي مين واكلها، ونضّف Docker واللوجات وكاش apt، من غير ما تلمس بيانات قواعد البيانات (مفيش --volumes في أي prune).",
     s: {
       bash: R`df -h / && df -i /
@@ -211,6 +219,7 @@ df -h /`
   },
   {
     t: "رجّع commit مسحته بالغلط",
+    tabs: ["git"],
     d: "اعمل repo تجربة فيه commitين، امسح التاني بـ reset --hard، وبعدين رجّعه من reflog في branch اسمها rescue. لاحظ علامات التنصيص حوالين HEAD@{1}: من غيرها PowerShell بيبوّظ الأمر.",
     s: {
       bash: R`git init rescue-lab && cd rescue-lab
@@ -245,6 +254,7 @@ git log --oneline rescue`
   },
   {
     t: "جهّز VS Code لمشروع الفريق",
+    tabs: ["vscode"],
     d: "في مشروع عندك: اعمل .vscode/settings.json يخلّي Prettier ينسّق مع كل حفظ و ESLint يصلّح لوحده، و extensions.json يقترح الإضافتين على أي حد يفتح المشروع، وافتح المشروع من الترمنال. الشرح في تاب VS Code المستوى ٣.",
     s: {
       bash: R`mkdir -p .vscode
@@ -273,6 +283,7 @@ code .`
   },
   {
     t: "Postgres في Docker: شغّال ومقفول على جهازك",
+    tabs: ["docker", "pg"],
     d: "شغّل Postgres في container بباسورد، على بورت متاح لجهازك بس (127.0.0.1)، واستنى لحد ما يبقى جاهز فعلًا، وبعدين اتأكد إن البورت مش مفتوح لباقي الشبكة. الشرح في تاب Docker (healthchecks) و PostgreSQL.",
     s: {
       bash: R`docker run -d --name pg -e POSTGRES_PASSWORD=secret -p 127.0.0.1:5432:5432 postgres:17
@@ -287,6 +298,7 @@ Get-NetTCPConnection -LocalPort 5432 -State Listen | Select-Object LocalAddress,
   },
   {
     t: "باك أب MongoDB وجرّب ترجّعه (bash بس)",
+    tabs: ["mongo"],
     d: "الباك أب اللي عمره ما اترجع مش باك أب. خد dump من container اسمه mongo، ورجّعه في container تجربة تاني، واتأكد إن عدد الـ documents واحد، وامسح التجربة. الشرح في تاب MongoDB المستوى ٣.",
     s: {
       bash: R`set -euo pipefail
@@ -301,6 +313,7 @@ docker rm -fv mongo-test`
   },
   {
     t: "بعد الـ deploy: اتأكد إن الموقع سليم",
+    tabs: ["diag", "gha"],
     d: "اكتب smoke test بيطلب أهم ٣ صفحات ويتأكد إنها بترجع 200، وإن صفحة مش موجودة بترجع 404 فعلًا (مش 200 بصفحة الـ SPA). لو أي حاجة غلط يطلع بكود فشل عشان CI يوقف. حل PowerShell محتاج PowerShell 7 (pwsh). الشرح في تاب التشخيص (smoke test).",
     s: {
       bash: R`fail=0
@@ -343,6 +356,7 @@ where mytool`
   },
   {
     t: "امنع أي commit فيه أخطاء lint",
+    tabs: ["git", "quality"],
     d: "في مشروع Node عندك: سطّب husky و lint-staged، واعمل hook بيشغّل ESLint و Prettier على الملفات اللي عملتلها add بس، وجرّب تعمل commit لملف فيه غلطة واتأكد إنه اترفض. الشرح في تاب فحص الكود المستوى ٢.",
     s: {
       bash: R`npm i -D husky lint-staged
@@ -356,6 +370,7 @@ git reset -q broken.js && rm broken.js`
   },
   {
     t: "مشروع Python نضيف: venv واختبارات",
+    tabs: ["python"],
     d: "اعمل venv للمشروع، وسطّب pytest جواه، واكتب اختبار صغير وشغّله، واحفظ النسخ في requirements.txt. الشرح في تاب Python.",
     s: {
       bash: R`python3 -m venv .venv
