@@ -35,6 +35,7 @@
       <button class="sw" role="tab" data-s="start" aria-selected="false"><div class="top"><b>ابدأ من هنا</b><span>$ pwd</span></div><div class="bot">لو لسه بتبتدي: يعني إيه ترمنال، وإزاي تقرا أمر، والسيرفر والبورت و HTTP ببساطة</div></button>
       <button class="sw" role="tab" data-s="files" aria-selected="false"><div class="top"><b>الملفات وامتداداتها</b><span>.json .xml .yaml .env .sh</span></div><div class="bot">كل نوع ملف هتقابله: جواه إيه، وبيتكتب إزاي، وبتفتحه وتفحصه بإيه، من .txt و .json لحد .pem و .apk</div></button>
       <button class="sw" role="tab" data-s="os" aria-selected="false"><div class="top"><b>اختصارات النظام</b><span>Win+R › services.msc</span></div><div class="bot">قائمة Run في ويندوز وأهم أوامرها، واختصارات ويندوز وأوبونتو والماك اللي بتوفر وقت كل يوم</div></button>
+      <button class="sw" role="tab" data-s="tools" aria-selected="false"><div class="top"><b>عدّة الترمنال</b><span>Get-PhysicalDisk</span></div><div class="bot">الحاجات المفيدة كل يوم: ألوان الترمنال والـ prompt، ومعلومات الجهاز والديسك والبطارية، وفحص الفيروسات، وفرمتة الفلاشة، ومين على شبكتك</div></button>
       <button class="sw" role="tab" data-s="vscode" aria-selected="false"><div class="top"><b>VS Code</b><span>Ctrl+Shift+P</span></div><div class="bot">الاختصارات اللي بتفرق، والترمنال و Git و Debugger جواه، وإعدادات المشروع اللي بتوفر ساعات</div></button>
       <button class="sw" role="tab" data-s="wsl" aria-selected="false"><div class="top"><b>WSL على ويندوز</b><span>PS&gt; wsl --install</span></div><div class="bot">لينكس حقيقي جوه ويندوز: التسطيب، وفين تحط المشروع، و VS Code و Docker والشبكة والمشاكل المتكررة</div></button>
       <button class="sw" role="tab" data-s="symbols" aria-selected="false"><div class="top"><b>الرموز</b><span>| &gt; &amp;&amp; =&gt; ?. ::</span></div><div class="bot">كل رمز بتقابله في الترمنال والكود: معناه، وبيتكتب إزاي على الكيبورد، وإمتى تستخدمه، والغلطات المشهورة فيه</div></button>
@@ -186,7 +187,7 @@
     <ol>
       <li><button type="button" data-go="start" data-lv="0">ابدأ من هنا</button>: المفاهيم الأساسية بالراحة. متتخطاهاش حتى لو حاسس إنك فاهم.</li>
       <li><button type="button" data-go="files" data-lv="1">الملفات وامتداداتها</button>: اعرف كل ملف هتقابله جواه إيه قبل ما تعدّل فيه، وارجع للمستوى ٢ و ٣ لما تقابل صيغة جديدة.</li>
-      <li><button type="button" data-go="os" data-lv="1">اختصارات النظام</button> و <button type="button" data-go="vscode" data-lv="1">VS Code المستوى ١</button> من أول يوم: كل اختصار بيوفّر ثواني، وبتتجمع ساعات. و <button type="button" data-go="vscode" data-lv="3">VS Code ٣</button> مع أول مشروع جد.</li>
+      <li><button type="button" data-go="os" data-lv="1">اختصارات النظام</button> و <button type="button" data-go="vscode" data-lv="1">VS Code المستوى ١</button> من أول يوم: كل اختصار بيوفّر ثواني، وبتتجمع ساعات. ومعاهم <button type="button" data-go="tools" data-lv="1">عدّة الترمنال</button>: الحاجات المفيدة كل يوم زي شكل الترمنال، ومعلومات الجهاز والبطارية، وفحص الفيروسات، وفرمتة الفلاشة. و <button type="button" data-go="vscode" data-lv="3">VS Code ٣</button> مع أول مشروع جد.</li>
       <li><button type="button" data-go="wsl" data-lv="1">WSL</button> لو على ويندوز: بعد «ابدأ من هنا» على طول، عشان تاب bash يشتغل عندك.</li>
       <li><button type="button" data-go="bash" data-lv="1">bash المستوى ١</button>: التنقل والملفات والقراءة.</li>
       <li><button type="button" data-go="git" data-lv="1">Git المستوى ١</button>: commit و log و diff و .gitignore. هتستخدمهم كل يوم.</li>
@@ -326,6 +327,7 @@
 <script src="js/tabs/os/05.js"></script>
 <script src="js/tabs/os/06.js"></script>
 <script src="js/tabs/os/07.js"></script>
+<script src="js/tabs/tools/01.js"></script>
 <script src="js/tabs/vscode/01.js"></script>
 <script src="js/tabs/vscode/02.js"></script>
 <script src="js/tabs/vscode/03.js"></script>

@@ -16749,6 +16749,91 @@
   "date": "2026-10-07",
   "on": "docker gcc:14 (gcc 14.4, linux)"
  },
+ "tools|health.ps1: تقرير في شاشة واحدة": {
+  "hash": "c98d98b7cf1a",
+  "date": "2026-10-29",
+  "on": "ويندوز 11: PowerShell 7.6 و 5.1 و CMD (من غير Admin)؛ أوبونتو 24.04 جوه Docker 29.6 للينكس وللفرمتة على ملفات .img، و nmap على شبكة Docker. docs: أوامر الماك، و smartctl/upower/ClamAV، وأدوات Admin (sfc/DISM/chkdsk) ورسايل نتايجها، وحد FAT32 الـ 4GB، والعربي المكسور محاكاة بـ 1256"
+ },
+ "tools|ألوان في الترمنال": {
+  "hash": "86efa8938c35",
+  "date": "2026-10-29",
+  "on": "ويندوز 11: PowerShell 7.6 و 5.1 و CMD (من غير Admin)؛ أوبونتو 24.04 جوه Docker 29.6 للينكس وللفرمتة على ملفات .img، و nmap على شبكة Docker. docs: أوامر الماك، و smartctl/upower/ClamAV، وأدوات Admin (sfc/DISM/chkdsk) ورسايل نتايجها، وحد FAT32 الـ 4GB، والعربي المكسور محاكاة بـ 1256"
+ },
+ "tools|اعرف الفلاشة صح": {
+  "hash": "d26b33ebfa30",
+  "date": "2026-10-29",
+  "on": "ويندوز 11: PowerShell 7.6 و 5.1 و CMD (من غير Admin)؛ أوبونتو 24.04 جوه Docker 29.6 للينكس وللفرمتة على ملفات .img، و nmap على شبكة Docker. docs: أوامر الماك، و smartctl/upower/ClamAV، وأدوات Admin (sfc/DISM/chkdsk) ورسايل نتايجها، وحد FAT32 الـ 4GB، والعربي المكسور محاكاة بـ 1256"
+ },
+ "tools|الأجهزة اللي على شبكتك": {
+  "hash": "e9bcee0e3f0b",
+  "date": "2026-10-29",
+  "on": "ويندوز 11: PowerShell 7.6 و 5.1 و CMD (من غير Admin)؛ أوبونتو 24.04 جوه Docker 29.6 للينكس وللفرمتة على ملفات .img، و nmap على شبكة Docker. docs: أوامر الماك، و smartctl/upower/ClamAV، وأدوات Admin (sfc/DISM/chkdsk) ورسايل نتايجها، وحد FAT32 الـ 4GB، والعربي المكسور محاكاة بـ 1256"
+ },
+ "tools|البطارية فاضل منها كام": {
+  "hash": "4526013633a3",
+  "date": "2026-10-29",
+  "on": "ويندوز 11: PowerShell 7.6 و 5.1 و CMD (من غير Admin)؛ أوبونتو 24.04 جوه Docker 29.6 للينكس وللفرمتة على ملفات .img، و nmap على شبكة Docker. docs: أوامر الماك، و smartctl/upower/ClamAV، وأدوات Admin (sfc/DISM/chkdsk) ورسايل نتايجها، وحد FAT32 الـ 4GB، والعربي المكسور محاكاة بـ 1256"
+ },
+ "tools|البورتات المفتوحة على جهازك": {
+  "hash": "e188ecb286ae",
+  "date": "2026-10-29",
+  "on": "ويندوز 11: PowerShell 7.6 و 5.1 و CMD (من غير Admin)؛ أوبونتو 24.04 جوه Docker 29.6 للينكس وللفرمتة على ملفات .img، و nmap على شبكة Docker. docs: أوامر الماك، و smartctl/upower/ClamAV، وأدوات Admin (sfc/DISM/chkdsk) ورسايل نتايجها، وحد FAT32 الـ 4GB، والعربي المكسور محاكاة بـ 1256"
+ },
+ "tools|الديسك: مساحة وصحة": {
+  "hash": "7a5df2416b46",
+  "date": "2026-10-29",
+  "on": "ويندوز 11: PowerShell 7.6 و 5.1 و CMD (من غير Admin)؛ أوبونتو 24.04 جوه Docker 29.6 للينكس وللفرمتة على ملفات .img، و nmap على شبكة Docker. docs: أوامر الماك، و smartctl/upower/ClamAV، وأدوات Admin (sfc/DISM/chkdsk) ورسايل نتايجها، وحد FAT32 الـ 4GB، والعربي المكسور محاكاة بـ 1256"
+ },
+ "tools|العربي في سكربتات PowerShell 5.1": {
+  "hash": "f9bcba57a117",
+  "date": "2026-10-29",
+  "on": "ويندوز 11: PowerShell 7.6 و 5.1 و CMD (من غير Admin)؛ أوبونتو 24.04 جوه Docker 29.6 للينكس وللفرمتة على ملفات .img، و nmap على شبكة Docker. docs: أوامر الماك، و smartctl/upower/ClamAV، وأدوات Admin (sfc/DISM/chkdsk) ورسايل نتايجها، وحد FAT32 الـ 4GB، والعربي المكسور محاكاة بـ 1256"
+ },
+ "tools|الـ prompt بتاعك": {
+  "hash": "d26b07caf55f",
+  "date": "2026-10-29",
+  "on": "ويندوز 11: PowerShell 7.6 و 5.1 و CMD (من غير Admin)؛ أوبونتو 24.04 جوه Docker 29.6 للينكس وللفرمتة على ملفات .img، و nmap على شبكة Docker. docs: أوامر الماك، و smartctl/upower/ClamAV، وأدوات Admin (sfc/DISM/chkdsk) ورسايل نتايجها، وحد FAT32 الـ 4GB، والعربي المكسور محاكاة بـ 1256"
+ },
+ "tools|خلّي التغيير يفضل": {
+  "hash": "44b793b2a24c",
+  "date": "2026-10-29",
+  "on": "ويندوز 11: PowerShell 7.6 و 5.1 و CMD (من غير Admin)؛ أوبونتو 24.04 جوه Docker 29.6 للينكس وللفرمتة على ملفات .img، و nmap على شبكة Docker. docs: أوامر الماك، و smartctl/upower/ClamAV، وأدوات Admin (sfc/DISM/chkdsk) ورسايل نتايجها، وحد FAT32 الـ 4GB، والعربي المكسور محاكاة بـ 1256"
+ },
+ "tools|فحص فيروسات من الترمنال": {
+  "hash": "16b05833928c",
+  "date": "2026-10-29",
+  "on": "ويندوز 11: PowerShell 7.6 و 5.1 و CMD (من غير Admin)؛ أوبونتو 24.04 جوه Docker 29.6 للينكس وللفرمتة على ملفات .img، و nmap على شبكة Docker. docs: أوامر الماك، و smartctl/upower/ClamAV، وأدوات Admin (sfc/DISM/chkdsk) ورسايل نتايجها، وحد FAT32 الـ 4GB، والعربي المكسور محاكاة بـ 1256"
+ },
+ "tools|فرمت فلاشة": {
+  "hash": "c70cf3f15210",
+  "date": "2026-10-29",
+  "on": "ويندوز 11: PowerShell 7.6 و 5.1 و CMD (من غير Admin)؛ أوبونتو 24.04 جوه Docker 29.6 للينكس وللفرمتة على ملفات .img، و nmap على شبكة Docker. docs: أوامر الماك، و smartctl/upower/ClamAV، وأدوات Admin (sfc/DISM/chkdsk) ورسايل نتايجها، وحد FAT32 الـ 4GB، والعربي المكسور محاكاة بـ 1256"
+ },
+ "tools|لاقي الأمر من كلمة": {
+  "hash": "959011463b49",
+  "date": "2026-10-29",
+  "on": "PowerShell 7.6 على ويندوز 11 و bash على أوبونتو 24.04 جوه Docker. docs: Find-Module و Update-Help و Get-Help -Online"
+ },
+ "tools|معلومات الجهاز في ثانية": {
+  "hash": "393ddec997d1",
+  "date": "2026-10-29",
+  "on": "ويندوز 11: PowerShell 7.6 و 5.1 و CMD (من غير Admin)؛ أوبونتو 24.04 جوه Docker 29.6 للينكس وللفرمتة على ملفات .img، و nmap على شبكة Docker. docs: أوامر الماك، و smartctl/upower/ClamAV، وأدوات Admin (sfc/DISM/chkdsk) ورسايل نتايجها، وحد FAT32 الـ 4GB، والعربي المكسور محاكاة بـ 1256"
+ },
+ "tools|ملفات النظام والديسك": {
+  "hash": "d21db4a09422",
+  "date": "2026-10-29",
+  "on": "ويندوز 11: PowerShell 7.6 و 5.1 و CMD (من غير Admin)؛ أوبونتو 24.04 جوه Docker 29.6 للينكس وللفرمتة على ملفات .img، و nmap على شبكة Docker. docs: أوامر الماك، و smartctl/upower/ClamAV، وأدوات Admin (sfc/DISM/chkdsk) ورسايل نتايجها، وحد FAT32 الـ 4GB، والعربي المكسور محاكاة بـ 1256"
+ },
+ "tools|مين واكل الجهاز": {
+  "hash": "1fb8980a2446",
+  "date": "2026-10-29",
+  "on": "ويندوز 11: PowerShell 7.6 و 5.1 و CMD (من غير Admin)؛ أوبونتو 24.04 جوه Docker 29.6 للينكس وللفرمتة على ملفات .img، و nmap على شبكة Docker. docs: أوامر الماك، و smartctl/upower/ClamAV، وأدوات Admin (sfc/DISM/chkdsk) ورسايل نتايجها، وحد FAT32 الـ 4GB، والعربي المكسور محاكاة بـ 1256"
+ },
+ "tools|نضّف من غير ما تمسح غلط": {
+  "hash": "6cbff29d68f8",
+  "date": "2026-10-29",
+  "on": "ويندوز 11: PowerShell 7.6 و 5.1 و CMD (من غير Admin)؛ أوبونتو 24.04 جوه Docker 29.6 للينكس وللفرمتة على ملفات .img، و nmap على شبكة Docker. docs: أوامر الماك، و smartctl/upower/ClamAV، وأدوات Admin (sfc/DISM/chkdsk) ورسايل نتايجها، وحد FAT32 الـ 4GB، والعربي المكسور محاكاة بـ 1256"
+ },
  "ts|! (non-null)": {
   "hash": "548b6a281bb5",
   "date": "2026-10-06",

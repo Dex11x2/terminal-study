@@ -528,7 +528,20 @@
 - [x] **net** (٢٩ أكتوبر): `net/05.js` قسمين — «مشروع: شبكة حقيقية جوه Docker» (٥ دروس: شبكتين وراوتر، asymmetric routing، NAT، port forwarding وثغرته، MTU والـ black hole) و«توصل للإجابة بنفسك في الشبكات» (درسين: اقرا الفشل، السؤال ← الأداة). وحقول الوحدة لكل الأقسام الـ ١٣ القديمة. **اسم الـ VPN الحقيقي اتشال (بقرار صاحب المشروع، ٢٩ أكتوبر):** ١٣٢ سطر في net/01-04 و re/01. الاسم بقى `DemoVPN`، و كارت النفق `tun0`، والعناوين `10.66.0.x`، والشرح التقني زي ما هو. والـ ١٠ دروس اللي فيهم ناتج اتغيّرت أسماؤه، الحل بتاعهم بيقول كده صريح. `cmd` ماتغيّرش في أي درس.
 - [ ] nginx · vps · sshc · sec · web · css · react · next · api · apis
 - [ ] pg · data · mongo · cloud · gha · diag · quality
+- [x] **tools «عدّة الترمنال»** (٢٩ أكتوبر، تاب جديد بطلبك: «ليه مش ضايف اني اقدر اغير الالوان… او اكتب اوامر مفيده زي الاسكان للجهاز او تفرمط الفلاشه»). الفحص لقى الحاجات دي **متفرّقة** (درس في cmd، ودرس في ps، ودرس في os) و بعضها صفر (صحة الديسك، والبطارية، و `Start-MpScan`، ومعلومات الجهاز، واللي بيفتح مع الجهاز). `js/tabs/tools/01.js`: ١٧ درس في ٧ وحدات (شكّل الترمنال، توصل للأمر بنفسك، اعرف جهازك، افحص وصلّح، الفلاشات والديسكات، مين على شبكتك، مشروع: تقرير صحة جهازك). الكارت في «البداية» بعد «اختصارات النظام»، ولينك في خريطة الطريق. والدروس بتودّي للدروس الأعمق في cmd و ps و os و docker و net.
 - [ ] bash · ps · git · docker · os · wsl · zsh · files · vscode · start (bash و ps و git و docker فيهم أجزاء من المعيار، وناقصهم حقول الوحدات للأقسام القديمة)
+
+**اكتشافات من دفعة tools (على جهاز التجربة — قراية بس):**
+- `$PSStyle` مش موجود في 5.1 (`$null -eq $PSStyle` = True). و `$PROFILE` جوه **OneDrive\Documents**، وملف مختلف لكل نسخة، ومش موجود (`Test-Path` = False).
+- bash: `PS1` قبل `bash -i` بيتمسح لأن `.bashrc` بيكتبه — لازم يتكتب في آخر `.bashrc` (اتجرّب قبل وبعد).
+- `Get-ComputerInfo` = ٢.٣ ثانية، و CIM أسرع. و Docker شايف ١٥ جيجا رام مش ٣١.
+- `Get-StorageReliabilityCounter` و `sfc` و `chkdsk` محتاجين Admin (الرسايل في الدروس).
+- البطارية ٥٦٪ من سعتها الأصلية (50,640 من 90,005 mWh). **Defender `FullScanAge = 4294967295` = عمره ما اتعمل full scan.** وديسكين D و E فاضيين أقل من ١٠٪. و Chrome = ٥٩–٦٢ عملية = ~١١ جيجا رام. و TEMP = ٣ جيجا. (اتقالوا لصاحب المشروع في الشات.)
+- `Start-MpScan -ScanType CustomScan` شغال من غير Admin (١.٨ ثانية لفولدر صغير). و **`Measure-Command` بيكتم ناتج الأمر**.
+- الفرمتة اتجرّبت على ملفات `.img` جوه Docker (vfat و exfat و ext4 و ntfs) و `blkid` و `mcopy` من غير mount. و `Format-Volume -WhatIf` على حرف مش موجود.
+- **ACP على جهاز التجربة = 65001** (إعداد UTF-8 الـ Beta شغال)، فـ 5.1 قرا UTF-8 من غير BOM صح. والعربي المكسور اتعرض بمحاكاة 1256 (`ط§ظ„ط¬ظ‡ط§ط²`). أي درس عن الترميز على الجهاز ده لازم ياخد ده في الحساب.
+- `Get-Help` من غير help متنزّل: «displaying only partial help». و `man -k` في صورة أوبونتو بتاعة Docker: «minimized».
+- عدّاد `[[ ]]` في `check.js` بيعد الأمثلة كمان: `[System.Collections.Generic.List[string]]::new()` فيه `]]` من غير `[[` — اتكتب `New-Object 'System.Collections.Generic.List[string]'` (والسكربت اتشغّل بعدها).- اتمسح: شبكة `homelab` و ٣ كونتينرات. وملفات الـ scratchpad (`health/` و `battery.html`) فضلت في الـ scratchpad بس.
 - [ ] js · ts · node · python · pyapi · pydata
 - [ ] angular · vue · rn · flutter · swift · kotlin · dotnet · spring · php · go · cpp
 - [ ] dsa · sweng · arch · ai · re · real · apps · projects
