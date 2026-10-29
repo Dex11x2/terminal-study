@@ -13195,334 +13195,334 @@
   "on": "Docker python:3.13-slim (pandas, matplotlib, openpyxl; xlsx inspected)"
  },
  "python|# /// script": {
-  "hash": "86a66969549f",
-  "date": "2026-10-06",
-  "on": "docker python:3.13-slim uv 0.12.23 + win11 Python 3.14"
+  "hash": "bcdd7c128dd3",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|#!/usr/bin/env python3": {
-  "hash": "b60fcce39e84",
-  "date": "2026-10-06",
-  "on": "docker ubuntu-24.04 (Python 3.12.3) + win11 pwsh 7 (Python 3.14.3)"
+  "hash": "6cfe6104dbf4",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|@pytest.fixture": {
-  "hash": "b797086ed3fb",
-  "date": "2026-10-06",
-  "on": "win11 Python 3.14 venv + docker python:3.13-slim"
+  "hash": "5b2cb659c26b",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|@pytest.mark.parametrize": {
-  "hash": "589f555423e5",
-  "date": "2026-10-06",
-  "on": "win11 Python 3.14 venv + docker python:3.13-slim"
+  "hash": "ce57aca3939a",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|Dockerfile": {
-  "hash": "6235ae6f6bb1",
-  "date": "2026-10-06",
-  "on": "Docker Desktop build + compose"
+  "hash": "954029e19373",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|Path(__file__).parent": {
-  "hash": "fc3fbff6f0b6",
-  "date": "2026-10-06",
-  "on": "docker python:3.13 + win11 pwsh 7 (Python 3.14.3)"
+  "hash": "bd95046e8d55",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|TestClient و conftest": {
-  "hash": "52a68a8b3819",
-  "date": "2026-10-06",
-  "on": "win11 Python 3.14 venv FastAPI 0.142 + docker python:3.13-slim"
+  "hash": "5c78a698d940",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|[project.scripts] و pipx": {
-  "hash": "c0c69059b8c5",
-  "date": "2026-10-06",
-  "on": "docker python:3.13-slim + win11 Python 3.14 venv"
+  "hash": "736fecae39e2",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|argparse --dry-run": {
-  "hash": "c7c50f4c5517",
-  "date": "2026-10-06",
-  "on": "win11 Python 3.14 pwsh 7 + ps 5.1 + cmd + docker python:3.13-slim"
+  "hash": "d493e85a1e1b",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|backup_zip.py": {
-  "hash": "b0ae5b2dfeab",
-  "date": "2026-10-06",
-  "on": "docker python:3.13-slim + win11 Python 3.14 venv"
+  "hash": "377554dc788b",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|bash ولا Python ولا PowerShell": {
-  "hash": "8a97bb6c9ad0",
-  "date": "2026-10-06",
-  "on": "docker python:3.13-slim + win11 pwsh 7 / ps 5.1 + win11 Python 3.14"
+  "hash": "9271ce489761",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|batch_rename.py": {
-  "hash": "0cd3dd142505",
-  "date": "2026-10-06",
-  "on": "docker python:3.13-slim + win11 Python 3.14 venv"
+  "hash": "1397a541d32a",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|breakpoint()": {
-  "hash": "3f5382f4b862",
-  "date": "2026-10-06",
-  "on": "win11 Python 3.14 venv + docker python:3.13-slim + python:3.12-slim"
+  "hash": "9c5de8ca5f11",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|clean_old_files.py": {
-  "hash": "35b498d19737",
-  "date": "2026-10-06",
-  "on": "docker python:3.13-slim + win11 Python 3.14 venv"
+  "hash": "1eb9bfc78092",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|concurrent.futures": {
-  "hash": "979a3b4bd92f",
-  "date": "2026-10-06",
-  "on": "docker python:3.13-slim + win11 Python 3.14"
+  "hash": "c14f4f75d1b6",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|cron و Task Scheduler": {
-  "hash": "bc9f13f0f82e",
-  "date": "2026-10-06",
-  "on": "docker ubuntu-24.04 cron + win11 schtasks /Query; docs: journalctl, schtasks /Create /Run"
+  "hash": "d12819f09ce8",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|csv و utf-8-sig": {
-  "hash": "f6290b3c73ed",
-  "date": "2026-10-06",
-  "on": "win11 Python 3.14 pwsh 7 + docker python:3.13-slim; docs: Excel display"
+  "hash": "6cafb7851137",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|datetime وأسماء الملفات": {
-  "hash": "0b2fd4a354e6",
-  "date": "2026-10-06",
-  "on": "win11 Python 3.14 pwsh 7 + docker python:3.13-slim"
+  "hash": "8fee8eb1b892",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|debugpy و launch.json": {
-  "hash": "09ab88b4055b",
-  "date": "2026-10-06",
-  "on": "win11 Python 3.14 venv debugpy 1.8.22 + docker python:3.13-slim; docs: VS Code UI"
+  "hash": "719a78cbb01f",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|docker compose run --rm --no-deps": {
-  "hash": "619004f3931f",
-  "date": "2026-10-06",
-  "on": "Docker Desktop Compose v5.3.0 + postgres:16-alpine"
+  "hash": "96a3b996d1b2",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|externally-managed-environment": {
-  "hash": "739a6cf9466f",
-  "date": "2026-10-06",
-  "on": "docker ubuntu-24.04 (Python 3.12.3) pipx + docker python:3.13"
+  "hash": "f83137341c99",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|find_duplicates.py": {
-  "hash": "ee361bd14c00",
-  "date": "2026-10-06",
-  "on": "docker python:3.13-slim + win11 Python 3.14 venv"
+  "hash": "2497bf264146",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|glob و rglob": {
-  "hash": "ed27d1b9e525",
-  "date": "2026-10-06",
-  "on": "docker python:3.13 + win11 pwsh 7 (Python 3.14.3)"
+  "hash": "6fcaa27dc35c",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|help() و dir()": {
-  "hash": "ff789ccd4ffd",
-  "date": "2026-10-28",
-  "on": "Python 3.14.3 على ويندوز 11"
+  "hash": "c3d673f9bbbe",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|if __name__ == \"__main__\":": {
-  "hash": "eb00877ff8bc",
-  "date": "2026-10-06",
-  "on": "docker python:3.13 + win11 pwsh 7 (Python 3.14.3)"
+  "hash": "b1ad59a4837b",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|input() و sys.argv": {
-  "hash": "8bb1f31d8acf",
-  "date": "2026-10-06",
-  "on": "docker python:3.13 + win11 pwsh 7 (Python 3.14.3) + ps 5.1 + cmd"
+  "hash": "bb96520cb076",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|json.load و json.dump": {
-  "hash": "82b136753425",
-  "date": "2026-10-06",
-  "on": "win11 Python 3.14 pwsh 7 + ps 5.1 BOM + docker python:3.13-slim"
+  "hash": "b7f09b7e067a",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|json_to_csv.py": {
-  "hash": "89fc2290a4d1",
-  "date": "2026-10-06",
-  "on": "docker python:3.13-slim + win11 Python 3.14 venv pwsh 7 / ps 5.1"
+  "hash": "437380a2a5a6",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|logging بدل print": {
-  "hash": "7edfa76e7137",
-  "date": "2026-10-06",
-  "on": "win11 Python 3.14 pwsh 7 + docker python:3.13-slim"
+  "hash": "c0bbe287243d",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|monkeypatch": {
-  "hash": "f78acea57826",
-  "date": "2026-10-06",
-  "on": "win11 Python 3.14 venv + docker python:3.13-slim"
+  "hash": "5b6eb90a8e5a",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|notify.py": {
-  "hash": "9c9abb6ca9bc",
-  "date": "2026-10-06",
-  "on": "docker python:3.13-slim aiosmtpd + win11 Python 3.14 venv; docs: real Gmail/Outlook TLS"
+  "hash": "e8d515c814b7",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|open() و encoding=\"utf-8\"": {
-  "hash": "39556caaeee2",
-  "date": "2026-10-06",
-  "on": "docker python:3.13 + win11 pwsh 7 (Python 3.14.3)"
+  "hash": "6dfe9ca4bfa6",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|organize_downloads.py": {
-  "hash": "5b31cd096acb",
-  "date": "2026-10-06",
-  "on": "docker python:3.13-slim + win11 Python 3.14 venv"
+  "hash": "a9b827922a97",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|os.environ و .env": {
-  "hash": "6dadf21dae34",
-  "date": "2026-10-06",
-  "on": "win11 Python 3.14 pwsh 7 python-dotenv 1.2.4 + docker python:3.13-slim"
+  "hash": "5fbb9e05be8a",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|pip freeze": {
-  "hash": "a4e8b783f4fa",
-  "date": "2026-10-06",
-  "on": "docker python:3.13 venv + win11 pwsh 7 (Python 3.14.3) venv"
+  "hash": "6e8cf1d53b87",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|pip install -r requirements.txt": {
-  "hash": "e4278765531e",
-  "date": "2026-10-06",
-  "on": "docker python:3.13 venv + win11 pwsh 7 (Python 3.14.3) venv"
+  "hash": "b308ea2fb785",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|print و f-strings للتقارير": {
-  "hash": "80aa8141a82c",
-  "date": "2026-10-06",
-  "on": "docker python:3.13 + win11 pwsh 7 (Python 3.14.3)"
+  "hash": "ed1c85d05319",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|pytest": {
-  "hash": "3cccdf9b8eb2",
-  "date": "2026-10-06",
-  "on": "win11 Python 3.14 venv pytest 9.1.1 + docker python:3.13-slim"
+  "hash": "e6c2f9f29788",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|pytest --cov": {
-  "hash": "2ec0767a4245",
-  "date": "2026-10-06",
-  "on": "win11 Python 3.14 venv pytest-cov 7.1 + docker python:3.13-slim; docs: open/xdg-open"
+  "hash": "b040722a9402",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|pytest لسكربت": {
-  "hash": "39571804a74a",
-  "date": "2026-10-06",
-  "on": "docker python:3.13-slim + win11 Python 3.14 venv"
+  "hash": "bca72959a366",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|pytest.ini": {
-  "hash": "21e1d1733872",
-  "date": "2026-10-06",
-  "on": "win11 Python 3.14 venv + docker python:3.13-slim"
+  "hash": "eec48219331d",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|python -m": {
-  "hash": "87a63d6733fa",
-  "date": "2026-10-06",
-  "on": "docker python:3.13 + win11 pwsh 7 (Python 3.14.3) + ps 5.1"
+  "hash": "d3be3ceae6ba",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|python -m http.server": {
-  "hash": "211274fb8ed3",
-  "date": "2026-10-06",
-  "on": "docker python:3.13 + win11 pwsh 7 (Python 3.14.3); docs: playwright screenshot"
+  "hash": "091c7f2ce61b",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|python -m pdb": {
-  "hash": "4ef3f7344f6e",
-  "date": "2026-10-06",
-  "on": "win11 Python 3.14 venv + docker python:3.13-slim"
+  "hash": "ac395f43b9c0",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|python -m pip والأدوات المدفونة": {
-  "hash": "7c37941dd19c",
-  "date": "2026-10-28",
-  "on": "Python 3.14.3 على ويندوز 11"
+  "hash": "a3b03f438e0f",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|python3 - <<'PY'": {
-  "hash": "3524d5bb8614",
-  "date": "2026-10-06",
-  "on": "docker ubuntu-24.04 + win11 pwsh 7 / ps 5.1"
+  "hash": "17b2caab1089",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|python3 -m venv .venv": {
-  "hash": "59e0eacfbd33",
-  "date": "2026-10-06",
-  "on": "docker ubuntu-24.04 (Python 3.12.3) + win11 pwsh 7 (Python 3.14.3) + ps 5.1 + cmd"
+  "hash": "822aaa3e890b",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|python3 script.py": {
-  "hash": "bc056e680491",
-  "date": "2026-10-06",
-  "on": "docker ubuntu-24.04 (Python 3.12.3) + win11 pwsh 7 (Python 3.14.3)"
+  "hash": "fb05a839e9b9",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|re في السكربتات": {
-  "hash": "5b4357fefc39",
-  "date": "2026-10-06",
-  "on": "win11 Python 3.14 pwsh 7 + docker python:3.13-slim"
+  "hash": "3d2877c2e716",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|requests و urllib مع timeout": {
-  "hash": "6575749864df",
-  "date": "2026-10-06",
-  "on": "win11 Python 3.14 pwsh 7 + docker python:3.13-slim"
+  "hash": "a570ac911458",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|resize_images.py": {
-  "hash": "d70b056599f5",
-  "date": "2026-10-06",
-  "on": "docker python:3.13-slim Pillow 12.3 + win11 Python 3.14 venv"
+  "hash": "de0c44315a14",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|retry و backoff": {
-  "hash": "b03f88527c83",
-  "date": "2026-10-06",
-  "on": "docker python:3.13-slim + win11 Python 3.14 pwsh"
+  "hash": "985c4e13c5aa",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|shutil copy و move و rmtree": {
-  "hash": "b84566b77321",
-  "date": "2026-10-06",
-  "on": "docker python:3.13 + win11 pwsh 7 (Python 3.14.3)"
+  "hash": "b6227206d6bd",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|subprocess.run في سكربت": {
-  "hash": "074fa9ad6305",
-  "date": "2026-10-06",
-  "on": "win11 Python 3.14 pwsh 7 git 2.56 + docker python:3.13-slim"
+  "hash": "2ca7d4eeb11f",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|sys.exit و exit codes": {
-  "hash": "7a0ce60bc094",
-  "date": "2026-10-06",
-  "on": "docker python:3.13 + win11 pwsh 7 (Python 3.14.3) + ps 5.1 + cmd"
+  "hash": "dd7df204c517",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|tmp_path": {
-  "hash": "848addcf8701",
-  "date": "2026-10-06",
-  "on": "win11 Python 3.14 venv + docker python:3.13-slim"
+  "hash": "f862a53e14cf",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|unittest.mock.patch": {
-  "hash": "bea438250118",
-  "date": "2026-10-06",
-  "on": "win11 Python 3.14 venv + docker python:3.13-slim"
+  "hash": "d93b4d9eaacf",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|uptime_check.py": {
-  "hash": "0b4e81db8ce9",
-  "date": "2026-10-06",
-  "on": "docker python:3.13-slim + win11 Python 3.14 venv"
+  "hash": "6e1d0fc2ca99",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|uvicorn --proxy-headers": {
-  "hash": "66e16c5f4363",
-  "date": "2026-10-06",
-  "on": "docker python:3.13-slim fastapi + uvicorn 0.54 + win11 Python 3.14 venv pwsh/ps 5.1/cmd"
+  "hash": "aa54ef066576",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|uvicorn --reload": {
-  "hash": "0faa2fd81a88",
-  "date": "2026-10-06",
-  "on": "docker python:3.13-slim pinned fastapi/uvicorn + win11 Python 3.14 venv; docs: reload on Windows not confirmed"
+  "hash": "670c40f14508",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|yaml.safe_load و ElementTree": {
-  "hash": "abc2ff5a0c66",
-  "date": "2026-10-06",
-  "on": "win11 Python 3.14 pwsh 7 PyYAML 6.0.3 + docker python:3.13-slim"
+  "hash": "dc0e1d775da7",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|اقرا الـ traceback": {
-  "hash": "632b471c2f1c",
-  "date": "2026-10-28",
-  "on": "Python 3.14.3 على ويندوز 11"
+  "hash": "1e3273e75509",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|مشروع — argparse بعمق": {
-  "hash": "81f5236dfdaf",
-  "date": "2026-10-28",
-  "on": "Python 3.14.3 — حزمة tally اتبنت واتسطّبت -e في venv محلي، والأمر اشتغل باسمه، و٥ اختبارات عدّوا، والـ wheel اتبنت واتفتحت"
+  "hash": "b2097f2ed980",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|مشروع — venv و pyproject والأمر": {
-  "hash": "822515a22123",
-  "date": "2026-10-28",
-  "on": "Python 3.14.3 — حزمة tally اتبنت واتسطّبت -e في venv محلي، والأمر اشتغل باسمه، و٥ اختبارات عدّوا، والـ wheel اتبنت واتفتحت"
+  "hash": "d8a3f446e9aa",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|مشروع — اختبارات وتغليف": {
-  "hash": "c62266038bed",
-  "date": "2026-10-28",
-  "on": "Python 3.14.3 — حزمة tally اتبنت واتسطّبت -e في venv محلي، والأمر اشتغل باسمه، و٥ اختبارات عدّوا، والـ wheel اتبنت واتفتحت"
+  "hash": "d91265c128cb",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "python|مشروع — المنطق منفصل عن الواجهة": {
-  "hash": "06e9947c223c",
-  "date": "2026-10-28",
-  "on": "Python 3.14.3 — حزمة tally اتبنت واتسطّبت -e في venv محلي، والأمر اشتغل باسمه، و٥ اختبارات عدّوا، والـ wheel اتبنت واتفتحت"
+  "hash": "dc1dc0014ec4",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
  },
  "quality|--coverage": {
   "hash": "d0acdc43d003",
