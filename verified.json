@@ -3310,9 +3310,9 @@
   "on": "AWS CLI 2.37 vs LocalStack 4.9: volumes, addresses, terminate, s3 rb, region sweep solCode; docs: RDS, ELB"
  },
  "cmd|%errorlevel% و !errorlevel!": {
-  "hash": "2b0c85c2fa5e",
-  "date": "2026-10-06",
-  "on": "win11 cmd"
+  "hash": "dffbb26c5447",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|%time% فيه مسافة و %date% فيه /": {
   "hash": "73f55ecbe973",
@@ -3320,19 +3320,19 @@
   "on": "ويندوز 11، cmd.exe (ملفات .bat بـ CRLF) + pwsh 7 و powershell 5.1 للمقارنة. docs: أكواد xcopy، و ping مع Destination host unreachable، وشيل wmic"
  },
  "cmd|%~dp0 و %~nx1": {
-  "hash": "56c584c47699",
-  "date": "2026-10-06",
-  "on": "win11 cmd; docs: drag-and-drop"
+  "hash": "2e461b15df65",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|&& و || و &": {
-  "hash": "525c9ddf0ac7",
-  "date": "2026-10-06",
-  "on": "win11 cmd"
+  "hash": "61501517c8eb",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|08 و 09 مش أرقام": {
-  "hash": "eb5cc2b73004",
-  "date": "2026-10-28",
-  "on": "ويندوز 11، cmd.exe (ملفات .bat بـ CRLF) + pwsh 7 و powershell 5.1 للمقارنة. docs: أكواد xcopy، و ping مع Destination host unreachable، وشيل wmic"
+  "hash": "ff38bd9dc4cd",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|2>&1 قبل ولا بعد >nul": {
   "hash": "9e74a811bef8",
@@ -3340,44 +3340,44 @@
   "on": "ويندوز 11، cmd.exe (ملفات .bat بـ CRLF) + pwsh 7 و powershell 5.1 للمقارنة. docs: أكواد xcopy، و ping مع Destination host unreachable، وشيل wmic"
  },
  "cmd|arp / route": {
-  "hash": "f86d1487f986",
-  "date": "2026-10-06",
-  "on": "win11 cmd; docs: route add/delete, arp -d"
+  "hash": "b41bfe2f6579",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|attrib": {
-  "hash": "f235f81789a2",
-  "date": "2026-10-06",
-  "on": "win11 cmd"
+  "hash": "6ba9223196fb",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|backup-date.bat": {
-  "hash": "530d5dd41ef5",
-  "date": "2026-10-06",
-  "on": "win11 cmd (USERPROFILE pointed at scratch)"
+  "hash": "c19d0dbb62be",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|batch ولا PowerShell؟": {
-  "hash": "0c15eb4d557d",
-  "date": "2026-10-06",
-  "on": "win11 cmd, pwsh 7.6.6, ps 5.1"
+  "hash": "1c86cbe45952",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|build.bat": {
-  "hash": "1dbb396397a7",
-  "date": "2026-10-06",
-  "on": "win11 cmd, npm 11"
+  "hash": "67914100b606",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|call :label": {
-  "hash": "04b49d26ec0c",
-  "date": "2026-10-06",
-  "on": "win11 cmd"
+  "hash": "2550bc26c630",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|cd": {
-  "hash": "62261beec412",
-  "date": "2026-10-06",
-  "on": "win11 cmd (username masked later)"
+  "hash": "23175605936a",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|chcp 65001": {
-  "hash": "692036c89ee3",
-  "date": "2026-10-06",
-  "on": "win11 cmd"
+  "hash": "ed8d7bc5fd5a",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|chkdsk": {
   "hash": "c3ad0b984c78",
@@ -3385,19 +3385,19 @@
   "on": "win11 cmd non-admin refusals; docs: /scan /f /r"
  },
  "cmd|clean-temp.bat": {
-  "hash": "8ea0196c4f70",
-  "date": "2026-10-06",
-  "on": "win11 cmd (TEMP pointed at scratch)"
+  "hash": "aca920ae363d",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|clip": {
-  "hash": "9859de3b2ad1",
-  "date": "2026-10-06",
-  "on": "win11 cmd (clipboard restored)"
+  "hash": "2bc56bfcd689",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|cls": {
-  "hash": "318f0daf4890",
-  "date": "2026-10-06",
-  "on": "win11 cmd; docs: screen clear itself"
+  "hash": "4053444ea392",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|color": {
   "hash": "107443977664",
@@ -3405,54 +3405,54 @@
   "on": "win11 cmd color /?; earlier conhost run in sol"
  },
  "cmd|copy / xcopy": {
-  "hash": "b36758211992",
-  "date": "2026-10-06",
-  "on": "win11 cmd"
+  "hash": "f0b05cb42686",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|curl.exe": {
-  "hash": "2617efef6922",
-  "date": "2026-10-06",
-  "on": "win11 cmd (System32 curl 8.21.0) + certutil"
+  "hash": "e4bf82904d01",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|del *.htm بيمسح .html كمان": {
-  "hash": "0d89e69d6a23",
-  "date": "2026-10-28",
-  "on": "ويندوز 11، cmd.exe (ملفات .bat بـ CRLF) + pwsh 7 و powershell 5.1 للمقارنة. docs: أكواد xcopy، و ping مع Destination host unreachable، وشيل wmic"
+  "hash": "3b3f1ee5b527",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|del / rd": {
-  "hash": "b96ac0aa84d5",
-  "date": "2026-10-06",
-  "on": "win11 cmd"
+  "hash": "b28e7e54833d",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|dir": {
-  "hash": "673920635f83",
-  "date": "2026-10-06",
-  "on": "win11 cmd"
+  "hash": "78d24366f060",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|diskpart": {
-  "hash": "6db1bb8c1047",
-  "date": "2026-10-06",
-  "on": "docs: all (not run)"
+  "hash": "c4593f6e3648",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|doskey": {
-  "hash": "716ae8d0c2cd",
-  "date": "2026-10-06",
-  "on": "win11 cmd"
+  "hash": "a3f95be0cc18",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|findstr": {
-  "hash": "bb8f38fd8d2d",
-  "date": "2026-10-06",
-  "on": "win11 cmd"
+  "hash": "0876b250b998",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|findstr مش regex كامل": {
-  "hash": "b4c6d6e3f453",
-  "date": "2026-10-28",
-  "on": "ويندوز 11، cmd.exe (ملفات .bat بـ CRLF) + pwsh 7 و powershell 5.1 للمقارنة. docs: أكواد xcopy، و ping مع Destination host unreachable، وشيل wmic"
+  "hash": "a33041fb6b44",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|for /f": {
-  "hash": "d067fed3ed4c",
-  "date": "2026-10-06",
-  "on": "win11 cmd, git 2.56"
+  "hash": "00889c5293e3",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|for /f بياكل سطور": {
   "hash": "741ce229d38e",
@@ -3460,19 +3460,19 @@
   "on": "ويندوز 11، cmd.exe (ملفات .bat بـ CRLF) + pwsh 7 و powershell 5.1 للمقارنة. docs: أكواد xcopy، و ping مع Destination host unreachable، وشيل wmic"
  },
  "cmd|for على الملفات": {
-  "hash": "ed58460caa5e",
-  "date": "2026-10-06",
-  "on": "win11 cmd"
+  "hash": "5b1d88dd2a89",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|for و delayed expansion": {
-  "hash": "7c02b97f39bc",
-  "date": "2026-10-06",
-  "on": "win11 cmd"
+  "hash": "8cb2659d6826",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|git-backup.bat": {
-  "hash": "b766e6031dff",
-  "date": "2026-10-06",
-  "on": "win11 cmd (local bare origin)"
+  "hash": "204eb2d0293e",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|help و /?": {
   "hash": "9ce5ef8f0eef",
@@ -3480,44 +3480,44 @@
   "on": "windows-11, cmd"
  },
  "cmd|hosts": {
-  "hash": "fe80c7ed00f0",
-  "date": "2026-10-06",
-  "on": "win11 cmd type; docs: editing as admin"
+  "hash": "a674ee90a627",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|icacls": {
-  "hash": "9d0be013b022",
-  "date": "2026-10-06",
-  "on": "win11 cmd non-admin (scratch folder)"
+  "hash": "0c4d2cb1dd77",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|if و errorlevel": {
-  "hash": "ac6051d90f43",
-  "date": "2026-10-06",
-  "on": "win11 cmd, npm 11"
+  "hash": "897fa0672cff",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|ipconfig": {
-  "hash": "af9aca24bf29",
-  "date": "2026-10-06",
-  "on": "win11 cmd non-admin (flushdns needs elevation here)"
+  "hash": "b1c77a60f7e4",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|ipconfig /release /renew": {
-  "hash": "8ab9d9de754d",
-  "date": "2026-10-06",
-  "on": "win11 cmd /displaydns (elevation); docs: /release /renew"
+  "hash": "25f206d1534f",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|mkdir": {
-  "hash": "36ea2e96f91a",
-  "date": "2026-10-06",
-  "on": "win11 cmd"
+  "hash": "ff6edc33fc58",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|mklink": {
-  "hash": "e2898b1b5aae",
-  "date": "2026-10-06",
-  "on": "win11 cmd non-admin"
+  "hash": "39e3e8c1b7f8",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|move / ren": {
-  "hash": "dffc65777a9e",
-  "date": "2026-10-06",
-  "on": "win11 cmd; docs: interactive overwrite prompt"
+  "hash": "d1518771d4e3",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|mstsc": {
   "hash": "94af5625ec03",
@@ -3530,9 +3530,9 @@
   "on": "win11 cmd non-admin"
  },
  "cmd|net share / net use": {
-  "hash": "e5688af37a54",
-  "date": "2026-10-06",
-  "on": "win11 cmd: net share, net use, helpmsg; docs: create/connect/delete"
+  "hash": "07fb4229a3bb",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|net user": {
   "hash": "f60d791f79ea",
@@ -3540,19 +3540,19 @@
   "on": "win11 cmd non-admin; docs: expires/times/active/delete"
  },
  "cmd|netsh": {
-  "hash": "fcd56f8b214f",
-  "date": "2026-10-06",
-  "on": "win11 cmd; docs: key=clear"
+  "hash": "103744b98de4",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|netsh advfirewall firewall": {
-  "hash": "39bc3fee587c",
-  "date": "2026-10-06",
-  "on": "win11 cmd: show profiles/rules; docs: add/delete rule"
+  "hash": "61614bd451eb",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|netsh interface ip set address": {
-  "hash": "a4bb3aa2a430",
-  "date": "2026-10-06",
-  "on": "win11 cmd: show interface/config; docs: set address/dns/dhcp"
+  "hash": "67ff344409c1",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|netsh winsock reset": {
   "hash": "13e44c3554cd",
@@ -3560,24 +3560,24 @@
   "on": "win11 cmd: winsock show catalog, flushdns (non-admin); docs: release/renew/reset"
  },
  "cmd|netsh wlan connect": {
-  "hash": "91876ec8a7dc",
-  "date": "2026-10-06",
-  "on": "win11 cmd: show interfaces/networks/profiles; docs: connect/export/add/delete"
+  "hash": "5685bed32372",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|netstat -ano": {
-  "hash": "0e50fdd90d4d",
-  "date": "2026-10-06",
-  "on": "win11 cmd"
+  "hash": "ee2535f0676f",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|nslookup": {
-  "hash": "b5262653339d",
-  "date": "2026-10-06",
-  "on": "win11 cmd"
+  "hash": "ac352edbe3e7",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|pathping": {
-  "hash": "f3bc91729c83",
-  "date": "2026-10-06",
-  "on": "win11 cmd"
+  "hash": "edb0a54fd3ff",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|ping -a و nbtstat -A": {
   "hash": "9c62ab027548",
@@ -3585,9 +3585,9 @@
   "on": "win11 cmd: arp -a, ping -a gateway, nbtstat -n, net view; earlier run: nbtstat -A, nslookup"
  },
  "cmd|ping / tracert / nslookup": {
-  "hash": "abceb6aa389d",
-  "date": "2026-10-06",
-  "on": "win11 cmd"
+  "hash": "1e3886ecb835",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|ping نجح ومفيش جهاز": {
   "hash": "0c41eb7b8a40",
@@ -3600,29 +3600,29 @@
   "on": "win11 cmd non-admin incl. one-driver export; docs: export *, add-driver"
  },
  "cmd|powercfg": {
-  "hash": "dd2c38f5f4b1",
-  "date": "2026-10-06",
-  "on": "win11 cmd non-admin: /a, /batteryreport, /getactivescheme, admin refusals; docs: /change"
+  "hash": "4c3e3ca15464",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|prompt": {
-  "hash": "2ce457093f26",
-  "date": "2026-10-06",
-  "on": "win11 cmd; docs: setx PROMPT"
+  "hash": "d1ac79bdbf8f",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|rename-files.bat": {
-  "hash": "212ae83ee3b7",
-  "date": "2026-10-06",
-  "on": "win11 cmd"
+  "hash": "df8e47a9a44b",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|robocopy": {
-  "hash": "29beee2610e7",
-  "date": "2026-10-06",
-  "on": "win11 cmd (local target)"
+  "hash": "6985b6d36585",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|robocopy نجح وسكربتك قال فشل": {
-  "hash": "4e4d8fad8be8",
-  "date": "2026-10-28",
-  "on": "ويندوز 11، cmd.exe (ملفات .bat بـ CRLF) + pwsh 7 و powershell 5.1 للمقارنة. docs: أكواد xcopy، و ping مع Destination host unreachable، وشيل wmic"
+  "hash": "0cd4e4553fc2",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|runas": {
   "hash": "87440cbd5ab6",
@@ -3630,39 +3630,39 @@
   "on": "docs: runas (needs another password); win11 cmd: sc qc seclogon"
  },
  "cmd|sc و net start": {
-  "hash": "46abde0df7d8",
-  "date": "2026-10-06",
-  "on": "win11 cmd non-admin"
+  "hash": "b979edcb8a82",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|schtasks": {
-  "hash": "779aff790724",
-  "date": "2026-10-06",
-  "on": "win11 cmd non-admin: create daily, query; docs: run/change/delete"
+  "hash": "8db41ef23bef",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|set / setx": {
-  "hash": "9f4e28b438ba",
-  "date": "2026-10-06",
-  "on": "win11 cmd; docs: setx"
+  "hash": "1badf71e06a8",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|set /a": {
-  "hash": "ad28f973f117",
-  "date": "2026-10-06",
-  "on": "win11 cmd"
+  "hash": "a5637beee571",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|set /p و choice": {
-  "hash": "fec3a0907c78",
-  "date": "2026-10-06",
-  "on": "win11 cmd"
+  "hash": "855a8924d460",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|set و %1": {
-  "hash": "6632b9cfd949",
-  "date": "2026-10-06",
-  "on": "win11 cmd"
+  "hash": "f3408d3333b3",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|setlocal / endlocal": {
-  "hash": "4e9e15edd4a7",
-  "date": "2026-10-06",
-  "on": "win11 cmd"
+  "hash": "420b371d51ca",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|sfc و DISM": {
   "hash": "780886988178",
@@ -3675,34 +3675,34 @@
   "on": "win11 cmd: /?, /a; docs: /s /r /h /fw"
  },
  "cmd|shutdown /m": {
-  "hash": "08116e0bffc3",
-  "date": "2026-10-06",
-  "on": "win11 cmd: shutdown /?, helpmsg; docs: remote shutdown"
+  "hash": "e504ccf1729e",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|start": {
-  "hash": "9a525b0fb8b7",
-  "date": "2026-10-06",
-  "on": "win11 cmd /b and /wait; docs: GUI forms"
+  "hash": "b181ea8c60c8",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|systeminfo / whoami": {
-  "hash": "2087ef002e57",
-  "date": "2026-10-06",
-  "on": "win11 cmd (username masked later)"
+  "hash": "28160d8b7001",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|takeown": {
-  "hash": "c60f9c68d892",
-  "date": "2026-10-06",
-  "on": "win11 cmd non-admin; docs: admin runs"
+  "hash": "e854a0e7a8b7",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|tasklist / taskkill": {
-  "hash": "395569d253cf",
-  "date": "2026-10-06",
-  "on": "win11 cmd (own processes); docs: /IM node.exe"
+  "hash": "23a9ebfd5f8c",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|timeout و ping": {
-  "hash": "7e77dc1b9ba2",
-  "date": "2026-10-06",
-  "on": "win11 cmd (own node server)"
+  "hash": "64d168f0f216",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|title و mode con": {
   "hash": "24dbefbdd5b9",
@@ -3710,29 +3710,29 @@
   "on": "win11 cmd; earlier conhost run for resize"
  },
  "cmd|tree": {
-  "hash": "fd382db35b5d",
-  "date": "2026-10-06",
-  "on": "win11 cmd"
+  "hash": "5e8ddb5a6808",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|type / more": {
-  "hash": "df4627769706",
-  "date": "2026-10-06",
-  "on": "win11 cmd; docs: more paging keys"
+  "hash": "2f0656e62bc1",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|type nul / echo >": {
-  "hash": "5cdb80985887",
-  "date": "2026-10-06",
-  "on": "win11 cmd"
+  "hash": "1872e499e81a",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|w32tm": {
-  "hash": "1c3f533031ed",
-  "date": "2026-10-06",
-  "on": "win11 cmd non-admin; docs: /config"
+  "hash": "74c718614de3",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|where": {
-  "hash": "2eb5e0da20ea",
-  "date": "2026-10-06",
-  "on": "win11 cmd + ps 5.1 (username masked later)"
+  "hash": "08eac3363f66",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|whoami /groups /priv": {
   "hash": "b5c932fccfb1",
@@ -3740,24 +3740,24 @@
   "on": "win11 cmd non-admin; docs: elevated output"
  },
  "cmd|winget upgrade": {
-  "hash": "154440395a4d",
-  "date": "2026-10-06",
-  "on": "win11 cmd: upgrade list, export; docs: --id/--all, import"
+  "hash": "f891afb9a08d",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|wmic": {
-  "hash": "ca04e5ea32ad",
-  "date": "2026-10-06",
-  "on": "win11 cmd (wmic missing) + PowerShell replacements"
+  "hash": "f1f199f9e840",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|| > >> 2>&1": {
-  "hash": "9f9461e9bf72",
-  "date": "2026-10-06",
-  "on": "win11 cmd"
+  "hash": "e5ecae1af974",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|أول ملف .bat": {
-  "hash": "8d42a0174b22",
-  "date": "2026-10-06",
-  "on": "win11 cmd; docs: double-click (username masked later)"
+  "hash": "66f59d7fa0a5",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|الطريقة: من مهمة لأمر في CMD": {
   "hash": "0913692a97c1",
@@ -3770,34 +3770,34 @@
   "on": "ويندوز 11، cmd.exe (ملفات .bat بـ CRLF) + pwsh 7 و powershell 5.1 للمقارنة. docs: أكواد xcopy، و ping مع Destination host unreachable، وشيل wmic"
  },
  "cmd|رموز CMD": {
-  "hash": "9b2d14a9bc2b",
-  "date": "2026-10-06",
-  "on": "win11 cmd (username masked later)"
+  "hash": "246b1df4ff95",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|سطر الاستخدام في CMD": {
-  "hash": "cb3b8f0f0ea2",
-  "date": "2026-10-28",
-  "on": "windows-11, cmd"
+  "hash": "85cf312b3293",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|مشروع — errorlevel: الفخ اللي بيضيّع وقت": {
-  "hash": "cfcad928c61a",
-  "date": "2026-10-28",
-  "on": "windows-11 cmd.exe (كل الأمثلة اتشغّلت: run.bat بالتلات أوضاع، وفخ %errorlevel% جوه بلوك، وفخ LF مقابل CRLF، وقراية JSON بـ batch مقابل PowerShell)"
+  "hash": "a43fce412733",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|مشروع — for /f: اقرا ملف الخطوات": {
-  "hash": "167dfd6530ed",
-  "date": "2026-10-28",
-  "on": "windows-11 cmd.exe (كل الأمثلة اتشغّلت: run.bat بالتلات أوضاع، وفخ %errorlevel% جوه بلوك، وفخ LF مقابل CRLF، وقراية JSON بـ batch مقابل PowerShell)"
+  "hash": "fd76bdf6c6d3",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|مشروع — إمتى تسيب batch": {
-  "hash": "f0a8daeb7398",
-  "date": "2026-10-28",
-  "on": "windows-11 cmd.exe (كل الأمثلة اتشغّلت: run.bat بالتلات أوضاع، وفخ %errorlevel% جوه بلوك، وفخ LF مقابل CRLF، وقراية JSON بـ batch مقابل PowerShell)"
+  "hash": "7b77223d7639",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|مشروع — ملف بيتداس عليه ويشتغل من أي مكان": {
-  "hash": "c6884349d1ad",
-  "date": "2026-10-28",
-  "on": "windows-11 cmd.exe (كل الأمثلة اتشغّلت: run.bat بالتلات أوضاع، وفخ %errorlevel% جوه بلوك، وفخ LF مقابل CRLF، وقراية JSON بـ batch مقابل PowerShell)"
+  "hash": "b3f716f8692f",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cpp|C++ في المسابقات": {
   "hash": "dbc4edee8a2a",

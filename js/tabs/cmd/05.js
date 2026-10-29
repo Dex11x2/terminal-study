@@ -24,11 +24,13 @@ ipconfig /displaydns`,
           try: "اعرض كاش الـ DNS بـ [[/displaydns]] قبل وبعد [[/flushdns]].",
           deep: {
             why: "تجديد عنوان الـ IP من الـ DHCP. مفيد لو الجهاز بقى عنوانه 169.254 أو الاتصال بايظ.",
-            how: R`[[ipconfig /release]] يطلّق العنوان الحالي. [[ipconfig /renew]] يطلب عنوان جديد من الـ DHCP (الراوتر).
+            how: R`[[ipconfig /release]] بيسيب العنوان اللي الراوتر اداهولك، والنت بيقطع. [[ipconfig /renew]] بيطلب عنوان جديد من الـ DHCP (الراوتر). الاتنين بيشتغلوا على كل الكروت، ولكارت واحد اكتب اسمه بعدهم.
 
-[[ /flushdns]] بيمسح الـ DNS cache. مفيد بعد تغيير ملف hosts.
+[[/flushdns]] بيمسح الـ DNS cache، مفيد بعد تغيير ملف hosts أو DNS دومين. و [[/displaydns]] بيعرض الكاش ده قبل ما تمسحه.
 
-أوامر advanced: [[ipconfig /registerdns]] بيسجّل اسم الجهاز في الـ DNS مرة تانية.`,
+[[ipconfig /registerdns]] بيجدّد العناوين ويسجّل اسم الجهاز في الـ DNS تاني، ودي بتفرق في شبكات الشركات أكتر.
+
+على ويندوز 11 الجديد أغلب الأوامر دي بتطلب CMD كأدمن.`,
             when: "الاتصال بايظ وعنوانك 169.254. بعد تغيير إعدادات الشبكة.",
             mistakes: "Release/Renew مش هيحل مشاكل wifi password أو MAC filtering. هو بس بيجدد العنوان."
           },
@@ -100,7 +102,11 @@ The requested operation requires elevation.
 | [[ipconfig /flushdns]] | امسح كاش الـ DNS | لأ |
 
 ودول مش هيحلوا باسورد واي فاي غلط أو كابل مفصول. في لينكس المقابل [[sudo dhclient -r]] وبعدها [[sudo dhclient]] على توزيعات كتير (من التوثيق، والأداة بتختلف حسب التوزيعة).`,
-          lines: ["سيب عنوان الـ IP الحالي.", "اطلب عنوان جديد من الراوتر.", "اعرض كاش الـ DNS."],
+          lines: [
+            R`بيقول للراوتر (سيرفر الـ DHCP) «مش محتاج العنوان ده تاني» ويشيله من الكروت، فالنت بيقطع لحد ما تعمل renew. غالبًا محتاج CMD كأدمن. ولو عايز كارت واحد بس اكتب اسمه بعده: [[ipconfig /release "Wi-Fi"]].`,
+            R`بيطلب من الراوتر عنوان جديد ويستنى لحد ما ييجي، فممكن ياخد ثواني. لو رجع عنوان بيبدأ بـ [[169.254]] يبقى الراوتر مردّش (مفيش DHCP)، والمشكلة في الراوتر أو الاتصال بيه مش في ويندوز.`,
+            R`بيعرض الكاش بتاع الـ DNS: كل دومين الجهاز سأل عليه قريب، ونوع السجل، والـ IP اللي اترد، والـ TTL (كام ثانية فاضلة قبل ما يسأل تاني). على ويندوز 11 الجديد ممكن يرفض من غير أدمن ويطبع [[The requested operation requires elevation.]]`,
+          ],
           sol: R`لو طلعلك [[The requested operation requires elevation.]] (ده اللي حصل في تجربة على ويندوز 11 Build 26300 من CMD عادي)، افتح CMD كأدمن وجرب تاني. [[ipconfig /displaydns]] هيطبع لكل دومين زرته قريب بلوك فيه [[Record Name]] و [[Record Type]] و [[Time To Live]] و [[A (Host) Record . . . : IP]]. بعد [[ipconfig /flushdns]] هيطبع [[Successfully flushed the DNS Resolver Cache.]]، و [[/displaydns]] تاني هيطلع شبه فاضي.
 
 لو لقيت كام entry لسه موجودين بعد الـ flush، غالبًا دول من ملف hosts (بيتحمّلوا دايمًا)، أو برنامج في الخلفية سأل تاني في الثواني اللي فاتت. [[/release]] و [[/renew]] مش جزء من التجربة دي، دول بيقطعوا النت ثواني، ومجربتهمش هنا؛ اللي مكتوب عنهم من توثيق ipconfig على Microsoft Learn.`
@@ -120,11 +126,13 @@ nslookup -type=txt example.com`,
           try: "اعرف سيرفرات الإيميل لدومين عندك.",
           deep: {
             why: "استعلام DNS بشكل تفاعلي أو مباشر. موجود في ويندوز والماك ولينكس.",
-            how: R`[[nslookup example.com]] بيسأل الـ DNS الافتراضي ويعرض الـ IP. [[nslookup example.com 8.8.8.8]] يسأل Google DNS.
+            how: R`[[nslookup example.com]] بيسأل الـ DNS الافتراضي ويعرض الـ IP. [[nslookup example.com 8.8.8.8]] يسأل Google DNS بدل اللي عندك.
 
-الوضع التفاعلي: [[nslookup]] من غير حاجة بيدخل prompt. [[set type=MX]] بيغيّر نوع الاستعلام. [[example.com]] بيبحث. [[exit]] للخروج.
+[[-type=]] بيحدد نوع السجل: [[A]] (IPv4) و [[AAAA]] (IPv6) و [[MX]] (الإيميل) و [[TXT]] (SPF والتحقق) و [[CNAME]] (اسم بيشاور على اسم تاني) و [[NS]] (السيرفرات المسؤولة عن الدومين).
 
-[[nslookup -type=TXT example.com]] لسجلات التحقق.`,
+الوضع التفاعلي: [[nslookup]] لوحدها بتدخلك prompt بعلامة [[>]]، تكتب [[set type=MX]] وبعدين اسم الدومين، و [[exit]] للخروج.
+
+لو ظهر [[DNS request timed out]] وبعده إجابة، يبقى محاولة واحدة اتأخرت والإجابة اللي بعدها سليمة.`,
             when: "DNS troubleshooting. التأكد من MX أو TXT records.",
             mistakes: "nslookup ممكن يطلعلك «Non-authoritative answer» ومش مشكلة، ده يعني الجواب من cache مش من السيرفر الأصلي."
           },
@@ -245,7 +253,12 @@ example.com	text =
 والأخير جربته على example.com وطلع سيرفرين: [[hera.ns.cloudflare.com]] و [[elliott.ns.cloudflare.com]]، يعني الـ DNS بتاعه متدار من Cloudflare.
 
 المقابل في لينكس [[dig example.com]] و [[dig MX example.com]] و [[dig @1.1.1.1 example.com]].`,
-          lines: ["الـ IP بتاع الدومين.", "اسأل Cloudflare بدل الـ DNS بتاعك.", "سيرفرات الإيميل.", "سجلات TXT."],
+          lines: [
+            R`بيسأل سيرفر الـ DNS اللي متظبط عندك عن الـ IP بتاع الدومين. أول جزء ([[Server]] و [[Address]]) هو مين اللي جاوب، وتحت [[Addresses]] العناوين (IPv6 و IPv4). لو طلع [[Non-existent domain]] يبقى الدومين مش موجود أو مكتوب غلط.`,
+            R`الكلمة التانية سيرفر DNS تسأله بدل اللي عندك، و [[1.1.1.1]] ده Cloudflare. لو الإجابة هنا غير اللي في السطر اللي فوق، يبقى الـ DNS بتاعك (أو كاش الراوتر) لسه شايف القديم. دي أسرع طريقة تفرّق بين «الدومين غلط» و«الـ DNS عندي قديم».`,
+            R`[[-type=mx]] بيسأل عن سجلات MX، ودي السيرفرات اللي بتستقبل إيميلات الدومين. كل سطر فيه [[preference]] (الأقل بيتجرّب الأول) و [[mail exchanger]] اسم السيرفر. لو إيميل الدومين مش بيوصل، أول حاجة تبص عليها هنا.`,
+            R`[[-type=txt]] بيجيب سجلات TXT، وفيها حاجات زي SPF ([[v=spf1 ...]]) اللي بتقول مين مسموح يبعت إيميل باسم الدومين، وأكواد التحقق اللي Google أو غيرها بيطلبوها عشان تثبت إن الدومين بتاعك.`,
+          ],
           sol: R`[[nslookup -type=mx yourdomain.com]] بيطبع سطر لكل سيرفر زي [[yourdomain.com  MX preference = 1, mail exchanger = smtp.google.com]] لو بتستخدم Google Workspace، أو سيرفرات [[...mail.protection.outlook.com]] لو Microsoft 365. الرقم الأصغر في preference أولويته أعلى.
 
 لو مطلعش أي [[mail exchanger]] ولقيت بس بيانات SOA (primary name server)، يبقى الدومين ملوش MX، والإيميل عليه مش هيوصل. ولو عايز تتأكد إن الرد مش من كاش قديم اسأل سيرفر عام: [[nslookup -type=mx yourdomain.com 1.1.1.1]].`
@@ -263,11 +276,11 @@ route print`,
           try: "اعرف IP الراوتر من route print.",
           deep: {
             why: "معلومات متقدمة عن الشبكة: جدول ARP لإيجاد أجهزة على نفس الشبكة، وجدول الـ routing.",
-            how: R`[[arp -a]] بيعرض جدول ARP: الأجهزة اللي الجهاز بيعرفها على الشبكة المحلية (IP وMAC). مفيد تعرف إيه الأجهزة على نفس الـ subnet.
+            how: R`[[arp -a]] بيعرض جدول ARP لكل كارت: الـ IP والـ MAC والنوع ([[dynamic]] اتعلمه من الشبكة، و [[static]] ثابت زي عناوين الـ broadcast). بيظهر بس الأجهزة اللي جهازك كلمها قريب، مش كل اللي على الشبكة.
 
-[[route print]] بيعرض جدول الـ routing. [[route print 0.0.0.0]] الـ default gateway.
+[[route print]] بيعرض الكروت ([[Interface List]]) وجدول الـ routing. السطر اللي [[Network Destination]] بتاعه [[0.0.0.0]] هو الـ default route، والـ [[Gateway]] فيه هو الراوتر. و [[route print -4]] بيعرض IPv4 بس.
 
-[[route add]] لإضافة route يدويًا (محتاج Admin).`,
+[[route add]] و [[route delete]] و [[arp -d]] بيعدّلوا ومحتاجين أدمن، وممكن يقطعوا النت لو غلط.`,
             when: "تشخيص مشاكل الـ routing. إيجاد عنوان MAC لجهاز. في بيئات شبكات معقدة.",
             mistakes: "arp cache بياخد وقت يتحدث. لو محتاج تجدّد: [[arp -d *]] بيمسح الكاش (محتاج Admin)."
           },
@@ -362,8 +375,8 @@ Network Destination        Netmask          Gateway       Interface  Metric
 
 أوامر التعديل ([[route add]] و [[route delete]] و [[arp -d]]) محتاجة أدمن وبتغيّر الشبكة، فمااتجربتش هنا. المقابل في لينكس [[ip neigh]] و [[ip route]].`,
           lines: [
-            "الأجهزة اللي جهازك شافها على الشبكة المحلية، بالـ IP والـ MAC.",
-            "جدول الراوتينج، وفيه الـ gateway الافتراضي."
+            R`بيعرض جدول ARP: لكل كارت، الـ IP والـ MAC بتوع الأجهزة اللي جهازك كلمها قريب على الشبكة المحلية، والنوع ([[dynamic]] اتعلمه من الشبكة). الجهاز اللي عمرك ما كلمته مش هيظهر، فده مش لستة بكل اللي على الشبكة.`,
+            R`بيعرض الكروت وجدول الـ routing: لكل شبكة، الطلب يخرج من أنهي كارت وعلى أنهي راوتر. السطر اللي [[Network Destination]] بتاعه [[0.0.0.0]] هو الطريق الافتراضي لأي عنوان بره، والـ [[Gateway]] فيه هو الراوتر بتاعك.`,
           ],
           sol: R`في [[route print]] روح لقسم [[IPv4 Route Table]] تحت [[Active Routes:]]، ودوّر على السطر اللي Network Destination و Netmask فيه [[0.0.0.0]] و [[0.0.0.0]]. عمود [[Gateway]] في السطر ده هو IP الراوتر، زي [[192.168.1.1]]، وعمود Interface هو الـ IP بتاعك.
 
@@ -483,7 +496,9 @@ hops [[3]] و [[4]] و [[5]] عليهم **100%**، وده يخض. بس بص عل
 | [[-h 10]] | أقصى عدد hops (الافتراضي 30) |
 
 استخدمه لما النت «بيقطّع» أو المكالمات بتتقطع، مش لما مفيش نت خالص (ساعتها [[ping]] و [[tracert]] أسرع). المقابل في لينكس [[mtr]].`,
-          lines: ["الطريق + نسبة الضياع عند كل راوتر (بياخد دقيقتين)."],
+          lines: [
+            R`بيعمل زي [[tracert]] الأول ويطبع الراوترات اللي في السكة، وبعدين يبعت لكل واحد فيهم 100 طلب (حوالي 25 ثانية لكل hop) ويطلع نسبة الضياع عند كل واحد. لو الضياع بيبدأ عند راوتر ويكمّل في كل اللي بعده، المشكلة من عنده.`,
+          ],
           sol: R`[[pathping google.com]] بيطبع الأول قايمة الـ hops زي tracert، وبعدين [[Computing statistics for 250 seconds...]] (الوقت حسب عدد الـ hops)، وفي الآخر جدول فيه Hop و RTT و [[Source to Here]] و [[This Node/Link]] و Address. العمود [[This Node/Link Lost/Sent = Pct]] هو نسبة الخسارة عند الراوتر ده بالذات.
 
 لو لقيت راوتر في النص عليه [[100%]] أو نسبة عالية بس اللي بعده [[0%]]، ده مش مشكلة: الراوتر ده بيتجاهل الـ ping بتاع الاختبار بس وبيعدّي الترافيك عادي. الخسارة الحقيقية هي اللي بتبدأ عند hop وتفضل في كل اللي بعده. وأول hop (الراوتر بتاعك) لو عليه خسارة، المشكلة في الواي فاي أو الكابل عندك.`
@@ -502,13 +517,13 @@ netsh wlan show profile name="MyWiFi" key=clear`,
           try: "اعرف باسورد الواي فاي بتاعك من جهاز متوصل بيه.",
           deep: {
             why: "أداة قوية لإدارة الشبكة في ويندوز. بتستخدمها لإيجاد الـ Wi-Fi passwords وإعداد الشبكة.",
-            how: R`[[netsh wlan show profiles]] يعرض كل الـ Wi-Fi networks المحفوظة.
+            how: R`netsh بيتقسم سياقات: [[interface]] للكروت والـ IP، و [[wlan]] للواي فاي، و [[advfirewall]] للفايروول، و [[winsock]] للـ sockets. وفي كل سياق أفعال: [[show]] للعرض، و [[set]] و [[add]] و [[delete]] للتغيير (ودول محتاجين أدمن).
 
-[[netsh wlan show profile name="NetworkName" key=clear]] يعرض معلومات الشبكة بما فيها الباسورد تحت «Key Content».
+[[netsh wlan show profiles]] الشبكات المحفوظة، و [[netsh wlan show profile name="NetworkName" key=clear]] تفاصيل شبكة وباسوردها تحت [[Key Content]].
 
 [[netsh interface ip show config]] إعدادات IP لكل كارت.
 
-[[netsh advfirewall set allprofiles state off]] يعطّل الفايروول (محتاج Admin). استخدم بحذر.`,
+ولو مش فاكر الأوامر: [[netsh wlan ?]] بيطبع الأوامر المتاحة في السياق ده، وده أسرع من البحث.`,
             when: "نسيت باسورد Wi-Fi محفوظ. إعداد شبكة من الـ command line.",
             mistakes: "netsh firewall (القديم) مش بيشتغل على ويندوز الحديث. استخدم netsh advfirewall."
           },
@@ -607,9 +622,9 @@ Profile "NoSuchNet123" is not found on the system.
 
 أي أمر فيه [[set]] (تغيير IP، قفل الفايروول) بيغيّر الجهاز فعلًا وممكن يقطع النت، وليه دروس لوحده في «تحكّم في الشبكة».`,
           lines: [
-            "إعدادات IP لكل كارت.",
-            "شبكات الواي فاي المحفوظة.",
-            "تفاصيل شبكة معينة، وباسوردها تحت Key Content ([[key=clear]])."
+            R`[[interface ip]] هو جزء الـ IPv4 في netsh، و [[show config]] بيعرض لكل كارت: الـ IP والـ mask والـ gateway والـ DNS، وهل جايين من DHCP ولا متكتبين بإيدك. للعرض بس، فآمن تشغّله في أي وقت.`,
+            R`[[wlan]] جزء الواي فاي، و [[show profiles]] بيطبع أسامي كل الشبكات اللي الجهاز اتوصل بيها قبل كده وحفظها، تحت [[All User Profile]]. الاسم ده بالظبط هو اللي هتكتبه في السطر اللي بعده.`,
+            R`تفاصيل شبكة واحدة: [[name=]] لازم يطابق الاسم بالظبط (حروف كابيتال ومسافات)، والتنصيص عشان المسافات. و [[key=clear]] بيطبع الباسورد نفسه تحت [[Key Content]]، وممكن يحتاج CMD كأدمن. متشغّلوش وحد بيبص على شاشتك.`,
           ],
           sol: R`[[netsh wlan show profiles]] الأول عشان تعرف الاسم بالظبط (بيظهر بعد [[All User Profile :]]). بعدين [[netsh wlan show profile name="اسم الشبكة" key=clear]]، ودوّر تحت [[Security settings]] على سطر [[Key Content : ...]]، ده الباسورد.
 
@@ -630,13 +645,13 @@ notepad C:\Windows\System32\drivers\etc\hosts`,
           try: "اعرض الملف واعرف فيه إيه.",
           deep: {
             why: "نفس ملف hosts في لينكس ولكن مكانه مختلف ومحتاج صلاحيات Admin.",
-            how: R`المسار: [[C:\Windows\System32\drivers\etc\hosts]]. عدّله بأي text editor كـ Admin.
+            how: R`المسار: [[C:\Windows\System32\drivers\etc\hosts]] (ملف من غير امتداد). كل سطر فيه IP وبعده مسافة وبعده الاسم، زي [[127.0.0.1 myapp.local]]، والسطر اللي بيبدأ بـ [[#]] متجاهل.
 
-أسهل طريقة: ابحث عن Notepad في Start Menu، كليك يمين ثم «Run as administrator»، ثم افتح الملف.
+أسهل طريقة تعدّله: ابحث عن Notepad في Start Menu، كليك يمين ثم «Run as administrator»، وافتح الملف (اختار All Files عشان يظهر).
 
 أو PowerShell كمدير: [[Add-Content "C:\Windows\System32\drivers\etc\hosts" "203.0.113.10 example.com"]].
 
-بعد التعديل: [[ipconfig /flushdns]] عشان التغيير يسري فورًا.`,
+بعد التعديل: [[ipconfig /flushdns]] عشان التغيير يسري فورًا من غير ما تستنى الكاش.`,
             when: "تجرّب موقع على سيرفر جديد. دومين محلي للتطوير.",
             mistakes: "تعدّل من غير صلاحيات Admin فيرفض الحفظ (Access denied). افتحه كـ Admin دايمًا واعمل flush بعده."
           },
@@ -723,7 +738,10 @@ notepad C:\Windows\System32\drivers\etc\hosts`,
 | [[203.0.113.10 example.com]] | جرّب موقعك على سيرفر جديد قبل ما تغيّر الـ DNS |
 
 المقابل في لينكس والماك [[/etc/hosts]] بنفس الشكل بالظبط، وبيتعدّل بـ [[sudo]].`,
-          lines: ["اعرض ملف hosts.", "افتحه في Notepad (لازم CMD يكون مفتوح كمدير عشان تقدر تحفظ)."],
+          lines: [
+            R`[[type]] بيطبع ملف hosts. ده ملف نص فيه سطور «IP واسم»، وويندوز بيبص فيه **قبل** ما يسأل الـ DNS. أغلب الملف الأصلي سطور بتبدأ بـ [[#]] (تعليقات متجاهلة)، فلو مفيش غيرها يبقى مفيش أي اسم متوجّه بإيد. القراية مش محتاجة أدمن.`,
+            R`افتحه في Notepad (لازم CMD يكون مفتوح كمدير عشان تقدر تحفظ).`,
+          ],
           sol: R`[[type C:\Windows\System32\drivers\etc\hosts]] على ويندوز جديد هيطبع سطور كلها بتبدأ بـ [[#]]: حقوق Microsoft، وشرح للصيغة، وسطرين معلقين [[# 127.0.0.1 localhost]] و [[# ::1 localhost]]. يعني الملف فعليًا مفيهوش حاجة شغالة، والـ [[#]] معناها تعليق.
 
 لو عندك Docker Desktop هتلاقي قسم [[# Added by Docker Desktop]] فيه [[host.docker.internal]] و [[kubernetes.docker.internal]]، وده طبيعي. أما لو لقيت سطور بدومينات معروفة (بنوك أو جوجل) شاورة على IP غريب وانت محطتهاش، ده ممكن يكون برنامج خبيث، راجعه. (الحفظ من notepad من غير أدمن مجربتهوش هنا عشان مش بنعدّل hosts؛ ده من توثيق Microsoft.)`
