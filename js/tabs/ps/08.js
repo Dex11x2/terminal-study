@@ -4,6 +4,14 @@ MORE("ps", [
       t: "تحكّم في الشبكة من PowerShell",
       l: 2,
       n: R`كروت الشبكة، والـ IP الثابت، والـ DNS، والفايروول، ونوع الشبكة Public ولا Private: اللي بتغيّره من Settings و Control Panel بأمر واحد. العرض من غير أدمن، والتغيير محتاج Terminal أدمن، وكله ويندوز بس`,
+      projects: [
+        { lvl: 'صغير', t: R`حالة الشبكة في شاشة واحدة`, what: R`سكربت [[net-status.ps1]] بيطبع: الكارت الشغال وسرعته، والـ IP وجاي منين ([[PrefixOrigin]])، والـ DNS، ونوع الشبكة، والفايروول شغال على البروفايل ده ولا لأ. من دروس Get-NetAdapter والـ IP الثابت والـ DNS و Public ولا Private.`, done: R`بيشتغل من نافذة عادية، وبيطبع ٥ سطور بأسامي ثابتة، والقيم نفس اللي في Settings ← Network & internet.` },
+        { lvl: 'صغير', t: R`عداد الاستهلاك`, what: R`سكربت بيحفظ [[ReceivedBytes]] و [[SentBytes]] والوقت في [[usage.json]] أول مرة، وكل مرة بعد كده يطبع نزلت ورفعت كام جيجا من ساعة اللقطة ([[1GB]]). ولو الرقم الجديد أصغر من القديم (الجهاز اتعمله restart فالعداد اتصفّر) يقول كده ويبدأ لقطة جديدة. من درس Get-NetAdapter.`, done: R`التشغيلة التانية بعد ما تتفرج على فيديو بتطبع رقم أكبر من الصفر بالجيجا، والملف فيه تاريخ اللقطة، وبعد restart بيطبع رسالة إن العداد اتصفّر بدل رقم سالب.` },
+        { lvl: 'متوسط', t: R`باك أب واسترجاع إعدادات الشبكة`, what: R`[[save-net.ps1]] بيحفظ لكل كارت شغال: الـ IP والـ prefix والـ gateway والـ DNS والـ DHCP (كنص مش رقم). و [[restore-net.ps1]] بيقرا الملف ويبني نفس أوامر درس الـ IP الثابت ودرس الـ DNS، ومن غير [[-Apply]] بيطبعهم بس، ومع [[-Apply]] بيشغّلهم (أدمن). ولو الكارت كان DHCP بيرجّعه DHCP مش IP ثابت.`, done: R`[[save-net.ps1]] بيعمل JSON تقدر تقراه بعينك ([["Dhcp": "Enabled"]] مش 1)، و [[restore-net.ps1]] من غير [[-Apply]] بيطبع الأوامر بالأسامي والأرقام الحقيقية ومبيغيّرش حاجة، والأوامر نفسها لو زوّدت عليها [[-WhatIf]] بتطبع [[What if:]] من غير error.` },
+        { lvl: 'متوسط', t: R`افتح موقعك للموبايل`, what: R`سكربت [[dev-share.ps1 -Port 5173]] بيفحص التلات حاجات اللي لازم يبقوا صح عشان الموبايل يفتح سيرفر التطوير: الشبكة Private، وفيه rule فايروول شغالة بتسمح بالبورت ده على Private، والسيرفر سامع على [[0.0.0.0]] أو [[::]] مش 127.0.0.1 بس. لو كله تمام يطبع [[http://IP:5173]] بالـ IP المحلي، ولو لأ يقول أنهي فحص فشل والأمر اللي يصلّحه. من كل دروس الوحدة ودرس «مين بيسمع على أنهي بورت».`, done: R`مع سيرفر سامع على 127.0.0.1 بس بيقول إن السيرفر مش مكشوف (ومبيقولش إن الفايروول هو المشكلة)، وعلى شبكة Public بيقول كده ويطبع أمر [[Set-NetConnectionProfile]] بالاسم، ولما التلاتة يبقوا صح اللينك اللي بيطبعه بيفتح من الموبايل.` },
+        { lvl: 'كبير', t: R`مبدّل إعدادات الشبكة`, what: R`[[net-switch.ps1 -Profile home]] بيقرا إعدادات مسمّاة من [[profiles.json]] (مثلًا: home بـ IP ثابت و DNS معين، و auto بـ DHCP، و cloudflare بتغيير الـ DNS بس). قبل أي حاجة: بيتأكد إنه أدمن (سطر [[$IsAdmin]] الجاهز في أول مثال درس «function prompt» في الوحدة الجاية) وإلا يقف برسالة، ويحفظ الإعدادات الحالية (المشروع المتوسط)، وبعدين يطبّق، ويتأكد إن الـ gateway بيرد و [[Resolve-DnsName example.com]] بيرجّع IP، ولو فشل يرجّع الباك أب لوحده. كل خطوة في لوج بالوقت، و [[-WhatIf]] بيعدّيه لكل أمر تغيير.`, done: R`من نافذة عادية بيقف برسالة واضحة وكود غير صفر. ومع [[-WhatIf]] بيطبع كل الأوامر ومبيغيّرش حاجة. ومن أدمن [[-Profile auto]] مرتين ورا بعض الشبكة شغالة بعد الاتنين، واللوج فيه نفس الخطوات مرتين. ولو حطيت gateway غلط في الملف بيرجع للإعدادات القديمة لوحده والنت يرجع.` },
+        { lvl: 'فكرة', t: R`الجهاز اللي بيعرف هو فين`, what: R`صمّم انت: الجهاز يعرف هو على أنهي شبكة (بالاسم من [[Get-NetConnectionProfile]] أو الـ gateway) ويظبط نفسه عليها: نوع الشبكة، والـ DNS، وrules سيرفر التطوير، وأي حاجة تانية بتغيّرها بإيدك كل ما تنقل من البيت للشغل للكافيه.`, done: R`على شبكتين مختلفين على الأقل، تشغيلة واحدة بتخلي الجهاز على الإعدادات اللي انت كاتبها للشبكة دي، وتشغيلها تاني على نفس الشبكة مبيغيّرش حاجة.`, ext: R`شغّلها لوحدها كل ما الشبكة تتغير (Task Scheduler بـ event)، وزوّد إشعار بالتغييرات، وخلّي الإعدادات في ملف واحد تشاركه بين أجهزتك.` },
+      ],
       items: [
         {
           cmd: "Get-NetAdapter",
@@ -22,6 +30,11 @@ Restart-NetAdapter -Name "Wi-Fi"
 Disable-NetAdapter -Name "Ethernet" -Confirm:$false
 Enable-NetAdapter -Name "Ethernet"`,
           try: R`اعرف الكارت اللي انت متوصل بيه فعلًا وسرعته، وكام جيجا نزلت عليه من ساعة ما الجهاز فتح (اقسم [[ReceivedBytes]] على [[1GB]]).`,
+          practice: [
+            { lvl: 'سريع', t: R`اعرض الكروت الحقيقية اللي شغالة بس: [[Get-NetAdapter -Physical | Where-Object Status -eq 'Up' | Select-Object Name, LinkSpeed, MacAddress]].`, done: R`غالبًا سطر واحد: الكارت اللي انت متوصل بيه، و [[LinkSpeed]] رقم زي [[65 Mbps]] أو [[1 Gbps]]. والكارت اللي مفيهوش كابل مش ظاهر لأن حالته [[Disconnected]].` },
+            { lvl: 'تطبيق', t: R`قيس سرعة النزول دلوقتي: خد [[ReceivedBytes]] من [[Get-NetAdapterStatistics -Name "Wi-Fi"]]، واستنى بـ [[Start-Sleep 5]]، وخده تاني، واقسم الفرق على 5 وعلى [[1KB]] واطبعه بـ [[{0:N0} KB/s]].`, done: R`بيطبع رقم KB/s: قريب من الصفر والجهاز فاضي، وبيعلى بوضوح لو شغّلت فيديو أو تحميل في نفس الوقت.` },
+            { lvl: 'تحدي', t: R`اعرف الكروت الافتراضية تبع إيه: [[$phys = Get-NetAdapter -Physical]]، وبعدين [[Get-NetAdapter | Where-Object Name -notin $phys.Name | Select-Object Name, InterfaceDescription, Status]]. وبعدين جرّب [[Restart-NetAdapter -Name "Wi-Fi" -WhatIf]] من نافذة عادية.`, done: R`[[(Get-NetAdapter).Count]] بيساوي عدد الحقيقية + عدد اللي طلعوا في الجدول، و [[InterfaceDescription]] بيقولك كل واحد تبع إيه (WSL أو Hyper-V أو VPN مثلًا). و [[-WhatIf]] بيطبع [[What if: Restart-NetAdapter 'Wi-Fi']] والنت مبيقطعش.` },
+          ],
           flag: "danger",
           deep: {
             why: R`النت واقف والواي فاي مكتوب Connected، أو كارت الـ Ethernet مش شايف الكابل، أو محتاج الـ MAC بتاع جهازك عشان تحطه في الراوتر (حجز IP أو فلترة أجهزة). بدل ما تلف في Control Panel ← Network Connections، الأمر بيوريك كل الكروت في جدول، و [[Restart-NetAdapter]] بيعمل نفس «Disable وبعدين Enable» اللي بتعمله بالماوس.`,
@@ -221,6 +234,11 @@ Remove-NetRoute -InterfaceAlias $if -AddressFamily IPv4 -DestinationPrefix 0.0.0
 Set-NetIPInterface -InterfaceAlias $if -Dhcp Enabled
 Set-DnsClientServerAddress -InterfaceAlias $if -ResetServerAddresses`,
           try: R`قبل ما تغيّر أي حاجة: اعرف عنوانك الحالي جاي منين ([[Get-NetIPAddress -InterfaceAlias "Wi-Fi" -AddressFamily IPv4]] وبص على [[PrefixOrigin]])، والـ DHCP شغال ولا لأ، واتأكد إن العنوان اللي ناوي عليه محدش واخده بـ [[Test-Connection 192.168.1.50 -Count 1 -Quiet]].`,
+          practice: [
+            { lvl: 'سريع', t: R`اعرف كل عنوان جاي منين: [[Get-NetIPAddress -AddressFamily IPv4 | Select-Object InterfaceAlias, IPAddress, PrefixLength, PrefixOrigin]].`, done: R`الكارت اللي انت متوصل بيه [[PrefixOrigin]] بتاعه [[Dhcp]]، و [[Loopback Pseudo-Interface 1]] بيبقى [[WellKnown]] بـ PrefixLength 8، والكروت اللي مش متوصلة غالبًا عنوانها 169.254.x.x بـ 16. ولو حطيت IP ثابت بعد كده هيتكتب [[Manual]].` },
+            { lvl: 'تطبيق', t: R`قبل أي تغيير خد باك أب: سكربت [[save-net.ps1]] بيكتب في [[net-backup.json]] اسم الكارت والـ IP والـ PrefixLength والـ gateway والـ DNS، وحالة الـ DHCP من [[(Get-NetIPInterface -InterfaceAlias "Wi-Fi" -AddressFamily IPv4).Dhcp]]، بـ [[ConvertTo-Json]].`, done: R`[[Get-Content net-backup.json -Raw | ConvertFrom-Json]] بيرجّع الست قيم. ولو كتبت [[Dhcp]] زي ما هو هتلاقيه في الملف رقم ([[1]]) مش [[Enabled]]، لأن [[ConvertTo-Json]] بيحوّل الـ enum لرقم (اتجرّب في 7.6 و 5.1)، فاكتبه [[.Dhcp.ToString()]] عشان الملف يتقري.` },
+            { lvl: 'تحدي', t: R`جرّب كود الدرس «على الناشف» من نافذة عادية (مش أدمن): حط اسم كارتك وزوّد [[-WhatIf]] على كل سطر بيغيّر ([[Set-NetIPInterface]] و [[Remove-NetIPAddress]] و [[Remove-NetRoute]] و [[New-NetIPAddress]] و [[Set-DnsClientServerAddress]])، واقرا كل سطر [[What if:]].`, done: R`كل أمر بيطبع [[What if:]] بالعملية اللي كان هيعملها (مثلًا [[Performing operation "Remove" on Target "NetIPAddress -IPv4Address ..."]])، و [[Set-NetIPInterface]] من غير [[-AddressFamily]] بيطبع سطرين (IPv4 و IPv6). و [[New-NetIPAddress]] ممكن يقول [[Instance DefaultGateway already exists]] لأن [[-WhatIf]] ممسحش الـ gateway القديم فعلًا. وبعدها [[PrefixOrigin]] لسه [[Dhcp]] والنت شغال.` },
+          ],
           flag: "danger",
           deep: {
             why: R`جهاز في البيت شغال سيرفر (ملفات، أو Home Assistant، أو جهاز بتعمله Remote)، أو طابعة، أو جهاز بتحطه في port forwarding: لازم عنوانه ميتغيرش، وإلا كل حاجة بتشاور عليه تقع لما الراوتر يدّيه عنوان جديد بعد restart.`,
@@ -414,6 +432,11 @@ Resolve-DnsName example.com -Type A
 Get-DnsClientDohServerAddress -ServerAddress 1.1.1.1
 Set-DnsClientServerAddress -InterfaceAlias "Wi-Fi" -ResetServerAddresses`,
           try: R`اعرف الـ DNS اللي جهازك بيستخدمه دلوقتي على IPv4 و IPv6 ([[Get-DnsClientServerAddress -InterfaceAlias "Wi-Fi"]])، وهل هو عنوان الراوتر ولا سيرفر عام.`,
+          practice: [
+            { lvl: 'سريع', t: R`قيس السيرفر بتاعك مقابل 1.1.1.1: [[(Measure-Command { Resolve-DnsName example.com -DnsOnly }).TotalMilliseconds]] وبعدين نفس السطر بـ [[-Server 1.1.1.1]]، وكرّر كل واحد ٣ مرات.`, done: R`عندك ٦ أرقام بالملي ثانية، وأول مرة غالبًا أبطأ من اللي بعدها (الكاش)، وتقدر تقول أنهي سيرفر أسرع عندك بالأرقام مش بالإحساس.` },
+            { lvl: 'تطبيق', t: R`سكربت [[dns-check.ps1]] بيعدّي على كل سيرفر DNS في [[(Get-DnsClientServerAddress -AddressFamily IPv4).ServerAddresses]] ويسأله مباشرة: [[$r = Resolve-DnsName example.com -Server $s -DnsOnly -QuickTimeout -ErrorAction SilentlyContinue]]، ويطبع OK لو [[$r]] فيه حاجة و FAIL لو فاضي. وزوّد 127.0.0.1 للستة كسيرفر غلط.`, done: R`كل سيرفر ليه سطر، والسيرفرات الشغالة OK، و 127.0.0.1 (مفيش DNS عليه) بيطلع FAIL في أقل من ثانية، والسكربت بيكمّل للآخر من غير ولا سطر أحمر.` },
+            { lvl: 'تحدي', t: R`سكربت [[switch-dns.ps1]] بياخد [[-To]] قيمته Cloudflare أو Google أو Auto: بيحفظ الـ DNS الحالي في JSON الأول، وبعدين يغيّر ([[-ResetServerAddresses]] لـ Auto)، ويمسح الكاش، ويتأكد بـ [[Resolve-DnsName example.com]]، ولو فشل يرجّع القديم من الـ JSON لوحده. وكل أمر تغيير بياخد [[-WhatIf]] لو السكربت اتشغّل بيه.`, done: R`من نافذة عادية [[-WhatIf]] بيطبع [[What if: Microsoft DNS Client settings will be changed as requested.]] ومفيش حاجة اتغيرت. ومن Terminal أدمن بعد [[-To Cloudflare]] [[Get-DnsClientServerAddress]] بيبين 1.1.1.1، وبعد [[-To Auto]] بيرجع اللي كان، وملف الباك أب موجود. (التغيير الحقيقي محتاج أدمن ومتجرّبش هنا، فده من الدرس والـ docs.)` },
+          ],
           flag: "danger",
           deep: {
             why: R`DNS مزوّد النت ممكن يبقى بطيء أو بيقع، أو بيحجب مواقع، أو عايز DNS بيفلتر الإعلانات أو المواقع المؤذية لجهاز في البيت (Cloudflare فيه 1.1.1.3 بيمنع المحتوى اللي مش للأطفال). وأحيانًا بتشخّص «الموقع مش بيفتح» وعايز تشيل الراوتر من الحسبة.`,
@@ -580,6 +603,11 @@ Get-NetFirewallRule -DisplayName "dev*" | Get-NetFirewallPortFilter | Select-Obj
 Disable-NetFirewallRule -DisplayName "dev server"
 Remove-NetFirewallRule -DisplayName "dev server"`,
           try: R`اعرف كام rule بتسمح بالدخول لجهازك وانت على شبكة عامة ([[Public]] أو [[Any]])، ودوّر فيهم على node و python.`,
+          practice: [
+            { lvl: 'سريع', t: R`من نافذة عادية: [[Get-NetFirewallProfile | Select-Object Name, Enabled, DefaultInboundAction]].`, done: R`٣ سطور: Domain و Private و Public، و [[Enabled]] بـ True في التلاتة على جهاز سليم، و [[DefaultInboundAction]] غالبًا [[NotConfigured]] (يعني ماشي على الافتراضي بتاع ويندوز: امنع الداخل).` },
+            { lvl: 'تطبيق', t: R`وزّع الـ rules اللي بتسمح بالدخول وشغالة على البروفايلات: [[Get-NetFirewallRule -Direction Inbound -Action Allow -Enabled True | Group-Object { $_.Profile.ToString() } | Sort-Object Count -Descending | Select-Object Count, Name]].`, done: R`جدول فيه أسامي زي [[Any]] و [[Public]] و [[Domain, Private]] وعدد كل واحد، ومجموع العمود [[Count]] بيساوي [[(Get-NetFirewallRule -Direction Inbound -Action Allow -Enabled True).Count]]. وكله اشتغل من غير أدمن.` },
+            { lvl: 'تحدي', t: R`اعرف مين فاتح بورت معين (22 مثلًا). جرّب الأول [[Get-NetFirewallPortFilter]] لوحده من نافذة عادية، وبعدين الطريقة اللي بتشتغل: [[$pf = Get-NetFirewallRule -Direction Inbound -Enabled True | Get-NetFirewallPortFilter | Where-Object LocalPort -eq '22']] وبعدين [[$pf | Get-NetFirewallRule | Select-Object DisplayName, Profile]]، وقيس الوقت بـ [[Measure-Command]].`, done: R`[[Get-NetFirewallPortFilter]] لوحده بيطلع [[Access is denied]]، والطريقة التانية بتشتغل من غير أدمن وبترجّع اسم الـ rule (أو مفيش ناتج لو محدش فاتح البورت). وهتلاقيها بطيئة (ثواني كتير، لأنها بتسأل عن كل rule لوحدها)، فلو هتسأل كذا سؤال خزّن ناتج [[Get-NetFirewallPortFilter]] في متغير مرة واحدة.` },
+          ],
           flag: "danger",
           deep: {
             why: R`الموبايل على نفس الواي فاي ومش بيفتح [[http://192.168.1.2:5173]]، أو بتشغّل API أو سيرفر لعبة على جهازك وعايز جهاز تاني يوصله، أو برنامج بيبعت بيانات وانت عايز تمنعه. بالماوس دي 7 شاشات في wf.msc، وبالأمر سطر تقدر تحطه في سكربت تجهيز الجهاز.`,
@@ -786,6 +814,11 @@ Get-NetConnectionProfile | Select-Object Name, InterfaceAlias, NetworkCategory
 Set-NetConnectionProfile -InterfaceAlias "Wi-Fi" -NetworkCategory Private
 Set-NetConnectionProfile -Name "Cafe WiFi" -NetworkCategory Public`,
           try: R`اعرف شبكتك الحالية Public ولا Private. ولو دي شبكة بيتك وعايز تفتح موقعك من الموبايل، غيّرها لـ Private من Terminal أدمن.`,
+          practice: [
+            { lvl: 'سريع', t: R`اربط نوع الشبكة ببروفايل الفايروول اللي شغال عليك: [[$cat = (Get-NetConnectionProfile | Select-Object -First 1).NetworkCategory]] وبعدين [[Get-NetFirewallProfile -Name $cat | Select-Object Name, Enabled]].`, done: R`بيطلع سطر واحد [[Name]] بتاعه نفس نوع شبكتك بالظبط (Public أو Private)، وده البروفايل اللي الـ rules بتاعته بتتطبق عليك دلوقتي.` },
+            { lvl: 'تطبيق', t: R`عدّ الـ rules اللي بتسمح بالدخول وبتنطبق على نوع شبكتك الحالي: الـ rule بتنطبق لو [[Profile]] بتاعها [[Any]] أو فيه اسم النوع: [[Where-Object { $_.Profile.ToString() -eq 'Any' -or $_.Profile.ToString() -match $cat }]].`, done: R`بيطلع رقم واحد، وهو بالظبط مجموع سطر [[Any]] وكل السطور اللي فيها اسم نوعك في جدول [[Group-Object]] بتاع تمرين الفايروول. ولو اتغير نوع الشبكة الرقم بيتغير.` },
+            { lvl: 'تحدي', t: R`«حارس الشبكات»: ملف [[trusted.json]] فيه أسامي شبكات بيتك وشغلك. سكربت بيقارن [[Name]] بتاع الشبكة الحالية باللستة: لو الشبكة مش في اللستة ونوعها Private، يطبع تحذير بـ [[Write-Warning]] ومعاه أمر [[Set-NetConnectionProfile -Name '...' -NetworkCategory Public]] بالاسم الحقيقي (من غير ما ينفّذه)، ويخرج بـ [[exit 1]].`, done: R`وانت على شبكة بيتك واسمها في اللستة بيخرج بـ 0. لو شلت اسمها من الملف وهي Private بيطبع الأمر باسم شبكتك بالظبط وبيخرج بـ 1، ولو هي Public أصلًا بيخرج بـ 0 من غير تحذير. والسكربت كله قراية، فمش محتاج أدمن.` },
+          ],
           flag: "danger",
           deep: {
             why: R`من أشهر أسباب «الموبايل مش بيفتح سيرفر التطوير» و «مش شايف الجهاز التاني على الشبكة»: ويندوز معلّم شبكة البيت Public، لأن أول مرة اتوصلت بيها اخترت (أو اتختار لك) إن الجهاز ميبانش. والأمر ده بيصلّحها في سطر.`,

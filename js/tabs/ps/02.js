@@ -4,6 +4,14 @@ MORE("ps", [
       t: "التنقل",
       l: 1,
       n: "",
+      projects: [
+        { lvl: 'صغير', t: R`جرد مشروع`, what: R`في فولدر مشروع عندك، [[Get-ChildItem -Recurse -File -Name]] بيطلّع كل ملف بمساره النسبي. احفظه في [[inventory.txt]] بـ [[>]]، وبعدين اعمل نفس الحاجة بـ [[-Force]] في ملف تاني وقارن. من درس «اعرض الملفات».`, done: R`كل سطر في الملف مسار نسبي زي [[src\app.js]] مش مسار كامل، والملف التاني فيه سطور زيادة لملفات مخفية (زي اللي جوه [[.git]] لو المشروع git).` },
+        { lvl: 'صغير', t: R`مين المخفي هنا`, what: R`[[Get-ChildItem -Hidden]] بيعرض المخفي بس. شغّله في ٣ فولدرات (مشروع، و [[~]]، و [[C:\]]) واكتب كل حاجة مخفية لقيتها وبتاعة مين. من درس «اعرض الملفات» و «اتنقل».`, done: R`عندك لستة لكل فولدر، وكل اسم فيها عمود Mode بتاعه فيه حرف [[h]]، ومفيش ولا اسم منهم ظهر في [[Get-ChildItem]] العادي.` },
+        { lvl: 'متوسط', t: R`لاقي كل مشاريع git عندك`, what: R`من فولدر المشاريع بتاعك، [[Get-ChildItem -Recurse -Directory -Force -Filter .git -Depth 2]] بيلاقي كل فولدر [[.git]]. بعدها ادخل كل مشروع بـ [[Push-Location]] واتأكد إنه فيه [[package.json]] أو لأ بـ [[Get-ChildItem -Filter]]، وارجع بـ [[Pop-Location]]. من كل دروس الوحدة.`, done: R`لستة مسارات مشاريع git، وجنب كل واحد «فيه package.json» أو «مفيش»، وبعد ما خلصت [[Get-Location]] بيطبع نفس الفولدر اللي بدأت منه بالظبط.` },
+        { lvl: 'متوسط', t: R`أكبر الفولدرات اللي فوق`, what: R`في فولدر فيه مشاريع كتير، اعرض الفولدرات بس ([[-Directory]])، وادخل كل واحد بـ [[Push-Location]] واعدّ ملفاته بـ [[(Get-ChildItem -Recurse -File).Count]] واكتب الرقم، و [[Pop-Location]]. من دروس الوحدة و «Get-Member» (الـ [[.Count]]).`, done: R`جدول بإيدك فيه اسم كل فولدر وعدد ملفاته، والفولدر اللي فيه [[node_modules]] باين إنه الأكبر بفرق كبير، وانت لسه واقف مكانك.` },
+        { lvl: 'كبير', t: R`خريطة مشروع بتتشغّل من أي مكان`, what: R`سكربت [[map.ps1]] أوله [[Push-Location D:\projects\myapp -ErrorAction Stop]] (لو المسار غلط يقف بدل ما يكمّل في الفولدر الغلط)، وبعدها بيكتب ٣ ملفات في فولدر [[map]]: الملفات بـ [[-File -Recurse -Name]]، والفولدرات بـ [[-Directory -Recurse -Name]]، والمخفي بـ [[-Hidden -Recurse -Name]]، وفي الآخر [[Pop-Location]]. وفي أوله سطر بيطبع الوقت ومكانك ([[Get-Date]] و [[Get-Location]]). بيجمع الوحدة دي مع اللي قبلها.`, done: R`تشغّله من [[C:\]] ومن [[~]] ومن جوه المشروع نفسه: في التلات حالات بيكتب نفس الملفات، وبعده [[Get-Location]] بيرجع المكان اللي بدأت منه. ولو غيّرت المسار لحاجة مش موجودة، بيطلع error أحمر واحد ومفيش ولا ملف في [[map]] اتغيّر.`, ext: R`خلّي المسار parameter بدل ما يبقى مكتوب جوه السكربت (درس [[param()]] بعدين)، وزوّد ملف رابع بالملفات اللي اتعدّلت النهارده، وقارن خريطة النهارده بخريطة امبارح.` },
+        { lvl: 'فكرة', t: R`محطات شغلك اليومية`, what: R`فكّر في الفولدرات اللي بتروحلها كل يوم (مشروع الشغل، والتحميلات، وفولدر الملاحظات...) وصمّم طريقة توصلك لكل واحد بأقل كتابة: aliases في ملف، أو [[Push-Location]] بأسامي stacks ([[-StackName]])، أو متغيرات بالمسارات. انت اللي بتقرر الشكل.`, done: R`تقدر تروح لكل محطة من محطاتك بأمر واحد قصير وترجع للي قبلها، ومكتوب عندك ليه اخترت الطريقة دي.`, ext: R`لما توصل لدرس [[$PROFILE]]، حط الطريقة دي فيه عشان تبقى موجودة في كل نافذة جديدة، وزوّد أمر بيطبعلك لستة المحطات نفسها.` },
+      ],
       items: [
         {
           cmd: "Set-Location",
@@ -18,6 +26,11 @@ cd D:\projects
 cd ~
 Get-Location`,
           try: "روح لأي درايف تاني وارجع الـ home.",
+          practice: [
+            { lvl: 'سريع', t: R`اكتب [[cd ~]] وبعدين [[cd ..]] وبعدين [[cd \]]، وبعد كل واحد [[Get-Location]].`, done: R`التلات مسارات بالترتيب: فولدرك الشخصي، وبعده [[C:\Users]]، وبعده [[C:\]].` },
+            { lvl: 'تطبيق', t: R`ادخل [[C:\Program Files]] مرة من غير علامات تنصيص ومرة بيها.`, done: R`من غيرها بيطلع [[A positional parameter cannot be found that accepts argument 'Files'.]] (فهم Files إنها argument تاني)، وبيها بتدخل عادي، في 7 و 5.1.` },
+            { lvl: 'تحدي', t: R`ادخل فولدر، وبعدين فولدر تاني، واكتب [[cd -]]. جرّبها في 7 وفي 5.1.`, done: R`في 7 بترجعك للفولدر اللي كنت فيه قبلها (و [[cd +]] بترجعك تاني لقدّام)، وفي 5.1 بتطلع [[Cannot find path ... because it does not exist]] لأنه فاكر [[-]] اسم فولدر.` },
+          ],
           deep: {
             why: R`كل أمر بتكتبه بيشتغل «من» فولدر معين، والملفات اللي بتكتب اسمها من غير مسار كامل بيدوّر عليها هناك. فأول حاجة في أي شغل إنك تقف في المكان الصح. نفس [[cd]] و [[pwd]] في bash.`,
             how: R`[[Set-Location C:\]] و [[cd C:\]] نفس الحاجة. PowerShell بيفهم الـ backslash ([[C:\Users]]) والـ forward slash ([[C:/Users]]) الاتنين.
@@ -148,6 +161,11 @@ Get-ChildItem -Force
 Get-ChildItem -Recurse -Filter *.js
 Get-ChildItem -Directory`,
           try: "اعرض كل ملفات .json في مشروع عندك من غير فولدرات.",
+          practice: [
+            { lvl: 'سريع', t: R`في فولدر فيه ملف مخفي، قارن [[Get-ChildItem]] بـ [[Get-ChildItem -Force]].`, done: R`مع [[-Force]] بتظهر أسامي زيادة، وعمود Mode بتاعها فيه حرف [[h]] (Hidden)، وتقدر تشوف المخفي لوحده بـ [[Get-ChildItem -Hidden]].` },
+            { lvl: 'تطبيق', t: R`في مشروع Node، هات ملفات [[.json]] اللي في أول مستويين بس: [[Get-ChildItem -Recurse -Depth 1 -Filter *.json -File]].`, done: R`[[package.json]] اللي في الجذر بيظهر، والـ json اللي جوه فولدر واحد بيظهر، واللي جوه [[node_modules\x\]] (مستوى تالت) مبيظهرش. [[-Depth 0]] بيجيب الجذر بس.` },
+            { lvl: 'تحدي', t: R`جرّب [[Get-ChildItem . -Include *.json]] من غير [[-Recurse]] في فولدر فيه json، وبعدين [[Get-ChildItem .\* -Include *.json]].`, done: R`الأول مبيرجّعش ولا حاجة (في 7 و 5.1)، والتاني بيرجّع الملفات. [[-Include]] بيشتغل بس مع [[-Recurse]] أو مسار فيه [[*]]، وعشان كده [[-Filter]] أضمن لامتداد واحد.` },
+          ],
           deep: {
             why: R`قبل ما تعمل أي حاجة في فولدر لازم تعرف فيه إيه: ملفات إيه، حجمها قد إيه، اتعدلت إمتى. وده أكتر أمر هتكتبه، زي ls في bash.`,
             how: R`[[Get-ChildItem]] أو [[ls]] أو [[dir]] كلهم شغالين. بيرجع objects مش نص، فتقدر تفلتر عليها بعدين.
@@ -292,6 +310,11 @@ d----           10/6/2026  9:36 AM                src
           example: R`Push-Location C:\Windows
 Pop-Location`,
           try: "اعمل pushd لفولدرين ورا بعض وبعدين popd مرتين.",
+          practice: [
+            { lvl: 'سريع', t: R`[[pushd C:\Windows]] وبعدها [[pushd $env:TEMP]]، واكتب [[Get-Location -Stack]]، وبعدين [[popd]] مرتين.`, done: R`الـ stack فيه مكانين قبل الـ pop، وبعد أول [[popd]] بقيت في [[C:\Windows]]، وبعد التاني رجعت للفولدر اللي بدأت منه.` },
+            { lvl: 'تطبيق', t: R`في سطر واحد بـ [[;]]: [[Push-Location]] لفولدر مشروع، و [[Get-ChildItem -File]]، و [[Pop-Location]].`, done: R`الناتج ملفات المشروع، وبعد السطر [[Get-Location]] بيطبع نفس المكان اللي كنت فيه قبله، كأنك ماتحركتش.` },
+            { lvl: 'تحدي', t: R`اعمل [[Pop-Location]] والـ stack فاضي، وبعدين اعرف إزاي تتأكد إنه فاضي قبلها.`, done: R`[[Pop-Location]] على stack فاضي مبيطلّعش error ومبيحرّكش مكانك (اتجرّب في 7 و 5.1)، فالغلطة دي مش هتبان. و [[(Get-Location -Stack).Count]] بيرجّع [[0]] لما يبقى فاضي.` },
+          ],
           deep: {
             why: R`محتاج تروح فولدر تعمل فيه حاجة وترجع مكانك بالظبط، من غير ما تفتكر كنت فين. مفيد جدًا في السكربتات اللي بتلف على كذا مشروع.`,
             how: R`[[Push-Location]] (أو [[pushd]]) بيحط المكان الحالي فوق stack وبعدين يروح للمكان الجديد. [[Pop-Location]] (أو [[popd]]) بيشيل آخر مكان من فوق ويرجعك له.
@@ -397,6 +420,14 @@ try {
       t: "ملفات وفولدرات",
       l: 1,
       n: "",
+      projects: [
+        { lvl: 'صغير', t: R`هيكل مشروع في ٣ سطور`, what: R`[[New-Item -ItemType Directory src, public, tests -Force]]، وبعدين ملفات [[README.md]] و [[.env]] و [[src\index.js]]، بس كل ملف يتعمل بس لو [[Test-Path]] قال False (عشان [[New-Item -Force]] على ملف موجود بيفضّيه). من دروس «اعمل ملف أو فولدر» و «الملف ده موجود؟».`, done: R`تكتب حاجة في [[README.md]]، وتشغّل السطور تاني: مفيش ولا error، و [[(Get-Item README.md).Length]] لسه زي ما هو مش صفر.` },
+        { lvl: 'صغير', t: R`باك أب للـ config قبل ما تلعب فيه`, what: R`قبل أي تعديل في [[.env]] انسخه لاسم فيه التاريخ: [[Copy-Item .env ".env.bak-$(Get-Date -Format yyyyMMdd)"]]. من درس «انسخ» و «بيانات ملف واحد».`, done: R`فيه ملف اسمه بيخلص بتاريخ النهارده، و [[(Get-Item .env).Length]] بيساوي [[Length]] بتاع النسخة بالظبط.` },
+        { lvl: 'متوسط', t: R`منظّف فولدر التحميلات`, what: R`فولدر تجريبي فيه ١٠ ملفات بامتدادات مختلفة (pdf و png و zip و txt). اعمل فولدر لكل نوع، وانقل كل نوع بـ [[Move-Item *.pdf docs\]] وهكذا، وكل أمر نقل جرّبه بـ [[-WhatIf]] الأول. من دروس «اعمل» و «انقل» و «امسح» (الـ WhatIf).`, done: R`[[Get-ChildItem -File]] في الجذر مبيرجّعش حاجة، و [[(Get-ChildItem -Recurse -File).Count]] لسه ١٠ زي ما كان (مفيش ملف ضاع).` },
+        { lvl: 'متوسط', t: R`سلّة محذوفات بتاعتك`, what: R`بدل [[Remove-Item]]، انقل اللي عايز تمسحه لفولدر جوه [[.trash]] اسمه تاريخ النهارده بـ [[Move-Item]]. وبعدين أمر تاني بيمسح بس فولدرات [[.trash]] اللي [[LastWriteTime]] بتاعها أقدم من ٧ أيام، بـ [[-WhatIf]] الأول. من دروس «انقل» و «امسح» و «بيانات ملف واحد».`, done: R`بعد «المسح» [[Test-Path]] على المكان القديم False وعلى [[.trash]] True، وتقدر ترجّع الملف بـ Move-Item. ولو غيّرت [[LastWriteTime]] لفولدر لتاريخ قديم، أمر التنضيف بيمسحه هو بس.` },
+        { lvl: 'كبير', t: R`سكربت تجهيز مشروع جديد`, what: R`سكربت [[new-project.ps1]] بيعمل الهيكل كله (src و public و tests)، وبيعمل [[.env]] من [[.env.example]] بس لو [[.env]] مش موجود، و [[README.md]] فيه اسم المشروع بس لو مش موجود. كل خطوة بتكتب سطر في [[setup.log]] بـ [[>>]] فيه الوقت وعملت إيه أو «موجود قبل كده». والسكربت بيبدأ بـ [[Push-Location]] وبيخلص بـ [[Pop-Location]]. بيجمع الوحدة دي مع «التنقل».`, done: R`تشغّله مرتين ورا بعض: التانية مفيهاش ولا error، ومفيش ملف اتكتب فوقه (عدّلت حاجة في [[.env]] بعد الأولى ولقيتها لسه موجودة)، و [[setup.log]] فيه سطور التشغيلتين والتانية كلها «موجود»، وانت رجعت للفولدر اللي بدأت منه.`, ext: R`خليه ياخد اسم المشروع ونوعه (node أو python) ويعمل هيكل مختلف لكل نوع، ويعمل [[git init]] و [[.gitignore]] لو مش موجودين، وزوّد [[-WhatIf]] بيطبع اللي هيتعمل من غير ما يعمله.` },
+        { lvl: 'فكرة', t: R`نظام الفولدرات بتاعك`, what: R`صمّم نظام ترتيب لملفاتك انت (مشاريع، وكورسات، وفواتير، وصور...) بقواعد واضحة: كل نوع يروح فين واسمه شكله إيه. وبعدين أوامر بتطبّق النظام ده على فولدر حقيقي من غير ما تمسح ولا ملف. انت اللي بتقرر القواعد.`, done: R`عندك ملف فيه القواعد، والأوامر اتجربت بـ [[-WhatIf]] الأول وبعدين بجد، وعدد الملفات قبل وبعد واحد.`, ext: R`لما توصل لوحدة الـ Pipeline، خلّي القواعد تتطبّق لوحدها بـ [[ForEach-Object]]، وبعد كده اعملها مهمة مجدولة كل أسبوع.` },
+      ],
       items: [
         {
           cmd: "New-Item",
@@ -411,6 +442,11 @@ New-Item index.js
 New-Item .env -Value "PORT=3000"
 mkdir logs`,
           try: R`اعمل [[app\src]] و [[app\public]] وملف [[app\src\server.js]].`,
+          practice: [
+            { lvl: 'سريع', t: R`[[New-Item -ItemType Directory app\src, app\public -Force]] وبعدين [[New-Item app\src\server.js]]، وبعدين [[Get-ChildItem app -Recurse -Name]].`, done: R`بيطبع ٣ سطور: [[public]] و [[src]] و [[src\server.js]]. ولو شغّلت أول سطر تاني مبيطلعش error بسبب [[-Force]].` },
+            { lvl: 'تطبيق', t: R`[[New-Item notes.txt]] مرتين ورا بعض، وبعدين [[New-Item logs\today.txt]] وفولدر [[logs]] مش موجود.`, done: R`التانية بتطلع [[The file '...\notes.txt' already exists.]]، والتالتة [[Could not find a part of the path]]. ومع [[-Force]] التالتة بتعمل الفولدر والملف.` },
+            { lvl: 'تحدي', t: R`[[New-Item keep.txt -Value 'important']]، وبعدين [[New-Item keep.txt -Force]]. بص على حجم الملف قبل وبعد. وبعدين اكتب سطر بيعمل الملف بس لو مش موجود.`, done: R`بعد [[-Force]] الملف بقى فاضي ([[(Get-Item keep.txt).Length]] بقى [[0]] في 7 و 5.1): الـ Force على ملف موجود بيكتب فوقه. والسطر الآمن [[if (-not (Test-Path keep.txt)) { New-Item keep.txt }]] مبيلمسش الملف لو موجود.` },
+          ],
           deep: {
             why: R`أي مشروع أو سكربت بيبدأ بهيكل: فولدرات src و logs، وملفات .env و README. New-Item بيعمل الاتنين، ومع [[-Force]] بيعمل المسار كله مرة واحدة حتى لو جزء منه موجود، ومن غير ما يقع لو شغّلت السكربت تاني.`,
             how: R`[[-ItemType File]] لملف (وده الافتراضي) و [[-ItemType Directory]] لفولدر. ومع الفولدرات، New-Item بيعمل الفولدرات اللي في السكة لوحده حتى من غير [[-Force]] (جربتها في 5.1 و 7.6)، و [[-Force]] بس بيمنع الـ error لو الفولدر موجود.
@@ -547,6 +583,11 @@ Get-ChildItem app -Recurse | Select-Object FullName`
 Copy-Item *.js backup\
 Copy-Item src src_backup -Recurse`,
           try: "انسخ فولدر app كله لـ [[app_copy]].",
+          practice: [
+            { lvl: 'سريع', t: R`[[Copy-Item .env.example .env]] وبعدين [[Get-ChildItem .env*]].`, done: R`فيه ملفين، و [[Get-Content .env]] بيطبع نفس سطور [[.env.example]] بالظبط.` },
+            { lvl: 'تطبيق', t: R`في فولدر فيه ملفات js و css، اعمل [[backup]] وانسخ ملفات js بس فيه بـ [[Copy-Item *.js backup\]].`, done: R`[[Get-ChildItem backup]] فيه ملفات js بس ونفس عددها في الأصل، ومفيش ولا css.` },
+            { lvl: 'تحدي', t: R`[[Copy-Item app app_copy -Recurse]] مرتين ورا بعض، وبعدين [[Get-ChildItem app_copy -Recurse -Name]]. وبعدين لاقي طريقة تنسخ تاني من غير المشكلة.`, done: R`بعد المرة التانية فيه [[app_copy\app\...]] جوه النسخة (اتجرّب في 7 و 5.1): لما الهدف موجود، الفولدر بيتنسخ **جوّاه**. والحل [[Copy-Item app\* app_copy -Recurse -Force]] (المحتوى مش الفولدر)، وتشغيلها مرتين بيسيب نفس الشكل.` },
+          ],
           deep: {
             why: R`نسخ ملفات وفولدرات: [[.env.example]] لـ [[.env]]، أو نسخة من فولدر قبل ما تجرّب فيه حاجة خطيرة. نفس cp في bash.`,
             how: R`[[Copy-Item source dest]]. [[-Recurse]] لازم مع الفولدرات. [[-Force]] يكتب فوق لو موجود.
@@ -686,6 +727,11 @@ What if: Performing the operation "Copy File" on target "Item: C:\...\lab\.env.e
 Rename-Item old.js new.js
 Get-ChildItem *.txt | Rename-Item -NewName { $_.Name -replace '\.txt$', '.md' }`,
           try: "اعمل 3 ملفات txt وحوّلهم كلهم لـ md بالأمر الأخير.",
+          practice: [
+            { lvl: 'سريع', t: R`[[Rename-Item old.js new.js]]، وبعدين جرّب [[Rename-Item new.js src\new.js]].`, done: R`الأولى نجحت، والتانية طلعت [[Cannot rename the specified target, because it represents a path or device name.]]: Rename الاسم بس، والنقل شغل Move-Item.` },
+            { lvl: 'تطبيق', t: R`فولدر فيه ملفات log و png مخلوطة: اعمل [[logs]] و [[images]] الأول، وبعدين انقل كل نوع لفولدره.`, done: R`[[Get-ChildItem -File]] في الجذر مبيطلّعش ولا log ولا png، وكل فولدر فيه النوع بتاعه بس.` },
+            { lvl: 'تحدي', t: R`فيه [[a.txt]] و [[b.txt]]: جرّب [[Move-Item a.txt b.txt]]، وبعدين نفس الأمر بـ [[-Force]]، واعرف حصل إيه لمحتوى b.`, done: R`من غير Force بيطلع [[Cannot create a file when that file already exists.]]، وبـ Force [[a.txt]] اختفى و [[b.txt]] بقى فيه كلام a، والكلام القديم بتاع b راح خالص.` },
+          ],
           deep: {
             why: R`تنظيم الملفات في فولدرات، وتغيير أسامي ملفات كتير مرة واحدة (امتداد، أو بادئة، أو مسافات). نفس mv في bash، بس مع الـ pipe بتعمل rename جماعي من غير لوب.`,
             how: R`[[Move-Item المصدر الهدف]] بينقل ملف أو فولدر. لو الهدف فولدر موجود، الحاجة بتتحط جوّاه باسمها. لو الهدف مش موجود، بتتنقل **وتاخد الاسم ده**، وده اللي بيخلي [[Move-Item *.log logs]] يعمل ملف اسمه logs لو الفولدر مش موجود. وبنفس الفكرة تقدر تغيّر الاسم بيه: [[Move-Item a.txt b.txt]].
@@ -831,6 +877,11 @@ Get-ChildItem *.md`
 Remove-Item node_modules -Recurse -Force -WhatIf
 Remove-Item node_modules -Recurse -Force`,
           try: "امسح [[app_copy]] بـ [[-WhatIf]] الأول واقرا الناتج، وبعدين من غيرها.",
+          practice: [
+            { lvl: 'سريع', t: R`[[Remove-Item app_copy -Recurse -WhatIf]].`, done: R`بيطبع سطر [[What if: Performing the operation "Remove Directory" on target ...]] بالمسار الكامل، و [[Test-Path app_copy]] بعدها لسه True.` },
+            { lvl: 'تطبيق', t: R`اعمل ملف read-only: [[Set-ItemProperty ro.txt IsReadOnly $true]]، وامسحه من غير [[-Force]] وبعدين بيها.`, done: R`من غير Force بيطلع error فيه [[sufficient access rights]] (في 7 و 5.1)، وبـ Force اتمسح و [[Test-Path ro.txt]] بقى False.` },
+            { lvl: 'تحدي', t: R`في شجرة فولدرات فيها ملفات [[.tmp]] وملفات تانية، امسح الـ tmp بس: [[Get-ChildItem -Recurse -Filter *.tmp -File | Remove-Item -WhatIf]] الأول، وبعدين من غير WhatIf.`, done: R`عدد سطور الـ What if بيساوي عدد ملفات tmp، وبعد المسح [[(Get-ChildItem -Recurse -Filter *.tmp).Count]] بيرجّع [[0]]، وعدد باقي الملفات زي ما كان.` },
+          ],
           flag: "danger",
           deep: {
             why: R`مسح node_modules وملفات مؤقتة ولوجات قديمة. وده أخطر أمر في التاب، لأن الغلطة فيه مبتترجعش.`,
@@ -944,6 +995,11 @@ PowerShell is in NonInteractive mode. Read and Prompt functionality is not avail
           example: R`Test-Path .env
 if (Test-Path .env) { "found" } else { "missing" }`,
           try: "اختبر ملف موجود وملف مش موجود.",
+          practice: [
+            { lvl: 'سريع', t: R`[[Test-Path .env]] على ملف موجود، و [[Test-Path .\nope.txt]] على ملف مش موجود.`, done: R`True و False، ومفيش ولا error أحمر في الحالتين.` },
+            { lvl: 'تطبيق', t: R`على فولدر، جرّب [[Test-Path app -PathType Leaf]] و [[Test-Path app -PathType Container]].`, done: R`[[Leaf]] (ملف) بيرجّع False و [[Container]] (فولدر) بيرجّع True، فتقدر تفرّق «موجود كملف» عن «موجود كفولدر».` },
+            { lvl: 'تحدي', t: R`اعمل ملف اسمه فيه قوسين مربعين: [[Set-Content -LiteralPath 'report[1].txt' x]]، وبعدين [[Test-Path 'report[1].txt']] و [[Test-Path -LiteralPath 'report[1].txt']].`, done: R`العادي بيرجّع False مع إن الملف موجود (لأن القوسين wildcard)، و [[-LiteralPath]] بيرجّع True. وخد بالك: [[Test-Path '']] في 7 بيرجّع False، وفي 5.1 بيطلع error [[because it is an empty string]].` },
+          ],
           deep: {
             why: "تتأكد إن ملف أو فولدر موجود قبل ما تعمل حاجة. مش هيطلع error، هيرجع True أو False.",
             how: R`[[Test-Path "C:\file.txt"]] بيرجّع [[True]] أو [[False]] ومبيطلعش error لو الحاجة مش موجودة. و [[-PathType Container]] بيرجّع True بس لو المسار فولدر، و [[-PathType Leaf]] بس لو ملف، فتفرّق بين الاتنين لو ليهم نفس الاسم.
@@ -1050,6 +1106,11 @@ no logs
 (Get-Item .\app.log).LastWriteTime
 Get-Item .\app.log | Format-List *`,
           try: "اعرف حجم وتاريخ آخر تعديل لأي ملف.",
+          practice: [
+            { lvl: 'سريع', t: R`اعرف حجم ملف بالكيلو: [[(Get-Item .\app.log).Length / 1KB]].`, done: R`رقم بكسور، ولو قسمت [[Length]] على 1024 بإيدك بيطلع نفس الرقم.` },
+            { lvl: 'تطبيق', t: R`جرّب [[(Get-Item .).Length]] على فولدر فيه ملفات كبيرة.`, done: R`بيرجّع [[1]] مش حجم الفولدر (اتجرّب في 7 و 5.1): الفولدر مالوش Length، و PowerShell بيدّي أي object لوحده Length و Count بـ 1. حجم الفولدر محتاج Measure-Object (درس جاي).` },
+            { lvl: 'تحدي', t: R`احسب الملف ده اتعدّل من كام يوم: [[((Get-Date) - (Get-Item f.txt).LastWriteTime).Days]]. وبعدين غيّر التاريخ بـ [[(Get-Item f.txt).LastWriteTime = '2020-01-01']] واحسب تاني.`, done: R`أول مرة [[0]] لملف لسه معمول، وبعد تغيير التاريخ الرقم أكتر من ١٠٠٠، و [[(Get-Item f.txt).LastWriteTime.Year]] بيقول [[2020]].` },
+          ],
           deep: {
             why: "جلب object يمثّل ملف أو فولدر بكل properties بتاعته: الحجم، وتاريخ الإنشاء، والامتداد.",
             how: R`[[Get-Item "file.txt"]] بيرجّع object واحد للملف، فيه [[Length]] (الحجم بالبايت)، و [[CreationTime]]، و [[LastWriteTime]]، و [[Extension]]، و [[FullName]] (المسار الكامل)، وغيرهم. ولو المسار فولدر بيرجّع object الفولدر نفسه، مش اللي جواه زي [[Get-ChildItem]].

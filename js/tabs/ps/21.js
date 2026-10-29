@@ -18,8 +18,12 @@ MORE("ps", [
       lab: R`New-Item -ItemType Directory "$HOME\lab\ps-chain" -Force
 Set-Location "$HOME\lab\ps-chain"`,
       projects: [
-        { t: R`شغّال ولا لأ؟`, what: R`سكربت بيفحص تلات حاجات ورا بعض (الملف موجود؟ الخدمة شغالة؟ البورت بيرد؟)، يقف عند أول فشل، ويرجّع كود خروج مختلف لكل حالة عشان اللي مناديه يعرف فشل فين. من دروس ١ و ٢.` },
-        { t: R`اسم ملف من الناتج`, what: R`سطر واحد بيعمل فولدر اسمه فيه اسم الجهاز والتاريخ، كله من [[$( )]] جوه نص واحد، وبينسخ فيه ملفات الإعدادات. من درس ٣.` },
+        { lvl: 'صغير', t: R`اسم ملف من الناتج`, what: R`سطر واحد بيعمل فولدر اسمه فيه اسم الجهاز والتاريخ، كله من [[$( )]] جوه نص واحد، وبينسخ فيه ملفات الإعدادات. من درس ٣.`, done: R`الفولدر اسمه زي [[backup_PC-NAME_2026-10-29]] (اسم الجهاز ظاهر، مش [[backup_]] على طول التاريخ)، والملفات اتنسخت جواه، والنسخ مبيحصلش لو عمل الفولدر فشل ([[&&]]).` },
+        { lvl: 'صغير', t: R`سطر قبل الـ push`, what: R`في مشروع Node عندك، اعمل دالة [[ship]] في الجلسة بتشغّل [[npm run lint && npm test && git push]]، ولو أي خطوة وقعت تطبع بالأحمر «اتوقف قبل الـ push» بـ [[||]]. من درس ١.`, done: R`لو كتبت تست بيقع عن قصد الـ push مبيحصلش ([[git status]] لسه بيقول [[ahead]]) والرسالة الحمرا طلعت. ولو كله نجح الـ push بيحصل ومفيش رسالة حمرا.` },
+        { lvl: 'متوسط', t: R`شغّال ولا لأ؟`, what: R`سكربت بيفحص تلات حاجات ورا بعض (الملف موجود؟ الخدمة شغالة؟ البورت بيرد؟)، يقف عند أول فشل، ويرجّع كود خروج مختلف لكل حالة عشان اللي مناديه يعرف فشل فين. من دروس ١ و ٢.`, done: R`كسّر كل حاجة لوحدها (اسم ملف غلط، خدمة مش موجودة، بورت مقفول): [[.\check.ps1; $LASTEXITCODE]] بيطبع ١ و ٢ و ٣ بالترتيب، و ٠ لما كله سليم. و [[.\check.ps1 && 'all good']] مبيطبعش [[all good]] غير في الحالة السليمة.` },
+        { lvl: 'متوسط', t: R`تعديل config من غير ما تبوّظه`, what: R`سكربت بيعمل نسخة [[.bak]] من ملف JSON، ويكتب النسخة الجديدة، ويتأكد إنها JSON سليم بـ [[ConvertFrom-Json]]، ولو مش سليمة يرجّع الـ [[.bak]]. كل خطوة مربوطة باللي قبلها بشرط (من درس ١)، والكود الطالع بيعتمد على [[$?]] و [[$LASTEXITCODE]] (درس ٢).`, done: R`لو النسخة الجديدة بايظة (شيل قوس) الملف بيرجع زي الأول بالظبط ([[Get-FileHash]] قبل وبعد زي بعض) والكود غير صفر. ولو سليمة بتتطبّق ويفضل جنبها [[.bak]] بالقديمة.` },
+        { lvl: 'كبير', t: R`مشغّل خطوات بلوج`, what: R`سكربت [[run-steps.ps1]] بياخد قايمة خطوات (كل خطوة اسم و script block، في ملف [[steps.ps1]] لوحده)، ويشغّلهم بالترتيب. بعد كل خطوة بيقرا [[$?]] و [[$LASTEXITCODE]] (وبيتعامل مع فخ stderr بتاع 5.1)، ويكتب سطر في لوج بالوقت والمدة والنتيجة، ويقف عند أول فشل إلا لو [[-ContinueOnError]]، وفي الآخر جدول ملخص. وكود الخروج رقم أول خطوة فشلت. بيجمع دروس الوحدة كلها مع [[try / catch]] و [[Measure-Command]].`, done: R`٤ خطوات والتالتة بتقع: الرابعة مبتتشغّلش، والجدول فيه OK و OK و FAIL و SKIPPED، و [[$LASTEXITCODE]] بـ ٣. ومع [[-ContinueOnError]] الرابعة بتتشغّل. بيشتغل في 7 و 5.1 بنفس النتيجة، واللوج فيه سطر لكل خطوة اتشغّلت في كل تشغيلة.`, ext: R`زوّد [[-WhatIf]] بيطبع الخطوات من غير ما يشغّلها، وخطوة «تنضيف» بتتشغّل دايمًا في الآخر حتى لو حاجة وقعت (زي [[finally]])، واستخدمه كـ mini CI لمشروعك قبل كل push.` },
+        { lvl: 'فكرة', t: R`سلسلة صباحك`, what: R`اكتب السلسلة اللي بتعملها كل يوم أول ما تقعد على الجهاز (تسحب آخر كود، تشغّل الـ stack، تفتح المحرر، تشوف الإيميل أو التذاكر...) كسطر واحد أو سكربت قصير، وانت اللي تقرر إيه اللي لازم يوقف السلسلة لو فشل وإيه اللي يكمّل عادي.`, done: R`أمر واحد بيعمل روتينك كله، والخطوة اللي بتفشل (جرّب تقطع النت) بتوقف اللي محتاجها بس، وبتطبع رسالة واضحة، والكود الطالع غير صفر.`, ext: R`حطها دالة في [[$PROFILE]] بـ parameters ([[-Project]] مثلًا)، وزوّد لوج بالوقت اللي كل خطوة بتاخده عشان تعرف إيه اللي بيعطّلك الصبح.` },
       ],
       n: R`تشغّل أمرين مع بعض، وتخلي التاني يشتغل بس لو الأول نجح، وتحشر ناتج أمر جوه أمر تاني. دي الحتة اللي بتحوّل أوامر متفرقة لشغل حقيقي`,
       items: [
@@ -52,6 +56,11 @@ cmd /c exit 1 && Write-Output "this will NOT print"
 cmd /c exit 1 || Write-Output "fallback ran"
 Get-Item "C:\nope.txt" && Write-Output "also will NOT print"`,
           try: R`جرّب [[Test-Path .\lab && Write-Output "موجود"]] في مكان فيه فولدر [[lab]] وفي مكان مفيهوش، وشوف الفرق. وبعدين جرّب نفس السطر في [[powershell -NoProfile]] (5.1) وشوف الرسالة.`,
+          practice: [
+            { lvl: 'سريع', t: R`شغّل [[cmd /c exit 0 && 'A'; cmd /c exit 1 || 'B']] في [[pwsh]]، وبعدين نفس السطر في [[powershell -NoProfile]].`, done: R`7 بيطبع [[A]] وبعدها [[B]]. و 5.1 بيرفض السطر كله قبل ما يشغّل أي حاجة، برسالة [[The token '&&' is not a valid statement separator in this version.]]` },
+            { lvl: 'تطبيق', t: R`[[New-Item -ItemType Directory build && Set-Location build]]، وبعدين [[Set-Location ..]] وشغّل نفس السطر تاني.`, done: R`أول مرة الفولدر بيتعمل وانت جواه. تاني مرة [[New-Item]] بيطلّع error إن الفولدر موجود، و [[Set-Location]] مبيشتغلش، فـ [[Get-Location]] لسه الفولدر اللي انت فيه.` },
+            { lvl: 'تحدي', t: R`قبل ما تشغّل، اكتب في ورقة هيطبع إيه: [[cmd /c exit 1 || 'B' && 'C']] و [[cmd /c exit 0 || 'B' && 'C']]. وبعدين شغّلهم.`, done: R`الأول بيطبع [[B]] و [[C]]، والتاني بيطبع [[C]] بس. السلسلة بتتقري من الشمال لليمين، و [[&&]] بتبص على نتيجة كل اللي قبلها، فلو توقّعك طلع غير كده تقدر تقول غلطت فين.` },
+          ],
           sol: R`[[Test-Path]] بيرجّع [[True]] أو [[False]] **ومبيفشلش**، فـ [[&&]] هتشتغل في الحالتين — ودي أول فخ.
 
 ~~~text الناتج (PowerShell 7.6)
@@ -375,6 +384,11 @@ Get-ChildItem C:\nopeB -ErrorAction Ignore; "Ignore -> $?"
 cmd /c exit 3; "LASTEXITCODE=$LASTEXITCODE  Qmark=$?"
 $ok = $?; "saved: $ok"`,
           try: R`شغّل [[Test-Path C:\nope]] وبعده على طول [[$?]]. إيه اللي طلع؟ وليه؟ وبعدين شغّل [[Get-Item C:\nope]] وبعده [[$?]] وقارن.`,
+          practice: [
+            { lvl: 'سريع', t: R`اسكت الخطأ واسأل: [[Get-ChildItem C:\nope -ErrorAction SilentlyContinue; $?]]، وبعدين نفس الحاجة بـ [[-ErrorAction Ignore]].`, done: R`مفيش أحمر في الحالتين، بس [[$?]] بيطبع False في الاتنين: الإسكات بيخبّي الرسالة، مش الفشل.` },
+            { lvl: 'تطبيق', t: R`[[cmd /c exit 5]]، وبعده [[Get-ChildItem | Out-Null]]، وبعدين اطبع [[$LASTEXITCODE]] و [[$?]].`, done: R`[[$LASTEXITCODE]] لسه ٥ و [[$?]] True. الرقم مبيتغيّرش غير لما برنامج خارجي تاني يشتغل، فلو قريته بعد cmdlet ممكن تقرا رقم قديم.` },
+            { lvl: 'تحدي', t: R`برنامج بيكتب على stderr وبيخرج بصفر: [[cmd /c "echo err 1>&2 & exit 0" 2>&1]]، وبعده [[$?]] و [[$LASTEXITCODE]]، في 7 وفي 5.1.`, done: R`في 7 [[$?]] True والكود ٠. في 5.1 [[$?]] False رغم إن الكود ٠، لأن 5.1 بيعتبر أي سطر stderr اتحوّل بـ [[2>&1]] خطأ. فمع البرامج الخارجية اعتمد على [[$LASTEXITCODE]]، وتقدر تقول ليه سكربت بيعدّي في 7 وبيقع في 5.1.` },
+          ],
           sol: R`~~~text الناتج (PowerShell 7.6)
 PS> Test-Path C:\nope
 False
@@ -713,6 +727,11 @@ $count = (Get-ChildItem C:\Windows -File).Count
 "Today is $(Get-Date -Format 'yyyy-MM-dd') and there are $count files"
 @(Get-ChildItem *.nothing).Count`,
           try: R`اطبع اسم أطول ملف في [[C:\Windows]] في جملة واحدة. تلميح: [[(Get-ChildItem C:\Windows -File | Sort-Object Length -Descending)[0].Name]]، وحطها جوه نص بـ [[$( )]].`,
+          practice: [
+            { lvl: 'سريع', t: R`اطبع [["v $PSVersionTable.PSVersion"]] وبعدين [["v $($PSVersionTable.PSVersion)"]].`, done: R`الأول بيطبع اسم نوع وبعده [[.PSVersion]] كنص ([[System.Management.Automation.PSVersionHashTable.PSVersion]] في 7، و [[System.Collections.Hashtable.PSVersion]] في 5.1). والتاني بيطبع رقم النسخة نفسه.` },
+            { lvl: 'تطبيق', t: R`اعمل اسم فولدر باك أب: [["backup_$env:COMPUTERNAME_$(Get-Date -Format yyyy-MM-dd)"]]. اسم الجهاز فين؟`, done: R`الناتج [[backup_]] وبعده التاريخ على طول، واسم الجهاز اختفى، لأن [[_]] جزء من اسم المتغير فـ PowerShell قرا [[$env:COMPUTERNAME_]] (متغير مش موجود). والتصليح [[$__{env:COMPUTERNAME}]] أو [[$($env:COMPUTERNAME)]]، وبعده اسم الجهاز بيظهر.` },
+            { lvl: 'تحدي', t: R`سطر واحد بيطبع: «فيه N ملف أكبر من 1MB في C:\Windows\System32، وأكبرهم X». كل الأرقام من [[$( )]] جوه نص واحد.`, done: R`الرقم بيساوي [[(Get-ChildItem C:\Windows\System32 -File | Where-Object Length -gt 1MB).Count]] لو شغّلته لوحده، والاسم هو أول واحد بعد [[Sort-Object Length -Descending]]. ولو غيّرت الحد لـ [[10GB]] السطر بيطبع ٠ ومبيقعش.` },
+          ],
           sol: R`~~~powershell
 "أكبر ملف: $((Get-ChildItem C:\Windows -File | Sort-Object Length -Descending)[0].Name)"
 ~~~
@@ -1040,6 +1059,11 @@ Get-ChildItem C:\Windows -File                               ← ١. هات ال
 if (($a -gt 5) -and ($b -lt 3)) { "الاتنين صح" }`,
           flag: "danger",
           try: R`احسب: [[(5 -gt 3) -and (2 -gt 7)]] هتطلّع إيه؟ وبعدين جرّب [[1 -eq 1 -and 2 -eq 2]] من غير أقواس وشوف هل بتشتغل.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[$true -or (Get-Item C:\nope)]]، وبعدين بدّل الترتيب: [[(Get-Item C:\nope) -or $true]].`, done: R`الأولى بتطبع True من غير ولا error، لأن [[-or]] لقى الأول True فمبصّش على التاني. التانية بتطبع error أحمر الأول وبعده True، لأن [[Get-Item]] اتنفّذ.` },
+            { lvl: 'تطبيق', t: R`شرط «الملف موجود وحجمه أكبر من 1KB»: [[(Test-Path $f) -and ((Get-Item $f).Length -gt 1KB)]]. جرّبه على ملف مش موجود، وملف صغير، وملف 2KB.`, done: R`التلات حالات: False من غير ولا error (الـ [[-and]] وقف عند أول False)، و False، و True.` },
+            { lvl: 'تحدي', t: R`سطر bash بيقول «لو a.txt و b.txt موجودين اطبع both». اكتبه في PowerShell بـ [[-and]] جوه [[if]]، وقارنه بـ [[Test-Path a.txt && Test-Path b.txt && 'both']].`, done: R`جرّب الأربع حالات (الاتنين موجودين، واحد بس، التاني بس، ولا واحد): نسخة [[-and]] بتطبع both مرة واحدة بس. ونسخة [[&&]] بتطبع both في الأربعة، لأن [[Test-Path]] عمره ما بيفشل، بيرد True أو False وخلاص.` },
+          ],
           sol: R`~~~text الناتج (PowerShell 7.6)
 PS> (5 -gt 3) -and (2 -gt 7)
 False

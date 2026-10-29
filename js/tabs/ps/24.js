@@ -20,10 +20,12 @@ MORE("ps", [
       lab: R`New-Item -ItemType Directory "$HOME\lab\PcTool" -Force
 Set-Location "$HOME\lab"`,
       projects: [
-        { t: R`موديول أدواتك الشخصي`, what: R`موديول اسمه [[MyTools]] تحط فيه كل دالة بتكررها: [[Get-Stamp]] و [[Write-Log]] و [[Test-Port]]. سطّبه مرة، وشيل الدوال دي من [[$PROFILE]]. من دروس ١ و ٥.` },
-        { t: R`نسختين جنب بعض`, what: R`خلي عندك [[PcTool\1.0.0]] و [[PcTool\1.1.0]] في نفس الفولدر، وجرّب [[Import-Module PcTool -RequiredVersion 1.0.0]]. هتفهم ليه الـ manifest لازم يبقى فيه نسخة. من درس ٣.` },
-        { t: R`إكمال من الواقع`, what: R`[[ArgumentCompleter]] بيقرا أسماء حقيقية من جهازك — أسماء الخدمات، أو أسماء الفولدرات في مشروعك — بدل قايمة ثابتة. من درس ٤.` },
-        { t: R`وزّعه على حد تاني`, what: R`اضغط فولدر الموديول في [[.zip]]، وابعته لزميلك، وخليه يفك الضغط في [[Documents\PowerShell\Modules]]. لو اشتغل عنده من غير ما تشرحله حاجة، يبقى الموديول متكامل. من درس ٥.` },
+        { lvl: 'صغير', t: R`نسختين جنب بعض`, what: R`خلي عندك [[PcTool\1.0.0]] و [[PcTool\1.1.0]] في نفس الفولدر (كل واحدة بـ psd1 بنسختها، ودالة [[Get-PcVer]] بترجّع رقمها)، وجرّب [[Import-Module PcTool -RequiredVersion 1.0.0]]. هتفهم ليه الـ manifest لازم يبقى فيه نسخة. من دروس ٣ و ٥.`, done: R`[[Get-Module -ListAvailable PcTool]] بيطلّع النسختين، و [[Import-Module PcTool]] من غير نسخة بيحمّل [[1.1.0]] (الأعلى)، و [[-RequiredVersion 1.0.0]] في جلسة جديدة بيخلي [[Get-PcVer]] يطبع [[1.0.0]].` },
+        { lvl: 'صغير', t: R`إكمال من الواقع`, what: R`[[Register-ArgumentCompleter]] بيقرا أسماء حقيقية وقت ما تدوس Tab: أسماء الفولدرات في [[$HOME\code]] لأمر [[Open-Project]]، بدل قايمة ثابتة. من درس ٤.`, done: R`[[TabExpansion2]] على [[Open-Project ]] بيرجّع أسامي الفولدرات الموجودة بس. ولو عملت فولدر جديد، بيظهر في الاقتراحات من غير [[Import-Module]] تاني، ولو مفيش [[$HOME\code]] مفيش error.` },
+        { lvl: 'متوسط', t: R`موديول أدواتك الشخصي`, what: R`موديول اسمه [[MyTools]] فيه كل دالة بتكررها: [[Get-Stamp]] و [[Write-Log]] و [[Test-Port]]، بمساعدة لكل واحدة و manifest بأسامي صريحة. سطّبه مرة، وشيل الدوال دي من [[$PROFILE]]. من دروس ١ و ٢ و ٣ و ٥.`, done: R`من [[pwsh -NoProfile]] جديد [[Test-Port localhost 80]] بيشتغل من غير Import ومن غير profile، و [[Get-Help Write-Log -Examples]] فيه مثالك، و [[Test-ModuleManifest]] بيعدّي، و [[$PROFILE]] مبقاش فيه الدوال دي.` },
+        { lvl: 'متوسط', t: R`وزّعه على حد تاني`, what: R`اضغط فولدر الموديول في [[.zip]] بـ [[Compress-Archive]]، وابعته لزميلك، وخليه يفك الضغط في [[Documents\PowerShell\Modules]]. لو اشتغل عنده من غير ما تشرحله حاجة، يبقى الموديول متكامل. من درس ٥.`, done: R`على جهاز تاني (أو فولدر تجريبي زوّدته لـ [[PSModulePath]]) [[Get-Command -Module PcTool]] بيطلّع التلات أوامر بس، و [[Get-Help Set-PcSchedule]] شغالة، والـ Tab بيقترح الدقايق. ولو الـ zip فيه فولدر زيادة فوق [[PcTool]] هتلاحظ إنه مبيتلاقيش، وتصلّحه.` },
+        { lvl: 'كبير', t: R`PcTool جاهز للنشر`, what: R`قسّم الموديول لـ [[Public\]] و [[Private\]] (ملف لكل دالة، والـ psm1 بيعمل dot-source لهم ويصدّر اللي في [[Public]] بس)، و manifest بأسامي صريحة، ومساعدة لكل أمر، و completer. وفوقهم [[build.ps1]] بيعمل [[Test-ModuleManifest]] وفحص المساعدة (تحدي درس ٢) و [[check-module.ps1]] (تحدي درس ٣)، وبعدين zip باسم فيه النسخة، ويكتب لوج بكل خطوة. من الخمس دروس.`, done: R`[[.\build.ps1]] بيطلّع [[PcTool-1.2.0.zip]] وسطر في اللوج لكل خطوة. تشغيله تاني بنفس النسخة بيرفض بكود ١ ومبيكتبش فوق الـ zip. أمر من غير [[.SYNOPSIS]] أو اسم غلط في [[FunctionsToExport]] بيوقّف البناء برسالة فيها الاسم. والـ zip لما يتفك في فولدر تجريبي في [[PSModulePath]] بيشتغل من نافذة [[-NoProfile]].`, ext: R`زوّد اختبارات Pester لكل أمر عام، و [[CHANGELOG.md]] بيتقري منه رقم النسخة، وخطوة [[Publish-Module -WhatIf]] للـ PowerShell Gallery، وشغّل [[build.ps1]] في GitHub Actions على كل push.` },
+        { lvl: 'فكرة', t: R`موديول لشغلك انت`, what: R`بص على الحاجات اللي بتكتبها في الترمنال كل يوم في شغلك (أوامر git طويلة، تشغيل مشروع بإعداداته، تنضيف فولدرات build، فتح لوجات) واختار ٤ منهم يبقوا أوامر بأسماء [[Verb-Noun]] في موديول واحد. انت اللي بتقرر الأسامي والـ parameters والاقتراحات.`, done: R`الموديول بيتحمّل لوحده من نافذة جديدة، ومفيش تحذير «unapproved verbs»، وكل أمر ليه [[Get-Help]] بمثال حقيقي، وأي أمر بيغيّر حاجة فيه [[-WhatIf]]، وكل parameter بقيمة متكررة ليه اقتراح Tab.`, ext: R`خليه يقرا إعداداته من ملف [[.psd1]] جنبه بدل ما تكون مكتوبة في الكود، وزوّد نسخة [[1.1.0]] بأمر جديد واحفظ القديمة جنبها، وشاركه مع فريقك من repo بـ README.` },
       ],
       n: R`الأداة شغالة، بس لسه ملف. في القسم ده بتبقى **أوامر**: ليها أسماء زي أوامر النظام، ومساعدة بتتقري بـ [[Get-Help]]، ونسخة، وإكمال تلقائي، وبتتحمّل لوحدها. ٥ خطوات على الأداة اللي بنيناها في مشروع ١`,
       items: [
@@ -103,6 +105,11 @@ Export-ModuleMember -Function Set-PcSchedule`,
             R`بيحدد الواجهة العامة: [[Set-PcSchedule]] بس اللي هيبان برّه الموديول، و [[Write-PcLog]] و [[$StatePath]] بيفضلوا جوه. من غير السطر ده الـ [[.psm1]] بيصدّر كل الدوال، فالدوال الداخلية كانت هتبان لليوزر وتلخبطه.`
           ],
           try: R`اعمل الملف، وشغّل [[Import-Module .\PcTool\PcTool.psm1 -Force]]، وبعدين [[Get-Command -Module PcTool]]. وبعدين جرّب [[Get-Command Write-PcLog]] وشوف هيلاقيها ولا لأ. وجرّب تسمّي دالة [[Cancel-PcSchedule]] وشوف التحذير اللي هيطلع.`,
+          practice: [
+            { lvl: 'سريع', t: R`اعمل موديول تجريبي فيه دالة [[Stop-Bad]] جواها [[exit 1]] ودالة [[Stop-Good]] جواها [[throw 'bad']]، وشغّل [[pwsh -NoProfile -Command "Import-Module .\Ex.psm1; Stop-Bad; 'after'"]].`, done: R`كلمة [[after]] مبتتطبعش خالص وكود الخروج ١ (من bash [[$?]]، ومن PowerShell [[$LASTEXITCODE]]): الـ [[exit]] قفل الجلسة كلها مش الدالة. ومع [[try { Stop-Good } catch { 'caught' }; 'after']] بتطبع [[caught]] وبعدها [[after]] والجلسة كمّلت.` },
+            { lvl: 'تطبيق', t: R`زوّد [[Get-PcSchedule]] بتقرا [[$script:StatePath]] وترجّع object فيه [[Kind]] و [[At]]، ولو الملف مش موجود متطبعش حاجة ومترميش. وصدّرها في [[Export-ModuleMember]].`, done: R`من غير ملف حالة [[$null -eq (Get-PcSchedule)]] بيطبع [[True]] ومفيش أي error، وبعد ما تكتب الملف بإيدك (JSON فيه Kind و At) [[(Get-PcSchedule).Kind]] بيطبع القيمة اللي كتبتها، و [[Get-Command -Module PcTool]] فيه الأمرين.` },
+            { lvl: 'تحدي', t: R`اختبر الدالة الداخلية [[Write-PcLog]] من غير ما تصدّرها: نادِها جوه نطاق الموديول نفسه بـ [[& (Get-Module PcTool) { Write-PcLog 'test' }]]، وفسّر ليه دي للاختبار بس ومش طريقة استخدام.`, done: R`سطر [[test]] اتكتب في [[pc.log]]، وفي نفس الجلسة [[Get-Command Write-PcLog]] لسه بيرمي [[CommandNotFoundException]]، وتقدر تقول في جملة إن أي حد بيعتمد على الطريقة دي هيتكسر لما تغيّر تفاصيلك الداخلية.` },
+          ],
           flag: "script",
           deep: {
             why: R`السكربت بيحل مشكلة واحدة. الموديول بيحل مشكلة التوزيع: اسم ثابت، وواجهة معلنة، وتفاصيل مخبّية. ولما تيجي تغيّر اسم ملف الحالة بعد شهر، هتغيّره في مكان واحد ومحدش هيحس، لأن محدش كان شايفه أصلًا.`,
@@ -349,6 +356,11 @@ function Set-PcSchedule {
             R`قفلة [[Set-PcSchedule]].`
           ],
           try: R`ضيف التعليق ده، واعمل [[Import-Module ... -Force]]، وشغّل [[Get-Help Set-PcSchedule]] وبعدين [[Get-Help Set-PcSchedule -Examples]]. وبعدين **شيل** parameter من [[param]] وشوف قسم [[SYNTAX]] اتغيّر لوحده ولا لأ.`,
+          practice: [
+            { lvl: 'سريع', t: R`بعد ما تضيف التعليق، اطبع [[(Get-Help Set-PcSchedule).Synopsis]]، وبعدين [[Get-Help Set-PcSchedule -Parameter In]].`, done: R`الأول بيطبع سطر الـ [[.SYNOPSIS]] بتاعك بالحرف، والتاني بيطبع شرح [[-In]] اللي كتبته ومعاه سطور [[Required?]] و [[Position?]] و [[Default value]] اللي PowerShell حسبها لوحده من الـ [[param]].` },
+            { lvl: 'تطبيق', t: R`اكتب مساعدة كاملة لـ [[Get-PcSchedule]] و [[Stop-PcSchedule]]: سطر [[.SYNOPSIS]]، و [[.PARAMETER]] لكل parameter، ومثالين حقيقيين لكل أمر.`, done: R`[[(Get-Help Stop-PcSchedule).examples.example.Count]] بيطبع [[2]]، و [[Get-Help Get-PcSchedule -Examples]] بيطلّع أمثلتك انت، وكل parameter في [[Get-Help ... -Full]] تحته شرح مش فاضي.` },
+            { lvl: 'تحدي', t: R`اغلط عمدًا مرتين: مرة اكتب [[.EXAMPEL]] بدل [[.EXAMPLE]]، ومرة [[.PARAMETER Kindd]] بدل [[Kind]]. وبعدين اكتب [[Test-PcHelp.ps1]] بيلف على [[Get-Command -Module PcTool]] ويمسك الأوامر اللي مساعدتها بايظة.`, done: R`كلمة واحدة غلط زي [[.EXAMPEL]] بتبوّظ التعليق كله، و [[Synopsis]] بيرجع سطر الـ syntax المتولّد بدل جملتك. والـ typo في اسم الـ parameter بيسيب شرحه فاضي من غير أي تحذير. والسكربت بيطبع اسم الأمر البايظ ويخرج بـ ١، وبعد التصليح بيخرج بـ ٠.` },
+          ],
           flag: "script",
           deep: {
             why: R`الأداة اللي محدش عارف يستخدمها مش موجودة. والتوثيق اللي في ملف منفصل بيتنسى، فبيبقى كداب بعد تعديلين. التعليق ده جنب الكود، فبيتعدّل معاه.`,
@@ -553,6 +565,11 @@ Test-ModuleManifest .\PcTool\PcTool.psd1`,
             R`بيقرا الـ manifest ويتأكد إنه ملف صالح. في PowerShell 7 كمان بيتأكد إن [[RootModule]] موجود فعلًا، أما 5.1 بيعدّيه من غير الملف (جرّبنا الاتنين). لو نجح بيطبع اسم الموديول ونسخته، ولو فيه غلطة بيقولك قبل ما اليوزر يكتشفها.`
           ],
           try: R`شغّل الأمر، وافتح [[PcTool.psd1]] واقراه — ده نص عادي. وبعدين غيّر [[ModuleVersion]] لـ [[1.1.0]]، وشغّل [[Test-ModuleManifest]] تاني. وبعدين جرّب تحط [[RootModule = 'مش-موجود.psm1']] وشوف [[Test-ModuleManifest]] هتقول إيه.`,
+          practice: [
+            { lvl: 'سريع', t: R`شغّل [[Test-ModuleManifest .\PcTool\PcTool.psd1 | Format-List Name, Version, ExportedFunctions]].`, done: R`بيطبع [[PcTool]] والنسخة [[1.0.0]] وأسامي التلات دوال اللي في [[FunctionsToExport]] بالظبط، من غير ولا error.` },
+            { lvl: 'تطبيق', t: R`سيب [[Get-PcSchedule]] في [[Export-ModuleMember]] جوه الـ psm1، بس شيلها من [[FunctionsToExport]] في الـ psd1، واعمل [[Import-Module .\PcTool\PcTool.psd1 -Force]].`, done: R`[[Get-Command -Module PcTool]] مبقاش فيه [[Get-PcSchedule]]: الـ manifest بيفلتر فوق الـ psm1، والدالة لازم تبقى مكتوبة في الاتنين عشان تبان. ولما ترجّعها في الـ psd1 تظهر تاني.` },
+            { lvl: 'تحدي', t: R`اكتب [[check-module.ps1]] بيفحص أكتر من [[Test-ModuleManifest]]: الـ [[RootModule]] موجود فعلًا جنب الـ psd1، وكل اسم في [[FunctionsToExport]] متعرّف كـ [[function]] في الـ psm1، ومفيش [[*]]. وجرّبه بـ [[RootModule = 'missing.psm1']] على [[pwsh]] وعلى [[powershell]].`, done: R`هتلاقي إن [[Test-ModuleManifest]] في 7 بيرمي error على الـ RootModule الناقص، لكن في 5.1 بيعدّيه ساكت (و [[Import-Module]] بيفشل في الاتنين). وسكربتك بيمسكه في الاتنين، وبيطبع اسم أي دالة مكتوبة غلط في [[FunctionsToExport]]، ويخرج بـ ١.` },
+          ],
           flag: "script",
           deep: {
             why: R`من غير manifest، موديولك ملف كود. مفيش طريقة حد يقول «أنا شغّال على ١.٠» ولا طريقة تقول «ده محتاج ٧». وأول ما تبقى عايز توزّعه أو تخلي حاجة تانية تعتمد عليه، النسخة بتبقى أول حاجة محتاجها.`,
@@ -724,6 +741,11 @@ Register-ArgumentCompleter -CommandName Set-PcSchedule -ParameterName In -Script
             R`قفلة الـ scriptblock، وقفلة [[Register-ArgumentCompleter]] نفسه.`
           ],
           try: R`ضيف السطور دي، [[Import-Module ... -Force]]، وبعدين اكتب [[Set-PcSchedule off -In ]] (بمسافة في الآخر) ودوس Tab. وبعدين اكتب [[1]] ودوس Tab تاني وشوف الفرق. وبعدين غيّر القايمة تجيب أسماء الخدمات: [[(Get-Service).Name]].`,
+          practice: [
+            { lvl: 'سريع', t: R`من غير ما تدوس Tab: [[$s = 'Set-PcSchedule off -In 1'; (TabExpansion2 $s $s.Length).CompletionMatches.CompletionText]]، وبعدين نفس الحاجة بـ [[-In 9]].`, done: R`الأول بيطبع [[15]] و [[120]] بس (اللي بيبدأوا بـ ١)، والتاني مبيطبعش حاجة لأن مفيش اقتراح بيبدأ بـ ٩. والرقم التاني في [[TabExpansion2]] هو مكان المؤشر، فلو نسيته أو كتبته أكبر من طول النص هتاخد error [[cursorIndex]].` },
+            { lvl: 'تطبيق', t: R`اعمل أمر تجريبي [[Get-SvcInfo -Name]] و completer بيقترح [[(Get-Service).Name]] اللي بتبدأ باللي اتكتب. وبعدين جرّب الطريقة القصيرة: الـ attribute [[ArgumentCompletions(5, 15, 30)]] فوق parameter، في [[pwsh]] وفي [[powershell]].`, done: R`[[TabExpansion2]] على [[Get-SvcInfo -Name Win]] بيرجّع أسامي خدمات حقيقية من جهازك كلها بتبدأ بـ Win. والـ attribute بيشتغل في 7، لكن في 5.1 نداء الدالة نفسه بيقع بـ «Cannot find the type for custom attribute 'ArgumentCompletions'»: لو أداتك لازم تشتغل على 5.1 استخدم [[Register-ArgumentCompleter]].` },
+            { lvl: 'تحدي', t: R`خلي الاقتراحات تعتمد على parameter تاني: لو [[-Kind restart]] اقترح ١ و ٢ و ٥ دقايق، ولو [[off]] اقترح القايمة الكبيرة. الـ scriptblock بياخد parameter خامس اسمه [[$fakeBoundParameters]] فيه اللي اليوزر كتبه لحد دلوقتي.`, done: R`[[TabExpansion2]] على [[Set-PcSchedule restart -In ]] بيرجّع [[1]] و [[2]] و [[5]]، وعلى [[Set-PcSchedule off -In ]] بيرجّع ٥ و ١٥ و ٣٠ و ٦٠ و ١٢٠، ولو [[-Kind]] لسه مكتوبش بيرجّع القايمة الكبيرة من غير error.` },
+          ],
           flag: "script",
           deep: {
             why: R`[[ValidateSet]] بتحل نص المشكلة: قايمة مقفولة. لكن أغلب القيم مش مقفولة — رقم، أو اسم ملف، أو اسم خدمة. الـ completer بيدّي اقتراح من غير ما يمنع، وبيقدر يقرا الواقع وقت الكتابة.`,
@@ -924,6 +946,11 @@ Copy-Item "$HOME\lab\PcTool\*" $dest -Recurse -Force`,
             R`[[\*]] بتنسخ اللي جوه [[PcTool]] مش الفولدر نفسه، فمتطلعش [[PcTool\PcTool]]. [[-Recurse]] بتاخد الفولدرات اللي جوه، و [[-Force]] بتكتب فوق النسخة القديمة لما تحدّث. بعدها افتح نافذة جديدة وجرّب [[Get-PcSchedule]] من غير أي تعديل للمسار.`
           ],
           try: R`زوّد المسار وجرّب [[Get-Module -ListAvailable PcTool]]. وبعدين **اقفل النافذة وافتح واحدة جديدة** وجرّب [[Get-PcSchedule]] — المفروض متشتغلش، لأن تعديل [[$env:PSModulePath]] بيضيع. وبعدين سطّبه في [[Documents\PowerShell\Modules]] (جوه المسار اللي بيرجّعه [[GetFolderPath('MyDocuments')]]) وجرّب تاني من نافذة جديدة.`,
+          practice: [
+            { lvl: 'سريع', t: R`اطبع [[$env:PSModulePath -split ';']] في [[pwsh]]، وبعدين في [[powershell]] (5.1) من نافذة جديدة، وقارن.`, done: R`في 7 أول مسار بيخلص بـ [[Documents\PowerShell\Modules]]، وفي 5.1 بـ [[Documents\WindowsPowerShell\Modules]]. و 7 بيشوف مسارات 5.1 كمان، لكن 5.1 مبيشوفش مسارات 7: يعني موديول في فولدر 7 مش هيتلاقي من [[powershell.exe]].` },
+            { lvl: 'تطبيق', t: R`غيّر اسم فولدر الموديول في المعمل من [[PcTool]] لـ [[tools]] وجرّب [[Import-Module PcTool]] بعد ما تزوّد المعمل لـ [[PSModulePath]]. وبعدين رجّع الاسم وجرّب [[$PSModuleAutoLoadingPreference = 'None']] وانده [[Get-PcSchedule]].`, done: R`باسم [[tools]] الـ error بيبقى [[Modules_ModuleNotFound]]، وبالاسم الصح بيتحمّل. ومع [[None]] نفس الأمر بيرمي [[CommandNotFoundException]] رغم إن الموديول في المسار، ولما ترجّعها [[All]] بيشتغل لوحده: كده انت شفت الـ autoloading بيشتغل وبيتقفل.` },
+            { lvl: 'تحدي', t: R`اكتب [[Install-PcTool.ps1]] بياخد [[-Destination]] (الافتراضي جوه [[GetFolderPath('MyDocuments')]])، وبينسخ لفولدر باسم النسخة ([[PcTool\1.0.0]]) من الـ psd1، وبيدعم [[-WhatIf]]، وبيتأكد في الآخر من نافذة جديدة. جرّبه الأول بـ [[-Destination]] على فولدر مؤقت.`, done: R`[[-WhatIf]] بيطبع اللي هيتنسخ ومبيعملش ولا فولدر. والتشغيل التاني بيدّي نفس النتيجة من غير error. و [[pwsh -NoProfile -Command "Get-PcSchedule; (Get-Module PcTool).Version.ToString()"]] بيشتغل من غير [[Import-Module]] ويطبع النسخة اللي في الـ manifest.` },
+          ],
           flag: "script",
           deep: {
             why: R`الأداة اللي محتاجة مسار مش أداة، دي ملف. أول ما تتسطّب، بتبقى جزء من النظام بتاعك: بتتكتب باسمها، والـ Tab بيكمّلها، و [[Get-Help]] بتشتغل عليها، وأي سكربت تاني يقدر يناديها.`,

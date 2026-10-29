@@ -4,6 +4,14 @@ MORE("ps", [
       t: "البيئة والإعدادات",
       l: 2,
       n: "",
+      projects: [
+        { lvl: 'صغير', t: R`دكتور PATH`, what: R`سكربت [[path-doctor.ps1]] بيطبع: PATH فيه كام فولدر، والمتكرر، والميت (مش موجود على الديسك)، والفاضي (من [[;;]] أو [[;]] في الآخر)، وكل واحد جاي من User ولا Machine. من درس متغيرات البيئة.`, done: R`الأرقام بتطابق اللي بتطلعه بإيدك بأوامر الدرس، ولو زوّدت للجلسة [[$env:PATH += ';C:\nosuch']] وشغّلته تاني بيظهر [[C:\nosuch]] في الميت، وعلى إنه مش من User ولا Machine (من الجلسة).` },
+        { lvl: 'صغير', t: R`أول بروفايل بجد`, what: R`٣ فانكشنز و ٢ aliases بتستخدمهم فعلًا (اختارهم من أكتر الأوامر في ملف التاريخ، تمرين درس History)، وقبل كل اسم [[Get-Command]] تتأكد إنه فاضي. من درسين $PROFILE و History.`, done: R`في نافذة جديدة كل اسم شغال، و [[pwsh -NoProfile]] مفيهوش ولا واحد منهم، ومفيش اسم منهم غطّى على أمر أو alias موجود قبل كده.` },
+        { lvl: 'متوسط', t: R`محمّل ملفات .env`, what: R`فانكشن [[Import-DotEnv]] بتقرا ملف [[.env]] سطر سطر: بتتخطى الفاضي واللي بيبدأ بـ [[#]]، وبتقسم عند أول [[=]] بس ([[-split '=', 2]])، وبتشيل علامات التنصيص من حوالين القيمة، وبتحط كل واحد في [[$env:]] للجلسة بـ [[Set-Item -Path "env:$name" -Value $value]]. وتطبع عدد اللي اتحمّل، ولو [[-Show]] تطبع الأسامي والقيم متخبية ([[***]]). من دروس متغيرات البيئة والمتغيرات.`, done: R`على ملف فيه ٤ متغيرات وتعليق وسطر فاضي وقيمة فيها [[=]] (زي [[DB_URL=postgres://u:p@h/db?x=1]]): بتطبع «4 loaded»، والقيمة اللي فيها [[=]] بتيجي كاملة، و [[pwsh -NoProfile -Command '$env:PORT']] من نفس النافذة بيطبع القيمة. والنافذة الجديدة مفيهاش حاجة منهم.` },
+        { lvl: 'متوسط', t: R`بروفايل للنسختين`, what: R`بروفايل واحد بيتحمّل من 7 و 5.1 (تحدي درس $PROFILE): الحاجات الخاصة بـ 7 جوه [[if]] على [[$PSVersionTable.PSVersion.Major]]، وأي موديول أو برنامج بيتحمّل بس لو [[Get-Command]] لقاه، وأول سطر فيه تعليق بوقت التحميل اللي قسته.`, done: R`[[pwsh]] و [[powershell]] الاتنين بيفتحوا من غير ولا سطر أحمر، والفانكشنز بتاعتك شغالة في الاتنين، وقست الوقت بـ [[Measure-Command]] قبل وبعد وكاتبه في التعليق.` },
+        { lvl: 'كبير', t: R`فاحص بيئة الشغل`, what: R`سكربت [[dev-env-check.ps1]] بيفحص جهازك وبيطبع لكل فحص PASS أو WARN أو FAIL وسبب: git و node و python موجودين ([[Get-Command]] ونسخهم)، و PATH مفيهوش ميت ولا متكرر، والـ ExecutionPolicy الفعّالة بتسمح بسكربتاتك في 7 و 5.1، والبروفايل موجود وبيتحمّل من غير error ([[pwsh -NoProfile -Command ". '$PROFILE'"]] وبعدين [[$LASTEXITCODE]])، وملف التاريخ مفيهوش كلمات زي password. بيكتب لوج بالوقت وتقرير JSON، ويخرج بعدد الـ FAIL. من كل دروس الوحدة ودروس الوحدات اللي فاتت.`, done: R`على جهازك بيطلع تقرير كامل والكود = عدد الـ FAIL. لو زوّدت فولدر ميت لـ PATH الجلسة الفحص بتاعه بيبقى WARN، ولو حطيت غلطة في نسخة من البروفايل وفحصتها بيبقى FAIL ومعاه رسالة الـ error. وهو قراية بس، فتشغّله ١٠ مرات من غير ما يغيّر حاجة، والـ JSON بيتكتب فوق القديم كل مرة واللوج بيزيد.` },
+        { lvl: 'فكرة', t: R`dotfiles بتوعك`, what: R`صمّم انت طريقة تنقل بيها بيئتك لأي جهاز ويندوز جديد في دقايق: البروفايل، والمتغيرات الدايمة اللي محتاجها، والـ aliases، وأي إعداد بتعمله بإيدك كل مرة. حطهم في فولدر واحد (وفي git لو تعرفه) ومعاهم سكربت تسطيب.`, done: R`على حساب يوزر تاني أو جهاز تاني، تشغيلة واحدة لسكربت التسطيب بتخلي النافذة الجديدة زي بتاعتك بالظبط، وتشغيله تاني مبيكرّرش ولا سطر.`, ext: R`زوّد فحص لبرامجك (winget) ويسطّب الناقص، ونسخة لـ bash أو zsh لو بتشتغل على لينكس أو ماك، وخلّي السكربت يعمل باك أب للبروفايل القديم قبل ما يغيّره.` },
+      ],
       items: [
         {
           cmd: "$env:",
@@ -18,6 +26,11 @@ $env:API_URL = "http://localhost:3000"
 [Environment]::SetEnvironmentVariable("API_URL", "http://localhost:3000", "User")
 Get-ChildItem env:`,
           try: "اطبع PATH سطر سطر بأول أمر.",
+          practice: [
+            { lvl: 'سريع', t: R`لاقي الفولدرات المتكررة في PATH: [[$env:PATH -split ';' | Group-Object | Where-Object Count -gt 1 | Select-Object Count, Name]]، وبعدين اعرف PATH فيه كام فولدر أصلًا: [[($env:PATH -split ';').Count]].`, done: R`يا مفيش ناتج (PATH نضيف)، يا جدول فيه كل فولدر متكرر وعدد مراته، وعندك رقم بعدد الفولدرات كلها. و [[Group-Object]] مش بيفرّق كابيتال وسمول، فـ [[C:\Tools]] و [[c:\tools]] بيتعدّوا واحد.` },
+            { lvl: 'تطبيق', t: R`اعمل [[$env:APP_MODE = 'test']] واتأكد إن البرامج اللي بتشغّلها من النافذة دي بتشوفه: [[pwsh -NoProfile -Command '$env:APP_MODE']] و [[cmd /c echo %APP_MODE%]]. وبعدين افتح نافذة جديدة من الـ Start واسأل تاني.`, done: R`الأمرين جوه نفس النافذة بيطبعوا [[test]] (اتجرّب في 7.6 و 5.1)، والنافذة الجديدة مبتطبعش حاجة، لأن [[$env:]] للجلسة دي واللي بيتولد منها بس.` },
+            { lvl: 'تحدي', t: R`لاقي الفولدرات الميتة في PATH (مكتوبة بس مش موجودة على الديسك): [[$env:PATH -split ';' | Where-Object { $_ -and -not (Test-Path $_) }]]، ولكل واحد اعرف جاي منين: [[[Environment]::GetEnvironmentVariable('Path', 'User') -split ';']] و [[... 'Machine']].`, done: R`عندك لستة بالفولدرات الميتة (أو مفيش)، وجنب كل واحد User أو Machine: اللي في User تقدر تشيله بنفسك، واللي في Machine محتاج أدمن. وكله قراية من غير ما تغيّر حاجة.` },
+          ],
           deep: {
             why: R`البرامج بتاخد إعدادات كتير من متغيرات البيئة: [[PATH]] اللي بيقرر أنهي node بيشتغل، و [[NODE_ENV]]، و [[JAVA_HOME]]. ولما برنامج «مش موجود» وهو متسطب، غالبًا المشكلة في الـ PATH.`,
             how: R`[[Env:]] في PowerShell زي drive كامل. [[$env:PATH]] بيقرا. [[ls Env:]] بيعرض كل المتغيرات. [[$env:MY_VAR = "value"]] بيضبط للجلسة الحالية بس.
@@ -170,6 +183,11 @@ $files.Count
 $user = @{ name = "Ali"; role = "dev" }
 $user.name`,
           try: "خزّن Get-Process في متغير واعرف عدد العمليات.",
+          practice: [
+            { lvl: 'سريع', t: R`[[$files = Get-ChildItem $HOME -File]]، واطبع عددهم واسم أكبر واحد: [[($files | Sort-Object Length -Descending)[0].Name]].`, done: R`بيطلع رقم واسم ملف، ولو فتحت فولدر اليوزر في Explorer ورتّبت بالحجم، أكبر ملف هو نفسه.` },
+            { lvl: 'تطبيق', t: R`[[$cfg = @{ port = 3000; env = 'dev' }]]، وغيّر البورت لـ 8080، وزوّد مفتاح جديد بـ [[$cfg.debug = $true]]، واطبع [[$cfg.Count]] و [[$cfg.port]] و [[$cfg["env"] ]].`, done: R`[[$cfg.Count]] بيطلع 3، و [[$cfg.port]] بيطلع 8080، والطريقتين (النقطة والأقواس) بيرجّعوا dev لنفس المفتاح.` },
+            { lvl: 'تحدي', t: R`اثبت إن المتغير بيشيل لقطة مش أمر: في فولدر تجارب [[$before = Get-ChildItem]]، اعمل ملف جديد، [[$after = Get-ChildItem]]، وقارن العددين. وبعدين [[$p = Get-Process -Id $PID]] واطبع [[$p.WorkingSet64]]، واعمل حاجة تاكل رام ([[$big = 1..300000 | ForEach-Object { "x$_" }]]) واطبعه تاني، وبعدين [[$p.Refresh()]] واطبعه.`, done: R`[[$before.Count]] فضل زي ما هو و [[$after.Count]] زاد واحد. و [[$p.WorkingSet64]] بيطلع نفس الرقم بالظبط بعد الحاجة التقيلة، ومبيتغيرش غير بعد [[$p.Refresh()]] (اتجرّب في 7.6 و 5.1): الـ object اتاخد مرة واحدة ومش بيسأل تاني لوحده.` },
+          ],
           deep: {
             why: "المتغيرات في PowerShell مش زي bash: بيها أنواع، وبتتعامل مع objects مش نص بس.",
             how: R`المتغيرات بتبدأ بـ [[$]]. مش محتاج declare. PowerShell بيحدد النوع لوحده من القيمة.
@@ -314,6 +332,11 @@ function gst { git status }
 Set-Alias ll Get-ChildItem
 . $PROFILE`,
           try: "اعمل function اسمها dev بتعمل [[npm run dev]] وحطها في البروفايل. اعرف الأول لو الاسم مستخدم بـ [[Get-Command dev]].",
+          practice: [
+            { lvl: 'سريع', t: R`[[$PROFILE | Select-Object *]] في pwsh وفي powershell.`, done: R`كل واحد بيطبع ٤ مسارات (AllUsersAllHosts و AllUsersCurrentHost و CurrentUserAllHosts و CurrentUserCurrentHost) وسطر [[Length]] زيادة لأن [[$PROFILE]] نص. وبتاع 7 في فولدر [[Documents\PowerShell]] وبتاع 5.1 في [[Documents\WindowsPowerShell]] (ممكن جوه OneDrive)، يعني كل نسخة ليها بروفايل منفصل.` },
+            { lvl: 'تطبيق', t: R`اتأكد إن الاسم فاضي بـ [[Get-Command mkcd -ErrorAction SilentlyContinue]]، وبعدين زوّد في البروفايل [[function mkcd { New-Item -ItemType Directory $args[0] -Force | Out-Null; Set-Location $args[0] }]].`, done: R`في نافذة جديدة [[mkcd demo]] بيعمل الفولدر ويدخله، و [[(Get-Command mkcd).CommandType]] بيقول [[Function]]، و [[pwsh -NoProfile -Command 'Get-Command mkcd']] بيطلع error لأن البروفايل متحمّلش هناك.` },
+            { lvl: 'تحدي', t: R`خلّي بروفايل واحد يشتغل في النسختين: في بروفايل 5.1 سطر واحد بس بيعمل dot-source لبروفايل 7 ([[. "مسار بروفايل 7"]]، والمسار من [[$PROFILE]] جوه pwsh)، وجوه بروفايل 7 حط أي حاجة خاصة بـ 7 (زي [[$PSStyle]]) جوه [[if ($PSVersionTable.PSVersion.Major -ge 7) { }]].`, done: R`فتح [[powershell]] بيحمّل فانكشنزك من غير ولا سطر أحمر، و [[Get-Command mkcd]] شغال في الاتنين. و [[(Measure-Command { pwsh -c exit }).TotalMilliseconds]] ناقص نفس السطر بـ [[-NoProfile]] بيقولك البروفايل بياخد كام ملي ثانية.` },
+          ],
           deep: {
             why: "ملف بيتشغّل أوتوماتيك كل ما تفتح PowerShell. حطّ فيه aliases وفانكشنز وإعدادات.",
             how: R`[[$PROFILE]] متغير فيه مسار الملف. لو مش موجود: [[New-Item $PROFILE -Force]]. وافتحه في VS Code: [[code $PROFILE]].
@@ -471,6 +494,11 @@ Get-Command dev`
           example: R`Get-History
 Invoke-History 5`,
           try: "اضغط Ctrl+Space بعد [[Get-Child]] وشوف الاختيارات.",
+          practice: [
+            { lvl: 'سريع', t: R`[[Get-History | Select-Object -Last 5 Id, CommandLine]]، وبعدين [[r]] ومعاه رقم واحد منهم.`, done: R`بيتعرض آخر ٥ أوامر بأرقامهم، و [[r]] بالرقم بيشغّل نفس الأمر تاني من غير ما تكتبه ولا تدوّر عليه بالأسهم.` },
+            { lvl: 'تطبيق', t: R`دوّر في ملف التاريخ الدايم مش الجلسة بس: [[Select-String -Path (Get-PSReadLineOption).HistorySavePath -Pattern 'git push' | Select-Object -Last 5]].`, done: R`بيطلع أوامر من جلسات قديمة اتقفلت، وجنب كل واحد رقم سطره في الملف، و [[Get-History]] في نفس الوقت مبيعرضهمش لأنه للجلسة دي بس.` },
+            { lvl: 'تحدي', t: R`اعرف أكتر ١٠ أوامر بتكتبها: [[Get-Content (Get-PSReadLineOption).HistorySavePath | ForEach-Object { ($_ -split ' ')[0] } | Group-Object | Sort-Object Count -Descending | Select-Object -First 10 Count, Name]]. وبعدين جرّب [[(Get-PSReadLineOption).AddToHistoryHandler.Invoke('echo token123')]] ونفس الحاجة بـ [['git status']].`, done: R`جدول بـ ١٠ أوامر وعددها (أول مرشحين لـ function في البروفايل). والسطر اللي فيه token بيرجّع [[MemoryOnly]] و git status بيرجّع [[MemoryAndFile]]: PSReadLine افتراضيًا مبيحفظش في الملف أي سطر فيه كلمات زي password و token و apikey و secret و asplaintext، بيفضل في سهم فوق للجلسة دي بس (اتجرّب في 2.4.5 مع 7.6 و 2.0.0 مع 5.1).` },
+          ],
           deep: {
             why: R`نص وقتك في الترمنال بتكتب أوامر كتبتها قبل كده. البحث في التاريخ والإكمال بالـ Tab بيوفروا كتابة كتير، وبيقللوا الغلط في أسامي الأوامر والـ parameters الطويلة.`,
             how: R`[[Get-History]] بيعرض أوامر الجلسة دي بأرقام. [[Invoke-History 42]] (أو [[r 42]]) بيشغّل الأمر رقم 42. و [[!!]] مش موجودة.
@@ -585,6 +613,11 @@ Ctrl+R         دوّر في كل تاريخك (الملف الدايم)
           example: R`Get-ExecutionPolicy
 Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`,
           try: "اعرف الـ policy الحالية عندك قبل ما تغيّر حاجة.",
+          practice: [
+            { lvl: 'سريع', t: R`[[Get-ExecutionPolicy -List]] في pwsh وفي powershell.`, done: R`كل واحد بيطبع ٥ scopes بالترتيب ده: MachinePolicy و UserPolicy و Process و CurrentUser و LocalMachine. والقيم ممكن تختلف بين النسختين لأن كل نسخة ليها إعدادها، و [[Get-ExecutionPolicy]] لوحده بيرجّع أول قيمة من فوق مش [[Undefined]].` },
+            { lvl: 'تطبيق', t: R`اعمل ملف «نازل من النت» بإيدك في فولدر تجارب: [[Set-Content .\dl.ps1 '"ran ok"']]، وبعدين [[Set-Content .\dl.ps1 -Stream Zone.Identifier -Value '[ZoneTransfer]', 'ZoneId=3']]. شغّله بـ [[.\dl.ps1]] تحت RemoteSigned، وبعدين [[Unblock-File .\dl.ps1]] وشغّله تاني.`, done: R`أول مرة بيطلع [[is not digitally signed]] و [[FullyQualifiedErrorId]] بتاعه [[UnauthorizedAccess]]، و [[(Get-Item .\dl.ps1 -Stream *).Stream]] بيبين [[Zone.Identifier]]. وبعد [[Unblock-File]] الـ stream ده بيختفي والسكربت بيطبع [[ran ok]]. اتجرّب في 7.6 و 5.1.` },
+            { lvl: 'تحدي', t: R`سكربت [[find-blocked.ps1]] بيدوّر في فولدر (زي Downloads) على كل [[.ps1]] و [[.psm1]] عليهم [[Zone.Identifier]] ([[Get-Item $f -Stream Zone.Identifier -ErrorAction SilentlyContinue]])، ويطبع الاسم والـ ZoneId من غير ما يفك أي حاجة.`, done: R`[[dl.ps1]] بتاع التمرين اللي فات (قبل ما تفكه) بيطلع ومعاه [[ZoneId=3]] (يعني من النت)، والملفات اللي انت كاتبها بنفسك مبتطلعش، وبعد [[Unblock-File]] على ملف بيختفي من الناتج.` },
+          ],
           deep: {
             why: "ويندوز بيمنع تشغيل سكربتات PowerShell افتراضيًا. دي الخطوة اللي بتشغّلها مرة واحدة.",
             how: R`[[Get-ExecutionPolicy]] بيعرض الحالي. الافتراضي [[Restricted]] (ممنوع تشغيل سكربتات). [[RemoteSigned]] (الأنصح): السكربتات المحلية بتشتغل، اللي جايين من النت محتاجين توقيع. [[Unrestricted]]: كل حاجة بتشتغل (مش آمن).

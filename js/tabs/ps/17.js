@@ -4,6 +4,14 @@ MORE("ps", [
       t: "الأجهزة اللي معاك على الشبكة",
       l: 3,
       n: R`تعرف مين متوصل على شبكة بيتك، وتصحّي جهاز مقفول، وتشارك فولدر، وتشغّل أوامر على جهاز تاني أو تدخله بـ SSH أو تعمله restart. كله على شبكتك انت أو بإذن صاحبها، وأغلبه محتاج أدمن على الجهازين`,
+      projects: [
+        { lvl: 'صغير', t: R`جرد شبكة البيت`, what: R`سكربت بيعمل sweep ويجيب الـ MAC والاسم لكل جهاز ويحفظهم في [[devices.csv]] بالتاريخ، وبيطبع جدول مترتب بالـ IP (بـ [[[version]]] زي المثال). من درس Get-NetNeighbor + ping sweep.`, done: R`الجدول مترتب صح ([[192.168.1.2]] قبل [[192.168.1.10]])، والملف بيتفتح في Excel، وكل جهاز تعرفه في البيت ليه سطر.` },
+        { lvl: 'صغير', t: R`wake.ps1 بالاسم`, what: R`[[devices.json]] فيه اسم وMAC لكل جهاز ([[{ "office": "00-11-22-33-44-55" }]] مثلًا)، و [[.\wake.ps1 office]] بيبعت الـ packet للـ MAC بتاعه. من درس Wake-on-LAN.`, done: R`اسم موجود بيطبع [[102]]، واسم مش موجود بيطبع الأسامي المتاحة ويخرج بـ ١، و MAC مكتوب غلط في الملف بيترفض بالـ ValidatePattern قبل الإرسال.` },
+        { lvl: 'متوسط', t: R`لوحة الشبكة`, what: R`sweep + MAC + اسم، ولكل جهاز رد: فحص سريع للبورتات [[22]] و [[445]] و [[3389]] و [[5985]] بـ [[Test-NetConnection -Port]] (أو [[TcpClient]] بـ timeout قصير)، والنتيجة جدول وملف CSV. من دروس الوحدة كلها.`, done: R`الجدول فيه عمود لكل بورت بـ True أو False، وجهازك بيطلع 445 مفتوح لو مشارك حاجة، والفحص كله بيخلص في أقل من دقيقة لشبكة بيت عادية، وجهاز بيقفل في النص مبيوقّفش السكربت.` },
+        { lvl: 'متوسط', t: R`صحة أجهزة البيت عن بعد`, what: R`[[Invoke-Command]] على لستة أجهزة بيجيب من كل واحد: الـ uptime، والمساحة الفاضية على C:، ونسخة الويندوز، ويحطهم في CSV بـ [[PSComputerName]]، والأجهزة اللي ماردّتش في قسم لوحده من [[-ErrorVariable]]. من درس Enter-PSSession / Invoke-Command.`, done: R`صف لكل جهاز رد، وكل جهاز ماردّش مكتوب اسمه وسبب الفشل، والسكربت بيخلص حتى لو كل الأجهزة مقفولة، والكود ١ لو فيه جهاز واحد على الأقل ماردّش.` },
+        { lvl: 'كبير', t: R`صحّي، افحص، واعمل restart`, what: R`[[lab.ps1]] بيقرا الأجهزة من JSON (اسم و IP و MAC)، ويصحّي المقفول بـ Wake-on-LAN ويستنى لحد ما يرد على ping (بحد أقصى)، ويجيب حالته بـ [[Invoke-Command]]، ويعمل restart بس للي uptime بتاعه أكتر من ٧ أيام، ومعاه [[-WhatIf]] للـ restart. وكل جهاز جوه [[try / catch]] لوحده، وكله في [[Start-Transcript]]، وجدول في الآخر. من الوحدة دي و «سكربتات زي المحترفين».`, done: R`جهاز مقفول ومش بيصحى بيتكتب «didn't wake in 120s» والباقي بيكمّل، و [[-WhatIf]] بيطبع مين كان هيتعمله restart من غير ما حد يتعمله، والتشغيل التاني على طول مبيعملش restart لنفس الجهاز (uptime بقى صغير)، واللوج فيه سطر لكل جهاز، والكود ١ لو أي جهاز فشل.`, ext: R`زوّد تحديث البرامج بـ winget على كل جهاز قبل الـ restart، وابعت ملخص إشعار على جهازك، وسجّله مهمة أسبوعية بالليل.` },
+        { lvl: 'فكرة', t: R`حارس شبكة البيت`, what: R`أداة بتعرف إمتى جهاز جديد دخل شبكتك، أو جهاز مهم (الطابعة، الـ NAS، الكاميرا) وقع، أو بورت اتفتح على جهاز مكانش مفتوح. انت اللي بتقرر تراقب إيه وكل قد إيه وتنبّه إزاي.`, done: R`جهاز جديد بيطلّع تنبيه مرة واحدة بس مش كل دقيقة، وجهاز مهم بتقفله بيطلع تنبيه في خلال الوقت اللي حددته، وكل التنبيهات في لوج بالوقت.`, ext: R`خلّيه يشتغل كمهمة كل ١٠ دقايق، وزوّد صفحة HTML بسيطة بتتولّد بآخر حالة، واسمح لأسامي الأجهزة المعروفة تتكتب في JSON بدل الـ MAC.` },
+      ],
       items: [
         {
           cmd: "Get-NetNeighbor + ping sweep",
@@ -25,6 +33,11 @@ $alive
 Get-NetNeighbor -AddressFamily IPv4 -State Reachable, Stale, Delay, Probe | Where-Object IPAddress -like "$prefix.*" | Select-Object IPAddress, LinkLayerAddress, State
 foreach ($ip in $alive) { $name = try { [System.Net.Dns]::GetHostEntry($ip).HostName } catch { "?" }; "{0,-15} {1}" -f $ip, $name }`,
           try: R`شغّل المثال على شبكة بيتك، وطابق كل عنوان على جهاز تعرفه (موبايلك، التليفزيون، الطابعة). في جهاز مش عارفه؟ قارن الـ MAC بقايمة الأجهزة في صفحة الراوتر.`,
+          practice: [
+            { lvl: 'سريع', t: R`هات عنوان الراوتر: [[(Get-NetIPConfiguration | Where-Object IPv4DefaultGateway).IPv4DefaultGateway.NextHop]]، ودوّر عليه في [[Get-NetNeighbor -AddressFamily IPv4]].`, done: R`عنوان الراوتر (غالبًا آخره [[.1]]) ظاهر في الجدول ومعاه MAC وحالة زي [[Reachable]] أو [[Stale]]، وده نفس الـ MAC اللي مكتوب على ضهر الراوتر أو في صفحته.` },
+            { lvl: 'تطبيق', t: R`قيس الـ sweep بتاع المثال بـ [[Measure-Command]] مرة بـ [[-ThrottleLimit 16]] ومرة بـ [[-ThrottleLimit 64]].`, done: R`الـ 64 أسرع بشكل واضح، ونفس العناوين بتطلع في المرتين. ولو جهاز ظهر في مرة بس، غالبًا نايم أو بيرد ببطء، فده سبب إنك متعتمدش على sweep واحد.` },
+            { lvl: 'تحدي', t: R`[[devices.csv]]: كل تشغيلة بتحفظ IP و MAC والاسم وأول مرة الجهاز اتشاف، والأجهزة اللي الـ MAC بتاعها مش في الملف تتطبع بالأصفر [[NEW]] وتتضاف.`, done: R`تشغيلتين ورا بعض من غير تغيير مبيطلّعوش NEW، ولو فتحت واي فاي موبايل كان مقفول بيطلع NEW، والملف مفيهوش صفين لنفس الـ MAC. (موبايلات كتير بتستخدم MAC عشوائي لكل شبكة، فممكن يطلع NEW مرة لما تغيّر الإعداد ده.)` },
+          ],
           deep: {
             why: R`عايز تعرف IP الطابعة أو الـ Raspberry Pi أو التليفزيون عشان توصل له، أو شاكك إن حد غريب على الواي فاي، أو بتتأكد إن جهاز اتوصل بالشبكة بعد ما شغّلته. ومن غير ما تسطّب برامج مسح شبكات.`,
             how: R`الـ ping مش دليل كامل: أجهزة كتير (ويندوز بفايروول على Public، وموبايلات نايمة) مش بترد على ping. بس أي جهاز بيرد أو حتى بيتكلم بعد ما بعتّله، جهازك بيعرف الـ MAC بتاعه وبيحطه في جدول الـ neighbors، فالجدول بيلقط أجهزة أحيانًا الـ ping مقالش عليها.
@@ -298,6 +311,11 @@ $udp.Send($packet, $packet.Count, [System.Net.IPEndPoint]::new([System.Net.IPAdd
 $udp.Close()
 Get-NetAdapterAdvancedProperty -Name "Ethernet" | Where-Object DisplayName -like "*Wake*" | Select-Object DisplayName, DisplayValue`,
           try: R`على الجهاز اللي عايز تصحّيه: هات الـ MAC بتاع كارت الـ Ethernet واتأكد من إعدادات Wake. اقفله (Sleep الأول)، وابعتله الـ packet من جهاز تاني على نفس الشبكة. ولو لسه مش جاهز، جرّب الكود بـ MAC وهمي وشوف إنه بيبعت 102 بايت.`,
+          practice: [
+            { lvl: 'سريع', t: R`هات الـ MAC بتاع كارتك ([[Get-NetAdapter | Select-Object Name, MacAddress]])، وابني الـ packet بيه زي المثال، واطبع [[$packet.Count]] وأول ٧ قيم بـ [[$packet | Select-Object -First 7]].`, done: R`[[102]]، وأول ٦ قيم [[255]] (ده [[0xFF]] بالعشري)، والسابعة أول بايت في الـ MAC بتاعك.` },
+            { lvl: 'تطبيق', t: R`function [[Send-WakeOnLan -Mac]]، والـ parameter عليه [[ValidatePattern('^([0-9A-Fa-f]{2}[-:]){5}[0-9A-Fa-f]{2}$')]]، وبترجّع عدد البايتات اللي اتبعتت.`, done: R`[[00-11-22-33-44-55]] و [[00:11:22:33:44:55]] الاتنين بيرجّعوا [[102]]، و [[00-11-22]] بيترفض برسالة أولها [[Cannot validate argument on parameter 'Mac']] قبل ما أي packet يتبعت.` },
+            { lvl: 'تحدي', t: R`اتأكد إن الـ packet صح من غير جهاز تاني: [[UdpClient]] بيسمع على [[127.0.0.1]] بورت [[40009]]، وابعتله الـ packet على نفس العنوان والبورت، واقرا اللي وصل بـ [[.Receive([ref]$ep)]].`, done: R`وصل [[102]] بايت، والبايتات من رقم 6 لـ 11 لما تكتبها hex بـ [[-join '-']] بتطلع نفس الـ MAC اللي بعته ([[00-11-22-33-44-55]] في التجربة). اتجرب على 7.6 و 5.1، ومن غير ما الفايروول يسأل لأن الاستماع على 127.0.0.1 بس.` },
+          ],
           deep: {
             why: R`جهاز مكتب أو سيرفر في البيت عايز توصله بـ SSH أو مشاركة ملفات، بس مش عايزه شغال 24 ساعة. أو جهاز في أوضة تانية. بالـ WoL تسيبه مقفول، وتصحّيه لما تحتاجه من لابتوبك أو من سكربت.`,
             how: R`الـ magic packet مش بيتبعت لجهاز بعينه، لأن الجهاز المقفول ملوش IP. بيتبعت broadcast لكل الشبكة، وكل كارت بيبص جواه: لو لقى الـ MAC بتاعه متكرر 16 مرة بعد الستة FF، بيصحّي الجهاز. عشان كده لازم الـ MAC مش الـ IP.
@@ -498,6 +516,11 @@ New-PSDrive -Name S -PSProvider FileSystem -Root \\PC\Shared -Persist -Credentia
 # لما تخلص، على الجهاز اللي عليه الفولدر:
 Remove-SmbShare -Name "Shared" -Force`,
           try: R`اعرض الشيرات اللي على جهازك دلوقتي (حتى لو عمرك ما شاركت حاجة)، واعرف قواعد File and Printer Sharing في الفايروول شغالة ولا لأ.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[Get-SmbShare]] من نافذة عادية.`, done: R`الشيرات المخفية [[ADMIN$]] و [[C$]] و [[IPC$]] (وأي درايف تاني بـ [[$]] بعده)، وأي فولدر انت شاركته قبل كده. الـ [[$]] في آخر الاسم معناها مخفية من Network في Explorer.` },
+            { lvl: 'تطبيق', t: R`اعمل فولدر [[share-lab]] في TEMP، وجرّب [[New-SmbShare -Name Lab -Path $env:TEMP\share-lab -ReadAccess Everyone -WhatIf]] من نافذة عادية، وبعدين من Terminal أدمن.`, done: R`من النافذة العادية بيطلع [[Access is denied.]] حتى مع [[-WhatIf]] (الأمر بيكلّم خدمة SMB الأول قبل ما يقرر، اتجرب على 7.6 و 5.1)، ومن الأدمن بيطبع سطر What if، و [[Get-SmbShare -Name Lab]] بعدها بيطلع error إنه مش لاقيه.` },
+            { lvl: 'تحدي', t: R`(محتاج جهازين) شارك فولدر تجربة للقراية بس، ومن الجهاز التاني [[Test-NetConnection PC -Port 445]]، وبعدين [[New-PSDrive -Name S -PSProvider FileSystem -Root \\PC\Lab]]، وجرّب تقرا ملف وتكتب ملف. وفي الآخر [[Remove-SmbShare -Name Lab -Force]].`, done: R`[[TcpTestSucceeded : True]]، والقراية شغالة، والكتابة بتطلع access denied لأن الشير قراية بس، وبعد [[Remove-SmbShare]] الأمر [[Get-SmbShare]] رجع زي ما كان أول مرة.` },
+          ],
           flag: "danger",
           deep: {
             why: R`تنقل ملفات كبيرة بين جهازين في البيت من غير فلاشة ولا رفع على النت، أو فولدر مشترك للعيلة (صور، أفلام)، أو جهاز قديم بقى «سيرفر ملفات»، أو تسيب فولدر للبرامج على جهاز تاني يقرا منه.`,
@@ -680,6 +703,11 @@ Exit-PSSession
 Invoke-Command -ComputerName 192.168.1.20, 192.168.1.21 -Credential $cred -ScriptBlock { Get-CimInstance Win32_OperatingSystem | Select-Object Caption, LastBootUpTime }
 Enter-PSSession -HostName 192.168.1.20 -UserName admin`,
           try: R`على جهازك من غير ما تغيّر حاجة: اعرف خدمة WinRM شغالة ولا لأ ([[Get-Service WinRM]])، وقواعد WINRM في الفايروول ([[Get-NetFirewallRule -Name "WINRM*"]])، وجرب [[Invoke-Command -ComputerName localhost -ScriptBlock { hostname }]] وشوف الـ error.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[Test-WSMan localhost]] على جهازك.`, done: R`لو WinRM مش شغالة (الافتراضي على ويندوز 10 و 11) بيطلع error فيه [[The client cannot connect to the destination specified in the request]]، ولو شغالة بيطلع جدول فيه [[ProductVersion]].` },
+            { lvl: 'تطبيق', t: R`[[Invoke-Command -ScriptBlock { param($n) "hi $n from $env:COMPUTERNAME" } -ArgumentList Sara]] من غير [[-ComputerName]].`, done: R`بيطبع [[hi Sara from]] واسم جهازك، من غير WinRM خالص (من غير -ComputerName بيشتغل محلي). ونفس الـ scriptblock ده بالظبط هو اللي بيتبعت لجهاز تاني لما تزوّد [[-ComputerName]]، و [[$env:COMPUTERNAME]] ساعتها هيطلع اسم الجهاز التاني.` },
+            { lvl: 'تحدي', t: R`[[Invoke-Command -ComputerName NOPE-PC -ScriptBlock { hostname } -ErrorAction SilentlyContinue -ErrorVariable failed]]، واطبع [[$failed.Count]] و [[$failed[0].TargetObject]] و [[$failed[0].FullyQualifiedErrorId]]. وبعدين اكتب منها تقرير «مين ماردّش» لو بعت لأكتر من اسم.`, done: R`[[1]] و [[NOPE-PC]]، والـ ID على جهاز مش في domain طلع [[ServerNotTrusted,PSSessionStateBroken]]: الاسم مش في TrustedHosts فالأمر رفض قبل ما يدوّر عليه أصلًا (اتجرب على 7.6 و 5.1). ولما تبعت لكذا اسم، اللي نجحوا ناتجهم فيه [[PSComputerName]] والفاشلين في [[$failed]] من غير ما حد يوقّف التاني.` },
+          ],
           flag: "danger",
           deep: {
             why: R`عندك جهازين أو تلاتة في البيت أو مكتب صغير، وعايز تعرف مساحة الديسك أو تسطّب تحديث أو تقرا لوج على كلهم من مكانك. Remote Desktop بياخد الشاشة كلها ومش موجود في Home، والـ remoting سطر واحد ونتيجته objects تقدر ترتبها وتصدّرها.`,
@@ -864,6 +892,11 @@ New-ItemProperty @shell
 Add-Content C:\ProgramData\ssh\administrators_authorized_keys "ssh-ed25519 AAAA...paste-your-laptop-public-key"
 icacls.exe C:\ProgramData\ssh\administrators_authorized_keys /inheritance:r /grant "*S-1-5-32-544:F" /grant "SYSTEM:F"`,
           try: R`من غير أدمن: اعرف OpenSSH Server متسطب عندك ولا لأ ([[Get-Service sshd]]، وشوف فيه [[sshd.exe]] في [[C:\Windows\System32\OpenSSH]] ولا لأ). ولو قررت تسطّبه: من Terminal أدمن، وبعدها ادخل على جهازك من الموبايل أو لابتوب تاني بـ ssh.`,
+          practice: [
+            { lvl: 'سريع', t: R`من غير أدمن: [[Get-Service sshd -ErrorAction SilentlyContinue]] و [[Test-Path C:\Windows\System32\OpenSSH\sshd.exe]].`, done: R`لو مش متسطب: الأول مبيطبعش حاجة والتاني [[False]]. ولو متسطب: سطر فيه Status و [[True]].` },
+            { lvl: 'تطبيق', t: R`(بعد ما تسطّبه من Terminal أدمن) [[Test-NetConnection localhost -Port 22]]، وبعدين [[ssh $env:USERNAME@localhost hostname]].`, done: R`[[TcpTestSucceeded : True]]، و ssh بيسألك عن الـ fingerprint أول مرة وبعدين الباسورد، ويطبع اسم جهازك ويقفل. (لو حسابك Microsoft account واليوزر مرفوض، جرّب الاسم اللي بيطلع في [[whoami]] بعد الـ [[\]] بدل الإيميل.)` },
+            { lvl: 'تحدي', t: R`الدخول بالمفتاح بس: حط مفتاحك العام في الملف الصح (للأدمن [[administrators_authorized_keys]] بالصلاحيات اللي في المثال)، وبعدين [[PasswordAuthentication no]] في [[C:\ProgramData\ssh\sshd_config]] و [[Restart-Service sshd]].`, done: R`[[ssh -o PreferredAuthentications=password user@pc]] بيطلع [[Permission denied]]، و ssh العادي بالمفتاح بيدخل من غير ما يسأل باسورد. (من توثيق OpenSSH لويندوز؛ اتأكد إن المفتاح شغال قبل ما تقفل الباسورد عشان متقفلش نفسك برا.)` },
+          ],
           flag: "danger",
           deep: {
             why: R`عايز توصل لجهاز البيت (ويندوز Home) من اللابتوب، أو تشغّل أوامر عليه من الموبايل، أو تنقل ملفات بـ scp و rsync من لينكس، أو تستخدم VS Code Remote-SSH على جهاز ويندوز. SSH بروتوكول واحد بيشتغل مع كل الأنظمة.`,
@@ -1076,6 +1109,11 @@ Restart-Computer -ComputerName 192.168.1.20 -Credential $cred -Wait -For PowerSh
 Stop-Computer -ComputerName 192.168.1.20, 192.168.1.21 -Credential $cred -Force
 Invoke-Command -ComputerName 192.168.1.20 -Credential $cred -ScriptBlock { shutdown /r /t 300 /c "Restart in 5 minutes, save your work" }`,
           try: R`من غير ما تقفل أي حاجة: جرّب [[Stop-Computer -ComputerName PC-OFFICE -WhatIf]] و [[Restart-Computer -ComputerName PC-OFFICE -WhatIf]] بجهاز مش موجود، وقارن الاتنين.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[Restart-Computer -ComputerName localhost -WhatIf]]، وبعدين [[Restart-Computer -ComputerName PC-OFFICE -WhatIf]] بجهاز مش موجود.`, done: R`الأول بيطبع سطر أوله [[What if:]] ومفيش حاجة حصلت، والتاني بيطلع error فيه [[cannot be resolved]] زي ما الدرس قال، يعني [[-WhatIf]] مش بيعدّي اسم غلط.` },
+            { lvl: 'تطبيق', t: R`[[restart-lab.ps1]] بيقرا أسامي من [[computers.txt]]، ولكل اسم [[Test-Connection $name -Count 1 -Quiet]] الأول: اللي مش بيرد يطبع «offline, skipped»، واللي بيرد [[Restart-Computer -ComputerName $name -WhatIf]].`, done: R`اسم مش موجود في الملف بيطبع skipped ومبيوقّفش الباقي، و [[-WhatIf]] بيطبع سطر لكل جهاز رد بس، ومفيش جهاز اتعمله restart.` },
+            { lvl: 'تحدي', t: R`(محتاج جهاز تاني بـ remoting شغال) خد [[LastBootUpTime]] بـ [[Invoke-Command]]، وبعدين [[Restart-Computer -Wait -For PowerShell -Timeout 300]]، وبعدين خده تاني.`, done: R`الوقت التاني أحدث من الأول، والسكربت ماكملش غير لما الجهاز رجع يرد على PowerShell، ولو الجهاز ماردّش في 300 ثانية بيطلع error بدل ما يستنى على طول.` },
+          ],
           flag: "danger",
           deep: {
             why: R`سطّبت تحديث على 5 أجهزة ومحتاجين restart، أو جهاز في أوضة تانية معلّق ومش عايز تقوم، أو سكربت آخر اليوم بيقفل أجهزة المكتب. ومع [[-Wait]] تقدر تكمّل السكربت على الجهاز بعد ما يقوم.`,

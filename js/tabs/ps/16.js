@@ -4,6 +4,14 @@ MORE("ps", [
       t: "اليوزرز والصلاحيات في ويندوز",
       l: 3,
       n: R`مين بيستخدم الجهاز وبأنهي صلاحيات: تعمل يوزر لحد من العيلة أو للتجارب، وتخلي حد أدمن أو تشيله، وتعرف السكربت شغال أدمن ولا لأ، وتتحكم مين يفتح فولدر. العرض من غير أدمن، والتعديل محتاج Terminal أدمن`,
+      projects: [
+        { lvl: 'صغير', t: R`مين أدمن هنا؟`, what: R`[[admins.ps1]] بيطبع أعضاء Administrators ونوع كل واحد ([[PrincipalSource]]) ومين فيهم شغال، وفي الآخر سطر «النافذة دي أدمن ولا لأ» من [[IsInRole]]. من دروس Add-LocalGroupMember و IsInRole.`, done: R`من نافذة عادية السطر الأخير بيقول لأ حتى لو حسابك في الجروب، ومن Terminal أدمن بيقول أيوه، والجدول نفسه نفس النتيجة في الحالتين.` },
+        { lvl: 'صغير', t: R`حارس فولدر .ssh`, what: R`سكربت بيقرا [[(Get-Acl $HOME\.ssh).Access]] ويطبع تحذير لو فيه أي حد عنده صلاحية غير حسابك و [[SYSTEM]] و [[Administrators]]، لأن ssh بيرفض المفتاح لو حد تاني يقدر يقراه. من درس Get-Acl / Set-Acl.`, done: R`على فولدر سليم بيطبع OK والكود ٠. على فولدر تجربة في TEMP ادّيت فيه [[Users]] قراية، بيطبع اسم [[BUILTIN\Users]] والكود ١. ولو [[.ssh]] مش موجود أصلًا بيقول كده من غير error أحمر.` },
+        { lvl: 'متوسط', t: R`تقرير حسابات الجهاز`, what: R`CSV فيه كل حساب local: Enabled و PrincipalSource و LastLogon، والجروبات اللي هو فيها (لفّ على [[Get-LocalGroup]] و [[Get-LocalGroupMember]])، ومسار البروفايل من [[Win32_UserProfile]] بالـ SID. من الوحدة كلها.`, done: R`كل حساب في صف واحد والجروبات مفصولة بـ [[;]] في خانة واحدة، وحسابك فيه Administrators و Users، والحسابات اللي ملهاش بروفايل الخانة فاضية مش error، وجروب فاضي مبيوقّفش السكربت.` },
+        { lvl: 'متوسط', t: R`onboard.ps1 بـ WhatIf`, what: R`[[onboard.ps1 -Name -FullName]] بـ [[SupportsShouldProcess]]: يشيك أدمن بـ [[IsInRole]]، ولو الحساب موجود يقول كده ويخرج بـ ٠، ولو لأ يطلب الباسورد بـ [[Read-Host -AsSecureString]] ويعمل الحساب ويضيفه لجروب Users بالـ SID. من دروس New-LocalUser و Add-LocalGroupMember و IsInRole.`, done: R`[[-WhatIf]] من نافذة عادية بيطبع سطر [[Create new local user]] ومبيعملش حاجة. وخطوة الجروب في [[-WhatIf]] هتطلع [[Principal ... was not found]] لأن الحساب لسه متعملش، فامسك الحالة دي واطبع «would add to Users» بدل الأحمر. والتشغيل الحقيقي مرتين: التانية بتقول «موجود» من غير error.` },
+        { lvl: 'كبير', t: R`حساب تجارب كامل وتنضيفه`, what: R`[[lab-user.ps1 -Action Create|Remove]]: بيرفع نفسه أدمن لو محتاج ([[Start-Process -Verb RunAs]] زي درس IsInRole)، و Create بيعمل يوزر [[lab]] لو مش موجود ويضيفه لـ Users، ويعمل فولدر [[C:\LabShare]] ويدّي الحساب ده Modify عليه بـ [[Set-Acl]]. و Remove بيقفل الحساب، ويمسح بروفايله بـ [[Remove-CimInstance]]، ويمسحه، ويشيل الفولدر. وكل خطوة في [[Start-Transcript]]، و [[-WhatIf]] شغال على كل حاجة. من الوحدة دي و «سكربتات زي المحترفين».`, done: R`Create مرتين ورا بعض مبيطلّعش error والتانية بتقول «موجود»، و [[icacls C:\LabShare]] فيه الحساب بـ [[(M)]]، و Remove بعدها بيرجّع الجهاز زي ما كان ([[Get-LocalUser lab]] بيطلع not found والفولدر مش موجود)، واللوج فيه سطر لكل خطوة، و [[-WhatIf]] مبيغيّرش حاجة.`, ext: R`زوّد إنك تدخل بالحساب ده مرة عشان البروفايل يتعمل وتتأكد إن Remove بيمسحه، وخلّي الصلاحيات تيجي من ملف JSON (مين ياخد إيه على أنهي فولدر)، وزوّد تقرير قبل وبعد.` },
+        { lvl: 'فكرة', t: R`جهاز العيلة`, what: R`صمّم إعداد جهاز بيستخدمه أكتر من حد: مين أدمن ومين يوزر عادي، وفولدرات مشتركة ليها صلاحيات، وفولدرات خاصة. وابني سكربت بيطبّق ده من ملف إعدادات، وسكربت تاني بيراجع إن الجهاز لسه زي الإعدادات وبيطبع أي فرق. انت اللي بتقرر الحسابات والفولدرات.`, done: R`سكربت المراجعة على جهاز مطابق بيطبع «مطابق» والكود ٠، ولو زوّدت حد لـ Administrators بإيدك أو غيّرت صلاحية فولدر بيطلع الفرق بالظبط والكود ١، وسكربت التطبيق بيشتغل بـ [[-WhatIf]] الأول.`, ext: R`شغّل المراجعة كمهمة أسبوعية وابعت النتيجة إشعار، وزوّد الحسابات اللي مبتدخلش من ٩٠ يوم في التقرير.` },
+      ],
       items: [
         {
           cmd: "Get-LocalUser / New-LocalUser",
@@ -26,6 +34,11 @@ Add-LocalGroupMember -SID S-1-5-32-545 -Member "sara"
 New-LocalUser -Name "kids" -NoPassword -Description "Kids games"
 Get-LocalUser "sara" | Select-Object Name, Enabled, PasswordExpires`,
           try: R`اعرض كل الحسابات اللي على جهازك ونوع كل واحد، واعرف الحساب اللي انت شغال بيه Local ولا Microsoft. ولو عايز تجرب الإنشاء من غير ما تعمل حساب فعلًا، زوّد [[-WhatIf]].`,
+          practice: [
+            { lvl: 'سريع', t: R`[[Get-LocalUser | Where-Object Enabled | Select-Object Name, PrincipalSource]]`, done: R`الحسابات الشغالة بس، وحسابك فيهم بـ [[Local]] أو [[MicrosoftAccount]]، والحسابات المدمجة (Administrator و Guest و DefaultAccount) مش ظاهرة لأنها مقفولة.` },
+            { lvl: 'تطبيق', t: R`جرّب الإنشاء بـ splatting و [[-WhatIf]] من نافذة عادية: [[$u = @{ Name = "test.lab"; NoPassword = $true; Description = "Lab" }; New-LocalUser @u -WhatIf]]، وبعدين [[Get-LocalUser test.lab]].`, done: R`الأول بيطبع [[What if: Performing the operation "Create new local user" on target "test.lab".]] حتى من غير أدمن، والتاني بيطلع [[User test.lab was not found.]]: يعني مفيش حساب اتعمل (اتجرب على 7.6 و 5.1).` },
+            { lvl: 'تحدي', t: R`تقرير CSV لكل الحسابات: Name و Enabled و PrincipalSource و PasswordLastSet و LastLogon، وعمود [[NeverLoggedOn]] بـ True لو LastLogon فاضي.`, done: R`عدد الصفوف بيساوي [[@(Get-LocalUser).Count]]، والملف بيتفتح في Excel صح. ولو LastLogon فاضي عند كل الحسابات حتى بتاعك (زي اللي حصل في الدرس)، اكتب في أول التقرير إن العمود ده مش مضمون بدل ما تعتمد عليه.` },
+          ],
           flag: "danger",
           deep: {
             why: R`حد من العيلة محتاج يستخدم الجهاز من غير ما يشوف ملفاتك ولا يسطّب حاجات، أو عايز حساب نضيف تجرب عليه برنامج مشكوك فيه أو إعدادات جديدة، أو حساب Standard تشتغل بيه كل يوم وحساب أدمن للتسطيب بس. ومن الأوامر تقدر تعمل كذا حساب في سكربت (معمل كمبيوتر مثلًا) بدل الضغط في Settings.`,
@@ -196,6 +209,11 @@ $sid = (Get-LocalUser "sara.m").SID.Value
 Get-CimInstance Win32_UserProfile | Where-Object SID -eq $sid | Remove-CimInstance
 Remove-LocalUser -Name "sara.m"`,
           try: R`اعرض البروفايلات الحقيقية على جهازك، وقارنها بالفولدرات اللي في [[C:\Users]]. فيه فولدرات ملهاش بروفايل؟`,
+          practice: [
+            { lvl: 'سريع', t: R`[[Disable-LocalUser -Name Guest -WhatIf]]، وبعدين [[(Get-LocalUser Guest).Enabled]].`, done: R`الأول بيطبع [[What if: Performing the operation "Disable local user" on target "Guest".]] من غير أدمن، والتاني بيرجّع نفس القيمة اللي كانت قبله (مفيش حاجة اتغيّرت).` },
+            { lvl: 'تطبيق', t: R`[[offboard.ps1 -Name]] بـ [[SupportsShouldProcess]]: يتأكد إن الحساب موجود، ويقفله بـ [[Disable-LocalUser]]، ويطبع مسار البروفايل بتاعه من [[Win32_UserProfile]] بالـ SID، من غير ما يمسح أي حاجة. جرّبه بـ [[-WhatIf]] على حساب موجود، وباسم مش موجود.`, done: R`الاسم المش موجود بيطلع رسالتك انت (مش الـ error الأحمر [[User ... was not found.]]) والكود ١، و [[-WhatIf]] بيطبع سطر [[Disable local user]] والحساب لسه Enabled، ومسار البروفايل اتطبع.` },
+            { lvl: 'تحدي', t: R`قارن ٣ لستات: فولدرات [[C:\Users]]، والبروفايلات في [[Win32_UserProfile -Filter "Special = false"]]، والحسابات في [[Get-LocalUser]] بالـ SID. وطلّع: فولدر من غير بروفايل، وبروفايل من غير حساب local، وحساب عمره ما دخل (ملوش بروفايل).`, done: R`[[Public]] بيطلع في «فولدر من غير بروفايل»، وحسابك مش في ولا لستة، والحسابات المدمجة المقفولة في «عمره ما دخل»، والسكربت كله [[Get-]] فمبيغيّرش حاجة.` },
+          ],
           flag: "danger",
           deep: {
             why: R`حد نسي الباسورد، أو حد ساب البيت أو الشغل ومحتاج تقفل حسابه بس تحتفظ بملفاته، أو حساب تجارب خلص دوره. والمسح الغلط (تمسح الحساب وتسيب الفولدر، أو تمسح الفولدر بإيدك) بيسيب ملفات تقيلة محدش عارف بتاعة مين، أو بروفايل مكسور في الـ registry.`,
@@ -349,6 +367,11 @@ Add-LocalGroupMember -SID S-1-5-32-544 -Member "sara"
 Remove-LocalGroupMember -SID S-1-5-32-544 -Member "sara"
 Add-LocalGroupMember -Group "Remote Desktop Users" -Member "sara"`,
           try: R`اعرف مين أدمن على جهازك، وهل الحساب اللي انت شغال بيه منهم. واعرض الجروبات اللي على جهازك ودوّر على Remote Desktop Users.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[Get-LocalGroupMember -SID S-1-5-32-544 | Select-Object Name, ObjectClass, PrincipalSource]]`, done: R`تعرف مين أدمن على جهازك، وهل حسابك منهم، و [[Administrator]] المدمج ظاهر حتى لو مقفول.` },
+            { lvl: 'تطبيق', t: R`[[Add-LocalGroupMember -SID S-1-5-32-544 -Member "nope.user" -WhatIf]] باسم مش موجود، وبعدين [[Add-LocalGroupMember -SID S-1-5-32-545 -Member $env:USERNAME -WhatIf]] بحسابك على جروب Users.`, done: R`الأول بيطلع [[Principal nope.user was not found.]] حتى مع [[-WhatIf]]: الأمر بيدوّر على الحساب قبل ما يقرر يعمل إيه. والتاني بيطبع [[What if: Performing the operation "Add member]] واسم حسابك على [[S-1-5-32-545]].` },
+            { lvl: 'تحدي', t: R`«مراجعة الأدمنز»: سكربت بيطلع أعضاء Administrators، ولكل واحد [[PrincipalSource]] بتاعه Local أو MicrosoftAccount يجيب [[Enabled]] من [[Get-LocalUser]] (الاسم بعد [[\]])، ويطبع تحذير ويخرج بـ [[exit 1]] لو فيه أدمن شغال غير اللي في لستة مسموحة انت كاتبها.`, done: R`لما لستتك فيها حسابك بس والـ Administrator مقفول الكود ٠ ومفيش تحذير، ولو شلت حسابك من اللستة بيطبع اسمه في التحذير والكود ١، والـ Administrator المقفول مبيطلعش في التحذير.` },
+          ],
           flag: "danger",
           deep: {
             why: R`عايز تدّي حد صلاحية يسطّب برامج، أو تشيلها من حد ماكانش المفروض ياخدها، أو تراجع مين أدمن على جهاز (أول حاجة تبص عليها لو شاكك إن حد عبث في الجهاز). ومن غير الأوامر دي على Home مفيش أداة رسومية كاملة للجروبات.`,
@@ -521,6 +544,11 @@ if (-not $isAdmin) {
 }
 Write-Host "Running as admin" -ForegroundColor Green`,
           try: R`احفظ المثال في ملف [[admin-check.ps1]] في فولدر اسمه فيه مسافة، وشغّله من نافذة عادية ووافق على UAC. وبعدين جرب ملف تاني أول سطر فيه [[#Requires -RunAsAdministrator]] بس.`,
+          practice: [
+            { lvl: 'سريع', t: R`من نافذة عادية، قارن [[IsInRole(...Administrator)]] (أول سطرين في المثال) بوجود حسابك في [[Get-LocalGroupMember -SID S-1-5-32-544]].`, done: R`لو حسابك أدمن: اسمك موجود في الجروب، ومع ذلك [[$isAdmin]] بيطلع [[False]]. ده UAC: الحساب أدمن والنافذة نفسها لأ، والسكربت بيسأل عن النافذة.` },
+            { lvl: 'تطبيق', t: R`سكربت فيه ٣ خطوات قراية وخطوة واحدة محتاجة أدمن: لو مش أدمن يطبع [[Write-Warning "skipping X: needs admin"]] ويعدّي الخطوة دي بس ويكمّل الباقي، ويخرج بـ ٠.`, done: R`من نافذة عادية بيطبع [[WARNING: skipping]] وخطوات القراية التلاتة بيطلع ناتجها و [[$LASTEXITCODE]] = ٠، ومن Terminal أدمن مفيش تحذير والأربع خطوات اشتغلوا.` },
+            { lvl: 'تحدي', t: R`اطبع جروبات النافذة دي بأساميها: [[[Security.Principal.WindowsIdentity]::GetCurrent().Groups | ForEach-Object { $_.Translate([Security.Principal.NTAccount]) }]]، ودوّر على [[BUILTIN\Administrators]]، وقارن بـ [[whoami /groups]].`, done: R`في نافذة عادية [[BUILTIN\Administrators]] مش في لستة [[.Groups]] خالص (اتجرب على 7.6 و 5.1)، مع إن [[whoami /groups]] بيطلّعه وجنبه [[Group used for deny only]]: الـ token فيه الجروب بس متعلّم «للمنع بس». ومن نافذة أدمن بيظهر في الاتنين.` },
+          ],
           flag: "script",
           deep: {
             why: R`سكربت بيعدّل الفايروول ويعمل يوزر ويغيّر hosts، شغّلته من نافذة عادية: أول خطوة فشلت بـ Access denied، والتانية نجحت لأنها مش محتاجة أدمن، والتالتة فشلت. النتيجة جهاز نص متظبط. الفحص في أول السكربت بيخلي الحكاية كلها تتعمل أو متتعملش.`,
@@ -693,6 +721,11 @@ $acl.RemoveAccessRule($rule) | Out-Null
 Set-Acl -Path $folder -AclObject $acl
 Remove-Item $folder -Recurse -Force`,
           try: R`شوف صلاحيات فولدر الـ SSH بتاعك ([[(Get-Acl $HOME\.ssh).Access]]): مين غيرك يقدر يقراه؟ وبعدين شغّل المثال كله على فولدر التجربة.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[(Get-Acl $env:TEMP).Owner]] و [[(Get-Acl $env:TEMP).AccessToString]]`, done: R`الـ Owner حسابك، و AccessToString فيه ٣ سطور: [[NT AUTHORITY\SYSTEM Allow  FullControl]] و [[BUILTIN\Administrators Allow  FullControl]] وحسابك [[FullControl]]. ودي بالظبط الصلاحيات اللي فولدر التجربة في الدرس ورثها.` },
+            { lvl: 'تطبيق', t: R`في فولدر تجربة في TEMP، ادي [[BUILTIN\Users]] (الـ SID [[S-1-5-32-545]]) صلاحية [[Read]] بس بـ [[ContainerInherit, ObjectInherit]]، واتأكد بـ [[icacls]]، وبعدين شيلها بـ [[RemoveAccessRule]].`, done: R`[[icacls]] بيطلع سطر [[BUILTIN\Users:(OI)(CI)(R)]] (من غير [[(I)]] لأنها صريحة مش موروثة)، وبعد الشيل السطر ده مش موجود. اتجرب على 7.6 و 5.1 من غير أدمن.` },
+            { lvl: 'تحدي', t: R`اقفل الوراثة على فولدر التجربة بـ [[$acl.SetAccessRuleProtection($true, $true)]] (التانية [[$true]] معناها انسخ الموروث كصلاحيات صريحة) و [[Set-Acl]]، وبعدين اكتب ملف جواه وامسح الفولدر كله.`, done: R`[[(Get-Acl $f).AreAccessRulesProtected]] = [[True]]، وعدد الصلاحيات اللي [[IsInherited]] بقى ٠ بس العدد الكلي زي ما هو (٣)، والكتابة والمسح شغالين. ولو التانية كانت [[$false]] الصلاحيات الموروثة كلها كانت هتتشال، وممكن تقفل نفسك برا الفولدر.` },
+          ],
           flag: "danger",
           deep: {
             why: R`فولدر مشترك بين يوزرين على نفس الجهاز، أو فولدر فيه أسرار (مفاتيح، ملفات .env) عايز تتأكد إن محدش غيرك يقراه، أو سيرفر شغال بحساب تاني ومحتاج يكتب في فولدر، أو SSH بيرفض المفتاح لأن صلاحيات الملف مفتوحة زيادة (درس ssh / scp).`,

@@ -57,6 +57,7 @@ for (const tab in DATA) {
     (cat.projects || []).forEach(p => {
       if (!p.t) err(`${tab} › ${cat.t}`, 'مشروع من غير t');
       if (p.lvl && !['صغير', 'متوسط', 'كبير', 'فكرة'].includes(p.lvl)) err(`${tab} › ${cat.t} › ${p.t}`, 'lvl لازم يبقى صغير أو متوسط أو كبير أو فكرة');
+      ['t', 'what', 'done', 'ext'].forEach(k => brackets(`${tab} › ${cat.t} › مشروع «${p.t}» (${k})`, p[k]));
     });
     cat.items.forEach(it => {
       const ci = CI[`${tab}|${it[0]}`];
@@ -76,6 +77,7 @@ for (const tab in DATA) {
       pr.forEach((p, i) => {
         if (!p.t) err(`${tab} › ${it[0]}`, `تمرين ${i + 1} من غير t`);
         if (p.lvl && !['سريع', 'تطبيق', 'تحدي'].includes(p.lvl)) err(`${tab} › ${it[0]}`, `تمرين ${i + 1}: lvl لازم يبقى سريع أو تطبيق أو تحدي`);
+        ['t', 'done'].forEach(k => brackets(`${tab} › ${it[0]} › تمرين ${i + 1} (${k})`, p[k]));
       });
     });
     cat.items.forEach(it => {

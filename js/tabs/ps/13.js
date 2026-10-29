@@ -4,6 +4,14 @@ MORE("ps", [
       t: "سكربتات زي المحترفين",
       l: 3,
       n: R`parameters وأخطاء ولوج وموديولات: الفرق بين سكربت شغال عندك وسكربت حد تاني يقدر يعتمد عليه`,
+      projects: [
+        { lvl: 'صغير', t: R`ملاحظة جديدة بأمر واحد`, what: R`[[new-note.ps1]] بـ [[param()]]: [[-Title]] إجباري، و [[-Tag]] عليه [[ValidateSet("work", "home", "study")]]، ويعمل ملف [[.md]] اسمه التاريخ والعنوان جوه فولدر [[notes]] جنب السكربت ([[Join-Path $PSScriptRoot]]). من درسين param() و $PSScriptRoot.`, done: R`[[.\new-note.ps1 -Title "call bank" -Tag home]] من أي فولدر بيعمل الملف جوه notes جنب السكربت مش في المكان اللي انت واقف فيه، و [[-Tag party]] بيرفض قبل ما يعمل أي ملف، ونفس العنوان مرتين في نفس اليوم مبيكتبش فوق الأولى (بيزوّد رقم أو بيرفض برسالة).` },
+        { lvl: 'صغير', t: R`موديول أدواتك`, what: R`[[MyTools.psm1]] فيه [[Write-Log]] (بيكتب سطر بالوقت في ملف) و [[Get-Stamp]] وفانكشن داخلية بيستخدموها، و [[Export-ModuleMember]] بيطلّع الاتنين بس. وسكربتين في فولدرين مختلفين بيحمّلوه بمسار مبني على [[$PSScriptRoot]]. من درس «Import-Module و dot-sourcing».`, done: R`[[Get-Command -Module MyTools]] بيطلّع اتنين بالظبط، والداخلية بتطلع [[is not recognized]] من بره، والسكربتين بيكتبوا في نفس اللوج، و [[Import-Module -Force]] بعد أي تعديل بيجيب التعديل.` },
+        { lvl: 'متوسط', t: R`منضّف لوجات تعتمد عليه`, what: R`[[clear-logs.ps1]] بـ [[[CmdletBinding(SupportsShouldProcess)]]] و [[-Path]] (عليه [[ValidateScript]]) و [[-Days]] (عليه [[ValidateRange]])، بيمسح ملفات [[.log]] الأقدم من عدد الأيام، و [[Write-Verbose]] لكل ملف، و [[try / catch]] حوالين كل مسح عشان ملف واحد بايظ ميوقّفش الباقي، و [[Start-Transcript]] لكل تشغيلة. من دروس param() و CmdletBinding و try / catch و Start-Transcript.`, done: R`[[-WhatIf]] بيطبع سطر لكل ملف قديم ومبيمسحش حاجة. التشغيل الحقيقي بيسيب الجديد بس. ملف read-only ([[(Get-Item f.log).IsReadOnly = $true]]) بيفشل مسحه فبيتكتب في اللوج والباقي بيتمسح عادي، والكود في الآخر ١ لو فيه ملف فشل و ٠ لو كله تمام.` },
+        { lvl: 'متوسط', t: R`build.ps1 بيقف عند أول فشل`, what: R`سكربت بيشغّل خطوات خارجية ورا بعض (git و npm أو أي برنامج عندك)، وبعد كل خطوة [[Assert-Ok]] على [[$LASTEXITCODE]] (درس $LASTEXITCODE)، وبيكتب ناتج كل خطوة في [[logs\build.log]] بـ [[cmd /c "... > log 2>&1"]] أو [[Tee-Object]] في 7، وبيشتغل من [[$PSScriptRoot]] مهما اتفتح منين.`, done: R`لما تبوّظ خطوة في النص (اسم script مش موجود في npm مثلًا)، السكربت بيقف عندها والخطوات اللي بعدها مبتشتغلش، والرسالة فيها اسم الخطوة والكود، و [[$LASTEXITCODE]] بعد السكربت مش صفر، واللوج مقروء في VS Code من غير مسافات بين الحروف.` },
+        { lvl: 'كبير', t: R`backup.ps1 حد تاني يقدر يعتمد عليه`, what: R`[[backup.ps1]] بياخد [[-Source]] و [[-Destination]] و [[-Keep]] بتحقق، وفيه [[SupportsShouldProcess]]، ويضغط بـ [[Compress-Archive]] عن طريق splatting، ويسيب آخر Keep نسخة بس، ويكتب الهاش بتاع كل zip بـ [[Get-FileHash]] في ملف جنبه، وكل ده جوه [[try / catch / finally]] مع [[Start-Transcript]] واللوج من [[MyTools.psm1]]، ويخرج بـ [[exit 0]] أو [[exit 1]]. من الوحدة كلها ووحدة «ضغط وهاش».`, done: R`٣ تشغيلات ورا بعض بـ [[-Keep 2]] بيسيبوا نسختين بالظبط وهاشهم في الملف، و [[-WhatIf]] مبيعملش ولا ملف، والمصدر الغلط بيرفض قبل ما يبدأ والكود ١ ومفيش zip نص معمول، واللوج فيه سطر لكل تشغيلة بالنتيجة، و [[Invoke-ScriptAnalyzer]] على السكربت والموديول مبيطلّعش حاجة.`, ext: R`زوّد [[-Exclude]] لفولدرات زي node_modules، وخطوة تفك آخر zip في TEMP وتقارن عدد الملفات بالأصل، وبعد كده سجّله مهمة يومية (الوحدة الجاية).` },
+        { lvl: 'فكرة', t: R`أداة شغلك اليومي`, what: R`اختار حاجة بتعملها بإيدك كتير (تجهيز فولدر مشروع جديد، تشغيل سيرفرات التطوير، تنضيف build قديم، رفع ملفات) وحوّلها لسكربت أو موديول بكل اللي في الوحدة: parameters بتحقق، و [[-WhatIf]] و [[-Verbose]]، وأخطاء واضحة بكود خروج، ولوج، ويعدّي من PSScriptAnalyzer. انت اللي بتصمم الأوامر والـ parameters.`, done: R`حد تاني يقدر يشغّلها من غير ما يسألك: [[Get-Help .\tool.ps1]] بيطلّع الـ parameters، وأي مدخل غلط بيترفض برسالة مفهومة، و [[-WhatIf]] شغال على أي خطوة بتغيّر حاجة، والكود ٠ أو غير صفر حسب النتيجة.`, ext: R`زوّد comment-based help ([[.SYNOPSIS]] و [[.EXAMPLE]]) فيطلع في Get-Help، وحوّلها لموديول ليه [[.psd1]]، وحطها في ريبو git، وخلّي CI يشغّل [[lint.ps1]] على كل push.` },
+      ],
       items: [
         {
           cmd: "param()",
@@ -29,6 +37,11 @@ MORE("ps", [
 "Project: $Project | Stage: $Stage | Port: $Port | Force: $Force"
 if ($Force) { "Skipping checks" }`,
           try: R`احفظه deploy.ps1 وشغّله: من غير أي حاجة، وبـ [[-Project shop]]، وبـ [[-Stage live]]، وبـ [[-Port 70000]]، وبـ [[-Project shop -Stage prod -Force]]. اقرا كل رسالة.`,
+          practice: [
+            { lvl: 'سريع', t: R`اعمل [[hello.ps1]] أوله [[param([string]$Name = "world")]] وتحته سطر [["Hello, $Name"]]، وشغّله مرة من غير حاجة ومرة بـ [[-Name Sara]].`, done: R`الأولى بتطبع [[Hello, world]] (القيمة الافتراضية) والتانية [[Hello, Sara]].` },
+            { lvl: 'تطبيق', t: R`سكربت [[clean.ps1]] فيه parameter اسمه [[$Days]] نوعه int وعليه [[ValidateRange(1, 30)]] وقيمته الافتراضية 7، و [[switch]] اسمه [[$DryRun]]، وبيطبع [["Days: $Days DryRun: $DryRun"]].`, done: R`[[.\clean.ps1 -Days 0]] بيرفض قبل ما ولا سطر يشتغل، والرسالة فيها [[less than the minimum allowed range of 1]]، و [[.\clean.ps1 -Days 14 -DryRun]] بيطبع [[Days: 14 DryRun: True]]، ومن غير حاجة [[Days: 7 DryRun: False]].` },
+            { lvl: 'تحدي', t: R`سكربت [[count.ps1]] بياخد [[-Path]] كذا فولدر مفصولين بفاصلة (النوع مصفوفة نصوص)، وعليه [[ValidateScript({ Test-Path $_ })]]، وبيطبع لكل فولدر عدد الملفات اللي فيه.`, done: R`[[.\count.ps1 -Path .\d1, .\d2]] بيطبع سطر لكل فولدر بعدده، ولو واحد بس من المسارات مش موجود السكربت كله بيرفض برسالة أولها [[Cannot validate argument on parameter 'Path']] ومفيش ولا سطر عدّ اتطبع.` },
+          ],
           flag: "script",
           deep: {
             why: "سكربت بقيم ثابتة جواه بتعدّله كل مرة قبل ما تشغّله، أو بتقرا [[$args[0]]] و [[$args[1]]] وتتمنى إن اللي شغّله فاكر الترتيب. param بيخلي السكربت بتاعك أمر حقيقي: ليه أسامي واضحة، وقيم افتراضية، ورسايل خطأ مفهومة لو حد بعت حاجة غلط، و [[Get-Help .\deploy.ps1]] بيعرض الـ parameters بتاعته.",
@@ -221,6 +234,11 @@ foreach ($f in $files) {
     }
 }`,
           try: R`اعمل فولدر logs فيه ملفين [[.log]]، وشغّل [[.\clear-logs.ps1 -WhatIf]] وبعدين [[Get-ChildItem logs]]، وبعدين [[.\clear-logs.ps1 -Verbose]].`,
+          practice: [
+            { lvl: 'سريع', t: R`زوّد [[[CmdletBinding()]]] فوق [[param( )]] في [[hello.ps1]] بتاع درس param()، وسطر [[Write-Verbose "Name is $Name"]]، وشغّله مرة عادي ومرة بـ [[-Verbose]].`, done: R`من غير [[-Verbose]] مفيش ولا سطر [[VERBOSE:]]، ومعاه بيطلع سطر أوله [[VERBOSE: Name is]] بلون مختلف، والتحية بتتطبع في الحالتين.` },
+            { lvl: 'تطبيق', t: R`اعمل فولدر تجربة في [[$env:TEMP]] فيه ٣ ملفات [[.tmp]]، واكتب [[clean-tmp.ps1]] بـ [[SupportsShouldProcess]] و [[$PSCmdlet.ShouldProcess]] بيمسحهم، وشغّله بـ [[-WhatIf]] الأول وبعدين من غيره.`, done: R`مع [[-WhatIf]] بيطبع ٣ سطور أولها [[What if:]] و [[(Get-ChildItem $lab -Filter *.tmp).Count]] لسه ٣، ومن غيره العدد بيبقى ٠.` },
+            { lvl: 'تحدي', t: R`جوه السكربت حط function عادية (من غير CmdletBinding) بتنادي [[Remove-Item]] على ملف، وشغّل السكربت بـ [[-WhatIf]]: الـ WhatIf بيوصل للأمر اللي جوه الـ function ولا لأ؟ وفسّر ليه.`, done: R`بيوصل: بيطبع [[What if: Performing the operation "Remove File" on target]] ومسار الملف، و [[Test-Path]] على الملف بيرجّع [[True]]. السبب إن [[-WhatIf]] على السكربت بيخلّي [[$WhatIfPreference]] بـ True، وكل الأوامر اللي جواه بتورثه (اتجرب على 7.6 و 5.1).` },
+          ],
           flag: "script",
           deep: {
             why: "أي سكربت بيمسح أو بينقل أو بيغيّر حاجات محتاج «تجربة على الناشف» قبل الحقيقي. بدل ما تعمل parameter اسمه DryRun وتحط if قبل كل سطر، PowerShell بيديك [[-WhatIf]] و [[-Confirm]] جاهزين، بنفس الشكل اللي كل الأوامر الأصلية بتستخدمه، فاللي هيستخدم سكربتك يعرفه من غير ما يقرا الكود.",
@@ -404,6 +422,11 @@ Get-ChildItem -Path . $__bt
     -Filter *.txt $__bt
     -Recurse`,
           try: R`اعمل hashtable للـ parameters بتاعة [[Compress-Archive]] (Path و DestinationPath و Force)، وابعته بـ splatting. وبعدين جرّب تكتب [[$copy]] بدل [[@copy]] وشوف الـ error.`,
+          practice: [
+            { lvl: 'سريع', t: R`حوّل [[Get-ChildItem -Path $env:TEMP -Filter *.log -File -ErrorAction SilentlyContinue]] لـ hashtable اسمه [[$gci]] وابعته بـ [[@gci]].`, done: R`[[(Get-ChildItem @gci).Count]] بيساوي العدد اللي بيطلع من السطر الطويل بالظبط، والـ switch [[File]] مكتوب [[File = $true]].` },
+            { lvl: 'تطبيق', t: R`function [[Copy-Safe]] بتاخد [[-Path]] و [[-Destination]] و [[-DryRun]]، وبتبني hashtable لـ [[Copy-Item]]، ولو [[-DryRun]] اتبعت تزوّد عليه [[WhatIf = $true]] قبل ما تبعته.`, done: R`مع [[-DryRun]] بيطبع سطر [[What if:]] و [[Test-Path]] على مكان النسخة بيرجّع [[False]]، ومن غيره الملف موجود هناك.` },
+            { lvl: 'تحدي', t: R`function [[Get-MyFiles]] بـ [[CmdletBinding]] وفيها [[-Path]] و [[-Filter]]، وجسمها سطر واحد: [[Get-ChildItem @PSBoundParameters]] (hashtable بيعمله PowerShell لوحده فيه الـ parameters اللي اتبعتت بس).`, done: R`[[@(Get-MyFiles -Path . -Filter *.txt).Count]] بيساوي [[@(Get-ChildItem -Path . -Filter *.txt).Count]]، ولو مبعتّش [[-Filter]] بترجع كل الملفات، يعني الـ parameter اللي متبعتش مبيوصلش فاضي، مبيوصلش خالص.` },
+          ],
           flag: "script",
           deep: {
             why: "سكربتات الأتمتة فيها أوامر بـ ٦ و ٧ parameters، بعضها بيتغيّر حسب الظروف (Recurse لو الفولدر كبير، Credential لو سيرفر). من غير splatting هتكتب نفس الأمر الطويل في كذا مكان، أو هتستخدم backtick في آخر كل سطر وأي مسافة زيادة تبوّظ الدنيا.",
@@ -605,6 +628,11 @@ Get-Item .\src.zip | Select-Object Name, Length`
 Get-ChildItem -File | Get-FileReport -Verbose
 Get-FileReport -File (Get-Item .\notes.txt)`,
           try: R`شيل كلمة [[process]] والأقواس بتاعتها (خلّي الكود اللي جواها لوحده) وشغّل [[Get-ChildItem -File | Get-FileReport]] تاني، وعدّ الصفوف.`,
+          practice: [
+            { lvl: 'سريع', t: R`function [[Add-Prefix]] فيها parameter عليه [[ValueFromPipeline]] وبلوك [[process]] بيطبع [[> ]] قبل السطر، وجرّب [['a', 'b' | Add-Prefix]].`, done: R`بيطبع سطرين: [[> a]] و [[> b]]. ولو شلت [[process]] والأقواس بيطبع [[> b]] بس (آخر واحد).` },
+            { lvl: 'تطبيق', t: R`function [[Measure-Lines]] بتستقبل ملفات من الـ pipe (النوع [[System.IO.FileInfo]]) وبتطلّع لكل ملف Name وعدد سطوره، وفي [[end]] تطبع المجموع.`, done: R`[[Get-ChildItem *.ps1 | Measure-Lines]] بيطلّع صف لكل ملف، والمجموع اللي في الآخر بيساوي [[(Get-ChildItem *.ps1 | Get-Content).Count]].` },
+            { lvl: 'تحدي', t: R`function فيها parameterين Name و Length عليهم [[ValueFromPipelineByPropertyName]]، وابعتلها مرة [[Get-ChildItem -File]] ومرة [[Import-Csv]] لملف فيه عمودين Name و Length.`, done: R`الاتنين بيطبعوا نفس الشكل ([[a.txt=3]] مثلًا)، يعني الـ function بتمسك أي object فيه خصايص بالأسامي دي، مش نوع معيّن، وعمود Length اللي جاي نص من الـ CSV بيتحوّل رقم لوحده.` },
+          ],
           flag: "script",
           deep: {
             why: R`عملت فانكشن مفيدة، وعايز تستخدمها زي باقي أوامر PowerShell: [[Get-ChildItem | Where-Object ... | Get-FileReport | Export-Csv]]. من غير process، الفانكشن بتشوف آخر عنصر بس أو كل الـ objects لستة واحدة، فالـ pipeline يبوظ.`,
@@ -800,6 +828,11 @@ Get-Command -Module MyTools
 . "$PSScriptRoot\tools\helpers.ps1"
 Get-AppName`,
           try: R`اعمل الـ ٣ ملفات وشغّل backup.ps1. وبعدين من الترمنال جرّب [[Get-Secret]] بعد Import-Module، وجرّب [[& .\tools\helpers.ps1]] من غير نقطة وبعدها [[Get-AppName]].`,
+          practice: [
+            { lvl: 'سريع', t: R`موديول [[Greet.psm1]] فيه [[Get-Greeting]]، و [[Import-Module .\Greet.psm1]]، وبعدين [[Get-Command -Module Greet]]، وبعدين [[Remove-Module Greet]] ونادي الفانكشن.`, done: R`[[Get-Command]] بيطلّع [[Get-Greeting]]، وبعد [[Remove-Module]] النداء بيطلّع [[is not recognized]].` },
+            { lvl: 'تطبيق', t: R`وانت لسه في نفس الجلسة، غيّر الكلام اللي [[Get-Greeting]] بيطبعه في الملف، واعمل [[Import-Module .\Greet.psm1]] تاني من غير [[-Force]]، وبعدين بـ [[-Force]].`, done: R`من غير [[-Force]] لسه بيطبع الكلام القديم (الموديول متحمّل أصلًا فمبيتقريش تاني)، وبـ [[-Force]] بيطبع الجديد. اتجرب على 7.6 و 5.1.` },
+            { lvl: 'تحدي', t: R`موديول فيه عدّاد خاص بيه: [[function Get-Next { $script:count++; $script:count }]]، ونادي [[Get-Next]] ٣ مرات، واطبع [[$count]] من بره، وبعدين [[Import-Module -Force]] ونادي تاني.`, done: R`النداءات بتطبع [[1]] و [[2]] و [[3]]: المتغير عايش جوه الموديول بين النداءات. و [[$count]] من بره فاضي، وبعد [[-Force]] العدّ بيرجع [[1]] لأن الموديول اتحمّل من الأول.` },
+          ],
           flag: "script",
           deep: {
             why: "أول ما يبقى عندك ٣ سكربتات كل واحد فيه نسخة من Write-Log، وتصلّح غلطة في واحدة وتنسى التانيين. الموديول بيخلي الكود المشترك في مكان واحد، وبيخبي الفانكشنز الداخلية عشان محدش يعتمد عليها.",
@@ -984,6 +1017,11 @@ if ($LASTEXITCODE -ne 0) {
     exit 1
 }`,
           try: "شغّله في فولدر مفيهوش package.json وشوف [[$LASTEXITCODE]].",
+          practice: [
+            { lvl: 'سريع', t: R`[[try { Get-Content .\nope.txt -ErrorAction Stop } catch { $_.Exception.GetType().FullName }]]، وبعدين نفس السطر من غير [[-ErrorAction Stop]].`, done: R`الأول بيطبع [[System.Management.Automation.ItemNotFoundException]]، والتاني الـ catch مش بيشتغل والـ error بيطلع أحمر عادي.` },
+            { lvl: 'تطبيق', t: R`[[read-config.ps1]] بيقرا [[config.json]] جنبه: لو الملف مش موجود أو الـ JSON بايظ يطبع رسالة واضحة ويعمل [[exit 1]]، و [[finally]] يطبع [[done]]. جرّبه بملف سليم، ومن غير ملف، وبملف فيه [[{ "a": 1, ]] بس.`, done: R`التلات حالات بيطبعوا [[done]] (حتى لما [[exit 1]] جوه الـ catch، الـ finally بيشتغل الأول)، و [[$LASTEXITCODE]] بعد السكربت [[0]] للسليم و [[1]] للتانيين. والـ JSON البايظ بيتمسك حتى من غير [[-ErrorAction Stop]] لأن [[ConvertFrom-Json]] بيرمي error بيوقف أصلًا.` },
+            { lvl: 'تحدي', t: R`function [[Invoke-Retry]] بتاخد scriptblock وعدد محاولات، وبين كل محاولة [[Start-Sleep 1]]، ولو كل المحاولات فشلت تعمل [[throw]] للـ error الأصلي. جرّبها على scriptblock بيفشل أول مرتين (عدّاد في [[$script:]]).`, done: R`بيطبع [[attempt 1 failed]] و [[attempt 2 failed]] وبعدين النتيجة من المحاولة التالتة. ولو خليته يفشل دايمًا، الرسالة اللي بتوصل في الآخر هي رسالة الـ throw الأصلية مش رسالة عامة.` },
+          ],
           flag: "script",
           deep: {
             why: R`سكربت بيكمّل بعد ما خطوة فشلت ممكن يعمل ضرر: يمسح الأصل بعد نسخة فاشلة، أو يعمل deploy لـ build بايظ. try / catch بيخليك تقرر تعمل إيه لما حاجة تفشل: توقف، أو تسجّل وتكمّل، أو تنضّف قبل ما تخرج.`,
@@ -1139,6 +1177,11 @@ function Get-Config([string]$Path) {
 try { Get-Config .\config.json } catch { "Failed: $_" }
 exit 2`,
           try: R`احفظه err.ps1 في فولدر فيه src، وشغّله، وبعدين اطبع [[$LASTEXITCODE]]. وبعدين غيّر أول سطر لـ [[-ErrorAction Ignore]] وقارن [[$Error.Count]].`,
+          practice: [
+            { lvl: 'سريع', t: R`[[Get-ChildItem .\nope, $env:TEMP -ErrorAction SilentlyContinue -ErrorVariable ev]]، وبعدين [[$ev.Count]] و [[$ev[0].TargetObject]].`, done: R`[[$ev.Count]] = [[1]]، و [[TargetObject]] هو المسار الكامل لـ nope، وفولدر TEMP اتعرض عادي من غير ولا سطر أحمر.` },
+            { lvl: 'تطبيق', t: R`في فولدر تجربة فيه ٣ ملفات، امسح لستة من ٥ أسامي (اتنين مش موجودين) في loop بـ [[Remove-Item $f -ErrorAction SilentlyContinue -ErrorVariable +failed]]، واطبع في الآخر [[deleted 3, failed 2]].`, done: R`الأرقام مظبوطة، و [[$failed.TargetObject]] بيطلّع المسارين الناقصين بس. والـ [[+]] قبل الاسم هي اللي بتجمع بدل ما كل لفة تمسح اللي قبلها: من غيرها [[$failed.Count]] بيبقى آخر لفة بس.` },
+            { lvl: 'تحدي', t: R`try واحد وتحته catch لـ [[ItemNotFoundException]] و catch لـ [[RuntimeException]] و catch عام، وجرّب ٣ حاجات: ملف مش موجود بـ Stop، و [[1/$zero]] (و [[$zero = 0]])، و [[[int]'abc']]. وبعدين بدّل ترتيب أول catchين.`, done: R`الملف بيروح لـ ItemNotFound، والقسمة والتحويل الاتنين بيروحوا لـ RuntimeException: جوه القسمة [[DivideByZeroException]] في [[$_.Exception.InnerException]]، وجوه التحويل [[PSInvalidCastException]]. ولما RuntimeException يبقى الأول بيمسك الملف كمان، لأن ItemNotFoundException نوع متفرّع منه. فالمتخصص لازم يبقى فوق.` },
+          ],
           flag: "script",
           deep: {
             why: "سكربت بيلف على ١٠٠ ملف، وملف واحد مقفول. عايز تكمّل الباقي وتسجّل اللي فشل؟ ولا تقف؟ وأي error يستاهل تقف عنده؟ من غير ما تتحكم، PowerShell بيطبع أحمر ويكمّل في حاجات، ويقف في حاجات، والسكربت يخلص بـ exit 0 كأن كله تمام.",
@@ -1340,6 +1383,11 @@ npm run build;                   Assert-Ok "npm build"
 # PowerShell 7.4+ بس:
 $PSNativeCommandUseErrorActionPreference = $true`,
           try: R`في فولدر مفيهوش package.json شغّل [[try { npm run build } catch { "caught" }]]، ولاحظ إن caught متطبعتش، وبعدين اطبع [[$LASTEXITCODE]].`,
+          practice: [
+            { lvl: 'سريع', t: R`[[cmd /c exit 3]] وبعدها على طول [["$LASTEXITCODE $?"]]، وبعدين [[$?]] لوحده في سطر جديد.`, done: R`الأول بيطبع [[3 False]]، والتاني [[True]]: [[$?]] بيتكلم عن آخر أمر بس (اللي هو الطباعة)، أما [[$LASTEXITCODE]] بيفضل [[3]] لحد ما برنامج خارجي تاني يشتغل.` },
+            { lvl: 'تطبيق', t: R`function [[Invoke-Native]] بتشغّل أي برنامج خارجي وتعمل [[throw]] لو [[$LASTEXITCODE]] مش صفر والرسالة فيها الكود، وجرّبها بـ [[git rev-parse --show-toplevel]] في فولدر مش ريبو.`, done: R`الرسالة فيها [[exit 128]] (كود git لـ «not a git repository»)، و [[try / catch]] حوالين النداء بيمسكها. ومن غير الـ function، [[try]] لوحده مكانش هيحس بحاجة.` },
+            { lvl: 'تحدي', t: R`[[robocopy]] بيرجّع ٠ لحد ٧ لما ينجح (كل رقم معناه حاجة: ٠ مفيش جديد، ١ اتنسخ ملفات...) و ٨ أو أكتر لما يفشل. اكتب سكربت بينسخ فولدر تجربة بيه ويعتبره فشل بس لو الكود ٨ أو أكتر.`, done: R`أول تشغيلة الكود [[1]] والسكربت بيقول OK، والتانية [[0]] (مفيش جديد) وبرضه OK، ولو المصدر مش موجود الكود [[16]] والسكربت بيخرج بـ [[exit 1]]. وسكربت بيقول [[-ne 0]] كان هيعتبر أول تشغيلة ناجحة فشل.` },
+          ],
           flag: "script",
           deep: {
             why: R`كتبت سكربت ديبلوي بـ PowerShell، وحطيت [[$ErrorActionPreference = "Stop"]] وكل حاجة جوه try/catch، وفاكر إنه هيقف لو حاجة فشلت. الـ build بتاع docker يفشل، والسكربت يكمّل عادي ويعمل up بالصورة القديمة ويطبع «Done».`,
@@ -1477,6 +1525,11 @@ Write-Host "Script file: $PSCommandPath"
 Write-Host "Working in:  $(Get-Location)"
 if (-not (Test-Path $dist)) { npm run build }`,
           try: R`اعمل where.ps1 فيه [[Write-Host $PSScriptRoot (Get-Location)]]، وشغّله مرة من فولدره ومرة من [[C:\]] بالمسار الكامل، وقارن.`,
+          practice: [
+            { lvl: 'سريع', t: R`سكربت بيطبع [[$PSScriptRoot]] و [[$PSCommandPath]] و [[Split-Path $PSCommandPath -Leaf]]، وشغّله من فولدر تاني بالمسار الكامل.`, done: R`الأول فولدر السكربت، والتاني المسار كامل بالاسم، والتالت اسم الملف بس، ومفيش ولا واحد فيهم بيتغيّر لما تشغّله من مكان تاني.` },
+            { lvl: 'تطبيق', t: R`[[show-config.ps1]] بيقرا [[config.json]] اللي جنبه بـ [[Join-Path $PSScriptRoot 'config.json']]، ونسخة تانية منه بـ [[.\config.json]]. شغّل الاتنين وانت واقف في [[C:\]].`, done: R`نسخة [[$PSScriptRoot]] بتقرا الملف، ونسخة [[.\]] بتطلّع [[Cannot find path 'C:\config.json' because it does not exist.]].` },
+            { lvl: 'تحدي', t: R`استخدم [[$PSScriptRoot]] في القيمة الافتراضية لـ parameter ([[param([string]$Cfg = (Join-Path $PSScriptRoot 'config.json'))]])، وكمان جوه ملف [[lib\helper.ps1]] بتعمله dot-source من السكربت، واطبع الاتنين.`, done: R`القيمة الافتراضية بتطلع مسار فولدر السكربت في 7.6 و 5.1، وجوه [[helper.ps1]] الـ [[$PSScriptRoot]] بيبقى فولدر [[lib]] (فولدر الملف نفسه) مش فولدر السكربت اللي ناداه. فلو الـ helper بيقرا ملفات جنبه، يستخدم [[$PSScriptRoot]] بتاعه هو.` },
+          ],
           flag: "script",
           deep: {
             why: "السكربت شغال تمام لما تشغّله من فولدر المشروع. تدوس عليه كليك يمين «Run with PowerShell»، أو زميلك يشغّله من فولدر تاني، يطلع [[Cannot find path]] لأن المسار النسبي بقى بيدوّر في مكان تاني.",
@@ -1608,6 +1661,11 @@ npm run build 2>&1 | ForEach-Object { "$_" } | Out-File build-log.txt -Encoding 
 npm run dev 2>&1 | Tee-Object -FilePath dev-log.txt
 Get-Content dev-log.txt -Wait -Tail 20`,
           try: R`في PowerShell 5.1 شغّل [[npm run build *> a.txt]] و [[cmd /c "npm run build > b.txt 2>&1"]]، وافتح الملفين في Notepad وقارن، وبص على الترميز تحت على اليمين.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[cmd /c "(echo out& echo err 1>&2) > log.txt 2>&1"]] وبعدين [[Get-Content log.txt]].`, done: R`الملف فيه سطرين: [[out]] و [[err]]، يعني الـ stdout والـ stderr الاتنين اتجمعوا في ملف واحد، ومفيش ولا سطر أحمر على الشاشة.` },
+            { lvl: 'تطبيق', t: R`في 5.1: [[cmd /c "echo err 1>&2" 2>&1 | Out-File x1.txt]]، ونفس السطر بس بـ [[| ForEach-Object { "$_" }]] قبل Out-File في [[x2.txt]]. قارن الملفين، وبص على أول بايتات بـ [[Format-Hex x1.txt]]. وبعدين نفس الحكاية في 7.`, done: R`في 5.1 [[x1.txt]] فيه [[cmd : err]] وتحته [[CategoryInfo]] و [[NativeCommandError]]، و [[x2.txt]] فيه [[err]] بس، والملف بيبدأ بـ [[FF FE]] (UTF-16). وفي 7 الملفين فيهم [[err]] بس، ومن غير [[FF FE]].` },
+            { lvl: 'تحدي', t: R`function [[Invoke-Logged]] بتشغّل أمر خارجي، وتكتب كل سطر من ناتجه (stdout و stderr) في لوج UTF-8 وقبله الوقت، وتسيب نفس الـ exit code. جرّبها بـ [[cmd /c "echo hi& exit 5"]].`, done: R`كل سطر في اللوج أوله وقت زي [[14:02:11]]، و [[Format-Hex]] على الملف مبيبدأش بـ [[FF FE]]، و [[$LASTEXITCODE]] بعد النداء [[5]] في 7.6 و 5.1.` },
+          ],
           deep: {
             why: "السيرفر المحلي بيطلع error وعايز تبعت اللوج لحد أو تدوّر فيه. تعمل [[> log.txt]] زي bash، تفتح الملف في أداة تانية تلاقيه مسافات بين كل حرف، أو مليان سطور [[NativeCommandError]] حمرا مش من البرنامج أصلًا.",
             how: R`في Windows PowerShell 5.1، [[>]] و [[*>]] هم في الحقيقة [[Out-File]]، وده بيكتب UTF-16 افتراضيًا. VS Code بيفهمه، بس grep وأدوات كتير بتشوف بايت صفر بعد كل حرف.
@@ -1800,6 +1858,11 @@ finally {
 Get-ChildItem $logDir -Filter *.log | Where-Object LastWriteTime -lt (Get-Date).AddDays(-30) | Remove-Item
 exit $code`,
           try: R`احفظه job.ps1 وشغّله مرتين، وافتح ملف اللوج في logs. وبعدين حط [[throw "boom"]] جوه الـ try وشغّل تاني، ووشوف الرسالة اتسجّلت ولا لأ، وشوف [[$LASTEXITCODE]].`,
+          practice: [
+            { lvl: 'سريع', t: R`[[Start-Transcript -Path $env:TEMP\t.log]]، وبعدها [[Get-Date]] و [[Write-Warning hi]]، وبعدين [[Stop-Transcript]] و [[Select-String -Path $env:TEMP\t.log -Pattern 'transcript start', 'WARNING']].`, done: R`فيه سطر فيه [[transcript start]] (في 5.1 [[Windows PowerShell transcript start]]) وسطر [[WARNING: hi]]، والتاريخ اتسجّل بينهم.` },
+            { lvl: 'تطبيق', t: R`سكربت بيعمل لوج اسمه فيه الوقت لحد الثانية ([[run_2026-10-29_14-05-09.log]] مثلًا) في فولدر logs جنبه، وفي آخره يسيب آخر ٥ لوجات بس ويمسح الأقدم.`, done: R`بعد ما تشغّله ٧ مرات، [[(Get-ChildItem logs -Filter *.log).Count]] بيبقى [[5]]، والفاضلين هما الأحدث (رتّبهم بـ LastWriteTime واتأكد).` },
+            { lvl: 'تحدي', t: R`سكربت فيه [[Start-Transcript]] وبعدين [[throw "boom"]] من غير try/finally. شغّله، وبعدين في نفس النافذة اكتب [[Stop-Transcript]] مرتين. وبعدين حط [[Stop-Transcript]] في [[finally]] وكرر.`, done: R`في النسخة الأولى أول [[Stop-Transcript]] بيطبع [[Transcript stopped, output file is]]، يعني التسجيل فضل شغال بعد ما السكربت وقع وكان بيسجّل شغلك انت. والتاني بيطلع [[The host is not currently transcribing.]]. وبعد الـ finally، أول نداء بيطلع الرسالة التانية على طول.` },
+          ],
           flag: "script",
           deep: {
             why: "الصبح تلاقي الباك أب ماتعملش، ومفيش أي أثر ليه. أو زميل بيقولك «السكربت طلع error» ومش فاكر قال إيه. الـ transcript بيخلي كل تشغيلة ليها سجل تقراه بعدين، من غير ما تغيّر ولا سطر في باقي السكربت.",
@@ -2014,6 +2077,11 @@ Set-PSDebug -Trace 1
 .\backup.ps1
 Set-PSDebug -Off`,
           try: "شغّله على backup.ps1 اللي تحت.",
+          practice: [
+            { lvl: 'سريع', t: R`سكربت فيه سطر [[gci | % { $_.Name }]]، وشغّل [[Invoke-ScriptAnalyzer]] عليه، وبعدين اكتبه بالأسامي الكاملة وشغّله تاني.`, done: R`بيطلع [[PSAvoidUsingCmdletAliases]] مرتين (لـ [[gci]] و [[%]]) ومعاهم رقم السطر، وبعد [[Get-ChildItem]] و [[ForEach-Object]] مفيش ناتج. (أسامي القواعد من توثيق PSScriptAnalyzer.)` },
+            { lvl: 'تطبيق', t: R`function اسمها [[Remove-OldLogs]] بتمسح ملفات من غير [[SupportsShouldProcess]]، وحلّلها، وبعدين صلّحها بـ [[[CmdletBinding(SupportsShouldProcess)]]] و [[$PSCmdlet.ShouldProcess]].`, done: R`قبل التصليح بيطلع [[PSUseShouldProcessForStateChangingFunctions]] (الأوامر اللي بتبدأ بـ Remove و Set و New وغيرهم المفروض تدعم [[-WhatIf]])، وبعده التحذير بيختفي و [[Remove-OldLogs -WhatIf]] بيطبع سطور What if بس.` },
+            { lvl: 'تحدي', t: R`[[lint.ps1]] بيحلل كل ملفات [[.ps1]] في الفولدر واللي تحته ([[-Recurse]])، ويطبع لكل مشكلة الملف ورقم السطر واسم القاعدة، ويتجاهل [[PSAvoidUsingWriteHost]] بـ [[-ExcludeRule]]، ويخرج بـ [[exit 1]] لو فيه أي Warning أو Error.`, done: R`على فولدر نضيف [[$LASTEXITCODE]] = ٠، ولو زوّدت [[gci]] في أي ملف بيبقى ١ والسطر بتاعه بيتطبع، و [[Write-Host]] مبيطلّعش حاجة. ده نفس اللي بيتحط في CI قبل الـ merge.` },
+          ],
           deep: {
             why: R`PowerShell بيسامح في حاجات كتير بتبوظ بعدين: aliases في سكربت هيشتغل على لينكس، أو متغير اتكتب غلط، أو Write-Host في فانكشن المفروض ترجّع داتا. PSScriptAnalyzer بيقرا الكود ويطلّعلك ده قبل ما تشغّل، زي shellcheck للـ bash.`,
             how: R`[[Install-Module -Name PSScriptAnalyzer -Scope CurrentUser]] مرة واحدة. [[Invoke-ScriptAnalyzer -Path script.ps1]] بيحلل.

@@ -4,6 +4,14 @@ MORE("ps", [
       t: "الشبكات بعمق",
       l: 2,
       n: "",
+      projects: [
+        { lvl: 'صغير', t: R`بطاقة شبكتك في سكربت`, what: R`سكربت [[netinfo.ps1]] بيطبع ٥ سطور بأسامي ثابتة: الكارت، والـ IP المحلي، والـ gateway، والـ DNS ([[DNSServer]] جوه [[Get-NetIPConfiguration]])، والـ IP العام. من درس «عناوينك وإعدادات الشبكة». ولو مفيش نت، سطر العام يكتب «مفيش نت» بدل الـ error ([[-ErrorAction SilentlyContinue]] وبعدين افحص النتيجة).`, done: R`التلات سطور الأولانيين نفس اللي [[ipconfig]] بيقوله، ولو قفلت الواي فاي وشغّلته السكربت بيكمّل للآخر وسطر العام بيقول «مفيش نت» من غير ولا سطر أحمر.` },
+        { lvl: 'صغير', t: R`مين ماسك البورت؟`, what: R`سكربت [[port.ps1 3000]] بياخد رقم بورت ([[$args[0] ]]) ويطبع اسم البرنامج والـ PID وسامع على أنهي عنوان، ويقولك «مكشوف للشبكة» لو العنوان [[0.0.0.0]] أو [[::]]. من درس «مين بيسمع على أنهي بورت».`, done: R`مع listener على 127.0.0.1 بيطبع اسمه ومش بيقول مكشوف، ولو البورت فاضي بيطبع رسالة واضحة من غير error، و [[$LASTEXITCODE]] بيبقى 0 لو لقى حد و 1 لو ملقاش.` },
+        { lvl: 'متوسط', t: R`تقرير دومين`, what: R`سكربت [[domain-report.ps1 example.com]] بيطلّع A و AAAA و MX و سطر SPF من الـ DNS بتاعك ومن [[-Server 1.1.1.1]]، ويعلّم أي سجل الردين مختلفين فيه، وفي الآخر يجرب بورت 443 بـ [[-InformationLevel Quiet]]. من دروس DNS و «الطريق لحد السيرفر».`, done: R`على example.com بيطلع جدول فيه كل سجل والقيمة من كل سيرفر، و MX بيبان على إنه «مبيستقبلش إيميل»، والـ 443 بـ True. وعلى [[nosuch-zzq.example.com]] بيقول إن مفيش A (مش بيعدّيه عشان مفيش error).` },
+        { lvl: 'متوسط', t: R`لقطة البورتات وإيه اللي اتغيّر`, what: R`سكربت بيحفظ كل البورتات اللي سامعة (البورت، والعنوان، واسم البرنامج، ومكشوف ولا لأ) في [[ports.json]] بـ [[ConvertTo-Json]]. ولو فيه لقطة قديمة، يقراها بـ [[ConvertFrom-Json]] ويطبع «جديد» و «اتقفل» بـ [[Where-Object]] و [[-notin]] قبل ما يحفظ الجديدة. من درس «مين بيسمع على أنهي بورت» ودروس الـ Pipeline.`, done: R`تشغّله، وتفتح الـ TcpListener على 8765، وتشغّله تاني: بيطبع «جديد: 8765» بس. تقفله وتشغّله تالت مرة: بيطبع «اتقفل: 8765». ولو مفيش تغيير مبيطبعش غير «مفيش جديد».` },
+        { lvl: 'كبير', t: R`دكتور النت`, what: R`سكربت [[net-doctor.ps1]] بيجاوب على «النت واقف ليه؟» خطوة خطوة، ويقف عند أول خطوة فشلت ومعاها نصيحة: (١) فيه كارت Up وعليه IP مش 169.254، (٢) فيه default route و [[Test-Connection]] للـ gateway بيرد، (٣) [[Resolve-DnsName example.com]] بيرجّع IP من الـ DNS بتاعك، ولو فشل يجرب [[-Server 1.1.1.1]] عشان يعرف المشكلة في الـ DNS ولا في النت، (٤) ملف hosts مفيهوش سطر لـ example.com، (٥) [[Test-NetConnection example.com -Port 443]]. كل خطوة بتتكتب في [[net-doctor.log]] بالوقت ونتيجتها. من كل دروس الوحدة.`, done: R`والنت شغال كل الخطوات PASS والسكربت بيخرج بـ 0. لو قفلت الواي فاي بيقف عند خطوة ١ أو ٢ ويخرج برقم الخطوة دي ([[$LASTEXITCODE]])، واللوج فيه سطر بالوقت لكل خطوة اتجرّبت. وكله قراية بس، فتشغّله ١٠ مرات ورا بعض من غير ما يغيّر حاجة على الجهاز.` },
+        { lvl: 'فكرة', t: R`مراقب الاتصال بتاعك`, what: R`انت اللي بتقرر: أداة بتراقب حاجة في شبكتك بتهمك (النت بيقطع إمتى؟ السيرفر بتاعك بيرد؟ حد فتح بورت جديد؟ الـ DNS بيتغير؟) بأوامر الوحدة دي، وتسجّل كل تغيير بالوقت في ملف تقدر تقراه بعدين.`, done: R`الأداة اشتغلت ساعة على الأقل وفي اللوج سطر لكل تغيير حصل بالوقت، وتقدر تجاوب منه على سؤال حقيقي (زي «النت قطع كام مرة النهارده وكل مرة قد إيه»).`, ext: R`زوّد ملخص يومي بيتحسب من اللوج، وشغّلها كمهمة مجدولة (درس Register-ScheduledTask)، وخلّيها تبعتلك إشعار لما حاجة تتغيّر.` },
+      ],
       items: [
         {
           cmd: "Get-NetIPAddress",
@@ -18,6 +26,11 @@ Get-NetIPAddress -AddressFamily IPv4 | Select-Object InterfaceAlias, IPAddress
 Get-NetRoute -DestinationPrefix 0.0.0.0/0
 (Invoke-RestMethod https://ifconfig.me/ip).Trim()`,
           try: "اعرف الـ IP المحلي والعام والـ gateway.",
+          practice: [
+            { lvl: 'سريع', t: R`اطبع عناوين IPv4 بتاعتك من غير [[127.0.0.1]] ومن غير عناوين [[169.254.*]] (دي معناها إن الكارت مخدش عنوان من الـ DHCP): [[Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.IPAddress -notlike '127.*' -and $_.IPAddress -notlike '169.254.*' } | Select-Object InterfaceAlias, IPAddress, PrefixLength]].`, done: R`الجدول فيه سطر للكارت اللي انت متوصل بيه (غالبًا Wi-Fi أو Ethernet) بعنوان زي 192.168.x.x أو 10.x.x.x، ومفيهوش ولا سطر بيبدأ بـ 127 أو 169.254.` },
+            { lvl: 'تطبيق', t: R`سكربت [[myip.ps1]] بيطبع ٣ سطور بس: [[Local: ...]] و [[Gateway: ...]] و [[Public: ...]]. المحلي من السطر التاني في الدرس، والـ gateway من [[NextHop]] بتاع [[Get-NetRoute -DestinationPrefix 0.0.0.0/0]]، والعام من ifconfig.me زي آخر سطر.`, done: R`التلات سطور طالعين بالأسامي دي بالظبط، والـ Gateway نفس الرقم اللي [[Get-NetIPConfiguration]] كاتبه تحت [[IPv4DefaultGateway]]، والـ Local والـ Public مختلفين (لو انت ورا راوتر عادي).` },
+            { lvl: 'تحدي', t: R`اعرف النت بيخرج فعلًا من أنهي كارت لعنوان معين: [[$ip = (Resolve-DnsName example.com -Type A)[0].IPAddress]] وبعدين [[Find-NetRoute -RemoteIPAddress $ip | Select-Object -Last 1 InterfaceAlias, DestinationPrefix, NextHop]]، وقارنه بجدول [[Get-NetRoute -AddressFamily IPv4 | Where-Object DestinationPrefix -in '0.0.0.0/0', '0.0.0.0/1', '128.0.0.0/1']].`, done: R`من غير VPN الاتنين بيقولوا نفس الكارت و [[DestinationPrefix]] بيبقى [[0.0.0.0/0]]. ولو فيه VPN شغال هتلاقي غالبًا سطرين [[0.0.0.0/1]] و [[128.0.0.0/1]] على كارت الـ VPN، و [[Find-NetRoute]] بيختار واحد منهم: الـ route الأدق (prefix أطول) بيكسب على الـ default route، وعشان كده [[Test-NetConnection]] بيقولك [[InterfaceAlias]] بتاع الـ VPN مش الواي فاي.` },
+          ],
           deep: {
             why: R`عايز تفتح موقعك من الموبايل على نفس الواي فاي (محتاج IP جهازك)، أو تتأكد إن الجهاز واخد IP من الراوتر، أو تعرف الـ IP العام عشان تحطه في firewall سيرفر. زي [[ip a]] و [[ip route]] في لينكس.`,
             how: R`[[Get-NetIPAddress]] بيعرض كل العناوين على كل الكروت، IPv4 و IPv6، ومعاهم كروت وهمية كتير (Loopback و vEthernet بتاع WSL و Docker). [[-AddressFamily IPv4]] بيسيب IPv4 بس، و [[-InterfaceAlias "Wi-Fi"]] كارت واحد. وكل عنوان معاه [[PrefixLength]]: 24 يعني الماسك 255.255.255.0.
@@ -195,6 +208,11 @@ Resolve-DnsName example.com -Server 1.1.1.1
 Resolve-DnsName example.com -Type MX
 Clear-DnsClientCache`,
           try: "قارن رد 1.1.1.1 و 8.8.8.8 لدومين عندك.",
+          practice: [
+            { lvl: 'سريع', t: R`طلّع العناوين بس من غير جدول: [[(Resolve-DnsName example.com -Type A).IPAddress]]، وبعدين نفس السطر بـ [[-Type AAAA]].`, done: R`كل عنوان في سطر لوحده من غير عناوين أعمدة: أرقام بنقط في A، وعناوين فيها [[:]] في AAAA.` },
+            { lvl: 'تطبيق', t: R`اعرف دومين بيستقبل إيميله فين وبيحمي اسمه إزاي: [[Resolve-DnsName example.com -Type MX]] و [[(Resolve-DnsName example.com -Type TXT).Strings]]، ودوّر في الـ TXT على السطر اللي بيبدأ بـ [[v=spf1]].`, done: R`في example.com هتلاقي MX واحد [[NameExchange]] بتاعه نقطة لوحدها و [[Preference]] صفر (معناها «الدومين ده مبيستقبلش إيميل» عن قصد)، وسطر TXT فيه [[v=spf1 -all]] (محدش مسموحله يبعت إيميل باسمه).` },
+            { lvl: 'تحدي', t: R`فانكشن [[Test-Dns]] بتاخد اسم وبترجع [[$true]] لو ليه عنوان A فعلًا. جرّبها على [[example.com]] و [[nosuch-zzq.example.com]] و [[nosuch-zzq.invalid]]. خلي بالك إن مش كل اسم مش موجود بيطلّع error.`, done: R`example.com بترجع True والاتنين التانيين False من غير ولا سطر أحمر. ولاحظت إن [[nosuch-zzq.invalid]] بيرمي [[DNS name does not exist]]، أما [[nosuch-zzq.example.com]] فمبيرميش error خالص وبيرجّع سجل [[SOA]] من غير [[IPAddress]] (اتجرّب في 7.6 و 5.1). فالفحص الصح إن [[.IPAddress]] مش فاضي، مش إن الأمر معملش error.` },
+          ],
           deep: {
             why: R`غيّرت الـ DNS بتاع دومين ولسه بيفتح السيرفر القديم، أو الإيميل مش واصل، أو عايز تتأكد إن الدومين بيشاور على السيرفر الصح قبل ما تعمل شهادة SSL. Resolve-DnsName بيوريك الرد بالظبط ومن أنهي DNS، زي [[dig]] في لينكس.`,
             how: R`[[Resolve-DnsName example.com]] بيسأل الـ DNS اللي جهازك متظبط عليه وبيرجّع الـ A و AAAA records. [[-Type]] بيحدد النوع: [[MX]] لسيرفرات الإيميل، و [[TXT]] للنصوص (SPF وتأكيد ملكية الدومين)، و [[CNAME]] لو الاسم بيشاور على اسم تاني، و [[NS]] للسيرفرات المسؤولة عن الدومين.
@@ -335,6 +353,11 @@ MX         مين بيستلم الإيميل، والـ Preference الأصغر
           example: R`Get-Content C:\Windows\System32\drivers\etc\hosts
 Start-Process notepad C:\Windows\System32\drivers\etc\hosts -Verb RunAs`,
           try: "ضيف [[127.0.0.1 myapp.local]] وافتح http://myapp.local:3000 وانت مشغّل سيرفر محلي.",
+          practice: [
+            { lvl: 'سريع', t: R`اعرض السطور الشغالة بس في ملف hosts، من غير التعليقات والسطور الفاضية: [[Get-Content C:\Windows\System32\drivers\etc\hosts | Where-Object { $_.Trim() -and $_.Trim() -notlike '#*' }]].`, done: R`الأمر اشتغل من نافذة عادية من غير أدمن. ولو الملف لسه زي ما ويندوز عمله مش هيطلع ولا سطر (كله تعليقات)، ولو برنامج زي Docker Desktop زوّد حاجة هتشوف سطوره هو بس.` },
+            { lvl: 'تطبيق', t: R`انسخ hosts لفولدر تجارب: [[Copy-Item C:\Windows\System32\drivers\etc\hosts .\hosts.test]]، وزوّد عليه [[127.0.0.1 myapp.local]] و [[10.0.0.5 db.local api.local]] بـ [[Add-Content]]، وحوّل السطور الشغالة لجدول IP و Name: شيل التعليق اللي في آخر السطر بـ [[($_ -split '#')[0].Trim()]]، وقسّم الباقي بـ [[-split '\s+']]، واعمل [[[pscustomobject]]] لكل اسم.`, done: R`الجدول فيه عمود IP وعمود Name، والسطر اللي فيه اسمين بيطلع صفين بنفس الـ IP. ولو [[Add-Content]] قالك Access denied أو النسخة مش باينة في [[ls]]، الأصل كان عليه attributes زي ReadOnly أو Hidden والنسخة خدتها: [[(Get-Item .\hosts.test -Force).Attributes = 'Normal']] وجرّب تاني.` },
+            { lvl: 'تحدي', t: R`سكربت [[add-host.ps1]] بياخد [[-Name]] و [[-IP]] و [[-Path]]: بيزوّد السطر بس لو الاسم مش موجود، وقبل أي تعديل بياخد نسخة [[.bak]] جنب الملف. جرّبه على [[hosts.test]] الأول، وبعد ما تتأكد شغّله على الملف الحقيقي من Terminal أدمن.`, done: R`لو شغّلته مرتين ورا بعض [[(Select-String -Path .\hosts.test -Pattern 'myapp.local' -SimpleMatch).Count]] بيفضل 1، وملف [[hosts.test.bak]] موجود. وعلى الملف الحقيقي، [[Resolve-DnsName myapp.local]] بيرجّع 127.0.0.1 (ده من الـ docs: [[Resolve-DnsName]] بيقرا hosts إلا لو كتبت [[-NoHostsFile]]).` },
+          ],
           deep: {
             why: "تغيير DNS لدومين على جهازك بس، من غير ما تغيّر الـ DNS الحقيقي.",
             how: R`ملف الـ hosts في ويندوز: [[C:\Windows\System32\drivers\etc\hosts]]. نفس الفكرة زي [[/etc/hosts]] في لينكس.
@@ -464,6 +487,11 @@ hosts     بيتقري قبل الـ DNS
           example: R`Test-NetConnection google.com -TraceRoute
 Test-NetConnection 203.0.113.10 -Port 443 -InformationLevel Quiet`,
           try: "اعمل سكربت بيجرب 3 بورتات على سيرفرك ويطبع المقفول بس.",
+          practice: [
+            { lvl: 'سريع', t: R`جرّب بورت مفتوح وبورت مقفول: [[Test-NetConnection example.com -Port 443 -InformationLevel Quiet]] وبعدين [[Test-NetConnection 127.0.0.1 -Port 65000 -InformationLevel Quiet]].`, done: R`الأول بيطبع [[True]]. والتاني بيطبع [[False]] ومعاه سطر WARNING أصفر [[TCP connect to (127.0.0.1 : 65000) failed]]، وبياخد حوالي ثانيتين قبل ما يرد.` },
+            { lvl: 'تطبيق', t: R`اعمل trace لـ example.com واحفظه في متغير: [[$t = Test-NetConnection example.com -TraceRoute]]، واطبع [[$t.TraceRoute.Count]] وأول hop بـ [[$t.TraceRoute[0] ]]، وعدّ الـ hops اللي مردتش بـ [[($t.TraceRoute -eq '0.0.0.0').Count]].`, done: R`بيطلع عدد الـ hops، وأول hop غالبًا هو الـ gateway بتاعك من أول درس (لو مفيش VPN شغال: مع VPN ممكن الطريق كله يبان hop أو اتنين)، وعندك رقم بعدد الـ hops الساكتة اللي مش معناها مشكلة.` },
+            { lvl: 'تحدي', t: R`سكربت [[port-watch.ps1]] بيقرا ملف [[targets.txt]] فيه سطور زي [[example.com:443]] و [[127.0.0.1:65000]]، ولكل سطر بيطبع UP أو DOWN، ولو DOWN بيعمل trace ويطبع آخر hop رد (آخر عنوان في اللستة مش [[0.0.0.0]]). والسطر الغلط (من غير [[:]]) بيطلع بـ [[Write-Warning]] والسكربت يكمّل.`, done: R`[[example.com:443]] بيطلع UP و [[127.0.0.1:65000]] بيطلع DOWN، وسطر زي [[example.com]] لوحده بيطلع WARNING ومبيوقّفش باقي السطور، والسكربت بيخلص من غير ولا سطر أحمر.` },
+          ],
           deep: {
             why: "تعرف الطريق اللي البيانات بتمر بيه لوصل سيرفر. زي traceroute في لينكس.",
             how: R`[[Test-NetConnection google.com -TraceRoute]] بيبعت رسايل لحد السيرفر، وكل راوتر في السكة بيرد، فبيطلعلك لستة IPs بالترتيب: أول واحد غالبًا راوتر البيت، وبعده سيرفرات مزود النت، لحد السيرفر نفسه. لو الطريق وقف عند hop معين، المشكلة غالبًا من عنده.
@@ -613,6 +641,11 @@ foreach ($port in 22, 80, 443) {
           example: R`Get-NetTCPConnection -State Listen | Select-Object LocalAddress, LocalPort, OwningProcess | Sort-Object LocalPort
 Get-NetTCPConnection -State Listen | ForEach-Object { [pscustomobject]@{ Port = $_.LocalPort; App = (Get-Process -Id $_.OwningProcess).Name } } | Sort-Object Port -Unique`,
           try: "اعرف أسامي البرامج اللي فاتحة بورتات عندك.",
+          practice: [
+            { lvl: 'سريع', t: R`اطبع البورتات المكشوفة للشبكة بس (اللي [[LocalAddress]] بتاعها [[0.0.0.0]] أو [[::]]) من غير تكرار: [[Get-NetTCPConnection -State Listen | Where-Object LocalAddress -in '0.0.0.0', '::' | Sort-Object LocalPort -Unique | Select-Object LocalPort, OwningProcess]].`, done: R`لستة بورتات، وغالبًا فيها 135 و 445 (خدمات ويندوز نفسه)، ومفيهاش ولا بورت سامع على 127.0.0.1 بس.` },
+            { lvl: 'تطبيق', t: R`افتح بورت بنفسك واتفرّج عليه: [[$l = [System.Net.Sockets.TcpListener]::new([ipaddress]::Loopback, 8765); $l.Start()]]، وبعدين [[Get-NetTCPConnection -LocalPort 8765 -State Listen]]، وبعدين [[$l.Stop()]] واسأل تاني.`, done: R`وهو شغال [[LocalAddress]] بيبقى 127.0.0.1 و [[OwningProcess]] هو نفس [[$PID]] بتاع نافذتك، و [[Test-NetConnection 127.0.0.1 -Port 8765 -InformationLevel Quiet]] بيقول True. وبعد [[Stop()]] نفس السؤال بيطلع error فيه [[No matching MSFT_NetTCPConnection objects found]].` },
+            { lvl: 'تحدي', t: R`فانكشن [[Get-PortOwner]] بتاخد رقم بورت وبترجع object فيه Port و Address و PID و Name و Path بتاع البرنامج ([[(Get-Process -Id ...).Path]])، ولو محدش سامع بتطبع «محدش سامع على البورت ده» بدل الـ error الأحمر ([[-ErrorAction SilentlyContinue]] وبعدين [[if (-not $c)]]).`, done: R`والـ listener بتاع التمرين اللي فات شغال، [[Get-PortOwner 8765]] بترجع اسم [[pwsh]] ورقم [[$PID]] بتاعك ومسار pwsh.exe. ومن غيره بتطبع الرسالة بس، من غير ولا سطر أحمر.` },
+          ],
           deep: {
             why: R`تعرف كل البرامج اللي فاتحة بورتات على جهازك، ومين فيهم مكشوف لأي حد على نفس الشبكة (مهم على واي فاي كافيه أو شغل). زي [[ss -tlnp]] في لينكس.`,
             how: R`[[-State Listen]] بيسيب البورتات اللي فيها برنامج مستني اتصالات، يعني السيرفرات اللي على جهازك. كل object فيه [[LocalAddress]] (بيسمع على أنهي عنوان)، و [[LocalPort]] (البورت)، و [[OwningProcess]] (رقم العملية اللي ماسكاه).
@@ -779,6 +812,11 @@ PID 4              ويندوز نفسه (System)
 استخدمنا 5433 مش 5432 عشان لو عندك Postgres محلي ميحصلش تعارض. النافذة هتفضل واقفة من غير ما تطبع حاجة وده معناه إنه شغال، وتقفل الـ tunnel بـ Ctrl+C. وصّل DBeaver أو pgAdmin على [[localhost:5433]].`,
           example: "ssh -N -L 5433:127.0.0.1:5432 deploy@203.0.113.10",
           try: "افتح tunnel ووصّل بيه DBeaver على localhost:5433.",
+          practice: [
+            { lvl: 'سريع', t: R`اعرف أنهي ssh بيشتغل لما تكتب [[ssh]]: [[Get-Command ssh -All | Select-Object Source]] وبعدين [[ssh -V]].`, done: R`بتشوف مسار أو أكتر، وأول واحد هو اللي بيشتغل: اللي جاي مع ويندوز في [[C:\Windows\System32\OpenSSH\ssh.exe]]، ولو Git متسطب وفولدره في PATH ممكن تلاقي كمان ssh بتاع Git. و [[ssh -V]] بيطبع اسم النسخة ورقمها.` },
+            { lvl: 'تطبيق', t: R`حط الـ tunnel في [[~/.ssh/config]] بدل ما تكتبه كل مرة: [[Host db-tunnel]] وتحته [[HostName]] و [[User]] و [[LocalForward 5433 127.0.0.1:5432]]. واتأكد من غير ما تتصل بـ [[ssh -G db-tunnel | Select-String '^(user|hostname|localforward) ']].`, done: R`[[ssh -G]] بيطبع [[localforward 5433 [127.0.0.1]:5432]] والـ user والـ hostname اللي كتبتهم ([[-G]] بيقرا الـ config ويطبعه بس، مش بيتصل)، وبعدها [[ssh -N db-tunnel]] بيعمل نفس tunnel الدرس.` },
+            { lvl: 'تحدي', t: R`سكربت بيفتح الـ tunnel في الخلفية: [[$p = Start-Process ssh -ArgumentList '-N', 'db-tunnel' -PassThru -WindowStyle Hidden]]، ويستنى لحد ما بورت 5433 يبقى Listen ([[Get-NetTCPConnection -LocalPort 5433 -State Listen -ErrorAction SilentlyContinue]] في لوب، بحد أقصى ١٠ ثواني)، ولو مفتحش يقفل البروسيس بـ [[Stop-Process]] ويخرج بـ [[exit 1]].`, done: R`مع سيرفر شغال البورت بيظهر Listen وتقدر توصّل عليه. ولو اسم الـ host غلط السكربت بيخرج بكود 1 قبل ما الـ ١٠ ثواني يخلصوا، و [[Get-Process -Id $p.Id -ErrorAction SilentlyContinue]] بعدها مبيلاقيش حاجة. (محتاج سيرفر SSH حقيقي، فمتجرّبش هنا: ده من الدرس والـ docs.)` },
+          ],
           deep: {
             why: "SSH tunnel من ويندوز. نفس الفكرة بالظبط زي bash: بتتصل بسيرفر وبيفتح بورت محلي بيوصلك لخدمة داخلية.",
             how: R`[[ssh -N -L 5433:127.0.0.1:5432 deploy@203.0.113.10]] نفس الأمر بالظبط زي لينكس، لأن ويندوز جاي معاه OpenSSH. [[-L]] شكله [[بورت_عندك:العنوان:بورت_هناك]]: أي اتصال على 5433 عندك بيتبعت جوه SSH، والسيرفر بيوصّله لـ 127.0.0.1:5432، و 127.0.0.1 هنا معناها السيرفر نفسه مش جهازك.

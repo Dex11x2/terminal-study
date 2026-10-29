@@ -4,6 +4,14 @@ MORE("ps", [
       t: "شكّل PowerShell بتاعك",
       l: 2,
       n: R`ألوان، و prompt بيوريك الفولدر والـ branch، واقتراحات من أوامرك القديمة، وأيقونات للملفات: الترمنال اللي قاعد قدامه كل يوم يبقى مريح ويديك المعلومة من غير ما تسأل عليها`,
+      projects: [
+        { lvl: 'صغير', t: R`ألوان الحالة`, what: R`٣ فانكشنز [[Write-Ok]] و [[Write-Fail]] و [[Write-Info]] بتطبع رسالة بلون وعلامة قدامها ([[OK]] و [[FAIL]] و [[..]])، بـ [[$PSStyle]] في 7 وبأكواد [[[char]27]] في 5.1. من درس $PSStyle.`, done: R`السكربت اللي بيستخدمهم بيطلع نفس الشكل في pwsh و powershell، ولو حوّلت الناتج لملف مفيهوش حرف ESC ([[.Contains([char]27)]] بيرجّع False).` },
+        { lvl: 'صغير', t: R`الـ prompt بتاعك`, what: R`prompt فيه اسم الفولدر، والـ git branch لو فيه، و [[[admin]]] لو النافذة أدمن، وسهم أخضر أو أحمر حسب آخر أمر، ومحفوظ في [[$PROFILE]]. من درس function prompt.`, done: R`في repo بيبين الـ branch وبره مبيبينش، و [[Get-Item nosuchfile]] بيخلي السهم أحمر والأمر اللي بعده الناجح بيرجّعه أخضر، و [[cmd /c exit 5]] وبعده [[$LASTEXITCODE]] بيطبع 5.` },
+        { lvl: 'متوسط', t: R`ثيم واحد لكل حاجة`, what: R`ملف [[theme.json]] فيه ألوان بالـ hex لكل حاجة: الأوامر والـ parameters والنصوص (PSReadLine)، والفولدرات والامتدادات ([[$PSStyle.FileInfo]])، وألوان الـ prompt. البروفايل بيقراه بـ [[ConvertFrom-Json]] ويطبّق كله، و [[Set-Theme]] بيبدّل بين ملفين. من دروس $PSStyle و function prompt و Set-PSReadLineOption -Colors.`, done: R`تغيير لون واحد في الملف وفتح نافذة جديدة بيغيّره في كل مكان بيستخدمه، ولو الملف مش موجود أو JSON بايظ البروفايل بيكمّل بألوان افتراضية وبيطبع سطر تحذير واحد بس.` },
+        { lvl: 'متوسط', t: R`بروفايل سريع`, what: R`قيس وقت فتح الترمنال بـ [[Measure-Command { pwsh -c exit }]] (٥ مرات، المتوسط) قبل أي تعديل، وبعدين خلّي كل حاجة تقيلة تتحمّل بشرط: Terminal-Icons في Windows Terminal بس، و oh-my-posh لو موجود، والاقتراحات لو PSReadLine 2.2 أو أحدث. من دروس Terminal-Icons و oh-my-posh و PredictionViewStyle.`, done: R`عندك رقمين (قبل وبعد) مكتوبين في تعليق أول البروفايل، والبعد أقل من أو زي القبل، والبروفايل بيفتح من غير error في Windows Terminal وفي VS Code وفي powershell 5.1.` },
+        { lvl: 'كبير', t: R`سكربت تسطيب الترمنال`, what: R`[[shell-setup.ps1]] بيجهّز شكل الترمنال على أي جهاز: بياخد [[-ProfilePath]] (افتراضيًا [[$PROFILE]]) عشان تجرّبه على ملف تجارب الأول، ويعمل الملف لو مش موجود، ويعمل نسخة باك أب بالتاريخ والساعة قبل أي تعديل، ويحط إعداداتك بين سطرين علامة ([[# >>> my-shell >>>]] و [[# <<< my-shell <<<]]): لو البلوك موجود يبدّله، ولو مش موجود يزوّده في الآخر، ومبيلمسش أي حاجة بره البلوك. وبيكتب كل خطوة في لوج. من كل دروس الوحدة ودرس $PROFILE.`, done: R`على ملف تجارب فيه سطور قديمة: شغّلته ٣ مرات و [[(Select-String -Path $p -Pattern '>>> my-shell' -SimpleMatch).Count]] بيطلع 1، والسطور القديمة اللي بره البلوك زي ما هي، وفيه ٣ نسخ باك أب. وبعد ما تشغّله على البروفايل الحقيقي، pwsh و powershell بيفتحوا من غير ولا سطر أحمر.` },
+        { lvl: 'فكرة', t: R`ترمنال فريقك`, what: R`صمّم انت شكل ترمنال يتشارك مع ناس تانية: ثيم، و prompt بيبين حاجة مهمة لشغلكم (البيئة dev ولا prod، أو المشروع، أو النسخة)، واختصارات أزرار. اختار انت إيه اللي يتحط وإيه اللي يتساب لكل واحد.`, done: R`حد تاني سطّبه على جهازه بسكربت التسطيب من غير ما يسألك، وقالك إن حاجة واحدة على الأقل في الـ prompt وفّرت عليه وقت.`, ext: R`زوّد تحذير واضح في الـ prompt لما تكون في فولدر production، وخلّي الثيم يتحدّث لوحده من repo مشترك، ونسخة لـ bash و zsh بنفس الألوان عشان اللي على لينكس.` },
+      ],
       items: [
         {
           cmd: "$PSStyle",
@@ -23,6 +31,11 @@ $PSStyle.FileInfo.Extension[".md"] = $PSStyle.Foreground.Magenta
 Get-ChildItem
 $PSStyle.OutputRendering`,
           try: R`خلّي ملفات [[.json]] تظهر أصفر في [[ls]]، واطبع [[$PSStyle.FileInfo.Extension.Keys]] عشان تشوف الامتدادات اللي ليها لون من الأول.`,
+          practice: [
+            { lvl: 'سريع', t: R`اطبع [[PASS]] أخضر و [[FAIL]] أحمر في نفس السطر، وبعدين شوف الأكواد المخفية: [["$($PSStyle.Foreground.Green)PASS$($PSStyle.Reset)" -replace [char]27, 'ESC']].`, done: R`الكلمتين بس ملونين وباقي السطر عادي، والسطر التاني بيطبع [[ESC[32mPASSESC[0m]]: يعني الأخضر هو [[[32m]] والـ Reset هو [[[0m]] وقبل كل واحد حرف ESC.` },
+            { lvl: 'تطبيق', t: R`فانكشن [[Format-Status]] بتاخد [[$ok]] ورسالة وترجّع النص ملوّن (أخضر أو أحمر). اكتب ناتجها في ملف بـ [[Out-File log.txt]] وافحص: [[(Get-Content log.txt -Raw).Contains([char]27)]]، وجرّب تاني بعد [[$PSStyle.OutputRendering = 'PlainText']].`, done: R`على الشاشة ملوّن، والفحص بيرجّع [[True]] في المرتين: النص اللي انت حاطط فيه الأكواد بنفسك بيتكتب في الملف بأكواده حتى مع [[PlainText]] (اتجرّب في 7.6). فشيلها قبل ما تكتب: [[-replace "$([char]27)\[\d*(;\d+)*m", '']]، وبعدها الفحص بيرجّع [[False]].` },
+            { lvl: 'تحدي', t: R`خلّي نفس السكربت يلوّن في 5.1 كمان: لو [[$PSStyle]] موجود استخدمه، ولو لأ اعمل الأكواد بنفسك من [[$e = [char]27]] (زي [["$e[32m"]] و [["$e[0m"]]).`, done: R`[[pwsh -NoProfile -File .\colors.ps1]] و [[powershell -NoProfile -File .\colors.ps1]] بيطلعوا نفس الألوان في Windows Terminal، و [[-replace [char]27, 'ESC']] على الناتج بيطلع نفس الحروف في الاتنين، و 5.1 مبيطلعش ولا error (فيه [[$PSStyle]] بيبقى [[$null]]).` },
+          ],
           deep: {
             why: R`الألوان مش زينة وبس: سطر [[OK]] أخضر وسطر [[FAIL]] أحمر بتلاحظهم من غير ما تقرا، والفولدرات بلون مختلف بتفرّقها عن الملفات بنظرة. وقبل 7.2 كنت لازم تحفظ أكواد زي [[[32m]] أو تستخدم [[Write-Host -ForegroundColor]] اللي مش بيدخل الـ pipeline.`,
             how: R`كل قيمة في [[$PSStyle]] نص عادي فيه كود ANSI، فتقدر تطبعه أو تلزقه في أي نص أو ترجعه من فانكشن. جرّب [[$PSStyle.Foreground.Red -replace [char]27, 'ESC']] هتشوف [[ESC[31m]]: الـ [[-replace]] بدّل حرف ESC (اللي مش بيتطبع) بكلمة عشان تشوفه.
@@ -214,6 +227,11 @@ function prompt {
     "$p$arrow > $($PSStyle.Reset)"
 }`,
           try: R`الصق الكود في النافذة، وادخل فولدر فيه git repo وفولدر مفيهوش، واكتب [[Get-Item nosuchfile]] وشوف السهم بقى أحمر. وبعدين احفظه في [[$PROFILE]].`,
+          practice: [
+            { lvl: 'سريع', t: R`أقصر prompt مفيد: [[function prompt { "$(Split-Path -Leaf $PWD)> " }]].`, done: R`الـ prompt بقى اسم الفولدر الحالي بس وبعده [[> ]]، وبيتغيّر لما تعمل [[cd ..]]، ولما تفتح نافذة جديدة بيرجع زي ما كان لأنك محفظتوش في [[$PROFILE]].` },
+            { lvl: 'تطبيق', t: R`زوّد على الـ prompt مدة آخر أمر: [[$last = Get-History -Count 1]]، ولو [[$last.Duration.TotalSeconds]] أكتر من 1 زوّد [[{0:N1}s]] على النص.`, done: R`بعد [[Start-Sleep 2]] الـ prompt بيبين حاجة زي [[2.0s]]، وبعد أمر سريع مبيبينش حاجة. وده في 7 بس: في 5.1 الـ [[HistoryInfo]] مفيهوش [[Duration]] (اتجرّب)، فهناك اطرح [[EndExecutionTime - StartExecutionTime]] بنفسك.` },
+            { lvl: 'تحدي', t: R`prompt بيقصّر المسار: [[$HOME]] يبقى [[~]]، ولو المسار أعمق من فولدرين يبين آخر اتنين بس وقبلهم [[...]]، ومن غير ما يبوّظ [[$LASTEXITCODE]] (احفظه أول سطر ورجّعه آخر سطر زي الدرس).`, done: R`في [[C:\Users\you\projects\shop\src\components]] بيبين [[~\...\src\components]]، وفي [[C:\Windows]] بيبين المسار كامل، و [[cmd /c exit 3]] وبعده [[$LASTEXITCODE]] لسه بيطبع 3 رغم إن الـ prompt اشتغل بينهم.` },
+          ],
           flag: "script",
           deep: {
             why: R`الـ prompt الافتراضي بيكتب المسار كله، فلما تبقى في [[C:\Users\ali\Documents\projects\shop\frontend\src]] نص الشاشة بيروح عليه. وأهم معلومة وانت شغال بـ git (انت على أنهي branch) مش ظاهرة، فتعمل commit على main بالغلط. prompt بيوريك اللي محتاجه بس بيوفّر عليك [[git status]] و [[pwd]] كل شوية.`,
@@ -406,6 +424,11 @@ Set-PSReadLineOption -Colors @{ Command = "#FFD700"; Parameter = "DarkGray"; Str
 Set-PSReadLineOption -Colors @{ Error = $PSStyle.Foreground.BrightRed; InlinePrediction = "$([char]27)[38;5;244m" }
 (Get-PSReadLineOption).CommandColor -replace [char]27, 'ESC'`,
           try: R`لوّن الأوامر بلون VS Code ([["#DCDCAA"]]) والـ parameters رمادي، واكتب [[Get-ChildItem -Path . -Filter "*.json" # test]] من غير Enter وشوف كل حتة بلونها.`,
+          practice: [
+            { lvl: 'سريع', t: R`اطبع كل ألوان PSReadLine الحالية بشكل مقروء: [[(Get-PSReadLineOption).PSObject.Properties | Where-Object Name -like '*Color' | ForEach-Object { '{0,-24} {1}' -f $_.Name, ($_.Value -replace [char]27, 'ESC') }]].`, done: R`لستة كل سطر فيها اسم زي [[CommandColor]] وجنبه كود زي [[ESC[93m]]: في 7.6 (PSReadLine 2.4.5) ١٩ لون، وفي 5.1 (2.0.0) ١٥ بس، والفرق ألوان جت في نسخ أحدث زي [[InlinePredictionColor]].` },
+            { lvl: 'تطبيق', t: R`حط ثيمك في hashtable اسمه [[$theme]] وطبّقه بـ [[Set-PSReadLineOption -Colors $theme]]، وجرّب نفس السطر في powershell 5.1 ومعاه مفتاح [[InlinePrediction]].`, done: R`في 7 بيشتغل. وفي 5.1 بيطلع [['InlinePrediction' is not a valid color property]]، فالمفتاح ده يتحط بس لو [[(Get-Module PSReadLine).Version]] 2.1 أو أحدث. والألوان بالـ hex زي [["#FFD700"]] شغالة في الاتنين، و [[CommandColor]] بعدها بيبقى [[ESC[38;2;255;215;0m]].` },
+            { lvl: 'تحدي', t: R`فانكشن [[Set-Theme]] بتاخد dark أو light: كل ثيم hashtable لألوان PSReadLine ولون الفولدرات في [[$PSStyle.FileInfo.Directory]]، والاختيار بيتحفظ في ملف [[$HOME\.shell-theme]]، والبروفايل بيقراه ويطبّقه أول ما النافذة تفتح.`, done: R`بعد [[Set-Theme light]] وفتح نافذة جديدة الثيم لسه light، و [[Get-Content $HOME\.shell-theme]] بيطبع light، ولو مسحت الملف البروفايل بيرجع لـ dark من غير error.` },
+          ],
           deep: {
             why: R`الألوان الافتراضية معمولة لخلفية سودا، فعلى ثيم فاتح ممكن الـ parameters الرمادي متتقريش. ولما ألوان الترمنال تبقى زي ألوان الـ editor بتاعك، عينك بتتعود على نفس المعنى في المكانين. والتلوين نفسه بيكشف الغلط بدري: لو النص فضل بلون الـ String لآخر السطر، يبقى نسيت تقفل علامة التنصيص.`,
             how: R`PSReadLine بيعمل parse للسطر مع كل حرف بتكتبه، ويلوّن كل token حسب نوعه. فالتلوين «فاهم» الكود: [[ls]] لوحدها بلون Command، لكن [["ls"]] بين علامات تنصيص بلون String.
@@ -546,6 +569,11 @@ Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward
 Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward
 (Get-Module PSReadLine).Version`,
           try: R`شغّل السطور، واكتب [[git]] بس وشوف القايمة واتحرك فيها بالأسهم. وبعدين اضغط F2 وارجع للشكل الـ Inline واقبل الاقتراح بالسهم يمين. وبعدين جرّب Tab بعد [[Get-Net]].`,
+          practice: [
+            { lvl: 'سريع', t: R`[[Get-Module PSReadLine -ListAvailable | Select-Object Version, ModuleBase]] من pwsh ومن powershell.`, done: R`من pwsh غالبًا نسختين: واحدة 2.2 أو أحدث (7.6 جاي بـ 2.4.5) و 2.0.0 بتاعة 5.1، ومن powershell نسخة 2.0.0 بس. والنسخة دي هي اللي بتقرر الاقتراحات شغالة ولا لأ.` },
+            { lvl: 'تطبيق', t: R`اقبل الاقتراح كلمة كلمة بدل ما تقبله كله: [[Set-PSReadLineKeyHandler -Chord Ctrl+f -Function AcceptNextSuggestionWord]]، واتأكد بـ [[Get-PSReadLineKeyHandler -Chord Ctrl+f]].`, done: R`التاني بيطبع الزرار وجنبه [[AcceptNextSuggestionWord]] (لو الكيبورد على عربي ممكن يكتب اسم الزرار بالحرف العربي اللي في نفس المكان)، ولما تكتب [[git]] ويظهر اقتراح طويل كل Ctrl+f بيقبل كلمة واحدة. وفي 5.1 الوظيفة دي مش موجودة، و [[-Chord]] مش parameter في [[Get-PSReadLineKeyHandler]].` },
+            { lvl: 'تحدي', t: R`بروفايل آمن للنسختين: كل سطور الاقتراحات جوه [[if ((Get-Module PSReadLine).Version -ge [version]'2.2') { }]]، وزوّد [[-AddToHistoryHandler]] بيرفض أي سطر بيبدأ بمسافة (زي bash)، وللباقي يرجّع [[[Microsoft.PowerShell.PSConsoleReadLine]::GetDefaultAddToHistoryOption($line)]] عشان فلتر الأسرار الافتراضي ميضيعش.`, done: R`powershell 5.1 بيفتح من غير ولا سطر أحمر. وفي 7: سطر بيبدأ بمسافة مبيظهرش بسهم فوق، و [[(Get-PSReadLineOption).AddToHistoryHandler.Invoke('echo token1')]] لسه بيرجّع [[MemoryOnly]] و [[Invoke('git status')]] بيرجّع [[MemoryAndFile]].` },
+          ],
           deep: {
             why: R`أغلب اللي بتكتبه في الترمنال كتبته قبل كده: [[npm run dev]] و [[git push origin main]] و [[docker compose up -d]]. الاقتراحات بتكمّلهولك من أول حرفين، والـ ListView بيوريك كذا أمر قديم مرة واحدة بدل ما تفضل تضغط فوق عشرين مرة. و Tab بالقايمة بيوريك كل الاختيارات بدل ما تخمّن.`,
             how: R`اقتراحات History جاية من ملف التاريخ الدائم بتاع PSReadLine (مكانه في [[(Get-PSReadLineOption).HistorySavePath]]، درس «History والاختصارات»)، مش من [[Get-History]] بتاع الجلسة، فبتلاقي أوامر من أيام فاتت.
@@ -702,6 +730,11 @@ Measure-Command { Import-Module Terminal-Icons -Force }
 Add-Content $PROFILE "Import-Module Terminal-Icons"
 Show-TerminalIconsTheme`,
           try: R`سطّبه، واعرض فولدر مشروع فيه ملفات js و json و md، وقيس وقت التحميل. لو أكتر من نص ثانية فكّر يستاهل ولا لأ.`,
+          practice: [
+            { lvl: 'سريع', t: R`اعرف هو متسطب فين ونسخته كام: [[Get-Module Terminal-Icons -ListAvailable | Select-Object Name, Version, ModuleBase]].`, done: R`لو متسطب بـ [[-Scope CurrentUser]] الـ [[ModuleBase]] بيبقى جوه فولدر [[Documents\PowerShell\Modules]] بتاعك. ولو مش متسطب الأمر مبيطبعش حاجة خالص ومن غير error، فينفع تستخدمه كشرط في البروفايل.` },
+            { lvl: 'تطبيق', t: R`حمّله بس في Windows Terminal: [[if ($env:WT_SESSION) { Import-Module Terminal-Icons }]] في البروفايل، لأن Windows Terminal بيحط المتغير [[WT_SESSION]] في كل تاب بيفتحه.`, done: R`في Windows Terminal [[$env:WT_SESSION]] فيه قيمة (GUID) و [[ls]] بالأيقونات. وفي ترمنال VS Code المتغير فاضي فمفيش أيقونات ولا وقت تحميل، إلا لو VS Code نفسه اتفتح من Windows Terminal (ساعتها بيورث المتغير).` },
+            { lvl: 'تحدي', t: R`اعرف الموديول بيكلّف كام بالظبط: [[(Measure-Command { pwsh -NoProfile -c 'Import-Module Terminal-Icons' }).TotalMilliseconds]] مقابل [[(Measure-Command { pwsh -NoProfile -c exit }).TotalMilliseconds]]، ٥ مرات لكل واحد وخد المتوسط بـ [[Measure-Object -Average]]. وخلي البروفايل يتخطاه لو مش متسطب: [[if (Get-Module Terminal-Icons -ListAvailable) { Import-Module Terminal-Icons }]].`, done: R`عندك متوسطين بالملي ثانية، والفرق بينهم هو تمن الأيقونات في كل نافذة جديدة، وقررت يستاهل ولا لأ. وعلى جهاز مش متسطب عليه البروفايل بيفتح من غير ولا error. (الأرقام بتاعتك انت، والموديول متسطبش هنا.)` },
+          ],
           deep: {
             why: R`في فولدر فيه 40 ملف، الأيقونة واللون بيخلوك تلاقي الـ [[.env]] أو الـ [[Dockerfile]] أو الصور بنظرة من غير ما تقرا كل اسم. نفس فكرة الأيقونات في VS Code، وفي [[lsd]] و [[eza]] على لينكس.`,
             how: R`PowerShell بيعرض أي object حسب «format view» مكتوب له. Terminal-Icons بيضيف view جديد للملفات والفولدرات (الأنواع اللي Get-ChildItem بيرجعها) بيحط في عمود Name الأيقونة والاسم بلون. والأيقونة بتتختار من اسم الملف أو امتداده، فـ [[package.json]] ليه أيقونة غير أي [[.json]] تاني.
@@ -854,6 +887,11 @@ oh-my-posh config export --config 'jandedobbeleer' --output "$HOME\.mytheme.omp.
 Add-Content $PROFILE 'oh-my-posh init pwsh --config "$HOME\.mytheme.omp.json" | Invoke-Expression'
 winget upgrade JanDeDobbeleer.OhMyPosh --source winget`,
           try: R`جرّب 3 ثيمات في نفس النافذة بالسطر التالت (غيّر الاسم بس)، واختار واحد واحفظه، وقيس وقت فتح الترمنال قبل وبعد بـ [[Measure-Command { pwsh -c exit }]].`,
+          practice: [
+            { lvl: 'سريع', t: R`[[oh-my-posh version]] و [[(Get-Command oh-my-posh).Source]].`, done: R`الأول بيطبع رقم نسخة، والتاني مسار الـ exe اللي winget سطّبه. ولو بيقولك [[is not recognized]] افتح نافذة جديدة عشان الـ PATH يتحدّث.` },
+            { lvl: 'تطبيق', t: R`صدّر الثيم ([[oh-my-posh config export --config 'jandedobbeleer' --output "$HOME\.mytheme.omp.json"]])، وغيّر فيه حاجة صغيرة (لون segment أو شيل segment)، واتأكد إن الملف لسه JSON سليم قبل ما تحمّله: [[Get-Content $HOME\.mytheme.omp.json -Raw | ConvertFrom-Json]].`, done: R`[[ConvertFrom-Json]] بيرجّع object من غير error (ولو نسيت فاصلة بيطلع error بيقولك مكانها)، وبعد سطر الـ init بالملف ده الـ prompt بيبين التغيير اللي عملته.` },
+            { lvl: 'تحدي', t: R`بروفايل بيرجع لوحده: لو [[Get-Command oh-my-posh -ErrorAction SilentlyContinue]] لقاه يحمّل الثيم، ولو لأ يستخدم [[function prompt]] بتاعتك من الدرس التاني. واختبر الحالة التانية من غير ما تمسح البرنامج: في [[pwsh -NoProfile]] شيل فولدره من PATH بـ [[$env:PATH = ($env:PATH -split ';' | Where-Object { $_ -notlike '*oh-my-posh*' }) -join ';']] وبعدين [[. $PROFILE]].`, done: R`في الحالتين مفيش ولا سطر أحمر: مع oh-my-posh الثيم بتاعه بيظهر، ومن غيره الـ prompt بتاعك. و [[Measure-Command { pwsh -c exit }]] بيقولك كل واحد بياخد كام. (oh-my-posh متسطبش هنا، فده من الدرس والـ docs.)` },
+          ],
           deep: {
             why: R`كتابة prompt بإيدك (درس «function prompt») بتعلّمك الفكرة، لكن oh-my-posh بيديك من غير مجهود حاجات صعب تعملها بنفسك: حالة الـ git كاملة (ملفات متعدلة، commits مستنية push)، ونسخة اللغة حسب المشروع، ووقت تنفيذ آخر أمر، والـ exit code، وبنفس الشكل في PowerShell و bash على WSL.`,
             how: R`[[oh-my-posh]] برنامج exe عادي مش موديول PowerShell. سطر الـ init بيعرّف [[prompt]] بتنادي البرنامج ده قبل كل أمر، والبرنامج يقرا ملف الثيم (JSON أو YAML أو TOML) ويرجّع الـ prompt بالأكواد والألوان. فأي فانكشن [[prompt]] كتبتها بنفسك هتتلغي لو سطر oh-my-posh جه بعدها في الـ profile: اللي في الآخر هو اللي بيكسب.

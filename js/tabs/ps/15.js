@@ -4,6 +4,14 @@ MORE("ps", [
       t: "تحكّم في جهازك من الترمنال",
       l: 3,
       n: R`مواصفات الجهاز، والحافظة، والتحميل، وتحديث البرامج، والشغل في الخلفية، ومراقبة الفولدرات، والتنبيهات، والقفل والإطفاء في معاد: حاجات بتعملها بالماوس كل يوم وتقدر تعملها بسطر أو تحطها في سكربت`,
+      projects: [
+        { lvl: 'صغير', t: R`بطاقة جهازك في الحافظة`, what: R`سكربت بيجمع بـ [[Get-CimInstance]] اسم الويندوز والبروسيسور والرام والـ uptime ونسبة الفاضي في كل درايف في جدول، ويحطه في الحافظة بـ [[Out-String | Set-Clipboard]] عشان تبعته لحد بيساعدك. من درسين Get-CimInstance و Set-Clipboard.`, done: R`لما تلصق في شات أو إيميل بيظهر جدول مقروء بالعناوين، مش سطور زي [[@{Name=...}]]، والأرقام مطابقة لـ Settings ← About.` },
+        { lvl: 'صغير', t: R`تايمر بيكلمك`, what: R`[[timer.ps1]] بتاع درس Write-Progress، ولما يخلص يقول [[Break time]] بـ SAPI ويعمل Beep، ومعاه [[-Silent]] يلغي الصوت. من درسين Write-Progress و SAPI.SpVoice.`, done: R`[[.\timer.ps1 -Minutes 0.1]] بيخلص في حوالي ٦ ثواني وبتسمع الجملة، و [[-Silent]] مفيهوش صوت، والشريط بيختفي في الحالتين.` },
+        { lvl: 'متوسط', t: R`downloader مضمون`, what: R`[[downloads.csv]] فيه Url و Sha256 و Name، وسكربت بينزّلهم واحد واحد ([[Invoke-WebRequest]] أو [[Start-BitsTransfer]])، ومعاه [[Write-Progress]] بعدد الملفات، ويقارن الهاش، واللي هاشه غلط يتمسح ويتكتب في تقرير. من دروس Invoke-WebRequest و Start-BitsTransfer و Write-Progress.`, done: R`لينك 404 بيتكتب فشل في التقرير والباقي بيكمّل، وملف هاشه غلط مش موجود في الآخر، والتشغيل التاني مبينزّلش اللي نزل صح قبل كده (بيشيك الهاش الأول)، والكود في الآخر ١ لو فيه أي فشل.` },
+        { lvl: 'متوسط', t: R`مرتّب Downloads`, what: R`[[FileSystemWatcher]] على فولدر تجربة (بعدين Downloads)، وكل ملف جديد بيتنقل لفولدر حسب امتداده (pdf و images و zips و others)، والملفات اللي أكبر من 100 ميجا تطلّع إشعار أو MessageBox. من دروس FileSystemWatcher و MessageBox / BurntToast.`, done: R`١٠ ملفات بامتدادات مختلفة بيروحوا كلهم للفولدر الصح، وملف [[.crdownload]] مبيتنقلش غير بعد ما اسمه يتغيّر، وملف اسمه موجود قبل كده مبيتكتبش فوقه (بيزوّد رقم).` },
+        { lvl: 'كبير', t: R`صيانة بالليل`, what: R`[[nightly.ps1]] بيشتغل كمهمة مجدولة: ياخد نسخة من [[winget export]] بالتاريخ، ويكتب لستة التحديثات المتاحة في اللوج، وينضّف ملفات TEMP الأقدم من ٧ أيام (بـ [[SupportsShouldProcess]] عشان [[-WhatIf]])، ويقيس وقت كل خطوة بـ [[Measure-Command]]، ويشغّل الخطوات المستقلة بـ [[Start-Job]]، وكله جوه [[Start-Transcript]] و [[try / catch]]، ويبعت إشعار بالنتيجة، ومعاه [[-ShutdownAfter]] بيجدول قفل بعد ١٠ دقايق برسالة. من الوحدة دي و «سكربتات زي المحترفين» و «ملفات البيانات والجدولة».`, done: R`اللوج فيه كل خطوة ووقتها، وخطوة بتفشل مبتوقّفش الباقي بس الكود في الآخر ١، و [[-WhatIf]] مبيمسحش ولا ملف، و [[shutdown /a]] بيلغي القفل، والتشغيل مرتين ورا بعض مبيعملش مشاكل (نسخة export جديدة باسم مختلف ومفيش job معلّق في [[Get-Job]]).`, ext: R`زوّد تقرير صباحي في الحافظة أو إشعار بأهم ٣ حاجات، وخلّي التنضيف ياخد الفولدرات من config.json، وقارن export النهارده باللي قبله وقولك برنامج جديد اتسطّب.` },
+        { lvl: 'فكرة', t: R`لوحة تحكم جهازك`, what: R`منيو ([[Out-GridView -OutputMode Single]] أو أرقام في الترمنال) فيه أوامر انت بتختارها من الوحدة: مواصفات الجهاز، تحميل ملف مضمون، تحديث البرامج، تايمر، قفل الشاشة، قفل الجهاز في معاد. انت اللي بتقرر الأوامر وشكل المنيو.`, done: R`كل اختيار بيشتغل لوحده ويرجعك للمنيو، و Cancel أو 0 بيخرج، والأوامر اللي بتقفل أو بتمسح بتسأل قبلها (MessageBox أو [[-Confirm]]).`, ext: R`خلّي المنيو يتبني من ملف JSON بدل ما يبقى مكتوب في الكود، وزوّد أمر بيعرض آخر ١٠ عمليات من لوج، واعمله اختصار على الـ Desktop بيفتحه في Terminal.` },
+      ],
       items: [
         {
           cmd: "Get-CimInstance",
@@ -23,6 +31,11 @@ Get-CimInstance Win32_Battery | Select-Object EstimatedChargeRemaining, BatteryS
 powercfg /batteryreport /output "$env:TEMP\battery.html"
 ii "$env:TEMP\battery.html"`,
           try: R`اعرف الجهاز شغال بقاله كام يوم من غير restart، وطلّع تقرير البطارية وقارن DESIGN CAPACITY بـ FULL CHARGE CAPACITY.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[Get-CimInstance Win32_ComputerSystem | Select-Object Manufacturer, Model, @{ n = "RAM_GB"; e = { [math]::Round($_.TotalPhysicalMemory / 1GB, 1) } }]]`, done: R`الشركة والموديل هما نفس اللي في Settings ← System ← About، والرام قريب من الرقم اللي هناك (أقل شوية، لأن جزء منه محجوز لكارت الشاشة أو الـ BIOS).` },
+            { lvl: 'تطبيق', t: R`نسبة الفاضي في كل درايف ثابت: [[Get-CimInstance Win32_LogicalDisk -Filter "DriveType=3"]] وحسبة [[FreeSpace / Size * 100]]، واطبع بالأصفر أي درايف أقل من 15٪.`, done: R`سطر لكل درايف بالحرف والنسبة، والأرقام قريبة من اللي في This PC. ولو غيّرت الحد مؤقتًا لـ 99 كل الدرايفات بتطلع بالأصفر، فتعرف إن الشرط شغال.` },
+            { lvl: 'تحدي', t: R`[[sysinfo.ps1]] بيجمع في object واحد: اسم الويندوز ونسخته، والأيام من آخر boot، والبروسيسور، والرام، والدرايفات (array من objects)، والبطارية، ويحفظه [[sysinfo.json]] بـ [[ConvertTo-Json -Depth 3]].`, done: R`[[Get-Content sysinfo.json -Raw | ConvertFrom-Json]] بيرجّعه من غير error، والدرايفات array حتى لو عندك درايف واحد، وعلى ديسكتوب من غير بطارية الخانة [[null]] مش error ولا السكربت وقف.` },
+          ],
           deep: {
             why: R`«الجهاز ده فيه رام كام؟ البروسيسور إيه؟ البطارية حالتها إيه؟ آخر restart إمتى؟» أسئلة بتتسأل في الدعم الفني، وقبل ما تسطّب برنامج تقيل، ولما تشتري لابتوب مستعمل. بدل ما تلف في Settings و Task Manager و Device Manager، كله من مكان واحد وتقدر تحفظه في ملف أو تبعته.`,
             how: R`CIM (و WMI قبله) نظام في ويندوز بيعرض كل حاجة عن الجهاز كـ classes. [[Get-CimClass Win32_*]] بيعرض الأسامي (مئات)، وأشهرها: [[Win32_ComputerSystem]] (الشركة والموديل والرام الكلية بالبايت)، و [[Win32_LogicalDisk]] (الديسكات، شوف disk-report.ps1)، و [[Win32_VideoController]] (كارت الشاشة ونسخة الدرايفر)، و [[Win32_BIOS]] (نسخة الـ BIOS والـ serial number).
@@ -214,6 +227,11 @@ Get-Clipboard
 Get-Clipboard -Raw | Measure-Object -Line -Word -Character
 Get-Clipboard | Sort-Object -Unique | Set-Clipboard`,
           try: R`انسخ من أي مكان كذا سطر فيهم تكرار (مثلًا banana و apple و banana و cherry و apple كل واحد في سطر)، وشغّل آخر سطر، والصق في Notepad.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[(Get-Location).Path | Set-Clipboard]] والصقه في خانة العنوان فوق في Explorer.`, done: R`Explorer بيفتح نفس الفولدر اللي الترمنال واقف فيه.` },
+            { lvl: 'تطبيق', t: R`في فولدر فيه ملفات: [[Get-ChildItem -Name | Set-Clipboard]] والصق في Notepad.`, done: R`كل اسم في سطر لوحده، وعدد السطور في Notepad بيساوي [[(Get-ChildItem).Count]].` },
+            { lvl: 'تحدي', t: R`«منضّف الحافظة»: انسخ من أي مكان نص فيه مسافات زيادة في أول وآخر السطور وسطور فاضية وتكرار، واكتب سكربت بيقرا [[Get-Clipboard]] ويعمل [[.Trim()]] لكل سطر ويشيل الفاضي والمتكرر ويرجّعه للحافظة.`, done: R`بعد السكربت [[(Get-Clipboard) -eq '']] مبيرجّعش حاجة (مفيش سطر فاضي)، ومفيش سطر بيبدأ بمسافة، وعدد السطور بقى عدد الحاجات المختلفة بس. والـ paste في أي برنامج بيطلع نفس النتيجة.` },
+          ],
           deep: {
             why: R`شغل كتير في الترمنال بيخلص بإنك تنقل حاجة لمكان تاني: مسار تبعته لزميل، أو هاش ملف، أو الـ public key لـ GitHub، أو جدول في issue. التحديد بالماوس في الترمنال بيلخبط السطور الطويلة وبيزوّد مسافات، و [[Set-Clipboard]] بينقل النص بالظبط.`,
             how: R`[[Set-Clipboard]] بياخد من الـ pipeline أو من [[-Value]]، ولو جاله كذا عنصر بيحط كل واحد في سطر. وأي object مش نص بيتحوّل بالـ ToString بتاعه، وده سبب [[@{Name=...}]] الغريبة، فـ [[Out-String]] أو [[ConvertTo-Csv]] (لو هتلزقه في Excel) أو [[ConvertTo-Json]] قبله. و [[Out-String]] بيحط سطر فاضي فوق وتحت، فلو مضايقك: [[(... | Out-String).Trim() | Set-Clipboard]].
@@ -382,6 +400,11 @@ $line = $sums -split '\n' | Where-Object { $_ -like '*jq-windows-amd64.exe' }
 Invoke-WebRequest $url -OutFile $out -Resume
 curl.exe -L -o jq.exe $url`,
           try: R`نزّل الملف وقارن الهاش، وبعدين غيّر حرف في الهاش المتوقع وشوف False. وجرّب [[curl.exe -o test.exe $url]] من غير [[-L]] وشوف حجم الملف.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[Invoke-WebRequest https://example.com -OutFile $env:TEMP\ex.html]] وبعدين [[Select-String -Path $env:TEMP\ex.html -Pattern '<title>']].`, done: R`الملف موجود وحجمه أكبر من صفر، والسطر اللي اتلقط فيه [[Example Domain]].` },
+            { lvl: 'تطبيق', t: R`اطلب لينك مش موجود ([[https://github.com/jqlang/jq/releases/download/jq-1.8.2/nope.exe]]) جوه try / catch واطبع نوع الـ error و [[[int]$_.Exception.Response.StatusCode]]. وفي 7 جرّب كمان [[-SkipHttpErrorCheck]] من غير try.`, done: R`الكود [[404]] في الاتنين، بس النوع [[HttpResponseException]] في 7 و [[WebException]] في 5.1 (لو بتمسك نوع معيّن خلي بالك). و [[-SkipHttpErrorCheck]] في 7 بيرجّع الرد من غير error و [[.StatusCode]] = [[404]]، وفي 5.1 بيطلع [[A parameter cannot be found that matches parameter name 'SkipHttpErrorCheck']].` },
+            { lvl: 'تحدي', t: R`function [[Save-Verified -Url -Sha256 -Path]]: بتنزّل لملف [[.part]]، وتقارن [[Get-FileHash]] بالهاش اللي اتبعت، ولو مطابق تغيّر الاسم للاسم النهائي، ولو لأ تمسح الـ part وتعمل [[throw]] برسالة فيها الهاشين. جرّبها على jq بالهاش الصح وبعدين بهاش غيّرت فيه حرف.`, done: R`بالهاش الصح الملف النهائي موجود و [[& $out --version]] بيطبع [[jq-1.8.2]]. وبالغلط مفيش لا ملف نهائي ولا [[.part]] فاضل، والرسالة فيها الهاش المتوقع واللي طلع فعلًا.` },
+          ],
           deep: {
             why: R`تسطيب أداة على سيرفر أو جهاز جديد من غير متصفح، أو سكربت setup بينزّل اللي محتاجه، أو تحميل backup من رابط. والتحقق بالهاش مش رفاهية: لو التحميل اتقطع، أو حد عدّل الملف في السكة، أو نزلت من mirror مضروب، الهاش بيكشفه قبل ما تشغّل حاجة.`,
             how: R`[[Invoke-WebRequest]] من غير [[-OutFile]] بيرجع object فيه [[StatusCode]] و [[Headers]] و [[Content]]. ولو عايز حجم الملف قبل ما تنزّله: [[(Invoke-WebRequest $url -Method Head).Headers['Content-Length']]] (طلع [[1035264]] للملف ده). ومع [[-OutFile]] مش بيرجع حاجة إلا لو زوّدت [[-PassThru]]. وبيمشي ورا الـ redirects لوحده، على عكس curl.
@@ -577,6 +600,11 @@ while ($job.JobState -in "Queued", "Connecting", "Transferring") { Start-Sleep -
 Complete-BitsTransfer $job
 Get-Item "$env:TEMP\jq-async.exe"`,
           try: R`ابدأ تحميل ملف كبير (installer أو ISO) بـ [[-Asynchronous]]، واقفل PowerShell، وافتح نافذة جديدة واكتب [[Get-BitsTransfer]].`,
+          practice: [
+            { lvl: 'سريع', t: R`نزّل jq بـ [[Start-BitsTransfer -Source $url -Destination $env:TEMP\jq-b.exe -DisplayName jq]] (نفس [[$url]] بتاع الدرس)، وبعدين [[(Get-Item $env:TEMP\jq-b.exe).Length]].`, done: R`[[1035264]] بايت، نفس الحجم اللي نزل بـ Invoke-WebRequest، والترمنال كان واقف لحد ما التحميل خلص (من غير [[-Asynchronous]]).` },
+            { lvl: 'تطبيق', t: R`ابدأ تحميل [[-Asynchronous]] واعمل loop بيطبع النسبة كل ثانية من [[BytesTransferred]] و [[BytesTotal]]، وبعده [[Complete-BitsTransfer]]. خلّي بالك إن [[BytesTotal]] في الأول ممكن يبقى [[18446744073709551615]] (يعني «لسه مش معروف»).`, done: R`النسبة بتتطبع من غير رقم غريب ولا قسمة بايظة في الأول (لما الحجم مش معروف بتطبع «unknown»)، وبتوصل 100، والملف موجود بعد [[Complete-BitsTransfer]] بس.` },
+            { lvl: 'تحدي', t: R`ابدأ تحميل [[-Asynchronous]] من لينك 404 (زي اللي في درس Invoke-WebRequest)، واعمل سكربت بيستنى لحد ما الحالة تبقى مش Queued ولا Connecting ولا Transferring، ولو [[Error]] يطبع [[ErrorDescription]] ويشيله بـ [[Remove-BitsTransfer]].`, done: R`الحالة بتوصل [[Error]] في ثواني، والوصف فيه [[HTTP status 404]]، وبعد [[Remove-BitsTransfer]] الأمر [[Get-BitsTransfer]] مفيهوش الـ job ده. من غير الشيل كان هيفضل معلّق في القايمة حتى بعد ما تقفل PowerShell.` },
+          ],
           deep: {
             why: R`ملف كبير على نت بيقطع: Invoke-WebRequest لو اتقطع بيفشل (إلا لو انت على 7 واستخدمت [[-Resume]] بنفسك). BITS بيكمّل لوحده من مكان ما وقف، حتى بعد restart، وتقدر تخليه يستخدم النت الفاضي بس عشان ميبطّأش شغلك.`,
             how: R`BITS (Background Intelligent Transfer Service) خدمة في ويندوز، والتحميلات محفوظة فيها مش في PowerShell، وكل يوزر بيشوف تحميلاته بس ([[-AllUsers]] للأدمن). و [[-Priority]] فيه [[Foreground]] (الافتراضي، الأسرع) و [[High]] و [[Normal]] و [[Low]] (بيستخدم النت الفاضي بس).
@@ -737,6 +765,11 @@ winget pin add --id Microsoft.DotNet.Runtime.8
 winget export -o "$HOME\apps.json"
 winget import -i "$HOME\apps.json" --accept-package-agreements --ignore-unavailable`,
           try: R`اعرض البرامج اللي محتاجة تحديث، وطلّع لستة برامجك في ملف وافتحه. (متشغّلش [[--all]] غير وانت فاضي ومقفّل برامجك.)`,
+          practice: [
+            { lvl: 'سريع', t: R`[[winget list --upgrade-available]] (نفس فكرة [[winget upgrade]] من غير حاجة).`, done: R`جدول بالبرامج اللي ليها نسخة أحدث بس، وفيه عمود Id وعمود Available بالنسخة الجديدة. اختار Id واحد منهم عشان الـ [[--id]] في التمرين الجاي.` },
+            { lvl: 'تطبيق', t: R`[[winget export -o $env:TEMP\apps.json]]، وعدّ البرامج اللي اتكتبت: [[(Get-Content $env:TEMP\apps.json -Raw | ConvertFrom-Json).Sources.Packages.Count]]، واطبع المصادر من [[.Sources.SourceDetails.Name]].`, done: R`الرقم أقل من عدد سطور [[winget list]]، لأن البرامج اللي مش في أي مصدر بتتطبع [[Installed package is not available from any source]] ومبتدخلش الملف. والمصادر [[winget]] وغالبًا [[msstore]]، وكل عنصر جوه Packages فيه [[PackageIdentifier]].` },
+            { lvl: 'تحدي', t: R`سكربت بيشيل من ملف الـ export برامج مش عايزها على الجهاز الجديد (لستة IDs في أول السكربت)، ويكتب [[apps-clean.json]] بـ [[-Depth 10]].`, done: R`[[.Sources.Packages.Count]] في الجديد أقل بعدد اللي شلتهم بالظبط، و [[Select-String]] على أي ID منهم مبيلاقيش حاجة، والملف لسه فيه [[$schema]] و [[SourceDetails]] (لو [[-Depth]] صغير كانوا هيبقوا نص).` },
+          ],
           flag: "danger",
           deep: {
             why: R`كل برنامج بيحدّث نفسه بطريقته (أو مبيحدّثش)، فبتلاقي نسخ قديمة فيها ثغرات. وجهاز جديد أو فورمات معناه يوم كامل تنزّل برامجك واحد واحد وتنسى نصهم. winget بيخلي الاتنين أمر واحد، وملف الـ JSON تحطه في OneDrive أو في repo الـ dotfiles بتاعك.`,
@@ -916,6 +949,11 @@ $a = Measure-Command { $arr = @(); foreach ($i in 1..20000) { $arr += $i } }
 $b = Measure-Command { $arr = foreach ($i in 1..20000) { $i } }
 "+= : {0:N2}s   foreach = : {1:N2}s" -f $a.TotalSeconds, $b.TotalSeconds`,
           try: R`قارن [[1..100000 | ForEach-Object { $_ * 2 }]] بـ [[foreach ($n in 1..100000) { $n * 2 }]] بـ Measure-Command، وشغّل كل واحد مرتين.`,
+          practice: [
+            { lvl: 'سريع', t: R`قيس [[Get-ChildItem C:\Windows\System32 -File]] ٣ مرات ورا بعض واطبع [[.TotalMilliseconds]]، وبعدين جرّب [[Measure-Command { $x = 5 }; $x]].`, done: R`٣ أرقام، والأولى غالبًا أبطأ (ويندوز بيحفظ الفولدر في الذاكرة بعد أول قراية)، فتعرف ليه بنقيس أكتر من مرة. وآخر سطر بيطبع [[5]]: المتغيرات اللي بتتعمل جوه Measure-Command بتفضل بعده.` },
+            { lvl: 'تطبيق', t: R`اعمل ملف ١٠٠ ألف سطر في TEMP ([[1..100000 | ForEach-Object { "line $_" } | Set-Content big.txt]])، وقارن [[Get-Content big.txt]] و [[Get-Content big.txt -Raw]] و [[[IO.File]::ReadAllLines("$PWD\big.txt")]].`, done: R`[[-Raw]] و ReadAllLines أسرع من Get-Content العادي بفرق كبير. على جهازي في 7.6: حوالي 270 مللي للعادي، و 12 لـ [[-Raw]]، و 22 لـ ReadAllLines. أرقامك هتختلف بس الترتيب نفسه.` },
+            { lvl: 'تحدي', t: R`function [[Measure-Average]] بتاخد scriptblock و [[-Times]] وترجّع object فيه Min و Avg و Max بالمللي ثانية، وجرّبها على [[{ Start-Sleep -Milliseconds 100 }]] خمس مرات.`, done: R`Min أصغر من أو بيساوي Avg، و Avg أصغر من أو بيساوي Max في كل تشغيلة، والـ Avg بتاع الـ sleep أكبر شوية من 100 (مش أقل أبدًا).` },
+          ],
           deep: {
             why: R`«ده بطيء» إحساس، و Measure-Command بيحوّله رقم. قبل ما تعدّل سكربت عشان تسرّعه، قيس: يمكن البطء في حتة تانية خالص. وبعد التعديل قيس تاني عشان تتأكد إنه اتحسّن فعلًا. ونفس الحكاية للـ profile: كل إضافة شكلها حلو بس بتاخد من وقت فتح كل نافذة.`,
             how: R`[[Measure-Command]] بيشغّل الكود في نفس الـ scope بتاعك، فأي متغير اتعمل جواه ([[$arr]] مثلًا) بيفضل موجود بعدها (جربتها في 5.1 و 7). والـ output بيترمي، لكن [[Write-Host]] بيبان لأنه مش output (درس «Write-Host والـ output»).
@@ -1069,6 +1107,11 @@ $j = ping -n 4 github.com &
 $j | Receive-Job -Wait -AutoRemoveJob
 Start-ThreadJob { Invoke-RestMethod https://api.github.com/zen } | Receive-Job -Wait -AutoRemoveJob`,
           try: R`ابدأ job بيحسب حجم فولدر كبير (زي [[C:\Windows]] مع [[-ErrorAction SilentlyContinue]])، وفي نفس الوقت اشتغل عادي في الترمنال، وبعدين هات الناتج.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[$j = Start-Job { Start-Sleep 3; 'done' }]]، واكتب [[$j.State]] على طول، وبعد ٥ ثواني تاني، وبعدين [[Receive-Job $j]].`, done: R`الأول [[Running]] والتاني [[Completed]]، و [[Receive-Job]] بيطبع [[done]]، والترمنال كان فاضي ليك طول الوقت.` },
+            { lvl: 'تطبيق', t: R`٣ jobs كل واحد بيعدّ ملفات فولدر مختلف (المسار بيوصل بـ [[$using:]])، وبعدين [[Wait-Job]] و [[Receive-Job]]، وقيس الكل بـ [[Measure-Command]] قدّام نفس العدّ ورا بعض من غير jobs.`, done: R`الأرقام هي هي في الطريقتين. ولو الفولدرات صغيرة الـ jobs أبطأ، لأن كل [[Start-Job]] بيفتح PowerShell جديد وده لوحده بياخد وقت. التوازي بيكسب بس لما الشغل نفسه تقيل.` },
+            { lvl: 'تحدي', t: R`[[$a = Start-Job { throw 'boom' }]] و [[$b = Start-Job { Get-Item C:\nope }]]، و [[Wait-Job $a, $b]]، وقارن [[.State]] بتاع الاتنين، وبعدين [[Receive-Job $b]].`, done: R`الأول [[Failed]] والتاني [[Completed]] رغم إن فيه error، لأن error بتاع Get-Item مش بيوقف. و [[Receive-Job $b]] بيطلّع الـ error الأحمر. يعني [[State]] لوحده مش كفاية تعرف الشغل نجح: افحص الـ errors كمان (اتجرب على 7.6 و 5.1).` },
+          ],
           deep: {
             why: R`حاجات بتاخد وقت ومش محتاج تتفرج عليها: حساب حجم فولدرات، أو ping طويل، أو تحميل، أو build. بدل ما تفتح تاب تاني وتنسى فيه إيه، Start-Job بيشغّلها في الخلفية وتجيب النتيجة لما تحتاجها. وفي سكربت تقدر تشغّل كذا حاجة مع بعض وتستناهم كلهم بـ [[Wait-Job]].`,
             how: R`[[Start-Job]] بيفتح عملية [[pwsh]] جديدة لكل job، وده بياخد وقت ورام، والناتج بيرجعلك نسخة من البيانات (serialized) مش الـ object الأصلي بالـ methods بتاعته. [[Start-ThreadJob]] بيشتغل في thread جوه نفس العملية، فأسرع وأخف، و [[-ThrottleLimit]] بيحدد كام واحد يشتغل مع بعض. ودا نفس اللي [[ForEach-Object -Parallel]] بيستخدمه.
@@ -1244,6 +1287,11 @@ Get-Process | Select-Object Name, Id, @{ n = "RAM_MB"; e = { [math]::Round($_.Wo
 Get-ChildItem $HOME\Downloads -File | Sort-Object LastWriteTime -Descending | Out-GridView -Title "Open a file" -OutputMode Single | Invoke-Item
 Import-Csv .\disk-report.csv | Out-GridView -Title "Disk report" -Wait`,
           try: R`اعرض العمليات، وفلتر بكلمة [[chrome]] أو [[code]]، ورتّب بـ RAM_MB، واختار اتنين ودوس OK، وشوف سطور What if.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[Get-Service | Out-GridView]]، واكتب [[Running]] في خانة Filter.`, done: R`الصفوف اللي فاضلة كلها Status بتاعها Running، والعدد اللي تحت بيقل وانت بتكتب.` },
+            { lvl: 'تطبيق', t: R`اعمل فولدر [[ogv-lab]] في TEMP فيه ٥ ملفات، وبعدين [[Get-ChildItem $env:TEMP\ogv-lab -File | Out-GridView -PassThru | Remove-Item -WhatIf]] واختار ٢ بـ Ctrl.`, done: R`سطرين [[What if:]] بالظبط بأسامي الملفين اللي اخترتهم، والـ ٥ ملفات لسه موجودين.` },
+            { lvl: 'تحدي', t: R`«منيو سكربتات»: اعرض ملفات [[.ps1]] في فولدر سكربتاتك بـ [[Out-GridView -OutputMode Single]]، وشغّل اللي تختاره بـ [[&]]، ولو دوست Cancel يطبع [[cancelled]] ومايشغّلش حاجة.`, done: R`اختيار سكربت بيشغّله، و Cancel أو قفل النافذة بيخلي المتغير [[$null]] فبيطبع [[cancelled]] بس، ومفيش error أحمر في الحالتين.` },
+          ],
           deep: {
             why: R`ساعات عايز تبص على بيانات كتير وتدوّر فيها بإيدك: مئات العمليات أو الخدمات أو صفوف CSV. الجدول في الترمنال بيتقطع وصعب تفلتره، و Excel كتير عليه. و [[-PassThru]] بيحل مشكلة «عايز أختار كام حاجة من لستة وأعمل فيهم حاجة» من غير ما تكتب [[Where-Object]] بشروط.`,
             how: R`[[Out-GridView]] بيعرض الخصائص اللي الـ object بيعرضها افتراضيًا، فاعمل [[Select-Object]] قبله بالأعمدة اللي عايزها بالظبط. والفلتر والترتيب جوه النافذة عرض بس؛ اللي بيرجع مع [[-PassThru]] هو الـ objects اللي اخترتها بكل خصائصها.
@@ -1380,6 +1428,11 @@ while ($true) {
     [console]::Beep(1000, 150)
 }`,
           try: R`شغّله، ومن نافذة تانية اعمل [[New-Item "$HOME\Downloads\test.pdf"]]، وبعدين نزّل أي PDF من المتصفح. وبعدين خليه ينقل كل PDF جديد لفولدر [[Documents\PDFs]].`,
+          practice: [
+            { lvl: 'سريع', t: R`[[$w = [System.IO.FileSystemWatcher]::new("$env:TEMP\fsw", "*.txt")]] (اعمل الفولدر الأول)، وبعدين [[$w.WaitForChanged('Created', 5000)]] من غير ما تعمل أي ملف، وبعدين تاني وانت بتعمل [[a.txt]] من نافذة تانية.`, done: R`الأولى بعد ٥ ثواني بترجّع [[TimedOut]] = [[True]]. والتانية بترجّع على طول [[Name]] = [[a.txt]] و [[ChangeType]] = [[Created]] و [[TimedOut]] = [[False]].` },
+            { lvl: 'تطبيق', t: R`«صندوق وارد»: راقب فولدر [[inbox]]، وأي [[.csv]] يوصل انقله لـ [[processed]] وقبل اسمه الوقت ([[14-05-09_data.csv]] مثلًا).`, done: R`٣ ملفات تحطهم ورا بعض بسرعة بيتنقلوا التلاتة، و inbox بيفضل فاضي، والأسامي في processed فيها الوقت. (لو ملف ضاع، ارجع لملاحظة النقل في شرح الدرس.)` },
+            { lvl: 'تحدي', t: R`نفس المراقبة بالأحداث بدل الـ loop: [[$w.EnableRaisingEvents = $true]] و [[Register-ObjectEvent $w Created -SourceIdentifier inbox -Action { ... }]]، والـ action بيزوّد الاسم في لستة global. وفي الآخر [[Unregister-Event inbox]].`, done: R`في الترمنال التفاعلي الملفات بتتسجّل وانت بتكتب أوامر تانية، وبعد [[Unregister-Event]] الأمر [[Get-EventSubscriber]] مبيطلّعش حاجة والملفات الجديدة مبتتسجّلش. وجوه سكربت: في 7 الـ action بيشتغل حتى والسكربت في [[Start-Sleep]]، لكن في 5.1 جرّبت [[Start-Sleep]] واحد ١.٥ ثانية والملف ماتسجّلش، ولما خليتها sleep قصير في loop أو [[Wait-Event -Timeout 1]] اتسجّل.` },
+          ],
           flag: "script",
           deep: {
             why: R`حاجات كتير بتستنى «لما ملف يوصل»: فاتورة نزلت تتنقل لفولدرها، صورة اتحفظت تتصغّر، CSV وصل من نظام تاني يتعالج، أو build يتعمل لما ملف يتغير. بدل ما تفحص الفولدر كل شوية، ويندوز نفسه بيبلّغ الـ watcher أول ما حاجة تحصل.`,
@@ -1579,6 +1632,11 @@ Write-Progress -Activity $Label -Completed
 [console]::Beep(660, 300)
 Write-Host "$Label done at $(Get-Date -Format HH:mm)" -ForegroundColor Green`,
           try: R`احفظه [[timer.ps1]] وشغّله بـ [[-Minutes 0.1 -Label Test]]، وبعدين اعمل سكربت جنبه بيشغّل 4 جلسات 25 دقيقة وبينهم راحة 5 دقايق.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[1..20 | ForEach-Object { Write-Progress -Activity Test -PercentComplete ($_ * 5); Start-Sleep -Milliseconds 100 }]]، وبعدها [[Write-Progress -Activity Test -Completed]].`, done: R`الشريط بيتملي لحد 100 في حوالي ثانيتين، وبعد [[-Completed]] بيختفي.` },
+            { lvl: 'تطبيق', t: R`انسخ ملفات فولدر تجربة (١٠ ملفات) لفولدر تاني واحد واحد، ومعاك [[Write-Progress]] بـ [[-Status "3 of 10"]] و [[-CurrentOperation]] باسم الملف.`, done: R`الشريط بيكتب الرقم واسم الملف اللي بيتنسخ دلوقتي، وفي الآخر عدد الملفات في الفولدرين واحد والشريط اختفى.` },
+            { lvl: 'تحدي', t: R`شريطين: برّاني بالفولدرات ([[-Id 1]]) وجوّاني بالملفات اللي جوه كل فولدر ([[-Id 2 -ParentId 1]]). وبعدين نفس السكربت بعد [[$ProgressPreference = 'SilentlyContinue']].`, done: R`الجوّاني ظاهر تحت البرّاني ومتزحزح لجوه، وبيتصفّر مع كل فولدر جديد. ومع SilentlyContinue مفيش ولا شريط والسكربت بيخلص في نفس الوقت أو أسرع.` },
+          ],
           flag: "script",
           deep: {
             why: R`عداد في الترمنال اللي انت فاتحه أصلًا: بومودورو، أو «فكّرني بعد 40 دقيقة»، أو تستنى قبل ما تعيد محاولة. ونفس [[Write-Progress]] ده هو اللي بتحطه في أي سكربت طويل (نسخ ملفات كتير، معالجة صور) عشان اللي بيشغّله يعرف فاضل قد إيه بدل ما يفتكر إنه علّق.`,
@@ -1772,6 +1830,11 @@ $voice.Rate = 2
 [console]::Beep(880, 300)
 npm run build; if ($LASTEXITCODE -eq 0) { $voice.Speak("Build passed") | Out-Null } else { [console]::Beep(300, 800); $voice.Speak("Build failed") | Out-Null }`,
           try: R`اعرض الأصوات اللي عندك، وخلّي الجهاز يقول جملة عربي لو عندك صوت عربي.`,
+          practice: [
+            { lvl: 'سريع', t: R`خلّي الجهاز يقول الساعة: [[$voice.Speak("It is $(Get-Date -Format 'h:mm tt')") | Out-Null]].`, done: R`بتسمع نفس الساعة اللي في الـ taskbar. ومن غير [[| Out-Null]] بيتطبع رقم بعد الكلام، ده رقم بيرجّعه [[Speak]] مش جزء من الكلام.` },
+            { lvl: 'تطبيق', t: R`function [[Invoke-AndSay]] بتاخد scriptblock وتشغّله، وتقول [[passed]] لو [[$LASTEXITCODE]] صفر و [[failed]] لو لأ، وتطبع الكود. جرّبها بـ [[{ cmd /c exit 0 }]] و [[{ cmd /c exit 1 }]].`, done: R`بتسمع passed للأولى و failed للتانية، والترمنال بيطبع [[0]] و [[1]]. ودي اللي تلفّ بيها أي build أو test طويل.` },
+            { lvl: 'تحدي', t: R`[[$voice.Speak("This is a long sentence to test async speech", 1)]] (الـ 1 معناه async) جوه [[Measure-Command]]، قدّام نفس الجملة من غير الـ 1، وبعدين [[$voice.WaitUntilDone(-1)]].`, done: R`العادي بياخد ثواني (طول الجملة)، والـ async بيرجع في مللي ثواني والكلام لسه شغال، و [[WaitUntilDone(-1)]] بيوقف السكربت لحد ما الكلام يخلص. (الـ flag ده [[SVSFlagsAsync]] من توثيق SAPI.)` },
+          ],
           deep: {
             why: R`build أو تست أو تحميل بياخد 10 دقايق، فبتروح تعمل حاجة وترجع كل شوية تبص، أو تنساه خالص. صوت أو جملة مسموعة بتقولك النتيجة وانت بعيد عن الشاشة. ونفس الفكرة في آخر أي سكربت طويل: «Backup done».`,
             how: R`[[SAPI.SpVoice]] بيستخدم أصوات «SAPI 5» القديمة المسجلة في ويندوز (اللي في اسمها Desktop). ويندوز 10 و 11 فيهم أصوات أحدث (OneCore)، وأي لغة بتضيف صوتها من Settings بتيجي من النوع ده. [[System.Speech.Synthesis.SpeechSynthesizer]] في PowerShell 7 شاف النوعين لما جربت، و [[GetInstalledVoices().VoiceInfo]] بيرجع الاسم واللغة ([[Culture]]) والنوع.
@@ -1939,6 +2002,11 @@ if ($answer -eq "Yes") { Get-ChildItem .\logs -Filter *.log | Where-Object LastW
 Install-Module BurntToast -Scope CurrentUser
 New-BurntToastNotification -Text "Build finished", "All tests passed"`,
           try: R`اعمل سؤال YesNo: لو دوست Yes اطبع [[OK]] بالأخضر، ولو No اطبع [[Cancelled]] بالأصفر. وبعدين ابعت إشعار بعد [[Start-Sleep 5]] وانت في برنامج تاني.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[[System.Windows.MessageBox]::Show("Continue?", "Test", "OKCancel")]] (بعد [[Add-Type -AssemblyName PresentationFramework]]) ودوس كل زرار مرة.`, done: R`بيطبع [[OK]] أو [[Cancel]] حسب الزرار، فتقدر تحطه في [[if]] زي مثال الدرس.` },
+            { lvl: 'تطبيق', t: R`في فولدر تجربة فيه ٤ ملفات: لكل ملف سؤال [[YesNoCancel]] فيه اسمه: Yes يمسحه، و No يسيبه، و Cancel يوقّف اللوب كله.`, done: R`الملفات اللي قلت عليها Yes بس اتمسحت، وبعد Cancel مفيش ولا سؤال تاني ظهر، والباقيين موجودين.` },
+            { lvl: 'تحدي', t: R`function [[Send-Done -Text]]: لو [[Get-Module -ListAvailable BurntToast]] لاقي الموديول تبعت toast، ولو لأ تطلع MessageBox، وفي الحالتين تكتب سطر في لوج بالوقت والطريقة اللي اتبعت بيها.`, done: R`على جهاز من غير BurntToast بيطلع MessageBox من غير أي error واللوج بيقول MessageBox، وبعد ما تسطّبه بنفس الأمر بيطلع toast واللوج بيقول toast.` },
+          ],
           deep: {
             why: R`السكربت ساعات بيشتغل والترمنال متصغّر أو ورا برامج تانية، فمحدش بيشوف سؤال [[Read-Host]] ولا رسالة «خلصت». النافذة بتطلع قدام كل حاجة، والإشعار بيوصلك وانت في المتصفح. ومفيد كمان لسكربت بتعمله لحد مش بيستخدم الترمنال (يدبل كليك على shortcut فيطلعله سؤال بسيط).`,
             how: R`[[MessageBox]] نافذة «modal»: الكود اللي بعدها مش بيتنفّذ لحد ما تتقفل، وده المطلوب في سؤال تأكيد. والبديل من WinForms: [[Add-Type -AssemblyName System.Windows.Forms]] وبعدين [[[System.Windows.Forms.MessageBox]::Show(...)]] بنفس الفكرة. و PowerShell بيحوّل النص [["YesNo"]] للنوع المطلوب لوحده، فمش محتاج تكتب [[[System.Windows.MessageBoxButton]::YesNo]].
@@ -2089,6 +2157,11 @@ shutdown /a
 shutdown /r /t 600 /c "Restarting in 10 minutes for updates"
 shutdown /a`,
           try: R`اعمل shutdown بعد ساعة بـ [[/t 3600]]، وشوف التنبيه اللي بيظهر، وبعدين الغيه بـ [[shutdown /a]] (واتأكد إنك لغيته!).`,
+          practice: [
+            { lvl: 'سريع', t: R`[[Stop-Computer -WhatIf]] و [[Restart-Computer -WhatIf]] على جهازك.`, done: R`كل واحد بيطبع سطر أوله [[What if:]] ومفيش حاجة حصلت، والجهاز لسه شغال والبرامج مفتوحة. ده أأمن طريقة تتأكد إن سكربتك هيقفل الجهاز الصح قبل ما تشيل [[-WhatIf]].` },
+            { lvl: 'تطبيق', t: R`function [[Get-SecondsUntil "23:30"]] بترجّع الثواني لحد الساعة دي (ولو الساعة عدّت النهارده تحسب لبكرة)، وسكربت بيطبع أمر الـ shutdown اللي هيتشغّل بالرقم من غير ما يشغّله.`, done: R`لأي ساعة (جاية أو عدّت) الرقم أكبر من صفر وأقل من [[86400]]، والساعة اللي عدّت من دقيقة بتطلع قريب من [[86400]]، والسطر المطبوع زي [[shutdown /s /t 36988]].` },
+            { lvl: 'تحدي', t: R`[[sleep-after.ps1 -Minutes 60]] بيجدول shutdown ويكتب في لوج إمتى، وفيه [[-Cancel]] بيعمل [[shutdown /a]] ويقولك اتلغى فعلًا ولا مكانش فيه حاجة متجدولة، من [[$LASTEXITCODE]].`, done: R`[[-Cancel]] بعد الجدولة بيقول «اتلغى» والكود [[0]]، و [[-Cancel]] تاني بيقول «مفيش حاجة متجدولة» (الكود [[1116]]) من غير ما الرسالة الحمرا تبان، واللوج فيه سطر لكل عملية.` },
+          ],
           flag: "danger",
           deep: {
             why: R`تحميل كبير أو build أو render هيخلص بعد ساعتين وانت عايز تنام، أو عايز الجهاز يعمل restart بالليل بعد التحديثات مش وانت شغال، أو بتحدد لنفسك «الجهاز يقفل الساعة 12». وقايمة Start مفيهاش «اقفل الساعة كذا».`,
@@ -2238,6 +2311,11 @@ Start-Sleep -Seconds 300; rundll32.exe user32.dll,LockWorkStation
 # shutdown /h
 # rundll32.exe powrprof.dll,SetSuspendState 0,1,0`,
           try: R`شغّل [[powercfg /a]] واعرف جهازك بيدعم إيه، وبعدين جرّب القفل بعد 10 ثواني: [[Start-Sleep 10; rundll32.exe user32.dll,LockWorkStation]].`,
+          practice: [
+            { lvl: 'سريع', t: R`[[powercfg /a]] واكتب الحالات المتاحة عندك.`, done: R`تقدر تقول جهازك Modern Standby ([[Standby (S0 Low Power Idle)]]) ولا [[S3]]، و Hibernate متاح ولا لأ، وده بيحدد أنهي سطر في المثال هيشتغل عندك.` },
+            { lvl: 'تطبيق', t: R`بعد تايمر درس Write-Progress ما يخلص، اقفل الشاشة لوحدها: [[.\timer.ps1 -Minutes 0.1 -Label Break; rundll32.exe user32.dll,LockWorkStation]].`, done: R`الشاشة بتقفل بعد حوالي ٦ ثواني والصوت، ولما تدخل الترمنال مفتوح والسطر الأخضر بتاع التايمر موجود.` },
+            { lvl: 'تحدي', t: R`اعرف الجهاز «فاضي» بقاله قد إيه بـ [[GetLastInputInfo]] من [[user32.dll]] عن طريق [[Add-Type]]، واكتب سكربت بيقفل الشاشة لو مفيش لمس للكيبورد والماوس ١٠ دقايق، وفيه [[-WhatIf]] بيطبع «would lock» بس.`, done: R`وانت بتحرّك الماوس الرقم أقل من ثانية، ولو سبته دقيقة بيبقى حوالي 60000 مللي، و [[-WhatIf]] بيطبع ومبيقفلش. و [[Add-Type]] نفسه شغال في 7.6 و 5.1.` },
+          ],
           flag: "danger",
           deep: {
             why: R`القفل قبل ما تقوم من على الجهاز عادة أمان أساسية في أي مكتب، والأمر ده بيخليك تقفل من سكربت أو بعد وقت أو من shortcut. والـ hibernate مفيد لو هتشيل اللابتوب ساعات ومش عايز البطارية تخلص في الـ sleep، وترجع لنفس الشغل.`,

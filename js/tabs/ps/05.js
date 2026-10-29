@@ -4,6 +4,15 @@ MORE("ps", [
       t: "العمليات والخدمات",
       l: 2,
       n: "",
+      projects: [
+        { lvl: 'صغير', t: R`مين ماسك البورت ده`, what: R`سطر بياخد رقم بورت ويطبع اسم البرنامج و PID بتاعه: [[Get-Process -Id (Get-NetTCPConnection -LocalPort 3000 -State Listen).OwningProcess]]. جرّبه على listener تجريبي ([[TcpListener]] زي تمرين الدرس) قبل ما تجرّبه على سيرفر حقيقي. من درس «مين ماسك البورت».`, done: R`وانت مشغّل الـ listener، السطر بيطبع اسم PowerShell بتاعك و Id بيساوي [[$PID]]، وبعد [[$l.Stop()]] بيطلع error فيه [[No matching MSFT_NetTCPConnection objects found]].` },
+        { lvl: 'صغير', t: R`افتح شغلك بأمر واحد`, what: R`سطور بتفتح كل اللي بتحتاجه للشغل: فولدر المشروع في Explorer ([[ii]])، والمحرر ([[Start-Process code -ArgumentList .]] لو عندك VS Code)، وصفحة الـ localhost والـ repo في المتصفح ([[Start-Process]] بلينك). من درس «شغّل حاجة».`, done: R`بتلزق السطور في نافذة جديدة وكل حاجة بتتفتح، والنافذة مش بتستنى أي برنامج يتقفل (رجعلك الـ prompt على طول).` },
+        { lvl: 'متوسط', t: R`شغّل وانتظر واعرف النتيجة`, what: R`سطور بتشغّل أمر طويل (build أو test، أو [[pwsh -NoProfile -Command 'Start-Sleep 3; exit 1']] كتجربة) مرة بـ [[Start-Process -Wait -PassThru]] ومرة بـ [[&]]، وفي الحالتين بتطبع OK أو FAIL حسب الـ exit code ([[.ExitCode]] و [[$LASTEXITCODE]]). من دروس «شغّل حاجة» و «&».`, done: R`مع [[exit 1]] الطريقتين بيطبعوا FAIL، ومع [[exit 0]] بيطبعوا OK، وتقدر تقول إمتى تستخدم أنهي واحدة (نافذة منفصلة ولا نفس النافذة).` },
+        { lvl: 'متوسط', t: R`خدمات المفروض شغالة ومش شغالة`, what: R`لستة الخدمات اللي [[StartType]] بتاعها [[Automatic]] و [[Status]] مش [[Running]]، بـ [[Where-Object]] وصدّرها CSV بالاسم و DisplayName. قراية بس: متشغّلش ولا خدمة. من درس «خدمات ويندوز» ووحدة الـ Pipeline.`, done: R`الـ CSV كل صف فيه Automatic و Stopped، وعدد الصفوف بيساوي [[.Count]] بتاع نفس الفلتر في الترمنال (ممكن يبقى صفر، وده طبيعي).` },
+        { lvl: 'كبير', t: R`dev-up و dev-down`, what: R`سكربتين لسيرفر التطوير: [[dev-up.ps1]] بيشوف البورت فاضي ([[Get-NetTCPConnection]])، ولو مشغول بيطبع مين ماسكه ويقف (من غير ما يقتل حاجة)، ولو فاضي بيشغّل السيرفر بـ [[Start-Process -PassThru]] ويحفظ الـ PID في [[.dev.pid]]، ويستنى لحد البورت ما يبقى Listen (لحد ١٠ ثواني) وإلا يقول فشل. ولو [[.dev.pid]] موجود والعملية لسه شغالة بيقول «شغال بالفعل» من غير ما يشغّل نسخة تانية. و [[dev-down.ps1]] بيقفل الـ PID اللي في الملف بس ويمسح الملف. كل خطوة سطر في [[dev.log]]. بيجمع الوحدة دي مع «ملفات وفولدرات» و «قراءة وكتابة».`, done: R`[[dev-up]] مرتين ورا بعض: التانية بتقول «شغال بالفعل» وعدد العمليات زي ما هو. [[dev-down]] بيقفلها و [[Get-NetTCPConnection]] على البورت بيطلع error. ولو برنامج تاني ماسك البورت، [[dev-up]] بيطبع اسمه ويخرج بكود غير صفر ومبيقفلوش.`, ext: R`خلّي البورت والأمر في ملف [[dev.json]] لكل مشروع، وزوّد [[dev-status]] بيقول شغال ولا لأ ومن امتى، وخلّي [[dev-up]] يفتح المتصفح على الصفحة أول ما البورت يبقى Listen.` },
+        { lvl: 'كبير', t: R`QA بالصور لموقعك`, what: R`طوّر [[screenshots.ps1]]: لستة الصفحات جاية من ملف [[pages.txt]]، وكل صفحة بتتصوّر بمقاسين (1440 و 390)، وكل صورة بتتفحص: موجودة ولا لأ، وحجمها مش صغير بشكل مريب (صفحة فاضية بتطلع صورة صغيرة جدًا). في الآخر ملخص بعدد OK و FAIL، وسطر لكل صورة في [[shots.log]]، و [[exit 1]] لو فيه FAIL. بيجمع الوحدة دي مع «ملفات وفولدرات» و «قراءة وكتابة».`, done: R`لينك صح بيطلع OK بمقاسين، ولينك لصفحة مش موجودة أو سيرفر واقف بيطلع FAIL وواضح أنهي صفحة، و [[$LASTEXITCODE]] بعدها [[1]]، وتشغيله تاني بيمسح الصور القديمة قبل ما يصوّر.`, ext: R`قارن كل صورة بصورة مرجعية محفوظة (الحجم أو الـ hash بـ [[Get-FileHash]]) وطلّع الصفحات اللي اتغيّرت بس، وزوّد مقاس تابلت، واعمل صفحة HTML فيها كل الصور جنب بعض.` },
+        { lvl: 'فكرة', t: R`حارس البرامج التقيلة`, what: R`صمّم أداة بتراقب جهازك وتنبّهك: برنامج بياكل رام أكتر من حد انت بتحدده، أو بورت اتفتح فجأة، أو خدمة مهمة ليك وقفت. انت اللي بتحدد إيه المهم وإيه الحدود. قراية وتنبيه بس، من غير ما تقفل حاجة لوحدها.`, done: R`الأداة بتشتغل دقيقة وتطبع التنبيه لما تفتح برنامج تقيل عن قصد، ومبتطبعش حاجة لما الجهاز هادي.`, ext: R`خليها تكتب لوج بالوقت، وتبعتلك إشعار ([[Invoke-RestMethod]] لـ webhook في وحدة الشبكة)، وبعد وحدة المهام المجدولة خليها تشتغل مع بداية الويندوز.` },
+      ],
       items: [
         {
           cmd: "Get-Process / Stop-Process",
@@ -17,6 +26,11 @@ MORE("ps", [
 Stop-Process -Name node
 Stop-Process -Id 1234 -Force`,
           try: "افتح notepad واقفله بـ Stop-Process بالاسم.",
+          practice: [
+            { lvl: 'سريع', t: R`[[Get-Process -Id $PID]] في 7 وفي 5.1.`, done: R`الاسم [[pwsh]] في 7 و [[powershell]] في 5.1، والـ Id هو نفسه [[$PID]].` },
+            { lvl: 'تطبيق', t: R`شغّل عملية تجريبية: [[$p = Start-Process pwsh -ArgumentList '-NoProfile', '-Command', 'Start-Sleep 60' -WindowStyle Hidden -PassThru]]، واقفلها بـ [[Stop-Process -Id $p.Id]]، وبعدين [[Get-Process -Id $p.Id]].`, done: R`آخر أمر بيطلع [[Cannot find a process with the process identifier]] ومعاه الرقم، يعني العملية دي بالذات اتقفلت وانت متأكد إنك مقفلتش حاجة تانية.` },
+            { lvl: 'تحدي', t: R`سطر بيقول برنامج شغال ولا لأ من غير error: [[if (Get-Process notepad -ErrorAction SilentlyContinue) { 'running' } else { 'not running' }]]. وجرّب [[Stop-Process -Name nosuchproc]] عشان تشوف الـ error اللي بتهرب منه.`, done: R`السطر بيطبع الحالة الصح وانت فاتح notepad وقافله، و [[Stop-Process -Name nosuchproc]] بيطلع [[Cannot find a process with the name "nosuchproc"]].` },
+          ],
           flag: "danger",
           deep: {
             why: R`برنامج معلّق، أو سيرفر node قديم لسه ماسك البورت، أو عايز تعرف مين بياكل الرام. زي ps و kill في bash.`,
@@ -127,6 +141,11 @@ Stop-Process مش بيسأل «تحب تحفظ؟»، أي كلام مكتوب م
 Get-Process -Id (Get-NetTCPConnection -LocalPort 3000 -State Listen).OwningProcess
 Stop-Process -Id (Get-NetTCPConnection -LocalPort 3000 -State Listen).OwningProcess -Force`,
           try: "شغّل [[npx http-server -p 3000]] واقفله من نافذة تانية بالبورت.",
+          practice: [
+            { lvl: 'سريع', t: R`[[Get-NetTCPConnection -State Listen | Sort-Object LocalPort | Select-Object LocalAddress, LocalPort, OwningProcess -First 10]].`, done: R`جدول بورتات مترتبة، وكل بورت قصاده رقم عملية تقدر تجيب اسمها بـ [[Get-Process -Id]].` },
+            { lvl: 'تطبيق', t: R`افتح بورت تجريبي من PowerShell نفسه: [[$l = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Loopback, 45871); $l.Start()]]، وبعدين [[Get-NetTCPConnection -LocalPort 45871 -State Listen]]، وبعدين [[$l.Stop()]] واسأل تاني.`, done: R`وهو شغال: [[LocalAddress]] بـ [[127.0.0.1]] و [[OwningProcess]] بيساوي [[$PID]]. بعد Stop: error فيه [[No matching MSFT_NetTCPConnection objects found]]، في 7 و 5.1.` },
+            { lvl: 'تحدي', t: R`سطر بيطبع لكل بورت Listen اسم البرنامج اللي ماسكه بدل الرقم: [[Get-NetTCPConnection -State Listen | Select-Object LocalPort, @{ n = 'Name'; e = { (Get-Process -Id $_.OwningProcess).ProcessName } } | Sort-Object LocalPort -Unique]].`, done: R`كل سطر فيه بورت واسم برنامج، ولو الـ listener التجريبي شغال، البورت 45871 قصاده [[pwsh]] أو [[powershell]] حسب النافذة.` },
+          ],
           deep: {
             why: R`أشهر error لأي حد بيشغّل سيرفر محلي: [[EADDRINUSE]]، يعني سيرفر قديم لسه ماسك البورت (غالبًا node في نافذة نسيتها). الأمر ده بيوصلك للبرنامج ويقفله في سطر، زي [[lsof -i]] و [[ss -tlnp]] في لينكس.`,
             how: R`[[Get-NetTCPConnection]] بيرجّع object لكل اتصال TCP: [[LocalAddress]] و [[LocalPort]] (عندك)، و [[RemoteAddress]] و [[RemotePort]] (الطرف التاني)، و [[State]]، و [[OwningProcess]] (رقم العملية). [[-LocalPort 3000]] بيفلتر بالبورت، و [[-State Listen]] بيسيب السيرفرات اللي مستنية اتصالات، و [[-State Established]] الاتصالات المفتوحة دلوقتي.
@@ -244,6 +263,11 @@ Start-Process "https://github.com"
 Start-Process powershell -Verb RunAs
 ii .`,
           try: "افتح الفولدر الحالي في Explorer بـ [[ii .]].",
+          practice: [
+            { lvl: 'سريع', t: R`افتح صفحة مساعدة PowerShell في المتصفح: [[Start-Process 'https://learn.microsoft.com/powershell/']].`, done: R`المتصفح الافتراضي اتفتح على الصفحة، والـ prompt رجعلك على طول من غير ما يستنى المتصفح يتقفل.` },
+            { lvl: 'تطبيق', t: R`اعرف الـ exit code بتاع برنامج اتشغّل في نافذة لوحده: [[(Start-Process pwsh -ArgumentList '-NoProfile', '-Command', 'exit 3' -Wait -PassThru).ExitCode]].`, done: R`بيطبع [[3]]. من غير [[-Wait]] الأمر بيرجع قبل ما البرنامج يخلص، ومن غير [[-PassThru]] مفيش object تسأله عن ExitCode أصلًا.` },
+            { lvl: 'تحدي', t: R`شغّل أمر واحفظ ناتجه في ملف من غير ما تفتح نافذة: [[Start-Process pwsh -ArgumentList '-NoProfile', '-Command', 'Get-Date -Format yyyy' -Wait -NoNewWindow -RedirectStandardOutput out.txt]].`, done: R`[[Get-Content out.txt]] بيطبع السنة الحالية، ومفيش نافذة اتفتحت. لو [[pwsh]] مش موجود عندك، نفس السطر بـ [[powershell]] شغال.` },
+          ],
           deep: {
             why: R`عايز تفتح لينك أو ملف بالبرنامج بتاعه، أو تفتح PowerShell كأدمن من غير ما تقفل اللي انت فيه، أو سكربت يشغّل برنامج ويستناه يخلص. Start-Process بيعمل الحاجات دي كلها، زي [[start]] في CMD و [[xdg-open]] في لينكس.`,
             how: R`[[Start-Process notepad.exe]] بيشغّل البرنامج في عملية منفصلة ويرجع على طول. [[-ArgumentList]] بيبعتله arguments، و [[-Wait]] بيستنى لحد ما يقفل قبل ما يكمّل، و [[-PassThru]] بيرجّع object العملية (ومع [[-Wait]] تقدر تقرا [[.ExitCode]]).
@@ -357,6 +381,11 @@ $chrome = "C:\Program Files\Google\Chrome\Application\chrome.exe"
 $chromeArgs = @("--headless=new", "--screenshot=$env:TEMP\page.png", "http://localhost:3000")
 & $chrome $chromeArgs`,
           try: R`اكتب [["C:\Program Files\nodejs\node.exe" --version]] وشوف الـ error، وبعدين حط [[&]] قبلها.`,
+          practice: [
+            { lvl: 'سريع', t: R`شغّل برنامج مساره في متغير جاهز من ويندوز: [[& $env:ComSpec /c ver]].`, done: R`[[$env:ComSpec]] مسار [[cmd.exe]]، والناتج سطر فيه [[Microsoft Windows]] ورقم الـ Version، وده نفس اللي بيطلع لو كتبت [[ver]] في CMD.` },
+            { lvl: 'تطبيق', t: R`[[& powershell -NoProfile -Command 'exit 5'; $LASTEXITCODE]].`, done: R`بيطبع [[5]]. مع [[&]] البرنامج بيشتغل في نفس النافذة وكوده بيتحط في [[$LASTEXITCODE]] لوحده، من غير Start-Process.` },
+            { lvl: 'تحدي', t: R`ابعت arguments فيها مسافات وعلامات تنصيص من array: [[$exe = (Get-Process -Id $PID).Path; $a = @('-NoProfile', '-Command', 'Write-Output "args ok"'); & $exe $a]]. جرّبه في 7 وفي 5.1.`, done: R`في 7 بيطبع سطر واحد [[args ok]]. في 5.1 بيطبع سطرين ([[args]] و [[ok]]): 5.1 بيشيل علامات التنصيص الجوّانية وهو بيبعت الكلام للبرنامج. فلو سكربتك لازم يشتغل في 5.1، متعتمدش على تنصيص جوه argument.` },
+          ],
           deep: {
             why: "أي برنامج في [[C:\\Program Files]] مساره فيه مسافة، فلازم يتحط بين علامات تنصيص. بس في PowerShell أي حاجة بين علامات تنصيص في أول السطر بتبقى نص مش أمر، فبيطلعلك error غريب أو المسار يتطبع وخلاص.",
             how: R`PowerShell بيبص على أول حاجة في السطر: لو كلمة عادية ([[node]]، [[git]]) بيدوّر عليها كأمر. لو string أو متغير، بيعتبره قيمة ويطبعها. فالمسار بين علامات تنصيص لوحده بيطبع المسار، ولو بعده arguments بيطلع [[Unexpected token]].
@@ -501,6 +530,11 @@ foreach ($p in $pages) {
 }
 ii $outDir`,
           try: "شغّل موقعك محليًا، وغيّر اللستة لصفحاتك، وقارن صورة اللابتوب بصورة الموبايل.",
+          practice: [
+            { lvl: 'سريع', t: R`صوّر صفحة واحدة بس بـ Chrome (أو Edge: [[msedge.exe]] Chromium برضه وبيقبل نفس الـ flags، اتجرّب): غيّر [[$pages]] لعنصر واحد فيه [[https://example.com]].`, done: R`ملف الصورة موجود و [[(Get-Item $out).Length]] أكبر من صفر، والسطر اللي اتطبع [[OK]] مش [[FAIL]].` },
+            { lvl: 'تطبيق', t: R`صوّر نفس الصفحة بمقاس موبايل [[390,844]]، واتأكد من أبعاد الصورة: [[Add-Type -AssemblyName System.Drawing; $img = [System.Drawing.Image]::FromFile($out); "$($img.Width)x$($img.Height)"; $img.Dispose()]].`, done: R`بيطبع [[390x844]] بالظبط (اتجرّب في 7 و 5.1 بـ Chrome)، يعني [[--window-size]] هو مقاس الصورة.` },
+            { lvl: 'تحدي', t: R`زوّد فحص: لو الصورة أصغر من ١٠ KB اعتبرها FAIL (غالبًا صفحة فاضية أو error)، وفي الآخر اطبع عدد OK و FAIL واخرج بـ [[exit 1]] لو فيه FAIL.`, done: R`صفحة HTML فيها عنوان واحد بس بتطلع صورة حوالي ٣ KB فبتبقى FAIL، وصفحة موقعك الحقيقية بتبقى OK، و [[$LASTEXITCODE]] بعد السكربت بيقول [[1]] لو فيه ولو صورة واحدة فاشلة.` },
+          ],
           flag: "script",
           deep: {
             why: "عايز صور لصفحات موقعك: للـ README، أو تبعتها لعميل، أو تتأكد إن شكل الموبايل مش بايظ قبل الرفع. Playwright و Puppeteer بيسطّبوا متصفح كامل ومكتبات، و Chrome اللي على جهازك أصلًا بيعمل ده بفلاجات.",
@@ -711,6 +745,11 @@ contact.png   9727 bytes   1440x1000
 Get-Service *docker*
 Restart-Service com.docker.service`,
           try: "اعرف حالة خدمة Docker أو أي خدمة عندك.",
+          practice: [
+            { lvl: 'سريع', t: R`عدّ الخدمات الشغالة والواقفة: [[Get-Service | Group-Object Status -NoElement]].`, done: R`سطر لكل حالة (غالبًا Running و Stopped)، ومجموعهم بيساوي [[(Get-Service).Count]].` },
+            { lvl: 'تطبيق', t: R`[[Get-Service -Name nosuchsvc]]، وبعدين نفس الأمر بـ [[-ErrorAction SilentlyContinue]] جوه [[if]] يطبع «مش متسطبة».`, done: R`الأول بيطلع [[Cannot find any service with service name 'nosuchsvc'.]]، والتاني بيطبع رسالتك بس من غير أحمر. ونفس السطر على [[Spooler]] (خدمة الطباعة) بيرجّع الخدمة.` },
+            { lvl: 'تحدي', t: R`الخدمات اللي المفروض تبدأ مع الويندوز ومش شغالة: [[Get-Service | Where-Object { $_.StartType -eq 'Automatic' -and $_.Status -ne 'Running' } | Select-Object Name, DisplayName]]. قراية بس.`, done: R`كل سطر في الناتج [[StartType]] بتاعه Automatic وحالته مش Running (ممكن الناتج يبقى فاضي، أو فيه خدمات بتشتغل وتقف لوحدها زي خدمات التحديث، وده طبيعي).` },
+          ],
           deep: {
             why: R`Docker مش شغال، أو Postgres المتسطب على الجهاز ماسك بورت 5432، أو الطباعة واقفة: كلها خدمات ويندوز. Get-Service بيوريك حالتها، و Restart-Service يعيد تشغيلها، زي [[systemctl status]] و [[systemctl restart]] في لينكس.`,
             how: R`[[Get-Service]] بيرجّع كل الخدمات، و [[Get-Service -Name "wuauserv"]] خدمة معينة بالاسم القصير، و [[-DisplayName "*Update*"]] بيدوّر بالاسم الطويل. [[Status]] قيمته Running أو Stopped أو Paused، و [[StartType]] بيقولك بتقوم إمتى: Automatic مع ويندوز، أو Manual لما حد يطلبها، أو Disabled متقفلة.

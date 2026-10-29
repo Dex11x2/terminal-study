@@ -19,10 +19,13 @@ MORE("ps", [
       lab: R`New-Item -ItemType Directory "$HOME\lab\pc-tool" -Force
 Set-Location "$HOME\lab\pc-tool"`,
       projects: [
-        { t: R`زرار على سطح المكتب يقفل الجهاز`, what: R`أيقونة تدوس عليها مرتين فيقفل الجهاز بعد ٣٠ دقيقة، من غير ما تفتح ترمنال. بتتعمل بـ [[New-Object -ComObject WScript.Shell]]، ولازم تمرّر [[-Force]] لأن مفيش حد هيرد على سؤال التأكيد. من دروس ١ و ٥ و ٦.` },
-        { t: R`منظّف الملفات المؤقتة`, what: R`أداة بتقولك كام ميجا نايمة في فولدر Temp، وبتمسح الأقدم من عدد أيام تحدده — وبـ [[-WhatIf]] الأول دايمًا. من دروس ٢ و ٣ و ٤.` },
-        { t: R`زرار «وضع التركيز»`, what: R`دوسة واحدة: تقفل برامج التشتيت بـ [[Stop-Process]]، وتكتم الصوت، وتفتح اللي بتشتغل عليه، وتضبط مؤقّت. واللوج بيقولك إيه اللي اتقفل عشان ترجّعه. من دروس ١ و ٢ و ٥.` },
-        { t: R`لعبة خمّن الرقم`, what: R`الجهاز بيفكر في رقم بـ [[Get-Random]] وانت بتخمّن، وهو بيقولك أكبر ولا أصغر. تمرين على [[while]] و [[Read-Host]] والتحقق من المدخل — نفس التحقق بتاع درس ٢ بس في لعبة.` },
+        { lvl: 'صغير', t: R`لعبة خمّن الرقم`, what: R`الجهاز بيفكر في رقم بـ [[Get-Random]] وانت بتخمّن، وهو بيقولك أكبر ولا أصغر. تمرين على [[while]] و [[Read-Host]] والتحقق من المدخل — نفس التحقق بتاع درس ٢ بس في لعبة.`, done: R`الإدخال الغلط (حروف، أو رقم بره ١ لـ ١٠٠) بيطبع رسالة ومبيتحسبش محاولة، والتخمين الصح بيطبع عدد المحاولات، و [[-Max 10]] بيغيّر المدى.` },
+        { lvl: 'صغير', t: R`عدّاد تنازلي`, what: R`[[timer.ps1 -Minutes 5 -Message 'قوم اشرب مية']]: [[ValidateRange]] على الدقايق، و [[Write-Progress]] بيعدّ قدامك، وفي الآخر صوت ([[[console]::Beep()]]) والرسالة. من دروس ١ و ٢.`, done: R`[[-Minutes 0]] و [[-Minutes 999]] بيترفضوا برسالة ValidateRange، و [[-Minutes 1]] بيخلص بعد حوالي ٦٠ ثانية ([[Measure-Command]] بيأكد)، و [[Ctrl+C]] بيوقفه من غير ما يسيب الـ progress bar.` },
+        { lvl: 'متوسط', t: R`منظّف الملفات المؤقتة`, what: R`أداة بتقولك كام ميجا نايمة في فولدر Temp، وبتمسح الأقدم من عدد أيام تحدده — وبـ [[-WhatIf]] الأول دايمًا. من دروس ٢ و ٣ و ٤.`, done: R`[[-WhatIf]] بيطبع العدد والحجم ومبيمسحش حاجة. التشغيل الحقيقي بيعدّي الملفات المقفولة (برنامج فاتحها) بتحذير بدل ما يقف، وبيطبع اللي اتمسح فعلًا، و [[-Days]] بره المدى بيترفض.` },
+        { lvl: 'متوسط', t: R`زرار «وضع التركيز»`, what: R`دوسة واحدة: تقفل برامج التشتيت بـ [[Stop-Process]]، وتكتم الصوت، وتفتح اللي بتشتغل عليه، وتضبط مؤقّت. واللوج بيقولك إيه اللي اتقفل عشان ترجّعه. من دروس ١ و ٢ و ٥.`, done: R`[[focus on -WhatIf]] بيطبع البرامج اللي هتتقفل ومبيقفلش حاجة. [[focus on]] بيقفلهم ويكتب أساميهم في اللوج، و [[focus off]] بيقرا اللوج ويفتحهم تاني. والبرنامج اللي مش شغال أصلًا مبيطلّعش error.` },
+        { lvl: 'متوسط', t: R`زرار على سطح المكتب يقفل الجهاز`, what: R`أيقونة تدوس عليها مرتين فيقفل الجهاز بعد ٣٠ دقيقة، من غير ما تفتح ترمنال. بتتعمل بـ [[New-Object -ComObject WScript.Shell]]، ولازم تمرّر [[-Force]] لأن مفيش حد هيرد على سؤال التأكيد. من دروس ١ و ٥ و ٦.`, done: R`الدوسة بتجدول القفل و [[pc status]] بيقول الساعة. فيه أيقونة تانية بتعمل [[pc cancel]]. واللوج فيه سطر لكل دوسة على الاتنين. جرّب الأولى بـ [[-In 30]] والغيها على طول.` },
+        { lvl: 'كبير', t: R`pc.ps1 النسخة التانية`, what: R`طوّر الأداة: [[-At 23:30]] بديل لـ [[-In]] (parameter sets و [[ValidateScript]])، وأمر [[history]] بيرجّع اللوج objects، ومتجدولش معاد جديد لو فيه معاد شغال إلا بـ [[-Force]]، وكل حالة خروج ليها رقم موثّق في [[Get-Help]] بتاع السكربت. ومعاها [[test.ps1]] بيجرّب كل حاجة بـ [[-WhatIf]] بس، عشان الجهاز ميقفلش ولا مرة وانت بتختبر. من كل دروس الوحدة.`, done: R`[[test.ps1]] بيعدّي على: مدخلات غلط بتترفض، و [[-At]] و [[-In]] مع بعض بيترفضوا، و [[-WhatIf]] مبيعملش ملف حالة، و [[history]] بيرجّع objects تتفلتر بـ [[Where-Object Level -eq WARN]]. وبيخرج بـ ٠. وتشغيله مرتين ورا بعض بيدّي نفس النتيجة.`, ext: R`زوّد [[sleep]] و [[lock]] (من درس [[LockWorkStation]])، وخلي [[status]] يوريك عدّاد متبقي بيتحدّث، واعمل للأداة موديول بـ manifest (مشروع ٣) عشان تتسطّب على أي جهاز.` },
+        { lvl: 'فكرة', t: R`أداة لحاجة بتعملها كل يوم`, what: R`اختار حاجة بتعملها بإيدك كل يوم على جهازك (تفتح مجموعة برامج للشغل، تقفل كل حاجة آخر اليوم، تغيّر الإضاءة أو الصوت، تفضّي الـ clipboard...) وابنيلها أداة بنفس خطوات المشروع: الواجهة الأول، والتحقق، والوظايف الآمنة قبل الخطرة، و [[-WhatIf]]، واللوج، وكود الخروج، ودالة في [[$PROFILE]].`, done: R`الأداة بتتنادي باسم قصير من أي فولدر، والمدخل الغلط بيترفض قبل أي تنفيذ، وكل حاجة بتغيّر في الجهاز بتدعم [[-WhatIf]]، واللوج بيقولك عملت إيه امبارح.`, ext: R`اربطها بمهمة مجدولة أو بـ shortcut على الكيبورد، واكتب لها [[test.ps1]] بالـ [[-WhatIf]] زي المشروع الكبير، واحكي في README إيه القرارات اللي خدتها في الواجهة وليه.` },
       ],
       n: R`أداة [[pc.ps1]] بتقفل الجهاز أو تعمله restart بعد مهلة، وتلغي المعاد، وتقولك فيه معاد ولا لأ. هنبنيها على ٦ خطوات، كل خطوة بتضيف حاجة واحدة وبنشغّلها قبل ما نكمّل`,
       items: [
@@ -58,6 +61,11 @@ Write-Host "Action = $Action"
 Write-Host "In     = $In"`,
           flag: "script",
           try: R`احفظه باسم [[pc.ps1]] في [[$HOME\lab]]، وشغّله تلات مرات: [[.\pc.ps1]] لوحده، وبعدين [[.\pc.ps1 -Action off -In 30]]، وبعدين [[.\pc.ps1 off -In 30]] من غير [[-Action]]. التالتة هتشتغل؟`,
+          practice: [
+            { lvl: 'سريع', t: R`شغّل [[.\pc.ps1 restart 5]] من غير ولا اسم parameter.`, done: R`بيطبع [[Action = restart]] و [[In     = 5]]: الاتنين خدوا مكانهم بالترتيب اللي في [[param()]].` },
+            { lvl: 'تطبيق', t: R`جرّب [[.\pc.ps1 off -In abc]] وبعدين [[.\pc.ps1 off -In 2.6]].`, done: R`الأولى بترفض قبل أي سطر بـ [[Cannot convert value "abc" to type "System.Int32"]]. والتانية بتعدّي وبتطبع [[In     = 3]]، لأن [[int]] بيقرّب الكسر من غير ما يشتكي. ودي حاجة لازم تعرفها قبل ما تبني على الرقم.` },
+            { lvl: 'تحدي', t: R`صمّم واجهة أداة تانية قبل الكود: [[vol.ps1]] فيها [[up]] و [[down]] و [[mute]] و [[-By 10]]. اكتب ٤ سطور استخدام في تعليق فوق، وبعدين [[param()]] بيطبع القيم بس.`, done: R`الأربع سطور اللي كتبتهم بيشتغلوا كلهم وكل واحد بيطبع القيم الصح ([[.\vol.ps1 up -By 5]] بيطبع up و 5)، ومن غير ولا سطر بيغيّر الصوت فعلًا.` },
+          ],
           sol: R`التلاتة بيشتغلوا:
 
 ~~~text الناتج (PowerShell 7.6)
@@ -330,6 +338,11 @@ switch ($Action) {
 }`,
           flag: "script",
           try: R`جرّب [[.\pc.ps1 sleep]] و [[.\pc.ps1 off -In 99999]] وشوف الرسالتين. وبعدين اكتب [[.\pc.ps1 ]] ودوس Tab كذا مرة.`,
+          practice: [
+            { lvl: 'سريع', t: R`شغّل [[.\pc.ps1 OFF]] بحروف كبيرة.`, done: R`بيعدّي وبيطبع رسالة [[off]]: [[ValidateSet]] مبيفرّقش بين الحروف، و [[switch]] كمان مبيفرّقش فدخل الفرع الصح. ولو كتبت [[IgnoreCase = $false]] جوه الـ ValidateSet، [[OFF]] بيترفض.` },
+            { lvl: 'تطبيق', t: R`جرّب الحدّين: [[.\pc.ps1 off -In -5]] و [[.\pc.ps1 off -In 10081]].`, done: R`الاتنين بيترفضوا قبل أي كود. الأولى رسالتها فيها [[less than the minimum allowed range of 0]]، والتانية [[greater than the maximum allowed range of 10080]]، و [[-In 10080]] بالظبط بيعدّي.` },
+            { lvl: 'تحدي', t: R`زوّد [[-At]] (ساعة زي [[23:30]]) بديل لـ [[-In]]: تحقق بـ [[ValidateScript]]، واعمل parameter set لكل واحد عشان مينفعوش مع بعض.`, done: R`[[-At 9pm]] بيترفض قبل التنفيذ. وفي 7 تقدر تكتب رسالتك انت بـ [[ErrorMessage]] جوه [[ValidateScript]]، لكن في 5.1 بيقول [[Property 'ErrorMessage' cannot be found]]. و [[-At 23:30 -In 5]] بيترفض بـ [[Parameter set cannot be resolved]].` },
+          ],
           sol: R`~~~text الناتج (PowerShell 7.6)
 PS> .\pc.ps1 sleep
 pc.ps1: Cannot validate argument on parameter 'Action'. The argument "sleep" does not belong
@@ -638,6 +651,11 @@ function Show-Status {
 }`,
           flag: "script",
           try: R`شغّل [[.\pc.ps1 cancel]] وانت متأكد إن مفيش معاد متجدول. إيه الرسالة؟ وبعدين اعمل ملف حالة بإيدك وشوف [[status]] بيقول إيه.`,
+          practice: [
+            { lvl: 'سريع', t: R`من غير السكربت: [[shutdown.exe /a; $LASTEXITCODE]] وانت متأكد إن مفيش معاد.`, done: R`بيطبع [[Unable to abort the system shutdown because no shutdown was in progress.(1116)]] وبعدها [[1116]]، ومفيش أي تغيير في الجهاز. ده الرقم اللي [[Invoke-Cancel]] بيترجمه لجملة.` },
+            { lvl: 'تطبيق', t: R`اكتب كلام بايظ في ملف الحالة ([[Set-Content $StatePath 'xyz']]) وشغّل [[.\pc.ps1 status]]. وبعدين لف القراية في [[try]]/[[catch]].`, done: R`قبل التصليح بيقع بـ error أحمر من [[ConvertFrom-Json]]. بعده بيطبع «ملف الحالة بايظ» بالأصفر ويمسح الملف، والـ [[status]] اللي بعدها بيقول «مفيش معاد متجدول».` },
+            { lvl: 'تحدي', t: R`اعمل ملف حالة بوقت فات بإيدك: [[@{ kind = 'off'; at = (Get-Date).AddMinutes(-10).ToString('o') } | ConvertTo-Json]] في [[$StatePath]]. وعدّل [[Show-Status]] يمسح الملف القديم لوحده.`, done: R`أول [[status]] بيقول «المعاد القديم عدّى»، وبعدها [[Test-Path $StatePath]] بيطبع False، وتاني [[status]] بيقول «مفيش معاد متجدول».` },
+          ],
           sol: R`~~~text الناتج (PowerShell 7.6 على ويندوز 11، اتشغّل فعلًا)
 PS> .\pc.ps1 status
 مفيش معاد متجدول
@@ -1025,6 +1043,11 @@ function Invoke-Schedule {
 }`,
           flag: "script danger",
           try: R`شغّل [[.\pc.ps1 off -In 30 -WhatIf]] وشوف السطر اللي بيطلع. وبعدين [[.\pc.ps1 restart -WhatIf]] من غير [[-In]]. وقارن الوقت اللي في السطرين. **متشغلهاش من غير [[-WhatIf]]** غير لما تكون متأكد.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[.\pc.ps1 off -In 0 -WhatIf]].`, done: R`الوقت في سطر [[What if]] هو الساعة دلوقتي (صفر دقيقة)، و [[Test-Path $StatePath]] بيطبع False لأن [[Save-State]] متنادتش.` },
+            { lvl: 'تطبيق', t: R`[[.\pc.ps1 off -In 30 -Confirm]] وجاوب [[N]].`, done: R`بيسألك [[Are you sure you want to perform this action?]] ومعاه الـ target ([[off at ...]])، ولما ترد N [[.\pc.ps1 status]] بيقول «مفيش معاد متجدول».` },
+            { lvl: 'تحدي', t: R`سكربت تجربة [[wi.ps1]] فيه [[SupportsShouldProcess]] وجواه [[Set-Content a.txt 'a']] و [[Set-Content b.txt 'b' -WhatIf:$false]]، وشغّله بـ [[-WhatIf]].`, done: R`بيطبع [[What if]] لـ [[a.txt]] ومبيعملهوش، و [[b.txt]] بيتكتب فعلًا (نفس النتيجة في 7 و 5.1). يعني [[-WhatIf]] بتاعة السكربت بتوصل لكل أمر جواه، وده بالظبط ليه [[Write-Log]] فيها [[-WhatIf:$false]].` },
+          ],
           sol: R`~~~text الناتج (PowerShell 7.6 على ويندوز 11، اتشغّل فعلًا)
 PS> .\pc.ps1 off -In 30 -WhatIf
 What if: Performing the operation "schedule" on target "off at 04:39:35".
@@ -1384,6 +1407,11 @@ if ($code -ne 0) {
 }`,
           flag: "script danger",
           try: R`شغّل [[.\pc.ps1 off -In 30 -WhatIf -Verbose]]، وبعدين افتح ملف اللوج [[$env:LOCALAPPDATA\pc-tool\pc.log]]. هتلاقي السطر متسجّل برغم إن مفيش قفل حصل. ليه ده مفيد؟`,
+          practice: [
+            { lvl: 'سريع', t: R`[[.\pc.ps1 off -In 30 -WhatIf]] مرتين، وبعدين [[Get-Content "$env:LOCALAPPDATA\pc-tool\pc.log" -Tail 2]].`, done: R`سطرين بنفس الشكل: التاريخ والوقت، وبعدهم [[[INFO] WhatIf: off at ...]]، و [[$LASTEXITCODE]] بعد كل واحدة ٠.` },
+            { lvl: 'تطبيق', t: R`[[.\pc.ps1 off -In 30]] من غير [[-Force]]، وجاوب **لأ** على سؤال التأكيد.`, done: R`بيطبع «اتلغى» بالأصفر، و [[$LASTEXITCODE]] بـ ١، وآخر سطر في اللوج مستواه [[WARN]] وفيه «اليوزر رفض»، و [[status]] بيقول «مفيش معاد متجدول».` },
+            { lvl: 'تحدي', t: R`حوّل اللوج لـ objects: لكل سطر [[-match '^(\S+ \S+) \[(\w+)\] (.*)$']] واعمل [[pscustomobject]] فيه Time و Level و Text، وبعدين [[Group-Object Level]].`, done: R`جدول فيه كل مستوى ([[INFO]] و [[WARN]]...) وعدده، ومجموع الأعداد بيساوي [[(Get-Content pc.log).Count]]. وتقدر تطلّع آخر WARN بـ [[Where-Object Level -eq WARN | Select-Object -Last 1]].` },
+          ],
           sol: R`~~~text الناتج (PowerShell 7.6، اتشغّل فعلًا)
 PS> .\pc.ps1 restart -In 10 -WhatIf -Verbose
 What if: Performing the operation "schedule" on target "restart at 04:17:10".
@@ -1788,6 +1816,11 @@ Add-Content $PROFILE 'function pc { & "$HOME\tools\pc.ps1" @args }'
 . $PROFILE`,
           flag: "script",
           try: R`اطبع [[$PROFILE]] و [[$PROFILE.CurrentUserAllHosts]] وشوف الفرق. وبعدين عرّف الدالة في الجلسة الحالية بس (من غير ما تعدّل أي ملف) وجرّبها من فولدر تاني.`,
+          practice: [
+            { lvl: 'سريع', t: R`عرّف [[function pc { & "$HOME\tools\pc.ps1" @args }]] في الجلسة دي بس، وبعدين [[Set-Location C:\]] و [[pc status]].`, done: R`[[pc status]] بيشتغل من [[C:\]]، و [[Get-Command pc]] بيقول [[CommandType]] بتاعه [[Function]].` },
+            { lvl: 'تطبيق', t: R`من الدالة: [[pc off -In 30 -WhatIf]].`, done: R`سطر [[What if]] بيطلع والوقت بعد ٣٠ دقيقة: [[@args]] وصّلت [[-In]] و [[-WhatIf]] للسكربت كـ parameters مش كنص، في 7 و 5.1.` },
+            { lvl: 'تحدي', t: R`الطريقة التانية: زوّد [[$HOME\tools]] لـ [[$env:PATH]] في الجلسة دي بس ([[$env:PATH += ";$HOME\tools"]])، وشغّل [[pc.ps1 status]] من أي فولدر.`, done: R`[[Get-Command pc.ps1]] بيقول [[ExternalScript]] ومعاه المسار الكامل. وبعد ما تقفل النافذة وتفتح واحدة جديدة [[pc.ps1]] مبقاش معروف، لأن التعديل كان للجلسة بس.` },
+          ],
           sol: R`~~~text الناتج (PowerShell 7.6 على ويندوز 11)
 PS> $PROFILE
 C:\Users\you\OneDrive\Documents\PowerShell\Microsoft.PowerShell_profile.ps1

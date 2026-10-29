@@ -4,6 +4,14 @@ MORE("ps", [
       t: "قراءة وكتابة الملفات",
       l: 1,
       n: "",
+      projects: [
+        { lvl: 'صغير', t: R`نظرة سريعة على لوج`, what: R`سطرين لأي ملف لوج: عدد السطور بـ [[(Get-Content app.log).Count]]، وآخر ١٠ سطور بـ [[-Tail 10]]، وأول سطر (امتى اللوج بدأ) بـ [[-TotalCount 1]]. من درس «اقرا الملف».`, done: R`التلات أرقام بتطابق اللي بتشوفه لو فتحت الملف في notepad، والأمر بيخلص بسرعة حتى على لوج كبير، عشان [[-Tail]] بيقرا من آخر الملف.` },
+        { lvl: 'صغير', t: R`مولّد .env نضيف`, what: R`اعمل [[.env]] بـ [[Set-Content]] لأول سطر و [[Add-Content]] للباقي، من غير [[-Encoding utf8]] في 5.1 (هناك بيحط BOM)، بحيث الملف يطلع من غير BOM في النسختين: في 7 الـ default كويس، وفي 5.1 الـ default بتاع [[Set-Content]] (ANSI) آمن طول ما الملف كله حروف إنجليزي. من درس «اكتب في ملف».`, done: R`[[Format-Hex .env]] أول بايت فيه [[50]] (حرف P في PORT) مش [[EF BB BF]]، في النسختين. وتشغيله تاني بيسيب الملف بنفس السطور (Set-Content الأول بيمسح القديم) مش متكررة.` },
+        { lvl: 'متوسط', t: R`تقرير package.json`, what: R`اقرا [[package.json]] بـ [[ConvertFrom-Json]]، واكتب [[report.txt]] فيه: الاسم والنسخة، وعدد الـ dependencies وعدد الـ devDependencies ([[.PSObject.Properties.Name]] و [[.Count]])، وأسامي الـ scripts. من دروس الوحدة كلها.`, done: R`الأرقام في التقرير بتطابق اللي في الملف لو عدّيتهم بإيدك، ولو المشروع مفيهوش [[devDependencies]] التقرير بيكتب [[0]] مش error.` },
+        { lvl: 'متوسط', t: R`رفع رقم النسخة`, what: R`سطور بتقرا [[version]] من نسخة من [[package.json]]، وتحوّلها لـ version object بـ [[$v = [version]$pkg.version]] وتزوّد الرقم الأخير (patch)، وتكتب الملف تاني بـ [[ConvertTo-Json -Depth 10]]، وقبلها [[Copy-Item]] للأصل لـ [[package.json.bak]]. من الوحدة دي و «انسخ».`, done: R`[[1.2.3]] بقت [[1.2.4]]، والـ [[.bak]] فيه النسخة القديمة، وكل الحقول التانية (scripts و dependencies) لسه موجودة لما تقراه تاني بـ ConvertFrom-Json.` },
+        { lvl: 'كبير', t: R`محرّر config آمن`, what: R`سكربت [[set-config.ps1]] بيغيّر قيمة واحدة في [[config.json]] متداخل: لو الملف مش موجود ([[Test-Path]]) يطبع رسالة ويقف، ولو الـ JSON بايظ يمسك الـ error بـ [[try { ... } catch { ... }]] ويطبع رسالة مفهومة بدل الأحمر الطويل، وقبل أي كتابة ياخد [[Copy-Item]] لـ [[config.json.bak]]، ويكتب بـ [[-Depth 10]]، ويضيف سطر لـ [[config.log]] بـ [[Add-Content]] فيه الوقت والقيمة القديمة والجديدة. بيجمع الوحدة دي مع «ملفات وفولدرات».`, done: R`٤ تجارب: ملف مش موجود بيطبع رسالتك بس، و JSON فيه غلطة بيطبع رسالتك والملف متلمسش، وتغيير عادي بيغيّر القيمة والباقي سليم (مفيش [[@{]] في الملف)، وتشغيله تاني بنفس القيمة بيشتغل عادي واللوج فيه سطر لكل مرة.`, ext: R`خليه يقبل مسار القيمة كنص زي [[db.port]]، ويتأكد إن نوع القيمة الجديدة زي القديمة (رقم مكان رقم)، ويحتفظ بآخر ٥ نسخ backup بس ويمسح الأقدم.` },
+        { lvl: 'فكرة', t: R`دفتر يومي في الترمنال`, what: R`أداة ملاحظات انت تصمّمها: كل ملاحظة سطر فيه التاريخ، أو ملف JSON فيه لستة objects. تضيف ملاحظة، وتعرض آخر ٥، وتدوّر في القديم. انت اللي بتقرر الشكل (نص ولا JSON) وليه.`, done: R`تقدر تضيف ملاحظة وتقراها تاني بعد ما تقفل النافذة وتفتح واحدة جديدة، والملف بيفضل سليم بعد ٢٠ ملاحظة.`, ext: R`لما توصل لوحدة البحث، زوّد بحث بكلمة بـ [[Select-String]]، وبعد درس الـ functions حوّلها لأمرين [[note]] و [[notes]] في [[$PROFILE]].` },
+      ],
       items: [
         {
           cmd: "Get-Content",
@@ -18,6 +26,11 @@ Get-Content app.log -Tail 20
 Get-Content app.log -Tail 5 -Wait
 (Get-Content app.log).Count`,
           try: R`في نافذة [[Get-Content app.log -Wait]]، وفي نافذة تانية [[Add-Content app.log "hello"]].`,
+          practice: [
+            { lvl: 'سريع', t: R`[[Get-Content app.log -TotalCount 3]] وبعدين [[Get-Content app.log -Tail 3]].`, done: R`أول ٣ سطور وآخر ٣ سطور، و [[(Get-Content app.log).Count]] بيساوي عدد السطور اللي notepad بيوريهولك.` },
+            { lvl: 'تطبيق', t: R`حط السطور في متغير [[$lines = Get-Content app.log]] واطبع آخر سطر وطوله: [[$lines[-1]; $lines[-1].Length]].`, done: R`آخر سطر هو نفسه اللي [[-Tail 1]] بيطلّعه، والطول رقم بعدد حروفه. و [[-1]] معناها «آخر عنصر» من غير ما تعرف العدد.` },
+            { lvl: 'تحدي', t: R`اعمل ملف فاضي وملف فيه سطر واحد، واطبع [[.Count]] لكل واحد، وبعدين [[(Get-Content one.txt).GetType().Name]].`, done: R`الفاضي [[0]] واللي فيه سطر [[1]] (في 7 و 5.1)، بس النوع [[String]] مش array. يعني الـ index صفر على ملف سطر واحد بيرجّع أول **حرف** في السطر مش السطر كله، وعشان كده تكتب [[@(Get-Content one.txt)]] لما تحتاج array دايمًا.` },
+          ],
           deep: {
             why: R`قراية ملف هي أكتر حاجة بتعملها بعد ls: تشوف .env، أو config، أو آخر سطور في لوج وقع فيه السيرفر. Get-Content بيعمل شغل cat و head و tail و tail -f في أمر واحد.`,
             how: R`[[Get-Content file.txt]] بيرجّع array من السطور: كل سطر عنصر نصي (String) لوحده، ومن غير علامة السطر الجديد. ولو الملف سطر واحد بيرجّع نص واحد مش array، ولو فاضي بيرجّع [[$null]]، و [[.Count]] بتشتغل صح في الحالات التلاتة (1 و 0).
@@ -118,6 +131,11 @@ Get-Content app.log -Tail 5 -Wait
 Add-Content .env "NODE_ENV=development"
 Get-Process | Out-File procs.txt -Encoding utf8`,
           try: "اعمل .env بسطرين واعرضه.",
+          practice: [
+            { lvl: 'سريع', t: R`[[Set-Content .env 'PORT=3000']] وبعدين [[Add-Content .env 'DEBUG=true']] وبعدين [[Set-Content .env 'PORT=4000']].`, done: R`[[Get-Content .env]] بيطبع سطر واحد بس: [[PORT=4000]]. الـ Set التاني مسح كل اللي قبله.` },
+            { lvl: 'تطبيق', t: R`اكتب سطر لوج فيه الوقت: [[Add-Content run.log "$(Get-Date -Format s) started"]]، وشغّله ٣ مرات.`, done: R`[[Get-Content run.log]] فيه ٣ سطور، كل واحد بيبدأ بتاريخ ووقت بالشكل [[2026-01-31T14:05:09]]، والأحدث في الآخر.` },
+            { lvl: 'تحدي', t: R`في 5.1 اكتب [[Set-Content a.txt 'a' -Encoding utf8]] و [['a' > b.txt]]، وافتح الاتنين بـ [[Format-Hex]]. وبعدين اعمل نفس الحاجة في 7.`, done: R`في 5.1: [[a.txt]] بيبدأ بـ [[EF BB BF]] (BOM) و [[b.txt]] بيبدأ بـ [[FF FE]] (UTF-16). في 7 الاتنين بيبدأوا بـ [[61]] على طول (حرف a). وده سبب إن [[.env]] معمول بـ 5.1 ممكن Node ميقراش أول سطر فيه صح.` },
+          ],
           deep: {
             why: R`سكربتات كتير بتكتب ملفات: .env لمشروع جديد، أو لوج، أو ناتج أمر عايز تحفظه. والكتابة على ويندوز فيها فخ الترميز (UTF-16 و BOM) اللي بيبوّظ ملفات بتقراها أدوات تانية، فلازم تعرف الأمر بيكتب إزاي.`,
             how: R`[[Set-Content]] بيكتب ويمسح اللي كان (زي [[>]]). [[Add-Content]] بيضيف في الآخر (زي [[>>]]).
@@ -234,6 +252,11 @@ NODE_ENV=development
 $pkg.version
 $pkg.dependencies`,
           try: "اطبع اسم ونسخة أي مشروع Node عندك.",
+          practice: [
+            { lvl: 'سريع', t: R`اطبع الـ scripts بتاعة مشروع: [[(Get-Content package.json -Raw | ConvertFrom-Json).scripts]].`, done: R`كل script باسمه وأمره زي ما هو في الملف، ولو كتبت [[.scripts.dev]] بيطبع أمر dev لوحده.` },
+            { lvl: 'تطبيق', t: R`اطبع أسامي الـ dependencies بس من غير النسخ: [[$pkg.dependencies.PSObject.Properties.Name]]، وعدّهم بـ [[.Count]].`, done: R`سطر لكل باكدج، والعدد بيساوي عدد السطور جوه [[dependencies]] في الملف.` },
+            { lvl: 'تحدي', t: R`على نسخة من config متداخل ٣ مستويات ([[{"a":{"b":{"c":{"d":1}}}}]])، غيّر قيمة واكتبه بـ [[ConvertTo-Json]] من غير [[-Depth]]، وبعدين بـ [[-Depth 10]].`, done: R`من غير Depth المستوى التالت بقى نص [[@{d=1}]] بدل object (والـ default عمقه ٢)، و 7 بيطبع [[WARNING: Resulting JSON is truncated]] لكن 5.1 بيعمل كده ساكت. وبـ [[-Depth 10]] الملف بيرجع زي الأصل.` },
+          ],
           deep: {
             why: "تتعامل مع JSON response من API أو تقرا ملف JSON. PowerShell بيحوّله لـ objects تقدر توصل لـ properties بسهولة.",
             how: R`[[ConvertFrom-Json]] بياخد نص JSON ويرجّع object: كل مفتاح بيبقى property، وكل array بتبقى array، والأرقام والـ true/false بيبقوا أنواعهم الحقيقية مش نص. و [[ConvertTo-Json]] بيعمل العكس.
@@ -361,6 +384,14 @@ myapp@1.2.0
       t: "البحث",
       l: 2,
       n: "",
+      projects: [
+        { lvl: 'صغير', t: R`لستة الـ TODO`, what: R`سطر واحد بيطلّع كل TODO و FIXME في مشروع بـ [[Select-String -Pattern 'TODO|FIXME']]، والناتج اسم الملف ورقم السطر. من درس «دوّر على نص».`, done: R`كل نتيجة شكلها [[ملف:رقم:السطر]]، ولو كتبت TODO جديد في أي ملف وشغّلت السطر تاني بيظهر برقم سطره الصح.` },
+        { lvl: 'صغير', t: R`أدواتي جاية منين`, what: R`لـ [[node]] و [[git]] و [[npm]] و [[python]]: [[Get-Command -All]] والمسار والنسخة ([[--version]]). من درس «البرنامج ده فين».`, done: R`جدول فيه كل أداة ومسارها ونسختها، والأداة اللي ليها أكتر من مسار مكتوب قصادها أنهي واحد بيشتغل فعلًا (الأول في الـ PATH)، والمش متسطبة مكتوب قصادها «مش موجودة» من [[CommandNotFoundException]].` },
+        { lvl: 'متوسط', t: R`صيّاد الأسرار`, what: R`دوّر في مشروع (من غير [[node_modules]] و [[.git]]) على سطور شكلها سر: [[password\s*=]] و [[api[_-]?key]] و [[secret]]، بـ [[Select-String]] و [[Where-Object FullName -notmatch]]. اعمل ملف تجريبي فيه سر وهمي عشان تتأكد إنه بيتمسك. من دروس الوحدة و «فلتر» لو سبقت.`, done: R`الملف التجريبي بيظهر برقم السطر الصح، وملف فيه كلمة password في تعليق عادي من غير [[=]] مبيظهرش، ومفيش ولا نتيجة من [[node_modules]].` },
+        { lvl: 'متوسط', t: R`ملخّص لوج`, what: R`على لوج فيه INFO و WARN و ERROR: عدد كل نوع بـ [[(Select-String 'ERROR' app.log).Count]] وهكذا، وآخر ٣ errors ومعاهم سطر قبل وسطر بعد بـ [[-Context 1,1]]. من درس «دوّر على نص».`, done: R`الأرقام التلاتة مجموعها بيساوي عدد سطور اللوج (لو كل سطر فيه نوع واحد)، وكل error ظاهر قبله وبعده سطر، وسطر الـ error نفسه أوله [[>]].` },
+        { lvl: 'كبير', t: R`فحص قبل الـ commit`, what: R`سكربت [[precommit.ps1]] بيدوّر في [[src]] على [[console.log]] (بـ [[-SimpleMatch]]) و TODO والأسرار الوهمية، ويكتب [[precommit-report.txt]] فيه الوقت وكل نتيجة. لو لقى سر بيطبع رسالة حمرا ويخرج بـ [[exit 1]]، ولو لقى console.log بس بيحذّر ويخرج بـ [[exit 0]]، ولو [[src]] مش موجود ([[Test-Path]]) بيقول كده ويخرج بـ [[exit 2]]. بيجمع الوحدة دي مع «قراءة وكتابة الملفات» و «ملفات وفولدرات».`, done: R`[[pwsh -File .\precommit.ps1; $LASTEXITCODE]] بيطبع [[1]] وفيه سر وهمي، و [[0]] بعد ما تشيله، و [[2]] لو غيّرت اسم src. والتقرير بيتكتب من جديد كل مرة (مش بيكبر للأبد)، وأول سطر فيه وقت آخر تشغيلة.`, ext: R`اربطه بـ git hook ([[.git\hooks\pre-commit]]) عشان يشتغل لوحده قبل كل commit، وخلّي الأنماط في ملف [[patterns.txt]] بدل ما تبقى في الكود، وزوّد قايمة استثناءات للسطور المقصودة.` },
+        { lvl: 'فكرة', t: R`محرّك بحث في ملاحظاتك`, what: R`عندك ملاحظات أو كود أو كتب PDF متحوّلة نص في فولدرات كتير. صمّم طريقة تدوّر فيها بكلمة وتطلّع أحسن النتايج الأول (مثلًا الملف اللي الكلمة فيه أكتر). انت اللي بتقرر الترتيب وشكل النتيجة.`, done: R`بتدوّر بكلمة وتلاقي الملف الصح في أول ٣ نتايج، في فولدر فيه ٥٠ ملف على الأقل.`, ext: R`زوّد بحث بأكتر من كلمة، وفلتر بالتاريخ ([[LastWriteTime]])، ولما توصل للـ functions خليها أمر [[find-note]] في الـ profile.` },
+      ],
       items: [
         {
           cmd: "Select-String",
@@ -374,6 +405,11 @@ myapp@1.2.0
 sls "error" app.log
 Get-ChildItem -Recurse -File -Include *.js,*.ts | Where-Object FullName -notmatch 'node_modules' | Select-String "console.log" -SimpleMatch`,
           try: "دوّر على كل console.log في مشروع من غير node_modules.",
+          practice: [
+            { lvl: 'سريع', t: R`في لوج فيه [[ERROR]] و [[Error]] و [[error]]، جرّب [[sls error app.log]] وبعدين نفس الأمر بـ [[-CaseSensitive]].`, done: R`الأول بيجيب التلات أشكال (Select-String مش بيفرّق في الحروف من غير ما تقوله)، والتاني بيجيب [[error]] الصغيرة بس.` },
+            { lvl: 'تطبيق', t: R`اعرض كل ERROR ومعاه سطر قبله وسطر بعده: [[Select-String 'ERROR' app.log -Context 1,1]].`, done: R`سطر الـ error أوله [[>]] واسم الملف ورقم السطر، والسطرين اللي حواليه من غير [[>]]، في 7 و 5.1.` },
+            { lvl: 'تحدي', t: R`في مشروع، اعرف **كام ملف** (مش كام سطر) فيه TODO: [[(Select-String TODO -Path *.js -List).Count]]، وقارنه بالعدد من غير [[-List]].`, done: R`ملف فيه ٣ TODO بيتحسب مرة واحدة مع [[-List]]، فالرقم الأول أصغر من أو بيساوي التاني. في تجربة بـ ٣ ملفات (واحد فيه ٣ TODO وواحد فيه ١ وواحد نضيف) طلع [[2]] و [[4]].` },
+          ],
           deep: {
             why: R`بتدوّر على كل مكان فيه TODO أو اسم متغير في المشروع، أو على كلمة error في لوج من ١٠ آلاف سطر. Select-String هو grep بتاع PowerShell، وكمان بيرجع objects فيها اسم الملف ورقم السطر تقدر تفلترها.`,
             how: R`[[Select-String -Pattern "error" -Path "*.log"]] بيدوّر في كل ملفات .log، وبيرجّع object من نوع MatchInfo لكل سطر لقاه، فيه [[Filename]] و [[LineNumber]] و [[Line]] (السطر نفسه). عشان كده تقدر تكمّل بالـ pipe: [[Select-String "function" *.js | Select-Object Filename, LineNumber]].
@@ -504,6 +540,11 @@ a.js:1:console.log("a") // TODO: rename
 (Get-Command node).Source
 where.exe node`,
           try: "اعرف مسار node و git و npm عندك. لو أي واحد طلع أكتر من مسار، يبقى عندك أكتر من نسخة والـ PATH بيقرر أنهي واحدة بتشتغل.",
+          practice: [
+            { lvl: 'سريع', t: R`[[Get-Command git]] وبعدين [[(Get-Command git).Source]].`, done: R`الأول جدول فيه [[CommandType]] قيمته [[Application]]، والتاني المسار بس كنص بيخلص بـ [[git.exe]].` },
+            { lvl: 'تطبيق', t: R`اعرف [[cd]] و [[ls]] و [[where]] إيه بالظبط: [[Get-Command cd, ls, where]].`, done: R`التلاتة نوعهم [[Alias]]، و [[where]] بيشاور على [[Where-Object]] مش برنامج [[where.exe]]، وعشان كده [[where.exe node]] لازم بالـ .exe.` },
+            { lvl: 'تحدي', t: R`سطر بيقول الأداة موجودة ولا لأ من غير error أحمر: [[if (Get-Command docker -ErrorAction SilentlyContinue) { 'yes' } else { 'no' }]]. جرّبه على أداة عندك وعلى اسم مش موجود.`, done: R`الأداة الموجودة بتطبع [[yes]] والاسم الوهمي بيطبع [[no]] من غير أي error. ومن غير [[-ErrorAction SilentlyContinue]] الاسم الوهمي بيطلّع [[CommandNotFoundException]] قبل الـ no.` },
+          ],
           deep: {
             why: "إيجاد مكان برنامج أو الـ alias اللي بيستخدمه. زي [[which]] أو [[type]] في bash.",
             how: R`[[Get-Command node]] بيقولك الاسم ده هيتنفّذ إزاي: برنامج exe ومساره، أو cmdlet والموديول بتاعه، أو alias والأمر اللي بيشاور عليه. مثلًا [[Get-Command ls]] بيقولك إنه alias لـ Get-ChildItem.

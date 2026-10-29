@@ -4,6 +4,15 @@ MORE("ps", [
       t: "الشبكة",
       l: 2,
       n: "",
+      projects: [
+        { lvl: 'صغير', t: R`النت بايظ ولا السيرفر؟`, what: R`٣ سطور بالترتيب: [[Test-NetConnection 1.1.1.1]] (فيه نت؟)، و [[Test-NetConnection github.com]] (الـ DNS شغال؟)، و [[Test-NetConnection github.com -Port 443]] (البورت بيرد؟). من درس «ping واختبار بورت».`, done: R`تقدر تقول من أنهي سطر وقع فين المشكلة: لو الأول True والتاني فشل في الاسم يبقى DNS، ولو التلاتة True يبقى المشكلة في البرنامج نفسه مش الشبكة.` },
+        { lvl: 'صغير', t: R`أحسن repos عند أي حد`, what: R`[[Invoke-RestMethod https://api.github.com/users/octocat/repos]] ورتّبهم بـ [[stargazers_count]] وطلّع أول ٥ بالاسم وعدد النجوم. من درس «كلّم API» ووحدة الـ Pipeline.`, done: R`٥ سطور مترتبة من الأكتر نجوم، والأرقام بتطابق صفحة الـ repos على GitHub.` },
+        { lvl: 'متوسط', t: R`فاحص بورتات لسيرفراتك`, what: R`ملف [[hosts.csv]] فيه عمودين [[Host]] و [[Port]]، وسطور بتقراه بـ [[Import-Csv]] وتفحص كل سطر بـ [[Test-NetConnection -InformationLevel Quiet -WarningAction SilentlyContinue]]، وتطلّع CSV بالنتيجة. من الوحدة دي و «الـ Pipeline».`, done: R`سطر لبورت مفتوح (زي [[github.com]] و [[443]]) بيطلع True، وسطر لبورت مقفول على [[127.0.0.1]] بيطلع False في حوالي ثانيتين من غير ما يوقف الباقي، والـ CSV فيه نفس عدد السطور.` },
+        { lvl: 'متوسط', t: R`health check لـ API`, what: R`سطور بتكلّم [[/health]] (أو أي endpoint) بـ [[Invoke-RestMethod -TimeoutSec 5]] جوه [[try/catch]]، وبتطبع OK أو رقم الـ status (من [[$_.Exception.Response.StatusCode]]) أو «مش بيرد»، ومعاها الوقت بالمللي ثانية ([[(Get-Date) - $start]]). من درس «كلّم API».`, done: R`ثلاث حالات: endpoint سليم بيطبع OK ووقت، و URL غلط على GitHub بيطبع [[404]]، وبورت محدش سامع عليه على [[127.0.0.1]] بيطبع «مش بيرد» بسرعة، ومفيش ولا حالة بتطلّع أحمر.` },
+        { lvl: 'كبير', t: R`مراقب uptime`, what: R`سكربت [[monitor.ps1]]: بيقرا [[urls.txt]] (لينك في كل سطر، ويتجاهل الفاضي واللي بيبدأ بـ #)، ويكلّم كل واحد بـ [[Invoke-WebRequest -TimeoutSec 10]] جوه try/catch، ويضيف سطر لكل لينك في [[uptime.csv]] بـ [[Export-Csv -Append]] (الوقت واللينك والـ status والمللي ثواني). ولو ملف الـ urls مش موجود يقف برسالة، ولو أي لينك واقع يطبع الملخص بالأحمر ويخرج بـ [[exit 1]]. بيجمع الوحدة دي مع «قراءة وكتابة» و «الـ Pipeline».`, done: R`تشغيلتين ورا بعض: [[uptime.csv]] بيكبر (مش بيتكتب فوقه) وفيه header مرة واحدة بس، واللينك اللي غلطته بيطلع بالـ status بتاعه، و [[$LASTEXITCODE]] بـ 1 لو فيه لينك واقع و 0 لو الكل شغال.`, ext: R`زوّد عمود الوقت بالمللي ثانية في ملخص يومي (المتوسط والأبطأ)، وابعت تنبيه لـ webhook لما لينك يقع بس مش كل مرة هو واقع، وبعد وحدة المهام المجدولة شغّله كل ٥ دقايق.` },
+        { lvl: 'كبير', t: R`deploy بخطوات بتقف عند أول غلطة`, what: R`سكربت [[deploy.ps1]]: يضغط [[dist]] بـ [[Compress-Archive]]، ويتأكد إن بورت 22 بيرد بـ [[Test-NetConnection -InformationLevel Quiet]]، ويرفع بـ [[scp]]، ويفك بـ [[ssh]]، وبعدها health check بـ [[Invoke-RestMethod]]. بعد كل أمر خارجي يبص على [[$LASTEXITCODE]] ويقف لو مش صفر، وكل خطوة سطر في [[deploy.log]]. السيرفر بيتكتب في متغير فوق السكربت. بيجمع الوحدة دي مع «العمليات» و «ملفات وفولدرات».`, done: R`على عنوان وهمي ([[203.0.113.10]]) بيقف عند خطوة البورت برسالة واضحة ومبيحاولش يعمل scp، واللوج آخر سطر فيه الخطوة اللي وقف عندها. وعلى سيرفر حقيقي (أو VM) بيخلص والـ health check بيرد. وتشغيله تاني بيكتب zip جديد فوق القديم من غير error.`, ext: R`احتفظ بآخر ٣ نسخ على السيرفر وزوّد خطوة rollback ترجّع للنسخة اللي قبلها لو الـ health check فشل، وخلّي السيرفر واليوزر في ملف config أو [[~/.ssh/config]] بدل السكربت.` },
+        { lvl: 'فكرة', t: R`بوت تنبيهاتك`, what: R`فكّر في حاجة على النت عايز تعرفها أول ما تحصل: سعر حاجة، أو repo نزّل release جديد، أو موقعك وقع. صمّم أداة بتسأل الـ API بتاعها وتقارن بآخر مرة (اللي محفوظة في ملف JSON) وتنبّهك لو فيه جديد. انت اللي بتختار المصدر وشكل التنبيه.`, done: R`أول تشغيلة بتحفظ الحالة، والتانية من غير تغيير مبتطبعش حاجة، ولما تغيّر الملف المحفوظ بإيدك عشان تمثّل تغيير، الأداة بتنبّهك.`, ext: R`ابعت التنبيه لـ webhook (Discord أو Slack أو Telegram) بـ [[Invoke-RestMethod -Method Post]]، وخلّي التوكن في متغير بيئة مش في الملف، وبعد وحدة المهام المجدولة شغّلها كل ساعة.` },
+      ],
       items: [
         {
           cmd: "Test-NetConnection",
@@ -17,6 +26,11 @@ MORE("ps", [
 Test-NetConnection 203.0.113.10 -Port 22
 Test-NetConnection localhost -Port 5432`,
           try: "اختبر إن بورت 22 و 443 مفتوحين على سيرفرك.",
+          practice: [
+            { lvl: 'سريع', t: R`[[Test-NetConnection github.com -Port 443]].`, done: R`فيه سطر [[TcpTestSucceeded : True]] لو النت شغال، ومعاه [[RemoteAddress]] بالـ IP اللي الاسم اتحوّل له.` },
+            { lvl: 'تطبيق', t: R`[[Test-NetConnection 127.0.0.1 -Port 45871 -InformationLevel Quiet]] على بورت محدش سامع عليه.`, done: R`بيطبع تحذير [[TCP connect to (127.0.0.1 : 45871) failed]] وبعده [[False]] بس، في حوالي ثانيتين. ومع [[-WarningAction SilentlyContinue]] بيطبع [[False]] لوحدها، وده اللي تحطه في [[if]].` },
+            { lvl: 'تحدي', t: R`افحص ٣ بورتات على سيرفر في جدول: [[22, 80, 443 | ForEach-Object { [pscustomobject]@{ Port = $_; Open = (Test-NetConnection github.com -Port $_ -InformationLevel Quiet -WarningAction SilentlyContinue) } }]].`, done: R`جدول ٣ سطور بعمودين Port و Open، و 443 قصاده True. وجرّب نفس السطر على [[127.0.0.1]]: البورتات اللي محدش سامع عليها بتطلع False، وكل واحدة بتاخد حوالي ثانيتين.` },
+          ],
           deep: {
             why: R`قبل ما تقعد ساعة تدوّر في الكود ليه التطبيق مش واصل لقاعدة البيانات أو للسيرفر، اتأكد إن الاتصال نفسه شغال. Test-NetConnection بيجاوب في سطر: الجهاز بيرد؟ والبورت مفتوح؟ زي ping و [[nc -zv]] مع بعض.`,
             how: R`[[Test-NetConnection google.com]] من غير بورت بيعمل ping بس. [[-Port 443]] بيجرّب اتصال TCP على البورت، والناتج object فيه [[TcpTestSucceeded]] (True أو False)، و [[RemoteAddress]] الـ IP اللي اتحل له الاسم، و [[SourceAddress]] الـ IP بتاعك اللي خرج منه الاتصال.
@@ -175,6 +189,11 @@ $u.public_repos
 Invoke-RestMethod -Uri http://localhost:3000/api/users -Method Post -ContentType "application/json" -Body '{"name":"test"}'
 Invoke-WebRequest https://example.com/file.zip -OutFile file.zip`,
           try: "هات بيانات GitHub بتاعك واطبع عدد الـ repos.",
+          practice: [
+            { lvl: 'سريع', t: R`[[(irm https://api.github.com/users/octocat).public_repos]].`, done: R`رقم واحد، ونفس الرقم في صفحة octocat على GitHub. وتقدر تكتب [[.login]] أو [[.created_at]] من غير ما تفك JSON بإيدك.` },
+            { lvl: 'تطبيق', t: R`امسك 404: [[try { irm https://api.github.com/users/no-such-user-zz9q8 } catch { [int]$_.Exception.Response.StatusCode; $_.Exception.GetType().Name }]].`, done: R`بيطبع [[404]] في النسختين، بس نوع الـ exception مختلف: [[HttpResponseException]] في 7 و [[WebException]] في 5.1. فلو بتمسك نوع معيّن في catch، السكربت مش هيشتغل نفس الشكل في الاتنين.` },
+            { lvl: 'تحدي', t: R`ابعت POST بـ JSON مبني من hashtable: [[$r = irm https://httpbin.org/post -Method Post -ContentType 'application/json' -Body (@{ name = 'test' } | ConvertTo-Json)]] واقرا [[$r.json.name]]. ولو في 7 جرّب [[-SkipHttpErrorCheck -StatusCodeVariable sc]] على الـ 404 اللي فات.`, done: R`[[$r.json.name]] بيطبع [[test]] (السيرفر رجّعلك اللي بعته). وفي 7 [[$sc]] بيبقى [[404]] من غير catch، وفي 5.1 الـ parameters دي مش موجودة أصلًا.` },
+          ],
           deep: {
             why: R`بتختبر API عملته، أو سكربت محتاج يجيب بيانات من GitHub أو يبعت رسالة لـ webhook. Invoke-RestMethod زي curl، بس الرد JSON بيرجع object على طول تقرا منه بالنقطة من غير jq.`,
             how: R`[[Invoke-RestMethod]] بيبعت HTTP request ولو الرد JSON بيحوّله تلقائيًا لـ object. مش محتاج ConvertFrom-Json.
@@ -327,6 +346,11 @@ Invoke-WebRequest https://example.com -OutFile page.html
 ssh root@203.0.113.10
 scp .\dist.zip root@203.0.113.10:/var/www/`,
           try: "ادخل سيرفرك من PowerShell مباشرة.",
+          practice: [
+            { lvl: 'سريع', t: R`[[ssh -V]] و [[(Get-Command ssh).Source]].`, done: R`سطر بيبدأ بـ [[OpenSSH_]] ومعاه رقم النسخة، والمسار بيقولك أنهي ssh بيشتغل (اللي جاي مع ويندوز في [[System32\OpenSSH]] أو اللي جاي مع Git).` },
+            { lvl: 'تطبيق', t: R`اعمل مفتاح تجريبي في فولدر lab مش في [[.ssh]]: [[ssh-keygen -t ed25519 -f .\test_key -C 'test@lab']] (اضغط Enter مرتين للباسورد)، وبعدين [[ssh-keygen -lf .\test_key.pub]].`, done: R`فيه ملفين [[test_key]] و [[test_key.pub]]، والـ pub بيبدأ بـ [[ssh-ed25519]]، و [[-lf]] بيطبع سطر فيه [[256 SHA256:]] والـ comment و [[(ED25519)]]. وخد بالك: [[-N '']] في 5.1 بيطلع [[Too many arguments.]] لأنه بيشيل الـ argument الفاضي، فسيبه يسألك.` },
+            { lvl: 'تحدي', t: R`اعرف ssh هيعمل إيه قبل ما يتصل: [[ssh -G 203.0.113.10]] بيطبع الإعدادات النهائية من غير اتصال. ودوّر فيها على [[user]] و [[port]] و [[identityfile]].`, done: R`فيه سطر [[hostname 203.0.113.10]] و [[port 22]]، و [[user]] قيمته اسم يوزر ويندوز بتاعك (لأنك ماكتبتش [[root@]])، و [[identityfile]] فيه المفاتيح اللي هيجرّبها بالترتيب. ولو كتبت [[root@203.0.113.10]] السطر بيتغيّر لـ [[user root]].` },
+          ],
           deep: {
             why: R`ويندوز ١٠ و ١١ فيهم SSH client مبني جوه (OpenSSH)، فبتدخل سيرفرات لينكس وترفع ملفات من PowerShell على طول من غير PuTTY ولا WinSCP.`,
             how: R`نفس أوامر SSH بالظبط زي Linux: [[ssh user@server]]، [[scp file user@server:/path]].

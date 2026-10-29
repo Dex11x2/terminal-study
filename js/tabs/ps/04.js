@@ -4,6 +4,14 @@ MORE("ps", [
       t: "الـ Pipeline والـ Objects",
       l: 2,
       n: "الفرق الحقيقي بين PowerShell وأي شيل تاني",
+      projects: [
+        { lvl: 'صغير', t: R`أكبر ١٠ ملفات في الديسك ده`, what: R`[[Get-ChildItem -Recurse -File -ErrorAction SilentlyContinue | Sort-Object Length -Descending | Select-Object -First 10]] بعمود حجم بالميجا ([[@{ n='MB'; e={ ... } }]])، وصدّره CSV. من دروس «رتّب» و «اختار» و «صدّر».`, done: R`الـ CSV فيه ١٠ صفوف متربة من الأكبر، وعمود MB فيه أرقام برقمين عشرية، والملف بيتفتح في Excel صح.` },
+        { lvl: 'صغير', t: R`مين بياكل الرام`, what: R`أكتر ٥ عمليات رام بعمود [[MB]] محسوب من [[WorkingSet]]، وجمع الرام بتاعتهم بـ [[Measure-Object -Sum]]. من دروس «رتّب» و «عدّ واجمع» و «اختار».`, done: R`جدول ٥ سطور متربة، وسطر أخير فيه المجموع بالميجا، والرقم قريب من اللي Task Manager بيقوله للبرامج دي.` },
+        { lvl: 'متوسط', t: R`تقرير أنواع الملفات`, what: R`لمشروع: [[Group-Object Extension]]، ولكل مجموعة العدد والحجم الكلي ([[$_.Group | Measure-Object Length -Sum]] جوه [[ForEach-Object]])، مترتب بالحجم، ومتصدّر CSV و JSON. من دروس الوحدة كلها.`, done: R`مجموع عمود العدد بيساوي [[(Get-ChildItem -Recurse -File).Count]]، ومجموع الأحجام بيساوي [[Measure-Object Length -Sum]] على المشروع كله، و [[ConvertFrom-Json]] على الـ JSON بيرجّع نفس الصفوف.` },
+        { lvl: 'متوسط', t: R`إيه اللي اتغيّر من آخر مرة`, what: R`أول تشغيلة بتحفظ [[inventory.csv]] فيه الاسم والحجم و [[LastWriteTime]] لكل ملف. التشغيلة التانية بتقرا الـ CSV القديم بـ [[Import-Csv]] وتطلّع الملفات الجديدة واللي حجمها اتغيّر. خد بالك إن [[Import-Csv]] بيرجّع كل حاجة نص، فحوّل الحجم لرقم بـ [[$size = [long]$_.Length]] قبل ما تقارن. من الوحدة دي و «قراءة وكتابة».`, done: R`تعمل ملف جديد وتعدّل ملف قديم بين التشغيلتين: الاتنين بيظهروا بس، ومفيش ولا ملف «اتغيّر» وهو متلمسش.` },
+        { lvl: 'كبير', t: R`تقرير ديسك أسبوعي`, what: R`سكربت [[disk-report.ps1]]: لكل فولدر في المستوى الأول من مسار بتديهوله، الحجم والعدد ([[ForEach-Object]] و [[Measure-Object]])، مع [[-ErrorAction SilentlyContinue -ErrorVariable skipped]] عشان الفولدرات الممنوعة متوقفوش، وعدد الحاجات اللي اتعدّت بيتكتب في التقرير. الناتج CSV اسمه فيه التاريخ ([[disk-2026-10-29.csv]]) في فولدر [[reports]]، وسطر في [[disk.log]] فيه الوقت والمسار والمجموع. ولو المسار مش موجود يقف برسالة. بيجمع الوحدة دي مع «ملفات وفولدرات» و «قراءة وكتابة».`, done: R`على [[C:\Users\you]] بيخلص من غير ما يقف عند فولدر ممنوع، ومجموع الأحجام في الـ CSV قريب من Properties في Explorer. وتشغيله مرتين في نفس اليوم بيكتب فوق تقرير اليوم بس، وفي يوم تاني بيعمل ملف جديد، واللوج فيه سطر لكل تشغيلة.`, ext: R`قارن تقرير النهارده بآخر تقرير وطلّع الفولدرات اللي كبرت أكتر من ١٠٪، واعمله HTML بـ [[ConvertTo-Html]]، وبعد وحدة المهام المجدولة شغّله كل جمعة لوحده.` },
+        { lvl: 'فكرة', t: R`داشبورد جهازك`, what: R`اختار الأرقام اللي بتهمك عن جهازك (أكبر فولدرات، وأكتر برامج رام، وملفات اتعدّلت النهارده، وعدد ملفات كل نوع...) وطلّعهم كلهم في JSON واحد أو جدول واحد. انت اللي بتختار الأرقام وشكل العرض.`, done: R`أمر واحد بيطلّع التقرير في أقل من دقيقة، وكل رقم فيه تقدر تتأكد منه بأمر لوحده.`, ext: R`حوّل الـ JSON لصفحة HTML بـ [[ConvertTo-Html]]، واحفظ نسخة كل يوم وقارن بالأمس، وبعد وحدة المهام المجدولة خليه يشتغل لوحده.` },
+      ],
       items: [
         {
           cmd: "Where-Object",
@@ -17,6 +25,11 @@ MORE("ps", [
 Get-ChildItem -File | Where-Object { $_.Length -gt 1MB }
 Get-Service | Where-Object Status -eq Running`,
           try: "اعرض الملفات اللي اتعدلت النهارده بس: [[Where-Object LastWriteTime -gt (Get-Date).Date]].",
+          practice: [
+            { lvl: 'سريع', t: R`[[Get-ChildItem -File | Where-Object Extension -eq '.log']].`, done: R`ملفات log بس، وعددها بيساوي [[(Get-ChildItem *.log).Count]].` },
+            { lvl: 'تطبيق', t: R`الملفات اللي أكبر من 1MB **و** اتعدّلت في آخر ٧ أيام: [[Where-Object { $_.Length -gt 1MB -and $_.LastWriteTime -gt (Get-Date).AddDays(-7) }]].`, done: R`كل ملف في الناتج الشرطين عليه صح (اتأكد من اتنين بـ [[Get-Item]])، ولو غيّرت [[1MB]] لـ [[0]] العدد بيزيد أو بيفضل زي ما هو، عمره ما بيقلّ.` },
+            { lvl: 'تحدي', t: R`قارن [['README.MD' -like '*.md']] بـ [['README.MD' -clike '*.md']]، وبعدين هات الملفات اللي امتدادها [[.md]] بالظبط بحروف صغيرة بس.`, done: R`[[-like]] بيرجّع True و [[-clike]] بيرجّع False (الـ c يعني case-sensitive). و [[Where-Object Name -clike '*.md']] بيستبعد [[README.MD]] ويجيب [[notes.md]].` },
+          ],
           deep: {
             why: "فلترة الـ objects اللي طالعة من أمر قبله. زي grep بس بيفهم الـ properties مش النص.",
             how: R`[[Where-Object { $_.CPU -gt 10 }]]: الكود بين الأقواس بيتنفّذ مرة لكل object جاي من الشمال، و [[$_]] (أو [[$PSItem]]) هو الـ object ده. لو الكود رجّع True الـ object بيعدّي، لو False بيتشال.
@@ -137,6 +150,11 @@ Running  AnyDesk            AnyDesk Service
           example: R`Get-Process | Select-Object Name, Id, CPU -First 5
 Get-ChildItem | Select-Object -ExpandProperty Name`,
           try: "اعرض اسم وحجم كل ملف في فولدر.",
+          practice: [
+            { lvl: 'سريع', t: R`[[Get-ChildItem | Select-Object Name, Length -First 3]].`, done: R`جدول بعمودين بس وتلات صفوف بالظبط.` },
+            { lvl: 'تطبيق', t: R`قارن [[(Get-ChildItem | Select-Object Name)[0].GetType().Name]] بـ [[(Get-ChildItem | Select-Object -ExpandProperty Name)[0].GetType().Name]].`, done: R`الأول [[PSCustomObject]] (object فيه عمود Name)، والتاني [[String]] (الاسم نفسه)، في 7 و 5.1. وده الفرق لما تبعت الناتج لأمر بيستنى نص.` },
+            { lvl: 'تحدي', t: R`عمود محسوب: [[Get-ChildItem -File | Select-Object Name, @{ n = 'KB'; e = { [math]::Round($_.Length / 1KB, 1) } }]].`, done: R`فيه عمود اسمه [[KB]] فيه أرقام برقم عشري واحد، ولو ضربت الرقم في 1024 بيطلع قريب من [[Length]] بتاع الملف.` },
+          ],
           deep: {
             why: "اختيار properties معينة من object أو تحديد عدد النتايج. زي [[cut]] في bash بس لـ objects.",
             how: R`[[Select-Object Name, CPU]] بيعمل objects جديدة فيها الخانات دي بس، وده بيحدد إيه اللي يظهر في الجدول وإيه اللي يتحفظ في CSV أو JSON. [[-First 5]] أول ٥، و [[-Last 5]] آخر ٥، و [[-Skip 2]] اتخطى أول اتنين، و [[-Unique]] بيشيل المتكرر.
@@ -239,6 +257,11 @@ src
           example: R`Get-ChildItem -Recurse -File | Sort-Object Length -Descending | Select-Object -First 10 Name, Length
 Get-Process | Sort-Object WorkingSet -Descending | Select-Object -First 5`,
           try: "اعرف أكتر 5 برامج بتاكل رام.",
+          practice: [
+            { lvl: 'سريع', t: R`أكبر ٥ ملفات في فولدر: [[Get-ChildItem -File | Sort-Object Length -Descending | Select-Object -First 5 Name, Length]].`, done: R`٥ سطور، وكل سطر [[Length]] بتاعه أكبر من أو بيساوي اللي تحته.` },
+            { lvl: 'تطبيق', t: R`رتّب بخاصيتين: [[Get-ChildItem -File | Sort-Object Extension, Name]].`, done: R`الملفات اللي ليها نفس الامتداد جنب بعض، وجوه كل امتداد الأسامي بالترتيب الأبجدي.` },
+            { lvl: 'تحدي', t: R`[['10', '9', '2' | Sort-Object]] وبعدين [['10', '9', '2' | Sort-Object { [int]$_ }]].`, done: R`الأول [[10]] و [[2]] و [[9]] (ترتيب نص: حرف حرف)، والتاني [[2]] و [[9]] و [[10]]. ودي نفس المشكلة اللي هتقابلها مع أي عمود جاي من CSV.` },
+          ],
           deep: {
             why: R`«أكبر ١٠ ملفات»، «أكتر ٥ برامج بتاكل رام»، «آخر الملفات اللي اتعدلت». أي سؤال فيه «أكتر» أو «آخر» محتاج ترتيب، و Sort-Object بيرتب بأي خاصية من غير ما تقص نص زي [[sort -k]] في bash.`,
             how: R`[[Sort-Object Name]] ترتيب أبجدي، و [[Sort-Object CPU -Descending]] من الأكبر للأصغر. وتقدر ترتّب بأكتر من خاصية: [[Sort-Object Status, Name]] بالحالة الأول، وجوه كل حالة بالاسم. و [[-Unique]] بيرتّب ويشيل المتكرر.
@@ -368,6 +391,11 @@ Get-Process | Sort-Object WorkingSet -Descending | Select-Object -First 5
           example: R`(Get-ChildItem -Recurse -File).Count
 Get-ChildItem -Recurse -File | Measure-Object Length -Sum`,
           try: "اعرف حجم فولدر node_modules بالميجا: قسّم الـ Sum على [[1MB]].",
+          practice: [
+            { lvl: 'سريع', t: R`[[(Get-ChildItem -Recurse -File).Count]] وبعدين [[(Get-ChildItem -Recurse -File | Measure-Object).Count]].`, done: R`نفس الرقم في الاتنين.` },
+            { lvl: 'تطبيق', t: R`حجم فولدر بالميجا مقرّب: [[$mb = [math]::Round((Get-ChildItem -Recurse -File | Measure-Object Length -Sum).Sum / 1MB, 2); $mb]].`, done: R`رقم برقمين عشرية، قريب من «Size» (مش «Size on disk») في Properties بتاع الفولدر في Explorer.` },
+            { lvl: 'تحدي', t: R`اعمل [[wc]] بتاع لينكس: [['hello world foo' | Measure-Object -Line -Word -Character]]، وبعدين على ملف README عندك.`, done: R`السطر التجريبي بيطلّع [[Lines]] بـ 1 و [[Words]] بـ 3 و [[Characters]] بـ 15. وعلى README الأرقام منطقية (عدد السطور قريب من [[(Get-Content README.md).Count]]).` },
+          ],
           deep: {
             why: "إحصاءات على مجموعة من القيم: العد، والمجموع، والمتوسط. زي wc -l في bash بس أقوى.",
             how: R`[[Measure-Object]] بيعدّ ويحسب على اللي جاي من الـ pipe. من غير أي إضافات بيعدّ بس: [[Get-Process | Measure-Object]] بيرجّع [[Count]] بعدد العمليات.
@@ -481,6 +509,11 @@ $m.Count
           example: R`1..5 | ForEach-Object { "Item $_" }
 Get-ChildItem *.log | ForEach-Object { $_.Name.ToUpper() }`,
           try: "اعمل 5 ملفات test1.txt لـ test5.txt بـ ForEach-Object و New-Item.",
+          practice: [
+            { lvl: 'سريع', t: R`[[1..5 | ForEach-Object { $_ * $_ }]].`, done: R`بيطبع [[1]] و [[4]] و [[9]] و [[16]] و [[25]]، كل رقم في سطر.` },
+            { lvl: 'تطبيق', t: R`لكل ملف اطبع سطر «الاسم - الحجم KB»: [[Get-ChildItem -File | ForEach-Object { "$($_.Name) - $([math]::Round($_.Length / 1KB, 1)) KB" }]].`, done: R`سطر نص لكل ملف (مش جدول)، والرقم مقرّب لرقم عشري واحد.` },
+            { lvl: 'تحدي', t: R`اجمع بـ [[-Begin]] و [[-Process]] و [[-End]]: [[1..3 | ForEach-Object -Begin { $s = 0 } -Process { $s += $_ } -End { $s }]]، وبعدين اجمع أحجام ملفات فولدر بنفس الطريقة.`, done: R`الأول بيطبع [[6]]، والتاني بيطبع نفس الرقم اللي [[(Get-ChildItem -File | Measure-Object Length -Sum).Sum]] بيطلّعه.` },
+          ],
           deep: {
             why: "تنفيذ كود على كل element في pipeline. زي for loop في لينكس بس داخل pipeline.",
             how: R`[[ForEach-Object { $_ }]] أو [[% { $_ }]] الاختصار. جوه الـ block [[$_]] (أو [[$PSItem]]، نفس الحاجة باسم أوضح) هو العنصر الحالي.
@@ -582,6 +615,11 @@ Get-ChildItem test*.txt | Select-Object Name`
 [[-NoElement]] بيشيل عمود Group لو مش محتاجه فالجدول يبقى أنضف. والملفات اللي ملهاش امتداد بتتجمع تحت Name فاضي، ومش غلط.`,
           example: "Get-ChildItem -Recurse -File | Group-Object Extension | Sort-Object Count -Descending",
           try: "اعرف أكتر نوع ملفات في مشروعك.",
+          practice: [
+            { lvl: 'سريع', t: R`[[Get-ChildItem -Recurse -File | Group-Object Extension -NoElement | Sort-Object Count -Descending]].`, done: R`جدول بعمودين Count و Name بس، والامتداد الأكتر في الأول، ومجموع Count بيساوي عدد الملفات كلها.` },
+            { lvl: 'تطبيق', t: R`البرامج اللي فاتحة أكتر نسخ: [[Get-Process | Group-Object Name | Sort-Object Count -Descending | Select-Object -First 5 Count, Name]].`, done: R`٥ سطور، والأول عدده أكبر من أو بيساوي اللي تحته (المتصفح غالبًا فوق لأنه بيفتح عملية لكل تاب).` },
+            { lvl: 'تحدي', t: R`جمّع الملفات بسنة آخر تعديل: [[Get-ChildItem -Recurse -File | Group-Object { $_.LastWriteTime.Year }]].`, done: R`عمود Name فيه سنين، ومجموع Count بيساوي عدد الملفات، وتقدر تقول المشروع ده اتشغل عليه آخر مرة امتى.` },
+          ],
           deep: {
             why: "تجميع النتايج بـ property. زي [[uniq -c]] في bash بس بيجيب groups كاملة.",
             how: R`[[Get-Process | Group-Object Name]] بيجمع كل العمليات اللي ليها نفس الاسم في مجموعة، فتعرف مثلًا chrome فاتح كام عملية. كل مجموعة object فيه [[Count]] (العدد)، و [[Name]] (القيمة المشتركة)، و [[Group]] (العناصر نفسها كاملة).
@@ -682,6 +720,11 @@ Count Name
 Get-Process | Select-Object Name, Id, CPU | Export-Csv procs.csv -NoTypeInformation
 Get-Service | Select-Object Name, Status -First 3 | ConvertTo-Json`,
           try: "صدّر لستة ملفات فولدر (الاسم والحجم) لـ CSV وافتحه في Excel.",
+          practice: [
+            { lvl: 'سريع', t: R`[[Get-Process -Id $PID | Select-Object Name, Id | Export-Csv me.csv]] من غير [[-NoTypeInformation]]، وافتحه بـ [[Get-Content]] في 7 وفي 5.1.`, done: R`في 5.1 أول سطر [[#TYPE Selected.System.Diagnostics.Process]]، وفي 7 أول سطر هو أسامي الأعمدة على طول: [["Name","Id"]].` },
+            { lvl: 'تطبيق', t: R`صدّر ملفات بحجمها لـ CSV، واقراه بـ [[Import-Csv]]، ورتّبه بـ [[Sort-Object Length]] وبعدين بـ [[Sort-Object { [int]$_.Length }]].`, done: R`[[$rows[0].Length.GetType().Name]] بيقول [[String]]، فالترتيب الأول غلط لو فيه أحجام بعدد أرقام مختلف (9 بعد 10)، والتاني صح.` },
+            { lvl: 'تحدي', t: R`[[@(1) | ConvertTo-Json]] وبعدين [[ConvertTo-Json @(1)]]. لو انت في 7 جرّب كمان [[1 | ConvertTo-Json -AsArray]].`, done: R`الأول بيطبع [[1]] من غير أقواس (الـ pipe فكّ الـ array)، والتاني بيطبع array فيها 1، و [[-AsArray]] موجود في 7 بس (في 5.1 parameter مش معروف). وده مهم لأي API مستني لستة دايمًا حتى لو فيها عنصر واحد.` },
+          ],
           deep: {
             why: "تحفظ البيانات في شكل قابل للاستخدام: CSV لـ Excel، أو JSON لـ API أو ملفات config.",
             how: R`[[Export-Csv -Path out.csv -NoTypeInformation]] يحفظ مباشرة. [[-NoTypeInformation]] مهمة عشان تشيل السطر الأول الغريب اللي بيبقى اسم النوع في PowerShell.

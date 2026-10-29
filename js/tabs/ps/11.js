@@ -4,6 +4,14 @@ MORE("ps", [
       t: "ضغط وهاش",
       l: 2,
       n: "",
+      projects: [
+        { lvl: 'صغير', t: R`zip للـ release ومعاه بصمته`, what: R`سكربت [[release.ps1]] بيضغط [[dist\*]] لملف [[app-1.0.zip]] ([[-Force]] لو موجود)، ويكتب جنبه [[app-1.0.zip.sha256]] فيه الهاش واسم الملف. من درسين Compress-Archive و Get-FileHash.`, done: R`الـ zip لما يتفك فيه الملفات على طول من غير فولدر [[dist]]، والهاش اللي في الملف هو نفس [[(Get-FileHash app-1.0.zip).Hash]]، وتشغيله مرتين ورا بعض من غير ما تغيّر dist بيطلع نفس الهاش.` },
+        { lvl: 'صغير', t: R`اتأكد من التحميل`, what: R`فانكشن [[Test-Download]] بتاخد مسار ملف والهاش المكتوب في صفحة التحميل، وترجّع True أو False، وتطبع الهاشين تحت بعض لو مختلفين عشان تشوف الفرق بعينك. من درس Get-FileHash.`, done: R`على ملف وهاشه الصح بترجع True حتى لو الهاش مكتوب سمول أو فيه مسافات في الأول والآخر ([[.Trim()]])، وعلى هاش غلط بحرف واحد بترجع False وتطبع الاتنين.` },
+        { lvl: 'متوسط', t: R`صياد المكرر`, what: R`سكربت [[find-dupes.ps1 -Path ...]] بيلاقي الملفات المكررة بالمحتوى (الحجم الأول وبعدين الهاش)، ويطلّع [[dupes.csv]] بـ [[Export-Csv]] فيه الهاش والحجم والمسارات والمساحة الضايعة، ويطبع المجموع بالميجا في الآخر. من درس Get-FileHash ودروس Group-Object و Export-Csv.`, done: R`على فولدر تجارب فيه ملفين متكررين بـ ٣ نسخ: الـ CSV فيه سطرين، والمساحة الضايعة صح بالحساب، والسكربت مبيمسحش أي حاجة، وتشغيله مرتين بيطلع نفس الملف.` },
+        { lvl: 'متوسط', t: R`بصمة الفولدر (manifest)`, what: R`[[manifest.ps1 -Path .\docs]] بيحفظ لكل ملف المسار النسبي والحجم والهاش في [[manifest.json]] بـ [[ConvertTo-Json]]. ولو اتشغّل بـ [[-Check]] بيقرا الـ manifest القديم بـ [[ConvertFrom-Json]] ويطبع ٣ لستات: اتغيّر، وجديد، واتمسح. من درس Get-FileHash ودروس ConvertFrom-Json و Where-Object.`, done: R`بعد ما تعدّل ملف وتزوّد ملف وتمسح ملف، [[-Check]] بيطلّع كل واحد في اللستة بتاعته بالظبط، ولو مفيش تغيير بيطبع «مفيش فرق» ويخرج بـ 0، ولو فيه بيخرج بـ 1.` },
+        { lvl: 'كبير', t: R`باك أب بيتأكد من نفسه`, what: R`[[backup.ps1 -Source ... -Dest ...]] بيعمل zip باسم فيه التاريخ والساعة ([[Get-Date -Format yyyy-MM-dd_HHmmss]])، ويحسب manifest للأصل، وبعدين يفك الـ zip في فولدر مؤقت ويحسب الهاش لكل ملف ويقارن بالـ manifest، ولو فيه فرق يمسح الـ zip البايظ ويخرج بـ 1. وبيسيب آخر ٥ باك أب بس ويمسح الأقدم، وبيكتب كل خطوة في [[backup.log]]، وبيقف برسالة لو [[-Source]] مش موجود. من دروس الوحدة ودروس Test-Path و Remove-Item.`, done: R`شغّلته ٧ مرات: فيه ٥ ملفات zip بس والأحدث هما اللي فاضلين، وكل سطر في اللوج فيه الوقت والخطوة. ومسار [[-Source]] غلط بيخرج بكود غير صفر من غير ما يعمل zip فاضي. والفولدر المؤقت بيتمسح في الآخر في كل الحالات.` },
+        { lvl: 'فكرة', t: R`نقل ملفات بثقة`, what: R`صمّم انت أداة لمشكلة نقل حقيقية عندك: صور الموبايل للهارد، أو ملفات مشروع لسيرفر، أو باك أب لفلاشة. لازم تتأكد إن كل ملف وصل زي ما هو، وتعرف إيه اللي اتنقل قبل كده عشان متنقلوش تاني.`, done: R`نقلت بيها فولدر حقيقي، وعندك تقرير فيه عدد الملفات اللي اتنقلت واللي اتخطت لأنها موجودة بنفس الهاش، وأي ملف وصل بايظ اتعلّم عليه.`, ext: R`زوّد استكمال لو النقل وقف في النص، وضغط للملفات النصية بس، وخلّيها تشتغل لوحدها لما الفلاشة تتوصل.` },
+      ],
       items: [
         {
           cmd: "Compress-Archive",
@@ -17,6 +25,11 @@ MORE("ps", [
 Expand-Archive dist.zip -DestinationPath out
 tar -czf app.tar.gz app`,
           try: "اضغط فولدر وفكه في مكان تاني.",
+          practice: [
+            { lvl: 'سريع', t: R`اضغط نفس الفولدر مرتين: [[Compress-Archive -Path dist\* -DestinationPath star.zip]] و [[Compress-Archive -Path dist -DestinationPath nostar.zip]]، وفكّهم في [[out1]] و [[out2]]، وقارن بـ [[Get-ChildItem out1, out2 -Recurse -File | Select-Object FullName]].`, done: R`[[out1]] فيه [[index.html]] على طول، و [[out2]] فيه فولدر [[dist]] والملفات جواه. اتجرّب في 7.6 و 5.1 بنفس الناتج.` },
+            { lvl: 'تطبيق', t: R`شغّل نفس أمر الضغط تاني على نفس الاسم، وبعدين زوّد ملف جديد بـ [[-Update]]، وبعدين فك تاني في نفس [[out1]].`, done: R`التانية بتطلع error [[ArchiveFileExists]] وبيقولك استخدم [[-Update]] أو [[-Force]]. و [[-Update]] بيزوّد الملف الجديد جنب القديم. والفك فوق فولدر فيه نفس الملفات بيطلع [[ExpandArchiveFileExists]] لحد ما تزوّد [[-Force]].` },
+            { lvl: 'تحدي', t: R`اعمل باك أب لمشروع من غير [[node_modules]] ومن غير ما الفولدرات تبوظ. جرّب الأول الطريقة اللي بتيجي في بالك: [[Get-ChildItem proj -Recurse -File | Where-Object FullName -notmatch 'node_modules' | Compress-Archive -DestinationPath flat.zip]]، وفكه وبص جواه.`, done: R`[[flat.zip]] فيه كل الملفات مرصوصة جنب بعض من غير فولدر [[src]]: الـ structure راح (اتجرّب في 7.6 و 5.1). والحل اللي بيحافظ عليه: [[Get-ChildItem proj -Exclude node_modules | Compress-Archive -DestinationPath backup.zip]]، وبعد الفك [[src\lib\b.js]] في مكانه ومفيش [[node_modules]] (ده بيشيل اللي في أول مستوى بس). وبـ tar: [[tar -czf app.tgz --exclude=node_modules proj]].` },
+          ],
           deep: {
             why: R`باك أب سريع لفولدر، أو تجهيز ملف ترفعه على سيرفر أو تبعته لحد، من غير ما تسطّب WinRAR أو 7-Zip. Compress-Archive مبني جوه PowerShell، و tar موجود جنبه لو محتاج tar.gz.`,
             how: R`[[Compress-Archive -Path ".\folder" -DestinationPath "archive.zip"]] بيعمل zip. لو الملف موجود بيطلع error، و [[-Force]] بيكتب فوقه، و [[-Update]] بيضيف ويحدّث الملفات جوه الـ zip الموجود. و [[-Path]] بياخد كذا مسار: [[Compress-Archive -Path .\a.txt, .\b.txt -DestinationPath files.zip]].
@@ -159,6 +172,11 @@ Get-ChildItem out -Recurse -Name`
 المقارنة الأسهل: [[(Get-FileHash .\setup.exe).Hash -eq "الرقم من الموقع"]] بترجع True أو False، و [[-eq]] مش بيفرّق بين الحروف الكابيتال والسمول، فمش مشكلة إن الموقع كاتبه سمول. و [[.\setup.exe]] يعني الملف في الفولدر الحالي.`,
           example: R`Get-FileHash .\setup.exe -Algorithm SHA256`,
           try: "اطلع الهاش لأي ملف عندك.",
+          practice: [
+            { lvl: 'سريع', t: R`احسب الهاش لملف نصي، وغيّر فيه حرف واحد، واحسبه تاني: [[(Get-FileHash .\a.txt).Hash]].`, done: R`الرقمين ٦٤ حرف ([[.Hash.Length]] بيطلع 64 و [[(Get-FileHash .\a.txt).Algorithm]] بيطلع SHA256)، ومختلفين في أغلب الحروف رغم إنك غيّرت حرف واحد بس.` },
+            { lvl: 'تطبيق', t: R`اعمل ملف [[SHA256SUMS.txt]] بشكل لينكس (الهاش ومسافتين واسم الملف في كل سطر) لكل ملفات فولدر، وسكربت بيقراه سطر سطر ويطبع OK أو FAIL لكل ملف. اكتب الهاش في الملف سمول بـ [[.ToLower()]] زي ناتج [[sha256sum]].`, done: R`كله OK، ولو غيّرت حرف في ملف واحد هو بس اللي بيطلع FAIL. والمقارنة بـ [[-eq]] بتعدّي رغم إن [[Get-FileHash]] بيطلّع الهاش كابيتال والملف سمول، لأن [[-eq]] مش بيفرّق؛ و [[-ceq]] كانت هتطلّع FAIL للكل.` },
+            { lvl: 'تحدي', t: R`لاقي الملفات المكررة في فولدر حتى لو أساميها مختلفة: [[Get-ChildItem -Recurse -File | Get-FileHash | Group-Object Hash | Where-Object Count -gt 1]]، واطبع لكل مجموعة المسارات والمساحة الضايعة.`, done: R`لو نسخت ملف بـ ٣ أسامي بيطلع group واحد فيه ٣ مسارات، والمساحة الضايعة = حجم الملف × 2، والملفات اللي شبه بعض بس مش زي بعض بالظبط مبتطلعش. وعلى فولدر كبير بقى أسرع لما عملت [[Group-Object Length]] الأول وحسبت الهاش بس للملفات اللي ليها نفس الحجم.` },
+          ],
           deep: {
             why: "التأكد إن ملف وصل سليم بعد النقل أو نزل بدون تعديل. زي sha256sum في bash.",
             how: R`[[Get-FileHash file.zip]] بيحسب SHA256 افتراضيًا، والناتج object فيه [[Algorithm]] و [[Hash]] (بحروف كابيتال) و [[Path]]. و [[-Algorithm SHA512]] أو [[SHA1]] أو [[MD5]] لو الموقع حاطط نوع تاني، بس MD5 و SHA1 ضعاف ومينفعوش يثبتوا إن محدش لعب في الملف.

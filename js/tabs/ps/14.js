@@ -4,6 +4,14 @@ MORE("ps", [
       t: "ملفات البيانات والجدولة",
       l: 3,
       n: R`CSV و JSON و XML، وإزاي تخلّي السكربت يشتغل لوحده كل يوم`,
+      projects: [
+        { lvl: 'صغير', t: R`CSV لـ JSON`, what: R`[[contacts.csv]] فيه Name و Email و Phones (التليفونات مفصولة بـ [[|]] في نفس الخانة)، وسكربت بيحوّله [[contacts.json]] فيه Phones كـ array بـ [[-split]] و [[ConvertTo-Json -Depth 3]]. من دروس Import-Csv و ConvertTo-Json -Depth.`, done: R`عدد العناصر في JSON بيساوي عدد صفوف الـ CSV، وأي واحد ليه رقم واحد بس برضه Phones بتاعه array (أقواس مربعة)، و [[ConvertFrom-Json]] بيقرا الملف من غير error.` },
+        { lvl: 'صغير', t: R`مبدّل الإعدادات`, what: R`[[set-env.ps1 -Env dev]] أو [[prod]] (عليه [[ValidateSet]]) بيغيّر [[server.port]] و [[logLevel]] في [[appsettings.json]]، وبياخد نسخة [[appsettings.json.bak]] قبل أي تعديل. من درس ConvertTo-Json -Depth.`, done: R`الملف بعد التعديل بيتقري بـ [[ConvertFrom-Json]] والقيم المتداخلة لسه objects مش نصوص، و [[.bak]] فيه القديم، و [[-Env test]] بيرفض من غير ما يلمس الملف.` },
+        { lvl: 'متوسط', t: R`تقرير المصاريف`, what: R`[[expenses.csv]] (Date و Category و Amount) وسكربت بيطلّع مجموع كل فئة في كل شهر، ويكتب [[summary.csv]] و [[summary.json]]، ويطبع أكبر ٣ فئات. من Import-Csv و ConvertTo-Json ودرس Group-Object.`, done: R`مجموع summary بيساوي مجموع الأصل بالظبط، والترتيب بالأرقام مش بالنصوص (100 بعد 9)، وسطر فيه Amount مش رقم بيتطبع كتحذير ومبيوقّفش الباقي.` },
+        { lvl: 'متوسط', t: R`web.config لكل بيئة`, what: R`[[set-webconfig.ps1 -Env dev|prod]] بيعدّل Debug و ApiUrl في web.config بـ [[[xml]]] و [[SelectSingleNode]]، ولو المفتاح مش موجود يضيفه بـ [[CreateElement]]، وبياخد نسخة احتياطي قبل الحفظ. من درس [xml].`, done: R`تشغيله مرتين بنفس البيئة بيدّي نفس الملف (مفيش [[<add>]] متكرر)، والملف لسه XML سليم ([[[xml](Get-Content web.config -Raw)]] من غير error)، والنسخة الاحتياطي فيها القديم.` },
+        { lvl: 'كبير', t: R`سجل الديسك اليومي المجدول`, what: R`[[disk-log.ps1]] بيقرا إعداداته من [[config.json]] (الفولدرات اللي يقيسها والحد الأقصى لحجم كل واحد)، ويزوّد صف لكل فولدر في [[history.csv]] بـ [[Export-Csv -Append]]، ويكتب تحذير لو فولدر عدّى حده، وكل ده جوه [[try / catch]] مع [[Start-Transcript]] و [[exit 1]] لو فيه مشكلة. ومعاه [[register.ps1]] بيسجّله مهمة يومية بس لو مش موجودة. من الوحدة دي و «سكربتات زي المحترفين».`, done: R`[[Start-ScheduledTask]] بيزوّد صفوف جديدة في history.csv من غير ما الهيدر يتكرر، و [[LastTaskResult]] في [[Get-ScheduledTaskInfo]] بيبقى [[0]]. لو كتبت في config فولدر مش موجود، اللوج فيه سطر error و [[LastTaskResult]] بيبقى [[1]]. و [[register.ps1]] مرتين مبيعملش مهمتين.`, ext: R`زوّد تقرير أسبوعي من history.csv بيقولك أكتر فولدر كبر، وابعت النتيجة في إشعار (وحدة «تحكّم في جهازك من الترمنال»)، وخلّي config فيه أكتر من جهاز.` },
+        { lvl: 'فكرة', t: R`بياناتك انت`, what: R`اختار بيانات حقيقية عندك: كشف حساب CSV من البنك، أو لستة كتب، أو درجات، أو export من أي برنامج. وابني عليها أداة بتقرا وتنضّف وتطلّع تقرير JSON أو CSV، وتتشغّل لوحدها كل أسبوع بمهمة مجدولة. انت اللي بتقرر الأعمدة والتقرير.`, done: R`الأداة بتشتغل على ملف جديد من نفس النوع من غير ما تغيّر الكود، والصفوف البايظة بتتطبع كتحذير ومبتوقّفش الباقي، والمهمة بتشتغل في معادها و [[LastTaskResult]] = ٠.`, ext: R`خلّيها تقرا أكتر من صيغة (CSV و JSON و XML) وتطلّع نفس التقرير، وزوّد مقارنة بالأسبوع اللي فات، وحط الإعدادات في ملف config بدل الكود.` },
+      ],
       items: [
         {
           cmd: "Import-Csv",
@@ -29,6 +37,11 @@ $users | ForEach-Object {
 } | Export-Csv domains.csv -NoTypeInformation
 Get-Content domains.csv`,
           try: R`ضيف للـ CSV عمود Active فيه yes أو no، واعمل ملف [[active.csv]] فيه الاسم والإيميل للـ Active بس.`,
+          practice: [
+            { lvl: 'سريع', t: R`CSV فيه عمودين Name و Age، والأعمار [[100]] و [[24]] و [[9]]. رتّبه بـ [[Sort-Object Age]] وبعدين بـ [[Sort-Object { [int]$_.Age }]] واطبع الأسامي.`, done: R`الأول بيطلع ترتيب نصوص: [[100]] ثم [[24]] ثم [[9]] (زي ترتيب القاموس)، والتاني [[9]] ثم [[24]] ثم [[100]]. أي عمود جاي من CSV نص لحد ما تحوّله انت.` },
+            { lvl: 'تطبيق', t: R`ملف من Excel بيستخدم [[;]] بدل الفاصلة (أول سطر [[Name;Email;Age]]). اقراه مرة عادي ومرة بـ [[-Delimiter ';']]، واطبع أسامي الخصايص بـ [[$rows[0].PSObject.Properties.Name]].`, done: R`من غير [[-Delimiter]] بيطلع خاصية واحدة اسمها [[Name;Email;Age]] كلها، ومعاه تلات خصايص Name و Email و Age. اتجرب على 7.6 و 5.1.` },
+            { lvl: 'تحدي', t: R`[[users.csv]] (Name و Email) و [[orders.csv]] (Email و Amount، واليوزر ممكن يبقى ليه كذا طلب أو ولا طلب). طلّع [[totals.csv]] فيه كل يوزر ومجموع طلباته، باستخدام [[Group-Object Email -AsHashTable]] أو hashtable بتبنيه بإيدك.`, done: R`اليوزر اللي ملوش طلبات موجود في الملف بـ [[0]] مش ناقص، ومجموع عمود Total كله بيساوي [[(Import-Csv orders.csv | Measure-Object Amount -Sum).Sum]]، والملف مفيهوش سطر [[#TYPE]] في أوله.` },
+          ],
           flag: "script",
           deep: {
             why: "CSV هو اللغة المشتركة بين الناس والسكربتات: لستة يوزرز من HR، أو تصدير من Excel أو من قاعدة بيانات، أو تقرير هتبعته لمديرك. سكربت يقرا CSV ويعمل حاجة لكل صف (يبعت إيميل، يعمل فولدر، يتأكد من سيرفر) ده من أكتر أنواع الأتمتة فايدة.",
@@ -289,6 +302,11 @@ $cfg | ConvertTo-Json -Depth 10 | Set-Content $path -Encoding utf8
 Get-Content $path
 $cfg | ConvertTo-Json -Depth 1`,
           try: R`اعمل appsettings.json (المحتوى في الـ solCode)، وشغّل المثال، وبعدين غيّر [[-Depth 10]] لـ [[-Depth 2]] في سطر الكتابة وشغّله على نسخة جديدة من الملف وبص عمل إيه في origins.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[@{ a = @{ b = @{ c = @{ d = 1 } } } } | ConvertTo-Json -Compress]] مرة من غير [[-Depth]] ومرة بـ [[-Depth 5]].`, done: R`من غيره بيطلع [[{"a":{"b":{"c":"System.Collections.Hashtable"}}}]]: الافتراضي عمق ٢ والباقي بقى نص. في 7 معاه سطر [[WARNING: Resulting JSON is truncated]] وفي 5.1 من غير ولا تحذير. وبـ [[-Depth 5]] بيطلع [[{"d":1}]] جوه c زي ما هو.` },
+            { lvl: 'تطبيق', t: R`[[package.json]] تجربة فيه [[scripts]] جواها [[build]] بس. زوّد script اسمه [[lint]] قيمته [[eslint .]]، وغيّر [[version]]، واكتب الملف تاني. جرّب الأول [[$pkg.scripts.lint = "eslint ."]] لوحدها.`, done: R`السطر ده لوحده بيطلع [[The property 'lint' cannot be found on this object]] لأن الخاصية مش موجودة أصلًا، فالصح [[Add-Member -NotePropertyName lint -NotePropertyValue "eslint ."]]. وبعد الكتابة [[(Get-Content package.json -Raw | ConvertFrom-Json).scripts.lint]] بيرجّع [[eslint .]] و build لسه موجود.` },
+            { lvl: 'تحدي', t: R`عندك لستة ممكن يبقى فيها عنصر واحد بس. قارن [[@('auth') | ConvertTo-Json]] و [[ConvertTo-Json -InputObject @('auth')]]، وفي 7 جرّب كمان [[@('auth') | ConvertTo-Json -AsArray]]، وفي الآخر [[[pscustomobject]@{ features = @('auth') } | ConvertTo-Json]].`, done: R`الأولى بتطلع [["auth"]] من غير أقواس مربعة (الـ pipe فك اللستة وبعت العنصر لوحده)، و [[-InputObject]] بيطلّعها array، و [[-AsArray]] كمان بس في 7 (5.1 بيقول [[A parameter cannot be found]])، وجوه object الخاصية بتفضل array عادي. يعني لو ملف config بيستنى array، متبعتش اللستة بالـ pipe.` },
+          ],
           flag: "script",
           deep: {
             why: R`سكربت ديبلوي محتاج يغيّر البورت أو رابط الـ API في ملف إعدادات، أو يزوّد version في package.json، أو يحدّث إعدادات VS Code لفريق كامل. تعديل JSON بـ [[-replace]] على النص هش جدًا، والطريقة الصح إنك تفهمه object وتعدّله.`,
@@ -498,6 +516,11 @@ $debug.value = "false"
 $doc.Save($path)
 Select-String -Path $path -Pattern 'Debug'`,
           try: R`احفظ web.config اللي في الـ solCode جنب السكربت، وشغّله. وبعدين عدّل السكربت يغيّر ApiUrl لـ [[https://api.example.com]].`,
+          practice: [
+            { lvl: 'سريع', t: R`اعمل [[app.csproj]] فيه [[<Project><PropertyGroup><TargetFramework>net8.0</TargetFramework></PropertyGroup></Project>]]، واقرا القيمة بالنقطة.`, done: R`[[$doc.Project.PropertyGroup.TargetFramework]] بيطبع [[net8.0]].` },
+            { lvl: 'تطبيق', t: R`زوّد عنصر [[<add key="Feature" value="on" />]] جديد جوه [[appSettings]] في web.config بتاع الدرس بـ [[CreateElement]] و [[SetAttribute]] و [[AppendChild]]، واحفظ، واقرا الملف تاني.`, done: R`[[@($doc.configuration.appSettings.add).Count]] زاد واحد عن الأول، و [[Select-String -Path web.config -Pattern Feature]] بيلاقي السطر الجديد، والملف لسه بيتقري بـ [[[xml]]] من غير error.` },
+            { lvl: 'تحدي', t: R`[[pom.xml]] أوله [[<project xmlns="http://maven.apache.org/POM/4.0.0">]] وجواه [[<version>1.2.0</version>]]. اقرا الـ version بالنقطة، وبعدين بـ [[SelectSingleNode('//version')]]، وبعدين بـ [[Select-Xml]] و [[-Namespace @{ m = 'http://maven.apache.org/POM/4.0.0' }]] و [[-XPath '//m:version']].`, done: R`النقطة بتجيب [[1.2.0]] عادي، و [[SelectSingleNode('//version')]] بيرجّع [[$null]] بسبب الـ xmlns (ودي الحالة اللي الدرس حذّر منها)، و [[Select-Xml]] بالـ namespace بيجيب [[1.2.0]] في [[.Node.InnerText]]. اتجرب على 7.6 و 5.1.` },
+          ],
           flag: "script",
           deep: {
             why: "سكربت ديبلوي على ويندوز سيرفر غالبًا هيلمس web.config: يغيّر connection string أو يقفل Debug قبل الإنتاج. أو سكربت بيقرا نسخة مشروع .NET من الـ .csproj. التعديل بـ [[-replace]] على النص بيبوظ مع أول مسافة أو ترتيب مختلف.",
@@ -702,6 +725,11 @@ Start-ScheduledTask -TaskName "DailyBackup"
 Get-ScheduledTaskInfo -TaskName "DailyBackup" | Select-Object LastRunTime, LastTaskResult, NextRunTime
 Unregister-ScheduledTask -TaskName "DailyBackup" -Confirm:$false`,
           try: R`سجّل مهمة بتشغّل backup.ps1 (درس backup.ps1) كل يوم، وشغّلها بـ Start-ScheduledTask، واستنى ثواني واقرا Get-ScheduledTaskInfo، واتأكد إن الـ zip اتعمل. وافتح Task Scheduler من Start وشوفها تحت Task Scheduler Library.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[Get-ScheduledTask -TaskPath '\' | Select-Object TaskName, State]]: المهام اللي في الجذر، وأغلبها اتعملت بإيد حد أو من برنامج اتسطّب، مش من ويندوز نفسه.`, done: R`جدول (ممكن يبقى فاضي) فيه اسم كل مهمة وحالتها زي [[Ready]] أو [[Disabled]]، وتقدر تقول كل مهمة فيهم جت من أنهي برنامج.` },
+            { lvl: 'تطبيق', t: R`اعمل triggers من غير ما تسجّل أي مهمة: [[New-ScheduledTaskTrigger -Daily -At 9am]] و [[New-ScheduledTaskTrigger -AtLogOn]] و [[New-ScheduledTaskTrigger -Weekly -DaysOfWeek Friday -At 6pm]]، واطبع [[.CimClass.CimClassName]] لكل واحد.`, done: R`[[MSFT_TaskDailyTrigger]] و [[MSFT_TaskLogonTrigger]] و [[MSFT_TaskWeeklyTrigger]]، ومفيش مهمة جديدة ظهرت في [[Get-ScheduledTask]]: الـ New- بيعمل object في الذاكرة بس، والتسجيل بيحصل في Register.` },
+            { lvl: 'تحدي', t: R`[[register-backup.ps1]] بيشيك الأول بـ [[Get-ScheduledTask -TaskName DailyBackup -ErrorAction SilentlyContinue]]: لو موجودة يطبع «already registered» ويخرج بـ ٠، ولو لأ يسجّلها. وقبلها اعرف [[(Get-Command Register-ScheduledTask).Parameters.ContainsKey('WhatIf')]]، ولو [[False]] اعمل انت [[-DryRun]] بيطبع الأمر والمعاد بس.`, done: R`[[ContainsKey('WhatIf')]] بيرجّع [[False]] لـ Register و [[True]] لـ [[Unregister-ScheduledTask]] (في 7.6 و 5.1)، فالـ [[-DryRun]] بتاعك هو الطريقة الوحيدة تجرّب. والتشغيل التاني بيطبع already من غير error، و [[@(Get-ScheduledTask -TaskName DailyBackup).Count]] بيفضل [[1]].` },
+          ],
           deep: {
             why: "الباك أب اللي بيعتمد إنك «تفتكر تشغّله» مش هيتعمل. نفس الحكاية تنضيف الـ Downloads، وتقرير مساحة الديسك، ورفع الشغل على GitHub. سكربت مكتوب كويس + مهمة مجدولة = حاجة بتحصل لوحدها كل يوم من غير ما تفكر فيها.",
             how: R`المهمة بتشتغل بيئة مختلفة عن الترمنال بتاعك، وده سبب أغلب المشاكل:

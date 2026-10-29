@@ -18,8 +18,12 @@ MORE("ps", [
       lab: R`New-Item -ItemType Directory "$HOME\lab\ps-find" -Force
 Set-Location "$HOME\lab\ps-find"`,
       projects: [
-        { t: R`دليل الأوامر بتاعك`, what: R`سكربت بياخد كلمة (زي [[service]])، يجيب كل أمر فيها بـ [[Get-Command]]، ويطلّع ملف Markdown فيه لكل أمر: اسمه، وسطر الاستخدام من [[-Syntax]]، وأول سطر من [[Get-Help]]. مرجعك انت، ومن دروس ٢ و ٣ و ٦.` },
-        { t: R`بوابة قبل التنفيذ`, what: R`دالة بتاخد اسم أمر و parameters، تشغّله بـ [[-WhatIf]] الأول وتطبع اللي هيحصل، وتسألك تكمّل ولا لأ. أول حاجة تحطها في [[$PROFILE]] بتاعك. من دروس ٤ و ٨.` },
+        { lvl: 'صغير', t: R`بطاقة أمر`, what: R`دالة [[card]] بتاخد اسم أمر وتطبع: سطر الاستخدام ([[-Syntax]])، والاختصارات بتاعته ([[Get-Alias -Definition]])، وبيدعم [[-WhatIf]] ولا لأ ([[Parameters.ContainsKey]]). من دروس [[-Syntax]] و [[Get-Alias]] و [[-WhatIf]].`, done: R`[[card Remove-Item]] بيطبع [[ri]] و [[del]] ضمن الاختصارات و «بيدعم WhatIf: آه»، و [[card Get-Date]] بيقول «لأ»، واسم أمر مش موجود بيطبع رسالة مفهومة مش error أحمر.` },
+        { lvl: 'صغير', t: R`إيه الجديد في جهازي؟`, what: R`سكربت بيحفظ أسامي كل الأوامر ([[Get-Command]]) في ملف، ولما تشغّله تاني بيقارن بـ [[Compare-Object]] ويقولك إيه الأوامر اللي ظهرت أو اختفت من آخر مرة. مفيد بعد ما تسطّب موديول أو برنامج. من درس [[Get-Command -Verb]] و [[-Noun]].`, done: R`تشغيلة أولى بتعمل الملف وتقول كده. لو عرّفت دالة جديدة أو عملت [[Import-Module]] لموديول وشغّلته تاني، بيطبع أسامي أوامرها هي بس، وتشغيلة تالتة من غير تغيير بتقول «مفيش جديد».` },
+        { lvl: 'متوسط', t: R`دليل الأوامر بتاعك`, what: R`سكربت بياخد كلمة (زي [[service]])، يجيب كل أمر فيها بـ [[Get-Command]]، ويطلّع ملف Markdown فيه لكل أمر: اسمه، وسطر الاستخدام من [[-Syntax]]، وأول سطر من [[Get-Help]]. مرجعك انت، ومن دروس ٢ و ٣ و ٦.`, done: R`[[.\guide.ps1 Service]] بيعمل [[Service.md]] فيه قسم لكل أمر من [[Get-Command -Noun Service]] (نفس العدد بالظبط)، وكل قسم فيه سطر الاستخدام في code block، والأمر اللي مساعدته مش متحمّلة بيكتب «مفيش وصف» بدل ما السكربت يقع.` },
+        { lvl: 'متوسط', t: R`بوابة قبل التنفيذ`, what: R`دالة بتاخد اسم أمر و parameters، تشغّله بـ [[-WhatIf]] الأول وتطبع اللي هيحصل، وتسألك تكمّل ولا لأ. أول حاجة تحطها في [[$PROFILE]] بتاعك. من دروس ٤ و ٨.`, done: R`[[Invoke-Safely Remove-Item @{ Path = '*.tmp' }]] بيطبع سطور [[What if]] ويسألك. لو رديت لأ كل الملفات لسه موجودة، ولو آه بتتمسح. وأمر مش بيدعم [[-WhatIf]] (زي [[Set-StrictMode]]) بيترفض برسالة بدل ما يتنفّذ على طول.` },
+        { lvl: 'كبير', t: R`مفسّر الأخطاء`, what: R`أمر [[why]] بيقرا آخر خطأ في [[$Error]] ويطبع شرح بالعربي: النوع، والكود، والسطر، ونصيحة حسب النوع ([[ItemNotFoundException]]: اتأكد من المسار بـ [[Test-Path]]، [[ParameterBindingException]]: يطبع [[-Syntax]] بتاع الأمر نفسه، [[UnauthorizedAccessException]]: صلاحيات أو أدمن، [[CommandNotFoundException]]: يدوّر بـ [[Get-Command]] على أسامي شبهه). جدول النصايح في hashtable، وكل شرح بيتسجل في لوج. من كل دروس الوحدة.`, done: R`٤ أخطاء مقصودة بيطلّعوا ٤ نصايح مختلفة، و [[Get-Itme]] (غلط إملائي) بيقترح [[Get-Item]]. لو [[$Error]] فاضي بيقول «مفيش أخطاء». فيه [[test.ps1]] بيعمل الأخطاء الأربعة ويتأكد إن النوع اتعرف صح ويخرج بـ ٠. واللوج فيه سطر لكل مرة اتنادى.`, ext: R`زوّد نوع جديد كل ما تقابل خطأ مش متغطّي، وخلي [[why -Last 5]] يشرح آخر ٥، وحطه في [[$PROFILE]] عشان يبقى معاك في كل نافذة.` },
+        { lvl: 'فكرة', t: R`اتعلم موديول لوحدك`, what: R`اختار موديول على جهازك عمرك ما استخدمته (شوف [[Get-Module -ListAvailable]]، زي [[NetTCPIP]] أو [[ScheduledTasks]] أو [[Defender]])، واتعلمه بالدورة بس: الأفعال اللي فيه، والـ syntax، وجرّب بـ [[-WhatIf]]. وبعدين ابني بيه أداة صغيرة بتحل مشكلة عندك انت.`, done: R`عندك ملف ملاحظات فيه كل أمر استخدمته وإزاي وصلتله (أنهي [[Get-Command]] وأنهي سطر syntax)، والأداة بتشتغل، وأي أمر فيها بيغيّر حاجة اتجرّب بـ [[-WhatIf]] الأول.`, ext: R`حوّل الملاحظات لدليل للي بعدك، واعمل للأداة parameters بـ [[ValidateSet]] عشان يبقى فيها إكمال، وشاركها مع حد بيستخدم نفس الموديول.` },
       ],
       n: R`مش هتحفظ ٥٠٠ أمر. هتحفظ الدورة اللي بتوصلك لأي أمر: تترجم المهمة لفعل واسم، تصطاد الأمر، تقرا شكله، تجرّبه من غير ما ينفّذ، وتفهم الخطأ لو وقع`,
       items: [
@@ -53,6 +57,11 @@ Get-Command Stop-Service -Syntax
 Stop-Service -Name Spooler -WhatIf
 Get-Service -Name Spooler`,
           try: R`امشي بنفس الدورة على مهمة تانية: «عايز أقفل برنامج شغّال». الفعل إيه؟ والاسم إيه؟ اصطاد الأمر بـ [[Get-Command -Noun Process]]، واقرا [[-Syntax]] بتاعه، وجرّب بـ [[-WhatIf]] على [[notepad]].`,
+          practice: [
+            { lvl: 'سريع', t: R`امشي الدورة على «عايز أعرف الـ IP بتاعي»: الفعل إيه والاسم إيه؟ ودوّر بـ [[Get-Command -Noun *IPAddress*]].`, done: R`لقيت [[Get-NetIPAddress]] في القايمة جنب [[New-NetIPAddress]] و [[Set-NetIPAddress]]، وعرفت إن [[Get]] هو اللي بيقرا بس، و [[Get-NetIPAddress -AddressFamily IPv4]] طلّع عنوانك.` },
+            { lvl: 'تطبيق', t: R`المهمة: «عايز أضغط فولدر في zip». امشي الخمس خطوات كلها لحد [[-WhatIf]]، من غير ما تفتح جوجل.`, done: R`وصلت لـ [[Compress-Archive]] من [[Get-Command -Noun *Archive*]]، وعرفت من [[-Syntax]] إن [[-DestinationPath]] اللي بتحدد اسم الـ zip، و [[-WhatIf]] طبع سطر [[What if]] و [[Test-Path]] على اسم الـ zip بيطبع False.` },
+            { lvl: 'تحدي', t: R`المهمة: «الجهاز اتعمله restart آخر مرة إمتى؟». جرّبها في PowerShell 7 وفي 5.1، ولو الدورة مجابتش أمر، دوّر بالاسم في CIM ([[Get-CimInstance]] من وحدة «تحكّم في جهازك»).`, done: R`في 7 [[Get-Command *uptime*]] بيلاقي [[Get-Uptime]] و [[Get-Uptime -Since]] بيدّيك وقت التشغيل. في 5.1 مبيلاقيش حاجة، فبتوصل لـ [[(Get-CimInstance Win32_OperatingSystem).LastBootUpTime]]. والاتنين بيدّوا نفس الوقت تقريبًا (فرق ثواني).` },
+          ],
           sol: R`الفعل [[Stop]] والاسم [[Process]]، فالأمر [[Stop-Process]].
 
 ~~~text الناتج (PowerShell 7.6)
@@ -281,6 +290,11 @@ Get-Command -Module Microsoft.PowerShell.Management
 Get-Command -ParameterName WhatIf
 Get-Command -CommandType Application`,
           try: R`دوّر على كل الأوامر اللي بتشتغل على الملفات بـ [[Get-Command -Noun Item]]، وبعدين عدّ كام أمر عندك في موديول [[Microsoft.PowerShell.Management]] بـ [[(Get-Command -Module Microsoft.PowerShell.Management).Count]].`,
+          practice: [
+            { lvl: 'سريع', t: R`طلّع كل أوامر الـ CSV بـ [[Get-Command -Noun Csv]].`, done: R`٤ أوامر: [[ConvertFrom-Csv]] و [[ConvertTo-Csv]] و [[Export-Csv]] و [[Import-Csv]]. وتقدر تقول الفرق من الفعل بس: [[Export]] بيكتب ملف و [[ConvertTo]] بيرجّع نص. ولو كتبت [[*Csv*]] بالنجوم هتلاقي معاهم أوامر [[Pcsv]] ملهاش علاقة.` },
+            { lvl: 'تطبيق', t: R`عندك موديول مش عارف بيعمل إيه: [[Get-Command -Module Microsoft.PowerShell.Archive]].`, done: R`أمرين بس: [[Compress-Archive]] و [[Expand-Archive]]، وعرفت من الفعل مين بيضغط ومين بيفك قبل ما تقرا أي مساعدة.` },
+            { lvl: 'تحدي', t: R`اعمل «خريطة» لموديول [[Microsoft.PowerShell.Utility]]: كام أمر لكل فعل، متترتبين من الأكتر.`, done: R`[[Get-Command -Module Microsoft.PowerShell.Utility | Group-Object Verb | Sort-Object Count -Descending]] بيطلّع جدول كل فعل وعدده، وأول صف [[Get]] في 7 و 5.1. وتقدر من الجدول تقول الموديول ده بيعمل إيه في جملة.` },
+          ],
           sol: R`~~~text الناتج (PowerShell 7.6)
 PS> Get-Command -Noun Item
 
@@ -495,6 +509,11 @@ Get-Command Stop-Service -Syntax
 Get-ChildItem C:\Windows -Filter *.ini
 Get-ChildItem -Path C:\Windows -Filter *.ini`,
           try: R`اطبع [[Get-Command New-Item -Syntax]]، وجاوب من السطر: إيه الـ parameter الإجباري؟ وإيه القيم المسموحة لـ [[-ItemType]]؟`,
+          practice: [
+            { lvl: 'سريع', t: R`اقرا [[Get-Command Copy-Item -Syntax]] وقول من السطر الأول مين بالموقع ومين إجباري.`, done: R`[[-Path]] إجباري وبالموقع (الاسم بس بين أقواس)، و [[-Destination]] اختياري بالكامل وبالموقع التاني، فـ [[Copy-Item a.txt b.txt]] صح من غير أسامي parameters.` },
+            { lvl: 'تطبيق', t: R`جرّب [[Get-Process -Name pwsh -Id $PID]]، وبعدين [[(Get-Command Get-Process).ParameterSets.Name]].`, done: R`الأول بيرفض بـ [[Parameter set cannot be resolved using the specified named parameters]]، والتاني بيوريك إن [[Name]] و [[Id]] في مجموعتين مختلفتين، فمينفعوش مع بعض.` },
+            { lvl: 'تحدي', t: R`اعرف أنهي parameters في [[Get-ChildItem]] بتاخد قيمتها من الـ pipeline، من غير صفحة المساعدة: [[(Get-Command Get-ChildItem).Parameters.Values | Where-Object { $_.Attributes.ValueFromPipelineByPropertyName -contains $true }]].`, done: R`بيطلع [[Path]] و [[LiteralPath]] بس، في 7 و 5.1. وده اللي بيخلي [[Get-Item C:\Windows | Get-ChildItem]] تشتغل: الـ object الداخل بيتربط بالمسار.` },
+          ],
           sol: R`~~~text الناتج (PowerShell 7.6)
 PS> Get-Command New-Item -Syntax
 
@@ -734,6 +753,11 @@ $WhatIfPreference = $true
 $WhatIfPreference = $false`,
           flag: "danger",
           try: R`اعمل فولدر تجربة وحط فيه ملفات، وجرّب [[Get-ChildItem -Recurse | Remove-Item -WhatIf]] وعدّ كام سطر «What if» طلع. بعدين غيّر الفلتر لـ [[-Filter *.log]] وشوف الفرق.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[New-Item test.txt -WhatIf]] وبعدها [[Test-Path test.txt]].`, done: R`سطر [[What if: Performing the operation "Create File"]] وبعده False: الأمر قالك هيعمل إيه ومعملوش.` },
+            { lvl: 'تطبيق', t: R`شغّل [[$WhatIfPreference = $true]] في الجلسة، وبعدين [[Remove-Item *.txt]] و [[Set-Content x.txt hi -WhatIf:$false]]، وبعدين رجّعه [[$false]].`, done: R`كل ملفات [[txt]] لسه موجودة وطلع سطر [[What if]] لكل واحد، و [[x.txt]] اتعمل فعلًا رغم إن الوضع شغال لأن [[-WhatIf:$false]] بتكسبه، وبعد ما رجّعته كل حاجة بتتنفّذ عادي.` },
+            { lvl: 'تحدي', t: R`دوّر على أوامر بتغيّر حاجة ومفيهاش [[-WhatIf]] أصلًا: [[Get-Command -Verb Set, Remove, Clear -Module Microsoft.PowerShell.* | Where-Object { $_.Parameters -and -not $_.Parameters.ContainsKey('WhatIf') }]].`, done: R`القايمة فيها أوامر زي [[Set-StrictMode]] و [[Set-Location]]، وتقدر تقول لكل واحد فيهم ليه مينفعش تعتمد على [[-WhatIf]] معاه وتجرّبه إزاي بأمان (في نافذة لوحدها أو على نسخة).` },
+          ],
           sol: R`~~~text الناتج (PowerShell 7.6، فولدر فيه a.txt و b.txt و old.log)
 PS> Remove-Item *.txt -WhatIf
 What if: Performing the operation "Remove File" on target "C:\...\lab\a.txt".
@@ -979,6 +1003,11 @@ Get-Alias | Measure-Object
 Set-Alias gh Get-Help
 Get-Command gci | Select-Object CommandType, Name, Definition`,
           try: R`شوف [[%]] و [[?]] بيشاوروا على إيه بـ [[Get-Alias -Definition ForEach-Object]] و [[Get-Alias -Definition Where-Object]]. وبعدين حاول [[Get-Alias '?']] وشوف الناتج الغريب واعرف ليه.`,
+          practice: [
+            { lvl: 'سريع', t: R`فك [[gci | ? Length -gt 1KB | % Name]] بـ [[Get-Alias]] واكتبه بالأسامي الكاملة.`, done: R`كتبته [[Get-ChildItem | Where-Object Length -gt 1KB | ForEach-Object Name]]، والسطرين في نفس الفولدر بيطلّعوا نفس الأسامي ([[Compare-Object]] بين الناتجين مبيطبعش حاجة).` },
+            { lvl: 'تطبيق', t: R`شغّل [[Get-Alias curl]] في [[pwsh -NoProfile]] وفي [[powershell -NoProfile]].`, done: R`في 5.1 بيرد [[curl -> Invoke-WebRequest]]، وفي 7 بيقول مفيش alias، فـ [[curl]] هناك بيشغّل [[curl.exe]] الحقيقي. ودي ليه سكربت فيه [[curl -o]] بيشتغل في نسخة وبيقع في التانية.` },
+            { lvl: 'تحدي', t: R`سكربت [[expand-aliases.ps1]] بياخد ملف .ps1 ويطبع كل اختصار فيه واسمه الكامل. قارن بالاسم بالظبط ([[Get-Alias | Where-Object Name -eq $word]])، مش [[Get-Alias $word]].`, done: R`على ملف فيه [[gci]] و [[?]] و [[%]] بيطبع ٣ سطور بالظبط. ولو استخدمت [[Get-Alias '?']] هتلاقيها بترجّع ٤ اختصارات، لأن [[?]] هناك wildcard معناها «أي حرف واحد».` },
+          ],
           sol: R`~~~text الناتج (PowerShell 7.6)
 PS> Get-Alias -Definition ForEach-Object
 
@@ -1241,6 +1270,11 @@ Get-Help about_Operators -Online
 Update-Help -Scope CurrentUser -ErrorAction SilentlyContinue
 Get-Help Get-ChildItem -Examples`,
           try: R`شغّل [[Get-Help about_*]] على جهازك وعدّ كام موضوع طلع. لو أقل من ٢٠، يبقى ملفات المساعدة مش متحمّلة. وجرّب [[Get-Help about_Comparison_Operators -Online]] من غير أي تحميل.`,
+          practice: [
+            { lvl: 'سريع', t: R`اعدّ صفحات المفاهيم عندك: [[(Get-Help about_*).Count]].`, done: R`لو الرقم صغير (أقل من ٢٠) ملفات المساعدة مش متحمّلة. اكتب الرقم، وبعد [[Update-Help -Scope CurrentUser]] في 7 اعدّ تاني والرقم يزيد.` },
+            { lvl: 'تطبيق', t: R`[[Get-Help Get-ChildItem -Examples]] قبل التحميل وبعده.`, done: R`قبل التحميل بيطلّع الاسم والاختصارات بس، ومعاهم [[Get-Help cannot find the Help files for this cmdlet on this computer. It is displaying only partial help.]]. وبعد التحميل بيطلّع أمثلة مرقّمة كل واحد فيه كود وشرح.` },
+            { lvl: 'تحدي', t: R`اعمل cheat sheet للعوامل: لكل صفحة من [[Get-Help about_*Operators*]] اكتب في [[operators.md]] عنوان باسمها وتحته الـ Synopsis.`, done: R`الملف فيه عنوان لكل صفحة رجعت من الأمر (نفس العدد)، ومفيش عنوان تحته سطر فاضي. ولو المساعدة مش متحمّلة السكربت بيقول كده ويقف بدل ما يكتب ملف فاضي.` },
+          ],
           sol: R`~~~text الناتج على جهاز لسه مشغّلش Update-Help (PowerShell 7.6)
 PS> Get-Help about_*
 
@@ -1521,6 +1555,11 @@ $r2.CompletionMatches | Select-Object -First 10 -ExpandProperty CompletionText
 Get-PSReadLineKeyHandler -Bound | Where-Object Function -like '*Complete*'`,
           flag: "keys",
           try: R`في الترمنال: اكتب [[Get-Ch]] ودوس Tab. وبعدين اكتب [[Get-Service -]] ودوس [[Ctrl+Space]] وشوف القايمة. وبعدين [[New-Item -ItemType ]] ودوس Tab كذا مرة.`,
+          practice: [
+            { lvl: 'سريع', t: R`اكتب [[New-Item -ItemType ]] ودوس Tab كذا مرة، وقارن بـ [[TabExpansion2]] على نفس السطر.`, done: R`بيلف على ٥ قيم: [[File]] و [[Directory]] و [[SymbolicLink]] و [[Junction]] و [[HardLink]]، ونفس الخمسة طلعوا من [[TabExpansion2]].` },
+            { lvl: 'تطبيق', t: R`اكتب [[Get-Process | Sort-Object ]] ودوس [[Ctrl+Space]].`, done: R`القايمة فيها خصائص الـ process نفسها (منها [[CPU]] و [[WorkingSet64]] و [[StartTime]])، يعني الإكمال عارف نوع الـ object اللي جاي من الـ pipeline. اختار [[CPU]] وزوّد [[-Descending]] وشغّله.` },
+            { lvl: 'تحدي', t: R`اكتب دالة [[Set-Mode]] فيها parameter عليه [[ValidateSet('fast','safe','off')]]، وشوف الإكمال بيقترح إيه بعد [[Set-Mode -Mode ]].`, done: R`Tab بيلف على التلات قيم بس، و [[TabExpansion2]] بيرجّعهم [[fast]] و [[off]] و [[safe]] (مترتبين أبجديًا). يعني أي ValidateSet بتكتبه بيدّي اليوزر إكمال مجانًا.` },
+          ],
           sol: R`[[Get-Ch]] + Tab بتكمّل لـ [[Get-ChildItem]] على طول، لأن فيه احتمال واحد بس:
 
 ~~~text ناتج TabExpansion2 (PowerShell 7.6)
@@ -1784,6 +1823,11 @@ $Error[0].FullyQualifiedErrorId
 $Error[0].InvocationInfo.ScriptLineNumber
 Get-Error`,
           try: R`غلّط بنفسك: شغّل [[Get-Content "C:\Windows\System32\config\SAM"]] (ملف محمي)، وبعدين [[Get-Content "C:\nope.txt"]] (ملف مش موجود). قارن [[$Error[0].Exception.GetType().FullName]] في الحالتين.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[Get-Item C:\nope]] وبعدها [[$Error[0].FullyQualifiedErrorId]].`, done: R`بيطبع [[PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand]] في 7 و 5.1: قبل الفاصلة السبب، وبعدها الأمر اللي طلّعه.` },
+            { lvl: 'تطبيق', t: R`اكتب [[try]]/[[catch]] بيمسك نوع [[ItemNotFoundException]] بس ويطبع «الملف مش موجود»، وجرّبه على [[Get-Content C:\nope.txt -ErrorAction Stop]] وعلى [[Get-Content C:\Windows\System32\config\SAM -ErrorAction Stop]].`, done: R`الملف المش موجود بيطبع رسالتك انت، والملف المحمي مبيدخلش الـ catch ده وبيطلع error أحمر نوعه [[System.UnauthorizedAccessException]]، لأن ده غلط تاني محتاج حل تاني.` },
+            { lvl: 'تحدي', t: R`دالة [[Show-LastError]] بتطبع لآخر خطأ: النوع، و [[FullyQualifiedErrorId]]، ورقم السطر، والسطر نفسه ([[InvocationInfo.Line]]). جرّبها على ٣ أخطاء: مسار غلط، و [[Get-ChildItem -Depht 1]]، وملف محمي.`, done: R`التلاتة بيطلّعوا ٣ أنواع مختلفة: [[ItemNotFoundException]] و [[ParameterBindingException]] (والكود بيبدأ بـ [[NamedParameterNotFound]]) و [[UnauthorizedAccessException]]. ولو [[$Error]] فاضي الدالة بتقول كده بدل ما تقع.` },
+          ],
           sol: R`الاتنين بيفشلوا، بس بنوعين مختلفين — وده بيحدد الحل:
 
 | الحالة | النوع | يعني |

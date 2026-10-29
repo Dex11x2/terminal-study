@@ -27,6 +27,14 @@ Set-Location $HOME\lab`,
       t: "الأساسيات والمساعدة",
       l: 1,
       n: "افهم منطق PowerShell وانت هتعرف تخمّن أي أمر",
+      projects: [
+        { lvl: 'صغير', t: R`انت في أنهي PowerShell؟`, what: R`سطر واحد تحفظه في ملف notes وتلزقه في أي نافذة، بيطبع الـ edition والنسخة ومسار البرنامج: [["$($PSVersionTable.PSEdition) $($PSVersionTable.PSVersion) $((Get-Process -Id $PID).Path)"]]. من درس «ثبّت PowerShell 7» و «رموز PowerShell» (الـ [[$( )]] جوه النص).`, done: R`نفس السطر بيشتغل في [[pwsh]] و [[powershell]] من غير تعديل: في 7 بيبدأ بـ [[Core 7]] والمسار بيخلص بـ [[pwsh.exe]]، وفي 5.1 بيبدأ بـ [[Desktop 5.1]] والمسار بيخلص بـ [[powershell.exe]].` },
+        { lvl: 'صغير', t: R`كارت لكل أمر جديد`, what: R`اختار ٥ أوامر عمرك ما استخدمتها (هاتهم من [[Get-Command -Verb Get]])، ولكل واحد اكتب في ملف نص: الفعل والاسم ومعناهم، والـ aliases بتاعته من [[Get-Alias -Definition]]، ومثال واحد من [[Get-Help -Examples]] أو [[-Online]]. من دروس «اسم الأمر فعل-اسم» و «اقرا الشرح» و «دوّر على أمر».`, done: R`الملف فيه ٥ كروت، كل كارت فيه التلات حاجات، وكل مثال كتبته شغّلته فعلًا واشتغل من غير error (أو كاتب جنبه «مالوش alias» لو Get-Alias رجّع error).` },
+        { lvl: 'متوسط', t: R`قاموس bash لـ PowerShell`, what: R`جدول بـ ١٠ أوامر bash انت عارفها ([[ls]] و [[cat]] و [[cd]] و [[rm]] و [[cp]] و [[mv]] و [[pwd]] و [[ps]] و [[kill]] و [[grep]])، وقصاد كل واحد الـ cmdlet الحقيقي من [[Get-Alias]]، ونوعه من [[Get-Command]]، وأهم parameter فيه من [[Get-Help -Parameter]]. اعمل الجدول مرة في 7 ومرة في 5.1. من كل دروس الوحدة.`, done: R`الجدول ١٠ سطور، والأمر اللي مالوش alias (زي [[grep]]) مكتوب قصاده «مفيش» مش متخمّن. وكاتب تحته الفرق اللي لقيته بين 7 و 5.1 (مثلًا [[curl]] alias في 5.1 بس).` },
+        { lvl: 'متوسط', t: R`خريطة ٣ objects`, what: R`اختار ٣ حاجات: ملف ([[Get-Item]])، والـ PowerShell اللي انت فيه ([[Get-Process -Id $PID]])، والتاريخ ([[Get-Date]]). لكل واحدة طلّع الـ TypeName بـ [[Get-Member]]، واختار ٥ properties مفيدة، واطبع كل واحدة بالشكل [[(Get-Date).DayOfWeek]]. من دروس «Get-Member» و «رموز PowerShell».`, done: R`عندك ١٥ سطر بيشتغلوا من غير error، وكل سطر جنبه تعليق بيقول القيمة دي معناها إيه بكلامك (مثلًا [[StartTime]] امتى النافذة اتفتحت).` },
+        { lvl: 'كبير', t: R`تقرير بيئة PowerShell`, what: R`سكربت [[env-report.ps1]] تشغّله بـ [[pwsh -File .\env-report.ps1]]، بيطبع: الـ edition والنسخة والمسار، وعدد الـ aliases ([[(Get-Alias).Count]])، وعدد الأوامر المتاحة ([[(Get-Command).Count]])، والموديول اللي جاي منه [[Get-ChildItem]]. ولو النسخة أقل من 7 بـ [[if ($PSVersionTable.PSVersion.Major -lt 7) { ... }]] يطبع تحذير واضح فيه أمر التسطيب بـ winget. وفي الآخر بيحفظ نفس الكلام في [[env-report.txt]] بـ [[>]] (بيكتب فوق النسخة القديمة، فتشغيله تاني آمن). بيجمع كل دروس الوحدة.`, done: R`[[pwsh -File .\env-report.ps1]] و [[powershell -File .\env-report.ps1]] الاتنين بيخلصوا من غير ولا سطر أحمر، والتحذير بيظهر في 5.1 بس. و [[env-report.txt]] فيه آخر تشغيلة بس، مش التشغيلتين ورا بعض. (لو 5.1 رفض يشغّل الملف، ده الـ ExecutionPolicy واتشرح في وحدة «البيئة والإعدادات».)`, ext: R`زوّد في التقرير الموديولات المتسطّبة اللي ليها نسخة أحدث، ومسار [[$PROFILE]]، وبعد وحدة الـ functions خليه دالة [[Get-EnvReport]] بترجّع object بدل نص عشان تقدر تصدّره JSON.` },
+        { lvl: 'فكرة', t: R`اتعلّم موديول لوحدك`, what: R`[[Get-Module -ListAvailable]] بيطلّع موديولات على جهازك عمرك ما فتحتها. اختار واحد، وهات أوامره بـ [[Get-Command -Module]]، واختار منهم ٣ تفهمهم بـ [[Get-Help]] و [[Get-Member]] بس، من غير ما تدوّر على النت. انت اللي بتختار الموديول والأوامر.`, done: R`عندك ملف فيه اسم الموديول، والتلات أوامر، ولكل واحد سطر شغّلته فعلًا وناتجه، وجملة بكلامك بتقول الأمر ده ينفعك في إيه.`, ext: R`كرّرها كل أسبوع بموديول جديد، وخلّي الملف ده «مرجعك» الشخصي. ولما توصل لوحدة الـ functions، حوّل كل كارت لدالة صغيرة بتطبع المثال بتاعه.` },
+      ],
       items: [
         {
           cmd: "pwsh",
@@ -40,6 +48,11 @@ Set-Location $HOME\lab`,
 pwsh
 $PSVersionTable.PSVersion`,
           try: "سطّبه واتأكد إن النسخة 7 أو أكتر.",
+          practice: [
+            { lvl: 'سريع', t: R`افتح [[pwsh]] و [[powershell]] واكتب في كل واحد [[$PSVersionTable.PSEdition]] وبعده [[$PSVersionTable.PSVersion.Major]].`, done: R`7 بيطبع [[Core]] و [[7]]، و 5.1 بيطبع [[Desktop]] و [[5]]. وبقيت تعرف انت في أنهي واحد من غير ما تبص على لون النافذة.` },
+            { lvl: 'تطبيق', t: R`اعرف مسار البرنامج اللي شغّال حاليًا بـ [[(Get-Process -Id $PID).Path]] في النسختين. [[$PID]] رقم العملية بتاعة النافذة اللي انت فيها.`, done: R`في 7 المسار بيخلص بـ [[pwsh.exe]]، وفي 5.1 بيخلص بـ [[System32\WindowsPowerShell\v1.0\powershell.exe]]. يعني فعلًا برنامجين منفصلين على الديسك.` },
+            { lvl: 'تحدي', t: R`من جوه نافذة 7، شغّل أمر واحد في 5.1 ورجّع نتيجته من غير ما تفتح نافذة: [[powershell -NoProfile -Command '$PSVersionTable.PSVersion.ToString()']].`, done: R`بيطبع رقم بيبدأ بـ [[5.1.]]، وبعدها [[$PSVersionTable.PSVersion.Major]] في نفس النافذة لسه بيقول [[7]]. وتقدر تشرح ليه الـ single quotes مهمة هنا (من غيرها 7 كان هيبدّل المتغير بقيمته هو قبل ما يبعته).` },
+          ],
           deep: {
             why: "PowerShell مش مجرد terminal بديل لـ CMD. هو بيئة برمجة كاملة على ويندوز، وبيشتغل كمان على الماك ولينكس. لما بتشتغل على ويندوز، ده اللي هتستخدمه للأتمتة وإدارة السيرفرات.",
             how: R`ويندوز 10 فيه اتنين: Windows PowerShell 5.1 (القديمة المبنية على .NET Framework، موجودة دايمًا) وPowerShell 7+ (الجديدة متعددة المنصات، محتاج تسطّبها). الجديدة (pwsh.exe) أسرع وعندها features أكتر، وهي اللي ينصح بيها.
@@ -175,6 +188,11 @@ Major  Minor  Build  Revision
           example: R`Get-Alias ls
 Get-Alias -Definition Get-ChildItem`,
           try: "اعرف كل aliases بتاعة Get-Content.",
+          practice: [
+            { lvl: 'سريع', t: R`اعرف كل الـ aliases بتاعة [[Get-Content]] و [[Get-ChildItem]] بـ [[Get-Alias -Definition]].`, done: R`Get-Content ليه [[cat]] و [[gc]] و [[type]]، و Get-ChildItem ليه [[dir]] و [[gci]] و [[ls]]، ونفس التلاتة في 7 و 5.1.` },
+            { lvl: 'تطبيق', t: R`عايز «تمسح» حاجة ومش متأكد الفعل اسمه إيه: جرّب [[Get-Verb Remove]] و [[Get-Verb Delete]].`, done: R`[[Remove]] بيرجّع سطر في جروب [[Common]]، و [[Delete]] مبيرجّعش حاجة لأنه مش فعل معتمد. فتعرف تخمّن إن الأمر [[Remove-Item]] مش Delete-Item.` },
+            { lvl: 'تحدي', t: R`من غير ما تدوّر، خمّن اسم الأمر اللي بيوقف خدمة، واللي بيعمل متغير جديد، واللي بيجيب التاريخ. وبعدين اتأكد بـ [[Get-Command]] على التلات أسامي (Get-Command بيدوّر بس، مش بيشغّل حاجة).`, done: R`التلات أسامي ([[Stop-Service]] و [[New-Variable]] و [[Get-Date]]) بيرجعوا من Get-Command من غير error، وكاتب جنب كل واحد الفعل والاسم وليه اخترتهم.` },
+          ],
           deep: {
             why: "PowerShell بيستخدم نظام تسمية ثابت: فعل-اسم. [[Get-Process]] تجيب، و[[Stop-Process]] توقّف، و[[New-Item]] تعمل. لما تعرف الفعل، تقدر تخمّن الأمر بشكل معقول.",
             how: R`الأفعال الأشهر: [[Get]] يجيب/يعرض. [[Set]] يغيّر. [[New]] يعمل جديد. [[Remove]] يمسح. [[Start]] يشغّل. [[Stop]] يوقّف. [[Invoke]] ينفّذ. [[Test]] يختبر.
@@ -284,6 +302,11 @@ Alias           ls -> Get-ChildItem
           example: R`Get-Help Copy-Item -Examples
 Get-Help Get-ChildItem -Online`,
           try: "اقرا أمثلة [[Remove-Item]] قبل ما تستخدمه.",
+          practice: [
+            { lvl: 'سريع', t: R`اقرا شرح parameter واحد بس: [[Get-Help Remove-Item -Parameter Recurse]].`, done: R`بيطبع الـ parameter ده لوحده من غير باقي الصفحة، وفيه سطر [[Required?]] قيمته [[false]] (يعني اختياري) وسطر [[Position?]] قيمته [[Named]] (لازم تكتب اسمه).` },
+            { lvl: 'تطبيق', t: R`قبل ما تستخدم [[Stop-Process]] لأول مرة: اعرف من [[Get-Help Stop-Process]] الفرق بين [[-Name]] و [[-Id]]، واتأكد إن فيه [[-WhatIf]] بـ [[(Get-Command Stop-Process).Parameters.ContainsKey('WhatIf')]].`, done: R`كاتب سطرين بالشكل الكامل للأمر (واحد بالاسم وواحد بالرقم)، والسطر التاني بيرجّع [[True]] في 7 و 5.1.` },
+            { lvl: 'تحدي', t: R`على جهاز جديد [[Get-Help about_Comparison_Operators]] مش هيلاقي حاجة لحد ما تعمل Update-Help. افتحه بـ [[-Online]]، واقرا منه الفرق بين [[-like]] و [[-match]].`, done: R`كاتب ومشغّل ٤ سطور: [['report.txt' -like '*.txt']] و [['report.txt' -match '\.txt$']] بيرجعوا True، ومثال لكل واحد بيرجّع False، وتقدر تقول مين فيهم بيستخدم wildcard ومين regex.` },
+          ],
           deep: {
             why: "أي أمر محتاج تعرف parameters بتاعه أو مثال عليه. Get-Help هو man في PowerShell.",
             how: R`[[Get-Help Get-ChildItem]] بيعرض المساعدة. [[-Examples]] بيوريك أمثلة فقط. [[-Online]] بيفتح الصفحة الرسمية في المتصفح، وده دايمًا الأشمل.
@@ -410,6 +433,11 @@ SYNTAX
           example: R`Get-Command *process*
 Get-Command -Verb Get -Noun *Item*`,
           try: "لاقي كل الأوامر اللي ليها علاقة بـ service.",
+          practice: [
+            { lvl: 'سريع', t: R`هات كل أوامر الخدمات بـ [[Get-Command -Noun Service]].`, done: R`لستة كلها بتخلص بـ [[-Service]] (Get و Start و Stop و Restart وغيرهم). [[Remove-Service]] موجود في 7 بس، ومش هتلاقيه في 5.1.` },
+            { lvl: 'تطبيق', t: R`اعرف [[Get-ChildItem]] جاي من أنهي موديول بـ [[(Get-Command Get-ChildItem).ModuleName]]، وبعدين هات كل أوامر الموديول ده بـ [[Get-Command -Module]].`, done: R`الموديول [[Microsoft.PowerShell.Management]]، ولستة أوامره فيها [[Copy-Item]] و [[Remove-Item]] و [[Get-Process]]. يعني أوامر الملفات والعمليات كلها في مكان واحد.` },
+            { lvl: 'تحدي', t: R`عايز تضغط فولدر zip ومش عارف اسم الأمر: لاقيه بـ Get-Command بكلمة واحدة وwildcard، واقرا أمثلته بـ Get-Help، واضغط فولدر تجريبي في [[lab]].`, done: R`[[Get-Command *archive*]] بيطلّع [[Compress-Archive]] و [[Expand-Archive]]، وملف الـ zip اتعمل وبيظهر في [[Get-ChildItem *.zip]]، وفكّيته في فولدر تاني ولقيت الملفات زي ما هي.` },
+          ],
           deep: {
             why: R`بتدوّر على أوامر من غير ما تعرف اسمها بالظبط. زي [[which]] و [[apropos]] في لينكس مع بعض، بس بيفهم نظام Verb-Noun فبيخليك تخمّن صح.`,
             how: R`[[Get-Command]] لوحده بيعرض كل الأوامر المتاحة، وهي بالآلاف، فاستخدمه دايمًا مع فلتر. [[Get-Command *نص*]] بيدوّر بالـ wildcard في الاسم كله، و [[Get-Command Get-*]] بيجيب الأوامر اللي بتبدأ بـ Get.
@@ -517,6 +545,11 @@ Cmdlet      Get-ItemPropertyValue     7.0.0.0 Microsoft.PowerShell.Management
           example: R`Get-Process | Get-Member
 Get-Item .\notes.txt | Get-Member -MemberType Property`,
           try: R`اعرف الـ properties بتاعة أي ملف، وبعدين اطبع [[(Get-Item .\notes.txt).LastWriteTime]].`,
+          practice: [
+            { lvl: 'سريع', t: R`قارن [[Get-Item . | Get-Member]] بـ [[Get-Item .\notes.txt | Get-Member]]: بص على أول سطر بس.`, done: R`الفولدر الـ TypeName بتاعه [[System.IO.DirectoryInfo]] والملف [[System.IO.FileInfo]]، والملف عنده [[Length]] والفولدر لأ.` },
+            { lvl: 'تطبيق', t: R`[[Get-Date | Get-Member -MemberType Property]] ولاقي الخاصية اللي بتقول النهارده يوم إيه في الأسبوع، واطبعها لوحدها.`, done: R`[[(Get-Date).DayOfWeek]] بيطبع اسم اليوم بالإنجليزي وهو نفس اليوم اللي في الساعة عندك، و [[(Get-Date).Year]] بيطبع السنة كرقم.` },
+            { lvl: 'تحدي', t: R`قارن [[@(1, 'a') | Get-Member]] بـ [[Get-Member -InputObject @(1, 'a')]]، واشرح ليه الناتج مختلف.`, done: R`الأول بيطبع نوعين ([[System.Int32]] و [[System.String]]) لأن الـ pipe بيفكّ الـ array ويبعت كل عنصر لوحده. والتاني بيطبع نوع واحد بس هو الـ array نفسها (اسمه [[System.Object]] وبعده قوسين مربعين).` },
+          ],
           deep: {
             why: "في PowerShell كل حاجة object، وأي object ليه properties وmethods. [[Get-Member]] بيقولك إيه المتاح.",
             how: R`[[Get-Process | Get-Member]] يوريك كل property وmethod لـ Process objects. الـ Properties هي المعلومات (Name، وId، وCPU). الـ Methods هي الأفعال (Kill()، وWaitForExit()).
@@ -688,6 +721,11 @@ $user = @{ name = "Ali"; role = "dev" }
 Get-ChildItem -Path . $__bt
     -Filter *.json`,
           try: R`اكتب [[Get-ChildItem | ? Length -gt 1KB | % Name]] وبعدين نفس الأمر بالأسامي الكاملة من غير أي اختصار. وجرّب [["5" + 1]] و [[[int]"5" + 1]].`,
+          practice: [
+            { lvl: 'سريع', t: R`اكتب [["5" + 1]] وبعدين [[1 + "5"]].`, done: R`الأول [[51]] (نص، لأن الشمال نص) والتاني [[6]] (رقم، لأن الشمال رقم). اللي على الشمال هو اللي بيحدد نوع العملية.` },
+            { lvl: 'تطبيق', t: R`اعمل hashtable [[$srv = @{ name = 'web'; port = 8080 }]]، واطبع منه جملة بـ double quotes: [["$($srv.name) on $($srv.port)"]]، وبعدين نفس الجملة بـ single quotes.`, done: R`الـ double بيطبع [[web on 8080]]، والـ single بيطبع الكلام زي ما هو بالـ [[$]] والأقواس. وفهمت إن [[$( )]] لازمة عشان [[$srv.name]] لوحدها جوه النص بتطبع [[System.Collections.Hashtable.name]]: بيحط الـ hashtable كنص وبعده [[.name]] كلام عادي.` },
+            { lvl: 'تحدي', t: R`خد [[Get-ChildItem | ? Length -gt 1KB | % Name]] واكتبه بالأسامي الكاملة على ٣ سطور من غير backtick: كل سطر بيخلص بـ [[|]].`, done: R`الـ ٣ سطور بيشتغلوا كأمر واحد (PowerShell بيستنى السطر الجاي لما السطر بيخلص بـ pipe) وبيطلّعوا نفس الأسامي اللي طلعت من السطر المختصر، في 7 و 5.1.` },
+          ],
           flag: "script",
           deep: {
             why: R`هتنسخ أكواد من Stack Overflow ومن الـ docs فيها [[% {$_}]] و [[@{}]] و [[[math]::]] و backtick في آخر السطر. لو مش عارف كل رمز معناه إيه، الكود هيبان سحر، وأي تعديل صغير هيبوّظه.`,

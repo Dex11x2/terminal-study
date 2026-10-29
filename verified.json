@@ -11775,869 +11775,869 @@
   "on": "Windows 11 local build (DB restart, AI no-key + limit); docs: Stripe CLI, prompt injection"
  },
  "ps|$?": {
-  "hash": "24a7e3186ceb",
+  "hash": "1456d662b0f9",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|$LASTEXITCODE": {
-  "hash": "a6f847715a59",
+  "hash": "5b57830623da",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|$PROFILE": {
-  "hash": "3f16ae01a4da",
+  "hash": "f9d13b985762",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|$PSScriptRoot": {
-  "hash": "37ae3dddca5c",
-  "date": "2026-10-06",
-  "on": "win11 pwsh-7.6 + ps-5.1"
+  "hash": "937d6bf7b545",
+  "date": "2026-10-29",
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|$PSStyle": {
-  "hash": "8cb4aad654bf",
+  "hash": "f71a0833076d",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|$env:": {
-  "hash": "ce6fe504dc52",
-  "date": "2026-10-06",
-  "on": "win11 pwsh 7.6.6 + ubuntu-24.04; docs: SetEnvironmentVariable User"
+  "hash": "7f7e45f9e914",
+  "date": "2026-10-29",
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|& (call operator)": {
-  "hash": "63a4e716849f",
+  "hash": "86d5770ec8e1",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|( ) و $( )": {
-  "hash": "478d96079af6",
+  "hash": "aa3603797b17",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|-ErrorAction و $Error": {
-  "hash": "f70756c4c50f",
+  "hash": "c9ed02af8bd6",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|-WhatIf و -Confirm": {
-  "hash": "b02f79974f6b",
+  "hash": "04d30459c5ee",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|-and و -or مقابل && و ||": {
-  "hash": "f072ed1365a6",
+  "hash": "107b8c99da35",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|; و && و ||": {
-  "hash": "8eaf42a2a089",
+  "hash": "e2b031ea4af8",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Add-LocalGroupMember": {
-  "hash": "42cf5a22a7e2",
+  "hash": "02d506565f5c",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Checkpoint-Computer": {
-  "hash": "bbdc4d4bf328",
+  "hash": "f7ed647ae0b1",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Compare-Object": {
-  "hash": "c3ab86467f07",
+  "hash": "9241c2326d25",
   "date": "2026-10-29",
-  "on": "pwsh-7.6.9 و powershell-5.1 على ويندوز 11 (من غير أدمن): whoami /groups و IsInRole و #Requires -RunAsAdministrator و sudo -h، و Export-Clixml بين النسختين، و Save-Module لـ SecretManagement في فولدر مؤقت، و -Parallel بالتوقيتات، و Compare-Object و Set-StrictMode. docs: اللي جوه نافذة الأدمن (UAC و High level)، وتفعيل sudo وأوضاعه، و Get-Credential prompt، و Register-SecretVault"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Compress-Archive": {
-  "hash": "30d1751f6093",
+  "hash": "b876bdd5846c",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|ConvertFrom-Json": {
-  "hash": "8f598edd45b7",
+  "hash": "c4bdf6498690",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|ConvertTo-Json -Depth": {
-  "hash": "11b800681d3c",
+  "hash": "412806c81f04",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Copy-Item": {
-  "hash": "8dd11c0a84cc",
+  "hash": "2e699515d206",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Enter-PSSession / Invoke-Command": {
-  "hash": "f76b533487f0",
+  "hash": "7fcf4fefa467",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|ExecutionPolicy": {
-  "hash": "8561cbf9be6e",
+  "hash": "c74d0cdcbb1d",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Export-Csv / ConvertTo-Json": {
-  "hash": "b5d01c63eee0",
+  "hash": "acbf81d10eb3",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|FileSystemWatcher": {
-  "hash": "e66dd2e62a80",
+  "hash": "6b5901c18026",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|ForEach-Object": {
-  "hash": "4b425bd6d108",
+  "hash": "4b6b7cff9399",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|ForEach-Object -Parallel": {
-  "hash": "d2498be66a67",
+  "hash": "b15dd0d56123",
   "date": "2026-10-29",
-  "on": "pwsh-7.6.9 و powershell-5.1 على ويندوز 11 (من غير أدمن): whoami /groups و IsInRole و #Requires -RunAsAdministrator و sudo -h، و Export-Clixml بين النسختين، و Save-Module لـ SecretManagement في فولدر مؤقت، و -Parallel بالتوقيتات، و Compare-Object و Set-StrictMode. docs: اللي جوه نافذة الأدمن (UAC و High level)، وتفعيل sudo وأوضاعه، و Get-Credential prompt، و Register-SecretVault"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Format-Volume / Clear-Disk": {
-  "hash": "0484eadeead6",
+  "hash": "0068d9b3b024",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Get-Acl / Set-Acl": {
-  "hash": "629bc56380a0",
+  "hash": "fa049cc2acfd",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Get-Alias": {
-  "hash": "7f69d8ca653e",
+  "hash": "2453318ae0be",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Get-BitLockerVolume": {
-  "hash": "92ff61850209",
+  "hash": "628557bfc2b5",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Get-ChildItem": {
-  "hash": "c75828019e07",
+  "hash": "02c4d469912b",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Get-CimInstance": {
-  "hash": "58edd7e2ec9b",
-  "date": "2026-10-06",
-  "on": "win11 pwsh 7.6 + ps 5.1"
+  "hash": "54642b524d09",
+  "date": "2026-10-29",
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Get-Command": {
-  "hash": "27df8e442394",
+  "hash": "e2a97480fd84",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Get-Command (which)": {
-  "hash": "3d97fb5a90f9",
+  "hash": "c867da8a07f5",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Get-Command -Syntax": {
-  "hash": "444d33c39b79",
+  "hash": "f94f53954b8b",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Get-Command -Verb و -Noun": {
-  "hash": "04f8f6a13a12",
+  "hash": "81e957bfa3e1",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Get-Content": {
-  "hash": "ed1d920b8ea7",
+  "hash": "7027408e8369",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Get-Counter": {
-  "hash": "b11b8fa21b4e",
+  "hash": "7472a6e3a274",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Get-Credential و الأسرار": {
-  "hash": "9e8b99ab75cd",
+  "hash": "5b83ec8aa40a",
   "date": "2026-10-29",
-  "on": "pwsh-7.6.9 و powershell-5.1 على ويندوز 11 (من غير أدمن): whoami /groups و IsInRole و #Requires -RunAsAdministrator و sudo -h، و Export-Clixml بين النسختين، و Save-Module لـ SecretManagement في فولدر مؤقت، و -Parallel بالتوقيتات، و Compare-Object و Set-StrictMode. docs: اللي جوه نافذة الأدمن (UAC و High level)، وتفعيل sudo وأوضاعه، و Get-Credential prompt، و Register-SecretVault"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Get-FileHash": {
-  "hash": "4483418c6455",
+  "hash": "9c0104791fb1",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Get-Help": {
-  "hash": "803b3fc0f589",
-  "date": "2026-10-06",
-  "on": "win11 pwsh 7.6.6; docs: -Online, Update-Help"
+  "hash": "52ace89a540c",
+  "date": "2026-10-29",
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Get-Item": {
-  "hash": "b07ba0f197ec",
+  "hash": "9c45b0346fe9",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Get-LocalUser / New-LocalUser": {
-  "hash": "77816a14a878",
-  "date": "2026-10-06",
-  "on": "win11 Home pwsh 7.6 non-admin + -WhatIf; docs: creation"
+  "hash": "4d332ec46e0a",
+  "date": "2026-10-29",
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Get-Member": {
-  "hash": "4589adc30353",
+  "hash": "c22f87a2f5e2",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Get-MpComputerStatus": {
-  "hash": "bfd4190664c6",
+  "hash": "af3ecf1e74ae",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Get-NetAdapter": {
-  "hash": "2a6a34e28e35",
+  "hash": "3e9eb62dd0cc",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Get-NetIPAddress": {
-  "hash": "72626c11725e",
+  "hash": "a9a5d2832e46",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Get-NetNeighbor + ping sweep": {
-  "hash": "378a24d7362d",
+  "hash": "a27ca5d5b7d9",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Get-NetTCPConnection": {
-  "hash": "dcaa0dac49e7",
+  "hash": "2d174bd0a114",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Get-NetTCPConnection -State Listen": {
-  "hash": "01a624819423",
+  "hash": "a0e9c5e217c7",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Get-PhysicalDisk": {
-  "hash": "e2ac2028afe9",
+  "hash": "46bbe364b044",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Get-PnpDevice": {
-  "hash": "d1e6b9cdaa40",
+  "hash": "05b1180040b6",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Get-Process / Stop-Process": {
-  "hash": "33258ba481cf",
+  "hash": "fcfa9bc16673",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Get-Service": {
-  "hash": "9a843ee9a1db",
+  "hash": "682f5f336e2a",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Get-WinEvent": {
-  "hash": "8f473d0238f7",
+  "hash": "777ecf539764",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Group-Object": {
-  "hash": "d5ac22d09088",
+  "hash": "3cd631ecf4df",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|History والاختصارات": {
-  "hash": "58177158b6da",
-  "date": "2026-10-06",
-  "on": "win11 pwsh 7.6.6; docs: keyboard shortcuts"
+  "hash": "54909de60cd1",
+  "date": "2026-10-29",
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Import-Csv": {
-  "hash": "cc0233762ff0",
+  "hash": "8316cc1b1a15",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Import-Module و dot-sourcing": {
-  "hash": "efc4a0727b58",
+  "hash": "2dcc715e6e38",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Invoke-RestMethod": {
-  "hash": "fc272ef29b99",
-  "date": "2026-10-06",
-  "on": "win11 pwsh 7.6.6 (GitHub API + local node server)"
+  "hash": "5ae277a1fb7a",
+  "date": "2026-10-29",
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Invoke-WebRequest -OutFile": {
-  "hash": "aac85f5515f8",
-  "date": "2026-10-06",
-  "on": "win11 pwsh 7.6 + curl.exe; ps 5.1 curl alias"
+  "hash": "47f7cdca5aed",
+  "date": "2026-10-29",
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|IsInRole (Admin check)": {
-  "hash": "f77b29fa1d41",
+  "hash": "2935ccac087d",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|LockWorkStation": {
-  "hash": "6bc25dd963d8",
-  "date": "2026-10-06",
-  "on": "win11 powercfg /a; docs: lock, hibernate, sleep"
+  "hash": "c9b655957aed",
+  "date": "2026-10-29",
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Measure-Command": {
-  "hash": "2aeb1d279919",
-  "date": "2026-10-06",
-  "on": "win11 pwsh 7.6 + ps 5.1"
+  "hash": "8536e091ec8e",
+  "date": "2026-10-29",
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Measure-Object": {
-  "hash": "a428f90a3171",
+  "hash": "591c87c6c7c5",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|MessageBox / BurntToast": {
-  "hash": "cb1e5c654d40",
-  "date": "2026-10-06",
-  "on": "win11 pwsh 7.6 + ps 5.1 types/enums; docs: windows, BurntToast"
+  "hash": "f70fe86d3546",
+  "date": "2026-10-29",
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Move-Item / Rename-Item": {
-  "hash": "f7e3eed670c6",
+  "hash": "778bcd457a94",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|New-Item": {
-  "hash": "d761f4d1d09b",
+  "hash": "d5a0e544fba2",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|New-NetFirewallRule": {
-  "hash": "06c474908792",
+  "hash": "1db4d6a69504",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|New-NetIPAddress (static IP)": {
-  "hash": "dee9fb6e95ad",
-  "date": "2026-10-06",
-  "on": "win11 pwsh 7.6.6 view + -WhatIf; docs: actual change"
+  "hash": "b9e67649e374",
+  "date": "2026-10-29",
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|New-SmbShare": {
-  "hash": "fe92d517aec1",
+  "hash": "5a9a2f1ddd0b",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|OpenSSH Server": {
-  "hash": "b809cd57b1f8",
+  "hash": "08aa86fddb0c",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Out-GridView": {
-  "hash": "07e3a4f14783",
-  "date": "2026-10-06",
-  "on": "win11 pwsh 7.6 -WhatIf; docs: grid window"
+  "hash": "a1574890b171",
+  "date": "2026-10-29",
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|PSScriptAnalyzer": {
-  "hash": "d27b9cb6428f",
+  "hash": "a0087ca94da5",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|PredictionViewStyle": {
-  "hash": "1e9fae538319",
+  "hash": "98a83160c35e",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Push-Location": {
-  "hash": "e8e8d764639e",
+  "hash": "9e7d645239b8",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|RandomNumberGenerator (password)": {
-  "hash": "5535356626ac",
+  "hash": "2485d5fd81e6",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Register-ScheduledTask": {
-  "hash": "ad6354d45d0b",
+  "hash": "144330af3e97",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Remove-Item": {
-  "hash": "47ff7354c5cd",
+  "hash": "f99c6beeebcb",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Resolve-DnsName": {
-  "hash": "0325c1ed45cc",
+  "hash": "eb0632cbdc05",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Restart-Computer -ComputerName": {
-  "hash": "4f5d9981af31",
+  "hash": "2d1cd0699a17",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|SAPI.SpVoice": {
-  "hash": "b5f1f5f12bea",
-  "date": "2026-10-06",
-  "on": "win11 pwsh 7.6 + ps 5.1 (volume 0); docs: Beep"
+  "hash": "adaf14190555",
+  "date": "2026-10-29",
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Select-Object": {
-  "hash": "04e4cc3d0bda",
+  "hash": "4c67d965e7ef",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Select-String": {
-  "hash": "8a7001458dd1",
+  "hash": "a10172fdca31",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Set-Clipboard / Get-Clipboard": {
-  "hash": "9ed558d2a5a8",
-  "date": "2026-10-06",
-  "on": "win11 pwsh 7.6 (clipboard restored) (username masked later)"
+  "hash": "cbed01b5e9a2",
+  "date": "2026-10-29",
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Set-Content / Add-Content": {
-  "hash": "a72010028a97",
-  "date": "2026-10-06",
-  "on": "win11 pwsh 7.6.6 + ps 5.1"
+  "hash": "1d94954b96fc",
+  "date": "2026-10-29",
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Set-DnsClientServerAddress": {
-  "hash": "431db5852056",
+  "hash": "c73ad85c0a41",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Set-LocalUser / Remove-LocalUser": {
-  "hash": "e2caf815871e",
+  "hash": "bf2726315ca5",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Set-Location": {
-  "hash": "9f70839d78d5",
+  "hash": "e28f646ebbeb",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Set-NetConnectionProfile": {
-  "hash": "633895854e69",
-  "date": "2026-10-06",
-  "on": "win11 pwsh 7.6.6 Get only; docs: Set"
+  "hash": "7bbb7339627a",
+  "date": "2026-10-29",
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Set-PSReadLineOption -Colors": {
-  "hash": "41c8667b670b",
-  "date": "2026-10-06",
-  "on": "win11 pwsh 7.6.6 (PSReadLine 2.4.5) + 5.1 (2.0.0)"
+  "hash": "8747e601ef8f",
+  "date": "2026-10-29",
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Set-StrictMode": {
-  "hash": "210513be6e49",
+  "hash": "53e22d995fd1",
   "date": "2026-10-29",
-  "on": "pwsh-7.6.9 و powershell-5.1 على ويندوز 11 (من غير أدمن): whoami /groups و IsInRole و #Requires -RunAsAdministrator و sudo -h، و Export-Clixml بين النسختين، و Save-Module لـ SecretManagement في فولدر مؤقت، و -Parallel بالتوقيتات، و Compare-Object و Set-StrictMode. docs: اللي جوه نافذة الأدمن (UAC و High level)، وتفعيل sudo وأوضاعه، و Get-Credential prompt، و Register-SecretVault"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Sort-Object": {
-  "hash": "e99b5a505ee9",
+  "hash": "5e6afad8fb35",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Start-BitsTransfer": {
-  "hash": "53a9ac33b903",
+  "hash": "f5b758f3f9f9",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Start-Job": {
-  "hash": "ae7d32edb41d",
-  "date": "2026-10-06",
-  "on": "win11 pwsh 7.6 + ps 5.1"
+  "hash": "632d37fcb257",
+  "date": "2026-10-29",
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Start-Process": {
-  "hash": "2ad9e9224dca",
+  "hash": "ba5785323adb",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Start-Process -Verb RunAs": {
-  "hash": "fc3183020d57",
+  "hash": "fea2045ee7c4",
   "date": "2026-10-29",
-  "on": "pwsh-7.6.9 و powershell-5.1 على ويندوز 11 (من غير أدمن): whoami /groups و IsInRole و #Requires -RunAsAdministrator و sudo -h، و Export-Clixml بين النسختين، و Save-Module لـ SecretManagement في فولدر مؤقت، و -Parallel بالتوقيتات، و Compare-Object و Set-StrictMode. docs: اللي جوه نافذة الأدمن (UAC و High level)، وتفعيل sudo وأوضاعه، و Get-Credential prompt، و Register-SecretVault"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Start-Transcript": {
-  "hash": "f19cb6f8b34f",
+  "hash": "04afc8a7625c",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Tab و Ctrl+Space": {
-  "hash": "5acfdd913542",
+  "hash": "b3057f99c46e",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Terminal-Icons": {
-  "hash": "c881da35901d",
-  "date": "2026-10-06",
-  "on": "win11 pwsh 7.6.6 (Save-Module to temp); docs: Install-Module"
+  "hash": "4e27d1f3a54e",
+  "date": "2026-10-29",
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Test-NetConnection": {
-  "hash": "9e2e372f822a",
+  "hash": "9cd51dd2444f",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Test-NetConnection -TraceRoute": {
-  "hash": "89b8cf1c52ce",
+  "hash": "195552d9542e",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Test-Path": {
-  "hash": "31d1fc9bb40f",
+  "hash": "3ac540d70e25",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Update-Help و about_": {
-  "hash": "97afd3294f9a",
+  "hash": "d27de5a27831",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Verb-Noun": {
-  "hash": "2c024b2b7e78",
-  "date": "2026-10-06",
-  "on": "win11 pwsh 7.6.6 + ps 5.1"
+  "hash": "ee036225003a",
+  "date": "2026-10-29",
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Wake-on-LAN": {
-  "hash": "55f936e8b92f",
+  "hash": "7cb49d84d04a",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Where-Object": {
-  "hash": "ababcfe7b244",
+  "hash": "7ad829889c74",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Win32_StartupCommand": {
-  "hash": "daebd7109ae2",
+  "hash": "8f15c86426cf",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Write-Host والـ output": {
-  "hash": "70b7a2c2cdd7",
-  "date": "2026-10-06",
-  "on": "win11 pwsh-7.6 + ps-5.1"
+  "hash": "c2e8952355d7",
+  "date": "2026-10-29",
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Write-Progress": {
-  "hash": "c1fd786a9836",
+  "hash": "91e20840aa6c",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|[CmdletBinding()]": {
-  "hash": "12fa7005e883",
+  "hash": "5927f3f6da85",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|[xml]": {
-  "hash": "d298c7604157",
+  "hash": "26901c29eb72",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|array و hashtable": {
-  "hash": "9ada70d0ea99",
+  "hash": "583b02fc4bdb",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|backup.ps1": {
-  "hash": "53be2cd2651d",
+  "hash": "d39a68bfd304",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|check-site.ps1": {
-  "hash": "0d0707281753",
+  "hash": "1486c031e399",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|clean-old-files.ps1": {
-  "hash": "e1f823547c6c",
+  "hash": "3b82a550d81a",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|cmd /c ... > log 2>&1": {
-  "hash": "5d5cb97daf85",
-  "date": "2026-10-06",
-  "on": "win11 pwsh-7.6 + ps-5.1"
+  "hash": "1c7b82731a2b",
+  "date": "2026-10-29",
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|disk-report.ps1": {
-  "hash": "d99afe10677e",
+  "hash": "c8f4dd7e8929",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|foreach / for / while": {
-  "hash": "b2ff09de5d1f",
+  "hash": "c36ab6e708d8",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|function": {
-  "hash": "6b2ab9528db0",
-  "date": "2026-10-06",
-  "on": "win11 pwsh-7.6 + ps-5.1"
+  "hash": "8c9822c809ad",
+  "date": "2026-10-29",
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|function prompt": {
-  "hash": "0c71688a0b32",
+  "hash": "cd2633cb9baa",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|hosts": {
-  "hash": "216c178ba54f",
+  "hash": "b8ef89ba28eb",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|if / switch": {
-  "hash": "f2d0abc361df",
+  "hash": "7681d0283a7a",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|new-project.ps1": {
-  "hash": "c320e5276565",
+  "hash": "b0f64257c0e2",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|oh-my-posh": {
-  "hash": "10c792c45611",
-  "date": "2026-10-06",
-  "on": "docs: ohmyposh.dev (only winget show run on win11)"
+  "hash": "3313eb71b285",
+  "date": "2026-10-29",
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|organize-downloads.ps1": {
-  "hash": "95bb8ddc8ac3",
+  "hash": "cd083ec98751",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|param()": {
-  "hash": "23524aaace1b",
+  "hash": "42a4d59c3b97",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|pipeline function": {
-  "hash": "c32115096706",
+  "hash": "422176b93268",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|pwsh": {
-  "hash": "2ec0cbd0576a",
-  "date": "2026-10-06",
-  "on": "win11 pwsh 7.6.6 + ps 5.1; docs: winget install, Linux/Mac install"
+  "hash": "8055ec725dee",
+  "date": "2026-10-29",
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|rename-photos.ps1": {
-  "hash": "998dfc6b9928",
+  "hash": "184600e02ebd",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|screenshots.ps1": {
-  "hash": "1116bc9f96f2",
+  "hash": "d108ad15c5c1",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|shutdown /s /t": {
-  "hash": "63330ef2794c",
+  "hash": "49ab172cf3e7",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|splatting": {
-  "hash": "b095905e2bd0",
+  "hash": "7d8c4814fd7c",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|ssh -L": {
-  "hash": "1a45997a3978",
+  "hash": "faaeb67c3646",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|ssh / scp": {
-  "hash": "2cdd96f698be",
+  "hash": "40272e682d9a",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|try / catch": {
-  "hash": "db2967a841a8",
+  "hash": "fe77ffaadf7e",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|verify-stack.ps1": {
-  "hash": "a725a5fe7054",
+  "hash": "85be464e3c58",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|winget upgrade / export / import": {
-  "hash": "ce7bf1353914",
-  "date": "2026-10-06",
-  "on": "win11 winget 1.29 list/export/pin list; docs: upgrade, pin add, import"
+  "hash": "9e926ad0bbf4",
+  "date": "2026-10-29",
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|zip-folders.ps1": {
-  "hash": "e295d77f7d23",
+  "hash": "f4e43d2c2385",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|أول سكربت .ps1": {
-  "hash": "0fdbebaa4aff",
+  "hash": "9466de1db0ef",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|اقرا رسالة الخطأ": {
-  "hash": "5c8f3888fdc1",
+  "hash": "bb4037c7888b",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|الطريقة: من مهمة لأمر": {
-  "hash": "0f59f1e41386",
+  "hash": "e0df1f4c3d53",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|المتغيرات": {
-  "hash": "d0b878264142",
+  "hash": "21a3f3f579c8",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|المتغيرات والأنواع": {
-  "hash": "cb0d097132ec",
+  "hash": "d534bf8739a5",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|النصوص (strings)": {
-  "hash": "fecad9b75b81",
+  "hash": "95281717fd21",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|رموز PowerShell": {
-  "hash": "87dda4119df2",
+  "hash": "f318cc8b5f0a",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|عوامل المقارنة": {
-  "hash": "d35dbdcaa3e8",
+  "hash": "ae7d4df3c4b6",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|مشروع ١ — cancel و status": {
-  "hash": "c1fce8392bca",
+  "hash": "5a4b033f2d21",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|مشروع ١ — off و restart بـ WhatIf": {
-  "hash": "23db75fb7696",
+  "hash": "267bbdc79b4e",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|مشروع ١ — التأكيد واللوج": {
-  "hash": "fe4a284a5f3f",
+  "hash": "5f897e58203a",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|مشروع ١ — التحقق من المدخلات": {
-  "hash": "c328276f37e1",
+  "hash": "4cecf869787e",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|مشروع ١ — الواجهة الأول": {
-  "hash": "53998dfe6275",
+  "hash": "c97624be557a",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|مشروع ١ — ناديه من أي مكان": {
-  "hash": "bd0f67acf7ea",
+  "hash": "fa7b25508069",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|مشروع ٢ — add وفخ المصفوفة": {
-  "hash": "9a8e6f0afe57",
+  "hash": "a01257c432e1",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|مشروع ٢ — done و rm والأخطاء": {
-  "hash": "b022a65ba573",
+  "hash": "4daeae002c0e",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|مشروع ٢ — اختبر أداتك": {
-  "hash": "41de4089e67d",
+  "hash": "b61669f59459",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|مشروع ٢ — التصميم والتخزين": {
-  "hash": "c8f2610ac8df",
+  "hash": "d292fb6cc12b",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|مشروع ٢ — رجّع objects مش نصوص": {
-  "hash": "c07e0284933a",
+  "hash": "96215fb0a85d",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|مشروع ٢ — فخ النطاق": {
-  "hash": "f2ba842b3bd2",
+  "hash": "656843b5aff1",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|مشروع ٣ — إكمال تلقائي لقيمك": {
-  "hash": "b57cf58b782f",
+  "hash": "793eb70db316",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|مشروع ٣ — الـ manifest": {
-  "hash": "a4d26c57ecf2",
+  "hash": "db2527801c8b",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|مشروع ٣ — المساعدة بتتكتب في الكود": {
-  "hash": "d9cb751b7c60",
+  "hash": "1f1a9315f8d6",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|مشروع ٣ — سطّبه وخليه يتحمّل لوحده": {
-  "hash": "864872958659",
+  "hash": "0e5125c3acf1",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|مشروع ٣ — من سكربت لموديول": {
-  "hash": "805126b11b1c",
+  "hash": "40a51ca619f7",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|مشروع ٤ — إشعار من غير إزعاج": {
-  "hash": "d820aa96c0f9",
+  "hash": "e1117a4ca8c0",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|مشروع ٤ — الفحوصات كبيانات": {
-  "hash": "ca42380450de",
+  "hash": "3785761dde47",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|مشروع ٤ — خليه يشتغل لوحده": {
-  "hash": "9bcd343e76a0",
+  "hash": "7d597c5dba97",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|مشروع ٤ — لما يفشل وانت مش موجود": {
-  "hash": "d1792606c012",
+  "hash": "e0f439ad2710",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|مشروع ٤ — لوج بيتقلّم لوحده": {
-  "hash": "67f68c46ba8b",
+  "hash": "f3f1ce721110",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|مشروع ٥ — الإعدادات بـ git config": {
-  "hash": "11831e2f9826",
+  "hash": "54ce5f1f3f60",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|مشروع ٥ — البرامج بـ winget": {
-  "hash": "105d2eed6379",
+  "hash": "aad63a56e15c",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|مشروع ٥ — الخطة قبل التنفيذ": {
-  "hash": "826e6fc536a8",
+  "hash": "89dcc0f1319f",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|مشروع ٥ — شغّله تاني": {
-  "hash": "cd5bfae12650",
+  "hash": "73d361237dc8",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|مشروع ٥ — يعني إيه idempotent": {
-  "hash": "5bd19a3d8aab",
+  "hash": "76bc76d366e7",
   "date": "2026-10-29",
-  "on": "pwsh-7.6 و powershell-5.1 على ويندوز 11 (الأجزاء اللي اتغيّرت في الكود اتشغّلت: cast التاريخ في Limit-Log على en-US و en-GB و ar-EG، و @( ) حوالين gitScope، و Write-Error -ErrorAction Continue، و shutdown /a جوه & { }، و GetFolderPath MyDocuments). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول، وأوامر Admin و Task Scheduler و BITS و winget install والشبكة من الوثائق"
+  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "pyapi|*args و **kwargs": {
   "hash": "308ff48c87e2",

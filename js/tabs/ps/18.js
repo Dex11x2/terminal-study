@@ -4,6 +4,14 @@ MORE("ps", [
       t: "صيانة وأمان الجهاز",
       l: 3,
       n: R`صحة الهارد، وفرمتة فلاشة، والتشفير، و Defender، ونقطة استرجاع قبل أي تغيير، والبرامج اللي بتقوم مع ويندوز، والأجهزة اللي فيها مشكلة، واستهلاك المعالج، وسجل الأحداث، وباسورد قوي: صيانة الجهاز من الترمنال. العرض غالبًا من غير أدمن، وأي تغيير محتاج Terminal أدمن`,
+      projects: [
+        { lvl: 'صغير', t: R`مولّد باسوردات`, what: R`[[pw.ps1 -Length 20 -NoSymbols -Count 3]] بيولّد بـ [[RandomNumberGenerator]]، والأول بيروح الحافظة على طول من غير ما يتطبع، والباقيين بيتطبعوا بس لو طلبت [[-Show]]. من درس RandomNumberGenerator.`, done: R`[[-Length 5]] بيترفض (ValidateRange من 12 مثلًا)، و [[-NoSymbols]] مفيهوش ولا رمز ([[-match '[^A-Za-z0-9]']] بيرجّع False)، ومن غير [[-Show]] مفيش باسورد على الشاشة ولا في الـ history.` },
+        { lvl: 'صغير', t: R`ليه الجهاز قفل؟`, what: R`[[why-off.ps1]] بيطبع آخر ١٠ مرات قفل أو restart بنوعهم (مطلوب أو فجأة) وأول سطر من الرسالة، وبيقولك آخر مرة الجهاز قام إمتى. من درس Get-WinEvent.`, done: R`الجدول مترتب الأحدث فوق، والقفل العادي من Start بيطلع «مطلوب» ومعاه اسم البرنامج اللي طلبه، ومفيش ولا سطر أحمر حتى لو مفيش أحداث 41 خالص.` },
+        { lvl: 'متوسط', t: R`تقرير صحة الجهاز`, what: R`[[health.ps1]] بيجمع: صحة الديسكات والمساحة، وحالة Defender وعمر التعريفات، والأجهزة اللي فيها Error، وعدد البرامج اللي بتقوم مع ويندوز، وأكتر ٥ مصادر errors من امبارح. ويكتب [[health.json]] بالتاريخ، ويطبع ملخص سطر لكل بند بـ OK أو WARN. من دروس الوحدة.`, done: R`على جهاز سليم كل البنود OK والكود ٠، وأي بند WARN بيخلي الكود ١، والبنود اللي محتاجة أدمن بتتكتب «skipped: needs admin» من غير ما توقّف الباقي، و [[health.json]] بيتقري بـ [[ConvertFrom-Json]].` },
+        { lvl: 'متوسط', t: R`مسجّل الأداء`, what: R`سكربت بيسجّل المعالج والرام والديسك بـ [[Get-Counter]] كل ٥ ثواني لمدة بتحددها في CSV، ولما المعالج يعدّي حد يزوّد في ملف تاني أكبر ٥ برامج ساعتها. من درس Get-Counter ودرس Measure-Command.`, done: R`عدد الصفوف بيساوي المدة على ٥، وملف البرامج فيه صفوف بس في الأوقات اللي الحد اتعدّى فيها (شغّل build أو فيديو تقيل تجرّب)، وتقدر تفتح الـ CSV في Excel وترسمه.` },
+        { lvl: 'كبير', t: R`فحص الأمان الأسبوعي`, what: R`[[weekly-check.ps1]]: بيرفع نفسه أدمن لو محتاج، ويحدّث تعريفات Defender ويشيك حالته، ويشيك BitLocker، ويقارن البرامج اللي بتقوم مع ويندوز بلقطة الأسبوع اللي فات، ويلخّص errors الأسبوع من Event Log، ويشيك صحة الديسكات والحرارة. وقبل أي خطوة بتغيّر حاجة بيعمل نقطة استرجاع بـ [[New-SafePoint]]. كله جوه [[Start-Transcript]] و [[try / catch]] لكل بند، ويكتب تقرير JSON بالتاريخ، ومتسجّل مهمة أسبوعية. من الوحدة دي و «سكربتات زي المحترفين» و «ملفات البيانات والجدولة».`, done: R`بند بيفشل (مثلًا BitLocker مش متاح على الجهاز) بيتكتب في التقرير والباقي بيكمّل، والتقرير بيقول إيه اتغيّر عن الأسبوع اللي فات (برنامج startup جديد مثلًا)، و [[-WhatIf]] مبيعملش نقطة ولا بيحدّث حاجة، والتشغيل مرتين في نفس اليوم مبيبوّظش اللقطة، والكود ٠ لو كله سليم و ١ لو فيه تحذير.`, ext: R`زوّد مقارنة تقارير JSON بتاعة آخر ٤ أسابيع في جدول واحد، وإشعار بأهم تحذير بس، وخلّي الحدود (عمر التعريفات، الحرارة، المساحة) تيجي من config.json.` },
+        { lvl: 'فكرة', t: R`عدّة الصيانة بتاعتك`, what: R`اختار المشاكل اللي بتحصلك انت فعلًا (الجهاز تقيل، الديسك بيتملي، الواي فاي بيفصل، الجهاز بيعمل restart لوحده) وابني لكل واحدة أمر تشخيص بيقولك السبب المحتمل من الأرقام والأحداث، مش بس بيطبع جداول. انت اللي بتقرر الأوامر والحدود.`, done: R`كل أمر بيطبع جملة واحدة بالنتيجة (زي «الرام الفاضية أقل من 10٪ وأكبر برنامج chrome»)، وبعدها التفاصيل، ومفيش أمر بيغيّر حاجة في الجهاز من غير [[-Confirm]] أو [[-WhatIf]].`, ext: R`اجمعهم في موديول بـ [[Get-Help]] لكل أمر، وزوّد أمر «fix» لكل مشكلة بيعمل نقطة استرجاع الأول، وخلّي واحد صاحبك يجرّبه على جهازه ويقولك إيه اللي مفهمهوش.` },
+      ],
       items: [
         {
           cmd: "Get-PhysicalDisk",
@@ -21,6 +29,11 @@ Get-Disk | Select-Object Number, FriendlyName, BusType, PartitionStyle, HealthSt
 Get-Partition | Select-Object DiskNumber, PartitionNumber, DriveLetter, Type, @{ n = "GB"; e = { [math]::Round($_.Size / 1GB, 1) } }
 Get-Volume | Where-Object DriveLetter | Select-Object DriveLetter, FileSystem, HealthStatus, @{ n = "FreeGB"; e = { [int]($_.SizeRemaining / 1GB) } }, @{ n = "GB"; e = { [int]($_.Size / 1GB) } }`,
           try: R`اعرف الهارد اللي عندك SSD ولا HDD وصحته، وأنهي ديسك عليه C:، ولو تقدر تفتح Terminal أدمن شوف الحرارة والـ Wear.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[Get-Partition -DriveLetter C | Get-Disk | Select-Object Number, FriendlyName, BusType, IsBoot]]`, done: R`سطر واحد بالديسك اللي عليه C: ونوع توصيله ([[NVMe]] أو [[SATA]])، و [[IsBoot]] بـ [[True]]، ونفس الاسم موجود في [[Get-PhysicalDisk]]. شغال من غير أدمن.` },
+            { lvl: 'تطبيق', t: R`[[disk-health.ps1]]: لكل ديسك HealthStatus، ولكل volume ليه حرف نسبة الفاضي، ويطبع تحذير لو ديسك مش [[Healthy]] أو volume أقل من ١٠٪، ويخرج بـ [[exit 1]] لو فيه أي تحذير.`, done: R`على جهاز سليم [[$LASTEXITCODE]] = ٠ ومفيش تحذير. ولو غيّرت الحد مؤقتًا لـ ٩٩٪ بيطبع تحذير لكل درايف والكود ١، فتعرف إن الشرط شغال قبل ما تحتاجه بجد.` },
+            { lvl: 'تحدي', t: R`زوّد على نفس السكربت [[Get-StorageReliabilityCounter]] (الحرارة والـ Wear)، ومن نافذة عادية امسك الرفض واطبع «temperature needs admin» بدل الأحمر، وكمّل باقي الفحص.`, done: R`من نافذة عادية بتطلع رسالتك بس، والـ error اللي مسكته رسالته [[Access to a CIM resource was not available to the client.]] ونوعه [[CimException]] (اتجرب على 7.6 و 5.1)، والكود مبيتغيّرش بسببه. ومن Terminal أدمن بيطلع رقم الحرارة.` },
+          ],
           deep: {
             why: R`الجهاز بقى بطيء جدًا أو بيهنّج، أو لابتوب مستعمل عايز تعرف حالة الهارد فيه، أو قبل ما تشتري SSD تعرف الجهاز فيه NVMe ولا SATA، أو بتقرر تحط الـ backup فين. الأرقام دي بتقولك الديسك نفسه شايف إيه قبل ما يقع.`,
             how: R`[[HealthStatus]] جاي من تقييم الديسك نفسه (SMART)، وغالبًا مش بيتغير لـ Warning غير لما المشكلة تبقى قربت، فمتعتمدش عليه لوحده. [[Wear]] و [[ReadErrorsTotal]] بيدّوك صورة أبكر: Wear بيزيد ببطء مع الكتابة، ولو عدّى 80 أو 90 ابدأ جهّز البديل، وأخطاء قراية بتزيد معناها خلي الـ backup بتاعك جاهز.
@@ -207,6 +220,11 @@ Clear-Disk -Number $n -RemoveData -RemoveOEM -Confirm:$false
 Initialize-Disk -Number $n -PartitionStyle MBR
 New-Partition -DiskNumber $n -UseMaximumSize -AssignDriveLetter | Format-Volume -FileSystem exFAT -NewFileSystemLabel "USB"`,
           try: R`من غير فلاشة متوصلة، شغّل أول 3 سطور بس وشوف رسالة الـ throw. وبعدين وصّل فلاشة مفيهاش حاجة مهمة، وشغّل أول سطرين واتأكد إن الاسم والحجم بتوعها هي، قبل ما تفكر تكمّل.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[Get-Disk | Where-Object BusType -eq USB | Get-Partition]] من غير فلاشة متوصلة، وبعدين بفلاشة.`, done: R`من غير فلاشة مفيش ناتج خالص، وبالفلاشة بيطلع تقسيماتها هي بس (حرفها وحجمها)، ومفيش ولا تقسيمة من ديسك الويندوز.` },
+            { lvl: 'تطبيق', t: R`function [[Select-UsbDisk]]: بترجع الديسك لو فيه USB واحد بس، و [[throw]] لو صفر أو أكتر من واحد، وكمان بترفض أي ديسك [[IsBoot]] أو [[IsSystem]] بتاعه [[True]] حتى لو BusType بتاعه USB.`, done: R`من غير فلاشة بتطلع رسالتك ([[found 0]])، ومع فلاشة واحدة بترجع رقمها واسمها، ولو جرّبت الشرط على ديسك C: (اللي [[IsBoot]] بتاعه [[True]]) بترفضه. كل ده قراية بس.` },
+            { lvl: 'تحدي', t: R`[[Clear-Disk]] و [[Format-Volume]] الاتنين فيهم [[-WhatIf]] (اتأكد بـ [[(Get-Command Format-Volume).Parameters.ContainsKey('WhatIf')]]). كمّل سكربت الدرس بحيث يتشغّل كله الأول بـ [[-WhatIf]] على الفلاشة، ومايمسحش بجد غير لو كتبت اسم الفلاشة بالظبط.`, done: R`[[ContainsKey]] بيرجّع [[True]] للاتنين، وتشغيلة [[-WhatIf]] من Terminal أدمن بتطبع سطور What if ومفيش ولا خطوة اتنفذت، والملفات اللي على الفلاشة لسه موجودة، واسم غلط بيوقّف قبل أي حاجة.` },
+          ],
           flag: "script danger",
           deep: {
             why: R`فلاشة كانت عليها ISO لينكس أو ويندوز (bootable) فبقت ظاهرة 2 ميجا بس، أو اتعملها partition غريب، أو عايز تمسحها قبل ما تديها لحد، أو تفرمتها exFAT عشان تحط عليها ملف أكبر من 4 جيجا. والطريقة دي بتنضّفها من الصفر أحسن من Format العادي في Explorer اللي بيفرمت تقسيمة واحدة وبيسيب الباقي.`,
@@ -377,6 +395,11 @@ FAT, FAT32, exFAT, NTFS, ReFS
 manage-bde -status C:
 manage-bde -protectors -get C:`,
           try: R`افتح Settings ← Privacy & security ← Device encryption واعرف التشفير شغال ولا لأ. ولو شغال، افتح [[https://aka.ms/myrecoverykey]] من موبايلك واتأكد إن المفتاح موجود، وقارن الـ Key ID بالناتج من Terminal أدمن.`,
+          practice: [
+            { lvl: 'سريع', t: R`من نافذة عادية [[manage-bde -status C:]] وبعده [[$LASTEXITCODE]]، وبعدين نفس الأمر من Terminal أدمن.`, done: R`العادية بتطبع [[ERROR: An attempt to access a required resource was denied.]] وكود مش صفر، والأدمن بيطبع [[Conversion Status]] و [[Protection Status]] للديسك.` },
+            { lvl: 'تطبيق', t: R`[[bitlocker-check.ps1]]: لو مش أدمن يطبع «needs admin» ويخرج بـ [[2]]، ولو أدمن يخرج بـ [[0]] لو كل الديسكات الثابتة [[ProtectionStatus]] بتاعها [[On]] وفيها protector نوعه [[RecoveryPassword]]، و [[1]] لو لأ.`, done: R`من نافذة عادية الكود ٢ من غير أي سطر أحمر، ومن Terminal أدمن الكود بيطابق اللي مكتوب في Settings ← Privacy & security ← Device encryption.` },
+            { lvl: 'تحدي', t: R`من Terminal أدمن اطبع [[KeyProtectorId]] بتاع الـ RecoveryPassword بس (من غير المفتاح نفسه)، وقارنه بـ Key ID في [[https://aka.ms/myrecoverykey]].`, done: R`أول ٨ حروف من الـ ID في الترمنال هي نفس الـ Key ID في الصفحة، والمفتاح نفسه (٤٨ رقم) ماتطبعش ولا اتكتب في أي ملف أو transcript (دوّر عليه بـ [[Select-String]] في اللوجات بتاعتك).` },
+          ],
           deep: {
             why: R`ناس كتير بتكتشف إن الديسك متشفّر يوم ما شاشة BitLocker recovery تظهر بعد تحديث، ومعندهمش المفتاح. خمس دقايق تتأكد فيها إن المفتاح محفوظ في حسابك أو مطبوع بتوفّر عليك ضياع كل الملفات. وكمان لو هتبيع جهاز أو تبعته صيانة، تعرف الديسك متشفّر ولا لأ.`,
             how: R`الـ TPM بيفتح الديسك أوتوماتيك طول ما «القياسات» بتاعة الـ boot زي ما هي (BIOS، و Secure Boot، و boot loader). تحديث BIOS، أو تغيير إعداد Secure Boot، أو نقل الديسك لجهاز تاني، بيغيّر القياسات، فالـ TPM يرفض وويندوز يطلب الـ Recovery key. عشان كده تحديثات BIOS الرسمية بتعلّق BitLocker مؤقتًا الأول (ProtectionStatus Off لحد الـ restart الجاي).
@@ -515,6 +538,11 @@ Get-MpThreatDetection | Select-Object InitialDetectionTime, ThreatID, Resources
 Add-MpPreference -ExclusionPath "D:\projects"
 (Get-MpPreference).ExclusionPath`,
           try: R`اعرف حالة Defender عندك، وآخر تحديث للتعريفات، وهل Tamper Protection شغال. ولو مقفول، شغّله من Windows Security ← Virus & threat protection ← Manage settings.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[Get-MpComputerStatus | Select-Object AntivirusSignatureAge, QuickScanAge, FullScanAge]]`, done: R`أرقام بالأيام. التعريفات غالبًا [[0]] أو [[1]] لو الجهاز بيتحدّث عادي، ولو أكبر من كده اعمل [[Update-MpSignature]] من Terminal أدمن واتأكد إنها رجعت [[0]].` },
+            { lvl: 'تطبيق', t: R`[[defender-check.ps1]]: تحذير لو [[RealTimeProtectionEnabled]] مش [[True]]، أو [[AntivirusSignatureAge]] أكبر من ٣، أو [[QuickScanAge]] أكبر من ٧، و [[exit 1]] لو فيه أي تحذير.`, done: R`على جهاز سليم الكود ٠. ولو غيّرت شرط التعريفات مؤقتًا لـ [[-ge 0]] بيطبع التحذير والكود ١، من غير ما تقفل أي حاجة في Defender.` },
+            { lvl: 'تحدي', t: R`من Terminal أدمن: فولدر تجربة في TEMP فيه ملفات نصية، و [[Start-MpScan -ScanType CustomScan -ScanPath]] عليه جوه [[Measure-Command]]، وبعدين [[Get-MpThreatDetection]].`, done: R`الفحص بيخلص في ثواني من غير ناتج، و [[Get-MpThreatDetection]] مفيهوش حاجة جديدة بتاريخ النهارده، والوقت اللي اتقاس يديك فكرة لو هتفحص فولدر Downloads كله.` },
+          ],
           flag: "danger",
           deep: {
             why: R`تتأكد إن الحماية شغالة (برامج كتير بتقفلها من غير ما تقول)، أو تفحص فولدر مشروع أو ملف نزّلته قبل ما تشغّله، أو تفهم ليه npm install بطيء، أو تشوف Defender مسك إيه وإمتى. ومن الترمنال تقدر تحطها في سكربت صيانة.`,
@@ -673,6 +701,11 @@ powershell -NoProfile -Command "Checkpoint-Computer -Description 'Before registr
 rstrui
 Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SystemRestore" -Name SystemRestorePointCreationFrequency -ErrorAction SilentlyContinue`,
           try: R`من Terminal أدمن: اعرض النقط الموجودة، ولو مفيش، شغّل System Protection واعمل نقطة باسم واضح قبل ما تسطّب الدرايفر أو البرنامج الجاي.`,
+          practice: [
+            { lvl: 'سريع', t: R`من Terminal أدمن في Windows PowerShell 5.1: [[Get-ComputerRestorePoint | Select-Object SequenceNumber, Description, CreationTime]].`, done: R`لستة النقط بأوصافها (أو ولا حاجة لو System Protection مقفول)، ومن نافذة عادية [[Access denied]] زي ما الدرس قال.` },
+            { lvl: 'تطبيق', t: R`[[Checkpoint-Computer]] ملوش [[-WhatIf]] (اتأكد بـ [[(Get-Command Checkpoint-Computer).Parameters.ContainsKey('WhatIf')]])، فاعمل function [[New-SafePoint -Description]] بـ [[SupportsShouldProcess]] بتسأل [[$PSCmdlet.ShouldProcess]] قبل ما تنادي Checkpoint-Computer.`, done: R`[[ContainsKey]] بيرجّع [[False]] في 7.6 و 5.1، و [[New-SafePoint "test" -WhatIf]] بيطبع سطر What if بتاعك من نافذة عادية ومن غير ما أي نقطة تتعمل.` },
+            { lvl: 'تحدي', t: R`سكربت قبل أي تغيير خطير: يعدّ النقط، ويعمل نقطة، ويعدّ تاني، ولو العدد مزادش يقف ويقولك إن ويندوز رفض (الحد الافتراضي نقطة كل ٢٤ ساعة) بدل ما يكمّل وانت فاكر إن عندك نقطة.`, done: R`أول مرة العدد بيزيد ١ والسكربت بيكمّل، وتاني مرة في نفس اليوم بيطلع تحذير من ويندوز والعدد زي ما هو والسكربت بيقف بكود مش صفر.` },
+          ],
           flag: "danger",
           deep: {
             why: R`تحديث درايفر كارت الشاشة خلى الشاشة سودا، أو برنامج «تنضيف» عبث في الـ registry، أو سكربت tweaks من النت بوّظ حاجة. من غير نقطة استرجاع الحل غالبًا Reset أو تسطيب من جديد. مع نقطة، ترجع في ربع ساعة.`,
@@ -830,6 +863,11 @@ Get-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run" | Select-
 Get-ChildItem ([Environment]::GetFolderPath("Startup"))
 Get-ScheduledTask | Where-Object { $_.State -ne "Disabled" -and $_.TaskPath -notlike "\Microsoft\*" -and $_.Triggers.CimClass.CimClassName -contains "MSFT_TaskLogonTrigger" } | Select-Object TaskName, TaskPath, State`,
           try: R`اعرف كام برنامج بيقوم مع ويندوز عندك، وأنهي واحد منهم انت مش محتاجه، واقفله من Task Manager ← Startup apps. وبعدين شغّل الـ solCode وشوف علامة Disabled.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[Get-CimInstance Win32_StartupCommand | Group-Object Location | Select-Object Count, Name]]`, done: R`كام برنامج من مفتاح Run بتاع اليوزر (بيبدأ بـ [[HKU\]])، وكام من [[HKLM]]، وكام من فولدر Startup، ومجموعهم بيساوي [[@(Get-CimInstance Win32_StartupCommand).Count]].` },
+            { lvl: 'تطبيق', t: R`استخدم الـ solCode بتاع الدرس ([[StartupApproved\Run]]) وطلّع البرامج اللي «شغالة فعلًا» بس، وقارن العدد بـ Task Manager ← Startup apps (اللي Status بتاعها Enabled).`, done: R`العدد بتاعك قريب من عدد Enabled في Task Manager، وأي برنامج قفلته من هناك مش في لستك، حتى لو [[Win32_StartupCommand]] لسه بيعرضه.` },
+            { lvl: 'تحدي', t: R`لقطة قبل وبعد: احفظ الأسامي في [[startup-before.csv]]، وبعدين سطّب برنامج أو فعّل واحد من Task Manager، وسكربت بيطبع الجديد بس (الاسم اللي مش في الملف القديم) بـ [[-notin]].`, done: R`من غير أي تغيير السكربت مبيطبعش حاجة، وبعد التغيير بيطبع اسم البرنامج الجديد بس، ولو شلت برنامج بيقولك «اتشال» برضه.` },
+          ],
           deep: {
             why: R`الجهاز بياخد دقايق بعد الدخول لحد ما يبقى سريع، أو الرام مليانة من غير ما تفتح حاجة، أو أيقونات كتير جنب الساعة. أغلب البرامج بتحط نفسها في الـ startup وقت التسطيب من غير ما تسأل. والأوامر دي بتوريك القايمة كاملة، بما فيها المهام المجدولة اللي Task Manager مش بيعرضها في Startup apps.`,
             how: R`أماكن الـ startup كتير، وأشهرها: مفتاح Run لليوزر (HKCU) ولكل اليوزرز (HKLM)، و RunOnce (مرة واحدة)، وفولدر Startup لليوزر ولكل اليوزرز، والمهام المجدولة بـ trigger عند الدخول أو عند التشغيل، والخدمات اللي StartupType بتاعها Automatic (درس Get-Service). أداة Autoruns من Sysinternals بتعرض كل الأماكن دي لو عايز الصورة الكاملة.
@@ -1023,6 +1061,11 @@ Get-CimInstance Win32_PnPEntity -Filter "ConfigManagerErrorCode <> 0" | Select-O
 Disable-PnpDevice -InstanceId "USB\VID_046D&PID_0825\12345678" -Confirm:$false
 Enable-PnpDevice -InstanceId "USB\VID_046D&PID_0825\12345678" -Confirm:$false`,
           try: R`اعرف عندك كام جهاز فيه مشكلة وإيه سببها، ونسخة درايفر كارت الواي فاي وتاريخها.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[Get-PnpDevice -PresentOnly | Group-Object Class | Sort-Object Count -Descending | Select-Object -First 5 Count, Name]]`, done: R`أكبر ٥ أنواع أجهزة ويندوز شايفها عندك، وتقدر تقول كل نوع منهم إيه (Net كروت شبكة، و USB، و System حاجات المذربورد...).` },
+            { lvl: 'تطبيق', t: R`[[Get-NetAdapter | Select-Object Name, InterfaceDescription, DriverVersion, DriverProvider, DriverDate]]، وقارن الواي فاي بالطريقة اللي في الدرس ([[Get-PnpDeviceProperty]]).`, done: R`نفس النسخة ونفس الشركة ونفس التاريخ بالطريقتين، بس [[Get-NetAdapter]] أقصر لكروت الشبكة، و [[Get-PnpDeviceProperty]] شغال لأي جهاز.` },
+            { lvl: 'تحدي', t: R`«إيه اللي اتوصل؟»: احفظ [[InstanceId]] بتاع كل الأجهزة الموجودة، ووصّل فلاشة أو ماوس، وخد تاني، واطبع الجديد بـ [[FriendlyName]] و [[Class]].`, done: R`من غير توصيل مفيش جديد، وبعد التوصيل بيطلع جهاز أو أكتر (الفلاشة ساعات بتطلع كذا سطر: الـ USB نفسه والـ disk والـ volume)، وبعد ما تشيلها وتشغّل بـ [[-PresentOnly]] بتختفي.` },
+          ],
           flag: "danger",
           deep: {
             why: R`الصوت اختفى، أو الكاميرا مش شغالة في الميتنج، أو البلوتوث مش ظاهر، أو بعد تسطيب ويندوز جديد فيه أجهزة من غير درايفر. بدل ما تفتح Device Manager وتدوّر على علامة صفرا، سطر واحد بيقولك مين وليه، وتقدر تجمعه من كذا جهاز.`,
@@ -1232,6 +1275,11 @@ Get-Process | Sort-Object CPU -Descending | Select-Object -First 5 Name, Id, CPU
 Get-Counter "\Memory\Available MBytes" -Continuous
 Get-CimInstance Win32_PerfFormattedData_PerfOS_Processor -Filter "Name='_Total'" | Select-Object PercentProcessorTime`,
           try: R`افتح حاجة تقيلة (build أو فيديو في المتصفح)، وشغّل السطر التالت، وقارن الأسامي بالسطر الرابع.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[(Get-Counter -ListSet Memory).Counter]] ودوّر على Available MBytes.`, done: R`اللستة فيها [[\Memory\Available MBytes]] اللي في المثال. (لو ويندوز بلغة تانية غير الإنجليزي، أسامي الـ counters ممكن تبقى مترجمة، فده أول مكان تدوّر فيه لو المثال طلّع error.)` },
+            { lvl: 'تطبيق', t: R`سجّل المعالج والرام كل ثانيتين لمدة دقيقة: [[Get-Counter "\Processor(_Total)\% Processor Time", "\Memory\Available MBytes" -SampleInterval 2 -MaxSamples 30]]، ولكل sample صف فيه [[Timestamp]] والقيمتين، و [[Export-Csv]].`, done: R`الملف فيه 30 صف بالظبط، والفرق بين كل [[Timestamp]] واللي بعده حوالي ثانيتين، والأرقام مقرّبة مش 15 رقم بعد العلامة.` },
+            { lvl: 'تحدي', t: R`«إنذار رام»: كل ٥ ثواني اقرا Available MBytes، ولو أقل من حد بتحدده اطبع أكبر ٣ برامج بـ [[WorkingSet64]] واعمل [[[console]::Beep(800, 300)]]، ويقف لوحده بعد عدد قرايات.`, done: R`لو الحد أعلى من الرام الفاضية عندك بيطبع الإنذار من أول قراية، ولو أقل مبيطبعش حاجة، والسكربت بيخلص بعد العدد اللي حددته من غير Ctrl+C.` },
+          ],
           deep: {
             why: R`المروحة شغالة على الآخر والجهاز بطيء، وعايز تعرف مين السبب من غير ما تفتح Task Manager، أو عايز تسجّل الاستهلاك وقت build أو test عشان تقارن قبل وبعد تعديل، أو سكربت يحذّرك لو الرام قربت تخلص.`,
             how: R`الـ % Processor Time محتاج قرايتين: [[Get-Counter]] بياخد قراية، ويستنى [[SampleInterval]] (افتراضي ثانية)، وياخد التانية، ويحسب الفرق. عشان كده أول قراية بتاخد ثانية، والرقم متوسط الثانية دي مش لحظة.
@@ -1434,6 +1482,11 @@ PercentProcessorTime
 Get-WinEvent -FilterHashtable @{ LogName = "System"; Level = 1, 2; StartTime = (Get-Date).AddDays(-1) } -ErrorAction SilentlyContinue | Group-Object ProviderName | Sort-Object Count -Descending | Select-Object Count, Name
 Get-WinEvent -LogName Security -MaxEvents 5`,
           try: R`اعرف آخر مرة جهازك اتقفل وليه (1074)، وآخر مرة قفل فجأة (41)، وإيه أكتر حاجة بتطلّع أخطاء من امبارح.`,
+          practice: [
+            { lvl: 'سريع', t: R`[[Get-WinEvent -FilterHashtable @{ LogName = 'System'; Id = 6005 } -MaxEvents 5 | Select-Object TimeCreated]] (6005 معناه «خدمة Event Log بدأت»، يعني الويندوز قام).`, done: R`آخر ٥ مرات الجهاز قام، الأحدث فوق، من غير أدمن. وتقدر تقول منها الجهاز بيتعمله restart كل قد إيه.` },
+            { lvl: 'تطبيق', t: R`ملخص أخطاء آخر ٧ أيام: [[Level = 2]] و [[StartTime = (Get-Date).AddDays(-7)]] في الـ FilterHashtable، و [[Group-Object ProviderName, Id]]، وأكتر ١٠ في [[errors.csv]].`, done: R`CSV فيه Count و Name، وأول صف أكتر واحد بيطلّع errors، ومجموع Count كله بيساوي عدد الأحداث من نفس الفلتر من غير Group.` },
+            { lvl: 'تحدي', t: R`function [[Get-ShutdownHistory]]: بترجع القفل آخر ٣٠ يوم (1074 = مطلوب، و 41 و 6008 = فجأة) مترتب، وفيه عمود Type، ومن غير ولا سطر أحمر لما مفيش أحداث.`, done: R`فلتر بـ Id مش موجود (زي [[99999]]) لوحده بيطلّع [[No events were found that match the specified selection criteria.]] و الـ ID بتاعه أوله [[NoMatchingEventsFound]]، و function بتاعتك في الحالة دي بترجع فاضي من غير error. و [[-LogName Security]] من نافذة عادية بيطلع [[Attempted to perform an unauthorized operation.]]، فمتدورش هناك من غير أدمن.` },
+          ],
           deep: {
             why: R`صحيت لقيت الجهاز عامل restart والشغل اللي كان مفتوح راح، أو الجهاز بيقفل فجأة كل كام يوم، أو برنامج بيقع ومش عارف ليه. Event Log فيه الإجابة غالبًا، بس Event Viewer تقيل وصعب تدوّر فيه، والفلتر بالأرقام بيوصلك في ثانية.`,
             how: R`[[-FilterHashtable]] بيبعت الفلتر لخدمة الـ Event Log نفسها، فبترجع الأحداث المطلوبة بس، وده أسرع بكتير من [[Get-WinEvent -LogName System | Where-Object Id -eq 41]] اللي بيقرا السجل كله (عشرات الآلاف من الأحداث) وبعدين يفلتر.
@@ -1623,6 +1676,11 @@ $password | Set-Clipboard
 -join (1..20 | ForEach-Object { $chars.ToCharArray() | Get-SecureRandom })
 [math]::Round($length * [math]::Log($chars.Length, 2), 1)`,
           try: R`اعمل باسورد 24 حرف وحطه في الحافظة، والصقه في Notepad واتأكد من طوله. وجرب [[Get-Random -Maximum 100 -SetSeed 23]] تلات مرات.`,
+          practice: [
+            { lvl: 'سريع', t: R`توكن hex عشوائي في 7: [[[Convert]::ToHexString([Security.Cryptography.RandomNumberGenerator]::GetBytes(16))]]، وشغّل نفس السطر في 5.1.`, done: R`في 7 بيطلع ٣٢ حرف من [[0-9]] و [[A-F]] ومختلف كل مرة. وفي 5.1 بيطلع [[does not contain a method named 'GetBytes']]، والبديل اللي شغال في الاتنين: [[$b = New-Object byte[] 16]] وبعدين [[[Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($b)]]، والبايتات بتتملي جوه [[$b]].` },
+            { lvl: 'تطبيق', t: R`function [[New-Password -Length 16]] بتضمن حرف كابيتال وحرف سمول ورقم ورمز على الأقل (بتعيد التوليد لحد ما الأربعة يتحققوا)، واختبرها ١٠٠ مرة.`, done: R`[[1..100 | ForEach-Object { New-Password }]] كلهم طولهم 16، وكلهم بيعدّوا [[-cmatch '[A-Z]']] و [[-cmatch '[a-z]']] و [[-match '\d']] و [[-match '[^A-Za-z0-9]']]، ومفيش اتنين زي بعض.` },
+            { lvl: 'تحدي', t: R`passphrase: اعمل لستة ٢٠٠ كلمة إنجليزي في ملف، واختار ٥ كلمات عشوائية بينهم شرطة، واحسب القوة [[[math]::Log(200, 2) * 5]]، وخلّي السكربت يشتغل في 5.1 و 7 (من غير [[GetInt32]] اللي مش موجود في 5.1).`, done: R`الناتج ٥ كلمات بينهم [[-]]، والقوة حوالي [[38.2]] bit (أقل من باسورد 20 حرف بتاع الدرس بكتير، فزوّد كلمات لو هتستخدمها لحاجة مهمة)، ونفس الملف بيشتغل في [[powershell]] و [[pwsh]] من غير error.` },
+          ],
           deep: {
             why: R`باسورد لحساب أدمن local (درس Get-LocalUser / New-LocalUser)، أو لقاعدة بيانات أو API key في ملف .env، أو لواي فاي الضيوف. الباسوردات اللي البني آدم بيختارها بتتخمّن، والمولّدات العادية ممكن تتوقع. ده بيدّيك باسورد عشوائي بجد من غير ما تفتح موقع.`,
             how: R`[[Get-Random]] بيستخدم مولّد pseudo-random: أرقام شكلها عشوائي بس جاية من معادلة وحالة داخلية، ولو حد عرف الحالة (أو الـ seed) يقدر يطلّع نفس الأرقام. [[RandomNumberGenerator]] بياخد عشوائيته من نظام التشغيل نفسه (CSPRNG)، ودي المعمولة للمفاتيح والتوكنز.
