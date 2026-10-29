@@ -331,7 +331,7 @@ body.quiz article.cmd:not(.shown) .notes{display:none}
 .fc-actions #fcMiss{border-color:var(--danger);color:var(--danger)}
 .fc-stat{margin:12px 0 0;font-size:13.5px;color:var(--muted)}
 @media print{
-  .bar,.switch,.sw-sec,.hero .lead,.hero .topline,.lab,.copy,.try .done,.reveal,.notes .note-btn,.tools,#fc,.path,#compare,#missions{display:none!important}
+  .bar,.switch,.sw-sec,.hero .lead,.hero .topline,.lab,.copy,.try .done,.reveal,.notes .note-btn,.tools,#fc,.path,#compare,#missions,.report,.ptick{display:none!important}
   body{background:#fff;color:#000;font-size:11pt}
   article.cmd{break-inside:avoid;border:1px solid #bbb}
   .term pre{white-space:pre-wrap}
@@ -657,6 +657,8 @@ body.todo .map tr.is-done{display:none}
 .projlist .lv3{color:var(--a-bash)}
 .projlist .lv4{color:var(--accent)}
 .projlist span.pfolio{font-size:13px;margin-top:4px}
+.report{margin:10px 0 0;font-size:13px}
+.report a{color:var(--muted)}
 /* a lesson's practice drills, under «جرّب» */
 .practice{margin:10px 0;padding:10px 14px;border:1px dashed var(--line);border-radius:8px;background:var(--surface)}
 .practice .lbl{display:block;font-weight:600;margin-bottom:6px}
@@ -984,6 +986,8 @@ const SHELLS = {}, LAB = {}, LABTXT = {}, LEVEL_TAB = {}, DATA = {}, DEEP = {}, 
 const USE = {}, CARD = {};
 /* PRACTICE: the lesson's practice drills [{lvl: سريع/تطبيق/تحدي, t, done}], shown under «جرّب» */
 const PRACTICE = {};
+/* CI: runnable checks for tools/ci-run.js, [{os: ['ubuntu','macos','windows'], sh: 'bash'|'zsh'|'pwsh'|'powershell'|'cmd'|'node'|'python', run, expect: [...], code}] */
+const CI = {};
 const LEVEL_INFO = {
   "1": ["البداية", "تتحرك بين الفولدرات وتتعامل مع الملفات وتقراها بثقة"],
   "2": ["المتوسط", "توصّل الأوامر ببعض، وتدير الصلاحيات والعمليات والشبكة"],
@@ -1026,6 +1030,7 @@ function cats(key, list){
       if (it.check) CHECK[id] = it.check;
       if (it.use) USE[id] = it.use;
       if (it.practice) PRACTICE[id] = it.practice;
+      if (it.ci) CI[id] = it.ci;
       if (it.learn || it.out) CARD[id] = {learn: it.learn, out: it.out};
       const row = [it.cmd, it.title, it.desc, it.example, it.try];
       if (it.flag !== undefined) row.push(it.flag);
@@ -78012,6 +78017,10 @@ retry 5 1 timeout 5 curl -fsS -o /dev/null http://127.0.0.1:3000/health`,
             R`الاستخدام الحقيقي: لحد ٥ محاولات، أول انتظار ثانية، وكل محاولة [[curl]] جوه [[timeout 5]]. فأسوأ حالة: ٥ محاولات × ٥ ثواني + ١+٢+٤+٨ ثواني انتظار، يعني أقل من دقيقة، ومستحيل يعلّق للأبد.`,
           ],
           try: R`شغّل [[timeout 2 sleep 10; echo $?]] و [[timeout 5 sleep 1; echo $?]] وقارن. وبعدين انسخ دالة [[retry]] في الترمنال وجرّب [[retry 3 1 false]] وشوف الرسايل والوقت.`,
+          ci: [
+            { os: [R`ubuntu`], sh: R`bash`, run: R`timeout 1 sleep 5
+echo "code=$?"`, expect: [R`code=124`] },
+          ],
           sol: R`اتشغّل على أوبونتو 24.04 جوه Docker: [[timeout 2 sleep 10]] رجّع [[124]] بعد ثانيتين، و [[timeout 5 sleep 1]] رجّع [[0]] بعد ثانية لأنه خلص قبل الحد. و [[retry 3 1 false]] طبع:
 
 ~~~text
@@ -78429,6 +78438,10 @@ diff -rq releases/old releases/new`,
             R`[[-r]] بيمشي جوه الفولدرين وكل الفولدرات اللي جواهم، و [[-q]] (brief) بيقول **أنهي** ملفات مختلفة وأنهي موجود في ناحية بس، من غير ما يطبع الفرق جوه كل ملف. مفيد تعرف نسختين من التطبيق فرقهم إيه قبل ما تفتح ملف ملف.`,
           ],
           try: R`اعمل ملفين: [[printf '%s\n' curl git nginx htop jq > server-a.txt]] و [[printf '%s\n' git nginx jq vim > server-b.txt]]. طلّع بـ [[comm]] اللي متسطب في الاتنين، واللي ناقص في b. وبعدين جرّب [[comm -12 server-a.txt server-b.txt]] من غير [[sort]] وشوف الناتج والرسالة.`,
+          ci: [
+            { os: [R`ubuntu`, R`macos`], sh: R`bash`, run: R`comm -12 <(printf "a\nb\nc\n") <(printf "b\nc\nd\n") | tr "\n" " "; echo
+cmp -s <(echo x) <(echo x) && echo same`, expect: [R`b c`, R`same`] },
+          ],
           sol: R`اتشغّل على أوبونتو 24.04 جوه Docker. [[comm -12 <(sort server-a.txt) <(sort server-b.txt)]] طبع [[git]] و [[jq]] و [[nginx]] (في الاتنين)، و [[comm -23 ...]] طبع [[curl]] و [[htop]] (عند a بس).
 
 ومن غير [[sort]] طبع [[git]] و [[nginx]] و [[jq]] وتحتهم:
@@ -112818,6 +112831,10 @@ $result | Sort-Object Port | Where-Object Open`,
             R`[[Sort-Object Port]] بيرجّع الترتيب بالرقم (لأن التوازي لخبطه: طلع [[135 445 5432 3000 9001 8080...]])، و [[Where-Object Open]] بيسيب اللي [[Open]] بتاعه True بس. على الجهاز ده طلع [[135]] و [[445]].`,
           ],
           try: R`شغّل السطرين الأولانيين وقارن الرقمين. بعدها شيل [[-ThrottleLimit 10]] من فحص البورتات وقيس بـ [[Measure-Command]]: المفروض يطلع حوالي ٢ ثانية (دفعتين). وافتح سيرفر صغير على بورت منهم (زي [[python -m http.server 8080]] في نافذة تانية) وشوفه بقى [[Open]].`,
+          ci: [
+            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`pwsh`, run: R`$t = (Measure-Command { 1..10 | ForEach-Object -Parallel { Start-Sleep 1 } }).TotalSeconds
+if ($t -lt 4) { "parallel fast" } else { "parallel slow $t" }`, expect: [R`parallel fast`] },
+          ],
           practice: [
             { lvl: 'سريع', t: R`قيس [[1..10 | ForEach-Object -Parallel { Start-Sleep 1 }]] بـ [[Measure-Command]]، وبعدين نفس الحاجة من غير [[-Parallel]].`, done: R`الأول حوالي ثانيتين (الحد الافتراضي ٥ في نفس الوقت)، والتاني حوالي ١٠ ثواني.` },
             { lvl: 'تطبيق', t: R`افحص ١٠ بورتات على [[127.0.0.1]] بالتوازي، وطلّع جدول متترتب بالبورت.`, done: R`الجدول متترتب مهما كان مين خلص الأول، وكل سطر فيه البورت ومفتوح ولا لأ.` },
@@ -113083,6 +113100,10 @@ Compare-Object (Get-Content .\before.env) (Get-Content .\after.env)`,
             R`[[Get-Content]] بيقرا كل ملف كقايمة سطور، والقوسين [[( )]] بيخلّوا كل قراية تخلص وتتبعت كقايمة. طلع [[PORT=8080 =>]] و [[CACHE=on =>]] (جديد أو اتغيّر) و [[PORT=3000 <=]] (القيمة القديمة). السطر اللي اتغيّر قيمته بيطلع مرتين: القديم بـ [[<=]] والجديد بـ [[=>]].`,
           ],
           try: R`اعمل الـ lab وشغّل السطور واحد واحد. بعدها اعرف الملفات اللي **محتواها** اتغيّر حتى لو حجمها زي بعض: قارن [[Get-FileHash]] بتاع الفولدرين بـ [[-Property Hash]]. وجرّب [[Compare-Object $src $bak]] من غير [[-Property]] في 7 وفي 5.1 وشوف الفرق.`,
+          ci: [
+            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`pwsh`, run: R`Compare-Object a,b,c b,c,d | ForEach-Object { "$($_.InputObject) $($_.SideIndicator)" }`, expect: [R`a <=`, R`d =>`] },
+            { os: [R`windows`], sh: R`powershell`, run: R`Compare-Object a,b,c b,c,d | ForEach-Object { "$($_.InputObject) $($_.SideIndicator)" }`, expect: [R`a <=`, R`d =>`] },
+          ],
           practice: [
             { lvl: 'سريع', t: R`قارن قايمتين أسامي كاتبهم بإيدك، مرة عادي ومرة بـ [[-IncludeEqual]].`, done: R`تقدر تقول كل سهم معناه إيه، و [[==]] بيظهر للأسامي اللي في الاتنين بس مع [[-IncludeEqual]].` },
             { lvl: 'تطبيق', t: R`قارن فولدرين بـ [[-Property Name, Length]].`, done: R`الملف اللي اتغيّر حجمه بيظهر مرتين ([[<=]] و [[=>]])، والملف الناقص بيظهر مرة واحدة.` },
@@ -113386,6 +113407,12 @@ Get-ChildItem $logDri -Filter *.log | Remove-Item -WhatIf
             R`سطر بيأكد إن السكربت وصل للآخر. من غير strict mode بيطبع [[done]] بعد ما «مسح» الملفات الغلط، فشكله نجح. ومع strict mode مبيوصلوش، لأن [[Stop]] وقّف السكربت عند الـ error (كود الخروج [[1]]).`,
           ],
           try: R`اعمل فولدر [[strict]] فيه [[app.log]] و [[logs\old.log]]، واحفظ المثال [[clean.ps1]] جواه، واقف في الفولدر وشغّله. بعدها امسح سطر [[Set-StrictMode]] وشغّله تاني وشوف الـ What if على أنهي ملفات. وفي الآخر صلّح الاسم لـ [[$logDir]].`,
+          ci: [
+            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`pwsh`, run: R`Set-StrictMode -Version Latest
+try { $nmae = "x"; $name } catch { $_.FullyQualifiedErrorId }`, expect: [R`VariableIsUndefined`] },
+            { os: [R`windows`], sh: R`powershell`, run: R`Set-StrictMode -Version Latest
+try { $nmae = "x"; $name } catch { $_.FullyQualifiedErrorId }`, expect: [R`VariableIsUndefined`] },
+          ],
           practice: [
             { lvl: 'سريع', t: R`اكتب [[$nmae = 'x'; $name]]، مرة من غير strict mode ومرة بعد [[Set-StrictMode -Version Latest]].`, done: R`من غيره مبيطبعش حاجة ومبيشتكيش، ومعاه بيطلع error فيه اسم المتغير الغلط.` },
             { lvl: 'تطبيق', t: R`اقرا خاصية مش موجودة ([[$obj.Nmae]]) تحت [[-Version 1]] وبعدين تحت [[Latest]].`, done: R`[[-Version 1]] بيعدّيها و [[Latest]] بيمسكها، وتقدر تقول ليه.` },
@@ -130080,6 +130107,14 @@ REM   8`,
             "بيطبع [[8]]: الرقم الصح من غير error. لو الرقم خانة واحدة بس (زي [[8]] من غير صفر)، [[1%h%]] هتبقى [[18]] والنتيجة تبقى غلط، فاستخدمها بس مع القيم اللي دايمًا خانتين."
           ],
           try: R`جرّب [[set /a x=07]] و [[set /a x=08]] و [[set /a x=0x1F]] و [[set /a x=017]] — وقبل كل واحدة اتوقّع الناتج. وبعدين جرّب الحيلة على [[09]] و [[10]] و [[00]].`,
+          ci: [
+            { os: [R`windows`], sh: R`cmd`, run: R`@echo off
+set /a n=010
+echo n=%n%
+set h=08
+set /a fixed=1%h%-100
+echo fixed=%fixed%`, expect: [R`n=8`, R`fixed=8`] },
+          ],
           flag: "script",
           deep: {
             why: R`CMD أخد قاعدة الأرقام من لغة C: الصفر في الأول octal، و [[0x]] hex. والقاعدة دي منطقية للمبرمجين، ومفاجئة لأي حد بيتعامل مع تواريخ.`,
@@ -138974,6 +139009,10 @@ print $__{(U)name} / $__{(C)name}
 print $__{(j:-:)fruits}
 for w in $name; do print "[$w]"; done`,
           try: R`قسّم [[PATH]] على [[:]] لـ array واطبع عدد الفولدرات وأول فولدر.`,
+          ci: [
+            { os: [R`macos`], sh: R`zsh`, run: R`arr=(a b c)
+echo "first=$arr[1] count=$#arr"`, expect: [R`first=a count=3`] },
+          ],
           flag: "script",
           deep: {
             why: "على الماك هتكتب سكربتات zsh، ولو جبت عادات bash (العد من 0، والتقسيم على المسافات) هتطلعلك نتايج غلط من غير أي error.",
@@ -729083,8 +729122,16 @@ function articleHTML(it){
     (ex ? termBlock(ex, c, flag) : '')+breakHTML(c, ex)+
     '<button type="button" class="reveal">اكشف الإجابة</button>'+
     '<div class="try"><span class="lbl">'+(shell==='glossary'?'الشرح الكامل في':'جرّب')+'</span><p>'+fmt(tr)+'</p><label class="done"><input type="checkbox" data-k="'+esc(key)+'"'+(done?' checked':'')+'> جربتها</label></div>'+
-    practiceHTML(c)+chkHTML(c)+solHTML(c)+noteHTML(c)+
+    practiceHTML(c)+chkHTML(c)+solHTML(c)+noteHTML(c)+reportHTML(c, t)+
   '</article>';
+}
+/* «something missing here?»: opens a prefilled GitHub issue for this lesson */
+const REPO = 'https://github.com/Dex11x2/terminal-study';
+function reportHTML(c, t){
+  const title = '['+shell+'] '+c+(t ? ' — '+t : '');
+  const body = 'الدرس: '+shell+' › '+c+'\nالرابط: '+location.origin+location.pathname+'#'+shell+'/'+encodeURIComponent(c)+
+    '\n\nإيه اللي ناقص أو مش واضح أو غلط؟\n\n\nلو أمر طلّع ناتج مختلف: النظام إيه، والأمر، والناتج اللي طلعلك:\n';
+  return '<p class="report"><a href="'+REPO+'/issues/new?title='+encodeURIComponent(title)+'&body='+encodeURIComponent(body)+'" target="_blank" rel="noopener">في حاجة ناقصة أو مش واضحة أو غلط هنا؟ قولّنا</a></p>';
 }
 /* the lesson's practice drills, easiest first; each one has its own tick (data-d, not the lesson's data-k) */
 const DRILL_LV = {'سريع': 1, 'تطبيق': 2, 'تحدي': 3};
