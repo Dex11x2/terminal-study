@@ -10,10 +10,11 @@ Read `PLAN.md` first: current state, ordered remaining work, agreed rules. Updat
 - Review log: `verified.json` via `node tools/verify.js` (summary), `todo <tab>` (lessons never verified or edited since), `mark <tab> "<cmd>"… --on "<where it ran>"` after actually running a lesson. Mark only what was really run; write `docs:` for doc-only parts.
 - `js/core.js`: `TAB()` registration. `js/app.js`: rendering, search, progress, OS boxes (`osBoxes`, `RUNS_IN`). `css/style.css`. `index.html`: tab cards and script list.
 - `tools/check.js` (content lint), `tools/build.js` (single file `dist/terminal.html`). Never read `dist/` or `vendor/`.
+- `tools/standard.js .` (per-tab standard: units, projects, ladders, drills), `tools/thin.js` (weak explanations), `tools/ci-run.js [tab|--list]` (lesson `ci` checks), `GAPS.md` (missing topics/projects per tab).
 
 ## Lesson format (details: README.md «شكل الدرس» and «قواعد كتابة الدروس»)
 
-`cmd` (never rename: progress key), `title`, `desc` (first paragraph = summary), `teach` (the full step-by-step explanation: mini-markdown with `~~~lang` fences; style rules in README «الشرح خطوة بخطوة», reference lesson start «CPU و RAM والديسك»), `example`, `try`, `deep{why,how,when,mistakes}`, `lines` (one per non-empty non-comment example line), `sol`/`solCode`, `flag`, bash-only `mac`. Inside R`...`: `${` → `$__{`, backtick → `$__bt`. `[[code]]` single-line, balanced. Egyptian dialect, terms in English.
+`cmd` (never rename: progress key), `title`, `desc` (first paragraph = summary), `teach` (the full step-by-step explanation: mini-markdown with `~~~lang` fences; style rules in README «الشرح خطوة بخطوة», reference lesson start «CPU و RAM والديسك»), `example`, `try`, `deep{why,how,when,mistakes}`, `lines` (one per non-empty non-comment example line), `sol`/`solCode`, `flag`, bash-only `mac`, `practice` (3+ drills `{lvl: سريع|تطبيق|تحدي, t, done}`), `ci` (runnable checks `{os, sh, run, expect}` run by `tools/ci-run.js` in the `lessons` workflow on ubuntu/macos/windows). Unit `projects`: `{lvl: صغير|متوسط|كبير|فكرة, t, what, done, ext}` (PLAN rule 9). Inside R`...`: `${` → `$__{`, backtick → `$__bt`. `[[code]]` single-line, balanced. Egyptian dialect, terms in English.
 
 ## Rules
 

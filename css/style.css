@@ -310,7 +310,7 @@ body.quiz article.cmd:not(.shown) .notes{display:none}
 .fc-actions #fcMiss{border-color:var(--danger);color:var(--danger)}
 .fc-stat{margin:12px 0 0;font-size:13.5px;color:var(--muted)}
 @media print{
-  .bar,.switch,.sw-sec,.hero .lead,.hero .topline,.lab,.copy,.try .done,.reveal,.notes .note-btn,.tools,#fc,.path,#compare,#missions{display:none!important}
+  .bar,.switch,.sw-sec,.hero .lead,.hero .topline,.lab,.copy,.try .done,.reveal,.notes .note-btn,.tools,#fc,.path,#compare,#missions,.report,.ptick{display:none!important}
   body{background:#fff;color:#000;font-size:11pt}
   article.cmd{break-inside:avoid;border:1px solid #bbb}
   .term pre{white-space:pre-wrap}
@@ -636,6 +636,8 @@ body.todo .map tr.is-done{display:none}
 .projlist .lv3{color:var(--a-bash)}
 .projlist .lv4{color:var(--accent)}
 .projlist span.pfolio{font-size:13px;margin-top:4px}
+.report{margin:10px 0 0;font-size:13px}
+.report a{color:var(--muted)}
 /* a lesson's practice drills, under «جرّب» */
 .practice{margin:10px 0;padding:10px 14px;border:1px dashed var(--line);border-radius:8px;background:var(--surface)}
 .practice .lbl{display:block;font-weight:600;margin-bottom:6px}

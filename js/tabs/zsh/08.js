@@ -544,6 +544,10 @@ print $__{(U)name} / $__{(C)name}
 print $__{(j:-:)fruits}
 for w in $name; do print "[$w]"; done`,
           try: R`قسّم [[PATH]] على [[:]] لـ array واطبع عدد الفولدرات وأول فولدر.`,
+          ci: [
+            { os: [R`macos`], sh: R`zsh`, run: R`arr=(a b c)
+echo "first=$arr[1] count=$#arr"`, expect: [R`first=a count=3`] },
+          ],
           flag: "script",
           deep: {
             why: "على الماك هتكتب سكربتات zsh، ولو جبت عادات bash (العد من 0، والتقسيم على المسافات) هتطلعلك نتايج غلط من غير أي error.",

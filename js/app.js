@@ -238,8 +238,16 @@ function articleHTML(it){
     (ex ? termBlock(ex, c, flag) : '')+breakHTML(c, ex)+
     '<button type="button" class="reveal">اكشف الإجابة</button>'+
     '<div class="try"><span class="lbl">'+(shell==='glossary'?'الشرح الكامل في':'جرّب')+'</span><p>'+fmt(tr)+'</p><label class="done"><input type="checkbox" data-k="'+esc(key)+'"'+(done?' checked':'')+'> جربتها</label></div>'+
-    practiceHTML(c)+chkHTML(c)+solHTML(c)+noteHTML(c)+
+    practiceHTML(c)+chkHTML(c)+solHTML(c)+noteHTML(c)+reportHTML(c, t)+
   '</article>';
+}
+/* «something missing here?»: opens a prefilled GitHub issue for this lesson */
+const REPO = 'https://github.com/Dex11x2/terminal-study';
+function reportHTML(c, t){
+  const title = '['+shell+'] '+c+(t ? ' — '+t : '');
+  const body = 'الدرس: '+shell+' › '+c+'\nالرابط: '+location.origin+location.pathname+'#'+shell+'/'+encodeURIComponent(c)+
+    '\n\nإيه اللي ناقص أو مش واضح أو غلط؟\n\n\nلو أمر طلّع ناتج مختلف: النظام إيه، والأمر، والناتج اللي طلعلك:\n';
+  return '<p class="report"><a href="'+REPO+'/issues/new?title='+encodeURIComponent(title)+'&body='+encodeURIComponent(body)+'" target="_blank" rel="noopener">في حاجة ناقصة أو مش واضحة أو غلط هنا؟ قولّنا</a></p>';
 }
 /* the lesson's practice drills, easiest first; each one has its own tick (data-d, not the lesson's data-k) */
 const DRILL_LV = {'سريع': 1, 'تطبيق': 2, 'تحدي': 3};

@@ -848,6 +848,10 @@ retry 5 1 timeout 5 curl -fsS -o /dev/null http://127.0.0.1:3000/health`,
             R`الاستخدام الحقيقي: لحد ٥ محاولات، أول انتظار ثانية، وكل محاولة [[curl]] جوه [[timeout 5]]. فأسوأ حالة: ٥ محاولات × ٥ ثواني + ١+٢+٤+٨ ثواني انتظار، يعني أقل من دقيقة، ومستحيل يعلّق للأبد.`,
           ],
           try: R`شغّل [[timeout 2 sleep 10; echo $?]] و [[timeout 5 sleep 1; echo $?]] وقارن. وبعدين انسخ دالة [[retry]] في الترمنال وجرّب [[retry 3 1 false]] وشوف الرسايل والوقت.`,
+          ci: [
+            { os: [R`ubuntu`], sh: R`bash`, run: R`timeout 1 sleep 5
+echo "code=$?"`, expect: [R`code=124`] },
+          ],
           sol: R`اتشغّل على أوبونتو 24.04 جوه Docker: [[timeout 2 sleep 10]] رجّع [[124]] بعد ثانيتين، و [[timeout 5 sleep 1]] رجّع [[0]] بعد ثانية لأنه خلص قبل الحد. و [[retry 3 1 false]] طبع:
 
 ~~~text
@@ -1265,6 +1269,10 @@ diff -rq releases/old releases/new`,
             R`[[-r]] بيمشي جوه الفولدرين وكل الفولدرات اللي جواهم، و [[-q]] (brief) بيقول **أنهي** ملفات مختلفة وأنهي موجود في ناحية بس، من غير ما يطبع الفرق جوه كل ملف. مفيد تعرف نسختين من التطبيق فرقهم إيه قبل ما تفتح ملف ملف.`,
           ],
           try: R`اعمل ملفين: [[printf '%s\n' curl git nginx htop jq > server-a.txt]] و [[printf '%s\n' git nginx jq vim > server-b.txt]]. طلّع بـ [[comm]] اللي متسطب في الاتنين، واللي ناقص في b. وبعدين جرّب [[comm -12 server-a.txt server-b.txt]] من غير [[sort]] وشوف الناتج والرسالة.`,
+          ci: [
+            { os: [R`ubuntu`, R`macos`], sh: R`bash`, run: R`comm -12 <(printf "a\nb\nc\n") <(printf "b\nc\nd\n") | tr "\n" " "; echo
+cmp -s <(echo x) <(echo x) && echo same`, expect: [R`b c`, R`same`] },
+          ],
           sol: R`اتشغّل على أوبونتو 24.04 جوه Docker. [[comm -12 <(sort server-a.txt) <(sort server-b.txt)]] طبع [[git]] و [[jq]] و [[nginx]] (في الاتنين)، و [[comm -23 ...]] طبع [[curl]] و [[htop]] (عند a بس).
 
 ومن غير [[sort]] طبع [[git]] و [[nginx]] و [[jq]] وتحتهم:

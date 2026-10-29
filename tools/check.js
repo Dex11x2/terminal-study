@@ -13,7 +13,7 @@ for (const f of files) {
   try { vm.runInContext(code, ctx, { filename: f }); }
   catch (e) { console.error('✗ ' + f + ': الملف فيه غلطة JavaScript ومش هيتقري:\n  ' + e.message); process.exit(1); }
 }
-const { DATA, DEEP, BREAK, SOL, CMP, MISSIONS, CHECK, TEACH, PRACTICE } = vm.runInContext('({DATA, DEEP, BREAK, SOL, CMP, MISSIONS, CHECK, TEACH, PRACTICE})', ctx);
+const { DATA, DEEP, BREAK, SOL, CMP, MISSIONS, CHECK, TEACH, PRACTICE, CI } = vm.runInContext('({DATA, DEEP, BREAK, SOL, CMP, MISSIONS, CHECK, TEACH, PRACTICE, CI})', ctx);
 
 const errors = [], warnings = [];
 const err = (where, msg) => errors.push(where + ': ' + msg);
@@ -51,6 +51,17 @@ for (const tab in DATA) {
     (cat.projects || []).forEach(p => {
       if (!p.t) err(`${tab} › ${cat.t}`, 'مشروع من غير t');
       if (p.lvl && !['صغير', 'متوسط', 'كبير', 'فكرة'].includes(p.lvl)) err(`${tab} › ${cat.t} › ${p.t}`, 'lvl لازم يبقى صغير أو متوسط أو كبير أو فكرة');
+    });
+    cat.items.forEach(it => {
+      const ci = CI[`${tab}|${it[0]}`];
+      if (ci) (Array.isArray(ci) ? ci : [ci]).forEach((c, i) => {
+        const w = `${tab} › ${it[0]} › ci ${i + 1}`;
+        if (!Array.isArray(c.os) || !c.os.length || c.os.some(o => !['ubuntu', 'macos', 'windows'].includes(o))) err(w, 'os لازم يبقى array من ubuntu و macos و windows');
+        if (!['bash', 'zsh', 'sh', 'pwsh', 'powershell', 'cmd', 'node', 'python'].includes(c.sh)) err(w, 'sh مش معروف: ' + c.sh);
+        if ((c.sh === 'powershell' || c.sh === 'cmd') && c.os.some(o => o !== 'windows')) err(w, c.sh + ' على windows بس');
+        if (typeof c.run !== 'string' || !c.run.trim()) err(w, 'run لازم يبقى نص');
+        if (!Array.isArray(c.expect) || !c.expect.length) err(w, 'expect لازم يبقى array فيه نص واحد على الأقل');
+      });
     });
     cat.items.forEach(it => {
       const pr = PRACTICE[`${tab}|${it[0]}`];

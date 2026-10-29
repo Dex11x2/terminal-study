@@ -5,6 +5,8 @@ const SHELLS = {}, LAB = {}, LABTXT = {}, LEVEL_TAB = {}, DATA = {}, DEEP = {}, 
 const USE = {}, CARD = {};
 /* PRACTICE: the lesson's practice drills [{lvl: سريع/تطبيق/تحدي, t, done}], shown under «جرّب» */
 const PRACTICE = {};
+/* CI: runnable checks for tools/ci-run.js, [{os: ['ubuntu','macos','windows'], sh: 'bash'|'zsh'|'pwsh'|'powershell'|'cmd'|'node'|'python', run, expect: [...], code}] */
+const CI = {};
 const LEVEL_INFO = {
   "1": ["البداية", "تتحرك بين الفولدرات وتتعامل مع الملفات وتقراها بثقة"],
   "2": ["المتوسط", "توصّل الأوامر ببعض، وتدير الصلاحيات والعمليات والشبكة"],
@@ -47,6 +49,7 @@ function cats(key, list){
       if (it.check) CHECK[id] = it.check;
       if (it.use) USE[id] = it.use;
       if (it.practice) PRACTICE[id] = it.practice;
+      if (it.ci) CI[id] = it.ci;
       if (it.learn || it.out) CARD[id] = {learn: it.learn, out: it.out};
       const row = [it.cmd, it.title, it.desc, it.example, it.try];
       if (it.flag !== undefined) row.push(it.flag);

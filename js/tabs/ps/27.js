@@ -766,6 +766,10 @@ $result | Sort-Object Port | Where-Object Open`,
             R`[[Sort-Object Port]] بيرجّع الترتيب بالرقم (لأن التوازي لخبطه: طلع [[135 445 5432 3000 9001 8080...]])، و [[Where-Object Open]] بيسيب اللي [[Open]] بتاعه True بس. على الجهاز ده طلع [[135]] و [[445]].`,
           ],
           try: R`شغّل السطرين الأولانيين وقارن الرقمين. بعدها شيل [[-ThrottleLimit 10]] من فحص البورتات وقيس بـ [[Measure-Command]]: المفروض يطلع حوالي ٢ ثانية (دفعتين). وافتح سيرفر صغير على بورت منهم (زي [[python -m http.server 8080]] في نافذة تانية) وشوفه بقى [[Open]].`,
+          ci: [
+            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`pwsh`, run: R`$t = (Measure-Command { 1..10 | ForEach-Object -Parallel { Start-Sleep 1 } }).TotalSeconds
+if ($t -lt 4) { "parallel fast" } else { "parallel slow $t" }`, expect: [R`parallel fast`] },
+          ],
           practice: [
             { lvl: 'سريع', t: R`قيس [[1..10 | ForEach-Object -Parallel { Start-Sleep 1 }]] بـ [[Measure-Command]]، وبعدين نفس الحاجة من غير [[-Parallel]].`, done: R`الأول حوالي ثانيتين (الحد الافتراضي ٥ في نفس الوقت)، والتاني حوالي ١٠ ثواني.` },
             { lvl: 'تطبيق', t: R`افحص ١٠ بورتات على [[127.0.0.1]] بالتوازي، وطلّع جدول متترتب بالبورت.`, done: R`الجدول متترتب مهما كان مين خلص الأول، وكل سطر فيه البورت ومفتوح ولا لأ.` },
@@ -1031,6 +1035,10 @@ Compare-Object (Get-Content .\before.env) (Get-Content .\after.env)`,
             R`[[Get-Content]] بيقرا كل ملف كقايمة سطور، والقوسين [[( )]] بيخلّوا كل قراية تخلص وتتبعت كقايمة. طلع [[PORT=8080 =>]] و [[CACHE=on =>]] (جديد أو اتغيّر) و [[PORT=3000 <=]] (القيمة القديمة). السطر اللي اتغيّر قيمته بيطلع مرتين: القديم بـ [[<=]] والجديد بـ [[=>]].`,
           ],
           try: R`اعمل الـ lab وشغّل السطور واحد واحد. بعدها اعرف الملفات اللي **محتواها** اتغيّر حتى لو حجمها زي بعض: قارن [[Get-FileHash]] بتاع الفولدرين بـ [[-Property Hash]]. وجرّب [[Compare-Object $src $bak]] من غير [[-Property]] في 7 وفي 5.1 وشوف الفرق.`,
+          ci: [
+            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`pwsh`, run: R`Compare-Object a,b,c b,c,d | ForEach-Object { "$($_.InputObject) $($_.SideIndicator)" }`, expect: [R`a <=`, R`d =>`] },
+            { os: [R`windows`], sh: R`powershell`, run: R`Compare-Object a,b,c b,c,d | ForEach-Object { "$($_.InputObject) $($_.SideIndicator)" }`, expect: [R`a <=`, R`d =>`] },
+          ],
           practice: [
             { lvl: 'سريع', t: R`قارن قايمتين أسامي كاتبهم بإيدك، مرة عادي ومرة بـ [[-IncludeEqual]].`, done: R`تقدر تقول كل سهم معناه إيه، و [[==]] بيظهر للأسامي اللي في الاتنين بس مع [[-IncludeEqual]].` },
             { lvl: 'تطبيق', t: R`قارن فولدرين بـ [[-Property Name, Length]].`, done: R`الملف اللي اتغيّر حجمه بيظهر مرتين ([[<=]] و [[=>]])، والملف الناقص بيظهر مرة واحدة.` },
@@ -1334,6 +1342,12 @@ Get-ChildItem $logDri -Filter *.log | Remove-Item -WhatIf
             R`سطر بيأكد إن السكربت وصل للآخر. من غير strict mode بيطبع [[done]] بعد ما «مسح» الملفات الغلط، فشكله نجح. ومع strict mode مبيوصلوش، لأن [[Stop]] وقّف السكربت عند الـ error (كود الخروج [[1]]).`,
           ],
           try: R`اعمل فولدر [[strict]] فيه [[app.log]] و [[logs\old.log]]، واحفظ المثال [[clean.ps1]] جواه، واقف في الفولدر وشغّله. بعدها امسح سطر [[Set-StrictMode]] وشغّله تاني وشوف الـ What if على أنهي ملفات. وفي الآخر صلّح الاسم لـ [[$logDir]].`,
+          ci: [
+            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`pwsh`, run: R`Set-StrictMode -Version Latest
+try { $nmae = "x"; $name } catch { $_.FullyQualifiedErrorId }`, expect: [R`VariableIsUndefined`] },
+            { os: [R`windows`], sh: R`powershell`, run: R`Set-StrictMode -Version Latest
+try { $nmae = "x"; $name } catch { $_.FullyQualifiedErrorId }`, expect: [R`VariableIsUndefined`] },
+          ],
           practice: [
             { lvl: 'سريع', t: R`اكتب [[$nmae = 'x'; $name]]، مرة من غير strict mode ومرة بعد [[Set-StrictMode -Version Latest]].`, done: R`من غيره مبيطبعش حاجة ومبيشتكيش، ومعاه بيطلع error فيه اسم المتغير الغلط.` },
             { lvl: 'تطبيق', t: R`اقرا خاصية مش موجودة ([[$obj.Nmae]]) تحت [[-Version 1]] وبعدين تحت [[Latest]].`, done: R`[[-Version 1]] بيعدّيها و [[Latest]] بيمسكها، وتقدر تقول ليه.` },
