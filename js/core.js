@@ -3,6 +3,8 @@ const R = String.raw;
 const SHELLS = {}, LAB = {}, LABTXT = {}, LEVEL_TAB = {}, DATA = {}, DEEP = {}, BREAK = {}, SOL = {}, BASH_OS = {}, CHECK = {}, TEACH = {};
 /* the course view: USE is the lesson's «تستخدمها فين؟», CARD is its row in the unit map */
 const USE = {}, CARD = {};
+/* PRACTICE: the lesson's practice drills [{lvl: سريع/تطبيق/تحدي, t, done}], shown under «جرّب» */
+const PRACTICE = {};
 const LEVEL_INFO = {
   "1": ["البداية", "تتحرك بين الفولدرات وتتعامل مع الملفات وتقراها بثقة"],
   "2": ["المتوسط", "توصّل الأوامر ببعض، وتدير الصلاحيات والعمليات والشبكة"],
@@ -44,6 +46,7 @@ function cats(key, list){
       if (it.mac) BASH_OS[it.cmd] = it.mac;
       if (it.check) CHECK[id] = it.check;
       if (it.use) USE[id] = it.use;
+      if (it.practice) PRACTICE[id] = it.practice;
       if (it.learn || it.out) CARD[id] = {learn: it.learn, out: it.out};
       const row = [it.cmd, it.title, it.desc, it.example, it.try];
       if (it.flag !== undefined) row.push(it.flag);

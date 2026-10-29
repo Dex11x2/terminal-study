@@ -13,7 +13,7 @@ for (const f of files) {
   try { vm.runInContext(code, ctx, { filename: f }); }
   catch (e) { console.error('✗ ' + f + ': الملف فيه غلطة JavaScript ومش هيتقري:\n  ' + e.message); process.exit(1); }
 }
-const { DATA, DEEP, BREAK, SOL, CMP, MISSIONS, CHECK, TEACH } = vm.runInContext('({DATA, DEEP, BREAK, SOL, CMP, MISSIONS, CHECK, TEACH})', ctx);
+const { DATA, DEEP, BREAK, SOL, CMP, MISSIONS, CHECK, TEACH, PRACTICE } = vm.runInContext('({DATA, DEEP, BREAK, SOL, CMP, MISSIONS, CHECK, TEACH, PRACTICE})', ctx);
 
 const errors = [], warnings = [];
 const err = (where, msg) => errors.push(where + ': ' + msg);
@@ -50,7 +50,16 @@ for (const tab in DATA) {
     if (![1, 2, 3].includes(cat.l)) err(`${tab} › ${cat.t}`, 'المستوى (l) لازم يبقى 1 أو 2 أو 3');
     (cat.projects || []).forEach(p => {
       if (!p.t) err(`${tab} › ${cat.t}`, 'مشروع من غير t');
-      if (p.lvl && !['صغير', 'متوسط', 'كبير'].includes(p.lvl)) err(`${tab} › ${cat.t} › ${p.t}`, 'lvl لازم يبقى صغير أو متوسط أو كبير');
+      if (p.lvl && !['صغير', 'متوسط', 'كبير', 'فكرة'].includes(p.lvl)) err(`${tab} › ${cat.t} › ${p.t}`, 'lvl لازم يبقى صغير أو متوسط أو كبير أو فكرة');
+    });
+    cat.items.forEach(it => {
+      const pr = PRACTICE[`${tab}|${it[0]}`];
+      if (!pr) return;
+      if (!Array.isArray(pr)) return err(`${tab} › ${it[0]}`, 'practice لازم يبقى array');
+      pr.forEach((p, i) => {
+        if (!p.t) err(`${tab} › ${it[0]}`, `تمرين ${i + 1} من غير t`);
+        if (p.lvl && !['سريع', 'تطبيق', 'تحدي'].includes(p.lvl)) err(`${tab} › ${it[0]}`, `تمرين ${i + 1}: lvl لازم يبقى سريع أو تطبيق أو تحدي`);
+      });
     });
     cat.items.forEach(it => {
       total++;

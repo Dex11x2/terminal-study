@@ -238,8 +238,21 @@ function articleHTML(it){
     (ex ? termBlock(ex, c, flag) : '')+breakHTML(c, ex)+
     '<button type="button" class="reveal">اكشف الإجابة</button>'+
     '<div class="try"><span class="lbl">'+(shell==='glossary'?'الشرح الكامل في':'جرّب')+'</span><p>'+fmt(tr)+'</p><label class="done"><input type="checkbox" data-k="'+esc(key)+'"'+(done?' checked':'')+'> جربتها</label></div>'+
-    chkHTML(c)+solHTML(c)+noteHTML(c)+
+    practiceHTML(c)+chkHTML(c)+solHTML(c)+noteHTML(c)+
   '</article>';
+}
+/* the lesson's practice drills, easiest first; each one has its own tick (data-d, not the lesson's data-k) */
+const DRILL_LV = {'سريع': 1, 'تطبيق': 2, 'تحدي': 3};
+function practiceHTML(c){
+  const list = typeof PRACTICE !== 'undefined' && PRACTICE[shell+'|'+c];
+  if (!list || !list.length) return '';
+  const rows = list.map((p, i) => [p, i]).sort((a, b) => (DRILL_LV[a[0].lvl] || 2) - (DRILL_LV[b[0].lvl] || 2)).map(([p, i]) => {
+    const k = 'drill:'+shell+':'+c+':'+i, on = store.get(k) === '1';
+    return '<li'+(on?' class="on"':'')+'>'+(p.lvl?'<em class="lv lv'+(DRILL_LV[p.lvl]||2)+'">'+esc(p.lvl)+'</em>':'')+'<span class="pt">'+fmt(p.t)+'</span>'+
+      (p.done?'<span class="pdone"><b>تعرف إنك خلصت لما:</b> '+fmt(p.done)+'</span>':'')+
+      '<label class="ptick"><input type="checkbox" data-d="'+esc(k)+'"'+(on?' checked':'')+'> عملته</label></li>';
+  }).join('');
+  return '<div class="practice"><span class="lbl">تمارين عملية</span><ol class="projlist">'+rows+'</ol></div>';
 }
 /* the unit head: what you can do when you finish it, and which fields it serves */
 const GOAL_F = [['prog','البرمجة'], ['net','الشبكات والسيرفرات'], ['cs','علوم الحاسب'], ['work','الشغل اليومي']];
@@ -253,11 +266,16 @@ function unitHead(cat){
 function unitFoot(cat, id){
   if (!cat.lab && !cat.projects) return '';
   const lab = cat.lab ? '<div><h4 class="uf-h">جهّز معملك</h4><p class="uf-p">متتعلمش الأوامر الخطيرة على ملفاتك الحقيقية.</p>'+termHTML(cat.lab, shell, false, '')+'</div>' : '';
-  // lvl: صغير/متوسط/كبير, shown as a badge and kept in that order; done: how you know the project works
-  const LV = {'صغير': 1, 'متوسط': 2, 'كبير': 3};
+  // lvl: صغير/متوسط/كبير/فكرة, shown as a badge and kept in that order; done: how you know it works;
+  // ext: ways to make it your own; a كبير project also says how to put it in your portfolio
+  const LV = {'صغير': 1, 'متوسط': 2, 'كبير': 3, 'فكرة': 4};
   const projs = cat.projects ? cat.projects.slice().sort((a, b) => (LV[a.lvl] || 2) - (LV[b.lvl] || 2)) : [];
-  const pr = cat.projects ? '<div class="projbox"><h4 class="uf-h">مشاريع القسم</h4><p class="uf-p">بعد ما تخلص الدروس، دي حاجات تبنيها بإيدك من اللي اتعلمته، من الصغير للكبير.</p><ol class="projlist">'+
-    projs.map(p => '<li>'+(p.lvl?'<em class="lv lv'+(LV[p.lvl]||2)+'">'+esc(p.lvl)+'</em>':'')+'<b>'+fmt(p.t)+'</b>'+(p.what?'<span>'+fmt(p.what)+'</span>':'')+(p.done?'<span class="pdone"><b>تعرف إنك خلصت لما:</b> '+fmt(p.done)+'</span>':'')+'</li>').join('')+'</ol></div>' : '';
+  const pr = cat.projects ? '<div class="projbox"><h4 class="uf-h">مشاريع القسم</h4><p class="uf-p">بعد ما تخلص الدروس، دي حاجات تبنيها بإيدك من اللي اتعلمته، من الصغير للكبير. و«فكرة» مشروع مفتوح: انت اللي بتقرر تفاصيله.</p><ol class="projlist">'+
+    projs.map(p => '<li>'+(p.lvl?'<em class="lv lv'+(LV[p.lvl]||2)+'">'+esc(p.lvl)+'</em>':'')+'<b>'+fmt(p.t)+'</b>'+(p.what?'<span>'+fmt(p.what)+'</span>':'')+
+      (p.done?'<span class="pdone"><b>تعرف إنك خلصت لما:</b> '+fmt(p.done)+'</span>':'')+
+      (p.ext?'<span class="pdone"><b>خليه بتاعك:</b> '+fmt(p.ext)+'</span>':'')+
+      (p.lvl==='كبير'||p.lvl==='فكرة'?'<span class="pfolio">ينفع يتحط في الـ portfolio: ارفعه repo على GitHub فيه README بيقول بيعمل إيه وإزاي يتشغّل، وصورة أو ناتج حقيقي.</span>':'')+
+      '</li>').join('')+'</ol></div>' : '';
   return '<div class="unit-two uf" id="'+id+'-foot">'+lab+pr+'</div>';
 }
 /* a category's lessons as a compact table: the whole row opens the lesson */
@@ -880,6 +898,8 @@ document.addEventListener('keydown', e => {
   else if (!asking && (e.key==='2' || e.key==='٢' || e.code==='Digit2' || e.code==='Numpad2')){ e.preventDefault(); fcMark(false); }
 });
 document.addEventListener('change', e => {
+  const dr = e.target.closest('input[type=checkbox][data-d]');
+  if (dr) { store.set(dr.dataset.d, dr.checked ? '1':'0'); dr.closest('li').classList.toggle('on', dr.checked); return; }
   const cb = e.target.closest('input[type=checkbox][data-k]');
   if (!cb) return;
   store.set(cb.dataset.k, cb.checked ? '1':'0');
