@@ -9605,9 +9605,9 @@
   "on": "win11 Git Bash + docker mongo:8; docs: ssh/scp/Atlas"
  },
  "net|IP": {
-  "hash": "50dd2a023369",
-  "date": "2026-10-27",
-  "on": "Docker ubuntu:24.04 + Windows 11 pwsh 7.6 / PS 5.1"
+  "hash": "2f703f0fde83",
+  "date": "2026-10-29",
+  "on": "docs: تغيير أسماء بس (اسم الـ VPN الحقيقي بقى DemoVPN، والكارت tun0، والعناوين 10.66.0.x). مااتعادش التشغيل؛ المراجعة الأصلية للسلوك سارية"
  },
  "net|MTU والـ black hole": {
   "hash": "1f9688dffe3b",
@@ -9620,14 +9620,14 @@
   "on": "Docker 29.6.1 (Docker Desktop، ويندوز) من Git Bash: معمل pc-a/router/web-b على alpine 3.21 بـ iptables nf_tables و tcpdump 4.99. docs: --ctorigdstport، ufw، policy routing، أرقام ويندوز، tcp_syn_retries"
  },
  "net|allowed_ips": {
-  "hash": "2caf67c5c079",
-  "date": "2026-10-27",
-  "on": "Docker ubuntu:24.04 lab (kernel WireGuard)"
+  "hash": "66cb8cb33793",
+  "date": "2026-10-29",
+  "on": "docs: تغيير أسماء بس (اسم الـ VPN الحقيقي بقى DemoVPN). مااتعادش التشغيل؛ المراجعة الأصلية سارية"
  },
  "net|arp": {
-  "hash": "3b5395ab1fbf",
-  "date": "2026-10-27",
-  "on": "Docker ubuntu:24.04 lab + Windows 11 pwsh 7.6"
+  "hash": "69c355cd53e2",
+  "date": "2026-10-29",
+  "on": "docs: تغيير أسماء بس (اسم الـ VPN الحقيقي بقى DemoVPN، والكارت tun0، والعناوين 10.66.0.x). مااتعادش التشغيل؛ المراجعة الأصلية للسلوك سارية"
  },
  "net|cidr": {
   "hash": "b3098839c710",
@@ -9635,59 +9635,59 @@
   "on": "Docker ubuntu:24.04 + Windows 11 pwsh 7.6 / PS 5.1"
  },
  "net|classify": {
-  "hash": "8be4187e31d6",
-  "date": "2026-10-27",
-  "on": "Docker ubuntu:24.04 + Windows 11 pwsh 7.6"
+  "hash": "869b6987cdd0",
+  "date": "2026-10-29",
+  "on": "docs: تغيير أسماء بس (اسم الـ VPN الحقيقي بقى DemoVPN، والكارت tun0، والعناوين 10.66.0.x). مااتعادش التشغيل؛ المراجعة الأصلية للسلوك سارية"
  },
  "net|dhcp": {
-  "hash": "2aa54eda6b26",
-  "date": "2026-10-27",
-  "on": "Docker ubuntu:24.04 lab (dnsmasq/dhclient) + Windows 11 pwsh 7.6"
+  "hash": "934331564fc4",
+  "date": "2026-10-29",
+  "on": "docs: تغيير أسماء بس (اسم الـ VPN الحقيقي بقى DemoVPN، والكارت tun0، والعناوين 10.66.0.x). مااتعادش التشغيل؛ المراجعة الأصلية للسلوك سارية"
  },
  "net|dns": {
-  "hash": "f0f06e356694",
-  "date": "2026-10-27",
-  "on": "Docker ubuntu:24.04 + Windows 11 pwsh 7.6"
+  "hash": "17f960f8d29a",
+  "date": "2026-10-29",
+  "on": "docs: تغيير أسماء بس (اسم الـ VPN الحقيقي بقى DemoVPN، والكارت tun0، والعناوين 10.66.0.x). مااتعادش التشغيل؛ المراجعة الأصلية للسلوك سارية"
  },
  "net|encap": {
-  "hash": "e1bc8c9e227c",
-  "date": "2026-10-27",
-  "on": "Docker ubuntu:24.04 + Windows 11 pwsh 7.6; docs: Mac ping -D"
+  "hash": "39113b72f378",
+  "date": "2026-10-29",
+  "on": "docs: تغيير أسماء بس (اسم الـ VPN الحقيقي بقى DemoVPN، والكارت tun0، والعناوين 10.66.0.x). مااتعادش التشغيل؛ المراجعة الأصلية للسلوك سارية"
  },
  "net|http": {
-  "hash": "ebf87b3b55fa",
-  "date": "2026-10-27",
-  "on": "Docker ubuntu:24.04 + Windows 11 pwsh 7.6 / PS 5.1"
+  "hash": "c5215fc2ecae",
+  "date": "2026-10-29",
+  "on": "docs: تغيير أسماء بس (اسم الـ VPN الحقيقي بقى DemoVPN، والكارت tun0، والعناوين 10.66.0.x). مااتعادش التشغيل؛ المراجعة الأصلية للسلوك سارية"
  },
  "net|ipv6": {
-  "hash": "fc6fa9eddc49",
-  "date": "2026-10-27",
-  "on": "Docker ubuntu:24.04 lab + Windows 11 pwsh 7.6"
+  "hash": "7c56d2c8845e",
+  "date": "2026-10-29",
+  "on": "docs: تغيير أسماء بس (اسم الـ VPN الحقيقي بقى DemoVPN، والكارت tun0، والعناوين 10.66.0.x). مااتعادش التشغيل؛ المراجعة الأصلية للسلوك سارية"
  },
  "net|journey": {
-  "hash": "ead0eeb0e406",
-  "date": "2026-10-27",
-  "on": "Docker ubuntu:24.04 + Windows 11 pwsh 7.6 / PS 5.1"
+  "hash": "992befdaf6b7",
+  "date": "2026-10-29",
+  "on": "docs: تغيير أسماء بس (اسم الـ VPN الحقيقي بقى DemoVPN، والكارت tun0، والعناوين 10.66.0.x). مااتعادش التشغيل؛ المراجعة الأصلية للسلوك سارية"
  },
  "net|kill_switch": {
-  "hash": "82d93948cb1a",
-  "date": "2026-10-27",
-  "on": "Docker ubuntu:24.04 + Windows 11 pwsh 7.6; docs: Mac pfctl"
+  "hash": "c5dbd8ebf5ba",
+  "date": "2026-10-29",
+  "on": "docs: تغيير أسماء بس (اسم الـ VPN الحقيقي بقى DemoVPN، والكارت tun0، والعناوين 10.66.0.x). مااتعادش التشغيل؛ المراجعة الأصلية للسلوك سارية"
  },
  "net|leak_protection": {
-  "hash": "b02562ceaa52",
-  "date": "2026-10-27",
-  "on": "Docker ubuntu:24.04 + Windows 11 pwsh 7.6; docs: Mac scutil"
+  "hash": "ba970f4a01c0",
+  "date": "2026-10-29",
+  "on": "docs: تغيير أسماء بس (اسم الـ VPN الحقيقي بقى DemoVPN، والكارت tun0، والعناوين 10.66.0.x). مااتعادش التشغيل؛ المراجعة الأصلية للسلوك سارية"
  },
  "net|mtu": {
-  "hash": "63d8b4c7a61b",
-  "date": "2026-10-27",
-  "on": "Docker ubuntu:24.04 lab (WireGuard) + Windows 11 pwsh 7.6"
+  "hash": "bae8e956aba9",
+  "date": "2026-10-29",
+  "on": "docs: تغيير أسماء بس (اسم الـ VPN الحقيقي بقى DemoVPN). مااتعادش التشغيل؛ المراجعة الأصلية سارية"
  },
  "net|nat": {
-  "hash": "a4c134473811",
-  "date": "2026-10-27",
-  "on": "Docker ubuntu:24.04 + Windows 11 pwsh 7.6; docs: Mac"
+  "hash": "e1e847d713b4",
+  "date": "2026-10-29",
+  "on": "docs: تغيير أسماء بس (اسم الـ VPN الحقيقي بقى DemoVPN، والكارت tun0، والعناوين 10.66.0.x). مااتعادش التشغيل؛ المراجعة الأصلية للسلوك سارية"
  },
  "net|pcap": {
   "hash": "804b9b3d38bb",
@@ -9695,9 +9695,9 @@
   "on": "Docker ubuntu:24.04 lab; docs: Windows pktmon"
  },
  "net|port": {
-  "hash": "91235b2fbe57",
-  "date": "2026-10-27",
-  "on": "Docker ubuntu:24.04 + Windows 11 pwsh 7.6; docs: Mac lsof"
+  "hash": "f8c6a78f6221",
+  "date": "2026-10-29",
+  "on": "docs: تغيير أسماء بس (اسم الـ VPN الحقيقي بقى DemoVPN، والكارت tun0، والعناوين 10.66.0.x). مااتعادش التشغيل؛ المراجعة الأصلية للسلوك سارية"
  },
  "net|port forwarding والثغرة اللي جنبه": {
   "hash": "b211feb3c99c",
@@ -9705,9 +9705,9 @@
   "on": "Docker 29.6.1 (Docker Desktop، ويندوز) من Git Bash: معمل pc-a/router/web-b على alpine 3.21 بـ iptables nf_tables و tcpdump 4.99. docs: --ctorigdstport، ufw، policy routing، أرقام ويندوز، tcp_syn_retries"
  },
  "net|routing": {
-  "hash": "2926e8edbef6",
-  "date": "2026-10-27",
-  "on": "Docker ubuntu:24.04 (lab TUN) + Windows 11 pwsh 7.6; docs: Mac route"
+  "hash": "046cf31ec80e",
+  "date": "2026-10-29",
+  "on": "docs: تغيير أسماء بس (اسم الـ VPN الحقيقي بقى DemoVPN، والكارت tun0، والعناوين 10.66.0.x). مااتعادش التشغيل؛ المراجعة الأصلية للسلوك سارية"
  },
  "net|slaac": {
   "hash": "11e6f2090d23",
@@ -9715,9 +9715,9 @@
   "on": "Docker ubuntu:24.04 lab (radvd) + Windows 11 pwsh 7.6"
  },
  "net|socks_proxy": {
-  "hash": "c9b5ec792d6a",
-  "date": "2026-10-27",
-  "on": "Docker ubuntu:24.04 (microsocks/tinyproxy) + Windows 11 pwsh 7.6"
+  "hash": "f2f4c1cb717a",
+  "date": "2026-10-29",
+  "on": "docs: تغيير أسماء بس (اسم الـ VPN الحقيقي بقى DemoVPN، والكارت tun0، والعناوين 10.66.0.x). مااتعادش التشغيل؛ المراجعة الأصلية للسلوك سارية"
  },
  "net|subnetting": {
   "hash": "9ad6674493e1",
@@ -9725,14 +9725,14 @@
   "on": "Docker ubuntu:24.04"
  },
  "net|tcp": {
-  "hash": "21b9293de50e",
-  "date": "2026-10-27",
-  "on": "Docker ubuntu:24.04 + Windows 11 pwsh 7.6; docs: Mac netstat"
+  "hash": "c5847a0edede",
+  "date": "2026-10-29",
+  "on": "docs: تغيير أسماء بس (اسم الـ VPN الحقيقي بقى DemoVPN، والكارت tun0، والعناوين 10.66.0.x). مااتعادش التشغيل؛ المراجعة الأصلية للسلوك سارية"
  },
  "net|tls_sni": {
-  "hash": "ca5c7796475b",
-  "date": "2026-10-27",
-  "on": "Docker ubuntu:24.04 + Windows 11 pwsh 7.6 / PS 5.1"
+  "hash": "6c65231704c8",
+  "date": "2026-10-29",
+  "on": "docs: تغيير أسماء بس (اسم الـ VPN الحقيقي بقى DemoVPN، والكارت tun0، والعناوين 10.66.0.x). مااتعادش التشغيل؛ المراجعة الأصلية للسلوك سارية"
  },
  "net|tshark": {
   "hash": "325dc8f1ef33",
@@ -9740,19 +9740,19 @@
   "on": "Docker ubuntu:24.04 lab; docs: Windows tshark/Wireshark GUI"
  },
  "net|tun": {
-  "hash": "bad18d6a75e4",
-  "date": "2026-10-27",
-  "on": "Docker ubuntu:24.04 (lab TUN) + Windows 11 pwsh 7.6; docs: Mac ifconfig"
+  "hash": "20ac73d062a5",
+  "date": "2026-10-29",
+  "on": "docs: تغيير أسماء بس (اسم الـ VPN الحقيقي بقى DemoVPN، والكارت tun0، والعناوين 10.66.0.x). مااتعادش التشغيل؛ المراجعة الأصلية للسلوك سارية"
  },
  "net|udp": {
-  "hash": "8fcdea089804",
-  "date": "2026-10-27",
-  "on": "Docker ubuntu:24.04 + Windows 11 pwsh 7.6; docs: Mac lsof"
+  "hash": "cd04ede40edd",
+  "date": "2026-10-29",
+  "on": "docs: تغيير أسماء بس (اسم الـ VPN الحقيقي بقى DemoVPN، والكارت tun0، والعناوين 10.66.0.x). مااتعادش التشغيل؛ المراجعة الأصلية للسلوك سارية"
  },
  "net|wireguard": {
-  "hash": "baa6a6321476",
-  "date": "2026-10-27",
-  "on": "Docker ubuntu:24.04 lab (kernel WireGuard)"
+  "hash": "6c2588bda1be",
+  "date": "2026-10-29",
+  "on": "docs: تغيير أسماء بس (اسم الـ VPN الحقيقي بقى DemoVPN، والكارت tun0، والعناوين 10.66.0.x). مااتعادش التشغيل؛ المراجعة الأصلية للسلوك سارية"
  },
  "net|اقرا الفشل: refused و timeout و unreachable": {
   "hash": "06368b4a61ce",
@@ -14395,9 +14395,9 @@
   "on": "Docker ubuntu:24.04 (javac -Xlint:all against android-36 android.jar + d8; AES-GCM run on JVM); docs: on-device Keystore behaviour"
  },
  "re|lab_ethics": {
-  "hash": "3ea0c9351bee",
-  "date": "2026-10-27",
-  "on": "Docker ubuntu:24.04 (build-tools 37, apktool 3.0.3, jadx 1.5.6, own sample APK); docs: adb with device"
+  "hash": "4a5527dcdccf",
+  "date": "2026-10-29",
+  "on": "docs: تغيير جملة بس (اسم مشروع حقيقي اتشال)"
  },
  "re|manifest": {
   "hash": "425126868d03",
