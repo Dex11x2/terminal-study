@@ -1830,14 +1830,14 @@
   "on": "docs: concept"
  },
  "bash|#!/usr/bin/env bash": {
-  "hash": "591d8dbbef8f",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (bash 5.2); docs: mac Homebrew path"
+  "hash": "f3cc39e4c66a",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|$$ في Makefile": {
-  "hash": "a9ebe67cad6f",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (user ubuntu) GNU Make 4.3, stubs"
+  "hash": "31fa00cd260f",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|$( )": {
   "hash": "94a0d0a582f2",
@@ -1845,39 +1845,39 @@
   "on": "ubuntu-24.04 (user ali)"
  },
  "bash|$(( ))": {
-  "hash": "2f2d899f3108",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (bash 5.2); docs: mac bc"
+  "hash": "34fbcf412e39",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|$1 و $# و $@": {
-  "hash": "ba058d5a42be",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (bash 5.2)"
+  "hash": "740b2e675136",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|$?": {
-  "hash": "60982bc97f5a",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (bash 5.2)"
+  "hash": "b94724606db0",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|$__{#VAR} و $__{VAR:0:3}": {
-  "hash": "2b2c444ddd52",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (bash 5.2)"
+  "hash": "5309b8d48ffb",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|$__{VAR%.*} و $__{VAR##*.}": {
-  "hash": "9793309b3982",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (bash 5.2)"
+  "hash": "2124731cdff8",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|$__{VAR/old/new} و $__{VAR,,}": {
-  "hash": "49ea4cfc71ee",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (bash 5.2); docs: mac bash 3.2"
+  "hash": "2996610702c3",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|$__{VAR:-default}": {
-  "hash": "fbeadb124c82",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (bash 5.2)"
+  "hash": "74b07b33aa9a",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|& و jobs و fg": {
   "hash": "1150ae5efef8",
@@ -1895,14 +1895,14 @@
   "on": "ubuntu-24.04 (user ali); docs: zsh nomatch"
  },
  "bash|/etc/hosts": {
-  "hash": "9b83479b12e5",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker; docs: mac flush"
+  "hash": "110b49c7c70d",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|127.0.0.1 و 0.0.0.0": {
-  "hash": "e1417ca68852",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (simulated LAN); docs: mac lsof"
+  "hash": "efd7d5efc6ed",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|2>&1": {
   "hash": "29b4ae5d3338",
@@ -1910,9 +1910,9 @@
   "on": "ubuntu-24.04 (user ali); docs: npm build line"
  },
  "bash|=~ و BASH_REMATCH": {
-  "hash": "bb8823e5f99c",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (bash 5.2)"
+  "hash": "fb5bceb5897a",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|> و >>": {
   "hash": "ba6c20d286ab",
@@ -1930,14 +1930,14 @@
   "on": "ubuntu-24.04 docker; docs: zsh"
  },
  "bash|SYNOPSIS: اقرا سطر الاستخدام": {
-  "hash": "42110589f96a",
-  "date": "2026-10-28",
-  "on": "ubuntu-24.04 (docker، صفحات man متسطبة) و Git Bash على ويندوز 11"
+  "hash": "b9cd8330dcb8",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|VAR=value": {
-  "hash": "144355df7173",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (bash 5.2)"
+  "hash": "1c54e6485c80",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|alias و .bashrc": {
   "hash": "b069ea908511",
@@ -1945,89 +1945,89 @@
   "on": "ubuntu-24.04 docker"
  },
  "bash|arrays": {
-  "hash": "9ccffeebabe1",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (bash 5.2, user ali)"
+  "hash": "b021999a425a",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|at": {
-  "hash": "e7ca2db9abb4",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker; docs: macOS"
+  "hash": "4094bcb8220d",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|avahi-browse و .local": {
-  "hash": "094887f9c94c",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (simulated LAN); docs: mac dns-sd"
+  "hash": "07f6f2acdf73",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|awk": {
-  "hash": "218e81fa4e5d",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker"
+  "hash": "0003036b5640",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|backup.sh": {
-  "hash": "ec9e17603633",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (normal user), shellcheck"
+  "hash": "634fdc7c7910",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|bat و eza": {
-  "hash": "78b3d495ea80",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker; docs: Mac/Windows"
+  "hash": "541ef958beec",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|case": {
-  "hash": "af59cde3be5c",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (bash 5.2) (docker compose lines replaced by echo)"
+  "hash": "cb20a27e946f",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|cat": {
-  "hash": "532d3c3b3611",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 (user ali)"
+  "hash": "d835bfa68ddd",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|cat > (نفس الـ inode)": {
-  "hash": "c947ba46f306",
-  "date": "2026-10-06",
-  "on": "Docker Desktop engine bind mount + ubuntu-24.04 nginx; docs: mac stat -f"
+  "hash": "8dd0909264f9",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|cd": {
-  "hash": "7f2b52ad2153",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 (user ali)"
+  "hash": "246c38c6ab9e",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|chattr و lsattr": {
-  "hash": "53317167c441",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker --privileged loop ext4; docs: macOS chflags"
+  "hash": "2779ef9910b4",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|chmod": {
-  "hash": "1608b2e89e3e",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 (user ali)"
+  "hash": "a88fbd4361eb",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|chmod +x و ./": {
-  "hash": "381e5f35b413",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (bash 5.2); docs: mac .zshrc"
+  "hash": "447c24bf19b5",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|chown": {
-  "hash": "91e3ebeff4dd",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 (user ali)"
+  "hash": "0501f7b9f7e4",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|cleanup-old.sh": {
-  "hash": "567de1b1923b",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (normal user); docs: mac"
+  "hash": "82121d4efb44",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|compgen": {
-  "hash": "7e7090febca2",
-  "date": "2026-10-28",
-  "on": "ubuntu-24.04 (docker، صفحات man متسطبة) و Git Bash على ويندوز 11"
+  "hash": "fa2d2ef9ce4d",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|convert-all.sh": {
-  "hash": "98325321dc3f",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (normal user), ImageMagick 6.9.12; docs: mac"
+  "hash": "a8e9d5511fbb",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|cp": {
   "hash": "261f437fcc2c",
@@ -2035,9 +2035,9 @@
   "on": "ubuntu-24.04 (user ali); docs: mac message"
  },
  "bash|cron للسكربت": {
-  "hash": "482ef7625a34",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (normal user), cron daemon; docs: mac/launchd"
+  "hash": "87c2d06befe4",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|curl": {
   "hash": "e9ee1f780cf5",
@@ -2045,9 +2045,9 @@
   "on": "ubuntu-24.04 docker; win11 ps 5.1 + pwsh 7"
  },
  "bash|curl -w '%{http_code}'": {
-  "hash": "27f28a6f7e36",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (user ubuntu) curl 8.5.0, local http.server"
+  "hash": "8b6470007b9f",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|cut": {
   "hash": "f2526d38788e",
@@ -2055,19 +2055,19 @@
   "on": "ubuntu-24.04 docker"
  },
  "bash|date +%F": {
-  "hash": "e87564d20679",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (bash 5.2); docs: mac date -v"
+  "hash": "252d4fad8a2d",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|declare -A": {
-  "hash": "d75163f1db68",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (bash 5.2, user ali); docs: mac bash 3.2"
+  "hash": "c484f0a2d8fa",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|deploy.sh": {
-  "hash": "ef5846f313e5",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (normal user), local git remote, stub docker; docs: compose/prune"
+  "hash": "c5c1cb38e453",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|df / du": {
   "hash": "3c651de5d051",
@@ -2080,89 +2080,89 @@
   "on": "ubuntu-24.04 docker"
  },
  "bash|dig": {
-  "hash": "3d0cec7b1327",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker"
+  "hash": "1b1c882c0001",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|disk-alert.sh": {
-  "hash": "8cdf42c9053a",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (clean container); docs: mac"
+  "hash": "4e2336663929",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|echo": {
-  "hash": "4e6ff8b9accd",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 (user ali); docs: zsh"
+  "hash": "7294a16a8d0f",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|envsubst": {
-  "hash": "470c01551a1f",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (bash 5.2)"
+  "hash": "5933b29fce62",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|exit 0 و 1 و 2": {
-  "hash": "8dd28368b451",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (bash 5.2)"
+  "hash": "95c0873ed3cc",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|export و env": {
-  "hash": "23baca3e3332",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker"
+  "hash": "31160a2b4977",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|fastfetch": {
-  "hash": "7352ab12a2eb",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (PPA); docs: macOS"
+  "hash": "2ad22978dc92",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|fdisk و mkfs و dd": {
-  "hash": "bc43fae7ddb0",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker on image files only; docs: Mac"
+  "hash": "f91f880698d8",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|ffmpeg": {
-  "hash": "4a21de325ca3",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker ffmpeg 6.1.1; docs: Mac/Windows install"
+  "hash": "19b192b48974",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|file / stat": {
-  "hash": "04782d93a2aa",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 (user ali); docs: mac stat -f"
+  "hash": "3b9b499e7f37",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|find": {
-  "hash": "1f5075d0e243",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 (user ali)"
+  "hash": "829155cfc302",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|find -print0 | while read": {
-  "hash": "c8fe3fe9a100",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (bash 5.2, user ali); docs: mac"
+  "hash": "2b81ae83b990",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|for": {
-  "hash": "1c9bbf4cf1cf",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (bash 5.2, user ali)"
+  "hash": "1c50df49673b",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|free -h": {
-  "hash": "9ef44ba64947",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker; docs: dmesg OOM, Mac"
+  "hash": "6bb478b07b93",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|function": {
-  "hash": "2b4c865256ba",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (bash 5.2, user ali)"
+  "hash": "19d285ad0a5f",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|fzf": {
-  "hash": "f80dcd2a263b",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (fzf 0.44.1); docs: keys, Mac/Windows"
+  "hash": "9a9879d41c4b",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|getopts": {
-  "hash": "667e1a1fd01d",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (bash 5.2, user ali); docs: mac"
+  "hash": "828482303496",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|grep": {
   "hash": "0eca2a4cf200",
@@ -2170,14 +2170,14 @@
   "on": "ubuntu-24.04 (user ali)"
  },
  "bash|grep -q || echo >>": {
-  "hash": "328a5aba13f4",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (normal user); docker error on host Docker Desktop"
+  "hash": "8cfd5cd640cb",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|groupadd و gpasswd": {
-  "hash": "5872ab8fbc23",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker; docs: macOS"
+  "hash": "9615593d149b",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|head / tail": {
   "hash": "047e087b4fcc",
@@ -2185,49 +2185,49 @@
   "on": "ubuntu-24.04 (user ali)"
  },
  "bash|help و type -a": {
-  "hash": "69c8f888ca81",
-  "date": "2026-10-28",
-  "on": "ubuntu-24.04 (docker، صفحات man متسطبة) و Git Bash على ويندوز 11"
+  "hash": "062c3f1ddd5b",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|heredoc و tee": {
-  "hash": "0e1a7e879a3b",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (normal user) + sudo, logrotate -d"
+  "hash": "6cc27a4810df",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|history": {
-  "hash": "fe18ed79f287",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker; win11 pwsh; docs: Ctrl+R, zsh"
+  "hash": "04b219949d05",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|id و groups و getent": {
-  "hash": "57a1f62bef05",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker; docs: macOS dscl"
+  "hash": "f1b1c9363960",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|if": {
-  "hash": "f4c3ddc40eef",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (bash 5.2)"
+  "hash": "e1dfde7f9832",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|inotifywait": {
-  "hash": "8156d09dfadc",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker; docs: macOS fswatch"
+  "hash": "593490a70885",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|ip a / ip route": {
-  "hash": "0fc49c342f38",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker; docs: mac"
+  "hash": "3a89c6166bb7",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|ip link و ip addr add": {
-  "hash": "c8f8f8528392",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker NET_ADMIN"
+  "hash": "4445c3272c77",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|jq": {
-  "hash": "dd7dbb1ecc71",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker"
+  "hash": "6c7bd9dfad4e",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|kill": {
   "hash": "cd0f69ca8746",
@@ -2245,49 +2245,49 @@
   "on": "ubuntu-24.04 (user ali); docs: nginx line"
  },
  "bash|log() والألوان": {
-  "hash": "937d6bf83d2c",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (bash 5.2, user ali) (tty via script); docs: mac"
+  "hash": "345061422a8d",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|log-cleanup.sh": {
-  "hash": "46bfeb39f61a",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (normal user); docs: mac"
+  "hash": "4d073abc05e5",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|ls": {
-  "hash": "2a40e40317b8",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 (user ali)"
+  "hash": "cc1b862b3b9c",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|ls -l": {
-  "hash": "30efb127893b",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 (user ali)"
+  "hash": "210d1535fa07",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|lsusb و lspci و lshw": {
-  "hash": "f1dcb79bdffa",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (WSL2 VM hardware); docs: sensors-detect, Mac"
+  "hash": "b2db4c3d5943",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|make": {
-  "hash": "4fe2387eccde",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (user ubuntu) GNU Make 4.3, docker stub; docs: mac make 3.81"
+  "hash": "a37702528db3",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|make VAR=value": {
-  "hash": "521845941e47",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (user ubuntu) GNU Make 4.3, docker stub"
+  "hash": "a95474b23bdd",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|make help": {
-  "hash": "e7727e0d56c4",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (user ubuntu) GNU Make 4.3, mawk; docs: mac BSD grep/awk"
+  "hash": "b46f1b0f7464",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|man / --help": {
-  "hash": "5192065b477e",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker + ubuntu-26.04 (tealdeer)"
+  "hash": "575abce5a925",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|mkdir": {
   "hash": "c6c14721074c",
@@ -2295,9 +2295,9 @@
   "on": "ubuntu-24.04 (user ali)"
  },
  "bash|mktemp": {
-  "hash": "6b047f09d554",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (normal user); docs: mac"
+  "hash": "d96d21223a13",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|mv": {
   "hash": "09153e955b82",
@@ -2310,44 +2310,44 @@
   "on": "docs: interactive (nano 7.2 checked)"
  },
  "bash|nc": {
-  "hash": "2981c7fd0c76",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (simulated LAN)"
+  "hash": "216558325ddf",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|nethogs": {
-  "hash": "ce303a9630ed",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (-t); docs: interactive screen"
+  "hash": "2b3eaddd5893",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|new-project.sh": {
-  "hash": "b840b701af30",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (normal user), git 2.43; docs: mac"
+  "hash": "662fc3118b98",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|nft و iptables -L": {
-  "hash": "5a090edd0987",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker NET_ADMIN"
+  "hash": "d9560b7680b0",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|nice و renice و ionice": {
-  "hash": "ba62dffb58b3",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (+SYS_NICE); win11 pwsh; docs: Mac"
+  "hash": "7759a7861a47",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|nmap": {
-  "hash": "f845337908eb",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker"
+  "hash": "169eae320dbe",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|nmap -sn و arp-scan": {
-  "hash": "e8170522edea",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (simulated LAN)"
+  "hash": "0be5b4ca1a25",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|nmcli": {
-  "hash": "5fb7c59db173",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker NetworkManager 1.46; docs: wifi, netplan try"
+  "hash": "591711cacb48",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|nohup": {
   "hash": "f91749fcc292",
@@ -2355,29 +2355,29 @@
   "on": "ubuntu-24.04 docker (pm2 7.0.4)"
  },
  "bash|notify-send و spd-say": {
-  "hash": "afd10a845a17",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (D-Bus error, alias); docs: display/sound, macOS"
+  "hash": "6329e27cd780",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|openssl enc": {
-  "hash": "be39d42a5155",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (user ubuntu) OpenSSL 3.0.13; docs: mac LibreSSL"
+  "hash": "3272c9e33273",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|openssl s_client": {
-  "hash": "e47154c6ccff",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker; docs: mac LibreSSL"
+  "hash": "2111be34d96c",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|organize.sh": {
-  "hash": "6a71b9d37074",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (normal user); docs: mac"
+  "hash": "33c28936c1d0",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|passwd -l و chage": {
-  "hash": "059711c733f8",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker; docs: interactive prompt, macOS"
+  "hash": "5f6c5f9d3198",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|ping": {
   "hash": "e2dfc798de71",
@@ -2385,14 +2385,14 @@
   "on": "ubuntu-24.04 docker; docs: Mac/Windows flags"
  },
  "bash|preflight.sh": {
-  "hash": "481c40eb3320",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (normal user) + root; docs: mac"
+  "hash": "ffcc596d262c",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|printf": {
-  "hash": "85aa9e870203",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (bash 5.2)"
+  "hash": "1d1daf9b87ef",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|ps": {
   "hash": "a19572ce8b1d",
@@ -2405,19 +2405,19 @@
   "on": "ubuntu-24.04 (user ali)"
  },
  "bash|read": {
-  "hash": "d4fd2902b9c3",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (bash 5.2) (pty via script)"
+  "hash": "49bfb6ee407e",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|rename.sh": {
-  "hash": "8a55c83f40ee",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (normal user); docs: mac"
+  "hash": "9e6c156b17db",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|resolvectl": {
-  "hash": "0f2f2404fa93",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker systemd-resolved; docs: mac"
+  "hash": "9d32f6bc1385",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|rm": {
   "hash": "57cde877bfce",
@@ -2425,109 +2425,109 @@
   "on": "ubuntu-24.04 (user ali)"
  },
  "bash|scp / rsync": {
-  "hash": "53846c9579fc",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker; docs: Mac"
+  "hash": "4c60e3c3e6dc",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|sed": {
-  "hash": "16e32a869337",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker; docs: mac sed -i"
+  "hash": "ee9de65d8768",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|select و confirm": {
-  "hash": "5f230ac787ff",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (bash 5.2, user ali) (tty via script); docs: mac"
+  "hash": "3aa7651abe5a",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|set -a و .env": {
-  "hash": "266699afdb24",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (bash 5.2); node line shown with child bash"
+  "hash": "f76dd2809de2",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|set -euo pipefail": {
-  "hash": "f341de833587",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (normal user)"
+  "hash": "531ccd8a4449",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|set -x و PS4": {
-  "hash": "f89a8fa33a50",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (bash 5.2)"
+  "hash": "94566f32ad05",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|setfacl و getfacl": {
-  "hash": "b0c4da4db0f0",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker; docs: macOS chmod +a"
+  "hash": "0de9a6bc6504",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|setuid و setgid و sticky bit": {
-  "hash": "6a8904db0788",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker; docs: macOS"
+  "hash": "8b9890e355c8",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|setup-env.sh": {
-  "hash": "c1d02c9c0176",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (normal user); docs: mac"
+  "hash": "2f420f0bba13",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|shellcheck": {
-  "hash": "5d60f945d388",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (bash 5.2) (shellcheck 0.9.0)"
+  "hash": "ae8892b3084b",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|shift و --help": {
-  "hash": "b5f231d62ab6",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (bash 5.2, user ali)"
+  "hash": "45995129be44",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|shopt -s nullglob": {
-  "hash": "8247bed333a1",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (bash 5.2, user ali); docs: mac"
+  "hash": "3914e4058f59",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|shutdown": {
-  "hash": "44907a6a55d6",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker with systemd: schedule/--show/-c; docs: now/reboot/suspend"
+  "hash": "dda8a5439fc9",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|site-check.sh": {
-  "hash": "b9a5aa6ed619",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (normal user); docs: mac"
+  "hash": "fa837d78dbe5",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|sleep & wait": {
-  "hash": "9f7500d18a2c",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (user ubuntu) + docker stop timing; docs: certbot renew"
+  "hash": "b2b2772ca926",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|smbclient و mount -t cifs": {
-  "hash": "3c70198a802e",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (simulated LAN) Samba 4.19; docs: Windows side, mac"
+  "hash": "3f58dacab6b1",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|sort و uniq": {
-  "hash": "bdae2e0b6ac0",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker"
+  "hash": "09b20e1d1da1",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|source lib.sh": {
-  "hash": "21cc13fcd032",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (bash 5.2, user ali); docs: mac"
+  "hash": "0f4011fb003e",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|ss / lsof": {
-  "hash": "1107a3b8814a",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker; win11 pwsh"
+  "hash": "b6eb284aca14",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|ssh": {
-  "hash": "b02d34794257",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (sshd on 127.0.0.1); docs: Mac"
+  "hash": "43ecb21e7dba",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|ssh -L": {
-  "hash": "e8df40319310",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (simulated LAN) (sshd, Postgres 16)"
+  "hash": "feaba3cb32fb",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|starship": {
   "hash": "205fadfc8005",
@@ -2535,14 +2535,14 @@
   "on": "ubuntu-24.04 docker (starship 1.26.0); docs: zsh/PowerShell"
  },
  "bash|su - و sudo -i": {
-  "hash": "285988324ca2",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker; docs: su password prompts"
+  "hash": "1d2f974eb92e",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|sudo": {
-  "hash": "3b7a66c1e8ce",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 (user ali); docs: systemctl restart nginx"
+  "hash": "e85bd6ce1739",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|systemctl": {
   "hash": "0a1c873baee5",
@@ -2555,9 +2555,9 @@
   "on": "ubuntu-24.04 docker; win11 tar.exe; docs: Mac"
  },
  "bash|tcpdump": {
-  "hash": "9df4f180ad83",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (simulated LAN); docs: mac"
+  "hash": "1725228b296d",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|top / htop": {
   "hash": "a05fc8b01ec3",
@@ -2570,19 +2570,19 @@
   "on": "ubuntu-24.04 (user ali)"
  },
  "bash|tr": {
-  "hash": "1627ffb5d3b6",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker"
+  "hash": "4e3b30943b67",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|traceroute / mtr": {
-  "hash": "afa0e00144f4",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker + win11 tracert; docs: mac"
+  "hash": "bb75ab645367",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|trap": {
-  "hash": "8b0be12aac07",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (normal user)"
+  "hash": "403ab8da47d2",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|tree": {
   "hash": "f9502a2d60b0",
@@ -2590,29 +2590,29 @@
   "on": "ubuntu-24.04 (user ali); docs: mac brew"
  },
  "bash|umask": {
-  "hash": "df80adbeb1a8",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker; docs: macOS"
+  "hash": "3afb239d4450",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|useradd و usermod": {
-  "hash": "22503927af6a",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker; docs: macOS"
+  "hash": "c22a30417643",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|visudo و sudoers.d": {
-  "hash": "7878e38a02cd",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker; docs: visudo editor, macOS"
+  "hash": "725953157fff",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|vmstat و iostat": {
-  "hash": "2e4d8df901b7",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker idle; load numbers from earlier run; docs: Mac"
+  "hash": "ca9739d76e1e",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|wakeonlan و ethtool": {
-  "hash": "076573c297aa",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (simulated LAN); docs: real NIC Wake-on, BIOS, mac"
+  "hash": "759ed5d03187",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|watch": {
   "hash": "eee19dde370a",
@@ -2625,24 +2625,24 @@
   "on": "ubuntu-24.04 (user ali)"
  },
  "bash|wget": {
-  "hash": "e002bc63381f",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker"
+  "hash": "20e4b1506ccb",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|wget -i و --limit-rate": {
-  "hash": "7363f122c05f",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker"
+  "hash": "6677c1141765",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|which / type": {
-  "hash": "ea0375f5649b",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 (user ali)"
+  "hash": "13092bd7dff5",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|while read": {
-  "hash": "a7db8f0b01d7",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (bash 5.2, user ali); docs: mac -W"
+  "hash": "514173b941d4",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|xargs": {
   "hash": "df1b6aa2fbac",
@@ -2650,9 +2650,9 @@
   "on": "ubuntu-24.04 (user ali)"
  },
  "bash|zgrep / zcat": {
-  "hash": "34d87637affe",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 (user ali)"
+  "hash": "89838ca4f496",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|zip / unzip": {
   "hash": "07828fe88d47",
@@ -2660,9 +2660,9 @@
   "on": "ubuntu-24.04 docker; win11 pwsh; docs: Mac"
  },
  "bash|zoxide": {
-  "hash": "8d53e0b633b6",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (zoxide 0.9.3); docs: zi"
+  "hash": "4da02e066cce",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash||": {
   "hash": "b5be5c60dca1",
@@ -2670,69 +2670,69 @@
   "on": "ubuntu-24.04 (user ali)"
  },
  "bash|أقسام man": {
-  "hash": "0efa8b7ff1f2",
-  "date": "2026-10-28",
-  "on": "ubuntu-24.04 (docker، صفحات man متسطبة) و Git Bash على ويندوز 11"
+  "hash": "a1d9fc8150e9",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|أول سكربت": {
-  "hash": "ca1335dc304d",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker (bash 5.2)"
+  "hash": "021a34d3f6a8",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|الطريقة: من مهمة لأمر": {
-  "hash": "cd13ba218526",
-  "date": "2026-10-28",
-  "on": "ubuntu-24.04 (docker، صفحات man متسطبة) و Git Bash على ويندوز 11"
+  "hash": "e53e87106aae",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|مشروع ٢ — trap: نضّف مهما حصل": {
-  "hash": "6dda2a79ac52",
-  "date": "2026-10-28",
-  "on": "docker node:22-slim (Debian 12, bash 5.2.15) — السكربت اتشغّل بالكامل: نشر، فحص فاشل، rollback، trap بالتلات حالات"
+  "hash": "4f4b9a9baece",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|مشروع ٢ — ابني في مكان مؤقت": {
-  "hash": "17911eb20ea9",
-  "date": "2026-10-28",
-  "on": "docker node:22-slim (Debian 12, bash 5.2.15) — السكربت اتشغّل بالكامل: نشر، فحص فاشل، rollback، trap بالتلات حالات"
+  "hash": "0dc2dc996121",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|مشروع ٢ — التقليم والخدمة": {
-  "hash": "f244befa5df4",
-  "date": "2026-10-28",
-  "on": "docker node:22-slim (Debian 12, bash 5.2.15) — prune اتجرّب (٥ نشرات، -k 3، فضل ٣)؛ docs: أوامر systemctl والـ unit file من توثيق systemd (مفيش systemd في الكونتينر)"
+  "hash": "1028d50ffb65",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|مشروع ٢ — الفحص والرجوع": {
-  "hash": "334f1c5055dd",
-  "date": "2026-10-28",
-  "on": "docker node:22-slim (Debian 12, bash 5.2.15) — السكربت اتشغّل بالكامل: نشر، فحص فاشل، rollback، trap بالتلات حالات"
+  "hash": "9ca970eee564",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|مشروع ٢ — شكل النشر: نسخ ورابط": {
-  "hash": "3e672a3eba65",
-  "date": "2026-10-28",
-  "on": "docker node:22-slim (Debian 12, bash 5.2.15) — السكربت اتشغّل بالكامل: نشر، فحص فاشل، rollback، trap بالتلات حالات"
+  "hash": "cd98f7283dd4",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|مشروع — find بشروط الصلاحيات": {
-  "hash": "68838f4b735e",
-  "date": "2026-10-28",
-  "on": "ubuntu-24.04 (docker)"
+  "hash": "ce28fee0aec3",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|مشروع — set -euo pipefail": {
-  "hash": "3d3fccfc6238",
-  "date": "2026-10-28",
-  "on": "ubuntu-24.04 (docker)"
+  "hash": "738219f61a8a",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|مشروع — التقرير والإصلاح": {
-  "hash": "9011adc8dc9c",
-  "date": "2026-10-28",
-  "on": "ubuntu-24.04 (docker)"
+  "hash": "ed4e7bb54353",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|مشروع — الواجهة و --help": {
-  "hash": "2e5a0d353859",
-  "date": "2026-10-28",
-  "on": "ubuntu-24.04 (docker)"
+  "hash": "97a95d80064c",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "bash|مشروع — حلّل الـ arguments بإيدك": {
-  "hash": "6af19c9f8f0f",
-  "date": "2026-10-28",
-  "on": "ubuntu-24.04 (docker)"
+  "hash": "9afdd247aa8b",
+  "date": "2026-10-29",
+  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات جداول قصيرة في teach و deep.how، وتصليح ٣ جمل teach غلط (shift 2 مع set -e بيقفل ساكت؛ trap بعد mv بيعدّي الاسم القديم) — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك bash الجديد اتجرّب في docker ubuntu:24.04 (bash 5.2) حيث أمكن؛ أدوات الشبكة والهاردوير و sudo و chattr و man من الوثائق"
  },
  "career|ATS": {
   "hash": "77260d3a217c",
