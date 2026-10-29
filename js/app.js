@@ -344,8 +344,10 @@ function openLesson(c){
   if ($('#q').value.trim()) $('#q').value = '';
   openCmd = c;
   render();
-  // scrollTo(0, 0) would also reset the horizontal scroll, and on an RTL page that jumps to the far left
-  window.scrollTo({top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'});
+  // land on the lesson, not the top of the page: above #list sit the hero and the tab cards, thousands of px
+  // on a phone, so a jump beats a long smooth scroll. scroll-padding-top on html keeps it clear of the sticky
+  // bar, and inline:'nearest' leaves the horizontal scroll alone (resetting it on an RTL page jumps to the far left)
+  $('#list').scrollIntoView({block: 'start', inline: 'nearest'});
 }
 function backToMap(to){
   const c = openCmd;
@@ -355,7 +357,7 @@ function backToMap(to){
   if (el) return el.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
   // back on the map, the lesson you were just reading is the row you look for
   const row = c && [...$('#list').querySelectorAll('tr[data-open]')].find(r => r.dataset.open === c);
-  row ? row.scrollIntoView({block:'center', behavior:'auto'}) : window.scrollTo({top: 0});
+  row ? row.scrollIntoView({block:'center', behavior:'auto'}) : $('#list').scrollIntoView({block:'start', inline:'nearest', behavior:'auto'});
 }
 /* the address bar carries the tab and the open lesson, so a lesson can be bookmarked and shared */
 let hashMine = '';
@@ -861,12 +863,20 @@ const savedL = +(store.get('level') || 0);
 if ([0,1,2,3].includes(savedL)){ level = savedL; markLevel(); }
 const [fromHash, fromCmd] = hashParse(location.hash), saved = store.get('shell');
 setShell(DATA[fromHash] ? fromHash : DATA[saved] ? saved : 'start', fromCmd);
+// a shared lesson link opens on the lesson, not on the hero above it
+if (openCmd) $('#list').scrollIntoView({block:'start', inline:'nearest'});
 window.addEventListener('hashchange', () => {
   if (location.hash === hashMine) return;
   const [tab, cmd] = hashParse(location.hash);
   if (!DATA[tab]) return;
+  const was = openCmd;
   if (tab !== shell) setShell(tab, cmd);
   else if ((cmd || null) !== openCmd){ openCmd = cmd && catOf(cmd) ? cmd : null; render(); }
+  else return;
+  // back/forward lands where the reader is looking: the lesson, or the map row of the lesson just left
+  if (openCmd) return $('#list').scrollIntoView({block:'start', inline:'nearest'});
+  const row = was && [...$('#list').querySelectorAll('tr[data-open]')].find(r => r.dataset.open === was);
+  if (row) row.scrollIntoView({block:'center', inline:'nearest'});
 });
 
 /* ---------- offline (PWA) ---------- */
