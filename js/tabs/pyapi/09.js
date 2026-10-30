@@ -3,6 +3,25 @@ MORE("pyapi", [
     {
       t: "collections و itertools و functools",
       l: 1,
+      time: R`حوالي ٦ ساعات (٣ دروس)`,
+      goal: [
+        R`تختار الـ container الصح بدل dict و list لكل حاجة: [[Counter]] و [[defaultdict]] و [[deque]] و [[namedtuple]] و [[heapq]] و [[bisect]] و [[OrderedDict]] و [[ChainMap]]، بأرقام سرعة متقاسة.`,
+        R`تكتب معالجة داتا كسولة بـ [[itertools]] (دفعات، أزواج، تراكم، تجميع، توافيق) بذاكرة ثابتة، وتعرف فخ الـ iterator اللي بيتقري مرة واحدة.`,
+        R`تستخدم [[functools]]: cache بحدود وبمدة، و [[partial]]، و [[wraps]] في كل decorator، و [[singledispatch]] بدل سلسلة [[isinstance]]، وتعرف إمتى الـ cache بيعمل memory leak.`,
+      ],
+      use: {
+        prog: R`نص كود معالجة الداتا اللي هتكتبه (تقارير، لوجات، تجميع) بيبقى سطرين بالأدوات دي بدل عشرين سطر [[if]] و [[for]]، وبيبقى أسرع وأخف.`,
+        work: R`rate limiter بـ [[deque]]، وطابور مهام بـ [[heapq]]، وإعدادات بأولوية بـ [[ChainMap]]، و cache لنداء API بطيء، و import ملايين صفوف دفعات. دي حاجات بتتكتب في أي backend.`,
+        cs: R`heap (O(log n)) و binary search و hash tables و LRU eviction و lazy evaluation: هياكل البيانات والخوارزميات الأساسية، مكتوبة في المكتبة القياسية بـ C وجاهزة.`,
+      },
+      projects: [
+        { lvl: 'صغير', t: R`أكتر الكلمات في نص`, what: R`[[topwords.py file.txt -n 10]] بيقرا ملف عربي أو إنجليزي، ويشيل علامات الترقيم بـ regex، ويطبع أكتر N كلمات بـ [[Counter]]، ويتجاهل كلمات من [[stopwords.txt]]. من درس collections ووحدة الملفات.`, done: R`على مقال حقيقي بيطبع ١٠ كلمات مترتبة بعددها، والكلمات في stopwords مش ظاهرة، و [["Tea"]] و [["tea"]] كلمة واحدة، والعربي بيتعدّ صح.` },
+        { lvl: 'صغير', t: R`آخر الأخطاء في لوج`, what: R`[[tailerr.py app.log -n 20]] بيلف على اللوج سطر سطر ويحتفظ بآخر N سطر فيه [[ERROR]] بـ [[deque(maxlen=N)]]، ويطبعهم مع عدد كل نوع خطأ بـ [[Counter]]. من درس collections.`, done: R`على لوج ١٠٠ ألف سطر الذاكرة ثابتة، وبيطبع آخر ٢٠ خطأ بالظبط بالترتيب، والعدّ لكل نوع صح، والملف الفاضي بيطبع «مفيش أخطاء».` },
+        { lvl: 'متوسط', t: R`طابور مهام بأولويات ومواعيد`, what: R`[[class Scheduler]] بـ [[heapq]]: [[add(task, priority, run_at)]] و [[due(now)]] بترجّع المهام اللي ميعادها جه بالأولوية، والمتساوي بالترتيب، و [[cancel(task_id)]]. من دروس collections و itertools.`, done: R`١٠ مهام بمواعيد وأولويات مختلفة بتطلع بالترتيب الصح، والمتساويين بترتيب الإضافة، والملغية مبتطلعش، و ٨ اختبارات pytest بتعدّي، ومفيش [[TypeError]] لو المهمة dict.` },
+        { lvl: 'متوسط', t: R`تقرير مبيعات من CSV كبير`, what: R`[[report.py sales.csv]] بيقرا سطر سطر، ويجمّع بـ [[defaultdict]] لكل مدينة ومنتج، ويطلّع أكبر ١٠ أيام بـ [[nlargest]]، والتغيّر اليومي بـ [[pairwise]]، ويكتب ملخص JSON. من الوحدة دي ووحدة الملفات.`, done: R`على ملف مليون صف بيخلص في أقل من ١٠ ثواني والذاكرة أقل من ٥٠ ميجا (قستهم)، والأرقام بتطابق حساب بإيدك على ملف ٢٠ صف، والسطور البايظة بتتعدّ ومبتوقّفش التقرير.` },
+        { lvl: 'كبير', t: R`طبقة cache لأي API بطيء`, what: R`موديول [[smartcache]] فيه decorator [[@cached(ttl=60, maxsize=1000)]] بـ [[OrderedDict]] (LRU) ومدة صلاحية بـ [[time.monotonic]]، و [[wraps]]، وإحصائيات hits/misses، و [[invalidate(*args)]]، ومفتاح بيقبل dict و list (بيحوّلهم hashable)، وبيحفظ الحالة على الديسك بـ [[write_atomic]] لو طلبت ([[persist="cache.json"]]) ويقراها لما البرنامج يقوم. ومعاه CLI صغير بيعرض الإحصائيات. من الوحدة دي ووحدات الملفات والـ classes.`, done: R`١٥ اختبار pytest بيعدّوا (منهم: انتهاء المدة بـ [[monkeypatch]] على الوقت، والـ LRU بيشيل الأقدم استخدامًا، و [[invalidate]] بتمسح مفتاح واحد، والدالة اسمها لسه صح)، وعلى ١٠٠ ألف نداء بنمط حقيقي الـ hit rate متطبعة، وملف الحالة البايظ بيتجاهل بتحذير ويكمّل، و [[mypy --strict]] نضيف.`, ext: R`لما توصل لـ async خلّيه يدعم [[async def]] (ومنع إن ١٠ نداءات لنفس المفتاح في نفس الوقت يعملوا ١٠ طلبات)، ولما توصل لـ Redis بدّل التخزين بـ Redis من غير ما الـ API بتاع الـ decorator يتغيّر.` },
+        { lvl: 'فكرة', t: R`حل مسائل بالأدوات دي`, what: R`اختار ١٠ مسائل من موقع مسائل (أو من بنك التمارين) وحل كل واحدة مرتين: مرة بـ loops بإيدك، ومرة بأدوات الوحدة دي ([[Counter]] و [[heapq]] و [[bisect]] و [[itertools]] و [[cache]]). قارن الطول والسرعة.`, done: R`١٠ مسائل محلولة بالطريقتين ونفس الناتج، وجدول فيه عدد السطور والوقت لكل واحدة، و ٣ مسائل على الأقل الأداة الجاهزة كانت أسرع بأكتر من ٥ مرات (بالقياس).`, ext: R`اعمل منهم «كراسة وصفات» بتاعتك: كل مشكلة شكلها إيه، والأداة اللي بتحلها، وسطرين مثال.` },
+      ],
       n: "أدوات جاهزة في المكتبة الأساسية بتوفّر عليك loops و dicts بتكتبها بإيدك",
       items: [
         {
@@ -57,6 +76,14 @@ def allow(ip: str, now: float) -> bool:
 print([allow("1.1.1.1", t) for t in [0, 1, 2, 3, 9.9, 10.5, 11]])
 print(allow("2.2.2.2", 3))`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** اكتب جنب كل مشكلة الأداة: عدّ الكلمات، وتجميع طلبات تحت كل يوزر، وآخر ١٠٠ سطر لوج، وطابور أولويات، وأكبر ٥ منتجات مبيعًا، ودرجة من شرايح، وإعدادات بأولوية، و LRU cache. وجنب كل واحدة الـ method الأساسية.`, done: R`التمانية صح ([[Counter.most_common]] و [[defaultdict(list)]] و [[deque(maxlen=100)]] و [[heappush/heappop]] و [[nlargest]] و [[bisect]] و [[ChainMap]] و [[OrderedDict.move_to_end]])، ولكل واحدة سطر جربته.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[d = defaultdict(int); print("x" in d); d["y"]; print(len(d), dict(d))]]، وبعدين [[c = Counter("banana"); print(c["z"], len(c), c.most_common(1))]]. اكتب الناتج قبل التشغيل.`, done: R`طابق التشغيل: [[False]] ثم [[1 {'y': 0}]] (القراية ضافت المفتاح)، ثم [[0 3 [('a', 3)]]] (القراية في Counter مضافتش)، وكاتب الفرق بين الاتنين في جملة.` },
+            { lvl: 'تطبيق', t: R`**صلّح:** طابور مهام بـ [[heapq]] بيقع: [[heappush(q, (1, {"id": 7}))]] وبعدها [[heappush(q, (1, {"id": 9}))]]. اقرا الرسالة، وصلّحه بعدّاد من [[itertools.count()]] بحيث المهام المتساوية في الأولوية تطلع بترتيب دخولها.`, done: R`قبل التصليح [[TypeError: '<' not supported between instances of 'dict' and 'dict']]، وبعده ٥ مهام بنفس الأولوية بتطلع بنفس ترتيب ما دخلت (اتأكدت بالـ id)، والأولوية الأقل لسه بتطلع الأول.` },
+            { lvl: 'تطبيق', t: R`**محاكاة:** rate limiter بـ [[deque]]: [[allow(user, now)]] بتسمح بـ ٥ طلبات لكل يوزر في أي ١٠ ثواني (نافذة متحركة)، بـ [[defaultdict(deque)]]. جرّبها بلستة أوقات ([[now]] رقم ثواني) مش بـ [[time.sleep]].`, done: R`٦ طلبات في ثانية واحدة: أول ٥ [[True]] والسادس [[False]]، وبعد ١٠ ثواني من أول طلب بيسمح تاني، ويوزرين مستقلين عن بعض، والـ deque لكل يوزر طوله عمره ما بيعدّي ٥.` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** لستة ٢٠ طلب ([[(user, city, product, amount)]]). طلّع في دالة واحدة: أكتر ٣ منتجات (Counter)، وإجمالي كل مدينة لكل منتج (defaultdict متداخل)، وأكبر ٣ طلبات (nlargest)، وكل ده من غير ولا [[if key not in]].`, done: R`الأرقام بتطابق حسبة بإيدك على ٥ طلبات منهم على الأقل، والنتيجة متحوّلة لـ dicts عادية ([[dict()]]) قبل ما ترجع، والكود مفيهوش [[if ... not in]].` },
+            { lvl: 'تحدي', t: R`**ابني وقيس:** [[LRUCache(capacity)]] بـ [[OrderedDict]] فيها [[get(k)]] و [[put(k, v)]]، وقارنها بـ [[functools.lru_cache]] على نفس سلسلة ١٠٠ ألف مفتاح عشوائي من ١٠٠٠ مفتاح، وسعة ١٠٠: عدد الـ hits في الاتنين والوقت.`, done: R`عدد الـ hits **متطابق** في الاتنين (نفس السياسة)، وعندك وقت الاتنين بالملي ثانية من جهازك، و [[LRUCache]] حجمها عمره ما بيعدّي ١٠٠، و ٤ اختبارات pytest بتعدّي (منهم إن [[get]] بتحدّث الترتيب).` },
+          ],
           deep: {
             why: R`عدّ الكلمات، وتجميع الطلبات حسب المستخدم، و «آخر ١٠٠ سطر لوج»، و BFS في الـ graphs، و طابور jobs: كلها بتتكتب بإيدك بـ dict و if و list، وبتطلع أطول وأبطأ. وفي انترفيوهات الـ DSA، [[Counter]] و [[deque]] بيختصروا نص الحل.`,
             how: R`[[Counter]] dict عادي بس [[c["x"]]] بترجع 0 لو مش موجود (من غير ما تضيف المفتاح). وبيتجمع ويتطرح ([[c1 + c2]] و [[c1 - c2]] وبيشيل الصفر والسالب)، و [[update]] بتزوّد، و [[total()]] (3.10+) مجموع العدّ.
@@ -194,12 +221,12 @@ print(queue.popleft(), queue.pop())
 urgent job2
 ~~~
 
-| خطوة | الطابور |
-|---|---|
-| البداية | [[job1, job2]] |
-| [[appendleft("urgent")]] | [[urgent, job1, job2]] |
-| [[popleft()]] رجّعت [[urgent]] | [[job1, job2]] |
-| [[pop()]] رجّعت [[job2]] | [[job1]] |
+| خطوة | الطابور | اللي حصل |
+|---|---|---|
+| البداية | [[job1, job2]] | طابور فيه شغلتين بالترتيب |
+| [[appendleft("urgent")]] | [[urgent, job1, job2]] | اتضافت في **الأول**، فهتطلع قبل الكل |
+| [[popleft()]] رجّعت [[urgent]] | [[job1, job2]] | طلّعت من الأول (FIFO لو بتضيف بـ [[append]]) |
+| [[pop()]] رجّعت [[job2]] | [[job1]] | طلّعت من الآخر (زي stack) |
 
 ليه مش list؟ [[list.pop(0)]] و [[list.insert(0, x)]] بيزقّوا كل العناصر خطوة، يعني وقتهم بيكبر مع حجم الـ list (O(n)). في deque الأربع عمليات [[append]] و [[appendleft]] و [[pop]] و [[popleft]] وقتهم ثابت (O(1)) مهما كان الحجم.
 
@@ -261,6 +288,76 @@ True
 
 ---
 
+## ٦. [[heapq]]: أكبر N، وطابور أولويات
+
+[[heapq]] بيخلي list عادية «heap»: أصغر عنصر دايمًا في [[[0]]]، والإضافة والشيل O(log n):
+
+~~~python
+import heapq
+sales = [("tea", 120), ("coffee", 340), ("juice", 90), ("water", 500), ("cake", 210)]
+print(heapq.nlargest(2, sales, key=lambda x: x[1]))
+tasks = []
+heapq.heappush(tasks, (2, "send email"))
+heapq.heappush(tasks, (1, "charge card"))
+heapq.heappush(tasks, (3, "write log"))
+print([heapq.heappop(tasks)[1] for _ in range(3)])
+~~~
+
+~~~text الناتج (Python 3.14)
+[('water', 500), ('coffee', 340)]
+['charge card', 'send email', 'write log']
+~~~
+
+- [[nlargest(n, items, key=...)]] و [[nsmallest]] بيجيبوا أكبر أو أصغر N من غير ما يرتّبوا الكل. قيست على ١٠٠ ألف رقم: [[sorted(data)[:10]]] أخدت **١٣.٦ ملي ثانية** و [[nsmallest(10, data)]] **١.٧٦**، يعني حوالي ٨ مرات أسرع. ولو N قريب من حجم اللستة، [[sorted]] أحسن.
+- [[heappush]] بيضيف و [[heappop]] بيطلّع **الأصغر** دايمًا، فالـ tuple [[(priority, task)]] بيطلع بالأولوية: ١ الأول. ده الطابور اللي ورا الـ schedulers و Dijkstra.
+- فخ: لو أولويتين متساويين، Python بيقارن العنصر التاني. ولو هو dict: [[TypeError: '<' not supported between instances of 'dict' and 'dict']] (اتجرّب). الحل [[(priority, counter, task)]] بعدّاد بيزيد، فمفيش اتنين متساويين أبدًا.
+- مفيش max-heap: حط [[-priority]].
+
+---
+
+## ٧. [[bisect]]: تدوّر وتحط في list مترتبة
+
+~~~python
+import bisect
+grades = [50, 65, 75, 85]
+letters = "FDCBA"
+print([letters[bisect.bisect(grades, s)] for s in [40, 50, 70, 90]])
+prices = [10, 20, 40]; bisect.insort(prices, 25); print(prices)
+~~~
+
+~~~text الناتج
+['F', 'D', 'C', 'A']
+[10, 20, 25, 40]
+~~~
+
+- [[bisect(grades, s)]] بيرجّع المكان اللي [[s]] كانت هتتحط فيه عشان اللستة تفضل مترتبة، بـ binary search (O(log n)). ٤٠ قبل الكل = ٠ = F، و ٥٠ بعد ٥٠ = ١ = D (لأن [[bisect]] = [[bisect_right]]؛ [[bisect_left]] كانت هتحطها قبلها). ده جدول تقديرات أو شرايح ضريبة من غير سلسلة [[if/elif]].
+- [[insort]] بيحط العنصر في مكانه الصح. الدوّرة O(log n) بس الإضافة نفسها O(n) لأن العناصر بتتزق.
+- قيست [[0.5 in sorted_list]] على ١٠٠ ألف رقم: **١٠٦٨ ميكروثانية** (بيلف واحد واحد)، و [[bisect_left(sorted_list, 0.5)]]: **٠.٢٥ ميكروثانية**. نفس السؤال، ٤٠٠٠ مرة أسرع، بشرط اللستة مترتبة.
+
+---
+
+## ٨. [[OrderedDict]] و [[ChainMap]]
+
+~~~python
+from collections import OrderedDict, ChainMap
+cache = OrderedDict()
+for k in ["a", "b", "c"]: cache[k] = k.upper()
+cache.move_to_end("a"); cache.popitem(last=False); print(list(cache))
+defaults = {"port": 8000, "debug": False}
+env = {"debug": True}
+cli = {"port": 9000}
+cfg = ChainMap(cli, env, defaults)
+print(cfg["port"], cfg["debug"], dict(cfg))
+~~~
+
+~~~text الناتج
+['c', 'a']
+9000 True {'port': 9000, 'debug': True}
+~~~
+
+- الـ [[dict]] العادي محافظ على الترتيب من 3.7، فـ [[OrderedDict]] بقى للحاجتين دول: [[move_to_end(k)]] (اتاستخدم دلوقتي فوديه الآخر) و [[popitem(last=False)]] (شيل الأقدم). مع بعض = LRU cache بإيدك: [[b]] اتشالت لأنها الأقدم استخدامًا.
+- [[ChainMap(cli, env, defaults)]] بيدوّر في الطبقات بالترتيب ويرجّع أول قيمة يلاقيها، من غير ما ينسخ أو يدمج: [[port]] من الـ CLI و [[debug]] من الـ env. ده بالظبط ترتيب أولوية الإعدادات في أي أداة (argument يغلب env يغلب default). والكتابة [[cfg["x"] = 1]] بتروح للطبقة الأولى بس.
+
 ## الخلاصة
 
 | النوع | استخدمه لـ | أهم حاجة |
@@ -272,30 +369,30 @@ True
 
 - [[Counter("hello world")]] بيعد **حروف** ([[('l', 3)]] أولهم)، فللكلمات اعمل [[.split()]] الأول.`,
           lines: [
-            "import الأربعة.",
-            "list كلمات.",
-            "عدّ في سطر.",
-            "أكتر اتنين.",
-            "مفتاح مش موجود: صفر، ومن غير KeyError.",
-            "زوّد عدّ.",
-            R`[[+]] بين Counters، و [[total()]] المجموع.`,
-            "أزواج (مدينة، مستخدم).",
-            "أي مدينة جديدة بتبدأ بـ list فاضية.",
-            "لف.",
-            R`من غير [[if city not in by_city]].`,
-            R`[[dict()]] عشان يتطبع ويترجع كـ dict عادي.`,
-            R`متداخل: مدينة ← صنف ← عدد.`,
-            "المفتاحين اتعملوا لوحدهم.",
-            R`طابور بحد أقصى ٣.`,
-            "٤ صفحات.",
-            "لما يتملى، الأقدم بيطلع لوحده.",
-            "آخر ٣ بس.",
-            "طابور عادي.",
-            "ضيف في الأول: O(1).",
-            R`[[popleft]] و [[pop]]: من الناحيتين O(1).`,
-            "namedtuple: tuple بأسماء.",
-            "object.",
-            "بالاسم، والطباعة واضحة."
+            R`بنستورد أربع أنواع من [[collections]] (المكتبة القياسية): [[Counter]] للعدّ، و [[defaultdict]] للتجميع من غير [[if]]، و [[deque]] للطابور من الناحيتين، و [[namedtuple]] لـ tuple بأسماء. التلاتة الأولانيين dict أو list «متخصصة».`,
+            R`[[split()]] من غير arguments بيقسّم على أي مسافات ويشيل الفاضي، فبتطلع list فيها ٦ كلمات بتتكرر. ده الشكل اللي بتجيبه من لوج أو من عمود في CSV.`,
+            R`[[Counter(words)]] بيلف مرة واحدة ويعدّ كل عنصر: dict المفتاح فيه العنصر والقيمة عدده ([[{'tea': 3, 'coffee': 2, 'juice': 1}]]). بيقبل أي iterable: list أو string (يعدّ الحروف) أو generator.`,
+            R`[[most_common(2)]] أكتر اتنين بالترتيب كـ list of tuples: [[[('tea', 3), ('coffee', 2)]]]. ولو عددهم متساوي، اللي ظهر الأول بيطلع الأول. ومن غير رقم بترجّع الكل مترتب.`,
+            R`مفتاح مش موجود بيرجّع [[0]] بدل [[KeyError]]، ومبيتضافش للـ Counter (عكس [[defaultdict]]). فـ [[c["water"] > 0]] سؤال آمن.`,
+            R`[[update]] بيزوّد العدّ بعناصر iterable تاني (مش بيستبدل زي [[dict.update]]): [[water]] بقت ١ و [[tea]] بقت ٤. ولو عايز تطرح: [[subtract]].`,
+            R`[[+]] بين Counterين بيجمع العدّ لكل مفتاح (و [[-]] بيطرح ويشيل اللي بقى صفر أو سالب). و [[total()]] (3.10+) مجموع كل العدّات = [[8]] هنا قبل الجمع.`,
+            R`list من tuples (مدينة، يوزر): الشكل اللي بتجيبه من صفوف داتابيز. عايزين نجمّع اليوزرز تحت كل مدينة.`,
+            R`[[defaultdict(list)]]: لو طلبت مفتاح مش موجود، بينادي [[list()]] ويحط النتيجة [[[]]] تحت المفتاح ده ويرجّعها. اللي بتديه **دالة** بتعمل الـ default ([[list]] مش [[[]]])، زي [[default_factory]] في الـ dataclass.`,
+            R`بنفك كل tuple لاسمين ([[city]] و [[user]]) جوه الـ [[for]] مباشرة (tuple unpacking)، بدل [[pair[0]]] و [[pair[1]]].`,
+            R`[[by_city[city]]] لأول مرة بيعمل [[[]]] لوحده، و [[append]] بيضيف عليها. من غير defaultdict كنت هتكتب [[by_city.setdefault(city, []).append(user)]] أو [[if]] قبلها. وخلي بالك: مجرد **قراية** مفتاح مش موجود بتضيفه.`,
+            R`[[dict(by_city)]] بيحوّله dict عادي: الطباعة بتبقى أنضف (من غير [[defaultdict(<class 'list'>, ...)]])، والأهم إن أي قراية غلط بعد كده هترمي [[KeyError]] بدل ما تضيف مفاتيح فاضية في صمت.`,
+            R`defaultdict متداخل: الـ default بتاع البرّاني [[lambda]] بترجّع defaultdict جوّاني الـ default بتاعه [[int]] (اللي بيرجّع [[0]]). فبتقدر تكتب [[tree[a][b] += 1]] لأي a و b من غير ما تعمل أي حاجة قبلها.`,
+            R`[[tree["Cairo"]]] اتعمل defaultdict جديد، و [[["tea"]]] جواه اتعمل [[0]]، و [[+= 2]] بقى [[2]]. سطر واحد بدل ٤ سطور [[if]]. ده الشكل اللي بتعدّ بيه «لكل مدينة، كل صنف اتباع كام».`,
+            R`[[deque(maxlen=3)]] طابور (double-ended queue) بحد أقصى ٣ عناصر. لما يتملى وتضيف، الأقدم من الناحية التانية بيطلع **لوحده**. مثالي لـ «آخر N حاجة»: آخر صفحات، آخر أخطاء، نافذة rate limit.`,
+            R`٤ صفحات والطابور بياخد ٣، عشان نشوف الأولى بتطلع.`,
+            R`[[append]] بيضيف في الآخر. لما وصل للرابعة ([[/c]]) والطابور مليان، [[/]] اتشالت من الأول من غير أي كود مننا.`,
+            R`[[deque(['/a', '/b', '/c'], maxlen=3)]]: آخر ٣ بس. الطباعة بتوري الـ [[maxlen]] كمان.`,
+            R`deque عادي من غير حد، فيه شغلتين. [[deque]] بدل [[list]] عشان الإضافة والشيل من **الأول** سريعين.`,
+            R`[[appendleft]] بيضيف في الأول في وقت ثابت (O(1)). في [[list]] نفس الحاجة [[insert(0, x)]] بتحرّك كل العناصر خطوة (O(n))، ومع ١٠٠ ألف عنصر الفرق بيبان.`,
+            R`[[popleft()]] بيطلّع من الأول ([[urgent]])، و [[pop()]] من الآخر ([[job2]]). الاتنين O(1). و [[list.pop(0)]] O(n). الناتج [[urgent job2]] وفاضل [[job1]].`,
+            R`[[namedtuple("Point", ["lat", "lng"])]] بيعمل **class** جديد اسمه [[Point]]: tuple عادي بس خاناته ليها أسماء. الاسم الأول (النص) هو اللي بيظهر في الطباعة، فخليه زي اسم المتغير.`,
+            R`object من الـ class الجديد بالمكان (أو [[Point(lat=30.04, lng=31.23)]] بالاسم). مبيتعدلش زي أي tuple: [[p.lat = 1]] بترمي [[AttributeError]].`,
+            R`[[p.lat]] بالاسم بدل [[p[0]]]، والطباعة [[Point(lat=30.04, lng=31.23)]] واضحة. ولأنه tuple، [[lat, lng = p]] شغالة. وفي كود جديد [[typing.NamedTuple]] (درس dataclass) نفس الحاجة بـ type hints.`,
           ]
         },
         {
@@ -331,6 +428,14 @@ ids = list(range(1, 11))
 for chunk in batched(ids, 4):
     print("INSERT batch:", chunk)`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** من غير ما تبص، قول أنهي أداة من [[itertools]] لكل حاجة: دفعات ١٠٠، وفرق كل يوم عن اللي قبله، ورصيد بعد كل عملية، وكل أزواج من ٤ لاعيبة، وأول ١٠ من مصدر مالوش آخر، وتجميع صفوف مترتبة، وتوزيع round-robin.`, done: R`السبعة صح ([[batched]] و [[pairwise]] و [[accumulate]] و [[combinations]] و [[islice]] و [[groupby]] و [[cycle]])، و [[len(list(combinations(range(4), 2)))]] طلعت [[6]] زي ما حسبت.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[nums = map(int, ["1", "2", "3"]); print(list(nums)); print(sum(nums)); print(list(zip("ab", count())))]]. اكتب الناتج، وبعدين [[print(list(batched("abcdefg", 3)))]].`, done: R`طابق: [[[1, 2, 3]]] ثم [[0]] (الـ map خلص) ثم [[[('a', 0), ('b', 1)]]] (zip وقف عند الأقصر رغم إن [[count]] مالوش آخر) ثم [[[('a', 'b', 'c'), ('d', 'e', 'f'), ('g',)]]].` },
+            { lvl: 'تطبيق', t: R`**صلّح:** تقرير بيجمّع المبيعات لكل يوم بـ [[groupby(rows, key=lambda r: r["date"])]] وبيطلع نفس اليوم مرتين، ولما اتصلّح طلعت كل الأيام بمجموع [[0]] لأن الكاتب حفظ الـ groups في dict الأول. صلّح الاتنين.`, done: R`كل يوم بيظهر مرة واحدة بالمجموع الصح (قارنته بـ [[defaultdict(int)]] على نفس الداتا)، والتصليحين: [[sorted(rows, key=...)]] قبل [[groupby]]، و [[sum]] أو [[list(g)]] جوه اللفة نفسها.` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** لستة أسعار سهم لـ ٣٠ يوم. بـ [[pairwise]] و [[accumulate]] و [[islice]] طلّع: أكبر صعود في يوم، وأطول سلسلة أيام صاعدة ورا بعض، والمتوسط المتحرك لـ ٥ أيام (sliding window بـ [[deque(maxlen=5)]]).`, done: R`الأرقام التلاتة بتطابق حسبة بإيدك على أول ١٠ أيام، والمتوسط المتحرك فيه ٢٦ قيمة (٣٠ - ٥ + ١)، والكود مفيهوش index يدوي زي [[prices[i+1] - prices[i]]].` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[import_rows(rows, size=500)]] بتاخد generator صفوف (ممكن مليون) وتبعتهم لدالة [[save_batch(batch)]] ٥٠٠ ٥٠٠ بـ [[batched]]، وترجّع عدد الدفعات والصفوف، ولو دفعة فشلت تكمّل الباقي وتسجّل رقمها.`, done: R`على generator مليون صف الذاكرة فضلت ثابتة (أقل من ٥ ميجا بـ [[tracemalloc]])، وعدد الدفعات [[2000]]، ولو [[save_batch]] رمت في الدفعة ٧ النتيجة فيها [[failed=[7]]] والباقي اتحفظ.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** قارن [[list(chain(a, b, c))]] و [[a + b + c]] و [[[*a, *b, *c]]] على ٣ lists مليون عنصر لكل واحدة في الوقت والذاكرة. وبعدين نفس الحاجة لو انت عايز تلف بس (من غير ما تبني list).`, done: R`جدول فيه ٣ أوقات و ٣ ذاكرة لبناء الـ list، ورقم واحد لـ [[for x in chain(...)]] من غير list (ذاكرته تقريبًا صفر)، وكاتب مين الأسرع في البناء عندك.` },
+          ],
           deep: {
             why: R`دفعات لـ API بيقبل ١٠٠ عنصر في الطلب، و «الفرق عن امبارح»، و «رصيد بعد كل عملية»، و «كل مقاسات ×كل ألوان»: كلها loops فيها indexes و off-by-one. و itertools بيقولها في كلمة، ومن غير ما يحمّل الداتا كلها في الذاكرة.`,
             how: R`كل دوال itertools بترجع iterators: بتتلف عليها مرة واحدة ومبتحسبش حاجة غير لما تطلب. فـ [[count()]] مالوش آخر ومينفعش تعمل منه list، بس ينفع مع [[islice]] أو [[zip]] أو [[next]].
@@ -502,6 +607,70 @@ INSERT batch: (9, 10)
 
 ---
 
+## ١٠. وصفات تانية بتتكتب كل يوم
+
+~~~python
+from itertools import takewhile, dropwhile, zip_longest, combinations, permutations, starmap, cycle, repeat, compress, islice
+print(list(takewhile(lambda x: x < 5, [1, 3, 7, 2])), list(dropwhile(lambda x: x < 5, [1, 3, 7, 2])))
+print(list(zip(["a", "b", "c"], [1, 2])), list(zip_longest(["a", "b", "c"], [1, 2], fillvalue=0)))
+list(zip(["a", "b", "c"], [1, 2], strict=True))
+print(list(combinations("ABC", 2)), len(list(permutations("ABC", 2))))
+print(list(starmap(pow, [(2, 3), (10, 2)])))
+print(list(islice(cycle(["web1", "web2"]), 5)), list(repeat("x", 3)))
+print(list(compress(["a", "b", "c"], [1, 0, 1])))
+~~~
+
+~~~text الناتج (Python 3.14)
+[1, 3] [7, 2]
+[('a', 1), ('b', 2)] [('a', 1), ('b', 2), ('c', 0)]
+ValueError: zip() argument 2 is shorter than argument 1
+[('A', 'B'), ('A', 'C'), ('B', 'C')] 6
+[8, 100]
+['web1', 'web2', 'web1', 'web2', 'web1'] ['x', 'x', 'x']
+['a', 'c']
+~~~
+
+| الأداة | بتعمل إيه | مثال من الشغل |
+|---|---|---|
+| [[takewhile(pred, it)]] | بتاخد لحد أول عنصر يكسر الشرط وتقف (الـ ٢ بعد ٧ متاخدتش) | سطور اللوج لحد أول سطر بعد ساعة معينة في ملف مترتب |
+| [[dropwhile(pred, it)]] | بترمي لحد أول عنصر يكسر الشرط، وبعدها تاخد الكل | تتخطى الـ header في ملف لحد أول سطر داتا |
+| [[zip]] و [[zip_longest]] | [[zip]] بيقف عند الأقصر في **صمت**، و [[zip_longest]] بيكمّل بـ [[fillvalue]] | عمودين من مصدرين مختلفين |
+| [[zip(..., strict=True)]] (3.10+) | بيرمي [[ValueError]] لو الأطوال مختلفة | لما الاختلاف معناه داتا بايظة ولازم تعرف |
+| [[combinations]] و [[permutations]] | توافيق من غير ترتيب (٣) ومع ترتيب (٦) | كل أزواج منتجين بيتشروا مع بعض، أو كل مباريات دوري |
+| [[starmap(f, pairs)]] | بتنادي [[f(*pair)]] لكل tuple | [[pow(2, 3)]] و [[pow(10, 2)]] من لستة أزواج |
+| [[cycle]] و [[repeat]] | تكرار لستة للأبد، أو قيمة N مرة | توزيع طلبات round-robin على سيرفرين |
+| [[compress(data, flags)]] | بتاخد العناصر اللي الـ flag بتاعها [[True]] | فلتر بعمود [[is_active]] جاي من CSV |
+
+---
+
+## ١١. الـ iterator بيتقري مرة واحدة
+
+~~~python
+it = iter([1, 2, 3]); print(sum(it), sum(it))
+gen = (x * 2 for x in range(3)); print(list(gen), list(gen))
+sales = [("Alex", 80), ("Cairo", 150), ("Alex", 20)]
+groups = {k: g for k, g in groupby(sorted(sales), key=lambda x: x[0])}
+print({k: list(g) for k, g in groups.items()})
+~~~
+
+~~~text الناتج
+6 0
+[0, 2, 4] []
+{'Alex': [], 'Cairo': []}
+~~~
+
+- [[sum(it)]] التانية [[0]]: الـ iterator خلص في الأولى ومبيرجعش من الأول. نفس الكلام مع generator ومع أي حاجة من [[itertools]] ومع ملف مفتوح. لو محتاج تلف مرتين: [[list(...)]] مرة واحدة واحتفظ بيها.
+- الأخطر: حفظت groups [[groupby]] في dict وقريتهم بعدين، **فضيوا كلهم**. كل group بيبوظ لما [[groupby]] يتحرك للي بعده. الحل [[{k: list(g) for k, g in groupby(...)}]] (حوّل جوه اللفة).
+
+وفايدة الـ laziness بالأرقام:
+
+~~~text اتقاس بـ tracemalloc: sum على مليون مربع
+list: sum([x * x for x in range(1_000_000)])   38.6 MB peak
+gen:  sum(x * x for x in range(1_000_000))      0.0 MB peak
+~~~
+
+القوسين المربعين عملوا list فيها مليون رقم الأول (٣٨.٦ ميجا)، والقوسين العاديين عملوا generator بيدّي رقم رقم. نفس الناتج.
+
 ## الخلاصة
 
 | الأداة | بتعمل إيه | مثال |
@@ -516,20 +685,20 @@ INSERT batch: (9, 10)
 
 - كله iterators: بتتلف مرة واحدة، و [[list()]] عشان تشوف القيم.`,
           lines: [
-            "الأدوات.",
-            R`[[itemgetter(0)]] = [[lambda x: x[0]]].`,
-            "وصّل كذا iterable ورا بعض.",
-            "دفعات بحجم ٣، والأخيرة أصغر.",
-            "أزواج متتالية: مفيد للفروق.",
-            "مجموع متراكم.",
-            "كل التوافيق: مقاسات × ألوان.",
-            "عدّاد مالوش آخر يبدأ من 1000.",
-            R`[[next]] بتاخد القيمة الجاية.`,
-            R`[[islice]] بتاخد ٣ من iterator مالوش آخر.`,
-            "مبيعات.",
-            R`رتّب بالمدينة الأول: [[groupby]] بيجمّع المتجاور بس.`,
-            "لف على كل مجموعة.",
-            "اجمع مبيعات المجموعة."
+            R`ثمن أدوات من [[itertools]]: [[chain]] توصيل، و [[batched]] دفعات (3.12+)، و [[pairwise]] أزواج متتالية (3.10+)، و [[accumulate]] تراكم، و [[product]] توافيق، و [[count]] عدّاد مالوش آخر، و [[islice]] قص من iterator، و [[groupby]] تجميع المتجاور. كلهم بيرجّعوا iterators كسولة (lazy).`,
+            R`[[itemgetter(0)]] من [[operator]] بترجّع دالة بتجيب العنصر رقم ٠، يعني زي [[lambda x: x[0]]] بس أسرع شوية وأوضح كـ [[key=]]. و [[itemgetter(0, 2)]] بترجّع tuple من الاتنين.`,
+            R`[[chain]] بتلف على list وبعدين tuple وبعدين range كأنهم واحد، **من غير** ما تعمل list جديدة فيها الكل. و [[list(...)]] حوالينها عشان نشوف القيم؛ من غيرها هيطبع [[<itertools.chain object at ...>]].`,
+            R`[[batched(range(7), 3)]] بيقسّم لدفعات tuples بحجم ٣، والأخيرة أصغر لو العدد مش بيتقسم: [[(6,)]]. ده اللي بتستخدمه عشان تبعت ١٠ آلاف صف للداتابيز أو API ١٠٠ ١٠٠. و من 3.13 [[strict=True]] بيرمي لو الأخيرة ناقصة.`,
+            R`[[pairwise]] كل عنصر مع اللي بعده: [[(100, 120)]] و [[(120, 90)]]. عدد الأزواج أقل بواحد من العناصر. مفيد للفروق ([[b - a]] = التغيّر من يوم لليوم اللي بعده) أو للمسافة بين نقط.`,
+            R`[[accumulate]] بيرجّع المجموع المتراكم بعد كل عنصر: ١٠٠، وبعدين ١٠٠-٣٠=٧٠، وبعدين ٧٠+٥٠=١٢٠. ده رصيد حساب بعد كل عملية. وبياخد دالة تانية: [[accumulate(xs, max)]] = أعلى قيمة لحد دلوقتي.`,
+            R`[[product]] كل التوافيق بين اللستتين (زي for جوه for): ٢ مقاس × ٢ لون = ٤ tuples [[('S', 'red')]] لحد [[('M', 'blue')]]. و [[product(range(3), repeat=2)]] = كل الأزواج من ٠ لـ ٢. خلي بالك العدد بيتضرب بسرعة.`,
+            R`[[count(start=1000)]] عدّاد بيطلّع ١٠٠٠، ١٠٠١، ١٠٠٢... من غير آخر. [[list(count())]] هتعلّق البرنامج وتاكل الذاكرة، فلازم تاخد منه بـ [[next]] أو [[islice]] أو [[zip]] مع حاجة ليها آخر.`,
+            R`[[next(it)]] بتاخد القيمة الجاية من iterator وبتحرّكه خطوة، فطلعت [[1000 1001]]. الـ iterator **فاكر هو وصل فين**، فالجاي هيبدأ من ١٠٠٢. ولو iterator خلص، [[next]] بترمي [[StopIteration]] (أو بترجّع default لو كتبت [[next(it, None)]]).`,
+            R`[[islice(ids, 3)]] بتاخد ٣ عناصر بس من iterator مالوش آخر، زي [[[:3]]] بس لأي iterator. وبدأت من [[1002]] لأن [[next]] خد الاتنين الأولانيين.`,
+            R`list مبيعات (مدينة، مبلغ) **مش مترتبة**: الإسكندرية في الأول والآخر. ده الشكل اللي هيبوّظ [[groupby]] لو نسيت السطر الجاي.`,
+            R`[[sort(key=itemgetter(0))]] بيرتّب في نفس الليستة بالمدينة. لازم قبل [[groupby]]، لأنه بيجمّع العناصر **المتجاورة** بس: من غير الترتيب كان هيطلع [[Alex]] مرتين كمجموعتين (اتجرّب: [[('Alex', 80), ('Cairo', 150), ('Alex', 20)]]).`,
+            R`[[groupby]] بيرجّع لكل مجموعة متجاورة المفتاح ([[city]]) و iterator على عناصرها ([[group]]). الـ group ده **بيتقري مرة واحدة** وبيبوظ لما [[groupby]] يتحرك للمجموعة اللي بعدها، فاستخدمه جوه اللفة على طول.`,
+            R`[[sum(amount for _, amount in group)]] بيجمع المبالغ في المجموعة، و [[_]] اسم للحاجة اللي مش محتاجينها (المدينة متكررة). الناتج [[Alex 100]] ثم [[Cairo 195]]. ولو التجميع بس هو المطلوب، [[defaultdict(int)]] أبسط ومش محتاج ترتيب.`,
           ]
         },
         {
@@ -586,6 +755,14 @@ egp = partial(fmt, currency="EGP")
 usd = partial(fmt, currency="USD", decimals=0)
 print(egp(12500.5), usd(99.6), egp(3, decimals=0))`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** من الذاكرة: الفرق بين [[lru_cache]] و [[cache]] و [[cached_property]] (بيحفظ فين، ولكل إيه، وإمتى بيتمسح)، و [[partial]] بتعمل إيه، و [[wraps]] بتحل مشكلة إيه.`, done: R`كاتب: lru_cache على الدالة بحد ومفتاحها الـ arguments، و cache نفس الحاجة من غير حد، و cached_property في [[__dict__]] بتاع كل object وبيتمسح بـ [[del]]، وجرّبت [[cache_info]] و [[del r.total]] بنفسك.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[@lru_cache(maxsize=2) def sq(x): print("calc", x); return x * x]]، وبعدين [[sq(1); sq(2); sq(1); sq(3); sq(2)]]. كام مرة [[calc]] هتتطبع وبأنهي أرقام؟ وإيه [[sq.cache_info()]] في الآخر؟`, done: R`[[calc 1]] و [[calc 2]] و [[calc 3]] و [[calc 2]] (٤ مرات: لما ٣ دخلت، الـ ٢ كانت الأقدم استخدامًا فاتشالت)، و [[CacheInfo(hits=1, misses=4, maxsize=2, currsize=2)]]، وشغّلته وطابق.` },
+            { lvl: 'تطبيق', t: R`**صلّح:** decorator [[retry(fn)]] بيعيد الدالة ٣ مرات لو رمت، بس [[help(fetch)]] بيقول [[wrapper]] و FastAPI بيشوف [[*args, **kwargs]] بدل باراميترات [[fetch]]. صلّحه بـ [[wraps]] واتأكد بـ [[inspect.signature(fetch)]].`, done: R`بعد التصليح [[fetch.__name__]] بـ [[fetch]]، و [[inspect.signature(fetch)]] بيطبع الباراميترات الحقيقية، و [[fetch.__wrapped__]] موجودة، والـ retry لسه شغال (دالة بترمي مرتين وتنجح التالتة بترجّع النتيجة).` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[ttl_cache(seconds)]] decorator زي [[lru_cache]] بس كل قيمة ليها مدة صلاحية، وبيستخدم [[time.monotonic()]] و [[wraps]]، وفيه [[.cache_clear()]]. جرّبه بدالة سعر صرف وبـ [[seconds=1]].`, done: R`نداءين ورا بعض = حسبة واحدة، وبعد [[time.sleep(1.1)]] بتتحسب تاني، و [[cache_clear()]] بيمسح، والدالة لسه اسمها صح، و ٣ اختبارات pytest بتعدّي (بتبدّل [[time.monotonic]] بـ [[monkeypatch]] بدل ما تستنى).` },
+            { lvl: 'تطبيق', t: R`**refactor:** دالة [[render(value)]] فيها ٦ [[elif isinstance]] (int و float و str و date و Decimal و list). حوّلها [[singledispatch]] من غير ما يتغيّر أي ناتج، وزوّد نوع جديد ([[datetime]] بساعة) من ملف تاني.`, done: R`نفس ١٠ نداءات قبل وبعد بيطلّعوا نفس النص بالظبط (قارنتهم بـ [[assert]])، ومفيش ولا [[isinstance]] في الكود الجديد، و [[datetime]] بياخد نسخته هو مش نسخة [[date]].` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** مسألة «عدد طرق طلوع سلم N درجة بخطوة ١ أو ٢ أو ٣». حلها (١) تكرار عادي (٢) [[@cache]] (٣) loop بـ ٣ متغيرات. قيس الوقت لـ N = ٢٥ و ٣٠٠ و ٥٠٠٠.`, done: R`الناتج واحد في الطرق اللي اشتغلت، وجدول أوقات من جهازك: التكرار العادي بيبقى مستحيل بعد ٣٠ تقريبًا، والـ cache بيقع [[RecursionError]] عند ٥٠٠٠ (أو كاتب ليه لأ)، والـ loop بيخلص الكل في أقل من ثانية.` },
+          ],
           deep: {
             why: R`[[lru_cache]] بيحوّل حسبة متكررة غالية (إعدادات، سعر صرف، recursion) لـ lookup. و [[partial]] بتلاقيه في كود callbacks ومع [[map]] ومع [[run_in_executor]] اللي مبيقبلش keyword arguments. و [[@lru_cache]] على [[get_settings]] هو الـ pattern الرسمي في FastAPI (درس «pydantic-settings»).`,
             how: R`[[@lru_cache(maxsize=256)]] بيعمل dict من الباراميترات للناتج، ولما يتملى بيشيل الأقدم استخدامًا (Least Recently Used). [[maxsize=None]] أو [[@cache]] (3.9+) من غير حد. والباراميترات لازم hashable (مفيش list ولا dict)، و [[f(1)]] و [[f(x=1)]] بيتخزنوا كمفتاحين مختلفين. و [[cache_info()]] و [[cache_clear()]] للمتابعة والمسح.
@@ -781,6 +958,94 @@ usd = partial(fmt, currency="USD", decimals=0)
 
 ---
 
+## ٧. [[@cache]] و [[@wraps]] و [[@singledispatch]]
+
+### [[@cache]]: الـ cache من غير حد
+
+~~~python
+from functools import cache
+@cache
+def fib(n): return n if n < 2 else fib(n-1) + fib(n-2)
+print(fib(200), fib.cache_info())
+~~~
+
+~~~text الناتج (Python 3.14)
+280571172992510140037611932413038677189525 CacheInfo(hits=198, misses=201, maxsize=None, currsize=201)
+~~~
+
+- [[@cache]] (3.9+) = [[@lru_cache(maxsize=None)]]: بيحفظ كل حاجة ومبيرميش، وأسرع شوية لأنه مش بيتابع الترتيب. [[fib(30)]] من غير cache أخدت **١١٤ ملي ثانية** (حوالي ١.٦ مليون نداء)، وبالـ cache **٥٢ ميكروثانية** (٣١ نداء بس). نفس الكود بسطر زيادة.
+- العيب: مالوش حد، فلو الـ arguments مالهاش آخر (IDs يوزرز في سيرفر شغال أسابيع) الذاكرة هتفضل تكبر. في سيرفر استخدم [[lru_cache(maxsize=...)]].
+- [[fib(5000)]] من غير ما تبني الـ cache تدريجيًا بترمي [[RecursionError: maximum recursion depth exceeded]]: الـ cache مبيلغيش عمق التكرار. احسب [[fib(i)]] بالترتيب الأول أو اكتبها بـ loop.
+
+### فخاخ الـ cache
+
+~~~python
+@lru_cache
+def f(x): return type(x).__name__
+print(f(1), f(1.0), f.cache_info().currsize)
+class Svc:
+    @lru_cache
+    def get(self, k): return k * 2
+s = Svc(); s.get(1); r = weakref.ref(s); del s; gc.collect(); print("alive after del:", r() is not None)
+~~~
+
+~~~text الناتج
+int float 2
+alive after del: True
+~~~
+
+- [[1 == 1.0]] و الـ hash بتاعهم واحد، ومع كده اتحفظوا كمفتاحين (تفصيلة في طريقة بناء المفتاح في CPython). متعتمدش على إن «القيم المتساوية» هتشارك نفس الـ entry، ولو عايز تفرقة صريحة بالنوع: [[lru_cache(typed=True)]].
+- [[@lru_cache]] على **method**: [[self]] جزء من المفتاح، فالـ cache ماسك الـ object و [[del s]] مبيمسحوش من الذاكرة (اتأكدت بـ [[weakref]]: لسه عايش). في سيرفر بيعمل object لكل request ده memory leak. الحل [[cached_property]] (لكل object لوحده)، أو cache على دالة برّه الـ class.
+
+### [[@wraps]]: الـ decorator ميضيّعش اسم الدالة
+
+~~~python
+def timed(fn):
+    @wraps(fn)
+    def wrapper(*a, **k):
+        t = time.perf_counter(); r = fn(*a, **k)
+        print(f"{fn.__name__}: {(time.perf_counter()-t)*1000:.1f} ms"); return r
+    return wrapper
+~~~
+
+~~~text الناتج: load.__name__ و load.__doc__ مع @wraps ومن غيره
+مع wraps:   load Load orders.
+من غيره:    wrapper None
+~~~
+
+من غير [[@wraps(fn)]]، الدالة الملفوفة اسمها بقى [[wrapper]] والـ docstring ضاع، فاللوج و [[help()]] والـ tracebacks وFastAPI (اللي بيقرا الـ signature) بيشوفوا الـ wrapper مش دالتك. [[wraps]] بينسخ الاسم والـ doc والـ annotations، وبيحط [[__wrapped__]] بيشاور على الأصلية. (درس decorators في وحدة الدوال.)
+
+### [[@singledispatch]]: دالة بتختار الكود حسب النوع
+
+~~~python
+from functools import singledispatch
+from datetime import date
+from decimal import Decimal
+@singledispatch
+def to_json(value):
+    raise TypeError(f"can't serialize {type(value).__name__}")
+@to_json.register
+def _(value: date) -> str:
+    return value.isoformat()
+@to_json.register
+def _(value: Decimal) -> str:
+    return str(value)
+@to_json.register(set)
+def _(value) -> list:
+    return sorted(value)
+print(to_json(date(2026, 9, 29)), to_json(Decimal("19.99")), to_json({3, 1}))
+to_json(1+2j)
+~~~
+
+~~~text الناتج
+2026-09-29 19.99 [1, 3]
+TypeError: can't serialize complex
+~~~
+
+- [[@singledispatch]] على الدالة الأساسية (اللي بتتنادى لو مفيش نسخة للنوع)، و [[@to_json.register]] بيضيف نسخة للنوع اللي في الـ type hint بتاع أول باراميتر. أو [[register(set)]] صريح.
+- بدل سلسلة [[if isinstance(value, date): ... elif isinstance(value, Decimal): ...]] بتكبر في دالة واحدة، كل نوع في مكانه، وأي حد يضيف نوع من موديول تاني من غير ما يلمس الأصلية. وبتشتغل مع الوراثة: [[datetime]] ابن [[date]] فبياخد نسخة [[date]].
+- وتنفع [[json.dumps(x, default=to_json)]] على طول (درس csv و json).
+
 ## الخلاصة
 
 | الأداة | بتعمل إيه | خلي بالك |
@@ -791,33 +1056,33 @@ usd = partial(fmt, currency="USD", decimals=0)
 | [[@cached_property]] | خاصية بتتحسب مرة لكل object | |
 | [[reduce(f, items, init)]] | تراكم | [[sum]] و [[math.prod]] غالبًا أوضح |`,
           lines: [
-            "للتأخير.",
-            "الأدوات.",
-            "cache بحد أقصى ٢٥٦ قيمة.",
-            "دالة غالية (كأنها بتنادي API).",
-            "نص ثانية.",
-            "القيمة.",
-            "أول مرة: بتتحسب (miss).",
-            "تاني مرة: من الـ cache على طول (hit).",
-            "إحصائيات الـ cache.",
-            "امسح الـ cache (لما الداتا تتغير).",
-            "دالة عامة.",
-            "الحسبة.",
-            R`[[partial]]: نسخة منها الـ rate فيها متثبت.`,
-            "بتتنادى بباراميتر واحد، وتنفع مع map.",
-            R`[[partial]] على [[print]] نفسها.`,
-            "بتطبع بالبادئة والفاصل.",
-            R`[[reduce]]: حاصل ضرب بالتراكم (وفيه [[math.prod]] أوضح).`,
-            "class.",
-            "الـ init.",
-            "خزّن.",
-            "خاصية بتتحسب أول مرة بس.",
-            "method.",
-            "علامة إن الحسبة حصلت.",
-            "الحسبة.",
-            "object.",
-            "بحسب... مرة واحدة، وبعدين 6 و 6.",
-            R`list مش hashable: [[lru_cache]] بيرمي.`
+            R`[[time]] عشان [[time.sleep]] تمثّل دالة بطيئة (طلب لـ API بياخد نص ثانية)، فنشوف الـ cache بيوفّر قد إيه.`,
+            R`أربع أدوات من [[functools]]: [[lru_cache]] تفتكر نتايج دالة، و [[partial]] نسخة من دالة باراميتراتها متثبتة، و [[reduce]] تراكم بدالة، و [[cached_property]] خاصية بتتحسب مرة. والقسم الأخير في الشرح فيه [[cache]] و [[wraps]] و [[singledispatch]].`,
+            R`[[@lru_cache(maxsize=256)]] بيحفظ نتيجة كل مجموعة arguments في dict. لو نفس الـ arguments اتنادت تاني، بيرجّع المحفوظ من غير ما يشغّل الدالة. ولما يتملى ٢٥٦، بيرمي **الأقدم استخدامًا** (Least Recently Used). و [[maxsize=None]] من غير حد.`,
+            R`دالة سعر الصرف: اسم العملة داخل ورقم طالع. مناسبة للـ cache لأن نفس الـ input بيدّي نفس الـ output (على الأقل لفترة)، ومفيهاش side effects لازم تحصل كل مرة.`,
+            R`[[time.sleep(0.5)]] بيمثّل نداء شبكة بطيء. ده الوقت اللي الـ cache بيوفّره في كل نداء متكرر.`,
+            R`dict ثابت بيمثّل رد الـ API، و [[[currency]]] بيجيب السعر. عملة مش موجودة بترمي [[KeyError]]، و [[lru_cache]] **مبيحفظش** الـ exceptions: النداء الجاي هيجرّب تاني.`,
+            R`أول نداء بـ [[USD]]: مش في الـ cache (miss)، فالدالة اشتغلت وأخدت نص ثانية واتحفظت النتيجة.`,
+            R`تاني نداء بنفس الـ argument: من الـ cache على طول (hit)، من غير [[sleep]]، في ميكروثواني.`,
+            R`[[cache_info()]] إحصائيات: [[hits=1]] (نداء جه من الـ cache)، و [[misses=1]] (نداء اتحسب)، و [[maxsize=256]]، و [[currsize=1]] (قيمة واحدة محفوظة). لو الـ hits قليلة جدًا، الـ cache مش بيفيد وبياكل ذاكرة.`,
+            R`[[cache_clear()]] بيمسح كل المحفوظ. لازم لما الداتا الأصلية تتغيّر (سعر الصرف اتحدّث)، لأن [[lru_cache]] ملوش مدة صلاحية (TTL)، وهيفضل يرجّع القديم للأبد.`,
+            R`دالة عامة بتاخد المبلغ ونسبة الضريبة. هنعمل منها نسخة مخصصة لمصر من غير ما نكتب دالة جديدة.`,
+            R`المبلغ في (١ + النسبة)، مقرّب لرقمين. [[round(100 * 1.14, 2)]] بـ [[114.0]].`,
+            R`[[partial(price_with_tax, rate=0.14)]] بترجّع دالة جديدة لما تتنادى بتنادي الأصلية و [[rate=0.14]] متحطوطة لوحدها. مفيدة لما مكتبة بتطلب دالة بباراميتر واحد (زي [[map]] أو callback) والدالة بتاعتك محتاجة اتنين.`,
+            R`[[egypt_vat(100)]] = [[price_with_tax(100, rate=0.14)]] = [[114.0]]، و [[map]] بتناديها على كل عنصر: [[[11.4, 22.8]]]. ولو كنت هتكتب [[lambda x: price_with_tax(x, 0.14)]]، [[partial]] أوضح وبيبان في الـ repr.`,
+            R`[[partial]] على [[print]] نفسها: أول argument ([["ERROR:"]]) متثبت في الأول، و [[sep=" | "]] متثبت كـ keyword. أي حاجة بتتبعتلها بعد كده بتيجي بعد [["ERROR:"]].`,
+            R`[[print_err("disk full")]] = [[print("ERROR:", "disk full", sep=" | ")]]، فبتطبع [[ERROR: | disk full]]. الفاصل بيتحط بين كل argument والتاني.`,
+            R`[[reduce(f, items, start)]] بتبدأ من [[1]] وبتنادي [[f(acc, x)]] لكل عنصر: ١×١، ثم ×٢، ثم ×٣، ثم ×٤ = [[24]]. الـ [[1]] في الآخر قيمة البداية؛ من غيرها لستة فاضية بترمي [[TypeError]]. ولحاصل الضرب بالذات [[math.prod]] أوضح، وللمجموع [[sum]].`,
+            R`class تقرير فيه صفوف، وإجمالي غالي في الحساب (تخيّل مليون صف). عايزينه يتحسب مرة واحدة بس مهما اتقرى كام مرة.`,
+            R`بياخد الصفوف كـ list أرقام.`,
+            R`بيخزّنها في الـ object. الـ [[cached_property]] تحت هيعتمد إنها مش هتتغير.`,
+            R`[[@cached_property]] أول قراية بتشغّل الـ method وتحط النتيجة في [[__dict__]] بتاع الـ object **بنفس الاسم**، فالقرايات الجاية بتلاقيها هناك ومبتنادييش الـ method خالص. ومحتاج [[__dict__]]، فمبيشتغلش مع [[slots=True]].`,
+            R`الـ method اللي بتحسب الإجمالي. بتتنادى مرة واحدة لكل object.`,
+            R`[[print]] كعلامة بنشوف بيها الحسبة حصلت كام مرة. في كود حقيقي ده مكان الشغل التقيل.`,
+            R`المجموع. وخلي بالك: لو [[self.rows]] اتغيّرت بعد أول قراية، [[total]] هيفضل القديم. عشان تعيد الحساب: [[del r.total]].`,
+            R`object تقرير بتلات صفوف. لسه محصلش أي حساب.`,
+            R`أول [[r.total]] طبع [[بحسب...]] وحسب [[6]]، والتانية جت من [[__dict__]] من غير طباعة. الناتج سطر [[بحسب...]] وبعده [[6 6]]. ده الفرق عن [[@property]] اللي بتحسب في كل قراية.`,
+            R`[[lru_cache]] بيستخدم الـ arguments كمفتاح dict، فلازم تبقى hashable. [[list]] مش hashable، فـ [[TypeError: unhashable type: 'list']]. الحل تبعت [[tuple]] أو [[frozenset]]، أو تحوّل جوه wrapper قبل الدالة المحفوظة.`,
           ]
         }
       ]

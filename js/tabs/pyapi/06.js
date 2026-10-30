@@ -3,6 +3,27 @@ MORE("pyapi", [
     {
       t: "Classes",
       l: 1,
+      time: R`حوالي ٨ ساعات (٦ دروس)`,
+      goal: [
+        R`تكتب class فيه داتا وقواعد بتحميها: [[__init__]] و [[@property]] بـ setter و [[@classmethod]] و [[@staticmethod]]، وتعرف الفرق بين خانة الـ class وخانة الـ object.`,
+        R`تفهم [[super()]] والـ MRO وتركّب mixins، وتختار بين الوراثة والـ composition بقاعدة مش بالإحساس.`,
+        R`تخلي objects بتاعتك تشتغل مع [[==]] و [[sorted]] و [[set]] و [[len]] و [[for]] و [[+]] بالـ dunder methods، وتعرف القواعد اللي لو اتكسرت الـ set بتضيع منها حاجات.`,
+        R`تختار الأداة الصح للداتا: dataclass ([[frozen]] و [[slots]] و [[order]] و [[kw_only]]) ولا NamedTuple ولا TypedDict ولا Pydantic، بأرقام ذاكرة متقاسة.`,
+        R`تقفل القيم المحددة في Enum، وتوصف الشكل المطلوب بـ ABC أو Protocol أو Generics عشان mypy يمسك الغلط قبل التشغيل.`,
+      ],
+      use: {
+        prog: R`كل framework هتستخدمه في التاب ده مبني على classes: Pydantic models و SQLAlchemy models و exceptions بتاعتك و Django views. لو فاهم [[super()]] والـ dunders، كود المكتبات بيبقى مقروء مش سحر.`,
+        work: R`الفلوس value object متتعدلش، والحالات Enum مش strings، والتخزين وراه Protocol عشان الاختبار يحط fake. دي قرارات بتتاخد في أول أسبوع في أي مشروع backend، والغلط فيها بيتكلّف شهور.`,
+        cs: R`الـ MRO بيتحسب بخوارزمية C3 linearization، والـ hash table محتاجة إن المتساويين ليهم نفس الـ hash، و [[__slots__]] بيشيل dict من كل object (٣٠٪ ذاكرة أقل اتقاست). دي نفس أفكار الـ vtables والـ interfaces في Java و C++ و Go.`,
+      },
+      projects: [
+        { lvl: 'صغير', t: R`عدّاد بقواعد`, what: R`[[class Counter]] بخانة [[value]] property بـ setter بيرفض السالب، و [[step]] بيتحدد في الإنشاء، و [[increment()]] و [[reset()]]، و [[@classmethod from_text("5/2")]] (القيمة/الخطوة)، و [[__repr__]]. من درس «class و self».`, done: R`[[Counter.from_text("5/2").increment()]] بتخلي القيمة [[7]]، و [[c.value = -1]] بترمي [[ValueError]] والقيمة متتغيرش، و [[Counter.from_text("x")]] بترمي [[ValueError]] برسالة فيها النص، و [[print(c)]] بيطبع [[Counter(value=7, step=2)]].` },
+        { lvl: 'صغير', t: R`Enum حالات تذكرة دعم`, what: R`[[TicketStatus(StrEnum)]] فيها [[open]] و [[in_progress]] و [[waiting]] و [[closed]]، و property [[label]] بالعربي، و method [[is_active()]]، و [[@unique]]. من درس «Enum».`, done: R`[[TicketStatus("waiting").label]] بترجّع النص العربي، و [[[s for s in TicketStatus if s.is_active()]]] فيها ٣، و [[json.dumps({"s": TicketStatus.CLOSED})]] بترجّع [[{"s": "closed"}]]، وإضافة قيمة متكررة بتترفض وقت التعريف.` },
+        { lvl: 'متوسط', t: R`محفظة بعملات`, what: R`[[@dataclass(frozen=True, slots=True) Money]] بالقروش والعملة، بـ [[__add__]] و [[__sub__]] و [[__lt__]] و [[__format__]] (اللي بيطبع [[1,234.56 EGP]])، وبترمي [[ValueError]] لو العملات مختلفة، و [[class Wallet]] شايلة [[Money]] كتير بـ [[__len__]] و [[__iter__]] و [[total(currency)]]. من دروس dunder و dataclass.`, done: R`[[sum(wallet, Money(0, "EGP"))]] شغالة لعملة واحدة وبترمي لعملات مختلفة، و [[sorted(wallet)]] بترتّب، و [[{Money(5, "EGP"), Money(5, "EGP")}]] فيها عنصر واحد، و [[Money(1, "EGP") + 1]] بترمي [[TypeError]] مش [[AttributeError]]، و ٨ [[assert]] بيعدّوا.` },
+        { lvl: 'متوسط', t: R`إشعارات بـ plugins`, what: R`[[class Channel]] أساس بـ [[__init_subclass__(name=...)]] بيسجّل كل قناة ([[sms]] و [[email]] و [[fake]])، و [[LoggingMixin]] و [[RetryMixin]] بيتركبوا فوق أي قناة، و [[notify(user, text, channel_name)]] بتختار القناة من الاسم. من دروس الوراثة و Protocol.`, done: R`[[notify(..., "email")]] و [[notify(..., "sms")]] بيستخدموا القناة الصح من غير [[if]] على الاسم، والقناة الـ fake بتسجّل اللي اتبعت في list، واسم قناة مش موجود بيرمي [[KeyError]] فيها الأسامي المتاحة، وقناة بتفشل مرتين بتنجح التالتة واللوج بيتطبع مرة واحدة.` },
+        { lvl: 'كبير', t: R`نظام مخزن صغير في الذاكرة`, what: R`[[Product]] dataclass ([[frozen]] و [[slots]] و [[__post_init__]] بيفحص السعر والـ SKU)، و [[Category(StrEnum)]]، و [[class Repo[T]]] generic بـ [[add]] و [[get]] و [[find(pred)]]، و [[Inventory]] بتستخدم [[Repo[Product]]] بالـ composition وفيها [[restock]] و [[sell]] بترمي [[OutOfStock]] (exception بتاعتك وارثة من [[Exception]])، و [[Storage]] Protocol بـ [[MemoryStorage]] و [[FileStorage]] (بـ [[with open]] من وحدة الأخطاء و with) بيحفظوا حالة المخزن كسطور نص. وكل عملية بتتسجّل بـ [[print]] بوقتها. من كل دروس الوحدة ومن وحدة الأخطاء و with.`, done: R`ملف اختبارات pytest فيه ١٥ اختبار على الأقل وكلهم بيعدّوا (منهم: بيع أكتر من المخزون بيرمي [[OutOfStock]] والكمية متتغيرش، و SKU متكرر بيترفض، و Product بسعر صفر بيترفض)، و [[mypy --strict]] بيقول [[Success]]، والبرنامج لو اتقفل واتفتح تاني بـ [[FileStorage]] بيرجع لنفس الحالة، ولو الملف بايظ (سطر ناقص) بيطبع رقم السطر ويكمّل بالباقي.`, ext: R`لما توصل لوحدة «ملفات وداتا وتواريخ» خلّي [[FileStorage]] JSON بـ [[pathlib]] وكتابة آمنة، ولما توصل لـ FastAPI حط عليه endpoints، و [[Repo]] نفسه يتبدّل بقاعدة بيانات من غير ما [[Inventory]] تتغيّر.` },
+        { lvl: 'فكرة', t: R`اقرا class من مكتبة حقيقية`, what: R`اختار class من المكتبة القياسية أو مكتبة بتستخدمها ([[collections.Counter]] أو [[pathlib.Path]] أو [[fractions.Fraction]]) وافتح الكود بتاعه ([[inspect.getsource]] أو ملف الـ [[.py]] في [[Lib]]). طلّع: إيه الـ dunders اللي كاتبها، وبيورث من مين ([[__mro__]])، وفيه [[__slots__]] ولا لأ، وفين بيرجّع [[NotImplemented]].`, done: R`ملف ملاحظات فيه جدول لكل dunder لقيته وبيتنادى مع أنهي أداة، والـ MRO مطبوع، و ٣ حاجات اتعلمتها مكانتش في الدرس، وكل واحدة جربتها في سطر كود.`, ext: R`اعمل نفس الحاجة لـ class من Pydantic أو FastAPI لما توصل لهم، وقارن أسلوبهم بأسلوب المكتبة القياسية.` },
+      ],
       n: "class و self و property، والوراثة و super، و dunder methods، و dataclass و Enum و Protocol",
       items: [
         {
@@ -85,6 +106,14 @@ try:
 except ValueError as err:
     print(err)`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة من الذاكرة:** من غير ما تبص فوق، اكتب جدول ٣ صفوف لـ method عادية و [[@classmethod]] و [[@staticmethod]]: أول باراميتر بياخد إيه، وبتتنادى إزاي، ومثال استخدام واحد من الشغل لكل واحدة.`, done: R`الجدول بيقول [[self]] ثم [[cls]] ثم ولا حاجة، وكل مثال منطقي (مثلًا [[from_dict]] للـ classmethod، وفحص قيمة للـ staticmethod)، وقارنته بالدرس ومفيش خانة غلط.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اكتب على ورقة ناتج السطرين: [[class Cart: items = []]] وجواها [[def add(self, x): self.items.append(x)]]، وبعدين [[a, b = Cart(), Cart(); a.add("tea"); print(b.items, a.items is b.items)]]، وبعدين [[b.items = ["x"]; print(a.items, Cart.items, b.items)]]. وبعدين شغّله.`, done: R`ورقتك طابقت الناتج الحقيقي: [[['tea'] True]] وبعدها [[['tea'] ['tea'] ['x']]]، وتقدر تقول في جملة ليه [[append]] غيّرت الكل و [[=]] غيّرت [[b]] بس.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[class Order]] فيها [[@classmethod def from_dict(cls, d): return Order(d["c"])]]، و [[class RushOrder(Order): pass]]. اطبع [[type(RushOrder.from_dict({"c": 1})).__name__]]، ولاقي الغلطة وصلّحها.`, done: R`قبل التصليح بيطبع [[Order]]، وبعد ما غيّرت [[Order(...)]] لـ [[cls(...)]] بيطبع [[RushOrder]]، و [[Order.from_dict]] لسه بيرجّع [[Order]].` },
+            { lvl: 'تطبيق', t: R`**مسألة بحالات طرفية:** [[BankAccount(owner)]] فيها [[deposit(amount)]] و [[withdraw(amount)]]، و [[balance]] property للقراية بس، و [[@classmethod from_row(row)]] بتاخد [[{"owner": "Sara", "balance": "250"}]] (الرقم نص زي CSV). المبلغ صفر أو سالب = [[ValueError]]، والسحب أكتر من الرصيد = [[ValueError]] برسالة فيها الرصيد.`, done: R`[[a = BankAccount.from_row(...)]] بعدها [[a.deposit(50); a.withdraw(100)]] بيخلي [[a.balance == 200]]، و [[a.withdraw(1000)]] رسالتها فيها [[200]]، و [[a.deposit(0)]] بيرمي، و [[a.balance = 5]] بيرمي [[AttributeError]]، والرصيد ميتغيّرش بعد أي عملية فاشلة.` },
+            { lvl: 'تطبيق', t: R`**اكتب اختبار:** لـ [[Product]] اللي في قسم الـ setter، اعمل [[test_product.py]] فيه ٤ اختبارات بـ pytest: التقريب ([[12.499]] تبقى [[12.5]])، والصفر، والسالب، وإن [[Product("x", 0)]] نفسه بيرمي (الإنشاء بيعدّي على الـ setter). استخدم [[pytest.raises(ValueError, match="> 0")]].`, done: R`[[pytest -q]] بيطلّع [[4 passed]]. ولو غيّرت [[self.price = price]] في [[__init__]] لـ [[self._price = price]]، بيقع اختبارين بالظبط: الإنشاء والتقريب (لأن التقريب كمان كان جوه الـ setter)، و [[test_zero]] و [[test_negative]] لسه بيعدّوا. وده بيثبت إن كل اختبار بيقيس حاجة محددة.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** خد [[P]] و [[S]] من قسم [[__slots__]] وقيس بـ [[tracemalloc]] الذاكرة لـ ١٠ آلاف و ١٠٠ ألف و مليون object، وبعدين قيس وقت الإنشاء بـ [[timeit]] لكل واحد. اكتب الأرقام في جدول.`, done: R`عندك ٦ أرقام ذاكرة و ٢ أرقام وقت حقيقية من جهازك، والفرق في الذاكرة بيكبر بنفس النسبة تقريبًا (حوالي ٣٠٪) مع عدد الـ objects، وكاتب جملة: إمتى الفرق ده يستاهل تكتب [[__slots__]] وإمتى لأ.` },
+          ],
           deep: {
             why: "الـ models والـ services والـ repositories في أي API هتبقى classes، وحتى Pydantic models و SQLAlchemy models classes. لازم تفهم self و property و classmethod عشان تقرا كود الناس وتكتب objects بتحافظ على الداتا بتاعتها سليمة.",
             how: R`[[o.add(50)]] هي بالظبط [[Order.add(o, 50)]]: عشان كده [[self]] أول باراميتر، والاسم اتفاق مش keyword.
@@ -299,6 +328,102 @@ Order('Ali', items=1, total=34.2) Order('Mona', items=0, total=0.0)
 
 ---
 
+## ٩. property بـ setter: الفحص وقت الكتابة
+
+الـ [[total]] فوق للقراية بس. بس ساعات عايز الخانة تتكتب، **بشرط** القيمة تبقى سليمة. ده شغل [[@اسم.setter]]:
+
+~~~python
+class Product:
+    def __init__(self, name: str, price: float):
+        self.name = name
+        self.price = price          # بيعدّي على الـ setter
+    @property
+    def price(self) -> float:
+        return self._price
+    @price.setter
+    def price(self, value: float) -> None:
+        if value <= 0:
+            raise ValueError(f"price must be > 0, got {value}")
+        self._price = round(value, 2)
+p = Product("tea", 12.499)
+print(p.price)
+p.price = 15
+print(p.price, p.__dict__)
+p.price = -1
+~~~
+
+~~~text الناتج (Python 3.14 على ويندوز)
+12.5
+15 {'name': 'tea', '_price': 15}
+ValueError: price must be > 0, got -1
+~~~
+
+- [[@property]] على [[price]] الأولى: القراية بترجّع [[self._price]]، الخانة الحقيقية اللي اسمها بـ [[_]] في أوله.
+- [[@price.setter]]: لازم الاسم يبقى **نفس اسم** الـ property ([[price]])، وإلا هتبقى عندك خاصيتين مختلفتين. أي [[p.price = ...]] بتنادي الدالة دي بالقيمة.
+- [[self.price = price]] جوه [[__init__]] بتعدّي على الـ setter كمان، فـ [[Product("x", 0)]] بيترفض من أول لحظة ([[price must be > 0, got 0]] اتجرّبت). لو كتبت [[self._price = price]] هناك، الفحص هيتعدّى وقت الإنشاء.
+- [[p.__dict__]] بيوريك اللي متخزّن فعلًا: [[_price]] مش [[price]]. الـ property نفسها عايشة في الـ class مش في الـ object.
+- الغلطة المشهورة: [[self.price = value]] **جوه** الـ setter نفسه بتنادي الـ setter تاني، وتاني... لحد [[RecursionError: maximum recursion depth exceeded]]. اكتب في [[self._price]].
+
+وإمتى؟ لما فيه قاعدة لازم تتحافظ على خانة بتتكتب من برّه. لو الخانة بتتكتب مرة واحدة في الإنشاء، فحص في [[__init__]] (أو [[__post_init__]] في الـ dataclass) أبسط. ولو قواعد كتير على داتا جاية من API، ده شغل Pydantic (وحدة Pydantic v2).
+
+---
+
+## ١٠. [[__slots__]] في class عادي: قيس الذاكرة
+
+كل object عادي شايل dict صغير ([[__dict__]]) فيه خاناته. [[__slots__]] بيقول لـ Python «الخانات دي بس»، فبيحجز مكانهم مباشرة من غير dict:
+
+~~~python
+import tracemalloc
+class P:
+    def __init__(self, x, y): self.x, self.y = x, y
+class S:
+    __slots__ = ("x", "y")
+    def __init__(self, x, y): self.x, self.y = x, y
+for cls in (P, S):
+    tracemalloc.start()
+    objs = [cls(i, i) for i in range(100_000)]
+    cur, peak = tracemalloc.get_traced_memory()
+    tracemalloc.stop()
+    print(cls.__name__, round(cur / 1024 / 1024, 1), "MB")
+    del objs
+s = S(1, 2)
+s.z = 3
+~~~
+
+~~~text الناتج (اتشغّل فعلًا، Python 3.14 ويندوز ١١)
+P 12.2 MB
+S 8.4 MB
+AttributeError: 'S' object has no attribute 'z' and no __dict__ for setting new attributes
+~~~
+
+- [[tracemalloc]] بيعدّ الذاكرة اللي Python حجزها من بعد [[start()]]. و [[get_traced_memory()]] بترجّع (دلوقتي، أعلى قيمة) بالبايت، فقسمنا على [[1024 * 1024]] عشان ميجا.
+- ١٠٠ ألف object: ١٢.٢ ميجا من غير slots و ٨.٤ بيها، يعني حوالي ٣٠٪ أقل. والرقم ده بيفرق لما بتعمل ملايين objects (صفوف داتا، نقط، أحداث)، ومش بيفرق لـ ١٠ objects.
+- الميزة التانية: الغلطة الإملائية ([[s.z]] أو [[s.nmae]]) بتطلع error فورًا بدل ما تعمل خانة جديدة في صمت. ورسالة Python 3.13 و 3.14 بتقول السبب بالظبط (اتجرّبت على الاتنين): «مفيش [[__dict__]] تحط فيه خانات جديدة».
+- العيب: مينفعش تزوّد خانة مش في اللستة، و [[vars(s)]] بترمي [[TypeError]]، والوراثة محتاجة كل class في السلسلة يكتب [[__slots__]] بتاعه عشان التوفير يفضل. وفي الـ dataclass بتكتب [[slots=True]] بدل ما تكتبها بإيدك (الدرس الجاي).
+
+---
+
+## ١١. [[_name]] و [[__name]]: مفيش private في Python
+
+~~~python
+class Account:
+    def __init__(self):
+        self._balance = 0
+        self.__pin = "1234"
+a = Account()
+print(a._balance)
+print(a.__pin)
+~~~
+
+~~~text الناتج
+0
+AttributeError: 'Account' object has no attribute '__pin'
+~~~
+
+- [[_balance]] (شرطة واحدة): **اتفاق** معناه «داخلي، متلمسوش من برّه». Python مبيمنعش حاجة، بس المحررات و linters زي ruff بتحذّر.
+- [[__pin]] (شرطتين في الأول ومش في الآخر): Python بيغيّر الاسم وهو بيقرا الـ class لـ [[_Account__pin]] (اسمها name mangling). فـ [[a._Account__pin]] بترجّع [[1234]] عادي، و [[list(vars(a))]] بتطلع [[['_balance', '_Account__pin']]]. الهدف إن ابن يكتب [[__pin]] بتاعه من غير ما يدوس على بتاع الأب، **مش** حماية.
+- يعني: متحطش سر في object على أساس إنه «private». اللي عايز يحمي داتا بيحميها بالتصميم (property من غير setter، أو object [[frozen]]).
+
 ## الخلاصة
 
 | الحاجة | أول باراميتر | بتتنادى إزاي |
@@ -312,36 +437,36 @@ Order('Ali', items=1, total=34.2) Order('Mona', items=0, total=0.0)
 - القراية بتدوّر في الـ object وبعدين الـ class، والكتابة على الـ object بتعمل attribute جديدة عليه.
 - default الـ list في [[__init__]] يبقى [[None]]، مش [[[]]].`,
           lines: [
-            R`[[Self]]: نوع «object من نفس الـ class».`,
-            "class جديد.",
-            "class attribute: مشتركة بين كل الطلبات.",
-            R`بيتنادى وقت الإنشاء، و [[self]] الـ object الجديد. و [[items]] default بـ None مش [[[]]].`,
-            "instance attribute: لكل طلب لوحده.",
-            "list جديدة لكل طلب لو مفيش list اتبعتت.",
-            "اللي تحت يتقري كخاصية من غير قوسين.",
-            "الإجمالي بيتحسب كل مرة من العناصر.",
-            "مع الضريبة، ومقرّب لقرشين.",
-            "method عادية بتعدّل الـ object.",
-            "بتستخدم الـ staticmethod عشان تتأكد من السعر.",
-            "ارفض السعر الغلط.",
-            "ضيف العنصر.",
-            R`[[@classmethod]]: الـ method اللي تحت بتاخد الـ class نفسه.`,
-            R`طريقة إنشاء بديلة من dict، و [[cls]] هو الـ class، والنوع [[Self]].`,
-            R`[[cls(...)]] مش [[Order(...)]]، عشان لو ابن ناداها يرجعله ابن.`,
-            R`[[@staticmethod]]: ملهاش [[self]] ولا [[cls]].`,
-            "دالة فحص عادية، مكانها منطقي جوه الـ class.",
-            "فحص بسيط.",
-            "الشكل اللي بيظهر في الطباعة والـ debugger.",
-            R`بيستخدم [[total]] كخاصية.`,
-            "object جديد.",
-            R`[[o.add(50)]] = [[Order.add(o, 50)]].`,
-            R`بيطبع [[Order('Sara', total=399.0) 399.0]].`,
-            R`نفس النداء بالشكل الطويل: [[self]] هو [[o]].`,
-            "object من الـ classmethod.",
-            "الـ class attribute بتتقري من الـ class ومن الـ object.",
-            "دي مبتغيّرش الـ class: بتعمل instance attribute لـ o2 بس.",
-            "o2 بقى من غير ضريبة، والـ class زي ما هو.",
-            "property من غير setter: ممنوع تكتب عليها."
+            R`[[Self]] من [[typing]] (Python 3.11 وبعده) type hint معناه «object من نفس الـ class ده». هنستخدمه كنوع رجوع لـ [[from_dict]]، وميزته إنه بيفضل صح لو حد ورث من [[Order]]: الابن هيرجّع ابن مش [[Order]]. مبيأثرش على التشغيل، ده للمحرر و mypy بس.`,
+            R`[[class Order:]] بتعرّف قالب اسمه [[Order]]. كل اللي متزاح تحته جزء من الـ class، والاسم بيتكتب CamelCase بالاتفاق (PEP 8) عشان تفرّقه عن الدوال والمتغيرات اللي بتتكتب snake_case.`,
+            R`متغير مكتوب في جسم الـ class نفسه = **class attribute**: نسخة واحدة مشتركة بين كل الطلبات. لو غيّرت [[Order.tax_rate]] كل الطلبات هتشوف الرقم الجديد. وده مكان مناسب للثوابت؛ ولو حطيت فيه list هتبقى list واحدة لكل الـ objects (bug مشهور، شوف التمارين).`,
+            R`[[__init__]] بيتنادى لوحده أول ما تكتب [[Order(...)]]، و [[self]] هو الـ object الجديد اللي لسه معمول. و [[items]] الـ default بتاعها [[None]] مش [[[]]]: الـ default بيتحسب **مرة واحدة** وقت تعريف الدالة، فلو كان [[[]]] كل الطلبات هتشارك نفس الليستة.`,
+            R`[[self.customer = customer]] بتعمل **instance attribute**: خانة جوه الـ object ده بس. [[customer]] اللي على اليمين الباراميتر، و [[self.customer]] اللي على الشمال الخانة اللي هتفضل بعد ما [[__init__]] يخلص. من غير السطر ده الاسم يضيع أول ما الدالة ترجع.`,
+            R`لو حد بعت list نستخدمها، ولو لأ ([[None]]) نعمل [[[]]] جديدة **دلوقتي** لكل طلب. [[is not None]] أدق من [[if items]]، لأن [[if items]] كانت هتعتبر list فاضية اتبعتت قصد زي «مفيش» وتعمل واحدة جديدة غيرها.`,
+            R`[[@property]] decorator بيحوّل الـ method اللي تحته لخاصية: بتتقري [[o.total]] من غير أقواس، وبتتحسب في كل قراية. ومن غير setter (شوف قسم الـ setter في الشرح) أي كتابة عليها بترمي [[AttributeError]].`,
+            R`[[def total(self) -> float:]] الـ method اللي الـ property ماسكاها. [[-> float]] نوع الرجوع للقارئ وللأدوات. مفيش باراميتر غير [[self]] لأن الخاصية مبتاخدش arguments.`,
+            R`بيجمع الأسعار ويضرب في [[1 + tax_rate]] (يعني ١.١٤)، وبعدين [[round(..., 2)]] لرقمين عشريين عشان [[float]] ميطلّعش [[398.99999999]]. ولأنها بتتحسب كل مرة، مستحيل الإجمالي يبقى قديم بعد [[add]]؛ لو كنت خزّنته في [[__init__]] كان لازم تفتكر تحدّثه في كل مكان بيغيّر [[items]].`,
+            R`method عادية: أول باراميتر [[self]] (الطلب اللي اتنادت عليه) وبعده السعر. [[-> None]] معناها إنها بتعدّل الـ object نفسه ومبترجّعش حاجة، فـ [[x = o.add(5)]] هيدّيك [[None]].`,
+            R`قبل ما نضيف، بنسأل الـ staticmethod [[is_valid_price]]. بنناديها بـ [[self.]] (أو [[Order.]])؛ الاتنين شغالين. القاعدة اللي بتحمي الداتا مكانها هنا جوه الـ class، فمفيش كود برّه يقدر يحط سعر سالب من غير ما يعدّي عليها.`,
+            R`لو السعر غلط بنرمي [[ValueError]] برسالة فيها القيمة نفسها ([[invalid price: -5]])، عشان اللي بيقرا اللوج يعرف إيه اللي اتبعت. والرمي بيوقّف الـ method قبل السطر اللي بعده، فالليستة مبتتلمسش.`,
+            R`[[append]] بيضيف السعر لليستة الطلب ده بس (لأن [[self.items]] list خاصة بيه). مش محتاجين نحدّث أي إجمالي، لأن [[total]] بيتحسب من [[items]] وقت القراية.`,
+            R`[[@classmethod]] بيخلي الـ method اللي تحته تاخد الـ **class** نفسه كأول باراميتر بدل الـ object. وده الشكل المعتاد لطرق إنشاء تانية: [[Order.from_dict(...)]] بتتنادى على الـ class قبل ما يبقى فيه object أصلًا.`,
+            R`[[cls]] هو [[Order]] (أو الابن لو اتنادت عليه)، و [[data: dict]] الـ dict اللي جاي من JSON مثلًا. نوع الرجوع [[Self]] بيقول للمحرر إنها بترجّع object من نفس الـ class اللي اتنادت عليه.`,
+            R`[[cls(...)]] بدل [[Order(...)]]: لو [[RushOrder(Order)]] نادى [[from_dict]] هيرجعله [[RushOrder]]. و [[data["customer"]]] بترمي [[KeyError]] لو الاسم ناقص (إجباري)، و [[data.get("items", [])]] بتدّي ليستة فاضية لو مش موجودة، و [[list(...)]] بتعمل نسخة عشان تعديل الطلب ميغيّرش الـ dict الأصلي.`,
+            R`[[@staticmethod]] = دالة عادية متحطوطة جوه الـ class: ملهاش [[self]] ولا [[cls]]، فمبتعرفش حاجة عن الـ object. بنحطها هنا عشان مكانها منطقي (قاعدة السعر بتاعة الطلب)، وممكن تتنادى من غير object: [[Order.is_valid_price(5)]].`,
+            R`[[price: float]] الباراميتر الوحيد (مفيش [[self]])، و [[-> bool]] بترجّع صح أو غلط. لو نسيت [[@staticmethod]] فوقها، Python هيبعت الـ object في [[price]] والمقارنة هتبقى بين [[Order]] ورقم وترمي [[TypeError]].`,
+            R`القاعدة نفسها: السعر لازم يبقى أكبر من صفر. [[0]] مرفوض و [[0.01]] مقبول. ولو القاعدة اتغيّرت (حد أقصى مثلًا) بتتغيّر في السطر ده بس، وكل اللي بينادي [[add]] بيلتزم بيها لوحده.`,
+            R`[[__repr__]] الشكل اللي بيظهر لما تطبع الـ object، أو تكتبه في الـ REPL، أو يظهر في لوج أو debugger. من غيره هتشوف [[<__main__.Order object at 0x000001F...>]] ومش هتعرف ده أنهي طلب.`,
+            R`[[!r]] جوه الـ f-string معناها «استخدم [[repr]] للقيمة»، فالاسم بيطلع بعلامات تنصيص ([['Sara']]) وتفرق بينه وبين رقم. و [[self.total]] بتتقري كخاصية من غير أقواس، يعني الـ property شغالة جوه الـ class زي برّه.`,
+            R`[[Order("Sara", [100, 200])]] بيعمل object: Python بيعمل object فاضي وبعدين ينادي [[__init__]] عليه بـ [[self]] = الـ object ده والاتنين التانيين. و [[o]] بقى شايل طلب فيه سعرين.`,
+            R`[[o.add(50)]] هي نفسها [[Order.add(o, 50)]]: النقطة بتلاقي [[add]] في الـ class وبتبعت [[o]] في [[self]] لوحدها. عشان كده [[self]] لازم يبقى أول باراميتر في التعريف.`,
+            R`[[print]] بتنادي [[__repr__]] (لأن مفيش [[__str__]]) فبيطلع [[Order('Sara', total=399.0)]]، وبعده [[o.total]] = (١٠٠+٢٠٠+٥٠) × ١.١٤ = [[399.0]].`,
+            R`نفس النداء بالشكل الطويل: بتبعت [[o]] بإيدك في مكان [[self]]. مش هتكتبه كده في الشغل، بس هو اللي بيوضح إن [[self]] مجرد باراميتر عادي اسمه متفق عليه، مش كلمة محجوزة.`,
+            R`[[o2]] اتعمل من dict بالـ classmethod مش من [[__init__]] على طول. ولأن الـ dict فيه [[items]]، [[o2.items]] بقت [[[10]]] (نسخة منها).`,
+            R`بيطبع [[Order('Omar', total=11.4) 0.14 0.14]]: الـ class attribute بتتقري من الـ class ومن أي object. لما تكتب [[o2.tax_rate]] Python بيدوّر في الـ object الأول، ومش لاقيها، فبيدوّر في الـ class.`,
+            R`**الكتابة** على الـ object مش بتغيّر الـ class: بتعمل خانة جديدة اسمها [[tax_rate]] جوه [[o2]] بس، بتغطي على بتاعة الـ class. [[vars(o2)]] بعدها هيبان فيه [[tax_rate: 0]]. ولو كنت عايز تغيّر للكل: [[Order.tax_rate = 0]].`,
+            R`[[10]]: [[o2]] بقى من غير ضريبة لأن القراية لقت الخانة الجديدة فيه، و [[Order.tax_rate]] لسه [[0.14]]، و [[o]] نفسه لسه بيحسب بالضريبة.`,
+            R`كتابة على property ملهاش setter بترمي [[AttributeError: property 'total' of 'Order' object has no setter]] (نص Python 3.14 بالظبط). وده المطلوب: الإجمالي بيتحسب، ومحدش يقدر يكتب رقم مزوّر فيه. السطر ده بيوقّف السكربت، فهو آخر سطر.`,
           ]
         },
         {
@@ -404,6 +529,14 @@ print("B returns:", B("shop", max_len=5).send("010", "hello world"))
 print([c.__name__ for c in A.__mro__])
 print([c.__name__ for c in B.__mro__])`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**اشرحها:** اكتب لزميل في ٣ سطور: [[super()]] بتنادي مين بالظبط؟ وليه [[LoggingMixin]] بتنادي [[SmsNotifier]] رغم إنها مش وارثة منه؟ وإيه اللي بيحصل لو الابن كتب [[__init__]] ونسي [[super().__init__]]؟`, done: R`السطور التلاتة فيها كلمة MRO، وإن [[super()]] بتمشي على MRO الـ object مش الـ class اللي مكتوبة فيه، وإن نسيان [[super().__init__]] بيطلّع [[AttributeError]] على خانة الأب بعدين (جرّبتها وطلعت [[has no attribute]]).` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[class A]] و [[B(A)]] و [[C(A)]] و [[D(B, C)]] زي قسم الماسة، بس [[C.hi]] بترجّع [[A.hi(self)]] بالاسم بدل [[super().hi()]]. اكتب ناتج [[D().hi()]]، وبعدين خلّي [[B.hi]] كمان بالاسم واكتب الناتج تاني.`, done: R`شغّلت الاتنين وطابقوا ورقتك: الأول [[B+C+A]]، والتاني [[B+A]] ([[C]] اتشالت من السلسلة لأن [[B]] بقت تنادي [[A]] على طول)، وتقدر تقول ليه.` },
+            { lvl: 'تطبيق', t: R`**صلّح:** [[class X(A, B)]] و [[B]] ابن [[A]] بيرمي [[TypeError: Cannot create a consistent method resolution order]]. صلّحه بطريقتين، واطبع [[X.__mro__]] في كل واحدة.`, done: R`الطريقتين ([[X(B, A)]] و [[X(B)]]) بيعرّفوا الـ class، والـ MRO فيهم الاتنين [[X, B, A, object]]، وكاتب في تعليق ليه الأولى كانت مستحيلة.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[RetryMixin]] بتعيد [[send]] لحد ٣ مرات لو رمت [[ConnectionError]]، و [[FlakySms(SmsNotifier)]] بترمي أول مرتين وتنجح التالتة. ركّب [[class SafeSms(LoggingMixin, RetryMixin, FlakySms)]].`, done: R`[[SafeSms("shop").send("010", "hi")]] بيرجّع الرسالة بعد ٣ محاولات واللوج بيتطبع **مرة واحدة**، ولو خليت [[FlakySms]] ترمي ٥ مرات الـ [[ConnectionError]] بيوصل لبرّه بعد ٣ محاولات بالظبط (عدّاد بيقول [[3]]).` },
+            { lvl: 'تطبيق', t: R`**refactor لـ composition:** [[class ReportEmailer(CsvExporter, EmailSender)]] بيورث الاتنين عشان يعمل CSV ويبعته. حوّله لـ [[ReportEmailer(exporter, sender)]] بياخدهم في [[__init__]]، وجرّبه بـ [[JsonExporter]] و sender وهمي بيحفظ اللي اتبعت في list.`, done: R`الناتج المبعوت زي القديم بالظبط مع الـ CSV، وبقيت تقدر تبعت JSON من غير ما تعمل class جديد، والاختبار مبيبعتش إيميل حقيقي (الـ list فيها رسالة واحدة).` },
+            { lvl: 'تحدي', t: R`**مسألة plugins:** وسّع [[Exporter]] بـ [[__init_subclass__]]: ارفض [[fmt]] متكرر برسالة [[ValueError]] فيها اسم الكلاسين، وزوّد [[Exporter.create(fmt)]] بترمي [[KeyError]] برسالة فيها الأنواع المتاحة لو الاسم غلط.`, done: R`تعريف [[class Other(Exporter, fmt="csv")]] بيرمي [[ValueError]] فيها [[CsvExporter]] و [[Other]]، و [[Exporter.create("xml")]] رسالتها فيها [[csv, json]]، و [[Exporter.create("json").export(rows)]] شغال.` },
+          ],
           deep: {
             why: R`هتقابل الوراثة في كل framework: [[BaseModel]] في Pydantic، و [[DeclarativeBase]] في SQLAlchemy، و [[Exception]] للأخطاء بتاعتك، و mixins في Django. ولو مش فاهم الـ MRO و [[super()]]، هتتلخبط في أول مرة method مبتتناداش أو بتتنادى مرتين. والـ MRO سؤال انترفيو Python متوسط/متقدم.`,
             how: R`لما تنادي [[n.send(...)]]، Python بيدوّر على [[send]] في الـ classes بترتيب [[type(n).__mro__]] وأول واحد يلاقيها بيشغّلها. الترتيب بيتحسب بخوارزمية اسمها C3 linearization، وقواعدها العملية: الابن قبل الأب، والآباء بنفس ترتيب كتابتهم في تعريف الـ class، وكل class بيظهر مرة واحدة، و [[object]] في الآخر.
@@ -602,6 +735,104 @@ B returns: [shop] -> 010: hello (via shop)
 
 ---
 
+## ٨. الماسة (diamond): ليه [[super()]] مش «الأب»
+
+لما ابنين بيورثوا من نفس الأب، وحفيد بيورث الاتنين، كل method لازم تتنادى **مرة واحدة**:
+
+~~~python
+class A:
+    def hi(self): return 'A'
+class B(A):
+    def hi(self): return 'B+' + super().hi()
+class C(A):
+    def hi(self): return 'C+' + super().hi()
+class D(B, C): pass
+print(D().hi(), [k.__name__ for k in D.__mro__])
+~~~
+
+~~~text الناتج (Python 3.14)
+B+C+A ['D', 'B', 'C', 'A', 'object']
+~~~
+
+- [[super()]] جوه [[B]] نادت [[C]] مش [[A]]، رغم إن [[B]] مش وارث من [[C]] أصلًا. لأنها بتمشي على MRO الـ object الحالي ([[D]]).
+- [[A]] اتنادت مرة واحدة بس. لو كل class كان كاتب [[A.hi(self)]] بالاسم، [[A]] كانت هتتنادى مرتين (مرة من [[B]] ومرة من [[C]])، وفي [[__init__]] ده معناه اتصال بالداتابيز يتفتح مرتين مثلًا.
+- الترتيب بيتحسب بخوارزمية اسمها C3: الابن قبل أبوه، والآباء بترتيب ما اتكتبوا. ولو الترتيب مستحيل Python بيرفض الـ class من أوله:
+
+~~~text الناتج: class X(A, B) و B ابن A
+TypeError: Cannot create a consistent method resolution order (MRO) for bases A, B
+~~~
+
+يعني كتبت الأب قبل ابنه. الحل: الأكتر تخصص الأول ([[class X(B, A)]] أو [[class X(B)]] بس).
+
+---
+
+## ٩. composition ولا inheritance
+
+الوراثة معناها «الابن **نوع من** الأب» ([[SmsNotifier]] نوع من [[Notifier]]). لو العلاقة «فيه» أو «بيستخدم»، الأحسن تحط object جوه object (composition):
+
+~~~python
+class Engine:
+    def start(self) -> str:
+        return "engine on"
+class Car:
+    def __init__(self, engine: Engine):
+        self.engine = engine
+    def drive(self) -> str:
+        return self.engine.start() + ", driving"
+class FakeEngine:
+    def start(self) -> str:
+        return "fake on"
+print(Car(Engine()).drive())
+print(Car(FakeEngine()).drive())
+~~~
+
+~~~text الناتج
+engine on, driving
+fake on, driving
+~~~
+
+- [[Car]] **مش** وارث من [[Engine]]؛ عربية مش نوع من موتور. هي شايلة موتور في [[self.engine]] وبتطلب منه يشتغل.
+- الميزة الكبيرة: تقدر تبدّل الجزء من برّه. [[FakeEngine]] في الاختبار، وموتور كهربا في الإنتاج، من غير ما تغيّر [[Car]] ولا تعمل ابن جديد. وده نفس اللي FastAPI بيعمله بالـ dependencies (وحدة Dependencies).
+- القاعدة العملية: وراثة لما الابن ينفع يتحط مكان الأب في أي حتة (نفس الـ methods بنفس المعنى)، و composition في أي حاجة تانية. ولو لقيت نفسك بتعمل وراثة تلات أو أربع طبقات عشان تعيد استخدام method واحدة، فكّها لـ composition.
+
+---
+
+## ١٠. [[__init_subclass__]]: الأب بيعرف ولاده
+
+[[__init_subclass__]] بيتنادى على الأب **كل ما class جديد يورث منه**. بيتستخدم في الـ plugins: كل ابن يسجّل نفسه لوحده.
+
+~~~python
+class Exporter:
+    registry: dict[str, type["Exporter"]] = {}
+    def __init_subclass__(cls, *, fmt: str, **kw):
+        super().__init_subclass__(**kw)
+        Exporter.registry[fmt] = cls
+    def export(self, rows: list[dict]) -> str:
+        raise NotImplementedError
+class CsvExporter(Exporter, fmt="csv"):
+    def export(self, rows):
+        return "\n".join(",".join(map(str, r.values())) for r in rows)
+class JsonExporter(Exporter, fmt="json"):
+    def export(self, rows):
+        import json
+        return json.dumps(rows)
+print(Exporter.registry)
+print(Exporter.registry["csv"]().export([{"id": 1, "name": "tea"}]))
+class Bad(Exporter):
+    pass
+~~~
+
+~~~text الناتج (Python 3.14)
+{'csv': <class '__main__.CsvExporter'>, 'json': <class '__main__.JsonExporter'>}
+1,tea
+TypeError: Exporter.__init_subclass__() missing 1 required keyword-only argument: 'fmt'
+~~~
+
+- [[cls]] هنا هو الابن الجديد ([[CsvExporter]])، مش [[Exporter]]. و [[*, fmt: str]] باراميتر keyword-only (درس [[*args و **kwargs]])، بييجي من [[fmt="csv"]] اللي مكتوبة في سطر الـ class نفسه.
+- [[super().__init_subclass__(**kw)]] عشان لو فيه أب تاني فوق بيستخدم نفس الفكرة ياخد الـ arguments بتاعته.
+- [[Bad]] من غير [[fmt]] اترفض **وقت تعريف الـ class**، قبل ما أي كود يشتغل. وده أحسن من إنك تكتشف بعد شهر إن فيه نوع مش متسجّل.
+- وبعد كده [[Exporter.registry[fmt]()]] بيختار الكلاس من اسم جاي من argument أو من query في API، من غير [[if fmt == "csv": ... elif ...]] بيكبر مع كل نوع جديد.
+
 ## الخلاصة
 
 - [[class Child(Parent):]] = ورث كل حاجة، و override بنفس الاسم.
@@ -610,28 +841,28 @@ B returns: [shop] -> 010: hello (via shop)
 - [[Class.__mro__]] بيوريك الترتيب: الابن، وبعدين الآباء من الشمال لليمين، و [[object]] في الآخر.
 - ترتيب الـ mixins بين القوسين بيغيّر النتيجة.`,
           lines: [
-            "الـ class الأساسي.",
-            "بياخد اسم المرسل.",
-            "خزّنه.",
-            "الـ method الأساسية.",
-            "بترجع الرسالة متنسقة.",
-            R`ابن: بيورث كل حاجة في [[Notifier]].`,
-            "باراميتر زيادة.",
-            R`[[super().__init__]]: خلّي الأب يعمل الـ sender.`,
-            "الزيادة بتاعة الابن.",
-            "override لنفس الـ method.",
-            R`بيقص الرسالة وبينادي نسخة الأب بـ [[super()]].`,
-            "mixin: سلوك واحد، ومش وارث من حاجة.",
-            "نفس اسم الـ method.",
-            R`[[super()]] هنا بينادي اللي بعده في الـ MRO، مش object.`,
-            "سجّل.",
-            "رجّع زي ما هو.",
-            "ركّب: اللوج برّه والـ SMS جوه.",
-            "مفيش كود زيادة.",
-            "object: max_len بتوصل لـ SmsNotifier عبر السلسلة.",
-            "اللوج بيطبع الرسالة بعد القص.",
-            R`الترتيب: [[LoggedSms, LoggingMixin, SmsNotifier, Notifier, object]].`,
-            R`True: SMS نوع من Notifier. و False: SmsNotifier مش وارث من الـ mixin.`
+            R`[[Notifier]] الـ class الأساسي (الأب): فيه السلوك المشترك اللي كل أنواع الإشعارات محتاجاه. مش وارث من حاجة صريحة، بس أي class في Python 3 بيورث من [[object]] لوحده، وده هيظهر في آخر الـ MRO.`,
+            R`[[__init__]] بتاع الأب بياخد [[sender]]: اسم اللي بيبعت (اسم المحل مثلًا). أي ابن هيحتاج يتأكد إن السطر ده اتنفّذ، وإلا الخانة مش هتتعمل.`,
+            R`بيخزّن الاسم في الـ object. ده السطر اللي لو الابن نسي [[super().__init__]] مش هيتنفّذ، و [[self.sender]] هترمي [[AttributeError]] بعدين في [[send]] (القسم «لو نسيت» في الشرح).`,
+            R`[[send]] الـ method الأساسية: بتاخد مين هيستلم ([[to]]) والنص، وبترجّع الرسالة كنص بدل ما تطبعها، فأي ابن أو mixin يقدر ياخد الناتج ويزوّد عليه.`,
+            R`بترجّع الشكل [[[shop] -> 010: hello]]. القوسين المربعين جزء من النص مش list. ده السلوك اللي الابن هيعيد استخدامه بـ [[super()]] بدل ما ينسخه.`,
+            R`[[class SmsNotifier(Notifier):]] = ابن: الاسم اللي بين القوسين هو الأب. أي حاجة مش متعرّفة في الابن (زي الخانات والـ methods) بتتجاب من الأب لوحدها.`,
+            R`الابن بيعيد تعريف [[__init__]] عشان عايز باراميتر زيادة ([[max_len]] = أقصى طول للـ SMS، الافتراضي ١٦٠ حرف زي الـ SMS الحقيقي). ولما الابن يكتب [[__init__]] بتاعه، بتاع الأب **مبيتناداش لوحده**.`,
+            R`عشان كده بننادي [[super().__init__(sender)]]: «يا اللي بعدي في السلسلة، اعمل الجزء بتاعك». من غيره [[self.sender]] مش هيتعمل. و [[super()]] من غير arguments شغالة جوه أي method في Python 3.`,
+            R`بعد ما الأب خلص، الابن بيزوّد الخانة بتاعته. الترتيب المعتاد: الأب الأول، وبعدين زيادة الابن، عشان لو الابن محتاج حاجة الأب عملها يلاقيها.`,
+            R`**override**: الابن بيعرّف [[send]] بنفس الاسم والـ signature، فـ [[sms.send(...)]] بتنادي دي مش بتاعة الأب. خلّي نفس الباراميترات، عشان أي كود بيستخدم [[Notifier]] يشتغل مع الابن من غير تغيير.`,
+            R`[[text[: self.max_len]]] slice بياخد أول ١٦٠ حرف (أو أقل لو النص أقصر، مفيش error). وبعدين [[super().send(...)]] بيعيد استخدام شكل الرسالة بتاع الأب بدل ما ننسخ الـ f-string هنا، فلو الأب غيّر الشكل الابن بياخده لوحده.`,
+            R`**mixin**: class صغير بيدّي سلوك واحد (هنا اللوج) ومش معمول يتعمل منه object لوحده. مش وارث من [[Notifier]] قصد، عشان ينفع يتركّب مع أي class فيه [[send]].`,
+            R`نفس اسم [[send]] بنفس الـ signature، فهيتنادى **قبل** اللي في [[SmsNotifier]] لما يتحط قبله في الوراثة.`,
+            R`[[super()]] هنا **مش** معناها «الأب بتاع LoggingMixin» (اللي هو [[object]] ومفيهوش [[send]]). معناها «اللي بعدي في الـ MRO بتاع الـ object الحالي»، واللي بعده في [[LoggedSms]] هو [[SmsNotifier]]. عشان كده الـ mixin شغال من غير ما يعرف هو متركّب مع مين.`,
+            R`بيطبع النتيجة بعد ما الجزء الجوّاني خلص، يعني بعد القص. [[print]] بتاخد كذا قيمة وبتفصل بينهم بمسافة: [[LOG: [shop] -> 010: hello]].`,
+            R`بيرجّع النتيجة زي ما هي من غير تعديل. لو نسيت [[return]] هنا، [[n.send(...)]] هترجّع [[None]] واللي نادى هيفتكر الإرسال مرجّعش حاجة، رغم إن اللوج اتطبع.`,
+            R`التركيب: [[LoggingMixin]] الأول وبعده [[SmsNotifier]]. الترتيب ده معناه إن اللوج «برّه» والـ SMS «جوه»: النداء بيدخل في اللوج الأول، اللوج بينادي الـ SMS، والـ SMS بينادي [[Notifier]].`,
+            R`[[pass]] = «مفيش كود». الـ class كامل من التركيب لوحده، ومش محتاج ولا سطر. Python محتاج حاجة في الجسم، فـ [[pass]] بتملا المكان.`,
+            R`[[LoggedSms("shop", max_len=5)]]: مفيش [[__init__]] في [[LoggedSms]] ولا [[LoggingMixin]]، فـ Python بيمشي على الـ MRO لحد ما يلاقي [[SmsNotifier.__init__]]، وهي اللي بتاخد [[max_len]] وتبعت [[sender]] للأب.`,
+            R`[[send]] بيتنادى على [[LoggingMixin]] الأول، اللي بينادي [[SmsNotifier.send]] (بيقص [["hello world"]] لـ [["hello"]] بـ ٥ حروف)، اللي بينادي [[Notifier.send]]. والنتيجة بترجع لبرّه، واللوج بيطبعها.`,
+            R`[[LoggedSms.__mro__]] tuple بالترتيب اللي Python بيدوّر بيه، و [[c.__name__]] اسم كل class. الناتج [[['LoggedSms', 'LoggingMixin', 'SmsNotifier', 'Notifier', 'object']]]. أي [[super()]] بيمشي خطوة واحدة على اللستة دي.`,
+            R`[[isinstance(n, Notifier)]] بيسأل «الـ object ده من النوع ده أو ابن ليه؟» فـ [[True]]. و [[issubclass(SmsNotifier, LoggingMixin)]] بيسأل عن الـ classes نفسها: [[SmsNotifier]] لوحده مش وارث من الـ mixin فـ [[False]]؛ اللي وارثهم الاتنين [[LoggedSms]] بس.`,
           ]
         },
         {
@@ -711,6 +942,14 @@ try:
 except TypeError as e:
     print("TypeError:", e)`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** من غير ما تبص، اكتب جنب كل حاجة الـ dunder اللي Python بيناديها: [[print(x)]]، [[x == y]]، [[len(x)]]، [[for i in x]]، [[x in y]]، [[x + y]]، [[x()]]، [[x[k]]]، [[if x:]]، [[{x}]].`, done: R`العشرة صح لما قارنتهم بالجدول في الشرح (منهم [[__str__]] و [[__contains__]] و [[__call__]] و [[__getitem__]] و [[__hash__]])، وكاتب جنب [[if x:]] إنها بتجرّب [[__len__]] لو [[__bool__]] مش موجودة.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[class P:]] فيها [[__init__]] بيخزّن [[x]] و [[__eq__]] بترجّع [[self.x == other.x]] بس. توقّع ناتج [[print(P(1) == P(1))]] وبعدين [[print({P(1)})]] وبعدين [[print(P(1) == 1)]]، وشغّلهم واحد واحد.`, done: R`الأول [[True]]، والتاني [[TypeError: cannot use 'P' as a set element (unhashable type: 'P')]]، والتالت [[AttributeError: 'int' object has no attribute 'x']]، وكاتب التصليح لكل واحد ([[__hash__]] و [[NotImplemented]]).` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[Money.__add__]] فيها [[self.cents += other.cents; return self]]. اعمل [[a = Money(100); b = a + Money(50); print(a, b, a is b)]] واشرح ليه ده bug في value object، وصلّحه.`, done: R`قبل التصليح [[a]] نفسها اتغيّرت لـ ١٥٠ و [[a is b]] بـ [[True]]، وبعده [[a]] لسه ١٠٠ و [[b]] ١٥٠ و [[a is b]] بـ [[False]]، و [[{a}]] لسه بتلاقي [[a]] بعد الجمع.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[Playlist]] زي التجربة، وزوّد [[__getitem__]] اللي بيقبل رقم و slice ([[p[1:]]] ترجّع Playlist جديدة مش list)، و [[__call__(song)]] بيضيف أغنية ويرجّع [[self]] عشان [[p("a")("b")]] تشتغل، و [[__format__]] بحيث [[f"{p:short}"]] تطبع الاسم وعدد الأغاني بس.`, done: R`[[type(p[1:]).__name__]] بيطبع [[Playlist]]، و [[p[-1]]] آخر أغنية، و [[p("x")("y")]] زوّدت اتنين، و [[f"{p:short}"]] زي [[chill (4)]]، و [[p["a"]]] بترمي [[TypeError]] برسالة واضحة إنت كاتبها.` },
+            { lvl: 'تطبيق', t: R`**اكتب اختبار:** اكتب [[test_money.py]] بـ pytest لـ [[Money]] اللي في المثال: الجمع مبيغيّرش الأصل، و [[sorted]] بيرتّب، و set بتشيل المتكرر، و [[Money(5) == 5]] بـ [[False]] من غير error، و [[Money(1) + 1]] بترمي [[TypeError]] (بعد ما تصلّح [[__add__]] بـ [[NotImplemented]]).`, done: R`[[pytest -q]] بيقول [[5 passed]]، ولو شلت سطر [[NotImplemented]] من [[__add__]] الاختبار الأخير بيقع بـ [[AttributeError]] بدل [[TypeError]].` },
+            { lvl: 'تحدي', t: R`**مسألة:** [[Vector(x, y)]] بـ [[__add__]] و [[__sub__]] و [[__mul__]] (ضرب في رقم) و [[__rmul__]] (عشان [[3 * v]] تشتغل مش [[v * 3]] بس) و [[__abs__]] (الطول) و [[__eq__]] و [[__hash__]] و [[__repr__]] و [[__iter__]] (عشان [[x, y = v]]).`, done: R`[[Vector(3, 4) * 2 == 2 * Vector(3, 4) == Vector(6, 8)]] بـ [[True]]، و [[abs(Vector(3, 4))]] بـ [[5.0]]، و [[x, y = Vector(1, 2)]] شغالة، و [[v * "a"]] بترمي [[TypeError]]، و [[len({Vector(1, 1), Vector(1, 1)})]] بـ [[1]].` },
+          ],
           deep: {
             why: R`class من غير [[__repr__]] بيطبع [[<__main__.Money object at 0x7f...>]] في اللوج ومحدش فاهم حاجة. ومن غير [[__eq__]]، كائنين بنفس القيمة مش متساويين. والـ dunders هي اللي بتخلي الـ class بتاعك يحس إنه built-in: [[sorted(prices)]] و [[sum(cart)]] و [[max(cart)]] يشتغلوا من غير كود زيادة.`,
             how: R`[[len(x)]] بتنادي [[type(x).__len__(x)]]، و [[a + b]] بتنادي [[a.__add__(b)]]، ولو رجعت [[NotImplemented]] بتجرّب [[b.__radd__(a)]]. و [[a == b]] نفس الفكرة، ولو الاتنين رجّعوا [[NotImplemented]] بيرجع لمقارنة الهوية ([[is]]). عشان كده [[Money(5) == 5]] بترجع [[False]] بهدوء بدل ما ترمي.
@@ -729,18 +968,18 @@ classين: [[Money]] قيمة فلوس بالقروش بتشتغل مع [[print]
 
 **dunder** اختصار double underscore: الشرطتين [[__]] قبل الاسم وبعده. والقاعدة:
 
-| انت بتكتب | Python بينادي |
-|---|---|
-| [[print(x)]] و [[str(x)]] | [[x.__str__()]] |
-| [[repr(x)]] والـ REPL | [[x.__repr__()]] |
-| [[a == b]] | [[a.__eq__(b)]] |
-| [[a < b]] | [[a.__lt__(b)]] |
-| [[a + b]] | [[a.__add__(b)]] |
-| [[hash(x)]] و [[set]] و مفتاح dict | [[x.__hash__()]] |
-| [[bool(x)]] و [[if x:]] | [[x.__bool__()]] |
-| [[len(x)]] | [[x.__len__()]] |
-| [[for i in x]] | [[x.__iter__()]] |
-| [[i in x]] | [[x.__contains__(i)]] |
+| انت بتكتب | Python بينادي | ولو الـ class مش كاتبها (اتجرّب على 3.14) |
+|---|---|---|
+| [[print(x)]] و [[str(x)]] | [[x.__str__()]] | بيستخدم [[__repr__]] بداله |
+| [[repr(x)]] والـ REPL | [[x.__repr__()]] | الشكل الافتراضي [[<__main__.X object at 0x...>]] |
+| [[a == b]] | [[a.__eq__(b)]] | بيقارن الهوية زي [[is]]، فـ [[X() == X()]] بـ [[False]] |
+| [[a < b]] | [[a.__lt__(b)]] | [[TypeError: '<' not supported between instances of 'X' and 'X']] |
+| [[a + b]] | [[a.__add__(b)]] | [[TypeError: unsupported operand type(s) for +: 'X' and 'X']] |
+| [[hash(x)]] و [[set]] و مفتاح dict | [[x.__hash__()]] | hash من الهوية؛ بس لو كتبت [[__eq__]] من غيرها الـ object بيبقى unhashable |
+| [[bool(x)]] و [[if x:]] | [[x.__bool__()]] | بيجرّب [[__len__]] (صفر = False)، ولو مش موجودة يبقى [[True]] دايمًا |
+| [[len(x)]] | [[x.__len__()]] | [[TypeError: object of type 'X' has no len()]] |
+| [[for i in x]] | [[x.__iter__()]] | بيجرّب [[__getitem__]] من صفر، وإلا [[TypeError: 'X' object is not iterable]] |
+| [[i in x]] | [[x.__contains__(i)]] | بيلف بـ [[__iter__]] ويقارن بـ [[==]]، وإلا [[argument of type 'X' is not a container or iterable]] (نص 3.14) |
 
 ---
 
@@ -935,6 +1174,105 @@ TypeError: unsupported operand type(s) for +: 'Playlist' and 'int'
 
 ---
 
+## ٨. [[__call__]]: object بيتنادى زي دالة
+
+~~~python
+class RateLimiter:
+    def __init__(self, limit: int):
+        self.limit, self.calls = limit, 0
+    def __call__(self, user: str) -> bool:
+        self.calls += 1
+        return self.calls <= self.limit
+allow = RateLimiter(2)
+print(allow("sara"), allow("sara"), allow("sara"), callable(allow))
+~~~
+
+~~~text الناتج (Python 3.14)
+True True False True
+~~~
+
+- [[allow("sara")]] = [[allow.__call__("sara")]]. الـ object بيتنادى بأقواس زي أي دالة، بس **فاكر حاجة** بين النداءات ([[self.calls]]).
+- إمتى بدل الدالة؟ لما الدالة محتاجة حالة (عدّاد، cache، إعدادات) ومش عايز متغير global. وإمتى بدل closure؟ لما الحالة كبيرة أو محتاج methods تانية ([[reset()]]). و [[callable(x)]] بيسأل «ينفع أناديه؟».
+- FastAPI بيستخدم ده: dependency ممكن تبقى object فيه [[__call__]] (وحدة Dependencies).
+
+---
+
+## ٩. [[__getattr__]]: لما الخاصية مش موجودة
+
+~~~python
+class Settings:
+    def __init__(self, data: dict):
+        self._data = data
+    def __getattr__(self, name: str):
+        try:
+            return self._data[name]
+        except KeyError:
+            raise AttributeError(f"no setting {name!r}") from None
+s = Settings({"port": 8000, "debug": False})
+print(s.port, s.debug)
+print(getattr(s, "host", "localhost"))
+s.host
+~~~
+
+~~~text الناتج
+8000 False
+localhost
+AttributeError: no setting 'host'
+~~~
+
+- [[__getattr__]] بيتنادى **بس** لما القراية العادية متلاقيش الاسم. فـ [[s._data]] بيتقري عادي من غير ما يعدّي عليها، و [[s.port]] مش موجودة كخانة فبتعدّي عليها.
+- لازم ترمي [[AttributeError]] مش [[KeyError]]: [[getattr(s, "host", "localhost")]] و [[hasattr]] بيعتمدوا على [[AttributeError]] بالذات عشان يرجّعوا الـ default. لو سبت [[KeyError]] تطلع، [[getattr]] بالـ default هترمي بدل ما ترجّع [[localhost]].
+- [[from None]] بيشيل سطر «During handling of the above exception» من الـ traceback، عشان الـ [[KeyError]] الداخلي تفصيلة مش مهمة لليوزر.
+- فخ: لو [[__getattr__]] قرت [[self._data]] قبل ما [[__init__]] يعمله (مثلًا وقت [[copy]] أو [[pickle]])، هتنادي نفسها لحد [[RecursionError]]. وفيه [[__getattribute__]] بيتنادى في **كل** قراية، ونادرًا ما تحتاجه.
+
+---
+
+## ١٠. [[__getitem__]] و [[__setitem__]] و [[__format__]]
+
+~~~python
+class Grid:
+    def __init__(self): self._cells = {}
+    def __getitem__(self, key): return self._cells.get(key, ".")
+    def __setitem__(self, key, value): self._cells[key] = value
+    def __delitem__(self, key): del self._cells[key]
+g = Grid(); g[0, 1] = "X"
+print(g[0, 1], g[5, 5]); del g[0, 1]; print(g[0, 1])
+class Price:
+    def __init__(self, c): self.c = c
+    def __format__(self, spec):
+        if spec == "egp": return f"{self.c/100:,.2f} ج.م"
+        return format(self.c, spec)
+m = Price(1234567)
+print(f"{m:egp}", f"{m:>10}")
+~~~
+
+~~~text الناتج
+X .
+.
+12,345.67 ج.م    1234567
+~~~
+
+- [[g[0, 1]]] = [[g.__getitem__((0, 1))]]: الفصلة بتعمل tuple، فالمفتاح [[(0, 1)]]. و [[g[0, 1] = "X"]] بتنادي [[__setitem__]]، و [[del g[0, 1]]] بتنادي [[__delitem__]].
+- [[__format__]] بيتنادى مع [[f"{m:egp}"]] و [[format(m, "egp")]]، واللي بعد [[:]] بيوصل في [[spec]]. فتقدر تعمل شكل خاص بيك ([[egp]])، وأي spec تاني ([[>10]] = محاذاة يمين في ١٠ خانات) بتسلّمه للرقم العادي.
+
+---
+
+## ١١. [[__eq__]] من غير [[__hash__]]
+
+~~~python
+class Bad:
+    def __eq__(self, o): return True
+{Bad()}
+~~~
+
+~~~text الناتج (نص Python 3.14 الجديد)
+TypeError: cannot use 'Bad' as a set element (unhashable type: 'Bad')
+~~~
+
+Python بيحط [[__hash__ = None]] لوحده لما تكتب [[__eq__]] من غير [[__hash__]]، لأن الـ hash القديم (من الهوية) هيكسر قاعدة «المتساويين ليهم نفس الـ hash». وفي 3.13 (اتجرّب في [[python:3.13-slim]]) الرسالة كانت [[unhashable type: 'Bad']] بس. الحل: اكتب [[__hash__]] من نفس الخانات لو الـ object مبيتعدلش، أو سيبه unhashable لو بيتعدل (زي [[list]]).
+
+ولـ [[__enter__]] و [[__exit__]] (اللي بيخلّوا الـ object يشتغل مع [[with]]) درس لوحدهم في وحدة «الأخطاء و with».
+
 ## الخلاصة
 
 - الـ dunders بيناديها Python، مش انت.
@@ -943,42 +1281,42 @@ TypeError: unsupported operand type(s) for +: 'Playlist' and 'int'
 - [[__add__]] بترجّع object جديد.
 - [[@total_ordering]]: اكتب [[__eq__]] و [[__lt__]] والباقي يتولّد.`,
           lines: [
-            "بيكمّل باقي المقارنات من eq و lt.",
-            "decorator على الـ class.",
-            "value object للفلوس.",
-            "بالقروش كـ int.",
-            "خزّن.",
-            "للمبرمج: REPL ولوج و debugger.",
-            "شكل زي الكود.",
-            R`للمستخدم: [[print]] و [[str()]].`,
-            "جنيهات بفواصل.",
-            R`[[==]].`,
-            "لو النوع مختلف...",
-            R`...[[NotImplemented]] مش False: خلّي Python يجرّب الناحية التانية.`,
-            "قارن القيم.",
-            "عشان يدخل set ويبقى مفتاح dict.",
-            R`hash من نفس الحاجات اللي [[__eq__]] بيقارنها.`,
-            R`[[<]]، ومنها [[sorted]] و [[max]] و [[min]].`,
-            "قارن القروش.",
-            R`[[+]]: بيرجع object جديد.`,
-            "مبيعدّلش self.",
-            R`[[bool()]] و [[if money:]].`,
-            "صفر يبقى False.",
-            "collection بتاعتك.",
-            "بتاخد أي عدد أسعار.",
-            R`[[_]] في الأول: داخلي.`,
-            R`[[len()]].`,
-            "العدد.",
-            R`[[for]] و [[sum]] و [[max]].`,
-            "iterator من الـ list.",
-            R`[[in]].`,
-            "دوّر (بيستخدم __eq__).",
-            "عربية فيها ٣ أسعار.",
-            "len و in.",
-            R`[[sum]] بقيمة بداية من نفس النوع، والطباعة بـ [[__str__]].`,
-            R`[[max]] و [[min]] بيستخدموا [[__lt__]].`,
-            R`[[>=]] جت من [[total_ordering]]، والـ set شال التكرار بفضل [[__hash__]].`,
-            R`[[__bool__]]، و [[Money(5) == 5]] رجعت False بهدوء.`
+            R`[[total_ordering]] decorator من [[functools]]: بتكتب [[__eq__]] و method مقارنة واحدة ([[__lt__]] هنا)، وهو يكمّل التلاتة الباقيين ([[<=]] و [[>]] و [[>=]]). من غيره [[Money(1) >= Money(1)]] كانت هترمي [[TypeError]].`,
+            R`الـ decorator بيتحط فوق الـ class نفسه (مش فوق method): بيقرا الـ class بعد ما يتعرّف ويضيف عليه الـ methods الناقصة.`,
+            R`[[Money]] value object: object بيتعرّف بقيمته (المبلغ والعملة) مش بهويته. اتنين [[Money(100)]] لازم يبقوا متساويين حتى لو اتعملوا في مكانين مختلفين، وده اللي الـ dunders تحت بتحققه.`,
+            R`المبلغ بالقروش كـ [[int]] مش جنيه كـ [[float]]: [[0.1 + 0.2]] في float بتطلع [[0.30000000000000004]]، و [[10 + 20]] قرش دايمًا [[30]]. و [[currency]] الافتراضي [[EGP]] عشان أغلب الاستخدام بالجنيه.`,
+            R`تعيين الخانتين في سطر واحد (tuple unpacking): اللي على اليمين بيتحسب الأول وبعدين بيتوزّع بالترتيب. نفس [[self.cents = cents]] وبعدها [[self.currency = currency]].`,
+            R`[[__repr__]] للمبرمج: هو اللي بيظهر في الـ REPL، وجوه list أو dict مطبوعة، وفي اللوج والـ debugger. لازم يكون واضح ومفيهوش لبس.`,
+            R`الشكل المعتاد للـ repr: يشبه الكود اللي يعمل نفس الـ object ([[Money(2550, 'EGP')]])، فلو نسخته ولصقته في Python يرجعلك نفس القيمة. و [[!r]] بتحط العملة بين علامات تنصيص.`,
+            R`[[__str__]] للمستخدم: [[print(x)]] و [[str(x)]] و [[f"{x}"]] بينادوها. لو مش موجودة بيستخدموا [[__repr__]]، فالـ repr هو اللي لازم تكتبه دايمًا، والـ str اختياري.`,
+            R`[[self.cents / 100]] بيحوّل لجنيه، و [[:,.2f]] format spec: [[,]] فاصل آلاف و [[.2f]] رقمين عشريين. فـ [[32550]] قرش بتطلع [[325.50 EGP]]، و [[1500000]] بتطلع [[15,000.00 EGP]].`,
+            R`[[__eq__]] بيتنادى مع [[a == b]] (و [[!=]] بتعكس نتيجته لوحدها). الـ type hint [[other: object]] لأن [[==]] ممكن تتكتب بين أي نوعين، مش [[Money]] بس.`,
+            R`لو الطرف التاني مش [[Money]] (رقم أو نص مثلًا)، منقارنش خانات مش موجودة فيه؛ من غير الفحص ده [[Money(5) == 5]] كانت هترمي [[AttributeError: 'int' object has no attribute 'cents']].`,
+            R`[[NotImplemented]] (قيمة خاصة، مش exception) معناها «مش عارف أقارن بالنوع ده». Python ساعتها بيجرّب الناحية التانية ([[5 .__eq__(money)]])، ولو هي كمان مش عارفة يرجع للمقارنة بالهوية فيطلع [[False]]. لو رجّعت [[False]] بإيدك، بتقفل الباب على نوع تاني ممكن يكون عارف يقارن نفسه بيك.`,
+            R`المقارنة كـ tuple: [[(cents, currency) == (cents, currency)]] بتقارن العنصر الأول وبعدين التاني، فـ [[Money(100, "EGP") == Money(100, "USD")]] بـ [[False]]. أقصر وأوضح من [[and]] بين مقارنتين.`,
+            R`[[__hash__]] هو اللي بيخلي الـ object ينفع يتحط في [[set]] أو يبقى مفتاح في dict. و**مهم**: أي class بيكتب [[__eq__]] من غير [[__hash__]] بيبقى unhashable لوحده، و [[{Money(5)}]] كانت هترمي [[TypeError]].`,
+            R`القاعدة: اللي بيتساووا لازم يبقى ليهم نفس الـ hash، فبنحسبه من **نفس الخانات** اللي [[__eq__]] بيقارنها، بـ [[hash()]] على tuple. ولو الـ object بيتعدّل بعد ما يدخل set، الـ hash بيتغيّر وتضيع منك جوه الـ set؛ عشان كده الـ value objects بتبقى متتعدلش (زي [[frozen=True]] في الـ dataclass).`,
+            R`[[__lt__]] = less than ([[<]]). [[sorted]] و [[min]] و [[max]] و [[list.sort]] كلهم بيستخدموها، فتعريفها بيخلي ترتيب الفلوس شغال من غير [[key=]]. والنوع [["Money"]] بين علامات تنصيص لأن الـ class لسه متعرّفش وقت ما السطر ده بيتقري (forward reference).`,
+            R`بيقارن القروش بس، وده تبسيط: [[Money(100, "USD") < Money(200, "EGP")]] هترجّع [[True]] رغم إنها مقارنة عملات مختلفة. في كود حقيقي ارمي [[ValueError]] لو العملات مختلفة، زي ما التمارين بتطلب.`,
+            R`[[__add__]] بيتنادى مع [[a + b]]. القاعدة في value objects إن [[+]] **بترجّع object جديد** ومبتغيّرش الأصلي، زي [[1 + 2]] اللي مبيغيّرش الـ 1.`,
+            R`[[Money(...)]] جديد بمجموع القروش، و [[self]] و [[other]] زي ما هما. ولو حد كتب [[money + 5]]، [[other.cents]] هترمي [[AttributeError]]؛ الأحسن [[if not isinstance(other, Money): return NotImplemented]] فيطلع [[TypeError: unsupported operand]] الواضح.`,
+            R`[[__bool__]] بيتنادى مع [[bool(x)]] و [[if x:]] و [[while x:]] و [[and]]/[[or]]. من غيرها أي [[Money]] حتى الصفر كان هيبقى [[True]] (لأن مفيش [[__len__]] كمان).`,
+            R`صفر قروش = [[False]]، أي حاجة تانية (حتى السالب) = [[True]]. فـ [[if balance:]] بتقرا «لو فيه فلوس» من غير [[balance.cents != 0]].`,
+            R`[[Cart]] collection بتاعتك: class شايل عناصر جواه، وهنخليه يتعامل زي list في [[len]] و [[for]] و [[in]] من غير ما يورث من [[list]] (اللي كانت هتدّيه [[append]] و [[clear]] وعشرين method مش عايزهم).`,
+            R`[[*prices: Money]] بتاخد أي عدد arguments بالمكان وتجمّعهم في tuple ([[*args]] من وحدة الدوال)، فـ [[Cart(a, b, c)]] و [[Cart()]] الاتنين شغالين.`,
+            R`[[list(prices)]] بيحوّل الـ tuple لـ list عشان تقدر تزوّد بعدين. و [[_]] في أول [[_prices]] اتفاق معناه «داخلي»: اللي برّه يستخدم [[len]] و [[for]] و [[in]]، مش يلعب في الليستة مباشرة.`,
+            R`[[__len__]] بيتنادى مع [[len(cart)]]، ولازم ترجّع [[int]] صفر أو أكبر. وبرضه [[bool(cart)]] بتستخدمها لو مفيش [[__bool__]]: عربية فاضية تبقى [[False]].`,
+            R`بنسأل الـ list الداخلية عن طولها. ده اسمه delegation: الـ class بيسلّم الشغل لحاجة جواه بدل ما يحسبه بنفسه.`,
+            R`[[__iter__]] بيتنادى مع [[for x in cart]]، وكمان [[sum]] و [[max]] و [[min]] و [[list(cart)]] و unpacking، لأن كلهم بيلفّوا. لازم ترجّع iterator (حاجة فيها [[__next__]]).`,
+            R`[[iter(self._prices)]] بيرجّع iterator جاهز من الـ list. وكل [[for]] بتنادي [[__iter__]] من جديد، فتقدر تلف على العربية مرتين وتلاقي العناصر كلها في المرتين.`,
+            R`[[__contains__]] بيتنادى مع [[item in cart]]. من غيرها [[in]] كانت هتشتغل برضه بإنها تلف بـ [[__iter__]]، بس كتابتها بتخليك تختار طريقة أسرع (set مثلًا) لو العربية كبيرة.`,
+            R`[[in]] على الـ list بتقارن كل عنصر بـ [[==]]، يعني بتنادي [[Money.__eq__]] اللي فوق. فـ [[Money(2550) in cart]] بتلاقي object **تاني** بنفس القيمة، مش لازم نفس الـ object.`,
+            R`عربية فيها ٣ أسعار: لابتوب ١٥٠ جنيه مرتين وحاجة بـ ٢٥.٥٠. ([[15000]] قرش = ١٥٠ جنيه.) التكرار مقصود عشان نشوف الـ set تحت بيشيله.`,
+            R`[[len(cart)]] نادت [[__len__]] = [[3]]، و [[Money(2550) in cart]] نادت [[__contains__]] اللي نادت [[__eq__]] = [[True]]. الناتج [[3 True]].`,
+            R`[[sum]] بيبدأ من [[0]] افتراضيًا، و [[0 + Money]] مش متعرّفة. فبنديله قيمة بداية من نفس النوع [[Money(0)]]، وهو بيعمل [[Money(0) + a + b + c]] بـ [[__add__]]. والطباعة بـ [[__str__]]: [[325.50 EGP]].`,
+            R`[[max]] و [[min]] بيلفّوا بـ [[__iter__]] ويقارنوا بـ [[__lt__]]. [[print(max(cart))]] بيستخدم [[__str__]] فيطلع [[150.00 EGP]]، و [[repr(min(cart))]] بيجبر الـ repr فيطلع [[Money(2550, 'EGP')]]. نفس الـ object بشكلين.`,
+            R`[[>=]] مش مكتوبة في الـ class؛ جت من [[total_ordering]] (من [[__lt__]] و [[__eq__]]) = [[True]]. و [[{Money(5), Money(5)}]] set فيها عنصر واحد بس: الاتنين ليهم نفس الـ hash ومتساويين، فالـ set اعتبرتهم واحد.`,
+            R`[[bool(Money(0))]] نادت [[__bool__]] = [[False]]. و [[Money(5) == 5]] رجّعت [[False]] بهدوء من غير error، بفضل [[NotImplemented]]: Python جرّب ناحية الـ [[int]]، ومعرفتش، فرجع لمقارنة الهوية.`,
           ]
         },
         {
@@ -1009,6 +1347,14 @@ print(asdict(cart))
 Money("oops")                   # بيعدّي! dataclass مبيفحصش الأنواع`,
           try: R`شيل [[default_factory]] واكتب [[items: list[str] = []]] وشغّل: هتلاقي Python نفسه رافض (ValueError: mutable default). وبعدين جرّب [[{price: "x"}]] مع [[frozen=True]] ومن غيرها.`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** اكتب من الذاكرة الـ [[@dataclass]] بتاع [[Money]] و [[Cart]] من المثال، وجنب كل إعداد ([[frozen]] و [[slots]] و [[default_factory]] و [[order]] و [[kw_only]] و [[repr=False]]) جملة: بيعمل إيه، وإيه اللي بيحصل من غيره.`, done: R`الكود بيتشغّل ويطبع نفس ناتج المثال، والست جمل كل واحدة فيها نتيجة تقدر تجرّبها (مثلًا «من غير [[default_factory]] بيطلع [[ValueError: mutable default]]»).` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[@dataclass(order=True) class V: major: int; minor: int; label: str = ""]]. إيه ناتج [[sorted([V(1, 10), V(1, 2), V(0, 99)])]]؟ وإيه ناتج [[V(1, 2, "a") == V(1, 2, "b")]]؟ وبعدين خلّي [[label]] بـ [[field(default="", compare=False)]] وتوقّع تاني.`, done: R`الترتيب [[V(0, 99), V(1, 2), V(1, 10)]] (مقارنة أرقام مش نص)، والمساواة [[False]] الأول و [[True]] بعد [[compare=False]]، وشغّلتهم وطابقوا.` },
+            { lvl: 'تطبيق', t: R`**صلّح:** [[@dataclass class Event: name: str; at: datetime = datetime.now(UTC)]]. اعمل حدثين بينهم [[time.sleep(1)]] واطبع الوقتين. لاقي الغلطة وصلّحها.`, done: R`قبل التصليح الوقتين **متطابقين** بالظبط (اتحسبوا وقت تعريف الـ class)، وبعد [[field(default_factory=lambda: datetime.now(UTC))]] الفرق بينهم حوالي ثانية.` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** ملف [[orders.csv]] فيه ٦ صفوف ([[id,customer,total,status]]) واتنين منهم بايظين (total سالب، و status مش من [[pending]] أو [[paid]] أو [[shipped]]). اعمل [[@dataclass(frozen=True, slots=True) Order]] بـ [[__post_init__]] بيحوّل [[total]] من نص لـ [[int]] ويفحص القواعد، واقرا الملف بـ [[csv.DictReader]] وافصل السليم عن البايظ ومعاه سبب كل واحد.`, done: R`٤ orders سليمة في list، والصفين البايظين متطبعين برقم السطر والرسالة ([[total must be >= 0]] مثلًا)، وكل [[Order]] [[frozen]] ([[o.total = 1]] بترمي)، وملحوظة: مع [[frozen]] التحويل جوه [[__post_init__]] محتاج [[object.__setattr__]].` },
+            { lvl: 'تطبيق', t: R`**refactor:** خد class [[Order]] من درس «class و self» (اللي فيه [[__init__]] و [[__repr__]] بإيدك) وحوّله dataclass من غير ما تغيّر سلوكه: [[total]] property، و [[add]] بتفحص السعر، و [[from_dict]] classmethod.`, done: R`الكود أقصر بـ ٥ سطور على الأقل، ونفس سطور التجربة بتطبع نفس الناتج تقريبًا (الـ repr بقى فيه أسامي الخانات)، و [[Order("a") == Order("a")]] بقت [[True]] (كانت [[False]]) وكاتب ليه.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** شغّل كود جدول المقارنة على جهازك لـ ١٠٠ ألف ومليون object، وزوّد صف لـ [[@dataclass(frozen=True, slots=True)]] وصف لـ Pydantic [[BaseModel]] (في venv). رتّب النتايج بالذاكرة.`, done: R`عندك جدول بأرقامك انت لـ ٨ أنواع، والترتيب النسبي بتاع الذاكرة زي اللي في الدرس (slots الأقل من الـ classes)، وكاتب جملة عن تكلفة Pydantic في الإنشاء مقارنة بالـ dataclass برقمك.` },
+          ],
           deep: {
             why: R`من غير dataclass بتكتب [[__init__]] فيه [[self.x = x]] لكل خاصية، و [[__repr__]] و [[__eq__]] بإيدك، وكل ما تضيف خاصية تعدّل ٣ أماكن. و [[frozen]] بيمنع نوع كامل من الـ bugs: حد عدّل object مشترك من مكان تاني.`,
             how: R`الـ decorator بيقرا الـ annotations في جسم الـ class ويولّد الـ methods. والترتيب مهم: خاصية ليها default مينفعش ييجي بعدها خاصية من غير default. و [[kw_only=True]] بيخلي كل الباراميترات بالاسم ويحل المشكلة دي.
@@ -1189,6 +1535,76 @@ Money(amount='oops', currency='EGP')
 
 ---
 
+## ٦. [[__post_init__]] و [[kw_only]] و [[order]] و [[field(...)]]
+
+~~~python
+from dataclasses import dataclass, field, fields, KW_ONLY
+@dataclass(order=True, kw_only=True)
+class Ticket:
+    priority: int
+    title: str = field(compare=False)
+    token: str = field(default="", repr=False, compare=False)
+    def __post_init__(self):
+        if not 1 <= self.priority <= 5:
+            raise ValueError(f"priority 1..5, got {self.priority}")
+        self.title = self.title.strip()
+t1 = Ticket(priority=3, title="  login broken ", token="s3cret")
+t2 = Ticket(priority=1, title="typo")
+print(t1)
+print(sorted([t1, t2]))
+print(t1 == Ticket(priority=3, title="other"))
+print([f.name for f in fields(Ticket)])
+Ticket(3, "x")
+~~~
+
+~~~text الناتج (Python 3.14)
+Ticket(priority=3, title='login broken')
+[Ticket(priority=1, title='typo'), Ticket(priority=3, title='login broken')]
+True
+['priority', 'title', 'token']
+TypeError: Ticket.__init__() takes 1 positional argument but 3 were given
+~~~
+
+| الإعداد | بيعمل إيه | ليه |
+|---|---|---|
+| [[__post_init__]] | method بيناديها [[__init__]] المتولّد بعد ما يملا الخانات | فحص قواعد ([[priority 1..5, got 9]] اتجرّبت) وتنضيف قيم ([[strip]]) من غير ما تكتب [[__init__]] بإيدك |
+| [[order=True]] | بيولّد [[<]] و [[<=]] و [[>]] و [[>=]] بمقارنة الخانات بالترتيب | [[sorted(tickets)]] تشتغل، والأولوية الأقل الأول |
+| [[kw_only=True]] | كل الباراميترات لازم بالاسم | [[Ticket(3, "x")]] بترمي، فمحدش يبدّل الخانات بالغلط، وكمان بيلغي قاعدة «من غير default قبل اللي ليه default» |
+| [[field(compare=False)]] | الخانة دي مش داخلة في [[==]] ولا الترتيب | العنوان مختلف والتذكرتين متساويين في الأولوية فـ [[True]] |
+| [[field(repr=False)]] | مش بتظهر في الطباعة | التوكن [[s3cret]] مظهرش في [[print(t1)]] ولا هيظهر في اللوج |
+| [[fields(Ticket)]] | لستة الخانات بأسمائها وأنواعها | تبني بيها CSV header أو form من غير ما تكتب الأسامي تاني |
+| [[_: KW_ONLY]] | الخانات اللي بعد السطر ده بس بالاسم | [[Point(1, label="a")]]: الأولى بالمكان والباقي بالاسم |
+
+- [[__post_init__]] بيتنادى بعد [[__init__]] على طول. ومع [[frozen=True]] مينفعش تكتب [[self.title = ...]] جواها؛ استخدم [[object.__setattr__(self, "title", ...)]].
+- [[repr=False]] مش أمان كامل: [[asdict]] لسه بيطلّع التوكن. هو بس بيقفل أشهر طريق للتسريب (الطباعة واللوج).
+
+---
+
+## ٧. جدول المقارنة: dataclass ولا NamedTuple ولا TypedDict ولا dict
+
+قيست ١٠٠ ألف object من كل نوع (خانتين أرقام) بـ [[tracemalloc]]، والإنشاء بـ [[timeit]] (أحسن ٥ مرات):
+
+~~~text اتشغّل فعلًا (Python 3.14، ويندوز ١١)
+dict              21.4 MB    108 ns
+TypedDict         21.3 MB    232 ns
+dataclass         12.2 MB    140 ns
+dataclass slots    8.4 MB    134 ns
+NamedTuple        10.7 MB    242 ns
+tuple              9.9 MB     56 ns
+~~~
+
+| النوع | بيتعدّل؟ | فحص أنواع وقت التشغيل | استخدمه لـ |
+|---|---|---|---|
+| [[@dataclass]] | أيوه (إلا مع [[frozen]]) | لأ | داتا داخلية فيها سلوك ([[methods]])، والأكتر استخدامًا |
+| [[@dataclass(slots=True)]] | أيوه | لأ | نفس اللي فوق لما عندك ملايين objects: أقل ذاكرة في الجدول |
+| [[NamedTuple]] | لأ | لأ | نتيجة دالة فيها كذا قيمة وعايز تفكها [[x, y = p]]، وبتتقارن وتترتب زي tuple |
+| [[TypedDict]] | أيوه | لأ | **شكل** dict لـ mypy بس؛ وقت التشغيل هو [[dict]] عادي ([[type(T(x=1, y=2))]] بتطلع [[<class 'dict'>]]) |
+| Pydantic [[BaseModel]] | أيوه | **أيوه** | أي داتا جاية من برّه: request أو ملف أو env (وحدة Pydantic v2) |
+
+- اللي يلفت النظر: الـ [[dict]] العادي أخد أكتر ذاكرة من الـ dataclass، لأن objects الـ class الواحد بتتشارك جدول المفاتيح (key-sharing) والـ dicts المنفصلة لأ.
+- [[TypedDict]] أبطأ من [[dict]] في الإنشاء رغم إنه dict، لأن [[T(x=..)]] نداء لـ class بدل literal [[{...}]].
+- الأرقام دي على جهازي؛ قيسها على جهازك (تمرين تحت). الفرق في النانوثانية مش هيفرق في API بيستنى داتابيز ٥ ملي ثانية؛ الفرق في الذاكرة بيفرق لما بتحمّل ملايين صفوف.
+
 ## الخلاصة
 
 | عايز | اكتب |
@@ -1204,26 +1620,26 @@ Money(amount='oops', currency='EGP')
 - الـ dataclass بيولّد [[__init__]] و [[__repr__]] و [[__eq__]]، ومبيفحصش الأنواع.
 - للداتا اللي جاية من برّه (request، ملف إعدادات): Pydantic.`,
           lines: [
-            "أدوات الـ dataclass.",
-            R`الوقت، و [[UTC]] (3.11+).`,
-            "مبيتعدلش، وأخف في الذاكرة.",
-            "class للفلوس.",
-            "المبلغ بالقروش كـ int: مفيش مشاكل float.",
-            "خاصية ليها default.",
-            "dataclass عادي بيتعدّل.",
-            "عربية مشتريات.",
-            "إجباري.",
-            "list جديدة لكل عربية.",
-            "الوقت بيتحسب وقت إنشاء كل object، مش وقت تعريف الـ class.",
-            R`[[__init__]] اتولّد لوحده.`,
-            R`و [[__repr__]] كمان.`,
-            R`و [[__eq__]]: بيقارن القيم مش الهوية.`,
-            R`[[frozen]] منع التعديل.`,
-            "التعديل بنسخة جديدة.",
-            "عربية جديدة، و items فاضية.",
-            "الـ list بتاعتها لوحدها.",
-            "حوّلها dict.",
-            "مفيش فحص وقت التشغيل: الفحص ده شغل Pydantic."
+            R`[[dataclass]] الـ decorator نفسه، و [[field]] لإعدادات خانة واحدة (زي default بيتعمل جديد لكل object)، و [[asdict]] بتحوّل الـ object لـ dict (عشان JSON مثلًا)، و [[replace]] بتعمل نسخة بقيم متغيّرة من غير ما تلمس الأصل.`,
+            R`[[datetime]] نوع التاريخ والوقت، و [[UTC]] (اختصار لـ [[timezone.utc]]، موجود من 3.11) المنطقة الزمنية العالمية. بنستخدمها عشان وقت الإنشاء يتخزن aware بالتوقيت العالمي مش بساعة السيرفر (درس datetime و zoneinfo).`,
+            R`[[frozen=True]] بيخلي أي كتابة على خانة بعد الإنشاء ترمي [[FrozenInstanceError]]، وبيولّد [[__hash__]] فالـ object ينفع مفتاح في dict. و [[slots=True]] (3.10+) بيخزّن الخانات من غير [[__dict__]]: ذاكرة أقل (اتقاست في قسم «جدول المقارنة»)، وغلطة إملائية في اسم خانة بتطلع error بدل خانة جديدة.`,
+            R`[[class Money:]] class عادي، والـ decorator اللي فوقه هو اللي بيكتب [[__init__]] و [[__repr__]] و [[__eq__]] من الخانات اللي تحت. مفيش وراثة من حاجة.`,
+            R`[[amount: int]] مش متغير، ده annotation (اسم ونوع) من غير قيمة. الـ dataclass بيقرا الـ annotations بالترتيب ويعمل منها باراميترات [[__init__]]؛ ولأنها من غير default، [[amount]] إجباري. وبالقروش كـ [[int]] عشان مفيش كسور [[float]].`,
+            R`[[currency: str = "EGP"]] خانة ليها default، فـ [[Money(15000)]] بتكفي. ولازم تيجي **بعد** الخانات اللي من غير default، وإلا [[TypeError: non-default argument ... follows default argument]] (أو استخدم [[kw_only=True]]، قسم الإعدادات في الشرح).`,
+            R`[[@dataclass(slots=True)]] من غير [[frozen]]: الـ object بيتعدّل عادي ([[cart.user_id = 9]] شغالة)، لأن العربية بطبيعتها بتتغير. وفي المقابل مفيش [[__hash__]]، فمينفعش تتحط في set.`,
+            R`[[Cart]] عربية مشتريات: رقم اليوزر، وليستة أصناف، ووقت إنشاء. مثال لداتا داخلية بتتعدل، عكس [[Money]] القيمة الثابتة.`,
+            R`[[user_id: int]] إجباري (ملوش default)، فـ [[Cart()]] من غيره بترمي [[TypeError: Cart.__init__() missing 1 required positional argument: 'user_id']].`,
+            R`[[field(default_factory=list)]]: [[list]] **دالة** بتتنادى مع كل object جديد وترجّع [[[]]] جديدة. من غيرها [[items: list[str] = []]] الـ dataclass بيرفضها أصلًا بـ [[ValueError: mutable default ... use default_factory]]، عشان كل العربيات كانت هتشارك نفس الليستة.`,
+            R`[[default_factory=lambda: datetime.now(UTC)]] دالة صغيرة من غير اسم بتتنادى وقت إنشاء **كل** عربية، فكل واحدة ليها وقتها. لو كتبت [[= datetime.now(UTC)]] على طول، الوقت كان هيتحسب مرة واحدة وقت تعريف الـ class وكل العربيات تاخد نفس اللحظة.`,
+            R`[[Money(15000)]] بينادي الـ [[__init__]] اللي الـ decorator ولّده: [[amount=15000]] و [[currency]] بالـ default. مكتبناش ولا سطر [[self.amount = amount]].`,
+            R`[[print]] بيستخدم الـ [[__repr__]] المتولّد: [[Money(amount=15000, currency='EGP')]]، اسم كل خانة وقيمتها. ده لوحده سبب كفاية تستخدم dataclass بدل class عادي بيطبع [[<__main__.Money object at 0x...>]].`,
+            R`[[__eq__]] المتولّد بيقارن الخانات كـ tuple بالترتيب، مش الهوية: اتنين معمولين لوحدهم بنفس القيمة = [[True]]. وبيرجّع [[NotImplemented]] لو النوع مختلف، فـ [[Money(1) == 1]] بـ [[False]] من غير error.`,
+            R`الكتابة على object [[frozen]] بترمي [[dataclasses.FrozenInstanceError: cannot assign to field 'amount']] (نص 3.14). السطر ده بيوقّف السكربت لو شغّلته كملف، فجرّبه في الـ REPL أو جوه [[try]].`,
+            R`[[replace(price, amount=12000)]] بترجّع [[Money]] **جديدة** بالمبلغ الجديد ونفس العملة، و [[price]] زي ما هي. ده الطريق «الصح» لتعديل frozen object: نسخة جديدة. (ومن 3.13 فيه [[copy.replace]] بيشتغل على أنواع تانية كمان.)`,
+            R`[[Cart(user_id=7)]] بالاسم (ينفع بالمكان كمان). [[items]] اتعملت [[[]]] جديدة من الـ factory، و [[created_at]] اتحسب دلوقتي.`,
+            R`[[append]] بيعدّل ليستة العربية دي بس. لو عملت [[Cart(8)]] بعدها، الـ items بتاعتها فاضية، لأن كل عربية خدت list من نداء مستقل لـ [[list()]].`,
+            R`[[asdict(cart)]] بتحوّل الـ object لـ dict، وبتنزل جوه أي dataclass متداخلة وأي list أو dict وتعمل **نسخ** منها (deep copy)، فتعديل الـ dict الناتج مبيغيّرش العربية. الناتج [[{'user_id': 7, 'items': ['tea'], 'created_at': datetime.datetime(...)}]]، والـ datetime محتاج [[default=str]] لو هتعمل [[json.dumps]].`,
+            R`[[Money("oops")]] بيعدّي من غير أي error ويطبع [[Money(amount='oops', currency='EGP')]]: الـ annotations للمحرر و mypy بس، و Python وقت التشغيل مبيفحصش الأنواع. لو عايز فحص: [[__post_init__]] بإيدك (قسم الإعدادات)، أو Pydantic للداتا اللي جاية من برّه.`,
           ],
           sol: R`مع [[items: list[str] = []]] الـ class مش هيتعرّف أصلًا: [[ValueError: mutable default <class 'list'> for field items is not allowed: use default_factory]]. الـ dataclass بيمنعها عشان كل الـ carts هتشارك نفس الـ list (نفس غلطة الـ default المتغير في الدوال)، و [[default_factory=list]] بيعمل list جديدة لكل object.
 
@@ -1289,6 +1705,14 @@ print(can_move(OrderStatus.SHIPPED, OrderStatus.CANCELLED))
 print(can_move(OrderStatus("paid"), OrderStatus("shipped")))
 assert set(ALLOWED) == set(OrderStatus), "كل حالة لازم يبقى ليها سطر"`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** من غير ما تبص، اكتب الفرق بين [[OrderStatus("paid")]] و [[OrderStatus["PAID"]]]، وإيه اللي كل واحد بيرميه لو غلط، وأنهي نوع Enum بيطلع JSON من غير [[.value]].`, done: R`كاتب: الأول بالقيمة وبيرمي [[ValueError]]، والتاني بالاسم وبيرمي [[KeyError]]، و [[StrEnum]] و [[IntEnum]] و [[IntFlag]] بيتحوّلوا JSON، وجرّبت الأربعة في الـ REPL.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[class Role(Enum): ADMIN = "admin"; USER = "user"; MEMBER = "user"]]. إيه ناتج [[len(list(Role))]] و [[Role.MEMBER]] و [[Role("user")]] و [[Role.ADMIN == "admin"]]؟`, done: R`توقعت [[2]] و [[Role.USER]] و [[Role.USER]] و [[False]]، وشغّلتهم وطابقوا، وتقدر تقول إن [[MEMBER]] alias وإن [[@unique]] كانت هتمسكه.` },
+            { lvl: 'تطبيق', t: R`**صلّح:** الكود ده [[if order["status"] == "Shipped": notify()]] مبيبعتش إشعار أبدًا، والداتا فيها [["shipped"]]. حوّل الحالة لـ [[StrEnum]] واكتب [[parse_status(text)]] بتقبل الكابيتال والمسافات ([[" Shipped "]]) وترمي [[ValueError]] برسالة فيها القيم المسموحة لو غلط.`, done: R`[[parse_status(" Shipped ")]] بترجّع [[OrderStatus.SHIPPED]]، و [[parse_status("lost")]] رسالتها فيها [[pending, paid, shipped, cancelled]]، والمقارنة في الكود بقت [[is OrderStatus.SHIPPED]] من غير ولا string.` },
+            { lvl: 'تطبيق', t: R`**محاكاة:** آلة حالات لطلب بـ [[ALLOWED]] (dict من كل حالة لـ set الحالات اللي ينفع تروحلها، زي حل التجربة) و [[class Order]] فيها [[move(to)]] بتسجّل كل انتقال في [[history]] مع الوقت. شغّل ٣ سيناريوهات: طلب طبيعي لحد التسليم، وطلب اتلغى بعد الدفع، ومحاولة شحن طلب ملغي.`, done: R`السيناريو الأول [[history]] فيه ٤ انتقالات بالترتيب، والتاني بيخلص بـ [[cancelled]]، والتالت بيرمي [[ValueError]] فيها [[cancelled -> shipped]] والـ [[history]] متغيّرش، و [[assert set(ALLOWED) == set(OrderStatus)]] موجود.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[class Perm(Flag)]] فيها [[READ]] و [[WRITE]] و [[DELETE]] و [[ADMIN = READ | WRITE | DELETE]]، و [[ROLES = {"viewer": ..., "editor": ..., "admin": ...}]]، ودالة [[can(role, perm)]]. وبعدين خزّن صلاحيات يوزر كرقم ([[perm.value]]) وارجع اقراها ([[Perm(3)]]).`, done: R`[[can("editor", Perm.DELETE)]] بـ [[False]] و [[can("admin", Perm.DELETE)]] بـ [[True]]، و [[Perm(Perm.READ.value | Perm.WRITE.value)]] بترجع نفس صلاحيات الـ editor، و [[can("ghost", ...)]] بترمي [[KeyError]] برسالة واضحة.` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من وثائق [[enum]] الرسمية (أو [[help(enum)]]) لاقي إزاي تعمل Enum أعضاؤه tuples ([[EGP = ("EGP", "ج.م", 2)]]) وكل عضو ليه [[code]] و [[symbol]] و [[decimals]] كخانات، من غير dict جنبه. استخدمه في دالة [[fmt(cents, currency)]].`, done: R`[[Currency.EGP.symbol]] بترجّع [[ج.م]]، و [[fmt(123456, Currency.EGP)]] بترجّع [[1,234.56 ج.م]]، و [[Currency("EGP")]] شغالة بالكود لوحده. (مع [[__init__]] بس، القيمة بتفضل الـ tuple كله و [[Currency("EGP")]] بترمي؛ الحل [[__new__]] اللي بيحط [[_value_]] = الكود، وكاتب ده في تعليق.)` },
+          ],
           deep: {
             why: R`الـ status كـ string حر من أشهر مصادر الـ bugs: [["Paid"]] و [["paid"]] و [["PAID"]] في نفس القاعدة، و if بتقارن بقيمة اتكتبت غلط. والـ Enum بيجمع الاختيارات في مكان واحد. وفي FastAPI، باراميتر نوعه Enum بيتفحص لوحده (أي قيمة تانية 422) وبيظهر كـ dropdown في [[/docs]]، ونفس الكلام في Pydantic.`,
             how: R`كل عضو في الـ Enum object واحد بس (singleton): [[OrderStatus("shipped") is OrderStatus.SHIPPED]] True، وليه [[.name]] (الاسم) و [[.value]] (القيمة). و [[OrderStatus("lost")]] بيرمي [[ValueError]]، فده نفسه validation. والـ Enum بيتلف عليه بالترتيب اللي اتكتب بيه.
@@ -1499,6 +1923,85 @@ True
 
 ---
 
+## ٩. methods و properties على الـ Enum
+
+الـ Enum class عادي، فتقدر تحط فيه سلوك يخص الحالة بدل ما تبعتره [[if]] في كل حتة:
+
+~~~python
+import json
+from enum import Enum, StrEnum, IntFlag, unique, auto
+class Status(StrEnum):
+    PENDING = auto()
+    PAID = auto()
+    SHIPPED = auto()
+    @property
+    def label(self) -> str:
+        return {"pending": "مستني الدفع", "paid": "اتدفع", "shipped": "اتشحن"}[self.value]
+    def can_cancel(self) -> bool:
+        return self in (Status.PENDING, Status.PAID)
+print(Status.PAID.label, Status.SHIPPED.can_cancel())
+print(json.dumps({"status": Status.PAID}))
+print(Status["PAID"])
+Status["paid"]
+~~~
+
+~~~text الناتج (Python 3.14)
+اتدفع False
+{"status": "paid"}
+paid
+KeyError: 'paid'
+~~~
+
+- [[label]] و [[can_cancel]] بيتعرّفوا جوه الـ class زي أي class، بس **مش** بيبقوا أعضاء (الـ methods والـ properties بتتساب). فـ [[list(Status)]] لسه ٣ أعضاء.
+- [[Status["PAID"]]] بالاسم الكبير، و [[Status["paid"]]] بالقيمة بترمي [[KeyError]]. لو الداتا جاية بالقيمة استخدم [[Status("paid")]].
+
+---
+
+## ١٠. aliases و [[@unique]]
+
+~~~python
+class Size(Enum):
+    S = 1
+    SMALL = 1
+print(Size.SMALL, Size.SMALL is Size.S, list(Size))
+@unique
+class Size2(Enum):
+    S = 1
+    SMALL = 1
+~~~
+
+~~~text الناتج
+Size.S True [<Size.S: 1>]
+ValueError: duplicate values found in <enum 'Size2'>: SMALL -> S
+~~~
+
+- قيمتين زي بعض = العضو التاني **alias** (اسم تاني) للأول، مش عضو جديد: [[Size.SMALL]] بتطبع [[Size.S]]، واللفة بتجيب عضو واحد. ممكن يكون ده المقصود (اسم قديم لسه شغال)، وممكن تكون غلطة نسخ ولصق.
+- [[@unique]] بيرفض أي قيمة متكررة وقت تعريف الـ class. حطه على أي Enum القيم فيه بتتخزن في داتابيز.
+
+---
+
+## ١١. [[IntFlag]]: صلاحيات زي [[chmod]]
+
+~~~python
+class P(IntFlag):
+    R = 4; W = 2; X = 1
+print(P(6), P.R | P.W == 6, int(P.R | P.X))
+~~~
+
+~~~text الناتج
+6 True 5
+~~~
+
+[[IntFlag]] زي [[Flag]] بس الأعضاء أرقام فعلًا، فبيتقارن بالأرقام ويتطبع كرقم ([[P(6)]] طبعت [[6]] مش [[P.R|W]]). مناسب لما الرقم نفسه بروتوكول (صلاحيات ملفات لينكس: [[rw-]] = ٦). و [[Flag]] العادي أأمن لو مش محتاج تقارن بأرقام.
+
+| النوع | العضو بيساوي قيمته؟ | JSON من غير [[.value]] | استخدمه لـ |
+|---|---|---|---|
+| [[Enum]] | لأ | لأ، [[TypeError]] | قيم داخلية مش عايز حد يقارنها بـ string |
+| [[StrEnum]] | أيوه | أيوه | حالات بتتخزن وبتتبعت في API (الأكتر استخدامًا) |
+| [[IntEnum]] | أيوه | أيوه (رقم) | أولويات ومستويات ليها ترتيب |
+| [[Flag]] | لأ | لأ | صلاحيات وخيارات بتتجمع |
+| [[IntFlag]] | أيوه | أيوه (رقم) | نفس [[Flag]] بس الرقم نفسه ليه معنى برّه |
+
 ## الخلاصة
 
 | النوع | الأعضاء | بيساوي قيمته؟ | الاستخدام |
@@ -1512,35 +2015,35 @@ True
 - [[.name]] الاسم و [[.value]] القيمة، وكل عضو موجود مرة واحدة ([[is]]).
 - جوه [[match]] اكتب [[OrderStatus.PAID]] بالنقطة، مش [[PAID]].`,
           lines: [
-            "أنواع الـ Enum.",
-            R`[[StrEnum]]: الأعضاء strings.`,
-            R`[[auto()]] بيدّي "pending".`,
-            "و paid.",
-            "و shipped.",
-            "و cancelled.",
-            "بيطبع كقيمته، وبيتساوى مع الـ string.",
-            R`من string لـ Enum: ده اللي بتعمله مع داتا جاية من برّه.`,
-            R`الاسم والقيمة، وعضو واحد بس ([[is]]).`,
-            "لف على كل الأعضاء بالترتيب.",
-            "Enum بأرقام.",
-            "قيمة.",
-            "قيمة.",
-            R`بيتقارن كأرقام، و [[Priority(3)]] بيرجع العضو.`,
-            "صلاحيات بتتجمع.",
-            "bit.",
-            "bit.",
-            "bit.",
-            R`[[|]]: قراية وكتابة.`,
-            R`[[in]]: الصلاحية موجودة؟`,
-            R`[[Enum]] عادي.`,
-            "قيمة.",
-            R`مش بيتساوى مع قيمته، و [[Color("#f00")]] بيرجع العضو.`,
-            "match على Enum.",
-            "الاسم فيه نقطة: مقارنة، مش capture.",
-            "جوه الـ case.",
-            "حالة تانية.",
-            "جوه الـ case.",
-            R`قيمة مش موجودة: [[ValueError]]. ده validation ببلاش.`
+            R`بنستورد ٤ أنواع: [[Enum]] الأساسي (العضو مش بيساوي قيمته)، و [[StrEnum]] (3.11+، الأعضاء strings فعلًا)، و [[IntEnum]] (الأعضاء أرقام وبتتقارن كأرقام)، و [[Flag]] (أعضاء بتتجمع بـ [[|]] زي الصلاحيات). و [[auto()]] بتختار القيمة لوحدها بدل ما تكتبها.`,
+            R`[[class OrderStatus(StrEnum):]] بيعرّف مجموعة حالات الطلب. الوراثة من [[StrEnum]] معناها إن كل عضو **هو** string ([[isinstance(OrderStatus.PAID, str)]] بـ [[True]])، فبيتخزن في الداتابيز وبيتحوّل JSON من غير [[.value]].`,
+            R`[[PENDING = auto()]]: في [[StrEnum]]، [[auto()]] بتدّي القيمة اسم العضو بحروف صغيرة، يعني [["pending"]]. الاسم الكبير ([[PENDING]]) للكود، والقيمة الصغيرة للداتا اللي برّه. والأعضاء ثوابت: [[OrderStatus.PENDING = "x"]] بترمي [[AttributeError: cannot reassign member 'PENDING']].`,
+            R`[[PAID]] قيمته [["paid"]]. كل عضو بيتعمل **مرة واحدة** وقت تعريف الـ class، فأي [[OrderStatus.PAID]] في أي حتة في البرنامج هو نفس الـ object، وتقدر تقارن بـ [[is]].`,
+            R`[[SHIPPED]] قيمته [["shipped"]]. لو حد كتب [[OrderStatus.SHIPED]] (غلطة إملائية) هتطلع [[AttributeError]] فورًا، وده الفرق عن string سايب [["shiped"]] اللي كان هيعدّي في صمت ومحدش يلاقي الطلب.`,
+            R`[[CANCELLED]] قيمته [["cancelled"]]. الترتيب اللي بتكتب بيه الأعضاء هو ترتيب اللفة عليهم ([[for st in OrderStatus]])، فاكتبهم بترتيب منطقي (ترتيب مراحل الطلب).`,
+            R`[[print(OrderStatus.PAID)]] بيطبع القيمة [[paid]] (في [[StrEnum]] الـ str هو القيمة)، و [[== "paid"]] بـ [[True]] لأنه string. فبيشتغل مع كود قديم بيقارن بـ strings. الناتج [[paid True]].`,
+            R`[[OrderStatus("shipped")]]: نداء الـ class **بقيمة** بيرجّع العضو. ده اللي بتعمله مع قيمة جاية من request أو صف في الداتابيز، وبيرمي [[ValueError]] لو القيمة مش من الاختيارات (آخر سطر).`,
+            R`[[.name]] الاسم في الكود ([[SHIPPED]])، و [[.value]] القيمة ([[shipped]])، و [[is]] بيأكد إن [[OrderStatus("shipped")]] رجّع **نفس** العضو مش نسخة. الناتج [[SHIPPED shipped True]].`,
+            R`اللفة على الـ class نفسه بتجيب كل الأعضاء بترتيب التعريف: [[['pending', 'paid', 'shipped', 'cancelled']]]. مفيدة لـ dropdown في الواجهة أو رسالة خطأ فيها «القيم المسموحة».`,
+            R`[[class Priority(IntEnum):]] أعضاؤه أرقام فعلًا ([[Priority.HIGH + 1]] بـ [[4]])، فبيتقارن ويترتب كأرقام. مناسب لما الترتيب نفسه له معنى (أولوية، مستوى)، ومش مناسب لحالات ملهاش ترتيب.`,
+            R`[[LOW = 1]] قيمة مكتوبة بإيدك بدل [[auto()]]، لأن الرقم نفسه مهم (بيتخزن في الداتابيز أو بيتبعت لنظام تاني). لو استخدمت [[auto()]] الأرقام هتبقى ١ و ٢ بالترتيب، وأي إعادة ترتيب هتغيّرها.`,
+            R`[[HIGH = 3]]: سبنا [[2]] فاضية قصد عشان لو احتجنا [[MEDIUM]] بعدين نحطها في النص من غير ما نغيّر قيم موجودة في داتا قديمة.`,
+            R`[[Priority.HIGH > Priority.LOW]] مقارنة أرقام = [[True]]، و [[Priority(3)]] بيرجّع العضو اللي قيمته ٣ و [[.name]] بتاعه [[HIGH]]. الناتج [[True HIGH]].`,
+            R`[[class Perm(Flag):]] للحاجات اللي بتتجمع: يوزر ممكن يبقى معاه قراية **و** كتابة في نفس الوقت. كل عضو bit لوحده في رقم، والتجميع بـ [[|]] (OR) بيعمل قيمة فيها كذا bit.`,
+            R`[[READ = auto()]]: في [[Flag]]، [[auto()]] بتدّي قوى ٢ بالترتيب: [[READ]] بـ [[1]] (binary [[001]])، عشان كل عضو ياخد bit مختلف ومفيش اتنين يتلخبطوا لما يتجمعوا.`,
+            R`[[WRITE]] بـ [[2]] (binary [[010]]). لو كتبت القيم بإيدك واديت اتنين نفس الـ bit، [[READ | WRITE]] هتبقى نفس [[READ]] من غير ما تاخد بالك.`,
+            R`[[DELETE]] بـ [[4]] (binary [[100]]). فـ [[READ | WRITE | DELETE]] = [[7]] = كل الصلاحيات.`,
+            R`[[Perm.READ | Perm.WRITE]] بيعمل قيمة واحدة فيها الصلاحيتين ([[3]])، وبتتطبع [[Perm.READ|WRITE]]. بتتخزن كرقم واحد في عمود في الداتابيز بدل جدول صلاحيات.`,
+            R`[[in]] مع [[Flag]] بتسأل «الـ bit ده موجود في التجميعة؟»: [[WRITE]] موجود و [[DELETE]] لأ. الناتج [[True False]]. ده أوضح من [[editor & Perm.DELETE]].`,
+            R`[[class Color(Enum):]] [[Enum]] العادي: العضو object مختلف عن قيمته (مش وارث من [[str]] ولا [[int]]). مناسب لما القيمة تفصيلة داخلية ومش عايز حد يقارن بيها مباشرة.`,
+            R`[[RED = "#f00"]]: القيمة كود لون. لازم [[Color.RED.value]] عشان توصله، و [[json.dumps({"c": Color.RED})]] بترمي [[TypeError: Object of type Color is not JSON serializable]] (اتجرّبت).`,
+            R`[[Color.RED == "#f00"]] بـ [[False]]: [[Enum]] العادي مش بيساوي قيمته، ودي أشهر لخبطة لما تنقل من string لـ Enum. و [[Color("#f00")]] بيرجّع العضو، وبيتطبع [[Color.RED]]. الناتج [[False Color.RED]].`,
+            R`[[match s:]] على Enum (درس match و case): بيقارن [[s]] بكل [[case]] بالترتيب، وأول واحدة تطابق بتتنفّذ والباقي بيتساب.`,
+            R`[[OrderStatus.SHIPPED]] فيه نقطة، فـ match بيعامله كقيمة **بيقارن بيها** (value pattern). لو كتبت اسم من غير نقطة ([[case SHIPPED:]])، كان هيبقى متغير بيلقط أي قيمة (capture). و [[|]] هنا معناها «أو».`,
+            R`بيطبع [[اتدفع]] لأن [[s]] = [[SHIPPED]] وهي من الاتنين اللي في الـ case. وبعد أول تطابق match بيخرج.`,
+            R`[[case OrderStatus.CANCELLED:]] حالة تانية مش هتتنفّذ هنا. ولو عايز تمسك أي حالة ناقصة، ضيف [[case _:]] في الآخر بترمي error، عشان لما حد يزوّد حالة جديدة ينكشف.`,
+            R`كان هيطبع [[اتلغى]] لو الطلب ملغي. مفيش fall-through زي [[switch]] في لغات تانية، فمش محتاج [[break]].`,
+            R`[[OrderStatus("lost")]] قيمة مش من الاختيارات بترمي [[ValueError: 'lost' is not a valid OrderStatus]]. ده validation ببلاش للداتا اللي جاية من برّه، و FastAPI بيحوّلها لرد 422 لوحده لو الباراميتر نوعه Enum.`,
           ]
         },
         {
@@ -1606,6 +2109,14 @@ print(is_expired(deadline, FixedClock(datetime(2026, 9, 30, 23, 59, 59, tzinfo=U
 print(is_expired(deadline, FixedClock(deadline)))
 print(is_expired(deadline, SystemClock()))`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** من الذاكرة املا جدول ٤ صفوف للـ [[ABC]] و [[Protocol]]: لازم وراثة؟ مين بيفحص وإمتى؟ فيه كود مشترك؟ مثال من الشغل لكل واحد.`, done: R`الجدول بيقول: ABC وراثة وفحص من Python وقت إنشاء الـ object وفيه كود مشترك، و Protocol من غير وراثة والفحص من mypy قبل التشغيل وشكل بس، ومثالين حقيقيين (Storage و Sender مثلًا).` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[class Base(ABC)]] فيها [[@abstractmethod def a(self)]] و [[@abstractmethod def b(self)]]، و [[class Half(Base)]] كاتبة [[a]] بس. توقّع: [[Half()]] بيعمل إيه؟ ورسالته بالظبط؟ وإيه اللي بيحصل لو [[class Base]] من غير [[(ABC)]]؟`, done: R`[[Half()]] بترمي [[TypeError]] فيها [[abstract method 'b']]، ومن غير [[ABC]] الـ object بيتعمل عادي ومفيش أي فحص (جرّبت الاتنين).` },
+            { lvl: 'تطبيق', t: R`**صلّح:** [[class SmsSender]] فيها [[def send(self, phone: str) -> None]] (باراميتر واحد)، واتبعتت لـ [[notify_shipped]]. شغّل الكود: بيشتغل ولا لأ؟ وبعدين شغّل [[mypy]] عليه، وصلّح الـ signature.`, done: R`وقت التشغيل بيرمي [[TypeError: SmsSender.send() takes 2 positional arguments but 3 were given]] بس لما النداء يحصل، و mypy قبل التشغيل طلّع [[incompatible type "SmsSender"; expected "Sender"]]، وبعد التصليح mypy بيقول [[Success]].` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[DiskStorage(Storage)]] بتكتب كل key كملف جوه فولدر بـ [[pathlib]] ([[write_bytes]])، وزوّد على [[Storage]] abstract method [[load(key) -> bytes]] وكمّلها في الاتنين. ارفض أي key فيه [[..]] أو [[/]] بـ [[ValueError]].`, done: R`[[save_text("a.txt", "أهلًا")]] ثم [[load("a.txt").decode()]] بيرجّع [[أهلًا]] في الاتنين، و [[MemoryStorage]] القديمة من غير [[load]] بقت ترمي [[TypeError]] عند الإنشاء (وده المقصود)، و [[save("../x", b"")]] بترمي ومفيش ملف اتعمل برّه الفولدر.` },
+            { lvl: 'تطبيق', t: R`**اكتب اختبار:** لـ [[notify_shipped]]، اكتب ٣ اختبارات pytest بـ [[FakeSender]]: الرسالة اتبعتت مرة واحدة، وللعنوان الصح، وبالنص الصح. ومن غير ما تستخدم [[unittest.mock]].`, done: R`[[pytest -q]] بيقول [[3 passed]]، ومفيش ولا [[print]] اتطبع (الإيميل الحقيقي متناداش)، ولو غيّرت النص في [[notify_shipped]] اختبار واحد بس بيقع.` },
+            { lvl: 'تحدي', t: R`**مسألة Generics:** [[class Page[T]]] dataclass فيها [[items: list[T]]] و [[total]] و [[page]] و [[size]]، و [[paginate[T](items: list[T], page: int, size: int) -> Page[T]]]. حالات طرفية: صفحة بعد الآخر، وصفحة صفر أو سالبة، و size صفر.`, done: R`[[paginate(list(range(25)), 3, 10).items]] بـ [[[20, 21, 22, 23, 24]]]، والصفحة ٤ items فاضية و total لسه ٢٥، و page صفر أو size صفر بيرموا [[ValueError]]، و [[mypy --strict]] بيقول [[Success]] ونوع [[.items]] في المحرر [[list[int]]].` },
+          ],
           deep: {
             why: R`الكود اللي بيعتمد على شكل مش على class معين سهل تختبره (تبعت fake) وسهل تغيّر الـ implementation (S3 بدل ملفات محلية). وده نفس مبدأ الـ dependency injection اللي FastAPI مبني عليه ([[Depends]]، المستوى ٢)، ونفس اللي في تاب «هندسة البرمجيات».`,
             how: R`[[ABC]]: [[class Storage(ABC)]] و [[@abstractmethod]] على الـ methods الإجبارية. محاولة [[Storage()]] أو ابن ناقص method بترمي [[TypeError: Can't instantiate abstract class]] وقت التشغيل. والـ ABC ينفع يبقى فيه methods عادية مشتركة ([[save_text]] بتستخدم [[save]])، ودي ميزته.
@@ -1818,6 +2329,49 @@ clock_bad.py:10: error: Argument 2 to "is_expired" has incompatible type "FixedC
 
 ---
 
+## ٥. Generics: class واحد لكل الأنواع ([[class Repo[T]]])
+
+[[Repo]] بيخزّن منتجات، وبعدين محتاج واحد لليوزرز، وواحد للطلبات. بدل ٣ classes بنفس الكود، بتعمل class واحد **بنوع متغير** [[T]] (Python 3.12+):
+
+~~~python
+from typing import Protocol
+class Repo[T]:
+    def __init__(self) -> None:
+        self._items: dict[int, T] = {}
+    def add(self, id: int, item: T) -> None:
+        self._items[id] = item
+    def get(self, id: int) -> T | None:
+        return self._items.get(id)
+def first[T](items: list[T]) -> T:
+    return items[0]
+class HasPrice(Protocol):
+    price: float
+def cheapest[P: HasPrice](items: list[P]) -> P:
+    return min(items, key=lambda x: x.price)
+class Item:
+    def __init__(self, n, p): self.name, self.price = n, p
+r = Repo[str]()
+r.add(1, "tea")
+print(r.get(1), r.get(2), first([3, 4]), cheapest([Item("a", 5), Item("b", 2)]).name)
+print(Repo.__type_params__)
+~~~
+
+~~~text الناتج (Python 3.14)
+tea None 3 b
+(T,)
+~~~
+
+- [[class Repo[T]:]] الأقواس المربعة بعد الاسم بتعرّف «type parameter» اسمه [[T]]. جوه الـ class، [[T]] معناها «النوع اللي اليوزر هيختاره». و [[Repo[str]()]] بتقول «Repo للنصوص».
+- [[def first[T](items: list[T]) -> T]] نفس الفكرة على دالة: اللي داخل list من نوع، واللي راجع من **نفس** النوع. فـ mypy عارف إن [[first([3, 4])]] [[int]].
+- [[[P: HasPrice]]] = «أي نوع بشرط يطابق [[HasPrice]]» (bound). Protocol فيه **خانة** [[price]] مش method، وده شغال برضه.
+- وقت التشغيل مفيش فحص: [[Repo[str]().add(1, 5)]] بتعدّي. اللي بيمسكها mypy:
+
+~~~text الناتج: mypy 2.4 على x = Repo[str](); x.add(5)
+error: Argument 1 to "add" of "Repo" has incompatible type "int"; expected "str"  [arg-type]
+~~~
+
+- قبل 3.12 كنت بتكتب [[T = TypeVar("T")]] و [[class Repo(Generic[T]):]]. هتلاقيها في كود قديم ومكتبات كتير، ومعناها نفس الحاجة بالظبط.
+
 ## الخلاصة
 
 - [[ABC]] + [[@abstractmethod]]: لازم ترث، و Python بيرفض الـ object الناقص وقت التشغيل، وتقدر تحط كود مشترك.
@@ -1825,40 +2379,40 @@ clock_bad.py:10: error: Argument 2 to "is_expired" has incompatible type "FixedC
 - [[@runtime_checkable]] بيخلّي [[isinstance]] تشتغل بس بتفحص الأسماء، مش الـ signatures.
 - الحاجات اللي بتتغير بين الإنتاج والاختبار (وقت، إرسال، تخزين) ابعتها كباراميتر نوعه Protocol.`,
           lines: [
-            "أدوات الـ ABC.",
-            "أدوات الـ Protocol.",
-            R`اسم لنوع (3.12+): الرسالة (لمين، النص).`,
-            "class أساسي abstract.",
-            "لازم أي ابن يكتبها.",
-            R`[[...]]: مفيش جسم.`,
-            "method عادية مشتركة بين الأبناء.",
-            "بتستخدم الـ abstract method.",
-            "ابن بيورث.",
-            "الـ init.",
-            "تخزين في الذاكرة.",
-            "كتب الـ method الإجبارية.",
-            "خزّن.",
-            "object من الابن: مسموح.",
-            "method من الأب بتنادي method الابن.",
-            "النص اتخزن bytes بـ UTF-8.",
-            R`عشان [[isinstance]] يشتغل مع الـ Protocol.`,
-            "Protocol: الشكل بس.",
-            "أي حاجة فيها send بالـ signature ده تطابق.",
-            "class عادي، مش وارث من Sender.",
-            "بس فيه send بنفس الشكل.",
-            "بيطبع.",
-            "fake للاختبار، برضه مش وارث.",
-            "الـ init.",
-            "بيحفظ اللي اتبعت بدل ما يبعته.",
-            "نفس الشكل.",
-            "سجّل.",
-            R`الدالة بتطلب [[Sender]]، مش class معين.`,
-            "بتنادي send وخلاص.",
-            "إيميل حقيقي.",
-            "fake.",
-            "نفس الدالة من غير أي تغيير.",
-            R`اللي اتبعت، و [[isinstance]] True بفضل runtime_checkable.`,
-            "abstract: TypeError."
+            R`[[ABC]] (Abstract Base Class) class بتورث منه عشان تقول «ده أساس مش معمول يتعمل منه object»، و [[abstractmethod]] decorator بيعلّم الـ methods اللي **لازم** كل ابن يكتبها. الاتنين من موديول [[abc]] في المكتبة القياسية.`,
+            R`[[Protocol]] من [[typing]] بيوصف «شكل» (methods بأنواعها) من غير وراثة، و [[runtime_checkable]] decorator بيخلي [[isinstance]] يشتغل معاه وقت التشغيل (فحص أسامي بس، تحت).`,
+            R`[[type Message = tuple[str, str]]] (Python 3.12+) بيدّي اسم لنوع: الرسالة tuple من نصين (لمين، النص). الاسم بيخلي الـ hints أقصر وأوضح (بتكتب [[list[Message]]] بدل ما تكرر الـ tuple كاملة) ومبيعملش أي حاجة وقت التشغيل.`,
+            R`[[class Storage(ABC):]] الأساس اللي كل أنواع التخزين (ميموري، ديسك، S3) بتورث منه. الوراثة من [[ABC]] هي اللي بتفعّل فحص الـ abstract methods؛ من غيرها [[@abstractmethod]] مبيعملش أي حاجة.`,
+            R`[[@abstractmethod]] على [[save]] معناها «أي ابن لازم يكتب [[save]] بتاعته». لو ابن نسيها، Python بيرفض يعمل object من الابن ده بـ [[TypeError]] ساعة الإنشاء، مش بعدين ساعة ما حد ينادي [[save]].`,
+            R`[[...]] (Ellipsis) مكان الجسم: «مفيش كود هنا، ده توصيف بس». الـ signature نفسه ([[key: str, data: bytes]] و [[-> None]]) هو العقد اللي الأبناء لازم يمشوا عليه.`,
+            R`[[save_text]] method **عادية** (مش abstract) جوه الـ ABC: كود مشترك كل الأبناء بياخدوه ببلاش. ده الفرق الأساسي عن [[Protocol]] اللي مفيهوش كود مشترك.`,
+            R`[[text.encode("utf-8")]] بيحوّل النص لـ bytes، وبعدين بينادي [[self.save]]، يعني الـ method اللي **الابن** كاتبها. الأب بيستخدم حاجة لسه متكتبتش، والابن هو اللي بيكمّلها (template method pattern).`,
+            R`[[class MemoryStorage(Storage):]] ابن بيخزّن في الذاكرة، مفيد في الاختبارات. لازم يكتب [[save]] عشان يبقى «concrete» (ينفع يتعمل منه object).`,
+            R`[[__init__]] بتاع الابن، و [[-> None]] لأن [[__init__]] دايمًا بترجّع [[None]]. الأب مفيهوش [[__init__]]، فمش محتاجين [[super().__init__()]] هنا.`,
+            R`[[self.files: dict[str, bytes] = {}]] dict من اسم الملف لمحتواه كـ bytes. الـ annotation على الخانة بتقول لـ mypy نوع المفاتيح والقيم، فلو حد حط [[str]] بدل [[bytes]] mypy هيعترض.`,
+            R`كتب [[save]] بنفس الـ signature بالظبط بتاع الأب. ده اللي بيشيل [[MemoryStorage]] من قايمة «abstract»، و [[MemoryStorage.__abstractmethods__]] بقت [[frozenset()]] فاضية.`,
+            R`[[self.files[key] = data]] بيخزّن المحتوى تحت الاسم، ولو الاسم موجود بيكتب فوقه. في تخزين حقيقي (ديسك أو S3) السطر ده كان هيبقى كتابة ملف.`,
+            R`[[MemoryStorage()]] شغال لأن كل الـ abstract methods اتكتبت. وده بيتحقق **وقت الإنشاء**: Python بيبص على [[__abstractmethods__]] وهو بيعمل الـ object.`,
+            R`[[save_text]] متعرّفة في الأب، بس جواها [[self.save]] بتنادي نسخة [[MemoryStorage]]، لأن [[self]] هو object الابن. النص العربي بيتحوّل لـ bytes بـ UTF-8.`,
+            R`بيطبع [[{'a.txt': b'\xd8\xa3...'}]]: [[b'...']] معناها bytes، وكل حرف عربي بقى ٢ bytes في UTF-8 (فـ «أهلًا» بقت ١٠ bytes)، و [[\x..]] الشكل اللي Python بيطبع بيه bytes مش ASCII.`,
+            R`[[@runtime_checkable]] من غيره [[isinstance(x, Sender)]] بترمي [[TypeError: Instance and class checks can only be used with @runtime_checkable protocols]]. ومعاه بيفحص إن الأسامي موجودة بس، مش الأنواع ولا عدد الباراميترات.`,
+            R`[[class Sender(Protocol):]] بيوصف أي حاجة «بتعرف تبعت رسالة». محدش لازم يورث منه؛ أي class فيه [[send]] بالشكل ده بيطابق (structural typing، زي interface في TypeScript أو Go).`,
+            R`الـ signature هو الشكل المطلوب: [[send(to: str, text: str) -> None]]. mypy بيقارن ده بالـ class اللي اتبعت، ولو الباراميترات أو الأنواع مختلفة بيطلّع [[incompatible type]].`,
+            R`[[EmailSender]] class عادي **مش** وارث من [[Sender]] ولا عارف إنه موجود. ده المهم: مكتبة خارجية أو كود قديم ممكن يطابق Protocol بتاعك من غير ما تلمسه.`,
+            R`[[send]] بنفس الأسامي والأنواع ونوع الرجوع، فـ mypy بيعتبره [[Sender]]. لو كان اسمها [[send_email]] أو بتاخد باراميتر واحد، mypy كان هيرفض النداء تحت.`,
+            R`بيطبع بدل ما يبعت فعلًا، عشان المثال يشتغل من غير سيرفر إيميل. في كود حقيقي هنا كان هيبقى [[smtplib]] أو API لخدمة إيميل.`,
+            R`[[FakeSender]] fake للاختبارات: نفس الشكل، بس بيحفظ اللي «اتبعت» بدل ما يبعته. ومش وارث من حاجة برضه.`,
+            R`[[__init__]] بيجهّز مكان يتسجّل فيه اللي اتبعت. مفيش باراميترات، فـ [[FakeSender()]] كفاية.`,
+            R`[[self.sent: list[Message] = []]] list فاضية من نوع [[Message]] اللي عرّفناه فوق. الاختبار بعدين يسأل [[fake.sent]] «اتبعت إيه ولمين؟» من غير ما يبعت حاجة حقيقية.`,
+            R`[[send]] بنفس الـ signature بالظبط بتاع [[Sender]]، وده كل اللي mypy محتاجه عشان يقبل [[FakeSender]] مكان [[Sender]].`,
+            R`[[append((to, text))]] بيضيف tuple (القوسين الجوانيين هما الـ tuple). بدل ما يطبع أو يبعت، بيسجّل عشان الاختبار يتأكد.`,
+            R`[[sender: Sender]] الدالة بتطلب **شكل** مش class معين، فهي مش مربوطة بالإيميل ولا بـ SMS. وده اللي بيخليها قابلة للاختبار من غير mock.`,
+            R`بتنادي [[sender.send]] وخلاص، من غير [[if isinstance(sender, EmailSender)]]. أي نوع جديد (SMS، واتساب) بيشتغل من غير ما تغيّر الدالة دي.`,
+            R`[[EmailSender()]] بيتبعت مكان [[Sender]] وبيطبع [[email to sara@example.com : طلبك اتشحن]]. (الـ [[:]] متطبعة بمسافات حواليها لأن [[print]] بيفصل بمسافة بين كل قيمة.)`,
+            R`[[FakeSender()]] object جديد [[sent]] بتاعه فاضي، هنبعته لنفس الدالة بالظبط.`,
+            R`نفس [[notify_shipped]] من غير ولا تغيير، بس المرة دي مفيش حاجة اتبعتت فعلًا؛ اتسجّلت في [[fake.sent]].`,
+            R`[[fake.sent]] بقت [[[('omar@example.com', 'طلبك اتشحن')]]]، و [[isinstance(fake, Sender)]] بـ [[True]] بفضل [[runtime_checkable]] (لأن فيه method اسمها [[send]]، مش لأنه فحص الأنواع).`,
+            R`[[Storage()]] مباشرة بيرمي [[TypeError: Can't instantiate abstract class Storage without an implementation for abstract method 'save']] (نص 3.12+). Python بيرفض يعمل object من class فيه abstract methods لسه مكتوبتش.`,
           ]
         }
       ]

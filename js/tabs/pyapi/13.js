@@ -3,6 +3,27 @@ MORE("pyapi", [
     {
       t: "Pydantic v2",
       l: 2,
+      time: R`حوالي ٥ ساعات`,
+      goal: [
+        R`توصف أي داتا داخلة أو طالعة بموديل Pydantic v2 بقيوده، وتقرا أخطاءه ([[type]] و [[loc]] و [[msg]]).`,
+        R`تحوّل بين موديل و dict و JSON في الاتجاهين ([[model_validate]] و [[model_dump]] و [[model_dump_json]])، ومن objects الـ ORM.`,
+        R`تكتب قواعدك انت: على حقل ([[field_validator]] و [[AfterValidator]])، وبين أكتر من حقل ([[model_validator]])، وتعرف الترتيب بيفرق إزاي.`,
+        R`تجمع إعدادات التطبيق في [[BaseSettings]] مفحوص، والأسرار في [[SecretStr]]، والتطبيق يقع وهو بيقوم لو حاجة ناقصة.`,
+      ],
+      use: {
+        prog: R`Pydantic هو الحتة اللي بتفحص في FastAPI، وبيتستخدم برّه كمان: قراية ملفات config، وردود API خارجية، ورسايل queue.`,
+        work: R`نص الباجات في الـ backend داتا شكلها غلط: سعر سالب، وتاريخ نهاية قبل البداية، ورقم موبايل بأرقام عربي. الموديل بيمسكها على الباب.`,
+        cs: R`الموديل «عقد» بين جزئين من السيستم. والـ JSON Schema اللي بيطلع منه هو نفس العقد بصيغة أي لغة تانية تفهمها (TypeScript و Go).`,
+      },
+      lab: R`cd shop-api && .venv/Scripts/activate && pip install pydantic-settings && python -c "import pydantic; print(pydantic.VERSION)"`,
+      projects: [
+        { lvl: 'صغير', t: R`فاحص ملف عملاء`, what: R`سكربت بيقرا [[customers.json]] (list عملاء) ويفحص كل واحد بموديل [[Customer]] من درس «BaseModel و Field»، ويطبع الصفوف الغلط برقمها وأول خطأ فيها.`, done: R`ملف فيه ١٠ عملاء منهم ٣ غلط (موبايل بأرقام عربي، واسم حرف واحد، و city ناقصة) بيطبع ٣ سطور بالظبط فيها رقم الصف والـ [[loc]] والـ [[msg]]، وكود الخروج 1 لو فيه غلط و 0 لو لأ.` },
+        { lvl: 'صغير', t: R`API بـ camelCase`, what: R`موديل رد [[OrderOut]] حقوله snake_case في Python ([[created_at]] و [[total_cents]]) وبيطلع camelCase للـ frontend بـ [[alias_generator=to_camel]]، وبيقبل الاتنين في الإدخال. من درس «model_dump و model_validate».`, done: R`الرد فيه [[createdAt]] و [[totalCents]]، و POST بـ [[{"totalCents": 500}]] و [[{"total_cents": 500}]] الاتنين بيعدّوا، و [[/docs]] بيعرض الأسماء الـ camelCase.` },
+        { lvl: 'متوسط', t: R`موديل حجز بقواعده`, what: R`[[BookingIn]] فيه [[email]] و [[start]] و [[end]] و [[guests]] و [[room]]: الإيميل بيتنضّف، والأرقام العربي في الموبايل بتتحوّل إنجليزي بـ [[BeforeValidator]]، و [[end]] بعد [[start]] بـ [[model_validator]] وبـ [[PydanticCustomError]] بنوع [[date_order]]، و [[nights]] حقل محسوب. ومعاه endpoint [[POST /bookings]].`, done: R`٨ اختبارات بتعدّي: حجز سليم بـ [[nights]] صح، وموبايل [[٠١٠١٢٣٤٥٦٧٨]] بيتقبل ويتخزن [[01012345678]]، وتواريخ مقلوبة بترجع 422 والـ [[type]] [[date_order]]، وتاريخ [[2026-02-30]] بيترفض، و [[nights]] اللي العميل بعتها بتتجاهل.` },
+        { lvl: 'متوسط', t: R`إعدادات لكل بيئة`, what: R`[[Settings]] بـ [[env_prefix="SHOP_"]] و [[env_nested_delimiter="__"]] وموديل [[Db]] جواه، و [[cors_origins]] بتتقري مفصولة بفاصلة، و [[jwt_secret: SecretStr]]. وملف [[.env.example]] فيه كل الأسماء من غير قيم، و [[get_settings()]] بتتنادى في الـ lifespan.`, done: R`من غير [[SHOP_JWT_SECRET]] التطبيق مبيقومش ورسالة الخطأ فيها اسم الحقل، و [[SHOP_DB__PORT=6543]] بيوصل [[settings.db.port == 6543]]، و [[print(settings)]] مبيطلعش السر، واختبار بيغيّر الإعدادات بـ [[dependency_overrides]] من غير ما يلمس [[.env]].` },
+        { lvl: 'كبير', t: R`مستورد طلبات من CSV`, what: R`endpoint [[POST /imports/orders]] بياخد CSV (من تاب Python: [[csv.DictReader]] على نص الـ body) ويفحص كل صف بموديل [[OrderRow]] بقواعده (تاريخ، وكمية موجبة، وسعر بالقروش int، وكود منتج بـ pattern)، ويرجّع تقرير: كام صف سليم، والصفوف الغلط برقم السطر واسم العمود والرسالة. والسليم بيتخزن في الذاكرة، والملف كله بيترفض لو الغلط أكتر من ١٠٪.`, done: R`ملف ١٠٠ صف فيه ٥ غلط بيرجّع 200 و [[{"ok": 95, "errors": [...]}]] فيها ٥ عناصر بأرقام السطور الحقيقية، وملف فيه ٢٠ غلط بيرجّع 422 ومفيش ولا صف اتخزّن، وملف فاضي أو أعمدته ناقصة بيرجّع 400 برسالة واضحة. وفيه لوج لكل import بعدد الصفوف والوقت، والاختبارات بتعدّي مرتين ورا بعض.`, ext: R`زوّد [[?dry_run=true]] بيرجّع التقرير من غير ما يخزّن، وحد أقصى لحجم الملف، وبعد قسم قاعدة البيانات خزّن الصفوف كلها في transaction واحدة.` },
+        { lvl: 'فكرة', t: R`عقد مشترك مع الـ frontend`, what: R`طلّع [[model_json_schema()]] لكل موديلات الرد في ملف [[schemas.json]]، وحوّله لأنواع TypeScript بأداة زي [[json-schema-to-typescript]] (تاب TypeScript). انت اللي بتقرر إمتى يتولّد (يدوي، أو في الـ CI).`, done: R`لما تزوّد حقل في موديل Python وتعيد التوليد، الـ frontend بيطلّع خطأ type في المكان اللي محتاج يتعدّل، من غير ما حد يقولك.`, ext: R`خلّي الـ CI يرفض الـ PR لو [[schemas.json]] مش متحدّث (نفس فكرة «dist is up to date»).` },
+      ],
       n: "موديلات بتفحص وتحوّل الداتا وقت التشغيل، و validators بتاعتك، والإعدادات من env",
       items: [
         {
@@ -35,6 +56,13 @@ except ValidationError as e:
     print(e.errors()[0]["loc"], e.errors()[0]["msg"])`,
           try: R`اطبع [[e.errors()]] كله وشوف كل خطأ فيه [[loc]] و [[msg]] و [[type]]. وبعدين اطبع [[Customer.model_json_schema()]]: ده اللي بيظهر في [[/docs]]. وجرّب [[budget="50"]] مرة، ومرة مع [[ConfigDict(strict=True)]].`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** من غير ما تبص، اكتب الحقل ده بـ Pydantic: «كمية رقم صحيح من ١ لـ ٥٠، والافتراضي ١»، و«كود خصم ٦ حروف كابيتال وأرقام»، و«نوع شحن واحد من [[standard]] و [[express]]».`, done: R`كتبت [[qty: int = Field(1, ge=1, le=50)]] و [[code: str = Field(pattern=r"^[A-Z0-9]{6}$")]] و [[shipping: Literal["standard", "express"]]]، وجرّبت كل واحد بقيمة سليمة وقيمة غلط وشفت الـ [[type]] الصح ([[less_than_equal]] و [[string_pattern_mismatch]] و [[literal_error]]).` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** على [[Customer]] من المثال، اكتب OK ولا ERR ونوع الخطأ لكل واحد: [[name="  س  "]]، و [[phone=1012345678]] (رقم مش نص)، و [[tier="PRO"]]، و [[birthday="2026-02-30"]]، و [[budget="inf"]].`, done: R`شغّلتهم وطابقوا: الخمسة ERR، بالترتيب [[string_too_short]] (المسافات اتشالت الأول)، و [[string_type]] (Pydantic مبيحوّلش int لـ str)، و [[literal_error]]، و [[date_from_datetime_parsing]]، و [[less_than_equal]].` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** موديل [[Product]] فيه [[price: float = Field(gt=0)]] بس. ابعتله [["inf"]] و [[float("nan")]] واتفرّج: أنهي واحد عدّى؟ وصلّحه بطريقتين.`, done: R`[["inf"]] عدّت ([[inf > 0]] صح)، و NaN اترفضت ([[nan > 0]] غلط) بس بخطأ ملخبط. والتصليحين: [[allow_inf_nan=False]] بيرجّع [[finite_number]]، أو [[le]] بحد أقصى منطقي، وكتبت إن الأحسن للفلوس [[price_cents: int]].` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** مستخدمين بيكتبوا الموبايل من كيبورد عربي. خلّي [[phone]] يقبل [[٠١٠١٢٣٤٥٦٧٨]] و [[010 1234 5678]] و [[+201012345678]] ويخزّنهم كلهم [[01012345678]]، بـ [[BeforeValidator]] قبل الـ pattern.`, done: R`التلاتة بيطلعوا [[01012345678]]، و [[0101234567]] (ناقص رقم) لسه بيترفض بـ [[string_pattern_mismatch]]، والـ validator بيستخدم [[str.translate]] بجدول من [[٠١٢٣٤٥٦٧٨٩]] لـ [[0123456789]].` },
+            { lvl: 'تحدي', t: R`**قارن:** اعمل نفس الموديل مرة بـ [[ConfigDict(strict=True)]] ومرة من غيرها، وابعت [[{"budget": "50", "birthday": "1999-05-01"}]] لـ [[model_validate]] ولـ [[model_validate_json]]. اكتب جدول: أنهي عدّى في أنهي وضع، وليه.`, done: R`الجدول فيه ٤ خانات مجرّبة، ولقيت إن strict في [[model_validate]] رفض [["50"]] وكمان رفض التاريخ كنص، وفي [[model_validate_json]] التاريخ عدّى لأن JSON مفيهوش نوع تاريخ أصلًا، وكتبت الرسالة الحقيقية لكل رفض.` },
+          ],
           deep: {
             why: "الـ type hints العادية مبتفحصش حاجة، و Pydantic هو اللي بيخليها حقيقية: أي داتا جاية من برّه (request، API خارجي، ملف، env، ناتج AI) بتعدّي على الموديل، وجوه الكود بتتعامل مع objects مضمونة الشكل.",
             how: R`الموديل class بيورث من [[BaseModel]]، والـ annotations هي الحقول. ووقت الإنشاء، pydantic-core (Rust) بيفحص كل حقل ويحوّل. في الوضع الافتراضي (lax) بيحوّل الحاجات المنطقية: [["1999-05-01"]] لـ date، و [["100"]] لـ float، و dict لموديل متداخل. و [[strict=True]] بيمنع التحويل.
@@ -69,7 +97,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError
 | [[Annotated]] | نوع + معلومات زيادة |
 | [[Literal]] | قيم محددة بس |
 | [[BaseModel]] | الأب اللي أي موديل بيورث منه |
-| [[ConfigDict]] | إعدادات الموديل |
+| [[ConfigDict]] | إعدادات الموديل كله مرة واحدة، زي رفض الحقول الزيادة وشيل المسافات، بدل ما تكررها في كل حقل |
 | [[Field]] | قيود و default لحقل |
 | [[ValidationError]] | الخطأ اللي بيترمي لو الداتا غلط |
 
@@ -133,10 +161,10 @@ class Customer(BaseModel):
 
 | الحتة | معناها |
 |---|---|
-| [[^]] | أول النص |
+| [[^]] | أول النص: من غيرها [[abc01012345678]] كانت هتعدّي لأن الـ regex بيدوّر في أي حتة |
 | [[01]] | يبدأ بـ 01 |
 | [[[0125]]] | رقم واحد من دول (فودافون واتصالات وأورانج ووي) |
-| [[\d{8}]] | ٨ أرقام |
+| [[\d{8}]] | ٨ أرقام بالظبط ورا بعض، و [[{8}]] معناها العدد |
 | [[$]] | آخر النص (مفيش حاجة زيادة) |
 
 ---
@@ -195,7 +223,7 @@ except ValidationError as e:
 | [[loc]] | المكان: [[('address', 'city')]] يعني جوه address، حقل city |
 | [[msg]] | رسالة للبني آدمين |
 | [[input]] | القيمة اللي اتبعتت |
-| [[ctx]] | تفاصيل القيد |
+| [[ctx]] | تفاصيل القيد اللي اتكسر، زي [[{"min_length": 2}]]، عشان تبني رسالة بالعربي |
 
 Pydantic **مبيقفش عند أول خطأ**: بيجمعهم كلهم. و [[print(e)]] نفسه بيطبعهم بشكل مقروء (أول سطر [[4 validation errors for Customer]]).
 
@@ -223,9 +251,34 @@ Customer.model_json_schema()
 | | [[budget="50"]] |
 |---|---|
 | الوضع العادي (lax) | بيعدّي ويبقى [[50.0]] |
-| [[ConfigDict(strict=True)]] | [[1 validation error ... Input should be a valid number [type=float_type, input_value='50', input_type=str]]] |
+| [[ConfigDict(strict=True)]] | النص [['50']] اترفض ومبقاش بيتحوّل رقم: [[1 validation error ... Input should be a valid number [type=float_type, input_value='50', input_type=str]]] |
 
 ---
+
+---
+
+## اتشغّل فعلًا: العربي واللانهاية والأرقام
+
+جربنا على نفس [[Customer]] (Pydantic 2.14 و Python 3.14)، وكل مرة غيّرنا حقل واحد بس من الداتا السليمة:
+
+~~~text الناتج
+name="  س  "                 → ERR string_too_short          ← المسافات اتشالت الأول فبقى حرف واحد
+name="سارة"                  → OK  سارة                       ← الطول بالحروف مش بالـ bytes
+budget="inf"                 → ERR less_than_equal           ← [[le=1_000_000]] هو اللي مسكها
+budget=float("nan")          → ERR less_than_equal
+phone="٠١٠١٢٣٤٥٦٧٨"          → ERR string_pattern_mismatch   ← الأرقام العربي مش [[01]]
+phone=1012345678             → ERR string_type               ← رقم مش نص، ومفيش تحويل int لـ str
+birthday="2026-02-30"        → ERR date_from_datetime_parsing  day value is outside expected range
+birthday="01/05/1999"        → ERR date_from_datetime_parsing  invalid character in year
+tier="PRO"                   → ERR literal_error             ← حساس لحالة الحروف
+~~~
+
+| الحالة | ليه | لو عايز تقبلها |
+|---|---|---|
+| [["inf"]] و NaN | Pydantic بيقبل اللانهاية في [[float]] افتراضيًا، و [[le]] بس اللي رفضها هنا | [[Field(allow_inf_nan=False)]]. ومن غير [[le]] و [[allow_inf_nan]] السعر اللانهائي بيعدّي (درس «request body») |
+| موبايل بأرقام عربي | الـ pattern بيقارن حروف، و [[٠]] حرف تاني غير [[0]] | [[BeforeValidator]] بيعمل [[translate]] للأرقام قبل الـ pattern (درس «field_validator و model_validator») |
+| [[phone=1012345678]] | الوضع lax بيحوّل [["5"]] لـ int، بس مش بيحوّل int لـ str | [[coerce_numbers_to_str=True]] في [[ConfigDict]]، بس الموبايل كرقم بيضيّع الصفر اللي في الأول أصلًا |
+| [["01/05/1999"]] | التاريخ لازم ISO، ومفيش تخمين للصيغة (يوم/شهر ولا شهر/يوم؟) | الـ frontend يبعت ISO، أو [[BeforeValidator]] بـ [[datetime.strptime]] بصيغة انت محددها |
 
 ## الخلاصة
 
@@ -235,28 +288,28 @@ Customer.model_json_schema()
 - [[ValidationError]] فيه **كل** الأخطاء، وكل واحد فيه [[loc]] و [[msg]] و [[type]].
 - الـ extra الافتراضي [[ignore]] مش [[forbid]]، والـ defaults مبتتفحصش.`,
           lines: [
-            "نوع التاريخ.",
-            R`[[Annotated]] و [[Literal]].`,
-            "الموديل، والإعدادات، والقيود، والخطأ.",
-            "نوع بقيوده، تستخدمه في كذا موديل.",
-            "موديل متداخل.",
-            "إجباري.",
-            "اختياري.",
-            "الموديل الأساسي.",
-            "ارفض الحقول الزيادة، وشيل المسافات من النصوص.",
-            "حرفين على الأقل (بعد شيل المسافات).",
-            "رقم موبايل مصري بـ regex.",
-            "قيمة من اتنين، والافتراضي free.",
-            "تاريخ اختياري: الـ string بيتحوّل date.",
-            "النوع اللي عملناه فوق.",
-            "موديل جوه موديل: الـ dict بيتحوّل Address.",
-            "داتا سليمة: كل حاجة اتحوّلت.",
-            R`[[Sara]] من غير مسافات، و [[1999]] لأن birthday بقت date.`,
-            "داتا غلط.",
-            "٤ مشاكل: اسم قصير، وموبايل غلط، و city ناقصة، و role زيادة.",
-            "امسك الخطأ.",
-            "كل الأخطاء اتجمعت: 4.",
-            "كل خطأ فيه مكانه ورسالته."
+            R`نوع [[date]] من Python نفسها: الحقل اللي نوعه [[date]] بيقبل [["1999-05-01"]] ويحوّله object تقدر تعمل عليه [[.year]] وتطرح منه.`,
+            R`[[Annotated]] عشان نعمل نوع ومعاه قيوده مرة واحدة، و [[Literal]] لحقل بيقبل كلمات محددة بس.`,
+            R`[[BaseModel]] أساس أي موديل، و [[ConfigDict]] لإعدادات الموديل كله، و [[Field]] لقيود حقل واحد، و [[ValidationError]] الـ exception اللي بيترمي لما الداتا غلط.`,
+            R`نوع جديد اسمه [[Price]]: float أكبر من صفر وأقصاه مليون. تكتبه مرة وتستخدمه في أي موديل، و [[le]] هنا كمان بيرفض [["inf"]] (اتجرب تحت).`,
+            R`موديل صغير للعنوان. هيتحط جوه [[Customer]]، فالـ dict اللي جاي في [[address]] بيتفحص بيه.`,
+            R`[[city]] نص من غير default، يعني **إجباري**: لو [[address]] جه [[{}]] الخطأ بيقول [[('address', 'city')]].`,
+            R`[[street]] اختياري: [[str | None]] و default [[None]]، فلو مبعتهوش الموديل بيكمّل عادي.`,
+            R`الموديل الأساسي: كل حقل تحته بنوعه وقيده، والترتيب هنا هو ترتيب المفاتيح في [[model_dump()]].`,
+            R`[[extra="forbid"]] بيرفض أي حقل مش متعرّف ([[role]] مثلًا) بخطأ [[extra_forbidden]]، و [[str_strip_whitespace=True]] بيشيل المسافات من أول وآخر **كل** نص قبل الفحص.`,
+            R`[[min_length=2]] بيتحسب **بعد** شيل المسافات، فـ [["  س  "]] بقت [["س"]] واترفضت. والطول بالحروف، فـ [["سارة"]] أربعة حروف عادي.`,
+            R`[[pattern]] regex لرقم موبايل مصري: [[01]] وبعدها [[0]] أو [[1]] أو [[2]] أو [[5]]، وبعدها ٨ أرقام. الـ [[r]] قبل النص عشان [[\d]] متبقاش escape. والأرقام العربي ([[٠١٠...]]) بتترفض لأن [[01]] في الأول حروف إنجليزي بالظبط.`,
+            R`[[Literal["free", "pro"]]] بيقبل الكلمتين دول بالظبط وحساس لحالة الحروف، فـ [["PRO"]] بترجع [[literal_error]]. والـ default [["free"]].`,
+            R`تاريخ اختياري: الـ string بصيغة ISO ([[YYYY-MM-DD]]) بيتحوّل [[date]]، و [["2026-02-30"]] أو [["01/05/1999"]] بيترفضوا برسالة.`,
+            R`نستخدم النوع [[Price]] اللي عملناه فوق، و default 100. القيد بيتطبق على أي قيمة تتبعت، مش على الـ default.`,
+            R`حقل نوعه موديل تاني: الـ dict اللي جاي بيتفحص بـ [[Address]] ويبقى object، فتقدر تكتب [[c.address.city]].`,
+            R`داتا سليمة: [[name]] فيها مسافات، و [[birthday]] نص، و [[address]] dict. Pydantic بينضّف ويحوّل كل ده وهو بيعمل الـ object.`,
+            R`بيطبع [[Sara 1999 Cairo]]: الاسم من غير مسافات، و [[.year]] اشتغلت لأن [[birthday]] بقت [[date]]، و [[address]] بقى object.`,
+            R`بنجرّب داتا غلط جوه [[try]] عشان نشوف الخطأ من غير ما البرنامج يقع.`,
+            R`٤ مشاكل في سطر واحد: اسم حرف واحد، وموبايل [["123"]]، و [[address]] من غير [[city]]، و [[role]] حقل مش متعرّف.`,
+            R`[[ValidationError]] بيترمي **مرة واحدة** وفيه كل الأخطاء، مش أول واحد بس.`,
+            R`[[error_count()]] بيطبع [[4]]: Pydantic كمّل فحص كل الحقول بعد أول غلط، وده اللي بيخلي الـ 422 في FastAPI فيه كل الأخطاء مع بعض.`,
+            R`كل خطأ dict فيه [[loc]] (المكان: [[('name',)]]) و [[msg]] (الرسالة) و [[type]] (كود ثابت تقدر تعتمد عليه في الكود بدل الرسالة).`,
           ],
           sol: R`[[e.errors()]] فيها ٤ أخطاء، كل واحد dict فيه [[type]] و [[loc]] و [[msg]] (و [[input]] و [[url]]): [[string_too_short ('name',)]]، و [[string_pattern_mismatch ('phone',)]]، و [[missing ('address', 'city')]] (الـ loc بيوصل لجوه الموديل المتداخل)، و [[extra_forbidden ('role',)]] (بسبب [[extra="forbid"]]). والـ [[type]] ثابت ومناسب للكود (تترجم منه الرسائل مثلًا)، والـ [[msg]] للبني آدمين.
 
@@ -289,6 +342,13 @@ class Row:
 from_orm = Item.model_validate(Row())`,
           try: R`قارن [[item.model_dump()]] بـ [[item.model_dump(mode="json")]] واطبع نوع [[created_at]] في الاتنين. وبعدين جرّب [[Item.model_validate(Row())]] من غير [[from_attributes]] واقرا الخطأ.`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** اكتب مقابل v2 لكل دالة v1 من غير ما تبص: [[parse_obj]] و [[parse_raw]] و [[dict()]] و [[json()]] و [[copy()]] و [[from_orm]] و [[orm_mode]].`, done: R`كتبت [[model_validate]] و [[model_validate_json]] و [[model_dump]] و [[model_dump_json]] و [[model_copy]] و [[model_validate]] مع [[from_attributes]]، وقارنت بجدول الدرس وطلعوا كلهم صح، وجربت إن [[item.dict()]] لسه شغالة بس بتطلّع [[PydanticDeprecatedSince20]].` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اكتب الناتج بالظبط (أنواع القيم) لـ [[item.model_dump()]] و [[item.model_dump(mode="json")]] و [[item.model_dump_json(exclude={"created_at"})]] على [[Item(id=1, name="Tea", created_at="2026-01-10T09:00:00Z")]].`, done: R`الأول فيه [[datetime.datetime(2026, 1, 10, 9, 0, tzinfo=TzInfo(0))]] و [[note: None]]، والتاني فيه [['2026-01-10T09:00:00Z']] نص، والتالت نص [['{"id":1,"name":"Tea","note":null}']] من غير مسافات. وطابقوا ورقتك.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[cached = redis.get("item:1"); item = Item(**json.loads(cached))]] و [[redis.set("item:1", json.dumps(item.model_dump()))]] بيقع بـ [[TypeError: Object of type datetime is not JSON serializable]]. صلّحه بسطرين.`, done: R`بقى [[redis.set(..., item.model_dump_json())]] و [[Item.model_validate_json(cached)]]، والـ round trip بيرجّع موديل مساوي للأصل ([[==]] بيطبع [[True]]) من غير [[json]] خالص.` },
+            { lvl: 'تطبيق', t: R`**ابني:** موديل [[OrderOut]] بـ [[alias_generator=to_camel]] و [[populate_by_name=True]] (أو [[validate_by_name=True]] في 2.11+)، ورجّعه من endpoint FastAPI. الـ frontend عايز [[createdAt]] و [[totalCents]].`, done: R`[[model_dump()]] بيطلّع [[created_at]]، و [[model_dump(by_alias=True)]] بيطلّع [[createdAt]]، والـ endpoint بيرجّع camelCase من غير ما تكتب [[by_alias]] (FastAPI بيعملها لوحده في الرد)، والموديل بيتعمل من الاسمين.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** list فيها ١٠٠ ألف [[Item]] كنص JSON. قيس بـ [[time.perf_counter]] مرتين لكل طريقة: [[TypeAdapter(list[Item]).validate_json(raw)]] مقابل [[[Item.model_validate(x) for x in json.loads(raw)]]].`, done: R`عندك ٤ أرقام حقيقية مكتوبة في تعليق، والفرق بالنسبة (مثلًا «أسرع ٣ مرات»)، وكتبت ليه: الأولى parse وفحص في Rust من غير objects وسيطة، والتانية بتعمل dicts في Python الأول.` },
+          ],
           deep: {
             why: "الموديل بيتنقل بين طبقات كتير: من JSON جاي، لـ dict تحطه في القاعدة، لـ JSON راجع، أو لـ Redis. لازم تعرف تحوّل في كل اتجاه من غير ما تخسر الفحص. والأسماء اتغيرت بين v1 و v2، فأمثلة النت القديمة بتلخبط.",
             how: R`جدول التحويل من v1: [[.dict()]] بقت [[model_dump()]]، و [[.json()]] بقت [[model_dump_json()]]، و [[parse_obj]] بقت [[model_validate]]، و [[parse_raw]] بقت [[model_validate_json]]، و [[.copy()]] بقت [[model_copy()]]، و [[orm_mode]] بقت [[from_attributes]]، و [[schema()]] بقت [[model_json_schema()]]. والقديمة بعضها لسه موجود بـ DeprecationWarning.
@@ -463,6 +523,38 @@ Input should be a valid dictionary or instance of Item [type=model_type, input_v
 | من ORM | [[from_attributes=True]] | [[orm_mode]] |
 | أي نوع | [[TypeAdapter(T)]] | [[parse_obj_as]] |
 
+---
+
+## اتشغّل فعلًا: أسامي مختلفة برّه وجوه (aliases)
+
+الـ frontend (JavaScript) بيكتب [[createdAt]]، و Python بيكتب [[created_at]]. بدل ما تكتب كل حقل مرتين، الـ alias بيترجم. اتجرب على Pydantic 2.14:
+
+~~~python
+from pydantic.alias_generators import to_camel
+class Api(BaseModel):
+    model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
+    first_name: str
+    created_at: date
+a = Api.model_validate({"firstName": "Sara", "createdAt": "2026-01-02"})
+print(a.model_dump(), a.model_dump(by_alias=True))
+print(Api(first_name="Omar", created_at="2026-01-02").first_name)
+~~~
+
+~~~text الناتج
+{'first_name': 'Sara', 'created_at': datetime.date(2026, 1, 2)} {'firstName': 'Sara', 'createdAt': datetime.date(2026, 1, 2)}
+Omar
+~~~
+
+| الحتة | بتعمل إيه |
+|---|---|
+| [[alias_generator=to_camel]] | بيعمل لكل حقل اسم تاني: [[first_name]] بيبقى [[firstName]]. ده الاسم اللي بيتقري من الـ input |
+| [[populate_by_name=True]] | يقبل اسم Python كمان، عشان كودك جوه يقدر يكتب [[Api(first_name=...)]]. في 2.11+ ليه اسم أوضح: [[validate_by_name=True]] (اتجرب، نفس النتيجة) |
+| [[model_dump()]] | بالأسامي بتاعة Python، للاستخدام جوه السيستم |
+| [[model_dump(by_alias=True)]] | بالأسامي الـ camelCase. و FastAPI بيعمل [[by_alias]] لوحده في الرد، فالعميل بيشوف [[firstName]] |
+| [[Field(alias="X")]] | لحقل واحد اسمه برّه مختلف خالص، زي [[Field(alias="ID")]] لـ API قديم |
+
+ولما الحقل ناقص، الـ [[loc]] بيبقى بالاسم الـ camelCase: [[{"first_name": "x"}]] رجعت خطأ [[missing]] و [[loc: ('createdAt',)]]. ده كويس للـ frontend، لأنه بيشوف نفس الاسم اللي بعته.
+
 ## الخلاصة
 
 - كل حاجة في v2 بتبدأ بـ [[model_]].
@@ -470,25 +562,25 @@ Input should be a valid dictionary or instance of Item [type=model_type, input_v
 - [[model_validate_json]] أحسن من [[json.loads]] + validate.
 - [[model_copy(update=...)]] مبيفحصش.`,
           lines: [
-            "datetime.",
-            "الموديل، والإعدادات، و TypeAdapter.",
-            "موديل.",
-            "يقبل objects بـ attributes مش dicts بس.",
-            "حقل.",
-            "حقل.",
-            "اختياري.",
-            "بيتحوّل من string لـ datetime.",
-            R`من dict: فحص وتحويل (كانت [[parse_obj]] في v1).`,
-            R`dict، و [[created_at]] لسه datetime object.`,
-            "dict كله أنواع JSON (التاريخ بقى string)، ومن غير الحقول اللي None.",
-            "JSON string بحقول معينة بس.",
-            "JSON جاي string (من Redis مثلًا).",
-            "parse و validate في خطوة واحدة جوه Rust.",
-            "نسخة بتعديل، والأصل زي ما هو.",
-            "فحص ليستة موديلات من غير ما تعمل موديل wrapper.",
-            "object عادي زي صف من ORM.",
-            "attributes.",
-            R`[[from_attributes]] خلّاه يقرا الـ attributes.`
+            R`[[datetime]] عشان حقل [[created_at]]: هيستقبل نص ISO ويخزّنه object فيه المنطقة الزمنية.`,
+            R`[[BaseModel]] للموديل، و [[ConfigDict]] للإعدادات، و [[TypeAdapter]] عشان نفحص أنواع مش موديلات زي [[list[Item]]].`,
+            R`الموديل اللي هنحوّل منه وإليه في كل السطور اللي جاية.`,
+            R`[[from_attributes=True]] بيخلي [[model_validate]] تقرا الحقول من attributes أي object (صف SQLAlchemy مثلًا)، مش من dict بس. اسمها القديم [[orm_mode]] في v1.`,
+            R`[[id]] رقم إجباري. لو جه [["1"]] نص بيتحوّل [[1]] في الوضع العادي.`,
+            R`[[name]] نص إجباري، والموديل مش هيتعمل من غيره.`,
+            R`[[note]] اختياري، و [[exclude_none=True]] تحت هتشيله من الناتج لو قيمته [[None]].`,
+            R`[[created_at]] نوعه [[datetime]]: [["2026-01-10T09:00:00Z"]] بيتحوّل object و [[Z]] بتبقى منطقة UTC.`,
+            R`[[model_validate(dict)]]: فحص وتحويل من dict لموديل (كانت [[parse_obj]] في v1). لو فيه غلط بترمي [[ValidationError]] زي الـ constructor بالظبط.`,
+            R`[[model_dump()]] بيرجّع dict Python عادي، و [[created_at]] فيه لسه [[datetime]] object، فمينفعش يتكتب [[json.dumps]] على طول.`,
+            R`[[mode="json"]] بيحوّل كل قيمة لنوع JSON (التاريخ بقى [["2026-01-10T09:00:00Z"]])، و [[exclude_none=True]] بيشيل [[note]] لأنها [[None]].`,
+            R`[[model_dump_json]] بيرجّع **نص** JSON جاهز يتبعت أو يتخزن، و [[include]] بيختار حقول معينة بس. ده أسرع من [[json.dumps(model_dump())]] لأنه في Rust.`,
+            R`نص JSON جاي من برّه (Redis أو queue أو ملف) ولسه متفحصش.`,
+            R`[[model_validate_json]] بيعمل parse وفحص في خطوة واحدة جوه Rust، من غير ما يعمل dict في النص. أسرع وبيطلّع أخطاء JSON البايظ في نفس الـ [[ValidationError]].`,
+            R`[[model_copy(update=...)]] بيعمل نسخة بتعديل والأصل زي ما هو. خد بالك: القيم في [[update]] **مبتتفحصش**، فلو حطيت [[name=5]] هتعدّي.`,
+            R`[[TypeAdapter(list[Item])]] بيفحص list موديلات من غير ما تعمل موديل wrapper، وبيرجّع [[list[Item]]] عادية. اعمله مرة برّه الدالة لو بتستخدمه كتير.`,
+            R`class عادي مش Pydantic، زي الصف اللي بيرجع من ORM، عشان نجرّب [[from_attributes]].`,
+            R`الـ attributes على مستوى الـ class، فـ [[Row()]] هيبقى عنده [[id]] و [[name]] و [[note]] و [[created_at]] من غير constructor.`,
+            R`[[model_validate(Row())]] بيقرا الـ attributes بفضل [[from_attributes]]. من غير الإعداد ده بيرمي [[model_type]]: «Input should be a valid dictionary or instance of Item».`,
           ],
           sol: R`[[model_dump()]] بيرجع [[created_at]] كـ [[datetime]] حقيقي ([[datetime.datetime(2026, 1, 10, 9, 0, tzinfo=TzInfo(0))]] ونوعه [[<class 'datetime.datetime'>]])، و [[model_dump(mode="json")]] بيرجعه string: [[2026-01-10T09:00:00Z]] ونوعه [[<class 'str'>]]. الأول لو هتكمّل شغل في Python، والتاني لو هتبعته لحاجة مبتفهمش غير JSON (Redis أو [[json.dumps]]).
 
@@ -528,6 +620,13 @@ b = Booking(email=" Sara@Company.com ", start="2026-03-01", end="2026-03-04", gu
 print(b.model_dump())`,
           try: R`ابعت [[end]] قبل [[start]] واقرا مكان الخطأ في [[e.errors()]] (هيبقى على الموديل كله مش على حقل). وبعدين ضيف [[@field_validator("guests")]] بيرفض أكتر من 6، وقارنه بإنك تكتب [[Field(le=6)]] (الأبسط دايمًا أحسن).`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** لكل قاعدة اكتب هتستخدم إيه ([[Field]] ولا [[field_validator]] ولا [[model_validator]]): «الكمية من ١ لـ ٥٠»، و«الإيميل يتصغّر»، و«سعر الخصم أقل من السعر الأصلي»، و«الكود يتحوّل كابيتال قبل الـ pattern».`, done: R`كتبت [[Field]] للأولى، و [[field_validator]] (after) للتانية، و [[model_validator]] للتالتة، و [[mode="before"]] أو [[BeforeValidator]] للرابعة، وكتبت جنب كل واحد ليه في جملة.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** نوعين: [[U1 = Annotated[str, Field(min_length=3), BeforeValidator(low)]]] و [[U2 = Annotated[str, BeforeValidator(low), Field(min_length=3)]]]، و [[low]] بتعمل [[strip().lower()]]. ابعت [[" Ab "]] للاتنين: هيطلع نفس الخطأ؟`, done: R`جرّبت: U1 طلّع [[string_too_short]] و [[String should have at least 3 characters]]، و U2 طلّع [[too_short]] و [[Value should have at least 3 items after validation, not 2]]. الاتنين رفضوا، بس النوع والرسالة اختلفوا حسب ترتيب الحاجات جوه [[Annotated]].` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** validator فيه [[v = v.strip().lower()]] ونسي [[return v]]، وتاني اسمه [[def check(self, v)]] تحت [[@field_validator]] من غير [[@classmethod]]. شغّل كل واحد واكتب اللي حصل.`, done: R`الأول عدّى من غير خطأ والإيميل بقى [[None]] (أخطر نوع باج: صامت)، والتاني وقع والكلاس بيتعرّف بـ [[PydanticUserError]] ورسالته فيها [[cannot be applied to instance methods]]. صلّحت الاتنين، واختبار بيتأكد إن الإيميل اتخزن متنضّف.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[POST /bookings]] بالموديل ده، وخلّي خطأ التواريخ يطلع بـ [[PydanticCustomError("date_order", "end لازم بعد start")]] بدل [[ValueError]]. وابعت تواريخ مقلوبة واقرا الـ 422.`, done: R`الـ 422 فيها [[type: "date_order"]] و [[msg: "end لازم بعد start"]] من غير [[Value error, ]] قدامها، و [[loc: ["body"]]]. والـ frontend يقدر يعتمد على [[date_order]] كنص ثابت.` },
+            { lvl: 'تحدي', t: R`**اكتب اختبار:** ٦ اختبارات pytest على [[Booking]] من غير FastAPI: إيميل بمسافات بيتنضّف، و gmail بيترفض، وتواريخ متساوية بتترفض، وإيميل غلط مع تواريخ غلط (كام خطأ؟)، و [[nights]] صح، و [[nights=99]] في الإدخال بيتجاهل.`, done: R`الستة بيعدّوا، والرابع بيتأكد إن فيه خطأ **واحد** بس (الإيميل) لأن الـ model validator مبيشتغلش لو حقل فشل، والاختبارات بتستخدم [[pytest.raises(ValidationError)]] و [[e.value.errors()]].` },
+          ],
           deep: {
             why: "قواعد الـ business الحقيقية مش دايمًا «رقم أكبر من صفر»: إيميل من دومين معين، تاريخين مرتبطين، حقل إجباري لو حقل تاني اتبعت. لو فحصتها جوه الـ route هتتكرر وتتنسى. في الموديل بتتطبّق في كل حتة وبتطلع 422 بنفس الشكل.",
             how: R`[[field_validator]] الافتراضي [[mode="after"]]: بيشتغل بعد ما Pydantic حوّل القيمة للنوع، فـ [[v]] مضمون str. و [[mode="before"]] بيشتغل على القيمة الخام قبل التحويل (مفيد لو هتحوّل [["a,b,c"]] لـ list). ولازم [[@classmethod]] تحته، ولازم ترجّع القيمة حتى لو معدّلتهاش.
@@ -664,7 +763,7 @@ end قبل start               → value_error () Value error, end لازم بع
 |---|---|
 | [[b.guests = 100]] بعد الإنشاء | عدّت من غير فحص (إلا لو [[validate_assignment=True]]) |
 | بعتنا [[nights=99]] | اتجاهلت: الـ computed field مبيتقبلش كـ input |
-| [[model_json_schema(mode="serialization")]] | [[nights]] فيه [[readOnly: True]] |
+| [[model_json_schema(mode="serialization")]] | [[nights]] ظهر في شكل الرد وعليه [[readOnly: True]]، يعني بيطلع بس ومبيتبعتش |
 
 ### [[field_validator]] ولا [[Field(le=6)]]؟ (الـ solCode)
 
@@ -679,6 +778,71 @@ WithField:     {'type': 'less_than_equal', 'loc': ('guests',), 'msg': 'Input sho
 
 ---
 
+---
+
+## اتشغّل فعلًا: [[mode="before"]] والـ validators جوه [[Annotated]]
+
+الـ validator العادي ([[mode="after"]]) بيستلم القيمة **بعد** ما Pydantic حوّلها لنوعها. ساعات محتاج تشتغل **قبل** التحويل: الـ frontend بيبعت [["a,b"]] وانت عايز [[list[str]]]. اتجرب على Pydantic 2.14 و FastAPI 0.162:
+
+~~~python
+def no_spaces(v: str) -> str:
+    if " " in v: raise ValueError("مفيش مسافات")
+    return v
+Username = Annotated[str, Field(min_length=3), BeforeValidator(lambda v: v.strip().lower() if isinstance(v, str) else v), AfterValidator(no_spaces)]
+class Signup(BaseModel):
+    username: Username
+    tags: list[str]
+    @field_validator("tags", mode="before")
+    @classmethod
+    def split(cls, v):
+        return v.split(",") if isinstance(v, str) else v
+print(Signup(username="  SaraA ", tags="a,b"))
+~~~
+
+~~~text الناتج
+username='saraa' tags=['a', 'b']
+~~~
+
+| الحتة | إمتى بتشتغل | ليه هنا |
+|---|---|---|
+| [[BeforeValidator(f)]] | قبل التحويل والقيود: [[v]] ممكن تبقى أي حاجة، فبنتأكد إنها [[str]] الأول | ننضّف المسافات والحروف قبل ما [[min_length]] يعدّ |
+| [[AfterValidator(f)]] | بعد التحويل والقيود: [[v]] أكيد [[str]] | قاعدة بتاعتنا: مفيش مسافات في النص |
+| [[Field(min_length=3)]] | جوه فحص النوع نفسه | الطول بعد التنضيف |
+| [[field_validator(..., mode="before")]] | قبل تحويل الحقل ده بس | [["a,b"]] تبقى list قبل ما Pydantic يرفضها كـ [[list_type]] |
+
+ميزة [[Annotated]] إن [[Username]] نوع بتستخدمه في أي موديل (Signup و Profile و Admin) من غير ما تكرر الـ validators.
+
+### الترتيب جوه [[Annotated]] بيفرق
+
+نفس النوع مرتين، والفرق مكان [[Field]] بس، وبعتنا [[" Ab "]]:
+
+~~~text الناتج
+Field قبل BeforeValidator   → string_too_short  String should have at least 3 characters
+Field بعد BeforeValidator   → too_short         Value should have at least 3 items after validation, not 2
+~~~
+
+الاتنين رفضوا، بس التاني بنوع عام ورسالة ملخبطة («items»)، لأن القيد اتطبق كـ validator منفصل بعد الـ BeforeValidator مش جوه فحص الـ string. حط [[Field]] أول حاجة بعد النوع.
+
+### الأخطاء في FastAPI
+
+~~~text الناتج (POST بـ 422)
+username="sa ra"   → {"type":"value_error","loc":["body","username"],"msg":"Value error, مفيش مسافات","input":"sa ra","ctx":{"error":{}}}
+end قبل start      → {"type":"value_error","loc":["body"],"msg":"Value error, end لازم بعد start",...}
+~~~
+
+خطأ الـ [[model_validator]] الـ [[loc]] بتاعه [[["body"]]] بس، فالـ frontend ميعرفش يحطه تحت أنهي خانة. وعشان [[type]] ثابت بتاعك من غير [[Value error, ]]:
+
+~~~python
+from pydantic_core import PydanticCustomError
+raise PydanticCustomError("date_order", "end لازم بعد start", {"start": str(self.start)})
+~~~
+
+~~~text الناتج
+[{'type': 'date_order', 'loc': (), 'msg': 'end لازم بعد start', 'input': {...}, 'ctx': {'start': '2026-03-04'}}]
+~~~
+
+التالت argument هو [[ctx]]: تفاصيل يقدر الـ frontend يبني منها رسالته.
+
 ## الخلاصة
 
 | عايز | استخدم |
@@ -691,32 +855,32 @@ WithField:     {'type': 'less_than_equal', 'loc': ('guests',), 'msg': 'Input sho
 - ارمي [[ValueError]] مش [[assert]].
 - الـ validators بتشتغل وقت الإنشاء بس.`,
           lines: [
-            "date.",
-            R`[[Self]] لنوع الرجوع (3.11+).`,
-            "الـ decorators.",
-            "موديل حجز.",
-            "حقل.",
-            "بيتحوّل date.",
-            "نفس الكلام.",
-            "حقل.",
-            "validator على حقل email.",
-            "لازم يبقى classmethod.",
-            R`[[v]] القيمة بعد ما اتحوّلت str.`,
-            "نضّفها.",
-            "قاعدة بتاعتك.",
-            R`[[ValueError]] بيبقى خطأ عادي في الـ 422.`,
-            "رجّع القيمة (المعدّلة).",
-            "validator على الموديل كله بعد فحص كل الحقول.",
-            R`بياخد [[self]].`,
-            "قاعدة بين حقلين.",
-            "ارمي.",
-            "لازم ترجّع self.",
-            "حقل محسوب بيظهر في الـ dump والـ JSON.",
-            "property عادية.",
-            "عدد الليالي.",
-            "الحسبة.",
-            "الإيميل هيتنضّف، والتواريخ هتتحوّل.",
-            R`فيه [[nights: 3]]، والإيميل [[sara@company.com]].`
+            R`[[date]] لحقلين [[start]] و [[end]]: Pydantic هيحوّل النص ISO لتاريخ قبل ما الـ validators بتاعتك تشتغل.`,
+            R`[[Self]] نوع بيقول «بترجّع نفس نوع الكلاس»، بنكتبه نوع رجوع للـ model validator. موجود في [[typing]] من Python 3.11.`,
+            R`الأدوات التلاتة: [[field_validator]] لحقل واحد، و [[model_validator]] لأكتر من حقل مع بعض، و [[computed_field]] لحقل محسوب بيطلع في الرد.`,
+            R`موديل حجز: هنحط عليه قاعدة على الإيميل، وقاعدة بين تاريخين، وحقل محسوب.`,
+            R`[[email]] نص عادي، والـ validator تحت هينضّفه ويتأكد من الدومين.`,
+            R`[[start: date]]: النص [["2026-03-01"]] بيتحوّل [[date]] **قبل** أي validator بتاعك، فـ [[self.start]] تحت date مش string.`,
+            R`[[end]] نفس الكلام. لو أي واحد فيهم تاريخ بايظ، الـ [[model_validator]] اللي تحت مش هيشتغل أصلًا.`,
+            R`عدد الضيوف رقم صحيح. مفيش عليه قيد هنا، وفي الـ solCode بنقارن قيده بـ validator مقابل [[Field(le=6)]].`,
+            R`[[@field_validator("email")]] بيربط الدالة اللي تحت بحقل [[email]]. ينفع تديله كذا اسم ([[("email", "backup_email")]]) أو [[("*")]] لكل الحقول.`,
+            R`لازم [[@classmethod]] تحت الـ decorator: الدالة بتشتغل **قبل** ما الـ object يتعمل، فمفيش [[self]] لسه.`,
+            R`[[v]] القيمة **بعد** ما Pydantic حوّلها [[str]] (ده الوضع [[mode="after"]] الافتراضي). ونوع الرجوع [[str]] لأن اللي هترجّعه هو اللي هيتخزن.`,
+            R`بننضّف القيمة: [[strip()]] بيشيل المسافات و [[lower()]] بيصغّر الحروف، عشان [[" Sara@Company.com "]] و [["sara@company.com"]] يبقوا نفس المستخدم.`,
+            R`قاعدة بتاعتك مش موجودة في [[Field]]: الإيميل لازم يخلص بدومين الشركة. الفحص على القيمة **بعد** التنضيف.`,
+            R`[[ValueError]] جوه validator بيبقى خطأ Pydantic عادي نوعه [[value_error]]، ورسالته قدامها [[Value error, ]]. في FastAPI ده 422 مش 500.`,
+            R`لازم ترجّع القيمة. لو نسيت [[return]] الحقل هيبقى [[None]] من غير أي خطأ، ودي غلطة بتعدّي في صمت.`,
+            R`[[model_validator(mode="after")]] بيشتغل **بعد** ما كل الحقول اتفحصت واتحوّلت، فتقدر تقارن بين حقلين.`,
+            R`بياخد [[self]]: الـ object جاهز بكل حقوله، ونوع الرجوع [[Self]].`,
+            R`القاعدة بين الحقلين: النهاية لازم بعد البداية. التاريخين هنا [[date]] فالمقارنة بالأيام صح، مش مقارنة نصوص.`,
+            R`بيرمي [[ValueError]]، والخطأ بيطلع بـ [[loc: ()]] (الموديل كله)، وفي FastAPI [[loc: ["body"]]] من غير اسم حقل. [[PydanticCustomError]] بيدّيك [[type]] بتاعك بدل [[value_error]] (اتجرب تحت).`,
+            R`ترجّع [[self]] في الآخر زي ما الوثائق بتطلب. في Pydantic 2.14 لو نسيته الموديل رجع عادي من غير تحذير (اتجرب)، بس ده مش مضمون في نسخ تانية، فمتعتمدش عليه.`,
+            R`[[@computed_field]] بيخلي الـ property تظهر في [[model_dump()]] والـ JSON والـ schema، كأنها حقل. من غيره الـ property موجودة في Python بس ومش بتطلع في الرد.`,
+            R`[[@property]] عادية من Python: بتتحسب كل مرة حد يقراها، ومبتتخزنش. ولازم تيجي تحت [[@computed_field]] بالترتيب ده.`,
+            R`عدد الليالي، ونوع الرجوع [[int]] بيدخل في الـ JSON Schema كـ [[readOnly]].`,
+            R`طرح تاريخين بيدّي [[timedelta]]، و [[.days]] عدد الأيام: من ١ لـ ٤ مارس = ٣ ليالي.`,
+            R`بنعمل حجز بإيميل فيه مسافات وحروف كابيتال، وتواريخ نصوص. الـ field validator هينضّف، والتحويل للتاريخ بيحصل لوحده.`,
+            R`بيطبع [[{'email': 'sara@company.com', 'start': ..., 'end': ..., 'guests': 2, 'nights': 3}]]: الإيميل اتنضّف، و [[nights]] ظهر مع إنه مش حقل اتبعت.`,
           ],
           sol: R`لما [[end]] قبل [[start]]: [[e.errors()]] فيها خطأ واحد بـ [[loc: ()]] (tuple فاضي، يعني على الموديل كله)، و [[type: 'value_error']]، و [[msg: 'Value error, end لازم بعد start']]. Pydantic بيضيف [[Value error, ]] قبل رسالتك، فخد بالك لو بتعرض الرسالة للمستخدم. ولو عايز الخطأ يتربط بحقل معين، اعمل الفحص في field validator.
 
@@ -766,6 +930,13 @@ async def info(settings: SettingsDep):
 # CORS_ORIGINS=["https://shop.example.com"]`,
           try: R`شغّل التطبيق من غير [[.env]] وافتح [[/info]]: هيرجع 500، واقرا الخطأ في الترمنال: فيه اسم كل متغير ناقص. (ولو عايزه يقع وهو بيقوم، نادي [[get_settings()]] في الـ lifespan.) وبعدين اطبع [[settings.jwt_secret]] و [[settings.jwt_secret.get_secret_value()]] وقارن. وجرّب [[DB_POOL_SIZE=abc]].`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** رتّب من الأعلى للأقل: [[.env]]، و default الحقل، و [[Settings(x=...)]]، ومتغير البيئة الحقيقي. وقول إيه اللي بيحصل لـ [[DB_POOL_SIZE=abc]].`, done: R`كتبت [[Settings(x=...)]] ثم البيئة ثم [[.env]] ثم الـ default، وجربت بـ [[$env:DB_POOL_SIZE]] غير اللي في [[.env]] وشفت البيئة كسبت، و [[abc]] طلّعت [[int_parsing]] باسم [[db_pool_size]].` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[env_prefix="SHOP_"]] و [[env_nested_delimiter="__"]] وحقل [[db: Db]] (فيه [[host]] و [[port]]) وحقل [[debug: bool]]. في البيئة [[SHOP_DB__PORT=6543]] و [[SHOP_DEBUG=yes]] و [[DEBUG=0]]. إيه قيمة [[settings.db.port]] و [[settings.debug]]؟`, done: R`جرّبت وطلع [[6543]] (int) و [[True]]: [[DEBUG=0]] اتجاهلت لأن البادئة [[SHOP_]] بقت إجبارية، و [[yes]] بقت [[True]].` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** اختبار بيعمل [[os.environ["SHOP_DB__PORT"] = "7777"]] وبعدين [[get_settings()]] ومستني 7777، بس بيلاقي القيمة القديمة. اعرف ليه وصلّحه بطريقتين.`, done: R`السبب [[@lru_cache]] (رجّع الـ object القديم)، والتصليحين: [[get_settings.cache_clear()]] قبل النداء، أو [[app.dependency_overrides[get_settings] = lambda: Settings(...)]] من غير ما تلمس البيئة، والاختبار بقى يعدّي.` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** الـ DevOps بيكتب [[SHOP_CORS_ORIGINS=https://a.com, https://b.com]] بفاصلة ومسافات، مش JSON. خلّي الحقل يقبل الشكل ده بـ [[Annotated[list[str], NoDecode]]] و validator [[mode="before"]].`, done: R`[[Settings().cors_origins]] بيرجّع [[['https://a.com', 'https://b.com']]] من غير مسافات، والمتغير الفاضي بيرجّع [[[]]]، ومن غير [[NoDecode]] نفس القيمة بتقع بـ [[SettingsError]].` },
+            { lvl: 'تحدي', t: R`**ابني:** خلّي التطبيق يرفض يقوم لو الإعدادات ناقصة: [[get_settings()]] جوه الـ lifespan، و [[.env.example]] فيه كل الأسماء، وسكربت [[check_env.py]] بيقارن [[.env.example]] بـ [[Settings.model_fields]] ويطبع الناقص.`, done: R`من غير [[JWT_SECRET]]، [[fastapi run]] بيقف قبل [[Application startup complete]] والخطأ فيه [[jwt_secret Field required]]، و [[check_env.py]] بيطبع اسم أي حقل مش في [[.env.example]] ويخرج بكود 1.` },
+          ],
           deep: {
             why: R`[[os.environ["DB_URL"]]] متفرقة في ٢٠ ملف: متغير ناقص يظهر بعد الديبلوي في أول request بيحتاجه، و [["10"]] string بيتقارن برقم، والسر بيطلع في اللوج. BaseSettings بيجمع الإعدادات في مكان واحد مفحوص، وأول ما تتقري بيطلع خطأ واحد فيه كل المتغيرات الناقصة (ولو ناديت get_settings() في الـ lifespan، ده بيحصل وقت الـ startup).`,
             how: R`كل حقل بيدوّر على متغير بيئة بنفس الاسم، من غير حساسية لحالة الحروف افتراضيًا: [[database_url]] بياخد [[DATABASE_URL]]. والأولوية: الـ arguments اللي بتديها لـ [[Settings()]]، وبعدين متغيرات البيئة، وبعدين [[.env]]، وبعدين الـ default. يعني متغير البيئة الحقيقي على السيرفر بيكسب على [[.env]].
@@ -931,11 +1102,11 @@ print(s)                             → ... jwt_secret=SecretStr('**********') 
 
 | جربنا | النتيجة |
 |---|---|
-| [[DB_POOL_SIZE=abc]] | [[db_pool_size Input should be a valid integer, unable to parse string as an integer]] |
+| [[DB_POOL_SIZE=abc]] | الإعدادات وقعت والخطأ فيه اسم الحقل: [[db_pool_size Input should be a valid integer, unable to parse string as an integer]] |
 | [[DB_POOL_SIZE=25 ENV=prod]] | [[25 prod]]: [[25]] اتحوّل int |
-| [[ENV=staging]] | [[Input should be 'dev', 'test' or 'prod']] |
-| [[DATABASE_URL=mysql://x@h/db]] | [[URL scheme should be 'postgres', 'postgresql', 'postgresql+asyncpg', ...]] |
-| [[CORS_ORIGINS=https://a.com]] (مش JSON) | [[SettingsError: error parsing value for field "cors_origins" from source "EnvSettingsSource"]] |
+| [[ENV=staging]] | اترفضت والرسالة بتقول القيم المسموحة: [[Input should be 'dev', 'test' or 'prod']] |
+| [[DATABASE_URL=mysql://x@h/db]] | [[PostgresDsn]] رفض أي URL مش Postgres: [[URL scheme should be 'postgres', 'postgresql', 'postgresql+asyncpg', ...]] |
+| [[CORS_ORIGINS=https://a.com]] (مش JSON) | المكتبة حاولت تقراها JSON وفشلت: [[SettingsError: error parsing value for field "cors_origins" from source "EnvSettingsSource"]]، والحل [[NoDecode]] (تحت) |
 | [[$env:DATABASE_URL]] غير اللي في .env | متغير البيئة **كسب** |
 | [[Settings(db_pool_size=3)]] | [[3]]: الـ argument كسب على الكل |
 
@@ -949,6 +1120,50 @@ Settings(x=...)  >  متغيرات البيئة  >  .env  >  الـ default
 
 ---
 
+---
+
+## اتشغّل فعلًا: بادئة، وإعدادات متداخلة، وقايمة بفاصلة
+
+على السيرفر الواحد ممكن يبقى فيه ٣ تطبيقات، وكل واحد عايز [[DEBUG]] بتاعه. البادئة بتحل ده، و [[__]] بيوصل للموديلات المتداخلة. اتجرب على pydantic-settings 2.16 و Python 3.14:
+
+~~~python
+class Db(BaseModel):
+    host: str = "localhost"
+    port: int = 5432
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_prefix="SHOP_", env_nested_delimiter="__")
+    db: Db = Db()
+    debug: bool = False
+    cors_origins: Annotated[list[str], NoDecode] = []
+    @field_validator("cors_origins", mode="before")
+    @classmethod
+    def split(cls, v):
+        return [x.strip() for x in v.split(",") if x.strip()] if isinstance(v, str) else v
+~~~
+
+والبيئة: [[SHOP_DB__HOST=db]] و [[SHOP_DB__PORT=6543]] و [[SHOP_DEBUG=yes]] و [[DEBUG=0]] و [[SHOP_CORS_ORIGINS=https://a.com, https://b.com]].
+
+~~~text الناتج
+db=Db(host='db', port=6543) debug=True cors_origins=['https://a.com', 'https://b.com']
+~~~
+
+| الحتة | بتعمل إيه |
+|---|---|
+| [[env_prefix="SHOP_"]] | كل حقل بيدوّر على اسمه وقدامه [[SHOP_]]، فـ [[DEBUG=0]] اتجاهل خالص و [[SHOP_DEBUG]] بس اللي اتقري |
+| [[env_nested_delimiter="__"]] | [[SHOP_DB__PORT]] معناها «حقل [[port]] جوه [[db]]»، والنص [["6543"]] اتحوّل [[int]] |
+| [[NoDecode]] | بيقول للمكتبة متحاولش تقرا القيمة كـ JSON، وسيبها نص للـ validator |
+| validator [[mode="before"]] | بيقسم على الفاصلة ويشيل المسافات، والقيمة الفاضية بقت [[[]]] (اتجرب) |
+
+### فخ الـ cache في الاختبارات
+
+~~~text الناتج
+get_settings().db.port                 → 6543
+SHOP_DB__PORT=7777 ثم get_settings()  → 6543   ← [[lru_cache]] رجّع القديم
+get_settings.cache_clear() ثم تاني    → 7777
+~~~
+
+الاختبار اللي بيغيّر البيئة وبيستنى قيمة جديدة لازم [[cache_clear()]]، والأحسن أصلًا [[dependency_overrides]] (درس «dependency_overrides») عشان الاختبار ميلمسش البيئة خالص.
+
 ## الخلاصة
 
 - [[BaseSettings]] = موديل بيتملي من البيئة و [[.env]]، بنفس الفحص.
@@ -958,27 +1173,27 @@ Settings(x=...)  >  متغيرات البيئة  >  .env  >  الـ default
 - [[@lru_cache]] + [[Depends]]: مرة واحدة، وسهل تبدّلها في الاختبار.
 - [[.env]] في [[.gitignore]] دايمًا.`,
           lines: [
-            "cache لدالة الإعدادات.",
-            "للـ dependency وللقيم المحددة.",
-            "FastAPI.",
-            R`[[PostgresDsn]] بيفحص الـ URL، و [[SecretStr]] بيخبي القيمة في الطباعة.`,
-            "مكتبة pydantic-settings.",
-            "موديل إعدادات.",
-            R`اقرا [[.env]] كمان، وتجاهل المتغيرات اللي ملهاش حقل.`,
-            R`واحدة من ٣ قيم، من [[ENV]].`,
-            "إجباري: ملوش default، ولو ناقص أول ما الإعدادات تتقري بيطلع خطأ باسمه.",
-            "ليه default.",
-            "سر: مبيطبعش.",
-            "list بتتقري JSON من المتغير.",
-            R`[["10"]] في env بيبقى int 10.`,
-            "مرة واحدة بس.",
-            "الدالة اللي بتعمل الإعدادات.",
-            "بتقرا env و .env وتفحص.",
-            "نوع جاهز للـ dependency (القسم الجاي).",
-            "التطبيق.",
-            "route.",
-            "الإعدادات جت كـ dependency: سهل تغيّرها في الاختبار.",
-            "استخدمها."
+            R`[[lru_cache]] بيحفظ نتيجة الدالة أول مرة، فـ [[get_settings()]] بتقرا البيئة و [[.env]] مرة واحدة بس مش مع كل request.`,
+            R`[[Annotated]] عشان نعمل [[SettingsDep]] تحت، و [[Literal]] لحقل [[env]] اللي بيقبل ٣ قيم بس.`,
+            R`[[Depends]] عشان الإعدادات توصل للـ routes كـ dependency (تتبدّل في الاختبارات)، و [[FastAPI]] للتطبيق.`,
+            R`[[PostgresDsn]] نوع بيفحص إن الـ URL فعلًا Postgres ([[postgresql://...]])، و [[SecretStr]] بيخبي القيمة لما تتطبع: [[**********]].`,
+            R`[[BaseSettings]] موديل بيملّي حقوله من متغيرات البيئة، و [[SettingsConfigDict]] إعداداته. المكتبة منفصلة: [[pip install pydantic-settings]] (جاية مع [[fastapi[standard]]] الحديث).`,
+            R`كل الإعدادات في class واحد. كل حقل بيدوّر على متغير بيئة بنفس الاسم من غير حساسية لحالة الحروف: [[database_url]] بياخد [[DATABASE_URL]].`,
+            R`[[env_file=".env"]] بيقرا الملف ده كمان لو موجود (ومش بيقع لو مش موجود)، و [[extra="ignore"]] بيتجاهل أي سطر في [[.env]] ملوش حقل بدل ما يرفض.`,
+            R`[[env]] من [[ENV]]، وبيقبل [[dev]] و [[test]] و [[prod]] بس. [[ENV=staging]] بيوقّع الإعدادات برسالة فيها القيم المسموحة.`,
+            R`إجباري: ملوش default، ولو [[DATABASE_URL]] ناقص أو مش Postgres أول ما الإعدادات تتقري بيطلع خطأ فيه اسم الحقل بالظبط.`,
+            R`ليه default، فلو متعرّفش في البيئة بيستخدم Redis المحلي. الـ defaults للتطوير بس، والإنتاج بيكتبها في البيئة.`,
+            R`السر نوعه [[SecretStr]]: [[print]] و [[repr]] واللوج بيطبعوا نجوم، والقيمة الحقيقية بـ [[get_secret_value()]] في المكان اللي محتاجها بس.`,
+            R`[[list[str]]] بتتقري من المتغير كـ **JSON**: [[CORS_ORIGINS=["https://a.com"]]]. لو كتبتها مفصولة بفاصلة بس بتقع بـ [[SettingsError]] (والحل [[NoDecode]] تحت).`,
+            R`[[DB_POOL_SIZE=25]] في البيئة نص، و Pydantic بيحوّله [[int]]. و [[abc]] بترجع خطأ [[int_parsing]] باسم الحقل.`,
+            R`[[@lru_cache]] على الدالة: أول نداء بيعمل [[Settings()]]، والباقي بيرجّع نفس الـ object. وفي الاختبارات لو غيّرت البيئة محتاج [[get_settings.cache_clear()]].`,
+            R`الدالة اللي بترجّع الإعدادات. استخدمها هي بدل [[Settings()]] في كل مكان، عشان تبقى نقطة واحدة تتبدّل في الاختبار.`,
+            R`هنا بيحصل كل الشغل: قراية البيئة و [[.env]] والفحص والتحويل. لو حاجة ناقصة بيرمي [[ValidationError]] فيها كل الأخطاء مرة واحدة.`,
+            R`نوع جاهز للـ dependency: [[settings: SettingsDep]] في أي route بدل ما تكتب [[Annotated[Settings, Depends(get_settings)]]] كل مرة (القسم الجاي).`,
+            R`التطبيق. في مشروع حقيقي نادي [[get_settings()]] في الـ lifespan، عشان الإعدادات الناقصة توقّع التطبيق وهو بيقوم.`,
+            R`route بيرجّع جزء من الإعدادات، عشان تشوف القيم اتقرت منين.`,
+            R`الإعدادات وصلت كـ dependency، فالاختبار يقدر يعمل [[app.dependency_overrides[get_settings]]] بإعدادات تانية من غير ما يلمس البيئة.`,
+            R`بيرجّع [[env]] و [[db_pool_size]] بس. متكتبش [[return settings]] كلها: حتى مع [[SecretStr]] بتكشف URL القاعدة وأسماء الخدمات.`,
           ],
           sol: R`من غير [[.env]]، [[/info]] بترجع [[500 Internal Server Error]]، والترمنال فيه [[2 validation errors for Settings]] وتحتها [[database_url Field required]] و [[jwt_secret Field required]]. التطبيق قام عادي لأن [[get_settings()]] مبتتناداش غير مع أول طلب، وده سبب إنك تناديها في الـ lifespan: الأحسن السيرفر يرفض يقوم بدل ما يقوم ويقع مع أول مستخدم.
 

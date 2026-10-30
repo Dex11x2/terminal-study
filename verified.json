@@ -12830,469 +12830,639 @@
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "pyapi|*args و **kwargs": {
-  "hash": "308ff48c87e2",
-  "date": "2026-10-07",
-  "on": "Windows 11 Python 3.14.3 + python:3.13-slim (Docker)"
+  "hash": "d864d90235ca",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|APIRouter": {
-  "hash": "5c40a15cdabb",
-  "date": "2026-10-07",
-  "on": "Windows 11, FastAPI 0.142.2 (curl, TestClient, pwsh 7; deps.py written for the test)"
+  "hash": "5ba84ed77161",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|BackgroundTasks": {
-  "hash": "24aa2fa5f4c7",
-  "date": "2026-10-07",
-  "on": "Windows 11, FastAPI 0.142/uvicorn; curl, forced-kill test; docs: arq lines"
+  "hash": "35e298415b5a",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|BaseModel و Field": {
-  "hash": "65c339d04b06",
-  "date": "2026-10-07",
-  "on": "Windows 11, Pydantic 2.13.5"
+  "hash": "13a2404775b0",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|CORS و middleware": {
-  "hash": "c9af0986da7d",
-  "date": "2026-10-07",
-  "on": "Windows 11, FastAPI 0.142 (Starlette 1.7); curl with Origin/preflight; docs: browser console message"
+  "hash": "f204801a9a3e",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
+ },
+ "pyapi|Celery و ARQ": {
+  "hash": "d8eeaca591d5",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|DRF permissions و pagination": {
-  "hash": "17c480a4b7a3",
-  "date": "2026-10-27",
-  "on": "Linux docker + Postgres 16 (runserver + curl)"
+  "hash": "178be897a409",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|DRF serializers و viewsets": {
-  "hash": "5af2c1785f93",
-  "date": "2026-10-27",
-  "on": "Linux docker + Postgres 16 (runserver + curl, APIClient)"
+  "hash": "a376b706b783",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|Depends بيعمل إيه": {
-  "hash": "214af11fee6f",
-  "date": "2026-10-07",
-  "on": "windows-pwsh py3.14 fastapi 0.142 + docker postgres:16-alpine"
+  "hash": "4ef9929cefa3",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|Depends و Annotated": {
-  "hash": "40dda0261ab1",
-  "date": "2026-10-07",
-  "on": "Windows 11, FastAPI 0.142/uvicorn; curl (Git Bash) + Invoke-RestMethod in pwsh 7 and PowerShell 5.1"
+  "hash": "d8033e3b8050",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|Django admin": {
-  "hash": "d5c74d40616f",
-  "date": "2026-10-27",
-  "on": "Linux docker + Postgres 16 (test Client)"
+  "hash": "74c668267f93",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|Django auth": {
-  "hash": "c46fc45618a3",
-  "date": "2026-10-27",
-  "on": "Linux docker (fresh project, SQLite)"
+  "hash": "595d86a5884d",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
+ },
+ "pyapi|Django forms و CSRF": {
+  "hash": "ffd6d737198d",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|Django في الإنتاج": {
-  "hash": "546a2b51de9d",
-  "date": "2026-10-27",
-  "on": "Linux docker + Postgres 16 (check --deploy, collectstatic, gunicorn); Windows pwsh 7 (gunicorn fcntl error, waitress)"
+  "hash": "11aa47e5aec3",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|Enum": {
-  "hash": "ed0004776928",
-  "date": "2026-10-07",
-  "on": "Windows 11 Python 3.14.3 + python:3.13-slim (Docker)"
+  "hash": "160ba3fe8714",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
+ },
+ "pyapi|FastAPI في Docker": {
+  "hash": "47a2c0af7584",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|Flask request و response": {
-  "hash": "ac0a0a51333b",
-  "date": "2026-10-27",
-  "on": "Linux docker (flask run + curl, test_client)"
+  "hash": "005ac86cfc45",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|Flask ولا FastAPI ولا Django": {
-  "hash": "76d9ebbff265",
-  "date": "2026-10-27",
-  "on": "Linux docker (all three run side by side + curl)"
+  "hash": "61a1740db6c8",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|Flask-SQLAlchemy": {
-  "hash": "f520e586a736",
-  "date": "2026-10-27",
-  "on": "Linux docker (SQLite; migration failure also on Postgres 16) + Windows pwsh 7 (seed)"
+  "hash": "6053c286ced6",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|HTTPException": {
-  "hash": "c8c60a50de2f",
-  "date": "2026-10-07",
-  "on": "Windows 11, FastAPI 0.142; curl + pwsh 7 and PowerShell 5.1"
+  "hash": "be70dbbd9549",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
+ },
+ "pyapi|JWT و refresh token": {
+  "hash": "790193887451",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|Jinja templates": {
-  "hash": "8e044f8d199b",
-  "date": "2026-10-27",
-  "on": "Linux docker"
+  "hash": "6432d4addb29",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
+ },
+ "pyapi|N+1 و pagination": {
+  "hash": "abb36867cb3e",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
+ },
+ "pyapi|OpenAPI بـ drf-spectacular": {
+  "hash": "6b862b894479",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|Protocol و ABC": {
-  "hash": "f514d45fe488",
-  "date": "2026-10-07",
-  "on": "Windows 11 Python 3.14.3 + python:3.13-slim (Docker, mypy 2.4.0 --strict)"
+  "hash": "106aa7c3c506",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|Pydantic v2 عمل إيه": {
-  "hash": "f0af24e4e6fd",
-  "date": "2026-10-07",
-  "on": "windows-pwsh py3.14 pydantic 2.13 (example, v1 deprecations, solCode, FastAPI 422)"
+  "hash": "cb6b2f8ea6d6",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|QuerySet و filter": {
-  "hash": "e710a62abdec",
-  "date": "2026-10-27",
-  "on": "Linux docker + Postgres 16"
+  "hash": "2a2d1b5fd228",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|SQLAlchemy async": {
-  "hash": "3923a203c03f",
-  "date": "2026-10-07",
-  "on": "Windows 11, SQLAlchemy 2.1.3 + asyncpg against postgres:18 in Docker (echo=True)"
+  "hash": "5e53c2a7bbe1",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|ThreadPoolExecutor و ProcessPoolExecutor": {
-  "hash": "2c7be4fb597e",
-  "date": "2026-10-07",
-  "on": "Windows 11, Python 3.14.3 (example + solCode)"
+  "hash": "39c90bc6682d",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
+ },
+ "pyapi|WebSocket في FastAPI": {
+  "hash": "684065b059c8",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|alembic": {
-  "hash": "3413256b1f33",
-  "date": "2026-10-07",
-  "on": "Windows 11 Git Bash (+ pwsh 7 / PowerShell 5.1 redirect), Alembic 1.20 against postgres:18 in Docker"
+  "hash": "930c48fbc081",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|argparse و typer": {
-  "hash": "014ea0ba319a",
-  "date": "2026-10-07",
-  "on": "Windows Python 3.14.3 (typer 0.27.3 in local venv) + docker python:3.13-slim (argparse)"
+  "hash": "dfadfa5da79e",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|async def و await": {
-  "hash": "4b4b97992f2a",
-  "date": "2026-10-07",
-  "on": "Windows 11, Python 3.14.3 venv"
+  "hash": "8d94b904d070",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|async مش أسرع": {
-  "hash": "13221ec7b334",
-  "date": "2026-10-07",
-  "on": "windows-pwsh py3.14 uvicorn 0.54 + docker postgres:16-alpine (load test, local 0.2s service instead of example.com)"
+  "hash": "2a845bb85fc3",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
+ },
+ "pyapi|asyncio.Queue والإلغاء": {
+  "hash": "cfe5507c46d3",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|asyncpg": {
-  "hash": "a2301b242e67",
-  "date": "2026-10-07",
-  "on": "Windows 11, asyncpg 0.32 against postgres:18 in Docker"
+  "hash": "d5b13fc1b2fe",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|auth dependency": {
-  "hash": "7163b9024929",
-  "date": "2026-10-07",
-  "on": "Windows 11, FastAPI 0.142 + PyJWT 2.15; curl (Git Bash)"
+  "hash": "a8e2ef65c661",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|blocking في async": {
-  "hash": "57f0dd507a72",
-  "date": "2026-10-07",
-  "on": "Windows 11, Python 3.14.3 + FastAPI 0.142.2 (curl/xargs in Git Bash, PYTHONASYNCIODEBUG)"
+  "hash": "792d56b261d5",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|class و self": {
-  "hash": "13f96e4f0494",
-  "date": "2026-10-07",
-  "on": "Windows 11 Python 3.14.3 + python:3.13-slim (Docker)"
+  "hash": "b9daed9991b8",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|collections": {
-  "hash": "98808aac8b64",
-  "date": "2026-10-07",
-  "on": "Windows Python 3.14.3 + docker python:3.13-slim"
+  "hash": "a6a3330e7a68",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|comprehensions": {
-  "hash": "b7d311e6bd73",
-  "date": "2026-10-07",
-  "on": "windows-11 python 3.14.3, docker python:3.13-slim"
+  "hash": "c3a75f92e64a",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|csv و json": {
-  "hash": "0712b69728e5",
-  "date": "2026-10-07",
-  "on": "Windows Python 3.14.3 + docker python:3.13-slim"
+  "hash": "a24f7b3454c1",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|dataclass": {
-  "hash": "9c5b9e049fe4",
-  "date": "2026-10-07",
-  "on": "Windows 11 Python 3.14.3 + python:3.13-slim (Docker)"
+  "hash": "950aee0c7f35",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|datetime و zoneinfo": {
-  "hash": "5591206ff98c",
-  "date": "2026-10-07",
-  "on": "Windows Python 3.14.3 (venv + tzdata 2026e) + docker python:3.13-slim"
+  "hash": "5fed8afb509f",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|decorator بإيدك": {
-  "hash": "054bac9ee9d3",
-  "date": "2026-10-07",
-  "on": "windows-pwsh py3.14 (example + solCode) + docker python:3.13-slim"
+  "hash": "bdc117496e00",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|decorators": {
-  "hash": "157599007f1b",
-  "date": "2026-10-07",
-  "on": "Windows 11 Python 3.14.3 + python:3.13-slim (Docker)"
+  "hash": "9fdf3fd18374",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
+ },
+ "pyapi|def و return و الـ defaults": {
+  "hash": "ec0df77c2abd",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|def ولا async def": {
-  "hash": "c22201054594",
-  "date": "2026-10-07",
-  "on": "Windows 11, FastAPI 0.142.2 (Git Bash curl/xargs; pwsh 7 ForEach-Object -Parallel; Invoke-RestMethod in Windows PowerShell 5.1)"
+  "hash": "cb4cd4dabcf0",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|dependency بـ yield": {
-  "hash": "8dd3d66a3c8b",
-  "date": "2026-10-07",
-  "on": "Windows 11, FastAPI 0.142 + asyncpg 0.32 against postgres:18 in Docker; curl"
+  "hash": "ab4f3d7be170",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|dependency_overrides": {
-  "hash": "535f23cadd33",
-  "date": "2026-10-07",
-  "on": "Windows 11, pytest 9.1 + FastAPI TestClient (example + solCode)"
+  "hash": "a580753135df",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|dict": {
-  "hash": "3fc64478483f",
-  "date": "2026-10-07",
-  "on": "windows-11 python 3.14.3, docker python:3.13-slim"
+  "hash": "4e86f7d93584",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|django-admin startproject": {
-  "hash": "07c194159dbf",
-  "date": "2026-10-27",
-  "on": "Linux docker python:3.13-slim + Windows pwsh 7 (venv, Activate.ps1, startproject, migrate, runserver); docs: Mac"
+  "hash": "602426b0e5b4",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|dunder methods": {
-  "hash": "bbd73cc921f2",
-  "date": "2026-10-07",
-  "on": "Windows 11 Python 3.14.3 + python:3.13-slim (Docker)"
+  "hash": "319362e46d17",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|exception handlers": {
-  "hash": "bb24108469fe",
-  "date": "2026-10-07",
-  "on": "Windows 11, FastAPI 0.142/uvicorn; curl"
+  "hash": "4bef2815ec96",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|f-strings": {
-  "hash": "d856dc1706bc",
-  "date": "2026-10-07",
-  "on": "windows-11 python 3.14.3, docker python:3.13-slim"
+  "hash": "91bcd645c2a9",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|fastapi dev": {
-  "hash": "16f3d64dc005",
-  "date": "2026-10-07",
-  "on": "Windows 11, FastAPI 0.142.2 (dev with reload, run --workers 2, pyproject entrypoint, /docs /openapi.json via curl)"
+  "hash": "9a23a1d2cf4e",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|field_validator و model_validator": {
-  "hash": "50c7cdc3d413",
-  "date": "2026-10-07",
-  "on": "Windows 11, Pydantic 2.13.5 (example + solCode)"
+  "hash": "7dd95db1ba7e",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|flask run و create_app": {
-  "hash": "c3c5858c445f",
-  "date": "2026-10-27",
-  "on": "Linux docker + Windows pwsh 7 (venv, flask run --debug, Invoke-RestMethod)"
+  "hash": "d581078299d3",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|for و range": {
-  "hash": "ef731cb9a6dd",
-  "date": "2026-10-07",
-  "on": "windows-11 python 3.14.3, docker python:3.13-slim"
+  "hash": "3e81bd295bbd",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|functools": {
-  "hash": "62eca5ab86cf",
-  "date": "2026-10-07",
-  "on": "Windows Python 3.14.3 + docker python:3.13-slim"
+  "hash": "ae33a4f23075",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|gather و TaskGroup": {
-  "hash": "c2e6bce11aee",
-  "date": "2026-10-07",
-  "on": "Windows 11, Python 3.14.3 venv (example + solCode)"
+  "hash": "781fe2dda3a2",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|generator مقابل list": {
-  "hash": "c23b3ae65d60",
-  "date": "2026-10-07",
-  "on": "windows-pwsh py3.14 (example + solCode on 1M-line log)"
+  "hash": "96bd8d536a8c",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|generators و yield": {
-  "hash": "83c53f103f07",
-  "date": "2026-10-07",
-  "on": "Windows 11 Python 3.14.3 + python:3.13-slim (Docker); solCode (resource) Linux only; docs: macOS ru_maxrss units"
+  "hash": "025b472029f4",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|httpx.AsyncClient": {
-  "hash": "1d23332d5436",
-  "date": "2026-10-07",
-  "on": "Windows 11, httpx 0.28 + FastAPI against a local fake upstream; docs: httpbin.org"
+  "hash": "6fe3bd06d97c",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|if و elif و else": {
-  "hash": "91001047e384",
-  "date": "2026-10-07",
-  "on": "windows-11 python 3.14.3, docker python:3.13-slim"
+  "hash": "ea74f880bc17",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|import و packages": {
-  "hash": "204d61e032bb",
-  "date": "2026-10-07",
-  "on": "Windows Python 3.14.3 (local venv with fastapi); circular import also on python:3.13-slim"
+  "hash": "ffbe7a28e6dc",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|itertools": {
-  "hash": "212e4248476e",
-  "date": "2026-10-07",
-  "on": "Windows Python 3.14.3 + docker python:3.13-slim"
+  "hash": "50c9f712a809",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
+ },
+ "pyapi|lambda والدوال كقيم": {
+  "hash": "7b920f33b23e",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|list": {
-  "hash": "07376180e861",
-  "date": "2026-10-07",
-  "on": "windows-11 python 3.14.3, docker python:3.13-slim"
+  "hash": "3cd3ff9a757c",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|list و tuple و set و dict": {
-  "hash": "7d1a2591404c",
-  "date": "2026-10-07",
-  "on": "windows-pwsh py3.14 (example + timeit)"
+  "hash": "a9117e95f792",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|logging و profiling": {
-  "hash": "d87067ef9608",
-  "date": "2026-10-07",
-  "on": "windows-pwsh py3.14 (logging example) + docker python:3.13-slim (cProfile, py-spy top/dump)"
+  "hash": "2ad7abb24a35",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|match و case": {
-  "hash": "8f038abb32d8",
-  "date": "2026-10-07",
-  "on": "windows-11 python 3.14.3, docker python:3.13-slim"
+  "hash": "1a85b8091707",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|model_dump و model_validate": {
-  "hash": "46009d37f0c3",
-  "date": "2026-10-07",
-  "on": "Windows 11, Pydantic 2.13.5"
+  "hash": "69e28c2381bd",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|models و makemigrations": {
-  "hash": "d19114174fd2",
-  "date": "2026-10-27",
-  "on": "Linux docker (SQLite + Postgres 16)"
+  "hash": "453528af628b",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|mutable و immutable": {
-  "hash": "0f3c6763860e",
-  "date": "2026-10-07",
-  "on": "windows-11 python 3.14.3, docker python:3.13-slim"
+  "hash": "bf0fb53f8109",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|names و objects": {
-  "hash": "19b26a181951",
-  "date": "2026-10-07",
-  "on": "windows-11 python 3.14.3, docker python:3.13-slim"
+  "hash": "c805d0def923",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
+ },
+ "pyapi|observability": {
+  "hash": "e59bab59e6f4",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|path و query": {
-  "hash": "26f33cc0be2b",
-  "date": "2026-10-07",
-  "on": "Windows 11, FastAPI 0.142.2 (curl; Invoke-RestMethod in pwsh 7 and Windows PowerShell 5.1)"
+  "hash": "286a054fb8ed",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|pathlib": {
-  "hash": "db70189c6f2b",
-  "date": "2026-10-07",
-  "on": "Windows Python 3.14.3 + docker python:3.13-slim"
+  "hash": "33c678c71668",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|pydantic-settings": {
-  "hash": "876bcaefaab7",
-  "date": "2026-10-07",
-  "on": "Windows 11, pydantic-settings 2.15.0 + FastAPI 0.142.2 (Git Bash and pwsh 7)"
+  "hash": "391a17aa3359",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|pytest-django": {
-  "hash": "54613016ee8f",
-  "date": "2026-10-27",
-  "on": "Linux docker + Postgres 16"
+  "hash": "7c7f8f4fd06d",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|re": {
-  "hash": "10fb34dc8451",
-  "date": "2026-10-07",
-  "on": "Windows Python 3.14.3 + docker python:3.13-slim"
+  "hash": "e6538625f6f3",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|redis cache": {
-  "hash": "8976dc1eecda",
-  "date": "2026-10-07",
-  "on": "Windows 11, redis-py 8.1 against redis:8-alpine in Docker + redis-cli"
+  "hash": "3fba138b6f04",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|redis rate limit": {
-  "hash": "d59253b65717",
-  "date": "2026-10-07",
-  "on": "Windows 11, FastAPI 0.142 + redis-py 8.1 against redis:8-alpine; curl + pwsh 7 + redis-cli MONITOR"
+  "hash": "d08d7db7be41",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|request body": {
-  "hash": "37cc99f1a3ed",
-  "date": "2026-10-07",
-  "on": "Windows 11, FastAPI 0.142.2 (curl; Invoke-RestMethod POST in pwsh 7 and Windows PowerShell 5.1)"
+  "hash": "1f592781565a",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|response model": {
-  "hash": "98f020b6dde4",
-  "date": "2026-10-07",
-  "on": "Windows 11, FastAPI 0.142.2 (curl, pwsh 7)"
+  "hash": "66e7e251ece0",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|scope و LEGB": {
-  "hash": "a50afa4c2dd5",
-  "date": "2026-10-07",
-  "on": "Windows 11 Python 3.14.3 + python:3.13-slim (Docker)"
+  "hash": "2380530c0a71",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|select_related و prefetch_related": {
-  "hash": "937d2c00e7b8",
-  "date": "2026-10-27",
-  "on": "Linux docker + Postgres 16 and SQLite"
+  "hash": "66dec1868004",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|set و tuple": {
-  "hash": "d4165f965c21",
-  "date": "2026-10-07",
-  "on": "windows-11 python 3.14.3, docker python:3.13-slim"
+  "hash": "f8fb3cbd28fa",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|settings من env": {
-  "hash": "b6e4ba812193",
-  "date": "2026-10-27",
-  "on": "Linux docker + Postgres 16 container; Windows pwsh 7 (.env loader, check, shell)"
+  "hash": "4052661d0461",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
+ },
+ "pyapi|shutil و tempfile": {
+  "hash": "419d81e9a154",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
+ },
+ "pyapi|signals": {
+  "hash": "6533d5f9dd77",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
+ },
+ "pyapi|strings: index و slicing و methods": {
+  "hash": "5cc520e51011",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|subprocess": {
-  "hash": "4ada56fcf5ef",
-  "date": "2026-10-07",
-  "on": "docker python:3.13 (with git) + Windows pwsh Python 3.14.3 (ls/sleep from Git usr/bin)"
+  "hash": "0ade9e4bd888",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
+ },
+ "pyapi|transaction.atomic": {
+  "hash": "631d9f039832",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|transactions": {
-  "hash": "e250600405ed",
-  "date": "2026-10-07",
-  "on": "Windows 11, asyncpg 0.32 + two psql sessions against postgres:18 in Docker"
+  "hash": "c63a4cb85178",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|try و except": {
-  "hash": "5fad969d9221",
-  "date": "2026-10-07",
-  "on": "Windows 11 Python 3.14.3 + python:3.13-slim (Docker)"
+  "hash": "9a51b223c012",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|type hints": {
-  "hash": "94d7cbc12bee",
-  "date": "2026-10-07",
-  "on": "windows-11 python 3.14.3 + mypy 2.4.0, docker python:3.13-slim"
+  "hash": "537abeb828d7",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|uv و pyproject.toml": {
-  "hash": "bea5a1785494",
-  "date": "2026-10-07",
-  "on": "Windows uv 0.10.7 + Python 3.14.3 (pwsh/Git Bash, local project); docs: install script lines"
+  "hash": "7676dfe887cc",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|views و urls": {
-  "hash": "41d2825ebaf0",
-  "date": "2026-10-27",
-  "on": "Linux docker + Postgres 16 (runserver + curl)"
+  "hash": "5aa1f849d4b9",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|while و break و continue": {
-  "hash": "6fa77d75a768",
-  "date": "2026-10-07",
-  "on": "windows-11 python 3.14.3 (piped input), docker python:3.13-slim"
+  "hash": "de9cb1e4590d",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|with و context managers": {
-  "hash": "bd1a9e5bb078",
-  "date": "2026-10-07",
-  "on": "Windows 11 Python 3.14.3 + python:3.13-slim (Docker)"
+  "hash": "b9f917d174d2",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|workers و GIL": {
-  "hash": "da82d7f097b8",
-  "date": "2026-10-07",
-  "on": "windows-pwsh py3.14 venv (fastapi 0.142, --workers 4) + docker python:3.13-slim --cpus 4 + python3.14t"
+  "hash": "03935acff3e5",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
+ },
+ "pyapi|أداة سطر أوامر": {
+  "hash": "c51305133eaa",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
+ },
+ "pyapi|أشكال بالـ loops": {
+  "hash": "ce7c7932f79f",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
+ },
+ "pyapi|اختبار Flask بـ pytest": {
+  "hash": "c59cdfd6cc92",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
+ },
+ "pyapi|الأرقام: int و float و Decimal": {
+  "hash": "e645d4a1d893",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|الـ GIL": {
-  "hash": "7fe6e25cf7ae",
-  "date": "2026-10-07",
-  "on": "windows-pwsh py3.14 + python3.14t (example + solCode); docs: C extension re-enabling GIL"
+  "hash": "acbd647bea0d",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|الـ default بيتحسب مرة": {
-  "hash": "37925e66e745",
-  "date": "2026-10-07",
-  "on": "windows-pwsh py3.14 (+ ruff B006/B008)"
+  "hash": "d6e9416d70e3",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
+ },
+ "pyapi|الـ traceback وأشهر الأخطاء": {
+  "hash": "9ad902c5809d",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|الوراثة و super و MRO": {
-  "hash": "2fd9943f26a8",
-  "date": "2026-10-07",
-  "on": "Windows 11 Python 3.14.3 + python:3.13-slim (Docker)"
+  "hash": "9da73905205f",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
+ },
+ "pyapi|تشفير الباسورد": {
+  "hash": "17fa23d2b757",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|تمارين الأساسيات": {
-  "hash": "e56a47755401",
-  "date": "2026-10-07",
-  "on": "windows-11 python 3.14.3, docker python:3.13-slim"
+  "hash": "21829fd6d596",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
+ },
+ "pyapi|توقّع الناتج": {
+  "hash": "ac28bf94d128",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
+ },
+ "pyapi|خريطة مشاريع Python": {
+  "hash": "49529221ef09",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
+ },
+ "pyapi|رفع ملفات": {
+  "hash": "b9e0b05ce096",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
+ },
+ "pyapi|لعبة في الترمنال": {
+  "hash": "02b6bc21e0a2",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
+ },
+ "pyapi|مسائل lists و dicts": {
+  "hash": "622b816f780b",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
+ },
+ "pyapi|مسائل أرقام": {
+  "hash": "36a78bc8c7fa",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
+ },
+ "pyapi|مسائل منطق ومحاكاة": {
+  "hash": "386f4bfcce9c",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
+ },
+ "pyapi|مسائل نصوص": {
+  "hash": "8e97aa26620e",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
+ },
+ "pyapi|مشروع التخرّج ١: الهيكل والموديلات": {
+  "hash": "035fcca9e34f",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
+ },
+ "pyapi|مشروع التخرّج ٢: قاعدة البيانات والـ endpoints": {
+  "hash": "5792cc2b3e20",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
+ },
+ "pyapi|مشروع التخرّج ٣: الأمان والأخطاء": {
+  "hash": "fc3f5819d084",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
+ },
+ "pyapi|مشروع التخرّج ٤: الاختبارات و Docker والنشر": {
+  "hash": "76ded24a831c",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
+ },
+ "pyapi|معالجة بيانات حقيقية": {
+  "hash": "90a4df0fd35f",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|مقدمة بايثون والـ print": {
-  "hash": "07943dfc1b04",
-  "date": "2026-10-07",
-  "on": "windows-11 python 3.14.3 (file + REPL), docker python:3.13-slim"
+  "hash": "feacd752971e",
+  "date": "2026-10-30",
+  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pydata|API و json_normalize": {
   "hash": "de3363b49900",

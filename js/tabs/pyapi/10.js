@@ -3,6 +3,26 @@ MORE("pyapi", [
     {
       t: "سكربتات وأوامر النظام",
       l: 1,
+      time: R`حوالي ٥ ساعات (درسين)`,
+      goal: [
+        R`تكتب أداة سطر أوامر بـ argparse أو typer: arguments و options و flags وأوامر فرعية، و [[--help]] واضح، ورسايل خطأ على stderr، وexit codes بتقول الحقيقة.`,
+        R`تكتب سكربت بيتركب في pipe: بيقرا من ملف أو stdin، وبيكتب الداتا على stdout والكلام على stderr.`,
+        R`تشغّل برامج تانية بـ [[subprocess]] بأمان: list مش shell، و [[check]] و [[timeout]] و [[cwd]] و [[env]] و [[encoding]]، وناتج سطر سطر بـ [[Popen]].`,
+        R`تختبر الأداة من غير ما تشغّل process، بـ [[main(argv)]] اللي بترجّع رقم.`,
+      ],
+      use: {
+        prog: R`كل مطوّر بيكتب أدوات صغيرة لنفسه ولفريقه (seed للداتابيز، تنضيف، تقارير، نشر). الفرق بين أداة الكل بيستخدمها وأداة محدش بيلمسها هو [[--help]] والرسايل وexit codes.`,
+        work: R`سكربتات الـ CI والنشر بتعتمد على exit code: سكربت بيرجّع ٠ بعد فشل بيخلي deploy بايظ يعدّي. و command injection من [[shell=True]] ثغرة حقيقية بتتلاقي في كود production.`,
+        cs: R`الـ process ليه ٣ قنوات (stdin و stdout و stderr) ورقم خروج، والـ pipe buffer محدود (ولو اتملى الكاتب بيقف)، والصدفة هي اللي بتفسّر الرموز مش البرنامج. دي أساسيات Unix اللي ويندوز كمان ماشي عليها.`,
+      },
+      projects: [
+        { lvl: 'صغير', t: R`آلة حاسبة ضريبة من الترمنال`, what: R`[[vat.py AMOUNT [--rate 0.14] [--reverse]]] بيطبع المبلغ بالضريبة (أو قبلها مع [[--reverse]])، بـ argparse و [[Decimal]]، و [[--rate]] من ٠ لـ ١ بس. من درس argparse و typer.`, done: R`[[vat.py 100]] بيطبع [[114.00]] و [[--reverse 114]] بيطبع [[100.00]]، و [[--rate 2]] و [[abc]] رسايل واضحة و exit 2، و ٤ اختبارات بـ [[main([...])]] بتعدّي.` },
+        { lvl: 'صغير', t: R`فاحص الأدوات المطلوبة`, what: R`[[doctor.py]] بيقرا لستة أدوات ([[git]] و [[python]] و [[node]] و [[docker]]) ويطبع لكل واحدة موجودة ولا لأ ([[shutil.which]]) ونسختها ([[--version]] بـ [[subprocess.run]] و [[timeout=5]]). من درس subprocess.`, done: R`بيطبع جدول بالأربعة والنسخ الحقيقية، والأداة الناقصة مكتوب جنبها «مش موجودة» من غير traceback، والـ exit code ١ لو أي أداة إجبارية ناقصة و ٠ لو كله موجود.` },
+        { lvl: 'متوسط', t: R`أداة CSV في الـ pipe`, what: R`[[csvtool.py]] بأوامر فرعية [[head]] و [[cols]] و [[filter COL=VALUE]] و [[count COL]]، كل واحد بيقرا من ملف أو stdin ويكتب CSV على stdout، فتتركب: [[csvtool.py filter city=Cairo orders.csv | csvtool.py count product]]. من الدرسين ووحدة الملفات.`, done: R`السلسلة دي بتطلع نفس الأرقام اللي طلعت من حسبة بإيدك، والأخطاء (عمود غلط، ملف مش موجود) على stderr بس وexit 2، والـ pipe بيشتغل على ملف مليون صف بذاكرة ثابتة، و ٨ اختبارات بتعدّي.` },
+        { lvl: 'متوسط', t: R`مشغّل أوامر من ملف`, what: R`[[runbook.py steps.txt]]: كل سطر في الملف أمر ([[shlex.split]])، والأداة بتشغّلهم بالترتيب بـ [[Popen]] وتطبع الناتج سطر سطر بوقته، وتقف عند أول فشل (أو تكمّل مع [[--keep-going]])، ومعاها [[--dry-run]]. من الدرسين.`, done: R`ملف فيه ٤ أوامر منهم واحد فاشل: من غير [[--keep-going]] بيقف عنده وexit بنفس كوده، ومعاه بيكمّل ويطبع ملخص (نجح ٣، فشل ١)، و [[--dry-run]] مبيشغّلش ولا أمر، وأمر بيطوّل بيتقتل بعد [[--timeout]].` },
+        { lvl: 'كبير', t: R`أداة نشر صغيرة لمشروع`, what: R`[[deploy.py]] بأوامر [[check]] و [[build]] و [[release]]: [[check]] بيتأكد إن git نضيف ([[git status --porcelain]] فاضي) وإن الأدوات موجودة، و [[build]] بيشغّل [[uv run pytest]] وبعدين [[uv build]] بالـ streaming ويوقف عند أي فشل، و [[release]] بيعمل [[git tag vX.Y.Z]] بعد سؤال تأكيد (و [[--yes]] للـ CI) ومع [[--dry-run]] بيطبع الأوامر بس، وكل خطوة بتتسجّل في [[deploy.log]] بالوقت UTC. الإعدادات (اسم المشروع، الأدوات المطلوبة) من [[deploy.json]]. من الوحدة دي ووحدات الملفات والـ modules.`, done: R`على repo فيه تغييرات [[check]] بيرفض ويقول الملفات وexit 1، وعلى repo نضيف [[build]] بيطبع ناتج pytest وهو شغال ويطلّع الـ wheel، و [[release --dry-run]] بيطبع أمر الـ tag من غير ما يعمله، والنسخة الغلط ([[v1.x]]) بترفض بـ exit 2، واللوج فيه سطر لكل خطوة، و ١٠ اختبارات بتبدّل [[subprocess.run]] بـ fake (من غير ما تشغّل git فعلًا) بتعدّي، والأداة اتشغّلت مرتين ورا بعض من غير مشاكل.`, ext: R`زوّد [[rollback]] (يشيل آخر tag)، وتحويلها لـ typer بـ completion، و GitHub Action بيشغّل [[deploy.py build]] على كل push.` },
+        { lvl: 'فكرة', t: R`لف أداة بتكرهها`, what: R`فكّر في أمر طويل بتنساه (ffmpeg، أو docker بخيارات كتير، أو pg_dump، أو أمر git معقد) واعمل wrapper بأسامي خيارات انت فاهمها، و [[--explain]] بيطبع الأمر الحقيقي اللي هيتشغّل.`, done: R`بتستخدمها بدل الأمر الأصلي أسبوع، و [[--explain]] بيطبع أمر لو نسخته وشغّلته بإيدك بيعمل نفس الحاجة، والأسامي الغريبة (ملفات بمسافات وعربي) شغالة.`, ext: R`شاركها مع زميل، وزوّد [[--help]] فيه أمثلة حقيقية، وحوّلها لأمر متسطّب بـ [[[project.scripts]]] (درس uv).` },
+      ],
       n: "سكربت بـ arguments بـ argparse أو typer، وتشغّل أوامر النظام بـ subprocess بأمان",
       items: [
         {
@@ -55,6 +75,14 @@ def report(
 if __name__ == "__main__":
     app()`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** من غير ما تبص، اكتب [[add_argument]] لكل حاجة: ملف إجباري، و [[-o/--out]] بـ default، و flag [[--dry-run]]، و [[--tag]] بيتكرر، و [[--level]] من ٣ اختيارات بس، و رقم. وجنب كل واحدة شكل القيمة في [[args]].`, done: R`الست سطور اشتغلوا في [[parse_args([...])]] وطبعت الـ Namespace، و [[--level]] بـ [[choices=["low", "mid", "high"]]] بيرفض [[x]] برسالة [[invalid choice]]، و [[--tag]] من غير ما يتكتب [[None]].` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** للمثال، إيه الـ exit code والرسالة لـ: [[python report.py]]، و [[python report.py a.csv --top 0]]، و [[python report.py nope.csv]]، و [[python report.py a.csv -v yes]]؟ اكتبهم وبعدين شغّل وافحص بـ [[echo $?]] أو [[$LASTEXITCODE]].`, done: R`التلاتة الأولانيين exit 2 (منهم [[nope.csv]] بـ [[return 2]] بتاعتنا)، والأخير exit 2 برسالة [[unrecognized arguments: yes]]، والرسايل كلها على stderr ([[2>$null]] أو [[2>/dev/null]] بيخفيها).` },
+            { lvl: 'تطبيق', t: R`**صلّح:** سكربت بيقرا [[sys.argv[1]]] و [[int(sys.argv[2])]] على طول، وبيطبع الخطأ بـ [[print]] ويخرج بـ ٠. اعمل له ٣ مشاكل (من غير arguments، ورقم غلط، وملف مش موجود) واكتب الـ traceback، وبعدين حوّله argparse بـ [[main(argv)]] واختبره.`, done: R`قبل: [[IndexError]] و [[ValueError]] و exit 0 في الحالة التالتة. بعد: التلاتة رسالة واضحة على stderr و exit 2، و [[--help]] بيشرح الاستخدام، و ٣ اختبارات pytest بتنادي [[main([...])]] وبتشيك الرقم.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[todo.py]] بأوامر فرعية [[add TEXT]] و [[list [--done | --pending]]] و [[done ID]]، والحالة في ملف JSON (بـ [[write_atomic]] من وحدة الملفات)، ومسار الملف من [[--file]] أو متغير [[TODO_FILE]] أو [[todo.json]].`, done: R`[[add]] ٣ مرات و [[done 2]] و [[list --pending]] بيطبع ٢، و [[done 99]] رسالة و exit 1، و [[--done --pending]] مع بعض exit 2 برسالة argparse، و [[TODO_FILE=x.json]] بيكتب في [[x.json]].` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية (pipe):** [[csvcol.py COLUMN [FILE]]] بيطبع عمود واحد من CSV جاي من ملف أو stdin (بـ [[-]])، ومعاه [[--unique]] و [[--count]]. ركّبه: [[python csvcol.py city orders.csv | sort | uniq -c]] (bash) أو [[| Sort-Object | Group-Object]] (PowerShell).`, done: R`بيشتغل من ملف ومن pipe بنفس الناتج، والعمود الغلط رسالة فيها أسامي الأعمدة المتاحة و exit 2، و [[--count]] بيطلع نفس الأرقام اللي طلعت من [[uniq -c]]، ومفيش ولا سطر من رسايله دخل في الـ pipe.` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من [[python -m argparse]] مش موجود، فادخل [[help(argparse.ArgumentParser.add_argument)]] ووثائق argparse. لاقي: إزاي تخلي [[--port]] ياخد قيمته من [[PORT]] env لو مش مكتوب، وإزاي تعمل [[--version]] بيطبع النسخة ويخرج، وإزاي تقرا arguments من ملف ([[@args.txt]]).`, done: R`التلاتة شغالين: [[default=int(os.environ.get(...))]] (أو [[type=int]] مع default نص)، و [[action="version"]]، و [[fromfile_prefix_chars="@"]]، وكاتب اسم المكان في الوثائق اللي لقيت فيه كل واحدة.` },
+          ],
           deep: {
             why: R`سكربت الـ seed، و import من CSV، وتقرير شهري، و cleanup: كلها بتتشغّل من الترمنال أو cron أو CI، ومحتاجة ملفات وخيارات مختلفة كل مرة. ومن غير arguments الناس بتعدّل الكود قبل كل تشغيل، أو بتقرا [[sys.argv[1]]] من غير أي فحص فتطلع [[IndexError]] بدل رسالة مفهومة.`,
             how: R`[[add_argument("src")]] من غير شرط positional وإجباري. و [[-o]]/[[--out]] option اختياري ليه default. و [[type=Path]] أو [[type=int]] بيحوّل ولو فشل بيطلّع رسالة ويخرج بـ 2. و [[action="store_true"]] flag من غير قيمة، و [[action="append"]] بيجمع التكرار في list، و [[choices=[...]]] قيم محددة، و [[nargs="+"]] واحد أو أكتر. والناتج [[Namespace]] بتوصل لقيمه بـ [[args.top]] (الشرطة في الاسم بتبقى underscore).
@@ -301,9 +329,9 @@ Try 'report_typer.py --help' for help.
 
 | الحالة | رسالة typer |
 |---|---|
-| من غير ملف | [[Missing argument 'src'.]] |
-| [[--top abc]] | [[Invalid value for '--top': 'abc' is not a valid int range.]] |
-| [[nope.csv]] | [[Invalid value for 'src': File 'nope.csv' does not exist.]] |
+| من غير ملف | نسيت الـ argument الإجباري: [[Missing argument 'src'.]] |
+| [[--top abc]] | النوع غلط، و typer فحصه من الـ type hint: [[Invalid value for '--top': 'abc' is not a valid int range.]] |
+| [[nope.csv]] | [[exists=True]] فحص الملف قبل ما الدالة تتنادى: [[Invalid value for 'src': File 'nope.csv' does not exist.]] |
 
 ومع [[--city Cairo --city Alex --top 3 -v]]:
 
@@ -316,42 +344,133 @@ reading orders.csv -> report.json, cities=['Cairo', 'Alex'], top=3
 
 ---
 
+## ٩. أوامر فرعية: [[shop add]] و [[shop list]]
+
+زي [[git commit]] و [[git push]]: برنامج واحد، وكل أمر ليه arguments بتاعته:
+
+~~~python
+import argparse
+import os
+import sys
+def cmd_add(args) -> int:
+    print(f"add {args.name} x{args.qty}")
+    return 0
+def cmd_list(args) -> int:
+    print("list", "--all" if args.all else "")
+    return 0
+def main(argv=None) -> int:
+    p = argparse.ArgumentParser(prog="shop")
+    p.add_argument("--db", default=os.environ.get("SHOP_DB", "shop.db"))
+    sub = p.add_subparsers(dest="command", required=True)
+    a = sub.add_parser("add", help="add a product")
+    a.add_argument("name")
+    a.add_argument("--qty", type=int, default=1)
+    a.set_defaults(func=cmd_add)
+    l = sub.add_parser("list", help="list products")
+    g = l.add_mutually_exclusive_group()
+    g.add_argument("--all", action="store_true")
+    g.add_argument("--low", action="store_true")
+    l.set_defaults(func=cmd_list)
+    args = p.parse_args(argv)
+    return args.func(args)
+if __name__ == "__main__":
+    sys.exit(main())
+~~~
+
+~~~text الناتج (Python 3.14، كل أمر لوحده)
+> python tool.py add tea --qty 3
+add tea x3
+> python tool.py
+usage: shop [-h] [--db DB] {add,list} ...
+shop: error: the following arguments are required: command
+> python tool.py list --all --low
+usage: shop list [-h] [--all | --low]
+shop list: error: argument --low: not allowed with argument --all
+~~~
+
+- [[add_subparsers(dest="command", required=True)]] بيعمل مكان للأوامر الفرعية، والاسم اللي اتكتب بيروح في [[args.command]]. و [[required=True]] عشان [[python tool.py]] لوحده يطلّع خطأ (من غيره بيكمّل و [[args.func]] بترمي [[AttributeError]]).
+- [[add_parser("add")]] parser كامل لكل أمر بـ arguments بتاعته، و [[help]] بيظهر في [[--help]] بتاع البرنامج كله.
+- [[set_defaults(func=cmd_add)]] بيحط دالة الأمر جوه [[args]]، فـ [[args.func(args)]] بتنادي الصح من غير [[if args.command == "add"]].
+- [[add_mutually_exclusive_group()]]: اختار واحد بس. الاتنين مع بعض = خطأ argparse بيكتبه لوحده و exit 2.
+- [[default=os.environ.get("SHOP_DB", "shop.db")]]: الأولوية argument ← متغير بيئة ← قيمة ثابتة. ده الترتيب اللي الأدوات المحترمة بتمشي عليه، و [[SHOP_DB=x.db python tool.py ...]] بيغيّرها من غير ما تكتب [[--db]].
+
+---
+
+## ١٠. سكربت بيتحط في pipe: stdin و stdout
+
+أداة كويسة تقرا من ملف **أو** من stdin، وتكتب الناتج على stdout والكلام الجانبي على stderr، فتتركب مع أدوات تانية:
+
+~~~python
+import argparse
+import sys
+def main(argv=None) -> int:
+    p = argparse.ArgumentParser(description="upper-case lines")
+    p.add_argument("file", nargs="?", default="-", help="file, or - for stdin")
+    args = p.parse_args(argv)
+    f = sys.stdin if args.file == "-" else open(args.file, encoding="utf-8")
+    with f:
+        n = 0
+        for line in f:
+            n += 1
+            sys.stdout.write(line.upper())
+    print(f"{n} lines", file=sys.stderr)
+    return 0
+if __name__ == "__main__":
+    sys.exit(main())
+~~~
+
+~~~text الناتج (Git Bash على ويندوز)
+$ printf "tea\ncoffee\n" | python upper.py
+TEA
+COFFEE
+2 lines
+$ python upper.py in.txt 2>/dev/null | python upper.py
+A
+1 lines
+~~~
+
+- [[nargs="?"]] يعني الـ argument اختياري، و [[default="-"]] الاتفاق المشهور: [[-]] = stdin (زي [[cat -]]).
+- السطور بتتقري واحد واحد ([[for line in f]])، فالأداة بتشتغل على ملف ١٠ جيجا من غير ما تحمّله.
+- [[2 lines]] راحت لـ stderr، فلما عملنا pipe للأداة التانية **موصلتش** ليها (الأداة التانية شافت [[A]] بس). ولو كانت على stdout كانت هتبقى جزء من الداتا وتتحوّل [[1 LINES]].
+- [[argparse.FileType]] كانت الطريقة القديمة لده، وفي 3.14 بقت بتطلّع [[PendingDeprecationWarning: FileType is deprecated. Simply open files after parsing arguments.]] (اتجرّب بـ [[-W default]])، فافتح الملف بنفسك بعد الـ parsing زي فوق.
+- [[sys.stdin.isatty()]] بيرجّع [[True]] لو حد بيكتب بإيده في ترمنال و [[False]] لو جاي من pipe أو ملف. تقدر تستخدمها تطبع «اكتب النص وبعدين Ctrl+Z (ويندوز) أو Ctrl+D (لينكس)» بدل ما الأداة تبان واقفة.
+
 ## الخلاصة
 
 | argparse | typer |
 |---|---|
 | [[add_argument("src")]] | باراميتر من غير default |
-| [[add_argument("--top", type=int, default=5)]] | [[top: int = 5]] |
-| [[action="store_true"]] | [[bool = False]] |
+| [[add_argument("--top", type=int, default=5)]] | [[top: int = 5]]: الـ type hint هو النوع، والـ default بيخليه option |
+| [[action="store_true"]] | [[bool = False]]: typer بيعمل [[--verbose]] و [[--no-verbose]] لوحده |
 | [[action="append"]] | النوع [[list[str]]] والـ default [[None]] |
-| فحص بإيدك + [[parser.error]] | [[min=]] و [[max=]] و [[exists=True]] |
+| فحص بإيدك + [[parser.error]] | [[min=]] و [[max=]] و [[exists=True]] جوه [[typer.Option]] أو [[typer.Argument]]، والرسالة بتطلع لوحدها |
 | مكتبة أساسية | [[pip install typer]] |
 
 - [[main(argv=None) -> int]] و [[sys.exit(main())]]: قابل للاختبار، والـ exit code صح.
 - الأخطاء على stderr، و 2 لـ «استخدام غلط».`,
           lines: [
-            "import.",
-            "للـ stderr و exit.",
-            "المسارات.",
-            R`[[argv]] بـ None في التشغيل العادي، و list في الاختبار.`,
-            R`الـ parser، والوصف بيظهر في [[--help]].`,
-            R`positional: إجباري، و [[type=Path]] بيحوّله.`,
-            "option بشكلين وقيمة افتراضية.",
-            R`[[append]]: [[--city A --city B]] بيبقوا list.`,
-            R`رقم، و [[metavar]] الاسم اللي يظهر في الـ help.`,
-            "flag: True لو موجود.",
-            R`اقرا [[sys.argv]] أو الـ list اللي اتبعتت.`,
-            "فحص زيادة...",
-            R`...[[parser.error]] بيطبع الـ usage والرسالة ويخرج بـ 2.`,
-            "الملف موجود؟",
-            "الخطأ على stderr مش stdout.",
-            "exit code غير صفر = فشل.",
-            "لو verbose...",
-            "اطبع كل الـ arguments.",
-            "الشغل الحقيقي.",
-            "نجح.",
-            "لما يتشغّل مباشرة بس.",
-            R`الـ return بتاع main بقى الـ exit code.`
+            R`[[argparse]] في المكتبة القياسية، فالسكربت بيشتغل في أي مكان فيه Python من غير [[pip install]]. بيقرا [[sys.argv]] ويحوّله object فيه كل الخيارات، ويعمل [[--help]] والأخطاء لوحده.`,
+            R`[[sys]] لحاجتين: [[sys.stderr]] عشان رسايل الخطأ تروح للمكان الصح، و [[sys.exit]] عشان رقم الخروج يوصل للصدفة.`,
+            R`[[Path]] هنستخدمه كـ [[type=]] للـ arguments اللي هي مسارات، فتوصل للكود [[Path]] جاهز عليه [[exists()]] و [[open()]] بدل string.`,
+            R`[[main(argv=None)]]: في التشغيل العادي [[argv]] بـ [[None]] فـ [[parse_args]] بيقرا [[sys.argv]]، وفي الاختبار بتبعت list ([[main(["orders.csv", "--top", "3"])]]) من غير ما تشغّل process. و [[-> int]] لأن اللي راجع هيبقى exit code.`,
+            R`[[ArgumentParser]] الـ object اللي بيعرف الـ arguments. [[description]] بيظهر تحت سطر [[usage]] في [[--help]]. ولو عايز اسم البرنامج يظهر غير اسم الملف: [[prog="report"]].`,
+            R`**positional**: اسم من غير [[-]]، فهو إجباري ومكانه بيحدده. [[type=Path]] بيتنادى على النص ([[Path("orders.csv")]])، و [[help]] بيظهر جنبه في [[--help]]. من غيره: [[error: the following arguments are required: src]] و exit 2.`,
+            R`**option**: بشكلين، قصير [[-o]] وطويل [[--out]]، والاسم في [[args]] بيتاخد من الطويل ([[args.out]]). ليه [[default]]، فلو متكتبش بياخد [[report.json]]. ومينفعش يبقى positional و option مع بعض.`,
+            R`[[action="append"]]: كل مرة [[--city]] تتكتب القيمة بتتضاف لـ list: [[--city Cairo --city Alex]] بتبقى [[['Cairo', 'Alex']]]. ومن غيرها الأخيرة بس هي اللي بتفضل. ولو متكتبتش خالص القيمة [[None]] (مش [[[]]])، فافحص [[if args.city]].`,
+            R`[[type=int]] بيحوّل النص لرقم وبيطلّع [[error: argument --top: invalid int value: 'abc']] لو مش رقم. و [[metavar="N"]] الاسم اللي يظهر في الـ help ([[--top N]]) بدل [[TOP]].`,
+            R`[[store_true]]: flag من غير قيمة؛ وجوده [[True]] وغيابه [[False]]. وبتكتب [[-v]] بس مش [[-v true]]. ولو كتبت [[-v yes]] هيعتبر [[yes]] argument تاني ويطلّع [[unrecognized arguments]].`,
+            R`[[parse_args]] بيقرا ويحوّل ويفحص الأنواع، ولو فيه خطأ بيطبع الـ usage والرسالة على stderr ويخرج بـ ٢ **من غير ما يرجع**. ولو كله تمام بيرجّع [[Namespace]] (object بسيط فيه خانة لكل argument).`,
+            R`فحص argparse مبيعرفش يعمله: الرقم في نطاق. [[1 <= args.top <= 50]] مقارنة متسلسلة (يعني [[1 <= top and top <= 50]])، و [[not]] قبلها: لو برّه النطاق.`,
+            R`[[parser.error]] بيطبع الـ usage ورسالتك بنفس شكل أخطاء argparse، ويخرج بـ ٢ (زي أي استخدام غلط). أحسن من [[print]] و [[sys.exit]] بإيدك لأن الشكل موحّد واليوزر بيشوف الاستخدام الصح.`,
+            R`[[exists()]] على الـ [[Path]] اللي argparse عمله. الفحص ده **بعد** الـ parsing لأن argparse مبيفحصش وجود الملفات (typer بيفحصه بـ [[exists=True]]).`,
+            R`[[file=sys.stderr]] بيبعت الرسالة لـ stderr مش stdout. لو حد عامل [[report.py x.csv > out.txt]]، الخطأ بيظهر في الشاشة بدل ما يتكتب جوه الملف ويبوّظه، والسكربت اللي بعده بيعرف إن فيه مشكلة.`,
+            R`[[return 2]] = فشل بسبب الاستخدام (نفس رقم argparse). أي رقم غير صفر معناه فشل، و [[&&]] في bash و [[$LASTEXITCODE]] في PowerShell والـ CI بيعتمدوا عليه. لو رجّعت ٠ بعد خطأ، الـ pipeline هيكمّل كأن كله تمام.`,
+            R`[[-v]] كان موجود؟ الكود الإضافي (طباعة التفاصيل) بيحصل بس لما اليوزر يطلبه. في سكربت أكبر ده مكان [[logging.DEBUG]] (درس logging في وحدة الإنتاج).`,
+            R`[[print(args)]] بيطبع الـ Namespace كامل: [[Namespace(src=WindowsPath('orders.csv'), ...)]]. أسرع طريقة تتأكد إن الـ arguments اتقرت زي ما انت فاكر.`,
+            R`مكان الشغل الحقيقي (قراية الـ CSV وكتابة التقرير). هنا بيطبع اللي هيعمله بس، عشان الدرس عن الـ arguments. [[args.city]] list أو [[None]]، و [[args.top]] [[int]] جاهز.`,
+            R`[[return 0]] = نجاح. ده الرقم اللي [[sys.exit]] تحت هيبعته للصدفة.`,
+            R`السطرين دول بيتنفّذوا بس لما الملف يتشغّل مباشرة ([[python report.py ...]])، مش لما اختبار يعمل [[import report]] وينادي [[main([...])]] (درس import و packages).`,
+            R`[[sys.exit(main())]] بياخد الرقم اللي [[main]] رجّعته ويخرج بيه. من غيرها السكربت دايمًا بيخرج بـ ٠ حتى لو [[main]] رجّعت ٢. و [[sys.exit]] بترمي [[SystemExit]]، فالـ [[finally]] والـ [[with]] بيتقفلوا صح.`,
           ]
         },
         {
@@ -410,6 +529,14 @@ if __name__ == "__main__":
         print("error:", e, file=sys.stderr)
         sys.exit(1)`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** من الذاكرة: الفرق بين [[run]] و [[Popen]]، وكل باراميتر من دول بيعمل إيه: [[capture_output]] و [[text]] و [[encoding]] و [[check]] و [[timeout]] و [[cwd]] و [[env]]، وإيه الـ exception اللي ممكن يطلع من كل واحد.`, done: R`السبعة متشرحين، ومعاهم [[CalledProcessError]] (check) و [[TimeoutExpired]] (timeout) و [[FileNotFoundError]] (برنامج مش موجود) و [[NotADirectoryError]] أو [[FileNotFoundError]] لـ [[cwd]] غلط (جرّبتها).` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[r = subprocess.run([sys.executable, "-c", "print(1); import sys; sys.exit(2)"], capture_output=True, text=True)]]. إيه [[r.returncode]] و [[repr(r.stdout)]]؟ وهل فيه exception؟ وبعدين نفس الحاجة مع [[check=True]]: الـ [[stdout]] بتاع الـ exception فيه إيه؟`, done: R`الأول [[2]] و [[1\n]] بين علامات ومفيش exception، والتاني [[CalledProcessError]] و [[e.stdout]] فيه [[1\n]] برضه (لأن [[capture_output]] متحط)، وشغّلت الاتنين وطابقوا.` },
+            { lvl: 'تطبيق', t: R`**صلّح (أمان):** دالة [[convert(name)]] فيها [[subprocess.run(f"ffmpeg -i {name} out.mp3", shell=True)]]. اكتب اسم ملف يخليها تعمل حاجة تانية (من غير ما تشغّله فعلًا: استخدم [[echo]] مكان [[ffmpeg]])، وصلّحها بـ list و [[--]] و [[shutil.which]].`, done: R`مع [[echo]] و [[shell=True]] اسم زي [[a.mp4 & echo HACKED]] (CMD) أو [[a.mp4; echo HACKED]] (bash) طبع [[HACKED]] لوحده، وبعد التصليح نفس الاسم وصل argument واحد ومطبعش [[HACKED]]، وفيه رسالة لو ffmpeg مش متسطّب.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[git_summary(path)]] بترجّع dict فيه الـ branch وعدد الملفات المتغيّرة وآخر ٣ commits (من [[git log --oneline -3]])، بـ [[cwd]] و [[timeout=5]] و [[check=True]]، وبترجّع [[None]] لو الفولدر مش repo، وبترمي رسالة واضحة لو git مش متسطّب. شغّلها على ٣ فولدرات.`, done: R`على repo بترجّع الأربع خانات صح (قارنتهم بـ [[git status]])، وعلى فولدر عادي [[None]] من غير traceback، ولو غيّرت اسم البرنامج لـ [[gitx]] الرسالة بتقول إن git مش موجود.` },
+            { lvl: 'تطبيق', t: R`**محاكاة (streaming):** [[run_with_progress(cmd)]] بتشغّل أمر بـ [[Popen]] وتطبع كل سطر قدامه الوقت من البداية ([[[0.52s] step 1]])، وترجّع exit code، وتقتل الأمر لو عدّى [[max_seconds]]. جرّبها على سكربت Python بيطبع سطر كل نص ثانية.`, done: R`السطور بتظهر واحد واحد وقت ما تتطبع (مش مرة واحدة في الآخر)، والأوقات قريبة من ٠.٥ و ١ و ١.٥، والأمر اللي بيطوّل بيتقتل بعد [[max_seconds]] والدالة بترجّع رقم غير صفر، ومفيش process فاضل ([[Get-Process python]] أو [[ps]]).` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** عدّ ملفات [[.py]] في فولدر كبير بطريقتين: [[subprocess.run(["git", "ls-files", "*.py"])]] و [[Path.rglob("*.py")]]، وقيس الوقت لكل واحدة ١٠ مرات. وبعدين قيس تكلفة تشغيل process فاضي ([[sys.executable -c "pass"]]) ١٠ مرات.`, done: R`جدول بالأوقات من جهازك، ورقم تكلفة الـ process الواحد بالملي ثانية (على ويندوز غالبًا أكبر من لينكس)، وكاتب قاعدة: إمتى أداة خارجية تستاهل وإمتى المكتبة القياسية أحسن (والعددين ممكن يختلفوا لو فيه ملفات في [[.gitignore]]).` },
+          ],
           deep: {
             why: R`سكربتات الأتمتة كتير بتنادي أدوات: [[pg_dump]] للـ backup، و [[git]] في deploy، و [[ffmpeg]] للفيديو، و [[convert]] للصور. و command injection من [[shell=True]] مع اسم ملف أو input من المستخدم ثغرة حقيقية ومشهورة (تاب «الأمان»).`,
             how: R`مع list، Python بينادي البرنامج مباشرة ([[execve]] على لينكس) وكل عنصر بيوصل argument منفصل. مع [[shell=True]] و string، بيشغّل [[/bin/sh -c "..."]]، فالـ shell بيفسّر [[;]] و [[&&]] و [[$()]] و [[*]] والمسافات. فـ [[filename = "x; rm -rf ~"]] في المثال وصل لـ [[ls]] كاسم ملف غريب، مش كأمر تاني.
@@ -609,40 +736,91 @@ error: fatal: not a git repository (or any of the parent directories): .git
 
 ---
 
+## ٩. ناتج سطر سطر وهو شغال: [[Popen]]
+
+[[run]] بيستنى البرنامج يخلص وبعدين يدّيك الناتج كله. لأمر طويل (build، أو backup، أو [[docker pull]]) عايز تشوف كل سطر وقت ما يطلع:
+
+~~~python
+import os, shlex, subprocess, sys
+code = "import sys\nfor i in range(3):\n    print('step', i, flush=True)\nprint('oops', file=sys.stderr)\nsys.exit(1)"
+with subprocess.Popen([sys.executable, "-c", code], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, encoding="utf-8") as p:
+    for line in p.stdout:
+        print("got:", line.rstrip())
+print("exit:", p.returncode)
+~~~
+
+~~~text الناتج (Python 3.14 ويندوز)
+got: step 0
+got: step 1
+got: step 2
+got: oops
+exit: 1
+~~~
+
+- [[Popen]] بيشغّل البرنامج ويرجع **على طول** من غير ما يستنى. و [[stdout=subprocess.PIPE]] بيوصّل ناتجه بـ pipe تقرا منه، و [[stderr=subprocess.STDOUT]] بيدمج الأخطاء في نفس الـ pipe عشان تتطبع بترتيبها.
+- [[for line in p.stdout]] بيقرا سطر سطر وقت ما يتكتب. و [[flush=True]] في البرنامج التاني مهم: Python بيعمل buffer لما الناتج رايح pipe مش ترمنال، ومن غيره كل السطور بتوصل مرة واحدة في الآخر.
+- الـ [[with]] بيستنى البرنامج يخلص في الآخر ([[wait()]])، فـ [[p.returncode]] بقى [[1]]. ولو مسكت stdout و stderr في pipes منفصلة وقريت واحد بس، البرنامج ممكن يعلّق لما الـ pipe التاني يتملى؛ لده اتعمل [[communicate()]] (أو [[run]] اللي بيستخدمها).
+
+---
+
+## ١٠. [[env]] و [[encoding]] و [[shlex]]
+
+~~~python
+env = {**os.environ, "APP_ENV": "test"}
+r = subprocess.run([sys.executable, "-c", "import os; print(os.environ['APP_ENV'])"], env=env, capture_output=True, text=True)
+print(r.stdout.strip(), "APP_ENV" in os.environ)
+r = subprocess.run([sys.executable, "-c", "print('سارة')"], capture_output=True, text=True, encoding="utf-8")
+print(r.stdout.strip())
+print(shlex.split('git commit -m "first commit"'), shlex.quote("my file; rm -rf ~.txt"))
+subprocess.run(["no-such-tool", "--version"])
+~~~
+
+~~~text الناتج
+test False
+سارة
+['git', 'commit', '-m', 'first commit'] 'my file; rm -rf ~.txt'
+FileNotFoundError: [WinError 2] The system cannot find the file specified
+~~~
+
+- [[env=]] بيستبدل متغيرات البيئة **كلها** للبرنامج التاني. لو بعت [[{"APP_ENV": "test"}]] بس، البرنامج هيفقد [[PATH]] و [[SYSTEMROOT]] ويقع بشكل غريب. عشان كده [[{**os.environ, ...}]]: نسخة من الحالي وفوقها التعديل. و [[os.environ]] بتاع سكربتك متغيرش ([[False]]).
+- [[text=True]] لوحده بيفك الناتج بـ encoding الجهاز (الـ locale). على الجهاز اللي اتجرّب عليه ده UTF-8 فطلع سليم، وعلى ويندوز بإعداد عادي ([[cp1252]] مثلًا) العربي من برنامج بيكتب UTF-8 كان هيطلع حروف غريبة أو [[UnicodeDecodeError]] (من الوثائق). [[encoding="utf-8"]] صريحة بتشيل الاحتمال.
+- [[shlex.split]] بيقسّم سطر أمر زي ما الصدفة بتقسمه (العلامات بتلم [[first commit]] كـ argument واحد)، مفيد لو الأمر جاي من ملف إعدادات. و [[shlex.quote]] بيحط علامات تنصيص آمنة لو **لازم** تبني أمر shell نص (على لينكس والماك؛ قواعد CMD و PowerShell مختلفة، فهناك list وبس).
+- برنامج مش موجود: [[FileNotFoundError]]، وعلى ويندوز الرسالة مبتقولش اسمه ([[WinError 2]])، وعلى لينكس بتقول [[No such file or directory: 'no-such-tool']]. عشان كده [[shutil.which]] الأول.
+
 ## الخلاصة
 
 | الباراميتر | ليه |
 |---|---|
 | الأمر list | كل argument بيوصل زي ما هو، ومفيش shell |
 | [[capture_output=True, text=True]] | الناتج في [[r.stdout]] و [[r.stderr]] كـ str |
-| [[check=True]] | الفشل يبقى [[CalledProcessError]] |
+| [[check=True]] | أي exit code غير صفر يبقى [[CalledProcessError]] بدل ما يعدّي في صمت |
 | [[timeout=n]] | [[TimeoutExpired]] بدل ما يقف للأبد |
 | [[cwd=folder]] | شغّل في فولدر تاني من غير [[cd]] |
 | [[sys.executable]] | نفس Python ونفس الـ venv |
-| [[shutil.which(name)]] | البرنامج موجود؟ |
+| [[shutil.which(name)]] | بتسأل البرنامج موجود في الـ PATH قبل ما تشغّله، فتطلع رسالة واضحة بدل [[FileNotFoundError]] |
 
 - متكتبش [[shell=True]] مع أي حاجة جاية من برّه، ومتستخدمش [[os.system]].`,
           lines: [
-            R`[[which]] للبحث عن برنامج في الـ PATH.`,
-            "import.",
-            R`[[sys.executable]].`,
-            R`list: البرنامج والـ arguments، و [[check=True]] يرمي لو فشل.`,
-            "الناتج والكود.",
-            "اسم ملف فيه ; و rm: كأنه جاي من المستخدم.",
-            R`بيوصل لـ [[ls]] كـ argument واحد، و [[--]] يمنع إنه يتفهم flag.`,
-            "ls بيقول الملف مش موجود، ومفيش حاجة اتمسحت.",
-            "try.",
-            "Python بيخرج بكود 3.",
-            R`[[check=True]] حوّل الفشل لـ exception.`,
-            "الكود.",
-            "try.",
-            "أمر بياخد ٥ ثواني.",
-            R`[[timeout=1]]: اتقفل ورمى.`,
-            "اطبع.",
-            "البرنامج متسطّب؟",
-            "رسالة واضحة بدل FileNotFoundError.",
-            R`[[cwd]]: الفولدر اللي الأمر يتشغّل فيه.`,
-            R`افحص [[returncode]] بنفسك لو مش مستخدم check.`
+            R`[[shutil.which]] بتدوّر على برنامج في الـ PATH زي [[where]] في ويندوز و [[which]] في لينكس، وبترجّع المسار الكامل أو [[None]]. بنستخدمها نسأل قبل ما نشغّل.`,
+            R`[[subprocess]] الموديول اللي بيشغّل برامج تانية (process جديد) ويستنّاها ويمسك ناتجها والـ exit code بتاعها. هو البديل الحديث لـ [[os.system]] و [[os.popen]].`,
+            R`[[sys.executable]] المسار الكامل للـ Python اللي شغّال دلوقتي (جوه الـ venv لو انت فيه). بنستخدمه عشان نشغّل Python كبرنامج تاني من غير ما نعتمد على إن [[python]] في الـ PATH هو نفس النسخة.`,
+            R`[[run]] بياخد **list**: البرنامج وبعده كل argument لوحده، فمفيش shell بيفسّر المسافات أو الرموز. [[capture_output=True]] يمسك stdout و stderr بدل ما يطبعوا، و [[text=True]] يحوّلهم [[str]]، و [[check=True]] يرمي [[CalledProcessError]] لو الـ exit code مش صفر. وبيرجّع [[CompletedProcess]] فيه الحاجات دي كلها.`,
+            R`[[r.stdout]] النص اللي البرنامج طبعه، و [[strip()]] تشيل الـ [[\n]] اللي في الآخر. و [[r.returncode]] بـ [[0]] لأن [[check=True]] كان هيرمي لو غير كده. الناتج زي [[git version 2.56.0.windows.3 0]].`,
+            R`اسم ملف فيه [[;]] و [[rm -rf ~]]: لو اتحط في أمر shell كنص ([[f"ls {filename}"]] مع [[shell=True]])، الصدفة كانت هتفهم [[;]] نهاية أمر وتشغّل [[rm -rf ~]]. ده command injection، والاسم ممكن ييجي من يوزر أو من ملف.`,
+            R`مع list، الاسم كله بيوصل لـ [[ls]] كـ argument **واحد** حرفيًا، ومفيش shell أصلًا يفسّر [[;]]. و [[--]] بيقول لـ [[ls]] «اللي بعدي اسم ملف مش flag»، فاسم زي [[-rf]] مش هيتفهم options.`,
+            R`[[2]] exit code بتاع [[ls]] لما الملف مش موجود، و [[stderr]] فيه [[ls: cannot access 'my file; rm -rf ~.txt': No such file or directory]]: الاسم وصل كامل زي ما هو، ومفيش حاجة اتمسحت. ومن غير [[check=True]] مفيش exception، فبنفحص بنفسنا.`,
+            R`[[try]] حوالين نداء متوقع يفشل، عشان نمسك [[CalledProcessError]] ونطبع رسالة بدل ما السكربت يقع بـ traceback.`,
+            R`[[-c]] بيشغّل كود Python من النص، والكود بيخرج بـ [[sys.exit(3)]]: برنامج فشل بكود ٣. و [[check=True]] هنا هيحوّل ده لـ exception. ومن غير [[capture_output]] أي ناتج كان هيطبع على الشاشة على طول.`,
+            R`[[CalledProcessError]] فيه [[returncode]] و [[cmd]] (الأمر اللي اتشغّل) و [[stdout]] و [[stderr]] (لو كانوا متمسوكين). [[as e]] بيدّينا الـ exception في متغير.`,
+            R`بيطبع [[فشل بكود 3]]. في سكربت حقيقي هنا تطبع [[e.stderr]] عشان تعرف السبب، أو ترجّع نفس الكود من سكربتك.`,
+            R`[[try]] تاني للـ timeout: أمر ممكن يعلّق (شبكة مقطوعة، برنامج مستني input) لازم يتقفل بعد مدة، وإلا سكربتك هيقف معاه للأبد.`,
+            R`[[sleep 5]] أمر بياخد ٥ ثواني، و [[timeout=1]] بيقول «استنى ثانية بالكتير». بعد الثانية [[run]] بيقتل الـ process ويرمي. (على ويندوز [[sleep]] موجود بس لو Git for Windows في الـ PATH.)`,
+            R`[[TimeoutExpired]] بيترمي بعد ما الـ process **اتقتل** خلاص، فمفيش process سايب شغّال في الخلفية. وفيه [[e.timeout]] و [[e.cmd]].`,
+            R`بيطبع [[اتأخر فاتقفل]] بعد حوالي ثانية مش ٥. ده بيثبت إن الـ timeout شغال.`,
+            R`[[shutil.which("pg_dump")]] بـ [[None]] لو البرنامج مش متسطّب أو مش في الـ PATH. أحسن من إنك تشغّل وتمسك [[FileNotFoundError: [WinError 2] The system cannot find the file specified]] اللي مش بتقول اسم البرنامج على ويندوز.`,
+            R`رسالة تقول بالظبط إيه الناقص، عشان اليوزر يعرف يسطّب إيه. في سكربت حقيقي بعدها [[sys.exit(1)]].`,
+            R`[[cwd="."]] الفولدر اللي الأمر هيتشغّل فيه (هنا الحالي، بس ممكن أي مسار)، من غير [[os.chdir]] اللي بيغيّر الفولدر لسكربتك كله. و [[--short]] بيطلّع سطر لكل ملف اتغيّر. ومفيش [[check]]، فالفشل مش هيرمي.`,
+            R`[[returncode == 0]] نجح فاطبع الناتج، وغير كده ([[128]] لما الفولدر مش repo) رسالة. ده الشكل لما الفشل متوقع وعايز تتعامل معاه بـ [[if]] بدل [[try]].`,
           ]
         }
       ]

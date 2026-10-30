@@ -3,6 +3,27 @@ MORE("pyapi", [
     {
       t: "الأخطاء والـ middleware",
       l: 2,
+      time: R`حوالي ٤ ساعات`,
+      goal: [
+        R`ترجّع الأخطاء بالكود الصح (400 و 401 و 403 و 404 و 409 و 429) و body ثابت الشكل يعتمد عليه الـ frontend.`,
+        R`تمسك أخطاء التطبيق والـ 422 والـ crash في handlers، فكل خطأ يطلع بنفس الشكل، والـ traceback يروح اللوج مش العميل.`,
+        R`تظبط CORS صح للـ frontend، وتعرف ليه المتصفح بيقول «CORS error» وهو في الحقيقة 500.`,
+        R`تكتب middleware لكل طلب (request id، وتوقيت) وتعرف ترتيب البصلة بيأثر على مين يشوف إيه.`,
+      ],
+      use: {
+        prog: R`الـ frontend بيعرض رسالة الخطأ للمستخدم، فلازم يعرف يقراها: [[code]] ثابت و [[fields]] لكل خانة، مش نص بيتغيّر.`,
+        work: R`أول سؤال لما مستخدم يشتكي: «إيه الـ request id؟». و [[log.exception]] بالـ id ده بيوصلك للسطر اللي وقع في ثواني.`,
+        net: R`CORS قاعدة في المتصفح مش في السيرفر، والـ preflight طلب [[OPTIONS]] حقيقي ممكن nginx يرد عليه أو يرفضه قبل التطبيق.`,
+      },
+      lab: R`cd shop-api && .venv/Scripts/activate && fastapi dev app/main.py`,
+      projects: [
+        { lvl: 'صغير', t: R`أخطاء API الملاحظات`, what: R`خلّي API الملاحظات يرجّع 404 بـ [[HTTPException]] بدل الـ [[KeyError]]، و 409 لو عنوان الملاحظة متكرر بـ [[detail={"code": "TITLE_TAKEN", ...}]]، و DELETE بـ 204. من درس «HTTPException».`, done: R`مفيش ولا مسار بيرجّع 500 على id مش موجود (اختبار لكل method)، والـ 409 فيها [[code]] ثابت، و DELETE مرتين ورا بعض بترجع 204 في المرتين.` },
+        { lvl: 'صغير', t: R`request id في كل رد`, what: R`middleware بياخد [[X-Request-ID]] من الطلب أو يعمل واحد، ويرجّعه في الرد، ويحطه في كل سطر لوج للطلب ده. من درس «CORS و middleware».`, done: R`[[curl -i]] بيطبع [[x-request-id]] في كل رد، ولو بعتّ [[X-Request-ID: abc]] بيرجع [[abc]] نفسه، وسطور اللوج بتاعة الطلب فيها نفس الـ id.` },
+        { lvl: 'متوسط', t: R`شكل خطأ واحد للـ API كله`, what: R`handlers لـ [[AppError]] وأبناءه، و [[RequestValidationError]] (من غير [[input]])، و [[StarletteHTTPException]] (عشان 404 و 405 بتاعة الـ routes)، و [[Exception]]. الشكل كله [[{"error": {"code", "message", "fields"?, "ref"?}}]]. من درس «exception handlers».`, done: R`اختبارات بتتأكد إن ٦ حالات (مسار مش موجود، و method غلط، و 422، و AppError، و crash، و [[Infinity]] في الـ body) كلها بنفس الشكل، والـ crash بيطلّع [[ref]] وموجود في اللوج بنفس الرقم ومعاه الـ traceback، ومفيش traceback في الرد.` },
+        { lvl: 'متوسط', t: R`CORS لـ frontend حقيقي`, what: R`صفحة React (أو HTML فيها [[fetch]]) على [[localhost:5173]] بتكلّم الـ API على 8000 بـ [[credentials: "include"]] و header [[Authorization]]. الـ origins من [[Settings]].`, done: R`الصفحة بتشتغل من 5173، ومن origin تاني ([[localhost:3000]]) الـ console بيقول [[blocked by CORS policy]]، و [[curl -X OPTIONS]] بيأكد إن الـ preflight بيرجع 200 للأول و 400 للتاني، ومفيش [[*]] في الإعدادات.` },
+        { lvl: 'كبير', t: R`API متين للإنتاج`, what: R`خد API الحجوزات أو الملاحظات وزوّد عليه: handlers الأخطاء الموحّدة، و middleware للـ request id والتوقيت، ولوج JSON سطر لكل طلب (method ومسار وكود ووقت و id)، و CORS من الإعدادات، و GZip، و [[/health]] مستثنى من اللوج. والـ crash بيرجع 500 بشكل الـ API نفسه (مش النص [[Internal Server Error]]). من الوحدات اللي فاتت كلها.`, done: R`اختبارات للأخطاء كلها بتعدّي، و ١٠٠ طلب بـ [[httpx]] بيطلّعوا ١٠٠ سطر لوج JSON كل واحد بيتقري بـ [[json.loads]]، والـ crash بيطلّع سطر [[ERROR]] فيه الـ traceback والـ id، والرد فيه [[ref]] بنفس الـ id. والتطبيق بيقوم ويقفل مرتين ورا بعض من غير تحذيرات.`, ext: R`زوّد شكل [[application/problem+json]] (RFC 9457)، وابعت الأخطاء لـ Sentry أو اللي في درس «observability»، و rate limit بـ 429 و [[Retry-After]] (قسم Redis).` },
+        { lvl: 'فكرة', t: R`كتالوج أخطاء للـ frontend`, what: R`اعمل صفحة أو ملف فيه كل [[code]] بيرجّعه الـ API: معناه، وإمتى بيحصل، والرسالة المقترحة للمستخدم بالعربي. انت بتختار الشكل.`, done: R`كل [[code]] في الكود موجود في الكتالوج (سكربت بيدوّر بـ regex على [[code="...]] ويقارن)، والـ frontend بيعرض رسالة الكتالوج بدل [[message]] الخام.`, ext: R`ولّد الكتالوج من الكود نفسه، وحطه في [[/docs]] بـ [[responses=]] على كل endpoint.` },
+      ],
       n: "HTTPException، و exceptions بتاعتك تتحوّل لردود، وشكل واحد لكل الأخطاء، و CORS و middleware",
       items: [
         {
@@ -32,6 +53,13 @@ async def delete_user(user_id: int) -> None:
     USERS.pop(user_id, None)`,
           try: R`اطلب [[/users/99]] واقرا شكل الرد ([[{"detail": "User not found"}]]). وبعدين [[curl -i -X POST "localhost:8000/users?email=sara@example.com"]] وشوف الـ 409 والـ detail اللي هو dict.`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** اكتب الكود الصح لكل موقف: إيميل مستخدم، وطلب على حاجة مش موجودة، وتوكن ناقص، ومستخدم عادي على صفحة أدمن، وطلبات كتير في الدقيقة، وكوبون منتهي.`, done: R`كتبت 409 و 404 و 401 و 403 و 429 و 400 (أو 422 لو اخترت إنه فحص داتا، ومكتوب ليه)، وقارنت بجدول الأكواد في درس «response model».` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[return HTTPException(404, "x")]] بدل [[raise]]. إيه الكود والـ body؟ و [[raise HTTPException(429, "slow down", headers={"Retry-After": "30"})]]؟`, done: R`الأولى رجعت 200 والـ exception نفسه متحوّل JSON (فيه [[status_code]] و [[detail]] و [[headers]])، والتانية رجعت 429 و header [[retry-after: 30]] و [[{"detail":"slow down"}]]. وطابقوا ورقتك.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[PATCH /products/{id}]] في درس «request body» بيرجّع 500 على id مش موجود. صلّحه بـ 404، وخلّي الـ [[detail]] فيه الـ id.`, done: R`[[PATCH /products/99]] بقت 404 و [[{"detail":"product 99 not found"}]]، والاختبار اللي كان مستني 500 اتعدّل لـ 404 وبيعدّي، والـ PATCH السليم لسه 200.` },
+            { lvl: 'تطبيق', t: R`**ابني endpoint:** [[POST /coupons/{code}/redeem]]: 404 لو مش موجود، و 410 Gone لو منتهي، و 409 لو اتستخدم قبل كده، و 200 فيه الخصم. والـ detail في الكل [[{"code": ..., "message": ...}]].`, done: R`أربع اختبارات [[TestClient]] للأربع حالات بالأكواد دي بالظبط، و [[r.json()["detail"]["code"]]] ثابت في كل واحدة، والاستخدام التاني لنفس الكوبون بيرجع 409.` },
+            { lvl: 'تحدي', t: R`**اكتب اختبار:** لكل route في التطبيق، اختبار بيبعت id مش موجود (99999) ويتأكد إن مفيش 500. خلّيه يلف على [[app.routes]] أوتوماتيك بدل ما تكتب route route.`, done: R`الاختبار بيلاقي كل route فيه [[{...id}]] في المسار من [[route.path]] و [[route.methods]]، وبيبعت لكل واحد، وبيفشل باسم الـ route لو رجع 500. ولما رجّعت [[DB[id]]] في route واحد الاختبار مسكه.` },
+          ],
           deep: {
             why: "العميل (موبايل أو frontend) بيقرر يعمل إيه من الكود: 401 يروح للـ login، و 404 صفحة «مش موجود»، و 409 رسالة تحت حقل الإيميل. لو كل حاجة 200 أو 500، الـ frontend مش هيعرف يتصرف.",
             how: R`[[HTTPException]] exception عادي بيحمل status و detail و headers. و FastAPI عنده handler جاهز ليه بيرجّع [[{"detail": ...}]] بالكود ده. ولأنه exception، بيعدّي على الـ dependencies اللي فيها yield (فالـ transaction بيعمل rollback).
@@ -204,11 +232,39 @@ $r = Invoke-WebRequest http://localhost:8000/users/99 -SkipHttpErrorCheck; $r.St
 
 | الكود | النتيجة |
 |---|---|
-| [[raise HTTPException(404, "...")]] | 404 و [[{"detail": "..."}]] |
+| [[raise HTTPException(404, "...")]] | الدالة بتقف والرد 404 و [[{"detail": "..."}]]، من غير ما تكتب [[JSONResponse]] |
 | [[raise HTTPException(409, detail={...})]] | 409 والـ dict جوه [[detail]] |
 | [[status_code=201]] في الـ decorator | كود النجاح للـ route |
 | [[status_code=204]] | نجاح من غير body |
 | [[return HTTPException(...)]] | غلط: 200 والـ exception متحوّل JSON |
+
+---
+
+## اتشغّل فعلًا: headers مع الخطأ، والـ 405 اللي بييجي لوحده
+
+اتجرب على FastAPI 0.162 بـ [[TestClient]]:
+
+~~~python
+@app.get("/limited")
+async def limited():
+    raise HTTPException(429, "slow down", headers={"Retry-After": "30"})
+~~~
+
+~~~text الناتج
+GET /limited     → 429  retry-after: 30   {"detail":"slow down"}
+DELETE /limited  → 405  allow: GET        {"detail":"Method Not Allowed"}
+GET /nope        → 404                    {"detail":"Not Found"}
+~~~
+
+| الحالة | مين رد | تعمل إيه |
+|---|---|---|
+| [[headers={"Retry-After": "30"}]] | انت، و FastAPI حط الـ header في الرد | استخدمه مع 429 (امتى يجرّب تاني)، ومع 401 ([[WWW-Authenticate]])، ومع 503 |
+| 405 و [[allow: GET]] | Starlette لوحده: المسار موجود بس الـ method لأ | متكتبش route لـ DELETE عشان ترجع 405، ده بيحصل لوحده |
+| 404 لمسار مش موجود | Starlette، مش [[HTTPException]] بتاعة FastAPI | handler على [[starlette.exceptions.HTTPException]] لو عايز شكلها موحّد (الدرس الجاي) |
+
+### [[detail]] ينفع يبقى إيه؟
+
+أي حاجة تتحوّل JSON: نص، أو dict، أو list. الـ frontend بيبني على الشكل ده، فاختار شكل واحد للتطبيق كله ومتغيّروش: نص لأخطاء بسيطة، أو dict فيه [[code]] ثابت و [[message]]. وفي الدرس الجاي بنوحّد الشكل لكل الأخطاء من مكان واحد.
 
 ## الخلاصة
 
@@ -216,25 +272,25 @@ $r = Invoke-WebRequest http://localhost:8000/users/99 -SkipHttpErrorCheck; $r.St
 - الـ [[detail]] بيوصل للعميل زي ما هو: متحطش فيه تفاصيل داخلية، وحط [[code]] ثابت لو الـ frontend هيتصرف على أساسه.
 - جرّب دايمًا بـ [[curl -i]] عشان تشوف الكود مش الـ body بس.`,
           lines: [
-            "HTTPException، و status لأسماء الأكواد.",
-            "التطبيق.",
-            "داتا وهمية.",
-            "route.",
-            "الدالة.",
-            R`[[get]] بترجع None لو مش موجود.`,
-            "مش موجود؟",
-            "وقّف الـ route وارجع 404.",
-            "موجود.",
-            "إنشاء، والنجاح 201.",
-            "email هنا query للتبسيط؛ في الحقيقة body model.",
-            "الإيميل مستخدم؟",
-            "409 بـ detail فيه code ثابت يعتمد عليه الـ frontend.",
-            "id جديد.",
-            "احفظ.",
-            "رجّع.",
-            "حذف، والنجاح 204 من غير body.",
-            "مبترجعش حاجة.",
-            "احذف لو موجود، ومتعترضش لو مش موجود (DELETE متكرر بيدّي نفس النتيجة)."
+            R`[[HTTPException]] الـ exception اللي FastAPI بيحوّله رد بالكود والـ detail، و [[status]] فيه أسماء الأكواد زي [[HTTP_404_NOT_FOUND]].`,
+            R`التطبيق، والـ routes التلاتة تحت عليه.`,
+            R`«قاعدة» في الذاكرة فيها مستخدم واحد id بتاعه 1. المفتاح رقم، فـ [[USERS.get(1)]] بتلاقيه و [[USERS.get("1")]] لأ.`,
+            R`GET على مستخدم واحد، و [[{user_id}]] في المسار.`,
+            R`[[user_id: int]] من المسار، فـ [[/users/abc]] بترجع 422 قبل ما نوصل للـ 404.`,
+            R`[[dict.get]] بترجّع [[None]] لو المفتاح مش موجود، بدل [[USERS[user_id]]] اللي بترمي [[KeyError]] وتبقى 500.`,
+            R`مش موجود؟ هنا بنقرر الكود بنفسنا بدل ما نسيب Python يرمي.`,
+            R`[[raise]] (مش [[return]]) بيوقف الدالة فورًا، و FastAPI بيرد 404 و [[{"detail":"User not found"}]]. ولو كتبت [[return]] بالغلط الرد بيبقى 200 (اتشرح فوق).`,
+            R`لو موجود بيرجّعه عادي بـ 200.`,
+            R`POST للإنشاء، و [[status_code=201]] كود النجاح بس. الأخطاء اللي بنرميها جوه بتغطي عليه.`,
+            R`[[email]] هنا query عشان المثال يفضل قصير. في الحقيقة body بموديل فيه [[EmailStr]] (درس «request body»).`,
+            R`[[any]] بتلف على كل المستخدمين وترجّع [[True]] أول ما تلاقي نفس الإيميل. على dict صغير ده كويس، وفي القاعدة ده [[UNIQUE]] constraint.`,
+            R`409 Conflict: الطلب سليم بس متعارض مع حاجة موجودة. و [[detail]] dict فيه [[code]] ثابت ([[EMAIL_TAKEN]]) يعتمد عليه الـ frontend، و [[message]] للعرض.`,
+            R`id جديد: أكبر مفتاح موجود زائد واحد. [[max]] على dict بترجّع أكبر **مفتاح**، ولو الـ dict فاضي بترمي [[ValueError]].`,
+            R`بنخزّن المستخدم الجديد بالـ id بتاعه.`,
+            R`بيرجّعه، والكود 201 من الـ decorator.`,
+            R`DELETE، و 204 No Content: نجاح من غير body، وأي حاجة ترجعها الدالة بتتجاهل.`,
+            R`[[-> None]]: الدالة مبترجعش حاجة، وده بيتماشى مع 204 في التوثيق.`,
+            R`[[pop(key, None)]] بيمسح لو موجود ومش بيرمي لو مش موجود، فـ DELETE مرتين بيرجّع 204 في المرتين (idempotent: نفس النتيجة مهما اتكرر).`,
           ],
           sol: R`[[/users/99]] بترجع [[404 Not Found]] و [[{"detail":"User not found"}]]: FastAPI بيحط اللي في [[detail]] جوه مفتاح اسمه [[detail]] دايمًا.
 
@@ -277,6 +333,13 @@ async def get_order(order_id: int):
     raise NotFoundError(f"order {order_id} not found")`,
           try: R`اطلب [[/orders/5]] و [[/orders/abc]] وقارن الشكلين: نفس الـ [[error.code]] كمفتاح. وبعدين ضيف route بيعمل [[1 / 0]] وشوف الـ ref في الرد وفي اللوج.`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** فيه handler لـ [[AppError]] وواحد لـ [[Exception]]، واترمى [[NotFoundError]]. مين بيمسكه؟ ولو اترمى [[KeyError]]؟ ولو المسار مش موجود خالص؟`, done: R`كتبت: [[NotFoundError]] بيروح لـ [[AppError]] (الأخص)، و [[KeyError]] لـ [[Exception]] (500 بـ ref)، والمسار المش موجود مبيروحش لأي واحد فيهم لأنه [[StarletteHTTPException]]، وجربت التلاتة.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** مع handler الـ 422 بتاع الدرس، ابعت [[{"address": {}}]] لموديل فيه [[address: Address]] و [[Address.city]] إجباري، وابعت [[?page=abc]]. اكتب [[field]] بتاع كل خطأ.`, done: R`طلع [[address.city]] للأول و [[page]] للتاني (أول عنصر في الـ loc اتشال)، والرد 422 بشكل [[{"error":{"code":"VALIDATION","fields":[...]}}]].` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** handler الـ crash فيه [[return JSONResponse({"error": str(exc), "trace": traceback.format_exc()}, 500)]]. اعرف المشكلتين وصلّحهم.`, done: R`كتبت إن الـ traceback بيكشف مسارات وكود (وممكن داتا) للعميل، و [[str(exc)]] ممكن يبقى فيه SQL أو إيميل. بقى [[log.exception]] بالـ ref، والرد فيه [[code]] و [[ref]] بس، واختبار بيتأكد إن كلمة [[Traceback]] مش في الرد.` },
+            { lvl: 'تطبيق', t: R`**ابني:** handler على [[StarletteHTTPException]] بيرجّع شكل [[application/problem+json]] (RFC 9457): [[type]] و [[title]] و [[status]] و [[instance]]، ومن غير ما يضيّع الـ headers ([[Retry-After]] و [[allow]]).`, done: R`[[GET /nope]] بيرجع 404 بـ [[content-type: application/problem+json]]، و [[DELETE]] على route GET بيرجع 405 ومعاه [[allow: GET]]، و 429 معاه [[retry-after]]: الـ handler بيمرر [[exc.headers]].` },
+            { lvl: 'تحدي', t: R`**اكتب اختبار:** اختبارات لـ [[{"price": Infinity}]] في الـ body: مرة بـ 422 الافتراضي ومرة بالـ handler بتاع الدرس، والموديل فيه [[allow_inf_nan=False]] في الاتنين. وبعدين اختبار تالت لـ crash بيتأكد إن الـ ref اللي في الرد هو اللي في اللوج ([[caplog]]).`, done: R`الأول بيستنى 500 (رد الـ 422 الافتراضي فيه [[input]] ومينفعش يتكتب JSON)، والتاني 422 نضيف فيه [[finite_number]]، والتالت بيلاقي نفس الـ ref في [[caplog.text]] ومعاه [[ZeroDivisionError]].` },
+          ],
           deep: {
             why: "الـ frontend محتاج يتعامل مع الأخطاء بطريقة واحدة. لو الـ 422 ليه شكل، و HTTPException شكل، والـ 500 نص، كل شاشة هتكتب parsing مختلف. والـ services اللي بترمي HTTPException مربوطة بـ HTTP ومينفعش تستخدمها من CLI أو worker.",
             how: R`لما exception يطلع من الـ route ومحدش مسكه، Starlette بيدوّر على handler لنوعه أو لأقرب parent في الوراثة. عشان كده handler واحد لـ [[AppError]] بيغطي [[NotFoundError]] و [[ConflictError]] وأي حاجة بتورث منه.
@@ -467,41 +530,86 @@ HTTP/1.1 404 Not Found
 | [[RequestValidationError]] | الطلب مش مطابق | 422 |
 | [[Exception]] | أي حاجة تانية | 500 مع ref |
 
+---
+
+## اتشغّل فعلًا: شكل واحد لكل الأخطاء، والـ crash اللي بيهرب من الـ middleware
+
+### handler على [[StarletteHTTPException]] بشكل RFC 9457
+
+[[application/problem+json]] شكل معياري للأخطاء (RFC 9457): [[type]] و [[title]] و [[status]] و [[instance]]. الـ handler على [[starlette.exceptions.HTTPException]] بيمسك بتاعة FastAPI كمان وبيمسك 404 و 405 اللي Starlette بيرميهم. اتجرب على FastAPI 0.162:
+
+~~~python
+@app.exception_handler(StarletteHTTPException)
+async def http_error(request: Request, exc: StarletteHTTPException):
+    return JSONResponse({"type": "about:blank", "title": exc.detail, "status": exc.status_code, "instance": request.url.path},
+                        status_code=exc.status_code, headers=exc.headers, media_type="application/problem+json")
+~~~
+
+~~~text الناتج
+GET /nope        → 404  application/problem+json              {"type":"about:blank","title":"Not Found","status":404,"instance":"/nope"}
+DELETE /limited  → 405  application/problem+json  allow: GET  {"type":"about:blank","title":"Method Not Allowed","status":405,...}
+GET /limited     → 429  application/problem+json  retry-after: 30  {"type":"about:blank","title":"slow down","status":429,...}
+~~~
+
+[[headers=exc.headers]] هي اللي حافظت على [[allow]] و [[retry-after]]. من غيرها الـ handler بيضيّعهم في صمت.
+
+### الـ crash بيطلع برّه الـ middleware
+
+نفس التطبيق فيه middleware بيحط [[Server-Timing]]، و route فيه [[1 / 0]]، **من غير** handler لـ [[Exception]]:
+
+~~~text الناتج
+GET /nope     → 404  فيه Server-Timing
+GET /limited  → 429  فيه Server-Timing
+GET /crash    → 500  text/plain; charset=utf-8   "Internal Server Error"   مفيش Server-Timing
+~~~
+
+الـ 500 بيترد من [[ServerErrorMiddleware]]، ودي **أبرّه** طبقة في البصلة، برّه أي middleware انت ضفته. فالرد ده مفيهوش أي header من بتوعك. والأخطر: مفيش CORS headers، فالمتصفح بيقول «CORS error» والمطوّر بيدوّر في إعدادات CORS والمشكلة bug عادي (اتجرب في الدرس الجاي). والـ handler على [[Exception]] بيشتغل في نفس المكان، فبيدّيك شكل JSON بس برضه من غير headers الـ middleware.
+
+### [[Infinity]] في الـ body
+
+في درس «request body»، [[{"price": Infinity}]] كانت بترجع 500 حتى مع [[allow_inf_nan=False]]، لأن الـ 422 الافتراضي فيه [[input]]. مع handler الدرس ده (اللي بيرجّع [[field]] و [[message]] بس):
+
+~~~text الناتج
+422 {"error":{"code":"VALIDATION","fields":[{"field":"price","message":"Input should be a finite number"}]}}
+~~~
+
+متحطش [[input]] في رد الـ 422 بتاعك: ممكن يبقى قيمة مينفعش تتكتب JSON، أو باسورد المستخدم بعته في حقل غلط.
+
 ## الخلاصة
 
 - الـ services ترمي exceptions بتاعتك، والـ handlers هي اللي تعرف HTTP.
 - handler واحد على الأب بيغطي كل الولاد.
 - الـ 500 للعميل فيها ref بس، والتفاصيل كلها في اللوج بنفس الـ ref.`,
           lines: [
-            "logging.",
-            "لرقم التتبع.",
-            "FastAPI و Request.",
-            "exception الـ 422.",
-            "رد JSON بكود.",
-            "logger باسم.",
-            "التطبيق.",
-            "الأب لكل أخطاء التطبيق.",
-            "الكود الافتراضي.",
-            "code ثابت للـ frontend.",
-            "constructor.",
-            "الرسالة.",
-            "نوع مخصوص.",
-            "بيغيّر الكود والـ code بس.",
-            "أي AppError أو ابن ليه يوصل هنا.",
-            "الـ handler بياخد الـ request والـ exception.",
-            "شكل موحّد.",
-            "بدّل شكل الـ 422 الافتراضي.",
-            "الـ handler.",
-            "حوّل الأخطاء لـ field و message، من غير body أو query في أول الـ loc.",
-            "نفس الشكل.",
-            "آخر خط: أي حاجة محدش مسكها.",
-            "الـ handler.",
-            "رقم قصير للتتبع.",
-            "سجّل الـ traceback كامل في اللوج، مش في الرد.",
-            "رسالة عامة ورقم.",
-            "route.",
-            "الدالة.",
-            "بترمي خطأ business، والـ handler بيحوّله 404."
+            R`[[logging]] عشان الـ crash يتسجّل بالـ traceback كامل في اللوج، مش في الرد.`,
+            R`[[uuid]] عشان نعمل رقم تتبع قصير لكل crash، يتكتب في اللوج ويرجع للعميل.`,
+            R`[[Request]] بيوصل للـ handler عشان يعرف المسار والـ headers، و [[FastAPI]] للتطبيق.`,
+            R`[[RequestValidationError]] الـ exception اللي FastAPI بيرميه قبل الـ 422. لو عملتله handler، انت اللي بتقرر شكل الـ 422.`,
+            R`[[JSONResponse]] رد JSON بكود و headers انت محددهم، لأن الـ handler بيرجّع رد كامل مش dict.`,
+            R`logger باسم [[app]] بدل الـ root، عشان تتحكم في مستواه ومكانه من إعدادات اللوج من غير ما تأثر على مكتبات تانية.`,
+            R`التطبيق، والـ handlers بتتسجّل عليه بـ [[exception_handler]].`,
+            R`الأب لكل أخطاء الـ business. الكود بتاعك يرمي [[NotFoundError]] من غير ما يعرف حاجة عن HTTP، والـ handler يترجمه.`,
+            R`كود HTTP الافتراضي لأي [[AppError]]: 400. الأبناء بيغيّروه.`,
+            R`[[code]] نص ثابت للـ frontend ([[APP_ERROR]] و [[NOT_FOUND]])، عشان الرسالة تتغيّر أو تتترجم من غير ما الـ frontend يبوظ.`,
+            R`constructor بياخد رسالة للبني آدمين.`,
+            R`بنخزّن الرسالة على الـ exception عشان الـ handler يقراها.`,
+            R`نوع مخصوص للـ 404. ممكن تزوّد [[ConflictError]] (409) و [[ForbiddenError]] (403) بنفس الطريقة.`,
+            R`بيغيّر الكود والـ code بس على مستوى الـ class، والـ constructor والـ handler زي ما هم.`,
+            R`[[exception_handler(AppError)]]: أي [[AppError]] **أو ابن ليه** بيترمي من أي route أو dependency بيوصل هنا.`,
+            R`الـ handler بياخد الطلب والـ exception، ولازم يرجّع [[Response]].`,
+            R`شكل موحّد [[{"error": {"code", "message"}}]] بالكود اللي في الـ exception. كل أخطاء الـ business بقت شبه بعض.`,
+            R`handler تاني بيبدّل شكل الـ 422 الافتراضي بتاع FastAPI بنفس الشكل الموحّد.`,
+            R`الـ handler بياخد [[RequestValidationError]]، و [[exc.errors()]] فيها نفس الـ list اللي كانت هتطلع في [[detail]].`,
+            R`لكل خطأ: [[field]] من [[loc]] من غير أول عنصر ([[body]] أو [[query]])، فـ [[("body", "address", "city")]] تبقى [[address.city]]. و [[map(str, ...)]] عشان الـ loc ممكن يبقى فيه أرقام (index في list). ومفيش [[input]]، فـ [[Infinity]] في الـ body مبقتش بتوقّع الرد 500 (اتجرب تحت).`,
+            R`نفس الشكل الموحّد بكود 422 و [[code: "VALIDATION"]] و [[fields]].`,
+            R`آخر خط: أي exception محدش مسكه (bug). لازم يبقى آخر handler فكرة، لأن الأخص بيكسب.`,
+            R`الـ handler بتاع الـ crash.`,
+            R`رقم قصير ٨ حروف من [[uuid4]]: كفاية عشان تلاقي السطر في اللوج، وقصير المستخدم يقراه في التليفون.`,
+            R`[[log.exception]] بيسجّل الرسالة **ومعاها الـ traceback** كامل، والـ ref والمسار عشان تلاقيه. الـ traceback مكانه اللوج بس، لأن فيه أسماء ملفات وأحيانًا داتا.`,
+            R`رد 500 عام فيه الـ ref بس. خد بالك: الرد ده بيتبعت من برّه الـ middleware بتاعك، فـ headers زي CORS و [[X-Request-ID]] مبتبقاش فيه (اتجرب في الدرس الجاي).`,
+            R`route تجريبي بيرمي خطأ business.`,
+            R`[[order_id]] من المسار ونوعه [[int]]، فـ [[/orders/abc]] بترجع 422 بالشكل الموحّد بتاع الـ handler اللي فوق.`,
+            R`بيرمي [[NotFoundError]] من غير ما يعرف حاجة عن HTTP، والـ handler حوّله 404 و [[{"error":{"code":"NOT_FOUND",...}}]].`,
           ],
           sol: R`[[/orders/5]] بترجع [[404]] و [[{"error": {"code": "NOT_FOUND", "message": "order 5 not found"}}]]، و [[/orders/abc]] بترجع [[422]] و [[{"error": {"code": "VALIDATION", "fields": [{"field": "order_id", "message": "Input should be a valid integer, unable to parse string as an integer"}]}}]]. الاتنين تحت [[error.code]]، فالـ frontend يعمل parse بطريقة واحدة. و [[loc[1:]]] شالت [[path]] من أول الـ loc عشان الاسم يبقى [[order_id]] بس.
 
@@ -537,6 +645,13 @@ async def timing(request: Request, call_next):
     return response`,
           try: R`من console صفحة على دومين تاني اعمل [[fetch("http://localhost:8000/health")]] قبل وبعد ما تضيف الدومين في [[allow_origins]]، واقرا رسالة CORS في الـ console. وشوف [[X-Request-ID]] في الرد بـ [[curl -i]].`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** CORS بيحمي مين؟ السيرفر ولا المستخدم؟ وليه [[curl]] بيشتغل عادي والمتصفح لأ؟ جاوب في ٣ سطور.`, done: R`كتبت إن CORS قاعدة في المتصفح بتحمي المستخدم من موقع تاني بيقرا ردود API بـ cookies بتاعته، وإن السيرفر بيرد عادي (200) والمتصفح هو اللي بيخبي الرد عن الـ JavaScript، و curl مش متصفح فمبيطبقش القاعدة. وجربت [[curl -H "Origin: https://evil.example"]] وشفت 200 من غير [[access-control-allow-origin]].` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[allow_origins=["*"]]] و [[allow_credentials=True]]. طلب من [[Origin: https://evil.example]] ومعاه cookie: إيه قيمة [[access-control-allow-origin]]؟ و [[access-control-allow-credentials]]؟`, done: R`جرّبت: [[access-control-allow-origin: https://evil.example]] (مش [[*]])، و [[access-control-allow-credentials: true]]، يعني أي موقع يقدر يقرا ردود الـ API بـ cookies المستخدم. ورجّعت القايمة لـ origins محددة.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الـ frontend بيقول «CORS error» على [[GET /report]] بس، وباقي الـ routes شغالة. الـ route فيه [[1 / 0]] بالغلط. اعرف إزاي توصل للسبب من غير ما تلمس إعدادات CORS.`, done: R`[[curl -i -H "Origin: http://localhost:5173" localhost:8000/report]] طلّع 500 ومفيش [[access-control-allow-origin]]، ولوج السيرفر فيه [[ZeroDivisionError]]. صلّحت الـ bug والـ «CORS error» اختفى، وكتبت ليه الـ 500 مفيهوش CORS headers.` },
+            { lvl: 'تطبيق', t: R`**ابني:** middleware بيرفض أي body أكبر من ١ ميجا بـ 413 قبل ما يتقري، من header [[Content-Length]]، ومن غير ما يقرا [[request.body()]].`, done: R`[[curl -X POST -H "Content-Length: 2000000"]] بيرجع 413 والـ route مبيتناداش (عداد فيه صفر)، و body صغير بيعدّي 200، وكتبت ليه [[await request.body()]] في الـ middleware فكرة وحشة (بيحمّل الـ body كله في الذاكرة).` },
+            { lvl: 'تحدي', t: R`**قيس:** route بيرجّع JSON حقيقي (٥٠٠ منتج بأسماء وأوصاف). قيس حجم الرد بـ gzip ومن غيره، ووقت الرد ١٠٠ مرة في الحالتين بـ [[time.perf_counter]].`, done: R`عندك ٤ أرقام حقيقية: الحجمين بالـ bytes (من [[content-length]]) ومتوسط الوقتين، والنسبة مكتوبة، وكتبت إمتى الضغط مش مستاهل (ردود صغيرة، أو nginx بيضغط أصلًا).` },
+          ],
           deep: {
             why: R`أول مرة تربط React بالـ API: كل حاجة شغالة في Postman، والمتصفح بيقول blocked by CORS policy. والحل مش [[allow_origins=["*"]]] وخلاص. والـ middleware بيحل الحاجات اللي لازم تحصل لكل request من غير ما تفتكرها في كل route.`,
             how: R`CORS قاعدة في المتصفح بس (curl و Postman مبيهتموش). ولما الطلب «مش بسيط» (فيه [[Authorization]] أو JSON أو PATCH)، المتصفح بيبعت الأول [[OPTIONS]] (preflight) يسأل، والـ middleware بيرد بالمسموح، وبعدين المتصفح يبعت الطلب الحقيقي. و [[allow_credentials=True]] (للـ cookies) لازم معاها الدومينات بالاسم. وخلي الدومينات جاية من الإعدادات، مش مكتوبة في الكود.
@@ -729,34 +844,68 @@ server-timing: app;dur=0.5
 | [[await call_next(request)]] | عدّي للي جوه وهات الرد |
 | [[response.headers[...] = ...]] | عدّل الرد قبل ما يطلع |
 
+---
+
+## اتشغّل فعلًا: [[*]] مع credentials، والـ 500 اللي مفيهوش CORS
+
+### [[allow_origins=["*"]]] و [[allow_credentials=True]]
+
+المتصفح نفسه بيرفض [[access-control-allow-origin: *]] مع credentials. فـ Starlette بيعمل حاجة تانية: بيرجّع الـ origin اللي طلب **زي ما هو**. اتجرب على Starlette 1.10 (FastAPI 0.162):
+
+~~~python
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
+~~~
+
+~~~text الناتج
+OPTIONS /x  Origin: https://evil.example  → 200
+  access-control-allow-origin: https://evil.example
+  access-control-allow-credentials: true
+  access-control-allow-headers: authorization
+GET /x  Origin: https://evil.example  Cookie: s=1  → 200
+  access-control-allow-origin: https://evil.example
+  access-control-allow-credentials: true
+  vary: Origin
+~~~
+
+يعني أي موقع على النت يقدر يعمل [[fetch]] بـ cookies المستخدم ويقرا الرد. ده نفس اللي في [[mistakes]] فوق، بس بالناتج الحقيقي. القايمة لازم تبقى origins محددة.
+
+### الـ 500 مفيهوش CORS headers
+
+~~~text الناتج (allow_origins=["http://localhost:5173"]، والطلب من نفس الـ origin)
+GET /crash  (فيه 1 / 0)             → 500  access-control-allow-origin: None
+GET /nf     (HTTPException 404)     → 404  access-control-allow-origin: http://localhost:5173
+~~~
+
+الـ [[HTTPException]] بتتحوّل رد **جوه** البصلة فبتعدّي على CORS، والـ crash بيترد من [[ServerErrorMiddleware]] اللي برّه كل حاجة. فالمتصفح بيشوف رد من غير [[access-control-allow-origin]] ويكتب [[blocked by CORS policy]]، والسبب الحقيقي [[ZeroDivisionError]] في لوج السيرفر. أول ما تشوف «CORS error» على route واحد بس: افتح لوج السيرفر قبل إعدادات CORS.
+
 ## الخلاصة
 
 - CORS قاعدة في المتصفح: السيرفر بيرد عادي، والمتصفح هو اللي بيمنع القراية. و curl عمره ما هيوريك خطأ CORS.
 - اكتب الـ origins بالاسم، خصوصًا مع [[allow_credentials=True]].
 - الـ middleware لكل الطلبات (ids، توقيت، ضغط، CORS)، والـ dependencies لـ routes معينة (auth، DB).`,
           lines: [
-            "للتوقيت.",
-            "للـ request id.",
-            "FastAPI و Request.",
-            "CORS جاهز.",
-            "ضغط gzip جاهز.",
-            "التطبيق.",
-            "ضيف middleware بإعداداته.",
-            "CORS.",
-            "الـ origins المسموحة بالظبط (من الإعدادات في الحقيقة).",
-            R`اسمح بالـ cookies (fetch بـ [[credentials: "include"]])؛ أما header الـ Authorization فبيتسمح بيه من allow_headers.`,
-            "الـ methods المسموحة.",
-            "الـ headers المسموحة.",
-            "قفلة.",
-            "اضغط الردود اللي أكبر من 1000 byte.",
-            "middleware بدالة.",
-            "بياخد الـ request ودالة بتعدّيه للي جوه.",
-            "خد الـ id من اللي قبلك (nginx) أو اعمل واحد.",
-            "ابدأ العداد.",
-            "عدّي الطلب واستنى الرد.",
-            "رجّع الـ id في الرد، عشان العميل يقولهولك لما يشتكي.",
-            "الوقت، وبيظهر في DevTools في تاب Timing.",
-            "رجّع الرد."
+            R`[[time]] عشان [[perf_counter()]]: ساعة دقيقة مبتتأثرش بتغيير ساعة الجهاز، فمناسبة لقياس مدة.`,
+            R`[[uuid]] عشان نعمل request id لو الطلب جه من غيره.`,
+            R`[[Request]] للـ middleware بتاعنا عشان يقرا الـ headers، و [[FastAPI]] للتطبيق.`,
+            R`[[CORSMiddleware]] جاهز من Starlette: بيرد على الـ preflight ([[OPTIONS]]) وبيضيف headers الـ [[access-control-*]] للردود.`,
+            R`[[GZipMiddleware]] بيضغط الردود الكبيرة لو العميل قال إنه بيفهم gzip.`,
+            R`التطبيق. الـ middleware بيتضاف عليه بعد ما يتعمل، وقبل ما أول طلب يوصل.`,
+            R`[[add_middleware]] بيلف التطبيق بطبقة. كل واحد بيتضاف بيبقى **برّه** اللي قبله، فآخر واحد هو أول واحد بيشوف الطلب.`,
+            R`أول argument الـ class نفسه (مش object)، والباقي إعداداته.`,
+            R`الـ origins المسموحة بالظبط (protocol ودومين و port). [[http://localhost:5173]] غير [[http://127.0.0.1:5173]]. والقايمة من [[Settings]] في الحقيقة، ومتكتبش [[*]] مع credentials (اتجرب تحت).`,
+            R`بيسمح للمتصفح يبعت الـ cookies لما الـ JavaScript يعمل [[fetch]] بـ [[credentials: "include"]]. أما [[Authorization]] header فبيتسمح بيه من [[allow_headers]] مش من هنا.`,
+            R`الـ methods اللي الـ preflight هيوافق عليها. GET و POST البسيطين مش محتاجين preflight أصلًا، بس PATCH و DELETE محتاجين.`,
+            R`الـ headers اللي الـ JavaScript مسموحله يبعتها. أي header تاني ([[X-API-Key]] مثلًا) الـ preflight بيرفضه بـ 400 [[Disallowed CORS headers]].`,
+            R`قفلة إعدادات CORS.`,
+            R`بيضغط أي رد أكبر من 1000 byte. الأصغر مبيتضغطش لأن الضغط بيكبّره.`,
+            R`decorator بيعمل middleware من دالة: بتتنادى مع كل طلب HTTP، حتى الـ 404 والـ preflight.`,
+            R`[[call_next]] دالة بتعدّي الطلب لكل اللي جوه (middleware تاني ثم الـ route) وترجّع الرد. اللي قبلها بيحصل قبل الـ route، واللي بعدها بعده.`,
+            R`بياخد الـ id من [[X-Request-ID]] لو nginx أو الـ frontend بعته، وإلا بيعمل واحد جديد. كده الطلب الواحد ليه نفس الـ id في كل السيستم.`,
+            R`بيبدأ العداد قبل ما الطلب يدخل.`,
+            R`بيعدّي الطلب ويستنى الرد. لو الـ route وقع بـ exception، اللي تحت السطر ده **مش هيشتغل** والرد 500 مش هيبقى فيه الـ headers دي.`,
+            R`بيرجّع الـ id في الرد، عشان المستخدم أو الـ frontend يقولهولك لما يشتكي وتدوّر بيه في اللوج.`,
+            R`[[Server-Timing]] header معياري بالمدة بالـ ms ([[:.1f]] رقم عشري واحد)، و DevTools بيعرضه في تاب Network ثم Timing.`,
+            R`بيرجّع الرد للطبقة اللي برّه. لو نسيت [[return]] الطلب بيقع.`,
           ],
           sol: R`قبل ما تضيف الدومين، الـ console هيطبع حاجة زي: [[Access to fetch at 'http://localhost:8000/health' from origin 'https://example.com' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.]] و [[fetch]] بيرمي [[TypeError: Failed to fetch]]. والمهم: لو بصيت في لوج السيرفر هتلاقي الطلب وصل ورجع [[200]]. الـ CORS مش بيمنع الطلب، بيمنع JavaScript إنه يقرا الرد. وبعد ما تضيف الدومين، الرد بيبقى فيه [[access-control-allow-origin: https://example.com]] والـ fetch بينجح. (Chrome الجديد ممكن كمان يسألك إذن «local network access» لما صفحة من الإنترنت تكلم localhost، وده غير الـ CORS.)
 

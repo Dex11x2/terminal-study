@@ -3,6 +3,27 @@ MORE("pyapi", [
     {
       t: "Dependencies",
       l: 2,
+      time: R`حوالي ٥ ساعات`,
+      goal: [
+        R`تكتب dependency مرة وتستخدمها في كل route بـ [[Annotated[T, Depends(f)]]]، وتعرف إمتى دالة وإمتى class.`,
+        R`تفتح حاجة لكل طلب وتقفلها بعده بـ [[yield]] (اتصال قاعدة، transaction)، وحاجة مرة واحدة مع عمر التطبيق بالـ lifespan.`,
+        R`تحمي routes بـ dependency للـ auth (401 و 403) و API key، من غير ما تكرر الفحص في كل دالة.`,
+        R`تختبر التطبيق بـ [[TestClient]] و [[httpx.AsyncClient]]، وتبدّل أي dependency بـ [[dependency_overrides]] من غير ما تلمس الكود.`,
+      ],
+      use: {
+        prog: R`الـ dependencies هي الطريقة اللي FastAPI بيوصّل بيها كل حاجة مشتركة: القاعدة، والمستخدم الحالي، والإعدادات، والـ pagination.`,
+        work: R`أي feature جديدة بتبدأ بسؤال «محتاجة dependency إيه؟». ولما حد يقول «الاختبار محتاج قاعدة حقيقية» الإجابة غالبًا override.`,
+        cs: R`ده dependency injection: الدالة بتقول هي محتاجة إيه، والـ framework هو اللي بيجيبه. فالكود ميعرفش جاي منين، وده اللي بيخليه يتختبر.`,
+      },
+      lab: R`cd shop-api && .venv/Scripts/activate && pip install pyjwt && mkdir -p tests && python -m pytest -q`,
+      projects: [
+        { lvl: 'صغير', t: R`pagination مشتركة`, what: R`dependency [[Paging]] (class بـ [[page]] و [[size]] و [[le=100]]) بترجّع [[limit]] و [[offset]]، واستخدمها في ٣ routes. من درس «Depends و Annotated».`, done: R`الـ ٣ routes بتقبل [[?page=3&size=10]] وبترجّع [[offset: 20]]، و [[size=500]] بترجع 422 في التلاتة، والقيد مكتوب في مكان واحد بس في الكود.` },
+        { lvl: 'صغير', t: R`مفتاح API للـ webhooks`, what: R`route [[POST /webhooks/payments]] محمي بـ [[APIKeyHeader(name="X-API-Key")]]، والمفتاح جاي من [[Settings]] كـ [[SecretStr]]، والمقارنة بـ [[secrets.compare_digest]].`, done: R`من غير header بيرجع 401، ومفتاح غلط 403، والصح 200. وزرار Authorize في [[/docs]] فيه خانة [[X-API-Key]]، والمفتاح مش مكتوب في أي ملف في الـ repo.` },
+        { lvl: 'متوسط', t: R`API ملاحظات لكل مستخدم`, what: R`كمّل API الملاحظات بتاع الوحدة الأولى: [[CurrentUser]] dependency (توكن من [[/auth/token]] تجريبي)، وكل مستخدم بيشوف ملاحظاته بس، والأدمن بس اللي يمسح أي ملاحظة بـ [[require_role("admin")]]. التوكنات الحقيقية والـ refresh في «JWT و refresh token».`, done: R`مستخدم بيعمل GET على ملاحظة مستخدم تاني بياخد 404 (مش 403، عشان ميعرفش إنها موجودة)، ومن غير توكن 401 ومعاه header [[WWW-Authenticate: Bearer]]، والأدمن بيمسح بـ 204، وكل ده في اختبارات بـ [[dependency_overrides]] من غير توكنات حقيقية.` },
+        { lvl: 'متوسط', t: R`اختبارات من غير شبكة`, what: R`التطبيق بيكلّم API خارجي للطقس بـ dependency [[get_weather_client]]. اكتب الاختبارات كلها بـ override بيرجّع client وهمي، ومنها حالة الـ API الخارجي واقع.`, done: R`[[pytest]] بيعدّي والنت مقفول، وفيه اختبار للحالة اللي الـ client الوهمي بيرمي فيها exception والرد 503 برسالة مفهومة، و [[dependency_overrides]] بتتمسح بعد كل اختبار (اختبار تاني بيتأكد إنها فاضية).` },
+        { lvl: 'كبير', t: R`API متعدد العملاء (multi-tenant)`, what: R`كل طلب فيه header [[X-Tenant-Id]]، و dependency بتتأكد إنه موجود في list العملاء وإن المستخدم الحالي تبعه. الـ routers كلها عليها الـ dependency دي، و dependency بـ [[yield]] بتفتح «جلسة» لكل طلب وتسجّل في اللوج [[commit]] أو [[rollback]] ووقت الطلب. والإعدادات من [[Settings]] في الـ lifespan.`, done: R`٢٠ اختبار على الأقل بـ [[TestClient]] و [[httpx.AsyncClient]]: tenant ناقص 400، و tenant مش بتاع المستخدم 403، و exception في نص الـ route بيطلّع [[rollback]] في اللوج، والطلب السليم [[commit]]. والاختبارات مش محتاجة [[.env]] ولا نت، وبتعدّي مرتين ورا بعض وبأي ترتيب ([[pytest -p no:randomly]] مش محتاجه).`, ext: R`بعد قسم قاعدة البيانات: الجلسة تبقى SQLAlchemy حقيقية، وكل tenant بـ [[schema]] أو عمود [[tenant_id]] بفلتر إجباري.` },
+        { lvl: 'فكرة', t: R`dependency بتحل مشكلة عندك`, what: R`دوّر في مشروع عندك على حاجة بتتكرر في أول كل route (فحص، أو قراية header، أو فتح حاجة وقفلها) وحوّلها dependency. انت اللي بتختار.`, done: R`الكود اللي اتكرر اتمسح من كل الـ routes، والـ dependency ليها اختبار لوحدها، وفيه override واحد على الأقل في الاختبارات.`, ext: R`اعملها package صغيرة تستخدمها في كل مشاريع FastAPI بتاعتك.` },
+      ],
       n: "Depends بيجهّز اللي الـ route محتاجه (اتصال، مستخدم، إعدادات) قبل ما يشتغل، ويقفله بعد ما يخلص",
       items: [
         {
@@ -34,6 +55,13 @@ async def list_products(page: PageDep):
     return {"limit": page.limit, "offset": page.offset}`,
           try: R`اطلب [[/orders?page=3]] من غير header [[X-Tenant-Id]] وشوف الـ 422، وبعدين بيه ([[curl -H "X-Tenant-Id: acme" "localhost:8000/orders?page=3"]]). وافتح [[/docs]] وشوف باراميترات الـ dependency ظهرت على الـ route.`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** اكتب من الذاكرة الفرق بين [[Annotated[Page, Depends(pagination)]]] و [[page: Page = Depends(pagination)]]، وإيه اللي بيحصل لو نفس الـ dependency اتطلبت مرتين في نفس الطلب.`, done: R`كتبت إن الاتنين شغالين والأولى هي الموصى بيها (النوع ظاهر والـ default حر)، وإن FastAPI بيناديها مرة واحدة في الطلب، وجربت بعداد وطلع [[{'a': 1, 'b': 1, 'd': 2}]] لما التالتة [[use_cache=False]].` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[GET /orders?page=0]] من غير header [[X-Tenant-Id]]. كام خطأ في الرد؟ وإيه الـ [[loc]] بتاع كل واحد؟ وهل [[tenant_id]] اتنادت؟`, done: R`جرّبت: 422 فيها خطأين، [[["query", "page"]]] و [[["header", "x-tenant-id"]]]، والدالة [[tenant_id]] نفسها **ماتنادتش** لأن الباراميتر بتاعها نفسه ناقص، و FastAPI بيجمع أخطاء كل الـ dependencies مع بعض.` },
+            { lvl: 'تطبيق', t: R`**refactor:** خد ٣ routes كل واحد فيه [[page: int = 1, size: int = 20]] و [[offset = (page - 1) * size]]، وحوّلهم لـ class dependency: [[class Paging]] بـ [[__init__(self, page, size)]] و [[Annotated[Paging, Depends()]]].`, done: R`[[Depends()]] من غير argument اشتغل لأن النوع نفسه هو الـ dependency، و [[?page=3&size=10]] رجعت [[{"limit":10,"offset":20}]] في التلاتة، والسطور المتكررة اتمسحت، و [[/docs]] لسه بيعرض [[page]] و [[size]].` },
+            { lvl: 'تطبيق', t: R`**ابني:** dependency [[get_locale]] بتقرا [[Accept-Language]] وترجّع [[ar]] أو [[en]] (الـ default [[en]])، و route [[/greeting]] بيرجّع «أهلًا» أو «Hello» حسبها.`, done: R`[[curl -H "Accept-Language: ar-EG,ar;q=0.9"]] بيرجّع «أهلًا»، ومن غير header «Hello»، و [[fr]] «Hello»، و [[/docs]] بيعرض الـ header كباراميتر اختياري.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** اكتب في ٥ سطور الترتيب اللي FastAPI بيحل بيه الشجرة بتاعة [[list_orders]]. وبعدين توقّع: [[?page=0]] و header [[X-Tenant-Id: a-b]] مع بعض، الرد 422 ولا 400؟ وهل [[tenant_id]] اتنادت؟`, done: R`جرّبت وطلع **400** [[bad tenant]] و [[tenant_id]] اتنادت، مع إن [[page]] غلط. وكتبت السبب: الـ dependency اللي باراميتراتها هي سليمة بتتنادى حتى لو باراميتر تاني في الطلب فشل، ولو رمت [[HTTPException]] ده اللي بيرجع. ومن غير الـ header خالص الرد 422 فيه الخطأين و [[tenant_id]] ماتنادتش. فمتحطش كتابة في القاعدة جوه dependency بتشتغل بدري.` },
+          ],
           deep: {
             why: "كل route محتاج نفس الحاجات: اتصال بالقاعدة، والمستخدم الحالي، والإعدادات، والـ pagination. من غير dependencies بتنسخ نفس ٥ سطور في كل route، وأول ما تغيّر حاجة تنسى مكان. وكمان الـ dependency injection بيخلّي الاختبار سهل: تبدّل الـ dependency بنسخة وهمية.",
             how: R`FastAPI بيقرا الـ signature، ويلاقي [[Depends(fn)]]، فيقرا signature الـ fn هي كمان، ويبني شجرة. ومع كل request بيحل الشجرة من تحت لفوق: ينادي كل dependency، ويبعت نواتجها.
@@ -268,6 +296,56 @@ x-tenant-id   header  إجباري
 | [[raise HTTPException]] جوه dependency | الطلب بيقف قبل الـ route |
 | [[page: PageDep]] في الـ route | القيمة جاهزة، من غير تكرار |
 
+---
+
+## اتشغّل فعلًا: class كـ dependency و API key
+
+### الـ class نفسه dependency
+
+أي حاجة ينفع تتنادى تنفع تبقى dependency، والـ class بيتنادى (بيعمل object). فـ [[__init__]] بيبقى زي باراميترات الدالة بالظبط. اتجرب على FastAPI 0.162:
+
+~~~python
+class Paging:
+    def __init__(self, page: int = 1, size: int = 20):
+        self.limit, self.offset = size, (page - 1) * size
+@app.get("/p")
+async def p(pg: Annotated[Paging, Depends()]):
+    return {"limit": pg.limit, "offset": pg.offset}
+~~~
+
+~~~text الناتج: GET /p?page=3&size=10
+{'limit': 10, 'offset': 20}
+~~~
+
+[[Depends()]] من غير argument معناها «الـ dependency هي النوع نفسه»، فمش محتاج تكتب [[Paging]] مرتين.
+
+### [[APIKeyHeader]]: مفتاح ثابت في header
+
+للخدمات اللي بتكلّم بعض (webhook من بوابة دفع مثلًا) مفيش مستخدم بيعمل login، فيه مفتاح ثابت:
+
+~~~python
+api_key = APIKeyHeader(name="X-API-Key")
+async def require_key(key: Annotated[str, Security(api_key)]):
+    if key != "k-123": raise HTTPException(403, "bad key")
+    return key
+@app.get("/k", dependencies=[Depends(require_key)])
+async def k(): return {"ok": True}
+~~~
+
+~~~text الناتج
+من غير header         → 401 {"detail":"Not authenticated"}
+X-API-Key: nope       → 403 {"detail":"bad key"}
+X-API-Key: k-123      → 200 {"ok":true}
+~~~
+
+| الحتة | بتعمل إيه |
+|---|---|
+| [[APIKeyHeader(name=...)]] | بتقرا الـ header ده، ولو مش موجود بترد 401 لوحدها، وبتضيف خانة للمفتاح في زرار Authorize في [[/docs]] |
+| [[Security(api_key)]] | زي [[Depends]] بالظبط، بس بيعلّم في OpenAPI إنها حماية |
+| [[key != "k-123"]] | للتجربة بس. في الحقيقة المفتاح من [[Settings]] كـ [[SecretStr]]، والمقارنة بـ [[secrets.compare_digest]] عشان متتقاسش بالوقت |
+
+> FastAPI القديم كان بيرد **403** لما الـ header ناقص. في 0.162 اللي اتجرب، الرد 401، وده المعيار الصح («مش متعرّف عليك»).
+
 ## الخلاصة
 
 - الـ dependency دالة عادية، و FastAPI بيقرا باراميتراتها من الطلب وبيناديها قبل الـ route.
@@ -275,27 +353,27 @@ x-tenant-id   header  إجباري
 - [[Depends(fn)]] من غير قوسين بعد [[fn]].
 - الأخطاء من الـ dependency بتوقف الطلب، والقيود والتوثيق بيتنقلوا للـ route لوحدهم.`,
           lines: [
-            "Annotated.",
-            "Depends، و Header لقراية الـ headers.",
-            "موديل للنتيجة.",
-            "التطبيق.",
-            "شكل الـ pagination.",
-            "حقل.",
-            "حقل.",
-            "dependency: باراميتراتها query عادية بقيود.",
-            "حوّلهم لـ limit و offset.",
-            "نوع بالـ dependency بتاعته، تكتبه مرة واحدة.",
-            R`dependency بتقرا header [[X-Tenant-Id]].`,
-            "فحص.",
-            "بيوقف الـ request قبل الـ route.",
-            "رجّع القيمة.",
-            "نوع تاني.",
-            "route.",
-            "باراميترين، كل واحد جاي من dependency.",
-            "استخدمهم.",
-            "route تاني بنفس الـ pagination.",
-            "سطر واحد.",
-            "رجّع."
+            R`[[Annotated]] بيلزق [[Depends(...)]] جنب النوع، فالنوع الحقيقي يفضل ظاهر للمحرر و mypy، والـ dependency معلومة زيادة لـ FastAPI.`,
+            R`[[Depends]] بيقول «القيمة دي نتيجة دالة»، و [[Header]] لقراية header، و [[HTTPException]] عشان الـ dependency توقف الطلب، و [[Query]] لقيود الـ query جوه الـ dependency.`,
+            R`[[BaseModel]] عشان نتيجة الـ pagination تبقى object بحقول ليها أسماء ([[page.limit]]) بدل tuple.`,
+            R`التطبيق. الـ dependencies مش بتتسجّل عليه، بتتكتب في الـ routes اللي محتاجاها.`,
+            R`شكل نتيجة الـ pagination: اللي القاعدة محتاجاه فعلًا، مش اللي العميل بعته.`,
+            R`[[limit]] كام صف في الصفحة: هيبقى [[LIMIT]] في SQL.`,
+            R`[[offset]] كام صف نعدّي: هيبقى [[OFFSET]] في SQL، والحساب بتاعه جوه الـ dependency مش في كل route.`,
+            R`الـ dependency نفسها دالة عادية. باراميتراتها بتتقري من الطلب زي أي route، فـ [[page]] و [[size]] query بقيودهم، وبيظهروا في [[/docs]] تحت كل route بيستخدمها.`,
+            R`بتحوّل رقم الصفحة لـ offset: الصفحة ٣ بحجم ١٠ يبقى [[offset=20]]. الحساب في مكان واحد، فلو اتغيّر بيتغيّر لكل الـ routes.`,
+            R`[[PageDep]] نوع جاهز: [[Page]] ومعاه طريقة جيبه. أي route يكتب [[page: PageDep]] وخلاص، ومفيش تكرار لـ [[Depends(pagination)]].`,
+            R`dependency تانية بتقرا header: [[x_tenant_id]] مع [[Header()]] بيتقري من [[X-Tenant-Id]] (الـ [[_]] بتبقى [[-]]). ومن غير default يبقى إجباري، فغيابه 422.`,
+            R`فحص زيادة على القيمة: حروف وأرقام بس. [[isalnum()]] بترجّع [[False]] لو فيه شرطة أو مسافة.`,
+            R`[[HTTPException]] جوه dependency بيوقف الطلب كله برد 400، والـ route **مبيشتغلش**. ده اللي بيخلي الـ dependency تنفع للفحص والصلاحيات.`,
+            R`لو الفحص عدّى بترجّع القيمة، وهي اللي هتوصل للـ route في الباراميتر.`,
+            R`نوع جاهز تاني للـ tenant، نفس فكرة [[PageDep]].`,
+            R`route الطلبات على [[/orders]].`,
+            R`باراميترين، كل واحد جاي من dependency. FastAPI بيناديهم قبل الدالة، ولو أي واحد رمى exception الدالة مبتتناداش.`,
+            R`بيستخدم القيم الجاهزة: [[tenant]] نص اتفحص، و [[page.limit]] و [[page.offset]] اتحسبوا.`,
+            R`route تاني على [[/products]] بنفس الـ pagination من غير ما يكتب ولا قيد.`,
+            R`سطر واحد بيجيب الـ pagination كاملة بقيودها، وده كل فايدة الـ dependency: تتكتب مرة وتتستخدم في كل مكان.`,
+            R`بيرجّع الـ limit والـ offset، و [[?page=3&size=10]] بترجع [[{"limit":10,"offset":20}]].`,
           ],
           sol: R`من غير الـ header: 422 و [[{"detail": [{"type": "missing", "loc": ["header", "x-tenant-id"], "msg": "Field required", "input": null}]}]]. لاحظ إن FastAPI حوّل [[x_tenant_id]] لـ [[x-tenant-id]] لوحده (الـ underscore بقى شرطة). وبالـ header: [[{"tenant": "acme", "limit": 20, "offset": 40}]]، لأن الصفحة 3 بحجم 20 تبدأ من 40. ولو بعت [[X-Tenant-Id: ac-me]] هتاخد [[400]] و [[bad tenant]] من الـ HTTPException اللي جوه الـ dependency.
 
@@ -330,6 +408,13 @@ async def create_order(conn: Conn):
     return {"id": order_id}`,
           try: R`ضيف [[raise HTTPException(400)]] بعد أول INSERT وشوف إن مفيش صف اتحط (rollback). وبعدين اطبع حاجة بعد الـ [[yield]] مرة بـ [[scope="function"]] ومرة من غيرها، وشوف بتتطبع قبل الرد ولا بعده.`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** اكتب لكل حاجة تتحط فين (lifespan ولا dependency بـ yield): pool القاعدة، و transaction، و [[httpx.AsyncClient]] واحد للتطبيق، وتحميل موديل ML تقيل، و lock على ملف لطلب واحد.`, done: R`الـ pool والـ client والموديل في الـ lifespan (مرة واحدة)، والـ transaction والـ lock في dependency بـ yield (لكل طلب)، وكتبت جنب كل واحد السبب في سطر.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** dependency بتضيف لـ list: [[open]] قبل [[yield]]، و [[commit]] بعده، و [[rollback]] في [[except]]، و [[close]] في [[finally]]. طلب سليم وبعده طلب بيرمي [[HTTPException(409)]] من الـ route. إيه الـ list؟`, done: R`كتبت توقّعك وبعدين شغّلت: [[['open', 'commit', 'close', 'open', 'rollback:HTTPException', 'close']]]، يعني الـ exception بتاع الـ route وصل للـ dependency، وحتى الـ HTTPException بتعمل rollback.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** dependency فيها [[except Exception: log.error("x")]] من غير [[raise]] بعد [[yield]]. اعمل route بيرمي [[HTTPException(404)]] وشوف الرد بقى إيه، وصلّحه.`, done: R`من غير [[raise]] الـ exception اتبلع والرد بقى 500 [[Internal Server Error]] بدل 404 (اتجرب على 0.162)، وبعد [[raise]] رجع 404 والـ rollback لسه بيحصل.` },
+            { lvl: 'تطبيق', t: R`**ابني:** lifespan بيعمل [[httpx.AsyncClient(timeout=5)]] واحد ويحطه في [[app.state.http]]، و dependency بترجّعه، و route [[/rates]] بيستخدمه. وفي الـ shutdown [[await client.aclose()]].`, done: R`مع [[with TestClient(app)]] الـ route بيشتغل، ومن غير [[with]] بيقع بـ [[AttributeError]] على [[app.state.http]]، والـ client اتعمل مرة واحدة بس (اطبعت [[id(client)]] في طلبين وطلع نفس الرقم).` },
+            { lvl: 'تحدي', t: R`**قيس:** route بيعمل [[asyncpg.connect()]] جديد مع كل طلب مقابل route بياخد من الـ pool. ابعت ٢٠٠ طلب لكل واحد بـ [[httpx.AsyncClient]] و [[asyncio.gather]] وقيس الوقت الكلي، على Postgres في Docker.`, done: R`عندك رقمين حقيقيين (ثواني) مكتوبين، والـ pool أسرع بفرق واضح، وكتبت السبب: كل اتصال جديد فيه TCP و TLS (لو موجود) و authentication، والـ pool بيعملهم مرة. واتأكدت إن مفيش [[too many connections]] في الحالتين.` },
+          ],
           deep: {
             why: "اتصال بيتاخد من الـ pool ومبيرجعش لأن exception حصل في النص: بعد ١٠ أخطاء الـ pool خلص والـ API واقف. و transaction نصها اتنفذ بتسيب داتا بايظة. الـ dependency بـ yield بتضمن التنضيف في كل الحالات، في مكان واحد.",
             how: R`FastAPI بيشغّل الـ dependency لحد الـ yield، ويدّي القيمة للـ route. ولو الـ route رمى exception (حتى [[HTTPException]])، بيترمي جوه الـ dependency عند الـ yield: [[async with conn.transaction()]] بيشوفه فيعمل rollback. ولو مفيش exception بيعمل commit.
@@ -533,6 +618,43 @@ HTTP/1.1 400 Bad Request
 | [[yield conn]] | الـ route بيشتغل هنا |
 | [[scope="function"]] | الـ commit قبل الرد |
 
+---
+
+## اتشغّل فعلًا: الـ exception بيوصل للـ dependency
+
+السؤال اللي بيلخبط: لو الـ route رمى exception، اللي بعد [[yield]] بيشوفه؟ جربنا بـ dependency بتسجّل كل خطوة، و [[httpx.AsyncClient]] (FastAPI 0.162):
+
+~~~python
+log = []
+async def get_db():
+    log.append("open")
+    try:
+        yield "db"
+        log.append("commit")
+    except Exception as e:
+        log.append(f"rollback:{type(e).__name__}")
+        raise
+    finally:
+        log.append("close")
+@app.post("/ok")
+async def ok(db: Annotated[str, Depends(get_db)]): return {"db": db}
+@app.post("/boom")
+async def boom(db: Annotated[str, Depends(get_db)]): raise HTTPException(409, "conflict")
+~~~
+
+~~~text الناتج: POST /ok ثم POST /boom
+['open', 'commit', 'close', 'open', 'rollback:HTTPException', 'close']
+~~~
+
+| الخطوة | معناها |
+|---|---|
+| [[open]] ثم [[commit]] ثم [[close]] | الطلب السليم: الكود بعد [[yield]] كمّل عادي |
+| [[rollback:HTTPException]] | الـ exception بتاع الـ route اترمى **عند الـ [[yield]]** جوه الـ dependency، فالـ [[except]] مسكه |
+| [[raise]] في الـ [[except]] | لازم ترميه تاني. لو بلعته، FastAPI مش هيعرف يرد 409 |
+| [[close]] في [[finally]] | بيحصل في الحالتين، وده مكان رجوع الاتصال للـ pool |
+
+يعني حتى [[HTTPException]] (اللي هي رد عادي مش crash) بتعمل rollback. لو عايز رد 4xx ومعاه commit، اعمل commit بنفسك قبل ما ترمي.
+
 ## الخلاصة
 
 - الموارد المشتركة (pool، client) في الـ lifespan، والموارد اللي لكل طلب في dependency بـ [[yield]].
@@ -540,27 +662,27 @@ HTTP/1.1 400 Bad Request
 - الـ transaction في dependency خليها [[scope="function"]] عشان العميل ميخدش 200 قبل الـ commit.
 - الـ ids مش متتالية بعد rollback، ومتعتمدش عليها.`,
           lines: [
-            "نوع الرجوع للـ generators الـ async.",
-            "decorator الـ lifespan.",
-            "Annotated.",
-            "درايفر Postgres async (المستوى ٣).",
-            "Request عشان نوصل لـ app.state.",
-            "بيحوّل الـ generator لـ context manager.",
-            "بيتنادى مرة واحدة مع التطبيق.",
-            "الـ pool بيتعمل وقت ما التطبيق يقوم (والـ URL من الإعدادات في الحقيقة).",
-            "هنا التطبيق بيستقبل requests.",
-            "وقت القفل: اقفل كل الاتصالات.",
-            "اربط الـ lifespan بالتطبيق.",
-            "dependency لكل request.",
-            "خد اتصال من الـ pool، وهيرجع لوحده.",
-            "transaction: commit لو الـ route نجح، و rollback لو رمى.",
-            "الـ route بيشتغل هنا.",
-            R`[[scope="function"]]: التنضيف (والـ commit) يحصل قبل ما الرد يتبعت.`,
-            "route.",
-            "بياخد الاتصال جاهز.",
-            "INSERT ويرجّع الـ id.",
-            "INSERT تاني في نفس الـ transaction: الاتنين يا يتنفذوا يا لأ.",
-            "رجّع."
+            R`[[AsyncIterator]] نوع الرجوع لأي دالة [[async]] فيها [[yield]]، عشان المحرر و mypy يفهموا إنها generator مش دالة بترجع قيمة.`,
+            R`[[asynccontextmanager]] بيحوّل generator فيه [[yield]] واحد لـ context manager: اللي قبل [[yield]] «افتح»، واللي بعده «اقفل». ده الشكل اللي FastAPI عايزه للـ lifespan.`,
+            R`[[Annotated]] عشان نعمل النوع [[Conn]] تحت ونكتبه مرة.`,
+            R`[[asyncpg]] درايفر Postgres الـ async (درس «asyncpg» في قسم قاعدة البيانات). أي حاجة ليها فتح وقفل بتنفع هنا: Redis و httpx كمان.`,
+            R`[[Request]] عشان الـ dependency توصل لـ [[request.app.state]] اللي الـ lifespan حط فيه الـ pool.`,
+            R`بيحوّل [[lifespan]] اللي تحته لـ async context manager، و FastAPI هيدخله وهو بيقوم ويخرج منه وهو بيقفل.`,
+            R`الـ lifespan بياخد التطبيق نفسه، وبيتنادى **مرة واحدة** في عمر الـ process، مش مع كل طلب.`,
+            R`بيعمل pool اتصالات وقت ما التطبيق يقوم ويحطه في [[app.state]]. لو القاعدة واقعة، التطبيق يقع وهو بيقوم بدل أول طلب. والـ URL في الحقيقة من [[Settings]] مش مكتوب في الكود.`,
+            R`[[yield]] هنا التطبيق شغال وبيستقبل طلبات. كل اللي قبله startup وكل اللي بعده shutdown.`,
+            R`بعد Ctrl+C أو [[SIGTERM]] من Docker: بيقفل كل الاتصالات بأدب، فالقاعدة متفضلش شايلة اتصالات ميتة.`,
+            R`بيربط الـ lifespan بالتطبيق. من غير [[lifespan=]] الدالة اللي فوق عمرها ما هتتنادى، و [[app.state.pool]] مش هيبقى موجود.`,
+            R`dependency لكل طلب: generator فيه [[yield]]، فـ FastAPI هيشغّل اللي قبل [[yield]] قبل الـ route، واللي بعده بعد الـ route.`,
+            R`بياخد اتصال من الـ pool، و [[async with]] بيرجّعه للـ pool لوحده حتى لو حصل exception. من غير [[async with]] أي exception بيضيّع اتصال من الـ pool.`,
+            R`بيفتح transaction: لو البلوك خلص عادي [[COMMIT]]، ولو exception عدّى منه [[ROLLBACK]]. والـ exception اللي بيترمي في الـ route بيوصل هنا فعلًا (اتجرب تحت).`,
+            R`بيدّي الاتصال للـ route. الـ route بيشتغل وهو هنا متوقف، وبعد ما يخلص الكود بيكمّل من بعد [[yield]] (يقفل الـ transaction ويرجّع الاتصال).`,
+            R`[[scope="function"]] (FastAPI 0.121+) بيخلي اللي بعد [[yield]] يحصل **قبل** ما الرد يتبعت، فالعميل مياخدش 200 والـ COMMIT لسه موقعش. الـ default بيقفل بعد الرد.`,
+            R`route بيعمل طلب جديد بـ POST.`,
+            R`بياخد الاتصال جاهز، والـ route ميعرفش حاجة عن الـ pool ولا الـ transaction. في الاختبار ممكن يتبدّل بـ override.`,
+            R`[[INSERT ... RETURNING id]] بيعمل الطلب ويرجّع الـ id في رحلة واحدة للقاعدة، و [[fetchval]] بياخد أول قيمة من أول صف.`,
+            R`INSERT تاني في **نفس** الـ transaction بـ [[$1]] (باراميتر، مش f-string). لو ده وقع، الطلب الأول بيترجع كمان، فمفيش طلب من غير event.`,
+            R`بيرجّع الـ id. لو [[scope="function"]]، الـ COMMIT حصل قبل ما الـ JSON ده يوصل للعميل.`,
           ],
           sol: R`مع [[raise HTTPException(400)]] بعد أول INSERT، الرد [[400]] و [[{"detail": "Bad Request"}]]، و [[SELECT * FROM orders]] مش هيلاقي الصف. الـ exception عدّى من الـ [[yield]] جوه [[conn.transaction()]] فعمل rollback. بس لاحظ إن الطلب اللي بعده هياخد [[id]] 2 مش 1: الـ sequence مبيرجعش في الـ rollback، فالفجوات في الـ ids طبيعية ومتعتمدش إنها متتالية.
 
@@ -604,6 +726,13 @@ async def delete_user(user_id: int):
     return {"deleted": user_id}`,
           try: R`اعمل توكن للتجربة: [[python -c "import jwt; print(jwt.encode({'sub': '1', 'role': 'admin'}, 'change-me', algorithm='HS256'))"]]، وجرّبه بـ [[curl -H "Authorization: Bearer <التوكن>" localhost:8000/me]] (زرار Authorize في [[/docs]] مع OAuth2PasswordBearer بيطلب username و password ويبعتهم لـ [[tokenUrl]]، فمينفعش تلزق فيه توكن؛ لو عايز تلزقه من /docs استخدم [[HTTPBearer]]). وبعدين غيّر حرف في التوكن، واعمل واحد بـ role عادي وجرّب الـ DELETE.`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** اكتب الكود والـ header لكل حالة من غير ما تبص: من غير [[Authorization]]، وتوكن توقيعه غلط، وتوكن منتهي، ومستخدم [[role=user]] على [[DELETE /users/5]].`, done: R`الأربعة: 401 (من [[oauth2]] و [[Not authenticated]])، و 401 [[invalid token]]، و 401 [[invalid token]]، و 403 [[forbidden]]، والتلاتة الأولانيين معاهم [[WWW-Authenticate: Bearer]]. وطابقوا اللي في «نجرّب كل الحالات».` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** خد توكن سليم وغيّر حرف واحد في الجزء التاني (الـ payload) بإيدك. هيرجع إيه [[/me]]؟ وبعدين فك الـ payload بـ [[base64]] من غير السر: تقدر تقراه؟`, done: R`الطلب رجع 401 لأن التوقيع مبقاش مطابق، وفك الـ base64 طلّع [[{"sub":"1","role":"admin"}]] من غير أي سر، فكتبت إن الـ JWT متوقّع مش متشفّر ومتحطش فيه أسرار.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[jwt.decode(token, SECRET)]] من غير [[algorithms]]، و [[except Exception: return None]]. شغّله وشوف اللي بيحصل في PyJWT 2، وصلّح الاتنين.`, done: R`من غير [[algorithms]] PyJWT 2 بيرمي [[DecodeError]] بـ [[It is required that you pass in a value for the "algorithms" argument]]، و [[return None]] كان هيخلي المستخدم [[None]] يوصل للـ route. بعد التصليح: [[algorithms=["HS256"]]] و [[raise HTTPException(401)]].` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[require_any_role(*roles)]] factory بتقبل أكتر من دور، و route [[/reports]] لـ [[admin]] و [[accountant]] بس، و [[/me/orders]] لأي مستخدم.`, done: R`محاسب بياخد 200 على [[/reports]]، و [[user]] بياخد 403، ومن غير توكن 401، والتلاتة في اختبارات بـ [[dependency_overrides[current_user]]] من غير ما تعمل توكن خالص.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** زميلك عايز يحط الدور في التوكن ويثق فيه من غير ما يرجع للقاعدة. اكتب ٥ سطور: إيه اللي بيحصل لما الأدمن يتشال من الأدمنية والتوكن لسه صالح ساعة؟ وإيه الحلول؟`, done: R`الشرح فيه إن التوكن بيفضل admin لحد [[exp]]، والحلول: توكن قصير (١٥ دقيقة) مع refresh، أو قراية الدور من القاعدة أو cache في [[current_user]]، أو نسخة للتوكنات في القاعدة بتتزوّد لما الصلاحيات تتغيّر. ومكتوب إن التفاصيل في «JWT و refresh token».` },
+          ],
           deep: {
             why: "الـ auth أكتر كود بيتكرر، وأخطر كود لو اتنسى في route. لما يبقى نوع في الـ signature، نسيانه بيبان بالعين في الـ code review، والـ router كله يتقفل بسطر.",
             how: R`[[OAuth2PasswordBearer(tokenUrl=...)]] بيعمل حاجتين: dependency بتقرا الـ header وترجّع التوكن (أو 401)، وبيعرّف الـ security scheme في OpenAPI فيظهر زرار Authorize في [[/docs]]. و [[tokenUrl]] مسار الـ login بتاعك اللي بيدّي توكن (بياخد [[OAuth2PasswordRequestForm]]).
@@ -655,8 +784,8 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6ImFkbWluIn0.3au3PsZ
 
 | الجزء | فيه إيه |
 |---|---|
-| [[eyJhbGciOi...]] | الـ header: [[{"alg":"HS256","typ":"JWT"}]] |
-| [[eyJzdWIiOi...]] | الـ payload: [[{"sub":"1","role":"admin"}]] |
+| [[eyJhbGciOi...]] | الـ header بـ base64، فيه نوع التوقيع: [[{"alg":"HS256","typ":"JWT"}]] |
+| [[eyJzdWIiOi...]] | الـ payload بـ base64، ودي الداتا اللي أي حد يقدر يقراها: [[{"sub":"1","role":"admin"}]] |
 | [[3au3PsZ9...]] | التوقيع: HMAC-SHA256 للجزئين الأولانيين بالسر |
 
 الجزئين الأولانيين **مش متشفرين**، دول base64 بس، وأي حد يقدر يقراهم (فكّيت الـ payload وطلع [[{"sub":"1","role":"admin"}]]). فمتحطش فيه باسورد. الأمان كله في التوقيع: محدش يقدر يغيّر حرف من غير ما التوقيع يبوظ، لأنه معهوش السر. و [[sub]] (subject) الاسم المعياري لـ id المستخدم، و HS256 = HMAC بـ SHA-256.
@@ -783,42 +912,57 @@ content-type: application/json
 | [[require_role("admin")]] | factory بترجع dependency بتفحص الدور = 403 |
 | [[dependencies=[Depends(...)]]] | شغّل الفحص من غير ما تاخد القيمة |
 
+---
+
+## اتشغّل فعلًا: الدرس ده بيفحص، مش بيعمل توكنات
+
+الدرس ده عن **الـ dependency** اللي بتفحص التوكن وتطلّع المستخدم. الحاجات اللي حواليها ليها دروس لوحدها في وحدة الأمان، فمتكررهاش هنا:
+
+| محتاج | فين |
+|---|---|
+| تعمل [[/auth/token]] نفسه، وتوكن قصير ومعاه refresh token، وتلغي توكن | «JWT و refresh token» |
+| تخزّن الباسورد ([[argon2]] و [[bcrypt]]) وتقارنه | «تشفير الباسورد» |
+| مفتاح ثابت بين خدمتين بدل مستخدم | [[APIKeyHeader]] في درس «Depends و Annotated» |
+| تبدّل [[current_user]] في الاختبار | درس «dependency_overrides» |
+
+واتجربت كل حالات الفحص بـ PyJWT 2 على FastAPI 0.162 (الجدول في «نجرّب كل الحالات» فوق).
+
 ## الخلاصة
 
 - الـ JWT مقروء لأي حد، ومحمي من التعديل بس. السر هو كل الأمان، فخليه طويل وفي الإعدادات.
 - اعمل الـ auth طبقات: توكن ← مستخدم ← صلاحية، وكل route ياخد اللي محتاجه.
 - 401 مع [[WWW-Authenticate]] لما مش عارف المستخدم، و 403 لما عارفه ومش مسموحله.`,
           lines: [
-            "Annotated.",
-            "PyJWT.",
-            R`الأدوات، و [[status]] لأسماء الأكواد.`,
-            "بيقرا Bearer token من الـ header.",
-            "الموديل.",
-            "للتجربة بس: السر مكانه الإعدادات.",
-            "مسار الـ login اللي بيدّي التوكن، وبيظهر زرار Authorize في /docs.",
-            "التطبيق.",
-            "المستخدم.",
-            "حقل.",
-            "حقل.",
-            "dependency فوق dependency: بتاخد التوكن من oauth2.",
-            "نحاول نفكه.",
-            "بيتأكد من التوقيع والانتهاء، والخوارزمية محددة.",
-            "توكن بايظ أو منتهي.",
-            "401 مع الـ header اللي المعيار طالبه.",
-            "المستخدم من الـ payload (في مشروع حقيقي: من القاعدة أو الـ cache).",
-            "النوع اللي كل الـ routes هتستخدمه.",
-            "factory: بترجع dependency حسب الدور.",
-            "الـ dependency الحقيقية، ومعتمدة على CurrentUser.",
-            "الدور غلط؟",
-            "403: عارفينك بس مش مسموحلك.",
-            "رجّع المستخدم لو حد محتاجه.",
-            "رجّع الدالة.",
-            "route لأي مستخدم مسجّل.",
-            "من غير توكن: 401 قبل ما الدالة تشتغل.",
-            "رجّع.",
-            "للأدمن بس، والـ route مش محتاج قيمة الـ dependency.",
-            "الدالة.",
-            "رجّع."
+            R`[[Annotated]] عشان نعمل النوع [[CurrentUser]] اللي كل الـ routes هتكتبه.`,
+            R`[[jwt]] هي مكتبة PyJWT ([[pip install pyjwt]])، مش مكتبة [[jwt]] تانية بنفس الاسم. بنستخدم منها [[decode]] بس، وعمل التوكنات والـ refresh في «JWT و refresh token».`,
+            R`[[Depends]] للشجرة، و [[HTTPException]] للـ 401 و 403، و [[status]] عشان نكتب [[HTTP_401_UNAUTHORIZED]] بدل الرقم.`,
+            R`[[OAuth2PasswordBearer]] dependency جاهزة بتقرا [[Authorization: Bearer <token>]] وترجّع التوكن نص. لو الـ header ناقص بترد 401 لوحدها.`,
+            R`[[BaseModel]] لموديل [[User]] اللي هيوصل للـ routes.`,
+            R`للتجربة بس: السر هنا مكتوب ٩ bytes، و PyJWT بيحذّر إن HS256 محتاج ٣٢ على الأقل. في الحقيقة من [[Settings]] كـ [[SecretStr]] ومولّد بـ [[secrets.token_urlsafe(32)]].`,
+            R`[[tokenUrl]] مسار الـ login اللي بيدّي التوكن، وبيستخدمه زرار Authorize في [[/docs]] عشان تعمل login من الصفحة. الـ object ده نفسه dependency.`,
+            R`التطبيق. الـ dependencies اللي تحت مش متسجّلة عليه، كل route بيطلب اللي محتاجه.`,
+            R`موديل المستخدم اللي الـ routes هتستلمه: [[id]] و [[role]] بس، مش كل اللي في القاعدة.`,
+            R`[[id]] رقم المستخدم، جاي من [[sub]] في التوكن بعد ما يتحوّل [[int]].`,
+            R`[[role]] الدور ([[user]] أو [[admin]]). [[require_role]] تحت بتقارن بيه.`,
+            R`dependency فوق dependency: [[current_user]] محتاجة التوكن، فـ FastAPI بينادي [[oauth2]] الأول. لو التوكن ناقص الـ 401 بتطلع من [[oauth2]] قبل ما الدالة دي تشتغل.`,
+            R`بنحاول نفك التوكن جوه [[try]]، عشان أي غلط فيه يبقى 401 مش 500.`,
+            R`[[decode]] بيتأكد من التوقيع بالسر، ومن [[exp]] لو موجود. و [[algorithms=["HS256"]]] **لازم** تتكتب: من غيرها حد ممكن يبعت توكن بـ [[alg: none]].`,
+            R`[[InvalidTokenError]] الأب لكل أخطاء التوكن: توقيع غلط، ومنتهي ([[ExpiredSignatureError]])، وشكل بايظ. exception واحد بيمسكهم كلهم.`,
+            R`401 ومعاه header [[WWW-Authenticate: Bearer]] اللي معيار HTTP بيطلبه مع 401، عشان العميل يعرف نوع الـ auth المطلوب.`,
+            R`بيبني المستخدم من الـ payload، و [[get("role", "user")]] لو الدور مش موجود. في مشروع حقيقي بتجيبه من القاعدة عشان المستخدم المحظور يتمنع حتى لو توكنه لسه صالح.`,
+            R`النوع اللي كل الـ routes بتكتبه: [[user: CurrentUser]]، ومن غير ما حد يكتب [[Depends(current_user)]] تاني.`,
+            R`factory: دالة بتاخد الدور وترجّع dependency جديدة. ده الطريقة اللي بتدّي بيها باراميتر لـ dependency من غير ما ييجي من الطلب.`,
+            R`الـ dependency الحقيقية جوه، ومعتمدة على [[CurrentUser]]. فالترتيب: التوكن، وبعدين المستخدم، وبعدين الدور.`,
+            R`بيقارن دور المستخدم بالدور المطلوب اللي اتحفظ في الـ closure من [[require_role("admin")]].`,
+            R`403 مش 401: احنا عارفين هو مين، بس مش مسموحله. 401 يعني «سجّل دخول»، و 403 يعني «سجّلت، بس لأ».`,
+            R`بترجّع المستخدم، عشان لو route حب يستخدم [[Depends(require_role("admin"))]] كباراميتر ياخد المستخدم كمان.`,
+            R`الـ factory بترجّع الدالة نفسها (من غير ما تناديها)، و FastAPI هو اللي هيناديها مع كل طلب.`,
+            R`route لأي مستخدم مسجّل على [[/me]].`,
+            R`[[user: CurrentUser]]: من غير توكن الرد 401 قبل ما الدالة تشتغل. والدالة متأكدة إن [[user]] موجود دايمًا.`,
+            R`بيرجّع المستخدم نفسه، و FastAPI بيحوّله JSON [[{"id":1,"role":"admin"}]].`,
+            R`[[dependencies=[...]]] في الـ decorator: الفحص بيشتغل وقيمته مبتتبعتش للدالة. مناسب لأن [[delete_user]] مش محتاجة تعرف مين الأدمن.`,
+            R`الدالة بتاخد [[user_id]] من المسار بس، والصلاحية اتفحصت قبلها.`,
+            R`بيرجّع الـ id اللي «اتمسح». في الحقيقة 204 من غير body (درس «HTTPException»).`,
           ],
           sol: R`[[jwt.encode]] بيطبع توكن من ٣ أجزاء بينهم نقط، زي [[eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6ImFkbWluIn0.3au3...]]، ومعاه تحذير [[InsecureKeyLengthWarning: The HMAC key is 9 bytes long]] من نسخ PyJWT الجديدة، لأن [[change-me]] أقصر من 32 byte. في الإنتاج السر يبقى طويل وعشوائي. و [[/me]] بالتوكن ده بترجع [[{"id": 1, "role": "admin"}]].
 
@@ -850,6 +994,13 @@ def test_validation(client: TestClient):
     assert r.json()["detail"][0]["loc"] == ["path", "item_id"]`,
           try: R`اكتب اختبار لـ DELETE بمستخدم role عادي ([[User(id=2, role="user")]]) وتأكد إنه 403. وبعدين شيل الـ [[with]] واستخدم [[TestClient(app)]] بس، وشوف الـ lifespan اشتغل ولا لأ (اطبع حاجة فيه).`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** اكتب ٣ أسباب الاختبار يعدّي لوحده ويقع مع الباقي، ليها علاقة بالدرس ده.`, done: R`كتبت: نسيان [[dependency_overrides.clear()]]، و [[lru_cache]] على [[get_settings]] شايل إعدادات اختبار قبله، و داتا متخزنة في dict في الذاكرة من اختبار قبله. وجربت الأول: اختبار من غير override بقى ياخد 200 بدل 401 لما شلت [[clear()]].` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[app.dependency_overrides[Depends(current_user)] = fake]]. الاختبار هيعدّي؟ وإيه الكود اللي هيرجع من [[/me]]؟`, done: R`جرّبت: الـ override مااشتغلش و [[/me]] رجعت 401، لأن المفتاح لازم الدالة [[current_user]] نفسها مش [[Depends(...)]]. وصلّحتها وبقت 200.` },
+            { lvl: 'تطبيق', t: R`**اكتب اختبار async:** نفس الاختبارات بـ [[httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://test")]] و [[@pytest.mark.anyio]]، ومعاها override لـ [[get_settings]] بـ [[Settings(env="test", feature_x=True)]].`, done: R`[[pytest -q]] بيطبع [[passed]] للاختبارات الـ async، و [[/flag]] رجعت [[{"env": "test", "x": True}]] من غير ما تلمس البيئة، و fixture [[anyio_backend]] بترجّع [["asyncio"]].` },
+            { lvl: 'تطبيق', t: R`**ابني:** fixture اسمها [[as_user(role)]] (factory fixture) بترجّع client بيتعامل كمستخدم بالدور ده، واستخدمها في ٣ اختبارات: [[admin]] و [[user]] ومن غير override.`, done: R`الاختبارات التلاتة بيعدّوا: الأدمن بيمسح بـ 200، والـ user بياخد 403، ومن غير override 401، وبعد كل واحد [[app.dependency_overrides == {}]] (اختبار رابع بيتأكد).` },
+            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** اختبار بيعمل [[c = TestClient(app)]] (من غير [[with]]) و lifespan بيعمل [[app.state.pool]]، والـ route بيستخدمه. شغّله واقرا الخطأ، وصلّحه، واكتب ليه الـ override لوحده مش كفاية.`, done: R`الخطأ [[AttributeError: 'State' object has no attribute 'pool']]، والتصليح [[with TestClient(app) as c]]، أو override للـ dependency اللي بتجيب الـ pool نفسها فالاختبار ميحتاجش الـ pool خالص. وكتبت إن الـ override بيبدّل الـ dependency بس، والـ lifespan حاجة تانية.` },
+          ],
           deep: {
             why: "من غير overrides، كل اختبار محتاج توكن حقيقي، وقاعدة شغالة، و Redis، و API خارجي. الاختبارات بتبقى بطيئة وهشة، فمحدش بيكتبها. والـ DI بتاع FastAPI معمول عشان تبدّل أي حاجة من برّه من غير ما تلمس كود الـ routes.",
             how: R`[[dependency_overrides]] dict على التطبيق: المفتاح الدالة الأصلية (نفس الـ object، مش اسمها)، والقيمة البديلة. FastAPI بيبص فيه قبل ما يحل أي dependency. والبديلة ممكن تاخد باراميترات أو dependencies هي كمان، أو تبقى generator بـ yield (اتصال بقاعدة اختبار جوه transaction تعمله rollback في الآخر، فكل اختبار يبدأ نضيف).
@@ -1000,7 +1151,46 @@ StarletteDeprecationWarning: Using $__bthttpx$__bt with $__btstarlette.testclien
 | [[with TestClient(app) as c]] | ويشغّل الـ lifespan كمان |
 | [[app.dependency_overrides[dep] = fake]] | بدّل الـ dependency في أي مكان في الشجرة |
 | [[.clear()]] | رجّع كل حاجة زي ما كانت |
-| [[r.status_code]] و [[r.json()]] | افحص الرد |
+| [[r.status_code]] و [[r.json()]] | افحص كود الرد والـ body بعد ما يتحوّل dict، وقارنهم بـ [[assert]] |
+
+---
+
+## اتشغّل فعلًا: اختبار async و override للإعدادات
+
+لو الاختبار نفسه محتاج [[await]] (يكلّم القاعدة قبل الطلب مثلًا)، [[TestClient]] مش مناسب لأنه sync. [[httpx.AsyncClient]] بيكلّم التطبيق في الذاكرة بـ [[ASGITransport]]. اتجرب على FastAPI 0.162 و httpx 0.28 و pytest 9.2 (الـ plugin بتاع [[anyio]] جاي مع Starlette):
+
+~~~python
+import httpx, pytest
+from app2 import Settings, app, get_settings
+@pytest.fixture
+def settings_override():
+    app.dependency_overrides[get_settings] = lambda: Settings(env="test", feature_x=True)
+    yield
+    app.dependency_overrides.clear()
+@pytest.fixture
+def anyio_backend(): return "asyncio"
+@pytest.mark.anyio
+async def test_flag(settings_override):
+    transport = httpx.ASGITransport(app=app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://test") as c:
+        r = await c.get("/flag")
+    assert r.json() == {"env": "test", "x": True}
+~~~
+
+~~~text الناتج
+..                                                                       [100%]
+2 passed in 0.49s
+~~~
+
+| الحتة | بتعمل إيه |
+|---|---|
+| [[ASGITransport(app=app)]] | بدل الشبكة: الطلب بيروح للـ object [[app]] مباشرة |
+| [[base_url="http://test"]] | لازم URL كامل، بس مش مهم إيه هو لأنه مش بيخرج برّه |
+| [[@pytest.mark.anyio]] | بيخلي pytest يشغّل الاختبار الـ async في event loop |
+| [[anyio_backend]] | بيختار [[asyncio]] بدل trio |
+| override لـ [[get_settings]] | الإعدادات بقت [[test]] من غير ما الاختبار يلمس البيئة ولا [[.env]] ولا [[lru_cache]] |
+
+> [[ASGITransport]] مش بيشغّل الـ lifespan. لو التطبيق محتاجه في الاختبار async، شغّل [[TestClient]] بـ [[with]]، أو مكتبة [[asgi-lifespan]] (من الـ docs، ماتجربتش هنا).
 
 ## الخلاصة
 
@@ -1008,24 +1198,24 @@ StarletteDeprecationWarning: Using $__bthttpx$__bt with $__btstarlette.testclien
 - [[with]] = الـ lifespan بيشتغل. من غيرها مفيش pool ولا clients.
 - امسح الـ overrides بعد كل اختبار، والأحسن جوه الـ fixture نفسه بعد الـ [[yield]].`,
           lines: [
-            "pytest (تفاصيله في تاب Python).",
-            "client بيكلّم التطبيق من غير سيرفر.",
-            "التطبيق.",
-            "الـ dependency اللي هنبدّلها، ونفس الـ object بالظبط.",
-            "fixture بيتشارك بين الاختبارات.",
-            "الـ fixture.",
-            "أي route محتاج current_user هياخد المستخدم ده من غير توكن.",
-            R`[[with]] بتشغّل الـ lifespan.`,
-            "ادّي الـ client للاختبار.",
-            "بعد الاختبار: شيل الـ overrides.",
-            "اختبار.",
-            "request.",
-            "الكود.",
-            "الـ JSON.",
-            "اختبار الفحص.",
-            "id مش رقم.",
-            "422.",
-            "مكان الخطأ بالظبط."
+            R`[[pytest]] بيلاقي الاختبارات ويشغّلها، ومنه [[@pytest.fixture]] (التفاصيل في تاب Python).`,
+            R`[[TestClient]] بيكلّم التطبيق في نفس الـ process من غير سيرفر ولا port، وبيرجّع ردود شبه [[requests]].`,
+            R`بنعمل import للتطبيق الحقيقي نفسه، مش نسخة، فالاختبار بيمشي على نفس الـ routes والـ middleware.`,
+            R`[[current_user]] نفسها هي **المفتاح** في الـ dict. لازم نفس الـ object بالظبط: دالة بنفس الاسم من ملف تاني مش هتنفع.`,
+            R`fixture: دالة pytest بيناديها قبل أي اختبار طالبها بالاسم، وبيدّيله اللي بترجّعه (أو بتعمله [[yield]]).`,
+            R`الـ fixture اسمه [[client]]، فأي اختبار فيه باراميتر [[client]] هياخده.`,
+            R`أي مكان في الشجرة محتاج [[current_user]] (route أو dependency زي [[require_role]]) هياخد المستخدم ده بدلها، من غير توكن ولا JWT.`,
+            R`[[with]] بيشغّل الـ lifespan (startup قبل الاختبار و shutdown بعده)، وبيخلي كل الطلبات في event loop واحد. من غيره [[app.state]] فاضي، والاتصالات الـ async ممكن تقع بـ [[Event loop is closed]] (اتجرب في قسم قاعدة البيانات).`,
+            R`بيدّي الـ client للاختبار. الكود اللي بعد [[yield]] بيشتغل بعد الاختبار، حتى لو الاختبار وقع.`,
+            R`بيشيل كل الـ overrides. من غيره الـ override بيفضل في الاختبارات اللي بعده، فاختبار بيعدّي لوحده ويقع مع الباقي.`,
+            R`اختبار: اسمه بيبدأ بـ [[test_]] فـ pytest بيلاقيه، وباراميتره [[client]] فبياخد الـ fixture.`,
+            R`طلب GET على [[/me]] من غير أي header. لولا الـ override كان رجع 401.`,
+            R`بيتأكد من الكود. لو وقع، pytest بيطبع القيمتين: اللي جه (401 مثلًا) واللي كنا مستنيينه.`,
+            R`بيقارن الـ JSON كله مرة واحدة، فلو حقل زيادة ظهر (زي باسورد) الاختبار يقع.`,
+            R`اختبار تاني للفحص التلقائي، بنفس الـ fixture.`,
+            R`[[abc]] مش رقم، فـ FastAPI لازم يرد 422 من غير ما الدالة تشتغل.`,
+            R`بيتأكد إنها 422 مش 500 ولا 404.`,
+            R`بيتأكد من المكان بالظبط: [[["path", "item_id"]]]. ده بيمسك لو حد غيّر اسم الباراميتر أو خلّاه query بالغلط.`,
           ],
           sol: R`الاختبار بيعمل override لـ [[current_user]] بمستخدم عادي، ويتأكد من [[status_code == 403]] و [[{"detail": "forbidden"}]]. ولو [[require_role]] بيعتمد على [[current_user]] جواه، الـ override بيوصل له كمان لأن FastAPI بيستبدل الـ dependency في أي مكان في الشجرة. ولو الاختبار رجع 401 يبقى عملت override لحاجة غير اللي الـ route بيستخدمها فعلًا (مثلًا نسخة اتعملت import من مكان تاني)، لازم نفس الـ object بالظبط.
 

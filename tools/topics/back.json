@@ -1,6246 +1,6245 @@
 {
- "node": [
-  {
-   "topic": "تشغيل ملف Node و REPL",
-   "find": [
-    "مقدمة node",
-    "node -p",
-    "node مباشرة"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "إدارة نسخ Node (nvm)",
-   "find": [
-    "nvm"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "package.json",
-   "find": [
-    "package.json"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "npm install و dependencies",
-   "find": [
-    "npm install"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "semver و lockfile",
-   "find": [
-    "package-lock",
-    "^ و ~"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "npm scripts",
-   "find": [
-    "npm scripts",
-    "npm start"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "npx",
-   "find": [
-    "npx"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "متغيرات البيئة و .env",
-   "find": [
-    ".env",
-    "env-file"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "ESM و CommonJS",
-   "find": [
-    "esm",
-    "commonjs",
-    "import.meta"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "fs و path",
-   "find": [
-    "fs/promises",
-    "path و"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "process و argv",
-   "find": [
-    "process.argv",
-    "parseArgs"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "exit codes",
-   "find": [
-    "exit codes"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "signals و الإغلاق النضيف",
-   "find": [
-    "SIGINT",
-    "الإغلاق النضيف"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "child_process",
-   "find": [
-    "execFile",
-    "spawn"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "command injection",
-   "find": [
-    "command injection"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "Buffer و encoding",
-   "find": [
-    "buffer"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "EventEmitter",
-   "find": [
-    "eventemitter"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "streams",
-   "find": [
-    "stream"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "worker_threads",
-   "find": [
-    "worker_threads"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "event loop",
-   "find": [
-    "event loop"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "http module (سيرفر بالمكتبة)",
-   "find": [
-    "node:http",
-    "http.createserver"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "رفع ملف من غير مكتبة",
-   "find": [
-    "multipart",
-    "رفع ملف"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "اختبارات node --test",
-   "find": [
-    "node --test"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "watch mode",
-   "find": [
-    "--watch"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "npm audit و التحديثات",
-   "find": [
-    "audit",
-    "outdated"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "ERESOLVE و تعارض النسخ",
-   "find": [
-    "eresolve"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "pnpm و yarn",
-   "find": [
-    "pnpm و yarn"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "workspaces و monorepo",
-   "find": [
-    "workspace"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": ".npmrc",
-   "find": [
-    ".npmrc"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "NODE_ENV و الإنتاج",
-   "find": [
-    "node_env"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "تشخيص الذاكرة",
-   "find": [
-    "الذاكرة",
-    "heap"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "debugger",
-   "find": [
-    "debugger",
-    "inspect"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "profiling (--cpu-prof)",
-   "find": [
-    "cpu-prof",
-    "--prof",
-    "flamegraph"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "نشر حزمة npm",
-   "find": [
-    "npm publish"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Prisma في Node",
-   "find": [
-    "prisma generate"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "migrations قبل التشغيل",
-   "find": [
-    "migrate deploy"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "webhooks والتحقق من التوقيع",
-   "find": [
-    "webhook",
-    "التحقق من التوقيع"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "tunnels (ngrok/cloudflared)",
-   "find": [
-    "ngrok",
-    "cloudflared"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Bun",
-   "find": [
-    "bun"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Deno",
-   "find": [
-    "deno"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Hono",
-   "find": [
-    "hono"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "أداة CLI كاملة",
-   "find": [
-    "أداة سطر أوامر",
-    "مشروع — من ملف"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "TypeScript runner (tsx)",
-   "find": [
-    "tsx",
-    "strip-types"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "لوج منظم في Node",
-   "find": [
-    "pino",
-    "logging",
-    "لوج"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "Docker لتطبيق Node",
-   "find": [
-    "dockerfile"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "سلسلة التوريد (lifecycle scripts)",
-   "find": [
-    "supply chain",
-    "lifecycle scripts",
-    "ignore-scripts",
-    "approve-builds"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "fetch و timeout",
-   "find": [
-    "fetch",
-    "abortsignal"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "قراءة الأخطاء",
-   "find": [
-    "اقرا خطأ",
-    "stack trace"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Next.js standalone نشر",
-   "find": [
-    "standalone"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "جدولة مهام في Node",
-   "find": [
-    "node-cron",
-    "cron",
-    "setinterval"
-   ],
-   "lvl": "متقدم"
-  }
- ],
- "api": [
-  {
-   "topic": "يعني إيه backend و API",
-   "find": [
-    "backend و api"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "HTTP method و status و headers",
-   "find": [
-    "method و status"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "node:http",
-   "find": [
-    "node:http"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Express أساسيات",
-   "find": [
-    "express()"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "routes و params و query",
-   "find": [
-    "req.params",
-    "req.query"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "قراءة JSON body",
-   "find": [
-    "express.json"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "status codes",
-   "find": [
-    "status codes"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "middleware",
-   "find": [
-    "middleware"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Router وتنظيم المشروع",
-   "find": [
-    "express.router",
-    "controllers"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "error handling middleware",
-   "find": [
-    "error middleware"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "async errors",
-   "find": [
-    "async errors"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "config و env بـ zod",
-   "find": [
-    "config.js"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "validation بـ schema",
-   "find": [
-    "validate(schema)",
-    "zod"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "express-validator",
-   "find": [
-    "express-validator"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "password hashing (bcrypt)",
-   "find": [
-    "bcrypt"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "JWT",
-   "find": [
-    "jwt.sign",
-    "jwt.verify"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "requireAuth",
-   "find": [
-    "requireauth"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "cookies و httpOnly",
-   "find": [
-    "res.cookie"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "access و refresh tokens",
-   "find": [
-    "access و refresh"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "sessions",
-   "find": [
-    "express-session"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "authorization و roles",
-   "find": [
-    "requirerole"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "IDOR و ownership",
-   "find": [
-    "idor",
-    "ownership"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "helmet",
-   "find": [
-    "helmet"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "CORS",
-   "find": [
-    "cors"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "rate limiting",
-   "find": [
-    "express-rate-limit"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "sanitization و XSS",
-   "find": [
-    "sanitization"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "Prisma في API",
-   "find": [
-    "prisma client"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "transactions",
-   "find": [
-    "$transaction"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "mongoose",
-   "find": [
-    "mongoose"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "pagination",
-   "find": [
-    "pagination"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "رفع ملفات (multer)",
-   "find": [
-    "multer"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "معالجة صور",
-   "find": [
-    "sharp"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "إرسال إيميل",
-   "find": [
-    "nodemailer",
-    "resend"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "request logging",
-   "find": [
-    "morgan"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "لوج منظم (pino)",
-   "find": [
-    "pino"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "اختبار API (supertest)",
-   "find": [
-    "supertest"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "قاعدة اختبار و factories",
-   "find": [
-    "قاعدة الاختبار",
-    "factories"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "mocking لخدمات خارجية",
-   "find": [
-    "msw",
-    "nock"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Redis أساسيات",
-   "find": [
-    "redis-cli",
-    "أنواع redis"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "caching بـ Redis",
-   "find": [
-    "ioredis"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Redis للـ sessions و locks",
-   "find": [
-    "connect-redis"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "pub/sub",
-   "find": [
-    "pub/sub"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "streams لملفات كبيرة",
-   "find": [
-    "streams و pipeline"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "تصدير CSV و PDF",
-   "find": [
-    "csv",
-    "pdf"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "worker و cluster",
-   "find": [
-    "worker_threads",
-    "cluster"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "AsyncLocalStorage و request id",
-   "find": [
-    "asynclocalstorage"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "NestJS",
-   "find": [
-    "nest:"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "idempotency",
-   "find": [
-    "idempotency"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "graceful shutdown",
-   "find": [
-    "graceful shutdown"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "OpenAPI من الكود",
-   "find": [
-    "openapi",
-    "swagger"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Socket.IO في Express",
-   "find": [
-    "socket.io"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "BullMQ (طوابير الشغل)",
-   "find": [
-    "bullmq"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "نشر Express (Docker و PM2)",
-   "find": [
-    "نشر express",
-    "pm2",
-    "dockerfile"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "health check و readiness",
-   "find": [
-    "health",
-    "readiness"
-   ],
-   "lvl": "إنتاج"
-  }
- ],
- "apis": [
-  {
-   "topic": "resources و URLs",
-   "find": [
-    "resources و urls"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "safe و idempotent",
-   "find": [
-    "safe و idempotent"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "PUT و PATCH",
-   "find": [
-    "put و patch"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "status codes (201/204/202)",
-   "find": [
-    "201 و 204"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "4xx صح",
-   "find": [
-    "4xx"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "problem+json",
-   "find": [
-    "problem+json"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "offset pagination",
-   "find": [
-    "offset pagination"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "cursor pagination",
-   "find": [
-    "cursor pagination"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "filter و sort",
-   "find": [
-    "filter و sort"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "versioning",
-   "find": [
-    "versioning"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "ETag و Cache-Control",
-   "find": [
-    "etag"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "optimistic concurrency (If-Match)",
-   "find": [
-    "if-match"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Idempotency-Key",
-   "find": [
-    "idempotency-key"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "OpenAPI",
-   "find": [
-    "openapi"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Swagger UI و codegen",
-   "find": [
-    "swagger ui",
-    "openapi-typescript"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "OWASP API Top 10",
-   "find": [
-    "owasp"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "async operation (202)",
-   "find": [
-    "async operation",
-    "polling"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "deprecation و Sunset",
-   "find": [
-    "sunset",
-    "deprecation"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "SSE",
-   "find": [
-    "sse"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "stream رد LLM",
-   "find": [
-    "رد llm",
-    "llm"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "WebSockets scaling",
-   "find": [
-    "redis adapter",
-    "sticky"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "heartbeat",
-   "find": [
-    "heartbeat"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "WebSocket بمكتبة ws",
-   "find": [
-    "auth على الـ upgrade",
-    "reconnect و backoff"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "backpressure",
-   "find": [
-    "backpressure"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "GraphQL أساسيات",
-   "find": [
-    "graphql ولا rest",
-    "schema و resolvers"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "DataLoader و N+1",
-   "find": [
-    "dataloader"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "حماية GraphQL (cost limit)",
-   "find": [
-    "cost limit",
-    "persisted"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "OIDC و OAuth",
-   "find": [
-    "discovery document",
-    "oidc"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "JWKS والتحقق",
-   "find": [
-    "jwks"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "client credentials",
-   "find": [
-    "client credentials"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "SSO",
-   "find": [
-    "sso"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "distributed rate limiting",
-   "find": [
-    "token bucket",
-    "sliding window"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "quota لكل plan",
-   "find": [
-    "quota"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "queue ولا pub/sub",
-   "find": [
-    "queue ولا pub/sub"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "dead-letter queue",
-   "find": [
-    "dead-letter"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "transactional outbox",
-   "find": [
-    "outbox"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "API keys",
-   "find": [
-    "api keys"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "توقيع webhooks صادرة",
-   "find": [
-    "توقيع webhooks"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "retries و delivery log",
-   "find": [
-    "retries"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "SSRF",
-   "find": [
-    "ssrf"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "tRPC",
-   "find": [
-    "trpc"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "gRPC",
-   "find": [
-    "grpc"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "RabbitMQ",
-   "find": [
-    "rabbitmq"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "ack و prefetch",
-   "find": [
-    "ack و nack"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Kafka",
-   "find": [
-    "kafka"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "idempotent consumer",
-   "find": [
-    "idempotent consumer"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "CDC",
-   "find": [
-    "cdc"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "محرك بحث",
-   "find": [
-    "meilisearch",
-    "elasticsearch"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "مزامنة البحث",
-   "find": [
-    "مزامنة البحث"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "bulk operations و batch",
-   "find": [
-    "bulk",
-    "batch"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "HATEOAS و links",
-   "find": [
-    "hateoas"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "multi-tenancy",
-   "find": [
-    "tenant"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "API gateway",
-   "find": [
-    "gateway"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "contract testing و breaking changes",
-   "find": [
-    "contract",
-    "breaking change"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "observability للـ API",
-   "find": [
-    "opentelemetry",
-    "metrics",
-    "tracing"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "CORS في تصميم API",
-   "find": [
-    "cors"
-   ],
-   "lvl": "يومي"
-  }
- ],
- "python": [
-  {
-   "topic": "venv",
-   "find": [
-    "venv"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "pip و requirements",
-   "find": [
-    "pip install"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "pip freeze و تثبيت النسخ",
-   "find": [
-    "pip freeze"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "externally-managed-environment",
-   "find": [
-    "externally-managed"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "python -m",
-   "find": [
-    "python -m"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "تشغيل سكربت",
-   "find": [
-    "script.py"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "shebang",
-   "find": [
-    "#!/usr/bin/env"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "__main__",
-   "find": [
-    "__main__"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "input و sys.argv",
-   "find": [
-    "sys.argv"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "exit codes",
-   "find": [
-    "sys.exit"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "مسارات بـ pathlib",
-   "find": [
-    "path(__file__)",
-    "pathlib"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "glob",
-   "find": [
-    "glob"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "ملفات و encoding",
-   "find": [
-    "open()"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "shutil",
-   "find": [
-    "shutil"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "pytest",
-   "find": [
-    "pytest"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "fixtures",
-   "find": [
-    "fixture"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "parametrize",
-   "find": [
-    "parametrize"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "tmp_path",
-   "find": [
-    "tmp_path"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "monkeypatch",
-   "find": [
-    "monkeypatch"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "mock.patch",
-   "find": [
-    "mock.patch"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "coverage",
-   "find": [
-    "--cov"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "debugging",
-   "find": [
-    "breakpoint",
-    "pdb"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "debugpy في VSCode",
-   "find": [
-    "debugpy"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "argparse",
-   "find": [
-    "argparse"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "json",
-   "find": [
-    "json.load"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "csv",
-   "find": [
-    "csv"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "yaml و xml",
-   "find": [
-    "yaml",
-    "elementtree"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "datetime",
-   "find": [
-    "datetime"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "logging",
-   "find": [
-    "logging"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "subprocess",
-   "find": [
-    "subprocess"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "env و .env",
-   "find": [
-    "os.environ"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "requests مع timeout",
-   "find": [
-    "requests"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "regex",
-   "find": [
-    "re في"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Docker لتطبيق Python",
-   "find": [
-    "dockerfile"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "uvicorn في الإنتاج",
-   "find": [
-    "uvicorn --proxy"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "pyproject و pipx",
-   "find": [
-    "project.scripts",
-    "pipx"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "inline script metadata (PEP 723)",
-   "find": [
-    "# /// script"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "جدولة مهام (cron)",
-   "find": [
-    "cron",
-    "task scheduler"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "retry و backoff",
-   "find": [
-    "retry"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "concurrent.futures",
-   "find": [
-    "concurrent.futures"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "sqlite3",
-   "find": [
-    "sqlite3"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "اقرا الـ traceback",
-   "find": [
-    "traceback"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "help و dir",
-   "find": [
-    "help()"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "تغليف حزمة",
-   "find": [
-    "تغليف",
-    "مشروع — venv"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "type hints و mypy",
-   "find": [
-    "mypy",
-    "type hint"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "ruff و formatter",
-   "find": [
-    "ruff",
-    "black"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "async في السكربتات",
-   "find": [
-    "asyncio"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "بوت Telegram",
-   "find": [
-    "telegram"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "uv",
-   "find": [
-    "uv "
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "اختبار سكربت CLI",
-   "find": [
-    "pytest لسكربت"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "إشعار من سكربت",
-   "find": [
-    "notify"
-   ],
-   "lvl": "يومي"
-  }
- ],
- "pyapi": [
-  {
-   "topic": "أنواع البيانات و names",
-   "find": [
-    "names و objects",
-    "mutable"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "type hints",
-   "find": [
-    "type hints"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "f-strings",
-   "find": [
-    "f-strings"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "control flow",
-   "find": [
-    "if و elif",
-    "for و range"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "match و case",
-   "find": [
-    "match و case"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "list و dict و set",
-   "find": [
-    "list",
-    "dict"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "comprehensions",
-   "find": [
-    "comprehensions"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "*args و **kwargs",
-   "find": [
-    "*args"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "decorators",
-   "find": [
-    "decorators"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "generators",
-   "find": [
-    "generators"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "try و except",
-   "find": [
-    "try و except"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "context managers",
-   "find": [
-    "context managers"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "classes و الوراثة",
-   "find": [
-    "class و self",
-    "super"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "dataclass",
-   "find": [
-    "dataclass"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Enum",
-   "find": [
-    "enum"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Protocol و ABC",
-   "find": [
-    "protocol"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "import و packages",
-   "find": [
-    "import و packages"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "uv و pyproject",
-   "find": [
-    "uv و pyproject"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "pathlib",
-   "find": [
-    "pathlib"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "datetime و timezone",
-   "find": [
-    "zoneinfo"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "async و await",
-   "find": [
-    "async def"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "gather و TaskGroup",
-   "find": [
-    "gather"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "blocking في async",
-   "find": [
-    "blocking في async"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "FastAPI أول API",
-   "find": [
-    "fastapi dev"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "path و query params",
-   "find": [
-    "path و query"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "request body",
-   "find": [
-    "request body"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "response_model",
-   "find": [
-    "response model"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "APIRouter",
-   "find": [
-    "apirouter"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Pydantic models",
-   "find": [
-    "basemodel"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "validators",
-   "find": [
-    "field_validator"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "settings (pydantic-settings)",
-   "find": [
-    "pydantic-settings"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Depends",
-   "find": [
-    "depends"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "dependency بـ yield",
-   "find": [
-    "بـ yield"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "auth dependency",
-   "find": [
-    "auth dependency"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "اختبار FastAPI (overrides)",
-   "find": [
-    "dependency_overrides",
-    "testclient"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "HTTPException و handlers",
-   "find": [
-    "httpexception",
-    "exception handlers"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "CORS و middleware",
-   "find": [
-    "cors"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "SQLAlchemy async",
-   "find": [
-    "sqlalchemy async"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "alembic migrations",
-   "find": [
-    "alembic"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "transactions",
-   "find": [
-    "transactions"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "httpx",
-   "find": [
-    "httpx"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Redis cache",
-   "find": [
-    "redis cache"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "rate limit",
-   "find": [
-    "rate limit"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "BackgroundTasks",
-   "find": [
-    "backgroundtasks"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Celery أو ARQ",
-   "find": [
-    "celery",
-    "arq"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "WebSocket في FastAPI",
-   "find": [
-    "websocket"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "رفع ملفات",
-   "find": [
-    "uploadfile",
-    "رفع ملفات"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "JWT و refresh token",
-   "find": [
-    "refresh token",
-    "jwt"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "password hashing",
-   "find": [
-    "argon2",
-    "bcrypt",
-    "passlib",
-    "pwdlib"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "logging منظم",
-   "find": [
-    "logging و profiling",
-    "logging"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "workers و GIL",
-   "find": [
-    "workers و gil"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "ruff و mypy",
-   "find": [
-    "ruff"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "observability (metrics/tracing)",
-   "find": [
-    "opentelemetry",
-    "prometheus",
-    "observability"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "Django ORM",
-   "find": [
-    "queryset"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Django migrations",
-   "find": [
-    "makemigrations"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Django admin",
-   "find": [
-    "django admin"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "DRF",
-   "find": [
-    "drf"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Django في الإنتاج",
-   "find": [
-    "django في الإنتاج"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "Flask",
-   "find": [
-    "flask"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "pytest-django",
-   "find": [
-    "pytest-django"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Docker و نشر FastAPI",
-   "find": [
-    "dockerfile",
-    "docker"
-   ],
-   "lvl": "إنتاج"
-  }
- ],
- "pydata": [
-  {
-   "topic": "Jupyter",
-   "find": [
-    "jupyter"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "numpy arrays",
-   "find": [
-    "np.array"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "broadcasting",
-   "find": [
-    "broadcasting"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "read_csv",
-   "find": [
-    "read_csv"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "فحص الداتا (info/describe)",
-   "find": [
-    "info و describe"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "loc و iloc",
-   "find": [
-    "loc و iloc"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "NaN و fillna",
-   "find": [
-    "nan و fillna"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "dtypes و astype",
-   "find": [
-    "astype"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "تواريخ في pandas",
-   "find": [
-    "to_datetime"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "تنضيف داتا حقيقية",
-   "find": [
-    "تنضيف داتا"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "groupby",
-   "find": [
-    "groupby"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "merge و join",
-   "find": [
-    "merge"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "pivot و melt",
-   "find": [
-    "pivot_table"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "time series (resample)",
-   "find": [
-    "resample"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "matplotlib",
-   "find": [
-    "matplotlib"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "seaborn",
-   "find": [
-    "seaborn"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "تصدير Excel و CSV",
-   "find": [
-    "to_excel"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "SQL مع pandas",
-   "find": [
-    "read_sql"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "vectorize بدل apply",
-   "find": [
-    "vectorize"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "polars و DuckDB",
-   "find": [
-    "polars",
-    "duckdb"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "ملفات كبيرة (chunks و parquet)",
-   "find": [
-    "chunksize",
-    "parquet",
-    "chunk"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "إحصاء أساسي",
-   "find": [
-    "إحصاء",
-    "statistics",
-    "الانحراف"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "SettingWithCopy",
-   "find": [
-    "settingwithcopy"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "LinearRegression",
-   "find": [
-    "linearregression"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "LogisticRegression",
-   "find": [
-    "logisticregression"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "train/test split و overfitting",
-   "find": [
-    "train_test_split",
-    "overfitting"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "cross validation",
-   "find": [
-    "cross_val_score"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "مقاييس التقييم",
-   "find": [
-    "precision",
-    "recall",
-    "roc",
-    "confusion"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "data leakage",
-   "find": [
-    "leakage"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Pipeline و ColumnTransformer",
-   "find": [
-    "pipeline"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "feature engineering",
-   "find": [
-    "feature engineering",
-    "get_dummies",
-    "onehot"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "K-Means",
-   "find": [
-    "k-means",
-    "kmeans"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "decision trees و random forest",
-   "find": [
-    "random forest",
-    "decisiontree"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "حفظ الموديل (joblib)",
-   "find": [
-    "joblib"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Streamlit",
-   "find": [
-    "streamlit"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "API و json_normalize",
-   "find": [
-    "json_normalize"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "scraping",
-   "find": [
-    "beautifulsoup"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "robots.txt و rate limiting",
-   "find": [
-    "robots.txt"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "مشروع تحليل مبيعات",
-   "find": [
-    "مشروع تحليل"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "إعادة الإنتاج (seed)",
-   "find": [
-    "random_state",
-    "reproduc"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "plotly وتفاعلي",
-   "find": [
-    "plotly"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "اختبار فرضيات و A/B",
-   "find": [
-    "a/b",
-    "t-test",
-    "hypothesis",
-    "فرضيات"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "data validation (pandera)",
-   "find": [
-    "pandera",
-    "great_expectations"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "جدولة pipeline",
-   "find": [
-    "airflow",
-    "prefect",
-    "جدولة"
-   ],
-   "lvl": "إنتاج"
-  }
- ],
- "pg": [
-  {
-   "topic": "psql أساسيات",
-   "find": [
-    "psql"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "أوامر backslash",
-   "find": [
-    "backslash"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "\\x و \\timing",
-   "find": [
-    "\\x"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "تشغيل SQL من ملف",
-   "find": [
-    "من ملف"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "\\copy",
-   "find": [
-    "\\copy"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "psql للسكربتات",
-   "find": [
-    "psql -tac"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "createdb و dropdb",
-   "find": [
-    "createdb"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "transactions",
-   "find": [
-    "begin و rollback"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "يوزرز وصلاحيات",
-   "find": [
-    "يوزرز"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "connection string",
-   "find": [
-    "connection string"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": ".pgpass",
-   "find": [
-    ".pgpass"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "الوصول من بره",
-   "find": [
-    "الوصول من بره"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "الجلسات والأقفال",
-   "find": [
-    "الأقفال"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "حجم الداتا",
-   "find": [
-    "الحجم"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "indexes",
-   "find": [
-    "indexes"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "EXPLAIN ANALYZE",
-   "find": [
-    "explain analyze"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "VACUUM",
-   "find": [
-    "vacuum"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "postgresql.conf و الإعدادات",
-   "find": [
-    "الإعدادات"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "init scripts في Docker",
-   "find": [
-    "initdb.d"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "pg_dump",
-   "find": [
-    "pg_dump"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "restore",
-   "find": [
-    "ترجيع الباك أب"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "migrations",
-   "find": [
-    "سكربت migrations",
-    "prisma migrate"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "تغييرات آمنة في الإنتاج",
-   "find": [
-    "تغييرات آمنة"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "connection pooling و PgBouncer",
-   "find": [
-    "pgbouncer",
-    "connection pooling"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "الاستعلامات البطيئة",
-   "find": [
-    "الاستعلامات البطيئة",
-    "pg_stat_statements"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "باك أب مجدول",
-   "find": [
-    "الباك أب المجدول"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "الأمان و SSL",
-   "find": [
-    "الأمان",
-    "ssl"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "Row Level Security",
-   "find": [
-    "row level security"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "ترقية الـ major version",
-   "find": [
-    "ترقية postgres"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "النقل بين سيرفرين",
-   "find": [
-    "النقل بين سيرفرين"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "PITR و WAL",
-   "find": [
-    "pitr",
-    "wal"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "replication",
-   "find": [
-    "replication"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "partitioning",
-   "find": [
-    "partitioning"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "pgvector",
-   "find": [
-    "pgvector"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "GIN و JSONB indexes",
-   "find": [
-    "gin"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "pgbench",
-   "find": [
-    "pgbench"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Supabase",
-   "find": [
-    "supabase"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "pgcli",
-   "find": [
-    "pgcli"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "autovacuum و bloat",
-   "find": [
-    "autovacuum",
-    "bloat"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "pg_stat_activity وقتل query",
-   "find": [
-    "pg_stat_activity",
-    "pg_terminate",
-    "pg_cancel"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "monitoring",
-   "find": [
-    "pg_stat",
-    "monitoring"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "least privilege و GRANT",
-   "find": [
-    "least privilege",
-    "grant"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "extensions",
-   "find": [
-    "extension"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "planner و seq scan",
-   "find": [
-    "planner",
-    "seq scan",
-    "خطة التنفيذ"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "deadlocks",
-   "find": [
-    "deadlock"
-   ],
-   "lvl": "متقدم"
-  }
- ],
- "mongo": [
-  {
-   "topic": "mongosh",
-   "find": [
-    "mongosh"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "show dbs و use",
-   "find": [
-    "show dbs"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "insert و find",
-   "find": [
-    "insertone"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "update",
-   "find": [
-    "updateone"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "delete",
-   "find": [
-    "deleteone"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "connection string",
-   "find": [
-    "mongodb+srv"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Mongo في Docker",
-   "find": [
-    "mongo_initdb"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "healthcheck",
-   "find": [
-    "healthcheck"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "يوزرز و auth",
-   "find": [
-    "createuser"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "indexes",
-   "find": [
-    "createindex"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "explain",
-   "find": [
-    "explain"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "embed ولا reference",
-   "find": [
-    "embed ولا reference"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "حد 16MB و bucket",
-   "find": [
-    "16mb"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "compound index و ESR",
-   "find": [
-    "esr"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "aggregation",
-   "find": [
-    "aggregate و $group"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "$lookup",
-   "find": [
-    "$lookup"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "populate و N+1",
-   "find": [
-    "populate"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "transactions",
-   "find": [
-    "transactions"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "schema validation",
-   "find": [
-    "$jsonschema"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "mongodump",
-   "find": [
-    "mongodump"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "mongorestore",
-   "find": [
-    "mongorestore"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "باك أب مجدول",
-   "find": [
-    "باك أب mongo مجدول"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "نقل الداتا",
-   "find": [
-    "نقل mongo"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "$facet و $bucket",
-   "find": [
-    "$facet"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "window functions",
-   "find": [
-    "$setwindowfields"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "$merge و $out",
-   "find": [
-    "$merge"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "أنماط التصميم (attribute/computed)",
-   "find": [
-    "attribute",
-    "computed"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "schema migration",
-   "find": [
-    "schemaversion"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "replica set",
-   "find": [
-    "replica set"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "change streams",
-   "find": [
-    "change streams"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "TTL index",
-   "find": [
-    "ttl"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "partial و sparse indexes",
-   "find": [
-    "partial"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "text index",
-   "find": [
-    "text index",
-    "$text"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "NoSQL injection",
-   "find": [
-    "nosql injection"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "sharding",
-   "find": [
-    "sharding"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "Atlas Search",
-   "find": [
-    "atlas search"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "time series",
-   "find": [
-    "time series",
-    "timeseries"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "pagination في Mongo",
-   "find": [
-    "pagination",
-    "skip و limit"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "write concern و read concern",
-   "find": [
-    "writeconcern",
-    "write concern",
-    "readconcern"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "monitoring (currentOp و profiler)",
-   "find": [
-    "currentop",
-    "profiler",
-    "serverstatus"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "تأمين Mongo (bind و auth)",
-   "find": [
-    "bindip",
-    "bind_ip",
-    "تأمين"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "upsert و bulkWrite",
-   "find": [
-    "upsert",
-    "bulkwrite"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "array operators",
-   "find": [
-    "$push",
-    "$pull",
-    "$elemmatch"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Mongoose في Node",
-   "find": [
-    "mongoose"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "capped collections",
-   "find": [
-    "capped"
-   ],
-   "lvl": "متقدم"
-  }
- ],
- "data": [
-  {
-   "topic": "مقدمة SQL",
-   "find": [
-    "مقدمة قواعد البيانات"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "CREATE TABLE",
-   "find": [
-    "create table"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "أنواع الأعمدة",
-   "find": [
-    "أنواع الأعمدة"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "numeric للفلوس",
-   "find": [
-    "numeric للفلوس"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "timestamptz والمناطق الزمنية",
-   "find": [
-    "timestamptz"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "PRIMARY KEY",
-   "find": [
-    "primary key"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "SELECT",
-   "find": [
-    "select"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "WHERE",
-   "find": [
-    "where"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "ORDER BY و LIMIT",
-   "find": [
-    "order by"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "LIKE",
-   "find": [
-    "like"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "NULL",
-   "find": [
-    "null"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "INSERT",
-   "find": [
-    "insert"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "UPDATE",
-   "find": [
-    "update"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "DELETE",
-   "find": [
-    "delete"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "count و aggregates",
-   "find": [
-    "count و sum"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "GROUP BY",
-   "find": [
-    "group by"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "HAVING",
-   "find": [
-    "having"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "CASE WHEN",
-   "find": [
-    "case when"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "دوال التاريخ",
-   "find": [
-    "دوال التاريخ"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "دوال النصوص",
-   "find": [
-    "دوال النصوص"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "علاقات one-to-many",
-   "find": [
-    "one-to-many"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "many-to-many",
-   "find": [
-    "many-to-many"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "ON DELETE",
-   "find": [
-    "on delete"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "INNER JOIN",
-   "find": [
-    "inner join"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "LEFT JOIN",
-   "find": [
-    "left join"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "EXISTS و subqueries",
-   "find": [
-    "exists"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "CTE",
-   "find": [
-    "cte"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "constraints",
-   "find": [
-    "constraints"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "normalization",
-   "find": [
-    "normalization"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "jsonb",
-   "find": [
-    "jsonb"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "B-tree index",
-   "find": [
-    "b-tree"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "composite index",
-   "find": [
-    "composite index"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "transactions",
-   "find": [
-    "transaction"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "race conditions و atomic UPDATE",
-   "find": [
-    "atomic update"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "SELECT FOR UPDATE",
-   "find": [
-    "for update"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "isolation levels",
-   "find": [
-    "isolation levels"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "upsert",
-   "find": [
-    "on conflict"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "window functions",
-   "find": [
-    "window functions"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "keyset pagination",
-   "find": [
-    "keyset"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "UNION",
-   "find": [
-    "union"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "json_agg",
-   "find": [
-    "json_agg"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "VIEW",
-   "find": [
-    "view و materialized"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "triggers",
-   "find": [
-    "trigger"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "functions",
-   "find": [
-    "create function"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "full-text search",
-   "find": [
-    "full-text"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "البحث بالعربي",
-   "find": [
-    "بالعربي"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "SQL injection و parameters",
-   "find": [
-    "sql injection",
-    "parameterized"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "soft delete",
-   "find": [
-    "soft delete"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "audit log",
-   "find": [
-    "audit log"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "COPY",
-   "find": [
-    "copy"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Prisma",
-   "find": [
-    "prisma"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Supabase و RLS",
-   "find": [
-    "policies",
-    "supabase"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Drizzle و seed",
-   "find": [
-    "drizzle",
-    "seed"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "EXPLAIN وقراية الخطة",
-   "find": [
-    "explain"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "migrations كمنهج",
-   "find": [
-    "prisma migrate",
-    "flyway",
-    "knex",
-    "schema migration"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "تصميم schema لمتجر",
-   "find": [
-    "متجر"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "حجز من غير double booking",
-   "find": [
-    "double booking",
-    "exclusion"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "ACID و CAP",
-   "find": [
-    "acid"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "connection pooling",
-   "find": [
-    "pooling"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "باك أب",
-   "find": [
-    "backup",
-    "باك أب"
-   ],
-   "lvl": "إنتاج"
-  }
- ],
- "php": [
-  {
-   "topic": "php -S و تشغيل ملف",
-   "find": [
-    "php -s"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "صيغة PHP و echo",
-   "find": [
-    "<?php"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "var_dump",
-   "find": [
-    "var_dump"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "strings و heredoc",
-   "find": [
-    "heredoc",
-    "interpolation"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "arrays",
-   "find": [
-    "array"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "array_map و filter",
-   "find": [
-    "array_map"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "foreach",
-   "find": [
-    "foreach"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "functions",
-   "find": [
-    "function"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "null coalescing",
-   "find": [
-    "??"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "include و require",
-   "find": [
-    "require_once"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "GET و POST",
-   "find": [
-    "$_get"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "htmlspecialchars و XSS",
-   "find": [
-    "htmlspecialchars"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "POST-Redirect-GET",
-   "find": [
-    "redirect"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "PDO",
-   "find": [
-    "new pdo"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "prepared statements",
-   "find": [
-    "prepare"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "fetch",
-   "find": [
-    "fetchall"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "transactions",
-   "find": [
-    "begintransaction"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "sessions",
-   "find": [
-    "session_start"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "password_hash",
-   "find": [
-    "password_hash"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "session fixation",
-   "find": [
-    "session_regenerate_id"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "CSRF",
-   "find": [
-    "csrf"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "رفع ملفات",
-   "find": [
-    "move_uploaded_file"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "إيميل",
-   "find": [
-    "phpmailer"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "json API بـ PHP عادي",
-   "find": [
-    "json_encode"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "config",
-   "find": [
-    "return config"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "try و catch",
-   "find": [
-    "try / catch"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "display_errors و error log",
-   "find": [
-    "display_errors"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "classes",
-   "find": [
-    "class"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "interfaces و abstract",
-   "find": [
-    "interface"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "traits",
-   "find": [
-    "trait"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "enums",
-   "find": [
-    "enum"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Composer",
-   "find": [
-    "composer require"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "PSR-4 autoload",
-   "find": [
-    "psr-4"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "front controller",
-   "find": [
-    "front controller"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "MVC",
-   "find": [
-    "mvc"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "security checklist",
-   "find": [
-    "security checklist"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "OPcache",
-   "find": [
-    "opcache"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "Laravel start",
-   "find": [
-    "laravel new"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "routing في Laravel",
-   "find": [
-    "route::resource"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Eloquent relations",
-   "find": [
-    "hasmany"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "N+1 في Laravel",
-   "find": [
-    "with()"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "mass assignment",
-   "find": [
-    "$fillable"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "migrations Laravel",
-   "find": [
-    "make:migration"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "factories و seeders",
-   "find": [
-    "factories"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "form requests (validation)",
-   "find": [
-    "make:request"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Blade",
-   "find": [
-    "blade"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "auth و policies",
-   "find": [
-    "policy"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Sanctum",
-   "find": [
-    "sanctum"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "API Resources",
-   "find": [
-    "api resources"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "queues",
-   "find": [
-    "queue:work"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "scheduler و mail و storage",
-   "find": [
-    "schedule"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Pest",
-   "find": [
-    "pest"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "PHPUnit",
-   "find": [
-    "phpunit"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Larastan و Pint",
-   "find": [
-    "larastan"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "نشر Laravel",
-   "find": [
-    "laravel على vps"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "Laravel cache و Redis",
-   "find": [
-    "cache::",
-    "laravel cache",
-    "redis في laravel"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Laravel logging",
-   "find": [
-    "laravel logging",
-    "log::"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "broadcasting و Reverb",
-   "find": [
-    "reverb",
-    "broadcasting"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "PHP 8 features",
-   "find": [
-    "php 8"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "login و CRUD بـ PHP عادي",
-   "find": [
-    "مشروع — login",
-    "مشروع: login"
-   ],
-   "lvl": "يومي"
-  }
- ],
- "go": [
-  {
-   "topic": "go version و التسطيب",
-   "find": [
-    "go version"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "go mod",
-   "find": [
-    "go mod init"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "go run و build",
-   "find": [
-    "go run"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "go fmt و vet",
-   "find": [
-    "go fmt"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "var و :=",
-   "find": [
-    "var و :="
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "const و iota",
-   "find": [
-    "iota"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "string و rune",
-   "find": [
-    "rune"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "fmt و Printf",
-   "find": [
-    "printf"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "if و for",
-   "find": [
-    "if و for"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "switch",
-   "find": [
-    "switch"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "الدوال و multiple returns",
-   "find": [
-    "الدوال"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "closures",
-   "find": [
-    "closures"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "slices",
-   "find": [
-    "slice"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "maps",
-   "find": [
-    "maps"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "pointers",
-   "find": [
-    "pointers"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "structs و methods",
-   "find": [
-    "structs"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "embedding",
-   "find": [
-    "embedding"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "error handling",
-   "find": [
-    "if err != nil"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "errors.Is و As",
-   "find": [
-    "errors.is"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "defer و panic",
-   "find": [
-    "defer"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "packages",
-   "find": [
-    "packages"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "interfaces",
-   "find": [
-    "interfaces"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "io.Reader و Writer",
-   "find": [
-    "io.reader"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "generics",
-   "find": [
-    "generics"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "nil interface",
-   "find": [
-    "nil interface"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "goroutines",
-   "find": [
-    "goroutines"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "channels",
-   "find": [
-    "channels"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "select",
-   "find": [
-    "select"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "WaitGroup و Mutex",
-   "find": [
-    "waitgroup"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "context",
-   "find": [
-    "context"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "net/http server",
-   "find": [
-    "net/http"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "ServeMux و PathValue",
-   "find": [
-    "servemux"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "encoding/json",
-   "find": [
-    "encoding/json"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "middleware",
-   "find": [
-    "middleware"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "http.Client و timeout",
-   "find": [
-    "http.client"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "database/sql و pgx",
-   "find": [
-    "database/sql"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "هيكل المشروع و env",
-   "find": [
-    "هيكل المشروع"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "go test",
-   "find": [
-    "go test"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "httptest",
-   "find": [
-    "httptest"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "benchmarks",
-   "find": [
-    "-bench"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "fuzzing",
-   "find": [
-    "-fuzz"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "pprof",
-   "find": [
-    "pprof"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "slog",
-   "find": [
-    "slog"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "graceful shutdown",
-   "find": [
-    "shutdown"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "Docker لتطبيق Go",
-   "find": [
-    "scratch"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "cross compile",
-   "find": [
-    "goos"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "worker pool و errgroup",
-   "find": [
-    "errgroup"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Gin و Echo و chi",
-   "find": [
-    "gin"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "JWT و bcrypt",
-   "find": [
-    "jwt",
-    "bcrypt"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "OpenAPI",
-   "find": [
-    "openapi",
-    "swag"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "golang-migrate",
-   "find": [
-    "migrate"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "gRPC",
-   "find": [
-    "grpc"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "WebSocket",
-   "find": [
-    "websocket"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "rate limit",
-   "find": [
-    "rate limit",
-    "rate.limiter"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "testify و testcontainers",
-   "find": [
-    "testify",
-    "testcontainers"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "table-driven tests",
-   "find": [
-    "table-driven",
-    "table driven"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "race detector",
-   "find": [
-    "-race",
-    "race detector"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "golangci-lint",
-   "find": [
-    "golangci"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "config و secrets",
-   "find": [
-    "secrets"
-   ],
-   "lvl": "إنتاج"
-  }
- ],
- "spring": [
-  {
-   "topic": "JDK و JVM",
-   "find": [
-    "jdk و jvm"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "primitives و wrappers",
-   "find": [
-    "primitives"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "String",
-   "find": [
-    "string"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "classes",
-   "find": [
-    "class و constructor"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "interfaces",
-   "find": [
-    "interfaces"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "records",
-   "find": [
-    "records"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "enum",
-   "find": [
-    "enum"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "sealed و pattern matching",
-   "find": [
-    "sealed"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Collections",
-   "find": [
-    "list و map"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "generics",
-   "find": [
-    "generics"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "lambdas",
-   "find": [
-    "lambdas"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "streams",
-   "find": [
-    "streams"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Optional",
-   "find": [
-    "optional"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "exceptions",
-   "find": [
-    "checked"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Maven",
-   "find": [
-    "pom.xml"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Gradle",
-   "find": [
-    "gradle"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Spring Initializr",
-   "find": [
-    "start.spring.io"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "DI و beans",
-   "find": [
-    "beans"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "@RestController",
-   "find": [
-    "@restcontroller"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "ResponseEntity",
-   "find": [
-    "responseentity"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Bean Validation",
-   "find": [
-    "validation"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "@RestControllerAdvice",
-   "find": [
-    "restcontrolleradvice"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "application.yaml",
-   "find": [
-    "application.yaml"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "profiles",
-   "find": [
-    "profiles"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "JPA entities",
-   "find": [
-    "@entity"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "JpaRepository",
-   "find": [
-    "jparepository"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "العلاقات",
-   "find": [
-    "العلاقات"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "N+1",
-   "find": [
-    "n+1"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "@Transactional",
-   "find": [
-    "@transactional"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Flyway",
-   "find": [
-    "flyway"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Spring Security",
-   "find": [
-    "securityfilterchain"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "JWT resource server",
-   "find": [
-    "jwt"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "@PreAuthorize",
-   "find": [
-    "@preauthorize"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "CORS",
-   "find": [
-    "cors"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "JUnit و Mockito",
-   "find": [
-    "junit"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "@WebMvcTest",
-   "find": [
-    "@webmvctest"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "@DataJpaTest",
-   "find": [
-    "@datajpatest"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Testcontainers",
-   "find": [
-    "testcontainers"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Actuator",
-   "find": [
-    "actuator"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "Docker",
-   "find": [
-    "dockerfile",
-    "jib",
-    "buildpacks"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "virtual threads",
-   "find": [
-    "virtual threads"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "springdoc / OpenAPI",
-   "find": [
-    "springdoc",
-    "openapi"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "رفع ملفات",
-   "find": [
-    "multipartfile",
-    "رفع ملفات"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "@Scheduled و @Async",
-   "find": [
-    "@scheduled",
-    "@async"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "@Cacheable",
-   "find": [
-    "@cacheable"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "RestClient و resilience4j",
-   "find": [
-    "restclient",
-    "resilience4j"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "@Version (optimistic lock)",
-   "find": [
-    "@version"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Micrometer",
-   "find": [
-    "micrometer"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "Logging (logback)",
-   "find": [
-    "logback",
-    "slf4j"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "Kafka مع Spring",
-   "find": [
-    "kafka"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "JVM tuning و GC",
-   "find": [
-    "gc"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "pagination (Pageable)",
-   "find": [
-    "pageable"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "DTO و MapStruct",
-   "find": [
-    "mapstruct"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "bean scopes",
-   "find": [
-    "bean scopes"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "AOP",
-   "find": [
-    "aop",
-    "@aspect"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "secrets و config خارجي",
-   "find": [
-    "secrets",
-    "configurationproperties"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "graceful shutdown",
-   "find": [
-    "graceful"
-   ],
-   "lvl": "إنتاج"
-  }
- ],
- "dotnet": [
-  {
-   "topic": "dotnet CLI",
-   "find": [
-    "dotnet --info"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "dotnet new",
-   "find": [
-    "dotnet new console"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "solution و NuGet",
-   "find": [
-    "sln و nuget"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "الأنواع",
-   "find": [
-    "الأنواع الأساسية"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "value و reference types",
-   "find": [
-    "value و reference"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "nullable reference types",
-   "find": [
-    "nullable"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "class و properties",
-   "find": [
-    "class و properties"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "record",
-   "find": [
-    "record"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "interface",
-   "find": [
-    "interface"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "collections",
-   "find": [
-    "list و dictionary"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "generics",
-   "find": [
-    "generics"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "LINQ",
-   "find": [
-    "linq"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "yield",
-   "find": [
-    "yield"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "lambdas",
-   "find": [
-    "func و action"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "extension methods",
-   "find": [
-    "extension methods"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "pattern matching",
-   "find": [
-    "switch expression"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "exceptions و using",
-   "find": [
-    "exceptions"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "async و Task",
-   "find": [
-    "task و async"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "CancellationToken",
-   "find": [
-    "cancellationtoken"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Web API",
-   "find": [
-    "dotnet new webapi"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Minimal API",
-   "find": [
-    "mapget"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "controllers",
-   "find": [
-    "controllers"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "رفع ملفات (IFormFile)",
-   "find": [
-    "iformfile",
-    "رفع ملفات"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "validation",
-   "find": [
-    "validation"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "ProblemDetails",
-   "find": [
-    "problemdetails"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "DI",
-   "find": [
-    "di و lifetimes"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "middleware",
-   "find": [
-    "middleware"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "configuration و options",
-   "find": [
-    "configuration و options"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "ILogger",
-   "find": [
-    "ilogger"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "CORS",
-   "find": [
-    "cors"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "DbContext",
-   "find": [
-    "dbcontext"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "EF migrations",
-   "find": [
-    "migrations"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "العلاقات في EF",
-   "find": [
-    "العلاقات"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "N+1 و Include",
-   "find": [
-    "include"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "AsNoTracking",
-   "find": [
-    "asnotracking"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "EF transactions",
-   "find": [
-    "transactions"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "concurrency token",
-   "find": [
-    "concurrency token",
-    "rowversion"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "JWT",
-   "find": [
-    "jwt"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "authorization policies",
-   "find": [
-    "policies"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Identity",
-   "find": [
-    "identity"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "xUnit",
-   "find": [
-    "xunit"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "mocking",
-   "find": [
-    "nsubstitute",
-    "moq"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "integration tests",
-   "find": [
-    "webapplicationfactory"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "BackgroundService",
-   "find": [
-    "backgroundservice"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "caching",
-   "find": [
-    "hybridcache",
-    "output caching"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "IHttpClientFactory",
-   "find": [
-    "ihttpclientfactory"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Polly و resilience",
-   "find": [
-    "polly",
-    "resilience"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "health checks",
-   "find": [
-    "health checks",
-    "healthchecks"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "SignalR",
-   "find": [
-    "signalr"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "dotnet publish",
-   "find": [
-    "dotnet publish"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "Docker",
-   "find": [
-    "dockerfile"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "reverse proxy",
-   "find": [
-    "kestrel ورا nginx"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "OpenAPI",
-   "find": [
-    "openapi"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "OpenTelemetry و Serilog",
-   "find": [
-    "opentelemetry",
-    "serilog"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "rate limiting",
-   "find": [
-    "rate limit"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "secrets (user-secrets)",
-   "find": [
-    "user-secrets",
-    "secrets"
-   ],
-   "lvl": "إنتاج"
-  }
- ],
- "kotlin": [
-  {
-   "topic": "تسطيب Kotlin",
-   "find": [
-    "تسطيب kotlin"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "val و var",
-   "find": [
-    "val و var"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "string templates",
-   "find": [
-    "string templates"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "if و when",
-   "find": [
-    "if و when"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "loops",
-   "find": [
-    "ranges"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "الدوال",
-   "find": [
-    "الدوال"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "null safety",
-   "find": [
-    "null safety"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "collections",
-   "find": [
-    "list و map"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "map و filter",
-   "find": [
-    "map و filter"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "classes",
-   "find": [
-    "class"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "data class",
-   "find": [
-    "data class"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "object و companion",
-   "find": [
-    "companion"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "sealed",
-   "find": [
-    "sealed"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "interfaces",
-   "find": [
-    "interface"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "extension functions",
-   "find": [
-    "extension"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "scope functions",
-   "find": [
-    "scope functions"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Result و exceptions",
-   "find": [
-    "result"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "مشروع Android",
-   "find": [
-    "مشروع android"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Gradle و version catalog",
-   "find": [
-    "libs.versions"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "AndroidManifest",
-   "find": [
-    "androidmanifest"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Activity lifecycle",
-   "find": [
-    "lifecycle"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Compose أساسيات",
-   "find": [
-    "jetpack compose"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Column و Row",
-   "find": [
-    "column و row"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Modifiers",
-   "find": [
-    "modifier"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "LazyColumn",
-   "find": [
-    "lazycolumn"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Material 3",
-   "find": [
-    "material 3"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "state",
-   "find": [
-    "remember"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "state hoisting",
-   "find": [
-    "hoisting"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Navigation",
-   "find": [
-    "navigation"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "ViewModel",
-   "find": [
-    "viewmodel"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "coroutines",
-   "find": [
-    "coroutines"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Flow",
-   "find": [
-    "flow"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Retrofit",
-   "find": [
-    "retrofit"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "loading و error",
-   "find": [
-    "loading و error"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Coil",
-   "find": [
-    "coil"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "DataStore",
-   "find": [
-    "datastore"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Room",
-   "find": [
-    "room"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "permissions",
-   "find": [
-    "permissions"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Hilt",
-   "find": [
-    "hilt"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "المعمارية",
-   "find": [
-    "المعمارية"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "unit tests",
-   "find": [
-    "unit tests"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Compose UI tests",
-   "find": [
-    "compose ui tests"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Logcat",
-   "find": [
-    "logcat"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "الأداء",
-   "find": [
-    "الأداء"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "signing و variants",
-   "find": [
-    "signing"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "AAB",
-   "find": [
-    "aab"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "R8",
-   "find": [
-    "r8"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "Play Console",
-   "find": [
-    "play console"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "Kotlin Multiplatform",
-   "find": [
-    "multiplatform"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Ktor server",
-   "find": [
-    "ktor"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "WorkManager",
-   "find": [
-    "workmanager"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "FCM و الإشعارات",
-   "find": [
-    "fcm",
-    "notification",
-    "إشعارات"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "offline-first",
-   "find": [
-    "offline-first"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "إدارة الأسرار (local.properties)",
-   "find": [
-    "local.properties",
-    "secrets"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "Crashlytics و monitoring",
-   "find": [
-    "crashlytics"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "Java interop",
-   "find": [
-    "java و kotlin"
-   ],
-   "lvl": "يومي"
-  }
- ],
- "swift": [
-  {
-   "topic": "تجهيز Swift",
-   "find": [
-    "تجهيز swift"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "الأنواع",
-   "find": [
-    "الأنواع واستنتاجها"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "if و guard",
-   "find": [
-    "if و guard"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "switch",
-   "find": [
-    "switch"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "loops",
-   "find": [
-    "for و while"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "الدوال",
-   "find": [
-    "argument labels"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Optionals",
-   "find": [
-    "optionals"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "optional chaining",
-   "find": [
-    "optional chaining"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "collections",
-   "find": [
-    "array و dictionary"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "map و filter",
-   "find": [
-    "map و filter"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "closures",
-   "find": [
-    "closures"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "struct و class",
-   "find": [
-    "structs"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "properties",
-   "find": [
-    "properties"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "enums",
-   "find": [
-    "enums"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "protocols",
-   "find": [
-    "protocols"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "generics",
-   "find": [
-    "generics"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "errors",
-   "find": [
-    "throws"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "access control",
-   "find": [
-    "access control"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "ARC",
-   "find": [
-    "arc"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "مشروع iOS",
-   "find": [
-    "مشروع ios"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "SwiftUI",
-   "find": [
-    "مقدمة swiftui"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "stacks",
-   "find": [
-    "vstack"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "modifiers",
-   "find": [
-    "modifiers"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "List",
-   "find": [
-    "list و foreach"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "State و Binding",
-   "find": [
-    "state و binding"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Observable",
-   "find": [
-    "@observable"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "NavigationStack",
-   "find": [
-    "navigationstack"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "sheet و alert",
-   "find": [
-    "sheet"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Form",
-   "find": [
-    "form و textfield"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "async و await",
-   "find": [
-    "async و await"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "Codable",
-   "find": [
-    "codable"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "URLSession",
-   "find": [
-    "urlsession"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "AsyncImage",
-   "find": [
-    "asyncimage"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "UserDefaults",
-   "find": [
-    "userdefaults"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "SwiftData",
-   "find": [
-    "swiftdata"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "MVVM",
-   "find": [
-    "mvvm"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "actors",
-   "find": [
-    "actors"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Swift 6 concurrency",
-   "find": [
-    "swift 6"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "SwiftPM",
-   "find": [
-    "swift package"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Swift Testing",
-   "find": [
-    "swift testing"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Instruments",
-   "find": [
-    "instruments"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "signing",
-   "find": [
-    "provisioning"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "TestFlight",
-   "find": [
-    "testflight"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "App Store review",
-   "find": [
-    "مراجعة app store"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "Keychain",
-   "find": [
-    "keychain"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "notifications",
-   "find": [
-    "notifications",
-    "إشعارات"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "WidgetKit",
-   "find": [
-    "widgetkit"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "Vapor",
-   "find": [
-    "vapor"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "animations",
-   "find": [
-    "animation"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "Combine أو AsyncStream",
-   "find": [
-    "combine",
-    "asyncstream"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "UI testing",
-   "find": [
-    "xcuitest",
-    "ui testing"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "deep links",
-   "find": [
-    "deep link"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "accessibility",
-   "find": [
-    "accessibility",
-    "voiceover"
-   ],
-   "lvl": "إنتاج"
-  }
- ],
- "cpp": [
-  {
-   "topic": "تسطيب compiler",
-   "find": [
-    "تسطيب compiler"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "compile و link",
-   "find": [
-    "compile و link"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "main و exit code",
-   "find": [
-    "exit code"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "المتغيرات والأنواع",
-   "find": [
-    "المتغيرات والأنواع"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "printf و scanf",
-   "find": [
-    "printf"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "العمليات",
-   "find": [
-    "العمليات"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "bitwise operations",
-   "find": [
-    "bitwise"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "if و loops",
-   "find": [
-    "if و switch"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "الدوال",
-   "find": [
-    "prototypes"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "arrays",
-   "find": [
-    "arrays"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "strings",
-   "find": [
-    "strings"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "pointers",
-   "find": [
-    "pointers"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "malloc و free",
-   "find": [
-    "malloc"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "struct",
-   "find": [
-    "struct"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "enum و const",
-   "find": [
-    "enum"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "alignment و padding",
-   "find": [
-    "alignment",
-    "padding"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "file I/O",
-   "find": [
-    "file i/o"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "make",
-   "find": [
-    "و make",
-    "makefile"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "undefined behavior",
-   "find": [
-    "undefined behavior"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "gdb",
-   "find": [
-    "gdb"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "references",
-   "find": [
-    "references"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "overloading",
-   "find": [
-    "overloading"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "classes",
-   "find": [
-    "classes"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "const",
-   "find": [
-    "const"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "RAII",
-   "find": [
-    "raii"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "rule of 0/3/5",
-   "find": [
-    "rule of"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "operator overloading",
-   "find": [
-    "operator overloading"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "virtual",
-   "find": [
-    "virtual"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "vector",
-   "find": [
-    "std::vector"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "map",
-   "find": [
-    "unordered_map"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "iterators",
-   "find": [
-    "iterators"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "algorithms",
-   "find": [
-    "algorithms"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "lambdas",
-   "find": [
-    "lambdas"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "templates",
-   "find": [
-    "templates"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "exceptions",
-   "find": [
-    "exceptions"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "optional و variant",
-   "find": [
-    "optional"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "CMake",
-   "find": [
-    "cmake"
-   ],
-   "lvl": "أساسي"
-  },
-  {
-   "topic": "move semantics",
-   "find": [
-    "move"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "smart pointers",
-   "find": [
-    "smart pointers"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "constexpr",
-   "find": [
-    "constexpr"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "string_view و span",
-   "find": [
-    "string_view"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "cache",
-   "find": [
-    "cache"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "threads و mutex",
-   "find": [
-    "mutex"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "atomic",
-   "find": [
-    "atomic"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "sanitizers",
-   "find": [
-    "sanitizers"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "valgrind",
-   "find": [
-    "valgrind"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "unit testing",
-   "find": [
-    "unit testing"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "vcpkg و Conan",
-   "find": [
-    "vcpkg"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "sockets",
-   "find": [
-    "socket"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "std::format",
-   "find": [
-    "std::format"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "clang-tidy",
-   "find": [
-    "clang-tidy"
-   ],
-   "lvl": "يومي"
-  },
-  {
-   "topic": "coroutines",
-   "find": [
-    "coroutines"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "profiling (perf)",
-   "find": [
-    "perf",
-    "profil"
-   ],
-   "lvl": "متقدم"
-  },
-  {
-   "topic": "CI",
-   "find": [
-    "github actions"
-   ],
-   "lvl": "إنتاج"
-  },
-  {
-   "topic": "warnings و cppcheck",
-   "find": [
-    "-wall",
-    "cppcheck"
-   ],
-   "lvl": "يومي"
-  }
- ]
+  "node": [
+    {
+      "topic": "تشغيل ملف Node و REPL",
+      "find": [
+        "مقدمة node",
+        "node -p",
+        "node مباشرة"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "إدارة نسخ Node (nvm)",
+      "find": [
+        "nvm"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "package.json",
+      "find": [
+        "package.json"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "npm install و dependencies",
+      "find": [
+        "npm install"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "semver و lockfile",
+      "find": [
+        "package-lock",
+        "^ و ~"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "npm scripts",
+      "find": [
+        "npm scripts",
+        "npm start"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "npx",
+      "find": [
+        "npx"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "متغيرات البيئة و .env",
+      "find": [
+        ".env",
+        "env-file"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "ESM و CommonJS",
+      "find": [
+        "esm",
+        "commonjs",
+        "import.meta"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "fs و path",
+      "find": [
+        "fs/promises",
+        "path و"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "process و argv",
+      "find": [
+        "process.argv",
+        "parseArgs"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "exit codes",
+      "find": [
+        "exit codes"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "signals و الإغلاق النضيف",
+      "find": [
+        "SIGINT",
+        "الإغلاق النضيف"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "child_process",
+      "find": [
+        "execFile",
+        "spawn"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "command injection",
+      "find": [
+        "command injection"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "Buffer و encoding",
+      "find": [
+        "buffer"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "EventEmitter",
+      "find": [
+        "eventemitter"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "streams",
+      "find": [
+        "stream"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "worker_threads",
+      "find": [
+        "worker_threads"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "event loop",
+      "find": [
+        "event loop"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "http module (سيرفر بالمكتبة)",
+      "find": [
+        "node:http",
+        "http.createserver"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "رفع ملف من غير مكتبة",
+      "find": [
+        "multipart",
+        "رفع ملف"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "اختبارات node --test",
+      "find": [
+        "node --test"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "watch mode",
+      "find": [
+        "--watch"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "npm audit و التحديثات",
+      "find": [
+        "audit",
+        "outdated"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "ERESOLVE و تعارض النسخ",
+      "find": [
+        "eresolve"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "pnpm و yarn",
+      "find": [
+        "pnpm و yarn"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "workspaces و monorepo",
+      "find": [
+        "workspace"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": ".npmrc",
+      "find": [
+        ".npmrc"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "NODE_ENV و الإنتاج",
+      "find": [
+        "node_env"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "تشخيص الذاكرة",
+      "find": [
+        "الذاكرة",
+        "heap"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "debugger",
+      "find": [
+        "debugger",
+        "inspect"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "profiling (--cpu-prof)",
+      "find": [
+        "cpu-prof",
+        "--prof",
+        "flamegraph"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "نشر حزمة npm",
+      "find": [
+        "npm publish"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Prisma في Node",
+      "find": [
+        "prisma generate"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "migrations قبل التشغيل",
+      "find": [
+        "migrate deploy"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "webhooks والتحقق من التوقيع",
+      "find": [
+        "webhook",
+        "التحقق من التوقيع"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "tunnels (ngrok/cloudflared)",
+      "find": [
+        "ngrok",
+        "cloudflared"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Bun",
+      "find": [
+        "bun"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Deno",
+      "find": [
+        "deno"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Hono",
+      "find": [
+        "hono"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "أداة CLI كاملة",
+      "find": [
+        "أداة سطر أوامر",
+        "مشروع — من ملف"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "TypeScript runner (tsx)",
+      "find": [
+        "tsx",
+        "strip-types"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "لوج منظم في Node",
+      "find": [
+        "pino",
+        "logging",
+        "لوج"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "Docker لتطبيق Node",
+      "find": [
+        "dockerfile"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "سلسلة التوريد (lifecycle scripts)",
+      "find": [
+        "supply chain",
+        "lifecycle scripts",
+        "ignore-scripts",
+        "approve-builds"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "fetch و timeout",
+      "find": [
+        "fetch",
+        "abortsignal"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "قراءة الأخطاء",
+      "find": [
+        "اقرا خطأ",
+        "stack trace"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Next.js standalone نشر",
+      "find": [
+        "standalone"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "جدولة مهام في Node",
+      "find": [
+        "node-cron",
+        "cron",
+        "setinterval"
+      ],
+      "lvl": "متقدم"
+    }
+  ],
+  "api": [
+    {
+      "topic": "يعني إيه backend و API",
+      "find": [
+        "backend و api"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "HTTP method و status و headers",
+      "find": [
+        "method و status"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "node:http",
+      "find": [
+        "node:http"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Express أساسيات",
+      "find": [
+        "express()"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "routes و params و query",
+      "find": [
+        "req.params",
+        "req.query"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "قراءة JSON body",
+      "find": [
+        "express.json"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "status codes",
+      "find": [
+        "status codes"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "middleware",
+      "find": [
+        "middleware"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Router وتنظيم المشروع",
+      "find": [
+        "express.router",
+        "controllers"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "error handling middleware",
+      "find": [
+        "error middleware"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "async errors",
+      "find": [
+        "async errors"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "config و env بـ zod",
+      "find": [
+        "config.js"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "validation بـ schema",
+      "find": [
+        "validate(schema)",
+        "zod"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "express-validator",
+      "find": [
+        "express-validator"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "password hashing (bcrypt)",
+      "find": [
+        "bcrypt"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "JWT",
+      "find": [
+        "jwt.sign",
+        "jwt.verify"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "requireAuth",
+      "find": [
+        "requireauth"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "cookies و httpOnly",
+      "find": [
+        "res.cookie"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "access و refresh tokens",
+      "find": [
+        "access و refresh"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "sessions",
+      "find": [
+        "express-session"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "authorization و roles",
+      "find": [
+        "requirerole"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "IDOR و ownership",
+      "find": [
+        "idor",
+        "ownership"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "helmet",
+      "find": [
+        "helmet"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "CORS",
+      "find": [
+        "cors"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "rate limiting",
+      "find": [
+        "express-rate-limit"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "sanitization و XSS",
+      "find": [
+        "sanitization"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "Prisma في API",
+      "find": [
+        "prisma client"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "transactions",
+      "find": [
+        "$transaction"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "mongoose",
+      "find": [
+        "mongoose"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "pagination",
+      "find": [
+        "pagination"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "رفع ملفات (multer)",
+      "find": [
+        "multer"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "معالجة صور",
+      "find": [
+        "sharp"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "إرسال إيميل",
+      "find": [
+        "nodemailer",
+        "resend"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "request logging",
+      "find": [
+        "morgan"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "لوج منظم (pino)",
+      "find": [
+        "pino"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "اختبار API (supertest)",
+      "find": [
+        "supertest"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "قاعدة اختبار و factories",
+      "find": [
+        "قاعدة الاختبار",
+        "factories"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "mocking لخدمات خارجية",
+      "find": [
+        "msw",
+        "nock"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Redis أساسيات",
+      "find": [
+        "redis-cli",
+        "أنواع redis"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "caching بـ Redis",
+      "find": [
+        "ioredis"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Redis للـ sessions و locks",
+      "find": [
+        "connect-redis"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "pub/sub",
+      "find": [
+        "pub/sub"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "streams لملفات كبيرة",
+      "find": [
+        "streams و pipeline"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "تصدير CSV و PDF",
+      "find": [
+        "csv",
+        "pdf"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "worker و cluster",
+      "find": [
+        "worker_threads",
+        "cluster"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "AsyncLocalStorage و request id",
+      "find": [
+        "asynclocalstorage"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "NestJS",
+      "find": [
+        "nest:"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "idempotency",
+      "find": [
+        "idempotency"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "graceful shutdown",
+      "find": [
+        "graceful shutdown"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "OpenAPI من الكود",
+      "find": [
+        "openapi",
+        "swagger"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Socket.IO في Express",
+      "find": [
+        "socket.io"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "BullMQ (طوابير الشغل)",
+      "find": [
+        "bullmq"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "نشر Express (Docker و PM2)",
+      "find": [
+        "نشر express",
+        "pm2",
+        "dockerfile"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "health check و readiness",
+      "find": [
+        "health",
+        "readiness"
+      ],
+      "lvl": "إنتاج"
+    }
+  ],
+  "apis": [
+    {
+      "topic": "resources و URLs",
+      "find": [
+        "resources و urls"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "safe و idempotent",
+      "find": [
+        "safe و idempotent"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "PUT و PATCH",
+      "find": [
+        "put و patch"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "status codes (201/204/202)",
+      "find": [
+        "201 و 204"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "4xx صح",
+      "find": [
+        "4xx"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "problem+json",
+      "find": [
+        "problem+json"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "offset pagination",
+      "find": [
+        "offset pagination"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "cursor pagination",
+      "find": [
+        "cursor pagination"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "filter و sort",
+      "find": [
+        "filter و sort"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "versioning",
+      "find": [
+        "versioning"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "ETag و Cache-Control",
+      "find": [
+        "etag"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "optimistic concurrency (If-Match)",
+      "find": [
+        "if-match"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Idempotency-Key",
+      "find": [
+        "idempotency-key"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "OpenAPI",
+      "find": [
+        "openapi"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Swagger UI و codegen",
+      "find": [
+        "swagger ui",
+        "openapi-typescript"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "OWASP API Top 10",
+      "find": [
+        "owasp"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "async operation (202)",
+      "find": [
+        "async operation",
+        "polling"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "deprecation و Sunset",
+      "find": [
+        "sunset",
+        "deprecation"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "SSE",
+      "find": [
+        "sse"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "stream رد LLM",
+      "find": [
+        "رد llm",
+        "llm"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "WebSockets scaling",
+      "find": [
+        "redis adapter",
+        "sticky"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "heartbeat",
+      "find": [
+        "heartbeat"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "WebSocket بمكتبة ws",
+      "find": [
+        "auth على الـ upgrade",
+        "reconnect و backoff"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "backpressure",
+      "find": [
+        "backpressure"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "GraphQL أساسيات",
+      "find": [
+        "graphql ولا rest",
+        "schema و resolvers"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "DataLoader و N+1",
+      "find": [
+        "dataloader"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "حماية GraphQL (cost limit)",
+      "find": [
+        "cost limit",
+        "persisted"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "OIDC و OAuth",
+      "find": [
+        "discovery document",
+        "oidc"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "JWKS والتحقق",
+      "find": [
+        "jwks"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "client credentials",
+      "find": [
+        "client credentials"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "SSO",
+      "find": [
+        "sso"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "distributed rate limiting",
+      "find": [
+        "token bucket",
+        "sliding window"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "quota لكل plan",
+      "find": [
+        "quota"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "queue ولا pub/sub",
+      "find": [
+        "queue ولا pub/sub"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "dead-letter queue",
+      "find": [
+        "dead-letter"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "transactional outbox",
+      "find": [
+        "outbox"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "API keys",
+      "find": [
+        "api keys"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "توقيع webhooks صادرة",
+      "find": [
+        "توقيع webhooks"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "retries و delivery log",
+      "find": [
+        "retries"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "SSRF",
+      "find": [
+        "ssrf"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "tRPC",
+      "find": [
+        "trpc"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "gRPC",
+      "find": [
+        "grpc"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "RabbitMQ",
+      "find": [
+        "rabbitmq"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "ack و prefetch",
+      "find": [
+        "ack و nack"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Kafka",
+      "find": [
+        "kafka"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "idempotent consumer",
+      "find": [
+        "idempotent consumer"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "CDC",
+      "find": [
+        "cdc"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "محرك بحث",
+      "find": [
+        "meilisearch",
+        "elasticsearch"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "مزامنة البحث",
+      "find": [
+        "مزامنة البحث"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "bulk operations و batch",
+      "find": [
+        "bulk",
+        "batch"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "HATEOAS و links",
+      "find": [
+        "hateoas"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "multi-tenancy",
+      "find": [
+        "tenant"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "API gateway",
+      "find": [
+        "gateway"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "contract testing و breaking changes",
+      "find": [
+        "contract",
+        "breaking change"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "observability للـ API",
+      "find": [
+        "opentelemetry",
+        "metrics",
+        "tracing"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "CORS في تصميم API",
+      "find": [
+        "cors"
+      ],
+      "lvl": "يومي"
+    }
+  ],
+  "python": [
+    {
+      "topic": "venv",
+      "find": [
+        "venv"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "pip و requirements",
+      "find": [
+        "pip install"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "pip freeze و تثبيت النسخ",
+      "find": [
+        "pip freeze"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "externally-managed-environment",
+      "find": [
+        "externally-managed"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "python -m",
+      "find": [
+        "python -m"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "تشغيل سكربت",
+      "find": [
+        "script.py"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "shebang",
+      "find": [
+        "#!/usr/bin/env"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "__main__",
+      "find": [
+        "__main__"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "input و sys.argv",
+      "find": [
+        "sys.argv"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "exit codes",
+      "find": [
+        "sys.exit"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "مسارات بـ pathlib",
+      "find": [
+        "path(__file__)",
+        "pathlib"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "glob",
+      "find": [
+        "glob"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "ملفات و encoding",
+      "find": [
+        "open()"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "shutil",
+      "find": [
+        "shutil"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "pytest",
+      "find": [
+        "pytest"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "fixtures",
+      "find": [
+        "fixture"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "parametrize",
+      "find": [
+        "parametrize"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "tmp_path",
+      "find": [
+        "tmp_path"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "monkeypatch",
+      "find": [
+        "monkeypatch"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "mock.patch",
+      "find": [
+        "mock.patch"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "coverage",
+      "find": [
+        "--cov"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "debugging",
+      "find": [
+        "breakpoint",
+        "pdb"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "debugpy في VSCode",
+      "find": [
+        "debugpy"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "argparse",
+      "find": [
+        "argparse"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "json",
+      "find": [
+        "json.load"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "csv",
+      "find": [
+        "csv"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "yaml و xml",
+      "find": [
+        "yaml",
+        "elementtree"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "datetime",
+      "find": [
+        "datetime"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "logging",
+      "find": [
+        "logging"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "subprocess",
+      "find": [
+        "subprocess"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "env و .env",
+      "find": [
+        "os.environ"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "requests مع timeout",
+      "find": [
+        "requests"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "regex",
+      "find": [
+        "re في"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Docker لتطبيق Python",
+      "find": [
+        "dockerfile"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "uvicorn في الإنتاج",
+      "find": [
+        "uvicorn --proxy"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "pyproject و pipx",
+      "find": [
+        "project.scripts",
+        "pipx"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "inline script metadata (PEP 723)",
+      "find": [
+        "# /// script"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "جدولة مهام (cron)",
+      "find": [
+        "cron",
+        "task scheduler"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "retry و backoff",
+      "find": [
+        "retry"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "concurrent.futures",
+      "find": [
+        "concurrent.futures"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "sqlite3",
+      "find": [
+        "sqlite3"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "اقرا الـ traceback",
+      "find": [
+        "traceback"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "help و dir",
+      "find": [
+        "help()"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "تغليف حزمة",
+      "find": [
+        "تغليف",
+        "مشروع — venv"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "type hints و mypy",
+      "find": [
+        "mypy",
+        "type hint"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "ruff و formatter",
+      "find": [
+        "ruff",
+        "black"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "async في السكربتات",
+      "find": [
+        "asyncio"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "بوت Telegram",
+      "find": [
+        "telegram"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "uv",
+      "find": [
+        "uv "
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "اختبار سكربت CLI",
+      "find": [
+        "pytest لسكربت"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "إشعار من سكربت",
+      "find": [
+        "notify"
+      ],
+      "lvl": "يومي"
+    }
+  ],
+  "pyapi": [
+    {
+      "topic": "أنواع البيانات و names",
+      "find": [
+        "names و objects",
+        "mutable"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "type hints",
+      "find": [
+        "type hints"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "f-strings",
+      "find": [
+        "f-strings"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "control flow",
+      "find": [
+        "if و elif",
+        "for و range"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "match و case",
+      "find": [
+        "match و case"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "list و dict و set",
+      "find": [
+        "list",
+        "dict"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "comprehensions",
+      "find": [
+        "comprehensions"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "*args و **kwargs",
+      "find": [
+        "*args"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "decorators",
+      "find": [
+        "decorators"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "generators",
+      "find": [
+        "generators"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "try و except",
+      "find": [
+        "try و except"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "context managers",
+      "find": [
+        "context managers"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "classes و الوراثة",
+      "find": [
+        "class و self",
+        "super"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "dataclass",
+      "find": [
+        "dataclass"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Enum",
+      "find": [
+        "enum"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Protocol و ABC",
+      "find": [
+        "protocol"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "import و packages",
+      "find": [
+        "import و packages"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "uv و pyproject",
+      "find": [
+        "uv و pyproject"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "pathlib",
+      "find": [
+        "pathlib"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "datetime و timezone",
+      "find": [
+        "zoneinfo"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "async و await",
+      "find": [
+        "async def"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "gather و TaskGroup",
+      "find": [
+        "gather"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "blocking في async",
+      "find": [
+        "blocking في async"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "FastAPI أول API",
+      "find": [
+        "fastapi dev"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "path و query params",
+      "find": [
+        "path و query"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "request body",
+      "find": [
+        "request body"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "response_model",
+      "find": [
+        "response model"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "APIRouter",
+      "find": [
+        "apirouter"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Pydantic models",
+      "find": [
+        "basemodel"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "validators",
+      "find": [
+        "field_validator"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "settings (pydantic-settings)",
+      "find": [
+        "pydantic-settings"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Depends",
+      "find": [
+        "depends"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "dependency بـ yield",
+      "find": [
+        "بـ yield"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "auth dependency",
+      "find": [
+        "auth dependency"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "اختبار FastAPI (overrides)",
+      "find": [
+        "dependency_overrides",
+        "testclient"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "HTTPException و handlers",
+      "find": [
+        "httpexception",
+        "exception handlers"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "CORS و middleware",
+      "find": [
+        "cors"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "SQLAlchemy async",
+      "find": [
+        "sqlalchemy async"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "alembic migrations",
+      "find": [
+        "alembic"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "transactions",
+      "find": [
+        "transactions"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "httpx",
+      "find": [
+        "httpx"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Redis cache",
+      "find": [
+        "redis cache"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "rate limit",
+      "find": [
+        "rate limit"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "BackgroundTasks",
+      "find": [
+        "backgroundtasks"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Celery أو ARQ",
+      "find": [
+        "celery",
+        "arq"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "WebSocket في FastAPI",
+      "find": [
+        "websocket"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "رفع ملفات",
+      "find": [
+        "uploadfile",
+        "رفع ملفات"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "JWT و refresh token",
+      "find": [
+        "refresh token",
+        "jwt"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "password hashing",
+      "find": [
+        "argon2",
+        "bcrypt",
+        "passlib",
+        "pwdlib"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "logging منظم",
+      "find": [
+        "logging و profiling",
+        "logging"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "workers و GIL",
+      "find": [
+        "workers و gil"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "ruff و mypy",
+      "find": [
+        "ruff"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "observability (metrics/tracing)",
+      "find": [
+        "opentelemetry",
+        "prometheus",
+        "observability"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "Django ORM",
+      "find": [
+        "queryset"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Django migrations",
+      "find": [
+        "makemigrations"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Django admin",
+      "find": [
+        "django admin"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "DRF",
+      "find": [
+        "drf"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Django في الإنتاج",
+      "find": [
+        "django في الإنتاج"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "Flask",
+      "find": [
+        "flask"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "pytest-django",
+      "find": [
+        "pytest-django"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Docker و نشر FastAPI",
+      "find": [
+        "FastAPI في Docker"
+      ],
+      "lvl": "إنتاج"
+    }
+  ],
+  "pydata": [
+    {
+      "topic": "Jupyter",
+      "find": [
+        "jupyter"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "numpy arrays",
+      "find": [
+        "np.array"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "broadcasting",
+      "find": [
+        "broadcasting"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "read_csv",
+      "find": [
+        "read_csv"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "فحص الداتا (info/describe)",
+      "find": [
+        "info و describe"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "loc و iloc",
+      "find": [
+        "loc و iloc"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "NaN و fillna",
+      "find": [
+        "nan و fillna"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "dtypes و astype",
+      "find": [
+        "astype"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "تواريخ في pandas",
+      "find": [
+        "to_datetime"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "تنضيف داتا حقيقية",
+      "find": [
+        "تنضيف داتا"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "groupby",
+      "find": [
+        "groupby"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "merge و join",
+      "find": [
+        "merge"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "pivot و melt",
+      "find": [
+        "pivot_table"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "time series (resample)",
+      "find": [
+        "resample"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "matplotlib",
+      "find": [
+        "matplotlib"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "seaborn",
+      "find": [
+        "seaborn"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "تصدير Excel و CSV",
+      "find": [
+        "to_excel"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "SQL مع pandas",
+      "find": [
+        "read_sql"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "vectorize بدل apply",
+      "find": [
+        "vectorize"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "polars و DuckDB",
+      "find": [
+        "polars",
+        "duckdb"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "ملفات كبيرة (chunks و parquet)",
+      "find": [
+        "chunksize",
+        "parquet",
+        "chunk"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "إحصاء أساسي",
+      "find": [
+        "إحصاء",
+        "statistics",
+        "الانحراف"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "SettingWithCopy",
+      "find": [
+        "settingwithcopy"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "LinearRegression",
+      "find": [
+        "linearregression"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "LogisticRegression",
+      "find": [
+        "logisticregression"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "train/test split و overfitting",
+      "find": [
+        "train_test_split",
+        "overfitting"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "cross validation",
+      "find": [
+        "cross_val_score"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "مقاييس التقييم",
+      "find": [
+        "precision",
+        "recall",
+        "roc",
+        "confusion"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "data leakage",
+      "find": [
+        "leakage"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Pipeline و ColumnTransformer",
+      "find": [
+        "pipeline"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "feature engineering",
+      "find": [
+        "feature engineering",
+        "get_dummies",
+        "onehot"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "K-Means",
+      "find": [
+        "k-means",
+        "kmeans"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "decision trees و random forest",
+      "find": [
+        "random forest",
+        "decisiontree"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "حفظ الموديل (joblib)",
+      "find": [
+        "joblib"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Streamlit",
+      "find": [
+        "streamlit"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "API و json_normalize",
+      "find": [
+        "json_normalize"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "scraping",
+      "find": [
+        "beautifulsoup"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "robots.txt و rate limiting",
+      "find": [
+        "robots.txt"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "مشروع تحليل مبيعات",
+      "find": [
+        "مشروع تحليل"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "إعادة الإنتاج (seed)",
+      "find": [
+        "random_state",
+        "reproduc"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "plotly وتفاعلي",
+      "find": [
+        "plotly"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "اختبار فرضيات و A/B",
+      "find": [
+        "a/b",
+        "t-test",
+        "hypothesis",
+        "فرضيات"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "data validation (pandera)",
+      "find": [
+        "pandera",
+        "great_expectations"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "جدولة pipeline",
+      "find": [
+        "airflow",
+        "prefect",
+        "جدولة"
+      ],
+      "lvl": "إنتاج"
+    }
+  ],
+  "pg": [
+    {
+      "topic": "psql أساسيات",
+      "find": [
+        "psql"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "أوامر backslash",
+      "find": [
+        "backslash"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "\\x و \\timing",
+      "find": [
+        "\\x"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "تشغيل SQL من ملف",
+      "find": [
+        "من ملف"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "\\copy",
+      "find": [
+        "\\copy"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "psql للسكربتات",
+      "find": [
+        "psql -tac"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "createdb و dropdb",
+      "find": [
+        "createdb"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "transactions",
+      "find": [
+        "begin و rollback"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "يوزرز وصلاحيات",
+      "find": [
+        "يوزرز"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "connection string",
+      "find": [
+        "connection string"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": ".pgpass",
+      "find": [
+        ".pgpass"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "الوصول من بره",
+      "find": [
+        "الوصول من بره"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "الجلسات والأقفال",
+      "find": [
+        "الأقفال"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "حجم الداتا",
+      "find": [
+        "الحجم"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "indexes",
+      "find": [
+        "indexes"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "EXPLAIN ANALYZE",
+      "find": [
+        "explain analyze"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "VACUUM",
+      "find": [
+        "vacuum"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "postgresql.conf و الإعدادات",
+      "find": [
+        "الإعدادات"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "init scripts في Docker",
+      "find": [
+        "initdb.d"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "pg_dump",
+      "find": [
+        "pg_dump"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "restore",
+      "find": [
+        "ترجيع الباك أب"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "migrations",
+      "find": [
+        "سكربت migrations",
+        "prisma migrate"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "تغييرات آمنة في الإنتاج",
+      "find": [
+        "تغييرات آمنة"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "connection pooling و PgBouncer",
+      "find": [
+        "pgbouncer",
+        "connection pooling"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "الاستعلامات البطيئة",
+      "find": [
+        "الاستعلامات البطيئة",
+        "pg_stat_statements"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "باك أب مجدول",
+      "find": [
+        "الباك أب المجدول"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "الأمان و SSL",
+      "find": [
+        "الأمان",
+        "ssl"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "Row Level Security",
+      "find": [
+        "row level security"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "ترقية الـ major version",
+      "find": [
+        "ترقية postgres"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "النقل بين سيرفرين",
+      "find": [
+        "النقل بين سيرفرين"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "PITR و WAL",
+      "find": [
+        "pitr",
+        "wal"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "replication",
+      "find": [
+        "replication"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "partitioning",
+      "find": [
+        "partitioning"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "pgvector",
+      "find": [
+        "pgvector"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "GIN و JSONB indexes",
+      "find": [
+        "gin"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "pgbench",
+      "find": [
+        "pgbench"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Supabase",
+      "find": [
+        "supabase"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "pgcli",
+      "find": [
+        "pgcli"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "autovacuum و bloat",
+      "find": [
+        "autovacuum",
+        "bloat"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "pg_stat_activity وقتل query",
+      "find": [
+        "pg_stat_activity",
+        "pg_terminate",
+        "pg_cancel"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "monitoring",
+      "find": [
+        "pg_stat",
+        "monitoring"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "least privilege و GRANT",
+      "find": [
+        "least privilege",
+        "grant"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "extensions",
+      "find": [
+        "extension"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "planner و seq scan",
+      "find": [
+        "planner",
+        "seq scan",
+        "خطة التنفيذ"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "deadlocks",
+      "find": [
+        "deadlock"
+      ],
+      "lvl": "متقدم"
+    }
+  ],
+  "mongo": [
+    {
+      "topic": "mongosh",
+      "find": [
+        "mongosh"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "show dbs و use",
+      "find": [
+        "show dbs"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "insert و find",
+      "find": [
+        "insertone"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "update",
+      "find": [
+        "updateone"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "delete",
+      "find": [
+        "deleteone"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "connection string",
+      "find": [
+        "mongodb+srv"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Mongo في Docker",
+      "find": [
+        "mongo_initdb"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "healthcheck",
+      "find": [
+        "healthcheck"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "يوزرز و auth",
+      "find": [
+        "createuser"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "indexes",
+      "find": [
+        "createindex"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "explain",
+      "find": [
+        "explain"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "embed ولا reference",
+      "find": [
+        "embed ولا reference"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "حد 16MB و bucket",
+      "find": [
+        "16mb"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "compound index و ESR",
+      "find": [
+        "esr"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "aggregation",
+      "find": [
+        "aggregate و $group"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "$lookup",
+      "find": [
+        "$lookup"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "populate و N+1",
+      "find": [
+        "populate"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "transactions",
+      "find": [
+        "transactions"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "schema validation",
+      "find": [
+        "$jsonschema"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "mongodump",
+      "find": [
+        "mongodump"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "mongorestore",
+      "find": [
+        "mongorestore"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "باك أب مجدول",
+      "find": [
+        "باك أب mongo مجدول"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "نقل الداتا",
+      "find": [
+        "نقل mongo"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "$facet و $bucket",
+      "find": [
+        "$facet"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "window functions",
+      "find": [
+        "$setwindowfields"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "$merge و $out",
+      "find": [
+        "$merge"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "أنماط التصميم (attribute/computed)",
+      "find": [
+        "attribute",
+        "computed"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "schema migration",
+      "find": [
+        "schemaversion"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "replica set",
+      "find": [
+        "replica set"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "change streams",
+      "find": [
+        "change streams"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "TTL index",
+      "find": [
+        "ttl"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "partial و sparse indexes",
+      "find": [
+        "partial"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "text index",
+      "find": [
+        "text index",
+        "$text"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "NoSQL injection",
+      "find": [
+        "nosql injection"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "sharding",
+      "find": [
+        "sharding"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "Atlas Search",
+      "find": [
+        "atlas search"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "time series",
+      "find": [
+        "time series",
+        "timeseries"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "pagination في Mongo",
+      "find": [
+        "pagination",
+        "skip و limit"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "write concern و read concern",
+      "find": [
+        "writeconcern",
+        "write concern",
+        "readconcern"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "monitoring (currentOp و profiler)",
+      "find": [
+        "currentop",
+        "profiler",
+        "serverstatus"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "تأمين Mongo (bind و auth)",
+      "find": [
+        "bindip",
+        "bind_ip",
+        "تأمين"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "upsert و bulkWrite",
+      "find": [
+        "upsert",
+        "bulkwrite"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "array operators",
+      "find": [
+        "$push",
+        "$pull",
+        "$elemmatch"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Mongoose في Node",
+      "find": [
+        "mongoose"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "capped collections",
+      "find": [
+        "capped"
+      ],
+      "lvl": "متقدم"
+    }
+  ],
+  "data": [
+    {
+      "topic": "مقدمة SQL",
+      "find": [
+        "مقدمة قواعد البيانات"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "CREATE TABLE",
+      "find": [
+        "create table"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "أنواع الأعمدة",
+      "find": [
+        "أنواع الأعمدة"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "numeric للفلوس",
+      "find": [
+        "numeric للفلوس"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "timestamptz والمناطق الزمنية",
+      "find": [
+        "timestamptz"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "PRIMARY KEY",
+      "find": [
+        "primary key"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "SELECT",
+      "find": [
+        "select"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "WHERE",
+      "find": [
+        "where"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "ORDER BY و LIMIT",
+      "find": [
+        "order by"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "LIKE",
+      "find": [
+        "like"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "NULL",
+      "find": [
+        "null"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "INSERT",
+      "find": [
+        "insert"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "UPDATE",
+      "find": [
+        "update"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "DELETE",
+      "find": [
+        "delete"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "count و aggregates",
+      "find": [
+        "count و sum"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "GROUP BY",
+      "find": [
+        "group by"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "HAVING",
+      "find": [
+        "having"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "CASE WHEN",
+      "find": [
+        "case when"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "دوال التاريخ",
+      "find": [
+        "دوال التاريخ"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "دوال النصوص",
+      "find": [
+        "دوال النصوص"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "علاقات one-to-many",
+      "find": [
+        "one-to-many"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "many-to-many",
+      "find": [
+        "many-to-many"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "ON DELETE",
+      "find": [
+        "on delete"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "INNER JOIN",
+      "find": [
+        "inner join"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "LEFT JOIN",
+      "find": [
+        "left join"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "EXISTS و subqueries",
+      "find": [
+        "exists"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "CTE",
+      "find": [
+        "cte"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "constraints",
+      "find": [
+        "constraints"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "normalization",
+      "find": [
+        "normalization"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "jsonb",
+      "find": [
+        "jsonb"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "B-tree index",
+      "find": [
+        "b-tree"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "composite index",
+      "find": [
+        "composite index"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "transactions",
+      "find": [
+        "transaction"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "race conditions و atomic UPDATE",
+      "find": [
+        "atomic update"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "SELECT FOR UPDATE",
+      "find": [
+        "for update"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "isolation levels",
+      "find": [
+        "isolation levels"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "upsert",
+      "find": [
+        "on conflict"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "window functions",
+      "find": [
+        "window functions"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "keyset pagination",
+      "find": [
+        "keyset"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "UNION",
+      "find": [
+        "union"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "json_agg",
+      "find": [
+        "json_agg"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "VIEW",
+      "find": [
+        "view و materialized"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "triggers",
+      "find": [
+        "trigger"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "functions",
+      "find": [
+        "create function"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "full-text search",
+      "find": [
+        "full-text"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "البحث بالعربي",
+      "find": [
+        "بالعربي"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "SQL injection و parameters",
+      "find": [
+        "sql injection",
+        "parameterized"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "soft delete",
+      "find": [
+        "soft delete"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "audit log",
+      "find": [
+        "audit log"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "COPY",
+      "find": [
+        "copy"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Prisma",
+      "find": [
+        "prisma"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Supabase و RLS",
+      "find": [
+        "policies",
+        "supabase"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Drizzle و seed",
+      "find": [
+        "drizzle",
+        "seed"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "EXPLAIN وقراية الخطة",
+      "find": [
+        "explain"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "migrations كمنهج",
+      "find": [
+        "prisma migrate",
+        "flyway",
+        "knex",
+        "schema migration"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "تصميم schema لمتجر",
+      "find": [
+        "متجر"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "حجز من غير double booking",
+      "find": [
+        "double booking",
+        "exclusion"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "ACID و CAP",
+      "find": [
+        "acid"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "connection pooling",
+      "find": [
+        "pooling"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "باك أب",
+      "find": [
+        "backup",
+        "باك أب"
+      ],
+      "lvl": "إنتاج"
+    }
+  ],
+  "php": [
+    {
+      "topic": "php -S و تشغيل ملف",
+      "find": [
+        "php -s"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "صيغة PHP و echo",
+      "find": [
+        "<?php"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "var_dump",
+      "find": [
+        "var_dump"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "strings و heredoc",
+      "find": [
+        "heredoc",
+        "interpolation"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "arrays",
+      "find": [
+        "array"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "array_map و filter",
+      "find": [
+        "array_map"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "foreach",
+      "find": [
+        "foreach"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "functions",
+      "find": [
+        "function"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "null coalescing",
+      "find": [
+        "??"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "include و require",
+      "find": [
+        "require_once"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "GET و POST",
+      "find": [
+        "$_get"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "htmlspecialchars و XSS",
+      "find": [
+        "htmlspecialchars"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "POST-Redirect-GET",
+      "find": [
+        "redirect"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "PDO",
+      "find": [
+        "new pdo"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "prepared statements",
+      "find": [
+        "prepare"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "fetch",
+      "find": [
+        "fetchall"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "transactions",
+      "find": [
+        "begintransaction"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "sessions",
+      "find": [
+        "session_start"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "password_hash",
+      "find": [
+        "password_hash"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "session fixation",
+      "find": [
+        "session_regenerate_id"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "CSRF",
+      "find": [
+        "csrf"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "رفع ملفات",
+      "find": [
+        "move_uploaded_file"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "إيميل",
+      "find": [
+        "phpmailer"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "json API بـ PHP عادي",
+      "find": [
+        "json_encode"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "config",
+      "find": [
+        "return config"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "try و catch",
+      "find": [
+        "try / catch"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "display_errors و error log",
+      "find": [
+        "display_errors"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "classes",
+      "find": [
+        "class"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "interfaces و abstract",
+      "find": [
+        "interface"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "traits",
+      "find": [
+        "trait"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "enums",
+      "find": [
+        "enum"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Composer",
+      "find": [
+        "composer require"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "PSR-4 autoload",
+      "find": [
+        "psr-4"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "front controller",
+      "find": [
+        "front controller"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "MVC",
+      "find": [
+        "mvc"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "security checklist",
+      "find": [
+        "security checklist"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "OPcache",
+      "find": [
+        "opcache"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "Laravel start",
+      "find": [
+        "laravel new"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "routing في Laravel",
+      "find": [
+        "route::resource"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Eloquent relations",
+      "find": [
+        "hasmany"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "N+1 في Laravel",
+      "find": [
+        "with()"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "mass assignment",
+      "find": [
+        "$fillable"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "migrations Laravel",
+      "find": [
+        "make:migration"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "factories و seeders",
+      "find": [
+        "factories"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "form requests (validation)",
+      "find": [
+        "make:request"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Blade",
+      "find": [
+        "blade"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "auth و policies",
+      "find": [
+        "policy"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Sanctum",
+      "find": [
+        "sanctum"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "API Resources",
+      "find": [
+        "api resources"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "queues",
+      "find": [
+        "queue:work"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "scheduler و mail و storage",
+      "find": [
+        "schedule"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Pest",
+      "find": [
+        "pest"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "PHPUnit",
+      "find": [
+        "phpunit"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Larastan و Pint",
+      "find": [
+        "larastan"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "نشر Laravel",
+      "find": [
+        "laravel على vps"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "Laravel cache و Redis",
+      "find": [
+        "cache::",
+        "laravel cache",
+        "redis في laravel"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Laravel logging",
+      "find": [
+        "laravel logging",
+        "log::"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "broadcasting و Reverb",
+      "find": [
+        "reverb",
+        "broadcasting"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "PHP 8 features",
+      "find": [
+        "php 8"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "login و CRUD بـ PHP عادي",
+      "find": [
+        "مشروع — login",
+        "مشروع: login"
+      ],
+      "lvl": "يومي"
+    }
+  ],
+  "go": [
+    {
+      "topic": "go version و التسطيب",
+      "find": [
+        "go version"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "go mod",
+      "find": [
+        "go mod init"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "go run و build",
+      "find": [
+        "go run"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "go fmt و vet",
+      "find": [
+        "go fmt"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "var و :=",
+      "find": [
+        "var و :="
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "const و iota",
+      "find": [
+        "iota"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "string و rune",
+      "find": [
+        "rune"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "fmt و Printf",
+      "find": [
+        "printf"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "if و for",
+      "find": [
+        "if و for"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "switch",
+      "find": [
+        "switch"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "الدوال و multiple returns",
+      "find": [
+        "الدوال"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "closures",
+      "find": [
+        "closures"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "slices",
+      "find": [
+        "slice"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "maps",
+      "find": [
+        "maps"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "pointers",
+      "find": [
+        "pointers"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "structs و methods",
+      "find": [
+        "structs"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "embedding",
+      "find": [
+        "embedding"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "error handling",
+      "find": [
+        "if err != nil"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "errors.Is و As",
+      "find": [
+        "errors.is"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "defer و panic",
+      "find": [
+        "defer"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "packages",
+      "find": [
+        "packages"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "interfaces",
+      "find": [
+        "interfaces"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "io.Reader و Writer",
+      "find": [
+        "io.reader"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "generics",
+      "find": [
+        "generics"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "nil interface",
+      "find": [
+        "nil interface"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "goroutines",
+      "find": [
+        "goroutines"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "channels",
+      "find": [
+        "channels"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "select",
+      "find": [
+        "select"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "WaitGroup و Mutex",
+      "find": [
+        "waitgroup"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "context",
+      "find": [
+        "context"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "net/http server",
+      "find": [
+        "net/http"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "ServeMux و PathValue",
+      "find": [
+        "servemux"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "encoding/json",
+      "find": [
+        "encoding/json"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "middleware",
+      "find": [
+        "middleware"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "http.Client و timeout",
+      "find": [
+        "http.client"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "database/sql و pgx",
+      "find": [
+        "database/sql"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "هيكل المشروع و env",
+      "find": [
+        "هيكل المشروع"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "go test",
+      "find": [
+        "go test"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "httptest",
+      "find": [
+        "httptest"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "benchmarks",
+      "find": [
+        "-bench"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "fuzzing",
+      "find": [
+        "-fuzz"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "pprof",
+      "find": [
+        "pprof"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "slog",
+      "find": [
+        "slog"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "graceful shutdown",
+      "find": [
+        "shutdown"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "Docker لتطبيق Go",
+      "find": [
+        "scratch"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "cross compile",
+      "find": [
+        "goos"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "worker pool و errgroup",
+      "find": [
+        "errgroup"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Gin و Echo و chi",
+      "find": [
+        "gin"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "JWT و bcrypt",
+      "find": [
+        "jwt",
+        "bcrypt"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "OpenAPI",
+      "find": [
+        "openapi",
+        "swag"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "golang-migrate",
+      "find": [
+        "migrate"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "gRPC",
+      "find": [
+        "grpc"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "WebSocket",
+      "find": [
+        "websocket"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "rate limit",
+      "find": [
+        "rate limit",
+        "rate.limiter"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "testify و testcontainers",
+      "find": [
+        "testify",
+        "testcontainers"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "table-driven tests",
+      "find": [
+        "table-driven",
+        "table driven"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "race detector",
+      "find": [
+        "-race",
+        "race detector"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "golangci-lint",
+      "find": [
+        "golangci"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "config و secrets",
+      "find": [
+        "secrets"
+      ],
+      "lvl": "إنتاج"
+    }
+  ],
+  "spring": [
+    {
+      "topic": "JDK و JVM",
+      "find": [
+        "jdk و jvm"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "primitives و wrappers",
+      "find": [
+        "primitives"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "String",
+      "find": [
+        "string"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "classes",
+      "find": [
+        "class و constructor"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "interfaces",
+      "find": [
+        "interfaces"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "records",
+      "find": [
+        "records"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "enum",
+      "find": [
+        "enum"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "sealed و pattern matching",
+      "find": [
+        "sealed"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Collections",
+      "find": [
+        "list و map"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "generics",
+      "find": [
+        "generics"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "lambdas",
+      "find": [
+        "lambdas"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "streams",
+      "find": [
+        "streams"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Optional",
+      "find": [
+        "optional"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "exceptions",
+      "find": [
+        "checked"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Maven",
+      "find": [
+        "pom.xml"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Gradle",
+      "find": [
+        "gradle"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Spring Initializr",
+      "find": [
+        "start.spring.io"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "DI و beans",
+      "find": [
+        "beans"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "@RestController",
+      "find": [
+        "@restcontroller"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "ResponseEntity",
+      "find": [
+        "responseentity"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Bean Validation",
+      "find": [
+        "validation"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "@RestControllerAdvice",
+      "find": [
+        "restcontrolleradvice"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "application.yaml",
+      "find": [
+        "application.yaml"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "profiles",
+      "find": [
+        "profiles"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "JPA entities",
+      "find": [
+        "@entity"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "JpaRepository",
+      "find": [
+        "jparepository"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "العلاقات",
+      "find": [
+        "العلاقات"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "N+1",
+      "find": [
+        "n+1"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "@Transactional",
+      "find": [
+        "@transactional"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Flyway",
+      "find": [
+        "flyway"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Spring Security",
+      "find": [
+        "securityfilterchain"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "JWT resource server",
+      "find": [
+        "jwt"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "@PreAuthorize",
+      "find": [
+        "@preauthorize"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "CORS",
+      "find": [
+        "cors"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "JUnit و Mockito",
+      "find": [
+        "junit"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "@WebMvcTest",
+      "find": [
+        "@webmvctest"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "@DataJpaTest",
+      "find": [
+        "@datajpatest"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Testcontainers",
+      "find": [
+        "testcontainers"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Actuator",
+      "find": [
+        "actuator"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "Docker",
+      "find": [
+        "dockerfile",
+        "jib",
+        "buildpacks"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "virtual threads",
+      "find": [
+        "virtual threads"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "springdoc / OpenAPI",
+      "find": [
+        "springdoc",
+        "openapi"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "رفع ملفات",
+      "find": [
+        "multipartfile",
+        "رفع ملفات"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "@Scheduled و @Async",
+      "find": [
+        "@scheduled",
+        "@async"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "@Cacheable",
+      "find": [
+        "@cacheable"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "RestClient و resilience4j",
+      "find": [
+        "restclient",
+        "resilience4j"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "@Version (optimistic lock)",
+      "find": [
+        "@version"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Micrometer",
+      "find": [
+        "micrometer"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "Logging (logback)",
+      "find": [
+        "logback",
+        "slf4j"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "Kafka مع Spring",
+      "find": [
+        "kafka"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "JVM tuning و GC",
+      "find": [
+        "gc"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "pagination (Pageable)",
+      "find": [
+        "pageable"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "DTO و MapStruct",
+      "find": [
+        "mapstruct"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "bean scopes",
+      "find": [
+        "bean scopes"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "AOP",
+      "find": [
+        "aop",
+        "@aspect"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "secrets و config خارجي",
+      "find": [
+        "secrets",
+        "configurationproperties"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "graceful shutdown",
+      "find": [
+        "graceful"
+      ],
+      "lvl": "إنتاج"
+    }
+  ],
+  "dotnet": [
+    {
+      "topic": "dotnet CLI",
+      "find": [
+        "dotnet --info"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "dotnet new",
+      "find": [
+        "dotnet new console"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "solution و NuGet",
+      "find": [
+        "sln و nuget"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "الأنواع",
+      "find": [
+        "الأنواع الأساسية"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "value و reference types",
+      "find": [
+        "value و reference"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "nullable reference types",
+      "find": [
+        "nullable"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "class و properties",
+      "find": [
+        "class و properties"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "record",
+      "find": [
+        "record"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "interface",
+      "find": [
+        "interface"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "collections",
+      "find": [
+        "list و dictionary"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "generics",
+      "find": [
+        "generics"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "LINQ",
+      "find": [
+        "linq"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "yield",
+      "find": [
+        "yield"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "lambdas",
+      "find": [
+        "func و action"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "extension methods",
+      "find": [
+        "extension methods"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "pattern matching",
+      "find": [
+        "switch expression"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "exceptions و using",
+      "find": [
+        "exceptions"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "async و Task",
+      "find": [
+        "task و async"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "CancellationToken",
+      "find": [
+        "cancellationtoken"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Web API",
+      "find": [
+        "dotnet new webapi"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Minimal API",
+      "find": [
+        "mapget"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "controllers",
+      "find": [
+        "controllers"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "رفع ملفات (IFormFile)",
+      "find": [
+        "iformfile",
+        "رفع ملفات"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "validation",
+      "find": [
+        "validation"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "ProblemDetails",
+      "find": [
+        "problemdetails"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "DI",
+      "find": [
+        "di و lifetimes"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "middleware",
+      "find": [
+        "middleware"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "configuration و options",
+      "find": [
+        "configuration و options"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "ILogger",
+      "find": [
+        "ilogger"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "CORS",
+      "find": [
+        "cors"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "DbContext",
+      "find": [
+        "dbcontext"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "EF migrations",
+      "find": [
+        "migrations"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "العلاقات في EF",
+      "find": [
+        "العلاقات"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "N+1 و Include",
+      "find": [
+        "include"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "AsNoTracking",
+      "find": [
+        "asnotracking"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "EF transactions",
+      "find": [
+        "transactions"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "concurrency token",
+      "find": [
+        "concurrency token",
+        "rowversion"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "JWT",
+      "find": [
+        "jwt"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "authorization policies",
+      "find": [
+        "policies"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Identity",
+      "find": [
+        "identity"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "xUnit",
+      "find": [
+        "xunit"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "mocking",
+      "find": [
+        "nsubstitute",
+        "moq"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "integration tests",
+      "find": [
+        "webapplicationfactory"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "BackgroundService",
+      "find": [
+        "backgroundservice"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "caching",
+      "find": [
+        "hybridcache",
+        "output caching"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "IHttpClientFactory",
+      "find": [
+        "ihttpclientfactory"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Polly و resilience",
+      "find": [
+        "polly",
+        "resilience"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "health checks",
+      "find": [
+        "health checks",
+        "healthchecks"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "SignalR",
+      "find": [
+        "signalr"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "dotnet publish",
+      "find": [
+        "dotnet publish"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "Docker",
+      "find": [
+        "dockerfile"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "reverse proxy",
+      "find": [
+        "kestrel ورا nginx"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "OpenAPI",
+      "find": [
+        "openapi"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "OpenTelemetry و Serilog",
+      "find": [
+        "opentelemetry",
+        "serilog"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "rate limiting",
+      "find": [
+        "rate limit"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "secrets (user-secrets)",
+      "find": [
+        "user-secrets",
+        "secrets"
+      ],
+      "lvl": "إنتاج"
+    }
+  ],
+  "kotlin": [
+    {
+      "topic": "تسطيب Kotlin",
+      "find": [
+        "تسطيب kotlin"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "val و var",
+      "find": [
+        "val و var"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "string templates",
+      "find": [
+        "string templates"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "if و when",
+      "find": [
+        "if و when"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "loops",
+      "find": [
+        "ranges"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "الدوال",
+      "find": [
+        "الدوال"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "null safety",
+      "find": [
+        "null safety"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "collections",
+      "find": [
+        "list و map"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "map و filter",
+      "find": [
+        "map و filter"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "classes",
+      "find": [
+        "class"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "data class",
+      "find": [
+        "data class"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "object و companion",
+      "find": [
+        "companion"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "sealed",
+      "find": [
+        "sealed"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "interfaces",
+      "find": [
+        "interface"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "extension functions",
+      "find": [
+        "extension"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "scope functions",
+      "find": [
+        "scope functions"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Result و exceptions",
+      "find": [
+        "result"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "مشروع Android",
+      "find": [
+        "مشروع android"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Gradle و version catalog",
+      "find": [
+        "libs.versions"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "AndroidManifest",
+      "find": [
+        "androidmanifest"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Activity lifecycle",
+      "find": [
+        "lifecycle"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Compose أساسيات",
+      "find": [
+        "jetpack compose"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Column و Row",
+      "find": [
+        "column و row"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Modifiers",
+      "find": [
+        "modifier"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "LazyColumn",
+      "find": [
+        "lazycolumn"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Material 3",
+      "find": [
+        "material 3"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "state",
+      "find": [
+        "remember"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "state hoisting",
+      "find": [
+        "hoisting"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Navigation",
+      "find": [
+        "navigation"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "ViewModel",
+      "find": [
+        "viewmodel"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "coroutines",
+      "find": [
+        "coroutines"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Flow",
+      "find": [
+        "flow"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Retrofit",
+      "find": [
+        "retrofit"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "loading و error",
+      "find": [
+        "loading و error"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Coil",
+      "find": [
+        "coil"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "DataStore",
+      "find": [
+        "datastore"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Room",
+      "find": [
+        "room"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "permissions",
+      "find": [
+        "permissions"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Hilt",
+      "find": [
+        "hilt"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "المعمارية",
+      "find": [
+        "المعمارية"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "unit tests",
+      "find": [
+        "unit tests"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Compose UI tests",
+      "find": [
+        "compose ui tests"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Logcat",
+      "find": [
+        "logcat"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "الأداء",
+      "find": [
+        "الأداء"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "signing و variants",
+      "find": [
+        "signing"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "AAB",
+      "find": [
+        "aab"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "R8",
+      "find": [
+        "r8"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "Play Console",
+      "find": [
+        "play console"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "Kotlin Multiplatform",
+      "find": [
+        "multiplatform"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Ktor server",
+      "find": [
+        "ktor"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "WorkManager",
+      "find": [
+        "workmanager"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "FCM و الإشعارات",
+      "find": [
+        "fcm",
+        "notification",
+        "إشعارات"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "offline-first",
+      "find": [
+        "offline-first"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "إدارة الأسرار (local.properties)",
+      "find": [
+        "local.properties",
+        "secrets"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "Crashlytics و monitoring",
+      "find": [
+        "crashlytics"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "Java interop",
+      "find": [
+        "java و kotlin"
+      ],
+      "lvl": "يومي"
+    }
+  ],
+  "swift": [
+    {
+      "topic": "تجهيز Swift",
+      "find": [
+        "تجهيز swift"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "الأنواع",
+      "find": [
+        "الأنواع واستنتاجها"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "if و guard",
+      "find": [
+        "if و guard"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "switch",
+      "find": [
+        "switch"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "loops",
+      "find": [
+        "for و while"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "الدوال",
+      "find": [
+        "argument labels"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Optionals",
+      "find": [
+        "optionals"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "optional chaining",
+      "find": [
+        "optional chaining"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "collections",
+      "find": [
+        "array و dictionary"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "map و filter",
+      "find": [
+        "map و filter"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "closures",
+      "find": [
+        "closures"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "struct و class",
+      "find": [
+        "structs"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "properties",
+      "find": [
+        "properties"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "enums",
+      "find": [
+        "enums"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "protocols",
+      "find": [
+        "protocols"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "generics",
+      "find": [
+        "generics"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "errors",
+      "find": [
+        "throws"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "access control",
+      "find": [
+        "access control"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "ARC",
+      "find": [
+        "arc"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "مشروع iOS",
+      "find": [
+        "مشروع ios"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "SwiftUI",
+      "find": [
+        "مقدمة swiftui"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "stacks",
+      "find": [
+        "vstack"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "modifiers",
+      "find": [
+        "modifiers"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "List",
+      "find": [
+        "list و foreach"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "State و Binding",
+      "find": [
+        "state و binding"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Observable",
+      "find": [
+        "@observable"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "NavigationStack",
+      "find": [
+        "navigationstack"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "sheet و alert",
+      "find": [
+        "sheet"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Form",
+      "find": [
+        "form و textfield"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "async و await",
+      "find": [
+        "async و await"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "Codable",
+      "find": [
+        "codable"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "URLSession",
+      "find": [
+        "urlsession"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "AsyncImage",
+      "find": [
+        "asyncimage"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "UserDefaults",
+      "find": [
+        "userdefaults"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "SwiftData",
+      "find": [
+        "swiftdata"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "MVVM",
+      "find": [
+        "mvvm"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "actors",
+      "find": [
+        "actors"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Swift 6 concurrency",
+      "find": [
+        "swift 6"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "SwiftPM",
+      "find": [
+        "swift package"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Swift Testing",
+      "find": [
+        "swift testing"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Instruments",
+      "find": [
+        "instruments"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "signing",
+      "find": [
+        "provisioning"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "TestFlight",
+      "find": [
+        "testflight"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "App Store review",
+      "find": [
+        "مراجعة app store"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "Keychain",
+      "find": [
+        "keychain"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "notifications",
+      "find": [
+        "notifications",
+        "إشعارات"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "WidgetKit",
+      "find": [
+        "widgetkit"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "Vapor",
+      "find": [
+        "vapor"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "animations",
+      "find": [
+        "animation"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Combine أو AsyncStream",
+      "find": [
+        "combine",
+        "asyncstream"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "UI testing",
+      "find": [
+        "xcuitest",
+        "ui testing"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "deep links",
+      "find": [
+        "deep link"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "accessibility",
+      "find": [
+        "accessibility",
+        "voiceover"
+      ],
+      "lvl": "إنتاج"
+    }
+  ],
+  "cpp": [
+    {
+      "topic": "تسطيب compiler",
+      "find": [
+        "تسطيب compiler"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "compile و link",
+      "find": [
+        "compile و link"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "main و exit code",
+      "find": [
+        "exit code"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "المتغيرات والأنواع",
+      "find": [
+        "المتغيرات والأنواع"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "printf و scanf",
+      "find": [
+        "printf"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "العمليات",
+      "find": [
+        "العمليات"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "bitwise operations",
+      "find": [
+        "bitwise"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "if و loops",
+      "find": [
+        "if و switch"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "الدوال",
+      "find": [
+        "prototypes"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "arrays",
+      "find": [
+        "arrays"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "strings",
+      "find": [
+        "strings"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "pointers",
+      "find": [
+        "pointers"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "malloc و free",
+      "find": [
+        "malloc"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "struct",
+      "find": [
+        "struct"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "enum و const",
+      "find": [
+        "enum"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "alignment و padding",
+      "find": [
+        "alignment",
+        "padding"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "file I/O",
+      "find": [
+        "file i/o"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "make",
+      "find": [
+        "و make",
+        "makefile"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "undefined behavior",
+      "find": [
+        "undefined behavior"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "gdb",
+      "find": [
+        "gdb"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "references",
+      "find": [
+        "references"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "overloading",
+      "find": [
+        "overloading"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "classes",
+      "find": [
+        "classes"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "const",
+      "find": [
+        "const"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "RAII",
+      "find": [
+        "raii"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "rule of 0/3/5",
+      "find": [
+        "rule of"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "operator overloading",
+      "find": [
+        "operator overloading"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "virtual",
+      "find": [
+        "virtual"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "vector",
+      "find": [
+        "std::vector"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "map",
+      "find": [
+        "unordered_map"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "iterators",
+      "find": [
+        "iterators"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "algorithms",
+      "find": [
+        "algorithms"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "lambdas",
+      "find": [
+        "lambdas"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "templates",
+      "find": [
+        "templates"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "exceptions",
+      "find": [
+        "exceptions"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "optional و variant",
+      "find": [
+        "optional"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "CMake",
+      "find": [
+        "cmake"
+      ],
+      "lvl": "أساسي"
+    },
+    {
+      "topic": "move semantics",
+      "find": [
+        "move"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "smart pointers",
+      "find": [
+        "smart pointers"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "constexpr",
+      "find": [
+        "constexpr"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "string_view و span",
+      "find": [
+        "string_view"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "cache",
+      "find": [
+        "cache"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "threads و mutex",
+      "find": [
+        "mutex"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "atomic",
+      "find": [
+        "atomic"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "sanitizers",
+      "find": [
+        "sanitizers"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "valgrind",
+      "find": [
+        "valgrind"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "unit testing",
+      "find": [
+        "unit testing"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "vcpkg و Conan",
+      "find": [
+        "vcpkg"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "sockets",
+      "find": [
+        "socket"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "std::format",
+      "find": [
+        "std::format"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "clang-tidy",
+      "find": [
+        "clang-tidy"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "coroutines",
+      "find": [
+        "coroutines"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "profiling (perf)",
+      "find": [
+        "perf",
+        "profil"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "CI",
+      "find": [
+        "github actions"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "warnings و cppcheck",
+      "find": [
+        "-wall",
+        "cppcheck"
+      ],
+      "lvl": "يومي"
+    }
+  ]
 }
