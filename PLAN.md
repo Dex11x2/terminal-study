@@ -638,6 +638,15 @@
 
 - [x] مشروع ٧ (AI): الحد اليومي count-then-insert مش atomic نظريًا (١٠ طلبات متوازية معدّتوش في ٣ جولات). ممكن يتحول لـ advisory lock زي الـ order. (اتصلح: `pg_advisory_xact_lock` في transaction؛ ٢٠ طلب متوازي من ٢٥: القديم وصل ٤٥، و INSERT…SELECT الشرطي ٣٥–٣٩، والقفل ٣٠ بالظبط في ٥ جولات)
 
+### ٤د. أوامر من الشات (لسه متضافتش)
+
+بطلبك (٣١ أكتوبر): أي أمر Claude بيستخدمه في أي شات (تحديث ريبو، سحب تعديلات، تشخيص) لازم يتعلّم هنا. القاعدة في `C:\Users\7ossa\.claude\CLAUDE.md`. كل موقف يتعاد في معمل بأسامي مخترعة ويتجرّب على ويندوز و Ubuntu.
+
+- [ ] **فولدر نازل ZIP من GitHub → ريبو git من غير ما تخسر حاجة** (تاب git): `gh repo list` و `gh api user --jq .login` (مين أنا ومين الريبو)، و `gh repo clone` في فولدر مؤقت، و `git diff --no-index --stat <فولدر> <فولدر>`، و `git --git-dir=<clone>/.git --work-tree=<فولدرك> diff --stat <commit>` على كل commit عشان تعرف النسخة بتاعتك أنهي commit، ونقل `.git`، و `git reset <commit>` (من غير `--hard`: بيغيّر الـ index بس)، و `git merge --ff-only origin/main`، وليه `reset --hard` غلط هنا.
+- [ ] **ملف «M» في `git status` والـ diff فاضي** (تاب git، ويربط بـ `.gitattributes`): `core.autocrlf=true` وملفات LF جاية من ZIP. التشخيص: `git diff --ignore-cr-at-eol --stat`، و `git hash-object <ملف>` قصاد `git rev-parse HEAD:<ملف>`، و `git ls-files --eol`، و `git update-index -q --refresh`، والحل الآمن `git checkout -- <ملف>` بعد ما تتأكد إن الهاش واحد.
+- [ ] **إيه اللي نزل في الـ pull** (تاب git، درس `git log`): `git log --format="%h %ad %s" --date=short A..HEAD`، و `git rev-list --count A..HEAD`، و `git status -sb` (`## main...origin/main`).
+- [ ] فخ في PowerShell: `foreach (...) { } | Select-Object` = «An empty pipe element is not allowed» (الـ foreach statement مش بيتعمله pipe؛ لفّه في `$( )` أو استخدم `ForEach-Object`). تاب ps.
+
 ### ٥. أسئلة مفتوحة
 
 - [ ] `df -h ~` فشل عند صاحب المشروع. ده اتجرّب في Git Bash و PowerShell و CMD على نفس الجهاز واشتغل. محتاجين نعرف اتشغّل فين بالظبط.
