@@ -642,6 +642,14 @@
 
 بطلبك (٣١ أكتوبر): أي أمر Claude بيستخدمه في أي شات (تحديث ريبو، سحب تعديلات، تشخيص) لازم يتعلّم هنا. القاعدة في `C:\Users\7ossa\.claude\CLAUDE.md`. كل موقف يتعاد في معمل بأسامي مخترعة ويتجرّب على ويندوز و Ubuntu.
 
+وبعدها في نفس اليوم وسّعت الطلب: مش الأوامر بس. **كل مشكلة اتحلّت تبقى حالة كاملة**: العَرَض، وإزاي ضيّقناها (ترتيب الفحوصات وليه)، والسبب، والحل والبدايل اللي اترفضت وليه، وإزاي تتأكد إنها اتصلّحت، وإزاي متتكررش. وكمان الطرق والفخاخ اللي ظهرت. ده بيتطبّق على **الشاتات القديمة كمان** (الـ transcripts في `C:\Users\7ossa\.claude\projects\*\*.jsonl`)، مش الجديدة بس. والدروس بتعلّم الطريقة بداتا مخترعة، مش بأسامي مواقعنا ولا سيرفراتنا.
+
+**الدفعة الجاية (متأجلة عشان الكوتا، ٣١ أكتوبر):**
+
+- البنود الجاية تتكتب دروس في تاب `diag`. ممكن يبقى قسم جديد «قضية كاملة: الدخول مش شغال» جنب «502 Bad Gateway» و«بعد reboot حاجات مقامتش»، ومتتكررش اللي فيهم.
+- المعمل جاهز: image اسمها `difflab-systemd` (Ubuntu 24.04 + systemd + nodejs + npm + pm2 7 + nginx)، والـ Dockerfile في scratchpad الشات. التشغيل: `docker run -d --privileged --cgroupns=host -v /sys/fs/cgroup:/sys/fs/cgroup:rw --tmpfs /run --tmpfs /run/lock difflab-systemd`.
+- بعدها: مراجعة الشاتات القديمة وتطليع اللي ماوصلش هنا.
+
 - [ ] **فولدر نازل ZIP من GitHub → ريبو git من غير ما تخسر حاجة** (تاب git): `gh repo list` و `gh api user --jq .login` (مين أنا ومين الريبو)، و `gh repo clone` في فولدر مؤقت، و `git diff --no-index --stat <فولدر> <فولدر>`، و `git --git-dir=<clone>/.git --work-tree=<فولدرك> diff --stat <commit>` على كل commit عشان تعرف النسخة بتاعتك أنهي commit، ونقل `.git`، و `git reset <commit>` (من غير `--hard`: بيغيّر الـ index بس)، و `git merge --ff-only origin/main`، وليه `reset --hard` غلط هنا.
 - [ ] **ملف «M» في `git status` والـ diff فاضي** (تاب git، ويربط بـ `.gitattributes`): `core.autocrlf=true` وملفات LF جاية من ZIP. التشخيص: `git diff --ignore-cr-at-eol --stat`، و `git hash-object <ملف>` قصاد `git rev-parse HEAD:<ملف>`، و `git ls-files --eol`، و `git update-index -q --refresh`، والحل الآمن `git checkout -- <ملف>` بعد ما تتأكد إن الهاش واحد.
 - [ ] **إيه اللي نزل في الـ pull** (تاب git، درس `git log`): `git log --format="%h %ad %s" --date=short A..HEAD`، و `git rev-list --count A..HEAD`، و `git status -sb` (`## main...origin/main`).
@@ -649,6 +657,21 @@
 - [ ] **خدمة systemd واقعة من أسبوعين لأن اليوزر بتاعها اتمسح** (تاب linux أو deploy، معمل في `ubuntu:24.04`): السيرفر عمل reboot والـ API بقى 502. التسلسل: `uptime` و `last -x reboot` (امتى عمل restart)، و `systemctl list-units --type=service --all | grep -i pm2` (لقيت `failed`)، و `systemctl status` و `systemctl show <svc> -p Result -p NRestarts` و `systemctl cat <svc>` (`User=deployer`)، و `id deployer` = «no such user»، و `getent passwd 1001` فاضي والملفات ملك رقم من غير اسم في `ls -la`، و `ls -la --time-style=long-iso /etc/passwd /home/` (امتى اليوزر اتمسح). البرامج بتفضل شغّالة في الرامات لحد أول reboot، فالعطل بيظهر بعد أيام. الحل: `useradd -u 1001 -M -d /home/<u> -s /usr/sbin/nologin <u>` و `systemctl reset-failed <svc>` و `systemctl start`، وليه تقرا `dump.pm2` الأول. **الحل التاني (من غير ما ترجّع اليوزر):** `systemctl disable --now` للخدمة القديمة، و `chown -R` للفولدر ليوزر موجود، و `pm2 start ... --name` و `pm2 save` و `pm2 startup` (بيطبعلك سطر sudo تشغّله)، وفخ: `.env` مكتوب فيه `KEY   = value` بمسافات، فـ `grep "^KEY="` مش هيلاقيه (استخدم `grep -E "^KEY\s*="`). وفخ تاني: `/health` بيرجع 200 والدخول بيفشل بـ `EntityMetadataNotFoundError: No metadata for "User"`، لأن الكود بيدوّر على entities بامتداد `.ts` لو `NODE_ENV` مش بالظبط `production` (كانت `production1`)، وإنت مشغّل `dist/*.js`. الدرس: الـ health check مش كفاية، جرّب endpoint حقيقي، وشغّل بنفس الطريقة اللي كان شغّال بيها (`pm2 delete <name>` ثم `pm2 start src/index.ts --interpreter ./node_modules/.bin/ts-node`). وفخ تالت: كده بيقع ويقوم كل ثانية (عمود `↺` في `pm2 list` بيزيد و `uptime` ثانية) بـ مئات `error TS1240` على الـ decorators، لأن `ts-node` تحت PM2 ملقاش `tsconfig.json` (فمفيش `experimentalDecorators`). الحل `TS_NODE_PROJECT=/path/tsconfig.json pm2 start ...`، وليه بلاش `--transpile-only` مع TypeORM و `SYNCHRONIZE=1` (الـ metadata بتاعة الأنواع بتتغيّر وممكن يعدّل الجداول). وكمان `pm2 flush <name>` عشان الـ logs القديمة متلخبطكش (`pm2 logs` بيعرض سطور من التشغيلة اللي فاتت). كمان: `ssh -o BatchMode=yes host '...'` عشان تشغّل أوامر قراية من غير ما الأمر يقف مستني باسورد، و `sudo -n true` تعرف بيه sudo محتاج باسورد ولا لأ. أسامي مخترعة.
 - [ ] **انسخ ملفات الريبو بس لفولدر تجربة** (تاب git أو bash): `git ls-files -z | xargs -0 -I{} cp --parents "{}" <فولدر>` (الملفات المتتبّعة بس من غير `.git` و `node_modules`، بنفس شكل الفولدرات، و `-z`/`-0` عشان الأسامي اللي فيها مسافات)، وبعدين تعدّل إعداد في النسخة (`sed -i`) وتجرّب من غير ما تلمس الأصل.
 - [ ] **كسر كاش المتصفح بـ `?v=`** (تاب css أو الويب): ليه المتصفح بيفضل شايل الملف القديم، وإزاي ترفع الرقم في كل الصفحات مرة واحدة: `sed -i 's/?v=29/?v=30/g' *.html`، وتتأكد بـ `grep -c`.
+- [ ] **ملاحظة صاحب المشروع على درس «الامتداد» (`files/01.js`، ٣١ أكتوبر)، وتتطبّق على كل دروس المعامل:**
+  - **(أ) مكان التجربة.** جرّب المثال وهو واقف على `/` في ترمنال بيقول `UCRT64` (ده MSYS2 مش Git Bash، و Git Bash بيقول `MINGW64`)، فطلعله `bash: notes.txt: Permission denied`، ولوحده فهم إنه لازم يروح فولدر بتاعه. الدرس بيقول «في فولدر `lab/files`» من غير ما يقول إزاي توصله.
+    - المطلوب: خطوة «قبل ما تبدأ» في أول الدرس: `pwd` (إنت فين)، و `cd ~`، و `mkdir -p ~/lab/files && cd ~/lab/files`.
+    - وشرح الخطأ نفسه: الـ `>` بيحاول يعمل ملف في الفولدر الحالي، والفولدر ده ملك النظام أو البرنامج، مش ملكك.
+    - وإيه هو `/` في Git Bash و MSYS2: فولدر التسطيب (`cygpath -w /` يقولك هو فين على ويندوز).
+    - والخطأ يتعاد في المعمل بنصه الحقيقي: في Docker بيوزر عادي على فولدر ملك root، وفي Git Bash على ويندوز.
+    - وكمان: هل `file` موجود في MSYS2 من غير `pacman -S file`؟ يتجرّب، أو يتقال صراحة إن الدرس على Git Bash.
+    - **وده يتعمل لكل التاب** (وأي تاب فيه معمل بيكتب ملفات): درس أو صندوق «فولدر المعمل» واحد، وكل درس يشاور عليه.
+  - **(ب) الشرح مكانش واضح إزاي `file` فرّق.** المطلوب:
+    - جدول «الاسم بيقول / `file` بيقول / الحكم» لكل ملف من الأربعة.
+    - جملة صريحة: «نفس السطر بالظبط للملفين يعني نفس النوع، والاسم ملوش دعوة».
+    - إثبات إن الـ bytes متطابقة: `cmp notes.txt notes.pdf && echo متطابقين` (ومعاه `sha256sum` أو `Get-FileHash`).
+    - مقارنة بملف PDF حقيقي عشان يشوف الفرق: `file` بيقول `PDF document, version 1.x`.
+    - مصدر لصورة PNG لو مش معاه: أمر يعمل واحدة أو مكان فيه صورة على كل نظام. يتجرّب الأول.
+    - وتمرين «توقّع قبل ما تشغّل».
 - [ ] فخ في PowerShell: `foreach (...) { } | Select-Object` = «An empty pipe element is not allowed» (الـ foreach statement مش بيتعمله pipe؛ لفّه في `$( )` أو استخدم `ForEach-Object`). تاب ps.
 
 ### ٥. أسئلة مفتوحة
