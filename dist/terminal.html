@@ -251,6 +251,7 @@ body.quiz article.cmd:not(.shown) .cmd-h .title{font-size:19px}
 body.quiz article.cmd:not(.shown) .trysol{display:none}
 .try .lbl{font-weight:700;color:var(--accent);white-space:nowrap}
 .try p{margin:0;flex:1;font-size:15.5px}
+.try .labhint{display:block;margin-top:6px;font-size:13.5px;color:var(--muted)}
 .done{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--muted);cursor:pointer;white-space:nowrap;user-select:none}
 .done input{width:18px;height:18px;accent-color:var(--ok);cursor:pointer}
 article.cmd.is-done .done{color:var(--ok)}
@@ -472113,6 +472114,17 @@ current_user
 
 [[current_user]] رمت [[HTTPException(401)]]، فالـ route متنادتش خالص. و [[get_db: released]] **متطبعتش**: الـ exception اتبعت جوه [[get_db]] عند الـ [[yield]]، فالـ [[async with]] قفل ورجّع الاتصال، بس السطر اللي بعده متنفّذش. عشان كده أي تنضيف لازم يحصل في الـ [[async with]] أو [[finally]]، مش في سطر عادي بعد الـ [[yield]].
 
+جرّبناها على FastAPI 0.162 بـ dependency اسمها [[plain]] فيها [[log.append("close")]] بعد الـ [[yield]] على طول، وأختها [[safe]] نفس الكود بس الـ [[close]] جوه [[finally]]:
+
+| الطلب | الكود | [[log]] |
+|---|---|---|
+| route عادي بـ [[plain]] | 200 | [[['open', 'close']]] |
+| route بيرمي [[HTTPException(404)]] بـ [[plain]] | 404 | [[['open']]] |
+| نفس الـ route بـ [[safe]] | 404 | [[['open', 'close']]] |
+| [[plain]] ومعاها auth رمت 401 | 401 | [[['open']]] |
+
+يعني في أي طلب بيفشل، التنضيف اللي مش في [[finally]] بيضيع: اتصال مش راجع، أو ملف مفتوح، أو lock متساب.
+
 ---
 
 ## ٤. [[dependency_overrides]]
@@ -766046,6 +766058,17 @@ function nameHTML(c){
   if (!notes.length) return '';
   return '<p class="nm"><b>الاسم</b> '+notes.map(([w, n]) => '<span><code>'+esc(w)+'</code> '+fmt(n)+'</span>').join('')+'</p>';
 }
+/* the tab's lab folder, repeated under every «جرّب»: whoever lands on a lesson from a link never saw the lab at the top of the tab */
+function labHint(tr){
+  const lab = LAB[shell] || '';
+  const m = lab.match(/mkdir -p (~\/lab[\w\/-]*) && cd \1/) || lab.match(/Set-Location (\$HOME\\lab\S*)/) || lab.match(/cd \/d (%USERPROFILE%\\lab\S*)/);
+  if (!m || shell === 'glossary' || (tr || '').includes(m[1])) return '';
+  // PowerShell 5.1 has no &&, and CMD's mkdir fails when the folder exists, so CMD joins with & (runs the cd anyway)
+  const [go, why] = m[0].startsWith('mkdir') ? [m[0], 'ولو طلعلك [[Permission denied]] يبقى انت واقف في فولدر مش بتاعك (زي [[/]] في Git Bash).']
+    : m[0].startsWith('Set-Location') ? ['New-Item -ItemType Directory '+m[1]+' -Force; '+m[0], 'الـ [[-Force]] بيخلّي الأمر ينفع حتى لو الفولدر موجود.']
+    : ['mkdir '+m[1]+' & '+m[0], 'لو الفولدر موجود هتشوف [[already exists]] وده عادي، والـ [[&]] بتكمّل الـ [[cd]] برضه.'];
+  return '<span class="labhint">'+fmt('قبل ما تجرّب، اشتغل في فولدر المعمل: [['+go+']]. '+why)+'</span>';
+}
 function articleHTML(it){
   const [c, t, d, ex, tr, flag] = it;
   const key = 'done:'+shell+':'+c;
@@ -766055,7 +766078,7 @@ function articleHTML(it){
     nameHTML(c)+(d?descHTML(d):'')+teachHTML(c)+deepHTML(c)+useHTML(c)+osNote(c)+
     (ex ? termBlock(ex, c, flag) : '')+breakHTML(c, ex)+
     '<button type="button" class="reveal">اكشف الإجابة</button>'+
-    '<div class="try"><span class="lbl">'+(shell==='glossary'?'الشرح الكامل في':'جرّب')+'</span><p>'+fmt(tr)+'</p><label class="done"><input type="checkbox" data-k="'+esc(key)+'"'+(done?' checked':'')+'> جربتها</label></div>'+
+    '<div class="try"><span class="lbl">'+(shell==='glossary'?'الشرح الكامل في':'جرّب')+'</span><p>'+fmt(tr)+labHint(tr)+'</p><label class="done"><input type="checkbox" data-k="'+esc(key)+'"'+(done?' checked':'')+'> جربتها</label></div>'+
     practiceHTML(c)+chkHTML(c)+solHTML(c)+noteHTML(c)+reportHTML(c, t)+
   '</article>';
 }
