@@ -399,7 +399,7 @@ deployer@vps1:~/app$ php artisan migrate
 $ ls -la
 hostname >/dev/null && whoami >/dev/null && echo "where-am-i ok"
 EOF
-(exec -a -bash bash --norc -i < paste.txt) 2>&1 | grep -E '^-bash: (cd|-bash|deployer|\$)|where-am-i'`, expect: [R`-bash: cd: /home/deployer/domains/shop.example/public_html: No such file or directory`, R`-bash: -bash:: command not found`, R`-bash: deployer@vps1:~/app$: No such file or directory`, R`-bash: $: command not found`, R`where-am-i ok`] },
+(exec -a -bash bash --noprofile --norc -i < paste.txt) 2>&1 | grep -E '^-bash: (cd|-bash|deployer|\$)|where-am-i'`, expect: [R`-bash: cd: /home/deployer/domains/shop.example/public_html: No such file or directory`, R`-bash: -bash:: command not found`, R`-bash: deployer@vps1:~/app$: No such file or directory`, R`-bash: $: command not found`, R`where-am-i ok`] },
             { os: [R`windows`], sh: R`powershell`, run: R`try { [scriptblock]::Create('echo a && echo b') | Out-Null } catch { $_.Exception.Message }`, expect: [R`The token '&&' is not a valid statement separator in this version.`] },
           ]
         },

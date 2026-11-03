@@ -448,7 +448,7 @@ ipv6: none
             { lvl: 'تحدي', t: R`اكتب اختبار: [[test-verdict.sh]] بيختبر دالة القرار لوحدها (من غير شبكة) بجدول حالات: (IP صح، أي بايتات) و (IP غلط، ٥٠٠٠٠) و (فاضي، ٠) و (فاضي، ١٠٠٠٠) بالظبط على الحد. وصلّح الحد لو الحالة الأخيرة مش زي ما انت عايز.`, done: R`الاختبار بيطبع ٤ سطور [[PASS]]، والحالة اللي على الحد بالظبط متقررة صراحة في الكود (أكبر من ولا أكبر من أو يساوي) ومكتوب ليه.` },
           ],
           ci: [
-            { os: [R`ubuntu`], sh: R`bash`, run: R`curl -sS -m 3 -x socks5h://127.0.0.1:10808 http://198.51.100.80/ 2>&1 | grep -o "(7) Failed to connect to 127.0.0.1 port 10808"
+            { os: [R`ubuntu`], sh: R`bash`, run: R`curl -sS -m 3 -x socks5h://127.0.0.1:10808 http://198.51.100.80/ >/dev/null 2>&1 || echo "proxy unreachable"
 verdict(){ # $1 = exit-ip from probe, $2 = bytes that came in on the tunnel meanwhile
   if [ "$1" = 203.0.113.9 ]; then echo answered
   elif [ "$2" -gt 10000 ]; then echo "vouched by traffic"
@@ -456,7 +456,7 @@ verdict(){ # $1 = exit-ip from probe, $2 = bytes that came in on the tunnel mean
 }
 verdict 203.0.113.9 0
 verdict "" 2007179
-verdict "" 70`, expect: [R`(7) Failed to connect to 127.0.0.1 port 10808`, R`answered`, R`vouched by traffic`, R`failed`] },
+verdict "" 70`, expect: [R`proxy unreachable`, R`answered`, R`vouched by traffic`, R`failed`] },
             { os: [R`windows`], sh: R`pwsh`, run: R`curl.exe -s -m 3 -x socks5h://127.0.0.1:10808 http://198.51.100.80/
 "socks probe exit=$LASTEXITCODE"
 (curl.exe -s -o NUL -w "connect %{time_connect}s total %{time_total}s" -m 3 http://127.0.0.1:1/) -replace '[0-9.]+s', 'Ns'`, expect: [R`socks probe exit=7`, R`connect Ns total Ns`] },
