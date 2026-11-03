@@ -920,6 +920,298 @@ action بتعمل صفحة Release للـ tag ده في الـ repo. [[generate_
 ولو عايز تمسح الـ tag وتعيده: [[git tag -d v1.0.0 && git push origin :refs/tags/v1.0.0]]، وامسح الـ Release من الواجهة. بس الأحسن تعمل [[v1.0.1]] بدل ما تعيد كتابة tag حد ممكن يكون نزّله.`
         },
         {
+          cmd: "ملف build كبير؟ انشره Release",
+          title: "الملف عدّى 50 MB: GitHub Actions يبنيه ويرفعه Release بعد كل push بدل ما يتعمله commit",
+          desc: R`لو مشروعك بيطلّع ملف كبير (نسخة offline، أو installer، أو PDF، أو zip) وانت بتعمله commit، أول ما يعدّي 50 MB الـ push بيحذّرك، ولو عدّى 100 MB GitHub بيرفض الـ push كله. الحل النضيف: تشيل الملف من الريبو، و workflow يبنيه بعد كل push ويرفعه **Release** بلينك ثابت بيجيب آخر نسخة.
+
+الدرس ده حالة حقيقية من الموقع ده نفسه: نسخته اللي في ملف واحد وصلت 52 MB. هنشوف الاختيارات وليه Releases، والـ workflow سطر سطر، وإزاي تتأكد إن الملف اللي اترفع هو نفسه اللي عندك، وفخ نهايات سطور ظهر واحنا بنتأكد.`,
+          example: R`on:
+  push:
+    branches: [main]
+    paths: ['src/**', 'tools/build.js']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: release
+  cancel-in-progress: true
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - run: node tools/build.js
+      - env:
+          GH_TOKEN: $__{{ github.token }}
+        run: |
+          tag="build-$(date -u +%Y%m%d-%H%M)-$__{GITHUB_SHA::7}"
+          gh release create "$tag" dist/site.html --target "$GITHUB_SHA" --latest --title "$tag" --notes "built from $__{GITHUB_SHA::7}"
+          gh release list --limit 100 --json tagName,createdAt --jq '[.[] | select(.tagName | startswith("build-"))] | sort_by(.createdAt) | reverse | .[10:] | .[].tagName' |
+          while read -r old; do gh release delete "$old" --cleanup-tag --yes; done`,
+          try: R`في ريبو تجربة بتاعك على GitHub (مش ريبو شغل): حط الـ workflow في [[.github/workflows/release.yml]] وخلّي [[tools/build.js]] يعمل [[dist/site.html]] (حتى لو سطر واحد). اعمل push، وبعدين شغّله بإيدك بـ [[gh workflow run release.yml]]، ونزّل الملف بـ [[curl -sSL -o site.html https://github.com/<you>/<repo>/releases/latest/download/site.html]] وقارنه بالنسخة اللي عندك بـ [[cmp]].`,
+          flag: "script",
+          deep: {
+            why: R`git مصمم لملفات نص صغيرة بتتغير حتة حتة. ملف build كبير بيتغير كله كل مرة، فكل commit بيضيف نسخة كاملة جديدة للتاريخ للأبد، والريبو بيتقل على كل حد بيعمل clone. و GitHub حاطط حدود: تحذير فوق 50 MB، ورفض فوق 100 MB. الـ Release مكانه الطبيعي: ملف بيتنزّل، مش كود بيتقرا.`,
+            how: R`الـ Release على GitHub هو tag في الريبو ومعاه ملفات مرفوعة (assets) لحد 2 GB للملف. [[gh release create]] بيعمل الـ tag على commit معيّن ([[--target]]) ويرفع الملف. و [[--latest]] بيخليها «آخر نسخة»، فاللينك [[/releases/latest/download/<اسم الملف>]] بيعمل redirect لملفها هي. والـ [[GITHUB_TOKEN]] اللي Actions بيدّيه للـ job مسموحله يكتب Releases بس لو الـ workflow فيه [[permissions: contents: write]].`,
+            when: R`أي ملف بيتولد من الكود ومش محتاج يتقرا في الـ diff: نسخة offline، أو CLI متجمّع لكل نظام، أو installer، أو PDF للكتاب، أو dataset. ولو الملف محتاج يبقى جوه الريبو فعلًا (صور التصميم الأصلية مثلًا)، استخدم Git LFS بدل الـ Release.`,
+            mistakes: R`تنسى [[permissions: contents: write]] فتطلع [[HTTP 403: Resource not accessible by integration]]. تحط [[paths]] ومتحطش فيها ملف الـ workflow نفسه، فأول push للـ workflow ميشغّلوش (شغّله بـ [[workflow_dispatch]]). تعمل Release بنفس الـ tag كل مرة فتفشل لأنه موجود. تمسح الـ Releases القديمة كلها حتى اللي مش من الـ build (زي [[v1.0.0]]) لأن الفلتر مفيهوش [[startswith("build-")]]. تشيل الملف بـ [[git rm]] من غير [[--cached]] فيتمسح من جهازك. وتفتكر إن [[git rm --cached]] بيصغّر الريبو: التاريخ لسه فيه كل النسخ القديمة.`
+          },
+          teach: R`## العَرَض: الـ push بيحذّر
+
+~~~text الناتج (git push، الأسامي مخترعة)
+remote: warning: File dist/site.html is 50.33 MB; this is larger than GitHub's recommended maximum file size of 50.00 MB
+remote: warning: GH001: Large files detected. You may want to try Git Large File Storage - https://git-lfs.github.com.
+~~~
+
+ده تحذير بس، والـ push عدّى. بس الملف بيكبر مع كل درس بيتضاف، ولما يعدّي 100 MB الـ push كله هيترفض (رسالة الرفض فيها [[exceeds GitHub's file size limit of 100.00 MB]]، من وثائق GitHub «About large files on GitHub»، متجربتش هنا لأنها محتاجة ريبو حقيقي وملف 100 MB).
+
+---
+
+## ١. الاختيارات
+
+| الطريقة | مين بيرفع النسخة الجديدة | اللينك | الحد | ليه لأ هنا |
+|---|---|---|---|---|
+| commit عادي (اللي كان) | انت مع كل commit | ثابت | تحذير 50 MB ورفض 100 MB | التاريخ بيتقل، والحد قرّب |
+| Git LFS | انت، والملف بيتحفظ برّه git | ثابت | ١ GB تخزين و ١ GB تحميل في الشهر ببلاش | الحصة الشهرية بتخلص مع كل تحميل |
+| Google Drive | انت بإيدك كل مرة، أو تدّي GitHub صلاحية على حسابك | بيتغيّر لو رفعت ملف جديد | مساحة حسابك | شغل يدوي، وصلاحيات برّه GitHub |
+| **GitHub Releases** | الـ workflow لوحده بعد كل push | ثابت: [[releases/latest/download/site.html]] | 2 GB للملف | ده اللي اخترناه |
+
+---
+
+## ٢. شيل الملف من الريبو من غير ما تمسحه
+
+~~~bash
+git rm --cached dist/site.html
+printf 'dist/\n' >> .gitignore
+git add .gitignore
+git status --short
+ls dist
+~~~
+
+~~~text الناتج
+rm 'dist/site.html'
+A  .gitignore
+D  dist/site.html
+site.html
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[git rm --cached]] | شيله من الـ index (من اللي git بيتابعه) بس. [[--cached]] هي اللي بتخلّي الملف يفضل على جهازك |
+| [[dist/]] في [[.gitignore]] | عشان الـ build الجاي ميرجعش يظهر في [[git status]] كملف جديد |
+| [[D  dist/site.html]] | في الـ commit الجاي الملف هيتشال من الريبو |
+| [[ls dist]] طبع [[site.html]] | الملف لسه عندك |
+
+بس خد بالك: النسخ القديمة لسه في التاريخ. في المعمل بعد ما شلناه:
+
+~~~bash
+git rev-list --objects --all | git cat-file --batch-check='%(objecttype) %(objectsize) %(rest)' | awk '$1=="blob" && $2>1000000'
+~~~
+
+~~~text الناتج
+blob 3000000 dist/site.html
+~~~
+
+[[git rev-list --objects --all]] بيطلّع كل object في كل الـ commits، و [[git cat-file --batch-check]] بيكتب نوع كل واحد وحجمه، و [[awk]] بيسيب الملفات اللي فوق ١ MB. الملف لسه هناك بحجمه. ده مش مشكلة لو التاريخ مش ضخم: الريبو مش هيكبر تاني. ولو لازم تمسحه من التاريخ كله، فيه [[git filter-repo --path dist/ --invert-paths]] (من وثائق git-filter-repo، وبيغيّر كل الـ hashes فكل اللي عنده clone لازم يعمل clone من جديد).
+
+---
+
+## ٣. الـ workflow
+
+### إمتى يشتغل
+
+- [[push]] على [[main]] بس، ولما يتغير ملف من اللي في [[paths]]. تعديل في [[README.md]] مش هيبني نسخة جديدة.
+- [[workflow_dispatch]]: زرار «Run workflow» في صفحة Actions، أو [[gh workflow run release.yml]] من الترمنال.
+
+### الصلاحية والزحمة
+
+- [[permissions: contents: write]]: من غيرها الـ token مقدرش يعمل Release.
+- [[concurrency]] بـ [[cancel-in-progress: true]]: لو عملت push مرتين ورا بعض، التاني بيلغي الأول بدل ما الاتنين يرفعوا مع بعض.
+
+### اسم الـ tag
+
+~~~bash
+GITHUB_SHA=193cf76a1b2c3d4e5f60718293a4b5c6d7e8f901
+echo "build-$(date -u -d 2026-11-03T19:05:00Z +%Y%m%d-%H%M)-$__{GITHUB_SHA::7}"
+~~~
+
+~~~text الناتج (Ubuntu 24.04)
+build-20261103-1905-193cf76
+~~~
+
+[[$__{GITHUB_SHA::7}]] أول ٧ حروف من الـ commit (بتاعة bash مش Actions)، والتاريخ بالدقيقة. فكل Release ليها اسم جديد، وتعرف منه اتبنت إمتى ومن أنهي commit.
+
+### الرفع
+
+[[gh release create "$tag" dist/site.html --target "$GITHUB_SHA" --latest]] بيعمل الـ tag على نفس الـ commit اللي اتبنى، ويرفع الملف، ويعلّمها «Latest». و [[gh]] متسطّب جاهز على runners بتوع GitHub، وبياخد الصلاحية من [[GH_TOKEN]].
+
+### نسيب آخر ١٠
+
+~~~bash
+jq -r '[.[] | select(.tagName | startswith("build-"))] | sort_by(.createdAt) | reverse | .[2:] | .[].tagName' rel.json
+~~~
+
+جرّبناه على ملف فيه ٣ builds و [[v1.0.0]]، وبـ [[.[2:]]] بدل [[.[10:]]] عشان يبان:
+
+~~~text الناتج (jq 1.7)
+build-20261101-0900-aaaaaaa
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[select(.tagName \| startswith("build-"))]] | الـ builds بس. [[v1.0.0]] (إصدار بإيدك) مش هيتلمس |
+| [[sort_by(.createdAt) \| reverse]] | الأحدث الأول |
+| [[.[10:]]] | كل اللي بعد أول ١٠، يعني الأقدم |
+| [[gh release delete "$old" --cleanup-tag --yes]] | يمسح الـ Release والـ tag بتاعها، من غير ما يسأل |
+
+وفي الـ workflow الفلتر ده بيتكتب في [[--jq]] بتاع [[gh]] (بيستخدم gojq جواه، ونفس الصيغة).
+
+---
+
+## ٤. أول تشغيل
+
+الـ push اللي فيه [[release.yml]] نفسه مش هيشغّله، لأن [[.github/workflows/]] مش في [[paths]]. شغّله بإيدك:
+
+~~~bash
+gh workflow run release.yml --ref main
+gh run list --workflow release.yml --limit 1
+~~~
+
+وبعد ما خلص، الـ Release ظهرت:
+
+~~~text الناتج (gh release list)
+نسخة من غير نت: 2026-11-03	Latest	build-20261103-1905-193cf76	2026-11-03T19:05:25Z
+~~~
+
+---
+
+## ٥. اتأكد إن اللينك شغال وإن الملف هو هو
+
+~~~bash
+curl -sSL -o site.html -w "HTTP %{http_code}  %{size_download} bytes  redirects %{num_redirects}\n" \
+  https://github.com/acme-co/shop-docs/releases/latest/download/site.html
+~~~
+
+~~~text الناتج
+HTTP 200  54401693 bytes  redirects 2
+~~~
+
+[[-L]] بيمشي ورا الـ redirects: [[latest]] بيروح للـ Release الأخيرة، وبعدها للتخزين اللي فيه الملف. وبعدين قارنه بالـ build اللي عندك:
+
+~~~bash
+cmp -s dist/site.html site.html && echo same || echo differs
+~~~
+
+~~~text الناتج
+differs
+~~~
+
+---
+
+## ٦. الفخ: ملفات عندك فيها CRLF و git شايفها نضيفة
+
+عدّينا الـ CR (حرف [[\r]]) في الاتنين:
+
+~~~bash
+tr -cd '\r' < dist/site.html | wc -c
+tr -cd '\r' < site.html | wc -c
+~~~
+
+~~~text الناتج
+14848
+0
+~~~
+
+يعني نسخة GitHub سليمة، والـ build بتاعك فيه CR جاية من ملفات المصدر اللي عندك. [[git ls-files --eol]] بيوري نهايات السطور في الـ index ([[i/]]) وفي الملف اللي على جهازك ([[w/]]):
+
+~~~bash
+git ls-files --eol | awk '$1=="i/lf" && $2!="w/lf"'
+~~~
+
+~~~text الناتج
+i/lf    w/mixed attr/text=auto eol=lf 	js/tabs/diag/09.js
+~~~
+
+الملف متحفوظ في git بـ LF، بس اللي على جهازك [[mixed]] (أداة كتبت فيه CRLF في حتت). و [[git status]] بيقول إنه نضيف، لأن [[eol=lf]] في [[.gitattributes]] بيحوّل الـ CRLF لـ LF قبل ما يقارن. عشان كده [[git checkout -- <الملف>]] **مبيعملش حاجة**: git شايف إن مفيش تغيير يرجّعه. جربناها في معمل:
+
+~~~text الناتج
+i/lf    w/mixed attr/text=auto eol=lf 	page.js      (بعد git checkout -- page.js)
+i/lf    w/lf    attr/text=auto eol=lf 	page.js      (بعد rm page.js && git checkout -- page.js)
+~~~
+
+الحل: امسح الملف وخلّي git يكتبه من جديد، **بس بعد ما تتأكد إن [[git status]] نضيف** (يعني مفيش شغل مش محفوظ فيه):
+
+~~~bash
+git status --short -- js/tabs/diag/09.js          # لازم يبقى فاضي
+rm js/tabs/diag/09.js && git checkout -- js/tabs/diag/09.js
+~~~
+
+وبعدها الـ build عندك بقى هو هو اللي على GitHub، byte ب byte.
+
+---
+
+## الخلاصة
+
+| الخطوة | الأمر |
+|---|---|
+| شيل الملف من الريبو وسيبه عندك | [[git rm --cached]] + [[.gitignore]] |
+| ابنيه وارفعه بعد كل push | [[release.yml]]: [[gh release create --target --latest]] |
+| لينك ثابت | [[releases/latest/download/<الملف>]] |
+| متسيبش الـ Releases تتراكم | [[gh release list --json --jq]] + [[gh release delete --cleanup-tag]] |
+| أول تشغيل | [[gh workflow run]] |
+| اتأكد | [[curl -sSL -w]] و [[cmp]] |
+| ملف عندك نهايات سطوره غلط و git شايفه نضيف | [[git ls-files --eol]] ثم [[rm]] و [[git checkout --]] |`,
+          lines: [
+            R`[[on:]]: إمتى الـ workflow يشتغل.`,
+            R`[[push:]]: مع كل push.`,
+            R`[[branches: [main]]]: على [[main]] بس، مش أي فرع.`,
+            R`[[paths:]]: بس لو اتغيّر ملف من دول. تعديل في الـ README مش هيبني نسخة.`,
+            R`[[workflow_dispatch:]]: زرار تشغيل بإيدك، و [[gh workflow run]] من الترمنال.`,
+            R`[[permissions:]]: صلاحيات الـ token اللي Actions بيدّيه للـ job.`,
+            R`[[contents: write]]: يقدر يعمل tags و Releases. من غيرها [[HTTP 403]].`,
+            R`[[concurrency:]]: متشغّلش نسختين من الـ workflow ده مع بعض.`,
+            R`[[group: release]]: اسم المجموعة اللي بتتقفل.`,
+            R`[[cancel-in-progress: true]]: push جديد بيلغي التشغيل القديم بدل ما يستناه.`,
+            R`[[jobs:]]: بداية الشغل نفسه. الـ workflow ممكن يبقى فيه كذا job بيشتغلوا على أجهزة منفصلة، وهنا واحد بس.`,
+            R`[[release:]]: اسم الـ job.`,
+            R`[[runs-on: ubuntu-latest]]: جهاز Linux من GitHub، وفيه [[node]] و [[gh]] جاهزين.`,
+            R`[[steps:]]: الخطوات اللي الـ job بينفّذها واحدة ورا التانية، ولو خطوة فشلت اللي بعدها مش بتشتغل.`,
+            R`[[actions/checkout@v5]]: نزّل الكود على الجهاز ده.`,
+            R`[[node tools/build.js]]: ابني الملف في [[dist/site.html]].`,
+            R`[[env:]]: متغيرات للخطوة دي.`,
+            R`[[GH_TOKEN]]: [[gh]] بياخد صلاحيته من المتغير ده، و [[github.token]] هو الـ token بتاع الـ job.`,
+            R`[[run: |]]: سكربت bash بكذا سطر.`,
+            R`اسم الـ tag: [[build-]] والتاريخ بالدقيقة وأول ٧ حروف من الـ commit، فكل نسخة اسمها جديد.`,
+            R`اعمل Release على نفس الـ commit ([[--target]])، وارفع الملف، وعلّمها آخر نسخة ([[--latest]]).`,
+            R`هات كل الـ Releases كـ JSON، وسيب الـ builds بس، ورتّبها الأحدث الأول، وطلّع أسامي اللي بعد أول ١٠.`,
+            R`كل اسم منهم: امسح الـ Release والـ tag بتاعها من غير سؤال.`,
+          ],
+          sol: R`المعمل اتعمل على Git Bash (git 2.56) ومعاه ريبو تجربة: [[git rm --cached]] طبع [[rm 'dist/site.html']] والملف فضل في [[dist]]، و [[git rev-list --objects --all | git cat-file --batch-check]] لسه طلّع [[blob 3000000 dist/site.html]] بعد ما اتشال. وفي ملف متحفوظ LF وجوه CRLF بعد [[git add]]: [[git status]] فاضي، و [[git ls-files --eol]] قال [[w/mixed]] قبل وبعد [[git checkout --]]، وبعد [[rm]] و [[git checkout --]] بقى [[w/lf]].
+
+فلتر [[jq]] اتجرّب بـ jq 1.7 في [[ubuntu:24.04]]، واسم الـ tag بـ [[date -u -d]] هناك. والـ workflow نفسه اشتغل فعلًا على ريبو الموقع ده: [[gh workflow run]] ثم Release اسمها [[build-...-<sha>]]، و [[curl -sSL]] على [[releases/latest/download/...]] رجّع [[HTTP 200]] بعد redirectين، والملف طلع نفس الـ build المحلي بالظبط بعد ما صلّحنا ملفات الـ CRLF. رسالة الرفض فوق 100 MB وحصة Git LFS من وثائق GitHub، و [[git filter-repo]] من وثائقه.`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** الـ workflow ده فيه [[paths: ['src/**']]]. لو عملت push فيه تعديل في [[README.md]] بس، هيحصل إيه؟ ولو التعديل في [[src/app.js]] و [[README.md]] مع بعض؟`, done: R`الأول: الـ workflow مش هيظهر في Actions خالص. التاني: هيشتغل مرة واحدة. وكاتب إن [[paths]] بتشوف أي ملف اتغيّر في الـ push مش كلهم.` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** workflow فشل بـ [[HTTP 403: Resource not accessible by integration]] على سطر [[gh release create]]. فيه [[env: GH_TOKEN: $__{{ github.token }}]] بس مفيهوش [[permissions]]. صلّحه وقول ليه ده كان بيشتغل عند ناس تانية.`, done: R`ضفت [[permissions: contents: write]] على مستوى الـ workflow أو الـ job، وكاتب إن صلاحيات الـ token الافتراضية بتتحدد من إعدادات الريبو (Settings ← Actions ← Workflow permissions)، فريبو تاني ممكن يكون مدّيها write.` },
+            { lvl: 'تطبيق', t: R`**ابني:** في ريبو تجربة، workflow بيبني ملف zip من فولدر [[docs/]] ويرفعه Release، ويسيب آخر ٣ بس. اعمل ٥ pushes ورا بعض.`, done: R`[[gh release list]] بيوري ٣ Releases بس اسمهم [[build-...]]، وأي Release عملتها بإيدك (زي [[v0.1.0]]) لسه موجودة، و [[curl -sSL -o docs.zip .../releases/latest/download/docs.zip]] بينزّل آخر واحد ([[unzip -l]] يوريك الملفات).` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** شغّل [[gh release list --limit 100 --json tagName,createdAt,isLatest]] على ريبو مفتوح المصدر بتستخدمه (أي أداة على GitHub)، وطلّع بـ [[--jq]] كام Release في آخر ٣٠ يوم، وأنهي واحدة Latest.`, done: R`عندك أمر واحد بيطبع رقم واسم tag، والرقم بيطابق اللي في صفحة الـ Releases على الموقع.` },
+            { lvl: 'تحدي', t: R`**محاكاة:** اكتب السكربت اللي بيمسح القديم على ملف JSON بإيدك فيه ١٢ build و ٢ إصدارات [[v*]]، وخلّيه يطبع الأسامي اللي هيمسحها من غير ما يمسح ([[--dry-run]] بتاعك). جرّب الحالات: صفر builds، و ١٠ بالظبط، و ١١.`, done: R`صفر و ١٠ مبيطبعوش حاجة، و ١١ بيطبع اسم واحد (الأقدم)، و ١٢ بيطبع اتنين، والـ [[v*]] عمرهم ما بيظهروا، والسكربت خارج بـ ٠ في كل الحالات.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** زميلك قال «ما احنا عملنا [[git rm --cached]] على الملف الـ 50 MB، يبقى الريبو صغر». اكتبله ٣ سطور: صح ولا غلط، وإزاي يتأكد بنفسه، وإمتى يستاهل يمسحه من التاريخ.`, done: R`كتبت إن التاريخ لسه فيه كل نسخة (والأمر [[git rev-list --objects --all | git cat-file --batch-check]] يثبت)، وإن الريبو مش هيكبر تاني بس مش هيصغر، وإن [[git filter-repo]] بيغيّر كل الـ hashes فيستاهل بس لو الـ clone بقى بطيء فعلًا والفريق متفق.` },
+          ],
+          ci: [
+            { os: [R`ubuntu`, R`macos`], sh: R`bash`, run: R`cat > rel.json <<'EOF'
+[{"tagName":"build-20261101-0900-aaaaaaa","createdAt":"2026-11-01T09:00:00Z"},{"tagName":"v1.0.0","createdAt":"2026-10-01T09:00:00Z"},{"tagName":"build-20261103-1905-ccccccc","createdAt":"2026-11-03T19:05:25Z"},{"tagName":"build-20261102-1200-bbbbbbb","createdAt":"2026-11-02T12:00:00Z"}]
+EOF
+jq -r '[.[] | select(.tagName | startswith("build-"))] | sort_by(.createdAt) | reverse | .[2:] | .[].tagName' rel.json`, expect: [R`build-20261101-0900-aaaaaaa`] },
+            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`bash`, run: R`export GIT_CONFIG_GLOBAL="$PWD/gc"; git config --global user.name ali; git config --global user.email ali@example.com
+git init -q demo && cd demo
+printf '* text=auto eol=lf\n' > .gitattributes; printf 'a\nb\n' > page.js; git add . && git commit -qm init
+printf 'a\r\nb\n' > page.js; git add page.js 2>/dev/null
+echo "status: [$(git status --short)]"
+git checkout -- page.js; git ls-files --eol page.js | awk '{print "after checkout:", $2}'
+rm page.js && git checkout -- page.js; git ls-files --eol page.js | awk '{print "after rm:", $2}'`, expect: [R`status: []`, R`after checkout: w/mixed`, R`after rm: w/lf`] },
+          ],
+        },
+        {
           cmd: "rollback من Actions",
           title: "ارجع لنسخة بضغطة",
           desc: R`لما نسخة جديدة تبوّظ الموقع، عايز ترجع للي قبلها في دقيقة من غير ما تفتح ترمنال. الـ workflow ده بيشتغل بإيدك من زرار Run workflow ([[workflow_dispatch]])، وبيطلب منك [[tag]]: رقم النسخة (زي [[v1.1.0]] أو commit sha) اللي عايز ترجعلها، و [[required: true]] يعني مش هيشتغل من غيره.
