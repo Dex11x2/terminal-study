@@ -10,7 +10,7 @@
 
 ### تاب `vps` (أو `real`): نقل مواقع بين سيرفرين
 
-- [ ] **١. قضية كاملة: «انقل كل المواقع من VPS قديم لجديد من غير downtime»** (تاب vps، درس جديد جنب `vps/11`؛ مفيش `cutover` ولا `rsync -aH` ولا `docker save|load` كنقل في أي تاب).
+- [x] **١. قضية كاملة: «انقل كل المواقع من VPS قديم لجديد من غير downtime»** (تاب vps، درس جديد جنب `vps/11`؛ مفيش `cutover` ولا `rsync -aH` ولا `docker save|load` كنقل في أي تاب). **(اتكتب ٣ نوفمبر: vps/15 و diag/07)**
   - **الترتيب كله، وليه:**
     1. **جرد القديم قراءة بس.** `hostname; cat /etc/os-release | head -2; nproc; free -h; df -h /`، `systemctl list-units --type=service --state=running`، `docker ps --format "{{.Names}}: {{.Status}}"`، `ls /etc/nginx/sites-enabled`، `grep -hE "server_name|proxy_pass|root |listen" /etc/nginx/sites-available/*`، `ls /etc/letsencrypt/live`، `crontab -l`، `du -sh /var/www/* /opt/*`. الهدف: خريطة (دومين ← بورت ← container ← داتا).
     2. **فين الداتا الحقيقية؟** `docker inspect $(docker ps -q) --format '{{.Name}}: {{range .Mounts}}[{{.Type}} {{.Source}} -> {{.Destination}}] {{end}}'` (bind mounts و volumes)، و `docker inspect ... --format '{{index .Config.Labels "com.docker.compose.project.working_dir"}}'` (كل container جاي من أنهي مجلد compose)، و `docker system df -v`.
@@ -28,7 +28,7 @@
 
 - [ ] **٢. «الكود المحلي قديم والمصدر الحقيقي على السيرفر بس»** (تاب vps أو git). العَرَض: دوّرت على صفحة في الريبو المحلي مالقيتهاش (`grep -rliE "white-friday" .` فاضي، و `git log` قديم) لكن الموقع الحي فيه الصفحة. التشخيص: `git log --oneline -3` و `git status --short` محلي، وبعدين على السيرفر `ls -a | grep -E "^\.git$" || echo no_git_on_server` (فيه `.git` ولا لأ؟)، وبعدين `grep -rliE` على السيرفر. السبب: الإنتاج اتعدّل على السيرفر مباشرة ومفيش git هناك. الحل: ماتعدّلش محلي وتتخيّل؛ خد نسخة احتياطية `mkdir -p /root/bak-DATE && cp -a file1 file2 /root/bak-DATE/`، وبعدين عدّل، ويفضّل ترجّع الكود لـ git. المنع: بعد أي تعديل على السيرفر ارفعه لريبو.
 
-- [ ] **٣. تشغيل نسخة تجريبية من التطبيقات جنب الإنتاج من غير ما تبعت إيميلات ولا تدفع ولا تكرر مهام** (تاب docker أو real، ويوسّع `ports: !` الموجود في `docker/04`؛ `!reset` مفيش).
+- [x] **٣. تشغيل نسخة تجريبية من التطبيقات جنب الإنتاج من غير ما تبعت إيميلات ولا تدفع ولا تكرر مهام** (تاب docker أو real، ويوسّع `ports: !` الموجود في `docker/04`؛ `!reset` مفيش). **(اتكتب ٣ نوفمبر: vps/15 و diag/07)**
   - الأوامر: `grep -vE "^\s*#|^\s*$" .env | cut -d= -f1 | tr "\n" " "` (أسماء المتغيرات بس من غير قيم)، `grep -rlE "node-cron|cron\.schedule|setInterval|bull" --include=*.js --include=package.json src --exclude-dir=node_modules` (فيه مهام مجدولة؟)، `sed -E 's/^(EMAIL_HOST|EMAIL_PASS|PAYMENT_KEY)=.*/\1=/' .env > test.env` (تفضّي المفاتيح اللي بتوصل لبره)، وملف override:
     ```yaml
     services:
@@ -42,13 +42,13 @@
   - فخ: `docker compose up` على الجديد بنفس الـ `.env` = إيميلات وإشعارات وcron مكررة للعملاء.
   - اكتشاف جانبي: التطبيق الحقيقي كان بيشتغل على Supabase السحابي مش على Postgres المحلي، فالـ Postgres المحلي ناقص جداول وبيطلّع أخطاء. الدرس: اتأكد التطبيق بيكلّم أنهي داتابيز فعلاً (`docker exec app sh -c 'echo $DATABASE_URL | sed -E "s#//([^:/@]+):[^@]*@#//\1:***@#"'` يعرض الـ URL من غير الباسورد).
 
-- [ ] **٤. تحويل الـ DNS: إيه اللي تغيّره وإيه اللي تسيبه، وإزاي تتأكد إنه انتشر** (تاب net أو vps؛ `nslookup` و TTL موجودين منفردين لكن مفيش الحالة).
+- [x] **٤. تحويل الـ DNS: إيه اللي تغيّره وإيه اللي تسيبه، وإزاي تتأكد إنه انتشر** (تاب net أو vps؛ `nslookup` و TTL موجودين منفردين لكن مفيش الحالة). **(اتكتب ٣ نوفمبر: vps/15 و diag/07)**
   - الترتيب: خفّض TTL (300) قبلها بيوم. افتح لوحة الـ DNS واكتب: `A @` → الجديد، `CNAME www → @` سيبه (بيتبع الـ `@`)، `A bot/n8n/team` على IP تالت = سيرفر تاني، **سيبهم**، سجلات الإيميل (`brevo._domainkey` و `_dmarc` و TXT) **متلمسهاش**، و**أي `AAAA` (IPv6) يتمسح** وإلا الزوار على IPv6 يفضلوا يروحوا للقديم، ولو دومين ما كانش له `A api` أصلاً ما تضيفش من نفسك.
   - التحقق من كذا resolver: `for ns in 8.8.8.8 1.1.1.1; do nslookup -type=A shop.example $ns; done`. الناتج بيتذبذب بين القديم والجديد أثناء الانتشار (Google عنده كذا cache node)، فاستنى لحد ما كل الـ resolvers تثبت. حلقة مراقبة: `until [ "$(nslookup shop.example 1.1.1.1 | awk '/^Address/&&!/#/{print $2}')" = 10.0.0.9 ]; do sleep 20; done`.
   - فخ: جهازك لسه شايل الـ IP القديم في الكاش المحلي (`ipconfig /flushdns` ويندوز) فـ `curl https://shop.example` من عندك بيروح للقديم وبيطلع `000` على الباقي. الحل للاختبار: `curl --resolve shop.example:443:10.0.0.9 -o /dev/null -w "%{http_code} ip=%{remote_ip} ssl_verify=%{ssl_verify_result}\n" https://shop.example/`.
   - بعد التحويل تتأكد إن زوار حقيقيين وصلوا: `grep -v "127.0.0.1" /var/log/nginx/access.log | awk '{print $9}' | sort | uniq -c | sort -rn`.
 
-- [ ] **٥. حادثة: `certbot renew --dry-run` وقّعت nginx ١٢ دقيقة** (تاب vps، يوسّع `vps/04` اللي فيه `pre_hook = systemctl stop nginx` بس من غير الحادثة).
+- [x] **٥. حادثة: `certbot renew --dry-run` وقّعت nginx ١٢ دقيقة** (تاب vps، يوسّع `vps/04` اللي فيه `pre_hook = systemctl stop nginx` بس من غير الحادثة). **(اتكتب ٣ نوفمبر: vps/15 و diag/07)**
   - **العَرَض:** بعد تحويل الـ DNS، من بره `curl https://shop.example` = `000`. الأعراض: الـ port 80/443 مقفول من بره ومفتوح محلي؟ لا، nginx نفسه واقف.
   - **التشخيص بالترتيب:** `systemctl is-active nginx` (واقف) ← `ss -tlnp | grep -E ":(80|443) "` (مفيش listener) ← `pgrep -a certbot` (certbot لسه شغال ومعلّق) ← `grep -nE "hook|authenticator|webroot" /etc/letsencrypt/renewal/*.conf` (لقينا `pre_hook = systemctl stop nginx` و `post_hook = systemctl start nginx`) ← `ufw status` (مش الفايروول) ← `nginx -t` ← `systemctl start nginx`.
   - **السبب:** أنا قتلت `certbot renew` وهو شغال بـ `pkill -f "certbot renew"`، فالـ `post_hook` ما اتنفّذش وnginx فضل واقف. وكمان `pkill -f` الأول **قتل أمر الـ ssh نفسه** لأن نص الأمر فيه نفس الباترن (سطر الأمر بتاع الـ shell اللي بينفّذ فيه الكلمة `certbot renew`). الحل: `pgrep -f "[c]ertbot renew"` (الأقواس بتخلي الـ regex مايطابقش نصه) أو `kill <PID>` برقم.
@@ -56,7 +56,7 @@
   - **مشاكل ملحوظة في نفس القضية:** (أ) `dry-run` بيرجع **404** على `.net`: الـ `webroot_map` في `renewal/shop.example.conf` بيشاور على المسار القديم `/var/www/old_app` بينما nginx بيخدم `/.well-known/acme-challenge/` من `/var/www/html`، والتشخيص: اكتب ملف تجريبي `echo ok > /var/www/html/.well-known/acme-challenge/t.txt` وجرّب `curl -si --resolve shop.example:80:127.0.0.1 http://shop.example/.well-known/acme-challenge/t.txt`. (ب) على الدومين التاني مفيش `location /.well-known` أصلاً (الـ server block بيعمل redirect 301 لكل حاجة). (ج) certbot عمل hang على الدومين التاني لدقايق: `tail -n 8 /var/log/letsencrypt/letsencrypt.log` و `ps -o pid,etime,stat,cmd --ppid <PID>` و `curl -s -o /dev/null -w "%{http_code}" https://acme-staging-v02.api.letsencrypt.org/directory`، والحل `kill` برقم وإعادة بـ `certbot renew --dry-run --no-random-sleep-on-renew` (من غير الـ sleep العشوائي الافتراضي).
   - **المنع:** ماتجرّبش `renew --dry-run` بعد الـ cutover على الإنتاج من غير ما تتأكد من الـ hooks، وجرّبه **قبل** تحويل الـ DNS بـ `--resolve`.
 
-- [ ] **٦. تصدير واستيراد Mongo و Postgres جوه containers من ssh (والفخاخ)** (تاب mongo أو docker أو real؛ الأوامر موجودة منفردة بس مفيش الفخاخ دي).
+- [x] **٦. تصدير واستيراد Mongo و Postgres جوه containers من ssh (والفخاخ)** (تاب mongo أو docker أو real؛ الأوامر موجودة منفردة بس مفيش الفخاخ دي). **(اتكتب ٣ نوفمبر: vps/15 و diag/07)**
   - Postgres: `ssh old "docker exec db pg_dump -U appuser -d appdb -Fc" > appdb.pgdump` ثم `docker exec -i db pg_restore -U appuser -d appdb --clean --if-exists --no-owner < appdb.pgdump` (الـ `-i` مهم عشان الـ stdin، و`-Fc` custom format).
   - Mongo: `docker exec mongo sh -c 'mongodump -u "$MONGO_INITDB_ROOT_USERNAME" -p "$MONGO_INITDB_ROOT_PASSWORD" --authenticationDatabase admin --archive --gzip' > mongo.archive.gz`.
   - **فخ ١:** الأمر فشل لما اتكتب سطر واحد جوه ssh جوه ssh بسبب `\$` والاقتباسات (shell المحلي بيوسّع المتغير أو بيسيبه فاضي)؛ الحل سكريبت صغير بـ heredoc `<<"EOF"` بيتنسخ وبيتنفّذ، ومتغيرات الـ container بتتوسّع **جوه** الـ container بـ `sh -c '...'` بـ single quotes. الرسالة الحقيقية من `mongo.err` تتولّد في المعمل.
@@ -65,9 +65,9 @@
   - **الصحة:** استنى `healthy` بحلقة: `for i in $(seq 1 25); do s=$(docker inspect -f '{{.State.Health.Status}}' mongo); [ "$s" = healthy ] && break; sleep 4; done`.
   - dump نهائي لازم بعد إيقاف الـ backend على القديم (وإلا بيانات تتكتب بعد الـ dump تضيع).
 
-- [ ] **٧. «الـ ports بتاعة الـ containers مفتوحة للإنترنت» — اكتشاف وإصلاح** (تاب docker أو sec أو vps؛ `DOCKER-USER` و «docker بيتجاوز ufw» مفيش في أي تاب). على القديم: `5433` (Postgres) و `3000` و `5000` و `8000` كانت `0.0.0.0` لأن compose كاتب `"5433:5432"`. `ss -tlnp` يورّي `0.0.0.0:5433`. الحل: `"127.0.0.1:5433:5432"` وnginx هو اللي بيطلع للإنترنت. اختبار من بره: `timeout 6 bash -c 'echo > /dev/tcp/10.0.0.9/5433' && echo open || echo CLOSED`. السبب إن Docker بيضيف قواعد iptables خاصة بيه فـ `ufw deny` مش بتوقفه (تأكد من ده في المعمل قبل الكتابة).
+- [x] **٧. «الـ ports بتاعة الـ containers مفتوحة للإنترنت» — اكتشاف وإصلاح** (تاب docker أو sec أو vps؛ `DOCKER-USER` و «docker بيتجاوز ufw» مفيش في أي تاب). على القديم: `5433` (Postgres) و `3000` و `5000` و `8000` كانت `0.0.0.0` لأن compose كاتب `"5433:5432"`. `ss -tlnp` يورّي `0.0.0.0:5433`. الحل: `"127.0.0.1:5433:5432"` وnginx هو اللي بيطلع للإنترنت. اختبار من بره: `timeout 6 bash -c 'echo > /dev/tcp/10.0.0.9/5433' && echo open || echo CLOSED`. السبب إن Docker بيضيف قواعد iptables خاصة بيه فـ `ufw deny` مش بتوقفه (تأكد من ده في المعمل قبل الكتابة). **(اتكتب ٣ نوفمبر: vps/15 و diag/07)**
 
-- [ ] **٨. تعديل موقع شغّال على السيرفر بأمان: tag احتياطي → build في الخلفية → تأكد إن الـ image الجديدة فيها التعديل → بدّل → رجوع في ثواني** (تاب real أو docker، يوسّع `real/08` و `tag.*pre-` الموجودين لكن من غير الأسلوب الكامل).
+- [x] **٨. تعديل موقع شغّال على السيرفر بأمان: tag احتياطي → build في الخلفية → تأكد إن الـ image الجديدة فيها التعديل → بدّل → رجوع في ثواني** (تاب real أو docker، يوسّع `real/08` و `tag.*pre-` الموجودين لكن من غير الأسلوب الكامل). **(اتكتب ٣ نوفمبر: vps/15 و diag/07)**
   - `docker tag app:latest app:pre-change-20261027` (نسخة احتياطية بالاسم)، `cd /opt/app && nohup docker compose build frontend > /root/build.log 2>&1 &`، حلقة polling: `pgrep -f "compose build" >/dev/null && echo RUNNING || echo DONE`.
   - **اتأكد إن الـ build الجديد فيه التعديل مش القديم:** `docker run --rm --entrypoint sh app:latest -c 'grep -rl "نص جديد" /usr/share/nginx/html | head -n 2' | wc -l` مقابل نفس الأمر على الـ tag القديم (يرجع 1 و 0)، و `docker inspect -f '{{.Image}}' app | cut -c8-19` (الـ container الشغال لسه على الـ image القديم لحد ما تعمل `docker compose up -d frontend`).
   - التبديل: `docker compose up -d frontend` (توقف أقل من ثانيتين). التراجع: `docker tag app:pre-change-20261027 app:latest && docker compose up -d frontend`.
@@ -75,13 +75,13 @@
   - **بعد النشر:** `curl -s https://shop.example/api/.../plans | python -I -c 'import sys,json;...'` يتأكد إن الـ API الحي رجّع القيمة، وفحص بالمتصفح، وعدد الأخطاء 5xx بعد وقت معين: `awk '$4 >= "[07/Oct/2026:09:10" && $9 ~ /^5/' /var/log/nginx/access.log | wc -l`.
   - فخ مرتبط: السكرين شوت بيطلع أبيض أو بيتعلّق على صفحة تقيلة؛ القياس بالـ DOM (`getBoundingClientRect` عرض الليبل مقابل عرض الكارت) دليل بديل.
 
-- [ ] **٩. «SSH بيتقفل قبل الـ banner والموقع شغال» — افصل مشكلة الدخول عن مشكلة الخدمة** (تاب sshc أو diag، جنب `MaxStartups` الموجود في `sshc/02`). العَرَض: `Connection closed` أثناء تسجيل الدخول (النص الحقيقي من الشات ما اتسجلش، يتولّد في المعمل: عادةً `kex_exchange_identification: Connection closed by remote host` أو `Error reading SSH protocol banner`). الترتيب: الأول `curl -s -o /dev/null -w "%{http_code}" https://shop.example/` (الموقع نفسه شغال؟) ← بعدين `for p in 22 80 443; do timeout 6 bash -c "echo > /dev/tcp/10.0.0.9/$p" && echo open || echo CLOSED; done` ← `ssh -vvv`. السبب المرجّح: أداتنا كانت بتفتح اتصال SSH جديد لكل أمر (عشرات الاتصالات في دقايق) فبتتخنق بـ `MaxStartups` أو `fail2ban`؛ الحل: اتصال واحد أو `ControlMaster auto` و `ControlPersist 10m`، واستنى. (هذا افتراض: الشات ما أكدش السبب.)
+- [x] **٩. «SSH بيتقفل قبل الـ banner والموقع شغال» — افصل مشكلة الدخول عن مشكلة الخدمة** (تاب sshc أو diag، جنب `MaxStartups` الموجود في `sshc/02`). العَرَض: `Connection closed` أثناء تسجيل الدخول (النص الحقيقي من الشات ما اتسجلش، يتولّد في المعمل: عادةً `kex_exchange_identification: Connection closed by remote host` أو `Error reading SSH protocol banner`). الترتيب: الأول `curl -s -o /dev/null -w "%{http_code}" https://shop.example/` (الموقع نفسه شغال؟) ← بعدين `for p in 22 80 443; do timeout 6 bash -c "echo > /dev/tcp/10.0.0.9/$p" && echo open || echo CLOSED; done` ← `ssh -vvv`. السبب المرجّح: أداتنا كانت بتفتح اتصال SSH جديد لكل أمر (عشرات الاتصالات في دقايق) فبتتخنق بـ `MaxStartups` أو `fail2ban`؛ الحل: اتصال واحد أو `ControlMaster auto` و `ControlPersist 10m`، واستنى. (هذا افتراض: الشات ما أكدش السبب.) **(اتكتب ٣ نوفمبر: vps/15 و diag/07)**
 
 - [ ] **١٠. أتمتة SSH بالباسورد: ليه سيئة والبديل** (تاب sshc، `sshpass` و `paramiko` مفيش). اللي حصل: الباسوردات اتبعتت في الشات واتشغّل سكريبت `paramiko` بيدخل بالباسورد من متغير بيئة (`SSH_PW`)، وبين السيرفرين استُخدم `sshpass -e` (من `SSHPASS`). الدرس: ليه الباسورد على سطر الأمر بيتسرّب في `ps` و `history`، وليه `-e` أحسن من `-p`، والأصح: `ssh-keygen -t ed25519` و `ssh-copy-id` وبعدين `PasswordAuthentication no` في `/etc/ssh/sshd_config.d/` مع `sshd -t` قبل `reload`، وبدّل الباسورد اللي اتكتب في أي شات. وإزاي تقول للـ AI «أنا هضيف مفتاحك بدل الباسورد».
 
-- [ ] **١١. كشف الأسرار في المخرجات أثناء الجرد** (تاب sec أو bash): `grep -vE "^\s*#|^\s*$" .env | cut -d= -f1` (أسماء بس)، و `sed -E 's/(PASSWORD|SECRET|KEY)([A-Z_]*)(: |=)[^ ]+/\1\2\3***/'` للـ compose، و `sed -E 's#//([^:/@]+):[^@]*@#//\1:***@#'` لـ URLs فيها يوزر وباسورد. الدرس: اكتب الأوامر بحيث الناتج نفسه مايحتويش سر (لأنه هيتسجّل في شات أو لوج).
+- [x] **١١. كشف الأسرار في المخرجات أثناء الجرد** (تاب sec أو bash): `grep -vE "^\s*#|^\s*$" .env | cut -d= -f1` (أسماء بس)، و `sed -E 's/(PASSWORD|SECRET|KEY)([A-Z_]*)(: |=)[^ ]+/\1\2\3***/'` للـ compose، و `sed -E 's#//([^:/@]+):[^@]*@#//\1:***@#'` لـ URLs فيها يوزر وباسورد. الدرس: اكتب الأوامر بحيث الناتج نفسه مايحتويش سر (لأنه هيتسجّل في شات أو لوج). **(اتكتب ٣ نوفمبر: vps/15 و diag/07)**
 
-- [ ] **١٢. ضغط وتسريع nginx على سيرفر شغال** (تاب nginx، `brotli` موجود في ٤ ملفات و `gzip_` في ٣، لكن مفيش التحقق من بره): قبل التعديل `cp default /root/default.bak`، و `nginx -t` **قبل** `systemctl reload nginx`، وبعدين من بره: `curl -sI --http2 -H "Accept-Encoding: br" https://shop.example/ | grep -iE "HTTP/2|content-encoding"`. (أولوية منخفضة: غالباً مغطى.)
+- [x] **١٢. ضغط وتسريع nginx على سيرفر شغال** (تاب nginx، `brotli` موجود في ٤ ملفات و `gzip_` في ٣، لكن مفيش التحقق من بره): قبل التعديل `cp default /root/default.bak`، و `nginx -t` **قبل** `systemctl reload nginx`، وبعدين من بره: `curl -sI --http2 -H "Accept-Encoding: br" https://shop.example/ | grep -iE "HTTP/2|content-encoding"`. (أولوية منخفضة: غالباً مغطى.) **(اتكتب ٣ نوفمبر: vps/15 و diag/07)**
 
 ---
 
@@ -149,7 +149,7 @@
 
 ### تاب git
 
-1. **ارفع على السيرفر من نسخة قديمة = كسرت الإنتاج (ونسيت إن الكود المنسوخ مش هو الشغّال)** (الأهم؛ يتربط بدرس `git fetch` وبـ«خدمة systemd واقعة» في تاب diag)
+1. **(اتكتب ٣ نوفمبر: diag/07 «نسخة قديمة كسرت الإنتاج») ارفع على السيرفر من نسخة قديمة = كسرت الإنتاج (ونسيت إن الكود المنسوخ مش هو الشغّال)** (الأهم؛ يتربط بدرس `git fetch` وبـ«خدمة systemd واقعة» في تاب diag)
    - الحالة: ملف `tools.py` اتنسخ بـ `scp` من الجهاز فوق نسخة السيرفر، والجهاز كان ورا الريبو بـ ٢٠+ commit. بعد `docker compose up -d --build --force-recreate brain` الاختبارات على السيرفر: ٢٢ فشل من ٦٢٩.
    - الخطأ الحقيقي: `AttributeError: module 'app.tools' has no attribute 'HANDOFFS'` (متكرر في كل الفاشلين، من `app/pipeline.py:607`).
    - التشخيص بالترتيب:

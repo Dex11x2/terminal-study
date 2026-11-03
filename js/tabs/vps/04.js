@@ -563,6 +563,47 @@ Congratulations, all simulated renewals succeeded:
 
 ---
 
+## ٦. الفخ: لو certbot اتقتل بين الـ pre-hook والـ post-hook
+
+الـ pre-hook والـ post-hook مش عملية واحدة. جرّبنا على نفس المحاكاة (Pebble و Ubuntu 24.04 بـ systemd، و certbot 2.9.0): [[renew --dry-run]] في الخلفية، وجمّدنا سيرفر الشهادات بعد سطر الـ pre-hook عشان certbot «يعلّق»، وقتلناه بـ [[pkill -f "certbot renew"]]:
+
+~~~text grep -E "hook|signal" /var/log/letsencrypt/letsencrypt.log
+08:29:48,665:INFO:certbot.compat.misc:Running pre-hook command: systemctl stop nginx
+08:30:01,483:DEBUG:certbot._internal.error_handler:Encountered signals: [15]
+08:30:01,766:DEBUG:certbot._internal.error_handler:Calling signal 15
+~~~
+
+~~~text systemctl is-active nginx
+inactive
+~~~
+
+مفيش [[post-hook]] خالص، و Nginx فضل واقف لحد ما حد شغّله بإيده. ونفس الكلام لو السيرفر عمل reboot في النص، أو [[timeout]] قتله، أو [[Ctrl+C]]. وكمان [[pkill -f]] قتل الـ shell اللي كان شغّال فيه (كود الخروج 143)، لأن سطر الأمر بتاع الـ shell فيه نفس الكلمات. القضية كاملة (التشخيص بالترتيب، والخط الزمني من اللوجات، وإزاي تقتل بالـ PID صح) في درس «nginx وقف وقت certbot» في تاب التشخيص.
+
+وقبل ما تفتكر certbot معلّق: لما بيتشغّل من غير ترمنال (في الخلفية أو من سكربت) بيستنى وقت عشوائي الأول. في المحاكاة اللوج قال [[Non-interactive renewal: random delay of 464.0920496465903 seconds]] (حوالي ٨ دقايق). وده بيحصل **قبل** الـ pre-hook، فمفيش ضرر لو قتلته وقتها، بس مالوش لازمة. و [[--no-random-sleep-on-renew]] بيلغيه.
+
+---
+
+## ٧. لو Nginx على السيرفر نفسه (مش Docker): حوّل لـ webroot
+
+الـ standalone منطقي لما Nginx جوه Docker ومش عايز تلمس إعداده. لو Nginx متسطّب على السيرفر نفسه، أو تقدر تشارك فولدر مع الـ container، webroot مفيهوش ولا ثانية توقف. وشهادة موجودة بتتحوّل بأمر واحد (من certbot 2.3):
+
+~~~bash
+sudo certbot reconfigure --cert-name example.com --webroot -w /var/www/html --pre-hook "" --post-hook ""
+~~~
+
+~~~text الناتج
+Simulating renewal of an existing certificate for example.com
+Successfully updated configuration.
+Changes will apply when the certificate renews.
+~~~
+
+- [[reconfigure]] بيعمل بروفة الأول، ولو فشلت **مبيحفظش** حاجة.
+- [[--pre-hook ""]] و [[--post-hook ""]] لازم يبقوا في نفس الأمر: لما جرّبنا من غيرهم، الـ pre-hook القديم وقّف Nginx وقت البروفة، فـ webroot فشل بـ [[connection refused]].
+- Nginx لازم يقدّم [[/.well-known/acme-challenge/]] من [[/var/www/html]] على بورت 80 (درس «certbot --webroot» فوق، ودرس «acme-challenge» في تاب nginx).
+- والـ reload بعد التجديد: ملف تنفيذي في [[/etc/letsencrypt/renewal-hooks/deploy/]] فيه [[nginx -t -q && systemctl reload nginx]].
+
+---
+
 ## الخلاصة
 
 ~~~text
@@ -571,15 +612,22 @@ Congratulations, all simulated renewals succeeded:
 --post-hook "شغّل nginx"   بعد (حتى لو فشل)
 renewal/DOMAIN.conf       لازم يبقى فيه pre_hook و post_hook
 renew --dry-run           بروفة: success + الموقع يقف ثواني ويرجع
+اتقتل بين الـ hooks       Nginx يفضل واقف: اقتل بالـ PID، أو حوّل لـ webroot
 ~~~`,
           lines: [
-            "خد شهادة بسيرفر certbot نفسه، من غير أسئلة...",
-            "...للدومين بالـ www ومن غيرها.",
-            "قبل الطلب: وقّف container الـ Nginx عشان بورت 80 يفضى.",
-            "بعده: شغّله تاني.",
-            "اتأكد إن الطريقة والـ hooks اتحفظوا للتجديد.",
-            "timer التجديد موجود؟",
-            "جرّب التجديد كامل بالـ hooks."
+            R`خد شهادة بس ([[certonly]]) بسيرفر certbot الصغير نفسه على بورت 80 ([[--standalone]])، من غير ولا سؤال ([[--non-interactive]])، وانت موافق على الشروط ([[--agree-tos]])...`,
+            R`...وبالإيميل اللي هيوصله تنبيه لو التجديد فشل، وللدومين بالـ www ومن غيرها ([[-d]] لكل اسم). الـ [[\]] في آخر السطر معناها الأمر مكمّل تحت.`,
+            R`[[--pre-hook]]: أمر بيتنفّذ قبل طلب الشهادة: يدخل فولدر المشروع ويوقّف container الـ Nginx بـ [[stop]] (مش [[down]]، عشان ميتمسحش) فبورت 80 يفضى.`,
+            R`[[--post-hook]]: أمر بيتنفّذ في آخر الـ run، نجح أو فشل: يشغّل الـ container تاني. لو certbot اتقتل قبل ما يوصل هنا، Nginx بيفضل واقف (القسم ٦ في الشرح).`,
+            R`اتأكد إن الطريقة ([[authenticator]]) والـ hooks اتحفظوا في ملف التجديد، لأن التجديد الأوتوماتيك بعد شهرين بيقرا الملف ده مش الأمر اللي كتبته.`,
+            R`المنبّه بتاع التجديد موجود؟ [[list-timers]] بيعرض كل الـ timers وميعادها الجاي، و [[grep certbot]] بيسيب سطره بس.`,
+            R`بروفة تجديد كاملة بالـ hooks على سيرفر الاختبار، من غير ما تحفظ شهادة. لاحظ الموقع بيقف ثواني ويرجع وهي شغّالة.`,
+          ],
+          practice: [
+            { lvl: 'سريع', t: R`من غير ما تبص: لو التجديد بـ standalone بالـ hooks اتقتل بعد الـ pre-hook، Nginx هيبقى في حالة إيه؟ وإيه السطر اللي هتدوّر عليه في [[letsencrypt.log]] عشان تتأكد؟`, done: R`كتبت إن Nginx هيفضل واقف ([[inactive]]) لأن الـ post-hook ما اتنفّذش، وإن الدليل [[Running pre-hook command]] ومن غير أي [[post-hook]] بعده.` },
+            { lvl: 'تطبيق', t: R`قيس: في المحاكاة، لوب [[curl]] كل ربع ثانية من جهاز تاني، و [[certbot renew --dry-run --no-random-sleep-on-renew]] على السيرفر. عدّ الطلبات اللي طلعت [[000]].`, done: R`عندك رقم حقيقي لعدد الـ [[000]] (في الدرس ٥ طلبات في حوالي ثانيتين وربع)، ووقت الـ pre-hook والـ post-hook من اللوج، والفرق بينهم قريب من مدة التوقف.` },
+            { lvl: 'تطبيق', t: R`صلّح: حوّل الشهادة لـ webroot بـ [[certbot reconfigure]] من غير ما تشيل الـ hooks، واقرا الخطأ. وبعدين أعد الأمر صح، واتأكد من ملف التجديد.`, done: R`المحاولة الأولى فشلت بـ [[connection refused]] واللوج فيه [[Running pre-hook command: systemctl stop nginx]]، والتانية طبعت [[Successfully updated configuration.]]، والملف فيه [[authenticator = webroot]] و [[pre_hook = ""]].` },
+            { lvl: 'تحدي', t: R`قارن وقيس: بعد التحويل لـ webroot، كرّر نفس لوب الـ curl و [[renew --dry-run]]، ومرة كمان وانت بتقتل certbot في النص بـ [[kill]] برقمه ([[pgrep -ax certbot]]). اكتب جدول: الطريقة، وعدد [[000]]، وحالة Nginx بعدها.`, done: R`الجدول فيه ٣ صفوف: standalone بعدد [[000]] أكبر من صفر، و webroot بصفر، و webroot مع القتل بصفر و Nginx [[active]].` },
           ],
           sol: R`[[sudo certbot renew --dry-run]] بيعمل (وبيكتب في اللوج، وعلى الشاشة لو شغّلته بـ [[-v]]) [[Running pre-hook command: cd /srv/myapp && docker compose stop frontend]]، وبعدين [[Simulating renewal of an existing certificate for example.com]]، وبعدين [[Running post-hook command: ...start frontend]]، وفي الآخر [[Congratulations, all simulated renewals succeeded]].
 

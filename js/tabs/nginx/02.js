@@ -86,8 +86,8 @@ gzip_types text/plain text/css text/javascript application/javascript applicatio
 
 | النوع | الملفات |
 |---|---|
-| [[text/plain]] | [[.txt]] |
-| [[text/css]] | [[.css]] |
+| [[text/plain]] | ملفات النص العادي [[.txt]]، وأي رد نصي من غير نوع أدق |
+| [[text/css]] | ملفات [[.css]]، وبتتضغط لربعها تقريبًا لأنها كلمات متكررة كتير |
 | [[text/javascript]] و [[application/javascript]] | [[.js]] (الاسمين، لأن السيرفرات المختلفة بتستخدم ده أو ده) |
 | [[application/json]] | [[.json]] وردود الـ API |
 | [[application/xml]] | [[.xml]] (sitemap مثلًا) |
@@ -121,17 +121,93 @@ gzip_types text/plain text/css text/javascript application/javascript applicatio
 
 | السطر | ليه |
 |---|---|
-| [[gzip on]] | شغّل (HTML بس) |
-| [[gzip_vary on]] | الكاش يحفظ نسخة لكل نوع |
-| [[gzip_min_length 1024]] | سيب الصغير |
-| [[gzip_comp_level 5]] | معظم المكسب بأقل معالج |
-| [[gzip_types ...]] | ضيف CSS و JS و JSON و SVG |`,
+| [[gzip on]] | شغّل الضغط، ولوحده بيضغط HTML بس، ومتكتبوش مرتين في نفس الـ http |
+| [[gzip_vary on]] | أي كاش في النص (CDN) يحفظ نسخة مضغوطة ونسخة عادية |
+| [[gzip_min_length 1024]] | سيب الردود الأصغر من كيلو، ضغطها ممكن يكبّرها |
+| [[gzip_comp_level 5]] | معظم المكسب في الحجم بأقل شغل على المعالج |
+| [[gzip_types ...]] | ضيف CSS و JS و JSON و SVG، وإلا الـ JS بيتبعت زي ما هو |
+
+---
+
+## زيادة: brotli على أوبونتو، و [[gzip_proxied]]، وقياس على موقع شغّال
+
+اتجرّب بعد الدرس ده على Ubuntu 24.04 (nginx 1.24.0) بـ systemd، على موقع بشهادة تجربة، والقياس من كونتينر تاني. الحكاية الكاملة (قيس قبل، وغيّر، و [[nginx -t]]، وقيس بعد) في قضية «سرّع nginx على سيرفر شغّال» في تاب التشخيص. هنا الحتت اللي تخص الضغط:
+
+### ١. على أوبونتو [[gzip on]] موجود، والـ JS مش بيتضغط
+
+~~~text grep -n "gzip" /etc/nginx/nginx.conf
+46:	gzip on;
+53:	# gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
+~~~
+
+يعني ملف [[jquery.min.js]] (89037 byte) كان بيتبعت زي ما هو حتى مع [[Accept-Encoding: gzip]]، والـ HTML بس اللي بيتضغط. ولما حطينا الملف بتاع الدرس ده في [[conf.d/perf.conf]] **ومعاه** [[gzip on;]]:
+
+~~~text sudo nginx -t
+2026/11/03 08:33:38 [emerg] 1147#1147: "gzip" directive is duplicate in /etc/nginx/conf.d/perf.conf:1
+nginx: configuration file /etc/nginx/nginx.conf test failed
+~~~
+
+فالسطر الأول بيتشال من ملفك لو [[nginx.conf]] فيه [[gzip on]] أصلًا (و [[gzip_*]] التانية متعلّق عليها هناك، فمفيش تكرار فيها).
+
+### ٢. brotli: باكدجين في أوبونتو 24.04
+
+~~~bash
+sudo apt install libnginx-mod-http-brotli-filter libnginx-mod-http-brotli-static
+ls /etc/nginx/modules-enabled/
+~~~
+
+~~~text الناتج
+50-mod-http-brotli-filter.conf
+50-mod-http-brotli-static.conf
+~~~
+
+ودول بيضيفوا [[load_module]] للـ module، فبقى ينفع تكتب في نفس [[perf.conf]]:
+
+~~~text conf.d/perf.conf (الجزء الجديد)
+brotli on;
+brotli_comp_level 5;
+brotli_min_length 1024;
+brotli_types text/plain text/css text/javascript application/javascript application/json application/xml image/svg+xml;
+~~~
+
+نفس فكرة سطور gzip بالظبط. والنتيجة (الحجم اللي نزل فعلًا، بـ [[curl -so /dev/null -H "Accept-Encoding: ..." -w "%{size_download}"]]):
+
+| الملف | من غير ضغط | gzip | br |
+|---|---|---|---|
+| الصفحة الرئيسية (HTML) | 18564 | 1894 | 965 |
+| [[jquery.min.js]] | 89037 | 31218 | 30362 |
+| [[jquery.js]] (مش متصغّر) | 289782 | 86815 | 80815 |
+
+في الـ JS المتصغّر brotli أحسن بحوالي ٣٪ بس، وفي الـ HTML والنص المتكرر الفرق أكبر بكتير. ولو المتصفح بعت [[gzip, br]]، nginx اختار [[br]] ([[content-encoding: br]]).
+
+### ٣. [[gzip_proxied]]: الطلبات اللي جاية من CDN
+
+nginx بيعرف إن الطلب جه عن طريق proxy من header [[Via]]. والافتراضي [[gzip_proxied off]]: متضغطش الطلبات دي. جرّبناها:
+
+~~~text الناتج (jquery.min.js)
+no Via         31218
+Via: 1.1 cdn   89037
+br + Via       30362
+Via + proxied  31218
+~~~
+
+- طلب عليه [[Via]] من غير [[gzip_proxied]]: مااتضغطش خالص.
+- brotli مالوش إعداد زي ده، فضغط عادي.
+- بعد [[gzip_proxied any;]] اتضغط.
+
+فلو قدام سيرفرك CDN أو proxy بيضيف [[Via]]، ضيف [[gzip_proxied any;]]. وملحوظة: أول قياس عملناه في نفس الثانية بعد [[reload]] طلع الرقم القديم، لأن الـ workers القدام بيكمّلوا شوية. استنى ثانية قبل ما تقيس.`,
           lines: [
-            "شغّل الضغط.",
-            "ضيف Vary للكاش.",
-            "متضغطش الأصغر من كيلو.",
-            "مستوى ٥: توازن بين الحجم والمعالج.",
-            "الأنواع اللي تتضغط (الافتراضي HTML بس)."
+            R`شغّل الضغط بـ gzip. لوحده بيضغط ردود [[text/html]] بس، والأنواع التانية بتيجي من [[gzip_types]] تحت. وعلى أوبونتو السطر ده مكتوب أصلًا في [[nginx.conf]]، فلو كررته في [[conf.d]] [[nginx -t]] بيرفض.`,
+            R`ضيف للرد header [[Vary: Accept-Encoding]]، عشان أي كاش في النص (CDN أو proxy) يحفظ نسخة مضغوطة للي بيفهم ونسخة عادية للي مش بيفهم.`,
+            R`متضغطش أي رد أصغر من 1024 byte (كيلو): الضغط ليه تكلفة ثابتة، وعلى ملف صغير الناتج ممكن يطلع أكبر من الأصل.`,
+            R`قوة الضغط من 1 لـ 9. المستوى ٥ بياخد معظم التوفير في الحجم، وبعده الحجم بيقل شوية صغيرين والمعالج بيشتغل أكتر.`,
+            R`الأنواع اللي تتضغط غير HTML: CSS و JS (بالاسمين) و JSON و XML و SVG. من غير السطر ده الـ JS والـ CSS بيتبعتوا من غير ضغط وانت فاكر إن الضغط شغّال.`
+          ],
+          practice: [
+            { lvl: 'سريع', t: R`من غير ما تبص: لو كتبت [[gzip on;]] بس ومفيش [[gzip_types]]، أنهي نوع ملفات بيتضغط؟ ولو قدام السيرفر CDN بيبعت [[Via]]، إيه السطر اللي لازم تضيفه عشان gzip يشتغل للطلبات دي؟`, done: R`كتبت إن [[text/html]] بس اللي بيتضغط، وإن السطر [[gzip_proxied any;]]، وإن brotli مالوش الإعداد ده.` },
+            { lvl: 'تطبيق', t: R`قارن وقيس: في كونتينر [[nginx:alpine]] أو Ubuntu، قدّم ملف JS حقيقي (زي [[jquery.min.js]])، وقيس [[%{size_download}]] بـ identity و gzip قبل ما تضيف [[gzip_types]] وبعد. اعمل جدول واحسب نسبة التوفير بأمر.`, done: R`الجدول فيه رقمين للـ JS قبل (متساويين، لأن الـ JS مكانش بيتضغط) ورقم بعد أصغر بكتير (لـ jquery.min.js حوالي 31 ألف من 89 ألف)، والنسبة محسوبة بـ [[awk]].` },
+            { lvl: 'تطبيق', t: R`صلّح الإعداد: على أوبونتو، ملف [[conf.d/perf.conf]] فيه [[gzip on;]] و [[gzip_types text/css;]] و [[brotli on;]] والـ brotli module مش متسطّب. شغّل [[nginx -t]] وصلّح رسالة رسالة لحد ما يعدّي، واكتب كل رسالة بنصها.`, done: R`كتبت [[directive is duplicate]] و [[unknown directive "brotli"]] وصلّحتهم (شلت [[gzip on]] من الملف، وسطّبت [[libnginx-mod-http-brotli-filter]])، وزوّدت [[application/javascript]] على [[gzip_types]]، و [[nginx -t]] في الآخر [[test is successful]].` },
+            { lvl: 'تحدي', t: R`اقرا وتوقّع: [[gzip_proxied]] مش مكتوب، و brotli شغّال لـ JS. قبل ما تقيس، اكتب الحجم المتوقع (مضغوط ولا الأصلي) للطلبات دي: gzip من غير [[Via]]، و gzip ومعاه [[Via: 1.1 cdn]]، و br ومعاه [[Via]]، و [[gzip, br]] ومعاه [[Via]]. وبعدين قيس كلهم.`, done: R`توقعاتك الأربعة اتكتبت قبل القياس، والقياس أكد: مضغوط، والأصلي، ومضغوط بـ br، ومضغوط بـ br (nginx بيختار br وده مش متأثر بـ [[Via]])، وكتبت جملة بتفسّر الرابع.` },
           ],
           sol: R`الأمر المفروض يطبع [[content-encoding: gzip]] (بحروف صغيرة لو الموقع HTTP/2). ومعاه في الـ headers [[Vary: Accept-Encoding]] بسبب [[gzip_vary on]]. جربتها على ملف JS خمسة كيلو وطلع [[Content-Encoding: gzip]].
 

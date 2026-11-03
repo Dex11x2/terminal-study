@@ -2857,6 +2857,52 @@
     "severity"
    ],
    "lvl": "إنتاج"
+  },
+  {
+   "topic": "certbot hooks وقّعت nginx",
+   "find": [
+    "pre_hook",
+    "post_hook"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "DNS cutover و TTL",
+   "find": [
+    "cutover"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "MaxStartups و ControlMaster",
+   "find": [
+    "maxstartups",
+    "قبل الـ banner"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "تقسيم وقت الطلب (time_connect و ttfb)",
+   "find": [
+    "time_appconnect",
+    "قسّم الوقت"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "نسخة قديمة اتنشرت (scp فوق الأحدث)",
+   "find": [
+    "نسخة قديمة"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "liveness و readiness",
+   "find": [
+    "readiness",
+    "/ready"
+   ],
+   "lvl": "إنتاج"
   }
  ],
  "quality": [

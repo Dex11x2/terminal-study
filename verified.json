@@ -4879,6 +4879,11 @@
   "date": "2026-10-07",
   "on": "docker postgres:18 (psql)"
  },
+ "diag|/health بيقول 200 والدخول بايظ": {
+  "hash": "76dcafffbad3",
+  "date": "2026-11-03",
+  "on": "Docker lab: Pebble, CoreDNS, systemd ubuntu:24.04, nginx 1.24/1.27, tc netem; Windows OpenSSH; flush-dns commands from docs"
+ },
  "diag|500 من التطبيق": {
   "hash": "620aa28e5e51",
   "date": "2026-10-06",
@@ -4943,6 +4948,11 @@
   "hash": "5f402a091c71",
   "date": "2026-10-28",
   "on": "Docker Desktop lab (b3d-*): Git Bash, pwsh 7.6, Windows PowerShell 5.1; docs: traces (links to cloud)"
+ },
+ "diag|nginx وقف وقت certbot": {
+  "hash": "59baa828e5ae",
+  "date": "2026-11-03",
+  "on": "Docker lab: Pebble, CoreDNS, systemd ubuntu:24.04, nginx 1.24/1.27, tc netem; Windows OpenSSH; flush-dns commands from docs"
  },
  "diag|node --cpu-prof": {
   "hash": "c903d10794d0",
@@ -5009,6 +5019,11 @@
   "date": "2026-10-06",
   "on": "ubuntu-24.04 systemd container lab + real DNS/HTTPS"
  },
+ "diag|السيرفر ولا جهازي؟": {
+  "hash": "bb1600476786",
+  "date": "2026-11-03",
+  "on": "Docker lab: Pebble, CoreDNS, systemd ubuntu:24.04, nginx 1.24/1.27, tc netem; Windows OpenSSH; flush-dns commands from docs"
+ },
  "diag|الـ container بيقع ويقوم": {
   "hash": "313fbdde9efc",
   "date": "2026-10-06",
@@ -5049,6 +5064,11 @@
   "date": "2026-10-06",
   "on": "ubuntu-24.04 container (real DNS)"
  },
+ "diag|سرّع nginx على سيرفر شغّال": {
+  "hash": "f670ec4b43cb",
+  "date": "2026-11-03",
+  "on": "Docker lab: Pebble, CoreDNS, systemd ubuntu:24.04, nginx 1.24/1.27, tc netem; Windows OpenSSH; flush-dns commands from docs"
+ },
  "diag|سيرفر مش فاكر عليه إيه": {
   "hash": "37f093da25b1",
   "date": "2026-10-06",
@@ -5078,6 +5098,16 @@
   "hash": "6512ec60a2c5",
   "date": "2026-10-06",
   "on": "OpenSSH server + client containers"
+ },
+ "diag|نسخة قديمة كسرت الإنتاج": {
+  "hash": "3d8df9536ca7",
+  "date": "2026-11-03",
+  "on": "Docker lab: Pebble, CoreDNS, systemd ubuntu:24.04, nginx 1.24/1.27, tc netem; Windows OpenSSH; flush-dns commands from docs"
+ },
+ "diag|نقل الدومين لسيرفر جديد": {
+  "hash": "a9786c74c275",
+  "date": "2026-11-03",
+  "on": "Docker lab: Pebble, CoreDNS, systemd ubuntu:24.04, nginx 1.24/1.27, tc netem; Windows OpenSSH; flush-dns commands from docs"
  },
  "docker|-f و -p": {
   "hash": "5b93b216c9fe",
@@ -10385,9 +10415,9 @@
   "on": "docker nginx:alpine (nginx/1.31.6) + node:24-alpine backend"
  },
  "nginx|gzip": {
-  "hash": "351fbdb145a6",
-  "date": "2026-10-06",
-  "on": "docker nginx:alpine 1.31.6"
+  "hash": "eefaca204ac9",
+  "date": "2026-11-03",
+  "on": "nginx 1.24 Ubuntu + brotli packages in Docker"
  },
  "nginx|htpasswd -B و $remote_user": {
   "hash": "37213e1e1311",
@@ -17720,9 +17750,9 @@
   "on": "ubuntu-24.04 systemd container (simulated VPS) + Pebble test CA"
  },
  "vps|certbot --standalone": {
-  "hash": "c9a71dab9b50",
-  "date": "2026-10-06",
-  "on": "ubuntu-24.04 systemd container (simulated VPS) + Pebble"
+  "hash": "f696caed9af5",
+  "date": "2026-11-03",
+  "on": "Pebble ACME + nginx + certbot in Docker; reconfigure from docs"
  },
  "vps|certbot --webroot": {
   "hash": "b99796e11b40",
@@ -17778,6 +17808,11 @@
   "hash": "c5f566949f49",
   "date": "2026-10-06",
   "on": "Docker 29.8.2 in ubuntu-24.04 container"
+ },
+ "vps|dump و restore بين سيرفرين": {
+  "hash": "4af32574ba9a",
+  "date": "2026-11-03",
+  "on": "Docker lab: ubuntu:24.04 servers with Docker 29 on a 203.0.113.0/24 network, mongo:7, postgres:16; pwsh 7.6/5.1; DNS and some flags from docs"
  },
  "vps|fail2ban": {
   "hash": "3e5ae42b1f45",
@@ -17934,15 +17969,30 @@
   "date": "2026-10-06",
   "on": "ubuntu-24.04 docker + docker ps"
  },
+ "vps|أسرار في الجرد واقتباسات متداخلة": {
+  "hash": "5c9d2f5d0eda",
+  "date": "2026-11-03",
+  "on": "Docker lab: ubuntu:24.04 servers with Docker 29 on a 203.0.113.0/24 network, mongo:7, postgres:16; pwsh 7.6/5.1; DNS and some flags from docs"
+ },
  "vps|أعراض مش أسباب": {
   "hash": "4886c88f94c1",
   "date": "2026-10-06",
   "on": "ubuntu-24.04 docker"
  },
+ "vps|بورتات Docker مفتوحة رغم ufw": {
+  "hash": "1c9fbcc2c107",
+  "date": "2026-11-03",
+  "on": "Docker lab: ubuntu:24.04 servers with Docker 29 on a 203.0.113.0/24 network, mongo:7, postgres:16; pwsh 7.6/5.1; DNS and some flags from docs"
+ },
  "vps|تسطيب Docker": {
   "hash": "3e9ea4a23f05",
   "date": "2026-10-06",
   "on": "ubuntu-24.04 systemd container (simulated VPS) DinD"
+ },
+ "vps|تعديل موقع شغّال بأمان": {
+  "hash": "61184d14e18c",
+  "date": "2026-11-03",
+  "on": "Docker lab: ubuntu:24.04 servers with Docker 29 on a 203.0.113.0/24 network, mongo:7, postgres:16; pwsh 7.6/5.1; DNS and some flags from docs"
  },
  "vps|تفعيل الموقع": {
   "hash": "94c871e1cecd",
@@ -18003,6 +18053,16 @@
   "hash": "170c5401571d",
   "date": "2026-10-06",
   "on": "ubuntu-24.04 systemd container (simulated VPS) + client"
+ },
+ "vps|نسخة تجربة جنب الإنتاج": {
+  "hash": "797f24a3e860",
+  "date": "2026-11-03",
+  "on": "Docker lab: ubuntu:24.04 servers with Docker 29 on a 203.0.113.0/24 network, mongo:7, postgres:16; pwsh 7.6/5.1; DNS and some flags from docs"
+ },
+ "vps|نقل السيرفر كله": {
+  "hash": "36e01077b82e",
+  "date": "2026-11-03",
+  "on": "Docker lab: ubuntu:24.04 servers with Docker 29 on a 203.0.113.0/24 network, mongo:7, postgres:16; pwsh 7.6/5.1; DNS and some flags from docs"
  },
  "vps|نقل مفتاح SSH": {
   "hash": "a942628aaed6",
