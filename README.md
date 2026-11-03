@@ -8,7 +8,7 @@
 - **من النت:** لينك GitHub Pages بتاع الـ repo.
 - **على الفون كتطبيق:** افتح اللينك، ومن قايمة المتصفح اختار «Add to Home screen» (أو «Install app»). بعد أول فتحة بيشتغل من غير نت.
 - **على الكمبيوتر:** افتح `index.html` بدبل كليك.
-- **ملف واحد (من غير نت، أو تبعته لحد):** `dist/terminal.html`.
+- **ملف واحد (من غير نت، أو تبعته لحد):** نزّل `terminal.html` من [آخر Release](https://github.com/Dex11x2/terminal-study/releases/latest/download/terminal.html). الملف كبير (أكتر من 50 MB)، فمبقاش في الريبو: GitHub Actions بيبنيه بعد كل تحديث وبيرفعه Release لوحده (`.github/workflows/release.yml`). ولو عايز تبنيه بنفسك: `npm run build` بيعمله في `dist/terminal.html` على جهازك.
 
 ## الملفات
 
@@ -130,7 +130,7 @@ check: {
 
 ```bash
 npm run check    # بيدوّر على الأخطاء: شرح سطور ناقص، اسم متكرر، رابط قاموس بايظ...
-npm run build    # بيفحص، وبعدين يعمل dist/terminal.html من جديد
+npm run build    # بيفحص، وبعدين يعمل dist/terminal.html من جديد (على جهازك بس، مش بيتعمله commit)
 ```
 
 ولو جربت دروس بجد (الأوامر اتشغّلت على النظام نفسه)، سجّلها:

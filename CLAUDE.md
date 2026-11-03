@@ -24,8 +24,8 @@ Read `PLAN.md` first: current state, ordered remaining work, agreed rules. Updat
 - Per-OS sections: comment lines that are only an OS header ending in `:` (`# Linux (and WSL):`, `# Windows (PowerShell):`, `# Mac:`). Don't use `flag: "script"` on them.
 - Before a content batch, audit related tabs for important missing topics and add them.
 - Never run destructive or system-changing commands on the user's machine; never `docker volume prune` or other global Docker cleanup.
-- After changes: `npm run check`, bump `CACHE` in `sw.js`, `npm run build`, commit, push, confirm GitHub Actions passed.
-- If agents are still editing other tab files, commit only the finished files, then build `dist/` from a worktree of the new HEAD (`git worktree add --detach <tmp> HEAD`, `node tools/build.js` there, copy `dist/terminal.html` back, remove the worktree) so CI's "dist is up to date" check matches the committed sources.
+- After changes: `npm run check`, bump `CACHE` in `sw.js`, commit, push, confirm GitHub Actions passed (`check`, `lessons`, and `release`).
+- `dist/` is git-ignored since 2026-11-03 (the file passed 50 MB; GitHub refuses files over 100 MB). `release.yml` builds `dist/terminal.html` on every push to main and publishes it as a Release (newest 10 kept); readers download `releases/latest/download/terminal.html`. Never commit `dist/`. If agents are still editing other tab files, commit only the finished files.
 
 ## Token budget
 

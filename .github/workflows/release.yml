@@ -1,0 +1,44 @@
+name: release
+
+# builds the single-file offline copy (dist/terminal.html) and publishes it as a GitHub Release
+# instead of committing it: the file is past 50 MB and GitHub refuses any file over 100 MB.
+# Stable link for the newest copy: https://github.com/<owner>/<repo>/releases/latest/download/terminal.html
+
+on:
+  push:
+    branches: [main]
+    paths: ['js/**', 'css/**', 'index.html', 'vendor/**', 'sw.js', 'manifest.webmanifest', 'tools/build.js']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# two quick pushes: the second build replaces the first instead of racing it
+concurrency:
+  group: release
+  cancel-in-progress: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Build
+        run: node tools/check.js && node tools/build.js
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="build-$(date -u +%Y%m%d-%H%M)-${GITHUB_SHA::7}"
+          size=$(du -h dist/terminal.html | cut -f1)
+          gh release create "$tag" dist/terminal.html \
+            --target "$GITHUB_SHA" --latest \
+            --title "نسخة من غير نت: $(date -u +%Y-%m-%d)" \
+            --notes "ملف واحد فيه الموقع كله (${size}). نزّله وافتحه بدبل كليك. اتبنى من ${GITHUB_SHA::7}."
+      - name: Keep the newest 10 builds
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release list --limit 100 --json tagName,createdAt \
+            --jq '[.[] | select(.tagName | startswith("build-"))] | sort_by(.createdAt) | reverse | .[10:] | .[].tagName' |
+          while read -r old; do gh release delete "$old" --cleanup-tag --yes; done

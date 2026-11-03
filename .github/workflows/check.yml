@@ -11,7 +11,6 @@ jobs:
       - uses: actions/checkout@v5
       - name: Content check
         run: node tools/check.js
-      - name: dist/terminal.html is up to date
-        run: |
-          node tools/build.js
-          git diff --exit-code dist/ || { echo "::error::شغّل npm run build واعمل commit للـ dist"; exit 1; }
+      # dist/ isn't committed any more (release.yml builds it and publishes it as a Release); this only proves the build still works
+      - name: The single-file build works
+        run: node tools/build.js && ls -l dist/terminal.html

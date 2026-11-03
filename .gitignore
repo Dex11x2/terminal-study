@@ -7,3 +7,6 @@ node_modules/
 /scratchpad/
 /key.pub
 .private-words
+
+# the single-file build is published as a GitHub Release (release.yml), never committed
+dist/
