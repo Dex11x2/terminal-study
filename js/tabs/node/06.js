@@ -1157,9 +1157,10 @@ const r = spawnSync(process.execPath, ["--cpu-prof", "--cpu-prof-name=p.cpuprofi
 console.log(r.stdout.trim());
 const prof = JSON.parse(readFileSync("p.cpuprofile", "utf8"));
 const byId = new Map(prof.nodes.map((n) => [n.id, n]));
-const self = new Map();
-prof.samples.forEach((id, i) => { const name = byId.get(id).callFrame.functionName || "(anonymous)"; self.set(name, (self.get(name) ?? 0) + prof.timeDeltas[i]); });
-console.log("top:", [...self].sort((a, b) => b[1] - a[1])[0][0]);`, expect: [R`unique: 15000`, R`top: slowUnique`] },
+const parent = new Map(); for (const n of prof.nodes) for (const c of n.children ?? []) parent.set(c, n.id);
+let total = 0, inSlow = 0;
+prof.samples.forEach((id, i) => { total += prof.timeDeltas[i]; for (let x = id; x !== undefined; x = parent.get(x)) if (byId.get(x).callFrame.functionName === "slowUnique") { inSlow += prof.timeDeltas[i]; break; } });
+console.log("slowUnique holds most of the time:", inSlow / total > 0.5);`, expect: [R`unique: 15000`, R`slowUnique holds most of the time: true`] },
           ],
         },
         {

@@ -3346,7 +3346,8 @@ for run in (1, 2):
 print(json.dumps(post("/_sent")["result"], ensure_ascii=False))
 srv.terminate()`,
           ci: [
-            { os: ['windows', 'ubuntu', 'macos'], sh: 'python', run: R`import json, threading, urllib.request, urllib.error
+            { os: ['windows', 'ubuntu', 'macos'], sh: 'python', run: R`import sys; sys.stdout.reconfigure(encoding="utf-8")  # كونسول ويندوز ممكن يبقى cp1252 فالعربي يقع
+import json, threading, urllib.request, urllib.error
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 TOKEN = "123456:TEST-TOKEN"
 inbox = [{"update_id": 1, "message": {"chat": {"id": 42}, "text": "/echo صباح الفل"}},
