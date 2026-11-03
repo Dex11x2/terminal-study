@@ -7319,6 +7319,11 @@
   "date": "2026-10-06",
   "on": "win11 Git Bash (Git 2.56); docs: gh issue, closing keywords"
  },
+ "git|M والـ diff فاضي": {
+  "hash": "9e6eb86c455d",
+  "date": "2026-11-03",
+  "on": "Git Bash 2.56 on Windows + ubuntu:24.04 Docker (local bare repos); gh commands from docs"
+ },
  "git|fork و upstream": {
   "hash": "0fbe84d2f32a",
   "date": "2026-10-06",
@@ -7385,9 +7390,9 @@
   "on": "win11 Git Bash (Git 2.56) + ubuntu-24.04; docs: SSH clone"
  },
  "git|git log": {
-  "hash": "e5a6c2475000",
-  "date": "2026-10-06",
-  "on": "win11 Git Bash (Git 2.56)"
+  "hash": "0e53382006c0",
+  "date": "2026-11-03",
+  "on": "Git Bash 2.56 on Windows + ubuntu:24.04 Docker (local bare repos); gh commands from docs"
  },
  "git|git log -S / blame": {
   "hash": "28987bf431de",
@@ -7504,10 +7509,20 @@
   "date": "2026-10-28",
   "on": "git 2.56.0.windows.3 على ويندوز 11، في ريبو تجريبي في scratchpad"
  },
+ "git|انسخ الملفات المتتبّعة بس": {
+  "hash": "0d9ce3b96911",
+  "date": "2026-11-03",
+  "on": "Git Bash 2.56 on Windows + ubuntu:24.04 Docker (local bare repos); gh commands from docs"
+ },
  "git|تحديث PR قديم": {
   "hash": "1323e13fc26e",
   "date": "2026-10-06",
   "on": "win11 Git Bash (Git 2.56) local bare remote; docs: GitHub PR page"
+ },
+ "git|فولدر ZIP لريبو git": {
+  "hash": "cf317cbac323",
+  "date": "2026-11-03",
+  "on": "Git Bash 2.56 on Windows + ubuntu:24.04 Docker (local bare repos); gh commands from docs"
  },
  "git|مشروع — الشجرة جاهزة؟": {
   "hash": "a32114761f2c",
@@ -12550,9 +12565,9 @@
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|foreach / for / while": {
-  "hash": "c36ab6e708d8",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "486317adada9",
+  "date": "2026-11-03",
+  "on": "pwsh 7.6 + powershell 5.1"
  },
  "ps|function": {
   "hash": "8c9822c809ad",
@@ -18488,6 +18503,11 @@
   "hash": "a29750259ed4",
   "date": "2026-10-29",
   "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
+ },
+ "web|?v= كسر الكاش": {
+  "hash": "a69c8770a01a",
+  "date": "2026-11-03",
+  "on": "Node lab server + Chromium (Playwright) + Git Bash/ubuntu sed; BSD sed from docs"
  },
  "web|CORS": {
   "hash": "52a963f04244",

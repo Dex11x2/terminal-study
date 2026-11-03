@@ -1456,6 +1456,16 @@ while ($n -lt 3) {
             { lvl: 'سريع', t: R`اجمع أحجام ملفات [[*.log]] بـ [[foreach]] في [[$total]]، وقارنه بـ [[(Get-ChildItem *.log | Measure-Object Length -Sum).Sum]].`, done: R`الرقمين زي بعض بالظبط.` },
             { lvl: 'تطبيق', t: R`استنى ملف يظهر بـ [[while]]: لوب بيسأل [[Test-Path .\ready.txt]] كل ثانية بحد أقصى ١٠ مرات، ويطبع [[waiting 1]] و [[waiting 2]]... واعمل الملف من نافذة تانية وهو بيستنى.`, done: R`لما تعمل الملف اللوب بيقف في اللفة اللي بعدها ويطبع [[ready]]. ولو معملتوش بيقف بعد ١٠ محاولات ويطبع [[timeout]]، يعني مستحيل يلف للأبد.` },
             { lvl: 'تحدي', t: R`اقرا [[tasks.txt]] سطر سطر بـ [[foreach]]: اللي بيبدأ بـ [[#]] اتخطاه بـ [[continue]]، ولما توصل لسطر [[END]] اقف بـ [[break]]. وبعدين لوبين جوه بعض واخرج من الاتنين مرة واحدة بـ label: [[:outer foreach ($i in 1..3) { foreach ($j in 1..3) { if ($j -eq 2) { break outer }; "$i-$j" } }]].`, done: R`مفيش ولا سطر تعليق اتطبع، ولا أي سطر بعد END. و [[break outer]] بيطبع [[1-1]] بس ويوقف اللوب الخارجي كمان، بينما [[break]] من غير label كان هيخرج من الداخلي بس ويطبع [[1-1]] و [[2-1]] و [[3-1]].` },
+            { lvl: 'سريع', t: R`اقرا وتوقّع: ملف فيه سطرين: [["start"]] وتحته [[foreach ($f in Get-ChildItem) { $f.Name } | Sort-Object]]. لما تشغّله، [["start"]] هيتطبع ولا لأ؟ وإيه أول كلمة في الرسالة؟ اكتب توقعك وشغّله في 7 و 5.1.`, done: R`توقعت إن مفيش حاجة هتتطبع خالص (ParserError قبل التنفيذ)، والرسالة فيها [[An empty pipe element is not allowed]] في النسختين، وفي 7 بتبدأ بـ [[ParserError:]].` },
+            { lvl: 'تطبيق', t: R`صلّح السكربت ده بالـ ٣ طرق ([[$( )]] و [[& { }]] ومتغير): [[foreach ($p in Get-Process) { "$($p.Name) $([int]($p.WS/1MB))" } | Select-Object -First 5]]. وبعدين اكتبه بـ [[ForEach-Object]].`, done: R`الأربع نسخ بيطبعوا ٥ سطور بالشكل [[name 123]] من غير أخطاء في 7 و 5.1.` },
+            { lvl: 'تحدي', t: R`قارن وقيس: كرر قياس الدرس على [[1..2000000]] بـ [[Measure-Command]] للحلول التلاتة مع [[Select-Object -First 1]]، وبعدين غيّرها لـ [[-Last 1]] وقيس تاني. مين كسب المرة دي، وليه؟`, done: R`مع [[-First 1]] [[$( )]] أبطأ بمئات المرات. ومع [[-Last 1]] الميزة اختفت لأن الكل لازم يتلف: [[$( )]] و [[& { }]] قريبين، و [[ForEach-Object]] بقى الأبطأ (في المعمل حوالي ٣ و ٢ و ٥.٥ ثانية في 7.6، و ٥ و ٤ و ١٥ في 5.1) لأن الـ script block بتاعه بيتنادى مرة لكل عنصر. وكتبت السبب في جملتين.` },
+          ],
+          ci: [
+            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`pwsh`, run: R`try { [scriptblock]::Create('foreach ($n in 1..3) { $n } | Select-Object -First 1') | Out-Null } catch { $_.Exception.Message }
+$(foreach ($n in 1..5) { $n * 10 }) | Select-Object -First 2
+& { foreach ($n in 1..5) { $n * 10 } } | Select-Object -Last 1`, expect: [R`An empty pipe element is not allowed`, R`20`, R`50`] },
+            { os: [R`windows`], sh: R`powershell`, run: R`try { [scriptblock]::Create('foreach ($n in 1..3) { $n } | Select-Object -First 1') | Out-Null } catch { $_.Exception.Message }
+$(foreach ($n in 1..5) { $n * 10 }) | Select-Object -First 2`, expect: [R`An empty pipe element is not allowed`, R`20`] },
           ],
           flag: "script",
           deep: {
@@ -1466,7 +1476,7 @@ while ($n -lt 3) {
 
 [[break]] يخرج من اللوب. [[continue]] يعدّي للـ iteration الجاية.`,
             when: "تعمل حاجة على كل ملف أو كل عنصر.",
-            mistakes: "[[foreach]] مع pipeline بدل [[ForEach-Object]] فـ PowerShell يجمع كل الـ objects في الذاكرة الأول."
+            mistakes: R`[[foreach]] مع pipeline بدل [[ForEach-Object]] فـ PowerShell يجمع كل الـ objects في الذاكرة الأول. وتكتب [[| Select-Object]] (أو أي pipe) بعد قفلة [[foreach (...) { }]] على طول، فيطلعلك [[An empty pipe element is not allowed]] والسكربت كله ميشتغلش لأنه ParserError: لفّه في [[$( )]] أو [[& { }]].`
           },
           teach: R`## الفكرة: نفس الكود، كذا مرة
 
@@ -1615,6 +1625,82 @@ day5
 
 ---
 
+## ٧. فخ: [[foreach (...) { } | Select-Object]]
+
+عايز آخر ٣ نتايج من لوب، فكتبت [[| Select-Object]] بعد قفلة الـ [[foreach]] (ده حصل فعلًا في سكربت بيلف على commits في git، درس «فولدر ZIP لريبو git» في تاب git). اتشغّل كملف [[t1.ps1]] فيه سطر واحد:
+
+~~~powershell
+foreach ($n in 1..5) { $n * 10 } | Select-Object -First 2
+~~~
+
+~~~text الناتج في PowerShell 7.6
+ParserError: C:\lab\t1.ps1:1
+Line |
+   1 |  foreach ($n in 1..5) { $n * 10 } | Select-Object -First 2
+     |                                   ~
+     | An empty pipe element is not allowed.
+~~~
+
+~~~text الناتج في Windows PowerShell 5.1
+At C:\lab\t1.ps1:1 char:34
++ foreach ($n in 1..5) { $n * 10 } | Select-Object -First 2
++                                  ~
+An empty pipe element is not allowed.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : EmptyPipeElement
+~~~
+
+### نقرا الرسالة
+
+- [[ParserError]]: الغلط في **قراية** الكود، قبل ما يتنفّذ أصلًا. فحتى لو قبل السطر ده سطر [["start"]]، مش هيتطبع: جرّبناها، والسكربت كله مااشتغلش.
+- العلامة [[~]] تحت الـ [[|]]: هنا المشكلة.
+- [[An empty pipe element is not allowed]]: «قبل الـ [[|]] مفيش حاجة تتبعت».
+
+ليه؟ الـ [[foreach]] هنا **statement** (جملة تحكّم زي [[if]] و [[while]])، مش أمر بيطلّع output في pipeline. فالـ parser شايف قبل الـ [[|]] «فاضي». ده مختلف عن [[ForEach-Object]] (أو اختصاره [[foreach]] **بعد** [[|]]) اللي هو cmdlet.
+
+> لو شغّلت نفس السطر جوه [[Invoke-Expression]] (أدوات كتير بتعمل كده من وراك)، الرسالة بتبدأ بـ [[Invoke-Expression:]] بدل [[ParserError:]]، ونفس المعنى.
+
+### ٤ حلول، وكلها اتجرّبت في 7.6 و 5.1
+
+~~~powershell
+$(foreach ($n in 1..5) { $n * 10 }) | Select-Object -First 2
+1..5 | ForEach-Object { $_ * 10 } | Select-Object -First 2
+$r = foreach ($n in 1..5) { $n * 10 }; $r | Select-Object -Last 2
+& { foreach ($n in 1..5) { $n * 10 } } | Select-Object -First 2
+~~~
+
+~~~text الناتج (بالترتيب)
+10
+20
+10
+20
+40
+50
+10
+20
+~~~
+
+| الحل | بيعمل إيه |
+|---|---|
+| [[$( ... )]] | subexpression: نفّذ اللي جوه، والناتج كله يبقى قيمة تتبعت للـ pipe |
+| [[ForEach-Object]] | cmdlet من الأول، فهو جزء طبيعي من الـ pipeline |
+| [[$r = foreach ...]] | خزّن الناتج في متغير، وبعدين ابعته. أوضح في سكربت طويل |
+| [[& { ... }]] | script block وتشغّله بـ [[&]]: بيطلّع كل نتيجة أول ما تجهز |
+
+### الفرق اللي بيبان مع الداتا الكبيرة
+
+[[Select-Object -First 1]] بيقدر يوقّف اللي قبله أول ما ياخد العنصر الأول، بس لو اللي قبله بيطلّع واحد واحد. قسناها على ٢ مليون عنصر بـ [[Measure-Command]]:
+
+| الحل | 7.6 | 5.1 |
+|---|---|---|
+| [[$( foreach ... )]] | ٩١٩ ms | ١٢٥٥ ms |
+| [[& { foreach ... }]] | ١٠ ms | ٥ ms |
+| [[ForEach-Object]] | ٤ ms | ٤ ms |
+
+[[$( )]] بيلف المليونين كلهم الأول ويبني لستة، وبعدين [[Select-Object]] ياخد واحد. أما [[& { }]] و [[ForEach-Object]] فبيبعتوا أول واحد، و [[Select-Object]] يقفل الباقي. فلو اللوب طويل أو بيكلّم شبكة، اختار [[& { }]] أو [[ForEach-Object]].
+
+---
+
 ## الخلاصة
 
 | اللوب | امتى |
@@ -1623,7 +1709,8 @@ day5
 | [[for ($i = 1; $i -le 3; $i++) { }]] | عدّاد بعدد معروف |
 | [[while (شرط) { }]] | لحد ما حاجة تتغيّر، وافتكر تغيّرها جوه |
 | [[1..5 | ForEach-Object { $_ * 2 }]] | جوه pipeline، و [[$_]] العنصر الحالي |
-| [[break]] و [[continue]] | اخرج، أو عدّي اللفة دي |`,
+| [[break]] و [[continue]] | اخرج، أو عدّي اللفة دي |
+| [[$(foreach ...) \| Select-Object]] | الـ [[foreach]] statement مبيتعملوش pipe على طول: لفّه في [[$( )]] أو [[& { }]] أو استخدم [[ForEach-Object]] |`,
           lines: [
             R`[[foreach]] بيلف على كل ملف [[.log]] في الفولدر الحالي، وفي كل لفة الملف الحالي اسمه [[$f]]. [[Get-ChildItem]] بيرجّع objects، فـ [[$f]] object فيه Name و Length وغيرهم مش مجرد اسم. لو مفيش ولا ملف، الـ loop مش بيتنفذ خالص.`,
             R`بيطبع اسم الملف وحجمه بالبايت. [[$( )]] لازمة لأن [[$f.Name]] جوه نص من غيرها هيطبع مسار الملف وبعده «.Name» كلام.`,

@@ -943,12 +943,17 @@ git log --oneline`
         {
           cmd: "git log",
           title: "التاريخ",
-          desc: "[[--oneline]] سطر لكل commit، و [[--graph --all]] بيرسم الـ branches. الرقم اللي في أول كل سطر هو الـ hash، ودي البصمة اللي بتستخدمها عشان تشاور على commit معين.",
+          desc: R`[[--oneline]] سطر لكل commit، و [[--graph --all]] بيرسم الـ branches. الرقم اللي في أول كل سطر هو الـ hash، ودي البصمة اللي بتستخدمها عشان تشاور على commit معين.
+
+وأهم سؤال بعد أي [[git pull]]: **إيه اللي نزل؟** [[git log A..HEAD]] معناها «الـ commits اللي في HEAD ومش في A»، فلو A هو المكان اللي كنت فيه قبل الـ pull ([[ORIG_HEAD]]، أو الرقم الأول في سطر [[Updating 3a872d4..1bfa2a2]])، يطلعلك اللي نزل بالظبط، و [[git rev-list --count A..HEAD]] عددهم. وقبل الـ pull أصلًا: [[git fetch]] وبعدين [[git status -sb]] بيقولك [[## main...origin/main [behind 3] ]]، و [[git log HEAD..origin/main]] بيوريك التلاتة دول قبل ما ينزلوا.`,
           example: R`git log
 git log --oneline
 git log --oneline --graph --all
 git log -p index.js
-git show a1b2c3d`,
+git show a1b2c3d
+git log --format="%h %ad %s" --date=short ORIG_HEAD..HEAD
+git rev-list --count ORIG_HEAD..HEAD
+git status -sb`,
           try: "اعرض التاريخ بالشكل المختصر، وافتح commit منهم بـ [[git show]].",
           deep: {
             why: "عشان تشوف تاريخ المشروع: مين عمل إيه، وإمتى، وليه. ولما حاجة تبوظ، تعرف آخر مرة كانت شغالة فيها.",
@@ -1073,6 +1078,100 @@ index 7898192..9ad2ebb 100644
 
 ---
 
+## ٦. إيه اللي نزل في الـ pull؟ [[A..HEAD]]
+
+السؤال اللي بييجي بعد كل [[git pull]]: «إيه الجديد؟». المعمل: ريبو bare اسمه [[origin.git]] (بدل GitHub)، وزميلتك [[sara]] رفعت ٣ commits، وانت ([[ali]]) لسه منزّلتهمش. اتجرّب على Git Bash في ويندوز (Git 2.56).
+
+### قبل الـ pull: [[git fetch]] و [[git status -sb]]
+
+~~~text git status -sb (قبل fetch)
+## main...origin/main
+~~~
+
+مكتوب إنك متساوي مع [[origin/main]]! بس [[origin/main]] ده نسخة **عندك** من آخر مرة كلّمت فيها السيرفر. [[git fetch]] بيحدّثها من غير ما يلمس ملفاتك:
+
+~~~text git fetch && git status -sb
+## main...origin/main [behind 3]
+~~~
+
+- [[-s]] short، و [[-b]] اطبع سطر الـ branch.
+- [[main...origin/main]]: الـ branch بتاعك، والـ branch اللي بيتابعه على السيرفر.
+- [[[behind 3] ]]: السيرفر فيه ٣ commits انت معندكش. ولو عندك commits مارفعتهاش هيقول [[[ahead 1] ]]، ولو الاتنين [[[ahead 1, behind 1] ]] (اتجرّبوا التلاتة).
+
+وتشوف التلاتة دول قبل ما ينزلوا:
+
+~~~text git log --oneline HEAD..origin/main
+1bfa2a2 README: how to run
+924ce9e Fix cart total
+10098d5 Add login page
+~~~
+
+### الـ [[..]] معناها إيه بالظبط؟
+
+[[A..B]] = «الـ commits اللي توصلها من [[B]] ومتوصلهاش من [[A]]». يعني اللي في B زيادة عن A. فـ [[HEAD..origin/main]] = اللي على السيرفر ومش عندك، و [[origin/main..HEAD]] = اللي عندك ومش على السيرفر (اللي مارفعتهوش). والترتيب بيفرق:
+
+~~~text لما يبقى عندك commit وسارة عندها commit
+git log --oneline HEAD..origin/main     →  ad2bebe Sara: tax fix
+git log --oneline origin/main..HEAD     →  45f4587 My local work
+~~~
+
+وبتلات نقط [[A...B]] = اللي في واحد فيهم بس، من الناحيتين، و [[--left-right]] بيعلّم كل واحد جاي منين:
+
+~~~text git log --oneline --left-right HEAD...origin/main
+< 45f4587 My local work
+> ad2bebe Sara: tax fix
+~~~
+
+### بعد الـ pull: [[ORIG_HEAD..HEAD]]
+
+~~~text git pull --ff-only
+Updating 3a872d4..1bfa2a2
+Fast-forward
+ README.md | 1 +
+ app.js    | 2 +-
+ login.js  | 1 +
+ 3 files changed, 3 insertions(+), 1 deletion(-)
+~~~
+
+أول سطر هو الإجابة: [[Updating 3a872d4..1bfa2a2]] = كنت فين، وبقيت فين. خد الرقم الأول:
+
+~~~bash
+git log --format="%h %ad %s" --date=short 3a872d4..HEAD
+git rev-list --count 3a872d4..HEAD
+~~~
+
+~~~text الناتج
+1bfa2a2 2026-10-19 README: how to run
+924ce9e 2026-10-18 Fix cart total
+10098d5 2026-10-14 Add login page
+3
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[--format="%h %ad %s"]] | شكل السطر: [[%h]] الهاش المختصر، و [[%ad]] تاريخ الـ author، و [[%s]] أول سطر في الرسالة |
+| [[--date=short]] | التاريخ [[2026-10-19]] بس، من غير الساعة والمنطقة |
+| [[3a872d4..HEAD]] | اللي في HEAD دلوقتي ومكانش في [[3a872d4]]: اللي نزل |
+| [[git rev-list --count]] | [[rev-list]] بيطبع الهاشات (أمر للسكربتات)، و [[--count]] بيطبع عددهم بس |
+
+ولو مش حافظ الرقم؟ git بيحفظه لك:
+
+- [[ORIG_HEAD]]: الـ [[pull]] و [[merge]] و [[reset]] و [[rebase]] بيكتبوا فيه مكانك قبلهم. فـ [[git log --oneline ORIG_HEAD..HEAD]] نفس التلات سطور.
+- [[HEAD@{1}]]: مكان HEAD قبل آخر حركة، من الـ reflog (درس «git reflog»). [[git log --oneline HEAD@{1}..HEAD]] برضه نفس النتيجة.
+- [[git diff --stat ORIG_HEAD HEAD]]: الملفات اللي اتغيرت بالأرقام، زي ملخص الـ pull بالظبط.
+
+⚠️ [[ORIG_HEAD]] بيتكتب فوقه مع أي [[reset]] أو [[merge]] بعدها، فلو هتسأل بعدين خزّن الرقم: [[before=$(git rev-parse HEAD)]] قبل الـ pull.
+
+### الأخطاء اللي هتقابلها
+
+~~~text git log --oneline A..HEAD
+fatal: ambiguous argument 'A..HEAD': unknown revision or path not in the working tree.
+~~~
+
+[[A]] هنا اسم مكانه (placeholder)، ولازم تحط هاش أو branch أو tag حقيقي. و [[unknown revision]] معناها git ملقاش حاجة بالاسم ده. و [[git rev-list --count]] من غير نطاق بيطبع صفحة الاستخدام ويخرج بـ [[129]].
+
+---
+
 ## الخلاصة
 
 | الأمر | بيوري |
@@ -1081,19 +1180,52 @@ index 7898192..9ad2ebb 100644
 | [[git log --oneline]] | سطر لكل commit |
 | [[git log --oneline --graph --all]] | الـ branches مرسومة |
 | [[git log -p FILE]] | تاريخ ملف واحد بالتعديلات |
-| [[git show HASH]] | commit واحد بالـ diff بتاعه |`,
+| [[git show HASH]] | commit واحد بالـ diff بتاعه |
+| [[git fetch]] ثم [[git status -sb]] | [[behind]] و [[ahead]] قبل ما تعمل pull |
+| [[git log HEAD..origin/main]] | اللي هينزل لو عملت pull |
+| [[git log ORIG_HEAD..HEAD]] | اللي نزل في آخر pull |
+| [[git rev-list --count A..B]] | عدد الـ commits بس |`,
           lines: [
             "اعرض كل الـ commits بالتفاصيل. q للخروج.",
             "كل commit في سطر: الرقم (hash) والرسالة.",
             "ارسم الـ branches بخطوط ([[--graph]]) لكل الـ branches ([[--all]]).",
             "تاريخ ملف واحد، والتعديلات نفسها ([[-p]]).",
-            "اعرض commit واحد برقمه: مين عمله وإمتى وغيّر إيه."
+            "اعرض commit واحد برقمه: مين عمله وإمتى وغيّر إيه.",
+            R`بعد [[git pull]]: الـ commits اللي نزلت. [[ORIG_HEAD]] مكانك قبل الـ pull، و [[..HEAD]] «لحد دلوقتي»، و [[%h %ad %s]] الهاش والتاريخ والرسالة، و [[--date=short]] التاريخ من غير ساعة.`,
+            R`نفس النطاق بس عددهم: [[rev-list]] بيطبع الهاشات و [[--count]] بيعدّها بدل ما يطبعها.`,
+            R`[[-s]] مختصر و [[-b]] سطر الـ branch: [[## main...origin/main]] ومعاه [[behind]] أو [[ahead]] لو فيه فرق. اعمل [[git fetch]] الأول عشان الرقم يبقى من السيرفر دلوقتي.`
           ],
           sol: R`[[git log --oneline]] بيطلّع سطر لكل commit: أول ٧ حروف من الرقم والرسالة، والأحدث فوق، والأحدث جنبه [[(HEAD -> main)]].
 
 [[git show 8a61323]] (أو أي رقم نسخته) بيعرض [[commit]] والرقم كامل، و [[Author:]] و [[Date:]] والرسالة، وتحتهم الـ diff بتاع الـ commit ده بس: السطور اللي اتضافت بـ [[+]] واللي اتشالت بـ [[-]].
 
-لو [[git log]] فتح شاشة ومش راضي يخلص، ده الـ pager: اضغط [[q]]. ولو [[git show]] قال [[unknown revision]] يبقى الرقم متنسخ غلط أو من repo تاني.`
+لو [[git log]] فتح شاشة ومش راضي يخلص، ده الـ pager: اضغط [[q]]. ولو [[git show]] قال [[unknown revision]] يبقى الرقم متنسخ غلط أو من repo تاني.
+
+وبعد أي [[git pull]]: [[git log --oneline ORIG_HEAD..HEAD]] بيطلّع اللي نزل بس (نفس الرقمين اللي في سطر [[Updating]])، و [[git rev-list --count ORIG_HEAD..HEAD]] عددهم.`,
+          practice: [
+            { lvl: 'سريع', t: R`في أي ريبو عندك: اطبع آخر ٥ commits بالشكل [[hash تاريخ رسالة]] في سطر لكل واحد من غير ما تفتح الـ pager. وبعدين نفس الحاجة بس للـ commits اللي عملتها انت بس ([[--author]]).`, done: R`أمرين بيطبعوا ٥ سطور بالظبط بالشكل [[1bfa2a2 2026-10-19 README: how to run]]، والتاني فيه اسمك بس.` },
+            { lvl: 'سريع', t: R`اقرا وتوقّع: [[git status -sb]] طبع [[## main...origin/main [ahead 2, behind 3] ]]. كام commit هيطلع في [[git log --oneline origin/main..HEAD]]؟ وفي [[HEAD..origin/main]]؟ وفي [[HEAD...origin/main]]؟ وليه [[git pull --ff-only]] هيرفض هنا؟`, done: R`كتبت ٢ و ٣ و ٥، وإن [[--ff-only]] بيرفض لأن الفرعين اتفرّعوا (فيه commits عندك مش على السيرفر)، وجرّبتها في معمل واتطابقت.` },
+            { lvl: 'تطبيق', t: R`ابني معمل الدرس (ريبو bare و clone لـ [[sara]] و clone ليك). سارة ترفع ٣ commits. قبل الـ pull اطبع اللي هينزل، وبعده اطبعه تاني بطريقتين مختلفتين ([[ORIG_HEAD]] و [[HEAD@{1}]]) واتأكد إن الـ ٣ طرق نفس السطور.`, done: R`التلات أوامر بيطلّعوا نفس الـ ٣ سطور بنفس الترتيب، و [[git rev-list --count]] بيطبع [[3]].` },
+            { lvl: 'تطبيق', t: R`صلّح الغلط: حد عمل [[git pull]] وبعدين [[git reset --soft HEAD~1]] (عشان يعدّل آخر commit)، وبعدين سأل [[git log ORIG_HEAD..HEAD]] عشان يعرف اللي نزل، وطلعله فاضي. جرّبها في المعمل، وقول ليه، وإيه اللي كان المفروض يعمله قبل الـ pull.`, done: R`شفت الناتج الفاضي، وعرفت إن الـ [[reset]] كتب فوق [[ORIG_HEAD]] (بقى الـ commit اللي قبل الـ reset)، والحل تخزّن [[before=$(git rev-parse HEAD)]] قبل الـ pull، أو تلاقي المكان القديم في [[git reflog]].` },
+            { lvl: 'تحدي', t: R`ابني [[whatsnew.sh]]: بيعمل [[git fetch]]، ولو مفيش جديد يطبع [[up to date]] ويخرج. ولو فيه، يطبع عدد الـ commits واللستة بالتاريخ والكاتب ([[%an]])، وعدد الملفات اللي هتتغير ([[git diff --stat HEAD origin/main]])، ويسأل «أعمل pull؟». ولو الفرعين متفرّعين يقول كده بدل ما يحاول.`, done: R`على المعمل بيطبع [[3 new commits]] واللستة و [[3 files changed]]، وبعد الـ pull تشغيله تاني بيطبع [[up to date]]، ولو عملت commit محلي وسارة عملت commit بيطبع إنهم متفرّعين ومبيعملش pull.` },
+            { lvl: 'تحدي', t: R`اشرحها لزميل في ٣ سطور: ليه [[git status -sb]] قال [[## main...origin/main]] (من غير behind) مع إن فيه ٣ commits على السيرفر، وإيه اللي خلّاه يقول [[[behind 3] ]] بعدها.`, done: R`الشرح فيه إن [[origin/main]] نسخة محلية بتتحدّث بس مع [[fetch]] أو [[pull]]، و [[status]] مبيكلّمش السيرفر، فالرقم «من آخر مرة سألت».` },
+          ],
+          ci: [
+            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`bash`, run: R`export GIT_AUTHOR_NAME=ali GIT_AUTHOR_EMAIL=ali@example.com GIT_COMMITTER_NAME=ali GIT_COMMITTER_EMAIL=ali@example.com
+git init -q --bare -b main origin.git
+git clone -q origin.git sara 2>/dev/null && cd sara
+echo v1 > app.js && git add . && git commit -qm "first version" && git push -q origin main
+cd .. && git clone -q origin.git ali && cd sara
+echo login > login.js && git add . && git commit -qm "Add login page"
+echo v2 > app.js && git commit -qam "Fix cart total"
+git push -q origin main && cd ../ali
+git fetch -q && git status -sb
+git log --oneline HEAD..origin/main | wc -l
+git pull -q --ff-only
+git log --format="%s" ORIG_HEAD..HEAD
+echo "count=$(git rev-list --count ORIG_HEAD..HEAD)"
+git status -sb`, expect: [R`## main...origin/main [behind 2]`, R`Fix cart total`, R`Add login page`, R`count=2`] },
+          ],
         },
         {
           cmd: "git diff",
