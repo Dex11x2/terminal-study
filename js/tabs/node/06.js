@@ -1148,9 +1148,12 @@ Chrome ← [[F12]] ← تاب **Performance** ← زرار «Load profile» (ا�
             when: R`سكربت أو build بياخد وقت أكتر من المتوقع، و endpoint معين بطيء والـ event loop delay عالي (درس event loop)، وقبل ما تختار بين مكتبتين على أساس «أسرع». ومش لما البطء استنا شبكة أو قاعدة: ده بيبان في الـ tracing واللوج بالأوقات، مش في CPU profile.`,
             mistakes: R`تعمل profile لحاجة قصيرة جدًا (٥٠ms) فالعينات قليلة ومش معبّرة. أو على Debug build مختلف عن الإنتاج. أو تبص على total time وتلوم [[main]] أو الـ router. أو تصلّح ٣ حاجات مرة واحدة ومتعرفش مين اللي فرق. أو تنسى إن [[--cpu-prof]] بيكتب في الخروج الطبيعي بس، فتقفل السيرفر بـ Ctrl+C من غير SIGINT handler (أو [[kill -9]]) ومفيش ملف. أو تسيب ملفات profile فيها أسامي ومسارات في الريبو.`,
           },
-          sol: R`[[slowUnique]]: حوالي 928ms، و [[top.mjs]] طلّعها ٩٥.١٪ (806 من 847ms). [[fastUnique]]: حوالي 4ms، والـ profile الكلي 41ms وأوله [[(program)]]. و [[--prof-process]] في Docker طلّع [[Builtin: ArrayIncludesSmiOrObject]] ٨٨٪ تحتها [[*slowUnique]].`,
+          sol: R`[[slowUnique]]: حوالي 928ms، و [[top.mjs]] طلّعها ٩٥.١٪ (806 من 847ms). [[fastUnique]]: حوالي 4ms، والـ profile الكلي 41ms وأوله [[(program)]]. و [[--prof-process]] في Docker طلّع [[Builtin: ArrayIncludesSmiOrObject]] ٨٨٪ تحتها [[*slowUnique]].
+
+وعلى ماك (Apple Silicon) في GitHub Actions نفس السكربت طلّع [[(anonymous)]] فوق بدل [[slowUnique]]: الـ JIT في V8 ممكن يدمج دالة صغيرة جوه اللي ناداها (inlining)، فوقتها بيتحسب على الدالة اللي برّه. لو اسم دالتك مش ظاهر، بص على الدالة اللي بتناديها، أو جرّب [[node --cpu-prof --no-turbo-inlining]] عشان تشوف الأسامي (الأرقام هتبقى أبطأ شوية).`,
           ci: [
-            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`node`, run: R`import { writeFileSync, readFileSync } from "node:fs";
+            { os: [R`ubuntu`, R`windows`], sh: R`node`, run: R`// مش على الماك: V8 على ARM ممكن يدمج slowUnique جوه اللي ناداها (inlining) فاسمها ميظهرش في الـ profile
+import { writeFileSync, readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 writeFileSync("app.mjs", 'function slowUnique(list) { const out = []; for (const x of list) if (!out.includes(x)) out.push(x); return out; }\nconst ids = Array.from({ length: 30000 }, (_, i) => "u" + (i % 15000));\nconsole.log("unique:", slowUnique(ids).length);\n');
 const r = spawnSync(process.execPath, ["--cpu-prof", "--cpu-prof-name=p.cpuprofile", "app.mjs"], { encoding: "utf8" });

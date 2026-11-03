@@ -3299,12 +3299,13 @@ readFile(import.meta.filename, () => {
   setTimeout(() => console.log("9 timeout inside I/O"), 0);
   setImmediate(() => console.log("8 immediate inside I/O"));
 });
-console.log("2 sync end");`, expect: [R`1 sync start
+console.log("2 sync end");
+// 5 و 6 ترتيبهم مش مضمون في الملف الرئيسي، فبنفحص بس الترتيب المضمون جوه الـ I/O
+const seen = []; const log0 = console.log; console.log = (m) => { seen.push(m); log0(m); };
+process.on("exit", () => { const at = (k) => seen.findIndex((m) => m.startsWith(k)); log0("inside I/O, immediate before timeout:", at("7 ") < at("8 ") && at("8 ") < at("9 ")); });`, expect: [R`1 sync start
 2 sync end
 4 promise.then
-3 nextTick`, R`7 readFile callback
-8 immediate inside I/O
-9 timeout inside I/O`] },
+3 nextTick`, R`inside I/O, immediate before timeout: true`] },
           ],
         },
         {
