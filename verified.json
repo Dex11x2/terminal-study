@@ -4264,6 +4264,11 @@
   "date": "2026-11-03",
   "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
+ "css|accessibility: لحد axe صفر": {
+  "hash": "a00b6fe72016",
+  "date": "2026-11-03",
+  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+ },
  "css|animation-timeline": {
   "hash": "39fe35515168",
   "date": "2026-11-03",
@@ -4404,6 +4409,46 @@
   "date": "2026-11-03",
   "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
+ "css|landing page: الأسئلة والـ CTA والـ footer والحركة": {
+  "hash": "a230d1e20349",
+  "date": "2026-11-03",
+  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+ },
+ "css|landing page: الألوان والثيم والعربي": {
+  "hash": "50cebe4928fc",
+  "date": "2026-11-03",
+  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+ },
+ "css|landing page: الصورة الكبيرة": {
+  "hash": "29a079f52e37",
+  "date": "2026-11-03",
+  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+ },
+ "css|landing page: الـ header والـ hero": {
+  "hash": "5c6b17471376",
+  "date": "2026-11-03",
+  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+ },
+ "css|landing page: المميزات والآراء والأسعار": {
+  "hash": "dd49de6e892e",
+  "date": "2026-11-03",
+  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+ },
+ "css|landing page: فحص accessibility والنشر والغلطات": {
+  "hash": "d0a98ea2eceb",
+  "date": "2026-11-03",
+  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+ },
+ "css|landing page: فورم تسجيل accessible": {
+  "hash": "f6c336c21f75",
+  "date": "2026-11-03",
+  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+ },
+ "css|landing page: مصفوفة المقاسات والأداء": {
+  "hash": "c3c387d250fb",
+  "date": "2026-11-03",
+  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+ },
  "css|lang و dir": {
   "hash": "3bc137656804",
   "date": "2026-11-03",
@@ -4413,6 +4458,11 @@
   "hash": "20eaf5fbfbcc",
   "date": "2026-11-03",
   "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+ },
+ "css|layouts بالـ flex والـ grid": {
+  "hash": "f1c44f428016",
+  "date": "2026-11-03",
+  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
  },
  "css|logical properties": {
   "hash": "77d439ee9383",
@@ -4559,6 +4609,11 @@
   "date": "2026-11-03",
   "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
+ "css|أشكال بالـ CSS": {
+  "hash": "2c18dc125df7",
+  "date": "2026-11-03",
+  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+ },
  "css|إعلان تغيير الصفحة": {
   "hash": "9aede9f1c9d5",
   "date": "2026-11-03",
@@ -4568,6 +4623,26 @@
   "hash": "037b8000a8af",
   "date": "2026-11-03",
   "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+ },
+ "css|المراجعة النهائية: مقاسات و a11y وأداء ونشر": {
+  "hash": "1492a14529b8",
+  "date": "2026-11-03",
+  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+ },
+ "css|بورتفوليو ١: الهيكل واللغتين و dir": {
+  "hash": "8578356c0760",
+  "date": "2026-11-03",
+  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+ },
+ "css|بورتفوليو ٢: الكروت والفلتر والظهور بالسكرول": {
+  "hash": "02e020cd25b1",
+  "date": "2026-11-03",
+  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+ },
+ "css|بورتفوليو ٣: دراسة الحالة والطباعة و OG": {
+  "hash": "5dafba68b803",
+  "date": "2026-11-03",
+  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
  },
  "css|بُعد واحد وبُعدين": {
   "hash": "1c80bbff69e2",
@@ -4579,6 +4654,11 @@
   "date": "2026-11-03",
   "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
+ "css|توقّع الـ cascade": {
+  "hash": "e9ec5b511369",
+  "date": "2026-11-03",
+  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+ },
  "css|توليد on-demand": {
   "hash": "29a41f2cda6f",
   "date": "2026-11-03",
@@ -4588,6 +4668,36 @@
   "hash": "27c671df828a",
   "date": "2026-11-03",
   "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+ },
+ "css|داشبورد ١: الـ shell والـ sidebar والأرقام": {
+  "hash": "fd06ddf333eb",
+  "date": "2026-11-03",
+  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+ },
+ "css|داشبورد ٢: جدول الأعضاء والحالة في الرابط": {
+  "hash": "5c8693e6399d",
+  "date": "2026-11-03",
+  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+ },
+ "css|داشبورد ٣: جدول الحصص و dialog والتنبيهات": {
+  "hash": "bc6813f11863",
+  "date": "2026-11-03",
+  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+ },
+ "css|صفحات بتفيض على 360": {
+  "hash": "7effb5742d38",
+  "date": "2026-11-03",
+  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+ },
+ "css|صفحات من وصف": {
+  "hash": "1c66735f7f2f",
+  "date": "2026-11-03",
+  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+ },
+ "css|صلّح الكود البايظ": {
+  "hash": "a4fb700f6fff",
+  "date": "2026-11-03",
+  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
  },
  "css|كلمة بتتبدّل في عنوان": {
   "hash": "67d440afdc5b",
@@ -4603,6 +4713,16 @@
   "hash": "8dd8caea64cc",
   "date": "2026-11-03",
   "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+ },
+ "css|مسائل بالـ JS على الصفحة": {
+  "hash": "f27841595b98",
+  "date": "2026-11-03",
+  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+ },
+ "css|مشروع portfolio و dashboard: الخريطة": {
+  "hash": "947d2f358de8",
+  "date": "2026-11-03",
+  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
  },
  "css|مصفوفة مقاسات": {
   "hash": "0def42d687ae",
