@@ -874,18 +874,18 @@ Restart-Computer -WhatIf
 ~~~
 
 ~~~text الناتج
-What if: Performing the operation "Enable the Local shutdown access rights and restart the computer." on target "localhost (Dexter)".
+What if: Performing the operation "Enable the Local shutdown access rights and restart the computer." on target "localhost (LAB-PC)".
 ~~~
 
 و [[Stop-Computer -WhatIf]]:
 
 ~~~text الناتج
-What if: Performing the operation "Stop-Computer" on target "localhost (Dexter)".
+What if: Performing the operation "Stop-Computer" on target "localhost (LAB-PC)".
 ~~~
 
 ### نقرا الناتج
 
-- [[localhost (Dexter)]]: الجهاز المحلي، واسمه [[Dexter]] (هيبقى اسم جهازك انت).
+- [[localhost (LAB-PC)]]: الجهاز المحلي، واسمه [[LAB-PC]] (هيبقى اسم جهازك انت).
 - وصف العملية في [[Restart-Computer]] بيذكر [[Enable the Local shutdown access rights]]: يعني الأمر جواه بيفعّل صلاحية الإطفاء الأول وبعدين يعمل ريستارت.
 - **الجهاز معملش ريستارت.** ودي الحتة اللي بتخليك تقدر تختبر سكربت بيقفل الجهاز وانت مرتاح.
 

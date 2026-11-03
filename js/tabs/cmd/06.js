@@ -1570,6 +1570,394 @@ E P     5       19      Security issue (Planned)
           sol: R`(مشغّلتهوش لأنه بيقفل جهاز تاني؛ ده من توثيق shutdown و UAC.) لو كل حاجة مظبوطة: [[shutdown /r /m \\192.168.1.50 /t 600 /c "Test"]] مش بيطبع حاجة عندك، والجهاز التاني بيطلّع إشعار إنه هيعمل restart وفيه الرسالة، و [[shutdown /a /m \\192.168.1.50]] بيلغيه.
 
 الأخطاء بتطلع بالشكل [[192.168.1.50: Access is denied.(5)]]: اليوزر مش أدمن هناك، أو أدمن محلي اتشالت صلاحياته على الشبكة، أو جلسة [[IPC$]] مفتوحة بيوزر تاني. و [[The network path was not found.(53)]]: الجهاز مقفول، أو الاسم غلط، أو File and printer sharing مقفول، أو الشبكة Public. و [[net use \\PC\IPC$]] بباسورد غلط: [[System error 1326 has occurred.]] و [[The user name or password is incorrect.]] (النصوص دي طلّعتها بـ [[net helpmsg 53]] و [[net helpmsg 1326]]).`
+        },
+        {
+          cmd: "netsh: The object already exists",
+          title: "The object already exists: أوامر إعداد وتراجع تتشغّل مرتين من غير ما تبوظ (idempotent)",
+          learn: R`تفهم ليه [[add]] بيفشل في التشغيلة التانية، وتكتب خطوات إعداد بتعتبر «موجود أصلًا» نجاح، وتسجّل أمر التراجع لكل خطوة نجحت، وترجع بالعكس عند أول فشل، وتخلي [[netsh]] يعمل routes مؤقتة بـ [[store=active]].`,
+          out: R`تشغيل [[up]] مرتين ورا بعض الاتنين [[ok]]، و [[down]] بيرجّع كل خطوة مرة واحدة بس، وفشل خطوة بيرجّع اللي قبلها و [[exit=1]].`,
+          desc: R`الأداة بتعمل خطوات إعداد للشبكة ورا بعض، ومن ضمنها:
+
+[[netsh interface ipv6 add address vpnlab0 fd00::2/64]]
+
+ورجع [[The object already exists.]] لأن العنوان فضل على الكارت من تجربة قبلها. الأداة اعتبرت ده فشل، وعملت rollback كامل لكل اللي اتعمل، والاتصال مقامش. والمشكلة مش في الأمر، في إن الإعداد **مش idempotent**: مينفعش يتشغّل مرتين.
+
+العلاج ٣ حاجات: (١) أمر بيشتغل في الحالتين لو موجود ([[set address]] بدل [[add]] في IPv6، و [[ip addr replace]] في لينكس)، أو «already exists» تتحسب نجاح. (٢) كل خطوة نجحت أمر تراجعها يتسجّل في ملف حالة، ومرة واحدة بس. (٣) أول خطوة تفشل فعلًا: ارجع بالعكس. ومعاهم: [[store=active]] في أي [[add route]]، لأن الافتراضي **دائم** ([[persistent: Change is persistent. This is the default.]] من [[netsh ... add route /?]]).`,
+          example: R`# Windows (CMD):
+netsh interface ipv6 add address vpnlab0 fd00::2/64
+netsh interface ipv6 set address vpnlab0 fd00::2/64 store=active
+netsh interface ipv4 add route prefix=0.0.0.0/1 interface=vpnlab0 nexthop=10.255.0.1 store=active
+netsh interface ipv4 add route /? | findstr /c:"default"
+route print -4 | findstr /c:"Persistent Routes" /c:"None"
+.\lab.bat & .\lab.bat & .\lab.bat down
+# Linux (and WSL):
+ip addr add 10.255.0.2/24 dev vpnlab0; echo "exit=$?"
+ip addr replace 10.255.0.2/24 dev vpnlab0; echo "exit=$?"
+sudo ./lab-net.sh up && sudo ./lab-net.sh up && sudo ./lab-net.sh down`,
+          lines: [
+            R`الأمر اللي فشل في الحالة الحقيقية: [[add]] بيضيف عنوان، ولو العنوان موجود على الكارت بيرد [[The object already exists.]] وبكود خروج مش صفر.`,
+            R`البديل اللي بيشتغل في الحالتين: [[set address]] في IPv6 بيضبط العنوان لو موجود ويضيفه لو مش موجود (ده اللي اشتغل في الحالة الحقيقية). و [[store=active]] لحد الـ restart بس.`,
+            R`route مؤقت: [[prefix=0.0.0.0/1]] نص الإنترنت، و [[interface=vpnlab0]] الكارت، و [[nexthop]] البوابة جوه النفق، و [[store=active]] عشان ميبقاش دائم.`,
+            R`اسأل [[netsh]] نفسه عن الافتراضي (قراية بس): السطر اللي فيه [[default]] بيقول إن [[persistent]] هو الافتراضي.`,
+            R`اتأكد إن مفيش routes دائمة فضلت: قسم [[Persistent Routes]] في [[route print]] والسطر [[None]] تحته. ([[/c:]] = النص ده بالظبط، وكذا [[/c:]] = أي واحد فيهم.)`,
+            R`معمل CMD آمن (فولدرات مكان الـ routes): [[up]] مرتين ورا بعض وبعدين [[down]]. [[.\]] لازمة لو الجهاز عليه [[NoDefaultCurrentDirectoryInExePath]] (تحت).`,
+            R`نفس الغلطة في لينكس: [[ip addr add]] لعنوان موجود: [[Error: ipv4: Address already assigned.]] وكود 2.`,
+            R`[[replace]] = «خليه كده سواء موجود أو لأ»: كود 0 في الحالتين.`,
+            R`سكربت الإعداد والتراجع في لينكس (في الشرح): [[up]] مرتين ينجحوا، و [[down]] يرجّع كل حاجة مرة واحدة.`,
+          ],
+          try: R`في كونتينر: [[docker run --rm -it --cap-add NET_ADMIN ubuntu:24.04]]، وسطّب [[iproute2]]، واعمل كارت تجربة [[ip link add vpnlab0 type dummy]] و [[ip link set vpnlab0 up]]، وجرّب [[ip addr add]] مرتين وبعدين [[replace]]، و [[ip route add]] مرتين. وبعدين شغّل [[lab-net.sh]] اللي في الشرح بالحالات الأربعة. وعلى ويندوز شغّل [[lab.bat]] (فولدرات بس، مفيش شبكة). أوامر [[netsh]] اللي بتغيّر متشغّلهاش غير على جهاز تجارب.`,
+          teach: R`## العَرَض
+
+الأداة بتبدأ الاتصال بـ ٦ أوامر [[netsh]] ورا بعض. الأمر التالت:
+
+~~~text الحالة الحقيقية
+netsh interface ipv6 add address vpnlab0 fd00::2/64
+The object already exists.
+~~~
+
+والأداة عملت اللي اتعلّمته: «خطوة فشلت؟ ارجع». فشالت الخطوتين اللي قبلها، والاتصال مقامش. وكل محاولة تانية نفس الحكاية، لأن العنوان لسه على الكارت من تجربة قديمة اتقفلت من غير تنظيف.
+
+السؤالين: ليه العنوان فضل؟ (قضية «جلسة ماتت وسابت وراها» في تاب التشخيص)، وليه الإعداد مش قادر يكمّل لو حاجة موجودة أصلًا؟ الدرس ده التاني.
+
+---
+
+## ١. نفس الغلطة في معمل
+
+[[netsh]] اللي بيغيّر مش هنشغّله على جهاز حقيقي. نفس السلوك بالظبط في لينكس، في كونتينر بكارت وهمي:
+
+~~~bash
+docker run --rm -it --cap-add NET_ADMIN ubuntu:24.04
+apt-get update -qq && apt-get install -y -qq iproute2
+ip link add vpnlab0 type dummy && ip link set vpnlab0 up
+~~~
+
+[[--cap-add NET_ADMIN]] بيدّي الكونتينر صلاحية يغيّر شبكته هو بس (مش شبكة جهازك). و [[type dummy]] كارت وهمي ملوش سلك.
+
+~~~text add مرتين، و route مرتين، و del مرتين
+ip addr add 10.255.0.2/24 dev vpnlab0          → exit=0
+ip addr add 10.255.0.2/24 dev vpnlab0          → Error: ipv4: Address already assigned.   exit=2
+ip -6 addr add fd00::2/64 dev vpnlab0 (مرتين)  → Error: ipv6: address already assigned.   exit=2
+ip route add 0.0.0.0/1 via 10.255.0.1 dev vpnlab0 (مرتين) → RTNETLINK answers: File exists   exit=2
+ip route del 0.0.0.0/1 via 10.255.0.1 dev vpnlab0 (مرتين) → RTNETLINK answers: No such process exit=2
+~~~
+
+| الرسالة | معناها | ويندوز بيقولها إزاي |
+|---|---|---|
+| [[Address already assigned]] | العنوان على الكارت أصلًا | [[The object already exists.]] |
+| [[RTNETLINK answers: File exists]] | الـ route موجود بنفس الوجهة والبوابة | [[The object already exists.]] |
+| [[RTNETLINK answers: No such process]] | بتمسح حاجة مش موجودة | [[delete]] بيرجّع خطأ برضه (متجرّبش هنا) |
+
+يعني [[add]] و [[del]] الاتنين **مش** idempotent: التانية بتفشل.
+
+---
+
+## ٢. أوامر بتشتغل في الحالتين
+
+~~~text replace
+ip addr replace 10.255.0.2/24 dev vpnlab0          → exit=0  (موجود)
+ip route replace 0.0.0.0/1 via 10.255.0.1 dev vpnlab0 → exit=0  (موجود)
+~~~
+
+[[replace]] = «خلّي الحالة دي هي الحالة»، موجودة أو لأ. وفي ويندوز:
+
+| ويندوز (من وثائق [[netsh]]) | بيعمل إيه |
+|---|---|
+| [[netsh interface ipv6 set address vpnlab0 fd00::2/64]] | [[set]] بيضبط عنوان موجود، وفي الحالة الحقيقية اشتغل كمان والعنوان مش موجود. فبقى بديل [[add]] |
+| [[netsh interface ipv4 set interface name=vpnlab0 metric=1]] | [[set]] على الكارت نفسه: idempotent بطبيعته. (خلّى ويندوز يفضّل DNS الكارت، بس في الحالة الحقيقية زوّد مشكلة تانية، فبقى اختياري) |
+| [[add route]] | مفيش [[set route]] بيضيف. فالحل التاني تحت: «already exists» = نجاح |
+
+وفي PowerShell نفس الفكرة: [[New-NetRoute]] بيفشل لو موجود، فبتسأل الأول بـ [[Get-NetRoute -DestinationPrefix 0.0.0.0/1 -ErrorAction SilentlyContinue]] (درس «New-NetIPAddress» في تاب PowerShell).
+
+---
+
+## ٣. [[store=active]]: الـ route الدائم
+
+~~~text netsh interface ipv4 add route /? | findstr /c:"default" (قراية بس)
+                                         the default.
+~~~
+
+~~~text netsh interface ipv4 add route /? (الجزء ده)
+       store             - One of the following values:
+                           active: Change only lasts until next boot.
+                           persistent: Change is persistent. This is
+                                         the default.
+~~~
+
+يعني [[netsh interface ipv4 add route prefix=0.0.0.0/1 interface=vpnlab0 nexthop=10.255.0.1]] من غير [[store=]] بيعمل route **بيرجع بعد الـ restart**، والكارت ممكن ميكونش موجود ساعتها، فالنت يروح لكارت مش موجود. ده بيبان في [[route print]] تحت [[Persistent Routes]]:
+
+~~~text route print -4 (جهاز سليم)
+Persistent Routes:
+  None
+~~~
+
+فأي [[add route]] في أداة VPN: [[store=active]]. وعناوين IPv6 كمان: [[netsh interface ipv6 add address /?]] بيقول [[persistent: Change is persistent (default).]]
+
+وأمر الطوارئ لو route دائم فضل (من الوثائق): [[netsh interface ipv4 delete route prefix=0.0.0.0/1 interface=vpnlab0 nexthop=10.255.0.1]] من نافذة أدمن.
+
+وقراية الجدول من غير ما تغيّر حاجة:
+
+~~~text netsh interface ipv4 show route
+Publish  Type      Met  Prefix                    Idx  Gateway/Interface Name
+-------  --------  ---  ------------------------  ---  ------------------------
+No       Manual    0    0.0.0.0/0                  13  192.168.1.1
+No       System    256  127.0.0.0/8                 1  Loopback Pseudo-Interface 1
+~~~
+
+---
+
+## ٤. سكربت إعداد وتراجع بيتشغّل مرتين (لينكس)
+
+~~~bash lab-net.sh
+#!/usr/bin/env bash
+STATE=/run/lab-net.undo
+step() {                       # step "<do>" "<undo>"
+  out=$(eval "$1" 2>&1); rc=$?
+  if [ $rc -eq 0 ] || grep -qiE 'already assigned|File exists|already exists' <<<"$out"; then
+    echo "ok   ($rc) $1"; grep -qxF "$2" "$STATE" 2>/dev/null || echo "$2" >> "$STATE"; return 0
+  fi
+  echo "FAIL ($rc) $1: $out"; return 1
+}
+down() {
+  [ -s "$STATE" ] || { echo "nothing to undo"; return 0; }
+  tac "$STATE" | while read -r cmd; do eval "$cmd" 2>/dev/null; echo "undo $cmd -> $?"; done
+  rm -f "$STATE"
+}
+case "$1" in
+  up)
+    step "ip addr add 10.255.0.2/24 dev vpnlab0"             "ip addr del 10.255.0.2/24 dev vpnlab0" &&
+    step "ip route add 0.0.0.0/1 via 10.255.0.1 dev vpnlab0" "ip route del 0.0.0.0/1 via 10.255.0.1 dev vpnlab0" &&
+    step "ip route add 128.0.0.0/1 via $__{GW:-10.255.0.1} dev vpnlab0" "ip route del 128.0.0.0/1 via $__{GW:-10.255.0.1} dev vpnlab0" ||
+    { echo "rolling back"; down; exit 1; } ;;
+  down) down ;;
+esac
+~~~
+
+| الحتة | بتعمل إيه |
+|---|---|
+| [[out=$(eval "$1" 2>&1); rc=$?]] | شغّل الخطوة وخد نصها (stdout و stderr) وكود خروجها |
+| [[grep -qiE 'already assigned|File exists|already exists']] | لو فشلت بس السبب «موجود أصلًا»: ده نجاح. الحالة اللي عايزينها موجودة |
+| [[grep -qxF "$2" "$STATE" || echo "$2" >> "$STATE"]] | سجّل أمر التراجع، **بس لو مش متسجّل**. [[-x]] السطر كله، و [[-F]] نص مش regex |
+| [[&&]] بين الخطوات و [[||]] في الآخر | أول خطوة ترجع 1 بتوقف الباقي وتروح للـ rollback |
+| [[tac]] | اقرا ملف الحالة من تحت لفوق: التراجع بالعكس (الـ route قبل العنوان) |
+| [[rm -f "$STATE"]] | بعد التراجع: مفيش حاجة ترجع لها تاني |
+| [[$__{GW:-10.255.0.1}]] | بوابة ممكن تتغيّر من بره ([[GW=...]]) عشان نجرّب الفشل |
+
+~~~text والعنوان موجود أصلًا من «تشغيلة قديمة»: up
+ok   (2) ip addr add 10.255.0.2/24 dev vpnlab0
+ok   (0) ip route add 0.0.0.0/1 via 10.255.0.1 dev vpnlab0
+ok   (0) ip route add 128.0.0.0/1 via 10.255.0.1 dev vpnlab0
+exit=0
+~~~
+
+[[ok   (2)]]: الخطوة رجعت 2 بس اتحسبت نجاح، والإعداد كمّل. ده بالظبط اللي كان ناقص في الأداة.
+
+~~~text up تاني، وبعدين down، وبعدين down تاني
+ok   (2) ip addr add 10.255.0.2/24 dev vpnlab0
+ok   (2) ip route add 0.0.0.0/1 via 10.255.0.1 dev vpnlab0
+ok   (2) ip route add 128.0.0.0/1 via 10.255.0.1 dev vpnlab0
+undo ip route del 128.0.0.0/1 via 10.255.0.1 dev vpnlab0 -> 0
+undo ip route del 0.0.0.0/1 via 10.255.0.1 dev vpnlab0 -> 0
+undo ip addr del 10.255.0.2/24 dev vpnlab0 -> 0
+nothing to undo
+~~~
+
+~~~text GW=10.99.0.1 ./lab-net.sh up (بوابة مش على الشبكة)
+ok   (0) ip addr add 10.255.0.2/24 dev vpnlab0
+ok   (0) ip route add 0.0.0.0/1 via 10.255.0.1 dev vpnlab0
+FAIL (2) ip route add 128.0.0.0/1 via 10.99.0.1 dev vpnlab0: Error: Nexthop has invalid gateway.
+rolling back
+undo ip route del 0.0.0.0/1 via 10.255.0.1 dev vpnlab0 -> 0
+undo ip addr del 10.255.0.2/24 dev vpnlab0 -> 0
+exit=1
+~~~
+
+فشل حقيقي (مش «موجود»)، فالتراجع رجّع الخطوتين اللي نجحوا بس، والكارت رجع فاضي.
+
+### الباج اللي ظهر في أول نسخة
+
+أول نسخة كانت [[echo "$2" >> "$STATE"]] من غير الـ [[grep -qxF]]. بعد [[up]] مرتين، ملف الحالة بقى فيه كل أمر مرتين، و [[down]] طلّع:
+
+~~~text
+undo ip route del 128.0.0.0/1 via 10.255.0.1 dev vpnlab0 -> 0
+undo ip route del 0.0.0.0/1 via 10.255.0.1 dev vpnlab0 -> 0
+undo ip addr del 10.255.0.2/24 dev vpnlab0 -> 0
+undo ip route del 128.0.0.0/1 via 10.255.0.1 dev vpnlab0 -> 2
+undo ip route del 0.0.0.0/1 via 10.255.0.1 dev vpnlab0 -> 2
+undo ip addr del 10.255.0.2/24 dev vpnlab0 -> 2
+~~~
+
+الإعداد بقى idempotent والتراجع لأ. لازم الاتنين.
+
+---
+
+## ٥. نفس الفكرة في batch (ويندوز)
+
+على ويندوز من غير ما نلمس الشبكة: الخطوات بتعمل فولدرات. [[mkdir]] على فولدر موجود بيرد [[A subdirectory or file vpnlab0 already exists.]]، يعني نفس شكل المشكلة.
+
+~~~batch lab.bat
+@echo off
+setlocal enabledelayedexpansion
+set "STATE=%~dp0undo.txt"
+set "LOG=%~dp0step.log"
+if /i "%~1"=="down" goto down
+call :step "mkdir vpnlab0" "rmdir vpnlab0" || goto rollback
+call :step "mkdir vpnlab0\routes" "rmdir vpnlab0\routes" || goto rollback
+call :step "mkdir vpnlab0\%BADNAME%dns" "rmdir vpnlab0\dns" || goto rollback
+echo up: all steps ok
+exit /b 0
+
+:step
+%~1 > "%LOG%" 2>&1
+set "RC=!errorlevel!"
+if !RC! neq 0 findstr /i /c:"already exists" "%LOG%" >nul || (echo FAIL ^(!RC!^) %~1 & type "%LOG%" & exit /b 1)
+echo ok   ^(!RC!^) %~1
+if exist "%STATE%" findstr /x /c:"%~2" "%STATE%" >nul && exit /b 0
+>>"%STATE%" echo %~2
+exit /b 0
+
+:rollback
+echo rolling back
+call :down
+exit /b 1
+
+:down
+if not exist "%STATE%" (echo nothing to undo & exit /b 0)
+set n=0
+for /f "usebackq delims=" %%L in ("%STATE%") do (set /a n+=1 & set "U!n!=%%L")
+for /l %%i in (!n!,-1,1) do (!U%%i! >nul 2>&1 && echo undo !U%%i! -^> ok || echo undo !U%%i! -^> FAILED)
+del "%STATE%"
+exit /b 0
+~~~
+
+| الحتة | بتعمل إيه |
+|---|---|
+| [[%~1 > "%LOG%" 2>&1]] | شغّل الخطوة واكتب كل ناتجها في ملف (batch مفيهوش [[$( )]]) |
+| [[set "RC=!errorlevel!"]] | خد الكود على طول، قبل أي أمر تاني يغيّره. [[!...!]] بسبب [[enabledelayedexpansion]] |
+| [[findstr /i /c:"already exists"]] | «موجود أصلًا» = نجاح. ولأمر [[netsh]] الحقيقي نفس السطر بيلاقي [[The object already exists.]] |
+| [[findstr /x /c:"%~2"]] | أمر التراجع مكتوب قبل كده؟ متكتبوش تاني (نفس باج لينكس) |
+| [[for /f ... set "U!n!=%%L"]] | اقرا ملف الحالة في متغيرات [[U1]] و [[U2]]... (batch مفيهوش [[tac]]) |
+| [[for /l %%i in (!n!,-1,1)]] | لف من الآخر للأول: التراجع بالعكس |
+| [[&& ... || ...]] | نجح ولا لأ (تحت ليه مش [[%errorlevel%]]) |
+
+~~~text .\lab.bat (وفولدر vpnlab0 موجود من قبل)، و .\lab.bat تاني
+ok   (1) mkdir vpnlab0
+ok   (0) mkdir vpnlab0\routes
+ok   (0) mkdir vpnlab0\dns
+up: all steps ok
+ok   (1) mkdir vpnlab0
+ok   (1) mkdir vpnlab0\routes
+ok   (1) mkdir vpnlab0\dns
+up: all steps ok
+~~~
+
+~~~text .\lab.bat down، و down تاني
+undo rmdir vpnlab0\dns -> ok
+undo rmdir vpnlab0\routes -> ok
+undo rmdir vpnlab0 -> ok
+nothing to undo
+~~~
+
+~~~text set BADNAME=? و .\lab.bat (خطوة ٣ بتفشل فعلًا)
+ok   (0) mkdir vpnlab0
+ok   (0) mkdir vpnlab0\routes
+FAIL (1) mkdir vpnlab0\?dns
+The filename, directory name, or volume label syntax is incorrect.
+rolling back
+undo rmdir vpnlab0\routes -> ok
+undo rmdir vpnlab0 -> ok
+exit=1
+~~~
+
+### فخ: [[rmdir]] مش بيصفّر [[errorlevel]]
+
+النسخة الأولى كانت بتطبع [[-^> !errorlevel!]] بعد كل تراجع، وطلّعت [[-> 1]] مع إن الفولدرات اتمسحت فعلًا. اتجرّب:
+
+~~~text cmd /v:on /c "mkdir x & mkdir x & echo after fail: !errorlevel! & rd x & echo after rd ok: !errorlevel!"
+after fail: 1
+after rd ok: 1
+~~~
+
+أوامر داخلية كتير في CMD (زي [[rd]] و [[echo]] و [[set]]) لما تنجح **مبتغيّرش** [[errorlevel]]، فبيفضل فيه رقم الأمر اللي فشل قبلها. لكن [[&&]] و [[||]] بيبصّوا على نجاح الأمر نفسه ([[rd x && echo rd said ok]] طبع [[rd said ok]]). فبعد أوامر داخلية: [[&&]] و [[||]]، مش [[%errorlevel%]].
+
+### فخ: [['lab.bat' is not recognized]]
+
+على جهاز التجربة [[.\lab.bat]] اشتغل و [[lab.bat]] لوحده رجّع [['lab.bat' is not recognized as an internal or external command,]] والسبب متغيّر البيئة [[NoDefaultCurrentDirectoryInExePath=1]]: بيمنع CMD يدوّر على البرامج في الفولدر الحالي (حماية من برنامج مزروع بنفس اسم أمر). فاكتب [[.\]] دايمًا في السكربتات.
+
+---
+
+## ٦. البدايل اللي اترفضت
+
+| البديل | ليه لأ |
+|---|---|
+| تتجاهل أي خطأ ([[2>nul]] وتكمّل) | خطأ حقيقي (زي [[Nexthop has invalid gateway]]) يعدّي، والإعداد يبقى نصه شغّال |
+| تمسح كل حاجة الأول ([[delete]] ثم [[add]]) | بتقطع الشبكة لحظة، ولو [[add]] فشل بعدها مفيش حاجة خالص. وكمان بتمسح حاجة يمكن مش بتاعتك |
+| [[netsh]] من غير [[store=active]] | routes دائمة بتفضل بعد الـ restart لكارت مش موجود |
+| تعدّ الخطوات بدل ملف حالة | لو العملية ماتت في النص، مفيش حاجة تقول اتعمل لحد فين |
+
+---
+
+## ٧. متتكررش
+
+- كل خطوة إعداد: أمر بيشتغل في الحالتين ([[set]] و [[replace]])، أو «موجود» = نجاح.
+- كل خطوة نجحت: أمر تراجعها في ملف حالة، مرة واحدة.
+- أول فشل حقيقي: تراجع بالعكس، وكود خروج مش صفر.
+- [[store=active]] في [[netsh]]، و [[route print]] قسم [[Persistent Routes]] = [[None]] بعد أي تجربة.
+- جرّب السكربت **مرتين ورا بعض** و [[down]] **مرتين**، مش مرة.
+
+---
+
+## الخلاصة
+
+| الموقف | اعمل |
+|---|---|
+| [[The object already exists.]] / [[File exists]] | الحالة المطلوبة موجودة: نجاح |
+| عنوان IPv6 في ويندوز | [[netsh interface ipv6 set address ... store=active]] |
+| route في ويندوز | [[netsh interface ipv4 add route ... store=active]] |
+| لينكس | [[ip addr replace]] و [[ip route replace]] |
+| التراجع | ملف حالة بالعكس ([[tac]] أو [[for /l]] بالسالب) |
+| نجح؟ في batch | [[&&]] و [[||]] بعد الأوامر الداخلية |`,
+          deep: {
+            why: R`أي سكربت إعداد هيتشغّل أكتر من مرة: بعد فشل، أو بعد restart، أو من نسختين، أو بعد ما حد عمل نص الخطوات بإيده. لو التشغيلة التانية بتفشل على حاجة موجودة، السكربت بيعاقبك على إن الحالة **صح**. وفي الحالة الحقيقية ده خلّى الاتصال مستحيل لحد ما حد يمسح العنوان بإيده.`,
+            how: R`[[netsh]] و [[ip]] الاتنين بيبعتوا طلب «أضف» للنظام (في ويندوز لـ NetIO عن طريق IP Helper API، وفي لينكس للكيرنل عن طريق netlink). النظام بيرفض لو العنصر موجود بنفس المفتاح (العنوان، أو الوجهة والبوابة): [[ERROR_OBJECT_ALREADY_EXISTS]] (5010) في ويندوز، و [[EEXIST]] في لينكس (وده اللي [[RTNETLINK answers: File exists]] بيقوله). [[replace]] في لينكس بيبعت الطلب بعلامة [[NLM_F_REPLACE]] و [[NLM_F_CREATE]] مع بعض: «اعمله أو بدّله». و [[store=persistent]] في ويندوز بيكتب في الـ registry تحت [[Tcpip\Parameters\PersistentRoutes]] فبيرجع مع كل boot.`,
+            when: R`أي أداة بتركّب شبكة (VPN، أو Docker network، أو routes لـ lab)، وسكربتات setup لأي حاجة (فولدرات، ويوزرز، وقواعد firewall، وخدمات)، وأي خطوة في CI ممكن تتعاد. نفس المبدأ اللي Ansible و Terraform مبنيين عليه: «الحالة المطلوبة» مش «الأوامر».`,
+            mistakes: R`تعامل «already exists» كفشل وتعمل rollback. أو العكس: تتجاهل كل الأخطاء. وتكتب أمر التراجع قبل ما الخطوة تنجح. وتسجّل التراجع مرتين فـ [[down]] يفشل على النص التاني. وتنسى [[store=active]]. وتعتمد على [[%errorlevel%]] بعد [[rd]] أو [[echo]] في batch. وتجرّب السكربت مرة واحدة بس.`
+          },
+          sol: R`في الكونتينر: [[ip addr add]] التانية [[Error: ipv4: Address already assigned.]] وكود 2، و IPv6 [[Error: ipv6: address already assigned.]]، و [[ip route add]] التانية [[RTNETLINK answers: File exists]]، و [[ip route del]] التانية [[RTNETLINK answers: No such process]]، و [[replace]] كود 0 في الحالتين. و [[lab-net.sh]]: [[up]] والعنوان موجود [[ok   (2)]] وكمّل، و [[up]] تاني كله [[ok   (2)]]، و [[down]] ٣ سطور [[-> 0]]، و [[down]] تاني [[nothing to undo]]، و [[GW=10.99.0.1]] طلّع [[FAIL (2) ... Error: Nexthop has invalid gateway.]] ورجّع الخطوتين و [[exit=1]]. والنسخة من غير [[grep -qxF]] طلّعت ٣ تراجعات [[-> 2]] زيادة.
+
+وعلى ويندوز: [[lab.bat]] مرتين [[up: all steps ok]]، و [[down]] ٣ [[ok]]، و [[BADNAME=?]] طلّع [[The filename, directory name, or volume label syntax is incorrect.]] و [[exit=1]]، و [[rd]] الناجح ساب [[errorlevel]] = 1. و [[netsh interface ipv4 add route /?]] (قراية بس): [[persistent: Change is persistent. This is the default.]]، و [[route print]]: [[Persistent Routes:]] و [[None]].
+
+اتجرّب في [[ubuntu:24.04]] بـ [[--cap-add NET_ADMIN]] وعلى ويندوز 11 في CMD. أوامر [[netsh ... add/set/delete]] ونص [[The object already exists.]] من الحالة الأصلية ووثائق [[netsh]]، ومتشغّلتش على الجهاز.`,
+          practice: [
+            { lvl: 'سريع', t: R`من غير ما تبص: اكتب ٣ رسايل معناها «موجود أصلًا» (ويندوز ولينكس)، وأمرين بيشتغلوا في الحالتين.`, done: R`[[The object already exists.]] و [[Address already assigned]] و [[RTNETLINK answers: File exists]]، و [[ip addr replace]] (أو [[ip route replace]]) و [[netsh interface ipv6 set address]].` },
+            { lvl: 'تطبيق', t: R`اقرا وتوقّع: في [[lab-net.sh]] لو بدّلت ترتيب [[&&]] و [[||]] في آخر [[up]] بحيث [[||]] بعد كل خطوة لوحدها، فشل الخطوة التانية هيعمل إيه؟ وبعدين جرّب بـ [[GW]].`, done: R`توقعت إن الـ rollback هيحصل بس السكربت هيكمّل للخطوة اللي بعدها (لأن [[||]] بيرجّع نجاح)، وده اللي حصل، ورجّعت الترتيب.` },
+            { lvl: 'تطبيق', t: R`صلّح: [[for /l %%i in (!n!,-1,1) do (!U%%i! >nul 2>&1 & echo undo !U%%i! -^> !errorlevel!)]] بيطبع [[-> 1]] والفولدرات اتمسحت. ليه؟ وصلّحه.`, done: R`السبب إن [[rmdir]] الناجح مبيصفّرش [[errorlevel]] فبيفضل 1 من الخطوة اللي فشلت، والإصلاح [[&& echo ... ok || echo ... FAILED]]، والناتج بقى [[ok]].` },
+            { lvl: 'تطبيق', t: R`زوّد على [[lab-net.sh]] خطوة رابعة: [[ip -6 addr add fd00::2/64 dev vpnlab0]] بتراجعها، وشغّل [[up]] مرتين و [[down]] مرتين.`, done: R`[[up]] التانية فيها [[ok   (2) ip -6 addr add ...]]، و [[down]] بيرجّع ٤ خطوات أولها الـ IPv6، و [[ip -6 addr show dev vpnlab0 | grep -c fd00]] بعدها صفر.` },
+            { lvl: 'تحدي', t: R`ابني [[safe-setup.sh]] عام: بياخد ملف خطوات كل سطر فيه [[do ||| undo]]، وبينفّذ بنفس قواعد [[lab-net.sh]]، ومع [[--dry-run]] بيطبع الخطة بس، ومع [[status]] بيطبع اللي في ملف الحالة. جرّبه على خطوات [[mkdir]] و [[ip]].`, done: R`نفس ملف الخطوات بيتشغّل مرتين من غير فشل، وخطوة فيها خطأ حقيقي بترجّع اللي قبلها، و [[status]] بعد [[up]] بيطبع أوامر التراجع بالترتيب اللي هتتنفّذ بيه، و [[--dry-run]] مبيغيّرش حاجة.` },
+            { lvl: 'تحدي', t: R`دوّر بنفسك: من [[netsh interface ipv4 add route /?]] و [[netsh interface ipv6 add address /?]] و [[netsh interface ipv4 set interface /?]] (قراية بس)، اكتب لكل أمر القيمة الافتراضية لـ [[store]]، وإيه اللي [[metric]] بيعمله.`, done: R`كتبت إن [[persistent]] هو الافتراضي في الاتنين، والسطر بالنص من الـ help، وإن [[metric]] بيتضاف على metric الـ routes بتاعة الكارت (السطر [[Interface metric, added to route metrics]]).` },
+          ],
+          ci: [
+            { os: [R`windows`], sh: R`cmd`, run: R`@echo off
+mkdir vpnlab0
+mkdir vpnlab0 2>step.log
+echo mkdir2 errorlevel=%errorlevel%
+findstr /i /c:"already exists" step.log >nul && echo treated as ok
+setlocal enabledelayedexpansion
+mkdir x 2>nul & mkdir x 2>nul
+echo after fail: !errorlevel!
+rd x
+echo after rd ok: !errorlevel!
+mkdir y & rd y && echo rd said ok
+netsh interface ipv4 add route /? | findstr /c:"the default"`, expect: [R`mkdir2 errorlevel=1`, R`treated as ok`, R`after fail: 1`, R`after rd ok: 1`, R`rd said ok`, R`the default.`] },
+            { os: [R`ubuntu`], sh: R`bash`, run: R`sudo unshare -n bash -c '
+ip link set lo up
+ip addr add 10.255.0.2/24 dev lo; echo "add1=$?"
+ip addr add 10.255.0.2/24 dev lo 2>&1; echo "add2=$?"
+ip addr replace 10.255.0.2/24 dev lo; echo "replace=$?"
+ip route add 0.0.0.0/1 via 10.255.0.1 dev lo
+ip route add 0.0.0.0/1 via 10.255.0.1 dev lo 2>&1; echo "route2=$?"
+ip route replace 0.0.0.0/1 via 10.255.0.1 dev lo; echo "route-replace=$?"
+'`, expect: [R`add1=0`, R`Address already assigned`, R`add2=2`, R`replace=0`, R`RTNETLINK answers: File exists`, R`route2=2`, R`route-replace=0`] },
+          ],
         }
       ]
     }

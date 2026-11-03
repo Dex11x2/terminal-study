@@ -151,10 +151,10 @@ date`,
 
 | الحتة | معناها |
 |---|---|
-| [[ali]] | اسم اليوزر |
-| [[@]] | يعني «على» (at) |
-| [[laptop]] | اسم الجهاز |
-| [[:]] | فاصل |
+| [[ali]] | اسم اليوزر اللي داخل بيه دلوقتي |
+| [[@]] | يعني «على» (at): اليوزر ده على الجهاز اللي بعده |
+| [[laptop]] | اسم الجهاز اللي الأوامر هتتنفّذ عليه |
+| [[:]] | فاصل بين اسم الجهاز والفولدر |
 | [[~/projects]] | الفولدر اللي انت فيه |
 | [[$]] | يوزر عادي، وجاهز تكتب |
 
@@ -288,6 +288,65 @@ $ ls -la
 
 انت بتكتب [[ls -la]] بس. لو نسخت الـ [[$]] معاها هيقولك [[$: command not found]].
 
+## ٧. لزقت الأمر في الجهاز الغلط (أو لزقت الـ prompt معاه)
+
+دي حصلت فعلًا: ٣ أخطاء ورا بعض في نفس الدقيقة، كلهم من نفس الغلطة. اتعادوا في كونتينر [[ubuntu:24.04]] اسمه [[vps1]] ويوزر [[deployer]]، بلزق نفس السطور في bash تفاعلي:
+
+~~~text الناتج (كل سطر أوله الـ prompt هو اللي اتلزق)
+deployer@vps1:~/app$ cd /home/deployer/domains/shop.example/public_html
+-bash: cd: /home/deployer/domains/shop.example/public_html: No such file or directory
+deployer@vps1:~/app$ -bash: cd: /home/deployer/domains/shop.example/public_html: No such file or directory
+-bash: -bash:: command not found
+deployer@vps1:~/app$ deployer@vps1:~/app$ php artisan migrate
+-bash: deployer@vps1:~/app$: No such file or directory
+deployer@vps1:~/app$ "Bash(ssh deployer@vps1:*)",
+-bash: Bash(ssh deployer@vps1:*),: command not found
+deployer@vps1:~/app$ $ ls -la
+-bash: $: command not found
+~~~
+
+| اللي اتلزق | الخطأ | السبب |
+|---|---|---|
+| [[cd /home/deployer/domains/...]] | [[No such file or directory]] | الأمر كان لسيرفر تاني (الفولدر ده على السيرفر التاني بس)، والـ prompt كان بيقول [[vps1]] |
+| سطر الخطأ اللي فوق نفسه | [[-bash: -bash:: command not found]] | لزقت **ناتج** الخطأ كأنه أمر، فأول كلمة [[-bash:]] بقت اسم أمر |
+| [[deployer@vps1:~/app$ php artisan migrate]] | [[-bash: deployer@vps1:~/app$: No such file or directory]] | نسخت الـ prompt مع الأمر. أول كلمة فيها [[/]] فـ bash اعتبرها **مسار** برنامج، ومفيش ملف بالاسم ده |
+| سطر إعداد JSON ([["Bash(ssh ...)",]]) | [[command not found]] | السطر ده مكانه ملف إعدادات أداة على جهازك، مش ترمنال السيرفر. الترمنال بينفّذ أي حاجة كأمر |
+| [[$ ls -la]] | [[-bash: $: command not found]] | الـ [[$]] جاية من شرح على النت ومش جزء من الأمر |
+
+و [[-bash:]] في أول الرسالة معناها إن اللي رد هو bash بتاع الدخول (اللي بتدخله بـ ssh). وفي سكربت بيبقى [[bash: line 1:]] بدلها.
+
+### الحل بالترتيب
+
+١. **اقرا الـ prompt قبل Enter**: [[user@host:path$]]. الـ host ده هو الجهاز اللي الأمر هيتنفّذ عليه. ولو بتشتغل على أكتر من سيرفر، خلّي اسم كل واحد واضح في الـ prompt.
+٢. **مش متأكد؟ اسأل**:
+
+~~~bash
+hostname; whoami; pwd
+~~~
+
+~~~text الناتج
+vps1
+deployer
+/home/deployer/app
+~~~
+
+الجهاز، واليوزر، والفولدر: ٣ أوامر مبتغيّرش حاجة، وبتشتغل في bash و zsh و PowerShell (في PowerShell [[pwd]] بيطبع جدول فيه [[Path]]).
+٣. **السطر اتكتب غلط؟ متدوسش Enter**: [[Ctrl+C]] بيلغي السطر كله ويرجّعلك prompt فاضي، و [[Ctrl+U]] بيمسح من المؤشر لأول السطر (في bash و zsh).
+٤. **انسخ الأمر لوحده**: من غير الـ prompt ومن غير ناتج قبله. ولو حد بعتلك أوامر في شات، الأمر بس اللي يتنسخ.
+
+### نفس الغلطة على ويندوز
+
+أمر كان للسيرفر (فيه [[&&]]) اتلزق في Windows PowerShell 5.1 على الجهاز:
+
+~~~text powershell -NoProfile -Command "echo a && echo b"
+At line:1 char:8
++ echo a && echo b
++        ~~
+The token '&&' is not a valid statement separator in this version.
+~~~
+
+[[&&]] مش موجود في 5.1 (موجود في PowerShell 7، وده في تاب PowerShell). بس السؤال الأول هنا مش «إزاي أخلي [[&&]] يشتغل»، السؤال: **الأمر ده كان مكانه فين؟** والـ prompt [[PS C:\Users\you>]] كان بيقول إنك على ويندوز، مش على [[deployer@vps1]].
+
 ---
 
 ## الخلاصة
@@ -295,12 +354,14 @@ $ ls -la
 | العلامة | معناها |
 |---|---|
 | [[$]] | يوزر عادي في bash |
-| [[#]] | root (المدير) |
-| [[%]] | zsh على الماك |
-| [[PS ...>]] | PowerShell |
-| [[C:\...>]] | CMD |
+| [[#]] | root (المدير)، وأي غلطة مفيش حاجة توقفها |
+| [[%]] | zsh، الشيل الافتراضي على الماك |
+| [[PS ...>]] | PowerShell، وبعد [[PS]] الفولدر الحالي |
+| [[C:\...>]] | CMD، المسار وبعده [[>]] من غير [[PS]] |
 | [[UCRT64]] أو [[MINGW64]] وبعدها [[$]] في سطر لوحدها | Git Bash على ويندوز |
-| [[>]] لوحدها في أول السطر | الأمر لسه مكملش |`,
+| [[>]] لوحدها في أول السطر | الأمر لسه مكملش |
+| [[-bash: user@host:~/app$: No such file or directory]] | لزقت الـ prompt مع الأمر |
+| [[-bash: -bash:: command not found]] | لزقت ناتج خطأ كأنه أمر |`,
           example: R`ali@laptop:~/projects$
 root@server:/var/www#
 PS C:\Users\Ali>
@@ -327,7 +388,19 @@ $`,
             { lvl: 'سريع', t: R`افتح الترمنال اللي بتستخدمه وحدد في الـ prompt بتاعك الحتت دي: اليوزر، والجهاز، والفولدر، والعلامة. ولو Git Bash: شغّل [[echo $MSYSTEM]] و [[cygpath -w /]].`, done: R`كتبت كل حتة وقصادها معناها، والكلمة اللي طبعها [[echo $MSYSTEM]] هي نفس الكلمة اللي في الـ prompt.` },
             { lvl: 'تطبيق', t: R`انت شايف [[root@server:/etc#]] وعاوز تمسح ملف تجارب اسمه [[test.conf]]. اكتب ٣ حاجات الـ prompt بيقولهالك لازم تاخد بالك منها قبل ما تكتب أي أمر.`, done: R`ذكرت: انت root (أي غلطة مفيش حاجة توقفها)، وعلى سيرفر مش جهازك، وواقف في [[/etc]] (فولدر إعدادات النظام كله)، يعني تتأكد من الاسم بـ [[ls]] قبل المسح.` },
             { lvl: 'تطبيق', t: R`توقّع: لو كتبت [[echo 'it's ok']] ودوست Enter، هيحصل إيه؟ اكتب توقعك وبعدين جرّب، واخرج من الموقف ده وصلّح الأمر.`, done: R`ظهر [[>]] لأن الـ [[']] اللي في [[it's]] قفلت التنصيص وفتحت واحد جديد. خرجت بـ Ctrl+C، والأمر الصح [[echo "it's ok"]] طبع [[it's ok]].` },
+            { lvl: 'تطبيق', t: R`صلّح من غير ما تشغّل: صاحبك لزق ده وقالك «السيرفر باظ»: [[deployer@vps1:~/app$ php artisan migrate]] ورجعله [[-bash: deployer@vps1:~/app$: No such file or directory]]، وقبلها [[cd /home/deployer/domains/shop.example/public_html]] رجع [[No such file or directory]]. اكتبله ٣ أسئلة وأمر واحد يشغّله قبل أي حاجة.`, done: R`الأسئلة: انت على أنهي سيرفر (الـ prompt بيقول [[vps1]])؟ الفولدر ده موجود على أنهي سيرفر؟ نسخت الـ prompt مع الأمر؟ والأمر [[hostname; whoami; pwd]]، والأمر الصح من غير الـ prompt هو [[php artisan migrate]] بس.` },
             { lvl: 'تحدي', t: R`في bash غيّر شكل الـ prompt مؤقتًا: [[PS1='\w \$ ']]. إيه اللي اختفى وإيه اللي فضل؟ اتنقّل بـ [[cd]] وشوفه بيتغير، وبعدين ارجع للشكل الأصلي من غير ما تفتكر القيمة القديمة.`, done: R`الـ prompt بقى الفولدر والعلامة بس (مثلًا [[~ $]])، واليوزر والجهاز اختفوا. ورجعت للأصلي بإنك فتحت ترمنال جديد، لأن التغيير كان في الجلسة دي بس.` },
+          ],
+          ci: [
+            { os: [R`ubuntu`], sh: R`bash`, run: R`cat > paste.txt <<'EOF'
+cd /home/deployer/domains/shop.example/public_html
+-bash: cd: /home/deployer/domains/shop.example/public_html: No such file or directory
+deployer@vps1:~/app$ php artisan migrate
+$ ls -la
+hostname >/dev/null && whoami >/dev/null && echo "where-am-i ok"
+EOF
+(exec -a -bash bash --norc -i < paste.txt) 2>&1 | grep -E '^-bash: (cd|-bash|deployer|\$)|where-am-i'`, expect: [R`-bash: cd: /home/deployer/domains/shop.example/public_html: No such file or directory`, R`-bash: -bash:: command not found`, R`-bash: deployer@vps1:~/app$: No such file or directory`, R`-bash: $: command not found`, R`where-am-i ok`] },
+            { os: [R`windows`], sh: R`powershell`, run: R`try { [scriptblock]::Create('echo a && echo b') | Out-Null } catch { $_.Exception.Message }`, expect: [R`The token '&&' is not a valid statement separator in this version.`] },
           ]
         },
         {

@@ -6,3 +6,4 @@ node_modules/
 # ملفات تجارب المساعدين (المفروض تبقى برة المشروع)
 /scratchpad/
 /key.pub
+.private-words

@@ -4489,6 +4489,76 @@
     "git grep"
    ],
    "lvl": "يومي"
+  },
+  {
+   "topic": "author vs committer و --reset-author",
+   "find": [
+    "reset-author"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "filter-branch و filter-repo و .mailmap",
+   "find": [
+    "filter-branch"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "--force-with-lease و --force-if-includes",
+   "find": [
+    "force-with-lease"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "ورا ولا قدام: rev-list --left-right و @{u}",
+   "find": [
+    "ورا ولا قدام"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "check-ignore -v والـ global excludes",
+   "find": [
+    "أول ريبو على GitHub"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "نقل شغل لريبو تاني: add -N و diff --binary و apply --check",
+   "find": [
+    "شغل في المشروع الغلط"
+   ],
+   "lvl": "متقدم"
+  },
+  {
+   "topic": "pathspec exclude و commit -F -",
+   "find": [
+    "commit لملفاتك بس"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "فحص أسرار قبل الـ commit: git grep --cached",
+   "find": [
+    "فحص أسرار"
+   ],
+   "lvl": "إنتاج"
+  },
+  {
+   "topic": "line endings في الـ diff و newline في Python",
+   "find": [
+    "الملف كله اتغيّر"
+   ],
+   "lvl": "يومي"
+  },
+  {
+   "topic": "تنزيل أداة من GitHub Releases والتحقق بـ checksum",
+   "find": [
+    "checksum"
+   ],
+   "lvl": "إنتاج"
   }
  ]
 }

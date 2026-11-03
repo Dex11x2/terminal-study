@@ -443,6 +443,8 @@ hint: its remote counterpart.
 | اترفع على branch لوحدك | [[--amend]] وبعدين [[git push --force-with-lease]] |
 | اترفع على main مشترك | commit جديد عادي، متعملش amend |
 
+> [[--amend]] بيحتفظ بالـ author الأصلي. لو بتصلّح الإيميل نفسه لازم [[--amend --reset-author --no-edit]]، والتفاصيل (ومعاها [[--force-if-includes]]) في درس «إيميل الـ commit غلط والنشر اتقفل».
+
 الأوامر نفسها في PowerShell و CMD والماك.
 
 ## الخلاصة

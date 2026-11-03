@@ -875,6 +875,20 @@ Unregister-ScheduledTask -TaskName "DailyBackup" -Confirm:$false
 
 ---
 
+## ٨. مسار فيه مسافة: ليه [[-Execute]] أحسن من [[schtasks /TR]]
+
+[[New-ScheduledTaskAction]] بياخد البرنامج في [[-Execute]] والـ arguments في [[-Argument]]: خانتين، فمسار زي [[C:\Program Files\Lab\app.exe]] مش محتاج تنصيص منك خالص. أما [[schtasks /Create /TR "..."]] فبياخد الاتنين في نص واحد ويقسمه هو، والتنصيص الصح للنص ده بيختلف بين CMD و PowerShell 7 و 5.1. اتجرّب ببرنامج بيطبع الـ arguments اللي وصلته:
+
+| الـ shell | قيمة [[/TR]] الصح |
+|---|---|
+| CMD | [["\"C:\Program Files\Lab\app.exe\" --autostart"]] |
+| PowerShell 7.3+ | [['"C:\Program Files\Lab\app.exe" --autostart']] |
+| Windows PowerShell 5.1 | [['\"C:\Program Files\Lab\app.exe\" --autostart']] |
+
+وبعد أي مهمة، اتأكد من اللي اتخزّن فعلًا: [[(Get-ScheduledTask -TaskName DailyBackup).Actions | Select-Object Execute, Arguments]]. التفاصيل (وإزاي تختبر التنصيص من غير ما تعمل مهمة) في درس «schtasks و المسافات» في وحدة «قضايا ويندوز من الشغل الحقيقي».
+
+---
+
 ## الخلاصة
 
 | الأمر | بيعمل إيه |

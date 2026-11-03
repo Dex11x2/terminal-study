@@ -1919,6 +1919,11 @@
   "date": "2026-10-29",
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
+ "bash|Git Bash و سويتشات ويندوز": {
+  "hash": "7d07a0675386",
+  "date": "2026-11-03",
+  "on": "Git Bash 2.56 with tasklist (read-only)"
+ },
  "bash|LS_COLORS و --color": {
   "hash": "e62d5fd5bf56",
   "date": "2026-10-29",
@@ -2230,9 +2235,9 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|ip a / ip route": {
-  "hash": "9167ac74fa70",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "d78e9be17f30",
+  "date": "2026-11-03",
+  "on": "docs: ISP IP replaced with documentation range, commands unchanged"
  },
  "bash|ip link و ip addr add": {
   "hash": "82625004f2c9",
@@ -2600,9 +2605,9 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|traceroute / mtr": {
-  "hash": "8e25ca50f89b",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "9ad5017c1a3d",
+  "date": "2026-11-03",
+  "on": "docs: ISP IP replaced with documentation range, commands unchanged"
  },
  "bash|trap": {
   "hash": "94a93c86c20b",
@@ -3599,6 +3604,11 @@
   "date": "2026-10-29",
   "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
+ "cmd|netsh: The object already exists": {
+  "hash": "110d7cf3a391",
+  "date": "2026-11-03",
+  "on": "read-only netsh show on Windows; add/delete from docs"
+ },
  "cmd|netstat -ano": {
   "hash": "ee2535f0676f",
   "date": "2026-10-29",
@@ -3610,9 +3620,9 @@
   "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|pathping": {
-  "hash": "edb0a54fd3ff",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "396f6e6f9437",
+  "date": "2026-11-03",
+  "on": "docs: real machine name / ISP IP replaced with invented ones, commands unchanged"
  },
  "cmd|ping -a و nbtstat -A": {
   "hash": "9c62ab027548",
@@ -3620,9 +3630,9 @@
   "on": "win11 cmd: arp -a, ping -a gateway, nbtstat -n, net view; earlier run: nbtstat -A, nslookup"
  },
  "cmd|ping / tracert / nslookup": {
-  "hash": "1e3886ecb835",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "5c85c61a3985",
+  "date": "2026-11-03",
+  "on": "docs: real machine name / ISP IP replaced with invented ones, commands unchanged"
  },
  "cmd|ping نجح ومفيش جهاز": {
   "hash": "0c41eb7b8a40",
@@ -3720,9 +3730,9 @@
   "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
  },
  "cmd|systeminfo / whoami": {
-  "hash": "28160d8b7001",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "accc73c5b5ac",
+  "date": "2026-11-03",
+  "on": "docs: real machine name / ISP IP replaced with invented ones, commands unchanged"
  },
  "cmd|takeown": {
   "hash": "e854a0e7a8b7",
@@ -3745,9 +3755,9 @@
   "on": "win11 cmd; earlier conhost run for resize"
  },
  "cmd|tree": {
-  "hash": "5e8ddb5a6808",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "0024e73314b1",
+  "date": "2026-11-03",
+  "on": "docs: real machine name / ISP IP replaced with invented ones, commands unchanged"
  },
  "cmd|type / more": {
   "hash": "2f0656e62bc1",
@@ -4904,6 +4914,11 @@
   "date": "2026-10-28",
   "on": "Docker Desktop: Prometheus 3.15.1 + Alertmanager 0.34.1 + node_exporter 1.12.1 + Node webhook, alerts fired/resolved live; promtool test rules; Git Bash, pwsh 7.6, Windows PowerShell 5.1"
  },
+ "diag|GOMEMLIMIT والـ CPU": {
+  "hash": "89519bb71a4d",
+  "date": "2026-11-03",
+  "on": "privileged ubuntu:24.04 netns/TUN + dnsmasq lab, golang image, read-only Windows event log/mutex; netsh/route changes from docs"
+ },
  "diag|Grafana provisioning": {
   "hash": "09e3e9782c15",
   "date": "2026-10-28",
@@ -4973,6 +4988,11 @@
   "hash": "4743afcb7eff",
   "date": "2026-10-27",
   "on": "docker node:24-alpine + strace 6.19 (alpine); docs: Ubuntu ptrace_scope, macOS dtruss"
+ },
+ "diag|ts-node تحت pm2 بيقع كل ثانية": {
+  "hash": "04d616ec0c42",
+  "date": "2026-11-03",
+  "on": "systemd ubuntu:24.04 lab + pm2 + TypeORM app, compose postgres, php:8.3-cli; hosting web console from docs"
  },
  "diag|webhook مش واصل": {
   "hash": "92ccfa9a9064",
@@ -5049,6 +5069,11 @@
   "date": "2026-10-06",
   "on": "ubuntu-24.04 systemd container lab + client container"
  },
+ "diag|بسجّل في الداشبورد ومش بيسجّل": {
+  "hash": "571ff8a5ae6e",
+  "date": "2026-11-03",
+  "on": "systemd ubuntu:24.04 lab + pm2 + TypeORM app, compose postgres, php:8.3-cli; hosting web console from docs"
+ },
  "diag|بعد reboot حاجات مقامتش": {
   "hash": "deec17704291",
   "date": "2026-10-06",
@@ -5063,6 +5088,16 @@
   "hash": "650d5834ed83",
   "date": "2026-10-06",
   "on": "ubuntu-24.04 container (real DNS)"
+ },
+ "diag|خدمة واقعة من أسبوعين": {
+  "hash": "a08fe0ef02a0",
+  "date": "2026-11-03",
+  "on": "systemd ubuntu:24.04 lab + pm2 + TypeORM app, compose postgres, php:8.3-cli; hosting web console from docs"
+ },
+ "diag|ديدلوك الـ DNS": {
+  "hash": "a7fac028ddf7",
+  "date": "2026-11-03",
+  "on": "privileged ubuntu:24.04 netns/TUN + dnsmasq lab, golang image, read-only Windows event log/mutex; netsh/route changes from docs"
  },
  "diag|سرّع nginx على سيرفر شغّال": {
   "hash": "f670ec4b43cb",
@@ -5084,6 +5119,26 @@
   "date": "2026-10-06",
   "on": "ubuntu-24.04 systemd container lab (expired cert via openssl ca)"
  },
+ "diag|عملية يتيمة و routes": {
+  "hash": "b11d2fedd0c6",
+  "date": "2026-11-03",
+  "on": "privileged ubuntu:24.04 netns/TUN + dnsmasq lab, golang image, read-only Windows event log/mutex; netsh/route changes from docs"
+ },
+ "diag|غيّر إعداد في الداتابيز من السيرفر": {
+  "hash": "c3e5103a5440",
+  "date": "2026-11-03",
+  "on": "systemd ubuntu:24.04 lab + pm2 + TypeORM app, compose postgres, php:8.3-cli; hosting web console from docs"
+ },
+ "diag|غيّرت الرقم ولسه القديم ظاهر": {
+  "hash": "27dde59c4d8e",
+  "date": "2026-11-03",
+  "on": "systemd ubuntu:24.04 lab + pm2 + TypeORM app, compose postgres, php:8.3-cli; hosting web console from docs"
+ },
+ "diag|فحص النفق بيختبر الطريق الغلط": {
+  "hash": "168ecfedfbf6",
+  "date": "2026-11-03",
+  "on": "privileged ubuntu:24.04 netns/TUN + dnsmasq lab, golang image, read-only Windows event log/mutex; netsh/route changes from docs"
+ },
  "diag|فيه مساحة ولسه No space": {
   "hash": "6cead209361f",
   "date": "2026-10-06",
@@ -5094,15 +5149,30 @@
   "date": "2026-10-06",
   "on": "docker compose Node 22 + Postgres 16"
  },
+ "diag|كونسول الاستضافة بيقول login:": {
+  "hash": "1e8af4bd39f1",
+  "date": "2026-11-03",
+  "on": "systemd ubuntu:24.04 lab + pm2 + TypeORM app, compose postgres, php:8.3-cli; hosting web console from docs"
+ },
  "diag|مش قادر أعمل SSH": {
   "hash": "6512ec60a2c5",
   "date": "2026-10-06",
   "on": "OpenSSH server + client containers"
  },
+ "diag|مفيش نشر تلقائي": {
+  "hash": "2c277988638a",
+  "date": "2026-11-03",
+  "on": "systemd ubuntu:24.04 lab + pm2 + TypeORM app, compose postgres, php:8.3-cli; hosting web console from docs"
+ },
  "diag|نسخة قديمة كسرت الإنتاج": {
   "hash": "3d8df9536ca7",
   "date": "2026-11-03",
   "on": "Docker lab: Pebble, CoreDNS, systemd ubuntu:24.04, nginx 1.24/1.27, tc netem; Windows OpenSSH; flush-dns commands from docs"
+ },
+ "diag|نسختين بعد الصحيان": {
+  "hash": "c52498597592",
+  "date": "2026-11-03",
+  "on": "privileged ubuntu:24.04 netns/TUN + dnsmasq lab, golang image, read-only Windows event log/mutex; netsh/route changes from docs"
  },
  "diag|نقل الدومين لسيرفر جديد": {
   "hash": "a9786c74c275",
@@ -7350,9 +7420,14 @@
   "on": "win11 Git Bash (Git 2.56); docs: gh issue, closing keywords"
  },
  "git|M والـ diff فاضي": {
-  "hash": "9e6eb86c455d",
+  "hash": "7f9dde0f600c",
   "date": "2026-11-03",
-  "on": "Git Bash 2.56 on Windows + ubuntu:24.04 Docker (local bare repos); gh commands from docs"
+  "on": "docs: cross-link to the new git/09 cases only"
+ },
+ "git|commit لملفاتك بس": {
+  "hash": "c4d69810825d",
+  "date": "2026-11-03",
+  "on": "Git Bash 2.56 + ubuntu:24.04 (git 2.43) with local bare repos; gh read-only on a public repo; platform rules and filter-repo from docs"
  },
  "git|fork و upstream": {
   "hash": "0fbe84d2f32a",
@@ -7370,9 +7445,9 @@
   "on": "git 2.56.0.windows.3 على ويندوز 11، في ريبو تجريبي في scratchpad"
  },
  "git|git add / commit": {
-  "hash": "895146ce3afb",
-  "date": "2026-10-06",
-  "on": "win11 Git Bash (Git 2.56) + pwsh 7 + ps 5.1"
+  "hash": "a15972554315",
+  "date": "2026-11-03",
+  "on": "docs: cross-link to the new git/09 cases only"
  },
  "git|git alias": {
   "hash": "055910d0d873",
@@ -7390,14 +7465,14 @@
   "on": "win11 Git Bash (Git 2.56) + ubuntu-24.04 + pwsh 7"
  },
  "git|git commit --amend": {
-  "hash": "b1944600678a",
-  "date": "2026-10-06",
-  "on": "win11 Git Bash (Git 2.56) local bare remote"
+  "hash": "c30553726087",
+  "date": "2026-11-03",
+  "on": "docs: cross-link to the new git/09 cases only"
  },
  "git|git config": {
-  "hash": "aa2d0d5c4c0c",
-  "date": "2026-10-06",
-  "on": "win11 Git Bash (Git 2.56) isolated global + ubuntu-24.04"
+  "hash": "18be5c885584",
+  "date": "2026-11-03",
+  "on": "docs: cross-link to the new git/09 cases only"
  },
  "git|git diff": {
   "hash": "e69e62a9844b",
@@ -7529,10 +7604,30 @@
   "date": "2026-10-06",
   "on": "win11 Git Bash (Git 2.56), git-lfs 3.8"
  },
+ "git|أداة من GitHub Releases بـ checksum": {
+  "hash": "8bd3cb464482",
+  "date": "2026-11-03",
+  "on": "Git Bash 2.56 + ubuntu:24.04 (git 2.43) with local bare repos; gh read-only on a public repo; platform rules and filter-repo from docs"
+ },
+ "git|أول ريبو على GitHub من فولدر": {
+  "hash": "a7a11b240b17",
+  "date": "2026-11-03",
+  "on": "Git Bash 2.56 + ubuntu:24.04 (git 2.43) with local bare repos; gh read-only on a public repo; platform rules and filter-repo from docs"
+ },
+ "git|إيميل الـ commit غلط والنشر اتقفل": {
+  "hash": "8b773a3a3262",
+  "date": "2026-11-03",
+  "on": "Git Bash 2.56 + ubuntu:24.04 (git 2.43) with local bare repos; gh read-only on a public repo; platform rules and filter-repo from docs"
+ },
  "git|الـ conflicts": {
   "hash": "723651aa3309",
   "date": "2026-10-06",
   "on": "win11 Git Bash (Git 2.56)"
+ },
+ "git|الـ diff بيقول الملف كله اتغيّر": {
+  "hash": "1a09377db9ae",
+  "date": "2026-11-03",
+  "on": "Git Bash 2.56 + ubuntu:24.04 (git 2.43) with local bare repos; gh read-only on a public repo; platform rules and filter-repo from docs"
  },
  "git|المعاينة في git: -n و --dry-run": {
   "hash": "af6dc501f18d",
@@ -7548,6 +7643,21 @@
   "hash": "1323e13fc26e",
   "date": "2026-10-06",
   "on": "win11 Git Bash (Git 2.56) local bare remote; docs: GitHub PR page"
+ },
+ "git|سكربت Python يعدّل ملف CRLF": {
+  "hash": "26f3ddd4958a",
+  "date": "2026-11-03",
+  "on": "Git Bash 2.56 + ubuntu:24.04 (git 2.43) with local bare repos; gh read-only on a public repo; platform rules and filter-repo from docs"
+ },
+ "git|شغل في المشروع الغلط": {
+  "hash": "64a9fe7fd5f9",
+  "date": "2026-11-03",
+  "on": "Git Bash 2.56 + ubuntu:24.04 (git 2.43) with local bare repos; gh read-only on a public repo; platform rules and filter-repo from docs"
+ },
+ "git|فحص أسرار قبل الـ commit": {
+  "hash": "66b6071aa129",
+  "date": "2026-11-03",
+  "on": "Git Bash 2.56 + ubuntu:24.04 (git 2.43) with local bare repos; gh read-only on a public repo; platform rules and filter-repo from docs"
  },
  "git|فولدر ZIP لريبو git": {
   "hash": "cf317cbac323",
@@ -7578,6 +7688,11 @@
   "hash": "813e9ccb1874",
   "date": "2026-10-06",
   "on": "win11 Git Bash (Git 2.56) + ubuntu-24.04 (Git 2.43)"
+ },
+ "git|ورا ولا قدام الـ remote؟": {
+  "hash": "35f03888ac22",
+  "date": "2026-11-03",
+  "on": "Git Bash 2.56 + ubuntu:24.04 (git 2.43) with local bare repos; gh read-only on a public repo; platform rules and filter-repo from docs"
  },
  "glossary|0.0.0.0": {
   "hash": "e4feefd93545",
@@ -9884,6 +9999,11 @@
   "date": "2026-10-29",
   "on": "Docker 29.6.1 (Docker Desktop، ويندوز) من Git Bash: معمل pc-a/router/web-b على alpine 3.21 بـ iptables nf_tables و tcpdump 4.99. docs: --ctorigdstport، ufw، policy routing، أرقام ويندوز، tcp_syn_retries"
  },
+ "net|SNI واسم الشهادة": {
+  "hash": "f91b2f6a5b34",
+  "date": "2026-11-03",
+  "on": "privileged ubuntu:24.04 netns/TUN lab, xray 26.10 image, openssl; Windows read-only (Get-NetRoute, WinRT read); firewall/ICS from docs"
+ },
  "net|allowed_ips": {
   "hash": "66cb8cb33793",
   "date": "2026-10-29",
@@ -9970,9 +10090,9 @@
   "on": "Docker 29.6.1 (Docker Desktop، ويندوز) من Git Bash: معمل pc-a/router/web-b على alpine 3.21 بـ iptables nf_tables و tcpdump 4.99. docs: --ctorigdstport، ufw، policy routing، أرقام ويندوز، tcp_syn_retries"
  },
  "net|routing": {
-  "hash": "046cf31ec80e",
-  "date": "2026-10-29",
-  "on": "docs: تغيير أسماء بس (اسم الـ VPN الحقيقي بقى DemoVPN، والكارت tun0، والعناوين 10.66.0.x). مااتعادش التشغيل؛ المراجعة الأصلية للسلوك سارية"
+  "hash": "2d7832f46816",
+  "date": "2026-11-03",
+  "on": "privileged ubuntu:24.04 netns/TUN lab, xray 26.10 image, openssl; Windows read-only (Get-NetRoute, WinRT read); firewall/ICS from docs"
  },
  "net|slaac": {
   "hash": "11e6f2090d23",
@@ -9980,9 +10100,9 @@
   "on": "Docker ubuntu:24.04 lab (radvd) + Windows 11 pwsh 7.6"
  },
  "net|socks_proxy": {
-  "hash": "f2f4c1cb717a",
-  "date": "2026-10-29",
-  "on": "docs: تغيير أسماء بس (اسم الـ VPN الحقيقي بقى DemoVPN، والكارت tun0، والعناوين 10.66.0.x). مااتعادش التشغيل؛ المراجعة الأصلية للسلوك سارية"
+  "hash": "e1f7bb18797a",
+  "date": "2026-11-03",
+  "on": "privileged ubuntu:24.04 netns/TUN lab, xray 26.10 image, openssl; Windows read-only (Get-NetRoute, WinRT read); firewall/ICS from docs"
  },
  "net|subnetting": {
   "hash": "9ad6674493e1",
@@ -9995,9 +10115,9 @@
   "on": "docs: تغيير أسماء بس (اسم الـ VPN الحقيقي بقى DemoVPN، والكارت tun0، والعناوين 10.66.0.x). مااتعادش التشغيل؛ المراجعة الأصلية للسلوك سارية"
  },
  "net|tls_sni": {
-  "hash": "6c65231704c8",
-  "date": "2026-10-29",
-  "on": "docs: تغيير أسماء بس (اسم الـ VPN الحقيقي بقى DemoVPN، والكارت tun0، والعناوين 10.66.0.x). مااتعادش التشغيل؛ المراجعة الأصلية للسلوك سارية"
+  "hash": "174d89d366ab",
+  "date": "2026-11-03",
+  "on": "privileged ubuntu:24.04 netns/TUN lab, xray 26.10 image, openssl; Windows read-only (Get-NetRoute, WinRT read); firewall/ICS from docs"
  },
  "net|tshark": {
   "hash": "325dc8f1ef33",
@@ -10005,9 +10125,9 @@
   "on": "Docker ubuntu:24.04 lab; docs: Windows tshark/Wireshark GUI"
  },
  "net|tun": {
-  "hash": "20ac73d062a5",
-  "date": "2026-10-29",
-  "on": "docs: تغيير أسماء بس (اسم الـ VPN الحقيقي بقى DemoVPN، والكارت tun0، والعناوين 10.66.0.x). مااتعادش التشغيل؛ المراجعة الأصلية للسلوك سارية"
+  "hash": "d594e15c82e9",
+  "date": "2026-11-03",
+  "on": "privileged ubuntu:24.04 netns/TUN lab, xray 26.10 image, openssl; Windows read-only (Get-NetRoute, WinRT read); firewall/ICS from docs"
  },
  "net|udp": {
   "hash": "cd04ede40edd",
@@ -10019,10 +10139,20 @@
   "date": "2026-10-29",
   "on": "docs: تغيير أسماء بس (اسم الـ VPN الحقيقي بقى DemoVPN، والكارت tun0، والعناوين 10.66.0.x). مااتعادش التشغيل؛ المراجعة الأصلية للسلوك سارية"
  },
+ "net|أيقونة الشبكة بتكدب": {
+  "hash": "c716f3406771",
+  "date": "2026-11-03",
+  "on": "privileged ubuntu:24.04 netns/TUN lab, xray 26.10 image, openssl; Windows read-only (Get-NetRoute, WinRT read); firewall/ICS from docs"
+ },
  "net|اقرا الفشل: refused و timeout و unreachable": {
   "hash": "06368b4a61ce",
   "date": "2026-10-29",
   "on": "Docker 29.6.1 (Docker Desktop، ويندوز) من Git Bash: معمل pc-a/router/web-b على alpine 3.21 بـ iptables nf_tables و tcpdump 4.99. docs: --ctorigdstport، ufw، policy routing، أرقام ويندوز، tcp_syn_retries"
+ },
+ "net|الاسم بيتحل فين": {
+  "hash": "ba26cad59e5c",
+  "date": "2026-11-03",
+  "on": "privileged ubuntu:24.04 netns/TUN lab, xray 26.10 image, openssl; Windows read-only (Get-NetRoute, WinRT read); firewall/ICS from docs"
  },
  "net|الرد رجع من طريق تاني": {
   "hash": "5fd442f851d1",
@@ -10039,10 +10169,25 @@
   "date": "2026-10-27",
   "on": "docs: concept"
  },
+ "net|حلقة التضخيم": {
+  "hash": "824f634752f8",
+  "date": "2026-11-03",
+  "on": "privileged ubuntu:24.04 netns/TUN lab, xray 26.10 image, openssl; Windows read-only (Get-NetRoute, WinRT read); firewall/ICS from docs"
+ },
  "net|شبكتين وراوتر في النص": {
   "hash": "2dfeee02f813",
   "date": "2026-10-29",
   "on": "Docker 29.6.1 (Docker Desktop، ويندوز) من Git Bash: معمل pc-a/router/web-b على alpine 3.21 بـ iptables nf_tables و tcpdump 4.99. docs: --ctorigdstport، ufw، policy routing، أرقام ويندوز، tcp_syn_retries"
+ },
+ "net|مشاركة النفق على الـ LAN": {
+  "hash": "e8751206249e",
+  "date": "2026-11-03",
+  "on": "privileged ubuntu:24.04 netns/TUN lab, xray 26.10 image, openssl; Windows read-only (Get-NetRoute, WinRT read); firewall/ICS from docs"
+ },
+ "net|هوت سبوت من النفق": {
+  "hash": "37e13104d138",
+  "date": "2026-11-03",
+  "on": "privileged ubuntu:24.04 netns/TUN lab, xray 26.10 image, openssl; Windows read-only (Get-NetRoute, WinRT read); firewall/ICS from docs"
  },
  "next|@slot و (.)": {
   "hash": "488e080503e8",
@@ -12055,9 +12200,9 @@
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|-WhatIf و -Confirm": {
-  "hash": "04d30459c5ee",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "1cf95683c8b7",
+  "date": "2026-11-03",
+  "on": "docs: real machine name / ISP IP replaced with invented ones, commands unchanged"
  },
  "ps|-and و -or مقابل && و ||": {
   "hash": "107b8c99da35",
@@ -12235,9 +12380,9 @@
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Get-NetIPAddress": {
-  "hash": "a9a5d2832e46",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "7fad84897e1c",
+  "date": "2026-11-03",
+  "on": "docs: real machine name / ISP IP replaced with invented ones, commands unchanged"
  },
  "ps|Get-NetNeighbor + ping sweep": {
   "hash": "a27ca5d5b7d9",
@@ -12390,9 +12535,9 @@
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Register-ScheduledTask": {
-  "hash": "144330af3e97",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "b403a0f0be15",
+  "date": "2026-11-03",
+  "on": "pwsh 7.6 + powershell 5.1, read-only on Windows; state-changing commands from Microsoft docs"
  },
  "ps|Remove-Item": {
   "hash": "f99c6beeebcb",
@@ -12464,6 +12609,11 @@
   "date": "2026-10-29",
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
+ "ps|Smart App Control": {
+  "hash": "2cb0d251f26e",
+  "date": "2026-11-03",
+  "on": "pwsh 7.6 + powershell 5.1, read-only on Windows; state-changing commands from Microsoft docs"
+ },
  "ps|Sort-Object": {
   "hash": "5e6afad8fb35",
   "date": "2026-10-29",
@@ -12510,14 +12660,19 @@
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Test-NetConnection -TraceRoute": {
-  "hash": "195552d9542e",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "d9cefd800a5f",
+  "date": "2026-11-03",
+  "on": "docs: real machine name / ISP IP replaced with invented ones, commands unchanged"
  },
  "ps|Test-Path": {
   "hash": "3ac540d70e25",
   "date": "2026-10-29",
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+ },
+ "ps|UI Automation": {
+  "hash": "2460ec839841",
+  "date": "2026-11-03",
+  "on": "pwsh 7.6 + powershell 5.1, read-only on Windows; state-changing commands from Microsoft docs"
  },
  "ps|Update-Help و about_": {
   "hash": "d27de5a27831",
@@ -12654,6 +12809,11 @@
   "date": "2026-10-29",
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
+ "ps|schtasks و المسافات": {
+  "hash": "68d7c353ec09",
+  "date": "2026-11-03",
+  "on": "pwsh 7.6 + powershell 5.1, read-only on Windows; state-changing commands from Microsoft docs"
+ },
  "ps|screenshots.ps1": {
   "hash": "d108ad15c5c1",
   "date": "2026-10-29",
@@ -12729,6 +12889,11 @@
   "date": "2026-10-29",
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
+ "ps|تجربة أدمن بتغيّر الشبكة": {
+  "hash": "144b0ca4ea1c",
+  "date": "2026-11-03",
+  "on": "pwsh 7.6 + powershell 5.1, read-only on Windows; state-changing commands from Microsoft docs"
+ },
  "ps|رموز PowerShell": {
   "hash": "f318cc8b5f0a",
   "date": "2026-10-29",
@@ -12738,6 +12903,21 @@
   "hash": "ae7d4df3c4b6",
   "date": "2026-10-29",
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+ },
+ "ps|قيس قبل ما تغيّر": {
+  "hash": "b19a7a59e1bd",
+  "date": "2026-11-03",
+  "on": "pwsh 7.6 + powershell 5.1, read-only on Windows; state-changing commands from Microsoft docs"
+ },
+ "ps|لوج UTF-16": {
+  "hash": "4c94daeadbfe",
+  "date": "2026-11-03",
+  "on": "pwsh 7.6 + powershell 5.1, read-only on Windows; state-changing commands from Microsoft docs"
+ },
+ "ps|مسار فيه مسافة": {
+  "hash": "370df2b798ee",
+  "date": "2026-11-03",
+  "on": "pwsh 7.6 + powershell 5.1, read-only on Windows; state-changing commands from Microsoft docs"
  },
  "ps|مشروع ١ — cancel و status": {
   "hash": "5a4b033f2d21",
@@ -16140,9 +16320,9 @@
   "on": "ubuntu-24.04; win11 pwsh7 + ps5.1"
  },
  "start|السيرفر والـ VPS": {
-  "hash": "18f18e7df850",
-  "date": "2026-10-05",
-  "on": "win11 pwsh7 (ssh -V, hostname, ssh timeout); ubuntu-24.04; docs: OpenSSH login prompt/exit message"
+  "hash": "5633435f656b",
+  "date": "2026-11-03",
+  "on": "docs: real machine name replaced, commands unchanged"
  },
  "start|الصلاحيات rwx": {
   "hash": "93375442c233",
@@ -16160,9 +16340,9 @@
   "on": "ubuntu-24.04; win11 pwsh7 + ps5.1"
  },
  "start|الـ prompt": {
-  "hash": "d1fc3cd385a9",
+  "hash": "2338dc457e42",
   "date": "2026-11-03",
-  "on": "Git Bash 2.56 UCRT64 (MSYSTEM, cygpath) + Ubuntu 24.04 Docker (PS1, Permission denied)"
+  "on": "Git Bash + bash in ubuntu:24.04 (pasted prompt errors)"
  },
  "start|الـ stack trace": {
   "hash": "d8c0bb55d2bb",
@@ -17248,6 +17428,11 @@
   "hash": "d26b33ebfa30",
   "date": "2026-10-29",
   "on": "ويندوز 11: PowerShell 7.6 و 5.1 و CMD (من غير Admin)؛ أوبونتو 24.04 جوه Docker 29.6 للينكس وللفرمتة على ملفات .img، و nmap على شبكة Docker. docs: أوامر الماك، و smartctl/upower/ClamAV، وأدوات Admin (sfc/DISM/chkdsk) ورسايل نتايجها، وحد FAT32 الـ 4GB، والعربي المكسور محاكاة بـ 1256"
+ },
+ "tools|افتح برنامج .NET متسطّب": {
+  "hash": "3804a33fc86d",
+  "date": "2026-11-03",
+  "on": "read-only file inspection; ilspycmd/dnfile from docs"
  },
  "tools|الأجهزة اللي على شبكتك": {
   "hash": "eec21aac0670",

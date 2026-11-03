@@ -615,6 +615,230 @@ Mandatory arguments to long options are mandatory for short options too.
           sol: R`على أوبونتو 24.04: [[sudo apt install pipx]] وبعدين [[pipx install tldr]] (بيحطه في [[~/.local/bin]]، و [[pipx ensurepath]] يزوّده للـ PATH). جربنا البدايل ومنفعتش: [[apt install tldr]] (0.9.2) و [[apt install tealdeer]] (1.6.1) فشلوا في تنزيل الصفحات، و [[npm i -g tldr]] مع Node 18 بتاع apt وقع بـ [[ERR_REQUIRE_ESM]]. وعلى أوبونتو 26.04 [[sudo apt install tealdeer]] وبعدين [[tldr --update]] اشتغل. وعلى الماك [[brew install tlrc]] (من الـ docs). بعدها [[tldr find]] بيطبع وصف في سطر وتحته أمثلة جاهزة، زي البحث بالاسم أو الامتداد، والبحث بتاريخ التعديل، وتنفيذ أمر على كل نتيجة.
 
 لو قالك [[No tldr entry for find]] أو [[Page cache not found]]، يبقى الصفحات لسه ماتحمّلتش (أو الجهاز مش واصل للنت)، شغّل [[tldr --update]]. ولو شفت flag في tldr وعايز تفاصيله، ساعتها [[man find]] وابحث جواه بـ [[/]] زي less.`
+        },
+        {
+          cmd: "Git Bash و سويتشات ويندوز",
+          title: "tasklist /FI من Git Bash: Invalid argument 'C:/Program Files/Git/FI'، والحل //FI",
+          learn: R`تعرف إن Git Bash بيحوّل أي argument شكله مسار ([[/FI]]) لمسار ويندوز قبل ما يبعته لبرنامج ويندوز، وتمنع ده بـ [[//]] أو [[MSYS_NO_PATHCONV=1]]، وتقفل أو تستنى عملية ويندوز من سكربت bash صح.`,
+          out: R`[[tasklist //FI "IMAGENAME eq explorer.exe" //NH]] بيطبع سطر [[explorer.exe]]، و [[taskkill //PID 99999 //F]] بيقول [[not found]] بدل [[Invalid argument]].`,
+          desc: R`من Git Bash على ويندوز كتبت أمر ويندوز عادي:
+
+[[tasklist /FI "IMAGENAME eq explorer.exe"]]
+
+ورجع: [[ERROR: Invalid argument/option - 'C:/Program Files/Git/FI'.]]
+
+انت كتبت [[/FI]]، و [[tasklist]] استلم [[C:/Program Files/Git/FI]]. السبب: Git Bash (مبني على MSYS2) لما بيشغّل برنامج ويندوز ([[.exe]] مش من أدوات MSYS)، بيحوّل أي argument أوله [[/]] لمسار ويندوز، لأن [[/]] في Git Bash هو فولدر تسطيب Git. ده بيخلي [[notepad /c/Users/you/a.txt]] يشتغل، بس بيبوّظ سويتشات ويندوز اللي بتبدأ بـ [[/]].
+
+الحلول: [[//FI]] (الاتنين بيتحوّلوا لـ [[/FI]] واحدة)، أو [[MSYS_NO_PATHCONV=1]] قبل الأمر (يقفل التحويل للأمر ده بس)، أو [[MSYS2_ARG_CONV_EXCL='*']]. وفي سكربت: [[taskkill //PID 123 //F]]، ولفّة تستنى العملية تخلص بـ [[tasklist | grep]] (لأن [[tasklist]] بيرجع 0 حتى لو ملقاش حاجة).`,
+          example: R`# Git Bash (Windows):
+tasklist /FI "IMAGENAME eq explorer.exe"
+tasklist //FI "IMAGENAME eq explorer.exe" //NH
+MSYS_NO_PATHCONV=1 tasklist /FI "IMAGENAME eq explorer.exe" /NH
+cmd //c echo /FI //PID /c/x
+taskkill //PID 99999 //F; echo "exit=$?"
+ping -n 30 127.0.0.1 >/dev/null & pid=$(tasklist //FI "IMAGENAME eq PING.EXE" //NH //FO CSV | head -1 | cut -d, -f2 | tr -d '"'); echo "bash=$! windows=$pid"
+taskkill //PID "$pid" //F
+for i in $(seq 1 30); do tasklist //FI "IMAGENAME eq PING.EXE" //NH | grep -qi ping || break; sleep 2; done; echo "gone (i=$i)"`,
+          lines: [
+            R`الغلطة: [[/FI]] اتحوّلت لـ [[C:/Program Files/Git/FI]] قبل ما توصل، و [[tasklist]] رد [[ERROR: Invalid argument/option]] وكود 1.`,
+            R`الحل الأول: [[//FI]] و [[//NH]]. Git Bash بيشوف [[//]] فبيشيل واحدة ومبيحوّلش. و [[/NH]] = من غير سطر العناوين.`,
+            R`الحل التاني: [[MSYS_NO_PATHCONV=1]] قبل الأمر = متغيّر بيئة للأمر ده بس، بيقفل التحويل خالص، فتكتب الأمر بشكل ويندوز العادي.`,
+            R`عشان تشوف بعينك إيه اللي بيوصل: [[cmd //c echo]] بيطبع الـ arguments زي ما استلمها. [[/FI]] بقت مسار، و [[//PID]] بقت [[/PID]]، و [[/c/x]] بقت [[C:/x]].`,
+            R`[[taskkill]] برقم مش موجود (آمن): [[//PID]] و [[//F]] (force). الرد [[ERROR: The process "99999" not found.]] وكود 128، يعني السويتشات وصلت صح.`,
+            R`شغّل [[ping]] في الخلفية ([[&]])، وهات رقمه **في ويندوز** من [[tasklist]] بصيغة CSV ([[//FO CSV]]): العمود التاني هو الـ PID. [[$!]] رقم bash، وده مختلف.`,
+            R`اقفلها بالرقم بتاع ويندوز: [[SUCCESS: The process with PID ... has been terminated.]]`,
+            R`استنى عملية تخلص: كل ٢ ثانية لحد ٣٠ مرة، [[grep -qi]] بيرجع 1 لما الاسم يختفي فـ [[||]] بيعمل [[break]]. ومنعتمدش على كود [[tasklist]] لأنه 0 حتى لو مفيش نتايج.`,
+          ],
+          mac: ["linux", "ده في Git Bash على ويندوز بس. bash على لينكس والماك و WSL مبيحوّلش arguments خالص، ومفيهوش [[tasklist]] أصلًا (فيه [[ps]] و [[kill]])."],
+          try: R`في Git Bash: جرّب [[tasklist /FI ...]] وبعدين [[//FI]] و [[MSYS_NO_PATHCONV=1]]، و [[cmd //c echo /FI //PID /c/x /usr]] واقرا كل argument وصل إزاي. وبعدين شغّل [[ping -n 30 127.0.0.1 >/dev/null &]] وقارن [[$!]] بالرقم في [[tasklist]] وفي [[ps]] (عمود [[WINPID]])، واقفله بـ [[taskkill //PID]].`,
+          teach: R`## العَرَض
+
+سكربت bash بيشتغل في Git Bash على ويندوز، ومحتاج يعرف برنامج شغّال ولا لأ، ويقفله:
+
+~~~text tasklist /FI "IMAGENAME eq explorer.exe"
+ERROR: Invalid argument/option - 'C:/Program Files/Git/FI'.
+Type "TASKLIST /?" for usage.
+~~~
+
+~~~text taskkill /PID 99999 /F
+ERROR: Invalid argument/option - 'C:/Program Files/Git/PID'.
+Type "TASKKILL /?" for usage.
+~~~
+
+الأمر نفسه شغّال في CMD و PowerShell. يبقى المشكلة في **اللي بين bash والبرنامج**.
+
+---
+
+## ١. البرنامج استلم إيه؟
+
+[[cmd //c echo]] بيطبع الـ arguments زي ما وصلته، فبيكشف التحويل:
+
+~~~text cmd //c echo /FI /usr /c/x //PID "a b"
+"C:/Program Files/Git/FI" "C:/Program Files/Git/usr" C:/x /PID "a b"
+~~~
+
+| كتبت | وصل | ليه |
+|---|---|---|
+| [[/FI]] | [["C:/Program Files/Git/FI"]] | أوله [[/]] فاتعامل كمسار جوه Git Bash، و [[/]] هنا = [[C:/Program Files/Git]] |
+| [[/usr]] | [["C:/Program Files/Git/usr"]] | نفس الحكاية (وده فولدر حقيقي فعلًا) |
+| [[/c/x]] | [[C:/x]] | [[/c/]] في Git Bash = درايف [[C:]] |
+| [[//PID]] | [[/PID]] | [[//]] = «ده مش مسار»، فبيشيل واحدة ويسيبها |
+| [["a b"]] | [["a b"]] | مش مسار، ما اتغيّرش |
+
+التحويل ده اسمه **MSYS path conversion**. Git Bash مش لينكس: البرامج اللي بتشغّلها من جوّاه برامج ويندوز عادية مبتفهمش [[/c/Users]]، فـ Git Bash بيترجم المسارات قبل ما يبعتها. ده اللي بيخلي [[notepad /c/Users/you/a.txt]] يفتح الملف. بس سويتشات ويندوز ([[/FI]] و [[/PID]] و [[/F]] و [[/all]]) شكلها مسارات، فبتتبوّظ.
+
+وده بيحصل بس مع برامج ويندوز. أوامر bash نفسها مش بتتأثر ([[echo /FI]] و [[printf '%s' /FI]] بيطبعوا [[/FI]]).
+
+أمثلة تانية اتجرّبت:
+
+~~~text ipconfig /all
+Error: unrecognized or incomplete command line.
+~~~
+
+~~~text cmd /c "echo x"
+Microsoft Windows [Version 10.0.26300.9818]
+(c) Microsoft Corporation. All rights reserved.
+~~~
+
+التانية خطيرة: [[/c]] اتحوّلت لـ [[C:/]]، فـ [[cmd]] ماشافش [[/c]] خالص، وفتح CMD تفاعلي **جوه** Git Bash (وكان هيستنى أوامر لو مفيش EOF). الحل [[cmd //c]].
+
+---
+
+## ٢. ٣ حلول
+
+~~~text tasklist //FI "IMAGENAME eq explorer.exe" //NH
+explorer.exe                 <pid> Console                    4    208,788 K
+~~~
+
+~~~text MSYS_NO_PATHCONV=1 tasklist /FI "IMAGENAME eq explorer.exe" /NH
+explorer.exe ...
+~~~
+
+~~~text MSYS2_ARG_CONV_EXCL='*' tasklist /FI "IMAGENAME eq explorer.exe" /NH
+explorer.exe ...
+~~~
+
+| الحل | إمتى |
+|---|---|
+| [[//FI]] | سويتش أو اتنين في أمر واحد. أسرع حاجة |
+| [[MSYS_NO_PATHCONV=1 cmd ...]] | أمر فيه سويتشات كتير. ده متغيّر خاص بـ Git for Windows، بيقفل التحويل للأمر ده بس |
+| [[MSYS2_ARG_CONV_EXCL='*']] | الطريقة الرسمية في MSYS2 (بتشتغل في Git Bash كمان). ممكن بدل [['*']] تكتب بدايات معينة متتحوّلش، زي [['/FI;/PID']] |
+| [[export MSYS_NO_PATHCONV=1]] في أول السكربت | سكربت كله أوامر ويندوز. بس خد بالك: أي مسار bash بعدها ([[/c/Users/...]]) مش هيتحوّل، فاكتب مسارات ويندوز ([[C:/Users/...]]) |
+
+> متغيّر اسمه [[MSYS_NO_PCONV]] بيتكتب في أماكن على النت: **مش شغّال**. اتجرّب: [[MSYS_NO_PCONV=1 tasklist /FI ...]] طلّع نفس [[Invalid argument/option - 'C:/Program Files/Git/FI']]. الاسم الصح [[MSYS_NO_PATHCONV]].
+
+ومسار من Git Bash لويندوز أو العكس من غير تخمين: [[cygpath]].
+
+~~~text cygpath
+cygpath -w /usr/bin                → C:\Program Files\Git\usr\bin
+cygpath -u 'C:\Windows\System32'   → /c/Windows/System32
+cygpath -m ~                       → C:/Users/you
+~~~
+
+[[-w]] شكل ويندوز بـ [[\]]، و [[-u]] شكل Git Bash، و [[-m]] (mixed) شكل ويندوز بـ [[/]] (بيشتغل في أغلب برامج ويندوز ومش محتاج escaping في bash).
+
+---
+
+## ٣. اقفل عملية ويندوز من سكربت bash
+
+~~~text taskkill //PID 99999 //F; echo "exit=$?"
+ERROR: The process "99999" not found.
+exit=128
+~~~
+
+([[99999]] رقم مش موجود، فالتجربة آمنة.) الرسالة اتغيّرت من [[Invalid argument]] لـ [[not found]]: السويتشات وصلت صح.
+
+وفخ تاني: رقم العملية في bash مش هو رقمها في ويندوز.
+
+~~~text ping -n 30 127.0.0.1 >/dev/null & ...
+winpid=45712 bashpid=11213
+ps: PID=11213 WINPID=45712 /c/WINDOWS/system32/ping
+SUCCESS: The process with PID 45712 has been terminated.
+bash job gone
+~~~
+
+| الرقم | منين | بيتستخدم في |
+|---|---|---|
+| [[$!]] و [[PID]] في [[ps]] | Git Bash (MSYS) بيدّي أرقام خاصة بيه | [[kill]] و [[wait]] جوه bash |
+| [[WINPID]] في [[ps]]، والعمود التاني في [[tasklist]] | رقم ويندوز الحقيقي | [[taskkill]] و Task Manager و PowerShell |
+
+و [[ps -W]] بيعرض عمليات ويندوز كلها (مش بس اللي اتشغّلت من Git Bash) بعمود [[WINPID]].
+
+---
+
+## ٤. استنى لحد ما العملية تخلص
+
+~~~bash
+for i in $(seq 1 30); do tasklist //FI "IMAGENAME eq PING.EXE" //NH | grep -qi ping || break; sleep 2; done; echo "gone (i=$i)"
+~~~
+
+~~~text الناتج (ping -n 6 شغّال في الخلفية، يعني حوالي ٥ ثواني)
+gone (i=3)
+~~~
+
+[[i=3]]: اللفّة شافته موجود مرتين (بعد كل مرة [[sleep 2]])، والمرة التالتة [[grep]] ملقاهوش فخرجت.
+
+ليه [[grep]] ومش كود [[tasklist]]؟
+
+~~~text tasklist //FI "IMAGENAME eq PING.EXE" //NH; echo "exit=$?"
+INFO: No tasks are running which match the specified criteria.
+exit=0
+~~~
+
+[[tasklist]] بيرجع **0** حتى لو مفيش ولا عملية. فـ [[if tasklist ...]] دايمًا صح. [[grep -qi ping]] هو اللي بيقول «لسه موجودة» (0) أو «اختفت» (1). و [[seq 1 30]] مع [[sleep 2]] = أقصى ٦٠ ثانية، فاللفّة مبتعلقش للأبد. وفي الحالة الحقيقية نفس السطر كان بيستنى برنامج النفق يقفل بعد ما الأداة تطلب منه:
+
+~~~bash
+for i in $(seq 1 30); do tasklist | grep -qi vpnlab || break; sleep 2; done
+~~~
+
+---
+
+## البدايل اللي اترفضت
+
+| البديل | ليه لأ |
+|---|---|
+| تشغّل الأوامر دي من CMD أو PowerShell بدل Git Bash | ممكن، بس السكربت كله bash (grep و seq و curl)، فالأسهل تصلّح السطرين |
+| [[export MSYS_NO_PATHCONV=1]] في [[.bashrc]] | بيبوّظ كل أمر بيعتمد على التحويل (أي برنامج ويندوز بتبعتله [[/c/...]]) |
+| [[kill $!]] على برنامج ويندوز | ساعات بيشتغل، بس لو البرنامج عمل عمليات ابن، [[taskkill //T]] هو اللي بيقفل الشجرة كلها |
+| [[MSYS_NO_PCONV=1]] | الاسم ده مش موجود (اتجرّب) |
+
+---
+
+## الخلاصة
+
+| عايز | اكتب في Git Bash |
+|---|---|
+| سويتش ويندوز | [[//FI]] و [[//PID]] و [[//F]] و [[//NH]] |
+| أمر كله سويتشات | [[MSYS_NO_PATHCONV=1 tasklist /FI ... /NH]] |
+| تشوف إيه وصل | [[cmd //c echo ...]] |
+| مسار بين العالمين | [[cygpath -w]] و [[-u]] و [[-m]] |
+| رقم ويندوز | [[tasklist //FO CSV]] العمود التاني، أو [[ps]] عمود [[WINPID]] |
+| استنى عملية | لفّة [[tasklist | grep -qi || break]] بحد أقصى |`,
+          deep: {
+            why: R`سكربتات كتير بتتكتب bash عشان تشتغل على لينكس والماك، وبعدين حد يشغّلها في Git Bash على ويندوز، وأول سطر فيه أمر ويندوز بيقع بخطأ مش مفهوم ([[C:/Program Files/Git/FI]]). لو عارف السبب، الحل حرفين.`,
+            how: R`Git for Windows مبني على MSYS2 (فرع من Cygwin). البرامج اللي متبنية لـ MSYS ([[ls]] و [[grep]] و [[bash]]) فاهمة مسارات [[/c/...]] لوحدها. لكن لما bash بيشغّل [[.exe]] عادي (native)، runtime بتاع MSYS بيلف على الـ arguments ومتغيرات البيئة، وأي حاجة شكلها مسار POSIX (تبدأ بـ [[/]]، أو فيها [[:]] بين مسارات) بيترجمها لمسار ويندوز. وفيه استثناءات: [[//]] في الأول، و arguments فيها [[=]] بقواعد خاصة، والمتغيرين [[MSYS_NO_PATHCONV]] (Git for Windows) و [[MSYS2_ARG_CONV_EXCL]] (MSYS2). وأرقام العمليات في MSYS افتراضية فوق أرقام ويندوز، فـ [[ps]] بيعرض الاتنين.`,
+            when: R`كل ما تكتب أمر ويندوز من Git Bash: [[tasklist]] و [[taskkill]] و [[ipconfig]] و [[netsh]] و [[robocopy]] و [[schtasks]] و [[cmd /c]] و [[reg]] و [[sc]]. وكل ما سكربت bash بيشتغل في CI على [[windows-latest]] بـ [[shell: bash]] (ده Git Bash).`,
+            mistakes: R`تكتب [[MSYS_NO_PCONV]] (اسم غلط). وتعمل [[export MSYS_NO_PATHCONV=1]] لكل حاجة وتنسى إن المسارات كمان مبقتش بتتحوّل. وتستخدم [[$!]] مع [[taskkill]]. وتعتمد على كود [[tasklist]] عشان تعرف العملية موجودة. وتكتب [[cmd /c]] فيفتح CMD تفاعلي ويعلّق السكربت. وتنسى حد أقصى للفّة الانتظار.`
+          },
+          sol: R`[[tasklist /FI ...]]: [[ERROR: Invalid argument/option - 'C:/Program Files/Git/FI'.]] وكود 1، و [[taskkill /PID 99999 /F]]: [[Invalid argument/option - 'C:/Program Files/Git/PID'.]] و [[ipconfig /all]]: [[Error: unrecognized or incomplete command line.]]، و [[cmd /c "echo x"]] فتح CMD تفاعلي. و [[cmd //c echo /FI /usr /c/x //PID "a b"]] طبع [["C:/Program Files/Git/FI" "C:/Program Files/Git/usr" C:/x /PID "a b"]]. و [[//FI]] و [[MSYS_NO_PATHCONV=1]] و [[MSYS2_ARG_CONV_EXCL='*']] طلّعوا سطر [[explorer.exe]]، و [[MSYS_NO_PCONV=1]] طلّع نفس الخطأ. و [[taskkill //PID 99999 //F]]: [[ERROR: The process "99999" not found.]] وكود 128. و [[$!]] = 11213 والـ WINPID = 45712، و [[taskkill //PID 45712 //F]]: [[SUCCESS]]. و [[tasklist]] على اسم مش موجود: [[INFO: No tasks are running which match the specified criteria.]] وكود 0.
+
+اتجرّب في Git Bash (Git 2.56، [[UCRT64]]) على ويندوز 11.`,
+          practice: [
+            { lvl: 'سريع', t: R`من غير ما تبص: ليه [[tasklist /FI]] بيفشل في Git Bash؟ واكتب ٣ طرق تصلّحه.`, done: R`كتبت إن [[/FI]] بيتحوّل لمسار تحت فولدر Git لأن البرنامج native، والحلول [[//FI]] و [[MSYS_NO_PATHCONV=1]] و [[MSYS2_ARG_CONV_EXCL='*']]، وجرّبت واحد منهم.` },
+            { lvl: 'تطبيق', t: R`اقرا وتوقّع: إيه اللي هيوصل لـ [[cmd //c echo]] من دول: [[/all]]، و [[//all]]، و [[/c/Windows]]، و [[C:/x]]، و [[--x=/tmp]]، و [[a/b]]. اكتب توقعك وبعدين شغّل.`, done: R`كتبت التوقعات الست، والـ ٣ الأولى طابقت ([[/all]] بقت مسار تحت Git، و [[//all]] بقت [[/all]]، و [[/c/Windows]] بقت [[C:/Windows]])، واللي ماطابقش كتبت جنبه السبب من ناتج التجربة.` },
+            { lvl: 'تطبيق', t: R`صلّح السكربت ده اللي بيتشغّل في Git Bash: [[pid=$!; if tasklist /FI "PID eq $pid" >/dev/null; then taskkill /PID $pid /F; fi]]. فيه ٣ مشاكل.`, done: R`لقيت: السويتشات بتتحوّل (محتاج [[//]])، و [[$!]] رقم bash مش ويندوز (محتاج [[WINPID]] من [[ps]] أو [[tasklist //FO CSV]])، و [[tasklist]] بيرجع 0 دايمًا فالـ [[if]] مالوش لازمة (محتاج [[grep]]). والنسخة الجديدة قفلت [[ping]] تجربة فعلًا.` },
+            { lvl: 'تطبيق', t: R`ابني function [[winkill]] في [[.bashrc]] بتاخد اسم برنامج ([[winkill PING.EXE]])، وتقفل كل نسخه بـ [[taskkill //IM ... //F]]، وتستنى لحد ١٠ ثواني إنها تختفي، وترجع 0 لو اختفت و 1 لو لأ.`, done: R`مع ٣ [[ping]] شغّالين في الخلفية: [[winkill PING.EXE]] بيقفلهم ويرجع 0 في أقل من ثانيتين، ومن غير ولا [[ping]] بيرجع 0 برسالة إنه مش شغّال، والـ function مش بتعمل [[export MSYS_NO_PATHCONV]].` },
+            { lvl: 'تحدي', t: R`قارن وقيس: اعمل جدول بـ ٨ أوامر ويندوز فيها سويتشات ([[ipconfig /all]]، و [[netstat -ano]]، و [[findstr /i]]، و [[robocopy /L]]، و [[schtasks /Query]]، و [[sc query]]، و [[where /?]]، و [[cmd /c]])، وجرّب كل واحد في Git Bash من غير تعديل. أنهي اتبوّظ وأنهي لأ؟ ليه [[netstat -ano]] مثلًا سليم؟`, done: R`الجدول ٨ سطور بالنتيجة الحقيقية، واللي بيستخدم [[-]] (زي [[netstat -ano]]) سليم لأن التحويل للـ [[/]] بس، واللي اتبوّظ اتصلّح بـ [[//]] واتجرّب تاني.` },
+            { lvl: 'تحدي', t: R`دوّر بنفسك: من صفحة «Known issues» أو الـ release notes بتاعة Git for Windows ومن وثائق MSYS2 (Filesystem Paths)، اكتب ٣ قواعد للتحويل غير اللي في الدرس (مثلًا arguments فيها [[=]] أو [[;]] أو [[:]]).`, done: R`كتبت ٣ قواعد ومعاهم مثال اتجرّب بـ [[cmd //c echo]] لكل واحدة والناتج الحقيقي.` },
+          ],
+          ci: [
+            { os: [R`windows`], sh: R`pwsh`, run: R`$gb = Join-Path $env:ProgramFiles 'Git\bin\bash.exe'
+& $gb -c 'cmd //c echo /FI //PID /c/x'
+& $gb -c 'tasklist /FI "IMAGENAME eq none.exe" 2>&1; echo "exit=$?"'
+& $gb -c 'tasklist //FI "IMAGENAME eq none.exe" //NH; echo "exit=$?"'
+& $gb -c 'MSYS_NO_PATHCONV=1 cmd /c echo /FI'
+& $gb -c 'taskkill //PID 99999 //F 2>&1'`, expect: [R`"C:/Program Files/Git/FI" /PID C:/x`, R`Invalid argument/option - 'C:/Program Files/Git/FI'`, R`exit=1`, R`INFO: No tasks are running which match the specified criteria.`, R`exit=0`, R`/FI`, R`ERROR: The process "99999" not found.`] },
+          ],
         }
       ]
     }
