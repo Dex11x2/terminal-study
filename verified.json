@@ -3355,499 +3355,549 @@
   "on": "AWS CLI 2.37 vs LocalStack 4.9: volumes, addresses, terminate, s3 rb, region sweep solCode; docs: RDS, ELB"
  },
  "cmd|%errorlevel% و !errorlevel!": {
-  "hash": "dffbb26c5447",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "9a76dadd5044",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|%time% فيه مسافة و %date% فيه /": {
-  "hash": "73f55ecbe973",
-  "date": "2026-10-28",
-  "on": "ويندوز 11، cmd.exe (ملفات .bat بـ CRLF) + pwsh 7 و powershell 5.1 للمقارنة. docs: أكواد xcopy، و ping مع Destination host unreachable، وشيل wmic"
+  "hash": "d709c04a0e28",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|%~dp0 و %~nx1": {
-  "hash": "2e461b15df65",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "359f26e0c436",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|&& و || و &": {
-  "hash": "61501517c8eb",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "964dd3b77c8a",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|08 و 09 مش أرقام": {
-  "hash": "ff38bd9dc4cd",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "8e46ff8e2f13",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|2>&1 قبل ولا بعد >nul": {
-  "hash": "9e74a811bef8",
-  "date": "2026-10-28",
-  "on": "ويندوز 11، cmd.exe (ملفات .bat بـ CRLF) + pwsh 7 و powershell 5.1 للمقارنة. docs: أكواد xcopy، و ping مع Destination host unreachable، وشيل wmic"
+  "hash": "659284f82b16",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
+ },
+ "cmd|Run as Administrator": {
+  "hash": "6c7733e3b381",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|arp / route": {
-  "hash": "b41bfe2f6579",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "6443830e3a9f",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
+ },
+ "cmd|assoc / ftype": {
+  "hash": "54ce9b80605d",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|attrib": {
-  "hash": "6ba9223196fb",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "af1a9d7ade50",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|backup-date.bat": {
-  "hash": "c19d0dbb62be",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "7c7269267007",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|batch ولا PowerShell؟": {
-  "hash": "1c86cbe45952",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "fc8688e21632",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|build.bat": {
-  "hash": "67914100b606",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "bf7a8469e094",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|call :label": {
-  "hash": "2550bc26c630",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "4ce7c0c83fed",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|cd": {
-  "hash": "23175605936a",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "95e99d93cb6b",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|chcp 65001": {
-  "hash": "ed8d7bc5fd5a",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "e82295e292f1",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|chkdsk": {
-  "hash": "c3ad0b984c78",
-  "date": "2026-10-06",
-  "on": "win11 cmd non-admin refusals; docs: /scan /f /r"
+  "hash": "872508d69bca",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|clean-temp.bat": {
-  "hash": "aca920ae363d",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "28a7b965ca83",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|clip": {
-  "hash": "2bc56bfcd689",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "d59eb3d97f75",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|cls": {
-  "hash": "4053444ea392",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "49c0850036fe",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
+ },
+ "cmd|cmdkey": {
+  "hash": "575785410baf",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|color": {
-  "hash": "107443977664",
-  "date": "2026-10-06",
-  "on": "win11 cmd color /?; earlier conhost run in sol"
+  "hash": "684aafd14e6c",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|copy / xcopy": {
-  "hash": "f0b05cb42686",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "f6813c2fdd35",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|curl.exe": {
-  "hash": "e4bf82904d01",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "61378aa73a58",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|del *.htm بيمسح .html كمان": {
-  "hash": "3b3f1ee5b527",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "bf6e5b4b0fbe",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|del / rd": {
-  "hash": "b28e7e54833d",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "2a14abc7e496",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|dir": {
-  "hash": "78d24366f060",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "9b9f645547c9",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|diskpart": {
-  "hash": "c4593f6e3648",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "5bc3770bc035",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|doskey": {
-  "hash": "a3f95be0cc18",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "2b253b9608cd",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|findstr": {
-  "hash": "0876b250b998",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "45fba09d616c",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|findstr مش regex كامل": {
-  "hash": "a33041fb6b44",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "64b6955cbf5e",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|for /f": {
-  "hash": "00889c5293e3",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "80461074541b",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|for /f بياكل سطور": {
-  "hash": "741ce229d38e",
-  "date": "2026-10-28",
-  "on": "ويندوز 11، cmd.exe (ملفات .bat بـ CRLF) + pwsh 7 و powershell 5.1 للمقارنة. docs: أكواد xcopy، و ping مع Destination host unreachable، وشيل wmic"
+  "hash": "643f20e75e4c",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|for على الملفات": {
-  "hash": "5b1d88dd2a89",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "b2de98de104d",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|for و delayed expansion": {
-  "hash": "8cb2659d6826",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "0226fcf29169",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
+ },
+ "cmd|getmac": {
+  "hash": "6571b71b7e55",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|git-backup.bat": {
-  "hash": "204eb2d0293e",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "81fb9be2c5c2",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
+ },
+ "cmd|gpresult": {
+  "hash": "101d82ad1f66",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|help و /?": {
-  "hash": "9ce5ef8f0eef",
-  "date": "2026-10-28",
-  "on": "windows-11, cmd"
+  "hash": "9e4dfee8d588",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|hosts": {
-  "hash": "a674ee90a627",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "1714ffa8017d",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|icacls": {
-  "hash": "0c4d2cb1dd77",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "928e9a9b6cec",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|if و errorlevel": {
-  "hash": "897fa0672cff",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "2a23ac3f11b0",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|ipconfig": {
-  "hash": "b1c77a60f7e4",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "e0f4b095c8bf",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|ipconfig /release /renew": {
-  "hash": "25f206d1534f",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "16dc83ef6252",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|mkdir": {
-  "hash": "ff6edc33fc58",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "3e635b5c4005",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|mklink": {
-  "hash": "39e3e8c1b7f8",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "2becfc3682d4",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|move / ren": {
-  "hash": "d1518771d4e3",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "9bbe7ba1a0d6",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|mstsc": {
-  "hash": "94af5625ec03",
-  "date": "2026-10-06",
-  "on": "win11 cmd: reg query, sc query TermService; docs: mstsc switches, enabling RDP"
+  "hash": "0a371fbc4032",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|net localgroup": {
-  "hash": "54f977bf4fa9",
-  "date": "2026-10-06",
-  "on": "win11 cmd non-admin"
+  "hash": "aa61435f5b52",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
+ },
+ "cmd|net session": {
+  "hash": "10b819b1e14b",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|net share / net use": {
-  "hash": "07fb4229a3bb",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "89edd4d4c9f6",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|net user": {
-  "hash": "f60d791f79ea",
-  "date": "2026-10-06",
-  "on": "win11 cmd non-admin; docs: expires/times/active/delete"
+  "hash": "a4f680ed1539",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|netsh": {
-  "hash": "103744b98de4",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "042ded639137",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|netsh advfirewall firewall": {
-  "hash": "61614bd451eb",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "6b3707845459",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|netsh interface ip set address": {
-  "hash": "67ff344409c1",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "0cfc2b0c52eb",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|netsh winsock reset": {
-  "hash": "13e44c3554cd",
-  "date": "2026-10-06",
-  "on": "win11 cmd: winsock show catalog, flushdns (non-admin); docs: release/renew/reset"
+  "hash": "c8e67d338e89",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|netsh wlan connect": {
-  "hash": "5685bed32372",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "f815596a2257",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|netsh: The object already exists": {
-  "hash": "110d7cf3a391",
+  "hash": "da3e2a59e502",
   "date": "2026-11-03",
-  "on": "read-only netsh show on Windows; add/delete from docs"
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|netstat -ano": {
-  "hash": "ee2535f0676f",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "d56cb195cb01",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|nslookup": {
-  "hash": "ac352edbe3e7",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "754fc0c363b7",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|pathping": {
-  "hash": "396f6e6f9437",
+  "hash": "a5b39457e1fe",
   "date": "2026-11-03",
-  "on": "docs: real machine name / ISP IP replaced with invented ones, commands unchanged"
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|ping -a و nbtstat -A": {
-  "hash": "9c62ab027548",
-  "date": "2026-10-06",
-  "on": "win11 cmd: arp -a, ping -a gateway, nbtstat -n, net view; earlier run: nbtstat -A, nslookup"
+  "hash": "21dba785c1f0",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|ping / tracert / nslookup": {
-  "hash": "5c85c61a3985",
+  "hash": "2da68d0275bc",
   "date": "2026-11-03",
-  "on": "docs: real machine name / ISP IP replaced with invented ones, commands unchanged"
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|ping نجح ومفيش جهاز": {
-  "hash": "0c41eb7b8a40",
-  "date": "2026-10-28",
-  "on": "ويندوز 11، cmd.exe (ملفات .bat بـ CRLF) + pwsh 7 و powershell 5.1 للمقارنة. docs: أكواد xcopy، و ping مع Destination host unreachable، وشيل wmic"
+  "hash": "2f25e17bd1a8",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|pnputil و driverquery": {
-  "hash": "148721e1065e",
-  "date": "2026-10-06",
-  "on": "win11 cmd non-admin incl. one-driver export; docs: export *, add-driver"
+  "hash": "d75f937a0fc5",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|powercfg": {
-  "hash": "4c3e3ca15464",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "223c87d8c5c0",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|prompt": {
-  "hash": "d1ac79bdbf8f",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "cf4305ffca3b",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
+ },
+ "cmd|pushd / popd": {
+  "hash": "d69ee017b8b9",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
+ },
+ "cmd|reg query / reg add": {
+  "hash": "d193ba027030",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|rename-files.bat": {
-  "hash": "df8e47a9a44b",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "975c496a17a5",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|robocopy": {
-  "hash": "6985b6d36585",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "790f5c14cef5",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|robocopy نجح وسكربتك قال فشل": {
-  "hash": "0cd4e4553fc2",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "1e83ad09a7ca",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|runas": {
-  "hash": "87440cbd5ab6",
-  "date": "2026-10-06",
-  "on": "docs: runas (needs another password); win11 cmd: sc qc seclogon"
+  "hash": "ba516139d6e2",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|sc و net start": {
-  "hash": "b979edcb8a82",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "d2f4bdd14e1d",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|schtasks": {
-  "hash": "8db41ef23bef",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "3b9caa0a394e",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|set / setx": {
-  "hash": "1badf71e06a8",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "5684b0b517fe",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|set /a": {
-  "hash": "a5637beee571",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "a0b0921d2945",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|set /p و choice": {
-  "hash": "855a8924d460",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "5131680658e3",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|set و %1": {
-  "hash": "f3408d3333b3",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "49d29e0cd337",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|setlocal / endlocal": {
-  "hash": "420b371d51ca",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "82ca0fd3d47b",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|sfc و DISM": {
-  "hash": "780886988178",
-  "date": "2026-10-06",
-  "on": "win11 cmd non-admin refusals; docs: real scans"
+  "hash": "70e664484a90",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|shutdown": {
-  "hash": "b5005a55344c",
-  "date": "2026-10-06",
-  "on": "win11 cmd: /?, /a; docs: /s /r /h /fw"
+  "hash": "e44891490c95",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|shutdown /m": {
-  "hash": "e504ccf1729e",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "35b4c269eab3",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|start": {
-  "hash": "b181ea8c60c8",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "a596edbea3aa",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
+ },
+ "cmd|subst": {
+  "hash": "8a6276c39be5",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|systeminfo / whoami": {
-  "hash": "accc73c5b5ac",
+  "hash": "956d8fa5a0c0",
   "date": "2026-11-03",
-  "on": "docs: real machine name / ISP IP replaced with invented ones, commands unchanged"
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|takeown": {
-  "hash": "e854a0e7a8b7",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "c99c78614a0e",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|tasklist / taskkill": {
-  "hash": "23a9ebfd5f8c",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "c02678112e84",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|timeout و ping": {
-  "hash": "64d168f0f216",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "dc0c30325b86",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|title و mode con": {
-  "hash": "24dbefbdd5b9",
-  "date": "2026-10-06",
-  "on": "win11 cmd; earlier conhost run for resize"
+  "hash": "4d200bd19f10",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|tree": {
-  "hash": "0024e73314b1",
+  "hash": "c24f1b31b448",
   "date": "2026-11-03",
-  "on": "docs: real machine name / ISP IP replaced with invented ones, commands unchanged"
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|type / more": {
-  "hash": "2f0656e62bc1",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "783c4de99ccf",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|type nul / echo >": {
-  "hash": "1872e499e81a",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "15ff7f55474f",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|w32tm": {
-  "hash": "74c718614de3",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "b70b288ae8e1",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
+ },
+ "cmd|wevtutil": {
+  "hash": "0016eea29460",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|where": {
-  "hash": "08eac3363f66",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "99a7f2aaf51e",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|whoami /groups /priv": {
-  "hash": "b5c932fccfb1",
-  "date": "2026-10-06",
-  "on": "win11 cmd non-admin; docs: elevated output"
+  "hash": "b58b382cc9ad",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|winget upgrade": {
-  "hash": "f891afb9a08d",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "e1c46b853639",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|wmic": {
-  "hash": "f1f199f9e840",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "2375f2511167",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|| > >> 2>&1": {
-  "hash": "e5ecae1af974",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "a31fff22c988",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|أول ملف .bat": {
-  "hash": "66f59d7fa0a5",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "b09839a508f2",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|الطريقة: من مهمة لأمر في CMD": {
-  "hash": "0913692a97c1",
-  "date": "2026-10-28",
-  "on": "windows-11, cmd"
+  "hash": "e2b4d2369cfc",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|المتغير الفاضي وقّف السكربت": {
-  "hash": "4235c3f72071",
-  "date": "2026-10-28",
-  "on": "ويندوز 11، cmd.exe (ملفات .bat بـ CRLF) + pwsh 7 و powershell 5.1 للمقارنة. docs: أكواد xcopy، و ping مع Destination host unreachable، وشيل wmic"
+  "hash": "f69394d7c47d",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|رموز CMD": {
-  "hash": "246b1df4ff95",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "8f1ed5b43206",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|سطر الاستخدام في CMD": {
-  "hash": "85cf312b3293",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "d3c2be96adbf",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|مشروع — errorlevel: الفخ اللي بيضيّع وقت": {
-  "hash": "a43fce412733",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "f0da9c17195f",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|مشروع — for /f: اقرا ملف الخطوات": {
-  "hash": "fd76bdf6c6d3",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "5069be4b795a",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|مشروع — إمتى تسيب batch": {
-  "hash": "7b77223d7639",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "8a8221d499d4",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cmd|مشروع — ملف بيتداس عليه ويشتغل من أي مكان": {
-  "hash": "b3f716f8692f",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines) وخانات الجداول و deep — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). سلوك CMD الجديد اتجرّب بـ cmd /d /c على ملفات .bat في فولدر مؤقت على ويندوز 11؛ diskpart و sc config و net start و schtasks و netsh set و takeown و winget و ipconfig /release من الوثائق"
+  "hash": "c53128513734",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: run in cmd /c on Windows 11; state-changing commands from Microsoft docs"
  },
  "cpp|C++ في المسابقات": {
   "hash": "dbc4edee8a2a",
@@ -10784,420 +10834,490 @@
   "date": "2026-10-06",
   "on": "docker ubuntu-24.04 + nginx 1.24.0"
  },
+ "node|--cpu-prof و profiling": {
+  "hash": "b15578bd0413",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
+ },
  "node|--host و Network URL": {
-  "hash": "619c6c3b6d16",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "7c2188637606",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|.env و متغيرات البيئة": {
-  "hash": "863d1517a30a",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "200a94c29325",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|.npmrc": {
-  "hash": "129216efcb2b",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "d19d971f33b8",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|Buffer و encoding": {
-  "hash": "520c77c4cd4c",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "edf8a1a02021",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|Bun.serve": {
-  "hash": "ca4568bfd229",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "9b1614fd089a",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|Deno.serve": {
-  "hash": "4c10f21b92f1",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "a1945dd6c23f",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
+ },
+ "node|Dockerfile لتطبيق Node": {
+  "hash": "673e2dda3a2c",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|ERESOLVE و legacy-peer-deps": {
-  "hash": "68a4692124ff",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "6298ce0ae211",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|EventEmitter في Node": {
-  "hash": "9b3aba39e089",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "80342fc9cbe6",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|Hono": {
-  "hash": "41eb6daba98c",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "769829efc9ea",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|Hono + zod": {
-  "hash": "4e3e953ab79e",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "31bd2da27217",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|Hono middleware": {
-  "hash": "72de2e31c79e",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "e4003ab4b4f7",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|Hono على كل runtime": {
-  "hash": "52c723c7ece3",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "50ad0b155f83",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|NODE_ENV=production": {
-  "hash": "201c90779235",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "30c28b7573f0",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|Next.js CLI": {
-  "hash": "81e7966e2cf0",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "8b3c2e7db5be",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|Next.js standalone": {
-  "hash": "ef7a1305f8a3",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "e2b457ba3964",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|Node ولا Bun ولا Deno": {
-  "hash": "8e45517b70de",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "aedd07b1104e",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|SIGINT و SIGTERM": {
-  "hash": "80093a534ae0",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "3bf120d86dbe",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|^ و ~ في النسخ": {
-  "hash": "a0fc03872a4b",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "eca1766f6471",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|bun": {
-  "hash": "ec61d345e3df",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "2e2d5e6662b2",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|bun install": {
-  "hash": "98254b9544d1",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "8d7b4ab7169e",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|bun test": {
-  "hash": "3206a9b8fbab",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "c5d154689d50",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|cloudflared": {
-  "hash": "284c1c456e66",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "363147af6897",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|command injection": {
-  "hash": "7f3cb03ee07b",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "5e3a5e667cd2",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|concurrently و wait-on": {
-  "hash": "ee56ce30d0ee",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "af4fe75a011e",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|deno fmt و lint و test": {
-  "hash": "1519ef794033",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "e3dc4f2a200a",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|deno run والصلاحيات": {
-  "hash": "d3ade640a533",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "bdb685a5bc8b",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|deno.json و npm:": {
-  "hash": "0a9bcf189081",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "43e2eb4470c8",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
+ },
+ "node|event loop": {
+  "hash": "f53b6c2848ce",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|execFile و spawn": {
-  "hash": "6f3c77c424ee",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "32376bd8e874",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|exit codes و process.exitCode": {
-  "hash": "e998b38c5284",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "b01d23fc6ea5",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|fs.watch": {
-  "hash": "40ee9d473943",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "229a3d5af3c5",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|fs/promises": {
-  "hash": "ed0b6aa4470c",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "37154af2018b",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|ls / why / dedupe": {
-  "hash": "35d778bde7e3",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "2b744c748f2e",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|migrate deploy قبل السيرفر": {
-  "hash": "19290bb21fda",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "1da36227e8f3",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|ngrok": {
-  "hash": "74824e62704c",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "b1320dded0cd",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|node --run": {
-  "hash": "7f4058d8db40",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "0660e15ffca8",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|node --test": {
-  "hash": "8964969b946a",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "e752cf3fffe9",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|node --watch --env-file": {
-  "hash": "055116eb5c83",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "4e0dd662e8ed",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|node -p و node -e": {
-  "hash": "0cf0304ec311",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "f2578fdfacf5",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|node -v": {
-  "hash": "d99911824838",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "3e178f4c8ea9",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|node مباشرة": {
-  "hash": "f600c60a3783",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "3e5f9dd0389b",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
+ },
+ "node|node:http سيرفر من غير مكتبة": {
+  "hash": "9b0624d38217",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|node_modules بايظ": {
-  "hash": "99c0c16b22b0",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "765bd4a1e174",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|npm install": {
-  "hash": "b4527c77df50",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "179beafda1a8",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|npm publish": {
-  "hash": "6e2d7a405eee",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "fcfe2fb4e2b5",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|npm scripts": {
-  "hash": "9769fa7a574d",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "79ee0b15c7f6",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|npm start ولا npm run dev": {
-  "hash": "8f7c8927ac45",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "6ea11944871c",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|npm بيوثّق نفسه": {
-  "hash": "d02245e638d9",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "d62f830e4001",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|npx": {
-  "hash": "b2dae940f3d8",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "f4780e5e3fa1",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|npx tsx": {
-  "hash": "04e9f763e3a9",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "a3fa0a25fb12",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|nvm": {
-  "hash": "9b5f3e9f287f",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "85b55c657e94",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|outdated / update / audit": {
-  "hash": "f81b1a4d9902",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "7028724e10ce",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|package-lock و npm ci": {
-  "hash": "aec147f32bf5",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "b16c4965ac86",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|package.json": {
-  "hash": "20cb7bcb6b5f",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "de45c84f3809",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|path و import.meta.dirname": {
-  "hash": "fe8e76c41bfe",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "7df8d38bfd27",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|pnpm --filter": {
-  "hash": "1ef4a357eea2",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "a26f70b51169",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|pnpm -r و --parallel": {
-  "hash": "bf20781a367b",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "e5cca85db200",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|pnpm approve-builds": {
-  "hash": "fffa4e8fdd66",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "9a98104055c0",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|pnpm و yarn": {
-  "hash": "f495e65903de",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "14dcaf870f50",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|pnpm-workspace.yaml و workspace:*": {
-  "hash": "9d54c35e75ca",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "098597528e80",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|prisma db push": {
-  "hash": "1860937bff55",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "bbdcd21406e6",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|prisma db seed و studio": {
-  "hash": "8424dfd600f2",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "29e8476f08a3",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|prisma generate": {
-  "hash": "8b9391a78399",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "e73f554255c6",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|process.argv و parseArgs": {
-  "hash": "14d09674a93f",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "7fcdba104585",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
+ },
+ "node|streams و pipeline": {
+  "hash": "06b8a58c886d",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|webhook تيليجرام": {
-  "hash": "5d028b383970",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "2ad9fc9dd5b4",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|worker_threads": {
-  "hash": "88ffee2ccdb7",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "4226d6a13325",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|workspaces و link": {
-  "hash": "1365b209fd92",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "0bf3575eebac",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|إعادة الإرسال والتكرار": {
-  "hash": "efd1601e2cd2",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "1e87dcc55820",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
+ },
+ "node|ابني بنفسك: ٦ أدوات Node": {
+  "hash": "ad9c9625e6ec",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|اقرا خطأ npm": {
-  "hash": "5513bc85d57a",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "0f102b7227e0",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|الإغلاق النضيف": {
-  "hash": "8988a0aa6fe2",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "0ebc0165698c",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|البورت مشغول": {
-  "hash": "01543ea47469",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "2ab97904bf3d",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|التحقق من التوقيع": {
-  "hash": "bcd84adee757",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "a4c916cec380",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|الذاكرة": {
-  "hash": "be111aa235a2",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "facf5c377e22",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|الـ debugger": {
-  "hash": "ef7663b1ab29",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "51cef0621cad",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|الفولدرات: mkdir و readdir و rm": {
-  "hash": "3b9f149d3b5c",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "4f8bc22c9b44",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|المشكلة": {
-  "hash": "ddc65207d2fc",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "d37c3b81c112",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|المعاينة في npm": {
-  "hash": "e8195724ed5a",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "6be633bb4109",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
+ },
+ "node|بيانات: لوج JSONL و CSV": {
+  "hash": "279fe99cae3d",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|توافق Bun مع Node": {
-  "hash": "a9288f63e8bf",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "5134fda05d4f",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
+ },
+ "node|جدولة مهام: setInterval و node-cron": {
+  "hash": "f86a03d861cf",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
+ },
+ "node|رفع ملف من غير مكتبة": {
+  "hash": "f12febc3b5aa",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|سكربت Node كأداة": {
-  "hash": "0b7ca3178844",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "eee945d7590d",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|لوج الـ webhooks": {
-  "hash": "51d224fcfea8",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "c6d2f212b2be",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
+ },
+ "node|محاكاة: EventEmitter و LRU و rate limiter": {
+  "hash": "4815cc1b1171",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
+ },
+ "node|مسائل: arguments و .env": {
+  "hash": "c9da43f9277f",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
+ },
+ "node|مسائل: المدد والأحجام و cron": {
+  "hash": "07f7f5597ddc",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
+ },
+ "node|مسائل: المسارات والروابط و routes": {
+  "hash": "966d47fd137d",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
+ },
+ "node|مسائل: النسخ و semver": {
+  "hash": "1f7b42b5cce0",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|مشروع — parseArgs من غير مكتبة": {
-  "hash": "9b9b2bc66239",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "1b52ba75a36a",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|مشروع — اقرا من ملف أو من أنبوبة": {
-  "hash": "b00c63799e7d",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "f6001225a555",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|مشروع — جهّزها للنشر": {
-  "hash": "9cdb6b014d57",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "8f18b4c022ef",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|مشروع — من ملف لأمر": {
-  "hash": "2b2a8ae56839",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "01d19dc9309e",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "node|مقدمة Node.js وتشغيل الملفات": {
-  "hash": "e9713e54aed2",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و npm 11.19 على ويندوز 11 (اللي اتغيّر في الكود اتشغّل: verifyPaymob بالـ regex على ٦ مدخلات، والـ try/catch بتاع الـ webhook بـ Express 5.3 و db وهمي بيرمي P2002 — مش Postgres حقيقي، و lsof -sTCP:LISTEN في docker ubuntu:24.04). docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Bun و wrangler و ngrok و cloudflared و npm registry من الوثائق ونواتج الدروس"
+  "hash": "20604e2f069e",
+  "date": "2026-11-03",
+  "on": "drills/ladders/bank/new lessons: Node 24.22 Windows + node:22-slim, pinned packages; some CLI behaviour from docs"
  },
  "os|%localappdata%": {
   "hash": "4bdefc3b131d",
@@ -13945,334 +14065,349 @@
   "on": "Docker python:3.13-slim (pandas, matplotlib, openpyxl; xlsx inspected)"
  },
  "python|# /// script": {
-  "hash": "bcdd7c128dd3",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "5888a01c774c",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|#!/usr/bin/env python3": {
-  "hash": "6cfe6104dbf4",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "fac8cff7972e",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|@pytest.fixture": {
-  "hash": "5b2cb659c26b",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "4f1d9fbcc644",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|@pytest.mark.parametrize": {
-  "hash": "ce57aca3939a",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "e4f6e988d70d",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|Dockerfile": {
-  "hash": "954029e19373",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "8b6f8b775e71",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|Path(__file__).parent": {
-  "hash": "bd95046e8d55",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "a85b329b81b8",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|TestClient و conftest": {
-  "hash": "5c78a698d940",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "f269ca4c2bb2",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|[project.scripts] و pipx": {
-  "hash": "736fecae39e2",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "f26de72cc208",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|argparse --dry-run": {
-  "hash": "d493e85a1e1b",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "7213706b4c7d",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|backup_zip.py": {
-  "hash": "377554dc788b",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "a9687a1d72a7",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|bash ولا Python ولا PowerShell": {
-  "hash": "9271ce489761",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "161ccd82ccbc",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|batch_rename.py": {
-  "hash": "1397a541d32a",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "d64315d90456",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|breakpoint()": {
-  "hash": "9c5de8ca5f11",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "24d135396908",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|clean_old_files.py": {
-  "hash": "1eb9bfc78092",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "a3a1b9f91077",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|concurrent.futures": {
-  "hash": "c14f4f75d1b6",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "1774a6a65eb2",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|cron و Task Scheduler": {
-  "hash": "d12819f09ce8",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "6f23841cea0b",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|csv و utf-8-sig": {
-  "hash": "6cafb7851137",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "d81077ddd840",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|datetime وأسماء الملفات": {
-  "hash": "8fee8eb1b892",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "74f40014d7c1",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|debugpy و launch.json": {
-  "hash": "719a78cbb01f",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "8fcf3d91aa46",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|docker compose run --rm --no-deps": {
-  "hash": "96a3b996d1b2",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "31e192d29092",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|externally-managed-environment": {
-  "hash": "f83137341c99",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "2250e507ae7b",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|find_duplicates.py": {
-  "hash": "2497bf264146",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "2784b7f42ff9",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|glob و rglob": {
-  "hash": "6fcaa27dc35c",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "778204c4bb97",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|help() و dir()": {
-  "hash": "c3d673f9bbbe",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "8c06bd491016",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|if __name__ == \"__main__\":": {
-  "hash": "b1ad59a4837b",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "ea18a6151a6c",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|input() و sys.argv": {
-  "hash": "bb96520cb076",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "950ce822d3af",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|json.load و json.dump": {
-  "hash": "b7f09b7e067a",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "cbc7294a638d",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|json_to_csv.py": {
-  "hash": "437380a2a5a6",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "a9f99058c5d3",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|logging بدل print": {
-  "hash": "c0bbe287243d",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "45c2d2fcead0",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|monkeypatch": {
-  "hash": "5b6eb90a8e5a",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "f6b659fe094a",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
+ },
+ "python|mypy": {
+  "hash": "21ef9540a81d",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|notify.py": {
-  "hash": "e8d515c814b7",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "a8bebb89efc3",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|open() و encoding=\"utf-8\"": {
-  "hash": "6dfe9ca4bfa6",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "34e02d3d355b",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|organize_downloads.py": {
-  "hash": "a9b827922a97",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "bcafb8870a63",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|os.environ و .env": {
-  "hash": "5fbb9e05be8a",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "d90e687d218a",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|pip freeze": {
-  "hash": "6e8cf1d53b87",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "671dab6bb5bb",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|pip install -r requirements.txt": {
-  "hash": "b308ea2fb785",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "d212401fdf8e",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|print و f-strings للتقارير": {
-  "hash": "ed1c85d05319",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "8cac0adf05b8",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|pytest": {
-  "hash": "e6c2f9f29788",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "7f796f6299a5",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|pytest --cov": {
-  "hash": "b040722a9402",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "b03e55571b54",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|pytest لسكربت": {
-  "hash": "bca72959a366",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "6aca875e50b9",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|pytest.ini": {
-  "hash": "eec48219331d",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "f3b2e0a43e7c",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|python -m": {
-  "hash": "d3be3ceae6ba",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "e3ebf73c8717",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|python -m http.server": {
-  "hash": "091c7f2ce61b",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "fd486da32888",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|python -m pdb": {
-  "hash": "ac395f43b9c0",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "1a6a06ad8bd1",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|python -m pip والأدوات المدفونة": {
-  "hash": "a3b03f438e0f",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "143094965187",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|python3 - <<'PY'": {
-  "hash": "17b2caab1089",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "9c61bb79d403",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|python3 -m venv .venv": {
-  "hash": "822aaa3e890b",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "dbaf95cf8b1a",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|python3 script.py": {
-  "hash": "fb05a839e9b9",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "d4a1a2805830",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|re في السكربتات": {
-  "hash": "3d2877c2e716",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "67df4c9524c9",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|requests و urllib مع timeout": {
-  "hash": "a570ac911458",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "1c336bfbc162",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|resize_images.py": {
-  "hash": "de0c44315a14",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "6db68c8f3eef",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|retry و backoff": {
-  "hash": "985c4e13c5aa",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "49433e2db999",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
+ },
+ "python|ruff check و ruff format": {
+  "hash": "e955ec7a94df",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|shutil copy و move و rmtree": {
-  "hash": "b6227206d6bd",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "00c02a9d3fe5",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|subprocess.run في سكربت": {
-  "hash": "2ca7d4eeb11f",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "36aae824266f",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|sys.exit و exit codes": {
-  "hash": "dd7df204c517",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "bbe12b1ddc09",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
+ },
+ "python|telegram_bot.py": {
+  "hash": "987591191329",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|tmp_path": {
-  "hash": "f862a53e14cf",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "fb1efd89edc2",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|unittest.mock.patch": {
-  "hash": "d93b4d9eaacf",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "75e71db0584c",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|uptime_check.py": {
-  "hash": "6e1d0fc2ca99",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "ad0a18897906",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|uvicorn --proxy-headers": {
-  "hash": "aa54ef066576",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "f00a8d8c0959",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|uvicorn --reload": {
-  "hash": "670c40f14508",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "91a54b18b36a",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|yaml.safe_load و ElementTree": {
-  "hash": "dc0e1d775da7",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "79da7a381607",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|اقرا الـ traceback": {
-  "hash": "1e3273e75509",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "1e2a5d3fce8d",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|مشروع — argparse بعمق": {
-  "hash": "b2097f2ed980",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "db4d7660f7f4",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|مشروع — venv و pyproject والأمر": {
-  "hash": "d8a3f446e9aa",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "da4947ddda86",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|مشروع — اختبارات وتغليف": {
-  "hash": "d91265c128cb",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "55b4d00a3536",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "python|مشروع — المنطق منفصل عن الواجهة": {
-  "hash": "dc1dc0014ec4",
-  "date": "2026-10-29",
-  "on": "docs: إعادة كتابة شرح السطور (lines)، وخانات جداول قصيرة في teach، و ٥ desc و ٣ deep.when — الأمثلة والحلول ماتغيّرتش (اتأكد بمقارنة مع HEAD). الكلام الجديد عن سلوك Python اتجرّب بـ Python 3.14 و pytest 9.1.1 و uv على ويندوز حيث أمكن؛ Pillow و httpx و FastAPI و cron/systemd من الوثائق"
+  "hash": "c1768047222b",
+  "date": "2026-11-03",
+  "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
  "quality|--coverage": {
   "hash": "d0acdc43d003",

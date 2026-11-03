@@ -4,6 +4,15 @@ MORE("node", [
       t: "Bun: runtime و package manager و test runner في برنامج واحد",
       l: 2,
       n: "Bun بيشغّل TypeScript على طول، وبيسطّب المكتبات، وبيعمل اختبارات وسيرفر، وفيه فروق عن Node لازم تعرفها قبل ما تنقل مشروع",
+      projects: [
+        { lvl: 'صغير', t: R`نفس المشروع بـ npm و Bun`, what: R`مشروع صغير فيه [[ms]] واختبار واحد: شغّله بـ [[npm ci]] و [[node --test]] مرة، وبـ [[bun install]] و [[bun test]] مرة، في Docker ([[node:22-slim]] و [[oven/bun:1.4.4-slim]]). من درس bun install و bun test.`, done: R`الاتنين بيعدّوا، والـ README فيه وقت التسطيب والاختبار لكل واحد برقم، وملف lock واحد بس متسجّل في git (قررت أنهي واحد وكتبت ليه).` },
+        { lvl: 'صغير', t: R`سكربت TypeScript بـ Bun`, what: R`[[stats.ts]] فيه [[enum]] و types، بيقرا JSON ويطبع ملخص، ويتشغّل بـ [[bun stats.ts]] من غير build. وجرّبه بـ [[node stats.ts]] وشوف إيه اللي محتاج يتغيّر. من درس bun.`, done: R`[[bun stats.ts]] بيطبع الملخص، و [[node stats.ts]] بيقع على الـ enum بـ [[ERR_UNSUPPORTED_TYPESCRIPT_SYNTAX]]، وبعد ما بقى [[as const]] الاتنين شغالين.` },
+        { lvl: 'متوسط', t: R`API بـ Bun.serve بأخطاء صح`, what: R`طوّر سيرفر درس [[Bun.serve]]: JSON غلط يرجّع 400 مش 500، و method مش مدعوم يرجّع 405 مش 404، و validation للاسم، واختبارات [[bun test]] بتشغّل السيرفر على [[port: 0]] وتبعتله [[fetch]]. من درس Bun.serve و bun test.`, done: R`[[POST]] بـ [[{bad]] = 400 (السيرفر الأصلي كان بيرجع 500)، و [[DELETE /api/users]] = 405 (الأصلي 404)، و [[bun test]] كله [[pass]].` },
+        { lvl: 'متوسط', t: R`فاحص توافق مكتبة مع Bun`, what: R`سكربت بياخد اسم مكتبة، يسطّبها في فولدر مؤقت بـ Bun، ويشغّل نفس اختبار صغير بـ node و bun، ويطبع الفرق في الناتج والوقت. جرّبه على ٣ مكتبات (واحدة pure JS، وواحدة بتستخدم [[node:]] APIs كتير، وواحدة native). من درس توافق Bun مع Node.`, done: R`جدول بـ ٣ صفوف فيه شغال/مش شغال والوقت لكل runtime، ومكتبة واحدة على الأقل بيختلف ناتجها وكتبت ليه.` },
+        { lvl: 'كبير', t: R`أداة CLI بتتبني binary واحد بـ Bun`, what: R`أداة [[logcount.ts]] بتقرا لوج (ملف أو stdin) وتطبع عدد كل level وأبطأ requests، فيها [[parseArgs]] و [[--json]] واختبارات [[bun test]] و coverage فوق ٨٠٪، وبتتبني بـ [[bun build --compile]] لملف واحد لينكس وويندوز. ومعاها GitHub Action بيبني الاتنين ويرفعهم كـ artifacts.`, done: R`الـ binary بيشتغل على جهاز مفيهوش Bun ولا Node، وحجمه مكتوب في README، و [[bun test --coverage]] فوق ٨٠٪، ونفس اللوج بيدّي نفس الأرقام من الـ binary ومن [[bun logcount.ts]].`, ext: R`زوّد [[--watch]] لملف لوج بيكبر، وقارن الأداء بنسخة Node من نفس الأداة على ملف ٧٣ MB (درس streams).` },
+        { lvl: 'فكرة', t: R`جرّب Bun على مشروع عندك`, what: R`خد مشروع Node حقيقي عندك، وجرّب [[bun install]] و [[bun run dev]] و [[bun test]] عليه في فرع لوحده، وسجّل كل حاجة وقعت وسببها (مكتبة native، أو API ناقصة، أو فرق في السلوك).`, done: R`عندك قايمة بكل مشكلة وحلّها أو «مالهاش حل لسه»، وقرار مكتوب: ننقل ولا لأ، بالأرقام (وقت التسطيب والاختبارات).`, ext: R`لو قررت تنقل: CI بيشغّل الاختبارات على Node و Bun الاتنين لحد ما تتأكد.` },
+        { lvl: 'كبير', t: R`benchmark عادل بين Node و Bun و Deno`, what: R`سكربت بيشغّل نفس ٣ مهام (JSON parse لملف كبير، و HTTP server تحت حمل بـ [[autocannon]] أو loop من fetch، وقراية ملف بـ stream) على Node 24 و Bun 1.4.4 و Deno 2.9.8 في Docker، كل مهمة ٥ مرات، ويطبع المتوسط والانحراف، ويحفظ النتايج JSON. من درس Node ولا Bun ولا Deno.`, done: R`جدول فيه ٩ أرقام بانحراف معقول (أقل من ١٠٪)، وكل رقم ممكن يتعاد بنفس الأمر، والـ README بيقول نسخة كل runtime والجهاز.`, ext: R`زوّد مهمة فيها Prisma أو مكتبة حقيقية، وارسم النتايج بصفحة HTML.` },
+      ],
       items: [
         {
           cmd: "bun",
@@ -23,6 +32,11 @@ curl -fsSL https://bun.sh/install | bash
 # Windows (PowerShell):
 powershell -c "irm bun.sh/install.ps1 | iex"`,
           try: R`اعمل فولدر فاضي، وشغّل [[bun init -y]]، وبعدين خلّي [[index.ts]] فيه [[console.log("Hello via Bun!", process.env.GREETING)]]، واعمل [[.env]] فيه [[GREETING=hi]]. شغّله بـ [[bun index.ts]] وبـ [[node index.ts]]: مين قرا الـ [[.env]]؟ وبعدين حط خطأ أنواع عمدًا ([[const n: number = "x"]]) وشغّل [[bun index.ts]] و [[bun check]].`,
+          practice: [
+            { lvl: 'سريع', t: R`**قارن وقيس:** [[en.ts]] فيه [[enum Color { Red, Green }]] و [[console.log(Color.Green)]]. شغّله بـ [[bun en.ts]] وبـ [[node en.ts]].`, done: R`Bun طبع [[1]]، و Node وقع بـ [[ERR_UNSUPPORTED_TYPESCRIPT_SYNTAX]] (درس npx tsx). Bun بيحوّل TypeScript كامل، و Node بيشيل الأنواع بس.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** نفس الملف فيه [[const n: number = "oops" as any]]، وبيطبع [[typeof Bun]] و [[process.versions.bun]]. هيطلع إيه؟ وهل Bun فحص الأنواع؟`, done: R`[[1 oops object 1.4.4]]: Bun مبيفحصش الأنواع (زي tsx)، والفحص بـ [[tsc --noEmit]] أو [[bun check]] لو موجود عندك.` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من [[bun --help]]: إيه الفرق بين [[bun run start]] و [[bun start]] و [[bun index.ts]] و [[bun x]]؟ ومين فيهم بيشغّل سكربت من package.json؟`, done: R`كتبت الأربعة: [[bun run <script>]] و [[bun <script>]] (لو مش ملف) بيشغّلوا سكربت package.json، و [[bun file.ts]] بيشغّل ملف، و [[bun x]] زي npx (وجرّبته بـ [[bun x cowsay@1.6.0 hi]]).` },
+          ],
           deep: {
             why: R`Node محتاج أدوات كتير جنبه عشان مشروع TypeScript عادي: [[tsx]] أو build عشان يشغّل [[.ts]]، و [[npm]] للتسطيب، و vitest أو jest للاختبارات، و [[dotenv]] أو [[--env-file]] للـ env. Bun بيحط الحاجات دي في برنامج واحد سريع في البداية، فالمشروع الصغير يتعمل في ثواني.`,
             how: R`Bun مكتوب بـ Zig، وبيستخدم محرك JavaScriptCore (بتاع Safari) مش V8 (بتاع Chrome و Node). لما تشغّل [[bun file.ts]] بيشيل الأنواع ويشغّل الكود على طول، **من غير ما يفحص الأنواع**. الفحص شغل [[bun check]] (موجود في 1.4.4، وبيطلّع نفس أخطاء [[tsc]] وأرقامها). وبيدعم [[require]] و [[import]] في نفس الملف، وبيحاول يبقى متوافق مع APIs بتاعة Node ([[node:fs]] و [[node:http]] وغيرهم).
@@ -193,6 +207,12 @@ bun pm trust core-js
 bun install --frozen-lockfile
 bun x cowsay hi`,
           try: R`في مشروع فيه [[package-lock.json]]: انسخه لفولدر تجربة، واعمل [[npm ci]] وقيس الوقت، وبعدين امسح [[node_modules]] واعمل [[bun install]] مرتين (المرة التانية الكاش سخن). وبعدين ضيف مكتبة فيها [[postinstall]] (زي [[core-js]]) وشوف Bun عمل إيه.`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[bun add ms@2.1.3]] في مشروع فاضي. ملف الـ lock اسمه إيه وشكله إيه؟`, done: R`[[bun.lock]] نص (JSONC) أوله [[lockfileVersion: 2]] و [[workspaces]] فيه [[ms: 2.1.3]]، مش [[bun.lockb]] الـ binary القديم، فبيتقري في PR.` },
+            { lvl: 'تطبيق', t: R`**محاكاة:** زوّد [[is-number]] في package.json بإيدك وشغّل [[bun install --frozen-lockfile]] زي CI.`, done: R`[[error: lockfile had changes, but lockfile is frozen]] و [[note: dependencies in package.json changed since bun.lock was saved: is-number was added]] و exit 1. نفس فكرة [[npm ci]] (درس package-lock و npm ci).` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[bun add -d esbuild@0.25.10]] (فيها postinstall) وبعدين [[bun pm untrusted]]. esbuild هتتعلّم untrusted؟`, done: R`لأ: [[bun pm untrusted]] قال إن كل اللي فيه سكربتات في [[trustedDependencies]] أو مفيش. esbuild في لستة Bun الافتراضية ([[bun pm default-trusted]])، بعكس pnpm 10 اللي وقفها (درس pnpm approve-builds).` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** نفس package.json فيه express: [[npm ci]] مقابل [[bun install]] من غير كاش (فولدرات جديدة) في Docker. قيس بـ [[time]] واكتب الرقمين.`, done: R`عندك رقمين، وكتبت إن الفرق بيقل لما كاش npm يبقى سخن، وإن السرعة مش السبب الوحيد للاختيار (الـ lock و trustedDependencies والتوافق).` },
+          ],
           deep: {
             why: R`التسطيب أكتر حاجة بتستنّاها في CI وفي أول يوم في مشروع. و [[postinstall]] بتاع أي مكتبة (أو مكتبة جواها) بيقدر يشغّل أي كود على جهازك وقت التسطيب، وده باب لهجمات supply chain. Bun بيقفل الباب ده افتراضيًا.`,
             how: R`Bun بيحفظ كل نسخة مكتبة مرة واحدة في كاش عام ([[~/.bun/install/cache]])، وفي [[node_modules]] بيعمل hardlinks منه على لينكس والماك، فالتسطيب التاني بيبقى شبه فوري. على ويندوز الفرق أصغر بكتير (شوف الأرقام في الشرح).
@@ -388,6 +408,12 @@ bun test math
 bun test -t "getUser"
 bun test --watch`,
           try: R`اعمل [[math.ts]] فيه [[sum]]، و [[math.test.ts]] فيه اختبار ليها و [[test.each]] بحالتين. شغّل [[bun test]]، وبعدين غيّر [[a + b]] لـ [[a - b]] وشوف شكل الفشل. وجرّب [[node --test math.test.ts]]: إيه اللي حصل؟`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[expect(0.1 + 0.2).toBe(0.3)]] في [[bun test]]. هيعدّي؟ وإيه اللي يتطبع؟`, done: R`[[(fail) float]] و [[Expected: 0.3]] و [[Received: 0.30000000000000004]]. الحل [[toBeCloseTo(0.3)]].` },
+            { lvl: 'تطبيق', t: R`**اكتب اختبار:** [[test.each([ [1, 1, 2], [2, 2, 5] ])("sum(%d, %d) = %d", ...)]] و [[expect(() => div(1, 0)).toThrow("division by zero")]]. شغّل وعدّ.`, done: R`[[3 pass]] و [[2 fail]] (الـ ٢+٢=٥ والـ float) و [[Ran 5 tests across 1 file]]، و [[bun test]] خرج بـ 1، واسم كل حالة من [[test.each]] ظاهر بأرقامها.` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** [[bun test --coverage]] على [[math.ts]] فيه دالتين في سطر واحد كل واحدة. النسب؟ وقارنها بتجربة [[--experimental-test-coverage]] في Node (درس node --test).`, done: R`[[% Funcs 100.00]] و [[% Lines 100.00]] لأن الاختبارات نادت الدالتين، ولو شلت اختبار [[div]] الـ funcs بتنزل، والسطور ممكن تفضل عالية (نفس فخ Node).` },
+            { lvl: 'تحدي', t: R`**refactor:** خد ملف اختبار مكتوب لـ [[node:test]] ([[test]] و [[assert.equal]]) وخليه يشتغل على الاتنين من غير تعديل بين التشغيلتين. هل [[bun test]] بيفهم [[node:test]]؟ جرّب.`, done: R`جرّبت وكتبت النتيجة بالظبط (اشتغل أو الرسالة اللي طلعت)، ولو مشتغلش كتبت wrapper صغير بيختار [[bun:test]] أو [[node:test]] حسب [[typeof Bun]].` },
+          ],
           deep: {
             why: R`في مشروع Node عادي، عشان تكتب اختبار بـ TypeScript محتاج vitest أو jest وإعدادات. في Bun الأداة موجودة أصلًا، ومفيش config. ولأن Bun بيبدأ بسرعة، الاختبارات الصغيرة بتخلص في أجزاء من الثانية.`,
             how: R`[[bun test]] بيدوّر في الفولدر على [[*.test.{ts,js,tsx}]] و [[*_test.*]] و [[*.spec.*]] و [[*_spec.*]]، ويشغّل كل ملف. الـ API بتاع [[bun:test]] شبه Jest: [[expect(x).toBe(y)]] و [[toEqual]] و [[toThrow]] و [[toHaveBeenCalledWith]]، و [[mock(fn)]] بدل [[jest.fn]] / [[vi.fn]]، و [[test.each]]. والـ coverage جاهز بـ [[--coverage]].
@@ -573,6 +599,11 @@ const server = Bun.serve({
 });
 console.log($__btlistening on $__{server.url}$__bt);`,
           try: R`احفظ المثال [[server.ts]] وشغّله بـ [[bun server.ts]]. جرّب بـ curl: [[GET /api/users]]، و [[POST]] بـ JSON، و [[/api/users/9]]، و [[DELETE /api/users]]، وابعت [[POST]] بـ body مش JSON. وبعدين اعمله ملف تنفيذي واحد بـ [[bun build --compile server.ts --outfile srv]].`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** على سيرفر المثال: [[DELETE /api/users]] هيرجع كام؟ و [[/api/users/abc]]؟`, done: R`[[DELETE]]: 404 [[Not Found]] من [[fetch]] (مش 405، لأن الـ route مالوش DELETE فبيقع للآخر). و [[abc]]: 404 [[{"error":"not found"}]] لأن [[Number("abc")]] = NaN.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[POST /api/users]] بـ body [[{bad]]. إيه الرد؟ وإيه اللي في لوج السيرفر؟ وخليه 400.`, done: R`الرد 500 [[{"error":"server error"}]] واللوج [[SyntaxError: JSON Parse error: Expected '}']] (رسالة JavaScriptCore، غير V8). بعد [[try { await req.json() } catch { return Response.json({ error: "invalid JSON" }, { status: 400 }) }]] بقى 400.` },
+            { lvl: 'تحدي', t: R`**ابني:** زوّد [[DELETE: () => Response.json({ error: "method not allowed" }, { status: 405 })]] و [[PUT]] على [[/api/users/:id]]، واكتب اختبار [[bun test]] بيشغّل السيرفر على [[port: 0]] ويختبر الحالات السبعة بـ [[fetch]].`, done: R`[[bun test]] بيعدّي، و [[server.stop()]] في الآخر بيخلّي الاختبار يخلص من غير ما يعلّق.` },
+          ],
           flag: "script",
           deep: {
             why: R`سيرفر API صغير أو webhook مش محتاج framework. [[Bun.serve]] بيدّيك routing جاهز و [[Request]]/[[Response]] القياسيين، فنفس الكود تقريبًا يشتغل في Deno و Cloudflare Workers.`,
@@ -768,6 +799,11 @@ console.log("used heap MB:", Math.round(heap.used_heap_size / 1e6));
 console.log("ELU:", performance.eventLoopUtilization().utilization.toFixed(3));
 console.log("engine:", typeof Bun !== "undefined" ? "JavaScriptCore" : "V8", "| node compat:", process.versions.node);`,
           try: R`احفظ المثال [[compat.mjs]] وشغّله بـ [[node compat.mjs]] و [[bun compat.mjs]] (و [[deno run compat.mjs]] لو عندك Deno). وبعدين خد مشروع Node عندك وجرّب: [[bun install]] و [[bun run dev]] و [[bun test]] (لو الاختبارات Vitest أو Jest)، واكتب إيه اللي وقع.`,
+          practice: [
+            { lvl: 'سريع', t: R`**قارن وقيس:** شغّل [[compat.mjs]] بـ [[node]] و [[bun]]. إيه اللي طلع في Bun لـ [[createHook init calls]] و [[used heap MB]] و [[ELU]] و [[node compat]]؟`, done: R`Bun 1.4.4: [[0]] و [[0]] و [[0.000]] و [[26.3.0]]: الـ APIs موجودة ومبتقعش، بس بترجّع قيم فاضية، و [[process.versions.node]] رقم بيقوله Bun عن نفسه. Node بيطلّع أرقام حقيقية.` },
+            { lvl: 'تطبيق', t: R`**اشرحها:** ليه «الـ API موجودة وبترجع صفر» أخطر من «الـ API مش موجودة وبتقع»؟ اكتب مثال من مكتبة APM أو monitoring.`, done: R`كتبت إن الأداة اللي بتعتمد على [[async_hooks]] (زي tracing) هتشتغل من غير ما تبلّغ عن حاجة، فهتفتكر إن مفيش مشاكل، والـ crash كان هيقولك على طول.` },
+            { lvl: 'تحدي', t: R`**ابني:** [[compat-check.mjs]] بيجرّب ١٠ APIs من Node (fs.watch، و worker_threads، و child_process.fork، و http2، و vm، و v8.writeHeapSnapshot، و async_hooks، و perf_hooks، و crypto.scrypt، و zlib.brotli) ويطبع لكل واحدة شغالة/فاضية/وقعت على أي runtime.`, done: R`نفس السكربت على Node و Bun طلّع جدولين، وكل اختلاف ليه سطر شرح، وفيه حالة واحدة على الأقل من نوع «فاضية».` },
+          ],
           flag: "script",
           deep: {
             why: R`أي حد هيقولك «Bun متوافق مع Node، انقل». ده صح لأغلب الكود، بس الحاجات اللي بتقع غالبًا مش بتطلّع error: بتشتغل وترجّع أرقام غلط. وأدوات المراقبة (APM) والـ profiling هي اللي بتعتمد على الحاجات دي بالظبط، فبتكتشفها في الإنتاج.`,

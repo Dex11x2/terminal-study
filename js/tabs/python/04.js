@@ -4,6 +4,14 @@ MORE("python", [
       t: "الاختبارات و FastAPI",
       l: 2,
       n: "pytest للاختبارات، و uvicorn يشغّل API وانت بتطوّر، و Python جوه سكربتات bash",
+      projects: [
+        { lvl: 'صغير', t: R`اختبارات لدوال النصوص`, what: R`موديول [[textutils.py]] فيه [[slugify]] و [[normalize_phone]] (أرقام مصرية بـ [[+20]] أو [[0]]) و [[truncate]]، ومعاه ١٢ اختبار على الأقل في [[tests/]] و [[pytest.ini]] فيه [[pythonpath]] و [[--strict-markers]].`, done: R`[[pytest]] و [[python -m pytest]] الاتنين أخضر من جذر المشروع، وفيه اختبار للنص الفاضي والعربي والأرقام العربي ([[٠١٢...]])، و [[-k phone]] بيشغّل اختبارات الموبايل بس.` },
+        { lvl: 'صغير', t: R`[[/health]] و [[/version]]`, what: R`تطبيق FastAPI فيه [[/health]] و [[/version]] بيرجّع نسخة التطبيق من متغير بيئة أو [["dev"]]، وبتشغّله بـ [[uvicorn --reload]]، ومعاه اختبارين بـ [[TestClient]].`, done: R`التعديل والحفظ بيعيد التشغيل لوحده، و [[APP_VERSION=1.2.0]] بيظهر في [[/version]]، والاختبارين خضر من غير سيرفر شغال.` },
+        { lvl: 'متوسط', t: R`API ملاحظات في الذاكرة`, what: R`CRUD كامل لملاحظات في dict: [[POST /notes]] و [[GET /notes]] و [[GET /notes/{id}]] و [[DELETE]]، والـ id مش موجود يرجّع ٤٠٤، وكل endpoint ليه اختبار. التفاصيل في تاب «Python و FastAPI».`, done: R`١٠ اختبارات خضرا بتغطي الـ ٤٠٤ والـ ٤٢٢ (body ناقص)، و [[/docs]] بيوريك كل الـ endpoints، وكل اختبار بيبدأ ببيانات نضيفة (fixture بتفضّي الـ dict).` },
+        { lvl: 'متوسط', t: R`مولّد config من البيئة`, what: R`سكربت bash للنشر بيعمل [[config.json]] من متغيرات بيئة بـ [[python3 - <<'PY']]، وبيقع بدري برسالة واضحة لو متغير مطلوب ناقص، وبيكتب الملف بصلاحية [[600]].`, done: R`قيم فيها علامات تنصيص و [[$]] وعربي بتطلع في JSON سليم، والمتغير الناقص بيوقّف السكربت بـ exit code ١ واسمه في الرسالة، و [[ls -l]] بيوري [[-rw-------]].` },
+        { lvl: 'كبير', t: R`مقصّر روابط صغير`, what: R`FastAPI و [[sqlite3]]: [[POST /links]] بياخد URL ويرجّع كود قصير، و [[GET /{code}]] بيعمل redirect ٣٠٧ ويزوّد عدّاد، و [[GET /links/{code}/stats]]. الـ URL بيتفحص (http أو https بس)، والقاعدة بتتعمل لوحدها أول تشغيل ومش بتتمسح في التاني، و [[logging]] لكل redirect، و ١٥ اختبار على الأقل بقاعدة مؤقتة لكل اختبار، و [[@pytest.mark.slow]] لاختبار ١٠٠٠ رابط.`, done: R`[[pytest -m "not slow"]] أخضر في أقل من ثانيتين، والكامل أخضر، و [[javascript:alert(1)]] بيترفض بـ ٤٢٢، والكود المش موجود ٤٠٤، وبعد ما تقفل uvicorn وتشغّله تاني الروابط لسه موجودة.`, ext: R`زوّد تاريخ انتهاء للرابط، وحد أقصى لعدد الطلبات من نفس الـ IP، وشغّله في Docker لما توصل لدرس «Dockerfile».` },
+        { lvl: 'فكرة', t: R`API لحاجة بتستخدمها`, what: R`اختار بيانات بتستخدمها فعلًا (مصاريف البيت، مواعيد التمرين، كتب بتقراها) واعمل لها API صغير بـ FastAPI واختبارات قبل الكود (اكتب الاختبار الأول، شوفه بيفشل، وبعدين الكود).`, done: R`كل endpoint ليه اختبار اتكتب قبله (باين في الـ commits)، و [[pytest]] أخضر، وفيه README بيقول تشغّله إزاي.`, ext: R`كمّل في تاب «Python و FastAPI»: قاعدة بيانات حقيقية و auth، وارفعه على سيرفر.` },
+      ],
       items: [
         {
           cmd: "pytest",
@@ -16,6 +24,14 @@ pytest -k "login and not slow"
 pytest tests/test_api.py::test_health -v
 python -m pytest -q --lf`,
           try: "اكتب [[def test_add(): assert 1 + 1 == 3]] في [[tests/test_math.py]] وشغّل pytest، وشوف إزاي بيوريك القيمتين. وبعدين صلّحه.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[tests/test_math.py]] فيه [[def test_add(): assert 1 + 1 == 3]]. شغّل [[pytest -q]]. آخر سطر هيقول إيه، والـ exit code كام؟`, done: R`pytest وراك السطر وتحته [[E       assert (1 + 1) == 3]] و [[FAILED tests/test_math.py::test_add - assert (1 + 1) == 3]]، وآخر سطر [[1 failed in ...]]، والـ exit code ١ (جرّبته بـ pytest 8.3.4). ولما صلّحته بقى [[1 passed]] و ٠.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في نفس الملف زوّد دالة اسمها [[add_test]] جواها [[assert False]]. هتفشل؟ وبعدين شغّل [[pytest -q]] في فولدر مفيهوش ولا اختبار، واطبع الـ exit code.`, done: R`[[add_test]] متشغّلتش أصلًا (الدالة لازم تبدأ بـ [[test]])، والفولدر الفاضي طبع [[no tests ran in ...]] والـ exit code [[5]]. يعني CI بيقع لو الاختبارات اختفت بالغلط، ودي حاجة كويسة.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** مشروع فيه [[app/core.py]] و [[tests/test_core.py]] أوله [[from app.core import f]]. [[python -m pytest]] شغال و [[pytest]] لوحده بيقع. اقرا الخطأ وصلّحه من غير ما تغيّر الأمر.`, done: R`[[pytest]] طلّع [[ModuleNotFoundError: No module named 'app']] و [[Interrupted: 1 error during collection]] والـ exit code ٢، لأن [[python -m]] بيحط الفولدر الحالي في [[sys.path]] و [[pytest]] لأ. صلّحته بـ [[pythonpath = .]] في [[pytest.ini]] (الدرس اللي بعده)، والاتنين بقوا [[1 passed]].` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** من [[pytest --help]] لاقي: إزاي تقف بعد ٣ فشل، وتشغّل اللي فشل آخر مرة الأول، وتشوف أبطأ ٥ اختبارات، وتشوف الـ [[print]] اللي جوه الاختبار.`, done: R`[[--maxfail=3]] و [[--ff]] (و [[--lf]] اللي فشل بس) و [[--durations=5]] و [[-s]]، وجرّبت كل واحد على مشروع فيه اختبار فاشل.` },
+            { lvl: 'تطبيق', t: R`**اكتب اختبار:** الدالة دي فيها باج: [[def slugify(t): return t.strip().lower().replace(" ", "-")]]. اكتب ٥ اختبارات (كلمة، كلمتين، مسافتين ورا بعض، مسافات في الأول، نص فاضي) ولاقي الباج.`, done: R`اختبار [["a  b"]] فشل لأنه طلع [["a--b"]] بدل [["a-b"]]، وصلّحت الدالة بـ [["-".join(t.split())]]، والخمسة بقوا [[5 passed]].` },
+            { lvl: 'تحدي', t: R`**اكتب اختبار:** دالة [[parse_age(s)]] بترجّع int وترمي [[ValueError]] برسالة [[age must be 0-150]] لو الرقم بره المدى. اختبر الحالة الغلط بـ [[pytest.raises(ValueError, match="0-150")]]، واختبر إن [["abc"]] برضه بيرمي [[ValueError]].`, done: R`٣ اختبارات خضرا، ولما غيّرت الرسالة في الدالة اختبار [[match]] فشل ووراك الرسالتين. وعرفت إن [[match]] بياخد regex، فلو فيه [[.]] أو [[(]] في الرسالة لازم [[re.escape]].` },
+          ],
           deep: {
             why: "بتعدّل دالة وعايز تعرف إنك مكسرتش حاجة تانية. pytest بيشغّل كل الاختبارات في ثواني ويقولك بالظبط إيه اللي وقع.",
             how: R`الاختبار دالة عادية فيها [[assert]]. لو الشرط غلط، pytest بيعرض القيمتين والفرق بينهم، من غير ما تكتب رسايل.
@@ -270,6 +286,12 @@ markers =
     slow: tests that take more than a second`,
           try: "حط الملف ده، وعلّم اختبار بـ [[@pytest.mark.slow]]، وشغّل [[pytest -m \"not slow\"]]. وبعدين اكتب [[@pytest.mark.slwo]] غلط وشوف --strict-markers بيمسكها.",
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** فيه [[addopts = --strict-markers]] و marker اسمه [[slow]] متسجّل، واختبار عليه [[@pytest.mark.slwo]] (غلطة إملائية). إيه اللي هيحصل؟`, done: R`الجمع وقف: [[ERROR test_m.py - Failed: 'slwo' not found in $__btmarkers$__bt configuration option]] و [[Interrupted: 1 error during collection]]. ومن غير [[--strict-markers]] كان هيعدّي بتحذير بس، والاختبار مكانش هيتستبعد بـ [[-m "not slow"]].` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** نسخت [[pytest.ini]] بتاع الدرس لمشروع مفيهوش [[pytest-asyncio]]، وظهر تحذير. اقراه وصلّحه.`, done: R`التحذير [[PytestConfigWarning: Unknown config option: asyncio_mode]]، يعني الخيار ده تبع plugin مش متسطّب. يا إما سطّبت [[pytest-asyncio]] لو فيه اختبارات async، يا إما شلت السطر. ولاحظت إن مع [[filterwarnings = error]] نفس التحذير بيبقى [[INTERNALERROR]] ومفيش ولا اختبار بيشتغل.` },
+            { lvl: 'تطبيق', t: R`**ابني:** زوّد [[filterwarnings = error]] في [[pytest.ini]]، واكتب اختبار بينادي دالة فيها [[warnings.warn("old api", DeprecationWarning)]].`, done: R`الاختبار فشل بـ [[FAILED test_m.py::test_w - DeprecationWarning: old api]]، يعني أي API قديمة بتستخدمها بتبان في CI بدري بدل ما تقع لما المكتبة تشيلها.` },
+            { lvl: 'تحدي', t: R`**قارن:** حط نفس الإعدادات في [[[tool.pytest.ini_options]]] جوه [[pyproject.toml]] وسيب [[pytest.ini]] كمان. شغّل [[pytest]] وبص على سطر [[configfile:]] في أول الناتج.`, done: R`طبع [[configfile: pytest.ini]]، يعني [[pytest.ini]] بيكسب حتى لو [[pyproject.toml]] فيه إعدادات، فإعدادات [[pyproject.toml]] اتجاهلت. فاخترت مكان واحد بس ومسحت التاني.` },
+          ],
           deep: {
             why: "ImportError في الاختبارات لأن pytest مش شايف الباكدج، واختبارات async مش بتشتغل، وكل واحد في الفريق بيشغّل بفلاجات مختلفة. ملف واحد بيحل التلاتة.",
             how: R`pytest بيدوّر على pytest.ini في الفولدر الحالي واللي فوقه، والفولدر اللي فيه الملف بيبقى الـ rootdir.
@@ -437,6 +459,13 @@ uvicorn app.main:app --reload --port 8001
 curl -s localhost:8000/health
 # التوثيق التفاعلي: http://localhost:8000/docs`,
           try: "اعمل [[app/main.py]] فيه [[app = FastAPI()]] و endpoint [[/health]] بيرجّع [[{\"ok\": True}]]. شغّله، وعدّل الرد واحفظ، وشوف uvicorn بيعيد لوحده.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في [[app/main.py]] المتغير اسمه [[app]]، وانت كتبت [[uvicorn app.main:application]]. هيطبع إيه؟`, done: R`[[ERROR:    Error loading ASGI app. Attribute "application" not found in module "app.main".]] (uvicorn 0.32.1). وفهمت إن اللي قبل [[:]] ملف واللي بعدها اسم متغير جواه.` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** شغّلت [[uvicorn app.main:app]] من الفولدر اللي فوق المشروع، وطلع traceback آخره [[ModuleNotFoundError: No module named 'app']]. صلّحه بطريقتين.`, done: R`مرة دخلت فولدر المشروع وشغّلت نفس الأمر، ومرة من مكاني بـ [[--app-dir api]] (الفولدر اللي فيه [[app]])، والاتنين [[curl -s localhost:8000/health]] رجّعوا [[{"ok":true}]].` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** من [[uvicorn --help]] لاقي إزاي تراقب فولدر معيّن بس للـ reload، وتغيّر مستوى اللوج، وتسمع على كل الكروت. وإيه اللي بيحصل لو كتبت [[--reload]] و [[--workers 4]] مع بعض؟`, done: R`[[--reload-dir app]] و [[--log-level debug]] و [[--host 0.0.0.0]]، وكتبت إن [[--reload]] للتطوير بس وإن uvicorn بيشتغل بـ worker واحد معاه (الـ workers للإنتاج، درس «uvicorn --proxy-headers»).` },
+            { lvl: 'تطبيق', t: R`**اكتب اختبار:** بدل [[curl]]، اكتب [[tests/test_health.py]] بـ [[from fastapi.testclient import TestClient]] بيتأكد إن [[/health]] بيرجّع ٢٠٠ و [[{"ok": True}]]. (محتاج [[httpx]]، وشرحه الكامل في درس «TestClient و conftest».)`, done: R`[[pytest -q]] بيقول [[1 passed]] من غير ما uvicorn يكون شغال، ولما غيّرت الرد في الكود الاختبار فشل ووراك الفرق.` },
+            { lvl: 'تحدي', t: R`**قارن:** شغّل التطبيق جوه [[docker run -p 8000:8000]] مرة بـ [[--host 127.0.0.1]] ومرة بـ [[--host 0.0.0.0]]، وجرّب [[curl localhost:8000/health]] من جهازك.`, done: R`مع [[127.0.0.1]] الطلب فشل (السيرفر بيسمع جوه الكونتينر بس)، ومع [[0.0.0.0]] رجع [[{"ok":true}]]. وكتبت إن ده نفس سبب إن Dockerfile في درس «Dockerfile» فيه [[0.0.0.0]].` },
+          ],
           deep: {
             why: "كل تعديل تقفل السيرفر وتفتحه تاني: بطيء ومملّ. و --reload بيعمل ده لوحده، و FastAPI بيديك صفحة تجرّب فيها الـ API من غير Postman.",
             how: R`أصغر تطبيق: [[from fastapi import FastAPI]] وبعدين [[app = FastAPI()]] وبعدين دالة فوقها [[@app.get("/health")]] بترجّع dict، و FastAPI بيحوّله JSON.
@@ -654,6 +683,13 @@ json.dump(creds, open(sys.argv[1], "w"), indent=2)
 PY`,
           try: "اعمل [[export INTERNAL_TOKEN='ab\"c']] (فيها علامة تنصيص) وشغّل السكربت، وشوف الـ JSON سليم. وجرّب تعمله بـ echo وشوف الفرق. ولو على ويندوز، جرّب نسخة PowerShell اللي في الحل.",
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في bash: [[export INTERNAL_TOKEN='ab"c']] وبعدها [[echo "{\"value\": \"Bearer $INTERNAL_TOKEN\"}" > bad.json]] وبعدها [[python3 -m json.tool bad.json]]. هيطبع إيه؟`, done: R`الملف بقى [[{"value": "Bearer ab"c"}]] و [[json.tool]] قال [[Expecting ',' delimiter: line 1 column 22 (char 21)]] وخرج بـ ١. ونسخة الدرس بـ [[json.dump]] طلّعت [["Bearer ab\"c"]] سليمة.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[python3 - x <<PY]] (من غير علامات تنصيص حوالين [[PY]]) وجواه [[import sys; print(sys.argv); print("home is $HOME")]]. وبعدين نفس الكلام بـ [[<<'PY']].`, done: R`الاتنين طبعوا [[['-', 'x']]] (الـ [[-]] مكان اسم السكربت)، بس الأولى طبعت [[home is /root]] لأن bash فك [[$HOME]] قبل ما Python يشوفه، والتانية طبعت [[home is $HOME]] زي ما هي. عشان كده [['PY']] دايمًا.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[curl -s URL | python3 - <<'PY']] وجواه [[json.load(sys.stdin)]]، وبيقع بـ [[JSONDecodeError]] رغم إن الـ API سليم. اعرف السبب وصلّحه.`, done: R`جرّبت [[echo '{"a": 1}' | python3 - <<'PY']] وجواه [[print(repr(sys.stdin.read()))]] وطبع [['']]: الـ heredoc هو اللي بقى الـ stdin والبرنامج نفسه اتقري منه، فالـ JSON ضاع. صلّحتها بـ [[python3 -c '...']] (فالـ stdin بيفضل للبيانات)، و [[echo '{"a": 1}' | python3 -c "import json,sys; print(json.load(sys.stdin)['a'])"]] طبع [[1]].` },
+            { lvl: 'تطبيق', t: R`**ابني:** نفس سكربت الدرس بـ PowerShell: here-string [[@'...'@]] بيتبعت لـ [[python -]] بـ pipe، والتوكن من [[$env:INTERNAL_TOKEN]] وفيه علامة تنصيص.`, done: R`[[creds.json]] اتعمل وسليم ([[python -m json.tool creds.json]] بيطبعه)، وفهمت إن [[@'...'@]] (single quote) زي [[<<'PY']] مبيفكش [[$]].` },
+            { lvl: 'تحدي', t: R`**refactor:** سكربت bash فيه ٣ heredocs بايثون ورا بعض كل واحد بيقرا ويكتب نفس ملف JSON. حوّلهم لسكربت [[config_tool.py]] واحد بأوامر فرعية ([[set]] و [[get]] و [[validate]]) ونادي عليه من bash.`, done: R`السكربت الجديد بيطلّع نفس الـ JSON بالظبط ([[diff]] فاضي)، و bash بقى ٣ سطور، و [[validate]] بيخرج بـ ١ لو مفتاح ناقص فـ [[set -e]] بيوقّف السكربت.` },
+          ],
           deep: {
             why: "JSON بـ [[echo \"{\\\"token\\\": \\\"$TOKEN\\\"}\"]] بيبوظ لو التوكن فيه علامة تنصيص أو backslash أو سطر جديد. Python بيعمل escape صح لوحده.",
             how: R`[[python3 -]]: الشرطة معناها «اقرا الكود من الـ stdin». وأي حاجة بعدها ([["$OUT"]]) بتوصل لـ [[sys.argv[1] ]].

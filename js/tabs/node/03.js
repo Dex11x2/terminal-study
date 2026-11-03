@@ -4,6 +4,15 @@ MORE("node", [
       t: "سكربتات التطوير",
       l: 2,
       n: "سيرفر بيعيد نفسه، و TypeScript من غير build، وكذا سيرفر في ترمنال واحد، وموقعك على الموبايل",
+      projects: [
+        { lvl: 'صغير', t: R`سكربت dev من غير مكتبات`, what: R`مشروع API صغير فيه [[dev: node --watch --env-file-if-exists=.env src/server.js]] و [[start: node src/server.js]]، و [[.env.example]] متسجّل في git و [[.env]] لأ. من درس node --watch --env-file.`, done: R`تعديل [[src/server.js]] أو [[.env]] بيطبع [[Restarting]] والسيرفر بيرجع بالقيمة الجديدة، و [[npm start]] من غير [[.env]] بيشتغل بالقيم الافتراضية.` },
+        { lvl: 'صغير', t: R`سكربت إداري بـ TypeScript`, what: R`[[scripts/stats.ts]] بيقرا ملف JSON فيه طلبات ويطبع عددها ومجموعها، بأنواع ([[type Order = {...}]]) ومن غير enum، ويتشغّل بـ [[node scripts/stats.ts]] على Node 24 أو [[npx tsx]] على أي نسخة. من درس npx tsx.`, done: R`[[node scripts/stats.ts orders.json]] بيطبع العدد والمجموع، ولو زوّدت [[enum]] بيقع بـ [[ERR_UNSUPPORTED_TYPESCRIPT_SYNTAX]] وبتعرف تشيله.` },
+        { lvl: 'متوسط', t: R`باك وفرونت في أمر واحد`, what: R`[[dev]] بيشغّل [[api]] (سيرفر [[node:http]] على 4000) و [[web]] (سيرفر ملفات ثابتة على 5173) بـ [[concurrently -k -n api,web]]، والـ web بيستنى الـ api بـ [[wait-on tcp:127.0.0.1:4000]]. من درس concurrently و wait-on.`, done: R`[[npm run dev]] بيطبع سطور [[[api]]] و [[[web]]] بألوان، والـ web مبيبدأش قبل الـ api، ولو الـ api وقع الاتنين بيقفلوا و exit غير صفر.` },
+        { lvl: 'متوسط', t: R`طابع الـ Network URL`, what: R`سكربت [[urls.mjs <port>]] بيطبع زي Vite: [[Local: http://localhost:<port>]] وسطر [[Network:]] لكل كارت IPv4 مش internal من [[os.networkInterfaces()]]، ويتجاهل كروت WSL و Docker الافتراضية لو اسمها فيه [[vEthernet]]. من درس --host و Network URL.`, done: R`السكربت بيطبع عنوان الواي فاي بتاعك، وفتحته من الموبايل على نفس الشبكة وسيرفر سامع على [[0.0.0.0]] (وبعد قاعدة الفايروول لو ويندوز).` },
+        { lvl: 'كبير', t: R`مشغّل dev بتاعك (mini nodemon)`, what: R`[[devrun.mjs <file>]] بيشغّل الملف بـ [[spawn(process.execPath, [file])]] ويراقب فولدر [[src]] و [[.env]] بـ [[fs.watch]] (recursive)، ولما ملف يتغيّر يستنى 200ms (debounce) ويقفل الـ child بـ SIGTERM ويستنى يقفل فعلًا وبعدين يشغّله تاني بـ [[--env-file-if-exists]]. بيطبع سبب كل restart، ولو الـ child وقع بيستنى تعديل مش بيعيد على طول (عشان ميعملش loop)، و Ctrl+C بيقفل الاتنين.`, done: R`٥ تعديلات ورا بعض في ثانية بيعملوا restart واحد بس، والـ child القديم بيتقفل قبل الجديد (مفيش EADDRINUSE)، والملف اللي فيه syntax error بيطبع «وقع، مستني تعديل» ومبيعيدش لوحده.`, ext: R`زوّد [[--ignore]] لفولدرات، و [[--legacy]] بيعمل polling بـ [[fs.watchFile]] للحالة اللي أحداث الملفات مش بتوصل فيها (Docker على ويندوز)، وقارن الـ CPU بين الطريقتين.` },
+        { lvl: 'فكرة', t: R`بيئة تطوير بأمر واحد لمشروعك`, what: R`خد مشروع حقيقي عندك فيه أكتر من حاجة لازم تشتغل (قاعدة بيانات في Docker، و API، وفرونت، و worker) واعمل [[npm run dev]] واحد بيشغّلهم بالترتيب الصح ويستنى كل واحد يجهز، ويطبع الروابط كلها في الآخر.`, done: R`زميل عمل clone و [[npm ci]] و [[npm run dev]] واشتغل عنده من غير ما يسألك، و Ctrl+C قفل كل حاجة من غير ما يسيب بروسيس شغال.`, ext: R`زوّد [[dev:check]] بيتأكد من البورتات والـ .env قبل ما يبدأ، و [[docker compose]] للخدمات بدل ما تتسطّب على الجهاز.` },
+        { lvl: 'كبير', t: R`فاحص بيئة التطوير قبل التشغيل`, what: R`[[predev.mjs]] بيتشغّل في [[predev]] وبيفحص: نسخة Node، و [[.env]] فيه كل مفاتيح [[.env.example]]، والبورتات 4000 و 5173 فاضية (بيحاول [[listen]] ويقفل)، و [[node_modules]] أحدث من [[package-lock.json]] (بالـ mtime). كل فحص بسطر أخضر أو أحمر وسبب وحل، ولو فيه أحمر بيخرج بـ 1 فـ dev ميبدأش.`, done: R`كل حالة من الأربعة بتطلع أحمر لوحدها لما تعملها بالقصد (تمسح مفتاح، تمسك البورت بسيرفر تاني، تعدّل الـ lock)، و dev مبيبدأش، ولما كله سليم dev بيبدأ في أقل من ثانية زيادة.`, ext: R`خليه يقترح الأمر اللي يصلّح ([[npm ci]]، أو البورت اللي فاضي)، وخيار [[--fix]] بينفّذه.` },
+      ],
       items: [
         {
           cmd: "node --watch --env-file",
@@ -21,6 +30,12 @@ MORE("node", [
 # جوه container على ويندوز (أحداث الملفات مش بتوصل)
 # nodemon --legacy-watch --watch src --ext js,json src/server.js`,
           try: "حوّل سكربت dev في مشروع بيستخدم nodemon و dotenv لـ [[node --watch --env-file=.env]]، وشيل المكتبتين من package.json، واتأكد إن التعديل بيعيد التشغيل.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[node --watch --env-file=.env app.js]] شغال و [[app.js]] بيطبع [[process.env.MSG]]. لو غيّرت [[MSG]] في [[.env]] من [[one]] لـ [[two]]، السيرفر هيعمل restart؟`, done: R`أيوه: طبع [[Change detected in '...\.env']] (على Node 24) و [[Restarting 'app.js']] و [[MSG = two]]. Node بيراقب ملف الـ env كمان (اتجرّب على 24.22.1 ويندوز و 22.23.3 لينكس).` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[node app.js --env-file=.env]] (الـ flag **بعد** اسم الملف) و [[MSG]] طالع [[undefined]]. ليه؟ وجرّب نفس الحاجة بملف مش موجود [[node app.js --env-file=nope.env]].`, done: R`الـ flag بعد اسم الملف بيروح للسكربت في [[process.argv]] ومبيتقريش، فـ [[MSG]] بـ [[undefined]]. والغريب إن الملف المش موجود لسه بيوقّع Node بـ [[nope.env: not found]] و exit 9 (على 24.22.1 و 22.23.3). الحل: الـ flags قبل اسم الملف دايمًا.` },
+            { lvl: 'تطبيق', t: R`**محاكاة:** شغّل [[node --watch]] جوه [[docker run]] على ملفات من ويندوز بـ [[-v]] (bind mount)، وعدّل الملف من ويندوز. حصل restart؟ وبعدين جرّب نفس الحاجة والملفات جوه الـ container نفسه.`, done: R`على الـ bind mount من ويندوز مفيش ولا restart (أحداث الملفات مش بتعدّي)، وجوه الـ container الـ restart اشتغل عادي. ده سبب [[--legacy-watch]] في nodemon (polling).` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من [[node --help]]: إيه الفرق بين [[--watch]] و [[--watch-path]] و [[--watch-preserve-output]]؟ وإيه اللي بيحصل لو استخدمت [[--watch-path=src]] والملف اللي بتشغّله برا [[src]]؟`, done: R`كتبت التلاتة، وجرّبت إن [[--watch-path]] بيراقب الفولدر ده بس بدل الملفات اللي اتعمل لها import، و [[--watch-preserve-output]] بيمنع مسح الشاشة عند الـ restart.` },
+          ],
           flag: "script",
           deep: {
             why: "كل مكتبة زيادة في devDependencies نسخة تتحدّث وثغرة محتملة. الحاجتين دول بقوا في Node نفسه، فالسكربت أبسط والمشروع أخف.",
@@ -184,6 +199,12 @@ npm run db:validate
 docker compose exec app ls scripts node_modules/.bin/tsx
 docker compose exec app npx tsx scripts/run-fix.ts`,
           try: "اكتب scripts/hello.ts فيه type وسطر console.log، وشغّله بـ [[npx tsx]]، وبعدين حط فيه خطأ أنواع واضح ولاحظ إنه برضه بيشتغل.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** على Node 24، [[node ok.ts]] والملف فيه [[const a: number = 5]] ودالة بأنواع. هيشتغل من غير tsx؟ وعلى [[node:22-slim]]؟`, done: R`اشتغل على الاتنين وطبع [[hi ts 5]]: Node بيشيل الأنواع لوحده (type stripping) في 24.22.1 و 22.23.3.` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[en.ts]] فيه [[enum Color { Red, Green }]]. شغّله بـ [[node en.ts]] واقرا الخطأ، وبعدين بـ [[npx -y tsx@4.23.15 en.ts]].`, done: R`node طلّع [[SyntaxError [ERR_UNSUPPORTED_TYPESCRIPT_SYNTAX]: TypeScript enum is not supported in strip-only mode]]، و tsx طبع [[1]]. الحل مع node: [[const Color = { Red: 0, Green: 1 } as const]].` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[bad.ts]] فيه [[const n: number = "oops"]]. إيه اللي هيحصل مع [[node bad.ts]] ومع [[tsx]]؟`, done: R`الاتنين طبعوا [[oops]] من غير ولا error: لا node ولا tsx بيفحصوا الأنواع. الفحص بـ [[npx tsc --noEmit]] بس، وده لازم يبقى خطوة في CI.` },
+            { lvl: 'تحدي', t: R`**ابني:** [[scripts/import-users.ts]] بيقرا CSV فيه [[name,email]]، ويتأكد من كل سطر (الإيميل فيه [[@]])، ويطبع عدد الصح والغلط، وبيتشغّل بـ [[node]] من غير build. وزوّد [[check:types]] في package.json بـ [[tsc --noEmit]].`, done: R`[[node scripts/import-users.ts users.csv]] بيطبع «٣ صح، ١ غلط (سطر ٤)»، و [[npm run check:types]] بيمسك لو غيّرت نوع حاجة غلط حتى لو التشغيل نفسه عدّى.` },
+          ],
           deep: {
             why: "مشروعك TypeScript، والسكربتات الصغيرة عايزة تستورد من الكود نفسه. تكتبها JS تخسر الأنواع، وتعمل لها build كل مرة تعب. tsx بيشغّلها زي ما هي.",
             how: R`tsx بيحوّل الـ TS لـ JS في الذاكرة بـ esbuild ويشغّله بـ Node، وبيفهم ESM و CommonJS والـ paths. مش بيفحص الأنواع، فالسكربت ممكن يشتغل وفيه خطأ أنواع، والفحص شغل tsc.
@@ -345,6 +366,12 @@ npx tsc --noEmit --strict scripts/hello.ts`
   "dev:web": "wait-on tcp:127.0.0.1:4000 && cross-env VITE_API_URL=http://localhost:4000 vite --strictPort"
 }`,
           try: "سطّب [[npm i -D concurrently wait-on cross-env]]، وحط السكربتات دي، وشغّل [[npm run dev]]، وبعدين Ctrl+C مرة واحدة واتأكد إن البورتين اتقفلوا.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[concurrently -k -n api,web]] وفيه api بيخرج بـ [[process.exit(2)]] بعد 800ms و web شغال على طول. إيه آخر ٣ سطور؟ والـ exit code؟`, done: R`[[[api] node api.js exited with code 2]] وبعده [[--> Sending SIGTERM to other processes..]] و [[[web] node web.js exited with code 1]]، و exit 1 (اتجرّب بـ concurrently 10.0.6).` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[wait-on -t 1500 tcp:127.0.0.1:4999]] ومفيش حاجة على البورت. إيه اللي هيحصل؟ وليه [[-t]] مهم في CI؟`, done: R`بعد ثانية ونص طلع [[Error: Timed out waiting for: tcp:127.0.0.1:4999]] و exit 1 (wait-on 9.5.1). من غير [[-t]] الـ CI كان هيفضل مستني لحد ما الـ job يتقتل بعد ساعات.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[wait-port.mjs <port> <ms>]] من غير مكتبات: بيحاول [[net.connect]] كل 200ms لحد ما يتصل أو الوقت يخلص، ويخرج بـ 0 أو 1.`, done: R`من غير سيرفر بيخرج بـ 1 بعد الوقت بالظبط تقريبًا، ومع سيرفر بيتشغّل بعد ثانية بيخرج بـ 0 أول ما يفتح.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** ليه [[cross-env NODE_ENV=production node x.js]] بدل [[NODE_ENV=production node x.js]] في package.json؟ وإيه البديل من غير مكتبة في Node 20+؟`, done: R`كتبت إن [[VAR=x cmd]] صيغة sh ومبتشتغلش في cmd.exe اللي npm بيستخدمه على ويندوز، وإن البديل [[node --env-file]] أو قراءة القيمة جوه الكود.` },
+          ],
           flag: "script",
           deep: {
             why: "من غير الأدوات دي: ترمنال للـ API وترمنال للفرونت، والفرونت بيقوم قبل الـ API فأول طلبات بتفشل، ولما تقفل واحد التاني بيفضل ماسك البورت.",
@@ -476,6 +503,11 @@ hostname -I
 # ويندوز (PowerShell أدمن): افتح البورت للشبكة الخاصة بس
 New-NetFirewallRule -DisplayName "dev 5173" -Direction Inbound -Protocol TCP -LocalPort 5173 -Profile Private -Action Allow`,
           try: "شغّل مشروع Vite بـ [[--host]]، وافتح رابط Network من موبايلك، وعدّل كلمة في الصفحة وشوف الموبايل بيتحدّث لوحده.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** سيرفر جوه Docker بيسمع على [[127.0.0.1:8080]] و [[docker run -p 18080:8080]]. [[curl http://127.0.0.1:18080]] من جهازك هيرد؟ وبـ [[0.0.0.0]]؟`, done: R`بـ [[127.0.0.1]] طلع [[curl: (52) Empty reply from server]]، وبـ [[0.0.0.0]] رد [[hello from 0.0.0.0]]. نفس الفكرة بالظبط مع الموبايل: localhost جوه الجهاز ده بس.` },
+            { lvl: 'تطبيق', t: R`**ابني:** سطر Node بيطبع زي Vite: لكل كارت في [[os.networkInterfaces()]] نوعه [[IPv4]] ومش [[internal]]، اطبع [[http://<address>:5173]] واسم الكارت.`, done: R`طبع سطر لـ [[Wi-Fi]] وسطر لكارت WSL الافتراضي ([[vEthernet]])، وعرفت إن عنوان الواي فاي هو اللي الموبايل يفتحه.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** ليه [[--host]] على سيرفر تطوير في كافيه أو شبكة شغل عامة خطر؟ وإزاي قاعدة الفايروول بـ [[-Profile Private]] بتقلّل الخطر ده؟`, done: R`كتبت إن أي حد على نفس الشبكة يقدر يفتح سيرفر التطوير (ومعاه أحيانًا source maps وأخطاء مفصّلة)، وإن [[Private]] بيفتح البورت على الشبكات اللي انت معلّمها خاصة بس (البيت)، مش العامة.` },
+          ],
           deep: {
             why: "الموقع شكله تمام في DevTools بمقاس موبايل، وعلى الموبايل الحقيقي الكيبورد بيغطي الفورم، واللمس مختلف، والخط أصغر. التجربة على جهاز حقيقي قبل الرفع بتوفّر كتير.",
             how: R`الـ [[--]] بتعدّي الفلاج للأداة نفسها مش لـ npm. Vite افتراضيًا على localhost بس، و [[--host]] بيخليه 0.0.0.0 (تقدر تحطها في vite.config: [[server.host: true]]). Next dev بيطبع Network لوحده غالبًا، و [[-H 0.0.0.0]] بيضمنها. ونفس الفلاج ده لازم جوه Docker، وإلا البورت المنشور مش هيوصل للسيرفر (شوف درس 127.0.0.1 و 0.0.0.0 في bash).

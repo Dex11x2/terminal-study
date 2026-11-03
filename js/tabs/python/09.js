@@ -4,6 +4,14 @@ MORE("python", [
       t: "Python على السيرفر",
       l: 3,
       n: "صورة Docker خفيفة، و uvicorn ورا nginx، والاختبارات جوه compose",
+      projects: [
+        { lvl: 'صغير', t: R`صورة لسكربت مش API`, what: R`Dockerfile لسكربت من وحدة الأتمتة (زي [[json_to_csv.py]]): بياخد الفولدر من volume، ويشتغل بيوزر عادي، و [[ENTRYPOINT]] بيخلّي الـ arguments تتبعت للسكربت.`, done: R`[[docker run --rm -v ./orders:/data IMAGE /data]] بيطلّع التقرير في نفس الفولدر، والملف الناتج صاحبه مش root، والصورة أقل من ٢٥٠MB.` },
+        { lvl: 'صغير', t: R`healthcheck`, what: R`زوّد [[HEALTHCHECK]] في الـ Dockerfile بيطلب [[/health]] بـ Python نفسه ([[urllib]]، مش curl لأنه مش في slim)، و [[depends_on: condition: service_healthy]] في compose.`, done: R`[[docker compose ps]] بيوري [[healthy]] بعد ثواني، ولو كسرت [[/health]] بيبقى [[unhealthy]]، والخدمة اللي بتعتمد عليه مبتقومش قبله.` },
+        { lvl: 'متوسط', t: R`API ورا nginx بـ IP حقيقي`, what: R`compose فيه nginx و FastAPI، وكل طلب بيتسجّل في لوج التطبيق بالـ IP الحقيقي والـ scheme، و [[--forwarded-allow-ips]] مظبوط على شبكة compose بس.`, done: R`اللوج بيطلّع IP جهازك، وطلب مباشر على التطبيق (لو فتحته مؤقتًا) بهيدر مزوّر مبيتصدّقش، و [[docker compose down]] و [[up]] تاني بيرجّع كله.` },
+        { lvl: 'متوسط', t: R`CI بيبني ويختبر الصورة`, what: R`GitHub Actions workflow بيبني الصورة ويشغّل [[docker compose run --rm --no-deps app pytest]]، ويفشل لو اختبار فشل.`, done: R`PR فيه اختبار مكسور بيطلع أحمر، والسليم أخضر، والـ workflow بيستخدم cache للـ layers فالتشغيل التاني أسرع (اكتب الوقتين).` },
+        { lvl: 'كبير', t: R`نشر كامل لتطبيق Python على VPS`, what: R`تطبيق FastAPI (من الوحدات اللي فاتت) بـ compose فيه app و nginx و (لو محتاج) Postgres: صورة multi-stage بيوزر عادي، و healthchecks، و [[.env]] على السيرفر بس، ولوجات بـ rotation ([[logging: options: max-size]])، وسكربت [[deploy.sh]] بيعمل pull وبناء واختبارات جوه الصورة وبعدين [[up -d]] ويرجع للنسخة القديمة لو الـ healthcheck فشل.`, done: R`[[deploy.sh]] على سيرفر (أو VM تجربة) بيطلّع النسخة الجديدة من غير ما الموقع يقع أكتر من ثواني، ونسخة فيها باج متعمّد في [[/health]] بترجع للقديمة لوحدها، والتشغيل مرتين ورا بعض مبيبوّظش حاجة، وفيه README فيه كل خطوة.`, ext: R`زوّد HTTPS بـ Let's Encrypt (تاب Nginx)، و backup للقاعدة بسكربت من وحدة الأتمتة، ومراقبة بـ uptime checker بتاعك.` },
+        { lvl: 'فكرة', t: R`اسحب مشروع قديم للـ container`, what: R`اختار أي سكربت أو API عملته في التاب ده وشغّله جوه Docker بنفس المعايير: صورة صغيرة، ويوزر عادي، والاختبارات جوه الصورة.`, done: R`زميل عنده Docker بس (من غير Python) بيشغّل المشروع والاختبارات بأمرين.`, ext: R`انشر الصورة على GitHub Container Registry وخلي CI يبنيها مع كل tag.` },
+      ],
       items: [
         {
           cmd: "uvicorn --proxy-headers",
@@ -16,6 +24,12 @@ ss -tlnp | grep 8080
 # Windows (PowerShell):
 Get-NetTCPConnection -LocalPort 8080 -State Listen`,
           try: "اعمل endpoint بيرجّع [[request.client.host]] و [[request.url.scheme]]، واطلبه من ورا nginx مرة بـ [[--forwarded-allow-ips \"*\"]] ومرة من غيرها وقارن.",
+          practice: [
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** من [[uvicorn --help]] لاقي [[--proxy-headers]] و [[--forwarded-allow-ips]] والـ default بتاع كل واحد، ومتغير البيئة اللي بيقوم مقام [[--forwarded-allow-ips]].`, done: R`كتبت إن [[--proxy-headers]] شغال افتراضيًا، وإن [[--forwarded-allow-ips]] الـ default بتاعه [[127.0.0.1]] (يعني بيصدّق الـ headers من الجهاز نفسه بس)، وإن [[FORWARDED_ALLOW_IPS]] بيعمل نفس الحاجة من البيئة.` },
+            { lvl: 'تطبيق', t: R`**قارن:** endpoint بيرجّع [[request.client.host]] و [[request.url.scheme]]. اطلبه بـ [[curl -H "X-Forwarded-For: 9.9.9.9" -H "X-Forwarded-Proto: https"]] مباشرة على uvicorn مرة بالـ default ومرة بـ [[--forwarded-allow-ips "*"]].`, done: R`مع [[*]] الرد بقى [[9.9.9.9]] و [[https]] لأي حد يبعت الهيدر، يعني أي حد يقدر يزوّر الـ IP بتاعه. وكتبت إن [[*]] ينفع بس لما uvicorn مش باين غير لـ nginx (جوه شبكة Docker)، وإلا تكتب IP الـ proxy بالظبط.` },
+            { lvl: 'تطبيق', t: R`**ابني:** compose فيه [[nginx]] و [[app]]: nginx بيبعت [[X-Forwarded-For]] و [[X-Forwarded-Proto]]، و app مالوش [[ports:]] خالص (nginx بس اللي باين).`, done: R`[[curl localhost/ip]] بيرجّع IP جهازك مش IP الـ nginx container، و [[curl localhost:8000]] بيفشل لأن app مش منشور، و [[docker compose ps]] بيوري البورت على nginx بس.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** شغّل نفس التطبيق بـ [[--workers 1]] و [[--workers 4]] واضربه بـ ٢٠٠ طلب متوازي على endpoint فيه شغل CPU صغير (أو [[time.sleep(0.1)]] في دالة sync). استخدم سكربت بـ [[ThreadPoolExecutor]] يقيس.`, done: R`كتبت الوقت الكلي في الحالتين، وعرفت إن الفرق كبير لشغل CPU ولدوال sync، وإن [[--workers]] مبيتجمعش مع [[--reload]].` },
+          ],
           deep: {
             why: "من غير الإعدادات دي: كل الطلبات شكلها جاية من IP بتاع nginx (فالـ rate limit بيقفل على الكل مرة واحدة)، والـ redirects بتطلع [[http://]] والموقع https.",
             how: R`[[--host 0.0.0.0]]: جوه الـ container، [[127.0.0.1]] معناها الـ container نفسه بس، فـ nginx (في container تاني) مش هيوصل.
@@ -238,6 +252,13 @@ HEALTHCHECK --interval=30s --timeout=3s CMD curl -fsS http://127.0.0.1:8080/heal
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080", "--proxy-headers", "--forwarded-allow-ips", "*"]`,
           try: "ابني الصورة وشوف حجمها بـ [[docker images]]. وبعدين [[docker compose exec app whoami]] المفروض يقول app مش root.",
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**قارن وقيس:** [[docker images]] بعد ما تبني الصورة. حجم [[python:3.12-slim]] نفسه كام، وصورتك كام، والفرق جه منين؟`, done: R`الأساسية عندي ١٨٠MB تقريبًا، وصورتك أكبر بحجم المكتبات، و [[docker history IMAGE]] بيوريك كل layer وحجمه، فعرفت أنهي سطر هو اللي تقيل.` },
+            { lvl: 'تطبيق', t: R`**اقرا:** شغّل [[pip install]] كـ root جوه [[python:3.12-slim]] بـ [[--root-user-action=warn]]. إيه الرسالة؟ وليه صورتك بتعمل [[USER app]]؟`, done: R`[[WARNING: Running pip as the 'root' user can result in broken permissions ...]]، وكتبت إن التسطيب كـ root جوه الـ build مقبول (الصورة نفسها)، بس التطبيق يشتغل بيوزر عادي عشان أي ثغرة متبقاش root، و [[docker compose exec app whoami]] بيقول [[app]].` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** Dockerfile فيه [[COPY . .]] قبل [[RUN pip install -r requirements.txt]]. غيّر سطر واحد في [[main.py]] وابني تاني وبص على الوقت.`, done: R`أي تعديل في الكود عاد تسطيب المكتبات كلها (الـ cache اتكسر من [[COPY . .]])، وبعد ما حطيت [[COPY requirements.txt .]] والتسطيب قبل [[COPY . .]] البناء التاني بقى ثواني و [[CACHED]] ظاهرة جنب سطر pip.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[.dockerignore]] فيه [[.venv]] و [[__pycache__]] و [[.git]] و [[.env]] و [[tests]]. قارن حجم الـ context في أول سطر من [[docker build]] قبل وبعد.`, done: R`الـ context قل بشكل واضح (اكتب الرقمين)، و [[docker run --rm IMAGE ls -a]] مفيهوش [[.env]] ولا [[.venv]]، يعني أسرارك مش جوه الصورة.` },
+            { lvl: 'تحدي', t: R`**ابني:** multi-stage: stage أول بيعمل venv في [[/opt/venv]] ويسطّب فيه، والتاني [[python:3.12-slim]] نضيف بينسخ [[/opt/venv]] بس. قارن الحجم بالنسخة العادية لو فيه مكتبة محتاجة compiler.`, done: R`الصورة النهائية مفيهاش [[gcc]] ([[docker run --rm IMAGE which gcc]] مبيطلّعش حاجة)، والتطبيق شغال، وكتبت الحجمين.` },
+          ],
           deep: {
             why: "صورة Python الكاملة حوالي جيجا، واللوج مش بيظهر، والتطبيق بيشتغل root. لو حد لقى ثغرة في الكود، هيبقى root جوه الـ container.",
             how: R`[[slim]] دبيان متقلّص (حوالي ١٥٠ ميجا بدل جيجا). alpine أصغر بس بـ musl، ومكتبات زي numpy و pandas و asyncpg ساعات بتتبني من الصفر عليها (دقايق طويلة)، فـ slim أأمن.
@@ -468,6 +489,12 @@ docker compose exec -T app python -m app.seed data/foods.csv
 docker compose exec -T app python -m app.backlog --dry-run
 docker compose run --rm -e LOG_LEVEL=debug app python -m app.check`,
           try: "شغّل الاختبارات بـ run --rm --no-deps، وبعدين [[docker ps -a]] واتأكد إنه مفيش containers فاضلة.",
+          practice: [
+            { lvl: 'سريع', t: R`**قارن:** [[docker compose run --rm app pytest]] و [[docker compose run app pytest]] (من غير [[--rm]]). وبعد كل واحدة [[docker ps -a]].`, done: R`من غير [[--rm]] فضل container واقف اسمه فيه [[run]] بعد كل مرة، ومع [[--rm]] مفيش حاجة. ومسحت اللي فضل بـ [[docker rm]] باسمه (مش بـ prune).` },
+            { lvl: 'تطبيق', t: R`**قارن:** [[docker compose run --rm app pytest]] من غير [[--no-deps]] والـ compose فيه [[db]]. بص على [[docker compose ps]] بعدها.`, done: R`من غير [[--no-deps]] الـ [[db]] قام وفضل شغال بعد الاختبارات، ومع [[--no-deps]] ماقامش. فاخترت [[--no-deps]] للاختبارات اللي مبتحتاجش قاعدة.` },
+            { lvl: 'تطبيق', t: R`**اقرا:** [[docker compose exec app python -c "print(1)"]] و [[docker compose exec -T app python -c "print(1)"]] من سكربت أو CI (من غير terminal).`, done: R`في CI الأولى ممكن تقع بـ [[the input device is not a TTY]]، و [[-T]] بتشيل الـ TTY فتشتغل. وكتبت إن [[exec]] محتاج container شغال و [[run]] بيعمل واحد جديد.` },
+            { lvl: 'تحدي', t: R`**ابني:** [[Makefile]] أو [[tasks.ps1]] فيه [[test]] (run --rm --no-deps pytest) و [[test-db]] (بقاعدة) و [[shell]] (exec bash) و [[logs]]، و [[test]] بيرجّع نفس exit code بتاع pytest.`, done: R`[[make test]] بيفشل لو اختبار فشل ([[echo $?]] مش صفر)، ومفيش containers فاضلة بعد أي أمر، وزميلك بيشغّل الاختبارات من غير ما يعرف أوامر docker.` },
+          ],
           deep: {
             why: "الاختبارات على جهازك محتاجة venv متفعّل ونسخة Python معيّنة. جوه الـ container هي نفس Python ونفس المكتبات اللي في الإنتاج بالظبط.",
             how: R`[[run]] بيعمل container جديد من تعريف الخدمة (الصورة والـ env والـ volumes)، بس بيشغّل الأمر اللي كتبته بدل الـ CMD. [[--rm]] يمسحه لما يخلص.

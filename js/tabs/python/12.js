@@ -16,13 +16,15 @@ MORE("python", [
         cs: R`الـ entry point إعلان: «الاسم ده يشاور على الدالة دي». وأداة التسطيب بتولّد الملف التنفيذي منه. نفس فكرة [[bin]] في npm.`,
       },
       lab: R`mkdir -p ~/lab/plab && cd ~/lab/plab && python -m venv .venv`,
-      projects: [
-        { t: R`زوّد تنسيق CSV للخرج`, what: R`[[--out csv]] بتطبع الملخص كـ CSV بدل النص، عشان تقدر تحطه في ملف وتفتحه. استخدم [[csv.DictWriter]] على [[sys.stdout]]. من درس ٣.` },
-        { t: R`اقرا JSONL كمان`, what: R`الأداة بتقرا CSV. خليها تقرا JSONL برضه حسب الامتداد أو حسب [[--format]]. ساعتها هتشتغل على ناتج مشاريعك التانية (مراقبة PowerShell، و [[jl]] في Node). من دروس ٢ و ٣.` },
-        { t: R`اختبارات للواجهة كمان`, what: R`[[main]] بتاخد [[argv]] كـ parameter عشان كده: [[main(["x.csv", "-q"])]]. اكتب اختبارات بتنادي [[main]] مباشرة وبتتأكد من كود الخروج. من درس ٤.` },
-        { t: R`شغّلها من غير تسطيب`, what: R`[[pipx run <الحزمة>]] أو [[uvx <الحزمة>]] بتشغّل أداة من غير ما تسطّبها في بيئتك. جرّبها على أداة معروفة وشوف الفرق.` },
-      ],
       n: R`هنبني [[tally]]: أداة بتقرا ملف CSV وبتلخّصه — عدد الصفوف، وتوزيع عمود، وإحصاءات عمود رقمي. أربع خطوات، من ملف لحزمة فيها أمر`,
+      projects: [
+        { lvl: 'صغير', t: R`زوّد تنسيق CSV للخرج`, what: R`[[--out csv]] بتطبع الملخص كـ CSV بدل النص، عشان تقدر تحطه في ملف وتفتحه. استخدم [[csv.DictWriter]] على [[sys.stdout]]. من درس ٣.`, done: R`[[tally sales.csv -g city --out csv > out.csv]] بيتفتح في Excel صح، والعربي سليم، والعمود الأول اسمه مظبوط (من غير BOM لازق فيه لو قريته تاني بـ [[utf-8-sig]]).` },
+        { lvl: 'صغير', t: R`شغّلها من غير تسطيب`, what: R`[[pipx run <الحزمة>]] أو [[uvx <الحزمة>]] بتشغّل أداة من غير ما تسطّبها في بيئتك. جرّبها على أداة معروفة، وبعدين على [[tally]] نفسها من الـ wheel أو من الفولدر ([[uvx --from . tally --version]]).`, done: R`[[tally --version]] اشتغلت من غير ما تتسطّب في أي venv بتاعك، وكتبت إمتى ده أحسن من [[pipx install]].` },
+        { lvl: 'متوسط', t: R`اقرا JSONL كمان`, what: R`الأداة بتقرا CSV. خليها تقرا JSONL برضه حسب الامتداد أو حسب [[--format]]. ساعتها هتشتغل على ناتج مشاريعك التانية (مراقبة PowerShell، و [[jl]] في Node). من دروس ٢ و ٣.`, done: R`نفس البيانات CSV و JSONL بتطلّع نفس الملخص بالظبط، والسطر البايظ في JSONL بيتعد في [[skipped]] برقم السطر على stderr، و [[summarize]] ماتغيّرتش.` },
+        { lvl: 'متوسط', t: R`اختبارات للواجهة كمان`, what: R`[[main]] بتاخد [[argv]] كـ parameter عشان كده: [[main(["x.csv", "-q"])]]. اكتب اختبارات بتنادي [[main]] مباشرة وبتتأكد من كود الخروج والناتج (بـ [[capsys]] أو [[contextlib.redirect_stdout]]). من درس ٤.`, done: R`كل exit code (٠ و ١ و ٢) ليه اختبار، وملف مش موجود وترميز غلط ليهم اختبارات بتتأكد من الرسالة اللي بتقول الحل.` },
+        { lvl: 'كبير', t: R`[[tally]] بنسخة 2.0 جاهزة للنشر`, what: R`كمّل الأداة: CSV و JSONL و stdin، و [[--out text|json|csv]]، و [[--top]]، وفلتر [[--where "city=Cairo"]]، والإحصاءات بتتجاهل [[nan]] و [[inf]]. ومعاها: اختبارات للـ core والـ cli والـ wheel (coverage فوق ٩٠٪)، و [[CHANGELOG.md]]، و GitHub Actions بيشغّل الاختبارات على ويندوز ولينكس و Python 3.12 و 3.14، ونسخة على TestPyPI.`, done: R`[[pipx install]] من TestPyPI على جهاز تاني شغال، و [[tally --version]] بيقول 2.0.0، والـ CI أخضر على الأربع تركيبات، وملف ٥٠٠ ألف صف بيخلص في أقل من ١٠ ثواني.`, ext: R`زوّد [[--chart]] بيطبع histogram بالنجوم في الترمنال (أشكال بالـ loops)، و plugin بسيط لقراية Excel لو [[openpyxl]] متسطّبة.` },
+        { lvl: 'فكرة', t: R`حزمتك انت`, what: R`اختار أداة من مشاريع التاب (مستورد الكشوف، أو housekeeper، أو syncbot) وطبّق عليها نفس الأربع خطوات: pyproject و argparse بعمق و core منفصل واختبارات وتغليف.`, done: R`الأداة بتتسطّب بـ [[pipx]] من git، و [[core]] مفيهوش ولا print، وفيه wheel مبني ومتجرّب في venv نضيف.`, ext: R`انشرها على PyPI بـ Trusted Publishing من GitHub Actions (من الوثائق).` },
+      ],
       items: [
         {
           cmd: "مشروع — venv و pyproject والأمر",
@@ -88,6 +90,12 @@ where = ["src"]`,
           try: R`اعمل الهيكل و [[pyproject.toml]]، وبعدين [[python -m venv .venv]] و [[.venv/Scripts/python -m pip install -e .]]. وبعدين شوف [[.venv/Scripts/]] وهتلاقي ملف باسم الأمر.`,
           flag: "script",
           mac: ["diff", R`المسارات مختلفة: على الماك ولينكس الـ venv بتحط الملفات في [[.venv/bin/]] مش [[.venv/Scripts/]]، والتفعيل [[source .venv/bin/activate]] بدل [[.venv\Scripts\activate]]. و[[python3]] بدل [[python]].`],
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا:** بعد [[pip install -e .]] شغّل [[pip show tally]] و [[pip show -f tally]]. فين بيقول إنه editable، وإيه الملفات اللي اتسطّبت فعلًا؟`, done: R`[[pip show]] فيه [[Editable project location:]] بمسار فولدر المشروع، و [[-f]] بيوري ملفات قليلة (الـ metadata وملف بيربط بالـ [[src]]) مش نسخة من الكود، وده سبب إن التعديل بيظهر على طول.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** غيّر [[tally = "tally.cli:main"]] لـ [[tally = "tally.cli:mian"]] وسطّب تاني وشغّل [[tally]].`, done: R`التسطيب عدّى والتشغيل وقع بـ [[ImportError: cannot import name 'mian' from 'tally.cli']]، فرجّعتها وكتبت اختبار بيشغّل [[tally --version]] بعد التسطيب يمسكها.` },
+            { lvl: 'تطبيق', t: R`**قارن:** امسح [[[tool.setuptools.packages.find]]] و [[where = ["src"]]] وسطّب تاني، وبعدين جرّب [[python -c "import tally"]] من فولدر تاني.`, done: R`من غير السطرين الـ build وقع أو الحزمة متسطّبتش صح، فعرفت إن الـ src layout محتاج تقول لـ setuptools الكود فين، وإن ده بالظبط اللي بيخلّيك تختبر النسخة المتسطّبة مش الملفات اللي جنبك.` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من وثائق [[pyproject.toml]] (packaging.python.org) زوّد [[authors]] و [[readme]] و [[classifiers]] و [[[project.urls]]]، وبعدين [[pip show tally]] تاني.`, done: R`الحقول الجديدة ظهرت في [[pip show]] (Author و Home-page أو Project-URL)، و [[readme = "README.md"]] شغال من غير ما الـ build يقع.` },
+          ],
           deep: {
             why: R`الأداة اللي محتاجة مسار كامل مش أداة. والمشروع من غير [[venv]] بيكسر مشروع تاني أول ما تحتاج نسخة مختلفة من مكتبة.`,
             how: R`**الـ venv** بتعمل فولدر فيه: نسخة (أو رابط) من الـ interpreter، و [[site-packages]] فاضي، وملف [[pyvenv.cfg]] فيه مسار الـ Python الأصلي.
@@ -372,6 +380,12 @@ def main(argv: list[str] | None = None) -> int:
           try: R`شغّل [[tally --help]] واقرا سطر الاستخدام — هتلاقي [[[--json | -q]]]. وبعدين جرّب [[tally sales.csv --json -q]] وشوف الرسالة وكود الخروج.`,
           flag: "script",
           mac: ["both", R`[[argparse]] من المكتبة القياسية، نفس السلوك في كل الأنظمة.`],
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[tally sales.csv --json -q]]. الرسالة إيه والـ exit code كام؟`, done: R`[[tally: error: argument -q/--quiet: not allowed with argument --json]] والـ exit code ٢، وده من [[add_mutually_exclusive_group()]] من غير ولا سطر تحقق بإيدك.` },
+            { lvl: 'تطبيق', t: R`**ابني:** زوّد [[--top N]] ([[type=int]] و default ١٠) بيحدد كام قيمة تظهر في التوزيع، و [[--sep]] ([[choices]] فيها [[","]] و [[";"]] و [["tab"]]) للفاصل.`, done: R`[[--top 3]] بيطلّع ٣ بس، و [[--top x]] بيرفض بـ exit ٢، و [[--sep tab]] بيقرا TSV، و [[--help]] بيوري الـ choices لوحده.` },
+            { lvl: 'تطبيق', t: R`**اكتب اختبار:** لـ [[build_parser()]]: الـ defaults، و [[-g city]]، و الخيارين المتنافيين بـ [[pytest.raises(SystemExit)]] و [[excinfo.value.code == 2]].`, done: R`٤ اختبارات خضرا من غير ما تشغّل [[tally]] من الترمنال.` },
+            { lvl: 'تحدي', t: R`**ابني:** خلي [[tally]] تقرا من stdin لما الملف مش موجود: [[type sales.csv | tally -g city]] (أو [[cat]]). ولو مفيش ملف ومفيش pipe (الـ stdin ترمنال) تطبع رسالة بدل ما تستنى للأبد.`, done: R`الـ pipe بيطلّع نفس ناتج الملف، و [[tally]] لوحدها في الترمنال بتطبع «ادّيني ملف أو pipe» وتخرج بـ ٢ (من [[sys.stdin.isatty()]]).` },
+          ],
           deep: {
             why: R`المساعدة اللي بتتكتب بإيدك بتبقى قديمة. واللي بتتولّد من التعريف مستحيل تبقى كده.`,
             how: R`[[argparse]] بتولّد: سطر الاستخدام، وقايمة الخيارات، و [[-h]]. وكلهم من نفس التعريف.
@@ -681,6 +695,12 @@ def summarize(rows: list[Row], group: str | None = None,
           try: R`افتح [[python]] واعمل [[from tally.core import summarize]] وناديها بقايمة قواميس كتبتها بإيدك. وبعدين جرّب عمود مش موجود وشوف [[skipped]] بتطلع كام.`,
           flag: "script",
           mac: ["both", R`نفس الكود. و [[newline=""]] في [[open]] مهمة في كل الأنظمة مع [[csv]].`],
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[summarize([], "city")]] و [[summarize([{"city": "Cairo"}, {"city": "cairo"}, {}], group="city")]].`, done: R`[[{'rows': 0, 'group': 'city', 'counts': {}}]] و [[{'rows': 3, 'group': 'city', 'counts': {'Cairo': 1, 'cairo': 1, '': 1}}]]: الحروف الكبيرة بتفرق، والصف الناقص بقى [['']]. قررت هل تعمل [[casefold()]] و [[strip()]] ولا لأ وكتبت القرار في docstring.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[summarize([{"amount": "x"}, {"amount": "10"}, {"amount": "nan"}, {"amount": " 5 "}], value="amount")]]. اقرا الناتج كويس.`, done: R`الناتج فيه [['numeric': 3, 'skipped': 1]] و [['sum': nan]]: الكلمة [["nan"]] اتقرت رقم بـ [[float()]] وبوّظت كل الإحصاءات، و [[" 5 "]] اتقرت عادي. صلّحتها بـ [[math.isfinite()]] بعد التحويل (و [["inf"]] كمان بتتحسب skipped)، وكتبت اختبار للحالة دي.` },
+            { lvl: 'تطبيق', t: R`**ابني:** زوّد لـ [[summarize]] [[min]] و [[max]] و [[stdev]] (لو فيه رقمين على الأقل) من غير ما تلمس [[cli.py]] غير سطر الطباعة.`, done: R`[[core.py]] لسه مفيهوش ولا [[print]] ولا [[open]]، والإحصاءات الجديدة ظاهرة في النص و [[--json]]، ورقم واحد بس مبيوقّعش [[stdev]].` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** ولّد CSV فيه ٥٠٠ ألف صف، وقيس [[tally big.csv -g city -v amount]] بـ [[time]] أو [[Measure-Command]]. وبعدين خلّي [[summarize]] تاخد iterable بدل list (من غير [[list(reader)]]) وقيس الوقت والذاكرة تاني.`, done: R`كتبت الوقت والذاكرة في الحالتين، والنسخة الـ streaming ذاكرتها ثابتة تقريبًا، وكل الاختبارات القديمة لسه خضرا (لأن list برضه iterable)، بس [[median]] اضطرت تحفظ الأرقام، فكتبت ده في التعليق.` },
+          ],
           deep: {
             why: R`الدالة اللي بتطبع مينفعش تتختبر غير بالتقاط الطباعة. واللي بتقرا ملف محتاجة ملف. والاتنين بيخلوا الاختبارات بطيئة وهشّة.`,
             how: R`**[[csv.DictReader]]** بتاخد أي iterable بيرجّع سطور. فـ [[open(...)]] و [[sys.stdin]] الاتنين بيشتغلوا. وبترجّع dict لكل صف، مفاتيحه من أول سطر.
@@ -962,6 +982,12 @@ class TestSummarize(unittest.TestCase):
           try: R`شغّل [[python -m unittest discover -s tests -v]]. وبعدين غيّر رقم في اختبار وشوف الفشل شكله إيه. وبعدين ابني wheel وافتحها وشوف جواها إيه.`,
           flag: "script",
           mac: ["both", R`[[unittest]] من المكتبة القياسية، نفس السلوك. والـ wheel ملف ZIP على كل الأنظمة.`],
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا:** [[pip wheel . -w dist]] وبعدين [[python -m zipfile -l dist/tally-1.0.0-py3-none-any.whl]]. الاختبارات جوه الـ wheel؟`, done: R`اللستة فيها [[tally/__init__.py]] و [[cli.py]] و [[core.py]] وفولدر [[dist-info]]، ومفيش [[tests/]]، لأن الـ src layout بيدخّل اللي في [[src]] بس.` },
+            { lvl: 'تطبيق', t: R`**اكتب اختبار:** حالات حدّية جديدة بـ [[unittest]]: ملف فيه header بس، وعمود رقمي كله [[nan]]، وأسماء أعمدة بمسافات، و BOM في أول الملف.`, done: R`[[python -m unittest discover -s tests -v]] بيطلّع كل اختبار باسمه و [[OK]] في الآخر، والحالات دي مسكت باج واحد على الأقل وصلّحته.` },
+            { lvl: 'تطبيق', t: R`**قارن:** نفس اختبار من الاختبارات بـ [[unittest]] وبـ [[pytest]] (pytest بيشغّل اختبارات unittest كمان). شغّل [[pytest tests]] على الفولدر زي ما هو.`, done: R`pytest لقى اختبارات unittest وشغّلها من غير تعديل، وكتبت الفرق: [[self.assertEqual]] قصاد [[assert]]، ورسالة الفشل في الاتنين.` },
+            { lvl: 'تحدي', t: R`**ابني:** اختبار end-to-end بيبني الـ wheel، ويسطّبه في venv جديد مؤقت ([[tempfile.TemporaryDirectory]] و [[venv.create(..., with_pip=True)]])، ويشغّل [[tally --version]] من جوه.`, done: R`الاختبار بيعدّي، ولو مسحت [[[project.scripts]]] بيفشل، يعني بيختبر الحزمة اللي هتتسلّم فعلًا مش الكود اللي في الفولدر.` },
+          ],
           deep: {
             why: R`الاختبار بيخليك تعدّل من غير خوف. ومن غيره كل تعديل مقامرة. والحزمة اللي فيها ملفات زيادة بتكبر وأحيانًا بتسرّب.`,
             how: R`**[[unittest]] مقابل [[pytest]]**: [[unittest]] في المكتبة القياسية و [[pytest]] محتاج تسطيب. و [[pytest]] أقصر في الكتابة ([[assert x == y]] بدل [[self.assertEqual]])، وفيه fixtures و parametrize. و[[pytest]] بيشغّل اختبارات [[unittest]] كمان — فتقدر تبدأ بالمدمج وتنقل بعدين.

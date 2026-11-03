@@ -4,6 +4,15 @@ MORE("node", [
       t: "Prisma في مشروع Node",
       l: 3,
       n: "الكلاينت المتولّد، والـ migrations وقت التشغيل، وليه db push مكانه جهازك بس (تفاصيل migrate في تاب PostgreSQL)",
+      projects: [
+        { lvl: 'صغير', t: R`مشروع Prisma من الصفر في Docker`, what: R`[[docker compose]] فيه Postgres و [[node:22-slim]]، و [[schema.prisma]] فيه [[User]]، و [[prisma.config.ts]] بيقرا [[DATABASE_URL]]، وسكربتات [[db:generate]] و [[db:push]] و [[db:studio]]. من درس prisma generate و db push.`, done: R`[[npm run db:push]] بيطبع [[Your database is now in sync with your Prisma schema]]، وسكربت بيعمل [[prisma.user.count()]] بيطبع 0 من غير errors.` },
+        { lvl: 'صغير', t: R`seed بيتشغّل مرتين من غير مشاكل`, what: R`[[prisma/seed.js]] بيحط أدمن وتصنيفات بـ [[upsert]] على مفتاح فريد مش [[create]]، ومتسجّل في [[migrations.seed]] في [[prisma.config.ts]]. من درس prisma db seed و studio.`, done: R`[[npx prisma db seed]] مرتين ورا بعض: المرة التانية مبتطلّعش [[Unique constraint failed]]، والعدد فضل زي ما هو ([[users: 1]]).` },
+        { lvl: 'متوسط', t: R`migration بتضيف عمود مطلوب على جدول فيه داتا`, what: R`جدول [[User]] فيه صفوف، وعايز [[phone String]] مطلوب. اعملها ٣ migrations بـ [[--create-only]]: تضيف العمود nullable، وبعدين تملا القديم بقيمة (SQL [[UPDATE]])، وبعدين تخليه [[NOT NULL]]. من درس migrate deploy قبل السيرفر.`, done: R`[[npx prisma migrate deploy]] على قاعدة فيها صفوف بيطبّق التلاتة من غير [[23502]]، و [[migrate status]] بيقول [[Database schema is up to date!]]، ومحاولة إضافة العمود مطلوب مرة واحدة بتطلّع [[contains null values]].` },
+        { lvl: 'متوسط', t: R`entrypoint بيرفض يقوم على قاعدة مش جاهزة`, what: R`[[entrypoint.sh]] بيستنى القاعدة (يحاول [[prisma migrate status]] كل ثانيتين لحد ٣٠ ثانية)، وبعدين [[prisma migrate deploy]]، ولو فشل بيطبع السبب ويخرج بـ 1 من غير ما يشغّل السيرفر، ولو نجح [[exec node server.js]].`, done: R`مع قاعدة واقعة: بعد ٣٠ ثانية «القاعدة مش بترد» و exit 1 والسيرفر مقامش. مع migration بايظة: [[P3018]] في اللوج و exit 1. ومع كله سليم: السيرفر قام و [[docker stop]] بيقفله في ثانية (بفضل [[exec]]).` },
+        { lvl: 'كبير', t: R`طقم قاعدة البيانات للفريق`, what: R`مشروع API فيه: [[compose.yaml]] بـ Postgres و healthcheck، و schema فيها ٣ models بعلاقات (User و Order و Item)، و migrations متسجّلة في git، و seed بـ upsert بيعمل داتا تجريبية واقعية (٢٠ طلب)، وسكربتات [[db:reset]] (للتطوير بس، بيرفض لو [[NODE_ENV=production]]) و [[db:check]] بيشغّل [[migrate status]] و [[validate]] في CI ويفشل لو فيه migration مش متطبّقة أو schema اتغيّرت من غير migration ([[migrate diff]]). و README فيه أوامر كل يوم.`, done: R`زميل جديد بيعمل clone و [[docker compose up -d]] و [[npm run db:reset]] ويلاقي ٢٠ طلب في studio في أقل من دقيقتين، و CI بيفشل لو حد عدّل [[schema.prisma]] ونسي [[migrate dev]]، و [[NODE_ENV=production npm run db:reset]] بيرفض.`, ext: R`زوّد باك أب بـ [[pg_dump]] قبل كل [[migrate deploy]] في الإنتاج، واختبارات بتشتغل على قاعدة مؤقتة لكل run.` },
+        { lvl: 'فكرة', t: R`انقل مشروع عندك لـ Prisma`, what: R`خد مشروع Node عندك بيكتب SQL بإيده أو بيستخدم ORM تاني، وابدأ بـ [[npx prisma db pull]] على القاعدة الموجودة، وانقل endpoint واحد يستخدم Prisma، وقارن الكود والأنواع.`, done: R`[[db pull]] طلّع schema مطابقة للقاعدة الحالية، و endpoint واحد شغال بـ Prisma بنفس الردود، وكتبت فرقين في سطرين (حاجة اتحسّنت وحاجة اتعقّدت).`, ext: R`اعمل baseline migration للقاعدة الموجودة ([[migrate resolve --applied]]) عشان تبدأ تستخدم migrations من النهارده.` },
+        { lvl: 'كبير', t: R`مراقب صحة القاعدة`, what: R`[[db-doctor.mjs]] بيتصل بالقاعدة بـ Prisma ويطبع: [[migrate status]] (مش متطبّق، أو فاشل)، وعدد الصفوف في كل جدول بـ [[$queryRaw]]، وأكبر ٥ جداول بالحجم من [[pg_total_relation_size]]، والاتصالات المفتوحة من [[pg_stat_activity]]. بيخرج بـ 1 لو فيه migration فاشلة أو الاتصالات قربت من الحد، و [[--json]] للمراقبة.`, done: R`على قاعدة فيها migration فاشلة (زي اللي في الدرس) بيطبع [[Following migration have failed]] بالاسم و exit 1، وبعد [[migrate resolve]] بيطبع تمام، والأرقام طابقت [[psql]].`, ext: R`شغّله كل ساعة (درس جدولة المهام) وابعت تنبيه لو الحالة اتغيّرت.` },
+      ],
       items: [
         {
           cmd: "prisma generate",
@@ -17,6 +26,11 @@ npx prisma generate
 pnpm exec prisma generate
 npm pkg set scripts.postinstall="prisma generate"`,
           try: "ضيف حقل جديد في model في schema.prisma، وجرّب تستخدمه في الكود قبل generate وشوف خطأ الأنواع، وبعدين generate وشوفه اختفى.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** سكربت بيعمل [[import { PrismaClient } from "./generated/prisma/client.ts"]] قبل ما تعمل [[prisma generate]]. إيه الخطأ؟`, done: R`[[Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/app/generated/prisma/client.ts']]: الكود ده مش جاي من npm، بيتولّد. وبعد [[npx prisma generate]] (طبع [[✔ Generated Prisma Client (7.10.0) to ./generated/prisma in 46ms]]) اشتغل.` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** بعد generate، افتح [[generated/prisma]]. إيه الملفات اللي فيه؟ وفين بالظبط الدوال بتاعة [[User]]؟ ولازم الفولدر ده يدخل git؟`, done: R`لقيت [[client.ts]] و [[models.ts]] و [[enums.ts]] و [[models/]] و [[internal/]] و [[browser.ts]] و [[commonInputTypes.ts]]، والـ User في [[models/]]، وحطيت [[generated/]] في [[.gitignore]] لأنه بيتعمل من الـ schema.` },
+            { lvl: 'تحدي', t: R`**اقرا وتوقّع:** على [[node:22-slim]]، كل أمر prisma بيطلّع [[prisma:warn Prisma failed to detect the libssl/openssl version to use]]. ده بيوقف حاجة؟ وإيه الحل في الـ Dockerfile؟`, done: R`الأوامر كمّلت (generate و db push اشتغلوا مع adapter-pg)، بس التحذير بيقول إن المحرك ممكن ميشتغلش صح، والحل [[RUN apt-get update -y && apt-get install -y openssl]] في الصورة (ده اقتراح الرسالة نفسها بالنص: [[Please manually install OpenSSL via apt-get update -y && apt-get install -y openssl]]).` },
+          ],
           deep: {
             why: "Prisma بيديك أنواع مظبوطة لكل جدول وعمود، والتمن إن الكود ده لازم يتولّد. أغلب أخطاء Prisma الغريبة بعد pull أو في Docker سببها generate متعملش، أو اتعمل على schema قديمة.",
             how: R`[[validate]] بيتأكد إن الـ schema سليمة، و [[format]] بينسّقها. [[generate]] بيقرا الـ schema ويكتب كود الكلاينت: في Prisma 7 بالـ generator الجديد [[prisma-client]] بيتكتب في فولدر انت محدده بـ [[output]] (زي src/generated/prisma) وبتستورد منه، وفي النسخ القديمة كان بيتكتب جوه [[node_modules/.prisma/client]].
@@ -219,6 +233,12 @@ npx prisma db push --accept-data-loss
 # الصح:
 # command: sh -c "npx prisma migrate deploy && node src/server.js"`,
           try: "على قاعدة تجربة: اعمل model فيه عمود name وضيف كام صف، وغيّر اسمه لـ fullName، وشغّل db push واقرا التحذير. بعدها جرّب بـ --accept-data-loss وشوف الداتا راحت فين.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** قاعدة فاضية، و [[prisma.user.count()]] قبل [[db push]]، وبعده.`, done: R`قبل: [[PrismaClientKnownRequestError]] و [[The table public.User does not exist in the current database.]] بعد [[db push]] ([[Your database is now in sync with your Prisma schema. Done in 120ms]]): 0.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** جدول فيه صفين، وزوّدت [[phone String]] (مطلوب، من غير default) وعملت [[db push]]. هيحصل إيه؟`, done: R`رفض: [[Added the required column phone to the User table without a default value. There are 2 rows in this table, it is not possible to execute this step.]] واقترح [[--force-reset]] اللي بيمسح القاعدة كلها. الحل الصح: [[String?]] أو [[@default("")]] أو migration على خطوات.` },
+            { lvl: 'تطبيق', t: R`**محاكاة:** شيل عمود [[name]] من الـ schema وعمل [[db push]]، وبعدين [[db push --accept-data-loss]]. وبعدين رجّع العمود: الأسامي رجعت؟`, done: R`الأولى: [[You are about to drop the column name on the User table, which still contains 2 non-null values.]] و [[Use the --accept-data-loss flag]]. التانية مسحت العمود من غير سؤال، ولما رجّعته رجع فاضي: الداتا راحت.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** فرق [[db push]] و [[migrate dev]] في ٣ أسطر: مين بيسيب ملف SQL، ومين ينفع في فريق، ومين ينفع للإنتاج. واكتب سطر الـ compose الغلط والصح.`, done: R`كتبت إن push من غير تاريخ ومفيش ملفات فمحدش يقدر يكرر نفس التغيير، وإن migrate بيسيب [[prisma/migrations/*/migration.sql]] في git، والغلط [[db push --accept-data-loss && node server.js]] والصح [[migrate deploy && node server.js]].` },
+          ],
           flag: "danger",
           deep: {
             why: "db push مريح جدًا: تعدّل الـ schema، أمر واحد، والقاعدة زيها. عشان كده بيتسرّب لسكربتات التشغيل. وهناك بيبقى قنبلة: أول تعديل بيمسح عمود، بيمسح داتا العملاء مع أول deploy.",
@@ -366,6 +386,13 @@ docker compose logs --tail 50 app
 # أو في entrypoint.sh:
 # npx prisma migrate deploy && exec node server.js`,
           try: "في مشروع تجربة بـ compose: اعمل migration جديدة، وارفعها، وطبّقها بـ [[docker compose run --rm]] قبل [[up -d]]، وبعدين [[migrate status]] يقول كله متطبق.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** فيه migration اتعملت بـ [[--create-only]] ومتطبّقتش. [[prisma migrate status]] هيقول إيه؟ والـ exit code؟`, done: R`[[Following migration have not yet been applied: 20261103172514_add_phone]] ومعاها [[To apply migrations in production run prisma migrate deploy]]، و exit 1. يعني ينفع خطوة في CI أو قبل التشغيل.` },
+            { lvl: 'تطبيق', t: R`**محاكاة:** migration فيها [[ALTER TABLE "User" ADD COLUMN "age" INTEGER NOT NULL]] على جدول فيه صف. [[migrate deploy]] هيطلّع إيه؟ و [[migrate status]] بعدها؟`, done: R`[[Error: P3018]] و [[A migration failed to apply]] و [[Database error code: 23502]] و [[column "age" of relation "User" contains null values]]، و exit 1. و status: [[Following migration have failed]] ومعاها أمر [[migrate resolve --rolled-back]].` },
+            { lvl: 'تطبيق', t: R`**صلّح:** نفس الـ migration الفاشلة: امسح فولدرها (أو صلّحها)، وعلّمها [[--rolled-back]]، واتأكد.`, done: R`[[Migration 29990101000000_broken marked as rolled back.]] وبعدها [[Database schema is up to date!]]. وكتبت إن ده بس لو اتأكدت إن مفيش حاجة منها اتطبّقت (Postgres بيعمل كل migration في transaction فالعمود مااتضافش).` },
+            { lvl: 'تحدي', t: R`**ابني:** [[entrypoint.sh]] بـ [[set -e]]: [[npx prisma migrate deploy]] وبعدين [[exec node server.js]]. جرّبه بـ migration سليمة وبـ الـ migration الفاشلة، وتأكد إن السيرفر **مقامش** في الحالة التانية.`, done: R`السليمة: اللوج فيه [[All migrations have been successfully applied.]] والسيرفر قام. الفاشلة: [[P3018]] والـ container خرج بـ 1 والـ healthcheck عمره ما بقى healthy.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** ٣ replicas قاموا مع بعض وكل واحد عمل [[migrate deploy]] في الـ entrypoint. بيحصل إيه؟ ومتى الأحسن تخليه خطوة deploy منفصلة؟`, done: R`كتبت إن Prisma بيعمل advisory lock فواحد بس بيطبّق والباقي بيستنى (من وثائق Prisma)، بس الخطوة المنفصلة أوضح: بتفشل قبل ما أي نسخة جديدة تقوم، ولوجها في مكان واحد.` },
+          ],
           deep: {
             why: "الكود والقاعدة لازم يتحركوا مع بعض. deploy الكود من غير migration = أخطاء في كل request. و migration بتفشل في صمت = نفس النتيجة، بس انت فاكر كله تمام.",
             how: R`[[migrate status]] بيقولك إيه اللي لسه متطبقش، اقراه قبل أي deploy.
@@ -561,6 +588,12 @@ npx prisma studio
 npx prisma studio --port 5556 --browser none
 ssh -L 5555:localhost:5555 deploy@203.0.113.10`,
           try: "اكتب seed بيعمل أدمن بـ upsert، وشغّله مرتين، واتأكد إن مفيش أدمن مكرر. وبعدين افتح studio وشوفه.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** seed بيعمل [[prisma.user.create]] لأدمن بإيميل ثابت، وشغّلته مرتين. المرة التانية؟`, done: R`[[Unique constraint failed on the constraint: User_email_key]] (P2002) والـ seed وقع. والـ seed اللي بيقع في التانية بيوقف [[migrate dev]] و [[migrate reset]] كمان.` },
+            { lvl: 'تطبيق', t: R`**صلّح:** حوّله لـ [[upsert({ where: { email }, update: {}, create: {...} })]] وشغّله مرتين.`, done: R`المرتين طبعوا [[users: 1]]، و [[npx prisma db seed]] طبع [[Running seed command node prisma/seed.js ...]] ونجح.` },
+            { lvl: 'تطبيق', t: R`**ابني:** seed بيعمل ٢٠ طلب بأسعار وتواريخ متنوعة من غير مكتبة fake (بـ array أسامي و [[i % n]])، والطلبات مربوطة بيوزرز موجودين، وبيمسح الطلبات القديمة بتاعة الـ seed بس (عليها [[source: "seed"]]).`, done: R`بعد seed مرتين: ٢٠ طلب مش ٤٠، والطلبات اللي انت عملتها بإيدك من studio لسه موجودة.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** ليه [[prisma studio]] على سيرفر الإنتاج بـ [[--hostname 0.0.0.0]] خطر؟ واكتب أمر [[ssh -L]] اللي بيوصلك ليه من غير ما تفتح بورت.`, done: R`كتبت إن studio بيعدّل أي جدول من غير login، وإن [[ssh -L 5555:localhost:5555 user@server]] (بأسامي وهمية) وstudio سامع على localhost بس هو الطريقة، وتقفله أول ما تخلص.` },
+          ],
           deep: {
             why: "كل واحد جديد في الفريق، وكل قاعدة تجربة بعد reset، محتاجة نفس البيانات الأولية. من غير seed كل واحد بيعملها بإيده وبشكل مختلف.",
             how: R`أمر الـ seed بيتعرّف مرة: في Prisma 7 جوه [[prisma.config.ts]] تحت [[migrations.seed]] (زي [[node --env-file=.env prisma/seed.js]] أو [[tsx prisma/seed.ts]])، وفي النسخ القديمة في package.json تحت [[prisma.seed]]. و [[npx prisma db seed]] بينفّذه. ومتعتمدش إنه يتشغّل لوحده بعد migrate، شغّله صريح.

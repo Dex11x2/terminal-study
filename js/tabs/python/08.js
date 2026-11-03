@@ -4,6 +4,14 @@ MORE("python", [
       t: "سكربتات أتمتة كاملة",
       l: 2,
       n: "سكربتات حقيقية من أولها لآخرها: ترتيب Downloads، وتغيير أسماء بالجملة، وملفات مكررة، وتنضيف القديم، وتقرير CSV، ومراقبة مواقع، و backup، وتصغير صور، وإيميل",
+      projects: [
+        { lvl: 'صغير', t: R`منظّف سطح المكتب`, what: R`نسخة من [[organize_downloads.py]] لسطح المكتب: الملفات اللي عمرها أكتر من ٧ أيام بس تروح [[Desktop/Archive/YYYY-MM]]، والاختصارات ([[.lnk]] و [[.desktop]]) متتلمسش.`, done: R`[[--dry-run]] بيطبع الخطة، و [[--apply]] بينفّذ، والتشغيل التاني مبيحرّكش حاجة، والاختصارات مكانها.` },
+        { lvl: 'صغير', t: R`تقرير المساحة الأسبوعي`, what: R`سكربت بيطبع أكبر ٢٠ ملف وأكبر ١٠ فولدرات في فولدر، والمساحة الفاضية على الديسك ([[shutil.disk_usage]])، ويحفظ التقرير CSV بالتاريخ عشان تقارن الأسابيع.`, done: R`التقرير بيتعمل في أقل من دقيقة على فولدر اليوزر، والفولدرات اللي ممنوع تدخلها بتتعد كتحذير، وتقريرين ورا بعض بيتقارنوا بسكربت صغير بيطلّع اللي كبر.` },
+        { lvl: 'متوسط', t: R`أرشيف الفواتير`, what: R`فولدر بيوصله PDFs فواتير بأسماء عشوائية، والسكربت بيطلّع التاريخ ورقم الفاتورة من الاسم أو من أول صفحة (لو مكتبة [[pypdf]] متسطّبة)، ويسمّيها [[YYYY-MM-DD_INV-123.pdf]] وينقلها لفولدر السنة، ويطلّع CSV بكل الفواتير.`, done: R`١٠ فواتير تجريبية اتسمّت واتنقلت صح، والفاتورة اللي معرفش يقراها راحت [[_review]] مع سطر في اللوج، والتشغيل التاني مبيعملش حاجة.` },
+        { lvl: 'متوسط', t: R`مراقب مواقع بإيميل`, what: R`ادمج [[uptime_check.py]] و [[notify.py]]: الفحص كل ٥ دقايق (cron أو Task Scheduler)، والإيميل بيتبعت بس لما الحالة تتغيّر، وفيه السبب ومدة الوقعة لما الموقع يرجع.`, done: R`وقعة لموقع محلي (اقفله دقيقتين) بتبعت إيميل واحد عند الوقوع وواحد عند الرجوع فيه المدة، ومفيش إيميلات مكررة، وكل ده متجرّب على aiosmtpd.` },
+        { lvl: 'كبير', t: R`[[housekeeper]]: صيانة جهازك بأمر واحد`, what: R`أداة بأوامر فرعية بتجمع سكربتات الوحدة: [[organize]] و [[dupes]] و [[clean]] و [[backup]] و [[report]]، والإعدادات كلها في [[housekeeper.yaml]] (الفولدرات، الأيام، عدد الـ backups، الإيميل). كل أمر بـ [[--dry-run]] افتراضي و [[--apply]]، ولوج موحّد بـ rotation، وإيميل ملخص في الآخر لو اتطلب، و exit code مختلف لكل نوع فشل، واختبارات لكل أمر على شجرة ملفات مؤقتة.`, done: R`[[housekeeper all --apply]] بيعدّي على الخمسة ويطبع ملخص (اتنقل كام، اتمسح كام، اتوفّر كام MB، اتعمل backup فين)، والتشغيل التاني ورا بعضه مبيغيّرش حاجة، وأي أمر بيفشل مبيوقّفش الباقي بس بيخلّي الـ exit code مش صفر، والاختبارات خضرا على ويندوز ولينكس.`, ext: R`اعمله pipx package (وحدة «سكربتات محترمة»)، وجدوله أسبوعيًا، وزوّد [[--undo]] لآخر [[organize]].` },
+        { lvl: 'فكرة', t: R`أتمتة لحد تاني`, what: R`اسأل حد قريب منك (محل، مكتب، زميل) بيعمل إيه بإيده على الكمبيوتر كل يوم، واختار حاجة واحدة واعمل لها سكربت كامل بالمعايير دي.`, done: R`السكربت شغال عنده هو (مش عندك بس)، وفيه طريقة تشغيل يفهمها من غير ترمنال (اختصار أو [[.bat]])، ورجعلك برأيه بعد أسبوع.`, ext: R`حوّله لحاجة ممكن تتباع: إعدادات من ملف، ورسايل خطأ مفهومة، ودليل تسطيب.` },
+      ],
       items: [
         {
           cmd: "organize_downloads.py",
@@ -54,6 +62,13 @@ if __name__ == "__main__":
     main()`,
           try: R`متجربش على Downloads الحقيقي الأول. اعمل فولدر تجربة: [[mkdir -p dl/Images && cd dl && touch cv.pdf "Photo 1.JPG" logo.png setup.exe movie.mkv data.tar.gz notes.TXT song.mp3 big.iso.part .hidden Images/logo.png && cd ..]]. شغّل [[python3 organize_downloads.py dl]]، وبعدين بـ [[--apply]]، وبعدين من غير [[--apply]] تاني. وبعدين ضيف [[.mp3]] لمجموعة جديدة [[Music]]. على ويندوز PowerShell: [[mkdir dl/Images]]، وبعدين جوه dl [[New-Item cv.pdf, "Photo 1.JPG", logo.png, ...]] بنفس الأسماء مفصولة بفواصل.`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** على فولدر التجربة اللي في الـ «جرّب»، من غير [[--apply]]: كام ملف هيتنقل؟ و [[big.iso.part]] و [[.hidden]] و [[Images/logo.png]] هيحصلهم إيه؟ اكتب توقعك وبعدين شغّله.`, done: R`كتبت العدد قبل التشغيل وطابق، وعرفت من الكود ليه كل واحد من التلاتة اتعامل بالشكل ده (ملف لسه بيتحمّل، ملف مخفي، اسم موجود في المكان اللي رايحله)، ومفيش ولا ملف اتحرك فعلًا.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** شغّل السكربت بـ [[--apply]] مرتين ورا بعض بعد ما تحط [[logo.png]] جديد في [[dl]] وفيه [[Images/logo.png]] قديم. اتأكد إن مفيش ملف اتكتب فوق التاني، ولو حصل صلّحه.`, done: R`الملف الجديد اتحفظ باسم زي [[logo (1).png]] والقديم زي ما هو (اتأكدت بالمحتوى مش بالاسم)، والتشغيل التالت مبيحرّكش حاجة.` },
+            { lvl: 'تطبيق', t: R`**ابني:** خلّي المجموعات تيجي من [[groups.json]] جنب السكربت بدل ما تبقى في الكود، وضيف [[Music]] لـ [[.mp3]] و [[.m4a]] من الملف بس.`, done: R`تعديل الملف من غير ما تلمس الكود بيغيّر الترتيب، و JSON بايظ بيطلّع رسالة فيها رقم السطر ويخرج بـ ٢، وامتداد في مجموعتين بيطلّع تحذير.` },
+            { lvl: 'تطبيق', t: R`**اكتب اختبار:** بـ [[tmp_path]] اعمل ١٠ ملفات بامتدادات مختلفة (منهم [[.JPG]] كابيتال وواحد من غير امتداد)، وشغّل دالة الترتيب، وقارن الشجرة اللي طلعت بـ set متوقع.`, done: R`الاختبار أخضر، والملف من غير امتداد راح [[Other]]، و [[.JPG]] راح [[Images]]، واختبار تاني بيشغّل الدالة مرتين ويتأكد إن التانية مبتعملش حاجة.` },
+            { lvl: 'تحدي', t: R`**ابني:** [[--undo]]: السكربت بيكتب كل نقل في [[moves.jsonl]] (سطر JSON لكل ملف: من وإلى والوقت)، و [[--undo]] بيرجّع آخر تشغيل بالظبط.`, done: R`بعد [[--apply]] وبعدها [[--undo]] الفولدر رجع زي الأول (قارنت [[sorted(rglob)]] قبل وبعد)، والفولدرات اللي اتعملت وفضلت فاضية اتشالت، و [[--undo]] مرتين مبيوقّعش.` },
+          ],
           deep: {
             why: "Downloads بيتملي من غير ما تحس، وتدوّر على PDF وسط ٤٠٠ ملف. السكربت ده بيترتب في ثانية، ولو اتجدول (المستوى ٣) يفضل مترتب لوحده.",
             how: R`[[GROUPS]] dict من اسم الفولدر لـ set امتدادات. البحث في set سريع، وإضافة نوع جديد سطر واحد.
@@ -446,6 +461,12 @@ if __name__ == "__main__":
     sys.exit(main())`,
           try: R`[[mkdir trip && touch trip/IMG_20260915_143210.JPG trip/IMG_20260915_150001.jpg "trip/WhatsApp Image 2026-09-16 at 10.15.jpeg" trip/notes.txt]]. شغّل [[python3 batch_rename.py trip --prefix trip --glob "*.[jJ]*" --dry-run]]، وبعدين من غير --dry-run، وبعدين تاني. وبعدين حالة صعبة: [[mkdir sw && echo A > sw/a.jpg && echo B > sw/photo_001.jpg]] و [[python3 batch_rename.py sw]] واقرا محتوى الملفين بعدها. على ويندوز سطور التجهيز دي شغّلها في Git Bash، أو في PowerShell بـ [[New-Item]] و [[Set-Content]]. جربت السكربت على ويندوز وطلع نفس الخطة ونفس النتيجة في الحالة الصعبة.`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** حالة [[sw]] اللي في الـ «جرّب» ([[a.jpg]] فيه A و [[photo_001.jpg]] فيه B). لو السكربت بيغيّر الأسماء واحد واحد على طول، هيحصل إيه للمحتوى؟ وبعدين شغّله واقرا الملفين.`, done: R`فهمت إن rename مباشر ممكن يكتب فوق ملف لسه ماتغيّرش اسمه، وإن السكربت بيمنع ده (بأسماء مؤقتة أو فحص قبل التنفيذ)، والمحتوى A و B لسه موجودين بعد التشغيل.` },
+            { lvl: 'تطبيق', t: R`**قارن:** [[Path.rename]] و [[Path.replace]] و [[os.rename]] لما الاسم الجديد موجود، على ويندوز وعلى لينكس.`, done: R`على ويندوز [[rename]] وقع بـ [[FileExistsError]] و [[replace]] كتب فوق، وعلى لينكس الاتنين كتبوا فوق في صمت. فكتبت فحص [[exists()]] قبل أي rename بدل ما أعتمد على النظام.` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** زوّد شكل اسم تالت: [[Screenshot_2026-09-17-08-30-12.png]] و [[PXL_20260918_101500123.jpg]]، والاسم اللي مفيهوش تاريخ ياخد تاريخ آخر تعديل.`, done: R`الأشكال الأربعة بتتحوّل لـ [[YYYY-MM-DD_prefix_NNN.ext]] في [[--dry-run]]، والترقيم متسلسل حسب التاريخ والوقت، وملف من غير تاريخ في الاسم مكتوب جنبه [[(mtime)]].` },
+            { lvl: 'تحدي', t: R`**اكتب اختبار:** اختبارات لدالة [[plan(names)]] اللي بترجّع لستة [[(old, new)]] من غير ما تلمس الديسك: تاريخين في نفس اليوم، وامتداد [[.JPEG]]، واسم جديد بيخبط في اسم قديم، ونفس الدالة مرتين.`, done: R`٥ اختبارات خضرا من غير أي ملف حقيقي، والخطة التانية على أسامي اتغيّرت خلاص بترجّع [[[]]] (مفيش حاجة تتغيّر).` },
+          ],
           deep: {
             why: R`تغيير أسماء بالجملة من أخطر الحاجات: اسمين بقوا واحد = ملف اتمسح من غير ولا رسالة، لأن [[rename]] على لينكس وماك بيكتب فوق الموجود. وبعد ما تغيّر ٣٠٠ اسم مفيش undo.`,
             how: R`[[DATE]] بيلقط [[20260915]] و [[2026-09-15]] (الشرطة [[-?]] اختيارية). [[m[1] ]] أول group، و [[{i:03d}]] الرقم بـ 3 خانات ([[001]]) عشان الترتيب بالاسم يفضل صح بعد 9 و 99.
@@ -795,6 +816,13 @@ if __name__ == "__main__":
     sys.exit(main(Path(sys.argv[1] if len(sys.argv) > 1 else ".")))`,
           try: R`جهّز: [[mkdir -p pics/2025 pics/backup && head -c 2000000 /dev/urandom > pics/2025/beach.jpg && cp pics/2025/beach.jpg "pics/backup/beach (copy).jpg" && cp pics/2025/beach.jpg pics/IMG_0001.jpg && head -c 2000000 /dev/urandom > pics/2025/other.jpg && echo hello > pics/a.txt && echo hello > pics/backup/a-old.txt && echo world > pics/b.txt && touch pics/empty1 pics/empty2]]. شغّل السكربت على [[pics]]. ليه [[b.txt]] ماظهرش مع إن حجمه زي [[a.txt]]؟ وليه [[empty1]] و [[empty2]] ماظهروش؟ أوامر التجهيز دي bash: على ويندوز شغّلها في Git Bash (فيه head و cp و touch و /dev/urandom)، والسكربت نفسه من أي ترمنال.`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**اشرحها:** في الـ «جرّب» [[b.txt]] حجمه زي [[a.txt]] وماظهرش مكرر، و [[empty1]] و [[empty2]] ماظهروش. اكتب في ٣ سطور ليه.`, done: R`كتبت إن الحجم بيفلتر بس والـ hash هو اللي بيحكم (hello و world نفس الحجم ومحتوى مختلف)، وإن الملفات الفاضية متستبعدة عمدًا لأن كل الفاضيين «متطابقين» ومالهمش لازمة في التقرير.` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** على ملف ٥٠٠ ميجا، قيس الـ hash بـ [[read()]] مرة واحدة، وبـ chunks ١ ميجا، وبـ [[hashlib.file_digest(f, "sha256")]] (من 3.11). وبص على الذاكرة في Task Manager أو [[top]].`, done: R`الـ ٣ طلّعوا نفس الـ hash، و [[read()]] الذاكرة طلعت لحجم الملف تقريبًا، والاتنين التانيين ثابتين. كتبت الأوقات التلاتة.` },
+            { lvl: 'تطبيق', t: R`**ابني:** خطوة وسط بين الحجم والـ hash الكامل: hash أول ٤ كيلو بس، والملفات اللي أولها متطابق بس هي اللي تتعمل hash كامل.`, done: R`على فولدر صور كبير عدد الملفات اللي اتقرت كاملة قلّ (اطبع الرقم قبل وبعد)، والنتيجة النهائية زي النسخة القديمة بالظبط.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[--delete-keep oldest]]: من كل مجموعة سيب أقدم ملف وانقل الباقي لفولدر [[_dupes]] (مش مسح)، و [[--dry-run]] الأول.`, done: R`بعد التنفيذ [[find_duplicates.py]] على الفولدر نفسه بيقول «مفيش مكرر»، وكل ملف في [[_dupes]] ليه نسخة أصلية، والمساحة اللي اتوفرت مطبوعة.` },
+            { lvl: 'تحدي', t: R`**بيانات حقيقية:** شغّله على فولدر حقيقي عندك (صور أو تحميلات) بـ [[--json]]، واطلع منه: أكبر ٥ مجموعات بالمساحة الضايعة، وأكتر فولدر فيه مكررات.`, done: R`كتبت الأرقام الحقيقية (عدد المجموعات والمساحة الضايعة)، والسكربت كمّل على ملف مقفول أو ممنوع تقراه بتحذير، ومفيش حاجة اتمسحت.` },
+          ],
           deep: {
             why: "الصور والفيديوهات المتكررة بتاكل جيجات: backup فوق backup، وتحميل نفس الملف مرتين، ونسخ من الموبايل كذا مرة. والسكربت بيوريك فين وقد إيه قبل ما تمسح بإيدك.",
             how: R`[[hashlib.sha256()]] بياخد bytes على دفعات بـ [[update]] ويطلّع بصمة 64 حرف. أي اختلاف ولو byte واحد بيغيّر البصمة كلها. القراية بـ 1MB في المرة ([[while block := f.read(chunk)]]) عشان فيديو 4GB ميتحمّلش في الذاكرة. ومن Python 3.11 فيه [[hashlib.file_digest(f, "sha256")]] بيعمل نفس اللفة.
@@ -1085,6 +1113,12 @@ if __name__ == "__main__":
     raise SystemExit(main())`,
           try: R`جهّز ملفات بأعمار مختلفة: [[mkdir -p logs/old && head -c 4096 /dev/urandom > logs/app-2026-08-01.log && touch -d "61 days ago" logs/app-2026-08-01.log && head -c 2048 /dev/urandom > logs/old/worker.log && touch -d "40 days ago" logs/old/worker.log && echo x > logs/app.log && touch -d "40 days ago" logs/keep.txt]]. شغّل [[python3 clean_old_files.py logs --days 30 --pattern "*.log"]]، وبعدين بـ [[--apply]]. وجرّب على [[~]]، ومن غير [[--days]]. على ويندوز شغّل أوامر التجهيز في Git Bash ([[touch -d]] هناك شغال)، وجربتها كده ونفس النتيجة، والمسار بيتطبع [[old\worker.log]] و [[refusing to clean C:\Users\...]].`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** على [[logs]] اللي في الـ «جرّب» بـ [[--days 30 --pattern "*.log"]]: أنهي ملفات هتطلع؟ وليه [[keep.txt]] لأ رغم إنه عمره ٤٠ يوم؟`, done: R`طلع [[app-2026-08-01.log]] و [[old/worker.log]] بس، و [[keep.txt]] ماطلعش عشان الـ pattern [[*.log]]، و [[app.log]] جديد. والمساحة اللي هتتوفر مكتوبة.` },
+            { lvl: 'تطبيق', t: R`**اكتب اختبار:** اعمل ملفات في [[tmp_path]] وغيّر عمرها بـ [[os.utime(path, (t, t))]] (من غير [[touch -d]]) بحيث يشتغل على ويندوز ولينكس، واختبر حد الـ ٣٠ يوم بالظبط (٢٩ و ٣٠ و ٣١).`, done: R`الاختبار أخضر على الاتنين، وقررت وكتبت في الاختبار إن ٣٠ بالظبط بتتمسح ولا لأ، والكود ماشي على قرارك.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** شغّل السكربت على [[~]] أو على [[/]] بـ [[--apply]] (من غير ما تأكد). لو السكربت قبل، ضيف حماية.`, done: R`السكربت بيرفض فولدر اليوزر نفسه وجذر الديسك وأي فولدر فيه [[.git]] برسالة واضحة، إلا لو [[--i-know]]، والفحص بعد [[resolve()]].` },
+            { lvl: 'تحدي', t: R`**ابني:** [[--keep-min 5]]: حتى لو كل الملفات قديمة، سيب أحدث ٥ دايمًا (عشان فولدر backups ميفضاش لو السكربت اللي بيعمل الـ backup وقف من شهرين).`, done: R`على فولدر فيه ٢٠ ملف كلهم أقدم من ٣٠ يوم، فضل أحدث ٥، و [[--dry-run]] بيقول جنب كل ملف اتساب ليه.` },
+          ],
           deep: {
             why: R`فولدر logs على السيرفر بيكبر لحد ما الـ disk يتملي والتطبيق يقف ([[No space left on device]]). سكربت متجدول كل ليلة بيمنع ده. وأي غلطة فيه بتمسح حاجات مهمة، فالحماية مش رفاهية.`,
             how: R`[[required=True]] على option: argparse يرفض من غيره. ومفيش default للأيام قصد: الرقم ده لازم حد يفكر فيه.
@@ -1375,6 +1409,12 @@ if __name__ == "__main__":
     sys.exit(main(Path(sys.argv[1]), Path(sys.argv[2] if len(sys.argv) > 2 else "report.csv")))`,
           try: R`اعمل فولدر [[orders]] بالأوامر اللي في الحل (3 طلبات سليمة، واحد منهم من غير city و items فاضية، وملف رابع مقطوع). شغّل [[python3 json_to_csv.py orders]] و [[cat report.csv]]. وبعدين زوّد عمود [[top_sku]] فيه الـ sku الأغلى في الطلب.`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا:** شغّله على [[orders]] بتاع الحل. الملف المقطوع والطلب اللي مفيهوش city حصلهم إيه؟ وفين الرسايل دي، stdout ولا stderr؟`, done: R`المقطوع اتطبع كتحذير على stderr بالاسم والسبب ومادخلش التقرير، والطلب من غير city دخل وخانته فاضية، و [[> out.txt]] مسك التقرير بس.` },
+            { lvl: 'تطبيق', t: R`**ابني:** زوّد عمود [[top_sku]] (أغلى item في الطلب) وعمود [[items_count]]، والطلب اللي [[items]] بتاعه فاضية ياخد [[-]] و [[0]].`, done: R`العمودين في التقرير ومطابقين لحساب بإيدك على ٣ طلبات، والطلب الفاضي مبيوقّعش [[max()]].` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** ولّد ١٠٠٠ ملف طلب عشوائي بـ [[random]] و seed ثابت (عملا وأسعار ومدن)، وشغّل السكربت، وبعدين افتح الـ CSV في Excel أو LibreOffice.`, done: R`١٠٠٠ صف والإجمالي في آخر سطر مطابق لـ [[sum]] في Python، والعربي سليم، والوقت الكلي مكتوب.` },
+            { lvl: 'تحدي', t: R`**refactor:** افصل السكربت لـ ٣ دوال: [[load_orders(folder)]] و [[to_rows(orders)]] و [[write_csv(rows, out)]]، واكتب اختبار لكل واحدة لوحدها.`, done: R`ناتج السكربت قبل وبعد متطابق بالبايت، و [[to_rows]] بتتختبر من غير أي ملفات، والتلات اختبارات خضرا.` },
+          ],
           deep: {
             why: "export من نظام، أو responses API متخزنة، أو ملفات إعدادات لكل جهاز: بيانات JSON متفرقة، والناس عايزاها في جدول. ده من أكتر السكربتات اللي هتكتبها في أي شغل.",
             how: R`[[load]] بترجّع dict جاهز للـ CSV أو [[None]] لو الملف بايظ. فصل القراية عن الكتابة بيخلي كل جزء سهل يتختبر.
@@ -1693,6 +1733,12 @@ if __name__ == "__main__":
     sys.exit(main(Path(sys.argv[1] if len(sys.argv) > 1 else "urls.txt")))`,
           try: R`اعمل [[urls.txt]] فيه [[https://example.com]] و [[https://www.python.org/]] و [[https://pypi.org/nope-404]] وسطر [[http://127.0.0.1:1/]] (بورت مقفول) و [[http://no-such-host.invalid/]]، وسطر بيبدأ بـ [[#]]. شغّله و [[echo $?]] (في PowerShell [[$LASTEXITCODE]]). ولو عندك سيرفر محلي بيتأخر، جرّب رابط بيرد بعد 7 ثواني.`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا:** شغّل السكربت على [[urls.txt]] بتاع الـ «جرّب» واكتب السبب اللي ظهر جنب كل DOWN: الـ 404، والبورت المقفول، والـ host اللي مش موجود.`, done: R`كل واحد ليه سبب مختلف (status ولا اتصال مرفوض ولا DNS)، والسطر اللي بيبدأ بـ [[#]] اتجاهل، والـ exit code ١ لأن فيه DOWN.` },
+            { lvl: 'تطبيق', t: R`**محاكاة:** اعمل سيرفر محلي بـ [[http.server]] فيه [[/ok]] و [[/slow]] (بيستنى ٧ ثواني) و [[/err]] (بيرجّع ٥٠٠)، وحطهم في [[urls.txt]].`, done: R`[[/ok]] UP بوقت صغير، و [[/slow]] DOWN بـ timeout بعد الحد اللي في السكربت مش بعد ٧ ثواني، و [[/err]] DOWN بـ ٥٠٠، والسيرفر بيقفل في الآخر.` },
+            { lvl: 'تطبيق', t: R`**ابني:** شغّل الفحوصات بالتوازي بـ [[ThreadPoolExecutor(max_workers=10)]] (درس «concurrent.futures»)، والناتج بنفس ترتيب الملف.`, done: R`١٠ روابط منهم ٣ بطيئين خلصوا في وقت أبطأ واحد تقريبًا مش مجموعهم، والترتيب زي الملف.` },
+            { lvl: 'تحدي', t: R`**ابني:** الحالة في [[state.json]]، والسكربت بيطبع بس اللي **اتغيّر** من آخر مرة (كان UP بقى DOWN أو العكس)، عشان cron ميبعتلكش نفس الإنذار كل ٥ دقايق.`, done: R`أول تشغيل بيطبع الكل، والتاني من غير تغيير مبيطبعش حاجة ويخرج بـ ٠، ولما موقع يقع بيطبعه هو بس ويخرج بـ ١، ولما يرجع بيطبع «رجع».` },
+          ],
           deep: {
             why: "تعرف إن موقعك واقع من سكربت قبل ما تعرف من عميل زعلان. ومش محتاج خدمة مدفوعة لمشروع صغير: سكربت ٣٠ سطر و cron كل ٥ دقايق.",
             how: R`[[Request(url, headers=...)]]: User-Agent باسم السكربت. مواقع كتير بترفض [[Python-urllib]] الافتراضي بـ 403، وفي logs السيرفر هتعرف الطلبات دي جاية منين.
@@ -1961,6 +2007,12 @@ if __name__ == "__main__":
     sys.exit(main())`,
           try: R`[[mkdir -p project/src && echo 'print("hi")' > project/src/app.py && head -c 50000 /dev/urandom > project/data.bin]]. شغّل [[python3 backup_zip.py project backups --keep 2]] تلات مرات بينهم ثانية، وبعدين [[ls backups]] و [[python3 -m zipfile -l]] على آخر واحد. وجرّب [[python3 backup_zip.py project project/backups]]. على ويندوز سطر التجهيز ده bash، شغّله في Git Bash (جربته كده وطلع نفس الناتج).`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** [[shutil.get_archive_formats()]] في Python 3.14 وفي [[python:3.12-slim]].`, done: R`الاتنين فيهم [[zip]] و [[tar]] و [[gztar]] و [[bztar]] و [[xztar]]، و 3.14 زوّد [[zstdtar]] (ضغط zstd جديد في المكتبة القياسية). فلو السكربت هيشتغل على نسخ مختلفة، استخدم [[zip]] أو [[gztar]].` },
+            { lvl: 'تطبيق', t: R`**اقرا:** جرّب [[python3 backup_zip.py project project/backups]] (الـ backup جوه الفولدر نفسه). إيه اللي حصل، وإيه اللي كان ممكن يحصل لو السكربت مكانش بيفحص؟`, done: R`السكربت رفض برسالة، وفهمت إن من غير الفحص كل backup كان هيبقى جواه الـ backups اللي قبله، والحجم يكبر كل مرة.` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** نفس الفولدر بـ [[zip]] و [[gztar]] و [[xztar]] (و [[zstdtar]] على 3.14). اكتب الحجم والوقت لكل واحد.`, done: R`جدول ٤ صفوف بالأرقام الحقيقية، وعرفت إن [[xztar]] غالبًا الأصغر والأبطأ، وإن ملفات متضغطة أصلًا (zip و jpg) مبتصغرش تقريبًا.` },
+            { lvl: 'تحدي', t: R`**اكتب اختبار:** بعد كل backup السكربت يفتح الـ zip بـ [[zipfile]] ويعمل [[testzip()]] ويقارن عدد الملفات بالفولدر، ولو فيه مشكلة يمسح الـ zip البايظ ويخرج بـ ١.`, done: R`backup سليم بيطبع «اتأكدت: N ملف»، ولو بوّظت byte في نص الـ zip بإيدك بعد ما اتعمل (في اختبار) الفحص بيمسكه.` },
+          ],
           deep: {
             why: R`أول مرة الـ disk يبوظ أو حد يمسح فولدر غلط، الـ backup هو الفرق بين «رجّعته في دقيقة» و «ضاع». و backup باسم ثابت بيدوس على اللي قبله، و backups من غير تنضيف بتملا الـ disk في شهر.`,
             how: R`[[make_archive(base, "zip", root_dir, base_dir)]]: [[base]] اسم الملف من غير [[.zip]] (بيضيفه لوحده ويرجّع المسار كامل). [[root_dir]] الفولدر اللي الأرشيف بيبدأ منه، و [[base_dir]] اللي جواه هيتحط. كده الـ zip جواه [[project/...]] مش المسارات الكاملة من [[/home]]. والأنواع: [["zip"]] و [["gztar"]] و [["bztar"]] و [["xztar"]].
@@ -2256,6 +2308,12 @@ if __name__ == "__main__":
     sys.exit(main())`,
           try: R`حط في فولدر [[photos]] كام صورة من موبايلك (منهم واحدة طولية) و PNG شفاف (لوجو)، وملف txt. [[pip install Pillow]] في venv وشغّل [[python resize_images.py photos small --max 1600]]. افتح الصورة الطولية والـ PNG في [[small]]. وبعدين جرّب [[python3 -S resize_images.py photos small]] (بيشغّل Python من غير المكتبات المتسطبة).`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** صورة PNG شفافة ([[RGBA]]) وانت بتحفظها JPEG. اقرا الخطأ (Pillow 12.0.0).`, done: R`[[OSError: cannot write mode RGBA as JPEG]]، وصلّحته بـ [[im.convert("RGB")]] (أو تلصقها على خلفية بيضا بـ [[Image.new]] و [[paste]] عشان الشفاف ميبقاش أسود)، أو تسيب الـ PNG يتحفظ PNG.` },
+            { lvl: 'تطبيق', t: R`**اقرا:** صورة طولية من الموبايل بعد التصغير ظهرت نايمة. شغّل السكربت عليها من غير [[ImageOps.exif_transpose]] وبيه.`, done: R`من غيره الصورة نايمة (الموبايل بيحفظ اتجاهها في EXIF مش في البكسلات)، وبيه طلعت سليمة، وعرفت ليه السطر ده لازم قبل [[thumbnail]].` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** صورة واحدة بـ [[quality=95]] و [[85]] و [[70]] و WEBP بـ [[80]]. اكتب الحجم لكل واحدة وافتحهم جنب بعض.`, done: R`جدول بالأحجام الحقيقية، وكتبت أقل quality مش باين فيها فرق بعينك، وإن WEBP كان أصغر من JPEG بنفس الشكل تقريبًا.` },
+            { lvl: 'تحدي', t: R`**ابني:** [[--watermark "نص"]] بيكتب نص في الركن بـ [[ImageDraw]] وخط عربي (ملف [[.ttf]] بتحدده)، وبيتخطى الصور اللي اتصغّرت قبل كده (بيقارن mtime الأصل بالناتج).`, done: R`العلامة ظاهرة في كل الصور بنفس المكان والحجم النسبي، والتشغيل التاني بيقول «اتخطيت N»، ولو عدّلت صورة واحدة بتتعمل هي بس.` },
+          ],
           deep: {
             why: R`رفع ٢٠٠ صورة لموقع أو إرسالهم بإيميل بحجمهم الأصلي: بطيء وممكن يترفض. وبرنامج صور بيصغّرهم واحدة واحدة. السكربت ثواني.`,
             how: R`[[try: from PIL import ...]] و [[except ImportError]]: الـ dependency اختيارية، فالرسالة بتقول الحل بدل [[ModuleNotFoundError]]. (اسم المكتبة Pillow بس الـ import [[PIL]].)
@@ -2549,6 +2607,12 @@ if __name__ == "__main__":
 
 في PowerShell المتغيرات بتتكتب قبلها: [[$env:SMTP_HOST="localhost"; $env:SMTP_PORT="8025"; $env:SMTP_TLS="0"; $env:SMTP_USER="bot@example.com"; $env:MAIL_TO="you@example.com"]] وبعدين [[python notify.py "Backup ok: 3 files" "النسخة الاحتياطية خلصت" report.csv]].`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** مع [[python -m aiosmtpd -n -l localhost:8025]] (aiosmtpd 1.4.6)، شغّل السكربت بـ [[SMTP_TLS=1]]. هيطبع إيه؟`, done: R`[[SMTPNotSupportedError: STARTTLS extension not supported by server.]]، لأن السيرفر التجريبي مفيهوش TLS. وفهمت إن نفس الرسالة على سيرفر حقيقي معناها إعداد غلط، ومينفعش السكربت يكمّل من غير تشفير.` },
+            { lvl: 'تطبيق', t: R`**اقرا:** ابعت إيميل بعنوان عربي ومرفق [[report.csv]]، وبص على اللي aiosmtpd طبعه.`, done: R`العنوان ظاهر متشفّر بشكل [[=?utf-8?...?=]] والمرفق ليه جزء لوحده فيه [[Content-Disposition: attachment; filename="report.csv"]]، يعني [[EmailMessage]] عمل الترميز لوحده.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[run_and_notify.py -- COMMAND...]] بيشغّل أي أمر بـ [[subprocess.run]]، وبعد ما يخلص يبعت إيميل فيه الـ exit code والمدة وآخر ٢٠ سطر من الناتج.`, done: R`[[run_and_notify.py -- python -c "import sys; sys.exit(3)"]] بيبعت إيميل عنوانه فيه «FAILED (3)»، وأمر ناجح عنوانه «OK»، والسكربت نفسه بيخرج بنفس الـ exit code بتاع الأمر.` },
+            { lvl: 'تحدي', t: R`**اكتب اختبار:** اختبر دالة بناء الرسالة من غير شبكة (العنوان والمستلم والمرفق)، واختبر دالة الإرسال بـ [[patch("smtplib.SMTP")]] واتأكد إنها نادت [[starttls]] و [[login]] و [[send_message]] بالترتيب.`, done: R`الاختبارين خضر من غير سيرفر، والترتيب اتأكد بـ [[mock_calls]]، ولو [[SMTP_PASSWORD]] مش موجود الدالة بترمي خطأ واضح قبل ما تفتح اتصال.` },
+          ],
           deep: {
             why: R`cron بيشغّل الـ backup الساعة 2 بالليل وبيفشل، ومحدش بيعرف لحد ما تحتاج الـ backup. إيميل «فشل» (أو تقرير كل يوم) بيقفل الدايرة.`,
             how: R`[[EmailMessage]]: الـ headers زي dict ([[msg["Subject"] ]])، و [[set_content]] النص (العربي بيتعمله encoding لوحده). و [[add_attachment]] محتاج النوع: [[mimetypes.guess_type("report.csv")]] بيرجّع [[text/csv]].
@@ -2788,7 +2852,546 @@ aWQsdG90YWwKMSw1Cg==
 وبورت مقفول: [[error: could not send: [Errno 111] Connection refused]]، وعلى ويندوز [[error: could not send: [WinError 10061] No connection could be made because the target machine actively refused it]]. (جربت الأربع حالات على لينكس، والإرسال والبورت المقفول على ويندوز كمان.)
 
 كل فشل رسالة سطر واحد و exit 1، فالسكربت اللي بينادي notify.py يقدر يعرف.`
-        }
+        },
+        {
+          cmd: "telegram_bot.py",
+          title: "بوت Telegram بالـ Bot API الرسمي، وتجرّبه على سيرفر مزيّف من غير token",
+          learn: R`تكتب بوت Telegram بالمكتبة القياسية بس: يرد على أوامر، ويفتكر آخر رسالة اتعالجت، ويتعامل مع الأخطاء. وتختبره كله على سيرفر Bot API مزيّف انت كاتبه، قبل ما تلمس token حقيقي.`,
+          out: R`سكربت بيبعتلك على الموبايل ويستقبل منك أوامر ([[/time]] و [[/echo]])، ومعاه سيرفر تجربة بيخليك تطوّر وتختبر من غير نت ولا حساب.`,
+          use: {
+            work: R`إشعار على الموبايل لما backup يخلص أو موقع يقع، وأوامر صغيرة تبعتها من أي مكان ([[/status]] و [[/disk]]). أسرع من الإيميل وأسهل من أي dashboard.`,
+            prog: R`Bot API مجرد HTTPS و JSON: نفس اللي اتعلمته في درس «requests و urllib مع timeout». واللي بتتعلمه هنا (long polling، و offset، وملف حالة، وسيرفر مزيّف للاختبار) بينفع مع أي API.`,
+            cs: R`long polling: العميل بيسأل والسيرفر بيمسك الطلب مفتوح لحد ما يجيله جديد أو الوقت يخلص، فالرد بيوصل في أجزاء من الثانية من غير ما تسأل كل ثانية.`,
+          },
+          desc: R`Telegram بيدّي أي بوت **Bot API**: عنوان HTTPS لكل عملية، [[https://api.telegram.org/bot<TOKEN>/<METHOD>]]، والرد دايمًا JSON فيه [[ok]] و [[result]]. البوت عبارة عن سكربت بيسأل كل شوية «فيه رسايل جديدة؟» بـ [[getUpdates]]، ويرد بـ [[sendMessage]]. مفيش مكتبة لازمة: [[urllib]] و [[json]] كفاية.
+
+الـ token بتاخده من [[@BotFather]] جوه Telegram، وهو زي باسورد البوت: أي حد معاه يقدر يبعت باسم البوت ويقرا رسايله. فبيتقري من متغير بيئة ([[BOT_TOKEN]])، وعمره ما يتكتب في الكود.
+
+والدرس **مش محتاج token حقيقي**: هنكتب سيرفر صغير بـ [[http.server]] بيقلّد الـ Bot API (نفس الـ URLs ونفس شكل الـ JSON)، والبوت بيكلّمه بدل Telegram لما [[TELEGRAM_API]] يشاور عليه. كل الناتج اللي تحت اتشغّل فعلًا على السيرفر ده بـ Python 3.14 على ويندوز و [[python:3.12-slim]] في Docker. أما الكلام عن Telegram الحقيقي (BotFather، والـ chat id، والـ 409، والـ webhooks، والحدود) فمن وثائق Bot API الرسمية ([[core.telegram.org/bots/api]]) ومتجرّبش هنا.`,
+          example: R`#!/usr/bin/env python3
+"""Echo bot on the Telegram Bot API: BOT_TOKEN=... python bot.py [--once]"""
+import json
+import logging
+import os
+import sys
+import urllib.error
+import urllib.request
+from datetime import datetime
+from pathlib import Path
+from typing import Any
+API = os.environ.get("TELEGRAM_API", "https://api.telegram.org")
+STATE = Path(__file__).with_name("bot_state.json")
+log = logging.getLogger("bot")
+def call(token: str, method: str, **params: Any) -> Any:
+    req = urllib.request.Request(f"{API}/bot{token}/{method}", data=json.dumps(params).encode(),
+                                 headers={"Content-Type": "application/json"})
+    try:
+        with urllib.request.urlopen(req, timeout=params.get("timeout", 0) + 10) as r:
+            body = json.load(r)
+    except urllib.error.HTTPError as e:
+        body = json.load(e)
+    if not body.get("ok"):
+        raise RuntimeError(f"{method}: {body.get('error_code')} {body.get('description')}")
+    return body["result"]
+def answer(text: str) -> str:
+    if text == "/start":
+        return "أهلًا! ابعت /time أو /echo وأي كلام."
+    if text == "/time":
+        return datetime.now().strftime("%Y-%m-%d %H:%M")
+    if text.startswith("/echo "):
+        return text.removeprefix("/echo ")
+    return "مش فاهم. جرّب /start"
+def main(argv: list[str]) -> int:
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+    token, once = os.environ.get("BOT_TOKEN"), "--once" in argv
+    if not token:
+        print("error: BOT_TOKEN is not set", file=sys.stderr)
+        return 2
+    offset = json.loads(STATE.read_text())["offset"] if STATE.exists() else 0
+    try:
+        log.info("running as @%s", call(token, "getMe")["username"])
+        while True:
+            for u in call(token, "getUpdates", offset=offset, timeout=0 if once else 25):
+                offset = u["update_id"] + 1
+                msg = u.get("message") or {}
+                if "text" in msg:
+                    reply = answer(msg["text"])
+                    call(token, "sendMessage", chat_id=msg["chat"]["id"], text=reply)
+                    log.info("chat %s: %r -> %r", msg["chat"]["id"], msg["text"], reply)
+                STATE.write_text(json.dumps({"offset": offset}))
+            if once:
+                return 0
+    except (RuntimeError, OSError) as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 1
+    except KeyboardInterrupt:
+        return 0
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))`,
+          lines: [
+            R`الـ docstring بيقول البوت ده بيعمل إيه وبيتشغّل إزاي: [[BOT_TOKEN]] في البيئة، و [[--once]] اختياري (يعالج اللي موجود ويخرج، للاختبار و cron).`,
+            R`[[json]] عشان نحوّل الطلب لـ JSON ونقرا رد الـ API، لأن Bot API بيتكلم JSON بس.`,
+            R`[[logging]] عشان كل رسالة اتعالجت تتسجّل بوقتها على stderr، والبوت ده هيفضل شغال ساعات فـ print مش كفاية (درس «logging بدل print»).`,
+            R`[[os]] عشان [[os.environ]]: الـ token وعنوان الـ API جايين من البيئة مش من الكود.`,
+            R`[[sys]] عشان [[sys.argv]] و [[sys.exit]] و [[sys.stderr]].`,
+            R`[[urllib.error]] فيه [[HTTPError]]: الـ exception اللي [[urlopen]] بيرميه لما الرد ٤xx أو ٥xx.`,
+            R`[[urllib.request]] بيبعت طلبات HTTP من المكتبة القياسية، فالبوت مش محتاج [[pip install]] خالص ويشتغل على أي سيرفر عليه Python.`,
+            R`[[datetime]] عشان أمر [[/time]] يرد بالوقت.`,
+            R`[[Path]] عشان ملف الحالة يتحط جنب السكربت (درس «Path(__file__).parent»).`,
+            R`[[Any]] من [[typing]]: نوع رد الـ API بيختلف حسب الـ method (dict مرة و list مرة)، فبنقول لـ mypy «أي حاجة» بدل نوع غلط (درس «mypy»).`,
+            R`[[API]] عنوان الـ Bot API. الـ default هو Telegram الحقيقي، ولو [[TELEGRAM_API]] موجود (زي [[http://127.0.0.1:8081]]) البوت بيكلّم السيرفر المزيّف. ده السطر اللي خلّى الدرس كله يتجرّب من غير token.`,
+            R`[[STATE]] ملف [[bot_state.json]] جنب السكربت، فيه آخر [[offset]]. من غيره البوت لو اتقفل واتفتح هيرد على نفس الرسايل تاني.`,
+            R`[[log]] logger باسم [[bot]]، والإعداد بتاعه في [[main]].`,
+            R`[[call]] دالة واحدة لكل الـ methods: [[call(token, "sendMessage", chat_id=42, text="hi")]]. [[**params]] بيجمع أي باراميترات بالاسم في dict، وهي نفسها اللي بتتبعت JSON.`,
+            R`بنبني الطلب: الـ URL [[API/bot<TOKEN>/<method>]] بالظبط زي الوثائق، و [[data=]] الـ JSON كـ bytes (وجود [[data]] بيخلّي الطلب POST لوحده).`,
+            R`[[Content-Type: application/json]] بيقول للسيرفر الـ body ده JSON. Bot API بيقبل كمان form و query string، بس JSON أسهل مع العربي والقيم المتداخلة.`,
+            R`[[try]] لأن [[urlopen]] بيرمي exception لو الرد مش ٢xx، وإحنا عايزين نقرا الـ JSON حتى في الحالة دي.`,
+            R`[[timeout]] = الـ [[timeout]] بتاع long polling + ١٠ ثواني. لـ [[getUpdates]] بـ ٢٥ يبقى ٣٥ ثانية، عشان السيرفر هيمسك الطلب ٢٥ ثانية قصد ومينفعش نقطعه قبلها. ولباقي الـ methods ١٠ ثواني.`,
+            R`[[json.load(r)]] بيقرا الرد ويحوّله dict، وشكله دايمًا [[{"ok": true, "result": ...}]].`,
+            R`لو الرد ٤xx أو ٥xx: الـ [[HTTPError]] نفسه بيتقري زي الرد، والـ Bot API بيبعت فيه JSON برضه بـ [[ok: false]] و [[error_code]] و [[description]].`,
+            R`نقرا الـ JSON بتاع الخطأ بدل ما نرمي الـ exception الخام، عشان الرسالة تبقى [[401 Unauthorized]] مش [[HTTP Error 401]] من غير تفاصيل.`,
+            R`[[ok]] هو المرجع مش الـ status code: الوثائق بتقول الرد فيه [[ok]] دايمًا، ولو [[false]] فيه [[description]].`,
+            R`نرمي [[RuntimeError]] باسم الـ method والكود والوصف، مثلًا [[getMe: 401 Unauthorized]]، و [[main]] هي اللي تقرر تعمل إيه.`,
+            R`نرجّع [[result]] بس: لـ [[getMe]] dict البوت، ولـ [[getUpdates]] list التحديثات، ولـ [[sendMessage]] الرسالة اللي اتبعتت.`,
+            R`[[answer]] منطق البوت كله: نص داخل ونص خارج، ومفيهاش شبكة ولا ملفات، فبتتختبر بـ pytest في ثانية (درس «المنطق منفصل عن الواجهة»).`,
+            R`[[/start]] أول أمر Telegram بيبعته لما حد يفتح البوت ويدوس Start.`,
+            R`الرد على [[/start]]: بيعرّف المستخدم بالأوامر.`,
+            R`[[/time]] أمر من غير باراميترات.`,
+            R`الرد بالوقت بتاع **السيرفر** اللي البوت شغال عليه (مش وقت المستخدم)، بـ [[strftime]] (درس «datetime وأسماء الملفات»).`,
+            R`[[/echo ]] بمسافة بعدها: أمر بياخد كلام. [[startswith]] بيمسك [[/echo أي حاجة]].`,
+            R`[[removeprefix]] (من 3.9) بيشيل [[/echo ]] من الأول بس، فبيرجّع الكلام زي ما هو.`,
+            R`أي حاجة تانية: رد ثابت بدل ما البوت يسكت، عشان المستخدم يعرف إنه شغال.`,
+            R`[[main(argv) -> int]] بنفس الهيكل بتاع كل السكربتات (درس «if __name__ == "__main__":»): بترجّع الـ exit code.`,
+            R`[[basicConfig]] بالوقت والمستوى، والناتج على stderr، فـ [[> out.txt]] مبياخدش اللوج.`,
+            R`الـ token من البيئة، و [[once]] [[True]] لو [[--once]] في الـ arguments.`,
+            R`من غير token مفيش فايدة نكمّل.`,
+            R`الرسالة على stderr ([[error: BOT_TOKEN is not set]]).`,
+            R`exit ٢: غلطة في طريقة التشغيل، زي argparse.`,
+            R`[[offset]] من ملف الحالة لو موجود، وإلا ٠ (يعني «هات كل اللي مستني»).`,
+            R`[[try]] واحد كبير حوالين الشغل كله، عشان أي خطأ شبكة أو API يطلع سطر واحد مفهوم مش traceback.`,
+            R`[[getMe]] أول نداء: بيتأكد إن الـ token صح والسيرفر بيرد قبل ما نبدأ الـ loop، وبيرجّع اسم البوت فنكتبه في اللوج.`,
+            R`[[while True]] البوت بيفضل شغال لحد Ctrl+C أو خطأ.`,
+            R`[[getUpdates]] بـ [[offset]] (هات اللي رقمه أكبر من أو يساوي ده) و [[timeout]]: ٢٥ ثانية long polling في التشغيل العادي، و ٠ (رد على طول) مع [[--once]].`,
+            R`[[offset]] = رقم التحديث + ١. الوثائق بتقول إن أي طلب [[getUpdates]] بـ offset أكبر من رقم تحديث بيعتبره اتعالج ومبيرجّعهوش تاني. ده اللي بيمنع الرد مرتين.`,
+            R`[[message]] ممكن متبقاش موجودة (تحديثات تانية زي تعديل رسالة أو ضغطة زرار)، فـ [[or {}]] بيخلّي اللي بعده ميقعش.`,
+            R`الرسايل اللي فيها نص بس (مش صورة ولا sticker).`,
+            R`[[answer(msg["text"])]] بتاخد نص الرسالة وترجّع نص الرد، والنتيجة بتتحفظ في [[reply]] عشان نبعتها ونكتبها في اللوج. كل منطق البوت جوه [[answer]]، فالسطر ده هو الحتة الوحيدة اللي بتتغيّر لو زوّدت أوامر.`,
+            R`[[sendMessage]] بـ [[chat_id]] اللي الرسالة جت منه و [[text]] الرد. ده الـ method اللي هتستخدمه لأي إشعار من أي سكربت.`,
+            R`سطر لوج لكل رسالة: المحادثة والنص والرد. [[%r]] بيطبع النص بعلامات التنصيص، فالمسافات في الآخر بتبان.`,
+            R`نحفظ الـ offset بعد **كل** تحديث مش في الآخر بس، فلو البوت وقع في النص مش هيعيد اللي خلص.`,
+            R`مع [[--once]] نخرج بعد أول دفعة.`,
+            R`[[return 0]] بيخرج من [[main]] بـ exit code ٠ (نجاح) بعد أول دفعة، فـ cron أو الاختبار يعرفوا إن البوت عالج اللي كان مستني من غير مشاكل.`,
+            R`[[RuntimeError]] من [[call]] (الـ API رد بـ [[ok: false]])، و [[OSError]] بيمسك مشاكل الشبكة ([[URLError]] نوع منه): السيرفر مش شغال، أو DNS، أو timeout.`,
+            R`الرسالة على stderr، مثلًا [[error: getMe: 401 Unauthorized]].`,
+            R`exit ١: البوت وقف بسبب خطأ، فـ systemd أو Docker يعيد تشغيله ويبان في اللوج.`,
+            R`Ctrl+C وقت الـ long polling بيرمي [[KeyboardInterrupt]].`,
+            R`نخرج بـ ٠ من غير traceback، لأن ده قفل مقصود.`,
+            R`السكربت بيشتغل لما تشغّله مباشرة بس، والاختبارات تقدر تعمل import لـ [[answer]] و [[call]] من غير ما البوت يبدأ.`,
+            R`الـ exit code بتاع [[main]] هو exit code البرنامج.`,
+          ],
+          try: R`احفظ السيرفر المزيّف اللي في الشرح باسم [[fake_telegram.py]] والبوت باسم [[bot.py]] في نفس الفولدر. في ترمنال شغّل [[python fake_telegram.py 8081]]. في ترمنال تاني ابعت رسالة كأنك مستخدم: [[curl -s -X POST http://127.0.0.1:8081/_inject -H "Content-Type: application/json" -d "{\"text\": \"/time\"}"]] (في PowerShell: [[Invoke-RestMethod -Method Post http://127.0.0.1:8081/_inject -ContentType 'application/json' -Body '{"text": "/start"}']]). وبعدين شغّل البوت: [[BOT_TOKEN=123456:TEST-TOKEN TELEGRAM_API=http://127.0.0.1:8081 python bot.py --once]] (في PowerShell حط [[$env:BOT_TOKEN='123456:TEST-TOKEN']] و [[$env:TELEGRAM_API='http://127.0.0.1:8081']] الأول)، واقرا الرد في [[http://127.0.0.1:8081/_sent]]. شغّل البوت تاني وشوف إنه مردّش على نفس الرسالة. وجرّب token غلط، ومن غير token، والسيرفر مقفول.`,
+          flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** ابعت للسيرفر المزيّف ٣ رسايل ([[/start]] و [[/echo صباح الفل]] و [[ازيك]]) وشغّل [[bot.py --once]] مرتين ورا بعض. كام رد هيتبعت في كل مرة؟ وإيه اللي في [[bot_state.json]]؟`, done: R`أول مرة ٣ ردود ([[صباح الفل]] واحد منهم)، وتاني مرة ولا رد (اللوج مفيهوش ولا سطر [[chat]])، و [[bot_state.json]] فيه [[{"offset": 4}]]: آخر [[update_id]] كان ٣.` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** شغّل البوت بـ [[BOT_TOKEN=bad]]، وبعدين من غير [[BOT_TOKEN]] خالص، وبعدين والسيرفر مقفول. اكتب الرسالة والـ exit code لكل واحدة.`, done: R`[[error: getMe: 401 Unauthorized]] و ١، و [[error: BOT_TOKEN is not set]] و ٢، و [[error: <urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>]] على ويندوز ([[[Errno 111] Connection refused]] على لينكس) و ١. ومفيش ولا traceback.` },
+            { lvl: 'تطبيق', t: R`**اكتب اختبار:** [[test_answer.py]] بـ [[parametrize]] على [[answer]]: [[/start]]، و [[/echo]] بكلام عربي، و [[/echo]] من غير كلام، وأمر مش معروف، و [[/time]] (اتأكد إن شكله [[YYYY-MM-DD HH:MM]] بـ [[re.fullmatch]]).`, done: R`٥ حالات خضرا في أقل من ثانية من غير سيرفر، وحالة [[/echo]] لوحدها (من غير مسافة) طلعت «مش فاهم»، فقررت تخليها كده ولا تصلّحها وكتبت القرار في الاختبار.` },
+            { lvl: 'تطبيق', t: R`**ابني:** أمر [[/disk]] بيرد بالمساحة الفاضية بـ [[shutil.disk_usage]] بالـ GB بكسر واحد، وأمر [[/help]] بيطلّع كل الأوامر من dict واحد ([[{"/time": دالة, ...}]]) بدل سلسلة [[if]].`, done: R`[[/disk]] بيرجّع رقم قريب من اللي File Explorer أو [[df -h]] بيقوله، و [[/help]] بيطلّع لستة الأوامر متولّدة من الـ dict، فزيادة أمر جديد بقت سطر واحد.` },
+            { lvl: 'تطبيق', t: R`**محاكاة:** شغّل البوت من غير [[--once]] (long polling)، وبعد ثانية ابعت [[/echo سريع]] للسيرفر المزيّف، وقيس الرد وصل بعد قد إيه.`, done: R`الرد وصل في أقل من عُشر ثانية (عندنا ٠.٠٨ على ويندوز و ٠.٠٦ في Docker) رغم إن البوت مبيسألش كل ثانية: الطلب كان مستني عند السيرفر ورجع أول ما الرسالة وصلت. و Ctrl+C قفل البوت بـ exit ٠.` },
+            { lvl: 'تحدي', t: R`**ابني:** [[notify_telegram.py "النص"]] لأي سكربت من وحدة الأتمتة: بيبعت رسالة لـ [[CHAT_ID]] من البيئة بـ [[sendMessage]]، ولو النص فاضي أو أطول من ٤٠٩٦ حرف يقسمه أو يرفضه قبل ما يبعت، و retry بـ backoff لـ ٥xx و ٤٢٩ (درس «retry و backoff»).`, done: R`[[backup_zip.py ... && notify_telegram.py "backup ok"]] بيبعت للسيرفر المزيّف، والنص الفاضي مبيوصلش للسيرفر (لأن المزيّف بيرد ٤٠٠ [[Bad Request: message text is empty]] زي الوثائق)، وفيه اختبار للتقسيم.` },
+          ],
+          deep: {
+            why: R`سكربتاتك المتجدولة (backup، مراقبة، تقرير) محتاجة تقولك النتيجة على الموبايل، وأحيانًا انت محتاج تسألها من برا ([[/status]]). البوت أبسط طريقة: مفيش سيرفر تفتحه للنت، ولا تطبيق تنزّله، ولا اشتراك. والفايدة التانية: البوت أول API حقيقي بالـ long polling و offset، والسيرفر المزيّف أول مرة تختبر فيها كود شبكة من غير شبكة.`,
+            how: R`**Bot API** (من الوثائق): كل method عنوانها [[https://api.telegram.org/bot<token>/<method>]]، وبتقبل GET أو POST، والباراميترات query string أو form أو JSON. الرد JSON فيه [[ok]]، ولو [[true]] فيه [[result]]، ولو [[false]] فيه [[description]] و [[error_code]].
+
+**طريقتين تستلم بيهم الرسايل** (من الوثائق): [[getUpdates]] (البوت هو اللي بيسأل، اللي في الدرس)، أو webhook بـ [[setWebhook]] (Telegram بيبعت لسيرفرك HTTPS). مينفعش الاتنين مع بعض: طول ما فيه webhook، [[getUpdates]] مبيشتغلش. والـ polling مش محتاج دومين ولا شهادة، فهو الأنسب لسكربت على جهازك أو VPS.
+
+**الـ offset**: كل تحديث ليه [[update_id]] بيزيد. طلب بـ [[offset = آخر update_id + 1]] بيأكّد إن اللي قبله اتعالج. والوثائق بتقول Telegram بيحتفظ بالتحديثات اللي ماتأكدتش ٢٤ ساعة بس.
+
+**long polling**: [[timeout=25]] بيخلّي Telegram يمسك الطلب لحد ما رسالة توصل أو الـ ٢٥ ثانية تخلص. فالبوت بيعمل حوالي طلبين في الدقيقة وهو فاضي، والرد بيوصل فورًا. والـ [[urlopen]] timeout لازم يبقى أكبر من الـ ٢٥.
+
+**السيرفر المزيّف** بيعمل نفس الحاجات دي بالظبط: نفس شكل الـ URL والـ JSON، و [[getUpdates]] بيستنى بـ [[threading.Condition]] لحد ما [[/_inject]] يحط رسالة، و [[sendMessage]] بيحفظ الرد في لستة تقراها من [[/_sent]]. فالكود اللي اتختبر عليه هو نفسه اللي هيشتغل على Telegram، والفرق متغير بيئة واحد.`,
+            when: R`إشعارات من سكربتات (أنسب من الإيميل لأي حاجة مستعجلة)، وأوامر صغيرة لسيرفرك أو جهازك، وبوت لمجموعة صغيرة. ولو البوت كبر (أزرار، ومحادثات بخطوات، وآلاف المستخدمين) استخدم مكتبة زي [[python-telegram-bot]] أو [[aiogram]] أو webhook ورا nginx. والإيميل لسه أحسن للتقارير الطويلة والمرفقات (درس «notify.py»).`,
+            mistakes: R`الـ token في الكود أو في git (أي حد شافه يقدر يتحكم في البوت: الحل [[/revoke]] من BotFather حسب الوثائق، وبعدين token جديد في [[.env]]). ونسيان الـ offset فالبوت يرد على كل الرسايل القديمة مع كل تشغيل. وتشغيل نسختين من البوت بنفس الـ token (الوثائق بتقول التانية بتاخد [[409 Conflict]]). و [[urlopen]] timeout أصغر من timeout بتاع الـ long polling فكل طلب يقع. والرد على كل رسالة في group من غير ما تفلتر (البوت بيبقى مزعج ويوصل لحدود الإرسال). وإنك تختبر على Telegram الحقيقي على طول بدل السيرفر المزيّف: كل تجربة رسايل حقيقية وبطء ومفيش اختبار تلقائي.`
+          },
+          teach: R`## الصورة الكبيرة
+
+~~~text
+ انت (Telegram على الموبايل)
+      │ ١. رسالة "/time"
+      ▼
+ Telegram  ◀──── ٢. getUpdates (long polling) ────  bot.py على جهازك أو VPS
+           ────▶ ٣. sendMessage("2026-11-03 18:58")
+~~~
+
+البوت **مش سيرفر**: هو سكربت بيسأل Telegram «فيه جديد؟» وبيرد. فمش محتاج دومين ولا بورت مفتوح. وعشان نجرّب من غير token ولا نت، هنحط مكان Telegram سيرفر صغير بيتكلم نفس اللغة:
+
+~~~text
+ curl أو Invoke-RestMethod ── /_inject ──▶ fake_telegram.py ◀── getUpdates/sendMessage ── bot.py
+                              /_sent ◀────  (127.0.0.1:8081)
+~~~
+
+اللي اتجرّب: Python 3.14.3 على ويندوز ١١، و [[python:3.12-slim]] في Docker. ومفيش ولا مكتبة متسطّبة: المكتبة القياسية بس.
+
+---
+
+## ١. Bot API في سطرين (من الوثائق)
+
+| الحاجة | الشكل |
+|---|---|
+| عنوان أي method | [[https://api.telegram.org/bot<TOKEN>/<METHOD>]] |
+| الرد الناجح | [[{"ok": true, "result": ...}]] |
+| الرد الفاشل | [[{"ok": false, "error_code": 401, "description": "Unauthorized"}]] |
+
+والـ methods اللي هنستخدمها:
+
+| method | بتعمل إيه | أهم باراميترات |
+|---|---|---|
+| [[getMe]] | بترجّع بيانات البوت. أول نداء للتأكد إن الـ token صح | مفيش |
+| [[getUpdates]] | بترجّع الرسايل الجديدة (تحديثات) | [[offset]] و [[timeout]] |
+| [[sendMessage]] | بتبعت رسالة | [[chat_id]] و [[text]] |
+
+شكل التحديث اللي [[getUpdates]] بترجّعه (ده اللي السيرفر المزيّف رجّعه فعلًا لما بعتنا [[/time]]):
+
+~~~json
+{"ok": true, "result": [{"update_id": 1, "message": {"message_id": 1, "date": 1793725139,
+  "chat": {"id": 42, "type": "private"}, "from": {"id": 42, "first_name": "Sara"}, "text": "/time"}}]}
+~~~
+
+| الحقل | معناه |
+|---|---|
+| [[update_id]] | رقم التحديث، بيزيد. منه بنحسب الـ offset |
+| [[message.chat.id]] | المحادثة اللي هنرد عليها ([[chat_id]] في [[sendMessage]]) |
+| [[message.text]] | النص. مش موجود لو الرسالة صورة أو sticker |
+| [[message.date]] | وقت الرسالة كـ Unix timestamp (ثواني من ١٩٧٠) |
+
+---
+
+## ٢. السيرفر المزيّف: [[fake_telegram.py]]
+
+ده كود الاختبار، مش جزء من البوت. بيقلّد ٣ methods، وفيه عنوانين زيادة للتجربة: [[/_inject]] (كأن مستخدم بعت رسالة) و [[/_sent]] (إيه اللي البوت بعته).
+
+~~~python
+#!/usr/bin/env python3
+"""A tiny fake of the Telegram Bot API for local tests: python fake_telegram.py [PORT]."""
+import json
+import sys
+import threading
+import time
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from urllib.parse import parse_qsl, urlparse
+
+TOKEN = "123456:TEST-TOKEN"
+updates: list[dict] = []
+sent: list[dict] = []
+lock = threading.Condition()
+next_id = 1
+
+def make_update(text: str, chat_id: int = 42) -> dict:
+    global next_id
+    u = {"update_id": next_id, "message": {"message_id": next_id, "date": int(time.time()),
+         "chat": {"id": chat_id, "type": "private"}, "from": {"id": chat_id, "first_name": "Sara"}, "text": text}}
+    next_id += 1
+    return u
+
+class Handler(BaseHTTPRequestHandler):
+    def reply(self, code: int, body: dict) -> None:
+        data = json.dumps(body, ensure_ascii=False).encode()
+        self.send_response(code)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Length", str(len(data)))
+        self.end_headers()
+        self.wfile.write(data)
+
+    def params(self) -> dict:
+        url = urlparse(self.path)
+        p = dict(parse_qsl(url.query))
+        n = int(self.headers.get("Content-Length") or 0)
+        if n:
+            raw = self.rfile.read(n).decode()
+            if self.headers.get("Content-Type", "").startswith("application/json"):
+                p.update(json.loads(raw))
+            else:
+                p.update(parse_qsl(raw))
+        return p
+
+    def do_GET(self) -> None:
+        self.route()
+
+    def do_POST(self) -> None:
+        self.route()
+
+    def route(self) -> None:
+        path, p = urlparse(self.path).path, self.params()
+        if path == "/_inject":
+            with lock:
+                updates.append(make_update(p["text"], int(p.get("chat_id", 42))))
+                lock.notify_all()
+            return self.reply(200, {"ok": True})
+        if path == "/_sent":
+            return self.reply(200, {"ok": True, "result": sent})
+        parts = path.strip("/").split("/")
+        if len(parts) != 2 or parts[0] != "bot" + TOKEN:
+            return self.reply(401, {"ok": False, "error_code": 401, "description": "Unauthorized"})
+        method = parts[1]
+        if method == "getMe":
+            return self.reply(200, {"ok": True, "result": {"id": 123456, "is_bot": True, "first_name": "Lab Bot", "username": "lab_test_bot"}})
+        if method == "getUpdates":
+            offset, wait = int(p.get("offset", 0)), float(p.get("timeout", 0))
+            with lock:
+                updates[:] = [u for u in updates if u["update_id"] >= offset]
+                if not updates and wait:
+                    lock.wait(timeout=wait)
+                return self.reply(200, {"ok": True, "result": list(updates)})
+        if method == "sendMessage":
+            if not str(p.get("text", "")).strip():
+                return self.reply(400, {"ok": False, "error_code": 400, "description": "Bad Request: message text is empty"})
+            msg = {"message_id": len(sent) + 1000, "chat": {"id": int(p["chat_id"])}, "text": p["text"]}
+            sent.append(msg)
+            return self.reply(200, {"ok": True, "result": msg})
+        return self.reply(404, {"ok": False, "error_code": 404, "description": "Not Found"})
+
+    def log_message(self, fmt: str, *args) -> None:
+        sys.stderr.write("fake: " + fmt % args + "\n")
+
+if __name__ == "__main__":
+    port = int(sys.argv[1]) if len(sys.argv) > 1 else 8081
+    server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
+    print(f"fake Telegram API on http://127.0.0.1:{port}  token={TOKEN}", flush=True)
+    server.serve_forever()
+~~~
+
+| الجزء | بيعمل إيه |
+|---|---|
+| [[TOKEN]] | الـ token الوحيد المقبول. أي حاجة تانية بترجع [[401 Unauthorized]] زي Telegram |
+| [[updates]] و [[sent]] | الرسايل المستنية، والردود اللي البوت بعتها. في الذاكرة بس، فتقفل السيرفر تبدأ من الأول |
+| [[threading.Condition()]] | قفل ومعاه «استنى لحد ما حد ينبّهك». ده اللي بيعمل الـ long polling |
+| [[make_update]] | بيبني تحديث بنفس شكل Telegram ورقم بيزيد |
+| [[reply]] | بيبعت JSON بالـ status و [[Content-Length]] |
+| [[params]] | بيجمع الباراميترات من الـ URL ومن الـ body (JSON أو form)، زي ما Bot API بيقبل الاتنين |
+| [[route]] | بيقسم المسار: [[/bot<TOKEN>/<method>]]، ويفحص الـ token، ويختار الـ method |
+| [[getUpdates]] | بيشيل اللي رقمه أقل من [[offset]] (اتأكد)، ولو مفيش جديد و [[timeout]] أكبر من صفر بيستنى بـ [[lock.wait]] لحد ما [[/_inject]] ينبّهه بـ [[notify_all]] |
+| [[sendMessage]] | النص الفاضي بيرجع [[400]] بنفس رسالة Telegram، وإلا بيحفظ الرد في [[sent]] |
+| [[ThreadingHTTPServer]] | thread لكل طلب: لازم، عشان [[getUpdates]] بيستنى، وفي نفس الوقت [[/_inject]] لازم يتخدم |
+
+> **غلطة حصلت وانا ببنيه:** النسخة الأولى كانت بتطبع سطر «fake Telegram API on ...» **قبل** ما تعمل [[ThreadingHTTPServer(...)]]. سكربت الاختبار كان بيستنى السطر ده ويبدأ يبعت، فعلى لينكس وقع بـ [[URLError: <urlopen error [Errno 111] Connection refused>]] لأن البورت لسه ماتفتحش. الحل: اعمل الـ server (اللي بيعمل bind) الأول، وبعدين اطبع إنك جاهز.
+
+---
+
+## ٣. البوت جزء جزء
+
+### [[call]]: دالة واحدة لكل الـ methods
+
+~~~python
+def call(token: str, method: str, **params: Any) -> Any:
+    req = urllib.request.Request(f"{API}/bot{token}/{method}", data=json.dumps(params).encode(),
+                                 headers={"Content-Type": "application/json"})
+~~~
+
+[[call(token, "sendMessage", chat_id=42, text="hi")]] بتبقى POST على [[.../bot<TOKEN>/sendMessage]] و body [[{"chat_id": 42, "text": "hi"}]]. نفس الدالة بتنفع لأي method في الوثائق من غير ما تكتب كود جديد.
+
+~~~python
+    try:
+        with urllib.request.urlopen(req, timeout=params.get("timeout", 0) + 10) as r:
+            body = json.load(r)
+    except urllib.error.HTTPError as e:
+        body = json.load(e)
+~~~
+
+[[urlopen]] بيرمي [[HTTPError]] لأي ٤xx أو ٥xx، بس الـ exception ده نفسه بيتقري زي الرد، والـ API حاطط فيه JSON بالسبب. فبنقراه بدل ما نضيّع السبب:
+
+~~~python
+    if not body.get("ok"):
+        raise RuntimeError(f"{method}: {body.get('error_code')} {body.get('description')}")
+    return body["result"]
+~~~
+
+### [[answer]]: المنطق من غير شبكة
+
+نص داخل ونص خارج. مفيش [[call]] جواها، فاختبارها سطر pytest (التمرين التالت).
+
+### الـ loop
+
+~~~python
+for u in call(token, "getUpdates", offset=offset, timeout=0 if once else 25):
+    offset = u["update_id"] + 1
+    ...
+    STATE.write_text(json.dumps({"offset": offset}))
+~~~
+
+| السطر | ليه |
+|---|---|
+| [[offset=offset]] | «اللي قبل كده اتعالج، متبعتهوش تاني» |
+| [[timeout=25]] | long polling: الطلب بيستنى عند السيرفر لحد رسالة جديدة أو ٢٥ ثانية |
+| [[offset = update_id + 1]] | الطلب الجاي بيأكّد اللي خلص |
+| [[STATE.write_text]] بعد كل تحديث | لو البوت وقع في النص، اللي خلص ميتعادش |
+
+---
+
+## ٤. التشغيل
+
+### على ويندوز (PowerShell)، ترمنالين
+
+~~~powershell
+# ترمنال ١:
+python fake_telegram.py 8081
+# ترمنال ٢:
+Invoke-RestMethod -Method Post http://127.0.0.1:8081/_inject -ContentType 'application/json' -Body '{"text": "/start"}' | ConvertTo-Json -Compress
+Invoke-RestMethod http://127.0.0.1:8081/bot123456:TEST-TOKEN/getMe | ConvertTo-Json -Compress
+$env:BOT_TOKEN='123456:TEST-TOKEN'; $env:TELEGRAM_API='http://127.0.0.1:8081'
+python bot.py --once
+(Invoke-RestMethod http://127.0.0.1:8081/_sent).result | ConvertTo-Json -Compress
+~~~
+
+الناتج (الوقت حسب جهازك):
+
+~~~text
+{"ok":true}
+{"ok":true,"result":{"id":123456,"is_bot":true,"first_name":"Lab Bot","username":"lab_test_bot"}}
+2026-11-03 18:58:57,826 INFO running as @lab_test_bot
+2026-11-03 18:58:57,844 INFO chat 42: '/start' -> 'أهلًا! ابعت /time أو /echo وأي كلام.'
+{"message_id":1000,"chat":{"id":42},"text":"أهلًا! ابعت /time أو /echo وأي كلام."}
+~~~
+
+### bash (Git Bash أو لينكس أو ماك)
+
+~~~bash
+python3 fake_telegram.py 8081 &
+SRV=$!
+sleep 1
+curl -s -X POST http://127.0.0.1:8081/_inject -H 'Content-Type: application/json' -d '{"text": "/time"}'
+curl -s http://127.0.0.1:8081/bot123456:TEST-TOKEN/getUpdates
+BOT_TOKEN=123456:TEST-TOKEN TELEGRAM_API=http://127.0.0.1:8081 python3 bot.py --once
+curl -s http://127.0.0.1:8081/_sent
+kill $SRV
+~~~
+
+~~~text
+fake Telegram API on http://127.0.0.1:8081  token=123456:TEST-TOKEN
+{"ok": true}
+{"ok": true, "result": [{"update_id": 1, "message": {"message_id": 1, ..., "text": "/time"}}]}
+2026-11-03 18:58:59,658 INFO running as @lab_test_bot
+2026-11-03 18:58:59,681 INFO chat 42: '/time' -> '2026-11-03 18:58'
+{"ok": true, "result": [{"message_id": 1000, "chat": {"id": 42}, "text": "2026-11-03 18:58"}]}
+~~~
+
+لاحظ إن [[getUpdates]] اللي بعتناه بإيدنا من غير offset رجّع الرسالة، ومع كده البوت لقاها: الطلب ده مأكّدش حاجة لأنه مبعتش [[offset]].
+
+### تشغيل تاني
+
+نفس الأمر تاني: [[running as @lab_test_bot]] وبس، ومفيش ولا سطر [[chat]]، لأن [[bot_state.json]] فيه [[{"offset": 2}]] (أو [[4]] بعد ٣ رسايل).
+
+---
+
+## ٥. الأخطاء، كل واحد برسالته (اتشغّلت فعلًا)
+
+| الحالة | الناتج | exit |
+|---|---|---|
+| [[BOT_TOKEN]] مش موجود | [[error: BOT_TOKEN is not set]] | ٢ |
+| token غلط | [[error: getMe: 401 Unauthorized]] | ١ |
+| السيرفر مقفول (ويندوز) | [[error: <urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>]] | ١ |
+| السيرفر مقفول (لينكس) | [[error: <urlopen error [Errno 111] Connection refused>]] | ١ |
+| [[sendMessage]] بنص فاضي (من [[curl]]) | [[400]] و [[{"ok": false, "error_code": 400, "description": "Bad Request: message text is empty"}]] | |
+
+ولما البوت شغال long polling وبعتنا رسالة بعد ثانية، الرد وصل بعد ٠.٠٨ ثانية على ويندوز و ٠.٠٦ في Docker.
+
+---
+
+## ٦. على Telegram الحقيقي (من الوثائق، متجرّبش هنا)
+
+1. في Telegram افتح [[@BotFather]] وابعت [[/newbot]]، واختار اسم واسم مستخدم آخره [[bot]]. هيرد بالـ token (شكله [[رقم:حروف]]).
+2. احفظه في [[.env]] أو متغير بيئة، وحط [[.env]] في [[.gitignore]] (درس «os.environ و .env»).
+3. افتح البوت من الموبايل ودوس Start، وشغّل [[python bot.py]] من غير [[TELEGRAM_API]]. هيرد على [[/start]].
+4. عشان تبعتلك إشعار من سكربت تاني، محتاج [[chat_id]] بتاعك: هو [[message.chat.id]] اللي في اللوج ([[chat 42]] في التجربة).
+5. لو الـ token اتسرّب: [[/revoke]] من BotFather بيلغيه ويطلّع واحد جديد.
+
+| حاجة من الوثائق | معناها ليك |
+|---|---|
+| نسختين بنفس الـ token بيعملوا [[getUpdates]] | التانية بترجع [[409 Conflict]]. شغّل نسخة واحدة بس |
+| فيه webhook متسجّل | [[getUpdates]] مبيشتغلش لحد [[deleteWebhook]] |
+| التحديثات بتتشال بعد ٢٤ ساعة | البوت لو فضل مقفول يوم، الرسايل القديمة بتضيع |
+| النص أقصاه ٤٠٩٦ حرف | الأطول قسّمه (التمرين الأخير) |
+| حدود الإرسال | الـ FAQ بتنصح بأقل من رسالة في الثانية للمحادثة الواحدة، وحوالي ٣٠ في الثانية إجمالًا، وغير كده [[429]] و [[retry_after]] |
+
+---
+
+## ٧. يفضل شغال على السيرفر
+
+- على لينكس: خدمة systemd بـ [[Restart=on-failure]] و [[EnvironmentFile=/etc/mybot.env]] (تاب VPS)، أو container بـ [[restart: unless-stopped]] (درس «Dockerfile»). الـ exit ١ اللي البوت بيطلعه عند الخطأ هو اللي بيخلّي الاتنين يعيدوا تشغيله.
+- على ويندوز: Task Scheduler عند الـ logon (درس «cron و Task Scheduler»).
+- لو عايزه يكمّل بعد خطأ شبكة بدل ما يخرج: retry بـ backoff حوالين [[getUpdates]] (درس «retry و backoff»).
+- لإشعارات بس من سكربت (من غير ما تستقبل أوامر): [[call(token, "sendMessage", chat_id=..., text=...)]] سطر واحد، ومن bash نفس الفكرة بـ [[curl]] في درس «تنبيه Telegram» في تاب VPS.`,
+          sol: R`ناتج الدرس على السيرفر المزيّف بعد ٣ رسايل ([[/start]] و [[/echo صباح الفل]] و [[ازيك]]):
+[[INFO running as @lab_test_bot]]
+[[INFO chat 42: '/start' -> 'أهلًا! ابعت /time أو /echo وأي كلام.']]
+[[INFO chat 42: '/echo صباح الفل' -> 'صباح الفل']]
+[[INFO chat 42: 'ازيك' -> 'مش فاهم. جرّب /start']]
+
+والتشغيل التاني: [[running as @lab_test_bot]] بس، و [[bot_state.json]] فيه [[{"offset": 4}]].
+
+token غلط: [[error: getMe: 401 Unauthorized]] و exit ١. ومن غير token: [[error: BOT_TOKEN is not set]] و exit ٢.
+
+السكربت ده بيشغّل السيرفر المزيّف ويبعت الـ ٣ رسايل ويشغّل البوت مرتين ويطبع الردود (اتشغّل على ويندوز و Docker):`,
+          solCode: R`import json, os, subprocess, sys, urllib.request
+srv = subprocess.Popen([sys.executable, "fake_telegram.py", "8081"], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True)
+print(srv.stdout.readline().strip())
+def post(path, **p):
+    req = urllib.request.Request("http://127.0.0.1:8081" + path, data=json.dumps(p).encode(), headers={"Content-Type": "application/json"})
+    return json.load(urllib.request.urlopen(req))
+for t in ["/start", "/echo صباح الفل", "ازيك"]:
+    post("/_inject", text=t)
+env = {**os.environ, "BOT_TOKEN": "123456:TEST-TOKEN", "TELEGRAM_API": "http://127.0.0.1:8081"}
+for run in (1, 2):
+    r = subprocess.run([sys.executable, "bot.py", "--once"], env=env, capture_output=True, text=True)
+    print("run", run, "exit", r.returncode, "replies", r.stderr.count("chat 42"))
+print(json.dumps(post("/_sent")["result"], ensure_ascii=False))
+srv.terminate()`,
+          ci: [
+            { os: ['windows', 'ubuntu', 'macos'], sh: 'python', run: R`import json, threading, urllib.request, urllib.error
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+TOKEN = "123456:TEST-TOKEN"
+inbox = [{"update_id": 1, "message": {"chat": {"id": 42}, "text": "/echo صباح الفل"}},
+         {"update_id": 2, "message": {"chat": {"id": 42}, "text": "ازيك"}}]
+sent = []
+class H(BaseHTTPRequestHandler):
+    def do_POST(self):
+        p = json.loads(self.rfile.read(int(self.headers["Content-Length"])) or b"{}")
+        bot, _, method = self.path.strip("/").partition("/")
+        if bot != "bot" + TOKEN:
+            code, body = 401, {"ok": False, "error_code": 401, "description": "Unauthorized"}
+        elif method == "getUpdates":
+            code, body = 200, {"ok": True, "result": [u for u in inbox if u["update_id"] >= p.get("offset", 0)]}
+        else:
+            sent.append(p["text"]); code, body = 200, {"ok": True, "result": {"message_id": 1}}
+        data = json.dumps(body).encode()
+        self.send_response(code); self.send_header("Content-Length", str(len(data))); self.end_headers(); self.wfile.write(data)
+    def log_message(self, *a): pass
+srv = ThreadingHTTPServer(("127.0.0.1", 0), H)
+threading.Thread(target=srv.serve_forever, daemon=True).start()
+API = f"http://127.0.0.1:{srv.server_address[1]}"
+def call(token, method, **params):
+    req = urllib.request.Request(f"{API}/bot{token}/{method}", data=json.dumps(params).encode(), headers={"Content-Type": "application/json"})
+    try:
+        with urllib.request.urlopen(req, timeout=10) as r:
+            body = json.load(r)
+    except urllib.error.HTTPError as e:
+        body = json.load(e)
+    if not body.get("ok"):
+        raise RuntimeError(f"{method}: {body.get('error_code')} {body.get('description')}")
+    return body["result"]
+def answer(text):
+    return text.removeprefix("/echo ") if text.startswith("/echo ") else "مش فاهم. جرّب /start"
+offset = 0
+for u in call(TOKEN, "getUpdates", offset=offset):
+    offset = u["update_id"] + 1
+    call(TOKEN, "sendMessage", chat_id=u["message"]["chat"]["id"], text=answer(u["message"]["text"]))
+print("sent:", " | ".join(sent))
+print("again:", len(call(TOKEN, "getUpdates", offset=offset)))
+try:
+    call("bad", "getMe")
+except RuntimeError as e:
+    print("error:", e)`, expect: [R`sent: صباح الفل | مش فاهم. جرّب /start`, R`again: 0`, R`error: getMe: 401 Unauthorized`] },
+          ],
+        },
       ]
     }
 ]);

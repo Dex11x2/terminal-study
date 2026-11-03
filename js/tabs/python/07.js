@@ -4,6 +4,14 @@ MORE("python", [
       t: "أدوات السكربتات",
       l: 2,
       n: "argparse آمن افتراضيًا، و JSON و CSV و YAML و XML، والتواريخ في أسماء الملفات، و logging، و subprocess، و .env، و HTTP، و re",
+      projects: [
+        { lvl: 'صغير', t: R`محوّل JSON و CSV و YAML`, what: R`[[convert.py IN OUT]] بيعرف النوع من الامتداد ويحوّل بين JSON و CSV و YAML (list of dicts)، بـ argparse و [[--dry-run]] بيطبع أول ٣ صفوف بس.`, done: R`التحويل رايح جاي بيرجّع نفس البيانات، والعربي سليم، و CSV بيتفتح في Excel، و YAML فيه [["NO"]] كنص مش False.` },
+        { lvl: 'صغير', t: R`مستخرج الإيميلات والأرقام`, what: R`[[extract.py FOLDER]] بيلف على ملفات [[.txt]] و [[.md]] ويطلّع الإيميلات وأرقام الموبايل المصرية (بالأرقام العربي والإنجليزي) بـ [[re]]، ويكتبهم CSV فيه الملف ورقم السطر.`, done: R`بيلاقي كل الحالات في ملف اختبار فيه ١٥ حالة (منهم أرقام بمسافات و [[+20]])، ومفيش مكرر، والأرقام العربي اتحوّلت لإنجليزي في الناتج.` },
+        { lvl: 'متوسط', t: R`مراقب مواقع بـ YAML`, what: R`[[sites.yaml]] فيه المواقع والـ timeout لكل واحد، والسكربت بيطلبهم بـ [[requests]]، ويكتب [[status.json]] (حالة كل موقع ووقت الرد وآخر مرة كان شغال)، و [[logging]] لملف بـ rotation، والتوكن (لو فيه) من [[.env]].`, done: R`موقع واقع بيتسجّل بالسبب (timeout ولا ٥٠٠ ولا DNS)، و [[status.json]] بيتكتب بـ [[os.replace]]، والتشغيل كل دقيقة لمدة ساعة مخلّاش اللوج يعدّي الحد.` },
+        { lvl: 'متوسط', t: R`تقرير git لكل المشاريع`, what: R`[[git_report.py ROOT]] بيلف على كل repo بـ [[subprocess.run]] ويطلّع جدول: الفرع، وفيه تعديلات مش متسجّلة ولا لأ، وكام commit قدّام وورا الـ remote، وتاريخ آخر commit، و [[--json]].`, done: R`على ٥ repos الجدول مطابق لـ [[git status -sb]] في كل واحد، و repo من غير remote مبيوقّعش الأداة، ومفيش ولا [[shell=True]].` },
+        { lvl: 'كبير', t: R`مستورد كشوف بنك`, what: R`أداة بتقرا كشوف حساب CSV من أكتر من بنك (كل بنك ليه أعمدة وفاصل وشكل تاريخ مختلف، ومتعرّفين في [[banks.yaml]])، وتوحّدهم، وتصنّف كل حركة بـ regex من [[rules.yaml]] (سوبرماركت، مواصلات، اشتراكات)، وتكتب [[transactions.csv]] موحّد وتقرير شهري. argparse بأوامر [[import]] و [[report --month 2026-10]]، و logging، وملف حالة بيفتكر الحركات اللي اتستوردت (hash لكل حركة) فالاستيراد التاني مبيكررش، واختبارات لكل بنك بملفات عيّنة.`, done: R`٣ ملفات من ٣ «بنوك» مختلفة بيتوحّدوا صح (التواريخ والأرقام بفاصلة عشرية)، واستيراد نفس الملف تاني بيقول «0 جديد»، والحركات اللي ملهاش قاعدة في «غير مصنّف»، والتقرير الشهري مجموعه مطابق للكشف، والاختبارات خضرا.`, ext: R`زوّد تنبيه لما مصروف فئة يعدّي حد، ورسم بسيط بـ matplotlib (تاب «Python للبيانات»).` },
+        { lvl: 'فكرة', t: R`أداة لشغلك انت`, what: R`فكّر في ملف بتعالجه بإيدك كل أسبوع في شغلك أو دراستك (تقرير، شيت، لوج، export من موقع)، واعمل له أداة بالأدوات اللي اتعلمتها: argparse و dry-run و logging والقراية والكتابة بالـ encoding الصح.`, done: R`الأداة بتوفّر وقت حقيقي (اكتب قبل وبعد بالدقايق)، وبتشتغل على ملف الأسبوع اللي جاي من غير تعديل، وفيها اختبار على عيّنة.`, ext: R`لما توصل لوحدة «سكربتات محترمة» حوّلها لأمر بيتسطّب وجدولها.` },
+      ],
       items: [
         {
           cmd: "argparse --dry-run",
@@ -34,6 +42,13 @@ print(args)
 print("APPLY" if args.apply else "DRY RUN", args.folder.expanduser(), args.days, args.ext, args.verbose)`,
           try: R`سمّيه [[cli.py]] وجرّب: [[-h]]، و [[~/Downloads]] لوحده، و [[lab --ext .log .tmp -vv --apply]]، و [[lab --dry-run --apply]]، ومن غير فولدر، و [[lab --app]]. وبعد كل واحدة [[echo $?]] (في PowerShell [[$LASTEXITCODE]]). وبعدين شيل سطر [[allow_abbrev=False]] وجرّب [[lab --app]] تاني.`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اكتب الرسالة والـ exit code لـ [[cli.py lab --dry-run --apply]] و [[cli.py lab --days ten]] قبل ما تشغّل.`, done: R`الأولى [[cli.py: error: argument --apply: not allowed with argument --dry-run]] والتانية [[cli.py: error: argument --days: invalid int value: 'ten']]، والاتنين قبلهم سطر [[usage:]] والـ exit code ٢ (نفس الكلام في 3.12 و 3.14).` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** شيل [[allow_abbrev=False]] وشغّل [[cli.py lab --app]]. إيه اللي حصل، وليه ده خطر في سكربت بيمسح؟`, done: R`اتقبلت كأنها [[--apply]] واطبع [[apply=True]]: argparse بيكمّل الاختصار لوحده. ومع [[allow_abbrev=False]] رجع [[unrecognized arguments: --app]] و exit ٢. فأي flag بيعمل حاجة خطيرة ميتفهمش من نصه.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[notes.py]] بأوامر فرعية بـ [[add_subparsers(dest="cmd", required=True)]]: [[add TEXT]] و [[list --limit N]] و [[done ID]]. شغّله من غير أمر.`, done: R`من غير أمر طبع [[notes: error: the following arguments are required: cmd]] و exit ٢، و [[notes.py add -h]] بيطلّع help الأمر ده بس، و [[done abc]] بيرفض لأن [[type=int]].` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** من وثائق argparse لاقي: [[choices]]، و [[BooleanOptionalAction]] (عشان [[--color]] و [[--no-color]] من سطر واحد)، و [[type]] بدالة انت كاتبها. اعمل [[--days]] يقبل أرقام موجبة بس برسالة بتاعتك.`, done: R`[[--days 0]] بيطلّع رسالتك (الدالة بترمي [[argparse.ArgumentTypeError]])، و [[--color]] و [[--no-color]] بيظهروا في الـ help سطر واحد، و [[--level]] بيقبل [[low]] و [[high]] بس.` },
+            { lvl: 'تحدي', t: R`**اكتب اختبار:** لـ [[parse_args(argv)]] اكتب اختبارات: الـ default dry run، و [[--apply]]، و [[--ext .log .tmp]]، و [[-vv]]، والحالة الغلط بـ [[pytest.raises(SystemExit)]] و [[capsys]] بتتأكد إن الرسالة فيها [[not allowed with]].`, done: R`٥ اختبارات خضرا من غير ما تشغّل السكربت من الترمنال، وده بيشتغل لأن [[parse_args]] بتاخد [[argv]] كباراميتر بدل ما تقرا [[sys.argv]] جوه.` },
+          ],
           deep: {
             why: R`سكربت بيمسح ومفيش فيه dry run: أول تجربة على فولدر غلط هي آخر تجربة. ومن غير [[--help]] محدش (ولا انت بعد شهر) فاكر السكربت بياخد إيه.`,
             how: R`[[add_argument("folder")]] من غير شرط = positional وإجباري. و [[type=Path]] و [[type=int]] بيحوّلوا، ولو التحويل فشل بيطبع رسالة ويخرج بـ 2.
@@ -296,6 +311,13 @@ os.replace(tmp, STATE)
 print(STATE.read_text(encoding="utf-8"))`,
           try: R`اعمل [[config.json]] فيه [[{"folders": ["~/Downloads", "~/Desktop"], "keep_days": 30, "owner": "سارة"}]]. شغّل السكربت مرتين وبص على [[state.json]]. وبعدين حط فاصلة زيادة بعد [[30]] وشغّله. وفي الآخر جرّب في Python [[json.dumps({"o": "سارة"})]] من غير [[ensure_ascii=False]]، و [[json.loads(json.dumps({1: "a"}))]].`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[json.dumps({"o": "سارة"})]] و [[json.loads(json.dumps({1: "a"}))]]. هيطلعوا إيه؟`, done: R`الأولى [[{"o": "\u0633\u0627\u0631\u0629"}]] (لحد ما تزوّد [[ensure_ascii=False]])، والتانية [[{'1': 'a'}]]: مفاتيح JSON نصوص دايمًا، فالرقم رجع string. فاللي بيقرا ملف حالة لازم يحوّل المفاتيح.` },
+            { lvl: 'سريع', t: R`**قارن:** [[json.loads('{"a": 30,}')]] (فاصلة زيادة) في 3.14 وفي 3.12.`, done: R`3.14: [[Illegal trailing comma before end of object: line 1 column 9 (char 8)]]، و 3.12: [[Expecting property name enclosed in double quotes: line 1 column 10 (char 9)]]. نفس الغلطة برسالتين، و [[e.lineno]] و [[e.colno]] هما اللي تطبعهم للمستخدم في الحالتين.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** ملف الحالة فيه [[{"last_run": datetime.now()}]]، و [[json.dumps]] وقع. اقرا الخطأ وصلّحه بحيث تقرا التاريخ تاني كـ datetime.`, done: R`الخطأ [[TypeError: Object of type datetime is not JSON serializable]]. كتبت [[now.isoformat()]] وانت بتحفظ و [[datetime.fromisoformat(...)]] وانت بتقرا (و [[default=str]] بيعدّيها بس مبيرجّعهاش datetime لوحده).` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** [[orders.json]] لستة طلبات فيها [[customer]] و [[items]] (كل item فيه [[price]] و [[qty]]). اطبع إجمالي كل عميل متترتب، واكتب [[summary.json]] بالعربي ومتنسّق.`, done: R`الأرقام مطابقة لحساب بإيدك على ٣ عملا، و [[summary.json]] فيه الأسامي عربي مقروء، وطلب من غير [[items]] بيتطبع كتحذير ومبيوقّعش السكربت.` },
+            { lvl: 'تحدي', t: R`**مسألة:** [[flatten(obj)]] بتحوّل JSON متداخل لمسارات بنقط: [[{"a": {"b": 1, "c": [1, 2]}}]] تبقى [[{"a.b": 1, "a.c.0": 1, "a.c.1": 2}]]. بـ recursion، ومعاها اختبارات لـ dict فاضي و list جوه list.`, done: R`المثال بيطلع بالظبط، و [[{}]] بترجّع [[{}]]، و [[{"x": [ [1] ]}]] بترجّع [[{"x.0.0": 1}]]، والاختبارات خضرا.` },
+          ],
           deep: {
             why: R`سكربت بيعالج طلبات جديدة كل ساعة لازم يعرف وقف فين المرة اللي فاتت، وإلا هيعالج نفس الحاجات تاني. ولو ملف الحالة اتكتب نصه وبعدين الكهربا قطعت أو حد عمل Ctrl+C، التشغيل الجاي هيقع بـ [[JSONDecodeError]] ومحدش فاكر كان واقف فين.`,
             how: R`[[read_text]] ثم [[json.loads]] هي نفسها [[json.load(f)]] على ملف مفتوح، اختار اللي يريحك.
@@ -556,6 +578,13 @@ with open("excel_export.csv", newline="", encoding="utf-8-sig") as f:
         print(dialect.delimiter, row["name"], float(row["total"].replace(",", ".")))`,
           try: R`اعمل ملف زي اللي Excel بيصدّره: [[printf '\xef\xbb\xbfname;city;total\r\nسارة;القاهرة;150,5\r\nOmar;Alex;80\r\n' > excel_export.csv]] وشغّل السكربت. وبعدين [[xxd report.csv | head -2]] وشوف أول 3 bytes. على ويندوز PowerShell مفيش printf ولا xxd: اعمل الملف بـ [[python -c "open('excel_export.csv','wb').write('\ufeffname;city;total\r\nسارة;القاهرة;150,5\r\nOmar;Alex;80\r\n'.encode())"]]، وبص على الـ bytes بـ [[Format-Hex report.csv | Select-Object -First 2]]. ولو عندك Excel أو LibreOffice، افتح report.csv، وبعدين اكتبه بـ [[utf-8]] بدل [[utf-8-sig]] وافتحه تاني.`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** ملف اتكتب بـ [[utf-8-sig]]، وانت قريته بـ [[DictReader]] و [[encoding="utf-8"]] وعملت [[row["name"]]]. إيه اللي هيحصل؟`, done: R`[[KeyError: 'name']]، لأن أول عمود اسمه بقى [['\ufeffname']] (الـ BOM لزق فيه). صلّحتها بـ [[utf-8-sig]] في القراية.` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** على ويندوز [[open("bad.csv", "w", encoding="utf-8")]] من غير [[newline=""]] وبعدها [[csv.writer(f).writerows(...)]]. افتح الملف في Excel، وبعدين بص على الـ bytes.`, done: R`Excel ظهر فيه سطر فاضي بين كل صف، والـ bytes فيها [[\r\r\n]] (الـ csv بيكتب [[\r\n]] والـ text mode بيحوّل [[\n]] تاني). وعلى لينكس الملف طلع سليم ([[\r\n]] بس). مع [[newline=""]] بقى سليم على الاتنين.` },
+            { lvl: 'تطبيق', t: R`**قارن:** اكتب صف [[Ali, Jr.]] و [[Alex]] و [[80]] مرة بـ [[",".join(...)]] ومرة بـ [[csv.writer]]، واقرا الاتنين بـ [[csv.reader]].`, done: R`بـ [[join]] السطر اتقري ٤ أعمدة (الفاصلة اللي في الاسم قسمته)، وبـ [[csv.writer]] الاسم اتحط بين علامات تنصيص ورجع ٣ أعمدة. فمتكتبش CSV بإيدك أبدًا.` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** [[sales.csv]] فيه [[date,city,product,total]] و ٢٠ صف بالعربي والإنجليزي، منهم صف [[total]] فيه فاضي وصف فيه [[150,5]] (فاصلة عشرية). اطلع [[summary.csv]] فيه إجمالي كل مدينة متترتب، يتفتح في Excel صح.`, done: R`[[summary.csv]] بـ [[utf-8-sig]] والعربي سليم في Excel، والصف الفاضي اتعد في سطر «اتخطى» على stderr، و [[150,5]] اتحسبت [[150.5]]، والمجموع الكلي مطابق لمجموع المدن.` },
+            { lvl: 'تحدي', t: R`**بيانات حقيقية:** [[contacts.csv]] (٣٠ صف) فيه مسافات زيادة، وإيميلات بحروف كبيرة، وأرقام موبايل بشرط ومسافات و [[+20]]، وناس متكررة. نضّفه: كل إيميل lowercase، والموبايل أرقام بس بشكل [[01xxxxxxxxx]]، وشيل المكرر بالإيميل وسيب آخر واحد.`, done: R`السكربت بيطبع: كام صف دخل، وكام اتصلّح، وكام مكرر اتشال، وكام رقم مش سليم (والصفوف دي في [[rejects.csv]])، وتشغيله على الناتج نفسه مبيغيّرش حاجة.` },
+          ],
           deep: {
             why: "أغلب الناس اللي هيستلموا تقرير السكربت هيفتحوه في Excel. لو العربي طلع رموز أو كل الأعمدة في عمود واحد، التقرير ملوش لازمة مهما كانت الأرقام صح.",
             how: R`الـ BOM هو الحرف [[U+FEFF]] ومكتوب utf-8 كـ [[EF BB BF]]. Excel على ويندوز بيشوفه فيقرا الملف utf-8، ومن غيره بيقرا بـ encoding ويندوز فيطلع العربي [[Ø³Ø§Ø±Ø©]] وما شابه. باقي البرامج (Python و LibreOffice و Google Sheets) بتفهم الاتنين.
@@ -777,6 +806,13 @@ for url in root.findall("sm:url", NS):
 print(len(root.findall("url")))`,
           try: R`اعمل الملفين بالأوامر اللي في أول الحل (فيهم [[country: NO]] و [[version: 1.10]] قصد)، وسطّب [[pyyaml]] في venv، وشغّل السكربت. وبعدين جرّب [[yaml.safe_load("on: yes\nzip: 012\n")]] وصلّح [[country]] و [[version]] في الملف عشان يطلعوا نصوص. أوامر الحل bash ([[cat > file <<'EOF']])، فعلى ويندوز اعمل الملفين في VS Code والصق اللي بين سطر [[cat]] وسطر [[EOF]].`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[yaml.safe_load("country: NO\nversion: 1.10\non: yes\nzip: 012\n")]] (pyyaml 6.0.2). اكتب الـ dict قبل ما تشغّل.`, done: R`[[{'country': False, 'version': 1.1, True: True, 'zip': 10}]]: [[NO]] بقت False، و [[1.10]] بقت رقم ١.١، و [[on]] (المفتاح نفسه) بقى True، و [[012]] اتقرت octal. والحل علامات تنصيص: [[country: "NO"]].` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[yaml.load(text)]] من غير حاجة تانية. شغّله واقرا الخطأ.`, done: R`[[TypeError: load() missing 1 required positional argument: 'Loader']] (من pyyaml 6)، وغيّرتها لـ [[yaml.safe_load(text)]] بدل ما تحط [[Loader=yaml.Loader]].` },
+            { lvl: 'تطبيق', t: R`**اشرحها:** جرّب [[yaml.safe_load("!!python/object/apply:os.system ['echo hi']")]]، واكتب ٣ سطور ليه [[safe_load]] بس.`, done: R`[[safe_load]] رفض بـ [[ConstructorError]] ([[could not determine a constructor for the tag 'tag:yaml.org,2002:python/object/apply:os.system']])، وكتبت إن [[yaml.load]] بـ Loader كامل كان هينفّذ الأمر، يعني ملف YAML من برا يقدر يشغّل كود على جهازك.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** ملف YAML متعمل بـ Tab بدل مسافات قبل [[b: 1]]. اقرا الخطأ وقول هو فين.`, done: R`[[found character '\t' that cannot start any token]] و [[line 2, column 1]]، وصلّحته بمسافتين، وظبطت المحرر يحوّل الـ Tab لمسافات في ملفات [[.yaml]].` },
+            { lvl: 'تحدي', t: R`**بيانات حقيقية:** ملف RSS فيه ٥ [[item]] (كل واحد [[title]] و [[link]] و [[pubDate]]). اطبع العناوين من الأحدث للأقدم بـ [[ElementTree]] و [[email.utils.parsedate_to_datetime]] للتاريخ.`, done: R`الـ ٥ عناوين بالترتيب الصح، و item من غير [[pubDate]] بيروح في الآخر بدل ما يوقّع السكربت، وعرفت من الوثائق إن XML من مصدر مش موثوق يتقري بـ [[defusedxml]].` },
+          ],
           deep: {
             why: R`إعدادات السكربت لما بتكبر (مواقع، جداول، مستخدمين) بتبقى أسهل في YAML. و XML بيقابلك لما تسحب sitemap موقع عشان تشيّك على روابطه، أو تقرا export من نظام قديم.`,
             how: R`[[safe_load]] بيطلّع dict و list و str و int و float و bool و None بس. [[yaml.load]] من غير Loader بقى error في PyYAML 6، والـ Loader الكامل ممكن ينفّذ كود Python من الملف ([[!!python/object/apply:os.system]])، فممنوع على أي ملف مش انت كاتبه.
@@ -1061,6 +1097,13 @@ print(day, day.strftime("%A"), (now.date() - day).days)
 print(sorted(["5-10-2026", "30-9-2026", "1-1-2027"]))`,
           try: R`اعمل ملف قديم بـ [[touch -d "45 days ago" old_report.csv]] (في PowerShell: [[New-Item old_report.csv]] وبعدين [[(Get-Item old_report.csv).LastWriteTime = (Get-Date).AddDays(-45)]]) وشغّل السكربت. وبعدين اكتب دالة [[latest_backup(folder)]] بترجّع أحدث [[backup_*.zip]] من الاسم نفسه (مش من وقت التعديل)، وجرّبها على [[backup_2026-09-29.zip]] و [[backup_2026-10-01.zip]] و [[backup_2026-09-30.zip]].`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[d = datetime(2026, 10, 1, 1) - datetime(2026, 9, 30, 23)]]. إيه [[d.days]] و [[d.total_seconds()]] و [[print(d)]]؟`, done: R`[[0]] و [[7200.0]] و [[2:00:00]]. يعني الفرق ساعتين رغم إن التاريخ اتغيّر، و [[days]] مش «كام يوم في التقويم». لو عايز فرق الأيام في التقويم: [[(a.date() - b.date()).days]] = ١.` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[datetime.strptime("2026/09/30", "%Y-%m-%d")]]. اقرا الخطأ وصلّحه.`, done: R`[[ValueError: time data '2026/09/30' does not match format '%Y-%m-%d']]، والصح [["%Y/%m/%d"]]. ولما الملفات فيها الشكلين، جرّبت الاتنين في loop ورجّعت أول واحد نجح.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[datetime.now() - datetime.now(timezone.utc)]]. وبعدين [[datetime.fromisoformat("2026-10-01T16:14:16Z")]].`, done: R`الأولى [[TypeError: can't subtract offset-naive and offset-aware datetimes]]، والتانية [[2026-10-01 16:14:16+00:00]] (الـ [[Z]] بتتقري من 3.11). فلازم الاتنين يبقوا نفس النوع قبل ما تطرح.` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** [[date(2026, 1, 1).isocalendar()]] و [[date(2026, 12, 31).isocalendar()]]. السنة دي فيها كام أسبوع ISO؟ وإزاي تسمّي ملف تقرير أسبوعي يترتب صح؟`, done: R`الأولى [[week=1]] والتانية [[week=53]]، يعني ٢٠٢٦ فيها ٥٣ أسبوع. وسمّيت الملف [[f"report_{y}-W{w:02d}.csv"]] عشان [[W09]] تيجي قبل [[W10]].` },
+            { lvl: 'تحدي', t: R`**مسألة:** [[to_delete(names, today, keep_daily=7, keep_weekly=4)]] بتاخد أسامي [[backup_YYYY-MM-DD.zip]] وترجّع اللي يتمسح: سيب آخر ٧ أيام، وآخر نسخة من كل أسبوع لآخر ٤ أسابيع. اختبرها على ٦٠ اسم متولّدين بـ [[timedelta]].`, done: R`فاضل ١١ ملف على الأكتر، والنسخة الأحدث عمرها ما بتتمسح، وأسماء مش ماشية على الشكل بتتجاهل (مش بتتمسح)، وتشغيلها مرتين على الناتج مبيمسحش حاجة زيادة.` },
+          ],
           deep: {
             why: R`backup باسم ثابت بيدوس على اللي قبله. واسم زي [[30-9-2026]] مبيترتبش صح. و «أقدم من 30 يوم» محتاجة تاريخ الملف مش تاريخ النهارده بس.`,
             how: R`الشكل [[%Y-%m-%d]] (ISO) هو الوحيد اللي ترتيب الأسماء فيه هو ترتيب التواريخ، عشان السنة الأول والأرقام بأصفار ([[09]] مش [[9]]). فـ [[sorted(names)]] و [[ls]] بيرتّبوه صح من غير أي parsing.
@@ -1347,6 +1390,13 @@ print("done")`,
 
 في PowerShell: [[python logs.py 2>$null]]، وبعدين [[python logs.py -v > $null]] (الـ stderr بيفضل على الشاشة لوحده)، وبعدين [[(Get-Content cleaner.log).Count]] و [[Get-Content cleaner.log -TotalCount 3]].`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** سكربت من غير [[basicConfig]] فيه [[logging.info("hidden")]] و [[logging.warning("shown")]]. هيطبع إيه؟`, done: R`[[WARNING:root:shown]] بس على stderr: الـ default مستوى WARNING وشكل [[LEVEL:name:message]]. فالـ info اللي محدش شافها مش باج في الكود، ده ناقص إعداد.` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[log.warning("deleted files", 5)]]. هيقع السكربت؟`, done: R`السكربت ماوقعش، بس طبع [[--- Logging error ---]] و [[TypeError: not all arguments converted during string formatting]] و [[Arguments: (5,)]]، والرسالة الأصلية ضاعت. صلّحتها بـ [["deleted %d files", 5]].` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[RotatingFileHandler("rot.log", maxBytes=1000, backupCount=3)]] واكتب ٢٠٠ سطر لوج. كام ملف هيفضل؟`, done: R`٤ ملفات: [[rot.log]] و [[rot.log.1]] و [[rot.log.2]] و [[rot.log.3]]، والسطور الأقدم اتمسحت لوحدها. وعرفت إن ده اللي بيمنع لوج سكربت شغال كل دقيقة يملا الديسك.` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** على [[cleaner.log]] اللي السكربت عمله بعد ١٠ تشغيلات، اكتب [[log_summary.py]] بيطبع عدد كل مستوى، وأول وآخر وقت، وآخر ٣ أخطاء.`, done: R`الأرقام مطابقة لـ [[grep -c " ERROR "]] (أو [[Select-String]])، والسطور اللي مش ماشية على الشكل (زي سطور الـ traceback) متعدّتش كمستويات.` },
+            { lvl: 'تحدي', t: R`**قارن:** [[log.error("failed: %s", e)]] و [[log.exception("failed")]] جوه [[except]]. إيه الفرق في الملف؟ وإيه اللي بيحصل لو ناديت [[basicConfig]] مرتين؟`, done: R`[[exception]] كتب الـ traceback كامل تحت الرسالة و [[error]] كتب سطر واحد. والـ [[basicConfig]] التانية اتجاهلت لأن فيه handlers، إلا لو [[force=True]] (من 3.8).` },
+          ],
           deep: {
             why: R`سكربت متجدول بيشتغل الساعة 2 بالليل وانت نايم. لما يفشل، مفيش غير الـ log تعرف منه حصل إيه وإمتى. و print من غير وقت ولا مستوى، ومتلخبط مع النتيجة، ولازم تمسحه قبل ما تسلّم.`,
             how: R`[[logging.getLogger("cleaner")]] logger باسم بيظهر في كل سطر (في مشروع فيه موديولات [[getLogger(__name__)]]).
@@ -1608,6 +1658,13 @@ if failed:
     sys.exit(f"failed: {', '.join(failed)}")`,
           try: R`جهّز repos تجربة بالأوامر اللي في الحل وشغّله مرتين. وبعدين عدّله: قبل الـ pull يشغّل [[git status --porcelain]]، ولو فيه تغييرات مش متعملها commit يطبع [[SKIP]] وعدد الملفات ومايعملش pull للـ repo ده.`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[subprocess.run(["git", "status"], cwd=FOLDER, capture_output=True, text=True)]] على فولدر مش git repo. إيه [[returncode]] و [[stderr]]؟ وهل Python هيرمي exception؟`, done: R`[[128]] و [[fatal: not a git repository (or any of the parent directories): .git]]، ومفيش exception: [[run]] مبيرميش إلا لو [[check=True]]. فلازم تشوف [[returncode]] بنفسك أو تستخدم [[check]].` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[subprocess.run(["nope-cmd-xyz"])]] على ويندوز وعلى لينكس. وبعدين [[subprocess.run(["dir"])]] من PowerShell.`, done: R`ويندوز: [[FileNotFoundError: [WinError 2] The system cannot find the file specified]]، ولينكس: [[FileNotFoundError: [Errno 2] No such file or directory: 'nope-cmd-xyz']]. و [[dir]] وقع بنفس الخطأ لأنه أمر جوه CMD مش برنامج، والحل [[shell=True]] أو [[os.listdir]].` },
+            { lvl: 'تطبيق', t: R`**محاكاة:** شغّل [[[sys.executable, "-c", "import time; time.sleep(3)"]]] بـ [[timeout=1]]، وبعدين [[[sys.executable, "-c", "import sys; sys.exit(3)"]]] بـ [[check=True]]. امسك الاتنين واطبع رسالة لكل واحد.`, done: R`الأولى [[TimeoutExpired]] ورسالتها [[timed out after 1 seconds]] (على لينكس الرقم ظهر [[0.99997...]])، والتانية [[CalledProcessError]] و [[returned non-zero exit status 3.]]. والسكربت كمّل بعدهم.` },
+            { lvl: 'تطبيق', t: R`**اشرحها:** على لينكس شغّل [[subprocess.run("echo listing " + name, shell=True)]] و [[name = "a.txt; echo HACKED"]]. اكتب ٣ سطور لزميلك.`, done: R`طبع [[listing a.txt]] وبعدها [[HACKED]]: الشيل نفّذ الأمر التاني. كتبت إن أي قيمة جاية من برا (اسم ملف، input، API) مع [[shell=True]] بتبقى command injection، والحل لستة arguments من غير shell.` },
+            { lvl: 'تحدي', t: R`**ابني:** [[pull_all.py ROOT]] بيلف على كل فولدر فيه [[.git]]، ويشغّل [[git pull --ff-only]] بـ timeout ٦٠ ثانية، ويطبع جدول: المشروع والنتيجة (اتحدّث، مفيش جديد، فشل وأول سطر من الـ stderr)، ويخرج بـ ١ لو أي واحد فشل.`, done: R`على فولدر فيه ٣ repos (واحد فيه تعديلات محلية متعارضة): الاتنين اتحدّثوا والتالت ظهر «فشل» بالسبب، والـ exit code ١، و [[--dry-run]] بيشغّل [[git fetch]] و [[git status -sb]] بس.` },
+          ],
           deep: {
             why: "عندك ١٥ مشروع على الجهاز أو السيرفر، وعايز تحدّثهم كلهم الصبح وتعرف مين فشل. بإيدك: cd و git pull ١٥ مرة. بالسكربت: أمر واحد وملخص.",
             how: R`[[root.glob("*/.git")]] بيلاقي كل فولدر جواه [[.git]] في مستوى واحد، و [[.parent]] الفولدر نفسه.
@@ -1907,6 +1964,13 @@ print(API_URL, DEBUG, TIMEOUT, token[:4] + "...")`,
 
 الـ [[NAME=value command]] ده شكل bash. في PowerShell مفيش متغير لأمر واحد: [[$env:API_URL="http://staging"; $env:DEBUG="0"; python envs.py]]، وبعدها [[Remove-Item Env:API_URL, Env:DEBUG]] عشان ميفضلوش في الترمنال ده.`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[os.environ["MISSING_XYZ"]]] و [[os.environ.get("MISSING_XYZ", "x")]] و [[bool(os.environ.get("DEBUG", "false"))]].`, done: R`[[KeyError: 'MISSING_XYZ']] و [['x']] و [[True]]! لأن [["false"]] نص مش فاضي. فالـ flags بتتقري بـ [[os.environ.get("DEBUG", "").lower() in ("1", "true", "yes")]].` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[.env]] فيه [[API_TOKEN=from-file]] والشيل فيه [[API_TOKEN=from-shell]]. بعد [[load_dotenv()]] القيمة كام؟ وبعد [[load_dotenv(override=True)]]؟ (python-dotenv 1.0.1)`, done: R`الأولى [[from-shell]] (الـ default إن البيئة الحقيقية بتكسب)، والتانية [[from-file]]. فالسيرفر يقدر يغيّر أي قيمة من غير ما يلمس الملف.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[.env]] فيه [[A="x#y"]] و [[B=x #comment]] و [[C='single $HOME']]. [[dotenv_values()]] هترجّع إيه؟`, done: R`[[A]] = [[x#y]] و [[B]] = [[x]] (اللي بعد [[ #]] تعليق) و [[C]] = [[single $HOME]] (الـ single quote مبيفكش المتغيرات). فأي سر فيه [[#]] يتحط بين علامات تنصيص.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[config.py]] فيه دالة [[load_settings()]] بترجّع dict فيه [[API_TOKEN]] (مطلوب)، و [[TIMEOUT]] (int، default ١٠)، و [[DEBUG]] (bool)، وبترمي خطأ واحد فيه **كل** المتغيرات الناقصة مرة واحدة.`, done: R`من غير أي متغير الرسالة فيها الأسماء الناقصة كلها في سطر، و [[TIMEOUT=abc]] بيطلّع رسالة واضحة، والاختبارات بـ [[monkeypatch.setenv]] و [[delenv]] خضرا.` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** في repo عندك، اتأكد إن [[.env]] مش في git ([[git check-ignore -v .env]])، ودوّر على أي توكن اتكتب في الكود بـ [[git grep -nE "(token|secret|password)\s*=\s*['\"]"]]، واعمل [[.env.example]] من غير قيم.`, done: R`[[check-ignore]] طبع السطر اللي في [[.gitignore]]، و [[git grep]] مطلّعش ولا سر (أو نقلت اللي طلع لـ [[.env]])، و [[.env.example]] فيه الأسامي بس.` },
+          ],
           deep: {
             why: R`نفس السكربت بيشتغل على جهازك (API تجربة) وعلى السيرفر (API حقيقي) من غير ما تعدّل سطر، والأسرار عمرها ما تدخل git. وأي حد بيقرا الكود يعرف السكربت محتاج إيه من الأسماء.`,
             how: R`[[os.environ]] dict فيه متغيرات البيئة، والقيم كلها نصوص. [[get(name, default)]] للاختياري، والإجباري تفحصه في الأول وتخرج برسالة واضحة بدل [[KeyError]] في نص الشغل.
@@ -2135,6 +2199,13 @@ except requests.RequestException as e:
 
 على ويندوز PowerShell: [[mkdir www]]، و [['{"name": "terminal-study", "version": 3}' | Set-Content www/data.json]]، و [[python -c "open('www/big.bin','wb').write(bytes(3000000))"]] (3 مليون byte أصفار)، والوقت بـ [[Measure-Command { python fetch.py }]] (fetch.py اسم السكربت عندك).`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** شغّل [[python -m http.server]] وبعدين [[requests.get(".../nope", timeout=5).raise_for_status()]] و [[urllib.request.urlopen(".../nope")]]. إيه رسالة كل واحد؟`, done: R`requests: [[404 Client Error: File not found for url: http://127.0.0.1:8000/nope]] (من [[HTTPError]])، و urllib: [[HTTP Error 404: File not found]]. والفرق: requests مبيرميش إلا لما تنادي [[raise_for_status()]]، و urllib بيرمي لوحده.` },
+            { lvl: 'تطبيق', t: R`**محاكاة:** اعمل سيرفر صغير بـ [[http.server]] فيه [[/slow]] بيعمل [[time.sleep(3)]]، واطلبه بـ [[requests.get(..., timeout=1)]].`, done: R`[[ReadTimeout]] ورسالته [[Read timed out. (read timeout=1)]] بعد ثانية، ومن غير [[timeout]] الطلب استنى الـ ٣ ثواني كاملين. وفهمت إن من غير timeout سيرفر معلّق بيعلّق السكربت للأبد.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[download.py URL OUT]] بيحمّل بـ [[stream=True]] و [[iter_content(64 * 1024)]] لملف [[.part]]، وبعد ما يخلص يعمل [[os.replace]] للاسم النهائي، ويطبع الحجم ويقارنه بـ [[Content-Length]].`, done: R`ملف كبير اتحمّل والذاكرة مكبرتش، ولو قطعت النت في النص الملف النهائي مش موجود (فيه [[.part]] بس)، والحجم مطابق للهيدر.` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** من [[https://api.github.com/repos/python/cpython/releases?per_page=5]] (أو أي API عام) اطبع اسم كل release وتاريخه بشكل [[2026-10-01]]، ومعاك [[User-Agent]] و [[timeout]].`, done: R`الجدول ٥ سطور، ولو حطيت URL غلط بيطبع الـ status ورسالة واضحة ويخرج بـ ١، ولو الـ API رجّع rate limit (٤٠٣) بيقول كده بدل traceback.` },
+            { lvl: 'تحدي', t: R`**قارن:** نفس الطلب ١٠ مرات بـ [[requests.get]] كل مرة، و ١٠ مرات من [[requests.Session()]] واحدة، على سيرفر محلي. قيس الوقت.`, done: R`كتبت الرقمين، والـ Session كانت أسرع لأنها بتعيد استخدام نفس الاتصال (keep-alive) بدل ما تفتح واحد جديد كل مرة، وعرفت إن الفرق بيكبر مع HTTPS.` },
+          ],
           deep: {
             why: R`سكربت بيسحب أسعار أو بيانات كل ساعة، وفي مرة السيرفر التاني علّق: من غير timeout السكربت بيفضل مستني، والتشغيلة اللي بعدها بتبدأ جنبه، وبعد يومين عندك ٤٨ نسخة معلّقة.`,
             how: R`urllib: [[urlopen]] بيرجّع response بتقرا منه، و [[json.load(r)]] بيقرا ويحوّل. وأي status من 400 لفوق بيرمي [[HTTPError]] (فيه [[code]] و [[reason]])، ومشاكل الاتصال (DNS، connection refused) بترمي [[URLError]].
@@ -2402,6 +2473,14 @@ print(sorted(emails))
 print(re.sub(r"\s+", " ", "  كلام    فيه   مسافات  ").strip())`,
           try: R`اعمل فولدر [[inbox]] فيه ملفين: الأول فيه [[01012345678]] و [[Sara.Ali@Example.com]] و [[+20 112 345 6789]]، والتاني فيه [[omar@shop.eg]] و [[0122-555-1234]] و [[0101234]] (ناقص) و [[12345678901234]] (طويل) و [[010 1234 5678]] (نفس أول رقم بمسافات). شغّل السكربت. وبعدين عدّله يطبع كل رقم ومعاه أسماء الملفات اللي ظهر فيها.`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[re.findall(r"\d+", "رقم ٠١٢٣ و 45")]]، وبعدين نفس السطر بـ [[re.ASCII]]، وبعدين بـ [[[0-9]+]].`, done: R`الأولى [[['٠١٢٣', '45']]]: [[\d]] بتمسك الأرقام العربي كمان، والتانية والتالتة [[['45']]] بس. فلو هتعمل [[int()]] على الناتج أو تحطه في قاعدة، اختار بوعي.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[re.findall("\bcat\b", "a cat here")]] (من غير [[r]]) و [[re.findall(r"\bcat\b", "a cat here")]].`, done: R`الأولى [[[]]] والتانية [[['cat']]]، لأن من غير [[r]] Python حوّل [[\b]] لحرف backspace قبل ما [[re]] يشوفه. فكل pattern يتكتب [[r"..."]].` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[re.findall(r"<b>.*</b>", "<b>x</b><b>y</b>")]] رجّعت عنصر واحد بدل اتنين. صلّحها.`, done: R`كانت [[['<b>x</b><b>y</b>']]] لأن [[.*]] greedy بتاخد أطول حاجة، وبـ [[.*?]] بقت [[['<b>x</b>', '<b>y</b>']]]. ولـ HTML حقيقي استخدم parser مش regex.` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** لوج nginx (٢٠ سطر) بالشكل [[1.2.3.4 - - [03/Nov/2026:10:00:00 +0000] "GET /api HTTP/1.1" 500 123]]. طلّع بـ named groups أكتر ٣ IPs، وعدد كل status، وكل مسار رجّع ٥xx.`, done: R`الأرقام مطابقة للعد بإيدك، والسطور اللي مش ماشية على الشكل اتعدّت في «مش مفهوم» ومش بتوقّع السكربت، والـ pattern متكتب بـ [[re.VERBOSE]] بتعليق لكل جزء.` },
+            { lvl: 'تطبيق', t: R`**مسألة:** حوّل كل تاريخ [[dd/mm/yyyy]] في نص لـ [[yyyy-mm-dd]] بـ [[re.sub]] و groups.`, done: R`[[re.sub(r"(\d{2})/(\d{2})/(\d{4})", r"\3-\2-\1", "on 05/10/2026 and 30/09/2026")]] رجّعت [[on 2026-10-05 and 2026-09-30]]، و [[5/10/2026]] (رقم واحد) مااتغيّرتش، فزوّدت [[\d{1,2}]] ومليت الصفر بدالة في [[re.sub]].` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** قيس [[re.match(r"(a+)+$", "a" * n + "!")]] لـ n = ١٨ و ٢٠ و ٢٢ بـ [[time.perf_counter()]].`, done: R`الوقت بيتضاعف تقريبًا ×٤ كل ما n تزيد ٢ (عندي ٠.٠٢ ثم ٠.٠٨ ثم ٠.٣١ ثانية)، ده اسمه catastrophic backtracking. وصلّحت الـ pattern لـ [[a+$]] فبقى فوري، وعرفت إن regex بيقرا input من برا لازم يتكتب كده.` },
+          ],
           deep: {
             why: R`عندك ٢٠٠ رسالة أو ملف export من نظام قديم وعايز لستة أرقام العملاء من غير تكرار. الأرقام مكتوبة بكل الأشكال: بمسافات، بشرط، بـ +20، من غير. بإيدك ساعات، والسكربت ثانية.`,
             how: R`[[r"..."]] raw string: الـ [[\d]] توصل لـ re زي ما هي من غير ما Python يفهمها escape. اكتب كل الـ patterns كده.

@@ -380,6 +380,48 @@
         "setinterval"
       ],
       "lvl": "متقدم"
+    },
+    {
+      "topic": "streams و pipeline",
+      "find": [
+        "streams و pipeline"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "node:http من غير مكتبة",
+      "find": [
+        "node:http سيرفر"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "Dockerfile لتطبيق Node",
+      "find": [
+        "Dockerfile لتطبيق Node"
+      ],
+      "lvl": "إنتاج"
+    },
+    {
+      "topic": "profiling بـ --cpu-prof",
+      "find": [
+        "--cpu-prof"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "جدولة مهام",
+      "find": [
+        "جدولة مهام"
+      ],
+      "lvl": "يومي"
+    },
+    {
+      "topic": "بنك تمارين Node",
+      "find": [
+        "مسائل: arguments"
+      ],
+      "lvl": "أساسي"
     }
   ],
   "api": [

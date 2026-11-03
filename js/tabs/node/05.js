@@ -4,6 +4,15 @@ MORE("node", [
       t: "Node runtime",
       l: 2,
       n: "المكتبات المبنية في Node: الملفات والمسارات، و process والإشارات، وتشغيل برامج تانية بأمان، و Buffer، و EventEmitter و worker_threads",
+      projects: [
+        { lvl: 'صغير', t: R`عدّاد تشغيل ما بيتبوّظش`, what: R`سكربت بيزوّد [[runs]] في [[state.json]] كل مرة يتشغّل، بيكتب في ملف مؤقت و [[rename]]، ولو الملف مش موجود يبدأ من 0، ولو JSON بايظ يطبع اسم الملف ويخرج بـ 1 من غير ما يمسحه. من درس fs/promises و exit codes.`, done: R`٣ تشغيلات ورا بعض بتدّي [[runs: 3]]، و [[{bad]] في الملف بتطلّع «state.json بايظ» و exit 1 والملف زي ما هو.` },
+        { lvl: 'صغير', t: R`أداة [[tree]] صغيرة`, what: R`[[tree.mjs <dir>]] بيلف بـ [[readdir({ recursive: true, withFileTypes: true })]] ويطبع الشجرة بمسافات، والفولدرات الأول، ويتخطّى [[node_modules]] و [[.git]]، وفي الآخر عدد الملفات والحجم الكلي. من درس الفولدرات و path.`, done: R`على مشروع Node بيطبع الشجرة من غير node_modules، والعدد والحجم بيطابقوا [[Get-ChildItem -Recurse -File | Measure-Object Length -Sum]] (لو استبعدت نفس الفولدرات).` },
+        { lvl: 'متوسط', t: R`مراقب فولدر بيبني لوحده`, what: R`[[watch-build.mjs]] بيراقب [[content/]] بـ [[fs.watch]] (recursive)، ولأي [[.md]] اتغيّر يستنى 200ms (debounce) ويحوّل كل الملفات لـ [[dist/*.html]] (عنوان من أول سطر [[#]] وباقي السطور فقرات)، ويطبع «built N files in X ms»، و Ctrl+C بيوقفه نضيف بـ AbortController. من درس fs.watch و SIGINT.`, done: R`حفظ ملف من VS Code (حدثين change) بيعمل build واحد بس، وملف [[.txt]] مبيعملش build، و Ctrl+C بيطبع «stopped» و exit 0.` },
+        { lvl: 'متوسط', t: R`[[git]] من Node بأمان`, what: R`[[changed.mjs <ref>]] بيشغّل [[git diff --name-only --end-of-options <ref>]] بـ [[execFile]] (مش exec)، ويطبع الملفات اللي اتغيّرت مجمّعة بالامتداد، ويرفض أي ref فيه حاجة غير حروف وأرقام و [[/._-~^]]. من درس execFile و spawn و command injection.`, done: R`[[node changed.mjs HEAD~3]] بيطبع الملفات بالامتداد، و [[node changed.mjs "--output=x.txt"]] بيرفض قبل ما يشغّل git ومفيش ملف [[x.txt]] اتعمل.` },
+        { lvl: 'كبير', t: R`أداة باك أب متينة`, what: R`[[backup.mjs --src <dir> --dest <dir> [--keep 5] [--dry-run]]] بـ [[parseArgs]]: بتعمل [[tar -czf]] بـ [[spawn]] لاسم فيه التاريخ، وتمسح القديم وتسيب آخر [[--keep]]، وتكتب سطر JSON في [[backup.log]] لكل تشغيل (وقت، وحجم، ونتيجة). فيها usage واضح مع أي option غلط (exit 2)، و exit 1 لو tar فشل (والملف الناقص بيتمسح)، و SIGINT/SIGTERM بيستنوا tar يخلص أو يقتلوه ويمسحوا الناقص، وبتمنع تشغيلين مع بعض بملف lock.`, done: R`٧ تشغيلات بـ [[--keep 5]] بتسيب ٥ ملفات، و [[--src]] مش موجود بيطلّع رسالة و exit 1 من غير ملف ناقص، و Ctrl+C في النص مبيسيبش [[.tgz]] بايظ، وتشغيل تاني والأول شغال بيقول «في نسخة شغالة (pid ...)» و exit 1، و [[--dry-run]] بيطبع اللي هيتعمل بس.`, ext: R`زوّد [[--verify]] بيعمل [[tar -tzf]] على الملف ويقارن عدد الملفات، وإشعار لو فشل، ومهمة مجدولة (درس جدولة المهام).` },
+        { lvl: 'كبير', t: R`محلّل لوج كبير بالـ streams`, what: R`[[logstat.mjs <file|->]] بيقرا لوج (ممكن مئات الـ MB أو [[.gz]]) بـ [[createReadStream]] و [[createGunzip]] و [[readline]]، ويطلّع: عدد كل level، وأبطأ ١٠ requests، وعدد الأخطاء في كل دقيقة. الذاكرة ثابتة مهما كبر الملف، و [[-]] بيقرا من stdin، و [[--json]] للـ CI، والسطور البايظة بتتعدّ مش بتوقّع الأداة، و EPIPE مع [[| head]] مبيطلعش stack trace.`, done: R`على ملف ٧٣ MB فيه مليون ونص سطر الـ RSS فضل حوالي ٧٠ MB والنتيجة طابقت [[readFile]] (اللي خد ٢٦٠ MB)، ونفس الملف [[.gz]] بيدّي نفس الأرقام، و [[node logstat.mjs big.log | head -3]] بيقفل ساكت بـ exit 0.`, ext: R`زوّد [[--follow]] يقرا السطور الجديدة زي [[tail -f]]، وشغّل الحساب على أكتر من ملف بـ worker_threads وقيس الفرق.` },
+        { lvl: 'فكرة', t: R`أداة نظام بتحل مشكلة عندك`, what: R`اختار حاجة بتعملها بإيدك على الملفات أو البرامج (ترتيب صور بالتاريخ، أو ضغط فولدر قديم، أو تشغيل [[ffmpeg]] على فيديوهات كتير، أو مراقبة فولدر تنزيلات) واعملها أداة Node بـ fs و child_process و parseArgs، فيها [[--dry-run]] و exit codes صح وإغلاق نضيف.`, done: R`استخدمتها أسبوع على ملفاتك الحقيقية، و [[--dry-run]] طابق اللي اتعمل فعلًا، ومفيش ملف اتمسح أو اتكتب فوقه من غير ما تطلب.`, ext: R`خليها تشتغل على ويندوز ولينكس (اختبرها في [[docker run --rm node:22-slim]])، وانشرها كـ CLI (وحدة «مشروع: أداة سطر أوامر»).` },
+      ],
       items: [
         {
           cmd: "fs/promises",
@@ -34,6 +43,14 @@ await saveJson("config.json", config);
 await appendFile("app.log", $__btrun $__{config.runs}\n$__bt);
 console.log(config);`,
           try: R`احفظه كـ [[config-demo.mjs]] في فولدر فاضي وشغّله ٣ مرات: [[runs]] لازم يزيد و [[app.log]] يطول سطر كل مرة. وبعدين اكتب [[{bad]] في config.json وشغّله تاني، وقرر: الأحسن يرجع للقيم الافتراضية ولا يقع؟ وعدّل [[loadConfig]] بحيث الرسالة تقول اسم الملف البايظ.`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[a.txt]] فيه [[hi]]. إيه اللي هيطبعه [[console.log(await readFile("a.txt"))]] من غير [[utf8]]؟`, done: R`[[<Buffer 68 69>]]: من غير encoding بترجع بايتات، و [[68]] و [[69]] هم [[h]] و [[i]] بالـ hex.` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[const data = readFile("a.txt", "utf8"); JSON.parse(data)]]. اقرا الخطأ واعرف الكلمة الناقصة.`, done: R`الخطأ [[SyntaxError: Unexpected token 'o', "[object Promise]" is not valid JSON]]: [[data]] كانت promise، والناقص [[await]].` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** إيه رسالة [[JSON.parse]] لملف فاضي؟ ولملف فيه [[{bad]]؟ ولملف مش موجود (اطبع [[err.code]])؟`, done: R`الفاضي: [[Unexpected end of JSON input]]، و [[{bad]]: [[Expected property name or '}' in JSON at position 1 (line 1 column 2)]]، والمش موجود: [[ENOENT]] ورسالته فيها المسار (على ويندوز المسار الكامل، وعلى لينكس زي ما كتبته).` },
+            { lvl: 'تطبيق', t: R`**محاكاة:** دالة [[bump()]] بتقرا [[{ runs }]] وتزوّده وتكتبه. شغّلها ٢٠ مرة مع بعض بـ [[Promise.all]]، ومرة ٢٠ مرة ورا بعض بـ [[for]] و [[await]]. [[runs]] هيبقى كام؟`, done: R`ورا بعض: 20. مع بعض: 1 أو 2 (اتجرّب ٦ مرات)، ومرة وقع بـ [[Unexpected end of JSON input]] لأن قراية جت والملف لسه بيتكتب. الحل: طابور (كتابة واحدة في المرة) أو قاعدة بيانات.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** ١٠٠ [[appendFile("log.txt", ...)]] مع بعض بـ [[Promise.all]]. عدّ السطور على ويندوز، وفي Docker على فولدر جوه الـ container، وفي Docker على فولدر ويندوز متشارك بـ [[-v]].`, done: R`على ويندوز وجوه الـ container: 100 سطر. على الـ bind mount من ويندوز: 25 سطر بس في تجربتنا. يعني «append آمن» بيعتمد على نظام الملفات، والحل كتابة من مكان واحد (stream واحد مفتوح).` },
+            { lvl: 'تحدي', t: R`**ابني:** [[saveJson(file, data, { backups: 3 })]]: قبل ما تكتب، انقل النسخة الحالية لـ [[file.1]] و [[file.1]] لـ [[file.2]]... لحد 3، وبعدين اكتب في [[.tmp]] و [[rename]].`, done: R`بعد ٥ حفظات فيه [[data.json]] و [[data.json.1]] و [[.2]] و [[.3]] بس، وكل واحد فيه النسخة الصح (الأقدم في [[.3]])، ومفيش [[.tmp]] فاضل.` },
+          ],
           flag: "script",
           deep: {
             why: R`أي سكربت أو سيرفر بيقرا config أو بيكتب نتيجة أو لوج. والغلطات هنا مش بتبان غير في أسوأ وقت: config بايظ السيرفر اشتغل بيه بالقيم الافتراضية من غير ما حد يعرف، أو ملف JSON فضل نصه مكتوب لأن الـ deploy قفل العملية وهي بتكتب.`,
@@ -288,6 +305,14 @@ function safeJoin(root, userPath) {
 console.log(safeJoin("/srv/uploads", "a/b.png"));
 console.log(safeJoin("/srv/uploads", "../../etc/passwd"));`,
           try: R`حط السكربت و [[config.json]] فيه [[{"port":4000}]] في فولدر، واعمل [[cd /]] وشغّله بالمسار الكامل: لازم يطبع 4000. بعدين بدّل [[configPath]] بـ [["config.json"]] بس وشغّله من نفس المكان. وجرّب [[safeJoin]] بـ [["/etc/passwd"]] و [["../uploads-old/x.png"]].`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** على ويندوز، إيه ناتج [[path.join("a", "/b")]] و [[path.resolve("a", "/b")]]؟ وعلى لينكس؟`, done: R`ويندوز: [[a\b]] و [[C:\b]]. لينكس: [[a/b]] و [[/b]]. [[join]] بيلزق، و [[resolve]] بيبدأ من الأول عند أي مسار مطلق.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[path.extname(".env")]] و [[path.extname("archive.tar.gz")]] و [[path.extname("Makefile")]] و [[path.basename("a/b.tar.gz", ".gz")]].`, done: R`[[""]] و [[.gz]] و [[""]] و [[b.tar]]: الملف اللي بيبدأ بنقطة ملوش امتداد، و [[extname]] بياخد آخر نقطة بس.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[safeJoin]] اللي بيقارن بـ [[full.startsWith(root)]] من غير [[path.sep]]. جرّبه بـ [["../uploads-old/x.png"]] و root = [[/srv/uploads]].`, done: R`عدّى ورجّع [[/srv/uploads-old/x.png]] (على ويندوز [[C:\srv\uploads-old\x.png]]): فولدر جنب uploads اسمه بيبدأ بنفس الحروف. بعد [[root + path.sep]] رمى [[path traversal]].` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** سكربت فيه [[readFile("config.json")]] وسكربت فيه [[path.join(import.meta.dirname, "config.json")]]. شغّل الاتنين من فولدرهم ومن [[cd ..]].`, done: R`من فولدرهم الاتنين اشتغلوا، ومن برا الأول وقع بـ [[ENOENT]] والتاني اشتغل: الأول نسبةً لـ [[process.cwd()]] والتاني نسبةً لمكان الملف.` },
+            { lvl: 'تحدي', t: R`**مسألة:** [[changeExt(p, ext)]] بترجّع نفس المسار بامتداد جديد: [[("docs/a.md", ".html") → docs/a.html]] و [[("a.tar.gz", ".zip") → a.tar.zip]] و [[(".env", ".bak") → .env.bak]]. استخدم [[path.parse]] و [[path.format]].`, done: R`التلات حالات صح على ويندوز ولينكس (الفاصل بتاع كل نظام)، وكتبت ليه [[.env]] بقت [[.env.bak]] مش [[.bak]] ([[parse]] بيعتبر [[.env]] اسم مش امتداد).` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** إمتى تستخدم [[path.posix]] حتى على ويندوز؟ (فكّر في URL، ومسار جوه zip أو S3، و git). وجرّب [[path.posix.join("uploads", "../x")]] و [[path.win32.join("uploads", "../x")]].`, done: R`الاتنين رجّعوا [[x]]، وكتبت إن أي مسار مش على الديسك (رابط، مفتاح S3، مسار جوه أرشيف) لازم [[/]] فبتستخدم [[path.posix]] عشان ميطلعش [[\]] على ويندوز.` },
+          ],
           flag: "script",
           deep: {
             why: R`«شغال لما أشغّله بإيدي ومش شغال من cron أو pm2 أو Docker»: غالبًا مسار نسبي، لأن الأدوات دي بتشغّل من فولدر تاني. والمسارات اللي فيها كلام جاي من اليوزر (اسم ملف مرفوع، أو [[?file=]] في URL) هي باب path traversal: اليوزر يبعت [[../../etc/passwd]] ويقرا أي ملف على السيرفر.`,
@@ -548,6 +573,14 @@ await rm("out", { recursive: true, force: true });
 await rm("out", { recursive: true, force: true });
 console.log("clean");`,
           try: R`شغّله مرتين ورا بعض: المفروض ميطلعش أي error. بعدين شيل [[recursive: true]] من [[mkdir]] وشغّل، وشيل [[force: true]] من الـ [[rm]] التاني وشغّل، وسجّل الـ [[code]] بتاع كل error.`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[mkdir("x/y/z")]] من غير recursive والـ x مش موجود، و [[mkdir("x")]] مرتين، و [[rm("nothere")]]، و [[rm("x")]] على فولدر. اكتب الـ [[code]] لكل واحدة.`, done: R`[[ENOENT]] و [[EEXIST]] و [[ENOENT]] و [[ERR_FS_EISDIR]] (على Node 24 و 22).` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[mkdir(dir, { recursive: true })]] بترجّع إيه لما الفولدر موجود؟ ولما بتعمل فولدرات جديدة؟`, done: R`موجود: [[undefined]]. جديد: مسار **أول** فولدر اتعمل (على ويندوز بشكل [[\\?\C:\...]])، وده بيقولك هل عملت حاجة فعلًا.` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** [[readdir("r", { recursive: true })]] على فولدر فيه ملفين وفولدرين متداخلين. كام اسم هيرجع؟ وشكل المسارات على ويندوز ولينكس؟`, done: R`٥ أسامي: الفولدرات والملفات مع بعض (عشان كده [[withFileTypes]] و [[isFile()]])، والمسارات [[a\2.md]] على ويندوز و [[a/2.md]] على لينكس.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[sizes.mjs <dir>]] بيلف على كل الملفات ويجمع الحجم بالامتداد، ويطبع جدول متترتب من الأكبر: [[.png 3 ملف 1.2 MB]].`, done: R`على فولدر مشروع حقيقي الأرقام طابقت [[du]] أو [[Get-ChildItem]] تقريبًا، والملفات اللي من غير امتداد ليها سطر [[(بدون)]].` },
+            { lvl: 'تحدي', t: R`**محاكاة:** تنضيف لوجات قديمة: اعمل ٣ ملفات، وخلي واحد قديم ١٠ أيام بـ [[utimes]]، واكتب سكربت بيمسح اللي أقدم من ٧ أيام بـ [[stat().mtimeMs]]، ومعاه [[--dry-run]].`, done: R`[[--dry-run]] طبع [[1.md]] بس ومسحش حاجة، ومن غيره اتمسح [[1.md]] والباقي فضل.` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** [[glob]] من [[node:fs/promises]]: من إمتى stable؟ وبيرجّع مسارات بـ [[\]] ولا [[/]] على ويندوز؟ جرّب [[for await (const f of glob("**/*.md"))]].`, done: R`[[typeof glob]] بـ [[function]] على 24 و 22، ولقيت من وثائق Node النسخة اللي بقى فيها stable، وجرّبت شكل المسارات على ويندوز بنفسك.` },
+          ],
           flag: "script",
           deep: {
             why: R`سكربتات التصدير والـ build والـ backup كلها بتعمل فولدرات وتلف على ملفات وتمسح. والنسخة «البسيطة» بتقع في أول مرة الفولدر مش موجود، أو تاني مرة لما يبقى موجود. الـ options دي بتخلي السكربت يتشغّل أي عدد مرات بنفس النتيجة (idempotent).`,
@@ -796,6 +829,13 @@ try {
 }
 console.log("stopped watching");`,
           try: R`اعمل فولدر [[content]] وشغّل السكربت، ومن ترمنال تاني اعمل ملف، وعدّله، وغيّر اسمه بـ [[mv]]، واحفظ ملف من VS Code. عدّ الأحداث في كل حالة. وبعدين اكتب نسخة بتعمل [[rebuild()]] مرة واحدة بعد ما التعديلات تهدى ٢٠٠ms، وبتتجاهل أي ملف مش [[.md]].`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** بتراقب فولدر وكتبت فيه ملف جديد بـ [[writeFile]]، وبعدين كتبت فيه تاني. كام حدث في كل مرة؟`, done: R`ملف جديد: [[rename:a.md]] و [[change:a.md]]. كتابة تانية: [[change]] مرتين (ويندوز ولينكس). عشان كده لازم debounce.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** غيّرت اسم [[a.md]] لـ [[b.md]] وانت بتراقب. الأحداث هتبقى إيه؟`, done: R`ويندوز: [[rename:a.md]] و [[rename:b.md]]. لينكس: [[rename:b.md]] و [[rename:a.md]] و [[change:b.md]]. الترتيب والعدد بيختلفوا، فاعتمد على إنك تقرا الحالة من الديسك مش على نوع الحدث.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[debounce(fn, 200)]] وحوّل المراقب بحيث [[rebuild()]] تتنادى مرة واحدة بعد ما الأحداث تهدى، ومعاها أسامي الملفات اللي اتغيّرت (في [[Set]]).`, done: R`حفظ من VS Code (حدثين) طبع [[rebuild: a.md]] مرة واحدة، و ٥ ملفات اتعملوا مع بعض طبعوا rebuild واحد فيه الخمسة.` },
+            { lvl: 'تحدي', t: R`**محاكاة:** شغّل نفس المراقب جوه [[docker run -v]] على فولدر من ويندوز، وعدّل ملف من ويندوز. وبعدين جرّب [[fs.watchFile(f, { interval: 500 }, ...)]] على نفس الملف.`, done: R`[[fs.watch]] مطلّعش ولا حدث، و [[watchFile]] (polling) لقط التعديل بعد نص ثانية تقريبًا. ده الحل لما الأحداث مش بتوصل، والتمن CPU أكتر.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** ليه [[event.filename]] ممكن يبقى [[null]] أو اسم ملف مؤقت زي [[a.md~]] أو [[.a.md.swp]]؟ واكتب الفلتر اللي بتحطه قبل ما تبني.`, done: R`كتبت إن المحررات بتكتب في ملف مؤقت وبعدين rename، وإن بعض الأنظمة مبتبعتش الاسم، والفلتر بيرفض [[null]] وأي حاجة مش [[.md]] وأي اسم بيبدأ بنقطة أو بينتهي بـ [[~]].` },
+          ],
           flag: "script",
           deep: {
             why: R`سكربت بيبني صفحات من ملفات Markdown، أو بيعيد توليد types لما schema تتغير، أو بيعالج أي ملف يتحط في فولدر inbox. محتاج تعرف إن ملف اتغير من غير ما تفحص الفولدر كل ثانية.`,
@@ -980,6 +1020,14 @@ if (!Number.isInteger(limit)) {
 console.log({ values, positionals, limit });
 console.log(process.env.NODE_ENV ?? "development", process.cwd(), process.pid > 0);`,
           try: R`احفظه كـ [[report.mjs]] وشغّله بـ [[node report.mjs orders.json -v --out=x.csv --limit 5]]، وبعدين بـ [[--limit abc]]، وبعدين بـ [[--colour]]، وبعدين [[node report.mjs a -- -v]]. واطبع [[echo $?]] بعد كل واحدة. وبعدين حوّل الـ error بتاع option غلط لرسالة usage واضحة بدل stack trace، وضيف [[-h]].`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[parseArgs]] فيه [[--out]] و [[-v]] و [[--limit]]. إيه اللي هيحصل مع [[--colour]]؟ ومع [[--limit]] من غير قيمة؟`, done: R`[[ERR_PARSE_ARGS_UNKNOWN_OPTION]] و [[Unknown option '--colour']]، و [[ERR_PARSE_ARGS_INVALID_OPTION_VALUE]] و [[Option '--limit <value>' argument missing]].` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[node report.mjs --limit -5]] بيقع. اقرا الرسالة واعرف إزاي تبعت رقم سالب.`, done: R`الرسالة [[Option '--limit' argument is ambiguous]] ومعاها «To specify an option argument starting with a dash use '--limit=-XYZ'»، و [[--limit=-5]] رجّع [[limit: "-5"]].` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[-vvv]] و [[--verbose=yes]] و [[--no-verbose]] و [[a -- -v]]. إيه اللي هيرجع في كل واحدة؟`, done: R`[[-vvv]] = [[verbose: true]] (مش عدّاد)، و [[--verbose=yes]] = خطأ [[does not take an argument]]، و [[--no-verbose]] = خطأ unknown إلا لو [[allowNegative: true]] فيبقى [[false]]، و [[-- -v]] = [[-v]] بقت positional.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[--tag a --tag b]] لازم يرجع array. زوّد [[multiple: true]] واطبع [[values.tag]]، وبعدين خلي [[--limit]] رقم صحيح بين 1 و 1000 وإلا usage و exit 2.`, done: R`[[values.tag]] = [[["a", "b"]]]، و [[--limit 0]] و [[--limit abc]] و [[--limit 5.5]] كلهم بيطبعوا usage و exit 2، و [[--limit 50]] بيعدّي.` },
+            { lvl: 'تحدي', t: R`**refactor:** حوّل أي error من [[parseArgs]] (اللي [[code]] بتاعه بيبدأ بـ [[ERR_PARSE_ARGS]]) لرسالة سطر واحد + usage + exit 2، وأي error تاني يفضل stack trace و exit 1.`, done: R`[[--colour]] بيطبع «option مش معروف: --colour» والـ usage و exit 2 من غير stack trace، وخطأ برمجي جوه السكربت لسه بيطبع stack و exit 1.` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** [[tokens: true]] في parseArgs بيرجّع إيه؟ استخدمه عشان تعرف الـ option اتكتب طويل ([[--verbose]]) ولا قصير ([[-v]]).`, done: R`[[tokens]] array فيه [[{ kind: "option", name, rawName, index }]]، و [[rawName]] بيفرّق [[-v]] عن [[--verbose]]، وطبعت الاتنين.` },
+          ],
           flag: "script",
           deep: {
             why: R`سكربتات الـ seed والتصدير والـ migration محتاجة parameters. قراية [[process.argv[2]]] بالترتيب بتنفع لـ argument واحد، وبعدها بتبقى هشة: اليوزر يكتب الـ flags بترتيب تاني أو [[--out=x]] بدل [[--out x]] فالسكربت يفهم غلط.`,
@@ -1266,6 +1314,13 @@ if (failed.length) {
 setTimeout(() => console.log("cleanup still runs"), 100);
 process.on("exit", (code) => console.log("exit with", code));`,
           try: R`شغّله وبعدين [[echo $?]]. وبعدين قارن الأمرين دول: [[node -e 'process.stdout.write("x".repeat(5e6)); process.exit(0)' | wc -c]] ونفس الأمر بـ [[process.exitCode = 0]] بدل [[process.exit(0)]]. وجرّب [[node -e 'throw new Error("x")'; echo $?]].`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** الـ exit code لـ [[throw new Error()]] و [[Promise.reject()]] من غير catch، و [[process.exitCode = 5; throw new Error()]].`, done: R`1 و 1 و 1: الـ exception بيكسب على [[exitCode]] اللي اتحط قبله.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[process.exit(300)]] و [[process.exit(-1)]]: الشيل هيشوف كام على لينكس وكام على ويندوز؟`, done: R`لينكس: 44 و 255 (الرقم بيتقص لـ 8 bit: 300 − 256 = 44). ويندوز: 300 و 4294967295. خلّي أكوادك من 0 لـ 125 عشان تبقى نفس الحاجة في كل مكان.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** جوه [[process.on("exit")]] فيه [[setTimeout(() => console.log("never"), 0)]] و [[console.log("sync ok")]]. إيه اللي هيتطبع؟`, done: R`[[sync ok]] بس: الـ timer عمره ما بيشتغل جوه exit. أي تنضيف async (قفل DB، رفع لوج) مكانه قبل الخروج مش في exit.` },
+            { lvl: 'تحدي', t: R`**ابني:** [[main()]] بالشكل ده: [[main().catch(err => { console.error(err.message); process.exitCode = err.exitCode ?? 1; })]]، ومعاه [[class UsageError extends Error]] بـ [[exitCode = 2]]. جرّب خطأ عادي وخطأ usage.`, done: R`الخطأ العادي exit 1 والـ usage exit 2، والرسالة سطر واحد مش stack trace، وأي [[setTimeout]] للتنضيف لسه بيتنفّذ.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** exit code 137 في Docker و 143 و 130 و 13 في Node: كل واحد معناه إيه وبتعمل إيه لما تشوفه؟`, done: R`137 = SIGKILL (غالبًا الذاكرة خلصت أو [[docker stop]] عدّى مهلته)، و 143 = SIGTERM اتقفل بيه، و 130 = Ctrl+C، و 13 = top-level await مخلصش، ولكل واحد الخطوة الجاية.` },
+          ],
           flag: "script",
           deep: {
             why: R`سكربت migration أو import فشل في نص الشغل وطبع error، بس خرج بـ 0، فالـ pipeline كمّل على deploy. أو سكربت بيطبع JSON كبير لـ [[jq]] والناتج بيوصل ناقص من غير سبب واضح. الاتنين مشاكل exit.`,
@@ -1478,6 +1533,13 @@ process.on("SIGTERM", shutdown);
 console.log("pid", process.pid);
 setInterval(() => { if (!stopping) console.log("working..."); }, 300);`,
           try: R`شغّله واضغط Ctrl+C مرة واحدة، وبعدين شغّله واضغطها مرتين بسرعة. ومن ترمنال تاني: [[kill -TERM <pid>]] ثم [[kill -9 <pid>]]. وبعد كل مرة [[echo $?]].`,
+          practice: [
+            { lvl: 'سريع', t: R`**محاكاة:** [[docker run -d node:22-slim node -e "setInterval(()=>{},1000)"]] وبعدين [[docker stop]] وقيس الوقت والـ exit code. وبعدين نفس الحاجة بـ [[--init]].`, done: R`من غير [[--init]]: الـ stop خد 11 ثانية و exit 137 (Node كـ PID 1 من غير معالج مبيقفلش بـ SIGTERM، فـ Docker استنى ١٠ ثواني وقتله). مع [[--init]]: صفر ثانية و exit 143.` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** نفس الـ container بس الكود فيه [[process.on("SIGTERM", () => { console.log("got SIGTERM"); process.exit(0) })]]. الوقت والـ code واللوج؟`, done: R`صفر ثانية و exit 0 و [[docker logs]] فيه [[got SIGTERM]]. يعني المعالج لوحده كفاية حتى من غير [[--init]].` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** على ويندوز، [[child.kill("SIGTERM")]] لـ child فيه [[process.on("SIGTERM")]]. المعالج هيشتغل؟ وعلى لينكس؟`, done: R`ويندوز: لأ، الـ child اتقفل فورًا ([[code=null signal=SIGTERM]] ومفيش «handler ran»). لينكس: المعالج اشتغل و [[code=0]]. يعني الإغلاق النضيف بـ SIGTERM بيتجرّب على لينكس أو Docker.` },
+            { lvl: 'تحدي', t: R`**ابني:** worker بياخد jobs من array كل 300ms. أول SIGINT: يبطّل ياخد جديد ويخلص اللي في إيده ويخرج بـ 0. تاني SIGINT: يخرج فورًا بـ 1. ومهلة ٥ ثواني لو الـ job علّق.`, done: R`Ctrl+C مرة: «finishing job 7» وبعدها «bye» و exit 0. مرتين بسرعة: «forced» و exit 1. وjob بيعلّق: بعد ٥ ثواني «timeout» و exit 1.` },
+            { lvl: 'تحدي', t: R`**محاكاة:** container بـ [[npm start]] (السكربت [[node server.js]] والسيرفر فيه معالج SIGTERM بيطبع «node got SIGTERM»). اعمل [[docker stop]] وبص على الوقت والـ exit code واللوج.`, done: R`على node:22-slim (npm 10.9.9): الـ stop خد ثانية، و exit 1، واللوج فيه [[npm error signal SIGTERM]] و [[npm error command sh -c node server.js]]، و «node got SIGTERM» **مااتطبعش**: الإغلاق النضيف ضاع. الحل [[CMD ["node", "server.js"] ]] في الـ Dockerfile.` },
+          ],
           flag: "script",
           deep: {
             why: R`worker بيعالج طابور، أو سكربت import بيكتب في القاعدة: لو اتقفل في النص بيسيب صف نصه متسجّل، أو job اتاخدت ومخلصتش. ومع كل deploy بيحصل ده لو العملية مش بتسمع SIGTERM.`,
@@ -1726,6 +1788,14 @@ const child = spawn("tar", ["-czvf", "backup.tgz", "uploads"], { stdio: "inherit
 child.on("error", (err) => console.error("could not start:", err.message));
 child.on("close", (code) => console.log("tar exited with", code));`,
           try: R`اعمل فولدر [[uploads]] فيه ملف وشغّل السكربت. بعدين غيّر [["tar"]] لـ [["tarr"]] وشوف أنهي event اشتغل. وبعدين اكتب دالة [[sh(cmd, args)]] بـ spawn بترجّع promise: تنجح لو exit code صفر، وترمي error فيه الـ code لو لأ.`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[spawn("tarr", ["-x"])]] (برنامج مش موجود). أنهي event هيشتغل؟ وإيه الـ code؟`, done: R`[[error]] بـ [[ENOENT]] و [[spawn tarr ENOENT]]، وبعده [[close]] برقم سالب (-4058 على ويندوز، -2 على لينكس). من غير [[on("error")]] العملية كلها كانت هتقع.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[execFile("npm", ["-v"])]] شغال على لينكس وبيقع على ويندوز. اعرف الخطأ، وجرّب [[npm.cmd]]، وبعدين [[shell: true]].`, done: R`ويندوز: [[spawn npm ENOENT]]، و [[npm.cmd]] من غير shell: [[spawn EINVAL]] (Node بيمنع تشغيل .cmd من غير shell من 2024 لأسباب أمان)، و [[shell: true]] اشتغل وطبع النسخة بس معاه [[DEP0190]] warning على Node 24.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[execFile]] لأمر بيطبع 2 مليون حرف و [[maxBuffer: 1024 * 1024]]. وأمر بينام ٥ ثواني و [[timeout: 300]]. إيه اللي في [[err]]؟`, done: R`الأول: [[ERR_CHILD_PROCESS_STDIO_MAXBUFFER]] و [[stdout maxBuffer length exceeded]]. التاني: [[killed=true signal=SIGTERM code=null]]. للـ output الكبير استخدم [[spawn]].` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[sh(cmd, args)]] بـ [[spawn]] بترجّع promise: تنجح بـ [[{ stdout, stderr }]] لو exit 0، وترمي error فيه [[code]] و [[stderr]] لو لأ، وترمي [[ENOENT]] لو البرنامج مش موجود.`, done: R`[[await sh(process.execPath, ["-e", "console.error('boom'); process.exit(3)"])]] رمت error فيه [[code=3]] و [[stderr="boom\n"]]، و [[sh("tarr", [])]] رمت ENOENT من غير ما تعلّق.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** [[stdio: "inherit"]] مقابل [[stdio: "pipe"]] لأمر بيطبع progress بألوان (زي [[npm install]] أو [[git clone --progress]]). إيه اللي بيتغيّر في الشكل؟ وفي إمكانية إنك تقرا الناتج؟`, done: R`مع inherit الألوان وسطر الـ progress ظاهرين بس مش قادر تقرا الناتج في الكود، ومع pipe قادر تقراه بس الأداة غالبًا بتطفي الألوان لأن stdout مش terminal ([[isTTY]]).` },
+            { lvl: 'تحدي', t: R`**اشرحها:** ليه Node بقى بيرفض [[.cmd]] و [[.bat]] من غير [[shell: true]] على ويندوز، وليه [[shell: true]] مع args بيطلّع DEP0190؟ اربطهم بدرس command injection.`, done: R`كتبت إن ملفات .bat بتتشغّل بـ cmd.exe اللي بيفسّر [[&]] و [[|]] فالـ args ممكن تبقى أوامر، وإن [[shell: true]] بيلزق الـ args في نص واحد من غير escape، فالاتنين نفس خطر الـ injection.` },
+          ],
           flag: "script",
           deep: {
             why: R`حاجات كتير أسهل تعملها بالبرنامج الجاهز: [[pg_dump]] للـ backup، و [[ffmpeg]] للفيديو، و [[git]] في سكربت release، و [[tar]] للضغط. وأي سكربت بيعمل كده محتاج يعرف الأمر فشل ولا نجح، ويشوف الـ output من غير ما يملى الرام.`,
@@ -1959,6 +2029,13 @@ try {
 } catch (err) {
   console.log("git:", err.stderr.trim().split("\n")[0]);
 }`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** على ويندوز، [[exec("type " + name)]] و [[name = "notes.txt & echo HACKED > pwned.txt"]]. هيتعمل [[pwned.txt]]؟`, done: R`أيوه: [[type]] طبع محتوى notes.txt وبعده cmd.exe نفّذ [[echo HACKED > pwned.txt]]. على ويندوز الفاصل [[&]] بدل [[;]].` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** حد «صلّح» الكود بـ [[execFile("wc", ["-l", name], { shell: true })]]. آمن؟ جرّب بنفس الـ name.`, done: R`لأ: [[pwned.txt]] اتعمل تاني على ويندوز ولينكس. [[shell: true]] بيرجّع الـ shell، فـ execFile بقى زي exec.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[execFile(process.execPath, ["-e", "console.log(process.argv[1])", name])]] بنفس الـ name الخطير. إيه اللي هيتطبع؟`, done: R`اتطبع النص زي ما هو [[notes.txt & echo HACKED > pwned.txt]] ومفيش ملف اتعمل: من غير shell الـ arg بيوصل حتة واحدة، والعلامات مالهاش معنى.` },
+            { lvl: 'تحدي', t: R`**ابني:** [[safeFileArg(name)]] بترفض أي اسم مش [[^[\w.\- ]+$]] أو بيبدأ بـ [[-]] أو فيه [[..]]، واستخدمها قبل [[execFile("wc", ["-l", "--", name])]].`, done: R`[["notes.txt"]] و [["تقرير 2026.txt"]]... خد بالك: [[\w]] مبيشملش العربي، فقررت تضيف [[\p{L}]] مع flag [[u]] أو ترفض العربي وكتبت ليه، و [["-n"]] و [["../x"]] و [["a;b"]] اترفضوا.` },
+            { lvl: 'تحدي', t: R`**اكتب اختبار:** بـ [[node:test]] اكتب ٥ اختبارات لـ [[countLines(name)]] الآمنة: اسم عادي، واسم فيه [[;]]، واسم فيه [[$(whoami)]]، واسم بيبدأ بـ [[--]]، واسم مش موجود. وكلهم لازم يتأكدوا إن مفيش ملف جديد اتعمل في الفولدر.`, done: R`الخمسة بيعدّوا على ويندوز ولينكس، وكل اختبار بيقارن [[readdir]] قبل وبعد، ولما رجّعت [[exec]] بالقصد اختبارين على الأقل وقعوا.` },
+          ],
           flag: "script",
           try: R`في فولدر تجربة فاضي: [[git init]]، واعمل commit فاضي ([[git commit --allow-empty -m init]])، واعمل [[notes.txt]] فيه سطرين، وشغّل السكربت. بعدين [[ls]]: هتلاقي ملفين محدش طلبهم. وبعدين اكتب [[countLines(name)]] و [[logFor(ref)]] آمنين، وجرّبهم بنفس المدخلات دي وبـ [["--help"]].`,
           deep: {
@@ -2250,6 +2327,14 @@ const part1 = decoder.decode(buf.subarray(0, 3), { stream: true });
 const part2 = decoder.decode(buf.subarray(3));
 console.log(part1 + part2);`,
           try: R`احسب عدد الحروف وعدد البايتات لـ «مرحبا يا عالم»، وحوّلها base64 وارجعها للنص واتأكد إنها زي الأصل. واطبع أول ٥ بايتات كنص وشوف إيه اللي بيطلع. وجرّب [[Buffer.from("zz", "hex")]] و [[btoa("سلام")]].`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** «مرحبا يا عالم»: [[length]] كام و [[Buffer.byteLength]] كام و [[[...t].length]] كام؟`, done: R`13 و 24 و 13: ١١ حرف عربي × ٢ بايت + مسافتين.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[Buffer.from(t).subarray(0, 5).toString()]] لنفس النص.`, done: R`[["مر�"]]: ٥ بايت = حرفين ونص، والنص الأخير بقى [[�]] (replacement character).` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** بيانات جاية حتتين: [[s.subarray(0, 3)]] و [[s.subarray(3)]] من «سلام»، والكود بيعمل [[toString()]] لكل حتة ويلزقهم.`, done: R`طلع [[س��ام]] لأن حرف اتقسم بين الحتتين. الحل [[Buffer.concat(chunks).toString()]] (طلع [[سلام]]) أو [[TextDecoder]] بـ [[stream: true]] أو [[setEncoding("utf8")]] على الـ stream.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[const sub = orig.subarray(0, 1); sub[0] = 74]] و [[orig]] = [["hello"]]. [[orig.toString()]] هيبقى إيه؟`, done: R`[[Jello]]: [[subarray]] مش نسخة، بيشاور على نفس البايتات. للنسخة [[Buffer.from(orig.subarray(0, 1))]].` },
+            { lvl: 'تحدي', t: R`**اقرا وتوقّع:** [[Buffer.from("zz", "hex")]] و [[Buffer.from("abz", "hex")]] و [[btoa("سلام")]] و [[timingSafeEqual]] على بافرين طولهم مختلف.`, done: R`[[<Buffer >]] فاضي من غير error، و [[<Buffer ab>]] (وقف عند أول حرف غلط)، و [[InvalidCharacterError: Invalid character]]، و [[ERR_CRYPTO_TIMING_SAFE_EQUAL_LENGTH]]. يعني hex غلط بيعدّي ساكت، فاتأكد من الطول بنفسك.` },
+            { lvl: 'تحدي', t: R`**مسألة:** اقرا header ملف PNG: أول ٨ بايت لازم [[89 50 4E 47 0D 0A 1A 0A]]، والعرض والطول في البايتات 16–23 كـ [[readUInt32BE]]. اكتب [[pngSize(buf)]] بترجّع [[{ width, height }]] أو [[null]].`, done: R`على أي صورة PNG عندك رجّعت نفس الأبعاد اللي في خصائص الملف، وعلى ملف مش PNG رجّعت [[null]]، و [[readUInt16LE]] مقابل [[BE]] على [[01 00]] بيدّوا 1 و 256 (عشان تفهم ليه BE هنا).` },
+          ],
           flag: "script",
           deep: {
             why: R`حدود الحجم في القاعدة والـ APIs بالبايت مش بالحروف: [[VARCHAR]] في MySQL بالحروف لكن حدود SMS و headers و S3 metadata بالبايت، فاسم عربي ٥٠ حرف ممكن يبقى ١٠٠ بايت. و base64 في كل حتة: Basic auth، و data URLs للصور، و JWT (base64url)، والملفات جوه JSON. ولو قطّعت بايتات في نص حرف عربي، يطلعلك [[�]] في الـ UI.`,
@@ -2485,6 +2570,14 @@ console.log("total", count);
 
 new Importer().run([{}]);`,
           try: R`شغّله: السطر الأخير لازم يوقّع العملية، ليه؟ بعدين جرّب [[await once(bus, "ready")]] على emitter بيعمل [[emit("error", ...)]] قبل ready، وسجّل listenerين على نفس الحدث واطبع حاجة قبل وبعد [[emit]] عشان تعرف sync ولا async.`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[log("before"); e.emit("x"); log("after")]] و [[x]] ليه listenerين بيطبعوا 1 و 2. الترتيب؟ وإيه اللي [[emit]] بيرجّعه لحدث مالوش listeners؟`, done: R`[[before]] ثم 1 ثم 2 ثم [[after]]: emit sync. و [[emit]] بيرجّع [[false]] لو مفيش listeners و [[true]] لو فيه.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[emit("error", new Error("boom"))]] من غير listener، و [[emit("error", "just text")]].`, done: R`الأول رمى الـ Error نفسه ([[boom]])، والتاني رمى [[ERR_UNHANDLED_ERROR]] و [[Unhandled error. ('just text')]]. في الحالتين العملية تقع لو مفيش catch.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[r.on("t", () => log("x")); r.off("t", () => log("x"))]]. كام listener فاضل؟ ليه؟ وصلّحه.`, done: R`[[listenerCount("t")]] = 1: دالتين شكلهم واحد بس كل واحدة object مختلف. الحل تحفظ الدالة في متغير وتديه لـ on و off.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** زوّد ١١ listener على نفس الحدث. إيه اللي هيطلع؟ وده error ولا warning؟`, done: R`warning: [[MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 data listeners added to [EventEmitter]. MaxListeners is 10]] والكود كمّل. غالبًا معناه إنك بتعمل [[on]] جوه حاجة بتتكرر.` },
+            { lvl: 'تحدي', t: R`**ابني:** [[Downloader extends EventEmitter]] بيحاكي تنزيل ملف ١٠ حتت: [[progress]] بـ النسبة، و [[done]] بالحجم، و [[error]] لو حتة رقمها 7 «فشلت» بالقصد. واستخدم [[once(dl, "done")]] بـ try/catch.`, done: R`طبع progress من 10% لـ 60%، وبعدين [[once]] رمى الـ error ([[once]] بيرفض لو [[error]] جه قبل الحدث)، ومن غير الحتة البايظة وصل لـ 100% و done.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** إمتى تستخدم EventEmitter وإمتى promise أو async iterator؟ اكتب مثال لكل واحد من Node نفسه.`, done: R`EventEmitter لحاجة بتحصل كذا مرة (data على stream، و request على server)، و promise لنتيجة واحدة (readFile)، و async iterator لسلسلة بالترتيب (readline، و [[on(emitter, "x")]] من node:events).` },
+          ],
           flag: "script",
           deep: {
             why: R`هتقابل events في كل حتة في Node حتى لو عمرك ما كتبت class بيورّث EventEmitter: [[stream.on("data")]] و [[child.on("close")]] و [[server.on("error")]]. ولو مش عارف قاعدة الـ error event، سيرفر بيقع كله بسبب error في stream واحد.`,
@@ -2716,6 +2809,505 @@ bus.emit("order", { id: 7 });
 console.log("after emit", bus.listenerCount("order"));`
         },
         {
+          cmd: "streams و pipeline",
+          title: "ملف لوج ٧٣ MB من غير ما الذاكرة تنفجر",
+          desc: R`الـ stream هو داتا بتيجي **حتة حتة** (chunks) بدل ما تتقري كلها مرة واحدة. [[readFile]] بيحط الملف كله في الذاكرة، فملف ٧٣ MB بياخد أكتر من ٢٠٠ MB RAM، وملف أكبر من حوالي ٥١٢ MB مبيتقريش كنص أصلًا. الـ stream بيقرا ٦٤ KB، تشتغل عليهم، وبعدين اللي بعدهم، فالذاكرة ثابتة مهما كبر الملف.
+
+في Node أربع أنواع: **Readable** (بتقرا منه: [[createReadStream]]، و [[process.stdin]]، والـ request في السيرفر)، و **Writable** (بتكتب فيه: [[createWriteStream]]، و [[process.stdout]]، والـ response)، و **Transform** (بياخد ويطلّع بعد ما يغيّر: [[createGzip]])، و **Duplex** (الاتنين، زي socket).
+
+والأداتين اللي هتستخدمهم كل يوم: [[readline]] عشان تلف على الملف **سطر سطر** بـ [[for await]]، و [[pipeline]] من [[node:stream/promises]] عشان توصّل streams في بعض (قراية ← ضغط ← كتابة) وهو اللي بيقفلهم كلهم ويرجّعلك الخطأ لو أي حتة وقعت. الـ [[.pipe()]] القديم مبيعملش ده.`,
+          example: R`import { createReadStream, createWriteStream } from "node:fs";
+import { pipeline } from "node:stream/promises";
+import { createGzip } from "node:zlib";
+import { createInterface } from "node:readline";
+
+const file = process.argv[2] ?? "big.log";
+
+let errors = 0;
+const rl = createInterface({ input: createReadStream(file), crlfDelay: Infinity });
+for await (const line of rl) if (line.includes(" ERROR ")) errors++;
+console.log("errors:", errors);
+
+await pipeline(createReadStream(file), createGzip(), createWriteStream(file + ".gz"));
+console.log("gzip done, rss MB:", Math.round(process.memoryUsage().rss / 1024 / 1024));`,
+          lines: [
+            R`من [[node:fs]] بناخد نسخ الـ stream: [[createReadStream]] بيفتح الملف ويقراه حتة حتة (٦٤ KB كل مرة افتراضيًا)، و [[createWriteStream]] بيكتب حتة حتة.`,
+            R`[[pipeline]] من [[node:stream/promises]] (النسخة اللي بترجّع promise فتعملها [[await]]): بتوصّل كذا stream ورا بعض وبتقفلهم كلهم لو حصل خطأ في أي واحد.`,
+            R`[[createGzip]] من [[node:zlib]] stream من نوع Transform: بياخد بايتات عادية ويطلّع بايتات مضغوطة بصيغة gzip، نفس اللي بيعمله [[gzip]] في لينكس.`,
+            R`[[createInterface]] من [[node:readline]] بياخد أي Readable ويقسمه سطور، حتى لو السطر اتقسم بين حتتين في النص.`,
+            R`اسم الملف من الترمنال ([[process.argv[2]]])، ولو مكتبتش حاجة [[??]] بيستخدم [[big.log]].`,
+            R`عدّاد للسطور اللي فيها [[ERROR]]، بيبدأ من صفر.`,
+            R`بنعمل readline على stream الملف. [[crlfDelay: Infinity]] بيخلي [[\r\n]] (سطر ويندوز) يتحسب سطر واحد مش سطرين لو الـ [[\r]] و [[\n]] جم في حتتين مختلفين.`,
+            R`[[for await]] بيلف على السطور واحد واحد ومستني اللي بعده يوصل من الديسك. في أي لحظة الذاكرة فيها حتة واحدة بس، مش الملف كله.`,
+            R`بعد ما الملف خلص بنطبع العدد: [[errors: 30000]] لملف فيه مليون ونص سطر.`,
+            R`[[pipeline]] بيوصّل تلاتة: يقرا الملف، ويضغطه، ويكتب [[big.log.gz]]. ولو الملف مش موجود أو الديسك اتملى، الـ [[await]] بيرمي الخطأ والـ streams التلاتة بيتقفلوا.`,
+            R`بنطبع الذاكرة اللي البرنامج واخدها ([[rss]] بالبايت، وقسمنا على ١٠٢٤ مرتين عشان MB): حوالي ٨٠ MB لملف ٧٣ MB، ومش هتزيد لو الملف بقى ٧ GB.`,
+          ],
+          teach: R`## السكربت بيعمل إيه؟
+
+بياخد ملف لوج كبير، وبيعدّ السطور اللي فيها [[ERROR]] من غير ما يقراه كله في الذاكرة، وبعدين بيضغطه لـ [[.gz]] بنفس الطريقة. كل الأرقام هنا من Node 24.22.1 على ويندوز ١١، ومن [[docker run --rm node:22-slim]] (Node 22.23.3).
+
+---
+
+## الأول: نعمل ملف كبير نجرّب عليه
+
+~~~js make-log.mjs
+import { createWriteStream } from "node:fs";
+const out = createWriteStream("big.log");
+for (let i = 0; i < 1_500_000; i++) {
+  const level = i % 50 === 0 ? "ERROR" : "INFO";
+  if (!out.write("2026-11-03 10:00 " + level + " request " + i + " took " + (i % 900) + "ms\n")) {
+    await new Promise((r) => out.once("drain", r));
+  }
+}
+out.end();
+~~~
+
+- [[out.write(...)]] بيرجّع [[false]] لما الـ buffer الداخلي اتملى (الديسك أبطأ من الـ loop). ساعتها بنستنى حدث [[drain]] قبل ما نكمّل. ده اسمه **backpressure**، ومن غيره الـ loop هيحط مليون ونص سطر في الذاكرة قبل ما يتكتبوا.
+- [[out.end()]] بيقول «خلصت»، فالملف يتقفل بعد آخر حتة.
+
+~~~text اتشغّل
+node make-log.mjs
+ls -la big.log      →  72235520 بايت (حوالي ٧٣ MB)
+~~~
+
+---
+
+## ١. readFile مقابل stream: قسنا
+
+~~~js
+// الطريقة اللي بتقرا كله
+const text = await readFile("big.log", "utf8");
+const n = text.split("\n").filter((l) => l.includes(" ERROR ")).length;
+~~~
+
+| الطريقة | النتيجة | الذاكرة (RSS) ويندوز | الذاكرة لينكس |
+|---|---|---|---|
+| [[readFile]] و [[split]] | 30000 | 264 MB | 215 MB |
+| [[readline]] على [[createReadStream]] | 30000 | 70 MB | 68 MB |
+| [[pipeline]] للضغط | 7.5 MB ناتج | 66–84 MB | 73–102 MB |
+
+نفس النتيجة، والذاكرة ربعها. والأهم إن رقم الـ stream **ثابت**: لو الملف ٧ GB هيفضل حوالي ٧٠ MB، و [[readFile]] مش هيقدر أصلًا:
+
+~~~text اتشغّل: أكبر نص V8 بيقبله
+node -e "Buffer.alloc(0x1fffffe8 + 1, 97).toString()"
+ERR_STRING_TOO_LONG Cannot create a string longer than 0x1fffffe8 characters
+~~~
+
+يعني أي ملف أكبر من حوالي ٥١٢ MB ([[0x1fffffe8]] حرف) [[readFile(..., "utf8")]] بيقع عليه. و [[readFile]] أسرع شوية في الملفات الصغيرة (٢٠٨ms مقابل ٣٥٦ms هنا)، فاستخدمه لـ config و JSON صغير، والـ stream لأي حاجة ممكن تكبر.
+
+---
+
+## ٢. السكربت سطر سطر وناتجه
+
+~~~text اتشغّل (ويندوز)
+node logs.mjs
+errors: 30000
+gzip done, rss MB: 84
+~~~
+
+و [[big.log.gz]] طلع 7510170 بايت (حوالي ١٠٪ من الأصل، لأن اللوج متكرر جدًا).
+
+---
+
+## ٣. الأخطاء: pipeline مقابل pipe
+
+~~~bash
+node logs.mjs nope.log
+~~~
+
+~~~text الناتج
+[Error: ENOENT: no such file or directory, open '...\nope.log'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+~~~
+
+و exit 1، لأن الـ readline رمى الخطأ في [[for await]]. ومع [[pipeline]] نفس الحاجة: الخطأ بيوصل للـ [[await]] فتمسكه بـ [[try/catch]]. **بس خد بالك:** [[createWriteStream("out.gz")]] بيفتح الملف الأول، فبعد الفشل [[out.gz]] بيفضل موجود **وحجمه 0**. لازم تمسحه في الـ catch.
+
+أما [[.pipe()]] القديم:
+
+~~~js
+const src = createReadStream("nope.log");
+src.on("error", (e) => console.log("src error only:", e.code));
+src.pipe(createWriteStream("out2.txt"));
+~~~
+
+الخطأ بيوصل للـ source بس، والـ writable مبيتقفلش ولا بيعرف. ولو نسيت [[on("error")]] العملية كلها بتقع. عشان كده: [[pipeline]] دايمًا.
+
+---
+
+## ٤. Transform بتاعك، والأسهل: async generator
+
+~~~js
+import { Transform, Readable } from "node:stream";
+const upper = new Transform({
+  transform(chunk, enc, cb) { cb(null, chunk.toString().toUpperCase()); },
+});
+await pipeline(Readable.from(["ahmed\n", "sara\n"]), upper, process.stdout);
+~~~
+
+~~~text الناتج
+AHMED
+SARA
+~~~
+
+و [[pipeline]] بيقبل **async generator** في النص بدل class كاملة:
+
+~~~js
+async function* onlyErrors(source) {
+  for await (const chunk of source)
+    for (const line of chunk.toString().split("\n")) if (line.includes("ERROR")) yield line + "\n";
+}
+await pipeline(Readable.from(["a INFO\nb ERROR\n", "c ERROR\n"]), onlyErrors, process.stdout);
+~~~
+
+~~~text الناتج
+b ERROR
+c ERROR
+~~~
+
+> **فخ:** [[chunk.toString()]] على حتة من ملف حقيقي ممكن يقطع حرف عربي في النص (شوف درس [[Buffer و encoding]])، وممكن يقطع **سطر** في النص. في الملفات الحقيقية استخدم [[readline]] أو [[setEncoding("utf8")]]، والكود اللي فوق ينفع لأن كل حتة فيها سطور كاملة.
+
+---
+
+## ٥. backpressure: write بيقولك «استنى»
+
+~~~js
+const slow = new Writable({ highWaterMark: 16 * 1024, write(chunk, enc, cb) { setTimeout(cb, 1); } });
+for (let i = 0; i < 100; i++) if (!slow.write(Buffer.alloc(1024))) falses++;
+~~~
+
+~~~text اتشغّل
+writes: 100 returned false: 85 writableLength: 102400
+~~~
+
+بعد أول ١٦ KB كل [[write]] رجّع [[false]]، والـ ١٠٠ KB كلهم قاعدين في الذاكرة مستنيين. في ملف حقيقي من غير ما تستنى [[drain]] الرقم ده بيبقى GB. [[pipeline]] و [[for await]] بيعملوا الاستنا ده لوحدهم.
+
+---
+
+## ٦. EPIPE: لما اللي بيقرا منك يقفل
+
+~~~bash
+node lines-bad.mjs | head -1
+~~~
+
+السكربت بيطبع ٥ سطور بينهم 50ms. [[head -1]] بياخد أول سطر ويقفل، فالكتابة اللي بعدها بتقع:
+
+~~~text ويندوز
+line 1
+Error: EPIPE: broken pipe, write
+~~~
+
+~~~text لينكس
+line 1
+Error: write EPIPE
+~~~
+
+و exit 1. أي أداة CLI بتطبع كتير لازم يبقى فيها:
+
+~~~js
+process.stdout.on("error", (err) => {
+  if (err.code === "EPIPE") process.exit(0);
+  throw err;
+});
+~~~
+
+وبعدها [[node lines.mjs | head -1]] طبع [[line 1]] وخرج بـ 0 على الاتنين.
+
+---
+
+## الخلاصة
+
+| عايز | استخدم |
+|---|---|
+| ملف صغير (config، JSON) | [[readFile]] |
+| ملف ممكن يكبر، سطر سطر | [[readline]] + [[for await]] |
+| من stream لـ stream (ضغط، نسخ، رفع) | [[pipeline]] من [[node:stream/promises]] |
+| تغيّر الداتا في النص | async generator جوه [[pipeline]]، أو [[Transform]] |
+| تكتب كتير بإيدك | استنى [[drain]] لما [[write]] يرجّع [[false]] |
+| أداة بتطبع لـ pipe | امسك [[EPIPE]] على [[process.stdout]] |
+
+الـ request والـ response في سيرفر [[node:http]] streams برضه، وده اللي هتشوفه في درس [[node:http سيرفر من غير مكتبة]] ودرس [[رفع ملف من غير مكتبة]].`,
+          try: R`اعمل [[make-log.mjs]] من الشرح وشغّله، وبعدين احفظ المثال كـ [[logs.mjs]] وشغّله. قارن الـ RSS بتاعه بسكربت تاني بيعمل [[readFile]] و [[split]] على نفس الملف. وبعدين شغّله على ملف مش موجود، وشوف [[big.log.gz]] أو الملف الفاضي اللي بيفضل، وعدّل السكربت يمسحه في [[catch]].`,
+          practice: [
+            { lvl: 'سريع', t: R`**قارن وقيس:** على [[big.log]] (٧٣ MB)، اطبع [[process.memoryUsage().rss]] بعد [[readFile]] + [[split]]، وبعد [[readline]]. اكتب الرقمين والنتيجة.`, done: R`نفس العدد (30000) في الاتنين، والـ RSS حوالي ٢٦٤ MB مقابل ٧٠ MB على ويندوز (٢١٥ و ٦٨ على لينكس). الرقم بتاعك ممكن يختلف شوية بس النسبة قريبة.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[pipeline(createReadStream("nope.log"), createGzip(), createWriteStream("out.gz"))]] جوه try/catch. إيه الـ [[code]]؟ وهل [[out.gz]] هيبقى موجود؟`, done: R`[[ENOENT]]، و [[out.gz]] موجود وحجمه 0: الـ writable اتفتح قبل ما الـ readable يفشل. ضفت [[rm("out.gz", { force: true })]] في الـ catch.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[createReadStream("nope.log").pipe(createWriteStream("out2.txt"))]] من غير أي [[on("error")]]. شغّله، وبعدين صلّحه بـ [[pipeline]].`, done: R`القديم وقع بـ [[Unhandled 'error' event]] و ENOENT و exit 1، والجديد مسك الخطأ في catch وطبع رسالة واحدة واضحة.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[node lines-bad.mjs | head -1]] بيطلّع stack trace. زوّد معالج [[EPIPE]] واتأكد من الـ exit code.`, done: R`قبل: [[Error: EPIPE: broken pipe, write]] على ويندوز و [[Error: write EPIPE]] على لينكس و exit 1. بعد: [[line 1]] بس و exit 0 على الاتنين.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[grep.mjs <word> [file]]]: لو فيه ملف يقراه بـ stream، ولو مفيش يقرا من [[process.stdin]]، ويطبع السطور اللي فيها الكلمة ورقم السطر.`, done: R`[[node grep.mjs ERROR big.log | head -3]] بيطبع ٣ سطور ويقفل بـ exit 0، و [[type big.log | node grep.mjs ERROR]] (أو [[cat]]) بيدّي نفس الناتج، والذاكرة تحت ١٠٠ MB.` },
+            { lvl: 'تحدي', t: R`**بيانات حقيقية:** من [[big.log]]: طلّع متوسط [[took]] وأبطأ ٥ requests من غير ما تحط كل السطور في array. الأبطأ ٥ بتتحفظ في array طوله ٥ بس.`, done: R`الأبطأ كلهم [[took 899ms]] (requests رقم 899 و 1799 و 2699 و 3599 و 4499)، والمتوسط 449.44ms، والذاكرة زي الـ readline العادي.` },
+          ],
+          deep: {
+            why: R`أول مرة سيرفر أو سكربت بيقرا ملف عميل ٢ GB أو لوج شهر كامل، [[readFile]] بيوقّعه بـ «heap out of memory» أو [[ERR_STRING_TOO_LONG]]. والـ streams هي الطريقة اللي Node نفسه بيشتغل بيها: الـ request والـ response، والـ child_process stdout، والـ sockets كلهم streams، فلازم تفهمها عشان تفهم أي حاجة فيها شبكة.`,
+            how: R`الـ Readable جواه buffer بحد اسمه [[highWaterMark]] (٦٤ KB للملفات، ١٦ KB للـ objects العادية). لما حد بيقرا (بـ [[for await]] أو [[pipe]] أو حدث [[data]]) الـ stream بيملا الـ buffer تاني من المصدر. والـ Writable ليه buffer برضه: [[write()]] بيحط فيه ويرجّع [[true]] لو لسه تحت الحد و [[false]] لو عدّاه، وحدث [[drain]] بيقول «فضيت». [[pipeline]] بيربط ده ببعضه: بيوقّف القراية لما الكتابة متأخرة، ويكمّل لما [[drain]] ييجي، ولو أي حتة رمت error بيعمل [[destroy]] للكل ويرفض الـ promise. و [[readline]] بيلم الحتت لحد ما يلاقي [[\n]] ويطلّع سطر كامل.`,
+            when: R`أي ملف مش عارف حجمه: لوجات، و CSV من عميل، و backups، وملفات مرفوعة. ونسخ أو ضغط أو تشفير ملف ([[createGzip]] و [[createCipheriv]])، وأي بيانات بتتنقل بين الشبكة والديسك (تنزيل ملف لـ disk، أو رفع ملف من disk). ومش محتاجها لملف config صغير، أو JSON لازم تقراه كله عشان تعمله parse.`,
+            mistakes: R`[[.pipe()]] من غير ما تمسك الأخطاء على كل stream. و [[chunk.toString()]] على حتة فيها عربي مقطوع (بيطلع [[�]]). و [[split("\n")]] على الحتة نفسها فالسطر اللي في الآخر بيتقسم نصين. و [[write()]] في loop من غير ما تبص على الـ [[false]]. وتنسى إن [[createWriteStream]] بيعمل الملف حتى لو المصدر فشل. وأداة CLI من غير معالج EPIPE.`,
+          },
+          sol: R`[[node logs.mjs]] طبع [[errors: 30000]] و [[gzip done, rss MB: 84]] على ويندوز (102 في Docker)، و [[big.log.gz]] = 7510170 بايت. ونسخة [[readFile]] على نفس الملف وصلت ٢٦٤ MB. وعلى ملف مش موجود: [[ENOENT]] و exit 1. لو استخدمت [[pipeline]] للضغط لوحده، الملف الناتج بيفضل بحجم 0 بعد الفشل.`,
+          solCode: R`import { rm } from "node:fs/promises";
+try {
+  await pipeline(createReadStream(file), createGzip(), createWriteStream(file + ".gz"));
+} catch (err) {
+  await rm(file + ".gz", { force: true });
+  console.error("فشل:", err.code, err.message);
+  process.exitCode = 1;
+}`,
+          flag: "script",
+          ci: [
+            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`node`, run: R`import { createReadStream, createWriteStream, writeFileSync, readFileSync } from "node:fs";
+import { pipeline } from "node:stream/promises";
+import { createGzip, gunzipSync } from "node:zlib";
+import { createInterface } from "node:readline";
+let text = "";
+for (let i = 0; i < 1000; i++) text += "2026-11-03 " + (i % 50 === 0 ? "ERROR" : "INFO") + " request " + i + "\n";
+writeFileSync("app.log", text);
+let errors = 0;
+for await (const line of createInterface({ input: createReadStream("app.log"), crlfDelay: Infinity })) if (line.includes(" ERROR ")) errors++;
+console.log("errors:", errors);
+await pipeline(createReadStream("app.log"), createGzip(), createWriteStream("app.log.gz"));
+console.log("same after gunzip:", gunzipSync(readFileSync("app.log.gz")).toString() === text);
+try { await pipeline(createReadStream("nope.log"), createGzip(), createWriteStream("x.gz")); } catch (err) { console.log("pipeline failed:", err.code); }`, expect: [R`errors: 20`, R`same after gunzip: true`, R`pipeline failed: ENOENT`] },
+          ],
+        },
+        {
+          cmd: "event loop",
+          title: "مين بيتنفّذ الأول، وليه سطر واحد تقيل بيوقّف السيرفر كله",
+          desc: R`Node بيشغّل الـ JavaScript بتاعك على **thread واحد**. الـ event loop هو اللف اللي بيعمله Node: يخلّص الكود اللي شغال دلوقتي للآخر، وبعدين يشوف مين جاهز (timer وقته جه، أو ملف خلص يتقري، أو request وصل) وينادي الـ callback بتاعه، وهكذا لحد ما مفيش حاجة فاضلة فيخرج.
+
+النتيجة الأولى: **الكود الـ sync بيخلص الأول دايمًا**، وبعده الـ microtasks ([[process.nextTick]] و [[.then]] بتاع الـ promises)، وبعدهم المراحل: timers ([[setTimeout]]) ← I/O (الملفات والشبكة) ← check ([[setImmediate]]).
+
+النتيجة التانية والأهم: أي حساب تقيل في callback (loop على مليون عنصر، أو [[JSON.parse]] لملف ضخم، أو regex بيلف) **بيوقّف كل حاجة**: ولا request بيترد ولا timer بيشتغل لحد ما يخلص. في التجربة تحت، timer طالب 100ms اشتغل بعد 500ms عشان loop واحد.
+
+والنتيجة التالتة: الـ [[await]] ورا بعض بيستنى كل واحد يخلص، و [[Promise.all]] بيشغّلهم مع بعض: ٣ طلبات كل واحد 200ms خدوا 609ms ورا بعض و 202ms مع بعض.`,
+          example: R`import { readFile } from "node:fs";
+
+console.log("1 sync start");
+setTimeout(() => console.log("5 setTimeout 0"), 0);
+setImmediate(() => console.log("6 setImmediate"));
+Promise.resolve().then(() => console.log("4 promise.then"));
+process.nextTick(() => console.log("3 nextTick"));
+readFile(import.meta.filename, () => {
+  console.log("7 readFile callback");
+  setTimeout(() => console.log("9 timeout inside I/O"), 0);
+  setImmediate(() => console.log("8 immediate inside I/O"));
+});
+console.log("2 sync end");`,
+          lines: [
+            R`[[readFile]] نسخة الـ callback من [[node:fs]]: هنستخدمها عشان نشوف callback جاي من مرحلة الـ I/O.`,
+            R`كود sync عادي: بيتطبع على طول، أول حاجة.`,
+            R`[[setTimeout(fn, 0)]] مش «دلوقتي»: معناها «في مرحلة الـ timers الجاية، بعد صفر ms على الأقل». فبيستنى الكود الحالي والـ microtasks.`,
+            R`[[setImmediate]] بيتحط في مرحلة الـ check، اللي بتيجي بعد مرحلة الـ I/O في كل لفة.`,
+            R`[[Promise.resolve().then(fn)]] microtask: بيتنفّذ أول ما الكود الـ sync الحالي يخلص، قبل أي timer.`,
+            R`[[process.nextTick]] microtask بتاع Node: قايمة لوحدها. في ملف CommonJS بتتنفّذ قبل الـ promises، وفي ES module ([[.mjs]]) بتيجي بعدهم (شوف الشرح).`,
+            R`بنطلب نقرا الملف ده نفسه ([[import.meta.filename]] مساره)، والـ callback هيتنادى في مرحلة الـ I/O لما القراية تخلص.`,
+            R`جوه callback الـ I/O: بنطبع إننا وصلنا هنا.`,
+            R`timer جديد اتعمل وإحنا في مرحلة الـ I/O: لازم يستنى اللفة الجاية عشان مرحلة الـ timers عدّت خلاص.`,
+            R`immediate جديد من جوه الـ I/O: مرحلة الـ check جاية على طول بعد الـ I/O في نفس اللفة، فده بيسبق الـ timer اللي فوقه **دايمًا**.`,
+            R`قفلة الـ callback بتاع [[readFile]].`,
+            R`آخر سطر sync: بيتطبع تاني حاجة، قبل كل الـ callbacks اللي فوقه رغم إنه مكتوب تحتهم.`,
+          ],
+          teach: R`## السكربت بيعمل إيه؟
+
+بيسجّل callbacks في كل الأماكن اللي Node بيأجّل فيها الشغل، وكل واحدة بتطبع رقم. الأرقام هي الترتيب اللي هيحصل فعلًا، مش ترتيب السطور في الملف. اتشغّل ٣٠ مرة على Node 24.22.1 (ويندوز) و ٣٠ مرة على Node 22.23.3 ([[docker run --rm node:22-slim]]).
+
+---
+
+## ١. الصورة: لفة واحدة من الـ event loop
+
+~~~text
+   الكود الـ sync كله (الملف من أوله لآخره)
+           │
+           ▼
+   microtasks: nextTick  ثم  promises  (لحد ما يفضوا خالص)
+           │
+   ┌───────▼────────┐
+   │ timers          │  setTimeout / setInterval اللي وقتها جه
+   │ pending         │  callbacks نظام متأجلة
+   │ poll (I/O)      │  ملفات، شبكة، child_process — وبيستنى هنا لو مفيش حاجة تانية
+   │ check           │  setImmediate
+   │ close           │  socket.on("close") وما شابه
+   └───────┬────────┘
+           │  (بعد كل callback: microtasks تاني)
+           └──► لفة جديدة، لحد ما مفيش timers ولا I/O ولا handles فاضلة → Node يخرج
+~~~
+
+---
+
+## ٢. الناتج
+
+~~~text اتشغّل: node loop.mjs
+1 sync start
+2 sync end
+4 promise.then
+3 nextTick
+5 setTimeout 0
+6 setImmediate
+7 readFile callback
+8 immediate inside I/O
+9 timeout inside I/O
+~~~
+
+### الحاجة الأولى الغريبة: 4 قبل 3
+
+في ملف [[.mjs]] الـ promise طلع قبل [[nextTick]]. السبب: الـ ES module نفسه بيتشغّل جوه promise job، فلما الكود الـ sync يخلص Node بيكمّل قايمة الـ promises الأول، وبعدين يفضّي قايمة الـ nextTick. نفس الملف كـ CommonJS ([[loop.cjs]] بـ [[require]] و [[__filename]]):
+
+~~~text اتشغّل: node loop.cjs
+1 sync start
+2 sync end
+3 nextTick
+4 promise.then
+~~~
+
+الاتنين على Node 24 و 22. يعني متبنيش كود بيعتمد على الترتيب بين الاتنين.
+
+### الحاجة التانية: 5 و 6 مش مضمونين
+
+~~~text ٣٠ تشغيل على ويندوز
+  27 مرة:  5 setTimeout 0  ثم  6 setImmediate
+   3 مرات: 6 setImmediate  ثم  5 setTimeout 0
+~~~
+
+وعلى لينكس الـ ٣٠ طلعوا 5 قبل 6، بس ده مش ضمان. السبب: [[setTimeout(fn, 0)]] فعليًا 1ms، ولو اللفة الأولى بدأت قبل ما الـ 1ms تعدّي الـ timer مش جاهز، فالـ immediate يسبقه.
+
+### والحاجة المضمونة: 8 قبل 9 دايمًا
+
+جوه callback الـ I/O، الـ check (immediate) جاي على طول في نفس اللفة، والـ timers في اللفة الجاية. لو عايز «بعد الـ I/O على طول» استخدم [[setImmediate]].
+
+---
+
+## ٣. الـ blocking: قسناه
+
+~~~js block.mjs
+const start = performance.now();
+setTimeout(() => console.log("timer wanted 100ms, ran after", Math.round(performance.now() - start), "ms"), 100);
+const end = Date.now() + 500;
+while (Date.now() < end) {}
+~~~
+
+~~~text الناتج (ويندوز ولينكس)
+timer wanted 100ms, ran after 500 ms
+~~~
+
+الـ [[while]] ده هو أي حساب تقيل. لو ده سيرفر، كل request وصل في النص ده استنى نص ثانية. وتقدر تقيسه في الإنتاج بـ [[monitorEventLoopDelay]]:
+
+~~~js
+import { monitorEventLoopDelay } from "node:perf_hooks";
+const h = monitorEventLoopDelay({ resolution: 10 });
+h.enable();
+// ... الشغل ...
+h.disable();
+console.log("max:", Math.round(h.max / 1e6), "ms  p50:", Math.round(h.percentile(50) / 1e6), "ms");
+~~~
+
+~~~text الناتج مع نفس الـ loop
+max: 500 ms  p50: 16 ms      (ويندوز)
+max: 508 ms  p50: 10 ms      (لينكس)
+~~~
+
+الأرقام بالـ nanoseconds فبنقسم على مليون. [[max]] كبير يعني فيه حاجة بتوقّف الـ loop، والحل في درس [[worker_threads]] أو تقسيم الشغل.
+
+### nextTick ممكن يجوّع الـ loop
+
+~~~js
+let n = 0;
+setTimeout(() => console.log("timeout after", n, "ticks"), 0);
+(function spin() { if (++n < 1e6) process.nextTick(spin); })();
+~~~
+
+~~~text الناتج
+timeout after 1000000 ticks, 94 ms
+~~~
+
+الـ timer اللي طالب صفر استنى مليون nextTick: قايمة الـ microtasks لازم تفضى قبل أي مرحلة. لو الـ spin ده من غير حد، الـ timer عمره ما هيشتغل.
+
+---
+
+## ٤. async: ورا بعض ولا مع بعض؟
+
+~~~js
+import { setTimeout as sleep } from "node:timers/promises";
+for (const ms of [200, 200, 200]) await sleep(ms);           // ورا بعض
+await Promise.all([200, 200, 200].map((ms) => sleep(ms)));   // مع بعض
+~~~
+
+~~~text الناتج
+sequential: 609 ms
+Promise.all: 202 ms
+~~~
+
+| الأداة | بتعمل إيه | لو واحد فشل |
+|---|---|---|
+| [[await]] ورا بعض | الواحد يستنى اللي قبله | بيقف عنده |
+| [[Promise.all]] | الكل مع بعض | بيرفض **فورًا** بأول خطأ ([[all rejects: fast fail]] حتى والتاني لسه شغال) |
+| [[Promise.allSettled]] | الكل مع بعض | بيستنى الكل، وكل واحد [[fulfilled]] أو [[rejected]] |
+| [[Promise.race]] / [[any]] | أول واحد يخلص / أول واحد ينجح | — |
+
+استخدم «ورا بعض» لما كل خطوة محتاجة نتيجة اللي قبلها، أو لما مش عايز تضرب سيرفر بـ ١٠٠٠ request مرة واحدة. و [[Promise.all]] لحاجات مستقلة.
+
+---
+
+## ٥. promise محدش مسكه
+
+~~~bash
+node -e "Promise.reject(new Error('r'))"; echo $?
+~~~
+
+بيطبع الخطأ وبيخرج بـ 1 (من Node 15). و [[process.on("unhandledRejection")]] ينفع للوج قبل الخروج، مش عشان تكمّل كأن مفيش حاجة.
+
+---
+
+## الخلاصة
+
+- الكود الـ sync بيخلص الأول، وبعده الـ microtasks، وبعدهم المراحل.
+- متعتمدش على الترتيب بين [[setTimeout(0)]] و [[setImmediate]] في الملف الرئيسي، ولا بين [[nextTick]] والـ promises.
+- أي حساب تقيل = السيرفر واقف. قيسه بـ [[monitorEventLoopDelay]]، وانقله لـ worker.
+- [[Promise.all]] للحاجات المستقلة، و [[allSettled]] لما عايز نتيجة الكل حتى لو فيه فشل.`,
+          try: R`احفظ المثال كـ [[loop.mjs]] وشغّله ١٠ مرات واكتب أي ترتيب اتغيّر. بعدين اعمل منه [[loop.cjs]] (بـ [[require]] و [[__filename]]) وقارن مكان [[nextTick]]. وبعدين زوّد قبل آخر سطر [[const end = Date.now() + 300; while (Date.now() < end) {}]] وقيس الـ timer اتأخر قد إيه.`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اكتب الترتيب اللي هيتطبع من [[console.log("A"); setTimeout(() => console.log("B")); Promise.resolve().then(() => console.log("C")); console.log("D")]] قبل ما تشغّله.`, done: R`[[A D C B]]: الـ sync الأول، وبعده الـ promise (microtask)، وبعده الـ timer.` },
+            { lvl: 'سريع', t: R`**قارن وقيس:** شغّل [[loop.mjs]] و [[loop.cjs]] وقارن أول ٤ سطور.`, done: R`الـ mjs: [[4 promise.then]] قبل [[3 nextTick]]، والـ cjs: [[3]] قبل [[4]]. على Node 24.22.1 و 22.23.3 الاتنين.` },
+            { lvl: 'تطبيق', t: R`**محاكاة:** سيرفر [[node:http]] فيه [[/slow]] بيعمل [[while]] لمدة ثانيتين و [[/fast]] بيرد على طول. افتح [[/slow]] وبعده [[/fast]] على طول من ترمنال تاني بـ [[curl -w "%{time_total}"]].`, done: R`[[/fast]] (اتبعت بعد [[/slow]] بـ 0.2 ثانية) خد 1.78 ثانية مش أجزاء من الثانية: الاستنا مكانش في [[/fast]]، كان في الـ loop الواقف. وبعد ما نقلت الحساب لـ worker، [[/fast]] رجع يرد على طول.` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** ٣ [[sleep(200)]] ورا بعض مقابل [[Promise.all]]، وبعدين [[Promise.all]] فيه واحد بيرفض بعد 10ms وواحد بيخلص بعد 50ms.`, done: R`609ms مقابل 202ms، و [[Promise.all]] رفض بـ [[fast fail]] من غير ما يستنى الـ 50ms، و [[allSettled]] رجّع [[fulfilled,rejected]].` },
+            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** [[for (const id of ids) results.push(await fetchUser(id))]] لـ ٥٠ يوزر بياخد ١٠ ثواني. خليه يشغّل ٥ في المرة بس (مش ٥٠ مع بعض عشان السيرفر التاني ميقعش) من غير مكتبة.`, done: R`كتبت [[mapLimit(items, 5, fn)]]، و ٥٠ طلب وهمي كل واحد 200ms خدوا حوالي 2026ms (١٠ دفعات)، وعدد اللي شغالين مع بعض عمره ما عدّى ٥ (اطبعه).` },
+            { lvl: 'تحدي', t: R`**اشرحها:** ارسم لفة الـ event loop بالمراحل الخمسة والـ microtasks، وحط فيها مكان كل سطر من [[loop.mjs]]، وقول ليه 8 قبل 9 مضمون و 5 و 6 لأ.`, done: R`الرسمة فيها الـ microtasks بعد كل callback، و 8 و 9 في مكانهم (check في نفس اللفة، و timers في اللفة اللي بعدها)، وسبب 5 و 6: الـ timer محتاج 1ms تعدّي قبل أول لفة.` },
+          ],
+          deep: {
+            why: R`أغلب مشاكل الأداء في Node مش «Node بطيء»، دي «حاجة واقفة على الـ thread الوحيد»: [[JSON.parse]] لـ response ضخم، أو [[bcrypt]] sync، أو loop على كل اليوزرز في الذاكرة. والفهم ده هو اللي بيخليك تعرف ليه [[await]] جوه [[for]] بطيء، وليه [[setTimeout]] مش دقيق، وليه السيرفر مبيردش وهو مش واقع.`,
+            how: R`Node مبني على libuv: مكتبة C بتلف بالمراحل (timers، و pending callbacks، و poll، و check، و close)، وفي مرحلة الـ poll بتسأل نظام التشغيل (epoll على لينكس، و IOCP على ويندوز، و kqueue على ماك) «إيه اللي جاهز؟». الملفات و DNS وبعض الـ crypto بتتعمل في thread pool جوه libuv (٤ threads افتراضيًا، [[UV_THREADPOOL_SIZE]])، بس الـ callback بتاعها بيرجع للـ thread الرئيسي. وبعد كل callback بيفضّي V8 قايمتين: [[nextTick]] و microtasks الـ promises. والعملية بتخرج لما مفيش أي handle «مربوط» ([[ref]]): timer أو server أو socket، وعشان كده [[timer.unref()]] بيخلي timer ميمنعش الخروج.`,
+            when: R`لما سيرفر بيبطأ فجأة تحت الحمل: قيس [[monitorEventLoopDelay]] قبل ما تزوّد سيرفرات. ولما بتكتب لوجيك بيعتمد على الترتيب (cache بيتملى، أو حدث لازم ييجي بعد الـ setup). ولما بتختار بين [[await]] ورا بعض و [[Promise.all]]، وبين [[setImmediate]] و [[setTimeout(0)]] لتقسيم شغل تقيل لحتت صغيرة.`,
+            mistakes: R`تفتكر [[setTimeout(fn, 0)]] بيتنفّذ فورًا. أو تحط حساب CPU تقيل جوه request handler. أو [[await]] جوه [[for]] لحاجات مستقلة فتاخد ٥٠ ضعف الوقت. أو [[Promise.all]] على ١٠٠٠٠ request فتوقّع السيرفر التاني. أو [[nextTick]] recursive من غير حد. أو تعتمد على ترتيب [[nextTick]] والـ promises وانت مش عارف الملف ESM ولا CJS. أو [[readFileSync]] جوه سيرفر.`,
+          },
+          sol: R`الناتج من [[loop.mjs]]: [[1 2 4 3 5 6 7 8 9]] غالبًا، و ٣ مرات من ٣٠ على ويندوز [[6]] قبل [[5]]. و [[loop.cjs]] بيطبع [[3]] قبل [[4]]. والـ busy loop بتاع 300ms بيأخّر الـ setTimeout(0) لحوالي 300ms، وبتاع 500ms أخّر timer الـ 100ms لـ 500ms.`,
+          solCode: R`// loop.cjs: نفس الملف بـ CommonJS
+const { readFile } = require("node:fs");
+console.log("1 sync start");
+process.nextTick(() => console.log("3 nextTick"));
+Promise.resolve().then(() => console.log("4 promise.then"));
+console.log("2 sync end");
+// 1 sync start / 2 sync end / 3 nextTick / 4 promise.then`,
+          flag: "script",
+          ci: [
+            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`node`, run: R`import { readFile } from "node:fs";
+console.log("1 sync start");
+setTimeout(() => console.log("5 setTimeout 0"), 0);
+setImmediate(() => console.log("6 setImmediate"));
+Promise.resolve().then(() => console.log("4 promise.then"));
+process.nextTick(() => console.log("3 nextTick"));
+readFile(import.meta.filename, () => {
+  console.log("7 readFile callback");
+  setTimeout(() => console.log("9 timeout inside I/O"), 0);
+  setImmediate(() => console.log("8 immediate inside I/O"));
+});
+console.log("2 sync end");`, expect: [R`1 sync start
+2 sync end
+4 promise.then
+3 nextTick`, R`7 readFile callback
+8 immediate inside I/O
+9 timeout inside I/O`] },
+          ],
+        },
+        {
           cmd: "worker_threads",
           title: "حساب تقيل من غير ما السيرفر يقف",
           desc: R`Node بيشغّل الـ JavaScript بتاعك على thread واحد. أي حساب CPU تقيل (hash كتير، صورة، ملف ضخم بيتعمله parse) بيوقف كل حاجة تانية لحد ما يخلص: ولا request تترد ولا timer يشتغل. [[worker_threads]] بتشغّل الحساب ده على thread تاني ليه event loop بتاعه، وبتكلّمه بـ [[postMessage]].
@@ -2739,6 +3331,13 @@ if (isMainThread) {
   parentPort.postMessage(fib(workerData));
 }`,
           try: R`شغّله وعدّ رسايل «still responsive». بعدين اكتب نسخة بتحسب [[fib(38)]] على الـ main thread مباشرة بنفس الـ [[setInterval]]، وقارن. وجرّب 40 بدل 38 في الاتنين.`,
+          practice: [
+            { lvl: 'سريع', t: R`**قارن وقيس:** [[setInterval]] كل 100ms بيعدّ، وبعدين [[fib(40)]] على الـ main thread. كام tick حصلت وهو بيحسب؟ وبعدين نفس الحساب في Worker.`, done: R`الـ main: حوالي 1180ms و 0 ticks (كل حاجة وقفت). الـ Worker: نفس الوقت تقريبًا و 11–12 tick: الحساب مبقاش أسرع، الـ main بقى فاضي يرد.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** worker بيبعت [[parentPort.postMessage({ f: () => 1 })]]. إيه الخطأ؟`, done: R`[[DataCloneError: () => 1 could not be cloned.]]: الرسايل بتتنسخ (structured clone)، والدوال مبتتنسخش. ابعت داتا بس.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** بعت [[{ n: 1 }]] للـ worker، وهو غيّره لـ 99 ورجّعه. [[obj.n]] في الـ main كام؟`, done: R`1، والراجع 99: كل جهة معاها نسخة. (لو عايز ذاكرة مشتركة فعلًا: [[SharedArrayBuffer]].)` },
+            { lvl: 'تحدي', t: R`**ابني:** pool صغير: [[run(n)]] بيوزّع شغل على [[availableParallelism() - 1]] workers ويرجّع promise، والطابور بيستنى لو كلهم مشغولين. احسب [[fib(35)]] ٨ مرات.`, done: R`الـ ٨ خلصوا في وقت أقل من ٨ × وقت واحدة (اكتب الرقمين)، وworker بيقع بـ [[throw]] بيرفض الـ promise بتاعته بس ومبيوقعش الـ pool.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** ليه worker_threads مش حل لـ «السيرفر بطيء عشان بيستنى القاعدة»؟ وإمتى child_process أحسن من worker؟`, done: R`كتبت إن الاستنا I/O مش CPU والـ event loop أصلًا مش واقف فيه، وإن child_process أحسن لما الشغل برنامج تاني (ffmpeg) أو محتاج عزل كامل (crash أو ذاكرة لوحده).` },
+          ],
           flag: "script",
           deep: {
             why: R`سيرفر Node بيخدم آلاف الطلبات على thread واحد لأن أغلب الشغل انتظار (قاعدة، network) والانتظار مبيوقفش حاجة. بس request واحد بيعمل حساب تقيل بيوقف كل الباقيين. والـ async مش بيحل ده: [[async function]] فيها حساب sync لسه بتوقف الـ thread.`,
@@ -2922,6 +3521,551 @@ console.timeEnd("fib");
 clearInterval(tick);
 // fib = 39088169
 // fib: 409.174ms   (ولا رسالة responsive)`
+        },
+        {
+          cmd: "node:http سيرفر من غير مكتبة",
+          title: "API صغيرة بـ http.createServer: routes و JSON و status codes",
+          desc: R`Express و Hono و Fastify كلهم مبنيين على [[node:http]]. لما تكتب سيرفر بيه مباشرة مرة واحدة، بتفهم هم بيعملولك إيه: [[http.createServer((req, res) => ...)]] بيدّيك دالة واحدة بتتنادى مع **كل** request، و [[req]] فيه [[method]] و [[url]] و [[headers]] والـ body كـ stream، و [[res]] بتكتب فيه الـ status والـ headers والـ body.
+
+مفيش router: انت اللي بتقارن [[url.pathname]] و [[req.method]]. ومفيش body parser: انت اللي بتجمع الـ body حتة حتة وتعمله [[JSON.parse]]، وبتحط حد للحجم عشان حد ميبعتلكش ١ GB. ومفيش error handler: لو رميت error جوه الدالة ومسكتهوش، الـ request بيفضل معلّق.
+
+السيرفر اللي تحت فيه ٥ حاجات كل API محتاجاها: [[/health]] للـ monitoring، و GET بـ query ([[?q=]])، و POST بـ JSON body متأكدين منه، و status code صح لكل حالة (200 و 201 و 400 و 404 و 405 و 413 و 422 و 500)، و [[try/catch]] واحد بيمسك الكل.`,
+          example: R`import http from "node:http";
+
+const notes = [{ id: 1, text: "اشتري لبن" }];
+const MAX_BODY = 1024 * 1024;
+
+function send(res, status, data) {
+  const body = JSON.stringify(data);
+  res.writeHead(status, { "content-type": "application/json; charset=utf-8", "content-length": Buffer.byteLength(body) });
+  res.end(body);
+}
+
+async function readJson(req) {
+  let size = 0;
+  const chunks = [];
+  for await (const chunk of req) {
+    size += chunk.length;
+    if (size > MAX_BODY) throw Object.assign(new Error("body too large"), { status: 413 });
+    chunks.push(chunk);
+  }
+  try {
+    return JSON.parse(Buffer.concat(chunks).toString("utf8"));
+  } catch {
+    throw Object.assign(new Error("invalid JSON"), { status: 400 });
+  }
+}
+
+const server = http.createServer(async (req, res) => {
+  const url = new URL(req.url, "http://localhost");
+  console.log(req.method, url.pathname);
+  try {
+    if (url.pathname === "/health") return send(res, 200, { ok: true });
+    if (url.pathname === "/notes" && req.method === "GET") {
+      const q = url.searchParams.get("q") ?? "";
+      return send(res, 200, notes.filter((n) => n.text.includes(q)));
+    }
+    if (url.pathname === "/notes" && req.method === "POST") {
+      const body = await readJson(req);
+      if (typeof body?.text !== "string" || !body.text.trim()) return send(res, 422, { error: "text is required" });
+      const note = { id: notes.length + 1, text: body.text.trim() };
+      notes.push(note);
+      return send(res, 201, note);
+    }
+    if (url.pathname === "/notes") return send(res, 405, { error: "method not allowed" });
+    send(res, 404, { error: "not found" });
+  } catch (err) {
+    send(res, err.status ?? 500, { error: err.status ? err.message : "internal error" });
+    if (!err.status) console.error(err);
+  }
+});
+
+server.listen(Number(process.env.PORT ?? 3000), () => console.log("listening on", server.address().port));`,
+          lines: [
+            R`[[node:http]] المكتبة المبنية في Node للسيرفرات والـ clients بتوع HTTP. مفيش [[npm install]]، والـ [[node:]] قدام الاسم بتقول «دي من Node نفسه مش من node_modules».`,
+            R`الداتا في الذاكرة: array فيه نوتة واحدة. في مشروع حقيقي دي قاعدة بيانات، والفكرة إنها بتضيع لما السيرفر يقفل.`,
+            R`أكبر body هنقبله: ١ MB ([[1024 * 1024]] بايت). أي حاجة أكبر هنرفضها بـ 413 بدل ما نحطها في الذاكرة.`,
+            R`دالة مساعدة بتبعت أي object كـ JSON بـ status code معين، عشان منكررش نفس التلات سطور في كل route.`,
+            R`[[JSON.stringify(data)]] بيحوّل الـ object لنص JSON.`,
+            R`[[writeHead]] بيكتب سطر الحالة والـ headers. [[content-type]] بيقول للـ client «ده JSON بـ UTF-8» (من غير [[charset]] بعض الـ clients بيبوّظوا العربي)، و [[content-length]] لازم يبقى عدد **البايتات** مش الحروف، فبنستخدم [[Buffer.byteLength]] (كلمة «لبن» ٣ حروف و ٦ بايت).`,
+            R`[[res.end(body)]] بيبعت الـ body ويقفل الـ response. لو نسيته الـ client هيفضل مستني لحد الـ timeout.`,
+            R`قفلة [[send]].`,
+            R`دالة بتقرا الـ body بتاع الـ request وترجّعه object، أو ترمي error فيه الـ status المناسب.`,
+            R`عدّاد للبايتات اللي وصلت لحد دلوقتي.`,
+            R`الحتت (Buffers) بنجمعها في array ونلزقها في الآخر.`,
+            R`[[req]] stream من نوع Readable، فـ [[for await]] بيدّينا الـ body حتة حتة وهي بتوصل من الشبكة (شوف درس [[streams و pipeline]]).`,
+            R`بنزوّد حجم الحتة دي على العدّاد.`,
+            R`لو عدّى الحد، بنرمي error ونوقف القراية فورًا. [[Object.assign]] بيحط [[status: 413]] على الـ error نفسه عشان الـ catch يعرف يرد بإيه. ده بيحمي من حد بيبعت body ضخم ولا بيكدب في [[content-length]].`,
+            R`الحتة سليمة، فبنحطها مع اللي قبلها.`,
+            R`قفلة الـ loop: كده الـ body كله وصل.`,
+            R`[[JSON.parse]] بيرمي error لو النص مش JSON، فبنحطه في try.`,
+            R`[[Buffer.concat]] بيلزق الحتت بايتات الأول وبعدين [[toString("utf8")]]. لو حوّلنا كل حتة لنص لوحدها، حرف عربي اتقسم بين حتتين هيبوظ.`,
+            R`الـ [[catch]] من غير متغير (مش محتاجين تفاصيل الخطأ بتاع JSON).`,
+            R`بنرمي error مفهوم بـ [[status: 400]] (Bad Request: الـ client بعت حاجة مش JSON).`,
+            R`قفلة الـ try/catch.`,
+            R`قفلة [[readJson]].`,
+            R`[[http.createServer]] بياخد دالة بتتنادى مع كل request. خليناها [[async]] عشان نقدر نعمل [[await]] جواها.`,
+            R`[[req.url]] فيه المسار والـ query بس ([[/notes?q=x]])، فبنديه base وهمي عشان [[new URL]] يقبله ويفصّله: [[pathname]] و [[searchParams]].`,
+            R`لوج بسيط لكل request: [[GET /notes]]. في الإنتاج بيبقى JSON فيه الوقت والـ status والمدة (درس لوج الـ webhooks).`,
+            R`try واحد حوالين كل الـ routes، عشان أي خطأ يوصل لمكان واحد ويرجع رد بدل ما الـ request يعلّق.`,
+            R`[[/health]] بيرد [[{ ok: true }]] بـ 200. الـ load balancer و Docker و uptime monitors بيسألوه كل شوية. [[return]] عشان منكمّلش للـ routes اللي تحت.`,
+            R`[[GET /notes]]: بنقارن المسار **و** الـ method مع بعض.`,
+            R`[[searchParams.get("q")]] بيرجّع قيمة [[?q=]] بعد ما يفك الـ encoding (العربي في الرابط بيوصل [[%D9%84...]] وبيرجع «لبن»)، ولو مش موجودة [[null]] فـ [[??]] بيخليها نص فاضي.`,
+            R`بنفلتر بالكلمة، والنص الفاضي موجود في أي نص فبيرجّع الكل. الرد array.`,
+            R`قفلة الـ GET.`,
+            R`[[POST /notes]]: هنا بنضيف نوتة جديدة من الـ body.`,
+            R`[[await readJson(req)]]: لو الـ body كبير أو مش JSON هيرمي، والـ catch اللي تحت يرد 413 أو 400.`,
+            R`[[body?.text]]: الـ [[?.]] مهم: JSON صالح زي [[null]] أو [[5]] ممكن يوصل، و [[null.text]] كان هيرمي TypeError ويرجع 500 (اتجرّب). ولو النص مش string أو فاضي بعد [[trim]]، بنرد 422 (Unprocessable: JSON سليم بس الداتا غلط).`,
+            R`بنعمل النوتة الجديدة: [[id]] = العدد + 1، والنص من غير المسافات الزيادة.`,
+            R`بنحطها في الـ array.`,
+            R`[[201 Created]] هو الكود الصح لـ «اتعمل حاجة جديدة»، ومعاه النوتة نفسها عشان الـ client ياخد الـ id.`,
+            R`قفلة الـ POST.`,
+            R`المسار [[/notes]] موجود بس الـ method مش GET ولا POST (زي DELETE): ده 405 Method Not Allowed مش 404.`,
+            R`أي مسار تاني: 404. السطر ده بيتنفّذ بس لو مفيش [[return]] فوقه اشتغل.`,
+            R`أي error اترمى فوق بيوصل هنا.`,
+            R`لو الـ error بتاعنا (فيه [[status]]) بنرجّع رسالته، ولو مش بتاعنا (باج) بنرد 500 برسالة عامة: متبعتش رسالة الخطأ الحقيقية للـ client لأنها ممكن تكشف تفاصيل السيرفر.`,
+            R`وبنطبع الباج الحقيقي في اللوج بس، عشان انت تشوفه والـ client لأ.`,
+            R`قفلة الـ catch.`,
+            R`قفلة الدالة بتاعة [[createServer]].`,
+            R`[[listen]] بيبدأ يستقبل على البورت من [[PORT]] أو 3000. الـ callback بيتنادى لما البورت يتفتح فعلًا، و [[server.address().port]] بيقول البورت الحقيقي (مفيد لو [[PORT=0]]).`,
+          ],
+          teach: R`## السكربت بيعمل إيه؟
+
+API صغيرة لنوتات: تشوفهم، وتدوّر فيهم، وتضيف واحدة. من غير ولا مكتبة. كل الردود تحت اتشغّلت بـ [[curl]] على Node 24.22.1 (ويندوز)، والـ status codes نفسها اتأكدت على Node 22.23.3 بسكربت [[fetch]] في Docker.
+
+~~~bash
+PORT=3999 node server.mjs
+~~~
+
+---
+
+## ١. كل حالة وردها
+
+~~~bash
+curl -i http://127.0.0.1:3999/health
+~~~
+
+~~~text الناتج
+HTTP/1.1 200 OK
+content-type: application/json; charset=utf-8
+content-length: 11
+Date: Tue, 03 Nov 2026 16:39:15 GMT
+Connection: keep-alive
+
+{"ok":true}
+~~~
+
+[[Date]] و [[Connection: keep-alive]] Node بيحطهم لوحده. keep-alive معناها الاتصال بيفضل مفتوح لـ requests تانية (أسرع)، وده سبب إن السيرفر مبيقفلش على طول لما تعمل [[server.close()]] لو فيه client فاتح.
+
+| الطلب | الرد |
+|---|---|
+| [[GET /notes]] | [[200]] ومعاه كل النوتات: [[[{"id":1,"text":"اشتري لبن"}]]] |
+| [[GET /notes?q=لبن]] (curl بيبعته [[%D9%84%D8%A8%D9%86]]) | [[200]] ونفس النوتة: [[searchParams]] فك الـ encoding |
+| [[POST]] بـ [[{"text":"  ذاكر Node  "}]] | [[201 Created]] و [[{"id":2,"text":"ذاكر Node"}]] (المسافات اتشالت) |
+| [[POST]] بـ [[{bad]] | [[400 Bad Request]] لأن النص مش JSON: [[{"error":"invalid JSON"}]] |
+| [[POST]] بـ [[{"text":""}]] أو [[null]] أو [[[] ]] أو [[5]] | [[422 Unprocessable Entity]] و [[text is required]] |
+| [[DELETE /notes]] | [[405 Method Not Allowed]]: المسار موجود والـ method لأ |
+| [[GET /nope]] | [[404 Not Found]]: مفيش route بالاسم ده |
+| [[POST]] بـ body ١.١ MB | [[413 Payload Too Large]] أول ما العدّاد عدّى ١ MB: [[body too large]] |
+
+~~~bash
+curl -X POST http://127.0.0.1:3999/notes -H "content-type: application/json" -d '{"text":"  ذاكر Node  "}'
+~~~
+
+ولما بعتنا الـ body الكبير بـ [[--data-binary @bigbody.txt]]، curl طبع الأول [[HTTP/1.1 100 Continue]] وبعدين [[413]]: curl بيسأل «أبعت؟» قبل الـ body الكبير، والسيرفر قال آه وبعدين رفضه وهو بيعدّ.
+
+---
+
+## ٢. الباج اللي لقيناه وإحنا بنجرّب
+
+أول نسخة كان فيها [[typeof body.text]] من غير [[?.]]. والـ body [[null]] (JSON صالح!):
+
+~~~text اللوج
+TypeError: Cannot read properties of null (reading 'text')
+    at Server.<anonymous> (file:///.../server.mjs:38:23)
+~~~
+
+والـ client خد [[{"error":"internal error"}]] بـ 500. الـ catch الواحد هو اللي منع السيرفر يقع أو الـ request يعلّق، بس 500 معناها «باج عندنا». بعد [[body?.text]] بقى 422. **أي input جاي من برا ممكن يبقى أي شكل JSON**، مش بس الشكل اللي انت متوقعه. (وده سبب مكتبات زي zod، شوف درس Hono + zod.)
+
+---
+
+## ٣. اختبره من Node نفسه: بورت 0 و fetch
+
+~~~js
+await new Promise((r) => server.listen(0, "127.0.0.1", r));
+const base = "http://127.0.0.1:" + server.address().port;
+const r = await fetch(base + "/notes", { method: "POST", body: "{bad" });
+console.log(r.status);   // 400
+server.close();
+~~~
+
+[[listen(0)]] بيخلي نظام التشغيل يختار بورت فاضي، فالاختبارات متتخانقش على 3000. ده نفس اللي في حقل الفحص الأوتوماتيك للدرس ده، وطلّع [[codes 200 201 400 422 405 404]] على الاتنين.
+
+---
+
+## ٤. الحاجات اللي المكتبات بتعملها وانت دلوقتي بتعملها بإيدك
+
+| الحاجة | هنا | في Express / Hono |
+|---|---|---|
+| routing | [[if (pathname === ... && method === ...)]] | [[app.get("/notes", ...)]] و [[:id]] في المسار |
+| body | [[readJson]] بحد ١ MB | [[express.json({ limit })]] / [[c.req.json()]] |
+| الأخطاء | [[try/catch]] واحد | error middleware / [[app.onError]] |
+| validation | [[typeof]] بإيدك | zod / schemas |
+| headers أمان و CORS | مش موجودة | helmet و cors middleware |
+
+الكود اللي فوق كويس لأداة داخلية أو webhook صغير أو تجربة. لما الـ routes تبقى ١٠ وفيها [[:id]] و auth و CORS، استخدم مكتبة (درس [[Hono]] في التاب ده).
+
+---
+
+## ٥. فخاخ
+
+- [[content-length]] بالحروف بدل البايتات: العربي بيتقطع عند الـ client.
+- نسيت [[res.end()]] في فرع: الـ request بيعلّق لحد الـ timeout.
+- [[return]] نسيته قبل [[send]]: الكود بيكمّل ويحاول يكتب تاني، فـ Node يرمي [[ERR_HTTP_HEADERS_SENT]]، والـ catch اللي بيحاول يرد 500 بيرمي تاني، فالسيرفر كله بيقع (جرّبناها).
+- [[JSON.parse]] من غير حد للحجم: أي حد يقدر يملا الذاكرة.
+- رسالة الخطأ الحقيقية في الرد: بتكشف مسارات وأسامي جداول.
+- السيرفر بيسمع على [[127.0.0.1]] جوه Docker: مش هيتشاف من برا (درس [[--host و Network URL]]).
+
+## الخلاصة
+
+[[createServer]] = دالة واحدة لكل request. انت اللي بتعمل routing وقراية الـ body بحد، وبترد بالكود الصح، وبتمسك كل الأخطاء في مكان واحد.`,
+          try: R`احفظ المثال كـ [[server.mjs]] وشغّله، وجرّب كل سطر في جدول الحالات بـ [[curl -i]] (أو [[Invoke-RestMethod]] في PowerShell). بعدين زوّد [[GET /notes/:id]] بـ [[pathname.match(/^\/notes\/(\d+)$/)]] يرجّع النوتة أو 404، و [[DELETE /notes/:id]] يرجّع 204 من غير body.`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اكتب الـ status code المتوقع قبل ما تبعت: [[POST]] بـ [[{bad]]، و [[POST]] بـ [[{"text":5}]]، و [[DELETE /notes]]، و [[GET /nope]].`, done: R`[[400]] و [[422]] و [[405]] و [[404]]، وكلهم طلعوا كده بـ [[curl -i]].` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** شيل [[?.]] من [[body?.text]] وابعت [[-d 'null']]. إيه اللي في اللوج وإيه اللي الـ client شافه؟`, done: R`اللوج: [[TypeError: Cannot read properties of null (reading 'text')]]، والـ client: [[{"error":"internal error"}]] بـ 500. بعد ما رجّعت [[?.]] بقى 422.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[GET /notes/:id]] و [[DELETE /notes/:id]] بـ regex على [[pathname]]، والـ id لازم رقم ([[/notes/abc]] = 404).`, done: R`[[GET /notes/1]] = 200 والنوتة، و [[/notes/99]] = 404، و [[DELETE /notes/1]] = 204 من غير body، وبعدها [[GET /notes/1]] = 404.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** شيل [[return]] من قبل [[send(res, 200, { ok: true })]] في [[/health]] وابعت [[GET /health]]. إيه اللي حصل في اللوج؟`, done: R`الـ client خد [[200 OK]]، بس الكود كمّل لحد [[send(res, 404, ...)]] فرمى [[Error [ERR_HTTP_HEADERS_SENT]: Cannot write headers after they are sent to the client]]، والـ catch حاول يبعت 500 فرمى تاني، والسيرفر **كله وقع** (اتجرّب على Node 24.22.1). سطر [[return]] واحد ناقص قفل الخدمة لكل الناس.` },
+            { lvl: 'تحدي', t: R`**اكتب اختبار:** بـ [[node:test]] شغّل السيرفر على [[listen(0)]] في [[before]]، واكتب ٦ اختبارات بـ [[fetch]] لكل status في الجدول، و [[server.close()]] في [[after]].`, done: R`[[node --test]] طبع ٦ [[✔]] و [[ℹ fail 0]] وخلص في أقل من ثانية (نسخة باختبارين خلصت في 149ms). ولو علّق في مشروعك بعد الاختبارات، غالبًا فيه connection keep-alive مفتوح، و [[server.closeAllConnections()]] قبل [[close]] بيحلها.` },
+            { lvl: 'تحدي', t: R`**محاكاة:** زوّد rate limit بسيط: كل IP ([[req.socket.remoteAddress]]) ليه ٥ requests في الدقيقة، والسادس 429 ومعاه header [[retry-after]] بالثواني. جرّبه بـ loop من ٧ requests.`, done: R`أول ٥ ردوا 200، والسادس والسابع 429 و [[retry-after]] رقم بين 1 و 60، وبعد دقيقة رجع يرد 200.` },
+          ],
+          deep: {
+            why: R`كل framework بيخبّي نفس الحاجات دي، ولما حاجة تبوظ (request بيعلّق، أو body بيتقطع، أو [[ERR_HTTP_HEADERS_SENT]]) لازم تعرف اللي تحت. وفيه حالات مش محتاج فيها مكتبة أصلًا: health check لـ worker، أو webhook endpoint واحد، أو سيرفر داخلي صغير، أو mock server في الاختبارات.`,
+            how: R`[[http.createServer]] بيعمل [[net.Server]] بيقبل اتصالات TCP، وكل اتصال بيعدّي على HTTP parser (llhttp) بيطلّع الـ method والـ url والـ headers، ويعمل [[IncomingMessage]] (اللي هو [[req]]، Readable stream للـ body) و [[ServerResponse]] (اللي هو [[res]]، Writable stream). الـ handler بتاعك بيتنادى أول ما الـ headers توصل، **قبل** الـ body، وعشان كده لازم تقرا الـ body بـ [[for await]]. و [[writeHead]] بيحجز الـ headers، وأول [[write]] أو [[end]] بيبعتهم، وبعدها أي محاولة تغيّرهم ترمي [[ERR_HTTP_HEADERS_SENT]]. وفيه timeouts جاهزة: [[server.requestTimeout]] (٣٠٠ ثانية افتراضيًا) و [[server.headersTimeout]] و [[keepAliveTimeout]] (٥ ثواني).`,
+            when: R`سيرفر صغير بـ ٢–٥ routes من غير auth معقّد، أو webhook receiver، أو health/metrics endpoint جنب worker، أو سيرفر وهمي في الاختبارات. ولما المشروع يكبر (params في المسار، و middleware، و CORS، و validation، و OpenAPI) استخدم Hono أو Fastify أو Express، وهتعرف هم بيعملوا إيه بالظبط.`,
+            mistakes: R`[[content-length]] بـ [[body.length]] (حروف مش بايتات). وتنسى [[res.end()]] في فرع. وتنسى [[return]] فترد مرتين. و [[JSON.parse]] على body من غير حد للحجم. وتثق في شكل الـ JSON ([[null.text]]). وترجّع [[err.message]] الحقيقي للـ client. وتستخدم 404 مكان 405 و 400 مكان 422. وتقارن [[req.url === "/notes"]] فـ [[/notes?q=x]] ميطابقش.`,
+          },
+          sol: R`الردود كلها في جدول الشرح، واتجرّبت بـ curl على ويندوز. للـ [[:id]]: [[const m = url.pathname.match(/^\/notes\/(\d+)$/)]]، ولو [[m]] موجود [[notes.find((n) => n.id === Number(m[1]))]]، ولو مش لاقيها 404. و [[DELETE]] بيرد [[res.writeHead(204); res.end()]] من غير body.`,
+          solCode: R`const m = url.pathname.match(/^\/notes\/(\d+)$/);
+if (m) {
+  const i = notes.findIndex((n) => n.id === Number(m[1]));
+  if (i === -1) return send(res, 404, { error: "not found" });
+  if (req.method === "GET") return send(res, 200, notes[i]);
+  if (req.method === "DELETE") { notes.splice(i, 1); res.writeHead(204); return res.end(); }
+  return send(res, 405, { error: "method not allowed" });
+}`,
+          flag: "script",
+          ci: [
+            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`node`, run: R`import http from "node:http";
+const notes = [];
+const server = http.createServer(async (req, res) => {
+  const url = new URL(req.url, "http://localhost");
+  const send = (s, d) => { res.writeHead(s, { "content-type": "application/json" }); res.end(JSON.stringify(d)); };
+  if (url.pathname === "/health") return send(200, { ok: true });
+  if (url.pathname !== "/notes") return send(404, { error: "not found" });
+  if (req.method !== "POST") return send(405, { error: "method not allowed" });
+  const chunks = [];
+  for await (const c of req) chunks.push(c);
+  let body;
+  try { body = JSON.parse(Buffer.concat(chunks).toString()); } catch { return send(400, { error: "invalid JSON" }); }
+  if (typeof body?.text !== "string" || !body.text.trim()) return send(422, { error: "text is required" });
+  notes.push(body.text);
+  send(201, { id: notes.length });
+});
+await new Promise((r) => server.listen(0, "127.0.0.1", r));
+const base = "http://127.0.0.1:" + server.address().port;
+const codes = [];
+for (const [path, init] of [["/health"], ["/notes", { method: "POST", body: '{"text":"hi"}' }], ["/notes", { method: "POST", body: "{bad" }], ["/notes", { method: "POST", body: "null" }], ["/notes", { method: "DELETE" }], ["/nope"]]) {
+  codes.push((await fetch(base + path, init)).status);
+}
+console.log("codes", codes.join(" "));
+server.close();`, expect: [R`codes 200 201 400 422 405 404`] },
+          ],
+        },
+        {
+          cmd: "رفع ملف من غير مكتبة",
+          title: "multipart/form-data بـ node:http و Request.formData: حد للحجم، ونوع حقيقي، واسم آمن",
+          desc: R`لما فورم فيه [[<input type="file">]] بيتبعت، المتصفح بيبعت body نوعه [[multipart/form-data]]: كل حقل في «جزء» لوحده، والأجزاء مفصولة بنص عشوائي اسمه **boundary** مكتوب في الـ [[content-type]]. والجزء بتاع الملف فيه اسمه زي ما اليوزر سمّاه، ونوعه زي ما المتصفح **خمّنه**، وبعدين البايتات.
+
+من Node 18 فيه [[Request]] و [[FormData]] و [[File]] نفس بتوع المتصفح، فتقدر تلف الـ [[req]] بتاع [[node:http]] في [[new Request(...)]] وتعمل [[.formData()]]، وهو اللي يفك الأجزاء. من غير multer ولا busboy.
+
+بس فك الأجزاء هو أسهل حتة. الصعب هو الأمان، والتلاتة دول لازم يبقوا في أي رفع: **حد للحجم** وانت بتقرا (مش من [[content-length]] بس، لأنه ممكن يبقى مش موجود: جرّبنا [[Transfer-Encoding: chunked]] وعدّى ملف ٣ MB من حد ٢ MB)، و **نوع حقيقي** من أول بايتات الملف (magic bytes)، مش من الامتداد ولا الـ [[type]] اللي الـ client بعته، و **اسم انت اللي بتعمله** ([[randomUUID]])، عمرك ما تستخدم اسم اليوزر في المسار.`,
+          example: R`import http from "node:http";
+import { mkdir, writeFile } from "node:fs/promises";
+import { randomUUID } from "node:crypto";
+import path from "node:path";
+
+const UPLOADS = path.join(import.meta.dirname, "uploads");
+const MAX = 2 * 1024 * 1024;
+const TYPES = { png: [0x89, 0x50, 0x4e, 0x47], jpg: [0xff, 0xd8, 0xff], pdf: [0x25, 0x50, 0x44, 0x46] };
+await mkdir(UPLOADS, { recursive: true });
+
+function kindOf(bytes) {
+  for (const [ext, sig] of Object.entries(TYPES)) if (sig.every((b, i) => bytes[i] === b)) return ext;
+  return null;
+}
+
+async function* limited(stream, max) {
+  let size = 0;
+  for await (const chunk of stream) {
+    size += chunk.length;
+    if (size > max) throw Object.assign(new Error("file too large"), { status: 413 });
+    yield chunk;
+  }
+}
+
+function reply(res, status, data) {
+  res.writeHead(status, { "content-type": "application/json; charset=utf-8" });
+  res.end(JSON.stringify(data));
+}
+
+http.createServer(async (req, res) => {
+  if (req.method !== "POST" || req.url !== "/upload") return reply(res, 404, { error: "not found" });
+  if (!req.headers["content-type"]?.startsWith("multipart/form-data")) return reply(res, 415, { error: "send multipart/form-data" });
+  if (Number(req.headers["content-length"] ?? 0) > MAX) return reply(res, 413, { error: "file too large" });
+  let form;
+  try {
+    const webReq = new Request("http://local/upload", { method: "POST", headers: req.headers, body: limited(req, MAX), duplex: "half" });
+    form = await webReq.formData();
+  } catch (err) {
+    return reply(res, err.status ?? 400, { error: err.status ? err.message : "bad multipart body" });
+  }
+  const file = form.get("file");
+  if (!(file instanceof File) || file.size === 0) return reply(res, 422, { error: "field file is required" });
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  const ext = kindOf(bytes);
+  if (!ext) return reply(res, 415, { error: "only png, jpg, pdf" });
+  const name = randomUUID() + "." + ext;
+  await writeFile(path.join(UPLOADS, name), bytes);
+  console.log("saved", name, file.size, "bytes, client name:", JSON.stringify(file.name));
+  reply(res, 201, { name, size: file.size, title: form.get("title") ?? "" });
+}).listen(Number(process.env.PORT ?? 3000), () => console.log("upload server ready"));`,
+          lines: [
+            R`[[node:http]] للسيرفر نفسه، زي درس [[node:http سيرفر من غير مكتبة]].`,
+            R`[[mkdir]] عشان نتأكد إن فولدر الرفع موجود، و [[writeFile]] عشان نحفظ الملف.`,
+            R`[[randomUUID]] من [[node:crypto]] بيطلّع اسم عشوائي زي [[6f55add0-7c0c-45f7-...]] مستحيل يتكرر أو يتخمّن، وده اللي هنسمّي بيه الملف.`,
+            R`[[path]] عشان نبني مسار الفولدر بالفاصل الصح لكل نظام.`,
+            R`فولدر [[uploads]] جنب ملف السيرفر نفسه ([[import.meta.dirname]])، مش نسبةً للمكان اللي شغّلت منه node. ومهم يبقى **برا** أي فولدر بيتعرض كـ static، عشان ملف مرفوع ميتشغّلش كصفحة.`,
+            R`أقصى حجم: ٢ MB بالبايت. ده للـ body كله (الملف والحقول والـ boundaries).`,
+            R`أول بايتات كل نوع مسموح (الـ magic bytes أو signature): PNG بيبدأ بـ [[89 50 4E 47]] (يعني [[\x89PNG]])، و JPEG بـ [[FF D8 FF]]، و PDF بـ [[%PDF]]. ده النوع الحقيقي مهما كان الاسم أو الامتداد.`,
+            R`بنعمل الفولدر مرة واحدة وقت التشغيل. [[recursive: true]] بيخليها متزعلش لو موجود (درس الفولدرات). و [[await]] في أول الملف مسموح لأنه ES module.`,
+            R`دالة بتبص على أول بايتات الملف وترجّع امتداده الحقيقي أو [[null]].`,
+            R`بتلف على الأنواع، ولكل نوع [[every]] بيتأكد إن كل بايت في الـ signature زي البايت اللي في نفس المكان في الملف. أول نوع يطابق بيرجع اسمه.`,
+            R`مفيش ولا نوع طابق: الملف مش مسموح بيه حتى لو اسمه [[photo.png]].`,
+            R`قفلة [[kindOf]].`,
+            R`async generator بياخد stream ويطلّعه زي ما هو حتة حتة، بس بيعدّ البايتات وهي معدّية. ده الحد **الحقيقي** للحجم، لأنه بيشتغل حتى لو الـ client مبعتش [[content-length]] أو كدب فيه.`,
+            R`عدّاد البايتات اللي عدّت لحد دلوقتي.`,
+            R`[[for await]] على الـ request: كل حتة بتوصل من الشبكة.`,
+            R`بنزوّد حجم الحتة دي على العدّاد.`,
+            R`عدّى الحد؟ بنرمي error فيه [[status: 413]]. الـ error ده بيوصل لـ [[formData()]] فبترفض، والـ catch تحت بيرد 413، وبنبطّل نقرا باقي الملف.`,
+            R`[[yield]] بيسلّم الحتة للي بيقرا (اللي هو الـ Request)، ومش بنحتفظ بيها إحنا.`,
+            R`قفلة الـ loop.`,
+            R`قفلة [[limited]].`,
+            R`دالة الرد JSON بـ status معين، زي [[send]] في درس السيرفر.`,
+            R`الـ headers: JSON بـ UTF-8 عشان العنوان العربي ([[title]]) يوصل سليم.`,
+            R`بنبعت الـ object كنص JSON ونقفل الرد.`,
+            R`قفلة [[reply]].`,
+            R`السيرفر: دالة واحدة لكل request.`,
+            R`أي حاجة غير [[POST /upload]] بترجع 404.`,
+            R`الـ content-type لازم يبدأ بـ [[multipart/form-data]] (وبعده [[; boundary=...]]). JSON أو أي حاجة تانية: 415 Unsupported Media Type. و [[?.]] عشان لو الـ header مش موجود أصلًا.`,
+            R`فحص سريع قبل ما نقرا أي حاجة: لو الـ client قال من الأول إن الحجم أكبر من الحد، بنرفض على طول من غير ما نستقبل ٢ GB. ولو الـ header مش موجود ([[?? 0]]) بنعدّي ونعتمد على [[limited]].`,
+            R`المتغير اللي هيشيل الحقول بعد ما تتفك.`,
+            R`فك الـ multipart ممكن يفشل (body بايظ أو كبير)، فجوه try.`,
+            R`بنلف [[req]] بتاع Node في [[Request]] بتاع الويب: نفس الـ headers (فيها الـ boundary)، والـ body هو [[limited(req, MAX)]] مش [[req]] مباشرة. و [[duplex: "half"]] لازم في Node لما الـ body stream.`,
+            R`[[formData()]] بيقرا الـ body كله ويفكه لـ [[FormData]]: النصوص نصوص، والملفات [[File]] objects. **خد بالك:** ده بيحط الملف كله في الذاكرة، فالحد ده مهم جدًا (ولملفات بالـ GB شوف الـ deep).`,
+            R`أي فشل: لو الـ error بتاعنا (فيه [[status]]) بنرد بيه (413)، ولو من الـ parser (body مش multipart سليم: [[Failed to parse body as FormData]]) بنرد 400.`,
+            R`بنرجّع الرد وبنخرج من الدالة.`,
+            R`قفلة الـ catch.`,
+            R`[[form.get("file")]] بيجيب الحقل اللي اسمه [[file]] في الفورم ([[name="file"]] في الـ input). لو مش موجود [[null]].`,
+            R`لازم يبقى [[File]] فعلًا (مش نص حد بعته في حقل اسمه file) ومش فاضي، وإلا 422.`,
+            R`بنجيب البايتات كـ [[Uint8Array]] عشان نبص على أولها ونكتبها.`,
+            R`النوع الحقيقي من البايتات. [[file.type]] (اللي الـ client بعته) وامتداد [[file.name]] مش بنثق فيهم خالص.`,
+            R`مش PNG ولا JPEG ولا PDF: 415. ملف PHP اسمه [[fake.png]] وجاي بـ [[type=image/png]] اتمسك هنا.`,
+            R`الاسم اللي هيتحفظ بيه: UUID عشوائي والامتداد **الحقيقي**. اسم اليوزر ممكن يبقى [[../../server.mjs]] أو فيه حروف ممنوعة على ويندوز.`,
+            R`بنكتب الملف في فولدر الرفع. [[path.join]] هنا آمن لأن [[name]] إحنا اللي عاملينه.`,
+            R`لوج: الاسم الجديد، والحجم، والاسم الأصلي بـ [[JSON.stringify]] عشان لو فيه حروف غريبة تبان (وده المكان الوحيد اللي بنستخدمه فيه).`,
+            R`201 Created، ومعاه الاسم الجديد عشان الـ client يستخدمه بعد كده، والحجم، والعنوان (حقل نص عادي في نفس الفورم، و [[?? ""]] لو مش موجود).`,
+            R`بيسمع على [[PORT]] أو 3000 ويطبع إنه جاهز.`,
+          ],
+          teach: R`## السكربت بيعمل إيه؟
+
+سيرفر بـ endpoint واحد [[POST /upload]] بيستقبل فورم فيه ملف وعنوان، ويقبل PNG و JPEG و PDF بس لحد ٢ MB، ويحفظ الملف باسم عشوائي في [[uploads/]]. اتجرّب بـ [[curl -F]] على Node 24.22.1 (ويندوز)، وبـ [[fetch]] و [[FormData]] على Node 22.23.3 في Docker.
+
+---
+
+## ١. شكل الـ multipart من جوه
+
+سيرفر بيطبع الـ body زي ما هو، و [[curl -F "title=رحلة" -F "file=@note.txt;type=text/plain"]]:
+
+~~~text اللي وصل فعلًا
+content-type: multipart/form-data; boundary=------------------------jdAZcYGZ1DOoI8bVSTVono
+
+--------------------------jdAZcYGZ1DOoI8bVSTVono
+Content-Disposition: form-data; name="title"
+
+رحلة
+--------------------------jdAZcYGZ1DOoI8bVSTVono
+Content-Disposition: form-data; name="file"; filename="note.txt"
+Content-Type: text/plain
+
+hello
+
+--------------------------jdAZcYGZ1DOoI8bVSTVono--
+~~~
+
+- الـ boundary جاي في الـ header، وكل جزء بيبدأ بـ [[--]] + الـ boundary، والآخر بينتهي بـ [[--]] زيادة.
+- كل جزء ليه headers صغيرة: [[name]] اسم الحقل، و [[filename]] اسم الملف عند اليوزر، و [[Content-Type]] اللي الـ client **قال** عليه.
+- البايتات بعد سطر فاضي. عشان كده تكتب parser بإيدك صعب: البايتات نفسها ممكن يبقى فيها أي حاجة، ولازم تدوّر على الـ boundary في binary.
+
+[[Request.formData()]] بيعمل ده كله.
+
+---
+
+## ٢. الحالات: اتجرّبت كلها
+
+~~~bash
+curl -F "title=صورة" -F "file=@pic.png" http://127.0.0.1:3997/upload
+~~~
+
+| اللي اتبعت | الرد |
+|---|---|
+| [[pic.png]] حقيقي (٥٠٨ بايت) و [[title=صورة]] | [[201]] و [[{"name":"<uuid>.png","size":508,"title":"صورة"}]] |
+| [[fake.png]] فيه [[<?php echo 1; ?>]] و [[type=image/png]] | [[415]] لأن أول بايتات مش PNG: [[only png, jpg, pdf]] |
+| [[pic.png]] بس [[filename=../../evil.png]] | [[201]]، واتحفظ باسم UUID، واللوج كتب [[client name: "../../evil.png"]] |
+| [[big.pdf]] ٣ MB | [[413]] من فحص [[content-length]] قبل أي قراية |
+| [[big.pdf]] و [[-H "Transfer-Encoding: chunked"]] | [[413]] من [[limited]] (من غيره كان اتحفظ، شوف تحت) |
+| حقل [[title]] بس، من غير ملف | [[422]] لأن حقل الملف ناقص: [[field file is required]] |
+| [[content-type: application/json]] | [[415]] قبل ما نقرا الـ body: [[send multipart/form-data]] |
+| [[boundary=zzz]] و body [[garbage]] | [[400]] لأن الـ parser ملقاش الـ boundary: [[bad multipart body]] |
+| [[GET /upload]] | [[404]] لأن الـ endpoint بيقبل POST بس |
+
+---
+
+## ٣. الثغرة اللي لقيناها وإحنا بنجرّب
+
+أول نسخة كان فيها فحص [[content-length]] بس، و [[body: req]] على طول. ده بيبان كفاية، لحد ما الـ client يبعت من غير الـ header:
+
+~~~bash
+curl -H "Transfer-Encoding: chunked" -F "file=@big.pdf" http://127.0.0.1:3997/upload
+~~~
+
+~~~text الناتج (النسخة القديمة)
+{"name":"76adb0b4-....pdf","size":3145737,"title":""}
+~~~
+
+ملف ٣ MB اتحفظ وإحنا قايلين ٢ MB. مع chunked مفيش [[content-length]]، فـ [[Number(undefined ?? 0)]] = 0 والفحص عدّى. الحل هو [[limited]]: بيعدّ وهو بيقرا، فمفيش طريقة يتلف حواليه. وبعده نفس الأمر رجّع [[{"error":"file too large"}]].
+
+---
+
+## ٤. client بـ Node: fetch و FormData
+
+~~~js client.mjs
+import { readFile } from "node:fs/promises";
+const fd = new FormData();
+fd.append("title", "صورة");
+fd.append("file", new Blob([await readFile("pic.png")]), "pic.png");
+const r = await fetch("http://127.0.0.1:3997/upload", { method: "POST", body: fd });
+console.log(r.status, await r.text());
+~~~
+
+~~~text الناتج (Node 22.23.3 في Docker)
+201 {"name":"fdda085c-....png","size":508,"title":"صورة"}
+415 {"error":"only png, jpg, pdf"}
+413 {"error":"file too large"}
+422 {"error":"field file is required"}
+~~~
+
+[[fetch]] بيعمل الـ boundary والـ [[content-type]] لوحده لما الـ body يبقى [[FormData]]. **متحطش [[content-type]] بإيدك**، هتنسى الـ boundary والسيرفر مش هيعرف يفك.
+
+---
+
+## ٥. من الفورم في المتصفح
+
+~~~html
+<form action="/upload" method="post" enctype="multipart/form-data">
+  <input name="title">
+  <input type="file" name="file" accept="image/png,image/jpeg,application/pdf">
+  <button>ارفع</button>
+</form>
+~~~
+
+من غير [[enctype="multipart/form-data"]] المتصفح بيبعت اسم الملف بس. و [[accept]] بيسهّل على اليوزر، بس مش أمان: أي حد يقدر يبعت أي حاجة بـ curl.
+
+---
+
+## ٦. لما الملفات تبقى كبيرة
+
+[[formData()]] بيحط الملف كله في الذاكرة. لـ ٢ MB ده تمام. لفيديوهات بالـ GB: يا إما parser بيكتب على الديسك وهو بيقرا (busboy، أو [[@fastify/multipart]])، يا إما الأحسن: الـ client يرفع **مباشرة** لـ S3 أو R2 بـ presigned URL، والسيرفر بتاعك ميشوفش البايتات أصلًا.
+
+## الخلاصة
+
+| الخطر | الحماية هنا |
+|---|---|
+| ملف ضخم يملا الذاكرة | [[content-length]] للرفض السريع + [[limited]] للحد الحقيقي |
+| ملف خطير باسم بريء | النوع من الـ magic bytes، مش [[file.type]] ولا الامتداد |
+| path traversal في الاسم | [[randomUUID()]] والامتداد الحقيقي |
+| الملف يتشغّل من السيرفر | [[uploads/]] برا الفولدر الـ static |`,
+          try: R`احفظ السيرفر وشغّله بـ [[PORT=3997]]، واعمل ملف [[pic.png]] حقيقي (أي صورة) وملف [[fake.png]] فيه نص. جرّب كل سطر في جدول الحالات بـ [[curl -F]]، وبعدين شيل [[limited]] وخلي [[body: req]] وجرّب الـ chunked وشوف الملف الكبير اتحفظ. ورجّعه.`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في الـ multipart اللي فوق، الـ boundary كام شرطة في أول كل جزء مقارنةً بالـ header؟ وآخر سطر فيه إيه زيادة؟`, done: R`الجزء بيبدأ بـ [[--]] + الـ boundary (يعني شرطتين زيادة عن اللي في الـ header)، وآخر سطر فيه [[--]] كمان في الآخر عشان يقول «خلصت».` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** client بيعمل [[fetch(url, { method: "POST", headers: { "content-type": "multipart/form-data" }, body: fd })]]. إيه اللي هيرجع؟ وليه؟`, done: R`السيرفر رد 400 [[bad multipart body]]: الـ header اللي كتبته مفيهوش boundary، فالـ parser مش عارف يقسم. الحل تشيل الـ header وتسيب fetch يعمله.` },
+            { lvl: 'تطبيق', t: R`**محاكاة:** شيل [[limited]] وارجع لـ [[body: req]]، وابعت [[big.pdf]] (٣ MB) مرة عادي ومرة بـ [[-H "Transfer-Encoding: chunked"]].`, done: R`عادي: 413 من فحص [[content-length]]. chunked: 201 و [[size":3145737]] واتحفظ. وبعد ما رجّعت [[limited]] الاتنين 413.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[GET /files/:name]] بيرجّع الملف المرفوع: الاسم لازم يطابق [[/^[0-9a-f-]{36}\.(png|jpg|pdf)$/]]، والـ [[content-type]] من الامتداد، و [[x-content-type-options: nosniff]].`, done: R`الاسم اللي رجع من الرفع بيفتح الصورة في المتصفح، و [[/files/../server.mjs]] و [[/files/abc.png]] بيرجعوا 404 من غير ما يلمسوا الديسك.` },
+            { lvl: 'تحدي', t: R`**ابني:** أكتر من ملف في نفس الفورم بـ [[form.getAll("file")]]: حد ٥ ملفات، وكل واحد بيتفحص نوعه لوحده، والرد array بنتيجة كل ملف (اتحفظ أو اترفض وليه).`, done: R`٣ ملفات (صورة و fake و pdf) رجّعوا ٣ نتايج: 2 اتحفظوا وواحد [[only png, jpg, pdf]]، و ٦ ملفات رجّعوا 422 من غير ما يتحفظ ولا واحد.` },
+            { lvl: 'تحدي', t: R`**اكتب اختبار:** بـ [[node:test]] و [[listen(0)]] و [[fetch]] و [[FormData]]: ٥ اختبارات (صورة سليمة 201، و PHP باسم png 415، و ٤ KB مع حد 1 KB 413، و من غير ملف 422، و body بايظ 400)، ولازم الاختبار يتأكد إن [[uploads/]] فيه ملف واحد بس في الآخر.`, done: R`الخمسة بيعدّوا على ويندوز وفي [[node:22-slim]] (زي فحص الدرس الأوتوماتيك اللي طلّع [[codes 201 415 413 422 400]])، والفولدر فيه ملف واحد.` },
+          ],
+          deep: {
+            why: R`رفع الملفات من أخطر الأماكن في أي تطبيق: ملف PHP أو HTML باسم صورة بيتشغّل من السيرفر أو بيعمل XSS، واسم [[../../]] بيكتب فوق ملفات السيرفر، وملف ٥ GB بيوقّعه. والمكتبات بتحل الـ parsing بس، القرارات الأمنية (الحجم والنوع والاسم والمكان) انت اللي بتاخدها في أي حالة.`,
+            how: R`[[new Request(url, { body, duplex: "half" })]] في Node بيستخدم undici، وبيقبل أي async iterable كـ body. [[formData()]] بيقرا الـ body كله وبيدوّر على الـ boundary اللي في الـ [[content-type]]، ولكل جزء بيقرا الـ headers بتوعه: لو فيه [[filename]] يعمل [[File]] (Blob ليه [[name]] و [[type]] و [[size]])، ولو لأ يعمل string. ولما الـ generator بتاعنا يرمي error، undici بيوقف القراية ويرفض الـ promise بنفس الـ error، فالـ [[status]] بيوصل للـ catch. والـ magic bytes ثابتة في بداية كل صيغة (PNG: [[89 50 4E 47 0D 0A 1A 0A]]، و JPEG: [[FF D8 FF]]، و PDF: [[25 50 44 46]] يعني [[%PDF]]، و ZIP و DOCX: [[50 4B 03 04]]).`,
+            when: R`صور البروفايل، والمستندات، وإيصالات الدفع، والـ CSV للاستيراد: أي ملف صغير لحد كام MB. ولما الملفات كبيرة أو كتير: presigned URL لـ S3 أو R2 والسيرفر بيدّي إذن بس، أو parser بيكتب على الديسك (busboy). وفي Express أو Fastify: multer أو [[@fastify/multipart]] بنفس قواعد الأمان.`,
+            mistakes: R`تثق في [[file.type]] أو الامتداد. وتحفظ بـ [[file.name]] ([[path.join(UPLOADS, "../../x")]] بيطلع برا الفولدر). وتعتمد على [[content-length]] لوحده (chunked بيعدّيه). وتحفظ في [[public/]] اللي بيتعرض static. وتكتب [[content-type]] بإيدك في الـ client. وتنسى [[enctype]] في الفورم. وتستخدم [[formData()]] لملفات بالـ GB فالذاكرة تخلص.`,
+          },
+          sol: R`الحالات كلها في جدول الشرح. لما شلت [[limited]]، [[curl -H "Transfer-Encoding: chunked" -F "file=@big.pdf"]] رجّع [[size":3145737]] واتحفظ، ولما رجّعته رجّع [[{"error":"file too large"}]]. واسم [[../../evil.png]] اتحفظ بـ UUID، ومفيش أي ملف اتكتب برا [[uploads/]].`,
+          solCode: R`// client.mjs: نفس الاختبار من Node
+import { readFile } from "node:fs/promises";
+const fd = new FormData();
+fd.append("title", "صورة");
+fd.append("file", new Blob([await readFile("pic.png")]), "pic.png");
+const r = await fetch("http://127.0.0.1:3997/upload", { method: "POST", body: fd });
+console.log(r.status, await r.text());
+// 201 {"name":"<uuid>.png","size":508,"title":"صورة"}`,
+          flag: "script",
+          ci: [
+            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`node`, run: R`import http from "node:http";
+const MAX = 1024;
+async function* limited(stream, max) {
+  let size = 0;
+  for await (const chunk of stream) {
+    size += chunk.length;
+    if (size > max) throw Object.assign(new Error("file too large"), { status: 413 });
+    yield chunk;
+  }
+}
+const server = http.createServer(async (req, res) => {
+  const reply = (s) => { res.writeHead(s); res.end(String(s)); };
+  let form;
+  try {
+    form = await new Request("http://local/", { method: "POST", headers: req.headers, body: limited(req, MAX), duplex: "half" }).formData();
+  } catch (err) { return reply(err.status ?? 400); }
+  const file = form.get("file");
+  if (!(file instanceof File) || file.size === 0) return reply(422);
+  const b = new Uint8Array(await file.arrayBuffer());
+  reply(b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47 ? 201 : 415);
+});
+await new Promise((r) => server.listen(0, "127.0.0.1", r));
+const url = "http://127.0.0.1:" + server.address().port;
+const png = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 13, 10, 26, 10, 0, 0]);
+const cases = [new Blob([png]), new Blob(["<?php echo 1; ?>"]), new Blob([new Uint8Array(4000)]), null];
+const codes = [];
+for (const blob of cases) {
+  const fd = new FormData();
+  fd.append("title", "test");
+  if (blob) fd.append("file", blob, "x.png");
+  codes.push((await fetch(url, { method: "POST", body: fd })).status);
+}
+codes.push((await fetch(url, { method: "POST", headers: { "content-type": "multipart/form-data; boundary=zzz" }, body: "garbage" })).status);
+console.log("codes", codes.join(" "));
+server.close();`, expect: [R`codes 201 415 413 422 400`] },
+          ],
         }
       ]
     }

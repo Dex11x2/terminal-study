@@ -4,6 +4,15 @@ MORE("node", [
       t: "الإنتاج والتشخيص",
       l: 3,
       n: "Node على السيرفر: الذاكرة، والإغلاق النضيف، والسكربتات كأدوات",
+      projects: [
+        { lvl: 'صغير', t: R`endpoint صحة حقيقي`, what: R`[[/health]] بيرجّع [[{ ok, uptime, rssMB, heapUsedMB, version }]] من [[process.uptime()]] و [[process.memoryUsage()]]، و [[/health?deep=1]] بيجرّب حاجة حقيقية (يقرا ملف أو يتصل بالقاعدة) ويرجّع 503 لو فشلت. من درس الذاكرة ودرس node:http.`, done: R`[[curl /health]] بيرجّع JSON فيه الأرقام، ولو مسحت الملف اللي الـ deep check بيقراه بيرجع 503 والسيرفر لسه شغال.` },
+        { lvl: 'صغير', t: R`[[setkey]] محترم`, what: R`طوّر [[setkey.mjs]] من درس «سكربت Node كأداة»: القيمة بتتحوّل لرقم أو boolean أو null لو شكلها كده ([[--raw]] يسيبها نص)، والمفاتيح المتداخلة بـ نقطة ([[db.port]])، ويرفض [[__proto__]] و [[constructor]]، ويكتب بأمان (tmp ثم rename).`, done: R`[[setkey c.json db.port 5432]] بيكتب [["port": 5432]] رقم جوه [[db]]، و [[setkey c.json __proto__ x]] بيرفض بـ exit 2، والملف عمره ما بيتبوّظ لو قفلت في النص.` },
+        { lvl: 'متوسط', t: R`سيرفر بيقفل صح`, what: R`سيرفر [[node:http]] فيه [[/slow]] بياخد ثانية. على SIGTERM: يبطّل يقبل اتصالات، ويرد [[Connection: close]] على أي request جديد على اتصال قديم، ويستنى اللي شغال، ويقفل الـ idle بـ [[closeIdleConnections()]]، وبعد ١٠ ثواني يخرج بـ 1 مهما حصل. من درس الإغلاق النضيف.`, done: R`في [[docker run]]: request لـ [[/slow]] والـ SIGTERM في النص، الـ client خد [[slow done]] كامل، والسيرفر خرج بـ 0 في أقل من ثانيتين، و request جديد على نفس الاتصال بعد الـ SIGTERM خد رد فيه [[connection: close]].` },
+        { lvl: 'متوسط', t: R`مكتبة صغيرة منشورة صح (dry-run)`, what: R`مكتبة فيها [[src/]] و [[test/]] و [[README.md]] و [[.env]] تجريبي. [[files]] و [[exports]] و [[engines]] و [[license]]، و [[prepublishOnly]] بيشغّل الاختبارات، و [[npm pack --dry-run]] مفيهوش غير [[src]] و README و package.json. من درس npm publish.`, done: R`[[npm pack --dry-run]] بيطبع [[total files: 3]] ومفيهوش [[.env]] ولا [[test/]]، و [[npm publish --dry-run]] بيشغّل الاختبارات الأول، واختبار فاشل بيوقف النشر.` },
+        { lvl: 'كبير', t: R`صندوق تشخيص لأي سيرفر Node`, what: R`موديول [[diag.mjs]] بتعمله import في أي سيرفر: لوج JSON كل دقيقة فيه الذاكرة و [[monitorEventLoopDelay]] (p50 و max)، و [[SIGUSR2]] (على لينكس) بيعمل heap snapshot في [[./snapshots]]، و [[POST /debug/cpu?seconds=10]] (محمي بتوكن من البيئة) بيشغّل [[inspector]] Profiler ويرجّع [[.cpuprofile]]، وتحذير في اللوج لو الـ heap بيزيد ٥ دقايق ورا بعض. ومعاه README بيشرح إزاي تقرا كل حاجة.`, done: R`على سيرفر فيه leak بالقصد (array بيكبر) اللوج بيطلّع التحذير، والـ snapshot بيتفتح في Chrome DevTools وفيه الـ array فوق، والـ cpuprofile بيوري الدالة البطيئة فوق في [[top.mjs]]، ومن غير التوكن الـ endpoint بيرد 401.`, ext: R`ابعت المقاييس لـ Prometheus بصيغة [[/metrics]]، واعمل dashboard، وقارن قبل وبعد تصليح.` },
+        { lvl: 'كبير', t: R`صورة Docker إنتاج لتطبيق Node`, what: R`Dockerfile بمرحلتين ([[npm ci --omit=dev]] في مرحلة، والتشغيل في التانية)، و [[USER node]]، و [[CMD ["node", "server.js"] ]]، و [[HEALTHCHECK]]، و [[.dockerignore]] فيه [[.env]] و [[node_modules]] و [[.git]]، وسكربت [[verify-image.sh]] بيتأكد إن مفيش [[.env]] جوه، و [[whoami]] مش root، و [[docker stop]] أقل من ٣ ثواني، و [[/health]] بيرد. من درس Dockerfile لتطبيق Node.`, done: R`[[verify-image.sh]] بيطبع ٤ سطور «تمام»، ولو شلت [[.env]] من [[.dockerignore]] أو رجّعت [[CMD npm start]] السطر بتاعه بيطلع «غلط» و exit 1.`, ext: R`زوّد GitHub Action بيبني الصورة ويشغّل [[verify-image.sh]] ويرفعها لـ GHCR بالـ tag بتاع الـ commit، وقارن الحجم مع [[node:22-alpine]] أو distroless.` },
+        { lvl: 'فكرة', t: R`خلي سيرفر حقيقي عندك جاهز للإنتاج`, what: R`خد سيرفر Node عندك واعمله «مراجعة إنتاج»: [[NODE_ENV]]، والإغلاق النضيف، و [[/health]]، واللوج JSON، والذاكرة تحت حمل ([[autocannon]] أو loop بـ fetch)، و profile لأبطأ endpoint، و Dockerfile. اكتب قبل وبعد بالأرقام.`, done: R`عندك جدول قبل/بعد فيه ٣ أرقام على الأقل (زمن أبطأ endpoint، والذاكرة بعد ١٠٠٠ request، ووقت [[docker stop]]) وكل رقم اتحسّن أو عارف ليه لأ.`, ext: R`اكتبها كـ checklist في README المشروع، وخليها خطوة في CI (مثلًا اختبار بيتأكد إن [[docker stop]] أقل من ٣ ثواني).` },
+      ],
       items: [
         {
           cmd: "NODE_ENV=production",
@@ -14,6 +23,12 @@ npm ci --omit=dev
 node -e "console.log(process.env.NODE_ENV)"
 npm run build && NODE_ENV=production npm start`,
           try: "شغّل تطبيق Express بـ production ومن غيرها، واعمل error، وقارن الرد.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** مشروع فيه [[ms]] في dependencies و [[is-number]] في dev. امسح node_modules وشغّل [[NODE_ENV=production npm install]]. إيه اللي هيتسطّب؟`, done: R`[[ms]] بس: npm بيقرا [[NODE_ENV=production]] ويخلي [[omit=dev]] لوحده ([[NODE_ENV=production npm config get omit]] طبع [[dev]]، ومن غيره فاضي).` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** على السيرفر كتبوا [[NODE_ENV=prod]]. شغّل [[NODE_ENV=prod npm install]] وشوف node_modules، وبعدين دوّر في الكود على [[=== "production"]].`, done: R`اتسطّب [[is-number]] و [[ms]] الاتنين: [[prod]] مش [[production]] فمفيش أي تأثير، وأي [[if (process.env.NODE_ENV === "production")]] في الكود مش هيدخل. الكلمة لازم بالظبط.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[config.mjs]] بيطبع تحذير على stderr لو [[NODE_ENV]] مش واحدة من [[development]] و [[test]] و [[production]]، ويرمي error لو [[production]] و [[SESSION_SECRET]] مش موجود أو أقل من ٣٢ حرف.`, done: R`[[NODE_ENV=prod]] بيطبع التحذير وبيكمّل، و [[NODE_ENV=production]] من غير السر بيقع برسالة واضحة و exit 1، وبالسر بيشتغل.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** اكتب ٣ حاجات بتتغيّر فعلًا لما [[NODE_ENV=production]] (في npm، وفي Express أو React، وفي كودك)، وحاجة واحدة الناس فاكرة إنها بتتغيّر ومبتتغيّرش (أداء Node نفسه).`, done: R`الـ ٣ صح (npm بيسيب dev، و Express بيخبي الـ stack في صفحة الخطأ ويعمل cache للـ views، و React build بيشيل التحذيرات)، وكتبت إن Node نفسه مبيبصّش على المتغير ده.` },
+          ],
           deep: {
             why: "نفس الكود بيشتغل مختلف في الإنتاج: Express بيعمل كاش للـ templates، و React بيشيل التحذيرات والـ dev tools، ومكتبات كتير بتسرّع. من غير المتغير ده التطبيق أبطأ وبيكشف معلومات.",
             how: R`[[NODE_ENV]] مجرد متغير بيئة بالاتفاق، Node نفسه مش بيعمل بيه حاجة. المكتبات هي اللي بتقراه: [[if (process.env.NODE_ENV === 'production')]].
@@ -204,6 +219,13 @@ NODE_OPTIONS=--max-old-space-size=4096 npm run build
 node -e "console.log(process.memoryUsage())"
 node --heapsnapshot-signal=SIGUSR2 server.js`,
           try: "شغّل [[npm run build]] لمشروع Next.js على سيرفر ١ جيجا: لو وقع، جرّب بـ NODE_OPTIONS ولو لسه، ده معناه محتاج swap أو build في CI.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[node -p "require('v8').getHeapStatistics().heap_size_limit"]] على جهازك، وبعدين نفس السطر بـ [[--max-old-space-size=512]].`, done: R`عندنا 4288 MB افتراضي، و 704 MB مع 512 (الحد بيشمل حاجات غير الـ old space). الرقم الافتراضي بيعتمد على RAM الجهاز.` },
+            { lvl: 'تطبيق', t: R`**محاكاة:** [[leak.js]] بيزوّد objects في array كل 1ms. شغّله بـ [[--max-old-space-size=64]] واكتب آخر سطر والـ exit code.`, done: R`[[FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory]] وقبله [[Last few GCs]]، و exit 134 على ويندوز ولينكس (abort).` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** [[docker run -m 256m node:22-slim node -p "...heap_size_limit"]] من غير ومع [[-m]]. وبعدين [[leak.js]] جوه [[-m 128m]] بـ [[--max-old-space-size=512]].`, done: R`من غير حد: 4144 MB، ومع [[-m 256m]]: 259 MB (Node 22 بيقرا حد الـ container). ومع الحد 512 والـ container 128: exit 137 من غير ولا رسالة JS، لأن kernel قتله (OOM killer) قبل ما V8 يوصل لحده.` },
+            { lvl: 'تحدي', t: R`**ابني:** سيرفر فيه cache في [[Map]] بيكبر مع كل request (leak بالقصد) و endpoint [[/mem]] بيرجّع [[heapUsed]] بالـ MB. ابعتله ٢٠٠٠ request بـ loop من fetch وارسم الرقم كل ٥٠٠. وبعدين حط حد للـ Map (LRU بسيط بـ ١٠٠٠ عنصر) وكرر.`, done: R`من غير حد الرقم بيطلع على طول (اكتب الأربع أرقام)، ومع الحد بيثبت تقريبًا بعد أول ١٠٠٠.` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من وثائق Node: [[--heapsnapshot-signal]] و [[--heapsnapshot-near-heap-limit]] و [[v8.writeHeapSnapshot()]]. أنهي واحد بيشتغل على ويندوز؟ جرّب [[v8.writeHeapSnapshot()]] وافتح الملف في Chrome DevTools ← Memory.`, done: R`الملف اتعمل ([[Heap.20261103.190545.17020.0.001.heapsnapshot]]: التاريخ والوقت والـ pid)، واتفتح في DevTools ولقيت الـ array الكبير في Summary مترتب بالـ Retained Size، وكتبت إن الإشارة [[SIGUSR2]] مش موجودة على ويندوز.` },
+          ],
           deep: {
             why: "[[next build]] على سيرفر ١ جيجا بيقع بـ heap out of memory. أو التطبيق بيكبر في الرام يوم ورا يوم لحد ما يتقتل.",
             how: R`V8 (محرك JavaScript) بيحدد سقف للـ heap (الذاكرة بتاعة الـ objects). لو التطبيق عدّاه، بيقع بـ [[FATAL ERROR: Reached heap limit Allocation failed]]. السقف بيتحسب من رام الجهاز بس ممكن يبقى أقل مما تحتاج.
@@ -412,6 +434,13 @@ process.on("unhandledRejection", (err) => {
   process.exit(1);
 });`,
           try: "شغّل السيرفر، وابعتله [[kill -TERM PID]]، وشوفه بيطبع الرسالة ويقفل بدل ما يتقطع.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** سيرفر فيه [[/slow]] بياخد ثانية، و SIGTERM وصل بعد 0.3 ثانية من الطلب. الـ client هياخد الرد؟ والسيرفر هيخرج بإيه؟`, done: R`في [[docker run]]: الـ client خد [[slow done]] كامل، والسيرفر طبع [[closed, exit 0]] وخرج بـ 0 بعد ما الطلب خلص.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** نفس التجربة، والـ client بيستخدم [[http.Agent({ keepAlive: true })]] وبعت request جديد على نفس الاتصال **بعد** الـ SIGTERM. هيترفض؟`, done: R`لأ: [[client: new request ok?!]]. [[server.close()]] بيقفل الباب للاتصالات **الجديدة** بس، والاتصال الـ keep-alive اللي مفتوح لسه بيخدم. السيرفر خرج بعد كده بحوالي ثانية لما الاتصال فضي.` },
+            { lvl: 'تطبيق', t: R`**صلّح:** في نفس السيرفر، بعد الـ SIGTERM خلي أي رد يبعت [[Connection: close]] (متغير [[stopping]] و [[res.setHeader]])، ونادي [[server.closeIdleConnections()]].`, done: R`الـ request الجديد على الاتصال القديم خد رده ومعاه [[connection: close]]، والاتصال اتقفل بعده، والسيرفر خرج أسرع من قبل.` },
+            { lvl: 'تحدي', t: R`**محاكاة:** [[unhandledRejection]] في نص request: اعمل route بيعمل [[Promise.reject(new Error("db down"))]] من غير await. إيه اللي بيحصل للـ requests التانية الشغالة؟ وقارن بمعالج بيعمل log و [[process.exitCode = 1]] و [[server.close()]] بدل [[process.exit(1)]].`, done: R`من غير معالج: Node 24 وقع على طول و exit 1، والـ requests اللي في النص اتقطعت. مع المعالج اللي بيقفل نضيف: اللي في النص خلصوا، واللوج فيه الخطأ، و exit 1.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** ليه [[setTimeout(..., 10000).unref()]] في الإغلاق؟ إيه اللي يحصل من غير [[unref]] لو [[server.close]] خلص في ثانية؟ ومن غير الـ timeout خالص لو client فاتح اتصال؟`, done: R`كتبت إن [[unref]] بيخلي الـ timer ميمنعش الخروج، فلو الإغلاق خلص بدري العملية بتخرج على طول، ومن غير الـ timeout خالص اتصال واحد معلّق ممكن يخلي العملية مستنية لحد ما Docker يقتلها بعد ١٠ ثواني (137).` },
+          ],
           flag: "script",
           deep: {
             why: "مع كل deploy، الطلبات اللي كانت شغالة بتتقطع في النص: دفعة اتسجّلت نص تسجيل، أو رد مرجعش. والتطبيق ممكن يقع فجأة بسبب promise فشل في مكان بعيد.",
@@ -576,6 +605,216 @@ process.on("SIGTERM", () => {
 // ترمنال تاني:  kill -TERM <pid>`
         },
         {
+          cmd: "Dockerfile لتطبيق Node",
+          title: "صورة Docker لـ Node: من غير أسرار جواها، ومن غير root، وبتقفل في ثانية",
+          desc: R`أغلب Dockerfiles لـ Node اللي بتلاقيها أونلاين أربع سطور: [[FROM node]] و [[COPY . .]] و [[RUN npm install]] و [[CMD npm start]]. وبيشتغلوا. بس قسناهم على تطبيق صغير، والنسخة دي طلع فيها **ملف [[.env]] بالباسورد جوه الصورة**، والتطبيق شغال **root**، و [[docker stop]] بياخد **١٠ ثواني** وبيخرج بـ 137 (اتقتل) لأن الإشارة مبتوصلش لـ Node، وكل تعديل في سطر كود بيعيد [[npm install]] من الأول.
+
+النسخة الصح فيها ٥ حاجات: [[.dockerignore]] بيمنع [[.env]] و [[node_modules]] و [[.git]] من الدخول، و **مرحلتين** (multi-stage): مرحلة بتعمل [[npm ci --omit=dev]] من [[package.json]] و [[package-lock.json]] بس (فالـ layer دي بتتعمل cache طول ما المكتبات متغيّرتش)، ومرحلة التشغيل بتنسخ الناتج. و [[USER node]] (اليوزر ده موجود جاهز في صور node الرسمية). و [[CMD ["node", "server.js"]]] بصيغة exec فـ Node يبقى PID 1 ويستلم SIGTERM. و [[HEALTHCHECK]] بيخلي Docker يعرف التطبيق شغال فعلًا مش بس الـ container.`,
+          example: R`FROM node:22-slim AS deps
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
+
+FROM node:22-slim
+ENV NODE_ENV=production
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+USER node
+EXPOSE 3000
+HEALTHCHECK --interval=5s --timeout=3s --start-period=5s CMD node -e "fetch('http://127.0.0.1:3000/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
+CMD ["node", "server.js"]`,
+          lines: [
+            R`المرحلة الأولى اسمها [[deps]]، مبنية على [[node:22-slim]] (Debian صغير فيه Node 22 و npm). [[slim]] أصغر بكتير من [[node:22]] الكاملة اللي فيها أدوات build، وأكتر توافق من [[alpine]] مع المكتبات اللي فيها كود native.`,
+            R`كل الأوامر الجاية بتشتغل جوه [[/app]]، وبيتعمل لوحده لو مش موجود.`,
+            R`بننسخ ملفين بس: [[package.json]] و [[package-lock.json]]. ده سر الـ cache: طول ما الملفين دول متغيّروش، Docker بيعيد استخدام الـ layer اللي بعدهم ومبيعملش install تاني.`,
+            R`[[npm ci]] بيسطّب النسخ اللي في الـ lock بالظبط (درس package-lock و npm ci)، و [[--omit=dev]] بيسيب devDependencies (typescript و eslint و vitest مش محتاجينهم في التشغيل).`,
+            R`المرحلة التانية: صورة نضيفة من نفس الأساس. أي حاجة اتعملت في [[deps]] ومنسختهاش بإيدك مش هتبقى هنا (كاش npm مثلًا).`,
+            R`[[NODE_ENV=production]] لكل الأوامر وللتطبيق نفسه وهو شغال (درس NODE_ENV).`,
+            R`نفس الفولدر في المرحلة دي.`,
+            R`[[--from=deps]] بينسخ [[node_modules]] الجاهز من المرحلة الأولى.`,
+            R`باقي كود التطبيق. ده بيتعمل بعد [[node_modules]] عشان تعديل في الكود يعيد السطر ده بس. و [[.dockerignore]] هو اللي بيمنع [[.env]] و [[node_modules]] بتوع جهازك من الدخول هنا.`,
+            R`من هنا ورايح كل حاجة بتشتغل باليوزر [[node]] (uid 1000) مش root. لو حد لقى ثغرة في التطبيق، مش هيبقى root جوه الـ container.`,
+            R`توثيق إن التطبيق بيسمع على 3000. مبيفتحش البورت لوحده، لسه محتاج [[-p 3000:3000]] وقت التشغيل.`,
+            R`Docker بيشغّل الأمر ده كل ٥ ثواني: سطر Node بيعمل [[fetch]] لـ [[/health]] ويخرج بـ 0 لو الرد ok وبـ 1 لو لأ. بعد ٣ فشلات ورا بعض الـ container بيبقى [[unhealthy]]. [[--start-period]] بيدّي التطبيق وقت يقوم. واستخدمنا Node نفسه عشان صورة slim مفيهاش [[curl]].`,
+            R`صيغة exec (array JSON): Docker بيشغّل [[node]] مباشرة كـ PID 1، فـ SIGTERM بتاع [[docker stop]] بيوصل للـ handler بتاعك. الصيغة النص ([[CMD node server.js]]) أو [[npm start]] بيحطوا shell أو npm في النص.`,
+          ],
+          teach: R`## الصورة بتعمل إيه؟
+
+بتشغّل سيرفر Node صغير ([[server.js]] بـ [[node:http]] و مكتبة [[ms]]، و [[/health]]، ومعالج SIGTERM). بنيناه بطريقتين وقارنّا. كله على Docker Desktop (ويندوز) بـ [[node:22-slim]] (Node 22.23.3)، والصور اتمسحت بعد التجربة بـ [[docker rmi]] بالاسم.
+
+~~~js server.js
+const http = require("node:http");
+const ms = require("ms");
+const server = http.createServer((req, res) => {
+  if (req.url === "/health") return res.end("ok");
+  res.end("up for " + ms(Math.round(process.uptime() * 1000)) + "\n");
+}).listen(3000, "0.0.0.0", () => console.log("listening on 3000 as", require("os").userInfo().username));
+process.on("SIGTERM", () => { console.log("SIGTERM, closing"); server.close(() => process.exit(0)); });
+~~~
+
+- [[0.0.0.0]] مش [[127.0.0.1]]: جوه الـ container لازم يسمع على كل الكروت عشان [[-p]] يوصله (درس [[--host و Network URL]]).
+- وفي الفولدر كمان [[.env]] فيه [[DB_PASSWORD=super-secret-lab]]، و [[is-number]] في devDependencies.
+
+---
+
+## ١. النسخة «اللي في كل حتة»
+
+~~~dockerfile Dockerfile.naive
+FROM node:22-slim
+WORKDIR /app
+COPY . .
+RUN npm install
+CMD npm start
+~~~
+
+~~~bash
+docker build -f Dockerfile.naive -t lab-notes:naive .
+docker run --rm lab-notes:naive sh -c 'cat .env; whoami; ls node_modules'
+~~~
+
+~~~text الناتج
+DB_PASSWORD=super-secret-lab
+root
+is-number ms
+~~~
+
+الباسورد جوه الصورة، وأي حد عنده الصورة (registry، أو زميل، أو CI logs) عنده الباسورد. وشغال root. والـ devDependencies جوه.
+
+~~~bash
+docker run -d -p 18081:3000 lab-notes:naive
+docker stop <id>      # وقسنا الوقت
+~~~
+
+~~~text الناتج
+stop 10s exit=137
+> notes-api@1.0.0 start
+> node server.js
+listening on 3000 as root
+~~~
+
+١٠ ثواني و 137 = Docker استنى ١٠ ثواني وبعدين بعت SIGKILL. واللوج **مفيهوش** [[SIGTERM, closing]]: [[CMD npm start]] بصيغة النص = [[/bin/sh -c "npm start"]]، والـ sh هو PID 1 ومبيبعتش الإشارة لحد.
+
+---
+
+## ٢. النسخة الصح
+
+[[.dockerignore]] جنب الـ Dockerfile:
+
+~~~text .dockerignore
+node_modules
+.env
+.git
+npm-debug.log
+Dockerfile*
+.dockerignore
+~~~
+
+والـ Dockerfile اللي في المثال.
+
+~~~text الناتج: نفس الأوامر
+cat: .env: No such file or directory
+node
+ms
+...
+healthy
+stop 0s exit=0
+listening on 3000 as node
+SIGTERM, closing
+~~~
+
+| | naive | الصح |
+|---|---|---|
+| [[.env]] جوه الصورة | موجود بالباسورد | مش موجود |
+| اليوزر | [[root]] | [[node]] |
+| devDependencies | [[is-number]] جوه | مش موجودة |
+| [[docker stop]] | ١٠ ثواني و exit 137 | صفر ثانية و exit 0 |
+| حالة الصحة | [[no healthcheck]] | [[healthy]] |
+| الحجم | 329MB | 326MB |
+
+الحجم تقريبًا واحد هنا لأن صورة [[node:22-slim]] نفسها هي معظم الحجم والتطبيق صغير. في مشروع فيه typescript و eslint و vitest الفرق بيبقى مئات الـ MB.
+
+---
+
+## ٣. الـ cache: عدّلنا سطر في [[server.js]] وبنينا تاني
+
+~~~text الصح
+#7 [deps 4/4] RUN npm ci --omit=dev
+#7 CACHED
+good rebuild 1541ms
+~~~
+
+~~~text naive
+#7 [3/4] COPY . .
+#8 [4/4] RUN npm install      ← اتعمل تاني من الأول
+naive rebuild 3942ms
+~~~
+
+في الـ naive أي تغيير في أي ملف بيبوّظ cache الـ [[COPY . .]] فكل اللي بعده يتعاد، ومنه [[npm install]]. وفي الصح [[package*.json]] متغيّروش فالـ install كله [[CACHED]]. مع مشروع فيه ٥٠٠ مكتبة ده الفرق بين ٥ ثواني و ٣ دقايق في كل build.
+
+---
+
+## ٤. فحص الصورة قبل ما ترفعها
+
+~~~bash
+docker run --rm lab-notes:good sh -c 'test ! -e .env && echo "no .env"; whoami'
+docker run --rm lab-notes:good node -e "console.log(process.env.NODE_ENV, process.version)"
+docker history lab-notes:good --format '{{.Size}}\t{{.CreatedBy}}' | head -8
+~~~
+
+~~~text الناتج
+no .env
+node
+production v22.23.3
+0B      CMD ["node" "server.js"]
+0B      HEALTHCHECK {Test:[CMD-SHELL node -e "fetch(…
+0B      USER node
+24.6kB  COPY . . # buildkit
+36.9kB  COPY /app/node_modules ./node_modules # buil…
+~~~
+
+**والأسرار؟** مكانها وقت التشغيل مش وقت البناء: [[docker run --env-file .env]] أو secrets في compose أو المنصة. ومتحطهاش في [[ENV]] أو [[ARG]] في الـ Dockerfile: بتفضل في [[docker history]].
+
+---
+
+## ٥. فخاخ تانية
+
+- [[package-lock.json]] في [[.dockerignore]] بالغلط: الـ [[COPY]] بيقع بـ [["/package-lock.json": not found]] (جرّبناها). ولو نسخت [[package.json]] بس، [[npm ci]] بيقع بـ [[EUSAGE]] (درس package-lock و npm ci).
+- مكتبة فيها كود native (bcrypt، sharp): لو بنيتها على ويندوز ونسخت [[node_modules]] للـ container هتقع، وده سبب [[node_modules]] في [[.dockerignore]] و [[npm ci]] جوه.
+- [[node --watch]] في صورة الإنتاج: لأ (درس [[node --watch --env-file]]).
+- [[--max-old-space-size]] أكبر من ذاكرة الـ container: kernel بيقتله بـ 137 من غير رسالة (درس الذاكرة).
+- Next.js: استخدم [[output: "standalone"]] وانسخ [[.next/standalone]] و [[static]] و [[public]] بس (درس Next.js standalone).
+
+## الخلاصة
+
+[[.dockerignore]] + مرحلتين + [[npm ci --omit=dev]] من الـ lock + [[USER node]] + [[CMD ["node", ...] ]] + [[HEALTHCHECK]]. وبعد كل build: [[.env]] مش موجود، و [[whoami]] مش root، و [[docker stop]] أقل من ٣ ثواني.`,
+          try: R`في مشروع Node صغير عندك (أو [[server.js]] اللي في الشرح مع [[npm i ms@2.1.3]])، اعمل [[Dockerfile.naive]] والـ Dockerfile اللي في المثال و [[.dockerignore]]، وابنيهم الاتنين. شغّل [[cat .env]] و [[whoami]] جوه كل واحد، وقيس [[docker stop]] بـ [[Measure-Command]] أو [[time]]. وبعدين امسح الصورتين بالاسم بـ [[docker rmi lab-notes:naive lab-notes:good]].`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صورة مبنية بـ [[COPY . .]] ومفيش [[.dockerignore]] والفولدر فيه [[.env]]. [[docker run --rm img cat .env]] هيطبع إيه؟`, done: R`طبع [[DB_PASSWORD=super-secret-lab]]: الملف جوه الصورة. وبعد [[.dockerignore]] فيه [[.env]]: [[cat: .env: No such file or directory]].` },
+            { lvl: 'سريع', t: R`**قارن وقيس:** [[CMD npm start]] مقابل [[CMD ["node", "server.js"]]] والسيرفر فيه معالج SIGTERM. وقت [[docker stop]] والـ exit code واللوج؟`, done: R`naive: ١٠ ثواني و 137 ومفيش [[SIGTERM, closing]] في اللوج. الصح: صفر ثانية و 0 و [[SIGTERM, closing]] موجود.` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** عدّل سطر في [[server.js]] وابني الصورتين تاني بـ [[--progress=plain]]. مين عمل [[npm install]] تاني؟ وكام ms؟`, done: R`الصح: [[RUN npm ci --omit=dev]] و [[CACHED]] و 1541ms. الـ naive: [[RUN npm install]] اتنفّذ تاني و 3942ms. وفي مشروعك الحقيقي اكتب الرقمين بتوعك.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[.dockerignore]] فيه [[package-lock.json]] بالغلط (حد كان عايز يصغّر الـ context). ابني واقرا الخطأ.`, done: R`البناء وقع قبل npm أصلًا، عند [[COPY package.json package-lock.json ./]]: [[ERROR: failed to calculate checksum ... "/package-lock.json": not found]]، وقبله تحذير [[CopyIgnoredFile: Attempting to Copy file "package-lock.json" that is excluded by .dockerignore]]. شلت السطر من [[.dockerignore]] وعدّى. (ولو كنت نسخت [[package.json]] بس، [[npm ci]] كان هيقع بـ [[EUSAGE]].)` },
+            { lvl: 'تحدي', t: R`**ابني:** [[verify-image.sh <image>]] بيشغّل ٤ فحوصات: مفيش [[.env]]، و [[whoami]] مش root، و [[/health]] بيرد في أقل من ١٠ ثواني بعد التشغيل، و [[docker stop]] أقل من ٣ ثواني. كل فحص بسطر، و exit 1 لو أي واحد فشل.`, done: R`على [[lab-notes:good]] الأربعة «تمام» و exit 0، وعلى [[lab-notes:naive]] تلاتة فشلوا (.env و root و stop) و exit 1، والسكربت بيمسح الـ container بتاعه في الآخر حتى لو فشل.` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من وثائق Docker: [[--init]] بيعمل إيه؟ وليه مع [[CMD ["node", ...] ]] ومعالج SIGTERM مش محتاجه غالبًا، وإمتى تحتاجه (zombie processes من child_process)؟`, done: R`كتبت إن [[--init]] بيحط tini كـ PID 1 بيوزّع الإشارات ويلم الـ zombies، وإن تجربة درس SIGINT و SIGTERM طلّعت ١١ ثانية من غير handler وصفر مع [[--init]]، وإن تطبيق بيعمل [[spawn]] كتير يستفيد منه حتى مع handler.` },
+          ],
+          deep: {
+            why: R`الـ Dockerfile بيتكتب مرة ويتنسخ لكل مشروع، فالغلطة فيه بتتكرر في كل مكان: أسرار في صور على registry، وتطبيقات root، و deploy بيستنى ١٠ ثواني في كل container (وفي rolling deploy على ١٠ containers ده دقيقتين)، و CI بيعيد [[npm install]] كل مرة.`,
+            how: R`كل سطر في الـ Dockerfile بيعمل layer، و Docker بيعيد استخدام الـ layer لو السطر نفسه والملفات اللي بيعملها [[COPY]] متغيّروش، ولو تغيّر بيعيد السطر ده وكل اللي بعده. عشان كده الحاجات اللي بتتغيّر قليل (المكتبات) فوق، والكثيرة التغيير (الكود) تحت. و multi-stage بيبني أكتر من صورة في ملف واحد، والصورة النهائية فيها الـ layers بتاعة آخر مرحلة بس. و [[.dockerignore]] بيتطبّق على الـ build context قبل ما يتبعت لـ Docker، فالملف المستبعد مش موجود أصلًا لأي [[COPY]]. و PID 1 في Linux ليه وضع خاص: الإشارات اللي مالهاش handler بتتجاهل بدل ما تقتله، فـ Node من غير معالج SIGTERM مبيقفلش، و [[sh -c]] كـ PID 1 مبيبعتش الإشارة لأولاده.`,
+            when: R`أي تطبيق Node هيتنشر في container: Railway أو Fly أو Render أو Kubernetes أو VPS بـ compose. وللـ dev ممكن تستخدم compose بـ volume و [[--watch]] بدل الصورة دي. ولو التطبيق Next.js استخدم standalone بنفس المبادئ.`,
+            mistakes: R`[[COPY . .]] قبل [[npm ci]] (الـ cache بيبوظ مع أي تعديل). ومفيش [[.dockerignore]] ([[.env]] و [[node_modules]] بتاع ويندوز جوه). و [[npm install]] بدل [[npm ci]]. و [[CMD npm start]] أو صيغة النص. و root. وأسرار في [[ENV]] أو [[ARG]]. و [[FROM node:latest]] من غير رقم (نسخة Node بتتغيّر لوحدها). و [[127.0.0.1]] في [[listen]]. و [[HEALTHCHECK]] بـ [[curl]] في صورة مفيهاش curl.`,
+          },
+          sol: R`النتايج كلها في جدول الشرح: الـ naive فيه [[.env]] و root و [[is-number]] و stop ١٠ ثواني و 137، والصح من غير [[.env]] و [[node]] و stop صفر ثانية و exit 0 و [[healthy]]، والحجم 329MB مقابل 326MB، والـ rebuild بعد تعديل سطر 3942ms مقابل 1541ms.`,
+          solCode: R`# قيس وقت الـ stop والـ exit code
+id=$(docker run -d -p 18081:3000 lab-notes:good)
+sleep 8
+docker inspect -f '{{.State.Health.Status}}' $id
+time docker stop $id
+docker inspect -f '{{.State.ExitCode}}' $id
+docker rm $id
+docker rmi lab-notes:naive lab-notes:good`,
+          flag: "script",
+        },
+        {
           cmd: "الـ debugger",
           title: "--inspect و VS Code",
           desc: "console.log بيوصّلك لحد ما. الـ debugger بيوقف الكود على سطر وتشوف كل المتغيرات. [[--inspect]] يفتح بورت 9229، و VS Code أو Chrome يتصلوا بيه. في Docker لازم [[0.0.0.0]] عشان يوصل من بره الـ container.",
@@ -585,6 +824,13 @@ node --inspect=0.0.0.0:9229 server.js
 node --trace-warnings server.js
 node --stack-trace-limit=50 server.js`,
           try: "حط [[debugger;]] في route، وشغّل بـ --inspect، وافتح chrome://inspect، واطلب الـ route وشوف الكود بيقف.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[node --inspect=127.0.0.1:9339 app.js]]: إيه أول سطرين هيطلعوا؟ وإيه اللي يحصل لو البورت مشغول؟`, done: R`[[Debugger listening on ws://127.0.0.1:9339/<uuid>]] و [[For help, see: https://nodejs.org/learn/getting-started/debugging]]. ولو البورت مشغول: [[Starting inspector on 127.0.0.1:9340 failed: address already in use]] والبرنامج **بيكمّل** من غير debugger.` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** ١١ listener على EventEmitter من غير وبـ [[--trace-warnings]]. الفرق في الناتج؟`, done: R`من غيره: الـ warning وسطر [[(Use node --trace-warnings ...)]]. ومعاه: نفس الـ warning ومعاه stack ([[at warnMaxListenersExceeded]] وبعدين السطر بتاعك) عشان تعرف مين زوّد الـ listener.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** recursion عمقها ٣٠ بترمي error. كام سطر [[at f]] هيطلع افتراضي؟ وبـ [[--stack-trace-limit=50]]؟`, done: R`افتراضي: 10 (الحد). بـ 50: سطرين بس ومعاهم [[... collapsed 29 duplicate lines matching above 1 lines 29 times...]]: Node 22 و 24 بيضغطوا التكرار.` },
+            { lvl: 'تحدي', t: R`**ابني:** [[.vscode/launch.json]] فيه config بـ [[type: "node"]] و [[request: "launch"]] و [[envFile]]، وconfig تاني [[attach]] على 9229. حط breakpoint شرطي ([[id === 42]]) في loop على ١٠٠ عنصر.`, done: R`F5 وقف عند العنصر 42 بس، وقريت المتغيرات في Variables، والـ attach اشتغل على سيرفر شغال بـ [[--inspect]].` },
+            { lvl: 'تحدي', t: R`**اشرحها:** ليه [[--inspect=0.0.0.0:9229]] على سيرفر خطر؟ وإزاي توصل لـ debugger على سيرفر بعيد من غير ما تفتح البورت للعالم؟`, done: R`كتبت إن أي حد يوصل للبورت يقدر يشغّل أي كود جوه العملية (remote code execution)، والحل [[ssh -L 9229:127.0.0.1:9229 server]] والسيرفر سامع على 127.0.0.1 بس.` },
+          ],
           deep: {
             why: "bug بيحصل في حالة معينة ومش عارف قيمة المتغير ساعتها. console.log في ٢٠ مكان مش هيكفي. الـ debugger بيوقف الكود وتتفرج.",
             how: R`[[--inspect]] بيخلي Node يفتح بورت 9229 لبروتوكول DevTools. Chrome (من chrome://inspect) أو VS Code بيتصلوا بيه، وبيشوفوا الكود والمتغيرات، ويقدروا يوقفوه على breakpoints.
@@ -747,6 +993,176 @@ Error: deep
 لو الكود ما وقفش: DevTools مش مفتوح (الـ [[debugger;]] بيتجاهل من غير debugger متوصل)، أو السيرفر ما اتعملوش restart بعد ما ضفت السطر. ولو [[chrome://inspect]] مش شايف حاجة، دوس Configure واتأكد إن [[localhost:9229]] موجود. ومتشغّلش [[--inspect=0.0.0.0]] على سيرفر مفتوح؛ أي حد يوصل للبورت يقدر ينفذ كود.`
         },
         {
+          cmd: "--cpu-prof و profiling",
+          title: "الكود بطيء: اعرف أنهي دالة بالظبط بدل ما تخمّن",
+          desc: R`لما حاجة بطيئة، أول غلطة إنك تخمّن وتغيّر. الـ profiler بيقولك الوقت راح فين بالأرقام: Node كل كام microsecond بيبص «الـ thread بيعمل إيه دلوقتي؟» ويسجّل اسم الدالة، وفي الآخر الدالة اللي اتسجّلت أكتر هي اللي واخدة الوقت.
+
+[[node --cpu-prof app.mjs]] بيشغّل السكربت عادي، ولما يخلص بيكتب ملف [[.cpuprofile]] (JSON) في الفولدر. الملف ده بيتفتح في Chrome DevTools (تاب Performance أو JavaScript Profiler) كـ **flame graph**، أو تقراه بسكربت صغير يطبعلك أكتر ٥ دوال. [[--cpu-prof-dir]] و [[--cpu-prof-name]] بيحددوا مكانه واسمه.
+
+وفيه طريقة أقدم: [[node --prof]] بيكتب [[isolate-*.log]]، و [[node --prof-process]] بيحوّله لتقرير نصي فيه الدوال الداخلية بتاعة V8 كمان (زي [[ArrayIncludesSmiOrObject]] اللي هتشوفه تحت). و [[--heap-prof]] نفس الفكرة للذاكرة: مين بيعمل allocate أكتر.`,
+          example: R`node --cpu-prof app.mjs
+node --cpu-prof --cpu-prof-dir=profiles --cpu-prof-name=slow.cpuprofile app.mjs
+node top.mjs profiles/slow.cpuprofile
+node --prof app.mjs
+node --prof-process isolate-0x1234-v8.log
+node --heap-prof app.mjs`,
+          lines: [
+            R`شغّل [[app.mjs]] وسجّل profile للـ CPU طول ما هو شغال. لما يخلص بيكتب ملف اسمه زي [[CPU.20261103.190016.31316.0.001.cpuprofile]] (التاريخ والوقت والـ pid) في الفولدر الحالي.`,
+            R`نفس الحاجة بس انت اللي بتختار الفولدر ([[--cpu-prof-dir]]، وبيتعمل لوحده لو مش موجود) والاسم ([[--cpu-prof-name]])، عشان متتوهش وسط ملفات كتير ولا تمسح واحد بالغلط.`,
+            R`[[top.mjs]] سكربت صغير (في الشرح) بيقرا الـ JSON ويجمع الوقت لكل دالة ويطبع أكتر ٥. بديل سريع للـ flame graph لما تكون على سيرفر من غير متصفح.`,
+            R`الطريقة القديمة: [[--prof]] بيكتب لوج بتاع V8 اسمه [[isolate-<عنوان>-v8.log]]، فيه كل tick (عينة) مع اسم الدالة.`,
+            R`[[--prof-process]] بيقرا اللوج ده ويطبع تقرير نصي: «Bottom up» بيوري أكتر حاجة واخدة ticks ومين ناداها. حط اسم الملف بالظبط (في PowerShell [[isolate-*.log]] مبيتفكّش، شوف الشرح).`,
+            R`[[--heap-prof]] بيسجّل مين بيحجز ذاكرة، ويكتب [[Heap.*.heapprofile]] بيتفتح في DevTools ← Memory. ده للـ «السكربت بياكل RAM» مش للـ «السكربت بطيء».`,
+          ],
+          teach: R`## السكربت بيعمل إيه؟
+
+[[app.mjs]] بيشيل التكرار من ٤٠ ألف اسم بطريقتين: [[slowUnique]] بـ [[includes]] (بتدوّر في الـ array كله لكل عنصر)، و [[fastUnique]] بـ [[Set]]. هنعمل profile ونشوف هل الأداة هتمسك الدالة الصح. كل الأرقام من Node 24.22.1 على ويندوز ١١ و Node 22.23.3 في Docker.
+
+~~~js app.mjs
+function slowUnique(list) {
+  const out = [];
+  for (const x of list) if (!out.includes(x)) out.push(x);
+  return out;
+}
+function fastUnique(list) {
+  return [...new Set(list)];
+}
+const ids = Array.from({ length: 40_000 }, (_, i) => "user-" + (i % 20_000));
+const fn = process.argv[2] === "fast" ? fastUnique : slowUnique;
+console.time(fn.name);
+const unique = fn(ids);
+console.timeEnd(fn.name);
+console.log("unique:", unique.length);
+~~~
+
+~~~text اتشغّل
+node app.mjs        →  slowUnique: 928.539ms   unique: 20000
+node app.mjs fast   →  fastUnique: 4.447ms     unique: 20000
+~~~
+
+نفس النتيجة، والفرق حوالي ٢٠٠ مرة. بس في مشروع حقيقي مش هتبقى عارف إن [[slowUnique]] هي المشكلة. ده شغل الـ profiler.
+
+---
+
+## ١. [[--cpu-prof]] واقرا الملف بنفسك
+
+~~~js top.mjs
+import { readFileSync, readdirSync } from "node:fs";
+const file = process.argv[2] ?? readdirSync(".").filter((f) => f.endsWith(".cpuprofile")).sort().at(-1);
+const prof = JSON.parse(readFileSync(file, "utf8"));
+const self = new Map();
+const byId = new Map(prof.nodes.map((n) => [n.id, n]));
+prof.samples.forEach((id, i) => {
+  const { functionName, url, lineNumber } = byId.get(id).callFrame;
+  const key = (functionName || "(anonymous)") + " " + (url.split("/").at(-1) || "") + ":" + (lineNumber + 1);
+  self.set(key, (self.get(key) ?? 0) + prof.timeDeltas[i] / 1000);
+});
+const total = [...self.values()].reduce((a, b) => a + b, 0);
+console.log("file:", file, "total ms:", Math.round(total));
+for (const [k, ms] of [...self].sort((a, b) => b[1] - a[1]).slice(0, 5)) console.log(String(Math.round(ms)).padStart(6), "ms", (ms / total * 100).toFixed(1).padStart(5) + "%", k);
+~~~
+
+شكل الملف: [[nodes]] شجرة الدوال (كل node ليه [[id]] و [[callFrame]] فيه اسم الدالة والملف والسطر)، و [[samples]] لستة بالـ [[id]] اللي كان شغال في كل عينة، و [[timeDeltas]] الوقت بين كل عينة واللي قبلها بالـ microseconds. فالوقت «الذاتي» (self time) لكل دالة = مجموع الـ deltas بتاعة العينات اللي هي كانت فيها.
+
+~~~text اتشغّل: node --cpu-prof --cpu-prof-name=slow.cpuprofile app.mjs && node top.mjs slow.cpuprofile
+file: slow.cpuprofile total ms: 847
+   806 ms  95.1% slowUnique app.mjs:1
+    13 ms   1.5% (program) :0
+     4 ms   0.5% (anonymous) app.mjs:1
+     3 ms   0.4% lstat :0
+     3 ms   0.4% (garbage collector) :0
+~~~
+
+~~~text على لينكس (Docker)
+   742 ms  96.2% slowUnique app.mjs:1
+    10 ms   1.3% (program) :0
+~~~
+
+الأداة قالت بالظبط: ٩٥٪ من الوقت في [[slowUnique]] سطر 1. و [[(program)]] شغل Node نفسه، و [[(garbage collector)]] تنضيف الذاكرة. ولو الـ GC طلع فوق، يبقى المشكلة إنك بتعمل objects كتير مش إن الحساب تقيل.
+
+والملف الافتراضي (من غير [[--cpu-prof-name]]) اسمه [[CPU.20261103.190016.31316.0.001.cpuprofile]]، وحجمه هنا ٢٠ KB تقريبًا.
+
+---
+
+## ٢. افتحه كـ flame graph
+
+Chrome ← [[F12]] ← تاب **Performance** ← زرار «Load profile» (السهم لفوق) ← اختار الملف. هتلاقي عمود عريض اسمه [[slowUnique]]: العرض = الوقت. والأعمدة اللي فوقه الدوال اللي هو ناداها. (VS Code كمان بيفتح [[.cpuprofile]] لو دوست عليه.)
+
+---
+
+## ٣. [[--prof]]: ليه بيقولك أكتر
+
+~~~text اتشغّل في Docker: node --prof app.mjs && node --prof-process isolate*.log
+ [Bottom up (heavy) profile]:
+   ticks parent  name
+    741   88.0%  Builtin: ArrayIncludesSmiOrObject
+    641   86.5%    JS: *slowUnique file:///w/app.mjs:1:20
+~~~
+
+هنا بيقولك إن الوقت مش في كود [[slowUnique]] نفسه، في **[[Array.prototype.includes]]** اللي جوه V8 ([[Builtin]])، والنجمة [[*slowUnique]] معناها إن الدالة اتعملها optimize. ده بيوصلك للحل على طول: [[includes]] على array كبير = O(n) لكل عنصر = O(n²) كلها، و [[Set]] بيدوّر في O(1).
+
+> **على ويندوز:** [[--prof]] طلّع ٤١ tick بس (بدل ٧٤١ على لينكس) لنفس الشغل: العينات أقل بكتير. النسب لسه صح (٨٩٪ في نفس الدالة)، بس الـ [[--cpu-prof]] أدق. و PowerShell مبيفكّش [[isolate-*.log]] لـ node: [[node --prof-process isolate-*.log]] طلّع [[Cannot access log file: isolate-*.log]]. الحل: [[node --prof-process (Get-ChildItem isolate-*.log)[0].Name]].
+
+---
+
+## ٤. profile لسيرفر شغال
+
+[[--cpu-prof]] بيكتب الملف لما العملية **تخلص**. لسيرفر:
+
+1. شغّله بـ [[node --cpu-prof server.mjs]].
+2. ابعتله حمل (loop بـ [[fetch]] أو [[npx autocannon]]).
+3. اقفله بـ Ctrl+C، **بشرط** يكون فيه [[process.on("SIGINT", () => process.exit(0))]]. جرّبناها في Docker: من غير handler العملية خرجت بـ 130 والملف **مااتكتبش** خالص (ولا الفولدر اتعمل)، ومع الـ handler خرجت بـ 0 والملف اتكتب.
+
+أو من غير restart: [[node --inspect server.mjs]] وافتح [[chrome://inspect]] ← Profiler ← Start/Stop في أي وقت (درس [[الـ debugger]]).
+
+---
+
+## ٥. الطريقة كلها في ٥ خطوات
+
+| الخطوة | بتعمل إيه |
+|---|---|
+| قيس الأول | [[console.time]] أو [[performance.now()]] حوالين الحتة المشكوك فيها، عشان يبقى عندك رقم قبل |
+| profile | [[--cpu-prof]] على نفس الشغل بالظبط |
+| اقرا | أكبر self time: دالة بتاعتك؟ builtin؟ GC؟ |
+| صلّح حاجة واحدة | الحل بيبقى غالبًا خوارزمية أو cache، مش «micro-optimization» |
+| قيس تاني | نفس الأمر، والرقم الجديد جنب القديم (928ms ← 4ms) |
+
+## الخلاصة
+
+- متخمّنش: [[--cpu-prof]] واقرا أكبر self time.
+- [[(garbage collector)]] عالي = objects كتير. Builtin عالي = استخدام غلط لحاجة جاهزة ([[includes]] في loop).
+- لسيرفر: [[--inspect]] و Profiler في DevTools، أو [[--cpu-prof]] واقفل بـ SIGINT.
+- البطء اللي سببه «استنا» (قاعدة أو API) مش هيبان في CPU profile. ده درس [[event loop]] و [[Promise.all]].`,
+          try: R`احفظ [[app.mjs]] و [[top.mjs]] من الشرح، وشغّل [[node --cpu-prof --cpu-prof-name=slow.cpuprofile app.mjs]] و [[node top.mjs slow.cpuprofile]]. وبعدين نفس الحاجة بـ [[fast]] واسم [[fast.cpuprofile]] وقارن الـ total. وافتح [[slow.cpuprofile]] في Chrome ← Performance.`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[node --cpu-prof app.mjs]] من غير [[--cpu-prof-name]]. اسم الملف هيبقى شكله إيه؟ وهيتكتب إمتى؟`, done: R`زي [[CPU.20261103.190016.31316.0.001.cpuprofile]] (تاريخ ووقت و pid)، وبيتكتب لما العملية تخلص مش وهي شغالة.` },
+            { lvl: 'سريع', t: R`**قارن وقيس:** [[top.mjs]] على [[slow.cpuprofile]] و [[fast.cpuprofile]]. الـ total كام في كل واحد؟ وأول سطر في الـ fast إيه؟`, done: R`slow: حوالي 847ms و ٩٥٪ في [[slowUnique]]. fast: حوالي 41ms وأول سطر [[(program)]]: الكود بتاعك مبقاش ظاهر أصلًا.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** في PowerShell [[node --prof-process isolate-*.log]] وقع. اقرا الرسالة وصلّحه.`, done: R`الرسالة [[Cannot access log file: isolate-*.log]] و [[Please provide a valid isolate file as the final argument.]]، والحل [[node --prof-process (Get-ChildItem isolate-*.log)[0].Name]] وطلع [[Builtin: ArrayIncludesSmiOrObject]] فوق.` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** اعمل profile لسكربت حقيقي عندك (build، أو import CSV، أو script بيقرا ملفات) واكتب أكبر ٣ دوال بالـ self time، وقول كل واحدة بتاعتك ولا من مكتبة ولا من Node.`, done: R`عندك ٣ سطور من [[top.mjs]] أو من DevTools، ولكل واحد جملة «ده من ...»، ولو [[(garbage collector)]] فوق ٢٠٪ كتبت ليه.` },
+            { lvl: 'تحدي', t: R`**مسألة:** [[app2.mjs]] بيعمل [[JSON.parse(JSON.stringify(obj))]] لـ object كبير ٥٠٠ مرة جوه loop عشان ينسخه. اعمل profile، ولاقي البديل ([[structuredClone]] أو إنك متنسخش خالص)، وقيس قبل وبعد.`, done: R`الـ profile طلّع [[stringify]] و [[parse]] فوق، والبديل نزّل الوقت برقم مكتوب (قبل وبعد بالـ ms)، وكتبت إن الأحسن غالبًا تبطّل تنسخ.` },
+            { lvl: 'تحدي', t: R`**ابني:** [[profile-server.mjs]]: بيشغّل [[server.mjs]] بـ [[--cpu-prof]] كـ child، ويبعتله ٥٠٠ request بـ [[fetch]]، ويقفله بـ SIGINT، ويشغّل [[top.mjs]] على الملف اللي اتعمل. كله بأمر واحد.`, done: R`أمر واحد طبع جدول أكبر ٥ دوال من السيرفر، والـ route البطيء (اعمله بالقصد بـ loop) طلع أول واحد. (على ويندوز SIGINT من [[child.kill]] مبيتمسكش، فقفّل السيرفر من جوه بـ route [[/stop]] بيعمل [[process.exit(0)]].)` },
+          ],
+          deep: {
+            why: R`«الموقع بطيء» من غير رقم بيخليك تغيّر حاجات عشوائية: تكبّر السيرفر، وتغيّر مكتبة، وتعمل cache في المكان الغلط. الـ profile بيدّيك الدالة والسطر في دقيقة، وفي أغلب الحالات المشكلة حاجة واحدة واضحة (loop جوه loop، أو regex، أو [[JSON]] لحاجة ضخمة، أو sync I/O).`,
+            how: R`[[--cpu-prof]] بيشغّل الـ V8 CPU profiler (نفس اللي في DevTools) من أول العملية: كل حوالي ١٠٠٠ microsecond (قابل للتغيير بـ [[--cpu-prof-interval]]) بيوقّف الـ thread لحظة ويسجّل الـ call stack كله. في الآخر بيكتب [[.cpuprofile]]: شجرة [[nodes]] (كل دالة في مكان معين في الشجرة)، و [[samples]] (أنهي node كان فوق في كل عينة)، و [[timeDeltas]]. والـ self time = الوقت والدالة دي فوق الـ stack نفسها، والـ total time = وهي في أي مكان في الـ stack (هي أو أي حاجة نادتها). أما [[--prof]] فبيستخدم الـ tick processor بتاع V8 وبيسجّل كمان الـ builtins و C++، وده اللي خلّى [[ArrayIncludesSmiOrObject]] تبان.`,
+            when: R`سكربت أو build بياخد وقت أكتر من المتوقع، و endpoint معين بطيء والـ event loop delay عالي (درس event loop)، وقبل ما تختار بين مكتبتين على أساس «أسرع». ومش لما البطء استنا شبكة أو قاعدة: ده بيبان في الـ tracing واللوج بالأوقات، مش في CPU profile.`,
+            mistakes: R`تعمل profile لحاجة قصيرة جدًا (٥٠ms) فالعينات قليلة ومش معبّرة. أو على Debug build مختلف عن الإنتاج. أو تبص على total time وتلوم [[main]] أو الـ router. أو تصلّح ٣ حاجات مرة واحدة ومتعرفش مين اللي فرق. أو تنسى إن [[--cpu-prof]] بيكتب في الخروج الطبيعي بس، فتقفل السيرفر بـ Ctrl+C من غير SIGINT handler (أو [[kill -9]]) ومفيش ملف. أو تسيب ملفات profile فيها أسامي ومسارات في الريبو.`,
+          },
+          sol: R`[[slowUnique]]: حوالي 928ms، و [[top.mjs]] طلّعها ٩٥.١٪ (806 من 847ms). [[fastUnique]]: حوالي 4ms، والـ profile الكلي 41ms وأوله [[(program)]]. و [[--prof-process]] في Docker طلّع [[Builtin: ArrayIncludesSmiOrObject]] ٨٨٪ تحتها [[*slowUnique]].`,
+          ci: [
+            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`node`, run: R`import { writeFileSync, readFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+writeFileSync("app.mjs", 'function slowUnique(list) { const out = []; for (const x of list) if (!out.includes(x)) out.push(x); return out; }\nconst ids = Array.from({ length: 30000 }, (_, i) => "u" + (i % 15000));\nconsole.log("unique:", slowUnique(ids).length);\n');
+const r = spawnSync(process.execPath, ["--cpu-prof", "--cpu-prof-name=p.cpuprofile", "app.mjs"], { encoding: "utf8" });
+console.log(r.stdout.trim());
+const prof = JSON.parse(readFileSync("p.cpuprofile", "utf8"));
+const byId = new Map(prof.nodes.map((n) => [n.id, n]));
+const self = new Map();
+prof.samples.forEach((id, i) => { const name = byId.get(id).callFrame.functionName || "(anonymous)"; self.set(name, (self.get(name) ?? 0) + prof.timeDeltas[i]); });
+console.log("top:", [...self].sort((a, b) => b[1] - a[1])[0][0]);`, expect: [R`unique: 15000`, R`top: slowUnique`] },
+          ],
+        },
+        {
           cmd: "سكربت Node كأداة",
           title: "اقرا arguments وملفات",
           desc: "Node مش بس سيرفرات. سكربت صغير بيقرا JSON ويعدّله، أو يعمل migration للداتا، أو يولّد ملفات. [[process.argv]] الـ arguments، و [[fs]] الملفات، والـ shebang يخليه يتشغّل مباشرة.",
@@ -763,6 +1179,12 @@ data[key] = value ?? null;
 await writeFile(file, JSON.stringify(data, null, 2) + "\n");
 console.log("updated", file);`,
           try: R`احفظه كـ setkey.mjs، و [[chmod +x]]، وشغّل [[./setkey.mjs package.json description "my api"]].`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[node setkey.mjs c.json port 4000]] والملف فيه [[{"port":3000}]]. شكل الملف بعدها؟`, done: R`[["port": "4000"]] بعلامات تنصيص: كل حاجة من [[process.argv]] نص. الكود اللي هيقرا الـ config ده ممكن يعمل [["4000" + 1]].` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[node setkey.mjs c.json __proto__ x]] طبع [[updated c.json]]. افتح الملف: اتغيّر؟ وليه ده خطر في أداة بتاخد مفاتيح من برا؟`, done: R`الملف زي ما هو ومفيش [[__proto__]] فيه: [[data["__proto__"] = "x"]] حاول يغيّر الـ prototype مش يضيف مفتاح. ومع object كـ قيمة ده prototype pollution. الحل ترفض [[__proto__]] و [[constructor]] و [[prototype]].` },
+            { lvl: 'تطبيق', t: R`**ابني:** حوّل القيمة: [["4000"]] ← 4000، و [["true"]] ← true، و [["null"]] ← null، و أي حاجة تانية نص، و [[--raw]] يسيبها نص دايمًا. استخدم [[parseArgs]].`, done: R`[[setkey c.json port 4000]] بيكتب رقم، و [[setkey c.json port 4000 --raw]] بيكتب نص، و [[setkey c.json name 007]] بيكتب [["007"]] (قررت إن الأصفار في الأول تفضل نص وكتبت ليه).` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** شغّل [[./setkey.mjs]] (بالـ shebang) من Git Bash، ومن PowerShell، ومن [[docker run --rm -v ... node:22-slim]] بعد [[chmod +x]]. مين اشتغل؟`, done: R`Git Bash ولينكس اشتغلوا بالـ shebang، و PowerShell لأ (ويندوز مبيفهمش [[#!]]): الحل [[node setkey.mjs]] أو [[bin]] في package.json فـ npm يعمل [[setkey.cmd]] (درس npm publish).` },
+          ],
           flag: "script",
           deep: {
             why: "bash كويس للملفات والأوامر، بس لما الشغل فيه JSON أو منطق أو async، Node أسهل وأنت عارفه أصلًا. سكربتات الـ migration وتوليد الملفات وتنضيف الداتا.",
@@ -961,6 +1383,223 @@ updated package.json
 الأخطاء التانية: [[env: 'node\r': No such file or directory]] لو الملف اتحفظ بـ CRLF من ويندوز (غيّره لـ LF). و [[SyntaxError: Unexpected token]] لو الملف JSON مش سليم؛ ضيف try/catch حوالين الـ parse لو عايز رسالة أوضح.`
         },
         {
+          cmd: "جدولة مهام: setInterval و node-cron",
+          title: "مهمة كل ٥ دقايق أو كل يوم ٩ الصبح: من غير ما تتداخل ولا توقّع السيرفر",
+          desc: R`أول حاجة بتيجي في بالك لمهمة متكررة [[setInterval(job, 60_000)]]. وبتشتغل، لحد ما المهمة تاخد وقت أطول من الفترة: [[setInterval]] **مبيستناش** المهمة اللي قبلها تخلص، فبيبدأ نسخة تانية وتالتة فوق بعض. قسناها: مهمة بتاخد ٢.٥ ثانية كل ثانية = ٣ نسخ شغالين مع بعض.
+
+الحل الأبسط من غير مكتبة: **loop بيستنى**: [[while]] فيه [[await job()]] جوه [[try/catch]] وبعدين [[await sleep(...)]]. المهمة عمرها ما بتتداخل مع نفسها، والخطأ مبيوقّفش الجدولة، و [[AbortController]] بيوقّفها نضيف.
+
+ولما الميعاد ساعة معينة ([[كل يوم 9:00]] أو [[أول كل شهر]]) استخدم صيغة cron: خمس خانات (دقيقة ساعة يوم شهر يوم-الأسبوع). [[node-cron]] (4.6.0) بيفهمها، وفيه [[noOverlap: true]] و [[timezone]]. والأهم من الأداة: المهمة اللي بتتجدول جوه السيرفر بتتنفّذ **مرة لكل نسخة شغالة** من السيرفر، ومبتتنفّذش خالص وهو واقع.`,
+          example: R`import { setTimeout as sleep } from "node:timers/promises";
+
+const EVERY_MS = 5000;
+const ac = new AbortController();
+process.on("SIGINT", () => ac.abort());
+process.on("SIGTERM", () => ac.abort());
+
+async function sendReport() {
+  console.log(new Date().toISOString().slice(11, 19), "sending report");
+  await sleep(1500);
+}
+
+while (!ac.signal.aborted) {
+  const started = Date.now();
+  try {
+    await sendReport();
+  } catch (err) {
+    console.error("report failed:", err.message);
+  }
+  const wait = Math.max(0, EVERY_MS - (Date.now() - started));
+  await sleep(wait, null, { signal: ac.signal }).catch(() => {});
+}
+console.log("stopped cleanly");`,
+          lines: [
+            R`[[setTimeout]] نسخة الـ promise من [[node:timers/promises]] وسمّيناها [[sleep]]: [[await sleep(1000)]] بتستنى ثانية من غير ما توقّف الـ event loop. وبتقبل [[signal]] عشان نلغيها.`,
+            R`كل قد إيه المهمة تبدأ: ٥ ثواني (من بداية المرة اللي فاتت لبداية المرة الجاية).`,
+            R`[[AbortController]] زرار إيقاف: لما نعمل [[ac.abort()]]، [[ac.signal.aborted]] بيبقى [[true]] وأي [[sleep]] مستني بالـ signal ده بيتلغى فورًا.`,
+            R`Ctrl+C بيدوس الزرار بدل ما يقتل العملية في نص المهمة.`,
+            R`و SIGTERM (من Docker أو systemd أو pm2) نفس الحاجة (درس SIGINT و SIGTERM).`,
+            R`المهمة نفسها: هنا بتطبع الوقت ([[HH:MM:SS]] من الـ ISO) وبتمثّل شغل بياخد ١.٥ ثانية. في الحقيقة: تقرير، أو تنضيف، أو مزامنة.`,
+            R`[[toISOString()]] بيرجّع [[2026-11-03T17:06:40.123Z]]، و [[slice(11, 19)]] بياخد الوقت بس. (ده UTC، شوف الشرح عن المناطق الزمنية.)`,
+            R`الاستنا اللي بيمثّل الشغل.`,
+            R`قفلة [[sendReport]].`,
+            R`اللف لحد ما حد يدوس الزرار.`,
+            R`بنسجّل إمتى المرة دي بدأت، عشان نحسب نستنى قد إيه بعدها.`,
+            R`try حوالين المهمة: لو رمت error المرة دي، الجدولة متقفش ونجرّب المرة الجاية.`,
+            R`[[await]]: الـ loop مش هيكمّل لحد ما المهمة تخلص، فمستحيل نسختين يشتغلوا مع بعض.`,
+            R`أي خطأ بيتمسك هنا.`,
+            R`بنطبع السبب ونكمّل. في الإنتاج: لوج JSON، وعدّاد فشل، وتنبيه لو فشلت كذا مرة ورا بعض.`,
+            R`قفلة الـ try/catch.`,
+            R`نستنى اللي فاضل من الـ ٥ ثواني بعد ما نطرح وقت المهمة نفسها، و [[Math.max(0, ...)]] عشان لو المهمة خدت أكتر من ٥ ثواني منستناش رقم سالب (نبدأ على طول).`,
+            R`[[sleep]] بالـ signal: لو جه Ctrl+C في النص بترمي [[AbortError]] فورًا، و [[.catch(() => {})]] بيبلعه عشان الـ loop يلاقي [[aborted]] ويخرج.`,
+            R`قفلة الـ loop.`,
+            R`بنطبع إننا خرجنا نضيف، والعملية بتخلص بـ exit 0 لأن مفيش حاجة فاضلة.`,
+          ],
+          teach: R`## السكربت بيعمل إيه؟
+
+بيبعت «تقرير» كل ٥ ثواني، وكل تقرير بياخد ١.٥ ثانية، ولما تدوس Ctrl+C أو يجيله SIGTERM بيقف بعد ما المهمة الحالية تخلص من غير ما يستنى الـ ٥ ثواني. الأرقام من Node 24.22.1 (ويندوز) و Node 22.23.3 في Docker.
+
+~~~text اتشغّل في Docker، و kill -INT بعد ١٢ ثانية
+17:06:40 sending report
+17:06:45 sending report
+17:06:50 sending report
+stopped cleanly
+exit=0
+~~~
+
+البداية كل ٥ ثواني بالظبط رغم إن المهمة بتاخد ١.٥: لأننا بنطرح وقتها من الاستنا.
+
+---
+
+## ١. مشكلة [[setInterval]]: قسناها
+
+~~~js drift.mjs
+let running = 0, runs = 0;
+async function job() {
+  runs++; running++;
+  console.log(at(), "start #" + runs, "running now:", running);
+  await sleep(2500);
+  running--;
+}
+setInterval(job, 1000);
+~~~
+
+~~~text الناتج
+1.0s start #1 running now: 1
+2.0s start #2 running now: 2
+3.0s start #3 running now: 3
+4.0s start #4 running now: 3
+~~~
+
+٣ نسخ من نفس المهمة شغالين مع بعض. لو المهمة بتبعت إيميلات، كل يوزر هياخد ٣. ولو بتكتب في نفس الملف، اتبوّظ (درس fs/promises: ٢٠ كتابة مع بعض طلّعت 1 أو 2 بدل 20). ولو بتاخد ذاكرة، العملية هتقع. وفحص الدرس الأوتوماتيك بيقيس ده: [[setInterval peak: 3]] و [[loop peak: 1]].
+
+---
+
+## ٢. خطأ واحد ميوقّفش الجدولة
+
+~~~text نسخة فيها throw في المرة التانية
+0.0s run #1
+2.5s run #2
+2.5s run #2 failed: API down
+3.5s run #3
+~~~
+
+من غير [[try/catch]] جوه الـ loop، أول [[throw]] كان هيطلع برا الـ [[while]] ويقفل السكربت (أو unhandled rejection مع [[setInterval]] ويوقّع السيرفر كله على Node 15+).
+
+---
+
+## ٣. مواعيد بالساعة: صيغة cron و node-cron
+
+~~~text الخمس خانات (وفي node-cron خانة سادسة اختيارية للثواني في الأول)
+┌───────── دقيقة (0-59)
+│ ┌─────── ساعة (0-23)
+│ │ ┌───── يوم في الشهر (1-31)
+│ │ │ ┌─── شهر (1-12)
+│ │ │ │ ┌─ يوم في الأسبوع (0-7، و 0 و 7 الحد)
+│ │ │ │ │
+0 9 * * *        كل يوم 9:00
+*/15 * * * *     كل ربع ساعة
+0 9 * * 0-4      9:00 من الحد للخميس
+0 3 1 * *        3 الفجر أول كل شهر
+~~~
+
+~~~bash
+npm i node-cron@4.6.0
+~~~
+
+~~~js nc.mjs
+import cron from "node-cron";
+console.log("valid:", cron.validate("*/2 * * * * *"), cron.validate("61 * * * *"));
+const task = cron.schedule("* * * * * *", async () => {
+  runs++; console.log(at(), "tick #" + runs);
+  await new Promise((r) => setTimeout(r, 2500));
+}, { noOverlap: true, timezone: "Africa/Cairo" });
+~~~
+
+~~~text الناتج (٦.٥ ثانية)
+valid: true false
+0.7s tick #1
+[NODE-CRON] [WARN] task still running, new execution blocked by overlap prevention!
+[NODE-CRON] [WARN] task still running, new execution blocked by overlap prevention!
+3.7s tick #2
+...
+6.5s stopped after 2 runs
+~~~
+
+- [[validate]] بيمسك الصيغة الغلط قبل ما تشغّل (61 دقيقة مش موجودة).
+- [[noOverlap: true]] بيعمل اللي الـ loop بتاعنا بيعمله: المهمة الجاية مبتبدأش والقديمة شغالة، وبيكتب warning.
+- [[timezone]] مهم جدًا على السيرفر: السيرفرات غالبًا UTC.
+
+~~~text اتشغّل: getNextRun لنفس الصيغة "0 9 * * *"
+timezone Africa/Cairo  →  2026-11-04T07:00:00.000Z
+timezone UTC           →  2026-11-04T09:00:00.000Z
+~~~
+
+«9 الصبح» في القاهرة = 7:00 UTC في نوفمبر (EET، UTC+2)، وفي الصيف بيبقى UTC+3. من غير [[timezone]] السيرفر هيبعت التقرير 11 الصبح بتوقيت القاهرة في نوفمبر.
+
+---
+
+## ٤. السؤال الأهم: المهمة دي مكانها فين؟
+
+| المكان | كويس في | مشكلته |
+|---|---|---|
+| جوه سيرفر Node (loop أو node-cron) | مهام صغيرة ومرتبطة بالتطبيق، و cache refresh | بتتنفّذ **مرة لكل نسخة**: ٣ replicas = ٣ تقارير. وبتضيع وهو واقع |
+| process لوحده (worker) | مهام تقيلة، ونسخة واحدة بس | لسه محتاج حد يتأكد إنه شغال (pm2، systemd، Docker restart) |
+| cron أو systemd timer على السيرفر | سكربت [[node report.mjs]] بيشتغل ويخلص | محتاج exit code صح ولوج (تاب bash: [[crontab]] و systemd timers) |
+| GitHub Actions [[schedule]] أو cloud scheduler | مهام مش محتاجة السيرفر بتاعك | ممكن يتأخر دقايق، وأقل فترة ٥ دقايق في Actions |
+
+ولو لازم جوه التطبيق و فيه أكتر من نسخة: lock مشترك (صف في القاعدة بـ [[UPDATE ... WHERE locked_until < now()]]، أو Redis [[SET NX PX]])، فنسخة واحدة بس تاخد الدور.
+
+---
+
+## ٥. المهام اللي فاتت
+
+السيرفر وقع من 8:50 لـ 9:10، فتقرير 9:00 مااتبعتش، ولا [[setInterval]] ولا node-cron هيفتكروه. الحل: احفظ [[lastRun]] (ملف أو قاعدة)، ولما السيرفر يقوم شوف لو آخر مرة أقدم من الفترة نفّذ مرة على طول. وخلّي المهمة **idempotent**: تشغيلها مرتين لنفس اليوم ميبعتش التقرير مرتين (درس «إعادة الإرسال والتكرار» في وحدة الـ webhooks بنفس الفكرة).
+
+## الخلاصة
+
+- [[setInterval]] مع مهمة async = تداخل. استخدم loop بـ [[await]] أو [[noOverlap]].
+- [[try/catch]] جوه، و [[AbortController]] للإيقاف النضيف.
+- مواعيد بالساعة: cron و [[timezone]]، واتأكد بـ [[getNextRun()]].
+- نسخ كتير من السيرفر = المهمة بتتكرر. نسخة واقعة = المهمة بتضيع. فكّر فين مكانها قبل ما تكتبها.`,
+          try: R`احفظ المثال كـ [[sched.mjs]] وشغّله ١٥ ثانية واتأكد إن البداية كل ٥ ثواني. بعدين خلي [[sendReport]] تنام ٧ ثواني بدل ١.٥ وشوف الفترة بقت كام. وبعدين اعمل [[drift.mjs]] بـ [[setInterval]] وعدّ أقصى [[running now]].`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[setInterval(job, 1000)]] و [[job]] بتاخد ٢.٥ ثانية. بعد ٤ ثواني كام نسخة هتبقى شغالة مع بعض؟`, done: R`٣: [[start #3 running now: 3]] و [[start #4 running now: 3]] (الأولى خلصت عند ٣.٥ ثانية).` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** إيه ناتج [[cron.validate("*/2 * * * * *")]] و [[cron.validate("61 * * * *")]]؟ وصيغة «كل يوم 9 الصبح من الحد للخميس»؟`, done: R`[[true]] و [[false]]، والصيغة [[0 9 * * 0-4]].` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** [[getNextRun()]] لـ [[0 9 * * *]] مرة بـ [[timezone: "Africa/Cairo"]] ومرة بـ [[UTC]]. الفرق كام ساعة؟ وليه هيتغيّر في الصيف؟`, done: R`[[2026-11-04T07:00:00.000Z]] مقابل [[09:00]]: ساعتين في نوفمبر (EET)، وفي الصيف ٣ (EEST)، و node-cron بيحسبها لوحده لما تديه اسم المنطقة.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[setInterval(async () => { await sync(); }, 60_000)]] و [[sync]] بترمي error مرة كل شوية. إيه اللي بيحصل على Node 24؟ حوّلها للـ loop اللي في المثال.`, done: R`الـ rejection مالوش catch فالسيرفر كله وقع بـ exit 1. في الـ loop: الخطأ اتطبع والمرة اللي بعدها اشتغلت عادي.` },
+            { lvl: 'تحدي', t: R`**محاكاة:** شغّل نفس سكربت الجدولة في ٣ ترمنالات (كأنهم ٣ replicas)، وخلي المهمة تكتب سطر في [[sent.log]]. وبعدين زوّد lock بملف: [[open("job.lock", "wx")]] (بيفشل بـ EEXIST لو موجود) ومعاه وقت انتهاء.`, done: R`من غير lock: كل دورة فيها ٣ سطور في [[sent.log]]. مع الـ lock: سطر واحد في كل دورة، والـ lock القديم (أقدم من الفترة) بيتمسح عشان نسخة ماتت متقفلش الدنيا.` },
+            { lvl: 'تحدي', t: R`**ابني:** [[daily.mjs]] بيحفظ [[lastRun]] في [[state.json]]، ولما يقوم لو آخر مرة أقدم من ٢٤ ساعة ينفّذ على طول، وبعدين كل يوم 9:00 القاهرة بـ node-cron و [[noOverlap]]، وبيكتب في state بعد النجاح بس.`, done: R`لو عدّلت [[lastRun]] لأمبارح الصبح وشغّلته بينفّذ على طول، ولو شغّلته تاني في نفس الدقيقة مبينفّذش، ولو المهمة فشلت [[lastRun]] مبيتغيّرش فبيجرّب المرة الجاية.` },
+          ],
+          deep: {
+            why: R`كل تطبيق حقيقي فيه شغل بيتكرر: تقارير، وتنضيف sessions قديمة، وتذكيرات، ومزامنة مع API تاني، وتجديد tokens. والغلطات فيه مبتبانش في التطوير (نسخة واحدة، والمهمة سريعة، والجهاز بتوقيت القاهرة) وبتبان في الإنتاج: إيميلات مكررة، وتقرير في الميعاد الغلط، ومهام ضاعت.`,
+            how: R`[[setInterval]] بيحط timer بيتكرر في مرحلة الـ timers في الـ event loop، ومبيعرفش حاجة عن الـ promise اللي الدالة رجّعتها، فبيناديها تاني في ميعادها مهما حصل. والـ loop بـ [[await]] بيخلي النداء الجاي مايتعملش غير بعد ما الـ promise يخلص. و node-cron بيحسب الميعاد الجاي من الصيغة والمنطقة الزمنية (بـ Intl)، وبيعمل [[setTimeout]] لحد الميعاد ده، ومع [[noOverlap]] بيتأكد إن الـ promise اللي قبلها خلص. والـ timers كلها في الذاكرة، فلو العملية وقفت كل الجدول ضاع، وعشان كده [[lastRun]] لازم يتحفظ برا.`,
+            when: R`loop بـ [[await]]: مهمة كل فترة ثابتة جوه process (polling، و cache refresh). node-cron: مواعيد بالساعة أو اليوم جوه تطبيق نسخة واحدة. cron أو systemd timer: سكربت بيشتغل ويخلص على سيرفر واحد. GitHub Actions أو cloud scheduler: مهام خفيفة مش محتاجة سيرفرك. وطابور (BullMQ وغيره) لما محتاج retries وأولوية وأكتر من worker.`,
+            mistakes: R`[[setInterval]] مع async. ومفيش [[try/catch]] فأول خطأ يوقّع السيرفر. ومواعيد من غير [[timezone]] على سيرفر UTC. ونفس المهمة في كل replica. ومفيش [[lastRun]] فالمهام وقت الـ deploy أو الـ crash بتضيع. ومهمة مش idempotent بتبعت مرتين بعد retry. و [[setInterval]] بفترة أكبر من ٢٤.٨ يوم (أكبر من [[2147483647]] ms بيتحوّل لـ 1ms!).`,
+          },
+          sol: R`[[sched.mjs]] بيبدأ كل ٥ ثواني بالظبط ([[17:06:40]] و [[45]] و [[50]]) و Ctrl+C أو SIGTERM بيطبع [[stopped cleanly]] و exit 0. مع مهمة ٧ ثواني الفترة بقت ٧ ثواني (الـ wait = 0) ومفيش تداخل. و [[drift.mjs]] بـ [[setInterval]] وصل [[running now: 3]].`,
+          solCode: R`// drift.mjs: setInterval مع مهمة أطول من الفترة
+import { setTimeout as sleep } from "node:timers/promises";
+const t0 = Date.now(); const at = () => ((Date.now() - t0) / 1000).toFixed(1) + "s";
+let running = 0, runs = 0;
+async function job() { runs++; running++; console.log(at(), "start #" + runs, "running now:", running); await sleep(2500); running--; }
+const timer = setInterval(job, 1000);
+setTimeout(() => clearInterval(timer), 4200);`,
+          flag: "script",
+          ci: [
+            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`node`, run: R`import { setTimeout as sleep } from "node:timers/promises";
+let running = 0, peak = 0;
+async function job() { running++; peak = Math.max(peak, running); await sleep(250); running--; }
+const t = setInterval(job, 100);
+await sleep(650); clearInterval(t); await sleep(300);
+console.log("setInterval peak:", peak);
+running = 0; peak = 0;
+const end = Date.now() + 650;
+while (Date.now() < end) { await job(); await sleep(100); }
+console.log("loop peak:", peak);`, expect: [R`setInterval peak: 3`, R`loop peak: 1`] },
+          ],
+        },
+        {
           cmd: "Next.js CLI",
           title: "dev و build و start و standalone",
           desc: "[[next dev]] للتطوير بـ hot reload. [[next build]] بيبني للإنتاج ويطبع جدول الصفحات (static ولا dynamic). [[next start]] بيشغّل الناتج. و [[output: standalone]] بيطلّع فولدر فيه بس اللي التطبيق محتاجه، وده اللي بيتحط في Docker.",
@@ -970,6 +1609,11 @@ npx next start
 npx eslint .
 node .next/standalone/server.js`,
           try: "اعمل build واقرا الجدول اللي بيطلع: أنهي صفحات static وأنهي dynamic.",
+          practice: [
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** من [[npx next --help]] أو وثائق Next.js: الـ flags اللي بتغيّر البورت والـ host لـ [[next dev]] و [[next start]]. وإيه اللي بيحصل لو شغّلت [[next start]] من غير [[next build]]؟`, done: R`كتبت [[-p]] و [[-H]] للاتنين، وإن start من غير build بيقع برسالة إنه مش لاقي production build في [[.next]] (المصدر: وثائق Next.js أو التشغيل عندك).` },
+            { lvl: 'تطبيق', t: R`**ابني:** سكربت [[prestart]] بيتأكد إن [[.next/BUILD_ID]] موجود وأحدث من آخر تعديل في [[app/]] أو [[src/]]، ولو لأ يطبع «اعمل npm run build» ويخرج بـ 1. جرّبه بفولدرات وهمية بـ [[mkdir]] و [[utimes]] من غير ما تسطّب Next.`, done: R`من غير [[.next/BUILD_ID]]: الرسالة و exit 1. مع ملف أقدم من ملف في [[app/]]: «الـ build قديم» و exit 1. أحدث: exit 0.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** فرق [[next dev]] و [[next build && next start]] في: سرعة أول تحميل، و hot reload، والأخطاء اللي بتظهر، وليه باج بيظهر في الإنتاج بس (hydration، أو متغير [[NEXT_PUBLIC_]] اتقرا وقت الـ build).`, done: R`الأربع نقط مكتوبين بأمثلة، ومنهم إن [[NEXT_PUBLIC_*]] بيتحط في الكود وقت الـ build فتغييره على السيرفر بعدها مبيعملش حاجة.` },
+          ],
           deep: {
             why: "Next.js ليه ٣ أوضاع مختلفة تمامًا، والخلط بينهم أشهر سبب لـ «شغال في dev ومش شغال في production».",
             how: R`[[next dev]]: يبني كل صفحة لما تطلبها، مع hot reload وتفاصيل الأخطاء. بطيء ومش للإنتاج أبدًا. و [[-p]] بورت تاني.
@@ -1145,6 +1789,11 @@ cp -r .next/static .next/standalone/.next/
 du -sh node_modules .next/standalone
 cd .next/standalone && HOSTNAME=0.0.0.0 PORT=3000 node server.js`,
           try: "فعّل standalone في مشروع Next، وابنيه، وشغّل server.js مرة من غير نسخ static وشوف الصفحة، وبعدين انسخه وقارن. وقارن حجم الفولدر بـ node_modules.",
+          practice: [
+            { lvl: 'سريع', t: R`**اشرحها:** ليه [[.next/static]] و [[public]] مش بيتنسخوا لوحدهم في [[standalone]]؟ وإيه اللي اليوزر بيشوفه لو نسيتهم؟`, done: R`كتبت إن standalone فيه السيرفر والكود اللي محتاجه بس، والملفات الثابتة متوقّع إن CDN أو nginx يخدمها، ولو نسيتهم الصفحة بتفتح من غير CSS و JS (404 على [[/_next/static/...]]).` },
+            { lvl: 'تطبيق', t: R`**ابني:** سكربت [[check-standalone.mjs]] بيتأكد إن [[.next/standalone/server.js]] و [[.next/standalone/.next/static]] و [[.next/standalone/public]] موجودين، ويطبع حجم [[standalone]] مقابل [[node_modules]]. جرّبه بفولدرات وهمية.`, done: R`على الفولدر الوهمي من غير static بيقول «ناقص: .next/static» و exit 1، وبعد ما عملته بيقول تمام ويطبع الحجمين.` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من وثائق Next.js: [[HOSTNAME]] و [[PORT]] في standalone. ليه [[HOSTNAME=0.0.0.0]] لازم جوه Docker؟ اربطها بدرس [[--host و Network URL]].`, done: R`كتبت إن من غيره السيرفر ممكن يسمع على اسم الـ container أو localhost بس، وإن تجربة [[127.0.0.1]] جوه Docker طلّعت [[curl: (52) Empty reply from server]] من برا.` },
+          ],
           deep: {
             why: "الـ image اللي فيها node_modules كاملة بتبقى مئات الميجا، وفيها مكتبات التطوير والـ build. standalone بياخد اللي بيتشغّل بس، فالـ image بتصغر لعشرات الميجا، وبتنزل على السيرفر أسرع، وفيها كود أقل ممكن يبقى فيه ثغرة.",
             how: R`وقت الـ build Next بيتتبّع كل ملف الكود بيعمله import أو require (file tracing)، وبينسخ بس الملفات دي من node_modules لـ [[.next/standalone/node_modules]]، ويكتب [[server.js]] صغير بيشغّل التطبيق من غير [[next start]].
@@ -1334,6 +1983,13 @@ npm publish --dry-run
 npm publish --access public
 npm version patch && npm publish`,
           try: "شغّل [[npm pack]] وافتح ملف tgz اللي طلع وشوف إيه اللي كان هيترفع.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** مكتبة فيها [[src/]] و [[test/]] و [[README.md]] و [[.env]] ومفيش [[files]] في package.json. [[npm pack --dry-run]] هيحط إيه؟`, done: R`٥ ملفات ومنهم [[9B .env]] و [[test/a.test.js]]: من غير [[files]] و [[.npmignore]] npm بيحط كل حاجة غير شوية حاجات معروفة. السر كان هيتنشر.` },
+            { lvl: 'تطبيق', t: R`**صلّح:** زوّد [[npm pkg set "files[0]=src"]] وكرر.`, done: R`[[total files: 3]]: README و package.json و [[src/index.js]] بس (README و package.json بيتحطوا دايمًا).` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** في ريبو git نضيف، [[npm version patch]]. وبعدين عدّل ملف من غير commit و [[npm version patch]] تاني.`, done: R`الأولى طبعت [[v0.1.1]] وعملت commit و tag [[v0.1.1]]. التانية وقعت بـ [[npm error Git working directory not clean.]]` },
+            { lvl: 'تحدي', t: R`**اقرا وتوقّع:** [[npm publish --dry-run]] من غير login. هيقع؟`, done: R`لأ: طبع [[npm warn publish This command requires you to be logged in ... (dry-run)]] و [[+ @lab-demo/slugify-ar@0.1.0]]. يعني dry-run مبيتأكدش من الصلاحيات، فأول publish حقيقي ممكن يقع بـ 402 أو 403 (scoped من غير [[--access public]]، أو اسم مش بتاعك).` },
+            { lvl: 'تحدي', t: R`**ابني:** [[prepublishOnly]] بيشغّل [[node --test]] و [[npm pack --dry-run --json]] ويقرا الـ JSON ويرفض لو فيه أي ملف اسمه [[.env]] أو بيبدأ بـ [[test/]].`, done: R`اختبار فاشل بيوقف [[npm publish --dry-run]]، وشيل [[files]] بيخلي السكربت يرفض ويقول اسم الملف.` },
+          ],
           deep: {
             why: "كود بتنسخه بين مشاريعك (helpers، و client لـ API بتاعك). لما يبقى باكدج، التحديث في مكان واحد، وكل مشروع بيسطّب النسخة اللي يحتاجها.",
             how: R`[[npm login]] مرة. الاسم في package.json لازم يبقى فريد على npm، والـ scoped [[@username/name]] بيضمن ده.

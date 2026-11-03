@@ -17,13 +17,16 @@ MORE("node", [
         work: R`كل حاجة بتعملها بإيدك على ملفات لوج أو JSON تستاهل الأداة دي.`,
       },
       lab: R`mkdir -p ~/lab/nlab && cd ~/lab/nlab && npm init -y`,
-      projects: [
-        { t: R`اربطها بمشاريعك`, what: R`لوج مشروع PowerShell الرابع JSONL، ولوج أي تطبيق Node بـ [[pino]] JSONL كمان. شغّل [[jl -f level]] عليهم. الأداة اللي بنيتها دلوقتي بتقرا ناتج مشاريعك التانية.` },
-        { t: R`زوّد [[--since]]`, what: R`فلتر بالوقت: [[jl --since 1h app.jsonl]]. هتحتاج تقرا حقل التاريخ وتقارنه. والجزء الصعب: تحلّل [[1h]] و [[30m]] و [[2d]]. من درس ٢.` },
-        { t: R`اختبارات بالمدمج`, what: R`[[node --test]] مشغّل اختبارات جوه Node، من غير jest ولا vitest. اكتب اختبارات لـ [[summarize]] في [[src/index.js]] وشغّلها بـ [[npm test]]. من درس ٤.` },
-        { t: R`انشرها فعلًا`, what: R`اختار اسم متاح ([[npm view <الاسم>]] لازم تطلّع E404)، واعمل [[npm publish --dry-run]]، وبعدين انشرها. وبعدين [[npx <اسمها>]] من جهاز تاني.` },
-      ],
       n: R`هنبني [[jl]]: أداة بتقرا ملف JSONL وبتلخّصه — عدد السطور، والتالف، وتوزيع أي عمود. أربع خطوات، وفيها باگ وقعت فيه وانا بكتبها`,
+      projects: [
+        { lvl: 'صغير', t: R`اربطها بمشاريعك`, what: R`لوج أي تطبيق Node عندك بصيغة JSONL (سطر JSON لكل حدث، زي [[pino]] أو لوج الـ webhooks في وحدة الـ webhooks)، أو لوج مشروع PowerShell الرابع. شغّل [[jl -f level]] عليهم.`, done: R`[[jl -f level app.jsonl]] بيطبع توزيع الـ levels على لوج حقيقي عندك، والسطور التالفة اتعدّت مش وقّعت الأداة.` },
+        { lvl: 'صغير', t: R`اختبارات بالمدمج`, what: R`[[node --test]] لـ [[summarize]] في [[src/index.js]]: ملف فاضي، وسطر تالف، وعمود مش موجود، وأرقام وعربي في القيم. وشغّلها بـ [[npm test]]. من درس اقرا من ملف أو من أنبوبة ووحدة الشغل اليومي (node --test).`, done: R`[[npm test]] بيعدّي، ولو بوّظت عدّ التالف بالقصد اختبار واحد بالظبط بيقع.` },
+        { lvl: 'متوسط', t: R`زوّد [[--since]]`, what: R`فلتر بالوقت: [[jl --since 1h app.jsonl]]. هتقرا حقل التاريخ وتقارنه، والجزء الصعب: دالة [[parseDuration]] بتفهم [[30s]] و [[30m]] و [[1h]] و [[2d]] وبترفض [[1x]] و [[-1h]] و [[""]] (وهي في مسائل بنك تمارين Node). من درس parseArgs من غير مكتبة.`, done: R`[[--since 1h]] بيعدّ السطور اللي في آخر ساعة بس، و [[--since 1x]] بيطبع usage و exit 2، و ٨ اختبارات لـ [[parseDuration]] بتعدّي.` },
+        { lvl: 'متوسط', t: R`[[--json]] و EPIPE وملف مضغوط`, what: R`[[--json]] بيطبع الملخص JSON واحد للـ CI، والأداة بتقرا [[.jsonl.gz]] لوحدها بـ [[createGunzip]] لو الامتداد كده، و [[| head]] مبيطلّعش stack trace. من درس streams و pipeline ودرس جهّزها للنشر.`, done: R`[[jl --json app.jsonl | node -e "JSON.parse(require('fs').readFileSync(0))"]] مبيشتكيش، ونفس اللوج مضغوط بيدّي نفس الأرقام، و [[jl app.jsonl | head -1]] بيخرج بـ 0.` },
+        { lvl: 'كبير', t: R`انشرها فعلًا`, what: R`اختار اسم متاح ([[npm view <الاسم>]] لازم تطلّع E404)، و [[files]] و [[bin]] و [[engines]] و [[license]] و README فيه أمثلة اتشغّلت، و [[prepublishOnly]] بيشغّل الاختبارات و فحص [[npm pack --dry-run]]، و GitHub Action بيشغّل الاختبارات على ويندوز ولينكس ماك مع كل push، وبعدين [[npm publish]] و [[npx <اسمها>]] من جهاز تاني أو [[docker run --rm node:22-slim npx -y <اسمها>]].`, done: R`[[npx -y <اسمها> --help]] بيشتغل في container نضيف، والحزمة فيها ٣–٤ ملفات بس (مفيش test ولا .env)، والـ Action أخضر على التلاتة، و [[npm version patch]] و publish تاني بيطلّعوا نسخة جديدة من غير مشاكل.`, ext: R`زوّد [[--format table|csv]]، و completions لـ bash و PowerShell، وتغيير ([[CHANGELOG.md]]) مع كل نسخة.` },
+        { lvl: 'فكرة', t: R`أداة CLI بتاعتك من الصفر`, what: R`بنفس الخطوات الأربعة (bin، و parseArgs، و stdin أو ملف، والنشر) اعمل أداة لحاجة بتعملها بإيدك (تحويل CSV لـ JSON، أو تنضيف أسامي ملفات، أو عدّ كلمات في ملفات Markdown، أو فحص روابط مكسورة).`, done: R`الأداة فيها [[--help]] و exit codes صح وبتقرا من pipe، واتنشرت أو متجهّزة بـ [[npm pack --dry-run]] نضيف، وحد غيرك استخدمها.`, ext: R`اعمل منها binary بـ Node SEA أو [[bun build --compile]] (وحدة Bun)، وقارن الحجم.` },
+        { lvl: 'كبير', t: R`[[jl]] بنسخة متينة للإنتاج`, what: R`كمّل الأداة: [[-f]] لأكتر من عمود ([[-f level -f service]])، و [[--where level=error]]، و [[--top 10]]، وقراية أكتر من ملف و glob ([[logs/*.jsonl]]) بالترتيب، و exit 1 لو نسبة السطور التالفة أكبر من [[--max-bad 5%]]، وذاكرة ثابتة على ملف ٥٠٠ MB (اقيسها)، واختبارات لكل خيار.`, done: R`على ملف ٥٠٠ MB الـ RSS تحت ١٠٠ MB والوقت مكتوب، و [[--max-bad 1%]] على ملف فيه ٢٪ تالف بيخرج بـ 1، وكل خيار ليه اختبار بيعدّي.`, ext: R`زوّد [[--follow]] (زي [[tail -f]]) و output ملوّن لو [[process.stdout.isTTY]]، و worker_threads للملفات الكبيرة جدًا.` },
+      ],
       items: [
         {
           cmd: "مشروع — من ملف لأمر",
@@ -67,6 +70,11 @@ MORE("node", [
 // src/cli.js — أول سطر
 #!/usr/bin/env node
 console.log('شغالة');`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** بعد [[npm link]] على ويندوز، إيه الملفات اللي بتتعمل في مجلد npm الـ global لـ [[jl]]؟ وليه ٣؟`, done: R`[[jl]] و [[jl.cmd]] و [[jl.ps1]] (زي اللي في [[node_modules/.bin]] في درس npx): واحد لكل شيل، لأن ويندوز مبيفهمش الـ shebang.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[bin]] في package.json بيشاور على [[src/cli.js]] والملف مفيهوش [[#!/usr/bin/env node]] في أول سطر. شغّل [[jl]] على لينكس ([[docker run]] بعد [[npm link]]) وشوف بيحصل إيه.`, done: R`الشيل حاول يشغّل الملف كـ sh وطلّع أخطاء syntax غريبة (أو [[import: not found]])، وبعد ما زوّدت السطر في الأول اشتغل. على ويندوز ممكن يشتغل عادي (الـ cmd shim بينادي node)، فالغلطة دي بتبان على لينكس بس.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** فرق [[npm link]] و [[npm install -g .]] و [[npx .]] في جملة لكل واحد، وإزاي تشيل الـ link بعد ما تخلص.`, done: R`الـ link بيعمل symlink للفولدر (أي تعديل بيبان على طول)، و [[install -g .]] بينسخ نسخة ثابتة، و [[npx .]] بيشغّل من غير تسطيب، والشيل بـ [[npm unlink -g <اسم الحزمة>]].` },
+          ],
           lines: [
             R`بداية [[package.json]]: object JSON واحد، و npm و Node بيقروه عشان يعرفوا اسم الحزمة ونسختها وإزاي تتشغّل. لازم يبقى JSON سليم بالظبط (من غير تعليقات ولا فاصلة في الآخر)، وإلا أي أمر npm يقع بـ [[EJSONPARSE]].`,
             R`اسم الحزمة: npm بيستخدمه في [[npm install jl]] وفي [[import ... from 'jl']]. حروف صغيرة ومن غير مسافات، ولو هتنشرها لازم يكون مش محجوز على npm، وإلا النشر يترفض.`,
@@ -312,6 +320,11 @@ try {
 
 if (args.help) { console.log(USAGE); process.exit(0); }
 const file = positionals[0];`,
+          practice: [
+            { lvl: 'سريع', t: R`**محاكاة:** اعمل الفخ بإيدك: نادي [[parseArgs]] مرتين (مرة بالخيارات، ومرة بـ [[{ options: {}, strict: false }]]) على [[-f level app.jsonl]]. إيه اللي في [[positionals]] التانية؟`, done: R`[[positionals]] التانية فيها [[level]] و [[app.jsonl]] (النداء التاني ميعرفش إن [[-f]] بتاخد قيمة)، فالأداة فتحت ملف اسمه [[level]]. ونداء واحد بـ [[allowPositionals: true]] حل المشكلة.` },
+            { lvl: 'تطبيق', t: R`**اكتب اختبار:** [[parseCli(argv)]] بترجّع [[{ field, files, json }]]. اكتب اختبارات لـ: [[[]]]، و [[["-f", "level", "a.jsonl"]]]، و [[["a.jsonl", "-f", "level"]]] (الترتيب)، و [[["--json"]]]، و [[["-f"]]] (من غير قيمة = error بـ code [[ERR_PARSE_ARGS_INVALID_OPTION_VALUE]]).`, done: R`الخمسة بيعدّوا، والترتيب مأثرش على النتيجة، والحالة الأخيرة بتتأكد من الـ [[code]] مش من نص الرسالة.` },
+            { lvl: 'تحدي', t: R`**ابني:** [[--help]] بيتولّد من نفس object الخيارات (اسم، و short، ووصف، و default) بدل ما يتكتب بإيدك، فأي خيار جديد يظهر في الـ help لوحده.`, done: R`زوّدت خيار جديد في الـ object بس و [[jl --help]] طلّعه بالوصف والـ default، والـ help ملوش نص مكتوب بإيد غير السطر الأول.` },
+          ],
           lines: [
             R`[[parseArgs]] جاية من [[node:util]] المدمجة في Node، فمفيش [[npm install]] لمكتبة زي commander أو yargs. بتاخد [[process.argv]] وتحوّله لخيارات ([[values]]) وكلام عادي ([[positionals]]).`,
             R`بنعرّف المتغيرين بـ [[let]] بره الـ [[try]] من غير قيمة. لو اتعرّفوا جوه الـ [[try]] بـ [[const]] كانوا هيختفوا بعد قفلته، والكود اللي تحت مش هيلاقيهم.`,
@@ -568,6 +581,11 @@ for await (const line of createInterface({ input, crlfDelay: Infinity })) {
 }
 
 process.exit(bad > 0 ? 1 : 0);`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[jl]] من غير ملف ومن غير pipe (شغّلته في الترمنال لوحده). المفروض يعمل إيه؟ واختبر [[process.stdin.isTTY]].`, done: R`لو بيقرا stdin على طول هيفضل مستني للأبد. الصح: لو [[process.stdin.isTTY]] و مفيش ملف، يطبع usage ويخرج بـ 2. واتأكدت إن [[isTTY]] بـ [[true]] في الترمنال و [[undefined]] مع pipe.` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** ملف JSONL فيه سطر فاضي، وسطر [[{bad]]، وسطر بـ BOM في الأول ([[\uFEFF{"level":"info"}]])، وسطر بـ [[\r\n]]. [[jl]] بيعدّهم إزاي؟ وصلّح الحالتين الأخيرتين.`, done: R`الفاضي اتجاهل، و [[{bad]] اتعدّ تالف، والـ BOM خلّى أول سطر تالف ([[JSON.parse]] بيرفضه)، وبعد [[line.replace(/^\uFEFF/, "")]] و [[crlfDelay: Infinity]] و [[trim]] الاتنين بقوا سليمين.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** [[jl -f level big.jsonl]] على ملف ٧٠+ MB (اعمله بسكربت زي [[make-log.mjs]] في درس streams بس JSONL) مرة بـ readline، ومرة بنسخة بتعمل [[readFile]] و [[split]]. الوقت والـ RSS.`, done: R`٤ أرقام، والـ readline ثابت الذاكرة حوالي ٧٠ MB، و [[readFile]] أكبر بكتير، ونفس العدد في الاتنين.` },
+          ],
           lines: [
             R`بيجيب [[createReadStream]] من [[node:fs]]: بتفتح الملف وتقراه حتة حتة (chunks) بدل ما تحمّله كله في الذاكرة مرة واحدة زي [[readFileSync]]، فملف ٢ جيجا يعدّي عادي.`,
             R`بيجيب [[createInterface]] من [[node:readline]]: بتاخد أي stream وتقسّمه سطور، فتلف عليه سطر سطر من غير ما تجمّع الـ chunks وتدوّر على [[\n]] بنفسك.`,
@@ -808,6 +826,11 @@ jl -f level --json app.jsonl
 # وقبل أي نشر
 npm pack --dry-run
 npm publish --dry-run`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[exports: { ".": "./src/index.js" }]] ومكتبة تانية عملت [[import "jl/src/cli.js"]]. هيشتغل؟`, done: R`لأ: [[ERR_PACKAGE_PATH_NOT_EXPORTED]] لأن [[exports]] بيقفل أي مسار مش متعرّف. ده بالظبط الغرض: انت اللي بتحدد الـ API العام.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[engines: { node: ">=22" }]] و فحص جوه [[cli.js]] نفسه بيطبع رسالة واضحة لو [[process.versions.node]] أقل (لأن npm بيطلّع warning بس، درس package.json).`, done: R`في [[docker run --rm node:20-slim]] (لو عندك) أو بتغيير الحد لـ 99: الأداة بتطبع «محتاج Node 22 أو أحدث» و exit 1 بدل stack trace غريب.` },
+            { lvl: 'تحدي', t: R`**اكتب اختبار:** اختبار بيشغّل [[npm pack --dry-run --json]] بـ [[spawnSync]] ويتأكد إن القايمة فيها [[src/cli.js]] و README و package.json بس، ومفيهاش [[test/]] ولا [[.env]] ولا [[*.jsonl]].`, done: R`الاختبار بيعدّي، ولو مسحت [[files]] من package.json بيقع ويقول أسامي الملفات الزيادة.` },
+          ],
           lines: [
             R`بداية [[package.json]] النهائي اللي هيتنشر مع الحزمة، فأي حد يسطّبها هيشوفه كامل.`,
             R`اسم الحزمة على npm. لازم يكون مش محجوز، وإلا [[npm publish]] يترفض؛ ولو محجوز استخدم اسم تحت scope بتاعك زي [[@you/jl]].`,

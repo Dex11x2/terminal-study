@@ -34,6 +34,15 @@ node -v`,
       t: "Node و npm: الأساسيات",
       l: 1,
       n: "نسخ Node، و package.json، وإيه اللي بيحصل فعلًا لما تكتب npm install",
+      projects: [
+        { lvl: 'صغير', t: R`سكربت «أهلًا» بيعرف نفسه`, what: R`ملف [[hello.js]] بياخد اسم من [[process.argv[2]]] (ولو مفيش يقول «يا صاحبي»)، ويطبع النظام ([[process.platform]]) ونسخة Node. ومعاه [[package.json]] فيه سكربت [[hi]] بيشغّله. من درس المقدمة ودرس package.json.`, done: R`[[node hello.js سارة]] بيطبع «أهلًا سارة، انت على win32 و Node v24...» (أو linux في Docker)، و [[npm run hi --silent]] بيطبع نفس السطر بـ «يا صاحبي».` },
+        { lvl: 'صغير', t: R`حارس نسخة Node للمشروع`, what: R`ملف [[.nvmrc]] فيه رقم النسخة، وسكربت [[check-node.mjs]] بيقراه ويقارن الرقم الكبير بـ [[process.versions.node]]، ولو مختلفين يطبع «شغّل nvm use» ويخرج بـ 1. وحطّه في [[predev]] عشان يشتغل قبل [[npm run dev]] لوحده. من درس node -v و nvm و npm scripts.`, done: R`على Node 24 ومعاك [[.nvmrc]] فيه 24 بيطبع «تمام» و [[npm run dev]] بيكمّل، وفي [[docker run --rm node:22-slim]] بيطبع الرسالة ويقف قبل dev بـ exit 1.` },
+        { lvl: 'متوسط', t: R`فاحص المكتبات الناقصة`, what: R`[[check-deps.mjs]] بيلف على [[dependencies]] و [[devDependencies]] في package.json، ولكل مكتبة يشوف [[node_modules/<name>/package.json]] موجود ولا لأ، ويطبع النسخة المتسطّبة جنب الـ range المطلوب، ويخرج بـ 1 لو فيه ناقص. من درس npm install و ^ و ~.`, done: R`بعد [[npm ci --omit=dev]] بيطبع «ناقص: is-number (^7.0.0)» ويخرج بـ 1، وبعد [[npm ci]] كله «موجود» ويخرج بـ 0.` },
+        { lvl: 'متوسط', t: R`قالب مشروع Node بتاعك`, what: R`فولدر قالب فيه [[package.json]] ([[type: module]] و [[engines]] و [[packageManager]]) و [[.nvmrc]] و [[.gitignore]] (فيه [[node_modules]] و [[.env]]) وسكربتات [[dev]] و [[start]] و [[test]] و [[check]]، و README بيشرح كل سكربت في سطر. وسكربت [[new-project.mjs <name>]] بينسخ القالب لفولدر جديد ويغيّر [[name]].`, done: R`[[node new-project.mjs shop-api]] بيعمل فولدر [[shop-api]]، وجواه [[npm pkg get name]] بيطبع [["shop-api"]]، و [[npm test]] بيعدّي من غير ما تكتب حاجة تانية.` },
+        { lvl: 'كبير', t: R`طبيب المشروع (project doctor)`, what: R`أداة [[doctor.mjs]] تتشغّل في أي مشروع Node وتطبع تقرير: نسخة Node مقابل [[engines]] و [[.nvmrc]]، وفيه [[package-lock.json]] ولا لأ، وهل package.json و الـ lock متطابقين (جرّب [[npm ci --dry-run]] أو قارن الأسامي)، والمكتبات الناقصة من node_modules، والسكربتات اللي بتستخدم أوامر مش موجودة على ويندوز زي [[rm -rf]]. كل فحص ليه نتيجة «تمام / تحذير / غلط»، والأداة بتخرج بـ 1 لو فيه غلط، وبـ [[--json]] بتطبع التقرير JSON للـ CI.`, done: R`على مشروع سليم كله «تمام» و exit 0. ولو مسحت [[package-lock.json]] أو زوّدت مكتبة في package.json من غير install أو حطيت [[engines.node=">=99"]]، كل حالة بتطلع في سطرها كـ «غلط» و exit 1، و [[--json]] بيطلّع JSON صالح ([[node -e "JSON.parse(require('fs').readFileSync(0))"]] مبيشتكيش).`, ext: R`زوّد فحص [[npm audit --json]]، وفحص إن [[node_modules]] مش متسجّل في git، وخيار [[--fix]] بيعمل [[npm install]] لوحده، وانشرها كـ [[npx]] tool في درس npm publish.` },
+        { lvl: 'كبير', t: R`مشغّل سكربتات بيقيس وقته`, what: R`[[run.mjs <script>]] بيقرا السكربت من package.json ويشغّله بـ [[spawn]] مع [[shell: true]]، ويطبع الوقت اللي خده والـ exit code الحقيقي (مش 1 بس زي [[node --run]])، ويحفظ كل تشغيل في [[.runs.jsonl]]، وأمر [[run.mjs --stats]] بيطبع أبطأ ٣ سكربتات ومتوسط وقت كل واحد.`, done: R`سكربت فيه [[process.exitCode = 3]] بيطلع منه «exit 3» و [[$?]] بـ 3، و [[--stats]] بعد ٥ تشغيلات بيطبع جدول فيه عدد المرات والمتوسط بالـ ms لكل سكربت.`, ext: R`شغّل pre و post زي npm، وخيار [[--watch]] يعيد التشغيل لما ملف يتغيّر (درس fs.watch)، و [[--parallel a b]] يشغّل أكتر من سكربت مع بعض.` },
+        { lvl: 'فكرة', t: R`أداة npm تخصّك انت`, what: R`فكّر في حاجة بتعملها بإيدك في كل مشروع Node جديد أو قديم (تنضيف [[node_modules]] في كل الفولدرات، أو تحديث [[engines]] في كذا مشروع، أو مقارنة نسخ مكتبة بين مشروعين...) واعملها أداة بأمر واحد فيها [[--help]] و [[--dry-run]]، وبتشتغل على ويندوز ولينكس.`, done: R`زميل جرّبها على مشروعه من README بس من غير ما يسألك، و [[--dry-run]] بيطبع اللي هيحصل من غير ما يغيّر ولا ملف.`, ext: R`حوّلها لحزمة فيها [[bin]] وانشرها (درس npm publish)، وزوّد اختبارات بـ [[node --test]] تشتغل على GitHub Actions على ويندوز ولينكس.` },
+      ],
       items: [
         {
           cmd: "مقدمة Node.js وتشغيل الملفات",
@@ -56,6 +65,14 @@ node -p "process.platform + ' ' + process.version"
 # ومفيهوش document بتاع المتصفح
 node -p "typeof document"`,
           try: R`اعمل فولدر جديد وافتحه في VS Code، واعمل فيه ملف [[app.js]] فيه سطرين: [[console.log("أول برنامج في Node!");]] و [[console.log(2 + 3);]]. افتح الترمنال في نفس الفولدر وشغّل [[node app.js]]. بعدين ضيف سطر تالت [[console.log(document.title);]] وشغّل تاني. وآخر حاجة جرّب أمرين [[node -p]] اللي في المثال.`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** قبل ما تشغّل، اكتب ناتج [[node -p "typeof document + ' ' + typeof process + ' ' + typeof globalThis + ' ' + typeof window"]]. وبعدين شغّله.`, done: R`كتبت [[undefined object object undefined]] قبل التشغيل وطلع كده: مفيش [[document]] ولا [[window]] في Node، و [[globalThis]] هو الـ object العام في الاتنين.` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** ملف [[a.js]] فيه سطر واحد [[alert("hi")]] منسوخ من كود متصفح. شغّله واقرا الخطأ، وبعدين صلّحه.`, done: R`شفت [[ReferenceError: alert is not defined]] و [[exit=1]] (بـ [[echo $?]] أو [[$LASTEXITCODE]])، وبعد ما بقى [[console.log("hi")]] طبع [[hi]] وخرج بـ 0.` },
+            { lvl: 'تطبيق', t: R`**ابني:** ملف [[hello.js]] بياخد اسم من الترمنال ([[process.argv[2]]]، ولو مفيش استخدم [[??]] بـ «يا صاحبي») ويطبع: «أهلًا <الاسم>، انت على <النظام> و Node <النسخة>».`, done: R`[[node hello.js سارة]] بيطبع [[أهلًا سارة، انت على win32 و Node v24.22.1]] على ويندوز (أو [[linux]] في [[docker run --rm node:22-slim]])، و [[node hello.js]] من غير اسم بيقول «يا صاحبي».` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** اعمل ملفين فيهم نفس السطر [[console.log(this)]]: واحد [[t.cjs]] وواحد [[t.mjs]]. وملفين فيهم [[console.log(typeof require, typeof module)]]: [[r.cjs]] و [[r.mjs]]. شغّل الأربعة واكتب الفرق.`, done: R`[[t.cjs]] طبع [[{}]] و [[t.mjs]] طبع [[undefined]]، و [[r.cjs]] طبع [[function object]] و [[r.mjs]] طبع [[undefined undefined]]: الامتداد بيحدد نوع الـ module، وفي ES modules مفيش [[require]] جاهزة.` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من [[node --help]] بس (من غير جوجل)، اعرف الفرق بين [[-e]] و [[-p]]، وجرّب [[node -e "1+1"]] و [[node -p "1+1"]].`, done: R`لقيت إن [[-p]] هو [[--print]] (بيقيّم ويطبع الناتج) و [[-e]] هو [[--eval]] (بيقيّم بس)، فالأول مطبعش حاجة والتاني طبع [[2]].` },
+            { lvl: 'تحدي', t: R`**اشرحها:** اكتب لزميل في ٣ سطور: ليه نفس كود JavaScript اللي بيقرا ملف بـ [[fs]] بيشتغل في Node ومينفعش في المتصفح، وليه [[document]] العكس.`, done: R`الشرح فيه ٣ أفكار: Node بيشغّل V8 برا المتصفح ومعاه APIs للنظام (ملفات وشبكة و process)، والمتصفح بيقفل الملفات عشان أمان اليوزر، و [[document]] جزء من الصفحة مش من اللغة فمش موجود في Node.` },
+          ],
           deep: {
             why: R`بسبب Node بقيت تقدر تكتب الـ frontend والـ backend بنفس اللغة: React في المتصفح، و Express أو NestJS على السيرفر. وكمان أغلب أدوات الويب نفسها شغالة على Node: Vite و npm و ESLint و TypeScript compiler. فحتى لو بتكتب frontend بس، هتشغّل Node كل يوم.`,
             how: R`V8 بيشغّل JavaScript نفسها، وفوقه Node بيضيف الحاجات اللي مش في المتصفح (الملفات والشبكة و [[process]]) عن طريق مكتبة مكتوبة بـ C اسمها libuv. Node بيشغّل الكود بتاعك على thread واحد، ولما تطلب حاجة بتاخد وقت (تقرا ملف، أو تستنى request) مش بيقف مستنيها: بيكمل، ولما الحاجة تخلص بينادي الكود اللي قلتله يتنفذ بعدها. ده اللي بيخلي سيرفر Node واحد يخدم طلبات كتير في نفس الوقت، وده موضوع درس «event loop» في تاب JavaScript.`,
@@ -224,6 +241,13 @@ npm -v
 which node
 node -p "process.versions.v8"`,
           try: "قارن نسخة node عندك بحقل [[engines]] في package.json لأي مشروع بتشتغل عليه.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** إيه الفرق في الناتج بين [[node -v]] و [[node -p "process.versions.node"]]؟ وكام مفتاح في [[process.versions]]؟`, done: R`[[node -v]] بيطبع [[v24.22.1]] بالـ v، و التاني [[24.22.1]] من غيرها، و [[node -p "Object.keys(process.versions).length"]] طلع 29 على Node 24.22.1 (الرقم بيختلف من نسخة لنسخة).` },
+            { lvl: 'تطبيق', t: R`**ابني:** سكربت [[check-node.mjs]] بياخد الرقم الكبير من [[process.versions.node]] بـ [[split(".")]]، ولو أقل من 22 يطبع رسالة على stderr ويخرج بـ 1.`, done: R`على Node 24 بيطبع «تمام» و exit 0، وفي [[docker run --rm -v ... node:22-slim]] مع الحد 24 بدل 22 بيطبع الرسالة و exit 1.` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** اعرف Node بتاعك جاي منين: [[where.exe node]] و [[Get-Command node]] على ويندوز، و [[which -a node]] على لينكس وماك. لو فيه أكتر من مسار، مين اللي بيكسب وليه؟`, done: R`كتبت المسار الكامل لـ node عندك ومين حطّه (installer، nvm، brew، apt)، وعرفت إن أول مسار في [[PATH]] هو اللي بيشتغل، وإن [[which -a]] بيطبعهم كلهم بالترتيب.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[node -p "process.release.lts + ' ' + process.arch"]] على Node 24 وعلى [[node:22-slim]]. إيه الكلمة اللي هتطلع، ومعناها إيه؟`, done: R`Node 24.22.1: [[Krypton x64]]، و Node 22.23.3: [[Jod x64]]: اسم خط الـ LTS. لو طلع [[undefined]] انت على نسخة Current (مش LTS)، وده مش مناسب لسيرفر إنتاج.` },
+            { lvl: 'سريع', t: R`**قارن وقيس:** [[npm -v]] مقابل [[npm version]] (من غير حاجة بعدها) جوه مشروع.`, done: R`[[npm -v]] طبع [[11.19.1]] بس، و [[npm version]] طبع object فيه اسم المشروع ونسخته ونسخ npm و node والمكتبات اللي جوه Node. (وخد بالك: [[npm version patch]] بيغيّر نسخة مشروعك، درس npm publish.)` },
+          ],
           deep: {
             why: "«شغال عندي ومش شغال عنده» في مشاريع Node غالبًا نسخة. مكتبة بتستخدم feature في Node 22 والسيرفر عليه 18، أو العكس. أول سؤال في أي مشكلة: انت على أنهي نسخة؟",
             how: R`[[node -v]] نسخة Node. [[npm -v]] نسخة npm، ودي بتيجي مع Node بس ممكن تتحدّث لوحدها.
@@ -398,6 +422,13 @@ nvm alias default 24
 echo "24" > .nvmrc
 nvm use`,
           try: "سطّب نسختين وبدّل بينهم، وشوف [[which node]] بيتغير مع كل [[nvm use]].",
+          practice: [
+            { lvl: 'سريع', t: R`**اشرحها:** في سطرين: الفرق بين [[nvm use 24]] و [[nvm alias default 24]]، وليه الباكدجات اللي سطّبتها بـ [[-g]] على 22 مش لاقيها بعد ما بدّلت لـ 24.`, done: R`كتبت إن use للترمنال ده بس و default لكل ترمنال جديد، وإن كل نسخة ليها فولدر [[-g]] لوحده فلازم تسطّبها تاني (أو [[nvm install 24 --reinstall-packages-from=22]] في nvm-sh).` },
+            { lvl: 'تطبيق', t: R`**ابني:** سكربت [[need.mjs]] بيقرا [[.nvmrc]] (ويشيل [[v]] والمسافات و [[\r]] بـ [[trim()]] و [[replace(/^v/, "")]]) ويقارنه بالرقم الكبير بتاع [[process.versions.node]]، ولو مختلف يطبع «المشروع عايز Node 24 وانت شغال 22.23.3. شغّل: nvm use» ويخرج بـ 1.`, done: R`على Node 24 بيطبع [[تمام: Node 24.22.1]]، وفي [[node:22-slim]] بيطبع الرسالة بالنسخة 22.23.3 و exit 1، وملف [[.nvmrc]] فيه [[v24]] وسطر ويندوز [[\r\n]] لسه بيعدّي.` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** nvm على ويندوز (nvm-windows) غير nvm-sh. من README بتاع nvm-windows: هل بيقرا [[.nvmrc]] لوحده لما تكتب [[nvm use]] من غير رقم؟ ولو لأ، اكتب سطر PowerShell بيعمل ده.`, done: R`عرفت من الوثائق إن [[nvm use]] في nvm-windows محتاج رقم (أو الكلمات [[latest]] و [[lts]])، وكتبت [[nvm use (Get-Content .nvmrc).Trim()]] كبديل، والرد مكتوب إنه من الوثائق.` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** فيه ٤ أماكن بتقول «المشروع ده عايز Node كام»: [[.nvmrc]] و [[.node-version]] و [[engines.node]] و [[packageManager]]. مين بيقرا كل واحد (nvm، و fnm، و Volta، و npm، و corepack، و GitHub Actions [[setup-node]])؟`, done: R`جدول صغير من الوثائق فيه كل ملف ومين بيقراه، وقررت تستخدم أنهي واحد في مشروعك (مثلًا [[.nvmrc]] و [[engines]] مع بعض) وليه.` },
+            { lvl: 'تحدي', t: R`**ابني:** [[engines-check.mjs]] بيقرا [[engines.node]] من package.json (زي [[>=22]] أو [[^24.0.0]]) ويقارنه بـ [[process.versions.node]] بدالة [[satisfies]] بتاعتك من بنك تمارين Node، ويخرج بـ 1 لو مش متوافق.`, done: R`مع [[engines.node=">=22.0.0"]] بيعدّي على 24 و 22، ومع [[">=99.0.0"]] بيطبع الرسالة و exit 1 (اللي npm بيطلّعه [[EBADENGINE]] warning بس).` },
+          ],
           deep: {
             why: "مينفعش تسطّب Node من apt وتفضل عليه: النسخة قديمة وتغييرها صعب. nvm بيسطّب أي نسخة في فولدرك وبيبدّل بينهم بأمر.",
             how: R`nvm سكربت بيتحمّل في الشيل (من .bashrc أو .zshrc)، وبيسطّب كل نسخة في [[~/.nvm/versions/node/]]. [[nvm use 24]] بيغيّر الـ PATH في الجلسة دي عشان يشاور على فولدر النسخة دي. عشان كده [[which node]] بيتغير.
@@ -579,6 +610,14 @@ npm pkg set type=module
 npm pkg set engines.node=">=22"
 npm pkg get scripts`,
           try: "اعمل مشروع فاضي بـ [[npm init -y]] وافتح package.json واقرا كل حقل.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اعمل فولدر اسمه [[my app]] (فيه مسافة) وجواه [[npm init -y]]. إيه اللي هيطلع من [[npm pkg get name version]]؟`, done: R`طلع [[{ "name": "my-app", "version": "1.0.0" }]]: npm بدّل المسافة بشَرطة لأن الاسم مينفعش يبقى فيه مسافات أو حروف كبيرة.` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** package.json ده فيه فاصلة زيادة بعد آخر سطر: [[{ "name": "shop", "version": "1.0.0", }]]. شغّل [[npm install]] واقرا الخطأ، وصلّحه.`, done: R`شفت [[npm error code EJSONPARSE]] وجنبه «Expected double-quoted property name in JSON at position 42 (line 4 column 1)» و «package.json must be actual JSON, not just JavaScript»، وبعد ما شلت الفاصلة [[npm install]] عدّى.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** بعد [[npm pkg set type=module]]، ملف [[x.js]] فيه [[const fs = require("fs")]] وقع. اقرا الرسالة واكتب الحلّين اللي هي نفسها بتقترحهم.`, done: R`الرسالة [[ReferenceError: require is not defined in ES module scope, you can use import instead]] ومعاها إن الملف اتعامل كـ ES module عشان [["type": "module"]]. الحلّين: [[import fs from "node:fs"]]، أو تغيّر اسم الملف لـ [[x.cjs]]. جرّبت الاتنين واشتغلوا.` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** في أي مشروع عندك، اكتب سطر [[node -p]] بيطبع السكربتات كجدول: الاسم بعرض ١٠ حروف ([[padEnd(10)]]) وجنبه الأمر، من [[Object.entries(require("./package.json").scripts)]].`, done: R`السطر طبع كل سكربت في سطر لوحده والأوامر تحت بعض في عمود واحد، وجرّبته على مشروع فيه ٥ سكربتات على الأقل.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** حط [[npm pkg set engines.node=">=99"]] في مشروع تجربة، وشغّل [[npm install]] مرة و [[npm install --engine-strict]] مرة، وسجّل الـ exit code في الحالتين.`, done: R`الأولى طلّعت [[npm warn EBADENGINE Unsupported engine]] وكمّلت بـ exit 0، والتانية [[npm error code EBADENGINE]] و [[Not compatible with your version of node/npm]] و exit 1. وعرفت إن [[engine-strict=true]] في [[.npmrc]] بيخلي التحذير غلط لكل الفريق.` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من [[npm help package.json]] (أو docs.npmjs.com)، اعرف الحقول [[bin]] و [[files]] و [[exports]] و [[private]] بتعمل إيه، واكتب لكل واحد مثال سطر واحد.`, done: R`عندك ٤ أمثلة، ومنهم إن [[private: true]] بيخلي [[npm publish]] يرفض، وإن [[files]] بيحدد إيه اللي يتنشر، والمصدر مكتوب إنه وثائق npm.` },
+          ],
           deep: {
             why: "من غيره مفيش مشروع Node. هو اللي بيقول للـ npm يسطّب إيه، وللفريق يشغّل إزاي، ولـ Node يقرا الملفات كـ ESM ولا CommonJS.",
             how: R`[[npm init -y]] بيعمل الملف بالاسم من الفولدر وقيم افتراضية. من غير [[-y]] بيسألك سؤال سؤال.
@@ -759,6 +798,14 @@ npm install -D typescript nodemon
 npm install -g pnpm
 npm uninstall nodemon`,
           try: "سطّب express و -D nodemon وشوف كل واحد راح في أنهي قسم في package.json.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في مشروع فاضي شغّل [[npm install ms@2.1.3]] و [[npm install -D is-number@7.0.0]]. قبل ما تفتح package.json: كل واحدة راحت فين، والـ range اتكتب إزاي؟`, done: R`[[npm pkg get dependencies devDependencies]] طلّع [[ms: ^2.1.3]] في dependencies و [[is-number: ^7.0.0]] في devDependencies، و [[npm ls --depth=0]] طبع الاتنين: npm بيكتب [[^]] قدام النسخة لوحده.` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** كتبت [[npm install expresss]] (بـ ٣ s). اتسطّب من غير ولا error! افتح [[node_modules/expresss/package.json]] وشوف ده إيه، وبعدين جرّب [[npm install expresss-not-real-xyz]].`, done: R`لقيت حزمة حد تاني اسمها [[expresss]] نسخة [[0.0.0]] ووصفها «temp test» (مش express خالص)، ومسحتها بـ [[npm uninstall expresss]]. والاسم اللي مش موجود طلّع [[npm error code E404]] و [[404 Not Found]]. الدرس: غلطة حرف ممكن تنزّل حزمة غريبة (typosquatting)، فبص على الاسم قبل Enter.` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** بعد ما سطّبت ms و is-number، امسح node_modules وشغّل [[npm ci --omit=dev]]. إيه اللي اتسطّب؟ وإيه اللي [[npm ls --depth=0]] بيقوله؟`, done: R`node_modules فيه [[ms]] بس، و [[npm ls]] طلّع [[npm error code ELSPROBLEMS]] و [[missing: is-number@^7.0.0]] لأنه بيقارن بالـ package.json كله. ده نفس اللي بيحصل على سيرفر إنتاج.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[check-deps.mjs]] بيلف على [[dependencies]] و [[devDependencies]] ويشوف [[node_modules/<name>/package.json]] موجود بـ [[existsSync]]، ويطبع «موجود: name@version» أو «ناقص: name (range)»، ويخرج بـ 1 لو فيه ناقص.`, done: R`بعد [[npm ci --omit=dev]] طبع [[موجود: ms@2.1.3]] و [[ناقص: is-number (^7.0.0)]] و exit 1، وبعد [[npm install]] الاتنين موجودين و exit 0.` },
+            { lvl: 'تحدي', t: R`**بيانات حقيقية:** من [[package-lock.json]] في مشروع حقيقي عندك (فيه express أو next مثلًا)، اطبع عدد الحزم كلها بـ [[Object.keys(lock.packages).filter(Boolean).length]]، وقارنه بعدد السطور في dependencies.`, done: R`طلع رقمين: مثلًا ٣ مكتبات في package.json و ٦٠+ حزمة في الـ lock، وفهمت إن الفرق هو الـ dependencies بتاعة المكتبات (transitive)، والمفتاح الفاضي [[""]] هو المشروع نفسه وعشان كده اتشال بـ [[filter(Boolean)]].` },
+            { lvl: 'تحدي', t: R`**اشرحها:** إمتى تحط مكتبة في [[dependencies]] وإمتى في [[devDependencies]]؟ اكتب ٣ أمثلة لكل واحدة من مشروع API حقيقي، وقول بيحصل إيه لو حطيت [[express]] في dev بالغلط.`, done: R`الأمثلة صح (express و zod و pg في dependencies، و typescript و eslint و vitest في dev)، وكتبت إن السيرفر اللي بيعمل [[npm ci --omit=dev]] هيقع بـ [[Cannot find module 'express']].` },
+          ],
           deep: {
             why: "المكتبة اللي بتسطّبها لازم تتسجّل في المكان الصح، وإلا الإنتاج يسطّب أدوات مالهاش لازمة، أو يفتقد مكتبة التطبيق محتاجها.",
             how: R`لما تكتب [[npm install express]]، npm بيعمل ٤ حاجات: يدوّر على النسخة المناسبة في الـ registry، ينزّلها ومكتباتها اللي محتاجاها (dependencies بتاعتها) في node_modules، يضيف سطر في package.json تحت [[dependencies]]، ويحدّث package-lock.
@@ -941,6 +988,13 @@ npm install express@4.18.2
 npm install express@^4
 npm install express@latest`,
           try: "اكتب [[npm view express versions]] وشوف كام نسخة نزلت. وبعدين اقرا الحقل في package.json وافهم أنهي نسخ مسموحة.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** من [[4.18.2]] و [[4.21.0]] و [[5.0.0]] و [[4.17.9]]، مين بيوافق [[^4.18.2]]؟ ومن [[4.18.2]] و [[4.18.9]] و [[4.21.0]] مين بيوافق [[~4.18.2]]؟ وبعدين اتأكد بـ [[npx -y semver@7.7.3 -r "^4.18.2" 4.18.2 4.21.0 5.0.0 4.17.9]].`, done: R`[[^4.18.2]] طلّع [[4.18.2]] و [[4.21.0]] بس، و [[~4.18.2]] طلّع [[4.18.2]] و [[4.18.9]] بس. توقّعك طابق.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** الفخ بتاع الصفر: مين بيوافق [[^0.2.3]] من [[0.2.3 0.2.9 0.3.0 1.0.0]]؟ ومين بيوافق [[^0.0.3]] من [[0.0.3 0.0.4]]؟`, done: R`[[^0.2.3]] طلّع [[0.2.3]] و [[0.2.9]] بس (يعني زي [[~]])، و [[^0.0.3]] طلّع [[0.0.3]] لوحده. قبل 1.0 الكاريت بيقفل على أول رقم مش صفر.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** هل [[^1.2.0]] بيوافق [[1.3.0-beta.1]] أو [[1.2.1-beta.1]]؟ جرّب بـ semver واكتب الـ exit code.`, done: R`ولا واحدة اتطبعت و exit 1: نسخ الـ prerelease مبتدخلش في range إلا لو الـ range نفسه فيه prerelease على نفس الأرقام. عشان كده [[npm install]] عمره ما هيجيبلك beta لوحده.` },
+            { lvl: 'تحدي', t: R`**مسألة:** اكتب [[satisfiesCaret(v, base)]] من غير مكتبة: بترجّع [[true]] لو [[v]] موافق [[^base]] (أرقام بس من غير prerelease)، بقاعدة أول رقم مش صفر. اختبرها على كل الحالات اللي فوق.`, done: R`الدالة بترجّع نفس نتايج [[npx semver -r]] في ١٠ حالات على الأقل، منهم [[("0.3.0", "0.2.3") → false]] و [[("4.21.0", "4.18.2") → true]] و [[("4.17.9", "4.18.2") → false]].` },
+            { lvl: 'تحدي', t: R`**اشرحها:** ليه [[^]] هو الافتراضي في npm، وإيه المشكلة اللي بتحصل لو مكتبة كسرت حاجة في نسخة minor؟ واكتب إزاي الـ lock file بيحميك وإمتى مبيحميكش.`, done: R`كتبت إن الـ lock بيثبّت النسخة طول ما بتعمل [[npm ci]]، ومبيحميكش لما حد يعمل [[npm install]] من غير lock أو [[npm update]] أو لما المكتبة نفسها تتنشر كـ dependency لحد تاني.` },
+          ],
           deep: {
             why: "المشروع اشتغل امبارح وبايظ النهارده وانت مغيرتش حاجة. السبب غالبًا مكتبة اتحدّثت لوحدها، لأن package.json سمح بده.",
             how: R`النسخ بصيغة semver: [[major.minor.patch]]. الـ major بيتغير لما فيه تغيير كاسر (كود قديم مش هيشتغل). الـ minor لميزات جديدة متوافقة. الـ patch لإصلاحات.
@@ -1125,6 +1179,13 @@ npm ci --omit=dev
 git diff package-lock.json | head
 npm install --package-lock-only`,
           try: "امسح node_modules وشغّل [[npm ci]] وقيس الوقت، وقارنه بـ [[npm install]].",
+          practice: [
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** في مشروع فيه [[dependencies]] ومفيهوش [[package-lock.json]]، شغّل [[npm ci]]. إيه الخطأ؟ وصلّحه.`, done: R`طلع [[npm error code EUSAGE]] و «The [[npm ci]] command can only install with an existing package-lock.json»، والحل [[npm install]] مرة عشان يعمل الـ lock وتعمله commit.` },
+            { lvl: 'تطبيق', t: R`**محاكاة:** زميلك زوّد مكتبة في package.json بإيده ([[npm pkg set dependencies.is-number="^7.0.0"]]) ونسي يعمل install. شغّل [[npm ci]] زي الـ CI ما هيعمل.`, done: R`طلع «npm ci can only install packages when your package.json and package-lock.json ... are in sync» و [[Missing: is-number@7.0.0 from lock file]]، وبعد [[npm install]] و commit للاتنين [[npm ci]] عدّى.` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** في نفس المشروع: امسح node_modules وشغّل [[npm ci]] مرتين، ومرة [[npm install]] و node_modules موجود. قيس بـ [[Measure-Command]] أو [[time]].`, done: R`عندك ٣ أرقام بالـ ms (عندنا ci أول مرة 7557 وتاني مرة 4377 من الكاش)، وكتبت إن [[npm ci]] دايمًا بيمسح node_modules ويبدأ من الأول، فميزته إنه مضمون مش إنه أسرع.` },
+            { lvl: 'تحدي', t: R`**بيانات حقيقية:** افتح [[package-lock.json]] واطبع [[lockfileVersion]] وعدد الحزم، وبص على مدخل واحد: إيه معنى [[resolved]] و [[integrity]]؟`, done: R`[[lockfileVersion]] طلع 3، وكتبت إن [[resolved]] الرابط اللي الحزمة نزلت منه بالظبط، و [[integrity]] hash (sha512) لو الملف اتغيّر على السيرفر npm بيرفض يسطّبه.` },
+            { lvl: 'تحدي', t: R`**ابني:** خطوة CI صغيرة [[lock-guard.mjs]]: لو [[package-lock.json]] مش موجود اطبع غلط واخرج بـ 1، ولو موجود شغّل [[npm ci --dry-run]] بـ [[spawnSync]] واخرج بنفس الـ code بتاعه.`, done: R`على مشروع سليم exit 0، ومن غير lock exit 1 برسالتك، ومع مكتبة زيادة في package.json exit 1 ورسالة npm «in sync» ظاهرة.` },
+          ],
           deep: {
             why: "package.json بيسمح بمدى من النسخ. لو كل حد في الفريق والسيرفر سطّب في وقت مختلف، كل واحد ممكن ياخد نسخ مختلفة، وتبدأ مشاكل «شغال عندي».",
             how: R`[[package-lock.json]] بيتكتب أوتوماتيك مع كل install، وفيه النسخة اللي اتسطّبت بالظبط لكل مكتبة، ولكل مكتبة جوه مكتبة، مع hash للملف. ده بيوصف node_modules بالكامل.
@@ -1290,6 +1351,13 @@ found 0 vulnerabilities
 node --run build
 node --run test -- --watch`,
           try: "قارن الوقت بين [[npm run lint]] و [[node --run lint]].",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** سكربتات [[prehi: echo PRE]] و [[hi: echo HI]] و [[posthi: echo POST]]. إيه اللي هيتطبع من [[npm run hi --silent]] ومن [[node --run hi]]؟`, done: R`npm طبع [[PRE]] و [[HI]] و [[POST]]، و [[node --run]] طبع [[HI]] بس: مبيشغّلش pre و post.` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** شغّل [[npm run hi --silent]] ٥ مرات و [[node --run hi]] ٥ مرات وقيس بـ [[Measure-Command { 1..5 | % { ... } }]] في PowerShell.`, done: R`عندنا npm خد حوالي 2630ms و node --run حوالي 275ms للخمس مرات (حوالي ١٠ مرات أسرع)، وكتبت الرقمين بتوعك.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** سكربت [[v: node -p process.env.npm_package_version]]. إيه ناتج [[npm run v --silent]] و [[node --run v]]؟`, done: R`npm طبع [[1.0.0]] و node --run طبع [[undefined]]: متغيرات [[npm_package_*]] بيحطها npm بس، فأي سكربت معتمد عليها مينفعش يتنقل لـ [[node --run]] من غير تعديل.` },
+            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** سكربت [[fail]] بيشغّل ملف فيه [[process.exitCode = 3]]. شغّله بـ [[npm run fail --silent]] وبـ [[node --run fail]] واطبع الـ exit code بعد كل واحد. ليه ده مهم في CI بيفرّق بين الأكواد؟`, done: R`npm رجّع 3 و [[node --run]] رجّع 1 (على Node 24.22.1 ويندوز و Node 22.23.3 لينكس)، فلو الـ CI بتاعك بيعتمد على رقم معين (زي 2 يعني «فيه تحذيرات») استخدم npm أو شغّل الملف بـ [[node]] مباشرة.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[node --run]] من غير اسم سكربت. هيطبع إيه؟ والـ exit code؟`, done: R`[[Available scripts are:]] وتحتها كل السكربتات بأوامرها، و exit 0. (و [[npm run]] من غير اسم بيعمل نفس الحاجة بشكل تاني.)` },
+          ],
           deep: {
             why: "npm run بياخد وقت عشان يحمّل npm نفسه، وده بيبان في السكربتات اللي بتتشغّل كتير.",
             how: "بيدوّر على أقرب package.json من الفولدر الحالي لفوق، ويشغّل الأمر اللي في scripts بالشيل من فولدر الـ package.json ده (حتى لو انت في فولدر فرعي)، بعد ما يضيف [[node_modules/.bin]] للـ PATH عشان الأدوات تشتغل باسمها. [[--]] بيمرر اللي بعده للأمر. مفيش pre/post ولا lifecycle scripts، ومش بيحط متغيرات [[npm_config_*]] ولا [[npm_package_*]]: بيحط بس [[NODE_RUN_SCRIPT_NAME]] و [[NODE_RUN_PACKAGE_JSON_PATH]]، فسكربت بيقرا [[npm_package_version]] هيلاقيها فاضية.",
@@ -1453,6 +1521,14 @@ npm test
 npm run build -- --watch
 npm run lint --silent`,
           try: "ضيف سكربت [[hello]] بيطبع رسالة، وشغّله، وبعدين ضيف [[prehello]] وشوفه بيتنفذ قبله لوحده.",
+          practice: [
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** في مشروع مش بتاعك، من غير ما تفتح package.json: إيه الأمر اللي بيطبع كل السكربتات؟ وإيه اللي بيطبعه لو كتبت اسم سكربت مش موجود؟`, done: R`[[npm run]] من غير اسم بيطبع اللستة، و [[npm run nope]] طلّع [[npm error Missing script: "nope"]] و exit 1، و [[node --run nope]] طلّع «Missing script» ومعاه كل السكربتات الموجودة.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** سكربت [[args: node args.js]] والملف بيطبع [[process.argv.slice(2)]]. إيه الفرق بين [[npm run args -- --port 4000 x]] و [[npm run args --port 4000]]؟`, done: R`الأولى طبعت [[ '--port', '4000', 'x' ]]، والتانية npm كل [[--port]] لنفسه وطلّع [[npm warn Unknown cli config "--port"]] والسكربت استلم [[ '4000' ]] بس. الـ [[--]] هي اللي بتقول «اللي بعدي للسكربت».` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** سكربت [[clean: rm -rf dist]] شغال على الماك. شغّله من PowerShell على ويندوز واقرا الخطأ، وبعدين خليه يشتغل على الكل من غير مكتبات.`, done: R`من PowerShell طلع [['rm' is not recognized as an internal or external command]] و exit 1 (npm بيشغّل السكربتات في cmd.exe على ويندوز). وبعد ما بقى [[node -e "require('fs').rmSync('dist',{recursive:true,force:true})"]] عدّى على ويندوز ولينكس. (من Git Bash ممكن يعدّي لأن [[rm]] بتاعه في الـ PATH، وده فخ.)` },
+            { lvl: 'تطبيق', t: R`**ابني:** سلسلة [[check]] بتشغّل [[lint]] وبعده [[test]] وبعده [[build]] بـ [[&&]]، و [[precheck]] بيطبع النسخة. خلي [[test]] يفشل بالقصد وشوف [[build]] اتنفّذ ولا لأ.`, done: R`لما [[test]] فشل [[build]] متنفّذش، و [[npm run check]] خرج بنفس الـ code، و [[precheck]] اتنفّذ الأول. وبعد ما رجّعت test سليم الأربعة اتنفّذوا بالترتيب.` },
+            { lvl: 'تحدي', t: R`**اقرا وتوقّع:** سكربت بيطبع [[process.env.npm_lifecycle_event]]. إيه ناتجه من [[npm run which]] ومن [[node --run which]]؟ وإيه المتغير اللي [[node --run]] بيحطه بداله؟`, done: R`npm طبع [[which]] و [[node --run]] طبع [[undefined]]، ومن وثائق Node لقيت [[NODE_RUN_SCRIPT_NAME]] و [[NODE_RUN_PACKAGE_JSON_PATH]]، وجرّبت الأول وطبع [[which]].` },
+            { lvl: 'تحدي', t: R`**refactor:** سكربت [[deploy]] طوله سطر ونص فيه ٥ أوامر بـ [[&&]] وعلامات تنصيص جوه بعض. انقله لملف [[scripts/deploy.mjs]] بيشغّل كل خطوة بـ [[spawnSync]] ويطبع اسمها ويقف عند أول فشل بنفس الـ code.`, done: R`السكربت في package.json بقى [[node scripts/deploy.mjs]]، ونفس الخطوات بتتنفّذ بنفس الترتيب، والخطوة الفاشلة اسمها بيتطبع والـ exit code هو بتاعها، وبيشتغل على ويندوز ولينكس من غير تعديل.` },
+          ],
           deep: {
             why: "بدل ما كل واحد في الفريق يفتكر أمر الـ build الطويل، بيتكتب مرة في package.json وكله يشغّل [[npm run build]].",
             how: R`[[scripts]] في package.json: اسم وأمر. [[npm run اسم]] بيشغّل الأمر في شيل، بعد ما يضيف [[node_modules/.bin]] للـ PATH. عشان كده [[tsc]] أو [[eslint]] بتشتغل باسمها من جوه السكربت حتى لو مش متسطبة عامة.
@@ -1640,6 +1716,13 @@ npx tsc --noEmit
 npx -y kill-port 3000
 npx cowsay "hi"`,
           try: R`شغّل [[npx cowsay "hi"]] وبعدين [[npm ls -g]]: مش هتلاقيها متسطبة.`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** شغّل [[npx -y cowsay@1.6.0 "hi"]]، وبعدين [[npm ls -g --depth=0]]. هل cowsay بقى متسطّب global؟`, done: R`البقرة اتطبعت بـ [[< hi >]]، و cowsay مش في [[npm ls -g]]: npx نزّلها في كاش ([[_npx]]) وشغّلها بس.` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** سطّب cowsay في المشروع ([[npm i -D cowsay@1.6.0]]) وبص في [[node_modules/.bin]]. ليه فيه ٣ ملفات لكل أمر على ويندوز؟ وبعدين شغّل [[npx cowsay -f tux local]].`, done: R`لقيت [[cowsay]] و [[cowsay.cmd]] و [[cowsay.ps1]] (واحد لكل شيل: bash و cmd و PowerShell)، و [[npx cowsay]] شغّل النسخة المحلية من غير ما ينزّل حاجة، والبطريق اتطبع.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[npx --no-install cowsay-xyz-none hi]] وقع. اقرا الرسالة: هل المشكلة إن الحزمة مش متسطّبة ولا إنها مش موجودة أصلًا؟`, done: R`الرسالة [[npm error code E404]] و [[404 Not Found - GET https://registry.npmjs.org/cowsay-xyz-none]]: الاسم مش موجود في الـ registry أصلًا، و exit 1.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** ليه [[npx create-next-app@latest]] أحسن من [[npm i -g create-next-app]]، وليه [[npx -y]] في سكربت CI ممكن يبقى خطر لو من غير نسخة؟`, done: R`كتبت إن npx بيجيب آخر نسخة كل مرة ومش بيوسّخ الـ global، وإن [[npx -y pkg]] من غير [[@1.2.3]] بيشغّل أي نسخة جديدة اتنشرت (حتى لو حد خطف الحزمة)، فالـ CI لازم يثبّت النسخة أو يستخدم المكتبة المحلية.` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** الحزمة اسمها [[cowsay]] بس فيها أمرين: [[cowsay]] و [[cowthink]]. إزاي تشغّل [[cowthink]] بـ npx؟ (دوّر على [[-p]] في [[npx --help]].)`, done: R`[[npx -y -p cowsay@1.6.0 cowthink hmm]] شغّل الأمر التاني من نفس الحزمة. [[-p]] = «نزّل الحزمة دي»، والكلمة اللي بعدها = «شغّل الأمر ده منها».` },
+          ],
           deep: {
             why: "أدوات كتير بتستخدمها مرة واحدة (create-next-app) أو لازم تبقى بنسخة المشروع مش نسخة عامة (prisma، tsc). التسطيب العام بيعمل مشاكل نسخ.",
             how: R`[[npx أداة]] بيدوّر بالترتيب: في node_modules/.bin بتاع المشروع، وبعدين في الأدوات العامة، ولو ملقاش بينزّل الباكدج في كاش مؤقت ويشغّلها ويسيبها في الكاش للمرة الجاية.
@@ -1815,6 +1898,13 @@ npm start
 # Vite مفيهوش start، عنده معاينة للـ build
 npm run build && npx vite preview --port 4173`,
           try: "في مشروع Next أو Vite: شغّل dev وافتح الصفحة وشوف وقت التحميل، وبعدين build و start (أو preview) وقارن.",
+          practice: [
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** مشروع فيه [[start: node dist/index.js]] ومفيش [[dist]]. شغّل [[npm start]] واقرا الخطأ، وقول الخطوة الناقصة.`, done: R`طلع [[Error: Cannot find module '...\dist\index.js']] و exit 1، والناقص [[npm run build]] قبل [[npm start]].` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** في مشروع **مفيهوش** سكربت [[start]] بس فيه ملف [[server.js]]، إيه اللي هيحصل مع [[npm start]]؟ وبعدين امسح server.js وجرّب تاني.`, done: R`مع server.js شغّله ([[node server.js]] هو الافتراضي)، ومن غيره طلع [[npm error Missing script: "start"]].` },
+            { lvl: 'تحدي', t: R`**ابني:** مشروع صغير فيه [[src/index.js]] و [[build]] بينسخه لـ [[dist/]] ويطبع «built»، و [[start]] بيشغّل [[dist/index.js]]، و [[prestart]] بيتأكد إن [[dist/index.js]] موجود ولو مش موجود يطبع «شغّل npm run build الأول» ويخرج بـ 1.`, done: R`من غير build: [[npm start]] بيطبع رسالتك بدل الـ stack trace الطويل و exit 1. وبعد [[npm run build]]: [[npm start]] بيشتغل.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** مشروع فيه سكربتات [[start]] و [[stop]] و [[test]] ومفيهوش [[restart]]. إيه اللي هيطبعه [[npm t --silent]] و [[npm restart --silent]]؟`, done: R`[[npm t]] = [[npm test]] (اختصار) طبع [[tests ran]]، و [[npm restart]] من غير سكربت restart شغّل [[stop]] وبعدين [[start]]: [[stop ran]] ثم [[start ran]].` },
+            { lvl: 'تحدي', t: R`**اشرحها:** مشروع Vite و مشروع Next و مشروع API بـ Node: لكل واحد، [[dev]] بيعمل إيه و [[build]] بيطلّع إيه و [[start]] (أو [[preview]]) بيشغّل إيه. ٣ أسطر لكل واحد.`, done: R`الجدول فيه ٣ مشاريع × ٣ سكربتات، ومنهم إن Vite مفيهوش [[start]] و [[preview]] للتجربة بس مش للإنتاج، وإن API من غير TypeScript ممكن ملوش build خالص.` },
+          ],
           deep: {
             why: "أشهر غلطة لما حد يرفع أول مشروع: السيرفر شغال بـ npm run dev. الموقع بيفتح، بس بطيء، وبياكل رامات، وبيطلّع تفاصيل الأخطاء للزوار، ومع أي تعديل في الملفات بيعيد البناء.",
             how: R`في Next: [[dev]] هو [[next dev]]، و [[build]] هو [[next build]]، و [[start]] هو [[next start]] اللي بيشغّل ناتج الـ build. من غير build قبله، start بيقول إنه ملقاش فولدر [[.next]] جاهز.

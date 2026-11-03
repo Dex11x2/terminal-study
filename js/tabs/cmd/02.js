@@ -8,7 +8,14 @@ MORE("cmd", [
       goal: [R`تعمل وتنسخ وتنقل وتمسح ملفات وفولدرات من سطر الأوامر.`, R`تختار بين [[copy]] و [[xcopy]] و [[robocopy]] حسب الحجم والمطلوب.`, R`تمسح بأمان: تشوف قبل ما تمسح، وتعرف إن [[del]] مبيروحش سلة المحذوفات.`],
       use: { prog: R`سكربتات البناء والنشر كلها نسخ ونقل ومسح.`, work: R`نسخ فولدر كبير وقف في النص؟ [[robocopy]] لو اتعاد بينسخ الناقص بس.` },
       lab: R`mkdir %TEMP%\cmdlab & cd /d %TEMP%\cmdlab`,
-      projects: [{ t: R`نسخة احتياطية بتتحدّث`, what: R`[[robocopy]] من فولدر لفولدر، وشغّله مرتين — التانية هتنسخ الجديد بس. وخد بالك من كود الخروج (درس «robocopy نجح وسكربتك قال فشل»).` }, { t: R`نضّف بأمان`, what: R`قبل أي [[del]] بـ wildcard، شغّل نفس الـ pattern بـ [[dir /b]]. وجرّبها على [[*.htm]] في فولدر فيه [[.html]] (درس «del *.htm بيمسح .html كمان»).` }],
+      projects: [
+        { lvl: 'صغير', t: R`[[new-project.bat <اسم>]]: هيكل مشروع`, what: R`بيعمل [[<اسم>\src]] و [[public]] و [[logs]] و [[docs]] بـ [[mkdir]]، وملفات [[index.js]] فاضي بـ [[type nul >]] و [[.env]] بسطرين ببلوك أقواس و [[.gitignore]] فيه [[node_modules]] و [[.env]]. من دروس [[mkdir]] و [[type nul / echo >]].`, done: R`[[tree <اسم> /f /a]] بيرسم الهيكل كله، و [[.env]] مفيهوش مسافات في آخر السطور (حجمه = مجموع الحروف + ٢ لكل سطر)، وتشغيله تاني بنفس الاسم بيرفض بكود 1 من غير ما يفضّي أي ملف.` },
+        { lvl: 'صغير', t: R`نضّف بأمان`, what: R`قبل أي [[del]] بنجمة، شغّل نفس الـ pattern بـ [[dir /s /b]] واحفظه في [[to-delete.txt]]، واقراه، وبعدين امسح. وجرّبها على [[*.htm]] في فولدر فيه [[.html]] (درس «del *.htm بيمسح .html كمان»).`, done: R`[[to-delete.txt]] فيه نفس الأسامي اللي [[del /s /q]] طبعها بعد [[Deleted file -]] بالظبط، ولقيت [[page.html]] في اللستة قبل ما يتمسح فغيّرت الـ pattern.` },
+        { lvl: 'متوسط', t: R`نسخة احتياطية بتتحدّث`, what: R`[[robocopy]] من فولدر مشروع لفولدر backup بـ [[/E /XD node_modules .git]]، وشغّله مرتين، وغيّر ملف وشغّله تالت. وبعدين جرّب [[/MIR]] بـ [[/L]] الأول. من درس [[robocopy]] ودرس «robocopy نجح وسكربتك قال فشل».`, done: R`كتبت كود الخروج في كل مرة: 1 ثم 0 ثم 1، و [[/L]] مع [[/MIR]] طبع [[*EXTRA File]] للملفات اللي هتتمسح من غير ما يمسحها، و [[node_modules]] مش في الـ backup ([[dir /s /b backup | findstr node_modules]] فاضي).` },
+        { lvl: 'متوسط', t: R`[[sort-downloads.bat]]: رتّب فولدر`, what: R`بينقل كل نوع لفولدره ([[docs\]] و [[images\]] و [[archives\]] و [[installers\]] لـ [[.exe .msi]])، ويعمل الفولدرات لو مش موجودة، ومبيكتبش فوق ملف موجود بنفس الاسم (يسيبه ويطبع [[skipped: <اسم>]]). من دروس [[move / ren]] و [[mkdir]].`, done: R`كل ملف في فولدره، والملف المكرر فضل مكانه واتطبع اسمه، والتشغيلة التانية مطبعتش ولا error، ومفيش ولا ملف اتحوّل لاسم من غير امتداد (كل هدف بـ [[\]]).` },
+        { lvl: 'كبير', t: R`[[backup.bat]]: باك أب تعتمد عليه`, what: R`[[backup.bat "source" "dest" [dry]]]: بيرفض لو الـ arguments ناقصة أو المصدر مش فولدر (كود 2)، و [[robocopy /MIR /XD node_modules .git /R:1 /W:1 /LOG+:robocopy.log]]، و [[dry]] بيحط [[/L]]، وكود 8 أو أكتر = فشل (كود 1)، وأي حاجة أقل = نجاح (كود 0)، وكل تشغيلة بتكتب سطر في [[backup.log]] فيه التاريخ و OK أو FAIL والكود. بيشتغل مع مسارات فيها مسافات. من دروس [[robocopy]] و [[copy / xcopy]] و [[del / rd]].`, done: R`اتجرّب على مشروع تجربة: من غير arguments كود 2، و [[dry]] سطر [[OK rc=1 /L app -> bk 2]] والهدف متعملش، وبعدها [[rc=1]] ثم [[rc=0]]، وملف زيادة في الهدف [[rc=2]] واتمسح، ومصدر مش موجود [[FAIL source not found: nope]] وكود 2. وتشغيله ١٠ مرات ورا بعض مبيبوّظش حاجة، و [[node_modules]] عمره ما اتنسخ.`, ext: R`زوّد إنه يحتفظ بآخر ٧ نسخ بالتاريخ (فولدر لكل يوم، والأقدم يتمسح بأمان)، ويتجدول بـ [[schtasks]] (درس [[schtasks]])، ويبعت سطر الفشل لملف تاني تشوفه الصبح.` },
+        { lvl: 'فكرة', t: R`أداة تنضيف مشاريعك`, what: R`فكّر في الحاجات اللي بتاكل الديسك في مشاريعك (فولدرات build و dist و logs قديمة و [[.tmp]]) واعمل أداة بتلاقيها كلها، وتعرضها بالحجم، وتمسح بعد تأكيد بس، ومبتلمسش أي حاجة برا فولدر المشاريع. انت اللي بتقرر إيه اللي يتمسح.`, done: R`أول تشغيلة بتعرض لستة وبتسأل، و [[N]] مبيمسحش حاجة، و [[Y]] بيمسح ويطبع المساحة اللي اتوفرت من سطر [[bytes free]] قبل وبعد، وفيه README بيقول بالظبط إيه اللي بيتمسح.`, ext: R`زوّد وضع [[dry]] افتراضي، ولوج بكل اللي اتمسح، وقايمة استثناءات في ملف ([[keep.txt]]) تقراها بـ [[for /f]].` },
+      ],
       items: [
         {
           cmd: "mkdir",
@@ -21,6 +28,13 @@ MORE("cmd", [
           example: R`mkdir app\src\components
 mkdir app\public app\logs`,
           try: "اعمل هيكل app بـ src و public و logs.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[mkdir app/src]] ثم [[mkdir My Folder2]] ثم [[dir /b /ad]]. اتعمل كام فولدر وأساميهم إيه؟`, done: R`الأول طلّع [[The syntax of the command is incorrect.]] ومعملش حتى [[app]] (لأن [[/src]] اتفهمت option). والتاني عمل فولدرين: [[My]] و [[Folder2]]. يعني [[\]] في المسار، والتنصيص للاسم اللي فيه مسافة.` },
+            { lvl: 'سريع', t: R`**اشرحها:** التلات رسايل دي من [[mkdir]]: [[A subdirectory or file data already exists.]] و [[The directory name is invalid.]] و [[The system cannot find the drive specified.]]. اكتب الأمر اللي يطلّع كل واحدة.`, done: R`[[mkdir data]] وفيه **ملف** اسمه [[data]] (الرسالة بتقول «subdirectory or file»)، و [[mkdir con]] (اسم محجوز في ويندوز زي [[nul]] و [[prn]] و [[aux]])، و [[mkdir "a:b"]] (النقطتين بتتفهم درايف). والتلاتة [[errorlevel]] = 1.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[setup.bat]] فيه [[mkdir logs && echo ready]]. أول مرة طبع [[ready]] والتانية لأ. صلّحه عشان يطبع [[ready]] كل مرة من غير رسالة error.`, done: R`[[if not exist logs\ mkdir logs]] ثم [[echo ready]]: التشغيلة التانية مبتحاولش أصلًا و [[errorlevel]] = 0. الـ [[\]] في آخر [[logs\]] بتخلي الفحص على فولدر مش ملف بنفس الاسم.` },
+            { lvl: 'تطبيق', t: R`**ابني:** هيكل مشروع في سطر واحد: [[app\src\components]] و [[app\public]] و [[app\logs]] و [[app\docs\api v1]] (فيه مسافة).`, done: R`[[mkdir app\src\components app\public app\logs "app\docs\api v1"]]، و [[tree app /a]] بيرسم ٦ فولدرات تحت [[app]]: [[docs]] وجواه [[api v1]] بالمسافة، و [[logs]] و [[public]] و [[src]] وجواه [[components]] (و [[mkdir]] عمل [[docs]] لوحده في السكة).` },
+            { lvl: 'تطبيق', t: R`**أشكال:** فولدرات الشهور: [[month01]] لحد [[month12]] بصفر في الأول، بـ [[for /l]] (درس for و delayed expansion). الصفر هو المسألة.`, done: R`[[dir /b /ad month*]] بيطبع ١٢ اسم من [[month01]] لـ [[month12]] بالترتيب. الحيلة: [[set /a n=100+%%i]] ثم [[!n:~1!]] (آخر خانتين)، ومن غيرها هتطلع [[month1]] و [[month10]] وترتيبهم يتلخبط.` },
+          ],
           deep: {
             why: R`أي مشروع أو سكربت محتاج هيكل فولدرات: src و logs و backups. وفي CMD الأمر بيعمل المسار كله مرة واحدة من غير أي إضافة.`,
             how: R`[[mkdir]] و [[md]] اسمين لنفس الأمر. CMD بيعمل الفولدرات الوسيطة لوحده: [[mkdir src\components\ui]] بيعمل التلاتة لو مش موجودين، من غير [[-p]] زي bash.
@@ -157,6 +171,13 @@ The syntax of the command is incorrect.
 (echo PORT=3000)> .env
 (echo NODE_ENV=development)>> .env`,
           try: "اعمل .env بسطرين واعرضه بـ [[type .env]].",
+          practice: [
+            { lvl: 'سريع', t: R`**قارن وقيس:** اعمل ٣ ملفات «فاضية» بـ [[echo.> e1.txt]] و [[type nul > e2.txt]] و [[copy nul e3.txt]]، واطبع حجم كل واحد بـ [[for %F in (e1.txt e2.txt e3.txt) do @echo %F=%~zF]].`, done: R`[[e1.txt=2]] (سطر فاضي = [[\r\n]]) و [[e2.txt=0]] و [[e3.txt=0]] (و [[copy]] طبع [[1 file(s) copied.]]). يعني [[echo.]] مش ملف فاضي.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[echo PORT=3000 > a.env]] و [[(echo PORT=3000)> b.env]]. حجم كل ملف كام؟`, done: R`[[a.env=12]] و [[b.env=11]]: الأول فيه مسافة مستخبية بعد [[3000]] (اللي قبل [[>]])، فـ [[PORT]] هتبقى [["3000 "]] في برامج كتير.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[echo DEBUG=1> c.env]] و [[echo n=1>> b.env]] و [[echo 1> a.log]]. اعرض التلات ملفات بـ [[type]]. فين الـ [[1]]؟`, done: R`[[c.env]] فيه [[DEBUG=]] و [[b.env]] فيه [[n=]] و [[a.log]] فيه [[ECHO is off.]]: [[1>]] معناها «وجّه stream رقم 1»، فالرقم اتاكل. الإصلاح [[(echo DEBUG=1)> c.env]] والناتج بقى [[DEBUG=1]].` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[keep.txt]] فيه [[hello]]. شغّلت [[type nul > keep.txt]]. حجمه بقى كام؟ وإزاي «تعمل touch» من غير ما تمسح المحتوى؟`, done: R`بقى [[0]]: [[>]] بتفضّي الملف قبل ما تكتب. لو عايز الملف يتعمل بس لو مش موجود: [[if not exist keep.txt type nul > keep.txt]]. (أما تحديث وقت التعديل من غير ما تلمس المحتوى فده [[copy /b keep.txt +,,]] من وثائق [[copy]].)` },
+            { lvl: 'تحدي', t: R`**ابني:** [[make-env.bat]] بيكتب [[.env]] فيه ٣ سطور ([[PORT=3000]] و [[DEBUG=1]] و [[DB_HOST=localhost]]) ببلوك أقواس واحد، ولو [[.env]] موجود يرفض ويخرج بكود 1 عشان ميمسحش إعدادات حد.`, done: R`أول مرة الملف حجمه ٣٩ byte (كل سطر وآخره [[\r\n]] من غير مسافات) و [[type .env]] بيطبع التلات سطور كاملين و [[DEBUG=1]] بالرقم. والتانية طبعت رسالة وكود 1 والملف زي ما هو.` },
+          ],
           deep: {
             why: R`مفيش touch ولا محرر نصوص في CMD نفسه، فلو سكربت محتاج يعمل .env أو ملف فاضي أو يكتب سطر إعداد، التوجيه هو الطريقة. وفيه فخين (المسافة والرقم قبل [[>]]) بيبوّظوا القيم من غير ما تاخد بالك.`,
             how: R`[[type nul > file.txt]] بيعمل ملف فاضي. [[nul]] هو الـ device الفاضي في ويندوز (زي /dev/null في لينكس).
@@ -309,6 +330,14 @@ echo.>> .env
 copy *.txt backup\
 xcopy src src_backup /E /I`,
           try: "انسخ فولدر app لـ app_copy بـ xcopy.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** فولدر [[src]] فيه [[a.js]] وفولدر [[lib\b.js]]. [[copy src src2]]. هيتعمل فولدر [[src2]]؟`, done: R`لأ: طبع [[src\a.js]] و [[1 file(s) copied.]] وعمل **ملف** اسمه [[src2]] (حجمه 4 byte) فيه محتوى [[a.js]]. [[copy]] بينسخ ملفات الفولدر بس، ومن غير فولدر هدف موجود بيعمل ملف. للفولدرات [[xcopy /E /I]] أو [[robocopy]].` },
+            { lvl: 'سريع', t: R`**اشرحها:** [[copy one.txt backup\]] طلّعت [[The system cannot find the path specified.]] و [[0 file(s) copied.]]. و [[copy nofile.txt x.txt]] طلّعت رسالة تانية. إيه الفرق؟`, done: R`الأولى: الفولدر [[backup]] مش موجود ([[copy]] مبيعملش فولدرات). التانية: [[The system cannot find the file specified.]] المصدر نفسه مش موجود. والاتنين [[errorlevel]] = 1، فـ [[copy ... || exit /b 1]] بيمسكهم.` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** [[xcopy src dstS /S /I]] و [[xcopy src dstE /E /I]] على [[src]] فيه فولدر فاضي [[empty]]. وبعدين [[dir /b /s /ad dstS dstE]].`, done: R`الاتنين طبعوا [[2 File(s) copied]]، بس [[dstS]] فيه [[lib]] بس و [[dstE]] فيه [[empty]] و [[lib]]: [[/S]] بيسيب الفولدرات الفاضية و [[/E]] بينسخها.` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** من [[xcopy /?]] لاقي الـ switch اللي بيطبع اللي هيتنسخ من غير ما ينسخ، وجرّبه على هدف مش موجود.`, done: R`[[/L]]: طبع [[src\a.js]] و [[src\lib\b.js]] و [[2 File(s)]] و [[if exist dstL]] بعدها قالت [[dstL not created]]. ده نفس [[robocopy /L]] و [[del]] بعد [[dir]]: شوف قبل ما تعمل.` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** دمج ملفات: [[1.txt]] فيه [[one]] و [[2.txt]] فيه [[two]]. اعمل منهم [[all.log]] بأمر [[copy]] واحد، مرة بـ [[+]] ومرة بنجمة.`, done: R`[[copy 1.txt+2.txt all.log]] و [[copy *.txt all.log]] الاتنين طبعوا الأسامي و [[1 file(s) copied.]] (ملف واحد ناتج)، و [[type all.log]] فيه [[one]] ثم [[two]]. نجمة لهدف **ملف** بتدمج، مش بتنسخ كل واحد لوحده.` },
+            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** [[sync.bat]] فيه [[xcopy src dst /E /I]]. اتشغّل مرة كويس، والتانية (من غير حد قدام الشاشة) نسخت صفر ملفات. ليه؟ صلّحه وخليه ينسخ اللي اتغيّر بس.`, done: R`جوه bat، [[xcopy]] (عكس [[copy]]) بيسأل [[Overwrite ...\a.js (Yes/No/All)?]] ومستني حد يرد، ومن غير كيبورد خرج بكود 2. الإصلاح [[xcopy src dst /E /I /D /Y]]: من غير تغيير طبع [[0 File(s) copied]]، وبعد تعديل [[a.js]] طبع [[1 File(s) copied]]، والاتنين كود 0.` },
+          ],
           deep: {
             why: R`نسخ .env.example لـ .env، أو نسخة من فولدر قبل ما تجرّب فيه حاجة. زي cp و cp -r في bash، بس على أمرين.`,
             how: R`[[copy source dest]] لملف واحد أو ملفات بـ wildcard، وبيشتغل جوه فولدر واحد بس (مش بيدخل الفرعيين). [[xcopy source dest /E /I]] لفولدر: [[/E]] بكل الفولدرات الفرعية حتى الفاضية، و [[/I]] يعتبر الهدف فولدر من غير سؤال، و [[/H]] يضيف الملفات المخفية.
@@ -464,6 +493,14 @@ app
 robocopy src D:\backup\src /MIR /XD node_modules`,
           try: "اعمل robocopy لـ app لفولدر تاني مع استبعاد node_modules.",
           flag: "danger",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[robocopy app bk /E /XD node_modules]] مرتين ورا بعض، وبعدين حط ملف زيادة [[bk\old.txt]] وشغّله تالت مرة. اكتب [[errorlevel]] التلاتة.`, done: R`[[1]] (نسخ ملفات) ثم [[0]] (مفيش جديد) ثم [[2]] (لقى ملف زيادة في الهدف ومسحهوش، لأن [[/E]] مش [[/MIR]]). ولا واحد فيهم فشل: الفشل من 8 وطالع.` },
+            { lvl: 'سريع', t: R`**اشرحها:** [[robocopy nofolder bk2 /E]] طلّع كود 16، و [[robocopy app\src\a.js bk4]] طلّع 16 برضه. اقرا السطرين واكتب الغلطة في كل واحد.`, done: R`[[ERROR 2 (0x00000002) Accessing Source Directory ...\nofolder\]] (المصدر مش موجود)، و [[ERROR 267 (0x0000010B) Accessing Source Directory ...\a.js\]] و [[The directory name is invalid.]]: المصدر لازم فولدر. الملف بيتكتب بعد الهدف: [[robocopy app\src bk3 a.js]] نسخه وكود 1.` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** قبل [[/MIR]] شغّل نفس الأمر بـ [[/L]]، وبعدين من غيره. اطبع [[if exist bk\old.txt]] بعد كل واحد.`, done: R`[[/L]] طبع [[*EXTRA File ... old.txt]] وكود 2 والملف لسه موجود، ومن غير [[/L]] نفس السطر ونفس الكود بس [[old deleted]]. [[/L]] بيوريك اللي هيتمسح بالظبط من غير ما يلمس حاجة.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[bk\debug.log]] موجود من نسخة قديمة، وشغّلت [[robocopy app bk /MIR /XF *.log]]. [[/MIR]] هيمسحه عشان الـ [[*.log]] مستثناة؟`, done: R`لأ، فضل موجود ([[debug.log kept in bk]]) والكود 1: المستثنى بـ [[/XF]] و [[/XD]] مستثنى من النسخ **ومن المسح** كمان. فلو عايز تنضّف الهدف من اللوجات، امسحها بنفسك.` },
+            { lvl: 'تطبيق', t: R`**refactor:** الناتج الافتراضي لـ robocopy صفحة كاملة. خليه سطر واحد لكل ملف بس، أو ولا سطر خالص، من غير ما تغيّر اللي بيتنسخ.`, done: R`[[/NJH /NJS /NDL /NP]] شالوا الهيدر والملخص وأسامي الفولدرات ونسبة التقدم، و [[/NFL]] كمان شال أسامي الملفات. الكود (1 أو 0) زي ما هو، فاللي بيقرر النجاح هو [[errorlevel]] مش الكلام.` },
+            { lvl: 'تحدي', t: R`**ابني:** [[backup.bat "source" "dest" [dry]]] بـ [[robocopy /MIR /XD node_modules .git /R:1 /W:1]] و [[/LOG+:]]، وكود 8 أو أكتر = فشل، وسطر في [[backup.log]] لكل تشغيلة، و [[dry]] يحط [[/L]].`, done: R`[[backup.bat]] لوحده: usage وكود 2. [[dry]]: [[OK rc=1 /L]] والهدف متعملش. أول تشغيلة [[rc=1]] والتانية [[rc=0]]، وملف زيادة في الهدف [[rc=2]] واتمسح، ومصدر مش موجود [[FAIL]] وكود 2. والسكربت نفسه بيخرج 0 في كل حالات النجاح (مش 1 زي robocopy).` },
+          ],
           deep: {
             why: "أقوى أداة نسخ في ويندوز. بتدعم retry، ومسح المحذوف في الهدف، وresume لو قُطع.",
             how: R`[[robocopy source dest /mir]] الأقوى: بيعمل mirror. يعني إيه أضفته في الـ source بيتضاف، وإيه مسحته بيتمسح من الـ dest. مفيد للـ backup والـ sync.
@@ -622,6 +659,14 @@ robocopy src backup\src /MIR /XD node_modules /L
 ren old.js new.js
 ren *.txt *.md`,
           try: "اعمل ملفين txt وغيّرهم لـ md بأمر واحد.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** مفيش فولدر اسمه [[logs]]. [[move a.log logs]]. وبعدين [[dir /b]].`, done: R`طبع [[1 file(s) moved.]] بس مفيش فولدر: [[a.log]] اتغيّر اسمه لملف اسمه [[logs]] من غير امتداد. [[move]] لمكان مش موجود = rename. اكتبها [[move a.log logs\]] أو اعمل الفولدر الأول.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[move *.tmp tmpdir]] و [[tmpdir]] مش موجود، وفيه ملفين [[.tmp]].`, done: R`[[Cannot move multiple files to a single file.]] و [[errorlevel]] = 1، والملفين مكانهم. هنا [[move]] اكتشف الغلطة، بس مع ملف واحد مكانش هيكتشفها.` },
+            { lvl: 'تطبيق', t: R`**اشرحها:** التلات أخطاء دي من [[ren]]: [[The syntax of the command is incorrect.]] و [[A duplicate file name exists, or the file cannot be found.]] و [[The system cannot find the file specified.]]. اكتب الأمر اللي يطلّع كل واحد.`, done: R`[[ren old.js src\new.js]] (الاسم الجديد فيه مسار)، و [[ren old.js new.js]] و [[new.js]] موجود، و [[ren nofile.js z.js]]. والتلاتة كود 1.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[one.txt]] و [[two.txt]]: [[ren *.txt *.md]] ثم [[ren *.md *.old.md]]. الأسامي هتبقى إيه؟`, done: R`[[one.md]] و [[two.md]]، وبعدين [[one.old.md]] و [[two.old.md]]: النجمة في الاسم الجديد بتاخد الاسم القديم لحد النقطة. جرّبها على نسخة الأول لأن قواعد النجوم في [[ren]] غريبة مع الأسامي اللي فيها كذا نقطة.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** في [[tidy.bat]]: [[move m1.txt m2.txt]] و [[m2.txt]] موجود. اتشغّل من غير سؤال ومحتوى [[m2.txt]] بقى [[A]]. خليه يرفض لو الهدف موجود.`, done: R`جوه bat [[move]] بيكتب فوق من غير سؤال ([[1 file(s) moved.]]). الإصلاح [[if exist m2.txt (echo exists: m2.txt & exit /b 1)]] قبل [[move]] (أو [[move /-Y]] بإيدك). والتشغيلة بعد الإصلاح طبعت الرسالة وكود 1 والملفين زي ما هم.` },
+            { lvl: 'تحدي', t: R`**ابني:** [[sort-downloads.bat]] بينقل [[*.pdf]] لـ [[docs\]] و [[*.jpg *.png]] لـ [[images\]] و [[*.zip]] لـ [[archives\]]، ويعمل الفولدرات لو مش موجودة، ويشتغل تاني من غير أخطاء.`, done: R`كل نوع راح فولدره، والتشغيلة التانية (ومفيش ملفات جديدة) مطبعتش ولا error (كل [[move]] قبله [[if exist *.pdf]])، ومفيش ملف اتحوّل لاسم فولدر بالغلط (كل هدف بـ [[\]] في آخره).` },
+          ],
           deep: {
             why: R`تنظيم الملفات في فولدرات، وتغيير اسم أو امتداد ملف أو ملفات كتير مرة واحدة. زي mv في bash.`,
             how: R`[[move source dest]] بينقل ملف أو فولدر أو مجموعة ملفات بـ wildcard. لو الهدف فولدر موجود بيحط جواه، ولو اسم جديد في نفس المكان بيبقى تغيير اسم. على نفس الدرايف النقل بيغيّر المكان بس فبيبقى لحظي، وللملفات بين درايفين بينسخ ويمسح الأصل.
@@ -758,6 +803,14 @@ del /s /q *.tmp
 rd /s /q app_copy`,
           try: "امسح app_copy، واعمل [[dir]] قبل وبعد.",
           flag: "danger",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[del nofile.txt]] ثم [[echo %errorlevel%]]، وبعدين [[del nofile.txt && echo AND || echo OR]].`, done: R`[[Could Not Find C:\lab\nofile.txt]] و [[errorlevel]] = **0**، و [[AND]]: [[del]] بيعتبر «مفيش حاجة أمسحها» نجاح. فلو السكربت محتاج يعرف، افحص بـ [[if exist]] قبله أو بعده.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** فولدر [[app]] فيه [[x.txt]] وفولدر [[sub\y.tmp]]. [[del /q app]] ثم [[dir /b /s app]].`, done: R`[[x.txt]] اتمسح، و [[sub]] و [[sub\y.tmp]] لسه موجودين: [[del]] على فولدر بيمسح الملفات اللي جواه مباشرة بس، والفولدر نفسه مبيتمسحش. ومن غير [[/q]] كان هيسأل [[Are you sure (Y/N)?]].` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** [[rd app]] على فولدر مش فاضي، واطبع [[%errorlevel%]] وبعدين [[rd app && echo AND || echo OR]]. وبعدين [[rd /s /q nofolder]] ثم [[rd /s /q app]] (موجود) واطبع [[%errorlevel%]] بعد كل واحد.`, done: R`[[The directory is not empty.]] و [[%errorlevel%]] فضل 0 بس [[||]] طبع [[OR]]. و [[rd /s /q nofolder]] طلّع [[The system cannot find the file specified.]] وكود 1، و [[rd /s /q app]] الناجح **ساب الـ 1 زي ما هو**. يعني مع [[rd]] اختبر بـ [[||]] أو [[if exist]]، مش بـ [[%errorlevel%]].` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[clean.bat]] بيعمل [[del ro.txt]] والملف عليه [[R]]. السكربت قال إنه خلص (كود 0) والملف لسه موجود. ليه؟ صلّحه.`, done: R`[[del]] طبع المسار و [[Access is denied.]] وساب [[errorlevel]] = 0. الإصلاح [[del /f ro.txt]] (بيمسح الـ read-only)، وبعده [[if exist ro.txt (echo still there & exit /b 1)]] عشان أي فشل تاني يبان.` },
+            { lvl: 'تطبيق', t: R`**محاكاة:** قبل مسح حقيقي: نفس الـ pattern بـ [[dir /s /b *.tmp]] الأول، وبعدين [[del /s /q *.tmp]]. قارن اللستتين.`, done: R`[[dir]] طبع مسارين، و [[del /s /q]] طبع [[Deleted file - C:\lab\z.tmp]] و [[Deleted file - C:\lab\app\sub\y.tmp]]: نفس الملفين بالظبط. لو اللستتين مختلفين يبقى فيه حاجة غلط في الـ pattern (زي فخ [[*.htm]]).` },
+            { lvl: 'تحدي', t: R`**ابني:** [[safe-rd.bat <folder>]] بيمسح فولدر بكل اللي جواه بس بعد ما: يتأكد إن الاسم مش فاضي ومش [[\]] ولا [[C:\]] ولا [[%USERPROFILE%]]، ويطبع عدد الملفات اللي هتتمسح، ويسأل [[Y/N]] بـ [[choice]] (درس set /p و choice)، ويتأكد بعدها إن الفولدر اتمسح ويخرج 1 لو لأ.`, done: R`[[safe-rd.bat]] من غير اسم و [[safe-rd.bat C:\]] رفضوا بكود 2، وفولدر تجربة فيه ٣ ملفات طبع [[3 files]] وسأل، و [[N]] سابه، و [[Y]] مسحه و [[if exist]] أكد. ومع ملف read-only جواه برضه اتمسح ([[rd /s /q]] بيمسحه) أو طبع سبب الفشل.` },
+          ],
           deep: {
             why: R`مسح node_modules وملفات مؤقتة ولوجات قديمة. وده أخطر أمرين في CMD، لأن مفيش سلة محذوفات ومفيش سؤال مع [[/q]].`,
             how: R`[[del file.txt]] يمسح ملف، و [[del *.tmp]] كل اللي بيطابق الـ wildcard في الفولدر الحالي. [[/f]] يمسح الملفات الـ read-only، و [[/s]] يدخل الفولدرات الفرعية ويطبع كل ملف اتمسح، و [[/q]] يلغي السؤال، و [[/p]] يسأل قبل كل ملف. و [[del]] مش بيمسح فولدرات: [[del folder]] بيسألك وبعدين يفضّي الملفات اللي جواه بس.
@@ -911,6 +964,13 @@ Access is denied.
           example: R`attrib +h secret.txt
 attrib -h secret.txt`,
           try: "خبّي ملف، اعمل [[dir]] ثم [[dir /a]].",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** بعد [[attrib +h secret.txt]]: [[dir /b]] و [[dir /b /a]] و [[attrib secret.txt]]. إيه اللي هيظهر؟`, done: R`[[dir /b]] من غيره، و [[dir /b /a]] معاه، و [[attrib]] طبع [[A   H]] قبل المسار: [[A]] archive و [[H]] hidden.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[attrib +s secret.txt]] على ملف مخفي طلّع رسالة ومحصلش حاجة. وبعدين [[attrib -h]] على ملف عليه [[S]] و [[H]]. اقرا الرسالتين وصلّح الأمرين.`, done: R`الرسالة [[Not resetting hidden file - C:\lab\secret.txt]]: ملف عليه [[H]] مينفعش تغيّر [[S]] لوحدها (والعكس [[Not resetting system file]]). الصح تكتبهم مع بعض: [[attrib +s +h secret.txt]] و [[attrib -s -h secret.txt]]، وبعدها [[attrib]] طبع [[A]] بس.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[attrib +r secret.txt]] ثم [[echo more>> secret.txt]] ثم [[del secret.txt]]. كل واحد هيعمل إيه؟ وإيه الـ [[errorlevel]]؟`, done: R`الإضافة طلّعت [[Access is denied.]] و [[errorlevel]] فضل 0، و [[del]] طبع المسار و [[Access is denied.]] والملف فضل. [[attrib -r]] أو [[del /f]] يحلوها. ده سبب «الملف مش راضي يتمسح» في نص الحالات.` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** من [[attrib /?]] اعرف الفرق بين [[/s]] و [[/d]]، وخبّي كل ملفات [[.txt]] في فولدر واللي تحته، وبعدين اظهر كل حاجة (ملفات وفولدرات).`, done: R`[[/S]] يطبّق على الملفات المطابقة في الفولدرات اللي تحت، و [[/D]] يشمل الفولدرات كمان. [[attrib +h /s *.txt]] ثم [[dir /b /s /ah]] طبع الملفات المخفية، و [[attrib -h /s /d *]] ثم [[dir /b /s /ah]] طبع [[File Not Found]].` },
+            { lvl: 'تحدي', t: R`**اشرحها:** زميلك قال «خبّيت [[.env]] بـ [[attrib +h]] فبقى آمن». اكتبله ٣ سطور: ليه مش أمان، وإيه اللي بيحمي فعلًا.`, done: R`[[dir /a]] و Explorer بـ «Hidden items» و [[git add .]] بيشوفوه عادي، و [[attrib]] نفسه مش صلاحيات. اللي بيحمي: [[.gitignore]] عشان ميترفعش، و [[icacls]] للصلاحيات (درس [[icacls]])، والأسرار برا المشروع أصلًا.` },
+          ],
           deep: {
             why: "تغيير خصائص الملفات: مخفي، وread-only، وsystem. أحيانًا محتاجها لما ملف مش بيتمسح.",
             how: R`[[attrib file]] من غير علامات بيعرض الـ attributes الحالية: [[A]] archive (اتعدّل من آخر باك أب، وموجودة على أغلب الملفات)، و [[H]] hidden، و [[R]] read-only، و [[S]] system.

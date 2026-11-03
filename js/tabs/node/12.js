@@ -16,12 +16,15 @@ MORE("node", [
         cs: R`أكواد أخطاء npm ([[E404]] و [[ERESOLVE]] و [[EACCES]]) تصنيف: كل كود بيوصف **نوع** المشكلة، فبتعرف تدوّر في المكان الصح.`,
       },
       lab: R`mkdir -p ~/lab/nlab && cd ~/lab/nlab && npm init -y`,
-      projects: [
-        { t: R`ورقة [[node -p]]`, what: R`اكتب عشر أسطر [[node -p]] بتجاوب على أسئلة بتتكرر عندك: نسخة V8، ومسار الـ cache، وحجم ملف، وتاريخ دلوقتي بصيغة ISO. حطهم في ملف وارجعله.` },
-        { t: R`فحص قبل النشر`, what: R`سكربت [[prepublishOnly]] بيشغّل [[npm pack --dry-run]] ويتأكد إن مفيش ملف فيه [[.env]] أو [[secret]] في القايمة. من درس ٣.` },
-        { t: R`قاموس أخطاء npm`, what: R`كل مرة تقابل كود خطأ جديد، سجّله ومعاه السبب والحل. بعد شهر هيبقى عندك مرجع أسرع من أي بحث. من درس ٤.` },
-      ],
       n: R`Node و npm فيهم توثيق كامل جواهم. القسم ده بيوريك تسأل إزاي، وتجرّب إزاي، وتقرا الخطأ إزاي — كله من الترمنال`,
+      projects: [
+        { lvl: 'صغير', t: R`ورقة [[node -p]]`, what: R`اكتب عشر أسطر [[node -p]] بتجاوب على أسئلة بتتكرر عندك: نسخة V8، ومسار الـ cache ([[npm config get cache]] بس من Node؟ دوّر)، وحجم ملف، وتاريخ دلوقتي بصيغة ISO، وعدد الـ CPUs. حطهم في ملف وارجعله. من درس node -p و node -e.`, done: R`العشر أسطر بيشتغلوا على ويندوز ولينكس، وكل سطر جنبه تعليق بيقول بيجاوب على إيه، ومفيش سطر فيه [[await]] (عارف ليه: [[ERR_EVAL_ESM_CANNOT_PRINT]]).` },
+        { lvl: 'صغير', t: R`قاموس أخطاء npm`, what: R`ملف [[npm-errors.md]]: كل مرة تقابل كود خطأ جديد سجّله بالنص الحقيقي والسبب والحل. ابدأ بالأربعة اللي في الدرس و [[ETARGET]] و [[EUSAGE]] و [[EBADENGINE]] من وحدة الأساسيات. من درس اقرا خطأ npm.`, done: R`فيه ٨ أكواد على الأقل، وكل واحد معاه أمر بيعيد الخطأ عن قصد في فولدر تجربة (زي [[npm i ms@9.9.9]] لـ [[ETARGET]]).` },
+        { lvl: 'متوسط', t: R`فحص قبل النشر`, what: R`سكربت [[prepublishOnly]] بيشغّل [[npm pack --dry-run --json]] ويقرا قايمة الملفات، ويرفض لو فيه [[.env]] أو أي ملف اسمه فيه [[secret]] أو [[key]] أو امتداد [[.pem]]، ويطبع حجم الحزمة. من درس المعاينة في npm.`, done: R`ملف [[.env]] جنب الكود من غير [[files]] بيوقف [[npm publish --dry-run]] برسالة فيها اسم الملف، وبعد [[files]] بيعدّي ويطبع الحجم.` },
+        { lvl: 'متوسط', t: R`[[pkginfo]]: كل حاجة عن حزمة قبل ما تسطّبها`, what: R`[[pkginfo.mjs <name>]] بيشغّل [[npm view <name> --json]] ويطبع في جدول: آخر نسخة وتاريخها، وعدد الـ dependencies، و [[unpackedSize]]، والـ license، وهل فيه [[scripts.postinstall]]، وعدد النسخ في آخر سنة. من درس npm بيوثّق نفسه.`, done: R`[[node pkginfo.mjs ms]] بيطبع [[unpackedSize]] (6721 بايت لـ 2.1.3) وصفر dependencies، و [[node pkginfo.mjs express]] بيطبع عدد الـ dependencies، واسم مش موجود بيطبع «مش موجودة (E404)» و exit 1.` },
+        { lvl: 'كبير', t: R`[[npm-explain]]: مترجم أخطاء npm`, what: R`أداة بتاخد ناتج أي أمر npm فاشل (من ملف أو من pipe: [[npm i 2>&1 | npm-explain]])، وتطلّع كود الخطأ، وتطبع بالعربي: معناه، وأشهر ٣ أسباب، والأمر اللي بتجرّبه بعده، ومسار ملف اللوج الكامل لو موجود. القواعد في [[rules.json]] (كود ← شرح) عشان تتزوّد من غير كود. ولها اختبارات بنصوص أخطاء حقيقية محفوظة.`, done: R`على ٦ أخطاء حقيقية محفوظة ([[E404]] و [[ETARGET]] و [[ERESOLVE]] و [[EUSAGE]] و [[EJSONPARSE]] و [[ENOENT]]) بتطلّع الشرح الصح، وخطأ مش في القواعد بيقول «كود مش معروف: X» ومبيقعش، و [[node --test]] بيعدّي.`, ext: R`خليها تقترح الحل وتسأل «أنفّذه؟» (مثلًا [[npm install]] لما الـ lock مش متطابق)، وانشرها كـ npx tool.` },
+        { lvl: 'فكرة', t: R`الدليل بتاعك لأداة بتستخدمها`, what: R`اختار أداة Node بتستخدمها كل يوم (vite، أو prisma، أو eslint، أو tsc) واعمل لها «ورقة» من [[--help]] بتاعها بس: أهم ١٠ أوامر، وأهم ٥ flags، و ٣ أخطاء قابلتها وحلّها. كل سطر جرّبته.`, done: R`الورقة صفحة واحدة، وكل أمر فيها اتشغّل عندك (والنسخة مكتوبة فوق)، وزميل استخدمها من غير ما يسألك.`, ext: R`اعمل سكربت بيطلّع الـ flags الجديدة لما الأداة تتحدّث (يقارن [[--help]] القديم بالجديد).` },
+      ],
       items: [
         {
           cmd: "node -p و node -e",
@@ -61,6 +64,12 @@ node -e "require('fs').writeFileSync('x.txt','تم')"
 # والفخ: argv مع -e
 node -e "console.log(JSON.stringify(process.argv))" a b c
 node argv.js a b c`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[node -p "import('node:os')"]]. هيطبع اسم النظام؟`, done: R`لأ: طبع [[Promise {]] وجواه الموديول كله (الـ [[import()]] بيرجّع promise و [[-p]] بيطبعه زي ما هو). عشان الناتج نفسه: [[node --input-type=module -e "import os from 'node:os'; console.log(os.platform())"]] طبع [[win32]].` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[node -p "await Promise.resolve(5)"]]. اقرا الخطأ وصلّحه.`, done: R`[[Error [ERR_EVAL_ESM_CANNOT_PRINT]: --print cannot be used with ESM input]] (على 24 و 22): الـ [[await]] بيخلي Node يعتبر الكود ESM، و [[-p]] مبيشتغلش مع ESM. الحل [[node -e "console.log(await Promise.resolve(5))"]].` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[node -p "({ a: 1, nested: { deep: { deeper: { x: 1 } } } })"]]. هيطبع الـ object كله؟`, done: R`[[{ a: 1, nested: { deep: { deeper: [Object] } } }]]: [[-p]] بيستخدم [[util.inspect]] بعمق 2. للكل: [[JSON.stringify(x, null, 2)]] أو [[util.inspect(x, { depth: null })]].` },
+            { lvl: 'تحدي', t: R`**ابني:** one-liner بـ [[-e]] بيقرا JSON من stdin ([[readFileSync(0)]]) ويطبع مفتاح متداخل من [[process.argv[1]]] (زي [[jq .a.b]] صغير): [[echo '{"a":{"b":7}}' | node -e "..." a.b]].`, done: R`طبع [[7]]، و [[a.x]] طبع [[undefined]] من غير ما يقع، وعرفت إن [[argv[1]]] مش [[argv[2]]] مع [[-e]] (مفيش اسم ملف).` },
+          ],
           lines: [
             R`[[-p]] (اختصار [[--print]]) بيشغّل الكود اللي بين علامات التنصيص **ويطبع ناتجه**، فبيطبع [[4]]. أسرع طريقة تتأكد دالة أو تعبير بيرجّع إيه من غير ما تعمل ملف ولا تفتح REPL.`,
             R`بيطبع نسخة محرك V8 اللي جوه Node ده. [[process.versions]] فيه نسخ كل المكونات (V8 و OpenSSL و libuv وغيرهم)، ومفيد لما ميزة JavaScript جديدة مش شغالة وعايز تعرف المحرك يدعمها ولا لأ.`,
@@ -280,6 +289,11 @@ npm -l
 npm view chalk versions
 npm view chalk dependencies
 npm docs chalk`,
+          practice: [
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** [[npm pack -h]]: أول ٣ سطور؟ و [[npm -l]] فيه كام أمر تقريبًا؟`, done: R`[[Create a tarball from a package]] و [[Usage:]] و [[npm pack <package-spec>]]، و [[npm -l]] فيه حوالي ٧٠ أمر (عدّيت 72 سطر أمر على npm 11.19.1).` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** [[npm view express@5.1.0 dependencies --json]] وابعته لـ [[node -p]] يعدّ المفاتيح. و [[npm view ms@2.1.3 dist.unpackedSize]].`, done: R`express 5.1.0 ليها 27 dependency مباشرة، و ms حجمها 6721 بايت. وعرفت إن الـ dependencies دي ليها dependencies تانية (درس ls / why / dedupe).` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من [[npm help config]] أو [[npm help npmrc]]: اعرف ٣ إعدادات مكنتش تعرفها وتنفعك ([[fund]] و [[audit]] و [[update-notifier]] مثلًا)، وجرّب كل واحد بـ [[npm config get]].`, done: R`٣ إعدادات، وقيمة كل واحد عندك، وإمتى تغيّره (مثلًا [[update-notifier=false]] في CI عشان سطور [[npm notice]] متملاش اللوج).` },
+          ],
           lines: [
             R`من غير أمر بعدها: بتطبع طريقة الاستخدام الأساسية ([[npm <command>]]) وأشهر الأوامر وقايمة بكل الأوامر المتاحة. أول حاجة تكتبها لما متفتكرش اسم أمر.`,
             R`[[-h]] بعد أي أمر بيطبع في الترمنال سطر استخدامه وكل الخيارات بتاعته، هنا [[npm pack]]: زي [[--dry-run]] و [[--pack-destination]]. أسرع من الصفحة الكاملة لما تكون عارف الأمر ومش فاكر الخيار.`,
@@ -466,6 +480,11 @@ npm publish --dry-run
 
 # و ci بدل install في CI وفي الصور
 npm ci --omit=dev`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[npm install --dry-run ms@2.1.3]] في مشروع فاضي. هيطبع إيه؟ و package.json و node_modules بعدها؟`, done: R`طبع [[add ms 2.1.3]] و [[added 1 package]]، و [[npm pkg get dependencies]] لسه [[{}]] ومفيش [[node_modules]]: ولا حاجة اتغيّرت رغم الكلمة «added».` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** [[npm pack --dry-run --json]] في مكتبة عندك، واطبع بـ Node أكبر ٥ ملفات بالحجم والحجم الكلي.`, done: R`السطر بيقرا [[[0].files]] ويرتّب بـ [[size]]، ولقيت ملف مكانش المفروض يتنشر (map أو test أو صورة) أو اتأكدت إن مفيش.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** [[npm ci --omit=dev]] مقابل [[npm ci]] في مشروع فيه devDependencies كتير (typescript و eslint مثلًا): حجم [[node_modules]] وعدد الحزم.`, done: R`رقمين لكل واحد (MB وعدد)، والفرق ده هو اللي بيتوفّر في كل صورة Docker (درس Dockerfile لتطبيق Node).` },
+          ],
           lines: [
             R`[[--dry-run]] مع [[install]] بيعمل كل الحسابات (هيجيب أنهي نسخة وهيغيّر إيه) ويطبع النتيجة زي [[add chalk 6.0.1]]، من غير ما يلمس [[node_modules]] ولا [[package.json]] ولا الـ lockfile. كده تعرف التسطيب هيعمل إيه قبل ما تعمله.`,
             R`بيطبع قايمة كل ملف هيتحط في الحزمة لو نشرتها، بحجمه، والحجم الكلي، من غير ما يعمل ملف [[.tgz]]. دي اللي بتكشف إن [[.env]] أو فولدر اختبارات هيتنشر بالغلط قبل ما يحصل.`,
@@ -675,6 +694,12 @@ npm run nope
 npm ls react
 npm explain react
 npm view react versions`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[npm i ms@9.9.9]]. الكود إيه؟ وده نفس [[E404]]؟`, done: R`[[npm error code ETARGET]] و [[No matching version found for ms@9.9.9.]] و exit 1: الحزمة موجودة بس النسخة لأ، مش E404. [[npm view ms versions]] بيوريك الموجود.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[npm run build]] في فولدر مفيهوش package.json. الكود؟ والـ exit code على ويندوز ولينكس؟`, done: R`[[npm error code ENOENT]] و [[syscall open]] و [[path ...\package.json]] و «This is related to npm not being able to find a file.». والـ exit code: 127 على ويندوز (npm 11.19.1) و 254 على لينكس (npm 10.9.9). يعني متعتمدش على رقم معين، اعتمد على «مش صفر».` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[npm-code.mjs]] بيقرا ناتج npm من stdin ويطبع الكود بس ([[E404]] أو [[ETARGET]]...) من سطر [[npm error code X]]، ولو مفيش يطبع [[none]].`, done: R`[[npm i ms@9.9.9 2>&1 | node npm-code.mjs]] طبع [[ETARGET]]، و [[npm -v | node npm-code.mjs]] طبع [[none]].` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** افتح ملف اللوج الكامل اللي في آخر سطر أي خطأ ([[A complete log of this run can be found in: ...debug-0.log]]). لاقي فيه: نسخة npm و node، والأمر اللي اتشغّل، والسطر اللي فيه السبب.`, done: R`لقيت التلاتة في الملف وكتبت أرقام السطور، وعرفت إن الملفات دي بتتراكم في [[_logs]] وإن [[logs-max]] في npm config بيحدد عددها.` },
+          ],
           lines: [
             R`بيحاول يسطّب حزمة مش موجودة، فـ npm بيطلّع [[npm error code E404]] في أول سطر، ومعاه الـ URL على الـ registry اللي جرّبه. [[E404]] معناه الاسم غلط (اتأكد من الإملاء) أو حزمة خاصة انت مش مسجّل دخول ليها.`,
             R`بيحاول يشغّل سكربت مش موجود في [[scripts]]، فـ npm بيطلّع [[Missing script: "nope"]] ويقولك في السطر اللي بعده الحل: [[npm run]] لوحدها بتعرض السكربتات الموجودة. ده خطأ من غير كود، وغالبًا غلطة في الاسم.`,

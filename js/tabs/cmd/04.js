@@ -8,7 +8,14 @@ MORE("cmd", [
       goal: [R`تعرف إيه اللي شغال على الجهاز، وتقفل برنامج معلّق.`, R`تعرف مين ماسك بورت معين.`, R`تفتح برامج وملفات من CMD.`],
       use: { prog: R`«Port 3000 is already in use» — [[netstat -ano | findstr :3000]] وبعدين [[taskkill /pid]].`, work: R`برنامج معلّق على سيرفر من غير واجهة.` },
       lab: R`mkdir %TEMP%\cmdlab & cd /d %TEMP%\cmdlab`,
-      projects: [{ t: R`مين ماسك البورت؟`, what: R`شغّل سيرفر على بورت (مثلًا [[python -m http.server 8000]])، ولاقيه بـ [[netstat -ano]]، واعرف اسمه بـ [[tasklist /fi "PID eq ..."]]، واقفله.` }],
+      projects: [
+        { lvl: 'صغير', t: R`مين ماسك البورت؟`, what: R`[[who-port.bat PORT]]: شغّل سيرفر على بورت (مثلًا [[python -m http.server 8000]])، والسكربت يلاقي سطر [[LISTENING]] بتاعه بالظبط ([[findstr /r /c:":%1 .*LISTENING"]]) ويطبع الـ PID واسم البرنامج من [[tasklist /fi "pid eq ..." /fo csv /nh]]. من درسين «netstat -ano» و «tasklist / taskkill».`, done: R`على بورت السيرفر بيطبع سطر زي [[port 8000  pid 8216  python.exe]]، وعلى بورت فاضي [[nobody listens on 4322]] بكود [[1]]، ومن غير بورت [[usage: who-port PORT]] بكود [[2]]. وسيرفر تاني على [[80001]] أو [[18000]] مبيظهرش.` },
+        { lvl: 'صغير', t: R`زرار «افتح شغلي»`, what: R`[[open-work.bat]] بتدوس عليه الصبح: يفتح فولدر المشروع في Explorer بـ [[start "" "%~dp0"]]، وملف [[notes.txt]] بـ [[start "" notepad notes.txt]]، ولينك الـ dashboard في المتصفح، ونافذة CMD عنوانها [[DEV]] في فولدر المشروع بـ [[start "DEV" /d "%~dp0" cmd /k]]. من درس «start».`, done: R`دبل كليك واحد بيفتح الأربع حاجات، ونافذة السكربت نفسها بتقفل لوحدها (لأن [[start]] مبيستناش)، ولو المسار فيه مسافة ([[C:\my projects\shop]]) كله بيفتح برضه.` },
+        { lvl: 'متوسط', t: R`اقفل السيرفر القديم بأمان`, what: R`[[kill-port.bat PORT]]: بيعرض الـ PID واسم البرنامج الأول، ويسألك [[choice /c yn]] قبل ما يقفل، ويقفل بـ [[/T /F]] بس الـ PIDs اللي في سطور [[LISTENING]] (ويتخطى [[0]] و [[4]])، وبعدها يتأكد إن البورت فضي. ومع [[/yes]] من غير سؤال للسكربتات. من دروس «netstat -ano» و «tasklist / taskkill».`, done: R`لو قلت [[n]] مبيقفلش حاجة ويخرج بكود [[1]]. لو [[y]] بيطبع [[SUCCESS: ...]] وبعدها [[port 8000 is free]]. وعلى بورت فاضي بيقول كده ومبيندهش [[taskkill]] خالص، ومستحيل يحاول يقفل PID صفر (جرّبه على عينة [[net.txt]] فيها [[TIME_WAIT 0]]).` },
+        { lvl: 'متوسط', t: R`مين بيفتح الملفات دي؟`, what: R`[[who-opens.bat]] بياخد لستة امتدادات ([[.txt .bat .js .vbs .html .pdf]]) ولكل واحد يطبع [[assoc]] وبعده [[ftype]] للنوع، ويعلّم بـ [[DANGER]] أي نوع أمر الفتح بتاعه [["%1" %*]] أو فيه [[WScript]]، ويطبع [[no association]] للمش مربوط. من درس «assoc / ftype».`, done: R`[[.bat]] و [[.js]] و [[.vbs]] متعلّم عليهم [[DANGER]]، و [[.txt]] بيقول [[txtfilelegacy]] ومعاه ملاحظة إن الـ UserChoice ممكن يكون غيره، وامتداد زي [[.nosuch]] بيطبع [[no association]] من غير ما السكربت يقف.` },
+        { lvl: 'كبير', t: R`مشغّل بيئة التطوير`, what: R`[[dev-up.bat]] و [[dev-down.bat]] لمشروع فيه API وواجهة. [[dev-up]]: يتأكد إن البورتين فاضيين (ولو مشغولين بنفس المشروع يقول «شغال أصلًا» ويخرج بـ [[0]])، ويشغّل كل واحد في نافذة باسمها بـ [[start "API" cmd /k ...]]، ويستنى في loop لحد ما كل بورت يبقى [[LISTENING]] بحد أقصى ٣٠ ثانية، ويحفظ الـ PIDs في [[dev.pids]]، ويكتب كل خطوة بالوقت في [[dev.log]]، وفي الآخر يفتح المتصفح. [[dev-down]]: يقرا [[dev.pids]] ويقفل بـ [[/T /F]] ويمسح الملف. من كل دروس الوحدة.`, done: R`[[dev-up]] مرتين ورا بعض: التانية بتقول «شغال أصلًا» ومش بتفتح نوافذ زيادة. لو الـ API وقع وهو بيقوم، بعد ٣٠ ثانية بيطبع [[API did not start in 30s]] ويخرج بكود غير صفر ومش بيفتح المتصفح. [[dev-down]] بيسيب البورتين فاضيين، وتشغيله مرتين التانية بتقول «مفيش حاجة شغالة». و [[dev.log]] فيه سطر بالوقت لكل خطوة.`, ext: R`زوّد [[dev-status.bat]] بيطبع كل خدمة شغالة ولا لأ والرام بتاعتها من [[tasklist /fi "pid eq ..."]]، وخلّي الخدمات وبورتاتها في ملف [[services.txt]] بدل ما تكون مكتوبة في السكربت.` },
+        { lvl: 'فكرة', t: R`مدير عمليات بالكيبورد`, what: R`قايمة في CMD بـ [[choice]]: ١ اعرض أكبر العمليات في الرام ([[/fi "memusage gt ..."]])، ٢ دوّر باسم، ٣ مين على بورت، ٤ اقفل بـ PID بعد تأكيد، ٥ البرامج المعلّقة ([[/fi "status eq not responding"]]). انت اللي تقرر الشكل والترتيب.`, done: R`كل اختيار بيرجعك للقايمة، وأي إدخال غلط (اسم مش موجود، PID مش رقم) بيطبع رسالة ومبيقفلش السكربت، ومفيش ولا خيار بيقفل حاجة من غير ما يسألك.`, ext: R`زوّد لوج لكل عملية اتقفلت (مين وإمتى)، وخيار «صدّر اللستة CSV» بـ [[/fo csv]]، وبعدين اكتب نفس الأداة في PowerShell وقارن عدد السطور.` },
+      ],
       items: [
         {
           cmd: "tasklist / taskkill",
@@ -24,6 +31,14 @@ taskkill /IM node.exe /F
 taskkill /PID 1234 /F /T`,
           try: "افتح notepad واقفله بـ taskkill.",
           flag: "danger",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** قبل ما تشغّل: [[taskkill /PID 99999]] وبعده [[echo %errorlevel%]]، وبعدين [[taskkill /IM nosuchprog.exe /F]] وبعده [[echo %errorlevel%]]. هيطبعوا إيه؟`, done: R`الاتنين طبعوا [[ERROR: The process "99999" not found.]] (والتاني باسم البرنامج) و [[errorlevel]] = [[128]] في الحالتين. يعني «مش موجود» ليه رقم خاص بيه، وسكربتك يقدر يفرّق بينه وبين «اتقفل» ([[0]]).` },
+            { lvl: 'سريع', t: R`**قارن وقيس:** عايز تعرف في سكربت «البرنامج ده شغال؟». قارن [[tasklist /fi "imagename eq nosuchprog.exe"]] بـ [[tasklist | findstr /i nosuchprog]]، وبعد كل واحد [[echo %errorlevel%]]، وبعدين زوّد على الأول [[| find /c /v ""]].`, done: R`الأول طبع [[INFO: No tasks are running which match the specified criteria.]] و [[errorlevel]] [[0]]، والسطر ده على الـ stdout ([[find /c]] عدّه [[1]])، فمينفعش تبني عليه [[if errorlevel]]. التاني مطبعش حاجة و [[errorlevel]] [[1]]: ده اللي تستخدمه في [[&&]] و [[||]].` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** كام نسخة [[svchost.exe]] شغالة عندك؟ وكام عملية واكلة أكتر من ٤٠٠ ميجا؟ استخدم [[tasklist /fo csv /nh /fi "imagename eq svchost.exe" | find /c /v ""]] و [[/fi "memusage gt 400000"]] (الرقم بالكيلوبايت).`, done: R`طلعلك رقمين (على جهاز التجربة [[106]] نسخة svchost و [[9]] عمليات فوق ٤٠٠ ميجا). وفهمت ليه [[/fo csv /nh]]: كل عملية سطر واحد من غير الهيدر والخط اللي تحته، فالعدّ بيطلع صح من غير ما تطرح حاجة.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** شغّلت [[start "" /b ping -n 30 127.0.0.1 >nul]] وجبت الـ PID بتاعه من [[tasklist]]، و [[taskkill /PID <الرقم>]] رفض. اقرا الرسالة وصلّح.`, done: R`الرسالة [[ERROR: The process with PID 27504 could not be terminated.]] وتحتها [[Reason: This process can only be terminated forcefully (with /F option).]] و [[errorlevel]] [[1]]: برنامج كونسول من غير نافذة مبيستقبلش «اقفل نفسك». [[taskkill /PID <الرقم> /F]] طبع [[SUCCESS: The process with PID ... has been terminated.]] و [[errorlevel]] [[0]].` },
+            { lvl: 'تحدي', t: R`**ابني:** [[kill-ping.bat]]: بيشغّل [[ping -n 30 127.0.0.1]] في الخلفية بـ [[start "" /b]]، ويجيب رقمه بـ [[for /f "tokens=2 delims=," %%p in ('tasklist /fi "imagename eq PING.EXE" /fo csv /nh')]]، ويقفله بـ [[/F]]، ويتأكد إنه اتقفل بـ [[tasklist /fi "pid eq %pid%" /nh]]. ولو لقى أكتر من ping شغال قبل ما يبدأ، يرفض ويخرج بكود [[2]] بدل ما يقفل حاجة مش بتاعته.`, done: R`التشغيل طبع [[found pid=2520]] وبعدها [[SUCCESS: The process with PID 2520 has been terminated.]] وبعدها [[INFO: No tasks are running which match the specified criteria.]]. ولما شغلته تاني طلع PID جديد واشتغل عادي. ولو فيه ping تاني شغال قبله بيطبع رسالة ويخرج بـ [[2]] (اتأكد بـ [[echo %errorlevel%]]).` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من [[tasklist /?]] و [[taskkill /?]] من غير ما تبص في الدرس: إزاي تعرض الخدمات اللي جوه كل [[svchost]]؟ وإزاي تلاقي البرامج المعلّقة؟ وهل [[taskkill]] بيقبل [[/fi]]؟ وبعدين جرّب [[taskkill /PID 0 /F]] واقرا الرد.`, done: R`[[tasklist /svc]] (بيضيف عمود [[Services]]، و [[tasklist /svc /fi "pid eq 4"]] طبع [[System]] قدامه [[N/A]])، و [[/fi "status eq not responding"]]، وأيوه [[taskkill /f /fi "pid eq 1234"]]. و PID صفر رد [[ERROR: The process with PID 0 could not be terminated.]] و [[Reason: This is critical system process. Taskkill cannot end this process.]]: ويندوز بيحمي العمليات دي حتى من [[/F]].` },
+          ],
           deep: {
             why: R`برنامج معلّق، أو سيرفر node قديم لسه ماسك البورت، أو عايز تعرف مين بياكل الرام. زي ps و kill في bash.`,
             how: R`[[tasklist]] بيعرض كل العمليات. [[tasklist /fi "imagename eq node.exe"]] بيفلتر بالاسم من غير findstr، و [[/fi "pid eq 1234"]] بالرقم، و [[/fo csv]] بيطلّع الناتج CSV لو هتقراه في سكربت أو Excel.
@@ -173,6 +188,14 @@ SUCCESS: The process with PID 41016 (child process of PID 42240) has been termin
           example: R`netstat -ano | findstr :3000
 taskkill /PID 1234 /F`,
           try: "شغّل سيرفر على 3000 واقفله بالطريقة دي.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اعمل ملف [[net.txt]] فيه ناتج netstat ده (سطر لكل اتصال): [[0.0.0.0:3000 LISTENING 8216]] و [[0.0.0.0:30001 LISTENING 9120]] و [[127.0.0.1:59370 → 127.0.0.1:3000 TIME_WAIT 0]] و [[[::]:3000 LISTENING 8216]] (بنفس أعمدة netstat). قبل ما تشغّل: [[findstr :3000 net.txt]] هيطبع كام سطر؟ وبعدين [[findstr /r /c:":3000 .*LISTENING" net.txt]]؟`, done: R`الأول طبع ٤ سطور، ومنهم سيرفر تاني خالص على [[30001]] واتصال [[TIME_WAIT]]. التاني طبع سطرين بس، الاتنين [[LISTENING]] ورقمهم [[8216]] (IPv4 و IPv6 لنفس السيرفر). المسافة بعد [[:3000]] في الـ regex هي اللي شالت [[30001]].` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** سكربت «اقفل اللي على 3000»: [[for /f "tokens=5" %%p in ('netstat -ano ^| findstr :3000') do taskkill /PID %%p /F]]. جرّبه على [[net.txt]] بـ [[echo would kill %%p]] بدل [[taskkill]] (و [[findstr :3000 net.txt]] بدل netstat). هيقفل مين؟`, done: R`طبع [[would kill 8216]] و [[would kill 9120]] و [[would kill 0]] و [[would kill 8216]]: كان هيقفل سيرفر تاني بريء على 30001، ويحاول يقفل PID صفر ([[taskkill /PID 0 /F]] بيرد [[ERROR: The process with PID 0 could not be terminated.]]). بعد التصليح بـ [[findstr /r /c:":3000 .*LISTENING"]] طبع [[8216]] بس (مرتين، فمش مشكلة).` },
+            { lvl: 'سريع', t: R`**قارن وقيس:** شغّل [[netstat -an]] مرة و [[netstat -a]] (من غير [[-n]]) مرة، واحسب الوقت (مثلًا [[echo %time%]] قبل وبعد، أو [[Measure-Command]] من PowerShell).`, done: R`على جهاز التجربة [[-an]] خلص في حوالي [[39]] ميلي ثانية و [[-a]] أخد حوالي [[236]] ثانية (قرب ٤ دقايق)، لأنه بيسأل الـ DNS عن اسم كل عنوان. فـ [[-n]] مش رفاهية: من غيرها الأمر بيبان إنه معلّق.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[who-port.bat PORT]]: بيدوّر على سطر [[LISTENING]] للبورت ده بس، ولكل واحد يطبع الـ PID واسم البرنامج من [[tasklist /fi "pid eq ..." /fo csv /nh]]. من غير بورت يطبع طريقة الاستخدام ويخرج بـ [[2]]، ولو محدش ماسكه يقول كده ويخرج بـ [[1]].`, done: R`[[call who-port.bat]] طبع [[usage: who-port PORT]] و [[errorlevel]] [[2]]، و [[call who-port.bat 4322]] (بورت فاضي) طبع [[nobody listens on 4322]] و [[errorlevel]] [[1]]، وعلى سيرفر شغال بيطبع سطر زي [[port 3000  pid 8216  node.exe]] (سطرين لو سامع على IPv4 و IPv6).` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من [[netstat /?]]: أنهي option بيرتّب العمليات حسب عدد البورتات اللي ماسكاها؟ وأنهي واحد بيطبع اسم البرنامج بدل ما تروح لـ tasklist؟ جرّب التاني من CMD عادي.`, done: R`[[-c]] بيطبع جدول [[Port Consumption]] بأعمدة [[Proto]] و [[PID]] و [[NumberOfPorts]]. و [[-b]] من CMD عادي رد [[The requested operation requires elevation.]] و [[errorlevel]] [[1]]، فاسم البرنامج يا إما من نافذة أدمن يا إما من [[tasklist /fi "pid eq ..."]].` },
+            { lvl: 'تحدي', t: R`**اشرحها:** زميلك شاف [[TCP 127.0.0.1:59370 127.0.0.1:3000 TIME_WAIT 0]] وعايز يقفل PID صفر عشان «ده اللي ماسك البورت». اكتبله ٣ سطور: إيه الاتصال ده، وليه PID صفر، وهو المفروض يعمل إيه.`, done: R`السطور فيها: ده اتصال قديم خلص (البورت [[3000]] في العمود البعيد مش المحلي)، وPID صفر معناه ملوش صاحب والنظام بيستنى شوية قبل ما ينساه، والمطلوب سطر [[LISTENING]] اللي فيه [[:3000]] في العمود الأول بس.` },
+          ],
           deep: {
             why: R`السيرفر مش راضي يقوم ويقول EADDRINUSE أو port 3000 in use. netstat بيوريك أنهي برنامج (برقمه) ماسك البورت، وبعدها taskkill يقفله. زي [[ss -tlnp]] في لينكس.`,
             how: R`[[-a]] كل الاتصالات والبورتات اللي بتسمع، و [[-n]] أرقام بدل أسامي (أسرع بكتير)، و [[-o]] رقم العملية (PID). الناتج أعمدة: البروتوكول، والعنوان المحلي ([[0.0.0.0:3000]] يعني بيسمع على كل الكروت)، والعنوان البعيد، والحالة ([[LISTENING]] أو [[ESTABLISHED]] أو [[TIME_WAIT]])، وآخر حاجة الـ PID.
@@ -306,6 +329,13 @@ start notepad
 start https://github.com
 start "" "C:\Program Files\Git\git-bash.exe"`,
           try: "افتح الفولدر الحالي في Explorer.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في ملف [[.bat]]: [[ver >nul]] (عشان errorlevel يبقى صفر)، وبعدين [[start "" /b cmd /c exit 7]] و [[echo %errorlevel%]]، وبعدين نفس السطر بـ [[/wait]]. الرقمين هيبقوا كام؟`, done: R`من غير [[/wait]] طبع [[0]]: [[start]] نجح إنه **يشغّل**، ومستناش يعرف النتيجة. مع [[/wait]] طبع [[7]]. فلو سكربتك بيقرر على نتيجة أمر، لازم [[/wait]] (أو [[call]] لو ملف batch).` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** زميلك كتب في سكربت [[start "C:\my tools\app.exe"]] والبرنامج مبيفتحش، وبتفتح بداله نافذة CMD فاضية. صلّح السطر، واكتب ليه.`, done: R`السطر بقى [[start "" "C:\my tools\app.exe"]]، والسبب مكتوب: أول حاجة بين علامات تنصيص [[start]] بياخدها عنوان النافذة. (السلوك ده من توثيق [[start]] على Microsoft Learn، والدرس مجرّبهوش عشان مبيفتحش نوافذ على الجهاز.)` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** من [[start /?]] لاقي الـ option اللي بيحدد الفولدر اللي البرنامج يشتغل منه، وجرّبه: [[start "" /b /wait /d "%TEMP%" cmd /c cd]]. وبعدين جرّبه بفولدر مش موجود.`, done: R`[[/d]]: طبع مسار الـ TEMP بتاعك (زي [[C:\Users\ali\AppData\Local\Temp]]) مع إن السكربت نفسه في فولدر تاني. والفولدر المش موجود طبع [[The current directory is invalid.]] و [[errorlevel]] مش صفر. ولقيت كمان [[/min]] و [[/max]] و [[/low]] و [[/high]] للأولوية.` },
+            { lvl: 'تطبيق', t: R`**محاكاة:** [[dev.bat]] بيشغّل «سيرفر» بياخد ٢ ثانية يقوم: [[start "" /b cmd /c "ping -n 3 127.0.0.1 >nul & echo server ready"]]، والسطر اللي بعده [[echo opening browser]] (مكان [[start http://localhost:3000]]). شغّله واكتب الترتيب.`, done: R`اتطبع [[opening browser]] الأول وبعده بثانيتين [[server ready]]: المتصفح كان هيفتح على سيرفر لسه مقامش (والصفحة تقول refused). فهمت إن [[start]] مبيستناش، والحل إنك تستنى لحد ما السيرفر يرد (loop بـ [[curl.exe -s]] أو [[ping -n 2]] كـ sleep) قبل ما تفتح المتصفح.` },
+            { lvl: 'تحدي', t: R`**ابني:** [[par.bat]] بيشغّل ٣ شغلانات بالتوازي بـ [[start "" /b cmd /c "ping -n 4 127.0.0.1 >nul & echo ok>job%%j.done"]] جوه [[for %%j in (1 2 3)]]، ويستنى في loop لحد ما الـ ٣ ملفات [[job*.done]] يبقوا موجودين، ويطبع وقت البداية والنهاية، ويمسح الملفات في الآخر.`, done: R`طبع [[all 3 jobs done  start=18:47:35.04 end=18:47:38.14]]: حوالي ٣ ثواني، مش ٩ (كل شغلانة ٣ ثواني لوحدها). ولو شغلته مرتين ورا بعض بيشتغل عادي لأنه بيمسح [[job*.done]] في الأول والآخر.` },
+          ],
           deep: {
             why: R`سكربت عايز يفتح المتصفح على localhost بعد ما السيرفر يقوم، أو يفتح فولدر الناتج في Explorer، أو يشغّل سيرفر في نافذة لوحده ويكمّل. start بيعمل كل ده ومش بيستنى البرنامج يخلص. زي xdg-open في لينكس و open في الماك.`,
             how: R`[[start .]] يفتح Explorer على الفولدر الحالي. [[start http://localhost:3000]] يفتح المتصفح. [[start "" "file.pdf"]] يفتح أي ملف بالبرنامج المرتبط بامتداده. [[start "" "C:\path\program.exe"]] يشغّل برنامج.
@@ -414,404 +444,230 @@ errorlevel after /wait = 3
           sol: R`[[start .]] بيفتح نافذة File Explorer على الفولدر اللي انت فيه، ومش بيطبع حاجة في CMD.
 
 لو كتبت [[start "C:\my folder"]] بين علامات تنصيص، هتفتح نافذة CMD جديدة عنوانها «C:\my folder» بدل الفولدر، لأن أول حاجة بين علامات تنصيص بتتقري عنوان. الحل [[start "" "C:\my folder"]]، أو [[explorer .]].`
-        }
-      ]
-    },
-    {
-      t: "الشبكة والنظام",
-      l: 2,
-      n: "",
-      time: R`حوالي نص ساعة`,
-      goal: [R`تعرف IP جهازك والـ DNS والـ gateway.`, R`تجرّب توصل لجهاز أو دومين، وتعرف الطريق.`, R`تعرف معلومات الجهاز واليوزر بسرعة.`],
-      use: { net: R`أول تلات أوامر في أي تشخيص شبكة. بس ping مش دليل لوحده (درس «ping نجح ومفيش جهاز»).`, work: R`«النت مش شغال» — [[ipconfig]] و [[nslookup]] بيفرّقوا بين «مفيش شبكة» و«DNS واقع».` },
-      lab: R`mkdir %TEMP%\cmdlab & cd /d %TEMP%\cmdlab`,
-      projects: [{ t: R`كارت الجهاز`, what: R`سكربت بيطبع اسم الجهاز واليوزر والـ IP والـ gateway والـ DNS في شاشة واحدة، من [[hostname]] و [[whoami]] و [[ipconfig]] و [[findstr]].` }],
-      items: [
-        {
-          cmd: "ipconfig",
-          title: "إعدادات الشبكة",
-          desc: R`[[ipconfig]] بيعرض إعدادات الشبكة لكل كارت (Wi-Fi و Ethernet والكروت الافتراضية)، زي [[ip a]] في لينكس. أهم سطرين تحت الكارت اللي انت متوصل بيه: [[IPv4 Address]] ده عنوان جهازك على شبكة البيت، و [[Default Gateway]] ده الراوتر.
-
-[[/all]] بيعرض تفاصيل أكتر: الـ MAC (اسمه Physical Address)، وسيرفرات الـ DNS، وهل الـ IP جاي من الراوتر أوتوماتيك (DHCP Enabled). و [[/flushdns]] بيمسح الردود اللي ويندوز حافظها عن الدومينات، ودي أول حاجة لو غيّرت الـ DNS بتاع دومين أو ملف hosts ولسه بيفتح القديم.
-
-لو الـ IPv4 بيبدأ بـ [[169.254]] يبقى الجهاز مخدش IP من الراوتر أصلًا (مشكلة اتصال مش مشكلة DNS). والـ IP اللي هنا مش اللي الناس بتشوفه على النت، ده جوه شبكتك بس.`,
-          example: R`ipconfig
-ipconfig /all
-ipconfig /flushdns`,
-          try: "اعرف الـ IP المحلي بتاعك.",
-          deep: {
-            why: R`عايز تفتح موقعك من الموبايل على نفس الواي فاي (محتاج IP جهازك)، أو النت فيه مشكلة وعايز تعرف الجهاز واخد IP ولا لأ، أو غيّرت DNS ومحتاج تمسح الكاش. زي [[ip a]] في لينكس.`,
-            how: R`[[ipconfig]] كل الكروت وعناوينها. [[ipconfig /all]] تفاصيل كاملة: MAC، وDNS، والـ DHCP.
-
-[[ipconfig /flushdns]] يمسح DNS cache (مفيد بعد تغيير hosts أو DNS). على ويندوز 11 الجديد ممكن يطلب CMD كأدمن.
-
-عنوانك على الواي فاي: ابص على «Wireless LAN adapter Wi-Fi» وخد الـ IPv4 Address.
-
-الـ Default Gateway هو عنوان الراوتر بتاعك. الـ DNS Servers هم اللي بتسألهم عن الدومينات.`,
-            when: "إيجاد عنوان الجهاز على الشبكة. بعد تغيير DNS. مشاكل الشبكة.",
-            mistakes: "الخلط بين IPv4 الحقيقي والـ 169.254.x.x: ده Automatic Private IP Address ومعناه مش قادر يتصل بـ DHCP (راوترك)."
-          },
-          teach: R`## الفكرة
-
-[[ipconfig]] (من IP configuration) بيعرض إعدادات الشبكة لكل «كارت شبكة» في الجهاز. اتجرب في CMD على ويندوز 11 على لابتوب متوصل بالواي فاي.
-
----
-
-## ١. [[ipconfig]]
-
-~~~cmd
-ipconfig
-~~~
-
-الناتج قسم لكل كارت. على الجهاز ده طلع ٨ كروت! أغلبهم كده:
-
-~~~text كارت مش متوصل
-Ethernet adapter Ethernet:
-
-   Media State . . . . . . . . . . . : Media disconnected
-   Connection-specific DNS Suffix  . :
-~~~
-
-[[Media disconnected]] يعني الكارت ده مش متوصل بحاجة (هنا كابل الشبكة مش متركب)، اتجاهله. والقسم المهم هو الكارت اللي انت متوصل بيه:
-
-~~~text كارت الواي فاي
-Wireless LAN adapter Wi-Fi:
-
-   Connection-specific DNS Suffix  . :
-   Link-local IPv6 Address . . . . . : fe80::84e:34ec:cd48:1b6e%13
-   IPv4 Address. . . . . . . . . . . : 192.168.1.65
-   Subnet Mask . . . . . . . . . . . : 255.255.255.0
-   Default Gateway . . . . . . . . . : 192.168.1.1
-~~~
-
-### نقرا السطور
-
-| السطر | القيمة | معناها |
-|---|---|---|
-| [[IPv4 Address]] | [[192.168.1.65]] | عنوان جهازك **جوه شبكة البيت**. ده اللي تكتبه في الموبايل عشان تفتح سيرفرك: [[http://192.168.1.65:3000]] |
-| [[Subnet Mask]] | [[255.255.255.0]] | أنهي جزء من العنوان هو «الشبكة»: الـ ٣ أرقام الأولى ([[192.168.1]]) ثابتة لكل الأجهزة اللي معاك، والأخير بيفرّق بينهم |
-| [[Default Gateway]] | [[192.168.1.1]] | الراوتر: أي حاجة رايحة برا الشبكة (النت) بتعدّي عليه |
-| [[Link-local IPv6 Address]] | [[fe80::...]] | عنوان IPv6 شغّال جوه الشبكة المحلية بس |
-
-وكان فيه كارت تاني متوصل: [[vEthernet (WSL (Hyper-V firewall))]] بـ IPv4 [[172.29.160.1]] ومن غير Gateway. ده كارت افتراضي بتاع WSL و Docker، مش اتصالك بالنت.
-
----
-
-## ٢. [[ipconfig /all]]
-
-[[/all]] بيضيف لكل كارت سطور كتير. ده الجزء الزيادة في كارت الواي فاي (الـ MAC متخبي جزء منه):
-
-~~~text الناتج (جزء)
-   Description . . . . . . . . . . . : Intel(R) Wi-Fi 6 AX200 160MHz
-   Physical Address. . . . . . . . . : 84-1B-77-XX-XX-XX
-   DHCP Enabled. . . . . . . . . . . : Yes
-   Lease Obtained. . . . . . . . . . : Tuesday, October 6, 2026 9:24:09 AM
-   Lease Expires . . . . . . . . . . : Wednesday, October 7, 2026 9:24:08 AM
-   DHCP Server . . . . . . . . . . . : 192.168.1.1
-   DNS Servers . . . . . . . . . . . : fe80::1%13
-                                       8.8.8.8
-                                       8.8.4.4
-                                       192.168.1.1
-~~~
-
-| السطر | معناه |
-|---|---|
-| [[Description]] | الكارت الحقيقي (اسم الهاردوير) |
-| [[Physical Address]] | الـ MAC: رقم ثابت للكارت نفسه، ٦ أجزاء بالـ hex |
-| [[DHCP Enabled: Yes]] | الـ IP جاي أوتوماتيك من الراوتر (DHCP)، مش متكتب بإيد |
-| [[Lease Obtained]] و [[Lease Expires]] | الراوتر «سلّف» الـ IP ده للجهاز من الساعة 9 الصبح ولمدة يوم، وبعدها الجهاز بيجدده |
-| [[DHCP Server]] | مين اداله الـ IP (الراوتر نفسه) |
-| [[DNS Servers]] | السيرفرات اللي الجهاز بيسألها «الدومين ده IP بتاعه إيه». هنا [[8.8.8.8]] و [[8.8.4.4]] بتوع Google |
-
----
-
-## ٣. [[ipconfig /flushdns]]
-
-ويندوز بيحفظ ردود الـ DNS شوية (cache) عشان ميسألش كل مرة. [[/flushdns]] بيمسح الحاجات دي، فأول طلب بعدها يسأل من جديد. مفيد لما تغيّر الـ DNS بتاع دومين أو ملف hosts ولسه بيفتح القديم. على ويندوز 11 اللي اتجرّب عليه (build 26300) الأمر ده من CMD عادي (مش أدمن) طلّع [[The requested operation requires elevation.]] ورجّع errorlevel [[1]]، ونفس الكلام لـ [[/displaydns]]؛ في نسخ ويندوز أقدم كانوا بيشتغلوا من غير أدمن. فلو طلعتلك الرسالة دي، افتح CMD كأدمن (Win+X ثم Terminal (Admin)). والرسالة اللي بتطلع لما ينجح (من توثيق ipconfig):
-
-~~~text الناتج
-Successfully flushed the DNS Resolver Cache.
-~~~
-
----
-
-## الخلاصة
-
-| عايز | اكتب | بص على |
-|---|---|---|
-| IP جهازك على الشبكة | [[ipconfig]] | [[IPv4 Address]] تحت الكارت المتوصل |
-| IP الراوتر | [[ipconfig]] | [[Default Gateway]] |
-| الـ MAC والـ DNS | [[ipconfig /all]] | [[Physical Address]] و [[DNS Servers]] |
-| امسح كاش الـ DNS | [[ipconfig /flushdns]] | |
-
-لو الـ IPv4 بيبدأ بـ [[169.254]] يبقى الجهاز مخدش IP من الراوتر خالص. والمقابل في لينكس [[ip a]] و [[ip route]].`,
-          lines: [
-            R`بيعرض لكل كارت شبكة (واي فاي وكابل وكروت افتراضية): الـ [[IPv4 Address]] بتاعك على الشبكة، والـ [[Subnet Mask]]، والـ [[Default Gateway]] وده عنوان الراوتر. الكارت اللي مش متوصل بيظهر [[Media disconnected]]. زي [[ip a]] في لينكس.`,
-            R`[[/all]] بيضيف التفاصيل: الـ MAC (اسمه [[Physical Address]])، وسيرفرات الـ DNS، وهل العنوان جاي أوتوماتيك من الراوتر ([[DHCP Enabled]])، وإمتى الـ lease بيخلص. ده اللي تبعته لحد بيساعدك في مشكلة شبكة.`,
-            R`[[/flushdns]] بيمسح الردود اللي ويندوز حافظها عن الدومينات (الـ DNS cache)، فأول طلب بعدها يسأل من جديد. مفيد بعد تعديل ملف hosts أو تغيير DNS دومين والمتصفح لسه بيفتح القديم. على ويندوز 11 الجديد ممكن يطلب CMD كأدمن.`,
-          ],
-          sol: R`[[ipconfig]] بيطبع قسم لكل كارت، دوّر على الكارت اللي انت متوصل بيه ([[Wireless LAN adapter Wi-Fi]] أو [[Ethernet adapter Ethernet]]). تحته [[IPv4 Address. . . : 192.168.1.15]] ده الـ IP المحلي، و [[Default Gateway . . . : 192.168.1.1]] ده الراوتر.
-
-اتجاهل كروت زي [[vEthernet (WSL)]] (في النسخ الجديدة اسمه [[vEthernet (WSL (Hyper-V firewall))]]) أو اللي تحتها [[Media disconnected]]، دي مش اتصالك الحقيقي. ولو الـ IPv4 بيبدأ بـ [[169.254]] يبقى الجهاز مخدش IP من الراوتر (مشكلة DHCP أو الكابل). والـ IP ده مش اللي الناس بتشوفه على النت، ده جوه شبكة البيت بس.`
         },
         {
-          cmd: "ping / tracert / nslookup",
-          title: "اختبار الاتصال",
-          desc: R`تلات أوامر لتشخيص «النت مش شغال» أو «الموقع مش بيفتح». [[ping]] بيبعت رسايل صغيرة للجهاز ويقيس الوقت لحد ما يرد: لو رد يبقى واصل. و [[-n 4]] عدد المرات (في ويندوز الافتراضي 4 وبيقف لوحده، و [[-t]] يفضل لحد Ctrl+C). خلي بالك: [[-n]] في لينكس معناها حاجة تانية، والعدد هناك [[-c]].
-
-[[tracert]] بيوريك الطريق كله من جهازك للسيرفر، راوتر راوتر، فتعرف المشكلة واقفة فين (زي traceroute). و [[nslookup]] بيسأل الـ DNS: الدومين ده بيشاور على أنهي IP؟ (زي dig، وفيه درس لوحده في «الشبكات بعمق»).
-
-ping بيفشل مش معناه الجهاز واقع: سيرفرات كتير (وراوترات) قافلة الرد على ping عن قصد. لو موقع مش بيرد على ping بس بيفتح في المتصفح، ده طبيعي.`,
-          example: R`ping -n 4 google.com
-tracert google.com
-nslookup example.com`,
-          try: "اعمل nslookup على دومين من دوميناتك واتأكد إنه بيشاور على IP السيرفر.",
-          deep: {
-            why: "تشخيص الشبكة: هل الجهاز بيرد؟ وما الطريق للوصول له؟ والـ DNS شايف إيه؟",
-            how: R`[[ping google.com]] بيجرّب 4 مرات افتراضيًا ويقف لوحده، على عكس لينكس. [[-n 10]] عدد معين، و [[-t]] يفضل شغال لحد Ctrl+C، و [[-4]] يجبره على IPv4. و [[Request timed out]] معناها مفيش رد، وممكن يكون فايروول قافل ping مش إن الجهاز واقع.
-
-[[tracert google.com]] الطريق كامل، و [[tracert /d]] من غير ما يحوّل كل IP لاسم (أسرع بكتير).
-
-[[nslookup example.com]] بيسأل الـ DNS عن الـ IP. [[nslookup example.com 8.8.8.8]] يسأل سيرفر معين بدل اللي متظبط عندك.`,
-            when: "الموقع مش بيفتح. الـ DNS لسه مش منتشر. لتشخيص بطء الشبكة.",
-            mistakes: "ping بيوقف لوحده في ويندوز، بس لو عايزه يفضل زي لينكس استخدم [[-t]]."
+          cmd: "assoc / ftype",
+          title: "مين بيفتح الملف ده؟",
+          learn: R`تعرف الامتداد ده مربوط بأنهي «نوع ملف»، والنوع ده بيتفتح بأنهي أمر، وليه [[start file.txt]] أو دبل كليك على [[.js]] بيعمل حاجة غير اللي انت متوقعها.`,
+          out: R`لما ملف يتفتح ببرنامج غلط (أو مبيتفتحش خالص)، تعرف تقرا الربط من CMD في ثانيتين بدل ما تخمّن، وتعرف إمتى الربط ده مش هو اللي بيحكم.`,
+          use: {
+            prog: R`دبل كليك على [[app.js]] بيطلّع error غريب بدل ما node يشغّله: [[assoc .js]] بيقولك إن [[.js]] مربوط بـ Windows Script Host مش node.`,
+            work: R`سكربت batch بيعمل [[start report.csv]] والملف بيفتح في برنامج مش متسطّب عند زميلك. بتعرف الربط بـ [[assoc]] و [[ftype]] قبل ما تبعت السكربت.`,
+            cs: R`ده نفس فكرة «MIME type ← برنامج» في المتصفح و [[xdg-mime]] في لينكس: طبقتين، الامتداد بيشاور على نوع، والنوع بيشاور على أمر.`,
           },
-          teach: R`## الفكرة
+          desc: R`لما تدوس دبل كليك على ملف أو تكتب [[start file.txt]]، ويندوز بيمشي خطوتين: **الامتداد** ([[.txt]]) مربوط بـ **نوع ملف** (file type، زي [[txtfile]])، و**النوع** ده ليه **أمر فتح** (open command). [[assoc]] بيوريك الخطوة الأولى، و [[ftype]] بيوريك التانية.
 
-٣ أوامر، كل واحد بيجاوب سؤال لما «النت مش شغال» أو «الموقع مش بيفتح»:
+[[assoc .bat]] طبع [[.bat=batfile]]، و [[ftype batfile]] طبع [[batfile="%1" %*]]: يعني شغّل الملف نفسه ([[%1]]) وابعتله كل الـ arguments ([[%*]]). و [[assoc .js]] طبع [[.js=JSFile]]، و [[ftype JSFile]] طبع [[JSFile=C:\Windows\System32\WScript.exe "%1" %*]]: فدبل كليك على [[app.js]] بيشغّله بـ Windows Script Host مش node.
 
-| الأمر | السؤال |
-|---|---|
-| [[ping]] | الجهاز ده بيرد عليا؟ وفي قد إيه؟ |
-| [[tracert]] | الطريق ليه بيعدّي على مين؟ |
-| [[nslookup]] | الدومين ده IP بتاعه إيه؟ |
+[[assoc]] من غير حاجة بيطبع كل الروابط (على جهاز التجربة [[580]] سطر)، فبتفلترها بـ [[findstr /i /b /c:".zip="]]. والامتداد المش مربوط بيطبع [[File association not found for extension .nosuch]] و [[errorlevel]] [[1]]، والنوع المش موجود [[File type 'nosuchtype' not found or no open command associated with it.]] و [[errorlevel]] [[2]].
 
-كله اتجرب في CMD على ويندوز 11 من شبكة بيت في مصر.
+**الفخ الكبير:** [[assoc]] و [[ftype]] بيقروا الربط القديم بتاع النظام كله (الجزء اللي في [[HKLM\Software\Classes]]). أما البرنامج اللي **انت** اخترته من «Open with» أو من Settings فمتسجّل لكل يوزر في مكان تاني (اسمه UserChoice)، وده اللي بيكسب. عشان كده على ويندوز 11 [[assoc .txt]] طبع [[.txt=txtfilelegacy]] و [[ftype txtfilelegacy]] قال إن مفيش أمر فتح، ومع ذلك [[.txt]] بيتفتح عادي بـ Notepad الجديد.
 
----
-
-## ١. [[ping -n 4 google.com]]
-
-~~~cmd
-ping -n 4 google.com
-~~~
-
-~~~text الناتج
-Pinging google.com [142.251.209.206] with 32 bytes of data:
-Reply from 142.251.209.206: bytes=32 time=57ms TTL=118
-Reply from 142.251.209.206: bytes=32 time=51ms TTL=118
-Reply from 142.251.209.206: bytes=32 time=74ms TTL=118
-Reply from 142.251.209.206: bytes=32 time=115ms TTL=118
-
-Ping statistics for 142.251.209.206:
-    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),
-Approximate round trip times in milli-seconds:
-    Minimum = 51ms, Maximum = 115ms, Average = 74ms
-~~~
-
-### نقرا الناتج
-
-- أول سطر: ping حوّل [[google.com]] لـ IP ([[142.251.209.206]]) الأول، وبعت رسايل حجم كل واحدة [[32 bytes]].
-- [[-n 4]]: ابعت ٤ رسايل (n من number). ده الافتراضي أصلًا في ويندوز، وبعدها بيقف لوحده.
-- [[time=57ms]]: الرسالة راحت ورجعت في ٥٧ ميلي ثانية (الثانية = 1000ms). الرقم ده بيتغير كل مرة، عشان كده في الآخر [[Minimum]] و [[Maximum]] و [[Average]].
-- [[TTL=118]] (Time To Live): عداد بيقل ١ عند كل راوتر في السكة. مش محتاجه دلوقتي.
-- [[Lost = 0 (0% loss)]]: مفيش ولا رسالة ضاعت، وده أهم رقم.
-
-### لو مفيش رد
-
-جربت IP مفيش حد عليه (و [[-w 1000]] يعني استنى ثانية بس لكل رد):
-
-~~~text الناتج
-Request timed out.
-Request timed out.
-
-Ping statistics for 10.255.255.1:
-    Packets: Sent = 2, Received = 0, Lost = 2 (100% loss),
-~~~
-
-خلي بالك: سيرفرات كتير بتتجاهل ping عن قصد، فـ [[Request timed out]] مش دايمًا معناها إنه واقع.
-
-> [[-n]] في لينكس معناها حاجة تانية خالص، والعدد هناك [[-c 4]]. و ping في لينكس مش بيقف لوحده.
-
----
-
-## ٢. [[tracert google.com]]
-
-~~~text الناتج
-Tracing route to google.com [142.251.209.206]
-over a maximum of 30 hops:
-
-  1    12 ms    17 ms    46 ms  192.168.1.1 [192.168.1.1]
-  2    21 ms    27 ms     5 ms  198.51.100.1
-  3     4 ms     5 ms     5 ms  10.35.33.145 [10.35.33.145]
-  4     8 ms    23 ms    38 ms  10.35.33.146 [10.35.33.146]
-  5    12 ms     5 ms     9 ms  10.45.28.77 [10.45.28.77]
-  6    16 ms     7 ms    11 ms  81.52.188.108
-  7    68 ms   101 ms    56 ms  193.251.152.113
-  8     *       48 ms     *     72.14.222.118
-  9    60 ms    79 ms    56 ms  ncmrsa-am-in-f14.1e100.net [142.251.209.206]
-
-Trace complete.
-~~~
-
-كل سطر اسمه **hop**: راوتر الباكت عدّى عليه في السكة.
-
-| العمود | معناه |
-|---|---|
-| الرقم الأول | ترتيب الـ hop. [[1]] هو الراوتر بتاعك ([[192.168.1.1]]) |
-| ٣ أوقات | tracert بيجرب كل hop ٣ مرات |
-| [[*]] | المحاولة دي مرجعش ليها رد (الراوتر ده مش بيرد على كل المحاولات، والطريق كمّل عادي) |
-| الآخر | عنوان الراوتر، واسمه لو ليه |
-
-الـ hops اللي في النص راوترات شركة النت والشبكات اللي بعدها، و hop 9 هو سيرفر جوجل نفسه (نفس الـ IP اللي ping طلّعه). لو النت واقف، tracert بيوريك فين بالظبط: لو hop 1 نفسه مش بيرد، المشكلة في الراوتر أو الواي فاي عندك.
-
----
-
-## ٣. [[nslookup example.com]]
-
-~~~text الناتج
-Server:  UnKnown
-Address:  fe80::1
-
-Non-authoritative answer:
-Name:    example.com
-Addresses:  2606:4700:10::ac42:93f3
-	  2606:4700:10::6814:179a
-	  104.20.23.154
-	  172.66.147.243
-~~~
-
-| السطر | معناه |
-|---|---|
-| [[Server]] و [[Address]] الأولانيين | سيرفر الـ DNS اللي اتسأل (هنا الراوتر). [[UnKnown]] معناها إن الراوتر ملوش اسم، عادي |
-| [[Non-authoritative answer]] | الرد جه من سيرفر وسيط عنده نسخة، مش من سيرفر الدومين الأصلي. عادي |
-| [[Name]] | الدومين اللي سألت عليه |
-| [[Addresses]] | الـ IPs بتاعته: ٢ IPv6 (اللي فيهم [[:]]) و ٢ IPv4 |
-
-وظهر كمان سطر [[DNS request timed out.]]: nslookup بيحاول يعرف اسم سيرفر الـ DNS نفسه الأول، والراوتر مردّش، عشان كده كتب [[UnKnown]]. الرد الأساسي وصل عادي.
-
----
-
-## الخلاصة
-
-| عايز تعرف | اكتب | بص على |
-|---|---|---|
-| واصل ولا لأ | [[ping -n 4 google.com]] | [[Lost]] و [[time]] |
-| المشكلة فين في السكة | [[tracert google.com]] | أول hop مش بيرد |
-| الدومين على أنهي IP | [[nslookup example.com]] | [[Address]] تحت [[Name]] |
-
-المقابل في لينكس: [[ping -c 4]] و [[traceroute]] و [[dig]].`,
-          lines: [
-            R`بيبعت 4 رسايل صغيرة (ICMP) لـ google.com ويستنى الرد، وكل رد بيطبع الوقت بالـ ms، وفي الآخر ملخص كام اتبعت وكام ضاع. [[-n]] في ويندوز معناها عدد المرات (في لينكس [[-c]])، ومن غيرها ويندوز بيبعت 4 ويقف لوحده.`,
-            R`بيوريك كل راوتر في السكة لحد جوجل، سطر لكل hop (لحد 30) وفيه 3 أوقات. سطر فيه [[*]] يعني الراوتر ده مردّش، وده مش لازم يبقى مشكلة لو اللي بعده كمّل. زي [[traceroute]] في لينكس، وبياخد وقت.`,
-            R`بيسأل سيرفر الـ DNS بتاعك الدومين ده بيشاور على أنهي IP، زي [[dig]]. أول سطرين ([[Server]] و [[Address]]) هما سيرفر الـ DNS نفسه، والإجابة تحت [[Name]] و [[Addresses]]. و [[Non-authoritative answer]] معناها الرد مش جاي من السيرفر الأصلي للدومين، وده طبيعي.`,
+والتغيير ([[assoc .ext=type]] و [[ftype type=command]]) محتاج CMD كأدمن وبيغيّر النظام كله، فمش متجرّب هنا: الشكل من توثيق Microsoft، وجرّبه في VM أو Windows Sandbox بس.`,
+          example: R`assoc .txt
+assoc .bat
+ftype batfile
+assoc | findstr /i /b /c:".js="
+ftype JSFile
+assoc .nosuch`,
+          try: R`اعرف [[.bat]] و [[.cmd]] و [[.js]] و [[.vbs]] مربوطين بإيه، ولكل واحد اعرف أمر الفتح بـ [[ftype]]. أنهي واحد فيهم «خطر» لو حد بعتلك ملف بيه في إيميل؟`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[assoc .bat]] و [[ftype batfile]] و [[assoc .exe]] و [[ftype exefile]]. قبل ما تشغّل: إيه اللي جوه أمر الفتح بتاع ملف [[.exe]]؟`, done: R`[[.bat=batfile]] و [[batfile="%1" %*]] و [[.exe=exefile]] و [[exefile="%1" %*]]: الاتنين «شغّل الملف نفسه وابعتله الـ arguments». مفيش برنامج تاني بيفتحهم، وده الفرق بينهم وبين [[.txt]].` },
+            { lvl: 'سريع', t: R`**قارن وقيس:** [[assoc .nosuch]] و [[ftype nosuchtype]]، وبعد كل واحد [[echo %errorlevel%]]. وبعدين [[assoc txt]] (من غير نقطة).`, done: R`[[File association not found for extension .nosuch]] بكود [[1]]، و [[File type 'nosuchtype' not found or no open command associated with it.]] بكود [[2]]، و [[assoc txt]] قال [[File association not found for extension txt]] بكود [[1]]: النقطة جزء من الاسم. والحروف مش فارقة: [[assoc .TXT]] طبع [[.TXT=txtfilelegacy]].` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** كام امتداد مربوط عندك؟ وكام نوع ليه أمر فتح؟ [[assoc | find /c "="]] و [[ftype | find /c "="]]. وبعدين لاقي كل الأنواع اللي بتفتح بـ notepad: [[ftype | findstr /i notepad]].`, done: R`طلعلك رقمين (على جهاز التجربة [[580]] و [[619]]: الأنواع أكتر من الامتدادات لأن فيه أنواع بتتستخدم من غير امتداد). وسطور notepad زي [[scriptletfile="C:\Windows\System32\NOTEPAD.EXE" "%1"]].` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** عايز تعرف [[.md]] مربوط بإيه: [[assoc | findstr /i /b ".md"]]. طلعلك سطر لامتداد تاني خالص. ليه؟ وصلّح.`, done: R`[[findstr]] من غير [[/c:]] بيدوّر على [[.md]] في **أول** السطر، فطلّع كمان [[.mdp=...]] (أي امتداد بيبدأ بـ md). [[assoc | findstr /i /b /c:".md="]] بيدوّر على الامتداد بالظبط، ولو مش مربوط بيرجّع [[errorlevel]] [[1]] ومبيطبعش حاجة. أو أسهل: [[assoc .md]].` },
+            { lvl: 'تحدي', t: R`**اقرا وتوقّع:** [[echo console.log("hi from node")> hello.js]]، وبعدين [[cscript //nologo hello.js]] (ده نفس Windows Script Host اللي [[JSFile]] مربوط بيه، بس بيطبع في الكونسول بدل نافذة)، وبعدين [[node hello.js]]. وبص على [[echo %PATHEXT%]].`, done: R`[[cscript]] طبع [[hello.js(1, 1) JavaScript runtime error: 'console' is undefined]]، و [[node]] طبع [[hi from node]]. و [[PATHEXT]] فيه [[.JS]]، يعني لو كتبت [[hello]] بس في الفولدر ده (أو دُست دبل كليك) هيشتغل بـ WScript مش node. عشان كده دايمًا اكتب [[node hello.js]] صريحة.` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** ليه [[assoc .txt]] بيقول [[txtfilelegacy]] و [[ftype txtfilelegacy]] بيقول مفيش أمر فتح، والملف بيفتح عادي؟ دوّر بـ [[reg query]] (قراية بس): [[reg query HKLM\Software\Classes\.txt /ve]] و [[reg query HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.txt\UserChoice /v ProgId]].`, done: R`الأول طبع [[(Default)    REG_SZ    txtfilelegacy]] (ده اللي [[assoc]] بيقراه)، والتاني طبع [[ProgId    REG_SZ    AppX...]] (اختيار اليوزر لـ Notepad الجديد). فهمت إن [[assoc]] بيوريك ربط النظام القديم، والـ UserChoice هو اللي بيكسب، وده بيتغيّر من Settings ‹ Default apps مش من CMD.` },
           ],
-          sol: R`[[nslookup yourdomain.com]] بيطبع الأول [[Server:]] و [[Address:]] بتوع الـ DNS اللي سألته (غالبًا الراوتر، ولو اسمه طلع [[UnKnown]] ده عادي: معناه إن الراوتر ملوش اسم في الـ DNS)، وبعدين [[Non-authoritative answer:]] وتحته [[Name:]] و [[Address:]] (أو [[Addresses:]] لو الدومين ليه أكتر من IP). الـ Address الأخيرة لازم تبقى IP السيرفر بتاعك.
-
-لو IP تاني: إما الـ A record غلط، أو غيّرته قريب والكاش لسه قديم (استنى أو [[ipconfig /flushdns]])، أو الدومين ورا Cloudflare بالسحابة البرتقالي، فهتشوف IPs بتوع Cloudflare وده طبيعي. ولو [[Non-existent domain]] يبقى الـ record مش موجود أصلًا.`
-        },
-        {
-          cmd: "systeminfo / whoami",
-          title: "معلومات الجهاز",
-          desc: R`[[systeminfo]] بيطلع تقرير كامل عن الجهاز: اسم الجهاز، ونسخة ويندوز ورقم الـ build، والرام الكلية والفاضية، وتاريخ التسطيب، وآخر مرة اشتغل فيها (System Boot Time)، والتحديثات المتسطبة. بياخد ثواني قبل ما يطبع، وده طبيعي.
-
-[[whoami]] بيقولك انت داخل بأنهي يوزر، بالشكل [[اسم-الجهاز\اسم-اليوزر]] (أو الدومين لو جهاز شركة)، و [[whoami /groups]] أو [[/priv]] بيوريك صلاحياتك. و [[hostname]] بيطبع اسم الجهاز بس، وده نفس أمر لينكس.
-
-عشان تاخد سطور معينة من التقرير الطويل: [[systeminfo | findstr /B /C:"OS Name" /C:"Total Physical Memory"]]، و [[/B]] يعني السطر لازم يبدأ بالكلام ده. بس لو ويندوزك بالعربي أسامي السطور هتبقى بالعربي فالفلتر ده مش هيلاقي حاجة.`,
-          example: R`systeminfo
-whoami
-hostname`,
-          try: "اعرف نسخة الويندوز والرام من systeminfo.",
           deep: {
-            why: R`استلمت جهاز جديد أو VM، أو حد طالب منك مواصفات جهازك عشان مشكلة، أو عايز تتأكد انت شغال بأنهي يوزر وبصلاحيات إيه قبل ما تعمل حاجة محتاجة أدمن.`,
-            how: R`[[systeminfo]] تقرير كامل: اسم الجهاز، ونسخة ويندوز والـ build، والـ CPU، والرام، ووقت آخر boot، والـ hotfixes. بياخد ثواني. ولو عايز سطر معين فلتره: [[systeminfo | findstr /i memory]].
+            why: R`ملف بيتفتح ببرنامج غلط، أو [[start report.pdf]] في سكربت بيفتح حاجة غريبة على جهاز زميلك، أو حد بعتلك [[invoice.js]] وعايز تعرف الدبل كليك عليه هيعمل إيه قبل ما تجرّب. [[assoc]] و [[ftype]] بيردوا في ثانية، ومن غير ما تفتح Settings.`,
+            how: R`ويندوز بيقرا الربط من الـ registry تحت [[Classes]]: مفتاح باسم الامتداد ([[.bat]]) قيمته الافتراضية اسم النوع ([[batfile]])، ومفتاح باسم النوع جواه [[shell\open\command]] فيه أمر الفتح. [[assoc]] بيقرا الأول و [[ftype]] بيقرا التاني، الاتنين أوامر جوه cmd.exe نفسه ([[where assoc]] قال [[INFO: Could not find "assoc".]]).
 
-[[whoami]] اسم المستخدم الحالي ([[computer\user]]). [[whoami /groups]] الجروبات، ومن CMD عادي هتلاقي فيها [[Medium Mandatory Level]]، ومن CMD أدمن [[High Mandatory Level]]، فتعرف من غير ما تخمّن. و [[whoami /priv]] الصلاحيات المتاحة.
+جوه أمر الفتح: [[%1]] اسم الملف اللي اتداس عليه، و [[%*]] كل الـ arguments. والـ help بيقول كمان إن [[%2]] أول parameter و [[%~2]] كل اللي من التاني وطالع.
 
-[[hostname]] اسم الجهاز بس، زي [[%COMPUTERNAME%]].`,
-            when: "استلام جهاز جديد أو VM. التأكد إنك Admin. إرسال معلومات support.",
-            mistakes: "[[systeminfo]] بطيء. لو محتاج معلومات محددة، استخدم [[ver]]، أو من PowerShell [[Get-CimInstance Win32_OperatingSystem | Select-Object Caption, Version]] (wmic اتشال من ويندوز 11 الجديد)."
+اللي بيحصل لما تكتب [[hello]] من غير امتداد: CMD بيجرّب الامتدادات اللي في [[PATHEXT]] بالترتيب ([[.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;...]])، ولما يلاقي [[hello.js]] بيفتحه بالربط بتاعه. وفوق الربط القديم ده، ويندوز 8 وأحدث بيحفظ اختيار كل يوزر في UserChoice (تحت [[HKCU]]) بـ hash محمي، فمينفعش برنامج يغيّره من ورا ضهرك، ومينفعش [[assoc]] يغيّره.`,
+            when: R`لما ملف بيتفتح غلط، أو قبل ما تكتب [[start file.ext]] في سكربت لحد تاني، أو وانت بتحقق في ملف مشبوه (إيه اللي هيشغّله؟). والتغيير بـ [[assoc]] و [[ftype]] بس في ماكينة بتجهزها كأدمن (VM أو صورة شركة)، مش على جهازك اليومي: اختيار البرنامج الافتراضي لنفسك من Settings.`,
+            mistakes: R`تفتكر [[assoc .txt]] بيقولك البرنامج اللي هيفتح (هو بيقول الربط القديم، والـ UserChoice ممكن يكون غيره). تكتب [[assoc txt]] من غير نقطة فيقول مش موجود. تفلتر بـ [[findstr /b ".md"]] فيجيبلك [[.mdp]] كمان. تشغّل [[assoc .ext=]] (فاضية) فاكر إنها بتعرض، وهي **بتمسح** الربط (من الـ help: Specify nothing for the file type and the command will delete the association). أو تفتكر [[app.js]] هيشتغل بـ node لو دُست عليه.`
           },
           teach: R`## الفكرة
 
-٣ أوامر بتعرّفك انت فين: [[systeminfo]] تقرير كامل عن الجهاز، و [[whoami]] انت داخل بأنهي يوزر، و [[hostname]] اسم الجهاز. اتجربوا في CMD على ويندوز 11 على لابتوب فيه 32GB RAM.
+ويندوز بيعرف يفتح الملف بأنهي برنامج على خطوتين:
+
+~~~text
+.txt   ──assoc──▶   txtfile   ──ftype──▶   "C:\Windows\system32\NOTEPAD.EXE" %1
+الامتداد            نوع الملف              أمر الفتح
+~~~
+
+[[assoc]] (من association) بيوريك الخطوة الأولى، و [[ftype]] (من file type) التانية. الاتنين أوامر جوه CMD (مش ملفات exe)، والقراية منهم آمنة ومش محتاجة أدمن. كل اللي تحت اتشغّل فعلًا في CMD عادي على ويندوز 11 (build 26300)، والتغيير بس من الوثائق.
 
 ---
 
-## ١. [[systeminfo]]
+## ١. [[assoc .txt]]
 
-بياخد ثواني قبل ما يطبع (بيجمع معلومات من حتت كتير)، وبعدين بيطلع حوالي ٤٠ سطر. دي أهم السطور (شلت منها سطور فيها بيانات شخصية زي الإيميل ورقم الترخيص):
-
-~~~text الناتج (جزء)
-Host Name:                     ALI-PC
-OS Name:                       Microsoft Windows 11 Home Single Language
-OS Version:                    10.0.26300 N/A Build 26300
-Original Install Date:         2/28/2026, 1:45:48 AM
-System Boot Time:              10/6/2026, 9:23:44 AM
-System Manufacturer:           ASUSTeK COMPUTER INC.
-System Type:                   x64-based PC
-Processor(s):                  1 Processor(s) Installed.
-Total Physical Memory:         32,175 MB
-Available Physical Memory:     11,523 MB
-Hotfix(s):                     9 Hotfix(s) Installed.
+~~~cmd
+assoc .txt
 ~~~
 
-### نقرا السطور
+~~~text اتشغّل فعلًا · ويندوز 11 · cmd.exe
+.txt=txtfilelegacy
+~~~
 
-| السطر | معناه |
+الشكل [[امتداد=نوع]]. الحروف مش فارقة ([[assoc .TXT]] طبع [[.TXT=txtfilelegacy]])، بس النقطة لازم: [[assoc txt]] طبع [[File association not found for extension txt]].
+
+الاسم [[txtfilelegacy]] غريب، وده أول دليل على الفخ اللي في الخطوة ٦.
+
+---
+
+## ٢. [[assoc .bat]] و [[ftype batfile]]
+
+~~~cmd
+assoc .bat
+ftype batfile
+~~~
+
+~~~text اتشغّل فعلًا · ويندوز 11 · cmd.exe
+.bat=batfile
+batfile="%1" %*
+~~~
+
+نقرا أمر الفتح:
+
+| الحتة | معناها |
 |---|---|
-| [[OS Name]] | نسخة ويندوز ونوعها (Home) |
-| [[OS Version]] | [[10.0]] ثابتة حتى في ويندوز 11، والمهم رقم [[Build]]: من 22000 وطالع يعني ويندوز 11 |
-| [[Original Install Date]] | ويندوز اتسطب امتى |
-| [[System Boot Time]] | آخر مرة الجهاز اشتغل (من هنا تعرف لو «Restart» حصل فعلًا) |
-| [[System Type]] | [[x64]] يعني 64-bit |
-| [[Total Physical Memory]] | الـ RAM كلها بالميجا: 32,175 MB يعني حوالي 31.4 جيجا (بنقسم على 1024) |
-| [[Available Physical Memory]] | الفاضي منها دلوقتي |
-| [[Hotfix(s)]] | عدد تحديثات ويندوز المتسطبة، وتحته رقم كل واحد ([[KB...]]) |
+| [["%1"]] | اسم الملف اللي اتداس عليه، بين علامات تنصيص عشان المسافات |
+| [[%*]] | كل الـ arguments اللي اتبعتت بعده |
 
-### سطور معينة بس
-
-~~~cmd
-systeminfo | findstr /B /C:"OS Name" /C:"Total Physical"
-~~~
-
-~~~text الناتج
-OS Name:                       Microsoft Windows 11 Home Single Language
-Total Physical Memory:         32,175 MB
-~~~
-
-- [[/C:"..."]] دوّر على الكلام ده زي ما هو بالمسافة، وينفع تكررها كذا مرة.
-- [[/B]] (من beginning) السطر لازم **يبدأ** بالكلام ده. ليه؟ جربت [[systeminfo | findstr /C:"OS Version"]] من غير [[/B]]، فطلع سطرين: [[OS Version: 10.0.26300 ...]] وكمان [[BIOS Version: American Megatrends ...]]، لأن كلمة BIOS Version فيها [[OS Version]] في نصها. ومع [[/B]] طلع السطر الأول بس.
-
-> لو ويندوزك بالعربي، أسامي السطور هتطلع بالعربي، والفلتر بالإنجليزي مش هيلاقي حاجة.
+يعني «شغّل الملف نفسه». ونفس الكلام لـ [[.cmd=cmdfile]] و [[.exe=exefile]] و [[.com=comfile]]: كلهم [["%1" %*]]. دول الملفات اللي بتشتغل لوحدها، وعشان كده خطر تفتحها من إيميل.
 
 ---
 
-## ٢. [[whoami]]
+## ٣. [[assoc]] كلها، وفلترها صح
 
 ~~~cmd
-whoami
+assoc | find /c "="
+ftype | find /c "="
 ~~~
 
-~~~text الناتج
-ali-pc\ali
+~~~text اتشغّل فعلًا · ويندوز 11 · cmd.exe
+580
+619
 ~~~
 
-الشكل [[اسم-الجهاز\اسم-اليوزر]]، بحروف سمول. الجزء الأول هنا اسم الجهاز لأنه يوزر محلي، ولو جهاز شركة متوصل بـ domain بيبقى اسم الدومين.
+[[assoc]] من غير حاجة بيطبع كل الروابط، سطر لكل امتداد. فبتدوّر بـ [[findstr]]:
+
+~~~cmd
+assoc | findstr /i /b /c:".js="
+~~~
+
+~~~text اتشغّل فعلًا · ويندوز 11 · cmd.exe
+.js=JSFile
+~~~
+
+| الحتة | ليه |
+|---|---|
+| [[/i]] | من غير فرق بين كابيتال وسمول |
+| [[/b]] | السطر لازم **يبدأ** بيها |
+| [[/c:".js="]] | النص بالظبط ومعاه [[=]]، عشان ميجيبش [[.jse]] أو [[.json]] |
+
+من غير [[=]] الفلتر بيمسك أي امتداد بيبدأ بنفس الحروف: [[assoc | findstr /i /b ".md"]] طلّع امتداد [[.mdp]] لبرنامج تاني، مع إن [[.md]] نفسه مش مربوط خالص.
 
 ---
 
-## ٣. [[hostname]]
+## ٤. [[ftype JSFile]]: الفخ بتاع [[.js]]
 
 ~~~cmd
-hostname
+ftype JSFile
 ~~~
 
-~~~text الناتج
-LAB-PC
+~~~text اتشغّل فعلًا · ويندوز 11 · cmd.exe
+JSFile=C:\Windows\System32\WScript.exe "%1" %*
 ~~~
 
-اسم الجهاز بس، بالحروف زي ما اتكتب. ([[systeminfo]] كتبه [[ALI-PC]] كابيتال، و [[whoami]] كتبه سمول، والتلاتة نفس الاسم.) و [[hostname]] نفس الأمر في لينكس والماك.
+[[.js]] مربوط بـ **Windows Script Host** (برنامج قديم من ويندوز بيشغّل JScript)، مش node. ولأن [[PATHEXT]] فيه [[.JS]]:
+
+~~~text اتشغّل فعلًا: echo %PATHEXT%
+.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.CPL
+~~~
+
+فلو كتبت [[hello]] بس في فولدر فيه [[hello.js]]، أو دُست عليه دبل كليك، هيتفتح بـ WScript. جربت نفس المحرّك في الكونسول بـ [[cscript]] (أخو WScript اللي بيطبع في CMD بدل نافذة):
+
+~~~cmd
+echo console.log("hi from node")> hello.js
+cscript //nologo hello.js
+node hello.js
+~~~
+
+~~~text اتشغّل فعلًا · ويندوز 11 · cmd.exe
+hello.js(1, 1) JavaScript runtime error: 'console' is undefined
+hi from node
+~~~
+
+[[console]] مش موجود هناك لأنه مش node. الدرس: اكتب [[node hello.js]] دايمًا صريحة. ونفس الفكرة بتخلي [[.js]] و [[.vbs]] في مرفق إيميل خطر: دبل كليك = تشغيل.
+
+---
+
+## ٥. لو الحاجة مش موجودة
+
+~~~cmd
+assoc .nosuch
+echo %errorlevel%
+ftype nosuchtype
+echo %errorlevel%
+~~~
+
+~~~text اتشغّل فعلًا · ويندوز 11 · cmd.exe
+File association not found for extension .nosuch
+1
+File type 'nosuchtype' not found or no open command associated with it.
+2
+~~~
+
+[[assoc]] بيرجّع [[1]] و [[ftype]] بيرجّع [[2]]، فتقدر تكتب في سكربت: [[assoc .pdf >nul 2>&1 || echo مفيش برنامج للـ PDF]].
+
+---
+
+## ٦. الفخ: [[assoc]] مش دايمًا هو اللي بيحكم
+
+~~~cmd
+ftype txtfilelegacy
+ftype htmlfile
+~~~
+
+~~~text اتشغّل فعلًا · ويندوز 11 · cmd.exe
+File type 'txtfilelegacy' not found or no open command associated with it.
+htmlfile="C:\Program Files\Internet Explorer\iexplore.exe" %1
+~~~
+
+يعني حسب [[assoc]] و [[ftype]]: [[.txt]] ملوش أمر فتح، و [[.html]] بيفتح بـ Internet Explorer. والحقيقة إن الاتنين بيتفتحوا بـ Notepad الجديد والمتصفح الافتراضي. ليه؟
+
+[[assoc]] و [[ftype]] بيقروا ربط **النظام** القديم ([[HKLM\Software\Classes]]). أما البرنامج اللي اخترته انت من «Open with ‹ Always» أو من Settings فمتسجّل لكل يوزر في مفتاح اسمه **UserChoice**، وده اللي بيكسب. شفته بـ [[reg query]] (قراية بس):
+
+~~~cmd
+reg query HKLM\Software\Classes\.txt /ve
+reg query HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.txt\UserChoice /v ProgId
+~~~
+
+~~~text اتشغّل فعلًا · ويندوز 11 · cmd.exe (الـ ProgId متقصّر)
+HKEY_LOCAL_MACHINE\Software\Classes\.txt
+    (Default)    REG_SZ    txtfilelegacy
+
+HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.txt\UserChoice
+    ProgId    REG_SZ    AppX...
+~~~
+
+وكمان: [[assoc .py]] قال [[File association not found for extension .py]] مع إن Python متسطّب على الجهاز، لأنه اتسطّب لليوزر بس مش للنظام كله. فـ [[assoc]] مفيد يقولك «فيه ربط قديم بيعمل إيه»، بس مش آخر كلمة.
+
+---
+
+## ٧. التغيير (من الوثائق، مش متجرّب)
+
+| الأمر | بيعمل إيه |
+|---|---|
+| [[assoc .log=txtfile]] | يربط [[.log]] بنوع [[txtfile]] |
+| [[ftype PyLab="C:\Python\python.exe" "%1" %*]] | يعمل نوع جديد بأمر فتح |
+| [[assoc .log=]] | **بيمسح** الربط (مش بيعرضه!) |
+
+الاتنين محتاجين CMD كأدمن، وبيغيّروا الجهاز لكل اليوزرز، وأي اختيار في UserChoice هيفضل غالب عليهم. عشان كده مش متشغّلين هنا: الشكل من [[assoc /?]] و [[ftype /?]] وتوثيق Microsoft. لو عايز تجرّب، في Windows Sandbox أو VM. ولنفسك: Settings ‹ Apps ‹ Default apps.
 
 ---
 
@@ -819,20 +675,36 @@ LAB-PC
 
 | عايز | اكتب |
 |---|---|
-| تقرير كامل | [[systeminfo]] |
-| نسخة ويندوز والـ RAM بس | [[systeminfo | findstr /B /C:"OS Name" /C:"Total Physical"]] |
-| رقم النسخة بسرعة | [[ver]] (طبع سطر فيه [[Microsoft Windows]] ورقم النسخة [[10.0.26300.9550]]) |
-| انا مين | [[whoami]] |
-| صلاحياتي | [[whoami /groups]] أو [[whoami /priv]] |
-| اسم الجهاز | [[hostname]] |`,
-          lines: [
-            R`بيجمع معلومات الجهاز في تقرير واحد: اسمه، ونسخة ويندوز ورقم الـ build، والـ CPU، والرام الكلية والفاضية، والتحديثات المتسطبة. بياخد ثواني عشان بيجمعهم. و [[systeminfo | findstr /i memory]] يجيب سطور الرام بس.`,
-            R`بيطبع اليوزر اللي CMD شغال بيه في شكل [[computer\username]] (أو [[DOMAIN\username]] على جهاز شركة). مهم قبل أمر محتاج صلاحيات، أو لما تفتح CMD بيوزر تاني وتتلخبط انت مين. و [[whoami /groups]] يوريك الجروبات.`,
-            R`بيطبع اسم الجهاز بس، وهو نفس [[%COMPUTERNAME%]]. ده الاسم اللي الأجهزة التانية بتشوفه على الشبكة، واللي هتكتبه في [[\\name\share]] أو [[mstsc /v:name]].`,
-          ],
-          sol: R`الأسرع: [[systeminfo | findstr /B /C:"OS Name" /C:"OS Version" /C:"Total Physical Memory"]]. هيطلع زي [[OS Name: Microsoft Windows 11 Pro]] و [[OS Version: 10.0.26100 N/A Build 26100]] و [[Total Physical Memory: 16,097 MB]].
+| الامتداد مربوط بإيه | [[assoc .txt]] |
+| النوع بيتفتح بإيه | [[ftype txtfile]] |
+| دوّر على امتداد في اللستة | [[assoc | findstr /i /b /c:".js="]] |
+| اختيار اليوزر الحقيقي | [[reg query ...\FileExts\.txt\UserChoice /v ProgId]] |
+| غيّر (أدمن، VM بس) | [[assoc .ext=type]] و [[ftype type=command]] |
 
-متتلخبطش إن ويندوز 11 مكتوب نسخته 10.0: رقم الـ Build من 22000 وطالع يعني ويندوز 11. و systeminfo بياخد ثواني قبل ما يطبع، ده طبيعي. ولو ويندوزك عربي الـ labels هتبقى بالعربي، فـ findstr بالإنجليزي مش هيلاقي حاجة، شغّله من غير فلتر ودوّر بعينك.`
+المقابل: في PowerShell مفيش cmdlet مباشر، بتستخدم [[cmd /c assoc .txt]] أو تقرا الـ registry بـ [[Get-ItemProperty]]. وفي لينكس [[xdg-mime query default text/plain]]، وفي الماك [[duti]] (برنامج منفصل).`,
+          lines: [
+            R`بيطبع الامتداد ده مربوط بأنهي نوع ملف، بالشكل [[امتداد=نوع]]. على ويندوز 11 طلع [[.txt=txtfilelegacy]]، ودي أول علامة إن الربط القديم مش هو اللي بيفتح الملف فعلًا (الـ UserChoice بتاع اليوزر هو اللي بيكسب).`,
+            R`[[.bat=batfile]]: ملفات batch ليها نوع اسمه [[batfile]]. اكتب الامتداد بالنقطة، والحروف مش فارقة.`,
+            R`بيطبع أمر الفتح بتاع النوع: [[batfile="%1" %*]]، يعني شغّل الملف نفسه ([[%1]]) بكل الـ arguments ([[%*]]). مفيش برنامج وسيط، وده سبب إن [[.bat]] في إيميل خطر.`,
+            R`[[assoc]] لوحده بيطبع كل الروابط (مئات السطور)، و [[findstr /i /b /c:".js="]] بيسيب السطر اللي بيبدأ بـ [[.js=]] بالظبط. الـ [[=]] مهمة عشان ميجيبش [[.jse]] و [[.json]].`,
+            R`طبع [[JSFile=C:\Windows\System32\WScript.exe "%1" %*]]: ملفات [[.js]] بتتفتح بـ Windows Script Host مش node. فدبل كليك على [[app.js]] (أو كتابة [[app]] بس، لأن [[.JS]] في [[PATHEXT]]) مش هيشغّل كود node.`,
+            R`امتداد مش مربوط بحاجة بيطبع [[File association not found for extension .nosuch]] و [[errorlevel]] [[1]]. ولو [[ftype]] على نوع مش موجود، الرسالة [[File type '...' not found or no open command associated with it.]] و [[errorlevel]] [[2]].`,
+          ],
+          sol: R`اتشغّل في CMD عادي على ويندوز 11:
+
+[[assoc .bat]] ← [[.bat=batfile]] و [[ftype batfile]] ← [[batfile="%1" %*]]. و [[assoc .cmd]] ← [[.cmd=cmdfile]] و [[ftype cmdfile]] ← [[cmdfile="%1" %*]]. و [[assoc .js]] ← [[.js=JSFile]] و [[ftype JSFile]] ← [[JSFile=C:\Windows\System32\WScript.exe "%1" %*]]. و [[assoc .vbs]] ← [[.vbs=VBSFile]] و [[ftype VBSFile]] ← [[VBSFile="%SystemRoot%\System32\WScript.exe" "%1" %*]].
+
+الأربعة خطر في إيميل: [[.bat]] و [[.cmd]] بيشتغلوا بنفسهم، و [[.js]] و [[.vbs]] بيشغّلهم Windows Script Host، يعني دبل كليك = الكود اشتغل على جهازك. والتغيير ([[assoc .ext=type]]) من الوثائق ومحتاج أدمن، فمش متجرّب هنا.`,
+          ci: [
+            { os: [R`windows`], sh: R`cmd`, run: R`@echo off
+assoc .bat
+ftype batfile
+assoc .nosuch_lab
+echo assoc missing=%errorlevel%
+ftype nosuchtype_lab
+echo ftype missing=%errorlevel%
+exit /b 0`, expect: [R`.bat=batfile`, R`batfile="%1" %*`, R`File association not found for extension .nosuch_lab`, R`assoc missing=1`, R`ftype missing=2`] },
+          ],
         }
       ]
     }

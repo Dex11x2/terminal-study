@@ -4,6 +4,14 @@ MORE("python", [
       t: "سكربتات محترمة",
       l: 3,
       n: "السكربت يتسطّب كأمر، أو يشيل الـ dependencies بتاعته جواه، ويتجدول، ويستحمل الأخطاء، ويشتغل بالتوازي، ويتختبر، وتعرف امتى Python أصلًا",
+      projects: [
+        { lvl: 'صغير', t: R`أمر من سكربت قديم`, what: R`خد أي سكربت كتبته في التاب وحوّله لحزمة بـ [[pyproject.toml]] و [[[project.scripts]]] و [[--version]]، وسطّبه بـ [[pipx install .]].`, done: R`الأمر شغال من أي فولدر من غير venv متفعّل، و [[--version]] من الـ metadata، وفيه اختبار بيشغّل الأمر بعد التسطيب.` },
+        { lvl: 'صغير', t: R`سكربت ملف واحد بيتشارك`, what: R`سكربت PEP 723 (مكتبة أو اتنين بنسخ ثابتة) تبعته لزميل في ملف واحد ويشغّله بـ [[uv run]] من غير أي تعليمات تانية.`, done: R`زميل على جهاز تاني شغّله من أول مرة، والـ README سطر واحد.` },
+        { lvl: 'متوسط', t: R`مهمة مجدولة متينة`, what: R`سكربت (backup أو تقرير) متجدول على جهازك (cron أو Task Scheduler) فيه: قفل ضد التداخل، و retry للشبكة، ولوج بـ rotation، وإيميل لما يفشل بس.`, done: R`اشتغل أسبوع لوحده واللوج فيه سطر لكل تشغيل، وفشل متعمّد (فصلت النت) بعت إيميل واحد، وتشغيل يدوي وقت المجدول اتمنع بالقفل.` },
+        { lvl: 'متوسط', t: R`فاحص روابط بالتوازي`, what: R`[[linkcheck URL]] بيجيب صفحة، ويطلّع كل اللينكات فيها، ويفحصهم بالتوازي ([[ThreadPoolExecutor]]) بـ retry للأخطاء المؤقتة بس، ويطبع المكسور.`, done: R`على صفحة محلية فيها ٣٠ لينك (منهم ٤٠٤ وواحد بطيء) خلص في ثواني، والمكسور بالسبب، والـ exit code ١ لو فيه مكسور.` },
+        { lvl: 'كبير', t: R`[[syncbot]]: مزامنة بيانات من API لملفات`, what: R`أداة بتتسطّب بـ pipx: بتسحب بيانات من API (سيرفر محلي تكتبه بـ [[http.server]] للتجربة) صفحة صفحة، وتحفظها JSONL، وبتفتكر آخر حاجة اتسحبت في ملف حالة فالتشغيل الجاي يكمّل من مكانه. فيها retry و backoff و jitter، وتوازي محدود، وقفل ضد التداخل، ولوج بـ rotation، و [[--dry-run]]، واختبارات بالسيرفر المزيّف (أخطاء ٥٠٣ و ٤٢٩ و timeout)، وتعليمات جدولة لويندوز ولينكس.`, done: R`أول تشغيل بيسحب كله، والتاني بيسحب الجديد بس، وقطع السيرفر في النص وتشغيل تاني بيكمّل من غير تكرار ولا نقص (عدد السطور = عدد العناصر في السيرفر)، والاختبارات خضرا في أقل من ٥ ثواني.`, ext: R`زوّد تصدير CSV، وإشعار Telegram لما يخلص (درس «telegram_bot.py»)، وشغّله في Docker.` },
+        { lvl: 'فكرة', t: R`عدّتك اليومية كحزمة`, what: R`اجمع أحسن ٣–٥ سكربتات عملتهم في التاب في حزمة واحدة بأمر رئيسي وأوامر فرعية، بمعايير الوحدة دي كلها.`, done: R`[[pipx install git+https://...]] من الـ repo بتاعك بيسطّبها على أي جهاز، وفيه CI بيشغّل الاختبارات على ويندوز ولينكس.`, ext: R`انشرها على TestPyPI وبعدين PyPI بتاع حقيقي لو حد غيرك هيستخدمها.` },
+      ],
       items: [
         {
           cmd: "[project.scripts] و pipx",
@@ -27,6 +35,13 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"`,
           try: R`اعمل الشكل ده: [[tidy-tools/pyproject.toml]] (المثال) و [[tidy-tools/src/tidy_tools/__init__.py]] فاضي، وانسخ [[organize_downloads.py]] لـ [[src/tidy_tools/organize.py]]، واعمل [[dupes.py]] فيه [[main()]] بسيطة. سطّبه بـ [[pip install -e ./tidy-tools]] في venv وجرّب [[tidy --help]]. وبعدين [[pipx install ./tidy-tools]] وشوف [[pipx list]]. وبعدين ضيف أمر [[hi]] مكتوب بـ click.`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** في [[pyproject.toml]] كتبت [[tidy = "tidy.cli:mian"]] (غلطة في [[main]])، و [[pip install -e .]] عدّى عادي. شغّل [[tidy]].`, done: R`التسطيب عدّى وعمل [[tidy.exe]] (أو [[tidy]] على لينكس)، بس التشغيل وقع بـ [[ImportError: cannot import name 'mian' from 'tidy.cli']]. يعني الغلطة دي مبتبانش غير وقت التشغيل، فاختبار بسيط بيشغّل الأمر بعد التسطيب بيمسكها.` },
+            { lvl: 'تطبيق', t: R`**اقرا:** بعد [[pip install -e .]] افتح فولدر [[.venv\Scripts]] (أو [[.venv/bin]]) ولاقي ملف الأمر. على لينكس اقراه بـ [[cat]].`, done: R`على لينكس الملف سكربت صغير أوله shebang بيشاور على Python بتاع الـ venv وبيعمل import للدالة ويناديها، وعلى ويندوز [[tidy.exe]] launcher بيعمل نفس الحاجة. فهمت ليه الأمر بيشتغل من غير تفعيل لو كتبت مساره.` },
+            { lvl: 'تطبيق', t: R`**قارن:** سطّب نفس الحزمة مرة بـ [[pip install -e .]] ومرة بـ [[pip install .]]، وعدّل سطر في الكود من غير ما تسطّب تاني.`, done: R`مع [[-e]] التعديل ظهر على طول، ومن غيرها لأ لحد ما تسطّب تاني (الكود اتنسخ لـ site-packages). وكتبت إن [[-e]] للتطوير و [[pipx install .]] للاستخدام اليومي.` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** من وثائق packaging.python.org لاقي إزاي تحط نسخة الحزمة في مكان واحد وتقراها من الكود ([[importlib.metadata.version("tidy-demo")]])، وزوّد [[tidy --version]].`, done: R`[[tidy --version]] بيطبع [[0.1.0]] من [[pyproject.toml]]، ولما غيّرت الرقم وسطّبت تاني اتغيّر من غير ما تلمس الكود.` },
+            { lvl: 'تحدي', t: R`**ابني:** حزمة فيها أمرين ([[tidy]] و [[tidy-report]]) ومكتبة واحدة مشتركة، و [[[project.optional-dependencies]]] فيه [[dev = ["pytest"]]]، و [[pipx install .]] (أو [[uv tool install .]]).`, done: R`الأمرين شغالين من أي فولدر من غير venv متفعّل، و [[pip install -e ".[dev]"]] بيسطّب pytest، و [[pipx uninstall]] بيشيلهم من غير ما يسيب حاجة.` },
+          ],
           deep: {
             why: R`سكربت في فولدر بتشغّله بـ [[~/scripts/.venv/bin/python ~/scripts/organize.py]] محدش بيفتكره. أمر اسمه [[tidy]] موجود في كل ترمنال، وبيتسطّب على جهاز جديد بأمر واحد من git، وكل dependencies بتاعته معزولة.`,
             how: R`[[[project] ]]: الاسم والنسخة والـ dependencies ([[dependencies = ["click>=8"] ]] مثلًا). و [[requires-python]] بيمنع التسطيب على Python أقدم.
@@ -334,6 +349,12 @@ for name in packages:
 Console().print(table)`,
           try: R`سطّب uv ([[pipx install uv]] أو من موقعه). شغّل [[uv run pypi_versions.py]] مرتين بـ [[time]]. وبعدين [[chmod +x pypi_versions.py]] و [[./pypi_versions.py typer no-such-pkg-xyz-123]]. وجرّب [[uv init --script new_tool.py]] و [[uv add --script new_tool.py httpx]] وبص على أول الملف.`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** سكربت أوله [[# /// script]] وفيه [[# dependencies = ["six==1.16.0"]]] و [[# requires-python = ">=3.12"]]. شغّله بـ [[uv run s723.py]] وبعدين بـ [[python s723.py]] في venv فاضي.`, done: R`[[uv run]] عمل بيئة مؤقتة وسطّب six وطبع [[six 1.16.0]] ونسخة Python اللي اختارها (uv 0.10.7 اختار 3.12.12 عندي لأنها مطابقة للشرط)، و [[python]] العادي وقع بـ [[ModuleNotFoundError]] لأن الـ metadata ده تعليق بالنسبة له.` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** من [[uv add --help]] لاقي إزاي تزوّد مكتبة لسكربت PEP 723 من الترمنال ([[--script]])، وجرّب [[uv add --script s723.py requests==2.32.3]].`, done: R`القسم في أول السكربت اتحدّث لوحده وبقى فيه [[requests==2.32.3]]، ومحتاجتش تكتبه بإيدك، و [[uv run]] بعدها شغال.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** كتبت القسم بـ [[# ///script]] (من غير مسافة) أو نسيت [[# ///]] اللي بيقفل. شغّل [[uv run]].`, done: R`القسم اتجاهل أو طلع خطأ والمكتبة متسطّبتش، فعرفت إن الشكل لازم يبقى بالظبط زي الـ PEP: [[# /// script]] وسطور كلها بتبدأ بـ [[#]] و [[# ///]] لوحدها.` },
+            { lvl: 'تحدي', t: R`**ابني:** سكربت ملف واحد [[weather.py]] بـ PEP 723 (httpx بنسخة ثابتة) و argparse، وبيشتغل على أي جهاز عليه uv من غير أي تجهيز، ومعاه shebang [[#!/usr/bin/env -S uv run --script]] على لينكس.`, done: R`على لينكس [[./weather.py Cairo]] بيشتغل بعد [[chmod +x]]، وعلى ويندوز [[uv run weather.py Cairo]]، وتشغيله تاني أسرع بكتير (البيئة متكيّشة).` },
+          ],
           deep: {
             why: R`السكربت الصغير اللي محتاج مكتبة واحدة كان بيعمل واحدة من اتنين: يا تسطّب المكتبة على النظام (ممنوع على أوبونتو الجديد، درس «externally-managed-environment»)، يا venv لكل سكربت. PEP 723 بيخلي السكربت مكتفي بنفسه.`,
             how: R`البلوك لازم يبدأ بـ [[# /// script]] بالظبط وينتهي بـ [[# ///]]، وكل سطر بينهم بيبدأ بـ [[#]]. اللي جواه TOML: [[requires-python]] و [[dependencies]] بنفس شكل pyproject.toml. ولأنهم تعليقات، Python العادي بيتجاهلهم.
@@ -581,6 +602,13 @@ schtasks /Create /TN "Backup" /SC DAILY /ST 02:00 /TR "C:\Users\sara\scripts\.ve
 schtasks /Query /TN "Backup" /V /FO LIST
 schtasks /Run /TN "Backup"`,
           try: R`حاكي بيئة cron من غير ما تستنى: من الـ home شغّل [[env -i HOME=$HOME PATH=/usr/bin:/bin /bin/sh -c "python3 uptime_check.py urls.txt"]] وشوف الرسالة. وبعدين نفس الأمر بـ [[cd /full/path && ...]]. وجرّب الـ lock: [[flock -n /tmp/u.lock sleep 30 &]] وبعدها على طول [[flock -n /tmp/u.lock echo second; echo $?]]. ولو عايز cron بجد: سطر [[* * * * * date >> /tmp/cron-test.txt]] واستنى دقيقتين. ده كله لينكس (و WSL)؛ على ويندوز جرّب أوامر schtasks اللي في المثال على سكربت تجربة، وامسح الـ task بعدها بـ [[schtasks /Delete /TN "Backup" /F]].`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** إمتى بيشتغل كل سطر: [[*/15 * * * *]] و [[0 3 * * 1]] و [[30 8 1 * *]] و [[0 9-17 * * 1-5]]؟`, done: R`كل ربع ساعة، و ٣ الفجر كل اتنين، و ٨:٣٠ أول كل شهر، وكل ساعة من ٩ لـ ٥ أيام الاتنين للجمعة. واتأكدت بـ [[man 5 crontab]] إن الحد صفر والاتنين واحد.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** السكربت شغال من الترمنال وفي cron مبيعملش حاجة. اكتب سطر cron بيحل التلات أسباب المشهورة: [[PATH]] قصير، والفولدر الحالي، والناتج اللي محدش بيشوفه.`, done: R`السطر فيه المسار الكامل لـ Python الـ venv والسكربت، وبيعتمد على [[Path(__file__).parent]] مش الفولدر الحالي، و [[>> ~/logs/job.log 2>&1]] في آخره، وبعد أول تشغيل اللوج فيه الناتج والأخطاء.` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** في [[man 5 crontab]] دوّر على معنى [[%]] في سطر الأمر. ليه [[date +%F]] جوه crontab بيبوظ؟`, done: R`[[%]] في سطر cron بتتحوّل لسطر جديد والباقي بيروح stdin، فلازم تكتبها [[\%]]، أو تحط الأمر كله في سكربت وتنادي السكربت. واخترت السكربت.` },
+            { lvl: 'تطبيق', t: R`**ابني:** على ويندوز اعمل مهمة بـ [[schtasks /Create /SC DAILY /ST 09:00 /TN "lab\py-report" /TR "..."]] بتشغّل سكربت بـ Python الـ venv، وبعدين [[schtasks /Query /TN "lab\py-report" /V /FO LIST]] و [[schtasks /Run]] و [[schtasks /Delete]].`, done: R`المهمة اتعملت وظهرت في Task Scheduler، و [[/Run]] شغّلها وكتبت اللوج، و [[Last Result]] بقى [[0]]، وبعدين مسحتها بـ [[/Delete /F]].` },
+            { lvl: 'تحدي', t: R`**ابني:** قفل عشان التشغيل مايتداخلش: السكربت بيعمل [[job.lock]] بـ [[open(path, "x")]] في الأول ويمسحه في [[finally]]، ولو موجود ومن أكتر من ساعة يعتبره قديم.`, done: R`تشغيلتين في نفس الوقت: التانية بتطبع «شغال بالفعل» وتخرج بـ ٠، ولو قتلت الأولى بالعافية القفل القديم بيتشال بعد ساعة، والتشغيل العادي بيمسح القفل حتى لو حصل exception.` },
+          ],
           deep: {
             why: R`سكربت الـ backup والتنضيف ومراقبة المواقع فايدتهم إنهم يشتغلوا من غير ما تفتكر. وأغلب مشاكل «السكربت شغال لما أشغّله وبيفشل في cron» سببها واحد: البيئة مختلفة.`,
             how: R`الميعاد: [[0 2 * * *]] الدقيقة 0 الساعة 2 كل يوم. [[*/5 * * * *]] كل 5 دقايق. [[0 9 * * 1-5]] 9 الصبح من الاتنين للجمعة. [[0 3 1 * *]] أول كل شهر. الموقع crontab.guru بيشرح أي سطر.
@@ -872,6 +900,13 @@ if __name__ == "__main__":
     sys.exit(main())`,
           try: R`محتاج سيرفر بيفشل ساعات. اعمل [[flaky.py]] بـ [[http.server]] بيرجّع 503 لأول طلبين و 200 للتالت، و 404 على [[/missing]] و 500 دايمًا على [[/boom]] (الكود في الحل). شغّل [[python3 fetch_retry.py http://localhost:8001/flaky]]، وبعدين على [[/missing]] و [[/boom]]، وبعد كل واحدة [[echo $?]] (في PowerShell [[$LASTEXITCODE]]). على ويندوز اكتب [[127.0.0.1]] بدل [[localhost]]: السيرفر سامع على 127.0.0.1 بس، وويندوز بيجرب [[::1]] الأول، فكل طلب لـ localhost كان بياخد ثانيتين زيادة (قستها: 2.3 ثانية بدل 0.3).`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**مسألة:** [[delay(attempt) = min(30, 1 * 2 ** attempt)]]. اكتب الأرقام للمحاولات من ٠ لـ ٥، ومجموع الانتظار لو كلهم فشلوا.`, done: R`[[1 2 4 8 16 30]] والمجموع [[61]] ثانية. وعرفت إن الحد الأقصى ([[cap]]) هو اللي بيمنع المحاولة العاشرة تستنى ربع ساعة.` },
+            { lvl: 'تطبيق', t: R`**اشرحها:** ليه بنزوّد jitter ([[random.uniform(0, d)]])؟ تخيّل ١٠٠٠ عميل وقعوا في نفس الثانية. اكتب ٣ سطور.`, done: R`كتبت إن من غير jitter الألف هيرجعوا مع بعض بعد ١ و ٢ و ٤ ثواني بالظبط ويوقّعوا السيرفر تاني، وإن الـ jitter بيوزّعهم على الفترة، وجرّبتها بطباعة ١٠ أرقام بـ seed ثابت.` },
+            { lvl: 'تطبيق', t: R`**محاكاة:** دالة مزيّفة بتفشل أول ٣ مرات بـ [[ConnectionError]] وبعدين تنجح. شغّل الـ retry عليها وزيّف [[time.sleep]] بلستة بتسجّل الانتظار.`, done: R`نجحت في المحاولة الرابعة، ولستة الانتظار [[[1, 2, 4]]] (من غير jitter)، والاختبار خلص في أقل من ثانية.` },
+            { lvl: 'تطبيق', t: R`**اكتب اختبار:** الـ retry ميعيدش على ٤٠٤ أو ٤٠١، ويعيد على ٥٠٣ و ٤٢٩ و timeout. ولو ٤٢٩ فيها [[Retry-After: 5]] يستنى ٥ بالظبط.`, done: R`٦ حالات بـ parametrize خضرا، وعدد النداءات لـ ٤٠٤ = ١ ولـ ٥٠٣ = عدد المحاولات، وانتظار الـ ٤٢٩ = ٥.` },
+            { lvl: 'تحدي', t: R`**قارن:** نفس الـ retry بإيدك وبمكتبة [[tenacity]] (نسخة ثابتة). قارن عدد السطور ووضوح الشروط.`, done: R`الاتنين بيعدّوا نفس الاختبارات، وكتبت إمتى تكتبه بإيدك (سكربت ملف واحد) وإمتى المكتبة (شروط كتير ولوج لكل محاولة).` },
+          ],
           deep: {
             why: "سكربت بيقع كل ما الـ API يتأخر ثانية بيصحّيك بالليل على الفاضي. وسكربت بيعيد للأبد على 404 بيضيّع وقت ويضايق السيرفر. والتوازن بينهم بيتكتب مرة واحدة ويتستخدم في كل سكربت.",
             how: R`[[is_transient]]: [[HTTPError]] لازم يتفحص الأول لأنه ابن [[URLError]]. 5xx = مشكلة عند السيرفر ممكن تروح. 429 = «بطّل» وغالبًا بعدها ينفع. أي 4xx تاني = طلبك غلط ومش هيصلح نفسه.
@@ -1246,6 +1281,12 @@ with ThreadPoolExecutor(max_workers=10) as pool:
     print([status for _, status in pool.map(check, urls)][:4])`,
           try: R`محتاج روابط بطيئة: سيرفر محلي فيه [[/slow]] بيستنى ثانية قبل ما يرد (عدّل [[flaky.py]] من الدرس اللي فات: [[import time]] في أوله، و [[time.sleep(1)]] لو [[self.path.startswith("/slow")]]). اعمل urls.txt فيه 10 روابط [[http://127.0.0.1:8001/slow?n=1]] لـ [[/slow?n=10]] ورابط 404 ([[/missing]]) ورابط على بورت مقفول ([[http://127.0.0.1:1/]]). شغّل وقارن الوقتين. وبعدين غيّر [[max_workers]] لـ 2 وشوف.`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** على ويندوز سكربت فيه [[with ProcessPoolExecutor(2) as ex: print(list(ex.map(sq, range(5))))]] على مستوى الملف من غير [[if __name__ == "__main__":]].`, done: R`على ويندوز وقع بـ [[RuntimeError]] فيه [[An attempt has been made to start a new process before the current process has finished its bootstrapping phase.]]، وعلى [[python:3.12-slim]] اشتغل وطبع [[[0, 1, 4, 9, 16]]] لأن الـ start method هناك [[fork]] وعلى ويندوز [[spawn]]. حطيت الكود تحت الـ guard فبقى شغال على الاتنين.` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** دالة CPU (مجموع مربعات لـ ٥ مليون) ٤ مرات: عادي، و [[ThreadPoolExecutor]]، و [[ProcessPoolExecutor]]. ودالة بتستنى ([[time.sleep(1)]]) ٤ مرات بنفس الطرق.`, done: R`جدول ٦ أرقام: الـ CPU اتسرّع مع الـ processes بس، والـ sleep اتسرّع مع الاتنين (٤ ثواني بقت ١ تقريبًا). وكتبت القاعدة: threads للانتظار و processes للحساب.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[ex.map(f, items)]] و [[as_completed([ex.submit(f, i) for i in items])]] على مهام وقتها مختلف. الترتيب في كل واحد؟ ولو مهمة رمت exception؟`, done: R`[[map]] بيرجّع بترتيب الإدخال، و [[as_completed]] بترتيب اللي خلص الأول. والـ exception في [[map]] بتطلع لما الـ loop يوصل للعنصر ده، ومش هتاخد نتايج اللي بعده في نفس الـ loop، وفي [[future.result()]] بتطلع للمهمة دي بس، فمسكتها لكل مهمة لوحدها.` },
+            { lvl: 'تحدي', t: R`**ابني:** [[download_all.py urls.txt --workers 8]] بيحمّل بالتوازي مع progress ([[3/20 done]])، وكل فشل بيتسجّل ومبيوقّفش الباقي، و [[Ctrl+C]] بيلغي اللي لسه مابدأش ([[ex.shutdown(cancel_futures=True)]]).`, done: R`٢٠ رابط محلي (سيرفر بـ sleep عشوائي) خلصوا في وقت قريب من [[المجموع / 8]]، والفاشلين في ملخص آخر، و [[Ctrl+C]] بيوقف في ثواني من غير traceback طويل.` },
+          ],
           deep: {
             why: "مراقبة ٢٠٠ موقع، أو تحميل ٥٠٠ صورة، أو تشيّك على ١٠٠٠ رابط في sitemap: نفس الكود بالـ threads بيخلص في جزء من الوقت.",
             how: R`[[pool.submit(check, u)]] بيبعت الشغلانة لـ worker ويرجّع [[Future]] على طول (وعد بنتيجة). و [[as_completed(futures)]] بيدّيك كل future أول ما يخلص، فالنتايج بتظهر بترتيب الخلصان مش ترتيب الـ list. [[fut.result()]] بيرجّع اللي الدالة رجّعته، أو يرمي الـ exception اللي حصل جواها.
@@ -1470,6 +1511,657 @@ Python فيه **GIL** (Global Interpreter Lock): thread واحد بس بيشغّ
 وعلى ويندوز: [[threads: 12 urls in 3.17s]] و [[one by one: 12.03s]]. الفرق كله من البورت المقفول: ويندوز بيستنى حوالي ثانيتين قبل ما يقول [[WinError 10061]] (لينكس بيرد في لحظة)، فالرابط ده لوحده بقى أبطأ من أي رابط slow.`
         },
         {
+          cmd: "ruff check و ruff format",
+          title: "ruff: linter و formatter في أداة واحدة، وأسرع من black بكتير",
+          learn: R`تشغّل [[ruff check]] تلاقي import مش مستخدم و except فاضي و default بيتغيّر، وتصلّح اللي ينفع بـ [[--fix]]، وتنسّق الكود كله بـ [[ruff format]]، وتختار القواعد في [[pyproject.toml]]، وتحطها في CI.`,
+          out: R`كود متنسّق بنفس الشكل عند كل الفريق من غير نقاش، وغلطات زي [[except:]] و [[def f(x=[])]] بتتمسك قبل الـ review، والفحص بياخد أقل من ثانية.`,
+          use: {
+            work: R`أي فريق Python النهارده عنده linter و formatter في CI. ruff بيعمل شغل flake8 و isort و pyupgrade و black مع بعض، فملف إعدادات واحد بدل ٤ أدوات.`,
+            prog: R`الـ formatter بيشيل كل نقاش «المسافات فين» من الـ review، والـ linter بيمسك نوع باجات معروف (زي الـ default اللي بيتغيّر) من غير ما تشغّل الكود.`,
+          },
+          desc: R`**ruff** أداة واحدة فيها حاجتين:
+
+[[ruff check]]: **linter**، بيقرا الكود ويدوّر على مشاكل معروفة، كل واحدة ليها كود: [[F401]] import مش مستخدم، و [[E722]] [[except:]] من غير نوع، و [[B006]] قيمة افتراضية بتتغيّر ([[def f(x=[])]])، و [[SIM115]] [[open()]] من غير [[with]]. وفيه حاجات بيصلّحها لوحده بـ [[--fix]].
+
+[[ruff format]]: **formatter**، بيعيد كتابة الكود بشكل ثابت (المسافات، وعلامات التنصيص، والسطور الطويلة) زي black بالظبط تقريبًا. مبيغيّرش المعنى، بيغيّر الشكل.
+
+والاتنين مكتوبين بـ Rust فسريعين جدًا: على نسخة من المكتبة القياسية (١٥٣ ملف، ١٢٩,١٠٧ سطر) [[ruff format --check]] خد ٠.٢٩ ثانية و [[black --check]] خد ١٧.٦٥ ثانية على نفس الجهاز. كل اللي تحت اتشغّل فعلًا بـ [[ruff==0.17.3]] و [[black==26.10.1]] على Python 3.14 (ويندوز) و Python 3.12 ([[python:3.12-slim]]).
+
+mypy (درس «mypy») بيفحص **الأنواع**، و ruff بيفحص **الأنماط**. مكمّلين لبعض، والاتنين في CI.`,
+          example: R`python -m pip install "ruff==0.17.3"
+ruff check .
+ruff check --output-format concise --statistics .
+ruff check --fix .
+ruff format --diff .
+ruff format .
+ruff format --check .
+ruff rule B006`,
+          lines: [
+            R`بيسطّب ruff في الـ venv بنسخة ثابتة، لأن كل نسخة ممكن تزوّد قواعد أو تغيّر الافتراضي، ومش عايز CI يفشل فجأة يوم ما نسخة جديدة تنزل.`,
+            R`بيفحص كل ملفات Python في الفولدر واللي تحته. لكل مشكلة بيطبع الكود والوصف، والسطر نفسه بسهم تحت الحتة الغلط، و [[help:]] بيقول التصليح، وفي الآخر [[Found 7 errors.]] والـ exit code ١.`,
+            R`نفس الفحص بس سطر لكل مشكلة ([[messy.py:1:8: F401 [*] $__btos$__bt imported but unused]]) و [[--statistics]] بيعد كل كود. ده الشكل اللي تبدأ بيه على مشروع قديم عشان تعرف أكتر حاجة متكررة.`,
+            R`بيصلّح لوحده اللي عليه [[[*]]] (زي ترتيب الـ imports وشيل اللي مش مستخدم)، ويطبع [[Found 7 errors (3 fixed, 4 remaining).]]. اللي ممكن يغيّر المعنى مبيعملهوش إلا بـ [[--unsafe-fixes]].`,
+            R`بيوريك التنسيق اللي هيعمله كـ diff ([[-]] القديم و [[+]] الجديد) من غير ما يلمس الملفات. ابدأ بيه عشان تشوف قبل ما توافق.`,
+            R`بينسّق كل الملفات فعلًا ويطبع [[1 file reformatted]]. اعمله commit لوحده عشان الـ diff بتاع التنسيق ميتلخبطش مع تعديلات حقيقية.`,
+            R`للـ CI: مبيغيّرش حاجة، بس بيطبع [[1 file would be reformatted]] ويخرج بـ ١ لو فيه ملف مش متنسّق، فـ PR مش متنسّق بيقع.`,
+            R`بيطبع شرح القاعدة كامل: [[# mutable-argument-default (B006)]]، وجاية من أنهي أداة ([[flake8-bugbear]])، وبتعمل إيه، وليه وحشة، ومثال قبل وبعد. أي كود مش فاهمه اسأل عنه بالأمر ده.`,
+          ],
+          try: R`اعمل [[messy.py]] اللي في الشرح، وشغّل [[ruff check messy.py]] واقرا كل مشكلة. بعدين [[ruff check --fix messy.py]] وشوف فاضل كام، وصلّح الباقي بإيدك. وبعدين [[ruff format --diff messy.py]] و [[ruff format messy.py]]. وفي الآخر جرّب [[ruff check --select E,F messy.py]] وقارن القواعد اللي ظهرت.`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** على [[messy.py]] اللي في الشرح، توقّع [[ruff check]] هيلاقي كام مشكلة وأنهي أكواد، قبل ما تشغّل. وبعدين [[ruff check --statistics messy.py]].`, done: R`٧ مشاكل: [[F401]] مرتين و [[I001]] و [[B006]] و [[SIM115]] و [[F841]] و [[E722]]، و [[--statistics]] طبعهم متجمّعين ([[2	F401	[*] unused-import]] فوق). و ٣ بس عليهم [[[*]]].` },
+            { lvl: 'سريع', t: R`**قارن:** نفس الملف بـ [[ruff check]] (القواعد الافتراضية في 0.17.3) وبـ [[ruff check --select E,F]].`, done: R`الافتراضي طلّع [[I001]] و [[B006]] و [[SIM115]] ومطلّعش [[E701]] (سطرين في سطر بـ [[:]]) ولا [[E721]] ([[type(x) == list]])، و [[--select E,F]] طلّع العكس (٨ مشاكل منهم [[E401]] و [[E701]] مرتين و [[E721]]). فاكتب القواعد اللي عايزها صريحة في [[pyproject.toml]] بدل ما تعتمد على الافتراضي.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[ruff check --fix]] صلّح ٣ وساب ٤. صلّح الأربعة بإيدك: [[B006]] و [[SIM115]] و [[F841]] و [[E722]]، من غير [[noqa]].`, done: R`[[cache=None]] وجواها [[if cache is None: cache = {}]]، و [[with open(path, encoding="utf-8") as f:]]، وشلت [[unused]]، و [[except (OSError, json.JSONDecodeError):]] بدل [[except:]]. و [[ruff check]] بقى [[All checks passed!]] والسكربت لسه بيطبع نفس الناتج.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** ملف فيه [[from typing import List, Optional]] و [[def f(x: Optional[int]) -> List[int]:]]. شغّل [[ruff check --select UP,I]] وبعدين [[--fix]].`, done: R`طلّع [[UP035]] و [[UP045]] ([[Use $__btX | None$__bt]]) و [[UP006]] و [[I001]]، وبعد [[--fix]] السطر بقى [[def f(x: int | None) -> list[int]:]] والـ import اتشال خالص لأنه بقى مش مستخدم. يعني ruff حدّث الكود لصيغة 3.10+ لوحده.` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** انسخ ملفات [[.py]] اللي في فولدر المكتبة القياسية ([[sysconfig.get_path("stdlib")]]) لفولدر تجربة، وقيس [[ruff format --check --no-cache]] و [[black --check]] و [[ruff check --no-cache]] بـ [[time.perf_counter()]] حوالين [[subprocess.run]].`, done: R`عندي ١٥٣ ملف: [[ruff format --check]] ٠.٢٩ ثانية، و [[black --check]] ١٧.٦٥، و [[ruff check]] ٠.١٤. و ruff قال [[152 files would be reformatted]] و black قال [[151 files would be reformatted]]، يعني الاتنين متفقين تقريبًا ومش ١٠٠٪. كتبت أرقامك انت.` },
+            { lvl: 'تحدي', t: R`**ابني:** [[pyproject.toml]] فيه [[[tool.ruff]]] ([[line-length = 100]] و [[target-version = "py312"]]) و [[[tool.ruff.lint]]] بـ [[select = ["E", "F", "I", "B", "UP", "SIM"]]] و [[per-file-ignores]] للاختبارات، وخطوتين في CI: [[ruff check .]] و [[ruff format --check .]]، وسطر واحد في الكود عليه [[# noqa: F841]] بسبب مكتوب.`, done: R`PR فيه [[import os]] مش مستخدم بيقع في خطوة [[ruff check]]، و PR مش متنسّق بيقع في [[format --check]]، والسطر اللي عليه [[noqa]] مبيظهرش في الناتج، و [[ruff check --statistics .]] على المشروع صفر.` },
+          ],
+          deep: {
+            why: R`فيه نوع غلطات بيتكرر في كل كود Python: import نسيته، ومتغير اتعمل ومستخدمش، و [[except:]] بيبلع Ctrl+C و [[sys.exit]] (درس «sys.exit و exit codes»)، و [[def f(x=[])]] اللي بتفتكر بين النداءات. الـ review البشري بيفوّتهم، و ruff بيمسكهم في أقل من ثانية. والـ formatter بيخلّي كل الكود شكل واحد، فالـ diff بيبقى التعديل الحقيقي بس ومحدش يتخانق على المسافات.`,
+            how: R`**الـ linter:** ruff بيحوّل الملف لشجرة (AST) ويعدّي عليها بقواعد. كل قاعدة ليها كود: الحرف أو الحروف بتقول جاية من أنهي أداة قديمة كان ruff بيقلّدها ([[F]] من Pyflakes، و [[E]] و [[W]] من pycodestyle، و [[I]] من isort، و [[B]] من flake8-bugbear، و [[UP]] من pyupgrade، و [[SIM]] من flake8-simplify)، والرقم القاعدة نفسها. [[ruff rule CODE]] بيشرح أي واحدة.
+
+**الـ fixes:** [[[*]]] جنب القاعدة يعني فيه تصليح آمن ([[--fix]] بيعمله). و «unsafe fix» (زي [[B006]] و [[F841]] في الناتج) ممكن يغيّر السلوك، فمبيتعملش إلا بـ [[--unsafe-fixes]] وتراجعه بنفسك.
+
+**الـ formatter:** بيقرا الكود ويكتبه من الأول بقواعد ثابتة: ٨٨ حرف للسطر (أو [[line-length]] بتاعك)، وعلامات تنصيص دبل، وسطرين فاضيين بين الدوال، وسطر لكل statement. هدفه يطلّع نفس شكل black، والفرق بينهم حالات قليلة (في التجربة ملف واحد من ١٥٣).
+
+**الإعدادات:** [[[tool.ruff]]] في [[pyproject.toml]] (أو [[ruff.toml]]). [[select]] بيحدد القواعد بدل الافتراضي، و [[extend-select]] بيزوّد عليه، و [[ignore]] بيشيل، و [[per-file-ignores]] لملفات معيّنة، و [[# noqa: CODE]] لسطر واحد.
+
+**الكاش:** ruff بيحفظ نتيجة كل ملف في [[.ruff_cache]]، فالتشغيل التاني بيفحص اللي اتغيّر بس. ضيف [[.ruff_cache/]] لـ [[.gitignore]]. و [[--no-cache]] للقياس بس.`,
+            when: R`في أي مشروع من أول يوم: [[ruff format]] و [[ruff check --fix]] قبل كل commit (من المحرر أو pre-commit)، و [[ruff check .]] و [[ruff format --check .]] في CI. ولو المشروع بيستخدم black و flake8 و isort فعلًا، ruff بيقوم مقامهم بإعدادات قريبة، بس اعمل commit التنسيق لوحده الأول. وفي VS Code إضافة Ruff بتشغّله وانت بتكتب.`,
+            mistakes: R`تعتمد على القواعد الافتراضية (بتتغيّر بين النسخ، شوف التمرين التاني) بدل [[select]] صريحة. و [[--unsafe-fixes]] على المشروع كله من غير ما تراجع. و [[# noqa]] من غير كود فتسكت أي قاعدة على السطر. وتخلط commit التنسيق (آلاف السطور) مع تعديل حقيقي فالـ review يبقى مستحيل. وتشغّل [[ruff format]] و black مع بعض فكل واحد يرجّع شغل التاني في الحالات اللي بيختلفوا فيها. ومتثبتش نسخة ruff فـ CI يقع يوم ما نسخة جديدة تزوّد قاعدة.`
+          },
+          teach: R`## أداة واحدة، شغلتين
+
+| الأمر | بيعمل إيه | بيغيّر الملفات؟ |
+|---|---|---|
+| [[ruff check]] | linter: بيدوّر على مشاكل بأكواد | لأ، إلا مع [[--fix]] |
+| [[ruff format]] | formatter: بيعيد كتابة الشكل | آه، إلا مع [[--check]] أو [[--diff]] |
+
+كل اللي تحت اتشغّل فعلًا بـ [[ruff 0.17.3]] و [[black, 26.10.1 (compiled: yes)]] على Python 3.14.3 (ويندوز ١١) و [[python:3.12-slim]].
+
+---
+
+## ١. ملف التجربة
+
+[[messy.py]] فيه ٩ حاجات وحشة عمدًا:
+
+~~~python
+import os, sys
+import json
+from pathlib import Path
+def load(path, cache={}):
+    if path in cache: return cache[path]
+    data = json.load(open(path))
+    unused = 1
+    cache[path] = data
+    return data
+def main():
+    try:
+        print(load(sys.argv[1]))
+    except:
+        print( 'error' )
+    if type(sys.argv) == list: pass
+~~~
+
+---
+
+## ٢. [[ruff check]]
+
+~~~text
+$ ruff check --output-format concise messy.py
+messy.py:1:1: I001 [*] Import block is un-sorted or un-formatted
+messy.py:1:8: F401 [*] $__btos$__bt imported but unused
+messy.py:3:21: F401 [*] $__btpathlib.Path$__bt imported but unused
+messy.py:4:22: B006 Do not use mutable data structures for argument defaults
+messy.py:6:22: SIM115 Use a context manager for opening files
+messy.py:7:5: F841 Local variable $__btunused$__bt is assigned to but never used
+messy.py:13:5: E722 Do not use bare $__btexcept$__bt
+Found 7 errors.
+[*] 3 fixable with $__bt--fix$__bt (2 unsafe fixes available with $__bt--fix --unsafe-fixes$__bt).
+~~~
+
+والـ exit code ١. ومن غير [[--output-format concise]] كل مشكلة بتطلع بالسطور اللي حواليها وسهم وتصليح مقترح، كده:
+
+~~~text
+B006 Do not use mutable data structures for argument defaults
+ --> messy.py:4:22
+  |
+2 | import json
+3 | from pathlib import Path
+4 | def load(path, cache={}):
+  |                      ^^
+5 |     if path in cache: return cache[path]
+6 |     data = json.load(open(path))
+  |
+help: Replace with $__btNone$__bt; initialize within function
+...
+note: This is an unsafe fix and may change runtime behavior
+~~~
+
+| الكود | المشكلة | ليه مهمة |
+|---|---|---|
+| [[I001]] | ترتيب الـ imports | شكل بس، بس بيقلل الـ conflicts في git |
+| [[F401]] | import مش مستخدم | بيبطّأ التشغيل وبيوهم اللي بيقرا إن الموديول مستخدم |
+| [[B006]] | [[cache={}]] افتراضي | الـ dict بيتعمل **مرة واحدة** وقت تعريف الدالة، وبيفضل يكبر بين النداءات |
+| [[SIM115]] | [[open()]] من غير [[with]] | الملف مبيتقفلش في وقت معروف |
+| [[F841]] | متغير مستخدمش | غالبًا نسيت تستخدمه، يعني باج |
+| [[E722]] | [[except:]] فاضي | بيبلع [[KeyboardInterrupt]] و [[SystemExit]] (درس «sys.exit و exit codes») |
+
+لاحظ إن [[E701]] (اتنين statement في سطر بـ [[:]]) و [[E721]] ([[type(x) == list]]) **مظهروش**: مش في القواعد الافتراضية للنسخة دي. مع [[--select E,F]]:
+
+~~~text
+$ ruff check --select E,F --output-format concise messy.py
+messy.py:1:1: E401 [*] Multiple imports on one line
+messy.py:1:8: F401 [*] $__btos$__bt imported but unused
+messy.py:3:21: F401 [*] $__btpathlib.Path$__bt imported but unused
+messy.py:5:21: E701 Multiple statements on one line (colon)
+messy.py:7:5: F841 Local variable $__btunused$__bt is assigned to but never used
+messy.py:13:5: E722 Do not use bare $__btexcept$__bt
+messy.py:15:8: E721 Use $__btis$__bt and $__btis not$__bt for type comparisons, or $__btisinstance()$__bt for isinstance checks
+messy.py:15:30: E701 Multiple statements on one line (colon)
+Found 8 errors.
+~~~
+
+الدرس: الافتراضي بيتغيّر بين النسخ، فاكتب [[select]] صريحة (القسم ٥).
+
+> **فرق ظهر في Docker:** نفس الملف في [[python:3.12-slim]] على فولدر متوصّل من ويندوز ([[-v]]) طلّع مشكلة تامنة: [[EXE002 The file is executable but no shebang is present]]، لأن الملفات اللي جاية من ويندوز بتبان هناك عليها صلاحية تنفيذ. على لينكس عادي بتختفي بـ [[chmod -x messy.py]]، والباقي نفس الناتج بالحرف.
+
+### [[--statistics]]
+
+~~~text
+$ ruff check --statistics messy.py
+2	F401  	[*] unused-import
+1	E722  	[ ] bare-except
+1	B006  	[ ] mutable-argument-default
+1	SIM115	[ ] open-file-with-context-handler
+1	I001  	[*] unsorted-imports
+1	F841  	[ ] unused-variable
+~~~
+
+على مشروع قديم فيه مئات المشاكل، ده بيقولك تبدأ بإيه.
+
+---
+
+## ٣. [[--fix]]
+
+~~~text
+$ ruff check --fix --output-format concise messy.py
+messy.py:5:22: B006 Do not use mutable data structures for argument defaults
+messy.py:7:22: SIM115 Use a context manager for opening files
+messy.py:8:5: F841 Local variable $__btunused$__bt is assigned to but never used
+messy.py:14:5: E722 Do not use bare $__btexcept$__bt
+Found 7 errors (3 fixed, 4 remaining).
+2 unsafe fixes available with $__bt--fix --unsafe-fixes$__bt.
+~~~
+
+صلّح التلاتة اللي عليهم [[[*]]]: رتّب الـ imports وشال [[os]] و [[Path]]. والباقي يا محتاج تفكير ([[E722]]: تمسك أنهي exception؟) يا التصليح ممكن يغيّر السلوك ([[B006]] و [[F841]]: unsafe).
+
+---
+
+## ٤. [[ruff format]]
+
+~~~text
+$ ruff format --diff messy.py
+--- messy.py
++++ messy.py
+@@ -3,14 +3,18 @@
+ def load(path, cache={}):
+-    if path in cache: return cache[path]
++    if path in cache:
++        return cache[path]
+     data = json.load(open(path))
+...
++
++
+ def main():
+     try:
+         print(load(sys.argv[1]))
+     except:
+-        print( 'error' )
+-    if type(sys.argv) == list: pass
++        print("error")
++    if type(sys.argv) == list:
++        pass
+
+1 file would be reformatted
+~~~
+
+| التغيير | القاعدة |
+|---|---|
+| [[if ...: return ...]] بقى سطرين | statement واحد في السطر |
+| سطرين فاضيين قبل [[def main]] | بين الدوال اللي على مستوى الملف |
+| [[print( 'error' )]] بقى [[print("error")]] | علامات تنصيص دبل، ومفيش مسافات جوه الأقواس |
+
+وبعدين [[ruff format messy.py]] طبع [[1 file reformatted]]. و [[ruff format --check]] على ملف مش متنسّق بيطبع [[1 file would be reformatted]] ويخرج بـ ١: ده اللي في CI.
+
+> **الـ formatter مبيصلّحش المعنى:** بعد التنسيق [[cache={}]] و [[except:]] لسه موجودين. ده شغل [[check]].
+
+---
+
+## ٥. الإعدادات
+
+~~~toml
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM"]
+ignore = ["E701"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["B011"]
+~~~
+
+| الإعداد | معناه |
+|---|---|
+| [[line-length]] | أقصى طول سطر للـ formatter ولقاعدة [[E501]] |
+| [[target-version]] | أقل Python هتشتغل عليه، فـ [[UP]] ميقترحش صيغة أحدث منه |
+| [[select]] | القواعد اللي هتشتغل بالظبط، بدل الافتراضي |
+| [[ignore]] | قواعد مش عايزها (هنا [[E701]] مثال) |
+| [[per-file-ignores]] | قاعدة مقفولة في ملفات معيّنة بس |
+
+ولسطر واحد: [[unused = 1  # noqa: F841]]. مع الإعدادات دي والـ noqa، [[ruff check .]] طلّع ٨ مشاكل منهم [[E401]] و [[E721]] (لأن [[E]] كلها اختارناها) ومنهمش [[F841]] ولا [[E701]].
+
+### [[UP]]: تحديث الكود القديم
+
+~~~python
+from typing import List, Optional
+def f(x: Optional[int]) -> List[int]:
+    return [x or 0]
+~~~
+
+~~~text
+old.py:1:1: UP035 $__bttyping.List$__bt is deprecated, use $__btlist$__bt instead
+old.py:1:1: I001 [*] Import block is un-sorted or un-formatted
+old.py:2:10: UP045 [*] Use $__btX | None$__bt for type annotations
+old.py:2:28: UP006 [*] Use $__btlist$__bt instead of $__btList$__bt for type annotation
+Found 4 errors.
+~~~
+
+وبعد [[--fix]] الملف بقى [[def f(x: int | None) -> list[int]:]] والـ import اتشال. ده نفس الصيغة اللي في درس «type hints» في تاب «Python و FastAPI».
+
+---
+
+## ٦. السرعة (اتقاست فعلًا)
+
+نسخت ملفات [[.py]] اللي في فولدر المكتبة القياسية لـ Python 3.14 (١٥٣ ملف، ١٢٩,١٠٧ سطر) وقستهم بـ [[time.perf_counter()]] حوالين [[subprocess.run]]:
+
+| الأمر | الوقت | الناتج |
+|---|---|---|
+| [[ruff format --check --no-cache big]] | ٠.٢٩ ثانية | [[152 files would be reformatted, 1 file already formatted]] |
+| [[black --check -q big]] | ١٧.٦٥ ثانية | [[151 files would be reformatted, 2 files would be left unchanged.]] |
+| [[ruff check --no-cache big]] | ٠.١٤ ثانية | |
+
+يعني ruff هنا أسرع حوالي ٦٠ مرة، والاتنين متفقين على كل الملفات تقريبًا (فرق ملف واحد). الأرقام على جهازك هتختلف، والنسبة هي المهمة.
+
+---
+
+## ٧. في الشغل اليومي
+
+~~~bash
+ruff check --fix . && ruff format .
+~~~
+
+قبل كل commit (أو خليها تتعمل لوحدها من VS Code أو pre-commit). وفي CI:
+
+~~~yaml
+- run: ruff check .
+- run: ruff format --check .
+- run: mypy .
+- run: pytest -q
+~~~
+
+وضيف [[.ruff_cache/]] لـ [[.gitignore]].`,
+          sol: R`على [[messy.py]]: [[ruff check]] بيطلّع ٧ مشاكل ([[I001]] و [[F401]] مرتين و [[B006]] و [[SIM115]] و [[F841]] و [[E722]])، و [[--fix]] بيصلّح ٣ ويسيب ٤. و [[ruff format --diff]] بيقسم السطور اللي فيها [[:]] ويحط سطرين قبل [[def main]] ويحوّل [[print( 'error' )]] لـ [[print("error")]].
+
+النسخة النظيفة (اتشغّل عليها [[ruff check]] و [[ruff format --check]] وعدّت):`,
+          solCode: R`import json
+import sys
+
+
+def load(path, cache=None):
+    if cache is None:
+        cache = {}
+    if path in cache:
+        return cache[path]
+    with open(path, encoding="utf-8") as f:
+        data = json.load(f)
+    cache[path] = data
+    return data
+
+
+def main():
+    try:
+        print(load(sys.argv[1]))
+    except (OSError, json.JSONDecodeError):
+        print("error")
+    if isinstance(sys.argv, list):
+        pass`,
+        },
+        {
+          cmd: "mypy",
+          title: "type hints و mypy: يمسك الغلطة قبل ما السكربت يشتغل",
+          learn: R`تزوّد type hints لسكربت موجود خطوة خطوة، وتشغّل mypy عليه، وتقرا كل خطأ بالكود بتاعه، وتظبطه في [[pyproject.toml]] وفي CI، وتعرف تعمل إيه مع مكتبة مالهاش أنواع.`,
+          out: R`أربع باجات في سكربت بتتمسك من غير ما تشغّله ولا مرة، وأي PR بيبعت [[str]] مكان [[Path]] أو بينسى [[None]] بيقف في CI.`,
+          use: {
+            work: R`في أي مشروع فيه أكتر من شخص، mypy في CI بيمسك نوع الغلطات اللي بتعدّي من الـ review: دالة بقت ترجّع [[None]] أحيانًا، أو حد بعت رقم مكان نص.`,
+            prog: R`الأنواع توثيق بيتفحص: [[def load(path: Path) -> list[dict[str, str]]]] بيقولك الدالة بتاخد إيه وترجّع إيه، و mypy بيتأكد إن ده لسه صح بعد كل تعديل.`,
+          },
+          desc: R`الـ type hints ([[path: Path]] و [[-> int]]) Python **مش بيفحصها وهو بيشغّل**: السكربت بيقع بعدين في سطر تاني خالص. **mypy** أداة بتقرا الكود من غير ما تشغّله وبتقولك فين النوع غلط، بالسطر وكود الخطأ ([[[arg-type]]] و [[[return-value]]]...)، وبتخرج بـ ١ لو لقت غلط، فتتحط في CI.
+
+الصيغة نفسها (و [[list[int]]] و [[X | None]] و [[Literal]] و generics) في درس «type hints» في تاب «Python و FastAPI». الدرس ده عن الأداة: إزاي تشغّلها على سكربت حقيقي، وتقرا أخطاءها، و [[--strict]]، والإعدادات، والمكتبات اللي مالهاش أنواع.
+
+كل اللي تحت اتشغّل فعلًا بـ [[mypy==2.4.1]] على Python 3.14 (ويندوز) و Python 3.12 ([[python:3.12-slim]])، ومعاه [[types-requests==2.33.0.20261030]] و [[types-PyYAML==6.0.12.20261103]].`,
+          example: R`python -m pip install "mypy==2.4.1"
+mypy report.py
+mypy --strict fixed.py
+mypy .
+python -m pip install "types-requests==2.33.0.20261030" "types-PyYAML==6.0.12.20261103"
+python -c "from typing import reveal_type; reveal_type({'a': '1'})"`,
+          lines: [
+            R`بيسطّب mypy في الـ venv بنسخة ثابتة (زي أي أداة تطوير، مش في Python بتاع الجهاز). [[python -m pip]] عشان تتأكد إنه رايح للـ Python ده بالظبط (درس «python -m pip والأدوات المدفونة»).`,
+            R`بيفحص ملف واحد من غير ما يشغّله: بيطبع كل غلطة بشكل [[الملف:السطر: error: الوصف [الكود] ]]، وفي الآخر [[Found 4 errors in 1 file]] والـ exit code ١ (أو [[Success: no issues found]] و ٠).`,
+            R`[[--strict]] بيشغّل كل الفحوصات الإضافية: أي دالة من غير أنواع غلطة، وأي [[Any]] راجع من دالة ليها نوع غلطة. ده المستوى اللي بتوصله في الآخر، مش أول يوم.`,
+            R`[[.]] يعني كل ملفات [[.py]] في الفولدر واللي تحته، وبياخد الإعدادات من [[[tool.mypy]]] في [[pyproject.toml]] لو موجود. ده السطر اللي بيتحط في CI.`,
+            R`مكتبات زي [[requests]] و [[PyYAML]] مش جايبة أنواعها معاها، والأنواع في حزم منفصلة اسمها [[types-...]]. من غيرها mypy بيقول [[Library stubs not installed for "requests"]]. وبنثبّت نسختها زي أي مكتبة.`,
+            R`[[reveal_type]] بتقولك النوع اللي mypy شايفه لأي قيمة. جوه ملف mypy بيطبعه [[note: Revealed type is ...]]، ولو السكربت اتشغّل عادي لازم تعملها import من [[typing]] (من 3.11)، وبتطبع [[Runtime type is 'dict']] على stderr وترجّع القيمة زي ما هي.`,
+          ],
+          try: R`اعمل [[sales.csv]] فيه [[city,amount]] وسطرين، واكتب [[report.py]] اللي في الشرح. شغّل [[python report.py sales.csv]] واقرا الـ traceback، وبعدين [[mypy report.py]] وقارن: mypy لقى كام غلطة، والـ traceback وراك كام؟ صلّح الأربعة لحد [[Success]]، وبعدين جرّب [[--strict]] وصلّح اللي يطلع.`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** شغّل [[report.py]] اللي في الشرح بـ Python الأول، وبعدين [[mypy report.py]]. كام غلطة هتشوف في كل واحد؟`, done: R`Python وقع عند أول غلطة بس: [[AttributeError: 'str' object has no attribute 'open']] (والتلاتة التانيين ماوصلهمش)، و mypy طلّع الأربعة مرة واحدة ([[arg-type]] و [[operator]] و [[index]] و [[return-value]]) و [[Found 4 errors in 1 file]] و exit ١.` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** حطيت [[reveal_type(city)]] في [[main]] عشان تشوف النوع، و mypy عدّى، بس السكربت وقع لما شغّلته. ليه، وإيه الحل؟`, done: R`Python وقع بـ [[NameError: name 'reveal_type' is not defined]]: mypy بيعرفها لوحده بس Python لأ. الحل تشيلها بعد ما تعرف النوع، أو [[from typing import reveal_type]] (من 3.11) فتطبع [[Runtime type is 'dict']] وتكمّل.` },
+            { lvl: 'تطبيق', t: R`**اقرا:** حط [[reveal_type(city)]] قبل [[if city is None: return 1]] وبعدها، وشغّل mypy.`, done: R`قبل الـ if: [[Revealed type is "dict[str, str] | None"]]، وبعدها [[Revealed type is "dict[str, str]"]]. ده اسمه narrowing: mypy فهم إن [[None]] اتشال، فـ [[city["amount"]]] بقى مسموح من غير ولا cast.` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** شغّل [[mypy --strict]] على سكربت من سكربتات وحدة الأتمتة (زي [[json_to_csv.py]] أو [[find_duplicates.py]]). اعمل جدول بأكواد الأخطاء وعدد كل واحد.`, done: R`عندك جدول (غالبًا [[no-untyped-def]] فوق)، وصلّحت لحد ما بقى [[Success]]، وكتبت عدد الأسطر اللي اتغيّرت، وعرفت ولا واحد من الأخطاء كان باج حقيقي ولا لأ.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[import requests]] و [[import yaml]] في ملف، و mypy قال [[Library stubs not installed for "requests"  [import-untyped]]]. صلّحه بطريقتين.`, done: R`مرة سطّبت [[types-requests]] و [[types-PyYAML]] بنسخ ثابتة فبقى [[Success]]، وبعدها mypy مسك [[timeout="5"]] (نص بدل رقم) و [[r.status_code + "!"]] في ملف تاني. ومرة بـ [[[[tool.mypy.overrides]]]] و [[ignore_missing_imports = true]] لـ [[yaml]] بس، وكتبت إن التانية بتطفي الفحص على المكتبة دي.` },
+            { lvl: 'تحدي', t: R`**ابني:** [[pyproject.toml]] فيه [[[tool.mypy]]] بـ [[strict = true]] و [[python_version = "3.12"]]، وخطوة في GitHub Actions بتشغّل [[mypy .]] بعد [[ruff check .]] و قبل [[pytest]]، وسكربت قديم فيه [[# type: ignore[no-untyped-def]]] مؤقت بالكود (مش [[# type: ignore]] لوحدها).`, done: R`PR فيه [[return "ok"]] في دالة [[-> int]] بيقع في خطوة mypy بـ [[[return-value]]]، والسليم أخضر، و [[git grep "type: ignore$"]] مبيلاقيش ولا ignore من غير كود.` },
+          ],
+          deep: {
+            why: R`أغلب الباجات في السكربتات مش منطق معقّد: قيمة ممكن تبقى [[None]] ومحدش فحصها، أو نص اتبعت مكان [[Path]]، أو دالة اتغيّرت ترجّع حاجة تانية والأماكن اللي بتناديها متعرفش. دي بتظهر وقت التشغيل، غالبًا في cron الساعة ٣ الفجر. mypy بيمسكها كلها قبل ما السكربت يشتغل ولا مرة، وفي ملف كامل مرة واحدة.`,
+            how: R`mypy بيقرا الكود (من غير ما ينفّذه) وبيحسب نوع كل تعبير: [[load(argv[0])]] يعني [[argv]] نوعه [[list[str]]] فـ [[argv[0]]] [[str]]، والدالة عايزة [[Path]]، فـ [[[arg-type]]].
+
+**الدوال من غير أنواع:** الـ default إن mypy **مبيفحصش جوه** الدالة اللي مالهاش أي annotation، وبيعتبر باراميتراتها [[Any]]. عشان كده تقدر تبدأ على مشروع قديم من غير ألف غلطة، وتزوّد الأنواع دالة دالة. و [[--strict]] بيقفل الباب ده ([[no-untyped-def]]).
+
+**الـ narrowing:** بعد [[if x is None: return]] أو [[isinstance(x, str)]]، mypy بيعرف النوع اتضيّق.
+
+**المكتبات:** لو المكتبة فيها ملف [[py.typed]] أنواعها جوها. لو لأ، الأنواع في [[types-<اسم>]] (من مشروع typeshed)، أو مفيش خالص فتعمل [[ignore_missing_imports]] ليها هي بس.
+
+**أكواد الأخطاء** (اللي بين [[[ ]]]) هي اللي بتكتبها في [[# type: ignore[code]]] عشان تسكت غلطة واحدة بعينها، والكود موجود في توثيق mypy بشرحه.
+
+**البدائل:** pyright (هو اللي ورا Pylance في VS Code، فبيعلّم على نفس الغلطات وانت بتكتب) و Pyrefly و ty من Astral. بيشتغلوا بنفس الأنواع، والفروق في التفاصيل والسرعة.`,
+            when: R`أي سكربت هيتجدول أو هيعيش أكتر من أسبوع، وأي مشروع فيه أكتر من ملف أو أكتر من شخص. ابدأ بـ [[mypy .]] من غير strict على الكود الجديد، وبعدين [[strict = true]] لما الأخطاء تقل. وسكربت تجربة هترميه النهارده مش محتاج.`,
+            mistakes: R`تفتكر إن الأنواع بتحمي وقت التشغيل (لأ، إلا في Pydantic و FastAPI). وتسيب [[reveal_type]] في الكود فيقع. و [[# type: ignore]] من غير كود فتسكت أي غلطة جديدة في نفس السطر. و [[ignore_missing_imports = true]] على المشروع كله بدل المكتبة دي بس. وتسطّب mypy في Python بتاع الجهاز بدل الـ venv فيشوف مكتبات غير اللي المشروع شايفها. وتكتب [[Any]] في كل حتة عشان mypy يسكت.`
+          },
+          teach: R`## الفكرة: الغلطة تبان قبل التشغيل
+
+Python بيشغّل السطر ويكتشف الغلطة لما يوصله. mypy بيقرا الملف كله ويقولك على كل الغلطات اللي في الأنواع مرة واحدة، من غير ما ينفّذ ولا سطر. كل اللي تحت اتشغّل فعلًا: [[mypy 2.4.1 (compiled: yes)]] على Python 3.14.3 (ويندوز ١١) وعلى [[python:3.12-slim]].
+
+---
+
+## ١. التسطيب
+
+~~~bash
+python -m pip install "mypy==2.4.1"
+mypy --version
+~~~
+
+~~~text
+mypy 2.4.1 (compiled: yes)
+~~~
+
+جوه الـ venv بتاع المشروع، عشان mypy يشوف نفس المكتبات اللي السكربت شايفها.
+
+---
+
+## ٢. سكربت فيه ٤ باجات
+
+[[report.py]] بيقرا [[sales.csv]] ويطبع الإجمالي وصف القاهرة:
+
+~~~python
+import csv
+import sys
+from pathlib import Path
+
+
+def load(path: Path) -> list[dict[str, str]]:
+    with path.open(newline="", encoding="utf-8-sig") as f:
+        return list(csv.DictReader(f))
+
+
+def total(rows: list[dict[str, str]], column: str) -> float:
+    return sum(float(r[column]) for r in rows)
+
+
+def find_city(rows, name: str) -> dict[str, str] | None:
+    for r in rows:
+        if r["city"] == name:
+            return r
+    return None
+
+
+def main(argv: list[str]) -> int:
+    rows = load(argv[0])
+    print(total(rows, "amount") + " EGP")
+    city = find_city(rows, "Cairo")
+    print(city["amount"])
+    return "ok"
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))
+~~~
+
+### Python بيقول إيه
+
+~~~text
+$ python report.py sales.csv
+Traceback (most recent call last):
+  File "...report.py", line 31, in <module>
+    sys.exit(main(sys.argv[1:]))
+  File "...report.py", line 23, in main
+    rows = load(argv[0])
+  File "...report.py", line 7, in load
+    with path.open(newline="", encoding="utf-8-sig") as f:
+         ^^^^^^^^^
+AttributeError: 'str' object has no attribute 'open'
+~~~
+
+غلطة واحدة، وفي سطر ٧ مع إن السبب في سطر ٢٣. ولو صلّحتها هتقع في اللي بعدها، وهكذا ٤ مرات.
+
+### mypy بيقول إيه
+
+~~~text
+$ mypy report.py
+report.py:23: error: Argument 1 to "load" has incompatible type "str"; expected "Path"  [arg-type]
+report.py:24: error: Unsupported operand types for + ("float" and "str")  [operator]
+report.py:26: error: Value of type "dict[str, str] | None" is not indexable  [index]
+report.py:27: error: Incompatible return value type (got "str", expected "int")  [return-value]
+Found 4 errors in 1 file (checked 1 source file)
+~~~
+
+والـ exit code ١. نفس الناتج بالحرف على 3.12.
+
+| السطر | الكود | معناه | التصليح |
+|---|---|---|---|
+| 23 | [[arg-type]] | بعتنا [[str]] لدالة عايزة [[Path]] | [[load(Path(argv[0]))]] |
+| 24 | [[operator]] | رقم + نص | [[f"{total(rows, 'amount')} EGP"]] |
+| 26 | [[index]] | [[find_city]] ممكن ترجّع [[None]] و [[None["amount"]]] بيقع | افحص [[None]] الأول |
+| 27 | [[return-value]] | الدالة قالت [[-> int]] ورجّعت نص | [[return 0]] |
+
+لاحظ إن mypy **مقالش حاجة** عن [[find_city(rows, ...)]] اللي [[rows]] فيها من غير نوع: الباراميتر من غير annotation بيتعامل [[Any]]، والغلطات جواه مبتتفحصش. ده قصد، عشان تقدر تبدأ على كود قديم.
+
+---
+
+## ٣. الـ narrowing و [[reveal_type]]
+
+بعد التصليح، في [[main]]:
+
+~~~python
+    city = find_city(rows, "Cairo")
+    reveal_type(city)
+    if city is None:
+        print("no Cairo rows", file=sys.stderr)
+        return 1
+    reveal_type(city)
+    print(city["amount"])
+    return 0
+~~~
+
+~~~text
+$ mypy fixed.py
+fixed.py:26: note: Revealed type is "dict[str, str] | None"
+fixed.py:30: note: Revealed type is "dict[str, str]"
+Success: no issues found in 1 source file
+~~~
+
+بعد [[if city is None: return 1]]، mypy عارف إن [[None]] مش ممكن، فـ [[city["amount"]]] بقى سليم.
+
+> **فخ:** [[reveal_type]] اسم mypy بيعرفه لوحده، بس Python لأ. السكربت ده لما اتشغّل وقع بـ [[NameError: name 'reveal_type' is not defined]]. يا تشيلها بعد ما تعرف النوع، يا [[from typing import reveal_type]] (من 3.11):
+
+~~~text
+$ python -c "from typing import reveal_type; reveal_type({'a': '1'})"
+Runtime type is 'dict'
+~~~
+
+---
+
+## ٤. [[--strict]]
+
+~~~text
+$ mypy --strict fixed.py
+fixed.py:15: error: Function is missing a type annotation for one or more parameters  [no-untyped-def]
+fixed.py:18: error: Returning Any from function declared to return "dict[str, str] | None"  [no-any-return]
+Found 2 errors in 1 file (checked 1 source file)
+~~~
+
+الاتنين بسبب [[rows]] اللي من غير نوع: الأولى بتقول «اكتب نوعه»، والتانية بتقول إن [[r]] جاي من [[rows]] فهو [[Any]]، يعني الدالة بترجّع حاجة mypy ميعرفش نوعها. سطر واحد بيصلّح الاتنين:
+
+~~~python
+def find_city(rows: list[dict[str, str]], name: str) -> dict[str, str] | None:
+~~~
+
+~~~text
+$ mypy --strict fixed.py
+Success: no issues found in 1 source file
+~~~
+
+---
+
+## ٥. الإعدادات في [[pyproject.toml]]
+
+~~~toml
+[tool.mypy]
+strict = true
+python_version = "3.12"
+
+[[tool.mypy.overrides]]
+module = ["yaml"]
+ignore_missing_imports = true
+~~~
+
+| الإعداد | ليه |
+|---|---|
+| [[strict = true]] | زي [[--strict]] من غير ما حد يفتكر يكتبه |
+| [[python_version = "3.12"]] | يفحص كأن الكود هيشتغل على 3.12 (السيرفر)، حتى لو انت على 3.14. فلو استخدمت حاجة جديدة في 3.13 بيعلّم عليها |
+| [[overrides]] | إعداد لموديول معيّن بس. هنا: سكت عن [[yaml]] لوحده بدل المشروع كله |
+
+و [[mypy .]] بياخدهم لوحده. وفي التجربة دي، [[mypy .]] على فولدر فيه السكربت قبل تصليح [[rows]] طلّع نفس غلطتين الـ strict، ومحتاجتش أكتب [[--strict]].
+
+---
+
+## ٦. مكتبات مالهاش أنواع
+
+~~~python
+import requests
+import yaml
+~~~
+
+~~~text
+$ mypy net.py
+net.py:1: error: Library stubs not installed for "requests"  [import-untyped]
+net.py:1: note: Hint: "python3 -m pip install types-requests"
+net.py:1: note: (or run "mypy --install-types" to install all missing stub packages)
+net.py:2: error: Library stubs not installed for "yaml"  [import-untyped]
+net.py:2: note: Hint: "python3 -m pip install types-PyYAML"
+Found 2 errors in 1 file (checked 1 source file)
+~~~
+
+| الحل | إمتى |
+|---|---|
+| [[pip install "types-requests==2.33.0.20261030" "types-PyYAML==6.0.12.20261103"]] | الأحسن: mypy يفحص استخدامك للمكتبة فعلًا. ثبّت النسخ في [[requirements-dev.txt]] |
+| [[ignore_missing_imports = true]] في [[overrides]] للمكتبة دي | مكتبة ملهاش types خالص |
+| [[import requests  # type: ignore[import-untyped]]] | سطر واحد مؤقت |
+
+وبعد ما سطّبت الـ stubs، mypy بقى يشوف جوه requests. الملف ده:
+
+~~~python
+import requests
+r = requests.get("http://x", timeout="5")
+print(r.status_code + "!")
+~~~
+
+~~~text
+net2.py:2: error: Argument "timeout" to "get" has incompatible type "str"; expected "float | tuple[float | None, float | None] | None"  [arg-type]
+net2.py:3: error: Unsupported operand types for + ("int" and "str")  [operator]
+Found 2 errors in 1 file (checked 1 source file)
+~~~
+
+---
+
+## ٧. الـ exit codes، و CI
+
+| الحالة | الناتج | exit |
+|---|---|---|
+| مفيش غلطات | [[Success: no issues found in 1 source file]] | ٠ |
+| فيه غلطات | [[Found 4 errors in 1 file ...]] | ١ |
+| ملف مش موجود | [[nope.py: error: Cannot read file: No such file or directory]] | ٢ |
+
+فخطوة CI بسيطة:
+
+~~~yaml
+- run: python -m pip install -r requirements-dev.txt
+- run: ruff check .
+- run: mypy .
+- run: pytest -q
+~~~
+
+الترتيب: ruff الأسرع (أجزاء من الثانية، درس «ruff check و ruff format»)، وبعده mypy، وبعده الاختبارات. أي واحد بيفشل بيوقف الباقي.
+
+---
+
+## ٨. على مشروع قديم: خطوة خطوة
+
+1. [[mypy .]] من غير strict: صلّح الغلطات الحقيقية بس.
+2. زوّد أنواع للدوال اللي بتتنادى من أماكن كتير الأول (الحدود بين الملفات).
+3. [[strict = true]] في [[overrides]] لملف أو اتنين جداد، وبعدين المشروع كله.
+4. أي [[# type: ignore]] يبقى بالكود ([[# type: ignore[no-untyped-def]]]) وجنبه سبب، عشان تلاقيه وتشيله بعدين.
+
+والأنواع مبتغيّرش أي حاجة وقت التشغيل: السكربت بعد كل الشغل ده بيطبع [[230.5 EGP]] و [[150.5]] زي ما كان المفروض من الأول.`,
+          sol: R`[[python report.py sales.csv]] بيقع بـ [[AttributeError: 'str' object has no attribute 'open']] بس. و [[mypy report.py]] بيطلّع ٤ غلطات ([[arg-type]] في 23 و [[operator]] في 24 و [[index]] في 26 و [[return-value]] في 27) و exit ١.
+
+بعد التصليح ([[load(Path(argv[0]))]] و f-string و فحص [[None]] و [[return 0]]): [[Success: no issues found in 1 source file]]، والسكربت بيطبع [[230.5 EGP]] و [[150.5]] على [[sales.csv]] فيه [[Cairo,150.5]] و [[Alex,80]].
+
+[[--strict]] بعدها بيطلّع غلطتين ([[no-untyped-def]] و [[no-any-return]])، وإنك تكتب نوع [[rows]] في [[find_city]] زي [[load]] بالظبط بيصلّح الاتنين.`,
+          solCode: R`def main(argv: list[str]) -> int:
+    rows = load(Path(argv[0]))
+    print(f"{total(rows, 'amount')} EGP")
+    city = find_city(rows, "Cairo")
+    if city is None:
+        print("no Cairo rows", file=sys.stderr)
+        return 1
+    print(city["amount"])
+    return 0`,
+          ci: [
+            { os: ['windows', 'ubuntu', 'macos'], sh: 'python', run: R`from pathlib import Path
+from typing import reveal_type, get_type_hints
+def load(path: Path) -> list[str]:
+    return [type(path).__name__]
+print("no runtime check:", load("sales.csv"))
+print("hints:", get_type_hints(load))
+x = reveal_type({"a": "1"})
+print("returned:", x)`, expect: [R`no runtime check: ['str']`, R`'path': <class 'pathlib.Path'>`, R`Runtime type is 'dict'`, R`returned: {'a': '1'}`] },
+          ],
+        },
+        {
           cmd: "pytest لسكربت",
           title: "اختبر السكربت بملفات مؤقتة",
           desc: R`سكربت بيمسح ملفات لازم يتختبر قبل ما يتجدول. [[pytest]] مع [[tmp_path]]: كل اختبار بياخد فولدر مؤقت فاضي، تعمل فيه ملفات بأعمار مختلفة، وتنادي [[main([...])]] بالـ arguments كـ list، وتتأكد مين اتمسح ومين فضل والـ exit code كام.
@@ -1512,6 +2204,12 @@ def test_days_must_be_a_number(capsys):
     assert "invalid int value: 'abc'" in capsys.readouterr().err`,
           try: R`حط [[clean_old_files.py]] (درس «clean_old_files.py») في فولدر، وجنبه [[tests/test_clean_old_files.py]]. شغّل [[python -m pytest -q]]. وبعدين جرّب [[pytest -q]] لوحده. وبعدين امسح سطر [[caplog.set_level(logging.INFO)]] وشغّل تاني واقرا الفشل.`,
           flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**اكتب اختبار:** لسكربت المسح نادي [[main(["--days", "30", str(tmp_path)])]] من غير [[--apply]]، واتأكد إن مفيش ولا ملف اتمسح وإن الـ exit code ٠.`, done: R`الاختبار أخضر، ولو حد غيّر الـ default للسكربت يمسح من غير [[--apply]] الاختبار ده هيفشل، وده الهدف منه.` },
+            { lvl: 'تطبيق', t: R`**اكتب اختبار:** بـ [[capsys]] اتأكد إن السكربت بيطبع اسم كل ملف هيتمسح على stdout، والتحذيرات على stderr.`, done: R`[[out, err = capsys.readouterr()]] و [[assert "old.log" in out]] و [[assert "skipped" in err]] خضرا، ولما بدّلت print بين الاتنين الاختبار فشل.` },
+            { lvl: 'تطبيق', t: R`**اكتب اختبار:** اختبار end-to-end بيشغّل السكربت كبرنامج بـ [[subprocess.run([sys.executable, SCRIPT, ...], capture_output=True, text=True)]] ويتأكد من الـ exit code والناتج.`, done: R`الاختبار بيعدّي، وبيمسك حاجات اختبار [[main()]] مبيمسكهاش: [[if __name__]] ناقص، و import بيفشل، و [[sys.exit]] بقيمة غلط.` },
+            { lvl: 'تحدي', t: R`**اكتب اختبار:** السكربت بيستخدم [[datetime.now()]] عشان يحسب العمر. اختبره بوقت ثابت من غير ما تستنى أيام: يا بـ [[monkeypatch]] على دالة [[now()]] في الموديول، يا السكربت ياخد [[--now]] للاختبار بس.`, done: R`الاختبارات بتعدّي في أي يوم وأي ساعة، وحالة الحد (عمر الملف ٣٠ يوم بالظبط) ليها اختبار.` },
+          ],
           deep: {
             why: R`سكربت المسح لو فيه bug في الشرط ([[>]] بدل [[<]]) هيمسح الملفات الجديدة بدل القديمة. اختبار ٥ سطور بيمسك ده على فولدر مؤقت، مش على السيرفر.`,
             how: R`[[from clean_old_files import main]]: ده السبب الحقيقي لـ [[if __name__ == "__main__"]]. الـ import مش بيشغّل حاجة.
@@ -1773,6 +2471,12 @@ find . -type f -name '*.*' -not -path './.git/*' | sed 's/.*\.//' | sort | uniq 
 # Windows (PowerShell):
 Get-ChildItem -Recurse -File | Group-Object Extension | Sort-Object Count -Descending | Select-Object -First 5 Count, Name`,
           try: R`شغّل التلاتة على نفس الفولدر (الـ proj بتاع درس «glob و rglob»، وفيه [[x.PNG]] و [[y.png]] و Makefile و .git). PowerShell على لينكس وماك اسمه [[pwsh]]. قارن النتايج: مين عدّ PNG و png مع بعض؟ ومين دخل .git؟ ومين عدّ Makefile؟`,
+          practice: [
+            { lvl: 'سريع', t: R`**قارن:** نفس المهمة (عد ملفات [[.log]] في فولدر وحجمها الكلي) في bash و PowerShell و Python. عدّ السطور في كل واحد.`, done: R`التلاتة طلّعوا نفس الرقمين، وكتبت عدد السطور لكل واحد وأنهي أسهل في القراية.` },
+            { lvl: 'تطبيق', t: R`**أشكال:** نفس شكل الهرم (٥ سطور، نجوم في النص) في التلاتة: Python بـ f-string و [[:^]]، و PowerShell بـ [[PadLeft]]، و bash بـ [[printf]] و loop.`, done: R`التلاتة طلّعوا نفس الناتج بالحرف (قارنت بـ [[diff]] أو [[Compare-Object]] على الناتج)، وكتبت أنهي أسهل.` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** عدّ السطور اللي فيها [[ERROR]] في لوج ٥٠٠ ألف سطر بـ [[grep -c]] و [[Select-String]] و loop في Python. قيس الوقت.`, done: R`كتبت التلات أرقام، و [[grep]] كان الأسرع غالبًا، و [[Select-String]] الأبطأ، و Python في النص، وفهمت إن لعملية واحدة على نص الأداة الجاهزة كفاية.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** اختار ٥ مهام من شغلك وقرّر لكل واحدة تكتبها بإيه، وجنب كل قرار سبب واحد من الدرس (الـ cross-platform، والبيانات المتداخلة، والسرعة، واللي متسطّب على السيرفر).`, done: R`جدول ٥ صفوف بأسباب حقيقية مش «عشان أحبه»، وواحدة على الأقل قررت فيها bash أو PowerShell مش Python.` },
+          ],
           deep: {
             why: "كل لغة فيها حاجات سهلة جدًا وحاجات مؤلمة. سكربت bash فيه JSON و if متداخلة و arrays بيبقى صعب يتقري ويتصلّح. وسكربت Python بيعمل pipe بين ٤ أوامر نظام بيبقى أطول من اللازم.",
             how: R`bash: كل حاجة نص، والأوامر بتتوصّل بـ [[|]]. سريع تكتب فيه سطر، بس المسافات في أسماء الملفات والـ quoting و [[set -euo pipefail]] بيوقعوا ناس كتير، ومفيش data structures حقيقية. وعلى ويندوز محتاج WSL أو Git Bash.

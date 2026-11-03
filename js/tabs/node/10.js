@@ -4,6 +4,15 @@ MORE("node", [
       t: "Deno 2: صلاحيات وأدوات جاهزة",
       l: 2,
       n: "Deno مبيسمحش للكود يقرا ملف أو يكلم النت غير لما انت تسمح، وجواه formatter و linter و test runner، وبيستخدم مكتبات npm",
+      projects: [
+        { lvl: 'صغير', t: R`سكربت بأقل صلاحيات`, what: R`[[report.ts]] بيقرا [[data.csv]] ويكتب [[report.json]] ويعمل fetch لـ API واحد، وبيتشغّل بـ [[--allow-read=data.csv --allow-write=report.json --allow-net=api.example.com]] بس، والأمر متسجّل كـ task في [[deno.json]]. من درس deno run والصلاحيات.`, done: R`[[deno task report]] بيشتغل، وأي محاولة تقرا ملف تاني (جرّب [[/etc/passwd]] أو [[C:\Windows\win.ini]]) بتقع بـ [[NotCapable: Requires read access]].` },
+        { lvl: 'صغير', t: R`مشروع Deno بأدواته`, what: R`[[deno init]] وبعدين [[deno add npm:zod@4.6.7]]، وملف فيه validation، و [[deno fmt]] و [[deno lint]] و [[deno check]] و [[deno test]] كلهم في task اسمه [[ci]]. من درس deno.json و deno fmt و lint و test.`, done: R`[[deno task ci]] بيعدّي، ولو زوّدت متغير مش مستخدم بيقع بـ [[no-unused-vars]]، ولو نوع غلط بيقع بـ [[TS2322]].` },
+        { lvl: 'متوسط', t: R`API بـ Deno.serve و URLPattern`, what: R`سيرفر درس [[Deno.serve]] بـ ٤ routes بـ URLPattern، و JSON غلط = 400 (الأصلي 500)، و 405 للـ methods المش مدعومة، واختبارات [[Deno.test]] بتشغّل السيرفر على port 0 وتختبره بـ fetch وتقفله.`, done: R`[[deno test --allow-net]] كله [[ok]]، و [[{bad]] = 400 مش [[500 Internal Server Error]]، والسيرفر بيتقفل في آخر الاختبار من غير ما يعلّق.` },
+        { lvl: 'متوسط', t: R`نفس المكتبة لـ Deno و Node`, what: R`مكتبة صغيرة (مثلًا [[slugify]] بالعربي من بنك تمارين JS) مكتوبة TypeScript من غير أي API خاص بـ runtime، وليها اختبارات بتشتغل بـ [[deno test]] و [[node --test]] (بـ type stripping)، و [[deno.json]] و [[package.json]] الاتنين.`, done: R`الاختبارات بتعدّي على الاتنين بنفس الملف، و [[deno publish --dry-run]] و [[npm pack --dry-run]] بيوروا الملفات الصح.` },
+        { lvl: 'كبير', t: R`أداة نظام آمنة بـ Deno`, what: R`أداة [[clean-downloads.ts]] بتنقل الملفات القديمة من فولدر التنزيلات لفولدر أرشيف حسب الامتداد والعمر، بصلاحيات read/write على الفولدرين دول بس (من غير [[-A]])، و [[--dry-run]]، ولوج JSON، واختبارات بفولدرات مؤقتة ([[Deno.makeTempDir]])، وبتتبني بـ [[deno compile]] لملف واحد بالصلاحيات جواه.`, done: R`الـ binary بيشتغل من غير Deno متسطّب، ومحاولة لمس فولدر تالت بتقع بـ [[NotCapable]]، و [[--dry-run]] بيطبع نفس اللي هيتعمل من غير ما يغيّر حاجة، والاختبارات بتعدّي.`, ext: R`زوّد جدولة (كل يوم)، وتقرير بالمساحة اللي اتوفّرت، وقارن نفس الأداة بنسخة Node من وحدة Node runtime.` },
+        { lvl: 'فكرة', t: R`سكربت عندك بيستاهل صلاحيات`, what: R`فكّر في سكربت Node عندك بيستخدم مكتبات من npm مش متأكد منها كلها، وشغّله بـ Deno بـ [[npm:]] وأقل صلاحيات ممكنة، واكتب كل صلاحية طلبها وليه.`, done: R`السكربت شغال بصلاحيات محددة (مفيش [[-A]])، وعندك لستة بكل صلاحية وسببها، وصلاحية واحدة على الأقل اكتشفت إن المكتبة بتطلبها من غير سبب واضح.`, ext: R`اعمل منه [[deno compile]] بالصلاحيات دي، وحطه في CI بيشتغل كل يوم.` },
+        { lvl: 'كبير', t: R`مراقب مواقع بـ Deno`, what: R`[[uptime.ts]] بيقرا [[sites.json]] (لستة URLs)، ويعمل fetch لكل واحد كل دقيقة بـ timeout ٥ ثواني ([[AbortSignal.timeout]])، ويحفظ النتايج في [[Deno.openKv]] أو ملف JSONL، و [[Deno.serve]] بيعرض صفحة HTML بالحالة الحالية وآخر ٢٤ ساعة. صلاحيات net للمواقع دي والبورت بتاعه بس.`, done: R`موقع واقع بالقصد (بورت مقفول) بيبان أحمر في الصفحة بعد دقيقة، والسكربت بيكمّل لو موقع ورا التاني وقع، ومحاولة fetch لموقع مش في اللستة بتقع بـ [[NotCapable]].`, ext: R`ابعت إشعار تيليجرام لما موقع يقع (درس webhook تيليجرام)، واعمل [[deno compile]] للأداة.` },
+      ],
       items: [
         {
           cmd: "deno run والصلاحيات",
@@ -20,6 +29,12 @@ curl -fsSL https://deno.land/install.sh | sh
 # Windows (PowerShell):
 irm https://deno.land/install.ps1 | iex`,
           try: R`اعمل [[main.ts]] بيقرا [[data.txt]] بـ [[Deno.readTextFile]]، ويطبع [[Deno.env.get("HOME")]]، ويعمل [[fetch("https://example.com")]]. شغّله من غير ولا flag، وبعدين زوّد الصلاحيات واحدة واحدة لحد ما يشتغل. وبعدين جرّب [[--allow-net=example.com]] والكود بيكلم [[example.org]].`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[deno run main.ts]] والملف بيقرا [[data.txt]] ويعمل fetch. إيه أول خطأ؟ والـ exit code؟`, done: R`[[error: Uncaught (in promise) NotCapable: Requires read access to "data.txt", run again with the --allow-read flag]] و exit غير صفر. ومن غير terminal (CI أو Docker من غير [[-t]]) مفيش سؤال، بيقع على طول.` },
+            { lvl: 'تطبيق', t: R`**محاكاة:** زوّد الصلاحيات واحدة واحدة: [[--allow-read=data.txt]]، وبعدها [[--allow-env=USER,USERNAME]]، وبعدها [[--allow-net=example.com]]. اكتب الخطأ الجديد في كل مرة.`, done: R`[[Requires env access to "USER"]]، وبعدين [[Requires net access to "example.com:443"]]، وبعدين اشتغل. وكل خطأ قالك بالظبط الصلاحية والاسم.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[deno run --allow-read=other.txt main.ts]] والملف بيقرا [[data.txt]]. هيعدّي؟`, done: R`لأ: [[Requires read access to "data.txt"]]: الصلاحية مربوطة بالمسار، و [[other.txt]] مش [[data.txt]].` },
+            { lvl: 'تحدي', t: R`**اشرحها:** ليه [[-A]] في سطر [[deno task]] بيضيّع ميزة Deno كلها؟ واكتب الصلاحيات الأقل لسيرفر بيسمع على 8000 ويقرا [[public/]] ويكلّم Postgres على 5432.`, done: R`كتبت إن [[-A]] = Node من غير صلاحيات، والأمر [[deno run --allow-net=0.0.0.0:8000,db:5432 --allow-read=public --allow-env=DATABASE_URL server.ts]] (بأسامي وهمية).` },
+          ],
           deep: {
             why: R`في Node أي مكتبة في [[node_modules]] (أو مكتبة جواها) تقدر تقرا [[~/.ssh]] وتبعته لأي سيرفر، ومحدش هيسألك. Deno بيقلب القاعدة: الكود معندوش حاجة لحد ما انت تسمح، والصلاحية محددة بالاسم (ملف معين، دومين معين).`,
             how: R`كل API حساس بيسأل الـ permission system قبل ما يشتغل: [[Deno.readTextFile]] بيسأل عن read، و [[fetch]] عن net، و [[Deno.env.get]] عن env، وكمان [[--allow-write]] و [[--allow-run]] (تشغيل برامج) و [[--allow-ffi]] و [[--allow-sys]]. نفس الكلام على APIs بتاعة Node جوه Deno ([[node:fs]] مثلًا).
@@ -165,6 +180,11 @@ deno task app
 deno run app.ts
 deno install`,
           try: R`اعمل مشروع بـ [[deno init]]، وضيف [[npm:zod]] و [[jsr:@std/path]]. اكتب [[app.ts]] بيستورد [[z]] من [[zod]] و [[join]] من [[@std/path]]، و [[ms]] مباشرة من [[npm:ms@2]] من غير ما تضيفه. وبعدين ضيف task اسمه [[app]] بيشغّله بصلاحية قراية فولدر [[data]] بس.`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[deno init]] بيعمل إيه؟ وبعد [[deno add npm:zod@4.6.7]] شكل [[deno.json]]؟`, done: R`عمل [[deno.json]] و [[main.ts]] و [[main_test.ts]]، وبعد add بقى فيه [[imports]]: [[zod: npm:zod@4.6.7]] جنب [[@std/assert: jsr:@std/assert@1]]، و task [[dev]] فيه [[--watch --allow-net]].` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[app.ts]] بيعمل [[import { z } from "zod"]] و [[safeParse({ name: "S" })]] مع [[min(2)]]. الناتج؟ وفين zod اتسطّبت؟`, done: R`[[false Sara]]، ومفيش [[node_modules]] في الفولدر: Deno بيحطها في كاش عام إلا لو [[nodeModulesDir]] في deno.json.` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من وثائق Deno: الفرق بين [[npm:]] و [[jsr:]]، وإمتى تحتاج [[nodeModulesDir: "auto"]]؟ (فكّر في أدوات بتدوّر على node_modules زي Prisma أو Vite).`, done: R`كتبت إن jsr فيه TypeScript أصلي ونشر من غير build، و npm للمكتبات الموجودة، وإن الأدوات اللي بتقرا [[node_modules]] بنفسها محتاجة [[nodeModulesDir]] (المصدر: وثائق Deno).` },
+          ],
           deep: {
             why: R`Deno 1 كان بيستورد من URLs بس، وده كان بيخلي مكتبات npm صعبة. Deno 2 بيفهم npm كويس (ومعاه [[package.json]] كمان)، فتقدر تستخدم zod و Express وغيرهم، وتحتفظ بالصلاحيات والأدوات الجاهزة.`,
             how: R`[[imports]] في [[deno.json]] هو import map: لما تكتب [[import { z } from "zod"]]، Deno بيبص في الخريطة يلاقي [["zod": "npm:zod@^4.6.7"]] فيجيبها من npm. وتقدر تكتب [[npm:ms@2]] مباشرة في الكود من غير خريطة، بس الخريطة أنضف (النسخة في مكان واحد).
@@ -349,6 +369,11 @@ deno lint util.ts
 deno check util.ts
 deno test`,
           try: R`اعمل [[util.ts]] فيه دالة async مفيهاش [[await]]، ومتغير [[let]] مش مستخدم، وفيه [[fetch(...)]] من غير [[await]]. شغّل الأوامر الخمسة بالترتيب. مين مسك الـ [[fetch]] اللي محدش مستنيه؟`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[util.ts]] فيه async function من غير await، و [[let unused = 1]]، و [[const x: number = "text"]]. كام مشكلة هيطلّعها [[deno lint]]؟ وهل هيمسك غلطة النوع؟`, done: R`[[Found 4 problems]]: [[require-await]] و [[no-unused-vars]] (unused) و [[prefer-const]] و [[no-unused-vars]] (x)، و exit 1. غلطة النوع مش شغل lint: [[deno check]] هو اللي طلّع [[TS2322]].` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[deno test util_test.ts]] والاختبارات نفسها سليمة بس [[util.ts]] فيه [[TS2322]]. الاختبارات هتشتغل؟`, done: R`لأ: [[deno test]] بيعمل type check الأول فطلع [[TS2322 [ERROR]: Type 'string' is not assignable to type 'number'.]] و [[error: Type checking failed.]] قبل أي اختبار. و [[--no-check]] شغّلهم: [[1 passed | 1 failed]].` },
+            { lvl: 'تحدي', t: R`**ابني:** task [[ci]] في deno.json بيشغّل [[deno fmt --check && deno lint && deno check main.ts && deno test]]، وجرّبه بأربع غلطات (واحدة لكل خطوة) واتأكد إن كل واحدة بتوقفه عند خطوتها.`, done: R`كل غلطة وقّفت الـ task عند الخطوة الصح بـ exit غير صفر، والنسخة النضيفة عدّت الأربعة.` },
+          ],
           deep: {
             why: R`في Node، أول ساعة في أي مشروع بتروح في تسطيب وظبط prettier و eslint و typescript و vitest، وكل واحد بنسخة وملف config. في Deno دي أوامر موجودة، فالمشروع الصغير ياخد نفس الفحص من أول دقيقة.`,
             how: R`[[deno fmt]] و [[deno lint]] مكتوبين بـ Rust (الـ formatter مبني على dprint)، فسريعين. القواعد الافتراضية «recommended»، وتقدر تغيّرها في [[deno.json]] تحت [["fmt"]] و [["lint"]]. و [[deno lint]] بيشوف ملف ملف من غير ما يسأل TypeScript عن الأنواع، فمش بيمسك حاجات زي Promise محدش عمله await (ده محتاج type-aware lint، شوف تاب فحص الكود).
@@ -512,6 +537,11 @@ Deno.serve({ port: 8000 }, async (req) => {
   return new Response("Not Found", { status: 404 });
 });`,
           try: R`احفظ المثال [[server.ts]] وشغّله بـ [[deno run --allow-net=0.0.0.0:8000 server.ts]]. جرّب نفس طلبات درس [[Bun.serve]] بـ curl. وبعدين اعمل [[srv2.ts]] فيه [[export default { fetch(req) { ... } }]] وشغّله بـ [[deno serve --port 8001 srv2.ts]]: محتاج [[--allow-net]]؟`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[deno run server.ts]] من غير [[--allow-net]]. وبـ [[--allow-net=0.0.0.0:8000]]: أول سطر في اللوج؟`, done: R`من غير: [[NotCapable: Requires net access to "0.0.0.0:8000"]]. معاه: [[Listening on http://0.0.0.0:8000/ (http://localhost:8000/)]].` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** ابعت نفس ٧ طلبات درس [[Bun.serve]] لسيرفر Deno. إيه اللي اختلف في [[POST {bad]]؟`, done: R`كله زي Bun ماعدا الـ JSON البايظ: Deno رجّع [[500 Internal Server Error]] (من غير JSON) واللوج [[SyntaxError: Expected property name or '}' in JSON at position 1 (line 1 column 2)]] (رسالة V8، زي Node). Bun رجّع JSON من الـ [[error]] handler.` },
+            { lvl: 'تحدي', t: R`**ابني:** [[onError]] لـ [[Deno.serve]] (الخيار [[onError]] في الـ options) بيرجّع JSON، و try/catch حوالين [[req.json()]] بيرجّع 400، و [[signal]] من AbortController بيقفل السيرفر في الاختبار.`, done: R`[[POST {bad]] = 400، وخطأ تاني بالقصد = 500 بـ JSON، والاختبار بيعمل [[ac.abort()]] و [[await server.finished]] ويخلص.` },
+          ],
           flag: "script",
           deep: {
             why: R`[[Request]] و [[Response]] و [[URL]] و [[URLPattern]] معايير الويب نفسها، فالـ handler ده قريب جدًا من اللي هتكتبه لـ Bun و Cloudflare Workers. وعشان كده frameworks زي Hono بتشتغل فوقه من غير تعديل.`,

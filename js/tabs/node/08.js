@@ -4,6 +4,15 @@ MORE("node", [
       t: "Webhooks: خلّي Paymob يوصل لجهازك",
       l: 3,
       n: "بوابة الدفع بتبعت callback لسيرفر على النت، وجهازك مش على النت. الـ tunnel بيحل ده",
+      projects: [
+        { lvl: 'صغير', t: R`مُعيد تشغيل webhook محفوظ`, what: R`[[replay.mjs <file.json> [url]]] بياخد payload محفوظ (من لوج ngrok أو من لوجك) ويبعته لـ [[http://localhost:3000/webhooks/...]] بنفس الـ headers والـ query، ويطبع الـ status والوقت. من درس المشكلة ودرس لوج الـ webhooks.`, done: R`نفس الـ payload بيتبعت ٣ مرات ورا بعض، والسيرفر بيرد 200 كل مرة، والطلب اتفعّل مرة واحدة بس (من درس التكرار).` },
+        { lvl: 'صغير', t: R`مولّد توقيع للاختبار`, what: R`[[sign.mjs <payload.json>]] بيحسب HMAC-SHA512 بنفس ترتيب الحقول اللي في درس التحقق من التوقيع بالسر اللي في [[.env]] ويطبع الـ URL كامل بـ [[?hmac=...]] عشان تجرّب بـ curl. من درس التحقق من التوقيع.`, done: R`الـ URL اللي طلع بيعدّي التحقق (200)، ولو غيّرت [[amount_cents]] في الملف من غير ما تحسب تاني بيرجع 401.` },
+        { lvl: 'متوسط', t: R`endpoint webhook كامل`, what: R`route بيعمل بالترتيب: يتحقق من التوقيع (401 لو غلط)، ويسجّل الطلب كله في لوج JSONL (من غير أسرار)، ويرد 200 بسرعة، وبعدين يعالج: يحفظ المعاملة بـ id فريد ويتجاهل التكرار ([[P2002]]) ويفعّل الطلب. ومعاه اختبارات [[node:test]] للحالات الأربعة. من دروس التوقيع والتكرار واللوج.`, done: R`الاختبارات بتعدّي: توقيع غلط 401 ومفيش حاجة اتحفظت، وطلب سليم 200 واتفعّل، ونفس الطلب ٣ مرات مع بعض = تفعيل واحد، و [[success: false]] اتحفظ ومااتفعّلش.` },
+        { lvl: 'متوسط', t: R`بوت تيليجرام بـ webhook`, what: R`سيرفر [[node:http]] بيستقبل updates على [[/telegram/webhook]]، بيرفض أي طلب الـ header [[X-Telegram-Bot-Api-Secret-Token]] بتاعه مش زي السر (بـ [[timingSafeEqual]])، وبيرد على [[/start]] و [[/ping]]. وسكربت [[set-webhook.mjs]] بيسجّل الـ URL والسر و [[getWebhookInfo]] بعدها. من درس webhook تيليجرام.`, done: R`طلب من غير الـ header أو بسر غلط بيرجع 401، و update وهمي فيه [[/ping]] بيطلّع «pong» في اللوج، و [[getWebhookInfo]] بيقول [[pending_update_count: 0]] بعد التشغيل الحقيقي.` },
+        { lvl: 'كبير', t: R`صندوق webhooks موثوق (inbox)`, what: R`خدمة صغيرة بتستقبل webhooks من أي مصدر: كل طلب بيتحفظ خام (الـ body بايتات، والـ headers) في جدول [[inbox]] بـ id فريد من المصدر، وبترد 200 على طول. و worker منفصل بيلف على الـ inbox ويعالج كل واحد مرة واحدة، ولو فشل بيعيد بـ backoff (1 و 5 و 30 دقيقة) ويعلّمه [[dead]] بعد ٥ مرات. و CLI بيعيد تشغيل أي طلب بالـ id، و [[/inbox/stats]] بيطلّع العدد في كل حالة.`, done: R`لو الـ worker واقع والطلبات بتوصل، بتتحفظ ومفيش حاجة بتضيع، ولما يقوم بيعالجهم كلهم. نفس الـ id مرتين = صف واحد. ومعالجة بترمي error بالقصد بتوصل [[dead]] بعد ٥ محاولات والـ stats بتقول ده، و [[replay <id>]] بيعيدها بعد التصليح.`, ext: R`زوّد تحقق التوقيع لكل مصدر بـ config، و dashboard صغير، وتنبيه لما [[dead]] يزيد.` },
+        { lvl: 'كبير', t: R`محاكي بوابة دفع للتطوير`, what: R`سيرفر محلي بيقلّد بوابة دفع: [[POST /pay]] بيرجّع رابط دفع وهمي، وصفحة فيها زرارين (نجح / فشل)، ولما تدوس بيبعت webhook موقّع لسيرفرك على الـ URL اللي في config، وبيعيد الإرسال لو سيرفرك رد غير 200 (3 مرات)، وفيه [[--duplicate]] يبعت نفس الـ webhook مرتين عشان تختبر الـ idempotency.`, done: R`دورة كاملة (طلب ← دفع ← webhook ← تفعيل) بتشتغل على جهازك من غير إنترنت ولا tunnel، و [[--duplicate]] بيبعت مرتين وسيرفرك بيفعّل مرة، وسيرفرك لو واقع المحاكي بيعيد ٣ مرات ويطبع إنه استسلم.`, ext: R`زوّد سيناريوهات: توقيع غلط بالقصد، و webhook بيوصل قبل ما الـ API بتاع الطلب يخلص، و delay عشوائي.` },
+        { lvl: 'فكرة', t: R`webhook لخدمة بتستخدمها`, what: R`اختار خدمة بتبعت webhooks وعندك حساب فيها (GitHub، أو Stripe test mode، أو Telegram، أو أي بوابة دفع sandbox) واعمل endpoint حقيقي ليها بكل القواعد: توقيع، وتكرار، ولوج، ورد سريع، واختبر بـ tunnel.`, done: R`الـ webhook الحقيقي وصل ولقيته في اللوج، والتحقق من التوقيع اشتغل بالسر الحقيقي، وإعادة الإرسال من لوحة الخدمة مكررتش الأثر.`, ext: R`انشره على VPS أو منصة بدومين ثابت بدل الـ tunnel، وزوّد مراقبة لعدد الـ webhooks اللي فشلت في اليوم.` },
+      ],
       items: [
         {
           cmd: "المشكلة",
@@ -11,6 +20,11 @@ MORE("node", [
           desc: "Paymob وTabby وTamara بعد الدفع بيبعتوا طلب POST لـ URL انت مسجّله عندهم. الـ URL لازم يبقى على النت. [[localhost:3000]] موجود على جهازك بس. الـ tunnel بيعمل عنوان عام مؤقت بيوصّل لجهازك.",
           example: R`curl -X POST http://localhost:3000/webhooks/paymob -H "Content-Type: application/json" -d '{"type":"TRANSACTION","obj":{"success":true,"amount_cents":10000}}'`,
           try: "اعمل route للـ webhook بيطبع req.body، وجرّبه بالأمر ده الأول قبل أي tunnel.",
+          practice: [
+            { lvl: 'سريع', t: R`**اشرحها:** في ٣ سطور: ليه Paymob (أو أي بوابة) مش قادرة تبعت لـ [[http://localhost:3000]]، حتى لو الموقع شغال قدامك في المتصفح؟`, done: R`كتبت إن localhost معناه «الجهاز ده» فالبوابة هتبعت لنفسها، وإن جهازك ورا الراوتر (NAT) ومالوش عنوان عام، وإن الحل عنوان عام بيوصل لجهازك (tunnel) أو سيرفر حقيقي.` },
+            { lvl: 'تطبيق', t: R`**محاكاة:** شغّل السيرفر وابعت الـ curl اللي في المثال بإيدك، وبعدين نفس الطلب بـ [[success: false]]، وبعدين من غير [[hmac]] خالص. سجّل الرد في كل حالة.`, done: R`عندك ٣ ردود، والطلب من غير hmac رجع 401 (لو التحقق متعمل) أو كشف إن السيرفر بيصدّق أي POST، وده اللي بيخليك تكمّل لدرس التحقق من التوقيع.` },
+            { lvl: 'تحدي', t: R`**ابني:** [[replay.mjs]] بيقرا [[webhook.json]] (فيه [[method]] و [[path]] و [[query]] و [[body]]) ويبعته بـ [[fetch]] لـ [[localhost]]، ويطبع الـ status والوقت بالـ ms.`, done: R`[[node replay.mjs webhook.json]] بيطبع [[200 in 12ms]] أو حاجة شبهها، وبتستخدمه بدل ما تدفع تاني عشان تجرّب كل تعديل.` },
+          ],
           deep: {
             why: "بتطوّر الدفع، وكل حاجة شغالة لحد صفحة Paymob، وبعدين مفيش callback. السبب إن Paymob بتبعت للـ URL المسجّل، وده localhost اللي عمره ما هيوصل من سيرفرات Paymob.",
             how: R`الـ webhook مجرد طلب HTTP من سيرفر البوابة لسيرفرك. عشان يوصل، سيرفرك لازم يبقى ليه عنوان عام على النت. جهازك ورا راوتر (NAT) ومفيش عنوان عام يشاور عليه.
@@ -146,6 +160,11 @@ ngrok http 3000
 ngrok http 3000 --url=https://myapp.ngrok-free.dev
 curl -s localhost:4040/api/requests/http | jq '.requests[0].request.uri'`,
           try: "شغّل ngrok وافتح الـ URL من موبايلك على الداتا (مش الواي فاي) واتأكد إنه فتح سيرفرك.",
+          practice: [
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** من [[ngrok http --help]] أو وثائق ngrok: إزاي تشوف كل الطلبات اللي عدّت في المتصفح؟ وإزاي تعيد إرسال طلب منهم من غير ما البوابة تبعته تاني؟`, done: R`لقيت إن [[http://localhost:4040]] فيه الواجهة وزرار Replay، وإن [[/api/requests/http]] بيرجّع نفس الكلام JSON (المصدر: وثائق ngrok).` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** بعد ما webhook وصل، احفظ ناتج [[curl -s localhost:4040/api/requests/http]] في ملف، واطبع بـ [[jq]] أو بـ Node لكل طلب: الـ uri والـ status والوقت.`, done: R`سطر لكل طلب بالتلات حاجات، وعرفت منهم إن فيه طلب رجع 500 أو 401 وده سبب إن البوابة عادت الإرسال.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** ليه الـ URL المجاني اللي بيتغيّر مع كل تشغيل مشكلة مع webhooks؟ وإيه الحلّين (الدومين الثابت المجاني في ngrok، أو cloudflared بدومينك)؟`, done: R`كتبت إن كل restart لازم تغيّر الـ URL في لوحة البوابة وإلا الـ webhooks بتروح لمكان مش موجود، وقارنت الحلين في سطرين (المصدر: وثائق ngrok و Cloudflare).` },
+          ],
           deep: {
             why: "أسرع طريقة تخلي جهازك على النت لدقايق. أمر واحد و URL جاهز تحطه في Paymob.",
             how: R`[[ngrok http 3000]] بيفتح اتصال لسيرفرات ngrok، وبيطبع URL عام. أي طلب على الـ URL ده بيتبعت لـ localhost:3000 عندك. HTTPS جاهز، وده مهم لأن البوابات بترفض http.
@@ -294,6 +313,11 @@ cloudflared tunnel create dev
 cloudflared tunnel route dns dev dev.example.com
 cloudflared tunnel run dev`,
           try: "اعمل named tunnel على subdomain، وحطه مرة واحدة في Paymob، ومش هتغيّره تاني.",
+          practice: [
+            { lvl: 'سريع', t: R`**قارن وقيس:** من الوثائق: [[cloudflared tunnel --url http://localhost:3000]] (quick tunnel) مقابل tunnel متسمّي بـ [[create]] و [[route dns]]. إيه اللي بيتغيّر مع كل تشغيل في كل واحد؟ ومحتاج حساب ولا لأ؟`, done: R`جدول صغير: الـ quick tunnel من غير حساب والـ URL بيتغيّر، والمتسمّي محتاج دومين على Cloudflare والـ URL ثابت (المصدر: وثائق Cloudflare Tunnel).` },
+            { lvl: 'تطبيق', t: R`**ابني:** ملف [[config.yml]] لـ cloudflared فيه [[ingress]] بيودّي [[dev.example.com/webhooks/*]] لـ 3000 و [[dev.example.com/*]] لـ 5173، وآخر قاعدة [[http_status:404]].`, done: R`[[cloudflared tunnel ingress validate]] بيقول OK، و [[cloudflared tunnel ingress rule https://dev.example.com/webhooks/paymob]] بيطبع القاعدة الأولى (لو مسطّب cloudflared عندك، وإلا من الوثائق).` },
+            { lvl: 'تحدي', t: R`**اشرحها:** tunnel شغال على جهازك والـ URL بقى عام: إيه اللي ممكن حد يوصله غير الـ webhook؟ اكتب ٣ قواعد عشان تقفل الباقي.`, done: R`كتبت إن أي route في السيرفر بقى عام (لوحة أدمن، أو debug endpoints)، والقواعد: ingress للمسار المطلوب بس، وتقفل الـ tunnel لما تخلص، ومتشغّلش [[--inspect]] أو أدوات dev على نفس البورت.` },
+          ],
           deep: {
             why: "ngrok المجاني ليه حدود، ولو عندك دومين على Cloudflare أصلًا، الـ tunnel بتاعهم مجاني بالكامل وبيديك subdomain ثابت.",
             how: R`[[cloudflared tunnel --url http://localhost:3000]] زي ngrok بالظبط: URL عشوائي على trycloudflare.com، من غير حساب حتى.
@@ -438,6 +462,14 @@ export function verifyPaymob(obj, receivedHmac, secret) {
   return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(receivedHmac));
 }`,
           try: "ابعت webhook بدون hmac أو بـ hmac غلط واتأكد إن الـ route بيرفض بـ 401 مش بيفعّل الطلب.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** HMAC-SHA512 بالـ hex طوله كام حرف؟ و HMAC-SHA256؟ وليه الـ regex في المثال [[{128}]]؟`, done: R`128 و 64: كل بايت = حرفين hex، و SHA-512 = 64 بايت. الـ regex بيرفض أي حاجة مش بالطول ده قبل المقارنة.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** نفس الـ object بترتيب مفاتيح مختلف: [[{ amount_cents, success, id }]] و [[{ id, success, amount_cents }]]. الـ HMAC على [[JSON.stringify]] بتاعهم هيبقى واحد؟`, done: R`لأ ([[false]]). عشان كده البوابات يا إما بتحدد ترتيب حقول (زي المثال)، يا إما بتوقّع على الـ body الخام بالبايت، ولازم تاخده قبل [[express.json()]].` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** حد شال سطر الـ regex وبيعمل [[timingSafeEqual(Buffer.from(expected), Buffer.from(received))]] على طول. ابعت [[?hmac=abc]].`, done: R`السيرفر رمى [[ERR_CRYPTO_TIMING_SAFE_EQUAL_LENGTH]] و 500 بدل 401 (وممكن يوقع لو مفيش catch). بعد ما رجّعت الفحص بقى [[false]] و 401.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** البوابة بعتت الـ hmac بحروف كبيرة ([[A3F...]]) وانت حاسبه صغير. [[timingSafeEqual]] هيرجّع إيه؟ والـ regex؟`, done: R`[[timingSafeEqual]] رجّع [[false]] (بايتات مختلفة)، والـ regex [[[0-9a-f]]] كان هيرفضه قبلها. لو البوابة بتبعت كبير، اعمل [[toLowerCase()]] الأول.` },
+            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** حقل [[source_data.sub_type]] مش موجود في payload معين، و [[String(get(obj, f))]] رجّع إيه؟ هل البوابة بتحسبه كده برضه؟ اقرا الوثائق وقرر.`, done: R`[[String(undefined)]] = [["undefined"]] و [[String(null)]] = [["null"]]، فالتوقيع هيفشل لو البوابة بتحط نص فاضي. عرفت من الوثائق (أو من webhook حقيقي) البوابة بتعمل إيه، وظبطت [[get]] على كده.` },
+            { lvl: 'تحدي', t: R`**اكتب اختبار:** ٥ اختبارات لـ [[verifyPaymob]] بسر تجريبي: سليم = true، و [[amount_cents]] اتغيّر = false، و hmac أقصر = false (من غير throw)، و hmac بحروف كبيرة = false، و [[receivedHmac]] = [[undefined]] = false.`, done: R`[[node --test]] طبع ٥ [[✔]]، ولما شلت الـ regex بالقصد اختبار الطول وقع بـ [[ERR_CRYPTO_TIMING_SAFE_EQUAL_LENGTH]].` },
+          ],
           flag: "script",
           deep: {
             why: R`الـ webhook URL بتاعك عام. أي حد يعرفه (أو يخمّنه) يقدر يبعت POST فيه [["success": true]] ويفعّل طلب من غير ما يدفع. التوقيع هو الدليل إن الطلب من Paymob فعلًا.`,
@@ -656,6 +688,13 @@ curl -s -o /dev/null -w "%{http_code}\n" -X POST "http://localhost:3000/webhooks
   }
 });`,
           try: "من لوحة ngrok (localhost:4040) اعمل Replay لنفس الطلب ٣ مرات واتأكد إن الطلب اتفعّل مرة واحدة.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** نفس الـ webhook وصل ٣ مرات **ورا بعض**، والكود بيعمل [[findUnique]] وبعدين [[create]]. كام مرة الطلب هيتفعّل؟ ولو وصلوا **مع بعض**؟`, done: R`ورا بعض: مرة واحدة ([[activated,seen,seen]]). مع بعض من غير unique: ٣ مرات ([[activated,activated,activated]]) لأن التلاتة عملوا [[findUnique]] قبل أي [[create]].` },
+            { lvl: 'تطبيق', t: R`**محاكاة:** اكتب [[idem.mjs]] بـ Map وهمي و [[sleep(5)]] في [[findUnique]] و [[create]]، وشغّل ٣ مع بعض بـ [[Promise.all]]، وبعدين خلي [[create]] يرمي [[P2002]] لو الـ id موجود.`, done: R`من غير الـ unique: [[activations: 3]]. معاه: [[activated,dup,dup]] و [[activations: 1]]. الـ unique في القاعدة هو الحماية الحقيقية، والـ [[findUnique]] مجرد طريق سريع.` },
+            { lvl: 'تطبيق', t: R`**اشرحها:** ليه الكود بيرد [[200]] **قبل** المعالجة؟ وإيه اللي يحصل لو المعالجة خدت ٢٠ ثانية والبوابة مهلتها ١٠؟`, done: R`كتبت إن البوابة هتعتبره فشل وتعيد الإرسال (فتكرار أكتر)، وإن الرد السريع وبعدين المعالجة (أو طابور) بيمنع ده، والتمن إن لو المعالجة فشلت لازم انت اللي تعيدها (لوج أو inbox).` },
+            { lvl: 'تحدي', t: R`**ابني:** جدول [[processed_events]] (أو Map في التجربة) بـ مفتاح [[source + event_id]]، ودالة [[once(key, fn)]] بتنفّذ [[fn]] مرة واحدة بس حتى لو اتنادت ١٠ مرات مع بعض، ولو [[fn]] فشلت المفتاح بيتشال عشان المرة الجاية تجرّب.`, done: R`١٠ نداءات مع بعض = تنفيذ واحد، ونداء بيفشل وبعده نداء = تنفيذين (الأول فشل والتاني نجح)، و اختبارات [[node:test]] للحالتين بتعدّي.` },
+            { lvl: 'تحدي', t: R`**مسألة:** webhook «اتلغى» وصل قبل «اتدفع» لنفس الطلب (الترتيب مش مضمون). صمّم الحالة: الطلب يبقى إيه في الآخر؟ واكتب الدالة اللي بتقرر من [[created_at]] أو رقم الحدث.`, done: R`الدالة بتتجاهل أي حدث أقدم من آخر حدث اتطبّق على الطلب، والسيناريو (إلغاء ثم دفع قديم) بيسيب الطلب ملغي، والعكس بيسيبه مدفوع، و ٤ اختبارات بتغطي الترتيبين.` },
+          ],
           flag: "script",
           deep: {
             why: "البوابة مش بتبعت مرة واحدة. لو سيرفرك تأخر في الرد أو رد بـ 500، بتعيد بعد دقيقة، وبعد ٥، وبعد ساعة. فلو الكود بيفعّل الطلب مع كل webhook، العميل بيتفعّله ٣ مرات، أو بيتسجّل ٣ دفعات.",
@@ -856,6 +895,11 @@ activations: 2 rows: 2
 grep '"id":12345' logs/webhooks.log | jq .
 curl -s localhost:4040/api/requests/http | jq '.requests[] | {uri: .request.uri, status: .response.status}'`,
           try: "سجّل كل webhook في ملف JSON lines، وبعدين استخدم jq تلاقي دفعة معينة بالـ id.",
+          practice: [
+            { lvl: 'سريع', t: R`**بيانات حقيقية:** ملف JSONL فيه ٥ webhooks (اكتبهم بإيدك: id و type و success و status). اطبع بسطر Node واحد عدد كل [[status]].`, done: R`السطر بيعمل [[readFileSync]] و [[split("\n")]] و [[filter(Boolean)]] و [[JSON.parse]] لكل سطر، وطبع [[{ 200: 3, 401: 1, 500: 1 }]] (أو حسب ملفك).` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** اللوج بيكتب [[req.query]] كامل، وفيه [[hmac]]، و headers فيها [[authorization]]. اكتب [[redact(obj)]] بتبدّل أي مفتاح اسمه [[hmac]] أو [[authorization]] أو [[token]] أو [[secret]] بـ [["[redacted]"]] على أي عمق.`, done: R`[[redact({ query: { hmac: "abc" }, headers: { Authorization: "x" } })]] رجّع الاتنين [[[redacted]]] (حتى بحرف كبير)، والأصل متغيّرش.` },
+            { lvl: 'تحدي', t: R`**ابني:** [[webhook-stats.mjs logs/webhooks.log]] بيقرا اللوج بـ readline (ممكن يكبر) ويطبع: العدد في الساعة، ونسبة الفشل، والـ ids اللي اتكررت أكتر من مرة، وأبطأ ٣ بالـ ms.`, done: R`على ملف تجريبي فيه ١٠٠٠ سطر و ٥ ids مكررين، طلّعهم الخمسة بعدد مرات كل واحد، والذاكرة ثابتة (من درس streams و pipeline).` },
+          ],
           deep: {
             why: "«دفعت والاشتراك متفعّلش» أصعب شكوى تحلها لو مش عندك سجل. وصل webhook أصلًا؟ بإيه؟ التوقيع فشل؟ من غير لوج بتخمّن.",
             how: R`السجل بيتكتب قبل أي معالجة: الوقت، والمسار، والـ headers المهمة، والـ body الخام كامل، ورقم الرد اللي رجعته. لو التوقيع فشل، بيتسجّل إنه فشل. وده غير جدول payments اللي بيتكتب بعد التحقق.
@@ -1042,6 +1086,11 @@ curl -sS "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/setWebhook" -d "url=ht
 curl -sS "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/getWebhookInfo" | jq .result
 curl -sS "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/deleteWebhook?drop_pending_updates=true"`,
           try: "اعمل بوت تجربة من BotFather، وسجّل له webhook على URL من ngrok، وابعت له رسالة، وبعدين [[getWebhookInfo]] وشوف pending_update_count.",
+          practice: [
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** من وثائق Telegram Bot API: [[setWebhook]] بياخد إيه غير [[url]] و [[secret_token]]؟ (فكّر في [[allowed_updates]] و [[drop_pending_updates]] و [[max_connections]]). وإيه الحروف المسموحة في [[secret_token]]؟`, done: R`كتبت التلاتة وفايدة كل واحد، وإن الـ secret من ١ لـ ٢٥٦ حرف من [[A-Z a-z 0-9 _ -]] (المصدر: وثائق Telegram).` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[checkTelegram(req, secret)]] بترجّع [[true]] لو [[x-telegram-bot-api-secret-token]] موجود وطوله زي السر و [[timingSafeEqual]] بيقول نفس البايتات. اختبرها بـ ٤ حالات.`, done: R`من غير header = false، وطول مختلف = false من غير throw، وحرف غلط = false، والصح = true، و [[node --test]] طبع ٤ [[✔]].` },
+            { lvl: 'تحدي', t: R`**محاكاة:** اعمل update وهمي بنفس شكل Telegram ([[update_id]] و [[message.chat.id]] و [[message.text]]) وابعته لسيرفرك بـ curl مع الـ header. خلي السيرفر يرد على [[/ping]] بـ [[sendMessage]] (أو يطبع اللي كان هيبعته)، ويتجاهل [[update_id]] اللي اتعالج قبل كده.`, done: R`أول مرة طبع «sendMessage chat=42 text=pong»، ونفس الـ [[update_id]] تاني اتجاهل، و update من غير header اترفض بـ 401.` },
+          ],
           deep: {
             why: "البوت مبيردش، ومش عارف المشكلة فين: الـ URL متسجّلش؟ تيليجرام بيبعت وسيرفرك بيرد بخطأ؟ الشهادة؟ getWebhookInfo بيجاوب في سطر.",
             how: R`[[setWebhook]] بيقول لتيليجرام «ابعت كل update على الـ URL ده». الـ URL لازم HTTPS بشهادة سليمة، وعلى بورت من 443 أو 80 أو 88 أو 8443 بس. في التطوير URL الـ tunnel بيمشي.

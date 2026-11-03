@@ -4,6 +4,15 @@ MORE("node", [
       t: "الشغل اليومي",
       l: 2,
       n: "البيئة، والبورتات، والمكتبات لما تبوظ، ومديرين الباكدجات التانيين",
+      projects: [
+        { lvl: 'صغير', t: R`فاحص الـ .env`, what: R`[[env-check.mjs]] بيقرا [[.env.example]] و [[.env]] بـ [[util.parseEnv]]، ويطبع المفاتيح الناقصة من [[.env]] والزيادة اللي مش في المثال، ويخرج بـ 1 لو فيه ناقص. ومن غير ما يطبع ولا قيمة (أسرار). من درس .env.`, done: R`لو شلت [[DATABASE_URL]] من [[.env]] بيطبع «ناقص: DATABASE_URL» و exit 1، ولو كله موجود بيطبع «تمام» و exit 0، و [[grep]] على الناتج مفيهوش ولا قيمة سر.` },
+        { lvl: 'صغير', t: R`سيرفر بيدوّر على بورت فاضي`, what: R`سيرفر [[node:http]] بيبدأ من [[PORT]] أو 3000، ولو [[EADDRINUSE]] يجرّب البورت اللي بعده لحد ٥ مرات، ويطبع البورت اللي اشتغل عليه، ولو كلهم مشغولين يطبع رسالة واضحة ويخرج بـ 1. من درس البورت مشغول.`, done: R`وسيرفر تاني ماسك 3456، سيرفرك بيطبع «3456 مشغول، بجرّب 3457» وبعدها «شغال على 3457».` },
+        { lvl: 'متوسط', t: R`تقرير صحة المكتبات الأسبوعي`, what: R`سكربت بيشغّل [[npm outdated --json]] و [[npm audit --json]] بـ [[spawnSync]] (الاتنين بيخرجوا بـ 1 لما فيه حاجة، فمتعتبرهوش فشل)، ويطلّع Markdown فيه جدول المكتبات القديمة (current/wanted/latest) وعدد الثغرات لكل severity. من درس outdated / update / audit.`, done: R`على مشروع فيه [[ms@2.0.0]] و [[lodash@4.17.20]] التقرير فيه سطرين في الجدول وسطر «high: 1»، وعلى مشروع محدّث بيقول «كله محدّث، 0 ثغرات».` },
+        { lvl: 'متوسط', t: R`مكتبة اختبارات لمشروع قديم`, what: R`خد ملف فيه ٣–٥ دوال من مشروع قديم عندك واكتبله ملف [[*.test.js]] بـ [[node:test]] و [[node:assert/strict]]: حالة عادية وحالة طرفية لكل دالة، و [[mock.fn]] لأي دالة بتبعت حاجة برا، وسكربت [[test]] و [[test:cov]] بـ [[--experimental-test-coverage]]. من درس node --test.`, done: R`[[npm test]] بيعدّي، و [[test:cov]] بيطبع جدول الـ coverage و funcs % فوق 80، ولو بوّظت سطر في دالة بالقصد اختبار واحد على الأقل بيقع.` },
+        { lvl: 'كبير', t: R`npm doctor للفريق`, what: R`أداة [[npm-health.mjs]] بتجمع في تقرير واحد: نسخ Node و npm، وفيه lock ولا لأ و [[npm ci --dry-run]] بيعدّي ولا لأ، و [[npm ls --all --json]] فيه [[problems]] ولا لأ، والمكتبات المتكررة بنسخ مختلفة (زي [[ms@2.0.0]] و [[ms@2.1.3]] مع [[debug@2]])، و [[npm audit --audit-level=high]]، والإعدادات المهمة من [[.npmrc]] ([[legacy-peer-deps]] و [[save-exact]] و [[engine-strict]]). بتكتب [[health.json]] وتخرج بـ 1 لو فيه حاجة حمرا، وفيها [[--fix]] بيعمل [[npm ci]].`, done: R`على مشروع سليم كل البنود خضرا و exit 0. وكل حالة من دول بتطلع حمرا لوحدها و exit 1: lock مش متطابق، و [[legacy-peer-deps=true]] في [[.npmrc]]، وثغرة high. والتقرير بيتكتب تاني من غير ما يكرر حاجة لو شغّلتها مرتين.`, ext: R`اعمل منها GitHub Action بتعلّق التقرير على كل PR، وزوّد مقارنة بين التقرير ده واللي قبله («ثغرة جديدة دخلت مع الـ PR ده»).` },
+        { lvl: 'كبير', t: R`monorepo صغير بـ npm workspaces`, what: R`جذر فيه [[workspaces]] و [[packages/shared]] (دوال مشتركة واختبارات [[node:test]]) و [[apps/api]] (سيرفر [[node:http]] بيستخدم [[@lab/shared]]) و [[apps/cli]]. سكربتات الجذر: [[test]] بيشغّل كل الاختبارات بـ [[--workspaces --if-present]]، و [[dev]] بيشغّل الـ api بـ [[--watch --env-file-if-exists=.env]]، و [[.npmrc]] فيه [[save-exact=true]].`, done: R`[[npm ci]] من الجذر بيعمل [[node_modules]] واحد فيه [[@lab/shared]] symlink، و [[npm test]] بيعدّي في الكل، وتعديل في shared بيبان في الـ api من غير install تاني.`, ext: R`زوّد [[packages/config]] فيه إعدادات مشتركة، وانقله لـ pnpm (وحدة monorepo بـ pnpm) وقارن حجم [[node_modules]] ووقت التسطيب.` },
+        { lvl: 'فكرة', t: R`أداة بتوفّر عليك صباح كل يوم`, what: R`فكّر في أول ١٠ دقايق من شغلك اليومي على مشروع Node (pull، و install لو الـ lock اتغيّر، والـ .env ناقصه حاجة، والبورت مشغول، وتشغيل dev) واعملهم أمر واحد بيعمل كل خطوة بس لو محتاجاها، ويقولك عمل إيه وساب إيه.`, done: R`شغّلته يومين ورا بعض: أول مرة عمل install لأن الـ lock اتغيّر، والمرة التانية قال «الـ lock زي ما هو، مفيش install»، وكل خطوة ليها سطر في الناتج.`, ext: R`خليه يقرا خطوات إضافية من ملف [[morning.json]] في المشروع، ويبعتلك إشعار لو [[npm audit]] لقى ثغرة جديدة.` },
+      ],
       items: [
         {
           cmd: "node --test",
@@ -14,6 +23,14 @@ node --test --watch
 node --test --test-name-pattern="login"
 node --test --experimental-test-coverage`,
           try: "اعمل math.test.js فيه test لدالة sum، وشغّله، وبعدين بوّظ الدالة وشوف الفشل.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[sum = (a, b) => a + b]] والاختبار [[assert.equal(sum("2", 3), 5)]] بـ [[node:assert/strict]]. هيعدّي؟ ولو لأ، الرسالة هتقول إيه؟`, done: R`وقع بـ [[AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:]] و [['23' !== 5]]، والملخص [[ℹ fail 1]] و exit 1: [["2" + 3]] بيلزق نصوص.` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[assert.equal({ a: 1 }, { a: 1 })]] وقع. اقرا الرسالة وصلّحه.`, done: R`الرسالة [[Values have same structure but are not reference-equal]]: [[equal]] بيقارن بالمرجع، والحل [[assert.deepEqual]] (في [[assert/strict]] ده [[deepStrictEqual]]) وعدّى.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الاختبار ده بيعدّي وهو غلط: [[test("no await", () => { slow().then(v => assert.equal(v, 3)); })]] و [[slow]] بترجّع 2 بعد 50ms. شغّله واقرا السطر اللي بيبدأ بـ ℹ، وصلّحه.`, done: R`قبل التصليح: [[✔ no await]] بس ومعاه [[Error: Test "no await" ... generated asynchronous activity after the test ended]]. بعد [[async () => assert.equal(await slow(), 3)]] بقى [[✖]] زي ما المفروض، وبعد ما صلّحت الرقم لـ 2 عدّى.` },
+            { lvl: 'تطبيق', t: R`**اكتب اختبار:** دالة [[total(items)]] بتجمع [[price * qty]]. اكتب ٣ اختبارات: فاضي = 0، واتنين = 25، و [[mock.fn]] بيتأكد إن دالة [[send]] اتنادت مرتين وتاني مرة بـ [["b"]] من [[send.mock.calls[1].arguments]].`, done: R`[[node --test total.test.js]] طبع ٣ [[✔]] و [[ℹ pass 3]] و [[ℹ fail 0]].` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** شغّل [[node --test --experimental-test-coverage]] على [[sum.js]] فيه ٣ دوال في سطر واحد كل واحدة، واختباراتك بتنادي [[total]] بس. بص على [[line %]] و [[funcs %]]. ليه الرقمين مختلفين كده؟`, done: R`الجدول طلّع [[line % 100.00]] و [[funcs % 50.00]]: كل دالة في سطر واحد فالسطر «اتغطّى» حتى لو الدالة متنادتش. يعني نسبة السطور لوحدها بتكدب، وبص على funcs و branch.` },
+            { lvl: 'تحدي', t: R`**محاكاة:** تذكير بيتبعت بعد ساعة. اكتب اختبار بـ [[t.mock.timers.enable({ apis: ["setTimeout"] })]] و [[t.mock.timers.tick(3_600_000)]] بيتأكد إن التذكير اتبعت، من غير ما تستنى ساعة.`, done: R`الاختبار بيعدّي في أقل من ثانية ([[duration_ms]] صغير)، ولو شلت [[tick]] بيقع، ولو خليت الـ tick أقل من ساعة بـ 1ms بيقع برضه.` },
+          ],
           deep: {
             why: "مشروع صغير أو سكربت مش محتاج jest وإعداداته. الاختبارات موجودة جوه Node نفسه.",
             how: "[[node --test]] من غير ملفات بيدوّر في المشروع (ماعدا [[node_modules]]) على ملفات أساميها زي [[*.test.js]] و [[*.test.mjs]] و [[*_test.js]] و [[test-*.js]]، وأي ملف جوه فولدر اسمه [[test]]، وملف زي [[helper.mjs]] برّه الأسامي دي مش بيتشغّل. كل ملف بيشتغل في process لوحده، فلو ملف ساب متغير global أو timer مش هيأثر على التاني. [[--watch]] بيعيد الاختبارات مع كل حفظ. [[--test-name-pattern]] بياخد regex ويشغّل الاختبارات اللي اسمها مطابق بس. والـ coverage لسه experimental وبيطبع جدول في الآخر. ولو حطيته في [[scripts.test]]، [[npm test]] بيشغّله.",
@@ -218,6 +235,13 @@ node -p "require('./package.json').version"
 node --watch server.js
 node --check server.js`,
           try: "افتح REPL وجرّب [[process.env.PATH.split(':')]] و [[os.cpus().length]] بعد [[const os = require('os')]].",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في الـ REPL ([[node]] لوحده) اكتب [[1+1]] وبعدين [[_ * 10]]. إيه اللي هيطلع؟ وإزاي تخرج؟`, done: R`طلع [[2]] وبعدين [[20]]: [[_]] بيشيل آخر ناتج. وخرجت بـ [[.exit]] أو Ctrl+D (أو Ctrl+C مرتين).` },
+            { lvl: 'سريع', t: R`**قارن وقيس:** [[node --check]] على ملف فيه [[if (a {]] وعلى ملف فيه [[console.log(notDefined)]]. مين اللي اتمسك؟`, done: R`الأول طلّع [[SyntaxError: Unexpected token '{']] و exit 1، والتاني [[--check]] عدّاه بـ exit 0 ووقع بس لما اتشغّل بـ [[ReferenceError: notDefined is not defined]]: [[--check]] بيفحص الـ syntax بس.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[node -e 'console.log(process.argv)' a b]]. فيه كام عنصر؟ وفين اسم السكربت؟`, done: R`٣ عناصر: مسار node.exe وبعدين [['a']] و [['b']]، ومفيش اسم ملف لأن الكود جاي من [[-e]]. عشان كده [[process.argv.slice(2)]] بيبوظ مع [[-e]] (بيضيّع [[a]]).` },
+            { lvl: 'تطبيق', t: R`**ابني:** ٣ one-liners بـ [[node -p]]: نسخة المشروع من package.json، وعدد السطور في ملف ([[readFileSync(f,"utf8").split("\n").length]])، ومجموع عمود الأرقام في [[prices.txt]].`, done: R`التلات سطور بيطبعوا الرقم الصح، وجرّبت كل واحد على ملف فيه سطر فاضي في الآخر وعرفت إن [[split]] بيعدّه سطر زيادة.` },
+            { lvl: 'تحدي', t: R`**اقرا وتوقّع:** شغّل [[node --watch w.js]] والملف فيه [[console.log("v1")]]، وبعدين غيّره لـ [[v2]] وانت سايبه. اكتب السطور اللي هتطلع بالترتيب.`, done: R`طلع [[v1]] و [[Completed running 'w.js'. Waiting for file changes before restarting...]] وبعد التعديل [[Restarting 'w.js']] و [[v2]] (اتجرّب على Node 22 في Docker).` },
+          ],
           deep: {
             why: "مش كل حاجة محتاجة ملف. تجرّب سطر JavaScript، أو تقرا قيمة من JSON، أو تشغّل السيرفر بحيث يعيد التشغيل مع كل تعديل.",
             how: R`[[node]] لوحدها REPL (Read Eval Print Loop): بتكتب JavaScript وبيتنفذ سطر سطر. [[.exit]] أو Ctrl+D للخروج. مفيد تجرّب regex أو date أو API مكتبة.
@@ -383,6 +407,14 @@ node -e "console.log(process.env.DATABASE_URL)"
 cp .env.example .env
 grep -v '^#' .env | cut -d= -f1`,
           try: "اعمل .env فيه PORT=4000 وشغّل السيرفر بـ [[--env-file]] واتأكد إنه فتح على 4000.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[.env]] فيه [[PORT=4000]] و [[DEBUG=false]]. إيه ناتج [[process.env.PORT + 1]]؟ وهل [[if (process.env.DEBUG)]] هيدخل؟`, done: R`[[40001]] (نص اتلزق فيه 1)، و [[if]] دخل لأن [["false"]] نص مش فاضي. الحل [[Number(process.env.PORT)]] و [[process.env.DEBUG === "true"]].` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[node --env-file=nope.env show.js]] والملف مش موجود. اقرا الرسالة والـ exit code، وبعدين خليه يكمّل من غير الملف.`, done: R`طلع [[node: nope.env: not found]] (على ويندوز بمسار node.exe قبلها) و exit 9، و [[--env-file-if-exists=nope.env]] طبع [[nope.env not found. Continuing without it.]] وكمّل.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[.env]] فيه [[PORT=4000]]، وانت شغّلت [[PORT=9999 node --env-file=.env -p "process.env.PORT"]]. مين بيكسب؟`, done: R`طبع [[9999]] على Node 24 و 22: المتغير اللي جاي من البيئة بيكسب على الملف، فالسيرفر يقدر يغيّر أي قيمة من غير ما يلمس [[.env]].` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** [[.env]] فيه تعليق، و [[NAME="Sara Ali"]]، و [[GREETING=hello # inline]]، و [[EMPTY=]]، و [[MULTI="line1\nline2"]]، و [[export TOKEN=abc]]. اطبع كل واحد بـ [[JSON.stringify]] بعد [[--env-file]].`, done: R`[["Sara Ali"]] من غير علامات التنصيص، و [["hello"]] من غير التعليق، و [[""]] للفاضي، و [["line1\nline2"]] بسطر جديد حقيقي، و [["abc"]] (الـ [[export]] اتشال)، وكلهم [[string]].` },
+            { lvl: 'تحدي', t: R`**ابني:** [[config.mjs]] بيقرا [[process.env]] ويرجّع object متأكد منه: [[port]] رقم بين 1 و 65535، و [[debug]] boolean من [["true"/"false"]] بس، و [[databaseUrl]] لازم موجود. ولو فيه غلط يرمي error فيه **كل** الأخطاء مرة واحدة.`, done: R`[[PORT=abc DEBUG=yes node app.mjs]] من غير [[DATABASE_URL]] بيطبع ٣ أخطاء في رسالة واحدة و exit 1، وبالقيم الصح بيطبع [[{ port: 4000, debug: false, ... }]] بأنواع صح.` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من وثائق Node: [[process.loadEnvFile()]] و [[util.parseEnv()]] بيعملوا إيه، وإمتى تستخدم كل واحد بدل [[--env-file]]؟ جرّب الاتنين.`, done: R`[[process.loadEnvFile('.env')]] حط القيم في [[process.env]] وطبعت [[Sara Ali]]، و [[util.parseEnv('A=1\nB="x y"')]] رجّع [[{ A: '1', B: 'x y' }]] من غير ما يلمس [[process.env]] (ينفع لأداة بتفحص ملف .env).` },
+          ],
           deep: {
             why: "الباسوردات والمفاتيح مينفعش تتكتب في الكود ولا تدخل Git. وبتختلف بين جهازك والسيرفر. بتتحط في البيئة، والكود بيقراها.",
             how: R`[[process.env]] object فيه كل متغيرات البيئة اللي العملية اتشغّلت بيها. [[PORT=4000 node server.js]] بيضيف PORT للبيئة للأمر ده بس.
@@ -563,6 +595,13 @@ kill -9 $(lsof -t -iTCP:3000 -sTCP:LISTEN)
 npx -y kill-port 3000
 PORT=3001 npm run dev`,
           try: "شغّل السيرفر مرتين في ترمنالين وشوف الرسالة، وبعدين اقفل الأول بـ kill-port.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** سيرفر ماسك بورت 3456، وشغّلت تاني [[http.createServer().listen(3456)]] من غير [[on("error")]]. أول سطر في الخطأ هيبقى إيه؟ والـ exit code؟`, done: R`[[Error: listen EADDRINUSE: address already in use :::3456]] ومعاه [[Emitted 'error' event on Server instance]] و [[code: 'EADDRINUSE']]، و exit 1. الـ [[:::]] معناها كل عناوين IPv6 (وIPv4 معاها).` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[listen(port, tries)]] بيسمع على [[error]] بـ [[once]]، ولو [[EADDRINUSE]] يجرّب [[port + 1]] لحد ٥ مرات.`, done: R`والبورت 3456 مشغول طبع [[3456 مشغول، بجرّب 3457]] و [[شغال على 3457]]، ولو أي error تاني بيطبع رسالته ويخرج بـ 1.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[server.listen(0)]] بيسمع على بورت كام؟ وإزاي تعرفه؟`, done: R`نظام التشغيل اختار بورت فاضي عشوائي، و [[server.address().port]] رجّعه (طلع أكبر من 1024). ده اللي بتستخدمه في الاختبارات عشان متتخانقش على بورت.` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** على ويندوز من غير [[lsof]]: اكتب أمرين يجيبوا رقم الـ process اللي ماسك 3000 ([[Get-NetTCPConnection -LocalPort 3000 -State Listen]] و [[netstat -ano | findstr :3000]]) وأمر يجيب اسمه ([[Get-Process -Id]]).`, done: R`شغّلت سيرفر Node على 3000 والأوامر رجّعت نفس الـ PID في الاتنين واسم البرنامج [[node]]، وقفلته بـ [[Stop-Process -Id <PID>]] (مش [[taskkill /IM node.exe]] اللي بيقفل كل Node عندك).` },
+            { lvl: 'تحدي', t: R`**اشرحها:** ليه [[kill -9]] على البورت حل وحش كعادة، وإيه اللي بيسيب البورت مشغول أصلًا (terminal اتقفل وسيرفر لسه شغال، و [[--watch]] قديم، و Docker ماسكه)؟ اكتب ٣ أسطر.`, done: R`كتبت إن [[-9]] مبيدّيش البرنامج فرصة يقفل نضيف (الاتصالات والملفات، شوف درس SIGINT و SIGTERM)، وإن الأحسن تعرف مين ماسك البورت الأول (ممكن يكون container أو سيرفر تاني مهم)، وتقفله بـ SIGTERM.` },
+          ],
           deep: {
             why: "شغّلت السيرفر، وقفلت الترمنال أو الـ hot reload وقع، والعملية القديمة لسه ماسكة البورت. اللي بعدها بتفشل بـ EADDRINUSE.",
             how: R`نظام التشغيل بيسمح لعملية واحدة تسمع على بورت. الرسالة بتقولك أنهي بورت. [[lsof -i :3000]] بيقولك مين ماسكه ورقمها (PID).
@@ -721,6 +760,13 @@ npm audit
 npm audit fix
 npx npm-check-updates -u`,
           try: "شغّل [[npm outdated]] على مشروع قديم واقرا الأعمدة التلاتة. لاحظ إن Latest ممكن يكون أعلى من Wanted.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** مشروع فيه [[ms@2.0.0]] و [[lodash@4.17.20]] بـ [[^]]. إيه اللي هيظهر في عواميد Current و Wanted و Latest في [[npm outdated]]؟ والـ exit code؟`, done: R`[[lodash 4.17.20 4.18.1 4.18.1]] و [[ms 2.0.0 2.1.3 2.1.3]]، و exit 1 (عشان كده [[npm outdated]] في CI بيفشّل الخطوة).` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** بعد [[npm update]] على نفس المشروع: النسخ في node_modules بقت كام؟ و package.json اتغيّر؟`, done: R`[[npm ls]] بقى [[lodash@4.18.1]] و [[ms@2.1.3]]، بس package.json فضل [[^4.17.20]] و [[^2.0.0]]: npm 11 بيحدّث الـ lock و node_modules بس جوه الـ range.` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** شغّل [[npm audit]] على المشروع ده قبل التحديث. كام ثغرة وإيه درجتها؟ وجرّب [[npm audit --audit-level=critical]] و [[npm audit --json]].`, done: R`طلع [[1 high severity vulnerability]] في lodash مع لينكات GHSA و exit 1، و [[--audit-level=critical]] رجّع exit 0 (مفيش critical)، وبعد التحديث [[metadata.vulnerabilities]] كلها 0.` },
+            { lvl: 'تحدي', t: R`**ابني:** [[outdated-report.mjs]] بيشغّل [[npm outdated --json]] بـ [[spawnSync]] ويطبع جدول بالمكتبات اللي فيها تحديث major بس (الرقم الأول في [[latest]] أكبر من [[current]]).`, done: R`السكربت مبيعتبرش exit 1 بتاع outdated فشل، وعلى مشروع فيه [[react@17]] مثلًا بيطبعها، ومبيطبعش [[ms 2.0.0 → 2.1.3]] لأنها مش major.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** ليه [[npm audit fix --force]] خطر؟ واكتب الخطوات اللي بتعملها لما audit يقول «high» في مكتبة انت مش مستخدمها مباشرة.`, done: R`كتبت إن [[--force]] ممكن يعمل تحديث major يكسر الكود، والخطوات: [[npm why <pkg>]] تعرف مين جابها، وبعدين تحدّث الأب، ولو مفيش [[overrides]] في package.json، وبعدين [[npm test]].` },
+          ],
           deep: {
             why: "المكتبات بتتحدّث كل أسبوع. لو سبتها شهور، التحديث بيبقى مؤلم. ولو حدّثت كل حاجة مرة واحدة من غير فهم، حاجة هتبوظ.",
             how: R`[[outdated]] بيعرض جدول: Current اللي عندك، Wanted أعلى نسخة مسموحة حسب ^ و ~ في package.json، Latest آخر نسخة نزلت. لو Wanted أقل من Latest، فيه major جديد.
@@ -886,6 +932,12 @@ npm why lodash
 npm dedupe
 du -sh node_modules`,
           try: "اكتب [[npm why]] لأي مكتبة ظهرت في [[npm audit]] عشان تعرف انت مسطّبها ولا جاية مع مكتبة تانية.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** سطّب [[debug@2.6.9]] و [[ms@2.1.3]]. كام نسخة من ms هتبقى في node_modules؟ اتأكد بـ [[npm ls ms]].`, done: R`نسختين: [[ms@2.1.3]] في الجذر و [[ms@2.0.0]] تحت [[debug/node_modules]]، لأن debug 2.6.9 طالب [[ms@"2.0.0"]] بالظبط.` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** [[npm why ms]] على نفس المشروع. اقرا الناتج وقول مين طالب كل نسخة وبأي range.`, done: R`[[ms@2.0.0]] جاية من [[debug@2.6.9]] بـ [[ms@"2.0.0"]]، و [[ms@2.1.3]] من [[the root project]] بـ [[^2.1.3]].` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** جرّب [[npm dedupe --dry-run]]، وبعدين حدّث [[debug@4.4.3]] وعدّ نسخ ms بـ [[find node_modules -path "*ms/package.json"]].`, done: R`dedupe قال [[up to date]] (مينفعش يدمج 2.0.0 و ^2.1.3)، وبعد debug 4 [[npm ls ms]] بقى فيه [[ms@2.1.3 deduped]] والعدّ نسخة واحدة: الحل كان تحديث الأب مش dedupe.` },
+            { lvl: 'تحدي', t: R`**ابني:** [[dupes.mjs]] بيشغّل [[npm ls --all --json]] ويلف على الشجرة كلها (recursion) ويطبع أي مكتبة ليها أكتر من نسخة، والنسخ جنبها.`, done: R`على مشروع debug@2 + ms@2.1.3 طبع [[ms: 2.0.0, 2.1.3]]، وبعد تحديث debug مطبعش حاجة.` },
+          ],
           deep: {
             why: "npm audit بيقولك ثغرة في مكتبة عمرك ما سمعت عنها. جت منين؟ ومين محتاجها؟ من غير ما تعرف مش هتعرف تحلها.",
             how: R`المكتبات ليها مكتبات. express محتاج ٣٠ مكتبة، وكل واحدة محتاجة غيرها. [[npm ls]] بيرسم الشجرة دي، و [[--depth=0]] المستوى الأول بس (اللي انت سطّبته).
@@ -1030,6 +1082,12 @@ npm install
 npm rebuild
 npm cache verify`,
           try: "جرّب [[npm rebuild]] الأول لو المشكلة في مكتبة native، قبل ما تمسح كل حاجة.",
+          practice: [
+            { lvl: 'سريع', t: R`**محاكاة:** امسح [[node_modules/ms/index.js]] بإيدك (كأن التسطيب اتقطع)، وشغّل [[node -e "require('ms')"]] و [[npm ls]]. مين لاحظ؟`, done: R`node وقع بـ [[Error: Cannot find module '...node_modules\ms\index'. Please verify that the package.json has a valid "main" entry]]، و [[npm ls]] خرج بـ 0 كأن كله تمام: هو بيقرا package.json بس مش كل الملفات.` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** في نفس الحالة جرّب [[npm install]] الأول وبعدين [[npm ci]]. مين صلّحها؟`, done: R`[[npm install]] قال [[found 0 vulnerabilities]] والملف لسه ناقص (شايف إن ms@2.1.3 متسطّبة)، و [[npm ci]] مسح node_modules وسطّب من الأول، و [[require('ms')('2h')]] رجّع [[7200000]].` },
+            { lvl: 'تحدي', t: R`**اشرحها:** رتّب الحلول من الأخف للأتقل وقول كل واحد بيحل إيه: [[npm ci]]، و [[npm rebuild]]، و [[rm -rf node_modules]] و install، ومسح [[package-lock.json]]، و [[npm cache clean --force]]. وليه مسح الـ lock آخر حاجة؟`, done: R`الترتيب فيه سبب لكل خطوة، ومنهم إن [[rebuild]] للمكتبات اللي فيها كود native بعد تغيير نسخة Node، وإن مسح الـ lock بيغيّر نسخ كل المكتبات مرة واحدة فبيدخّل باجات جديدة.` },
+            { lvl: 'تحدي', t: R`**ابني:** [[verify-modules.mjs]] بيلف على كل [[node_modules/*/package.json]] ويتأكد إن الملف اللي في [[main]] (أو [[index.js]] لو مفيش) موجود فعلًا.`, done: R`بعد ما مسحت [[ms/index.js]] السكربت طبع [[ms: main مش موجود]] و exit 1، و [[npm ls]] كان ساكت في نفس الحالة.` },
+          ],
           deep: {
             why: "node_modules فيه آلاف الملفات، وبيتلخبط: تسطيب اتقطع في النص، أو تبديل نسخة Node، أو pull غيّر الـ lock. الأعراض غريبة ومش مرتبطة بكودك.",
             how: R`أعراض المشكلة: [[Cannot find module]] لمكتبة موجودة في package.json، أو [[invalid ELF header]] / [[was compiled against a different Node.js version]] لمكتبة native.
@@ -1180,6 +1238,12 @@ npm install react-day-picker@latest
 npm install --legacy-peer-deps
 echo "legacy-peer-deps=true" >> .npmrc`,
           try: "في مشروع تجربة سطّب react@19 وبعدين مكتبة قديمة معمولة لـ react 17، واقرا رسالة ERESOLVE لحد ما تفهم مين طالب إيه.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** عندك [[react@18.3.1]] وكتبت [[npm i react-dom@19.0.0]]. اقرا رسالة npm وطلّع منها ٣ حاجات: مين موجود، ومين طالب إيه، والاقتراح.`, done: R`[[Found: react@18.3.1]]، و [[peer react@"^19.0.0" from react-dom@19.0.0]]، والاقتراح «retry this command with --force or --legacy-peer-deps to accept an incorrect (and potentially broken) dependency resolution».` },
+            { lvl: 'تطبيق', t: R`**محاكاة:** نفّذ الاقتراح الغلط: [[npm i react-dom@19.0.0 --legacy-peer-deps]]، وبعدين [[npm ls]]، وبعدين شغّل [[renderToString]] من [[react-dom/server]].`, done: R`التسطيب عدّى و [[npm ls]] خرج بـ 0 من غير أي تحذير، بس التشغيل وقع بـ [[Error: Incompatible React versions: The "react" and "react-dom" packages must have the exact same version]]: المشكلة اتأجلت للـ runtime.` },
+            { lvl: 'تطبيق', t: R`**صلّح:** نفس المشروع، الحل الصح: [[npm view react-dom@19.0.0 peerDependencies]]، وبعدين نسخة react-dom اللي بتطابق react 18.`, done: R`[[npm view]] طلّع [[{ react: '^19.0.0' }]]، و [[npm i react-dom@18.3.1]] عدّى من غير flags، و [[renderToString]] رجّع [[<b>x</b>]].` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من وثائق npm، إيه الفرق بين [[--force]] و [[--legacy-peer-deps]] و [[overrides]]؟ واكتب [[overrides]] بيجبر مكتبة فرعية على نسخة معينة.`, done: R`كتبت الفرق (legacy بيتجاهل peers خالص، و force بيسطّب ولو فيه تعارض، و overrides بيغيّر النسخة اللي في الشجرة بإرادتك)، ومثال overrides اتسطّب و [[npm ls <pkg>]] بيوري النسخة الجديدة.` },
+          ],
           deep: {
             why: "الرسالة طويلة ومخيفة، فالناس بتنسخ أول حل على النت: legacy-peer-deps. التسطيب بيعدّي، والمشكلة بتظهر بعدين وقت التشغيل في شكل error ملهوش علاقة.",
             how: R`الـ [[peerDependencies]] مش مكتبة المكتبة محتاجاها جواها، دي مكتبة لازم «انت» تكون مسطّبها، زي plugin لـ React محتاج React نفسه. المكتبة بتقول النسخ اللي اتجرّبت معاها.
@@ -1352,6 +1416,11 @@ pnpm add express
 pnpm dlx create-next-app
 npm pkg set packageManager=pnpm@9.12.0`,
           try: "لو المشروع فيه pnpm-lock.yaml استخدم pnpm، ولو yarn.lock استخدم yarn. متخلطش، كل واحد ليه lock مختلف.",
+          practice: [
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** نسخة corepack اللي جاية مع Node بتاعك كام؟ وجرّب [[npx -y pnpm@9.12.0 --version]] من غير تسطيب global.`, done: R`[[corepack --version]] طبع [[0.36.0]] على Node 24.22.1، والتاني طبع [[9.12.0]]. وعرفت من وثائق Node إن corepack مش جاي مع Node 25 وما بعده.` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** نفس package.json فيه express: سطّبه بـ npm في فولدر وبـ [[npx -y pnpm@9.12.0 install]] في فولدر تاني. قارن الوقت وشكل [[node_modules]] (فيه [[.pnpm]]؟).`, done: R`عندك رقمين للوقت، ولقيت إن pnpm بيحط المكتبات في [[node_modules/.pnpm]] ويعمل links، وإن [[require]] لمكتبة مش مكتوبة في package.json بيقع مع pnpm وبيعدّي مع npm (phantom dependency).` },
+            { lvl: 'تحدي', t: R`**اشرحها:** فريق فيه ناس بتستخدم npm وناس pnpm على نفس الريبو. إيه اللي بيحصل للـ lock files؟ وإزاي [[packageManager]] و corepack بيمنعوا ده؟`, done: R`كتبت إن هيبقى فيه [[package-lock.json]] و [[pnpm-lock.yaml]] بنسخ مختلفة، وإن [[packageManager: pnpm@9.12.0]] مع corepack بيخلي الكل يستخدم نفس الأداة بنفس النسخة.` },
+          ],
           deep: {
             why: "مشروع هتشتغل عليه بيستخدم pnpm، أو عايز تسطيب أسرع ومساحة أقل. لازم تعرف الفرق وإزاي متخلطش.",
             how: R`التلاتة بيقروا نفس package.json. الفرق في التسطيب والـ lock: npm بيعمل package-lock.json، و yarn بيعمل yarn.lock، و pnpm بيعمل pnpm-lock.yaml. المشروع بيستخدم واحد بس، وتعرفه من ملف الـ lock الموجود.
@@ -1510,6 +1579,12 @@ npm run build --workspaces
 npm run dev -w apps/web
 npm link ../my-lib`,
           try: R`اعمل مشروع فيه [[workspaces: ["apps/*", "packages/*"] ]] وشوف إن node_modules واحد في الجذر.`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** بعد [[npm init -w packages/shared -y]] و [[npm init -w apps/api -y]]، إيه اللي هيبقى في [[workspaces]] في package.json الجذر؟`, done: R`[[npm pkg get workspaces]] طلّع [[["packages/shared", "apps/api"]]]: npm زوّدهم لوحده.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[packages/shared/index.js]] فيه [[exports.hi]]، وسمّيه [[@lab/shared]]، وسطّبه في الـ api بـ [[npm i @lab/shared -w apps/api]]، واستخدمه من جوه [[apps/api]].`, done: R`[[node_modules/@lab/shared]] طلع symlink للفولدر، و [[node -p "require('@lab/shared').hi('api')"]] من جوه apps/api طبع [[hi api]]، و dependencies بتاعة الـ api فيها [[@lab/shared: ^1.0.0]].` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[npm run test --workspaces --if-present]] وقع رغم إن [[--if-present]] موجود. ليه؟`, done: R`لأن [[npm init -y]] بيحط سكربت test افتراضي [[echo "Error: no test specified" && exit 1]]، فالسكربت «موجود» وبيفشل ([[npm error workspace @lab/shared@1.0.0]]). الحل تمسحه أو تكتب اختبار حقيقي.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** طوّر مكتبة صغيرة بـ [[npm link]] مرة، وبـ workspaces مرة. اكتب الفرق في: هل لازم تعمل link تاني بعد [[npm ci]]؟ وهل زميلك بياخد نفس الإعداد من git؟`, done: R`لقيت إن [[npm link]] بيضيع بعد [[npm ci]] ومش متسجّل في الريبو، و workspaces متسجّلة في package.json فأي حد يعمل clone بياخدها.` },
+          ],
           deep: {
             why: "عندك API و web و كود مشترك بينهم (types، وvalidation). تنسخ المشترك في الاتنين؟ يتفرق. تنشره كباكدج؟ تقيل. الـ workspaces بيخليهم مشروع واحد.",
             how: R`في package.json الجذر: [[workspaces: ["apps/*", "packages/*"] ]]. كل فولدر جواهم مشروع بـ package.json بتاعه. [[npm install]] في الجذر بيسطّب الكل في node_modules واحد، وبيعمل لينك لكل workspace باسمه، فـ [[apps/api]] بيستورد [[@myapp/shared]] كأنها مكتبة، وأي تعديل فيها بيظهر فورًا.
@@ -1711,6 +1786,11 @@ npm config get registry
 echo "//npm.pkg.github.com/:_authToken=TOKEN" >> ~/.npmrc
 echo "@myorg:registry=https://npm.pkg.github.com" >> .npmrc`,
           try: "فعّل [[save-exact]] وسطّب مكتبة وشوف النسخة اتكتبت من غير ^.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[.npmrc]] في المشروع فيه [[save-exact=true]]. بعد [[npm i ms@2.1.3]] package.json هيبقى فيه إيه؟`, done: R`[["ms": "2.1.3"]] من غير [[^]]، و [[npm config get save-exact]] رجّع [[true]].` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[.npmrc]] فيه [[save-exact=false]] وانت شغّلت [[npm_config_save_exact=true npm config get save-exact]]. مين بيكسب؟`, done: R`طبع [[true]]: متغير البيئة [[npm_config_*]] أقوى من ملف المشروع، وده اللي الـ CI بيستخدمه عشان يغيّر إعداد من غير ما يلمس الملف.` },
+            { lvl: 'تحدي', t: R`**محاكاة:** زوّد [[@lab:registry=https://npm.example.test/]] في [[.npmrc]]، وجرّب [[npm config get @lab:registry]] و [[npm i @lab/thing]]. وقول التوكن المفروض يتحط فين ومينفعش يتحط فين.`, done: R`الأول رجّع الرابط، والتاني وقع بـ [[npm error code ENOTFOUND]] و [[syscall getaddrinfo]] (الدومين مش موجود)، وكتبت إن التوكن في [[~/.npmrc]] أو [[$__{NPM_TOKEN}]] من البيئة، مش في [[.npmrc]] اللي في الريبو.` },
+          ],
           deep: {
             why: "محتاج تغيّر سلوك npm: نسخ ثابتة، أو registry خاص للشركة، أو توكن لباكدجات خاصة على GitHub Packages.",
             how: R`npm بيقرا الإعدادات من ٣ أماكن بالترتيب: [[.npmrc]] في المشروع، وبعدين [[~/.npmrc]] بتاعك، وبعدين الافتراضي. [[config list]] بيوريك النتيجة، و [[config set]] بيكتب في ملفك.

@@ -16,12 +16,15 @@ MORE("python", [
         cs: R`الـ introspection: البرنامج بيقدر يسأل عن نفسه وقت التشغيل. و Python بيعمل ده بشكل كامل، وده أساس أدوات زي الـ debuggers والـ ORMs.`,
       },
       lab: R`mkdir -p ~/lab/plab && cd ~/lab/plab`,
-      projects: [
-        { t: R`جولة في المكتبة القياسية`, what: R`[[python -c "import sys; print(sorted(sys.stdlib_module_names))"]] بتطلّع ٢٩٧ وحدة. خد ٢٠ اسم متعرفهمش و [[python -m pydoc <الاسم>]] على كل واحد. هتلاقي حاجات بتسطّب مكتبات عشانها.` },
-        { t: R`سيرفر في ثانية`, what: R`[[python -m http.server 8000]] بتخدم المجلد الحالي. استخدمها لما تحتاج تبعت ملف لجهاز تاني على نفس الشبكة، أو تجرّب صفحة HTML. **وقفلها بعدها** — دي بتكشف المجلد لأي حد على الشبكة.` },
-        { t: R`قياس بدل تخمين`, what: R`[[python -m timeit "..."]] بتقيس سرعة سطر. قارن [[sorted(x)]] بـ [[x.sort()]]، و [[+]] على النصوص بـ [[''.join()]]. الأرقام هتفاجئك. من درس ٢.` },
-      ],
       n: R`Python بيحمل توثيقه وأدواته جواه. القسم ده بيوريك تسأله إزاي، وتشغّل أدواته المدفونة، وتقرا أخطاءه`,
+      projects: [
+        { lvl: 'صغير', t: R`جولة في المكتبة القياسية`, what: R`[[python -c "import sys; print(sorted(sys.stdlib_module_names))"]] بتطلّع ٢٩٧ وحدة في Python 3.14 (و ٣٠١ في 3.12، لأن وحدات قديمة اتشالت زي [[cgi]] و [[telnetlib]]). خد ٢٠ اسم متعرفهمش و [[python -m pydoc <الاسم>]] على كل واحد، واكتب لكل واحد سطر «بيعمل إيه» ومثال اتشغّل. هتلاقي حاجات بتسطّب مكتبات عشانها.`, done: R`الملف فيه ٢٠ اسم بمثال شغال لكل واحد، وواحد منهم على الأقل استخدمته بدل مكتبة كنت بتسطّبها.` },
+        { lvl: 'صغير', t: R`قياس بدل تخمين`, what: R`[[python -m timeit "..."]] بتقيس سرعة سطر. قارن [[sorted(x)]] بـ [[x.sort()]]، و [[+]] على النصوص بـ [[''.join()]]، و [[in]] على list قصاد set لـ ١٠٠٠٠ عنصر. من درس ٢.`, done: R`جدول بالأرقام اللي [[timeit]] طبعها لكل مقارنة، وجنب كل واحدة سطر بيقول الفرق كام مرة، وواحدة على الأقل كانت عكس توقعك.` },
+        { lvl: 'متوسط', t: R`[[whatis]]: توثيق سريع في الترمنال`, what: R`[[whatis NAME]] بيطبع الـ signature وأول فقرة من الـ docstring لأي دالة أو كلاس ([[whatis json.dumps]] و [[whatis pathlib.Path.rglob]])، بـ [[importlib]] و [[inspect]].`, done: R`بيشتغل على ١٠ أسماء مختلفة من المكتبة القياسية، والاسم الغلط بيقترح أقرب اسم ([[difflib.get_close_matches]]).` },
+        { lvl: 'متوسط', t: R`قارئ tracebacks`, what: R`[[tbsummary.py LOGFILE]] بيلاقي كل traceback في لوج، ويطلّع لكل واحد نوع الخطأ والرسالة وآخر سطر من كودك (مش من site-packages)، ويعد المتكرر.`, done: R`على لوج فيه ١٠ tracebacks (منهم ٤ نفس الغلطة) بيطلّع ٧ أنواع والعدد، والسطور اللي من مكتبات متخطية.` },
+        { lvl: 'كبير', t: R`[[pyenv-report]]: تقرير عن أي Python على الجهاز`, what: R`أداة بتلاقي كل نسخ Python على الجهاز ([[py --list]] على ويندوز، والـ PATH، و venvs في فولدر بتحدده)، ولكل واحد: النسخة، والمسار، وعدد المكتبات، وحجم الفولدر، وآخر مرة اتعدّل. argparse و [[--json]] و logging، وبتتعامل مع venv بايظ (الـ Python الأصلي اتمسح) من غير ما تقع، واختبارات بـ venvs مؤقتة.`, done: R`على جهازك بتطلّع كل النسخ والـ venvs، والـ venv البايظ بيظهر «بايظ: home مش موجود» من [[pyvenv.cfg]]، والتشغيل على فولدر فيه ٢٠ venv بيخلص في ثواني، والاختبارات خضرا.`, ext: R`زوّد اقتراح venvs قديمة ممكن تتمسح (مااتفتحتش من ٦ شهور) بالمساحة اللي هتتوفر.` },
+        { lvl: 'فكرة', t: R`علّم حد يصطاد`, what: R`اختار زميل مبتدئ وعلّمه يحل ٣ مشاكل من غير بحث على النت: من [[help]] و [[dir]] و الـ traceback بس. اكتب الأسئلة اللي سألها وإجابتك.`, done: R`زميلك حل الـ ٣ لوحده في المرة التانية، وعندك ملف بالأسئلة اللي اتسألت أكتر.`, ext: R`حوّل الأسئلة دي لتمارين «دوّر بنفسك» جديدة.` },
+      ],
       items: [
         {
           cmd: "help() و dir()",
@@ -71,6 +74,13 @@ python -c "import sys; print(len(sys.stdlib_module_names))"`,
           ],
           try: R`شغّل [[python -m pydoc pathlib.Path]] واقرا أول ١٠ سطور. وبعدين [[python -c "print([m for m in dir(list) if not m.startswith('_')])"]] وشوف list بتعمل كام حاجة.`,
           mac: ["both", R`[[help]] و [[dir]] و [[pydoc]] نفس الحاجة في كل الأنظمة. بس [[python]] على الماك ولينكس ممكن تكون Python 2 أو مش موجودة — استخدم [[python3]] هناك.`],
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[len([n for n in dir("") if not n.startswith("_")])]]: الـ str ليه كام method عامة؟ وبعدين اطبعهم وعلّم على اللي عمرك ما استخدمته.`, done: R`[[47]] (نفس الرقم في 3.12 و 3.14)، وجرّبت ٣ منهم ماكنتش تعرفهم من [[help(str.اسمها)]] (مثلًا [[partition]] و [[casefold]] و [[removeprefix]]).` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** من غير نت: إيه الـ arguments اللي [[json.dumps]] بتاخدها؟ استخدم [[inspect.signature]] و [[help]].`, done: R`[[inspect.signature(json.dumps)]] طبع [[(obj, *, skipkeys=False, ensure_ascii=True, ..., sort_keys=False, **kw)]]، والـ [[*]] معناها إن كل اللي بعدها لازم بالاسم ([[indent=2]] مش [[2]]).` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[int.__mro__]] و [[bool.__mro__]]. وبعدين [[True + True]] و [[isinstance(True, int)]].`, done: R`[[(<class 'int'>, <class 'object'>)]] و [[(<class 'bool'>, <class 'int'>, <class 'object'>)]]، و [[2]] و [[True]]: الـ bool نوع من الـ int. وفهمت ليه [[sys.exit(True)]] خرجت بـ ١ في درس الـ exit codes.` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** شغّل [[python -m pydoc -b]] (بيفتح المتصفح) ودوّر على [[pathlib]]، وبعدين [[python -m pydoc pathlib.Path.glob]] في الترمنال. وفي الآخر اعمل نفس الحاجة لموديول انت كاتبه بـ docstrings.`, done: R`لقيت توثيق [[glob]] كامل من غير نت، وموديولك ظهر في [[pydoc]] بالـ docstrings بتاعتك، فعرفت إن الـ docstring مش زينة: ده التوثيق اللي الناس هتشوفه.` },
+            { lvl: 'تحدي', t: R`**ابني:** [[explore.py NAME]] بياخد اسم زي [[pathlib.Path]] أو [[json]]، ويعمل import ديناميكي ([[importlib.import_module]] و [[getattr]])، ويطبع كل اسم عام فيه ونوعه وأول سطر من الـ docstring.`, done: R`[[explore.py json]] بيطبع [[dumps]] و [[loads]] وغيرهم بأول سطر من التوثيق، و [[explore.py pathlib.Path]] شغال، واسم غلط بيطبع رسالة ويخرج بـ ٢.` },
+          ],
           deep: {
             why: R`الخروج للمتصفح بيقطع الشغل، والتوثيق اللي في موقع ممكن يكون لنسخة تانية. و [[help]] بتقرا من **النسخة المتسطبة عندك**.`,
             how: R`[[help]] بتستخدم وحدة [[pydoc]]، وبتجمع: توقيع الدالة، والـ docstring، وتوثيق الميثودز الموروثة.
@@ -278,6 +288,12 @@ python -m pip --version`,
           ],
           try: R`شغّل [[python -m timeit "sorted([3,1,2])"]] و [[python -m timeit "x=[3,1,2]; x.sort()"]] وقارن. وبعدين [[python -m http.server 8000]] وافتح [[localhost:8000]] — **واقفله بعدها**.`,
           mac: ["both", R`نفس الحاجة، بس استخدم [[python3 -m]] على الماك ولينكس. و [[http.server]] بتسمع على كل الواجهات افتراضيًا — [[--bind 127.0.0.1]] بتقفلها على جهازك بس، وده الأأمن.`],
+          practice: [
+            { lvl: 'سريع', t: R`**قارن:** [[pip --version]] و [[python -m pip --version]] و [[py -m pip --version]] في نفس الترمنال، قبل وبعد تفعيل venv.`, done: R`كل سطر بيطبع مسار pip والـ Python اللي تبعه، ولقيت إن [[pip]] لوحده ممكن يبقى تبع Python تاني غير اللي [[python]] بيشغّله (خصوصًا قبل التفعيل)، و [[python -m pip]] دايمًا تبع [[python]] نفسه.` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** جرّب ٥ أدوات مدفونة: [[python -m platform]] و [[python -m sqlite3 --help]] و [[python -m ast FILE]] و [[python -m site]] و [[python -m compileall -q .]]. كل واحدة بتعمل إيه؟`, done: R`[[platform]] طبع النظام (عندي [[Windows-11-...]])، و [[sqlite3]] شِل للقاعدة من غير تسطيب (من 3.12)، و [[ast]] طبع الشجرة (أوله [[Module(]] وجواه [[Assign]])، و [[site]] طبع [[sys.path]] وفولدر اليوزر، و [[compileall]] عمل [[__pycache__]].` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** [[python -m cProfile -s cumtime script.py]] على سكربت من الوحدات اللي فاتت (زي [[find_duplicates.py]]). أنهي ٣ دوال واخدين أطول وقت؟`, done: R`كتبت الـ ٣ وأرقامهم، ولقيت إن أغلب الوقت في قراية الملفات أو الـ hash مش في الكود بتاعك، فعرفت تحسّن فين.` },
+            { lvl: 'تحدي', t: R`**ابني:** [[minitools.md]]: جدول فيه ١٠ أدوات من المكتبة القياسية بتشتغل بـ [[-m]] وبتغني عن مكتبات ناس بتسطّبها (مثلًا [[json.tool]] بدل jq البسيط، و [[http.server]]، و [[zipfile]]، و [[sqlite3]]، و [[timeit]])، وكل واحدة بأمر اتجرّب عندك.`, done: R`الجدول ١٠ صفوف وكل أمر فيه اتشغّل بالناتج بتاعه، وكاتب جنب كل واحدة النسخة اللي بدأت فيها لو جديدة (زي [[sqlite3]] في 3.12 و [[random]] في 3.13).` },
+          ],
           deep: {
             why: R`أشهر مشكلة في Python هي إن عندك أكتر من نسخة، و [[pip]] بتسطّب في واحدة و [[python]] بتشغّل تانية. و [[-m]] بتقفل الباب ده.`,
             how: R`[[python -m x]] بتعمل حاجتين: بتضيف **المجلد الحالي** لأول الـ [[sys.path]]، وبتشغّل الوحدة بـ [[__name__ == "__main__"]].
@@ -494,6 +510,13 @@ level1()`,
           try: R`اعمل الملف وشغّله واقرا الـ traceback من تحت لفوق. وبعدين خلي [[level3]] تعمل [[d["a"] + d["missing"]]] وشوف الأسهم بتشاور على أنهي جزء.`,
           flag: "script",
           mac: ["both", R`نفس الشكل. والأسهم موجودة من Python 3.11 في كل الأنظمة.`],
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** إيه الفرق في الـ traceback بين [[raise ValueError("bad config") from e]] و [[raise ValueError("bad config")]] جوه [[except KeyError as e:]]؟`, done: R`الأولى طبعت [[The above exception was the direct cause of the following exception:]] (انت قلت ده سببه)، والتانية [[During handling of the above exception, another exception occurred:]] (حصلت غلطة تانية وانت بتعالج الأولى، يعني غالبًا باج). والاتنين بيوروا الـ KeyError فوق.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [["abc".uper()]] في الـ REPL، وبعدين [[str(e)]] لنفس الـ exception في [[except]].`, done: R`الـ traceback آخره [[AttributeError: 'str' object has no attribute 'uper'. Did you mean: 'upper'?]]، بس [[str(e)]] رجّع [['str' object has no attribute 'uper']] من غير الاقتراح: الاقتراح بيتضاف وقت طباعة الـ traceback بس، فلوجك لازم يكتب الـ traceback مش الرسالة بس.` },
+            { lvl: 'تطبيق', t: R`**ابني:** وانت بتقرا CSV، زوّد للـ exception ملاحظة بـ [[e.add_note(f"row {n} of {path}")]] (من 3.11) قبل [[raise]].`, done: R`آخر الـ traceback بقى سطرين: [[ValueError: ...]] وتحته [[row 3 of data.csv]]، فعرفت الصف من غير ما تدخل pdb.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** traceback طويل جاي من جوه مكتبة (٢٠ سطر في [[site-packages]]). لاقي آخر سطر من **كودك انت** فيه، وصلّح الغلطة هناك.`, done: R`عرفت إن السطور اللي فيها مسار مشروعك هي اللي تبص عليها، والغلطة كانت في الـ arguments اللي انت بعتّها للمكتبة مش في المكتبة.` },
+            { lvl: 'تحدي', t: R`**مسألة:** اكتب سكربت بيطلّع ٥ أخطاء مختلفة في ٥ دوال ([[KeyError]] و [[IndexError]] و [[TypeError]] و [[ZeroDivisionError]] و [[FileNotFoundError]])، وخلّي زميل يصلّحهم من الـ traceback بس.`, done: R`زميلك صلّح الخمسة من غير ما يسألك، وكتب لكل واحد السطر اللي دلّه، وانت كتبت لكل واحد الرسالة بالظبط اللي ظهرت.` },
+          ],
           deep: {
             why: R`أول رد فعل لناس كتير هو نسخ آخر سطر في جوجل. وآخر سطرين مع بعض بيقولوا الإجابة في أغلب الحالات.`,
             how: R`الـ traceback بيتبني من الـ call stack. وبيتعرض من **الأقدم للأحدث** — عكس بعض اللغات. فآخر إطار هو مكان الانفجار.

@@ -4,6 +4,15 @@ MORE("node", [
       t: "monorepo بـ pnpm",
       l: 2,
       n: "كذا تطبيق وباكدج مشتركة في ريبو واحد: الربط، والفلترة، والتشغيل مع بعض، والـ builds المقفولة",
+      projects: [
+        { lvl: 'صغير', t: R`أول workspace بـ pnpm`, what: R`[[pnpm-workspace.yaml]] فيه [[apps/*]] و [[packages/*]]، و [[packages/shared]] فيه دالة، و [[apps/web]] بيستخدمها بـ [[workspace:*]]. من درس pnpm-workspace.yaml.`, done: R`[[pnpm install]] بيعمل [[apps/web/node_modules/@lab/shared]] symlink، و [[node -p "require('@lab/shared').hi('web')"]] من جوه web بيطبع [[hi web]].` },
+        { lvl: 'صغير', t: R`سكربتات الجذر`, what: R`في package.json الجذر: [[build]] = [[pnpm -r build]]، و [[dev]] = [[pnpm --parallel -r dev]]، و [[test]] = [[pnpm -r --stream test]]، و [[web]] = [[pnpm --filter @lab/web --fail-if-no-match]]. من درس pnpm --filter و pnpm -r.`, done: R`[[pnpm build]] بيبني shared قبل web، و [[pnpm web dev]] بيشغّل web بس، واسم غلط في الفلتر بيخرج بـ 1 مش 0.` },
+        { lvl: 'متوسط', t: R`مكتبة مشتركة بتتنشر صح`, what: R`[[packages/shared]] فيه [[exports]] و [[files]]، و [[pnpm pack]] من [[apps/web]] بيوري إن [[workspace:*]] اتحوّلت لرقم نسخة حقيقي. اكتب سكربت بيفك الـ tgz ويتأكد إن مفيش [[workspace:]] جوه package.json. من درس pnpm-workspace.yaml.`, done: R`الـ tgz فيه [[@lab/shared: 1.0.0]] مش [[workspace:*]]، والسكربت بيطبع «تمام» ولو لقى [[workspace:]] بيخرج بـ 1.` },
+        { lvl: 'متوسط', t: R`CI بيختبر اللي اتغيّر بس`, what: R`workflow (أو سكربت محلي) بيشغّل [[pnpm --filter "...[origin/main]" test]]: الباكدجات اللي اتغيّرت من main واللي معتمدة عليها بس. من درس pnpm --filter.`, done: R`تعديل في [[apps/api]] بيشغّل اختبارات api بس، وتعديل في [[packages/shared]] بيشغّل shared و web (اللي معتمدة عليه)، والوقت أقل من [[pnpm -r test]] برقم مكتوب.` },
+        { lvl: 'كبير', t: R`monorepo متجهّز للفريق`, what: R`ريبو فيه [[apps/api]] (Node بـ [[node:http]] أو Hono) و [[apps/web]] و [[packages/shared]] (أنواع ودوال validation مشتركة) و [[packages/config]]. فيه [[packageManager: pnpm@10.34.9]]، و [[onlyBuiltDependencies]] متسجّل للمكتبات اللي محتاجة build بس، وسكربتات build و dev و test و lint من الجذر، و CI بيعمل [[pnpm install --frozen-lockfile]] واختبار اللي اتغيّر بس، و README فيه شجرة الفولدرات وشغلة كل واحد.`, done: R`clone جديد و [[corepack enable]] و [[pnpm install --frozen-lockfile]] و [[pnpm build]] و [[pnpm test]] بيعدّوا من غير ولا تحذير ignored builds، وتعديل نوع في shared بيكسر build الـ api و web الاتنين (يعني فعلًا مشتركين).`, ext: R`زوّد Turborepo أو [[pnpm --filter ... --workspace-concurrency]] وقيس الفرق، وكاش للـ build في CI.` },
+        { lvl: 'فكرة', t: R`حوّل مشروعين عندك لـ monorepo`, what: R`اختار مشروعين عندك بيكرروا نفس الكود (فرونت وباك، أو موقع ولوحة أدمن)، وانقلهم لريبو واحد بـ pnpm مع packages مشتركة للحاجات المكررة، من غير ما تضيّع تاريخ git (ابحث عن [[git subtree]] أو [[git filter-repo]]).`, done: R`الكود المكرر بقى في package واحدة، والمشروعين بيتبنوا من الجذر، و [[git log]] لكل تطبيق لسه فيه commits القديمة.`, ext: R`زوّد changesets لإدارة نسخ الـ packages، وانشر package منهم على npm أو GitHub Packages.` },
+        { lvl: 'كبير', t: R`أداة تقرير الـ workspace`, what: R`[[ws-report.mjs]] بيقرا [[pnpm-workspace.yaml]] (globs بسيطة زي [[apps/*]])، ويلف على كل package.json، ويطبع: كل package وسكربتاتها، ومين معتمد على مين بـ [[workspace:]]، وترتيب البناء الصح (topological sort)، ويخرج بـ 1 لو فيه dependency دايرية (a على b و b على a) ويقول الحلقة.`, done: R`على الريبو التجريبي ترتيب البناء [[@lab/shared]] قبل [[@lab/web]]، ولو خليت shared يعتمد على web بيطبع «حلقة: @lab/shared ← @lab/web ← @lab/shared» و exit 1.`, ext: R`اطبع الرسم بصيغة Mermaid، وقارن الترتيب اللي طلعته بترتيب [[pnpm -r build]] الحقيقي.` },
+      ],
       items: [
         {
           cmd: "pnpm-workspace.yaml و workspace:*",
@@ -25,6 +34,11 @@ packages:
 "name": "@myapp/shared",
 "exports": { ".": "./src/index.ts", "./types": "./src/types.ts" }`,
           try: "اعمل ريبو فيه apps/web و packages/shared، واربطهم بـ workspace:*، وشغّل [[pnpm install]]، وبعدين [[ls -l apps/web/node_modules/@myapp]] وشوف اللينك.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** بعد [[pnpm install]] في workspace فيه [[@lab/shared: workspace:*]] في web، إيه اللي هتلاقيه في [[apps/web/node_modules/@lab/shared]]؟`, done: R`symlink للفولدر [[packages/shared]] ([[ls -la]] بيوري [[shared -> .../packages/shared]])، فأي تعديل في shared بيبان في web على طول.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** شغّل [[pnpm pack]] جوه [[apps/web]] وفك الـ tgz. [[workspace:*]] هتفضل زي ما هي؟`, done: R`لأ: [[package/package.json]] فيه [["@lab/shared": "1.0.0"]]. pnpm بيحوّلها لنسخة الـ package الحقيقية وقت pack و publish (pnpm 10.34.9).` },
+            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** web بيعمل [[import { hi } from "@lab/shared"]] و shared فيه [[exports: { ".": "./src/index.ts" }]] ومفيش build، وانت بتشغّل web بـ [[node]] عادي على Node 22. إيه اللي هيحصل لو shared فيه [[enum]]؟ وإمتى الطريقة دي تنفع؟`, done: R`على Node 22.18+ و 24 الـ .ts بيتشغّل بـ type stripping، بس [[enum]] بيوقّعه بـ [[ERR_UNSUPPORTED_TYPESCRIPT_SYNTAX]]، وكتبت إن الطريقة دي تنفع لما اللي بيستورد Vite أو Next أو tsx، أو الكود من غير syntax محتاج تحويل.` },
+          ],
           flag: "script",
           deep: {
             why: "عندك لعبة وسيرفر ولوحة أدمن، والتلاتة بيستخدموا نفس الأنواع ونفس الأسئلة. نسخ الكود بيخليه يتفرق، ونشره على npm تقيل. الـ workspace بيخليه مكان واحد وأي تعديل يبان في الكل فورًا.",
@@ -229,6 +243,12 @@ pnpm --filter @myapp/web add zod
 pnpm --filter "@myapp/web..." build
 pnpm --filter "...[origin/main]" test`,
           try: "في ريبو فيه أكتر من باكدج، ضيف مكتبة لتطبيق واحد بـ [[--filter]] واتأكد إنها اتكتبت في package.json بتاعه بس.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[pnpm --filter "@lab/web..." build]]. هيبني كام package وبأي ترتيب؟`, done: R`[[Scope: 2 of 4 workspace projects]]: shared الأول وبعدين web، لأن [[...]] بعد الاسم معناها «ومعاها اللي معتمدة عليه».` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** كتبت اسم غلط [[pnpm --filter @lab/nope build]] في CI والـ job عدّى أخضر. اعرف الـ exit code وصلّحه.`, done: R`طبع [[No projects matched the filters]] و exit 0 (ده سبب الأخضر)، ومع [[--fail-if-no-match]] بقى exit 1.` },
+            { lvl: 'تطبيق', t: R`**ابني:** من الجذر، زوّد [[ms@2.1.3]] لـ web بس بـ [[--filter]]، وتأكد إن package.json الجذر و api متغيّروش.`, done: R`[[apps/web/package.json]] بقى فيه [[ms]] جنب [[@lab/shared: workspace:*]]، و [[git diff]] مفيهوش غير web والـ lock.` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من وثائق pnpm: إيه الفرق بين [[@lab/web...]] و [[...@lab/web]] و [[@lab/web^...]]؟ جرّب الأولانيين على الريبو التجريبي.`, done: R`كتبت إن [[web...]] = web واللي هو معتمد عليه، و [[...web]] = web واللي معتمد عليه هو (dependents)، و [[^...]] = اللي معتمد عليه من غير web نفسه، والـ Scope في الناتج طابق.` },
+          ],
           deep: {
             why: "في monorepo فيه ٥ باكدجات، مش عايز تبني الكل عشان تجرّب واحد، ولا تفضل تعمل cd رايح جاي. والـ CI مش لازم يختبر كل حاجة لو التغيير في باكدج واحدة.",
             how: R`الفلتر بيختار باكدجات، والأمر اللي بعده بيتنفذ في كل واحدة منهم.
@@ -432,6 +452,11 @@ pnpm --parallel --filter "./apps/*" dev
 pnpm -r exec rm -rf dist .next
 pnpm -r --workspace-concurrency=1 build`,
           try: "في الجذر اعمل سكربتات [[build: pnpm -r build]] و [[dev: pnpm --parallel --filter \"./apps/*\" dev]]، وشغّل الاتنين وقارن الخرج.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في workspace فيه shared و web (معتمد على shared) و api، و build موجود في shared و web بس. [[pnpm -r build]] هيعمل إيه؟`, done: R`[[Scope: 3 of 4 workspace projects]] (من غير الجذر)، و shared اتبنى قبل web، و api اتخطّى لأن معندوش build.` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** خلي [[dev]] في shared و web و api يطبع [[start]] ويستنى ثانية ونص ويطبع [[end]]. شغّل [[pnpm -r dev]] مرة و [[pnpm --parallel -r dev]] مرة، ورتّب السطور.`, done: R`من غير [[--parallel]]: [[api start]] و [[shared start]] مع بعض، و [[web start]] مبدأش غير بعد [[shared end]] (web معتمد على shared). ومع [[--parallel]] التلاتة بدأوا مع بعض. يعني [[dev]] اللي مبيخلصش في shared كان هيمنع web يبدأ أبدًا من غير [[--parallel]].` },
+            { lvl: 'تحدي', t: R`**اشرحها:** إمتى تحتاج [[--workspace-concurrency=1]]؟ اكتب حالتين حقيقيتين (ذاكرة الـ CI، أو اختبارات بتستخدم نفس قاعدة البيانات أو نفس البورت).`, done: R`الحالتين مكتوبين بسبب واضح، ومعاهم ليه [[--stream]] بيخلي اللوج متداخل وإمتى ده مقبول.` },
+          ],
           deep: {
             why: "سكربتات الجذر لازم متعرفش أسامي الباكدجات: [[pnpm build]] في الجذر ينادي [[pnpm -r build]]، والـ CI يشغّل pnpm build وخلاص. تضيف باكدج جديدة، تدخل لوحدها.",
             how: R`[[-r]] (recursive) بيرتّب الباكدجات topologically: لو web معتمدة على shared، shared تتبني الأول. وبيشغّل كذا واحدة مع بعض لو مش معتمدين على بعض (الحد الافتراضي 4، أو عدد الأنوية لو أقل، و [[--workspace-concurrency=1]] واحدة واحدة لو الجهاز ضعيف أو اللوج متلخبط).
@@ -592,6 +617,12 @@ pnpm approve-builds
 git diff pnpm-workspace.yaml
 pnpm rebuild sharp`,
           try: "في مشروع pnpm جديد سطّب esbuild (أو sharp@0.34؛ من sharp 0.35 مبقاش فيه سكربت install فمش هتطلع رسالة)، واقرا الرسالة اللي بتطلع، وشغّل [[pnpm approve-builds]]، واقرا اللي اتكتب في pnpm-workspace.yaml.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[pnpm add esbuild@0.25.10]] بـ pnpm 10.34.9. هيطلع إيه؟ وهل esbuild هيشتغل؟`, done: R`طلع صندوق [[Ignored build scripts: esbuild@0.25.10]] و [[Run "pnpm approve-builds"]]، والتسطيب عدّى، و [[pnpm exec esbuild --version]] طبع [[0.25.10]] (esbuild بيجيب الـ binary من package تانية، فاشتغل رغم كده؛ prisma و sharp مش كده).` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** نفس الأمر بـ [[npx -y pnpm@11.28.9 add esbuild@0.25.10]]. إيه اللي اتغيّر؟`, done: R`في pnpm 11 التسطيب نفسه وقع بـ [[[ERR_PNPM_IGNORED_BUILDS] Ignored build scripts: esbuild@0.25.10]] و exit 1.` },
+            { lvl: 'تطبيق', t: R`**ابني:** من غير الأسئلة التفاعلية: اكتب [[onlyBuiltDependencies]] فيه [[esbuild]] في [[pnpm-workspace.yaml]]، وشغّل [[pnpm rebuild]] و [[pnpm ignored-builds]].`, done: R`[[pnpm rebuild]] طبع [[postinstall$ node install.js]] و [[Done]]، و [[ignored-builds]] بقى [[None]]، والملف ده بيدخل git.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** ليه pnpm قفل postinstall افتراضي؟ اكتب سيناريو هجوم حقيقي الشكل (حزمة اتخطفت ونزّلت نسخة فيها postinstall) وإزاي القرار ده بيوقفه.`, done: R`السيناريو فيه: حساب صاحب الحزمة اتسرق، ونسخة patch فيها postinstall بيقرا [[~/.npmrc]] و [[.env]] ويبعتهم، و [[^]] بيجيبها في أي install جديد، و pnpm بيوقف السكربت لحد ما انت توافق بالاسم.` },
+          ],
           deep: {
             why: "هجمات supply chain كتير بتشتغل من postinstall: مكتبة اتخترقت، وأول ما حد يسطّبها بتسرق التوكنات من جهازه. pnpm قفل الباب ده افتراضيًا، والتمن إنك تفتحه بإيدك للمكتبات اللي تثق فيها.",
             how: R`في التسطيب pnpm بيطبع أسامي المكتبات اللي سكربتاتها اتمنعت: تحذير في pnpm 10، وخطأ بيوقف التسطيب في pnpm 11 (الإعداد [[strictDepBuilds]] بقى true افتراضيًا). [[pnpm ignored-builds]] بيعرضهم تاني.

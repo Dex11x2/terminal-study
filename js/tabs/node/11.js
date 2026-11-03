@@ -4,6 +4,15 @@ MORE("node", [
       t: "Hono: API واحدة على Node و Bun و Deno و Workers",
       l: 2,
       n: "framework صغير مبني على Request و Response، فنفس الكود بيشتغل على أي runtime، ومعاه middleware و validation بـ zod و client متأمّن بالأنواع",
+      projects: [
+        { lvl: 'صغير', t: R`API بـ Hono مختبرة من غير سيرفر`, what: R`[[app.ts]] فيه ٣ routes، وملف اختبار بـ [[node --test]] بيستخدم [[app.request()]] بس (من غير [[listen]]). من درس Hono.`, done: R`[[node --test]] بيعدّي في أقل من ثانية ومن غير بورت، والاختبارات بتغطي 200 و 201 و 404.` },
+        { lvl: 'صغير', t: R`نفس التطبيق على ٣ runtimes`, what: R`[[app.ts]] واحد ومعاه ٣ ملفات تشغيل صغيرة: [[node.ts]] بـ [[@hono/node-server]]، و [[bun.ts]] بـ [[export default app]]، و [[deno.ts]] بـ [[Deno.serve(app.fetch)]]. من درس Hono على كل runtime.`, done: R`نفس [[curl /api/users]] بيرجع نفس الـ JSON من التلاتة (في Docker لكل واحد)، والفرق الوحيد في الملف الصغير.` },
+        { lvl: 'متوسط', t: R`API بأخطاء وتحقق كامل`, what: R`[[zValidator]] على الـ body والـ query، و [[HTTPException]] للـ 404، و [[app.onError]] و [[app.notFound]] بيرجّعوا JSON بنفس الشكل [[{ error }]]، و [[bearerAuth]] على [[/admin/*]]، و [[secureHeaders]] و [[cors]] بـ origin واحد. من درس Hono middleware و Hono + zod.`, done: R`اختبارات [[app.request]] بتغطي: 400 من zod، و 401 من غير توكن، و 404 بـ JSON (مش [[404 Not Found]] النص)، و 500 بـ [[internal error]] (مش [[Internal Server Error]])، و CORS header موجود للـ origin المسموح بس.` },
+        { lvl: 'متوسط', t: R`client متأمّن بالأنواع`, what: R`[[hc<AppType>]] من [[hono/client]] في سكربت تاني بيكلّم السيرفر، وأي تغيير في شكل الـ body في السيرفر بيكسر الـ client في [[tsc --noEmit]]. من درس Hono + zod.`, done: R`لو غيّرت [[name]] لـ [[fullName]] في الـ schema، [[tsc]] بيطلّع خطأ في ملف الـ client قبل ما تشغّل أي حاجة.` },
+        { lvl: 'كبير', t: R`API تذاكر دعم حقيقية بـ Hono`, what: R`API لتذاكر دعم: يوزرز بـ JWT ([[hono/jwt]])، وتذاكر (فتح، تعليق، قفل)، و zod على كل input، و pagination بـ [[?page]] و [[?limit]]، ولوج JSON لكل request بالمدة، و [[/health]]، وقاعدة SQLite أو Postgres بـ Prisma، واختبارات [[app.request]] لكل route، و Dockerfile من درس Dockerfile لتطبيق Node.`, done: R`٢٠+ اختبار بيعدّوا، و [[docker run]] بيقوم ويرد على [[/health]]، وتوكن منتهي بيرجع 401، و [[limit=1000]] بيتقص لـ 100، والتطبيق نفسه بيشتغل على Bun بتغيير ملف التشغيل بس.`, ext: R`زوّد OpenAPI من الـ schemas ([[@hono/zod-openapi]])، وانشره على Cloudflare Workers أو VPS.` },
+        { lvl: 'فكرة', t: R`انقل route من Express لـ Hono`, what: R`خد مشروع Express عندك، وانقل مجموعة routes واحدة لـ Hono (تقدر تشغّلهم جنب بعض)، وقارن الكود والاختبارات والسرعة.`, done: R`الـ routes المنقولة بترد نفس الردود بالظبط (اختبار بيقارن الاتنين)، وعندك ٣ ملاحظات: حاجة أسهل، وحاجة أصعب، ورقم واحد اتقاس.`, ext: R`لو النتيجة عجبتك، كمّل الباقي وشيل Express، واعمل [[hc]] client للفرونت.` },
+        { lvl: 'كبير', t: R`rate limiter و cache كـ middleware`, what: R`اكتب بنفسك (من غير مكتبات) middleware [[rateLimit({ windowMs, max })]] بـ Map وبيرجّع 429 و [[retry-after]]، و [[cache({ ttl })]] للـ GET بيحفظ الرد ويرجّعه بـ header [[x-cache: HIT]]، واختبرهم بـ [[app.request]] و [[mock.timers]] من غير ما تستنى الوقت فعلًا.`, done: R`الطلب رقم [[max + 1]] بيرجع 429، وبعد [[tick(windowMs)]] بيرجع 200، والـ GET التاني بيرجع [[x-cache: HIT]] وبعد [[tick(ttl)]] بيرجع [[MISS]]، وكل ده من غير sleep.`, ext: R`خلّي الاتنين يشتغلوا بـ Redis عشان أكتر من نسخة، وقارن.` },
+      ],
       items: [
         {
           cmd: "Hono",
@@ -33,6 +42,13 @@ app.post("/api/users", async (c) => {
 });
 export default app;`,
           try: R`احفظ المثال [[src/app.ts]] (و [[npm i hono]]). اعمل [[src/app.test.ts]] بيستورد [[app]] ويعمل [[await app.request("/api/users/2")]] ويطبع الـ status والـ JSON، وبعدين [[POST]] بـ body، وبعدين [[/nope]]. شغّله بـ [[node src/app.test.ts]]: من غير ما تشغّل سيرفر.`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** route [[/order]] متسجّل مرتين: الأول [[c.text("first")]] والتاني [[c.text("second")]]. [[app.request("/order")]] هيرجّع إيه؟`, done: R`[[first]]: أول handler بيرجّع response بيكسب، والتاني عمره ما بيتنادى. (اتجرّب على Hono 4.13.14.)` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** من غير [[app.notFound]] ولا [[app.onError]]: [[GET /nope]] و route بيعمل [[throw new Error("db down")]]. الردين؟`, done: R`[[/nope]]: 404 والنص [[404 Not Found]]. الـ throw: 500 والنص [[Internal Server Error]] والخطأ اتطبع في اللوج ([[Error: db down]]). مش JSON، فالـ client اللي بيعمل [[res.json()]] هيقع.` },
+            { lvl: 'تحدي', t: R`**اكتب اختبار:** بـ [[node --test]] و [[app.request]]: ٥ اختبارات (قايمة، و واحد موجود، و واحد مش موجود، و POST سليم، و POST بـ JSON بايظ) من غير [[serve]] ولا بورت.`, done: R`الخمسة بيعدّوا، و [[duration_ms]] صغير (مفيش شبكة)، ولو غيّرت status في الكود الاختبار بتاعه وقع.` },
+            
+            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** في ملف اختبار، عملت [[await app.request("/")]] وبعدين سجّلت route جديد [[app.post("/u", ...)]]. شغّله واقرا الخطأ.`, done: R`[[Error: Can not add a route since the matcher is already built.]] من [[SmartRouter.add]]: أول request بيبني الـ router، وبعدها مفيش routes جديدة. الحل: سجّل كل الـ routes الأول (وده سبب إن [[onError]] و [[notFound]] اشتغلوا بعد requests عادي: دول مش routes).` },
+          ],
           flag: "script",
           deep: {
             why: R`Express مربوط بـ [[http]] بتاع Node. Hono مبني على معايير الويب، فنفس الـ app يشتغل على Node و Bun و Deno و Cloudflare Workers و Vercel وغيرهم (درس [[Hono على كل runtime]]). وصغير، وفيه أنواع TypeScript كويسة لحد ما تعمل client من الأنواع (درس [[Hono + zod]]).`,
@@ -182,6 +198,11 @@ bun src/bun.ts
 deno run --allow-net=0.0.0.0:3000 src/deno.ts
 npx wrangler dev src/worker.ts`,
           try: R`اعمل الـ ٤ ملفات اللي في الشرح جنب [[app.ts]]. شغّل كل واحد لوحده واطلب [[/api/users?q=sa]] و [[/api/users/9]]: الردود متطابقة؟ وبص على الـ headers: فيه فرق في حروف [[Content-Type]]؟`,
+          practice: [
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** في [[@hono/node-server]] (2.1.6): [[serve()]] بترجّع إيه؟ وإزاي تقفلها نضيف على SIGTERM (درس الإغلاق النضيف)؟`, done: R`عرفت إنها بترجّع الـ [[http.Server]] بتاع Node، فبتعمل [[server.close()]] زي أي سيرفر، وكتبت المعالج.` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** شغّل نفس [[app.ts]] على Node و Bun و Deno في Docker، وابعت ١٠٠٠ request بـ loop من fetch، وقيس الوقت الكلي.`, done: R`٣ أرقام، وكتبت إن الفرق في «hello world» مش هو الفرق في تطبيق فيه قاعدة بيانات (شوف درس Node ولا Bun ولا Deno).` },
+            { lvl: 'تحدي', t: R`**اشرحها:** ليه Hono بيشتغل على Workers و Express لأ؟ (فكّر في [[Request]] و [[Response]] بتوع الويب مقابل [[req]] و [[res]] بتوع [[node:http]]).`, done: R`كتبت إن Hono مبني على Fetch API (Request ← Response) الموجودة في كل runtime، و Express على [[IncomingMessage]] و [[ServerResponse]] الخاصين بـ Node، وإن [[@hono/node-server]] هو اللي بيحوّل بين الاتنين.` },
+          ],
           deep: {
             why: R`ممكن تبدأ على Node وتنقل لـ Bun عشان السرعة، أو تحط جزء من الـ API على Cloudflare Workers قريب من اليوزر. لو الكود مربوط بـ runtime، النقل إعادة كتابة. مع Hono بيبقى ملف من ٤ سطور.`,
             how: R`كل runtime حديث بيفهم دالة [[(Request) => Response]]: Deno في [[Deno.serve]]، و Bun في [[fetch]] بتاع [[Bun.serve]] (أو [[export default]] فيه [[fetch]])، و Workers في [[export default { fetch }]] (والـ Hono app نفسه فيه [[fetch]] فينفع يتصدّر على طول). Node بس اللي [[http]] بتاعه بيستخدم [[req]]/[[res]] القديمين، فـ [[@hono/node-server]] بيحوّل بينهم.
@@ -350,6 +371,12 @@ app.onError((err, c) => {
 });
 export default app;`,
           try: R`احفظ المثال [[src/mw.ts]]، واعمل سكربت بـ [[app.request]] يطلب: [[/api/hello]] بـ header [[Origin: http://localhost:5173]]، و [[/api/admin/stats]] من غير توكن ومعاه [[Authorization: Bearer ...]]، و [[/api/boom]] و [[/api/teapot]] و [[/nope]]. شغّله بـ [[ADMIN_TOKEN=dev-token]]. وبعدين غيّر [[onError]] يرجّع [[c.json({ error: err.message }, err.status)]] للـ HTTPException وشوف رد الـ 401 اتغير إزاي.`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[bearerAuth({ token: "lab-token" })]] على [[/admin/*]]. [[GET /admin/stats]] من غير header، وبـ [[authorization: Bearer lab-token]]؟`, done: R`من غير: 401 [[Unauthorized]]. معاه: 200 [[{"users":2}]].` },
+            { lvl: 'تطبيق', t: R`**صلّح:** زوّد [[app.onError]] و [[app.notFound]] بيرجّعوا JSON، و [[HTTPException]] بيرجّع رسالته و status بتاعه. جرّب نفس الطلبات.`, done: R`[[/boom]]: [[{"error":"internal error"}]] بـ 500، و [[/nope]]: [[{"error":"no route"}]] بـ 404، و [[HTTPException(404)]]: [[{"error":"user not found"}]] بـ 404.` },
+            { lvl: 'تطبيق', t: R`**ابني:** middleware [[timing]] بيقيس وقت كل request ويحط header [[x-response-time]] ويطبع سطر JSON فيه method و path و status و ms. اتأكد إنه بيقيس حتى لو الـ handler رمى error.`, done: R`كل رد فيه [[x-response-time]]، واللوج فيه سطر لكل طلب، والطلب اللي رمى error اتسجّل بـ 500 مش اتنسى.` },
+            { lvl: 'تحدي', t: R`**اقرا وتوقّع:** ٣ middlewares بيطبعوا «before 1/2/3» قبل [[await next()]] و «after 1/2/3» بعده. الترتيب؟`, done: R`[[before 1، before 2، before 3، handler، after 3، after 2، after 1]]: شكل البصلة (onion)، وجرّبتها وطابقت.` },
+          ],
           flag: "script",
           deep: {
             why: R`حاجات كل API محتاجاها: لوج لكل طلب، و CORS للفرونت، و headers أمان، وحماية لمسارات الأدمن، ورد موحّد للأخطاء. لو اتكتبت في كل handler بتتنسي. الـ middleware بيكتبها مرة.`,
@@ -548,6 +575,12 @@ const app = new Hono()
 export type AppType = typeof app;
 export default app;`,
           try: R`احفظ المثال [[src/zod.ts]] ([[npm i hono zod @hono/zod-validator]]). بـ [[app.request]] ابعت: body صح، و body فيه [[name: "S"]] و [[email: "nope"]] و [[age: 9.5]]، و body من غير [[content-type: application/json]]، و [[?page=3]] و [[?page=abc]]. وبعدين اعمل [[client.ts]] بـ [[hc<AppType>]] وانسَ [[email]] وشغّل [[npx tsc]].`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[CreateUser = z.object({ name: z.string().min(2) })]] و [[POST]] بـ [[{"name":"M"}]]. الـ status وأول حاجة في الـ body؟`, done: R`400 و [[{"success":false,"error":{"name":"ZodError","message":"[...too_small...minimum 2...]"}}]]: [[zValidator]] بيرجّع الـ error كامل افتراضيًا.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** client بعت [[POST]] بـ [[{"name":"Mona"}]] من غير [[content-type: application/json]]. هيعدّي؟`, done: R`لأ: 400 و [[invalid_type]] و [[expected: string]] على [[name]]: من غير الـ header الـ body اتقري فاضي. الحل في الـ client (header)، ومتشيلش الـ validator.` },
+            { lvl: 'تطبيق', t: R`**ابني:** الـ hook التالت لـ [[zValidator]] ([[(result, c) => ...]]) بيرجّع [[{ error: "validation", fields: { name: "..." } }]] بدل الـ ZodError كله، رسالة بالعربي لكل حقل.`, done: R`[[{"name":"M"}]] بيرجع [[{"error":"validation","fields":{"name":"الاسم حرفين على الأقل"}}]]، ومفيش [[ZodError]] في الرد.` },
+            { lvl: 'تحدي', t: R`**اقرا وتوقّع:** [[age: z.coerce.number().int().min(13).optional()]] و [[{"name":"Mo","age":"5"}]]. هيعدّي؟ وبـ [[age: "15"]]؟ وبـ [[age: ""]]؟`, done: R`[["5"]]: 400 (اتحوّل 5 وأقل من 13). [["15"]]: 201 و [[age: 15]] رقم. [[""]]: اتحوّل 0 فـ 400. يعني [[coerce]] مع string فاضي بيدّي 0 مش undefined، وده فخ.` },
+          ],
           flag: "script",
           deep: {
             why: R`[[c.req.json<T>()]] نوع بس، والعميل يقدر يبعت أي حاجة. من غير تحقق، [[name]] ممكن يبقى object أو مش موجود، والغلط يظهر جوه الداتابيز. zod بيتحقق في الحدود (أول ما الطلب يدخل)، والـ handler يشتغل على داتا مضمونة. والـ RPC client بيخلي الفرونت يقع وقت الـ build لو الـ API اتغيرت.`,
@@ -731,6 +764,11 @@ bun src/bun.ts
 deno run --allow-net=0.0.0.0:3000 src/deno.ts
 npx autocannon -c 50 -d 8 http://localhost:3000/api/users`,
           try: R`شغّل نفس الـ app على التلاتة (واحد في كل مرة)، وقيس بـ [[autocannon]]، وسجّل [[Req/Sec]] المتوسط. وبعدين اختار مشروع حقيقي عندك وجاوب: بيستخدم أداة مراقبة (APM)؟ فيه native addons؟ هيتنشر فين؟ الإجابات دي بتقرر أكتر من الرقم.`,
+          practice: [
+            { lvl: 'سريع', t: R`**اشرحها:** ٣ أسئلة تسألها قبل ما تختار runtime لمشروع جديد (المكتبات اللي محتاجها، والاستضافة، والفريق)، ولكل سؤال إجابة بتخليك تختار كل واحد.`, done: R`٣ أسئلة و ٣ أمثلة قرار، ومنهم «مكتبة native أو APM بيعتمد على async_hooks» = Node (من تجربة compat: Bun رجّع 0).` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** نفس سكربت [[compat.mjs]] بتاع درس توافق Bun على Node و Bun و Deno ([[deno run -A]]). اعمل جدول.`, done: R`جدول ٣ × ٤ بالأرقام اللي طلعت (Node أرقام حقيقية، و Bun 1.4.4 أصفار)، وسطر لـ Deno من التشغيل عندك.` },
+            { lvl: 'تحدي', t: R`**بيانات حقيقية:** اختار مشروع عندك واكتب «ADR» صغير (قرار معماري): المشكلة، والبدايل التلاتة، والقرار، والسبب بالأرقام، وإمتى نراجع القرار.`, done: R`صفحة فيها الأجزاء الخمسة، وفيها رقم اتقاس بنفسك على الأقل، ومش «لأنه أسرع» من غير قياس.` },
+          ],
           deep: {
             why: R`كل runtime جديد بيطلع بـ benchmark «أسرع ٣ مرات». الرقم ده غالبًا hello world على لينكس بأداة قياس مخصوصة. في الشغل الحقيقي الوقت بيروح في الداتابيز والشبكة، وأي توفير في الـ runtime صغير جنبهم، وأي مشكلة توافق ممكن تكلّفك أيام.`,
             how: R`اللي بيفرق فعلًا:

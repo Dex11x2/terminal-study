@@ -30,6 +30,14 @@ source .venv/bin/activate`,
       t: "البيئة والمكتبات",
       l: 1,
       n: "كل مشروع في venv خاص بيه، والمكتبات بنسخ ثابتة",
+      projects: [
+        { lvl: 'صغير', t: R`مشروع جديد في أمر واحد`, what: R`سكربت [[newproj.ps1]] أو [[newproj.sh]] بياخد اسم، ويعمل الفولدر، و venv جواه، و [[.gitignore]] فيه [[.venv/]]، و [[requirements.txt]] فاضي، و [[main.py]] بيطبع Hello. من درس الـ venv.`, done: R`[[newproj demo]] بيعمل الفولدر جاهز، و [[demo\.venv\Scripts\python main.py]] بيطبع Hello، ولو الفولدر موجود بيرفض برسالة ومبيدوسش عليه.` },
+        { lvl: 'صغير', t: R`أنا شغال على أنهي Python؟`, what: R`[[whichpy.py]] بيطبع [[sys.executable]] و [[sys.version]] وجوه venv ولا لأ ([[sys.prefix != sys.base_prefix]]) وعدد المكتبات المتسطّبة من [[importlib.metadata.distributions()]].`, done: R`بره الـ venv بيقول «مش جوه venv» وجواه بيقول اسم الفولدر، وعدد المكتبات بيزيد واحد بعد أي [[pip install]] لمكتبة ملهاش dependencies.` },
+        { lvl: 'متوسط', t: R`فاحص requirements`, what: R`[[check_reqs.py]] بيقارن كل سطر [[==]] في [[requirements.txt]] باللي متسطّب، وبيطبع جدول: الاسم والمطلوب والمتسطّب والحالة، ويخرج بـ ١ لو فيه مشكلة عشان ينفع في CI. من درسين pip و freeze.`, done: R`على venv سليم ٠، وبعد [[pip uninstall]] لمكتبة أو تسطيب نسخة تانية بيطلّع السطر الغلط بالظبط ويخرج بـ ١، والسطور الفاضية والتعليقات و [[-r]] متتجاهلة.` },
+        { lvl: 'متوسط', t: R`تقرير التحديثات`, what: R`[[outdated.py]] بيشغّل [[pip list --outdated --format=json]] بـ [[subprocess.run]] ويطلّع جدول Markdown: الاسم والنسخة الحالية والجديدة، والتحديثات الكبيرة (الرقم الأول اتغيّر) فوق.`, done: R`الجدول بيتطبع متترتب، والتحديث من [[1.x]] لـ [[2.x]] مكتوب جنبه «كبير»، ولو مفيش نت بيطبع رسالة واضحة ويخرج بـ ١ بدل traceback.` },
+        { lvl: 'كبير', t: R`env-doctor: طبيب البيئة`, what: R`أداة سطر أوامر بـ [[argparse]] وأوامر فرعية: [[check]] (venv متفعّل، ونسخة Python مش أقدم من اللي في [[.python-version]]، وكل requirements متسطّبة بنسختها)، و [[report --json]]، و [[fix]] بيعمل الـ venv لو مش موجود ويسطّب الناقص. فيها [[logging]] لملف، و exit code لكل نوع مشكلة، واختبارات pytest بـ [[tmp_path]] لملفات requirements غريبة (سطر فاضي، تعليق، [[-r]]، اسم بحروف كبيرة).`, done: R`[[env-doctor check]] على مشروع سليم بيخرج بـ ٠، وعلى مشروع ناقصه مكتبة بيخرج بـ ٢ ويقول اسمها، و [[fix]] بيصلّحها ولو اتشغّل تاني مبيعملش حاجة، و [[pytest]] أخضر، و [[--json]] بيتقري بـ [[json.loads]].`, ext: R`زوّد فحص إن مفيش مكتبات متسطّبة بره venv في Python بتاع الجهاز، واعمله GitHub Action بيشغّل [[check]] على كل PR.` },
+        { lvl: 'فكرة', t: R`قفل البيئة بالـ hash`, what: R`ابني أداة بتطلّع ملف قفل فيه كل مكتبة بنسختها والـ hash بتاعها (بـ [[pip download]] و [[pip hash]])، وبتسطّب منه بـ [[pip install --require-hashes]]، عشان ملف متلعب فيه ميتسطّبش حتى لو اسمه ونسخته صح.`, done: R`التسطيب من الملف بيعدّي، ولو غيّرت حرف في hash بيقع pip ويرفض التسطيب، وفيه README بيشرح ليه.`, ext: R`قارن أداتك بـ [[pip-compile --generate-hashes]] و [[uv lock]] واكتب الفرق في جدول.` },
+      ],
       items: [
         {
           cmd: "python3 -m venv .venv",
@@ -53,6 +61,14 @@ py -m venv .venv
 where python
 deactivate`,
           try: "اعمل venv في فولدر تجربة، وفعّله، وشوف [[which python]] بيشاور على جوه .venv. على ويندوز: [[(Get-Command python).Source]] في PowerShell، أو [[where python]] في CMD.",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** شغّل [[python -c "import sys; print(sys.prefix == sys.base_prefix)"]] مرة والـ venv متفعّل ومرة بعد [[deactivate]]. توقّع الناتجين قبل ما تشغّل.`, done: R`جوه الـ venv طبع [[False]] وبره طبع [[True]]، وتقدر تقول ليه: [[sys.prefix]] بيشاور على [[.venv]] و [[sys.base_prefix]] على Python الأصلي. السطر ده هو الطريقة اللي سكربت بيعرف بيها هو جوه venv ولا لأ.` },
+            { lvl: 'سريع', t: R`**اقرا:** افتح [[.venv/pyvenv.cfg]] بأي محرر. فيه كام سطر، وكل سطر معناه إيه؟`, done: R`لقيت [[home]] (فولدر Python الأصلي) و [[include-system-site-packages = false]] و [[version = 3.14.3]] (أو نسختك) و [[executable]] و [[command]] (الأمر اللي عمل الـ venv بالظبط). وفهمت إن الـ venv مربوط بالـ Python اللي في [[home]]، فلو مسحته الـ venv يبوظ.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** زميلك كتب [[pip install requests]] وبعدها [[.venv\Scripts\Activate.ps1]] وبعدها [[python -c "import requests"]]، وطلعله [[ModuleNotFoundError: No module named 'requests']]. اشرح حصل إيه وصلّحه من غير ما تمسح الـ venv.`, done: R`عرفت إن [[pip]] اشتغل قبل التفعيل فسطّب في Python بتاع الجهاز، وصلّحتها بـ [[python -m pip install requests]] بعد التفعيل، و [[python -m pip show requests]] بقى بيقول [[Location:]] جوه [[.venv]].` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** من [[python -m venv --help]] بس، اعمل venv اسمه [[v2]] من غير pip وبـ prompt اسمه [[lab]]. وبعدين جرّب [[v2\Scripts\python -m pip --version]] (أو [[v2/bin/python]]).`, done: R`استخدمت [[--without-pip]] و [[--prompt lab]]، والتفعيل بيطلّع [[(lab)]] في أول السطر، و [[pip]] رد بـ [[No module named pip]]، و [[pyvenv.cfg]] فيه سطر [[prompt = 'lab']].` },
+            { lvl: 'تطبيق', t: R`**قارن:** اعمل venv بـ Python 3.14 (أو 3.13) وواحد بـ 3.12 (في [[docker run --rm python:3.12-slim]] لو مش عندك)، وشوف جوه كل واحد فيه ملف [[.gitignore]] ولا لأ.`, done: R`في 3.14 لقيت [[.venv/.gitignore]] فيه [[*]] (فـ git مش هيشوف الـ venv حتى لو نسيت تكتبه)، وفي 3.12 مفيش الملف ده، وعرفت إن [[--without-scm-ignore-files]] في 3.13+ بتلغيه. والدرس: اكتب [[.venv/]] في [[.gitignore]] بتاع المشروع برضه، عشان أي حد بنسخة أقدم.` },
+            { lvl: 'تحدي', t: R`**ابني:** سكربت [[setup.ps1]] (أو [[setup.sh]]) بيعمل الـ venv **لو مش موجود بس**، ويسطّب [[requirements.txt]] بـ [[.venv\Scripts\python -m pip]] من غير تفعيل، ويطبع نسخة Python اللي جوه.`, done: R`أول مرة عمل الـ venv وسطّب، وتاني مرة طبع «الـ venv موجود» وماعملش واحد جديد، ولو مسحت [[.venv]] بيرجع يعمله. ومفيش ولا سطر [[activate]] في السكربت.` },
+          ],
           deep: {
             why: "من غير venv كل المكتبات بتتسطّب في Python بتاع النظام: المشاريع بتدوس على بعض، وعلى أوبونتو الجديد pip أصلًا بيرفض.",
             how: R`[[python3 -m venv .venv]] بيعمل فولدر [[.venv]] فيه لينك لـ Python، و pip، وفولدر site-packages فاضي للمكتبات.
@@ -275,6 +291,13 @@ pip list
 pip show fastapi
 pip uninstall -y httpx`,
           try: "اعمل requirements.txt فيه [[requests==2.32.3]]، وسطّبه في venv جديد، وشوف [[pip show requests]] بيقول إيه.",
+          practice: [
+            { lvl: 'سريع', t: R`**افتكر:** اكتب من دماغك الفرق بين [[pip install requests]] و [[pip install -r requirements.txt]] و [[pip install -U requests]] و [[pip uninstall -y requests]]، وبعدين اتأكد من [[pip help install]].`, done: R`كتبت إن الأول مكتبة واحدة، والتاني كل اللي في الملف، والتالت بيرقّي لآخر نسخة، والرابع بيشيلها من غير ما يسأل. وكلهم بيأثروا على الـ venv المتفعّل بس.` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[requirements.txt]] فيه سطر [[reqeusts==2.32.3]]. شغّل [[pip install -r requirements.txt]] واقرا الخطأ.`, done: R`ظهر [[ERROR: Could not find a version that satisfies the requirement reqeusts==2.32.3 (from versions: none)]] وبعده [[No matching distribution found]] والـ exit code ١. وفهمت إن [[(from versions: none)]] معناها «الاسم ده مالوش ولا نسخة على PyPI»، يعني غلطة في الاسم مش في النسخة، وصلّحته لـ [[requests]].` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** من [[pip install --help]] لاقي الخيار اللي بيقولك هيتسطّب إيه من غير ما يسطّب. جرّبه على ملف فيه [[httpx==0.28.1]].`, done: R`استخدمت [[--dry-run]]، وآخر سطر كان [[Would install ...]] وفيه [[httpx-0.28.1]] ومعاها المكتبات اللي بتعتمد عليها (عندنا [[anyio]] و [[h11]] و [[httpcore]] و [[typing_extensions]])، و [[pip list]] بعدها مفيهوش httpx.` },
+            { lvl: 'تطبيق', t: R`**ابني:** قسّم مكتبات مشروع لملفين: [[requirements.txt]] للتشغيل (requests)، و [[requirements-dev.txt]] أول سطر فيه [[-r requirements.txt]] وبعده [[pytest]]. سطّب الـ dev بس في venv جديد.`, done: R`أمر واحد [[pip install -r requirements-dev.txt]] سطّب requests و pytest مع بعض، والسيرفر بيسطّب [[requirements.txt]] بس فمفيش pytest عليه.` },
+            { lvl: 'تحدي', t: R`**مسألة:** اكتب [[check_reqs.py]] بيقرا [[requirements.txt]] ويقارن كل سطر [[name==version]] باللي متسطّب فعلًا بـ [[importlib.metadata.version(name)]]. يطبع الناقص والمختلف، ويتجاهل السطور الفاضية والتعليقات و [[-r]].`, done: R`في venv سليم بيطبع «كله مظبوط» ويخرج بـ ٠. لو شلت مكتبة بـ [[pip uninstall -y]] بيطبع «ناقص: ...» (من [[PackageNotFoundError]])، ولو سطّبت نسخة تانية بيطبع «مختلف: ... متسطّب X والمطلوب Y»، والاتنين بيخرجوا بـ ١.` },
+          ],
           deep: {
             why: "حد عمل clone للمشروع (أو السيرفر) محتاج نفس المكتبات بالظبط. بدل ما يخمّن، أمر واحد من ملف.",
             how: R`[[python -m pip]] أضمن من [[pip]] لوحده: بيستخدم pip بتاع الـ python ده بالظبط، مش pip تاني في الـ PATH بيسطّب في Python غيره.
@@ -443,6 +466,13 @@ diff requirements.txt requirements-new.txt
 # Windows (PowerShell):
 Compare-Object (Get-Content requirements.txt) (Get-Content requirements-new.txt)`,
           try: "في venv فيه مكتبة واحدة زي fastapi، شغّل [[pip freeze]] وشوف كام مكتبة طلعت (هي والمكتبات اللي بتعتمد عليها).",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في venv جديد سطّب [[requests==2.32.3]] بس. [[pip freeze]] هيطبع كام سطر؟ وهل [[pip]] نفسه هيبقى فيهم؟`, done: R`طلعوا ٥ سطور: requests ومعاها certifi و charset-normalizer و idna و urllib3، ومفيش pip. ولقيت إن [[pip freeze --all]] بيزوّد سطر [[pip==...]]، وإن [[pip list --format=freeze]] برضه فيه pip (٦ سطور).` },
+            { lvl: 'سريع', t: R`**قارن:** شغّل [[pip list]] و [[pip freeze]] و [[pip list --outdated]] في نفس الـ venv. كل واحد بينفع لإيه؟`, done: R`كتبت إن [[pip list]] جدول للقراية، و [[pip freeze]] بصيغة [[name==version]] اللي تتحط في ملف، و [[--outdated]] بيطلّع اللي ليه نسخة أحدث بس (ومحتاج نت).` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** حد شغّل [[pip freeze > requirements.txt]] من غير ما يفعّل الـ venv، والملف طلع فيه عشرات المكتبات اللي مالهاش علاقة بالمشروع. صلّح الملف واعرف إزاي تمنعها تاني.`, done: R`فعّلت الـ venv وأعدت الأمر، أو استخدمت [[.venv\Scripts\python -m pip freeze]] من غير تفعيل، والملف بقى فيه مكتبات المشروع بس. وفهمت إن [[python -m pip]] بيبيّن أنهي Python بالظبط.` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** عندك [[old.txt]] فيه [[requests==2.31.0]] و [[idna==3.6]] و [[six==1.16.0]]، و [[new.txt]] فيه [[requests==2.32.3]] و [[idna==3.6]] و [[urllib3==2.2.1]]. اكتب [[diff_freeze.py]] بيطبع اللي اتضاف واللي اتشال واللي نسخته اتغيّرت.`, done: R`الناتج ٣ سطور: [[+ urllib3 2.2.1]] و [[- six 1.16.0]] و [[~ requests 2.31.0 -> 2.32.3]]، و idna مش ظاهرة لأنها ماتغيّرتش. واستخدمت dict من [[line.split("==")]] لكل ملف.` },
+            { lvl: 'تحدي', t: R`**اكتب اختبار:** اثبت إن [[requirements.txt]] بيبني نفس البيئة: اعمل venv جديد في فولدر مؤقت، سطّب منه، وقارن [[pip freeze]] بتاعه بالملف.`, done: R`[[diff]] (أو [[Compare-Object]]) مطلّعش ولا سطر. ولما جرّبت ملف فيه [[requests]] من غير نسخة، فهمت إن أي حد بيسطّب في يوم تاني ممكن ياخد نسخة تانية، وده سبب [[==]].` },
+          ],
           deep: {
             why: "requirements فيها [[fastapi]] من غير نسخة: النهارده تسطّب نسخة، وبعد شهر على السيرفر تسطّب أحدث فيها تغيير كاسر. الـ build نفسه بقى مختلف من غير ما تغيّر سطر.",
             how: R`[[pip freeze]] بيطبع كل اللي في الـ venv بـ [[==]]، ومعاها المكتبات اللي اتسحبت كـ dependencies (starlette و pydantic مع fastapi مثلًا).
@@ -615,6 +645,13 @@ pipx install httpie
 pipx ensurepath
 pipx list`,
           try: "على سيرفر التجربة (أوبونتو 24.04) جرّب [[pip install requests]] وشوف الرسالة، وبعدين سطّب [[httpie]] بـ pipx وجرّب [[http example.com]].",
+          practice: [
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** الحماية دي ملف اسمه [[EXTERNALLY-MANAGED]] جنب مكتبة Python القياسية. اطبع مكانها بـ [[python -c "import sysconfig; print(sysconfig.get_path('stdlib'))"]] ودوّر عليه.`, done: R`على ويندوز (Python 3.14 من python.org) وفي [[python:3.12-slim]] الملف مش موجود، فـ pip بيسطّب بره venv عادي. وعلى أوبونتو 24.04 بعد [[apt install python3]] بتلاقيه في [[/usr/lib/python3.12/EXTERNALLY-MANAGED]]، وده اللي بيطلّع الرسالة.` },
+            { lvl: 'سريع', t: R`**اشرحها:** زميلك عايز يحل الرسالة بـ [[pip install --break-system-packages requests]]. اكتبله ٣ سطور ليه ده غلط وإيه البديل.`, done: R`كتبت إن apt بيعتمد على Python بتاع النظام فممكن مكتبة تكسر أداة نظام، وإن التحديث الجاي من apt ممكن يدوس على اللي سطّبه، وإن البديل venv للمشروع و [[pipx]] للأدوات.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** Dockerfile بيبدأ بـ [[FROM ubuntu:24.04]] وفيه [[RUN apt-get install -y python3-pip]] وبعده [[RUN pip install -r requirements.txt]]، والـ build بيقع. صلّحه من غير [[--break-system-packages]].`, done: R`زوّدت [[python3-venv]] و [[RUN python3 -m venv /opt/venv]] و [[ENV PATH=/opt/venv/bin:$PATH]] قبل سطر pip، والـ build عدّى، و [[docker run ... which python]] بيطبع [[/opt/venv/bin/python]].` },
+            { lvl: 'تحدي', t: R`**ابني:** سكربت [[bootstrap.sh]] لسيرفر أوبونتو جديد: بيسطّب [[python3-venv]] و [[pipx]] لو مش موجودين، ويعمل venv للمشروع، ويسطّب [[requirements.txt]] جواه، ويسطّب أداة واحدة بـ pipx.`, done: R`اتشغّل مرتين ورا بعض في [[docker run --rm -it ubuntu:24.04]] من غير أخطاء (التانية مبتعيدش التسطيب)، ومفيش ولا [[pip install]] بره الـ venv، و [[pipx list]] بيطلّع الأداة.` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** على أوبونتو بعد [[sudo apt install pipx]]، شغّل [[pipx environment]] و [[pipx list]] بعد ما تسطّب أداة. الأداة اتحطت فين، والأمر نفسه فين؟`, done: R`لقيت إن كل أداة ليها venv لوحدها تحت [[PIPX_HOME]] (غالبًا [[~/.local/share/pipx/venvs]])، وإن الأمر نفسه لينك في [[PIPX_BIN_DIR]] ([[~/.local/bin]])، فلو [[pipx ensurepath]] ماتعملش الأمر مش هيتلاقي. وكتبت الفرق بينها وبين [[pip install --user]] (كله في مكان واحد ويدوس على بعض).` },
+          ],
           deep: {
             why: "أول مرة على سيرفر جديد: [[pip install]] ويطلع error طويل. واللي بيقرا أول نتيجة في جوجل بيعمل [[--break-system-packages]] ويكسر حاجات في النظام بعد شهر.",
             how: R`ده PEP 668: التوزيعة بتحط ملف اسمه [[EXTERNALLY-MANAGED]] جنب Python بتاع النظام، و pip لما يشوفه بيرفض يسطّب بره venv. السبب إن أدوات في النظام مكتوبة بـ Python ومعتمدة على نسخ معيّنة جاية من apt، و pip لو غيّرها ممكن يكسرها.
@@ -790,6 +827,14 @@ manual pages are exposed at /root/.local/share/man
       t: "Python كأداة",
       l: 1,
       n: "سيرفر static في ثانية، وموديولات جاهزة بتشتغل كأوامر",
+      projects: [
+        { lvl: 'صغير', t: R`شارك فولدر على شبكة البيت`, what: R`سكربت بياخد فولدر، ويطبع عنوان الجهاز على الشبكة (من [[socket]])، ويشغّل [[http.server]] على الفولدر ده بس، عشان تفتحه من الموبايل.`, done: R`الموبايل على نفس الواي فاي بيفتح اللستة وبينزّل ملف، و [[Ctrl+C]] بيقفل السيرفر من غير traceback، والفولدر اللي فوق مش ظاهر.` },
+        { lvl: 'صغير', t: R`[[pretty]]: JSON مقروء من أي حتة`, what: R`دالة في الـ profile بتاعك (PowerShell أو bash) اسمها [[pretty]] بتاخد ملف أو [[stdin]] وتعدّيه على [[python -m json.tool --sort-keys --no-ensure-ascii]].`, done: R`[[pretty data.json]] و [[curl ... | pretty]] الاتنين بيطبعوا JSON متنسّق والعربي ظاهر، وملف JSON بايظ بيطبع رسالة الخطأ برقم السطر.` },
+        { lvl: 'متوسط', t: R`سيرفر dev لتطبيق SPA`, what: R`[[spa_server.py]] مبني على [[SimpleHTTPRequestHandler]]: أي مسار مش ملف موجود يرجّع [[index.html]] (عشان روابط React/Vue)، و [[Cache-Control: no-store]] على كل حاجة، و [[--port]] و [[--dir]] بـ argparse.`, done: R`[[/about]] و [[/users/5]] بيرجّعوا [[index.html]] بـ ٢٠٠، و [[/app.js]] بيرجّع الملف نفسه، و [[/missing.png]] (امتداد ملف) بيرجّع ٤٠٤ مش index.` },
+        { lvl: 'متوسط', t: R`[[python -m notes]]`, what: R`حزمة [[notes]] فيها [[__main__.py]]: [[python -m notes add "..."]] و [[python -m notes list]] و [[python -m notes done 3]]، والملاحظات في ملف JSON في فولدر اليوزر. من درس [[python -m]].`, done: R`الأوامر التلاتة شغالة من أي فولدر طالما الحزمة في المسار، والملف بيتعمل أول مرة لوحده، ورقم مش موجود بيطبع خطأ ويخرج بـ ١.` },
+        { lvl: 'كبير', t: R`سيرفر رفع ملفات صغير للشبكة الداخلية`, what: R`سيرفر بـ [[http.server]] (من غير مكتبات) فيه صفحة رفع وصفحة لستة: [[POST /upload]] بيحفظ في فولدر محدد بحد أقصى للحجم، واسم الملف بيتنضّف (مفيش [[..]] ولا [[/]])، ولو الاسم موجود بيزوّد رقم. وفيه [[logging]] لكل رفع (IP والاسم والحجم)، و argparse للبورت والفولدر والحد، واختبارات بتشغّل السيرفر في thread وترفع بـ [[urllib]].`, done: R`رفع ملف عادي بيظهر في اللستة، وملف أكبر من الحد بيرجع ٤١٣، واسم [[../../x.txt]] بيتحفظ جوه الفولدر بس، والاختبارات خضرا، والسيرفر بيتقفل نضيف بـ [[Ctrl+C]] ولو اتشغّل تاني بيكمّل على نفس الفولدر.`, ext: R`زوّد توكن في هيدر عشان مش أي حد على الشبكة يرفع، وجرّب HTTPS بـ [[--tls-cert]] في Python 3.14 بشهادة self-signed.` },
+        { lvl: 'فكرة', t: R`عدّة [[-m]] بتاعتك`, what: R`دوّر في المكتبة القياسية على الموديولات اللي بتشتغل بـ [[-m]]، واختار ٥ هتستخدمهم فعلًا، واعمل لكل واحد اختصار أو سكربت صغير بيلفّه بالخيارات اللي بتحبها.`, done: R`عندك ملف cheatsheet بالخمسة بمثال لكل واحد اتشغّل على جهازك، والاختصارات شغالة من أي ترمنال.`, ext: R`قارن نفس الموديولات بين Python 3.12 و 3.14 (زي [[random]] و [[http.server]]) واكتب اللي اتغيّر.` },
+      ],
       items: [
         {
           cmd: "python -m http.server",
@@ -801,6 +846,13 @@ python -m http.server 8000 --directory dist
 # تجربة PWA: افتح http://localhost:8000 و DevTools > Application
 npx playwright screenshot --viewport-size "390,844" --full-page http://localhost:8000 shot-mobile.png`,
           try: "اعمل index.html بسيط، وشغّل السيرفر، وافتحه من المتصفح. وبعدين افتح نفس الملف بدبل كليك وقارن في Console.",
+          practice: [
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** من [[python -m http.server --help]] اعرف الخيار اللي بيحدد الفولدر، واللي بيحدد العنوان، والـ default لكل واحد. وقارن الـ help في Python 3.14 و 3.12.`, done: R`[[-d]] أو [[--directory]] (الـ default الفولدر الحالي) و [[-b]] أو [[--bind]] (الـ default كل الكروت)، والبورت الـ default [[8000]]. وفي 3.14 لقيت خيارات زيادة [[--tls-cert]] و [[--tls-key]] و [[--tls-password-file]] (HTTPS) مش موجودة في 3.12.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** والسيرفر شغال، افتح [[http://127.0.0.1:8000/nope.html]] (ملف مش موجود). المتصفح هيوريك إيه، والترمنال بتاع السيرفر هيطبع كام سطر؟`, done: R`المتصفح: صفحة [[Error response]] بـ [[404]] و [[File not found]]. والترمنال طبع سطرين: [[code 404, message File not found]] وبعده [["GET /nope.html HTTP/1.1" 404 -]]. والطلبات الناجحة سطر واحد بـ [[200]].` },
+            { lvl: 'تطبيق', t: R`**اقرا:** اعمل فولدر فيه [[sub/a.txt]] بس من غير [[index.html]]، وافتح [[http://127.0.0.1:8000/sub/]]. إيه اللي ظهر؟ وبعدين حط [[index.html]] جوه [[sub]] وافتحه تاني.`, done: R`الأول ظهرت صفحة عنوانها [[Directory listing for /sub/]] فيها لينك [[a.txt]]، وبعد [[index.html]] ظهرت الصفحة بدل اللستة. وفهمت إن ده معناه أي ملف في الفولدر بيبان لأي حد يوصل للبورت، فـ [[--bind 127.0.0.1]] مهم.` },
+            { lvl: 'تطبيق', t: R`**اكتب اختبار:** سكربت [[smoke.py]] بيشغّل [[python -m http.server]] بـ [[subprocess.Popen]] على بورت فاضي، ويستنى ثانية، ويطلب [[/]] بـ [[urllib.request.urlopen]] ويطبع الـ status والـ Content-Type، ويقفل السيرفر بـ [[p.terminate()]].`, done: R`طبع [[200 text/html]] لصفحة [[index.html]]، وطلب لملف مش موجود رمى [[urllib.error.HTTPError]] بـ [[404 File not found]]، والسيرفر اتقفل في الآخر (السكربت خلص لوحده ومفيش بروسيس فاضل).` },
+            { lvl: 'تحدي', t: R`**ابني:** [[dev_server.py]] بيورث من [[http.server.SimpleHTTPRequestHandler]] ويزوّد [[Cache-Control: no-store]] على كل رد (في [[end_headers]])، ويرجّع JSON [[{"ok": true}]] على [[/health]].`, done: R`[[curl -i http://127.0.0.1:8000/]] بيطلّع [[Cache-Control: no-store]] في الهيدرز، و [[curl http://127.0.0.1:8000/health]] بيرجّع [[{"ok": true}]] بـ [[Content-Type: application/json]]، وباقي الملفات بتتقدّم عادي.` },
+          ],
           deep: {
             why: "موقع ملف واحد أو build جاهز محتاج يتفتح من سيرفر مش من file://، لأن المتصفح بيمنع حاجات كتير من file://: الـ fetch، و ES modules، والـ service worker.",
             how: R`[[http.server]] موديول جاهز في Python: بيقدّم الملفات زي ما هي، مع index.html تلقائي، وبيطبع كل طلب في الترمنال. Ctrl+C يقفله.
@@ -965,6 +1017,14 @@ python -m app.seed
 python -m pip --version
 python -c "import sys; print(sys.version)"`,
           try: "اعمل فولدر app فيه [[__init__.py]] فاضي و seed.py بيعمل [[from app import config]]. شغّله بـ [[python app/seed.py]] (هيفشل) وبعدين بـ [[python -m app.seed]] (هيشتغل).",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اعمل [[app/__init__.py]] فاضي و [[app/seed.py]] أوله [[from app import config]]. شغّله بـ [[python app/seed.py]] وبعدين بـ [[python -m app.seed]] من فولدر المشروع.`, done: R`الأولى وقعت بـ [[ModuleNotFoundError: No module named 'app']] والـ exit code ١، والتانية اشتغلت. وعرفت السبب في التمرين اللي بعده.` },
+            { lvl: 'تطبيق', t: R`**اشرحها:** اطبع [[repr(sys.path[0])]] بتلات طرق: من سكربت [[app/where.py]]، ومن [[python -m app.where]]، ومن [[python -c]]. واكتب في ٣ سطور ليه [[python app/seed.py]] وقعت.`, done: R`السكربت طبع مسار فولدر [[app]] نفسه، و [[-m]] طبع فولدر المشروع (الحالي)، و [[-c]] طبع [['']] (يعني الفولدر الحالي). فـ Python بيدوّر على [[app]] جوه [[app]] لما تشغّل الملف بمساره، وده سبب الخطأ.` },
+            { lvl: 'تطبيق', t: R`**قارن:** شغّل [[python -m random -c شاي قهوة عصير]] في Python 3.14، وبعدين [[python -m random]] في [[python:3.12-slim]].`, done: R`3.14 طبع اختيار واحد عشوائي ([[-c]] و [[-i N]] و [[-f N]] جديدة من 3.13)، و 3.12 طبع بدلها اختبار سرعة طويل ([[10000 times random()]]...). يعني نفس [[-m]] بيعمل حاجة مختلفة حسب النسخة، فاقرا [[--help]] قبل ما تعتمد عليه في سكربت.` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** لاقي ٣ موديولات في المكتبة القياسية بتشتغل بـ [[-m]] غير اللي في الدرس، وشغّل كل واحد بمثال: جرّب [[calendar]] و [[uuid]] و [[zipfile]] و [[base64]] و [[timeit]].`, done: R`مثلًا [[python -m calendar 2026 11]] طبع شهر نوفمبر وأوله يوم الحد ١، و [[python -m uuid]] طبع UUID جديد، و [[python -m zipfile -l x.zip]] طبع محتوى ملف zip. وكتبت كل واحد بينفع لإيه.` },
+            { lvl: 'تطبيق', t: R`**ابني:** حزمة [[mytool]] فيها [[__init__.py]] و [[__main__.py]] بيطبع [[sys.argv[1:]]]. شغّلها بـ [[python -m mytool a b]].`, done: R`طبع [[['a', 'b']]]، وفهمت إن [[__main__.py]] هو الملف اللي [[-m]] بيشغّله لما تديله اسم فولدر حزمة، وده نفس اللي [[python -m pip]] بيعمله.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** بـ [[python -m timeit]] قيس [[s = ""; for i in range(1000): s += str(i)]] قصاد [["".join(str(i) for i in range(1000))]] قصاد [["".join(map(str, range(1000)))]].`, done: R`كتبت التلات أرقام اللي [[timeit]] طبعها ([[usec per loop]]) وترتيبهم، وعرفت إن [[timeit]] بيطبع أحسن نتيجة من كذا تكرار مش متوسط، فشغّلته مرتين واتأكدت إن الترتيب ثابت.` },
+          ],
           deep: {
             why: "[[python app/seed.py]] بيطلع [[ModuleNotFoundError: No module named 'app']] مع إن الفولدر قدامك. و JSON من API مكتوب في سطر واحد طويل مش مقروء ومفيش jq.",
             how: R`[[-m]] بيدوّر على الموديول في sys.path زي import بالظبط، وبيشغّله كبرنامج.
