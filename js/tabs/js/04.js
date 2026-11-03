@@ -37,9 +37,11 @@ square(4);        // 16
 toUser("Sara");   // { name: "Sara", active: true }`,
           try: R`حوّل [[add]] لـ arrow في سطر واحد. وبعدين امسح القوسين اللي حوالين الـ object في [[toUser]] وشغّل: هيطلع SyntaxError (Unexpected token ':')، لأن JS فهم الـ [[{]] بداية جسم دالة. ولو سبت جوه [[{ name }]] بس، مش هيطلع error، بس الدالة هترجّع undefined. فكّر ليه.`,
           practice: [
-            { lvl: 'سريع', t: R`حوّل [[function triple(n) { return n * 3; }]] لـ arrow في سطر واحد.`, done: R`[[triple(4)]] بترجّع 12، ومفيش [[return]] ولا [[{ }]] في السطر.` },
-            { lvl: 'تطبيق', t: R`[[toProduct(name, price)]] arrow بترجّع object، في سطر واحد.`, done: R`[[toProduct("Mug", 120)]] بترجّع [[{ name: 'Mug', price: 120 }]]، ومن غير القوسين حوالين الـ object بترجّع undefined.` },
-            { lvl: 'تحدي', t: R`نادي [[sayHi()]] قبل ما تعرّفها، مرة وهي [[function sayHi() {}]] ومرة [[const sayHi = () => {}]].`, done: R`الأولى بتشتغل، والتانية بتوقع بـ [[ReferenceError: Cannot access 'sayHi' before initialization]].` }
+            { lvl: 'سريع', t: R`**refactor:** حوّل [[function triple(n) { return n * 3; }]] لـ arrow في سطر واحد.`, done: R`[[triple(4)]] بترجّع 12، ومفيش [[return]] ولا [[{ }]] في السطر.` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[const add = (a, b) => { a + b };]] و [[console.log(add(2, 3))]]. ليه undefined؟ صلّحها بطريقتين.`, done: R`فهمت إن الأقواس [[{ }]] بتعمل body محتاج [[return]]. التصليح الأول [[(a, b) => a + b]] والتاني [[{ return a + b; }]]، والاتنين بيطبعوا 5.` },
+            { lvl: 'تطبيق', t: R`**مسألة:** [[toProduct(name, price)]] arrow بترجّع object، في سطر واحد.`, done: R`[[toProduct("Mug", 120)]] بترجّع [[{ name: 'Mug', price: 120 }]]، ومن غير القوسين حوالين الـ object بترجّع undefined.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** نادي [[sayHi()]] قبل ما تعرّفها، مرة وهي [[function sayHi() {}]] ومرة [[const sayHi = () => {}]].`, done: R`الأولى بتشتغل، والتانية بتوقع بـ [[ReferenceError: Cannot access 'sayHi' before initialization]].` },
+            { lvl: 'تحدي', t: R`**ابني:** ٣ arrows صغيرة: [[addVat(p)]] (١٤٪) و [[applyCoupon(p, percent)]] و [[formatEGP(p)]] (رقمين عشريين و «ج.م»)، وركّبهم في سطر واحد على سعر 200 وكوبون 10٪.`, done: R`[[formatEGP(applyCoupon(addVat(200), 10))]] بيطبع [[205.20 ج.م]]. وكل دالة بترجّع قيمة ومبتطبعش، فتقدر تبدّل ترتيب الكوبون والضريبة وتقارن.` }
           ],
           flag: "script",
           deep: {
@@ -338,9 +340,11 @@ function createUser({ name, role = "user", active = true } = {}) {
 createUser({ name: "Sara", active: false });`,
           try: R`نادي [[createUser()]] من غير أي حاجة، وبعدين امسح [[= {}]] من الباراميتر ونادي تاني واقرا الـ error. وبعدين جرّب [[Math.max(...[])]] وشوف بترجّع إيه.`,
           practice: [
-            { lvl: 'سريع', t: R`[[greet(name = "ضيف")]] وجرّب [[greet()]] و [[greet(undefined)]] و [[greet(null)]].`, done: R`الأولتين بيرجعوا «أهلًا يا ضيف»، و [[greet(null)]] بترجّع «أهلًا يا null» (الـ default للـ undefined بس).` },
-            { lvl: 'تطبيق', t: R`[[sumAll(...nums)]] بتجمع أي عدد أرقام.`, done: R`[[sumAll()]] 0، و [[sumAll(1, 2, 3)]] 6، و [[sumAll(...[4, 5])]] 9.` },
-            { lvl: 'تحدي', t: R`[[createUser({ name, role = "user", active = true } = {})]] بترجّع object. جرّب [[createUser()]] و [[createUser({ name: "Ali", role: null })]] و [[Math.max(...[])]].`, done: R`[[createUser()]] بيرجّع role "user" و active true من غير error، والتانية role بتاعها null مش "user"، و [[Math.max(...[])]] بترجّع [[-Infinity]].` }
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[greet(name = "ضيف")]] وجرّب [[greet()]] و [[greet(undefined)]] و [[greet(null)]].`, done: R`الأولتين بيرجعوا «أهلًا يا ضيف»، و [[greet(null)]] بترجّع «أهلًا يا null» (الـ default للـ undefined بس).` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[function logAll(...items, level) { console.log(level, items); }]]. شغّل الملف واقرا الرسالة، وصلّح الترتيب.`, done: R`node بيوقع قبل أي سطر بـ [[SyntaxError: Rest parameter must be last formal parameter]]. بعد [[function logAll(level, ...items)]]: [[logAll("info", 1, 2)]] بيطبع [[info]] وبعدها [[[ 1, 2 ]]].` },
+            { lvl: 'تطبيق', t: R`**مسألة:** [[sumAll(...nums)]] بتجمع أي عدد أرقام.`, done: R`[[sumAll()]] 0، و [[sumAll(1, 2, 3)]] 6، و [[sumAll(...[4, 5])]] 9.` },
+            { lvl: 'تطبيق', t: R`**refactor:** [[function total(a, b, c, d) { return (a || 0) + (b || 0) + (c || 0) + (d || 0); }]] بتقبل ٤ أرقام بس. خليها بـ rest وتقبل أي عدد، من غير ما نتايج الـ ٤ تتغيّر.`, done: R`[[total(1, 2)]] 3 و [[total(1, 2, 3, 4)]] 10 زي الأول، و [[total(1, 2, 3, 4, 5)]] بقت 15 (القديمة كانت بتطلع 10 وتتجاهل الخامس من غير ما تقولك).` },
+            { lvl: 'تحدي', t: R`**ابني:** [[createUser({ name, role = "user", active = true } = {})]] بترجّع object. جرّب [[createUser()]] و [[createUser({ name: "Ali", role: null })]] و [[Math.max(...[])]].`, done: R`[[createUser()]] بيرجّع role "user" و active true من غير error، والتانية role بتاعها null مش "user"، و [[Math.max(...[])]] بترجّع [[-Infinity]].` }
           ],
           flag: "script",
           deep: {
@@ -531,9 +535,11 @@ const pipe = (...fns) => (x) => fns.reduce((v, f) => f(v), x);
 pipe(double, triple)(1);   // 6`,
           try: R`اكتب [[withLog(fn)]] بترجّع دالة جديدة، بتطبع الـ arguments قبل ما تنادي fn وبتطبع الناتج بعدها. جرّبها على [[add]].`,
           practice: [
-            { lvl: 'سريع', t: R`[[repeat(n, fn)]] بتنادي fn عدد n مرة وبتبعتلها رقم اللفة.`, done: R`[[repeat(3, i => console.log(i))]] بيطبع 0 و 1 و 2.` },
-            { lvl: 'تطبيق', t: R`[[makeDiscount(percent)]] بترجّع دالة بتاخد السعر.`, done: R`[[const sale = makeDiscount(20);]] وبعدين [[sale(500)]] بترجّع 400، وتقدر تعمل خصمين مختلفين من نفس الدالة.` },
-            { lvl: 'تحدي', t: R`[[once(fn)]] بترجّع دالة بتشغّل fn أول مرة بس، وبعد كده بترجّع نفس النتيجة الأولى.`, done: R`[[const init = once(() => { console.log("init"); return 42; });]] وبعدين [[init(); init();]]: «init» بتتطبع مرة واحدة، والمرتين بيرجعوا 42.` }
+            { lvl: 'سريع', t: R`**مسألة:** [[repeat(n, fn)]] بتنادي fn عدد n مرة وبتبعتلها رقم اللفة.`, done: R`[[repeat(3, i => console.log(i))]] بيطبع 0 و 1 و 2.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** إيه ناتج [[["1", "2", "3"].map(parseInt)]]؟ خمّن وبعدين شغّل، وفسّر.`, done: R`طلع [[[1, NaN, NaN]]] مش [[[1, 2, 3]]]، لأن map بتبعت (العنصر، رقم مكانه) و parseInt بتاخد التاني كـ radix: [[parseInt("2", 1)]] NaN. والتصليح [[.map(Number)]] أو [[.map(s => parseInt(s, 10))]].` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[makeDiscount(percent)]] بترجّع دالة بتاخد السعر.`, done: R`[[const sale = makeDiscount(20);]] وبعدين [[sale(500)]] بترجّع 400، وتقدر تعمل خصمين مختلفين من نفس الدالة.` },
+            { lvl: 'تحدي', t: R`**مسألة:** [[once(fn)]] بترجّع دالة بتشغّل fn أول مرة بس، وبعد كده بترجّع نفس النتيجة الأولى.`, done: R`[[const init = once(() => { console.log("init"); return 42; });]] وبعدين [[init(); init();]]: «init» بتتطبع مرة واحدة، والمرتين بيرجعوا 42.` },
+            { lvl: 'تحدي', t: R`**محاكاة:** [[retry(fn, times)]] بتنادي fn، ولو رمت error بتحاول تاني لحد times، وبتطبع «محاولة n فشلت» كل مرة، ولو كلهم فشلوا بترمي آخر error. جرّبها على دالة بتفشل أول مرتين وتنجح في التالتة.`, done: R`[[retry(flaky, 3)]] بيطبع «محاولة 1 فشلت» و «محاولة 2 فشلت» وبعدين يرجّع [["ok"]]. ولو عدّاد flaky رجع صفر و [[retry(flaky, 2)]]، بيطبع نفس السطرين وبيرمي آخر error ([[فشل 2]]).` }
           ],
           flag: "script",
           deep: {

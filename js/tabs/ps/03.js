@@ -27,9 +27,11 @@ New-Item .env -Value "PORT=3000"
 mkdir logs`,
           try: R`اعمل [[app\src]] و [[app\public]] وملف [[app\src\server.js]].`,
           practice: [
-            { lvl: 'سريع', t: R`[[New-Item -ItemType Directory app\src, app\public -Force]] وبعدين [[New-Item app\src\server.js]]، وبعدين [[Get-ChildItem app -Recurse -Name]].`, done: R`بيطبع ٣ سطور: [[public]] و [[src]] و [[src\server.js]]. ولو شغّلت أول سطر تاني مبيطلعش error بسبب [[-Force]].` },
-            { lvl: 'تطبيق', t: R`[[New-Item notes.txt]] مرتين ورا بعض، وبعدين [[New-Item logs\today.txt]] وفولدر [[logs]] مش موجود.`, done: R`التانية بتطلع [[The file '...\notes.txt' already exists.]]، والتالتة [[Could not find a part of the path]]. ومع [[-Force]] التالتة بتعمل الفولدر والملف.` },
-            { lvl: 'تحدي', t: R`[[New-Item keep.txt -Value 'important']]، وبعدين [[New-Item keep.txt -Force]]. بص على حجم الملف قبل وبعد. وبعدين اكتب سطر بيعمل الملف بس لو مش موجود.`, done: R`بعد [[-Force]] الملف بقى فاضي ([[(Get-Item keep.txt).Length]] بقى [[0]] في 7 و 5.1): الـ Force على ملف موجود بيكتب فوقه. والسطر الآمن [[if (-not (Test-Path keep.txt)) { New-Item keep.txt }]] مبيلمسش الملف لو موجود.` },
+            { lvl: 'سريع', t: R`**ابني:** [[New-Item -ItemType Directory app\src, app\public -Force]] وبعدين [[New-Item app\src\server.js]]، وبعدين [[Get-ChildItem app -Recurse -Name]].`, done: R`بيطبع ٣ سطور: [[public]] و [[src]] و [[src\server.js]]. ولو شغّلت أول سطر تاني مبيطلعش error بسبب [[-Force]].` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[New-Item notes.txt]] مرتين ورا بعض، وبعدين [[New-Item logs\today.txt]] وفولدر [[logs]] مش موجود.`, done: R`التانية بتطلع [[The file '...\notes.txt' already exists.]]، والتالتة [[Could not find a part of the path]]. ومع [[-Force]] التالتة بتعمل الفولدر والملف.` },
+            { lvl: 'تحدي', t: R`**مسألة:** [[New-Item keep.txt -Value 'important']]، وبعدين [[New-Item keep.txt -Force]]. بص على حجم الملف قبل وبعد. وبعدين اكتب سطر بيعمل الملف بس لو مش موجود.`, done: R`بعد [[-Force]] الملف بقى فاضي ([[(Get-Item keep.txt).Length]] بقى [[0]] في 7 و 5.1): الـ Force على ملف موجود بيكتب فوقه. والسطر الآمن [[if (-not (Test-Path keep.txt)) { New-Item keep.txt }]] مبيلمسش الملف لو موجود.` },
+            { lvl: 'تطبيق', t: R`**أشكال:** اعمل هيكل موقع صغير بأقل عدد أوامر: [[site\css]] و [[site\js]] و [[site\img]]، وجواهم [[index.html]] في الجذر و [[css\style.css]] و [[js\app.js]]. واعرض الشكل بـ [[tree /f site]].`, done: R`[[(Get-ChildItem site -Recurse -File).Count]] بيرجّع [[3]] و [[(Get-ChildItem site -Recurse -Directory).Count]] بيرجّع [[3]]، والأوامر كلها سطرين: سطر للفولدرات بـ [[-Force]] وسطر للملفات (New-Item بياخد لستة مسارات).` },
+            { lvl: 'سريع', t: R`**قارن وقيس:** [[mkdir]] و [[md]] و [[New-Item -ItemType Directory]]: اعرف كل واحد نوعه إيه بـ [[(Get-Command mkdir).CommandType]]، وجرّب كل واحد على مسار متداخل [[a\b\c]] مش موجود.`, done: R`[[mkdir]] نوعه [[Function]] و [[md]] نوعه [[Alias]]، والاتنين ومعاهم New-Item عملوا الفولدرات الوسطانية لوحدهم ([[Test-Path a\b\c]] بقى True) في 7 و 5.1، فمش محتاج تعمل كل مستوى لوحده.` },
           ],
           deep: {
             why: R`أي مشروع أو سكربت بيبدأ بهيكل: فولدرات src و logs، وملفات .env و README. New-Item بيعمل الاتنين، ومع [[-Force]] بيعمل المسار كله مرة واحدة حتى لو جزء منه موجود، ومن غير ما يقع لو شغّلت السكربت تاني.`,
@@ -168,9 +170,11 @@ Copy-Item *.js backup\
 Copy-Item src src_backup -Recurse`,
           try: "انسخ فولدر app كله لـ [[app_copy]].",
           practice: [
-            { lvl: 'سريع', t: R`[[Copy-Item .env.example .env]] وبعدين [[Get-ChildItem .env*]].`, done: R`فيه ملفين، و [[Get-Content .env]] بيطبع نفس سطور [[.env.example]] بالظبط.` },
-            { lvl: 'تطبيق', t: R`في فولدر فيه ملفات js و css، اعمل [[backup]] وانسخ ملفات js بس فيه بـ [[Copy-Item *.js backup\]].`, done: R`[[Get-ChildItem backup]] فيه ملفات js بس ونفس عددها في الأصل، ومفيش ولا css.` },
-            { lvl: 'تحدي', t: R`[[Copy-Item app app_copy -Recurse]] مرتين ورا بعض، وبعدين [[Get-ChildItem app_copy -Recurse -Name]]. وبعدين لاقي طريقة تنسخ تاني من غير المشكلة.`, done: R`بعد المرة التانية فيه [[app_copy\app\...]] جوه النسخة (اتجرّب في 7 و 5.1): لما الهدف موجود، الفولدر بيتنسخ **جوّاه**. والحل [[Copy-Item app\* app_copy -Recurse -Force]] (المحتوى مش الفولدر)، وتشغيلها مرتين بيسيب نفس الشكل.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[Copy-Item .env.example .env]] وبعدين [[Get-ChildItem .env*]].`, done: R`فيه ملفين، و [[Get-Content .env]] بيطبع نفس سطور [[.env.example]] بالظبط.` },
+            { lvl: 'تطبيق', t: R`**مسألة:** في فولدر فيه ملفات js و css، اعمل [[backup]] وانسخ ملفات js بس فيه بـ [[Copy-Item *.js backup\]].`, done: R`[[Get-ChildItem backup]] فيه ملفات js بس ونفس عددها في الأصل، ومفيش ولا css.` },
+            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** [[Copy-Item app app_copy -Recurse]] مرتين ورا بعض، وبعدين [[Get-ChildItem app_copy -Recurse -Name]]. وبعدين لاقي طريقة تنسخ تاني من غير المشكلة.`, done: R`بعد المرة التانية فيه [[app_copy\app\...]] جوه النسخة (اتجرّب في 7 و 5.1): لما الهدف موجود، الفولدر بيتنسخ **جوّاه**. والحل [[Copy-Item app\* app_copy -Recurse -Force]] (المحتوى مش الفولدر)، وتشغيلها مرتين بيسيب نفس الشكل.` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** عايز تنسخ [[app]] كله من غير ملفات اللوج. لاقي الـ parameter المناسب من [[Get-Help Copy-Item -Parameter *]] من غير ما حد يقولك اسمه، وانسخ لـ [[app_nolog]].`, done: R`لقيت [[-Exclude]]، و [[Copy-Item app app_nolog -Recurse -Exclude *.log]] نسخ كل حاجة إلا ملفات [[.log]] حتى اللي جوه فولدرات فرعية، و [[(Get-ChildItem app_nolog -Recurse -Filter *.log).Count]] بيرجّع [[0]] في 7 و 5.1.` },
+            { lvl: 'سريع', t: R`**ابني:** نسخة احتياطي من [[notes.txt]] اسمها فيه تاريخ النهارده: [[Copy-Item notes.txt "notes-$(Get-Date -Format yyyyMMdd).txt"]]. شغّله مرتين.`, done: R`فيه ملف اسمه زي [[notes-20260131.txt]] بتاريخ النهارده، والتشغيلة التانية كتبت فوقه من غير error (Copy-Item بيكتب فوق الملف لو موجود)، فعدد الملفات زي ما هو.` },
           ],
           deep: {
             why: R`نسخ ملفات وفولدرات: [[.env.example]] لـ [[.env]]، أو نسخة من فولدر قبل ما تجرّب فيه حاجة خطيرة. نفس cp في bash.`,
@@ -312,9 +316,11 @@ Rename-Item old.js new.js
 Get-ChildItem *.txt | Rename-Item -NewName { $_.Name -replace '\.txt$', '.md' }`,
           try: "اعمل 3 ملفات txt وحوّلهم كلهم لـ md بالأمر الأخير.",
           practice: [
-            { lvl: 'سريع', t: R`[[Rename-Item old.js new.js]]، وبعدين جرّب [[Rename-Item new.js src\new.js]].`, done: R`الأولى نجحت، والتانية طلعت [[Cannot rename the specified target, because it represents a path or device name.]]: Rename الاسم بس، والنقل شغل Move-Item.` },
-            { lvl: 'تطبيق', t: R`فولدر فيه ملفات log و png مخلوطة: اعمل [[logs]] و [[images]] الأول، وبعدين انقل كل نوع لفولدره.`, done: R`[[Get-ChildItem -File]] في الجذر مبيطلّعش ولا log ولا png، وكل فولدر فيه النوع بتاعه بس.` },
-            { lvl: 'تحدي', t: R`فيه [[a.txt]] و [[b.txt]]: جرّب [[Move-Item a.txt b.txt]]، وبعدين نفس الأمر بـ [[-Force]]، واعرف حصل إيه لمحتوى b.`, done: R`من غير Force بيطلع [[Cannot create a file when that file already exists.]]، وبـ Force [[a.txt]] اختفى و [[b.txt]] بقى فيه كلام a، والكلام القديم بتاع b راح خالص.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[Rename-Item old.js new.js]]، وبعدين جرّب [[Rename-Item new.js src\new.js]].`, done: R`الأولى نجحت، والتانية طلعت [[Cannot rename the specified target, because it represents a path or device name.]]: Rename الاسم بس، والنقل شغل Move-Item.` },
+            { lvl: 'تطبيق', t: R`**ابني:** فولدر فيه ملفات log و png مخلوطة: اعمل [[logs]] و [[images]] الأول، وبعدين انقل كل نوع لفولدره.`, done: R`[[Get-ChildItem -File]] في الجذر مبيطلّعش ولا log ولا png، وكل فولدر فيه النوع بتاعه بس.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** فيه [[a.txt]] و [[b.txt]]: جرّب [[Move-Item a.txt b.txt]]، وبعدين نفس الأمر بـ [[-Force]]، واعرف حصل إيه لمحتوى b.`, done: R`من غير Force بيطلع [[Cannot create a file when that file already exists.]]، وبـ Force [[a.txt]] اختفى و [[b.txt]] بقى فيه كلام a، والكلام القديم بتاع b راح خالص.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** فيه [[notes_txt.txt]] و [[plan.txt]]. السطر ده المفروض يحوّلهم md: [[Get-ChildItem *.txt | Rename-Item -NewName { $_.Name -replace '.txt', '.md' }]]. شغّله واعرف الغلط فين وصلّحه.`, done: R`النسخة البايظة عملت [[notes.md.md]] و [[plan.md]]: الـ [[.]] في [[-replace]] معناها «أي حرف» فـ [[_txt]] اتبدّلت هي كمان. والتصليح [['\.txt$']] (نقطة حقيقية وآخر الاسم بس) بيعمل [[notes_txt.md]]. نفس الناتج في 7 و 5.1.` },
+            { lvl: 'تحدي', t: R`**مسألة:** ٣ صور [[p1.jpg]] و [[p2.jpg]] و [[p3.jpg]]: زوّد [[2026-]] قبل اسم كل واحدة بـ [[Rename-Item -NewName { '2026-' + $_.Name }]]، وشغّله مرتين. وبعدين اكتب نسخة تتشغّل مرتين من غير ما تبوّظ الأسامي.`, done: R`النسخة الأولى بعد مرتين عملت [[2026-2026-p1.jpg]]. والنسخة الآمنة بتفلتر الأول [[Get-ChildItem *.jpg | Where-Object Name -notlike '2026-*' | Rename-Item ...]] وبعد أي عدد تشغيلات الأسامي [[2026-p1.jpg]] بس.` },
           ],
           deep: {
             why: R`تنظيم الملفات في فولدرات، وتغيير أسامي ملفات كتير مرة واحدة (امتداد، أو بادئة، أو مسافات). نفس mv في bash، بس مع الـ pipe بتعمل rename جماعي من غير لوب.`,
@@ -462,9 +468,11 @@ Remove-Item node_modules -Recurse -Force -WhatIf
 Remove-Item node_modules -Recurse -Force`,
           try: "امسح [[app_copy]] بـ [[-WhatIf]] الأول واقرا الناتج، وبعدين من غيرها.",
           practice: [
-            { lvl: 'سريع', t: R`[[Remove-Item app_copy -Recurse -WhatIf]].`, done: R`بيطبع سطر [[What if: Performing the operation "Remove Directory" on target ...]] بالمسار الكامل، و [[Test-Path app_copy]] بعدها لسه True.` },
-            { lvl: 'تطبيق', t: R`اعمل ملف read-only: [[Set-ItemProperty ro.txt IsReadOnly $true]]، وامسحه من غير [[-Force]] وبعدين بيها.`, done: R`من غير Force بيطلع error فيه [[sufficient access rights]] (في 7 و 5.1)، وبـ Force اتمسح و [[Test-Path ro.txt]] بقى False.` },
-            { lvl: 'تحدي', t: R`في شجرة فولدرات فيها ملفات [[.tmp]] وملفات تانية، امسح الـ tmp بس: [[Get-ChildItem -Recurse -Filter *.tmp -File | Remove-Item -WhatIf]] الأول، وبعدين من غير WhatIf.`, done: R`عدد سطور الـ What if بيساوي عدد ملفات tmp، وبعد المسح [[(Get-ChildItem -Recurse -Filter *.tmp).Count]] بيرجّع [[0]]، وعدد باقي الملفات زي ما كان.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[Remove-Item app_copy -Recurse -WhatIf]].`, done: R`بيطبع سطر [[What if: Performing the operation "Remove Directory" on target ...]] بالمسار الكامل، و [[Test-Path app_copy]] بعدها لسه True.` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** اعمل ملف read-only: [[Set-ItemProperty ro.txt IsReadOnly $true]]، وامسحه من غير [[-Force]] وبعدين بيها.`, done: R`من غير Force بيطلع error فيه [[sufficient access rights]] (في 7 و 5.1)، وبـ Force اتمسح و [[Test-Path ro.txt]] بقى False.` },
+            { lvl: 'تحدي', t: R`**مسألة:** في شجرة فولدرات فيها ملفات [[.tmp]] وملفات تانية، امسح الـ tmp بس: [[Get-ChildItem -Recurse -Filter *.tmp -File | Remove-Item -WhatIf]] الأول، وبعدين من غير WhatIf.`, done: R`عدد سطور الـ What if بيساوي عدد ملفات tmp، وبعد المسح [[(Get-ChildItem -Recurse -Filter *.tmp).Count]] بيرجّع [[0]]، وعدد باقي الملفات زي ما كان.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** سكربت تنضيف فيه [[$dir = $env:CLEAN_DIR; Remove-Item "$dir\*" -Recurse]]. **متشغّلوش.** بدّل [[Remove-Item]] بـ [[Get-ChildItem]] واعرف هيلمس إيه لو المتغير فاضي، وبعدين صلّحه.`, done: R`لما [[CLEAN_DIR]] مش متعرّف، المسار بقى [[\*]] و Get-ChildItem طلّع جذر الدرايف كله ([[C:\Windows]] و [[C:\Program Files]]). والتصليح سطر قبله [[if (-not $dir) { throw 'CLEAN_DIR is empty' }]] بيوقف السكربت قبل أي مسح.` },
+            { lvl: 'سريع', t: R`**اشرحها:** اكتب لزميل ٣ سطور: Remove-Item بيودّي الملف فين؟ وليه [[-WhatIf]] الأول؟ وإيه الفرق بين [[-Recurse]] و [[-Force]]؟`, done: R`الشرح فيه إن الملف بيتمسح على طول ومش بيروح سلة المحذوفات، وإن WhatIf بيوريك القايمة من غير ما يلمس حاجة، وإن Recurse للي جوه الفولدر و Force للمخفي والـ read-only، ومثال من التمارين اللي فوق على كل واحدة.` },
           ],
           flag: "danger",
           deep: {
@@ -580,9 +588,11 @@ PowerShell is in NonInteractive mode. Read and Prompt functionality is not avail
 if (Test-Path .env) { "found" } else { "missing" }`,
           try: "اختبر ملف موجود وملف مش موجود.",
           practice: [
-            { lvl: 'سريع', t: R`[[Test-Path .env]] على ملف موجود، و [[Test-Path .\nope.txt]] على ملف مش موجود.`, done: R`True و False، ومفيش ولا error أحمر في الحالتين.` },
-            { lvl: 'تطبيق', t: R`على فولدر، جرّب [[Test-Path app -PathType Leaf]] و [[Test-Path app -PathType Container]].`, done: R`[[Leaf]] (ملف) بيرجّع False و [[Container]] (فولدر) بيرجّع True، فتقدر تفرّق «موجود كملف» عن «موجود كفولدر».` },
-            { lvl: 'تحدي', t: R`اعمل ملف اسمه فيه قوسين مربعين: [[Set-Content -LiteralPath 'report[1].txt' x]]، وبعدين [[Test-Path 'report[1].txt']] و [[Test-Path -LiteralPath 'report[1].txt']].`, done: R`العادي بيرجّع False مع إن الملف موجود (لأن القوسين wildcard)، و [[-LiteralPath]] بيرجّع True. وخد بالك: [[Test-Path '']] في 7 بيرجّع False، وفي 5.1 بيطلع error [[because it is an empty string]].` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[Test-Path .env]] على ملف موجود، و [[Test-Path .\nope.txt]] على ملف مش موجود.`, done: R`True و False، ومفيش ولا error أحمر في الحالتين.` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** على فولدر، جرّب [[Test-Path app -PathType Leaf]] و [[Test-Path app -PathType Container]].`, done: R`[[Leaf]] (ملف) بيرجّع False و [[Container]] (فولدر) بيرجّع True، فتقدر تفرّق «موجود كملف» عن «موجود كفولدر».` },
+            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** اعمل ملف اسمه فيه قوسين مربعين: [[Set-Content -LiteralPath 'report[1].txt' x]]، وبعدين [[Test-Path 'report[1].txt']] و [[Test-Path -LiteralPath 'report[1].txt']].`, done: R`العادي بيرجّع False مع إن الملف موجود (لأن القوسين wildcard)، و [[-LiteralPath]] بيرجّع True. وخد بالك: [[Test-Path '']] في 7 بيرجّع False، وفي 5.1 بيطلع error [[because it is an empty string]].` },
+            { lvl: 'تطبيق', t: R`**ابني:** سطر بيعمل [[.env]] من [[.env.example]] بس لو مش موجود، ويطبع [[created]] أو [[exists]]: [[if (-not (Test-Path .env)) { Copy-Item .env.example .env; 'created' } else { 'exists' }]]. شغّله مرتين.`, done: R`أول مرة طبع [[created]] والتانية [[exists]]، ولو عدّلت [[.env]] بين المرتين التعديل لسه موجود (السطر مبيكتبش فوقه).` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** فيه [[a.txt]] بس. توقّع ناتج [[Test-Path a.txt, nope.txt]] و [[Test-Path *.txt]] و [[Test-Path *.zzz]] قبل ما تشغّل.`, done: R`الأول بيرجّع سطرين [[True]] و [[False]] (واحد لكل مسار)، و [[*.txt]] بيرجّع [[True]] لأن فيه ملف واحد على الأقل بيطابق، و [[*.zzz]] بيرجّع [[False]]. نفس الناتج في 7 و 5.1.` },
           ],
           deep: {
             why: "تتأكد إن ملف أو فولدر موجود قبل ما تعمل حاجة. مش هيطلع error، هيرجع True أو False.",
@@ -691,9 +701,11 @@ no logs
 Get-Item .\app.log | Format-List *`,
           try: "اعرف حجم وتاريخ آخر تعديل لأي ملف.",
           practice: [
-            { lvl: 'سريع', t: R`اعرف حجم ملف بالكيلو: [[(Get-Item .\app.log).Length / 1KB]].`, done: R`رقم بكسور، ولو قسمت [[Length]] على 1024 بإيدك بيطلع نفس الرقم.` },
-            { lvl: 'تطبيق', t: R`جرّب [[(Get-Item .).Length]] على فولدر فيه ملفات كبيرة.`, done: R`بيرجّع [[1]] مش حجم الفولدر (اتجرّب في 7 و 5.1): الفولدر مالوش Length، و PowerShell بيدّي أي object لوحده Length و Count بـ 1. حجم الفولدر محتاج Measure-Object (درس جاي).` },
-            { lvl: 'تحدي', t: R`احسب الملف ده اتعدّل من كام يوم: [[((Get-Date) - (Get-Item f.txt).LastWriteTime).Days]]. وبعدين غيّر التاريخ بـ [[(Get-Item f.txt).LastWriteTime = '2020-01-01']] واحسب تاني.`, done: R`أول مرة [[0]] لملف لسه معمول، وبعد تغيير التاريخ الرقم أكتر من ١٠٠٠، و [[(Get-Item f.txt).LastWriteTime.Year]] بيقول [[2020]].` },
+            { lvl: 'سريع', t: R`**قارن وقيس:** اعرف حجم ملف بالكيلو: [[(Get-Item .\app.log).Length / 1KB]].`, done: R`رقم بكسور، ولو قسمت [[Length]] على 1024 بإيدك بيطلع نفس الرقم.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** جرّب [[(Get-Item .).Length]] على فولدر فيه ملفات كبيرة.`, done: R`بيرجّع [[1]] مش حجم الفولدر (اتجرّب في 7 و 5.1): الفولدر مالوش Length، و PowerShell بيدّي أي object لوحده Length و Count بـ 1. حجم الفولدر محتاج Measure-Object (درس جاي).` },
+            { lvl: 'تحدي', t: R`**مسألة:** احسب الملف ده اتعدّل من كام يوم: [[((Get-Date) - (Get-Item f.txt).LastWriteTime).Days]]. وبعدين غيّر التاريخ بـ [[(Get-Item f.txt).LastWriteTime = '2020-01-01']] واحسب تاني.`, done: R`أول مرة [[0]] لملف لسه معمول، وبعد تغيير التاريخ الرقم أكتر من ١٠٠٠، و [[(Get-Item f.txt).LastWriteTime.Year]] بيقول [[2020]].` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[(Get-Item .\nope.log).Length]] على ملف مش موجود بيطلع أحمر. اقرا الرسالة، واكتب سطر بيطبع الحجم لو الملف موجود و [[missing]] لو لأ.`, done: R`الرسالة [[Cannot find path '...\nope.log' because it does not exist.]]، والسطر [[if (Test-Path .\nope.log) { (Get-Item .\nope.log).Length } else { 'missing' }]] بيطبع [[missing]] من غير ولا أحمر.` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** اعمل [[hid.txt]] وخبّيه بـ [[attrib +h hid.txt]]. جرّب [[Get-Item .\hid.txt]]، ولاقي من [[Get-Help Get-Item -Parameter *]] الـ parameter اللي يخليه يشوفه.`, done: R`من غيره بيطلع [[Could not find item ...\hid.txt.]] مع إن الملف موجود، وبـ [[-Force]] بيرجعه و [[.Attributes]] فيها [[Hidden]]. نفس الكلام في 7 و 5.1.` },
           ],
           deep: {
             why: "جلب object يمثّل ملف أو فولدر بكل properties بتاعته: الحجم، وتاريخ الإنشاء، والامتداد.",
@@ -836,9 +848,11 @@ Get-Content app.log -Tail 5 -Wait
 (Get-Content app.log).Count`,
           try: R`في نافذة [[Get-Content app.log -Wait]]، وفي نافذة تانية [[Add-Content app.log "hello"]].`,
           practice: [
-            { lvl: 'سريع', t: R`[[Get-Content app.log -TotalCount 3]] وبعدين [[Get-Content app.log -Tail 3]].`, done: R`أول ٣ سطور وآخر ٣ سطور، و [[(Get-Content app.log).Count]] بيساوي عدد السطور اللي notepad بيوريهولك.` },
-            { lvl: 'تطبيق', t: R`حط السطور في متغير [[$lines = Get-Content app.log]] واطبع آخر سطر وطوله: [[$lines[-1]; $lines[-1].Length]].`, done: R`آخر سطر هو نفسه اللي [[-Tail 1]] بيطلّعه، والطول رقم بعدد حروفه. و [[-1]] معناها «آخر عنصر» من غير ما تعرف العدد.` },
-            { lvl: 'تحدي', t: R`اعمل ملف فاضي وملف فيه سطر واحد، واطبع [[.Count]] لكل واحد، وبعدين [[(Get-Content one.txt).GetType().Name]].`, done: R`الفاضي [[0]] واللي فيه سطر [[1]] (في 7 و 5.1)، بس النوع [[String]] مش array. يعني الـ index صفر على ملف سطر واحد بيرجّع أول **حرف** في السطر مش السطر كله، وعشان كده تكتب [[@(Get-Content one.txt)]] لما تحتاج array دايمًا.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[Get-Content app.log -TotalCount 3]] وبعدين [[Get-Content app.log -Tail 3]].`, done: R`أول ٣ سطور وآخر ٣ سطور، و [[(Get-Content app.log).Count]] بيساوي عدد السطور اللي notepad بيوريهولك.` },
+            { lvl: 'تطبيق', t: R`**مسألة:** حط السطور في متغير [[$lines = Get-Content app.log]] واطبع آخر سطر وطوله: [[$lines[-1]; $lines[-1].Length]].`, done: R`آخر سطر هو نفسه اللي [[-Tail 1]] بيطلّعه، والطول رقم بعدد حروفه. و [[-1]] معناها «آخر عنصر» من غير ما تعرف العدد.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** اعمل ملف فاضي وملف فيه سطر واحد، واطبع [[.Count]] لكل واحد، وبعدين [[(Get-Content one.txt).GetType().Name]].`, done: R`الفاضي [[0]] واللي فيه سطر [[1]] (في 7 و 5.1)، بس النوع [[String]] مش array. يعني الـ index صفر على ملف سطر واحد بيرجّع أول **حرف** في السطر مش السطر كله، وعشان كده تكتب [[@(Get-Content one.txt)]] لما تحتاج array دايمًا.` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** اعمل لوج تجريبي [[1..50 | % { "2026-01-31 INFO request $_" } | Set-Content app.log]]، واطبع السطور من ١٠ لـ ١٢ بس، وآخر سطرين، وعدد السطور.`, done: R`[[(Get-Content app.log)[9..11] ]] بيطبع [[request 10]] لـ [[request 12]] (الـ index بيبدأ من صفر)، و [[-Tail 2]] بيطبع ٤٩ و ٥٠، و [[.Count]] بيرجّع [[50]].` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** اعمل ملف ٢٠٠ ألف سطر [[1..200000 | % { "line $_" } | Set-Content big.log]]، وقيس [[Measure-Command { (Get-Content big.log).Count }]] قصاد [[Measure-Command { [IO.File]::ReadAllLines("$PWD\big.log").Count }]].`, done: R`كاتب الرقمين بالـ milliseconds من جهازك، و ReadAllLines أسرع بعشرات المرات (عندنا حوالي ١٩٠٠ قصاد ٦٠ في 7، و ١٦٠٠ قصاد ٢٠ في 5.1)، وتقدر تقول ليه: Get-Content بيعمل object لكل سطر.` },
           ],
           deep: {
             why: R`قراية ملف هي أكتر حاجة بتعملها بعد ls: تشوف .env، أو config، أو آخر سطور في لوج وقع فيه السيرفر. Get-Content بيعمل شغل cat و head و tail و tail -f في أمر واحد.`,
@@ -941,9 +955,11 @@ Add-Content .env "NODE_ENV=development"
 Get-Process | Out-File procs.txt -Encoding utf8`,
           try: "اعمل .env بسطرين واعرضه.",
           practice: [
-            { lvl: 'سريع', t: R`[[Set-Content .env 'PORT=3000']] وبعدين [[Add-Content .env 'DEBUG=true']] وبعدين [[Set-Content .env 'PORT=4000']].`, done: R`[[Get-Content .env]] بيطبع سطر واحد بس: [[PORT=4000]]. الـ Set التاني مسح كل اللي قبله.` },
-            { lvl: 'تطبيق', t: R`اكتب سطر لوج فيه الوقت: [[Add-Content run.log "$(Get-Date -Format s) started"]]، وشغّله ٣ مرات.`, done: R`[[Get-Content run.log]] فيه ٣ سطور، كل واحد بيبدأ بتاريخ ووقت بالشكل [[2026-01-31T14:05:09]]، والأحدث في الآخر.` },
-            { lvl: 'تحدي', t: R`في 5.1 اكتب [[Set-Content a.txt 'a' -Encoding utf8]] و [['a' > b.txt]]، وافتح الاتنين بـ [[Format-Hex]]. وبعدين اعمل نفس الحاجة في 7.`, done: R`في 5.1: [[a.txt]] بيبدأ بـ [[EF BB BF]] (BOM) و [[b.txt]] بيبدأ بـ [[FF FE]] (UTF-16). في 7 الاتنين بيبدأوا بـ [[61]] على طول (حرف a). وده سبب إن [[.env]] معمول بـ 5.1 ممكن Node ميقراش أول سطر فيه صح.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[Set-Content .env 'PORT=3000']] وبعدين [[Add-Content .env 'DEBUG=true']] وبعدين [[Set-Content .env 'PORT=4000']].`, done: R`[[Get-Content .env]] بيطبع سطر واحد بس: [[PORT=4000]]. الـ Set التاني مسح كل اللي قبله.` },
+            { lvl: 'تطبيق', t: R`**ابني:** اكتب سطر لوج فيه الوقت: [[Add-Content run.log "$(Get-Date -Format s) started"]]، وشغّله ٣ مرات.`, done: R`[[Get-Content run.log]] فيه ٣ سطور، كل واحد بيبدأ بتاريخ ووقت بالشكل [[2026-01-31T14:05:09]]، والأحدث في الآخر.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** في 5.1 اكتب [[Set-Content a.txt 'a' -Encoding utf8]] و [['a' > b.txt]]، وافتح الاتنين بـ [[Format-Hex]]. وبعدين اعمل نفس الحاجة في 7.`, done: R`في 5.1: [[a.txt]] بيبدأ بـ [[EF BB BF]] (BOM) و [[b.txt]] بيبدأ بـ [[FF FE]] (UTF-16). في 7 الاتنين بيبدأوا بـ [[61]] على طول (حرف a). وده سبب إن [[.env]] معمول بـ 5.1 ممكن Node ميقراش أول سطر فيه صح.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[Get-Process -Id $PID | Set-Content procs.txt]] المفروض يحفظ بيانات العملية. افتح الملف، واعرف ليه الناتج مش مفيد، وصلّحه.`, done: R`الملف فيه سطر واحد [[System.Diagnostics.Process (pwsh)]] ([[(powershell)]] في 5.1): Set-Content بيكتب كل object كنص بـ ToString. و [[Get-Process -Id $PID | Out-File procs.txt]] بيكتب الجدول زي ما بيظهر على الشاشة.` },
+            { lvl: 'سريع', t: R`**مسألة:** اكتب [[abc]] في ملف من غير سطر جديد في الآخر. قارن [[Set-Content n1.txt 'abc']] بـ [[Set-Content n2.txt 'abc' -NoNewline]] بالحجم.`, done: R`[[(Get-Item n1.txt).Length]] بيرجّع [[5]] (الحروف التلاتة و CR و LF) و [[n2.txt]] بيرجّع [[3]]، في 7 و 5.1.` },
           ],
           deep: {
             why: R`سكربتات كتير بتكتب ملفات: .env لمشروع جديد، أو لوج، أو ناتج أمر عايز تحفظه. والكتابة على ويندوز فيها فخ الترميز (UTF-16 و BOM) اللي بيبوّظ ملفات بتقراها أدوات تانية، فلازم تعرف الأمر بيكتب إزاي.`,
@@ -1062,9 +1078,11 @@ $pkg.version
 $pkg.dependencies`,
           try: "اطبع اسم ونسخة أي مشروع Node عندك.",
           practice: [
-            { lvl: 'سريع', t: R`اطبع الـ scripts بتاعة مشروع: [[(Get-Content package.json -Raw | ConvertFrom-Json).scripts]].`, done: R`كل script باسمه وأمره زي ما هو في الملف، ولو كتبت [[.scripts.dev]] بيطبع أمر dev لوحده.` },
-            { lvl: 'تطبيق', t: R`اطبع أسامي الـ dependencies بس من غير النسخ: [[$pkg.dependencies.PSObject.Properties.Name]]، وعدّهم بـ [[.Count]].`, done: R`سطر لكل باكدج، والعدد بيساوي عدد السطور جوه [[dependencies]] في الملف.` },
-            { lvl: 'تحدي', t: R`على نسخة من config متداخل ٣ مستويات ([[{"a":{"b":{"c":{"d":1}}}}]])، غيّر قيمة واكتبه بـ [[ConvertTo-Json]] من غير [[-Depth]]، وبعدين بـ [[-Depth 10]].`, done: R`من غير Depth المستوى التالت بقى نص [[@{d=1}]] بدل object (والـ default عمقه ٢)، و 7 بيطبع [[WARNING: Resulting JSON is truncated]] لكن 5.1 بيعمل كده ساكت. وبـ [[-Depth 10]] الملف بيرجع زي الأصل.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اطبع الـ scripts بتاعة مشروع: [[(Get-Content package.json -Raw | ConvertFrom-Json).scripts]].`, done: R`كل script باسمه وأمره زي ما هو في الملف، ولو كتبت [[.scripts.dev]] بيطبع أمر dev لوحده.` },
+            { lvl: 'تطبيق', t: R`**مسألة:** اطبع أسامي الـ dependencies بس من غير النسخ: [[$pkg.dependencies.PSObject.Properties.Name]]، وعدّهم بـ [[.Count]].`, done: R`سطر لكل باكدج، والعدد بيساوي عدد السطور جوه [[dependencies]] في الملف.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** على نسخة من config متداخل ٣ مستويات ([[{"a":{"b":{"c":{"d":1}}}}]])، غيّر قيمة واكتبه بـ [[ConvertTo-Json]] من غير [[-Depth]]، وبعدين بـ [[-Depth 10]].`, done: R`من غير Depth المستوى التالت بقى نص [[@{d=1}]] بدل object (والـ default عمقه ٢)، و 7 بيطبع [[WARNING: Resulting JSON is truncated]] لكن 5.1 بيعمل كده ساكت. وبـ [[-Depth 10]] الملف بيرجع زي الأصل.` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** [[$j = '[{"name":"mona","age":31},{"name":"omar","age":24}]']]. اطبع أسامي اللي سنّهم أكبر من ٢٥ بـ [[$j | ConvertFrom-Json | Where-Object age -gt 25]] في 7 وفي 5.1، وصلّحه عشان يشتغل في الاتنين.`, done: R`7 بيطبع [[mona]] و 5.1 مبيطبعش حاجة: 5.1 بيبعت الـ array كلها كـ object واحد في الـ pipe. التصليح [[$users = $j | ConvertFrom-Json; $users | Where-Object age -gt 25]] (أو قوسين حوالين ConvertFrom-Json) بيطبع [[mona]] في الاتنين.` },
+            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** ملف config فيه comment و comma زيادة: [[{"port": 3000, // dev]] وبعده [[}]] في سطر لوحده. اقراه بـ ConvertFrom-Json في 7 وفي 5.1، وقرّر تصلّح الملف ولا السكربت.`, done: R`7 بيقراه عادي ويطبع [[3000]]، و 5.1 بيقع ([[Invalid object passed in, ':' or '}' expected.]] بسبب الـ comment، و [[Invalid JSON primitive]] لو الـ comma الزيادة لوحدها). والقرار: الملف يبقى JSON صافي من غير comments لو أي حد هيقراه بـ 5.1 أو بأداة تانية.` },
           ],
           deep: {
             why: "تتعامل مع JSON response من API أو تقرا ملف JSON. PowerShell بيحوّله لـ objects تقدر توصل لـ properties بسهولة.",

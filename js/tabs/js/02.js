@@ -36,9 +36,11 @@ s[0] = "H";
 console.log(s.toUpperCase(), s);`,
           try: R`افتح Node (اكتب [[node]] في الترمنال) والصق السطور واحد واحد، وبعد كل سطر اكتب [[typeof]] واسم المتغير. وبعدين جرّب [["hi".length]]: إزاي primitive عنده خاصية؟ الإجابة في «ازاي بيشتغل».`,
           practice: [
-            { lvl: 'سريع', t: R`[[let a = 5; let b = a; b = 10;]] واطبع a. وبعدين [[const o1 = { n: 5 }; const o2 = o1; o2.n = 10;]] واطبع [[o1.n]].`, done: R`a بتفضل 5، و [[o1.n]] بتبقى 10. وتقدر تقول ليه في جملة.` },
-            { lvl: 'تطبيق', t: R`[[addItem(cart, item)]] بتعمل [[cart.push(item)]] ومبترجّعش حاجة. نادي عليها على [[const myCart = []]] واطبع [[myCart.length]].`, done: R`بيطبع 1 مع إنك مكتبتش [[myCart = ...]] خالص، لأن الدالة استلمت نفس الـ array مش نسخة منها.` },
-            { lvl: 'تحدي', t: R`[[const s = "hi"; s.x = 1;]] واطبع [[s.x]]، مرة في [[node -e]] ومرة في ملف [[.mjs]].`, done: R`في [[node -e]] بيطبع undefined من غير error، وفي الـ [[.mjs]] (strict mode) بيوقع بـ [[TypeError: Cannot create property 'x' on string 'hi']]. والسبب إن الـ primitive مش object حقيقي.` }
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[let a = 5; let b = a; b = 10;]] واطبع a. وبعدين [[const o1 = { n: 5 }; const o2 = o1; o2.n = 10;]] واطبع [[o1.n]].`, done: R`a بتفضل 5، و [[o1.n]] بتبقى 10. وتقدر تقول ليه في جملة.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[addItem(cart, item)]] بتعمل [[cart.push(item)]] ومبترجّعش حاجة. نادي عليها على [[const myCart = []]] واطبع [[myCart.length]].`, done: R`بيطبع 1 مع إنك مكتبتش [[myCart = ...]] خالص، لأن الدالة استلمت نفس الـ array مش نسخة منها.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[function withTax(prices) { for (let i = 0; i < prices.length; i++) prices[i] = Math.round(prices[i] * 1.14 * 100) / 100; return prices; }]]. نادي [[withTax(p)]] على [[const p = [100, 200]]] واطبع p. وصلّحها بحيث p متتغيّرش.`, done: R`قبل التصليح p نفسها بقت [[[114, 228]]] و [[p === withTax(p)]] true، يعني الدالة بوّظت الأسعار الأصلية. بعد ما تكتبها بـ [[prices.map(...)]]: p بتفضل [[[100, 200]]] والناتج [[[114, 228]]] array جديدة.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** [[const s = "hi"; s.x = 1;]] واطبع [[s.x]]، مرة في [[node -e]] ومرة في ملف [[.mjs]].`, done: R`في [[node -e]] بيطبع undefined من غير error، وفي الـ [[.mjs]] (strict mode) بيوقع بـ [[TypeError: Cannot create property 'x' on string 'hi']]. والسبب إن الـ primitive مش object حقيقي.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** ارسم صناديق وأسهم لـ [[let a = { n: 1 }; let b = a; b = { n: 2 };]]: كل متغير صندوق، وكل object دايرة، والسهم بيشاور على مين. وبعدين توقّع [[a.n]].`, done: R`الرسمة فيها دايرتين وسهم b اتنقل للدايرة التانية وسهم a فضل مكانه، فتوقعت [[a.n]] بـ 1 وطلعت 1. وتقدر تقول الفرق بين [[b = {...}]] (سهم جديد) و [[b.n = 2]] (تعديل في نفس الدايرة).` }
           ],
           flag: "script",
           deep: {
@@ -236,9 +238,11 @@ Array.isArray([])      // true
 new Date() instanceof Date  // true`,
           try: R`افتح Console في المتصفح (F12) وجرّب كل سطر. وبعدين اكتب دالة [[getType(v)]] بترجّع [["null"]] و [["array"]] صح وباقي الأنواع من typeof. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
           practice: [
-            { lvl: 'سريع', t: R`اطبع typeof لـ [[42]] و [["42"]] و [[true]] و [[undefined]] و [[null]] و [[NaN]] و [[[]]].`, done: R`"number" و "string" و "boolean" و "undefined" و "object" و "number" و "object".` },
-            { lvl: 'تطبيق', t: R`[[safeAdd(a, b)]] بتجمع لو الاتنين numbers وغير NaN، وإلا ترجّع «مش أرقام».`, done: R`[[safeAdd(2, 3)]] 5، و [[safeAdd(2, "3")]] «مش أرقام» مش "23"، و [[safeAdd(NaN, 1)]] «مش أرقام».` },
-            { lvl: 'تحدي', t: R`طوّر [[getType(v)]] بتاعة الـ try تفرّق كمان بين NaN و Date (بـ [[instanceof Date]]).`, done: R`[[getType(NaN)]] "nan"، و [[getType(new Date())]] "date"، و [[getType([])]] "array"، و [[getType(null)]] "null"، و [[getType(() => 1)]] "function".` }
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اطبع typeof لـ [[42]] و [["42"]] و [[true]] و [[undefined]] و [[null]] و [[NaN]] و [[[]]].`, done: R`"number" و "string" و "boolean" و "undefined" و "object" و "number" و "object".` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[if (typeof value === undefined) console.log("مفيش قيمة");]] مبتطبعش حاجة حتى لو [[value]] undefined. لاقي الغلط.`, done: R`فهمت إن [[typeof]] بترجّع نص، فـ [[typeof value === undefined]] دايمًا false. بعد ما تكتب [[=== "undefined"]] بين علامتين الرسالة بتظهر.` },
+            { lvl: 'تطبيق', t: R`**مسألة:** [[safeAdd(a, b)]] بتجمع لو الاتنين numbers وغير NaN، وإلا ترجّع «مش أرقام».`, done: R`[[safeAdd(2, 3)]] 5، و [[safeAdd(2, "3")]] «مش أرقام» مش "23"، و [[safeAdd(NaN, 1)]] «مش أرقام».` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** رد API: [[{"id": "7", "price": "120.5", "active": "true", "tags": null}]]. بعد [[JSON.parse]] اطبع اسم كل حقل و typeof بتاعه، وحدد الحقول اللي محتاجة تتحوّل قبل ما تحسب بيها.`, done: R`الناتج: id و price و active كلهم "string"، و tags "object" (ده null). وقررت إن id و price محتاجين [[Number]] و active محتاجة [[=== "true"]]، وإن [[typeof]] لوحدها مش هتفرق null عن object.` },
+            { lvl: 'تحدي', t: R`**مسألة:** طوّر [[getType(v)]] بتاعة الـ try تفرّق كمان بين NaN و Date (بـ [[instanceof Date]]).`, done: R`[[getType(NaN)]] "nan"، و [[getType(new Date())]] "date"، و [[getType([])]] "array"، و [[getType(null)]] "null"، و [[getType(() => 1)]] "function".` }
           ],
           flag: "console",
           deep: {
@@ -417,9 +421,12 @@ Object.is(NaN, NaN)   // true
 const a = []; a === a // true: نفس الـ reference`,
           try: R`خمّن ناتج كل سطر قبل ما تشغّله في Console، وعدّ غلطت في كام. وبعدين جرّب [[[1, 2] == "1,2"]] وفكّر ليه طلعت true.`,
           practice: [
-            { lvl: 'سريع', t: R`خمّن وجرّب: [["1" == 1]] و [["1" === 1]] و [[null == undefined]] و [[null === undefined]] و [[NaN === NaN]].`, done: R`true و false و true و false و false.` },
-            { lvl: 'تطبيق', t: R`قيمة من input: [[const qty = "3";]]. اكتب [[if (qty === 3)]] وشوف ليه مبتدخلش، وصلّح بالتحويل مش بـ [[==]].`, done: R`[[qty === 3]] false، و [[Number(qty) === 3]] true، والكود بيدخل الـ if بعد التحويل.` },
-            { lvl: 'تحدي', t: R`[[[] == ![]]] بتطلع إيه؟ وجرّب [[Object.is(NaN, NaN)]] و [[Object.is(0, -0)]]، واشرح خطوات التحويل في الأولى.`, done: R`[[[] == ![]]] true (اليمين بقى false، والاتنين اتحوّلوا لـ 0)، و [[Object.is(NaN, NaN)]] true، و [[Object.is(0, -0)]] false.` }
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** خمّن وجرّب: [["1" == 1]] و [["1" === 1]] و [[null == undefined]] و [[null === undefined]] و [[NaN === NaN]].`, done: R`true و false و true و false و false.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** قيمة من input: [[const qty = "3";]]. اكتب [[if (qty === 3)]] وشوف ليه مبتدخلش، وصلّح بالتحويل مش بـ [[==]].`, done: R`[[qty === 3]] false، و [[Number(qty) === 3]] true، والكود بيدخل الـ if بعد التحويل.` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** اعمل [[console.table]] لـ ٦ أزواج: [[0]] و [[""]]، و [[0]] و [["0"]]، و [[""]] و [["0"]]، و [[null]] و [[undefined]]، و [[NaN]] و [[NaN]]، و [[0]] و [[-0]]. ولكل زوج ٣ عواميد: [[==]] و [[===]] و [[Object.is]].`, done: R`الجدول بيقول: [[==]] true في ٤ (أول اتنين و null/undefined و 0/-0)، و [[===]] true في 0/-0 بس، و [[Object.is]] true في NaN/NaN بس. ولاحظت إن [[0 == ""]] و [[0 == "0"]] true بس [["" == "0"]] false (الـ == مش متعدّية).` },
+            { lvl: 'تطبيق', t: R`**مسألة:** [[findById(products, id)]]: الـ ids في products أرقام، والـ id جاي من الـ URL كنص. حوّله الأول وقارن بـ [[===]]، ولو مش رقم صحيح رجّع null.`, done: R`على [[[{ id: 1, name: "Mug" }, { id: 2, name: "Cap" }]]]: [[findById(products, "2")]] بترجّع Cap، و [[findById(products, "abc")]] و [[findById(products, "")]] بيرجّعوا null (مش المنتج اللي id بتاعه 0 لو موجود)، ومفيش [[==]] في الكود.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** [[[] == ![]]] بتطلع إيه؟ وجرّب [[Object.is(NaN, NaN)]] و [[Object.is(0, -0)]]، واشرح خطوات التحويل في الأولى.`, done: R`[[[] == ![]]] true (اليمين بقى false، والاتنين اتحوّلوا لـ 0)، و [[Object.is(NaN, NaN)]] true، و [[Object.is(0, -0)]] false.` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من صفحة «Equality comparisons and sameness» على MDN، ومن غير ما تجرّب الأول: [[null == 0]] و [[null >= 0]] بيطلعوا إيه؟ وبعدين شغّلهم.`, done: R`طلع [[false]] و [[true]]. ولقيت السبب: [[==]] مع null ليها قاعدة خاصة (بتساوي undefined بس)، لكن [[>=]] بتحوّل null لـ 0. ودي حجة إنك تحوّل القيم بنفسك قبل أي مقارنة.` }
           ],
           flag: "console",
           deep: {
@@ -603,9 +610,11 @@ if (items.length) console.log("فيه عناصر");
 const isLoggedIn = !!"token";    // true`,
           try: R`اكتب دالة [[pageSize(n)]] بترجّع 20 لو n مش متبعت، وجرّبها بـ [[pageSize(0)]]: لازم ترجّع 0 مش 20. جرّبها بـ [[||]] وبعدين بـ [[??]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[pageSize]].`,
           practice: [
-            { lvl: 'سريع', t: R`اطبع [[Boolean]] لـ [[0]] و [[""]] و [["0"]] و [[" "]] و [[[]]] و [[{}]] و [[null]] و [[NaN]].`, done: R`false و false و true و true و true و true و false و false.` },
-            { lvl: 'تطبيق', t: R`[[getConfig(opts)]] بترجّع [[retries]] (افتراضي 3) و [[verbose]] (افتراضي false). اكتبها بـ [[||]] الأول وجرّب [[getConfig({ retries: 0 })]].`, done: R`بـ [[||]] الـ retries بتطلع 3 (غلط، اليوزر طلب 0)، وبـ [[??]] بتطلع 0، و [[getConfig({})]] بترجّع 3 و false.` },
-            { lvl: 'تحدي', t: R`[[isEmpty(v)]] true لـ [[""]] والمسافات بس و [[[]]] و [[{}]] و [[null]] و [[undefined]]، و false لـ [[0]] و [[false]].`, done: R`[[isEmpty("  ")]] true، و [[isEmpty({})]] true، و [[isEmpty(0)]] false، و [[isEmpty([0])]] false. ولو اعتمدت على [[!v]] بس هتلاقي [[[]]] و [[{}]] بيرجعوا false.` }
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اطبع [[Boolean]] لـ [[0]] و [[""]] و [["0"]] و [[" "]] و [[[]]] و [[{}]] و [[null]] و [[NaN]].`, done: R`false و false و true و true و true و true و false و false.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[getConfig(opts)]] بترجّع [[retries]] (افتراضي 3) و [[verbose]] (افتراضي false). اكتبها بـ [[||]] الأول وجرّب [[getConfig({ retries: 0 })]].`, done: R`بـ [[||]] الـ retries بتطلع 3 (غلط، اليوزر طلب 0)، وبـ [[??]] بتطلع 0، و [[getConfig({})]] بترجّع 3 و false.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[badgeText(count)]] لعلامة السلة: ترجّع [[""]] لو مفيش عدد (0 أو undefined أو null)، و [["9+"]] لو أكتر من 9، وإلا الرقم كنص.`, done: R`[[[0, 3, 12, undefined].map(badgeText)]] بترجّع [[["", "3", "9+", ""]]]. واستخدمت [[!count]] بقصد هنا لأن 0 فعلًا معناها «متعرضش حاجة».` },
+            { lvl: 'تحدي', t: R`**مسألة:** [[isEmpty(v)]] true لـ [[""]] والمسافات بس و [[[]]] و [[{}]] و [[null]] و [[undefined]]، و false لـ [[0]] و [[false]].`, done: R`[[isEmpty("  ")]] true، و [[isEmpty({})]] true، و [[isEmpty(0)]] false، و [[isEmpty([0])]] false. ولو اعتمدت على [[!v]] بس هتلاقي [[[]]] و [[{}]] بيرجعوا false.` },
+            { lvl: 'تحدي', t: R`**بيانات حقيقية:** فورم اتبعت: [[{ name: "", age: "0", newsletter: false, phone: null, city: " " }]]. اكتب [[missing(form)]] بترجّع أسماء الحقول الفاضية بجد، مرة بـ [[!v]] ومرة بفحص صح.`, done: R`بـ [[!v]] بترجّع [[["name", "newsletter", "phone"]]]: غلط في newsletter (false اختيار مش نقص) وفوّتت city. الفحص الصح ([[v == null || String(v).trim() === ""]]) بيرجّع [[["name", "phone", "city"]]].` }
           ],
           flag: "script",
           deep: {
@@ -819,9 +828,11 @@ Math.round(19.99 * 100)          // 1999: السعر بالقروش
 new Intl.NumberFormat("ar-EG", { style: "currency", currency: "EGP" }).format(1999 / 100)`,
           try: R`اجمع [[0.1]] عشر مرات في loop وشوف الناتج. وبعدين جرّب [[19.99 * 100]] من غير round. وآخر حاجة: [[[1, 10, 2].map(parseInt)]]، وحاول تفهم ليه طلعت [[[1, NaN, NaN]]] (مساعدة: map بتبعت الـ index كتاني argument، و parseInt بتعتبره الـ radix).`,
           practice: [
-            { lvl: 'سريع', t: R`اطبع [[0.1 + 0.2]] و [[(0.1 + 0.2).toFixed(2)]] و [[typeof (0.1 + 0.2).toFixed(2)]].`, done: R`0.30000000000000004، و "0.30"، و "string" (toFixed بترجّع نص).` },
-            { lvl: 'تطبيق', t: R`اجمع سلة [[[29.9, 0.2, 10.1]]] عادي، وبعدين بالقروش ([[Math.round(p * 100)]]) واقسم على 100 في الآخر.`, done: R`العادي 40.199999999999996، وبالقروش 40.2.` },
-            { lvl: 'تحدي', t: R`[[parseQty(input)]] من فورم: ترجّع رقم صحيح موجب أو null. جرّب [["12"]] و [["12px"]] و [[""]] و [["  "]] و [["2.5"]] و [["-1"]]، وقارن [[isNaN("abc")]] بـ [[Number.isNaN("abc")]].`, done: R`[["12"]] 12 وكل الباقي null (خلي بالك [[Number("")]] و [[Number("  ")]] بيرجعوا 0 مش NaN). و [[isNaN("abc")]] true بس [[Number.isNaN("abc")]] false.` }
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اطبع [[0.1 + 0.2]] و [[(0.1 + 0.2).toFixed(2)]] و [[typeof (0.1 + 0.2).toFixed(2)]].`, done: R`0.30000000000000004، و "0.30"، و "string" (toFixed بترجّع نص).` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[const price = Number("abc"); if (price === NaN) console.log("سعر غلط");]]. ليه الرسالة مبتظهرش؟ صلّحها.`, done: R`[[price === NaN]] بترجّع false لأن NaN مش بتساوي أي حاجة حتى نفسها. بعد [[Number.isNaN(price)]] الرسالة بتظهر.` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** اجمع سلة [[[29.9, 0.2, 10.1]]] عادي، وبعدين بالقروش ([[Math.round(p * 100)]]) واقسم على 100 في الآخر.`, done: R`العادي 40.199999999999996، وبالقروش 40.2.` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** من صفحة [[Number.prototype.toLocaleString]] على MDN، اطبع [[1234567.891]] بفواصل الآلاف ورقمين عشريين بالإنجليزي، وبعدين بالأرقام العربي.`, done: R`[[toLocaleString("en-US", { maximumFractionDigits: 2 })]] بيطبع [[1,234,567.89]]، و [["ar-EG"]] بيطبع [[١٬٢٣٤٬٥٦٧٫٨٩]]. والناتج نص للعرض بس، متحسبش بيه تاني.` },
+            { lvl: 'تحدي', t: R`**مسألة:** [[parseQty(input)]] من فورم: ترجّع رقم صحيح موجب أو null. جرّب [["12"]] و [["12px"]] و [[""]] و [["  "]] و [["2.5"]] و [["-1"]]، وقارن [[isNaN("abc")]] بـ [[Number.isNaN("abc")]].`, done: R`[["12"]] 12 وكل الباقي null (خلي بالك [[Number("")]] و [[Number("  ")]] بيرجعوا 0 مش NaN). و [[isNaN("abc")]] true بس [[Number.isNaN("abc")]] false.` }
           ],
           flag: "console",
           deep: {

@@ -1845,9 +1845,9 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|$( )": {
-  "hash": "9366a6c9f4ff",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "5270a42b8c54",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|$(( ))": {
   "hash": "490dd928c305",
@@ -1855,14 +1855,14 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|$1 و $# و $@": {
-  "hash": "996bc305172b",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "06d35ba07d0e",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|$?": {
-  "hash": "edea2762fc73",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "2ec042e89286",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|$__{#VAR} و $__{VAR:0:3}": {
   "hash": "7df48cd4dede",
@@ -1885,19 +1885,19 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|& و jobs و fg": {
-  "hash": "7634c3047fa4",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "02f2dc21a965",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|&& و || و ;": {
-  "hash": "12c3a08bf812",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "4f1ce3f9af1e",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|* و ? و [ ]": {
-  "hash": "64ad0545534f",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "ceaee4bdf1f7",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|/etc/hosts": {
   "hash": "821f337bb4e1",
@@ -1910,9 +1910,9 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|2>&1": {
-  "hash": "92d59136b42f",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "178e7412bf8c",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|=~ و BASH_REMATCH": {
   "hash": "666a0beed575",
@@ -1920,9 +1920,9 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|> و >>": {
-  "hash": "2379b404b262",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "f58a6b57a4be",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|Git Bash و سويتشات ويندوز": {
   "hash": "7d07a0675386",
@@ -1940,14 +1940,14 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|SYNOPSIS: اقرا سطر الاستخدام": {
-  "hash": "49cdd42785a7",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "d7d6eade50eb",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|VAR=value": {
-  "hash": "77f607c27af4",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "f3a843fe743a",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|alias و .bashrc": {
   "hash": "003131b5c585",
@@ -1970,9 +1970,9 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|awk": {
-  "hash": "decb62bc4f18",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "955f67fd384d",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|backup.sh": {
   "hash": "fd8e3d105bd2",
@@ -1985,14 +1985,14 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|case": {
-  "hash": "bc0af1cd4ddb",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "981c7eea7aea",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|cat": {
-  "hash": "f7781df92958",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "812dfd24ec6a",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|cat > (نفس الـ inode)": {
   "hash": "f94ab27ef666",
@@ -2000,9 +2000,9 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|cd": {
-  "hash": "94dcb271fc36",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "6dfb8eae6a4e",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|chattr و lsattr": {
   "hash": "6b286fdc974e",
@@ -2010,9 +2010,9 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|chmod": {
-  "hash": "550f7f7fdbe6",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "97718d41095d",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|chmod +x و ./": {
   "hash": "f0acc535470e",
@@ -2020,9 +2020,9 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|chown": {
-  "hash": "d2de3cda7d28",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "ed29d78fb774",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|cleanup-old.sh": {
   "hash": "ea653e9f86a8",
@@ -2030,9 +2030,9 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|compgen": {
-  "hash": "a7889517b461",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "0e68f8061569",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|convert-all.sh": {
   "hash": "4bfe64ba4e72",
@@ -2040,9 +2040,9 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|cp": {
-  "hash": "9dd29eb808ef",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "3930d6369ceb",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|cron للسكربت": {
   "hash": "2b67ea6598b8",
@@ -2050,9 +2050,9 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|curl": {
-  "hash": "b2a3861610a3",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "0b6589c76936",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|curl -w '%{http_code}'": {
   "hash": "53f64d58779e",
@@ -2060,9 +2060,9 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|cut": {
-  "hash": "97fd08f479cc",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "d71b10234cf4",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|date +%F": {
   "hash": "45fcd1e743de",
@@ -2080,9 +2080,9 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|df / du": {
-  "hash": "0488d01dfd3f",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "4cff99ee439e",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|diff": {
   "hash": "e9cc0fd9babf",
@@ -2105,9 +2105,9 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|echo": {
-  "hash": "e2560a2aee6d",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "da3e31888dd5",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|envsubst": {
   "hash": "336cd8e409cb",
@@ -2125,14 +2125,14 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|exit 0 و 1 و 2": {
-  "hash": "59267b391f96",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "2ee051b1a686",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|export و env": {
-  "hash": "32a191b53580",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "fc002cdec043",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|fastfetch": {
   "hash": "ee56a641386e",
@@ -2150,14 +2150,14 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|file / stat": {
-  "hash": "401c3e004346",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "5161416e6c52",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|find": {
-  "hash": "dff2b0938891",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "a7cc8096ba1f",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|find -print0 | while read": {
   "hash": "3fc82b8f6331",
@@ -2165,9 +2165,9 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|for": {
-  "hash": "e49883cabe0f",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "7e61103ca1e0",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|free -h": {
   "hash": "0b99a750351e",
@@ -2175,9 +2175,9 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|function": {
-  "hash": "973badcaa8ad",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "19fbd6bc80eb",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|fzf": {
   "hash": "bd74cae1d25c",
@@ -2190,9 +2190,9 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|grep": {
-  "hash": "4b74ea973d71",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "2576415fa535",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|grep -q || echo >>": {
   "hash": "c079b7e5f18b",
@@ -2205,14 +2205,14 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|head / tail": {
-  "hash": "8ead2e86c35d",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "c130a9ef11ed",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|help و type -a": {
-  "hash": "77ff303ca7f7",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "64245c513304",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|heredoc و tee": {
   "hash": "ba85d8cf1da8",
@@ -2230,9 +2230,9 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|if": {
-  "hash": "e5d5c2d9b2e8",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "da2e2511e760",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|inotifywait": {
   "hash": "4f91619ac0c5",
@@ -2255,19 +2255,19 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|kill": {
-  "hash": "81f78971a823",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "80237fa64959",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|less": {
-  "hash": "49f5a967e04c",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "993f492384a8",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|ln -s": {
-  "hash": "4fab034518a1",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "a2a1727f2b35",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|log() والألوان": {
   "hash": "4cb32a95d495",
@@ -2285,14 +2285,14 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|ls": {
-  "hash": "4c35404d671d",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "b730d0010081",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|ls -l": {
-  "hash": "d2ab9a5a0e29",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "7c72546a7a12",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|lsusb و lspci و lshw": {
   "hash": "0208fabf833f",
@@ -2320,9 +2320,9 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|mkdir": {
-  "hash": "3821b68440bb",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "4286d43e645c",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|mktemp": {
   "hash": "8eb2bb94f36a",
@@ -2330,14 +2330,14 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|mv": {
-  "hash": "a577fe31935a",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "865d15f66713",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|nano": {
-  "hash": "9a7b4d1dafb1",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "c73d6cbe326d",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|nc": {
   "hash": "2dbe33aa4079",
@@ -2380,9 +2380,9 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|nohup": {
-  "hash": "7b5a7a7b60dc",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "83357100ef98",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|notify-send و spd-say": {
   "hash": "73dc2c4eb5b2",
@@ -2425,14 +2425,14 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|ps": {
-  "hash": "af15ad22284a",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "66eaf820eb86",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|pwd": {
-  "hash": "e0cc813b0ced",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "00966474644d",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|read": {
   "hash": "323653d3a6cd",
@@ -2450,9 +2450,9 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|rm": {
-  "hash": "12034cdeb0f2",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "fe2bf45f6ec5",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|scp / rsync": {
   "hash": "b53954a9673b",
@@ -2460,9 +2460,9 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|sed": {
-  "hash": "5429ef5ff340",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "473a5d376021",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|select و confirm": {
   "hash": "4efbb7c7ec55",
@@ -2475,9 +2475,9 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|set -euo pipefail": {
-  "hash": "a0eb14ce3913",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "9211a3bce4ca",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|set -x و PS4": {
   "hash": "fa68f6d3fa41",
@@ -2535,9 +2535,9 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|sort و uniq": {
-  "hash": "344fadf599a3",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "601b22fee925",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|source lib.sh": {
   "hash": "7d60cc271acc",
@@ -2550,9 +2550,9 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|ssh": {
-  "hash": "6dffdb0c7a34",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "e50bfcf95d6c",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|ssh -L": {
   "hash": "d398a2bf4595",
@@ -2570,9 +2570,9 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|sudo": {
-  "hash": "36bf05953777",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "acf134a65c12",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|systemctl": {
   "hash": "d41a5f86d50f",
@@ -2580,9 +2580,9 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|tar": {
-  "hash": "8d12d438b86d",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "8d3c4f94a600",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|tcpdump": {
   "hash": "4f95af65afe7",
@@ -2600,9 +2600,9 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|touch": {
-  "hash": "afa95d33a367",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "86c592d211ae",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|tr": {
   "hash": "f0db7695ec05",
@@ -2615,14 +2615,14 @@
   "on": "docs: ISP IP replaced with documentation range, commands unchanged"
  },
  "bash|trap": {
-  "hash": "94a93c86c20b",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "0bf29851effc",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|tree": {
-  "hash": "a367b88a9fda",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "d728321d6db2",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|umask": {
   "hash": "94ac0333b6e4",
@@ -2655,9 +2655,9 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|wc": {
-  "hash": "963b13631dde",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "e91bcc5587f0",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|wget": {
   "hash": "973db512fca9",
@@ -2675,14 +2675,14 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|while read": {
-  "hash": "9462969845d5",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "b4186f132364",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|xargs": {
-  "hash": "ed9e54ad07ad",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "351cb8846c7b",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|xargs -P و wait -n": {
   "hash": "a4db1e16dc69",
@@ -2705,14 +2705,14 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash||": {
-  "hash": "331b9caf3377",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "41ffab9fd8d1",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|أقسام man": {
-  "hash": "a09d6de40963",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "d25815ce481e",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|أول سكربت": {
   "hash": "12df01180a72",
@@ -2725,9 +2725,9 @@
   "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
  },
  "bash|الطريقة: من مهمة لأمر": {
-  "hash": "e8bb01dd37a3",
-  "date": "2026-10-29",
-  "on": "docker ubuntu:24.04 (bash 5.2): practice و projects اتضافوا وأي ناتج في done اتجرّب كـ root ويوزرز عاديين؛ درس logrotate الجديد كله اتشغّل (logrotate 3.21.0)؛ وتصليح ln -sfn اتجرّب بـ strace على coreutils 9.4 و 8.32 (ubuntu:22.04) و busybox (alpine:3.21). docs: systemd و journalctl و NetworkManager و avahi و smb وأجهزة الهاردوير والأجزاء التفاعلية"
+  "hash": "2b1c78800453",
+  "date": "2026-11-03",
+  "on": "drills + nohup ssh-timeout section: run in ubuntu:24.04 (two-container ssh lab) + Git Bash; BSD from man"
  },
  "bash|مشروع ٢ — trap: نضّف مهما حصل": {
   "hash": "26c9f84d9ece",
@@ -8765,14 +8765,14 @@
   "on": "Node 24 Windows"
  },
  "js|&& و || و !": {
-  "hash": "a6e3faf17954",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "62ffdf979d7a",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|== و ===": {
-  "hash": "ada9557e0e9b",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "988fc1105448",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|AssemblyScript": {
   "hash": "11a141f63b54",
@@ -8785,14 +8785,14 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|CommonJS و ESM": {
-  "hash": "6c253e9ca0c6",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "96bb885c82d6",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|Date ومطبّاته": {
-  "hash": "1db8ceb7fa6c",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "420f7d0af15c",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|Declarative Shadow DOM و :defined": {
   "hash": "cdb189476479",
@@ -8810,9 +8810,9 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|FormData و URLSearchParams": {
-  "hash": "ad65d3648f20",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "bf64be9700b7",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|IndexedDB و BroadcastChannel": {
   "hash": "7803c90be75f",
@@ -8830,14 +8830,14 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|JSON": {
-  "hash": "4ef645d603b2",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "1f1da0771004",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|Map و Set": {
-  "hash": "5fc0476656e5",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "3c2e6854c218",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|MutationObserver": {
   "hash": "14d558ed74e9",
@@ -8850,14 +8850,14 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|Object.keys و entries": {
-  "hash": "6522612e419c",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "66bdb6435734",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|Promise": {
-  "hash": "23fc25e94031",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "c58fe4b29b8f",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|Promise.all بإيدك": {
   "hash": "d6f99c2ff8b0",
@@ -8865,9 +8865,9 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|Promise.all و allSettled": {
-  "hash": "04412385e904",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "f5846825f336",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|Proxy و Reflect": {
   "hash": "eead9300bb9c",
@@ -8890,9 +8890,9 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|UTC و Intl.DateTimeFormat": {
-  "hash": "2b48446dfb4c",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "7df9a6a6bdef",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|WASI و node:wasi": {
   "hash": "692d69f476a1",
@@ -8915,29 +8915,29 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|addEventListener": {
-  "hash": "b5f3c23b55d4",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "d76f84f4e8e4",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|array destructuring و spread": {
-  "hash": "b9619fba1a76",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "fc5b77ab480d",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|arrow و this": {
-  "hash": "f87cdbc0fd29",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "8eb2896d6242",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|async في loops": {
-  "hash": "f8fdf9fa3fa5",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "7906ca4e7d26",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|async و await": {
-  "hash": "4191933674ff",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "712a5bdcd546",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|attributes و properties": {
   "hash": "4db4b2d90825",
@@ -8950,9 +8950,9 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|break و continue": {
-  "hash": "ad4e402a4fbb",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "a2927e21fdf5",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|breakpoints و node --inspect و source maps": {
   "hash": "b7b3759e6d82",
@@ -8960,9 +8960,9 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|call و apply و bind": {
-  "hash": "be050cdf5c6b",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "9b8c23759356",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|canvas: ارسم أشكال وحرّكها": {
   "hash": "83c28433f46c",
@@ -8970,19 +8970,19 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|class": {
-  "hash": "60aa32478270",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "810dd00c3520",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|closure": {
-  "hash": "bce26b8f8148",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "48553c9c9e8b",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|closures في loop": {
-  "hash": "9cac4d2d2f9e",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "38afce5a55db",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|curry": {
   "hash": "79e4243b8fc6",
@@ -8990,9 +8990,9 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|custom errors و cause": {
-  "hash": "5500d4d3eec6",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "f381e7f1390a",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|customElements.define": {
   "hash": "c2c7ec3daecb",
@@ -9015,9 +9015,9 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|debugger": {
-  "hash": "92daca33e24c",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "13b7f6da39f1",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|deep equal": {
   "hash": "ddfadebd76c5",
@@ -9030,14 +9030,14 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|default و rest و spread": {
-  "hash": "14d01ae6e89f",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "862bccc64784",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|defer و async و module": {
-  "hash": "ee48c473f09f",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "2bced95163bd",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|drag and drop و progress": {
   "hash": "e046f749db14",
@@ -9045,14 +9045,14 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|dynamic import()": {
-  "hash": "b1d00639e27a",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "41f911caa75f",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|event delegation": {
-  "hash": "d853e41d9ae1",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "b791fa866138",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|event loop": {
   "hash": "f08913368283",
@@ -9060,29 +9060,29 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|extends و super": {
-  "hash": "3ab2d12e7860",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "571e73efc029",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|fetch و AbortController": {
-  "hash": "a71be16ced6e",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "2bd89cba8f68",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|find و some و includes": {
-  "hash": "8ff83f6342cb",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "f1b70e999335",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|for و while": {
-  "hash": "3def55067590",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "4f689d5ebdf4",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|for...of و for...in": {
-  "hash": "a903a4539123",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "510bb9cd1afb",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|form-associated و ElementInternals": {
   "hash": "9f83857424ac",
@@ -9090,29 +9090,29 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|function و arrow": {
-  "hash": "a5285eb664af",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "5956263bfe4f",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|groups و flags": {
-  "hash": "144e9ed35229",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "12a0c90edd14",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|higher-order functions": {
-  "hash": "ade5dd74785a",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "415fcc2a0926",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|hoisting و TDZ": {
-  "hash": "f8df1a8b51a1",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "066e3dbdfd69",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|if و else if": {
-  "hash": "b42b71fcf8a6",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "4395196b228a",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|immutability": {
   "hash": "2f13bfdd4350",
@@ -9120,9 +9120,9 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|import و export": {
-  "hash": "c059d630c7a6",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "5092b16f87e0",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|innerHTML هي الباب": {
   "hash": "66f152021f9f",
@@ -9135,14 +9135,14 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|iterators و generators": {
-  "hash": "ae03f44ec1c9",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "9f6c79084226",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|let و const و var": {
-  "hash": "9f18a6d22224",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "3dc24ea58031",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|manifest.webmanifest": {
   "hash": "6dc8107cb6de",
@@ -9150,9 +9150,9 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|map و filter و reduce": {
-  "hash": "4d6e63b0394d",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "e2af0bc3e572",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|memoize": {
   "hash": "f8a887e7c85c",
@@ -9180,19 +9180,19 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|number و NaN": {
-  "hash": "27150533a366",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "a34507e1d1ba",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|object destructuring و spread": {
-  "hash": "cf7ba5196716",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "1a0b1c44f3b0",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|object literal": {
-  "hash": "3302718886c4",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "396283dffb2d",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|polyfills: map و bind": {
   "hash": "0393a45ea7fb",
@@ -9200,19 +9200,19 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|primitives و objects": {
-  "hash": "253507f00a5e",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "869dd756edec",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|prototype chain": {
-  "hash": "8e5a54ecb222",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "6b7b3915d035",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|pseudocode": {
-  "hash": "ed272a0f8509",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "1768679bdf71",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|push و Background Sync": {
   "hash": "9df545afff2d",
@@ -9225,24 +9225,24 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|querySelector": {
-  "hash": "6878569901b4",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "77223da67f0e",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|reference و copy": {
-  "hash": "e6613256adde",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "f7048d270ba8",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|regex: classes و quantifiers": {
-  "hash": "b80553689e87",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "74d7bd0b1f2e",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|scope": {
-  "hash": "65745661e82a",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "24c32339ab85",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|shadow DOM": {
   "hash": "fe335aa06c45",
@@ -9255,54 +9255,54 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|sort و toSorted": {
-  "hash": "9e86fa6a8b32",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "ff9ca42c8cf9",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|string methods": {
-  "hash": "cbe7b7b5ad21",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "7d75be6f2041",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|switch ولا object lookup": {
-  "hash": "f4855727bae7",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "9ab996fe5bab",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|template literals": {
-  "hash": "1dbe17e4c1d1",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "c1cc87ef5c91",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|test و match و matchAll و replace": {
-  "hash": "dad215df0c04",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "f2e725a4dc6a",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|textContent و classList": {
-  "hash": "4e7627969d47",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "5ebe8befe753",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|this": {
-  "hash": "49a27d1a8bb2",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "903a18b6fb79",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|truthy و falsy": {
-  "hash": "df924d922bed",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "9378d9d793f4",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|try و catch و finally": {
-  "hash": "222264692aae",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "392d306e20ab",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|typeof": {
-  "hash": "054527e722f1",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "206ca5e3325a",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|visibilitychange و bfcache": {
   "hash": "77cca2ac4062",
@@ -9360,14 +9360,14 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|اعرض داتا من fetch": {
-  "hash": "815dc7a0c052",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "1ccbd308ec06",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|اقرا الـ error": {
-  "hash": "e7a774065ff3",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "319171a67e6e",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|اقرا رسالة الخطأ في JavaScript": {
   "hash": "7c6e430708e7",
@@ -9395,84 +9395,84 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|المتغيرات والأنواع والعمليات": {
-  "hash": "1b250cdaae76",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "b4b2bd2f14f8",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|تمارين أساسيات ١": {
-  "hash": "73edd8c075a7",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "9e0a25a48884",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|تمارين أساسيات ٢": {
-  "hash": "a108906032e0",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "361f01d8b1ae",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|تمرين charCount": {
-  "hash": "f8002153c44a",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "4d12d15cd802",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|تمرين countEvens": {
-  "hash": "3c6fc9da3a46",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "73f32ca644a3",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|تمرين countVowels": {
-  "hash": "3a9712be3d56",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "4b0c3bf71dfe",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|تمرين factorial": {
-  "hash": "4bf3c9d07a6f",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "2505a211eae9",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|تمرين fibonacci": {
-  "hash": "66006c83f824",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "cc821e51f3b6",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|تمرين isPrime": {
-  "hash": "fe96752976e6",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "283d06aae08e",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|تمرين maxOf": {
-  "hash": "f039515d15e7",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "1f92c48dcaa9",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|تمرين reverse": {
-  "hash": "2b39db05f3dc",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "191edca8dec4",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|تمرين secondLargest": {
-  "hash": "ce896d9c63ca",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "4d8612807a53",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|تمرين sumDigits": {
-  "hash": "0a013cc0709b",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "ef81ef89e54f",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|تمرين sumTo": {
-  "hash": "4a68f1fcb23a",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "63cef30ccf09",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|تمرين table": {
-  "hash": "711b36969cd6",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "7ab2e5ad11bb",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|تمرين unique": {
-  "hash": "369a40be3d95",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "60a75029bd3b",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|خريطة مشاريع JS": {
   "hash": "3b7abc47e724",
@@ -9605,9 +9605,9 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|مقدمة الدوال function": {
-  "hash": "06e9feb5ecb8",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "1b335a7ade61",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|من جملة لتوقيع دالة": {
   "hash": "9664232e6d5a",
@@ -9620,9 +9620,9 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|يعني إيه برنامج": {
-  "hash": "e53f3503312d",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "6a14a3d828cb",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "kotlin|Activity و lifecycle": {
   "hash": "3d31db0d8175",
@@ -12265,24 +12265,24 @@
   "on": "Windows 11 local build (DB restart, AI no-key + limit); docs: Stripe CLI, prompt injection"
  },
  "ps|$?": {
-  "hash": "1456d662b0f9",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "7d720c44a4bf",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|$LASTEXITCODE": {
-  "hash": "5b57830623da",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "1e9c41096b6b",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|$PROFILE": {
-  "hash": "f9d13b985762",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "81ad6de04297",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|$PSScriptRoot": {
-  "hash": "937d6bf7b545",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "114ab0ee266c",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|$PSStyle": {
   "hash": "f71a0833076d",
@@ -12290,39 +12290,39 @@
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|$env:": {
-  "hash": "7f7e45f9e914",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "a5829a1a77b6",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|& (call operator)": {
-  "hash": "86d5770ec8e1",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "c8be89f02992",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|( ) و $( )": {
-  "hash": "aa3603797b17",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "777b84aaa3b8",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|-ErrorAction و $Error": {
-  "hash": "c9ed02af8bd6",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "b4125f76b4e3",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|-WhatIf و -Confirm": {
-  "hash": "1cf95683c8b7",
+  "hash": "6856d43ae06e",
   "date": "2026-11-03",
-  "on": "docs: real machine name / ISP IP replaced with invented ones, commands unchanged"
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|-and و -or مقابل && و ||": {
-  "hash": "107b8c99da35",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "c8bcb5d44e70",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|; و && و ||": {
-  "hash": "e2b031ea4af8",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "2172eb8dff52",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|Add-LocalGroupMember": {
   "hash": "02d506565f5c",
@@ -12345,19 +12345,19 @@
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|ConvertFrom-Json": {
-  "hash": "c4bdf6498690",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "f774fd579bd6",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|ConvertTo-Json -Depth": {
-  "hash": "412806c81f04",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "752d5953161e",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|Copy-Item": {
-  "hash": "2e699515d206",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "603b72e3a4a6",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|Enter-PSSession / Invoke-Command": {
   "hash": "7fcf4fefa467",
@@ -12365,14 +12365,14 @@
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|ExecutionPolicy": {
-  "hash": "c74d0cdcbb1d",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "9160107d107d",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|Export-Csv / ConvertTo-Json": {
-  "hash": "acbf81d10eb3",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "ae58955dc0ac",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|FileSystemWatcher": {
   "hash": "6b5901c18026",
@@ -12380,9 +12380,9 @@
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|ForEach-Object": {
-  "hash": "4b6b7cff9399",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "31397868c121",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|ForEach-Object -Parallel": {
   "hash": "b15dd0d56123",
@@ -12400,9 +12400,9 @@
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Get-Alias": {
-  "hash": "2453318ae0be",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "39f6a71019fd",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|Get-BitLockerVolume": {
   "hash": "628557bfc2b5",
@@ -12410,9 +12410,9 @@
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Get-ChildItem": {
-  "hash": "02c4d469912b",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "84cd0e2e7212",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|Get-CimInstance": {
   "hash": "54642b524d09",
@@ -12420,9 +12420,9 @@
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Get-Command": {
-  "hash": "e2a97480fd84",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "74f1b27dcb37",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|Get-Command (which)": {
   "hash": "c867da8a07f5",
@@ -12430,19 +12430,19 @@
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Get-Command -Syntax": {
-  "hash": "f94f53954b8b",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "18de7b91cacb",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|Get-Command -Verb و -Noun": {
-  "hash": "81e957bfa3e1",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "4747f38d5f33",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|Get-Content": {
-  "hash": "7027408e8369",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "f451f6a65564",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|Get-Counter": {
   "hash": "7472a6e3a274",
@@ -12460,14 +12460,14 @@
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Get-Help": {
-  "hash": "52ace89a540c",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "56ad77316d2b",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|Get-Item": {
-  "hash": "9c45b0346fe9",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "410b3b1c7327",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|Get-LocalUser / New-LocalUser": {
   "hash": "4d332ec46e0a",
@@ -12475,9 +12475,9 @@
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Get-Member": {
-  "hash": "c22f87a2f5e2",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "9a5ac2ea0c09",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|Get-MpComputerStatus": {
   "hash": "af3ecf1e74ae",
@@ -12520,14 +12520,14 @@
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Get-Process / Stop-Process": {
-  "hash": "fcfa9bc16673",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "167689971e4e",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|Get-Service": {
-  "hash": "682f5f336e2a",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "2d192d7cb114",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|Get-WinEvent": {
   "hash": "777ecf539764",
@@ -12535,9 +12535,9 @@
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Group-Object": {
-  "hash": "3cd631ecf4df",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "4fbbc1fdba2f",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|History والاختصارات": {
   "hash": "54909de60cd1",
@@ -12545,9 +12545,9 @@
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Import-Csv": {
-  "hash": "8316cc1b1a15",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "79a261cec3b0",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|Import-Module و dot-sourcing": {
   "hash": "2dcc715e6e38",
@@ -12555,19 +12555,19 @@
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Invoke-RestMethod": {
-  "hash": "5ae277a1fb7a",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "ba231693cd05",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|Invoke-WebRequest -OutFile": {
-  "hash": "47f7cdca5aed",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "aa5c4b26e8ef",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|IsInRole (Admin check)": {
-  "hash": "2935ccac087d",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "3d6f49ee016a",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|LockWorkStation": {
   "hash": "c9b655957aed",
@@ -12580,9 +12580,9 @@
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Measure-Object": {
-  "hash": "591c87c6c7c5",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "cabef9a48caa",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|MessageBox / BurntToast": {
   "hash": "f70fe86d3546",
@@ -12590,14 +12590,14 @@
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Move-Item / Rename-Item": {
-  "hash": "778bcd457a94",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "7f5dc37f075d",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|New-Item": {
-  "hash": "d5a0e544fba2",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "c48c9d8cef4c",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|New-NetFirewallRule": {
   "hash": "1db4d6a69504",
@@ -12635,9 +12635,9 @@
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Push-Location": {
-  "hash": "9e7d645239b8",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "436b747ed699",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|RandomNumberGenerator (password)": {
   "hash": "2485d5fd81e6",
@@ -12650,9 +12650,9 @@
   "on": "pwsh 7.6 + powershell 5.1, read-only on Windows; state-changing commands from Microsoft docs"
  },
  "ps|Remove-Item": {
-  "hash": "f99c6beeebcb",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "dfd91f9563b6",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|Resolve-DnsName": {
   "hash": "eb0632cbdc05",
@@ -12670,14 +12670,14 @@
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Select-Object": {
-  "hash": "4c67d965e7ef",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "218f803dd480",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|Select-String": {
-  "hash": "a10172fdca31",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "1f37bd8b60c0",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|Set-Clipboard / Get-Clipboard": {
   "hash": "cbed01b5e9a2",
@@ -12685,9 +12685,9 @@
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Set-Content / Add-Content": {
-  "hash": "1d94954b96fc",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "7e1b2f6c7c6f",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|Set-DnsClientServerAddress": {
   "hash": "c73ad85c0a41",
@@ -12700,9 +12700,9 @@
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Set-Location": {
-  "hash": "e28f646ebbeb",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "2fbae90531f5",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|Set-NetConnectionProfile": {
   "hash": "7bbb7339627a",
@@ -12725,9 +12725,9 @@
   "on": "pwsh 7.6 + powershell 5.1, read-only on Windows; state-changing commands from Microsoft docs"
  },
  "ps|Sort-Object": {
-  "hash": "5e6afad8fb35",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "e00ba9f3d3fc",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|Start-BitsTransfer": {
   "hash": "f5b758f3f9f9",
@@ -12740,14 +12740,14 @@
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Start-Process": {
-  "hash": "ba5785323adb",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "ca52726e2714",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|Start-Process -Verb RunAs": {
-  "hash": "fea2045ee7c4",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "e19223420fef",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|Start-Transcript": {
   "hash": "04afc8a7625c",
@@ -12755,9 +12755,9 @@
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Tab و Ctrl+Space": {
-  "hash": "b3057f99c46e",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "99e1375bc9ce",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|Terminal-Icons": {
   "hash": "4e27d1f3a54e",
@@ -12775,9 +12775,9 @@
   "on": "docs: real machine name / ISP IP replaced with invented ones, commands unchanged"
  },
  "ps|Test-Path": {
-  "hash": "3ac540d70e25",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "86e7a9dfc96b",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|UI Automation": {
   "hash": "2460ec839841",
@@ -12785,14 +12785,14 @@
   "on": "pwsh 7.6 + powershell 5.1, read-only on Windows; state-changing commands from Microsoft docs"
  },
  "ps|Update-Help و about_": {
-  "hash": "d27de5a27831",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "f462b6a38b5f",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|Verb-Noun": {
-  "hash": "ee036225003a",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "6873cca7e9e3",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|Wake-on-LAN": {
   "hash": "7cb49d84d04a",
@@ -12800,9 +12800,9 @@
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Where-Object": {
-  "hash": "7ad829889c74",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "595b18901f29",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|Win32_StartupCommand": {
   "hash": "8f15c86426cf",
@@ -12810,9 +12810,9 @@
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|Write-Host والـ output": {
-  "hash": "c2e8952355d7",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "4db9ace67704",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|Write-Progress": {
   "hash": "91e20840aa6c",
@@ -12830,9 +12830,9 @@
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|array و hashtable": {
-  "hash": "583b02fc4bdb",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "ebc92e93b383",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|backup.ps1": {
   "hash": "d39a68bfd304",
@@ -12860,14 +12860,14 @@
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|foreach / for / while": {
-  "hash": "486317adada9",
+  "hash": "4f59647af1f4",
   "date": "2026-11-03",
-  "on": "pwsh 7.6 + powershell 5.1"
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|function": {
-  "hash": "8c9822c809ad",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "89ebf67c13a8",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|function prompt": {
   "hash": "cd2633cb9baa",
@@ -12880,9 +12880,9 @@
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|if / switch": {
-  "hash": "7681d0283a7a",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "1dcc64b4ed0b",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|new-project.ps1": {
   "hash": "b0f64257c0e2",
@@ -12900,9 +12900,9 @@
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|param()": {
-  "hash": "42a4d59c3b97",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "3074edc069b4",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|pipeline function": {
   "hash": "422176b93268",
@@ -12910,9 +12910,9 @@
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|pwsh": {
-  "hash": "8055ec725dee",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "e0a98b4d7e28",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|rename-photos.ps1": {
   "hash": "184600e02ebd",
@@ -12950,9 +12950,9 @@
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|try / catch": {
-  "hash": "fe77ffaadf7e",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "be1453f1497b",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|verify-stack.ps1": {
   "hash": "85be464e3c58",
@@ -12970,34 +12970,34 @@
   "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
  },
  "ps|أول سكربت .ps1": {
-  "hash": "9466de1db0ef",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "b2c517bb1a4c",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|اقرا رسالة الخطأ": {
-  "hash": "bb4037c7888b",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "dacffbe5bfa9",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|الطريقة: من مهمة لأمر": {
-  "hash": "e0df1f4c3d53",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "ef310b892303",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|المتغيرات": {
-  "hash": "21a3f3f579c8",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "142595eb71d9",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|المتغيرات والأنواع": {
-  "hash": "d534bf8739a5",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "d15b0ba87f12",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|النصوص (strings)": {
-  "hash": "95281717fd21",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "95f9ffff62d9",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|تجربة أدمن بتغيّر الشبكة": {
   "hash": "144b0ca4ea1c",
@@ -13005,14 +13005,14 @@
   "on": "pwsh 7.6 + powershell 5.1, read-only on Windows; state-changing commands from Microsoft docs"
  },
  "ps|رموز PowerShell": {
-  "hash": "f318cc8b5f0a",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "8d43eea14321",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|عوامل المقارنة": {
-  "hash": "ae7d4df3c4b6",
-  "date": "2026-10-29",
-  "on": "practice (٣ تمارين لكل درس) و projects (سلّمة لكل وحدة) اتضافوا؛ أي ناتج أو فرق بين النسختين مكتوب في done اتجرّب على pwsh-7.6 و powershell-5.1 من غير أدمن في فولدر مؤقت. docs: التمارين اللي محتاجة أدمن أو SSH server أو موديولات مش متسطّبة (PSScriptAnalyzer و oh-my-posh) أو GUI، والـ done بتاعها من غير ناتج حرفي"
+  "hash": "a9d53ec0ee88",
+  "date": "2026-11-03",
+  "on": "drills only: done outputs run in pwsh 7.6 + powershell 5.1"
  },
  "ps|قيس قبل ما تغيّر": {
   "hash": "b19a7a59e1bd",

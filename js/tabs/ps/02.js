@@ -27,9 +27,11 @@ cd ~
 Get-Location`,
           try: "روح لأي درايف تاني وارجع الـ home.",
           practice: [
-            { lvl: 'سريع', t: R`اكتب [[cd ~]] وبعدين [[cd ..]] وبعدين [[cd \]]، وبعد كل واحد [[Get-Location]].`, done: R`التلات مسارات بالترتيب: فولدرك الشخصي، وبعده [[C:\Users]]، وبعده [[C:\]].` },
-            { lvl: 'تطبيق', t: R`ادخل [[C:\Program Files]] مرة من غير علامات تنصيص ومرة بيها.`, done: R`من غيرها بيطلع [[A positional parameter cannot be found that accepts argument 'Files'.]] (فهم Files إنها argument تاني)، وبيها بتدخل عادي، في 7 و 5.1.` },
-            { lvl: 'تحدي', t: R`ادخل فولدر، وبعدين فولدر تاني، واكتب [[cd -]]. جرّبها في 7 وفي 5.1.`, done: R`في 7 بترجعك للفولدر اللي كنت فيه قبلها (و [[cd +]] بترجعك تاني لقدّام)، وفي 5.1 بتطلع [[Cannot find path ... because it does not exist]] لأنه فاكر [[-]] اسم فولدر.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اكتب [[cd ~]] وبعدين [[cd ..]] وبعدين [[cd \]]، وبعد كل واحد [[Get-Location]].`, done: R`التلات مسارات بالترتيب: فولدرك الشخصي، وبعده [[C:\Users]]، وبعده [[C:\]].` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** ادخل [[C:\Program Files]] مرة من غير علامات تنصيص ومرة بيها.`, done: R`من غيرها بيطلع [[A positional parameter cannot be found that accepts argument 'Files'.]] (فهم Files إنها argument تاني)، وبيها بتدخل عادي، في 7 و 5.1.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** ادخل فولدر، وبعدين فولدر تاني، واكتب [[cd -]]. جرّبها في 7 وفي 5.1.`, done: R`في 7 بترجعك للفولدر اللي كنت فيه قبلها (و [[cd +]] بترجعك تاني لقدّام)، وفي 5.1 بتطلع [[Cannot find path ... because it does not exist]] لأنه فاكر [[-]] اسم فولدر.` },
+            { lvl: 'تطبيق', t: R`**مسألة:** انت في [[$HOME\lab\a\b\c]] (اعملها الأول بـ [[New-Item -ItemType Directory a\b\c -Force]]). ارجع لـ [[lab]] بأمر واحد بطريقتين مختلفتين: مرة بمسار نسبي ومرة بمسار كامل.`, done: R`[[cd ..\..\..]] و [[cd $HOME\lab]] الاتنين بيخلّوا [[Get-Location]] يطبع نفس المسار اللي آخره [[\lab]]، وتقدر تقول إمتى النسبي أحسن (جوه المشروع) وإمتى الكامل (في سكربت مش عارف هيتشغّل منين).` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** [[cd]] مش للفولدرات بس. شغّل [[Get-PSDrive]] ولاقي «درايفات» مش ديسك، وادخل [[cd Env:]] واعمل [[Get-ChildItem]]، وارجع بـ [[cd C:]].`, done: R`اللستة فيها [[Env]] و [[HKCU]] و [[Variable]] و [[Function]] جنب [[C]] (و [[Temp]] في 7 بس)، و [[Get-ChildItem]] جوه [[Env:]] طلّع متغيرات البيئة بدل ملفات، و [[cd C:]] رجّعك لنفس الفولدر اللي كنت فيه على C مش لجذر الدرايف.` },
           ],
           deep: {
             why: R`كل أمر بتكتبه بيشتغل «من» فولدر معين، والملفات اللي بتكتب اسمها من غير مسار كامل بيدوّر عليها هناك. فأول حاجة في أي شغل إنك تقف في المكان الصح. نفس [[cd]] و [[pwd]] في bash.`,
@@ -162,9 +164,11 @@ Get-ChildItem -Recurse -Filter *.js
 Get-ChildItem -Directory`,
           try: "اعرض كل ملفات .json في مشروع عندك من غير فولدرات.",
           practice: [
-            { lvl: 'سريع', t: R`في فولدر فيه ملف مخفي، قارن [[Get-ChildItem]] بـ [[Get-ChildItem -Force]].`, done: R`مع [[-Force]] بتظهر أسامي زيادة، وعمود Mode بتاعها فيه حرف [[h]] (Hidden)، وتقدر تشوف المخفي لوحده بـ [[Get-ChildItem -Hidden]].` },
-            { lvl: 'تطبيق', t: R`في مشروع Node، هات ملفات [[.json]] اللي في أول مستويين بس: [[Get-ChildItem -Recurse -Depth 1 -Filter *.json -File]].`, done: R`[[package.json]] اللي في الجذر بيظهر، والـ json اللي جوه فولدر واحد بيظهر، واللي جوه [[node_modules\x\]] (مستوى تالت) مبيظهرش. [[-Depth 0]] بيجيب الجذر بس.` },
-            { lvl: 'تحدي', t: R`جرّب [[Get-ChildItem . -Include *.json]] من غير [[-Recurse]] في فولدر فيه json، وبعدين [[Get-ChildItem .\* -Include *.json]].`, done: R`الأول مبيرجّعش ولا حاجة (في 7 و 5.1)، والتاني بيرجّع الملفات. [[-Include]] بيشتغل بس مع [[-Recurse]] أو مسار فيه [[*]]، وعشان كده [[-Filter]] أضمن لامتداد واحد.` },
+            { lvl: 'سريع', t: R`**قارن وقيس:** في فولدر فيه ملف مخفي، قارن [[Get-ChildItem]] بـ [[Get-ChildItem -Force]].`, done: R`مع [[-Force]] بتظهر أسامي زيادة، وعمود Mode بتاعها فيه حرف [[h]] (Hidden)، وتقدر تشوف المخفي لوحده بـ [[Get-ChildItem -Hidden]].` },
+            { lvl: 'تطبيق', t: R`**مسألة:** في مشروع Node، هات ملفات [[.json]] اللي في أول مستويين بس: [[Get-ChildItem -Recurse -Depth 1 -Filter *.json -File]].`, done: R`[[package.json]] اللي في الجذر بيظهر، والـ json اللي جوه فولدر واحد بيظهر، واللي جوه [[node_modules\x\]] (مستوى تالت) مبيظهرش. [[-Depth 0]] بيجيب الجذر بس.` },
+            { lvl: 'تحدي', t: R`**اقرا وتوقّع:** جرّب [[Get-ChildItem . -Include *.json]] من غير [[-Recurse]] في فولدر فيه json، وبعدين [[Get-ChildItem .\* -Include *.json]].`, done: R`الأول مبيرجّعش ولا حاجة (في 7 و 5.1)، والتاني بيرجّع الملفات. [[-Include]] بيشتغل بس مع [[-Recurse]] أو مسار فيه [[*]]، وعشان كده [[-Filter]] أضمن لامتداد واحد.` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[Get-ChildItem -Filter *.js, *.css]] بيقع. اقرا الرسالة وهات الملفين بأمر واحد صح.`, done: R`الرسالة [[Cannot convert 'System.Object[]' to the type 'System.String' required by parameter 'Filter'.]] لأن [[-Filter]] بياخد قيمة واحدة بس. والتصليح [[Get-ChildItem *.js, *.css]] (الـ Path بياخد لستة) بيرجّع الملفين، في 7 و 5.1.` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** اعرض البرامج اللي في فولدر ويندوز نفسه من غير فولدرات ومن غير ما تدخل جوه: [[Get-ChildItem $env:windir -File -Filter *.exe]]، وعدّهم بـ [[.Count]].`, done: R`الأسامي فيها [[explorer.exe]] و [[notepad.exe]] و [[regedit.exe]]، والعدد رقم صغير (على ويندوز 11 عندنا [[8]] في 7 و 5.1)، ومن غير [[-File]] كانت الفولدرات هتتعد معاهم.` },
           ],
           deep: {
             why: R`قبل ما تعمل أي حاجة في فولدر لازم تعرف فيه إيه: ملفات إيه، حجمها قد إيه، اتعدلت إمتى. وده أكتر أمر هتكتبه، زي ls في bash.`,
@@ -311,9 +315,11 @@ d----           10/6/2026  9:36 AM                src
 Pop-Location`,
           try: "اعمل pushd لفولدرين ورا بعض وبعدين popd مرتين.",
           practice: [
-            { lvl: 'سريع', t: R`[[pushd C:\Windows]] وبعدها [[pushd $env:TEMP]]، واكتب [[Get-Location -Stack]]، وبعدين [[popd]] مرتين.`, done: R`الـ stack فيه مكانين قبل الـ pop، وبعد أول [[popd]] بقيت في [[C:\Windows]]، وبعد التاني رجعت للفولدر اللي بدأت منه.` },
-            { lvl: 'تطبيق', t: R`في سطر واحد بـ [[;]]: [[Push-Location]] لفولدر مشروع، و [[Get-ChildItem -File]]، و [[Pop-Location]].`, done: R`الناتج ملفات المشروع، وبعد السطر [[Get-Location]] بيطبع نفس المكان اللي كنت فيه قبله، كأنك ماتحركتش.` },
-            { lvl: 'تحدي', t: R`اعمل [[Pop-Location]] والـ stack فاضي، وبعدين اعرف إزاي تتأكد إنه فاضي قبلها.`, done: R`[[Pop-Location]] على stack فاضي مبيطلّعش error ومبيحرّكش مكانك (اتجرّب في 7 و 5.1)، فالغلطة دي مش هتبان. و [[(Get-Location -Stack).Count]] بيرجّع [[0]] لما يبقى فاضي.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[pushd C:\Windows]] وبعدها [[pushd $env:TEMP]]، واكتب [[Get-Location -Stack]]، وبعدين [[popd]] مرتين.`, done: R`الـ stack فيه مكانين قبل الـ pop، وبعد أول [[popd]] بقيت في [[C:\Windows]]، وبعد التاني رجعت للفولدر اللي بدأت منه.` },
+            { lvl: 'تطبيق', t: R`**ابني:** في سطر واحد بـ [[;]]: [[Push-Location]] لفولدر مشروع، و [[Get-ChildItem -File]]، و [[Pop-Location]].`, done: R`الناتج ملفات المشروع، وبعد السطر [[Get-Location]] بيطبع نفس المكان اللي كنت فيه قبله، كأنك ماتحركتش.` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** اعمل [[Pop-Location]] والـ stack فاضي، وبعدين اعرف إزاي تتأكد إنه فاضي قبلها.`, done: R`[[Pop-Location]] على stack فاضي مبيطلّعش error ومبيحرّكش مكانك (اتجرّب في 7 و 5.1)، فالغلطة دي مش هتبان. و [[(Get-Location -Stack).Count]] بيرجّع [[0]] لما يبقى فاضي.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** السطر ده بيسيبك في فولدر غلط لما يحصل error: [[try { Push-Location sub; throw 'boom'; Pop-Location } catch { }]]. شغّله واعرف انت فين، وبعدين صلّحه بـ [[finally]].`, done: R`بعد النسخة البايظة [[Get-Location]] بيقول إنك جوه [[sub]] لأن [[Pop-Location]] متنفذش. والنسخة [[try { Push-Location sub; throw 'boom' } catch { } finally { Pop-Location }]] بترجّعك لنفس المكان كل مرة، في 7 و 5.1.` },
+            { lvl: 'تحدي', t: R`**اقرا وتوقّع:** stack فاضي، وبعدين [[Push-Location C:\nope-xyz]] (فولدر مش موجود). توقّع: [[(Get-Location -Stack).Count]] هيبقى كام؟ وانت فين؟ وبعدين شغّل واعرف [[Pop-Location]] هيوديك فين.`, done: R`الأمر طلّع [[Cannot find path 'C:\nope-xyz' because it does not exist.]] ومع ذلك العدد بقى [[1]] (المكان القديم اتحط في الـ stack قبل ما الانتقال يفشل)، وانت لسه في فولدرك، و [[Pop-Location]] رجّعك لنفس الفولدر. في 7 و 5.1.` },
           ],
           deep: {
             why: R`محتاج تروح فولدر تعمل فيه حاجة وترجع مكانك بالظبط، من غير ما تفتكر كنت فين. مفيد جدًا في السكربتات اللي بتلف على كذا مشروع.`,

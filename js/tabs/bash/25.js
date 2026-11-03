@@ -26,9 +26,11 @@ cp nothing.txt /tmp/
 echo "This never prints"`,
           try: "شغّله بسطر set ومن غيره وقارن.",
           practice: [
-            { lvl: 'سريع', t: R`سكربت فيه [[set -u]] وبعده [[echo "$UNDEFINED_VAR"]] وسطر تاني بيطبع after.`, done: R`بيطبع [[UNDEFINED_VAR: unbound variable]] ومبيطبعش after، و [[echo $?]] بيطبع [[1]]. ومن غير [[set -u]] بيطبع سطر فاضي ويكمّل عادي.` },
-            { lvl: 'تطبيق', t: R`[[grep nothing /etc/passwd | wc -l; echo $?]] مرة عادي ومرة بعد [[set -o pipefail]].`, done: R`الاتنين بيطبعوا العدد [[0]]، بس exit code الأول [[0]] والتاني [[1]]. يعني من غير pipefail سكربت بيعمل [[grep ... | wc -l]] عمره ما هيعرف إن grep فشل أو إن الملف مش موجود.` },
-            { lvl: 'تحدي', t: R`فخ [[((n++))]]: سكربت فيه [[set -e]] و [[n=0]] ولوب على ٣ حاجات بيعمل [[((n++))]] ويطبع counted، وفي الآخر total.`, done: R`بيخرج بـ [[1]] من غير ما يطبع ولا سطر: أول [[((n++))]] قيمته صفر، وده عند bash فشل. بعد ما تبدّلها بـ [[n=$((n + 1))]] بيطبع التلات سطور و [[total 3]] و exit 0.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** سكربت فيه [[set -u]] وبعده [[echo "$UNDEFINED_VAR"]] وسطر تاني بيطبع after.`, done: R`بيطبع [[UNDEFINED_VAR: unbound variable]] ومبيطبعش after، و [[echo $?]] بيطبع [[1]]. ومن غير [[set -u]] بيطبع سطر فاضي ويكمّل عادي.` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** [[grep nothing /etc/passwd | wc -l; echo $?]] مرة عادي ومرة بعد [[set -o pipefail]].`, done: R`الاتنين بيطبعوا العدد [[0]]، بس exit code الأول [[0]] والتاني [[1]]. يعني من غير pipefail سكربت بيعمل [[grep ... | wc -l]] عمره ما هيعرف إن grep فشل أو إن الملف مش موجود.` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** من [[help set]] (عند [[-e]]) اعرف الأوامر اللي [[set -e]] مبيقفش عندها. وجرّب: [[bash -c 'set -e; false || true; echo still']] و [[bash -c 'set -e; f() { false; echo inside; }; if f; then echo ok; fi']].`, done: R`الأولى طبعت [[still]]: أي أمر في [[||]] أو [[&&]] (ما عدا الأخير) أو في شرط [[if]] مش بيوقف. والتانية طبعت [[inside]] و [[ok]]: الدالة اتنادت جوه [[if]] فـ [[-e]] اتقفل جواها كلها. ونفس الدالة لوحدها ([[f; echo after]]) وقفت والكود 1.` },
+            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** فخ [[((n++))]]: سكربت فيه [[set -e]] و [[n=0]] ولوب على ٣ حاجات بيعمل [[((n++))]] ويطبع counted، وفي الآخر total.`, done: R`بيخرج بـ [[1]] من غير ما يطبع ولا سطر: أول [[((n++))]] قيمته صفر، وده عند bash فشل. بعد ما تبدّلها بـ [[n=$((n + 1))]] بيطبع التلات سطور و [[total 3]] و exit 0.` },
+            { lvl: 'تحدي', t: R`**refactor:** سكربت قديم فيه بعد كل أمر سطرين [[if [ $? -ne 0 ]; then exit 1; fi]] (٤ أوامر يعني ٨ سطور فحص). اكتبه بـ [[set -euo pipefail]] في أوله، وسيب رسالة بس للأمر اللي محتاج شرح: [[cp a b || { echo "copy failed" >&2; exit 1; }]].`, done: R`النسخة الجديدة أقصر بحوالي ٨ سطور ([[wc -l]] على الاتنين)، ولما [[a]] مش موجود الاتنين بيقفوا عند نفس الأمر بكود 1، والجديدة بتطبع [[copy failed]]. ولو نسيت فحص في القديم كان هيكمّل، في الجديد مستحيل تنسى.` },
           ],
           flag: "script",
           deep: {
@@ -216,9 +218,11 @@ curl -fsSL https://example.com -o page.html
 wc -c page.html`,
           try: "غيّر الرابط لرابط غلط، وشوف رسالة الـ ERR، واتأكد إن الفولدر المؤقت اتمسح.",
           practice: [
-            { lvl: 'سريع', t: R`[[bash -c 'trap "echo bye" EXIT; exit 3'; echo $?]].`, done: R`بيطبع [[bye]] وبعدين [[3]]: الـ trap اشتغل ومغيّرش exit code.` },
-            { lvl: 'تطبيق', t: R`قفل بسيط بـ [[mkdir]]: السكربت يعمل [[/tmp/myjob.lock]] أو يطبع already running ويخرج 1، وبعدها [[trap 'rmdir /tmp/myjob.lock' EXIT]] و [[sleep 30]]. شغّله في ترمنالين.`, done: R`التاني بيطبع already running و [[1]]. ولما تقفل الأول بـ Ctrl+C، [[ls -d /tmp/myjob.lock]] بيقول No such file: الـ EXIT trap اشتغل حتى مع Ctrl+C.` },
-            { lvl: 'تحدي', t: R`trap على ERR بيطبع [[$LINENO]] و [[$BASH_COMMAND]] في سكربت فيه [[set -euo pipefail]]، وفانكشن فيها [[false]] في النص.`, done: R`من غير [[-E]] الـ trap مبيطبعش حاجة خالص والسكربت بيخرج 1 ساكت. بعد [[set -Eeuo pipefail]] بيطبع [[ERR at line N: false]] برقم السطر اللي جوه الفانكشن.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[bash -c 'trap "echo bye" EXIT; exit 3'; echo $?]].`, done: R`بيطبع [[bye]] وبعدين [[3]]: الـ trap اشتغل ومغيّرش exit code.` },
+            { lvl: 'تطبيق', t: R`**محاكاة:** قفل بسيط بـ [[mkdir]]: السكربت يعمل [[/tmp/myjob.lock]] أو يطبع already running ويخرج 1، وبعدها [[trap 'rmdir /tmp/myjob.lock' EXIT]] و [[sleep 30]]. شغّله في ترمنالين.`, done: R`التاني بيطبع already running و [[1]]. ولما تقفل الأول بـ Ctrl+C، [[ls -d /tmp/myjob.lock]] بيقول No such file: الـ EXIT trap اشتغل حتى مع Ctrl+C.` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** من [[help trap]] لاقي إزاي تطبع الـ traps المتسجّلة، وإزاي تلغي واحد. جرّب: [[bash -c "trap 'echo bye' EXIT; trap -p"]].`, done: R`[[-p]] للطباعة و [[trap - EXIT]] للإلغاء. طبع [[trap -- 'echo bye' EXIT]] وبعده [[bye]] لما الشيل خلص. و [[trap -l]] بيطبع أسامي الإشارات زي [[kill -l]].` },
+            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** trap على ERR بيطبع [[$LINENO]] و [[$BASH_COMMAND]] في سكربت فيه [[set -euo pipefail]]، وفانكشن فيها [[false]] في النص.`, done: R`من غير [[-E]] الـ trap مبيطبعش حاجة خالص والسكربت بيخرج 1 ساكت. بعد [[set -Eeuo pipefail]] بيطبع [[ERR at line N: false]] برقم السطر اللي جوه الفانكشن.` },
+            { lvl: 'تحدي', t: R`**ابني:** [[cnt.sh]]: لوب [[for i in $(seq 100); do sleep 0.5; done]] وفوقه [[trap 'echo "stopped at $i"; exit 130' INT]]. ابعتله Ctrl+C بعد ثانيتين بـ [[timeout --preserve-status -s INT 2 bash cnt.sh; echo $?]].`, done: R`طبع [[stopped at 4]] (أو رقم قريب) و [[$?]] طبع 130، يعني السكربت عرف وقف فين وخرج بالكود الصح. ومن غير [[--preserve-status]] [[timeout]] بيرجّع 124 بتاعه هو حتى لو السكربت خرج بـ 130.` },
           ],
           flag: "script",
           deep: {

@@ -35,9 +35,12 @@ console.log(typeof inside);  // "undefined": let جوه الـ block بس
 PI = 3;                      // TypeError: Assignment to constant variable.`,
           try: R`شغّل الكود في ملف [[vars.js]] بـ [[node vars.js]] واقرا الـ error في الآخر. وبعدين غيّر [[let inside]] لـ [[var inside]] وشوف الفرق في السطر اللي قبل الأخير.`,
           practice: [
-            { lvl: 'سريع', t: R`[[const arr = [1]; arr.push(2);]] واطبع arr، وبعدين [[arr = [];]].`, done: R`الأول بيطبع [[[1, 2]]] عادي، والتاني [[TypeError: Assignment to constant variable.]]. الـ const بيمنع التعيين مش التعديل جوه الـ array.` },
-            { lvl: 'تطبيق', t: R`خد أي حل كتبته في التمارين وغيّر كل [[var]] لـ [[const]]، وشغّل، ورجّع لـ [[let]] بس اللي الـ error قال عليه.`, done: R`الكود بيطلّع نفس النتيجة، ومفيش [[var]]، واللي بقى [[let]] بس هي العدادات والمجاميع اللي بتتغير فعلًا.` },
-            { lvl: 'تحدي', t: R`[[for (var i = 0; i < 3; i++) setTimeout(() => console.log(i));]] وبعدين نفس السطر بـ [[let]].`, done: R`بـ var بيطبع 3 تلات مرات، وبـ let بيطبع 0 و 1 و 2، وتقدر تقول ليه (var فيه i واحدة للـ loop كلها).` }
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[const arr = [1]; arr.push(2);]] واطبع arr، وبعدين [[arr = [];]].`, done: R`الأول بيطبع [[[1, 2]]] عادي، والتاني [[TypeError: Assignment to constant variable.]]. الـ const بيمنع التعيين مش التعديل جوه الـ array.` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[let total = 0; if (true) { let total = 50; } console.log(total);]]. المطلوب يطبع 50. ليه بيطبع 0؟`, done: R`فهمت إن [[let total]] جوه الـ block عملت متغير جديد بنفس الاسم (shadowing) واختفى بعد [[}]]. بعد ما تشيل [[let]] اللي جوه ويبقى [[total = 50;]] بيطبع 50.` },
+            { lvl: 'تطبيق', t: R`**refactor:** خد أي حل كتبته في التمارين وغيّر كل [[var]] لـ [[const]]، وشغّل، ورجّع لـ [[let]] بس اللي الـ error قال عليه.`, done: R`الكود بيطلّع نفس النتيجة، ومفيش [[var]]، واللي بقى [[let]] بس هي العدادات والمجاميع اللي بتتغير فعلًا.` },
+            { lvl: 'تطبيق', t: R`**اشرحها:** اعمل جدول ٣ صفوف (var و let و const) و ٤ عواميد: الـ scope، ينفع تعيد التعيين، ينفع تعرّفه تاني بنفس الاسم، يتقري قبل سطره. وأثبت خانتين بكود.`, done: R`الجدول كامل، والإثبات: [[const x = 1; x = 2;]] بتطلّع [[TypeError: Assignment to constant variable.]]، و [[let y; let y;]] بتطلّع [[SyntaxError: Identifier 'y' has already been declared]] قبل ما أي سطر يشتغل.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** [[for (var i = 0; i < 3; i++) setTimeout(() => console.log(i));]] وبعدين نفس السطر بـ [[let]].`, done: R`بـ var بيطبع 3 تلات مرات، وبـ let بيطبع 0 و 1 و 2، وتقدر تقول ليه (var فيه i واحدة للـ loop كلها).` },
+            { lvl: 'تحدي', t: R`**مسألة:** [[runningTotals(nums)]] بترجّع المجموع التراكمي: [[const result = []]] و [[let sum = 0]]. جرّبها الأول بـ [[const sum = 0]] وشوف الرسالة.`, done: R`بـ const بتوقع بـ [[TypeError: Assignment to constant variable.]] أول ما تزوّد. بعد let: [[runningTotals([10, 20, 5])]] بترجّع [[[10, 30, 35]]] و [[runningTotals([])]] بترجّع [[[]]]، و result فضلت const لأنك بتعمل push مش تعيين.` }
           ],
           flag: "script",
           deep: {
@@ -222,9 +225,11 @@ console.log(msg);
 console.log(status);`,
           try: R`اعمل array فيها ٣ منتجات (اسم وسعر)، وركّب منها string فيه [[<ul>]] وجواه [[<li>]] لكل منتج بـ [[map]] و [[join("")]].`,
           practice: [
-            { lvl: 'سريع', t: R`[[const name = "Sara";]] واطبع [[$__btHello, $__{name}!$__bt]] بالـ backtick.`, done: R`بيطبع "Hello, Sara!"، ولو كتبتها بـ [["..."]] بدل الـ backtick هيطبع [[$__{name}]] زي ما هي.` },
-            { lvl: 'تطبيق', t: R`سطر فاتورة لـ [[{ name: "Mug", qty: 2, price: 120 }]] بحسبة جوه [[$__{ }]].`, done: R`بيطبع "Mug: 2 × 120 = 240 جنيه"، والحسبة جوه الـ template مش في متغير برا.` },
-            { lvl: 'تحدي', t: R`إيميل من كذا سطر لطلب: سطر لكل منتج بـ [[map]] و [[join("\n")]] جوه الـ template، وجملة الحالة بـ ternary («اتدفع» أو «مستني الدفع»).`, done: R`عدد السطور = سطور ثابتة + عدد المنتجات بالظبط، ومفيش سطر فاضي زيادة في الأول أو الآخر، وتغيير [[paid]] بيغيّر جملة الحالة بس.` }
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[const name = "Sara";]] واطبع [[$__btHello, $__{name}!$__bt]] بالـ backtick.`, done: R`بيطبع "Hello, Sara!"، ولو كتبتها بـ [["..."]] بدل الـ backtick هيطبع [[$__{name}]] زي ما هي.` },
+            { lvl: 'سريع', t: R`**refactor:** [["Hi " + name + ", you have " + count + " items (" + total + " EGP)"]]. حوّلها لـ template literal واحد، وتأكد إن الناتج هو هو بـ [[===]].`, done: R`مع [[name = "Sara"]] و [[count = 3]] و [[total = 450]] الاتنين بيطبعوا [[Hi Sara, you have 3 items (450 EGP)]] والمقارنة true. ومفيش ولا [[+]] في السطر الجديد.` },
+            { lvl: 'تطبيق', t: R`**ابني:** سطر فاتورة لـ [[{ name: "Mug", qty: 2, price: 120 }]] بحسبة جوه [[$__{ }]].`, done: R`بيطبع "Mug: 2 × 120 = 240 جنيه"، والحسبة جوه الـ template مش في متغير برا.` },
+            { lvl: 'تطبيق', t: R`**أشكال:** [[boxed(text)]] بترجّع النص جوه برواز بـ template من ٣ سطور: سطر [[+---+]] بطول النص + 2، وسطر [[| text |]]، وسطر زي الأول.`, done: R`[[console.log(boxed("Hello"))]] بيطبع [[+-------+]] ثم [[| Hello |]] ثم [[+-------+]]، ولو النص أطول البرواز بيطول معاه. ومفيش [[\n]] مكتوبة بإيدك لو استخدمت سطور حقيقية جوه الـ backtick.` },
+            { lvl: 'تحدي', t: R`**ابني:** إيميل من كذا سطر لطلب: سطر لكل منتج بـ [[map]] و [[join("\n")]] جوه الـ template، وجملة الحالة بـ ternary («اتدفع» أو «مستني الدفع»).`, done: R`عدد السطور = سطور ثابتة + عدد المنتجات بالظبط، ومفيش سطر فاضي زيادة في الأول أو الآخر، وتغيير [[paid]] بيغيّر جملة الحالة بس.` }
           ],
           flag: "script",
           deep: {
@@ -411,9 +416,11 @@ clean.at(-1)                                // "m"
 [..."مرحبا"].reverse().join("")             // اقلب نص`,
           try: R`اكتب دالة [[slugify(title)]] تحوّل [["  Hello World JS  "]] لـ [["hello-world-js"]] بـ trim و toLowerCase و split و join. وبعدين جرّب [[slugify("كورس جافاسكريبت")]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[slugify]] كمان على نص فيه مسافتين ورا بعض.`,
           practice: [
-            { lvl: 'سريع', t: R`نضّف إيميل جاي من فورم: [[" Sara@Mail.com "]].`, done: R`[[.trim().toLowerCase()]] بترجّع "sara@mail.com".` },
-            { lvl: 'تطبيق', t: R`[[maskPhone(phone)]] بـ [[slice]] و [[repeat]].`, done: R`[[maskPhone("01012345678")]] بترجّع "010*****678"، وطولها 11 زي الأصل.` },
-            { lvl: 'تحدي', t: R`[[capitalizeWords(str)]] بـ [[split(" ")]] و [[map]]. جرّبها على [["hello  world"]] (مسافتين).`, done: R`أول نسخة غالبًا بتوقع بـ [[TypeError: Cannot read properties of undefined (reading 'toUpperCase')]] بسبب الكلمة الفاضية بين المسافتين. بعد التصليح بترجّع "Hello  World" بالمسافتين زي ما هم.` }
+            { lvl: 'سريع', t: R`**بيانات حقيقية:** نضّف إيميل جاي من فورم: [[" Sara@Mail.com "]].`, done: R`[[.trim().toLowerCase()]] بترجّع "sara@mail.com".` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اكتب ناتج [["Cairo".slice(-3)]] و [["a-b-c".split("-", 2)]] و [["abc".at(-1)]] و [["Hello".replace("l", "L")]] و [["Hello".replaceAll("l", "L")]] و [["ab".padStart(5, "*")]] قبل ما تشغّل.`, done: R`توقعت وطلع [["iro"]] و [[["a", "b"]]] و [["c"]] و [["HeLlo"]] و [["HeLLo"]] و [["***ab"]]. وعرفت إن replace بتغيّر أول واحدة بس، وإن السالب في slice و at بيعدّ من الآخر.` },
+            { lvl: 'تطبيق', t: R`**مسألة:** [[maskPhone(phone)]] بـ [[slice]] و [[repeat]].`, done: R`[[maskPhone("01012345678")]] بترجّع "010*****678"، وطولها 11 زي الأصل.` },
+            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** [[capitalizeWords(str)]] بـ [[split(" ")]] و [[map]]. جرّبها على [["hello  world"]] (مسافتين).`, done: R`أول نسخة غالبًا بتوقع بـ [[TypeError: Cannot read properties of undefined (reading 'toUpperCase')]] بسبب الكلمة الفاضية بين المسافتين. بعد التصليح بترجّع "Hello  World" بالمسافتين زي ما هم.` },
+            { lvl: 'تحدي', t: R`**ابني:** [[slugify(title)]] لرابط مقال: بتشيل المسافات من الأطراف، وبتصغّر الحروف، وبتشيل أي رمز مش حرف أو رقم أو مسافة، وبتحط [[-]] مكان المسافات (حتى لو كذا مسافة ورا بعض).`, done: R`[[slugify("  Hello World! JS 2026 ")]] بترجّع [["hello-world-js-2026"]]، ومفيش [[--]] ولا [[-]] في الأول أو الآخر. وتقدر تقول هتعمل إيه مع عنوان عربي (يا تسيبه، يا تحوّله لحروف لاتيني).` }
           ],
           flag: "console",
           deep: {

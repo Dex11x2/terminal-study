@@ -36,9 +36,12 @@ const revenue2 = orders
 const byStatus = Object.groupBy(orders, (o) => o.status);`,
           try: R`من نفس الـ orders اطلع: عدد الطلبات الـ pending، وأكبر total، و object شكله [[{ 1: 250, 2: 900, 3: 400 }]] بـ reduce. وبعدين اطبع [[byStatus]] وشوف شكله.`,
           practice: [
-            { lvl: 'سريع', t: R`[[[1, 2, 3, 4].map(n => n * 10)]] و [[[1, 2, 3, 4].filter(n => n % 2 === 0)]].`, done: R`[[[10, 20, 30, 40]]] و [[[2, 4]]]، والأصل لسه [[[1, 2, 3, 4]]].` },
-            { lvl: 'تطبيق', t: R`منتجات جاية من API فيها [[{ name, price, inStock }]]: طلّع أسامي المتاح اللي أقل من 200، وإجمالي أسعار المتاح بس، في سلسلة filter و map و reduce.`, done: R`على Mug 120 متاح و Shirt 300 متاح و Cap 90 مش متاح: الأسامي [[["Mug"]]] والإجمالي 420.` },
-            { lvl: 'تحدي', t: R`جمّع الطلبات حسب الـ status بـ reduce في object من الـ ids: [[{ paid: [1, 3], pending: [2] }]]، وبعدين قارن بـ [[Object.groupBy]].`, done: R`الـ reduce بيرجّع [[{ paid: [1, 3], pending: [2] }]]، و [[Object.groupBy(orders, o => o.status)]] بيجمع الـ objects كاملة مش الـ ids، و Node بيطبعه [[[Object: null prototype]]].` }
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[[1, 2, 3, 4].map(n => n * 10)]] و [[[1, 2, 3, 4].filter(n => n % 2 === 0)]].`, done: R`[[[10, 20, 30, 40]]] و [[[2, 4]]]، والأصل لسه [[[1, 2, 3, 4]]].` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[const total = cart.reduce((s, item) => s + item.price);]] على [[[{ price: 10 }, { price: 20 }]]]. شغّلها، وجرّبها كمان على [[[]]].`, done: R`قبل التصليح بترجّع [["[object Object]20"]] (أول عنصر بقى الـ s وهو object)، وعلى [[[]]] بتوقع بـ [[TypeError: Reduce of empty array with no initial value]]. بعد ما تزوّد [[, 0]] كقيمة بداية: 30 و 0.` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** منتجات جاية من API فيها [[{ name, price, inStock }]]: طلّع أسامي المتاح اللي أقل من 200، وإجمالي أسعار المتاح بس، في سلسلة filter و map و reduce.`, done: R`على Mug 120 متاح و Shirt 300 متاح و Cap 90 مش متاح: الأسامي [[["Mug"]]] والإجمالي 420.` },
+            { lvl: 'تطبيق', t: R`**أشكال:** من [[[3, 5, 2]]] اطبع bar chart أفقي: كل رقم سطر [[#]] بعدده، بـ [[map]] و [[repeat]] و [[join("\n")]] من غير ولا for.`, done: R`بيطبع [[###]] ثم [[#####]] ثم [[##]]. ولو زوّدت قبل كل سطر الرقم نفسه ([[n + " " + "#".repeat(n)]]) الشكل بيبقى زي تقرير.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** جمّع الطلبات حسب الـ status بـ reduce في object من الـ ids: [[{ paid: [1, 3], pending: [2] }]]، وبعدين قارن بـ [[Object.groupBy]].`, done: R`الـ reduce بيرجّع [[{ paid: [1, 3], pending: [2] }]]، و [[Object.groupBy(orders, o => o.status)]] بيجمع الـ objects كاملة مش الـ ids، و Node بيطبعه [[[Object: null prototype]]].` },
+            { lvl: 'تحدي', t: R`**refactor:** ده كود بـ for: [[const out = []; for (const p of products) { if (p.inStock) { out.push(p.name.toUpperCase()); } }]]. حوّله لسلسلة filter و map في سطر، وتأكد إن الناتج واحد على نفس البيانات.`, done: R`على Mug و Shirt متاحين و Cap مش متاح الاتنين بيرجّعوا [[["MUG", "SHIRT"]]]، و [[JSON.stringify]] بتاعهم واحد. ومفيش [[push]] ولا متغير بيتغيّر في النسخة الجديدة.` }
           ],
           flag: "script",
           deep: {
@@ -263,9 +266,11 @@ users.every((u) => u.admin);         // false: مش كلهم
 [NaN].indexOf(NaN);                  // -1`,
           try: R`اكتب [[const user = users.find(...)]] على id مش موجود، وبعدين [[user.name]] واقرا الـ error. صلّحه بـ [[user?.name]]. وبعدين جرّب [[users.includes({ id: 1, name: "Sara", admin: true })]] وفكّر ليه false.`,
           practice: [
-            { lvl: 'سريع', t: R`على [[[5, 12, 8]]]: [[find(n => n > 10)]] و [[findIndex(n => n > 10)]] و [[find(n => n > 100)]].`, done: R`12 و 1 و undefined.` },
-            { lvl: 'تطبيق', t: R`سلة: [[hasOutOfStock]] بـ some (فيه منتج stock بتاعه 0؟)، و [[allPaid]] بـ every على الطلبات.`, done: R`لو منتج واحد stock بتاعه 0 [[hasOutOfStock]] true، و [[[].every(...)]] على array فاضية بترجّع true (فكّر ليه ده ممكن يبقى bug).` },
-            { lvl: 'تحدي', t: R`[[hasAll(perms, required)]] بترجّع true لو اليوزر عنده كل الصلاحيات المطلوبة. وجرّب [[[NaN].includes(NaN)]] و [[[NaN].indexOf(NaN)]].`, done: R`[[hasAll(["read", "write"], ["read"])]] true، و [[hasAll(["read"], ["read", "delete"])]] false. و includes بترجّع true و indexOf بترجّع -1.` }
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** على [[[5, 12, 8]]]: [[find(n => n > 10)]] و [[findIndex(n => n > 10)]] و [[find(n => n > 100)]].`, done: R`12 و 1 و undefined.` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[const roles = ["admin", "editor"]; if (roles.indexOf("admin")) console.log("أهلًا يا أدمن");]]. ليه الرسالة مبتظهرش؟`, done: R`[[roles.indexOf("admin")]] بترجّع 0 وده falsy، فالـ if مبتدخلش. بعد [[roles.includes("admin")]] الرسالة بتظهر، ولو [["admin"]] مش موجودة مبتظهرش.` },
+            { lvl: 'تطبيق', t: R`**ابني:** سلة: [[hasOutOfStock]] بـ some (فيه منتج stock بتاعه 0؟)، و [[allPaid]] بـ every على الطلبات.`, done: R`لو منتج واحد stock بتاعه 0 [[hasOutOfStock]] true، و [[[].every(...)]] على array فاضية بترجّع true (فكّر ليه ده ممكن يبقى bug).` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** [[users = [{ email: "Sara@Mail.com", name: "Sara" }, { email: "omar@mail.com", name: "Omar" }]]] واليوزر كتب [["sara@mail.com"]] في فورم الدخول. لاقيه بـ find.`, done: R`المقارنة العادية [[===]] بترجّع undefined، وبعد ما تصغّر الطرفين بـ [[toLowerCase()]] بترجّع object فيه Sara. وبتقول للمستخدم «مش موجود» لو find رجّعت undefined بدل ما توقع على [[.name]].` },
+            { lvl: 'تحدي', t: R`**مسألة:** [[hasAll(perms, required)]] بترجّع true لو اليوزر عنده كل الصلاحيات المطلوبة. وجرّب [[[NaN].includes(NaN)]] و [[[NaN].indexOf(NaN)]].`, done: R`[[hasAll(["read", "write"], ["read"])]] true، و [[hasAll(["read"], ["read", "delete"])]] false. و includes بترجّع true و indexOf بترجّع -1.` }
           ],
           flag: "script",
           deep: {
@@ -440,9 +445,11 @@ products.toSorted((a, b) => a.price - b.price || a.name.localeCompare(b.name));
 prices.with(0, 999);                     // [999, 100, 200]`,
           try: R`رتّب [[products]] بالسعر تنازلي. وبعدين اعمل [[const x = prices.sort()]] واطبع [[prices]] و [[x === prices]]: هتلاقي sort عدّلت الأصل ورجّعت نفس الـ array.`,
           practice: [
-            { lvl: 'سريع', t: R`[[[10, 1, 2].sort()]] وبعدين [[[10, 1, 2].sort((a, b) => a - b)]].`, done: R`[[[1, 10, 2]]] و [[[1, 2, 10]]].` },
-            { lvl: 'تطبيق', t: R`رتّب منتجات بالسعر تصاعدي، واللي سعرهم زي بعض بالاسم ([[localeCompare]])، بـ toSorted.`, done: R`المنتجين اللي بنفس السعر مترتبين أبجدي، والـ array الأصلية بنفس ترتيبها القديم.` },
-            { lvl: 'تحدي', t: R`رتّب [[["file10", "file2", "file1"]]] بـ [[sort()]] عادي، وبعدين بـ [[localeCompare(b, undefined, { numeric: true })]]. وجرّب [[["Sara", "omar", "Ali"]]] بالطريقتين.`, done: R`العادي [[["file1", "file10", "file2"]]] والـ numeric [[["file1", "file2", "file10"]]]. والأسامي: [[sort()]] بيحط "omar" في الآخر (الحروف الكبيرة الأول)، و [[localeCompare]] بيرتّب Ali ثم omar ثم Sara.` }
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[[10, 1, 2].sort()]] وبعدين [[[10, 1, 2].sort((a, b) => a - b)]].`, done: R`[[[1, 10, 2]]] و [[[1, 2, 10]]].` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[const scores = [40, 90, 70, 100, 60]; const top = scores.sort((a, b) => b - a).slice(0, 3);]] وبعدها اطبع [[scores]]. المطلوب scores تفضل زي ما دخلت.`, done: R`قبل التصليح scores بقت [[[100, 90, 70, 60, 40]]] (sort بتغيّر الأصل). بعد [[toSorted]]: top [[[100, 90, 70]]] و scores لسه [[[40, 90, 70, 100, 60]]].` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** رتّب منتجات بالسعر تصاعدي، واللي سعرهم زي بعض بالاسم ([[localeCompare]])، بـ toSorted.`, done: R`المنتجين اللي بنفس السعر مترتبين أبجدي، والـ array الأصلية بنفس ترتيبها القديم.` },
+            { lvl: 'تطبيق', t: R`**ابني:** لوحة ترتيب لعبة: [[{ n, p, t }]] (الاسم، والنقط، والوقت بالثواني). رتّب بالنقط تنازلي، ولو النقط زي بعض الأسرع الأول، واطبع [[1. Omar 95]] وهكذا.`, done: R`على Sara 90 في 120، و Omar 95 في 200، و Ali 90 في 100: بيطبع [[1. Omar 95]] ثم [[2. Ali 90]] ثم [[3. Sara 90]]. والـ comparator سطر واحد: [[b.p - a.p || a.t - b.t]].` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** رتّب [[["file10", "file2", "file1"]]] بـ [[sort()]] عادي، وبعدين بـ [[localeCompare(b, undefined, { numeric: true })]]. وجرّب [[["Sara", "omar", "Ali"]]] بالطريقتين.`, done: R`العادي [[["file1", "file10", "file2"]]] والـ numeric [[["file1", "file2", "file10"]]]. والأسامي: [[sort()]] بيحط "omar" في الآخر (الحروف الكبيرة الأول)، و [[localeCompare]] بيرتّب Ali ثم omar ثم Sara.` }
           ],
           flag: "script",
           deep: {
@@ -629,9 +636,11 @@ const rows = [[1, 2], [3, 4]];
 rows.flat();                               // [1, 2, 3, 4]`,
           try: R`اكتب دالة [[removeAt(arr, i)]] بترجّع array جديدة من غير العنصر رقم i، بـ spread و slice (من غير splice). وبعدين اعملها بـ [[toSpliced]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[removeAt]] (النسخة بتاعة spread و slice).`,
           practice: [
-            { lvl: 'سريع', t: R`[[const [first, , third] = ["a", "b", "c"];]] واطبع الاتنين.`, done: R`"a" و "c".` },
-            { lvl: 'تطبيق', t: R`فك تاريخ جاي كنص: [[const [y, m, d] = "2026-10-29".split("-").map(Number);]].`, done: R`y بـ 2026 و m بـ 10 و d بـ 29، و [[typeof m]] "number" مش "string".` },
-            { lvl: 'تحدي', t: R`[[const a = [ [1], [2] ]; const b = [...a]; b[0].push(9);]] واطبع [[a[0]]]. وبعدين صلّح بـ [[structuredClone]].`, done: R`قبل التصليح [[a[0]]] بقت [[[1, 9]]] (الـ spread نسخ الـ array من برا بس)، وبعد [[structuredClone(a)]] بتفضل [[[1]]].` }
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[const [first, , third] = ["a", "b", "c"];]] واطبع الاتنين.`, done: R`"a" و "c".` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** فك تاريخ جاي كنص: [[const [y, m, d] = "2026-10-29".split("-").map(Number);]].`, done: R`y بـ 2026 و m بـ 10 و d بـ 29، و [[typeof m]] "number" مش "string".` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[const [x = 5, y = 7] = [undefined, null];]] و [[const [p, ...rest] = "abc";]]. اكتب x و y و p و rest قبل التشغيل.`, done: R`توقعت وطلع x بـ 5 و y بـ null و p بـ [["a"]] و rest [[["b", "c"]]]. وعرفت إن الـ default بيشتغل مع undefined بس، وإن الـ string بتتفك حروف لأنها iterable.` },
+            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** [[const a = [ [1], [2] ]; const b = [...a]; b[0].push(9);]] واطبع [[a[0]]]. وبعدين صلّح بـ [[structuredClone]].`, done: R`قبل التصليح [[a[0]]] بقت [[[1, 9]]] (الـ spread نسخ الـ array من برا بس)، وبعد [[structuredClone(a)]] بتفضل [[[1]]].` },
+            { lvl: 'تحدي', t: R`**مسألة:** [[rotate(arr, k)]] بتلف الـ array لليمين k خطوة بـ spread و slice، ومن غير ما تغيّر الأصل. خلي بالك من k أكبر من الطول ومن الـ array الفاضية.`, done: R`[[rotate([1, 2, 3, 4], 1)]] بترجّع [[[4, 1, 2, 3]]]، و [[rotate([1, 2, 3, 4], 5)]] نفس الناتج، و [[rotate([], 2)]] بترجّع [[[]]]، و [[rotate([1, 2], 0)]] بترجّع [[[1, 2]]] نسخة جديدة.` }
           ],
           flag: "script",
           deep: {
