@@ -657,25 +657,18 @@
 - [ ] **خدمة systemd واقعة من أسبوعين لأن اليوزر بتاعها اتمسح** (تاب linux أو deploy، معمل في `ubuntu:24.04`): السيرفر عمل reboot والـ API بقى 502. التسلسل: `uptime` و `last -x reboot` (امتى عمل restart)، و `systemctl list-units --type=service --all | grep -i pm2` (لقيت `failed`)، و `systemctl status` و `systemctl show <svc> -p Result -p NRestarts` و `systemctl cat <svc>` (`User=deployer`)، و `id deployer` = «no such user»، و `getent passwd 1001` فاضي والملفات ملك رقم من غير اسم في `ls -la`، و `ls -la --time-style=long-iso /etc/passwd /home/` (امتى اليوزر اتمسح). البرامج بتفضل شغّالة في الرامات لحد أول reboot، فالعطل بيظهر بعد أيام. الحل: `useradd -u 1001 -M -d /home/<u> -s /usr/sbin/nologin <u>` و `systemctl reset-failed <svc>` و `systemctl start`، وليه تقرا `dump.pm2` الأول. **الحل التاني (من غير ما ترجّع اليوزر):** `systemctl disable --now` للخدمة القديمة، و `chown -R` للفولدر ليوزر موجود، و `pm2 start ... --name` و `pm2 save` و `pm2 startup` (بيطبعلك سطر sudo تشغّله)، وفخ: `.env` مكتوب فيه `KEY   = value` بمسافات، فـ `grep "^KEY="` مش هيلاقيه (استخدم `grep -E "^KEY\s*="`). وفخ تاني: `/health` بيرجع 200 والدخول بيفشل بـ `EntityMetadataNotFoundError: No metadata for "User"`، لأن الكود بيدوّر على entities بامتداد `.ts` لو `NODE_ENV` مش بالظبط `production` (كانت `production1`)، وإنت مشغّل `dist/*.js`. الدرس: الـ health check مش كفاية، جرّب endpoint حقيقي، وشغّل بنفس الطريقة اللي كان شغّال بيها (`pm2 delete <name>` ثم `pm2 start src/index.ts --interpreter ./node_modules/.bin/ts-node`). وفخ تالت: كده بيقع ويقوم كل ثانية (عمود `↺` في `pm2 list` بيزيد و `uptime` ثانية) بـ مئات `error TS1240` على الـ decorators، لأن `ts-node` تحت PM2 ملقاش `tsconfig.json` (فمفيش `experimentalDecorators`). الحل `TS_NODE_PROJECT=/path/tsconfig.json pm2 start ...`، وليه بلاش `--transpile-only` مع TypeORM و `SYNCHRONIZE=1` (الـ metadata بتاعة الأنواع بتتغيّر وممكن يعدّل الجداول). وكمان `pm2 flush <name>` عشان الـ logs القديمة متلخبطكش (`pm2 logs` بيعرض سطور من التشغيلة اللي فاتت). كمان: `ssh -o BatchMode=yes host '...'` عشان تشغّل أوامر قراية من غير ما الأمر يقف مستني باسورد، و `sudo -n true` تعرف بيه sudo محتاج باسورد ولا لأ. أسامي مخترعة.
 - [ ] **انسخ ملفات الريبو بس لفولدر تجربة** (تاب git أو bash): `git ls-files -z | xargs -0 -I{} cp --parents "{}" <فولدر>` (الملفات المتتبّعة بس من غير `.git` و `node_modules`، بنفس شكل الفولدرات، و `-z`/`-0` عشان الأسامي اللي فيها مسافات)، وبعدين تعدّل إعداد في النسخة (`sed -i`) وتجرّب من غير ما تلمس الأصل.
 - [ ] **كسر كاش المتصفح بـ `?v=`** (تاب css أو الويب): ليه المتصفح بيفضل شايل الملف القديم، وإزاي ترفع الرقم في كل الصفحات مرة واحدة: `sed -i 's/?v=29/?v=30/g' *.html`، وتتأكد بـ `grep -c`.
-- [ ] **ملاحظة صاحب المشروع على درس «الامتداد» (`files/01.js`، ٣١ أكتوبر)، وتتطبّق على كل دروس المعامل:**
-  - **(أ) مكان التجربة.** جرّب المثال في Git Bash وهو واقف على `/` (البرومبت `UCRT64 /`)، فطلعله `bash: notes.txt: Permission denied`، ولوحده فهم إنه لازم يروح فولدر بتاعه. الدرس بيقول «في فولدر `lab/files`» من غير ما يقول إزاي توصله.
-    - السبب: `/` في Git Bash هو `C:\Program Files\Git\` (اتأكدنا بـ `cygpath -w /`)، وأي حاجة تحت `Program Files` الكتابة فيها للأدمن بس.
-    - المطلوب: خطوة «قبل ما تبدأ» في أول الدرس: `pwd` (إنت فين)، و `cd ~`، و `mkdir -p ~/lab/files && cd ~/lab/files`.
-    - وشرح الخطأ نفسه: الـ `>` بيحاول يعمل ملف في الفولدر الحالي، والفولدر ده ملك النظام أو البرنامج، مش ملكك.
-    - والخطأ يتعاد في المعمل بنصه الحقيقي: في Docker بيوزر عادي على فولدر ملك root، وفي Git Bash على ويندوز.
-    - `file` موجود في Git Bash (‏`/usr/bin/file`، النسخة 5.48 مع Git 2.56).
-    - **غلطة اتصلّحت في الشات:** أنا قلت لصاحب المشروع إن `UCRT64` معناها MSYS2 مش Git Bash، وده غلط. Git for Windows الجديد (2.56 على جهازه، و `MSYSTEM=UCRT64`) بقى بيكتب `UCRT64` في البرومبت بدل `MINGW64`.
-    - **ومطلوب درس (تاب start أو wsl):** «أجزاء البرومبت في Git Bash»: `user@host`، والـ `MSYSTEM`، والمسار، و `~`.
-      - والفرق بين `MINGW64` و `UCRT64` وباقي البيئات (MSYS و CLANG64): كلهم bash واحد، والفرق في مكتبة C اللي البرامج متبنية عليها (`msvcrt.dll` القديمة ولا `ucrtbase.dll` اللي جوه ويندوز 10+). المستخدم العادي ميفرقش معاه، لكنه بيفرق في الـ C/C++ (cpp/01) وفي المسارات (`/mingw64/bin` ولا `/ucrt64/bin`، وده موجود في wsl/02).
-      - `echo $MSYSTEM` و `cygpath -w /` و `cygpath -w ~` يتجرّبوا.
-    - **وده يتعمل لكل التاب** (وأي تاب فيه معمل بيكتب ملفات): درس أو صندوق «فولدر المعمل» واحد، وكل درس يشاور عليه.
-  - **(ب) الشرح مكانش واضح إزاي `file` فرّق.** المطلوب:
-    - جدول «الاسم بيقول / `file` بيقول / الحكم» لكل ملف من الأربعة.
-    - جملة صريحة: «نفس السطر بالظبط للملفين يعني نفس النوع، والاسم ملوش دعوة».
-    - إثبات إن الـ bytes متطابقة: `cmp notes.txt notes.pdf && echo متطابقين` (ومعاه `sha256sum` أو `Get-FileHash`).
-    - مقارنة بملف PDF حقيقي عشان يشوف الفرق: `file` بيقول `PDF document, version 1.x`.
-    - مصدر لصورة PNG لو مش معاه: أمر يعمل واحدة أو مكان فيه صورة على كل نظام. يتجرّب الأول.
-    - وتمرين «توقّع قبل ما تشغّل».
+- [x] **ملاحظة صاحب المشروع على درس «الامتداد» (٣١ أكتوبر، اتعمل ٣ نوفمبر):**
+  - `files/01.js` «الامتداد» فيه دلوقتي:
+    - خطوة «٠. قبل ما تبدأ: انت واقف فين؟»: `pwd` و `cd ~` و `mkdir -p ~/lab/files`، ومعاها `Permission denied` بنصه الحقيقي (Git Bash و Ubuntu)، و `/` = `C:\Program Files\Git\`.
+    - «إزاي عرفنا إن الاتنين نفس الحاجة؟»: `cmp` و `sha256sum`.
+    - صورة PNG بـ `base64 -d`.
+    - «٦. نقارن بـ PDF حقيقي»: `printf '%%PDF-1.4'`.
+    - جدول «الاسم بيقول / `file` بيقول / الحكم».
+    - `Get-FileHash` لويندوز.
+    - ٦ تمارين، و `ci` على ٣ أنظمة.
+  - `start/02.js` «الـ prompt»: قسم «٣ب. Git Bash على ويندوز»، فيه برومبت السطرين، و `UCRT64` ولا `MINGW64` (مكتبة C)، و `echo $MSYSTEM` و `cygpath -w`، وفخ `/` تحت Program Files، و ٥ تمارين.
+  - غلطة اتصلّحت في الشات: كنت قلت إن `UCRT64` معناها MSYS2 مش Git Bash. Git for Windows 2.56 نفسه `MSYSTEM=UCRT64`.
+- [ ] **باقي ملاحظة «مكان التجربة» في كل التابات:** دروس تاب files التانية بتقول «في فولدر `lab/files`» من غير ما تشاور على خطوة «قبل ما تبدأ» في «الامتداد». ونفس الكلام لأي تاب فيه معمل بيكتب ملفات (bash و linux و git...): كل درس أوله سطر `cd ~/lab/<tab>` أو لينك للخطوة دي.
 - [ ] فخ في PowerShell: `foreach (...) { } | Select-Object` = «An empty pipe element is not allowed» (الـ foreach statement مش بيتعمله pipe؛ لفّه في `$( )` أو استخدم `ForEach-Object`). تاب ps.
 
 ### ٥. أسئلة مفتوحة

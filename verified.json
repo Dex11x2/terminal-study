@@ -6800,9 +6800,9 @@
   "on": "ubuntu-24.04 (docker) (xdg-mime, xdg-open headless); docs: open -a, start, code.desktop default"
  },
  "files|الامتداد": {
-  "hash": "c17ab950c84a",
-  "date": "2026-10-07",
-  "on": "ubuntu-24.04 (docker)"
+  "hash": "846a816c43e7",
+  "date": "2026-11-03",
+  "on": "Ubuntu 24.04 Docker + Git Bash 2.56 UCRT64 + pwsh 7 / PS 5.1 (Get-FileHash)"
  },
  "files|الامتداد بيكدب": {
   "hash": "30806702f2ee",
@@ -16115,9 +16115,9 @@
   "on": "ubuntu-24.04; win11 pwsh7 + ps5.1"
  },
  "start|الـ prompt": {
-  "hash": "a3a76e0b6f96",
-  "date": "2026-10-05",
-  "on": "pwsh 7.6, powershell 5.1; docs: bash/zsh prompt shapes"
+  "hash": "d1fc3cd385a9",
+  "date": "2026-11-03",
+  "on": "Git Bash 2.56 UCRT64 (MSYSTEM, cygpath) + Ubuntu 24.04 Docker (PS1, Permission denied)"
  },
  "start|الـ stack trace": {
   "hash": "d8c0bb55d2bb",
