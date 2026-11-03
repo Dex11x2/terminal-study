@@ -1748,6 +1748,358 @@ echo "without -n: $(while read h; do fake_ssh "$h"; done < hosts.txt | wc -l | t
 echo "with -n: $(while read h; do fake_ssh "$h" < /dev/null; done < hosts.txt | wc -l | tr -d ' ')"`, expect: [R`require is not defined in ES module scope`, R`read {"type":"module"}`, R`DATABASE_URL: postgres://shop:***@db:5432/shop`, R`PAYMENT_KEY: ***`, R`SMTP_PASS: ***`, R`NODE_ENV: production`, R`unexpected EOF while looking for matching`, R`without -n: 1`, R`with -n: 3`] },
         ],
       },
+        {
+          cmd: "المصدر الحقيقي على السيرفر",
+          title: "الريبو عندك قديم والموقع الحي فيه صفحة مش عندك: الكود اتعدّل على السيرفر مباشرة",
+          learn: R`تثبت إن الكود الحي اتعدّل على السيرفر ومش في git، وتجيب نسخة منه وتقارنها بالريبو، وتاخد نسخة احتياطية قبل أي تعديل، وترجّع السيرفر نفسه تحت git من غير ما تلمس ملفاته، فأي تعديل يدوي بعد كده يبان في [[git status]].`,
+          out: R`[[diff -rq]] بين نسخة السيرفر والريبو فاضي، و [[git status --short]] على السيرفر فاضي، والصفحة الحية لسه شغّالة، و [[git log -1]] على السيرفر = آخر commit عندك.`,
+          desc: R`طلبوا منك تعدّل صفحة «White Friday». دوّرت في الريبو على جهازك: [[grep -rliE "white-friday" .]] مطلّعش حاجة، و [[git log]] آخره من شهور، و [[git status]] نضيف. بس الصفحة شغّالة على الموقع الحي! يعني الكود اللي على السيرفر **مش** هو اللي في الريبو: حد عدّل هناك مباشرة (أو رفع ملفات بـ FTP)، والسيرفر مفيهوش [[.git]] أصلًا.
+
+الغلطة اللي بتحصل هنا: تعدّل على نسختك القديمة وترفعها فوق السيرفر، فتمسح الصفحة الجديدة وأي تعديل تاني اتعمل هناك. الترتيب الصح:
+1. تثبت: [[ls -a | grep -E "^\.git$" || echo no_git_on_server]] على السيرفر، و [[grep]] و [[find]] هناك.
+2. تجيب نسخة من السيرفر ([[tar]] على [[ssh]]) وتقارنها بالريبو بـ [[diff -rq]].
+3. نسخة احتياطية بالتاريخ قبل أي تعديل: [[mkdir -p /root/bak-$(date +%F) && cp -a ...]].
+4. ترجّع الحقيقة لـ git: commit بنسخة السيرفر في الريبو، وبعدين السيرفر نفسه يبقى checkout ([[git init]] و [[git fetch]] و [[git reset]] من غير [[--hard]]) فملفاته متتلمسش.
+5. من هنا التعديل يبقى في الريبو، والنشر بـ [[git pull --ff-only]].`,
+          example: R`grep -rliE "white.?friday" . --exclude-dir=.git; echo "exit=$?"
+git log --format="%h %ad %s" --date=short -3 && git status --short
+ssh deployer@203.0.113.10 'cd ~/domains/shop.example/public_html && { ls -a | grep -E "^\.git$" || echo no_git_on_server; } && grep -rliE "white.?friday" . && find . -type f -newermt "2026-07-03" -printf "%TY-%Tm-%Td %p\n" | sort'
+ssh deployer@203.0.113.10 'cd ~/domains/shop.example/public_html && tar czf - --exclude=./uploads --exclude=./config.php .' | tar xzf - -C ~/server-copy
+diff -rq --exclude=.git --exclude=.gitignore ~/server-copy .
+ssh deployer@203.0.113.10 'B=~/bak-$(date +%F); mkdir -p $B && cp -a ~/domains/shop.example/public_html/{index,prices,white-friday}.php $B/'
+git switch -c server-snapshot && rsync -a --exclude=.git --exclude=.gitignore ~/server-copy/ ./ && git add -A && git commit -m "snapshot: live server 2026-11-03"
+git switch main && git merge --ff-only server-snapshot && git push origin main
+ssh deployer@203.0.113.10 'cd ~/domains/shop.example/public_html && git init -q -b main && git remote add origin git@github.com:acme-co/shop-site.git && git fetch -q origin && git reset -q origin/main && git branch -q -u origin/main && git status --short'`,
+          lines: [
+            R`على جهازك: الصفحة موجودة في الكود؟ [[-r]] كل الفولدرات، و [[-l]] أسماء الملفات بس، و [[-i]] من غير فرق بين كبير وصغير، و [[-E]] regex، و [[white.?friday]] بتطابق [[white-friday]] و [[White Friday]] و [[whitefriday]]. [[exit=1]] = مفيش ولا ملف.`,
+            R`آخر ٣ commits بتواريخها، وهل فيه تعديلات مش متسجّلة. لو آخر commit من شهور والموقع اتغيّر من أسبوع، فيه حاجة اتعملت بره git.`,
+            R`على السيرفر بأمر ssh واحد: فيه [[.git]]؟ (لو لأ يطبع [[no_git_on_server]])، والصفحة في أنهي ملفات، وإيه الملفات اللي اتعدّلت بعد آخر commit عندك ([[-newermt]] = أحدث من التاريخ ده، و [[-printf]] بيطبع تاريخ التعديل جنب الاسم).`,
+            R`نسخة من كود السيرفر على جهازك من غير ما تلمس السيرفر: [[tar czf -]] بيكتب الأرشيف على الـ stdout، والـ pipe بيوصّله لـ [[tar xzf -]] على جهازك. [[--exclude]] للصور المرفوعة والأسرار.`,
+            R`قارن الفولدرين: [[-r]] جوه الفولدرات، و [[-q]] أسماء الملفات اللي مختلفة بس. [[Only in ~/server-copy]] = ملف على السيرفر مش عندك، و [[differ]] = نفس الملف بمحتوى مختلف.`,
+            R`قبل أي تعديل على السيرفر: نسخة من الملفات اللي هتتغيّر في فولدر بتاريخ النهارده. [[cp -a]] بيحافظ على التواريخ والصلاحيات، و [[{index,prices,white-friday}.php]] بيتفرد لـ ٣ أسامي.`,
+            R`على جهازك: فرع جديد، وحط نسخة السيرفر فوق الريبو ([[rsync -a]] من غير [[--delete]]، فاللي عندك ومش هناك ميتمسحش)، و commit بيقول من فين النسخة دي.`,
+            R`ارجع لـ [[main]] وخد الفرع ([[--ff-only]]: يرفض لو محتاج merge commit)، وارفع.`,
+            R`على السيرفر: اعمل الفولدر ريبو، واجيب التاريخ من GitHub، و [[git reset]] (من غير [[--hard]]) بيخلّي الـ index = [[origin/main]] **ومبيلمسش الملفات**. [[git status --short]] بعدها بيقول إيه اللي مختلف بين الملفات الحية والريبو.`,
+          ],
+          try: R`ابني المعمل اللي في الشرح في container ([[php:8.4-cli]] أو [[ubuntu:24.04]] و [[apt-get install -y git rsync]]): ريبو bare، و [[laptop]] فيه commitين قدام، وفولدر [[server/public_html]] منسوخ من غير [[.git]] واتعدّل فيه ([[white-friday.php]] جديد، و [[prices.php]] اتغيّر، و [[config.php]] و [[uploads/]]). امشي بالترتيب: grep، و [[no_git_on_server]]، و [[tar]]، و [[diff -rq]]، والنسخة الاحتياطية، والـ snapshot، و [[git reset]] على السيرفر. وبعدين جرّب [[rsync -an --delete]] من نسخة قديمة عشان تشوف كان هيمسح إيه.`,
+          teach: R`## العَرَض
+
+- على جهازك: [[grep -rliE "white-friday" .]] فاضي، و [[git log]] آخره ٢ يوليو، و [[git status]] نضيف.
+- على الموقع الحي: [[https://shop.example/white-friday]] بيرجّع 200 وفيه الصفحة.
+
+يعني الكود اللي شغّال مش هو اللي في الريبو. قبل ما تفكر في التعديل المطلوب، لازم تعرف **الحقيقة فين**.
+
+---
+
+## المعمل
+
+container [[php:8.4-cli]] (Debian) و [[apt-get install -y git rsync]]. مكان السيرفر فولدر [[/lab/server/public_html]]، ومكان جهازك [[/lab/laptop]]، و «GitHub» ريبو bare [[/lab/origin.git]]. وأمر [[tar]] على [[ssh]] اتجرّب لوحده بين يوزرين في container [[ubuntu:24.04]] فيه [[sshd]] بمفتاح.
+
+| الملف على السيرفر | الحكاية |
+|---|---|
+| [[index.php]] | زي الريبو |
+| [[prices.php]] | اتعدّل على السيرفر (سعر White Friday) |
+| [[white-friday.php]] | اتعمل على السيرفر بس |
+| [[config.php]] | باسورد الداتابيز، مش المفروض في git أصلًا |
+| [[uploads/]] | صور الزوار |
+
+---
+
+## ١. على جهازك: الحاجة مش موجودة فعلًا؟
+
+~~~bash
+grep -rliE "white-friday" . --exclude-dir=.git; echo "exit=$?"
+git log --format="%h %ad %s" --date=short -3
+git status --short; echo "status lines: $(git status --short | wc -l)"
+git fetch -q origin; git status -sb | head -1
+~~~
+
+~~~text الناتج
+exit=1
+6eb911f 2026-07-02 home banner
+9dfb751 2026-06-10 first version
+status lines: 0
+## main...origin/main
+~~~
+
+- [[exit=1]] من [[grep]] = ولا سطر طابق (و [[2]] = خطأ زي فولدر مش موجود).
+- [[--format="%h %ad %s" --date=short]]: الهاش القصير، والتاريخ، والرسالة.
+- [[git status -sb]] بعد [[fetch]]: [[## main...origin/main]] من غير [[behind]] = الريبو على GitHub كمان مفيهوش حاجة أحدث. يعني المشكلة مش «انت مسحبتش»، المشكلة إن التعديل **مش في git خالص**.
+
+---
+
+## ٢. على السيرفر: فيه git؟ والحاجة فين؟
+
+~~~bash
+cd ~/domains/shop.example/public_html
+ls -a | grep -E "^\.git$" || echo no_git_on_server
+grep -rliE "white-friday" .
+~~~
+
+~~~text الناتج
+no_git_on_server
+./prices.php
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[ls -a]] | كل الملفات حتى اللي أولها نقطة |
+| [[grep -E "^\.git$"]] | سطر هو [[.git]] بالظبط ([[^]] أول السطر و [[$]] آخره و [[\.]] نقطة حرفية) |
+| [[|| echo no_git_on_server]] | لو [[grep]] ملقاش (كود 1) اطبع الرسالة |
+
+**فخ صغير:** [[grep]] لقى [[prices.php]] بس، مش [[white-friday.php]]! لأن [[grep]] بيدوّر في **المحتوى**، والملف جواه [[White Friday]] بمسافة. والاسم بيتدوّر عليه بـ [[find]]:
+
+~~~bash
+grep -rliE "white.?friday" .
+find . -iname "*white*friday*"
+find . -type f -newermt "2026-07-03" -printf "%TY-%Tm-%Td %p\n" | sort
+~~~
+
+~~~text الناتج
+./prices.php
+./white-friday.php
+./white-friday.php
+2026-10-20 ./prices.php
+2026-10-20 ./white-friday.php
+2026-11-03 ./uploads/a.jpg
+~~~
+
+- [[white.?friday]]: [[.]] أي حرف و [[?]] مرة أو ولا مرة، فبتطابق الشرطة والمسافة ومن غيرهم.
+- [[find -iname]]: بالاسم، من غير فرق بين كبير وصغير.
+- [[-newermt "2026-07-03"]]: الملفات اللي اتعدّلت بعد آخر commit عندك (٢ يوليو). ده بيديك لستة «اللي اتعمل هناك» مرة واحدة.
+- [[-printf "%TY-%Tm-%Td %p\n"]]: سنة وشهر ويوم التعديل ([[%T]] = وقت التعديل) والمسار. و [[sort]] يرتّبهم.
+
+---
+
+## ٣. هات نسخة وقارن
+
+~~~bash
+mkdir -p ~/server-copy
+ssh deployer@203.0.113.10 'cd ~/domains/shop.example/public_html && tar czf - --exclude=./uploads --exclude=./config.php .' | tar xzf - -C ~/server-copy
+diff -rq --exclude=.git --exclude=.gitignore ~/server-copy .
+diff -u prices.php ~/server-copy/prices.php
+~~~
+
+~~~text الناتج
+Files /lab/server-copy/prices.php and ./prices.php differ
+Only in /lab/server-copy: white-friday.php
+--- prices.php	2026-11-03 11:24:43.418840400 +0000
++++ /lab/server-copy/prices.php	2026-10-20 12:00:00.000000000 +0000
+@@ -1 +1 @@
+-<?php $prices = ["monthly" => 150];
++<?php $prices = ["monthly" => 150, "white-friday" => 99];
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[tar czf - ...]] | [[c]] اعمل أرشيف، و [[z]] اضغطه gzip، و [[f -]] الملف هو الـ stdout |
+| [[--exclude=./uploads]] | الصور مالهاش دعوة بالكود، وممكن تبقى جيجات |
+| [[--exclude=./config.php]] | الأسرار متنزلش على جهازك ولا تدخل git |
+| [[| tar xzf - -C ~/server-copy]] | [[x]] فك من الـ stdin في الفولدر ده |
+| [[diff -rq]] | لستة الملفات المختلفة بس |
+| [[diff -u]] | الفرق جوه ملف واحد: [[-]] عندك و [[+]] على السيرفر |
+
+ده أهم خطوة: دلوقتي عارف **بالظبط** إيه اللي اتعمل على السيرفر (ملف جديد، وسطر سعر)، مش بتخمّن. (اتجرّب [[ssh ... tar czf - | tar xzf -]] لوحده بمفتاح بين يوزرين في [[ubuntu:24.04]]: [[ls ~/server-copy]] طلّع [[index.php]] و [[white-friday.php]] من غير [[uploads]] و [[config.php]].)
+
+---
+
+## ٤. ليه متعدّلش على نسختك وترفع؟
+
+لو رفعت الريبو القديم بـ [[rsync --delete]] (أو FTP بـ «اكتب فوق»)، ده اللي كان هيحصل. [[-n]] = dry run، بيقول بس:
+
+~~~text rsync -an --delete --exclude=.git --exclude=config.php --exclude=uploads --itemize-changes ./ /lab/server/public_html/
+*deleting   white-friday.php
+.d..t...... ./
+>f..t...... .gitignore
+>f.st...... prices.php
+~~~
+
+[[*deleting white-friday.php]]: الصفحة الحية كانت هتتمسح. و [[>f.st...... prices.php]]: الملف هيتكتب فوقه ([[s]] الحجم مختلف و [[t]] الوقت)، فسعر White Friday هيروح. ومن غير [[--delete]] الصفحة كانت هتفضل، بس [[prices.php]] برضه هيترجع للقديم.
+
+---
+
+## ٥. نسخة احتياطية قبل أي حاجة
+
+~~~bash
+B=/root/bak-$(date +%F); mkdir -p $B && cp -a index.php prices.php white-friday.php $B/ && ls -l --time-style=+%F $B
+~~~
+
+~~~text الناتج
+-rw-r--r-- 1 root root 29 2026-07-02 index.php
+-rw-r--r-- 1 root root 58 2026-10-20 prices.php
+-rw-r--r-- 1 root root 36 2026-10-20 white-friday.php
+~~~
+
+- [[$(date +%F)]]: تاريخ النهارده [[2026-11-03]]، فالفولدر [[bak-2026-11-03]]. تقدر تعمل كذا واحد في كذا يوم من غير ما تكتب فوق.
+- [[cp -a]]: archive، بيحافظ على التاريخ والصلاحيات والمالك (شوف التواريخ في الناتج: مش النهارده).
+- على استضافة مشتركة مفيش [[/root]]: [[~/bak-$(date +%F)]].
+
+---
+
+## ٦. رجّع الحقيقة لـ git
+
+### (أ) على جهازك: commit بنسخة السيرفر
+
+~~~bash
+git switch -c server-snapshot
+rsync -a --exclude=.git --exclude=.gitignore ~/server-copy/ ./
+git status --short
+git add -A && git commit -m "snapshot: live server 2026-11-03 (white-friday edited directly on server)"
+git diff --stat main
+git switch main && git merge --ff-only server-snapshot && git push origin main
+~~~
+
+~~~text الناتج
+ M prices.php
+?? white-friday.php
+ prices.php       | 2 +-
+ white-friday.php | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+~~~
+
+فرع منفصل عشان لو حاجة غريبة ظهرت في الـ diff (ملف مش مفهوم، أو سر) توقف قبل [[main]]. و [[rsync -a ~/server-copy/ ./]] بالـ [[/]] في آخر المصدر = محتوى الفولدر مش الفولدر نفسه.
+
+### (ب) على السيرفر: يبقى checkout من غير ما ملف يتلمس
+
+~~~bash
+git init -q -b main
+git remote add origin git@github.com:acme-co/shop-site.git
+git fetch -q origin
+git reset -q origin/main
+git branch -q -u origin/main
+git status --short
+~~~
+
+~~~text الناتج
+ D .gitignore
+?? config.php
+?? uploads/
+~~~
+
+| الأمر | بيعمل إيه |
+|---|---|
+| [[git init -b main]] | فولدر [[.git]] فاضي، والفرع [[main]] |
+| [[git fetch]] | يجيب التاريخ كله في [[.git]]، والملفات الحية زي ما هي |
+| [[git reset origin/main]] | (mixed، الافتراضي) الفرع والـ index = [[origin/main]]، **والملفات متتلمسش**. [[--hard]] كان هيكتب فوقها |
+| [[git branch -u origin/main]] | الفرع ده بيتابع [[origin/main]]، فـ [[git pull]] و [[status]] يعرفوه |
+
+الناتج بيقول إن الفرق الوحيد: [[.gitignore]] مش موجود على السيرفر (عمره ما اتنسخ)، فـ [[config.php]] و [[uploads/]] ظاهرين كملفات جديدة. ده مش تعديل في الكود، فرجّعه:
+
+~~~bash
+git checkout -- .gitignore
+git status --short; echo "dirty lines: $(git status --short | wc -l)"
+git status --short --ignored
+git pull --ff-only
+~~~
+
+~~~text الناتج
+dirty lines: 0
+!! config.php
+!! uploads/
+Already up to date.
+~~~
+
+[[!!]] = ملفات git شايفها ومتجاهلها بقصد. والسيرفر دلوقتي = الريبو بالظبط.
+
+---
+
+## ٧. اتأكد
+
+~~~text على السيرفر
+dirty lines: 0                      ← git status --short | wc -l
+0f42e03 snapshot: live server ...   ← git log --oneline -1 (نفس اللي على جهازك)
+~~~
+
+وأهم حاجة إن الموقع لسه شغّال: [[curl -s -o /dev/null -w "%{http_code}" https://shop.example/white-friday]] لازم يفضل 200 (مفيش ملف اتغيّر، فمفيش سبب يتغيّر). وأي تعديل يدوي بعد كده بيبان على طول:
+
+~~~text echo "// hotfix" >> index.php; git status --short; git diff --stat
+ M index.php
+ index.php | 1 +
+ 1 file changed, 1 insertion(+)
+~~~
+
+ودلوقتي ابدأ التعديل المطلوب: في الريبو على جهازك، وبعدين push، وعلى السيرفر [[git pull --ff-only]].
+
+---
+
+## ٨. البدايل اللي اترفضت
+
+| البديل | ليه لأ |
+|---|---|
+| تعدّل على نسختك القديمة وترفعها | بتمسح [[white-friday.php]] وسعر [[prices.php]] (اتجرّب بـ [[rsync -an --delete]]) |
+| تعدّل على السيرفر مباشرة وخلاص | بيكمّل المشكلة: الريبو يفضل قديم، والمرة الجاية نفس الحكاية |
+| [[git clone]] جديد مكان [[public_html]] | بيمسح التعديلات الحية، أو بيفشل لأن الفولدر مش فاضي |
+| [[git reset --hard origin/main]] على السيرفر | بيكتب فوق الملفات الحية بنسخة الريبو، يعني نفس مسح الصفحة |
+| [[git add -A]] على السيرفر و commit من هناك | ممكن، بس بيدخّل [[config.php]] و [[uploads/]] لو [[.gitignore]] مش موجود، وبيعمل commit بهوية السيرفر. الـ snapshot من جهازك بيعدّي على عينك الأول |
+
+---
+
+## ٩. متتكررش
+
+- **مفيش تعديل على السيرفر مباشرة.** لو لازم hotfix عاجل: اعمله، وبعدين على طول [[git diff]] على السيرفر وانقله لـ commit في الريبو (أو [[git commit]] هناك و [[git push]]).
+- **سكربت النشر يرفض لو [[git status --short]] على السيرفر مش فاضي** (درس «نسخة قديمة كسرت الإنتاج» في تاب التشخيص بيعمل نفس الحكاية بالعكس).
+- **قبل أي شغل على مشروع قديم:** [[ssh ... 'git -C <dir> status --short 2>&1 || echo no_git']] أول أمر، قبل ما تفتح الريبو عندك.
+- **[[find -newermt]] شهريًا** على السيرفرات اللي مفيهاش git لسه، لحد ما كلها تبقى checkout.
+
+---
+
+## الخلاصة
+
+| السؤال | الأمر |
+|---|---|
+| عندي؟ | [[grep -rliE "white.?friday" .]] و [[git log -3]] و [[git status -sb]] بعد [[fetch]] |
+| السيرفر فيه git؟ | [[ls -a | grep -E "^\.git$" || echo no_git_on_server]] |
+| إيه اللي اتعمل هناك؟ | [[find -newermt]] و [[find -iname]] و [[grep]] |
+| بالظبط إيه الفرق؟ | [[ssh ... tar czf - | tar xzf -]] ثم [[diff -rq]] و [[diff -u]] |
+| قبل أي تعديل | [[cp -a]] لـ [[bak-$(date +%F)]] |
+| رجّع لـ git | snapshot commit، وعلى السيرفر [[git init]] و [[fetch]] و [[reset]] (من غير [[--hard]]) |`,
+          deep: {
+            why: R`أي مشروع عاش فترة على استضافة بيتعدّل على السيرفر مرة: hotfix بالليل، أو حد غير تقني من لوحة الاستضافة، أو مطوّر تاني بـ FTP. ولما ده يحصل، الريبو بيبطل يبقى المصدر، وأي نشر من الريبو بيمسح الشغل الحي من غير ما حد يحس. الطريقة دي بتحوّل «إحنا مش عارفين الحقيقة فين» لمكان واحد معروف، من غير ما الموقع يقع ولا ملف يتغيّر.`,
+            how: R`[[tar czf -]] على السيرفر و [[tar xzf -]] عندك بيعدّوا الملفات في stream واحد على اتصال ssh، بالتواريخ والصلاحيات. و [[diff -rq]] بيقارن الشجرتين ملف ملف. و [[git reset <commit>]] من غير [[--hard]] بيحرّك الفرع ويكتب الـ index من الـ commit ده، ومبيكتبش في working tree، فـ [[git status]] بعدها = الفرق بين الملفات الحية والـ commit. و [[find -newermt]] بيقارن mtime بتاريخ؛ و FTP و [[cp]] من غير [[-a]] ممكن يغيّروا الـ mtime، فده دليل مش إثبات، والإثبات هو [[diff]].`,
+            when: R`أول ما تمسك مشروع شغّال من حد تاني، أو الموقع الحي فيه حاجة مش عندك، أو [[git pull]] على السيرفر بيقول [[not a git repository]]، أو حد يقول «عدّلتها على السيرفر على طول». وقبل أي نقل لسيرفر جديد (درس «نقل السيرفر كله»).`,
+            mistakes: R`تعدّل على نسختك القديمة وترفع فوق. وتدوّر بـ [[grep]] على اسم ملف (بيدوّر في المحتوى). وتعمل [[git reset --hard]] أو [[git clone]] في [[public_html]]. وتنسى [[--exclude]] للأسرار فتنزل [[config.php]] على جهازك وتدخل git. وتنسى النسخة الاحتياطية. وتعمل [[rsync --delete]] من غير [[-n]] الأول. وتفتكر إن [[git status]] الفاضي على جهازك معناه إن مفيش حاجة جديدة في أي حتة.`
+          },
+          sol: R`على الجهاز: [[exit=1]] و آخر commit [[2026-07-02 home banner]] و [[status lines: 0]]. على السيرفر: [[no_git_on_server]]، و [[grep "white-friday"]] لقى [[prices.php]] بس، و [[white.?friday]] لقى الاتنين، و [[find -newermt]] طلّع [[prices.php]] و [[white-friday.php]] بتاريخ [[2026-10-20]]. [[diff -rq]]: [[Files ... prices.php ... differ]] و [[Only in ...server-copy: white-friday.php]]. [[rsync -an --delete]] من نسخة قديمة: [[*deleting white-friday.php]]. بعد الـ snapshot و [[git reset]] و [[git checkout -- .gitignore]]: [[dirty lines: 0]] و [[!! config.php]] و [[!! uploads/]] و [[Already up to date.]]، وتعديل تجريبي ظهر [[M index.php]].
+
+اتجرّب في container [[php:8.4-cli]] بـ git و rsync من apt، و [[ssh ... tar | tar]] في [[ubuntu:24.04]] فيه [[sshd]]. العناوين والريبو في المثال مخترعين.`,
+          practice: [
+            { lvl: 'سريع', t: R`من غير ما تبص: رتّب ٦ خطوات من «مش لاقي الصفحة في الريبو» لحد «السيرفر بقى checkout نضيف»، وجنب كل خطوة الأمر.`, done: R`الترتيب: grep و git log عندك، و [[no_git_on_server]] و find هناك، و tar على ssh و [[diff -rq]]، و [[cp -a]] للنسخة الاحتياطية، و snapshot commit، و [[git init]] و [[fetch]] و [[reset]] من غير [[--hard]]، وكل أمر صح.` },
+            { lvl: 'تطبيق', t: R`اقرا وتوقّع: سيرفر مفيهوش git، و [[git init && git fetch origin && git reset origin/main]] عليه، والريبو فيه [[a.php]] و [[b.php]]، والسيرفر فيه [[a.php]] (متعدّل) و [[c.php]] (جديد) ومفيهوش [[b.php]]. توقّع [[git status --short]] بالظبط، وبعدين اعمل الحالة ونفّذ.`, done: R`توقعت [[ M a.php]] و [[ D b.php]] و [[?? c.php]]، والناتج طابق، وكتبت إيه اللي يحصل لكل ملف لو كان [[reset --hard]].` },
+            { lvl: 'تطبيق', t: R`صلّح الكود البايظ: سكربت النشر ده [[rsync -az --delete ./ deployer@203.0.113.10:~/domains/shop.example/public_html/]] من غير أي فحص. زوّده بفحصين قبل الرفع: السيرفر فيه git ونضيف، و [[rsync -n]] بيقول هيمسح إيه، ويرفض لو هيمسح أي ملف [[.php]].`, done: R`على المعمل اللي فيه [[white-friday.php]] على السيرفر بس، السكربت بيرفض ويطبع [[would delete: white-friday.php]]، وبعد الـ snapshot بيعدّي، وكود الخروج غير صفر في حالة الرفض.` },
+            { lvl: 'تطبيق', t: R`ابني [[drift.sh <host> <dir>]]: بيجيب نسخة من السيرفر بـ tar على ssh (من غير [[uploads]] وأي [[*.env]] أو [[config*.php]])، ويقارنها بآخر commit في [[origin/main]] (مش بالـ working tree عندك، استخدم [[git archive origin/main | tar x]] في فولدر مؤقت)، ويطبع جدول: جديد على السيرفر، ومتعدّل، وناقص.`, done: R`على المعمل بيطبع [[new: white-friday.php]] و [[changed: prices.php]]، وبعد الـ snapshot بيطبع [[no drift]] وكود 0، والفولدرات المؤقتة بتتمسح ([[trap]]).` },
+            { lvl: 'تحدي', t: R`بيانات حقيقية الشكل: اعمل سيرفر وهمي فيه ٢٠٠ ملف PHP، و ١٥ منهم اتعدّلوا على مدار ٦ شهور بتواريخ مختلفة ([[touch -d]])، و ٣ جداد. من غير ما تعرف مين، طلّع بأوامر [[find]] و [[diff]]: إيه اتعدّل في كل شهر، وأقدم تعديل، وهل فيه ملف اتعدّل بعد آخر commit بس محتواه زي الريبو (اتلمس من غير تغيير).`, done: R`جدول بالشهر وعدد الملفات، وأقدم تاريخ، ولستة الملفات اللي [[-newermt]] بيطلّعها و [[diff]] بيقول إنها زي بعض، وكتبت ليه [[find]] لوحده مش دليل.` },
+            { lvl: 'تحدي', t: R`اشرحها: صاحب الشغل بيقول «إحنا بنعدّل على السيرفر من لوحة الاستضافة عادي، ليه git؟». اكتب له ٥ سطور من غير مصطلحات صعبة، فيهم المثال اللي في الدرس.`, done: R`الكلام فيه: مين عدّل إيه وإمتى، وإزاي ترجع لنسخة امبارح في دقيقة، وإن الرفع من نسخة قديمة مسح صفحة White Friday في المثال، ومن غير ولا كلمة زي commit أو merge.` },
+          ],
+          ci: [
+            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`bash`, run: R`export GIT_AUTHOR_NAME=dev GIT_AUTHOR_EMAIL=dev@shop.example GIT_COMMITTER_NAME=dev GIT_COMMITTER_EMAIL=dev@shop.example
+export GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=core.autocrlf GIT_CONFIG_VALUE_0=false
+git init -q --bare -b main origin.git
+git clone -q origin.git laptop 2>/dev/null && cd laptop
+printf '<?php echo "home";\n' > index.php
+printf '<?php $p = 150;\n' > prices.php
+printf 'config.php\nuploads/\n' > .gitignore
+git add -A && git commit -qm first && git push -q origin main && cd ..
+mkdir -p server/uploads && echo img > server/uploads/a.jpg && cp laptop/index.php laptop/prices.php server/
+printf '<?php echo "<h1>White Friday</h1>";\n' > server/white-friday.php
+printf '<?php $p = ["monthly" => 150, "white-friday" => 99];\n' > server/prices.php
+printf '<?php $pw = "lab";\n' > server/config.php
+cd laptop
+grep -rliE "white-friday" . --exclude-dir=.git; echo "local exit=$?"
+cd ../server
+ls -a | grep -E "^\.git$" || echo no_git_on_server
+grep -rliE "white.?friday" . | sort
+cd ..
+mkdir copy && (cd server && tar czf - --exclude=./uploads --exclude=./config.php .) | tar xzf - -C copy
+diff -rq --exclude=.git --exclude=.gitignore copy laptop | sed 's#copy#server-copy#'
+cd laptop && git switch -q -c snap && cp ../copy/*.php . && git add -A && git commit -qm "snapshot" && git switch -q main && git merge -q --ff-only snap && git push -q origin main && cd ..
+cd server && git init -q -b main && git remote add origin ../origin.git && git fetch -q origin && git reset -q origin/main
+git status --short | sort
+git checkout -- .gitignore
+echo "dirty: $(git status --short | wc -l | tr -d ' ')"
+git status --short --ignored
+ls white-friday.php config.php`, expect: [R`local exit=1`, R`no_git_on_server`, R`./prices.php`, R`./white-friday.php`, R`Files server-copy/prices.php and laptop/prices.php differ`, R`Only in server-copy: white-friday.php`, R` D .gitignore`, R`?? config.php`, R`dirty: 0`, R`!! config.php`, R`!! uploads/`] },
+          ],
+        }
     ],
   }
 ]);

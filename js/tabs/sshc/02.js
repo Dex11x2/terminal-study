@@ -1,5 +1,4 @@
-// ملف إضافي لتاب sshc: الحقول نفس شكلها في 01.js.
-
+// تكملة تاب sshc: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/sshc/01.js (شرح حقول الدرس في أوله)
 MORE("sshc", [
   {
     t: "SOCKS والشهادات وتأمين السيرفر",
@@ -1126,7 +1125,408 @@ ssh-keygen -K
         sol: R`المتوقع حسب الـ docs: ssh-keygen يطلب لمسة (و PIN لو [[verify-required]])، وبعدين كل [[ssh]] للسيرفر يطلب لمسة تاني. وملف [[id_ed25519_sk]] على جهاز تاني من غير الـ YubiKey مش بيدخل.
 
 ولو مش معاك مفتاح: [[Key enrollment failed: device not found]]، زي ما طلع في الـ container هنا.`
+      },
+      {
+        cmd: "أتمتة SSH من غير باسورد",
+        title: "سكربت أو أداة بتدخل السيرفر بالباسورد (sshpass و paramiko): بيتسرّب فين، والبديل بمفتاح محدود",
+        learn: R`تعرف الباسورد بيتسرّب فين لما سكربت أو أداة (أو مساعد AI) يدخل بيه ([[ps]] و [[history]] والشات والملفات)، وتفرق بين [[sshpass -p]] و [[-e]] و [[-f]]، وتحوّل لمفتاح ed25519 محدود بـ [[from=]] وتقفل الباسورد على السيرفر صح، وتغيّر أي باسورد اتكتب في شات.`,
+        out: R`[[ssh -i ... -o BatchMode=yes]] بيرجّع [[hostname]]، و [[ssh -o PubkeyAuthentication=no]] بيرجّع [[Permission denied (publickey).]]، و [[sshd -T]] بيقول [[passwordauthentication no]]، و [[passwd -S]] بيقول [[L]].`,
+        desc: R`عشان أداة أو سكربت (أو مساعد AI) يشغّل أوامر على السيرفر، الطريق السهل: الباسورد في متغير ([[SSHPASS]] أو [[SSH_PW]]) و [[sshpass -e ssh ...]] أو مكتبة [[paramiko]] في Python. وده اللي حصل في حالة حقيقية: الباسوردات اتكتبت في الشات، وسكربت paramiko دخل بيها، وبين السيرفرين [[sshpass -e]].
+
+المشكلة مش «sshpass وحش». المشكلة إن الباسورد بقى **نص** بيتنقل: في الشات، وفي [[~/.bash_history]]، وفي سكربت، وفي env كل برنامج بيتشغّل من نفس الـ shell، وفي سطر أوامر أي [[bash -c "..."]] بيبان في [[ps]] لأي يوزر. والسيرفر لازم يفضل قابل باسوردات، يعني أي حد معاه الباسورد (أو بيخمّنه) يدخل.
+
+البديل: مفتاح [[ed25519]] للأداة دي بس، متضاف بـ [[ssh-copy-id]] وعليه [[from="..."]] وقيود، والدخول بـ [[-o BatchMode=yes]] (يفشل على طول بدل ما يستنى باسورد)، وبعدين [[PasswordAuthentication no]] في [[/etc/ssh/sshd_config.d/]] بـ [[sshd -t]] قبل الـ reload، وأي باسورد اتكتب في شات يتغيّر أو يتقفل. ودرس «كونسول الاستضافة بيقول login:» في تاب التشخيص بيوري [[sshpass -p]] في [[ps]] و [[grep -rn sshpass]]؛ هنا الأتمتة نفسها.`,
+        example: R`ssh-keygen -t ed25519 -N "" -C "deploy-bot@ci" -f ~/.ssh/deploy_ed25519
+ssh-copy-id -i ~/.ssh/deploy_ed25519.pub deployer@203.0.113.10
+ssh -i ~/.ssh/deploy_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes deployer@203.0.113.10 hostname
+echo "PasswordAuthentication no" | sudo tee /etc/ssh/sshd_config.d/01-no-passwords.conf
+sudo sshd -t && sudo sshd -T | grep -E "^(passwordauthentication|kbdinteractiveauthentication) "
+sudo systemctl reload ssh
+ssh -o PubkeyAuthentication=no -o PreferredAuthentications=password deployer@203.0.113.10 true
+sudo passwd -l deployer && sudo passwd -S deployer`,
+        lines: [
+          R`على الجهاز اللي هيشغّل الأتمتة: مفتاح جديد لها هي بس. [[-t ed25519]] النوع الحديث (صغير وسريع)، و [[-N ""]] من غير passphrase عشان يشتغل من غير حد (فلازم يتحمى بالقيود تحت)، و [[-C]] تعليق بيظهر في [[authorized_keys]] فتعرف ده مفتاح مين، و [[-f]] اسم الملف.`,
+          R`انسخ الجزء العام للسيرفر. ده آخر مرة الباسورد بيتكتب (بإيدك، مش في سكربت)، و [[ssh-copy-id]] بيحطه في [[~/.ssh/authorized_keys]] بالصلاحيات الصح.`,
+          R`جرّب بالمفتاح: [[-i]] المفتاح ده، و [[BatchMode=yes]] ممنوع أي سؤال (لو المفتاح مش شغّال يفشل بـ 255 بدل ما يستنى باسورد)، و [[IdentitiesOnly=yes]] متجرّبش مفاتيح تانية من الـ agent.`,
+          R`على السيرفر: قفل الباسوردات في ملف جوه [[sshd_config.d]]. الاسم يبدأ بـ [[01-]] عشان أول قيمة بتكسب والملفات بتتقرا بالترتيب الأبجدي.`,
+          R`[[sshd -t]] بيفحص الـ syntax (ولو غلط بيقول الملف والسطر)، و [[sshd -T]] بيطبع الإعدادات النهائية فعلًا بعد كل الملفات.`,
+          R`طبّق من غير ما تقطع الجلسات المفتوحة. (على أوبونتو الخدمة اسمها [[ssh]]، وفي توزيعات تانية [[sshd]].)`,
+          R`اتأكد من ترمنال **تاني** إن الباسورد اترفض فعلًا: لازم [[Permission denied (publickey).]].`,
+          R`الباسورد اللي اتكتب في الشات: اقفله ([[-l]] = lock، بيحط [[!]] قدامه في [[/etc/shadow]])، والمفتاح يفضل شغّال. و [[passwd -S]] بيطبع الحالة: [[L]] مقفول، و [[P]] فيه باسورد.`,
+        ],
+        try: R`في [[ubuntu:24.04]] في Docker: [[apt-get install -y openssh-server sshpass python3-paramiko]]، واعمل ٣ يوزرز ([[deployer]] بباسورد، و [[bot]] للأتمتة، و [[intern]] يوزر عادي تاني)، وشغّل [[sshd]]. من [[bot]] شغّل [[sshpass -e]] جوه [[bash -c "..."]] و [[sleep]]، ومن [[intern]] بص على [[ps -eo user,args]]. وبعدين امشي على المثال سطر سطر، وجرّب [[PasswordAuthentication no]] في ملف اسمه [[60-...]] الأول.`,
+        teach: R`## الحكاية
+
+أداة أتمتة (في الحالة الحقيقية مساعد AI، والطريقة نفسها في أي CI أو cron) لازم تشغّل أوامر على سيرفرين. اللي حصل:
+- الباسوردات اتكتبت في الشات.
+- سكربت Python بمكتبة [[paramiko]] بيدخل بالباسورد من متغير بيئة [[SSH_PW]].
+- ومن سيرفر للتاني [[sshpass -e]] (الباسورد من متغير [[SSHPASS]]).
+
+كله اشتغل. والسؤال: الباسورد ده بقى موجود فين؟
+
+---
+
+## المعمل
+
+container [[ubuntu:24.04]] فيه OpenSSH 9.6 و [[sshpass]] 1.09 و [[paramiko]] 2.12 من apt. ٣ يوزرز: [[deployer]] (على «السيرفر»، باسورد [[Lab-only-Pass-9]] للمعمل بس)، و [[bot]] (اللي بيشغّل الأتمتة)، و [[intern]] (أي يوزر تاني على نفس الجهاز). و [[sshd]] شغّال على نفس الـ container، وفيه ملف [[50-cloud-init.conf]] فيه [[PasswordAuthentication yes]] زي صور السيرفرات السحابية.
+
+---
+
+## ١. الباسورد بيتسرّب فين؟
+
+### (أ) سطر الأوامر: [[ps]]
+
+[[bot]] شغّل الأتمتة من سكربت بـ [[bash -c]]، والباسورد مكتوب في السطر:
+
+~~~bash
+su - bot -c "SSHPASS=Lab-only-Pass-9 sshpass -e ssh deployer@localhost \"sleep 4; hostname\" &"
+su - intern -c "ps -eo user,args"
+~~~
+
+~~~text اللي intern شافه (مختصر)
+root     bash -c  su - bot -c "SSHPASS=Lab-only-Pass-9 sshpass -e ssh deployer@localhost \"sleep 4; hostname\" > /tmp/bot-out.txt 2>&1 &" ...
+bot      sshpass -e ssh deployer@localhost sleep 4; hostname
+bot      ssh deployer@localhost sleep 4; hostname
+~~~
+
+[[sshpass -e]] نفسه نضيف: سطره مفيهوش الباسورد. بس الـ shell اللي شغّله ([[bash -c "..."]]) سطره كله ظاهر، والباسورد جواه. أي يوزر على الجهاز يقدر يشوف [[ps]]. ([[sshpass -p 'pass']] أسوأ: درس «كونسول الاستضافة بيقول login:» بيوري إن الباسورد بيبان في سطر الأب حتى لو sshpass غطّاه.)
+
+### (ب) الـ environment
+
+~~~text محاولات قراية /proc/<pid>/environ بتاع sshpass
+intern:  cat: /proc/3726/environ: Permission denied
+root:    /proc/3726/environ: Permission denied     ← في Docker، الـ container مفيهوش CAP_SYS_PTRACE
+bot:     SSHPASS=xxxxxxxxxxxxxxx
+~~~
+
+- يوزر تاني مش بيقدر يقرا env بتاع برنامجك. وده الفرق الحقيقي بين [[-e]] و [[-p]].
+- [[sshpass]] بيكتب [[x]] فوق قيمة [[SSHPASS]] في الذاكرة بتاعته أول ما يقراها. (و root على سيرفر عادي بيقدر يقرا أي env؛ في المعمل اترفض لأن Docker بيشيل صلاحية [[ptrace]].)
+- **بس:** لو عملت [[export SSHPASS=...]] في الـ shell، كل برنامج تشغّله من الـ shell ده بعد كده بياخده في الـ env بتاعه:
+
+~~~text su - bot -c "export SSHPASS=Lab-only-Pass-9; env | grep -c SSHPASS; python3 -c '...'"
+1
+Lab-...
+~~~
+
+أي سكربت Python أو npm package أو أداة بتجمع «معلومات النظام» عند crash بتشوفه.
+
+### (ج) الـ history
+
+~~~bash
+printf "export SSHPASS=Lab-typed-1\n export SSHPASS=Lab-typed-2\nexit\n" | su - bot -c "bash -i"
+cat /home/bot/.bash_history
+~~~
+
+~~~text الناتج
+export SSHPASS=Lab-typed-1
+exit
+~~~
+
+السطر الأول اتسجّل في [[~/.bash_history]] بالباسورد. التاني (أوله مسافة) متسجّلش، لأن أوبونتو حاطط [[HISTCONTROL=ignoreboth]] في [[~/.bashrc]] (السطر ١٣): السطور اللي أولها مسافة والمكررة متتسجّلش. والأحسن خالص إنه مايتكتبش:
+
+~~~bash
+read -rs SSHPASS && export SSHPASS
+~~~
+
+[[read -s]] بيقرا من غير ما يظهر اللي بتكتبه، و [[-r]] متفكّش [[\]]. مفيش سطر في الـ history فيه الباسورد.
+
+### (د) الملف والشات
+
+- [[sshpass -f ~/.deployer.pass]]: الباسورد في ملف بصلاحيات [[-rw-------]] (بـ [[umask 077]] قبل ما تكتبه). [[ps]] بيوري اسم الملف بس. ده أحسن الـ ٣ في sshpass، بس الملف ده باسورد نصّي على الديسك وفي أي backup للفولدر.
+- **الشات:** أي باسورد اتكتب في شات (مع AI أو زميل أو جروب) اتخزّن في سيرفرات حد تاني، وممكن يظهر في export أو screenshot أو لوج. اعتبره اتسرّب.
+
+| الطريقة | [[ps]] | الـ env | history | ملف |
+|---|---|---|---|---|
+| [[sshpass -p 'pass']] | بيبان في سطر الأب | — | لو اتكتب بإيدك | لو في سكربت |
+| [[SSHPASS=... sshpass -e]] | بيبان لو جوه [[bash -c "..."]] | نفس اليوزر و root | لو [[export]] اتكتب | لو في سكربت |
+| [[sshpass -f file]] | اسم الملف بس | — | — | الملف نفسه |
+| مفتاح | — | — | — | مفتاح خاص بس، وممكن تحدّه |
+
+### نتايج [[sshpass]] لما حاجة تغلط
+
+~~~text الناتج
+Permission denied, please try again.
+exit=5      ← باسورد غلط
+exit=6      ← السيرفر مش في known_hosts (sshpass مبيوافقش لوحده)
+~~~
+
+---
+
+## ٢. [[paramiko]] بالباسورد، وبالمفتاح
+
+السكربت اللي اتعمل:
+
+~~~python
+# الطريقة اللي اتعملت في الشات: باسورد من متغير بيئة
+import os, paramiko
+
+client = paramiko.SSHClient()
+client.set_missing_host_key_policy(paramiko.AutoAddPolicy())   # بيقبل أي سيرفر من غير سؤال
+client.connect("localhost", username="deployer", password=os.environ["SSH_PW"])
+_, out, _ = client.exec_command("hostname")
+print(out.read().decode().strip())
+client.close()
+~~~
+
+~~~text SSH_PW=... python3 run_pw.py ثم من غير SSH_PW
+c404b0de6983
+KeyError: 'SSH_PW'
+~~~
+
+مشكلتين: الباسورد، و [[AutoAddPolicy]]: أي سيرفر بيرد على العنوان ده (حد عامل نفسه السيرفر في نص الطريق) بيتقبل، والباسورد بيتبعتله. النسخة الصح:
+
+~~~python
+# الأصح: مفتاح، والسيرفر لازم يكون معروف في known_hosts
+import os, paramiko
+
+client = paramiko.SSHClient()
+client.load_system_host_keys()                                  # ~/.ssh/known_hosts بتاع اليوزر بس
+client.set_missing_host_key_policy(paramiko.RejectPolicy())     # سيرفر مش معروف = ارفض
+client.connect(
+    "localhost",
+    username="deployer",
+    key_filename=os.path.expanduser("~/.ssh/deploy_ed25519"),
+    allow_agent=False,
+    look_for_keys=False,
+)
+_, out, _ = client.exec_command("hostname")
+print(out.read().decode().strip())
+client.close()
+~~~
+
+~~~text أول تشغيل
+paramiko.ssh_exception.SSHException: Server 'localhost' not found in known_hosts
+~~~
+
+حتى لو [[/etc/ssh/ssh_known_hosts]] فيه السيرفر ([[ssh]] نفسه شايفه): [[load_system_host_keys()]] في paramiko بيقرا [[~/.ssh/known_hosts]] بس. فضيف السيرفر هناك، **بعد ما تتأكد من البصمة**:
+
+~~~bash
+ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub
+ssh-keyscan -t ed25519 localhost 2>/dev/null > /tmp/scan; ssh-keygen -lf /tmp/scan
+cat /tmp/scan >> ~/.ssh/known_hosts && python3 run_key.py
+~~~
+
+~~~text الناتج
+256 SHA256:xWjslgmhq8bImbgN/WkJOTUppDwFh/anmlDcn5NKPnU root@c404b0de6983 (ED25519)
+256 SHA256:xWjslgmhq8bImbgN/WkJOTUppDwFh/anmlDcn5NKPnU localhost (ED25519)
+c404b0de6983
+~~~
+
+السطر الأول اتشغّل **على السيرفر** (من كونسول الاستضافة أو جلسة موثوقة)، والتاني من جهاز الأتمتة. نفس البصمة = مفيش حد في النص. ([[ssh-keyscan]] لوحده بيصدّق أي حد بيرد، زي [[AutoAddPolicy]].) و [[allow_agent=False]] و [[look_for_keys=False]] = استخدم المفتاح ده بس.
+
+---
+
+## ٣. المفتاح
+
+~~~text ssh -o BatchMode=yes deployer@localhost hostname (قبل المفتاح)
+deployer@localhost: Permission denied (publickey,password).
+exit=255
+~~~
+
+[[BatchMode=yes]] فشل على طول بدل ما يسأل باسورد ويعلّق السكربت. والقوسين بيقولوا السيرفر بيقبل إيه: [[publickey,password]].
+
+~~~text ssh-keygen ثم ssh-copy-id
+Generating public/private ed25519 key pair.
+Your identification has been saved in /home/bot/.ssh/deploy_ed25519
+Your public key has been saved in /home/bot/.ssh/deploy_ed25519.pub
+/usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: "/home/bot/.ssh/deploy_ed25519.pub"
+/usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
+/usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys
+
+Number of key(s) added: 1
+~~~
+
+~~~text ssh -i ~/.ssh/deploy_ed25519 -o BatchMode=yes deployer@localhost hostname
+c404b0de6983
+exit=0
+~~~
+
+و [[ssh-copy-id]] حط الصلاحيات الصح: [[drwx------]] لـ [[~/.ssh]] و [[-rw-------]] لـ [[authorized_keys]] (لو أوسع من كده sshd بيتجاهل الملف). وفي المعمل الباسورد اتدّى لـ [[ssh-copy-id]] بـ [[sshpass -e]] عشان المعمل بيتشغّل لوحده؛ على سيرفر حقيقي بتكتبه بإيدك مرة واحدة. (ولو [[ssh-copy-id]] مش موجود، زي ويندوز: درس «نقل مفتاح SSH» في تاب VPS.)
+
+---
+
+## ٤. مفتاح لأداة من بره (أو مساعد AI): بحدود
+
+«أنا هضيف مفتاحك بدل الباسورد»: الأداة بتعمل مفتاحها عندها وتدّيك الـ [[.pub]] بس، وانت بتضيفه بقيود:
+
+~~~bash
+echo "from=\"127.0.0.1,::1\",no-agent-forwarding,no-port-forwarding,no-X11-forwarding $(cat agent_ed25519.pub)" >> ~/.ssh/authorized_keys
+~~~
+
+| القيد | معناه |
+|---|---|
+| [[from="..."]] | المفتاح ده مقبول من العناوين دي بس. في الحقيقة: IP الجهاز أو الـ runner اللي بتشتغل منه الأداة |
+| [[no-agent-forwarding]] | ميقدرش يستخدم مفاتيح تانية من الـ agent بتاعه على السيرفر |
+| [[no-port-forwarding]] | ميعملش tunnels للشبكة الداخلية عن طريق السيرفر |
+| [[no-X11-forwarding]] | مفيش شاشات |
+
+(الشرح الكامل وقيود زي [[command=]] في درس «authorized_keys options».)
+
+**الفخ اللي حصل:** أول مرة [[from="127.0.0.1"]] بس:
+
+~~~text ssh -i ~/.ssh/agent_ed25519 -o BatchMode=yes deployer@localhost whoami
+deployer@localhost: Permission denied (publickey).
+~~~
+
+~~~text ssh -v ... | grep Connecting
+debug1: Connecting to localhost [::1] port 22.
+~~~
+
+[[localhost]] راح لـ IPv6 ([[::1]])، مش [[127.0.0.1]]. نفس الحكاية على سيرفر حقيقي لو الأداة عندها IPv6: حط العنوانين، و [[ssh -v]] بيقولك اتوصل منين. بعد [[from="127.0.0.1,::1"]]: [[deployer]].
+
+ولما الشغل يخلص، شيله:
+
+~~~bash
+sed -i "/ ai-agent$/d" ~/.ssh/authorized_keys
+grep -c ai-agent ~/.ssh/authorized_keys
+~~~
+
+~~~text الناتج
+0
+deployer@localhost: Permission denied (publickey).
+~~~
+
+[[/ ai-agent$/d]]: امسح أي سطر آخره [[ ai-agent]] (التعليق اللي اتحط بـ [[-C]] لما المفتاح اتعمل). عشان كده التعليق مهم.
+
+---
+
+## ٥. اقفل الباسوردات على السيرفر
+
+~~~bash
+echo "PasswordAuthentication no" > /etc/ssh/sshd_config.d/60-no-passwords.conf
+sshd -t; echo "sshd -t exit=$?"
+sshd -T | grep -E "^(passwordauthentication|kbdinteractiveauthentication|pubkeyauthentication|permitrootlogin) "
+~~~
+
+~~~text الناتج
+sshd -t exit=0
+permitrootlogin without-password
+pubkeyauthentication yes
+passwordauthentication yes
+kbdinteractiveauthentication no
+~~~
+
+[[yes]]! الـ syntax سليم بس الإعداد مااتطبقش. [[sshd_config]] في أوبونتو أول حاجة فيه (السطر ١٢) [[Include /etc/ssh/sshd_config.d/*.conf]]، والملفات بتتقرا بالترتيب الأبجدي، و sshd بياخد **أول** قيمة لكل إعداد. [[50-cloud-init.conf]] قبل [[60-...]]، فـ [[yes]] كسبت. (نفس الفخ في درس «sshd_config» في تاب VPS.) الحل: اسم أقل، أو عدّل [[50-cloud-init.conf]] نفسه:
+
+~~~bash
+rm /etc/ssh/sshd_config.d/60-no-passwords.conf
+printf "PasswordAuthentication no\nKbdInteractiveAuthentication no\n" > /etc/ssh/sshd_config.d/01-no-passwords.conf
+sshd -t && echo "syntax ok"
+sshd -T | grep -E "^(passwordauthentication|kbdinteractiveauthentication) "
+~~~
+
+~~~text الناتج
+syntax ok
+passwordauthentication no
+kbdinteractiveauthentication no
+~~~
+
+و [[KbdInteractiveAuthentication]] لازم [[no]] كمان: ده طريق تاني بيسأل باسورد (عن طريق PAM). وغلطة كتابة واحدة:
+
+~~~text PasswordAuthentication noo
+/etc/ssh/sshd_config.d/01-no-passwords.conf line 1: unsupported option "noo".
+sshd -t exit=255
+~~~
+
+عشان كده [[sshd -t]] **قبل** الـ reload دايمًا: sshd بإعداد بايظ ممكن ميقومش، وانت داخل بـ SSH.
+
+### الـ reload، والتأكيد من ترمنال تاني
+
+~~~text قبل الـ reload: الباسورد لسه شغّال
+c404b0de6983
+exit=0
+~~~
+
+الملف اتغيّر بس sshd لسه شغّال بالإعداد القديم. على السيرفر [[systemctl reload ssh]] (في المعمل مفيش systemd، فـ [[kill -HUP]] على الـ PID اللي في [[/run/sshd.pid]]، وده نفس اللي [[reload]] بيعمله). الـ reload مبيقفلش الجلسات المفتوحة.
+
+~~~text بعد الـ reload، من ترمنال تاني
+ssh -o PreferredAuthentications=password,keyboard-interactive -o PubkeyAuthentication=no deployer@localhost hostname
+deployer@localhost: Permission denied (publickey).
+exit=255
+
+ssh -i ~/.ssh/deploy_ed25519 -o BatchMode=yes deployer@localhost hostname
+c404b0de6983
+exit=0
+~~~
+
+[[(publickey)]] لوحدها = السيرفر مبقاش بيعرض الباسورد خالص. وسيب الجلسة الأولى مفتوحة لحد ما التأكيد ده يعدّي.
+
+---
+
+## ٦. الباسورد اللي اتكتب في الشات
+
+~~~text passwd -S ثم passwd -l ثم passwd -S
+deployer P 2026-11-03 0 99999 7 -1
+passwd: password changed.
+deployer L 2026-11-03 0 99999 7 -1
+~~~
+
+- [[P]] = فيه باسورد، و [[L]] = مقفول. [[passwd -l]] بيحط [[!]] قدام الـ hash في [[/etc/shadow]]، فمفيش باسورد يطابق.
+- المفتاح لسه شغّال بعدها (اتجرّب: [[hostname]] رجع). لو محتاج باسورد لـ [[sudo]] أو الكونسول: [[passwd deployer]] بباسورد جديد طويل محدش شافه، مش القديم.
+- وشوف حد دخل بيه ولا لأ. على السيرفر: [[journalctl -u ssh --since "7 days ago" | grep -E "Accepted (password|publickey)"]] (من الوثائق؛ المعمل مفيهوش systemd). في المعمل sshd اتشغّل بـ [[-E /var/log/sshd.log]]:
+
+~~~text grep -E "Accepted|Connection closed" /var/log/sshd.log
+Accepted publickey for deployer from ::1 port 50000 ssh2: ED25519 SHA256:4Gmm9HJNM2UCIAfFoR4uF2VsNo9xKNfP01uF3OwuXIc
+Connection closed by authenticating user deployer ::1 port 50000 [preauth]
+~~~
+
+السطر الأول دخول بمفتاح (والبصمة بتقول أنهي مفتاح). التاني محاولة من غير مفتاح اتقفلت قبل الدخول. أي [[Accepted password]] من عنوان مش معروف بعد ما الباسورد اتكتب في الشات = اعتبر السيرفر مخترق.
+
+---
+
+## ٧. البدايل اللي اترفضت
+
+| البديل | ليه لأ |
+|---|---|
+| [[sshpass -p]] في سكربت | بيبان في [[ps]] وفي الملف والـ history |
+| [[sshpass -e]] و [[export SSHPASS]] | أحسن في [[ps]]، بس في env كل برنامج بعده، وفي الـ history لو اتكتب، والسيرفر لازم يقبل باسوردات |
+| [[sshpass -f]] | أحسن الـ ٣، بس لسه باسورد نصّي، ومينفعش تحدّه بـ [[from=]] |
+| [[paramiko]] بـ [[AutoAddPolicy]] | بيبعت الباسورد (أو بيثق) في أي سيرفر بيرد |
+| تسيب الباسورد بعد ما المفتاح يشتغل | اتكتب في شات، فهو مش سر |
+| تضيف المفتاح العام للأداة من غير قيود | لو اتسرّب، داخل من أي مكان وبيعمل tunnels |
+
+---
+
+## الخلاصة
+
+| الخطوة | الأمر | المتوقع |
+|---|---|---|
+| مفتاح للأداة | [[ssh-keygen -t ed25519 -N "" -C name -f key]] | ملفين [[key]] و [[key.pub]] |
+| حطه | [[ssh-copy-id -i key.pub user@host]] | [[Number of key(s) added: 1]] |
+| حدّه | [[from="IP",no-port-forwarding,...]] في [[authorized_keys]] | من عنوان تاني: [[Permission denied]] |
+| جرّب | [[ssh -i key -o BatchMode=yes]] | الأمر اشتغل، ولو لأ 255 على طول |
+| اقفل الباسورد | ملف [[01-...]] في [[sshd_config.d]] و [[sshd -t]] و [[sshd -T]] و reload | [[passwordauthentication no]] |
+| اتأكد | [[ssh -o PubkeyAuthentication=no]] | [[Permission denied (publickey).]] |
+| الباسورد المتسرّب | [[passwd -l]] أو [[passwd]] جديد، واللوج | [[L]]، ومفيش [[Accepted password]] غريب |`,
+        deep: {
+          why: R`الباسورد سر واحد بيفتح كل حاجة، ومينفعش تحدّه بمكان ولا بأوامر، ولما يتنقل كنص (شات، سكربت، env) بيوصل لأماكن انت مش متحكم فيها. المفتاح بيفضل على الجهاز اللي اتعمل عليه، والسيرفر عنده الجزء العام بس (مش سر)، وتقدر تحدّه وتشيله لوحده من غير ما تغيّر حاجة لحد تاني. وطالما السيرفر بيقبل باسوردات، أي bot على الإنترنت بيجرّب يخمّن (fail2ban بيخفف بس).`,
+          how: R`[[sshpass]] بيفتح pseudo-terminal، ويشغّل [[ssh]] جواه، ولما ssh يطبع [[password:]] بيكتب الباسورد. فلازم السيرفر يسأل باسورد. و [[ps]] بيقرا [[/proc/<pid>/cmdline]] اللي أي يوزر يقدر يقراه، و [[/proc/<pid>/environ]] محمي بـ ptrace (نفس اليوزر أو root بالصلاحية). و [[ssh-copy-id]] بيدخل بأي طريقة متاحة ويضيف المفتاح لـ [[authorized_keys]]. وعند الدخول بالمفتاح، السيرفر بيتأكد إن المفتاح العام في الملف وبيطلب توقيع بالمفتاح الخاص، والقيود في أول السطر بتتطبق بعد ما المفتاح يتقبل. و [[sshd]] بيقرا الإعدادات من فوق لتحت وبياخد أول قيمة، و [[Include]] في أول الملف بيخلّي ملفات [[sshd_config.d]] أولى من الملف الأساسي. و [[SIGHUP]] (reload) بيخلّي sshd يعيد قراية الإعدادات للاتصالات الجديدة بس.`,
+          when: R`أي سكربت أو cron أو CI أو مساعد AI أو أداة نشر بتدخل سيرفر. وأي مرة تلاقي [[sshpass]] أو [[password=]] في سكربت أو ملف إعدادات، أو باسورد اتكتب في شات أو تذكرة. وبعد ما تسلّم سيرفر لحد أو تستلمه.`,
+          mistakes: R`تكتب الباسورد في الشات أو في السكربت. وتعمل [[export SSHPASS]] في ترمنال وتكمّل شغل عادي فيه. وتستخدم [[AutoAddPolicy]] أو [[StrictHostKeyChecking=no]] عشان «الأداة متعلّقش». وتستخدم مفتاحك الشخصي للأداة بدل مفتاح ليها. وتضيف مفتاح الأداة من غير [[from=]]. وتنسى [[::1]] أو IPv6 في [[from=]]. وتحط [[PasswordAuthentication no]] في ملف اسمه بعد [[50-cloud-init.conf]]. وتعمل reload من غير [[sshd -t]]. وتقفل الباسورد قبل ما تجرّب المفتاح من ترمنال تاني. ومتغيّرش الباسورد اللي اتكتب في الشات.`
+        },
+        sol: R`[[ps]] من [[intern]]: سطر [[bash -c ... SSHPASS=Lab-only-Pass-9 ...]] ظاهر، وسطر [[sshpass -e ssh ...]] من غير باسورد. [[environ]]: [[Permission denied]] لـ [[intern]]، و [[SSHPASS=xxxxxxxxxxxxxxx]] لـ [[bot]]. الـ history: السطر من غير مسافة بس. [[sshpass]]: [[exit=5]] باسورد غلط، و [[exit=6]] سيرفر مش معروف. paramiko بالمفتاح أول مرة: [[Server 'localhost' not found in known_hosts]]. [[BatchMode]] من غير مفتاح: [[Permission denied (publickey,password).]] و 255. بعد [[ssh-copy-id]]: [[Number of key(s) added: 1]] و [[hostname]]. [[from="127.0.0.1"]] لوحده: [[Permission denied (publickey).]] لأن [[Connecting to localhost [::1]]]. ملف [[60-...]]: [[passwordauthentication yes]]، و [[01-...]]: [[no]]. [[noo]]: [[unsupported option "noo".]] و 255. بعد الـ reload: [[Permission denied (publickey).]]، والمفتاح شغّال. [[passwd -S]]: [[P]] ثم [[L]].
+
+اتجرّب في [[ubuntu:24.04]] في Docker (OpenSSH 9.6p1، sshpass 1.09، paramiko 2.12.0). [[systemctl reload ssh]] و [[journalctl -u ssh]] من الوثائق (مفيش systemd في الـ container).`,
+        practice: [
+          { lvl: 'سريع', t: R`من غير ما تبص: اكتب ٤ أماكن الباسورد ممكن يتسرّب فيها لما سكربت يستخدم [[sshpass]]، وجنب كل واحد أمر تتأكد بيه.`, done: R`ذكرت [[ps]] ([[ps -eo user,args]] من يوزر تاني)، والـ env ([[cat /proc/<pid>/environ]] أو [[env]] في برنامج ابن)، والـ history ([[cat ~/.bash_history]])، والملفات ([[grep -rn "sshpass\|SSHPASS" ~ /etc]])، وأي واحد الشات.` },
+          { lvl: 'تطبيق', t: R`اقرا وتوقّع: ملفات [[sshd_config.d]] فيها [[10-hardening.conf]] ([[PasswordAuthentication no]]) و [[50-cloud-init.conf]] ([[PasswordAuthentication yes]]) و [[99-local.conf]] ([[PasswordAuthentication yes]] و [[PermitRootLogin no]]). توقّع [[sshd -T]] لـ [[passwordauthentication]] و [[permitrootlogin]]، وبعدين اعملهم في المعمل.`, done: R`توقعت [[passwordauthentication no]] (من [[10-]]، أول ملف) و [[permitrootlogin no]] (أول مرة الإعداد ده يظهر في [[99-]]، لأن سطره في الملف الأساسي متعلّق عليه)، و [[sshd -T]] طلّع الاتنين كده (اتجرّب على Ubuntu 24.04)، وكتبت قاعدة «أول قيمة تكسب» بكلامك.` },
+          { lvl: 'تطبيق', t: R`صلّح الكود البايظ: [[deploy.py]] فيه [[client.set_missing_host_key_policy(paramiko.AutoAddPolicy())]] و [[password="Summer2026"]] مكتوب في الملف، و [[deploy.sh]] فيه [[sshpass -p "$PW" ssh -o StrictHostKeyChecking=no ...]]. حوّل الاتنين لمفتاح و known_hosts، واكتب إيه اللي هيحصل لو حد عمل نفسه السيرفر في كل نسخة.`, done: R`الاتنين شغّالين بمفتاح ([[key_filename]] و [[ssh -i ... -o BatchMode=yes]])، وسيرفر بمفتاح host مختلف بيترفض في الاتنين ([[not found in known_hosts]] و [[Host key verification failed.]])، و [[grep -rn "password=\|sshpass" .]] فاضي.` },
+          { lvl: 'تطبيق', t: R`ابني [[add-tool-key.sh <pubkey-file> <from-ips> <label>]] على السيرفر: بيتأكد إن الملف مفتاح صالح ([[ssh-keygen -lf]])، ويضيفه لـ [[authorized_keys]] بـ [[from=]] والقيود والـ label في الآخر، ومبيضيفوش مرتين لو موجود، و [[--remove <label>]] بيشيله.`, done: R`إضافة مرتين = سطر واحد ([[grep -c label]] = 1)، وملف مش مفتاح بيترفض برسالة، والدخول من IP مش في اللستة [[Permission denied]]، و [[--remove]] بيرجّع العدد 0 والدخول بيترفض.` },
+          { lvl: 'تحدي', t: R`محاكاة: ٣ سيرفرات (٣ containers فيها sshd) بتقبل باسوردات، وواحد عليه [[sshpass]] في cron. اعمل خطة ونفّذها: مفتاح للأداة على الـ ٣، وتغيير الـ cron، وقفل الباسورد بالترتيب الآمن (من غير ما تتقفل بره ولا الأداة تقف دقيقة)، وتأكيد آلي في الآخر.`, done: R`سكربت تأكيد بيلف على الـ ٣ ويطبع لكل واحد: المفتاح [[OK]]، والباسورد [[refused]]، و [[sshd -T]] [[no]]، والـ cron اشتغل بعد التغيير (سطر في اللوج بالوقت)، ومفيش [[sshpass]] في أي ملف.` },
+          { lvl: 'تحدي', t: R`اشرحها: اكتب الرسالة اللي تبعتها لمساعد AI (أو زميل) بدل الباسورد: إزاي يعمل مفتاحه، ويبعتلك إيه بالظبط، وانت هتعمل إيه، وهيدخل إزاي، وإمتى المفتاح هيتشال. من غير ما الرسالة فيها أي سر.`, done: R`الرسالة فيها: [[ssh-keygen -t ed25519 -C <label>]] عنده، يبعت [[.pub]] بس، انت هتضيفه بـ [[from=]] وقيود، هيدخل بـ [[-o BatchMode=yes]]، وهيتشال بعد المهمة بـ [[sed -i "/ <label>$/d"]]، ومفيش ولا باسورد أو مفتاح خاص فيها.` },
+        ],
+        ci: [
+          { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`bash`, run: R`ssh-keygen -q -t ed25519 -N "" -C "ai-agent" -f ./agent_ed25519
+ssh-keygen -lf ./agent_ed25519.pub | awk '{print $1, $NF}'
+echo "from=\"127.0.0.1,::1\",no-agent-forwarding,no-port-forwarding,no-X11-forwarding $(cat agent_ed25519.pub)" > authorized_keys
+echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOtherKeyOtherKeyOtherKeyOtherKeyOther other@laptop" >> authorized_keys
+grep -c " ai-agent$" authorized_keys
+cut -d' ' -f1 authorized_keys | head -1
+sed -i.bak "/ ai-agent$/d" authorized_keys
+echo "after remove: $(grep -c ai-agent authorized_keys)"
+wc -l < authorized_keys | tr -d ' '`, expect: [R`256 (ED25519)`, R`from="127.0.0.1,::1",no-agent-forwarding,no-port-forwarding,no-X11-forwarding`, R`after remove: 0`] },
+        ],
       }
     ]
-  },
+  }
 ]);

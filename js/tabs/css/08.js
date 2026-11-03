@@ -1,715 +1,590 @@
 // تكملة تاب css: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/css/01.js (شرح حقول الدرس في أوله)
 MORE("css", [
     {
-      t: "Tailwind CSS v4",
-      l: 2,
-      n: "Tailwind بيقرا الكلاسات من ملفاتك ويطلّع CSS للي استخدمته بس، والتوكنز والإعداد كلهم في ملف CSS",
+      t: "الصور والفيديو و SVG",
+      l: 1,
+      n: "صورة بتملا مكانها من غير ما تتمط، وصيغ حديثة بـ fallback، وفيديو و YouTube و SVG بيتصرفوا صح",
       items: [
         {
-          cmd: "Tailwind v4",
-          title: "إزاي كلاس زي p-4 بيبقى CSS",
-          desc: R`Tailwind مش مكتبة مكونات. هو أداة بتقرا ملفات مشروعك، وتلاقي أسماء كلاسات زي [[flex]] و [[p-4]] و [[text-lg]]، وتطلّع ملف CSS فيه القواعد دي بس. فانت بتنسّق من جوه الـ HTML أو الـ JSX مباشرة.
+          cmd: "object-fit",
+          title: "صورة الكارت تملا المكان من غير ما تتمط",
+          desc: R`لما تدّي صورة عرض وارتفاع مش بنفس نسبتها، المتصفح بيمطّها. [[object-fit: cover]] بيخليها تملا المكان كله وتتقص من الأطراف، و [[contain]] بيخليها تبان كلها وتسيب فراغ (مناسب للّوجو وصور المنتجات اللي مينفعش حاجة منها تتقص).
 
-في v4 الإعداد كله في CSS: سطر [[@import "tailwindcss";]] في ملف الـ CSS الرئيسي، و plugin لأداة الـ build (Vite، أو PostCSS في Next). مفيش [[tailwind.config.js]] إلا لو عايزه.`,
-          example: R`npm install tailwindcss @tailwindcss/vite
-// vite.config.ts
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import tailwindcss from "@tailwindcss/vite";
-export default defineConfig({ plugins: [react(), tailwindcss()] });
-// src/index.css
-@import "tailwindcss";
-// src/App.tsx
-<button className="rounded-lg bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-500">حفظ</button>
-// في Next.js بدل plugin الـ Vite: npm i -D tailwindcss @tailwindcss/postcss
-// postcss.config.mjs
-export default { plugins: { "@tailwindcss/postcss": {} } };`,
-          try: R`نفّذ الإعداد في مشروع الـ lab وحط الزرار في App.tsx. افتح DevTools › Sources وافتح ملف الـ CSS: هتلاقي [[.px-4]] موجودة و [[.px-5]] مش موجودة لأنك مكتبتهاش. اكتب [[px-5]] واحفظ وشوفها اتضافت.`,
+و [[object-position]] بيحدد أنهي جزء يفضل باين لما تتقص: [[50% 20%]] يعني قريب من فوق، مفيد لصور الناس عشان الوش ميتقصش.
+
+ومعاهم [[aspect-ratio]] عشان كل الكروت تبقى نفس الشكل مهما كانت الصور. وفي Tailwind: [[aspect-square]] و [[object-cover]] و [[object-top]].`,
+          example: R`.card-img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  object-position: 50% 20%;
+}
+.logo { width: 8rem; height: 4rem; object-fit: contain; }
+<img class="card-img" src="/p/42.webp" width="800" height="600" alt="سماعة سودا">
+<img className="aspect-square w-full object-cover object-top" src="/team/mona.webp" alt="منى، مديرة المبيعات" width="400" height="400" />
+<div className="relative aspect-video"><Image src="/hero.webp" alt="" fill sizes="100vw" className="object-cover" /></div>`,
+          try: R`حط صورة طولية (بورتريه) في صندوق [[aspect-ratio: 4 / 3]]، وفي DevTools غيّر [[object-fit]] بين [[fill]] و [[cover]] و [[contain]] و [[none]]. وبعدين مع cover غيّر [[object-position]] لـ [[top]] و [[bottom]] وشوف أنهي جزء بيختفي.`,
           flag: "script",
           deep: {
-            why: R`في CSS العادي بتقعد تخترع أسماء ([[.card-header-title-wrapper]])، وتتنقّل بين ملفين، والملف بيكبر للأبد لأن محدش بيجرؤ يمسح قاعدة مش عارف مين بيستخدمها. Tailwind بيحط التنسيق جنب العنصر، والـ CSS النهائي فيه اللي مستخدم بس، فبيفضل صغير مهما المشروع كبر.`,
-            how: R`محرّك v4 (Oxide) أسرع بكتير: الأجزاء التقيلة زي اللف على الملفات مكتوبة بـ Rust، والباقي TypeScript. وقت الـ dev والـ build بيعمل كده:
+            why: R`كروت المنتجات والفريق والمقالات بتيجي صورها بمقاسات مختلفة من ناس مختلفة. من غير object-fit يا الصور تتمط (منظر مش احترافي خالص)، يا كل كارت بارتفاع مختلف والـ grid يبوظ.`,
+            how: R`الـ [[<img>]] ليه صندوق (العرض والارتفاع اللي انت اديتهم) ومحتوى (الصورة نفسها بنسبتها). [[object-fit]] بيقول المحتوى يتحط إزاي جوه الصندوق: [[fill]] (الافتراضي) بيمطّه، و [[cover]] بيكبّره لحد ما يغطي الصندوق كله ويقص الزيادة، و [[contain]] بيصغّره لحد ما يبان كله، و [[none]] بيسيبه بمقاسه الأصلي، و [[scale-down]] زي contain بس عمره ما يكبّر الصورة.
 
-1) بيلف على ملفات المشروع لوحده (automatic source detection)، وبيتجاهل اللي في [[.gitignore]] (زي node_modules) والملفات الـ binary. ولو فيه فولدر برا المشروع (باكدج UI في monorepo) بتضيفه بـ [[@source "../packages/ui";]].
+[[object-position]] بنفس فكرة [[background-position]]: القيمة الافتراضية [[50% 50%]] (النص). لو القص بيقطع الوشوش، ارفعها لفوق.
 
-2) بيقسّم كل ملف لكلمات ويشوف مين فيهم اسم utility صالح ([[p-4]] و [[md:flex]]). هو مش بيفهم JavaScript، بيدوّر على نصوص، عشان كده الكلاس لازم يبقى مكتوب كامل في الكود.
+الـ [[width]] و [[height]] في الـ HTML لسه مهمين عشان يحجزوا المكان (درس img)، بس خد بالك: الـ [[height]] اللي في الـ HTML المتصفح بيعامله كأنه [[height]] في CSS، فلو سبته، الصورة بتاخد ارتفاعه وتتجاهل الـ [[aspect-ratio]]. عشان كده لازم [[height: auto]] في CSS، و Tailwind بيحطها لكل الصور في الـ Preflight.
 
-3) بيطلّع CSS للكلمات دي بس، مترتّب في cascade layers: [[theme]] (المتغيرات)، و [[base]] (الـ Preflight: reset بيشيل الـ margins الافتراضية ويحط [[box-sizing: border-box]] على كل حاجة)، و [[components]]، و [[utilities]].
-
-والقيم بقت متغيرات: [[p-4]] بقت [[padding: calc(var(--spacing) * 4)]]، فأي رقم بيشتغل ([[p-13]] و [[h-17]]) من غير إعداد.
-
-في Vite الـ plugin بيشتغل جوه الـ bundler. وفي Next الـ plugin بتاع PostCSS، و [[@import "tailwindcss"]] في [[app/globals.css]] المستورد في الـ root layout.`,
-            when: R`أي مشروع React أو Next جديد. ولو المشروع v3 فيه [[tailwind.config.js]] و [[@tailwind base]]، فيه أداة ترقية رسمية: [[npx @tailwindcss/upgrade]].`,
-            mistakes: R`تبني اسم الكلاس بـ string: [[bg-$__{color}-500]]، و Tailwind مش هيشوفه ومش هيطلّعه. اكتب الأسماء كاملة في object: [[{ red: "bg-red-500", green: "bg-green-500" }]]. وتستخدم أسماء v3 في v4: [[shadow-sm]] بتاعة v3 اسمها دلوقتي [[shadow-xs]]، و [[shadow-sm]] في v4 بقت أكبر (هي [[shadow]] القديمة)، و [[outline-none]] بقت [[outline-hidden]]، و [[ring]] بقى 1px، ولون الـ border الافتراضي بقى [[currentColor]] مش رمادي. وتكتب [[@tailwind base;]] بتاعة v3 في مشروع v4.`
+[[<Image fill>]] في Next.js بيخلي الصورة [[position: absolute]] وتملا أبوها، فالأب لازم يبقى [[relative]] وليه مقاس (هنا [[aspect-video]])، و [[object-cover]] بيمنع المط، و [[sizes]] ضروري عشان يختار الملف الصح.`,
+            when: R`أي صورة في صندوق مقاسه ثابت: كروت، و avatars، وهيرو. contain للّوجو وصور المنتجات على خلفية بيضا اللي مينفعش حاجة منها تتقص. و [[object-fit]] بيشتغل كمان على [[<video>]].`,
+            mistakes: R`[[height: 200px]] على صورة من غير object-fit فتتمط. [[background-image]] بدل [[<img>]] عشان تستخدم [[background-size: cover]]: كده ضاع الـ alt والـ lazy loading والـ srcset. [[<Image fill>]] والأب مش relative فالصورة تملا الصفحة كلها. و cover على لوجو فيتقص نصه.`
           },
-          teach: R`## من كلمة في className لقاعدة CSS
+          teach: R`## الصورة جوه صندوق مش بنفس نسبتها
 
-نفّذنا المثال حرفيًا: مشروع Vite + React فيه الإعداد ده بالظبط (Tailwind 4.3.3 و Vite 8)، وعملنا [[npx vite build]]، وقرينا ملف الـ CSS اللي طلع، وفتحنا الصفحة في Chrome وقسنا الزرار.
+أي [[<img>]] فيه حاجتين: **الصندوق** (المقاس اللي الـ CSS اداهوله) و**الصورة نفسها** بنسبتها الأصلية. لما النسبتين مختلفين، [[object-fit]] بيقرر الصورة تتحط إزاي. عشان نشوف ده بالأرقام، عملنا صورة طولية 600 × 900 مقسومة لـ ٩ شرايط ألوان، كل شريط 100px، مترقمين من 0 (فوق) لـ 8 (تحت). حطيناها في كارت عرضه 400، وصوّرنا الصورة في Chrome وقرينا لون أول سطر وآخر سطر فيها: كده نعرف أنهي جزء من الصورة باين.
 
 ---
 
-## ١. التسطيب
+## ١. [[.card-img]] سطر سطر
 
-~~~bash
-npm install tailwindcss @tailwindcss/vite
+~~~text style.css
+.card-img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  object-position: 50% 20%;
+}
 ~~~
 
-باكدجين: [[tailwindcss]] نفسه (المحرك)، و [[@tailwindcss/vite]] الـ plugin اللي بيشغّله جوه Vite. الـ [[@]] في أول الاسم معناه إن الباكدج جوه «scope» اسمه tailwindcss على npm.
+- [[width: 100%]]: عرض الكارت = 400.
+- [[height: auto]]: مهم جدًا. الـ HTML فيه [[height="600"]]، والمتصفح بيعامله كأنه CSS. جربنا من غير السطر ده: الصورة طلعت **400 × 600** والـ aspect-ratio اتجاهل. ومعاه: **400 × 300**.
+- [[aspect-ratio: 4 / 3]]: الارتفاع = العرض × 3 ÷ 4 = 300.
+- [[object-fit: cover]]: كبّر الصورة لحد ما تغطي الصندوق كله، واقصص الزيادة.
+- [[object-position: 50% 20%]]: لو فيه قص، أنهي جزء يفضل باين. الرقم الأول أفقي والتاني رأسي.
 
-## ٢. [[vite.config.ts]]
+### الحسبة بتاعة cover
 
-~~~text vite.config.ts
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import tailwindcss from "@tailwindcss/vite";
-export default defineConfig({ plugins: [react(), tailwindcss()] });
+الصورة 600 × 900 والصندوق 400 × 300. عشان تغطي العرض لازم تصغر لـ 400 ÷ 600 = ⅔، فتبقى 400 × 600. الارتفاع 600 والصندوق 300، يعني 300 بكسل زيادة لازم يتقصوا. و [[20%]] معناها: اقصص 20% من الزيادة من فوق والباقي من تحت.
+
+| object-position | اللي باين من فوق لتحت |
+|---|---|
+| [[50% 50%]] (الافتراضي) | شريط 2 لـ 6 (النص) |
+| [[50% 20%]] (المثال) | شريط 0 لـ 5 |
+| [[top]] | شريط 0 لـ 4 |
+| [[bottom]] | شريط 4 لـ 8 |
+
+مع [[20%]] أول شريط (فوق خالص) باين، فلو صورة شخص، الراس مش هتتقص.
+
+## ٢. القيم الخمسة على نفس الصورة
+
+| object-fit | اللي حصل (متقاس) |
+|---|---|
+| [[fill]] (الافتراضي) | الـ ٩ شرايط كلهم باينين ومضغوطين: الصورة اتمطّت |
+| [[cover]] | الصندوق مليان، وجزء من فوق وتحت اتقص |
+| [[contain]] | الصورة كلها باينة (شريط 0 لـ 8)، والجنبين فاضيين أبيض |
+| [[none]] | الصورة بمقاسها الأصلي في النص: شريط 3 لـ 5 بس |
+| [[scale-down]] | زي contain، بس عمره ما يكبّر صورة صغيرة |
+
+## ٣. [[.logo { width: 8rem; height: 4rem; object-fit: contain; }]]
+
+صندوق 128 × 64 بالعرض، والصورة طولية. مع [[contain]]: النص فيه الصورة، والشمال واليمين فاضيين (أبيض). يعني اللوجو كله باين من غير قص ولا مط.
+
+## ٤. نفس الكلام بـ HTML و Tailwind و Next
+
+~~~text index.html
+<img class="card-img" src="/p/42.webp" width="800" height="600" alt="سماعة سودا">
 ~~~
 
-- [[import ... from "..."]]: هات حاجة من باكدج.
-- [[defineConfig({...})]]: دالة من Vite بتاخد الإعداد (وبتخلي المحرر يكمّلك الخصائص).
-- [[plugins: [react(), tailwindcss()]]]: قايمة plugins. كل واحد دالة بتتنده بـ [[()]] وبترجع plugin. [[react()]] بيفهّم Vite الـ JSX، و [[tailwindcss()]] بيولّد الـ CSS.
-- [[export default]]: ده اللي الملف بيطلّعه، و Vite بيقراه.
+الـ [[width]] و [[height]] في الـ HTML بيدّوا المتصفح النسبة قبل ما الصورة تتحمّل، فيحجز المكان.
 
-## ٣. [[src/index.css]]
-
-~~~text src/index.css
-@import "tailwindcss";
+~~~text Tailwind
+<img className="aspect-square w-full object-cover object-top" ... />
 ~~~
 
-السطر ده بيجيب ٣ حاجات: الـ theme (المتغيرات زي الألوان والمسافات)، و Preflight (reset)، والـ utilities. والملف ده لازم يتعمله import في [[main.tsx]] ([[import "./index.css";]]).
+[[aspect-square]] = [[aspect-ratio: 1 / 1]]، و [[w-full]] = [[width: 100%]]، و [[object-cover]] و [[object-top]] نفس الخصائص. ومش محتاج [[h-auto]] لأن الـ Preflight بتاع Tailwind بيحط [[height: auto]] على كل الصور.
 
-## ٤. الزرار
-
-~~~text src/App.tsx
-<button className="rounded-lg bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-500">حفظ</button>
+~~~text Next.js
+<div className="relative aspect-video"><Image src="/hero.webp" alt="" fill sizes="100vw" className="object-cover" /></div>
 ~~~
 
-[[className]] هو [[class]] في JSX. وكل كلمة جواه utility:
-
-| الكلاس | القاعدة اللي طلعت في الـ CSS | القيمة المتقاسة على الزرار |
-|---|---|---|
-| [[rounded-lg]] | [[border-radius: var(--radius-lg)]] و [[--radius-lg: .5rem]] | 8px |
-| [[bg-indigo-600]] | [[background-color: var(--color-indigo-600)]] | oklch(0.511 0.262 276.966) |
-| [[px-4]] | [[padding-inline: calc(var(--spacing) * 4)]] و [[--spacing: .25rem]] | 16px يمين وشمال |
-| [[py-2]] | نفس الفكرة × 2 | 8px فوق وتحت |
-| [[text-white]] | لون الكلام أبيض | rgb(255, 255, 255) |
-| [[hover:bg-indigo-500]] | جوه [[@media (hover:hover)]] | oklch(0.585 0.233 277.117) وقت الـ hover |
-
-- [[px]] = padding على المحور x (يمين وشمال)، و [[py]] على y (فوق وتحت).
-- [[padding-inline]] = الجنبين حسب اتجاه الكلام. و [[calc(var(--spacing) * 4)]] = 0.25rem × 4 = 1rem = 16px.
-- قاعدة الـ hover نفسها في الملف كانت كده:
-
-~~~text من الـ CSS الناتج
-@media (hover:hover){.hover\:bg-indigo-500:hover{background-color:var(--color-indigo-500)}}
-~~~
-
-الـ [[\:]] لأن [[:]] جوه اسم كلاس لازم يتعمله escape، و [[@media (hover:hover)]] = على الأجهزة اللي فيها ماوس بس.
-
-الزرار طلع 62.73 × 40، والـ CSS كله 4668 byte (1.6 KB بعد gzip).
-
-### Preflight اشتغل كمان
-
-على نفس الصفحة: [[margin]] بتاع الـ body بقى 0px، و [[box-sizing]] على الزرار [[border-box]]، والـ border بقى [[0px solid]]. ده الـ reset اللي بيجي مع [[@import "tailwindcss"]].
-
-## ٥. التجربة: [[px-5]] بدل [[px-4]]
-
-| | في الـ CSS | padding الجنبين | عرض الزرار |
-|---|---|---|---|
-| [[px-4]] | [[.px-4]] بس | 16px | 62.73 |
-| [[px-5]] | [[.px-5]] بس، و [[.px-4]] اختفت | 20px | 70.73 |
-
-وحاجة اتعلمناها بالغلط: أول مرة المشروع مكانش فيه [[.gitignore]]، فـ Tailwind قرا فولدر [[dist]] القديم ولقى فيه [[px-4]]، فطلّع الاتنين. لما ضفنا [[.gitignore]] فيه [[dist]] و [[node_modules]] طلع اللي مستخدم بس. ده لأن Tailwind بيلف على ملفات المشروع كلها وبيتجاهل اللي في [[.gitignore]].
-
-## ٦. Next.js (من الـ docs الرسمية، متجرّبش هنا)
-
-~~~bash
-npm i -D tailwindcss @tailwindcss/postcss
-~~~
-
-~~~text postcss.config.mjs
-export default { plugins: { "@tailwindcss/postcss": {} } };
-~~~
-
-[[-D]] = devDependency (أداة build مش كود بيتبعت للمتصفح). Next بيستخدم PostCSS، فالـ plugin بتاعه هنا بدل plugin الـ Vite، و [[@import "tailwindcss";]] في [[app/globals.css]].
+[[fill]] بيخلي الصورة [[position: absolute]] و [[inset: 0]]، فبتملا الأب. عشان كده الأب [[relative]] (مرجع) و [[aspect-video]] (= 16 / 9، عشان يبقى ليه ارتفاع).
 
 ## الخلاصة
 
-- الإعداد: باكدج + plugin + سطر [[@import "tailwindcss";]].
-- Tailwind بيقرا ملفاتك كنص ويطلّع قاعدة لكل كلاس لقاه بس، فالكلاس لازم يتكتب كامل.
-- القيم متغيرات: [[px-4]] = [[--spacing]] × 4، والألوان [[--color-*]].
-- [[hover:]] ملفوف في [[@media (hover:hover)]].`,
+- [[cover]] للكروت والـ avatars (مليانة ومقصوصة)، و [[contain]] للّوجوهات (كاملة).
+- [[object-position]] بيختار الجزء الباين، ورفعه لفوق بيحمي الوشوش.
+- مع [[aspect-ratio]] على صورة فيها [[height]] في الـ HTML، اكتب [[height: auto]].`,
           lines: [
-            "سطّب Tailwind والـ plugin بتاع Vite (في مشروع الـ lab).",
-            "إعداد Vite.",
-            "plugin الـ React.",
-            "plugin الـ Tailwind.",
-            "ضيفه جنب React، وده كل الإعداد في Vite.",
-            "السطر الوحيد في ملف الـ CSS: بيجيب الـ theme والـ reset (Preflight) والـ utilities.",
-            "زرار كامل من غير ولا سطر CSS: تدوير، وخلفية، ومسافات، ولون كلام، ولون عند الـ hover.",
-            "في Next.js: PostCSS بالـ plugin بتاعه، و [[@import]] نفسه في globals.css."
+            "صورة الكارت.",
+            "عرض الكارت كله.",
+            R`[[height: auto]]: ألغي الارتفاع اللي جاي من [[height="600"]] في الـ HTML، عشان الـ aspect-ratio هو اللي يحسب الارتفاع.`,
+            "كل الكروت نفس النسبة مهما كانت الصورة.",
+            "املا الصندوق كله واقصص الزيادة بدل ما تمط.",
+            "لو فيه قص، خلّي الجزء اللي فوق شوية باين (عشان الوشوش).",
+            "قفلة.",
+            R`لوجو: مقاس ثابت، و [[contain]] عشان يبان كله من غير قص.`,
+            "الصورة في الـ HTML، ومقاسها الأصلي لحجز المكان.",
+            "نفس الفكرة بـ Tailwind: مربع، ومليان، والقص من تحت.",
+            R`Next Image بـ [[fill]]: الأب [[relative]] وليه نسبة، والصورة [[object-cover]].`
           ],
-          sol: R`الزرار بيظهر بنفسجي غامق (indigo-600) والكلام أبيض ومدوّر، ولما تقف عليه بالماوس بيفتح شوية (indigo-500). في Sources (أو في Elements › Styles على الزرار) هتلاقي CSS متولد فيه قواعد زي دي بالظبط (من Tailwind v4.3):
+          sol: R`[[fill]]: الصورة الطولية اتمطت بالعرض والوشوش عريضة. [[cover]]: الصندوق مليان والصورة بنسبتها، بس اتقص جزء من فوق ومن تحت. [[contain]]: الصورة كلها باينة وفيه فراغ يمين وشمال. [[none]]: الصورة بحجمها الأصلي، غالبًا جزء صغير منها بس اللي باين.
 
-[[.px-4 { padding-inline: calc(var(--spacing) * 4); }]] و [[--spacing: 0.25rem]] متعرّف على [[:root]]، يعني 1rem. ومش هتلاقي [[.px-5]] خالص. اكتب [[px-5]] بدل [[px-4]] واحفظ: الـ Vite بيحدّث الصفحة من غير refresh، والقاعدة [[.px-5]] ظهرت في الملف، و [[.px-4]] اختفت لو مبقتش مستخدمة في أي حتة. وقاعدة الـ hover هتلاقيها ملفوفة جوه [[@media (hover: hover)]]، فعلى الموبايل بالـ touch مش بتعلق.
-
-لو مفيش أي ستايل اتطبق: اتأكد إن [[tailwindcss()]] في plugins بتاعة vite.config، وإن [[@import "tailwindcss";]] في أول ملف CSS، وإن الملف ده متعمله import في [[main.tsx]]. ولو الملف فيه كلاسات كتير مش كاتبها، ده الـ preflight (reset) والـ theme، وده طبيعي.`
+مع cover و [[object-position: top]]: اللي فوق باين واللي تحت اتقص، و [[bottom]] العكس. لو التغيير ملوش أي تأثير، يبقى الصورة نسبتها قريبة من الصندوق أصلًا، جرّب صورة أطول.`
         },
         {
-          cmd: "@theme",
-          title: "ألوانك وخطوطك تبقى كلاسات",
-          desc: R`[[@theme]] في ملف الـ CSS بيعرّف الـ design tokens، وكل متغير بيطلّع كلاسات: [[--color-brand]] بيطلّع [[bg-brand]] و [[text-brand]] و [[border-brand]]، و [[--font-display]] بيطلّع [[font-display]]، و [[--breakpoint-3xl]] بيطلّع [[3xl:]].
+          cmd: "picture",
+          title: "صورة مختلفة للموبايل، و AVIF مع fallback",
+          desc: R`[[<picture>]] بيحط جواه كذا [[<source>]] وفي الآخر [[<img>]]. المتصفح بيمشي على الـ sources بالترتيب وياخد أول واحد ينفع (نوعه مدعوم و [[media]] بتاعته متحققة)، ويعرضه في الـ img. ولو ولا واحد نفع، بياخد الـ img نفسه.
 
-و [[@theme inline]] لما التوكن نفسه بيشاور على متغير تاني (زي خط من next/font، أو لون بيتغير مع الثيم).`,
-          example: R`@import "tailwindcss";
-@theme {
-  --color-brand: oklch(0.55 0.2 265);
-  --color-brand-soft: oklch(0.95 0.03 265);
-  --font-display: "Cairo", system-ui, sans-serif;
-  --radius-card: 1.25rem;
-  --breakpoint-3xl: 120rem;
-}
-@theme inline {
-  --color-bg: var(--bg);
-  --color-fg: var(--fg);
-}
-:root { --bg: white; --fg: oklch(0.21 0.03 265); }`,
-          try: R`ضيف [[--color-brand]] واستخدم [[bg-brand text-white]] على زرار. وبعدين افتح الـ CSS الناتج ودوّر على [[--color-brand]]: هتلاقيه على [[:root]] كمتغير عادي، يعني تقدر تستخدمه في CSS عادي بـ [[var(--color-brand)]] كمان.`,
+استخدامين: صيغ حديثة ([[AVIF]] أصغر بكتير، وبعدها [[WebP]]، وبعدها JPEG للقديم)، و art direction: صورة مقصوصة مختلفة للموبايل (مش نفس الصورة أصغر، لأن ده شغل [[srcset]] في درس img).
+
+الـ [[alt]] والـ [[width]] و [[height]] و [[loading]] والكلاسات كلها على الـ [[<img>]]، مش على picture.`,
+          example: R`<picture>
+  <source media="(max-width: 767px)" type="image/avif" srcset="/hero-mobile.avif" width="800" height="1000">
+  <source media="(max-width: 767px)" type="image/webp" srcset="/hero-mobile.webp" width="800" height="1000">
+  <source type="image/avif" srcset="/hero-800.avif 800w, /hero-1600.avif 1600w" sizes="100vw">
+  <source type="image/webp" srcset="/hero-800.webp 800w, /hero-1600.webp 1600w" sizes="100vw">
+  <img src="/hero-1600.jpg" width="1600" height="700" alt="عرض الصيف: خصم 30% على السماعات" fetchpriority="high">
+</picture>`,
+          try: R`حوّل صورة لـ AVIF و WebP (من squoosh.app أو [[npx sharp-cli]])، واعمل الـ picture. افتح DevTools › Network وفلتر على Img: شوف أنهي ملف اتحمّل على عرض كبير، وبعدين وضع الموبايل واعمل refresh. وقارن أحجام الملفات التلاتة.`,
           flag: "script",
           deep: {
-            why: R`بدل ما تكتب [[bg-[#4f46e5]]] في مية مكان، بتدّي اللون اسم في مكان واحد. والتصميم كله بيبقى من مجموعة قيم محددة (ألوان، وخطوط، ومسافات، وتدوير)، ولو اللون اتغير بيتغير في سطر.`,
-            how: R`كل متغير في [[@theme]] ليه namespace بيحدد الكلاسات: [[--color-*]] للألوان، و [[--font-*]] للخطوط، و [[--text-*]] لأحجام الخط، و [[--radius-*]] للتدوير، و [[--shadow-*]] للظلال، و [[--breakpoint-*]] للـ breakpoints، و [[--spacing]] للمسافات. وبيطلعوا كمان كمتغيرات CSS عادية على [[:root]] (اللي مستخدم بس، إلا لو كتبت [[@theme static]]).
+            why: R`صورة الهيرو غالبًا أكبر حاجة في الصفحة وهي اللي بتحدد LCP. نفس الصورة بـ AVIF ممكن تبقى نص حجم الـ WebP وأصغر بكتير من JPEG. وصورة عريضة 16:9 على موبايل طولي بتبقى شريط صغير الكلام اللي فيها مش باين، فمحتاج صورة مقصوصة تانية.`,
+            how: R`المتصفح بيقرا [[type]] ويسأل نفسه: أعرف أفك الصيغة دي؟ لو لأ بيعدّي من غير ما يحمّل حاجة. وبيقرا [[media]] زي media query. أول source يعدّي الاتنين بيكسب، وجواه [[srcset]] و [[sizes]] بيشتغلوا عادي زي درس img. فالترتيب مهم: الأدق (موبايل + AVIF) الأول، والعام في الآخر.
 
-الفرق بين [[@theme]] و [[:root]]: الاتنين متغيرات، بس اللي في [[@theme]] بس هو اللي بيعمل كلاسات. متغير من غير كلاسات حطه في [[:root]].
+[[width]] و [[height]] على الـ source: لما صورة الموبايل نسبتها مختلفة (4:5 بدل 16:9)، دول بيخلوا المتصفح يحجز المكان الصح ليها بدل ما يستخدم نسبة الـ img، فمفيش CLS.
 
-ليه [[inline]]؟ من غيرها، [[bg-bg]] بتطلع [[background-color: var(--color-bg)]]، و [[--color-bg]] متعرّف على [[:root]] بقيمة [[var(--bg)]]. المتغير اللي قيمته [[var()]] بيتحسب في المكان اللي اتعرّف فيه، فـ [[--color-bg]] بيتحسب مرة واحدة على [[:root]]. لو غيّرت [[--bg]] على عنصر جوه الصفحة ([[<section class="dark">]])، الكلاس مش هيحس. مع [[inline]] الكلاس بيطلع [[background-color: var(--bg)]] مباشرة، فبيقرا القيمة في مكان العنصر نفسه.
+AVIF بقت مدعومة في كل المتصفحات الحديثة، بس الـ fallback مش بيكلّف حاجة (المتصفح مبيحمّلش غير ملف واحد)، والـ encode بتاعها أبطأ، فاعملها وقت الـ build مش مع كل request.
 
-ولو عايز تشيل ألوان Tailwind الافتراضية كلها وتفضل ألوانك بس: [[--color-*: initial;]] في أول الـ [[@theme]].`,
-            when: R`أول ما تبدأ مشروع: ألوان البراند، والخط، والتدوير. وكل لون بيتغير مع الثيم يبقى متغير عادي في [[:root]] وتوكن في [[@theme inline]].`,
-            mistakes: R`توكن بيشاور على [[var()]] من غير [[inline]]، فالثيم يشتغل على الصفحة كلها بس مش على جزء منها. في مشروع حقيقي كل الألوان كانت في [[@theme]] عادي بـ [[var(--bg)]]، وده شغال طول ما الثيم بيتغير على [[<html>]] بس، لكن أول ما حد يعمل section غامقة لوحدها هيتفاجئ. واسم التوكن غلط ([[--colors-brand]] بـ s) فمفيش كلاسات بتتعمل ومفيش error.`
+في Next.js، [[<Image>]] بيحوّل الصيغة لوحده حسب اللي المتصفح بيقول إنه بيدعمه (WebP افتراضيًا، و AVIF لو ضفتها في [[images.formats]] في الـ config)، فمش محتاج picture عشان الصيغ. بس لـ art direction لسه محتاج picture أو [[getImageProps]].`,
+            when: R`صور الهيرو والبانرات الكبيرة: صيغ حديثة دايمًا، و art direction لما الصورة فيها كلام أو تفاصيل هتضيع على الموبايل. الصور الصغيرة والأيقونات: مش محتاجة.`,
+            mistakes: R`الـ [[alt]] أو الكلاس على [[<picture>]] بدل الـ img. الـ source العام قبل الخاص فالموبايل ياخد صورة الديسكتوب. picture لنفس الصورة بمقاسات مختلفة (ده srcset). تنسى الـ [[<img>]] جوه فمفيش صورة خالص. و [[src]] على [[<source>]] بدل [[srcset]] (الـ source مبيقراش src جوه picture).`
           },
-          teach: R`## متغير في [[@theme]] = كلاسات جديدة
+          teach: R`## المتصفح بيختار ملف واحد من قايمة
 
-[[@theme]] بلوك في ملف الـ CSS بتكتب فيه متغيرات، و Tailwind بيقرا **اسم** كل متغير ويعرف منه هيعمل أنهي كلاسات. حطينا المثال في [[src/index.css]] بتاع مشروع Vite (Tailwind 4.3.3)، واستخدمنا الكلاسات في [[App.tsx]]، وعملنا build، وقرينا الـ CSS الناتج، وقسنا العناصر في Chrome.
+[[<picture>]] نفسه مبيعرضش حاجة. هو بيدّي المتصفح قايمة اختيارات ([[<source>]])، والمتصفح ياخد **أول واحد** ينفعه ويحطه في الـ [[<img>]] اللي في الآخر. عشان نتأكد من ده، عملنا ملفات حقيقية بـ sharp (مكتبة Node لتحويل الصور) لصورة تجربة 1600 × 700، وفتحنا المثال في Chrome بمقاسات مختلفة، وسجلنا كل request للصور.
 
 ---
 
-## ١. البلوك الأول
+## ١. السطرين الأولانيين: الموبايل
 
-~~~text src/index.css
-@import "tailwindcss";
-@theme {
-  --color-brand: oklch(0.55 0.2 265);
-  --color-brand-soft: oklch(0.95 0.03 265);
-  --font-display: "Cairo", system-ui, sans-serif;
-  --radius-card: 1.25rem;
-  --breakpoint-3xl: 120rem;
-}
+~~~text index.html
+<source media="(max-width: 767px)" type="image/avif" srcset="/hero-mobile.avif" width="800" height="1000">
+<source media="(max-width: 767px)" type="image/webp" srcset="/hero-mobile.webp" width="800" height="1000">
 ~~~
 
-[[@theme]] لازم ييجي بعد [[@import "tailwindcss";]]. والجزء الأول من الاسم (اسمه namespace) بيحدد نوع الكلاسات، والباقي اسم الكلاس:
+- [[media]]: شرط زي media query. [[max-width: 767px]] = الشاشة 767 أو أصغر.
+- [[type]]: صيغة الملف (اسمها MIME type). لو المتصفح مبيعرفش يفك [[image/avif]]، بيعدّي السطر من غير ما يحمّل حاجة.
+- [[srcset]]: الملف (أو الملفات). جوه picture لازم [[srcset]] مش [[src]].
+- [[width="800" height="1000"]]: نسبة الصورة دي (4:5)، عشان المتصفح يحجز مكان بالنسبة الصح.
 
-| المتغير | الـ namespace | الكلاس اللي استخدمناه | القاعدة في الـ CSS الناتج | المتقاس |
-|---|---|---|---|---|
-| [[--color-brand]] | [[--color-]] | [[bg-brand]] | [[background-color: var(--color-brand)]] | oklch(0.55 0.2 265) |
-| [[--font-display]] | [[--font-]] | [[font-display]] | [[font-family: var(--font-display)]] | Cairo, system-ui, sans-serif |
-| [[--radius-card]] | [[--radius-]] | [[rounded-card]] | [[border-radius: var(--radius-card)]] | 20px |
-| [[--breakpoint-3xl]] | [[--breakpoint-]] | [[3xl:grid-cols-6]] | جوه [[@media (width>=120rem)]] | 6 أعمدة على 1920، و none على 1200 |
+## ٢. السطرين التانيين: الشاشات الكبيرة
 
-- [[--color-brand]] بيعمل كمان [[text-brand]] و [[border-brand]] و [[ring-brand]] وغيرهم: أي utility بتاخد لون.
-- [[--font-display]] قيمته قايمة خطوط: [[Cairo]]، ولو مش موجود [[system-ui]] (خط النظام)، وبعدين [[sans-serif]].
-- [[1.25rem]] = 20px، و [[120rem]] = 1920px.
+~~~text index.html
+<source type="image/avif" srcset="/hero-800.avif 800w, /hero-1600.avif 1600w" sizes="100vw">
+<source type="image/webp" srcset="/hero-800.webp 800w, /hero-1600.webp 1600w" sizes="100vw">
+~~~
 
-### المتغير نفسه موجود في الصفحة
+- مفيش [[media]]، فبيشتغلوا على أي شاشة.
+- [[800w]] = الملف ده عرضه 800 بكسل. والمتصفح بيختار مقاس حسب [[sizes]].
+- [[sizes="100vw"]] = الصورة هتتعرض بعرض الشاشة كلها.
 
-قرينا [[getComputedStyle(document.documentElement).getPropertyValue("--color-brand")]] (قيمة المتغير على [[<html>]]):
+## ٣. الـ img: الاحتياطي والمكان اللي الصورة بتتعرض فيه
+
+~~~text index.html
+<img src="/hero-1600.jpg" width="1600" height="700" alt="عرض الصيف: خصم 30% على السماعات" fetchpriority="high">
+~~~
+
+لو ولا source نفع، الـ [[src]] بتاعه هو اللي بيتحمّل (JPEG، كل المتصفحات بتعرفه). و [[fetchpriority="high"]] = حمّلها بأولوية عالية لأنها أهم صورة فوق. والـ alt والمقاس هنا مش على picture.
+
+---
+
+## اللي اتحمّل فعلًا
+
+| الشاشة | الملفات اللي اتطلبت | المقاس المعروض |
+|---|---|---|
+| 1200، كثافة 1 | [[/hero-1600.avif]] بس | 1200 × 525 |
+| 1200، كثافة 2 | [[/hero-1600.avif]] بس | 1200 × 525 |
+| 700 | [[/hero-mobile.avif]] بس | 700 × 875 |
+| 390، كثافة 3 | [[/hero-mobile.avif]] بس | 390 × 487.5 |
+
+- في كل حالة ملف **واحد** اتحمّل.
+- على 1200 اختار 1600 مش 800: الصورة هتتعرض 1200 بكسل، والـ 800 أصغر من المطلوب.
+- على 700 الصورة بقت طولية: 700 × 875 = نسبة 4:5 بتاعة صورة الموبايل، مش 1600 × 700. ده من الـ [[width]] و [[height]] اللي على الـ source.
+
+ولما غيّرنا [[image/avif]] لصيغة وهمية (كأننا متصفح قديم مبيعرفش AVIF)، اتحمّل [[/hero-1600.webp]] بدالها.
+
+## أحجام الملفات اللي عملناها
+
+| الملف | الحجم |
+|---|---|
+| hero-1600.jpg | 268,494 byte |
+| hero-1600.webp | 252,490 byte |
+| hero-1600.avif | 107,321 byte |
+| hero-800.avif | 11,614 byte |
+
+الصورة دي متولّدة (ألوان متدرجة ونقط عشوائية)، فالفرق في صورة حقيقية بيختلف، بس الترتيب غالبًا كده: AVIF أصغر، وبعدها WebP، وبعدها JPEG.
+
+## الخلاصة
+
+- المتصفح بيمشي على الـ sources بالترتيب وياخد أول واحد [[type]] و [[media]] بتوعه ينفعوا، فالأدق الأول.
+- [[srcset]] على الـ source، و [[alt]] والمقاس والكلاسات على الـ img.
+- ملف واحد بس بيتحمّل، فالـ fallback ملوش تمن.`,
+          lines: [
+            "بداية الـ picture.",
+            R`موبايل وبيدعم AVIF: صورة مقصوصة طولي، ونسبتها الخاصة بـ width و height.`,
+            "موبايل ومش بيدعم AVIF: نفس الصورة WebP.",
+            R`شاشة كبيرة وبيدعم AVIF: مقاسين، والمتصفح يختار بـ [[sizes]].`,
+            "شاشة كبيرة و WebP.",
+            R`آخر احتمال والمكان اللي الصورة بتتعرض فيه فعلًا: الـ alt والمقاس والأولوية هنا.`,
+            "قفلة."
+          ],
+          sol: R`على عرض كبير في Chrome: هتلاقي [[hero-1600.avif]] اتحمّل (الـ [[hero-800.avif]] بيتاخد بس لما الصورة هتتعرض 800 بكسل حقيقي أو أقل، يعني عرض الشاشة × الكثافة)، ومفيش WebP ولا JPEG. في وضع الموبايل بعد refresh: [[hero-mobile.avif]] والصورة بقت طولية. ملف واحد بس بيتحمّل في كل مرة.
+
+الأحجام: غالبًا AVIF أصغر من WebP بشوية لنص، والاتنين أصغر بكتير من JPEG (الأرقام بتختلف حسب الصورة والجودة).
+
+لو لقيت صورة الديسكتوب على الموبايل: الـ sources الخاصة بالموبايل لازم تيجي الأول. ولو مفيش حاجة اتحمّلت: اتأكد إنك كتبت [[srcset]] مش [[src]] على الـ source.`
+        },
+        {
+          cmd: "video و iframe",
+          title: "فيديو بيشتغل لوحده على الموبايل، و YouTube ميتقّلش الصفحة",
+          desc: R`[[<video>]] محتاج [[controls]] عشان المستخدم يشغّل ويوقف، و [[poster]] صورة لحد ما يشتغل، و [[preload="metadata"]] عشان ميحمّلش الفيديو كله على الفاضي. والترجمة بـ [[<track kind="captions">]] وملف WebVTT.
+
+فيديو خلفية بيشتغل لوحده لازم [[muted autoplay loop playsinline]]: المتصفحات بتمنع الـ autoplay بصوت، و iPhone من غير [[playsinline]] بيفتحه full screen.
+
+و [[<iframe>]] (YouTube أو خريطة) لازم له [[title]] و [[loading="lazy"]]. وأحسن من كده: facade، يعني صورة الفيديو وزرار تشغيل، والـ iframe يتعمل بس لما المستخدم يدوس.`,
+          example: R`<video controls preload="metadata" poster="/video/intro.jpg" width="1280" height="720">
+  <source src="/video/intro.webm" type="video/webm">
+  <source src="/video/intro.mp4" type="video/mp4">
+  <track kind="captions" src="/video/intro.ar.vtt" srclang="ar" label="عربي" default>
+</video>
+<video autoplay muted loop playsinline poster="/hero.jpg" aria-hidden="true" src="/hero.mp4"></video>
+<iframe src="https://www.youtube-nocookie.com/embed/VIDEO_ID" title="شرح المنتج في دقيقتين" width="560" height="315" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+<button type="button" class="yt-facade" data-id="VIDEO_ID" aria-label="شغّل: شرح المنتج في دقيقتين" style="background-image: url(https://i.ytimg.com/vi/VIDEO_ID/hqdefault.jpg)">▶</button>`,
+          try: R`حط iframe يوتيوب عادي في صفحة، وافتح Network واعمل refresh: عدّ الـ requests والحجم. وبعدين بدّله بزرار الـ facade واكتب السكربت اللي لما تدوس عليه يحط الـ iframe مكانه ويشغّله، وقارن الـ Network تاني قبل الضغط.`,
+          flag: "script",
+          deep: {
+            why: R`iframe يوتيوب واحد بيحمّل مئات الـ KB من JavaScript قبل ما حد يدوس play، وبيبطّأ الصفحة حتى لو محدش هيتفرج. والفيديو من غير poster بيبان مربع أسود. والفيديو من غير ترجمة مش مفهوم للصم، ولا لأي حد فاتح الموبايل في مواصلات من غير سماعة.`,
+            how: R`الـ [[<source>]] جوه video زي picture: المتصفح ياخد أول نوع يعرف يشغّله. [[preload="none"]] مبيحمّلش حاجة، و [[metadata]] بيحمّل المدة وأول frame بس، و [[auto]] ممكن يحمّل كتير.
+
+سياسة الـ autoplay: المتصفح بيسمح بالتشغيل التلقائي لو الفيديو [[muted]] (أو المستخدم اتفاعل مع الموقع قبل كده). و [[playsinline]] لـ iOS Safari. والفيديو اللي بيشتغل لوحده أكتر من 5 ثواني لازم يبقى فيه طريقة توقفه (WCAG)، وتحترم [[prefers-reduced-motion]] (متشغلوش لوحده).
+
+ملف الـ VTT نص عادي: أول سطر [[WEBVTT]]، وبعدين لكل جملة سطر وقت [[00:00.000 --> 00:03.000]] وتحته الكلام. و [[kind="captions"]] (كل الصوت مكتوب) غير [[subtitles]] (ترجمة للغة تانية). ولو الـ VTT على domain تاني، الـ video محتاج [[crossorigin]] والسيرفر يبعت CORS.
+
+الـ facade: زرار بصورة الفيديو من [[i.ytimg.com]]، ولما يتضغط تعمل iframe بـ [[?autoplay=1]] وتحطه مكانه. فيه مكتبة جاهزة اسمها [[lite-youtube-embed]]. و [[youtube-nocookie.com]] بيقلل الـ cookies لحد ما المستخدم يشغّل. وفي الحالتين الـ iframe محتاج [[title]] عشان قارئ الشاشة يعرف هو إيه.`,
+            when: R`فيديو بتاعك (شرح، إعلان): [[<video>]] بـ controls و poster و captions. خلفية للهيرو: muted autoplay loop playsinline وقصير وخفيف، ومعاه زرار إيقاف. فيديو يوتيوب في صفحة فيها كذا فيديو أو في الـ landing: facade دايمًا.`,
+            mistakes: R`autoplay من غير muted فمبيشتغلش ومفيش أي error. نسيان playsinline فالآيفون يفتحه full screen. فيديو 50MB في الهيرو على موبايل. iframe من غير title. 10 iframes يوتيوب في صفحة واحدة. فيديو خلفية ملوش زرار إيقاف ومبيحترمش reduced motion. وترجمة محروقة في الفيديو نفسه بدل track (مبتتكبرش ومبتتقفلش ومبتتدوّرش).`
+          },
+          teach: R`## ٣ طرق تحط فيديو في صفحة
+
+فيديو بتاعك بأزرار تحكم، وفيديو خلفية بيشتغل لوحده، وفيديو يوتيوب. عشان نجرّب بجد، عملنا بـ ffmpeg فيديو تجربة 1280 × 720 مدته ٦ ثواني بصيغتين (WebM و MP4)، وصورة poster، وملف ترجمة، وفتحنا المثال في Chrome. وقرينا حالة كل فيديو من JavaScript: [[currentSrc]] (الملف اللي اختاره)، و [[paused]] (واقف؟)، و [[duration]] (المدة بالثواني).
+
+---
+
+## ١. الفيديو العادي
+
+~~~text index.html
+<video controls preload="metadata" poster="/video/intro.jpg" width="1280" height="720">
+  <source src="/video/intro.webm" type="video/webm">
+  <source src="/video/intro.mp4" type="video/mp4">
+  <track kind="captions" src="/video/intro.ar.vtt" srclang="ar" label="عربي" default>
+</video>
+~~~
+
+- [[controls]]: أزرار التشغيل والصوت والوقت بتاعة المتصفح.
+- [[poster]]: صورة بتظهر لحد ما المستخدم يشغّل.
+- [[preload="metadata"]]: حمّل المعلومات (المدة والمقاس) بس.
+- [[width]] و [[height]]: النسبة، عشان يحجز المكان.
+- [[<source>]]: زي picture، المتصفح بياخد أول [[type]] يعرف يشغّله. Chrome اختار [[/video/intro.webm]].
+- [[<track kind="captions">]]: ملف ترجمة. [[srclang]] لغته، و [[label]] اسمه في القايمة، و [[default]] = مفعّل من الأول.
 
 ~~~text الناتج
---color-brand:       oklch(55% .2 265)
---color-brand-soft:  (فاضي)
+currentSrc: /video/intro.webm   paused: true   duration: 6.008
+textTracks[0]: captions، عربي، ar، mode: showing، 2 cues
 ~~~
 
-[[55%]] هي نفسها [[0.55]] مكتوبة بشكل تاني. و [[--color-brand-soft]] مش موجود خالص، لأن مفيش ولا كلاس استخدمه، و Tailwind بيطلّع المتغيرات المستخدمة بس. لما غيّرنا [[@theme]] لـ [[@theme static]] الاتنين ظهروا في الـ CSS.
+[[showing]] = الترجمة ظاهرة، و 2 cues = الجملتين اللي في الملف.
 
-## ٢. [[@theme inline]] و [[:root]]
+### ملف الـ VTT
 
-~~~text src/index.css
-@theme inline {
-  --color-bg: var(--bg);
-  --color-fg: var(--fg);
-}
-:root { --bg: white; --fg: oklch(0.21 0.03 265); }
+~~~text intro.ar.vtt
+WEBVTT
+
+00:00.000 --> 00:03.000
+أهلًا، ده فيديو تجربة
+
+00:03.000 --> 00:06.000
+وده السطر التاني
 ~~~
 
-هنا التوكن قيمته متغير تاني ([[var(--bg)]])، و [[--bg]] متعرّف في [[:root]] عادي (ده مش بيعمل كلاسات). عشان نشوف فايدة [[inline]] عملنا توكن تالت بنفس القيمة في [[@theme]] عادي، وحطينا قاعدة [[.dark { --bg: oklch(0.17 0.03 265); }]]:
+أول سطر لازم [[WEBVTT]]. وكل جملة (اسمها cue) سطر وقت [[من --> لحد]] بالدقايق والثواني، وتحته الكلام، وسطر فاضي بينها.
 
-~~~text الكلاسات اللي طلعت
-.bg-bg  {background-color:var(--bg)}          (من @theme inline)
-.bg-bg2 {background-color:var(--color-bg2)}   (من @theme عادي)
+### [[preload]] بيفرق قد إيه؟
+
+جربنا فيديو WebM مدته 60 ثانية وحجمه حوالي 8 ميجا، وعدّينا الـ bytes اللي السيرفر المحلي بعتها في أول ٤ ثواني من غير ما حد يدوس play:
+
+| preload | اللي اتبعت | المدة معروفة؟ |
+|---|---|---|
+| [[none]] | ولا byte | لأ (NaN) |
+| [[metadata]] | حوالي 1.4 ميجا (أول 7.6 ثانية) | آه، 60 |
+| [[auto]] | حوالي 5.5 ميجا (أول 26 ثانية) | آه، 60 |
+
+يعني Chrome مع metadata بيحمّل حتة صغيرة من الأول مش المعلومات بس، بس أقل بكتير من auto.
+
+## ٢. فيديو الخلفية
+
+~~~text index.html
+<video autoplay muted loop playsinline poster="/hero.jpg" aria-hidden="true" src="/hero.mp4"></video>
 ~~~
 
-| العنصر | الخلفية المتقاسة |
+- [[autoplay]]: يشتغل لوحده. [[muted]]: من غير صوت. [[loop]]: يعيد لما يخلص.
+- [[playsinline]]: على iPhone يشتغل مكانه في الصفحة مش full screen.
+- [[aria-hidden="true"]]: قارئ الشاشة يتجاهله، لأنه زينة.
+
+قارنّاه بنفس الفيديو بـ [[autoplay]] من غير [[muted]]:
+
+| | paused بعد التحميل |
 |---|---|
-| [[<section class="bg-bg">]] | rgb(255, 255, 255) |
-| [[<section class="dark bg-bg">]] | oklch(0.17 0.03 265) (غمقت) |
-| [[<section class="dark bg-bg2">]] | rgb(255, 255, 255) (فضلت بيضا) |
+| [[autoplay muted]] | false (شغال) |
+| [[autoplay]] لوحده | true (Chrome منعه) |
 
-ليه؟ [[inline]] بيحط [[var(--bg)]] جوه الكلاس نفسه، فبيقرا [[--bg]] من العنصر اللي عليه الكلاس (اللي [[.dark]] غيّرته). من غير inline الكلاس بيقرا [[--color-bg2]]، وده اتحسب مرة واحدة على [[:root]] لما [[--bg]] كانت لسه white.
+ومفيش أي error في الـ Console: الفيديو بيفضل واقف وخلاص.
+
+## ٣. يوتيوب: iframe ضد facade
+
+~~~text index.html
+<iframe src="https://www.youtube-nocookie.com/embed/VIDEO_ID" title="شرح المنتج في دقيقتين" width="560" height="315" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+~~~
+
+- [[<iframe>]] صفحة جوه صفحتك. [[title]] اسمها لقارئ الشاشة.
+- [[loading="lazy"]]: متتحمّلش غير لما تقرب من الشاشة.
+- [[allow]]: الصلاحيات اللي الصفحة اللي جوه تاخدها (تشغيل تلقائي، وفيديو محمي، وصورة جوه صورة).
+
+~~~text index.html
+<button type="button" class="yt-facade" data-id="VIDEO_ID" aria-label="شغّل: شرح المنتج في دقيقتين" style="background-image: url(https://i.ytimg.com/vi/VIDEO_ID/hqdefault.jpg)">▶</button>
+~~~
+
+الـ facade زرار عادي خلفيته صورة الفيديو من [[i.ytimg.com]]، و [[data-id]] فيه رقم الفيديو، و [[aria-label]] اسم الزرار.
+
+جربنا الاتنين بفيديو يوتيوب حقيقي، وعدّينا الـ requests في أول ٦ ثواني:
+
+| | requests | الحجم تقريبًا |
+|---|---|---|
+| iframe عادي (الفيديو في الشاشة) | 15 (من 7 domains) | 1164 KB |
+| facade قبل الضغط | 2 (الصفحة والصورة) | 24 KB |
+
+### الـ solCode: إزاي الـ facade بيتحول iframe
+
+- [[document.addEventListener('click', ...)]]: اسمع أي ضغطة في الصفحة.
+- [[e.target.closest('.yt-facade')]]: الضغطة كانت على الزرار أو جواه؟ لو لأ [[return]].
+- [[document.createElement('iframe')]]: اعمل iframe جديد.
+- [[iframe.src = ...]]: الرابط مبني بـ template string: [[btn.dataset.id]] بيقرا [[data-id]]، و [[?autoplay=1]] = اشتغل على طول.
+- [[title]] من [[aria-label]]، و [[allow]] و [[allowFullscreen]] والمقاس زي الـ iframe العادي.
+- [[btn.replaceWith(iframe)]]: حط الـ iframe مكان الزرار.
+- [[iframe.focus()]]: الـ focus كان على الزرار اللي اتشال، فحطه على الـ iframe عشان مستخدم الكيبورد ميتوهش.
+
+بعد ما ضغطنا: الـ iframe اتعمل بالرابط [[...embed/VIDEO_ID?autoplay=1]] والـ title صح، و [[document.activeElement]] (العنصر اللي عليه الـ focus) بقى [[IFRAME]].
 
 ## الخلاصة
 
-| | بيعمل كلاسات؟ | يستخدم إمتى |
-|---|---|---|
-| [[@theme]] | آه | قيم ثابتة: ألوان البراند والخطوط والتدوير |
-| [[@theme inline]] | آه | التوكن بيشاور على متغير بيتغير (ثيم) |
-| [[:root]] | لأ | متغيرات عادية |
+| الحالة | لازم |
+|---|---|
+| فيديو بتاعك | [[controls]] و [[poster]] و [[preload="metadata"]] و [[<track>]] |
+| فيديو خلفية | [[autoplay muted loop playsinline]] و [[aria-hidden]] |
+| يوتيوب | [[title]] و [[loading="lazy"]]، وأحسن facade |
 
-- اسم المتغير لازم يبدأ بالـ namespace الصح ([[--color-]] مش [[--colors-]])، وإلا مفيش كلاسات.
-- [[@theme static]] لو عايز كل المتغيرات تطلع حتى اللي مش مستخدمة.`,
+- autoplay من غير muted بيتمنع في سكوت.`,
           lines: [
-            "Tailwind الأول.",
-            "التوكنز.",
-            R`[[bg-brand]] و [[text-brand]] و [[ring-brand]]... وكمان [[bg-brand/50]] بشفافية.`,
-            R`[[bg-brand-soft]].`,
-            R`[[font-display]].`,
-            R`[[rounded-card]].`,
-            R`breakpoint جديد: [[3xl:grid-cols-6]].`,
+            "فيديو عادي: أزرار تحكم، ويحمّل المدة بس، وصورة لحد ما يشتغل، ومقاس عشان يحجز المكان.",
+            "WebM الأول (أصغر غالبًا).",
+            "MP4 للباقي.",
+            R`الترجمة: ملف VTT بالعربي، و [[default]] مفعّلة من الأول.`,
             "قفلة.",
-            "توكنز بتشاور على متغيرات تانية.",
-            R`[[bg-bg]] بتاخد [[var(--bg)]] نفسه، فلما [[--bg]] يتغير في الـ dark mode الكلاس يتغير.`,
-            R`[[text-fg]].`,
-            "قفلة.",
-            "القيم الحقيقية، ودي اللي الثيم بيغيّرها."
+            R`فيديو خلفية: بيشتغل لوحده لأنه [[muted]]، ومش full screen على الآيفون، ومخفي عن قارئ الشاشة لأنه زينة.`,
+            R`يوتيوب عادي: [[nocookie]]، و [[title]] للـ accessibility، و [[lazy]] ميتحملش غير لما يقرب.`,
+            "الـ facade: زرار بصورة الفيديو، والـ iframe بيتعمل بس لما يتضغط."
           ],
-          sol: R`الزرار بقى بلون الـ brand (أزرق بنفسجي) والكلام أبيض. في الـ CSS الناتج هتلاقي جوه [[@layer theme]] قاعدة [[:root, :host { ... --color-brand: oklch(0.55 0.2 265); }]]، والكلاس [[.bg-brand { background-color: var(--color-brand); }]]. يعني الكلاس نفسه بيقرا المتغير، فلو كتبت في CSS عادي [[border-color: var(--color-brand)]] هيشتغل، ولو غيّرت المتغير على [[:root]] من DevTools كل حاجة بتتغير معاه.
+          sol: R`الـ iframe العادي: حوالي 15 request من كذا domain (JavaScript و CSS و fonts من يوتيوب) وحجم حوالي 1.1MB قبل ما تدوس play (ده اللي اتقاس في Chrome على فيديو حقيقي). الـ facade قبل الضغط: request واحد (الصورة، عشرات الـ KB). بعد الضغط: الـ iframe بيتحمّل ويشتغل على طول لأن فيه [[autoplay=1]].
 
-حاجة هتلاحظها: [[--color-brand-soft]] مش موجود في الناتج، لأنك مستخدمتش [[bg-brand-soft]] ولا أي كلاس بيقراه. Tailwind v4 بيطلّع متغيرات الـ theme المستخدمة بس. لو عايزها كلها تطلع دايمًا عشان تستخدمها في CSS عادي أو JavaScript، اكتب [[@theme static]] بدل [[@theme]] (جرّبتها ولقيت الاتنين بقوا موجودين).
-
-ولو الكلاس [[bg-brand]] ملوش أي تأثير، غالبًا كتبت الاسم [[--brand]] من غير [[--color-]] في الأول، فـ Tailwind مش عارف إنه لون.`
+لو الفيديو مشتغلش لوحده بعد الضغط: اتأكد إن [[allow]] فيه [[autoplay]]. ولو الـ focus ضاع بعد ما الزرار اتشال: حط الـ focus على الـ iframe الجديد.`,
+          solCode: R`document.addEventListener('click', (e) => {
+  const btn = e.target.closest('.yt-facade');
+  if (!btn) return;
+  const iframe = document.createElement('iframe');
+  iframe.src = $__bthttps://www.youtube-nocookie.com/embed/$__{btn.dataset.id}?autoplay=1$__bt;
+  iframe.title = btn.getAttribute('aria-label');
+  iframe.allow = 'autoplay; encrypted-media; picture-in-picture';
+  iframe.allowFullscreen = true;
+  iframe.width = 560;
+  iframe.height = 315;
+  btn.replaceWith(iframe);
+  iframe.focus();
+});`
         },
         {
-          cmd: "variants",
-          title: "hover و focus و md و dark قدام أي كلاس",
-          desc: R`أي كلاس في Tailwind تقدر تحط قدامه شرط: [[hover:bg-brand]] (عند الـ hover)، و [[focus-visible:outline-2]] (focus من الكيبورد)، و [[md:flex]] (من 768 وطالع)، و [[dark:bg-gray-900]] (في الوضع الغامق)، و [[disabled:opacity-50]]، و [[rtl:-scale-x-100]].
+          cmd: "SVG",
+          title: "SVG: inline ولا img؟ و currentColor و svgo",
+          desc: R`[[<img src="logo.svg">]]: سهل وبيتكاش، بس الـ CSS بتاع صفحتك مش بيوصل جواه، فمتقدرش تغيّر لونه مع الـ hover أو الـ dark mode.
 
-وتقدر تجمعهم: [[md:hover:bg-brand]] = على شاشة md وطالع وعند الـ hover بس.`,
-          example: R`<nav className="flex flex-col gap-2 md:flex-row md:items-center md:gap-6">
-  <a className="rounded-md px-3 py-2 text-gray-700 hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-brand dark:text-gray-200 dark:hover:bg-gray-800" href="/pricing">
-    الأسعار
-  </a>
-  <button className="hidden md:inline-flex disabled:cursor-not-allowed disabled:opacity-50" disabled>
-    ابدأ
-  </button>
-  <ul className="*:border-b *:py-2 *:last:border-0">...</ul>
-</nav>`,
-          try: R`اعمل اللينك ده واتنقل له بـ Tab: الـ outline هيظهر. دوس عليه بالماوس: مش هيظهر. وبعدين صغّر الشاشة وشوف الـ nav بقى عمود والزرار اختفى.`,
+[[<svg>]] inline في الـ HTML: الـ CSS بيوصل لكل جزء فيه، و [[fill="currentColor"]] أو [[stroke="currentColor"]] بيخليه ياخد لون الكلام اللي حواليه ([[color]]). ده اللي lucide-react بيعمله.
+
+وأي SVG طالع من Figma أو Illustrator فيه زبالة (metadata، و groups فاضية، وأرقام بـ 6 decimals). [[svgo]] بينضّفه وغالبًا بيصغّره للنص أو أقل.`,
+          example: R`<img src="/logo.svg" alt="متجر النور" width="120" height="32">
+<button type="button" class="icon-btn" aria-label="السلة">
+  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+    <circle cx="9" cy="20" r="1" /><circle cx="18" cy="20" r="1" />
+    <path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6" />
+  </svg>
+</button>
+<svg role="img" aria-labelledby="chart-t" viewBox="0 0 100 40"><title id="chart-t">المبيعات زادت 20% الشهر ده</title>...</svg>
+// styles.css
+.icon-btn { color: var(--color-gray-700); }
+.icon-btn:hover { color: var(--color-brand); }`,
+          try: R`صدّر أيقونة من Figma (أو خد أي SVG) وشغّل [[npx svgo icon.svg -o icon.min.svg]] وقارن الملفين. وبعدين حط نفس الأيقونة مرة كـ [[<img>]] ومرة inline جوه زرار عليه [[color: red]]: أنهي واحدة اتلوّنت؟`,
           flag: "script",
           deep: {
-            why: "في CSS العادي، الـ hover والـ media query والـ dark mode كل واحد قاعدة لوحدها في مكان تاني. الـ variants بتخلي كل حالات العنصر مكتوبة عليه، فتشوف سلوكه كله في سطر.",
-            how: R`كل variant بيلف الـ utility في selector أو at-rule: [[hover:bg-x]] بتطلع قاعدة فيها [[:hover]] جوه [[@media (hover: hover)]]. و [[md:flex]] جوه [[@media (width >= 48rem)]]. و [[dark:]] افتراضيًا جوه [[@media (prefers-color-scheme: dark)]] (وتقدر تخليه كلاس، درس الـ dark mode).
+            why: R`الأيقونات في كل حتة: أزرار، ومنيو، وحالات. لو كل لون محتاج ملف SVG منفصل، هيبقى عندك 4 نسخ من كل أيقونة (عادي، و hover، و dark، و disabled). مع currentColor أيقونة واحدة بتاخد لون أي مكان تتحط فيه.`,
+            how: R`الـ [[<img>]] بيعامل الـ SVG كصورة منفصلة: document لوحده، والـ CSS و JavaScript بتوع الصفحة مش بيوصلوله، والمتصفح بيكاشه زي أي صورة. الـ inline جزء من الـ DOM: [[:hover]] و CSS variables و [[currentColor]] كلهم بيشتغلوا، بس بيتقل حجم الـ HTML ومبيتكاش لوحده.
 
-في v4 الـ variants المتراكبة بتتقري من الشمال لليمين: [[*:last:border-0]] = على الأولاد، لما يكون الابن آخر واحد (في v3 كانت بالعكس).
+[[currentColor]] معناها «قيمة [[color]] في العنصر ده»، وبتتورث من الأب. فلو الـ path عليه [[fill="currentColor"]] والزرار [[color: red]]، الأيقونة حمرا.
 
-فيه variants كتير جاهزة: [[focus-visible:]] و [[active:]] و [[disabled:]] و [[first:]] و [[last:]] و [[odd:]] و [[placeholder:]] و [[aria-expanded:]] و [[data-[state=open]:]] (مهمة مع Radix) و [[motion-reduce:]] و [[print:]] و [[max-md:]] (أقل من md) و [[rtl:]] و [[ltr:]].
+الـ accessibility: أيقونة جوه زرار أو جنب كلام يبقى [[aria-hidden="true"]] والاسم على الزرار. SVG بيعني حاجة لوحده (رسم بياني، لوجو inline) ياخد [[role="img"]] واسم من [[<title>]] أو [[aria-label]].
 
-وترتيب الكلاسات في الـ className نفسه مش هو اللي بيحسم التعارض: الترتيب في ملف الـ CSS الناتج هو اللي بيحكم، والـ variants بتيجي بعد الكلاس العادي، فـ [[hover:bg-x]] بتكسب [[bg-y]] وقت الـ hover.`,
-            when: R`كل حالة ليها شكل مختلف. [[focus-visible:]] على كل عنصر بيتضغط (accessibility). وابدأ بالموبايل: الكلاس العادي للموبايل و [[md:]] للأكبر.`,
-            mistakes: R`[[sm:text-sm]] وانت فاكر إنه للموبايل: هو من 640 وطالع. [[focus:]] بدل [[focus-visible:]] فالـ outline يظهر مع كل ضغطة ماوس، فتزهق وتشيله خالص وتبوّظ الكيبورد. و [[hover:]] بس على حاجة مهمة، فاللي على الموبايل ميشوفهاش (v4 مبيطبّقش hover على اللمس أصلًا).`
+svgo (نسخة 4) بيشيل الـ XML declaration والتعليقات والـ metadata والـ groups الفاضية ويقصّر الأرقام، وبيسيب [[viewBox]] و [[<title>]] افتراضيًا. والـ [[fill="#000"]] بيشيله لأن الأسود هو الافتراضي، وساعتها الأيقونة inline بتبقى سودا مش currentColor، فحط [[fill="currentColor"]] على الـ [[<svg>]] نفسه، أو اعمل [[svgo.config.mjs]] فيه plugin [[convertColors]] بـ [[currentColor: true]].
+
+وفي React: الأيقونات من مكتبة (lucide-react) أو ملفات بتتحول لـ components بـ SVGR. واللوجو الكبير أو الرسومات التوضيحية [[<img>]] أحسن عشان الكاش.`,
+            when: R`أيقونات بتتلوّن أو بتتحرك: inline أو مكتبة أيقونات. لوجو ثابت، ورسومات كبيرة، وصور مقالات: [[<img>]]. وأي SVG جاي من برنامج تصميم: svgo قبل ما يدخل المشروع.`,
+            mistakes: R`SVG من غير [[viewBox]] فمبيتكبرش ولا بيصغر صح. لون ثابت [[fill="#333"]] جوه الأيقونة فمبتتلونش. [[<img src="icon.svg">]] وتستغرب ليه [[color]] مش شغال. SVG inline تقيل (خريطة، رسمة 200KB) بيتكرر في كل صفحة. أيقونة لوحدها في زرار من غير اسم. و SVG جاي من مستخدمين بيتحط inline: ممكن يكون فيه [[<script>]] (XSS)، فنضّفه أو اعرضه كـ img.`
           },
-          teach: R`## الشرط قبل الـ [[:]]، والكلاس بعدها
+          teach: R`## SVG صورة مكتوبة كـ كود
 
-[[md:flex-row]] تتقري: «لو الشرط [[md]] متحقق، طبّق [[flex-row]]». حطينا المثال في [[App.tsx]] بتاع مشروع Vite (Tailwind 4.3.3، ومعاه [[--color-brand]] من درس [[@theme]])، وعملنا build، وقرينا القواعد في الـ CSS الناتج، وجربنا في Chrome بالكيبورد والماوس وعلى عرض 400 و 1000 وبثيم فاتح وغامق.
+SVG (Scalable Vector Graphics) ملف نصي فيه أشكال: دواير وخطوط ومسارات بأرقام. عشان كده بيتكبر لأي مقاس من غير ما يبوظ. وتقدر تحطه بطريقتين: كصورة بـ [[<img>]]، أو تلزق الكود نفسه في الـ HTML (inline). جربنا الاتنين في Chrome على زرار لونه أحمر، وقرينا لون الخط من [[getComputedStyle]] ومن صورة الشاشة نفسها.
 
 ---
 
-## ١. الـ nav
+## ١. اللوجو كـ img
 
-~~~text App.tsx
-<nav className="flex flex-col gap-2 md:flex-row md:items-center md:gap-6">
+~~~text index.html
+<img src="/logo.svg" alt="متجر النور" width="120" height="32">
 ~~~
 
-| الكلاس | في الـ CSS | على 400 | على 1000 |
-|---|---|---|---|
-| [[flex flex-col gap-2]] | من غير شرط | column، gap 8px | (اتغطّى) |
-| [[md:flex-row md:items-center md:gap-6]] | جوه [[@media (width>=48rem)]] | مش شغال | row، gap 24px |
+ملف منفصل، المتصفح بيكاشه، و [[alt]] اسمه. بس هو document مقفول: الـ CSS بتاع الصفحة مش بيدخل جواه.
 
-[[48rem]] = 768px. والكلاس العادي للموبايل، و [[md:]] بيضيف من 768 وطالع.
+## ٢. الأيقونة inline جوه زرار
 
-## ٢. اللينك
-
-~~~text App.tsx
-<a className="rounded-md px-3 py-2 text-gray-700 hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-brand dark:text-gray-200 dark:hover:bg-gray-800" href="/pricing">
+~~~text index.html
+<button type="button" class="icon-btn" aria-label="السلة">
+  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+    <circle cx="9" cy="20" r="1" /><circle cx="18" cy="20" r="1" />
+    <path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6" />
+  </svg>
+</button>
 ~~~
 
-القواعد زي ما طلعت في الملف:
+- [[aria-label="السلة"]]: اسم الزرار لقارئ الشاشة، لأن مفيش كلام جواه.
+- [[viewBox="0 0 24 24"]]: الرسمة مرسومة على لوحة 24 × 24. أي أرقام جوه بتتحسب على اللوحة دي، و [[width]] و [[height]] المقاس على الشاشة. لو كبّرتهم لـ 48 الرسمة تكبر معاهم.
+- [[fill="none"]]: الأشكال من جوه فاضية. [[stroke="currentColor"]]: الخط حواليها بلون [[color]] بتاع الأب. [[stroke-width="2"]]: سُمك الخط.
+- [[aria-hidden="true"]]: قارئ الشاشة يتجاهل الرسمة، والاسم على الزرار.
+- [[<circle cx="9" cy="20" r="1" />]]: دايرة مركزها (9، 20) ونص قطرها 1. دول عجلتين السلة.
+- [[<path d="...">]]: [[d]] أوامر رسم: [[M1 1]] = روح للنقطة (1، 1)، و [[h4]] = خط أفقي 4، و [[l2.7 13.4]] = خط للنقطة دي بالنسبة للحالية، و [[a]] = قوس (الركن المدوّر)، و [[L]] = خط لنقطة، و [[H6]] = خط أفقي لحد x = 6.
 
-~~~text من الـ CSS الناتج
-@media (hover:hover){.hover\:bg-gray-100:hover{background-color:var(--color-gray-100)}}
-.focus-visible\:outline-2:focus-visible{outline-style:var(--tw-outline-style);outline-width:2px}
-.focus-visible\:outline-brand:focus-visible{outline-color:var(--color-brand)}
-@media (prefers-color-scheme:dark){.dark\:text-gray-200{color:var(--color-gray-200)}@media (hover:hover){.dark\:hover\:bg-gray-800:hover{...}}}
+## ٣. اللون من CSS
+
+~~~text style.css
+.icon-btn { color: var(--color-gray-700); }
+.icon-btn:hover { color: var(--color-brand); }
 ~~~
 
-- [[hover:]] = [[:hover]] جوه [[@media (hover:hover)]].
-- [[focus-visible:]] = [[:focus-visible]]: العنصر عليه focus **والمتصفح شايف إن لازم يبان** (زي لما توصله بـ Tab).
-- [[outline-2]] = خط حوالين العنصر 2px، و [[outline-brand]] لونه.
-- [[dark:]] = جوه [[@media (prefers-color-scheme:dark)]]، يعني ثيم الجهاز. و [[dark:hover:]] الاتنين مع بعض.
+(الـ [[// styles.css]] في المثال مجرد عنوان بيقول الحتة دي في ملف CSS.)
 
-### Tab ضد ضغطة الماوس (على 1000)
-
-| الحالة | [[:focus]] | [[:focus-visible]] | الـ outline |
-|---|---|---|---|
-| الصفحة لسه فاتحة | false | false | none |
-| بعد Tab | true | true | solid 2px oklch(0.55 0.2 265) |
-| بعد ضغطة ماوس | true | false | none |
-
-في الحالتين الـ focus على اللينك، بس الـ outline ظهر مع الكيبورد بس. ولما الماوس وقف عليه الخلفية بقت [[oklch(0.967 0.003 264.542)]] (gray-100).
-
-### الثيم الغامق
-
-فتحنا الصفحة بثيم جهاز dark: لون اللينك بقى [[oklch(0.928 0.006 264.531)]] (gray-200) بدل [[oklch(0.373 0.034 259.733)]] (gray-700)، وخلفية الـ hover [[oklch(0.278 0.033 256.848)]] (gray-800).
-
-## ٣. الزرار
-
-~~~text App.tsx
-<button className="hidden md:inline-flex disabled:cursor-not-allowed disabled:opacity-50" disabled>
+~~~text الناتج: stroke بتاع الـ path
+عادي:          oklch(0.373 0.034 259.733)   (رمادي غامق)
+وقت الـ hover:  rgb(255, 0, 0)               (لون البراند في التجربة)
 ~~~
 
-- [[hidden]] = [[display: none]]، و [[md:inline-flex]] بيرجّعه من 768.
-- [[disabled]] attribute = الزرار مقفول. و [[disabled:]] variant = [[:disabled]].
+الأيقونة ملهاش ولا قاعدة CSS، بس [[currentColor]] بيقرا [[color]] من الزرار.
 
-| العرض | display | opacity | cursor |
-|---|---|---|---|
-| 400 | none | 0.5 | not-allowed |
-| 1000 | flex | 0.5 | not-allowed |
+## ٤. SVG بيعني حاجة لوحده
 
-ليه flex مش inline-flex؟ الزرار ابن جوه flex، والمتصفح بيحوّل أي ابن flex لـ block (inline-flex تبقى flex)، والشكل واحد.
-
-## ٤. [[*:]] على القايمة
-
-~~~text App.tsx
-<ul className="*:border-b *:py-2 *:last:border-0">...</ul>
+~~~text index.html
+<svg role="img" aria-labelledby="chart-t" viewBox="0 0 100 40"><title id="chart-t">المبيعات زادت 20% الشهر ده</title>...</svg>
 ~~~
 
-[[*:]] = «على كل ابن مباشر». وفي v4 الـ variants بتتقري من الشمال لليمين: [[*:last:border-0]] = على الأولاد، اللي منهم آخر واحد. القاعدة طلعت كده:
+[[role="img"]] = عامله كصورة، و [[aria-labelledby="chart-t"]] = اسمك هو الكلام اللي في العنصر اللي id بتاعه [[chart-t]]، يعني الـ [[<title>]]. قرينا شجرة الـ accessibility من Chrome، والرسمة ظهرت كده:
 
-~~~text من الـ CSS الناتج
-:is(.\*\:last\:border-0>*):last-child{border-style:var(--tw-border-style);border-width:0}
+~~~text الناتج
+image: المبيعات زادت 20% الشهر ده
 ~~~
 
-حطينا ٣ [[<li>]]: الـ border تحت كل واحد طلع 1px و 1px و **0px**.
+---
 
-## الخلاصة
+## التجربة الأولى: svgo على ملف من برنامج تصميم
 
-| الـ variant | بيتحول لـ |
+عملنا أيقونة السلة بالشكل اللي Illustrator بيصدّره (فيها [[<?xml>]] وتعليق البرنامج و [[<metadata>]] و [[<g>]] جوه [[<g>]] و [[fill="#000000"]] وأرقام زي [[9.000000]])، وشغلنا:
+
+~~~powershell
+npx svgo icon.svg -o icon.min.svg
+~~~
+
+[[npx]] بيشغّل أداة من npm من غير ما تسطّبها global، و [[-o]] = output: اسم الملف الجديد.
+
+~~~text الناتج
+icon.svg:
+Done in 11 ms!
+0.915 KiB - 67% = 0.302 KiB
+~~~
+
+~~~text icon.min.svg
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="24" height="24" viewBox="0 0 24 24"><title>السلة</title><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/><path fill="none" stroke="#000" stroke-width="2" d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+~~~
+
+- من 937 byte لـ 309: الـ xml والتعليق والـ metadata والـ g اتشالوا، و [[9.000000]] بقت [[9]]، والـ path اتكتب أقصر.
+- [[viewBox]] و [[<title>]] لسه موجودين.
+- [[fill="#000000"]] على الدواير اتشال (الأسود هو الافتراضي)، و [[stroke="#000"]] على الـ path فضل.
+
+## التجربة التانية: مين بيتلوّن؟
+
+حطينا ٣ زراير عليهم [[color: red]]، وقرينا الألوان:
+
+| جوه الزرار | النتيجة المتقاسة |
 |---|---|
-| [[hover:]] | [[:hover]] جوه [[@media (hover:hover)]] |
-| [[focus-visible:]] | [[:focus-visible]] |
-| [[md:]] | [[@media (width>=48rem)]] |
-| [[dark:]] | [[@media (prefers-color-scheme:dark)]] |
-| [[disabled:]] | [[:disabled]] |
-| [[*:]] | الأولاد المباشرين |
+| الأيقونة inline بـ [[currentColor]] | stroke = rgb(255, 0, 0)، والبكسلات على الشاشة حمرا |
+| [[<img src="icon.min.svg">]] | البكسلات سودا (0، 0، 0) |
+| icon.min.svg ملزوق inline | stroke = rgb(0, 0, 0) و fill الدواير rgb(0, 0, 0) |
 
-- الكلاس من غير prefix للموبايل، و [[md:]] من 768 وطالع.
-- [[focus-visible:]] مش [[focus:]] عشان الـ outline يظهر مع الكيبورد بس.`,
-          lines: [
-            "على الموبايل عمود، ومن md صف متوسّط بمسافات أكبر.",
-            "لينك: لون عادي، وخلفية عند الـ hover، و outline لما ياخد focus من الكيبورد، وألوان تانية في الوضع الغامق.",
-            "النص.",
-            "قفلة.",
-            "مستخبي على الموبايل وبيظهر من md. ولما يبقى disabled: شفاف والماوس ممنوع.",
-            "النص.",
-            "قفلة.",
-            R`[[*:]] = على كل الأولاد المباشرين: خط تحت كل واحد، إلا الأخير.`,
-            "قفلة."
-          ],
-          sol: R`لما تدوس Tab من أول الصفحة: الـ focus بيروح للينك «الأسعار» وحواليه outline بعرض 2px بلون الـ brand. لما تدوس عليه بالماوس: الـ focus عليه برضه بس مفيش outline، لأن المتصفح بيعتبر إن الضغط بالماوس مش محتاج مؤشر، فـ [[:focus-visible]] مش متحققة. ده بالظبط الفرق بين [[focus:]] (هيظهر في الحالتين) و [[focus-visible:]].
-
-لما تصغّر الشاشة تحت 768px ([[md]] = 48rem): الـ nav بقى عمود ([[flex-direction: column]]) والزرار «ابدأ» اختفى ([[display: none]]). فوق 768 رجع صف والزرار ظاهر [[inline-flex]] ونصه باهت لأنه [[disabled]].
-
-الغلط الشائع إنك تكتب [[md:hidden]] وتتوقعه يخفي على الموبايل: md معناها «من 768 وأكبر»، مش «على الموبايل». الإخفاء على الموبايل بس = [[max-md:hidden]] أو [[hidden md:block]] زي المثال.`
-        },
-        {
-          cmd: "arbitrary values",
-          title: "قيمة مش موجودة في الـ theme؟",
-          desc: R`لو محتاج قيمة مرة واحدة: حطها بين أقواس مربعة [[w-[327px]]] و [[bg-[#1da1f2]]] و [[grid-cols-[240px_1fr]]] (الـ [[_]] = مسافة). ومتغير CSS بقوسين عاديين: [[bg-(--brand)]]. وخاصية مش موجودة خالص: [[[-webkit-tap-highlight-color:transparent]]].
-
-ولو هتكررها، اعملها utility باسم بـ [[@utility]] في ملف الـ CSS.`,
-          example: R`<div className="grid grid-cols-[240px_1fr] gap-6">
-  <aside className="sticky top-[calc(4rem+1px)] h-[calc(100dvh-4rem)]">...</aside>
-  <main className="max-w-[72ch] text-[clamp(1rem,0.9rem+0.5vw,1.125rem)]">...</main>
-</div>
-<span className="bg-(--brand) [-webkit-tap-highlight-color:transparent]">...</span>
-// globals.css
-@utility container-app {
-  width: 100%;
-  max-width: 75rem;
-  margin-inline: auto;
-  padding-inline: 1.25rem;
-}`,
-          try: R`جرّب [[bg-[#ff0]]] على عنصر وشوف القاعدة في الـ CSS الناتج. وبعدين اعمل [[container-app]] بـ [[@utility]] واستخدمها مع [[md:]] وشوفها شغالة زي أي كلاس.`,
-          flag: "script",
-          deep: {
-            why: "الـ theme بيغطي أغلب اللي محتاجه، بس دايمًا فيه قيمة من الديزاين مش على الـ scale (ارتفاع هيدر 72، أو عرض عمود 240). بدل ما تسيب Tailwind وتكتب CSS منفصل، بتكتبها في نفس المكان.",
-            how: R`Tailwind بيشوف [[w-[327px]]] في الكود ويطلّع قاعدة [[width: 327px]]. القيمة بتتحط زي ما هي، فلازم تبقى CSS صالح ومن غير مسافات (المسافة بتقسم الكلاس لاتنين)، عشان كده [[_]] بتتحول لمسافة.
-
-لو القيمة ممكن تتفهم أكتر من طريقة ([[text-(--x)]] لون ولا حجم؟) تقدر تحدد النوع: [[text-(length:--x)]] أو [[text-(color:--x)]].
-
-[[bg-(--brand)]] هو الشكل المختصر في v4 لـ [[bg-[var(--brand)]]]. ودي أحسن طريقة لقيم جاية من JavaScript: تبعت المتغير في [[style]] وتستخدمه في الكلاس، فالكلاس يفضل ثابت ومكتوب كامل و Tailwind يشوفه.
-
-[[@utility]] بتعمل كلاس حقيقي جوه layer الـ utilities، فبيتعامل زي أي utility: بيقبل variants، وبيترتب صح. ودا بديل [[@layer components { .btn {...} }]] بتاعة v3 للحاجات الصغيرة.`,
-            when: R`arbitrary لقيمة مرة واحدة. لو القيمة اتكررت 3 مرات، خليها توكن في [[@theme]] أو [[@utility]].`,
-            mistakes: R`مشروع كله arbitrary values ([[text-[17px]]] و [[mt-[13px]]] في كل حتة): رجعت لـ CSS عادي بس أصعب في القراية، والتصميم بيفقد الاتساق. ومسافة جوه الأقواس فالكلاس يتقسم. و [[bg-[--brand]]] (شكل v3) في v4: اكتب [[bg-(--brand)]].`
-          },
-          teach: R`## القيمة بين الأقواس بتتنسخ زي ما هي
-
-[[w-[327px]]] معناها: utility العرض، بس القيمة مش من الـ theme، خدها من بين الأقواس المربعة. حطينا المثال في [[App.tsx]] بتاع مشروع Vite (Tailwind 4.3.3)، و [[@utility]] في [[src/index.css]]، وعملنا build وقرينا القواعد اللي طلعت، وقسنا في Chrome على شاشة 1200 × 800.
-
----
-
-## ١. [[grid-cols-[240px_1fr]]]
-
-~~~text من الـ CSS الناتج
-.grid-cols-\[240px_1fr\]{grid-template-columns:240px 1fr}
-~~~
-
-الـ [[_]] اتحولت مسافة. ليه مكتبناش مسافة على طول؟ لأن الـ className بيتقسم كلاسات عند المسافات. و [[\[]] في اسم الكلاس escape عشان الأقواس ليها معنى في الـ CSS. على 1200: الأعمدة [[240px 936px]] (1200 - 240 - 24 gap).
-
-## ٢. الـ aside
-
-~~~text App.tsx
-<aside className="sticky top-[calc(4rem+1px)] h-[calc(100dvh-4rem)]">...</aside>
-~~~
-
-~~~text من الـ CSS الناتج
-.top-\[calc\(4rem\+1px\)\]{top:calc(4rem + 1px)}
-.h-\[calc\(100dvh-4rem\)\]{height:calc(100dvh - 4rem)}
-~~~
-
-Tailwind حط المسافات حوالين [[+]] و [[-]] لوحده (calc لازم مسافات حوالين الجمع والطرح). والمتقاس: [[top: 65px]] (64 + 1، تحت هيدر 64 وخط 1)، و [[height: 736px]] (800 - 64).
-
-## ٣. الـ main
-
-~~~text App.tsx
-<main className="max-w-[72ch] text-[clamp(1rem,0.9rem+0.5vw,1.125rem)]">...</main>
-~~~
-
-- [[ch]] وحدة = عرض حرف الصفر في الخط الحالي، فـ [[72ch]] حوالي 72 حرف في السطر.
-- [[text-[clamp(...)]]]: Tailwind فهم إن القيمة طول، فعملها [[font-size]].
-
-| العرض | font-size | max-width (72ch) |
-|---|---|---|
-| 600 | 17.4px (14.4 + 3) | 675.34px |
-| 1200 | 18px (الـ MAX) | 698.63px |
-
-لاحظ إن [[72ch]] بتكبر مع الخط: نفس الـ 72 حرف.
-
-## ٤. [[bg-(--brand)]] و property كاملة
-
-~~~text App.tsx
-<span className="bg-(--brand) [-webkit-tap-highlight-color:transparent]">...</span>
-~~~
-
-~~~text من الـ CSS الناتج
-.bg-\(--brand\){background-color:var(--brand)}
-.\[-webkit-tap-highlight-color\:transparent\]{-webkit-tap-highlight-color:transparent}
-~~~
-
-- [[bg-(--brand)]]: القوسين العاديين = اسم متغير، فبقت [[var(--brand)]]. عرّفنا [[--brand]] في [[:root]]، والخلفية المتقاسة [[oklch(0.55 0.2 265)]].
-- [[[خاصية:قيمة]]]: كلاس كله بين أقواس مربعة = سطر CSS كامل. [[-webkit-tap-highlight-color]] لون الومضة اللي بتظهر لما تلمس لينك على الموبايل، و [[transparent]] بتلغيها.
-
-## ٥. [[@utility]]
-
-~~~text globals.css
-@utility container-app {
-  width: 100%;
-  max-width: 75rem;
-  margin-inline: auto;
-  padding-inline: 1.25rem;
-}
-~~~
-
-بيعمل كلاس اسمه [[container-app]] بيتعامل زي أي utility. استخدمناه بـ [[md:container-app]] بس، فطلع كده:
-
-~~~text من الـ CSS الناتج
-@media (width>=48rem){.md\:container-app{width:100%;max-width:75rem;margin-inline:auto;padding-inline:1.25rem}}
-~~~
-
-| العرض | عرض العنصر | left | padding |
-|---|---|---|---|
-| 600 | 600 | 0 | 0px (الشرط مش متحقق) |
-| 1200 | 1200 | 0 | 20px |
-| 2000 | 1200 (= 75rem) | 400 | 20px |
-
----
-
-## التجربة: [[bg-[#ff0]]] ومسافة غلط
-
-~~~text من الـ CSS الناتج
-.bg-\[\#ff0\]{background-color:#ff0}
-~~~
-
-الخلفية المتقاسة [[rgb(255, 255, 0)]] (أصفر). وجربنا [[w-[calc(4rem + 1px)]]] بمسافات: مطلعش ليها **ولا قاعدة** في الـ CSS، والعنصر فضل بعرض الصفحة كلها. المسافة قسمت الكلاس لـ ٣ كلمات مش مفهومين.
+الـ img مقفول على الـ CSS. والملف المنضّف حتى لو inline فضل أسود، لأن الألوان مكتوبة جواه ([[stroke="#000"]]) أو مش موجودة خالص (افتراضي أسود). عشان كده الـ solCode بيستخدم plugin [[convertColors]] بـ [[currentColor: true]] يحوّل أي لون ثابت لـ [[currentColor]]. جربناه على نفس الملف: الـ path طلع [[stroke="currentColor"]]، بس الدواير طلعت من غير [[fill]] خالص (الـ [[#000000]] اتشال قبل ما يتحوّل)، يعني هتفضل سودا. فضيف [[fill="currentColor"]] على الـ [[<svg>]] نفسه، والدواير هتورثه.
 
 ## الخلاصة
 
-| الكتابة | المعنى |
-|---|---|
-| [[w-[327px]]] | قيمة مباشرة |
-| [[grid-cols-[240px_1fr]]] | [[_]] = مسافة |
-| [[bg-(--brand)]] | [[var(--brand)]] |
-| [[[خاصية:قيمة]]] | خاصية مش موجودة في Tailwind |
-| [[@utility اسم {...}]] | كلاس جديد بيقبل variants |
-
-- مفيش مسافات جوه الأقواس أبدًا. والقيمة اللي بتتكرر خليها توكن أو [[@utility]].`,
-          lines: [
-            R`عمودين: 240 ثابت والباقي. [[_]] مكان المسافة لأن الكلاس مينفعش فيه مسافة.`,
-            "sticky تحت هيدر 64px، وارتفاعه الشاشة ناقص الهيدر.",
-            "عرض مريح للقراية (حوالي 72 حرف)، وخط fluid بـ clamp.",
-            "قفلة.",
-            "لون من متغير CSS بالقوسين العاديين، وخاصية كاملة مش موجودة في Tailwind بين أقواس مربعة.",
-            R`utility جديدة باسم، بتتعامل زي أي كلاس: [[md:container-app]] شغالة.`,
-            "عرض كامل...",
-            "...لحد 1200px.",
-            "في النص.",
-            "مسافة من الجنبين (بتتقلب مع RTL).",
-            "قفلة."
-          ],
-          sol: R`[[bg-[#ff0]]] بيدّي خلفية صفرا، وفي الـ CSS الناتج هتلاقي القاعدة بالشكل ده: [[.bg-\[\#ff0\] { background-color: #ff0; }]]. الأقواس و الـ [[#]] اتعمل لهم escape بـ backslash عشان يبقوا selector صحيح.
-
-الـ [[@utility container-app]] بيطلع كلاس عادي في layer الـ utilities، ولما تستخدم [[md:container-app]] Tailwind بيولّد نسخة تانية جوه [[@media (width >= 48rem)]] بنفس الخصائص، زي أي كلاس جاهز. على الشاشة: المحتوى بقى في النص وعرضه أقصى 75rem وحواليه padding.
-
-لو القيمة الـ arbitrary ملهاش أي تأثير: غالبًا فيه مسافة جوه الأقواس ([[bg-[#ff 0]]] أو [[calc(4rem + 1px)]])، والمسافة بتقسم الكلاس لكلاسين. استخدم [[_]] مكان المسافة. ولو [[@utility]] رفض يشتغل، اتأكد إن الاسم مفيهوش [[.]] قبله وإنه مش جوه [[@layer]].`
-        },
-        {
-          cmd: "group و peer",
-          title: "غيّر شكل ابن لما الأب أو الأخ يتغير",
-          desc: R`[[group]] على الأب، و [[group-hover:]] على أي ابن: الابن يتغير لما الماوس ييجي على الأب. مثالي للكارت: السهم يتحرك والعنوان يتلوّن لما تقف على الكارت كله.
-
-و [[peer]] على عنصر، و [[peer-user-invalid:]] أو [[peer-checked:]] على أخ جاي بعده: رسالة خطأ تظهر لما الحقل اللي قبلها غلط، من غير ولا سطر JavaScript.`,
-          example: R`<a href="/courses/1" className="group block rounded-xl border p-5 hover:border-brand">
-  <h3 className="font-bold group-hover:text-brand">كورس React</h3>
-  <ArrowLeft className="size-4 transition-transform group-hover:-translate-x-1" />
-</a>
-<label className="grid gap-1">
-  <span>الإيميل</span>
-  <input type="email" required className="peer rounded border px-3 py-2" />
-  <span className="invisible text-sm text-red-600 peer-user-invalid:visible">إيميل مش صحيح</span>
-</label>`,
-          try: R`اعمل الكارت ده وقف عليه بالماوس. وبعدين اكتب إيميل غلط واخرج من الحقل: الرسالة هتظهر. جرّب [[peer-invalid:]] بدل [[peer-user-invalid:]] وشوف الفرق: الرسالة هتظهر من أول ما الصفحة تفتح.`,
-          flag: "script",
-          deep: {
-            why: R`حالات زي «لما تقف على الكارت السهم يتحرك» كانت محتاجة CSS منفصل بـ selector زي [[.card:hover .arrow]]، أو state في React. group و peer بيعملوها بكلاسات على العناصر نفسها.`,
-            how: R`[[group]] مش بيعمل أي CSS لوحده، هو علامة. و [[group-hover:text-brand]] بيطلع selector معناه «لو فيه جد عليه group وعليه hover».
-
-لو فيه groups جوه بعض (كارت جوه قايمة كلها hover)، سمّيهم: [[group/card]] على الأب و [[group-hover/card:]] على الابن.
-
-[[peer]] بيستخدم الـ sibling combinator [[~]] في CSS، ودا بيشتغل على الإخوات اللي بعده بس. عشان كده لازم الـ peer ييجي الأول في الـ HTML، ومينفعش label قبل input يتغير حسب الـ input بـ peer (هنا [[:has()]] بيحل: [[has-[:user-invalid]:text-red-600]] على الأب، درس في المستوى التالت).
-
-[[:invalid]] بتتطبق من أول ما الصفحة تفتح (الحقل الفاضي اللي عليه required يعتبر invalid). [[:user-invalid]] بتستنى لحد ما المستخدم يعدّل ويخرج أو يحاول يبعت، ودي اللي عايزها للرسايل (variant [[user-invalid:]] موجود من Tailwind v4.1).`,
-            when: "كروت ولينكات كبيرة فيها أجزاء بتتفاعل. رسايل الـ validation وتنسيق الحقول، و checkbox و toggle مخصصين بالـ CSS بس.",
-            mistakes: R`الـ peer بعد العنصر اللي عايزه يتغير فمش بيشتغل ومفيش error. groups جوه بعض من غير أسماء فالابن يتفاعل مع الجد الغلط. و [[peer-invalid:]] فالحقول كلها حمرا أول ما الصفحة تفتح.`
-          },
-          teach: R`## عنصر بيتغير بسبب حالة عنصر تاني
-
-العادي إن [[hover:]] بيغيّر العنصر اللي الماوس فوقه بس. [[group]] و [[peer]] بيخلّوا عنصر يتغير بحالة **أبوه** أو **أخوه اللي قبله**. حطينا المثال في [[App.tsx]] بتاع مشروع Vite (Tailwind 4.3.3، والصفحة [[dir="rtl"]] وعرضها 800)، والسهم بدل [[ArrowLeft]] بتاع lucide حطينا component صغير بيرسم SVG سهم بنفس الـ className (lucide بيعمل نفس الحاجة). وجربنا بالماوس والكيبورد في Chrome.
-
----
-
-## ١. الكارت: [[group]]
-
-~~~text App.tsx
-<a href="/courses/1" className="group block rounded-xl border p-5 hover:border-brand">
-  <h3 className="font-bold group-hover:text-brand">كورس React</h3>
-  <ArrowLeft className="size-4 transition-transform group-hover:-translate-x-1" />
-</a>
-~~~
-
-- [[group]] على اللينك: مش بيطلّع أي CSS لوحده. هو علامة بتقول «أنا الأب اللي الأولاد هيسألوا عنه».
-- [[block]] = [[display: block]]، عشان اللينك ياخد عرض السطر ويبقى كارت. [[border]] و [[p-5]] (20px padding) و [[rounded-xl]].
-- [[hover:border-brand]]: الـ border نفسه يتلوّن لما الماوس على اللينك.
-- [[group-hover:text-brand]]: العنوان يتلوّن لما الماوس على **الأب** اللي عليه group.
-- [[size-4]] = عرض وارتفاع 16px. [[transition-transform]] = التحريك يحصل بنعومة. [[-translate-x-1]] = حرّك 4px ناحية الشمال (السالب على محور x).
-
-القاعدة اللي طلعت:
-
-~~~text من الـ CSS الناتج
-@media (hover:hover){.group-hover\:text-brand:is(:where(.group):hover *){color:var(--color-brand)}}
-~~~
-
-[[:where(.group):hover *]] = «أي عنصر جوه حد عليه [[.group]] والماوس فوقه». والمسافة قبل [[*]] معناها «جوه، في أي عمق».
-
-وقفنا بالماوس على الركن التحتاني للكارت، بعيد عن العنوان والسهم:
-
-| | قبل | وقت الـ hover |
+| | [[<img>]] | inline |
 |---|---|---|
-| لون العنوان | rgb(0, 0, 0) | oklch(0.55 0.2 265) |
-| لون الـ border | rgb(0, 0, 0) | oklch(0.55 0.2 265) |
-| [[translate]] السهم | none | -4px |
-| مكان السهم (left) | 763 | 759 |
+| الكاش | آه | لأ (جزء من الـ HTML) |
+| CSS و [[currentColor]] | مش بيوصلوا | بيشتغلوا |
+| مناسب لـ | لوجو، رسومات كبيرة | أيقونات بتتلوّن |
 
-في الصفحة العربي السهم على الشمال، و 4px لناحية الشمال = لقدام.
-
-## ٢. الإيميل: [[peer]]
-
-~~~text App.tsx
-<label className="grid gap-1">
-  <span>الإيميل</span>
-  <input type="email" required className="peer rounded border px-3 py-2" />
-  <span className="invisible text-sm text-red-600 peer-user-invalid:visible">إيميل مش صحيح</span>
-</label>
-~~~
-
-- [[<label>]] حوالين الحقل = الكلام اللي جواه اسم الحقل. و [[grid gap-1]] = فوق بعض بمسافة 4px.
-- [[type="email"]] و [[required]]: المتصفح نفسه بيفحص إن فيه إيميل صالح.
-- [[peer]] على الـ input: علامة زي group، بس للإخوات.
-- [[invisible]] = [[visibility: hidden]]: مستخبية بس مكانها محجوز، فالصفحة متتنطش لما تظهر.
-- [[peer-user-invalid:visible]] = تظهر لما الأخ اللي عليه peer يبقى [[:user-invalid]].
-
-~~~text من الـ CSS الناتج
-.peer-user-invalid\:visible:is(:where(.peer):user-invalid~*){visibility:visible}
-~~~
-
-[[~]] في CSS = «أخ جاي بعده». عشان كده الـ peer لازم ييجي قبل الرسالة في الـ HTML.
-
-## ٣. التجربة: [[peer-invalid:]] ضد [[peer-user-invalid:]]
-
-حطينا رسالتين تحت نفس الحقل، واحدة بكل variant، وقرينا [[visibility]] لكل واحدة:
-
-| الخطوة | [[:invalid]] | [[:user-invalid]] | الرسالة بـ [[peer-user-invalid:]] | الرسالة بـ [[peer-invalid:]] |
-|---|---|---|---|---|
-| الصفحة لسه فاتحة | true | false | hidden | **visible** |
-| بتكتب [[ahmed]] | true | false | hidden | visible |
-| خرجت بـ Tab | true | true | **visible** | visible |
-| كتبت [[ahmed@example.com]] وخرجت | false | false | hidden | hidden |
-
-- [[:invalid]] شغالة من أول ما الصفحة تفتح: الحقل فاضي وعليه required، فالرسالة ظاهرة قبل ما المستخدم يعمل أي حاجة.
-- [[:user-invalid]] بتستنى لحد ما المستخدم يعدّل ويخرج من الحقل.
-
-## الخلاصة
-
-| على المصدر | على اللي بيتغير | بيشتغل لما |
-|---|---|---|
-| [[group]] | [[group-hover:]] | الماوس على الأب (أو أي جد عليه group) |
-| [[peer]] | [[peer-user-invalid:]] | الأخ اللي قبله غلط بعد ما المستخدم اتعامل معاه |
-
-- الـ peer لازم ييجي **قبل** العنصر اللي بيتغير، ويكونوا إخوات.
-- للرسايل استخدم [[user-invalid]] مش [[invalid]].`,
+- أيقونة جوه زرار: [[aria-hidden="true"]] عليها والاسم على الزرار. SVG بيعني حاجة: [[role="img"]] واسم.
+- أي SVG من برنامج تصميم: svgo الأول، وبعدين [[currentColor]] بدل الألوان الثابتة.`,
           lines: [
-            R`الكارت كله لينك، و [[group]] بيعلّمه كأب.`,
-            "العنوان يتلوّن لما الماوس ييجي على أي حتة في الكارت.",
-            "السهم (من lucide) يتحرك لقدام شوية. في صفحة عربي «لقدام» = شمال.",
-            "قفلة.",
-            "label حوالين الحقل والرسالة.",
-            "اسم الحقل.",
-            R`[[peer]]: الإخوات اللي بعد الحقل ده يقدروا يسألوا عن حالته.`,
-            "مخفية، وتظهر لما الحقل يبقى غلط بعد ما المستخدم يتعامل معاه.",
-            "قفلة."
+            R`لوجو ثابت: [[<img>]] بيتكاش، ومقاس، و alt.`,
+            "زرار أيقونة: الاسم على الزرار.",
+            R`الأيقونة inline: الخطوط بلون الكلام ([[currentColor]])، ومخفية عن قارئ الشاشة لأن الزرار ليه اسم.`,
+            "عجلتين السلة.",
+            "جسم السلة.",
+            "قفلة الـ svg.",
+            "قفلة الزرار.",
+            R`SVG بيعني حاجة لوحده: [[role="img"]] واسمه من الـ [[<title>]].`,
+            "لون الأيقونة هو لون الزرار.",
+            "في الـ hover الزرار بيتلوّن، والأيقونة معاه من غير أي CSS ليها."
           ],
-          sol: R`لما تقف على الكارت في أي حتة (مش على العنوان بس): العنوان بيتلوّن بلون الـ brand والسهم بيتحرك 4px (شمال في المثال). ده لأن الـ hover على الأب اللي عليه [[group]]، والأبناء بيسمعوا له.
+          sol: R`على أيقونة تجربة، svgo طبع حاجة زي [[Done in 14 ms! 0.449 KiB - 65.4% = 0.155 KiB]]. الملف الجديد سطر واحد: من غير [[<?xml>]] ولا التعليق بتاع البرنامج ولا [[<metadata>]] ولا الـ [[<g>]]، والأرقام اتقصّرت ([[7.000]] بقت [[7]])، والـ [[viewBox]] و [[<title>]] لسه موجودين.
 
-الإيميل: الصفحة بتفتح والرسالة مستخبية. اكتب [[ahmed]]: وانت بتكتب الرسالة لسه مستخبية. اخرج من الحقل بـ Tab: «إيميل مش صحيح» ظهرت، لأن [[:user-invalid]] بيتحقق بس بعد ما المستخدم يتعامل مع الحقل ويخرج منه. مع [[peer-invalid:]]: الرسالة ظاهرة من أول ما الصفحة تفتح والحقل فاضي، لأن الحقل [[required]] وفاضي فهو [[:invalid]] من الأول.
+الـ inline جوه الزرار الأحمر اتلوّن أحمر (لو فيه [[currentColor]])، والـ img فضل بلونه الأصلي، لأن الـ CSS مش بيدخل جوه الـ img.
 
-لو الرسالة مش بتظهر خالص: اتأكد إن الـ span جاي بعد الـ input في الـ HTML وإنهم إخوات (نفس الأب)، لأن [[peer]] بيشتغل بـ [[~]] اللي بيشوف الإخوات اللي بعده بس.`
+لو الـ inline فضل أسود: الأيقونة فيها [[fill]] بلون ثابت أو svgo شال [[fill="#000"]] فبقت على الافتراضي (أسود). حط [[fill="currentColor"]] على الـ [[<svg>]].`,
+          solCode: R`// svgo.config.mjs: أي لون ثابت في الأيقونة يبقى currentColor
+export default {
+  plugins: ['preset-default', { name: 'convertColors', params: { currentColor: true } }],
+};`
         }
       ]
     }

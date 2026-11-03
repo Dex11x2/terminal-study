@@ -1315,6 +1315,403 @@ Parse error:  syntax error, unexpected token "echo", expecting "," or ";" in /sr
 [[echo $undefined;]] في dev: الصفحة فيها [[Warning: Undefined variable $undefined in ... on line 3]] وبعدها باقي الصفحة بـ 200، والـ Warning متسجل في اللوج كمان. في production: الصفحة نضيفة، والـ Warning في اللوج بس. الـ Warning مش exception، فالـ handler مبيشتغلش عليه والصفحة بتكمّل.
 
 لو اللوج فاضي: فولدر [[logs]] مش موجود أو PHP مش قادر يكتب فيه (على السيرفر اليوزر [[www-data]])، فالرسايل بتروح لـ stderr بتاع السيرفر. ولو على سيرفر حقيقي (PHP-FPM) التعديل في [[config.php]] مأثرش على طول، استنى ثانيتين: OPcache بيعيد فحص الملفات كل [[revalidate_freq=2]].`
+        },
+        {
+          cmd: "السعر حسب بلد الزائر",
+          title: "السعر والعملة واللهجة حسب بلد الزائر: طبقات الكشف، والاختبار بـ curl من غير سفر، وفخ الكاش",
+          learn: R`تحدد بلد الزائر بطبقات بالترتيب (اختيار الزائر، و cookie، وهيدر الـ CDN، و IP مع lookup بـ timeout، والمنطقة الزمنية كاحتياط)، وتختبر كل طبقة بـ [[curl]] وهيدرات مزيفة، وتقفل الكاش المشترك على الصفحات دي، ومتصدّقش هيدرات الزائر.`,
+          out: R`[[curl -H "CF-IPCountry: SA"]] بيطلّع [[19 SAR]]، و [[-b region=ae]] بيطلّع [[AED]]، و Googlebot بياخد الافتراضي، و lookup بطيء بيقف عند ١٫٨ ثانية، وزائر بيكتب [[X-Forwarded-For]] مزيف مبيغيّرش السعر.`,
+          desc: R`موقع بيبيع اشتراك، والمطلوب: الزائر من السعودية يشوف السعر بالريال وكلام سعودي، ومن مصر بالجنيه وكلام مصري. الكشف بيمشي بطبقات، وأول طبقة تجاوب بتكسب:
+1. [[?region=sa]] في الرابط: اختيار الزائر بإيده (زرار تبديل، وللتجربة). بيغلب كل حاجة وبيتحفظ.
+2. cookie [[region]] اتحفظت قبل كده (٣٠ يوم)، عشان الكشف ميتعادش مع كل صفحة.
+3. هيدر من الـ CDN أو السيرفر: [[CF-IPCountry]] من Cloudflare أو [[GEOIP_COUNTRY_CODE]] من موديول GeoIP.
+4. IP الزائر + استعلام لخدمة geo خارجية، بـ timeout قصير (١٫٨ ثانية) والنتيجة في الـ cookie.
+5. المنطقة الزمنية للمتصفح كاحتياط أخير بـ JavaScript (وفيها فخ: [[Asia/Riyadh]] بتغطي جيران).
+
+والاختبار من غير سفر: [[curl -H "CF-IPCountry: SA"]] و [[-H "X-Forwarded-For: 203.0.113.7"]] و [[-b "region=sa"]]. وأهم ٣ فخاخ: الكاش المشترك (زائر يشوف سعر زائر تاني)، و الـ bots (Googlebot لازم يشوف نسخة ثابتة)، والهيدرات اللي الزائر يقدر يكتبها بنفسه.`,
+          example: R`curl -s -D hdr.txt -o out.html -w "[%{http_code}]\n" -H "CF-IPCountry: SA" https://shop.example/pricing
+grep -i "set-cookie: region" hdr.txt
+grep -o 'class="price">.\{0,30\}' out.html
+curl -s -D - -o /dev/null -b "region=ae" https://shop.example/pricing | grep -i "^x-region"
+curl -s -D - -o /dev/null "https://shop.example/pricing?region=eg" | grep -iE "^x-region|set-cookie"
+curl -s -D - -o /dev/null -A "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)" -H "CF-IPCountry: SA" https://shop.example/pricing | grep -i "^x-region"
+curl -s -D - -o /dev/null -H "X-Forwarded-For: 203.0.113.7" https://shop.example/pricing | grep -iE "^x-region|^cache-control|^vary"`,
+          lines: [
+            R`زائر «من السعودية» من غير سفر: هيدر [[CF-IPCountry]] زي اللي Cloudflare بيبعته. [[-D hdr.txt]] الهيدرات في ملف، و [[-o out.html]] الصفحة في ملف، و [[-w]] يطبع كود الرد.`,
+            R`الموقع حفظ المنطقة في cookie؟ [[-i]] من غير فرق بين كبير وصغير.`,
+            R`السعر اللي ظهر: [[grep -o]] يطلّع الجزء اللي طابق بس، و [[.\{0,30\}]] لحد ٣٠ حرف بعد [[class="price">]].`,
+            R`زائر رجع تاني ومعاه cookie [[region=ae]]: [[-b]] بيبعت cookie. و [[-D -]] الهيدرات على الشاشة.`,
+            R`الزائر داس على زرار «مصر»: [[?region=eg]] لازم يغلب أي حاجة ويحفظ cookie جديدة.`,
+            R`Googlebot: [[-A]] بيغيّر الـ User-Agent. لازم ياخد الافتراضي حتى لو الهيدر بيقول SA.`,
+            R`زائر بيحاول يزوّر بلده بـ [[X-Forwarded-For]]: المفروض ميأثرش. وفي نفس الطلب اتأكد إن الصفحة [[Cache-Control: private]] و [[Vary: Cookie]].`,
+          ],
+          try: R`ابني المعمل اللي في الشرح بـ Docker (خدمة geo وهمية، و [[pricing.php]]، و nginx قدامهم بشبكة [[10.89.0.0/24]] والـ «CDN» على [[10.89.0.10]]). جرّب كل طبقة لوحدها بـ curl من «الـ CDN» ومن «زائر مباشر» ([[10.89.0.20]])، وبعدين اطلب نفس الصفحة من ٣ بلاد ورا [[location /cached/]] وشوف السعر.`,
+          teach: R`## الحكاية
+
+صفحة الأسعار لازم تعرض السعر والعملة واللهجة حسب بلد الزائر (مصر [[150 EGP]]، والسعودية [[19 SAR]]، والإمارات [[19 AED]]). الكود PHP على سيرفر ورا nginx، وقدّامه CDN.
+
+المعمل (كله Docker على شبكة [[10.89.0.0/24]]، والـ IPs من نطاقات التوثيق اللي مش بتتوجّه على الإنترنت):
+
+| الحتة | العنوان | بتعمل إيه |
+|---|---|---|
+| nginx | [[10.89.0.100]] | قدام التطبيق، فيه [[geo]] و [[realip]] و كاش (درس «geo» في تاب Nginx) |
+| [[app]] | [[php:8.4-cli]] بـ [[php -S]] | [[pricing.php]] و [[region.php]] |
+| خدمة geo وهمية | [[php -S]] تاني | [[203.0.113.x]] ← SA، و [[192.0.2.x]] ← AE، و [[198.51.100.x]] بتستنى ٥ ثواني (خدمة بطيئة) |
+| «الـ CDN» | [[10.89.0.10]] | container بيعمل [[curl]] من العنوان ده، و nginx واثق فيه |
+| «زائر مباشر» | [[10.89.0.20]] | حد وصل للسيرفر من غير الـ CDN |
+
+---
+
+## ١. الطبقات في الكود
+
+~~~php
+<?php
+// بيحدد منطقة الزائر بالترتيب: ?region ثم cookie ثم هيدر الـ CDN ثم lookup بالـ IP ثم الافتراضي
+const REGIONS = ['eg' => ['EGP', 'مصري'], 'sa' => ['SAR', 'سعودي'], 'ae' => ['AED', 'إماراتي']];
+const DEFAULT_REGION = 'eg';
+
+function is_bot(): bool {
+    return (bool) preg_match('/bot|crawl|spider|slurp/i', $_SERVER['HTTP_USER_AGENT'] ?? '');
+}
+
+function client_ip(): string {
+    // X-Real-IP بيحطه nginx بنفسه (وبيمسح أي قيمة جاية من بره)، فده IP الزائر
+    // أول IP في X-Forwarded-For بيكتبه الزائر نفسه لو حب، فمتصدّقوش
+    $ip = $_SERVER["HTTP_X_REAL_IP"] ?? $_SERVER["REMOTE_ADDR"] ?? "";
+    return filter_var($ip, FILTER_VALIDATE_IP) ? $ip : "";
+}
+
+function lookup_country(string $ip): ?string {
+    $ch = curl_init(getenv('GEO_API') . '/?ip=' . urlencode($ip));
+    curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT_MS => 1800, CURLOPT_CONNECTTIMEOUT_MS => 800]);
+    $body = curl_exec($ch);
+    if ($body === false) {
+        error_log('geo lookup failed: ' . curl_error($ch));
+        return null;
+    }
+    return json_decode($body, true)['country'] ?? null;
+}
+
+function set_region_cookie(string $r): void {
+    setcookie('region', $r, ['expires' => time() + 30 * 86400, 'path' => '/', 'samesite' => 'Lax']);
+}
+
+function detect_region(): array {
+    $q = strtolower($_GET['region'] ?? '');
+    if (isset(REGIONS[$q])) { set_region_cookie($q); return [$q, 'query']; }
+
+    $c = $_COOKIE['region'] ?? '';
+    if (isset(REGIONS[$c])) return [$c, 'cookie'];
+
+    if (is_bot()) return [DEFAULT_REGION, 'bot'];
+
+    $hdr = strtolower($_SERVER['HTTP_CF_IPCOUNTRY'] ?? $_SERVER['GEOIP_COUNTRY_CODE'] ?? '');
+    if (isset(REGIONS[$hdr])) { set_region_cookie($hdr); return [$hdr, 'header']; }
+
+    $ip = client_ip();
+    $country = strtolower(lookup_country($ip) ?? '');
+    $r = isset(REGIONS[$country]) ? $country : DEFAULT_REGION;
+    set_region_cookie($r);   // حتى الافتراضي: عشان الـ lookup ميتكررش مع كل صفحة
+    return [$r, $country ? "lookup $ip" : 'default'];
+}
+~~~
+
+| الحتة | ليه |
+|---|---|
+| [[isset(REGIONS[$q])]] | أي قيمة مش في اللستة بتتجاهل ([[?region=zz]] بيكمّل للطبقة اللي بعدها)، فمفيش قيمة غريبة توصل للـ cookie أو الصفحة |
+| [[return [$r, 'query']]] | المنطقة **و** سبب اختيارها. السبب بيطلع في هيدر [[X-Region]] للتشخيص |
+| [[is_bot()]] قبل الهيدر والـ lookup | Googlebot بيزحف من أمريكا غالبًا؛ لو اتحوّل يشوف سعر تاني كل مرة، النتايج في جوجل بتتلخبط. ومفيش lookup مدفوع لكل زحفة |
+| [[$_SERVER['HTTP_CF_IPCOUNTRY']]] | PHP بيحط أي هيدر طلب في [[$_SERVER]] باسم [[HTTP_]] + الاسم بحروف كبيرة و [[-]] بقت [[_]] |
+| [[GEOIP_COUNTRY_CODE]] | متغير بيحطه موديول GeoIP في Apache أو nginx ([[fastcgi_param]])، مش هيدر |
+| [[CURLOPT_TIMEOUT_MS => 1800]] | أقصى وقت للطلب كله. الصفحة متستناش خدمة بطيئة أكتر من ١٫٨ ثانية |
+| [[CURLOPT_CONNECTTIMEOUT_MS => 800]] | أقصى وقت لفتح الاتصال نفسه، لو الخدمة واقعة خالص |
+| [[error_log(...)]] | الفشل بيتسجّل والصفحة بتكمّل بالافتراضي |
+| [[setcookie(... 30 * 86400 ...)]] | ٣٠ يوم × ٨٦٤٠٠ ثانية في اليوم. و [[samesite => Lax]] بيتبعت مع الروابط العادية من مواقع تانية |
+| الـ cookie حتى للافتراضي | من غيرها كل صفحة لزائر مش معروف بلده = lookup جديد |
+
+والصفحة:
+
+~~~php
+<?php
+require __DIR__ . '/region.php';
+[$region, $why] = detect_region();
+$prices = ['eg' => 150, 'sa' => 19, 'ae' => 19];
+[$currency, $dialect] = REGIONS[$region];
+
+header('Cache-Control: private, no-store');   // الصفحة دي بتختلف من زائر للتاني
+header('Vary: Cookie');
+header("X-Region: $region ($why)");
+?>
+<!doctype html>
+<meta charset="utf-8">
+<body data-region="<?= $region ?>" data-why="<?= $why === 'default' ? 'default' : 'server' ?>">
+<h1>الاشتراك الشهري</h1>
+<p class="price"><?= $prices[$region] ?> <?= $currency ?></p>
+<p class="dialect"><?= $dialect ?></p>
+~~~
+
+[[[$region, $why] = ...]] بيفك الـ array لمتغيرين. و [[Cache-Control]] و [[Vary]] شرحهم في فخ الكاش تحت.
+
+---
+
+## ٢. جرّب كل طبقة بـ curl
+
+~~~bash
+cdn()    { docker run --rm --network becase-geo --ip 10.89.0.10 nginx:alpine "$@"; }
+direct() { docker run --rm --network becase-geo --ip 10.89.0.20 nginx:alpine "$@"; }
+U=http://10.89.0.100/pricing.php
+cdn curl -s -D - -H "CF-IPCountry: SA" -H "X-Forwarded-For: 198.51.100.50" $U | grep -iE "x-region|set-cookie|class=.price"
+~~~
+
+[[cdn]] و [[direct]] دالتين في bash: كل واحدة بتشغّل container مؤقت ([[--rm]]) بعنوان ثابت ([[--ip]]) وتنفّذ الأمر اللي بعدها جواه. ([[nginx:alpine]] جواه curl.)
+
+~~~text الناتج: الـ CDN بيقول SA
+Set-Cookie: region=sa; expires=Thu, 03 Dec 2026 11:20:19 GMT; Max-Age=2592000; path=/; SameSite=Lax
+X-Region: sa (header)
+X-Visitor-Country: SA
+<p class="price">19 SAR</p>
+~~~
+
+| الاختبار | الأمر (الإضافة على [[cdn curl -s -D - $U]]) | النتيجة |
+|---|---|---|
+| هيدر الـ CDN | [[-H "CF-IPCountry: SA"]] | [[sa (header)]] و [[19 SAR]] وcookie لـ ٣٠ يوم ([[Max-Age=2592000]]) |
+| IP في نطاق AE ومفيش هيدر | [[-H "X-Forwarded-For: 192.0.2.44"]] | [[ae (header)]] و [[19 AED]] (nginx عرف البلد من الـ IP وبعته كهيدر) |
+| cookie قديمة | [[-b "region=sa"]] مع IP إماراتي | [[sa (cookie)]]، ومفيش Set-Cookie جديدة |
+| الزرار | [[-b "region=sa"]] و [[?region=ae]] | [[ae (query)]] و cookie جديدة [[region=ae]] |
+| قيمة غلط | [[?region=zz]] و [[CF-IPCountry: SA]] | [[sa (header)]]: الـ [[zz]] اتجاهلت |
+| Googlebot | [[-A "...Googlebot/2.1..."]] و [[CF-IPCountry: SA]] | [[eg (bot)]] و [[150 EGP]] |
+| خدمة geo بطيئة | [[-H "X-Forwarded-For: 198.51.100.50"]] و [[-w "%{time_total}"]] | [[eg (default)]] بعد [[1.806463s]] |
+
+واللوج بتاع التطبيق في حالة الخدمة البطيئة:
+
+~~~text docker logs becase-app
+geo lookup failed: Operation timed out after 1803 milliseconds with 0 bytes received
+~~~
+
+الصفحة استنت ١٫٨ ثانية مرة واحدة، والـ cookie [[region=eg]] اتحفظت، فالصفحة الجاية من غير lookup. لو الـ timeout مكانش موجود: curl في PHP افتراضيًا مالوش حد (أو [[default_socket_timeout]] = ٦٠ ثانية للـ streams)، يعني الصفحة كانت هتستنى الخدمة ٥ ثواني أو أكتر مع كل زائر جديد.
+
+---
+
+## ٣. فخ: الهيدرات اللي الزائر بيكتبها بنفسه
+
+### (أ) [[CF-IPCountry]] مزيف
+
+~~~text direct curl -s -D - -H "CF-IPCountry: SA" $U
+X-Region: eg (default)
+<p class="price">150 EGP</p>
+~~~
+
+الزائر المباشر كتب [[CF-IPCountry: SA]] ومأثرش، لأن nginx بيكتب الهيدر ده بنفسه قبل ما يبعته للتطبيق ([[proxy_set_header CF-IPCountry $visitor_country]])، ومبيصدّقش القيمة اللي جاية غير من عنوان الـ CDN (التفاصيل في درس «geo» في تاب Nginx). **لو الموقع على استضافة مشتركة ورا Cloudflare من غير nginx في إيدك:** أي حد يوصل للسيرفر مباشرة (بالـ IP) يقدر يبعت الهيدر ده. الحل هناك: السيرفر ميقبلش غير IPs بتاعة Cloudflare، أو التطبيق يتأكد إن [[REMOTE_ADDR]] من نطاقاتهم.
+
+### (ب) [[X-Forwarded-For]] مزيف
+
+النسخة الأولى من [[client_ip()]] كانت بتاخد **أول** IP في [[X-Forwarded-For]] (زي ما اتكتب في الحالة الأصلية):
+
+~~~php
+$xff = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? '';
+$first = trim(explode(',', $xff)[0]);
+return filter_var($first, FILTER_VALIDATE_IP) ? $first : ($_SERVER['REMOTE_ADDR'] ?? '');
+~~~
+
+~~~text direct curl -s -D - -H "X-Forwarded-For: 203.0.113.7" $U
+X-Region: sa (lookup 203.0.113.7)
+<p class="price">19 SAR</p>
+~~~
+
+زائر مباشر كتب IP سعودي وخد سعر السعودية. ليه؟ nginx بيضيف عنوان اللي كلّمه **في آخر** الهيدر ([[$proxy_add_x_forwarded_for]] = اللي جه + [[, 10.89.0.20]])، فالتطبيق شاف [[203.0.113.7, 10.89.0.20]] وخد الأول، وده اللي الزائر كتبه. القاعدة: كل IP في [[X-Forwarded-For]] بيتكتب من الطرف اللي قبله، فبتصدّق من **اليمين** بس لحد آخر proxy انت واثق فيه. والأسهل: nginx يحسبه (موديول [[realip]]) ويبعته في [[X-Real-IP]]، والتطبيق ياخده من هناك:
+
+~~~text بعد الإصلاح: direct curl -H "X-Forwarded-For: 203.0.113.7"
+X-Region: eg (default)
+<p class="price">150 EGP</p>
+~~~
+
+~~~text والزائر الحقيقي من ورا الـ CDN: cdn curl -H "X-Forwarded-For: 203.0.113.7"
+X-Region: sa (header)
+<p class="price">19 SAR</p>
+~~~
+
+> **ومع ده كله:** [[?region=sa]] بيخلّي أي حد يختار أي منطقة بإيده، وده مقصود (زرار التبديل). يعني السعر هنا **عرض**، مش حماية. لو فرق السعر كبير والدفع لازم يبقى بسعر البلد فعلًا، اربطه بحاجة مش في إيد الزائر وقت الدفع (بلد الكارت مثلًا عند بوابة الدفع)، واحسب السعر في السيرفر وقت الدفع مش من الصفحة.
+
+---
+
+## ٤. فخ الكاش: زائر يشوف سعر زائر تاني
+
+nginx فيه كاش لصفحات الموقع، والمفتاح [[$scheme$host$request_uri]] (نفس الرابط = نفس النسخة)، ومتظبط يتجاهل هيدرات التطبيق (إعداد شائع في «كاش كل حاجة»):
+
+~~~text ٣ زوار من ٣ بلاد على /cached/pricing.php
+X-Cache: MISS <p class="price">19 SAR</p>
+X-Cache: HIT <p class="price">19 SAR</p>    ← زائر مصري
+X-Cache: HIT <p class="price">19 SAR</p>    ← زائر إماراتي
+~~~
+
+أول زائر سعودي اتخزنت نسخته، وكل اللي بعده خدوها. نفس الحاجة بتحصل في أي كاش مشترك: CDN، أو Varnish، أو كاش صفحات WordPress.
+
+### الحل ١: الصفحة مبتتكاشش
+
+[[Cache-Control: private, no-store]] بيقول لأي كاش مشترك: «الرد ده لزائر واحد، متخزنوش». و nginx بيحترمه لو ماقلتلوش يتجاهله:
+
+~~~text نفس الطلبين من غير proxy_ignore_headers
+X-Cache: MISS <p class="price">19 SAR</p>
+X-Cache: MISS <p class="price">150 EGP</p>
+~~~
+
+### الحل ٢: البلد جزء من مفتاح الكاش
+
+~~~text proxy_cache_key "$scheme$host$request_uri|$visitor_country|$cookie_region"
+X-Cache: MISS <p class="price">19 SAR</p>
+X-Cache: MISS <p class="price">150 EGP</p>
+X-Cache: MISS <p class="price">19 AED</p>
+X-Cache: HIT <p class="price">19 SAR</p>
+~~~
+
+نسخة لكل بلد ولكل cookie، والسعودي التاني خد نسخة السعودي.
+
+### و [[Vary]]؟
+
+[[Vary: Cookie]] بيقول «الرد ده بيختلف حسب الـ cookie، اعمل نسخة لكل قيمة». المتصفحات والكاشات اللي ماشية على HTTP بتحترمه، بس بيقسم الكاش على **كل** الـ cookies (session وتحليلات...)، فعمليًا تقريبًا مفيش كاش. ووثائق Cloudflare بتقول إنه مبيعتمدش على [[Vary]] في قرار الكاش (غير [[Accept-Encoding]] وحالات الصور)، فهناك الحل [[private]] أو مفتاح كاش مخصوص. (الجزء ده من الوثائق، مش متجرّب.)
+
+---
+
+## ٥. الطبقة الأخيرة: المنطقة الزمنية في المتصفح
+
+لو السيرفر وقع على الافتراضي (الـ lookup فشل)، الصفحة بتجرّب المنطقة الزمنية مرة واحدة:
+
+~~~html
+<script>
+// الاحتياط الأخير: السيرفر وقع على الافتراضي؟ جرّب المنطقة الزمنية للمتصفح مرة واحدة
+const TZ_REGION = { "Africa/Cairo": "eg", "Asia/Riyadh": "sa", "Asia/Dubai": "ae" };
+if (document.body.dataset.why === "default") {
+  const r = TZ_REGION[Intl.DateTimeFormat().resolvedOptions().timeZone];
+  if (r && r !== document.body.dataset.region) {
+    document.cookie = "region=" + r + "; path=/; max-age=" + 30 * 86400 + "; samesite=lax";
+    location.reload();
+  }
+}
+</script>
+~~~
+
+- [[Intl.DateTimeFormat().resolvedOptions().timeZone]]: اسم المنطقة الزمنية بتاعة الجهاز بصيغة IANA ([[Africa/Cairo]]).
+- [[document.body.dataset.why]]: قيمة [[data-why]] اللي PHP كتبها على الـ [[body]].
+- بيكتب الـ cookie ويعمل reload مرة واحدة بس، لأن بعدها السيرفر هيلاقي الـ cookie (طبقة ٢) و [[why]] مش [[default]].
+
+اتجرّب الـ mapping في Node 22 بـ [[TZ=...]]: [[Africa/Cairo -> eg]] و [[Asia/Riyadh -> sa]]، و [[Asia/Kuwait -> (no change)]].
+
+**الفخ:** المنطقة الزمنية مش البلد. في ويندوز:
+
+~~~text Get-TimeZone -Id "Arab Standard Time"
+Id                    DisplayName
+--                    -----------
+Arab Standard Time    (UTC+03:00) Kuwait, Riyadh
+~~~
+
+~~~text [System.TimeZoneInfo]::TryConvertWindowsIdToIanaId("Arab Standard Time", ...)
+KW: Asia/Kuwait
+default: Asia/Riyadh
+~~~
+
+ويندوز عنده منطقة واحدة للكويت والرياض، واسمها الافتراضي في IANA [[Asia/Riyadh]]. فزائر كويتي على ويندوز ممكن متصفحه يقول [[Asia/Riyadh]] وياخد سعر السعودية. عشان كده دي **آخر** طبقة، والزرار موجود دايمًا.
+
+---
+
+## ٦. حاجات مش كود
+
+- **الخصوصية:** IP الزائر بيروح لخدمة خارجية. ده لازم يتذكر في سياسة الخصوصية. والأحسن قاعدة GeoIP على السيرفر نفسه (زي GeoLite2 من MaxMind بموديول [[geoip2]] في nginx، من الوثائق) فمفيش IP بيخرج ومفيش timeout.
+- **اللهجة:** أي نص مترجم للهجة لازم يراجعه حد من البلد. «مصري» في الكود مش ضمان إن الكلام مصري صح.
+- **SEO:** الرابط الواحد بأسعار مختلفة. لو عايز جوجل يعرض كل بلد بسعرها، روابط منفصلة ([[/sa/pricing]]) و [[hreflang]] أوضح من التحويل الأوتوماتيك.
+
+---
+
+## ٧. البدايل اللي اترفضت
+
+| البديل | ليه لأ |
+|---|---|
+| lookup لكل طلب من غير cookie | بطء على كل صفحة، وفلوس لو الخدمة مدفوعة، ولو الخدمة وقعت الموقع كله بطيء |
+| lookup من غير timeout | خدمة بطيئة = صفحة بطيئة لكل زائر جديد |
+| تحويل الزائر لرابط تاني حسب البلد ([[302]]) | الـ bots والزوار المسافرين بيتلفّوا، ومش بتقدر توصل لصفحة بلد تانية |
+| أول IP في [[X-Forwarded-For]] | الزائر بيكتبه (اتجرّب: سعر السعودية لزائر مباشر) |
+| كاش «كل حاجة» للصفحة | زائر بيشوف سعر زائر تاني (اتجرّب) |
+| المنطقة الزمنية أول طبقة | مش بلد، وفيها مناطق مشتركة |
+
+---
+
+## الخلاصة
+
+| الطبقة | المصدر | تتختبر بـ |
+|---|---|---|
+| ١ | [[?region=sa]] | [[curl "URL?region=sa"]] |
+| ٢ | cookie [[region]] | [[curl -b "region=sa"]] |
+| — | bot؟ | [[curl -A "...Googlebot..."]] |
+| ٣ | [[CF-IPCountry]] / [[GEOIP_COUNTRY_CODE]] | [[curl -H "CF-IPCountry: SA"]] (من ورا الـ CDN بس) |
+| ٤ | IP + lookup بـ timeout | [[curl -H "X-Forwarded-For: 203.0.113.7"]] من proxy موثوق |
+| ٥ | المنطقة الزمنية (JS) | [[TZ=Asia/Riyadh node -e ...]] |
+| الكاش | [[Cache-Control: private]] أو مفتاح فيه البلد | ٣ طلبات من ٣ بلاد و [[X-Cache]] |`,
+          deep: {
+            why: R`الزائر اللي بيشوف السعر بعملته وبلهجته بيفهم العرض أسرع ومبيحسبش التحويل. بس الكشف بالـ IP مش مضمون (VPN، وشبكات الموبايل، والمسافرين)، فلازم طبقات وزرار، ولازم كل طبقة تفشل بهدوء للي بعدها. وأي غلطة في الكاش أو الهيدرات بتخلّي زائر يشوف سعر غلط، وده أسوأ من إنك متعملش الميزة خالص.`,
+            how: R`الـ CDN (زي Cloudflare) بيعرف بلد الزائر من الـ IP اللي وصله وبيضيف [[CF-IPCountry]] للطلب. وأي proxy بيضيف عنوان اللي كلّمه في آخر [[X-Forwarded-For]]، فالهيدر بيتبني من الشمال لليمين وكل طرف يقدر يكتب أي حاجة قبله. وموديول [[realip]] في nginx بيمشي من اليمين ويشيل العناوين الموثوقة ([[set_real_ip_from]]) لحد أول عنوان مش موثوق، وده بيبقى [[$remote_addr]]. والكاش بيخزن الرد بمفتاح؛ لو الرد بيختلف حسب حاجة مش في المفتاح، النسخة الأولى بتتوزع على الكل. و [[Vary]] بيضيف هيدرات الطلب للمفتاح، و [[Cache-Control: private]] بيمنع التخزين في أي كاش مشترك ويسمح بكاش المتصفح بس.`,
+            when: R`أسعار أو عملات أو لغات حسب البلد، أو محتوى مش مسموح في بلاد معينة، أو اختيار أقرب فرع أو مخزن. ونفس فكرة الطبقات (اختيار المستخدم، ثم المحفوظ، ثم الكشف، ثم الافتراضي) في اللغة ([[Accept-Language]]) والثيم (فاتح وغامق).`,
+            mistakes: R`تصدّق أول IP في [[X-Forwarded-For]] أو [[CF-IPCountry]] من أي حد. وتعمل lookup من غير timeout ولا cookie. وتحوّل Googlebot. وتسيب الصفحة تتكاش في CDN أو nginx بمفتاح الرابط بس. وتعتمد على [[Vary]] في Cloudflare. وتخلّي المنطقة الزمنية أول طبقة. وتحسب سعر الدفع من الصفحة بدل السيرفر. وتنسى تكتب في سياسة الخصوصية إن الـ IP بيروح لخدمة خارجية. وتنشر لهجة محدش من البلد راجعها.`
+          },
+          sol: R`من «الـ CDN»: [[CF-IPCountry: SA]] ← [[X-Region: sa (header)]] و [[19 SAR]] و [[Set-Cookie: region=sa ... Max-Age=2592000]]. و [[X-Forwarded-For: 192.0.2.44]] ← [[ae (header)]]. و [[-b region=sa]] ← [[sa (cookie)]]. و [[?region=ae]] ← [[ae (query)]]. و Googlebot ← [[eg (bot)]]. والخدمة البطيئة ← [[eg (default)]] في [[1.806463s]] واللوج [[Operation timed out after 1803 milliseconds]]. من «زائر مباشر»: [[CF-IPCountry: SA]] ← [[eg (default)]]، و [[X-Forwarded-For: 203.0.113.7]] ← [[sa (lookup 203.0.113.7)]] بالنسخة القديمة و [[eg (default)]] بعد الإصلاح. الكاش: [[MISS SAR]] ثم [[HIT SAR]] للمصري والإماراتي، وبالمفتاح الجديد ٣ [[MISS]] بـ ٣ عملات.
+
+اتجرّب في Docker: [[nginx:alpine]] (nginx 1.31) و [[php:8.4-cli]] و Node 22 للمنطقة الزمنية، و [[Get-TimeZone]] في PowerShell 7 على ويندوز 11. كلام Cloudflare عن [[Vary]] من وثائقهم.`,
+          practice: [
+            { lvl: 'سريع', t: R`من غير ما تبص: رتّب الطبقات الخمسة، وقدام كل واحدة الأمر بتاع curl اللي بيختبرها، وفين الـ bots بيقفوا.`, done: R`الترتيب [[?region]] ثم cookie ثم (bot يقف هنا بالافتراضي) ثم هيدر الـ CDN ثم IP و lookup ثم المنطقة الزمنية، وكل أمر curl فيه الخيار الصح ([[-b]] و [[-H]] و [[-A]]).` },
+            { lvl: 'تطبيق', t: R`اقرا وتوقّع: نفس [[detect_region()]] اللي في الدرس. توقّع [[X-Region]] لكل طلب من دول: (١) [[-b "region=ae"]] و [[?region=xx]]، (٢) Googlebot ومعاه [[-b "region=sa"]]، (٣) [[CF-IPCountry: sa]] بحروف صغيرة، (٤) ولا هيدر والخدمة واقعة. شغّل المعمل وقارن.`, done: R`(١) [[ae (cookie)]]، (٢) [[sa (cookie)]] لأن الـ cookie قبل فحص الـ bot، (٣) [[sa (header)]] لأن [[strtolower]]، (٤) [[eg (default)]] بعد أقل من ثانيتين، وكتبت ليه (٢) ممكن تكون مشكلة وهل تغيّر الترتيب.` },
+            { lvl: 'تطبيق', t: R`صلّح الكود البايظ: [[$ip = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])[0]; $c = file_get_contents("https://geo.example/?ip=$ip");]] وبعده [[header('Cache-Control: public, max-age=600')]]. لاقي ٤ مشاكل واكتب نسخة سليمة، واثبت كل مشكلة بأمر curl.`, done: R`المشاكل: أول IP بيكتبه الزائر، ومفيش timeout (الخدمة البطيئة بتعلّق الصفحة)، ومفيش cookie فكل صفحة lookup، و [[public]] بيخلّي CDN يكاش سعر زائر لغيره. والنسخة بتاعتك بتعدّي الـ ٤ اختبارات.` },
+            { lvl: 'تطبيق', t: R`ابني [[geo-check.sh URL]]: بيعمل جدول بـ ٧ حالات (كل طبقة، و bot، وزائر بيزوّر هيدر، وخدمة بطيئة) ويطبع لكل حالة [[X-Region]] والسعر والوقت، ويفشل لو أي حالة طلعت غير المتوقع (المتوقع في ملف [[expected.txt]]).`, done: R`على المعمل السليم كل السطور [[OK]] وكود الخروج 0، ولما ترجّع [[client_ip()]] للنسخة القديمة سطر «زائر بيزوّر» بيطلع [[FAIL: got sa want eg]] والكود 1.` },
+            { lvl: 'تحدي', t: R`قارن وقيس: شغّل ١٠٠ طلب لزوار جداد (من غير cookie) والخدمة بطيئة، مرة بالـ timeout ١٨٠٠ ومرة من غيره ومرة بـ cookie محفوظة. قيس متوسط الوقت وأبطأ طلب بـ [[curl -w "%{time_total}"]] و [[sort -n]].`, done: R`جدول فيه ٣ أرقام لكل حالة: من غير timeout حوالي ٥ ثواني لكل طلب، وبالـ timeout حوالي ١٫٨، وبالـ cookie أقل من ٠٫٠٥، وجملة عن ليه الـ cookie أهم من الـ timeout.` },
+            { lvl: 'تحدي', t: R`بيانات حقيقية الشكل: ملف لوج nginx فيه ١٠٠٠ سطر بالشكل [[ip country region_cookie status]] (اعمله بسكربت). طلّع: كام زائر الكشف بتاعهم اختلف عن الـ cookie (اختاروا بلد تانية بالزرار)، وأكتر ٣ بلاد، وكام طلب جه من غير بلد خالص.`, done: R`٣ أرقام بأمر [[awk]] واحد لكل سؤال (أو سكربت واحد)، والأرقام بتطابق اللي السكربت المولّد حطه، وكتبت إيه اللي الرقم الأول بيقوله عن دقة الكشف.` },
+          ],
+          ci: [
+            { os: [R`ubuntu`], sh: R`bash`, run: R`mkdir -p app geo
+cat > geo/index.php <<'EOF'
+<?php
+$ip = $_GET['ip'] ?? '';
+if (str_starts_with($ip, '198.51.100.')) sleep(5);
+$c = str_starts_with($ip, '192.0.2.') ? 'AE' : null;
+echo json_encode(['country' => $c]);
+EOF
+cat > app/pricing.php <<'EOF'
+<?php
+const REGIONS = ['eg' => 'EGP', 'sa' => 'SAR', 'ae' => 'AED'];
+function lookup(string $ip): ?string {
+    $ch = curl_init('http://127.0.0.1:8796/?ip=' . urlencode($ip));
+    curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT_MS => 1800]);
+    $b = curl_exec($ch);
+    return $b === false ? null : (json_decode($b, true)['country'] ?? null);
+}
+function detect(): array {
+    $q = strtolower($_GET['region'] ?? '');
+    if (isset(REGIONS[$q])) return [$q, 'query'];
+    $c = $_COOKIE['region'] ?? '';
+    if (isset(REGIONS[$c])) return [$c, 'cookie'];
+    if (preg_match('/bot|crawl|spider/i', $_SERVER['HTTP_USER_AGENT'] ?? '')) return ['eg', 'bot'];
+    $h = strtolower($_SERVER['HTTP_CF_IPCOUNTRY'] ?? '');
+    if (isset(REGIONS[$h])) return [$h, 'header'];
+    $country = strtolower(lookup($_SERVER['HTTP_X_REAL_IP'] ?? $_SERVER['REMOTE_ADDR']) ?? '');
+    return isset(REGIONS[$country]) ? [$country, 'lookup'] : ['eg', 'default'];
+}
+[$r, $why] = detect();
+setcookie('region', $r, ['expires' => time() + 30 * 86400, 'path' => '/']);
+header('Cache-Control: private, no-store');
+header("X-Region: $r ($why)");
+echo REGIONS[$r], "\n";
+EOF
+php -S 127.0.0.1:8796 -t geo > /dev/null 2>&1 & G=$!
+php -S 127.0.0.1:8797 -t app > /dev/null 2>&1 & A=$!
+sleep 1
+U=http://127.0.0.1:8797/pricing.php
+t() { n=$1; shift; echo "$n => $(curl -s -D - -o /dev/null "$@" | tr -d '\r' | grep -i '^x-region' | cut -d' ' -f2-)"; }
+t header -H "CF-IPCountry: SA" $U
+t lookup -H "X-Real-IP: 192.0.2.44" $U
+t cookie -b "region=sa" -H "X-Real-IP: 192.0.2.44" $U
+t query -b "region=sa" "$U?region=ae"
+t badquery -H "CF-IPCountry: SA" "$U?region=zz"
+t bot -A "Mozilla/5.0 (compatible; Googlebot/2.1)" -H "CF-IPCountry: SA" $U
+curl -s -o /dev/null -w "slow %{time_total}\n" -H "X-Real-IP: 198.51.100.50" $U | awk '{ print ($2 < 3 ? "slow capped" : "slow NOT capped") }'
+curl -s -D - -o /dev/null -H "CF-IPCountry: SA" $U | tr -d '\r' | grep -iE '^(cache-control|set-cookie: region)' | cut -d';' -f1
+kill $G $A`, expect: [R`header => sa (header)`, R`lookup => ae (lookup)`, R`cookie => sa (cookie)`, R`query => ae (query)`, R`badquery => sa (header)`, R`bot => eg (bot)`, R`slow capped`, R`Cache-Control: private, no-store`, R`Set-Cookie: region=sa`], timeout: 60 },
+          ],
         }
       ]
     }

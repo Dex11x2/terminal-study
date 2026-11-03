@@ -1,525 +1,882 @@
 // تكملة تاب css: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/css/01.js (شرح حقول الدرس في أوله)
 MORE("css", [
     {
-      t: "Accessibility",
-      l: 3,
-      n: "الموقع لازم يشتغل بالكيبورد وقارئ الشاشة ولمن نظره ضعيف، ومعظم ده ببلاش لو الـ HTML صح",
+      t: "الثيم والعربي والخطوط والأيقونات",
+      l: 2,
+      n: "dark mode من غير وميض، ومكونات بتتقلب لوحدها في العربي، وخط بيتحمّل صح، وأيقونات ليها اسم",
       items: [
         {
-          cmd: "aria",
-          title: "لما HTML لوحده ميكفيش: قول لقارئ الشاشة الحالة",
-          desc: R`القاعدة الأولى: لو فيه عنصر HTML بيعمل الحاجة، استخدمه ومتحطش aria. [[<button>]] أحسن من [[<div role="button">]].
+          cmd: "dark mode",
+          title: "وضع غامق بزرار ومن غير وميض",
+          desc: R`في Tailwind v4 الـ [[dark:]] افتراضيًا بيتبع نظام التشغيل. عشان تخليه بزرار، غيّر الـ variant يبقى على كلاس: [[@custom-variant dark (&:where(.dark, .dark *));]]، وبعدين [[<html class="dark">]] يقلب كل حاجة.
 
-aria للحاجات اللي HTML مش بيوصفها: [[aria-label]] اسم لعنصر ملوش كلام، و [[aria-expanded]] المنيو مفتوحة ولا لأ، و [[aria-controls]] الزرار ده بيتحكم في أنهي عنصر، و [[aria-current="page"]] اللينك ده الصفحة الحالية، و [[aria-describedby]] رسالة خطأ مربوطة بالحقل، و [[aria-live]] منطقة بتتغير ولازم تتقري.`,
-          example: R`<button aria-expanded={open} aria-controls="mobile-menu" aria-label="القايمة" onClick={() => setOpen(!open)}>
-  <Menu className="size-6" />
-</button>
-<nav id="mobile-menu" hidden={!open}>
-  <a href="/" aria-current={pathname === "/" ? "page" : undefined}>الرئيسية</a>
-</nav>
-<input id="email" aria-invalid={!!error} aria-describedby="email-error" />
-<p id="email-error">{error}</p>
-<div role="status" aria-live="polite">{saved && "اتحفظ"}</div>`,
-          try: R`شغّل قارئ الشاشة (Narrator على ويندوز بـ Ctrl+Win+Enter، أو VoiceOver على الماك بـ Cmd+F5) وافتح المنيو واقفلها بالكيبورد، واسمع بيقول إيه مع وبدون [[aria-expanded]].`,
+و [[next-themes]] في Next.js بيعمل الباقي: بيحط الكلاس، ويحفظ الاختيار في localStorage، ويتبع النظام لو المستخدم مختارش، ويشغّل script صغير قبل الرسم فمفيش وميض أبيض.`,
+          example: R`// globals.css
+@custom-variant dark (&:where(.dark, .dark *));
+// app/layout.tsx
+import { ThemeProvider } from "next-themes";
+<html lang="ar" dir="rtl" suppressHydrationWarning>
+  <body className="bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100">
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+      {children}
+    </ThemeProvider>
+  </body>
+</html>
+// theme-toggle.tsx ("use client")
+const { resolvedTheme, setTheme } = useTheme();
+<button onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}>غيّر الثيم</button>`,
+          try: R`طبّق ده في مشروع Next، واختار dark واعمل refresh: مفيش وميض أبيض. وفي DevTools › Application › Local Storage شوف مفتاح [[theme]]. وبعدين امسح [[suppressHydrationWarning]] وشوف التحذير في الكونسول.`,
           flag: "script",
           deep: {
-            why: "قارئ الشاشة بيقرا شجرة الـ accessibility: لكل عنصر role (زرار، لينك، حقل)، و name (اسمه)، و state (مفتوح، متعلّم، غلط). الـ HTML الصح بيملاهم لوحده. بس الحاجات الديناميكية (منيو بتفتح، حفظ نجح، خطأ ظهر) محتاجة حد يقول لقارئ الشاشة، ودا شغل aria.",
-            how: R`aria مبتغيّرش أي سلوك: [[role="button"]] على div مش بيخليه ياخد focus ولا يشتغل بـ Enter، بيغيّر اللي قارئ الشاشة بيقوله بس. عشان كده القاعدة المشهورة «no ARIA is better than bad ARIA»: aria غلط أسوأ من مفيش.
+            why: "المستخدمين متوقعين dark mode، وأي موقع بيفتح أبيض ثانية وبعدين يغمق بيبان مكسور. المشكلة إن السيرفر مش عارف اختيار المستخدم (محفوظ في المتصفح)، فلازم حاجة تحط الكلاس قبل ما الصفحة تترسم.",
+            how: R`[[@custom-variant dark (&:where(.dark, .dark *))]] بيغيّر معنى [[dark:bg-x]] لـ «لو العنصر نفسه أو جد ليه عليه [[.dark]]». و [[:where]] عشان الـ variant ميزودش specificity، فـ [[dark:bg-x]] يفضل بنفس وزن أي utility (كلاس واحد). ولو بتستخدم attribute: [[&:where([data-theme=dark], [data-theme=dark] *)]].
 
-الاسم (accessible name) بيتحسب بالترتيب: [[aria-labelledby]]، وبعدين [[aria-label]]، وبعدين الـ [[<label>]] أو [[alt]] أو محتوى العنصر، وآخر حاجة [[title]]. فلو فيه كلام ظاهر، هو الاسم، ومتحطش [[aria-label]] مختلف عنه (اللي بيستخدم التحكم بالصوت بيقول الكلام اللي شايفه).
+next-themes بيحقن [[<script>]] صغير في أول الصفحة بيتنفذ قبل الرسم: بيقرا localStorage (أو [[prefers-color-scheme]] لو system) ويحط الكلاس على html، وكمان [[color-scheme]] عشان الـ scrollbars وحقول الفورم تغمق هي كمان. بس السيرفر رسم html من غير الكلاس، فـ React هيلاقي فرق وقت الـ hydration، و [[suppressHydrationWarning]] بيسكّت التحذير ده على العنصر ده بس.
 
-[[aria-live="polite"]] بيستنى قارئ الشاشة يخلص كلامه ويقرا التغيير، و [[assertive]] بيقاطع (للأخطاء المهمة بس). والمنطقة لازم تبقى موجودة في الصفحة قبل ما المحتوى يتغير، مش تتعمل مع الرسالة.
+أي حاجة شكلها بيعتمد على الثيم في JavaScript (أيقونة شمس أو قمر) مش معروفة على السيرفر. فالمكون لازم يستنى لحد ما يتعمل mount: [[useEffect(() => setMounted(true), [])]]، وقبلها يعرض placeholder بنفس المقاس.
 
-و [[aria-hidden="true"]] بيخفي عنصر وأولاده عن قارئ الشاشة، للزينة بس. متحطوش على حاجة بتاخد focus.`,
-            when: "مكونات بتفتح وتقفل (منيو، و accordion، و tabs)، ورسايل بتظهر (toast، وأخطاء فورم، وحفظ)، وأزرار الأيقونات. وقبل ما تكتبها: فيه primitive (Radix) بيعملها؟",
-            mistakes: R`[[role="button"]] على div بدل button. [[aria-label]] على [[<div>]] عادي (غالبًا مش بيتقري لأن الـ div ملوش role). [[aria-hidden]] على عنصر فيه لينك أو زرار. وفي مشروع حقيقي زرار المنيو على الموبايل كان عليه aria-label بس ومن غير [[aria-expanded]] و [[aria-controls]]، والمنيو [[{open && ...}]] من غير id.`
+الطريقة الأنضف من [[dark:]] على كل عنصر: متغيرات. [[:root { --bg: white }]] و [[.dark { --bg: black }]] وتوكن [[--color-bg]] في [[@theme inline]]، فتكتب [[bg-bg]] بس وهو يتغير لوحده، ودا اللي shadcn بيعمله.
+
+وفيه حل من غير script خالص: cookie فيها الثيم، والسيرفر يحط الكلاس في الـ HTML نفسه. في مشروع حقيقي كان كده: الـ layout بيقرا الـ cookie ويحط [[data-theme]] على html، فمفيش وميض ولا فرق hydration.`,
+            when: R`أي موقع أو داشبورد. ولو الموقع landing بسيط، [[dark:]] الافتراضي اللي بيتبع النظام ممكن يكفي من غير زرار.`,
+            mistakes: R`تنسى [[suppressHydrationWarning]]. تعرض أيقونة الثيم من غير mounted فتظهر غلط وبعدين تتقلب. تكتب [[darkMode: "class"]] في tailwind.config.js في مشروع v4 ومفيش حاجة بتحصل: v4 مش بيقرا الملف ده غير بـ [[@config]]. و [[dark:]] على كل عنصر في المشروع بدل متغيرات، فأي لون جديد يتنسي في وضع من الاتنين.`
           },
-          teach: R`## قارئ الشاشة بيقرا شجرة، و aria بتكتب فيها
+          teach: R`## كلاس على [[<html>]] بيقلب الصفحة كلها
 
-المتصفح بيبني من الـ HTML شجرة تانية جنب الـ DOM اسمها **accessibility tree**. كل عنصر فيها ليه ٣ حاجات: **role** (هو إيه: زرار، لينك، حقل)، و **name** (اسمه اللي بيتقري)، و **state** (حالته: مفتوح، غلط، متعلّم). قارئ الشاشة مبيشوفش الشاشة، بيقرا الشجرة دي بس. و aria (اختصار Accessible Rich Internet Applications) attributes بتكتب في الشجرة دي ومبتغيّرش أي حاجة في الشكل ولا السلوك.
-
-عشان نشوف ده بعينينا، حطينا المثال في صفحة React (Vite) وفتحناها في Chrome، وقرينا الشجرة من Chrome DevTools Protocol (نفس اللي بيظهر في DevTools › Elements › Accessibility). وضفنا زرارين للتجربة بس: واحد بيحط رسالة خطأ، وواحد بيعمل «اتحفظ».
+الفكرة كلها: [[dark:]] يشتغل لما يبقى فيه كلاس [[dark]] فوق، و next-themes هو اللي بيحط الكلاس ده ويشيله ويفتكره. حطينا المثال في مشروع Next.js 16.4 (Tailwind 4.3.3، و next-themes 0.4.6)، وعملنا build وفتحناه في Chrome مرة والجهاز light ومرة dark (Playwright بيحاكي إعداد النظام).
 
 ---
 
-## ١. زرار المنيو
+## ١. [[globals.css]]: [[@custom-variant dark (&:where(.dark, .dark *));]]
 
-~~~text JSX
-<button aria-expanded={open} aria-controls="mobile-menu" aria-label="القايمة" onClick={() => setOpen(!open)}>
-  <Menu className="size-6" />
-</button>
+- [[@custom-variant]]: أمر Tailwind v4 بيعرّف variant جديد (أو يغيّر واحد موجود). اسمه هنا [[dark]].
+- [[&]]: العنصر اللي عليه الكلاس نفسه.
+- [[:where(.dark, .dark *)]]: «العنصر لو عليه [[.dark]]، أو لو جوه حد عليه [[.dark]]». والمسافة قبل [[*]] = «جوه، في أي عمق».
+- [[:where()]] specificity بتاعها صفر، فالكلاس يفضل بوزن كلاس واحد زي أي utility.
+
+القاعدة اللي طلعت في الـ CSS:
+
+~~~text من الـ CSS الناتج
+.dark\:bg-gray-950:where(.dark,.dark *){background-color:var(--color-gray-950)}
 ~~~
 
-نفكّه حتة حتة:
+ومن غير السطر ده، [[dark:]] في v4 بيتبع [[prefers-color-scheme]] بتاع الجهاز، والزرار مش هيأثر.
 
-- [[<button>]]: زرار HTML حقيقي. بياخد focus بالـ Tab، وبيشتغل بـ Enter و Space، و role بتاعه button من غير ما تكتب حاجة. ده ليه القاعدة الأولى «استخدم العنصر الصح الأول».
-- [[aria-label="القايمة"]]: الزرار جواه أيقونة بس، فملوش كلام يتقري. الـ attribute ده بيدّيله اسم.
-- [[aria-expanded={open}]]: [[open]] متغير state في React (true أو false). React بيكتبه في الـ HTML كـ [[aria-expanded="true"]] أو [[="false"]]، فالحالة بتتحدّث مع كل ضغطة.
-- [[aria-controls="mobile-menu"]]: «الزرار ده بيتحكم في العنصر اللي الـ id بتاعه mobile-menu».
-- [[onClick={() => setOpen(!open)}]]: [[!open]] = عكس القيمة الحالية، فكل ضغطة بتقلبها.
-- [[<Menu className="size-6" />]]: أيقونة من lucide-react. و [[size-6]] من Tailwind = عرض وارتفاع 1.5rem (24px).
+## ٢. [[app/layout.tsx]]
 
-الشجرة اللي Chrome طلّعها للزرار أول ما الصفحة فتحت:
+### [[import { ThemeProvider } from "next-themes";]]
 
-~~~text accessibility tree (Chrome)
-button name="القايمة" expanded=false
-~~~
+package بيدير الثيم: يحط الكلاس، ويحفظ الاختيار، ويقرا إعداد الجهاز.
 
-وبعد Tab ثم Enter:
+### [[<html lang="ar" dir="rtl" suppressHydrationWarning>]]
 
-~~~text accessibility tree (Chrome)
-button name="القايمة" focused=true expanded=true controls="mobile-menu"
-~~~
+[[lang]] و [[dir]] للعربي. و [[suppressHydrationWarning]] هنتكلم عنه في الخطوة ٥.
 
-لاحظ إن [[controls]] مظهرش غير لما المنيو اتفتحت: وهي مقفولة العنصر نفسه مش موجود في الشجرة (تحت هتعرف ليه)، فمفيش حاجة يشاور عليها.
+### [[<body className="bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100">]]
 
-### الأيقونة اتخفت لوحدها
+لونين لكل حاجة: [[bg-white]] و [[text-gray-900]] في العادي، و [[dark:bg-gray-950]] و [[dark:text-gray-100]] لما [[.dark]] تبقى على html.
 
-قرينا الـ attributes بتاعة الـ [[<svg>]] اللي lucide-react (نسخة 1.52) طلّعه:
+### [[<ThemeProvider ...>]]
 
-~~~text
-class=lucide lucide-menu size-6 aria-hidden=true
-~~~
+| الـ prop | يعني |
+|---|---|
+| [[attribute="class"]] | حط الثيم ككلاس على html ([[class="dark"]]). البديل [[data-theme]] |
+| [[defaultTheme="system"]] | لو المستخدم لسه مختارش، امشي على الجهاز |
+| [[enableSystem]] | اسمح بـ [[system]] كاختيار |
+| [[disableTransitionOnChange]] | وقف كل الـ transitions لحظة التبديل، عشان كل لون ميتحركش لوحده |
 
-[[aria-hidden="true"]] معناها «شيل العنصر ده وكل اللي جواه من الشجرة». الأيقونة زينة، والاسم جاي من [[aria-label]] على الزرار، فمش محتاجين قارئ الشاشة يقول «graphic» قبله.
+و [[{children}]] = الصفحة نفسها.
 
-### الاسم بيتحسب منين؟
+## ٣. [[theme-toggle.tsx]]
 
-Chrome بيقول هو جاب الاسم منين، وده اللي طلع للينك «الرئيسية»:
+الملف لازم يبدأ بـ [["use client"]] لأن الزرار فيه [[onClick]] و hook، ودول بيشتغلوا في المتصفح بس.
 
-| الترتيب | المصدر | النتيجة |
-|---|---|---|
-| ١ | [[aria-labelledby]] | مش موجود |
-| ٢ | [[aria-label]] | مش موجود |
-| ٣ | contents (الكلام اللي جوه) | «الرئيسية» ← ده الاسم |
-| ٤ | [[title]] | اتجاهل (superseded) |
-
-يعني أول مصدر موجود بيكسب. وده ليه مينفعش تحط [[aria-label]] مختلف عن كلام ظاهر: هيغطي عليه.
+- [[const { resolvedTheme, setTheme } = useTheme();]]: [[useTheme]] hook بيرجّع object، والـ [[{ }]] بتطلّع منه اتنين بأساميهم.
+- [[resolvedTheme]]: الثيم الفعلي، [[light]] أو [[dark]]. حتى لو الاختيار [[system]]، ده بيقولك النتيجة.
+- [[setTheme("dark")]]: يغيّر الثيم ويحفظه.
+- [[resolvedTheme === "dark" ? "light" : "dark"]]: الـ [[? :]] اسمه ternary: «لو dark خليه light، وإلا خليه dark».
 
 ---
 
-## ٢. المنيو نفسها
+## ٤. اللي حصل في المتصفح
 
-~~~text JSX
-<nav id="mobile-menu" hidden={!open}>
-  <a href="/" aria-current={pathname === "/" ? "page" : undefined}>الرئيسية</a>
-</nav>
+### الجهاز light، أول مرة
+
+~~~text الناتج
+html class   = "...variable light"
+html style   = "color-scheme: light;"
+localStorage theme = null
+body background    = rgb(255, 255, 255)
 ~~~
 
-- [[<nav>]]: role بتاعه navigation (landmark)، وقارئ الشاشة يقدر يقفز له.
-- [[id="mobile-menu"]]: نفس القيمة اللي في [[aria-controls]]، وده الربط بينهم.
-- [[hidden={!open}]]: الـ attribute [[hidden]] بيخلّي [[display: none]]، فالعنصر بيختفي من الشاشة ومن الـ Tab ومن الشجرة مرة واحدة. قسناه: بعد الفتح [[nav.hidden]] بقت [[false]] و [[display]] بقى [[block]].
-- [[aria-current={... ? "page" : undefined}]]: الـ [[? :]] اسمه ternary: لو المسار [[/]] القيمة [[page]]، وإلا [[undefined]]، و React مبيكتبش attribute قيمته undefined خالص. في الـ DOM طلع [[<a href="/" aria-current="page">الرئيسية</a>]]. قارئ الشاشة بيقول معاه «current page» (ده من docs قارئات الشاشة، الـ CDP مبيعرضش الخاصية دي في قايمته).
+([[...variable]] ده كلاس الخط من درس next/font، ملوش علاقة.) ومفيش [[theme]] في localStorage لأن المستخدم لسه مختارش، فالثيم جاي من الجهاز.
 
-شكل الشجرة كلها بعد الفتح (من [[ariaSnapshot]] بتاع Playwright):
+### ضغطنا الزرار
 
-~~~text
-- button "القايمة" [expanded]
-- navigation:
-  - link "الرئيسية":
-    - /url: /
+~~~text الناتج
+html class   = "...variable dark"
+html style   = "color-scheme: dark;"
+localStorage theme = "dark"
+body background    = lab(1.90334 0.278696 -5.48866)    ← gray-950
 ~~~
 
----
+[[color-scheme: dark]] بيقول للمتصفح يغمّق حاجاته هو كمان: الـ scrollbar وحقول الفورم.
 
-## ٣. الحقل ورسالة الخطأ
+### refresh
 
-~~~text JSX
-<input id="email" aria-invalid={!!error} aria-describedby="email-error" />
-<p id="email-error">{error}</p>
+الكلاس كان [[dark]] و [[color-scheme: dark]] **قبل** ما الصفحة تخلص تحميل (قسناه لحظة [[readyState = "interactive"]]، قبل ما React يشتغل). يعني مفيش لحظة بيضا.
+
+### الجهاز dark، أول مرة
+
+فتح [[dark]] لوحده من غير ما نضغط حاجة. ضغطنا الزرار: بقى [[light]] واتحفظ، ومع إن الجهاز لسه dark الخلفية بيضا. ده بالظبط شغل [[@custom-variant]]: [[dark:]] بقى بيسمع للكلاس مش للجهاز.
+
+### إزاي مفيش وميض؟
+
+الـ HTML اللي جاي من السيرفر:
+
+~~~text الناتج
+<html lang="ar" dir="rtl" class="pW5XIG_variable">
+<body class="..."><div hidden=""></div><script>(...)("class","theme","system",null,["light","dark"],null,true,true)</script>
 ~~~
 
-- [[!!error]]: علامتين [[!]] بيحوّلوا أي قيمة لـ true أو false. نص فاضي [[""]] يبقى false، و «اكتب الإيميل» يبقى true.
-- [[aria-invalid]]: الحقل ده قيمته غلط.
-- [[aria-describedby="email-error"]]: الكلام اللي في العنصر ده هو **وصف** الحقل، بيتقري بعد اسمه.
+السيرفر مش عارف اختيارك، فبعت html **من غير** dark. بس أول حاجة في الـ body [[<script>]] صغير بيتنفّذ قبل ما أي حاجة تترسم: بيقرا [[localStorage.getItem("theme")]]، ولو مفيش أو [[system]] بيسأل [[matchMedia("(prefers-color-scheme: dark)")]]، ويحط الكلاس والـ [[color-scheme]] على html.
 
-قبل الخطأ وبعده:
+## ٥. [[suppressHydrationWarning]]
 
-~~~text accessibility tree (Chrome)
-قبل:  textbox name="" desc=""             invalid="false"
-بعد:  textbox name="" desc="اكتب الإيميل" invalid="true"
+React لما بيشتغل في المتصفح (hydration) بيقارن الـ HTML اللي جه من السيرفر باللي هو كان هيرسمه. والـ script غيّر html قبله. شلنا الـ prop وشغّلنا [[next dev]] والجهاز dark:
+
+~~~text الـ Console
+A tree hydrated but some attributes of the server rendered HTML didn't match the client properties.
+  <html
+    lang="ar"
+    dir="rtl"
++   className="cairo_..._variable"
+-   className="cairo_..._variable dark"
+-   style={{color-scheme:"dark"}}
+  >
 ~~~
 
-> لاحظ [[name=""]]: المثال مركّز على aria، فالحقل ملوش [[<label>]]. في الحقيقة لازم [[<label for="email">الإيميل</label>]]، وإلا قارئ الشاشة هيقول «edit text» من غير اسم. (درس «form و label».)
-
----
-
-## ٤. منطقة الإعلان
-
-~~~text JSX
-<div role="status" aria-live="polite">{saved && "اتحفظ"}</div>
-~~~
-
-- [[role="status"]]: منطقة رسايل حالة.
-- [[aria-live="polite"]]: أي تغيير في الكلام جواها يتقري لما قارئ الشاشة يخلص اللي بيقوله.
-- [[{saved && "اتحفظ"}]]: لو [[saved]] true يتعرض الكلام، ولو false مبيتعرضش حاجة.
-
-Chrome طلّعها كده من أول ما الصفحة فتحت وهي فاضية:
-
-~~~text accessibility tree (Chrome)
-status live="polite" atomic=true relevant="additions text"
-~~~
-
-[[atomic=true]] جت من الـ role لوحده: بتتقري كلها كوحدة. والمهم إن المنطقة **موجودة من الأول** فاضية، وبعد الضغط بقت [[status: اتحفظ]]. لو كانت بتتعمل مع الرسالة، قارئات شاشة كتير مش هتلحق تراقبها.
-
----
-
-## ملخص الـ attributes
-
-| attribute | بيكتب في الشجرة | مثال القيمة |
-|---|---|---|
-| [[aria-label]] | name | «القايمة» |
-| [[aria-expanded]] | state | true / false |
-| [[aria-controls]] | علاقة بعنصر تاني | id |
-| [[aria-current]] | state | page |
-| [[aria-invalid]] | state | true / false |
-| [[aria-describedby]] | description | id الرسالة |
-| [[aria-live]] | المنطقة تعلن تغييرها | polite / assertive |
-| [[aria-hidden]] | يشيل العنصر من الشجرة | true |
+[[+]] = اللي React متوقعه، و [[-]] = اللي لقاه فعلًا. الفرق في [[className]] و [[style]] بتوع html بس، ودول متوقعين. رجّعنا الـ prop: الخطأ اختفى. وهو بيسكّت html نفسه بس، مش اللي جواه.
 
 ## الخلاصة
 
-- العنصر الصح الأول ([[<button>]] و [[<nav>]] و [[<label>]])، و aria للي HTML ميعرفش يقوله: الحالة والعلاقات.
-- aria بتغيّر الشجرة بس، مش السلوك: [[role="button"]] على div مش هياخد focus.
-- القيمة لازم تتحدّث مع الـ state ([[aria-expanded={open}]] مش ثابتة).
-- منطقة [[aria-live]] تبقى موجودة قبل الرسالة.`,
+| الحتة | شغلتها |
+|---|---|
+| [[@custom-variant dark (...)]] | [[dark:]] يسمع للكلاس مش للجهاز |
+| [[attribute="class"]] | next-themes يحط [[class="dark"]] على html |
+| [[defaultTheme="system"]] + [[enableSystem]] | من غير اختيار: زي الجهاز |
+| الـ script في أول الـ body | يحط الكلاس قبل الرسم، فمفيش وميض |
+| [[localStorage.theme]] | الاختيار المحفوظ |
+| [[suppressHydrationWarning]] | يسكّت فرق html المتوقع |
+| [[resolvedTheme]] | الثيم الفعلي للزرار |`,
           lines: [
-            "زرار المنيو: بيقول مفتوحة ولا لأ، وبيتحكم في أنهي عنصر، واسمه إيه.",
-            "الأيقونة (lucide v1 بيخفيها عن قارئ الشاشة لوحده).",
+            R`[[dark:]] يشتغل لما [[.dark]] تبقى على العنصر أو أي جد ليه، بدل ما يتبع النظام.`,
+            "المكتبة.",
+            R`[[suppressHydrationWarning]] لأن next-themes هيحط كلاس على html قبل React، فالسيرفر والمتصفح هيختلفوا في الحتة دي بس.`,
+            "ألوان الوضعين.",
+            R`[[attribute="class"]] يحط [[.dark]]، والافتراضي النظام، و [[disableTransitionOnChange]] يمنع كل الـ transitions تشتغل مع بعض وقت التبديل.`,
+            "الصفحة.",
             "قفلة.",
-            R`المنيو نفسها. [[hidden]] بيشيلها من الشاشة ومن الـ Tab ومن قارئ الشاشة.`,
-            "لينك الصفحة الحالية: قارئ الشاشة بيقول «current page».",
             "قفلة.",
-            "الحقل: غلط ولا لأ، ورسالة الخطأ بتاعته فين.",
-            "الرسالة. قارئ الشاشة بيقراها بعد اسم الحقل.",
-            "منطقة بتعلن التغييرات: لما «اتحفظ» تظهر بتتقري من غير ما الـ focus يتحرك."
+            "قفلة.",
+            R`[[resolvedTheme]] = الثيم الفعلي (لو system بيقولك light ولا dark).`,
+            "زرار بيقلب."
           ],
-          sol: R`مع [[aria-expanded]]: لما توصل للزرار بـ Tab، قارئ الشاشة بيقول حاجة زي «القايمة، زرار، مقفول» (Narrator بيقول collapsed، و VoiceOver بيقول «collapsed» أو «مطوي» حسب اللغة). اضغط Enter: بيقول «متفتح / expanded»، ولما تنزل بـ Tab تلاقي لينك «الرئيسية» ومعاه «current page» لو انت فيها. اضغط تاني: «مقفول».
+          sol: R`بعد ما تختار dark وتعمل refresh: الصفحة بتفتح غامقة من أول frame، من غير ولا لمحة بيضا. لو فتحت Elements هتلاقي على [[<html>]] ‏[[class="dark"]] ومعاها [[style="color-scheme: dark;"]]، ودول اتحطوا بـ script صغير next-themes بيحطه قبل ما الصفحة تترسم. وفي Application › Local Storage هتلاقي مفتاح [[theme]] وقيمته [[dark]] (أو [[light]]، ولو لسه مختارتش هتلاقيه مش موجود أو [[system]]).
 
-من غير [[aria-expanded]]: بيقول «القايمة، زرار» بس، ولما تدوس مفيش أي كلام بيقولك إن حاجة اتفتحت؛ المستخدم مش عارف إن المنيو ظهرت ولا لأ غير لو كمّل Tab بالصدفة. ولو شلت [[aria-label]] كمان هيقول «زرار» من غير اسم، لأن الأيقونة لوحدها ملهاش كلام.
+لما تمسح [[suppressHydrationWarning]] وتعمل refresh وانت على dark: في الـ Console خطأ hydration من React بيقول إن attributes الـ HTML اللي جاي من السيرفر مش زي اللي على العميل، وهتلاقي فيه [[class]] و [[style]] بتوع الـ html. ده لأن السيرفر بعت html من غير class، والـ script غيّرها قبل React. الـ prop ده بيسكّت التحذير للعنصر ده بس، مش لأولاده.
 
-الصياغة بالظبط بتختلف من قارئ لقارئ ومن لغة لأخرى، المهم إن الحالة (expanded/collapsed) تتقال وتتغير. لو سمعت الحالة مش بتتغير، يبقى القيمة مش بتتحدّث مع الـ state (مثلًا كاتبها [[aria-expanded="true"]] ثابتة).`
+لو لسه فيه وميض أبيض: اتأكد إن [[@custom-variant dark]] مكتوب (من غيره [[dark:]] بيشتغل على ثيم الجهاز مش على الكلاس)، وإن [[attribute="class"]] على الـ provider. ولو الزرار مش بيعمل حاجة أول مرة، غالبًا بتقرا [[theme]] (اللي ممكن يبقى [[system]]) بدل [[resolvedTheme]].`
         },
         {
-          cmd: "focus-visible",
-          title: "الموقع بيشتغل بالكيبورد لوحده؟",
-          desc: R`جرّب موقعك بـ Tab و Shift+Tab و Enter و Space و Escape بس. كل حاجة بتتضغط لازم يتوصلها، والـ focus لازم يبقى باين، والترتيب منطقي.
+          cmd: "logical properties",
+          title: "مكون واحد يشتغل عربي وإنجليزي من غير rtl: في كل حتة",
+          desc: R`بدل [[left]] و [[right]] استخدم start و end: [[ms-4]] (margin-inline-start) بدل [[ml-4]]، و [[pe-2]] بدل [[pr-2]]، و [[text-start]] بدل [[text-left]]، و [[inset-s-0]] بدل [[left-0]]، و [[rounded-s-lg]] و [[border-e]]. دول بيتقلبوا لوحدهم مع [[dir]].
 
-[[:focus-visible]] بيظهر الـ outline لما المستخدم ماشي بالكيبورد بس، فمفيش سبب تشيله. و [[tabindex="0"]] بيدخّل عنصر في الـ Tab (نادرًا تحتاجه)، و [[tabindex="-1"]] بيخليه ياخد focus من الكود بس. ولينك «تخطى للمحتوى» كأول حاجة في الصفحة بيوفّر على مستخدم الكيبورد 20 Tab.`,
-          example: R`<a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:inset-s-2 focus:z-50 focus:rounded focus:bg-white focus:p-3">
-  تخطى للمحتوى
-</a>
-<main id="main" tabIndex={-1}>...</main>
-<button className="rounded-lg px-4 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand">حفظ</button>
-// globals.css
-:focus-visible { outline: 2px solid var(--color-brand); outline-offset: 2px; }`,
-          try: R`سيب الماوس وامشي في موقعك بالكيبورد بس: سجّل دخول، وافتح منيو، واقفل مودال. كل مرة الـ focus يختفي أو يروح مكان غريب اكتبها. وبعدين دوس Tab أول ما الصفحة تفتح وشوف لينك التخطي.`,
+والحاجات اللي ليها اتجاه (سهم «التالي»، أيقونة رجوع) اقلبها بـ [[rtl:-scale-x-100]]. أما أيقونة زي البحث أو الساعة فسيبها.`,
+          example: R`<div className="flex items-center gap-3 ps-4 pe-2">
+  <img className="size-10 rounded-full" src="/u.jpg" alt="" />
+  <p className="text-start">محمد</p>
+  <span className="ms-auto">من 5 دقايق</span>
+</div>
+<button className="inline-flex items-center gap-2">
+  التالي <ArrowRight className="size-4 rtl:-scale-x-100" />
+</button>
+<aside className="border-e ps-6">...</aside>
+<span className="absolute top-2 inset-e-2">جديد</span>
+<span dir="ltr">+20 100 000 0000</span>`,
+          try: R`اعمل المكون ده وقلّب [[dir]] على html بين rtl و ltr: كل حاجة هتتقلب صح. بعدين غيّر [[ms-auto]] لـ [[ml-auto]] وشوف الوقت لزق في الناحية الغلط في العربي.`,
           flag: "script",
           deep: {
-            why: R`ناس كتير مش بتستخدم ماوس: إعاقة حركية، أو نظر ضعيف مع قارئ شاشة، أو مبرمج بيحب الكيبورد. وأشهر غلطة [[outline: none]] على كل حاجة عشان «شكلها وحش»، فالموقع يبقى مستحيل من الكيبورد.`,
-            how: R`الـ Tab بيمشي على العناصر اللي بتاخد focus لوحدها (a بـ href، و button، و input، و select، و textarea، و summary) بترتيبها في الـ HTML. [[tabindex="0"]] بيضيف أي عنصر للترتيب ده في مكانه الطبيعي. [[tabindex="-1"]] بيخليه يقبل [[element.focus()]] من غير ما يدخل الـ Tab. وأي رقم موجب ([[tabindex="3"]]) بيعمل ترتيب منفصل ويلخبط كل حاجة: متستخدموش.
+            why: R`موقع عربي وإنجليزي بـ left و right معناه نسختين من كل مكون، أو [[rtl:]] على كل عنصر. الـ logical properties بتخلي الكود يوصف «البداية والنهاية» مش «الشمال واليمين»، والمتصفح يحوّلهم حسب اتجاه الصفحة.`,
+            how: R`في CSS: [[margin-inline-start]] و [[padding-inline-end]] و [[inset-inline-start]] و [[border-inline-end]] و [[text-align: start]]. الـ inline = اتجاه الكتابة (أفقي في العربي والإنجليزي)، والـ block = الاتجاه العمودي عليه (فوق وتحت). فـ [[margin-block]] = فوق وتحت، و [[padding-inline]] = الجنبين.
 
-[[:focus]] بتتطبق مع أي focus (ماوس أو كيبورد). [[:focus-visible]] المتصفح هو اللي بيقرر: لما تدوس بالماوس على زرار مبتظهرش، ولما تيجي بـ Tab بتظهر، وفي حقول الكتابة دايمًا بتظهر (لأنك هتكتب). فالـ outline موجود للي محتاجه ومش بيضايق الباقي.
+في Tailwind: [[ms-*]] و [[me-*]] و [[ps-*]] و [[pe-*]] و [[inset-s-*]] و [[inset-e-*]] و [[rounded-s-*]] و [[rounded-e-*]] و [[border-s]] و [[border-e]] و [[text-start]] و [[text-end]]. و [[mx-*]] و [[px-*]] أصلًا متماثلين فمش فارقين. ([[start-*]] و [[end-*]] للـ position بقوا deprecated من v4.2 لصالح [[inset-s-*]] و [[inset-e-*]].)
 
-إدارة الـ focus: لما تفتح مودال حط الـ focus جواه، ولما يقفل رجّعه للزرار. لما تمسح عنصر من قايمة، ودّي الـ focus للي بعده. لما تتنقل لصفحة في SPA، ودّيه للعنوان أو الـ main. و Radix بيعمل أول اتنين لوحده.
+اللي مش بيتقلب لوحده: [[translate-x]] (الرقم الموجب دايمًا يمين)، و [[rotate]]، والـ gradients ([[bg-linear-to-r]])، والظل اللي ليه إزاحة أفقية، و [[background-position]]. دول محتاجين [[rtl:]]: [[rtl:-translate-x-1]] أو [[rtl:bg-linear-to-l]].
 
-و attribute [[inert]] بيخلي جزء كامل من الصفحة مش بيتوصله ولا بيتقري، مفيد للمحتوى اللي ورا drawer مفتوح.`,
-            when: R`مع كل مكون تفاعلي بتعمله: اختبره بالكيبورد قبل ما تقول خلص. و [[focus-visible:]] على كل زرار ولينك شكله مخصص.`,
-            mistakes: R`[[outline: none]] من غير بديل. [[tabindex]] موجب. div بيتضغط ومش بيتوصله. مودال بيتقفل والـ focus يرجع لأول الصفحة. وفي Tailwind v4 [[outline-none]] بقى بيشيل الـ outline فعلًا، و [[outline-hidden]] هو اللي بيسيب outline شفاف يبان في وضع التباين العالي (forced colors) بتاع ويندوز.`
+الأيقونات: اللي معناها اتجاه (أسهم التالي والسابق، ورجوع، وإرسال، والـ chevrons في الـ breadcrumb) بتتقلب. واللي بتمثل حاجة حقيقية (ساعة، وبحث، و play في مشغل فيديو، وعلامة صح) متتقلبش. في مشروع حقيقي أيقونات الأسهم كلها كانت [[rtl:-scale-x-100]]، والحركة عند الـ hover [[rtl:group-hover:-translate-x-1]]، والأرقام والأوقات عليها [[dir="ltr"]]. و shadcn فيه [[--rtl]] بيحوّل مكوناته لـ logical لوحده.`,
+            when: "أي مشروع ممكن يبقى فيه عربي، حتى لو دلوقتي إنجليزي بس. عوّد إيدك على ms و pe من الأول، مفيش أي تكلفة.",
+            mistakes: R`[[ml-2]] للمسافة بين أيقونة وكلام، وفي العربي الأيقونة تلزق في الكلام والمسافة تروح الناحية التانية (أحسن [[gap-2]] على الأب). تقلب كل الأيقونات فالساعة تلف بالعكس. و [[translate-x]] في animation أو toggle من غير [[rtl:]]. وساعات الحل المقبول [[dir="ltr"]] على العنصر ده بس، لو شكله مش مرتبط باللغة.`
           },
-          teach: R`## ٣ حاجات: لينك تخطي، ومكان يستقبل الـ focus، و outline يبان بالكيبورد بس
+          teach: R`## «البداية» و «النهاية» بدل «شمال» و «يمين»
 
-المثال فيه لينك «تخطى للمحتوى» مستخبي لحد ما ياخد focus، و [[<main>]] يقدر يستقبل الـ focus لما اللينك يتداس، وزرار عليه outline بلون البراند. حطيناه في صفحة React + Tailwind 4.3.3 (Vite) بـ [[dir="rtl"]] وشاشة 800×600، وضفنا قبل الـ main هيدر فيه لينكين عشان نشوف التخطي بيعدّي عليهم، ومشينا فيها بالكيبورد من Playwright في Chrome، وقسنا كل خطوة بـ [[getComputedStyle]] و [[getBoundingClientRect]].
+كل كلاس في المثال بيقول «من ناحية البداية» أو «من ناحية النهاية»، والمتصفح بيعرف البداية فين من [[dir]]: في [[rtl]] البداية يمين، وفي [[ltr]] شمال. حطينا المثال في صفحة Vite (Tailwind 4.3.3) جوه صندوق عرضه 600 و [[relative]]، و [[ArrowRight]] من lucide-react، وقسنا كل حاجة في Chrome مرة بـ [[dir="rtl"]] على html ومرة [[ltr]]. الأرقام تحت مكان العنصر من الطرف الشمال للصندوق (من - لـ).
 
 ---
 
-## ١. لينك التخطي
+## ١. الكلاسات بتطلّع إيه في CSS
 
-~~~text JSX
-<a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:inset-s-2 focus:z-50 focus:rounded focus:bg-white focus:p-3">
-  تخطى للمحتوى
-</a>
+~~~text من الـ CSS الناتج
+.ps-4{padding-inline-start:calc(var(--spacing) * 4)}
+.pe-2{padding-inline-end:calc(var(--spacing) * 2)}
+.ms-auto{margin-inline-start:auto}
+.ml-auto{margin-left:auto}
+.text-start{text-align:start}
+.border-e{border-inline-end-style:var(--tw-border-style);border-inline-end-width:1px}
+.inset-e-2{inset-inline-end:calc(var(--spacing) * 2)}
 ~~~
 
-[[href="#main"]]: الـ [[#]] معناها «عنصر في نفس الصفحة الـ id بتاعه main». الضغط عليه بينزل للعنصر ده من غير تحميل صفحة.
+- **inline** = اتجاه السطر (الجنبين). و **block** = فوق وتحت.
+- [[s]] = start (البداية)، و [[e]] = end (النهاية).
+- [[ml-auto]] الوحيد اللي فيه [[left]] صريحة، فمش بيتقلب.
 
-### [[sr-only]]: مستخبي من الشاشة بس
+## ٢. الصف: [[<div className="flex items-center gap-3 ps-4 pe-2">]]
 
-sr = screen reader. القاعدة اللي Tailwind طلّعها (من ملف الـ CSS بعد الـ build):
+- [[flex items-center]]: العناصر جنب بعض ومتوسّطين رأسيًا. والـ flex نفسه بيمشي مع [[dir]]: أول عنصر عند البداية.
+- [[gap-3]]: 12px بين كل عنصرين، من غير ما تحدد ناحية.
+- [[ps-4]] و [[pe-2]]: 16px من البداية و 8px من النهاية.
 
-~~~text CSS ناتج
-.sr-only{clip-path:inset(50%);white-space:nowrap;border-width:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}
+| | [[rtl]] | [[ltr]] |
+|---|---|---|
+| [[padding-right]] | 16px | 8px |
+| [[padding-left]] | 8px | 16px |
+
+## ٣. الصورة والاسم والوقت
+
+~~~text App.tsx
+<img className="size-10 rounded-full" src="/u.jpg" alt="" />
+<p className="text-start">محمد</p>
+<span className="ms-auto">من 5 دقايق</span>
 ~~~
 
-يعني العنصر بقى ١×١ بكسل، و [[clip-path: inset(50%)]] قصّه لحد ما مفيش حاجة باينة. بس هو لسه موجود في الـ DOM، فقارئ الشاشة بيقراه والـ Tab بيوصله. ولو كنا استخدمنا [[display: none]] كان اختفى من الاتنين.
+- [[size-10]]: 40×40px. و [[rounded-full]]: دايرة. و [[alt=""]]: صورة للزينة، قارئ الشاشة يتجاهلها.
+- [[text-start]]: الكلام على ناحية البداية. القيمة المحسوبة فضلت [[start]] في الحالتين، والمتصفح بيترجمها.
+- [[ms-auto]]: margin من ناحية البداية بـ [[auto]]. في الـ flex الـ [[auto]] بياكل كل المساحة الفاضية، فبيزق العنصر لآخر الصف.
 
-### [[focus:]]: كل اللي بعدها يتطبق وقت الـ focus بس
+| العنصر | [[rtl]] | [[ltr]] |
+|---|---|---|
+| الصورة | 543 - 583 (يمين) | 17 - 57 (شمال) |
+| «محمد» | 495 - 531 | 69 - 105 |
+| الوقت بـ [[ms-auto]] | **9 - 84** (أقصى الشمال) | 516 - 591 (أقصى اليمين) |
+| الوقت بـ [[ml-auto]] | **460 - 535** (لازق في الاسم) | 516 - 591 |
 
-[[focus:X]] بتطلّع قاعدة على [[:focus]]. القواعد اللي طلعت:
+السطر الأخير هو الغلطة: [[ml-auto]] في [[ltr]] بيدّي نفس النتيجة بالظبط، فاللي بيجرّب بالإنجليزي بس مش هيشوف المشكلة. في [[rtl]] الـ margin الشمال زق الوقت يمين ناحية الاسم.
 
-| الكلاس | القاعدة |
+## ٤. زرار التالي: [[rtl:-scale-x-100]]
+
+~~~text App.tsx
+<button className="inline-flex items-center gap-2">
+  التالي <ArrowRight className="size-4 rtl:-scale-x-100" />
+</button>
+~~~
+
+- [[ArrowRight]]: سهم بيشاور يمين، يعني «لقدام» في الإنجليزي.
+- [[-scale-x-100]]: [[scale-x]] = تكبير على المحور الأفقي، و [[100]] = 100٪، والسالب = اعكسه مراية.
+- [[rtl:]]: بس لما الصفحة RTL.
+
+| | [[rtl]] | [[ltr]] |
+|---|---|---|
+| [[scale]] المحسوب | [[-1 1]] (معكوس، بيشاور شمال) | [[none]] |
+
+والـ selector اللي طلع في Tailwind 4.3.3:
+
+~~~text من الـ CSS الناتج
+.rtl\:-scale-x-100:where(:is(:lang(ar),:lang(he),:lang(fa),...),[dir=rtl],[dir=rtl] *){...}
+~~~
+
+يعني [[rtl:]] بيشتغل لو العنصر جوه [[dir="rtl"]] **أو** جوه [[lang]] لغة بتتكتب من اليمين (عربي، عبري، فارسي...). عشان كده خلي [[lang]] و [[dir]] على html متفقين.
+
+## ٥. [[<aside className="border-e ps-6">]]
+
+خط فاصل على ناحية النهاية، و 24px padding من البداية:
+
+| | [[rtl]] | [[ltr]] |
+|---|---|---|
+| border شمال / يمين | 1px / 0 | 0 / 1px |
+| padding شمال / يمين | 0 / 24px | 24px / 0 |
+
+## ٦. الشارة: [[absolute top-2 inset-e-2]]
+
+- [[absolute]]: مكانها محسوب من أقرب أب [[relative]] (الصندوق).
+- [[top-2]]: 8px من فوق.
+- [[inset-e-2]]: 8px من ناحية النهاية ([[inset-inline-end]]).
+
+| | [[rtl]] | [[ltr]] |
+|---|---|---|
+| مكانها | 9 - 40 (الركن الشمال) | 560 - 591 (الركن اليمين) |
+| [[left]] المحسوب | 8px | 559.266px |
+| [[right]] المحسوب | 559.266px | 8px |
+
+## ٧. [[<span dir="ltr">+20 100 000 0000</span>]]
+
+جربنا نفس الرقم جوه سطر عربي مرتين، وقرينا ترتيب الحروف على الشاشة من الشمال لليمين:
+
+~~~text الناتج
+من غير dir:    0000 000 100 20+
+dir="ltr":     +20 100 000 0000
+~~~
+
+من غير [[dir]]، المتصفح اعتبر كل مجموعة أرقام حتة لوحدها في سطر RTL، فرتّبهم من اليمين للشمال والـ [[+]] راحت للآخر. [[dir="ltr"]] على العنصر ده بس بيخليه يتكتب شمال ليمين صح.
+
+## الخلاصة
+
+| بدل | استخدم | CSS |
+|---|---|---|
+| [[ml-*]] / [[mr-*]] | [[ms-*]] / [[me-*]] | [[margin-inline-start/end]] |
+| [[pl-*]] / [[pr-*]] | [[ps-*]] / [[pe-*]] | [[padding-inline-start/end]] |
+| [[left-*]] / [[right-*]] | [[inset-s-*]] / [[inset-e-*]] | [[inset-inline-start/end]] |
+| [[border-l]] / [[border-r]] | [[border-s]] / [[border-e]] | [[border-inline-start/end]] |
+| [[text-left]] / [[text-right]] | [[text-start]] / [[text-end]] | [[text-align: start/end]] |
+
+- الأيقونات اللي معناها اتجاه: [[rtl:-scale-x-100]].
+- جرّب دايمًا في الاتجاهين، لأن الغلط مش بيبان في [[ltr]].`,
+          lines: [
+            "padding من البداية 16 ومن النهاية 8. في العربي البداية يمين.",
+            "الصورة.",
+            "الكلام محاذي للبداية مهما كانت اللغة.",
+            R`[[ms-auto]] يزق الوقت لآخر الصف: شمال في العربي، يمين في الإنجليزي.`,
+            "قفلة.",
+            "زرار التالي.",
+            R`السهم لليمين في الإنجليزي، و [[rtl:-scale-x-100]] يقلبه مراية في العربي.`,
+            "قفلة.",
+            "خط فاصل على ناحية النهاية، و padding من البداية.",
+            R`شارة في ركن النهاية فوق. [[inset-e-2]] من v4.2 بدل [[end-2]].`,
+            "رقم التليفون LTR جوه صفحة عربي."
+          ],
+          sol: R`مع [[dir="rtl"]]: الصورة على اليمين وجنبها «محمد»، و «من 5 دقايق» لازقة في أقصى الشمال، والـ padding الأكبر (16px) ناحية اليمين، وسهم «التالي» معكوس بيشاور شمال، والـ border بتاع الـ aside على الشمال، والشارة «جديد» في الركن الشمال فوق. قلّب لـ [[ltr]]: كل ده اتعكس (الصورة شمال، والوقت أقصى اليمين، والسهم يمين)، من غير ولا [[rtl:]] ولا سطر زيادة. رقم التليفون بيفضل [[+20 100 000 0000]] في الحالتين.
+
+بعد ما تغيّر [[ms-auto]] لـ [[ml-auto]] في العربي: «من 5 دقايق» بقت لازقة في «محمد» والفراغ كله راح على الطرف الشمال. قست ده في صفحة عرضها 600: مع [[ms-auto]] الوقت كان من 8 لـ 82px (أقصى الشمال)، ومع [[ml-auto]] بقى من 409 لـ 483 جنب الاسم. لأن [[ml-auto]] = [[margin-left]] دايمًا، والوقت في rtl آخر عنصر وعلى الشمال أصلًا، فالـ margin زقّه لليمين ناحية الاسم. في الـ ltr التغيير مش هيبان لأن start = left، وده بالظبط ليه الغلط ده بيعدّي على اللي بيجرّب بالإنجليزي بس.`
+        },
+        {
+          cmd: "next/font",
+          title: "خط عربي بيتحمّل بسرعة ومن غير ما الصفحة تتنط",
+          desc: R`[[next/font/google]] بينزّل الخط وقت الـ build ويخدمه من موقعك (مفيش request لجوجل)، وبيعمل خط احتياطي مقاساته مظبوطة فالكلام ميتنطش لما الخط الحقيقي يوصل. و [[variable]] بيطلّعه كمتغير CSS تربطه بـ Tailwind.
+
+برا Next بتكتب [[@font-face]] بنفسك: ملف [[woff2]] من موقعك، و [[font-display: swap]] عشان الكلام يظهر بخط النظام لحد ما خطك يتحمّل.`,
+          example: R`// app/layout.tsx
+import { Cairo } from "next/font/google";
+const cairo = Cairo({ subsets: ["arabic", "latin"], variable: "--font-cairo", display: "swap" });
+<html lang="ar" dir="rtl" className={cairo.variable}>
+// globals.css
+@theme inline {
+  --font-sans: var(--font-cairo), system-ui, sans-serif;
+}
+// من غير Next
+@font-face {
+  font-family: "Cairo";
+  src: url("/fonts/cairo-var.woff2") format("woff2");
+  font-weight: 200 1000;
+  font-display: swap;
+}`,
+          try: R`حط Cairo بـ next/font، وافتح Network وفلتر على Font: هتلاقي ملف woff2 جاي من [[/_next/static/media]] مش من جوجل. وبعدين بطّأ النت (Slow 4G) واعمل refresh وشوف الكلام بيظهر بخط النظام وبعدين يتبدّل.`,
+          flag: "script",
+          deep: {
+            why: "الخط تقل خفي: ملف أو اتنين، وكل واحد عشرات الـ KB، ولو جاي من سيرفر تاني بعد ما الـ CSS يتحمّل بيتأخر أكتر. والصفحة يا إما تفضل من غير كلام، يا إما الكلام يظهر بخط وبعدين يتبدّل ويتنط لأن المقاسات مختلفة (CLS).",
+            how: R`[[font-display]] بيحدد المتصفح يعمل إيه لحد ما الخط يوصل: [[block]] يخفي الكلام شوية، و [[swap]] يعرضه بالخط الاحتياطي على طول ويبدّل أول ما يوصل، و [[optional]] يستنى لحظة، ولو الخط موصلش يكمّل بالاحتياطي في الصفحة دي (مفيش تبديل خالص). next/font الافتراضي swap.
+
+مشكلة swap: الخط الاحتياطي (Arial مثلًا) عرض حروفه وارتفاع سطوره مختلف، فلما يتبدّل الفقرات بتطول أو تقصر والصفحة تتنط. next/font بيحل ده بـ [[adjustFontFallback]] (شغال افتراضيًا): بيعمل [[@font-face]] للخط الاحتياطي بـ [[size-adjust]] وقيم محسوبة، بحيث يبقى قد خطك تقريبًا.
+
+[[subsets]] بيحدد أنهي subsets يتعملها preload. الباقي بيتخدم من موقعك برضه، والمتصفح بيحمّله بس لو الصفحة فيها حروف منه (unicode-range). والـ variable fonts ملف واحد لكل الأوزان بدل ملف لكل وزن. و [[--font-sans]] في Tailwind هو الخط الافتراضي للصفحة كلها (الـ Preflight بيحطه على html)، فتغييره بيغيّر الموقع كله.
+
+و [[@import url(...)]] لخط من سيرفر خارجي جوه ملف الـ CSS أسوأ حالة: المتصفح لازم يحمّل الـ CSS بتاعك، ويلاقي الـ import، ويحمّل CSS الخط، ويلاقي ملف الخط، ويحمّله. سلسلة requests واحد ورا التاني.`,
+            when: R`في Next دايمًا next/font. في Vite أو PHP: [[@font-face]] بملفات woff2 عندك، و [[<link rel="preload" as="font" type="font/woff2" crossorigin>]] للخط الأساسي بس.`,
+            mistakes: R`في مشروع حقيقي كان globals.css بيبدأ بـ [[@import url("https://fonts.example.com/...")]] لخط لاتيني جنب خطوط next/font: request خارجي بيوقف الرسم، وكان ممكن يتنقل لـ [[next/font/local]]. وتحمّل 6 أوزان وانت بتستخدم 2. وتنسى subset الـ [[arabic]] فملف العربي ميتعملوش preload: الكلام يظهر بخط النظام الأول ويتبدّل متأخر (الملف بيتحمّل من موقعك برضه، بس بعد ما المتصفح يكتشف إنه محتاجه).`
+          },
+          teach: R`## الخط بقى ملف من موقعك
+
+[[next/font]] بينزّل الخط من Google **وقت الـ build**، ويحطه جوه مشروعك، ويكتب الـ [[@font-face]] لوحده. والمستخدم بياخد الخط من سيرفرك انت. حطينا الجزء الأول في مشروع Next.js 16.4 (Tailwind 4.3.3) وعملنا build وفتحناه في Chrome، والجزء التاني ([[@font-face]] بإيدك) في صفحة Vite.
+
+---
+
+## ١. [[import { Cairo } from "next/font/google";]]
+
+كل خط في Google Fonts ليه function بنفس اسمه. ولو الاسم فيه مسافة بتبقى [[_]]: [[Noto_Kufi_Arabic]].
+
+## ٢. [[const cairo = Cairo({ ... });]]
+
+| الخيار | يعني |
 |---|---|
-| [[focus:not-sr-only]] | يرجّع كل حاجة: [[clip-path:none]] و [[width:auto]] و [[height:auto]] و [[position:static]]... |
-| [[focus:fixed]] | [[position:fixed]]: مثبّت في الشاشة فوق أي حاجة |
-| [[focus:top-2]] | [[top: calc(var(--spacing) * 2)]] = 0.5rem = 8px |
-| [[focus:inset-s-2]] | [[inset-inline-start]] = 8px. الـ s = start: بداية السطر، يمين في العربي وشمال في الإنجليزي |
-| [[focus:z-50]] | [[z-index: 50]]: فوق باقي الصفحة |
-| [[focus:rounded]] | [[border-radius: .25rem]] |
-| [[focus:bg-white]] | خلفية بيضا |
-| [[focus:p-3]] | padding = 12px |
+| [[subsets: ["arabic", "latin"]]] | أنهي أجزاء من الخط يتعملها preload (تحت) |
+| [[variable: "--font-cairo"]] | اعمل متغير CSS بالاسم ده فيه اسم الخط |
+| [[display: "swap"]] | [[font-display: swap]]: اعرض الكلام فورًا بخط احتياطي وبدّل لما الخط يوصل |
 
-ليه [[fixed]] بيكسب [[static]] اللي جاي من [[not-sr-only]]؟ لأن Tailwind بيرتّب القواعد في الملف، و [[focus:fixed]] جاية بعدها.
+Cairo خط **variable**: ملف واحد فيه كل الأوزان، فمش محتاج [[weight]]. وده باين في الـ CSS اللي اتولّد: [[font-weight:200 1000]].
 
-### القياس
+## ٣. [[<html lang="ar" dir="rtl" className={cairo.variable}>]]
 
-~~~text اتقاس في Chrome
-وقت التحميل:   rect x=800 y=-1  1×1          position=absolute  clip=inset(50%)
-بعد أول Tab:   rect x=667 y=8   124.6×48     position=fixed     clip=none  bg=rgb(255,255,255)  padding=12px  z=50
+[[cairo.variable]] اسم كلاس اتولّد وقت الـ build. في الـ HTML طلع [[class="pW5XIG_variable"]]، والـ CSS بتاعه:
+
+~~~text من الـ CSS الناتج
+.pW5XIG_variable{--font-cairo:"Cairo", "Cairo Fallback"}
 ~~~
 
-أول Tab اللينك ظهر فوق على اليمين: [[y=8]] من [[top-2]]، وحافته اليمين عند 792 يعني 8px من حافة الشاشة (800) من [[inset-s-2]]. والارتفاع 48 = سطر الكلام + 12px فوق و 12px تحت.
+يعني الكلاس ده بس بيعرّف المتغير على html، ومش بيغيّر أي خط لوحده.
 
----
-
-## ٢. الـ main
-
-~~~text JSX
-<main id="main" tabIndex={-1}>...</main>
-~~~
-
-- [[id="main"]]: الهدف بتاع [[#main]].
-- [[tabIndex={-1}]]: في JSX بيتكتب [[tabIndex]] بحرف I كبير، وهو [[tabindex]] في HTML. القيمة [[-1]] معناها «يقبل focus من الكود أو من لينك، بس الـ Tab ميقفش عنده».
-
-بعد Enter على لينك التخطي، ثم Tab:
-
-~~~text اتقاس في Chrome
-Enter:  activeElement = MAIN#main   location.hash = #main   (لينك التخطي رجع 1×1)
-Tab:    activeElement = BUTTON#save
-~~~
-
-يعني الـ focus نفسه بقى على الـ main، والـ Tab اللي بعده بدأ من جواه وعدّى لينكين الهيدر.
-
-وجربنا نفس الصفحة من غير [[tabIndex]] (HTML عادي): بعد Enter الصفحة نزلت، بس [[document.activeElement]] فضل [[BODY]]، يعني مفيش عنصر عليه focus وقارئ الشاشة مش هيقول إنه وصل حاجة. (الـ Tab الجاي في Chrome كمّل من الـ main برضه، لأن المتصفح بيفتكر «نقطة البداية»، بس ده مش كفاية لقارئ الشاشة.) فـ [[tabIndex={-1}]] هو اللي بيخلّي الـ focus يتنقل فعلًا.
-
----
-
-## ٣. الزرار
-
-~~~text JSX
-<button className="rounded-lg px-4 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand">حفظ</button>
-~~~
-
-- [[rounded-lg]] تدوير 8px، و [[px-4]] padding 16px يمين وشمال، و [[py-2]] 8px فوق وتحت.
-- [[focus-visible:]] زي [[focus:]] بس على [[:focus-visible]]. والقواعد اللي طلعت:
-
-~~~text CSS ناتج
-.focus-visible\:outline-2:focus-visible{outline-style:var(--tw-outline-style);outline-width:2px}
-.focus-visible\:outline-offset-2:focus-visible{outline-offset:2px}
-.focus-visible\:outline-brand:focus-visible{outline-color:var(--color-brand)}
-~~~
-
-[[outline-brand]] اشتغلت لأن الـ CSS فيه [[@theme { --color-brand: oklch(0.55 0.2 265); }]] (درس [[@theme]]). و [[outline-offset]] = مسافة بين الزرار والخط حواليه.
-
-القياس بعد ما وصلنا للزرار بالـ Tab، وبعد ما دسنا عليه بالماوس:
-
-| إزاي الـ focus جه | [[:focus]] | [[:focus-visible]] | الـ outline |
-|---|---|---|---|
-| Tab | true | true | [[solid 2px oklch(0.55 0.2 265)]] و offset 2px |
-| ضغطة ماوس | true | false | [[none]] |
-
-وده الفرق كله: المتصفح هو اللي بيقرر [[:focus-visible]]، وبيقول «أيوه» مع الكيبورد و «لأ» مع الماوس على الزراير. وفي حقول الكتابة بيقول «أيوه» دايمًا.
-
----
-
-## ٤. نفس الفكرة بـ CSS عادي
+## ٤. [[globals.css]]: [[@theme inline]]
 
 ~~~text globals.css
-:focus-visible { outline: 2px solid var(--color-brand); outline-offset: 2px; }
+@theme inline {
+  --font-sans: var(--font-cairo), system-ui, sans-serif;
+}
 ~~~
 
-سطر [[// globals.css]] في المثال مجرد اسم الملف، والسطر اللي بعده CSS. الـ selector هنا [[:focus-visible]] لوحده من غير عنصر قبله، يعني «أي عنصر». [[outline]] اختصار لـ 3 خصائص مرة واحدة: العرض (2px) والشكل (solid) واللون. وبيطبق على الموقع كله، فمش محتاج تكتب كلاسات على كل زرار.
+- [[--font-sans]] هو الخط الافتراضي في Tailwind، والـ Preflight بيحطه على [[html]]، فالموقع كله بياخده.
+- [[var(--font-cairo)]]: هات قيمة المتغير اللي next/font عمله.
+- [[system-ui, sans-serif]]: لو مفيش، خط النظام.
+- [[inline]]: Tailwind يحط القيمة نفسها مكان ما بتتستخدم بدل [[var(--font-sans)]]. في الـ CSS الناتج لقينا [[--default-font-family:var(--font-cairo), system-ui, sans-serif]]، ومفيش [[--font-sans]] خالص. ده المطلوب لما قيمة في الـ theme بتشاور على متغير تاني: المتغير يتقري في مكان الاستخدام.
 
-وجربنا كمان: الـ main لما بياخد focus من الكود بعد ضغطة ماوس، [[:focus-visible]] بتطلع false والـ outline [[none]]. ولو اتنقل له بالكيبورد (Enter على اللينك) بيبقى عليه outline، فلو مش عايزه على عنصر مش تفاعلي زي main أو h1 اشيله منه هو بس.
+والنتيجة المحسوبة على الفقرة:
+
+~~~text getComputedStyle
+font-family: Cairo, "Cairo Fallback", system-ui, sans-serif
+~~~
+
+## ٥. اللي حصل وقت الـ build
+
+next/font كتب 4 [[@font-face]]. ٣ لـ Cairo، كل واحد لجزء من الحروف، وواحد للخط الاحتياطي:
+
+| الملف | الحروف ([[unicode-range]]) | preload |
+|---|---|---|
+| [[9ff27b8a0a8f3dc0-s.p....woff2]] | العربي ([[U+6??]]...) | أيوه |
+| [[d41831e24743a3c1-s.p....woff2]] | اللاتيني الأساسي ([[U+??]]...) | أيوه |
+| [[a5b03b231ce290a0-s....woff2]] | latin-ext (حروف أوروبية زيادة) | لأ |
+
+- [[unicode-range]]: المتصفح بيحمّل الملف بس لو الصفحة فيها حروف من المدى ده.
+- الـ [[.p.]] في الاسم = عليه [[<link rel="preload">]] في الـ head. اللي في [[subsets]] بس هما اللي اتعملهم preload.
+
+والخط الاحتياطي:
+
+~~~text من الـ CSS الناتج
+@font-face{font-family:Cairo Fallback;src:local(Arial);ascent-override:137.65%;descent-override:60.32%;line-gap-override:0.0%;size-adjust:94.66%}
+~~~
+
+ده Arial اللي على الجهاز ([[local(Arial)]])، بس متعدّل: [[size-adjust:94.66%]] بيصغّر حروفه، و [[ascent-override]] و [[descent-override]] بيظبطوا ارتفاع السطر، عشان مقاساته تبقى قريبة من Cairo. فلما Cairo يوصل ويتبدّل، الكلام ميتنطش.
+
+## ٦. في Chrome
+
+~~~text الـ Network (نوع font)
+/_next/static/media/9ff27b8a0a8f3dc0-s.p.40_3w74kn95bo.woff2
+/_next/static/media/d41831e24743a3c1-s.p.08tn9snzkmifr.woff2
+~~~
+
+- ملفين بس اتحمّلوا: العربي واللاتيني، لأن الصفحة فيها عربي وكلمة Hello. الـ latin-ext متحمّلش.
+- الاتنين من [[localhost]]، ومفيش ولا request لـ [[fonts.googleapis.com]] أو [[fonts.gstatic.com]].
+- في الـ head لقينا [[<link rel="preload" as="font" type="font/woff2" crossorigin>]] للملفين دول.
+- Chrome قال إن الكلام اترسم فعلًا بخط [[Cairo]] (custom).
+
+---
+
+## ٧. من غير Next: [[@font-face]] بإيدك
+
+~~~text globals.css
+@font-face {
+  font-family: "Cairo";
+  src: url("/fonts/cairo-var.woff2") format("woff2");
+  font-weight: 200 1000;
+  font-display: swap;
+}
+~~~
+
+- [[font-family: "Cairo"]]: الاسم اللي هتكتبه بعدين في [[font-family]]. انت اللي بتختاره.
+- [[src: url(...) format("woff2")]]: الملف من موقعك، و [[woff2]] أصغر صيغة خطوط.
+- [[font-weight: 200 1000]]: الملف ده بيغطي كل الأوزان من 200 لـ 1000 (variable).
+- [[font-display: swap]]: نفس الكلام اللي فوق.
+
+جربناه في صفحة Vite، وأخّرنا ملف الخط ثانيتين عمدًا:
+
+| الوقت | الخط اللي اترسم بيه الكلام | حالة الخط |
+|---|---|---|
+| 208ms | Segoe UI (خط ويندوز) | [[loading]] |
+| 2340ms | Cairo | [[loaded]] |
+
+يعني الكلام ظهر على طول بخط النظام، واتبدّل لما Cairo وصل. ده [[swap]]. بس هنا مفيش [[Cairo Fallback]] متظبط، فلو المقاسات مختلفة الكلام ممكن يتنط وقت التبديل، وده اللي next/font بيحله لوحده.
 
 ## الخلاصة
 
-| الحتة | بتعمل إيه |
-|---|---|
-| [[sr-only]] | يخبي من الشاشة ويسيب العنصر لقارئ الشاشة والـ Tab |
-| [[focus:not-sr-only focus:fixed ...]] | يظهر لينك التخطي فوق في ركن البداية وقت الـ focus بس |
-| [[tabIndex={-1}]] | الـ main يستقبل الـ focus من اللينك، والـ Tab الجاي يكمّل من جواه |
-| [[focus-visible:outline-*]] | outline بالكيبورد بس |
-| [[:focus-visible { outline: ... }]] | نفس الكلام للموقع كله بقاعدة واحدة |
+| | next/font | [[@font-face]] بإيدك |
+|---|---|---|
+| الملف | بينزل وقت الـ build ويتخدم من موقعك | انت بتحطه في [[public/fonts]] |
+| preload | لوحده للـ [[subsets]] | [[<link rel="preload">]] بإيدك |
+| خط احتياطي متظبط | لوحده ([[size-adjust]]) | مش موجود إلا لو كتبته |
+| الربط بـ Tailwind | [[variable]] + [[--font-sans]] | [[--font-sans: "Cairo", ...]] |
 
-ومتشيلش الـ outline من غير بديل: [[:focus-visible]] أصلًا مش هيضايق اللي بيستخدم الماوس.`,
+- متنساش [[arabic]] في [[subsets]]، وإلا ملف العربي ميتعملوش preload.
+- مفيش [[<link>]] لـ Google Fonts ولا [[@import url(...)]].`,
           lines: [
-            R`لينك التخطي: مخفي بـ [[sr-only]]، وأول ما ياخد focus بيظهر فوق في ركن البداية.`,
-            "النص.",
-            "قفلة.",
-            R`المحتوى. [[tabIndex={-1}]] عشان الـ focus يتنقل له فعلًا لما تدوس اللينك.`,
-            "زرار عليه outline واضح بلون البراند، لما ييجي من الكيبورد بس.",
-            "أو قاعدة واحدة للموقع كله: أي عنصر ياخد focus من الكيبورد عليه outline."
-          ],
-          sol: R`دي تجربة ملهاش إجابة واحدة، بس النتيجة الكويسة شكلها قايمة زي دي: «بعد ما فتحت المودال الـ focus فضل ورا على الصفحة»، «زرار إغلاق المنيو مش بيتوصله»، «الـ dropdown بيفتح بالماوس بس»، «بعد ما المودال يقفل الـ focus بيروح لأول الصفحة»، «الـ outline مختفي على الزراير لأن فيه [[outline: none]] في الـ CSS»، «ترتيب الـ Tab بيقفز من الهيدر للفوتر بسبب [[tabindex]] موجب». كل واحدة منهم bug حقيقي تصلّحه.
-
-أول ما الصفحة تفتح وتدوس Tab: لينك «تخطى للمحتوى» بيظهر فوق في الركن ناحية بداية السطر (يمين في العربي) على خلفية بيضا. Enter: الصفحة بتنزل للـ main والـ focus نفسه بيبقى عليه (ده سبب [[tabIndex={-1}]]: من غيره [[document.activeElement]] بيفضل الـ body)، والـ Tab اللي بعده بيبدأ من جوه المحتوى مش من الهيدر. ولو دوست عليه بالماوس (نادر) مش هيبان outline، بالكيبورد هتلاقي outline الـ brand بـ offset 2px.
-
-لو لينك التخطي مظهرش، اتأكد إنه أول عنصر في الـ body فعلًا وإن مفيش حاجة قبله بتاخد الـ focus (زي بانر الكوكيز)، وإن [[focus:not-sr-only]] مكتوبة صح.`
-        },
-        {
-          cmd: "contrast ratio",
-          title: "الكلام الرمادي الفاتح اللي محدش بيعرف يقراه",
-          desc: R`التباين نسبة بين إضاءة لون الكلام ولون الخلفية، من 1:1 (نفس اللون) لـ 21:1 (أسود على أبيض). WCAG AA بيطلب [[4.5:1]] للكلام العادي، و [[3:1]] للكلام الكبير (حوالي 24px، أو 18.5px bold) ولحدود الحقول والأيقونات المهمة.
-
-أشهر مشكلة: [[text-gray-400]] على أبيض عشان «شيك». نسبته حوالي 2.6:1، يعني ساقط.`,
-          example: R`.muted { color: var(--color-gray-500); }
-.hint { color: var(--color-gray-400); }
-.dark .muted { color: var(--color-gray-400); }
-.input { border: 1px solid var(--color-gray-500); }
-.btn-primary { background: var(--color-indigo-600); color: white; }
-.on-image { background: rgb(0 0 0 / 0.55); color: white; }
-@media (prefers-contrast: more) {
-  .muted { color: var(--color-gray-700); }
-}`,
-          try: R`في Chrome DevTools اختار أي كلام، وفي Styles دوس على مربع اللون: هيقولك Contrast ratio وعلامة صح أو غلط لـ AA و AAA. وكمان Lighthouse › Accessibility بيطلّع كل العناصر اللي ساقطة.`,
-          flag: "script",
-          deep: {
-            why: "مش بس لضعاف النظر: أي حد ماسك موبايل في الشمس، أو شاشة رخيصة، أو كبير في السن. الكلام الباهت أشهر مشكلة accessibility في المواقع (موجود في أغلب الصفحات حسب مسح WebAIM السنوي)، وأسهل واحدة تتحل.",
-            how: R`النسبة = (L1 + 0.05) / (L2 + 0.05)، حيث L الـ relative luminance: إضاءة اللون محسوبة بأوزان للأحمر والأخضر والأزرق حسب حساسية العين. الأبيض 1 والأسود 0، فأقصى نسبة 21.
-
-الحدود: AA للكلام العادي 4.5، وللكبير 3. وللعناصر اللي مش كلام (حدود حقل، أو أيقونة لوحدها بتعني حاجة، أو شكل الـ focus) 3. و AAA أعلى (7 و 4.5). الزراير الـ disabled مستثناة، بس الـ placeholder كلام ولازم يتقري.
-
-الألوان بـ oklch بتسهّل: الـ L فيها قريبة من اللي العين شايفاه، ففرق كبير في L = تباين كبير غالبًا. في الرماديات (gray و slate و zinc و neutral و stone) على خلفية بيضا: 600 و 700 للكلام بأمان، و 500 على الحافة، و 400 وأفتح للزينة بس. أما الألوان الفاتحة بطبيعتها (yellow و amber و lime و green و emerald و teal و cyan و sky و orange) فحتى 600 بيسقط (بين 3:1 و 4:1 تقريبًا)، ومحتاجة 700 أو أغمق، فاتأكد بالأداة.
-
-وفي الـ dark mode متقلبش الألوان بالظبط: أبيض صافي على أسود صافي بيتعب العين، الأحسن رمادي فاتح على رمادي غامق جدًا، ولسه فوق 4.5.`,
-            when: "وقت اختيار الـ palette، ومع كل لون كلام جديد، وفي الوضعين الفاتح والغامق.",
-            mistakes: "تختار الألوان من التصميم على شاشة غالية وتفتكرها واضحة. تعدّي الوضع الفاتح وتنسى الغامق. وتعتمد على اللون بس (حقل أحمر من غير رسالة، أو لينك لونه مختلف من غير underline): اللي عنده عمى ألوان مش هيشوف الفرق."
-          },
-          teach: R`## رقم واحد بيقولك الكلام مقروء ولا لأ
-
-التباين (contrast ratio) رقم بين 1 و 21 بيقارن إضاءة لونين. المثال فيه ٦ قواعد CSS لونها مختار عشان تعدّي الحد، وواحدة ([[.hint]]) ساقطة عمدًا. حطينا المثال في صفحة HTML بقيم ألوان Tailwind v4 (من [[tailwindcss/theme.css]] نسخة 4.3.3)، وفي Chrome حوّلنا كل لون لـ RGB عن طريق canvas، وحسبنا النسبة بمعادلة WCAG نفسها.
-
----
-
-## ١. المعادلة في سطرين
-
-~~~text المعادلة
-L = 0.2126 × R + 0.7152 × G + 0.0722 × B      (بعد ما R و G و B يتحوّلوا لقيم «خطية» من 0 لـ 1)
-النسبة = (L الأفتح + 0.05) ÷ (L الأغمق + 0.05)
-~~~
-
-- [[L]] = relative luminance، يعني الإضاءة زي ما العين شايفاها. الأخضر واخد 0.7152 لأن العين أحسّ بيه، والأزرق 0.0722 بس.
-- الأبيض L = 1 والأسود L = 0، فأقصى نسبة (1 + 0.05) ÷ (0 + 0.05) = **21**.
-- الـ 0.05 موجودة عشان القسمة متبقاش على صفر.
-
-والحدود في WCAG AA:
-
-| العنصر | لازم يبقى على الأقل |
-|---|---|
-| كلام عادي | 4.5 |
-| كلام كبير (حوالي 24px، أو 18.5px bold) | 3 |
-| حدود حقل، أيقونة بتعني حاجة، شكل الـ focus | 3 |
-
----
-
-## ٢. القواعد واحدة واحدة
-
-### [[.muted { color: var(--color-gray-500); }]]
-
-- [[var(--color-gray-500)]]: [[var()]] بتجيب قيمة متغير CSS، والمتغير ده من Tailwind قيمته [[oklch(55.1% 0.027 264.364)]].
-- oklch طريقة لكتابة اللون بـ 3 أرقام: L الإضاءة (55.1%)، و C التشبع (0.027 = رمادي تقريبًا)، و H درجة اللون (264 = مايل للأزرق).
-
-~~~text اتقاس في Chrome
-gray-500  →  rgb(106, 114, 130)  →  على أبيض 4.84:1   ✓ AA للكلام العادي
-~~~
-
-### [[.hint { color: var(--color-gray-400); }]]
-
-~~~text اتقاس في Chrome
-gray-400  →  rgb(153, 161, 175)  →  على أبيض 2.6:1   ✗ حتى للكلام الكبير (محتاج 3)
-~~~
-
-ده «الرمادي الشيك» اللي في عنوان الدرس.
-
-### [[.dark .muted { color: var(--color-gray-400); }]]
-
-المسافة بين [[.dark]] و [[.muted]] معناها «[[.muted]] اللي جوه عنصر عليه [[.dark]]». القاعدة دي أتقل من [[.muted]] لوحدها (كلاسين مش واحد)، فبتكسب في الوضع الغامق. وعلى خلفية [[gray-950]]:
-
-~~~text اتقاس في Chrome
-gray-400 على gray-950 rgb(3, 7, 18)  →  7.74:1   ✓ (حتى AAA)
-~~~
-
-نفس اللون اللي ساقط على أبيض ناجح على غامق. التباين دايمًا **بين لونين**، مش صفة في لون لوحده.
-
-### [[.input { border: 1px solid var(--color-gray-500); }]]
-
-[[border]] اختصار: سُمك 1px، وشكل [[solid]] (خط متصل)، واللون. حد الحقل مش كلام، فمحتاج 3 بس، و gray-500 عامل 4.84. لو كان gray-400 (2.6) الحقل كان هيبان كأنه مش موجود.
-
-### [[.btn-primary { background: var(--color-indigo-600); color: white; }]]
-
-~~~text اتقاس في Chrome
-indigo-600 → rgb(79, 57, 246)  مع أبيض  →  6.46:1   ✓
-~~~
-
-هنا الخلفية هي الغامقة والكلام هو الفاتح، والمعادلة مش فارق معاها مين فوق مين.
-
-### [[.on-image { background: rgb(0 0 0 / 0.55); color: white; }]]
-
-- [[rgb(0 0 0 / 0.55)]]: أسود، و [[/ 0.55]] = شفافية 55% (alpha). يعني طبقة سودا نص شفافة ورا الكلام.
-- أسوأ حالة إن الصورة اللي تحتها بيضا خالص. خلطنا الطبقة على أبيض:
-
-~~~text اتقاس في Chrome
-فوق صورة بيضا:  rgb(115, 115, 115)  مع كلام أبيض  →  4.74:1  ✓
-فوق صورة سودا:  rgb(0, 0, 0)        مع كلام أبيض  →  21:1    ✓
-~~~
-
-فمهما كانت الصورة الكلام فوق 4.5. لو قللت الـ 0.55 لـ 0.4 مثلًا، الحالة البيضا هتسقط.
-
-### [[@media (prefers-contrast: more)]]
-
-[[@media]] = طبّق القواعد اللي جوه لو الشرط اتحقق. و [[prefers-contrast: more]] بيتحقق لما المستخدم يطلب تباين أعلى من إعدادات النظام (زي Increase contrast في إعدادات الماك، حسب الـ docs؛ و DevTools › Rendering بيعمله emulate). عملنا emulate للإعداد ده من Playwright:
-
-~~~text اتقاس في Chrome
-عادي:              .muted = gray-500 → 4.84:1
-prefers-contrast:  .muted = gray-700 → rgb(54, 65, 83) → 10.3:1
-~~~
-
----
-
-## ملخص الأرقام
-
-| القاعدة | اللون | الخلفية | النسبة | الحكم |
-|---|---|---|---|---|
-| [[.muted]] | gray-500 | أبيض | 4.84 | AA ✓ |
-| [[.hint]] | gray-400 | أبيض | 2.6 | ✗ |
-| [[.dark .muted]] | gray-400 | gray-950 | 7.74 | AAA ✓ |
-| [[.input]] (حد) | gray-500 | أبيض | 4.84 | ✓ (محتاج 3) |
-| [[.btn-primary]] | أبيض | indigo-600 | 6.46 | AA ✓ |
-| [[.on-image]] | أبيض | أسود 55% على أبيض | 4.74 | AA ✓ |
-| [[prefers-contrast]] | gray-700 | أبيض | 10.3 | AAA ✓ |
-
-## الخلاصة
-
-- 4.5 للكلام العادي، و 3 للكبير وللحدود والأيقونات.
-- النسبة بين لونين: gray-400 ساقط على أبيض وناجح على gray-950.
-- كلام فوق صورة: طبقة غامقة نص شفافة، واحسب على أسوأ صورة (بيضا).
-- متخمّنش: DevTools بيوريك الرقم لما تدوس على مربع اللون في Styles.`,
-          lines: [
-            "رمادي 500 على أبيض: حوالي 4.8:1، عدّى للكلام العادي.",
-            "رمادي 400 على أبيض: حوالي 2.6:1، ساقط. حتى الـ placeholder المفروض يبقى مقروء.",
-            "في الغامق الموضوع بيتقلب: 400 على خلفية شبه سودا بيعدّي.",
-            "حدود الحقل محتاجة 3:1 عشان الحقل نفسه يبان: 500 على أبيض بيعدّي، و 400 لأ.",
-            "زرار غامق وكلام أبيض: حوالي 6:1.",
-            "كلام فوق صورة: طبقة غامقة ورا الكلام تضمن التباين مهما كانت الصورة.",
-            "لو المستخدم طالب تباين أعلى من إعدادات النظام...",
-            "...خلّي الكلام الباهت أغمق.",
+            R`أي خط من Google Fonts كـ function (المسافة في الاسم بتبقى [[_]]).`,
+            R`الـ subsets اللي هيتعملها preload (العربي واللاتيني)، والباقي بيتخدم من موقعك برضه بس مش بيتحمّل غير لو اتستخدم. ومتغير CSS اسمه [[--font-cairo]]. Cairo خط variable فمش محتاج weights.`,
+            "الكلاس بيعرّف المتغير على html.",
+            R`Tailwind: [[font-sans]] يبقى Cairo.`,
+            "Cairo الأول، ولو محمّلش خط النظام.",
+            R`قفلة. [[inline]] لأنه بيشاور على متغير.`,
+            "برا Next: تعريف الخط بإيدك.",
+            R`الاسم اللي هتستخدمه في [[font-family]].`,
+            "ملف woff2 من موقعك (أصغر صيغة).",
+            "ملف variable واحد فيه كل الأوزان من 200 لـ 1000.",
+            "اعرض الكلام فورًا بخط احتياطي وبدّل لما الخط يوصل.",
             "قفلة."
           ],
-          sol: R`الأرقام اللي هتشوفها على خلفية بيضا (بألوان Tailwind v4، قستها): [[gray-500]] حوالي 4.8:1، يعني AA ✓ للكلام العادي (محتاج 4.5) و AAA ✗ (محتاج 7). [[gray-400]] حوالي 2.6:1، ساقط في الاتنين، وحتى للكلام الكبير (محتاج 3). [[gray-700]] حوالي 10:1 وناجح في كله. والزرار [[indigo-600]] مع أبيض حوالي 6.5:1 ناجح AA. وفي الـ dark: [[gray-400]] على [[gray-950]] حوالي 7.7:1 وده ليه المثال بيستخدمه هناك.
+          sol: R`في Network بفلتر Font: هتلاقي ملف أو اتنين [[.woff2]] بأسماء فيها hash زي [[/_next/static/media/xxxxxxxx-s.p.woff2]]، والدومين هو دومين موقعك (localhost:3000)، ومفيش ولا request لـ [[fonts.googleapis.com]] ولا [[fonts.gstatic.com]]. Next نزّل الخط وقت الـ build وبيقدّمه من عندك. والـ [[.p.]] في الاسم معناها إن عليه preload في الـ head.
 
-Chrome بيوريك الرقم مع علامة ✓ أو ⚠ جنب AA و AAA، وخط أو اتنين على لوحة الألوان: أي لون تحت الخط ناجح. اسحب اللون لتحت الخط وشوف الرقم بيتغير. Lighthouse › Accessibility بيطلّع «Background and foreground colors do not have a sufficient contrast ratio» ومعاه كل العناصر الساقطة.
+مع Slow 4G وrefresh: الكلام بيظهر الأول بخط النظام وبعد ثانية أو اتنين بيتبدّل لـ Cairo (ده الـ [[swap]]). والنطّة وقت التبديل صغيرة جدًا، لأن next/font بيعمل خط fallback اسمه زي [[Cairo Fallback]] معدّل بـ [[size-adjust]] عشان مقاساته تبقى قريبة من Cairo. هتلاقيه في Computed › font-family.
 
-الغلط الشائع: تقيس placeholder أو كلام disabled وتفتكره مشكلة لازم تتحل؛ الـ disabled مستثنى من القاعدة، لكن الـ placeholder لو هو الـ label الوحيد يبقى لازم يعدّي. وبرضه Lighthouse مش بيعرف يقيس الكلام اللي فوق صورة، فده لازم تبص عليه بعينك. وفي موقع عربي خلي بالك: axe-core (اللي جوه Lighthouse) بيتخطى الكلام العربي المتصل في فحص التباين (بيفتكره أيقونة، شوف درس «axe و Lighthouse»)، فقيس بـ DevTools على العنصر نفسه.`
+لو لقيت request لجوجل، يبقى فيه [[<link>]] لـ Google Fonts لسه في الـ layout أو [[@import url(...)]] في الـ CSS، امسحهم. ولو الخط متطبقش خالص، غالبًا [[--font-sans]] مش بيقرا [[var(--font-cairo)]] أو الـ [[className={cairo.variable}]] مش على [[<html>]].`
+        },
+        {
+          cmd: "lucide-react",
+          title: "أيقونات SVG كمكونات React",
+          desc: R`في [[lucide-react]] كل أيقونة مكون: [[<Search />]] و [[<Menu />]] و [[<ChevronLeft />]]. بتستورد اللي محتاجه بس، والباقي مش بيدخل الـ bundle. الحجم بـ [[size-4]]، واللون بياخد [[currentColor]] فبيمشي مع [[text-*]].
+
+ومن v1 الأيقونات عليها [[aria-hidden]] افتراضيًا، فلو الزرار أيقونة بس، لازم تدّي الزرار نفسه اسم بـ [[aria-label]].`,
+          example: R`import { Search, Menu, ChevronLeft, LoaderCircle } from "lucide-react";
+<button className="inline-flex items-center gap-2 text-brand">
+  <Search className="size-4" /> بحث
+</button>
+<button aria-label="افتح القايمة" className="md:hidden">
+  <Menu className="size-6" strokeWidth={1.5} />
+</button>
+<ChevronLeft className="size-4 shrink-0 ltr:rotate-180" />
+<LoaderCircle className="size-4 animate-spin motion-reduce:hidden" />`,
+          try: R`اعمل زرار أيقونة بس من غير [[aria-label]] وافتح DevTools › Elements › Accessibility: اسمه فاضي. ضيف الـ label وشوف الاسم ظهر. وبعدين غيّر [[text-brand]] لـ [[text-red-600]] وشوف الأيقونة اتغيرت معاه.`,
+          flag: "script",
+          deep: {
+            why: "الأيقونات كصور PNG بتتشوّه لما تكبر ومش بتاخد لون الكلام. وكـ font icons بتحمّل الخط كله عشان 10 أيقونات، وقارئ الشاشة ساعات يقرا حروف غريبة. SVG inline كمكون بيحل الاتنين: حاد في أي حجم، ولونه [[currentColor]]، وبتحمّل اللي بتستخدمه بس.",
+            how: R`كل مكون بيرسم [[<svg>]] بـ [[viewBox="0 0 24 24"]] و [[stroke="currentColor"]] و [[fill="none"]]. [[currentColor]] معناها «لون الكلام بتاع العنصر»، فـ [[text-*]] على الأيقونة أو أي أب ليها بيلوّنها. والحجم الافتراضي 24، و [[size-4]] بيغلبه من الـ CSS.
+
+[[strokeWidth]] بيغيّر سُمك الخط، وبيكبر مع الأيقونة. و [[absoluteStrokeWidth]] بيخليه ثابت بالبكسل مهما الأيقونة كبرت.
+
+Tree-shaking: [[import { Search } from "lucide-react"]] مع bundler حديث بيدخّل Search بس. بس لو عملت [[import * as Icons]] واخترت بالاسم وقت التشغيل، الـ bundler مش هيعرف ويدخّل الكل (آلاف الأيقونات).
+
+lucide v1 (2026): شال أيقونات البراندات (GitHub وفيسبوك وغيرهم)، وشال أسماء قديمة كانت متسابة كـ aliases (فلو import مش لاقي أيقونة دوّر على اسمها الجديد)، وبقى بيحط [[aria-hidden="true"]] على الأيقونات لوحده. ولو محتاج شعارات: Simple Icons أو SVG من البراند نفسه.`,
+            when: "أي أيقونة UI في React. و shadcn بيستخدمه افتراضيًا.",
+            mistakes: R`زرار أيقونة من غير اسم: قارئ الشاشة يقول «button» وخلاص. [[<Menu />]] من غير حجم جنب كلام صغير فيبان ضخم. وفي مشروع حقيقي زرار المنيو على الموبايل كان عليه [[aria-label="Toggle menu"]] كويس، بس ناقصه [[aria-expanded]] فقارئ الشاشة مش عارف القايمة مفتوحة ولا مقفولة (درس aria). و [[npm i lucide-react@latest]] من غير ما تقرا الـ changelog: من 0.x لـ 1.x أيقونات البراندات اتشالت والصفحة بقت 500 بـ [[Export Github doesn't exist in target module]].`
+          },
+          teach: R`## كل أيقونة component بيرسم [[<svg>]]
+
+[[<Search />]] مش صورة بتتحمّل: ده component بيرسم [[<svg>]] جوه الصفحة نفسها. حطينا المثال في صفحة Vite ([[lucide-react]] 1.52، و Tailwind 4.3.3، و [[--color-brand]] متعرّف) وقسنا في Chrome، وزودنا زرار تالت فيه [[<Menu />]] من غير [[aria-label]] للمقارنة.
+
+---
+
+## ١. [[import { Search, Menu, ChevronLeft, LoaderCircle } from "lucide-react";]]
+
+بتستورد كل أيقونة باسمها. والأسامي PascalCase (كل كلمة أولها كابيتال) لأنها components.
+
+وده بيفرق في الحجم. عملنا build لـ ٣ صفحات صغيرة بـ Vite وقارنّا ملف الـ JavaScript:
+
+| الصفحة | حجم الـ JS |
+|---|---|
+| React بس، من غير أيقونات | 219.53 kB |
+| [[import { Search, Menu }]] | 222.99 kB: زيادة 3.5 kB بس |
+| [[import * as Icons]] واختيار الأيقونة بالاسم وقت التشغيل | **984.15 kB**: كل الأيقونات دخلت |
+
+الاستيراد بالاسم زوّد 3.5 kB بس. لكن [[import * as Icons]] مع [[Icons[name]]] دخّل كل الأيقونات، لأن الـ bundler مش عارف وقت الـ build انت هتختار أنهي واحدة. ده اسمه tree-shaking: الـ bundler بيشيل الكود اللي محدش استخدمه، بس لازم يقدر يشوف ده من الكود.
+
+## ٢. الـ SVG اللي بيطلع
+
+ده اللي [[<Search className="size-4" />]] رسمه:
+
+~~~text الناتج
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+     class="lucide lucide-search size-4" aria-hidden="true">
+  <path d="m21 21-4.34-4.34"></path>
+  <circle cx="11" cy="11" r="8"></circle>
+</svg>
+~~~
+
+| الـ attribute | يعني |
+|---|---|
+| [[width="24" height="24"]] | الحجم الافتراضي 24px |
+| [[viewBox="0 0 24 24"]] | الرسمة مرسومة على شبكة 24×24، وبتكبر وتصغر من غير ما تبوظ |
+| [[fill="none"]] | مفيش تلوين جوه الأشكال، خطوط بس |
+| [[stroke="currentColor"]] | لون الخط = لون الكلام ([[color]]) بتاع العنصر |
+| [[stroke-width="2"]] | تخانة الخط 2 من 24 |
+| [[aria-hidden="true"]] | قارئ الشاشة يتجاهلها. lucide v1 بيحطه لوحده |
+
+و [[className]] بتاعك اتضاف جنب [[lucide lucide-search]].
+
+## ٣. الزرار الأول: أيقونة وكلام
+
+~~~text App.tsx
+<button className="inline-flex items-center gap-2 text-brand">
+  <Search className="size-4" /> بحث
+</button>
+~~~
+
+- [[inline-flex items-center gap-2]]: الأيقونة والكلمة جنب بعض، في النص رأسيًا، و 8px بينهم.
+- [[text-brand]] على الزرار: لون الكلام. والأيقونة جوه الزرار، فـ [[currentColor]] بتاعها بياخد نفس اللون.
+- [[size-4]]: 16×16. الـ CSS بيغلب [[width="24"]] اللي على الـ svg.
+
+القياس: الأيقونة 16px و [[stroke]] بتاعها [[oklch(0.55 0.2 265)]]، نفس لون الـ brand. غيّرنا [[text-brand]] لـ [[text-red-600]]: الكلام والأيقونة الاتنين بقوا [[oklch(0.577 0.245 27.325)]].
+
+## ٤. الزرار التاني: أيقونة بس
+
+~~~text App.tsx
+<button aria-label="افتح القايمة" className="md:hidden">
+  <Menu className="size-6" strokeWidth={1.5} />
+</button>
+~~~
+
+- [[aria-label]]: اسم الزرار لقارئ الشاشة، لأن مفيش كلام جواه والأيقونة [[aria-hidden]].
+- [[md:hidden]]: مستخبي من 768px وطالع. على عرض 800 الزرار كان [[display: none]]، وعلى 375 ظهر 24×24.
+- [[size-6]] = 24px. و [[strokeWidth={1.5}]] = خط أرفع من الافتراضي، وطلع على الـ svg [[stroke-width="1.5"]].
+
+الـ Accessibility tree على عرض 375:
+
+~~~text الناتج
+- button "بحث"
+- button "افتح القايمة"
+- button
+~~~
+
+التالت هو اللي زودناه من غير [[aria-label]]: [[button]] من غير اسم. قارئ الشاشة هيقول «button» وخلاص.
+
+## ٥. [[<ChevronLeft className="size-4 shrink-0 ltr:rotate-180" />]]
+
+- [[ChevronLeft]]: سهم صغير بيشاور شمال، يعني «التالي» في صفحة عربي.
+- [[shrink-0]]: في flex ميتصغرش لو الكلام اللي جنبه طويل.
+- [[ltr:rotate-180]]: في صفحة إنجليزي لفّه نص لفة فيشاور يمين.
+
+| [[lang]] و [[dir]] على html | [[rotate]] المحسوب |
+|---|---|
+| [[ar]] و [[rtl]] | [[none]]: السهم زي ما هو بيشاور شمال |
+| [[en]] و [[ltr]] | [[180deg]]: اتلف نص لفة فبيشاور يمين |
+
+## ٦. [[<LoaderCircle className="size-4 animate-spin motion-reduce:hidden" />]]
+
+- [[animate-spin]]: animation اسمها [[spin]] مدتها 1s، بتلف على طول.
+- [[motion-reduce:hidden]]: لو المستخدم مفعّل «حركة أقل» في نظامه ([[prefers-reduced-motion: reduce]])، اخفيها.
+
+حاكينا الإعداد ده في Chrome: الأيقونة بقت [[display: none]] ومقاسها 0×0.
+
+## الخلاصة
+
+| عايز | اكتب |
+|---|---|
+| الحجم | [[size-4]] أو [[size-6]] |
+| اللون | [[text-*]] على الأيقونة أو أي أب |
+| تخانة الخط | [[strokeWidth={1.5}]] |
+| زرار أيقونة بس | [[aria-label]] على الزرار |
+| حجم bundle صغير | [[import { Name }]] مش [[import *]] |
+
+- الأيقونة [[aria-hidden]] لوحدها، فالاسم لازم ييجي من الزرار.
+- متلوّنهاش بـ [[fill-*]]: دي خطوط، لونها [[stroke]].
+
+---
+
+## فخ: ترقية major شالت أيقونة GitHub والصفحة بقت 500
+
+### العَرَض
+
+مشروع Next 16.4.4 فيه footer بأيقونة GitHub من [[lucide-react@0.577.0]] (آخر نسخة 0.x). حد عمل [[npm i lucide-react@latest]] (عشان أيقونة جديدة)، وفجأة **كل** الصفحات اللي فيها الـ footer:
+
+~~~text curl -s -o /dev/null -w "HTTP: %{http_code}\n" http://localhost:4311/ar
+HTTP: 500
+~~~
+
+~~~text sed 's/\x1b\[[0-9;]*m//g' dev.log | tail -20
+⨯ ./app/components/Footer.tsx:1:1
+Error: Export Github doesn't exist in target module
+> 1 | import { Github, Mail } from "lucide-react";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The export Github was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.mjs [app-rsc] (ecmascript).
+Did you mean to import Gift?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./app/components/Footer.tsx
+    ./app/[lang]/page.tsx
+
+ GET /ar 500 in 1345ms (next.js: 1187ms, application-code: 158ms)
+~~~
+
+- [[Export Github doesn't exist]]: الاسم مش موجود في الباكدج.
+- [[Did you mean to import Gift?]]: Turbopack بيقترح أقرب اسم بالحروف. **متصدّقوش**: Gift أيقونة هدية، ملهاش علاقة.
+- [[Import trace]]: مين استورد الملف ده، لحد الصفحة.
+
+و TypeScript بيقول نفس الكلام من غير ما تشغّل حاجة:
+
+~~~text npx tsc --noEmit
+app/components/Footer.tsx(1,10): error TS2305: Module '"lucide-react"' has no exported member 'Github'.
+~~~
+
+ورقم الخروج [[2]]. يعني لو [[tsc --noEmit]] أو [[next build]] في الـ CI، كان اتمسك قبل ما يوصل لحد.
+
+### التشخيص بالترتيب
+
+١. **إيه اللي اتغيّر في [[package.json]]؟**
+
+~~~text grep lucide package.json   (قبل ← بعد)
+    "lucide-react": "^0.577.0",
+    "lucide-react": "^1.67.0",
+~~~
+
+نسخة **major** جديدة (0 ← 1). والـ major معناها «فيه حاجات اتشالت أو اتغيّرت».
+
+٢. **النسخ المتاحة، والمتسطبة فعلًا:**
+
+~~~text npm view lucide-react versions --json | tail -5
+  "1.64.0",
+  "1.65.0",
+  "1.66.0",
+  "1.67.0"
+]
+~~~
+
+~~~text head -5 node_modules/lucide-react/package.json
+{
+  "name": "lucide-react",
+  "description": "A Lucide icon library package for React applications.",
+  "version": "1.67.0",
+~~~
+
+٣. **الأيقونة موجودة في الباكدج الجديد؟**
+
+~~~text grep -ciE "github" node_modules/lucide-react/dist/lucide-react.d.ts
+0
+~~~
+
+ولا مرة. وعدد الأيقونات:
+
+~~~text ls node_modules/lucide-react/dist/esm/icons | grep -c '\.mjs$'
+2296
+~~~
+
+يعني الأيقونات **زادت** (في 0.577.0 كانوا 1951 ملف)، بس GitHub مش منهم.
+
+٤. **إيه اللي اتشال بالظبط؟** من غير ما تسطّب القديمة، نزّل الباكدج كملف واقرا منه:
+
+~~~bash
+npm pack lucide-react@0.577.0
+tar -xzf lucide-react-0.577.0.tgz package/dist/lucide-react.d.ts
+grep -oE "declare const (Github|Gitlab|Facebook|Instagram|Linkedin|Twitter|Youtube|Figma|Slack)\b" package/dist/lucide-react.d.ts | sort -u
+~~~
+
+[[npm pack]] بينزّل الـ [[.tgz]] بتاع النسخة دي بس (مش بيسطّب)، و [[tar -xzf ... مسار]] بيطلّع الملف ده بس. وقارنّا قايمة أكبر بين النسختين: اتشالوا [[Codepen]] و [[Codesandbox]] و [[Dribbble]] و [[Facebook]] و [[Figma]] و [[Framer]] و [[Github]] و [[Gitlab]] و [[Instagram]] و [[Linkedin]] و [[Pocket]] و [[Slack]] و [[Trello]] و [[Twitch]] و [[Twitter]] و [[Youtube]]، وفضل [[Rss]]. يعني v1 شال **أيقونات البراندات** كلها.
+
+### ازاي حصل القفز ده؟ [[^]] على 0.x
+
+[[^0.577.0]] معناها «أي 0.577.x»: في نسخ 0.x الـ caret بيقفل الرقم التاني كمان. اتأكدنا:
+
+~~~text npm outdated lucide-react
+Package       Current   Wanted  Latest  Location                   Depended by
+lucide-react  0.577.0  0.577.0  1.67.0  node_modules/lucide-react  shop2
+~~~
+
+~~~text npm update lucide-react
+up to date in 764ms
+~~~
+
+[[Wanted]] (أعلى نسخة الـ range بيسمح بيها) = 0.577.0، و [[npm update]] مغيّرش حاجة. القفز لـ 1.x محتاج حد يطلبه صريح: [[npm i lucide-react@latest]] أو [[npm i lucide-react]] من غير رقم (اللي بيكتب [[^1.67.0]])، أو أداة بتعمل كده.
+
+### الحل (اختار واحد)
+
+**(أ) ارجع واقفل النسخة بالظبط:**
+
+~~~text npm i --save-exact lucide-react@0.577.0 && grep lucide package.json
+    "lucide-react": "0.577.0",
+~~~
+
+[[--save-exact]] بيكتب الرقم من غير [[^]]، فمحدش هيرقّي غير لما يغيّر الرقم بإيده. سريع، بس انت كده فضلت على نسخة مش هتاخد أيقونات وتصليحات جديدة.
+
+**(ب) خليك على 1.x، والبراند SVG من مصدر للبراندات:** [[simple-icons]] (16.36.0) فيه path البراندات الرسمية:
+
+~~~tsx app/components/BrandIcon.tsx
+import type { SimpleIcon } from "simple-icons";
+
+export function BrandIcon({ icon, className }: { icon: SimpleIcon; className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
+      <path d={icon.path} />
+    </svg>
+  );
+}
+~~~
+
+~~~tsx app/components/Footer.tsx
+import { Mail } from "lucide-react";
+import { siGithub } from "simple-icons";
+import { BrandIcon } from "./BrandIcon";
+...
+<a href="https://github.com/acme" aria-label="GitHub"><BrandIcon icon={siGithub} className="size-5" /></a>
+~~~
+
+- [[fill="currentColor"]] مش [[stroke]]: أيقونات البراندات **مليانة**، عكس lucide (خطوط).
+- [[siGithub.path]]: الـ [[d]] بتاع الشعار، و [[siGithub.hex]] لونه الرسمي ([[181717]]) لو احتجته.
+- [[aria-hidden]] على الـ SVG و [[aria-label]] على اللينك (نفس قاعدة lucide).
+
+بعدها: [[HTTP: 200]]، و [[npx tsc --noEmit]] خرج [[0]]. والـ footer server component، فالـ SVG بيتبعت HTML ومفيش JavaScript زيادة للمتصفح.
+
+**ليه مش البدايل دي؟**
+
+| البديل | ليه لأ |
+|---|---|
+| تصدّق [[Did you mean Gift?]] | أيقونة تانية خالص |
+| تنسخ ملف الأيقونة من 0.577.0 جوه مشروعك | شغّال، بس انت كده بتصون نسخة من مكتبة. لو هتنسخ SVG، انسخه من مصدر للبراندات |
+| تفضل على 0.x للأبد | مفيش أيقونات جديدة ولا تصليحات. اختار (أ) وانت عارف إنه مؤقت |
+| تشيل الأيقونة وتحط كلمة «GitHub» | بيحل الـ 500، بس الديزاين اتغيّر من غير ما حد يقرر |
+
+### إزاي متتكررش
+
+- قبل أي ترقية major: اقرا الـ changelog أو صفحة الـ releases بتاعة المكتبة، ودوّر على «removed» أو «breaking».
+- [[npm outdated]] بيوريك [[Latest]] أكبر من [[Wanted]] بـ major = محتاجة قرار، مش [[npm update]].
+- [[npm i --save-exact]]، أو مرة واحدة للمشروع [[.npmrc]] فيه [[save-exact=true]] (جربنا: [[npm config get save-exact]] طلّع [[true]] جوه الفولدر).
+- [[npx tsc --noEmit]] أو [[next build]] في الـ CI: كان هيقف بـ [[TS2305]] قبل الـ merge.`,
+          lines: [
+            "استورد الأيقونات بالاسم. اللي مش مستورد مش بيدخل الـ bundle.",
+            R`زرار فيه أيقونة وكلام: اللون من [[text-brand]] بيوصل للأيقونة.`,
+            "16px، والكلام اللي جنبها هو اسم الزرار.",
+            R`قفلة الزرار الأول: الأيقونة والكلمة جواه، فالكلمة هي اسمه.`,
+            R`زرار أيقونة بس: [[aria-label]] هو اسمه لقارئ الشاشة.`,
+            "الأيقونة نفسها مخفية عن قارئ الشاشة، وخطها أرفع من الافتراضي (2).",
+            R`قفلة الزرار التاني: مفيهوش كلام، فاسمه جاي من [[aria-label]] بس.`,
+            R`سهم «التالي» في صفحة عربي بيشاور شمال، وفي الإنجليزي بيلف لليمين. و [[shrink-0]] عشان ميتزنقش جنب كلام طويل.`,
+            "loader بيلف، ويختفي عند اللي طالبين حركة أقل."
+          ],
+          sol: R`زرار الأيقونة من غير [[aria-label]]: في Accessibility pane هتلاقي Role [[button]] و Name فاضي، وقارئ الشاشة بيقول «button» بس، و Lighthouse بيطلّعه في «Buttons do not have an accessible name». بعد [[aria-label="افتح القايمة"]] الـ Name بقى «افتح القايمة» وجنبه إنه جاي من [[aria-label]].
+
+لما تغيّر [[text-brand]] لـ [[text-red-600]] على الزرار: الأيقونة والكلمة الاتنين بقوا أحمر مع بعض، لأن الـ SVG بتاع lucide مرسوم بـ [[stroke="currentColor"]]، يعني بياخد لون الـ [[color]] من الأب. لو فتحت الـ SVG في Elements هتلاقي [[stroke="currentColor"]] و [[fill="none"]].
+
+الغلط الشائع: تحاول تلوّن الأيقونة بـ [[fill-red-600]] فتطلع مليانة ومشوّهة، لأن lucide أيقونات خطوط. اللون بالـ [[text-*]] والتخانة بـ [[strokeWidth]].
+
+ولو الصفحة بقت 500 بعد ترقية lucide واللوج فيه [[Export Github doesn't exist in target module]]: v1 شال أيقونات البراندات. [[grep lucide package.json]] هتلاقي [[^1.x]]. ارجع بـ [[npm i --save-exact lucide-react@0.577.0]]، أو خليك على 1.x وحط الشعار من [[simple-icons]] بـ [[fill="currentColor"]].`,
+          practice: [
+            { lvl: 'سريع', t: R`اقرا وتوقّع: [[package.json]] فيه [[lucide-react: "^0.577.0"]] و [[react: "^19.2.0"]]. لو آخر نسخ متاحة 0.577.3 و 1.67.0 لـ lucide، و 19.3.1 و 20.0.0 لـ react، [[npm update]] هيسطّب إيه لكل واحدة؟ اكتب، وبعدين اعرف من [[npm outdated]] على مشروع حقيقي إن عمود [[Wanted]] بيقول نفس الكلام.`, done: R`كتبت 0.577.3 لـ lucide (الـ caret على 0.x بيقفل الرقم التاني) و 19.3.1 لـ react (مش 20)، وتقدر تشاور على عمود [[Wanted]] في [[npm outdated]] وتشرحه.` },
+            { lvl: 'تطبيق', t: R`صلّح المكوّن البايظ ده بعد الترقية لـ lucide 1.x من غير ما ترجع النسخة: [[import { Github, Linkedin, Mail } from "lucide-react"]]. استخدم [[simple-icons]] للبراندين و [[BrandIcon]] زي الدرس، وأثبت بـ [[npx tsc --noEmit]] و [[curl -w "%{http_code}"]].`, done: R`[[tsc]] خرج 0، والصفحة [[200]]، و [[curl | grep -c "<svg"]] بيعدّ ٣ أيقونات، واللينكات عليها [[aria-label]].` },
+            { lvl: 'تطبيق', t: R`دوّر بنفسك من غير ما تسطّب: بـ [[npm pack]] و [[tar]] طلّع [[dist/lucide-react.d.ts]] من 0.577.0 ومن آخر نسخة، وطلّع قايمة الأسامي اللي في القديمة ومش في الجديدة ([[comm -23]] على لستتين مترتبين، أو سكربت Node).`, done: R`عندك لستة فيها [[Github]] و [[Facebook]] و [[Youtube]] على الأقل، وعارف تشرح [[npm pack]] بيعمل إيه في سطر.` },
+            { lvl: 'تحدي', t: R`اكتب [[majors.mjs]]: بيقرا [[package.json]] وملف JSON فيه آخر نسخة لكل باكدج (اعمله بإيدك أو من [[npm view <pkg> version]])، ويطبع كل باكدج الـ range بتاعه مش هيوصل لآخر نسخة لأن الفرق major، ويخرج بـ 1 لو فيه. (شكل فحص الـ ci في الدرس.)`, done: R`على [[{"lucide-react":"^0.577.0","react":"^19.2.0"}]] وآخر نسخ [[1.67.0]] و [[19.3.1]] بيطبع [[lucide-react: ^0.577.0 -> 1.67.0 (major)]] بس ويخرج 1.` },
+          ],
+          ci: [
+            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`node`, run: R`const deps = { "lucide-react": "^0.577.0", "react": "^19.2.0", "simple-icons": "16.36.0" };
+const latest = { "lucide-react": "1.67.0", "react": "19.3.1", "simple-icons": "16.36.0" };
+const parse = v => v.replace(/^[\^~]/, "").split(".").map(Number);
+function caretAllows(range, v) {
+  if (!range.startsWith("^")) return range === v;
+  const [a, b, c] = parse(range), [x, y, z] = parse(v);
+  if (a > 0) return x === a && (y > b || (y === b && z >= c));
+  return x === 0 && y === b && z >= c;
+}
+let bad = 0;
+for (const [name, range] of Object.entries(deps)) {
+  const ok = caretAllows(range, latest[name]);
+  console.log(name + ": " + range + " -> " + latest[name] + (ok ? " ok" : " (major)"));
+  if (!ok) bad++;
+}
+console.log("needs decision: " + bad);`, expect: [R`lucide-react: ^0.577.0 -> 1.67.0 (major)`, R`react: ^19.2.0 -> 19.3.1 ok`, R`simple-icons: 16.36.0 -> 16.36.0 ok`, R`needs decision: 1`] },
+          ],
         }
       ]
     }

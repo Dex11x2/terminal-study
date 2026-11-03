@@ -463,6 +463,504 @@ curl: (52) Empty reply from server
 ولو المتصفح نزّل الملف أو عرض الكود نفسه بدل ما ينفّذه، يبقى انت فاتحه كـ [[file:///...]] أو السيرفر مش شغال في نفس الفولدر. لازم الرابط يبدأ بـ [[http://localhost:8000]].`
         },
         {
+          cmd: "PHP محمول على ويندوز",
+          title: "جرّب موقع PHP على ويندوز من غير تسطيب: zip و -d و router.php وداتابيز وهمية",
+          learn: R`تشغّل PHP من zip في فولدر مؤقت، وتفعّل الـ extensions بـ [[-d]] من غير [[php.ini]]، وتفحص الملفات اللي اتغيّرت بـ [[php -l]]، وتشغّل الموقع بـ router بيعمل شغل [[.htaccess]] وداتابيز وهمية، وتقفل السيرفر صح.`,
+          out: R`[[/]] و [[/trial]] بيرجعوا 200، و [[/lib/...]] 403، و [[php-errors.log]] فاضي، و [[tasklist]] مفيهوش [[php.exe]] بعد ما تخلص.`,
+          desc: R`الجهاز مفيهوش PHP، وعايز تتأكد إن تعديلك على موقع PHP شغّال قبل ما ترفعه؟ مش لازم تسطّب XAMPP: نزّل الـ zip الرسمي في فولدر مؤقت، وشغّل [[php.exe]] منه على طول. ومن غير [[php.ini]]، أي إعداد بيتحط بـ [[-d name=value]] على سطر الأمر.
+
+الأربع حاجات اللي بتخلّي التجربة قريبة من الاستضافة:
+• [[php -l]] لكل ملف اتغيّر: syntax سليم قبل أي حاجة.
+• [[-d extension_dir=... -d extension=mbstring]]: الـ extensions مش شغّالة لوحدها في الـ zip، ومن غير [[extension_dir]] PHP بيدوّر في [[C:\php\ext]].
+• [[router.php]]: [[php -S]] مبيقراش [[.htaccess]]، فالـ URLs النضيفة ([[/trial]] من غير [[.php]]) والفولدرات المقفولة بتتعمل في ملف PHP.
+• [[-d auto_prepend_file=mock.php]]: ملف بيتنفّذ قبل كل صفحة، بيعرّف [[db()]] على SQLite في الذاكرة بدل MySQL.
+
+وفخين اتقابلوا فعلًا: من غير [[curl.cainfo]] أي طلب HTTPS من جوه PHP بيفشل، و [[auto_prepend_file]] مع router بيتنفّذ **مرتين** في نفس الطلب.`,
+          example: R`curl -sLO https://downloads.php.net/~windows/releases/php-8.4.27-1-nts-Win32-vs17-x64.zip
+sha256sum php-8.4.27-1-nts-Win32-vs17-x64.zip
+unzip -q php-8.4.27-1-nts-Win32-vs17-x64.zip -d /tmp/php84 && export PATH="/tmp/php84:$PATH"
+php -v
+git diff HEAD --name-only --diff-filter=d -z -- '*.php' | while IFS= read -r -d '' f; do php -l "$f" || echo "FAIL $f"; done
+php -d extension_dir=/tmp/php84/ext -d extension=mbstring -d extension=curl -d extension=pdo_sqlite -d curl.cainfo="$PWD/dev/cacert.pem" -d auto_prepend_file="$PWD/dev/mock.php" -S 127.0.0.1:8799 -t site dev/router.php > dev/server.log 2>&1 &
+curl -s -m 20 -o out.html -D hdr.txt -w "[%{http_code}] %{time_total}s\n" http://127.0.0.1:8799/trial
+kill $!`,
+          lines: [
+            R`نزّل الـ zip الرسمي لويندوز. [[-s]] من غير شريط تقدّم، و [[-L]] يمشي ورا التحويل (الرابط القديم [[windows.php.net]] بيحوّل لـ [[downloads.php.net]])، و [[-O]] احفظ بنفس اسم الملف.`,
+            R`بصمة الملف، وقارنها بالـ [[sha256]] المكتوب جنب الملف في صفحة التنزيل (أو في [[releases.json]]). لو مختلفة: الملف بايظ أو اتغيّر، متشغّلوش.`,
+            R`فك الـ zip في [[/tmp/php84]] (ده [[%TEMP%\php84]] في ويندوز)، و [[export PATH]] بيحط الفولدر أول الـ PATH **للترمنال ده بس**. لما تقفله، كأن مفيش حاجة حصلت.`,
+            R`اتأكد إن [[php]] اللي بيشتغل هو اللي في الفولدر ده، ونسخته قريبة من نسخة الاستضافة.`,
+            R`كل ملف [[.php]] اتغيّر عن آخر commit (staged وغير staged)، من غير الممسوح، وأسماء فيها مسافات تعدّي سليمة. [[php -l]] بيفحص الـ syntax من غير ما يشغّل، ولو فشل يطبع [[FAIL]] واسم الملف.`,
+            R`سيرفر التجربة: كل [[-d]] إعداد مكان [[php.ini]]. الـ extensions اللي الموقع محتاجها، وشهادات الـ HTTPS لـ curl، والداتابيز الوهمية قبل كل صفحة، و [[router.php]] بيستقبل كل الطلبات. والـ log في ملف، و [[&]] يخلّيه في الخلفية.`,
+            R`اطلب صفحة: الجسم في [[out.html]]، والـ headers في [[hdr.txt]]، وعلى الشاشة الكود والوقت. [[-m 20]] أقصى ٢٠ ثانية بدل ما يعلّق.`,
+            R`[[$!]] رقم آخر برنامج اتشغّل في الخلفية من الـ shell ده (السيرفر)، و [[kill]] يقفله.`,
+          ],
+          try: R`اعمل فولدر [[lab]] فيه [[site/index.php]] بيعمل [[db()->query('SELECT name, price FROM plans')]]، و [[site/trial.php]]، و [[site/lib/db.php]] بيعرّف [[db()]] على MySQL جوه [[if (!function_exists('db'))]]، و [[dev/router.php]] و [[dev/mock.php]] زي الشرح. شغّل السيرفر واطلب [[/]] و [[/trial]] و [[/trial.php]] و [[/lib/db.php]] و [[/nope]]. وبعدين شيل الـ [[if]] من [[mock.php]] وشوف [[/]] بيرجّع إيه و [[server.log]] فيه إيه.`,
+          teach: R`## الحكاية
+
+موقع PHP على استضافة مشتركة، والمطلوب تعديل صفحة. الجهاز ويندوز ومفيهوش PHP خالص، ومش عايز تسطّب XAMPP عشان تجربة. الطريقة: PHP من zip في فولدر مؤقت، وكل الإعدادات على سطر الأمر، وسيرفر التجربة بيقلّد الاستضافة (URLs نضيفة، وفولدرات مقفولة)، وداتابيز وهمية.
+
+كله اتجرّب على ويندوز 11 من Git Bash و PowerShell 7 بـ PHP 8.4.27 (الـ zip الرسمي [[nts-Win32-vs17-x64]])، و [[/tmp]] في Git Bash هو [[%TEMP%]] بتاع ويندوز. (اسم اليوزر في المسارات اتغيّر لـ [[you]].)
+
+---
+
+## ١. نزّل الـ zip وافحصه
+
+صفحة التنزيل فيها أكتر من نسخة لكل إصدار:
+
+| الكلمة في الاسم | معناها | تختار إيه |
+|---|---|---|
+| [[nts]] | Non Thread Safe: نسخة لـ [[php -S]] و الـ CLI و FastCGI | ده اللي محتاجه |
+| [[ts]] | Thread Safe: لـ Apache اللي بيشغّل PHP جواه كـ module | مش هنا |
+| [[vs17]] | اتبنت بـ Visual Studio 2022، ومحتاجة Visual C++ Redistributable (موجود في معظم الأجهزة) | زي ما هي |
+| [[x64]] | ويندوز 64 بت | أي جهاز حديث |
+
+~~~bash
+curl -sL https://downloads.php.net/~windows/releases/releases.json | head -c 300
+curl -sLO https://downloads.php.net/~windows/releases/php-8.4.27-1-nts-Win32-vs17-x64.zip
+sha256sum php-8.4.27-1-nts-Win32-vs17-x64.zip
+~~~
+
+~~~text الناتج (جوه releases.json لنسخة 8.4، وبعدين البصمة)
+{"path":"php-8.4.27-1-nts-Win32-vs17-x64.zip","size":"33.66MB","sha256":"dbae154a0a89791f36c3d48e68bae797878333e7d6cb5721e74617de59b63ab7"}
+dbae154a0a89791f36c3d48e68bae797878333e7d6cb5721e74617de59b63ab7 *php-8.4.27-1-nts-Win32-vs17-x64.zip
+~~~
+
+البصمتين زي بعض، يبقى الملف هو اللي اتنشر. (التنزيل ٣٣ ميجا خد ١٧ ثانية.)
+
+> **اختار نفس الإصدار اللي على الاستضافة.** شغّل [[php -v]] على السيرفر (أو بص في لوحة الاستضافة). لو الاستضافة 8.2 وانت بتفحص بـ 8.4، [[php -l]] هيعدّي حاجات زي property hooks (8.4 بس) وهي هتكسر الموقع هناك.
+
+### فك وشغّل (Git Bash)
+
+~~~bash
+unzip -q php-8.4.27-1-nts-Win32-vs17-x64.zip -d /tmp/php84
+export PATH="/tmp/php84:$PATH"
+php -v
+~~~
+
+~~~text الناتج
+PHP 8.4.27 (cli) (built: Oct 26 2026 09:50:21) (NTS Visual C++ 2022 x64)
+Copyright (c) The PHP Group
+Built by The PHP Group
+Zend Engine v4.4.27, Copyright (c) Zend Technologies
+~~~
+
+- [[unzip -q]]: فك من غير ما يطبع كل ملف. [[-d]] الفولدر اللي يفك فيه (أقل من ثانية).
+- [[export PATH=...]]: الـ shell بيدوّر على البرامج في فولدرات الـ PATH بالترتيب، فحطّينا فولدرنا الأول. ده للترمنال ده بس، ومش بيغيّر PATH بتاع ويندوز.
+
+### نفس الكلام في PowerShell
+
+~~~powershell
+$S = "$env:TEMP\php84"
+Invoke-WebRequest https://downloads.php.net/~windows/releases/php-8.4.27-1-nts-Win32-vs17-x64.zip -OutFile php84.zip
+(Get-FileHash .\php84.zip -Algorithm SHA256).Hash
+Expand-Archive .\php84.zip -DestinationPath $S
+$env:Path = "$S;$env:Path"
+(Get-Command php).Source
+~~~
+
+~~~text الناتج
+DBAE154A0A89791F36C3D48E68BAE797878333E7D6CB5721E74617DE59B63AB7
+C:\Users\you\AppData\Local\Temp\php84\php.exe
+~~~
+
+[[Get-FileHash]] بيطبع البصمة بحروف كبيرة، والمقارنة في PowerShell مش بتفرق ([[-eq]] case-insensitive). و [[$env:Path = ...]] برضه للنافذة دي بس. و [[Expand-Archive]] خد أقل من ثانية.
+
+---
+
+## ٢. [[php -l]] على الملفات اللي اتغيّرت بس
+
+~~~bash
+git diff HEAD --name-only --diff-filter=d -z -- '*.php' | while IFS= read -r -d '' f; do php -l "$f" || echo "FAIL $f"; done
+~~~
+
+~~~text الناتج (عدّلت trial.php وغلطت فيه، وضفت «about us.php»، ومسحت rate.php)
+No syntax errors detected in about us.php
+
+Parse error: syntax error, unexpected token "<", expecting end of file in trial.php on line 5
+Errors parsing trial.php
+FAIL trial.php
+~~~
+
+فك الأمر:
+
+| الحتة | بتعمل إيه |
+|---|---|
+| [[git diff HEAD --name-only]] | أسماء الملفات اللي مختلفة عن آخر commit، staged وغير staged مع بعض (من غير [[HEAD]] بيطلّع غير staged بس) |
+| [[--diff-filter=d]] | الـ [[d]] الصغيرة = استبعد الممسوحة (الكبيرة [[D]] = الممسوحة بس) |
+| [[-z]] | افصل الأسماء بـ byte صفر بدل سطر جديد، عشان أي اسم فيه مسافة أو سطر يعدّي |
+| [[-- '*.php']] | pathspec: ملفات php بس، و git هو اللي بيفلتر |
+| [[read -r -d '']] | اقرا لحد الـ byte الصفر، و [[-r]] متفكّش الـ [[\]]، و [[IFS=]] متشيلش المسافات من الأطراف |
+| [[php -l "$f" || echo]] | [[-l]] = lint: compile من غير تشغيل. لو فشل (كود 255) اطبع FAIL |
+
+والطريقة اللي كانت في الشات الأصلي: [[for f in $(git diff --name-only | grep '\.php$'); do php -l "$f"; done]]. جرّبناها على نفس الحالة:
+
+~~~text الناتج
+Could not open input file: about
+Could not open input file: us.php
+Could not open input file: rate.php
+
+Parse error: syntax error, unexpected token "<", expecting end of file in trial.php on line 5
+Errors parsing trial.php
+~~~
+
+٣ مشاكل: [[$(...)]] بيقسم على المسافات فـ «about us.php» بقى ملفين، والملف الممسوح اتفحص، ولو كان فيه ملف جديد مش staged ماكانش هيظهر أصلًا. الملفات الجديدة اللي لسه مش متضافة: [[git ls-files --others --exclude-standard -- '*.php']].
+
+---
+
+## ٣. الـ extensions: [[-d]] من غير [[php.ini]]
+
+الـ zip فيه [[php.ini-development]] و [[php.ini-production]] بس، ومفيش [[php.ini]]، فـ PHP شغّال بالقيم الافتراضية. [[php -m]] بيوري الـ modules الشغّالة: فيها [[PDO]] و [[mysqlnd]]، ومفيهاش [[mbstring]] ولا [[curl]] ولا [[openssl]] ولا [[pdo_sqlite]]. الملفات نفسها موجودة في [[ext\]] ([[php_mbstring.dll]] و [[php_curl.dll]] ...)، بس محدش حمّلها.
+
+~~~bash
+php -d extension=mbstring -r 'echo mb_strlen("مجانية"), "\n";'
+~~~
+
+~~~text الناتج
+Warning: PHP Startup: Unable to load dynamic library 'mbstring' (tried: C:\php\ext\mbstring (The specified module could not be found), C:\php\ext\php_mbstring.dll (The specified module could not be found)) in Unknown on line 0
+
+Fatal error: Uncaught Error: Call to undefined function mb_strlen() in Command line code:1
+~~~
+
+اقرا الـ warning: دوّر في [[C:\php\ext]]، ده المكان الافتراضي لما مفيش [[extension_dir]]. الحل:
+
+~~~bash
+php -d extension_dir=/tmp/php84/ext -d extension=mbstring -r 'echo mb_strlen("مجانية"), "\n";'
+~~~
+
+~~~text الناتج
+6
+~~~
+
+- [[-d name=value]]: نفس سطر [[name = value]] في [[php.ini]]، لمرة واحدة.
+- [[extension=mbstring]]: PHP بيكمّلها لـ [[php_mbstring.dll]] لوحده.
+- Git Bash بيحوّل [[/tmp/php84/ext]] لمسار ويندوز ([[C:/Users/you/AppData/Local/Temp/php84/ext]]) قبل ما يديه لـ [[php.exe]]. لو حصلت مشكلة في التحويل: [[$(cygpath -m /tmp/php84)]].
+- [[6]] مش [[12]]: [[mb_strlen]] بيعد حروف، و [[strlen]] بيعد bytes (كل حرف عربي ٢ bytes في UTF-8).
+
+> لو هتشتغل على المشروع كتير، اعمل [[php.ini]] صغير جنب [[php.exe]] فيه نفس السطور، بدل [[-d]] كل مرة. بس [[-d]] بيخلّي الإعدادات ظاهرة في الأمر نفسه، وده مفيد في سكربت.
+
+---
+
+## ٤. فخ HTTPS من جوه PHP: [[curl.cainfo]]
+
+الصفحة [[rate.php]] بتجيب حاجة من API خارجي بـ curl:
+
+~~~text php -d extension_dir=/tmp/php84/ext -d extension=curl rate.php
+curl error: SSL certificate OpenSSL verify result: unable to get local issuer certificate (20)
+~~~
+
+curl في PHP على ويندوز معندوش لستة الشهادات الموثوقة (CA bundle)، فمش قادر يتأكد من شهادة أي موقع. الحل: نزّل الـ bundle من مشروع curl ووريه مكانه:
+
+~~~bash
+curl -s -o dev/cacert.pem https://curl.se/ca/cacert.pem
+php -d extension_dir=/tmp/php84/ext -d extension=curl -d curl.cainfo="$PWD/dev/cacert.pem" rate.php
+~~~
+
+~~~text الناتج
+ok 577 bytes
+~~~
+
+| الحالة (اتجرّبت) | النتيجة |
+|---|---|
+| [[curl_exec]] من غير [[curl.cainfo]] | بيفشل بـ [[unable to get local issuer certificate (20)]] لأن مفيش لستة شهادات |
+| [[curl_exec]] مع [[curl.cainfo]] | شغّال وبيرجّع الصفحة ([[ok 577 bytes]]) |
+| [[file_get_contents("https://...")]] من غير [[openssl]] | بيفشل بـ [[Unable to find the wrapper "https" - did you forget to enable it]]: PHP مش عارف يتكلم HTTPS أصلًا |
+| [[file_get_contents("https://...")]] مع [[-d extension=openssl]] | شغّال من غير ملف شهادات (الـ openssl في PHP على ويندوز بيقرا شهادات ويندوز نفسها) |
+
+> **متحلّهاش بـ [[CURLOPT_SSL_VERIFYPEER => false]].** كده أي حد في النص يقدر ينتحل الـ API. والسطر ده بيتنسي في الكود ويوصل الإنتاج.
+
+---
+
+## ٥. [[router.php]]: شغل [[.htaccess]] في [[php -S]]
+
+الاستضافة (Apache أو LiteSpeed) فيها [[.htaccess]] بيعمل حاجتين: [[/trial]] يفتح [[trial.php]]، وفولدرات [[lib/]] و [[scripts/]] مقفولة. الشكل المعتاد (من وثائق Apache، مش متجرّب هنا):
+
+~~~text .htaccess
+RewriteEngine On
+RewriteRule ^(lib|scripts)/ - [F]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^(.+)$ $1.php [L]
+~~~
+
+[[php -S]] مبيقراش الملف ده خالص. لكن لو اديته ملف PHP في آخر الأمر، كل طلب بيعدّي عليه الأول:
+
+~~~php
+<?php
+// php -S بيبعت كل طلب للملف ده الأول (بيعمل شغل .htaccess)
+$root = $_SERVER['DOCUMENT_ROOT'];
+$path = rawurldecode(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
+
+// الفولدرات اللي الاستضافة بتقفلها بـ .htaccess: 403 هنا كمان
+if (preg_match('#^/(lib|scripts)/#', $path)) {
+    http_response_code(403);
+    exit("403 forbidden\n");
+}
+
+// ملف موجود فعلًا (css، صورة، index.php): سيبه لـ php -S يخدمه زي ما هو
+if (is_file($root . $path) || $path === '/') {
+    return false;
+}
+
+// URL نضيف: /trial → trial.php
+if (is_file($root . $path . '.php')) {
+    $_SERVER['SCRIPT_NAME'] = $path . '.php';
+    require $root . $path . '.php';
+    return true;
+}
+
+http_response_code(404);
+echo "404 not found: $path\n";
+~~~
+
+| السطر | ليه |
+|---|---|
+| [[$_SERVER['DOCUMENT_ROOT']]] | الفولدر اللي اديته لـ [[-t]] ([[site]]) |
+| [[parse_url(..., PHP_URL_PATH)]] | المسار من غير [[?query]]: [[/trial?x=1]] بيبقى [[/trial]] |
+| [[rawurldecode]] | [[%20]] ترجع مسافة، عشان [[is_file]] يلاقي الملف |
+| [[return false]] | «مش شغلي»: [[php -S]] يخدم الملف بنفسه (ويشغّله لو [[.php]]) |
+| [[require]] ثم [[return true]] | شغّلت الصفحة بنفسي، خلاص |
+| [[preg_match('#^/(lib|scripts)/#')]] | نفس قاعدة [[[F]]] في [[.htaccess]]: ممنوع (403) |
+
+الـ router ده للتطوير بس. على الاستضافة [[.htaccess]] هو اللي شغّال، فلو غيّرت قاعدة في واحد غيّرها في التاني.
+
+---
+
+## ٦. داتابيز وهمية بـ [[auto_prepend_file]]
+
+[[lib/db.php]] في الموقع بيعرّف [[db()]] على MySQL، بس جوه شرط:
+
+~~~php
+<?php
+// الاتصال الحقيقي: بيتعرّف بس لو mock.php ماعرّفهوش قبله
+if (!function_exists('db')) {
+    function db(): PDO {
+        static $pdo = null;
+        return $pdo ??= new PDO('mysql:host=127.0.0.1;dbname=shop;charset=utf8mb4', 'shop', getenv('DB_PASS') ?: '', [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+    }
+}
+~~~
+
+و [[dev/mock.php]] بيتحقن قبل كل صفحة ويعرّف [[db()]] الأول، على SQLite في الذاكرة بالبيانات اللي الصفحات محتاجاها:
+
+~~~php
+<?php
+// بيتحقن قبل كل صفحة بـ auto_prepend_file: داتابيز وهمية في الذاكرة بدل MySQL
+// الـ if لازم: php -S بيحقن الملف ده مرتين في نفس الطلب لما الـ router يرجّع false
+if (!function_exists('db')) {
+    function db(): PDO {
+        static $pdo = null;
+        if ($pdo) return $pdo;
+        $pdo = new PDO('sqlite::memory:', null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+        $pdo->exec("CREATE TABLE plans (name TEXT, price INT)");
+        $pdo->exec("INSERT INTO plans VALUES ('شهري', 150), ('سنوي', 1500)");
+        $pdo->exec("CREATE TABLE settings (key_name TEXT PRIMARY KEY, value TEXT)");
+        $pdo->exec("INSERT INTO settings VALUES ('trial_days', '7')");
+        return $pdo;
+    }
+}
+~~~
+
+- [[auto_prepend_file]]: ملف PHP بيتنفّذ قبل أي سكربت، كأنه [[require]] في أول سطر.
+- [[sqlite::memory:]]: داتابيز في الذاكرة، بتتعمل مع كل طلب وتختفي بعده، فكل طلب بيبدأ بنفس البيانات.
+- [[static $pdo]]: نفس الاتصال طول الطلب، مهما [[db()]] اتنادت.
+- محتاج [[-d extension=pdo_sqlite]].
+
+### الفخ اللي حصل: [[Cannot redeclare function db()]]
+
+أول نسخة من [[mock.php]] كانت [[function db()]] على طول من غير [[if]]:
+
+~~~text curl -w "[%{http_code}]" على كل صفحة
+/ [500]
+/trial [200]
+/trial.php [500]
+~~~
+
+~~~text dev/server.log
+127.0.0.1:60661 [500]: GET / - Cannot redeclare function db() (previously declared in C:\Users\you\...\dev\mock.php:3) in C:\Users\you\...\dev\mock.php on line 3
+~~~
+
+[[/trial]] اشتغل و [[/trial.php]] لأ! الفرق: في [[/trial]] الـ router عمل [[require]] بنفسه (الـ prepend اتنفّذ مرة قبل الـ router). في [[/trial.php]] الـ router رجّع [[false]]، فـ [[php -S]] شغّل الملف كسكربت جديد **في نفس الطلب**، والـ prepend اتنفّذ تاني، و [[db()]] اتعرّفت مرتين.
+
+جرّبت [[if (function_exists('db')) return;]] في أول الملف: نفس الخطأ (السطر بقى ٤). ليه؟ الدالة اللي متعرّفة على مستوى الملف (مش جوه [[if]]) PHP بيسجّلها وقت الـ compile، **قبل** ما أي سطر يتنفّذ، فالـ [[return]] بيوصل متأخر. الحل الوحيد: التعريف نفسه جوه [[if (!function_exists('db')) { ... }]]، فبيتسجّل وقت التنفيذ بس.
+
+---
+
+## ٧. شغّل وجرّب
+
+~~~bash
+php -d extension_dir=/tmp/php84/ext -d extension=mbstring -d extension=curl -d extension=openssl -d extension=pdo_sqlite \
+  -d curl.cainfo="$PWD/dev/cacert.pem" -d auto_prepend_file="$PWD/dev/mock.php" \
+  -d display_errors=0 -d log_errors=1 -d error_log="$PWD/php-errors.log" \
+  -S 127.0.0.1:8799 -t site dev/router.php > dev/server.log 2>&1 &
+for u in / /trial /trial.php /assets/site.css /rate /lib/helpers.php /scripts/admin/migrate-2026-09.php /nope; do
+  curl -s -m 20 -o out.html -w "$u [%{http_code}] %{time_total}s\n" -D hdr.txt "http://127.0.0.1:8799$u"
+done
+tail php-errors.log
+~~~
+
+~~~text الناتج
+/ [200] 0.003741s
+/trial [200] 0.002208s
+/trial.php [200] 0.002458s
+/assets/site.css [200] 0.001789s
+/rate [200] 0.332737s
+/lib/helpers.php [403] 0.001495s
+/scripts/admin/migrate-2026-09.php [403] 0.001481s
+/nope [404] 0.001688s
+tail: cannot open 'php-errors.log' for reading: No such file or directory
+~~~
+
+- [[\]] في آخر السطر: الأمر مكمّل في السطر اللي بعده (مجرد تقسيم للقراية).
+- [[display_errors=0]] و [[log_errors=1]] و [[error_log=...]]: زي الإنتاج، الأخطاء متطلعش في الصفحة وتتكتب في ملف. ملف مش موجود = مفيش ولا خطأ.
+- ومن غير [[display_errors=0]] فخ: نفس الـ fatal error بتاع [[Cannot redeclare]] رجع **[[200]]** والخطأ مكتوب جوه الصفحة (اتجرّب على [[php:8.4-cli]] في لينكس، الافتراضي هناك [[display_errors]] شغّال). يعني [[curl -w "%{http_code}"]] لوحده مش كفاية؛ بص في اللوج أو دوّر على [[Fatal error]] في الصفحة.
+- [[127.0.0.1]] مش [[0.0.0.0]]: السيرفر ده مش لحد غيرك.
+- [[-D hdr.txt]]: الـ headers في ملف تقرا منه [[Content-Type]] و [[Location]] لو فيه redirect.
+- [[/rate]] أبطأ (٠٫٣ ثانية) لأنه بيطلب موقع بره فعلًا.
+
+ونفس الصفحة بالمحتوى:
+
+~~~text curl -s http://127.0.0.1:8799/ ثم /trial
+<h1>الباقات</h1>
+<p class="price">شهري: 150 EGP</p>
+<p class="price">سنوي: 1500 EGP</p>
+<h1>تجربة مجانية 6 حروف، لمدة 7 يوم</h1>
+~~~
+
+---
+
+## ٨. اقفل السيرفر صح (والفخ اللي بيخلّيك تجرّب على سيرفر غلط)
+
+### (أ) احفظ الـ PID وانت بتشغّل
+
+في Git Bash، [[$!]] بعد [[&]] على طول، و [[kill $!]] في الآخر. وفي سكربت: [[trap 'kill $PID' EXIT]] بيقفله حتى لو السكربت فشل في النص (اتجرّب: بعد السكربت [[tasklist]] مفيهوش [[php.exe]]).
+
+وفي PowerShell:
+
+~~~powershell
+$p = Start-Process php -ArgumentList '-S','127.0.0.1:8799','-t','site','dev\router.php' -RedirectStandardError server.log -WindowStyle Hidden -PassThru
+$p.Id
+Stop-Process -Id $p.Id
+~~~
+
+[[-PassThru]] بيرجّع الـ process نفسها، فـ [[$p.Id]] رقمها. ([[php -S]] بيكتب الـ log على stderr، عشان كده [[-RedirectStandardError]].)
+
+### (ب) نسيت تحفظه
+
+الطريقة اللي اتعملت في الشات: دوّر على مين ماسك البورت.
+
+~~~bash
+PID=$(netstat -ano | grep "127.0.0.1:8799" | grep LISTEN | awk '{print $5}' | head -1)
+taskkill //PID $PID //F
+~~~
+
+ولازم [[//]] مزدوجة. بـ [[/PID]] واحدة:
+
+~~~text الناتج
+ERROR: Invalid argument/option - 'C:/Program Files/Git/PID'.
+Type "TASKKILL /?" for usage.
+~~~
+
+Git Bash شاف [[/PID]] كمسار لينكس وحوّله لمسار ويندوز جوه فولدر Git قبل ما يدّيه لـ [[taskkill]]. الـ [[//]] بتقوله «دي مش مسار». (والحل التاني: [[MSYS_NO_PATHCONV=1 taskkill /PID $PID /F]].)
+
+> على جهاز التجربة، [[netstat -ano]] طلّع عمود الـ PID [[0]] (صلاحيات ناقصة)، فالـ [[taskkill]] اترفض بـ [[ERROR: Invalid syntax. Value expected for '/PID'.]] لأن المتغير فاضي. الأضمن من غير netstat: [[Get-Process php | Where-Object Path -like "$env:TEMP\php84*" | Stop-Process -Force]]، بيقفل الـ php اللي من فولدرنا بس، مش أي [[php.exe]] تاني على الجهاز.
+
+### (ج) الفخ: ويندوز بيسيبك تفتح نفس البورت مرتين
+
+أول تشغيل في المعمل كان على بورت [[8765]]، و [[server.log]] قال:
+
+~~~text dev/server.log
+PHP 8.4.27 Development Server (http://127.0.0.1:8765) started
+~~~
+
+بس [[curl]] رجّع ٤٠٤ لكل حاجة، والصفحة كانت HTML مش بتاعتنا خالص: برنامج تاني كان ماسك البورت، و PHP «اشتغل» من غير أي خطأ. وجرّبناها تاني قصد: سيرفر PHP شغّال على [[8799]]، وسيرفر تاني بفولدر تاني على نفس البورت:
+
+~~~text الناتج
+[Tue Nov  3 13:11:41 2026] PHP 8.4.27 Development Server (http://127.0.0.1:8799) started
+200 200 200 200     ← كل الطلبات راحت للسيرفر الأول
+~~~
+
+ونفس التجربة في لينكس ([[php:8.4-cli]] في Docker):
+
+~~~text الناتج
+Failed to listen on 127.0.0.1:8799 (reason: Address already in use)
+exit=1
+~~~
+
+على لينكس التاني بيفشل على طول. على ويندوز الاتنين «شغّالين» والطلبات بتروح للأول. فلو عدّلت ومش شايف التعديل: اقفل كل سيرفرات التجربة القديمة، أو غيّر البورت، وبص في [[server.log]] إن الطلبات بتوصل فعلًا (كل طلب بيطلع سطر [[Accepted]]).
+
+---
+
+## ٩. لما تخلص
+
+~~~bash
+kill $!
+rm -rf /tmp/php84 php-8.4.27-1-nts-Win32-vs17-x64.zip
+~~~
+
+مفيش حاجة اتسطّبت: لا PATH اتغيّر، ولا registry، ولا service.
+
+---
+
+## الخلاصة
+
+| عايز | الأمر |
+|---|---|
+| PHP من غير تسطيب | zip الـ [[nts-x64]]، و [[sha256sum]]، و [[export PATH]] للترمنال ده |
+| syntax الملفات اللي اتغيّرت | [[git diff HEAD --name-only --diff-filter=d -z -- '*.php']] ثم [[php -l]] |
+| extension | [[-d extension_dir=.../ext -d extension=mbstring]] |
+| HTTPS من curl جوه PHP | [[-d curl.cainfo=cacert.pem]] |
+| URLs نضيفة وفولدرات مقفولة | [[router.php]] في آخر أمر [[php -S]] |
+| داتابيز وهمية | [[-d auto_prepend_file=mock.php]] و [[if (!function_exists())]] |
+| أخطاء في ملف | [[-d display_errors=0 -d log_errors=1 -d error_log=...]] |
+| اقفل | [[kill $!]] أو [[Stop-Process -Id $p.Id]] أو [[taskkill //PID ... //F]] |`,
+          deep: {
+            why: R`عشان تجرّب قبل ما ترفع. من غير تجربة محلية الطريقة الوحيدة إنك ترفع على الاستضافة وتشوف، وأي غلطة syntax بتوقّع الصفحة للزوار لحد ما تصلّحها. والـ zip بيدّيك ده من غير ما تسيب أثر على الجهاز، والـ router والـ mock بيخلّوا التجربة قريبة من الاستضافة: نفس الـ URLs، ونفس الحاجات المقفولة، ونفس شكل البيانات.`,
+            how: R`[[php.exe]] بيدوّر على [[php.ini]] جنبه وفي [[PHPRC]] وفي فولدر ويندوز، ولو مالقاش بيشتغل بالقيم المبنية جواه، ومنها [[extension_dir = C:\php\ext]]. و [[-d]] بيكتب فوق أي قيمة لمرة التشغيل دي. و [[php -S]] لما يتديله router بيشغّله مع كل طلب: [[return false]] معناه «اخدم الملف»، ولو الملف [[.php]] بيشغّله كسكربت تاني في نفس الطلب، وده سبب إن [[auto_prepend_file]] بيتنفّذ مرتين. والدوال اللي متعرّفة على مستوى الملف PHP بيسجّلها وقت الـ compile، فـ [[return]] قبلها مبيمنعهاش. و [[curl]] في PHP بيستخدم OpenSSL ومحتاج ملف CA صريح، لكن الـ streams ([[file_get_contents]]) في بناء ويندوز بتقرا مخزن شهادات ويندوز. وويندوز بيسمح لبرنامجين يسمعوا على نفس البورت في حالات (PHP مبيطلبش [[SO_EXCLUSIVEADDRUSE]])، ولينكس بيرفض بـ [[Address already in use]].`,
+            when: R`تعديل على موقع PHP على استضافة مشتركة والجهاز ويندوز من غير PHP، أو تجربة نسخة PHP تانية من غير ما تلمس اللي متسطّب، أو CI على ويندوز. ولو المشروع كبير وهتشتغل عليه شهور: Docker ([[php:8.4-apache]] بيقرا [[.htaccess]] زي الاستضافة) أو Laragon/XAMPP أريح.`,
+            mistakes: R`تفحص بإصدار PHP أحدث من الاستضافة. وتستخدم [[$(git diff --name-only)]] فالأسماء اللي فيها مسافات تتقسم والممسوحة تتفحص. وتنسى [[extension_dir]] فتشوف [[C:\php\ext]] في الخطأ. وتحل الـ HTTPS بـ [[VERIFYPEER false]]. وتعرّف [[db()]] في الـ mock من غير [[if]]. وتفتكر إن [[started]] معناها إن الطلبات بتوصل لك. وتكتب [[taskkill /PID]] في Git Bash. وتسيب السيرفر شغّال وتفتح غيره على نفس البورت. وتفتح [[0.0.0.0]] على شبكة عامة.`
+          },
+          sol: R`[[/]] و [[/trial]] و [[/trial.php]] بيرجعوا [[200]] والمحتوى [[الباقات]] وسعرين، و [[تجربة مجانية 6 حروف، لمدة 7 يوم]]. و [[/lib/db.php]] [[403]]، و [[/nope]] [[404 not found: /nope]]. ومن غير الـ [[if]] في [[mock.php]]: [[/]] و [[/trial.php]] بيرجعوا [[500]] و [[/trial]] بس [[200]]، و [[server.log]] فيه [[Cannot redeclare function db() (previously declared in ...mock.php:3)]].
+
+اتجرّب على ويندوز 11: Git Bash و PowerShell 7 بـ PHP 8.4.27 من الـ zip الرسمي، و [[php:8.4-cli]] في Docker للمقارنة مع لينكس. سطور [[.htaccess]] من وثائق Apache (مش متجرّبة هنا).`,
+          practice: [
+            { lvl: 'سريع', t: R`من غير ما تبص: اكتب الـ ٤ إعدادات [[-d]] اللي بتخلّي [[php -S]] من zip قريب من الاستضافة، وجنب كل واحد الخطأ اللي بيطلع من غيره.`, done: R`كتبت [[extension_dir]] ([[Unable to load dynamic library ... C:\php\ext]])، و [[extension=...]] ([[Call to undefined function mb_strlen()]])، و [[curl.cainfo]] ([[unable to get local issuer certificate]])، و [[auto_prepend_file]] (الصفحة بتحاول توصل لـ MySQL)، وكل خطأ بنصه.` },
+            { lvl: 'تطبيق', t: R`اقرا وتوقّع: router فيه [[return false]] لأي ملف موجود، و [[mock.php]] فيه [[function db()]] من غير [[if]]. توقّع كود الرد لـ [[/]] و [[/trial]] (اللي الـ router بيعمله [[require]]) و [[/trial.php]] و [[/assets/site.css]]، وبعدين شغّل وقارن.`, done: R`توقعت [[500]] و [[200]] و [[500]] و [[200]] (الـ CSS مش PHP فمفيش prepend تاني)، والنتيجة طابقت، وكتبت في سطر ليه [[/trial]] بالذات اشتغل.` },
+            { lvl: 'تطبيق', t: R`صلّح الكود البايظ: السطر ده بيفحص الملفات قبل الرفع: [[for f in $(git diff --name-only | grep '\.php$'); do php -l $f; done]]. اعمل ريبو فيه ملف اسمه [[about us.php]] جديد، وملف ممسوح، وملف فيه غلطة syntax، ووريني ٣ مشاكل في السطر، واكتب نسخة سليمة بترجع كود غير صفر لو أي ملف فشل.`, done: R`النسخة القديمة طلّعت [[Could not open input file: about]] و [[us.php]] والملف الممسوح، والجديدة بتفحص [[about us.php]] صح، ومبتلمسش الممسوح، و [[echo $?]] بعدها [[1]] لما فيه ملف بايظ و [[0]] لما كله سليم.` },
+            { lvl: 'تطبيق', t: R`ابني [[dev.sh]]: بيشغّل السيرفر بكل الـ [[-d]]، وبيحفظ الـ PID، و [[trap]] بيقفله، وبيطلب لستة صفحات من ملف [[pages.txt]] (صفحة في كل سطر مع الكود المتوقع)، وبيطبع [[OK]] أو [[FAIL]] لكل واحدة، وبيفشل لو [[php-errors.log]] فيه أي سطر.`, done: R`مع الموقع السليم: كل السطور [[OK]] وكود الخروج 0. لما تكسر [[trial.php]]: [[FAIL /trial 500]] وآخر سطر من اللوج فيه [[Parse error]] وكود الخروج 1. وفي الحالتين [[tasklist | grep php]] بعدها فاضي.` },
+            { lvl: 'تحدي', t: R`محاكاة: الصفحة [[orders.php]] بتعمل [[INSERT]] في جدول [[orders]] وبعدين [[header('Location: /thanks')]]. وسّع [[mock.php]] بحيث الداتابيز الوهمية تفضل بين الطلبات (SQLite في ملف [[dev/mock.sqlite]] بدل الذاكرة، وتتعمل من الأول لو مش موجودة)، واختبر بـ [[curl -s -o /dev/null -w "%{http_code} %{redirect_url}"]] ثم عدّ الطلبات.`, done: R`أول POST بيرجّع [[302 http://127.0.0.1:8799/thanks]]، وبعد ٣ طلبات [[SELECT COUNT(*) FROM orders]] من [[php -r]] على نفس الملف = 3، ومسح الملف بيرجّع الداتابيز لأولها، والملف في [[.gitignore]].` },
+            { lvl: 'تحدي', t: R`دوّر بنفسك: من [[php --ini]] و [[php -i]] (أو الوثائق)، اعرف PHP على ويندوز بيدوّر على [[php.ini]] في أنهي أماكن وبأنهي ترتيب، وجرّب [[PHPRC]] تشاور على فولدر فيه [[php.ini]] صغير فيه سطور الـ extensions، وقارن بـ [[-d]].`, done: R`[[php --ini]] من غير ملف بيطبع [[Loaded Configuration File: (none)]]، ومع [[PHPRC]] بيطبع مسار الملف بتاعك، و [[php -m]] فيه [[mbstring]] من غير ولا [[-d]]، وكتبت إمتى تستخدم ملف وإمتى [[-d]].` },
+          ],
+          ci: [
+            { os: [R`ubuntu`], sh: R`bash`, run: R`mkdir -p site dev && cd site
+printf '<?php echo "trial ok\\n";\n' > trial.php
+printf '<?php echo "home\\n";\n' > index.php
+mkdir lib && printf '<?php echo "secret";\n' > lib/x.php
+cat > ../dev/router.php <<'EOF'
+<?php
+$root = $_SERVER['DOCUMENT_ROOT'];
+$path = rawurldecode(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
+if (preg_match('#^/(lib|scripts)/#', $path)) { http_response_code(403); exit("403\n"); }
+if (is_file($root . $path) || $path === '/') return false;
+if (is_file($root . $path . '.php')) { require $root . $path . '.php'; return true; }
+http_response_code(404);
+EOF
+printf '<?php\nfunction db() { return 1; }\n' > ../dev/mock.php
+cd ..
+php -d display_errors=0 -d log_errors=1 -d auto_prepend_file="$PWD/dev/mock.php" -S 127.0.0.1:8799 -t site dev/router.php > dev/server.log 2>&1 &
+PID=$!; sleep 1
+for u in / /trial /trial.php /lib/x.php /nope; do echo "$u $(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8799$u)"; done
+kill $PID; sleep 0.5
+grep -o 'Cannot redeclare' dev/server.log | head -1
+printf '<?php\nif (!function_exists("db")) { function db() { return 1; } }\n' > dev/mock.php
+php -d display_errors=0 -d log_errors=1 -d auto_prepend_file="$PWD/dev/mock.php" -S 127.0.0.1:8799 -t site dev/router.php > dev/server.log 2>&1 &
+PID=$!; sleep 1
+echo "fixed /trial.php $(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8799/trial.php)"
+kill $PID
+printf '<?php\necho "x"\n' > bad.php
+php -l bad.php >/dev/null 2>&1; echo "lint exit=$?"`, expect: [R`/ 500`, R`/trial 200`, R`/trial.php 500`, R`/lib/x.php 403`, R`/nope 404`, R`Cannot redeclare`, R`fixed /trial.php 200`, R`lint exit=255`] },
+          ],
+        },
+        {
           cmd: "<?php ?>",
           title: "إزاي الكود بيتخلط مع HTML في نفس الملف",
           desc: R`ملف [[.php]] بيتقري كـ HTML عادي لحد ما PHP يقابل [[<?php]]؛ من هنا كود لحد [[?>]]. [[echo]] بيطبع، وكل جملة بتخلص بـ [[;]]، و [[<?= $x ?>]] اختصار لـ [[<?php echo $x; ?>]].

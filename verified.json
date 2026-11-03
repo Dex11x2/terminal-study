@@ -1045,9 +1045,9 @@
   "on": "Windows 11 Node 24.19 Express 5.2.1 helmet 8.3: curl -I, Invoke-WebRequest (pwsh 7, powershell 5.1); docs: browser CORP image blocking"
  },
  "api|idempotency": {
-  "hash": "d36859339730",
-  "date": "2026-10-07",
-  "on": "Windows 11, Express 5.2 + Prisma 7.10 + Postgres 16 (Docker)"
+  "hash": "77ef72914906",
+  "date": "2026-11-03",
+  "on": "docs: summary line + drills linking to arch case"
  },
  "api|ioredis": {
   "hash": "dcad9a931e76",
@@ -1828,6 +1828,11 @@
   "hash": "c1e48c3b69e5",
   "date": "2026-10-08",
   "on": "docs: concept"
+ },
+ "arch|منع التكرار بين الدورات": {
+  "hash": "d936487f2be3",
+  "date": "2026-11-03",
+  "on": "Postgres 16 + Node lab with advisory lock"
  },
  "bash|#!/usr/bin/env bash": {
   "hash": "c1408668ae50",
@@ -4195,9 +4200,9 @@
   "on": "Chrome headless (playwright-core, keyboard emulation), Windows 11"
  },
  "css|arbitrary values": {
-  "hash": "b0279120c26d",
-  "date": "2026-10-06",
-  "on": "Vite 8 + Tailwind 4.3.3 build + Chrome headless on Windows 11"
+  "hash": "3c139aa3b6a6",
+  "date": "2026-11-03",
+  "on": "Next 16.4.4 + Tailwind 4.3.4 + lucide-react 0.577/1.67, playwright-core with Chrome 156"
  },
  "css|aria": {
   "hash": "361b96ac40d0",
@@ -4345,9 +4350,9 @@
   "on": "Vite + Tailwind 4.3.3 + lucide-react in headless Chrome, rtl/ltr measured; docs: start-*/end-* deprecation"
  },
  "css|lucide-react": {
-  "hash": "dcc15d5716e9",
-  "date": "2026-10-06",
-  "on": "Vite + lucide-react 1.52 + Tailwind 4.3.3 in headless Chrome (ARIA tree, reduced motion, bundle sizes via vite build); docs: Lighthouse wording"
+  "hash": "330fe46a4ae2",
+  "date": "2026-11-03",
+  "on": "Next 16.4.4 + Tailwind 4.3.4 + lucide-react 0.577/1.67, playwright-core with Chrome 156"
  },
  "css|media queries": {
   "hash": "438c4a4dd40f",
@@ -4509,6 +4514,11 @@
   "date": "2026-10-06",
   "on": "Chrome headless (playwright-core, 375px mobile), Windows 11"
  },
+ "css|كلمة بتتبدّل في عنوان": {
+  "hash": "7fa0eca4baca",
+  "date": "2026-11-03",
+  "on": "Next 16.4.4 + Tailwind 4.3.4 + lucide-react 0.577/1.67, playwright-core with Chrome 156"
+ },
  "css|كيبورد وقارئ شاشة": {
   "hash": "97792e9abc37",
   "date": "2026-10-07",
@@ -4518,6 +4528,11 @@
   "hash": "2ac82560447b",
   "date": "2026-10-06",
   "on": "headless Chrome 154 (playwright, Windows), DevTools Protocol Performance metrics"
+ },
+ "css|مصفوفة مقاسات": {
+  "hash": "cc77c6fef926",
+  "date": "2026-11-03",
+  "on": "Next 16.4.4 + Tailwind 4.3.4 + lucide-react 0.577/1.67, playwright-core with Chrome 156"
  },
  "css|مقدمة CSS وتنسيق العناصر": {
   "hash": "e514e23464fb",
@@ -4914,6 +4929,11 @@
   "date": "2026-10-28",
   "on": "Docker Desktop: Prometheus 3.15.1 + Alertmanager 0.34.1 + node_exporter 1.12.1 + Node webhook, alerts fired/resolved live; promtool test rules; Git Bash, pwsh 7.6, Windows PowerShell 5.1"
  },
+ "diag|CORS و mixed content": {
+  "hash": "24680c2c5d19",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 via CDP, nginx/postgres containers, pgbench, ss; cloud timeouts and SRE practice from docs"
+ },
  "diag|GOMEMLIMIT والـ CPU": {
   "hash": "89519bb71a4d",
   "date": "2026-11-03",
@@ -4939,6 +4959,11 @@
   "date": "2026-10-27",
   "on": "docker node:24-alpine --ulimit nofile=256; Windows pwsh (HandleCount); docs: systemd LimitNOFILE"
  },
+ "diag|WebSocket بيفصل": {
+  "hash": "d8aa4f13d044",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 via CDP, nginx/postgres containers, pgbench, ss; cloud timeouts and SRE practice from docs"
+ },
  "diag|cron مشتغلش": {
   "hash": "af99371cdb33",
   "date": "2026-10-06",
@@ -4948,6 +4973,16 @@
   "hash": "7082efed16cc",
   "date": "2026-10-27",
   "on": "docker alpine:3.22 + node:24-alpine, ubuntu:24.04 bash; Windows pwsh 7 + powershell 5.1; docs: 0xC0000005"
+ },
+ "diag|git bisect لعطل في الإنتاج": {
+  "hash": "3464ec43dbe0",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 via CDP, nginx/postgres containers, pgbench, ss; cloud timeouts and SRE practice from docs"
+ },
+ "diag|incident: severity و runbook و postmortem": {
+  "hash": "b48670212f46",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 via CDP, nginx/postgres containers, pgbench, ss; cloud timeouts and SRE practice from docs"
  },
  "diag|leak في الذاكرة": {
   "hash": "50e3857f368c",
@@ -4978,6 +5013,16 @@
   "hash": "94e7aa8b249c",
   "date": "2026-10-28",
   "on": "Docker Desktop: node:22-slim + prom-client 15.1.3 + Express 5.3.0; curl from Git Bash and nginx:alpine (Alpine 3.24); pwsh 7.6, Windows PowerShell 5.1"
+ },
+ "diag|redirect loop": {
+  "hash": "58ddd3381131",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 via CDP, nginx/postgres containers, pgbench, ss; cloud timeouts and SRE practice from docs"
+ },
+ "diag|slow query و TIME_WAIT": {
+  "hash": "91dacd3974ea",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 via CDP, nginx/postgres containers, pgbench, ss; cloud timeouts and SRE practice from docs"
  },
  "diag|smoke test": {
   "hash": "17f8b219a8ab",
@@ -5135,9 +5180,9 @@
   "on": "systemd ubuntu:24.04 lab + pm2 + TypeORM app, compose postgres, php:8.3-cli; hosting web console from docs"
  },
  "diag|فحص النفق بيختبر الطريق الغلط": {
-  "hash": "168ecfedfbf6",
+  "hash": "9b2726c19386",
   "date": "2026-11-03",
-  "on": "privileged ubuntu:24.04 netns/TUN + dnsmasq lab, golang image, read-only Windows event log/mutex; netsh/route changes from docs"
+  "on": "ci check made curl-version independent; ran on ubuntu-latest CI"
  },
  "diag|فيه مساحة ولسه No space": {
   "hash": "6cead209361f",
@@ -7419,10 +7464,20 @@
   "date": "2026-10-06",
   "on": "win11 Git Bash (Git 2.56); docs: gh issue, closing keywords"
  },
+ "git|Conventional Commits": {
+  "hash": "300d859089c0",
+  "date": "2026-11-03",
+  "on": "Git Bash 2.56 + ubuntu:24.04 git 2.43 labs, fixed dates for stable hashes; GitHub rulesets/GH006/Actions events from docs"
+ },
  "git|M والـ diff فاضي": {
   "hash": "7f9dde0f600c",
   "date": "2026-11-03",
   "on": "docs: cross-link to the new git/09 cases only"
+ },
+ "git|branch protection و CODEOWNERS": {
+  "hash": "aed230afafc2",
+  "date": "2026-11-03",
+  "on": "Git Bash 2.56 + ubuntu:24.04 git 2.43 labs, fixed dates for stable hashes; GitHub rulesets/GH006/Actions events from docs"
  },
  "git|commit لملفاتك بس": {
   "hash": "c4d69810825d",
@@ -7455,9 +7510,9 @@
   "on": "win11 Git Bash (Git 2.56) via -c + pwsh 7 + ubuntu-24.04; docs: --global write"
  },
  "git|git bisect": {
-  "hash": "bcd82b6117e5",
-  "date": "2026-10-06",
-  "on": "win11 Git Bash (Git 2.56) + pwsh 7 + ubuntu-24.04"
+  "hash": "db47199e24b1",
+  "date": "2026-11-03",
+  "on": "docs: cross-link to diag case only"
  },
  "git|git clean": {
   "hash": "c030d060de0b",
@@ -7488,6 +7543,11 @@
   "hash": "c0f15a73eef0",
   "date": "2026-10-28",
   "on": "git 2.56.0.windows.3 على ويندوز 11، في ريبو تجريبي في scratchpad"
+ },
+ "git|git hooks": {
+  "hash": "00d668643c45",
+  "date": "2026-11-03",
+  "on": "Git Bash 2.56 + ubuntu:24.04 git 2.43 labs, fixed dates for stable hashes; GitHub rulesets/GH006/Actions events from docs"
  },
  "git|git init / clone": {
   "hash": "145a518cee16",
@@ -7579,6 +7639,16 @@
   "date": "2026-10-28",
   "on": "git 2.56.0.windows.3 على ويندوز 11، في ريبو تجريبي في scratchpad"
  },
+ "git|git و GitHub Actions": {
+  "hash": "f48d24682b12",
+  "date": "2026-11-03",
+  "on": "Git Bash 2.56 + ubuntu:24.04 git 2.43 labs, fixed dates for stable hashes; GitHub rulesets/GH006/Actions events from docs"
+ },
+ "git|includeIf": {
+  "hash": "49bed7607a30",
+  "date": "2026-11-03",
+  "on": "Git Bash 2.56 + ubuntu:24.04 git 2.43 labs, fixed dates for stable hashes; GitHub rulesets/GH006/Actions events from docs"
+ },
  "git|ours و theirs في rebase": {
   "hash": "932555dfa5c2",
   "date": "2026-10-06",
@@ -7594,6 +7664,11 @@
   "date": "2026-10-06",
   "on": "ubuntu-24.04 (Git 2.43); docs: Windows variant"
  },
+ "git|shallow clone و sparse-checkout": {
+  "hash": "b55e8bba02b7",
+  "date": "2026-11-03",
+  "on": "Git Bash 2.56 + ubuntu:24.04 git 2.43 labs, fixed dates for stable hashes; GitHub rulesets/GH006/Actions events from docs"
+ },
  "git|ssh key لـ GitHub": {
   "hash": "fbf04e599c8c",
   "date": "2026-10-06",
@@ -7603,6 +7678,11 @@
   "hash": "4a2fd46658c5",
   "date": "2026-10-06",
   "on": "win11 Git Bash (Git 2.56), git-lfs 3.8"
+ },
+ "git|trunk-based ولا git flow": {
+  "hash": "94cfe5374794",
+  "date": "2026-11-03",
+  "on": "Git Bash 2.56 + ubuntu:24.04 git 2.43 labs, fixed dates for stable hashes; GitHub rulesets/GH006/Actions events from docs"
  },
  "git|أداة من GitHub Releases بـ checksum": {
   "hash": "8bd3cb464482",
@@ -7643,6 +7723,11 @@
   "hash": "1323e13fc26e",
   "date": "2026-10-06",
   "on": "win11 Git Bash (Git 2.56) local bare remote; docs: GitHub PR page"
+ },
+ "git|جوه .git/: objects و refs و HEAD": {
+  "hash": "81e9048f320b",
+  "date": "2026-11-03",
+  "on": "Git Bash 2.56 + ubuntu:24.04 git 2.43 labs, fixed dates for stable hashes; GitHub rulesets/GH006/Actions events from docs"
  },
  "git|سكربت Python يعدّل ملف CRLF": {
   "hash": "26f3ddd4958a",
@@ -10289,6 +10374,11 @@
   "date": "2026-10-07",
   "on": "Windows 11, Next 16.4.0 + next-intl 4.14.9, next start, curl + headless Chrome"
  },
+ "next|dev server قديم و .next": {
+  "hash": "22f1d97f787a",
+  "date": "2026-11-03",
+  "on": "Next 16.4.4 / React 19.3 on Windows (Git Bash, pwsh) and node:22-slim; extensions simulated"
+ },
  "next|env في Next": {
   "hash": "f9a9a869a4b6",
   "date": "2026-10-07",
@@ -10315,9 +10405,9 @@
   "on": "Windows 11, Next.js 16.4.0 + better-auth 1.7.7 + Postgres 16 (Docker) + fetch/psql"
  },
  "next|hydration mismatch": {
-  "hash": "899117c4f5a4",
-  "date": "2026-10-07",
-  "on": "Windows 11, Next 16.4.0 next dev (server TZ=UTC), headless Chrome (Africa/Cairo and UTC)"
+  "hash": "bed380788b35",
+  "date": "2026-11-03",
+  "on": "Next 16.4.4 / React 19.3 on Windows (Git Bash, pwsh) and node:22-slim; extensions simulated"
  },
  "next|layout.tsx": {
   "hash": "efa3280d4429",
@@ -10335,9 +10425,9 @@
   "on": "Windows 11, Next.js 16.4.0 build/start + curl"
  },
  "next|next upgrade": {
-  "hash": "4919c5a29f1f",
-  "date": "2026-10-07",
-  "on": "Windows 11, Next 16.4.0 project + create-next-app@15 (15.5.27) upgraded with @next/codemod@canary, npm outdated/audit, next typegen/build"
+  "hash": "0a8000d3ad93",
+  "date": "2026-11-03",
+  "on": "Next 16.4.4 / React 19.3 on Windows (Git Bash, pwsh) and node:22-slim; extensions simulated"
  },
  "next|next-intl": {
   "hash": "3661946c2bb4",
@@ -10558,6 +10648,11 @@
   "hash": "7af1da09a2b5",
   "date": "2026-10-27",
   "on": "docker nginx:alpine (nginx/1.31.6) + node:24-alpine backend"
+ },
+ "nginx|geo": {
+  "hash": "68af21c1dda4",
+  "date": "2026-11-03",
+  "on": "nginx in Docker with realip/geo/map; geoip2 from docs"
  },
  "nginx|gzip": {
   "hash": "eefaca204ac9",
@@ -11634,6 +11729,11 @@
   "date": "2026-10-07",
   "on": "php:8.4-cli (PHP 8.4.26); docs: PHP 8.3 parse error"
  },
+ "php|PHP محمول على ويندوز": {
+  "hash": "551b1fa98cdd",
+  "date": "2026-11-03",
+  "on": "portable PHP zip on Windows, php:8.4-cli, mariadb 11.4, mysql 8.4, postgres 16 in Docker; Apache/Cloudflare from docs"
+ },
  "php|PHPMailer": {
   "hash": "ff99556af02f",
   "date": "2026-10-07",
@@ -11799,6 +11899,11 @@
   "date": "2026-10-07",
   "on": "docker php:8.4-cli (PHP 8.4.26)"
  },
+ "php|migration بتتعاد بأمان": {
+  "hash": "47635e1b63c7",
+  "date": "2026-11-03",
+  "on": "portable PHP zip on Windows, php:8.4-cli, mariadb 11.4, mysql 8.4, postgres 16 in Docker; Apache/Cloudflare from docs"
+ },
  "php|move_uploaded_file": {
   "hash": "f58bc0b02f50",
   "date": "2026-10-07",
@@ -11923,6 +12028,11 @@
   "hash": "04bb1d91745d",
   "date": "2026-10-07",
   "on": "php:8.4-cli (PHP 8.4.26) + Laravel 13.35.0, SQLite"
+ },
+ "php|السعر حسب بلد الزائر": {
+  "hash": "25cde92b4839",
+  "date": "2026-11-03",
+  "on": "portable PHP zip on Windows, php:8.4-cli, mariadb 11.4, mysql 8.4, postgres 16 in Docker; Apache/Cloudflare from docs"
  },
  "php|السيرفر مقابل المتصفح": {
   "hash": "92f95b84146e",
@@ -16179,6 +16289,11 @@
   "date": "2026-10-27",
   "on": "Docker ubuntu:24.04 OpenSSH 9.6 + ssh-audit 3.9.0"
  },
+ "sshc|أتمتة SSH من غير باسورد": {
+  "hash": "18facf32b279",
+  "date": "2026-11-03",
+  "on": "openssh + sshpass + paramiko in ubuntu containers; systemctl reload from docs"
+ },
  "sshc|الأدوات بتقرا الملف": {
   "hash": "11aa33490df3",
   "date": "2026-10-06",
@@ -18164,6 +18279,11 @@
   "date": "2026-10-06",
   "on": "ubuntu-24.04 docker"
  },
+ "vps|المصدر الحقيقي على السيرفر": {
+  "hash": "d28116b5f1da",
+  "date": "2026-11-03",
+  "on": "ubuntu:24.04 servers over ssh, rsync --dry-run"
+ },
  "vps|بورتات Docker مفتوحة رغم ufw": {
   "hash": "1c9fbcc2c107",
   "date": "2026-11-03",
@@ -18893,6 +19013,16 @@
   "hash": "981ed186a834",
   "date": "2026-10-06",
   "on": "Chrome 154 headless (CDP) on local pages"
+ },
+ "web|التعديل وصل؟ curl و grep": {
+  "hash": "6d1c76f43043",
+  "date": "2026-11-03",
+  "on": "Next dev server + curl on Windows/node:22-slim, Chrome 156, local signed-URL server; macOS timeout from docs"
+ },
+ "web|اللقطة ناقصة: 591px وفيديو مؤقت": {
+  "hash": "3f911959889f",
+  "date": "2026-11-03",
+  "on": "Next dev server + curl on Windows/node:22-slim, Chrome 156, local signed-URL server; macOS timeout from docs"
  },
  "web|تفاصيل الطلب": {
   "hash": "55d4d5c7d5b4",

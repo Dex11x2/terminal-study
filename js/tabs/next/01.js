@@ -536,6 +536,382 @@ export default async function ProductPage({ params }: PageProps<"/products/[id]"
   const product = await getProduct(id);
   return <h1>{product.name}</h1>;
 }`
+        },
+        {
+          cmd: "dev server قديم و .next",
+          title: "غيّرت الـ CSS ومفيش حاجة اتغيّرت حتى بعد Hard Reload: انت فاتح سيرفر قديم، مش كاش",
+          desc: R`غيّرت ألوان الثيم في [[globals.css]]، وعملت Ctrl+Shift+R، واللون لسه القديم. قبل ما تمسح كاش المتصفح أو [[.next]]: **اقرا أول سطور [[npm run dev]]**. لو فيها [[Port 3000 is in use by an unknown process, using available port 3001 instead]]، يبقى فيه سيرفر قديم (من فولدر تاني أو نسخة قديمة من المشروع) لسه ماسك 3000، وانت فاتح **هو** في المتصفح، والجديد شغّال على 3001 ومحدش فاتحه.
+
+الترتيب: (١) مين ماسك البورت ومن أنهي فولدر ([[cat .next/dev/lock]]، و [[ss -ltnp]] أو [[netstat -ano]])، (٢) قارن الـ CSS اللي كل سيرفر بيقدّمه بـ [[curl]] و [[grep]] على اللون نفسه، (٣) اقفل القديم ([[kill]] أو [[taskkill //PID 6284 //F]] في Git Bash أو [[Stop-Process]])، (٤) لو لسه فيه حاجة غريبة: اقفل السيرفر و [[rm -rf .next]] وشغّل تاني. ومن Next 16.4 لو شغّلت سيرفر تاني **من نفس الفولدر** بيرفض ويقولك PID القديم بنفسه.`,
+          example: R`# Linux and Mac (and Git Bash):
+cat .next/dev/lock
+CSS_URL=$(curl -s http://localhost:3000/ar | grep -oE '/_next/static/chunks/[^"]+\.css' | head -1)
+curl -s "http://localhost:3000$CSS_URL" | grep -oE "(6366f1|0ea5e9)" | sort -u
+ss -ltnp 'sport = :3000'
+readlink /proc/3579/cwd
+kill 3579
+rm -rf .next && npm run dev
+# Windows (Git Bash):
+netstat -ano | findstr :3000
+taskkill //PID 6284 //F
+# Windows (PowerShell):
+Get-NetTCPConnection -LocalPort 3000 | Select-Object LocalAddress, State, OwningProcess
+(Get-CimInstance Win32_Process -Filter "ProcessId=6284").CommandLine
+Stop-Process -Id 6284 -Force
+Remove-Item -Recurse -Force .next; npm run dev`,
+          lines: [
+            R`Next 16 بيكتب ملف [[lock]] جوه [[.next/dev]] فيه [[pid]] و [[port]] بتاع سيرفر الـ dev الشغّال **من الفولدر ده**. لو الملف مش موجود، يبقى مفيش سيرفر شغّال من هنا (بس ممكن يكون فيه واحد من فولدر تاني).`,
+            R`هات الصفحة من البورت، وطلّع منها رابط ملف الـ CSS اللي الصفحة بتطلبه: [[-o]] الجزء اللي طابق بس، و [[head -1]] أول واحد. والنتيجة بتتحط في متغير [[CSS_URL]].`,
+            R`هات ملف الـ CSS نفسه من **نفس السيرفر**، ودوّر فيه على اللون القديم والجديد. اللي يطلع هو اللي السيرفر ده بيقدّمه فعلًا، بغض النظر عن المتصفح وكاشه.`,
+            R`لينكس: مين بيسمع على 3000؟ [[-l]] اللي بيسمعوا بس، و [[-t]] TCP، و [[-n]] أرقام من غير أسامي، و [[-p]] اسم البرنامج والـ PID، والفلتر [[sport = :3000]] البورت ده بس.`,
+            R`لينكس: الفولدر اللي البرنامج ده شغّال منه ([[cwd]] = current working directory). ده اللي بيقولك «ده السيرفر القديم من النسخة التانية».`,
+            R`ابعت للبرنامج إشارة يقفل ([[SIGTERM]]). Next بيقفل نفسه وبيسيب البورت.`,
+            R`امسح ناتج البناء والكاش بتاع Next وابدأ من الأول. [[&&]] يعني التاني يشتغل بس لو الأول نجح. اعمل ده **والسيرفر مقفول**.`,
+            R`ويندوز: كل الاتصالات اللي فيها 3000، وآخر عمود الـ PID. السطر اللي فيه [[0.0.0.0:3000]] أو [[[::]:3000]] في العمود التاني هو السيرفر نفسه.`,
+            R`ويندوز من Git Bash: اقفل البرنامج ده بالقوة. الشرطتين [[//]] عشان Git Bash ميحوّلش [[/PID]] لمسار فايل.`,
+            R`PowerShell: مين ماسك 3000، و [[OwningProcess]] هو الـ PID.`,
+            R`PowerShell: سطر الأمر الكامل للبرنامج. فيه مسار [[node_modules\next\...]] جوه فولدر المشروع، فبتعرف هو من أنهي فولدر.`,
+            R`PowerShell: اقفل البرنامج، و [[-Force]] من غير ما يسأل.`,
+            R`PowerShell: امسح [[.next]] كله ([[-Recurse]] كل اللي جواه)، وبعدين شغّل dev. [[;]] بتشغّل التاني حتى لو الأول فشل، فاتأكد إن المسح نجح.`,
+          ],
+          try: R`اعمل نسخة من مشروعك في فولدر تاني ([[cp -r shop shop-old]] من غير [[node_modules]] وبعدين [[npm ci]] جواه) وشغّلها بـ [[npm run dev]]. ارجع للمشروع الأصلي وغيّر لون في [[globals.css]] وشغّل [[npm run dev]]. اقرا أول ٣ سطور، وافتح [[localhost:3000]]: اللون إيه؟ وطبّق الخطوات بالترتيب لحد ما اللون الجديد يظهر على 3000.`,
+          flag: "term",
+          teach: R`## العَرَض
+
+غيّرت ألوان الـ brand في [[globals.css]] من بنفسجي ([[#6366f1]]) لأزرق ([[#0ea5e9]])، وحفظت، والصفحة على [[localhost:3000]] لسه بنفسجي. عملت Hard Reload، وفتحت Incognito: لسه بنفسجي. وأول حاجة بتيجي في بالك «الكاش»، فبتمسح كاش المتصفح وبعدين [[.next]]، ومفيش فايدة.
+
+---
+
+## المعمل
+
+مشروع Next 16.4.4 فيه صفحة [[/ar]] و [[/en]] و [[/]] بتحوّل لـ [[/ar]]، والألوان في [[globals.css]]:
+
+~~~css app/globals.css (قبل)
+:root { --brand: #6366f1; --accent: #f97316; }
+.btn { background: var(--brand); color: white; padding: 8px 16px; }
+.hero { color: var(--accent); }
+~~~
+
+واتعمل مرتين: على لينكس في [[docker run node:22-slim]] (Node 22.23) بالبورتات 3000 و 3001، وعلى ويندوز 11 (Node 24.22، و Git Bash و PowerShell 7.6 و 5.1) بالبورتات 4310 و 4311، لأن 3000 كان عليه سيرفر تاني على الجهاز أصلًا (وده نفسه العَرَض: [[curl localhost:3000]] رجّع صفحة مش بتاعتنا خالص).
+
+عشان نعيد الحالة: عملنا نسخة من المشروع في فولدر [[/old]] **قبل** تعديل الألوان، وشغّلناها، وبعدين عدّلنا الألوان في المشروع الأصلي وشغّلنا [[npm run dev]].
+
+---
+
+## ١. اقرا أول سطور [[npm run dev]] (أهم خطوة ومحدش بيعملها)
+
+~~~text npm run dev (في المشروع الأصلي)
+> app@1.0.0 dev
+> next dev
+
+⚠ Port 3000 is in use by an unknown process, using available port 3001 instead.
+▲ Next.js 16.4.4 (Turbopack)
+- Local:         http://localhost:3001
+~~~
+
+السطر الأصفر بيقول كل حاجة: 3000 مشغول، فالسيرفر **الجديد** اشتغل على 3001. وانت لسه فاتح 3000 في المتصفح، يعني بتكلّم السيرفر القديم اللي بيقرا من فولدر [[/old]] اللي فيه الألوان القديمة. Hard Reload بيجيب نسخة جديدة **من نفس السيرفر**، ومسح [[.next]] في الفولدر الأصلي ملوش دعوة بالسيرفر التاني. عشان كده مفيش حاجة نفعت.
+
+### ولو السيرفرين من نفس الفولدر؟
+
+Next 16.4 بقى بيمسك الحالة دي بنفسه. شغّلنا [[npm run dev]] تاني في نفس الفولدر والأول شغّال:
+
+~~~text الناتج (لينكس)
+⚠ Port 3000 is in use by an unknown process, using available port 3001 instead.
+▲ Next.js 16.4.4 (Turbopack)
+- Local:         http://localhost:3001
+✓ Ready in 390ms
+⨯ Another next dev server is already running.
+
+- Local:        http://localhost:3000
+- PID:          3331
+- Dir:          /app
+- Log:          .next/dev/logs/next-development.log
+
+You can access the existing server at http://localhost:3000,
+or run kill 3331 to stop it and start a new one.
+~~~
+
+ورقم الخروج [[1]]. وعلى ويندوز نفس الرسالة بس آخر سطر [[or run taskkill /PID 12120 /F to stop it and start a new one.]] (والأمر ده بالشكل ده **مش هيشتغل في Git Bash**، شوف خطوة ٤). لاحظ إن [[Ready in]] اتطبع **قبل** الخطأ، ودي هتفرق في الدرس الجاي (الانتظار لحد ما السيرفر يجهز).
+
+الرسالة بتعرف ده منين؟ من ملف [[.next/dev/lock]]:
+
+~~~text cat .next/dev/lock
+{"pid":3331,"port":3000,"hostname":"localhost","appUrl":"http://localhost:3000","startedAt":1793704933191}
+~~~
+
+يعني القديم من نفس الفولدر = Next بيقولك. القديم من **فولدر تاني** (نسخة قديمة، أو worktree، أو مشروع تاني خالص) = مجرد [[Port 3000 is in use]] وبيكمّل على 3001. وفي Next 15 وأقدم مفيش الحماية دي خالص.
+
+> ملحوظة PowerShell: [[Get-Content .next\dev\lock]] والسيرفر شغّال طلّع [[The process cannot access the file '...\.next\dev\lock' because it is being used by another process.]] على 7.6 و 5.1، بينما [[cat]] في Git Bash قراه عادي. لو احتجته من PowerShell، اقراه من Git Bash أو استخدم خطوة ٣.
+
+---
+
+## ٢. اثبت بالـ CSS نفسه، من غير متصفح
+
+~~~bash
+for port in 3000 3001; do
+  CSS_URL=$(curl -s http://localhost:$port/ar | grep -oE '/_next/static/chunks/[^"]+\.css' | head -1)
+  echo "$port CSS_URL=$CSS_URL"
+  curl -s "http://localhost:$port$CSS_URL" | grep -oE "(6366f1|f97316|0ea5e9|22c55e)" | sort -u
+done
+~~~
+
+~~~text الناتج (لينكس)
+3000 CSS_URL=/_next/static/chunks/app_globals_0yg4wg8plh8sv.css
+6366f1
+f97316
+3001 CSS_URL=/_next/static/chunks/app_globals_0yg4wg8plh8sv.css
+0ea5e9
+22c55e
+~~~
+
+| الحتة | بتعمل إيه |
+|---|---|
+| [[curl -s URL]] | يجيب الـ HTML من غير شريط التحميل |
+| [[grep -oE '/_next/static/chunks/[^"]+\.css']] | يطلّع رابط ملف الـ CSS: [[[^"]+]] أي حروف لحد علامة التنصيص، و [[\.css]] نقطة عادية وبعدها css |
+| [[head -1]] | أول رابط بس، لو الصفحة فيها أكتر من ملف |
+| [[grep -oE "(a\|b)"]] | يطلّع كل لون لقاه من اللستة، كل مرة في سطر |
+| [[sort -u]] | يرتّب ويشيل المكرر، فكل لون يظهر مرة واحدة |
+
+اسم الملف **نفسه** على السيرفرين ([[app_globals_0yg4wg8plh8sv.css]]) والمحتوى مختلف. يعني من الرابط لوحده مش هتعرف، ولازم تدوّر على اللون جوه الملف. وعلى ويندوز (Git Bash) نفس الأمر بالظبط طلّع نفس النتيجة على 4310 (القديم: [[6366f1]] و [[f97316]]) و 4311 (الجديد: [[0ea5e9]] و [[22c55e]])، والملف اسمه [[app_globals_css_20o3uo5wggppq.css]] على الاتنين.
+
+> ليه مش DevTools؟ تنفع، بس [[curl]] بيلغي المتصفح وكاشه وإضافاته من المعادلة. لو [[curl]] جاب القديم، المشكلة في السيرفر مش في المتصفح.
+
+---
+
+## ٣. مين ماسك البورت، ومن أنهي فولدر؟
+
+### لينكس: [[ss]]
+
+~~~text ss -ltnp
+LISTEN 0      511                *:3000            *:*    users:(("next-server (v1",pid=3579,fd=19))
+LISTEN 0      511                *:3001            *:*    users:(("next-server (v1",pid=3649,fd=19))
+~~~
+
+اسم البرنامج [[next-server (v16.4.4)]] (اتقطع لـ 15 حرف)، و [[pid=3579]]. ومن أنهي فولدر:
+
+~~~text readlink /proc/3579/cwd
+/old
+~~~
+
+كل برنامج على لينكس ليه فولدر [[/proc/<pid>]]، و [[cwd]] جواه link للفولدر اللي شغّال منه. [[/old]] = النسخة القديمة. اتمسك.
+
+وعشان تاخد الـ PID في متغير (للسكربت):
+
+~~~bash
+PID=$(ss -ltnpH 'sport = :3000' | grep -oE 'pid=[0-9]+' | cut -d= -f2 | head -1)
+~~~
+
+[[-H]] من غير سطر العناوين، و [[cut -d= -f2]] اللي بعد [[=]].
+
+جربنا كمان [[lsof -nP -iTCP:3000 -sTCP:LISTEN]] جوه الكونتينر: مطلّعش حاجة ورقم خروجه [[1]] رغم إن البورت مفتوح. على جهاز لينكس عادي [[lsof]] شغّال، بس في الكونتينر [[ss]] كان الأضمن. و [[node:22-slim]] أصلًا مفيهوش [[ss]] ولا [[ps]] ولا [[pkill]] ولا [[curl]]: اتسطبوا بـ [[apt-get install -y curl procps iproute2 lsof psmisc]].
+
+### ويندوز من Git Bash: [[netstat]]
+
+~~~text netstat -ano | findstr :4310
+  TCP    0.0.0.0:4310           0.0.0.0:0              LISTENING       6284
+  TCP    [::]:4310              [::]:0                 LISTENING       6284
+  TCP    [::1]:64907            [::1]:4310             TIME_WAIT       0
+~~~
+
+| العمود | معناه |
+|---|---|
+| [[0.0.0.0:4310]] | العنوان المحلي: بيسمع على كل الكروت على البورت ده. ده السيرفر |
+| [[0.0.0.0:0]] | الطرف التاني: مفيش، لأنه مستني اتصالات |
+| [[LISTENING]] | الحالة: بيستنى |
+| [[6284]] | الـ PID |
+| سطور [[TIME_WAIT]] | اتصالات قديمة اتقفلت (طلبات [[curl]] بتاعتك). PID بتاعها [[0]] وملهاش دعوة |
+
+> فخّين اتقابلوا فعلًا: (١) [[findstr :3000]] بيلقط كمان [[:30001]] وأي سطر فيه 3000 في الطرف التاني، فاقرا العمود التاني. (٢) على جهاز الاختبار (Windows 11 build 26300) [[netstat]] كان **أحيانًا** بيكتب [[CLOSED]] بدل [[LISTENING]] لنفس السيرفر وهو شغّال، و [[Get-NetTCPConnection]] كتب [[Closed]] برضه. فمتعتمدش على كلمة الحالة: البورت في العمود التاني + الـ PID + [[curl]] بيرد = ده هو.
+
+### ويندوز من PowerShell
+
+~~~text Get-NetTCPConnection -LocalPort 4311 | Select-Object LocalAddress, LocalPort, State, OwningProcess
+LocalAddress LocalPort  State OwningProcess
+------------ ---------  ----- -------------
+::                4311 Listen         39312
+~~~
+
+~~~text (Get-CimInstance Win32_Process -Filter "ProcessId=6284").CommandLine
+"C:\Program Files\nodejs\node.exe" C:\Users\you\...\shop-old\node_modules\next\dist\server\lib\start-server.js
+~~~
+
+ويندوز معندوش [[/proc/<pid>/cwd]]، بس سطر الأمر فيه مسار [[node_modules]] جوه فولدر المشروع: [[shop-old]] = النسخة القديمة. و [[Get-NetTCPConnection]] و [[Get-CimInstance]] اشتغلوا بنفس الشكل في 7.6 و 5.1.
+
+---
+
+## ٤. اقفل القديم
+
+### لينكس
+
+~~~bash
+kill 3579
+~~~
+
+ومن غير PID: [[fuser -k 3000/tcp]] بيقفل اللي ماسك البورت ([[fuser]] من باكدج [[psmisc]])، وطبع [[3000/tcp: 3579]] واتقفل.
+
+> فخ [[pkill -f "next dev"]]: شغّلناه جوه [[bash -c '...; pkill -f "next dev"; ...']]، فقفل **الـ bash نفسه** ورقم الخروج بقى [[143]] (= اتقفل بإشارة 15، SIGTERM). [[-f]] بيدوّر في سطر الأمر كله، وسطر الـ bash فيه الكلمتين. وفي [[node:22-slim]] من غير [[procps]] الأمر مش موجود أصلًا: [[sh: 1: pkill: not found]] ورقم الخروج [[127]]. اقفل بالـ PID أو بالبورت، مش بالاسم.
+
+### ويندوز من Git Bash: الشرطتين
+
+~~~text taskkill /PID 6284 /F   (في Git Bash)
+ERROR: Invalid argument/option - 'C:/Program Files/Git/PID'.
+Type "TASKKILL /?" for usage.
+~~~
+
+Git Bash بيفتكر أي حاجة أولها [[/]] مسار لينكس، فبيحوّلها لمسار ويندوز قبل ما يبعتها: [[/PID]] بقت [[C:/Program Files/Git/PID]]. الحل [[//PID]] (الشرطة الزيادة بتقوله «سيبها زي ما هي»):
+
+~~~text taskkill //PID 6284 //F
+SUCCESS: The process with PID 6284 has been terminated.
+~~~
+
+ولو شغّلته تاني: [[ERROR: The process "6284" not found.]] ورقم الخروج [[128]]. ونفس الفخ بيضرب في أوامر تانية اتقابلت في نفس اليوم:
+
+| الأمر في Git Bash | اللي حصل | الحل |
+|---|---|---|
+| [[findstr /V TIME_WAIT]] | [[FINDSTR: Cannot open TIME_WAIT]]: الـ [[/V]] اتحوّلت لمسار، فـ TIME_WAIT بقت اسم ملف | [[findstr //V TIME_WAIT]] |
+| [[docker run -w /app ...]] | [[the working directory 'C:/Program Files/Git/app' is invalid, it needs to be an absolute path]] | [[MSYS_NO_PATHCONV=1 docker run -w /app ...]] |
+
+[[MSYS_NO_PATHCONV=1]] قبل الأمر بيقفل التحويل للأمر ده كله.
+
+### ويندوز من PowerShell
+
+~~~powershell
+Stop-Process -Id 6284 -Force
+~~~
+
+مفيش مشكلة الشرطة هنا. و [[taskkill /PID 6284 /F]] بالشكل العادي شغّال في PowerShell و cmd.
+
+---
+
+## ٥. لو لسه فيه حاجة غريبة: [[.next]]
+
+[[.next]] فيه ناتج البناء وكاش Turbopack. نادرًا ما يبقى هو السبب (في المعمل ماحتجناهوش خالص: قفل السيرفر القديم كان كفاية)، بس لو بعد ما قفلت كل السيرفرات لسه فيه سلوك غريب:
+
+~~~bash
+rm -rf .next && npm run dev
+~~~
+
+**والسيرفر مقفول.** مسحناه والسيرفر شغّال عشان نشوف:
+
+~~~text الناتج (لينكس، في لوج السيرفر الشغّال)
+⨯ The directory at "/app/.next/dev" was deleted.
+
+Deleting this directory removes caches and will cause slower performance.
+
+Deleting this directory while Next.js is running can lead to undefined behavior. Restarting the server to recover...
+~~~
+
+Next عمل restart لنفسه (وعلى ويندوز الـ PID اتغيّر من 9648 لـ 39312 بعدها). يعني مش كارثة، بس «undefined behavior». ومع [[curl]] وقت الـ restart رجّع [[000]] (مفيش اتصال خالص).
+
+وفي PowerShell [[rm -rf]] مش موجود بالشكل ده، والمكافئ [[Remove-Item -Recurse -Force .next]] (اشتغل في 7.6 و 5.1). ولو حطيت [[rm -rf .next]] في سكربت في [[package.json]]:
+
+~~~text npm run rmtest   (من PowerShell)
+> rm -rf .next-test
+
+'rm' is not recognized as an internal or external command,
+operable program or batch file.
+~~~
+
+npm على ويندوز بيشغّل السكربتات بـ [[cmd.exe]]. ومن Git Bash نفس السكربت **اشتغل** لأن [[rm.exe]] بتاع Git في الـ PATH، فهتفتكره شغّال وهو مش شغّال عند زميلك. الشكل اللي اشتغل في الاتنين:
+
+~~~json package.json
+"clean": "node -e \"require('fs').rmSync('.next',{recursive:true,force:true})\""
+~~~
+
+---
+
+## ٦. البورت المحدد بيفشل بدل ما يهرب
+
+لو [[next dev -p 4310]] والبورت مشغول، Next **مبيدوّرش** على بورت تاني:
+
+~~~text npx next dev -p 4310   (والقديم على 4310)
+⨯ Failed to start server
+Error: listen EADDRINUSE: address already in use :::4310
+~~~
+
+ورقم الخروج [[1]]. ده أحسن من الهروب الصامت لـ 3001: الخطأ في وشّك. عشان كده ممكن تحط [[-p 3000]] في سكربت [[dev]].
+
+> في الحالة الأصلية الأمر خرج بـ [[exit code 4]] («Restart dev server clean failed with exit code 4»). في المعمل مقدرناش نطلّع 4: كل الفشل كان [[1]] ([[Another next dev server]] و [[EADDRINUSE]]). الرقم بيعتمد على الأداة اللي شغّلت الأمر، فاقرا اللوج مش الرقم.
+
+---
+
+## البدايل اللي اترفضت وليه
+
+| البديل | ليه لأ |
+|---|---|
+| تمسح كاش المتصفح | المتصفح جاب نسخة **جديدة** من السيرفر الغلط. [[curl]] بيثبت ده |
+| [[rm -rf .next]] على طول | الفولدر الغلط. والقديم شغّال من [[.next]] بتاعه هو |
+| تعيد تشغيل الجهاز | بيحل، بس مبيعلّمكش إيه حصل، والمرة الجاية هتعيد تشغيله تاني |
+| [[pkill node]] أو [[taskkill /IM node.exe /F]] | بيقفل **كل** برامج Node: سيرفرات تانية، و VS Code extensions، وأدوات شغّالة. اقفل بالـ PID |
+
+## إزاي تتأكد إنها اتحلت
+
+- [[npm run dev]] أول سطر فيه [[Local: http://localhost:3000]] من غير [[Port 3000 is in use]].
+- [[curl]] على 3000 + [[grep]] على الألوان: الجديدة بس ([[0ea5e9]] و [[22c55e]]). ده اللي طلع في المعمل بعد [[fuser -k 3000/tcp 3001/tcp]] و [[rm -rf .next]] وتشغيل واحد.
+- [[ss -ltnp]] أو [[netstat]]: سيرفر واحد بس.
+
+## إزاي متتكررش
+
+- اقرا أول ٣ سطور من [[npm run dev]] كل مرة: البورت.
+- سيرفر dev واحد لكل مشروع، واقفل الترمنال القديم ([[Ctrl+C]]) قبل ما تفتح واحد جديد.
+- [[next dev -p 3000]] في السكربت: يفشل بصوت عالي بدل ما يهرب لـ 3001.
+- قبل ما تشك في الكاش: [[cat .next/dev/lock]] و [[curl | grep]] (دقيقة واحدة).
+
+## الخلاصة
+
+| الخطوة | لينكس / Git Bash | PowerShell |
+|---|---|---|
+| مين شغّال من الفولدر ده | [[cat .next/dev/lock]] | من Git Bash (الملف مقفول على PowerShell) |
+| السيرفر بيقدّم إيه | [[curl -s URL \| grep -oE "لون"]] | [[curl.exe]] بنفس الشكل |
+| مين ماسك البورت | [[ss -ltnp 'sport = :3000']] أو [[netstat -ano \| findstr :3000]] | [[Get-NetTCPConnection -LocalPort 3000]] |
+| من أنهي فولدر | [[readlink /proc/PID/cwd]] | [[(Get-CimInstance Win32_Process -Filter "ProcessId=PID").CommandLine]] |
+| اقفل | [[kill PID]] أو [[taskkill //PID PID //F]] | [[Stop-Process -Id PID -Force]] |
+| ابدأ نضيف | [[rm -rf .next && npm run dev]] | [[Remove-Item -Recurse -Force .next; npm run dev]] |
+
+> Hard Reload بيجيب نسخة جديدة من **نفس** السيرفر. لو السيرفر غلط، كل الكاش في الدنيا مش هيفرق.`,
+          deep: {
+            why: R`أكتر سبب لـ «عدّلت ومفيش حاجة اتغيّرت» في الشغل اليومي مش الكاش: سيرفر تاني. ترمنال اتنسي مفتوح، أو نسخة قديمة من المشروع في فولدر تاني، أو worktree. والوقت بيضيع في مسح كاش وإعادة تشغيل لأن السؤال الغلط اتسأل («ليه الكاش مش بيتمسح؟» بدل «أنا بكلّم مين؟»).`,
+            how: R`[[next dev]] بيبدأ بالبورت 3000، ولو مشغول وانت مكتبتش [[-p]]، بيجرّب 3001 وهكذا، وبيكتب سطر تحذير واحد. وفي Next 16 بيكتب [[.next/dev/lock]] فيه الـ PID والبورت، فلو حد شغّل [[next dev]] تاني من نفس الفولدر، بيلاقي الملف ويرفض ([[Another next dev server is already running]]). والـ dev في 16 بيكتب في [[.next/dev]] منفصل عن ناتج [[next build]]، فجربنا [[next build]] والـ dev شغّال: البناء نجح ([[build-exit=0]]) والـ dev فضل شغّال. وملف الـ CSS في dev اسمه مش مبني على المحتوى، فنفس الاسم ممكن يتقدّم بمحتوى مختلف من سيرفرين.`,
+            when: R`أي مرة التعديل مش ظاهر: CSS، أو نص، أو env جديد، أو [[next.config]]. وبالذات بعد ما تعمل نسخة من المشروع، أو [[git worktree]]، أو تفتح المشروع في ترمنال جديد من غير ما تقفل القديم، أو بعد ما أداة (زي agent أو IDE) شغّلت السيرفر في الخلفية.`,
+            mistakes: R`تمسح كاش المتصفح و [[.next]] قبل ما تقرا أول سطر في الترمنال. [[taskkill /PID 123 /F]] في Git Bash (التحويل). [[pkill -f "next dev"]] جوه سكربت فيقفل السكربت نفسه. [[pkill node]] فيقفل كل حاجة. تمسح [[.next]] والسيرفر شغّال. [[rm -rf]] في سكربت npm وزميلك على PowerShell. وتعتمد على كلمة [[LISTENING]] في [[netstat]] لوحدها.`
+          },
+          sol: R`أول سطر من [[npm run dev]] في المشروع الأصلي: [[⚠ Port 3000 is in use by an unknown process, using available port 3001 instead.]]. على [[localhost:3000]] اللون القديم، وعلى 3001 الجديد. والإثبات:
+
+[[curl]] + [[grep]] على CSS الـ 3000 بيطلّع [[6366f1]] (القديم)، وعلى 3001 [[0ea5e9]] (الجديد)، واسم ملف الـ CSS واحد على الاتنين.
+
+[[ss -ltnp]] (لينكس) أو [[netstat -ano | findstr :3000]] (ويندوز) بيدّيك PID القديم، و [[readlink /proc/PID/cwd]] أو [[CommandLine]] بيوري إنه من فولدر [[shop-old]]. اقفله ([[kill PID]] أو [[taskkill //PID PID //F]] أو [[Stop-Process]])، واقفل الجديد كمان، وشغّل [[npm run dev]] مرة واحدة: [[Local: http://localhost:3000]]، و [[curl]] بيطلّع اللون الجديد بس. مسح [[.next]] مش لازم في الحالة دي.`,
+          practice: [
+            { lvl: 'سريع', t: R`اقرا وتوقّع: [[npm run dev]] طبع [[⚠ Port 3000 is in use by an unknown process, using available port 3001 instead.]] وبعدين [[✓ Ready in 412ms]]. انت فاتح [[localhost:3000]] وعدّلت [[globals.css]]. هتشوف التعديل؟ وليه Hard Reload مش هيفرق؟ اكتب الإجابة في سطرين قبل ما تجرب.`, done: R`كتبت إن 3000 سيرفر تاني (قديم) وإن Hard Reload بيجيب من نفس السيرفر الغلط، وجربتها بالنسخة القديمة وطلعت صح.` },
+            { lvl: 'تطبيق', t: R`ابني المعمل: نسختين من مشروع Next في فولدرين، كل واحدة بلون مختلف في [[globals.css]]، شغّل الاتنين، واكتب حلقة [[for port in 3000 3001]] بتطبع لكل بورت: رابط الـ CSS واللون اللي جواه. وبعدين اقفل القديم بالـ PID (مش بالاسم) وأثبت إن 3000 بقى فاضي.`, done: R`الحلقة طبعت لونين مختلفين للبورتين، وبعد القفل [[ss -ltn]] أو [[netstat]] مفيهوش 3000 (أو [[curl]] بيرجّع [[000]]).` },
+            { lvl: 'تطبيق', t: R`صلّح الأوامر البايظة دي في Git Bash من غير ما تغيّر الشِل: [[taskkill /PID 4321 /F]] و [[findstr /V TIME_WAIT]] و [[docker run --rm -w /app node:22-slim pwd]]. شغّل كل واحد واكتب الخطأ اللي طلع، وبعدين صلّحه.`, done: R`عندك ٣ أخطاء بنصها (فيها [[C:/Program Files/Git/...]] أو [[Cannot open]])، و ٣ أوامر مصلّحة ([[//PID]] و [[//V]] و [[MSYS_NO_PATHCONV=1]]) شغّالة: آخر واحد طبع [[/app]].` },
+            { lvl: 'تطبيق', t: R`اكتب سكربت [[whoport.sh]] بياخد رقم بورت ويطبع: الـ PID، واسم البرنامج، والفولدر اللي شغّال منه. على لينكس بـ [[ss]] و [[/proc]]، وعلى ويندوز نسخة PowerShell بـ [[Get-NetTCPConnection]] و [[Get-CimInstance]]. ولو البورت فاضي يطبع [[free]] ويخرج بـ 0.`, done: R`[[./whoport.sh 3000]] وسيرفر شغّال بيطبع سطر فيه PID وفولدر المشروع الصح، ومن غير سيرفر بيطبع [[free]]، والنسخة التانية بتعمل نفس الحاجة على ويندوز.` },
+            { lvl: 'تحدي', t: R`قارن: شغّل [[next dev]] (من غير [[-p]]) والبورت مشغول، وبعدين [[next dev -p 3000]] والبورت مشغول. سجّل لكل واحد: السطر اللي طلع، ورقم الخروج ([[echo $?]])، والبورت اللي اشتغل عليه. أنهي واحد تحطه في سكربت [[dev]] بتاع فريق؟ وليه؟`, done: R`عندك جدول صفين: الأول [[using available port 3001 instead]] واشتغل، والتاني [[EADDRINUSE]] ورقم [[1]]. واخترت واحد بسبب مكتوب.` },
+            { lvl: 'تحدي', t: R`اعمل سكربت [[clean]] في [[package.json]] بيمسح [[.next]] ويشتغل من cmd و PowerShell و Git Bash. جرّب [[rm -rf .next]] الأول من PowerShell وسجّل الخطأ، وبعدين اكتب النسخة اللي بـ [[node -e]] وجرّبها في التلاتة.`, done: R`[[rm -rf]] من PowerShell طلّع [['rm' is not recognized as an internal or external command]]، ونسخة [[node -e "require('fs').rmSync(...)"]] مسحت الفولدر في التلات شِلات ([[Test-Path .next]] = [[False]]).` },
+          ],
+          ci: [
+            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`bash`, run: R`mkdir -p old new
+printf ':root{--brand:#6366f1}' > old/app.css
+printf ':root{--brand:#0ea5e9}' > new/app.css
+cat > srv.js <<'EOF'
+const http = require("http"), fs = require("fs"), path = require("path");
+const [dir, port] = process.argv.slice(2);
+http.createServer((q, s) => {
+  if (q.url === "/ar") return s.end('<link rel="stylesheet" href="/_next/static/chunks/app_globals.css">');
+  s.end(fs.readFileSync(path.join(dir, "app.css")));
+}).listen(+port, "127.0.0.1");
+EOF
+node srv.js old 18931 & A=$!
+node srv.js new 18932 & B=$!
+sleep 1
+for port in 18931 18932; do
+  CSS_URL=$(curl -s http://127.0.0.1:$port/ar | grep -oE '/_next/static/chunks/[^"]+\.css' | head -1)
+  echo "$port $CSS_URL $(curl -s "http://127.0.0.1:$port$CSS_URL" | grep -oE "(6366f1|0ea5e9)" | sort -u)"
+done
+kill $A $B; wait $A $B 2>/dev/null; sleep 1`, expect: [R`18931 /_next/static/chunks/app_globals.css 6366f1`, R`18932 /_next/static/chunks/app_globals.css 0ea5e9`] },
+            { os: [R`windows`], sh: R`bash`, run: R`taskkill /PID 999999 /F 2>&1 || true
+MSYS_NO_PATHCONV=1 taskkill /PID 999999 /F 2>&1 || true
+taskkill //PID 999999 //F 2>&1 || true`, expect: [R`C:/Program Files/Git/PID`, R`999999`] },
+          ],
         }
       ]
     }

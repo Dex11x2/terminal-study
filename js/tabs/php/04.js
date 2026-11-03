@@ -1162,6 +1162,410 @@ INSERT INTO products (name, stock) VALUES ('Laptop', 3);
 -- شغّل السكريبت بالـ throw، وبعدين:
 SELECT stock FROM products;        -- 3
 SELECT COUNT(*) FROM orders;       -- 0`
+        },
+        {
+          cmd: "migration بتتعاد بأمان",
+          title: "سكربت ترقية قاعدة بيانات يتشغّل مرتين من غير ضرر، ومن الـ CLI من غير تسجيل دخول",
+          learn: R`تكتب سكربت ترقية (جدول وعمود و index وإعداد) كل جملة فيه تنفع تتعاد، وتقفله على الأدمن من المتصفح وتسيبه للـ CLI، وتنشر بالترتيب الصح (الكود، ثم الترقية، ثم التفعيل)، وتتأكد بتشغيله مرتين.`,
+          out: R`التشغيلة التانية بتطبع نفس الـ [[OK]]/[[SKIP]] و [[done]]، والأعداد ([[SELECT COUNT(*)]]) والإعداد اللي الأدمن غيّره ثابتين، والمتصفح من غير أدمن بياخد [[403]].`,
+          desc: R`ميزة جديدة محتاجة تغيير في الداتابيز: جدول جديد، وعمود، و index، وإعداد بقيمة افتراضية. اكتبهم في سكربت PHP واحد كل جملة فيه **idempotent**: تتشغّل مرة أو عشرة والنتيجة واحدة. ليه؟ لأن السكربت هيتشغّل مرتين أكيد: مرة فشل في النص ورجعت تشغّله، أو حد شغّله على السيرفر وانت شغّلته تاني.
+
+الأدوات: [[CREATE TABLE IF NOT EXISTS]]، و [[ALTER TABLE ... ADD COLUMN IF NOT EXISTS]] و [[CREATE INDEX IF NOT EXISTS]] (MariaDB بس؛ في MySQL 8 دول [[syntax error]] وبتسأل [[information_schema]] الأول)، و [[INSERT ... SELECT ... WHERE NOT EXISTS]] للإعداد عشان ميكتبش فوق قيمة الأدمن غيّرها.
+
+والسكربت ورا تسجيل دخول الأدمن لو اتفتح من المتصفح (فتحه من غير دخول بيرجّع [[403]]، ودي مش مشكلة)، ومن السيرفر [[php scripts/admin/migrate-2026-09.php]] بيشتغل على طول، لأن [[PHP_SAPI]] هناك [[cli]]، واللي معاه shell على السيرفر معاه كل حاجة أصلًا.`,
+          example: R`ssh deployer@203.0.113.10 'cd ~/domains/shop.example/public_html && git log -1 --format="%h %s"'
+php -l scripts/admin/migrate-2026-09.php
+php scripts/admin/migrate-2026-09.php
+php scripts/admin/migrate-2026-09.php; echo "exit=$?"
+mariadb shop -e "SELECT COUNT(*) FROM settings; SHOW COLUMNS FROM users LIKE 'is_partner'"
+curl -s -w "[%{http_code}]\n" https://shop.example/scripts/admin/migrate-2026-09.php`,
+          lines: [
+            R`قبل أي ترقية: الكود الجديد وصل السيرفر فعلًا؟ آخر commit هناك لازم يبقى بتاع الميزة. (لو مش متأكد إن فيه نشر تلقائي، الطريقة في درس «مفيش نشر تلقائي» في تاب التشخيص.)`,
+            R`السكربت نفسه مفيهوش غلطة syntax قبل ما يلمس الداتابيز.`,
+            R`أول تشغيل على السيرفر: بيطبع [[OK]] أو [[FAIL]] لكل خطوة، وفي الآخر [[done]].`,
+            R`التشغيل التاني: لازم نفس الناتج من غير [[FAIL]]، و [[exit=0]]. ده الاختبار إن السكربت بيتعاد بأمان.`,
+            R`اتأكد من الداتابيز نفسها: العدد ماتغيّرش، والعمود موجود بالنوع والقيمة الافتراضية الصح.`,
+            R`ومن بره من غير تسجيل دخول: لازم [[403]]. لو رجع [[200]] و [[done]]، أي حد على الإنترنت يقدر يشغّل الترقية.`,
+          ],
+          try: R`شغّل MariaDB في Docker ([[mariadb:11.4]]) فيها جدولين [[users]] و [[settings]]، و PHP CLI فيه [[pdo_mysql]]. شغّل السكربت اللي في الشرح مرتين وقارن الناتج، وغيّر [[referrals_enabled]] لـ [[1]] وشغّله تالت مرة. وبعدين جرّب نسخة «ساذجة» من غير [[IF NOT EXISTS]] مرتين، ونفس السكربت على [[mysql:8.4]].`,
+          teach: R`## الحكاية
+
+ميزة «الإحالات» محتاجة: جدول [[referrals]]، وعمود [[users.is_partner]]، و index على [[referrals.user_id]]، وإعداد [[referrals_enabled]] قيمته [[0]] (مقفولة لحد ما الأدمن يفعّلها). الكود اتكتب، والترقية في ملف [[scripts/admin/migrate-2026-09.php]].
+
+فتحت الملف من المتصفح وانت مش داخل كأدمن: [[403: admins only]]. ده **مقصود** (مش عطل): الملف ده مش للزوار. والصح إنه يتشغّل من السيرفر نفسه بـ [[php]]، وهناك مفيش تسجيل دخول.
+
+المعمل: MariaDB 11.4 و MySQL 8.4 في Docker، و [[php:8.4-cli]] متضاف له [[pdo_mysql]] بـ [[docker-php-ext-install pdo_mysql]]، و Postgres 16 للمقارنة.
+
+---
+
+## ٠. قبل ما تشغّل: الكود الجديد وصل السيرفر؟
+
+الترقية من غير الكود الجديد ممكن تبقى سليمة (إضافات بس)، بس لازم تعرف الكود فين عشان تختار الترتيب (القسم ٦). ولو مفيش نشر تلقائي، الـ push لوحده مش بيوصّل حاجة للسيرفر:
+
+~~~bash
+ls .github/workflows 2>/dev/null || echo "no workflows"
+gh api repos/acme-co/shop-site/hooks --jq 'length'
+ssh deployer@203.0.113.10 'cd ~/domains/shop.example/public_html && git log -1 --format="%h %s"'
+git log -1 --format="%h %s" origin/main
+~~~
+
+- [[ls .github/workflows]]: مفيش ملفات = مفيش GitHub Actions بتنشر.
+- [[gh api repos/<owner>/<repo>/hooks --jq 'length']]: عدد الـ webhooks على الريبو (عنوان بيوصله POST مع كل push، وبعض الاستضافات بتعمل [[git pull]] لما يوصل). [[0]] = مفيش نشر تلقائي من هنا كمان. محتاج صلاحية admin على الريبو. (الأمر ده من وثائق GitHub CLI، ومتجرّب بالتفصيل في درس «مفيش نشر تلقائي» في تاب التشخيص.)
+- آخر commit على السيرفر لازم يساوي آخر commit في [[origin/main]]. لو لأ: انشر الأول ([[git pull --ff-only]] على السيرفر)، وبعدين الترقية.
+
+---
+
+## ١. السكربت
+
+~~~php
+<?php
+// ترقية سبتمبر: كل جملة هنا لازم تنفع تتشغّل مرتين من غير ضرر
+require __DIR__ . '/../../lib/db.php';
+
+// من المتصفح: أدمن بس. من الـ CLI: اللي معاه shell على السيرفر أصلًا
+if (PHP_SAPI !== 'cli') {
+    require __DIR__ . '/../../lib/auth.php';
+    require_admin();
+    header('Content-Type: text/plain; charset=utf-8');
+}
+
+$steps = [
+    'table referrals' => "CREATE TABLE IF NOT EXISTS referrals (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        code VARCHAR(32) NOT NULL UNIQUE,
+        created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )",
+    'column users.is_partner' => "ALTER TABLE users ADD COLUMN IF NOT EXISTS is_partner TINYINT(1) NOT NULL DEFAULT 0",
+    'index referrals.user_id' => "CREATE INDEX IF NOT EXISTS idx_referrals_user ON referrals (user_id)",
+    'setting referrals_enabled' => "INSERT INTO settings (key_name, value)
+        SELECT 'referrals_enabled', '0' FROM DUAL
+        WHERE NOT EXISTS (SELECT 1 FROM settings WHERE key_name = 'referrals_enabled')",
+];
+
+$failed = 0;
+foreach ($steps as $name => $sql) {
+    try {
+        $rows = db()->exec($sql);
+        echo "OK   $name (rows: $rows)\n";
+    } catch (PDOException $e) {
+        $failed++;
+        echo "FAIL $name: " . $e->getMessage() . "\n";
+    }
+}
+echo $failed ? "done with $failed errors\n" : "done\n";
+exit($failed ? 1 : 0);
+~~~
+
+| الحتة | ليه |
+|---|---|
+| [[PHP_SAPI !== 'cli']] | [[PHP_SAPI]] اسم الطريقة اللي PHP اشتغل بيها: [[cli]] من الترمنال، و [[fpm-fcgi]] أو [[apache2handler]] أو [[cli-server]] من سيرفر ويب. من الترمنال مفيش session ولا cookie أصلًا، والأمان هنا إن اللي يشغّله لازم يكون معاه SSH |
+| [[require_admin()]] | من المتصفح: لو [[$_SESSION['role']]] مش [[admin]] يرجّع [[403]] ويقف |
+| [[$steps]] اسم ← جملة | كل خطوة ليها اسم بيتطبع، فالناتج يتقري ويتبعت زي ما هو |
+| [[try]] حوالين كل خطوة | خطوة فشلت؟ اطبعها وكمّل الباقي، وفي الآخر كود خروج [[1]] |
+| [[exec()]] بترجّع عدد الصفوف | [[rows: 1]] في الإعداد أول مرة = اتضاف، و [[rows: 0]] بعد كده = كان موجود |
+| [[exit($failed ? 1 : 0)]] | سكربت النشر أو [[&&]] يعرف إنها فشلت |
+
+والـ [[lib/auth.php]]:
+
+~~~php
+<?php
+function require_admin(): void {
+    session_start();
+    if (($_SESSION['role'] ?? '') !== 'admin') {
+        http_response_code(403);
+        exit("403: admins only\n");
+    }
+}
+~~~
+
+---
+
+## ٢. شغّله مرتين
+
+~~~text php scripts/admin/migrate-2026-09.php (أول مرة)
+OK   table referrals (rows: 0)
+OK   column users.is_partner (rows: 0)
+OK   index referrals.user_id (rows: 0)
+OK   setting referrals_enabled (rows: 1)
+done
+exit=0
+~~~
+
+~~~text تاني مرة
+OK   table referrals (rows: 0)
+OK   column users.is_partner (rows: 0)
+OK   index referrals.user_id (rows: 0)
+OK   setting referrals_enabled (rows: 0)
+done
+exit=0
+~~~
+
+الفرق الوحيد [[rows: 0]] في الإعداد. وجوه MariaDB الجمل اللي فيها [[IF NOT EXISTS]] مش بتفشل، بتسيب **ملاحظة**:
+
+~~~text SHOW WARNINGS (بعد كل جملة في التشغيل التاني)
+Note	1060	Duplicate column name 'is_partner'
+Note	1050	Table 'referrals' already exists
+Note	1061	Duplicate key name 'idx_referrals_user'
+~~~
+
+والتأكيد من الداتابيز نفسها:
+
+~~~text mariadb shop -e "SELECT COUNT(*) AS n FROM settings; SHOW COLUMNS FROM users LIKE 'is_partner'"
+n
+2
+Field	Type	Null	Key	Default	Extra
+is_partner	tinyint(1)	NO		0
+~~~
+
+### ونفس الترقية من غير [[IF NOT EXISTS]]؟
+
+~~~text التشغيل التاني لنسخة ساذجة
+FAIL: SQLSTATE[42S01]: Base table or view already exists: 1050 Table 'referrals' already exists
+FAIL: SQLSTATE[42S21]: Column already exists: 1060 Duplicate column name 'is_partner'
+FAIL: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'referrals_enabled' for key 'PRIMARY'
+~~~
+
+الداتابيز نفسها سليمة هنا، بس الناتج بقى كله [[FAIL]]، ومحدش هيعرف يفرق بين «اتعمل قبل كده» و «فشل بجد». والأسوأ لو السكربت وقف عند أول خطأ: الخطوات اللي بعدها مش هتتنفّذ أبدًا.
+
+---
+
+## ٣. ليه مش transaction وخلاص؟
+
+~~~text MySQL 8.4: START TRANSACTION; ALTER TABLE users ADD COLUMN note ...; INSERT INTO settings ...; ROLLBACK;
+Field	Type	Null	Key	Default	Extra
+note	varchar(20)	YES		NULL
+tmp_rows
+1
+~~~
+
+الـ [[ROLLBACK]] مارجّعش حاجة! في MySQL و MariaDB أي [[ALTER]] أو [[CREATE]] بيعمل **implicit commit**: بيقفل الـ transaction اللي فاتحها قبله. وبعده الـ autocommit رجع، فالـ [[INSERT]] اتسجّل لوحده. يعني ترقية فشلت في الخطوة التالتة سابت الأولى والتانية متنفّذين، والطريقة الوحيدة الآمنة: كل خطوة تتعاد من غير ضرر.
+
+في Postgres الـ DDL جوه transaction بيرجع ([[BEGIN; ALTER TABLE users ADD COLUMN note text; ROLLBACK;]] وبعدها العمود مش موجود، اتجرّب)، وبرضه بيدعم [[IF NOT EXISTS]] للجدول والعمود والـ index و [[ON CONFLICT DO NOTHING]] للإعداد. نفس الترقية مرتين:
+
+~~~text psql -q -v ON_ERROR_STOP=1 < pg.sql (التشغيل التاني)
+NOTICE:  relation "referrals" already exists, skipping
+NOTICE:  column "is_partner" of relation "users" already exists, skipping
+NOTICE:  relation "idx_referrals_user" already exists, skipping
+~~~
+
+---
+
+## ٤. فخ: «idempotent» مش معناها «اكتب فوق»
+
+الأدمن فعّل الميزة ([[UPDATE settings SET value='1' ...]]). وبعدين حد شغّل الترقية تاني. لو الإعداد مكتوب بـ [[ON DUPLICATE KEY UPDATE]]:
+
+~~~sql
+INSERT INTO settings (key_name, value) VALUES ('referrals_enabled','0')
+ON DUPLICATE KEY UPDATE value = VALUES(value);
+~~~
+
+~~~text SELECT value FROM settings WHERE key_name='referrals_enabled'
+0
+~~~
+
+الميزة اتقفلت للكل من غير ما حد يقصد. بنسختنا ([[WHERE NOT EXISTS]]):
+
+~~~text بعد التشغيل التالت
+OK   setting referrals_enabled (rows: 0)
+done
+1
+~~~
+
+القيمة فضلت [[1]]. والفرق بين التلات طرق:
+
+| الطريقة | لو الصف موجود | تستخدمها إمتى |
+|---|---|---|
+| [[INSERT ... SELECT ... WHERE NOT EXISTS]] | مبيعملش حاجة، و [[rows: 0]] | قيمة افتراضية أول مرة بس (الحالة دي) |
+| [[INSERT IGNORE]] | مبيعملش حاجة، بس بيحوّل أخطاء تانية لـ warnings (زي قيمة طويلة اتقصّت) فبيخبّي مشاكل | بلاش هنا |
+| [[ON DUPLICATE KEY UPDATE]] | بيكتب فوق القيمة | لما الترقية **لازم** تفرض قيمة جديدة |
+
+[[INSERT IGNORE]] اتجرّب: [[Warning 1062 Duplicate entry 'referrals_enabled' for key 'PRIMARY']] في [[SHOW WARNINGS]] ومن غير خطأ.
+
+---
+
+## ٥. MySQL مش MariaDB
+
+نفس السكربت على [[mysql:8.4]]:
+
+~~~text الناتج
+OK   table referrals (rows: 0)
+FAIL column users.is_partner: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'IF NOT EXISTS is_partner TINYINT(1) NOT NULL DEFAULT 0' at line 1
+FAIL index referrals.user_id: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'IF NOT EXISTS idx_referrals_user ON referrals (user_id)' at line 1
+OK   setting referrals_enabled (rows: 1)
+done with 2 errors
+exit=1
+~~~
+
+[[ADD COLUMN IF NOT EXISTS]] و [[CREATE INDEX IF NOT EXISTS]] إضافات MariaDB. MySQL 8 بيقبل [[CREATE TABLE IF NOT EXISTS]] بس. استضافات كتير بتقول «MySQL» وهي MariaDB: اعرف بـ [[SELECT VERSION();]] (لو فيها [[MariaDB]] يبقى MariaDB).
+
+النسخة اللي بتشتغل على الاتنين بتسأل [[information_schema]] الأول:
+
+~~~php
+function exists(string $sql, array $args): bool {
+    $st = db()->prepare($sql);
+    $st->execute($args);
+    return (int) $st->fetchColumn() > 0;
+}
+function column_exists(string $t, string $c): bool {
+    return exists("SELECT COUNT(*) FROM information_schema.COLUMNS
+                   WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND COLUMN_NAME = ?", [$t, $c]);
+}
+function index_exists(string $t, string $i): bool {
+    return exists("SELECT COUNT(*) FROM information_schema.STATISTICS
+                   WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND INDEX_NAME = ?", [$t, $i]);
+}
+
+$steps = [
+    // ...
+    'column users.is_partner' => fn() => column_exists('users', 'is_partner') ? 'skip'
+        : db()->exec("ALTER TABLE users ADD COLUMN is_partner TINYINT(1) NOT NULL DEFAULT 0"),
+    'index referrals.user_id' => fn() => index_exists('referrals', 'idx_referrals_user') ? 'skip'
+        : db()->exec("CREATE INDEX idx_referrals_user ON referrals (user_id)"),
+];
+~~~
+
+- [[information_schema.COLUMNS]] و [[STATISTICS]]: جداول بتوصف الداتابيز نفسها (أعمدة كل جدول، وكل index).
+- [[DATABASE()]]: الداتابيز اللي متوصّل بيها، عشان متلاقيش عمود بنفس الاسم في داتابيز تانية.
+- [[fn() => ...]]: arrow function، الخطوة بقت دالة بتتنفّذ جوه الـ [[try]] بدل نص SQL.
+
+~~~text MySQL 8.4، التشغيل التاني
+OK   table referrals (rows: 0)
+SKIP column users.is_partner (already there)
+SKIP index referrals.user_id (already there)
+OK   setting referrals_enabled (rows: 0)
+done
+~~~
+
+ونفس الناتج على MariaDB.
+
+---
+
+## ٦. الترتيب: الكود، وبعدين الترقية، وبعدين التفعيل
+
+الصفحة الجديدة [[referrals.php]]:
+
+~~~php
+<?php
+// صفحة الإحالات الجديدة: مستخبية (404) لحد ما الأدمن يفعّلها
+require __DIR__ . '/lib/db.php';
+$on = db()->query("SELECT value FROM settings WHERE key_name = 'referrals_enabled'")->fetchColumn();
+if ($on !== '1') {             // false (الصف لسه مش موجود) أو '0'
+    http_response_code(404);
+    exit("not found\n");
+}
+$n = db()->query("SELECT COUNT(*) FROM users WHERE is_partner = 1")->fetchColumn();
+echo "partners: $n\n";
+~~~
+
+| المرحلة | [[curl /referrals.php]] |
+|---|---|
+| ١. الكود اتنشر، الترقية لسه | [[404]] (الإعداد مش موجود، [[fetchColumn()]] رجّعت [[false]]) |
+| ٢. بعد الترقية | [[404]] (الإعداد [[0]]) |
+| ٣. الأدمن فعّل | [[200]] و [[partners: 0]] |
+
+الكود الجديد شغّال بالقيم الافتراضية من غير الترقية، فمفيش لحظة الموقع فيها بايظ. ولو حد فعّل **قبل** الترقية:
+
+~~~text curl /referrals.php (الإعداد 1 والعمود مش موجود)
+Fatal error: Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'is_partner' in 'WHERE' in /app/referrals.php:9
+[200]
+~~~
+
+ولاحظ [[200]] مع Fatal error: الـ [[display_errors]] كان شغّال في المعمل، فـ PHP كتب الخطأ في الصفحة وكود الرد فضل [[200]]. كود الرد لوحده مش دليل.
+
+> القاعدة العامة (expand / contract في تاب المعمارية): الإضافات (جدول وعمود جديد بقيمة افتراضية) آمنة مع الكود القديم، فممكن الترقية تسبق الكود. والكود الجديد لازم ميعتمدش على الجديد غير بعد ما يتأكد إنه موجود، أو يتقفل ورا إعداد زي هنا. والحذف وتغيير الأسماء آخر حاجة، بعد ما مفيش كود بيستخدم القديم.
+
+---
+
+## ٧. لما سطر يطلع [[FAIL]]
+
+ابعت الناتج **كله** زي ما هو (اسم الخطوة ورسالة MySQL بالكود: [[1064]] syntax، [[1142]] صلاحية، [[1054]] عمود مش موجود). متعدّلش في الداتابيز بإيدك تكمّل اللي فشل: صلّح الجملة في السكربت، وشغّله تاني. هو مصمم لكده.
+
+---
+
+## ٨. البدايل اللي اترفضت
+
+| البديل | ليه لأ |
+|---|---|
+| تنفّذ الجمل بإيدك من phpMyAdmin | مفيش سجل إيه اتنفّذ، ومش هتتكرر زي ما هي على نسخة تانية (staging أو سيرفر جديد) |
+| تشيل [[require_admin()]] مؤقتًا عشان تفتحه من المتصفح | هيتنسي، وأي حد هيقدر يشغّله |
+| رابط سري فيه token ([[?key=...]]) | الـ token بيتسجّل في لوجات السيرفر والـ proxy وسجل المتصفح |
+| [[ON DUPLICATE KEY UPDATE]] للإعدادات | بيكتب فوق قرار الأدمن (اتجرّب: [[1]] بقت [[0]]) |
+| ترقية واحدة كبيرة في transaction | الـ DDL في MySQL بيعمل commit لوحده، فالـ rollback مش هيرجّع |
+
+---
+
+## ٩. متتكررش
+
+- كل جملة في أي ترقية لازم تعدّي «شغّلها مرتين» قبل ما تتنشر (على نسخة محلية من نفس نوع الداتابيز ونفس الإصدار).
+- ملفات الترقية بره الـ web root لو تقدر، أو مقفولة بـ [[.htaccess]] ([[Require all denied]]) وكمان [[require_admin()]].
+- الخطوة الجاية: جدول [[schema_migrations]] بيسجّل كل ترقية اتنفّذت وإمتى، وده اللي بتعمله أدوات زي Laravel migrations و Phinx و Flyway (درس [[make:migration]] في Laravel).
+
+---
+
+## الخلاصة
+
+| عايز | MariaDB | MySQL 8 |
+|---|---|---|
+| جدول | [[CREATE TABLE IF NOT EXISTS]] | نفسه |
+| عمود | [[ADD COLUMN IF NOT EXISTS]] | [[information_schema.COLUMNS]] الأول |
+| index | [[CREATE INDEX IF NOT EXISTS]] | [[information_schema.STATISTICS]] الأول |
+| قيمة افتراضية | [[INSERT ... SELECT ... WHERE NOT EXISTS]] | نفسه |
+| تتأكد | شغّلها مرتين: نفس الناتج، والأعداد ثابتة | نفسه |`,
+          deep: {
+            why: R`الترقيات بتتعاد غصب عنك: سكربت وقف في النص من timeout أو صلاحية ناقصة، أو اتنين في الفريق شغّلوه، أو نسخة staging اتعملت من الإنتاج وفيها نص الترقية. لو كل جملة بتتعاد من غير ضرر، الحل لأي حاجة من دول «شغّله تاني». ولو لأ، كل مرة محتاج حد يقرا الداتابيز ويقرر بإيده إيه اللي اتنفّذ.`,
+            how: R`[[IF NOT EXISTS]] بيخلّي الداتابيز تتأكد بنفسها وتسيب Note بدل الخطأ (1050 و 1060 و 1061 في MariaDB). و [[INSERT ... SELECT ... FROM DUAL WHERE NOT EXISTS (...)]] بيرجّع صف واحد لو الشرط صح وصفر لو لأ، و [[DUAL]] جدول وهمي عشان [[SELECT]] من غير جدول. و [[PDO::exec]] بيرجّع عدد الصفوف اللي اتأثرت. و MySQL/MariaDB بيعملوا implicit commit قبل وبعد أي DDL، عشان كده الترقيات مبتتلفّش في transaction. و [[PHP_SAPI]] ثابت بيتحدد وقت تشغيل PHP: [[cli]] من الترمنال و cron، و [[fpm-fcgi]] أو [[cgi-fcgi]] أو [[litespeed]] على الاستضافات.`,
+            when: R`أي تغيير في الداتابيز على موقع شغّال من غير أداة migrations: جدول أو عمود أو index أو إعداد افتراضي. وبرضه جوه أدوات الـ migrations لما الترقية بتعمل حاجة الأداة مش بتتابعها (زي بيانات افتراضية). ولو المشروع بيكبر: انقل لأداة بتسجّل اللي اتنفّذ.`,
+            mistakes: R`تفتكر إن [[403]] من المتصفح عطل فتشيل الحماية. وتكتب [[ADD COLUMN IF NOT EXISTS]] على MySQL. وتستخدم [[ON DUPLICATE KEY UPDATE]] لقيمة افتراضية فتكتب فوق قرار الأدمن. وتستخدم [[INSERT IGNORE]] فتستخبى أخطاء تانية. وتعتمد على [[ROLLBACK]] في ترقية فيها [[ALTER]]. وتفعّل الميزة قبل الترقية. وتصلّح [[FAIL]] بإيدك في phpMyAdmin بدل السكربت. وتشغّل الترقية قبل ما تتأكد إن الكود الجديد وصل السيرفر.`
+          },
+          sol: R`MariaDB: التشغيلتين [[done]] و [[exit=0]]، والفرق [[rows: 1]] ثم [[rows: 0]] في الإعداد، و [[SHOW WARNINGS]] فيه [[Note 1060]] و [[1050]] و [[1061]]. بعد [[UPDATE ... '1']] وتشغيل تالت القيمة فضلت [[1]]. النسخة الساذجة: [[1050 Table 'referrals' already exists]] و [[1060 Duplicate column name]] و [[1062 Duplicate entry]]. على [[mysql:8.4]]: سطرين [[FAIL ... 1064 ... near 'IF NOT EXISTS ...']] و [[done with 2 errors]] و [[exit=1]]، والنسخة بـ [[information_schema]]: [[SKIP]] في التشغيل التاني على الاتنين. المتصفح من غير أدمن: [[403: admins only]].
+
+اتجرّب على [[mariadb:11.4]] (11.4.13) و [[mysql:8.4]] (8.4.13) و [[postgres:16-alpine]] و [[php:8.4-cli]] بـ [[pdo_mysql]] في Docker. أمر [[ssh]] في المثال بعناوين من نطاق التوثيق ومحتاج سيرفر حقيقي.`,
+          practice: [
+            { lvl: 'سريع', t: R`من غير ما تبص: لكل واحدة من دول اكتب النسخة اللي بتتعاد بأمان على MariaDB وعلى MySQL 8: جدول جديد، وعمود جديد، و index، وإعداد بقيمة افتراضية.`, done: R`٨ جمل (أو جملة وفحص [[information_schema]])، والإعداد بـ [[WHERE NOT EXISTS]] مش [[ON DUPLICATE KEY UPDATE]]، وجرّبت كل واحدة مرتين على الداتابيز ومفيش ولا خطأ.` },
+            { lvl: 'تطبيق', t: R`اقرا وتوقّع: سكربت فيه ٤ خطوات، التالتة [[ALTER TABLE orders ADD COLUMN coupon VARCHAR(20)]] (من غير IF NOT EXISTS) والرابعة [[INSERT IGNORE INTO settings ...]]. اتشغّل مرة ووقف عند الرابعة بسبب انقطاع. توقّع ناتج التشغيل التاني سطر سطر على MariaDB، وبعدين نفّذ.`, done: R`توقعت إن الخطوة التالتة [[FAIL ... 1060 Duplicate column name 'coupon']] والباقي يعدّي، والنتيجة طابقت، وصلّحت التالتة بـ [[IF NOT EXISTS]] والتشغيل التالت كله [[OK]].` },
+            { lvl: 'تطبيق', t: R`صلّح الكود البايظ: الترقية دي بتتشغّل من المتصفح بـ [[?token=abc123]]، والإعداد بـ [[REPLACE INTO settings VALUES ('maintenance','0')]]، والسكربت بيقف عند أول خطأ بـ [[die()]]. لاقي ٣ مشاكل وصلّحها.`, done: R`شلت الـ token وحطيت [[PHP_SAPI]] و [[require_admin()]]، وبدلت [[REPLACE INTO]] (بيمسح الصف ويرجّعه بالقيمة الجديدة، يعني بيكتب فوق) بـ [[WHERE NOT EXISTS]]، وخلّيت كل خطوة في [[try]] تكمّل وتطلع بكود 1 في الآخر، وجرّبت إن المتصفح من غير دخول بياخد 403.` },
+            { lvl: 'تطبيق', t: R`ابني [[migrate.php]] عام بياخد فولدر [[migrations/]] فيه ملفات [[2026_09_01_referrals.php]] كل واحد بيرجّع array خطوات، وجدول [[schema_migrations (name, ran_at)]]: بينفّذ اللي مش متسجّل بس، ويسجّل كل ملف بعد ما كل خطواته تعدّي، و [[--dry-run]] بيطبع اللي هيتنفّذ من غير ما ينفّذ.`, done: R`أول مرة بينفّذ الملفين ويسجّلهم، التانية بتطبع [[nothing to run]]، وملف فيه خطوة فاشلة مبيتسجّلش وبيتعاد المرة الجاية، و [[--dry-run]] مبيغيّرش [[SELECT COUNT(*) FROM schema_migrations]].` },
+            { lvl: 'تحدي', t: R`اكتب اختبار: script بـ bash بيشغّل MariaDB و MySQL في Docker، ويحط نفس الـ schema، ويشغّل الترقية مرتين على كل واحدة، ويقارن [[mysqldump --no-data]] بعد التشغيل الأول وبعد التاني (لازم يكونوا زي بعض)، ويفشل لو فيه سطر [[FAIL]].`, done: R`على السكربت السليم: [[diff]] بين الـ dumps فاضي على الاتنين وكود الخروج 0. لما ترجّع [[ADD COLUMN IF NOT EXISTS]] من غير فحص: بيفشل على MySQL بس وبيطبع اسم الخطوة. والـ containers بتتمسح في الآخر حتى لو فشل ([[trap]]).` },
+            { lvl: 'تحدي', t: R`اشرحها: زميلك عايز يشغّل الترقية **قبل** ما ينشر الكود، وزميل تاني عايز ينشر الأول. اكتب لكل ترتيب امتى يبقى صح وامتى يكسر الموقع، بمثال من الدرس، في ٦ سطور.`, done: R`الإضافات (جدول، عمود بـ DEFAULT) آمنة قبل الكود، والكود اللي بيقرا الجديد لازم يستنى الترقية أو يبقى ورا إعداد، والحذف أو تغيير الاسم بعد الكود، ومذكور مثال [[Unknown column 'is_partner']] لما الإعداد اتفعّل قبل الترقية.` },
+          ],
+          ci: [
+            { os: [R`ubuntu`], sh: R`bash`, run: R`cat > migrate.php <<'EOF'
+<?php
+$db = new PDO('sqlite:' . __DIR__ . '/shop.sqlite', null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+if (PHP_SAPI !== 'cli') { http_response_code(403); exit("403: admins only\n"); }
+function column_exists(PDO $db, string $t, string $c): bool {
+    foreach ($db->query("PRAGMA table_info($t)") as $col) if ($col['name'] === $c) return true;
+    return false;
+}
+$steps = [
+    'table settings' => fn() => $db->exec("CREATE TABLE IF NOT EXISTS settings (key_name TEXT PRIMARY KEY, value TEXT NOT NULL)"),
+    'table users' => fn() => $db->exec("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, email TEXT)"),
+    'column users.is_partner' => fn() => column_exists($db, 'users', 'is_partner') ? 'skip'
+        : $db->exec("ALTER TABLE users ADD COLUMN is_partner INTEGER NOT NULL DEFAULT 0"),
+    'setting referrals_enabled' => fn() => $db->exec("INSERT INTO settings (key_name, value)
+        SELECT 'referrals_enabled', '0' WHERE NOT EXISTS (SELECT 1 FROM settings WHERE key_name = 'referrals_enabled')"),
+];
+$failed = 0;
+foreach ($steps as $name => $step) {
+    try { $r = $step(); echo $r === 'skip' ? "SKIP $name\n" : "OK   $name (rows: $r)\n"; }
+    catch (PDOException $e) { $failed++; echo "FAIL $name: " . $e->getMessage() . "\n"; }
+}
+echo $failed ? "done with errors\n" : "done\n";
+exit($failed ? 1 : 0);
+EOF
+php migrate.php > run1.txt; echo "run1 exit=$?"
+php -r '$d=new PDO("sqlite:shop.sqlite"); $d->exec("UPDATE settings SET value=1 WHERE key_name=\"referrals_enabled\"");'
+php migrate.php > run2.txt; echo "run2 exit=$?"
+grep -c FAIL run1.txt run2.txt
+grep "setting" run1.txt run2.txt
+grep "is_partner" run2.txt
+php -r '$d=new PDO("sqlite:shop.sqlite"); echo "value=", $d->query("SELECT value FROM settings")->fetchColumn(), " rows=", $d->query("SELECT COUNT(*) FROM settings")->fetchColumn(), "\n";'
+php -S 127.0.0.1:8798 > /dev/null 2>&1 &
+PID=$!; sleep 1
+curl -s -w "[%{http_code}]\n" http://127.0.0.1:8798/migrate.php
+kill $PID`, expect: [R`run1 exit=0`, R`run2 exit=0`, R`run1.txt:0`, R`run2.txt:0`, R`run1.txt:OK   setting referrals_enabled (rows: 1)`, R`run2.txt:OK   setting referrals_enabled (rows: 0)`, R`SKIP column users.is_partner`, R`value=1 rows=1`, R`403: admins only`, R`[403]`] },
+          ],
         }
       ]
     }

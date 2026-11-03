@@ -830,6 +830,136 @@ found 0 vulnerabilities
 
 ---
 
+## ٨. بعد الترقية: اقرا docs النسخة المتسطبة، مش ذاكرتك (ولا ذاكرة أداة AI)
+
+### العَرَض
+
+مشروع على Next 16.4.4. كتبت (أو أداة AI كتبتلك) [[middleware.ts]] بـ [[export function middleware]] زي ما الدروس القديمة بتقول. الصفحة اشتغلت، بس اللوج:
+
+~~~text dev.log
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead.
+
+  To migrate automatically, run:
+  npx @next/codemod@canary middleware-to-proxy .
+
+  Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+~~~
+
+اللي في دماغك (أو في بيانات تدريب الأداة) قديم. المرجع الصح للنسخة **دي بالظبط** موجود جوه المشروع.
+
+### من Next 16.2 الـ docs جوه [[node_modules]]
+
+~~~text node -p "require('next/package.json').version"
+16.4.4
+~~~
+
+~~~text ls node_modules/next/dist/docs/
+01-app
+02-pages
+03-architecture
+04-community
+index.md
+~~~
+
+~~~text find node_modules/next/dist/docs -name "*.md" | wc -l
+474
+~~~
+
+٤٧٤ ملف markdown: نفس وثائق الموقع، بس **بنسخة اللي متسطب عندك**. ودوّر فيهم:
+
+~~~text ls node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/ | grep -iE "proxy|middleware"
+middleware.md
+proxy.md
+~~~
+
+~~~text head -12 node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/proxy.md
+---
+title: proxy.js
+description: API reference for the proxy.js file.
+...
+> **Note**: The $__btmiddleware$__bt file convention is deprecated and has been renamed to $__btproxy$__bt. See [Migration to Proxy](#migration-to-proxy) for more details.
+~~~
+
+~~~text grep -rl "middleware-to-proxy" node_modules/next/dist/docs
+node_modules/next/dist/docs/01-app/02-guides/upgrading/codemods.md
+node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/middleware.md
+node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/proxy.md
+~~~
+
+| الأمر | ليه |
+|---|---|
+| [[node -p "require('next/package.json').version"]] | النسخة المتسطبة فعلًا (مش اللي في [[package.json]] بـ [[^]]) |
+| [[ls .../03-file-conventions/ \| grep -iE]] | أسامي الملفات = أسامي الـ conventions. [[-i]] من غير فرق capital |
+| [[head -12]] | أول الصفحة فيه التحذيرات المهمة ([[Note]] و [[deprecated]]) |
+| [[grep -rl]] | أنهي صفحات بتتكلم عن الموضوع ([[-r]] في كل الفولدرات، و [[-l]] اسم الملف بس) |
+
+وفي PowerShell 7.6 (نفس النتايج):
+
+~~~powershell
+(Get-ChildItem node_modules\next\dist\docs\01-app\03-api-reference\03-file-conventions | Where-Object Name -match 'proxy|middleware').Name
+Get-Content node_modules\next\dist\docs\01-app\03-api-reference\03-file-conventions\proxy.md -TotalCount 12
+(Get-ChildItem node_modules\next\dist\docs -Recurse -Filter *.md | Select-String 'middleware-to-proxy' -List).Path.Count
+~~~
+
+الأول طلّع [[middleware.md]] و [[proxy.md]]، والتالت [[3]]. ([[-List]] = أول مطابقة في كل ملف، فالعدد = عدد الملفات.)
+
+### ونفس الـ docs بتقول من أنهي نسخة
+
+~~~text node_modules/next/dist/docs/01-app/02-guides/ai-agents.md (مقتطف)
+Next.js 16.3 and later include bundled documentation and support managed agent instructions. Next.js 16.2 includes the bundled documentation but does not generate instructions automatically.
+
+Next.js 16.1 and earlier do not include the bundled documentation. The legacy $__btagents-md$__bt command downloads a version-matched copy to $__bt.next-docs/$__bt and indexes it in $__btAGENTS.md$__bt
+~~~
+
+واتأكدنا من ناحية تانية: [[npm pack next@15.5.28]] و [[tar -tzf next-15.5.28.tgz | grep -c "dist/docs/"]] طلّع [[0]]. يعني Next 15 مفيهوش الفولدر ده خالص، والـ 16.1 وأقدم بيجيبوه بـ [[npx @next/codemod@canary agents-md]] (من نفس الـ docs، مش متجرّب هنا).
+
+### [[AGENTS.md]]: [[next dev]] بيكتبه لوحده
+
+أول [[next dev]] على 16.4.4 طبع:
+
+~~~text dev.log
+✓ Generated AGENTS.md for AI agents. Set $__btagentRules: false$__bt in next.config to disable.
+~~~
+
+~~~text AGENTS.md
+<!-- BEGIN:nextjs-agent-rules -->
+
+## This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in $__btnode_modules/next/dist/docs/$__bt ... before writing any code. Heed deprecation notices.
+...
+<!-- END:nextjs-agent-rules -->
+~~~
+
+ده ملف تعليمات لأدوات الـ AI (زي Claude Code و Cursor): «متكتبش من ذاكرتك، اقرا الـ docs اللي جنبك». و [[next dev]] بيرجّع الجزء اللي بين العلامتين لو مسحته (عشان كده الوثائق بتقول اعمله commit)، والباقي في الملف بتاعك. ولو مش عايزه: [[agentRules: false]] في [[next.config.ts]] (من صفحة [[agentRules.md]] في نفس الـ docs).
+
+### التصليح، والفخ اللي في النص
+
+غيّرنا اسم الملف بس:
+
+~~~bash
+mv middleware.ts proxy.ts
+~~~
+
+~~~text dev.log
+To fix it:
+- Ensure this file has either a default or "proxy" function export.
+
+Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+⨯ [Error: The Proxy file "/proxy" must export a function named $__btproxy$__bt or a default function.]
+~~~
+
+و [[curl]] رجّع [[500]]. اسم الملف اتغيّر والدالة لسه [[middleware]]. وبعد [[export function proxy]]:
+
+~~~text curl -s -o /dev/null -D - http://localhost:4311/ar | grep -iE "^HTTP|x-shop"
+HTTP/1.1 200 OK
+x-shop: 1
+~~~
+
+([[-D -]] اطبع الـ headers على الشاشة، و [[x-shop]] header الـ proxy بيحطه، فوجوده = الـ proxy اشتغل.) والـ codemod ([[middleware-to-proxy]]) بيغيّر الاتنين مع بعض، وده سبب إنه أحسن من [[mv]] بإيدك.
+
+> القاعدة: بعد أي ترقية major، أو لما تشك في API، أو لما أداة AI تكتبلك كود Next: [[grep -rl "اللي بتدوّر عليه" node_modules/next/dist/docs]] قبل ما تصدّق أي ذاكرة.
+
 ## الخلاصة
 
 | الأمر | بيعمل إيه |
@@ -840,7 +970,8 @@ found 0 vulnerabilities
 | [[next-async-request-api]] | يحوّل [[params]] و [[cookies()]] لـ await (ترقية 15) |
 | [[@next-codemod-error]] | مكان الـ codemod سابه ليك. دوّر عليه بـ grep |
 | [[npx next typegen]] | أنواع الـ routes |
-| [[npm run build]] و [[npm audit --omit=dev]] | يتأكدوا إن كله تمام ومفيش ثغرات معروفة |`,
+| [[npm run build]] و [[npm audit --omit=dev]] | يتأكدوا إن كله تمام ومفيش ثغرات معروفة |
+| [[grep -rl "..." node_modules/next/dist/docs]] | وثائق النسخة المتسطبة بالظبط (16.2 وأحدث)، بدل الذاكرة |`,
           lines: [
             "نسخ Next و React و Node الحالية.",
             "النسخة الحالية، والأحدث المسموح بيها، والأحدث خالص.",
@@ -855,7 +986,13 @@ found 0 vulnerabilities
 الـ [[params]] و [[cookies()]] الـ sync: الترقية من 15 مبتلمسهمش (ده codemod الترقية من 14 لـ 15، اسمه [[next-async-request-api]])، والـ build بيقع بـ [[Property 'get' does not exist on type 'Promise<ReadonlyRequestCookies>']]. لما شغّلناه لوحده: [[function Page({ params }: { params: { id: string } })]] بقت [[async function Page(props: { params: Promise<{ id: string }> })]] وتحتها [[const params = await props.params]].
 
 و [[@next-codemod-error]] بيظهر في الأماكن اللي الـ codemod مقدرش يخليها async لوحده، زي [[getTheme()]]: لف النداء بـ [[cookies() as unknown as UnsafeUnwrappedCookies]] وحط تعليق [[@next-codemod-error Await this API and update its callers; remove the temporary UnsafeUnwrappedCookies cast after repairing the migration.]] وفي Next 16 النوع ده مبقاش موجود، فالـ build بيقع: [[Module '"next/headers"' has no exported member 'UnsafeUnwrappedCookies'.]] الحل بإيدك: خلي [[getTheme]] async واعمل await في كل مكان بيناديها، وامسح الـ cast. والأمر اللي تحت بيلاقيهم كلهم قبل الـ merge.`,
-          solCode: R`grep -rn "@next-codemod-error\|UnsafeUnwrapped" src app lib --include=*.ts --include=*.tsx`
+          solCode: R`grep -rn "@next-codemod-error\|UnsafeUnwrapped" src app lib --include=*.ts --include=*.tsx`,
+          practice: [
+            { lvl: 'سريع', t: R`دوّر بنفسك: على مشروع Next 16.2 أو أحدث، من غير نت، لاقي صفحة الـ docs اللي بتشرح [[generateMetadata]] واطبع أول ١٥ سطر منها. وقول من أنهي فولدر جت.`, done: R`عندك أمر واحد ([[grep -rl]] أو [[find]]) طلّع مسار جوه [[node_modules/next/dist/docs/01-app/03-api-reference]]، و [[head -15]] عليه طبع العنوان والوصف.` },
+            { lvl: 'تطبيق', t: R`صلّح المشروع ده: [[middleware.ts]] فيه [[export function middleware]] على Next 16.4. اعملها مرة بإيدك ([[mv]] وبعدين تغيير اسم الدالة) وسجّل الخطأ اللي بيطلع بين الخطوتين، ومرة بالـ codemod، وقارن الـ diff.`, done: R`عندك نص الخطأ [[must export a function named]] من الخطوة اللي في النص، وبعد التصليحين [[curl -D -]] بيطلّع الـ header بتاع الـ proxy، والـ diff بتاع الـ codemod فيه التغييرين مع بعض.` },
+            { lvl: 'تطبيق', t: R`قارن: هات قايمة ملفات [[03-file-conventions]] من docs النسخة المتسطبة، وقارنها بقايمة الـ conventions اللي فاكرها (أو اللي في الدروس). اكتب كل ملف موجود في الـ docs ومش في ذاكرتك، واقرا أول سطر في كل واحد.`, done: R`عندك لستة فيها ٣ ملفات على الأقل (زي [[forbidden.md]] أو [[unauthorized.md]] أو [[instrumentation-client.md]]) وجنب كل واحد سطر بيشرحه بكلامك.` },
+            { lvl: 'تحدي', t: R`اكتب [[docs-diff.sh]]: بياخد نسختين من Next (مثلًا 16.2.0 و 16.4.4)، ينزّل كل واحدة بـ [[npm pack]] في فولدر مؤقت، ويطلّع قايمة ملفات [[dist/docs]] من كل واحدة بـ [[tar -tzf]]، ويطبع الملفات اللي اتضافت والي اتشالت. وبيمسح الـ [[.tgz]] في الآخر.`, done: R`السكربت بيطبع قسمين ([[added]] و [[removed]]) فيهم مسارات [[.md]]، ومفيش [[.tgz]] فاضل بعد ما يخلص، ولو اديته نسخة 15 بيقول إن مفيش docs فيها.` },
+          ],
         }
       ]
     }

@@ -407,6 +407,147 @@ Hydration failed because the server rendered HTML didn't match the client.
 
 ---
 
+## ٤. نفس الرسالة والكود سليم: إضافات المتصفح
+
+### العَرَض
+
+عندك (أو عند حد من الفريق) في الـ console على **كل** صفحة، والكود مفيهوش [[Date]] ولا [[window]]:
+
+~~~text الناتج (Chrome 156، Next 16.4.4)
+A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+- A server/client branch $__btif (typeof window !== 'undefined')$__bt.
+- Variable input such as $__btDate.now()$__bt or $__btMath.random()$__bt which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+...
+                        <html
+-                         data-darkreader-scheme="dark"
+                          <body
+-                           cz-shortcut-listen="true"
+~~~
+
+### المعمل
+
+الـ layout عادي جدًا:
+
+~~~tsx app/layout.tsx
+export default function RootLayout({ children }: LayoutProps<"/">) {
+  return (
+    <html lang="ar" dir="rtl">
+      <body>{children}</body>
+    </html>
+  );
+}
+~~~
+
+وفتحنا الصفحة بـ Chrome 156 من Playwright (باكدج [[playwright-core]] 1.64.1، و [[channel: "chrome"]]). وبدل ما نسطّب إضافات حقيقية، **حاكينا** اللي بتعمله: سكربت بيشتغل قبل أي سكربت في الصفحة ([[context.addInitScript]]) وبيحط attributes على [[<html>]] و [[<body>]] أول ما يظهروا، زي اللي بتحطه إضافات الوضع الغامق وأدوات الألوان:
+
+~~~js
+await context.addInitScript(() => {
+  new MutationObserver(() => {
+    const h = document.documentElement, b = document.body;
+    if (h && !h.hasAttribute("data-darkreader-scheme")) h.setAttribute("data-darkreader-scheme", "dark");
+    if (b && !b.hasAttribute("cz-shortcut-listen")) b.setAttribute("cz-shortcut-listen", "true");
+  }).observe(document, { childList: true, subtree: true });
+});
+~~~
+
+[[MutationObserver]] بينادي الدالة مع كل تغيير في الـ DOM وهو بيتبني، فأول ما [[<body>]] يتعمل، الـ attribute بيتحط. ده قبل ما React يشتغل، بالظبط زي الإضافة.
+
+### التشخيص بالترتيب
+
+١. **اقرا الـ diff:** آخر الرسالة. [[-]] = موجود في الـ DOM اللي React لقاه، ومش في اللي React رسمه. هنا [[data-darkreader-scheme]] على [[<html>]] و [[cz-shortcut-listen]] على [[<body>]].
+
+٢. **الأسامي دي في الكود؟**
+
+~~~text grep -rnE "cz-shortcut-listen|darkreader" app
+(ولا سطر)
+exit=1
+~~~
+
+مش بتوعك. حد تاني حطّهم في الصفحة.
+
+٣. **افتح Incognito** (الإضافات مقفولة فيه افتراضيًا): من غير السكربت ده، نفس الصفحة:
+
+~~~text الناتج
+{"html":"lang dir","body":""}
+no hydration errors
+~~~
+
+اختفت. يعني إضافة. ولو عايز تعرف أنهي واحدة: اقفل الإضافات واحدة واحدة.
+
+٤. **وكمان في الترمنال:** Next 16.4 بيبعت أخطاء المتصفح للوج بتاع الـ dev، فلقيناها في [[.next/dev/logs/next-development.log]] بـ [[source":"Browser]] و [[level":"ERROR]]. يعني لو زميلك قالك «فيه error»، تقدر تشوفه من غير ما تفتح جهازه (في dev بس).
+
+### [[This won't be patched up]] مقابل [[regenerated on the client]]
+
+- اختلاف **attributes** (زي الإضافات): React بيسيبها زي ما هي («won't be patched up») وبيكتب [[console.error]]. الصفحة شغّالة.
+- اختلاف **نص** (زي الساعة في أول الدرس): React بيرمي الجزء ده ويرسمه من الأول («regenerated»)، وفي Playwright ظهر كـ [[pageerror]] مش [[console.error]].
+
+### الحل: [[suppressHydrationWarning]] على [[<html>]] و [[<body>]] بس
+
+~~~tsx app/layout.tsx
+<html lang="ar" dir="rtl" suppressHydrationWarning>
+  <body suppressHydrationWarning>{children}</body>
+</html>
+~~~
+
+~~~text الناتج (والإضافة شغّالة)
+{"html":"lang dir data-darkreader-scheme","body":"cz-shortcut-listen"}
+no hydration errors
+~~~
+
+الـ attributes لسه موجودة (الإضافة شغّالة عادي)، والتحذير اختفى.
+
+### بيمسك مستوى واحد بس
+
+خلّينا «الإضافة» تحط كمان [[data-ext-scan="1"]] على [[<main>]] (جوه الـ body):
+
+~~~text الناتج
+                          <main
+-                           data-ext-scan="1"
+~~~
+
+التحذير رجع. [[suppressHydrationWarning]] بيسكّت **العنصر اللي عليه بس** (الـ attributes بتاعته والنص اللي جواه مباشرة)، مش أولاده. وده كويس: مش هتخبّي مشاكل الصفحة كلها بسطر في الـ layout.
+
+### ومتحطوش على كومبوننت فيه وقت أو random
+
+~~~tsx app/clock2/page.tsx
+"use client";
+export default function Clock2() {
+  return <main><p id="hidden" suppressHydrationWarning>{new Date().toLocaleTimeString("en-GB")}</p></main>;
+}
+~~~
+
+السيرفر شغّال بـ [[TZ=UTC]] والمتصفح بتوقيت القاهرة:
+
+~~~text الناتج
+{"hidden":"11:38:49"}
+no hydration errors
+13:38:52 Cairo now
+~~~
+
+مفيش ولا تحذير، **والوقت غلط بساعتين**: React ساب نص السيرفر زي ما هو. انت كده خبّيت bug حقيقي بدل ما تصلّحه. ونفس السطر من غير [[suppressHydrationWarning]] طلّع [[Hydration failed because the server rendered text didn't match the client]] والنص اتصلّح لوقت المتصفح. الحل الصح هنا اللي في أول الدرس: [[useEffect]].
+
+### البدايل وليه لأ
+
+| البديل | ليه لأ |
+|---|---|
+| تتجاهل التحذير | هيغطّي على تحذيرات حقيقية جاية، وكل الفريق هيتعوّد يتجاهل الـ console |
+| [[suppressHydrationWarning]] على كل كومبوننت | بيخبّي bugs زي الساعة فوق |
+| تقول للمستخدمين يقفلوا الإضافات | مش في إيدك، والصفحة شغّالة أصلًا |
+| تشيل الـ SSR ([[ssr: false]]) | هتخسر الـ SSR عشان attribute ملوش لازمة |
+
+### إزاي متتكررش (يعني متتلخبطش تاني)
+
+- [[suppressHydrationWarning]] على [[<html>]] و [[<body>]] في الـ root layout من الأول (ومكتبة [[next-themes]] بتطلب ده في وثائقها لنفس السبب: بتحط الثيم على [[<html>]] قبل React).
+- أي hydration error: اقرا الـ diff الأول. attribute مش في الكود = إضافة. نص أو رقم = bug عندك.
+- اختبر في Incognito أو بروفايل نضيف قبل ما تبدأ تديبج.
+
+---
+
 ## الخلاصة
 
 | السبب | الحل |
@@ -415,11 +556,12 @@ Hydration failed because the server rendered HTML didn't match the client.
 | [[typeof window]] أو [[localStorage]] في الـ render | نفس الحل، أو [[dynamic]] بـ [[ssr: false]] |
 | HTML مش صالح ([[<div>]] جوه [[<p>]]) | صلّح الـ tags |
 | حالة معروفة ومقصودة (الثيم على [[<html>]]) | [[suppressHydrationWarning]] على العنصر ده بس |
+| إضافة في المتصفح بتحط attributes على [[<html>]] أو [[<body>]] | [[suppressHydrationWarning]] على الاتنين بس، واتأكد في Incognito |
 
 والقاعدة: أول رسمة في المتصفح لازم تطلّع نفس اللي طلّعه السيرفر.`,
           lines: [
-            "client component.",
-            "ساعة.",
+            R`[["use client"]] = client component: بيترسم على السيرفر وفي المتصفح، فالـ hydration بتحصل هنا.`,
+            R`كومبوننت اسمه [[Now]] بيعرض الساعة، و [[export]] عشان صفحة تانية تستخدمه.`,
             R`القيمة الأولى [[null]] على السيرفر وفي المتصفح، فالاتنين يطلّعوا نفس HTML.`,
             "بعد الـ hydration بس، احسب الوقت الحقيقي بتوقيت الجهاز.",
             "placeholder لحد ما الوقت يتحسب.",
@@ -427,7 +569,16 @@ Hydration failed because the server rendered HTML didn't match the client.
           ],
           sol: R`الوقت: في dev الـ console فيها [[Hydration failed because the server rendered text didn't match the client]] ومعاها ليستة بالأسباب ([[typeof window]]، و [[Date.now()]]، والـ locale) و diff. بس ممكن متشوفوش خالص: لو السيرفر والمتصفح في نفس الـ timezone ورسموا في نفس الثانية، النص بيطابق بالصدفة. جربتها والمتصفح على [[Africa/Cairo]] والسيرفر UTC: الخطأ طلع على طول. وده بالظبط ليه الـ bug ده بيظهر عند المستخدمين ومش عندك.
 
-و [[<div>]] جوه [[<p>]]: [[In HTML, <div> cannot be a descendant of <p>. This will cause a hydration error.]] وبعدها [[Hydration failed because the server rendered HTML didn't match the client]]، لأن المتصفح بيقفل الـ [[<p>]] قبل الـ [[<div>]] وهو بيقرا الـ HTML، فالـ DOM بقى مختلف عن اللي React متوقعه. الحل: [[<div>]] بدل [[<p>]]، والوقت في [[useEffect]] زي المثال.`
+و [[<div>]] جوه [[<p>]]: [[In HTML, <div> cannot be a descendant of <p>. This will cause a hydration error.]] وبعدها [[Hydration failed because the server rendered HTML didn't match the client]]، لأن المتصفح بيقفل الـ [[<p>]] قبل الـ [[<div>]] وهو بيقرا الـ HTML، فالـ DOM بقى مختلف عن اللي React متوقعه. الحل: [[<div>]] بدل [[<p>]]، والوقت في [[useEffect]] زي المثال.
+
+ولو الرسالة [[A tree hydrated but some attributes of the server rendered HTML didn't match]] والـ diff فيه attribute مش في كودك على [[<html>]] أو [[<body>]] (زي [[cz-shortcut-listen]] أو [[data-darkreader-scheme]]): دي إضافة في المتصفح. افتح Incognito وهتختفي، والحل [[suppressHydrationWarning]] على [[<html>]] و [[<body>]] بس. ولو الإضافة لمست عنصر جوه الـ body، التحذير هيفضل لأن الخاصية دي بتمسك مستوى واحد.`,
+          practice: [
+            { lvl: 'سريع', t: R`اقرا وتوقّع: آخر رسالة hydration فيها [[<body]] وتحته [[- data-new-gr-c-s-check-loaded="14.1"]]، ورسالة تانية فيها [[<span]] وتحته [[+ 13:39:04]] و [[- 11:39:04]]. أنهي واحدة bug في كودك وأنهي إضافة؟ وإيه الحل لكل واحدة؟`, done: R`كتبت إن الأولى إضافة (attribute مش في الكود على body) وحلها [[suppressHydrationWarning]] على body، والتانية فرق توقيت بين السيرفر والمتصفح وحلها [[useEffect]]، وكل حل في سطر.` },
+            { lvl: 'تطبيق', t: R`ابني محاكي الإضافة اللي في الشرح ([[addInitScript]] و [[MutationObserver]]) على مشروع Next، واطبع رسايل الـ console. شغّله ٣ مرات: من غير المحاكي، وبيه، وبيه بعد [[suppressHydrationWarning]] على [[<html>]] و [[<body>]].`, done: R`٣ نتايج: [[no hydration errors]]، وبعدين رسالة فيها [[data-darkreader-scheme]] و [[cz-shortcut-listen]]، وبعدين [[no hydration errors]] والـ attributes لسه موجودة في الـ DOM.` },
+            { lvl: 'تطبيق', t: R`صلّح الكود البايظ: [[<p suppressHydrationWarning>{new Date().toLocaleTimeString("en-GB")}</p>]] في client component. شغّل السيرفر بـ [[TZ=UTC]] والمتصفح بتوقيت القاهرة، وأثبت إن الوقت المعروض غلط من غير ولا تحذير، وبعدين صلّحه بـ [[useState(null)]] و [[useEffect]].`, done: R`قبل: الوقت ناقص ساعتين (أو ٣ حسب التوقيت الصيفي) ومفيش تحذير. بعد: الوقت = وقت القاهرة، ومفيش تحذير، و HTML السيرفر فيه [[--:--]].` },
+            { lvl: 'تطبيق', t: R`محاكي الإضافة يحط attribute على [[<main>]] جوه الصفحة. جرّب [[suppressHydrationWarning]] على [[<body>]] بس (هيفضل التحذير؟)، وبعدين على [[<main>]]. واكتب في سطرين القاعدة اللي طلعت بيها.`, done: R`على [[<body>]] التحذير فضل وفيه [[<main]] و [[data-ext-scan]]، وعلى [[<main>]] اختفى. والقاعدة: بيسكّت العنصر نفسه بس مش أولاده.` },
+            { lvl: 'تحدي', t: R`اكتب [[hydration-check.js]] بـ Playwright: بيفتح ٥ صفحات من موقعك، ويجمع أي [[console.error]] أو [[pageerror]] فيه كلمة [[hydrat]]، ويطبع الصفحة وأول سطر من الرسالة، ويخرج بـ 1 لو فيه. شغّله مرة من غير محاكي الإضافة (لازم يعدّي) ومرة بصفحة فيها [[Date.now()]] في الـ render (لازم يمسكها).`, done: R`الموقع السليم: [[0 hydration errors]] ورقم خروج 0. ومع صفحة الـ [[Date.now()]]: سطر فيه اسم الصفحة و [[Hydration failed]] ورقم خروج 1.` },
+          ],
         },
         {
           cmd: "proxy مش حماية",
