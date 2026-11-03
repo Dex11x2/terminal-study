@@ -35,6 +35,14 @@ Mac: Cmd+Option+I / Cmd+Option+J / Cmd+Option+U`,
       t: "افتح الصفحة وافهمها",
       l: 1,
       n: "أي تعديل في DevTools بيحصل على جهازك انت بس، والموقع الحقيقي مش بيتغير. ريفريش والدنيا ترجع زي ما كانت",
+      projects: [
+        { lvl: 'صغير', t: R`كارت «الصفحة دي SPA ولا SSR؟»`, what: R`سكربت [[ssr-check.sh]] بياخد URL وجملة ظاهرة في الصفحة، ويعمل [[curl -s]] ويقول «الجملة في الـ HTML (SSR/static)» أو «مش موجودة (CSR)». من درس «View Page Source و Inspect».`, done: R`على صفحة SSR بيطبع SSR، وعلى صفحة Vite/React عادية بيطبع CSR، ولو الـ URL غلط بيطبع الـ status ويخرج بـ [[1]] بدل ما يقول CSR غلط.` },
+        { lvl: 'صغير', t: R`صياد السكرول الجانبي`, what: R`Snippet في DevTools بيلاقي كل عنصر طالع بره الشاشة يمين أو شمال ([[getBoundingClientRect]])، ويحط عليه [[outline]] أحمر، ويطبع جدول بالـ selector والعرض. من درسي «Device Toolbar» و «Elements».`, done: R`على صفحة فيها عنصر [[106vw]] بيعلّم عليه هو (مش [[html]] و [[body]])، وعلى صفحة سليمة بيطبع «مفيش» والجدول فاضي.` },
+        { lvl: 'متوسط', t: R`[[?v=]] أوتوماتيك قبل كل نشر`, what: R`سكربت بيحسب hash لكل ملف CSS و JS، ويحط [[?v=<hash>]] في كل HTML بيستخدمه، ويطبع اللي اتغيّر. من درسي «Hard Reload» و «?v= كسر الكاش».`, done: R`تشغيله مرتين ورا بعض من غير تعديل مبيغيّرش أي ملف، وتعديل [[style.css]] بس بيغيّر رابطه هو بس في كل الصفحات، و [[git diff --stat]] بيبيّن كده.` },
+        { lvl: 'متوسط', t: R`جدول «الكارت بقى ضيّق من أنهي عرض؟»`, what: R`سكربت Playwright بيفتح صفحة على ١٠ عروض (من 320 لـ 1440)، ويقيس عرض أصغر كارت و [[scrollWidth]] في كل عرض، ويطبع جدول ويعلّم على العروض اللي فيها مشكلة. من درس «Device Toolbar».`, done: R`الجدول ١٠ صفوف، والعروض اللي فيها overflow أو كارت أضيق من ١٥٠px متعلّمة، وبعد ما صلّحت الـ CSS بـ [[minmax]] اختفت العلامات.` },
+        { lvl: 'كبير', t: R`فاحص layout لموقع كامل`, what: R`أداة Node بتاخد [[sitemap.xml]] أو لستة روابط، وتفتح كل صفحة على ٣ مقاسات، وتلاقي: سكرول جانبي والعنصر المتسبب، و sticky بايظ (أب عليه [[overflow]])، و modal أو dropdown مغطّي ([[elementFromPoint]])، وصور أعرض من مكانها. وبتطلّع تقرير HTML بالصور والأخطاء، ولوج لكل صفحة، وتكمّل لو صفحة وقعت.`, done: R`على موقع ٢٠ صفحة بتخلص وتطلّع تقرير فيه كل صفحة وحالتها، وصفحة [[404]] أو timeout بتتكتب في التقرير ومبتوقفش الباقي، وتشغيلها تاني بيكتب فوق التقرير القديم من غير ما يبوظ.`, ext: R`زوّد مقارنة بالتشغيل اللي قبله (اتصلّح إيه واتكسر إيه)، وخلّيها GitHub Action بيعلّق على الـ PR بالصفحات اللي اتكسرت.` },
+        { lvl: 'فكرة', t: R`إضافة Chrome «بص على الصفحة دي»`, what: R`extension صغيرة (Manifest V3) زرار واحد بيشغّل فحوصات الوحدة دي على التاب الحالي: SSR ولا CSR، وسكرول جانبي، وصور من غير alt، وعناصر مغطّية. انت اللي بتختار الفحوصات وشكل النتيجة.`, done: R`الإضافة بتتحمّل من [[chrome://extensions]] (Load unpacked)، وبتطلّع نتيجة على ٣ مواقع مختلفة، وفيه README بصورة.`, ext: R`زوّد زرار «صلّح مؤقتًا» بيحقن CSS يصلّح الـ overflow عشان تجرّب، وانشرها على Chrome Web Store.` },
+      ],
       items: [
         {
           cmd: "View Page Source و Inspect",
@@ -143,7 +151,13 @@ true
 
 في موقع Next.js أو موقع أخبار الجملة هتظهر في View Source نفسه، لأن السيرفر بعت الـ HTML جاهز (SSR أو static). ولو لقيتها في الاتنين في موقع React، يبقى الموقع ده عامل SSR أو prerender.
 
-الغلطة المشهورة: تدوّر في Elements وتفتكر إن ده اللي جوجل والـ bots شايفينه. الحكم على الـ SEO بيبقى من View Source (أو [[curl -s URL]]) مش من Elements.`
+الغلطة المشهورة: تدوّر في Elements وتفتكر إن ده اللي جوجل والـ bots شايفينه. الحكم على الـ SEO بيبقى من View Source (أو [[curl -s URL]]) مش من Elements.`,
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** من غير ما تبص في الدرس، اكتب الاختصار اللي بيفتح View Source، واللي بيفتح DevTools على Console على طول، واللي بيمسك سهم الاختيار، والفرق بين Ctrl+U و Elements في جملة.`, done: R`كتبت [[Ctrl+U]] و [[Ctrl+Shift+J]] و [[Ctrl+Shift+C]] صح، والجملة فيها «Source = اللي السيرفر بعته، Elements = الصفحة دلوقتي بعد JavaScript».` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** على موقعين (واحد React أو Vue بـ Vite، وواحد موقع أخبار أو Next.js) دوّر على نفس الجملة الظاهرة بـ Ctrl+F في View Source، وبعدين بـ [[curl -s URL | grep -c "الجملة"]] في الترمنال.`, done: R`عندك جدول ٢×٢: الموقع، ولقيت الجملة في Source ولا لأ، ورقم [[grep -c]]. وموقع الـ SPA طلع [[0]] في الاتنين والتاني رقم أكبر من صفر.` },
+            { lvl: 'تطبيق', t: R`**ابني:** صفحة [[spa.html]] فيها [[<div id="root"></div>]] وسكربت بيكتب جواها [[<h1>]]، وصفحة [[ssr.html]] فيها نفس الـ [[<h1>]] مكتوب في الـ HTML. شغّلهم من سيرفر محلي (درس «سيرفر محلي بدل file://»).`, done: R`Ctrl+F في Source بتاع [[spa.html]] مبيلاقيش الجملة وفي [[ssr.html]] بيلاقيها، وفي Console [[document.body.innerText.includes("الجملة")]] بيرجّع [[true]] في الاتنين.` },
+            { lvl: 'تحدي', t: R`**اقرا وتوقّع:** صفحة الـ source بتاعها فيه [[<title>Shop</title>]]، وسكربت فيها بيعمل [[document.title = "Cart (3)"]]. معاينة اللينك في واتساب هتكتب إيه؟ وتاب المتصفح؟ وجوجل؟ اكتب توقعك وبعدين اختبر التاب و [[curl]].`, done: R`التاب بيقول [[Cart (3)]]، و [[curl -s URL | grep -o "<title>[^<]*"]] بيطبع [[<title>Shop]]، وكاتب ليه المعاينة هتاخد [[Shop]] (مش بتشغّل JavaScript) وإن جوجل ممكن ياخد أي واحد فيهم.` },
+          ],
         },
         {
           cmd: "Elements",
@@ -232,7 +246,15 @@ getComputedStyle($0).color
 
 الـ hover: دوس [[:hov]] وعلّم [[:hover]]، هتلاقي قاعدة [[button:hover]] ظهرت في Styles والزرار ثابت على شكل الـ hover من غير ماوس.
 
-الـ font-size: اختار العنوان وافتح Computed واكتب [[font-size]] في الفلتر. هتلاقي القيمة النهائية بالـ px دايمًا (حتى لو كاتبها [[2rem]] هتشوف مثلًا [[32px]])، ولو فتحت السهم جنبها هتعرف أنهي قاعدة في أنهي ملف كسبت. لو لقيت القاعدة بتاعتك في Styles عليها خط، يبقى فيه selector أقوى منها غطّاها.`
+الـ font-size: اختار العنوان وافتح Computed واكتب [[font-size]] في الفلتر. هتلاقي القيمة النهائية بالـ px دايمًا (حتى لو كاتبها [[2rem]] هتشوف مثلًا [[32px]])، ولو فتحت السهم جنبها هتعرف أنهي قاعدة في أنهي ملف كسبت. لو لقيت القاعدة بتاعتك في Styles عليها خط، يبقى فيه selector أقوى منها غطّاها.`,
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** افتح أي صفحة، اختار زرار بـ [[Ctrl+Shift+C]]، وغيّر لونه من Styles، وخبّيه بـ [[H]]، وارجع بـ [[Ctrl+Z]]، وبعدين ريفريش.`, done: R`الزرار اتغيّر واتخبّى ورجع، وبعد الريفريش كل حاجة رجعت زي الأول (التعديل كان على جهازك بس).` },
+            { lvl: 'تطبيق', t: R`**فهم:** في Styles لاقي خاصية عليها خط (مشطوبة) في أي موقع، وروح Computed واعرف القيمة اللي كسبت جاية من أنهي ملف وأنهي سطر، وليه (specificity ولا ترتيب ولا [[!important]]).`, done: R`كاتب: اسم الخاصية، والقيمة المشطوبة وملفها، والقيمة اللي كسبت وملفها ورقم السطر، والسبب في جملة واحدة.` },
+            { lvl: 'تطبيق', t: R`**صلّح:** اعمل صفحة فيها زرار [[button:hover { background: red }]] وزرار تاني [[:focus-visible]]. ظبّط شكل الـ hover والـ focus من غير ما الماوس يتحرك، بـ [[:hov]].`, done: R`علّمت [[:hover]] من [[:hov]] والزرار فضل أحمر وانت بتعدّل في Styles، وعلّمت [[:focus-visible]] وشفت الـ outline، ونقلت القيم النهائية للملف بإيدك.` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك (z-index):** صفحة فيها header [[position: sticky; z-index: 100]] و modal [[position: fixed; z-index: 9999]] جوه [[<section>]] عليه [[transform: translateY(0)]]. افتح الـ modal: هتلاقيه تحت الـ header ومش مغطّي الشاشة. لاقي السبب من Elements و Computed من غير ما تقرا الحل.`, done: R`لقيت إن الـ section عليه [[transform]] (Computed بيقول [[matrix(1, 0, 0, 1, 0, 0)]])، وإن ده بيعمل stacking context و containing block للـ fixed. في المعمل بتاعنا [[document.elementFromPoint]] على مكان الـ header رجّع الـ header مش الـ modal، ومستطيل الـ modal كان [[16,132,1334,585]] بدل الشاشة كلها [[0,0,1366,768]]. ولما نقلت الـ modal لآخر [[body]] بقى فوق ومغطّي الشاشة.` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك (sticky):** header عليه [[position: sticky; top: 0]] وبيطلع مع السكرول. في Elements امشي على أهالي الـ header واحد واحد، ودوّر في Computed على [[overflow]] مش [[visible]]. جرّب ٣ حالات: [[body { overflow-x: hidden }]] لوحده، و [[html, body { overflow-x: hidden }]]، و [[html, body { overflow-x: clip }]].`, done: R`بعد سكرول ٨٠٠px، [[$0.getBoundingClientRect().top]] للـ header: [[0]] في الحالة الأولى، و [[-800]] في التانية (الـ sticky باظ لأن [[body]] بقى scroll container)، و [[0]] في التالتة. وكاتب ليه [[clip]] بيقص من غير ما يعمل scroll container.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** ارسم الـ box model لزرار في أي موقع بأرقامه من المربعات الملونة في Computed (margin و border و padding و content)، وقول عرضه الكلي كام، وبعدين غيّر [[box-sizing]] من Styles وشوف الرقم اتغيّر ولا لأ.`, done: R`الرسمة فيها الأربع أرقام، والعرض الكلي اللي حسبته بإيدك = [[$0.getBoundingClientRect().width]] في Console، وكاتب الفرق بين [[content-box]] و [[border-box]] في سطرين.` },
+          ],
         },
         {
           cmd: "Device Toolbar",
@@ -318,7 +340,13 @@ $$("*").filter(e => e.getBoundingClientRect().right > innerWidth)
 الأشهر: صورة أو جدول بعرض ثابت ([[width: 600px]])، عنصر بـ [[100vw]] مع padding، [[<pre>]] أو لينك طويل من غير [[overflow-wrap: anywhere]]، أو flex row من غير [[flex-wrap]]. ولو ملقتش ولا حاجة والموقع شكله صغير جدًا، غالبًا ناقصه [[<meta name="viewport" content="width=device-width, initial-scale=1">]].`,
           solCode: R`// paste in the Console while the page is 360px wide
 $$("*").filter(e => e.getBoundingClientRect().right > innerWidth)
-  .forEach(e => { e.style.outline = "2px solid red"; console.log(e); });`
+  .forEach(e => { e.style.outline = "2px solid red"; console.log(e); });`,
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** افتح أي موقع بـ [[Ctrl+Shift+M]]، واختار عرض 360، واعمل [[Ctrl+Shift+R]]، واكتب في Console [[innerWidth]] و [[devicePixelRatio]].`, done: R`[[innerWidth]] طلع [[360]]، و [[devicePixelRatio]] طلع الرقم اللي في قايمة الجهاز (مش رقم شاشتك)، وعرفت إنه بيقلّد الـ viewport بس.` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك (overflow):** صفحة بتعمل سكرول أفقي على الموبايل. على عرض 360 قارن [[document.documentElement.scrollWidth]] بـ [[clientWidth]]، وبعدين لاقي العنصر المتسبب بسطر في Console بيدوّر على أي عنصر [[getBoundingClientRect()]] بتاعه خارج الشاشة يمين أو شمال.`, done: R`في معمل الدرس (شريط عرض بـ [[width: 106vw]] في صفحة RTL): [[scrollWidth]] طلع [[414]] و [[clientWidth]] [[360]]، والسطر طلّع [[div.promo -54..344]] (طالع من الشمال لأن الصفحة RTL). ولما شيلت الـ [[width]] الرقمين بقوا [[360]].` },
+            { lvl: 'تطبيق', t: R`**قارن:** السطر المشهور [[[...document.querySelectorAll('*')].filter(e => e.scrollWidth > e.clientWidth)]] شغّله على نفس الصفحة اللي فوق. طلّع مين؟ وليه مطلّعش العنصر المتسبب نفسه؟`, done: R`في المعمل طلّع [[html]] و [[body]] و [[main.wrap]]: دول **الأهالي** اللي جواهم حاجة أعرض منهم، مش العنصر العريض. وكاتب إن سطر [[getBoundingClientRect]] هو اللي بيجيب المتسبب.` },
+            { lvl: 'تحدي', t: R`**ابني:** صفحة فيها ٣ كروت بـ [[grid-template-columns: repeat(3, 1fr)]]، واعمل بـ Device Toolbar جدول: من أنهي عرض الكروت بتبقى أضيق من 150px؟ وبعدين حوّلها لـ [[repeat(auto-fit, minmax(200px, 1fr))]] وكرر.`, done: R`الجدول فيه ٤ عروض (1440 و 768 و 412 و 360) وعرض الكارت في كل واحد ([[$0.offsetWidth]])، والنسخة الجديدة مفيهاش كارت أقل من 200px ولا سكرول أفقي.` },
+          ],
         },
         {
           cmd: "Hard Reload",
@@ -396,7 +424,12 @@ GET /logo.png 200         (Cache-Control: no-cache و Pragma: no-cache)
 - لو حتى بعد Hard Reload مفيش تغيير، المشكلة على السيرفر أو CDN أو service worker.`,
           sol: R`الريفريش العادي ممكن يفضل يعرض الـ CSS القديم: لو فتحت Network هتلاقي ملف الـ CSS جاي [[(memory cache)]] أو [[(disk cache)]] أو [[304]]، يعني المتصفح ما جابش النسخة الجديدة. مع Ctrl+Shift+R هتلاقيه [[200]] وحجمه الحقيقي، والتعديل ظهر.
 
-لو حتى بعد Hard Reload التعديل مش ظاهر، المشكلة مش كاش المتصفح: يا إما الملف مارفعش فعلًا (افتح الـ URL بتاع الـ CSS مباشرة واتأكد إن التعديل فيه)، يا إما فيه CDN أو Nginx كاش قدام السيرفر، يا إما service worker بيرجّع نسخة قديمة (Application ثم Service workers). والحل الدائم للمستخدمين هو إن اسم الملف يتغير مع كل build ([[app.3f9a1c.css]]) زي ما Vite و Next.js بيعملوا.`
+لو حتى بعد Hard Reload التعديل مش ظاهر، المشكلة مش كاش المتصفح: يا إما الملف مارفعش فعلًا (افتح الـ URL بتاع الـ CSS مباشرة واتأكد إن التعديل فيه)، يا إما فيه CDN أو Nginx كاش قدام السيرفر، يا إما service worker بيرجّع نسخة قديمة (Application ثم Service workers). والحل الدائم للمستخدمين هو إن اسم الملف يتغير مع كل build ([[app.3f9a1c.css]]) زي ما Vite و Next.js بيعملوا.`,
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** اكتب الفرق بين التلات طرق (ريفريش عادي، و [[Ctrl+Shift+R]]، و «Empty Cache and Hard Reload») في جدول: كل واحدة بتمسح الكاش ولا لأ، ومحتاجة DevTools مفتوحة ولا لأ.`, done: R`الجدول ٣ صفوف، و «Empty Cache» هي الوحيدة اللي بتمسح الكاش فعلًا ومحتاجة DevTools مفتوحة، وكاتب إن [[Disable cache]] بيشتغل بس والـ DevTools مفتوحة.` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** على أي موقع، سجّل في Network عمود Size لأول ٥ ملفات في ٣ حالات: ريفريش عادي، و [[Ctrl+Shift+R]]، و [[Disable cache]] متعلّم.`, done: R`عندك ١٥ خانة، والريفريش العادي فيه [[(memory cache)]] أو [[(disk cache)]] أو [[304]]، والاتنين التانيين كلهم أرقام بالـ kB.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** زميلك بيقول «عملت Ctrl+Shift+R والزوار لسه شايفين القديم». اكتبله ٣ سطور: ليه، وإيه الفرق بين كاشه وكاش الزوار، والحل اللي بيوصل للزوار (درس «?v= كسر الكاش»).`, done: R`السطور فيها: الكاش على جهاز كل زائر، و [[Cache-Control: max-age]] بيخلّي المتصفح ميسألش، والحل رابط جديد ([[?v=]] أو hash في اسم الملف) مع HTML مش متكيّش.` },
+          ],
         },
         {
           cmd: "?v= كسر الكاش",
@@ -628,12 +661,12 @@ Get-ChildItem *.html | ForEach-Object { (Get-Content $_.FullName -Raw) -replace 
 
 بعد [[sed -i.bak 's/?v=29/?v=30/g' *.html]]: [[grep -o '?v=30' *.html | wc -l]] بيطبع [[6]] (زي عدد [[?v=29]] قبلها)، و [[grep -l '?v=29' *.html]] مبيطبعش حاجة. ولما تروح لأي صفحة: اللوج فيه [[GET /css/style.css?v=30 200]] واللون الجديد ظهر.`,
           practice: [
-            { lvl: 'سريع', t: R`توقّع قبل ما تشغّل: صفحة فيها السطر [[<link href="a.css?v=7"><script src="b.js?v=7"></script>]] وصفحة تانية فيها [[a.css?v=7]] لوحده. [[grep -c '?v=7' *.html]] هيطبع إيه؟ و [[grep -o '?v=7' *.html | wc -l]]؟`, done: R`كتبت [[1]] و [[1]] للأمر الأول و [[3]] للتاني، وشغّلتهم واتطابقوا، وتقدر تقول ليه في جملة.` },
-            { lvl: 'تطبيق', t: R`صلّح الأمر البايظ: [[sed -i 's/?v=1/?v=2/g' *.html]] على موقع فيه ملفات على [[?v=1]] وملفات على [[?v=12]]. اعمل المعمل ده بنفسك (صفحتين)، وشوف [[?v=12]] بقت إيه، واكتب نسخة متلمسش غير [[?v=1]].`, done: R`القديم حوّل [[?v=12]] لـ [[?v=22]]. نسختك ([[s/?v=1"/?v=2"/g]] أو [[\b]] في PowerShell) سابت [[?v=12]] زي ما هي، و [[grep -o '?v=1"' *.html]] بعدها فاضي.` },
-            { lvl: 'تطبيق', t: R`ابني معمل الدرس ([[server.js]] و ٣ صفحات)، وافتح الموقع في المتصفح وتاب Network مفتوح. سجّل لكل خطوة: الـ CSS جه من [[(memory cache)]] أو [[(disk cache)]] أو [[200]]؟ ٣ خطوات: أول زيارة، وبعد ما غيّرت الـ CSS من غير الرقم، وبعد [[?v=30]].`, done: R`عندك ٣ سطور: [[200]]، وبعدين من الكاش واللون القديم، وبعدين [[200]] واللون الجديد. ولوج السيرفر فيه طلب الـ CSS مرتين بس.` },
-            { lvl: 'تطبيق', t: R`ابني [[bump.sh]]: بيلاقي كل [[?v=رقم]] في [[*.html]] (حتى في فولدرات جوه، [[find . -name '*.html']])، ويحطهم كلهم على [[$(date +%Y%m%d%H%M)]]، ويطبع العدد قبل وبعد، ويقف برسالة لو العددين مختلفين.`, done: R`على المعمل بيطبع [[before: 6  after: 6]]، وتشغيله مرتين ورا بعض بيغيّر الرقم من غير ما يكسر حاجة، ولو حطيت ملف [[sub/x.html]] بيتغيّر هو كمان.` },
-            { lvl: 'تحدي', t: R`قارن: بدل الرقم اليدوي، خلّي الرقم لكل ملف هو أول ٨ حروف من [[sha256sum]] بتاع الملف نفسه ([[style.css?v=1a2b3c4d]]). اكتب السكربت، وبعدين غيّر [[style.css]] بس وشغّله: مين اللي رابطه اتغيّر؟`, done: R`بعد تعديل [[style.css]] بس: رابط [[style.css]] اتغيّر في الـ ٣ صفحات، ورابط [[app.js]] فضل زي ما هو، والمتصفح جاب الـ CSS بس (لوج السيرفر).` },
-            { lvl: 'تحدي', t: R`اشرحها لزميل في ٤ سطور: ليه Ctrl+Shift+R صلّح المشكلة عندك ومصلّحهاش عند الزوار، وليه [[?v=]] بيصلّحها، وإيه الشرط اللي لازم يبقى في الـ HTML نفسه.`, done: R`الشرح فيه: الكاش عند كل زائر على جهازه؛ و [[max-age]] بيخلّي المتصفح ميسألش؛ و [[?v=]] رابط جديد مالوش نسخة؛ والـ HTML لازم [[no-cache]] أو مدة قصيرة عشان الرابط الجديد يوصل.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صفحة فيها السطر [[<link href="a.css?v=7"><script src="b.js?v=7"></script>]] وصفحة تانية فيها [[a.css?v=7]] لوحده. [[grep -c '?v=7' *.html]] هيطبع إيه؟ و [[grep -o '?v=7' *.html | wc -l]]؟`, done: R`كتبت [[1]] و [[1]] للأمر الأول و [[3]] للتاني، وشغّلتهم واتطابقوا، وتقدر تقول ليه في جملة.` },
+            { lvl: 'تطبيق', t: R`**صلّح:** [[sed -i 's/?v=1/?v=2/g' *.html]] على موقع فيه ملفات على [[?v=1]] وملفات على [[?v=12]]. اعمل المعمل ده بنفسك (صفحتين)، وشوف [[?v=12]] بقت إيه، واكتب نسخة متلمسش غير [[?v=1]].`, done: R`القديم حوّل [[?v=12]] لـ [[?v=22]]. نسختك ([[s/?v=1"/?v=2"/g]] أو [[\b]] في PowerShell) سابت [[?v=12]] زي ما هي، و [[grep -o '?v=1"' *.html]] بعدها فاضي.` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** ابني معمل الدرس ([[server.js]] و ٣ صفحات)، وافتح الموقع في المتصفح وتاب Network مفتوح. سجّل لكل خطوة: الـ CSS جه من [[(memory cache)]] أو [[(disk cache)]] أو [[200]]؟ ٣ خطوات: أول زيارة، وبعد ما غيّرت الـ CSS من غير الرقم، وبعد [[?v=30]].`, done: R`عندك ٣ سطور: [[200]]، وبعدين من الكاش واللون القديم، وبعدين [[200]] واللون الجديد. ولوج السيرفر فيه طلب الـ CSS مرتين بس.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[bump.sh]]: بيلاقي كل [[?v=رقم]] في [[*.html]] (حتى في فولدرات جوه، [[find . -name '*.html']])، ويحطهم كلهم على [[$(date +%Y%m%d%H%M)]]، ويطبع العدد قبل وبعد، ويقف برسالة لو العددين مختلفين.`, done: R`على المعمل بيطبع [[before: 6  after: 6]]، وتشغيله مرتين ورا بعض بيغيّر الرقم من غير ما يكسر حاجة، ولو حطيت ملف [[sub/x.html]] بيتغيّر هو كمان.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** بدل الرقم اليدوي، خلّي الرقم لكل ملف هو أول ٨ حروف من [[sha256sum]] بتاع الملف نفسه ([[style.css?v=1a2b3c4d]]). اكتب السكربت، وبعدين غيّر [[style.css]] بس وشغّله: مين اللي رابطه اتغيّر؟`, done: R`بعد تعديل [[style.css]] بس: رابط [[style.css]] اتغيّر في الـ ٣ صفحات، ورابط [[app.js]] فضل زي ما هو، والمتصفح جاب الـ CSS بس (لوج السيرفر).` },
+            { lvl: 'تحدي', t: R`**اشرحها:** لزميل في ٤ سطور: ليه Ctrl+Shift+R صلّح المشكلة عندك ومصلّحهاش عند الزوار، وليه [[?v=]] بيصلّحها، وإيه الشرط اللي لازم يبقى في الـ HTML نفسه.`, done: R`الشرح فيه: الكاش عند كل زائر على جهازه؛ و [[max-age]] بيخلّي المتصفح ميسألش؛ و [[?v=]] رابط جديد مالوش نسخة؛ والـ HTML لازم [[no-cache]] أو مدة قصيرة عشان الرابط الجديد يوصل.` },
           ],
           ci: [
             { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`bash`, run: R`printf '<link rel="stylesheet" href="css/style.css?v=29">\n<script src="js/app.js?v=29"></script>\n' > index.html
@@ -657,6 +690,14 @@ Get-ChildItem *.html | ForEach-Object { (Get-Content $_.FullName -Raw) -replace 
       t: "Console",
       l: 1,
       n: "أول مكان تبص فيه لما حاجة في الصفحة مش شغالة",
+      projects: [
+        { lvl: 'صغير', t: R`Snippets شنطة العدة`, what: R`٥ Snippets في Sources: [[audit-images]] (من غير alt أو مقاس)، و [[links-table]] (كل اللينكات و [[target]] و [[rel]])، و [[find-overflow]]، و [[listeners]] (بـ [[getEventListeners]])، و [[design-mode]] (يقلب [[designMode]]). من درس «أوامر Console المفيدة».`, done: R`الـ ٥ بيشتغلوا بـ [[Ctrl+Enter]] على أي موقع ومبيرموش error لو الصفحة مفيهاش العناصر دي، وكل واحد بيطبع [[console.table]].` },
+        { lvl: 'صغير', t: R`قاموس أخطاء Console بتاعك`, what: R`ملف Markdown فيه ١٥ رسالة حقيقية قابلتها (بالنص)، ولكل واحدة: معناها، وأول مكان تبص فيه، والتصليح، ولينك الدرس. من درس «قراءة الأخطاء».`, done: R`١٥ رسالة كل واحدة بنصها الكامل، ومنهم على الأقل واحدة CSP وواحدة Mixed Content وواحدة CORS، وزميل استخدمه وحل خطأ من غير ما يسألك.` },
+        { lvl: 'متوسط', t: R`مسجّل أخطاء الصفحة`, what: R`سكربت صغير تحطه في أي موقع بيمسك [[window.onerror]] و [[unhandledrejection]] و [[securitypolicyviolation]]، ويجمّعهم ويبعتهم كل ١٠ ثواني لـ endpoint (Node) بيحفظهم JSONL. من دروس Console و «Content Security Policy».`, done: R`خطأ JavaScript، و Promise مرفوض، ومخالفة CSP، الـ ٣ وصلوا الملف بالرسالة والملف والسطر والـ URL، ونفس الخطأ ١٠٠ مرة اتبعت مرة واحدة ومعاه عدّاد.` },
+        { lvl: 'متوسط', t: R`Snippet «حالة الصفحة» للدعم الفني`, what: R`Snippet بيطلّع JSON واحد فيه: الـ URL، والـ user agent، والعرض، وآخر ١٠ أخطاء (لو المسجّل موجود)، وأحجام localStorage و cookies (الأسامي بس من غير القيم)، و [[performance]] timings، ويعمله [[copy()]].`, done: R`بعد التشغيل الـ clipboard فيه JSON صالح ([[JSON.parse]] عليه بيعدّي)، ومفيهوش أي قيمة كوكي أو توكن (اتأكدت بـ search على كلمة [[token]]).` },
+        { lvl: 'كبير', t: R`لوحة أخطاء الإنتاج`, what: R`سيرفر Node بيستقبل أخطاء من «مسجّل أخطاء الصفحة»، ويجمّع المتشابه (نفس الرسالة والملف والسطر)، ويترجم الأماكن بالـ source maps (درس «Source maps»)، ويعرض صفحة بالأخطاء متترتبة بالعدد وآخر مرة حصلت، وبيمسح الأقدم من ٣٠ يوم.`, done: R`خطأ من [[app.min.js:1:85]] بيظهر في اللوحة [[cart.js:7:23]]، و ٥٠ نسخة من نفس الخطأ صف واحد بعدّاد ٥٠، والسيرفر بيتعامل مع JSON بايظ من غير ما يقع، وبيكمّل بعد restart من نفس الملف.`, ext: R`زوّد إشعار (تيليجرام أو إيميل) لما خطأ جديد يظهر أول مرة، وفلتر بالمتصفح والصفحة، وrelease tag عشان تعرف الخطأ بدأ مع أنهي نشر.` },
+        { lvl: 'فكرة', t: R`مساعد «اقرا الـ Console ده»`, what: R`أداة بتاخد رسايل Console متصدّرة (Save as) وتصنّفها (JS، شبكة، أمان، extension) وتقول لكل نوع الدرس اللي بيشرحه وأول خطوة. انت بتختار القواعد وشكل التقرير.`, done: R`على ملف Console حقيقي فيه ٢٠ رسالة، كل رسالة اتصنّفت، والرسايل اللي هي نتيجة لرسالة قبلها (زي [[Failed to fetch]] بعد Mixed Content) متجمّعة معاها.`, ext: R`خليها extension بتقرا Console من DevTools panel بتاعها، أو CLI بتاخد HAR وتحلّل الطلبات الفاشلة كمان.` },
+      ],
       items: [
         {
           cmd: "قراءة الأخطاء",
@@ -771,7 +812,15 @@ value[object Object]
 
 [[Failed to load resource: the server responded with a status of 404 (Not Found)]]: ملف أو طلب مش موجود، دوس عليه وهيوديك Network. [[Uncaught TypeError: Cannot read properties of undefined (reading 'x')]] وجنبه اسم الملف ورقم السطر: bug في JavaScript، دوس على اللينك اللي على اليمين يفتحلك السطر في Sources. و [[Access to fetch at ... has been blocked by CORS policy]]: الـ API رافض الـ origin ده (شوف درس CORS).
 
-ركز على أول error بس، لأن التانيين كتير بيبقوا نتيجة ليه. ومتقلقش من الأصفر (warnings) ولا من errors جاية من extensions أو إعلانات (هتلاقي في اللينك [[chrome-extension://]] أو دومين إعلانات): دي مش مشكلة الموقع.`
+ركز على أول error بس، لأن التانيين كتير بيبقوا نتيجة ليه. ومتقلقش من الأصفر (warnings) ولا من errors جاية من extensions أو إعلانات (هتلاقي في اللينك [[chrome-extension://]] أو دومين إعلانات): دي مش مشكلة الموقع.`,
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** اكتب معنى كل رسالة في سطر: [[x is not defined]]، و [[Cannot read properties of undefined (reading 'price')]]، و [[Failed to load resource: the server responded with a status of 404]]، و [[Unexpected token '<']]، و [[Failed to fetch]].`, done: R`٥ سطور، وكل سطر فيه السبب الأشهر وأول مكان تبص فيه (Sources، ولا Network، ولا السيرفر).` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** الكود ده: [[const items = [{ product: { price: 25 }, qty: 2 }, { qty: 1 }]; items.reduce((s, i) => s + i.product.price * i.qty, 0)]]. توقّع الرسالة بالنص وأنهي عنصر السبب، وبعدين شغّله في Console.`, done: R`الرسالة [[TypeError: Cannot read properties of undefined (reading 'price')]] (اتجرّبت في Chrome 156)، والسبب العنصر التاني اللي مفيهوش [[product]]، وكتبت تصليح بـ [[i.product?.price ?? 0]] أو فلتر قبلها.` },
+            { lvl: 'تطبيق', t: R`**صلّح:** صفحة فيها [[<script src="/js/app.js">]] والملف اسمه [[App.js]] على السيرفر (لينكس). اكتب الأخطاء اللي هتطلع في Console بالترتيب، وأنهي واحد هو الأصل.`, done: R`الأول [[404]] على [[app.js]] (السيرفر حساس لحالة الحروف)، وبعده [[... is not defined]] لأي حاجة الملف ده كان المفروض يعرّفها. وكاتب إن الأحمر التاني نتيجة للأول، فبتصلّح الأول بس.` },
+            { lvl: 'تطبيق', t: R`**فلتر:** على صفحة فيها أخطاء كتير، استخدم صندوق الفلتر في Console: [[-url:chrome-extension]] (يخبّي رسايل الإضافات)، و Errors بس، و [[url:app.js]].`, done: R`عدد الرسايل قبل وبعد كل فلتر مكتوب، وفاضل بس رسايل الموقع نفسه، وعرفت تفرّق بين رسالة من extension ورسالة من الموقع.` },
+            { lvl: 'تحدي', t: R`**بيانات حقيقية:** خد كل رسايل Console من صفحة فيها مشاكل (كليك يمين ثم Save as...) وصنّفها في جدول: النوع (JS ولا شبكة ولا أمان CSP/Mixed Content)، والمصدر (الموقع ولا extension)، وتتصلّح فين.`, done: R`الجدول فيه كل الرسايل، وكل رسالة أمان (زي [[Mixed Content]] أو [[Content Security Policy]]) مربوطة بالدرس اللي بيشرحها، وفيه رسالة واحدة على الأقل اكتشفت إنها نتيجة لرسالة قبلها.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** الفرق بين [[console.error("x")]] و [[throw new Error("x")]] في Console: شكلهم، والـ stack، وهل الكود اللي بعدهم بيكمّل. جرّبهم في Console وفي ملف.`, done: R`كاتب إن الاتنين أحمر، بس [[throw]] بيوقف باقي الدالة (والكود اللي بعده مبيتنفّذش) وليه [[Uncaught]] قبله، و [[console.error]] رسالة وبس والكود بيكمّل.` },
+          ],
         },
         {
           cmd: "أوامر Console المفيدة",
@@ -839,7 +888,7 @@ Shift+Enter في Console بينزّلك سطر جديد من غير تنفيذ،
 | [[img]] | أي عنصر صورة |
 | [[:not([alt])]] | مش عليه attribute اسمه alt |
 | [[$$(...)]] | كل العناصر اللي تطابق، كـ array |
-| [[.length]] | عددهم |
+| [[.length]] | عدد العناصر اللي في الـ array |
 
 ~~~text الناتج
 1
@@ -897,9 +946,9 @@ false
 
 | السطر | بيعمل إيه |
 |---|---|
-| [[document.title]] | عنوان الصفحة |
+| [[document.title]] | عنوان الصفحة اللي في التاب |
 | [[$0]] | العنصر المختار في Elements |
-| [[$0.style.outline = ...]] | علّمه بإطار |
+| [[$0.style.outline = ...]] | علّمه بإطار أحمر من غير ما يزق الصفحة |
 | [[$$("img:not([alt])").length]] | عدد الصور اللي من غير alt |
 | [[copy(...)]] | انسخ أي قيمة كـ JSON |
 | [[document.designMode = "on"]] | عدّل نص الصفحة بالكتابة |
@@ -921,290 +970,14 @@ false
 
 [[copy($$("a").map(a => a.href))]] مش بيطبع حاجة (بيرجع [[undefined]])، لكن اللينكات بقت في الـ clipboard كـ JSON array، الصقها في أي ملف. لاحظ إن [[a.href]] بيرجع الـ URL الكامل ([[http://localhost:8791/x]]) حتى لو في الـ HTML مكتوب [[/x]].
 
-لو طلعلك [[$$ is not defined]] أو [[copy is not defined]]: انت بتشغّلهم في كود الصفحة أو في Node. دول أدوات Console بتاعة DevTools بس، مش JavaScript عادي.`
-        }
-      ]
-    },
-    {
-      t: "Network: كل طلب الصفحة بتعمله",
-      l: 2,
-      n: "هنا بتشوف الكلام اللي بين المتصفح والسيرفر",
-      items: [
-        {
-          cmd: "Network",
-          title: "الأساس",
-          desc: "افتح التاب وبعدين اعمل ريفريش، لأنه بيسجّل من لحظة ما تفتحه. كل سطر طلب: الاسم، والـ Status، والنوع، والحجم، والوقت. الأحمر طلبات فشلت. فلتر [[Fetch/XHR]] بيوريك طلبات الـ API بس، وده اللي هتستخدمه أكتر حاجة. علّم على Preserve log لو الصفحة بتعمل redirect أو بتعمل submit وبتنقلك، وإلا هيتمسح. وتحت خالص: عدد الطلبات والحجم الكلي ووقت التحميل.",
-          example: R`Ctrl+R (DevTools open)   Record page load
-Filter: Fetch/XHR        API calls only
-Filter box: status-code:500   Only failed server calls
-Preserve log             Keep requests across navigation
-Disable cache            Always load fresh`,
-          try: "افتح موقعك، واعرف كام طلب بيعمل، وإيه أكبر ملف، وإيه أبطأ طلب.",
-          flag: "keys",
-          deep: {
-            why: "الصفحة بطيئة، أو API بيرجع حاجة غلط. Network هو «السجل الكامل» للكلام بين المتصفح والسيرفر.",
-            how: R`Network بيسجّل من لحظة ما تفتحه. لو فتحته بعد تحميل الصفحة، هتلاقيه فاضي، لازم Ctrl+R عشان تصوّر التحميل.
-
-كل سطر طلب واحد، الأحمر فشل. الفلاتر فوق: All الكل، وFetch/XHR طلبات API، وDoc الصفحات. غالبًا هتكون في Fetch/XHR.
-
-«Preserve log»: لو الصفحة بتعمل redirect أو form submit، السجل بيتمسح بدونه.
-
-تحت: إجمالي عدد الطلبات، والحجم الكلي، والوقت. وفوق خالص: timeline بيوريك متى بدأ كل طلب.`,
-            when: "API بيرجع error. الصفحة بطيئة وعايز تعرف أي طلب السبب. تتأكد إن طلب معين اتبعت أصلًا.",
-            mistakes: "تفتح Network بعد تحميل الصفحة وتلاقيه فاضي. وتنسى Preserve log لما الصفحة بتعمل redirect."
-          },
-          teach: R`## الأول: Network بيسجّل، مش بيفتكر
-
-تاب Network بيكتب سطر لكل طلب المتصفح بيعمله، **من لحظة ما تفتحه**. لو فتحته والصفحة محمّلة خلاص، هتلاقيه فاضي، فلازم [[Ctrl+R]] وهو مفتوح. أسامي الأزرار والفلاتر من Chrome DevTools docs (صفحة Network reference)، والأرقام اللي تحت من تجربة حقيقية.
-
----
-
-## ١. سطور المثال
-
-| السطر | بيعمل إيه |
-|---|---|
-| [[Ctrl+R (DevTools open)]] | ريفريش وانت بتسجّل، فتشوف كل طلبات التحميل |
-| [[Filter: Fetch/XHR]] | يخفي الصور والـ CSS والـ JS ويسيب طلبات الـ API ([[fetch]] و [[XMLHttpRequest]]، الاسم القديم) |
-| [[Filter box: status-code:500]] | في خانة الفلتر تكتب [[property:value]]، وده بيسيب الطلبات اللي رجعت 500 بس |
-| [[Preserve log]] | ميمسحش السجل لما الصفحة تنتقل (redirect أو submit فورم) |
-| [[Disable cache]] | كل طلب يروح للسيرفر، زي زائر جديد |
-
----
-
-## ٢. نفس المعلومات من Console
-
-المعلومات اللي في جدول Network موجودة كمان في الـ Performance API جوه الصفحة. فتحت صفحة تجربة فيها CSS وصورتين وكتبت:
-
-~~~javascript Console
-performance.getEntriesByType("resource").length
-performance.getEntriesByType("resource").map(r => r.name.replace(location.origin, "") + "  " + r.transferSize + " B  " + Math.round(r.duration) + " ms")
-~~~
-
-~~~text الناتج
-4
-["/assets/app.css  489 B  11 ms", "/logo.png  370 B  13 ms", "/banner.png  370 B  14 ms", "/favicon.ico  450 B  3 ms"]
-~~~
-
-- [[performance.getEntriesByType("resource")]]: كل ملف الصفحة طلبته بعد الـ HTML نفسه (عشان كده ٤ مش ٥).
-- [[r.name]]: الـ URL، و [[.replace(location.origin, "")]] بيشيل [[http://127.0.0.1:8791]] من أوله عشان يقصر.
-- [[r.transferSize]]: اللي نزل على الشبكة فعلًا بالـ byte، **بالـ headers**. عشان كده صورة حجمها ٧٠ byte طلعت ٣٧٠: الباقي headers الرد. ده نفس عمود Size في Network.
-- [[r.duration]]: من أول الطلب لآخر byte بالـ ms، زي عمود Time.
-
----
-
-## ٣. الشريط اللي تحت
-
-تحت جدول Network فيه سطر بالشكل ده (الأرقام مثال):
-
-~~~text شكل الشريط
-42 requests | 1.8 MB transferred | 3.2 MB resources | Finish: 2.1 s | DOMContentLoaded: 0.9 s | Load: 1.6 s
-~~~
-
-| الخانة | معناها |
-|---|---|
-| requests | عدد الطلبات |
-| transferred | اللي نزل على الشبكة (مضغوط، وبالـ headers) |
-| resources | حجم الملفات بعد فك الضغط |
-| Finish | آخر طلب خلص إمتى (ممكن يزيد مع طلبات API بعد التحميل) |
-| DOMContentLoaded و Load | الـ HTML اتقرا، وبعدين كل الصور والملفات خلصت |
-
-## الخلاصة
-
-- افتح Network الأول وبعدين [[Ctrl+R]].
-- [[Fetch/XHR]] للـ API، و [[status-code:500]] للطلبات اللي فشلت على السيرفر.
-- Size = اللي نزل بالـ headers، و Time = المدة كلها. رتّب بيهم تلاقي الأكبر والأبطأ.`,
-          sol: R`اعمل Ctrl+R وDevTools مفتوحة على Network. تحت خالص في الـ status bar هتلاقي حاجة زي [[42 requests | 1.8 MB transferred | 3.2 MB resources | Finish: 2.1 s]]: ده عدد الطلبات، و transferred هو اللي نزل فعلًا على الشبكة (مضغوط)، و resources حجمه بعد فك الضغط.
-
-أكبر ملف: دوس على عمود Size يترتب. أبطأ طلب: دوس على عمود Time. الأكبر غالبًا صورة مش مضغوطة أو JS bundle، والأبطأ غالبًا API call أو خط من بره.
-
-لو لقيت الأرقام صغيرة بشكل غريب والـ Size مكتوب فيه [[(memory cache)]]، علّم Disable cache وكرّر، عشان تقيس اللي زائر جديد بيشوفه.`
-        },
-        {
-          cmd: "تفاصيل الطلب",
-          title: "دوس على أي طلب",
-          desc: "[[Headers]]: الـ URL والـ method والـ status، وheaders الطلب والرد. [[Payload]]: البيانات اللي اتبعتت (body أو query). [[Preview]]: الرد منسّق، ولو JSON هيبقى شجرة تفتحها. [[Response]]: الرد خام زي ما جه. [[Timing]]: الوقت راح فين. لو «Waiting for server response» (TTFB) كبير يبقى السيرفر أو الـ API بطيء، ولو «Content Download» كبير يبقى الملف تقيل.",
-          example: R`Headers    URL, method, status, request + response headers
-Payload    What you sent (JSON body, form data, query params)
-Preview    Parsed response (JSON tree, image)
-Response   Raw response text
-Timing     Where the time went (TTFB = server thinking)
-Initiator  Which code line fired this request`,
-          try: "اعمل login على موقع بتاعك وافتح طلب الـ login: شوف الـ Payload، والـ status، والـ Set-Cookie في الرد.",
-          flag: "keys",
-          deep: {
-            why: "شوفت في Network طلب أحمر أو بطيء. محتاج تعرف التفاصيل: إيه اللي اتبعت، وإيه اللي رجع، والوقت راح فين.",
-            how: R`دوس على أي طلب يفتح panel جانبي.
-
-Headers: الـ URL والـ method والـ status. وResponse Headers كل header رجع (Content-Type، وSet-Cookie...). وRequest Headers كل header اتبعت (Authorization، وCookie...).
-
-Payload: اللي انت بعتته. لو GET: query parameters. لو POST: الـ body.
-
-Preview: الرد منسّق. لو JSON هيوريكه كشجرة. أسرع من Response في القراية.
-
-Timing: أهم تاب للأداء. «Waiting (TTFB)» وقت انتظار أول byte: لو كبير، المشكلة في السيرفر أو قاعدة البيانات. «Content Download» وقت تحميل الرد: لو كبير، الرد تقيل.`,
-            when: "بعد أي API request يطلع error: Headers للـ status، وPayload للتأكد من البيانات، وPreview لرسالة الـ error. وTiming لو الـ API بطيء.",
-            mistakes: "إنك تتجاهل Timing وتفضل تدوّر في الكود، والمشكلة query بطيء في قاعدة البيانات."
-          },
-          teach: R`## الأول: كل طلب ليه ٦ تابات
-
-لما تدوس على طلب في Network بيفتح لوحة جنبه. أسماء التابات ومحتواها من Chrome DevTools docs، والأرقام والقيم اللي تحت من تجربة حقيقية على سيرفر محلي.
-
-| التاب | فيه إيه |
-|---|---|
-| Headers | الـ URL والـ method والـ status، وheaders الطلب والرد |
-| Payload | اللي انت بعته: query params أو body |
-| Preview | الرد متفسّر: JSON كشجرة، صورة كصورة |
-| Response | الرد نص خام |
-| Timing | الوقت راح فين |
-| Initiator | مين اللي عمل الطلب (أنهي ملف وسطر) |
-
----
-
-## ١. Headers و Payload و Preview بمثال
-
-عملت من Console طلب [[POST]] لـ [[/api/users]] على السيرفر المحلي بالبودي [[{"name":"test","email":"test@example.com"}]]. القيم دي حقيقية، ومتلخّصة بنفس ترتيب تاب Headers:
-
-~~~text تاب Headers (ملخص)
-Request URL:     http://127.0.0.1:8791/api/users
-Request Method:  POST
-Status Code:     201 Created
-Response Headers:  Content-Type: application/json; charset=utf-8
-Request Headers:   Content-Type: application/json
-~~~
-
-- **Payload** هيعرض البودي اللي بعته (ولو GET هيعرض الـ query params اللي بعد [[?]] في جدول).
-- **Preview** هيعرض الرد [[{id: 7, name: "test", email: "test@example.com"}]] كشجرة، و **Response** نفس الكلام نص خام.
-
----
-
-## ٢. Timing: الوقت راح فين
-
-أهم خانتين:
-
-- **Waiting for server response** (اسمها TTFB = Time To First Byte): من ما الطلب خلص إرسال لحد أول byte في الرد. ده وقت تفكير السيرفر.
-- **Content Download**: من أول byte لآخر byte. ده حجم الرد على سرعة النت.
-
-عملت endpoint [[/slow]] بيستنى ٨٠٠ms قبل ما يرد، وقست الخانتين من Console بالـ Performance API (نفس الأرقام اللي Timing بيعرضها):
-
-~~~javascript Console
-await fetch("/slow").then(r => r.json())
-(() => { const t = performance.getEntriesByName(location.origin + "/slow")[0]; return { waiting_TTFB: Math.round(t.responseStart - t.requestStart), download: Math.round(t.responseEnd - t.responseStart) } })()
-~~~
-
-~~~text الناتج
-{ok: true}
-{waiting_TTFB: 805, download: 0}
-~~~
-
-- [[requestStart]]: الطلب اتبعت إمتى. [[responseStart]]: أول byte وصل إمتى. الفرق = TTFB.
-- [[responseEnd]]: آخر byte. الفرق بينه وبين [[responseStart]] = Content Download.
-
-الناتج: ٨٠٥ms انتظار و ٠ تحميل. يعني الرد صغير، والبطء كله في السيرفر (الـ ٨٠٠ اللي حطيتهم + ٥ms). في الحقيقة ده شكل query بطيء في قاعدة البيانات، والحل في الـ backend مش في الـ frontend.
-
----
-
-## ٣. Initiator
-
-بيوريك سلسلة النداء: أنهي ملف وسطر عمل الطلب. لو الطلب جه من Console هتلاقي حاجة زي [[VM123:1]] ([[VM]] = كود اتنفّذ من غير ملف). مفيد جدًا لما تلاقي طلب غريب ومش عارف مين بيبعته.
-
-## الخلاصة
-
-- Headers للـ status والـ headers، Payload للي بعته، Preview للرد.
-- Timing: TTFB كبير = السيرفر بطيء. Content Download كبير = الرد تقيل.
-- Initiator يقولك مين بعت الطلب.`,
-          sol: R`طلب الـ login غالبًا [[POST /api/login]] (فلتر Fetch/XHR عشان تلاقيه). في Payload هتلاقي اللي بعته، غالبًا [[{"email":"...","password":"..."}]]، أيوه الباسورد باين هنا وده طبيعي لأنه جهازك والطلب ماشي على HTTPS. الـ status لو نجح [[200]] أو [[204]]، ولو غلط [[401]] مع body فيه رسالة.
-
-في Headers تحت Response Headers هتلاقي حاجة زي [[set-cookie: session=abc...; Path=/; HttpOnly; Secure; SameSite=Lax]]. لو ملقتش Set-Cookie خالص، يبقى موقعك غالبًا بيرجّع token في الـ body (شوفه في Preview) وبيحفظه في localStorage. ولو Chrome حاطط علامة تحذير صفرا جنب الكوكي، حط الماوس عليها: غالبًا الكوكي اترفضت عشان [[Secure]] على http أو [[SameSite=None]] من غير Secure.`
-        },
-        {
-          cmd: "Throttling و Blocking",
-          title: "جرّب الظروف الوحشة",
-          desc: "القائمة اللي مكتوب فيها «No throttling» بتخليك تجرب الموقع على نت بطيء (Slow 4G) أو من غير نت (Offline)، وهتلاقي مشاكل مش باينة على نت سريع: زراير بتتداس مرتين، loading مش ظاهر. وكليك يمين على أي طلب ثم Block request بيمنعه (أو Throttle request يبطّأه لوحده)، عشان تعرف الموقع هيعمل إيه لو مكتبة أو API وقعت.",
-          example: R`Throttling dropdown > Slow 4G / Offline
-Right-click request > Block request / Throttle request
-Ctrl+Shift+P > "Show Request conditions"`,
-          try: "افتح موقعك على Slow 4G واعمل submit لفورم، وشوف المستخدم بيشوف إيه وهو مستني.",
-          flag: "keys",
-          deep: {
-            why: "موقعك شغال تمام على نت سريع والمستخدم يشتكي. أو عايز تتأكد إن الموقع بيتعامل صح لو خدمة خارجية وقعت.",
-            how: R`Throttling: القائمة «No throttling» بتقلّد جودة النت. «Slow 4G» بيبطّئ. «Offline» بيقطع خالص.
-
-لما تشغّله وتجرب الموقع، هتلاقي مشاكل مخبّية: لستة بتلود ببطء ومفيش loading indicator، أو زرار اتضغط مرتين لأن المستخدم فكر مش حصل.
-
-Request conditions: كليك يمين ثم Block request أو Throttle request (Chrome 145+). مفيد تشوف الموقع بيعمل إيه لو Google Fonts أو analytics وقعت.`,
-            when: "قبل الرفع: جرّب على Slow 4G. لما بتشتغل على error handling.",
-            mistakes: "تنسى إن Throttling شغال وتتساءل ليه التحميل بطيء. بيفضل حتى لو فتحت تاب جديد."
-          },
-          teach: R`## الأول: بتقلّد ظروف وحشة على جهازك انت
-
-القايمة اللي مكتوب فيها [[No throttling]] بتبطّأ النت **للتاب ده بس**، و Block request بيمنع طلب بعينه. أسماء القوايم من Chrome DevTools docs (Network features reference). التأثير اللي تحت جربته في Chrome ببروتوكول DevTools، وده نفس اللي الأزرار بتعمله.
-
----
-
-## ١. سطور المثال
-
-| السطر | بيعمل إيه |
-|---|---|
-| [[Throttling dropdown > Slow 4G / Offline]] | Slow 4G بيزوّد تأخير على كل طلب ويقلّل السرعة. Offline يقطع النت |
-| [[Right-click request > Block request / Throttle request]] | يمنع (أو يبطّأ) الطلب ده بس، والباقي عادي |
-| [[Ctrl+Shift+P > "Show Request conditions"]] | لوحة فيها كل الطلبات الممنوعة والمبطّأة، وتضيف patterns بـ [[*]] |
-
----
-
-## ٢. التبطيء: الأرقام الحقيقية
-
-نفس طلب [[/api/me]] (رده صغير جدًا) مرة بتأخير ٥٦٠ms وسرعة ١.٤ ميجابت (قريب من فكرة Slow 4G)، ومرة من غير:
-
-~~~javascript Console
-await (async () => { const t = performance.now(); await fetch("/api/me?x=" + Math.random()); return Math.round(performance.now() - t) + " ms" })()
-~~~
-
-~~~text الناتج
-"584 ms"    مع التبطيء
-"2 ms"      من غير
-~~~
-
-- [[performance.now()]] ساعة دقيقة بالـ ms. الفرق قبل وبعد = مدة الطلب.
-- [[?x=" + Math.random()]] بيخلي الـ URL مختلف كل مرة عشان الكاش ميلعبش في القياس.
-- [[(async () => {...})()]] فانكشن async بتتنفّذ على طول، و [[await]] قبلها بيستنى نتيجتها.
-
-نفس الطلب بقى أبطأ ٣٠٠ مرة. أي زرار مفيهوش loading هيبان «مش شغال» نص ثانية، والمستخدم هيدوس تاني.
-
----
-
-## ٣. Offline
-
-~~~javascript Console
-await fetch("/api/me").then(r => r.json())
-~~~
-
-~~~text الناتج في Console
-Failed to load resource: net::ERR_INTERNET_DISCONNECTED
-Uncaught TypeError: Failed to fetch
-~~~
-
-[[fetch]] بيرمي [[TypeError: Failed to fetch]] لما مفيش رد خالص. الكود بتاعك لازم يمسكه بـ [[catch]] ويقول «مفيش نت».
-
----
-
-## ٤. Block request
-
-منعت [[*/api/products]] وجربت:
-
-~~~text الناتج
-Uncaught TypeError: Failed to fetch
-~~~
-
-نفس الـ error، والطلب في Network بيبان إنه اتمنع من DevTools (في البروتوكول سبب الفشل [[inspector]]). وده بيوريك الموقع هيعمل إيه لو API أو مكتبة من بره وقعت.
-
-## الخلاصة
-
-- Slow 4G يكشف الزراير اللي مفيهاش loading والضغط المتكرر.
-- Offline و Block الاتنين بيطلّعوا [[TypeError: Failed to fetch]]: امسكه في الكود.
-- متنساش ترجّع [[No throttling]]، لأنه بيفضل شغال على التاب.`,
-          sol: R`على Slow 4G أي submit هياخد ثانية أو اتنين أو أكتر. اللي المفروض يشوفه المستخدم: الزرار اتقفل ([[disabled]]) ومكتوب عليه «جاري الحفظ...» أو spinner، وبعدين رسالة نجاح أو غلط.
-
-النتايج الوحشة اللي بتكشفها التجربة دي: مفيش أي feedback فالمستخدم يدوس تاني، وفي Network هتلاقي نفس الـ POST اتبعت مرتين (ودي بتعمل طلبين أو حسابين مكررين). أو الفورم بيتمسح قبل ما الرد يرجع. ولو جربت Offline هتشوف [[TypeError: Failed to fetch]] في Console: الواجهة لازم تمسك الـ error ده وتقول للمستخدم «مفيش نت» بدل ما تفضل تلف.`
+لو طلعلك [[$$ is not defined]] أو [[copy is not defined]]: انت بتشغّلهم في كود الصفحة أو في Node. دول أدوات Console بتاعة DevTools بس، مش JavaScript عادي.`,
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** على أي صفحة اكتب: [[$$("img").length]]، و [[$$("img:not([alt])").length]]، و [[$$("a").length]]، و [[document.title]].`, done: R`عندك ٤ أرقام ونص، وعارف إن [[$$]] بيرجّع Array عادي (عليه [[.map]] على طول) مش NodeList.` },
+            { lvl: 'تطبيق', t: R`**ابني:** سطر واحد بيطلّع جدول بكل اللينكات اللي بتفتح في تاب جديد ([[target="_blank"]]) ومفيهاش [[rel="noopener"]]: [[console.table]] بالـ href والنص.`, done: R`الجدول بيظهر بعمودين، ولما زوّدت لينك تجريبي من Elements وشغّلت السطر تاني ظهر فيه.` },
+            { lvl: 'تطبيق', t: R`**قيس:** [[console.time("x")]] و [[console.timeEnd("x")]] حوالين loop مليون لفة، و [[console.count("click")]] مرتين.`, done: R`ظهر سطر بالشكل [[x: 1.43... ms]] (الرقم عندك هيختلف)، و [[click: 1]] و [[click: 2]]. وعارف إن [[console.assert(1 === 2, "math broke")]] بيطبع بس لما الشرط يطلع false.` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** صفحة بتمنع الكليك يمين و F12 بـ JavaScript ([[contextmenu]] و [[keydown]] عليهم [[preventDefault]]). افتح DevTools من قايمة المتصفح (⋮ ثم More tools)، واكتب في Console [[getEventListeners(document)]]، وشيلهم.`, done: R`[[getEventListeners(document)]] رجّع [[contextmenu]] و [[keydown]] بالدوال، وبعد [[removeEventListener]] بالـ listener نفسه الكليك يمين رجع. وعرفت إن [[getEventListeners]] موجودة في Console بس: من سكربت في الصفحة [[typeof getEventListeners]] بيطلع [[undefined]].` },
+            { lvl: 'تحدي', t: R`**مسألة:** اكتب snippet (Sources ثم Snippets) اسمه [[audit]] بيطبع في جدول واحد: عدد الصور من غير alt، والصور اللي أعرض من الشاشة، والزراير اللي مفيهاش نص ولا [[aria-label]]، والـ inputs اللي مالهاش label.`, done: R`الـ snippet بيتشغّل بـ [[Ctrl+Enter]] على أي موقع ويطبع ٤ صفوف بالأرقام، ولما تزوّد صورة من غير alt من Elements الرقم بيزيد ١.` },
+          ],
         }
       ]
     }

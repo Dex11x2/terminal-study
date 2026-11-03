@@ -1,886 +1,1064 @@
 // تكملة تاب web: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/web/01.js (شرح حقول الدرس في أوله)
 MORE("web", [
     {
-      t: "فحص الموقع من بره",
-      l: 3,
-      n: "اللي جوجل والمهاجمين والأدوات بيشوفوه. اعمل الفحص ده لمواقعك انت أو المواقع اللي عندك إذن تختبرها",
+      t: "Application: الكوكيز والتخزين",
+      l: 2,
+      n: "",
+      projects: [
+        { lvl: 'صغير', t: R`فاك JWT صغير`, what: R`صفحة HTML واحدة (من غير سيرفر) بتلصق فيها JWT فتطلّع الـ header والـ payload وتاريخ الانتهاء بتوقيتك وفاضل قد إيه، وتحذير لو فيه حاجة شكلها سر. من درس «localStorage و JWT».`, done: R`توكن منتهي بيظهر أحمر «انتهى من X دقيقة»، و base64url بـ [[-]] و [[_]] بيتفك صح، ونص مش JWT بيطلّع رسالة مش exception.` },
+        { lvl: 'صغير', t: R`مسودة فورم مبتضيعش`, what: R`فورم طويل بيحفظ المسودة في localStorage مع كل كتابة (debounce)، وبيرجّعها بعد ريفريش، وبيمسحها بعد الإرسال، ومبيحفظش الباسورد ولا الكارت. من درس «localStorage و JWT».`, done: R`ريفريش في النص بيرجّع كل الحقول ما عدا الحساسة، و Application مفيهوش المفتاح بعد الإرسال، و localStorage مليان (QuotaExceededError) مبيكسرش الفورم.` },
+        { lvl: 'متوسط', t: R`login بكوكي صح`, what: R`سيرفر Node فيه [[/login]] و [[/logout]] و [[/me]] بكوكي session [[HttpOnly; Secure; SameSite=Lax]]، وحماية CSRF بـ [[Sec-Fetch-Site]] و [[Origin]]، و [[Clear-Site-Data]] في الـ logout. من دروس «Cookies» و «CSRF و SameSite» و «Clear site data».`, done: R`[[document.cookie]] مبيبيّنش الـ session، وفورم POST من [[evil.test]] بيرجع [[403]]، و [[/logout]] بيفضّي الكوكيز والـ storage في Application، واختبارات [[node --test]] بتغطي الـ ٣.` },
+        { lvl: 'متوسط', t: R`مقارنة SameSite في جدول حي`, what: R`معمل درس «CSRF و SameSite» بصفحة نتايج: بتعمل login وتجرّب الـ ٥ طرق من [[evil.test]] و [[api.shop.test]] بزرار، والجدول بيتملي من لوج السيرفر لايف، ومعاه عدّاد الدقيقتين بتوع Lax+POST.`, done: R`الجدول بيطلع زي اللي في الدرس، والخانة «من غير SameSite + فورم» بتتقلب من «اتبعتت» لـ «لأ» بعد دقيقتين قدام عينك.` },
+        { lvl: 'كبير', t: R`فاحص تخزين وكوكيز لأي موقع`, what: R`أداة Playwright بتعمل login (بخطوات من ملف)، وتطلّع تقرير: كل كوكي وخصايصها وتحذير لكل session من غير HttpOnly أو SameSite، وكل مفتاح localStorage شكله توكن (JWT)، و CSP موجود ولا لأ، وتجرّب CSRF بسيط (فورم من origin تاني) على endpoints انت بتحددها.`, done: R`على معمل فيه أخطاء متعمّدة بتطلّع كل واحد، وعلى المعمل المتصلّح بتطلّع صفر، وبتشتغل من غير ما تطبع أي قيمة كوكي أو توكن في التقرير (اتأكدت بـ grep).`, ext: R`زوّد فحص IndexedDB و service worker cache، وخليها تطلّع severity لكل نتيجة وروابط للدروس.` },
+        { lvl: 'فكرة', t: R`«امسح بياناتي» لموقعك`, what: R`صفحة إعدادات في موقعك بتوري اليوزر كل اللي الموقع شايله عنه على جهازه (كوكيز، و localStorage، و cache) بلغة بسيطة، وزرار يمسح كل حاجة. انت بتختار التصميم والكلام.`, done: R`الزرار بيمسح فعلًا (Application فاضي بعده)، واليوزر بيرجع لصفحة login، والصفحة بتشرح كل مفتاح بجملة.`, ext: R`زوّد تصدير البيانات كـ JSON، واربطها بسياسة الخصوصية.` },
+      ],
       items: [
         {
-          cmd: "Security headers و SSL",
-          title: "الحماية الأساسية",
-          desc: "[[Strict-Transport-Security]] بيجبر HTTPS، و [[Content-Security-Policy]] بيحدد السكربتات المسموحة، و [[X-Frame-Options]] بيمنع الموقع يتحط جوه iframe. أول أمر بيطبع اللي موجود منهم. ولتقرير كامل: securityheaders.com بيدّي درجة للـ headers، و ssllabs.com/ssltest بيفحص الشهادة وإعدادات الـ SSL.",
-          example: R`curl -sI https://example.com | grep -iE "strict-transport|content-security|x-frame|x-content-type|referrer-policy"`,
-          try: "افحص موقعك على securityheaders.com، وضيف ناقص واحد في Nginx بـ [[add_header]].",
-          flag: "term",
+          cmd: "Cookies",
+          title: "مين حافظ إيه",
+          desc: "Application ثم Cookies بيوريك كل كوكي بخصايصه. [[HttpOnly]] معناها JavaScript مش قادر يقراها، وده اللي لازم يبقى في كوكي الـ session عشان لو حصل XSS التوكن ميتسرقش. [[Secure]] تتبعت على HTTPS بس. و [[SameSite]] بتحمي من CSRF. دبل كليك على أي قيمة تعدّلها، و Delete تمسحها، ودي أسرع طريقة تختبر «لو الـ session خلصت هيحصل إيه».",
+          example: R`Application > Storage > Cookies > your domain
+Columns to check: HttpOnly, Secure, SameSite, Expires`,
+          try: "بص على كوكيز موقعك بعد login: هل كوكي الـ session عليها HttpOnly و Secure؟",
+          flag: "keys",
           deep: {
-            why: "موقعك محتاج يبعت headers معينة تقول للمتصفح «فعّل الحماية». بدونها حتى لو الكود تمام، المتصفح مش هيفعّل بعض الحمايات.",
-            how: R`Security headers هي response headers بيبعتها السيرفر:
+            why: "Session منتهية ومش عارف ليه، أو كوكي مش بتتخزن، أو عايز تختبر السلوك من غير session.",
+            how: R`Application tab ثم Cookies تحت Storage. كل كوكي بيعرض: الاسم والقيمة، والدومين، والـ Expires، والـ HttpOnly والـ Secure والـ SameSite.
 
-[[Strict-Transport-Security]] (HSTS) بيقول للمتصفح «استخدم HTTPS دايمًا»، يمنع SSL stripping.
+[[HttpOnly]]: JavaScript مش قادر يقرا الكوكي دي. مهم لكوكيات الـ session لأنه يمنع XSS من سرقتها.
 
-[[Content-Security-Policy]] بيحدد من أين يُسمح بتحميل scripts. أقوى حماية ضد XSS.
+[[Secure]]: الكوكي بتتبعت على HTTPS بس.
 
-[[X-Frame-Options: DENY]] بيمنع الموقع يتحط جوه iframe على موقع تاني (clickjacking).
+[[SameSite]]: بيتحكم في إمتى الكوكي بتتبعت مع cross-site requests. Strict لنفس الـ site بس. Lax في navigations. None في كل الحالات (محتاج Secure).
 
-[[X-Content-Type-Options: nosniff]] بيمنع المتصفح يخمّن نوع الملف.
-
-securityheaders.com بيدّيك درجة. مع Nginx بتضيفها بـ [[add_header]].`,
-            when: "بعد ما ترفع موقع: افحصه على securityheaders.com. واستهدف درجة A.",
-            mistakes: "CSP بياخد وقت عشان تضبطه. ابدأ بـ report-only mode يجمعلك violations من غير ما يمنع حاجة."
+تقدر تدبل كليك وتغيّر قيمة أو تمسح بـ Delete. مفيد تختبر «إيه اللي هيحصل لو الـ session خلصت».`,
+            when: "Session بتنتهي قبل المفروض. تختبر صفحة المستخدم غير الـ logged in.",
+            mistakes: "SameSite=None من غير Secure. وكوكيات session من غير HttpOnly."
           },
-          teach: R`## الأول: الـ headers دي تعليمات حماية للمتصفح
+          teach: R`## الأول: الكوكي بيحطها السيرفر بـ Set-Cookie
 
-السيرفر بيبعتها مع الرد، والمتصفح بيشغّل حمايات معينة لما يشوفها. لو مش موجودة، الحماية مش شغالة. المثال بيشوف أنهي موجود. اتشغّل في [[docker run --rm ubuntu:24.04]] على [[example.com]] و [[api.github.com]]، وعلى سيرفر محلي.
-
----
-
-## ١. الأمر
-
-~~~bash
-curl -sI https://example.com | grep -iE "strict-transport|content-security|x-frame|x-content-type|referrer-policy"
-~~~
-
-- [[curl -sI]]: الـ headers بس من غير شريط تحميل.
-- [[| grep -iE "a|b|c"]]: سيب السطور اللي فيها أي واحدة من الكلمات، من غير فرق capital و small.
-
-~~~text الناتج على example.com
-(ولا سطر)
-exit=1
-~~~
-
-[[grep]] مطلعش حاجة وخرج بـ exit code [[1]] (يعني «ملقتش»). example.com مش باعت ولا header أمان من الخمسة. نفس الأمر على api.github.com:
-
-~~~text الناتج على api.github.com
-Strict-Transport-Security: max-age=31536000; includeSubdomains; preload
-X-Frame-Options: deny
-X-Content-Type-Options: nosniff
-Referrer-Policy: origin-when-cross-origin, strict-origin-when-cross-origin
-Content-Security-Policy: default-src 'none'
-~~~
+السيرفر بيبعت header اسمه [[Set-Cookie]]، والمتصفح بيحفظ الكوكي ويبعتها تاني مع كل طلب لنفس الموقع في header اسمه [[Cookie]]. تاب Application ثم Cookies بيعرض المحفوظ بأعمدة لكل خاصية (الأعمدة من Chrome DevTools docs). جربت كوكيتين على سيرفر محلي.
 
 ---
 
-## ٢. كل header بيعمل إيه
+## ١. السيرفر بعت إيه
 
-| الـ header | القيمة في github | معناها |
-|---|---|---|
-| [[Strict-Transport-Security]] (HSTS) | [[max-age=31536000; includeSubdomains; preload]] | سنة كاملة متفتحش الموقع ده غير بـ HTTPS، وكل الـ subdomains كمان |
-| [[X-Frame-Options]] | [[deny]] | ممنوع أي موقع يحطني جوه iframe (ضد clickjacking) |
-| [[X-Content-Type-Options]] | [[nosniff]] | صدّق الـ Content-Type، متخمّنش نوع الملف |
-| [[Referrer-Policy]] | [[strict-origin-when-cross-origin]] (آخر قيمة بتكسب) | لمواقع تانية ابعت الدومين بس من غير المسار |
-| [[Content-Security-Policy]] | [[default-src 'none']] | مسموح تحمّل إيه ومنين. [['none']] = ولا حاجة (ده API مش صفحة، فمحتاجش يحمّل حاجة) |
-
-## ٣. على سيرفرك
-
-أضفت ٤ منهم في Express وجربت نفس الفكرة بـ PowerShell:
-
-~~~text curl.exe -sI http://127.0.0.1:8791/secure | Select-String ...
-Strict-Transport-Security: max-age=31536000; includeSubDomains
-X-Content-Type-Options: nosniff
-X-Frame-Options: DENY
-Referrer-Policy: strict-origin-when-cross-origin
+~~~powershell
+curl.exe -si http://127.0.0.1:8791/shop | Select-String -Pattern "set-cookie"
 ~~~
 
-وفي Nginx (من الـ docs، مش متجرّب هنا) كل واحد سطر [[add_header]] في الـ [[server]] block، و [[always]] في الآخر عشان يتبعت حتى مع ردود الـ errors.
+~~~text الناتج
+Set-Cookie: session=s3cr3t; Path=/; HttpOnly; SameSite=Lax
+Set-Cookie: theme=dark; Path=/; SameSite=Lax
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[session=s3cr3t]] | الاسم والقيمة |
+| [[Path=/]] | تتبعت مع كل المسارات في الموقع |
+| [[HttpOnly]] | JavaScript مش قادر يقراها |
+| [[SameSite=Lax]] | متتبعتش مع طلبات جاية من مواقع تانية، غير لما المستخدم يدوس لينك ويفتح الموقع |
+| [[Secure]] | (مش موجودة هنا لأنه http محلي) تتبعت على HTTPS بس |
+| [[Expires]] أو [[Max-Age]] | (مش موجودين) فالكوكي «Session»: تتمسح لما المتصفح يقفل |
+
+---
+
+## ٢. اختبار HttpOnly في Console
+
+~~~javascript Console
+document.cookie
+~~~
+
+~~~text الناتج
+"theme=dark"
+~~~
+
+[[document.cookie]] بيرجّع الكوكيز اللي JavaScript مسموحله يشوفها، كنص واحد [[اسم=قيمة; اسم=قيمة]]. كوكي الـ [[session]] مش ظاهرة لأنها [[HttpOnly]]، مع إنها موجودة في المتصفح وبتتبعت مع الطلبات (شفتها من بروتوكول DevTools: [[theme, session(HttpOnly)]]). ودي بالظبط الحماية: لو حد قدر يحقن JavaScript في صفحتك (XSS)، مش هيعرف يقرا الـ session.
+
+---
+
+## ٣. اللي في الأعمدة
+
+| العمود | تبص على إيه في كوكي الـ session |
+|---|---|
+| HttpOnly | ✓ |
+| Secure | ✓ في الإنتاج (HTTPS) |
+| SameSite | Lax أو Strict |
+| Expires / Max-Age | تاريخ معقول أو Session |
+
+ودبل كليك على القيمة يعدّلها، و Delete يمسحها. امسح كوكي الـ session وريفريش، وشوف الموقع بيرجّعك لصفحة الـ login صح ولا بيكسر.
 
 ## الخلاصة
 
-- [[curl -sI | grep]] بيوريك الموجود، واللي مش ظاهر ناقص.
-- ابدأ بـ [[X-Content-Type-Options: nosniff]] و [[X-Frame-Options]] و HSTS. و CSP آخر حاجة وبـ Report-Only الأول.
-- securityheaders.com يدّيك درجة، و ssllabs.com/ssltest للشهادة.`,
-          lines: ["الـ headers بس، وفلتر على headers الأمان الخمسة. اللي مش ظاهر يبقى ناقص."],
-          sol: R`securityheaders.com هيديك درجة من F لـ A+ وقايمة Missing Headers. موقع Nginx جديد من غير إعدادات غالبًا بياخد F أو D. أسهل واحد تضيفه وتقفل بيه ثغرة حقيقية:
+- [[Set-Cookie]] من السيرفر، و [[Cookie]] من المتصفح في كل طلب.
+- [[document.cookie]] مش بيوريك الـ HttpOnly، وده المطلوب لكوكي الـ session.
+- SameSite=None لازم معاها Secure.`,
+          sol: R`اللي المفروض تشوفه في صف كوكي الـ session: علامة ✓ في عمود HttpOnly، و ✓ في Secure، و SameSite [[Lax]] أو [[Strict]]، و Expires إما تاريخ معقول أو [[Session]] (تتمسح لما تقفل المتصفح).
 
-[[add_header X-Content-Type-Options "nosniff" always;]]
+اختبار سريع: اكتب [[document.cookie]] في Console. لو كوكي الـ session ظاهرة في الناتج، يبقى مفيهاش HttpOnly وأي XSS يقدر يسرقها، ودي أول حاجة تصلّحها. لو مش ظاهرة يبقى تمام.
 
-حطه في الـ [[server]] block، واعمل [[sudo nginx -t]] (المفروض [[syntax is ok]] و [[test is successful]]) وبعدين [[sudo systemctl reload nginx]]، وشغّل أمر الـ curl تاني: السطر هيظهر.
-
-لو ما ظهرش: فيه [[add_header]] تاني جوه [[location]] (ولما location فيها add_header بتلغي كل اللي ورثته من server)، أو الرد error ونسيت [[always]]. سيب CSP للآخر وابدأها بـ [[Content-Security-Policy-Report-Only]] لأنها بتكسر سكربتات. (مقدرتش أجرّب Nginx حقيقي هنا.)`
+لو Secure مش متعلم عليها والموقع على HTTPS، الكوكي ممكن تتبعت على http لو حد فتح اللينك من غير s. وعلى localhost طبيعي تلاقيها من غير Secure في التطوير.`,
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** افتح Application ثم Cookies على موقع عامل فيه login، واكتب لكل كوكي: الاسم، و HttpOnly، و Secure، و SameSite، و Expires (ولا Session).`, done: R`جدول بكل الكوكيز، وكوكي الـ session الحقيقية متعلّم عليها HttpOnly، ولو لقيت كوكي session من غير HttpOnly كتبت إن ده خطر XSS.` },
+            { lvl: 'تطبيق', t: R`**ابني:** سيرفر Node بيعمل [[Set-Cookie]] لـ ٣ كوكيز: [[a=1]] عادية، و [[b=1; HttpOnly]]، و [[c=1; Max-Age=10]]. في Console اكتب [[document.cookie]] على طول وبعد ١٥ ثانية.`, done: R`أول مرة [[a=1; c=1]] (من غير [[b]])، وبعد ١٥ ثانية [[a=1]] بس. و [[b]] ظاهرة في Application وفي Request Headers بتاعة كل طلب.` },
+            { lvl: 'تطبيق', t: R`**اختبر الـ session:** على موقعك امسح كوكي الـ session من Application (Delete)، وبعدين دوس على أي زرار محتاج login.`, done: R`كاتب اللي حصل: الـ API رجّع [[401]] والصفحة ودّتك للـ login (سليم)، أو فضلت شغالة بيانات قديمة أو وقعت (باج تكتبه وتصلّحه).` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** ابعت [[Set-Cookie: s=1; SameSite=None]] من غير [[Secure]]. هل اتحفظت؟ دوّر في Network على الرد، في تاب Cookies بتاع الطلب، على السبب.`, done: R`الكوكي مااتحفظتش، وجنبها تحذير إن [[SameSite=None]] لازم معاها [[Secure]] (في البروتوكول السبب [[SameSiteNoneInsecure]]، اتجرّب في Chrome 156).` },
+            { lvl: 'تحدي', t: R`**قارن:** كوكي بـ [[Domain=shop.test]] وكوكي من غير [[Domain]]، من [[shop.test]]. افتح [[api.shop.test]] (اعمل الاسمين في [[hosts]] أو بـ [[--host-resolver-rules]]): أنهي واحدة وصلت؟`, done: R`اللي فيها [[Domain]] بتوصل للـ subdomains كمان، واللي من غيره (host-only) بتوصل لـ [[shop.test]] بس. وكاتب إمتى تحتاج الأولى (login مشترك) وإمتى التانية أأمن.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** HttpOnly بيحمي من إيه بالظبط ومبيحميش من إيه؟ ٤ سطور فيها: سرقة الكوكي بـ XSS، والطلبات اللي الـ XSS بيبعتها بنفسه، و CSRF.`, done: R`كاتب إن HttpOnly بيمنع **قراية** الكوكي من JavaScript، بس سكربت XSS لسه يقدر يبعت [[fetch]] والكوكي هتتبعت معاه، و CSRF محتاج SameSite أو token مش HttpOnly.` },
+          ],
         },
         {
-          cmd: "SEO من الترمنال",
-          title: "اللي جوجل بيقراه",
-          desc: "الـ title والـ description وصورة og اللي بتظهر لما حد يشير اللينك، و robots.txt اللي بيقول لجوجل يدخل فين، و sitemap. لو الأوامر دي طلعت فاضية وانت شايف الكلام في المتصفح، يبقى المحتوى بيترسم بـ JavaScript، وده اللي بيفرق فيه SSR.",
-          example: R`curl -s https://example.com | grep -iE "<title|name=\"description\"|property=\"og:"
-curl -s https://example.com/robots.txt
-curl -sI https://example.com/sitemap.xml`,
-          try: "شغّلهم على موقعك واتأكد إن كل صفحة ليها title و description مختلفين.",
+          cmd: "CSRF و SameSite",
+          title: "موقع تاني بيبعت طلب لموقعك بكوكي اليوزر: SameSite بتقرر الكوكي تروح ولا لأ، و Sec-Fetch-Site بيقولك جاي منين",
+          desc: R`CSRF (Cross-Site Request Forgery): اليوزر عامل login في موقعك، وفتح موقع تاني فيه فورم مخفي بيبعت [[POST /transfer]] لموقعك. المتصفح بيبعت الطلب **بكوكي اليوزر**، فالسيرفر فاكره هو. خاصية [[SameSite]] على الكوكي هي اللي بتقرر الكوكي تتبعت مع طلب جاي من موقع تاني ولا لأ: [[Strict]] أبدًا، و [[Lax]] مع التنقّل العادي بـ GET بس (دوسة على لينك)، و [[None]] دايمًا (ولازم معاها [[Secure]]). والكوكي اللي من غير SameSite خالص Chrome بيعاملها [[Lax]]، **بس** لمدة دقيقتين بعد ما تتحط بيسيبها تروح مع POST من موقع تاني (اتقاس في المعمل: بعد الـ login على طول الكوكي راحت مع الفورم، وبعد ١٢٥ ثانية لأ).
+
+وفخ «same-site»: الموقع هو الدومين الأساسي، فـ [[api.shop.test]] و [[shop.test]] نفس الـ site، وكوكي [[Strict]] بتروح من أي subdomain. يعني subdomain مخترق أو فيه صفحات يوزرز = CSRF. الحماية الكاملة: [[SameSite=Lax]] (أو Strict) **و** فحص على السيرفر لأي طلب بيغيّر حاجة: header [[Sec-Fetch-Site]] (المتصفح بيبعته: [[cross-site]] أو [[same-site]] أو [[same-origin]]) أو [[Origin]]، أو CSRF token، ومتغيّرش حاجة بـ GET أبدًا.`,
+          example: R`res.setHeader("Set-Cookie", "session=abc; HttpOnly; Secure; SameSite=Lax; Path=/")
+const site = req.headers["sec-fetch-site"]
+if (req.method !== "GET" && site && site !== "same-origin") return res.writeHead(403).end("cross-site")
+const origin = req.headers.origin
+if (req.method !== "GET" && origin && origin !== "https://shop.test") return res.writeHead(403).end("bad origin")`,
+          lines: [
+            R`كوكي الـ session: [[HttpOnly]] (JavaScript مش بيقراها)، و [[Secure]] (https بس)، و [[SameSite=Lax]] (متتبعتش مع POST أو fetch أو صورة من موقع تاني، وتتبعت لو اليوزر داس على لينك ليك من موقع تاني فيفضل logged in). لو موقعك مش محتاج حد يوصله من لينك وهو logged in (لوحة أدمن مثلًا)، [[Strict]] أأمن.`,
+            R`المتصفحات الحديثة بتبعت [[Sec-Fetch-Site]] مع كل طلب، وصفحات الويب **مش بتقدر** تغيّره (forbidden header). قيمه: [[same-origin]] (نفس الدومين والبورت والـ scheme)، و [[same-site]] (subdomain من نفس الموقع)، و [[cross-site]] (موقع تاني)، و [[none]] (اليوزر كتب الرابط أو bookmark).`,
+            R`أي طلب بيغيّر حاجة ([[POST]] و [[PUT]] و [[DELETE]]) ومش من نفس الـ origin: ارفضه بـ [[403]]. الشرط [[site &&]] بيعدّي الطلبات اللي مفيهاش الـ header أصلًا (متصفح قديم أو curl أو سيرفر تاني)، ودول بيتعاملوا بالسطر اللي بعده أو بـ token.`,
+            R`header [[Origin]] بيتبعت مع أي POST من المتصفح، وفيه الـ scheme والدومين والبورت بتاع الصفحة اللي بعتت (من غير path). أقدم من [[Sec-Fetch-Site]]، فبيغطي متصفحات أكتر.`,
+            R`لو الـ Origin مش موقعك بالظبط: [[403]]. قارن بالنص كامل ([[!==]])، مش بـ [[includes("shop.test")]] (لأن [[https://shop.test.evil.example]] فيها [[shop.test]]).`,
+          ],
+          try: R`ابني معمل الدرس: سيرفر https واحد بيرد على [[shop.test]] و [[evil.test]] و [[api.shop.test]] (شهادة محلية للأسامي التلاتة و [[--host-resolver-rules]]). [[/login]] بيحط ٤ كوكيز بـ SameSite مختلفة، و [[/transfer]] بيطبع الكوكيز اللي وصلت و [[Sec-Fetch-Site]] و [[Origin]]. من صفحات [[evil.test]] جرّب: فورم POST، و [[fetch]]، وصورة، ولينك. وبعدين استنى دقيقتين وكرر.`,
+          deep: {
+            why: R`المتصفح بيبعت الكوكيز الخاصة بأي دومين مع أي طلب رايح له، مهما كان الطلب جاي منين. ده اللي بيخلّي فورم في موقع تاني يقدر يعمل «تحويل فلوس» أو «غيّر الإيميل» أو «امسح الحساب» باسم اليوزر، من غير ما يقرا ولا حرف من الرد. CORS مبيحميش من ده: CORS بيمنع **قراية** الرد، بس الفورم **اتبعت** والسيرفر عمل الحاجة.`,
+            how: R`لكل طلب، المتصفح بيحسب «site» الصفحة اللي بعتت و «site» الطلب. الـ site = الـ scheme + الدومين المسجّل (eTLD+1)، فـ [[api.shop.test]] و [[shop.test]] نفس الـ site، و [[evil.test]] site تاني. لو مختلفين (cross-site): كوكي [[Strict]] متتبعتش أبدًا، و [[Lax]] تتبعت بس لو ده تنقّل top-level (الصفحة كلها بتتغيّر) بـ method آمنة (GET)، و [[None]] تتبعت (بس لازم [[Secure]]، وإلا الكوكي مبتتحفظش أصلًا: [[SameSiteNoneInsecure]] في المعمل). الكوكي من غير SameSite بيتعامل [[Lax]] من Chrome 80، ومعاه استثناء اسمه «Lax+POST»: لو الكوكي اتحطت من أقل من دقيقتين بتتبعت مع POST top-level (عشان مواقع الدفع اللي بترجعك بـ POST). وبجانب الكوكيز، المتصفح بيبعت [[Sec-Fetch-Site]] و [[Sec-Fetch-Mode]] و [[Sec-Fetch-Dest]] و [[Origin]]، والسيرفر يقدر يرفض على أساسهم (Fetch Metadata).`,
+            when: R`أي موقع فيه login بكوكيز (sessions، أو JWT في كوكي). لو الـ API بتاعك بيستخدم [[Authorization: Bearer]] من JavaScript بس (مش كوكي)، CSRF مش مشكلة، لأن الموقع التاني ميعرفش التوكن. وكل فريمورك ليه حماية جاهزة: Django و Laravel و Rails بـ CSRF token، و Next.js Server Actions بيقارن [[Origin]] بالـ host، و Express محتاج تعملها بنفسك (زي المثال) أو مكتبة.`,
+            mistakes: R`تفتكر CORS بيحمي من CSRF (لأ: الفورم بيتبعت عادي). تعمل action بيغيّر حاجة بـ GET ([[/logout]] أو [[/delete?id=5]]): Lax بيبعت الكوكي مع لينك أو redirect. تحط [[SameSite=None]] «عشان كله يشتغل». تختبر بعد الـ login على طول وتقول «الكوكي اتبعتت، يبقى Lax مش شغّال» (ده استثناء الدقيقتين). تفتكر Strict بيحمي من subdomain (same-site). تقارن [[Origin]] بـ [[includes]] أو [[startsWith]]. أو تحط الـ CSRF token في كوكي وتقرا الكوكي بس على السيرفر (لازم تقارن الكوكي بقيمة جاية في header أو body).`
+          },
+          teach: R`## الأول: الهجوم في ٣ خطوات
+
+1. اليوزر عامل login في [[shop.test]]، فالمتصفح شايل كوكي [[session]].
+2. فتح [[evil.test]] (لينك في رسالة، إعلان...). الصفحة فيها:
+
+~~~html evil.test/form
+<form method="POST" action="https://shop.test:8444/transfer?via=form">
+  <input name="to" value="evil"><input name="amount" value="5000">
+</form>
+<script>document.forms[0].submit()</script>
+~~~
+
+3. المتصفح بيبعت الـ POST لـ [[shop.test]]، ولو الكوكي اتبعتت معاه، السيرفر هيفتكر اليوزر هو اللي طلب.
+
+الموقع التاني مش محتاج يقرا الرد ولا يعرف الكوكي. كفاية الطلب يوصل بالكوكي. والسؤال كله: **الكوكي هتتبعت ولا لأ؟** وده اللي [[SameSite]] بيقرره.
+
+---
+
+## المعمل
+
+سيرفر Node بـ [[node:https]] واحد على بورت [[8444]] بيرد على ٣ أسامي حسب header [[Host]]: [[shop.test]] (الموقع)، و [[evil.test]] (المهاجم)، و [[api.shop.test]] (subdomain). الشهادة self-signed للأسامي دي، و Chrome 156 (headless) بـ [[--host-resolver-rules="MAP *.test 127.0.0.1"]].
+
+[[/login]] على [[shop.test]] بيحط ٥ كوكيز:
+
+~~~text Set-Cookie
+s_none=1; SameSite=None; Secure; Path=/
+s_lax=1; SameSite=Lax; Path=/
+s_strict=1; SameSite=Strict; Path=/
+s_default=1; Path=/
+s_none_nosecure=1; SameSite=None; Path=/
+~~~
+
+و [[/transfer]] بيكتب في اللوج: الكوكيز اللي وصلت، و [[sec-fetch-site]]، و [[origin]].
+
+---
+
+## ١. الكوكيز اتحفظت إزاي
+
+~~~text الناتج
+blocked Set-Cookie: s_none_nosecure=1; SameSite=None; Path=/ -> SameSiteNoneInsecure
+stored: s_none(None) s_lax(Lax) s_strict(Strict) s_default(Lax)
+~~~
+
+- [[s_none_nosecure]] **مااتحفظتش خالص**: [[SameSite=None]] من غير [[Secure]] مرفوضة. في DevTools: Network ثم الطلب ثم تاب Cookies، وعلّم «show filtered out request cookies»، هتلاقيها بعلامة تحذير وسببها.
+- [[s_default]] (من غير SameSite) اتحفظت كـ [[Lax]].
+
+وفي Application ثم Cookies، عمود **SameSite** بيوريك ده لكل كوكي.
+
+---
+
+## ٢. من evil.test: إيه اللي وصل؟
+
+صفحات [[evil.test]] بعتت ٤ طلبات بـ ٤ طرق، وصفحة من [[api.shop.test]] بعتت نفس الفورم:
+
+~~~text لوج shop.test مباشرة بعد الـ login
+POST shop.test/transfer?via=form     | cookies: s_default,s_none                   | sec-fetch-site: cross-site | origin: https://evil.test:8444
+POST shop.test/transfer?via=fetch    | cookies: s_none                             | sec-fetch-site: cross-site | origin: https://evil.test:8444
+GET  shop.test/pixel?via=img         | cookies: s_none                             | sec-fetch-site: cross-site | origin: -
+GET  shop.test/transfer?via=link-get | cookies: s_default,s_lax,s_none             | sec-fetch-site: cross-site | origin: -
+POST shop.test/transfer?via=form     | cookies: s_default,s_lax,s_none,s_strict    | sec-fetch-site: same-site  | origin: https://api.shop.test:8444
+~~~
+
+وبعد ما استنيت ١٢٥ ثانية وكررت:
+
+~~~text لوج shop.test بعد ١٢٥ ثانية
+POST shop.test/transfer?via=form     | cookies: s_none                             | sec-fetch-site: cross-site | origin: https://evil.test:8444
+POST shop.test/transfer?via=fetch    | cookies: s_none                             | sec-fetch-site: cross-site
+GET  shop.test/pixel?via=img         | cookies: s_none                             | sec-fetch-site: cross-site
+GET  shop.test/transfer?via=link-get | cookies: s_default,s_lax,s_none             | sec-fetch-site: cross-site
+POST shop.test/transfer?via=form     | cookies: s_default,s_lax,s_none,s_strict    | sec-fetch-site: same-site
+~~~
+
+اقراهم كده:
+
+| الكوكي | فورم POST من موقع تاني | fetch أو صورة من موقع تاني | لينك GET من موقع تاني | من subdomain |
+|---|---|---|---|---|
+| [[None; Secure]] | بتتبعت | بتتبعت | بتتبعت | بتتبعت |
+| [[Lax]] | لأ | لأ | **بتتبعت** | بتتبعت |
+| [[Strict]] | لأ | لأ | لأ | **بتتبعت** |
+| من غير SameSite | **بتتبعت أول دقيقتين** وبعدين لأ | لأ | بتتبعت | بتتبعت |
+
+ثلاث حاجات مهمة طلعت من الجدول:
+
+- **استثناء الدقيقتين (Lax+POST):** [[s_default]] راحت مع الفورم بعد الـ login على طول، ومراحتش بعد ١٢٥ ثانية. لو اختبرت بسرعة هتفتكر الحماية مش شغالة، ولو اختبرت بعد شوية هتفتكرها شغالة. حط [[SameSite=Lax]] صريحة ومتعتمدش على الافتراضي.
+- **[[Lax]] بتروح مع لينك GET:** فأي حاجة بتغيّر بيانات بـ GET ([[/transfer?to=evil]]، [[/logout]]) مكشوفة. GET لازم ميغيّرش حاجة.
+- **same-site مش same-origin:** من [[api.shop.test]] حتى [[Strict]] اتبعتت، و [[sec-fetch-site: same-site]]. لو أي subdomain فيه محتوى يوزرز أو اتخترق، SameSite مش هيحميك.
+
+---
+
+## ٣. الحماية على السيرفر
+
+كل طلب فيه [[sec-fetch-site]] و [[origin]] (اللي الصفحة مش بتقدر تزوّرهم). سطور المثال بترفض أي طلب مش GET لو:
+
+- [[Sec-Fetch-Site]] موجود ومش [[same-origin]]، أو
+- [[Origin]] موجود ومش موقعك بالظبط.
+
+على اللوج اللي فوق: الـ ٣ طلبات من [[evil.test]] (form و fetch) هترجع [[403]]، وكمان اللي من [[api.shop.test]] ([[same-site]] مش [[same-origin]]). ولو عايز تسمح لـ subdomain معيّن، حطه في لستة بالاسم.
+
+والطلبات اللي مفيهاش الاتنين (curl، سيرفر تاني، متصفح قديم جدًا) مش جاية من صفحة في متصفح فيها كوكي اليوزر، فمش CSRF. بس لو عايز حماية زيادة: **CSRF token**. السيرفر بيحط قيمة عشوائية في الصفحة (hidden input أو meta)، والفورم بيبعتها، والسيرفر بيقارنها باللي في الـ session. الموقع التاني ميقدرش يعرف القيمة (CORS بيمنعه يقرا صفحتك). الطريقة دي في PHP في درس «token + SameSite» في تاب PHP.
+
+---
+
+## ٤. تتأكد إزاي من DevTools
+
+- **Application ثم Cookies:** عمود SameSite لكل كوكي (فاضي = مااتحددش = Lax مع الاستثناء).
+- **Network ثم الطلب ثم Cookies:** الكوكيز اللي اتبعتت فعلًا. علّم «show filtered out request cookies» تشوف اللي اتمنعت وجنبها السبب (SameSite أو Secure).
+- **Network ثم الطلب ثم Headers:** [[Sec-Fetch-Site]] و [[Origin]] في Request Headers. ده نفس اللي السيرفر بيشوفه.
+
+## الخلاصة
+
+- CSRF = موقع تاني بيبعت طلب بكوكي اليوزر. CORS مش بيحمي منه.
+- [[Lax]] (صريحة) للـ session، و [[Strict]] للوحات الحساسة، و [[None]] بس لو محتاج cross-site فعلًا (ومعاها [[Secure]]).
+- من غير SameSite = Lax + استثناء POST لمدة دقيقتين.
+- subdomain = same-site، فالكوكي بتروح منه حتى لو Strict.
+- على السيرفر: ارفض أي تغيير لو [[Sec-Fetch-Site]] مش [[same-origin]] أو [[Origin]] غريب، ومتغيّرش حاجة بـ GET.`,
+          sol: R`مباشرة بعد [[/login]]: الفورم من [[evil.test]] وصل بـ [[s_default]] و [[s_none]]، والـ fetch والصورة بـ [[s_none]] بس، واللينك GET بـ [[s_default]] و [[s_lax]] و [[s_none]]، والفورم من [[api.shop.test]] بالأربعة ومعاهم [[s_strict]]. و [[s_none_nosecure]] مااتحفظتش أصلًا ([[SameSiteNoneInsecure]]).
+
+بعد دقيقتين: نفس الكلام بس الفورم من [[evil.test]] بقى بـ [[s_none]] بس، لأن استثناء Lax+POST خلص.
+
+و [[sec-fetch-site]] كان [[cross-site]] في كل طلبات [[evil.test]] و [[same-site]] من [[api.shop.test]]، و [[origin]] موجود في الـ POST بس. بالفحص اللي في المثال، كل الـ POST دي بترجع [[403]]، واللينك GET بيعدّي (ولازم ميغيّرش حاجة).`,
+          flag: "script",
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** املى الجدول من دماغك: [[Strict]] و [[Lax]] و [[None]] ومن غير SameSite، مع فورم POST ولينك GET وصورة من موقع تاني.`, done: R`١٢ خانة صح، ومعلّم على خانة «من غير SameSite + فورم POST» إنها بتتبعت أول دقيقتين بس.` },
+            { lvl: 'تطبيق', t: R`**ابني المعمل:** اعمل السيرفر بـ ٣ أسامي، واكتب جدول الدرس بإيدك من لوج السيرفر.`, done: R`الجدول بتاعك مطابق للي في الدرس، وفيه صف [[api.shop.test]] و [[Strict]] وصلت.` },
+            { lvl: 'تطبيق', t: R`**صلّح:** endpoint [[GET /account/delete?confirm=1]] في موقعك القديم. اكتب صفحة على موقع تاني بتمسح حساب اليوزر بلينك، وبعدين صلّح الـ endpoint.`, done: R`قبل التصليح الحساب اتمسح من لينك من موقع تاني (والكوكي Lax)، وبعد ما بقى [[POST]] ومعاه فحص [[Sec-Fetch-Site]]: نفس اللينك رجع [[404]] أو [[405]]، وفورم POST من موقع تاني رجع [[403]].` },
+            { lvl: 'تطبيق', t: R`**اكتب اختبار:** test (بـ [[node:test]] و [[fetch]]) بيبعت POST لسيرفرك بـ [[sec-fetch-site: cross-site]] ومرة [[same-origin]] ومرة من غير، ويتأكد إن الأولى [[403]] والباقي [[200]].`, done: R`الاختبار بيعدّي، ولما شيلت سطر الفحص من السيرفر الاختبار الأول وقع. (Node [[fetch]] بيسمح تحط [[sec-fetch-site]] بإيدك، المتصفح لأ: اتجرّب.)` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** خلّي استثناء الدقيقتين يبان: اعمل login، وابعت الفورم من [[evil.test]] على طول، وبعد ٦٠ ثانية، وبعد ١٢٥ ثانية. الكوكي اللي من غير SameSite وصلت إمتى؟`, done: R`وصلت في أول مرتين ومراحتش في التالتة، وفي DevTools ثم Network ثم Cookies (مع «show filtered out») ظهرت متمنعة بسبب SameSite في المرة التالتة.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** زميل بيقول «حطينا CORS بـ origin بتاعنا بس، يبقى مفيش CSRF». اكتبله ٤ سطور بالمعمل.`, done: R`السطور فيها: الفورم HTML مش محتاج CORS أصلًا، والـ [[fetch]] بـ [[mode: "no-cors"]] اتبعت ووصل السيرفر (لوج المعمل)، و CORS بيمنع قراية الرد بس، والحماية SameSite و [[Sec-Fetch-Site]]/[[Origin]] أو token.` },
+          ],
+          ci: [
+            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`node`, run: R`import http from "node:http";
+const srv = http.createServer((req, res) => {
+  const site = req.headers["sec-fetch-site"];
+  if (req.method !== "GET" && site && site !== "same-origin") return res.writeHead(403).end("cross-site");
+  const origin = req.headers.origin;
+  if (req.method !== "GET" && origin && origin !== "https://shop.test") return res.writeHead(403).end("bad origin");
+  res.end("ok");
+}).listen(0, "127.0.0.1", async () => {
+  const url = "http://127.0.0.1:" + srv.address().port + "/transfer";
+  const cases = [
+    ["evil form", { "sec-fetch-site": "cross-site", origin: "https://evil.test" }],
+    ["subdomain", { "sec-fetch-site": "same-site", origin: "https://api.shop.test" }],
+    ["same page", { "sec-fetch-site": "same-origin", origin: "https://shop.test" }],
+    ["old browser", { origin: "https://shop.test.evil.example" }],
+    ["curl", {}],
+  ];
+  for (const [name, headers] of cases) {
+    const r = await fetch(url, { method: "POST", headers, body: "to=x" });
+    console.log(name + ": " + r.status + " " + await r.text());
+  }
+  srv.close();
+});`, expect: [R`evil form: 403 cross-site`, R`subdomain: 403 cross-site`, R`same page: 200 ok`, R`old browser: 403 bad origin`, R`curl: 200 ok`] },
+          ],
+        },
+        {
+          cmd: "localStorage و JWT",
+          title: "التخزين في المتصفح",
+          desc: "localStorage بيفضل موجود بعد ما تقفل المتصفح، و sessionStorage بيروح مع قفل التاب. أي JavaScript في الصفحة يقدر يقراهم، فمتحطش فيهم توكن حساس لو تقدر تستخدم كوكي HttpOnly. والـ JWT تلات حتت بينهم نقط، والنص اللي في النص base64 تقدر تفكّه وتقراه. يعني الـ JWT مش مشفّر، فمتحطش فيه أي سر.",
+          example: R`localStorage
+localStorage.getItem("token")
+JSON.parse(atob(localStorage.getItem("token").split(".")[1].replace(/-/g, "+").replace(/_/g, "/")))
+localStorage.clear()`,
+          try: "لو موقعك بيحفظ JWT، فكّه واعرف فيه إيه وبيخلص إمتى (exp).",
+          deep: {
+            why: "التطبيق بيحفظ التوكن في localStorage وعايز تشوفه أو تفكّه. أو تتأكد إنه مش بيحفظ حاجات حساسة.",
+            how: R`Application tab ثم Storage ثم Local Storage. بتشوف كل key/value. بتقدر تعدّل أو تمسح.
+
+الـ JWT مش مشفّر، هو encoded بـ base64url (بـ [[-]] و [[_]] بدل [[+]] و [[/]]، وعشان كده بنبدّلهم قبل atob). اللي بين أول نقطة وتانية نقطة هو الـ payload. [[atob()]] في Console بيفكّه. أو موقع jwt.io.
+
+لأن أي JavaScript يقدر يقرا الـ localStorage، الـ JWT المخزّن هناك هدف لـ XSS. الأأمن إنه يتخزّن في HttpOnly cookie.`,
+            when: "تتأكد من محتوى الـ JWT: صلاحيات اليوزر، وإمتى التوكن بينتهي (حقل exp). تختبر سلوك التطبيق لما التوكن منتهي.",
+            mistakes: "تتوقع إن الـ JWT مشفّر. أي حد ممكن يفكّه. متحطش معلومات سرية جواه."
+          },
+          teach: R`## الأول: localStorage قاموس نصوص للموقع
+
+[[localStorage]] مكان تخزين لكل origin، فيه مفاتيح وقيم **نصوص بس**، وبيفضل بعد قفل المتصفح. و [[sessionStorage]] نفس الشكل بس بيروح مع قفل التاب. والاتنين أي JavaScript في الصفحة يقراهم. المثال بيقرا توكن JWT محفوظ ويفكّه. كله اتشغّل في Console في Chrome، بعد ما حطيت token تجربة بـ [[localStorage.setItem("token", "...")]].
+
+---
+
+## ١. [[localStorage]]
+
+~~~text الناتج
+Storage {token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0Mi...', theme: 'dark', length: 2}
+~~~
+
+كل المفاتيح وقيمها، و [[length]] عددهم. نفس اللي في Application ثم Local Storage.
+
+## ٢. [[localStorage.getItem("token")]]
+
+بيرجّع قيمة مفتاح واحد كنص:
+
+~~~text الناتج
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MiIsIm5hbWUiOiJBbGkiLCJyb2xlIjoidXNlciIsImlhdCI6MTc5MTMwODU1NCwiZXhwIjoxNzkxMzA5NDU0fQ.c2lnbmF0dXJl"
+~~~
+
+الـ JWT تلات حتت بينهم نقط: **header** و **payload** و **signature** (التوقيع اللي السيرفر بيتأكد بيه إن محدش عدّل).
+
+---
+
+## ٣. السطر الطويل من جوه لبرة
+
+~~~javascript Console
+JSON.parse(atob(localStorage.getItem("token").split(".")[1].replace(/-/g, "+").replace(/_/g, "/")))
+~~~
+
+### الخطوة ١: [[.split(".")]]
+
+بيقسم النص عند كل نقطة ويرجّع array من ٣ حتت:
+
+~~~text الناتج
+["eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "eyJzdWIiOiI0MiIsIm5hbWUi...ODU1NCwiZXhwIjoxNzkxMzA5NDU0fQ", "c2lnbmF0dXJl"]
+~~~
+
+### الخطوة ٢: الرقم 1 بين القوسين المربعين
+
+الترقيم بيبدأ من صفر، فـ ١ هي الحتة التانية: الـ payload.
+
+### الخطوة ٣: الـ replace مرتين
+
+- [[/-/g]] regex معناه «كل [[-]]» ([[g]] = global، كل المرات مش أول مرة بس)، ويتبدل بـ [[+]].
+- [[/_/g]] كل [[_]] يتبدل بـ [[/]].
+
+ليه؟ الـ JWT مكتوب بـ **base64url**: نسخة من base64 بتستخدم [[-]] و [[_]] بدل [[+]] و [[/]] عشان تنفع في URL. و [[atob]] بيفهم base64 العادي بس، فبنرجّع الحرفين.
+
+### الخطوة ٤: [[atob(...)]]
+
+اسمها من «ASCII to binary»: بتفك base64 لنص. مثال صغير:
+
+~~~text atob("eyJzdWIiOiI0MiJ9")
+"{"sub":"42"}"
+~~~
+
+### الخطوة ٥: [[JSON.parse(...)]]
+
+بيحوّل نص JSON لـ object:
+
+~~~text الناتج
+{sub: '42', name: 'Ali', role: 'user', iat: 1791308554, exp: 1791309454}
+~~~
+
+| المفتاح | معناه |
+|---|---|
+| [[sub]] | subject: اليوزر صاحب التوكن |
+| [[iat]] | issued at: اتعمل إمتى، بالثواني من ١ يناير ١٩٧٠ |
+| [[exp]] | expires: بيخلص إمتى، بنفس الوحدة |
+
+[[exp - iat]] = ٩٠٠ ثانية، يعني عمره ربع ساعة. وكل ده اتقرا **من غير أي مفتاح سري**: الـ JWT مش مشفّر.
+
+---
+
+## ٤. الـ solCode: إمتى بيخلص
+
+~~~javascript Console
+const p = JSON.parse(atob(localStorage.getItem("token").split(".")[1].replace(/-/g, "+").replace(/_/g, "/")));
+console.log(p, new Date(p.exp * 1000).toISOString(), Math.round((p.exp * 1000 - Date.now()) / 60000) + " min left");
+~~~
+
+~~~text الناتج
+{sub: '42', name: 'Ali', role: 'user', iat: 1791308554, exp: 1791309454} '2026-10-06T17:57:34.000Z' '15 min left'
+~~~
+
+- [[p.exp * 1000]]: JavaScript بيعدّ بالـ ms مش الثواني، فبنضرب في ١٠٠٠.
+- [[new Date(...).toISOString()]]: التاريخ بصيغة عالمية بتوقيت UTC (الـ [[Z]] في الآخر).
+- [[Date.now()]]: دلوقتي بالـ ms. الفرق ÷ ٦٠٠٠٠ = دقايق.
+
+---
+
+## ٥. الأخطاء اللي هتقابلك (جربتها)
+
+~~~text الناتج
+localStorage.getItem("tokn").split(".")
+Uncaught TypeError: Cannot read properties of null (reading 'split')
+
+atob("ab-c")
+Uncaught InvalidCharacterError: Failed to execute 'atob' on 'Window': The string to be decoded is not correctly encoded.
+~~~
+
+- [[getItem]] بيرجّع [[null]] لو المفتاح مش موجود (هنا الاسم غلط).
+- [[atob]] بيرفض [[-]] و [[_]]، وعشان كده الـ replace.
+
+## ٦. [[localStorage.clear()]]
+
+بيمسح كل مفاتيح الموقع ده، وبعدها [[localStorage.length]] رجع [[0]]. زي logout يدوي لو التطبيق شايل التوكن هنا.
+
+## الخلاصة
+
+- localStorage نصوص بس، ويتقري من أي JavaScript في الصفحة.
+- JWT = header.payload.signature، والـ payload base64url تفكّه بـ [[atob]] بعد تبديل [[-]] و [[_]].
+- [[exp]] بالثواني، اضربه في ١٠٠٠ قبل [[new Date]].`,
+          lines: [
+            "كل اللي متخزن (اكتبها في Console).",
+            "[[getItem(\"token\")]] بيرجّع قيمة المفتاح ده كنص، أو [[null]] لو المفتاح مش موجود (مش error).",
+            "فك الـ JWT: خد الجزء اللي في النص (بعد أول نقطة)، فك الـ base64 بـ atob، وحوّله object. هتلاقي فيه اليوزر و exp.",
+            "امسح كل حاجة (زي logout يدوي)."
+          ],
+          sol: R`السطر التالت بيرجع object. جربته على token فيه payload زي ده:
+
+[[{"sub":"42","role":"user","iat":1790000000,"exp":1790000900}]]
+
+[[exp]] بالثواني من ١٩٧٠، فعشان تقراه: [[new Date(1790000900 * 1000)]] = [[2026-09-21T14:28:20.000Z]]. و [[exp - iat]] = ٩٠٠ ثانية، يعني الـ token عمره ربع ساعة. الكود تحت بيطبعلك فاضل قد إيه.
+
+لو طلع [[Cannot read properties of null (reading 'split')]] يبقى مفيش key اسمه [[token]]، اكتب [[localStorage]] وشوف الاسم الحقيقي. ولو طلع [[InvalidCharacterError]] يبقى القيمة مش JWT أو محفوظة بعلامات تنصيص (اعمل [[JSON.parse]] الأول). وافتكر: أي حد معاه الـ token يقدر يقراه كده، فمفيش أسرار في الـ payload.`,
+          solCode: R`const p = JSON.parse(atob(localStorage.getItem("token").split(".")[1].replace(/-/g, "+").replace(/_/g, "/")));
+console.log(p, new Date(p.exp * 1000).toISOString(), Math.round((p.exp * 1000 - Date.now()) / 60000) + " min left");`,
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** في Console: [[localStorage.setItem("n", 5)]] وبعدين [[typeof localStorage.getItem("n")]]، و [[localStorage.setItem("cart", { id: 1 })]] وبعدين [[getItem("cart")]]، و [[getItem("nope")]].`, done: R`طلع [[string]]، و [[[object Object]]]، و [[null]] (اتجرّبوا في Chrome 156). وعارف إن الحل [[JSON.stringify]] و [[JSON.parse]].` },
+            { lvl: 'تطبيق', t: R`**ابني (draft):** فورم «اكتب تعليق» بيحفظ المسودة في localStorage مع كل كتابة، ويرجّعها لما الصفحة تفتح، ويمسحها بعد الإرسال. ومتحفظش حقل الباسورد أو رقم الكارت أبدًا.`, done: R`ريفريش في نص الكتابة بيرجّع النص، وبعد إرسال المسودة اختفت من Application، ولما مسحت المفتاح من Application يدوي الفورم فتح فاضي من غير error.` },
+            { lvl: 'تطبيق', t: R`**فك JWT:** خد أي JWT (من jwt.io أو اعمله بـ [[node]]) وفكّه بسطر الدرس، واحسب هيخلص إمتى بـ [[new Date(payload.exp * 1000)]].`, done: R`عندك الـ payload كـ object، وتاريخ الانتهاء بتوقيتك، وكاتب إن أي حد معاه التوكن يقدر يقرا ده (مش مشفّر).` },
+            { lvl: 'تطبيق', t: R`**قيس الحد:** في Console احفظ [[localStorage.setItem("big", "a".repeat(6 * 1024 * 1024))]]. وبعدين امسح واحفظ قِطع كل واحدة [["a".repeat(524288)]] بمفاتيح مختلفة لحد ما يقع.`, done: R`طلع [[QuotaExceededError: Failed to execute 'setItem' on 'Storage': Setting the value of 'big' exceeded the quota.]]، وفي المعمل ٩ قِطع عدّوا والعاشرة وقعت (يعني الحد حوالي ٥ مليون حرف للموقع كله، Chrome 156). وكتبت [[try/catch]] حوالين [[setItem]].` },
+            { lvl: 'تحدي', t: R`**قارن:** نفس الموقع في تابين: [[sessionStorage.setItem("x", 1)]] في الأول، واقراه في التاني. وبعدين [[localStorage]]. وبعدين افتح تاب تالت بـ «Duplicate tab».`, done: R`[[sessionStorage]] مش ظاهر في التاب التاني، و [[localStorage]] ظاهر، والتاب الـ Duplicate واخد **نسخة** من sessionStorage بتاع الأول. وكاتب ده بيفرق إزاي في سلة شرا.` },
+            { lvl: 'تحدي', t: R`**اشرحها (أمان):** ليه توكن في localStorage أخطر من كوكي HttpOnly لو حصل XSS؟ وإيه اللي HttpOnly مش هيحميك منه؟ ٤ سطور.`, done: R`كاتب إن أي سكربت بيقرا [[localStorage]] ويبعته بره (التوكن اتسرق ويتستخدم من أي جهاز)، والكوكي HttpOnly مش بتتقري بس الـ XSS يقدر يبعت طلبات من الصفحة وهي مفتوحة. والحل الحقيقي منع الـ XSS نفسه (CSP، درس «Content Security Policy»).` },
+          ],
+        },
+        {
+          cmd: "Clear site data",
+          title: "ابدأ على نضافة",
+          desc: "Application ثم Storage ثم Clear site data بيمسح الكوكيز والتخزين والكاش للموقع ده بس، كأنك أول مرة تفتحه. ولو الموقع PWA وبيعرض نسخة قديمة مهما تعمل، ادخل Service workers واعمل Unregister.",
+          example: R`Application > Storage > Clear site data
+Application > Service workers > Unregister
+Or: open the site in an Incognito window`,
+          try: "امسح بيانات موقعك وافتحه كزائر جديد.",
+          flag: "keys",
+          deep: {
+            why: "التطبيق بيعرض حاجة قديمة من الكاش، أو عايز تبدأ من أول كأنك زائر جديد.",
+            how: R`Application ثم Storage ثم «Clear site data» بيمسح Cookies، وlocalStorage، وsessionStorage، والـ cache. بيخلي الموقع كأنك أول مرة تفتحه.
+
+Service Workers مشكلة شائعة: ممكن يعرض نسخة قديمة حتى بعد Hard Reload. Application ثم Service workers ثم Unregister بيشيله.
+
+أسرع طريقة: افتح الموقع في نافذة Incognito.`,
+            when: "لما الـ caching بيسبب مشاكل في التطوير. لما تختبر first-time user experience.",
+            mistakes: "تعمل Hard Reload وتفتكر إنه بيمسح localStorage والـ cookies. هو بس بيتخطى الـ HTTP cache للتحميل ده، ومش بيلمس الكوكيز ولا التخزين."
+          },
+          teach: R`## الأول: إيه اللي بيتمسح فعلًا
+
+الزرار في Application ثم Storage بيمسح كل حاجة الموقع ده حافظها عندك: الكوكيز (حتى الـ HttpOnly)، و localStorage، و sessionStorage، و IndexedDB، والكاش، والـ service workers. أماكن الأزرار من Chrome DevTools docs. والتأثير جربته بأمر بروتوكول DevTools اللي بيعمل نفس الحاجة ([[Storage.clearDataForOrigin]]).
+
+---
+
+## ١. قبل وبعد
+
+قبل المسح:
+
+~~~javascript Console
+localStorage.setItem("token", "abc"); sessionStorage.setItem("step", "2"); [document.cookie, localStorage.length, sessionStorage.length]
+~~~
+
+~~~text الناتج
+["theme=dark", 1, 1]
+كوكيز المتصفح كلها: theme, session(HttpOnly)
+~~~
+
+بعد Clear site data:
+
+~~~javascript Console
+[document.cookie, localStorage.length, sessionStorage.length]
+~~~
+
+~~~text الناتج
+["", 0, 0]
+كوكيز المتصفح كلها: none
+~~~
+
+السطر بيرجّع array فيه ٣ أسئلة مرة واحدة: الكوكيز اللي JavaScript شايفها، وعدد مفاتيح localStorage، وعدد مفاتيح sessionStorage. كله بقى فاضي، وكوكي الـ session الـ HttpOnly اتمسحت كمان، فلو كنت logged in هتلاقي نفسك خرجت.
+
+---
+
+## ٢. سطور المثال
+
+| السطر | بيعمل إيه |
+|---|---|
+| [[Application > Storage > Clear site data]] | يمسح كل حاجة للـ origin ده بس (مش باقي المواقع) |
+| [[Application > Service workers > Unregister]] | يشيل الـ service worker اللي ممكن يكون بيرجّع نسخة قديمة من الكاش بتاعه |
+| [[Or: open the site in an Incognito window]] | نافذة جديدة ببيانات فاضية، ومش بتلمس بيانات نافذتك العادية |
+
+## ٣. الفرق عن Hard Reload
+
+| | Hard Reload | Clear site data |
+|---|---|---|
+| HTTP cache | بيتخطاه للتحميل ده | بيمسحه |
+| الكوكيز | سليمة | بتتمسح |
+| localStorage | سليم | بيتمسح |
+| service worker | فاضل | بيتشال |
+
+## الخلاصة
+
+- Clear site data = الموقع كأنك أول مرة تزوره، وبيخرّجك من الحساب.
+- Hard Reload مش بيلمس الكوكيز ولا التخزين.
+- Incognito أسرع لو عايز تجرّب كزائر جديد من غير ما تمسح حاجة.`,
+          sol: R`بعد Clear site data وريفريش: هتلاقي نفسك عملت logout، وأي banner بتاع cookies أو onboarding هيظهر تاني، وفي Network كل الملفات جاية [[200]] بحجمها الكامل (مفيش memory cache ولا 304). Application ثم Cookies و Local storage هيبقوا فاضيين لحد ما الموقع يكتب فيهم تاني.
+
+لو لسه شايف نفسك logged in، غالبًا الـ session محفوظة على دومين تاني (زي [[auth.yoursite.com]] أو [[.yoursite.com]]) مش الدومين اللي مسحته. ونافذة Incognito بتديك نفس النتيجة من غير ما تمسح بيانات نافذتك العادية.`,
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** قبل ما تعمل Clear site data، اكتب في Console قيمة [[document.cookie]] و [[localStorage.length]] و [[(await caches.keys()).length]]. اعمل Clear، واكتبهم تاني.`, done: R`الـ ٣ قيم قبل وبعد مكتوبة، وبعد المسح [[""]] و [[0]] و [[0]]، والموقع رجع يطلب login.` },
+            { lvl: 'تطبيق', t: R`**قارن:** نفس الموقع في نافذة Incognito وفي نافذة عادية بعد Clear site data. فرق إيه؟ (الإضافات، والكوكيز بتاعة مواقع تانية، والـ service worker).`, done: R`كاتب ٣ فروق على الأقل، ومنهم إن Incognito معظم الإضافات مقفولة فيه، و Clear بيمسح الموقع ده بس.` },
+            { lvl: 'تحدي', t: R`**ابني:** endpoint [[/logout]] بيرجّع header [[Clear-Site-Data: "cookies", "storage"]]. اعمل login (كوكي و localStorage)، وروح [[/logout]].`, done: R`بعد [[/logout]] الكوكي والـ localStorage فاضيين في Application من غير ما الـ JavaScript يمسح حاجة، وكاتب إن الـ header ده بيشتغل على HTTPS أو localhost بس (من MDN).` },
+          ],
+        },
+        {
+          cmd: "سيرفر محلي بدل file://",
+          title: "الصفحة بتفتح بالدبل كليك بس الـ service worker والـ fetch لأ",
+          desc: R`لما تفتح index.html بدبل كليك، العنوان بيبدأ بـ [[file://]]، والمتصفح بيمنع حاجات كتير هناك: service worker، و [[fetch]] لملف JSON جنبها، و [[<script type="module">]]. شغّل سيرفر static صغير في الفولدر وافتح [[http://localhost]]: [[localhost]] المتصفح بيعامله كأنه آمن زي https.`,
+          example: R`cd files
+python -m http.server 8791 --bind 127.0.0.1
+npx serve . -l tcp://127.0.0.1:8791`,
+          try: "افتح مشروع PWA بدبل كليك وشوف الأخطاء في Console، وبعدين من [[http://localhost:8791]] وادخل Application ثم Service workers: هتلاقيه activated.",
           flag: "term",
           deep: {
-            why: "جوجل بيقرا الـ HTML زي curl مش زي المتصفح. الـ title والـ description لازم يكونوا في الـ source.",
-            how: R`[[curl -s]] بيجيب الـ source، و[[grep]] بيلاقي السطور المهمة. [[<title>]] في تاب المتصفح وفي نتايج جوجل. [[name="description"]] الوصف تحت العنوان. [[property="og:]] بيظهر لما حد يشارك الـ link.
+            why: "الكود سليم بس «مش شغال»، والأخطاء في Console شكلها CORS أو «Failed to register a ServiceWorker». بتضيع وقت في الكود والمشكلة إن الصفحة مش جاية من سيرفر.",
+            how: R`[[file://]] ملوش origin حقيقي (المتصفح بيعتبره [[null]])، فـ [[fetch('data.json')]] بيتمنع بـ CORS، والـ modules مبتتحمّلش. والـ service worker محتاج «secure context»: https، أو [[localhost]] و [[127.0.0.1]] بالاستثناء.
 
-لو الـ grep طلع فاضي، الـ content بيتعمل بـ JavaScript (CSR) وجوجل ممكن ما يقراهوش بسهولة. الحل SSR أو static generation.
+[[python -m http.server 8791]]: سيرفر static للفولدر الحالي على بورت 8791، جاي مع Python من غير تسطيب. [[--bind 127.0.0.1]] مهمة: من غيرها بيسمع على كل الشبكات، وأي حد على نفس الواي فاي يقدر يفتح ملفاتك. على ويندوز لو [[python]] مش شغال جرّب [[py]].
 
-[[robots.txt]] بيقول لـ crawlers إيه اللي يدخلوا فيه. [[sitemap.xml]] خريطة بكل صفحات الموقع.`,
-            when: "بعد كل إصدار: اتأكد إن الـ meta tags صح. ولما حد بيشارك الموقع والصورة مش بتظهر.",
-            mistakes: "تفتح الموقع في المتصفح وتشوف الـ title وتفتكر جوجل شايفه. استخدم curl للتأكيد دايمًا."
+[[npx serve . -l tcp://127.0.0.1:8791]]: نفس الفكرة من Node. بيضيف ميزات زي إن [[/about]] يفتح [[about.html]]. ولو كتبت البورت بس ([[-l 8791]]) بيسمع على كل الشبكات زي python من غير [[--bind]]، فاكتب [[tcp://127.0.0.1:]] قبل البورت.
+
+بعد ما تعدّل في [[sw.js]]، المتصفح ممكن يفضل على الـ worker القديم. في Application ثم Service workers فعّل Update on reload وانت بتطوّر. وخلي بالك: لو الـ worker بيستخدم cache-first لكل حاجة، أي تعديل مش هيوصل للزوار غير لما تغيّر اسم الكاش.`,
+            when: "أي صفحة فيها service worker أو PWA أو fetch لملفات محلية أو ES modules.",
+            mistakes: "في مشروع حقيقي sw.js كان cache-first لكل الملفات، فتعديلات index.html مبتوصلش للزوار غير بتغيير اسم الكاش، والأيقونات اللي في الـ manifest مكنتش موجودة فالـ Console مليان 404. وسيرفر التجربة من غير [[--bind 127.0.0.1]] على شبكة عامة."
           },
-          teach: R`## الأول: curl بيشوف زي الـ crawler
+          teach: R`## الأول: [[file://]] مش origin حقيقي
 
-الـ crawler (برنامج جوجل أو واتساب اللي بيقرا الصفحات) بيبدأ بالـ HTML اللي السيرفر بعته، زي [[curl]]، مش زي متصفحك اللي بيشغّل JavaScript. فلو الكلام مش في ناتج curl، فيه احتمال كبير الـ bot ميشوفهوش. اتشغّل في [[docker run --rm ubuntu:24.04]] على example.com، وعلى سيرفر محلي فيه صفحة SSR وصفحة SPA.
+لما تفتح [[index.html]] بدبل كليك، العنوان بيبقى [[file:///C:/...]]، والمتصفح بيعتبر الـ origin بتاع الصفحة [[null]]. وحاجات كتير ممنوعة على origin [[null]]. الحل: سيرفر صغير على جهازك يقدّم الملفات على [[http://127.0.0.1]].
+
+---
+
+## ١. التجربة: نفس الملفات بطريقتين
+
+فولدر فيه [[index.html]] و [[app.js]] (بيعمل [[fetch("data.json")]] ويسجّل [[sw.js]]) و [[data.json]] و [[sw.js]].
+
+### بالدبل كليك (file://) في Chrome
+
+مع [[<script type="module">]]:
+
+~~~text الناتج في Console
+Access to script at 'file:///C:/Users/ali/site/files/app.js' from origin 'null' has been blocked by CORS policy: Cross origin requests are only supported for protocol schemes: chrome, chrome-experimental-site-token-provider, chrome-extension, chrome-untrusted, data, http, https, isolated-app.
+~~~
+
+الملف نفسه مش اتحمّل. ولما خليته script عادي (من غير module):
+
+~~~text الناتج في Console
+sw failed: Failed to register a ServiceWorker: The URL protocol of the current origin ('null') is not supported.
+Access to fetch at 'file:///C:/Users/ali/site/files/data.json' from origin 'null' has been blocked by CORS policy: Cross origin requests are only supported for protocol schemes: ...
+fetch failed: Failed to fetch
+~~~
+
+التلاتة اتمنعوا: الـ module، والـ fetch، والـ service worker.
+
+---
+
+## ٢. [[cd files]]
+
+ادخل الفولدر اللي فيه [[index.html]]. السيرفر بيقدّم الفولدر **اللي انت فيه**.
+
+## ٣. [[python -m http.server 8791 --bind 127.0.0.1]]
+
+| الحتة | معناها |
+|---|---|
+| [[python]] | (على ويندوز ممكن [[py]]، وعلى لينكس والماك [[python3]]) |
+| [[-m http.server]] | شغّل الموديول [[http.server]] اللي جاي مع Python كبرنامج |
+| [[8791]] | البورت |
+| [[--bind 127.0.0.1]] | اسمع على جهازك بس |
+
+~~~text الناتج (Python 3.14 على ويندوز)
+Serving HTTP on 127.0.0.1 port 8791 (http://127.0.0.1:8791/) ...
+127.0.0.1 - - [06/Oct/2026 20:50:45] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [06/Oct/2026 20:50:45] "GET /app.js HTTP/1.1" 200 -
+127.0.0.1 - - [06/Oct/2026 20:50:45] "GET /data.json HTTP/1.1" 200 -
+127.0.0.1 - - [06/Oct/2026 20:50:45] code 404, message File not found
+127.0.0.1 - - [06/Oct/2026 20:50:45] "GET /sw.js HTTP/1.1" 200 -
+127.0.0.1 - - [06/Oct/2026 20:50:45] "GET /favicon.ico HTTP/1.1" 404 -
+~~~
+
+كل سطر طلب: مين طلب، وإمتى، والـ method والمسار، والـ status. و [[/]] بيرجّع [[index.html]] لوحده. وسطر [[code 404, message File not found]] بتاع طلب الـ favicon (المتصفح بيطلب أيقونة لوحده ومفيش واحدة في الفولدر)، بس اتطبع قبل سطر الطلب بتاعه لأن الطلبات كانت شغالة في نفس الوقت، وده طبيعي. وفي Console نفس الصفحة اشتغلت:
+
+~~~text الناتج في Console
+data: {"items":3}
+sw registered, scope: http://127.0.0.1:8791/
+~~~
+
+ليه ده مسموح؟ لأن [[http://127.0.0.1]] و [[http://localhost]] المتصفح بيعاملهم «secure context» زي https. جربت [[isSecureContext]] على الصفحة ورجع [[true]].
+
+[[Ctrl+C]] في الترمنال يقفل السيرفر.
+
+## ٤. [[npx serve . -l tcp://127.0.0.1:8791]]
+
+- [[npx]]: شغّل باكدج npm من غير ما تسطّبها (بينزّلها مؤقتًا أول مرة).
+- [[serve]]: سيرفر static من Vercel.
+- [[.]]: الفولدر الحالي.
+- [[-l]] (listen): يسمع فين. [[tcp://127.0.0.1:8791]] = على جهازك بس، بورت 8791.
+
+~~~text الناتج
+ INFO  Accepting connections at http://127.0.0.1:8791
+~~~
+
+> اتأكدت إن [[npx serve . -l 8791]] (بالبورت بس) بيسمع على كل الشبكات: [[Get-NetTCPConnection]] وراني [[LocalAddress ::]] (يعني كل العناوين)، وده نفس خطر python من غير [[--bind]]. عشان كده المثال بقى بـ [[tcp://127.0.0.1:8791]]، وده خلّاه [[127.0.0.1]] بس.
+
+وميزة زيادة: [[serve]] بيشيل [[.html]] من الروابط. طلبت [[/classic.html]] رجّع [[301]] لـ [[/classic]]، و [[/classic]] رجّع الصفحة [[200]].
+
+| | python http.server | npx serve |
+|---|---|---|
+| محتاج | Python | Node |
+| يقفل على جهازك | [[--bind 127.0.0.1]] | [[-l tcp://127.0.0.1:PORT]] |
+| [[/about]] يفتح [[about.html]] | لأ | أيوه |
+
+## الخلاصة
+
+- [[file://]] = origin [[null]]: مفيش modules ولا fetch لملفات جنبك ولا service worker.
+- سيرفر static على [[127.0.0.1]] بيحل التلاتة، لأن localhost secure context.
+- دايمًا قفل السيرفر على [[127.0.0.1]]، مش على كل الشبكة.`,
+          lines: [
+            "[[cd files]] ادخل الفولدر اللي فيه [[index.html]]: السيرفر بيخدم الفولدر اللي انت واقف فيه.",
+            "سيرفر static على بورت 8791، لجهازك بس.",
+            "أو نفس الحاجة بـ Node من غير Python، ومقفول على جهازك برضه."
+          ],
+          sol: R`بالدبل كليك (file://) جربتها في Chromium وطلع في Console:
+
+[[Failed to register a ServiceWorker: The URL protocol of the current origin ('null') is not supported.]]
+و [[Access to fetch at 'file:///.../data.json' from origin 'null' has been blocked by CORS policy: Cross origin requests are only supported for protocol schemes: ...]] (ولو الـ script نفسه [[type="module"]] بيتمنع بنفس الرسالة قبل ما يشتغل أصلًا)
+
+من [[http://localhost:8791]] نفس الصفحة اشتغلت: الـ fetch رجع الـ JSON، و [[navigator.serviceWorker.register]] نجح، وفي Application ثم Service workers الحالة [[activated and is running]].
+
+السبب: الـ service worker لازم secure context (HTTPS أو localhost)، و file:// الـ origin بتاعه [[null]]. لو السيرفر ما اشتغلش وطلع [[Address already in use]] غيّر البورت. ولو قالك [[python: command not found]] اكتب [[python3]].`,
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** اكتب ٣ حاجات بتقع على [[file://]] وبتشتغل على [[http://localhost]]، وأمر سيرفر واحد بـ Python وواحد بـ Node.`, done: R`الحاجات: service worker، و [[fetch]] لملف جنبها، و [[<script type="module">]]، والأمرين مقفولين على [[127.0.0.1]].` },
+            { lvl: 'تطبيق', t: R`**قارن:** نفس [[index.html]] اللي فيه [[fetch("data.json")]]: افتحه بالدبل كليك، وبعدين من السيرفر. اكتب رسالة Console في الأولى بالنص.`, done: R`الأولى فيها رسالة CORS على [[file://]] (أو [[origin 'null']])، والتانية البيانات ظهرت، وفي Network على السيرفر [[200]] لـ [[data.json]].` },
+            { lvl: 'تحدي', t: R`**ابني:** سيرفر static بـ [[node:http]] في ٢٥ سطر: بيخدم الفولدر، وبيحط [[Content-Type]] صح لـ html و css و js و json و svg، وبيرد [[404]] لملف مش موجود، وبيرفض [[../]] (path traversal).`, done: R`الموقع بيفتح، والـ module scripts شغالة (لو الـ Content-Type غلط بتقع برسالة MIME في Console)، و [[curl --path-as-is http://127.0.0.1:8791/../package.json]] بيرجّع [[403]] أو [[404]] مش الملف.` },
+          ],
+        }
+      ]
+    },
+    {
+      t: "ابعت طلبات بنفسك",
+      l: 3,
+      n: "",
+      projects: [
+        { lvl: 'صغير', t: R`مجموعة طلبات API بـ curl`, what: R`ملف [[api.http.sh]] فيه دوال bash لكل endpoint في مشروعك ([[login]] و [[me]] و [[orders]]) بتقرا التوكن من متغير بيئة، وكل واحدة بتطبع الـ status والوقت. من دروس «curl -i / -v» و «Copy as cURL».`, done: R`[[source api.http.sh && me]] بيطبع اليوزر، ومفيش توكن مكتوب في الملف، وكل دالة بتطبع [[HTTP 401]] واضحة لو التوكن مش موجود.` },
+        { lvl: 'صغير', t: R`[[fetch]] بـ timeout و retry في Console`, what: R`Snippet فيه دالة [[api(path, opts)]] بـ [[AbortSignal.timeout]] و retry على [[5xx]] بـ backoff، تستخدمها من Console على موقعك. من درس «fetch من Console».`, done: R`على endpoint بطيء بيطبع [[TimeoutError: signal timed out]]، وعلى [[503]] مرتين وبعدين [[200]] بيرجّع البيانات، و Network فيه ٣ طلبات.` },
+        { lvl: 'متوسط', t: R`محوّل Copy as cURL لسكربت`, what: R`أداة بتاخد أمر Copy as cURL، وتشيل الـ headers اللي مالهاش لازمة، وتستبدل الكوكي والتوكن بمتغيرات بيئة، وتطلّع نسخة bash و PowerShell و [[fetch]]. من درس «Copy as cURL».`, done: R`على أمر حقيقي النسخ التلاتة بيرجّعوا نفس الرد، ومفيش قيمة كوكي في الناتج، والـ headers قلّت للي لازم بس.` },
+        { lvl: 'متوسط', t: R`smoke test بعد النشر`, what: R`سكربت بيطلب ١٠ endpoints و صفحات بعد كل نشر، ويتأكد من الـ status والـ content-type ووقت أقل من حد، ويطبع جدول، ويخرج [[1]] لو أي حاجة وقعت. من دروس الوحدة و «التعديل وصل؟ curl و grep».`, done: R`على السيرفر السليم كله أخضر و exit [[0]]، ولما وقفت الـ API بيطلّع [[502]] للـ endpoints دي و exit [[1]]، وشغال في bash و PowerShell.` },
+        { lvl: 'كبير', t: R`عميل API صغير بتاعك (زي Postman مصغّر)`, what: R`CLI بيقرا ملف YAML أو JSON فيه طلبات (method و URL و headers و body) ومتغيرات لكل بيئة (dev و staging)، ويشغّل طلب أو كله، ويحفظ قيم من الرد (توكن الـ login) للطلبات اللي بعده، ويطبع الرد ملوّن، وبيعمل assertions بسيطة ([[status == 200]]).`, done: R`سلسلة login ثم me ثم create order بتشتغل بأمر واحد والتوكن بيتنقل لوحده، و assertion واقع بيوقّف ويطبع الفرق، والأسرار من متغيرات بيئة مش من الملف.`, ext: R`زوّد import لـ HAR أو Copy as cURL، وتقرير JUnit عشان يشتغل في CI.` },
+        { lvl: 'فكرة', t: R`أداة «اعمل الطلب ده تاني» لفريق الدعم`, what: R`أداة بتاخد طلب فاشل من يوزر (HAR أو cURL منسوخ)، وتشيل البيانات الحساسة، وتعيده على staging، وتقارن الرد. انت بتختار الواجهة.`, done: R`طلب حقيقي فاشل اتعاد واتشاف نفس الخطأ، ومفيش توكن يوزر اتخزّن ولا اتطبع، وفيه README للدعم الفني.`, ext: R`زوّد زرار «افتح issue» بيحط الطلب المتنضّف والرد في issue جاهز.` },
+      ],
+      items: [
+        {
+          cmd: "fetch من Console",
+          title: "أسرع طريقة تجرب API",
+          desc: "الطلب بيتبعت كأنه من الصفحة نفسها، يعني بالكوكيز بتاعتك. لو انت عامل login على موقعك، تقدر تكلّم الـ API بتاعه كيوزر مسجّل من غير ما تجيب توكن. لو بتكلّم دومين تاني، قواعد CORS هتطبق. Shift+Enter بتنزل سطر جديد في Console من غير ما تنفّذ.",
+          example: R`await fetch("/api/me").then(r => r.json())
+
+await fetch("/api/users", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ name: "test", email: "test@example.com" })
+}).then(r => r.json())`,
+          try: "اعمل GET و POST للـ API بتاعك من Console وشوفهم ظاهرين في Network.",
+          flag: "console",
+          deep: {
+            why: "عايز تجرّب API endpoint بسرعة من غير Postman. والطلب بييجي من الـ browser session، فالـ cookies والـ auth موجودين.",
+            how: R`أي JavaScript بتكتبه في Console بيتنفّذ في context الصفحة الحالية. لو انت logged in، الطلب بيتبعت بكوكياتك أوتوماتيك.
+
+[[await fetch(...)]] بيشتغل في Console. بعد [[.then(r => r.json())]] بيفتح الناتج كـ object تقدر تعدّيه.
+
+الطلب بيظهر في تاب Network عادي، فتقدر تشوف كل تفاصيله.
+
+Shift+Enter بينزّلك سطر جديد من غير تنفيذ، عشان تكتب كود متعدد الأسطر.`,
+            when: "تجرّب endpoint جديد. تبعث بيانات معينة وتشوف الرد. تتأكد إن الـ auth شغال.",
+            mistakes: "تستخدمه لطلبات مهمة وتنسى إنهم بيتنفّذوا فعلًا. DELETE في Console بيمسح فعلًا."
+          },
+          teach: R`## الأول: الطلب بيطلع من الصفحة نفسها
+
+لما تكتب [[fetch]] في Console، الطلب بيتبعت كأن الصفحة هي اللي عملته: نفس الـ origin، ونفس الكوكيز. فلو انت logged in، الـ API هيعاملك كيوزر مسجّل. المثالين اتشغّلوا في Console في Chrome على صفحة على [[http://127.0.0.1:8791]] و API محلي بـ Express.
+
+---
+
+## ١. الـ GET: [[await fetch("/api/me").then(r => r.json())]]
+
+من جوه لبرة:
+
+1. [[fetch("/api/me")]]: ابعت GET (الافتراضي) لـ [[/api/me]] على نفس الموقع. بيرجّع **Promise** (وعد بنتيجة هتيجي بعدين).
+2. [[.then(r => r.json())]]: لما الرد ييجي، سمّيه [[r]] واقرا الـ body كـ JSON. وده كمان Promise.
+3. [[await]]: استنى لحد ما كله يخلص وهات النتيجة.
+
+~~~text الناتج
+{id: 42, name: 'Ali', role: 'user'}
+~~~
+
+ومن غير [[await]]:
+
+~~~text fetch("/api/me").then(r => r.json())
+Promise {<pending>}
+~~~
+
+بتاخد الـ Promise نفسه مش القيمة. فـ [[await]] هو اللي بيطلّع النتيجة.
+
+---
+
+## ٢. الـ POST سطر سطر
+
+~~~javascript Console
+await fetch("/api/users", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ name: "test", email: "test@example.com" })
+}).then(r => r.json())
+~~~
+
+اكتبه بـ Shift+Enter بين السطور، و Enter في الآخر.
+
+| السطر | معناه |
+|---|---|
+| [[fetch("/api/users", {]] | الـ URL، وبعده object إعدادات الطلب |
+| [[method: "POST",]] | نوع الطلب (الافتراضي GET) |
+| [[headers: { "Content-Type": "application/json" },]] | قول للسيرفر «البودي JSON» |
+| [[body: JSON.stringify({...})]] | البودي لازم نص، فـ [[JSON.stringify]] بيحوّل الـ object لنص JSON |
+| [[}).then(r => r.json())]] | قفلة الإعدادات والـ fetch، وبعدين اقرا الرد JSON |
+
+~~~text الناتج
+{id: 7, name: 'test', email: 'test@example.com'}
+~~~
+
+الـ API رجّع الـ user الجديد ومعاه [[id]]، والـ status كان [[201]] (شفته بـ [[r.status]] في طلب تاني).
+
+[[JSON.stringify]] لوحده:
+
+~~~text JSON.stringify({ name: "test" })
+'{"name":"test"}'
+~~~
+
+---
+
+## ٣. جربت أشيل الـ Content-Type
+
+~~~javascript Console
+await fetch("/api/users", { method: "POST", body: JSON.stringify({ name: "no header" }) }).then(r => r.json())
+~~~
+
+~~~text الناتج
+{id: 9}
+~~~
+
+الطلب نجح بس الاسم **ضاع**. من غير الـ header، المتصفح بيبعت النص بنوع [[text/plain]]، و [[express.json()]] بيقرا الـ body بس لو النوع [[application/json]]، فالسيرفر شاف body فاضي. ده خطأ صامت: مفيش error، بس الداتا مش وصلت.
+
+## الخلاصة
+
+- [[fetch]] من Console = من الصفحة، بكوكيزك وبقواعد CORS بتاعتها.
+- [[await]] عشان تشوف القيمة مش [[Promise]].
+- POST بـ JSON محتاج التلاتة: [[method]] و [[Content-Type]] و [[JSON.stringify]].
+- الطلبات دي حقيقية: POST بيعمل، و DELETE بيمسح.`,
+          lines: [
+            "GET وحوّل الرد JSON. [[await]] شغال في Console مباشرة.",
+            "POST لنفس الـ API.",
+            "[[method: \"POST\"]] نوع الطلب: من غيره [[fetch]] بيبعت GET، والسيرفر هيرجّع الليستة بدل ما ينشئ حاجة.",
+            "قول للسيرفر إن البودي JSON، وإلا ممكن يتجاهله.",
+            "البودي لازم يتحوّل لنص بـ stringify.",
+            "[[.then(r => r.json())]] حوّل الرد لـ object. لو السيرفر رجّع HTML (صفحة خطأ) هنا بالظبط هيطلع [[Unexpected token '<']]."
+          ],
+          sol: R`الـ GET بيرجع البيانات مباشرة في Console (object أو array)، والـ POST بيرجع اللي الـ API بيرجعه بعد الإنشاء (غالبًا الـ object الجديد ومعاه [[id]]). وفي تاب Network (فلتر Fetch/XHR) هتلاقي الطلبين، وفي عمود Initiator مكتوب حاجة زي [[VM123:1]] يعني جايين من Console.
+
+دوس على الـ POST: في Payload هتلاقي [[{"name":"test","email":"test@example.com"}]]، والـ status [[201]] لو الـ API مكتوب صح. لو رجع [[400]] أو [[415]] غالبًا نسيت [[Content-Type: application/json]] فالسيرفر مقراش الـ body. ولو الـ GET رجع [[401]] وانت عامل login، يبقى الـ API على دومين تاني والكوكي ما اتبعتتش (محتاج [[credentials: "include"]]).`,
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** اكتب من دماغك [[fetch]] بـ POST و JSON (التلات حاجات اللي لازم تبقى موجودة)، وشغّله على أي API تجريبي عندك، ولاقي الطلب في Network وعمود Initiator.`, done: R`الطلب اتبعت بـ [[method]] و [[Content-Type: application/json]] و [[JSON.stringify]]، والـ Initiator مكتوب فيه حاجة زي [[VM123:1]] (يعني من Console).` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[const r = fetch("/api/me"); r.status]]. هيطبع إيه؟ وبعدين [[(await fetch("/api/me")).status]]؟`, done: R`الأول [[undefined]] (لأن [[r]] لسه [[Promise]] مش [[Response]])، والتاني الرقم. وكاتب إن [[await]] شغال في Console من غير [[async]] بس مش في ملف عادي.` },
+            { lvl: 'تطبيق', t: R`**ابني:** دالة [[api(path, body)]] في Console بتبعت GET لو مفيش body و POST بـ JSON لو فيه، وترمي error فيه الـ status لو [[!res.ok]]، وترجّع JSON أو [[null]] لو [[204]].`, done: R`[[await api("/api/me")]] بيرجّع object، و [[await api("/nope")]] بيرمي [[HTTP 404]]، و DELETE بـ [[204]] بيرجّع [[null]] من غير [[Unexpected end of JSON input]].` },
+            { lvl: 'تطبيق', t: R`**timeout و إلغاء:** endpoint بيستنى ٣ ثواني. ابعتله [[fetch(url, { signal: AbortSignal.timeout(1000) })]]، ومرة تانية بـ [[AbortController]] و [[abort()]] على طول.`, done: R`الأولى [[TimeoutError: signal timed out]] والتانية [[AbortError: signal is aborted without reason]] (اتجرّبوا في Chrome 156)، والطلب في Network مكتوب [[(canceled)]].` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** ٥ طلبات ورا بعض بـ [[await]] في loop، وبعدين نفس الـ ٥ بـ [[Promise.all]]، على endpoint بيستنى ٥٠٠ms. قيس بـ [[performance.now()]].`, done: R`الـ loop حوالي ٢٥٠٠ms و [[Promise.all]] حوالي ٥٠٠ms، وفي Waterfall الأولى درجات سلّم والتانية عمود واحد.` },
+            { lvl: 'تحدي', t: R`**صلّح:** [[fetch("/api/save", { method: "POST", body: { name: "x" } })]] والسيرفر بيقول البودي فاضي. بص في Payload، واكتب ليه، وصلّحه.`, done: R`Payload كان [[[object Object]]] و [[Content-Type: text/plain;charset=UTF-8]]، والتصليح [[JSON.stringify]] و [[Content-Type: application/json]]، والسيرفر استلم [[{"name":"x"}]].` },
+          ],
+        },
+        {
+          cmd: "Copy as cURL",
+          title: "خد أي طلب وكرره من الترمنال",
+          desc: "كليك يمين على أي طلب في Network ثم Copy ثم Copy as cURL. الطلب هيتنسخ بكل الـ headers والكوكيز والبودي، فتلصقه في الترمنال وتعدّل فيه اللي انت عايزه. على ويندوز اختار «(bash)» لو هتشغّله في Git Bash أو WSL، أو «Copy as PowerShell». وخد بالك: الأمر المنسوخ فيه الكوكيز والتوكن بتوعك، فمتبعتهوش لحد ومتحطهوش في issue على GitHub.",
+          example: R`curl 'https://example.com/api/orders' -H 'accept: application/json' -H 'cookie: session=...' --compressed
+curl -i 'https://example.com/api/orders?page=2' -H 'cookie: session=...'`,
+          try: "انسخ طلب من موقعك، وشغّله في الترمنال، وغيّر فيه page أو أي parameter.",
+          flag: "term",
+          deep: {
+            why: "لاقيت طلب في Network فيه مشكلة وعايز تجرّبه من الترمنال. Copy as cURL بيحوّله لأمر جاهز بكل الـ headers والكوكيز.",
+            how: R`كليك يمين على أي طلب في Network ثم Copy ثم Copy as cURL (bash). الأمر فيه: الـ URL، وكل الـ headers، والـ body لو POST.
+
+تلصقه في الترمنال وتشغّله. تقدر تعدّل: الـ URL، أو قيمة header، أو الـ body.
+
+تحذير: الأمر بيتضمن cookies وTokens الـ session الحقيقية. متبعتهوش في رسايل أو تحطه على GitHub.`,
+            when: "Bug في API وعايز تعزله. تشارك الطلب مع backend developer.",
+            mistakes: "تنسى تغيير الكوكيز والتوكنات قبل ما تشارك."
+          },
+          teach: R`## الأول: الطلب كله في أمر واحد
+
+Copy as cURL في Network بيحوّل الطلب لأمر [[curl]] فيه كل حاجة: الـ URL والـ method والـ headers والكوكيز والبودي. مكان الأمر في القايمة من Chrome DevTools docs. والأوامر اللي تحت اتشغّلت بـ [[curl.exe]] في PowerShell 7 على API محلي.
 
 ---
 
 ## ١. السطر الأول
 
 ~~~bash
-curl -s https://example.com | grep -iE "<title|name=\"description\"|property=\"og:"
+curl 'https://example.com/api/orders' -H 'accept: application/json' -H 'cookie: session=...' --compressed
 ~~~
 
 | الحتة | معناها |
 |---|---|
-| [[curl -s URL]] | هات الـ HTML بسكوت |
-| [[<title]] | عنوان الصفحة (التاب ونتايج جوجل) |
-| [[name=\"description\"]] | الوصف تحت العنوان في جوجل. [[\"]] علامة تنصيص جوه النص |
-| [[property=\"og:]] | Open Graph: العنوان والصورة لما حد يشارك اللينك |
+| [[curl 'URL']] | الطلب، و GET لأن مفيش [[-X]] ولا بودي |
+| [[-H 'accept: application/json']] | header: «عايز الرد JSON» |
+| [[-H 'cookie: session=...']] | الكوكي بتاعتك. ده اللي بيخلي الطلب «logged in» |
+| [[--compressed]] | اطلب رد مضغوط (gzip أو br) وفكّه، زي المتصفح |
 
-~~~text الناتج على example.com
-<!doctype html><html lang=en><head><meta charset=utf-8>...<title>Example Domain</title><style>...</style></head><body>...</body></html>
-~~~
+الأمر الحقيقي بيبقى أطول بكتير ([[user-agent]] و [[referer]] و [[sec-ch-ua]]...)، ومعظمهم ممكن تمسحه.
 
-(اختصرت السطر.) الصفحة كلها سطر واحد، فـ grep طبعه كله عشان فيه [[<title]]. ومفيهوش description ولا og، يعني لو حد شارك اللينك هيظهر العنوان بس من غير وصف ولا صورة.
-
-على صفحة SSR محلية:
-
-~~~text الناتج
-<html><head><meta charset="utf-8"><title>Shop</title>
-<meta name="description" content="Fresh deals every day">
-<meta property="og:title" content="Shop">
-<meta property="og:image" content="https://example.com/og.png">
-~~~
-
-وعلى صفحة SPA بنفس المحتوى، اللي React بيحط الـ description فيها بعد التحميل: سطر [[<title>Shop</title>]] بس.
-
-## ٢. [[curl -s https://example.com/robots.txt]]
-
-robots.txt ملف نص في جذر الموقع بيقول لكل crawler يدخل فين. على example.com رجع **نفس صفحة الـ HTML**، ولما سألت عن الـ status:
-
-~~~text curl -s -o /dev/null -w "%{http_code} %{content_type}"
-404 text/html; charset=utf-8
-~~~
-
-يعني مفيش robots.txt، والسيرفر رجّع صفحة 404 بـ HTML. وده لازم تاخد بالك منه: [[curl -s]] مش بيقولك الـ status. ([[-o /dev/null]] ارمي البودي، و [[-w]] اطبع معلومات عن الرد.) على السيرفر المحلي:
-
-~~~text الناتج
-User-agent: *
-Disallow: /admin/
-Sitemap: http://127.0.0.1:8791/sitemap.xml
-~~~
-
-- [[User-agent: *]]: القواعد دي لكل الـ crawlers.
-- [[Disallow: /admin/]]: متدخلش هنا. ([[Disallow: /]] لوحدها = متدخلش الموقع كله.)
-- [[Sitemap:]]: مكان الـ sitemap.
-
-## ٣. [[curl -sI https://example.com/sitemap.xml]]
-
-~~~text الناتج على example.com
-HTTP/2 404
-~~~
-
-~~~text الناتج على السيرفر المحلي
-HTTP/1.1 200 OK
-Content-Type: application/xml; charset=utf-8
-~~~
-
-[[-I]] هنا لأننا عايزين نعرف «موجود ولا لأ» بس، فالسطر الأول كفاية.
-
-## الخلاصة
-
-- اللي مش في [[curl -s]] ممكن جوجل والـ bots ميشوفوهوش بسهولة.
-- كل صفحة: title و description مختلفين، و og:image للمشاركة.
-- [[curl -s]] بيخبّي الـ status، فاسأل بـ [[-I]] أو [[-w "%{http_code}"]].`,
-          lines: [
-            "هات الصفحة زي ما جوجل بيشوفها، وطلّع الـ title والـ description و Open Graph. لو فاضي، المحتوى بيتعمل بـ JavaScript.",
-            "ملف robots.txt: إيه اللي مسموح للـ crawlers.",
-            "الـ sitemap موجود؟ (200 يعني موجود)."
-          ],
-          sol: R`على صفحة مظبوطة أمر الـ grep بيطلّع سطور فيها [[<title>...]] و [[<meta name="description" content="...">]] و [[<meta property="og:title" ...>]] و [[og:image]]. كرره على ٣ صفحات مختلفة (الرئيسية ومقال ومنتج) ولازم الـ title والـ description يختلفوا في كل واحدة.
-
-الغلط الأشهر في SPA: كل الصفحات بترجّع نفس الـ title، أو grep مش بيلاقي description خالص لأن React بيحطها بعد التحميل. [[robots.txt]] المفروض يرجع نص فيه [[Sitemap: https://...]] ومفيهوش [[Disallow: /]] (دي بتمنع جوجل من الموقع كله، وبتتنسي من staging). و [[curl -sI .../sitemap.xml]] لازم يرجع [[200]]، لو [[404]] اعمل واحد.`
-        },
-        {
-          cmd: "أدوات جوجل",
-          title: "إزاي جوجل شايف موقعك",
-          desc: "ابحث في جوجل بـ [[site:example.com]] تعرف أنهي صفحات متسجلة عنده. Google Search Console (بعد ما تثبت إن الدومين بتاعك) هي أهم أداة: URL Inspection بيوريك الصفحة زي ما Googlebot شافها ولو فيها مشكلة. و Rich Results Test بيختبر الـ structured data (JSON-LD). و PageSpeed Insights للأداء.",
-          example: R`site:example.com
-site:example.com inurl:blog
-search.google.com/search-console
-search.google.com/test/rich-results
-pagespeed.web.dev`,
-          try: "سجّل موقع من مواقعك في Search Console، واعمل URL Inspection لصفحة جديدة.",
-          flag: "keys",
-          deep: {
-            why: "جوجل هو أهم زائر لموقعك. محتاج تعرف إزاي هو شايفه، وإيه الصفحات اللي عنده.",
-            how: R`[[site:example.com]] في Google Search بيعرض الصفحات اللي جوجل عنده. لو صفحة مهمة مش ظاهرة، جوجل مش وصل إليها أو فيها مشكلة.
-
-Google Search Console: بتثبّت إنك صاحب الموقع، وبيوريك الـ impressions والـ clicks والـ position في نتايج البحث.
-
-URL Inspection: بتحط URL وبيوريك Googlebot شايفه إيه. لو Googlebot مش قادر يشوف المحتوى (SPA من غير SSR) بيقولك.
-
-Rich Results Test: لو فيه structured data (JSON-LD)، بيتحقق إنه صح وهيظهر كـ rich result.`,
-            when: "بعد إطلاق الموقع. كل شهر تشوف اللي الناس بيبحثوا عنه. لما صفحة مهمة مش في جوجل.",
-            mistakes: "تستنى جوجل يلاقي موقعك لوحده. ابعت sitemap في Search Console على طول."
-          },
-          teach: R`## الأول: الأدوات دي بتسأل جوجل نفسه
-
-curl بيوريك اللي **ممكن** جوجل يشوفه، والأدوات دي بتوريك اللي جوجل **شافه فعلًا**. كلها مواقع على النت محتاجة حساب جوجل أو موقع حقيقي، فالشرح هنا من Google Search Central docs ومش متجرّب من الجهاز ده.
-
----
-
-## ١. [[site:example.com]]
-
-بتكتبه في خانة بحث جوجل العادية. [[site:]] معناها «النتايج من الدومين ده بس». النتايج = الصفحات اللي جوجل عامل لها index (فهرسة) تقريبًا. العدد اللي بيظهر تقريبي، فمتعتمدش عليه كرقم دقيق.
-
-## ٢. [[site:example.com inurl:blog]]
-
-[[inurl:blog]] = الـ URL فيه كلمة blog. الاتنين مع بعض: «صفحات الموقع ده اللي في قسم الـ blog». مفيد تشوف قسم معين اتفهرس ولا لأ.
-
-## ٣. [[search.google.com/search-console]]
-
-Google Search Console. لازم تثبت إن الموقع بتاعك:
-
-| النوع | بيغطي | التأكيد |
-|---|---|---|
-| Domain | الدومين كله بكل الـ subdomains و http و https | TXT record في الـ DNS |
-| URL prefix | الـ URL ده بس (مثلًا https://www) | ملف HTML أو meta tag أو Google Analytics |
-
-وجواه: **URL Inspection** (حالة صفحة واحدة: متفهرسة؟ وآخر مرة Googlebot زارها؟ وشكلها زي ما شافها)، و **Performance** (الكلمات اللي ظهرت بيها، والظهور والضغطات)، و **Sitemaps** (تبعت الـ sitemap).
-
-## ٤. [[search.google.com/test/rich-results]]
-
-بيختبر الـ structured data: كود JSON-LD في الصفحة بيوصف المحتوى (منتج بسعر، مقال، أسئلة شائعة). لو صح، الصفحة ممكن تظهر في جوجل بشكل مميز (نجوم، سعر). بتديه URL أو كود.
-
-## ٥. [[pagespeed.web.dev]]
-
-PageSpeed Insights: بيشغّل Lighthouse من سيرفرات جوجل، **وفوقه** بيانات زوار حقيقيين من Chrome (CrUX) لو موقعك عليه زيارات كفاية. ده المكان اللي هتلاقي فيه INP الحقيقي، اللي Lighthouse لوحده مش بيقيسه.
-
-| الأداة | بتجاوب على |
-|---|---|
-| [[site:]] | جوجل عنده إيه من موقعي؟ |
-| Search Console | صفحة معينة متفهرسة؟ والناس بتلاقيني بإيه؟ |
-| Rich Results Test | الـ structured data بتاعتي صح؟ |
-| PageSpeed Insights | سرعتي في المعمل وعند الزوار الحقيقيين |
-
-## الخلاصة
-
-- [[site:]] نظرة سريعة، و Search Console هو المرجع الحقيقي.
-- ابعت الـ sitemap في Search Console أول ما الموقع يطلع.
-- PageSpeed Insights = Lighthouse + بيانات زوار حقيقيين.`,
-          sol: R`في Search Console: Add property، واختار Domain (بيتأكد بـ TXT record في الـ DNS) أو URL prefix (بيتأكد بملف HTML أو meta tag). بعد التأكيد حط لينك الصفحة الجديدة في خانة البحث فوق (URL Inspection).
-
-الغالب هتشوف [[URL is not on Google]] لصفحة جديدة، وده طبيعي. دوس Test Live URL عشان تتأكد إن جوجل قادر يوصلها (لازم يقول [[URL is available to Google]])، وبعدين Request Indexing. بعد أيام ارجع هتلاقيها [[URL is on Google]].
-
-لو قالك [[Excluded by 'noindex' tag]] أو [[Blocked by robots.txt]] ده غلط عندك مش عند جوجل. وخد بالك إن البيانات في Performance بتاخد يومين تلاتة تظهر لموقع جديد.`
-        },
-        {
-          cmd: "التعديل وصل؟ curl و grep",
-          title: "اتأكد إن التعديل وصل للسيرفر من غير متصفح: شغّل في الخلفية، استنى الجاهزية، و curl و grep",
-          desc: R`بدل ما تفتح المتصفح بعد كل تعديل وتسأل «هو اتحدّث ولا ده كاش؟»، اسأل السيرفر نفسه: شغّل [[npm run dev > dev.log 2>&1 &]] (اللوج في ملف والترمنال فاضي)، واستنى لحد ما اللوج يقول [[Ready in]] **أو** خطأ (حلقة [[until grep -q ...]] بحد أقصى للوقت)، وبعدين [[curl -w]] يطبع الكود والوقت والحجم، و [[grep -oE]] يدوّر على النص أو اللون الجديد في الرد نفسه.
-
-ولما الصفحة ترجع [[500]]: الإجابة في اللوج مش في المتصفح ([[grep -aiE "error|⨯" dev.log | tail -5]]). والفخاخ اللي اتقابلت: [[Ready in]] بيتطبع **قبل** ما الصفحة تتبني (أول طلب ممكن ياخد ثواني أو دقيقة)، والخطأ ساعات بيتكتب على stderr فلو مجمعتش [[2>&1]] مش هتشوفه، واللوج فيه ألوان فـ [[grep]] بيقول [[binary file matches]].`,
-          example: R`# Linux and Mac (and Git Bash):
-npm run dev > dev.log 2>&1 &
-timeout 60 bash -c 'until grep -aqE "Ready in|Error|Another next dev" dev.log; do sleep 1; done'
-curl -s -o /dev/null -w "HTTP: %{http_code}\nTIME: %{time_total}s\nSIZE: %{size_download}\n" http://localhost:3000/ar
-curl -s http://localhost:3000/en | grep -oE "(We build|Services)" | sort -u
-curl -s -o /dev/null -w "ROOT: %{http_code} -> %{redirect_url}\n" http://localhost:3000/
-curl -sL -o /dev/null -w "FINAL: %{http_code} %{url_effective} redirects=%{num_redirects}\n" http://localhost:3000/
-grep -aiE "error|⨯" dev.log | tail -5
-sed -E 's/\x1b\[([0-9;]*)m//g' dev.log | tail -50
-# Windows (PowerShell):
-curl.exe -s -o NUL -w "HTTP: %{http_code}\nTIME: %{time_total}s\n" http://localhost:3000/ar
-(curl.exe -s http://localhost:3000/en | Select-String -Pattern 'We build|Services' -AllMatches).Matches.Value | Sort-Object -Unique
-Select-String -Path dev.log -Pattern 'Ready in|Error' -Quiet`,
-          lines: [
-            R`شغّل سيرفر الـ dev في الخلفية ([[&]] في الآخر)، وكل اللي بيطبعه يروح [[dev.log]]: [[>]] الطبيعي (stdout)، و [[2>&1]] الأخطاء (stderr) في نفس الملف. من غير [[2>&1]] الأخطاء بتضيع.`,
-            R`استنى لحد ما اللوج فيه «جاهز» أو «خطأ». [[until ...; do sleep 1; done]] بيعيد كل ثانية لحد ما [[grep -q]] يلاقي (و [[-q]] من غير طباعة، و [[-a]] اعتبر الملف نص حتى لو فيه ألوان). و [[timeout 60]] بيقفل الحلقة بعد ٦٠ ثانية بدل ما تستنى للأبد.`,
-            R`اطلب الصفحة ورمي الـ body ([[-o /dev/null]])، واطبع حاجات عن الطلب بـ [[-w]]: كود الحالة، والوقت الكلي بالثواني، وحجم اللي اتحمّل بالبايت. [[\n]] سطر جديد.`,
-            R`هات الصفحة الإنجليزي ودوّر فيها على النصين. [[-o]] الجزء اللي طابق بس، و [[sort -u]] كل واحد مرة. لو النص الجديد ظهر، التعديل وصل للسيرفر.`,
-            R`[[/]] بيحوّل؟ [[%{redirect_url}]] بيطبع المكان اللي السيرفر قال روح له، و curl **مش بيروح** (من غير [[-L]]). فبتشوف التحويل نفسه.`,
-            R`نفس الطلب بس [[-L]] بيمشي ورا التحويلات. [[%{url_effective}]] آخر رابط وصل له، و [[%{num_redirects}]] عدد التحويلات في السكة.`,
-            R`لما حاجة ترجع 500: آخر ٥ سطور فيها [[error]] أو علامة [[⨯]] (اللي Next بيحطها قبل الأخطاء). [[-i]] من غير فرق capital و small.`,
-            R`اللوج فيه أكواد ألوان (حرف ESC وبعده رقم اللون وحرف m، زي اللي بيلوّن [[⨯]] بالأحمر). [[sed]] بيشيلها عشان يتقري ويتعمله [[grep]] عادي، و [[-E]] regex موسّع فالقوسين [[( )]] مجموعة، و [[tail -50]] آخر ٥٠ سطر. (في الشرح نفس الأمر من غير [[-E]] ومن غير القوسين، والاتنين طلّعوا نفس الناتج في GNU sed.)`,
-            R`PowerShell: [[curl.exe]] (مش [[curl]] اللي ممكن يبقى alias لـ [[Invoke-WebRequest]] في 5.1)، و [[NUL]] هو [[/dev/null]] بتاع ويندوز.`,
-            R`PowerShell: [[Select-String -AllMatches]] بيلاقي كل المرات في الرد، و [[.Matches.Value]] النصوص نفسها، و [[Sort-Object -Unique]] كل واحد مرة.`,
-            R`PowerShell: هل اللوج فيه «جاهز» أو «خطأ»؟ [[-Quiet]] بيرجّع [[True]] أو [[False]] بس، فينفع في [[while]].`,
-          ],
-          try: R`على مشروع Next عندك: شغّل dev في الخلفية باللوج، واستنى بالحلقة، و [[curl -w]] على الصفحة الرئيسية مرتين ورا بعض وقارن [[TIME]]. وبعدين غيّر كلمة في الصفحة واثبت بـ [[curl | grep]] إنها وصلت. وبعدين اكسر الصفحة ([[throw new Error("test")]]) واقرا الخطأ من اللوج بـ [[grep]] من غير ما تفتح المتصفح.`,
-          flag: "term",
-          teach: R`## العَرَض
-
-بعد كل تعديل بتفتح المتصفح وتعمل refresh وتبص. ولما مش بيظهر، مش عارف: التعديل موصلش؟ ولا السيرفر لسه بيبني؟ ولا المتصفح جايب نسخة قديمة؟ ولا الصفحة وقعت وانت شايف صفحة الخطأ بتاعة Next؟ الدرس ده بيشيل المتصفح من المعادلة: السيرفر نفسه هو اللي يجاوب.
-
----
-
-## المعمل
-
-مشروع Next 16.4.4: صفحة [[/[lang]]] بتعرض [[We build stores]] و [[Services]] بالإنجليزي و [[بنبني متاجر]] و [[خدماتنا]] بالعربي، و [[/]] بيحوّل لـ [[/ar]] من [[next.config.mjs]]:
-
-~~~js next.config.mjs
-export default {
-  async redirects() { return [{ source: "/", destination: "/ar", permanent: false }]; },
-};
-~~~
-
-واتجرّب في [[docker run node:22-slim]] (لينكس) وفي Git Bash و PowerShell 7.6 و 5.1 على ويندوز 11.
-
----
-
-## ١. شغّل في الخلفية، واللوج في ملف
-
-~~~bash
-npm run dev > dev.log 2>&1 &
-~~~
-
-| الحتة | بتعمل إيه |
-|---|---|
-| [[> dev.log]] | اللي البرنامج بيطبعه عادي (stdout) يروح الملف بدل الشاشة |
-| [[2>&1]] | الأخطاء (stderr، رقم 2) تروح لنفس مكان stdout (رقم 1) |
-| [[&]] | شغّله في الخلفية وارجعلي الـ prompt على طول |
-
-ليه [[2>&1]] مهمة بالذات؟ لأن Next بيكتب [[Ready in]] على stdout، وبعض الأخطاء على stderr. جربناها على ويندوز بـ [[Start-Process]] وكل واحد في ملف لوحده، والمشروع فيه سيرفر شغّال أصلًا:
-
-~~~text dev2.log (stdout)
-▲ Next.js 16.4.4 (Turbopack)
-- Local:         http://localhost:4312
-✓ Ready in 339ms
-~~~
-
-~~~text dev2.err (stderr)
-⨯ Another next dev server is already running.
-...
-or run taskkill /PID 12120 /F to stop it and start a new one.
-~~~
-
-اللي بيبص على stdout بس شاف [[Ready in]] وكمّل، و [[curl]] رجّع [[000]] (مفيش سيرفر على 4312، اتقفل بعد الرسالة). نفس الملف = نفس الحكاية بالترتيب.
-
-> وفي Next 16 فيه لوج تاني بيتكتب لوحده من غير ما تعمل حاجة: [[.next/dev/logs/next-development.log]]، كل سطر JSON فيه [[timestamp]] و [[source]] ([[Server]] أو [[Browser]]) و [[level]]. يعني [[grep '"level":"ERROR"' .next/dev/logs/next-development.log]] بيجيب الأخطاء، وأخطاء المتصفح (زي hydration) بتتسجّل هناك كمان بـ [[source":"Browser]].
-
----
-
-## ٢. استنى الجاهزية، بحد أقصى
-
-~~~bash
-timeout 60 bash -c 'until grep -aqE "Ready in|Error|Another next dev" dev.log; do sleep 1; done'
-~~~
-
-- [[until COND; do ...; done]]: كرر لحد ما الشرط ينجح. والشرط هنا [[grep]] لقى واحدة من التلات كلمات.
-- ليه [[Error]] و [[Another next dev]] مع [[Ready in]]؟ لأن لو السيرفر فشل، [[Ready in]] ممكن ميجيش أبدًا، فتستنى للأبد. استنى «جاهز **أو** فشل»، وبعدين افحص أنهي واحد.
-- [[timeout 60]]: لو مفيش ولا واحدة خلال ٦٠ ثانية اقفل. جربناه على كلمة مش موجودة: خرج بعد ٥ ثواني ([[timeout 5]]) ورقم الخروج [[124]] (رقم [[timeout]] لما الوقت يخلص).
-- [[-a]]: من غيرها [[grep]] على لوج Next طبع [[grep: /tmp/dev.log: binary file matches]] بدل السطر، لأن اللوج فيه أكواد ألوان فاتفهم ملف binary.
-
-وفي PowerShell:
+جربته على السيرفر المحلي:
 
 ~~~powershell
-$t = 0
-while (-not (Select-String -Path dev.log -Pattern 'Ready in|Error' -Quiet -ErrorAction SilentlyContinue) -and $t -lt 60) { Start-Sleep 1; $t++ }
-~~~
-
-[[$t]] عدّاد بيمنع الانتظار للأبد. واشتغلت في 7.6 و 5.1.
-
-والماك معندوش [[timeout]] من غير تسطيب (من وثائق macOS: بييجي مع [[brew install coreutils]] باسم [[gtimeout]]). الشكل اللي بيشتغل في أي bash من غير أدوات زيادة: عدّاد.
-
-~~~bash
-for i in $(seq 1 60); do grep -aqE "Ready in|Error" dev.log && break; sleep 1; done
-~~~
-
-[[seq 1 60]] بيطبع الأرقام من 1 لـ 60، والحلقة بتلف عليهم، و [[&& break]] بيخرج أول ما [[grep]] يلاقي. جربناه في الكونتينر على كلمة مش موجودة بـ [[seq 1 3]]: خلص بعد ٣ لفّات ([[i=3]]).
-
-### فخ: [[Ready in]] مش معناها إن الصفحة جاهزة
-
-~~~text dev.log (لينكس، أول تشغيل)
-▲ Next.js 16.4.4 (Turbopack)
-- Local:         http://localhost:3000
-✓ Ready in 442ms
-...
-It looks like you're trying to use TypeScript but do not have the required package(s) installed.
-Installing dependencies
-...
- GET /ar 200 in 678ms (next.js: 542ms, application-code: 136ms)
-~~~
-
-~~~text curl -w (أول طلب)
-HTTP: 200
-TIME: 84.933839s
-SIZE: 9547
-~~~
-
-[[Ready in 442ms]] = السيرفر بيسمع. الصفحة نفسها بتتبني مع **أول طلب**. وفي المرة دي Next لقى ملفات [[.tsx]] ومفيش [[typescript]] متسطب، فسطّبه بنفسه، والطلب الأول خد ٨٥ ثانية. التاني على نفس الصفحة: [[TIME: 0.045515s]]. فـ [[curl]] أول مرة محتاج [[--max-time]] كبير (أو اعمل طلب «تسخين» وتجاهل وقته).
-
----
-
-## ٣. [[curl -w]]: الكود والوقت والحجم
-
-~~~bash
-curl -s -o /dev/null -w "HTTP: %{http_code}\nTIME: %{time_total}s\nSIZE: %{size_download}\n" http://localhost:3000/ar
-~~~
-
-~~~text الناتج (التاني)
-HTTP: 200
-TIME: 0.045515s
-SIZE: 9547
-~~~
-
-| المتغير | معناه |
-|---|---|
-| [[%{http_code}]] | كود الرد. [[000]] = مفيش رد خالص (السيرفر مش شغّال أو البورت غلط) |
-| [[%{time_total}]] | الطلب كله بالثواني |
-| [[%{size_download}]] | حجم الـ body بالبايت. لو فجأة صغر جدًا (زي [[217]]) يبقى غالبًا ده سيرفر تاني أو صفحة خطأ |
-
-وعلى ويندوز في PowerShell بـ [[curl.exe -s -o NUL -w ...]]: [[HTTP: 200]] و [[TIME: 0.045538s]] و [[SIZE: 13601]]. وعلى نفس الجهاز [[curl localhost:3000]] رجّع **217 بايت** من سيرفر تاني مش بتاعنا خالص كان ماسك 3000 (درس «dev server قديم و .next» في تاب Next).
-
----
-
-## ٤. التعديل وصل؟ دوّر على النص نفسه
-
-~~~bash
-curl -s http://localhost:3000/en | grep -oE "(We build|Services)" | sort -u
+curl.exe 'http://127.0.0.1:8791/api/orders' -H 'accept: application/json' -H 'cookie: session=s3cr3t' --compressed
 ~~~
 
 ~~~text الناتج
-Services
-We build
+{"page":1,"orders":[{"id":11,"total":250},{"id":12,"total":90}]}
 ~~~
 
-الاتنين موجودين في الـ HTML اللي السيرفر بعته. لو غيّرت [[We build]] لـ [[We craft]]، نفس الأمر بـ [[We craft]] لازم يلاقيها. ولو التعديل في الـ CSS، دوّر في ملف الـ CSS نفسه:
+## ٢. السطر التاني: عدّلت فيه
 
-~~~bash
-CSS_URL=$(curl -s http://localhost:3000/ar | grep -oE '/_next/static/chunks/[^"]+\.css' | head -1)
-curl -s "http://localhost:3000$CSS_URL" | grep -oE "(6366f1|0ea5e9)" | sort -u
+~~~powershell
+curl.exe -i 'http://127.0.0.1:8791/api/orders?page=2' -H 'cookie: session=s3cr3t'
 ~~~
 
-ولو عايز تستنى لحد ما الـ build يلقط التعديل (بعد الحفظ بثانية أو اتنين):
+~~~text الناتج
+HTTP/1.1 200 OK
+X-Powered-By: Express
+Content-Type: application/json; charset=utf-8
+Content-Length: 64
 
-~~~bash
-timeout 30 bash -c 'until curl -s "http://localhost:3000$0" | grep -q 0ea5e9; do sleep 1; done' "$CSS_URL" && echo arrived
+{"page":2,"orders":[{"id":21,"total":250},{"id":22,"total":90}]}
 ~~~
 
-([[$0]] جوه [[bash -c]] هو أول argument بعد النص: [[$CSS_URL]].)
-
-وللإنتاج: بعد [[npm run build]] الـ CSS في [[.next/static/chunks/*.css]] باسم مبني على المحتوى:
-
-~~~text grep -oE "0ea5e9|22c55e|6366f1" .next/static/chunks/*.css | sort | uniq -c
-      1 0ea5e9
-      1 22c55e
-~~~
-
-القديم ([[6366f1]]) مش موجود خالص في البناء الجديد.
+- [[?page=2]]: query parameter، والـ API رجّع الصفحة التانية.
+- [[-i]]: اطبع headers الرد قبل البودي، فتشوف الـ status.
+- الـ URL جوه علامات تنصيص عشان [[?]] و [[&]] ليهم معنى في الـ shell.
 
 ---
 
-## ٥. التحويلات: [[%{redirect_url}]] و [[-L]]
+## ٣. أنهي نسخة تنسخ
 
-~~~text curl -s -o /dev/null -w "ROOT: %{http_code} -> %{redirect_url}\n" http://localhost:3000/
-ROOT: 307 -> http://localhost:3000/ar
-~~~
-
-[[307]] = تحويل مؤقت ([[permanent: false]])، والمتصفح هيروح [[/ar]]. curl من غير [[-L]] وقف عند التحويل ووراك هو رايح فين.
-
-~~~text curl -sL -o /dev/null -w "FINAL: ..." http://localhost:3000/
-FINAL: 200 http://localhost:3000/ar redirects=1
-~~~
-
-[[-L]] مشي وراه: تحويل واحد ووصل لـ 200. لو [[redirects]] طلع رقم كبير أو curl قال [[Maximum (50) redirects followed]]، عندك loop.
-
-وفي PowerShell 7: [[Invoke-WebRequest http://localhost:3000/ -MaximumRedirection 0 -SkipHttpErrorCheck]] و [[.StatusCode]] و [[.Headers.Location]] طلّعوا [[307 -> /ar]] (الـ Location هنا نسبي زي ما السيرفر بعته). و [[-SkipHttpErrorCheck]] مش موجود في 5.1، فهناك استخدم [[curl.exe]].
-
----
-
-## ٦. الصفحة رجعت 500: اللوج هو اللي يقول
-
-كسرنا الصفحة بـ [[throw new Error("missing dictionary: fr")]] لو اللغة [[fr]]:
-
-~~~text curl -s -o /dev/null -w "HTTP: %{http_code}\n" http://localhost:3000/fr
-HTTP: 500
-~~~
-
-~~~text grep -aiE "error|⨯" dev.log | tail -5
-⨯ Error: missing dictionary: fr
-> 3 |   if (lang === "fr") throw new Error("missing dictionary: fr");
-~~~
-
-ولو عايز السياق كله:
-
-~~~text sed 's/\x1b\[[0-9;]*m//g' dev.log | tail -12
-    at Home (app/[lang]/page.tsx:3:28)
-  1 | export default async function Home({ params }: { params: Promise<{ lang: string }> }) {
-  2 |   const { lang } = await params;
-> 3 |   if (lang === "fr") throw new Error("missing dictionary: fr");
-    |                            ^
-...
-  digest: '3587257851'
-}
- GET /fr 500 in 88ms (next.js: 14ms, application-code: 74ms)
-~~~
-
-الملف والسطر والعمود ([[page.tsx:3:28]])، والسطر نفسه، و [[^]] تحت مكان الخطأ. و [[digest]] رقم بيظهر للمستخدم في الإنتاج بدل الرسالة (عشان متكشفش تفاصيل)، فلما حد يبعتلك الرقم ده تدوّر عليه في لوج السيرفر.
-
-| الحتة في [[sed]] | معناها |
+| هتشغّله في | اختار |
 |---|---|
-| [[\x1b]] | حرف ESC (رقمه 27) اللي بيبدأ بيه كود اللون |
-| الباقي | قوس مربع مفتوح (عليه backslash عشان يتقري حرف عادي)، وبعده أرقام وفواصل منقوطة بأي عدد، وبعدين حرف [[m]]. زي كود الأحمر: 31 وبعدها m |
-| [[s/.../ /g]] | استبدله بولا حاجة، كل مرة في السطر |
+| Git Bash أو WSL أو لينكس أو ماك | Copy as cURL (bash) |
+| CMD | Copy as cURL (cmd) |
+| PowerShell | Copy as PowerShell (بيطلع [[Invoke-WebRequest]]) أو نسخة bash مع [[curl.exe]] في PowerShell 7 |
 
----
-
-## البدايل وليه الطريقة دي
-
-| البديل | امتى ينفع | ليه مش هو الأساس هنا |
-|---|---|---|
-| تفتح المتصفح | تشوف الشكل نفسه | الكاش والإضافات والتاب القديم بيدخلوا في الإجابة |
-| [[sleep 10]] بدل الحلقة | سكربت سريع | يا كتير (وقت ضايع) يا قليل (أول build بطيء)، ومبيعرفش لو السيرفر وقع |
-| تستنى البورت يفتح ([[nc -z]]) | سيرفر غير Next | البورت بيفتح قبل الصفحة ما تتبني، زي [[Ready in]] بالظبط |
-| Playwright | تختبر سلوك وتفاعل | تقيل على سؤال «النص وصل؟» |
+الفرق في علامات التنصيص: bash بيستخدم [['...']]، و CMD مبيفهمش الـ single quotes.
 
 ## الخلاصة
 
-| السؤال | الأمر |
-|---|---|
-| شغّل واحفظ اللوج | [[npm run dev > dev.log 2>&1 &]] |
-| استنى | [[timeout 60 bash -c 'until grep -aqE "Ready in\|Error" dev.log; do sleep 1; done']] |
-| الصفحة شغّالة؟ | [[curl -s -o /dev/null -w "%{http_code}"]] |
-| التعديل وصل؟ | [[curl -s URL \| grep -oE "النص"]] |
-| بيحوّل لفين؟ | [[-w "%{redirect_url}"]]، و [[-L]] تمشي وراه |
-| وقعت ليه؟ | [[grep -aiE "error\|⨯" dev.log \| tail -5]] |
-
-> [[Ready in]] = السيرفر بيسمع، مش الصفحة جاهزة. والحكم النهائي [[curl]] على الصفحة نفسها.`,
-          deep: {
-            why: R`السؤال «التعديل وصل؟» محتاج إجابة من مصدر واحد مضمون. المتصفح مش مضمون (كاش، تاب قديم، سيرفر تاني، إضافات). [[curl]] بيكلّم السيرفر مباشرة، والأوامر نفسها تنفع في سكربت أو CI أو بعد deploy على سيرفر مفيهوش شاشة. وبتوفّر وقت: سطر واحد بدل ٣٠ ثانية تبص على صفحة.`,
-            how: R`[[&]] بيشغّل البرنامج كـ job في الخلفية والـ shell بيكمّل. [[until]] بيشغّل الشرط، ولو رقم خروجه مش صفر بيشغّل الجسم ويرجع. [[grep -q]] بيخرج 0 لما يلاقي. [[timeout N cmd]] بيبعت SIGTERM بعد N ثانية ويرجّع 124. و [[curl -w]] بيطبع متغيرات بعد ما الطلب يخلص (فيه عشرات: [[time_connect]] و [[time_starttransfer]] و [[remote_ip]] وغيرهم في [[man curl]]). و Next dev بيبني كل route أول ما حد يطلبه، فأول طلب = build لـ route ده، والباقي من الكاش.`,
-            when: R`بعد أي تعديل عايز تتأكد إنه وصل (نص، أو لون، أو redirect، أو header). وفي سكربت بيشغّل السيرفر ويختبره ويقفله (CI بسيط أو smoke test بعد النشر: نفس [[curl -w]] على الدومين الحقيقي). ولما الصفحة بتقع ومش عايز تفتح المتصفح على سيرفر بعيد.`,
-            mistakes: R`[[> dev.log]] من غير [[2>&1]] فالأخطاء تضيع. حلقة [[until]] من غير [[timeout]] فتستنى للأبد لو السيرفر وقع. تستنى [[Ready in]] بس. [[grep]] من غير [[-a]] على لوج ملوّن. تتحكم على أول طلب ([[TIME]] كبير) إن الموقع بطيء. [[curl]] من غير [[-L]] وتستغرب إن الـ body فاضي (ده تحويل). وفي PowerShell 5.1 [[curl]] = [[Invoke-WebRequest]]، فاكتب [[curl.exe]].`
-          },
-          sol: R`أول [[curl -w]]: [[TIME]] كبير (أول build للـ route)، والتاني أقل من ثانية بكتير ([[0.04s]] في المعمل). بعد ما غيّرت الكلمة وحفظت: [[curl -s URL | grep -oE "الكلمة الجديدة"]] بيطبعها (ممكن تحتاج ثانية بعد الحفظ، ولو مطبعتش جرّب تاني أو استخدم حلقة [[until]]).
-
-بعد [[throw new Error("test")]]: [[curl -w "%{http_code}"]] بيطبع [[500]]، و [[grep -aiE "error|⨯" dev.log | tail -5]] بيطبع [[⨯ Error: test]] والسطر اللي فيه الـ throw، وأمر [[sed]] اللي بيشيل الألوان (اللي في المثال) مع [[tail -20]] بيوري الملف ورقم السطر و [[GET /... 500 in ...]].`,
-          practice: [
-            { lvl: 'سريع', t: R`من غير ما تشغّل: [[curl -s -o /dev/null -w "%{http_code} %{redirect_url}\n" http://localhost:3000/]] طبع [[307 http://localhost:3000/ar]]. إيه اللي هيطبعه نفس الأمر بـ [[-L]] و [[%{url_effective}]] بدل [[%{redirect_url}]]؟ اكتب توقعك وبعدين جرّب على أي موقع بيحوّل.`, done: R`توقعت [[200 http://localhost:3000/ar]] (أو اللي يقابلها في موقعك)، وطابق التشغيل، وتقدر تقول الفرق بين [[redirect_url]] و [[url_effective]] في جملة.` },
-            { lvl: 'تطبيق', t: R`ابني [[smoke.sh]]: بيشغّل [[npm run dev]] في الخلفية باللوج، ويستنى بـ [[timeout]]، ويطلب ٣ صفحات ويطبع لكل واحدة الكود والوقت، ويطبع [[FAIL]] ويخرج بـ 1 لو أي واحدة مش 200، وفي الآخر يقفل السيرفر اللي شغّله هو بس ([[kill $PID]] بـ [[$!]]).`, done: R`على مشروع سليم بيطبع ٣ سطور [[200]] ويخرج 0، ولو كسرت صفحة بيطبع [[FAIL /اسم-الصفحة 500]] ويخرج 1، وبعد ما يخلص البورت فاضي.` },
-            { lvl: 'تطبيق', t: R`صلّح السكربت ده اللي بيعلّق ساعات: [[npm run dev > dev.log & until grep -q "Ready in" dev.log; do sleep 1; done; curl -s localhost:3000 | grep -c "Hello"]]. فيه ٣ مشاكل على الأقل (الأخطاء رايحة فين، والانتظار للأبد، والألوان). اكتب النسخة المصلّحة واختبرها والسيرفر بيقع (مثلًا والبورت مشغول بـ [[-p]]).`, done: R`النسخة المصلّحة فيها [[2>&1]] و [[timeout]] و [[-a]] و [[Error]] في الشرط، ولما البورت مشغول بتخرج في أقل من دقيقة وبتطبع سطر [[EADDRINUSE]] من اللوج.` },
-            { lvl: 'تطبيق', t: R`بيانات حقيقية: خد [[.next/dev/logs/next-development.log]] من مشروعك بعد شوية تجارب، واكتب أمر (بـ [[grep]] أو [[node -e]] أو [[jq]] لو عندك) بيطبع آخر ٣ أخطاء: الوقت، والمصدر ([[Server]] أو [[Browser]])، وأول سطر من الرسالة.`, done: R`الأمر بيطبع ٣ سطور كل واحد فيه [[timestamp]] و [[Server]] أو [[Browser]] وأول سطر من الخطأ، وبيتغيّر لو عملت خطأ جديد وشغّلته تاني.` },
-            { lvl: 'تحدي', t: R`قارن وقيس: على صفحة واحدة، قيس [[time_total]] لأول طلب بعد ما تشغّل السيرفر، وبعدين ٥ طلبات ورا بعض، وبعدين بعد ما تعدّل الصفحة. اطبع جدول بـ [[curl -w]] واشرح ليه الأول مختلف.`, done: R`عندك ٧ أرقام: الأول أكبر بكتير، والـ ٥ قريبين من بعض، واللي بعد التعديل أكبر شوية، وكاتب سبب كل واحد في جملة (build أول طلب، كاش، recompile).` },
-            { lvl: 'تحدي', t: R`نفس [[smoke.sh]] بس PowerShell: [[Start-Process]] بـ [[-RedirectStandardOutput]] و [[-RedirectStandardError]] (لازم ملفين مختلفين)، وحلقة [[while]] بعدّاد على **الملفين**، و [[curl.exe -w]]، و [[Stop-Process]] في الآخر. اختبره والبورت مشغول وشوف أنهي ملف فيه الخطأ.`, done: R`السكربت بيشتغل في 7 و 5.1، والبورت مشغول بيخرج برسالة فيها السطر اللي جه من ملف الـ stderr، ومن غير مشكلة بيطبع [[200]].` },
+- Copy as cURL = نفس الطلب بالظبط، تعدّل فيه وتعيده.
+- فيه كوكيز وتوكن حقيقيين: متشاركهوش من غير ما تمسحهم.
+- لو رجع 401 بعد شوية، الـ session خلصت، انسخه تاني.`,
+          lines: [
+            "اللي بيطلع من Copy as cURL: الـ URL، وكل header ([[-H]]) بما فيهم الكوكي، و [[--compressed]] يقبل رد مضغوط.",
+            "نفس الطلب بعد ما عدّلت فيه: صفحة تانية، و [[-i]] عشان تشوف الـ status."
           ],
-          ci: [
-            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`bash`, run: R`cat > dev.js <<'EOF'
-const http = require("http");
-console.log("starting...");
-setTimeout(() => {
-  http.createServer((q, s) => {
-    if (q.url === "/") { s.writeHead(307, { Location: "/ar" }); return s.end(); }
-    if (q.url === "/fr") { console.error("\x1b[31m⨯ Error: missing dictionary: fr\x1b[39m"); s.writeHead(500); return s.end("err"); }
-    s.end(q.url === "/en" ? "<h1>We build stores</h1><a>Services</a>" : "<h1>ar</h1>");
-  }).listen(18940, "127.0.0.1", () => console.log("\x1b[32m✓\x1b[39m Ready in 12ms"));
-}, 1500);
-EOF
-node dev.js > dev.log 2>&1 &
-PID=$!
-for i in $(seq 1 20); do grep -aqE "Ready in|Error" dev.log && break; sleep 1; done; grep -aq "Ready in" dev.log && echo "ready"
-curl -s -o /dev/null -w "HTTP: %{http_code}\n" http://127.0.0.1:18940/ar
-curl -s http://127.0.0.1:18940/en | grep -oE "(We build|Services)" | sort -u
-curl -s -o /dev/null -w "ROOT: %{http_code} -> %{redirect_url}\n" http://127.0.0.1:18940/
-curl -sL -o /dev/null -w "FINAL: %{http_code} redirects=%{num_redirects}\n" http://127.0.0.1:18940/
-curl -s -o /dev/null -w "FR: %{http_code}\n" http://127.0.0.1:18940/fr
-sleep 1
-grep -aiE "error|⨯" dev.log | sed -E 's/\x1b\[([0-9;]*)m//g' | tail -1
-kill $PID; wait $PID 2>/dev/null; sleep 1`, expect: [R`ready`, R`HTTP: 200`, R`Services`, R`We build`, R`ROOT: 307 -> http://127.0.0.1:18940/ar`, R`FINAL: 200 redirects=1`, R`FR: 500`, R`⨯ Error: missing dictionary: fr`] },
-            { os: [R`ubuntu`, R`windows`], sh: R`bash`, run: R`echo 'still starting' > dev.log
-timeout 2 bash -c 'until grep -aqE "Ready in|Error" dev.log; do sleep 1; done'; echo "timeout-exit=$?"`, expect: [R`timeout-exit=124`] },
+          sol: R`في Network كليك يمين على الطلب ثم Copy ثم Copy as cURL (bash). هتلاقي أمر طويل فيه [[-H 'cookie: ...']] و headers كتير. الصقه في الترمنال، المفروض يرجع نفس الـ JSON اللي شايفه في Preview.
+
+غيّر [[page=1]] لـ [[page=2]] في الـ URL (خليه جوه علامات التنصيص عشان [[&]] و [[?]]) وشغّله، هتاخد الصفحة اللي بعدها. زوّد [[-i]] عشان تشوف الـ status.
+
+لو رجعلك [[401]] بعد شوية، الكوكي أو الـ token خلصوا، انسخ الطلب تاني. ولو الناتج رموز غريبة يبقى نسيت [[--compressed]]. وعلى ويندوز اختار «Copy as cURL (cmd)» أو شغّله من Git Bash/WSL لأن علامات التنصيص مختلفة.`,
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** انسخ أي طلب API بـ Copy as cURL (bash)، والصقه في محرر، وعلّم على: الـ URL، والـ headers اللي مالهاش لازمة، والكوكي.`, done: R`عارف تشيل [[sec-ch-ua]] و [[sec-fetch-*]] و [[user-agent]] والطلب لسه بيشتغل، والكوكي متعلّم عليها كـ «سر».` },
+            { lvl: 'تطبيق', t: R`**صغّره:** خد الأمر المنسوخ وشيل header ورا header لحد ما تلاقي أقل أمر لسه بيرجّع نفس الرد. اكتب الـ headers اللي طلعت لازمة.`, done: R`الأمر النهائي ٢–٣ headers بس (غالبًا [[cookie]] أو [[authorization]] و [[content-type]])، ونفس الـ status والـ body.` },
+            { lvl: 'تطبيق', t: R`**قارن:** نفس الطلب Copy as cURL (bash) و Copy as cURL (cmd) و Copy as PowerShell و Copy as fetch. شغّل كل واحد في المكان الصح.`, done: R`الأربعة رجّعوا نفس الرد، وكاتب الفرق في علامات التنصيص: bash بـ [[']]، و cmd بـ [[^]] والدبل، و PowerShell بيستخدم [[Invoke-WebRequest]] و [[-WebSession]].` },
+            { lvl: 'تحدي', t: R`**ابني:** سكربت [[replay.sh]] بياخد الأمر المنسوخ من ملف، ويشيل الكوكي ويحط مكانها [[$SESSION]] من متغير بيئة، ويشغّله ٣ مرات ويطبع الـ status والوقت بـ [[-w]].`, done: R`مفيش كوكي مكتوبة في السكربت ([[grep -c session= replay.sh]] = [[0]])، والسكربت بيطبع ٣ سطور فيهم الـ status والوقت.` },
+            { lvl: 'تحدي', t: R`**اشرحها (أمان):** زميل حط Copy as cURL في issue عام على GitHub. اكتب الخطوات بالترتيب اللي لازم تتعمل دلوقتي.`, done: R`الخطوات: امسح أو عدّل الـ issue، و logout من كل الأجهزة أو اعمل revoke للـ session والتوكن من السيرفر (المسح من GitHub مش كفاية لأن حد ممكن يكون نسخه)، وبعدين امسح الكوكي من الأمر قبل أي مشاركة.` },
           ],
         },
         {
-          cmd: "اللقطة ناقصة: 591px وفيديو مؤقت",
-          title: "«الـ screenshot مش واضح والصور ناقصة»: المعاينة كانت بعرض موبايل، والفيديو من رابط مؤقت",
-          desc: R`صورة الصفحة طالعة ناقصة: مفيش فيديو في الـ hero، والمعرض اختفى. قبل ما تصلّح أي CSS، اسأل سؤالين بالترتيب: (١) **اللقطة اتاخدت بعرض كام؟** معاينة بعرض 591px بتشتغل عليها قواعد الموبايل ([[max-width: 767px]])، فالحاجات اللي بتستخبى على الموبايل هتستخبى. صوّر بـ 1440 الأول. (٢) **الفيديو جاي منين؟** لو رابط خارجي مؤقت (CDN برابط موقّع، أو رابط مولّد من أداة AI)، افحصه بـ [[curl -sI]]: [[200]] أو [[206]] تمام، [[403]] يبقى انتهى.
-
-وفي تاب Network هتلاقي [[net::ERR_ABORTED]] على طلبات الفيديو حتى وهو شغّال: ده طبيعي (المتصفح بيلغي طلب ويطلب حتة تانية من الملف بـ [[Range]])، والحكم الحقيقي [[readyState]] (4 = جاهز). والحل الدائم: نزّل الفيديو عندك ([[curl -o public/hero.mp4]]) واربطه [[/hero.mp4]]، وصغّره، ومتحمّلوش على الموبايل لو مستخبي.`,
-          example: R`curl -sI --max-time 20 "$VIDEO_URL" | head -20
-curl -s -r 0-1 -o /dev/null -w "range: %{http_code} %{size_download}\n" "$VIDEO_URL"
-curl -s --max-time 120 -o public/hero.mp4 "$VIDEO_URL" && file public/hero.mp4
-ffmpeg -i public/hero.mp4 -c copy -movflags +faststart public/hero-fast.mp4
-node shot.js 1440 http://localhost:3000/ hero-1440.png
-# في Console المتصفح:
-document.querySelectorAll("video").forEach(v => console.log(v.currentSrc.split("?")[0], v.readyState, v.networkState, v.error && v.error.code))`,
-          lines: [
-            R`اطلب الـ headers بس ([[-I]] = طلب [[HEAD]]) من غير شريط ([[-s]])، و [[--max-time 20]] متستناش أكتر من ٢٠ ثانية. أول سطر فيه الكود ([[200]] أو [[403]])، وتحته [[Content-Type]] و [[Content-Length]] و [[Accept-Ranges]].`,
-            R`اطلب أول ٢ بايت بس ([[-r 0-1]]). لو رد [[206]] و [[2]]، السيرفر بيدعم الطلب بالحتت (Range)، وده اللي المتصفح محتاجه عشان يقدّم ويأخّر في الفيديو.`,
-            R`نزّل الملف عندك في [[public/]] (وهو لسه شغّال)، و [[&&]] لو نجح افحص نوعه بـ [[file]]: لازم يقول [[ISO Media, MP4]] مش HTML أو XML (صفحة خطأ اتحفظت بامتداد mp4).`,
-            R`انقل جزء الفهرس ([[moov]]) لأول الملف من غير ما تعيد الضغط ([[-c copy]])، فالمتصفح يبدأ التشغيل من أول حتة بدل ما يروح لآخر الملف الأول.`,
-            R`صوّر الصفحة بعرض 1440 بسكربت Playwright (اللي في الشرح). ده العرض اللي بيوري تخطيط الديسكتوب.`,
-            R`في Console: لكل [[<video>]] اطبع الرابط من غير الـ query، و [[readyState]] (4 = عنده داتا كفاية يشتغل)، و [[networkState]] (3 = ملقاش مصدر)، وكود الخطأ لو فيه (4 = المصدر مرفوض).`,
-          ],
-          try: R`ابني المعمل اللي في الشرح (صفحة فيها hero بفيديو، و «CDN» صغير بيرد [[403]] بعد وقت معيّن). صوّر الصفحة بعرض 591 و 1440 وقارن. وبعدين خلّي الرابط ينتهي وصوّر تاني، واقرا [[readyState]] و [[curl -sI]]. وفي الآخر نزّل الفيديو في [[public/]] واتأكد إن الصفحة شغّالة من غير الـ CDN.`,
+          cmd: "curl -i / -v",
+          title: "ابعت واقرا الرد كامل",
+          desc: "[[-i]] بيطبع الـ headers والبودي، و [[-v]] بيطبع كمان الطلب اللي اتبعت نفسه والـ TLS handshake. [[-H]] بيزوّد header، و [[-d]] بيبعت البودي (ومعاه بيبقى POST لوحده)، و [[-X]] بيغيّر الـ method. ولو الرد JSON وصّله بـ [[jq]] يطلع منسّق. وده أسرع طريقة تعرف الغلط في السيرفر ولا في المتصفح: لو curl رجّع نفس الرد، المتصفح بريء.",
+          example: R`curl -i https://api.github.com/users/octocat
+curl -s https://api.github.com/users/octocat | jq '{name, public_repos}'
+curl -i -X POST https://example.com/api/login -H "Content-Type: application/json" -d '{"email":"a@b.com","password":"secret"}'
+curl -H "Authorization: Bearer $TOKEN" https://example.com/api/me`,
+          try: "اعمل طلب login غلط للـ API بتاعك بـ curl -i، واقرا الـ status والـ body.",
           flag: "term",
-          teach: R`## العَرَض
+          deep: {
+            why: "تجرّب API من الترمنال وتقرا الـ status والـ headers والـ body في مكان واحد.",
+            how: R`[[-i]] بيطبع الـ response headers قبل الـ body. أول سطر دايمًا الـ status. مفيد لما تشوف السيرفر بيرجع إيه بالظبط.
 
-حد بعتلك (أو أداة بتاخد لقطات أوتوماتيك) صورة من الموقع: «الـ screenshot مش واضح، والصور ناقصة». الـ hero فاضي (مربع أسود أو مفيش خالص)، والمعرض اللي تحته مش موجود. وعلى جهازك الموقع شكله سليم.
+[[-v]] (verbose) أقوى: بيطبع الطلب (السطور بتبدأ بـ [[>]]) والرد ([[<]]) وتفاصيل الاتصال. مفيد جدًا لـ debugging HTTPS.
+
+[[-s]] بيخفي شريط التحميل. [[-o /dev/null]] برمي الـ body. [[| jq]] بيعرض الـ JSON منسّق.
+
+لو بتبعت JSON: علامات تنصيص مهمة، single quotes بره والـ JSON جواه.`,
+            when: "تجرّب API endpoint. تتأكد من الـ headers. تكتب سكربت health check.",
+            mistakes: "على ويندوز في CMD، single quotes غير مدعومة. استخدم double quotes."
+          },
+          teach: R`## الأول: curl بيوريك قد إيه من الكلام
+
+| الفلاج | بيطبع إيه |
+|---|---|
+| (من غير حاجة) | البودي بس |
+| [[-i]] (include) | headers الرد + البودي |
+| [[-v]] (verbose) | الاتصال + الطلب اللي اتبعت + headers الرد + البودي |
+| [[-s]] (silent) | يشيل شريط التحميل |
+
+الأمثلة اتشغّلت: الـ GitHub في [[docker run --rm ubuntu:24.04]] (curl 8.5.0 و jq 1.7)، والـ login و [[-v]] على API محلي بـ [[curl.exe]] (8.21.0) في ويندوز.
 
 ---
 
-## المعمل
+## ١. [[curl -i https://api.github.com/users/octocat]]
 
-صفحة فيها hero بعمودين: كلام وفيديو (عنصرين [[<video>]] فوق بعض لعمل crossfade، والاتنين بنفس الرابط)، وتحتها معرض صور. وعلى الموبايل الفيديو والمعرض بيستخبوا:
+~~~text الناتج (أول سطور، لينكس)
+HTTP/2 200
+content-type: application/json; charset=utf-8
+cache-control: public, max-age=60, s-maxage=60
+x-ratelimit-limit: 60
+x-ratelimit-remaining: 57
+...
 
-~~~css
-.hero { display: grid; grid-template-columns: 1fr 1fr; }
-@media (max-width: 767px) {
-  .hero { grid-template-columns: 1fr; }
-  .media, .gallery { display: none; }
+{
+  "login": "octocat",
+  ...
+~~~
+
+[[x-ratelimit-remaining: 57]] معناها: من غير توكن مسموحلك ٦٠ طلب في الساعة، وفاضل ٥٧. حاجة زي دي مش هتشوفها من غير [[-i]].
+
+## ٢. [[curl -s https://api.github.com/users/octocat | jq '{name, public_repos}']]
+
+- [[-s]]: من غير شريط التحميل، عشان ميتلخبطش مع الـ JSON.
+- [[| jq]]: ابعت الرد لـ [[jq]]، برنامج بيقرا JSON.
+- [['{name, public_repos}']]: اعمل object جديد فيه المفتاحين دول بس.
+
+~~~text الناتج
+{
+  "name": "The Octocat",
+  "public_repos": 8
 }
 ~~~
 
-والفيديو جاي من «CDN» عملناه بـ Node على [[127.0.0.1:8932]] بيحاكي الرابط الموقّع: [[/media/hero.mp4?Expires=<وقت>&Signature=...]]، وبعد [[Expires]] بيرد [[403]]. (ده محاكاة لسلوك الروابط الموقّعة، والنص بالظبط بيختلف من خدمة للتانية.) والفيديو ملف MP4 حجمه 15,070,719 بايت (حوالي ١٥ ميجا، زي الـ ١٦ في الحالة الأصلية)، اتعمل بـ [[ffmpeg]] 9.0.2. واللقطات بـ Playwright 1.64.1 (باكدج [[playwright-core]]) على Chrome 156 المتسطب على الجهاز، على ويندوز 11.
-
-~~~js shot.js
-const { chromium } = require("playwright-core");
-const [w, url, out] = process.argv.slice(2);
-(async () => {
-  const browser = await chromium.launch({ channel: "chrome" });
-  const page = await browser.newPage({ viewport: { width: +w, height: 900 } });
-  page.on("requestfailed", r => console.log("FAILED", r.failure().errorText));
-  page.on("response", r => { if (r.url().includes("hero.mp4")) console.log("RESP", r.status(), r.request().headers().range || "-"); });
-  await page.goto(url);
-  await page.waitForTimeout(4000);
-  console.log(await page.evaluate(() => JSON.stringify({
-    media: getComputedStyle(document.querySelector(".media")).display,
-    videos: [...document.querySelectorAll("video")].map(v => v.readyState),
-  })));
-  await page.screenshot({ path: out });
-  await browser.close();
-})();
-~~~
-
-- [[channel: "chrome"]]: استخدم Chrome المتسطب على الجهاز بدل ما Playwright ينزّل متصفح خاص بيه (مفيش [[npx playwright install]]).
-- [[viewport]]: عرض وطول الصفحة. ده اللي بتشوفه الـ media queries.
-- [[requestfailed]] و [[response]]: اطبع كل طلب فشل وسببه، وكل رد للفيديو بكوده والـ [[Range]] اللي اتطلب.
-- [[waitForTimeout(4000)]]: ٤ ثواني عشان الفيديو يلحق يحمّل قبل اللقطة.
-
----
-
-## ١. السؤال الأول: اللقطة اتاخدت بعرض كام؟
-
-~~~text node shot.js 591 ... hero-591.png
-{"media":"none", ...}
-~~~
-
-~~~text node shot.js 1440 ... hero-1440.png
-{"media":"block", ...}
-~~~
-
-عرض المعاينة كان **591px**. 591 أقل من 767، فقاعدة الموبايل اشتغلت: الفيديو والمعرض [[display: none]]. «الصور ناقصة» مش bug، ده تصميم الموبايل. ولقطة 1440 فيها الاتنين.
-
-وده بيحصل كتير مع: نافذة معاينة جوه IDE أو أداة، أو متصفح مش مكبّر، أو لقطة من موبايل. والـ media query بتشوف عرض الـ viewport (الصفحة نفسها) مش الشاشة. فأول حاجة: اعرف العرض ([[innerWidth]] في Console، أو حجم الصورة نفسها)، وصوّر بعرض ديسكتوب واضح (1440) قبل ما تحكم.
-
----
-
-## ٢. السؤال التاني: الفيديو نفسه جاي منين؟
-
-صورة 1440 فيها مكان الفيديو. بس لو كان مربع أسود، نروح للفيديو:
-
-~~~text curl -sI --max-time 20 "$VIDEO_URL" | head -20   (والرابط لسه شغّال)
-HTTP/1.1 200 OK
-Content-Type: video/mp4
-Accept-Ranges: bytes
-Content-Length: 15070719
-~~~
-
-| السطر | معناه |
-|---|---|
-| [[200 OK]] | الملف موجود والرابط شغّال |
-| [[Content-Type: video/mp4]] | نوعه فيديو فعلًا، مش صفحة خطأ |
-| [[Accept-Ranges: bytes]] | بيقبل طلبات بالحتت ([[Range]])، فالمتصفح يقدر يقدّم ويأخّر |
-| [[Content-Length: 15070719]] | ١٥ ميجا. ومع عنصرين [[<video>]] بنفس الرابط ممكن يتحمّل أكتر من مرة |
-
-~~~text curl -s -r 0-1 -o /dev/null -w "range: %{http_code} %{size_download}\n" "$VIDEO_URL"
-range: 206 2
-~~~
-
-[[206 Partial Content]] و ٢ بايت بالظبط: الـ Range شغّال.
-
-### نفس الرابط بعد ما انتهى
-
-~~~text curl -sI "$OLD_URL" | head -3
-HTTP/1.1 403 Forbidden
-Content-Type: application/xml
-~~~
-
-[[403]] والنوع [[application/xml]] (رسالة خطأ من الـ CDN، مش فيديو). وفي المتصفح:
-
-~~~text shot.js بعد انتهاء الرابط
-RESP 403 bytes=0-
-RESP 403 bytes=0-
-{"width":1440,"media":"block","videos":[{"readyState":0,"networkState":3,"error":4},{"readyState":0,"networkState":3,"error":4}]}
-~~~
-
-| الرقم | معناه (من مواصفة HTML) |
-|---|---|
-| [[readyState: 0]] | HAVE_NOTHING: مفيش ولا بايت يتعرض |
-| [[networkState: 3]] | NETWORK_NO_SOURCE: ملقاش مصدر ينفع |
-| [[error.code: 4]] | MEDIA_ERR_SRC_NOT_SUPPORTED: المصدر اترفض |
-| [[readyState: 4]] | HAVE_ENOUGH_DATA: عنده كفاية يشتغل للآخر. ده اللي عايزه |
-
-والصورة: مربع أسود مكان الفيديو. ده **السبب الحقيقي** في الحالة الأصلية: الفيديو كان رابط مولّد من أداة AI على CDN، ومعاه توقيع بينتهي. اشتغل يوم التسليم، ووقف بعدها.
-
----
-
-## ٣. والـ [[net::ERR_ABORTED]] اللي في Network؟ (مش هو السبب)
-
-والرابط **شغّال**، ده اللي ظهر:
-
-~~~text node shot.js 1440 ... (والرابط شغّال)
-RESP 206 bytes=0-
-RESP 206 bytes=0-
-FAILED net::ERR_ABORTED
-FAILED net::ERR_ABORTED
-RESP 206 bytes=15040512-
-RESP 206 bytes=3145728-
-{"media":"block","videos":[4,4]}
-~~~
-
-طلبين اتلغوا و [[readyState]] = 4 للاتنين: الفيديو شغّال. اللي حصل: كل عنصر [[<video>]] طلب الملف من أوله ([[bytes=0-]])، والمتصفح لقى إن «فهرس» الملف ([[moov]]) مش في الأول، فلغى الطلب وطلب آخر الملف ([[bytes=15040512-]]) يقرا الفهرس، وبعدين كمّل من النص. الإلغاء ده هو [[ERR_ABORTED]]. يعني **طبيعي** ومش علامة فشل، وفي الحالة الأصلية اتشاف على نسخة الـ crossfade التانية بالظبط.
-
-وبعد ما نقلنا الفهرس لأول الملف:
+## ٣. الـ POST: login بباسورد غلط
 
 ~~~bash
-ffmpeg -i hero.mp4 -c copy -movflags +faststart hero-fast.mp4
+curl -i -X POST https://example.com/api/login -H "Content-Type: application/json" -d '{"email":"a@b.com","password":"secret"}'
 ~~~
 
-~~~text node shot.js 1440 ... (hero-fast)
-RESP 206 bytes=0-
-RESP 206 bytes=0-
-FAILED net::ERR_ABORTED
-{"media":"block","videos":[4,4]}
-~~~
+| الحتة | معناها |
+|---|---|
+| [[-X POST]] | الـ method |
+| [[-H "Content-Type: application/json"]] | البودي JSON |
+| [[-d '...']] | البودي (data). الـ JSON جواه double quotes، فبرّه single quotes |
 
-الطلب لآخر الملف اختفى، وفضل إلغاء واحد (العنصر التاني اكتفى باللي اتجاب). نفس الحجم (15,070,719) لأن [[-c copy]] مبيعيدش الضغط.
-
-> والفخ العكسي: سيرفر **مبيدعمش** Range (بيرد [[200]] بالملف كله على أي طلب). جربناه بسيرفر Node بسيط: ٦ طلبات [[ERR_ABORTED]] وكل طلب [[200]] من الأول. الفيديو اشتغل في الآخر، بس بتحميل مكرر. عشان كده [[curl -r 0-1]] لازم يرجّع [[206]].
-
----
-
-## ٤. الحل: الفيديو عندك
-
-~~~bash
-curl -s --max-time 120 -o public/hero.mp4 "$VIDEO_URL" && file public/hero.mp4
-~~~
+على API محلي:
 
 ~~~text الناتج
-public/hero.mp4: ISO Media, MP4 Base Media v1 [ISO 14496-12:2003]
+HTTP/1.1 401 Unauthorized
+X-Powered-By: Express
+Content-Type: application/json; charset=utf-8
+Content-Length: 37
+
+{"error":"Invalid email or password"}
 ~~~
 
-| الحتة | ليه |
+### على ويندوز: علامات التنصيص
+
+جربت نفس السطر بالظبط بـ [[curl.exe]]:
+
+| الشِل | النتيجة |
 |---|---|
-| [[--max-time 120]] | ١٥ ميجا على نت بطيء ممكن تاخد وقت، بس متعلّقش للأبد |
-| [[-o public/hero.mp4]] | في Next، أي حاجة في [[public/]] بتتقدّم من [[/]]: الملف ده = [[/hero.mp4]] |
-| [[file]] | اتأكد إنه فيديو. لو الرابط كان انتهى، [[curl -s]] هيحفظ رسالة الـ [[403]] (XML) باسم [[hero.mp4]] من غير ما يقول حاجة. ([[curl -f]] بيخرج بخطأ بدل ما يحفظ صفحة الخطأ) |
+| PowerShell 7 | [[401]]: اشتغل زي bash |
+| Windows PowerShell 5.1 | [[400 Bad Request]]: الـ double quotes جوه الـ JSON اتشالت قبل ما توصل لـ curl، والسيرفر قال [[SyntaxError: Expected property name]] |
+| CMD | لازم double quotes بره و [[\"]] جوه: [[-d "{\"email\":\"a@b.com\",\"password\":\"secret\"}"]]، وكده رجع 401 |
 
-وبعدين في الكود [[src="/hero.mp4"]]. ونتأكد إن Next بيقدّمه صح:
+## ٤. [[curl -H "Authorization: Bearer $TOKEN" URL]]
 
-~~~text curl -sI http://localhost:4311/hero.mp4
-HTTP/1.1 200 OK
-Accept-Ranges: bytes
-Cache-Control: public, max-age=0
-Content-Type: video/mp4
-Content-Length: 15070719
-~~~
-
-و [[curl -r 0-1]] رجّع [[206 2]]. يعني Next 16.4 بيدعم Range للملفات في [[public/]].
-
-### صغّره، ومتحمّلوش على الموبايل لو مستخبي
-
-قسنا البايتات اللي الـ «CDN» بعتها في ٤ ثواني:
-
-| الحالة | اتبعت |
-|---|---|
-| 1440، عنصرين [[<video>]] | 15.6 MB |
-| 591، والفيديو [[display: none]] | **7.6 MB** (مستخبي واتحمّل برضه) |
-| 591، و [[src]] بيتحط بس لو [[matchMedia("(min-width: 768px)").matches]] | 0 MB (ولا طلب) |
-
-~~~js
-if (matchMedia("(min-width: 768px)").matches)
-  document.querySelectorAll(".media video").forEach(v => v.src = "/hero.mp4");
-~~~
-
-[[display: none]] مبيمنعش التحميل مع [[autoplay]]. [[matchMedia]] بيسأل نفس سؤال الـ media query من JavaScript، فالموبايل مش بيطلب حاجة.
-
-وإعادة الضغط ([[ffmpeg -i hero.mp4 -c:v libx264 -crf 28 -preset veryfast -movflags +faststart -an hero-small.mp4]]) نزّلت الملف التجريبي من 15,070,719 لـ 3,510,238 بايت. الرقم ده لفيديو تجريبي (testsrc2)، والفيديو الحقيقي هيختلف، فقيس على ملفك. و [[-an]] بيشيل الصوت (hero [[muted]] أصلًا).
-
-### وفي git؟
-
-ملف ١٥ ميجا في الريبو بيتنسخ مع كل clone، وكل نسخة جديدة منه بتفضل في التاريخ للأبد. ملف أو اتنين مقبول. لو هيتغيّر كتير أو أكبر، [[git lfs]] (درس في تاب git) أو CDN **انت** اللي متحكم فيه (رابط ثابت مش موقّع بوقت).
+- [[Authorization: Bearer ...]]: الطريقة المعتادة تبعت توكن.
+- [[$TOKEN]]: الـ shell بيحط قيمة المتغير [[TOKEN]] مكانه قبل ما curl يشتغل. اعمله الأول بـ [[TOKEN=abc123]] (في bash) أو [[$env:TOKEN = "abc123"]] واكتب [[$env:TOKEN]] (في PowerShell). وكده التوكن مش مكتوب في الأمر نفسه فمش هيبان في الـ history.
 
 ---
 
-## البدايل اللي اترفضت
+## ٥. [[-v]]: الطلب نفسه
 
-| البديل | ليه لأ |
+~~~text curl.exe -v http://127.0.0.1:8791/api/me (ويندوز)
+*   Trying 127.0.0.1:8791...
+* Established connection to 127.0.0.1 (127.0.0.1 port 8791) from 127.0.0.1 port 65505
+* using HTTP/1.x
+> GET /api/me HTTP/1.1
+> Host: 127.0.0.1:8791
+> User-Agent: curl/8.21.0
+> Accept: */*
+>
+* Request completely sent off
+< HTTP/1.1 200 OK
+< X-Powered-By: Express
+< Content-Type: application/json; charset=utf-8
+< Content-Length: 36
+<
+* Connection #0 to host 127.0.0.1:8791 left intact
+{"id":42,"name":"Ali","role":"user"}
+~~~
+
+| أول السطر | معناه |
 |---|---|
-| تصلّح الـ CSS عشان المعرض يظهر في 591 | ده تصميم الموبايل المقصود. المشكلة في عرض اللقطة |
-| تجدّد الرابط المؤقت وتحطه تاني | هينتهي تاني. أي أصل أساسي (hero، لوجو، خط) لازم يبقى عندك أو على رابط ثابت |
-| تتجاهل الـ [[ERR_ABORTED]] كلها | لو الرابط بيرد [[403]] هتتجاهل السبب الحقيقي. افحص الكود و [[readyState]] |
-| [[preload="none"]] على الموبايل | جربناه مع [[autoplay]] على 591: العنصرين طلبوا الفيديو برضه ([[autoplay]] بيغلب). [[matchMedia]] اتقاس ومطلبش حاجة |
+| [[*]] | معلومات curl عن الاتصال |
+| [[>]] | اللي curl **بعته** |
+| [[<]] | اللي السيرفر **رده** |
 
-## إزاي تتأكد إنها اتحلت
-
-- لقطة 1440 فيها الفيديو، و [[readyState]] = 4 للعنصرين.
-- [[grep -rnE "Expires=|Signature=|X-Amz" app components]] (أو اسم الدومين الخارجي) مبيطلّعش حاجة (جربناه على ملف فيه رابط موقّع: طلّع [[app/tmp.ts:1:...]]): مفيش أصل أساسي على رابط موقّع.
-- [[curl -sI http://localhost:3000/hero.mp4]]: [[200]] و [[video/mp4]].
-
-## إزاي متتكررش
-
-- أي رابط فيه [[Expires]] أو [[Signature]] أو [[X-Amz-]] = مؤقت. نزّله أول ما تاخده.
-- كل لقطة مكتوب جنبها العرض. وصوّر الاتنين: 390 و 1440.
-- قدّر الحجم قبل ما تحط فيديو: [[Content-Length]] × عدد عناصر [[<video>]] اللي بتحمّله.
+السطر الفاضي بعد [[>]] و [[<]] هو الفاصل بين الـ headers والبودي في HTTP نفسه.
 
 ## الخلاصة
 
-| السؤال | إزاي تعرف |
-|---|---|
-| ناقص عشان الموبايل؟ | عرض اللقطة أقل من الـ breakpoint. صوّر 1440 |
-| الرابط شغّال؟ | [[curl -sI]]: [[200]] أو [[206]]. [[403]] = انتهى |
-| الفيديو شغّال في الصفحة؟ | [[readyState]] = 4 |
-| [[ERR_ABORTED]] مشكلة؟ | لو [[readyState]] = 4، لأ |
-| الحل الدائم | [[curl -o public/hero.mp4]] و [[file]] و [[src="/hero.mp4"]] |`,
-          deep: {
-            why: R`الشكوى «اللقطة ناقصة» فيها مشكلتين مختلفتين خالص متلخبطين في بعض: واحدة مش مشكلة (عرض موبايل)، وواحدة مشكلة حقيقية هتكسر الموقع لكل الزوار (رابط بينتهي). من غير ترتيب، هتصلّح CSS سليم وتسيب الرابط اللي هيوقع.`,
-            how: R`المتصفح بيحمّل الفيديو بطلبات [[Range]]: يبدأ بـ [[bytes=0-]]، ولو الفهرس ([[moov]]) في آخر الملف (الافتراضي في كتير من برامج التصدير) بيلغي ويطلب آخر الملف، فيظهر [[ERR_ABORTED]]. و [[-movflags +faststart]] بيحط الفهرس في الأول. والروابط الموقّعة (signed URLs) بيبقى فيها وقت انتهاء وتوقيع محسوب على الرابط والوقت، فالـ CDN بيرفض بعد الوقت ([[403]]) ومينفعش تغيّر الوقت من غير ما التوقيع يبوظ. و [[display: none]] بيخفي الرسم بس، مش بيلغي تحميل عنصر [[<video autoplay>]].`,
-            when: R`أي لقطة شاشة جاية من أداة أو زميل أو CI، وأي مرة تستخدم صورة أو فيديو من رابط خارجي (أداة AI، أو S3 أو CloudFront موقّع، أو Google Drive). وقبل أي تسليم: دوّر في الكود على روابط مؤقتة.`,
-            mistakes: R`تصلّح CSS على لقطة 591 فتكسر الموبايل. تفتكر [[ERR_ABORTED]] هو السبب وتسيب الـ [[403]]. تنزّل الفيديو بـ [[curl -s]] بعد ما الرابط انتهى فتحفظ XML باسم mp4. عنصرين [[<video>]] بنفس الملف الكبير من غير ما تحسب الحجم. [[display: none]] وتفتكر الموبايل مش بيحمّل. وتحط ملفات كبيرة كتير في git من غير ما تفكر في LFS.`
-          },
-          sol: R`لقطة 591: الفيديو والمعرض مش موجودين ([[media: none]])، و 1440: موجودين. والرابط شغّال: [[curl -sI]] بيرد [[200]] و [[video/mp4]]، و [[readyState]] = 4، وفي Network طلبين [[ERR_ABORTED]] وده طبيعي.
-
-بعد ما الرابط ينتهي: [[curl -sI]] بيرد [[403 Forbidden]] و [[application/xml]]، و [[readyState]] = 0 و [[networkState]] = 3 و [[error.code]] = 4، ولقطة 1440 فيها مربع أسود.
-
-بعد [[curl -s --max-time 120 -o public/hero.mp4 "$VIDEO_URL"]] (والرابط لسه شغّال) و [[src="/hero.mp4"]]: [[file]] بيقول [[ISO Media, MP4]]، و [[curl -sI localhost:3000/hero.mp4]] بيرد [[200]] و [[Accept-Ranges: bytes]]، والفيديو شغّال حتى والـ CDN مقفول.`,
-          practice: [
-            { lvl: 'سريع', t: R`اقرا وتوقّع: صفحة فيها [[@media (max-width: 767px) { .gallery { display: none } }]]. لقطة اتاخدت بعرض 591، وتانية 768، وتالتة 767. المعرض هيظهر في أنهي لقطة؟ وبعدين صوّر التلاتة واتأكد.`, done: R`كتبت إنه هيظهر في 768 بس، والتلات لقطات أكدت (أو [[getComputedStyle]] رجّع [[none]] في 591 و 767 و [[grid]] أو [[block]] في 768).` },
-            { lvl: 'تطبيق', t: R`ابني «CDN» صغير بـ Node بيقدّم ملف فيديو برابط فيه [[?Expires=]] ويرد [[403]] بعده، ويدعم [[Range]]. اختبره بـ [[curl -sI]] و [[curl -r 0-1]] قبل وبعد الانتهاء.`, done: R`قبل الانتهاء: [[200]] و [[Accept-Ranges: bytes]]، و [[-r 0-1]] بيرد [[206]] و [[2]] بايت. بعده: [[403]] للاتنين.` },
-            { lvl: 'تطبيق', t: R`صلّح الأمر ده: [[curl -s -o public/hero.mp4 "$VIDEO_URL"]] اتشغّل بعد ما الرابط انتهى، والصفحة فيها فيديو أسود. اكتشف إيه اللي اتحفظ فعلًا ([[file]] و [[head -c 200]])، واكتب نسخة من الأمر بتفشل بصوت عالي بدل ما تحفظ صفحة خطأ.`, done: R`[[file]] قال XML أو text مش MP4، والنسخة المصلّحة فيها [[-f]] (أو بتفحص [[%{http_code}]]) ورقم خروجها مش صفر لما الرابط منتهي، ومبتسيبش ملف مكانه.` },
-            { lvl: 'تطبيق', t: R`قيس: على المعمل، احسب البايتات اللي اتحمّلت للفيديو في ٤ ثواني بعرض 591 والفيديو [[display: none]]، وبعدين بعد ما تحط [[src]] بـ [[matchMedia]] بس. استخدم لوج السيرفر أو Network.`, done: R`عندك رقمين: الأول أكبر من صفر (ميجات)، والتاني صفر ومفيش ولا طلب [[.mp4]] في Network.` },
-            { lvl: 'تحدي', t: R`دوّر بنفسك: اعرف من [[man ffmpeg]] أو وثائق ffmpeg يعني إيه [[faststart]]، وبعدين اعمل فيديو بـ [[ffmpeg -f lavfi -i testsrc2=size=1280x720:rate=30 -t 10]] مرة من غير و مرة بـ [[-movflags +faststart]]، وعدّ طلبات [[ERR_ABORTED]] لكل واحد في Playwright.`, done: R`عندك رقمين: من غير faststart فيه طلب لآخر الملف ([[bytes=<رقم كبير>-]]) وإلغاءات أكتر، وبـ faststart الطلب ده اختفى. وكاتب في سطر faststart بيعمل إيه.` },
-            { lvl: 'تحدي', t: R`ابني [[find-temp-urls.sh]]: بيدوّر في فولدرات الكود على روابط مؤقتة ([[Expires=]] و [[Signature=]] و [[X-Amz-]] و [[token=]]) ويطبع الملف والسطر، ولكل رابط يعمل [[curl -sI --max-time 10]] ويطبع الكود. ويخرج بـ 1 لو لقى أي رابط مؤقت.`, done: R`على مشروع فيه رابط موقّع واحد: بيطبع [[ملف:سطر]] والكود ([[200]] أو [[403]]) ويخرج 1، وعلى مشروع نضيف بيخرج 0 من غير طباعة.` },
+- [[-i]] للـ status والـ headers، [[-v]] لما عايز تشوف اللي اتبعت كمان.
+- [[-X]] الـ method، [[-H]] header، [[-d]] البودي، و [[| jq]] للـ JSON.
+- على ويندوز: PowerShell 7 زي bash، و 5.1 بيبوّظ الـ JSON، و CMD محتاج [[\"]].`,
+          lines: [
+            "GET مع الـ headers والـ status قبل البودي.",
+            "الرد JSON، خد منه حقلين بس بـ jq.",
+            "POST بـ JSON: [[-X POST]] النوع، و [[-H]] نوع المحتوى، و [[-d]] البودي بين single quotes.",
+            "طلب بتوكن في header الـ Authorization، والتوكن من متغير."
           ],
-          ci: [
-            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`bash`, run: R`cat > cdn.js <<'EOF'
-const http = require("http");
-const body = Buffer.alloc(5000, 7);
-http.createServer((q, s) => {
-  const exp = Number(new URL(q.url, "http://x").searchParams.get("Expires"));
-  if (!exp || Date.now() / 1000 > exp) { s.writeHead(403, { "Content-Type": "application/xml" }); return s.end("<Error>Request has expired</Error>"); }
-  const m = /bytes=(\d+)-(\d*)/.exec(q.headers.range || "");
-  if (m) { const a = +m[1], b = m[2] ? +m[2] : body.length - 1; s.writeHead(206, { "Content-Type": "video/mp4", "Accept-Ranges": "bytes", "Content-Range": "bytes " + a + "-" + b + "/" + body.length }); return s.end(body.subarray(a, b + 1)); }
-  s.writeHead(200, { "Content-Type": "video/mp4", "Accept-Ranges": "bytes", "Content-Length": body.length }); s.end(q.method === "HEAD" ? undefined : body);
-}).listen(18950, "127.0.0.1");
-EOF
-node cdn.js & PID=$!
-sleep 1
-FUTURE=$(( $(date +%s) + 600 ))
-curl -sI "http://127.0.0.1:18950/hero.mp4?Expires=$FUTURE&Signature=x" | head -1
-curl -s -r 0-1 -o /dev/null -w "range: %{http_code} %{size_download}\n" "http://127.0.0.1:18950/hero.mp4?Expires=$FUTURE&Signature=x"
-curl -sI "http://127.0.0.1:18950/hero.mp4?Expires=1700000000&Signature=x" | head -1
-curl -sf -o old.mp4 "http://127.0.0.1:18950/hero.mp4?Expires=1700000000&Signature=x"; echo "curl -f exit=$?"
-kill $PID; wait $PID 2>/dev/null; sleep 1`, expect: [R`HTTP/1.1 200 OK`, R`range: 206 2`, R`HTTP/1.1 403 Forbidden`, R`curl -f exit=22`] },
+          sol: R`جربتها على API محلي بباسورد غلط:
+
+[[HTTP/1.1 401 Unauthorized]]
+[[Content-Type: application/json]]
+وبعد السطر الفاضي الـ body: [[{"error":"Invalid email or password"}]]
+
+ده الصح: [[401]] (أو [[400]] لو الـ body نفسه ناقص) ورسالة عامة متقولش هل الإيميل موجود ولا لأ. لو رجعلك [[200]] ومعاه [[{"success":false}]] ده تصميم وحش لأن أي client أو monitoring هيفتكره نجح. ولو [[500]] يبقى فيه exception في الكود مع الباسورد الغلط، افتح logs. ولو [[404]] يبقى الـ route غلط أو ناقصه prefix زي [[/api/v1]].`,
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** على أي موقع، شغّل [[curl -I]] و [[curl -i]] و [[curl -v]] واكتب الفرق في سطر لكل واحد.`, done: R`[[-I]] بيبعت [[HEAD]] ويطبع الـ headers بس، و [[-i]] بيبعت GET ويطبع الـ headers والبودي، و [[-v]] بيطبع كمان الطلب بعلامة [[>]] وتفاصيل الاتصال بـ [[*]].` },
+            { lvl: 'تطبيق', t: R`**ابني:** سطر [[curl -s -o /dev/null -w]] بيطبع: الـ status، و [[time_namelookup]]، و [[time_connect]]، و [[time_starttransfer]]، و [[time_total]]، و [[size_download]] لموقعك.`, done: R`السطر بيطبع ٦ أرقام، وعارف إن [[time_starttransfer]] ناقص [[time_connect]] تقريبًا = وقت السيرفر (زي TTFB في Timing).` },
+            { lvl: 'تطبيق', t: R`**قارن:** نفس الـ POST بـ JSON في bash وفي PowerShell 5.1 بـ [[curl.exe]]. اكتب نسخة PowerShell اللي بتشتغل، وليه [[curl]] من غير [[.exe]] في 5.1 بيطلع حاجة تانية.`, done: R`النسختين رجّعوا نفس الرد، وكاتب إن [[curl]] في 5.1 alias لـ [[Invoke-WebRequest]]، والـ JSON في PowerShell محتاج [[--data-raw '{\"a\":1}']] أو ملف بـ [[-d "@body.json"]].` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** من [[curl --help all]] (أو [[man curl]]) لاقي الخيار اللي بيعمل retry لو السيرفر رد [[503]]، والخيار اللي بيخلّي curl يخرج بكود غلط على [[4xx]]/[[5xx]].`, done: R`[[--retry 3]] و [[--fail]] (أو [[--fail-with-body]])، وجرّبت إن [[curl --fail URL/nope; echo $?]] بيطبع [[22]].` },
+            { lvl: 'تحدي', t: R`**قارن (HTTP/2):** [[curl -sI --http1.1 URL]] و [[curl -sI --http2 URL]] على موقع HTTPS. أول سطر بيتغيّر إزاي؟ (درس «HTTP/2 و HTTP/3»).`, done: R`الأول [[HTTP/1.1 200 OK]] والتاني [[HTTP/2 200]] من غير كلمة OK، وأسماء الـ headers في HTTP/2 كلها small letters (اتجرّب بـ curl 8.14 في Alpine). ولو [[curl]] بتاعك قال [[option --http2: the installed libcurl version does not support this]] (ده اللي طلع من curl بتاع ويندوز و Git Bash)، جرّب من WSL أو Docker.` },
           ],
         }
       ]

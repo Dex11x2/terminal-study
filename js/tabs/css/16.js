@@ -4,10 +4,24 @@ MORE("css", [
       t: "widgets و scroll وميزات جديدة",
       l: 3,
       n: "accordion و tabs من غير مكتبة، و scroll مظبوط، وحركة بين الصفحات، وإزاي تعرف الميزة الجديدة تنفع ولا لسه",
+      projects: [
+        { lvl: 'صغير', t: R`FAQ لشركة شحن متخيلة «سِكّة»`, what: R`١٠ أسئلة بـ [[<details name="faq">]]، والفتح والقفل بيتحركوا بـ [[::details-content]] و [[interpolate-size: allow-keywords]]، وسهم بيلف مع [[details[open]]]، وخانة بحث فوق بتخفي الأسئلة اللي مش فيها الكلمة. من درس details و summary.`, done: R`سؤال واحد بس مفتوح في المرة، والحركة شغالة في Chrome وفي المتصفح اللي مش بيدعمها بيفتح من غير حركة، والسهم في الناحية الصح في العربي، ومع reduce مفيش حركة، والبحث بيلاقي كلمة جوه إجابة مقفولة.` },
+        { lvl: 'صغير', t: R`carousel منتجات بأزرار ونقط`, what: R`carousel بـ [[scroll-snap]] (من الدرس)، وزرارين «اللي قبله» و«اللي بعده» بيعملوا [[scrollBy]] بعرض كارت في الاتجاه الصح في RTL ([[scrollLeft]] بيبقى بالسالب)، ونقط تحت بتعلّم الكارت الظاهر بـ IntersectionObserver على الـ carousel نفسه. من درس scroll-snap و scroll-margin.`, done: R`الزراير بتمشي صح في العربي والإنجليزي، وبتتعطّل في الأول والآخر، والنقطة الحالية عليها [[aria-current="true"]]، والسحب باللمس والأسهم شغالين.` },
+        { lvl: 'متوسط', t: R`صفحة منتج بـ tabs ومعرض`, what: R`صفحة منتج متخيل: معرض صور بـ scroll-snap، والضغط على صورة صغيرة بيكبّرها بـ View Transition (الصورتين ليهم نفس [[view-transition-name]] لحظة التبديل بس)، وتحتها tabs (الوصف، والمواصفات، والتقييمات) بـ roving tabindex، و FAQ بـ details. بيجمع دروس الوحدة.`, done: R`كل حاجة بالكيبورد (Tab بيدخل الـ tabs مرة واحدة والأسهم جواها)، والصورة بتطير لمكانها ومفيش في الكونسول «Unexpected duplicate view-transition-name»، ومع reduce التبديل فوري، و axe صفر مشاكل.` },
+        { lvl: 'متوسط', t: R`command palette بـ Ctrl+K`, what: R`[[<dialog>]] بيفتح بـ Ctrl+K، فيه input ولستة نتايج [[role="listbox"]]. الـ focus بيفضل في الـ input، والأسهم بتغيّر [[aria-activedescendant]] للنتيجة المختارة (بدل roving tabindex)، و Enter بيفتحها، والنتايج بتتفلتر وانت بتكتب، والكلمة المطابقة بتتعلّم بـ [[<mark>]].`, done: R`[[document.activeElement]] هو الـ input طول الوقت والأسهم بتمشي في النتايج، وقارئ الشاشة بيقول النتيجة المختارة، و Escape بيقفل ويرجّع الـ focus، ونتيجة «مفيش» بتتقري في [[role="status"]].` },
+        { lvl: 'كبير', t: R`متجر صغير بانتقالات «ركن القهوة»`, what: R`موقع متعدد الصفحات (MPA عادي من غير framework): صفحة لستة فيها فلتر chips بيحرّك الكروت لأماكنها الجديدة بـ View Transitions، وصفحة منتج الانتقال ليها بـ [[@view-transition { navigation: auto; }]] وصورة المنتج بتطير بين الصفحتين، وفيها tabs و FAQ و carousel، وهيدر sticky و [[scroll-margin-top]] للعناوين، و [[text-wrap: balance]] للعناوين. كل ميزة جديدة جوه [[@supports]] أو بتقع بهدوء. بيجمع الوحدة دي مع الثيم والـ Accessibility والحركة.`, done: R`في Chrome الانتقالات شغالة بين الصفحات، وفي متصفح من غير cross-document view transitions الصفحات بتفتح عادي من غير أخطاء. كل حاجة بالكيبورد، و axe صفر في كل الصفحات، و Lighthouse Performance ‏90 أو أكتر، و reduce بيلغي الانتقالات. وفيه جدول Baseline بكل ميزة اتستخدمت (من MDN) والـ fallback بتاعها.`, ext: R`زوّد سلة بـ drawer بيطلع من ناحية النهاية، وحوّل الموقع لثنائي اللغة، وانشره على GitHub Pages.` },
+        { lvl: 'فكرة', t: R`widget من الصفر بـ APG`, what: R`اختار widget من WAI-ARIA Authoring Practices مش اتشرح هنا (combobox، أو tree، أو slider بمقبضين، أو carousel بـ autoplay)، وابنيه من الصفر بالـ HTML والـ CSS والـ JavaScript، ماشي على الكيبورد والـ aria اللي الصفحة بتطلبها بالظبط.`, done: R`كل اختصار في جدول APG بتاع الـ widget شغال، وقارئ الشاشة بيقول الحالة الصح، وفيه اختبار Playwright بيجرّب كل اختصار.`, ext: R`قارنه بنسخة مكتبة (Radix أو React Aria): الحجم، والسلوك، وإيه اللي المكتبة عملته وانت نسيته.` },
+      ],
       items: [
         {
           cmd: "details و summary",
           title: "accordion و FAQ من غير ولا سطر JavaScript",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** سؤالين [[<details name="f">]] والأول [[open]]. دوست على الـ summary بتاع التاني: الأول هيبقى إيه؟ وبعدين من الكونسول عملت [[a.open = true]] للأول: التاني هيبقى إيه؟`, done: R`بعد الضغطة: الأول اتقفل والتاني اتفتح. وبعد [[a.open = true]]: الأول اتفتح والتاني اتقفل لوحده، يعني الـ [[name]] بيشتغل حتى من JavaScript. اتقاس في Chrome 156.` },
+            { lvl: 'تطبيق', t: R`**ابني:** حركة فتح وقفل للـ FAQ من غير JavaScript: [[:root { interpolate-size: allow-keywords }]] و [[details::details-content { block-size: 0; overflow: clip; transition: block-size .4s, content-visibility .4s allow-discrete }]] و [[details[open]::details-content { block-size: auto }]].`, done: R`الإجابة بتنزل بنعومة: قسناها على إجابة 200px في Chrome 156، بعد 200ms من الضغط ارتفاع الـ details كان 110px وفي الآخر 218px. وفي المتصفح اللي مش بيدعم [[::details-content]] أو [[interpolate-size]] بتفتح عادي من غير حركة، ومع reduce من غير حركة.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** FAQ معمول بـ [[<div class="q" onclick="this.classList.toggle('open')">]] والإجابة [[display: none]] لحد ما الكلاس يتحط. حوّله لـ details و summary.`, done: R`مفيش ولا سطر JavaScript، والسؤال بيتفتح بـ Enter و Space، وقارئ الشاشة بيقول collapsed و expanded، و axe صفر مشاكل، والـ CSS بقى بيستخدم [[details[open]]] بدل [[.open]].` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** دوّر في MDN على: البحث بـ Ctrl+F بيلاقي كلام جوه [[<details>]] مقفول؟ وإيه هو [[hidden="until-found"]]؟ وفين الدعم بتاع [[name]] على details؟`, done: R`كتبت: Chrome بيفتح الـ details لوحده لما البحث يلاقي كلام جواه، و [[hidden="until-found"]] بيعمل نفس الحكاية لأي عنصر مخفي، وجدول دعم [[name]] من MDN (Chrome 120، و Safari 17.2، و Firefox 130)، وجرّبت البحث بإيدك في Chrome.` },
+          ],
           desc: R`[[<details>]] بيتفتح ويتقفل لوحده، و [[<summary>]] جواه هو الجزء اللي بتدوس عليه. والباقي بيظهر لما يتفتح. شغال بالماوس والكيبورد (Enter و Space)، وقارئ الشاشة بيقول «collapsed» و «expanded» من غير aria.
 
 و [[open]] بيخليه مفتوح من الأول، و [[details[open] > summary]] في CSS للشكل وهو مفتوح. ولو اديت كذا details نفس [[name]]، يبقوا accordion حصري: فتح واحد بيقفل الباقي.`,
@@ -169,18 +183,18 @@ summary 2 (مقفول):  color: rgb(0, 0, 0)
 - متحطش زرار أو لينك جوه الـ summary، ومتستخدموش لمنيو بيتقفل لما تدوس برا.`,
           lines: [
             "الجزء كله ليه اسم من العنوان.",
-            "العنوان.",
+            R`عنوان القسم، و [[id]] بتاعه هو اللي [[aria-labelledby]] بيشاور عليه.`,
             R`سؤال مفتوح من الأول، و [[name="faq"]] بيربطه بالباقي.`,
             "الجزء اللي بيتداس عليه، وبياخد focus لوحده.",
             "الإجابة: بتبان بس وهو مفتوح.",
-            "قفلة.",
+            R`قفلة أول سؤال؛ أي حاجة جوه [[details]] بعد الـ summary هي الإجابة.`,
             "سؤال تاني بنفس الـ name: فتحه بيقفل الأول.",
-            "السؤال.",
-            "الإجابة.",
-            "قفلة.",
-            "قفلة الـ section.",
+            R`نص السؤال التاني، وقارئ الشاشة بيقوله ومعاه «collapsed».`,
+            R`إجابة السؤال التاني: مخفية لحد ما يتفتح، بس البحث في الصفحة بيلاقيها.`,
+            R`قفلة السؤال التاني؛ ممكن تزوّد أسئلة بنفس الـ name من غير أي كود.`,
+            R`قفلة الـ section اللي اسمه جاي من العنوان، فقارئ الشاشة بيعدّه region.`,
             "خط بين الأسئلة ومسافة.",
-            "السؤال شكله بيتداس.",
+            R`السؤال شكله بيتداس: الماوس بيبقى إيد، والخط أتقل من الإجابة.`,
             "السؤال المفتوح بلون البراند ومسافة تحته."
           ],
           sol: R`بالكيبورد: Tab بيقف على كل summary، و Enter أو Space بيفتحوا ويقفلوا، وقارئ الشاشة بيقول «التوصيل بياخد قد إيه؟، button، expanded».
@@ -192,6 +206,12 @@ Ctrl+F على كلمة في إجابة مقفولة: في Chrome و Edge الـ 
         {
           cmd: "roving tabindex",
           title: "tabs بتتحرك بالأسهم زي البرامج الحقيقية",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** ٤ tabs في صفحة RTL، والـ focus على الأول (اللي على اليمين خالص). دوست سهم شمال: هيروح فين؟ وسهم يمين؟ و End؟`, done: R`سهم شمال = التاني (اللي بعده في القراية)، وسهم يمين = الرابع (لف من الأول للآخر)، و End = الرابع. وكل مرة المحتوى اتغير و [[aria-selected]] اتنقل. واتأكدت بالكيبورد.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** كل الـ tabs عليها [[tabindex="0"]]، فـ Tab بيعدّي على الـ ٦ tabs قبل ما يوصل للمحتوى. وواحد فيهم [[aria-controls]] بتاعه بيشاور على id مش موجود، فالاختيار بيوقع بـ «Cannot set properties of null (setting 'hidden')».`, done: R`Tab بيوقف مرة واحدة على الـ tab المختار وبعده على طول المحتوى، وكل [[aria-controls]] ليه لوحة موجودة، ومفيش errors في الكونسول.` },
+            { lvl: 'تطبيق', t: R`**اكتب اختبار:** بـ Playwright في صفحة RTL: Tab بيدخل على الـ tab المختار، وسهم شمال بيختار التاني ولوحته بتبان واللوحة القديمة [[hidden]]، و Tab تاني بيروح للوحة مش للـ tab اللي بعده.`, done: R`الاختبار بيعدّي، ولو رجّعت كل الـ tabs [[tabindex="0"]] بيقع على آخر خطوة، ولو شلت حساب الـ [[rtl]] بيقع على السهم.` },
+            { lvl: 'تحدي', t: R`**ابني:** لستة نتايج بحث بـ [[aria-activedescendant]] بدل roving: الـ focus فاضل في الـ input، والأسهم بتغيّر الـ option المختار ([[aria-selected]] وكلاس للشكل)، و Enter بيختاره.`, done: R`[[document.activeElement]] هو الـ input وانت بتمشي بالأسهم، وكل option ليه id، و [[aria-activedescendant]] بيتغير معاه، وقارئ الشاشة بيقول اسم الـ option. وكتبت إمتى ده أحسن من roving (لما الكتابة لازم تفضل شغالة).` },
+          ],
           desc: R`الـ tabs widget واحد: Tab بيدخله مرة واحدة ويطلع منه مرة واحدة، وجواه بتتحرك بالأسهم. عشان كده roving tabindex: الـ tab المختار بس عليه [[tabindex="0"]]، والباقي [[tabindex="-1"]]. ولما تدوس سهم، بتنقل الـ 0 والـ focus للي بعده.
 
 الـ roles: [[tablist]] على الحاوية، و [[tab]] على كل زرار ومعاه [[aria-selected]] و [[aria-controls]]، و [[tabpanel]] على كل محتوى ومعاه [[aria-labelledby]].
@@ -399,30 +419,30 @@ function select(tab) {
 - ده «automatic activation»: السهم بيعرض المحتوى على طول. لو العرض تقيل خلي السهم ينقل الـ focus بس و Enter يختار.
 - في مشروع React حقيقي استخدم Radix Tabs، بس اختبره بنفس الجدول اللي فوق.`,
           lines: [
-            "الحاوية.",
+            R`الحاوية اللي عليها [[role=tablist]]، وعليها هنسمع للأسهم والضغط.`,
             "كل الـ tabs في مصفوفة.",
-            "اختيار tab.",
-            "لكل tab...",
-            "...هو ده المختار؟",
+            R`دالة بتختار tab: بتحدّث الكل وبتنقل الـ focus، وبيستخدمها الكيبورد والماوس.`,
+            R`بتلف على كل الـ tabs، المختار والباقي...`,
+            R`...و [[on]] بتبقى [[true]] للـ tab المختار بس.`,
             "aria-selected بـ true أو false.",
             "المختار بس عليه 0 والباقي -1: وقفة Tab واحدة.",
             "المحتوى بتاعه يبان والباقي يستخبى.",
             "قفلة الـ for.",
             "الـ focus على الـ tab الجديد.",
             "قفلة.",
-            "الأسهم جوه الـ tablist.",
-            "مكان الـ focus الحالي.",
+            R`listener واحد على الحاوية بيمسك الأسهم لأي tab جواها.`,
+            R`رقم الـ tab اللي عليه الـ focus دلوقتي في المصفوفة.`,
             "الاتجاه الحقيقي من الـ CSS.",
             "في RTL اليمين = اللي قبله والشمال = اللي بعده.",
             "سهم: روح للي بعده أو قبله ولف في الآخر.",
-            "Home: الأول.",
-            "End: الأخير.",
+            R`Home: روح لأول tab في الترتيب.`,
+            R`End: روح لآخر tab، و [[at(-1)]] = آخر عنصر في المصفوفة.`,
             "أي زرار تاني: سيبه للمتصفح.",
             "منع الـ scroll بالأسهم.",
             "قفلة.",
-            "الضغط بالماوس...",
-            "...على أي tab...",
-            "...يختاره.",
+            R`الضغط بالماوس على الحاوية كلها (listener واحد بدل واحد لكل tab)...`,
+            R`...[[closest]] بيطلع من العنصر اللي اتداس لحد أقرب [[role=tab]]، حتى لو دوست على أيقونة جواه...`,
+            R`...ولو لقى tab بيختاره بنفس دالة الكيبورد.`,
             "قفلة."
           ],
           sol: R`Tab من برا بيقف على «الحساب» بس (الوحيد اللي عليه 0). في [[dir="rtl"]]: السهم الشمال بيروح لـ «الأمان» والمحتوى بتاعه يظهر، والسهم اليمين يرجع (ومن الأول بيلف للأخير)، و Home و End للأول والآخر. و Tab بعد كده بيخرج من الـ tabs على طول للـ panel أو اللي بعده.
@@ -442,6 +462,12 @@ function select(tab) {
         {
           cmd: "scroll-snap و scroll-margin",
           title: "carousel من CSS بس، وعنوان ميستخباش تحت الـ header",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** carousel في صفحة [[dir="rtl"]]. [[scrollLeft]] بيبدأ بكام؟ ولو عملت [[scrollBy({ left: -100 })]] بيبقى كام؟ وإيه اللي ده بيعنيه لزرار «اللي بعده»؟`, done: R`بيبدأ 0 وبعد الـ scrollBy بقى -100 (اتقاس في Chrome 156): في RTL الـ scroll للشمال بالسالب. فزرار «اللي بعده» في العربي لازم [[scrollBy({ left: -width })]]، والأحسن تضرب في [[dir === "rtl" ? -1 : 1]].` },
+            { lvl: 'تطبيق', t: R`**ابني:** زرارين قبل وبعد للـ carousel بـ [[scrollBy]] بعرض كارت + الـ gap، وبيتعطّلوا لما توصل للأول أو الآخر (من [[scrollLeft]] و [[scrollWidth - clientWidth]] بالقيمة المطلقة)، وليهم أسامي عربي.`, done: R`الزراير بتمشي صح في الاتجاهين، والـ snap بيقف على أول الكارت بالظبط، والزرار بيبقى [[disabled]] في الأطراف، وقارئ الشاشة بيقول «اللي بعده، زرار».` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** carousel بيقلب لوحده كل ٣ ثواني بـ [[setInterval]] ومفيش طريقة توقّفه (WCAG 2.2.2). زوّد زرار وقوف وتشغيل، ووقّف مع [[:hover]] و [[:focus-within]] (من JavaScript بـ [[matches]])، وما يشتغلش خالص مع reduce.`, done: R`الزرار بيبدّل [[aria-pressed]] وكلمته، والـ carousel بيقف لما الماوس عليه أو الـ focus جواه، ومع reduce مفيش autoplay من الأول.` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** صفحة بهيدر sticky ارتفاعه 64px، ولينك [[#prices]] لعنوان تحت. دوس اللينك من غير [[scroll-margin-top]] واطبع [[document.querySelector("#prices").getBoundingClientRect().top]]، وبعدين حطه وقيس تاني.`, done: R`قبل: الرقم أقل من 64 (العنوان تحت الهيدر)، وبعد: أكبر من 64 والعنوان باين كله.` },
+          ],
           desc: R`[[scroll-snap-type: x mandatory]] على الحاوية و [[scroll-snap-align: start]] على العناصر: لما المستخدم يسيب الـ scroll، بيقف على أول كارت بالظبط بدل ما يقف في النص. carousel كامل بـ swipe على الموبايل من غير مكتبة.
 
 و [[scroll-margin-top]] على العنصر بيسيب مسافة فوقه لما المتصفح يعمل scroll ليه (لينك [[#pricing]]، أو [[scrollIntoView]])، فالعنوان ميستخباش تحت الـ header الثابت. و [[scroll-padding-top]] على الـ html نفس الفكرة بس لكل العناصر مرة واحدة، وبيشمل الـ focus بالـ Tab.`,
@@ -596,9 +622,9 @@ h2[id] { scroll-margin-top: 6rem; }
 - [[mandatory]] مع كروت أطول من الشاشة غلط: استخدم [[proximity]].`,
           lines: [
             "القايمة الأفقية: ليها اسم وبتاخد focus للـ scroll بالكيبورد.",
-            "كارت.",
-            "كارت.",
-            "قفلة.",
+            R`كارت: [[li]] جواه صورة بمقاسات و alt، فالقايمة بتتقري «لستة فيها ٢».`,
+            R`كارت تاني بنفس الشكل؛ في الحقيقة دول بيتولدوا من بيانات.`,
+            R`قفلة القايمة؛ الـ snap كله في الـ CSS، مفيش JavaScript.`,
             R`flex أفقي، و scroll أفقي، والوقوف إجباري على نقط الـ snap، والـ scroll ميكمّلش للصفحة، ونقطة الوقوف بعد 1rem من الحافة.`,
             "كل كارت 80% من العرض (فاللي بعده باين)، والوقوف على بدايته.",
             "أي scroll لعنصر (لينك # أو focus) يسيب 5rem للـ header الثابت.",
@@ -614,6 +640,12 @@ h2[id] { scroll-margin-top: 6rem; }
         {
           cmd: "View Transitions",
           title: "حركة ناعمة بين حالتين أو صفحتين",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** عنصرين في الصفحة عليهم نفس [[view-transition-name: product-42]] في نفس الوقت، وبدأت [[document.startViewTransition()]]. هيحصل إيه؟`, done: R`مفيش حركة خالص: الكونسول طلّع «Unexpected duplicate view-transition-name: product-42»، و [[transition.ready]] اترفض بـ «InvalidStateError: Transition was aborted because of invalid state. Snapshot capture failed» (Chrome 156). الاسم لازم يبقى فريد في كل لحظة.` },
+            { lvl: 'تطبيق', t: R`**ابني:** شبكة كروت فيها فلتر chips، وكل كارت [[view-transition-name: card-<id>]] (اسم فريد). الفلتر بيتطبق جوه [[startViewTransition]]، فالكروت الفاضلة بتتزحلق لأماكنها الجديدة واللي اتشالت بتختفي.`, done: R`الكروت بتتحرك لأماكنها بدل ما تقفز، ومفيش duplicate في الكونسول، والفلتر شغال من غير حركة في المتصفح اللي مش بيدعم ومع reduce، والـ focus فاضل على الـ chip.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[document.startViewTransition(() => { fetch("/api/p/42").then(r => r.json()).then(render) })]]: الحركة بتحصل بين الصفحة القديمة والقديمة، وبعدين المحتوى الجديد بيقفز. صلّحه.`, done: R`الدالة بقت [[async]] وبترجّع الـ promise ([[await]] للـ fetch والـ render جواها)، فالمتصفح بيستنى المحتوى الجديد قبل ما ياخد الصورة التانية، والحركة بقت بين القديم والجديد فعلًا.` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** من MDN اعرف دعم الـ View Transitions داخل نفس الصفحة ([[startViewTransition]]) والـ View Transitions بين صفحتين ([[@view-transition]]) في Chrome و Safari و Firefox.`, done: R`جدول: داخل الصفحة Chrome 111 و Safari 18 و Firefox 144، وبين الصفحات Chrome 126 و Safari 18.2 و Firefox لسه (حسب MDN وقت ما دوّرت، واكتب التاريخ)، ومكتوب إن الكود اللي في الدرس بيشتغل من غير حركة في أي متصفح مش بيدعم.` },
+          ],
           desc: R`[[document.startViewTransition(update)]] بياخد صورة للصفحة قبل، ويشغّل الدالة اللي بتغيّر الـ DOM، وياخد صورة بعد، ويعمل crossfade بينهم. ولو عنصر ليه [[view-transition-name]] في الحالتين، بيتحرك ويكبر من مكانه القديم للجديد (صورة المنتج في اللستة بتطير لصفحة التفاصيل).
 
 وبين صفحات حقيقية (MPA): [[@view-transition { navigation: auto; }]] في CSS الصفحتين، من غير JavaScript.
@@ -778,6 +810,11 @@ ready ← InvalidStateError
         {
           cmd: "text-wrap",
           title: "عنوان سطره الأخير كلمة لوحدها",
+          practice: [
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** عنوان عربي طويل في كارت عرضه 260 و 300 و 340px، مرة من غير [[text-wrap]] ومرة بـ [[balance]]. قيس عرض كل سطر بـ [[Range.getClientRects()]] (أو بعينك من DevTools).`, done: R`جدول بعرض كل سطر في الحالات الست. ولاحظت إن في مقاسات العنوان أصلًا متوازن فمفيش فرق، وفي مقاسات تانية السطر الأخير بقى أطول بكتير مع [[balance]]، فالخاصية بتفرق في حالات معينة مش كلها.` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** [[text-wrap: balance]] حطيته على فقرة ١٢ سطر ومفيش فرق. دوّر في MDN أو وثائق Chrome ليه.`, done: R`عرفت إن المتصفحات بتحدد عدد سطور للـ balance (في Chrome حوالي ٦ سطور، و Firefox أكتر) عشان الحساب تقيل، وإن الفقرات ليها [[pretty]] مش [[balance]]، وكتبت المصدر.` },
+            { lvl: 'تطبيق', t: R`**ابني:** كارت منتج: الاسم [[line-clamp-2]]، والسعر [[white-space: nowrap]] برقم وعملة ([[Intl.NumberFormat("ar-EG", { style: "currency", currency: "EGP" })]])، والوصف [[text-wrap: pretty]]. جرّبه باسم ٣ سطور وسعر كبير.`, done: R`الاسم بيقف على سطرين بـ «…» وقارئ الشاشة لسه بيقرا الاسم كامل (القص شكل بس)، والسعر والعملة على سطر واحد مبيتقسموش، والكارت ارتفاعه ثابت مهما الاسم طال.` },
+          ],
           desc: R`[[text-wrap: balance]] بيوزّع كلام العنوان على السطور بالتساوي، بدل سطر مليان وسطر فيه كلمة واحدة. و [[text-wrap: pretty]] للفقرات: بيحاول ميخليش كلمة لوحدها في آخر سطر.
 
 وفي Tailwind v4: [[text-balance]] و [[text-pretty]]. ومعاهم [[line-clamp-2]] لو عايز تقطع الكلام بعد سطرين بـ «…».`,
@@ -932,6 +969,12 @@ CSS.supports('text-wrap', 'balance')   → true
         {
           cmd: "Baseline و @supports",
           title: "الميزة دي أستخدمها ولا لسه؟ Baseline و caniuse و @supports",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[CSS.supports("(:has(a))")]] و [[CSS.supports("selector(:has(a))")]]: كل واحد بيرجّع إيه في Chrome 156؟ وليه؟`, done: R`الأول [[false]] والتاني [[true]] (اتقاس). الـ selectors لازم تتسأل بـ [[selector()]]، و [[@supports (:has(a))]] من غيرها دايمًا false فالـ fallback بيشتغل حتى في المتصفح اللي بيدعم.` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** جدول بحالة Baseline من MDN لـ ٦ ميزات من الوحدات دي: [[:has()]]، و container queries، و [[@property]]، و [[animation-timeline]]، و View Transitions بين الصفحات، و [[text-wrap: pretty]].`, done: R`جدول فيه لكل ميزة: Widely ولا Newly ولا Limited، وأول نسخة في كل متصفح، وقرارك: «استخدمها عادي» أو «بـ fallback» أو «لسه»، وتاريخ اليوم اللي دوّرت فيه.` },
+            { lvl: 'تطبيق', t: R`**ابني:** navbar زجاجي: [[backdrop-filter: blur(12px)]] وخلفية شبه شفافة، و [[@supports not (backdrop-filter: blur(1px))]] بيدّيه خلفية شبه مصمتة. جرّب الـ fallback بإنك تشيل الخاصية من DevTools.`, done: R`في الحالتين الكلام 4.5:1 أو أكتر فوق أفتح وأغمق جزء في الصفحة تحته (اتقاس من DevTools)، والـ fallback شكله مقصود مش مكسور.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** شغّل [[npx browserslist "baseline widely available"]] و [[npx browserslist "defaults"]] في مشروع، وقارن اللستتين.`, done: R`عدد المتصفحات والنسخ في كل واحدة، وأقدم نسخة Safari في كل لستة، وجملة: الفرق ده بيأثر على إيه (prefixes من autoprefixer، وتحويل CSS في Lightning CSS أو Vite).` },
+          ],
           desc: R`Baseline علامة بتلاقيها في MDN و caniuse: «Newly available» يعني الميزة شغالة في آخر نسخة من Chrome و Edge و Firefox و Safari (ديسكتوب وموبايل)، و «Widely available» يعني عدّى على ده 30 شهر، فأغلب الناس عندهم نسخة بتدعمها.
 
 caniuse.com بيدّيك التفاصيل: أنهي نسخة، ونسبة المستخدمين، والمشاكل المعروفة. و [[@supports]] في CSS (و [[CSS.supports()]] في JavaScript) بيسأل المتصفح نفسه: لو بتدعم الحاجة دي طبّق ده.
@@ -1096,7 +1139,7 @@ npx browserslist "defaults"
             "...خلفية فيها لمسة خفيفة من لون البراند.",
             "قفلة.",
             R`لو المتصفح مش بيدعم [[:has()]]...`,
-            "...اعرض الـ fallback.",
+            R`...اعرض النسخة البديلة اللي بتعمل نفس الشغل من غير [[:has()]].`,
             "قفلة.",
             R`نفس السؤال من JavaScript: لو بيدعم anchor positioning علّم الـ html بكلاس.`,
             "الأدوات كلها تستهدف المتصفحات اللي فيها الميزات المنتشرة من 30 شهر أو أكتر."

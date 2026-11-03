@@ -4,10 +4,26 @@ MORE("css", [
       t: "الحركة",
       l: 3,
       n: "حركة سريعة وخفيفة على transform و opacity، وبتتلغي للي طالب كده",
+      projects: [
+        { lvl: 'صغير', t: R`مكتبة loaders`, what: R`تلات loaders بـ CSS بس: دايرة بتلف ([[border]] و [[@keyframes]] على [[transform: rotate]])، وتلات نقط بتنط ورا بعض ([[animation-delay: calc(var(--i) * 120ms)]])، و skeleton بـ shimmer. كل واحد جوه [[role="status"]] فيه «بيحمّل» لقارئ الشاشة. من درس transition و @keyframes.`, done: R`التلاتة بيتحركوا بـ transform و opacity بس (أو [[background-position]] للـ shimmer)، ومع [[prefers-reduced-motion]] كل واحد بيبقى شكل ثابت مفهوم ومفيش ولا حركة شغالة ([[document.getAnimations().length]] = 0)، وقارئ الشاشة بيقول «بيحمّل».` },
+        { lvl: 'صغير', t: R`كارت بيتقلب`, what: R`كارت فريق عمل (صورة ورا اسم ونبذة) بيتقلب 3D: الحاوية [[perspective: 1000px]]، والكارت [[transform-style: preserve-3d]] و [[transition: transform .6s]]، والوشين [[backface-visibility: hidden]] والضهر [[rotateY(180deg)]]. بيتقلب مع [[:hover]] و [[:focus-within]]، وفيه زرار «اقلب» للموبايل. من درس transition و @keyframes.`, done: R`بيتقلب بالماوس وبالكيبورد وبالزرار، والضهر مش باين معكوس في أي لحظة، ومع reduced motion بيتبدّل الوشين بـ crossfade بدل اللفة، والكلام اللي ورا بيتقري لقارئ الشاشة.` },
+        { lvl: 'متوسط', t: R`صفحة قصة لمحمصة بن متخيلة «حبّاية»`, what: R`صفحة طويلة: hero بيظهر بـ CSS keyframes (مش JavaScript)، وأقسام بتظهر بالتتابع مع الـ scroll بـ IntersectionObserver و [[unobserve]] بعد أول مرة و [[--i]] للـ stagger، وعدّادات أرقام بتعد لحد القيمة لما تظهر بـ [[requestAnimationFrame]] و [[tabular-nums]]، و marquee آراء العملاء بيقف مع hover و focus. والإخفاء بيحصل بس لو فيه كلاس [[js]] على html (سكربت صغير في الـ head بيحطه). بيجمع دروس الوحدة.`, done: R`مع JavaScript مقفول (DevTools › Disable JavaScript) كل المحتوى ظاهر. مع reduced motion مفيش حركة والعدّادات بتطلع بالرقم النهائي على طول والـ marquee لستة ثابتة. والـ hero بيبان من غير ما يستنى JavaScript (LCP في Lighthouse مش مستني الـ bundle).` },
+        { lvl: 'متوسط', t: R`منيو مطعم بيتقلب زي الكتاب`, what: R`flipbook من ٦ صفحات: الحاوية [[perspective: 2400px]]، وكل ورقة [[transform-style: preserve-3d]] ليها وش وضهر [[backface-visibility: hidden]]، وبتتقلب بـ [[rotateY(-180deg)]] حوالين الكعب. في العربي الكتاب بيفتح من الناحية التانية ([[transform-origin]] بيتقلب مع [[dir]] بمتغير). زرارين «اللي بعدها» و«اللي قبلها» والأسهم في الكيبورد، و [[aria-live]] بيقول رقم الصفحة.`, done: R`الصفحات بتتقلب بالزراير والأسهم في الاتجاهين، وفي العربي من اليمين للشمال صح، ومفيش وش معكوس بيبان، و reduced motion بيبدّل الصفحات من غير لف، وقارئ الشاشة بيقول «صفحة ٣ من ٦».` },
+        { lvl: 'كبير', t: R`معمل التأثيرات`, what: R`صفحة واحدة فيها ١٠ تأثيرات من اللي بيتكرر في المواقع الحقيقية، كل واحد في سكشن ليه شرح قصير: كارت spotlight (هالة بتتبع الماوس بـ [[--x]] و [[--y]] و [[radial-gradient]])، و tilt بيميل مع الماوس، و flip card، و marquee بيقف ومظبوط في RTL، ولوحة زجاج بـ [[backdrop-filter]] و fallback، و blobs بتتحرك ببطء بـ [[filter: blur()]]، و reveal بالتتابع، و عدّاد، و skeleton، وزرار مغناطيسي. فوق الصفحة لوحة فيها toggle «حركة أقل» بيقلب كلاس على html (غير إعداد النظام). وكل تأثير بيشتغل بالكيبورد أو ليه بديل. بيجمع الوحدة دي مع وحدة الثيم والـ Accessibility.`, done: R`في Performance وانت بتحرّك الماوس وبتعمل scroll، مفيش frames أطول من 16.7ms كتير (Frames track أخضر) ومفيش «Forced reflow». الـ toggle وإعداد النظام الاتنين بيوقّفوا كل الحركات. التأثيرات اللي بتتبع الماوس مبتشتغلش على اللمس ([[(hover: hover) and (pointer: fine)]]). axe صفر مشاكل. وفيه جدول في الصفحة: كل تأثير بيتحرك بإيه (transform أو opacity أو paint) وتكلفته.`, ext: R`زوّد لكل تأثير زرار «انسخ الكود»، وقيس الصفحة على CPU 6x slowdown وخفّف أتقل تأثير، وانشرها كـ portfolio piece.` },
+        { lvl: 'فكرة', t: R`حركة بهوية`, what: R`اختار ٣ قيم حركة لهوية موقعك: مدة قصيرة وطويلة، و easing واحد ([[--ease: cubic-bezier(...)]])، ومسافة الطلوع. وطبّقهم على كل الحركات في موقعك عشان تبقى «عيلة واحدة»، وصمّم بديل هادي لكل حركة لـ reduced motion بدل ما تلغيها بس.`, done: R`كل الحركات في الموقع بتقرا من التوكنز دي ومفيش مدة مكتوبة بإيدك، ولكل حركة سطر في جدول: الأصل والبديل الهادي.`, ext: R`اعمل صفحة motion guide فيها كل حركة بمثال حي وزرار «شغّل تاني»، و DevTools › Animations panel لتبطيئها.` },
+      ],
       items: [
         {
           cmd: "transition و @keyframes",
           title: "حركة ناعمة بالـ CSS بس",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** مع [[transition: all 300ms]]، أنهي تغيير من دول هيتحرك بنعومة وأنهي هيقفز: [[opacity: 0 → 1]]، و [[transform: scale(.9) → none]]، و [[background-color]]، و [[display: none → block]]، و [[height: 0 → auto]]، و [[visibility: hidden → visible]]؟ اكتب، وجرّب كل واحد بكلاس بيتضاف.`, done: R`opacity و transform و background-color ناعمين، و display و [[height: auto]] بيقفزوا (محتاجين [[@starting-style]] و [[transition-behavior: allow-discrete]] و [[interpolate-size]] في درس لاحق)، و visibility بيتقلب مرة واحدة في أول أو آخر الـ transition. وفهمت ليه [[transition: all]] خطر: بيحرّك حاجات مكنتش قاصدها.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** موقع حاطط [[@media (prefers-reduced-motion: reduce) { * { animation-duration: .01ms !important } }]] بس، وفيه loader بـ [[infinite]]. فعّل reduce من DevTools › Rendering وبص على الـ loader، واطبع [[document.getAnimations()[0].effect.getComputedTiming().currentIteration]].`, done: R`الـ loader بيترعش بدل ما يقف، والرقم بيطلع بالآلاف (قسناه 10001 بعد 300ms في Chrome 156). بعد ما زوّدت [[animation-iteration-count: 1 !important]] الحركة خلصت و [[getAnimations()]] رجّعت لستة فاضية.` },
+            { lvl: 'تطبيق', t: R`**أشكال:** اعمل ٣ حركات صغيرة من غير JavaScript: نقطة «مباشر» بتنبض بـ [[scale]] و [[opacity]] (ping)، ونجوم بتلمع كل واحدة بـ [[animation-delay]] مختلف من [[--i]]، و «موجة صوت» من ٥ أعمدة بـ [[scaleY]] و delays متدرجة.`, done: R`التلاتة شغالين بـ transform و opacity بس (مفيش width ولا height ولا top في الـ keyframes)، والأعمدة بتتحرك من تحت مش من النص ([[transform-origin: bottom]])، ومع reduce التلاتة واقفين في شكل مفهوم.` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** shimmer للـ skeleton مرتين: مرة بـ [[@keyframes]] على [[background-position]]، ومرة بـ [[::after]] فيه gradient بيتحرك بـ [[translateX]]. شغّل DevTools › Rendering › Paint flashing.`, done: R`النسخة الأولى بتنوّر أخضر طول الوقت (repaint كل frame)، والتانية مبتنوّرش غير مرة في الأول لأن transform بيتعمل في الـ compositor. وكتبت إمتى الفرق ده يهم (لستة فيها ٢٠ skeleton على موبايل ضعيف).` },
+            { lvl: 'تطبيق', t: R`**ابني:** scroll reveal: [[[data-reveal]]] بيبدأ [[opacity: 0; translate: 0 16px]] وبيظهر لما يدخل الشاشة بكلاس [[in]] من IntersectionObserver، وكل عنصر [[transition-delay: calc(var(--i) * 80ms)]]، و [[unobserve]] بعد أول ظهور. والإخفاء بيبدأ بس لو html عليه كلاس [[js]].`, done: R`مع JavaScript مقفول كل المحتوى ظاهر من الأول، ومعاه العناصر بتطلع ورا بعض مرة واحدة بس (الـ scroll لفوق وتحت مبيعيدهاش)، ومع reduce بتظهر من غير حركة.` },
+            { lvl: 'تحدي', t: R`**مسألة:** marquee لوجوهات لا نهائي: المحتوى مكرر مرتين جوه [[display: flex; width: max-content]] و [[translateX(-50%)]] بيلف من غير ما يبان مكان الوصلة. وقّفه مع [[:hover]] و [[:focus-within]] بـ [[animation-play-state: paused]]، وظبّطه في RTL، ومع reduce خليه لستة بـ scroll أفقي عادي.`, done: R`مفيش نطة ولا فراغ عند نقطة التكرار في الاتجاهين، وفي RTL عملت keyframes تانية لـ [[translateX(50%)]] (لأن [[animation-direction: reverse]] بيعكس الوقت مش الاتجاه فبيبيّن فراغ)، والنسخة المكررة عليها [[aria-hidden="true"]] فقارئ الشاشة بيقرا اللوجوهات مرة واحدة.` },
+          ],
           desc: R`[[transition]] بيحرّك التغيير بين حالتين: من العادي للـ hover مثلًا. و [[@keyframes]] بيعرّف حركة بمراحل تشتغل لوحدها (loader بيلف، أو عنصر بيطلع من تحت أول ما الصفحة تفتح) وبتتشغّل بـ [[animation]].
 
 حرّك [[transform]] و [[opacity]] بس لو تقدر، دول المتصفح بيحرّكهم من غير ما يعيد حساب الصفحة. وأي حركة لازم تتلغي أو تخف مع [[prefers-reduced-motion]].`,
@@ -21,7 +37,7 @@ MORE("css", [
 }
 .reveal { animation: fade-up 500ms ease-out both; animation-delay: calc(var(--i, 0) * 80ms); }
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
 }`,
           try: R`اعمل 6 كروت بـ [[.reveal]] و [[style="--i: 0"]] و 1 و 2... وشوفهم بيطلعوا ورا بعض. وبعدين من DevTools › Rendering فعّل [[prefers-reduced-motion: reduce]] واعمل refresh.`,
           flag: "script",
@@ -140,7 +156,7 @@ t=900   كلهم op=1.00 ty=0
 
 ~~~text CSS
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
 }
 ~~~
 
@@ -148,6 +164,8 @@ t=900   كلهم op=1.00 ty=0
 - [[*]] = أي عنصر، و [[*::before]] و [[*::after]] = العناصر الوهمية اللي الـ CSS بيعملها قبل وبعد المحتوى (مش بتتمسك بـ [[*]] لوحدها).
 - [[0.01ms]] مش [[0]]: الحركة لسه بتشتغل وتخلص فورًا، فالعنصر بيوصل لحالة [[to]] وأحداث زي [[animationend]] بتحصل عادي.
 - [[!important]]: يكسب أي قيمة تانية مكتوبة على العناصر.
+- [[animation-iteration-count: 1]]: من غيرها أي حركة [[infinite]] (loader بيلف مثلًا) بتفضل شغالة بس كل لفة 0.01ms، فبتلف آلاف المرات في الثانية وتبان بتترعش. قسناها على spinner بـ [[infinite]] بعد 300ms: من غير السطر ده [[playState]] = [[running]] و [[currentIteration]] = 10001، ومعاه الحركة خلصت واختفت من [[document.getAnimations()]].
+- [[scroll-behavior: auto]]: يلغي الـ smooth scroll اللي بيتحط على html، فالقفز لـ anchor بيبقى فوري.
 
 عملنا emulate لـ reduce من Playwright:
 
@@ -173,7 +191,7 @@ transition-duration: 1e-05s
 
 وحرّك [[transform]] و [[opacity]] بس: دول اللي المتصفح بيحرّكهم من غير ما يعيد حساب الـ layout.`,
           lines: [
-            "الكارت.",
+            R`الكارت في حالته العادية، وهنا بيتكتب الـ transition مش في الـ hover، عشان الحركة تشتغل في الدخول والخروج.`,
             "لما الـ transform أو الظل يتغيروا، اتحرك في 200ms بـ ease-out (سريع في الأول وبيهدى).",
             "قفلة.",
             "الحالة التانية: يطلع 4px لفوق وظله يكبر. الـ transition هو اللي بيخليها ناعمة.",
@@ -183,7 +201,7 @@ transition-duration: 1e-05s
             "قفلة.",
             R`شغّل الحركة نص ثانية، و [[both]] يخلي العنصر شفاف قبل ما تبدأ. و [[--i]] بيأخّر كل عنصر عن اللي قبله.`,
             "لو المستخدم طالب حركة أقل من إعدادات النظام...",
-            "...خلّي كل الحركات تخلص فورًا، فالعناصر تظهر في مكانها النهائي على طول.",
+            R`...خلّي كل الحركات تخلص فورًا ومرة واحدة بس (حتى اللي [[infinite]])، والـ smooth scroll يبقى قفزة، فالعناصر تظهر في مكانها النهائي على طول.`,
             "قفلة."
           ],
           sol: R`الكروت الـ 6 بيطلعوا ورا بعض من تحت لفوق مع fade: الأول على طول، والتاني بعد 80ms، وهكذا لحد السادس بعد 400ms، فالكل بيخلص في حوالي 900ms. قبل ما دور الكارت ييجي بيبقى مخفي تمامًا (مش ظاهر وبعدين يختفي)، وده سبب [[both]]: بيطبّق الـ [[from]] وقت الـ delay.
@@ -195,6 +213,13 @@ transition-duration: 1e-05s
         {
           cmd: "motion",
           title: "حركة مربوطة بالـ state، ودخول وخروج العناصر",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في المثال، لو شلت [[<AnimatePresence>]] حركة الخروج هتحصل؟ ولو شلت [[key="panel"]]؟ ولو المستخدم مفعّل reduce و [[reducedMotion="user"]]، إيه اللي لسه بيتحرك؟`, done: R`من غير AnimatePresence العنصر بيختفي على طول من غير exit، ومن غير key الـ exit ممكن ميشتغلش صح لما العنصر يتبدّل بغيره، ومع reduce الـ [[y]] والـ [[layoutId]] اتلغوا والـ opacity بس فضلت. واتأكدت بـ DevTools › Rendering.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** كل الأقسام عليها [[initial={{ opacity: 0 }}]] و [[whileInView]]، حتى الـ hero. فالـ HTML اللي جاي من السيرفر كله [[opacity: 0]]، ومفيش حاجة بتبان لحد ما الـ JavaScript يتحمّل. صلّح الـ hero بـ CSS keyframes ([[animation: fade-up .5s both]])، وسيب [[whileInView]] للي تحت أول شاشة بس.`, done: R`Lighthouse بيدّي LCP أحسن (رقم قبل وبعد)، ومع JavaScript مقفول الـ hero ظاهر، وفي View Source عنوان الـ hero مفيش عليه [[style="opacity:0"]].` },
+            { lvl: 'تطبيق', t: R`**ابني:** زرار مغناطيسي: لما الماوس يقرب بيتحرك ناحيته بـ ٣٠٪ من المسافة بين المؤشر ومركز الزرار ([[useMotionValue]] و [[useSpring]] أو متغيرات CSS)، ويرجع مكانه لما يبعد. وبيتلغي على اللمس و reduce.`, done: R`على الديسكتوب بيتحرك بنعومة وبيرجع، وفي Device Toolbar (لمس) مبيتحركش خالص ([[matchMedia("(hover: hover) and (pointer: fine)")]] = [[false]])، ومع reduce واقف، والزرار لسه بيتضغط بالكيبورد عادي.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** لستة مهام بتتفلتر جوه [[AnimatePresence]] بـ [[key={i}]]. امسح المهمة التانية: الحركة بتحصل على آخر عنصر مش اللي اتمسح، والـ checkbox بتاع التالتة بيتنقل للتانية. صلّحه بـ id ثابت.`, done: R`بعد [[key={task.id}]] العنصر اللي اتمسح هو اللي بيعمل exit، والباقي بيتزحلق لمكانه بـ [[layout]]، والحالة المتعلّمة فاضلة مع المهمة الصح.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** اعمل build لصفحة فيها [[motion.div]] واحد، وبعدين غيّرها لـ [[m.div]] جوه [[<LazyMotion features={domAnimation}>]]. قارن حجم الـ JavaScript.`, done: R`حجم الـ chunk قبل وبعد من ناتج [[npm run build]] (أو Network في الصفحة)، والحركة شغالة زي ما هي، وكتبت إمتى الفرق يستاهل (صفحة landing بحركة أو اتنين).` },
+          ],
           desc: R`مكتبة [[motion]] (اسمها زمان framer-motion) بتحوّل أي عنصر لـ [[<motion.div>]] بيقبل [[initial]] (البداية) و [[animate]] (يروح لفين) و [[exit]] (يعمل إيه وهو خارج). و [[<AnimatePresence>]] بيخلي العنصر يفضل في الصفحة لحد ما حركة الخروج تخلص، ودي حاجة CSS مش بيعرف يعملها.
 
 و [[layout]] بيحرّك العنصر لوحده لما مكانه أو حجمه يتغير (قايمة اتفلترت، أو كارت كبر)، و [[layoutId]] بيحرّك عنصر من مكان لمكان (الخلفية تحت التاب المختار).`,
@@ -341,14 +366,14 @@ x=1088  transform: matrix(0.994, 0, 0, 1, 4.2, 0)
             "لما open تبقى false العنصر هيتشال...",
             R`...بس الأول: يبدأ شفاف وتحت 8، ويطلع لمكانه، ولما يتشال ينزل ويختفي في 200ms. الـ [[key]] لازم.`,
             "قفلة الشرط.",
-            "قفلة AnimatePresence.",
-            "التابات.",
+            R`قفلة [[AnimatePresence]]: اللي جواها بس هو اللي بيستنى حركة الخروج.`,
+            R`لستة التابات، وكل تاب زرار بيغيّر [[active]] لما تدوس عليه.`,
             R`كل تاب. [[isolate]] عشان الخلفية اللي عليها [[-z-10]] تفضل جوه الزرار (درس z-index).`,
             R`الخلفية موجودة في التاب المختار بس، وبنفس الـ [[layoutId]]، فبتتزحلق من التاب القديم للجديد.`,
-            "اسم التاب.",
-            "قفلة الزرار.",
+            R`اسم التاب نفسه، فوق الخلفية بسبب [[-z-10]] على الخلفية.`,
+            R`قفلة الزرار؛ الـ [[relative]] اللي عليه هو اللي الخلفية [[absolute inset-0]] بتتحسب منه.`,
             "قفلة map.",
-            "قفلة."
+            R`قفلة [[MotionConfig]]؛ أي motion جوّاها بيحترم إعداد reduced motion.`
           ],
           sol: R`مع [[AnimatePresence]]: لما تقفل، العنصر بيعمل fade وبينزل 8px في 0.2 ثانية، وبعدين بس بيتشال من الـ DOM (لو فتحت Elements هتشوفه لسه موجود لحظة الحركة). ومع الفتح بيعمل العكس: بيطلع من تحت وبيظهر.
 
@@ -491,11 +516,11 @@ if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
           },
           sol: R`(١) [[textContent]]: على 900 حافة آخر كلمة بتتحرك مع كل تبديل (في المعمل 667 ثم 657 ثم 496)، وعلى 360 ارتفاع العنوان بيتغيّر (52 و 104). (٢) [[absolute]]: عرض الـ span صفر، والكلمة راكبة على اللي بعدها، وعلى 360 [[scrollWidth]] أكبر من 360. (٣) [[inline-grid]]: عرض الـ span ثابت = أطول كلمة (258 في المعمل)، وحافة آخر كلمة ثابتة، والارتفاع ثابت. ولو العنوان كبير والكلمة الطويلة خرجت برا 360، صغّر الخط بـ [[clamp()]].`,
           practice: [
-            { lvl: 'سريع', t: R`اقرا وتوقّع: [[.swap { display: inline-grid }]] فيه ٣ كلمات عرضها 87 و 97 و 258، وكلهم [[grid-area: 1 / 1]] والمستخبيين [[opacity: 0]]. عرض [[.swap]] كام؟ ولو المستخبيين [[display: none]] بدل [[opacity: 0]]؟ اكتب، وبعدين قيس بـ [[getBoundingClientRect().width]].`, done: R`كتبت 258 في الحالة الأولى، وفي التانية عرض الكلمة الظاهرة بس (87 أو 97 أو 258 حسب الظاهرة)، والقياس طابق.` },
-            { lvl: 'تطبيق', t: R`ابني الـ hero ده: عنوان فيه كلمة بتتبدّل بين ٤ كلمات (عربي)، وزرار تحت العنوان. اعمله بـ [[inline-grid]]، و [[prefers-reduced-motion]]، وجملة [[sr-only]]. اتأكد بـ Playwright إن مكان الزرار ([[getBoundingClientRect().top]]) ثابت في ٤ تبديلات على 1440 و 360.`, done: R`٨ أرقام لـ [[top]] الزرار: ٤ متساويين على 1440، و ٤ متساويين على 360، ومفيش scroll أفقي على 360.` },
-            { lvl: 'تطبيق', t: R`صلّح الكود البايظ: [[<span class="w"></span>]] و [[setInterval(() => w.textContent = words[i++ % 3], 2000)]]، والكلام اللي بعد الكلمة بيتنطط. حوّله لـ [[inline-grid]] من غير ما تغيّر الكلمات ولا الوقت، وقيس [[right]] بتاع الكلمة اللي بعده قبل وبعد.`, done: R`قبل: ٣ قيم مختلفة لـ [[right]]. بعد: قيمة واحدة في الـ ٣ تبديلات.` },
-            { lvl: 'تطبيق', t: R`قارن وقيس: نفس العنوان بخط 80px ثابت، وبـ [[clamp(1.75rem, 8vw, 5rem)]]. على 320 و 360 و 414: [[scrollWidth]] كام في كل حالة؟`, done: R`جدول ٣ عروض × حالتين: الخط الثابت فيه [[scrollWidth]] أكبر من العرض في واحدة على الأقل، و [[clamp]] مساوي للعرض في التلاتة.` },
-            { lvl: 'تحدي', t: R`اعمل تأثير gooey بالفلتر اللي في الدرس، بس الفلتر يتحط بكلاس [[morphing]] وقت التبديل بس (٦٠٠ms) ويتشال بعدها. خد لقطتين بـ Playwright: والعنوان واقف، ووسط التبديل. والعربي لازم يبقى مقري في اللقطة الأولى.`, done: R`لقطة الوقوف: الحروف والنقط واضحة ومفيش فلتر على العنصر ([[getComputedStyle(el).filter]] = [[none]]). لقطة التبديل: الكلمتين ملزوقين كـ blob، و [[filter]] فيها [[url]].` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[.swap { display: inline-grid }]] فيه ٣ كلمات عرضها 87 و 97 و 258، وكلهم [[grid-area: 1 / 1]] والمستخبيين [[opacity: 0]]. عرض [[.swap]] كام؟ ولو المستخبيين [[display: none]] بدل [[opacity: 0]]؟ اكتب، وبعدين قيس بـ [[getBoundingClientRect().width]].`, done: R`كتبت 258 في الحالة الأولى، وفي التانية عرض الكلمة الظاهرة بس (87 أو 97 أو 258 حسب الظاهرة)، والقياس طابق.` },
+            { lvl: 'تطبيق', t: R`**ابني:** الـ hero ده: عنوان فيه كلمة بتتبدّل بين ٤ كلمات (عربي)، وزرار تحت العنوان. اعمله بـ [[inline-grid]]، و [[prefers-reduced-motion]]، وجملة [[sr-only]]. اتأكد بـ Playwright إن مكان الزرار ([[getBoundingClientRect().top]]) ثابت في ٤ تبديلات على 1440 و 360.`, done: R`٨ أرقام لـ [[top]] الزرار: ٤ متساويين على 1440، و ٤ متساويين على 360، ومفيش scroll أفقي على 360.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[<span class="w"></span>]] و [[setInterval(() => w.textContent = words[i++ % 3], 2000)]]، والكلام اللي بعد الكلمة بيتنطط. حوّله لـ [[inline-grid]] من غير ما تغيّر الكلمات ولا الوقت، وقيس [[right]] بتاع الكلمة اللي بعده قبل وبعد.`, done: R`قبل: ٣ قيم مختلفة لـ [[right]]. بعد: قيمة واحدة في الـ ٣ تبديلات.` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** نفس العنوان بخط 80px ثابت، وبـ [[clamp(1.75rem, 8vw, 5rem)]]. على 320 و 360 و 414: [[scrollWidth]] كام في كل حالة؟`, done: R`جدول ٣ عروض × حالتين: الخط الثابت فيه [[scrollWidth]] أكبر من العرض في واحدة على الأقل، و [[clamp]] مساوي للعرض في التلاتة.` },
+            { lvl: 'تحدي', t: R`**أشكال:** اعمل تأثير gooey بالفلتر اللي في الدرس، بس الفلتر يتحط بكلاس [[morphing]] وقت التبديل بس (٦٠٠ms) ويتشال بعدها. خد لقطتين بـ Playwright: والعنوان واقف، ووسط التبديل. والعربي لازم يبقى مقري في اللقطة الأولى.`, done: R`لقطة الوقوف: الحروف والنقط واضحة ومفيش فلتر على العنصر ([[getComputedStyle(el).filter]] = [[none]]). لقطة التبديل: الكلمتين ملزوقين كـ blob، و [[filter]] فيها [[url]].` },
           ],
         }
       ]
@@ -504,10 +529,25 @@ if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
       t: "الأداء",
       l: 3,
       n: "الصفحة تظهر بسرعة ومتتنطش، والـ JavaScript ميجبرش المتصفح يعيد الحساب على الفاضي",
+      projects: [
+        { lvl: 'صغير', t: R`صفحة مقال CLS بتاعها صفر`, what: R`صفحة مقال فيها صورة هيرو، و ٣ صور جوه الكلام، وفيديو مضمّن، ومكان إعلان، وخط من موقعك. احجز مكان كل حاجة ([[width]] و [[height]] و [[aspect-ratio]] و [[min-height]] وخط احتياطي مظبوط). من درس CLS.`, done: R`snippet الـ [[PerformanceObserver]] على [[layout-shift]] بيطبع صفر entries (أو مجموع أقل من 0.01) على Slow 4G و Disable cache، و Lighthouse بيقول CLS أقل من 0.05.` },
+        { lvl: 'صغير', t: R`صياد الـ forced reflow`, what: R`خد صفحة فيها scroll handler أو loop بيقرا ويكتب مقاسات (اكتبها انت لو مفيش)، وسجّل Performance trace، ولاقي كل «Forced reflow» بالسطر بتاعه، وصلّحهم بالترتيب (اقرا الكل ثم اكتب الكل) أو CSS. من درس layout thrashing.`, done: R`الـ trace بعد التصليح مفيهوش ولا تحذير Forced reflow في الـ handler، والوقت بتاع الـ handler نزل لرقم مكتوب قبل وبعد.` },
+        { lvl: 'متوسط', t: R`هيرو بيظهر في أقل من ثانيتين`, what: R`صفحة landing أول شاشة فيها صورة كبيرة وعنوان بخط عربي. اعمل: [[srcset]] و [[sizes]] و [[fetchpriority="high"]] للصورة (ومن غير [[loading="lazy"]] عليها)، و preload للخط الوحيد اللي في أول شاشة، و CSS أول شاشة inline والباقي ملف واحد صغير، و JavaScript بـ [[defer]]. بيجمع دروس الوحدة.`, done: R`Lighthouse (Mobile، Slow 4G) بيدّي LCP أقل من 2.5s و CLS أقل من 0.1 و TBT أقل من 200ms، وفي Network الصورة والخط أولويتهم High وبيبدأوا قبل ما الـ CSS الكبير يخلص، ومفيش تحذير «preloaded but not used».` },
+        { lvl: 'متوسط', t: R`لستة ٢٠٠٠ منتج بتعمل scroll ناعم`, what: R`صفحة فيها ٢٠٠٠ كارت منتج. قيس وقت أول رسم ووقت الـ scroll، وبعدين حط [[content-visibility: auto]] و [[contain-intrinsic-size: auto 320px]] على كل كارت، والصور [[loading="lazy"]] و [[decoding="async"]] بمقاسات، وقيس تاني.`, done: R`جدول قبل وبعد: وقت الـ Rendering في Performance لأول تحميل، وعدد الصور اللي اتحمّلت في أول شاشة، وإن الـ scrollbar مبيتنطش لما توصل للكروت (بفضل [[contain-intrinsic-size]]).` },
+        { lvl: 'كبير', t: R`إنقاذ صفحة بطيئة`, what: R`ابني صفحة فيها ٨ مشاكل أداء بقصد زي اللي بتتكرر في المشاريع: خط من غير [[font-display]] بـ [[@import]]، وصورة الهيرو [[loading="lazy"]]، وصور من غير مقاسات، و CSS 300KB نصه مش مستخدم، و scroll handler بيعمل layout thrashing، و [[filter: blur(80px)]] على عنصر قد الشاشة، و [[will-change]] على كل الكروت، وبانر بيتحط فوق الصفحة بعد ثانية. وبعدين شخّص كل واحدة بأداة (Lighthouse، و Performance، و Coverage، و Rendering › Paint flashing و Layer borders) وصلّحها. بيجمع الوحدة دي مع الحركة والصور.`, done: R`تقرير فيه لكل مشكلة: العَرَض، والأداة اللي كشفتها، والسبب، والتصليح، والرقم قبل وبعد. Lighthouse Performance من تحت الـ 50 لـ 90 أو أكتر على Mobile، والصفحة شكلها زي ما هو، والتقرير بيتعاد بنفس الخطوات على جهاز تاني بنفس النتيجة تقريبًا.`, ext: R`اعمل GitHub Action بيشغّل Lighthouse CI بـ budget ([[budget.json]]) ويوقّع الـ PR لو LCP أو CLS أو حجم الـ CSS عدّى الحد.` },
+        { lvl: 'فكرة', t: R`قيس موقع بتستخدمه كل يوم`, what: R`اختار موقع بتفتحه كتير وبتحس إنه تقيل، وقيسه بـ Lighthouse و Performance (من غير ما تلمس الكود بتاعه)، وطلّع أكبر ٣ أسباب للبطء بأدلة، واكتب إزاي كنت هتصلّحهم.`, done: R`تقرير صفحة واحدة: ٣ مشاكل، ولكل واحدة لقطة من الأداة ورقم، والتصليح المقترح والمكسب المتوقع.`, ext: R`اعمل نسخة محلية صغيرة من الجزء البطيء وجرّب التصليح فعلًا وقيس الفرق.` },
+      ],
       items: [
         {
           cmd: "CLS",
           title: "الصفحة بتتنط وانت بتقرا",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** أنهي تغيير من دول بيعمل layout shift: عنصر [[position: relative]] الـ [[top]] بتاعه اتغير من 0 لـ 40px، وعنصر عليه [[transform: translateY(40px)]]، و div ارتفاعه 80px اتحط في أول الـ body؟ اكتب، وبعدين جرّب بـ [[new PerformanceObserver(l => console.log(l.getEntries())).observe({ type: "layout-shift", buffered: true })]].`, done: R`[[top]] طلّع entry، و transform مطلّعش حاجة، والـ div اللي اتحط فوق طلّع entry قيمته أكبر (قسناها 0.022 في Chrome 156) لأنه زق كل اللي تحته. فالحركة بـ transform مبتأثرش على CLS.` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** صفحة فيها ٣ صور من غير [[width]] و [[height]]. افتحها بـ Slow 4G و Disable cache وقيس CLS بالـ snippet أو Lighthouse، وبعدين زوّد المقاسات وقيس تاني.`, done: R`رقمين قبل وبعد، والبعد صفر أو قريب منه، وفي Performance › Layout Shifts مبقاش فيه مستطيلات على الصور.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** بانر «خصم ٢٠٪» بيتحط في أول الصفحة بـ JavaScript بعد ثانية من التحميل وبيزق كل حاجة لتحت. صلّحه بطريقتين: مكان محجوز بـ [[min-height]] من الأول، أو بانر [[position: fixed]] فوق المحتوى.`, done: R`الـ snippet بيطلّع صفر layout shifts من البانر في الطريقتين، والبانر لسه بيتقفل بزرار ليه اسم، وفي طريقة الـ fixed المحتوى اللي تحته مش مستخبي (فيه [[padding]] بنفس ارتفاعه أو البانر تحت).` },
+            { lvl: 'تطبيق', t: R`**ابني:** لستة جاية من API وهمي بتتأخر 1.5 ثانية. وهي بتتحمّل اعرض skeleton بنفس مقاس الكارت الحقيقي (shimmer من درس الحركة)، والحاوية عليها [[aria-busy="true"]] لحد ما البيانات توصل.`, done: R`CLS صفر لحظة ما البيانات تيجي، وارتفاع الـ skeleton والكارت الحقيقي الفرق بينهم أقل من 4px، و [[aria-busy]] بقى [[false]] بعدها، والـ shimmer واقف مع reduce.` },
+            { lvl: 'تحدي', t: R`**بيانات حقيقية:** استخدم مكتبة [[web-vitals]] (نسخة attribution) و [[onCLS(console.log, { reportAllChanges: true })]] على صفحة بتتنط، وطلّع من النتيجة العنصر اللي عمل أكبر shift ووقته.`, done: R`عرفت الـ selector من [[attribution.largestShiftTarget]] والوقت من [[attribution.largestShiftTime]]، وصلّحت العنصر ده بالذات، والرقم نزل تحت 0.1.` },
+          ],
           desc: R`CLS (Cumulative Layout Shift) مقياس من جوجل لكمية الحركة المفاجئة للمحتوى: صورة اتحمّلت ودفعت الكلام، أو إعلان ظهر فوق الزرار. المطلوب [[0.1]] أو أقل.
 
 الأسباب المشهورة: صور وفيديو و iframes من غير مقاسات، وخطوط بتتبدّل بمقاسات مختلفة، ومحتوى بيتحط فوق محتوى موجود (بانر كوكيز، أو إشعار) بعد ما الصفحة ترسم.`,
@@ -628,13 +668,13 @@ img, video { max-width: 100%; height: auto; }
             "iframe فيديو: ملوش مقاسات من نفسه.",
             "مكان إعلان أو widget بيتحمّل متأخر.",
             "مكان محتوى جاي من API.",
-            "CSS.",
+            R`بلوك [[<style>]] صغير فيه القواعد اللي بتحجز المكان (في مشروع حقيقي في ملف الـ CSS).`,
             "الصورة تصغر مع الشاشة والارتفاع يتحسب من النسبة، فالمكان المحجوز صح.",
             R`[[aspect-ratio]] بيحجز ارتفاع الفيديو من عرضه.`,
             "احجز أقل ارتفاع للإعلان حتى لو لسه فاضي.",
             "skeleton بنفس ارتفاع المحتوى الحقيقي تقريبًا، فلما البيانات توصل مفيش نطة.",
             R`الإشعارات [[fixed]]: بتظهر فوق الصفحة من غير ما تزق حاجة.`,
-            "قفلة."
+            R`قفلة الـ style؛ القواعد دي لازم تبقى في الـ CSS اللي بيتحمّل قبل الرسم مش بعده.`
           ],
           sol: R`في Performance بعد record مع reload: هتلاقي track اسمه Layout shifts (أو مربعات بنفسجي) عند اللحظة اللي الصورة وصلت فيها، ولما تدوس عليه يوريك العناصر اللي اتحركت. وفي Lighthouse الرقم تحت Cumulative Layout Shift؛ الكويس أقل من 0.1.
 
@@ -645,6 +685,13 @@ img, video { max-width: 100%; height: auto; }
         {
           cmd: "critical CSS",
           title: "ليه الصفحة بيضا ثانيتين قبل ما تظهر؟",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** أنهي واحد من دول بيوقّف أول رسم: [[<link rel="stylesheet" media="print">]]، و [[<link rel="stylesheet" media="(min-width: 2000px)">]] على شاشة 1280، و [[<script src>]] في الـ head من غير defer، و [[<script defer>]]، و [[<script type="module">]]، و [[@import]] جوه ملف CSS؟`, done: R`بيوقّف: السكربت العادي (بيوقف قراية الـ HTML)، و [[@import]] (سلسلة طلبات قبل الرسم). مش بيوقّف: print، والـ media اللي مش متطابقة (بتتحمّل بأولوية قليلة)، و defer، و module. واتأكدت من عمود Priority في Network و Lighthouse «Render-blocking resources».` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** نفس الصفحة مرتين على Slow 4G: مرة بملف CSS واحد 200KB في الـ head، ومرة بـ CSS أول شاشة inline (أقل من 14KB) والباقي بيتحمّل من غير ما يوقّف ([[media="print"]] و [[onload="this.media='all'"]]).`, done: R`FCP قبل وبعد من Lighthouse أو Performance، والتانية أسرع، ومفيش «وميض» لما الـ CSS الكامل يوصل (الأول شاشة شكلها واحد في الحالتين).` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صورة الهيرو عليها [[loading="lazy"]] «عشان الأداء». قيس LCP، وبعدين شيل الـ lazy وزوّد [[fetchpriority="high"]] (أو preload بـ [[imagesrcset]] لو الصورة background).`, done: R`LCP قبل وبعد من Lighthouse، وفي Network الصورة بقت أولويتها High وبتبدأ بدري في الـ waterfall، وباقي الصور اللي تحت لسه lazy.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** عملت [[<link rel="preload" href="/f.woff2" as="font" type="font/woff2" crossorigin>]] بس مفيش CSS بيستخدم الخط ده. الكونسول هيقول إيه بعد التحميل؟`, done: R`Chrome 156 طلّع تحذير: «The resource http://…/f.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate [[as]] value and it is preloaded intentionally.» يعني preload غلط بيضيّع bandwidth من حاجات تانية.` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** افتح DevTools › Coverage (من Command Menu) وسجّل وانت بتفتح الرئيسية بتاعتك. كام في المية من الـ CSS مش مستخدم؟ وأنهي ملف أسوأ؟`, done: R`رقم لكل ملف (Unused Bytes)، وعرفت إن الرقم ده لصفحة واحدة بس (الصفحات التانية ممكن تستخدم الباقي)، وطلعت بخطة: إيه يتقسم أو يتمسح.` },
+          ],
           desc: R`المتصفح مش بيرسم أي حاجة لحد ما كل ملفات الـ CSS اللي في الـ head تتحمّل (render-blocking). فكل ملف CSS كبير أو بطيء أو جاي من سيرفر تاني بيأخّر أول ظهور للصفحة.
 
 الحل: CSS صغير (Tailwind بيطلّع المستخدم بس)، والـ CSS الضروري لأول شاشة (critical CSS) يبقى أول حاجة أو inline، والباقي يتأجّل. و [[preload]] و [[preconnect]] للحاجات اللي هتحتاجها بدري.`,
@@ -754,14 +801,14 @@ app.js اتنفذ:    1092
 - [[media]] بيشيل الـ CSS اللي مش للشاشة من الطريق، و [[defer]] بيشيل الـ JS.
 - [[preload]] و [[preconnect]] لحاجة أو اتنين مهمين بس.`,
           lines: [
-            "الـ head.",
+            R`الـ [[<head>]]: كل اللي فيه بيتقري قبل ما المتصفح يرسم أي حاجة، فترتيبه بيفرق.`,
             "افتح الاتصال بسيرفر تاني بدري (DNS و TLS) قبل ما تحتاجه.",
             R`حمّل الخط الأساسي من الأول بدل ما المتصفح يكتشفه بعد ما يقرا الـ CSS. [[crossorigin]] لازم مع الخطوط حتى لو من نفس الموقع.`,
             "CSS أول شاشة inline: مفيش request.",
             "باقي الـ CSS: بيوقف الرسم، فخليه صغير.",
             R`CSS الطباعة: [[media="print"]] بيخليه يتحمّل من غير ما يوقف الرسم.`,
             R`الـ JS بـ [[defer]]: ميوقفش القراية ولا الرسم.`,
-            "قفلة."
+            R`قفلة الـ head؛ بعدها الـ body، وأول رسم بيحصل لما الـ CSS اللي فوق يخلص.`
           ],
           sol: R`في الـ Waterfall: ملف [[app.css]] بيتحمّل بأولوية Highest، وخط أول رسم (FCP، الخط الأخضر أو الأزرق في الـ Timeline) بيبقى بعد ما يخلص. يعني طول ما الملف ده بيتحمّل الصفحة بيضا. بطّأ النت لـ Slow 4G وهتشوف الفرق بوضوح: الصفحة البيضا بتطول قد مدة تحميل الـ CSS. أما [[print.css]] فبيتحمّل بأولوية Lowest ومش بيأخّر الرسم، لأن الـ [[media="print"]] مش متحققة على الشاشة.
 
@@ -772,6 +819,12 @@ app.js اتنفذ:    1092
         {
           cmd: "layout thrashing",
           title: "JavaScript بيخلي المتصفح يعيد حساب الصفحة مية مرة",
+          practice: [
+            { lvl: 'سريع', t: R`**قارن وقيس:** اعمل ١٠٠٠ [[.card]] وجرّب الطريقتين اللي في المثال، وحوّط كل واحدة بـ [[performance.now()]].`, done: R`رقمين: في Chrome 156 قسناهم 274.8ms للقراية والكتابة بالتبادل و 7.6ms للقراية كلها ثم الكتابة. وجهازك أرقامه مختلفة بس الفرق بنفس الحجم تقريبًا.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** هيدر بيصغر مع الـ scroll: الـ handler بيقرا [[scrollY]] و [[header.offsetHeight]] ويكتب [[style.height]] و [[style.padding]] في كل event. سجّل Performance وانت بتعمل scroll، وصلّحه: اقرا مرة، واكتب في [[requestAnimationFrame]]، وغيّر [[transform: scale]] بدل الارتفاع.`, done: R`الـ trace قبل فيه علامات بنفسجي «Forced reflow»، وبعد مفيش، والـ frames أقصر. وعارف إن فيه حل من غير JavaScript خالص بـ [[animation-timeline: scroll()]] في وحدة CSS الحديث.` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** دوّر على gist «What forces layout / reflow» (Paul Irish)، وطلّع ٨ حاجات بتجبر layout غير [[offsetWidth]].`, done: R`لستة ٨ فيها مثلًا [[getComputedStyle()]] و [[scrollIntoView()]] و [[innerText]] و [[focus()]] و [[scrollTop]] و [[clientHeight]] و [[getClientRects()]] و [[window.innerHeight]]، وجنب كل واحدة إمتى بتستخدمها.` },
+            { lvl: 'تطبيق', t: R`**ابني:** عدّاد أرقام بيعد من 0 لـ 12,500 في ثانية ونص لما يظهر (IntersectionObserver ثم [[requestAnimationFrame]])، بـ [[font-variant-numeric: tabular-nums]] و [[min-inline-size]] بعدد الحروف، و [[Intl.NumberFormat("ar-EG")]] للأرقام. ومع reduce يطلع الرقم النهائي على طول.`, done: R`العرض ثابت وهو بيعد (الكلام اللي جنبه مبيتهزش و layout-shift صفر)، ومفيش forced reflow في كل frame (مبتقراش مقاسات جوه الـ loop)، والرقم النهائي بيتقري لقارئ الشاشة مرة واحدة مش كل رقم.` },
+          ],
           desc: R`لما تقرا مقاس من الـ DOM ([[offsetWidth]] أو [[getBoundingClientRect()]] أو [[scrollTop]]) بعد ما غيّرت style، المتصفح لازم يعيد حساب الـ layout فورًا عشان يديك رقم صح (forced reflow). ولو عملت ده جوه loop (اكتب، اقرا، اكتب، اقرا)، بيحسب الصفحة في كل لفة.
 
 الحل: اقرا كل اللي محتاجه الأول، وبعدين اكتب كله. وأي حاجة بتتكرر مع الـ scroll أو الحركة حطها في [[requestAnimationFrame]].`,
@@ -887,7 +940,7 @@ window.addEventListener("scroll", () => requestAnimationFrame(updateHeader), { p
 | [[aspect-ratio]] | صفر JavaScript |`,
           lines: [
             "كل الكروت كـ array.",
-            "لف عليهم.",
+            R`[[for...of]] على الكروت واحد واحد، وكل لفة فيها قراية وكتابة.`,
             R`بتقرا [[offsetWidth]] بعد ما كتبت height للكارت اللي قبله، فالمتصفح يعيد الـ layout كل لفة. 500 كارت = 500 reflow.`,
             "قفلة.",
             "القراية كلها مرة واحدة: layout واحد.",

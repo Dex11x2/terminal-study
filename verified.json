@@ -4170,434 +4170,459 @@
   "on": "docker gcc:14 (g++ 14.4.0)"
  },
  "css|(id, class, type)": {
-  "hash": "ec88ca39c1bb",
-  "date": "2026-10-06",
-  "on": "headless Chrome 154 (playwright, Windows)"
+  "hash": "1edabd277cbe",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|4 طبقات و box-sizing": {
-  "hash": "64cbb07fd84d",
-  "date": "2026-10-06",
-  "on": "headless Chrome 154 (playwright, Windows)"
+  "hash": "2eaf8eea14ff",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|:has()": {
-  "hash": "ebcab04e9aeb",
-  "date": "2026-10-07",
-  "on": "headless Chrome, solCode + the other example rules; Tailwind 4.3.3 build output"
+  "hash": "29638ea3ced7",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|<!doctype html>": {
-  "hash": "7bb7dc6df1f4",
-  "date": "2026-10-06",
-  "on": "Chrome headless (playwright-core, mobile emulation for the viewport part), Windows 11"
+  "hash": "6c5d3e67c153",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+ },
+ "css|@media print": {
+  "hash": "31a4fdab228e",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+ },
+ "css|@property": {
+  "hash": "7acfb3cb31cf",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|@theme": {
-  "hash": "a4651ef5caa6",
-  "date": "2026-10-06",
-  "on": "Vite 8 + Tailwind 4.3.3 build + Chrome headless on Windows 11"
+  "hash": "d781da50e40e",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+ },
+ "css|BEM و CSS Modules": {
+  "hash": "4dc00860c053",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|Baseline و @supports": {
-  "hash": "54f6e6370982",
-  "date": "2026-10-06",
-  "on": "headless Chrome 154 (playwright, Windows) + browserslist 4.29.3; docs: MDN Baseline badges"
+  "hash": "f6ecc3ca38da",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|CLS": {
-  "hash": "40ea6db4ff44",
-  "date": "2026-10-07",
-  "on": "headless Chrome, PerformanceObserver layout-shift, image delayed 800ms"
+  "hash": "3e0203d01132",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|CSS nesting": {
-  "hash": "dc36b5f10b12",
-  "date": "2026-10-07",
-  "on": "headless Chrome, static HTML + CSSOM"
+  "hash": "83e7c3499f4a",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|CSS variables": {
-  "hash": "dfc37c6658f0",
-  "date": "2026-10-06",
-  "on": "Chrome headless on Windows 11"
+  "hash": "809e1c6ed806",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|Constraint Validation API": {
-  "hash": "2c52ff8cd0f3",
-  "date": "2026-10-06",
-  "on": "Chrome headless (playwright-core), example + solCode, Windows 11"
+  "hash": "307a1f608235",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|Dialog": {
-  "hash": "99af3595c14b",
-  "date": "2026-10-06",
-  "on": "Vite + radix-ui 1.7.0 + React 19.3 in headless Chrome (keyboard, ARIA tree, scroll lock)"
+  "hash": "21d43fbaa1b7",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|SVG": {
-  "hash": "212268b62e7e",
-  "date": "2026-10-06",
-  "on": "Chrome headless on Windows 11 + svgo 4.1.0"
+  "hash": "9047072620e5",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|Tailwind v4": {
-  "hash": "5c4a048e8655",
-  "date": "2026-10-06",
-  "on": "Vite 8 + Tailwind 4.3.3 build + Chrome headless on Windows 11; docs: Next.js PostCSS setup"
+  "hash": "4918840f7b90",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|View Transitions": {
-  "hash": "913c3ae22188",
-  "date": "2026-10-06",
-  "on": "headless Chrome 154 (playwright, Windows), same-document and cross-document"
+  "hash": "bd9bb24333dd",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|WCAG 2.2": {
-  "hash": "f97b6a513a80",
-  "date": "2026-10-07",
-  "on": "headless Chrome (playwright-core), static HTML"
+  "hash": "9f083f3e98fb",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|a و button": {
-  "hash": "417cd065d484",
-  "date": "2026-10-06",
-  "on": "Chrome headless (playwright-core, keyboard emulation), Windows 11"
+  "hash": "9be3928842e2",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+ },
+ "css|animation-timeline": {
+  "hash": "39fe35515168",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|arbitrary values": {
-  "hash": "3c139aa3b6a6",
+  "hash": "e8201ef903b5",
   "date": "2026-11-03",
-  "on": "Next 16.4.4 + Tailwind 4.3.4 + lucide-react 0.577/1.67, playwright-core with Chrome 156"
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|aria": {
-  "hash": "361b96ac40d0",
-  "date": "2026-10-07",
-  "on": "headless Chrome (playwright-core), React 19 + Vite, accessibility tree via CDP"
+  "hash": "de0aea2d8187",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|auto-fit و minmax": {
-  "hash": "ef055d37a83c",
-  "date": "2026-10-06",
-  "on": "Chrome headless on Windows 11"
+  "hash": "e4be1d10108e",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|axe و Lighthouse": {
-  "hash": "32cbe9802644",
-  "date": "2026-10-07",
-  "on": "@playwright/test 1.63 + @axe-core/playwright 4.13 on Chrome; Lighthouse 13.5 CLI"
+  "hash": "3e4b3878c932",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|box model": {
-  "hash": "cce89bd4b505",
-  "date": "2026-10-06",
-  "on": "Chrome headless (playwright-core), Windows 11"
+  "hash": "81fabc0ae128",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|cascade": {
-  "hash": "28fe7982249d",
-  "date": "2026-10-06",
-  "on": "Chrome headless (playwright-core), Windows 11"
+  "hash": "51fa78c14c5e",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|clamp()": {
-  "hash": "1ed779063da7",
-  "date": "2026-10-06",
-  "on": "Chrome headless on Windows 11 (widths 320-1600, zoom via deviceScaleFactor)"
+  "hash": "3e78beaf4500",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|cn()": {
-  "hash": "0c232d58f763",
-  "date": "2026-10-06",
-  "on": "Node 24 (clsx 2.1.1, tailwind-merge 3.7.0, cn 0.4.0) + Vite/Tailwind 4.3.3 page in headless Chrome"
+  "hash": "c85ff6b9eb49",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|container queries": {
-  "hash": "e549695078ea",
-  "date": "2026-10-07",
-  "on": "headless Chrome, Vite + Tailwind 4.3.3 + React, plus plain CSS page"
+  "hash": "4bc27a4aa2e9",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|containing block": {
-  "hash": "c96063afb1a6",
-  "date": "2026-10-06",
-  "on": "headless Chrome 154 (playwright, Windows)"
+  "hash": "1087fda932e6",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|contrast ratio": {
-  "hash": "6fa83f786942",
-  "date": "2026-10-07",
-  "on": "headless Chrome (playwright-core), Tailwind 4.3.3 color values, prefers-contrast emulated; docs: macOS contrast setting"
+  "hash": "a7af6f6d97de",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|critical CSS": {
-  "hash": "c47261657163",
-  "date": "2026-10-07",
-  "on": "headless Chrome, CDP request priorities + paint timing, CSS delayed by the server"
+  "hash": "6246b155493a",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|cva": {
-  "hash": "4f6a0cd11051",
-  "date": "2026-10-06",
-  "on": "Vite + Tailwind 4.3.3 + cva 0.7.1 in headless Chrome; tsc 6.0.3 for the variant errors"
+  "hash": "2e22a132d477",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|dark mode": {
-  "hash": "b3a2768636cb",
-  "date": "2026-10-06",
-  "on": "Next.js 16.4 + next-themes 0.4.6 + Tailwind 4.3.3, prod build + next dev, headless Chrome light/dark"
+  "hash": "8a5abd79f01f",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|details و summary": {
-  "hash": "345464aa269a",
-  "date": "2026-10-06",
-  "on": "headless Chrome 154 (playwright, Windows); docs: Ctrl+F find-in-page"
+  "hash": "8b096e7ad04e",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|display": {
-  "hash": "0d4010420ee0",
-  "date": "2026-10-06",
-  "on": "Chrome headless (playwright-core + CDP accessibility tree), Windows 11"
+  "hash": "b6a12f9e5be5",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|dvh": {
-  "hash": "4c176a471d6f",
-  "date": "2026-10-06",
-  "on": "Chrome headless on Windows 11 (desktop 1200x800 + real-scrollbar run for 100vw); docs: mobile URL-bar behaviour"
+  "hash": "42f1744c605a",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|fieldset و radio": {
-  "hash": "a41b35583a54",
-  "date": "2026-10-06",
-  "on": "Chrome headless (playwright-core), Windows 11"
+  "hash": "fdcc23eb60d7",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|flex: 1": {
-  "hash": "16a0a1f36a44",
-  "date": "2026-10-06",
-  "on": "Chrome headless on Windows 11 (360/600/1200)"
+  "hash": "6ceab6bd2c49",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|flexbox": {
-  "hash": "db98422b2a86",
-  "date": "2026-10-06",
-  "on": "Chrome headless on Windows 11 (ltr and rtl)"
+  "hash": "26e35b5037cf",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|focus-visible": {
-  "hash": "c86c8b35e434",
-  "date": "2026-10-07",
-  "on": "headless Chrome (playwright-core), Vite + Tailwind 4.3.3 + React"
+  "hash": "f8899b17f143",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|form و label": {
-  "hash": "6a4a2026d73d",
-  "date": "2026-10-06",
-  "on": "Chrome headless (playwright-core); docs: mobile keyboards"
+  "hash": "c6e93d69e1b5",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|grid": {
-  "hash": "9577cd3ba7f4",
-  "date": "2026-10-06",
-  "on": "Chrome headless on Windows 11 (ltr and rtl)"
+  "hash": "de1a9aef30f2",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|grid-template-areas": {
-  "hash": "0cb2d50898cc",
-  "date": "2026-10-06",
-  "on": "Chrome headless on Windows 11"
+  "hash": "b5e2f8912610",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|group و peer": {
-  "hash": "ca98f3ee3412",
-  "date": "2026-10-06",
-  "on": "Vite 8 + Tailwind 4.3.3 build + Chrome headless on Windows 11 (ArrowLeft replaced by an equivalent SVG component)"
+  "hash": "78e3efd5d7ac",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|img": {
-  "hash": "050559e7b523",
-  "date": "2026-10-06",
-  "on": "Chrome headless (playwright-core, DPR 1/2/3 and 375/1440/1920 viewports), Windows 11"
+  "hash": "23d77dea705d",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|jsx-a11y و getByRole": {
-  "hash": "5c11dac84055",
-  "date": "2026-10-07",
-  "on": "ESLint 9.39 + eslint-plugin-jsx-a11y 6.10; Vitest 5 + jsdom + Testing Library + axe-core 4.14"
+  "hash": "bc516fedee00",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|lang و dir": {
-  "hash": "67897a6274dc",
-  "date": "2026-10-06",
-  "on": "Chrome headless (playwright-core), Windows 11"
+  "hash": "3bc137656804",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|layout thrashing": {
-  "hash": "6f45fa527bc7",
-  "date": "2026-10-07",
-  "on": "headless Chrome, solCode as written + CDP LayoutCount"
+  "hash": "20eaf5fbfbcc",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|logical properties": {
-  "hash": "f3d605f3f62f",
-  "date": "2026-10-06",
-  "on": "Vite + Tailwind 4.3.3 + lucide-react in headless Chrome, rtl/ltr measured; docs: start-*/end-* deprecation"
+  "hash": "77d439ee9383",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|lucide-react": {
-  "hash": "330fe46a4ae2",
+  "hash": "ad0bb4ba20f5",
   "date": "2026-11-03",
-  "on": "Next 16.4.4 + Tailwind 4.3.4 + lucide-react 0.577/1.67, playwright-core with Chrome 156"
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|media queries": {
-  "hash": "438c4a4dd40f",
-  "date": "2026-10-06",
-  "on": "Chrome headless on Windows 11 (widths, touch emulation, prefers-color-scheme)"
+  "hash": "50ac0e1c263d",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|meta و Open Graph": {
-  "hash": "2c6ddacbfa3d",
-  "date": "2026-10-07",
-  "on": "headless Chrome (title/meta/network); docs: WhatsApp, Google and X previews"
+  "hash": "97891c6b3302",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|mobile-first": {
-  "hash": "d177f3f29f68",
-  "date": "2026-10-06",
-  "on": "headless Chrome 154 (playwright, Windows), viewports 240-1440 and default font 16/20"
+  "hash": "6b7336e04c7f",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|motion": {
-  "hash": "b112f0bd342f",
-  "date": "2026-10-07",
-  "on": "headless Chrome, React + motion 14 + Tailwind 4.3.3, reduced motion emulated"
+  "hash": "0369b8fbca7e",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|next/font": {
-  "hash": "c26d4443056e",
-  "date": "2026-10-06",
-  "on": "Next.js 16.4 build (Cairo via next/font/google) in headless Chrome; @font-face part on a Vite page with a delayed font"
+  "hash": "470341a0cd82",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|object-fit": {
-  "hash": "276e748c6991",
-  "date": "2026-10-06",
-  "on": "Chrome headless on Windows 11 (pixel sampling); docs: Next.js Image fill"
+  "hash": "fe5ba490cde1",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|picture": {
-  "hash": "ae902d7704d3",
-  "date": "2026-10-06",
-  "on": "Chrome headless on Windows 11 with sharp-generated avif/webp/jpg"
+  "hash": "d4c67bc06759",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|position: absolute": {
-  "hash": "8fa99a52d3b3",
-  "date": "2026-10-06",
-  "on": "Chrome headless on Windows 11 (ltr and rtl)"
+  "hash": "58970365f227",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|rem من الـ root": {
-  "hash": "784ec86bb856",
-  "date": "2026-10-06",
-  "on": "headless Chrome 154 (playwright, Windows), default font 16/20"
+  "hash": "8970a0548cbf",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|rem و em": {
-  "hash": "b6d699d19802",
-  "date": "2026-10-06",
-  "on": "Chrome headless (playwright) on Windows 11, including a profile with default font size 20"
+  "hash": "5a4ac5d773a6",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|roving tabindex": {
-  "hash": "5f171f176091",
-  "date": "2026-10-06",
-  "on": "headless Chrome 154 (playwright, Windows), RTL and LTR"
+  "hash": "a1f3b0d28117",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|scroll-snap و scroll-margin": {
-  "hash": "78cffd145f40",
-  "date": "2026-10-06",
-  "on": "headless Chrome 154 (playwright, Windows); docs: overscroll-behavior / mobile swipe"
+  "hash": "c94aed20a48b",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|selectors": {
-  "hash": "5984b9a73520",
-  "date": "2026-10-06",
-  "on": "Chrome headless (playwright-core), Windows 11"
+  "hash": "a695abce44ff",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|semantic HTML": {
-  "hash": "1dbd5360cfac",
-  "date": "2026-10-06",
-  "on": "Chrome headless (playwright-core + CDP accessibility tree), Windows 11"
+  "hash": "c57f8351572c",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|semantic HTML أولًا": {
-  "hash": "e9969f3d4d80",
-  "date": "2026-10-06",
-  "on": "headless Chrome 154 (playwright, Windows), accessibility tree; docs: Lighthouse audit, screen reader speech"
+  "hash": "852b194e2239",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|shadcn/ui": {
-  "hash": "872334de8d9a",
-  "date": "2026-10-06",
-  "on": "shadcn CLI 4.21.3 on a Vite + Tailwind 4.3.3 scratch project (Windows, Git Bash), git diff checks + headless Chrome radius measurements; docs: July 2026 date"
+  "hash": "ba2e22429f20",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|specificity": {
-  "hash": "3238b94b5e45",
-  "date": "2026-10-06",
-  "on": "Chrome headless (playwright-core + CDP CSS specificity), Windows 11"
+  "hash": "2b026af38220",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|stacking context": {
-  "hash": "c6d6ce85d26c",
-  "date": "2026-10-06",
-  "on": "headless Chrome 154 (playwright, Windows), elementFromPoint"
+  "hash": "65c3680c4c15",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|sticky و fixed": {
-  "hash": "750aa2d5f10e",
-  "date": "2026-10-06",
-  "on": "Chrome headless on Windows 11"
+  "hash": "810564f67236",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+ },
+ "css|subgrid": {
+  "hash": "cf93f559f1ad",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|table": {
-  "hash": "ab84e0efc116",
-  "date": "2026-10-06",
-  "on": "Chrome headless (playwright-core + CDP accessibility tree), Windows 11"
+  "hash": "b5a2953109d8",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|text-wrap": {
-  "hash": "14ad8e61a757",
-  "date": "2026-10-06",
-  "on": "headless Chrome 154 (playwright, Windows) + Vite 8.3.3 / Tailwind 4.3.3 build; docs: balance line limit"
+  "hash": "dbf040df8e22",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|textarea و date و number": {
-  "hash": "25f17f778fdd",
-  "date": "2026-10-06",
-  "on": "Chrome headless (playwright-core, Cairo and New York timezones); docs: mobile keyboards"
+  "hash": "f7633321b224",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|transition و @keyframes": {
-  "hash": "067c2225751e",
-  "date": "2026-10-07",
-  "on": "headless Chrome (playwright-core), reduced motion emulated"
+  "hash": "d65fecc278f4",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|variants": {
-  "hash": "6febf5faae09",
-  "date": "2026-10-06",
-  "on": "Vite 8 + Tailwind 4.3.3 build + Chrome headless on Windows 11 (keyboard/mouse, light/dark)"
+  "hash": "6c7f794ed65d",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|video و iframe": {
-  "hash": "4bd684336b11",
-  "date": "2026-10-06",
-  "on": "Chrome headless on Windows 11 with ffmpeg videos, real YouTube iframe + facade solCode; docs: iOS playsinline"
+  "hash": "16b734ec3848",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|z-index": {
-  "hash": "8e8fe8c771b4",
-  "date": "2026-10-06",
-  "on": "Chrome headless on Windows 11"
+  "hash": "0f3b93ed78c3",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|إعلان تغيير الصفحة": {
-  "hash": "6c1224974a5f",
-  "date": "2026-10-07",
-  "on": "headless Chrome, React 19.3 + react-router 8.4 production build in StrictMode; docs: Next.js behaviour"
+  "hash": "9aede9f1c9d5",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|احجز المكان": {
-  "hash": "f2febacfc2b0",
-  "date": "2026-10-06",
-  "on": "headless Chrome 154 (playwright, Windows), PerformanceObserver layout-shift"
+  "hash": "037b8000a8af",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|بُعد واحد وبُعدين": {
-  "hash": "41b08af08cc9",
-  "date": "2026-10-06",
-  "on": "headless Chrome 154 (playwright, Windows)"
+  "hash": "1c80bbff69e2",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|ترتيب وصفحات في الـ URL": {
-  "hash": "d6a2bb715dc0",
-  "date": "2026-10-06",
-  "on": "Chrome headless (playwright-core) + Node 24 (readState/view solCode), Windows 11"
+  "hash": "c5055cee7fef",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|توليد on-demand": {
-  "hash": "1d7b3d2caf61",
-  "date": "2026-10-06",
-  "on": "Vite 8.3.3 + Tailwind 4.3.3 build and @tailwindcss/cli 4.3.3 (Windows)"
+  "hash": "29a41f2cda6f",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|جدول responsive": {
-  "hash": "5e0d53d6645d",
-  "date": "2026-10-06",
-  "on": "Chrome headless (playwright-core, 375px mobile), Windows 11"
+  "hash": "27c671df828a",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|كلمة بتتبدّل في عنوان": {
-  "hash": "7fa0eca4baca",
+  "hash": "67d440afdc5b",
   "date": "2026-11-03",
-  "on": "Next 16.4.4 + Tailwind 4.3.4 + lucide-react 0.577/1.67, playwright-core with Chrome 156"
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|كيبورد وقارئ شاشة": {
-  "hash": "97792e9abc37",
-  "date": "2026-10-07",
-  "on": "headless Chrome for Tab/Shift+Tab/Enter/Space/Esc; docs: NVDA and VoiceOver shortcuts"
+  "hash": "7fce462ff493",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|مراحل الرسم": {
-  "hash": "2ac82560447b",
-  "date": "2026-10-06",
-  "on": "headless Chrome 154 (playwright, Windows), DevTools Protocol Performance metrics"
+  "hash": "8dd8caea64cc",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|مصفوفة مقاسات": {
-  "hash": "cc77c6fef926",
+  "hash": "0def42d687ae",
   "date": "2026-11-03",
-  "on": "Next 16.4.4 + Tailwind 4.3.4 + lucide-react 0.577/1.67, playwright-core with Chrome 156"
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|مقدمة CSS وتنسيق العناصر": {
-  "hash": "e514e23464fb",
-  "date": "2026-10-06",
-  "on": "Chrome headless (playwright-core), Windows 11"
+  "hash": "73f5c0a70aab",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|مقدمة HTML والـ Tags": {
-  "hash": "60c63f3f7bab",
-  "date": "2026-10-06",
-  "on": "Chrome headless (playwright-core), Windows 11"
+  "hash": "8cea4c203326",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "css|ملخص الأخطاء": {
-  "hash": "40075ee4265a",
-  "date": "2026-10-06",
-  "on": "Chrome headless (playwright-core), example + solCode HTML, Windows 11"
+  "hash": "30bef648ffa0",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "data|$queryRaw": {
   "hash": "16ad9e141bae",
@@ -19010,174 +19035,224 @@
   "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "web|?v= كسر الكاش": {
-  "hash": "a69c8770a01a",
+  "hash": "f7db80dbbccc",
   "date": "2026-11-03",
-  "on": "Node lab server + Chromium (Playwright) + Git Bash/ubuntu sed; BSD sed from docs"
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "web|CORS": {
-  "hash": "52a963f04244",
-  "date": "2026-10-06",
-  "on": "Chrome 154 headless (CDP) on local pages + curl.exe on local Express"
+  "hash": "bde19c70000c",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+ },
+ "web|CSRF و SameSite": {
+  "hash": "dca53b5fd25a",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "web|Clear site data": {
-  "hash": "702b87086220",
-  "date": "2026-10-06",
-  "on": "Chrome 154 headless (CDP) on local pages; docs: buttons"
+  "hash": "42a24677bc19",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "web|Command Menu": {
-  "hash": "2377cb430307",
-  "date": "2026-10-06",
-  "on": "Chrome 154 headless (CDP) on local pages; docs: command names"
+  "hash": "cacc36f887d7",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+ },
+ "web|Content Security Policy": {
+  "hash": "9b6728eed127",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "web|Cookies": {
-  "hash": "72075261a7fb",
-  "date": "2026-10-06",
-  "on": "curl.exe on local Express + Chrome 154 headless (CDP) on local pages; docs: Application columns"
+  "hash": "553e6c74e9c5",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "web|Copy as cURL": {
-  "hash": "13bad8bc5034",
-  "date": "2026-10-06",
-  "on": "curl.exe on local Express; docs: menu"
+  "hash": "42861f67144a",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+ },
+ "web|Core Web Vitals (LCP/INP)": {
+  "hash": "14e4f06fff1f",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "web|Device Toolbar": {
-  "hash": "ff072f6955bb",
-  "date": "2026-10-06",
-  "on": "Chrome 154 headless (CDP) on local pages; docs: toolbar UI"
+  "hash": "24adced62d76",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "web|Elements": {
-  "hash": "f2680ea97499",
-  "date": "2026-10-06",
-  "on": "Chrome 154 headless (CDP) on local pages; docs: Elements UI"
+  "hash": "0cca942be129",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+ },
+ "web|HTTP/2 و HTTP/3": {
+  "hash": "294b8f2b3d3a",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "web|Hard Reload": {
-  "hash": "eefd6e72933b",
-  "date": "2026-10-06",
-  "on": "Chrome 154 headless (CDP) on local pages; docs: menu items"
+  "hash": "a19de6a49ba8",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "web|Headers": {
-  "hash": "cf105cf5451a",
-  "date": "2026-10-06",
-  "on": "docker ubuntu-24.04 curl + curl.exe on local Express"
+  "hash": "529e633e6a8e",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "web|Lighthouse": {
-  "hash": "55b38a626555",
-  "date": "2026-10-06",
-  "on": "win11 npx lighthouse 13.5.0"
+  "hash": "c7767d9dc373",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+ },
+ "web|Memory و heap snapshot": {
+  "hash": "5c452bf7e2f9",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+ },
+ "web|Mixed content و HTTPS": {
+  "hash": "cee324ab6292",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "web|Network": {
-  "hash": "c710f6614770",
-  "date": "2026-10-06",
-  "on": "Chrome 154 headless (CDP) on local pages; docs: Network panel"
+  "hash": "33843f68f3ac",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "web|Overrides": {
-  "hash": "57d8d98a3a6a",
-  "date": "2026-10-06",
-  "on": "docs: Local overrides"
+  "hash": "eb2ca288782d",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "web|Performance و Coverage": {
-  "hash": "453ad046e4e5",
-  "date": "2026-10-06",
-  "on": "Chrome 154 headless (CDP) on local pages; docs: panels"
+  "hash": "3f9fd2807cb3",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "web|Recorder": {
-  "hash": "ba7c60bd68f2",
-  "date": "2026-10-06",
-  "on": "docs: Chrome DevTools Recorder"
+  "hash": "97651bcd85b9",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "web|SEO من الترمنال": {
-  "hash": "92d3d8efec63",
-  "date": "2026-10-06",
-  "on": "docker ubuntu-24.04 curl + curl.exe on local Express"
+  "hash": "0c533bdad4b9",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "web|Security headers و SSL": {
-  "hash": "48b3276f17f4",
-  "date": "2026-10-06",
-  "on": "docker ubuntu-24.04 curl + curl.exe on local Express; docs: nginx, scanners"
+  "hash": "430bee5977a3",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+ },
+ "web|Source maps": {
+  "hash": "30b6f0e18cc3",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "web|Sources و breakpoints": {
-  "hash": "b348747979e6",
-  "date": "2026-10-06",
-  "on": "Chrome 154 headless (CDP) on local pages; docs: UI shortcuts"
+  "hash": "1b07e122e0bf",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "web|Status codes": {
-  "hash": "563b3462a1a6",
-  "date": "2026-10-06",
-  "on": "curl.exe on local Express + Chrome 154 headless (CDP) on local pages"
+  "hash": "67de5ac74982",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "web|Throttling و Blocking": {
-  "hash": "80eb4201aaca",
-  "date": "2026-10-06",
-  "on": "Chrome 154 headless (CDP) on local pages; docs: menu names"
+  "hash": "a5a7dbd915de",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "web|Unexpected token '<'": {
-  "hash": "494714119a8d",
-  "date": "2026-10-06",
-  "on": "Chrome 154 headless (CDP) on local pages"
+  "hash": "95ef9966645c",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "web|View Page Source و Inspect": {
-  "hash": "81caa220cb57",
-  "date": "2026-10-06",
-  "on": "Chrome 154 headless (CDP) on local pages + curl.exe on local Express; docs: shortcuts"
+  "hash": "f9c01b7bb483",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+ },
+ "web|WebSocket و SSE في Network": {
+  "hash": "ace9ac28efcc",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "web|chrome://inspect": {
-  "hash": "cb2f95429637",
-  "date": "2026-10-06",
-  "on": "win11 Node 24 --inspect; docs: inspect UI"
+  "hash": "2edfe63c312f",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "web|curl -i / -v": {
-  "hash": "45b239643ff0",
-  "date": "2026-10-06",
-  "on": "docker ubuntu-24.04 curl + curl.exe on local Express pwsh 7 / ps 5.1 / cmd"
+  "hash": "2698036b191a",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "web|fetch من Console": {
-  "hash": "6fd5a601a972",
-  "date": "2026-10-06",
-  "on": "Chrome 154 headless (CDP) on local pages"
+  "hash": "729bc9af1795",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "web|localStorage و JWT": {
-  "hash": "6172b2f79365",
-  "date": "2026-10-06",
-  "on": "Chrome 154 headless (CDP) on local pages"
+  "hash": "5c4b169b4324",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "web|playwright screenshot": {
-  "hash": "0aa5e21b8615",
-  "date": "2026-10-06",
-  "on": "win11 Playwright 1.63 CLI"
+  "hash": "2064014ea54f",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "web|أدوات جوجل": {
-  "hash": "0f1de6ce09db",
-  "date": "2026-10-06",
-  "on": "docs: Google Search Central"
+  "hash": "83e6435b269e",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "web|أوامر Console المفيدة": {
-  "hash": "981ed186a834",
-  "date": "2026-10-06",
-  "on": "Chrome 154 headless (CDP) on local pages"
+  "hash": "3afd9bd2ed70",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "web|التعديل وصل؟ curl و grep": {
-  "hash": "6d1c76f43043",
+  "hash": "f247ac261b50",
   "date": "2026-11-03",
-  "on": "Next dev server + curl on Windows/node:22-slim, Chrome 156, local signed-URL server; macOS timeout from docs"
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "web|اللقطة ناقصة: 591px وفيديو مؤقت": {
-  "hash": "3f911959889f",
+  "hash": "bcad0d0041b9",
   "date": "2026-11-03",
-  "on": "Next dev server + curl on Windows/node:22-slim, Chrome 156, local signed-URL server; macOS timeout from docs"
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "web|تفاصيل الطلب": {
-  "hash": "55d4d5c7d5b4",
-  "date": "2026-10-06",
-  "on": "Chrome 154 headless (CDP) on local pages; docs: request tabs"
+  "hash": "3fc4959e1273",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "web|سيرفر محلي بدل file://": {
-  "hash": "92486cfa5e4d",
-  "date": "2026-10-06",
-  "on": "win11 python http.server + npx serve + Chrome 154 headless (CDP) on local pages"
+  "hash": "f7f28ef92458",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+ },
+ "web|صيغ الصور WebP و AVIF": {
+  "hash": "16ff6167c85c",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "web|قراءة الأخطاء": {
-  "hash": "398d60fe7429",
-  "date": "2026-10-06",
-  "on": "Chrome 154 headless (CDP) on local pages"
+  "hash": "a9ec0e6b9944",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+ },
+ "web|مشروع تشخيص موقع بطيء ومكسور": {
+  "hash": "c6d248a9fe29",
+  "date": "2026-11-03",
+  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
  },
  "wsl|.wslconfig المتقدم": {
   "hash": "9eccf56ca845",

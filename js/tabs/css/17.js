@@ -4,10 +4,23 @@ MORE("css", [
       t: "أسئلة انترفيو",
       l: 3,
       n: "الأسئلة اللي بتتسأل في أي انترفيو frontend، بإجابة تقولها بصوتك في دقيقة",
+      projects: [
+        { lvl: 'صغير', t: R`حاسبة specificity`, what: R`صفحة فيها input تكتب فيه selector وتطلع (a,b,c) بتاعته وشرح كل جزء اتحسب ليه، وبتقارن selectorين وتقول مين يكسب. بتتعامل مع ids و classes و attributes و pseudo-classes و pseudo-elements و [[:where()]] (صفر) و [[:is()]] و [[:not()]] (أتقل حاجة جواهم). من سؤال (id, class, type).`, done: R`[[#a .b]] = (1,1,0)، و [[ul li:not(.x)]] = (0,1,2)، و [[:is(#a, .b) p]] = (1,0,1)، و [[:where(nav) .link]] = (0,1,0)، و [[a::before]] = (0,0,2)، وفيه ١٠ اختبارات بتعدّي، و selector غلط بيطلّع رسالة مش crash.` },
+        { lvl: 'صغير', t: R`بطاقات مراجعة للانترفيو`, what: R`صفحة فيها الـ ١١ سؤال كـ [[<details>]]، كل واحد فيه إجابتك في دقيقة بكلامك ومثال كود صغير، وزرار «عرفتها» و«لسه» بيتحفظ في localStorage (جوه try/catch)، ووضع «سؤال عشوائي» بعدّاد ٦٠ ثانية.`, done: R`الإجابات بكلامك انت مش منسوخة، والتقدّم فاضل بعد refresh، والعدّاد بيتقري لقارئ الشاشة كل ١٥ ثانية مش كل ثانية، والصفحة بالكيبورد كلها.` },
+        { lvl: 'متوسط', t: R`أداة تشرح الـ box model`, what: R`sliders للـ width والـ padding والـ border والـ margin، وزرار بيبدّل [[box-sizing]]، وصندوق حي بيتغير، ورسمة زي اللي في DevTools بالأرقام، والعرض الكلي محسوب. ومعاه مثال margin collapse: عنصرين block فوق بعض والأب بيتبدّل بين block و flex. بيجمع أسئلة box model و position.`, done: R`الأرقام اللي في الرسمة نفس اللي في DevTools › Computed لكل تركيبة جرّبتها، والـ margin بين العنصرين بيبقى أكبر قيمة في block ومجموعهم في flex، وكل slider ليه label وقيمته بتتقري.` },
+        { lvl: 'متوسط', t: R`مستكشف الـ stacking context`, what: R`صفحة فيها عناصر جوه بعض بألوان، وجنب كل واحد checkboxes بتحط عليه [[opacity: .99]] أو [[transform]] أو [[isolation: isolate]] أو [[z-index]]، وسكربت بيطلّع لستة بالعناصر اللي عاملة stacking context وليه. ومعاها مثال الهيدر والمودال اللي في الإجابة. بيجمع أسئلة stacking context و reflow و repaint.`, done: R`لما تعلّم [[transform]] على الأب المودال بينزل تحت الهيدر قدامك، واللستة بتقول «main: transform»، ولما تشيله يرجع. وكل خاصية من الخمسة اللي في الإجابة متجرّبة ومكتوب جنبها اللي حصل.` },
+        { lvl: 'كبير', t: R`موقع «إجاباتي» للانترفيو`, what: R`موقع فيه صفحة لكل سؤال من الوحدة دي: الإجابة في دقيقة، و demo حي بيثبتها (حاسبة الـ specificity، وأداة الـ box model، والمستكشف، وصفحة CLS بتتنط وزرار بيصلّحها، وأنيميشن left مقابل transform بقياس الـ frames)، ولقطة من DevTools. بالعربي والإنجليزي (الإجابة الإنجليزي اللي هتقولها)، وثيمين، وكيبورد كامل، و reduced motion. بيجمع الوحدة دي مع كل الوحدات اللي قبلها.`, done: R`كل demo بيشتغل لوحده وبيثبت الرقم اللي في الإجابة، و Lighthouse ‏90 أو أكتر في الأربعة (Performance و Accessibility و Best Practices و SEO)، و axe صفر، وكل صفحة ليها title و description و OG، ومنشور برابط تقدر تبعته في CV.`, ext: R`زوّد وضع «انترفيو تجريبي»: سؤال عشوائي، وعدّاد، وتسجيل صوتك بـ MediaRecorder تسمعه بعدها، ولستة بالكلمات المهمة اللي المفروض تقولها تعلّم عليها.` },
+        { lvl: 'فكرة', t: R`سؤال بتاعك`, what: R`اختار سؤال frontend اتسألته (أو قريته) ومش موجود هنا: BEM مقابل CSS Modules، أو [[:focus]] مقابل [[:focus-visible]]، أو ليه [[100vh]] بايظ على الموبايل. اكتب إجابة في دقيقة و demo بيثبتها بنفس شكل الوحدة.`, done: R`زميل قرا إجابتك بصوت عالي في أقل من دقيقة وفهم، والـ demo بيثبت كل جملة فيها برقم أو لقطة.`, ext: R`اعمله درس كامل بنفس شكل دروس الموقع (desc و example و lines و practice)، وابعته كاقتراح.` },
+      ],
       items: [
         {
           cmd: "4 طبقات و box-sizing",
           title: "اشرح الـ box model (Explain the CSS box model)",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** عنصرين block فوق بعض، الأول [[margin-bottom: 30px]] والتاني [[margin-top: 20px]]. المسافة بينهم كام؟ وكام لو الأب بقى [[display: flex; flex-direction: column]]؟ اكتب، وبعدين قيس بـ [[getBoundingClientRect()]].`, done: R`30px في الـ block (الـ margins بتتلم وبياخد الأكبر)، و 50px في الـ flex (مفيش collapse)، والقياس طابق.` },
+            { lvl: 'تطبيق', t: R`**مسألة:** أب عرضه 600px، وجواه عنصر [[width: 50%; padding: 10%; border: 5px solid]]. العرض الكلي كام في content-box وكام في border-box؟ وكام الـ padding الرأسي؟`, done: R`الـ padding ‏60px من كل ناحية (النسبة من عرض الأب حتى فوق وتحت). content-box: ‏300 + 120 + 10 = 430px. border-box: ‏300px والمحتوى 170px. واتأكدت من Computed في DevTools.` },
+            { lvl: 'سريع', t: R`**اشرحها:** سجّل نفسك بتجاوب «Explain the CSS box model» بالإنجليزي في أقل من دقيقة، وبعدين اسمعها.`, done: R`التسجيل أقل من ٦٠ ثانية، وفيه الأربع طبقات بالترتيب، و content-box مقابل border-box بمثال رقم، و margin collapse، وجملة «I'd show it in DevTools Computed». ولو نسيت حاجة سجّل تاني.` },
+          ],
           desc: R`كل عنصر صندوق من 4 طبقات من جوه لبرا: content و padding و border و margin. الـ width الافتراضي (content-box) بيحدد المحتوى بس، فالـ padding والـ border بيتزودوا عليه. مع [[border-box]] الـ width بيبقى العرض الكامل شامل الـ padding والـ border، ودا اللي بنحطه على كل حاجة في أي مشروع (و Tailwind بيعمله في الـ Preflight). الـ margin برا الحساب في الحالتين، والـ margin الرأسي بين عنصرين block بيعمل collapse: الأكبر بس اللي بيفضل.`,
           example: R`.box { width: 200px; padding: 20px; border: 5px solid; }
 .box { box-sizing: content-box; }
@@ -16,7 +29,7 @@ MORE("css", [
           flag: "script",
           deep: {
             why: "سؤال أساسي بيختبر إنك فاهم ليه الحاجات بتطلع أعرض من المتوقع، وإنك مش بتحل كل حاجة بالتجربة.",
-            how: "لو عايز تتميز: margin collapse مش بيحصل جوه flex و grid ولا في الاتجاه الأفقي، والـ padding بالنسبة المئوية بيتحسب من عرض الأب حتى الرأسي، والعناصر الـ inline بتتجاهل width و height والـ margin الرأسي.",
+            how: "لو عايز تتميز: margin collapse مش بيحصل جوه flex و grid ولا في الاتجاه الأفقي، والـ padding بالنسبة المئوية بيتحسب من عرض الأب حتى الرأسي، والعناصر الـ inline بتتجاهل width و height والـ margin الرأسي.\n\nومثال تحسبه قدامهم: كارت عليه width 300px و padding 20px و border 2px بياخد 344px في content-box (300 + 40 + 4)، و 300px بالظبط في border-box والمحتوى جواه 256px. ولو قالك «اثبتلي»، افتح DevTools › Computed: الرسمة الملونة فيها الأربع طبقات بأرقامهم.",
             when: R`أسئلة المتابعة: «إيه الـ margin collapse وإمتى مبيحصلش؟» و «inline و block و inline-block الفرق؟» و «[[width: 100%]] مع padding ليه بيعمل scroll أفقي؟».`,
             mistakes: "«الـ margin جزء من العرض». أو «border-box بيشيل الـ padding». أو نسيان إن الافتراضي content-box مش border-box."
           },
@@ -116,6 +129,11 @@ clientWidth:    190
         {
           cmd: "(id, class, type)",
           title: "إزاي المتصفح بيقرر أنهي قاعدة تكسب؟ (How does CSS specificity work?)",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** احسب specificity دول: [[#a .b]]، و [[.a.b.c.d]]، و [[ul li:not(.x)]]، و [[:is(#a, .b) p]]، و [[a::before]]. ورتّبهم من الأقوى.`, done: R`(1,1,0) و (0,4,0) و (0,1,2) و (1,0,1) و (0,0,2). الترتيب: [[#a .b]] ثم [[:is(#a, .b) p]] ثم [[.a.b.c.d]] ثم [[ul li:not(.x)]] ثم [[a::before]]. واتأكدت بالـ hover على الـ selector في DevTools › Styles (بيطلّع الـ specificity).` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** ملف CSS فيه ٣ قواعد بتتخانق بـ [[!important]] على لون الزرار (reset، ومكوّن، و utility)، وكل واحد زوّد important عشان يكسب اللي قبله. رتّبهم بـ [[@layer reset, components, utilities;]] وشيل كل [[!important]].`, done: R`[[grep -c "!important"]] = 0، والزرار شكله زي ما كان في كل حالاته (لقطة قبل وبعد)، وأي utility بتكسب المكوّن من غير ما تزوّد specificity.` },
+            { lvl: 'سريع', t: R`**اشرحها:** اكتب لزميل ٥ سطور: ترتيب الـ cascade بالظبط من الأقوى للأضعف، وجملة على كل خطوة.`, done: R`الـ ٥ سطور بالترتيب: important (والـ layers بتتقلب معاه)، وبعدين الـ inline style، وبعدين الـ layers (اللي برا أي layer أقوى)، وبعدين الـ specificity خانة خانة، وبعدين الترتيب في الكود. وزميلك قدر يجاوب بيها على مثال جديد.` },
+          ],
           desc: R`لما قاعدتين بيغيّروا نفس الخاصية على نفس العنصر، المتصفح بيبص الأول على [[!important]]، وبعدين الـ inline style، وبعدين الـ cascade layers، وبعدين الـ specificity، وآخر حاجة الترتيب في الكود. الـ specificity تلات خانات: عدد الـ ids، وبعدين الـ classes والـ attributes والـ pseudo-classes، وبعدين أنواع العناصر والـ pseudo-elements. بتتقارن خانة خانة، فـ id واحد يغلب أي عدد classes. و [[:where()]] وزنها صفر، والوراثة ملهاش وزن خالص.`,
           example: R`nav a { color: gray; }
 .link { color: blue; }
@@ -125,7 +143,9 @@ nav .link:hover { color: navy; }
           flag: "script",
           deep: {
             why: "بيتسأل عشان يعرف هل بتفهم ليه CSS بيتصرف كده، ولا بتحط !important لحد ما يشتغل.",
-            how: R`لو عايز تتميز: اذكر إن Tailwind v4 بيستخدم cascade layers، وإن أي CSS برا layer بيغلب الـ utilities مهما كانت الـ specificity. واذكر إن [[:is()]] و [[:not()]] و [[:has()]] وزنهم = أتقل حاجة جواهم.`,
+            how: R`لو عايز تتميز: اذكر إن Tailwind v4 بيستخدم cascade layers، وإن أي CSS برا layer بيغلب الـ utilities مهما كانت الـ specificity. واذكر إن [[:is()]] و [[:not()]] و [[:has()]] وزنهم = أتقل حاجة جواهم.
+
+ومثال يبيّن إن الخانات مبتتراكمش: [[#nav a]] وزنه (1,0,1) وبيغلب [[.nav .menu .link:hover]] اللي وزنه (0,4,0)، لأن أول خانة بتتقارن الأول، وأي عدد classes ميعدّيش id واحد. وفيه حتة قليلين بيعرفوها: [[!important]] بيقلب ترتيب الـ layers، فـ important جوه layer بيغلب important برا أي layer.`,
             when: R`أسئلة المتابعة: «!important بيتعامل إزاي؟» و «إيه الـ cascade layers؟» و «[[:is()]] وزنها كام؟» و «إزاي تتجنب حروب الـ specificity في مشروع كبير؟» (BEM، أو utility-first، أو layers).`,
             mistakes: "«اللي مكتوب آخر بيكسب» على طول (ده آخر معيار بس). «11 class تغلب id» (لأ، الخانات مش بتتحوّل). «الـ inline style مينفعش يتغلب» (!important بيغلبه)."
           },
@@ -202,7 +222,7 @@ C  أنواع العناصر والـ pseudo-elements    nav  a  ::after
 - [[:where()]] صفر، و [[:is()]] و [[:not()]] و [[:has()]] أتقل حاجة جواهم.
 - التعادل؟ اللي جاي آخر يكسب.`,
           lines: [
-            "(0,0,2).",
+            R`(0,0,2): نوعين عناصر بس، فأي class لوحده بيغلبها.`,
             "(0,1,0): بتغلب اللي فوق.",
             "(0,2,1): class و pseudo-class ونوع.",
             R`(0,1,0): الـ where صفر، فزي [[.link]] بالظبط، والترتيب هو اللي يحسم.`
@@ -216,6 +236,11 @@ C  أنواع العناصر والـ pseudo-elements    nav  a  ::after
         {
           cmd: "بُعد واحد وبُعدين",
           title: "إمتى تستخدم flex وإمتى grid؟ (Flexbox vs Grid)",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** حاوية 700px و ٥ كروت من غير gap. مرة [[display: flex; flex-wrap: wrap]] والكروت [[flex: 1 1 200px]]، ومرة [[grid-template-columns: repeat(auto-fill, minmax(200px, 1fr))]]. عرض كروت الصف التاني كام في كل واحدة؟`, done: R`flex: الصف الأول ٣ كروت 233.3px والتاني كارتين 350px (بيتمدّوا يملوا الصف). grid: الصفين أعمدتهم 233.3px والكارتين اللي تحت نفس عرض اللي فوق. وقست بـ DevTools.` },
+            { lvl: 'تطبيق', t: R`**ابني:** ٣ كروت أسعار عناوينهم ومميزاتهم أطوال مختلفة. مرة بـ flex ومرة بـ grid و [[subgrid]] (الكارت [[grid-row: span 3]] و [[grid-template-rows: subgrid]]).`, done: R`في نسخة subgrid العناوين على خط واحد والأزرار على خط واحد في الـ ٣ كروت، وفي flex لأ. ولقطة الاتنين جنب بعض مع overlay الـ grid من DevTools.` },
+            { lvl: 'سريع', t: R`**اشرحها:** جاوب «Flexbox vs Grid» في دقيقة بمثالين من شغلك: حاجة عملتها flex وحاجة grid، وليه.`, done: R`الإجابة فيها «one dimension / two dimensions» و «content-out / layout-in» ومثالين حقيقيين، وإنك بتستخدمهم مع بعض، في أقل من ٦٠ ثانية.` },
+          ],
           desc: R`Flexbox للـ layout في بُعد واحد: صف أو عمود، والعناصر نفسها بتحدد حجمها، والمساحة بتتوزع حسب محتواها. Grid للـ layout في بُعدين: بتعرّف الصفوف والأعمدة من الأب، والعناصر بتتحط في الخانات، فالأعمدة بتفضل متصفة في كل الصفوف. عمليًا: flex للمكونات (navbar، وأيقونة جنب كلام، وزراير)، و grid للـ layout (الصفحة، وشبكة كروت، وفورم بعمودين). وغالبًا بستخدمهم مع بعض: grid للهيكل و flex جوه كل خانة.`,
           example: R`.nav { display: flex; justify-content: space-between; align-items: center; }
 .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }`,
@@ -223,7 +248,9 @@ C  أنواع العناصر والـ pseudo-elements    nav  a  ::after
           flag: "script",
           deep: {
             why: "بيختبر إنك بتختار الأداة حسب المشكلة، مش حسب العادة.",
-            how: R`لو عايز تتميز: flex «content-out» (المحتوى بيحدد المقاسات)، و grid «layout-in» (الأب بيحدد والمحتوى بيتحط). واذكر [[subgrid]] لما عايز كروت جوه grid عناوينها وأزرارها متصفة.`,
+            how: R`لو عايز تتميز: flex «content-out» (المحتوى بيحدد المقاسات)، و grid «layout-in» (الأب بيحدد والمحتوى بيتحط). واذكر [[subgrid]] لما عايز كروت جوه grid عناوينها وأزرارها متصفة.
+
+ومثال تحكيه: ٣ كروت جنب بعض، عناوينهم أطوال مختلفة. بـ flex كل كارت لوحده، فالأزرار اللي تحت مش على خط واحد. لو الكارت [[grid-row: span 3]] و [[grid-template-rows: subgrid]]، صفوفه بقت صفوف الأب، فكل العناوين وكل الأزرار بيتصفوا في كل الكروت. و [[gap]] بقى شغال في الاتنين، فمش محتاج margins بين العناصر.`,
             when: R`أسئلة المتابعة: «ليه آخر سطر في كروت flex-wrap شكله غريب؟» و «إيه الفرق بين auto-fit و auto-fill؟» و «ليه [[flex: 1]] مش بيوزّع بالتساوي ساعات؟» (المحتوى و min-width: auto).`,
             mistakes: "«grid أحدث فهو أحسن»، أو «flex للموبايل و grid للديسكتوب». الاتنين مش بديل لبعض، والإجابة لازم تبقى عن الأبعاد ومين بيتحكم في المقاسات: المحتوى ولا الأب."
           },
@@ -334,6 +361,11 @@ C  أنواع العناصر والـ pseudo-elements    nav  a  ::after
         {
           cmd: "containing block",
           title: "إيه الفرق بين قيم position الخمسة؟",
+          practice: [
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** sidebar عليه [[position: sticky; top: 1rem]] ومبيلزقش. جد ليه في النص عليه [[overflow: hidden]] (اتحط زمان عشان يقص ظل). لاقيه من DevTools وصلّحه من غير ما الظل يبوظ.`, done: R`لقيت الجد في Computed، وغيّرته لـ [[overflow: clip]] (مش بيعمل scroll container فالـ sticky بيشتغل) أو شلته، والـ sidebar بقى بيلزق، والظل لسه مقصوص.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** مودال [[position: fixed; inset: 0]] جوه كارت عليه [[transform: translateY(-4px)]] وقت الـ hover. لما تفتحه والماوس على الكارت، هيغطي الشاشة ولا الكارت بس؟`, done: R`الكارت بس: الـ transform خلّى الكارت containing block للـ fixed. واتأكدت بـ [[getBoundingClientRect()]] على المودال (مقاسه مقاس الكارت)، والحل portal على الـ body أو [[<dialog>]] بـ [[showModal()]] (بيطلع في الـ top layer).` },
+            { lvl: 'سريع', t: R`**اشرحها:** ارسم (على ورقة أو في صفحة) الخمس قيم: كل واحدة مكانها محجوز في الـ flow ولا لأ، وبتتحسب من مين، وبتتحرك مع الـ scroll ولا لأ.`, done: R`جدول ٥ صفوف × ٣ أعمدة صح، وتقدر تشرحه في دقيقة من غير ما تبص.` },
+          ],
           desc: R`[[static]] الافتراضي: العنصر في الـ flow و top و left ملهمش تأثير. [[relative]] في الـ flow ومكانه محجوز، وبيتزق بصريًا بس، وبيبقى مرجع لأولاده الـ absolute. [[absolute]] بيطلع من الـ flow ومكانه بيتحسب من أقرب جد positioned. [[fixed]] بيطلع من الـ flow ومكانه من الشاشة، فبيفضل ثابت مع الـ scroll. [[sticky]] بيتصرف relative لحد ما يوصل للحد اللي حددته ([[top: 0]]) وبعدين يلزق، جوه حدود أبوه بس.`,
           example: R`.parent { position: relative; }
 .badge { position: absolute; top: 0; inset-inline-end: 0; }
@@ -342,7 +374,9 @@ C  أنواع العناصر والـ pseudo-elements    nav  a  ::after
           flag: "script",
           deep: {
             why: "أغلب مشاكل «العنصر راح فين؟» و «ليه الهيدر مش ثابت؟» سببها position، فبيتسأل كتير.",
-            how: R`لو عايز تتميز: الـ containing block بتاع absolute هو أقرب جد positioned، بس [[transform]] أو [[filter]] على أي جد بيعمل containing block برضه، حتى للـ fixed. ودا سبب إن مودال fixed جوه عنصر متحرك بيتحبس، والحل portal.`,
+            how: R`لو عايز تتميز: الـ containing block بتاع absolute هو أقرب جد positioned، بس [[transform]] أو [[filter]] على أي جد بيعمل containing block برضه، حتى للـ fixed. ودا سبب إن مودال fixed جوه عنصر متحرك بيتحبس، والحل portal.
+
+وفخ تاني بيتسأل كتير: [[position: sticky]] مبيلزقش لو أي جد عليه [[overflow: hidden]] أو [[overflow: auto]]، لأن sticky بيلزق جوه أقرب scroll container، والأب ده بقى هو الـ scroller وهو مش بيعمل scroll أصلًا. التشخيص: امشي على الأجداد في DevTools › Computed ودوّر على overflow.`,
             when: R`أسئلة المتابعة: «ليه الـ sticky مش شغال؟» (overflow على جد، أو مفيش top، أو الأب قد العنصر بالظبط). «ليه fixed جوه عنصر عليه transform بيتصرف غلط؟» و «z-index بيشتغل على مين؟».`,
             mistakes: "«absolute بيتحسب من الأب» (من أقرب جد positioned، مش الأب المباشر بالضرورة). «fixed دايمًا من الشاشة» (إلا لو جد عليه transform أو filter). ونسيان sticky خالص."
           },
@@ -439,6 +473,11 @@ fixed جوه transform:   618 ← 218    (مشي مع الصفحة)
         {
           cmd: "mobile-first",
           title: "هتعمل الموقع responsive إزاي؟ (Responsive strategy)",
+          practice: [
+            { lvl: 'تطبيق', t: R`**refactor:** ملف CSS مكتوب desktop-first بـ [[max-width]] media queries (الشكل الكبير برا، وكل شاشة أصغر بتلغي). حوّله mobile-first بـ [[min-width]].`, done: R`عدد القواعد نقص (رقم قبل وبعد)، والصفحة شكلها نفس الشكل على 360 و 768 و 1280 (لقطات قبل وبعد)، ومفيش قيمة بتتكتب وتتلغي في نفس الشاشة.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الموقع عليه [[html, body { overflow-x: hidden }]] عشان «فيه scroll أفقي على الموبايل». شيله، ولاقي العنصر اللي طالع برا الشاشة على 360px بسطر في الكونسول بيدوّر على أي عنصر [[getBoundingClientRect().right]] بتاعه أكبر من [[innerWidth]].`, done: R`لقيت العنصر بالاسم (صورة من غير [[max-width: 100%]] أو عنصر [[width: 100vw]] أو margin سالب)، وصلّحته هو بس، و [[document.documentElement.scrollWidth]] بقى زي [[clientWidth]] من غير overflow على html.` },
+            { lvl: 'سريع', t: R`**اشرحها:** جاوب «How do you make a site responsive?» في دقيقة بالترتيب: viewport، و mobile-first، و layouts مرنة، والوحدات، والصور، و container queries، وإزاي بتختبر.`, done: R`الإجابة فيها الـ ٧ نقط بالترتيب وجملة عن breakpoints من المحتوى مش من الأجهزة، في أقل من ٦٠ ثانية.` },
+          ],
           desc: R`أبدأ بـ meta viewport، وبعدين أكتب الـ CSS الأساسي لأصغر شاشة، وأضيف بـ [[min-width]] media queries للأكبر، والـ breakpoints حسب المحتوى (لما الشكل يبوظ) مش حسب أجهزة. وبعتمد على layouts مرنة من نفسها: flex-wrap، و grid بـ auto-fit و minmax، ووحدات مرنة: rem و % و clamp للخطوط والمسافات، وصور بـ [[max-width: 100%]] و srcset. وللمكونات اللي بتتحط في أماكن مختلفة container queries. وبختبر على أجهزة حقيقية مش DevTools بس، وبتأكد من أهداف اللمس (حوالي 44px، وأقل حاجة 24 في WCAG 2.2) ومن إن مفيش حاجة مهمة معتمدة على hover.`,
           example: R`.grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr)); }
 h1 { font-size: clamp(1.75rem, 1rem + 3vw, 3rem); }
@@ -447,7 +486,7 @@ h1 { font-size: clamp(1.75rem, 1rem + 3vw, 3rem); }
           flag: "script",
           deep: {
             why: "بيختبر إن عندك منهج، مش «بظبط لحد ما يبان كويس».",
-            how: "لو عايز تتميز: اذكر إن breakpoints بـ rem بتحترم إعداد خط المستخدم، وإن Tailwind v4 بيلف hover في (hover: hover)، وإنك بتعمل intrinsic layouts (auto-fit و clamp و container queries) فالـ media queries بتقل.",
+            how: "لو عايز تتميز: اذكر إن breakpoints بـ rem بتحترم إعداد خط المستخدم، وإن Tailwind v4 بيلف hover في (hover: hover)، وإنك بتعمل intrinsic layouts (auto-fit و clamp و container queries) فالـ media queries بتقل.\n\nوليه min-width بالذات: الـ CSS اللي برا أي media query هو شكل الموبايل، فالموبايل (أضعف جهاز) مبيضطرش يلغي قواعد الديسكتوب بقواعد زيادة، وكل شاشة أكبر بتزوّد بس. والحاجات اللي بتظهر بالـ hover لوحده تتحط في (hover: hover) and (pointer: fine)، لأن اللمس مفيهوش hover.",
             when: "أسئلة المتابعة: «الفرق بين mobile-first و desktop-first؟» و «إيه الـ breakpoints اللي بتستخدمها وليه؟» و «container queries ولا media queries؟» و «بتتعامل مع الصور إزاي؟».",
             mistakes: "«بستخدم Bootstrap أو Tailwind فهو responsive لوحده». أو إجابة كلها breakpoints لأجهزة معينة من غير layouts مرنة. أو نسيان الـ viewport meta."
           },
@@ -559,6 +598,11 @@ h1 { font-size: clamp(1.75rem, 1rem + 3vw, 3rem); }
         {
           cmd: "rem من الـ root",
           title: "إيه الفرق بين px و em و rem؟ (px vs em vs rem)",
+          practice: [
+            { lvl: 'سريع', t: R`**مسألة:** html ‏16px، و [[ul { font-size: 0.9em }]]، وفيه ٣ قوايم جوه بعض. الخط في التالتة كام؟ وكام لو [[0.9rem]]؟`, done: R`em: ‏16 × 0.9 × 0.9 × 0.9 = 11.66px (بيصغر كل مستوى). rem: ‏14.4px في الـ ٣. واتأكدت من Computed.` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** صفحتين نفس الشكل: واحدة كلها px وواحدة rem. غيّر حجم الخط من إعدادات Chrome (Appearance › Font size › Very large) وبعدين جرّب zoom 200%.`, done: R`مع إعداد الخط صفحة الـ rem كبرت وصفحة الـ px فضلت زي ما هي، ومع الـ zoom الاتنين كبروا. وكتبت ليه ده مهم (ناس كتير بتكبّر الخط من الإعدادات مش بالـ zoom).` },
+            { lvl: 'سريع', t: R`**اشرحها:** جاوب «px vs em vs rem» في دقيقة، وفيها إمتى بتستخدم em بالذات (padding زرار بيكبر مع خطه).`, done: R`الإجابة فيها التعريف التلاتة، والتراكم في em بمثال رقم، و rem للخطوط والمسافات، و em لحاجة بتتناسب مع خط المكوّن، في أقل من ٦٠ ثانية.` },
+          ],
           desc: R`[[px]] وحدة ثابتة. [[rem]] مضروبة في font-size بتاع الـ root (html)، والافتراضي 16px، وبتتغير لو المستخدم كبّر الخط من إعدادات المتصفح. [[em]] مضروبة في font-size بتاع العنصر نفسه، وفي خاصية font-size نفسها بتاعة الأب، فبتتراكم لو العناصر جوه بعض. أنا بستخدم rem للخطوط والمسافات عشان تحترم إعدادات المستخدم وتفضل متناسقة، و em للحاجات اللي لازم تتناسب مع خط المكون نفسه زي padding الزرار أو أيقونة جنب كلام، و px للحاجات اللي لازم تفضل رفيعة زي الـ border.`,
           example: R`html { font-size: 100%; }
 .btn { font-size: 1.125rem; padding: 0.5em 1em; border: 1px solid; }`,
@@ -566,7 +610,9 @@ h1 { font-size: clamp(1.75rem, 1rem + 3vw, 3rem); }
           flag: "script",
           deep: {
             why: "بيختبر إنك فاهم الوحدات، وبيفتح باب الـ accessibility.",
-            how: R`لو عايز تتميز: Tailwind كله rem ([[--spacing: 0.25rem]])، والـ media queries بـ rem أو em بتتحسب من خط المتصفح الافتراضي مش من خط الـ html، و clamp بـ rem + vw عشان الـ zoom يفضل شغال.`,
+            how: R`لو عايز تتميز: Tailwind كله rem ([[--spacing: 0.25rem]])، والـ media queries بـ rem أو em بتتحسب من خط المتصفح الافتراضي مش من خط الـ html، و clamp بـ rem + vw عشان الـ zoom يفضل شغال.
+
+ومثال تحسبه قدامهم: خط الـ html ‏16px، و [[.card { font-size: 1.25em }]] جوه [[.card]] تاني: الداخلي 25px (16 × 1.25 × 1.25)، لكن [[1.25rem]] في الاتنين 20px. ولو المستخدم خلّى خط المتصفح 20px من الإعدادات، كل اللي بالـ rem بيكبر 25% واللي بالـ px فاضل زي ما هو.`,
             when: R`أسئلة المتابعة: «إيه مشكلة [[html { font-size: 62.5% }]]؟» و «الـ media queries بـ em بتتحسب من إيه؟» و «vw في الخطوط؟».`,
             mistakes: "«rem من الأب» (ده em). «px أسهل ومفيش فرق» (بيكسر تكبير الخط). «em دايمًا من الأب» (بس في font-size، وفي باقي الخصائص من العنصر نفسه)."
           },
@@ -668,13 +714,20 @@ h1 { font-size: clamp(1.75rem, 1rem + 3vw, 3rem); }
         {
           cmd: "توليد on-demand",
           title: "Tailwind بيشتغل إزاي من جوه؟ وإيه عيوبه؟",
+          practice: [
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** badge لونه جاي من البيانات: [[className={$__bt bg-$__{status.color}-100 text-$__{status.color}-700 $__bt}]]، واللون مبيظهرش. صلّحه.`, done: R`عملت map فيه الكلاسات كاملة ([[{ success: "bg-green-100 text-green-700", ... }]])، والألوان ظهرت، والكلاسات موجودة في ملف الـ CSS بعد الـ build (دوّرت عليها بـ Ctrl+F).` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** اعمل build لمشروع Tailwind v4، وافتح ملف الـ CSS الناتج. طلّع ترتيب الـ [[@layer]] اللي في أوله، وعدد القواعد اللي جوه [[@layer utilities]]، وشوف [[--color-*]] بقوا فين.`, done: R`كتبت ترتيب الـ layers ([[theme, base, components, utilities]])، وعدد القواعد قريب من عدد الكلاسات اللي استخدمتها فعلًا، والألوان متغيرات على [[:root]] (أو [[:host]]).` },
+            { lvl: 'سريع', t: R`**اشرحها:** جاوب «How does Tailwind work, and what are its downsides?» في دقيقة: الـ scan، و on-demand، والـ layers، وعيبين حقيقيين وإزاي بتتعامل معاهم.`, done: R`الإجابة فيها إنه build tool مش runtime، والكلاس لازم يتكتب كامل، و HTML مزحوم وحلّه components و cva، في أقل من ٦٠ ثانية.` },
+          ],
           desc: R`Tailwind أداة build مش مكتبة runtime. بيعمل scan لملفات المشروع ويدوّر على أسماء كلاسات بيعرفها، ويطلّع CSS للي اتكتب بس، فالملف النهائي صغير مهما المشروع كبر. في v4 الإعداد في CSS: [[@import "tailwindcss"]] و [[@theme]] للتوكنز، والقيم متغيرات CSS، والناتج في cascade layers. والـ variants زي [[hover:]] و [[md:]] بتلف الكلاس في selector أو media query. العيوب: الـ HTML بيبقى مزحوم، والكلاسات لازم تتكتب كاملة (مينفعش تبنيها بـ string)، والتعارض بين الكلاسات محتاج tailwind-merge، والفريق محتاج يتفق على التوكنز عشان ميبقاش كله arbitrary values.`,
           example: R`<button className="rounded-lg bg-brand px-4 py-2 text-white hover:bg-brand/90 md:px-6">حفظ</button>`,
           try: R`افتح CSS الناتج لمشروع Tailwind ودوّر على كلاس مش مستخدم: مش هتلاقيه. ودي الـ «on-demand» اللي تشرحها.`,
           flag: "script",
           deep: {
             why: "بيتسأل لأنه في كل مشروع حديث، والإجابة بتفرق بين اللي بيستخدمه واللي فاهمه.",
-            how: R`لو عايز تتميز: الـ scan نصي مش بيفهم JavaScript، ودا سبب إن [[bg-$__{color}-500]] مش شغال. والـ utilities جوه [[@layer utilities]]، فأي CSS عادي برا layer بيغلبها. وإعادة الاستخدام بتبقى بمكونات React و cva، مش بـ [[@apply]] في كل حتة.`,
+            how: R`لو عايز تتميز: الـ scan نصي مش بيفهم JavaScript، ودا سبب إن [[bg-$__{color}-500]] مش شغال. والـ utilities جوه [[@layer utilities]]، فأي CSS عادي برا layer بيغلبها. وإعادة الاستخدام بتبقى بمكونات React و cva، مش بـ [[@apply]] في كل حتة.
+
+والحل لما الكلاس لازم ييجي من بيانات: object فيه الأسامي كاملة ([[{ red: "bg-red-500", green: "bg-green-500" }]]) فالـ scanner يلاقيها كنص، أو [[@source inline("bg-red-500")]] في v4. وافتح الـ CSS الناتج بعد الـ build وابحث عن الكلاس: لو مش موجود، يبقى الـ scanner مشافهوش.`,
             when: R`أسئلة المتابعة: «بتعمل dark mode إزاي؟» و «إيه الفرق بين v3 و v4؟» و «إزاي بتعيد استخدام الستايلات؟» و «ليه مش CSS Modules؟».`,
             mistakes: "«Tailwind زي الـ inline styles» (لأ: فيه variants و media queries وتوكنز، والـ CSS بيتعمله cache). «بيطلّع كل الكلاسات وبعدين يمسح اللي مش مستخدم» (ده شكل قديم؛ دلوقتي بيولّد اللي محتاجه بس). و @apply في كل حتة فترجع لـ CSS عادي."
           },
@@ -793,13 +846,18 @@ px-5           أيوه  (رغم إنها في تعليق!)
         {
           cmd: "semantic HTML أولًا",
           title: "إيه أهم حاجات الـ accessibility في الفرونت إند؟",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** إيه الـ role والاسم في الـ accessibility tree لـ: [[<div onclick="save()">حفظ</div>]]، و [[<button>حفظ</button>]]، و [[<a href="/p">التفاصيل</a>]]، و [[<button><svg aria-hidden="true">…</svg></button>]]؟`, done: R`generic من غير اسم مفيد ومش focusable، و button «حفظ»، و link «التفاصيل»، و button من غير اسم (axe بيطلّع [[button-name]]). واتأكدت من DevTools › Accessibility.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة فيها المشاكل اللي بتتكرر: [[outline: none]] من غير بديل، و [[onclick]] على div، ومودال مبيحبسش الـ focus، و emoji أيقونات من غير اسم، وحالة باللون بس، و [[text-align: right !important]] على كل [[[dir=rtl]]]، ومفيش skip link، ومفيش [[prefers-reduced-motion]]. صلّح التمانية.`, done: R`axe صفر، والصفحة كلها بالكيبورد بـ focus باين، والمودال بيرجّع الـ focus، والعناصر اللي لازم تتوسّط اتوسّطت تاني، ومع reduce مفيش حركة.` },
+            { lvl: 'سريع', t: R`**اشرحها:** جاوب «What are the most important accessibility practices?» في دقيقة بالترتيب: semantic HTML، والكيبورد، والتباين، و aria بس لما HTML ميكفيش، و reduced motion، والاختبار.`, done: R`الإجابة بالترتيب ده، وفيها مثال div مقابل button، وأداة اختبار أوتوماتيك وفحص يدوي، في أقل من ٦٠ ثانية.` },
+          ],
           desc: R`أبدأ بـ HTML صح: عناصر semantic، و button للأفعال و a للتنقل، و label لكل حقل، و alt للصور، وعناوين بالترتيب. ده بيدّي نص الـ accessibility ببلاش. بعدين الكيبورد: كل حاجة بتتوصل بـ Tab، والـ focus باين بـ focus-visible، والمودالات بتحبس الـ focus وبترجّعه. بعدين التباين: 4.5:1 للكلام العادي. و aria بس للحاجات اللي HTML مش بيوصفها: aria-expanded و aria-live و aria-label لأزرار الأيقونات. واحترام prefers-reduced-motion. وبختبر بالكيبورد وبـ Lighthouse أو axe، وأحيانًا بقارئ شاشة حقيقي.`,
           example: R`<button aria-label="إغلاق" onClick={close}><X aria-hidden="true" /></button>`,
           try: R`اعمل audit لصفحة من مشروعك بـ Lighthouse › Accessibility، وصلّح أول 3 مشاكل، واحكي عنهم في الانترفيو كمثال حقيقي.`,
           flag: "script",
           deep: {
             why: "شركات كتير عندها التزامات قانونية بالـ accessibility، والسؤال بيفرق بين اللي بيبني UI للماوس بس واللي بيبني لكل الناس.",
-            how: "لو عايز تتميز: اذكر الـ accessibility tree والـ role/name/state، وإن primitives زي Radix بتحل focus trap و Escape والـ aria، وإن WCAG 2.2 AA هو المعيار المعتاد.",
+            how: "لو عايز تتميز: اذكر الـ accessibility tree والـ role/name/state، وإن primitives زي Radix بتحل focus trap و Escape والـ aria، وإن WCAG 2.2 AA هو المعيار المعتاد.\n\nومثال يثبت كلامك: div عليه onclick شكله زرار، بس الـ accessibility tree بيقول عليه generic: مفيش role، ومش بيتوصل بـ Tab، و Enter مبيشغّلوش. و button بيدّي التلاتة ببلاش. افتح DevTools › Elements › Accessibility على الاتنين وورّيهم الفرق في الـ role والـ focusable.",
             when: "أسئلة المتابعة: «الفرق بين aria-label و aria-labelledby؟» و «إزاي تعمل مودال accessible؟» و «إيه WCAG AA؟» و «بتختبر إزاي؟».",
             mistakes: R`«بحط aria على كل حاجة» (no ARIA is better than bad ARIA). «[[role="button"]] على div كفاية». «الـ accessibility للمكفوفين بس» (كيبورد، ونظر ضعيف، وعمى ألوان، وحساسية للحركة، وموبايل في الشمس).`
           },
@@ -875,13 +933,18 @@ px-5           أيوه  (رغم إنها في تعليق!)
         {
           cmd: "احجز المكان",
           title: "إيه هو CLS وإزاي تقلله؟",
+          practice: [
+            { lvl: 'سريع', t: R`**مسألة:** بانر ارتفاعه ربع الشاشة اتحط فوق الصفحة فزق كل المحتوى (اللي كان مالي الشاشة) ربع الشاشة لتحت. قيمة الـ shift تقريبًا كام؟`, done: R`المساحة المتأثرة 1 (المحتوى مالي الشاشة قبل وبعد)، والمسافة 0.25، فالـ shift ≈ 0.25، يعني بانر واحد ضعف حد «Good» (0.1).` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** عنوان الصفحة بخط عربي من الموقع، ولما الخط يوصل الفقرات بتتنط سطر لأن الخط الاحتياطي أصغر. صلّحه بخط احتياطي بـ [[size-adjust]] و [[ascent-override]] (أو next/font).`, done: R`Performance › Layout Shifts مفيهوش shift لحظة وصول الخط (على Slow 4G و Disable cache)، و CLS في Lighthouse أقل من 0.05.` },
+            { lvl: 'سريع', t: R`**اشرحها:** جاوب «What is CLS and how do you reduce it?» في دقيقة بـ ٣ أسباب و ٣ حلول، وإزاي بتقيسه في الـ lab والـ field.`, done: R`الإجابة فيها «reserve space» و صور بمقاسات و skeleton و خطوط بـ size-adjust، و Lighthouse مقابل web-vitals و Search Console، في أقل من ٦٠ ثانية.` },
+          ],
           desc: R`CLS مقياس من Core Web Vitals لحركة المحتوى المفاجئة وانت بتتفرج على الصفحة، والمطلوب 0.1 أو أقل. أشهر أسبابه صور و iframes من غير مقاسات، وخطوط بتتبدّل بمقاسات مختلفة، ومحتوى بيتحط فوق محتوى موجود زي البانرات والإعلانات. الحل في كلمة: احجز المكان قبل ما المحتوى يوصل: width و height أو aspect-ratio للصور والفيديو، و min-height أو skeleton للمحتوى الديناميكي، و size-adjust أو next/font للخطوط، والإشعارات fixed بدل ما تزق الصفحة. والحركة بـ transform مش بتتحسب، والتغيير اللي بيحصل بعد ضغطة المستخدم على طول مش بيتحسب.`,
           example: R`<img src="/hero.webp" width="1200" height="600" alt="...">`,
           try: R`شغّل Lighthouse على صفحة ليك واكتب الـ CLS، وصلّح سبب واحد، وقيس تاني. رقم قبل وبعد في الانترفيو بيفرق جدًا.`,
           flag: "script",
           deep: {
             why: "Core Web Vitals بتأثر على ترتيب جوجل وعلى تجربة المستخدم، فبتتسأل في أي انترفيو frontend.",
-            how: "لو عايز تتميز: CLS = أكبر مجموعة shifts متقاربة (session window)، وكل shift = المساحة المتأثرة × المسافة. واذكر الفرق بين lab data (Lighthouse) و field data (Search Console و web-vitals).",
+            how: "لو عايز تتميز: CLS = أكبر مجموعة shifts متقاربة (session window)، وكل shift = المساحة المتأثرة × المسافة. واذكر الفرق بين lab data (Lighthouse) و field data (Search Console و web-vitals).\n\nومثال للحساب: عنصر ارتفاعه نص الشاشة اتزق لتحت ربع الشاشة. المساحة المتأثرة (مكانه قبل وبعد مع بعض) 0.75 من الشاشة، والمسافة 0.25، فالـ shift = 0.75 × 0.25 = 0.1875، لوحده عدّى حد الـ 0.1. والـ shifts اللي بتحصل في أقل من 500ms بعد ضغطة أو كتابة مش بتتحسب لأن المستخدم متوقعها.",
             when: "أسئلة المتابعة: «إيه باقي Core Web Vitals؟» (LCP أقل من 2.5 ثانية، و INP أقل من 200ms). «بتقيس في الحقيقة إزاي مش في المعمل؟» و «ليه CLS عالي عند المستخدمين وواطي عندك؟».",
             mistakes: "«CLS يعني الصفحة بطيئة» (ده LCP). «lazy loading بيقلل CLS» (لوحده لأ، وممكن يزوّده لو مفيش مقاسات). وتخلط INP مع FID القديم (FID اتشال سنة 2024 و INP بقى مكانه)."
           },
@@ -978,6 +1041,11 @@ img { max-width: 100%; height: auto; }
         {
           cmd: "مراحل الرسم",
           title: "إيه الفرق بين reflow و repaint؟",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صنّف تغيير كل خاصية: [[width]]، و [[color]]، و [[transform]]، و [[opacity]]، و [[box-shadow]]، و [[top]] على عنصر relative، و [[visibility]]. أنهي layout، وأنهي paint بس، وأنهي composite بس؟`, done: R`layout: width و top. paint بس: color و box-shadow و visibility. composite غالبًا: transform و opacity. واتأكدت بـ Paint flashing (الـ paint بينوّر) و Performance.` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** مربع بيتحرك يمين وشمال على طول، مرة بـ [[left]] ومرة بـ [[transform: translateX()]]. سجّل Performance ٥ ثواني بـ CPU 6x slowdown.`, done: R`نسخة left فيها Layout و Paint في كل frame وفريمات أطول، ونسخة transform مفيهاش، وكتبت متوسط مدة الـ frame في الاتنين من الـ Frames track.` },
+            { lvl: 'سريع', t: R`**اشرحها:** جاوب «What's the difference between reflow and repaint?» في دقيقة بالمراحل الأربعة ومثال hover كارت، و layout thrashing في جملة.`, done: R`الإجابة فيها style ثم layout ثم paint ثم composite، وإن transform و opacity أرخص، والقراية بعد الكتابة في loop، في أقل من ٦٠ ثانية.` },
+          ],
           desc: R`المتصفح بيرسم على مراحل: يحسب الـ styles، وبعدين layout (أو reflow): أماكن ومقاسات كل العناصر، وبعدين paint (أو repaint): يلوّن البكسلات، وبعدين composite: يركّب الطبقات. تغيير width أو margin أو إضافة عنصر بيعمل reflow، وممكن يأثر على الصفحة كلها، وبعده repaint. تغيير color أو background بيعمل repaint بس. و transform و opacity غالبًا composite بس، ودا ليه الحركات بتتعمل بيهم. والأخطر layout thrashing: قراية مقاس زي offsetHeight بعد كتابة style، فالمتصفح يعمل reflow فوري، ولو في loop بيتكرر مية مرة. الحل: اقرا الكل الأول وبعدين اكتب، أو requestAnimationFrame.`,
           example: R`el.style.width = "200px";
 const h = el.offsetHeight;
@@ -986,7 +1054,9 @@ el.style.transform = "translateX(10px)";`,
           flag: "script",
           deep: {
             why: "بيختبر إنك فاهم ليه الموقع بيقطّع، مش بس إنه بيقطّع.",
-            how: R`لو عايز تتميز: الخصائص اللي بتعمل forced reflow (offsetWidth و getBoundingClientRect و scrollTop و getComputedStyle)، و [[will-change]] بيرقّي العنصر لطبقة لوحده بس بياكل ذاكرة، و ResizeObserver و IntersectionObserver بدل القراية في loop.`,
+            how: R`لو عايز تتميز: الخصائص اللي بتعمل forced reflow (offsetWidth و getBoundingClientRect و scrollTop و getComputedStyle)، و [[will-change]] بيرقّي العنصر لطبقة لوحده بس بياكل ذاكرة، و ResizeObserver و IntersectionObserver بدل القراية في loop.
+
+ومثال تقوله: hover بيغيّر [[width]] بتاع كارت في grid = layout لكل الكروت اللي جنبه وبعدها paint، لكن [[transform: scale(1.05)]] = composite بس والكروت التانية متعرفش حاجة. وتثبتها بـ DevTools: Rendering › Paint flashing بينوّر اللي اترسم تاني، و Performance بيبيّن Layout بالبنفسجي و Paint بالأخضر.`,
             when: R`أسئلة المتابعة: «إزاي تكتشف ده في DevTools؟» (Performance وتحذير Forced reflow). «إيه [[will-change]] وإمتى تستخدمه؟» و «ليه animation لـ top أبطأ من translate؟».`,
             mistakes: "«repaint أغلى من reflow» (العكس، والـ reflow غالبًا بيجيب repaint معاه). «transform ببلاش» (على عناصر كتير أو كبيرة بياكل ذاكرة GPU). و will-change على كل حاجة."
           },
@@ -1089,6 +1159,11 @@ items.forEach((it, i) => it.style.width = (ws[i] + 1) + 'px');
         {
           cmd: "stacking context",
           title: "ليه z-index: 9999 مش بيطلّع العنصر فوق؟",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** هيدر [[position: sticky; z-index: 10]]، و [[main]] عليه [[transform: translateZ(0)]]، وجوه main مودال [[position: fixed; z-index: 9999]]. مين فوق مين؟ وإيه اللي يحصل لو شلت الـ transform؟`, done: R`الهيدر فوق المودال، لأن main بقى context بـ [[z-index: auto]] قدام الهيدر. ولما الـ transform اتشال المودال طلع فوق (وغطّى الشاشة كلها كمان). واتأكدت بـ [[document.elementFromPoint()]] على نقطة في الهيدر.` },
+            { lvl: 'تطبيق', t: R`**refactor:** مشروع فيه z-index عشوائية: 1000 و 2001 و 70 و 50 و 99999. حوّلهم لـ scale توكنز ([[--z-dropdown]] و [[--z-sticky]] و [[--z-overlay]] و [[--z-modal]] و [[--z-toast]]) واستخدم [[isolation: isolate]] للكروت اللي فيها طبقات داخلية.`, done: R`مفيش رقم z-index مكتوب برا التوكنز ([[grep]] على [[z-index: [0-9]]] بيرجّع صفر)، والترتيب في الصفحة زي ما كان، والتوست فوق المودال فوق الهيدر في كل الصفحات.` },
+            { lvl: 'سريع', t: R`**اشرحها:** اكتب لستة بكل خاصية بتعمل stacking context تفتكرها، وبعدين قارنها بلستة MDN «Stacking context».`, done: R`لستتك فيها على الأقل: positioned بـ z-index، و opacity أقل من 1، و transform، و filter، و isolation، و will-change، و position fixed أو sticky، وابن flex أو grid عليه z-index. وكتبت اللي نسيته من MDN.` },
+          ],
           desc: R`z-index بيتقارن بس بين عناصر في نفس الـ stacking context. أي عنصر positioned عليه z-index، أو عليه opacity أقل من 1، أو transform، أو filter، أو [[isolation: isolate]]، بيعمل context جديد، وكل اللي جواه بيترتب جواه، وبعدين الـ context كله بيتعامل كوحدة واحدة مع اللي برا. فابن عليه 9999 جوه أب عليه [[z-index: 1]] عمره ما هيطلع فوق أخو الأب اللي عليه 2. الحل إني أرفع العنصر اللي عامل الـ context، أو أطلّع العنصر برا خالص بـ portal، ودا اللي Radix بيعمله للمودالات والـ dropdowns.`,
           example: R`.header { position: relative; z-index: 1; }
 .header .menu { position: absolute; z-index: 9999; }
@@ -1097,7 +1172,9 @@ items.forEach((it, i) => it.style.width = (ws[i] + 1) + 'px');
           flag: "script",
           deep: {
             why: "مشكلة بتحصل في كل مشروع، والسؤال بيفرق بين اللي بيزوّد أصفار واللي فاهم الطبقات.",
-            how: R`لو عايز تتميز: اذكر إن animation بـ transform (framer-motion مثلًا) بتعمل context جديد فجأة، وإن [[isolation: isolate]] بيعمل context مقصود من غير z-index، وإن مشروع كبير محتاج scale ثابت للـ z-index.`,
+            how: R`لو عايز تتميز: اذكر إن animation بـ transform (framer-motion مثلًا) بتعمل context جديد فجأة، وإن [[isolation: isolate]] بيعمل context مقصود من غير z-index، وإن مشروع كبير محتاج scale ثابت للـ z-index.
+
+ومثال تحكيه: هيدر [[position: sticky; z-index: 10]]، ومودال [[z-index: 9999]] جوه [[main]] اللي عليه [[transform]]. المودال طلع تحت الهيدر، لأن main بقى stacking context ودخل المقارنة كوحدة واحدة بـ [[z-index: auto]]، والـ 9999 بيتقارن بس جوه main. الحل portal للمودال على الـ body، أو تشيل الـ transform من main. و DevTools › Layers بيبيّن الطبقات دي.`,
             when: "أسئلة المتابعة: «إيه الحاجات اللي بتعمل stacking context؟» و «إيه isolation: isolate؟» و «إزاي تنظّم z-index في مشروع كبير؟».",
             mistakes: "«اللي رقمه أكبر فوق دايمًا». «z-index بيشتغل على أي عنصر» (محتاج positioned أو ابن flex أو grid)."
           },

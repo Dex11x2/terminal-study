@@ -66,7 +66,9 @@ for (const c of mine) {
     for (const m of missing) console.log('   ناقص في الناتج:', JSON.stringify(m));
     console.log(out.split('\n').slice(0, 15).map(l => '   | ' + l).join('\n'));
   }
-  fs.rmSync(dir, { recursive: true, force: true });
+  // on Windows a process the lesson started can still hold a file for a moment (EPERM): retry, and never crash the whole run over a temp folder
+  try { fs.rmSync(dir, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 }); }
+  catch (e) { console.log('   (مقدرتش أمسح', dir + ':', e.code + ')'); }
 }
 console.log(`\n${mine.length - fail} من ${mine.length} نجحوا على ${here}` + (mine.length ? '' : ' (مفيش فحوصات للنظام ده)'));
 process.exit(fail ? 1 : 0);
