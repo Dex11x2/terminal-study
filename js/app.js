@@ -239,6 +239,17 @@ function nameHTML(c){
   if (!notes.length) return '';
   return '<p class="nm"><b>الاسم</b> '+notes.map(([w, n]) => '<span><code>'+esc(w)+'</code> '+fmt(n)+'</span>').join('')+'</p>';
 }
+/* the tab's lab folder, repeated under every «جرّب»: whoever lands on a lesson from a link never saw the lab at the top of the tab */
+function labHint(tr){
+  const lab = LAB[shell] || '';
+  const m = lab.match(/mkdir -p (~\/lab[\w\/-]*) && cd \1/) || lab.match(/Set-Location (\$HOME\\lab\S*)/) || lab.match(/cd \/d (%USERPROFILE%\\lab\S*)/);
+  if (!m || shell === 'glossary' || (tr || '').includes(m[1])) return '';
+  // PowerShell 5.1 has no &&, and CMD's mkdir fails when the folder exists, so CMD joins with & (runs the cd anyway)
+  const [go, why] = m[0].startsWith('mkdir') ? [m[0], 'ولو طلعلك [[Permission denied]] يبقى انت واقف في فولدر مش بتاعك (زي [[/]] في Git Bash).']
+    : m[0].startsWith('Set-Location') ? ['New-Item -ItemType Directory '+m[1]+' -Force; '+m[0], 'الـ [[-Force]] بيخلّي الأمر ينفع حتى لو الفولدر موجود.']
+    : ['mkdir '+m[1]+' & '+m[0], 'لو الفولدر موجود هتشوف [[already exists]] وده عادي، والـ [[&]] بتكمّل الـ [[cd]] برضه.'];
+  return '<span class="labhint">'+fmt('قبل ما تجرّب، اشتغل في فولدر المعمل: [['+go+']]. '+why)+'</span>';
+}
 function articleHTML(it){
   const [c, t, d, ex, tr, flag] = it;
   const key = 'done:'+shell+':'+c;
@@ -248,7 +259,7 @@ function articleHTML(it){
     nameHTML(c)+(d?descHTML(d):'')+teachHTML(c)+deepHTML(c)+useHTML(c)+osNote(c)+
     (ex ? termBlock(ex, c, flag) : '')+breakHTML(c, ex)+
     '<button type="button" class="reveal">اكشف الإجابة</button>'+
-    '<div class="try"><span class="lbl">'+(shell==='glossary'?'الشرح الكامل في':'جرّب')+'</span><p>'+fmt(tr)+'</p><label class="done"><input type="checkbox" data-k="'+esc(key)+'"'+(done?' checked':'')+'> جربتها</label></div>'+
+    '<div class="try"><span class="lbl">'+(shell==='glossary'?'الشرح الكامل في':'جرّب')+'</span><p>'+fmt(tr)+labHint(tr)+'</p><label class="done"><input type="checkbox" data-k="'+esc(key)+'"'+(done?' checked':'')+'> جربتها</label></div>'+
     practiceHTML(c)+chkHTML(c)+solHTML(c)+noteHTML(c)+reportHTML(c, t)+
   '</article>';
 }

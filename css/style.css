@@ -230,6 +230,7 @@ body.quiz article.cmd:not(.shown) .cmd-h .title{font-size:19px}
 body.quiz article.cmd:not(.shown) .trysol{display:none}
 .try .lbl{font-weight:700;color:var(--accent);white-space:nowrap}
 .try p{margin:0;flex:1;font-size:15.5px}
+.try .labhint{display:block;margin-top:6px;font-size:13.5px;color:var(--muted)}
 .done{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--muted);cursor:pointer;white-space:nowrap;user-select:none}
 .done input{width:18px;height:18px;accent-color:var(--ok);cursor:pointer}
 article.cmd.is-done .done{color:var(--ok)}

@@ -1004,6 +1004,17 @@ current_user
 
 [[current_user]] رمت [[HTTPException(401)]]، فالـ route متنادتش خالص. و [[get_db: released]] **متطبعتش**: الـ exception اتبعت جوه [[get_db]] عند الـ [[yield]]، فالـ [[async with]] قفل ورجّع الاتصال، بس السطر اللي بعده متنفّذش. عشان كده أي تنضيف لازم يحصل في الـ [[async with]] أو [[finally]]، مش في سطر عادي بعد الـ [[yield]].
 
+جرّبناها على FastAPI 0.162 بـ dependency اسمها [[plain]] فيها [[log.append("close")]] بعد الـ [[yield]] على طول، وأختها [[safe]] نفس الكود بس الـ [[close]] جوه [[finally]]:
+
+| الطلب | الكود | [[log]] |
+|---|---|---|
+| route عادي بـ [[plain]] | 200 | [[['open', 'close']]] |
+| route بيرمي [[HTTPException(404)]] بـ [[plain]] | 404 | [[['open']]] |
+| نفس الـ route بـ [[safe]] | 404 | [[['open', 'close']]] |
+| [[plain]] ومعاها auth رمت 401 | 401 | [[['open']]] |
+
+يعني في أي طلب بيفشل، التنضيف اللي مش في [[finally]] بيضيع: اتصال مش راجع، أو ملف مفتوح، أو lock متساب.
+
 ---
 
 ## ٤. [[dependency_overrides]]

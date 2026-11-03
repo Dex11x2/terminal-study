@@ -12870,9 +12870,9 @@
   "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
  },
  "pyapi|Depends بيعمل إيه": {
-  "hash": "4ef9929cefa3",
-  "date": "2026-10-30",
-  "on": "Python 3.14.3 على ويندوز في venvs مؤقتة (FastAPI 0.162 و Pydantic 2.14 و SQLAlchemy 2.1 و Alembic 1.20 و Django 6.1.2 و DRF 3.18.3 و Flask 3.1.3 و pytest 9.2 و httpx 0.28 و pwdlib و PyJWT و arq و celery)، و Docker (postgres:16 و redis:7.4 و python:3.13/3.11/3.9 للمقارنة). docs: deploy حقيقي على VPS و GitHub Actions على GitHub و Kubernetes و Flower و OpenTelemetry Collector"
+  "hash": "b3cd8607927f",
+  "date": "2026-11-03",
+  "on": "FastAPI 0.162 in python:3.12-slim Docker (yield cleanup with/without finally)"
  },
  "pyapi|Depends و Annotated": {
   "hash": "d8033e3b8050",

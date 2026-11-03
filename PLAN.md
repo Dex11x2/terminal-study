@@ -93,7 +93,7 @@
   - تطبيقات جديدة، كل واحد في التاب بتاعه وبنفس المعيار: أداة سطر أوامر تنزل npm، وبوت Telegram (python)، و browser extension، وتطبيق desktop بـ Tauri (apps)، وتطبيق موبايل بـ Expo (rn)، وشات realtime بـ WebSocket، و dashboard بيانات (pydata)، و scraper مجدول، و SaaS لأكتر من عميل (multi-tenant)، وأول PR في open source، وتحويل مشروع JS لـ TypeScript.
   - مشاريع التخرّج في كل تاب لغة (js/30 و pyapi/26 وبعدهم) فيها نفس الأقسام.
   - **أول درس في الدفعة دي: «إزاي تختار أداة»** في تاب المشاريع (وافقت عليه ٣٠ أكتوبر): معايير تقيّم بيها أي أداة جديدة (مستقبلها ومين بيصونها، والـ license، والوثائق والمجتمع، والأداء، والتكلفة، وفريقك يعرفها ولا لأ) عشان الطالب يختار بنفسه مش يحفظ اختياراتنا. وكل جدول «ليه الأدوات دي» مكتوب فيه النسخة وتاريخ التجربة.
-- [ ] **pyapi متابعة:** درس «Depends بيعمل إيه» (pyapi/14): سطر التنضيف بعد `yield` من غير `try/finally` مبيتنفّذش لو الـ route رمت 404 — يتصلح ويتجرّب.
+- [x] **pyapi متابعة:** درس «Depends بيعمل إيه» (دلوقتي pyapi/19): الدرس كان بيقول الصح أصلًا. اتجرّب على FastAPI 0.162 (٣ نوفمبر) واتضاف جدول النتيجة: من غير `finally` السطر اللي بعد `yield` مبيتنفّذش مع 404 ولا 401، ومع `finally` بيتنفّذ. ملحوظة للدفعة الجاية: `fastapi.testclient` بقى بيطلّع `StarletteDeprecationWarning: Using httpx with starlette.testclient is deprecated; install httpx2 instead`، ودروس الاختبار في pyapi محتاجة تذكره.
 - [ ] **مراجعة التمارين في التابات اللي خلصت قبل القواعد الأخيرة** (ps و bash و js): (١) التمارين في الدرس تختلف في النوع مش في الصعوبة بس؛ (٢) **الدروس المهمة والأساسية تاخد ٥–٦ تمارين** بتغطي المراجعة والفهم والتطبيق (بطلبك: «ده ف كل الدروس مش بايثون بس»). بتتعمل بعد دفعة pyapi على طول، وأي تاب جاي بيتكتب بالقاعدة من الأول.
 
 **الترتيب:**
@@ -648,7 +648,7 @@
 
 - البنود الجاية تتكتب دروس في تاب `diag`. ممكن يبقى قسم جديد «قضية كاملة: الدخول مش شغال» جنب «502 Bad Gateway» و«بعد reboot حاجات مقامتش»، ومتتكررش اللي فيهم.
 - المعمل جاهز: image اسمها `difflab-systemd` (Ubuntu 24.04 + systemd + nodejs + npm + pm2 7 + nginx)، والـ Dockerfile في scratchpad الشات. التشغيل: `docker run -d --privileged --cgroupns=host -v /sys/fs/cgroup:/sys/fs/cgroup:rw --tmpfs /run --tmpfs /run/lock difflab-systemd`.
-- بعدها: مراجعة الشاتات القديمة وتطليع اللي ماوصلش هنا.
+- [x] مراجعة الشاتات القديمة (٣ نوفمبر): ٣ agents قروا شاتات كل المشاريع التانية وطلّعوا **٦٣ بند** مش موجودين على الموقع، في ملف **`CHAT-CASES.md`** (بأسامي مخترعة). الدفعات الجاية بتاخد منه بالترتيب: (١) قضايا السيرفر الكبيرة: نقل مواقع بين سيرفرين من غير توقف، و `pkill` وقّع nginx وقت `certbot renew`، و DNS cutover، ورفع نسخة قديمة كسر الإنتاج. (٢) git: الإيميل والـ author و `filter-branch`، و commit لملفاتك بس. (٣) ps و cmd و diag من شات الـ VPN. (٤) الباقي (web و pg و php و next).
 
 - [ ] **فولدر نازل ZIP من GitHub → ريبو git من غير ما تخسر حاجة** (تاب git): `gh repo list` و `gh api user --jq .login` (مين أنا ومين الريبو)، و `gh repo clone` في فولدر مؤقت، و `git diff --no-index --stat <فولدر> <فولدر>`، و `git --git-dir=<clone>/.git --work-tree=<فولدرك> diff --stat <commit>` على كل commit عشان تعرف النسخة بتاعتك أنهي commit، ونقل `.git`، و `git reset <commit>` (من غير `--hard`: بيغيّر الـ index بس)، و `git merge --ff-only origin/main`، وليه `reset --hard` غلط هنا.
 - [ ] **ملف «M» في `git status` والـ diff فاضي** (تاب git، ويربط بـ `.gitattributes`): `core.autocrlf=true` وملفات LF جاية من ZIP. التشخيص: `git diff --ignore-cr-at-eol --stat`، و `git hash-object <ملف>` قصاد `git rev-parse HEAD:<ملف>`، و `git ls-files --eol`، و `git update-index -q --refresh`، والحل الآمن `git checkout -- <ملف>` بعد ما تتأكد إن الهاش واحد.
@@ -668,7 +668,7 @@
     - ٦ تمارين، و `ci` على ٣ أنظمة.
   - `start/02.js` «الـ prompt»: قسم «٣ب. Git Bash على ويندوز»، فيه برومبت السطرين، و `UCRT64` ولا `MINGW64` (مكتبة C)، و `echo $MSYSTEM` و `cygpath -w`، وفخ `/` تحت Program Files، و ٥ تمارين.
   - غلطة اتصلّحت في الشات: كنت قلت إن `UCRT64` معناها MSYS2 مش Git Bash. Git for Windows 2.56 نفسه `MSYSTEM=UCRT64`.
-- [ ] **باقي ملاحظة «مكان التجربة» في كل التابات:** دروس تاب files التانية بتقول «في فولدر `lab/files`» من غير ما تشاور على خطوة «قبل ما تبدأ» في «الامتداد». ونفس الكلام لأي تاب فيه معمل بيكتب ملفات (bash و linux و git...): كل درس أوله سطر `cd ~/lab/<tab>` أو لينك للخطوة دي.
+- [x] **باقي ملاحظة «مكان التجربة» في كل التابات** (٣ نوفمبر): بدل ما نعدّل كل درس، `js/app.js` (`labHint`) بيحط تحت «جرّب» في كل درس سطر بفولدر المعمل بتاع التاب (من `lab` في أول التاب): bash `mkdir -p ~/lab/x && cd ~/lab/x`، و PowerShell `New-Item ... -Force; Set-Location` (من غير `&&` عشان 5.1)، و CMD `mkdir ... & cd /d ...` (الـ `&` بتكمّل حتى لو الفولدر موجود). والسطر مبيظهرش لو الدرس نفسه بيقول المسار.
 - [ ] فخ في PowerShell: `foreach (...) { } | Select-Object` = «An empty pipe element is not allowed» (الـ foreach statement مش بيتعمله pipe؛ لفّه في `$( )` أو استخدم `ForEach-Object`). تاب ps.
 
 ### ٥. أسئلة مفتوحة
