@@ -348,15 +348,29 @@ function renderMap(q, rawQ){
       mapTable(cat, items)+(q?'':unitFoot(cat, id))+'</section>';
   });
   if (!shown){
-    const other = Object.keys(DATA).filter(k => k!==shell && DATA[k].some(c => c.items.some(it => searchText(k, it).includes(q))));
-    html = '<div class="empty">مفيش نتيجة لـ «'+esc(rawQ)+'» في '+SHELLS[shell].label+'.'+
-      (other.length ? ' موجودة في: '+other.map(k=>'<button type="button" data-go="'+k+'">'+SHELLS[k].label+'</button>').join(' و ') : ' جرّب كلمة أقصر أو اسم الأمر بالإنجليزي.')+'</div>';
+    html = '<div class="empty">مفيش نتيجة لـ «'+esc(rawQ)+'» في '+SHELLS[shell].label+'.<span id="elsewhere"> بدوّر في باقي الكورسات…</span></div>';
+    searchElsewhere(q);
   }
   $('#list').innerHTML = html;
   $('#chips').innerHTML = chips;
   railMap(cats);
   $('#toc').innerHTML = ''; $('#toc').hidden = true;
   $('#lbar').hidden = true;
+}
+
+/* nothing in this tab: look through the other tabs' lesson names (js/search-index.js, a small file loaded the first time it's needed) */
+let searchIndexReady = null;
+async function searchElsewhere(q){
+  await null;   // renderMap writes #elsewhere into the page after calling this
+  let other;
+  if (Object.keys(TAB_FILES).length){
+    try { await (searchIndexReady = searchIndexReady || addScript('js/search-index.js')); }
+    catch (e) { searchIndexReady = null; const box = $('#elsewhere'); if (box) box.textContent = ' جرّب كلمة أقصر أو اسم الأمر بالإنجليزي.'; return; }
+    other = Object.keys(SEARCH_INDEX).filter(k => k !== shell && SEARCH_INDEX[k].some(([c, t]) => normAr(c+' '+t).includes(q)));
+  } else other = Object.keys(DATA).filter(k => k !== shell && DATA[k].some(c => c.items.some(it => searchText(k, it).includes(q))));
+  const box = $('#elsewhere');
+  if (!box || normAr($('#q').value.trim()) !== q) return;
+  box.innerHTML = other.length ? ' موجودة في: '+other.map(k => '<button type="button" data-go="'+k+'">'+SHELLS[k].label+'</button>').join(' و ') : ' جرّب كلمة أقصر أو اسم الأمر بالإنجليزي.';
 }
 
 function renderReader(){
@@ -486,18 +500,58 @@ function goHome(){
   hashSet();
   updateProgress();
   const [s, c] = (store.get('last') || '').split('\n'), b = $('#resumeBtn');
-  b.hidden = !(c && DATA[s] && DATA[s].some(x => x.items.some(it => it[0] === c)));
+  b.hidden = !(c && TAB_META[s]);
   if (!b.hidden){ b.textContent = 'كمّل: '+SHELLS[s].label+' › '+c; b.dataset.s = s; b.dataset.c = c; }
   window.scrollTo(0, 0);
 }
-function enterTab(s, cmd){
+/* a tab's lesson files load when the tab opens. index.html keeps the list in an inert <template> (the tools read it there);
+   the single-file build inlines everything and has no template, so TAB_FILES stays empty and nothing loads */
+const TAB_FILES = {}, tabPromise = {}, tabLoaded = {};
+{
+  const t = document.getElementById('tabfiles');
+  if (t) t.content.querySelectorAll('script').forEach(s => { const f = s.getAttribute('src'), k = f.split('/')[2]; (TAB_FILES[k] = TAB_FILES[k] || []).push(f); });
+}
+Object.keys(TAB_META).forEach(k => { if (!SHELLS[k]) SHELLS[k] = {label: TAB_META[k].label, prompt: TAB_META[k].prompt}; });
+function addScript(src){
+  return new Promise((ok, no) => {
+    const s = document.createElement('script');
+    s.src = src; s.async = false;   // async=false keeps execution in list order: TAB() runs before the tab's MORE() files
+    s.onload = ok; s.onerror = () => no(new Error(src));
+    document.head.appendChild(s);
+  });
+}
+function loadTab(k){
+  return tabPromise[k] || (tabPromise[k] = Promise.all(TAB_FILES[k].map(addScript)).catch(e => { delete tabPromise[k]; throw e; }));
+}
+async function tabReady(tabs){
+  const need = [].concat(tabs).filter(k => TAB_FILES[k] && !tabLoaded[k]);
+  if (!need.length) return true;
+  const box = $('#loadbar');
+  box.textContent = 'بيحمّل '+(need.length > 1 ? AR(need.length)+' كورس' : SHELLS[need[0]].label)+'…';
+  box.hidden = false;
+  try {
+    await Promise.all(need.map(loadTab));
+    need.forEach(k => tabLoaded[k] = true);
+    box.hidden = true;
+    return true;
+  } catch (e) {
+    box.textContent = 'الكورس ده مش محفوظ عندك ومفيش نت. وصّل النت وجرّب تاني.';
+    setTimeout(() => { box.hidden = true; }, 5000);
+    return false;
+  }
+}
+function loadAllTabs(){ return tabReady(Object.keys(TAB_FILES)); }
+async function enterTab(s, cmd){
+  if (!await tabReady(s)) return false;
   pushNext = true;
   setShell(s, cmd);
   window.scrollTo(0, 0);
+  return true;
 }
 const hashParse = h => { const i = h.indexOf('/'); return i < 0 ? [decodeURIComponent(h.slice(1)), null] : [decodeURIComponent(h.slice(1, i)), decodeURIComponent(h.slice(i+1))]; };
 
 function render(){
+  if (atHome || !DATA[shell]) return;
   const rawQ = $('#q').value.trim(), q = normAr(rawQ);
   // a search always lands on the map, and a lesson the level filter hides can't stay open
   if (q || (openCmd && !DATA[shell].some(c => (!level || c.l === level) && c.items.some(it => it[0] === openCmd)))) openCmd = null;
@@ -511,9 +565,11 @@ function render(){
 
 function cardProgress(){
   let T = 0, D = 0;
+  // counted from the saved marks, so the home page doesn't need the tabs' lessons loaded
+  const doneBy = {};
+  store.keys().forEach(k => { if (k.startsWith('done:') && store.get(k)==='1'){ const t = k.split(':')[1]; doneBy[t] = (doneBy[t] || 0) + 1; } });
   document.querySelectorAll('.sw').forEach(b => {
-    const k = b.dataset.s; let t = 0, d = 0;
-    DATA[k].forEach(c => c.items.forEach(it => { t++; if (store.get('done:'+k+':'+it[0])==='1') d++; }));
+    const k = b.dataset.s, t = TAB_META[k] ? TAB_META[k].n : 0, d = Math.min(doneBy[k] || 0, t);
     let pg = b.querySelector('.pg');
     if (!pg){ pg = document.createElement('span'); pg.className = 'pg'; b.querySelector('.top').appendChild(pg); }
     pg.textContent = d ? AR(d)+' / '+AR(t) : AR(t);
@@ -526,7 +582,9 @@ function cardProgress(){
 }
 function updateProgress(){
   cardProgress();
-  updateWeak(); updateDue(); lvBadges();
+  updateWeak(); updateDue();
+  if (!DATA[shell]) return;
+  lvBadges();
   let total = 0, done = 0;
   DATA[shell].filter(c => !level || c.l === level).forEach(c => c.items.forEach(it => { total++; if (store.get('done:'+shell+':'+it[0])==='1') done++; }));
   $('#doneN').textContent = AR(done);
@@ -611,7 +669,8 @@ function fcPick(){
 const tabName = k => $('.sw[data-s="'+k+'"] .top b') ? $('.sw[data-s="'+k+'"] .top b').textContent : SHELLS[k].label;
 const cards = (tab, keep) => { const a = []; DATA[tab].forEach(cat => { if (!keep || keep(cat)) cat.items.forEach(([c,t,d,ex,tr,flag]) => a.push({key:tab+':'+c, tab, cat:cat.t, c, t, d, ex, flag})); }); return a; };
 const allCards = test => Object.keys(DATA).flatMap(k => cards(k).filter(x => test(x.key)));
-let _lk; const lessonKeys = () => _lk || (_lk = new Set(allCards(() => true).map(x => x.key)));
+// a saved card still counts while its lesson exists; a tab that isn't loaded yet gets the benefit of the doubt
+const knownKey = key => { const i = key.indexOf(':'), t = key.slice(0, i), c = key.slice(i+1); return !!TAB_META[t] && (!tabLoaded[t] && TAB_FILES[t] ? true : DATA[t].some(x => x.items.some(it => it[0] === c))); };
 // a card counts as "forgotten" while it was missed more often than recalled
 const isWeak = key => { const st = fcStats(key); return st.m > st.k; };
 const weakPool = () => allCards(isWeak);
@@ -619,13 +678,13 @@ const duePool = () => { const t = day(); return allCards(k => isDue(k, t)); };
 function updateWeak(){
   let n = 0;
   // counted like weakPool(): a card of a lesson that no longer exists can't be reviewed, so it doesn't count
-  store.keys().forEach(k => { if (k.startsWith('fc:') && lessonKeys().has(k.slice(3)) && isWeak(k.slice(3))) n++; });
+  store.keys().forEach(k => { if (k.startsWith('fc:') && knownKey(k.slice(3)) && isWeak(k.slice(3))) n++; });
   $('#weakN').textContent = AR(n);
   $('#weakBtn').hidden = !n;
 }
 function updateDue(){
   const t = day(); let n = 0;
-  store.keys().forEach(k => { if (k.startsWith('srs:') && lessonKeys().has(k.slice(4)) && isDue(k.slice(4), t)) n++; });
+  store.keys().forEach(k => { if (k.startsWith('srs:') && knownKey(k.slice(4)) && isDue(k.slice(4), t)) n++; });
   $('#dueN').textContent = AR(n);
   $('#dueBtn').hidden = !n;
 }
@@ -685,7 +744,14 @@ function fcStart(mode, pool, extra){
   if (typeof dlg.showModal === 'function'){ if (!dlg.open) dlg.showModal(); } else dlg.setAttribute('open', '');
   fcNext();
 }
-function fcOpen(mode){ fcStart(mode || '', mode==='weak' ? weakPool() : mode==='due' ? duePool() : cards(shell, c => !level || c.l === level)); }
+async function fcOpen(mode){
+  // reviews across tabs need the lessons of the tabs that have cards waiting, and only those
+  if (mode==='weak' || mode==='due'){
+    const pre = mode==='due' ? 'srs:' : 'fc:', tabs = [...new Set(store.keys().filter(k => k.startsWith(pre)).map(k => k.slice(pre.length).split(':')[0]).filter(k => TAB_META[k]))];
+    if (!await tabReady(tabs)) return;
+  }
+  fcStart(mode || '', mode==='weak' ? weakPool() : mode==='due' ? duePool() : cards(shell, c => !level || c.l === level));
+}
 
 /* level exam: up to 10 random lessons of one level, graded by the learner; 80% (8 of 10) passes. exam:<tab>:<level> = {last, pass} */
 // an imported backup can hold anything, so only a well-formed record counts (and its date is escaped where it's shown)
@@ -847,7 +913,7 @@ function importProgress(file){
       if (o.todo !== undefined) { document.body.classList.toggle('todo', o.todo === '1'); $('#todoBtn').setAttribute('aria-pressed', o.todo === '1' ? 'true' : 'false'); }
       if (o.brief !== undefined) { document.body.classList.toggle('brief', o.brief === '1'); $('#briefBtn').setAttribute('aria-pressed', o.brief === '1' ? 'true' : 'false'); }
       if (o.level !== undefined && [0,1,2,3].includes(+o.level)) { level = +o.level; markLevel(); }
-      if (o.shell && DATA[o.shell]) setShell(o.shell); else render();
+      if (o.shell && TAB_META[o.shell]) enterTab(o.shell); else { render(); updateProgress(); }
       alert('اترجّع '+n+' عنصر.');
     }catch(e){ alert('الملف ده مش نسخة تقدم من الصفحة دي.'); }
   };
@@ -856,6 +922,12 @@ function importProgress(file){
 
 /* ---------- events ---------- */
 document.querySelectorAll('.sw').forEach(b => b.addEventListener('click', () => enterTab(b.dataset.s)));
+$('#offlineBtn').addEventListener('click', async e => {
+  const b = e.currentTarget;
+  b.disabled = true; b.textContent = 'بينزّل كل الدروس…';
+  const ok = await loadAllTabs();
+  b.disabled = false; b.textContent = ok ? 'كل الدروس اتحفظت عندك' : 'النت قطع، جرّب تاني';
+});
 $('#homeBtn').addEventListener('click', () => { pushNext = true; goHome(); });
 $('#resumeBtn').addEventListener('click', e => enterTab(e.currentTarget.dataset.s, e.currentTarget.dataset.c));
 $('#lbMenu').addEventListener('click', openOutline);
@@ -972,8 +1044,7 @@ document.addEventListener('click', e => {
   const go = e.target.closest('[data-go]');
   if (go){
     if (go.dataset.lv !== undefined){ level = +go.dataset.lv; markLevel(); }
-    enterTab(go.dataset.go);
-    if (go.dataset.lv !== undefined) $('#list').scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+    enterTab(go.dataset.go).then(ok => { if (ok && go.dataset.lv !== undefined) $('#list').scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}); });
   }
 });
 // the SQL engine is ~6 MB, so it starts loading only when the learner reaches a SQL exercise's box
@@ -1016,15 +1087,18 @@ if (store.get('todo')==='1'){ document.body.classList.add('todo'); $('#todoBtn')
 if (store.get('brief')==='1'){ document.body.classList.add('brief'); $('#briefBtn').setAttribute('aria-pressed','true'); }
 const savedL = +(store.get('level') || 0);
 if ([0,1,2,3].includes(savedL)){ level = savedL; markLevel(); }
-const [fromHash, fromCmd] = hashParse(location.hash), saved = store.get('shell');
-setShell(DATA[fromHash] ? fromHash : DATA[saved] ? saved : 'start', fromCmd);
-if (!DATA[fromHash]) goHome();
-// a shared lesson link opens on the lesson, not on the top of the page
-if (openCmd) $('#list').scrollIntoView({block:'start', inline:'nearest'});
-window.addEventListener('hashchange', () => {
+const [fromHash, fromCmd] = hashParse(location.hash), savedShell = store.get('shell');
+if (TAB_META[savedShell]) shell = savedShell;
+(async () => {
+  if (!TAB_META[fromHash] || !await tabReady(fromHash)) return goHome();
+  setShell(fromHash, fromCmd);
+  // a shared lesson link opens on the lesson, not on the top of the page
+  if (openCmd) $('#list').scrollIntoView({block:'start', inline:'nearest'});
+})();
+window.addEventListener('hashchange', async () => {
   if (location.hash === hashMine) return;
   const [tab, cmd] = hashParse(location.hash);
-  if (!DATA[tab]) return goHome();
+  if (!TAB_META[tab] || !await tabReady(tab)) return goHome();
   const was = openCmd, wasHome = atHome;
   if (wasHome || tab !== shell) setShell(tab, cmd);
   else if ((cmd || null) !== openCmd){ openCmd = cmd && catOf(cmd) ? cmd : null; render(); }

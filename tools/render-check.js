@@ -82,6 +82,8 @@ if (process.argv.includes('--print')) {
   const errors = [];
   page.on('pageerror', e => errors.push(e.message));
   await page.goto(`http://localhost:${port}/index.html`, { waitUntil: 'load' });
+  // the page loads a tab's lessons when it opens; this check walks all of them
+  await page.evaluate(() => loadAllTabs());
   const r = await page.evaluate(checkInPage, 400);
   await browser.close(); srv.close();
   for (const [tab, c, what] of r.problems) console.log('✗', tab, '›', c, '—', what);

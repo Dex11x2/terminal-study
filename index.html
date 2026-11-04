@@ -217,6 +217,8 @@
   </div>
 </div>
 
+<div class="loadbar" id="loadbar" role="status" hidden></div>
+
 <div class="bar">
   <div class="wrap">
     <div class="row">
@@ -280,8 +282,9 @@
     <button type="button" class="quiz-btn" id="exportBtn">نزّل نسخة من تقدمي</button>
     <button type="button" class="quiz-btn" id="importBtn">رجّع نسخة</button>
     <input type="file" id="importFile" accept="application/json,.json" hidden>
-    <button type="button" class="quiz-btn" id="resetBtn">صفّر تقدم التاب ده</button>
-    <button type="button" class="quiz-btn" id="printBtn">اطبع التاب (أو احفظه PDF)</button>
+    <button type="button" class="quiz-btn" id="offlineBtn">نزّل كل الدروس عشان تشتغل من غير نت</button>
+    <button type="button" class="quiz-btn tab-only" id="resetBtn">صفّر تقدم التاب ده</button>
+    <button type="button" class="quiz-btn tab-only" id="printBtn">اطبع التاب (أو احفظه PDF)</button>
   </div>
 </footer>
 
@@ -305,6 +308,7 @@
 </dialog>
 
 <script src="js/core.js"></script>
+<template id="tabfiles">
 <script src="js/tabs/start/01.js"></script>
 <script src="js/tabs/start/02.js"></script>
 <script src="js/tabs/start/03.js"></script>
@@ -1023,8 +1027,10 @@
 <script src="js/tabs/go/09.js"></script>
 <script src="js/tabs/go/10.js"></script>
 <script src="js/tabs/go/11.js"></script>
+</template>
 <script src="js/extras.js"></script>
 <script src="js/names.js"></script>
+<script src="js/meta.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

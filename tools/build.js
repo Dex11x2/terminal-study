@@ -12,6 +12,8 @@ const read = f => fs.readFileSync(path.join(ROOT, f), 'utf8');
 html = html.replace(/<link rel="(manifest|icon|apple-touch-icon)"[^>]*>\n?/g, '');
 
 html = html.replace(/<link rel="stylesheet" href="([^"]+)">/g, (_, f) => '<style>\n' + read(f) + '</style>');
+// the page lists the tab files in an inert <template> and loads them on demand; the single file carries them all, so the list becomes plain script tags
+html = html.replace(/<template id="tabfiles">\n/, '').replace(/<\/template>\n/, '');
 const srcs = [...html.matchAll(/<script src="([^"]+)"><\/script>/g)].map(m => m[1]);
 if (!srcs.length) throw new Error('مفيش <script src> في index.html');
 // lessons about HTML can show </script>, which would end the inline <script>, so the < goes in as $__lt and core.js restores it

@@ -222,5 +222,11 @@ process.on('unhandledRejection', e => { console.error('✗ promise اترفض م
   const rv = {ok: 0, stale: 0, never: 0};
   Object.values(require('./verify.js').status()).forEach(list => list.forEach(l => rv[l.state]++));
   console.log(`المراجعة: ${rv.ok} درس اتجرّب، ${rv.stale} اتعدّل بعد ما اتراجع، ${rv.never} لسه (التفاصيل: node tools/verify.js)`);
+  // the home page knows the tabs through js/meta.js and js/search-index.js, generated from the lessons
+  const stale = require('./meta.js').sync(DATA, vm.runInContext('SHELLS', ctx));
+  if (stale.length) {
+    if (process.env.CI) { console.error('✗ ' + stale.join(' و ') + ' مش متحدّث: شغّل npm run check وارفعه'); process.exitCode = 1; }
+    else console.log('اتحدّث: ' + stale.join(' و '));
+  }
   process.exit(errors.length || process.exitCode ? 1 : 0);
 })();

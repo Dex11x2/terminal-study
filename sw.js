@@ -1,6 +1,6 @@
 // بيخلّي الصفحة تفتح من غير نت: أول زيارة بتحفظ كل الملفات، وبعد كده لو فيه نت بيجيب الجديد ويحدّث المحفوظ،
 // ولو مفيش نت بيعرض آخر نسخة محفوظة.
-const CACHE = 'terminal-v209';
+const CACHE = 'terminal-v210';
 // محرك تمارين SQL (vendor/pglite، حوالي ٦ ميجا) مش بيتحفظ مع الصفحة: بيتحفظ أول ما تشغّل أول تمرين SQL، في كاش لوحده
 // مبيتمسحش مع تغيير CACHE. غيّر الاسم ده بس لما تغيّر نسخة PGlite (tools/vendor-pglite.js).
 const VENDOR = 'terminal-vendor-pglite-0.5.8';
@@ -9,7 +9,8 @@ self.addEventListener('install', e => {
   e.waitUntil((async () => {
     const c = await caches.open(CACHE);
     const html = await (await fetch('./index.html', { cache: 'no-store' })).text();
-    const files = [...html.matchAll(/(?:src|href)="((?:js|css|icons)\/[^"]+)"/g)].map(m => './' + m[1]);
+    // the tab files are listed in the page too, but they load when a tab opens, and that fetch caches them (below)
+    const files = [...html.matchAll(/(?:src|href)="((?:js|css|icons)\/[^"]+)"/g)].map(m => './' + m[1]).filter(f => !f.startsWith('./js/tabs/'));
     await c.addAll(['./', './index.html', './manifest.webmanifest', './js/sql-worker.js', ...new Set(files)]);
     await self.skipWaiting();
   })());

@@ -831,3 +831,8 @@ article.cmd,[dir="rtl"] article.cmd{border:1px solid var(--line);border-radius:1
 code{background:color-mix(in srgb,var(--accent) 9%,transparent)}
 /* terminals: one neutral tone, except the shells whose real look is part of the lesson */
 body:not([data-shell="ps"]):not([data-shell="cmd"]):not([data-shell="zsh"]):not([data-shell="vps"]):not([data-shell="web"]){--t-bg:#16181d;--t-fg:#e6e8ec;--t-pr:color-mix(in srgb,var(--accent) 70%,#fff);--t-cm:#9aa1ad;--t-bar:#20232a}
+
+/* shown while a tab's files load */
+.loadbar{position:fixed;top:10px;inset-inline:0;margin-inline:auto;width:fit-content;max-width:calc(100vw - 32px);z-index:20;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:6px 16px;font-size:14px;box-shadow:var(--shadow)}
+.loadbar[hidden]{display:none}
+@media print{.loadbar{display:none!important}}
