@@ -690,3 +690,58 @@ body.brief .use,body.brief .goal.gu{display:none}
 .nm{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;margin:6px 0 10px;padding:8px 12px;border-radius:8px;background:color-mix(in srgb,var(--accent) 7%,transparent);line-height:1.8}
 .nm > b{color:var(--accent);font-size:13px}
 .nm code{font-weight:700}
+
+/* home vs tab page: the cards live on home alone, a tab is its own page */
+body.home .bar,body.home .shell,body.home .tab-only{display:none}
+body:not(.home) .home-only{display:none}
+body:not(.home) header.hero{padding:10px 0 4px}
+body:not(.home) .hero>:not(.topline){display:none}
+body:not(.home) .hero .topline{margin-bottom:0}
+.homebtn{all:unset;box-sizing:border-box;cursor:pointer;white-space:nowrap;font-size:14px;font-weight:600;padding:9px 12px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.homebtn:hover{border-color:var(--accent);color:var(--accent)}
+.homebtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+#tabLab{padding-top:12px}
+body.reading #tabLab{display:none}
+details.lab{padding:10px 16px}
+details.lab summary{cursor:pointer;font-weight:600}
+details.lab[open] summary{margin-bottom:8px}
+/* while reading, the bar shrinks to search + the lesson strip */
+body.reading .bar .meter,body.reading .bar .lvls,body.reading .bar .chips,body.reading .bar .prog{display:none}
+.lbar[hidden]{display:none}
+.lbar{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:stretch;margin-top:8px}
+.lb-arrow,.lb-menu{all:unset;box-sizing:border-box;cursor:pointer;background:var(--surface);border:1px solid var(--line);border-radius:8px;color:var(--ink)}
+.lb-arrow{display:flex;align-items:center;gap:6px;padding:0 14px;font-size:14px;white-space:nowrap}
+.lb-arrow:hover:not(:disabled),.lb-menu:hover{border-color:var(--accent);color:var(--accent)}
+.lb-arrow:disabled{opacity:.4;cursor:default}
+.lb-arrow:focus-visible,.lb-menu:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.lb-menu{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:8px;align-items:center;min-width:0;padding:5px 12px}
+.lb-menu .pos{grid-column:1;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lb-menu b{grid-column:1;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lb-menu i{grid-column:2;grid-row:1/3;font-style:normal;color:var(--muted)}
+@media (max-width:520px){.lb-arrow span{display:none}.homebtn{padding:9px 10px;font-size:13px}.search kbd{display:none}}
+/* the outline drawer */
+#outline{margin:0;margin-inline-end:auto;width:min(440px,100vw);max-width:100vw;height:100dvh;max-height:100dvh;padding:14px;border:0;border-inline-end:1px solid var(--line);background:var(--bg);color:var(--ink)}
+#outline::backdrop{background:rgba(0,0,0,.5)}
+#outline[open]{display:flex;flex-direction:column;gap:10px}
+#outline .search{flex:none}
+.ol-head{display:flex;justify-content:space-between;align-items:center;font-size:17px}
+#olBody{flex:1;min-height:0;overflow:auto}
+.ol-cat{border-bottom:1px solid var(--line);padding:6px 0}
+.ol-cat summary{cursor:pointer;font-weight:600;display:flex;gap:8px;align-items:baseline;padding:6px 4px}
+.ol-cat summary em{margin-inline-start:auto;font-style:normal;font-size:12px;color:var(--muted)}
+.ol-cat ol{list-style:none;margin:4px 0 8px;padding:0}
+.ol-cat button{all:unset;box-sizing:border-box;display:block;width:100%;cursor:pointer;padding:7px 10px;font-size:14.5px;border-inline-start:2px solid var(--line)}
+.ol-cat button:hover{background:var(--surface);border-inline-start-color:var(--accent)}
+.ol-cat button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.ol-cat li.on button{color:var(--accent);font-weight:600;background:var(--surface);border-inline-start-color:var(--accent)}
+.ol-cat li[data-done] button::after{content:" ✓";color:var(--ok)}
+.ol-none{color:var(--muted)}
+@media print{.homebtn,.lbar,#outline{display:none!important}}
+
+/* a drill's solution, closed until asked for */
+.psol{margin-top:6px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.psol summary{cursor:pointer;padding:6px 10px;font-size:14px;font-weight:600;color:var(--accent)}
+.psol[open] summary{border-bottom:1px solid var(--line)}
+.psol-b{padding:8px 12px;font-size:15px;min-width:0;overflow-wrap:anywhere}
+.psol-b pre{overflow-x:auto}
+@media print{.psol{display:none!important}}

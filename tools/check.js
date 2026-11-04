@@ -92,6 +92,7 @@ for (const tab in DATA) {
         if (!p.t) err(`${tab} › ${it[0]}`, `تمرين ${i + 1} من غير t`);
         if (p.lvl && !['سريع', 'تطبيق', 'تحدي'].includes(p.lvl)) err(`${tab} › ${it[0]}`, `تمرين ${i + 1}: lvl لازم يبقى سريع أو تطبيق أو تحدي`);
         ['t', 'done'].forEach(k => brackets(`${tab} › ${it[0]} › تمرين ${i + 1} (${k})`, p[k]));
+        if (p.sol !== undefined) brackets(`${tab} › ${it[0]} › تمرين ${i + 1} (sol)`, noFence(p.sol));
       });
     });
     cat.items.forEach(it => {

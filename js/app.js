@@ -280,6 +280,8 @@ function practiceHTML(c){
     const k = 'drill:'+shell+':'+c+':'+i, on = store.get(k) === '1';
     return '<li'+(on?' class="on"':'')+'>'+(p.lvl?'<em class="lv lv'+(DRILL_LV[p.lvl]||2)+'">'+esc(p.lvl)+'</em>':'')+'<span class="pt">'+fmt(p.t)+'</span>'+
       (p.done?'<span class="pdone"><b>تعرف إنك خلصت لما:</b> '+fmt(p.done)+'</span>':'')+
+      // the solution stays closed until asked for: try first, then compare
+      (p.sol?'<details class="psol"><summary>الحل والشرح (جرّب الأول)</summary><div class="psol-b">'+mdHTML(p.sol)+'</div></details>':'')+
       '<label class="ptick"><input type="checkbox" data-d="'+esc(k)+'"'+(on?' checked':'')+'> عملته</label></li>';
   }).join('');
   return '<div class="practice"><span class="lbl">تمارين عملية</span><ol class="projlist">'+rows+'</ol></div>';
@@ -353,23 +355,59 @@ function renderMap(q, rawQ){
   $('#chips').innerHTML = chips;
   railMap(cats);
   $('#toc').innerHTML = ''; $('#toc').hidden = true;
+  $('#lbar').hidden = true;
 }
 
 function renderReader(){
   const cat = catOf(openCmd), idx = cat.items.findIndex(it => it[0] === openCmd);
-  const it = cat.items[idx], prev = cat.items[idx-1], next = cat.items[idx+1];
+  const it = cat.items[idx], seq = lessonSeq(), at = seq.findIndex(x => x[1][0] === openCmd);
+  const prevE = seq[at-1], nextE = seq[at+1], prev = prevE && prevE[1], next = nextE && nextE[1];
+  const nextLbl = nextE && nextE[0] !== cat ? 'القسم الجاي: '+nextE[0].t : 'الدرس الجاي';
+  const prevLbl = prevE && prevE[0] !== cat ? 'القسم اللي فات: '+prevE[0].t : 'الدرس اللي فات';
   const btn = (x, cls, lbl) => '<button type="button" class="pg-b '+cls+'" data-open="'+esc(x[0])+'"><span>'+lbl+'</span><b>'+esc(x[1] || x[0])+'</b></button>';
   $('#list').innerHTML =
     '<nav class="lnav"><button type="button" class="back" data-map="1">▸ '+esc(cat.t)+'</button>'+
     '<span class="pos">الدرس <b>'+AR(idx+1)+'</b> من '+AR(cat.items.length)+'</span></nav>'+
     '<div class="reader">'+articleHTML(it)+'</div>'+
     '<div class="pager">'+
-      (prev ? btn(prev, 'pv', 'الدرس اللي فات') : '<span></span>')+
-      (next ? btn(next, 'nx', 'الدرس الجاي') : '<button type="button" class="pg-b nx" data-map="1"><span>خلصت القسم</span><b>ارجع للخريطة</b></button>')+
+      (prev ? btn(prev, 'pv', prevLbl) : '<span></span>')+
+      (next ? btn(next, 'nx', nextLbl) : '<button type="button" class="pg-b nx" data-map="1"><span>خلصت التاب</span><b>ارجع للخريطة</b></button>')+
     '</div>';
   $('#chips').innerHTML = DATA[shell].map((c, i) => '<button class="chip" type="button" data-t="'+shell+'-c'+i+'">'+esc(c.t)+'</button>').join('');
   railUnit(cat);
   buildToc();
+  lessonBar(cat, idx, prev, next);
+}
+
+/* every lesson of the tab in reading order (level first, like the map), as [unit, lesson] */
+function lessonSeq(){
+  return [...DATA[shell]].sort((a, b) => a.l - b.l).filter(c => !level || c.l === level).flatMap(c => c.items.map(it => [c, it]));
+}
+/* the strip that stays on screen while reading: changing lessons never needs a scroll to the top or the bottom */
+function lessonBar(cat, idx, prev, next){
+  const set = (b, x) => { b.disabled = !x; if (x) b.dataset.open = x[0]; else delete b.dataset.open; };
+  $('#lbar').hidden = false;
+  set($('#lbPrev'), prev); set($('#lbNext'), next);
+  $('#lbMenu').innerHTML = '<span class="pos">'+esc(cat.t)+' · '+AR(idx+1)+' من '+AR(cat.items.length)+'</span><b>'+esc(cat.items[idx][1] || openCmd)+'</b><i aria-hidden="true">▾</i>';
+}
+/* the drawer with every unit and lesson of the tab */
+function renderOutline(){
+  const q = normAr($('#olQ').value.trim()), cur = openCmd && catOf(openCmd);
+  $('#olTitle').textContent = SHELLS[shell].label;
+  $('#olBody').innerHTML = [...DATA[shell]].sort((a, b) => a.l - b.l).filter(c => !level || c.l === level).map(c => {
+    const items = c.items.filter(it => !q || normAr(it[0]+' '+(it[1] || '')).includes(q));
+    if (!items.length) return '';
+    return '<details class="ol-cat"'+(q || c === cur ? ' open' : '')+'><summary>'+esc(c.t)+'<em>'+AR(items.length)+'</em></summary><ol>'+items.map(it =>
+      '<li'+(it[0]===openCmd?' class="on"':'')+(store.get('done:'+shell+':'+it[0])==='1'?' data-done="1"':'')+'><button type="button" data-open="'+esc(it[0])+'">'+esc(it[1] || it[0])+'</button></li>').join('')+'</ol></details>';
+  }).join('') || '<p class="ol-none">مفيش درس بالاسم ده هنا.</p>';
+}
+function openOutline(){
+  $('#olQ').value = '';
+  renderOutline();
+  $('#outline').showModal();
+  const on = $('#olBody .on');
+  // scroll the list only: scrollIntoView would move the page behind the dialog too
+  if (on) $('#olBody').scrollTop = on.offsetTop - $('#olBody').offsetTop - 120;
 }
 
 /* right rail: the categories in map view, the open unit's lessons in the reader */
@@ -410,6 +448,7 @@ function openLesson(c){
   if (!catOf(c)) return;
   if ($('#q').value.trim()) $('#q').value = '';
   openCmd = c;
+  pushNext = true;
   render();
   // land on the lesson, not the top of the page: above #list sit the hero and the tab cards, thousands of px
   // on a phone, so a jump beats a long smooth scroll. scroll-padding-top on html keeps it clear of the sticky
@@ -419,6 +458,7 @@ function openLesson(c){
 function backToMap(to){
   const c = openCmd;
   openCmd = null;
+  pushNext = true;
   render();
   const el = to && document.getElementById(to);
   if (el) return el.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
@@ -426,11 +466,33 @@ function backToMap(to){
   const row = c && [...$('#list').querySelectorAll('tr[data-open]')].find(r => r.dataset.open === c);
   row ? row.scrollIntoView({block:'center', behavior:'auto'}) : $('#list').scrollIntoView({block:'start', inline:'nearest', behavior:'auto'});
 }
+// the page changes under the same document, so the browser must not put back an old scroll position
+try{ history.scrollRestoration = "manual"; }catch(e){}
 /* the address bar carries the tab and the open lesson, so a lesson can be bookmarked and shared */
-let hashMine = '';
+let hashMine = '', pushNext = false;
 function hashSet(){
-  hashMine = '#'+shell+(openCmd ? '/'+encodeURIComponent(openCmd) : '');
-  try{ if (location.hash !== hashMine) history.replaceState(null, '', hashMine); }catch(e){}
+  hashMine = atHome ? '#home' : '#'+shell+(openCmd ? '/'+encodeURIComponent(openCmd) : '');
+  try{ if (location.hash !== hashMine) history[pushNext ? 'pushState' : 'replaceState'](null, '', hashMine); }catch(e){}
+  pushNext = false;
+  if (openCmd) store.set('last', shell+'\n'+openCmd);
+}
+/* home = the cards alone; a tab = its own page, with no cards above it to scroll past */
+let atHome = false;
+function setHome(on){ atHome = on; document.body.classList.toggle('home', on); }
+function goHome(){
+  openCmd = null;
+  setHome(true);
+  hashSet();
+  updateProgress();
+  const [s, c] = (store.get('last') || '').split('\n'), b = $('#resumeBtn');
+  b.hidden = !(c && DATA[s] && DATA[s].some(x => x.items.some(it => it[0] === c)));
+  if (!b.hidden){ b.textContent = 'كمّل: '+SHELLS[s].label+' › '+c; b.dataset.s = s; b.dataset.c = c; }
+  window.scrollTo(0, 0);
+}
+function enterTab(s, cmd){
+  pushNext = true;
+  setShell(s, cmd);
+  window.scrollTo(0, 0);
 }
 const hashParse = h => { const i = h.indexOf('/'); return i < 0 ? [decodeURIComponent(h.slice(1)), null] : [decodeURIComponent(h.slice(1, i)), decodeURIComponent(h.slice(i+1))]; };
 
@@ -477,6 +539,7 @@ function markLevel(){
   store.set('level', String(level));
 }
 function setShell(s, cmd){
+  setHome(false);
   shell = s;
   openCmd = cmd && DATA[s].some(c => c.items.some(it => it[0] === cmd)) ? cmd : null;
   document.body.dataset.shell = s;
@@ -791,7 +854,15 @@ function importProgress(file){
 }
 
 /* ---------- events ---------- */
-document.querySelectorAll('.sw').forEach(b => b.addEventListener('click', () => setShell(b.dataset.s)));
+document.querySelectorAll('.sw').forEach(b => b.addEventListener('click', () => enterTab(b.dataset.s)));
+$('#homeBtn').addEventListener('click', () => { pushNext = true; goHome(); });
+$('#resumeBtn').addEventListener('click', e => enterTab(e.currentTarget.dataset.s, e.currentTarget.dataset.c));
+$('#lbMenu').addEventListener('click', openOutline);
+$('#olClose').addEventListener('click', () => $('#outline').close());
+$('#olQ').addEventListener('input', renderOutline);
+// closed before the document-level handler opens the lesson; a click on the backdrop closes it too
+$('#olBody').addEventListener('click', e => { if (e.target.closest('[data-open]')) $('#outline').close(); });
+$('#outline').addEventListener('click', e => { if (e.target === e.currentTarget) e.currentTarget.close(); });
 let qTm;
 $('#q').addEventListener('input', () => {
   clearTimeout(qTm);
@@ -800,7 +871,7 @@ $('#q').addEventListener('input', () => {
 document.addEventListener('keydown', e => {
   const inField = /^(TEXTAREA|INPUT|SELECT)$/.test(document.activeElement.tagName);
   if (e.key === 'Enter' && e.target.matches && e.target.matches('tr[data-open]')){ e.preventDefault(); openLesson(e.target.dataset.open); return; }
-  if (openCmd && !inField && !$('#fc').open){
+  if (openCmd && !inField && !$('#fc').open && !$('#outline').open){
     // the page is RTL, so the right arrow is the lesson before this one
     const b = e.key === 'ArrowLeft' ? $('#list .pg-b.nx') : e.key === 'ArrowRight' ? $('#list .pg-b.pv') : null;
     if (b && b.dataset.open){ e.preventDefault(); openLesson(b.dataset.open); return; }
@@ -900,7 +971,7 @@ document.addEventListener('click', e => {
   const go = e.target.closest('[data-go]');
   if (go){
     if (go.dataset.lv !== undefined){ level = +go.dataset.lv; markLevel(); }
-    setShell(go.dataset.go);
+    enterTab(go.dataset.go);
     if (go.dataset.lv !== undefined) $('#list').scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
   }
 });
@@ -946,16 +1017,18 @@ const savedL = +(store.get('level') || 0);
 if ([0,1,2,3].includes(savedL)){ level = savedL; markLevel(); }
 const [fromHash, fromCmd] = hashParse(location.hash), saved = store.get('shell');
 setShell(DATA[fromHash] ? fromHash : DATA[saved] ? saved : 'start', fromCmd);
-// a shared lesson link opens on the lesson, not on the hero above it
+if (!DATA[fromHash]) goHome();
+// a shared lesson link opens on the lesson, not on the top of the page
 if (openCmd) $('#list').scrollIntoView({block:'start', inline:'nearest'});
 window.addEventListener('hashchange', () => {
   if (location.hash === hashMine) return;
   const [tab, cmd] = hashParse(location.hash);
-  if (!DATA[tab]) return;
-  const was = openCmd;
-  if (tab !== shell) setShell(tab, cmd);
+  if (!DATA[tab]) return goHome();
+  const was = openCmd, wasHome = atHome;
+  if (wasHome || tab !== shell) setShell(tab, cmd);
   else if ((cmd || null) !== openCmd){ openCmd = cmd && catOf(cmd) ? cmd : null; render(); }
   else return;
+  if (wasHome) window.scrollTo(0, 0);
   // back/forward lands where the reader is looking: the lesson, or the map row of the lesson just left
   if (openCmd) return $('#list').scrollIntoView({block:'start', inline:'nearest'});
   const row = was && [...$('#list').querySelectorAll('tr[data-open]')].find(r => r.dataset.open === was);

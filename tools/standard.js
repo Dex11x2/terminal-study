@@ -12,12 +12,14 @@ for (const f of files) {
 const DATA = vm.runInContext('DATA', ctx), TEACH = vm.runInContext('typeof TEACH!=="undefined"?TEACH:{}', ctx), PRACTICE = vm.runInContext('typeof PRACTICE!=="undefined"?PRACTICE:{}', ctx);
 const rows = [];
 for (const [tab, cats] of Object.entries(DATA)) {
-  let lessons = 0, ran = 0, drill = 0;
+  let lessons = 0, ran = 0, drill = 0, drills = 0, solved = 0;
   for (const c of cats) for (const it of c.items) {
     lessons++;
     const t = TEACH[tab + '|' + it[0]] || '';
     if (/اتشغّل فعلًا|اتشغل فعلا/.test(t)) ran++;
-    if ((PRACTICE[tab + '|' + it[0]] || []).length >= 3) drill++;
+    const pr = PRACTICE[tab + '|' + it[0]] || [];
+    if (pr.length >= 3) drill++;
+    drills += pr.length; solved += pr.filter(p => p.sol).length;
   }
   const names = cats.map(c => c.t);
   rows.push({
@@ -28,11 +30,11 @@ for (const [tab, cats] of Object.entries(DATA)) {
     ranPct: lessons ? Math.round(100 * ran / lessons) : 0,
     // all of a unit's projects, and the units whose projects climb صغير → متوسط → كبير
     projs: cats.reduce((n, c) => n + (c.projects || []).length, 0),
-    drill,
+    drill, drills, solved,
     ladder: cats.filter(c => ['صغير', 'متوسط', 'كبير'].every(l => (c.projects || []).some(p => p.lvl === l))).length,
   });
 }
 rows.sort((a, b) => a.ranPct - b.ranPct);
-console.log('tab'.padEnd(12), 'دروس'.padStart(5), 'وحدات'.padStart(6), 'بنفسك', 'مشروع', '٪اتشغّل', 'مشاريع', 'سلّمة', 'تمارين');
-for (const r of rows) console.log(r.tab.padEnd(12), String(r.lessons).padStart(5), String(r.unit).padStart(6), '  ' + r.self + '  ', String(r.proj).padStart(4), String(r.ranPct).padStart(6) + '%', String(r.projs).padStart(6), String(r.ladder).padStart(5), String(r.drill).padStart(6));
-console.log('\nمشاريع = كل المشاريع في حقول projects. سلّمة = الوحدات اللي مشاريعها فيها صغير ومتوسط وكبير. تمارين = الدروس اللي فيها ٣ تمارين عملية أو أكتر (القاعدة ٩).');
+console.log('tab'.padEnd(12), 'دروس'.padStart(5), 'وحدات'.padStart(6), 'بنفسك', 'مشروع', '٪اتشغّل', 'مشاريع', 'سلّمة', 'تمارين', 'بحل');
+for (const r of rows) console.log(r.tab.padEnd(12), String(r.lessons).padStart(5), String(r.unit).padStart(6), '  ' + r.self + '  ', String(r.proj).padStart(4), String(r.ranPct).padStart(6) + '%', String(r.projs).padStart(6), String(r.ladder).padStart(5), String(r.drill).padStart(6), String(r.solved).padStart(5) + "/" + r.drills);
+console.log('\nمشاريع = كل المشاريع في حقول projects. سلّمة = الوحدات اللي مشاريعها فيها صغير ومتوسط وكبير. بحل = التمارين اللي ليها sol من كل تمارين التاب. تمارين = الدروس اللي فيها ٣ تمارين عملية أو أكتر (القاعدة ٩).');

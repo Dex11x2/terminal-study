@@ -26,7 +26,7 @@
 <body data-shell="bash">
 
 <header class="hero wrap">
-  <div class="topline"><span>تقدمك في الصفحة كلها: جربت <b id="totalDone">0</b> من <b id="totalAll">0</b></span><button type="button" class="quiz-btn" id="dueBtn" hidden title="البطاقات اللي ميعاد مراجعتها جه النهارده، من كل التابات. كل ما تعرف بطاقة ميعادها الجاي بيبعد: يوم، ٣، ٧، ١٦، ٣٥ يوم">عليك مراجعة (<b id="dueN">0</b>)</button><button type="button" class="quiz-btn" id="weakBtn" hidden title="بطاقات «اختبرني» اللي نسيتها أكتر ما افتكرتها، من كل التابات">راجع اللي نسيته (<b id="weakN">0</b>)</button><button type="button" class="quiz-btn" id="themeBtn" title="فاتح أو غامق أو حسب جهازك">المظهر: تلقائي</button></div>
+  <div class="topline"><span>تقدمك في الصفحة كلها: جربت <b id="totalDone">0</b> من <b id="totalAll">0</b></span><button type="button" class="quiz-btn" id="resumeBtn" hidden></button><button type="button" class="quiz-btn" id="dueBtn" hidden title="البطاقات اللي ميعاد مراجعتها جه النهارده، من كل التابات. كل ما تعرف بطاقة ميعادها الجاي بيبعد: يوم، ٣، ٧، ١٦، ٣٥ يوم">عليك مراجعة (<b id="dueN">0</b>)</button><button type="button" class="quiz-btn" id="weakBtn" hidden title="بطاقات «اختبرني» اللي نسيتها أكتر ما افتكرتها، من كل التابات">راجع اللي نسيته (<b id="weakN">0</b>)</button><button type="button" class="quiz-btn" id="themeBtn" title="فاتح أو غامق أو حسب جهازك">المظهر: تلقائي</button></div>
   <h1>الترمنال والبرمجة بإيدك</h1>
   <p class="lead">أكاديميتك ودليلك الشامل لعلوم وهندسة البرمجيات: من الترمنال وأساسيات CS حتى احتراف الـ Full Stack والمعمارية ونشر المشاريع للإنتاج. كل درس معاه شرح عميق، ومثال تنسخه، وتجربة تعملها بإيدك، وتمارين تصحيح ذاتي. متقسمة على ٣ مستويات وبتفتكر تقدمك وتشتغل بالكامل بدون إنترنت.</p>
   <section class="sw-sec">
@@ -148,7 +148,7 @@
   </section>
 </header>
 
-<div class="wrap">
+<div class="wrap home-only">
   <div class="intro">
     <div>
       <h2>مين فيهم تستخدمه إمتى</h2>
@@ -157,11 +157,6 @@
       <p><b>zsh</b> الشيل الافتراضي في الماك، ومتوافق مع bash في معظم الشغل اليومي. اتعلم تاب bash الأول، وبعدين تاب zsh للفروق وأوامر الماك.</p>
       <p><b>PowerShell</b> لشغلك اليومي على ويندوز. أقوى بكتير من CMD لأن الـ pipe فيه بيعدّي objects ليها properties، فتقدر تفلتر وترتب من غير ما تقطّع نصوص.</p>
       <p class="muted">CMD اعرف أساسياته بس، كفاية تقرا بيه سكربت .bat وتحل مشكلة سريعة.</p>
-    </div>
-    <div class="lab">
-      <h3>جهّز مكان التجربة الأول</h3>
-      <p id="labTxt"></p>
-      <div id="labBox"></div>
     </div>
   </div>
   <div class="path">
@@ -225,6 +220,7 @@
 <div class="bar">
   <div class="wrap">
     <div class="row">
+      <button type="button" class="homebtn" id="homeBtn">▸ كل المواضيع</button>
       <label class="search"><span aria-hidden="true">⌕</span><input id="q" type="search" placeholder="دوّر على أمر أو شرح… مثلًا grep أو بورت" aria-label="بحث في الأوامر"><kbd>/</kbd></label>
       <div class="prog"><span id="shellName">bash</span>: جربت <b id="doneN">0</b> من <span id="allN">0</span></div>
     </div>
@@ -241,7 +237,20 @@
       <button type="button" class="quiz-btn" id="quizBtn" aria-pressed="false" title="بيخبّي الأوامر والشرح، وانت تفتكر الأمر من الوصف">وضع المراجعة</button>
     </div>
     <nav class="chips" id="chips" aria-label="الأقسام"></nav>
+    <div class="lbar" id="lbar" hidden>
+      <button type="button" class="lb-arrow" id="lbPrev" aria-label="الدرس اللي فات">›<span>السابق</span></button>
+      <button type="button" class="lb-menu" id="lbMenu" aria-haspopup="dialog" title="كل دروس التاب"></button>
+      <button type="button" class="lb-arrow" id="lbNext" aria-label="الدرس الجاي"><span>التالي</span>‹</button>
+    </div>
   </div>
+</div>
+
+<div class="wrap tab-only" id="tabLab">
+  <details class="lab">
+    <summary>جهّز مكان التجربة الأول</summary>
+    <p id="labTxt"></p>
+    <div id="labBox"></div>
+  </details>
 </div>
 
 <main class="wrap shell">
@@ -250,7 +259,7 @@
   <aside class="rail rail-l"><div class="sticky"><nav id="toc" aria-label="فهرس الدرس" hidden></nav></div></aside>
 </main>
 
-<div class="wrap">
+<div class="wrap tab-only">
   <section class="block" id="compare">
     <h2>نفس المهمة في التلاتة</h2>
     <p>أسرع طريقة تثبّت بيها: شوف المهمة، وحاول تفتكر الأمر في الشيل اللي بتتعلمه قبل ما تبص على العمود بتاعه.</p>
@@ -275,6 +284,12 @@
     <button type="button" class="quiz-btn" id="printBtn">اطبع التاب (أو احفظه PDF)</button>
   </div>
 </footer>
+
+<dialog id="outline" aria-labelledby="olTitle">
+  <div class="ol-head"><b id="olTitle"></b><button type="button" class="fc-x" id="olClose" aria-label="قفل">×</button></div>
+  <label class="search"><span aria-hidden="true">⌕</span><input id="olQ" type="search" placeholder="دوّر في دروس التاب" aria-label="دوّر في دروس التاب"></label>
+  <div id="olBody"></div>
+</dialog>
 
 <dialog id="fc" aria-labelledby="fcQ">
   <div class="fc-head"><span id="fcMeta"></span><button type="button" class="fc-x" id="fcClose" aria-label="قفل">✕</button></div>
