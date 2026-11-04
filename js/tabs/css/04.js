@@ -16,11 +16,221 @@ MORE("css", [
         {
           cmd: "مقدمة CSS وتنسيق العناصر",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في الـ CSS سطرين: [[colr: red;]] (حرف ناقص) و [[font-size: big;]] (قيمة مش موجودة). العنوان هيتغيّر؟ والسطور التانية اللي في نفس القاعدة هتشتغل؟`, done: R`السطرين اتجاهلوا والعنوان فضل بلونه وحجمه، والسطور التانية في نفس القاعدة اشتغلت عادي. في DevTools › Styles هتلاقي السطرين متشطّب عليهم وجنبهم علامة تحذير. المتصفح بيرمي السطر الغلط بس، مش القاعدة كلها.` },
-            { lvl: 'تطبيق', t: R`**ابني:** كارت «بُن الصباح» (متجر قهوة متخيل): عنوان h2 لونه بني غامق، وفقرة رمادي بمسافة سطور 1.6، وسعر تقيل، وزرار [[.btn]] بخلفية وكلام أبيض وزوايا 8px. كل ده في [[style.css]] لوحده.`, done: R`الصفحة من غير الـ CSS لسه مفهومة، ومعاه شكلها كارت، والـ Computed بتاع الزرار بيقول [[border-radius: 8px]]، ومفيش أي CSS جوه الـ HTML.` },
-            { lvl: 'تطبيق', t: R`**أشكال:** ٣ أشكال من div فاضي: دايرة 80px، وكبسولة 160×40، ومثلث بالحدود بس: [[width: 0; height: 0; border-inline: 20px solid transparent; border-bottom: 30px solid black;]].`, done: R`الدايرة مدورة بالظبط ([[border-radius: 50%]])، والكبسولة جنابها نص دايرة ([[999px]])، والمثلث [[getBoundingClientRect]] بتاعه 40×30 رغم إن width و height صفر: الحدود هي اللي رسمته، والشفافين قصّوا الجنبين.` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** زرار [[class="o1"]] عليه ٣ قواعد: في [[ext.css]] (مربوط الأول) [[.o1 { color: blue; }]]، وفي [[<style>]] بعده [[.o1 { color: green; }]]، وعلى زرار تاني نفس الـ class ومعاه [[style="color: red"]]. لون كل زرار إيه؟`, done: R`الأول أخضر ([[rgb(0, 128, 0)]]): نفس الوزن فاللي بعد يكسب، والملف الخارجي مش أقوى ولا أضعف من [[<style>]]. والتاني أحمر: الـ [[style=""]] أقوى من الاتنين. اتقاس في Chrome.` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** من صفحة [[<color>]] على MDN اكتب نفس الأزرق بـ ٣ طرق: [[#2563eb]] و [[hsl(221 83% 53%)]] و [[oklch(0.55 0.2 260)]]، واقرا [[getComputedStyle(el).color]] لكل واحد.`, done: R`الـ hex رجع [[rgb(37, 99, 235)]] والـ hsl رجع [[rgb(36, 99, 235)]] (قريب جدًا بس مش نفسه: التقريب بيفرق)، والـ oklch رجع زي ما هو [[oklch(0.55 0.2 260)]] من غير ما يتحول لـ rgb في Chrome 156.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في الـ CSS سطرين: [[colr: red;]] (حرف ناقص) و [[font-size: big;]] (قيمة مش موجودة). العنوان هيتغيّر؟ والسطور التانية اللي في نفس القاعدة هتشتغل؟`, done: R`السطرين اتجاهلوا والعنوان فضل بلونه وحجمه، والسطور التانية في نفس القاعدة اشتغلت عادي. في DevTools › Styles هتلاقي السطرين متشطّب عليهم وجنبهم علامة تحذير. المتصفح بيرمي السطر الغلط بس، مش القاعدة كلها.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>توقّع</title>
+<style>
+  h1 {
+    colr: red;
+    font-size: big;
+    background: lightyellow;
+    letter-spacing: 2px;
+  }
+</style>
+</head>
+<body>
+<h1>العنوان</h1>
+</body>
+</html>
+~~~
+
+**الإجابة:** العنوان لونه وحجمه مش هيتغيّروا، والسطرين التانيين هيشتغلوا.
+
+CSS مبيقفش عند الغلط زي JavaScript. لما يلاقي خاصية مش معروفة زي [[colr]] أو قيمة مش معروفة زي [[big]]، بيرمي السطر ده بس ويكمّل. وده مقصود: الموقع القديم ميقعش لما الـ CSS يكبر، والمتصفح القديم يتجاهل الخاصية الجديدة بس.
+
+**إزاي تلاقي الغلط:** مفيش أي رسالة في الـ Console. افتح DevTools، ثم Styles: السطر الغلط متشطّب عليه وجنبه علامة تحذير.
+
+**الغلطة الشائعة:** تدوّر على الغلط في الـ Console وتلاقيه نضيف، فتقول «الكود سليم». أخطاء CSS مبتظهرش هناك خالص.
+
+~~~text الناتج
+color = rgb(0, 0, 0)      (أسود الافتراضي، colr اتجاهلت)
+font-size = 32px  (حجم h1 الافتراضي، big اتجاهلت)
+background-color = rgb(255, 255, 224)   اشتغل
+letter-spacing = 2px     اشتغل
+رسايل في الـ Console: 0
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** كارت «بُن الصباح» (متجر قهوة متخيل): عنوان h2 لونه بني غامق، وفقرة رمادي بمسافة سطور 1.6، وسعر تقيل، وزرار [[.btn]] بخلفية وكلام أبيض وزوايا 8px. كل ده في [[style.css]] لوحده.`, done: R`الصفحة من غير الـ CSS لسه مفهومة، ومعاه شكلها كارت، والـ Computed بتاع الزرار بيقول [[border-radius: 8px]]، ومفيش أي CSS جوه الـ HTML.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بُن الصباح</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <h1>منتجاتنا</h1>
+  <article class="card">
+    <h2>بن يمني</h2>
+    <p>تحميص وسط وطعم فواكه خفيف، مناسب للفلتر والإسبريسو.</p>
+    <p class="price">٣٢٠ جنيه</p>
+    <a class="btn" href="#buy">اشتري</a>
+  </article>
+</main>
+</body>
+</html>
+~~~
+
+~~~css style.css
+body {
+  font-family: system-ui;
+  background: #faf7f2;
+  margin: 16px;
+}
+.card {
+  max-width: 320px;
+  padding: 16px;
+  background: #fff;
+  border-radius: 12px;
+}
+.card h2 { color: #4a2c17; margin-block-start: 0; }
+.card p { color: #52525b; line-height: 1.6; }
+.card .price { color: #18181b; font-weight: 700; }
+.btn {
+  display: inline-block;
+  padding: 10px 16px;
+  background: #4a2c17;
+  color: #fff;
+  border-radius: 8px;
+  text-decoration: none;
+}
+~~~
+
+**ليه ملف منفصل:** الملف بيتحمّل مرة ويتخزّن، وكل الصفحات تستخدمه، وتعديل واحد يغيّر الكل. و [[style=""]] جوه الـ HTML بيتكرر في كل عنصر، وبيبقى صعب تغطيه.
+
+- [[line-height: 1.6]] من غير وحدة: المسافة بتتحسب من حجم خط العنصر نفسه.
+- [[.card .price]] وزنها (0,2,0) أكبر من [[.card p]] (0,1,1)، فالسعر بياخد اللون الغامق رغم إنه فقرة.
+- [[display: inline-block]] على اللينك عشان الـ padding يزق اللي حواليه.
+
+**الغلطة الشائعة:** تكتب الألوان في [[style=""]] جوه الـ HTML. تغيير لون واحد هيبقى في كل صفحة، بدل سطر واحد في [[style.css]].
+
+~~~text الناتج
+border-radius الزرار = 8px
+لون h2 = rgb(74, 44, 23)   line-height الفقرة = 25.6px   وزن السعر = 700
+تباين كلام الزرار على خلفيته = 12.62:1
+عدد style="" و <style> في الـ HTML = 0
+من غير الـ CSS: ترتيب القراءة: h2 ثم p ثم p ثم a
+overflow على 360: 0px   axe: 0 violations
+~~~` },
+            { lvl: 'تطبيق', t: R`**أشكال:** ٣ أشكال من div فاضي: دايرة 80px، وكبسولة 160×40، ومثلث بالحدود بس: [[width: 0; height: 0; border-inline: 20px solid transparent; border-bottom: 30px solid black;]].`, done: R`الدايرة مدورة بالظبط ([[border-radius: 50%]])، والكبسولة جنابها نص دايرة ([[999px]])، والمثلث [[getBoundingClientRect]] بتاعه 40×30 رغم إن width و height صفر: الحدود هي اللي رسمته، والشفافين قصّوا الجنبين.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>أشكال</title>
+<style>
+  .circle { width: 80px; height: 80px; border-radius: 50%; background: #0f766e; }
+  .pill { width: 160px; height: 40px; border-radius: 999px; background: #1d4ed8; margin-block: 16px; }
+  .triangle {
+    width: 0;
+    height: 0;
+    border-inline: 20px solid transparent;
+    border-bottom: 30px solid black;
+  }
+</style>
+</head>
+<body>
+<div class="circle"></div>
+<div class="pill"></div>
+<div class="triangle"></div>
+</body>
+</html>
+~~~
+
+**إزاي المثلث بيتكوّن:** الحدود الأربعة بتتقابل عند الزوايا بخط مايل. لما العنصر مقاسه صفر، الحدود بتبقى هي الشكل كله. عندك ٣ حدود: اليمين والشمال 20px شفافين، والتحتاني 30px أسود. فالمساحة السودا هي مثلث قاعدته 40 وطوله 30.
+
+- [[border-inline]] اختصار لحدود الجنبين، و [[transparent]] بيخليهم يقصّوا الجنبين.
+- [[border-radius: 50%]]: نص العرض ونص الطول، فمع مربع بتبقى دايرة.
+- [[999px]]: رقم كبير، والمتصفح بيصغّره لنص الارتفاع، فالجنبين نص دايرة. لو كتبت [[50%]] على الكبسولة هتطلع بيضاوي.
+
+**الغلطة الشائعة:** تكتب [[height: auto]] أو تسيب نص جوه المثلث، فالقاعدة تعرض وتبوّظ الشكل.
+
+~~~text الناتج
+الدايرة 80×80   border-radius = 50%
+الكبسولة 160×40
+المثلث 40×30   رغم إن width = 0px و height = 0px
+~~~` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** زرار [[class="o1"]] عليه ٣ قواعد: في [[ext.css]] (مربوط الأول) [[.o1 { color: blue; }]]، وفي [[<style>]] بعده [[.o1 { color: green; }]]، وعلى زرار تاني نفس الـ class ومعاه [[style="color: red"]]. لون كل زرار إيه؟`, done: R`الأول أخضر ([[rgb(0, 128, 0)]]): نفس الوزن فاللي بعد يكسب، والملف الخارجي مش أقوى ولا أضعف من [[<style>]]. والتاني أحمر: الـ [[style=""]] أقوى من الاتنين. اتقاس في Chrome.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الألوان</title>
+<link rel="stylesheet" href="ext.css">
+<style>
+  .o1 { color: green; }
+</style>
+</head>
+<body>
+<button id="a" class="o1">الأول</button>
+<button id="b" class="o1" style="color: red">التاني</button>
+</body>
+</html>
+~~~
+
+~~~css ext.css
+.o1 { color: blue; }
+~~~
+
+**الإجابة:**
+
+- الزرار الأول: الملف الخارجي و [[<style>]] ليهم نفس المكانة. الاتنين author CSS. نفس الوزن، فاللي **بعد** في الصفحة يكسب، و [[<style>]] مكتوب بعد الـ link.
+- الزرار التاني: [[style=""]] على العنصر أقوى من أي selector عادي.
+
+**جرّب تبدّل:** لو حطيت [[<style>]] قبل [[<link>]] الأزرق هو اللي هيكسب. فالمسألة ترتيب مش مكان.
+
+**الغلطة الشائعة:** تفتكر إن الملف الخارجي أضعف أو أقوى من [[<style>]]. مفيش فرق خالص بينهم.
+
+~~~text الناتج
+الأول  = rgb(0, 128, 0)  (أخضر)
+التاني = rgb(255, 0, 0)  (أحمر)
+لو <style> قبل <link>: الأول = rgb(0, 0, 255)  (أزرق)
+~~~` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** من صفحة [[<color>]] على MDN اكتب نفس الأزرق بـ ٣ طرق: [[#2563eb]] و [[hsl(221 83% 53%)]] و [[oklch(0.55 0.2 260)]]، واقرا [[getComputedStyle(el).color]] لكل واحد.`, done: R`الـ hex رجع [[rgb(37, 99, 235)]] والـ hsl رجع [[rgb(36, 99, 235)]] (قريب جدًا بس مش نفسه: التقريب بيفرق)، والـ oklch رجع زي ما هو [[oklch(0.55 0.2 260)]] من غير ما يتحول لـ rgb في Chrome 156.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>أزرق</title>
+<style>
+  .a { color: #2563eb; }
+  .b { color: hsl(221 83% 53%); }
+  .c { color: oklch(0.55 0.2 260); }
+</style>
+</head>
+<body>
+<p class="a">hex</p>
+<p class="b">hsl</p>
+<p class="c">oklch</p>
+</body>
+</html>
+~~~
+
+| الصيغة | معناها |
+|---|---|
+| [[#2563eb]] | أحمر وأخضر وأزرق بالـ hex، كل لون رقمين |
+| [[hsl(221 83% 53%)]] | درجة اللون ثم التشبع ثم الإضاءة |
+| [[oklch(0.55 0.2 260)]] | إضاءة ثم قوة اللون ثم درجته، بطريقة أقرب لعين الإنسان |
+
+**ليه الـ hsl طلع مختلف بدرجة:** الـ hex القيمة بالظبط، أما hsl مكتوب بأرقام صحيحة، فالتقريب غيّر رقم الأحمر من 37 لـ 36. الفرق مبيتشافش، بس لو بتقارن ألوان في اختبار، خد بالك.
+
+**ليه oklch فضلت زي ما هي:** ده لون ممكن يكون أوسع من sRGB، فالمتصفح مبيحوّلهوش عشان ميخسرش.
+
+**الغلطة الشائعة:** تكتب اختبار بيقارن [[getComputedStyle]] بـ [[rgb(...)]] على لون oklch. هيفشل، لأن القيمة راجعة بنفس الصيغة.
+
+~~~text الناتج
+hex    → rgb(37, 99, 235)
+hsl    → rgb(36, 99, 235)
+oklch  → oklch(0.55 0.2 260)
+~~~` },
           ],
           title: "CSS بيتربط بالصفحة إزاي، والقاعدة بتتكتب إزاي؟",
           desc: R`[[CSS]] اختصار Cascading Style Sheets. الـ HTML بيقول «ده عنوان»، والـ CSS بيقول «العنوان ده لونه أزرق وحجمه كذا ومكانه فين». الألوان والخطوط والمسافات وترتيب العناصر على الشاشة كلها CSS. من غيره المتصفح بيعرض الصفحة بتنسيقه الافتراضي: خط أسود على خلفية بيضا ولينكات زرقا.
@@ -208,11 +418,237 @@ h1        { color  :  #2563eb  ;  }
         {
           cmd: "selectors",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[<ul class="menu">]] فيه ٣ [[li]]، وأول li جواه [[ul]] تاني فيه ٢ [[li]]. كام عنصر بيرجع من [[.menu > li]]؟ ومن [[.menu li]]؟ ومن [[.menu li:nth-child(odd)]]؟ وبعدين اسأل [[querySelectorAll]].`, done: R`٣ و ٥ و ٣: الـ [[>]] الأولاد المباشرين بس، والمسافة كل الأحفاد، والـ odd اختار الأول والتالت في القايمة الكبيرة والأول في الصغيرة (كل li بيتعدّ وسط إخواته هو بس).` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الكارت فيه h3 وبعده p، والـ CSS [[.card p:first-child { color: red; }]] مش شغال على الفقرة.`, done: R`عرفت إن [[:first-child]] معناها «أول ابن خالص» والـ h3 هو الأول، فالـ p مش first-child. بعد [[:first-of-type]] (أول p وسط إخواته) القاعدة اشتغلت.` },
-            { lvl: 'تطبيق', t: R`**أشكال:** تذكرة حفلة متخيلة: كارت فيه خط متقطع ([[border-top: 2px dashed]]) بيفصل الجزء اللي بيتقطع، ونص دايرة على كل جنب عند الخط ده ([[::before]] و [[::after]] دواير بلون خلفية الصفحة)، ورقم المقعد بخط كبير.`, done: R`التذكرة شكلها مقطوعة من الجنبين عند الخط المتقطع بالظبط، والدايرتين من غير أي عنصر زيادة في الـ HTML (اتنين pseudo-elements بس)، والتذكرة على 360px مش طالعة برّه الشاشة.` },
-            { lvl: 'تطبيق', t: R`**ابني:** قايمة تنقل لموقع مكتبة متخيلة: اللينك الحالي عليه [[aria-current="page"]] وبيتلوّن بـ [[a[aria-current="page"] ]] (مش class)، و [[a:hover]] بيعمل خط تحت، و [[a:focus-visible]] حلقة 3px.`, done: R`لما تغيّر الصفحة الحالية بتغيّر الـ attribute بس والتنسيق بيمشي وراه، والحلقة بتظهر بالكيبورد بس مش بالماوس، وقارئ الشاشة بيعرف إنه الصفحة الحالية من الـ attribute نفسه مش من اللون.` },
-            { lvl: 'تحدي', t: R`**مسألة:** على لستة ١٠ كروت اكتب selector لكل واحدة: كل تالت كارت من التاني (٢ و ٥ و ٨)، وآخر كارتين، وكل الكروت ما عدا الأخير، والكارت الوحيد لو اللستة فيها كارت واحد بس.`, done: R`[[:nth-child(3n+2)]] رجّع ٣، و [[:nth-last-child(-n+2)]] رجّع ٢، و [[:not(:last-child)]] رجّع ٩، و [[:only-child]] رجّع صفر على العشرة وواحد لما سبت كارت واحد. واتأكدت من كل رقم بـ [[querySelectorAll().length]].` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[<ul class="menu">]] فيه ٣ [[li]]، وأول li جواه [[ul]] تاني فيه ٢ [[li]]. كام عنصر بيرجع من [[.menu > li]]؟ ومن [[.menu li]]؟ ومن [[.menu li:nth-child(odd)]]؟ وبعدين اسأل [[querySelectorAll]].`, done: R`٣ و ٥ و ٣: الـ [[>]] الأولاد المباشرين بس، والمسافة كل الأحفاد، والـ odd اختار الأول والتالت في القايمة الكبيرة والأول في الصغيرة (كل li بيتعدّ وسط إخواته هو بس).`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>selectors</title>
+</head>
+<body>
+<ul class="menu">
+  <li>أول
+    <ul>
+      <li>فرعي ١</li>
+      <li>فرعي ٢</li>
+    </ul>
+  </li>
+  <li>تاني</li>
+  <li>تالت</li>
+</ul>
+</body>
+</html>
+~~~
+
+| الـ selector | العدد | ليه |
+|---|---|---|
+| [[.menu > li]] | ٣ | الأولاد المباشرين بس |
+| [[.menu li]] | ٥ | أي li تحت [[.menu]] في أي عمق |
+| [[.menu li:nth-child(odd)]] | ٣ | الأول والتالت في الكبيرة، والأول في الصغيرة |
+
+**الفكرة في** [[nth-child]]**:** العد بيتحسب وسط إخوات العنصر نفسه، مش في الصفحة كلها. فـ «فرعي ١» رقم 1 في قايمته الصغيرة، مش رقم 2.
+
+**الغلطة الشائعة:** تكتب [[.menu li]] وانت عايز القايمة الأولى بس، فالتنسيق ينزل على القايمة الفرعية. لو عايز المستوى الأول استخدم [[>]].
+
+~~~text الناتج
+.menu > li                  → 3
+.menu li                    → 5
+.menu li:nth-child(odd)     → 3   (أول ، فرعي ١ ، تالت)
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الكارت فيه h3 وبعده p، والـ CSS [[.card p:first-child { color: red; }]] مش شغال على الفقرة.`, done: R`عرفت إن [[:first-child]] معناها «أول ابن خالص» والـ h3 هو الأول، فالـ p مش first-child. بعد [[:first-of-type]] (أول p وسط إخواته) القاعدة اشتغلت.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الكارت</title>
+<style>
+  .card p:first-of-type { color: red; }
+</style>
+</head>
+<body>
+<article class="card">
+  <h3>العنوان</h3>
+  <p>الفقرة الأولى</p>
+  <p>الفقرة التانية</p>
+</article>
+</body>
+</html>
+~~~
+
+**السبب:** [[p:first-child]] معناها «عنصر هو p **و** هو أول ابن في أبوه». وأول ابن هنا [[h3]]، فمفيش p يحقق الشرطين.
+
+أما [[p:first-of-type]] فمعناها «أول p وسط إخواته»، ومش مهم فيه إيه قبله.
+
+| الـ selector | بيعدّ إيه |
+|---|---|
+| [[:first-child]] | كل الإخوات من أي نوع |
+| [[:first-of-type]] | الإخوات من نفس النوع بس |
+
+**الغلطة الشائعة:** تقرا [[.card p:first-child]] كأنها «أول p في الكارت». الـ selector مش بيعمل فلتر بالترتيب ده. وتذكّر إن [[type]] هنا نوع العنصر، مش الـ class: [[.x:first-of-type]] مش معناها «أول عنصر عليه x».
+
+~~~text الناتج
+قبل (first-child): لون الفقرة الأولى = rgb(0, 0, 0)
+بعد (first-of-type): لون الفقرة الأولى = rgb(255, 0, 0)
+                     لون الفقرة التانية = rgb(0, 0, 0)
+~~~` },
+            { lvl: 'تطبيق', t: R`**أشكال:** تذكرة حفلة متخيلة: كارت فيه خط متقطع ([[border-top: 2px dashed]]) بيفصل الجزء اللي بيتقطع، ونص دايرة على كل جنب عند الخط ده ([[::before]] و [[::after]] دواير بلون خلفية الصفحة)، ورقم المقعد بخط كبير.`, done: R`التذكرة شكلها مقطوعة من الجنبين عند الخط المتقطع بالظبط، والدايرتين من غير أي عنصر زيادة في الـ HTML (اتنين pseudo-elements بس)، والتذكرة على 360px مش طالعة برّه الشاشة.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تذكرة</title>
+<style>
+  :root { --page: #e7e5e4; }
+  body { background: var(--page); font-family: system-ui; margin: 16px; }
+  .ticket { max-width: 320px; margin-inline: auto; background: #fff; border-radius: 12px; }
+  .ticket__main { padding: 20px; }
+  .ticket__stub {
+    position: relative;
+    padding: 20px;
+    border-top: 2px dashed #a1a1aa;
+    text-align: center;
+  }
+  .ticket__stub::before,
+  .ticket__stub::after {
+    content: "";
+    position: absolute;
+    top: -13px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--page);
+  }
+  .ticket__stub::before { inset-inline-start: -12px; }
+  .ticket__stub::after { inset-inline-end: -12px; }
+  .seat { font-size: 2.5rem; font-weight: 700; }
+</style>
+</head>
+<body>
+<main>
+<article class="ticket">
+  <div class="ticket__main">
+    <h1>حفلة الربيع</h1>
+    <p>١٥ أبريل، الساعة ٨ مساءً</p>
+  </div>
+  <div class="ticket__stub">
+    <p>المقعد</p>
+    <p class="seat">B12</p>
+  </div>
+</article>
+</main>
+</body>
+</html>
+~~~
+
+**الخدعة:** الدايرتين مش مقصوصين من التذكرة فعلًا. هما دايرتين بنفس لون خلفية الصفحة، قاعدين فوق حافة الكارت، فالعين بتشوفها قطعة ناقصة.
+
+- [[content: ""]] لازم موجود، وإلا الـ pseudo-element مش هيترسم.
+- [[position: relative]] على الأب، عشان [[absolute]] يتحسب منه.
+- [[top: -13px]]: نص الدايرة 12 + نص الخط 1، فمركزها بالظبط على الخط.
+- [[inset-inline-start]] بدل [[left]]: الشكل يشتغل في RTL و LTR.
+- [[--page]] متغير: لو غيّرت لون الصفحة الدايرتين يمشوا معاها.
+
+**الغلطة الشائعة:** تكتب لون الصفحة بإيدك في الدايرتين، وبعدين تغيّر خلفية الصفحة فالدواير تبان. والخدعة دي مش هتنفع لو الخلفية صورة، ووقتها استخدم [[mask]].
+
+~~~text الناتج
+مركز الدايرة y = 179.875   ومركز الخط y = 179.875
+الدايرة اليمين مركزها على حافة التذكرة: يمين التذكرة 340، وأقصى يمين الدايرة 352 جوه الشاشة
+عناصر زيادة في الـ HTML للدواير: 0 (اتنين pseudo-elements)
+overflow على 360: 0px   axe: 0 violations
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** قايمة تنقل لموقع مكتبة متخيلة: اللينك الحالي عليه [[aria-current="page"]] وبيتلوّن بـ [[a[aria-current="page"] ]] (مش class)، و [[a:hover]] بيعمل خط تحت، و [[a:focus-visible]] حلقة 3px.`, done: R`لما تغيّر الصفحة الحالية بتغيّر الـ attribute بس والتنسيق بيمشي وراه، والحلقة بتظهر بالكيبورد بس مش بالماوس، وقارئ الشاشة بيعرف إنه الصفحة الحالية من الـ attribute نفسه مش من اللون.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الكتب</title>
+<style>
+  nav { display: flex; gap: 8px; font-family: system-ui; }
+  nav a { padding: 8px 12px; color: #1e3a8a; text-decoration: none; border-radius: 6px; }
+  a[aria-current="page"] { background: #1e3a8a; color: #fff; }
+  a:hover { text-decoration: underline; }
+  a:focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
+</style>
+</head>
+<body>
+<header>
+  <nav aria-label="الرئيسية">
+    <a href="#home">الرئيسية</a>
+    <a href="#books" aria-current="page">الكتب</a>
+    <a href="#contact">تواصل</a>
+  </nav>
+</header>
+<main><h1>الكتب</h1></main>
+</body>
+</html>
+~~~
+
+**ليه attribute مش class:** [[aria-current="page"]] بتعمل حاجتين في سطر واحد: قارئ الشاشة بيقول «الصفحة الحالية»، والـ CSS بيلوّنها. لو استخدمت [[.active]] لازم تكتب الاتنين وتفتكر تحافظ عليهم. كده مصدر واحد مستحيل يختلف.
+
+- [[a[aria-current="page"]]]: selector بيختار بالـ attribute، ومش محتاج أي class.
+- [[:focus-visible]]: المتصفح بيقرر، الحلقة تظهر للكيبورد، ومبتظهرش لضغطة الماوس على اللينك.
+- [[outline-offset]]: مسافة بين الحلقة والعنصر.
+
+**الغلطة الشائعة:** تكتب [[a:focus { outline: none; }]] عشان الحلقة «وحشة». كده اللي بيستخدم الكيبورد ضاع.
+
+~~~text الناتج
+الصفحة الحالية: الخلفية = rgb(30, 58, 138)
+بعد نقل aria-current للرئيسية: الرئيسية = rgb(30, 58, 138)   والكتب = rgba(0, 0, 0, 0)
+hover: text-decoration = underline
+بالكيبورد: outline = 3px solid rgb(180, 83, 9)
+بالماوس:   outline-style = none
+اسم اللينك: - link "الكتب":
+axe: 0 violations
+~~~` },
+            { lvl: 'تحدي', t: R`**مسألة:** على لستة ١٠ كروت اكتب selector لكل واحدة: كل تالت كارت من التاني (٢ و ٥ و ٨)، وآخر كارتين، وكل الكروت ما عدا الأخير، والكارت الوحيد لو اللستة فيها كارت واحد بس.`, done: R`[[:nth-child(3n+2)]] رجّع ٣، و [[:nth-last-child(-n+2)]] رجّع ٢، و [[:not(:last-child)]] رجّع ٩، و [[:only-child]] رجّع صفر على العشرة وواحد لما سبت كارت واحد. واتأكدت من كل رقم بـ [[querySelectorAll().length]].`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الكروت</title>
+</head>
+<body>
+<section id="list"></section>
+<script>
+  for (let i = 1; i <= 10; i++) {
+    const card = document.createElement('article');
+    card.textContent = 'كارت ' + i;
+    document.querySelector('#list').append(card);
+  }
+$__lt/script>
+</body>
+</html>
+~~~
+
+~~~js
+const c = (s) => document.querySelectorAll('#list > ' + s).length;
+c(':nth-child(3n+2)');
+c(':nth-last-child(-n+2)');
+c(':not(:last-child)');
+c(':only-child');
+~~~
+
+**قراءة كل واحد:**
+
+- [[:nth-child(3n+2)]]: n بتبدأ من صفر: 2 ثم 5 ثم 8. الـ 3 هي الخطوة، والـ 2 نقطة البداية.
+- [[:nth-last-child(-n+2)]]: العد من الآخر. [[-n+2]] بتدّي 2 و 1 و 0، فآخر اتنين بس.
+- [[:not(:last-child)]]: مفيدة جدًا لحط فاصل بين العناصر من غير ما يبقى بعد الأخير.
+- [[:only-child]]: الأول والأخير في نفس الوقت.
+
+**الغلطة الشائعة:** تكتب [[:nth-child(2 + 3n)]] أو تتوقع إن n بتبدأ من 1. والصيغة الصحيحة [[an+b]] بالترتيب ده، ومن غير مسافات حوالين n.
+
+~~~text الناتج
+:nth-child(3n+2)        → 3 كروت: 2 و 5 و 8
+:nth-last-child(-n+2)   → 2: 9 و 10
+:not(:last-child)       → 9
+:only-child             → 0 على العشرة
+بعد ما سبت كارت واحد   → 1
+~~~` },
           ],
           title: "تختار العناصر اللي عايز تنسّقها",
           desc: R`الـ selector هو الجزء اللي قبل [[{]]: بيقول القاعدة دي على مين. بالنوع [[p]]، أو بالـ class [[.card]]، أو بالـ attribute [[[type="email"]]]، أو بالمكان: [[.card p]] (أي p جوه card) و [[.menu > li]] (الأولاد المباشرين بس).
@@ -369,11 +805,212 @@ document.querySelectorAll(".menu li").length   // 4`
         {
           cmd: "specificity",
           practice: [
-            { lvl: 'تطبيق', t: R`**مسألة:** رتّب الـ selectors دي من الأضعف للأقوى، واكتب وزن كل واحد: [[ul li a]] و [[.nav a:hover]] و [[#main .btn]] و [[a[href^="http"] ]] و [[:is(#a, .b) p]] و [[:where(#a) p]]. وبعدين اتأكد بالماوس في DevTools.`, done: R`[[:where(#a) p]] (0,0,1)، و [[ul li a]] (0,0,3)، و [[a[href^="http"] ]] (0,1,1)، و [[.nav a:hover]] (0,2,1)، و [[:is(#a, .b) p]] (1,0,1) لأن is بتاخد وزن أقوى حاجة جواها، و [[#main .btn]] (1,1,0). والـ tooltip في DevTools قال نفس الأرقام.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** ملف فيه ٣ قواعد للزرار كلهم [[!important]] (واحدة للون، وواحدة في الـ hover، وواحدة جوه الـ footer)، وكل واحد زوّد [[!important]] عشان يغلب اللي قبله. شيلهم كلهم من غير ما الشكل يتغيّر.`, done: R`[[grep -c "!important"]] على الملف بقى صفر، والزرار في التلات حالات نفس الشكل (screenshot قبل وبعد)، والحل كان ترتيب القواعد أو modifier واحد زي [[.btn--footer]] بدل selector أطول.` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[<p style="color: red">]] وفي الـ CSS [[p.imp { color: blue !important; }]]. مين بيكسب: الـ inline ولا الـ important؟`, done: R`الأزرق ([[rgb(0, 0, 255)]] في Chrome): [[!important]] أقوى من الـ [[style=""]] العادي. ده سبب إن الـ important مشكلة: حتى الـ inline اللي JavaScript بيحطه مبقاش يقدر يغيّر اللون.` },
-            { lvl: 'سريع', t: R`**قارن وقيس:** نفس العنصر عليه [[id="main"]]. قارن وزن [[#main]] بوزن [[ [id="main"] ]]. وبعدين جرّب الاتنين ضد [[.nav .btn.primary]].`, done: R`[[#main]] (1,0,0) و [[ [id="main"] ]] (0,1,0) مع إنهم بيختاروا نفس العنصر: الـ attribute وزنه زي class. فـ [[.nav .btn.primary]] (0,3,0) غلب [[ [id="main"] ]] وخسر قدام [[#main]].` },
-            { lvl: 'سريع', t: R`**اشرحها:** ليه ملفات الـ reset والمكتبات الحديثة بتكتب قواعدها جوه [[:where()]]؟ ٣ سطور لزميل.`, done: R`الشرح فيه: [[:where()]] وزنها صفر، فأي قاعدة يكتبها صاحب الموقع (حتى [[p]] لوحدها) بتغلبها من غير ما يكبّر الـ selector أو يستخدم important، والمكتبة كده بتدّي شكل افتراضي بس.` },
+            { lvl: 'تطبيق', t: R`**مسألة:** رتّب الـ selectors دي من الأضعف للأقوى، واكتب وزن كل واحد: [[ul li a]] و [[.nav a:hover]] و [[#main .btn]] و [[a[href^="http"] ]] و [[:is(#a, .b) p]] و [[:where(#a) p]]. وبعدين اتأكد بالماوس في DevTools.`, done: R`[[:where(#a) p]] (0,0,1)، و [[ul li a]] (0,0,3)، و [[a[href^="http"] ]] (0,1,1)، و [[.nav a:hover]] (0,2,1)، و [[:is(#a, .b) p]] (1,0,1) لأن is بتاخد وزن أقوى حاجة جواها، و [[#main .btn]] (1,1,0). والـ tooltip في DevTools قال نفس الأرقام.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الوزن</title>
+<style>
+  ul li a { color: black; }
+  .nav a:hover { color: red; }
+  #main .btn { color: blue; }
+  a[href^="http"] { color: green; }
+  :is(#a, .b) p { color: teal; }
+  :where(#a) p { color: orange; }
+</style>
+</head>
+<body>
+<div id="main">
+  <nav class="nav"><ul><li><a class="btn" href="https://example.com">لينك</a></li></ul></nav>
+</div>
+<div id="a"><p>فقرة</p></div>
+</body>
+</html>
+~~~
+
+**العد:** ٣ خانات (ids, classes, elements). الـ class والـ attribute والـ pseudo-class خانة الوسط، والعنصر الخانة الأخيرة. والمقارنة خانة خانة من الشمال، مش جمع.
+
+**الاستثناءين هنا:**
+
+- [[:is(#a, .b)]] بتاخد وزن **أقوى** حاجة جواها، فـ id كامل حتى لو العنصر اختير بالـ class.
+- [[:where()]] وزنها صفر دايمًا، مهما كان جواها.
+
+**الغلطة الشائعة:** تحسب [[:is(#a, .b) p]] على أساس [[.b]] لو ده اللي طابق. الوزن ثابت، مش بيعتمد على اللي طابق فعلًا.
+
+~~~text الناتج
+الترتيب من الأضعف للأقوى، والأرقام من Chrome نفسه:
+(0,0,1)  :where(#a) p
+(0,0,3)  ul li a
+(0,1,1)  a[href^="http"]
+(0,2,1)  .nav a:hover
+(1,0,1)  :is(#a, .b) p
+(1,1,0)  #main .btn
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** ملف فيه ٣ قواعد للزرار كلهم [[!important]] (واحدة للون، وواحدة في الـ hover، وواحدة جوه الـ footer)، وكل واحد زوّد [[!important]] عشان يغلب اللي قبله. شيلهم كلهم من غير ما الشكل يتغيّر.`, done: R`[[grep -c "!important"]] على الملف بقى صفر، والزرار في التلات حالات نفس الشكل (screenshot قبل وبعد)، والحل كان ترتيب القواعد أو modifier واحد زي [[.btn--footer]] بدل selector أطول.`, sol: R`قبل:
+
+~~~css before.css
+.btn { background: #1d4ed8 !important; color: #fff !important; padding: 8px 16px; }
+.btn:hover { background: #1e3a8a !important; }
+footer .btn { background: #166534 !important; }
+~~~
+
+بعد:
+
+~~~css after.css
+.btn { background: #1d4ed8; color: #fff; padding: 8px 16px; }
+.btn:hover { background: #1e3a8a; }
+.btn--footer { background: #166534; }
+~~~
+
+والصفحة، ومعاها التغيير الوحيد في الـ HTML:
+
+~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الأزرار</title>
+<link rel="stylesheet" href="after.css">
+</head>
+<body>
+<main><button id="m" class="btn">عادي</button></main>
+<footer><button id="f" class="btn btn--footer">في الفوتر</button></footer>
+</body>
+</html>
+~~~
+
+**إزاي شلناهم:**
+
+- مفيش خناقة أصلًا بين [[.btn]] و [[.btn:hover]]: الـ hover أقوى بطبيعته (0,2,0) ضد (0,1,0).
+- [[footer .btn]] كانت بتعتمد على مكان الزرار. [[.btn--footer]] بتقول المعنى صراحة، وبنفس وزن [[.btn]]، وهي مكتوبة بعدها فتكسب بالترتيب.
+- في الفوتر الـ hover لسه كسبان (0,2,0) ضد (0,1,0)، زي ما كان قبل.
+
+**الغلطة الشائعة:** تستبدل [[!important]] بـ selector أطول زي [[footer .wrapper .btn.btn]]. دي نفس المشكلة بشكل تاني، والقاعدة الجاية هتحتاج أطول.
+
+~~~text الناتج
+grep -c "!important" before.css → 3
+grep -c "!important" after.css  → 0
+
+مقارنة الـ screenshot قبل وبعد، بايت ببايت:
+من غير hover (الزرارين ظاهرين)  متطابق
+hover على الزرار العادي          متطابق
+hover على زرار الفوتر            متطابق
+~~~` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[<p style="color: red">]] وفي الـ CSS [[p.imp { color: blue !important; }]]. مين بيكسب: الـ inline ولا الـ important؟`, done: R`الأزرق ([[rgb(0, 0, 255)]] في Chrome): [[!important]] أقوى من الـ [[style=""]] العادي. ده سبب إن الـ important مشكلة: حتى الـ inline اللي JavaScript بيحطه مبقاش يقدر يغيّر اللون.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مين يكسب</title>
+<style>
+  p.imp { color: blue !important; }
+</style>
+</head>
+<body>
+<p class="imp" style="color: red">كلام</p>
+</body>
+</html>
+~~~
+
+**الإجابة:** الأزرق. [[!important]] بيقلب الترتيب: بيتحسب في طبقة فوق كل حاجة عادية، بما فيها [[style=""]].
+
+وعشان كده هو مشكلة: JavaScript بيغيّر الألوان بـ [[el.style.color = ...]]، وده مش هيأثر:
+
+~~~js
+const p = document.querySelector('p');
+p.style.color = 'green';
+getComputedStyle(p).color;
+~~~
+
+والوحيد اللي يغلبه من الـ inline: [[el.style.setProperty('color', 'green', 'important')]]، يعني important تانية.
+
+**الغلطة الشائعة:** تشغّل كود بيغيّر اللون وتلاقيه ماتغيّرش، وتدوّر على باج في الـ JavaScript، والسبب سطر CSS بعيد. افتح Computed وشوف مين كسب.
+
+~~~text الناتج
+اللون = rgb(0, 0, 255)  (أزرق)
+بعد p.style.color = 'green': rgb(0, 0, 255)  (لسه أزرق)
+بعد setProperty(..., 'important'): rgb(0, 128, 0)
+~~~` },
+            { lvl: 'سريع', t: R`**قارن وقيس:** نفس العنصر عليه [[id="main"]]. قارن وزن [[#main]] بوزن [[ [id="main"] ]]. وبعدين جرّب الاتنين ضد [[.nav .btn.primary]].`, done: R`[[#main]] (1,0,0) و [[ [id="main"] ]] (0,1,0) مع إنهم بيختاروا نفس العنصر: الـ attribute وزنه زي class. فـ [[.nav .btn.primary]] (0,3,0) غلب [[ [id="main"] ]] وخسر قدام [[#main]].`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>id</title>
+<style>
+  .nav .btn.primary { color: green; }
+</style>
+</head>
+<body>
+<nav class="nav"><button id="main" class="btn primary">اضغط</button></nav>
+</body>
+</html>
+~~~
+
+جرّب تضيف كل مرة سطر واحد من دول، **قبل** [[.nav .btn.primary]]:
+
+~~~css
+#main { color: red; }
+[id="main"] { color: red; }
+~~~
+
+| الـ selector | الوزن | بيختار نفس العنصر؟ |
+|---|---|---|
+| [[#main]] | (1,0,0) | أيوه |
+| [[[id="main"]]] | (0,1,0) | أيوه |
+| [[.nav .btn.primary]] | (0,3,0) | أيوه |
+
+**الفكرة:** الوزن من شكل الـ selector، مش من العنصر اللي بيختاره. ووزن id واحد بيغلب أي عدد من الـ classes، لأن المقارنة خانة خانة.
+
+**إمتى ده مفيد:** لو مضطر تختار عنصر بالـ id، بس عايز وزن قليل (مثلًا عنصر من مكتبة)، اكتبه [[[id="main"]]].
+
+**الغلطة الشائعة:** تعتقد إن كتير من الـ classes ممكن يغلبوا id. المقارنة خانة خانة، ومفيش جمع.
+
+~~~text الناتج
+#main ضد .nav .btn.primary          → rgb(255, 0, 0)  (أحمر، id كسب)
+[id="main"] ضد .nav .btn.primary    → rgb(0, 128, 0)  (أخضر، attribute خسر)
+~~~` },
+            { lvl: 'سريع', t: R`**اشرحها:** ليه ملفات الـ reset والمكتبات الحديثة بتكتب قواعدها جوه [[:where()]]؟ ٣ سطور لزميل.`, done: R`الشرح فيه: [[:where()]] وزنها صفر، فأي قاعدة يكتبها صاحب الموقع (حتى [[p]] لوحدها) بتغلبها من غير ما يكبّر الـ selector أو يستخدم important، والمكتبة كده بتدّي شكل افتراضي بس.`, sol: R`**الرد النموذجي لزميلك:**
+
+~~~text الشرح
+:where() وزنها صفر مهما كان جواها، فأي قاعدة صاحب الموقع يكتبها، حتى p لوحدها، بتغلب قاعدة المكتبة.
+كده المكتبة بتدّي شكل افتراضي بس، ومش بتتخانق مع اللي بيستخدمها.
+ومن غيرها كان هيضطر يكبّر الـ selector أو يستخدم !important عشان يغيّر حاجة بسيطة.
+~~~
+
+~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>where</title>
+<style>
+  /* المكتبة */
+  :where(.prose) p { color: gray; }
+  .prose2 p { color: gray; }
+  /* صاحب الموقع */
+  p { color: black; }
+</style>
+</head>
+<body>
+<div class="prose"><p id="a">بـ where</p></div>
+<div class="prose2"><p id="b">من غير where</p></div>
+</body>
+</html>
+~~~
+
+**الغلطة الشائعة:** تستخدم [[:where()]] في كود الموقع نفسه لأي حاجة. دي مناسبة للي **المفروض** يتكسر بسهولة زي reset أو مكتبة، مش لقواعد عايزها تثبت.
+
+~~~text الناتج
+:where(.prose) p  ضد  p  → rgb(0, 0, 0)  (p كسبت)
+.prose2 p         ضد  p  → rgb(128, 128, 128)  (المكتبة كسبت)
+~~~` },
           ],
           title: "ليه القاعدة بتاعتي مش بتتطبق؟",
           desc: R`لما قاعدتين بيختاروا نفس العنصر ويغيّروا نفس الخاصية، المتصفح بيدّي كل selector وزن من 3 خانات: (id، class، نوع). الأعلى يكسب، ولو اتساووا اللي مكتوب آخر يكسب.
@@ -486,11 +1123,243 @@ Chrome فك [[:where(.nav) .btn]] وحسب حتة واحدة بس: [[.btn]].
         {
           cmd: "cascade",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** الـ body عليه [[font-family: "Times New Roman"]]. زرار [[<button>]] جوه الصفحة خطه هيبقى إيه؟ ورث من الـ body؟`, done: R`لأ: في Chrome على ويندوز الزرار طلع [[Arial]] وحجمه [[13.3333px]]، لأن المتصفح بيدّي الأزرار والحقول خط من عنده بيغلب الوراثة. الحل اللي في كل reset: [[button, input, select, textarea { font: inherit; }]].` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** موقعك فيه [[.btn { padding: 4px; }]] ومكتبة جاهزة (مربوطة بعدك) فيها [[.btn { padding: 20px; }]]، فأزرارك كلها اتغيّرت. حطها في طبقة: [[@import url("lib.css") layer(vendor);]] في أول ملفك.`, done: R`الـ padding رجع [[4px]] في Computed مع إن المكتبة لسه موجودة: قواعدك اللي برّه أي طبقة بتغلب أي طبقة، مهما كان ترتيب الملفات أو الـ specificity جوه المكتبة.` },
-            { lvl: 'تطبيق', t: R`**ابني:** ملف CSS واحد بـ [[@layer reset, components, utilities;]]: reset فيه box-sizing و [[font: inherit]] و margin صفر، و components فيه [[.card]] بـ [[display: grid]] و [[margin-block-end: 24px]]، و utilities فيه [[.mt-0 { margin-block-start: 0; }]] و [[.hidden { display: none; }]].`, done: R`[[<div class="card hidden">]] مختفي رغم إن الاتنين class واحدة، لأن utilities آخر طبقة. ولو بدّلت ترتيب الطبقات في أول سطر بس (من غير ما تحرّك القواعد) الكارت بيرجع يظهر.` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** من MDN اعرف الفرق بين [[inherit]] و [[initial]] و [[unset]] و [[revert]]، وجرّب الأربعة على [[color]] لـ p جوه div أحمر، وعلى [[display]] لـ div.`, done: R`على color: inherit و unset أحمر (color بيتورّث)، و initial أسود، و revert كمان أحمر (المتصفح مالوش لون خاص بالـ p، فرجع للوراثة). وعلى display: initial و unset بقوا [[inline]] (مش block!)، و revert رجّع [[block]]. فعرفت إن initial مش «بتاع المتصفح».` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** افتح أي صفحة كبيرة (موقع أخبار أو متجر)، واختار زرار، وفي DevTools › Styles عدّ: كام قاعدة بتطبّق عليه؟ كام واحدة متشطّب عليها؟ وكام [[!important]]؟ وفي Computed اضغط السهم جنب [[color]] تعرف مين كسب.`, done: R`كتبت الأرقام التلاتة لزرار واحد، وعرفت القاعدة اللي كسبت في color و padding واسم الملف بتاعها، وكتبت جملة: الكسب كان بسبب الطبقة ولا الـ specificity ولا الترتيب.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** الـ body عليه [[font-family: "Times New Roman"]]. زرار [[<button>]] جوه الصفحة خطه هيبقى إيه؟ ورث من الـ body؟`, done: R`لأ: في Chrome على ويندوز الزرار طلع [[Arial]] وحجمه [[13.3333px]]، لأن المتصفح بيدّي الأزرار والحقول خط من عنده بيغلب الوراثة. الحل اللي في كل reset: [[button, input, select, textarea { font: inherit; }]].`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الخط</title>
+<style>
+  body { font-family: "Times New Roman"; }
+</style>
+</head>
+<body>
+<p>فقرة</p>
+<button>زرار</button>
+<input value="حقل">
+</body>
+</html>
+~~~
+
+**الإجابة:** لأ، الزرار مش بيورث. [[font-family]] خاصية بتتورّث فعلًا، بس الوراثة أضعف حاجة في الـ cascade: أي قاعدة على العنصر نفسه تغلبها. والمتصفح عنده ملف CSS داخلي بيدّي الأزرار والحقول خط وحجم من عنده، وده بيغلب الوراثة.
+
+**الحل اللي في كل reset:**
+
+~~~css
+button, input, select, textarea {
+  font: inherit;
+}
+~~~
+
+[[inherit]] بتقول «خد قيمة أبوك» صراحة، فبقت قاعدة على العنصر نفسه.
+
+**الغلطة الشائعة:** تعمل خط عربي جميل على الـ body، والأزرار تفضل Arial، وتزوّد الخط على كل زرار لوحده.
+
+~~~text الناتج
+                   font-family            font-size
+الفقرة             "Times New Roman"        16px
+الزرار قبل         Arial                  13.3333px
+الزرار بعد inherit "Times New Roman"        16px
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** موقعك فيه [[.btn { padding: 4px; }]] ومكتبة جاهزة (مربوطة بعدك) فيها [[.btn { padding: 20px; }]]، فأزرارك كلها اتغيّرت. حطها في طبقة: [[@import url("lib.css") layer(vendor);]] في أول ملفك.`, done: R`الـ padding رجع [[4px]] في Computed مع إن المكتبة لسه موجودة: قواعدك اللي برّه أي طبقة بتغلب أي طبقة، مهما كان ترتيب الملفات أو الـ specificity جوه المكتبة.`, sol: R`~~~css style.css
+@import url("lib.css") layer(vendor);
+
+.btn { padding: 4px; }
+~~~
+
+~~~css lib.css
+.btn { padding: 20px; }
+~~~
+
+~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الأزرار</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<button class="btn">زرار</button>
+</body>
+</html>
+~~~
+
+**ليه ده بيحل المشكلة:** قبل كده الاتنين في نفس المكانة، ونفس الوزن، فاللي آخر كسب. الـ [[layer(vendor)]] بيحط كل المكتبة في طبقة. والقاعدة: **أي CSS برّه الطبقات بيغلب أي CSS جوه طبقة**، مهما كان الوزن ومهما كان الترتيب.
+
+[[@import]] لازم يبقى أول سطر في الملف، قبل أي قاعدة، وإلا المتصفح بيتجاهله.
+
+**الغلطة الشائعة:** تظن إن الحل تحويل قواعدك لـ [[#id]] أو [[!important]]. وفي الـ layers الـ [[!important]] بيتقلب: important في طبقة بيغلب important برّه الطبقات، فمتستخدمهوش كحل هنا.
+
+~~~text الناتج
+قبل (lib.css مربوط بعد ملفك): padding = 20px
+بعد (layer):                  padding = 4px
+حتى لو المكتبة فيها #x .btn { padding: 20px }: 4px
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** ملف CSS واحد بـ [[@layer reset, components, utilities;]]: reset فيه box-sizing و [[font: inherit]] و margin صفر، و components فيه [[.card]] بـ [[display: grid]] و [[margin-block-end: 24px]]، و utilities فيه [[.mt-0 { margin-block-start: 0; }]] و [[.hidden { display: none; }]].`, done: R`[[<div class="card hidden">]] مختفي رغم إن الاتنين class واحدة، لأن utilities آخر طبقة. ولو بدّلت ترتيب الطبقات في أول سطر بس (من غير ما تحرّك القواعد) الكارت بيرجع يظهر.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الطبقات</title>
+<style>
+  @layer reset, components, utilities;
+
+  @layer reset {
+    *, *::before, *::after { box-sizing: border-box; }
+    body, h1, p { margin: 0; }
+    button, input { font: inherit; }
+  }
+
+  @layer components {
+    .card {
+      display: grid;
+      gap: 8px;
+      padding: 16px;
+      margin-block-end: 24px;
+      border: 1px solid #d4d4d8;
+    }
+  }
+
+  @layer utilities {
+    .mt-0 { margin-block-start: 0; }
+    .hidden { display: none; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>الكروت</h1>
+  <div id="a" class="card">كارت عادي</div>
+  <div id="b" class="card hidden">كارت مخفي</div>
+</main>
+</body>
+</html>
+~~~
+
+**السطر الأول هو كل الحكاية:** [[@layer reset, components, utilities;]] بيحدد الترتيب من الأضعف للأقوى، مهما كان مكان القواعد نفسها في الملف.
+
+[[.card]] و [[.hidden]] نفس الوزن (0,1,0). لكن الطبقات بتتقارن **قبل** الوزن، و [[utilities]] آخر طبقة فتكسب. فتقدر تطمن إن [[.hidden]] هتشتغل دايمًا، من غير [[!important]].
+
+**الغلطة الشائعة:** تسيب قواعد برّه أي طبقة وهي المفروض تبقى جوه. أي قاعدة برّه بتغلب كل الطبقات، حتى [[utilities]]، فـ [[.hidden]] هتخسر قدامها.
+
+~~~text الناتج
+.card hidden: display = none  (مخفي)
+بعد تبديل أول سطر لـ utilities, reset, components:
+.card hidden: display = grid  (ظهر، من غير ما نحرّك ولا قاعدة)
+box-sizing للكارت = border-box
+~~~` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** من MDN اعرف الفرق بين [[inherit]] و [[initial]] و [[unset]] و [[revert]]، وجرّب الأربعة على [[color]] لـ p جوه div أحمر، وعلى [[display]] لـ div.`, done: R`على color: inherit و unset أحمر (color بيتورّث)، و initial أسود، و revert كمان أحمر (المتصفح مالوش لون خاص بالـ p، فرجع للوراثة). وعلى display: initial و unset بقوا [[inline]] (مش block!)، و revert رجّع [[block]]. فعرفت إن initial مش «بتاع المتصفح».`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>القيم</title>
+<style>
+  .red { color: red; }
+  .i1 { color: inherit; }
+  .i2 { color: initial; }
+  .i3 { color: unset; }
+  .i4 { color: revert; }
+  .d1 { display: initial; }
+  .d2 { display: unset; }
+  .d3 { display: revert; }
+</style>
+</head>
+<body>
+<div class="red">
+  <p class="i1">inherit</p>
+  <p class="i2">initial</p>
+  <p class="i3">unset</p>
+  <p class="i4">revert</p>
+</div>
+<div class="d1">a</div>
+<div class="d2">b</div>
+<div class="d3">c</div>
+</body>
+</html>
+~~~
+
+| الكلمة | معناها |
+|---|---|
+| [[inherit]] | خد قيمة الأب، حتى لو الخاصية مبتتورّثش |
+| [[initial]] | القيمة الأولية من مواصفة CSS، مش بتاعة المتصفح |
+| [[unset]] | لو الخاصية بتتورّث يبقى inherit، ولو لأ يبقى initial |
+| [[revert]] | ارجع لشكل المتصفح الافتراضي لو فيه، وبعدها الوراثة |
+
+**ليه** [[display: initial]] **طلع inline:** القيمة الأولية لـ [[display]] في المواصفة هي [[inline]] لكل العناصر. إن div يبقى block ده قاعدة في ملف المتصفح، مش في المواصفة. عشان كده [[revert]] رجّعته block.
+
+**الغلطة الشائعة:** تكتب [[display: initial]] عشان «ترجّع» عنصر مخفي. الـ div هيرجع inline وشكله هيتكسر. اكتب [[revert]].
+
+~~~text الناتج
+color لـ p جوه div أحمر:
+inherit  rgb(255, 0, 0)
+initial  rgb(0, 0, 0)
+unset    rgb(255, 0, 0)
+revert   rgb(255, 0, 0)
+
+display لـ div:
+initial  inline
+unset    inline
+revert   block
+~~~` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** افتح أي صفحة كبيرة (موقع أخبار أو متجر)، واختار زرار، وفي DevTools › Styles عدّ: كام قاعدة بتطبّق عليه؟ كام واحدة متشطّب عليها؟ وكام [[!important]]؟ وفي Computed اضغط السهم جنب [[color]] تعرف مين كسب.`, done: R`كتبت الأرقام التلاتة لزرار واحد، وعرفت القاعدة اللي كسبت في color و padding واسم الملف بتاعها، وكتبت جملة: الكسب كان بسبب الطبقة ولا الـ specificity ولا الترتيب.`, sol: R`التمرين على موقع حقيقي من اختيارك، فالأرقام هتختلف. عشان تشوف شكل الإجابة، ده معمل بيقلّد موقع متجر متخيل، بنفس طريقة القراءة:
+
+~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>متجر</title>
+<link rel="stylesheet" href="vendor.css">
+<style>
+  .btn { padding: 12px 24px; }
+  .product .btn { color: white; }
+  .btn-buy { background: green !important; }
+</style>
+</head>
+<body>
+<main class="product">
+  <h1>المنتج</h1>
+  <button class="btn btn-buy">اشتري</button>
+</main>
+</body>
+</html>
+~~~
+
+~~~css vendor.css
+.btn { padding: 8px; color: black; background: gray; border: 0; }
+.btn:hover { background: darkgray; }
+~~~
+
+**الخطوات في DevTools:** كليك يمين على الزرار، ثم Inspect. في Styles عدّ القواعد واللي متشطّب عليه. وفي Computed دوّر على [[color]] واضغط السهم: هيوديك للقاعدة الكسبانة والملف بتاعها.
+
+**الغلطة الشائعة:** تعد القواعد من غير ما تفرق بين اللي جاي من «user agent stylesheet» وقواعد الموقع. والموقع الكبير غالبًا CSS بتاعه متجمّع في ملف واحد، فاسم الملف مش هيوضّح المصدر.
+
+**إجابة نموذجية على المعمل:**
+
+~~~text الناتج
+القواعد اللي بتطبّق (من غير بتاعة المتصفح): 4
+  .btn
+  .btn
+  .btn-buy
+  .product .btn
+
+السطور المتشطّب عليها: 3  (.btn → padding ، .btn → color ، .btn → background)
+عدد !important: 1
+
+color = rgb(255, 255, 255): كسبت .product .btn من ملف <style>
+       السبب: الـ specificity (0,2,0) أكبر من .btn في vendor.css (0,1,0)
+padding = 12px 24px: كسبت .btn من ملف <style>
+       السبب: الترتيب، نفس الوزن واللي بعد يكسب
+background = rgb(0, 128, 0): كسبت .btn-buy
+       السبب: !important
+~~~` },
           ],
           title: "قاعدتين بيتخانقوا: الترتيب الكامل للي بيكسب",
           desc: R`الـ cascade هو الخوارزمية اللي بتقرر القيمة النهائية لكل خاصية. بالترتيب: [[!important]] الأول، وبعدين الـ inline style، وبعدين الـ layer ([[@layer]])، وبعدين الـ specificity، وآخر حاجة الترتيب في الملف (الآخر يكسب).
@@ -647,12 +1516,283 @@ a { color: red; }
         {
           cmd: "box model",
           practice: [
-            { lvl: 'سريع', t: R`**مسألة:** [[width: 300px; padding: 20px; border: 5px solid; margin: 10px]]. احسب العرض اللي العنصر بياخده على الشاشة (من الحد للحد) والمساحة اللي بيحجزها شامل الـ margin، مرة بـ [[content-box]] ومرة بـ [[border-box]].`, done: R`content-box: الصندوق 350 (300 + 40 + 10) والمحجوز 370، والمحتوى 300. border-box: الصندوق 300 والمحجوز 320 والمحتوى 250. والرسمة في Computed قالت نفس الأرقام.` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** عنصرين ورا بعض: الأول [[margin-bottom: 24px]] والتاني [[margin-top: 16px]]. المسافة بينهم كام؟ وبعدين حطهم جوه أب عليه [[display: flex; flex-direction: column]] وقيس تاني.`, done: R`عادي المسافة 24 (الـ margins بيتداخلوا وياخد الأكبر)، وجوه flex بقت 40 (الـ flex مفيهوش margin collapse). ودا سبب إن [[gap]] أريح من الـ margins في الـ layouts.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** كارت باقة عليه [[width: 100%; padding: 24px; border: 2px solid]] جوه صندوق على موبايل 360، وطالع برّه الشاشة من الشمال وعامل scroll أفقي.`, done: R`قبل: الكارت 364 جوه صندوق 312 (اتقاس في Chrome)، يعني طالع 52px. بعد [[box-sizing: border-box]] الكارت بقى 312 بالظبط ومفيش scroll أفقي.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** شريط مايل بين جزئين في الصفحة: [[width: 106%; transform: rotate(-1.4deg)]]، وعامل scroll أفقي على الموبايل. حد اقترح [[html, body { overflow-x: hidden }]].`, done: R`قبل: [[scrollWidth]] كان 382 على شاشة 360. بعد [[overflow-x: clip]] على الـ section اللي فيه الشريط بس بقى 360، من غير ما تلمس الـ body (عشان الـ sticky يفضل شغال، شوف تمرين «جدول responsive»).` },
-            { lvl: 'تطبيق', t: R`**أشكال:** ٤ كروت حالة لجدول تمارين متخيل (مكتمل، ناقص، تحذير، راحة): فوق كل كارت شريط 4px بلون الحالة بـ [[::before]]، وخلفية الكارت نفس اللون فاتح جدًا، ولما الماوس ييجي عليه [[transform: translateY(-4px)]] وظل أكبر.`, done: R`الشريط جوه الكارت مش زايد عليه (الكارت ارتفاعه ثابت قبل وبعد الشريط، أو محسوب)، والـ hover مش بيحرّك الكروت اللي جنبه (اتأكد إن مكانهم ثابت)، والحالة مكتوبة كلام كمان مش لون بس.` },
-            { lvl: 'سريع', t: R`**قارن وقيس:** لينك عليه [[:hover { border: 4px solid }]] ولينك تاني [[:hover { outline: 4px solid }]]، وبعد كل واحد كلمة. حط الماوس على كل واحد وقيس الكلمة اللي بعده اتحركت كام.`, done: R`مع border الكلمة اتحركت 8px (4 من كل ناحية) فالسطر بيترعش، ومع outline اتحركت صفر لأن الـ outline مش جزء من الـ box model. فالـ focus ring والـ hover اللي بيرسم حدود يبقوا outline أو [[box-shadow]].` },
+            { lvl: 'سريع', t: R`**مسألة:** [[width: 300px; padding: 20px; border: 5px solid; margin: 10px]]. احسب العرض اللي العنصر بياخده على الشاشة (من الحد للحد) والمساحة اللي بيحجزها شامل الـ margin، مرة بـ [[content-box]] ومرة بـ [[border-box]].`, done: R`content-box: الصندوق 350 (300 + 40 + 10) والمحجوز 370، والمحتوى 300. border-box: الصندوق 300 والمحجوز 320 والمحتوى 250. والرسمة في Computed قالت نفس الأرقام.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الصندوق</title>
+<style>
+  .box { width: 300px; padding: 20px; border: 5px solid; margin: 10px; }
+  .a { box-sizing: content-box; }
+  .b { box-sizing: border-box; }
+</style>
+</head>
+<body>
+<div class="box a">content-box</div>
+<div class="box b">border-box</div>
+</body>
+</html>
+~~~
+
+**الحساب بالأرقام:**
+
+| | content-box | border-box |
+|---|---|---|
+| المحتوى | 300 | 300 − 40 − 10 = 250 |
+| الصندوق من الحد للحد | 300 + 40 + 10 = 350 | 300 |
+| المساحة المحجوزة بالـ margin | 350 + 20 = 370 | 300 + 20 = 320 |
+
+**الفكرة:** [[width]] في [[content-box]] معناها عرض المحتوى، فالـ padding والـ border بيزيدوا عليه. وفي [[border-box]] معناها الصندوق كله، فهم بياكلوا من المحتوى.
+
+والـ margin برّه الصندوق في الحالتين، و [[getBoundingClientRect]] مبيحسبهوش.
+
+**الغلطة الشائعة:** تعتبر [[width: 300px]] معناها إن العنصر 300 على الشاشة، فتتفاجئ بـ 350. عشان كده كل reset حديث بيحط [[box-sizing: border-box]].
+
+~~~text الناتج
+                       الصندوق    المحتوى    بالـ margin
+content-box            350      300      370
+border-box             300      250      320
+~~~` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** عنصرين ورا بعض: الأول [[margin-bottom: 24px]] والتاني [[margin-top: 16px]]. المسافة بينهم كام؟ وبعدين حطهم جوه أب عليه [[display: flex; flex-direction: column]] وقيس تاني.`, done: R`عادي المسافة 24 (الـ margins بيتداخلوا وياخد الأكبر)، وجوه flex بقت 40 (الـ flex مفيهوش margin collapse). ودا سبب إن [[gap]] أريح من الـ margins في الـ layouts.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>margin</title>
+<style>
+  .a { margin-bottom: 24px; height: 40px; background: #bfdbfe; }
+  .b { margin-top: 16px; height: 40px; background: #bbf7d0; }
+  .flex { display: flex; flex-direction: column; }
+</style>
+</head>
+<body>
+<section id="n">
+  <div class="a"></div>
+  <div class="b"></div>
+</section>
+<section id="f" class="flex">
+  <div class="a"></div>
+  <div class="b"></div>
+</section>
+</body>
+</html>
+~~~
+
+**الإجابة:** في الوضع العادي 24، وجوه flex بقت 40.
+
+في الـ block العادي الـ margins الرأسية اللي بتتقابل بتتداخل، ده اسمه margin collapse، والمسافة بتبقى **أكبر** الاتنين مش مجموعهم. دي كانت فكرة قديمة للنصوص: مسافة بعد العنوان ومسافة قبل الفقرة ميتجمعوش.
+
+جوه flex و grid مفيش collapse، فالاتنين بيتجمعوا.
+
+**ليه** [[gap]] **أريح:** بتحط المسافة في الأب مرة واحدة، فمفيش حساب، ومفيش margin زيادة بعد آخر عنصر.
+
+**الغلطة الشائعة:** تزوّد margin على عنصر ومتلاقيش المسافة زادت، لأن العنصر اللي جنبه margin بتاعه أكبر. وفيه حالات تانية للـ collapse، زي margin أول ابن مع أبوه.
+
+~~~text الناتج
+عادي: المسافة = 24px  (الأكبر)
+flex: المسافة = 40px  (المجموع)
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** كارت باقة عليه [[width: 100%; padding: 24px; border: 2px solid]] جوه صندوق على موبايل 360، وطالع برّه الشاشة من الشمال وعامل scroll أفقي.`, done: R`قبل: الكارت 364 جوه صندوق 312 (اتقاس في Chrome)، يعني طالع 52px. بعد [[box-sizing: border-box]] الكارت بقى 312 بالظبط ومفيش scroll أفقي.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الباقة</title>
+<style>
+  body { margin: 0; font-family: system-ui; }
+  .box { padding: 24px; }
+  .plan {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 24px;
+    border: 2px solid #0f766e;
+  }
+</style>
+</head>
+<body>
+<main class="box">
+  <h1>الباقة</h1>
+  <article class="plan">٣ شهور، ١٣٠٠ جنيه</article>
+</main>
+</body>
+</html>
+~~~
+
+**السبب:** [[width: 100%]] يعني عرض الصندوق الأب، 312 هنا. ومن غير [[border-box]] الـ padding والـ border بيتزوّدوا فوقها: 312 + 48 + 4 = 364.
+
+ولأن الصفحة RTL، العنصر بيبدأ من اليمين، فالزيادة بتطلع من **الشمال**.
+
+**الحل على الموقع كله:** مش كارت كارت، سطر واحد في الـ reset:
+
+~~~css
+*, *::before, *::after { box-sizing: border-box; }
+~~~
+
+**الغلطة الشائعة:** تعالجها بـ [[width: calc(100% - 52px)]]. هتشتغل، بس كل ما الـ padding يتغيّر الرقم هيتغيّر.
+
+~~~text الناتج
+على 360:
+             الأب    الكارت    طالع     overflow الصفحة
+قبل          312     364     52px     28px
+بعد          312     312     0px      0px
+axe: 0 violations
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** شريط مايل بين جزئين في الصفحة: [[width: 106%; transform: rotate(-1.4deg)]]، وعامل scroll أفقي على الموبايل. حد اقترح [[html, body { overflow-x: hidden }]].`, done: R`قبل: [[scrollWidth]] كان 382 على شاشة 360. بعد [[overflow-x: clip]] على الـ section اللي فيه الشريط بس بقى 360، من غير ما تلمس الـ body (عشان الـ sticky يفضل شغال، شوف تمرين «جدول responsive»).`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الشريط</title>
+<style>
+  body { margin: 0; font-family: system-ui; }
+  .band { overflow-x: clip; padding-block: 24px; }
+  .strip {
+    box-sizing: border-box;
+    width: 106%;
+    margin-inline-start: -3%;
+    padding: 12px;
+    background: #0f766e;
+    color: #fff;
+    text-align: center;
+    transform: rotate(-1.4deg);
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>العروض</h1>
+  <section class="band">
+    <div class="strip">خصم ٢٠٪ النهارده بس</div>
+  </section>
+</main>
+</body>
+</html>
+~~~
+
+**ليه مش** [[html, body]]**:** [[overflow-x: hidden]] على الصفحة بيحل الشكل، بس بيكسر أي [[position: sticky]] فيها، زي تمرين «جدول responsive». وهو كمان حل واسع لمشكلة في مكان واحد.
+
+**الحل المحدود:** [[overflow-x: clip]] على الـ section اللي فيه الشريط بس. [[clip]] بيقص من غير ما يعمل منطقة scroll.
+
+و [[padding-block]] عشان الشريط المايل ميتقصّش من فوق وتحت، لأن [[overflow-x: clip]] بيقص أفقي بس، بس لو كتبت [[overflow: clip]] هيقص الاتنين.
+
+و [[margin-inline-start: -3%]] زيادة صغيرة: بتوسّط الشريط، فالـ 6% الزيادة تطلع من الناحيتين بالتساوي.
+
+**الغلطة الشائعة:** تخلي الشريط [[width: 100%]] عشان تتجنب المشكلة. الزوايا المايلة هتبان فاضية في الجناب، وده سبب الـ 106%.
+
+~~~text الناتج
+على 360:
+scrollWidth قبل (من غير clip): 382
+scrollWidth بعد:               360
+sticky في نفس الصفحة بيشتغل: top = 0 بعد النزول
+axe: 0 violations
+~~~` },
+            { lvl: 'تطبيق', t: R`**أشكال:** ٤ كروت حالة لجدول تمارين متخيل (مكتمل، ناقص، تحذير، راحة): فوق كل كارت شريط 4px بلون الحالة بـ [[::before]]، وخلفية الكارت نفس اللون فاتح جدًا، ولما الماوس ييجي عليه [[transform: translateY(-4px)]] وظل أكبر.`, done: R`الشريط جوه الكارت مش زايد عليه (الكارت ارتفاعه ثابت قبل وبعد الشريط، أو محسوب)، والـ hover مش بيحرّك الكروت اللي جنبه (اتأكد إن مكانهم ثابت)، والحالة مكتوبة كلام كمان مش لون بس.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>جدول التمارين</title>
+<style>
+  body { font-family: system-ui; margin: 16px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; max-width: 760px; margin-inline: auto; }
+  .status {
+    --c: #15803d;
+    --soft: #f0fdf4;
+    position: relative;
+    overflow: hidden;
+    padding: 20px 16px 16px;
+    background: var(--soft);
+    border-radius: 8px;
+    transition: transform .15s, box-shadow .15s;
+  }
+  .status::before {
+    content: "";
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline: 0;
+    height: 4px;
+    background: var(--c);
+  }
+  .status:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgb(0 0 0 / .15);
+  }
+  .status--miss { --c: #b91c1c; --soft: #fef2f2; }
+  .status--warn { --c: #a16207; --soft: #fefce8; }
+  .status--rest { --c: #1d4ed8; --soft: #eff6ff; }
+</style>
+</head>
+<body>
+<main>
+<h1>تمارين الأسبوع</h1>
+<div class="grid">
+  <article class="status"><h2>السبت</h2><p>مكتمل</p></article>
+  <article class="status status--miss"><h2>الأحد</h2><p>ناقص</p></article>
+  <article class="status status--warn"><h2>الاتنين</h2><p>تحذير</p></article>
+  <article class="status status--rest"><h2>التلات</h2><p>راحة</p></article>
+</div>
+</main>
+</body>
+</html>
+~~~
+
+**اللي يفرق هنا:**
+
+- [[position: absolute]] على الشريط: مش بياخد مكان، فالكارت ارتفاعه مبيتغيّرش.
+- [[overflow: hidden]]: عشان الشريط ياخد انحناء الزوايا بتاع الكارت.
+- [[--c]] و [[--soft]]: كل modifier بيغيّر متغيرين بس.
+- [[transform]]: بيحرّك العنصر في الرسم، من غير ما يغيّر الـ layout، فالجيران مبيتحركوش. لو استخدمت [[margin-top: -4px]] الصف كله هيتهز.
+
+**الغلطة الشائعة:** الشريط بـ [[border-top: 4px solid]]. الحدود بتزوّد ارتفاع الكارت، والزوايا المدورة بتخلي طرفها رفيع.
+
+~~~text الناتج
+ارتفاع الكارت بالشريط 144.81px، ومن غير الشريط 144.81px
+مكان الكارت اللي جنبه قبل hover x=646 y=85.88، وبعده x=646 y=85.88
+الكارت نفسه طلع 4px
+أقل تباين لكلام الحالة: 19.2:1
+overflow على 360: 0px   axe: 0 violations
+~~~` },
+            { lvl: 'سريع', t: R`**قارن وقيس:** لينك عليه [[:hover { border: 4px solid }]] ولينك تاني [[:hover { outline: 4px solid }]]، وبعد كل واحد كلمة. حط الماوس على كل واحد وقيس الكلمة اللي بعده اتحركت كام.`, done: R`مع border الكلمة اتحركت 8px (4 من كل ناحية) فالسطر بيترعش، ومع outline اتحركت صفر لأن الـ outline مش جزء من الـ box model. فالـ focus ring والـ hover اللي بيرسم حدود يبقوا outline أو [[box-shadow]].`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الحدود</title>
+<style>
+  a { color: #1d4ed8; }
+  #a:hover { border: 4px solid; }
+  #b:hover { outline: 4px solid; }
+  .x { display: inline-block; }
+</style>
+</head>
+<body>
+<main>
+<h1>الفرق</h1>
+<p><a id="a" href="#one">لينك بحدود</a> <span class="x" id="ax">كلمة</span></p>
+<p><a id="b" href="#two">لينك بـ outline</a> <span class="x" id="bx">كلمة</span></p>
+</main>
+</body>
+</html>
+~~~
+
+**ليه الفرق:** الـ [[border]] جزء من الـ box model، فظهوره بيزوّد العرض 4 من كل ناحية، و الكلمة اللي بعده بتتزق. والـ [[outline]] بيترسم فوق الصفحة، برّه الحسابات خالص، فمحدش بيتحرك.
+
+**لو عايز حدود حقيقية من غير رعشة:** حط [[border: 4px solid transparent]] من الأول، وغيّر اللون بس في الـ hover. أو استخدم [[box-shadow: 0 0 0 4px]].
+
+**الغلطة الشائعة:** حلقة الـ focus بـ [[border]]. كل ما المستخدم يتنقل بـ Tab، الصفحة تتهز.
+
+~~~text الناتج
+الكلمة بعد اللينك بـ border: اتحركت 8px
+الكلمة بعد اللينك بـ outline: اتحركت 0px
+ارتفاع الفقرة قبل وبعد: 18 و 18 (اللينك inline فالحدود الرأسية مبتزقّش)
+~~~` },
           ],
           title: "كل عنصر صندوق: المساحة بتتحسب إزاي",
           desc: R`كل عنصر في الصفحة صندوق من 4 طبقات من جوه لبرا: [[content]] (المحتوى)، و [[padding]] (مسافة جوه الحدود)، و [[border]] (الحدود)، و [[margin]] (مسافة برا بينه وبين اللي جنبه).
@@ -835,11 +1975,236 @@ Tailwind بيحط [[box-sizing: border-box]] على كل حاجة في الـ Pr
         {
           cmd: "display",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** لينك جوه فقرة عليه [[padding: 10px; margin-top: 20px; margin-bottom: 20px]]. الفقرة هتطول؟ والفقرة اللي تحتها هتنزل؟`, done: R`لأ: ارتفاع الفقرة فضل 18 ومكان الفقرة اللي تحتها فضل زي ما هو، رغم إن Computed بيقول [[margin-top: 20px]]. الـ inline بيتجاهل الـ margin الرأسي، والـ padding بيترسم (خلفية اللينك كبرت) بس مش بيزق السطور فممكن يغطي على السطر اللي فوقه.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** شيل سطر [[.modal[hidden] { display: none; }]] من المثال وخلي [[.modal { display: flex; }]]. المودال عليه [[hidden]] ولسه ظاهر!`, done: R`[[getComputedStyle(modal).display]] رجّع [[flex]]: الـ [[hidden]] شغله [[display: none]] من المتصفح نفسه بأضعف وزن، فأي [[display]] منك بيغلبه. رجّعت السطر (أو [[ [hidden] { display: none !important; }]] في الـ reset زي مكتبات كتير) والمودال اختفى.` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صندوق عرضه 300px جواه ٣ [[span]] عليهم [[display: inline-block; width: 100px]] ومكتوبين في الـ HTML بمسافة بينهم. هيقفوا جنب بعض في سطر واحد؟`, done: R`لأ: التالت نزل سطر جديد (اتقاس: أول اتنين top واحد والتالت تحتهم)، لأن المسافات اللي بين الـ spans في الـ HTML بقت مسافات كلام حقيقية جنب الـ inline-block فالمجموع زاد عن 300. وده من أسباب إن الـ layouts بقت flex و grid.` },
-            { lvl: 'تطبيق', t: R`**أشكال:** شريط خطوات طلب (١ اتطلب، ٢ بيتحضّر، ٣ في الطريق، ٤ وصل): كل خطوة دايرة 32px فيها الرقم ([[display: inline-grid; place-items: center]])، وبينهم خط 40×2px [[inline-block]]، والخطوات اللي خلصت لونها مختلف.`, done: R`الدواير والخطوط على نفس الخط بالظبط (الـ top واحد أو [[vertical-align: middle]])، والرقم في نص الدايرة، والشريط كله في سطر واحد على 360px (لو مش كفاية: الخطوط تقصر)، والخطوة الحالية عليها [[aria-current="step"]].` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** من MDN اعرف [[display: contents]] و [[display: flow-root]]. جرّب [[flow-root]] على أب فيه ابن عليه [[margin-top: 30px]].`, done: R`من غير flow-root الـ margin بتاع الابن طلع برّه الأب (الأب نزل 30 كله)، ومعاه الـ margin بقى جوه الأب. وعرفت إن [[contents]] بيشيل صندوق العنصر نفسه وبيسيب أولاده، وإنه زمان كان بيضيّع الـ role بتاع العنصر في بعض المتصفحات.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** لينك جوه فقرة عليه [[padding: 10px; margin-top: 20px; margin-bottom: 20px]]. الفقرة هتطول؟ والفقرة اللي تحتها هتنزل؟`, done: R`لأ: ارتفاع الفقرة فضل 18 ومكان الفقرة اللي تحتها فضل زي ما هو، رغم إن Computed بيقول [[margin-top: 20px]]. الـ inline بيتجاهل الـ margin الرأسي، والـ padding بيترسم (خلفية اللينك كبرت) بس مش بيزق السطور فممكن يغطي على السطر اللي فوقه.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>inline</title>
+<style>
+  a { padding: 10px; margin-top: 20px; margin-bottom: 20px; background: #fde68a; }
+</style>
+</head>
+<body>
+<p id="p1">فقرة فيها <a href="#x">لينك</a> عادي.</p>
+<p id="p2">الفقرة اللي تحتها.</p>
+</body>
+</html>
+~~~
+
+**الإجابة:** لأ، الفقرة مش هتطول، واللي تحتها مش هتنزل.
+
+عناصر الـ inline بتتحط جوه خط الكلام. ارتفاع السطر بييجي من [[line-height]]، مش من مقاس العنصر. فـ:
+
+- الـ margin الرأسي: محسوب في Computed بس مالوش أي تأثير.
+- الـ padding الرأسي: بيترسم، والخلفية بتكبر، بس مبيزقّش حاجة. ولو كبر كفاية بيغطي السطر اللي فوقه.
+- الـ padding والـ margin **الأفقيين** بيشتغلوا عادي.
+
+**الحل:** [[display: inline-block]]: العنصر يفضل في السطر، بس يتعامل كصندوق كامل.
+
+**الغلطة الشائعة:** تزوّد margin-top للينك عشان ينزل، وتتحيّر ليه مبيتحركش.
+
+~~~text الناتج
+                       ارتفاع الفقرة     مكان الفقرة التانية
+inline (الافتراضي)      18             50
+من غير padding/margin   18             50
+inline-block            78             110
+
+margin-top في Computed: 20px   ومع كده مالوش أثر
+ارتفاع خلفية اللينك: 37px
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** شيل سطر [[.modal[hidden] { display: none; }]] من المثال وخلي [[.modal { display: flex; }]]. المودال عليه [[hidden]] ولسه ظاهر!`, done: R`[[getComputedStyle(modal).display]] رجّع [[flex]]: الـ [[hidden]] شغله [[display: none]] من المتصفح نفسه بأضعف وزن، فأي [[display]] منك بيغلبه. رجّعت السطر (أو [[ [hidden] { display: none !important; }]] في الـ reset زي مكتبات كتير) والمودال اختفى.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>المودال</title>
+<style>
+  .modal { display: flex; position: fixed; inset: 0; background: rgb(0 0 0 / .5); }
+  .modal[hidden] { display: none; }
+</style>
+</head>
+<body>
+<main><h1>الصفحة</h1></main>
+<div class="modal" hidden><p>أهلًا</p></div>
+</body>
+</html>
+~~~
+
+**السبب:** [[hidden]] مش سحر. المتصفح بيترجمه لقاعدة في ملفه الداخلي: [[[hidden] { display: none }]]. وملف المتصفح أضعف مكان في الـ cascade، فأي [[display]] تكتبه انت، حتى class واحدة، بيغلبها.
+
+**الحلين:**
+
+- [[.modal[hidden] { display: none; }]]: وزنها (0,2,0)، أكبر من [[.modal]].
+- سطر عام في الـ reset، وده بيغطي كل العناصر:
+
+~~~css
+[hidden] { display: none !important; }
+~~~
+
+ده من الأماكن القليلة اللي [[!important]] فيها معقولة، لأن [[hidden]] معناه واضح ومفيش سبب تغلبه.
+
+**الغلطة الشائعة:** تعمل [[modal.hidden = true]] من JavaScript، والمودال يفضل ظاهر، فتفتكر إن فيه باج في الكود. افتح Computed وشوف الـ [[display]].
+
+~~~text الناتج
+من غير السطر: display = flex   (ظاهر رغم hidden)
+مع .modal[hidden]: display = none
+بديل reset [hidden]: display = none
+~~~` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صندوق عرضه 300px جواه ٣ [[span]] عليهم [[display: inline-block; width: 100px]] ومكتوبين في الـ HTML بمسافة بينهم. هيقفوا جنب بعض في سطر واحد؟`, done: R`لأ: التالت نزل سطر جديد (اتقاس: أول اتنين top واحد والتالت تحتهم)، لأن المسافات اللي بين الـ spans في الـ HTML بقت مسافات كلام حقيقية جنب الـ inline-block فالمجموع زاد عن 300. وده من أسباب إن الـ layouts بقت flex و grid.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الصف</title>
+<style>
+  .row { width: 300px; background: #f4f4f5; }
+  .row span { display: inline-block; width: 100px; background: #bfdbfe; }
+</style>
+</head>
+<body>
+<div class="row" id="a">
+  <span>١</span>
+  <span>٢</span>
+  <span>٣</span>
+</div>
+</body>
+</html>
+~~~
+
+**الإجابة:** لأ، التالت هينزل. السطر الجديد والمسافات بين الـ spans في الـ HTML بقت مسافة كلام واحدة. والـ inline-block بيقف في السطر زي الحروف، فالمسافة بتتحسب. والمجموع: 100 + مسافة + 100 + مسافة + 100، وده أكبر من 300.
+
+**الحلول القديمة** كانت [[font-size: 0]] على الأب، أو تلزق الـ tags. كلها ترقيعات.
+
+**الحل الحديث:**
+
+~~~css
+.row { display: flex; }
+.row span { width: 100px; }
+~~~
+
+**الغلطة الشائعة:** تعمل [[width: 33%]] فوق بعض وتتفاجئ بنفس المشكلة. وعرض المسافة نفسه بيعتمد على الخط، فالرقم هيتغيّر من صفحة للتانية.
+
+~~~text الناتج
+inline-block:
+top للتلاتة: 8 , 8 , 26   التالت نزل سطر
+عرض المسافة: 4px
+
+flex:
+top للتلاتة: 8 , 8 , 8   في سطر واحد
+~~~` },
+            { lvl: 'تطبيق', t: R`**أشكال:** شريط خطوات طلب (١ اتطلب، ٢ بيتحضّر، ٣ في الطريق، ٤ وصل): كل خطوة دايرة 32px فيها الرقم ([[display: inline-grid; place-items: center]])، وبينهم خط 40×2px [[inline-block]]، والخطوات اللي خلصت لونها مختلف.`, done: R`الدواير والخطوط على نفس الخط بالظبط (الـ top واحد أو [[vertical-align: middle]])، والرقم في نص الدايرة، والشريط كله في سطر واحد على 360px (لو مش كفاية: الخطوط تقصر)، والخطوة الحالية عليها [[aria-current="step"]].`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>متابعة الطلب</title>
+<style>
+  body { font-family: system-ui; margin: 16px; }
+  ol { list-style: none; padding: 0; margin: 0; white-space: nowrap; text-align: center; }
+  li { display: inline; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .step {
+    display: inline-grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #e4e4e7;
+    color: #18181b;
+    vertical-align: middle;
+    font-weight: 700;
+  }
+  .line {
+    display: inline-block;
+    width: clamp(12px, 8vw, 40px);
+    height: 2px;
+    background: #d4d4d8;
+    vertical-align: middle;
+  }
+  .done .step { background: #0f766e; color: #fff; }
+  .done .line { background: #0f766e; }
+  [aria-current="step"] .step { outline: 3px solid #0f766e; outline-offset: 2px; }
+</style>
+</head>
+<body>
+<main>
+<h1>طلبك</h1>
+<ol aria-label="حالة الطلب">
+  <li class="done"><span class="step">١</span><span class="sr">اتطلب</span><span class="line"></span></li>
+  <li class="done"><span class="step">٢</span><span class="sr">بيتحضّر</span><span class="line"></span></li>
+  <li aria-current="step"><span class="step">٣</span><span class="sr">في الطريق</span><span class="line"></span></li>
+  <li><span class="step">٤</span><span class="sr">وصل</span></li>
+</ol>
+</main>
+</body>
+</html>
+~~~
+
+**اللي بيخلّيه يقف على خط واحد:**
+
+- [[display: inline-grid]]: الدايرة بتقف في السطر، وجواها grid يوسّط الرقم.
+- [[vertical-align: middle]] على الاتنين: بدونها الخط 2px يقف على خط الكلام تحت، مش في نص الدايرة.
+- [[clamp(12px, 8vw, 40px)]]: على الموبايل الخطوط بتقصر، والشريط يفضل في سطر واحد.
+- [[white-space: nowrap]]: ممنوع النزول سطر.
+- [[aria-current="step"]]: قارئ الشاشة يعرف الخطوة الحالية، وبرضه بنستخدمها في الـ CSS.
+- [[.sr]]: اسم الخطوة نص حقيقي مخفي بالشكل بس، فقارئ الشاشة يقراه.
+
+**الغلطة الشائعة:** تعتمد على اللون بس في «الخطوات اللي خلصت». الحلقة حوالين الحالية والأرقام نفسها بيخلوا المعنى واضح من غير لون.
+
+~~~text الناتج
+مركز الدواير y: 102
+مركز الخطوط y: 102
+مركز الرقم في الدايرة الأولى: دايرة (278, 102) ورقم (278, 102)
+عرض الشريط على 360: 228px من 328px  وفي سطر واحد: true
+عرض الخط على 360: 28.8px  وعلى 1280: 40px
+overflow على 360: 0px   axe: 0 violations
+~~~` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** من MDN اعرف [[display: contents]] و [[display: flow-root]]. جرّب [[flow-root]] على أب فيه ابن عليه [[margin-top: 30px]].`, done: R`من غير flow-root الـ margin بتاع الابن طلع برّه الأب (الأب نزل 30 كله)، ومعاه الـ margin بقى جوه الأب. وعرفت إن [[contents]] بيشيل صندوق العنصر نفسه وبيسيب أولاده، وإنه زمان كان بيضيّع الـ role بتاع العنصر في بعض المتصفحات.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>flow-root</title>
+<style>
+  body { margin: 0; }
+  .parent { background: #bfdbfe; }
+  .child { margin-top: 30px; background: #fde68a; height: 40px; }
+  .fix { display: flow-root; }
+  .list { display: flex; gap: 8px; }
+  .group { display: contents; }
+</style>
+</head>
+<body>
+<div class="parent" id="a"><div class="child"></div></div>
+<div class="parent fix" id="b"><div class="child"></div></div>
+<div class="list"><div class="group"><span id="s1">١</span><span id="s2">٢</span></div></div>
+</body>
+</html>
+~~~
+
+**[[flow-root]]:** بيعمل block formatting context، يعني عالم مقفول: الـ margin بتاع الابن ميخرجش من الأب، والـ float مبيطلعش برّه. من غيره، الـ margin العلوي للابن بيتداخل مع أبوه، والأب كله بينزل 30 بدل ما الابن ينزل جواه.
+
+**[[contents]]:** العنصر نفسه بيختفي من الـ layout، وأولاده بيبقوا كأنهم أولاد جدهم. فـ [[.group]] مبقاش ليه صندوق، و [[١]] و [[٢]] بقوا flex items في [[.list]] مباشرة. والـ [[gap]] بيشتغل بينهم.
+
+**الفخ التاريخي:** [[display: contents]] كان بيضيّع الـ role بتاع العنصر في بعض المتصفحات، زي [[button]] أو [[table]]. متستخدمهوش على عناصر ليها معنى من غير ما تختبر. الجزء ده من MDN.
+
+**الغلطة الشائعة:** تحط [[padding-top: 1px]] أو [[overflow: hidden]] على الأب عشان توقف الـ collapse. [[flow-root]] معمول لكده، ومن غير آثار جانبية.
+
+~~~text الناتج
+من غير flow-root:
+top الأب = 30   ارتفاعه = 40   (الـ margin طلع برّه، فالأب نزل كله)
+
+بـ flow-root:
+top الأب = 0   ارتفاعه = 70   (الـ margin بقى جوه)
+
+display: contents: المسافة بين ١ و ٢ = 8px   (الـ gap شغال عليهم)
+~~~` },
           ],
           title: "بلوك ولا جوه السطر؟ وإخفاء العناصر",
           desc: R`[[block]] بياخد سطر كامل وتقدر تحدد عرضه وطوله ([[div]] و [[p]] و [[h1]]). [[inline]] بيمشي جوه السطر مع الكلام وبيتجاهل [[width]] و [[height]] والـ margin الرأسي ([[span]] و [[a]] و [[strong]]). [[inline-block]] في النص: جوه السطر بس بيقبل مقاسات.
@@ -1161,12 +2526,318 @@ document.querySelector('#plan-title').className = styles.title;
 
 بالـ CSS Modules: الـ Console طبع [[{"title":"_title_1wc96_1"}]] (الحروف اللي في النص hash وممكن تختلف عندك، والرقم اللي في الآخر رقم السطر في الملف: class في السطر التاني بقت [[_2]])، وعنوان الكارت عليه الاسم ده، و [[.title]] بتاع الهيدر شغال زي ما هو.`,
           practice: [
-            { lvl: 'تطبيق', t: R`**refactor:** صفحة فيها CSS بالشكل ده: [[.card h3]] و [[.card .btn]] و [[#sidebar .card p]] و [[.card.big]]. حوّلها لـ BEM: كل حاجة class واحدة، والكبير modifier.`, done: R`كل الـ selectors بقت (0,1,0) ما عدا modifier بيغيّر element (0,2,0)، ومفيش id في الـ CSS، والصفحة شكلها نفس الشكل بالظبط (screenshot قبل وبعد)، وتقدر تحط الكارت في الـ sidebar من غير ما شكله يتغيّر.` },
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** زميلك كتب [[<article class="card--featured">]] والكارت المميز طالع من غير حدود ولا مسافات، مع إن [[.card--featured { border-color: blue; }]] موجودة.`, done: R`عرفت إن الـ modifier بيغيّر لون الحدود بس والحدود نفسها في [[.card]]، فحطيت الاتنين [[class="card card--featured"]]، و Computed بقى بيقول [[border-top-style: solid]] و padding 16px.` },
-            { lvl: 'تطبيق', t: R`**قارن وقيس:** ملفين CSS فيهم [[.title]] بحجمين مختلفين. اعكس ترتيب الـ [[<link>]] بتاعهم وقيس حجم الـ h1 في كل مرة. وبعدين حوّل واحد منهم لـ [[.module.css]] في Vite وقيس تاني.`, done: R`الحجم بيتغيّر مع ترتيب الـ link (اللي آخر يكسب: 20px أو 32px)، وبعد الـ module الحجم ثابت مهما كان الترتيب، وفي [[dist/assets]] لقيت الاسم الجديد زي [[._title_xxxxx_1]].` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** component بيعمل [[el.className = styles.titel]] وشكله مش متنسّق، والـ Console نضيف خالص.`, done: R`في Elements لقيت [[class="undefined"]]، وطبعت [[styles]] ولقيت المفتاح اسمه [[title]]، وصلّحته. وزوّدت سطر بيتأكد: [[if (!styles.title) throw new Error('class ناقصة')]] أو استخدمت TypeScript.` },
-            { lvl: 'تحدي', t: R`**ابني:** مكتبة كروت صغيرة بالـ BEM لموقع جيم متخيل: [[.plan]] و [[.plan__name]] و [[.plan__price]] و [[.plan__features]] و [[.plan__cta]]، و ٣ modifiers: [[--featured]] (حدود ملونة وشارة «الأشهر» بـ [[::before]])، و [[--muted]] (رمادي)، و [[--compact]] (padding أقل).`, done: R`٣ كروت جنب بعض كل واحد بـ modifier مختلف، وكل modifier أقل من ٤ سطور CSS لأنه بيغيّر بس، وتقدر تجمع اتنين ([[plan plan--featured plan--compact]]) والاتنين يشتغلوا، ومفيش [[!important]] في الملف.` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** في وثائق Vite (صفحة Features › CSS Modules) اعرف إزاي تخلي الأسماء في الـ JavaScript camelCase (يعني [[.plan-card]] تتقري [[styles.planCard]])، وإيه [[:global()]].`, done: R`لقيت [[css.modules.localsConvention]] في [[vite.config]] وجرّبتها، وفهمت إن [[:global(.x)]] بتسيب الاسم زي ما هو جوه ملف module (مثلًا عشان class جاي من مكتبة).` },
+            { lvl: 'تطبيق', t: R`**refactor:** صفحة فيها CSS بالشكل ده: [[.card h3]] و [[.card .btn]] و [[#sidebar .card p]] و [[.card.big]]. حوّلها لـ BEM: كل حاجة class واحدة، والكبير modifier.`, done: R`كل الـ selectors بقت (0,1,0) ما عدا modifier بيغيّر element (0,2,0)، ومفيش id في الـ CSS، والصفحة شكلها نفس الشكل بالظبط (screenshot قبل وبعد)، وتقدر تحط الكارت في الـ sidebar من غير ما شكله يتغيّر.`, sol: R`قبل:
+
+~~~html before.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الكروت</title>
+<style>
+  .card { padding: 16px; border: 1px solid #ccc; }
+  .card h3 { margin: 0; color: #124; }
+  .card .btn { background: #124; color: #fff; }
+  #sidebar .card p { font-size: 14px; }
+  .card.big { padding: 32px; }
+  .card.big h3 { font-size: 28px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>الكروت</h1>
+  <h2>العروض</h2>
+  <article class="card big"><h3>كبير</h3><p>نص</p><button class="btn">شوف</button></article>
+  <aside id="sidebar">
+    <article class="card"><h3>جانبي</h3><p>نص</p><button class="btn">شوف</button></article>
+  </aside>
+</main>
+</body>
+</html>
+~~~
+
+بعد:
+
+~~~html after.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الكروت</title>
+<style>
+  .card { padding: 16px; border: 1px solid #ccc; }
+  .card__title { margin: 0; color: #124; }
+  .card__text { margin-block: 1em; }
+  .card__btn { background: #124; color: #fff; }
+  .card--big { padding: 32px; }
+  .card--big .card__title { font-size: 28px; }
+  .card--compact .card__text { font-size: 14px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>الكروت</h1>
+  <h2>العروض</h2>
+  <article class="card card--big"><h3 class="card__title">كبير</h3><p class="card__text">نص</p><button class="card__btn">شوف</button></article>
+  <aside id="sidebar">
+    <article class="card card--compact"><h3 class="card__title">جانبي</h3><p class="card__text">نص</p><button class="card__btn">شوف</button></article>
+  </aside>
+</main>
+</body>
+</html>
+~~~
+
+**الأسماء:** [[block__element--modifier]]. الـ block هو [[card]]، والعنصر جواه [[card__title]]، والحالة أو النوع [[card--big]].
+
+**إيه اللي اتغيّر فعليًا:**
+
+- [[.card h3]] كانت بتعتمد على شكل الـ HTML. لو غيّرتها لـ h2 الشكل يبوظ. [[.card__title]] مش بتهتم بالـ tag.
+- [[#sidebar .card p]] كانت بتربط الشكل بالمكان. الكارت لو اتنقل برّه الـ sidebar بيتغيّر. [[.card--compact]] بتروح مع الكارت أينما كان.
+- كل selector وزنه (0,1,0)، ماعدا modifier بيغيّر element فهو (0,2,0)، فمفيش خناقات.
+
+**الغلطة الشائعة:** تعمل [[.card__body__title]]. الـ BEM مفيهوش عناصر متداخلة: كل element تابع للـ block مباشرة، مهما كان عمقه في الـ HTML.
+
+~~~text الناتج
+الـ screenshot قبل وبعد: متطابق بايت ببايت
+عدد selectors فيها id في الـ CSS بعد: 0
+أوزان الـ selectors بعد:
+(0,1,0)  .card__title
+(0,2,0)  .card--big .card__title
+(0,1,0)  .card__text
+(0,2,0)  .card--compact .card__text
+(0,1,0)  .card
+(0,1,0)  .card--big
+(0,1,0)  .card__btn
+نقلنا الكارت الجانبي برّه الـ aside: حجم النص = 14px  (لسه نفس الشكل)
+axe: 0 violations
+~~~` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** زميلك كتب [[<article class="card--featured">]] والكارت المميز طالع من غير حدود ولا مسافات، مع إن [[.card--featured { border-color: blue; }]] موجودة.`, done: R`عرفت إن الـ modifier بيغيّر لون الحدود بس والحدود نفسها في [[.card]]، فحطيت الاتنين [[class="card card--featured"]]، و Computed بقى بيقول [[border-top-style: solid]] و padding 16px.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الكروت</title>
+<style>
+  .card { border: 1px solid #ccc; padding: 16px; margin-block-end: 8px; }
+  .card--featured { border-color: blue; }
+</style>
+</head>
+<body>
+<main>
+<h1>الكروت</h1>
+<article class="card card--featured">مميز</article>
+</main>
+</body>
+</html>
+~~~
+
+**السبب:** الـ modifier مش بديل للـ block، ده إضافة عليه. [[.card--featured]] فيها سطر واحد للون الحدود بس. أما الحدود نفسها والمسافات ففي [[.card]]. فلو كتبت الـ modifier لوحده، مفيش حدود أصلًا عشان تتلوّن.
+
+**القاعدة:** الاتنين مع بعض دايمًا: [[class="card card--featured"]].
+
+**الغلطة الشائعة:** تنسخ كل قواعد [[.card]] جوه [[.card--featured]] عشان تشتغل لوحدها. كده لما تغيّر [[.card]] المميز مش هيتغيّر معاها.
+
+~~~text الناتج
+قبل (class="card--featured"):
+border-top-style = none   padding = 0px
+
+بعد (class="card card--featured"):
+border-top-style = solid   padding = 16px   لون الحدود = rgb(0, 0, 255)
+axe: 0 violations
+~~~` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** ملفين CSS فيهم [[.title]] بحجمين مختلفين. اعكس ترتيب الـ [[<link>]] بتاعهم وقيس حجم الـ h1 في كل مرة. وبعدين حوّل واحد منهم لـ [[.module.css]] في Vite وقيس تاني.`, done: R`الحجم بيتغيّر مع ترتيب الـ link (اللي آخر يكسب: 20px أو 32px)، وبعد الـ module الحجم ثابت مهما كان الترتيب، وفي [[dist/assets]] لقيت الاسم الجديد زي [[._title_xxxxx_1]].`, sol: R`~~~css a.css
+.title { font-size: 20px; }
+~~~
+
+~~~css b.module.css
+.title { font-size: 32px; }
+~~~
+
+~~~js main.js
+import './a.css';
+import styles from './b.module.css';
+
+document.querySelector('h1').className = styles.title;
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>العنوان</title>
+</head>
+<body>
+<main><h1>العنوان</h1></main>
+<script type="module" src="/main.js">$__lt/script>
+</body>
+</html>
+~~~
+
+وعشان تجربة الترتيب من غير modules: ملفين [[a.css]] و [[b.css]] فيهم نفس الـ class، و [[<h1 class="title">]]، وبدّل سطور [[<link>]].
+
+بعد كده [[npm create vite@latest]] ثم [[npx vite build]].
+
+**ليه الترتيب بطّل يفرق:** CSS Modules بتغيّر اسم الـ class وقت البناء لاسم فريد. فـ [[.title]] في الموديول مبقاش [[.title]] أصلًا. ومفيش خناقة، لأن الاسمين مختلفين.
+
+**الغلطة الشائعة:** تكتب [[class="title"]] في الـ HTML وتستنى الموديول يشتغل. الاسم الجديد موجود في [[styles.title]] بس.
+
+~~~text الناتج
+ملفين عاديين:
+a ثم b  → 32px
+b ثم a  → 20px
+
+b.module.css:
+a ثم الموديول  → 32px
+الموديول ثم a  → 32px
+
+الاسم في dist/assets: ._title_1tx54_1
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** component بيعمل [[el.className = styles.titel]] وشكله مش متنسّق، والـ Console نضيف خالص.`, done: R`في Elements لقيت [[class="undefined"]]، وطبعت [[styles]] ولقيت المفتاح اسمه [[title]]، وصلّحته. وزوّدت سطر بيتأكد: [[if (!styles.title) throw new Error('class ناقصة')]] أو استخدمت TypeScript.`, sol: R`~~~js
+import styles from './card.module.css';
+
+if (!styles.title) throw new Error('class ناقصة: title');
+
+const el = document.querySelector('h2');
+el.className = styles.title;
+~~~
+
+**ليه الـ Console نضيف:** في JavaScript، قراية مفتاح مش موجود في object مش خطأ، بترجّع [[undefined]]. و [[el.className = undefined]] بيحوّلها لنص، فالـ class بيبقى كلمة [[undefined]] حرفيًا. مفيش ولا error، بس مفيش تنسيق.
+
+**خطوات الوصول للسبب:**
+
+1. Elements: لقيت [[class="undefined"]].
+2. [[console.log(styles)]]: لقيت المفتاح [[title]] مش [[titel]].
+3. صلّحت الاسم، وزوّدت سطر فحص، فالغلطة الجاية تصرخ بدل ما تسكت.
+
+**الوقاية:** TypeScript مع [[typescript-plugin-css-modules]] بيطلّع خطأ في المحرر قبل ما تشغّل.
+
+**الغلطة الشائعة:** تدوّر في ملف الـ CSS وتعيد كتابة القاعدة. القاعدة سليمة، المشكلة في السطر اللي بيقراها.
+
+~~~text الناتج
+قبل (styles.titel):
+class في Elements = undefined
+Console: 0 رسالة خطأ
+console.log(styles) = {"title":"_title_1s69e_1"}
+
+بعد (styles.title):
+class في Elements = _title_1s69e_1
+~~~` },
+            { lvl: 'تحدي', t: R`**ابني:** مكتبة كروت صغيرة بالـ BEM لموقع جيم متخيل: [[.plan]] و [[.plan__name]] و [[.plan__price]] و [[.plan__features]] و [[.plan__cta]]، و ٣ modifiers: [[--featured]] (حدود ملونة وشارة «الأشهر» بـ [[::before]])، و [[--muted]] (رمادي)، و [[--compact]] (padding أقل).`, done: R`٣ كروت جنب بعض كل واحد بـ modifier مختلف، وكل modifier أقل من ٤ سطور CSS لأنه بيغيّر بس، وتقدر تجمع اتنين ([[plan plan--featured plan--compact]]) والاتنين يشتغلوا، ومفيش [[!important]] في الملف.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الباقات</title>
+<style>
+  body { font-family: system-ui; margin: 16px; }
+  .plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; max-width: 800px; margin-inline: auto; }
+  .plan { position: relative; padding: 24px; border: 2px solid #d4d4d8; border-radius: 12px; }
+  .plan__name { margin: 0; font-size: 1.25rem; }
+  .plan__price { font-size: 1.75rem; font-weight: 700; }
+  .plan__features { padding-inline-start: 20px; }
+  .plan__cta { display: inline-block; padding: 10px 16px; background: #0f766e; color: #fff; border-radius: 8px; text-decoration: none; }
+
+  .plan::before {
+    position: absolute; top: -12px; inset-inline-start: 16px;
+    padding: 0 8px; background: #0f766e; color: #fff; border-radius: 999px; font-size: .75rem;
+  }
+
+  .plan--featured { border-color: #0f766e; }
+  .plan--featured::before { content: "الأشهر"; }
+
+  .plan--muted { color: #52525b; background: #f4f4f5; }
+  .plan--muted .plan__cta { background: #52525b; }
+
+  .plan--compact { padding: 12px; }
+</style>
+</head>
+<body>
+<main>
+<h1>الباقات</h1>
+<div class="plans">
+  <article class="plan plan--muted">
+    <h2 class="plan__name">أساسي</h2>
+    <p class="plan__price">٥٠٠ ج</p>
+    <ul class="plan__features"><li>صالة</li></ul>
+    <a class="plan__cta" href="#basic">اشترك في الأساسي</a>
+  </article>
+  <article class="plan plan--featured">
+    <h2 class="plan__name">ذهبي</h2>
+    <p class="plan__price">٩٠٠ ج</p>
+    <ul class="plan__features"><li>صالة</li><li>حصص</li></ul>
+    <a class="plan__cta" href="#gold">اشترك في الذهبي</a>
+  </article>
+  <article class="plan plan--featured plan--compact">
+    <h2 class="plan__name">سريع</h2>
+    <p class="plan__price">٣٠٠ ج</p>
+    <ul class="plan__features"><li>أسبوع</li></ul>
+    <a class="plan__cta" href="#quick">اشترك في السريع</a>
+  </article>
+</div>
+</main>
+</body>
+</html>
+~~~
+
+**ليه الـ modifiers قصيرة:** كل واحد بيقول الفرق بس. كل حاجة مشتركة في [[.plan]]. وعشان كده تقدر تجمع اتنين: كل واحد بيلمس خصايص مختلفة، فمفيش تعارض.
+
+- [[position: relative]] على [[.plan]] عشان الشارة [[::before]] تتحسب منه.
+- [[.plan--muted .plan__cta]]: modifier بيغيّر element، وزنها (0,2,0). دي الحالة الوحيدة اللي بنستخدم فيها selector مركّب.
+- شكل الشارة في [[.plan::before]]، وده مش بيترسم لوحده لأن مفيهوش [[content]]. فالـ modifier بيكتب [[content]] بس، وبيفضل سطر واحد.
+- [[content: "الأشهر"]] زينة، وقارئ الشاشة ممكن يقراها. لو المعلومة مهمة خليها نص حقيقي.
+
+**الغلطة الشائعة:** تعمل [[.plan--featured-compact]] لكل تركيبة. كده الأسماء هتتضاعف مع كل modifier جديد.
+
+~~~text الناتج
+padding: عادي 24px   compact 12px
+الاتنين مع بعض: حدود rgb(15, 118, 110) و padding 12px و شارة: "الأشهر"
+عدد سطور CSS في كل modifier: featured 2، muted 2، compact 1
+!important في الملف: 0
+مواضع الكروت على 1280: 86 , 86 , 86 (نفس السطر)
+overflow على 360: 0px   axe: 0 violations
+~~~` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** في وثائق Vite (صفحة Features › CSS Modules) اعرف إزاي تخلي الأسماء في الـ JavaScript camelCase (يعني [[.plan-card]] تتقري [[styles.planCard]])، وإيه [[:global()]].`, done: R`لقيت [[css.modules.localsConvention]] في [[vite.config]] وجرّبتها، وفهمت إن [[:global(.x)]] بتسيب الاسم زي ما هو جوه ملف module (مثلًا عشان class جاي من مكتبة).`, sol: R`~~~js vite.config.js
+export default {
+  css: {
+    modules: {
+      localsConvention: 'camelCaseOnly',
+    },
+  },
+};
+~~~
+
+~~~css plan.module.css
+.plan-card { padding: 16px; }
+:global(.lib-tooltip) { color: teal; }
+~~~
+
+~~~js main.js
+import styles from './plan.module.css';
+
+console.log(JSON.stringify(styles));
+document.querySelector('h1').className = styles.planCard;
+~~~
+
+**الإجابات:**
+
+- [[css.modules.localsConvention]]: بتتحكم في شكل المفاتيح في الـ JavaScript. [[camelCase]] بتسيب الاسم الأصلي وتضيف نسخة camelCase، و [[camelCaseOnly]] بتسيب الـ camelCase بس.
+- [[:global(.x)]]: جوه ملف موديول، اسم الـ class بيتسيب زي ما هو من غير hash. بتحتاجه لما class جاي من مكتبة، أو لما تكتب على عنصر برّه الموديول.
+
+**الغلطة الشائعة:** تكتب [[styles['plan-card']]] في كل مكان وتتعب، أو تنسى تعيد تشغيل Vite بعد تعديل الـ config.
+
+~~~text الناتج
+camelCaseOnly: مفاتيح styles = planCard
+camelCase:     مفاتيح styles = plan-card , planCard
+من غير config: مفاتيح styles = plan-card
+
+:global في الملف الناتج: .lib-tooltip{color:teal}
+~~~` },
           ]
         }
       ]

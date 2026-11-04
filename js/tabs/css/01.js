@@ -42,11 +42,144 @@ npm run dev`,
         {
           cmd: "مقدمة HTML والـ Tags",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** السطر ده القفلات فيه متلخبطة: [[<p>أهلًا <b>يا <i>صاحبي</b></i> وبس</p>]]. قبل ما تفتحه اكتب الشجرة اللي تتوقّع المتصفح يبنيها، وبعدين افتحه وقارن بناتج [[document.querySelector('p').innerHTML]] في الـ Console.`, done: R`Chrome رجّع [[أهلًا <b>يا <i>صاحبي</i></b> وبس]]: صلّحها لوحده وقفل الـ i جوه الـ b من غير أي error. وفهمت إن «شكلها سليم» مش معناه «الكود سليم».` },
-            { lvl: 'تطبيق', t: R`**ابني:** كارت تعريف لـ «مكتبة النور» (اسم متخيل) بـ ٦ عناصر بس: h1 بالاسم، وفقرة بالمواعيد، ولينك لصفحة الكتب، وصورة لوجو ليها alt، و input للبحث بـ placeholder، وزرار «دوّر». من غير CSS.`, done: R`في Elements الـ body فيه ٦ أولاد بنفس الترتيب، و h1 و p كل واحد في سطر لوحده، والأربعة التانيين جنب بعض في سطر واحد (inline)، ولو غيّرت اسم ملف اللوجو غلط الـ alt بيظهر مكانه.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الكود ده «شغال» بس فيه غلطتين: [[<a href=/products?sort=new&page=2>المنتجات<a>]] وبعده [[<img src=logo.png alt=لوجو المكتبة>]]. افتحه واعرف الغلطتين من Elements قبل ما تصلّح.`, done: R`لقيت إن [[img.alt]] طلع [[لوجو]] بس، والكلمة التانية بقت attribute اسمه [[المكتبة]] (لأن القيمة اللي فيها مسافة لازم تبقى بين علامتين تنصيص)، وإن [[<a>]] التانية (بدل [[</a>]]) فتحت لينك فاضي لفّ كل اللي بعده في الصفحة. بعد التصليح [[alt]] بيرجّع الجملة كاملة، واللي بعد اللينك مبقاش جواه.` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** من صفحة «HTML elements reference» على MDN طلّع ٥ void elements غير [[meta]] و [[img]] و [[input]] (العناصر اللي ملهاش closing tag)، واكتب لكل واحد سطر بيستخدمه.`, done: R`عندك ٥ من [[br]] و [[hr]] و [[link]] و [[source]] و [[wbr]] و [[area]] و [[col]] و [[embed]] و [[track]]، ولما فتحت ملفك في Elements مفيش ولا واحد منهم ليه قفلة ولا جواه حاجة.` },
-            { lvl: 'سريع', t: R`**اشرحها:** اكتب لزميل في ٣ سطور الفرق بين tag و element و attribute على المثال ده بالظبط: [[<a href="/menu">المنيو</a>]].`, done: R`الشرح بيقول إن [[<a href="/menu">]] opening tag و [[</a>]] closing tag، والسطر كله element واحد، و [[href="/menu"]] attribute اسمه href وقيمته /menu، وزميلك قدر يطلّع نفس التلاتة من [[<img src="x.png" alt="قطة">]] لوحده.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** السطر ده القفلات فيه متلخبطة: [[<p>أهلًا <b>يا <i>صاحبي</b></i> وبس</p>]]. قبل ما تفتحه اكتب الشجرة اللي تتوقّع المتصفح يبنيها، وبعدين افتحه وقارن بناتج [[document.querySelector('p').innerHTML]] في الـ Console.`, done: R`Chrome رجّع [[أهلًا <b>يا <i>صاحبي</i></b> وبس]]: صلّحها لوحده وقفل الـ i جوه الـ b من غير أي error. وفهمت إن «شكلها سليم» مش معناه «الكود سليم».`, sol: R`احفظ السطر ده في [[predict.html]] وافتحه:
+
+~~~html
+<p>أهلًا <b>يا <i>صاحبي</b></i> وبس</p>
+~~~
+
+والتوقّع المكتوب قبل الفتح: العنصر [[b]] جواه الكلمة «يا» والعنصر [[i]]، و [[i]] جواه «صاحبي»، وبعدين «وبس» برّه الاتنين.
+
+~~~text الشجرة اللي المتصفح بيبنيها
+p
+├── "أهلًا "
+├── b
+│   ├── "يا "
+│   └── i
+│       └── "صاحبي"
+└── " وبس"
+~~~
+
+**ليه كده:** الـ HTML مش بيقف عند الغلط زي JavaScript. المعيار نفسه كاتب خطوات لتصليح القفلات المتلخبطة: لما المتصفح يقابل [[</b>]] والـ [[i]] لسه مفتوحة، بيقفل الـ i الأول وبعدين الـ b. وبعدها لما يوصل لـ [[</i>]] يلاقي مفيش i مفتوحة، فبيتجاهلها.
+
+**الغلطة الشائعة:** تعتبر إن الصفحة طالما ظهرت يبقى الكود سليم. المتصفح صلّح الغلطة في صمت، فالشجرة في Elements مش هي الملف اللي كتبته، و Console مفيهوش ولا سطر. الفحص الحقيقي هو الـ validator.
+
+~~~text الناتج
+document.querySelector('p').innerHTML
+أهلًا <b>يا <i>صاحبي</i></b> وبس
+
+أخطاء في الـ Console: 0
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** كارت تعريف لـ «مكتبة النور» (اسم متخيل) بـ ٦ عناصر بس: h1 بالاسم، وفقرة بالمواعيد، ولينك لصفحة الكتب، وصورة لوجو ليها alt، و input للبحث بـ placeholder، وزرار «دوّر». من غير CSS.`, done: R`في Elements الـ body فيه ٦ أولاد بنفس الترتيب، و h1 و p كل واحد في سطر لوحده، والأربعة التانيين جنب بعض في سطر واحد (inline)، ولو غيّرت اسم ملف اللوجو غلط الـ alt بيظهر مكانه.`, sol: R`~~~html
+<h1>مكتبة النور</h1>
+<p>مفتوحين كل يوم من ١٠ الصبح لـ ١٠ بالليل.</p>
+<a href="books.html">شوف الكتب</a>
+<img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48'><circle cx='24' cy='24' r='24' fill='teal'/></svg>" alt="لوجو مكتبة النور" width="48" height="48">
+<input type="search" placeholder="اسم الكتاب" aria-label="اسم الكتاب">
+<button type="button">دوّر</button>
+~~~
+
+**كل سطر بيعمل إيه:**
+
+- [[h1]] و [[p]] عناصر block: كل واحد بياخد سطر لوحده بعرض الصفحة كله.
+- [[a]] و [[img]] و [[input]] و [[button]] عناصر inline: بيقفوا جنب بعض طالما فيه مكان.
+- الـ [[alt]] هو الكلام اللي بيظهر لو الصورة ماتحمّلتش، واللي قارئ الشاشة بيقوله.
+- الـ [[src]] هنا صورة مكتوبة جوه الملف نفسه (data URL) عشان الصفحة تشتغل من غير ما تجهّز ملف. في مشروعك هتكتب [[logo.png]].
+- الـ [[aria-label]] على الحقل عشان مفيهوش label ظاهر، و placeholder لوحده مش اسم للحقل.
+
+**الغلطة الشائعة:** تلف الأربعة في [[<div>]] أو تحط [[<br>]] بينهم عشان «ترتبهم»، والتمرين قايل ٦ عناصر بس. والترتيب هنا جاي من نوع العنصر نفسه من غير أي CSS.
+
+~~~text الناتج
+عدد أولاد الـ body: 6  الترتيب: h1 p a img input button
+منتصف كل عنصر من فوق (بالـ px): 27 , 75 , 143 , 124 , 144 , 144
+h1 و p في سطرين لوحدهم، والأربعة التانيين على نفس السطر (الصورة أطول فمنتصفها أعلى شوية)
+
+بعد ما غيّرت الـ src لاسم ملف مش موجود:
+عرض الصورة بقى 48px وارتفاعها 48px، والظاهر مكانها: لوجو مكتبة النور
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الكود ده «شغال» بس فيه غلطتين: [[<a href=/products?sort=new&page=2>المنتجات<a>]] وبعده [[<img src=logo.png alt=لوجو المكتبة>]]. افتحه واعرف الغلطتين من Elements قبل ما تصلّح.`, done: R`لقيت إن [[img.alt]] طلع [[لوجو]] بس، والكلمة التانية بقت attribute اسمه [[المكتبة]] (لأن القيمة اللي فيها مسافة لازم تبقى بين علامتين تنصيص)، وإن [[<a>]] التانية (بدل [[</a>]]) فتحت لينك فاضي لفّ كل اللي بعده في الصفحة. بعد التصليح [[alt]] بيرجّع الجملة كاملة، واللي بعد اللينك مبقاش جواه.`, sol: R`الكود بعد التصليح:
+
+~~~html
+<a href="/products?sort=new&amp;page=2">المنتجات</a>
+<img src="logo.png" alt="لوجو المكتبة">
+~~~
+
+**الغلطة الأولى:** القيمة [[لوجو المكتبة]] فيها مسافة ومن غير علامات تنصيص، فالمتصفح بيوقف القيمة عند أول مسافة، والكلمة التانية بتتقري كـ attribute جديد اسمه «المكتبة». عشان كده دايمًا اكتب القيمة بين [[" "]] حتى لو هي كلمة واحدة.
+
+**الغلطة التانية:** [[<a>]] التانية مش قفلة، دي لينك جديد. والمتصفح لما يلاقي a جوه a بيقفل الأولاني ويفتح التاني، وبعدين بيكمّل، فكل اللي بعده في الصفحة بيتلف جوه لينك فاضي.
+
+و [[&amp;]] بدل [[&]] في الـ href مش ضرورية عشان الصفحة تشتغل هنا، بس هي الكتابة السليمة: الـ validator بيطلب كده لو بعد الـ & حروف تتفهم كـ entity.
+
+**الغلطة الشائعة:** تقول «اللينك شغال خلاص» وتقفل. الغلطتين دول مبيبانوش في الشكل، بيبانوا في Elements بس.
+
+~~~text الناتج
+قبل التصليح:
+img.alt                        = لوجو
+الـ attributes بتاعة الصورة       = src , alt , المكتبة
+عدد الـ a في الصفحة              = 2
+الفقرة اللي بعد الكود جوه لينك؟   = true
+
+بعد التصليح:
+img.alt                        = لوجو المكتبة
+عدد الـ a في الصفحة              = 1
+الفقرة اللي بعد الكود جوه لينك؟   = false
+~~~` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** من صفحة «HTML elements reference» على MDN طلّع ٥ void elements غير [[meta]] و [[img]] و [[input]] (العناصر اللي ملهاش closing tag)، واكتب لكل واحد سطر بيستخدمه.`, done: R`عندك ٥ من [[br]] و [[hr]] و [[link]] و [[source]] و [[wbr]] و [[area]] و [[col]] و [[embed]] و [[track]]، ولما فتحت ملفك في Elements مفيش ولا واحد منهم ليه قفلة ولا جواه حاجة.`, sol: R`دي الخمسة اللي اخترتها، كل واحد في سطر حقيقي:
+
+~~~html
+<p>العنوان<br>شارع النصر، الدور التاني</p>
+<hr>
+<link rel="stylesheet" href="style.css">
+<video controls width="320"><source src="intro.mp4" type="video/mp4"></video>
+<p>supercalifragilistic<wbr>expialidocious</p>
+~~~
+
+| العنصر | بيعمل إيه |
+|---|---|
+| [[br]] | سطر جديد جوه نفس الفقرة، زي العنوان |
+| [[hr]] | فاصل في المعنى بين جزئين |
+| [[link]] | بيربط الصفحة بملف، زي ملف CSS |
+| [[source]] | بيدّي [[video]] أو [[audio]] أو [[picture]] نسخة من الملف |
+| [[wbr]] | مكان مسموح الكلمة الطويلة تتكسر عنده لو السطر ضاق |
+
+**ليه ملهاش closing tag:** العناصر دي مش بتاخد محتوى أصلًا، فمفيش حاجة تتقفل عليها. والباقيين من اللستة: [[area]] و [[col]] و [[embed]] و [[track]].
+
+**الغلطة الشائعة:** تكتب [[</br>]] أو [[<br></br>]]. المتصفح بيحوّل [[</br>]] لـ [[<br>]] تانية، فبيطلعلك سطرين بدل واحد. والـ [[/]] في [[<br/>]] مسموحة ومالهاش أي تأثير.
+
+~~~text الناتج
+br        أولاده: 0  outerHTML: <br>
+hr        أولاده: 0  outerHTML: <hr>
+link      أولاده: 0  outerHTML: <link rel="stylesheet" href="style.css">
+source    أولاده: 0  outerHTML: <source src="intro.mp4" type="video/mp4">
+wbr       أولاده: 0  outerHTML: <wbr>
+
+والفخ: <p>a</br>b</p> طلّع br عددها 1
+~~~` },
+            { lvl: 'سريع', t: R`**اشرحها:** اكتب لزميل في ٣ سطور الفرق بين tag و element و attribute على المثال ده بالظبط: [[<a href="/menu">المنيو</a>]].`, done: R`الشرح بيقول إن [[<a href="/menu">]] opening tag و [[</a>]] closing tag، والسطر كله element واحد، و [[href="/menu"]] attribute اسمه href وقيمته /menu، وزميلك قدر يطلّع نفس التلاتة من [[<img src="x.png" alt="قطة">]] لوحده.`, sol: R`**إجابة نموذجية بتتبعت لزميلك:**
+
+~~~html
+<a href="/menu">المنيو</a>
+~~~
+
+~~~text الشرح في ٣ سطور
+[<a href="/menu">] ده opening tag، و [</a>] ده closing tag: دول العلامات اللي كتبتها.
+السطر كله من أول القفلة لآخرها element واحد: الـ tags والكلام اللي جواهم مع بعض.
+[href="/menu"] ده attribute: اسمه href وقيمته /menu، وبيضيف معلومة للعنصر.
+~~~
+
+**ليه التفريقة دي مهمة:** الـ tag حاجة بتكتبها في الملف، والـ element حاجة بتعيش في الصفحة (في الـ DOM) وبتقدر تتعامل معاها من JavaScript. والـ attribute بيتكتب في الـ opening tag بس، مش في القفلة.
+
+**تطبيق زميلك على** [[<img src="x.png" alt="قطة">]]: السطر كله opening tag وكمان element كامل، لأن [[img]] مفيهاش closing tag ولا محتوى، وفيها اتنين attributes: [[src]] قيمته [[x.png]] و [[alt]] قيمته [[قطة]].
+
+**الغلطة الشائعة:** تقول «tag» و «element» على نفس الحاجة، فمتعرفش تشرح ليه [[img]] element من غير قفلة.
+
+~~~text الناتج
+a.tagName = A
+a.getAttribute("href") = /menu
+a.textContent = المنيو
+img attributes = src=x.png , alt=قطة
+img.childNodes.length = 0
+~~~` },
           ],
           title: "HTML يعني إيه، وإيه الفرق بين الـ tag والـ element والـ attribute؟",
           desc: R`[[HTML]] اختصار HyperText Markup Language. هي مش لغة برمجة (مفيهاش حسابات ولا if ولا loops)، هي لغة «توصيف»: بتقول للمتصفح كل حتة في الصفحة هي إيه. ده عنوان، ودي فقرة، وده لينك، ودي صورة.
@@ -229,11 +362,174 @@ npm run dev`,
         {
           cmd: "<!doctype html>",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صفحة فيها [[<div><img src="x.png" width="100" height="100"></div>]] بس. ارتفاع الـ div هيبقى كام لو الصفحة من غير [[<!doctype html>]]؟ وكام لو بيه؟ قيسه بـ [[getBoundingClientRect().height]].`, done: R`في Chrome من غير doctype ([[BackCompat]]) طلع 100 بالظبط، وبالـ doctype ([[CSS1Compat]]) طلع 104: في الوضع العادي الصورة inline فبتقف على خط الكلام وتحتها مسافة الحروف اللي بتنزل تحت الخط. نفس الكود بمقاس مختلف عشان سطر واحد.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة «جيم الأبطال» عنوانها في التاب طالع [[Ø¬ÙŠÙ… Ø§Ù„Ø£Ø¨Ø·Ø§Ù„]]، والـ head فيه [[<meta charset="iso-8859-1">]]. اعرف السبب من [[document.characterSet]] وصلّحه.`, done: R`قبل التصليح [[document.characterSet]] رجّع [[windows-1252]] (المتصفح بيعامل iso-8859-1 كده)، يعني كل حرف عربي (بايتين في UTF-8) اتقري حرفين لاتيني. بعد [[<meta charset="utf-8">]] في أول الـ head بيرجّع [[UTF-8]] والعنوان «جيم الأبطال».` },
-            { lvl: 'تطبيق', t: R`**قارن وقيس:** حط في الـ head سكربتين: واحد من غير defer وواحد بـ [[defer]]، والاتنين فيهم [[console.log(document.querySelector('h1'))]]، والـ h1 في الـ body.`, done: R`السكربت العادي طبع [[null]] (اتنفّذ قبل ما المتصفح يوصل للـ h1)، واللي بـ defer طبع العنصر ([[HTMLHeadingElement]]) لأنه استنى لحد ما الصفحة كلها اتقرت. وفهمت ليه السكربت في الدرس عليه defer.` },
-            { lvl: 'تطبيق', t: R`**ابني:** قالب بداية تنسخه لأي مشروع جديد لموقع «جيم الأبطال»: doctype، و lang و dir، و charset أول حاجة، و viewport، و title فيه اسم الصفحة واسم الموقع، و [[<meta name="description">]]، و link لملف CSS، و script بـ defer.`, done: R`الـ validator على validator.w3.org/nu بيقول مفيش errors، و [[document.compatMode]] = [[CSS1Compat]]، وفي وضع الموبايل [[innerWidth]] بيساوي عرض الجهاز اللي اخترته (مثلًا 375)، وعنوان التاب صح.` },
-            { lvl: 'تحدي', t: R`**اكتب اختبار:** سكربت تلزقه في الـ Console على أي صفحة ويطبع ✓ أو ✗ لـ ٦ حاجات: [[document.doctype?.name === 'html']]، و [[compatMode]]، و [[characterSet]]، ووجود meta viewport، و title مش فاضي، و [[document.documentElement.lang]] مش فاضي.`, done: R`على قالبك طلعوا ٦ ✓، وعلى ملف درس «مقدمة HTML» (اللي من غير doctype ولا lang ولا title) طلع ✗ على الـ doctype والـ compatMode والـ viewport والـ title والـ lang، و ✓ على الـ charset بس.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صفحة فيها [[<div><img src="x.png" width="100" height="100"></div>]] بس. ارتفاع الـ div هيبقى كام لو الصفحة من غير [[<!doctype html>]]؟ وكام لو بيه؟ قيسه بـ [[getBoundingClientRect().height]].`, done: R`في Chrome من غير doctype ([[BackCompat]]) طلع 100 بالظبط، وبالـ doctype ([[CSS1Compat]]) طلع 104: في الوضع العادي الصورة inline فبتقف على خط الكلام وتحتها مسافة الحروف اللي بتنزل تحت الخط. نفس الكود بمقاس مختلف عشان سطر واحد.`, sol: R`ملفين فرقهم سطر واحد:
+
+~~~html a.html
+<div><img src="x.png" width="100" height="100"></div>
+~~~
+
+~~~html b.html
+<!doctype html>
+<div><img src="x.png" width="100" height="100"></div>
+~~~
+
+وفي الـ Console لكل واحد:
+
+~~~js
+document.compatMode
+document.querySelector('div').getBoundingClientRect().height
+~~~
+
+**ليه الرقم مختلف:** الصورة عنصر inline، يعني بتقف على خط الكلام (baseline) زي حرف. وتحت خط الكلام بتفضل مسافة لحروف زي ق و ي اللي بتنزل تحته. في الوضع العادي المسافة دي بتتحسب، فالـ div طوله 100 زائد المسافة.
+
+من غير doctype المتصفح بيدخل quirks mode، يعني بيقلّد متصفحات التسعينات عشان المواقع القديمة متبوظش. وفي الوضع ده السطر اللي فيه صورة بس مبيحسبش مسافة الحروف.
+
+**الغلطة الشائعة:** تعالج المسافة دي بـ [[margin-bottom: -4px]]. العلاج السليم [[display: block]] على الصورة، أو [[vertical-align: bottom]].
+
+~~~text الناتج
+من غير doctype: compatMode = BackCompat   ارتفاع الـ div = 100
+بالـ doctype:   compatMode = CSS1Compat   ارتفاع الـ div = 104
+بالـ doctype و display: block على الصورة: ارتفاع الـ div = 100
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة «جيم الأبطال» عنوانها في التاب طالع [[Ø¬ÙŠÙ… Ø§Ù„Ø£Ø¨Ø·Ø§Ù„]]، والـ head فيه [[<meta charset="iso-8859-1">]]. اعرف السبب من [[document.characterSet]] وصلّحه.`, done: R`قبل التصليح [[document.characterSet]] رجّع [[windows-1252]] (المتصفح بيعامل iso-8859-1 كده)، يعني كل حرف عربي (بايتين في UTF-8) اتقري حرفين لاتيني. بعد [[<meta charset="utf-8">]] في أول الـ head بيرجّع [[UTF-8]] والعنوان «جيم الأبطال».`, sol: R`الـ head بعد التصليح:
+
+~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>جيم الأبطال</title>
+</head>
+<body><h1>جيم الأبطال</h1></body>
+</html>
+~~~
+
+**اللي حصل:** الملف محفوظ UTF-8، يعني كل حرف عربي بايتين. والـ meta بيقول للمتصفح «اقراه iso-8859-1»، وفي الترميز ده كل بايت حرف لاتيني لوحده. فـ «ج» بقت [[Ø¬]] و «ي» بقت [[ÙŠ]]. البيانات سليمة في الملف، القراءة هي اللي غلط.
+
+و [[document.characterSet]] رجّع [[windows-1252]] مش iso-8859-1: المعيار نفسه بيقول تعامل الاسمين كأنهم واحد.
+
+**ليه** [[<meta charset>]] **لازم يبقى أول حاجة في الـ head:** المتصفح بيدوّر عليه في أول 1024 بايت من الملف. لو جه بعد [[title]] بالعربي، ممكن المتصفح يكون قرا الاسم بالترميز الغلط.
+
+**الغلطة الشائعة:** تعيد كتابة النص بالعربي في الملف وتحفظه كذا مرة، وهو سليم أصلًا. دوّر على الترميز، مش على النص.
+
+~~~text الناتج
+قبل: characterSet = windows-1252
+     العنوان في التاب = Ø¬ÙŠÙ… Ø§Ù„Ø£Ø¨Ø·Ø§Ù„
+
+بعد: characterSet = UTF-8
+     العنوان في التاب = جيم الأبطال
+~~~` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** حط في الـ head سكربتين: واحد من غير defer وواحد بـ [[defer]]، والاتنين فيهم [[console.log(document.querySelector('h1'))]]، والـ h1 في الـ body.`, done: R`السكربت العادي طبع [[null]] (اتنفّذ قبل ما المتصفح يوصل للـ h1)، واللي بـ defer طبع العنصر ([[HTMLHeadingElement]]) لأنه استنى لحد ما الصفحة كلها اتقرت. وفهمت ليه السكربت في الدرس عليه defer.`, sol: R`٣ ملفات في نفس الفولدر. والملفين js لازم يبقوا منفصلين:
+
+~~~html page.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>defer</title>
+<script src="normal.js">$__lt/script>
+<script src="later.js" defer>$__lt/script>
+</head>
+<body><h1>أهلًا</h1></body>
+</html>
+~~~
+
+~~~js normal.js
+console.log('من غير defer:', document.querySelector('h1'));
+~~~
+
+~~~js later.js
+console.log('بـ defer:', document.querySelector('h1'));
+~~~
+
+**ليه:** المتصفح بيبني الصفحة من فوق لتحت. أول ما يقابل [[<script>]] عادي بيقف، ويحمّله ويشغّله، وبعدين يكمّل. وقت الوقفة دي الـ body لسه مش موجود، فـ [[querySelector]] بيرجّع [[null]]. أما [[defer]] فبيحمّل الملف في الخلفية وبيشغّله بعد ما الصفحة كلها تتقري.
+
+**الغلطة الشائعة (والمهمة هنا):** تكتب [[defer]] على سكربت جوه الصفحة نفسها، زي [[<script defer>console.log(...)$__lt/script>]]. الـ defer شغال مع [[src]] بس، فالسكربت ده بيتنفّذ فورًا كأن الكلمة مش موجودة، وبيطبع [[null]] برضه.
+
+~~~text الناتج
+من غير defer: null
+بـ defer: HTMLHeadingElement
+
+والفخ: سكربت inline عليه defer طبع: null
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** قالب بداية تنسخه لأي مشروع جديد لموقع «جيم الأبطال»: doctype، و lang و dir، و charset أول حاجة، و viewport، و title فيه اسم الصفحة واسم الموقع، و [[<meta name="description">]]، و link لملف CSS، و script بـ defer.`, done: R`الـ validator على validator.w3.org/nu بيقول مفيش errors، و [[document.compatMode]] = [[CSS1Compat]]، وفي وضع الموبايل [[innerWidth]] بيساوي عرض الجهاز اللي اخترته (مثلًا 375)، وعنوان التاب صح.`, sol: R`القالب (الملفين [[style.css]] و [[app.js]] جنبه، ولو فاضيين):
+
+~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الرئيسية | جيم الأبطال</title>
+<meta name="description" content="جيم الأبطال: اشتراكات شهرية وحصص تدريب لكل المستويات.">
+<link rel="stylesheet" href="style.css">
+<script src="app.js" defer>$__lt/script>
+</head>
+<body>
+<h1>جيم الأبطال</h1>
+</body>
+</html>
+~~~
+
+**كل سطر ليه سبب:**
+
+- [[<!doctype html>]]: يدخّل الصفحة الوضع العادي بدل quirks mode.
+- [[lang="ar" dir="rtl"]]: اللغة لقارئ الشاشة، والاتجاه للصفحة كلها.
+- [[charset]] أول حاجة: عشان الـ title بالعربي يتقري صح.
+- [[viewport]]: من غيره الموبايل بيرسم الصفحة على عرض 980 ويصغّرها.
+- [[title]]: اسم الصفحة قبل اسم الموقع، عشان لما التابات تضيق يفضل الجزء المهم ظاهر.
+- [[description]]: الجملة اللي ممكن تظهر تحت اللينك في نتايج البحث.
+- [[defer]]: السكربت يقدر يكون في الـ head من غير ما يعطّل بناء الصفحة.
+
+**الغلطة الشائعة:** تنسخ قالب فيه [[user-scalable=no]] في الـ viewport. ده بيمنع التكبير، وبيضر اللي نظره ضعيف.
+
+~~~text الناتج
+validator.w3.org/nu: عدد الـ errors = 0
+document.compatMode = CSS1Compat
+عرض 375 في وضع الموبايل: innerWidth = 375
+عنوان التاب = الرئيسية | جيم الأبطال
+~~~` },
+            { lvl: 'تحدي', t: R`**اكتب اختبار:** سكربت تلزقه في الـ Console على أي صفحة ويطبع ✓ أو ✗ لـ ٦ حاجات: [[document.doctype?.name === 'html']]، و [[compatMode]]، و [[characterSet]]، ووجود meta viewport، و title مش فاضي، و [[document.documentElement.lang]] مش فاضي.`, done: R`على قالبك طلعوا ٦ ✓، وعلى ملف درس «مقدمة HTML» (اللي من غير doctype ولا lang ولا title) طلع ✗ على الـ doctype والـ compatMode والـ viewport والـ title والـ lang، و ✓ على الـ charset بس.`, sol: R`~~~js
+const checks = {
+  'doctype': document.doctype?.name === 'html',
+  'compatMode': document.compatMode === 'CSS1Compat',
+  'characterSet': document.characterSet === 'UTF-8',
+  'viewport': !!document.querySelector('meta[name="viewport"]'),
+  'title': document.title.trim() !== '',
+  'lang': document.documentElement.lang !== '',
+};
+for (const [name, ok] of Object.entries(checks)) {
+  console.log((ok ? '✓ ' : '✗ ') + name);
+}
+~~~
+
+**إزاي بيشتغل:** كل مفتاح في [[checks]] اسم الفحص، وقيمته [[true]] أو [[false]]. و [[Object.entries]] بيحوّل الـ object لأزواج فنلف عليهم ونطبع.
+
+- [[document.doctype?.name]]: علامة [[?.]] مهمة، لأن [[document.doctype]] بيبقى [[null]] لو مفيش doctype، ومن غيرها السكربت يقع بـ TypeError.
+- [[!!]] بتحوّل العنصر أو [[null]] لـ true أو false.
+- [[.trim()]] عشان [[<title>   </title>]] ميتحسبش عنوان.
+
+**ليه الـ charset عدّى على ملف الدرس:** ملف «مقدمة HTML» فيه [[<meta charset="utf-8">]] فعلًا، هو ناقصه الباقي بس.
+
+**الغلطة الشائعة:** تفحص [[document.querySelector('html').lang]] من غير ما تقارن، فالسطر يرجّع نص فاضي وانت فاكره نتيجة. كل سطر لازم يرجّع [[true]] أو [[false]] صريح.
+
+~~~text الناتج
+على القالب:
+✓ doctype
+✓ compatMode
+✓ characterSet
+✓ viewport
+✓ title
+✓ lang
+
+على ملف درس «مقدمة HTML»:
+✗ doctype
+✗ compatMode
+✓ characterSet
+✗ viewport
+✗ title
+✗ lang
+~~~` },
           ],
           title: "أقل صفحة HTML سليمة",
           desc: R`كل صفحة بتبدأ بـ [[<!doctype html>]] وبعدها [[<html>]] فيه جزئين: [[<head>]] للمعلومات اللي مش بتظهر (الترميز، والعنوان، والـ viewport، والـ CSS)، و [[<body>]] للي بيظهر فعلًا.
@@ -402,11 +698,194 @@ interactive h1=true
         {
           cmd: "lang و dir",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في صفحة [[dir="rtl"]] فيه فقرتين عرضهم 300px: واحدة [[text-align: start]] وواحدة [[text-align: left]]. لو غيّرت الصفحة لـ [[dir="ltr"]]، أنهي فقرة هتغيّر مكان الكلام؟`, done: R`اللي [[start]] بس: كانت يمين وبقت شمال لأن «البداية» بتمشي مع الاتجاه، واللي [[left]] فضلت شمال في الحالتين. وده سبب إن الكود اللي بيشتغل عربي وإنجليزي بيكتب start و end مش left و right.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** لستة تعليقات في صفحة عربي، والاسم جاي من الداتابيز: [[<li>Mona_7 5 تعليقات</li>]]. افتحها وبص الرقم 5 لازق في مين، وبعدين صلّحها.`, done: R`من غير عزل الرقم 5 اتعرض يمين الاسم ولازق فيه كأنه جزء منه ([[Mona_7 5]] وبعدهم [[تعليقات]] لوحدها)، لأن الرقم بياخد اتجاه الكلام الإنجليزي اللي جنبه. بـ [[<bdi>Mona_7</bdi> 5 تعليقات]] الرقم رجع جنب كلمة تعليقات. اتقاس بمكان كل حرف بـ Range في Chrome.` },
-            { lvl: 'تطبيق', t: R`**ابني:** كارت حجز لـ «عيادة الشفاء» (اسم متخيل) في صفحة عربي فيه: رقم تليفون بـ +، وإيميل، وكود حجز زي [[BK-2026-17]]، وميعاد [[10:30 AM]]، وحقل إيميل يكتب فيه المريض.`, done: R`كل قيمة إنجليزي بتظهر بنفس ترتيب حروفها اللي كتبتها (الـ + في الأول)، و [[getComputedStyle(el).direction]] على كل span منهم بيرجّع [[ltr]]، وحقل الإيميل المؤشر فيه بيبدأ من الشمال.` },
-            { lvl: 'تطبيق', t: R`**قارن وقيس:** حقل بحث بـ [[dir="auto"]]. اكتب فيه [[hello]] وبعدين امسحه واكتب [[أهلا]]، وفي كل مرة اسأل [[input.matches(':dir(rtl)')]] في الـ Console.`, done: R`مع الإنجليزي الحقل بقى ltr ([[:dir(ltr)]] رجّع [[true]])، ومع العربي بقى rtl، من غير JavaScript. وعرفت إن [[dir="auto"]] بيختار حسب أول حرف «قوي» في الكلام، فهو أنسب لحقل ممكن يتكتب فيه أي لغة.` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** [[lang]] مش لقارئ الشاشة بس. دوّر في MDN على ٣ حاجات تانية بتتغيّر حسب قيمته (ابدأ بصفحة [[hyphens]] و [[:lang()]]).`, done: R`عندك ٣: تقسيم الكلمات في آخر السطر ([[hyphens: auto]] مش بيشتغل من غير lang)، و selector [[:lang(en)]]، واختيار الخط والترجمة التلقائية في المتصفح. ولكل واحد سطر كود جربته.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في صفحة [[dir="rtl"]] فيه فقرتين عرضهم 300px: واحدة [[text-align: start]] وواحدة [[text-align: left]]. لو غيّرت الصفحة لـ [[dir="ltr"]]، أنهي فقرة هتغيّر مكان الكلام؟`, done: R`اللي [[start]] بس: كانت يمين وبقت شمال لأن «البداية» بتمشي مع الاتجاه، واللي [[left]] فضلت شمال في الحالتين. وده سبب إن الكود اللي بيشتغل عربي وإنجليزي بيكتب start و end مش left و right.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>اتجاه</title>
+<style>p { width: 300px; background: #eee; }</style>
+</head>
+<body>
+<p id="s" style="text-align: start">start</p>
+<p id="l" style="text-align: left">left</p>
+</body>
+</html>
+~~~
+
+بعد ما تفتحها اكتب في الـ Console [[document.documentElement.dir = 'ltr']] وقارن.
+
+**الإجابة:** اللي [[start]] بس هي اللي بتتحرك. [[start]] معناها «بداية السطر»، والبداية بتتحدد من الاتجاه: يمين في [[rtl]] وشمال في [[ltr]]. أما [[left]] فكلمة ثابتة: شمال دايمًا، مهما الاتجاه اتغيّر.
+
+ولاحظ إن الفقرتين نفسهم اتحركوا كمان، لأن الصندوق نفسه بيبدأ من ناحية الاتجاه. عشان كده القياس هنا مكان الكلام **جوه** الصندوق، مش مكان الصندوق.
+
+**الغلطة الشائعة:** تكتب [[text-align: left]] و [[margin-left]] في موقع هيتترجم، وبعدين تعمل ملف CSS كامل يعكس كل ده للعربي. لو كتبت [[start]] و [[margin-inline-start]] من الأول، نفس الملف هيشتغل للغتين.
+
+~~~text الناتج
+المسافة بين شمال الصندوق وأول الكلام، بالـ px:
+
+            rtl      ltr
+start       272    0     اتحركت
+left        0      0       فضلت شمال
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** لستة تعليقات في صفحة عربي، والاسم جاي من الداتابيز: [[<li>Mona_7 5 تعليقات</li>]]. افتحها وبص الرقم 5 لازق في مين، وبعدين صلّحها.`, done: R`من غير عزل الرقم 5 اتعرض يمين الاسم ولازق فيه كأنه جزء منه ([[Mona_7 5]] وبعدهم [[تعليقات]] لوحدها)، لأن الرقم بياخد اتجاه الكلام الإنجليزي اللي جنبه. بـ [[<bdi>Mona_7</bdi> 5 تعليقات]] الرقم رجع جنب كلمة تعليقات. اتقاس بمكان كل حرف بـ Range في Chrome.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تعليقات</title>
+</head>
+<body>
+<ul>
+  <li id="bad">Mona_7 5 تعليقات</li>
+  <li id="good"><bdi>Mona_7</bdi> 5 تعليقات</li>
+</ul>
+</body>
+</html>
+~~~
+
+**اللي بيحصل:** الأرقام مالهاش اتجاه قوي، فبتاخد اتجاه الكلام اللي قبلها. وقبل الـ 5 حروف إنجليزي، فالمتصفح بيعتبرها جزء من الجملة الإنجليزية، ويعرضها على يمين [[Mona_7]] ولازقة فيه. والقارئ بيشوفها كأن الاسم [[Mona_7 5]].
+
+و [[<bdi>]] معناها «اعزل اللي جوايا». فالاسم بقى كتلة لوحده، والرقم مبقاش شايف الحروف الإنجليزي، فبياخد اتجاه الفقرة العربي ويرجع جنب كلمة «تعليقات».
+
+**ليه** [[bdi]] **تحديدًا مش** [[span]]**:** الاسم جاي من الداتابيز، يعني ممكن يبقى عربي أو إنجليزي أو أي حاجة. و [[bdi]] بتشتغل مع الاتنين من غير ما تعرف اللغة مقدمًا.
+
+**الغلطة الشائعة:** تصلّحها بإنك تقلب ترتيب الكلام في الـ HTML. ده بيبان سليم مع اسم إنجليزي، ويبوظ مع أول اسم عربي.
+
+~~~text الناتج
+مكان كل جزء من شمال السطر، بالـ px (في rtl الجملة بتتقري من اليمين):
+
+قبل   Mona_7: 1167-1220   الرقم 5: 1224-1232   تعليقات: 1126-1163
+بعد   Mona_7: 1179-1232   الرقم 5: 1167-1175   تعليقات: 1126-1163
+
+قبل: الرقم على يمين الاسم مباشرة (لازق فيه)
+بعد: الرقم بين الاسم وكلمة تعليقات، جنب كلمة تعليقات
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** كارت حجز لـ «عيادة الشفاء» (اسم متخيل) في صفحة عربي فيه: رقم تليفون بـ +، وإيميل، وكود حجز زي [[BK-2026-17]]، وميعاد [[10:30 AM]]، وحقل إيميل يكتب فيه المريض.`, done: R`كل قيمة إنجليزي بتظهر بنفس ترتيب حروفها اللي كتبتها (الـ + في الأول)، و [[getComputedStyle(el).direction]] على كل span منهم بيرجّع [[ltr]]، وحقل الإيميل المؤشر فيه بيبدأ من الشمال.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>حجز</title>
+<style>
+  .card { max-width: 340px; padding: 16px; border: 1px solid #ccc; border-radius: 12px; font-family: system-ui; }
+  dt { font-weight: 700; margin-top: 8px; }
+  dd { margin: 0; }
+  label { display: block; margin-top: 12px; }
+  input { width: 100%; box-sizing: border-box; padding: 8px; }
+</style>
+</head>
+<body>
+<main class="card">
+  <h1>عيادة الشفاء</h1>
+  <dl>
+    <dt>التليفون</dt><dd><span dir="ltr">+20 100 000 0000</span></dd>
+    <dt>الإيميل</dt><dd><span dir="ltr">hello@shifa-clinic.example</span></dd>
+    <dt>كود الحجز</dt><dd><span dir="ltr">BK-2026-17</span></dd>
+    <dt>الميعاد</dt><dd><span dir="ltr">10:30 AM</span></dd>
+  </dl>
+  <label for="mail">إيميلك</label>
+  <input id="mail" type="email" dir="ltr" autocomplete="email">
+</main>
+</body>
+</html>
+~~~
+
+**ليه كل قيمة في** [[span dir="ltr"]]**:** من غيرها الـ + بتتعامل كعلامة ملهاش اتجاه، فبتتنقل لآخر الرقم، و [[BK-2026-17]] بتتقسم وتتعرض قطع. و [[dir="ltr"]] بتعزل القيمة وبتمشّيها من الشمال لليمين، والجملة العربية حواليها زي ما هي.
+
+**ليه** [[dir="ltr"]] **على الـ input مش في الـ CSS:** الإيميل والتليفون إنجليزي دايمًا مهما كانت لغة الصفحة، فالمؤشر لازم يبدأ من الشمال. وده معلومة عن البيانات نفسها، فمكانها الـ HTML.
+
+**الغلطة الشائعة:** تكتب [[dir="ltr"]] على الـ dd كله أو تعمل [[text-align: left]]. القيمة هتتقري صح بس هتروح أقصى الشمال، بعيد عن العنوان بتاعها.
+
+~~~text الناتج
+القيم زي ما اتعرضت في الترتيب (من الشمال لليمين):
++20 100 000 0000 , hello@shifa-clinic.example , BK-2026-17 , 10:30 AM
+أول حرف من شمال الرقم هو +: true
+
+direction لكل span: ltr , ltr , ltr , ltr
+direction الحقل: ltr   text-align المحسوبة: start
+المؤشر بيبدأ من شمال الحقل: x الـ input = 25
+overflow على 360: 0px   axe: 0 violations
+~~~` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** حقل بحث بـ [[dir="auto"]]. اكتب فيه [[hello]] وبعدين امسحه واكتب [[أهلا]]، وفي كل مرة اسأل [[input.matches(':dir(rtl)')]] في الـ Console.`, done: R`مع الإنجليزي الحقل بقى ltr ([[:dir(ltr)]] رجّع [[true]])، ومع العربي بقى rtl، من غير JavaScript. وعرفت إن [[dir="auto"]] بيختار حسب أول حرف «قوي» في الكلام، فهو أنسب لحقل ممكن يتكتب فيه أي لغة.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بحث</title>
+</head>
+<body>
+<label for="q">دوّر</label>
+<input id="q" type="search" dir="auto">
+</body>
+</html>
+~~~
+
+وفي الـ Console بعد كل كتابة:
+
+~~~js
+const input = document.querySelector('#q');
+input.matches(':dir(ltr)');
+input.matches(':dir(rtl)');
+~~~
+
+**ليه بيشتغل:** [[dir="auto"]] بيخلي المتصفح يبص على أول حرف «قوي» في القيمة. الحرف القوي يعني حرف ليه اتجاه محدد، عربي أو لاتيني. أما الأرقام والعلامات فمش قوية، فبيعدّي عليها ويدوّر على اللي بعدها. فـ [[123 أهلا]] بتطلع rtl.
+
+والتغيير بيحصل وانت بتكتب، من غير JavaScript ولا event.
+
+**الغلطة الشائعة:** تعمل [[oninput]] يفحص الحروف ويغيّر [[dir]] بإيدك. ده سطور كتير لحاجة المتصفح بيعملها بكلمة واحدة، وغالبًا هتنسى حالة الرقم في الأول. وكمان [[dir="auto"]] ينفع على عنصر عرض، زي تعليق جاي من مستخدم.
+
+~~~text الناتج
+القيمة      :dir(ltr)   :dir(rtl)
+فاضي        true       false     (بياخد اتجاه الصفحة)
+hello       true        false
+أهلا        false       true
+123 أهلا    false       true
+~~~` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** [[lang]] مش لقارئ الشاشة بس. دوّر في MDN على ٣ حاجات تانية بتتغيّر حسب قيمته (ابدأ بصفحة [[hyphens]] و [[:lang()]]).`, done: R`عندك ٣: تقسيم الكلمات في آخر السطر ([[hyphens: auto]] مش بيشتغل من غير lang)، و selector [[:lang(en)]]، واختيار الخط والترجمة التلقائية في المتصفح. ولكل واحد سطر كود جربته.`, sol: R`**الإجابة النموذجية: ٣ حاجات بتتغيّر بـ** [[lang]] **غير قارئ الشاشة:**
+
+~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>lang</title>
+<style>
+  p { width: 90px; hyphens: auto; }
+  :lang(en) { font-style: italic; }
+  .up { text-transform: uppercase; }
+</style>
+</head>
+<body>
+<p lang="en">internationalization</p>
+<span lang="tr" class="up">i</span>
+<span lang="en" class="up">i</span>
+</body>
+</html>
+~~~
+
+| الحاجة | بتتغيّر إزاي |
+|---|---|
+| [[hyphens: auto]] | المتصفح بيقسم الكلمة بقواعد اللغة، ومن غير [[lang]] مبيقسمش خالص |
+| [[:lang(en)]] | selector بيختار العناصر حسب لغتها، حتى لو اللغة جاية من عنصر أب |
+| [[text-transform]] | حرف [[i]] الصغير في التركي كبيره [[İ]] بنقطة، مش [[I]] |
+
+وكمان: المتصفح بيستخدم [[lang]] في اختيار الخط لو الحروف مشتركة بين لغات، وعشان يقرر يعرض الترجمة ولا لأ. دول من وثائق MDN، مش من تجربة هنا.
+
+**اللي مانفعش في التجربة:** [[hyphens: auto]] محتاج قاموس تقسيم للغة، و Chrome بيحمّله لوحده بعد التثبيت. في المتصفح الآلي اللي اتجرب فيه مكانش موجود، فالفقرة ماتقسمتش لا بـ lang ولا من غيره. فالسطر بتاعه من وثائق MDN، وجرّبه انت في Chrome العادي. ونفس الكلام علامات [[<q>]]: كتير من المراجع بتقول إنها بتتغيّر بالـ lang، بس Chrome هنا عرض [[“ ”]] مع [[fr]] و [[en]] زي بعض.
+
+**الغلطة الشائعة:** تسيب [[lang="en"]] جاية من قالب إنجليزي على صفحة عربي. الشكل مش هيتغيّر، بس قارئ الشاشة هيقرا العربي بنطق إنجليزي، و Chrome هيعرض ترجمة غلط.
+
+~~~text الناتج
+:lang(en) على الفقرة  →  font-style = italic
+uppercase لحرف i:  tr = İ   en = I
+hyphens: auto: ارتفاع الفقرة بـ lang = 18px ومن غيره 18px (مفيش قاموس في الجهاز ده، فمتساويين)
+~~~` },
           ],
           title: "صفحة عربي بتتقري من اليمين صح",
           desc: R`[[lang="ar"]] بيقول لغة الصفحة، و [[dir="rtl"]] بيقلب اتجاهها كلها: النص يبدأ من اليمين، والـ flex بيرص من اليمين، والـ grid بيبدأ من اليمين. الاتنين على [[<html>]].
@@ -539,12 +1018,356 @@ interactive h1=true
         {
           cmd: "semantic HTML",
           practice: [
-            { lvl: 'تطبيق', t: R`**ابني:** صفحة هبوط لـ «عيادة الابتسامة» (اسم متخيل) من ٧ أجزاء: الهيرو، والخدمات، والخطوات، والأطبا، والأسعار، والأسئلة، والتواصل. كل جزء [[<section id="...">]] وجواه h2، والـ header فيه nav بلينك لكل جزء، والفوتر برّه الـ main.`, done: R`تاب Accessibility (أو ARIA snapshot) بيورّي banner و navigation و main و contentinfo، وفيه h1 واحد وتحته ٧ h2، والضغط على أي لينك في الـ nav بينزل للجزء بتاعه والـ URL بيبقى فيه [[#الاسم]].` },
-            { lvl: 'تطبيق', t: R`**refactor:** خد الصفحة دي: [[<div class="header">]] فيه اللوجو والقايمة، و [[<div class="content">]] للمحتوى، و [[<div class="footer">]]. حوّلها لعناصر semantic من غير ما الشكل يتغيّر ولا class واحد يتشال.`, done: R`قبل: axe طلّع [[region]] (محتوى برّه أي landmark). بعد: صفر violations، والصفحة شكلها نفس الشكل بالظبط (خد screenshot قبل وبعد وقارن)، والـ landmarks الأربعة ظاهرين في تاب Accessibility.` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صفحة فيها header فوق خالص، و article جواه header و footer، و aside، و section ليه [[aria-labelledby]]، و section تاني من غيره. اكتب الـ role اللي تتوقّعه لكل واحد، وبعدين شوف تاب Accessibility.`, done: R`الـ header اللي فوق banner، بس الـ header والـ footer اللي جوه الـ article ملهمش landmark خالص (بقوا جزء من الـ article)، و aside بقى complementary، والـ section اللي ليه اسم بقى region، واللي من غير اسم ملوش role. اتشاف في ARIA snapshot من Chrome.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة فيها اتنين [[<main>]]، والعنوان اللي بعد h1 هو h4 «عشان الخط أصغر». شغّل axe (إضافة axe DevTools أو Lighthouse) وصلّح كل اللي يطلع.`, done: R`axe قبل التصليح طلّع [[landmark-no-duplicate-main]] و [[heading-order]] (ومعاهم [[landmark-unique]])، وبعد ما بقى main واحد والعنوان h2 (والخط صغّرته بـ CSS) بقوا صفر.` },
-            { lvl: 'تحدي', t: R`**أشكال:** ٣ كروت آراء عملا بـ [[<figure>]] و [[<blockquote>]] و [[<figcaption>]]، وكل كارت فيه دايرة بأول حرف من اسم العميل (من غير صور: [[width]] و [[height]] 48px و [[border-radius: 50%]] ولون خلفية)، وعلامة تنصيص كبيرة باهتة بـ [[::before]].`, done: R`الدواير مدورة بالظبط ([[getBoundingClientRect]] بيقول 48×48)، والحرف في نص الدايرة، والكلام نفسه جوه blockquote واسم العميل جوه figcaption في تاب Elements. وعلامة التنصيص زينة: لو تاب Accessibility بيقراها جزء من الرأي، خليها [[content: "”" / ""]] عشان متتقريش.` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** عندك JSON فيه ٤ مقالات لمدونة طبخ متخيلة: [[{"title":"عيش بلدي في البيت","date":"2026-03-01","author":"شيف سلمى"}]] وزيّه ٣. اكتب لكل مقال [[<article>]] فيه h2 و [[<time datetime="2026-03-01">١ مارس</time>]] واسم الكاتب.`, done: R`كل article ليه عنوان، وكل [[time]] الـ datetime بتاعه بصيغة [[YYYY-MM-DD]] والكلام اللي جواه مكتوب للقارئ، والـ validator مش بيشتكي من أي datetime، والمقالات الأربعة جوه section واحد عنوانه «أحدث الوصفات».` },
+            { lvl: 'تطبيق', t: R`**ابني:** صفحة هبوط لـ «عيادة الابتسامة» (اسم متخيل) من ٧ أجزاء: الهيرو، والخدمات، والخطوات، والأطبا، والأسعار، والأسئلة، والتواصل. كل جزء [[<section id="...">]] وجواه h2، والـ header فيه nav بلينك لكل جزء، والفوتر برّه الـ main.`, done: R`تاب Accessibility (أو ARIA snapshot) بيورّي banner و navigation و main و contentinfo، وفيه h1 واحد وتحته ٧ h2، والضغط على أي لينك في الـ nav بينزل للجزء بتاعه والـ URL بيبقى فيه [[#الاسم]].`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>عيادة الابتسامة</title>
+<style>section { min-height: 60vh; scroll-margin-top: 16px; }</style>
+</head>
+<body>
+<header>
+  <a href="#hero">عيادة الابتسامة</a>
+  <nav aria-label="أجزاء الصفحة">
+    <a href="#hero">البداية</a>
+    <a href="#services">الخدمات</a>
+    <a href="#steps">الخطوات</a>
+    <a href="#doctors">الأطبا</a>
+    <a href="#prices">الأسعار</a>
+    <a href="#faq">الأسئلة</a>
+    <a href="#contact">التواصل</a>
+  </nav>
+</header>
+<main>
+  <h1>ابتسامة تثق فيها</h1>
+  <section id="hero"><h2>ليه عيادتنا؟</h2><p>كشف أول مرة مجانًا.</p></section>
+  <section id="services"><h2>الخدمات</h2><p>تنظيف وتبييض وتقويم.</p></section>
+  <section id="steps"><h2>الخطوات</h2><p>احجز، واكشف، وابدأ.</p></section>
+  <section id="doctors"><h2>الأطبا</h2><p>٥ أطبا متخصصين.</p></section>
+  <section id="prices"><h2>الأسعار</h2><p>الكشف من ٢٠٠ جنيه.</p></section>
+  <section id="faq"><h2>الأسئلة</h2><p>بنستقبل الأطفال من سن ٣ سنين.</p></section>
+  <section id="contact"><h2>التواصل</h2><p>اتصل على <a href="tel:+200000000000">الرقم ده</a>.</p></section>
+</main>
+<footer><p>عيادة الابتسامة، كل الحقوق محفوظة.</p></footer>
+</body>
+</html>
+~~~
+
+**اللي يفرق هنا:**
+
+- [[header]] مباشرة تحت الـ body بيبقى landmark اسمه banner. و [[footer]] برّه الـ main بيبقى contentinfo. لو حطيت الفوتر جوه [[main]] هيفقد الـ role ده.
+- الـ [[aria-label]] على [[nav]] بيسمّيها، فقارئ الشاشة يقول «أجزاء الصفحة navigation».
+- [[href="#services"]] بيدوّر على [[id="services"]] وينزل له، والـ URL بيتغيّر ومن غير reload.
+- [[scroll-margin-top]] بيسيب مسافة فوق الجزء لما ينزل له.
+
+**الغلطة الشائعة:** تستخدم [[h3]] تحت [[h1]] عشان حجمها عجبك، أو [[h1]] في كل section. الحجم شغل CSS، والرقم معناه الترتيب.
+
+~~~text الناتج
+- banner:
+  - navigation "أجزاء الصفحة":
+- main:
+  - heading "ابتسامة تثق فيها" [level=1]
+  - heading "ليه عيادتنا؟" [level=2]
+  - heading "الخدمات" [level=2]
+  - heading "الخطوات" [level=2]
+  - heading "الأطبا" [level=2]
+  - heading "الأسعار" [level=2]
+  - heading "الأسئلة" [level=2]
+  - heading "التواصل" [level=2]
+- contentinfo:
+
+landmarks: banner , navigation , main , contentinfo
+h1 = 1   h2 = 7
+بعد الضغط على «الأسعار»: الـ URL فيه #prices   والجزء فوق الشاشة عند y = 16
+overflow على 360: 0px   axe: 0 violations
+~~~` },
+            { lvl: 'تطبيق', t: R`**refactor:** خد الصفحة دي: [[<div class="header">]] فيه اللوجو والقايمة، و [[<div class="content">]] للمحتوى، و [[<div class="footer">]]. حوّلها لعناصر semantic من غير ما الشكل يتغيّر ولا class واحد يتشال.`, done: R`قبل: axe طلّع [[region]] (محتوى برّه أي landmark). بعد: صفر violations، والصفحة شكلها نفس الشكل بالظبط (خد screenshot قبل وبعد وقارن)، والـ landmarks الأربعة ظاهرين في تاب Accessibility.`, sol: R`قبل:
+
+~~~html before.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>متجر النور</title>
+<style>
+  .header { background: #124; color: #fff; padding: 12px; }
+  .header a { color: #fff; margin-inline-start: 12px; }
+  .content { padding: 12px; }
+  .footer { background: #eee; padding: 12px; }
+</style>
+</head>
+<body>
+<div class="header">
+  <span class="logo">متجر النور</span>
+  <div class="menu"><a href="#a">الرئيسية</a><a href="#b">العروض</a></div>
+</div>
+<div class="content"><h1>أهلًا</h1><p>أحدث العروض هنا.</p></div>
+<div class="footer">كل الحقوق محفوظة</div>
+</body>
+</html>
+~~~
+
+بعد (نفس الـ classes، والـ tags بس اللي اتغيّرت):
+
+~~~html after.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>متجر النور</title>
+<style>
+  .header { background: #124; color: #fff; padding: 12px; }
+  .header a { color: #fff; margin-inline-start: 12px; }
+  .content { padding: 12px; }
+  .footer { background: #eee; padding: 12px; }
+</style>
+</head>
+<body>
+<header class="header">
+  <span class="logo">متجر النور</span>
+  <nav class="menu" aria-label="الرئيسية"><a href="#a">الرئيسية</a><a href="#b">العروض</a></nav>
+</header>
+<main class="content"><h1>أهلًا</h1><p>أحدث العروض هنا.</p></main>
+<footer class="footer">كل الحقوق محفوظة</footer>
+</body>
+</html>
+~~~
+
+**ليه الشكل مبيتغيّرش:** [[div]] و [[header]] و [[main]] و [[footer]] و [[nav]] كلهم [[display: block]] افتراضيًا ومن غير مسافات. والـ CSS مربوط بالـ class مش بالـ tag. فالتغيير في المعنى بس.
+
+**ليه الـ class فضل:** الـ CSS والـ JavaScript ممكن يكونوا معتمدين عليه. الـ refactor معناه إن الناتج ميتغيّرش.
+
+**الغلطة الشائعة:** تكتب [[<section class="header">]]. [[section]] معناها جزء من المحتوى، مش رأس الصفحة، ومن غير اسم ملهاش أي role.
+
+~~~text الناتج
+axe قبل: landmark-one-main , region
+axe بعد: 0 violations
+الـ landmarks بعد: banner , navigation , main , contentinfo
+الـ screenshot قبل وبعد متطابقين بايت ببايت على 1280: true
+overflow على 360: 0px
+~~~` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صفحة فيها header فوق خالص، و article جواه header و footer، و aside، و section ليه [[aria-labelledby]]، و section تاني من غيره. اكتب الـ role اللي تتوقّعه لكل واحد، وبعدين شوف تاب Accessibility.`, done: R`الـ header اللي فوق banner، بس الـ header والـ footer اللي جوه الـ article ملهمش landmark خالص (بقوا جزء من الـ article)، و aside بقى complementary، والـ section اللي ليه اسم بقى region، واللي من غير اسم ملوش role. اتشاف في ARIA snapshot من Chrome.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الأدوار</title>
+</head>
+<body>
+<header>رأس الموقع</header>
+<main>
+  <article>
+    <header><h1>المقال</h1></header>
+    <p>نص المقال.</p>
+    <footer>كتبته سلمى</footer>
+  </article>
+  <aside>روابط جانبية</aside>
+  <section aria-labelledby="t"><h2 id="t">التعليقات</h2></section>
+  <section><h2>جزء من غير اسم</h2></section>
+</main>
+</body>
+</html>
+~~~
+
+| العنصر | الـ role | ليه |
+|---|---|---|
+| [[header]] فوق خالص | banner | تحت الـ body مباشرة، فهو رأس الموقع كله |
+| [[header]] جوه article | مفيش landmark | ده رأس المقال بس، مش الموقع |
+| [[footer]] جوه article | مفيش landmark | نفس السبب |
+| [[aside]] | complementary | محتوى مكمّل للصفحة |
+| [[section]] ليه اسم | region | الاسم هو اللي بيخليه landmark |
+| [[section]] من غير اسم | ملوش role | بيتعامل معاملة div |
+
+**القاعدة:** [[header]] و [[footer]] بيتحسبوا landmarks بس لو مش جوه [[article]] أو [[aside]] أو [[main]] أو [[nav]] أو [[section]]. نفس الـ tag معناه بيتغيّر حسب مكانه.
+
+**الغلطة الشائعة:** تحط [[section]] على كل حاجة وتفتكر إن الصفحة بقت semantic. من غير اسم هو مجرد div، والعلاج [[aria-labelledby]] على عنوانه.
+
+~~~text الناتج
+ARIA snapshot من Chrome:
+- banner: رأس الموقع
+- main:
+  - article:
+    - heading "المقال" [level=1]
+    - paragraph: نص المقال.
+    - text: كتبته سلمى
+  - complementary: روابط جانبية
+  - region "التعليقات":
+    - heading "التعليقات" [level=2]
+  - heading "جزء من غير اسم" [level=2]
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة فيها اتنين [[<main>]]، والعنوان اللي بعد h1 هو h4 «عشان الخط أصغر». شغّل axe (إضافة axe DevTools أو Lighthouse) وصلّح كل اللي يطلع.`, done: R`axe قبل التصليح طلّع [[landmark-no-duplicate-main]] و [[heading-order]] (ومعاهم [[landmark-unique]])، وبعد ما بقى main واحد والعنوان h2 (والخط صغّرته بـ CSS) بقوا صفر.`, sol: R`قبل:
+
+~~~html before.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>عيادة</title>
+</head>
+<body>
+<main><h1>عيادة النور</h1></main>
+<main><h4>المواعيد</h4><p>كل يوم من ١٠ لـ ١٠.</p></main>
+</body>
+</html>
+~~~
+
+بعد:
+
+~~~html after.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>عيادة</title>
+<style>.small-title { font-size: 1rem; }</style>
+</head>
+<body>
+<main>
+  <h1>عيادة النور</h1>
+  <h2 class="small-title">المواعيد</h2>
+  <p>كل يوم من ١٠ لـ ١٠.</p>
+</main>
+</body>
+</html>
+~~~
+
+**التلات مشاكل:**
+
+- [[main]] المفروض يبقى واحد بس في الصفحة. هو الـ landmark اللي برنامج قراءة الشاشة بينط عليه مباشرة، واتنين بيخلوا الحركة ملخبطة.
+- [[landmark-unique]] طلعت عشان الاتنين ليهم نفس الـ role ونفس الاسم الفاضي، فمفيش طريقة تفرّق بينهم.
+- [[heading-order]]: من h1 لـ h4 نطّة، وقارئ الشاشة بيستخدم مستويات العناوين كفهرس، فبيبان إن فيه أجزاء ضايعة.
+
+**التصليح الصح للحجم:** العنوان بيتصغّر بالـ CSS، والمستوى بيتحدد من ترتيب الكلام. القاعدة: h2 تحت h1، ولو عايزه أصغر، class.
+
+**الغلطة الشائعة:** تستبدل h4 بـ [[<p><b>...</b></p>]] عشان axe يسكت. كده العنوان اختفى من فهرس قارئ الشاشة، والمشكلة بقت أسوأ.
+
+~~~text الناتج
+axe قبل: heading-order , landmark-no-duplicate-main , landmark-unique
+axe بعد: 0 violations
+عدد main بعد = 1   العناوين: H1 32px , H2 16px
+~~~` },
+            { lvl: 'تحدي', t: R`**أشكال:** ٣ كروت آراء عملا بـ [[<figure>]] و [[<blockquote>]] و [[<figcaption>]]، وكل كارت فيه دايرة بأول حرف من اسم العميل (من غير صور: [[width]] و [[height]] 48px و [[border-radius: 50%]] ولون خلفية)، وعلامة تنصيص كبيرة باهتة بـ [[::before]].`, done: R`الدواير مدورة بالظبط ([[getBoundingClientRect]] بيقول 48×48)، والحرف في نص الدايرة، والكلام نفسه جوه blockquote واسم العميل جوه figcaption في تاب Elements. وعلامة التنصيص زينة: لو تاب Accessibility بيقراها جزء من الرأي، خليها [[content: "”" / ""]] عشان متتقريش.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>آراء العملا</title>
+<style>
+  body { font-family: system-ui; margin: 16px; background: #f4f4f5; }
+  h1 { text-align: center; }
+  .reviews { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); max-width: 900px; margin-inline: auto; }
+  figure { position: relative; margin: 0; padding: 20px; background: #fff; border-radius: 12px; }
+  figure::before {
+    content: "”" / "";
+    position: absolute; inset-block-start: 0; inset-inline-end: 12px;
+    font-size: 72px; line-height: 1; color: #d4d4d8;
+  }
+  blockquote { margin: 0 0 12px; }
+  figcaption { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+  .avatar {
+    width: 48px; height: 48px; flex: none;
+    border-radius: 50%; background: #0f766e; color: #fff;
+    display: grid; place-items: center;
+  }
+</style>
+</head>
+<body>
+<main>
+<h1>آراء العملا</h1>
+<section class="reviews" aria-label="آراء العملا">
+  <figure>
+    <blockquote>الطلب وصل في نفس اليوم والخدمة ممتازة.</blockquote>
+    <figcaption><span class="avatar" aria-hidden="true">م</span>منى سامي</figcaption>
+  </figure>
+  <figure>
+    <blockquote>أول مرة أشتري أونلاين ومتعبش.</blockquote>
+    <figcaption><span class="avatar" aria-hidden="true">ك</span>كريم عادل</figcaption>
+  </figure>
+  <figure>
+    <blockquote>الأسعار كويسة والتواصل سريع.</blockquote>
+    <figcaption><span class="avatar" aria-hidden="true">س</span>سلمى فؤاد</figcaption>
+  </figure>
+</section>
+</main>
+</body>
+</html>
+~~~
+
+**كل جزء بيعمل إيه:**
+
+- [[figure]] وحدة قايمة بذاتها، و [[figcaption]] وصفها. و [[blockquote]] معناها «كلام منقول من حد».
+- [[.avatar]]: [[width]] و [[height]] متساويين و [[border-radius: 50%]] يطلعوا دايرة. و [[flex: none]] بتمنع الدايرة تنضغط لو الاسم طويل.
+- [[display: grid; place-items: center]] أقصر طريقة لتوسيط حرف في النص.
+- [[aria-hidden="true"]] على الدايرة، لأن الحرف زينة والاسم مكتوب جنبها.
+- [[position: relative]] على الكارت عشان [[::before]] يتحدد مكانه بالنسبة له.
+- [[content: "”" / ""]]: اللي بعد الـ [[/]] هو النص البديل لقارئ الشاشة، وفاضي يعني «متقراش».
+
+**الغلطة الشائعة:** تكتب [[width: 48px]] و [[height: 48px]] جوه flex من غير [[flex: none]]. الدايرة تتحول بيضاوي أول ما الاسم يطول.
+
+~~~text الناتج
+مقاس الدايرة: 48×48  border-radius: 50%
+مركز الدايرة (1046, 184)  ومركز الحرف (1046, 184)
+الأعمدة: 1280 = 289.328px 289.328px 289.344px   360 = 328px
+overflow على 360: 0px   axe: 0 violations
+اللي بيتقري من أول كارت: - figure "منى سامي": - blockquote: الطلب وصل في نفس اليوم والخدمة ممتازة. - text: منى سامي
+~~~` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** عندك JSON فيه ٤ مقالات لمدونة طبخ متخيلة: [[{"title":"عيش بلدي في البيت","date":"2026-03-01","author":"شيف سلمى"}]] وزيّه ٣. اكتب لكل مقال [[<article>]] فيه h2 و [[<time datetime="2026-03-01">١ مارس</time>]] واسم الكاتب.`, done: R`كل article ليه عنوان، وكل [[time]] الـ datetime بتاعه بصيغة [[YYYY-MM-DD]] والكلام اللي جواه مكتوب للقارئ، والـ validator مش بيشتكي من أي datetime، والمقالات الأربعة جوه section واحد عنوانه «أحدث الوصفات».`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مدونة طبخ</title>
+</head>
+<body>
+<main>
+  <section aria-labelledby="latest">
+    <h1 id="latest">أحدث الوصفات</h1>
+    <article>
+      <h2>عيش بلدي في البيت</h2>
+      <p><time datetime="2026-03-01">١ مارس</time>، كتبته شيف سلمى</p>
+    </article>
+    <article>
+      <h2>كشري بالعدس الأصفر</h2>
+      <p><time datetime="2026-03-08">٨ مارس</time>، كتبته شيف سلمى</p>
+    </article>
+    <article>
+      <h2>مكرونة بشاميل خفيفة</h2>
+      <p><time datetime="2026-03-15">١٥ مارس</time>، كتبه شيف عادل</p>
+    </article>
+    <article>
+      <h2>كنافة بالمانجا</h2>
+      <p><time datetime="2026-03-22">٢٢ مارس</time>، كتبته شيف هدى</p>
+    </article>
+  </section>
+</main>
+</body>
+</html>
+~~~
+
+**ترتيب العناوين:** «أحدث الوصفات» هو عنوان الصفحة h1، والمقالات h2 تحته. ولو ضفت فوقه h1 تاني زي اسم المدونة، ينزل هو h2 والمقالات h3، عشان الترتيب ميتكسرش.
+
+**الجزء المهم:** [[time]] فيه كلامين: اللي بيتقري للقارئ «١ مارس»، واللي الجهاز بيفهمه [[2026-03-01]]. فجوجل والتقويم يعرفوا التاريخ حتى لو الكلام جواه عربي. الصيغة لازم [[YYYY-MM-DD]] وبأرقام إنجليزي.
+
+**ليه** [[article]]**:** كل وصفة ممكن تتقري لوحدها، حتى لو اتنقلت لصفحة تانية. ده الاختبار: لو الجزء مالوش معنى لوحده، يبقى مش article.
+
+**الغلطة الشائعة:** تكتب [[datetime="١ مارس"]] أو [[datetime="2026-3-1"]]. التانية من غير صفر، والـ validator بيرفضها.
+
+~~~text الناتج
+validator: عدد الـ errors = 0
+عدد article = 4، وكلهم ليهم عنوان: true
+datetime: 2026-03-01 , 2026-03-08 , 2026-03-15 , 2026-03-22
+والتجربة العكسية datetime="2026-3-1": الـ validator طلّع 1 error
+overflow على 360: 0px   axe: 0 violations
+~~~` },
           ],
           title: "استخدم العنصر اللي معناه صح مش div لكل حاجة",
           desc: R`بدل ما الصفحة كلها [[div]]، فيه عناصر ليها معنى: [[header]] لرأس الصفحة، و [[nav]] للروابط الرئيسية، و [[main]] للمحتوى الأساسي (واحد بس)، و [[section]] لجزء ليه عنوان، و [[article]] لحاجة كاملة لوحدها زي بوست أو كارت منتج، و [[aside]] لمحتوى جانبي، و [[footer]] لآخر الصفحة.
@@ -700,11 +1523,245 @@ region "الأكثر مبيعًا"
         {
           cmd: "a و button",
           practice: [
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** متجر فيه [[<a href="#" onclick="addToCart()">أضف للسلة</a>]] و [[<div class="btn" onclick="openMenu()">القايمة</div>]]. جرّبهم بالكيبورد بس وصلّحهم.`, done: R`الـ div مكانش بيتوصله بـ Tab، واللينك كان بيزوّد [[#]] في الـ URL ويطلع الصفحة لفوق. بعد ما الاتنين بقوا [[<button type="button">]]: الاتنين بيتوصلهم بـ Tab ويشتغلوا بـ Enter و Space، والـ URL مبيتغيّرش.` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** فورم بحث [[method="get"]] فيه [[<input name="q">]] وزرار «مسح» من غير type، والـ onclick بتاعه بيفضّي الحقل. اكتب في الحقل «قهوة» ودوس «مسح». إيه اللي هيحصل للصفحة؟`, done: R`الصفحة اتبعتت واتحمّلت من الأول والـ URL بقى فيه [[?q=]] فاضي: الزرار من غير type جوه فورم بيبقى submit، فالـ onclick فضّى الحقل وبعدها الفورم اتبعت. الحل [[type="button"]].` },
-            { lvl: 'تطبيق', t: R`**ابني:** شريط تواصل لـ «بُن الصباح» (متجر قهوة متخيل): لينك «المنيو» لصفحة تانية، وزرار «أضف للسلة»، ولينك «اتصل» بـ [[tel:]]، ولينك واتساب خارجي في تاب جديدة، ولينك «حمّل المنيو» لملف PDF بـ [[download]].`, done: R`بـ Tab بتعدّي على الخمسة بالترتيب، وتاب Accessibility بيقول ٤ link وواحد button، واللينك الخارجي عليه [[rel="noopener noreferrer"]]، ولينك الـ PDF بينزّل الملف بدل ما يفتحه.` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** لينك [[target="_blank"]] من غير [[rel]] خالص. في الصفحة اللي بتفتح اطبع [[window.opener]]. وبعدين اقرا ليه الدرس لسه بيقولك تكتب [[rel="noopener noreferrer"]].`, done: R`في Chrome الحديث طلع [[null]] حتى من غير rel، لأن المتصفحات بقت بتحط noopener لوحدها مع [[_blank]]. بس [[noreferrer]] لسه بيمنع إن الموقع التاني يعرف انت جاي منين، والمتصفحات القديمة مبتعملش noopener لوحدها، فكتابتها لسه صح.` },
-            { lvl: 'تطبيق', t: R`**أشكال:** ٣ أزرار من غير أي مكتبة: زرار كبسولة ([[border-radius: 999px]])، وزرار دايرة فيه أيقونة × بس، وزرار شفاف بحدود (ghost). خلي ألوانهم من متغيرين [[--bg]] و [[--fg]] والـ ghost يغيّرهم بس.`, done: R`كل زرار مقاسه 44×44 على الأقل ([[getBoundingClientRect]])، وزرار الأيقونة ليه [[aria-label="اقفل"]] فاسمه في تاب Accessibility «اقفل» مش ×، والـ ghost الـ CSS بتاعه سطرين بس بيغيّروا المتغيرات.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** متجر فيه [[<a href="#" onclick="addToCart()">أضف للسلة</a>]] و [[<div class="btn" onclick="openMenu()">القايمة</div>]]. جرّبهم بالكيبورد بس وصلّحهم.`, done: R`الـ div مكانش بيتوصله بـ Tab، واللينك كان بيزوّد [[#]] في الـ URL ويطلع الصفحة لفوق. بعد ما الاتنين بقوا [[<button type="button">]]: الاتنين بيتوصلهم بـ Tab ويشتغلوا بـ Enter و Space، والـ URL مبيتغيّرش.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>متجر</title>
+</head>
+<body>
+<main>
+<h1>المتجر</h1>
+<button type="button" onclick="addToCart()">أضف للسلة</button>
+<button type="button" class="btn" onclick="openMenu()">القايمة</button>
+<p id="log">جاهز</p>
+</main>
+<script>
+  function addToCart() { document.querySelector('#log').textContent = 'اتضاف للسلة'; }
+  function openMenu() { document.querySelector('#log').textContent = 'القايمة اتفتحت'; }
+$__lt/script>
+</body>
+</html>
+~~~
+
+**ليه الاتنين كانوا غلط:**
+
+- [[<a href="#">]] لينك معناه «روح لمكان». الـ [[#]] بيخلي المتصفح يطلع لأول الصفحة ويضيف علامة في الـ URL، وده مش اللي انت عايزه في إضافة للسلة.
+- [[<div onclick>]] مبيتوصلش بـ Tab أصلًا، ومبيشتغلش بـ Enter ولا Space، وقارئ الشاشة مبيقولش إنه زرار. كل ده بييجي ببلاش مع [[button]].
+
+**القاعدة:** لو بيودّيك لصفحة أو مكان، يبقى [[a]]. لو بيعمل حاجة في نفس الصفحة، يبقى [[button]].
+
+**الغلطة الشائعة:** تزوّد الـ div بـ [[tabindex="0"]] و [[role="button"]] و [[onkeydown]]. ده تلات حاجات بتعيد بناء زرار موجود جاهز، وغالبًا هتنسى Space. وشكل الزرار بيتغيّر بالـ CSS عادي.
+
+~~~text الناتج
+قبل، بـ Tab مرتين: وصل لـ a «أضف للسلة» ثم الـ body (خرج من الصفحة)  (الـ div مش بيتوصله)
+قبل، الضغط على اللينك: الـ URL بقى ينتهي بـ /p.html#
+
+بعد:
+Tab الأولى: button «أضف للسلة»  Tab التانية: button «القايمة»
+Enter على الأول  →  اتضاف للسلة
+Space على التاني →  القايمة اتفتحت
+الـ URL اتغيّر: false
+axe: 0 violations
+~~~` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** فورم بحث [[method="get"]] فيه [[<input name="q">]] وزرار «مسح» من غير type، والـ onclick بتاعه بيفضّي الحقل. اكتب في الحقل «قهوة» ودوس «مسح». إيه اللي هيحصل للصفحة؟`, done: R`الصفحة اتبعتت واتحمّلت من الأول والـ URL بقى فيه [[?q=]] فاضي: الزرار من غير type جوه فورم بيبقى submit، فالـ onclick فضّى الحقل وبعدها الفورم اتبعت. الحل [[type="button"]].`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بحث</title>
+</head>
+<body>
+<form method="get" action="search.html">
+  <label for="q">دوّر</label>
+  <input id="q" name="q">
+  <button onclick="document.querySelector('#q').value = ''">مسح</button>
+</form>
+</body>
+</html>
+~~~
+
+**التوقّع الصح:** الصفحة بتتبعت. أي [[button]] جوه [[form]] من غير [[type]] بيبقى [[submit]] افتراضيًا. فالترتيب كان: الـ onclick فضّى الحقل، وبعدها الزرار عمل شغله العادي وبعت الفورم بقيمة فاضية.
+
+**الحل:** سطر واحد:
+
+~~~html
+<button type="button" onclick="document.querySelector('#q').value = ''">مسح</button>
+~~~
+
+ولو الفورم مش متغيّر من JavaScript، فيه [[type="reset"]] جاهز بيرجّع كل الحقول لقيمتها الأولى.
+
+**الغلطة الشائعة:** تعالجها بـ [[event.preventDefault()]] في كل زرار. ده بيشتغل، بس [[type="button"]] أوضح وأقصر. وعوّد نفسك تكتب [[type]] على كل [[button]] دايمًا.
+
+~~~text الناتج
+قبل (من غير type):
+الـ URL بعد الضغط: /search.html?q=
+نوع الزرار: submit
+
+بعد (type="button"):
+الـ URL بعد الضغط: /p.html
+قيمة الحقل: «»
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** شريط تواصل لـ «بُن الصباح» (متجر قهوة متخيل): لينك «المنيو» لصفحة تانية، وزرار «أضف للسلة»، ولينك «اتصل» بـ [[tel:]]، ولينك واتساب خارجي في تاب جديدة، ولينك «حمّل المنيو» لملف PDF بـ [[download]].`, done: R`بـ Tab بتعدّي على الخمسة بالترتيب، وتاب Accessibility بيقول ٤ link وواحد button، واللينك الخارجي عليه [[rel="noopener noreferrer"]]، ولينك الـ PDF بينزّل الملف بدل ما يفتحه.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بُن الصباح</title>
+<style>
+  .bar { display: flex; flex-wrap: wrap; gap: 8px; padding: 8px; }
+  .bar a, .bar button { padding: 10px 14px; font: inherit; }
+</style>
+</head>
+<body>
+<main>
+<h1>بُن الصباح</h1>
+<nav class="bar" aria-label="التواصل">
+  <a href="menu.html">المنيو</a>
+  <button type="button">أضف للسلة</button>
+  <a href="tel:+200000000000">اتصل</a>
+  <a href="https://wa.me/200000000000" target="_blank" rel="noopener noreferrer">واتساب</a>
+  <a href="menu.pdf" download>حمّل المنيو</a>
+</nav>
+</main>
+</body>
+</html>
+~~~
+
+**كل عنصر اخترناه ليه:**
+
+- «المنيو» [[a]]: بيودّي لصفحة تانية، فيفتح في تاب جديدة بالكليك الوسط.
+- «أضف للسلة» [[button]]: بيعمل حاجة في نفس الصفحة.
+- [[tel:]]: على الموبايل بيفتح الاتصال بالرقم، والرقم بالصيغة الدولية من غير مسافات.
+- [[target="_blank"]]: تاب جديدة، ومعاها [[rel="noopener noreferrer"]] عشان الموقع التاني ميوصلش لصفحتك.
+- [[download]]: المتصفح بينزّل الملف بدل ما يفتحه. وده بيشتغل على ملف من نفس الموقع بس. لو الملف من دومين تاني بيتجاهله.
+
+**الغلطة الشائعة:** تعمل زرار فيه [[onclick="location.href=..."]] بدل لينك. الكليك الوسط يبطل، و «افتح في تاب جديدة» تبطل، وقارئ الشاشة يقول زرار وهو بيودّي لصفحة.
+
+~~~text الناتج
+ترتيب Tab: المنيو ← أضف للسلة ← اتصل ← واتساب ← حمّل المنيو
+الأدوار: 4 link و 1 button
+rel الخارجي: noopener noreferrer
+الضغط على «حمّل المنيو»: اتنزّل ملف اسمه menu.pdf، والصفحة فضلت على /p.html
+overflow على 360: 0px   axe: 0 violations
+~~~` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** لينك [[target="_blank"]] من غير [[rel]] خالص. في الصفحة اللي بتفتح اطبع [[window.opener]]. وبعدين اقرا ليه الدرس لسه بيقولك تكتب [[rel="noopener noreferrer"]].`, done: R`في Chrome الحديث طلع [[null]] حتى من غير rel، لأن المتصفحات بقت بتحط noopener لوحدها مع [[_blank]]. بس [[noreferrer]] لسه بيمنع إن الموقع التاني يعرف انت جاي منين، والمتصفحات القديمة مبتعملش noopener لوحدها، فكتابتها لسه صح.`, sol: R`الصفحة اللي فيها اللينكات:
+
+~~~html from.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>من هنا</title>
+</head>
+<body>
+<a id="plain" href="to.html" target="_blank">من غير rel</a>
+<a id="safe" href="to.html" target="_blank" rel="noopener noreferrer">بـ rel كامل</a>
+<a id="old" href="to.html" target="_blank" rel="opener">rel="opener"</a>
+</body>
+</html>
+~~~
+
+والصفحة اللي بتفتح:
+
+~~~html to.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>هنا</title>
+</head>
+<body>
+<script>
+  console.log('opener:', window.opener);
+  console.log('referrer:', document.referrer);
+$__lt/script>
+</body>
+</html>
+~~~
+
+شغّلهم من سيرفر محلي (مثلًا [[npx serve .]]) عشان الـ referrer يتبعت.
+
+**الفرق بين التلاتة:**
+
+- [[window.opener]] هو باب من الصفحة الجديدة لصفحتك. لو موجود، الموقع التاني يقدر يكتب [[window.opener.location = ...]] ويبدّل صفحتك بصفحة مزيفة وانت في التاب التانية.
+- المتصفحات الحديثة بقت بتحط [[noopener]] لوحدها مع [[_blank]]. عشان كده [[window.opener]] طلع [[null]] حتى من غير rel. وعشان نرجّع السلوك القديم لازم نكتب [[rel="opener"]] صراحة.
+- [[noreferrer]] موضوع تاني: بيمنع الموقع التاني يعرف انت جاي منين، و [[document.referrer]] بيبقى فاضي.
+
+**الغلطة الشائعة:** تستنتج إن [[rel]] بقت ملهاش لازمة لأن الرقم طلع [[null]]. جرّب اللينك التاني: الـ referrer مختلف، وده اللي لسه محتاجه، زائد المتصفحات القديمة.
+
+~~~text الناتج
+                 window.opener     document.referrer
+من غير rel       null            عنوان صفحتك: /from.html
+noopener noreferrer  null        (فاضي)
+rel="opener"     Window            عنوان صفحتك: /from.html
+~~~` },
+            { lvl: 'تطبيق', t: R`**أشكال:** ٣ أزرار من غير أي مكتبة: زرار كبسولة ([[border-radius: 999px]])، وزرار دايرة فيه أيقونة × بس، وزرار شفاف بحدود (ghost). خلي ألوانهم من متغيرين [[--bg]] و [[--fg]] والـ ghost يغيّرهم بس.`, done: R`كل زرار مقاسه 44×44 على الأقل ([[getBoundingClientRect]])، وزرار الأيقونة ليه [[aria-label="اقفل"]] فاسمه في تاب Accessibility «اقفل» مش ×، والـ ghost الـ CSS بتاعه سطرين بس بيغيّروا المتغيرات.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>أزرار</title>
+<style>
+  .btn {
+    --bg: #0f766e;
+    --fg: #fff;
+    background: var(--bg);
+    color: var(--fg);
+    border: 2px solid var(--bg);
+    min-width: 44px;
+    min-height: 44px;
+    padding: 8px 20px;
+    font: 600 1rem system-ui;
+    cursor: pointer;
+    border-radius: 999px;
+  }
+  .btn--ghost {
+    --bg: transparent;
+    --fg: #0f766e;
+    border-color: currentColor;
+  }
+  .btn--round {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border-radius: 50%;
+  }
+</style>
+</head>
+<body>
+<main>
+<h1>الأزرار</h1>
+<button type="button" class="btn">اشترك</button>
+<button type="button" class="btn btn--round" aria-label="اقفل">×</button>
+<button type="button" class="btn btn--ghost">اعرف أكتر</button>
+</main>
+</body>
+</html>
+~~~
+
+**ليه المتغيرات:** كل الشكل في [[.btn]] مكتوب مرة واحدة بـ [[var(--bg)]]. فالـ ghost مبيعيدش كتابة حاجة، بيغيّر قيمتين بس، والـ [[border-color: currentColor]] بتاخد لون الكلام.
+
+و [[min-width]] و [[min-height]] 44px عشان الزرار يتداس بالصباع بسهولة، وده أقل من أي نص جواه هيقدر يكسره.
+
+و [[aria-label="اقفل"]] مهم: من غيره قارئ الشاشة هيقول «multiplication sign». الـ aria-label بيبدّل اسم الزرار.
+
+**الغلطة الشائعة:** تكتب [[border: none]] في الأساس وبعدين تضيف border للـ ghost. الـ ghost يطلع أكبر من الزرار العادي بـ 4px، فالصف يتهز. الـ border موجود في الاتنين، بس شفاف أو بنفس لون الخلفية.
+
+~~~text الناتج
+كبسولة  85.4×44.0
+دايرة   44.0×44.0   border-radius = 50%
+ghost   107.2×44.0   الخلفية = rgba(0, 0, 0, 0)
+أسماء الأزرار: button "اشترك" ,   button "اقفل": × ,   button "اعرف أكتر"
+axe: 0 violations
+~~~` },
           ],
           title: "لينك ولا زرار؟ والـ div اللي بيتضغط",
           desc: R`القاعدة: لو الضغطة بتوديك مكان (صفحة، أو جزء في الصفحة، أو ملف) يبقى [[<a href>]]. لو بتعمل حاجة في نفس المكان (تفتح مودال، تبعت فورم، تضيف للسلة) يبقى [[<button>]].
@@ -855,12 +1912,336 @@ generic
         {
           cmd: "form و label",
           practice: [
-            { lvl: 'تطبيق', t: R`**ابني:** فورم حجز حصة تجريبية في «جيم الأبطال»: الاسم، والموبايل بـ [[pattern="01[0125][0-9]{8}"]] و [[title]] بيشرح الشكل، والإيميل، والفرع ([[<select>]])، و checkbox الموافقة. كل حقل ليه label مربوط و autocomplete مناسب.`, done: R`إرسال فاضي بيقف عند الاسم، و [[0123]] في الموبايل بيطلّع رسالة فيها كلام الـ title، و [[01012345678]] بيعدّي، و [[form.checkValidity()]] بيرجّع [[true]] بس لما كله سليم.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** فورم فيه [[<label for="mail">الإيميل</label><input id="email" type="email" placeholder="الإيميل">]] وحقل كلمة سر من غير [[name]]. الإيميل بيوصل للسيرفر وكلمة السر لأ، والضغط على الكلمة مش بيعمل حاجة.`, done: R`[[document.querySelector('#email').labels.length]] بقى 1 بعد ما خليت for = id، و [[new FormData(form)]] بقى فيه [[password]]، وشلت الـ placeholder اللي كان بيكرر الـ label (لأنه بيختفي أول ما تكتب).` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** فورم GET فيه: [[name="q"]] قيمته قهوة، و input من غير name، و [[name="code"]] عليه [[disabled]]، و checkbox [[news]] مش متعلّم، و checkbox [[terms]] متعلّم. إيه اللي هيظهر في الـ URL؟`, done: R`ظهر [[q=قهوة&terms=on]] بس (في Chrome): الحقل اللي من غير name مش بيتبعت، والـ disabled مش بيتبعت، والـ checkbox اللي مش متعلّم مش بيتبعت خالص (مش [[news=off]])، والمتعلّم من غير value بيتبعت [[on]].` },
-            { lvl: 'تطبيق', t: R`**قارن وقيس:** حقلين فيهم نفس الرقم [[01001234567]]: واحد [[type="number"]] وواحد [[type="tel"]]. اضغط في كل واحد ودوس سهم لفوق.`, done: R`الـ number بقى [[1001234568]]: الصفر اللي في الأول راح والرقم زاد واحد، والـ tel فضل زي ما هو. فالموبايل ورقم البطاقة والكود البريدي [[tel]] أو [[text]] مع [[inputmode="numeric"]]، والـ number للكميات بس.` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** من صفحة [[autocomplete]] على MDN طلّع القيم اللي تخلي المتصفح يملا فورم عنوان شحن كامل: الاسم، والشارع، والمدينة، والكود البريدي، والبلد، والتليفون.`, done: R`فورمك فيه [[name]] و [[street-address]] (أو [[address-line1]]) و [[address-level2]] و [[postal-code]] و [[country]] و [[tel]]، و Chrome عرض يملاهم كلهم مرة واحدة من عنوان محفوظ.` },
-            { lvl: 'تحدي', t: R`**أشكال:** label عايم من غير JavaScript: الـ label فوق الحقل كأنه placeholder، ولما تركّز أو تكتب يطلع لفوق ويصغر. الحيلة: [[placeholder=" "]] على الحقل، والـ label بعده، و [[input:focus + label, input:not(:placeholder-shown) + label]] بتحرّكه بـ transform.`, done: R`الـ label بيطلع لفوق لما تدوس على الحقل، وبيفضل فوق لو فيه كلام، وبيرجع مكانه لو مسحت الكلام وطلعت، والربط [[for]] و [[id]] لسه موجود (تاب Accessibility بيقول اسم الحقل)، وفي RTL الـ label بيبدأ من اليمين.` },
+            { lvl: 'تطبيق', t: R`**ابني:** فورم حجز حصة تجريبية في «جيم الأبطال»: الاسم، والموبايل بـ [[pattern="01[0125][0-9]{8}"]] و [[title]] بيشرح الشكل، والإيميل، والفرع ([[<select>]])، و checkbox الموافقة. كل حقل ليه label مربوط و autocomplete مناسب.`, done: R`إرسال فاضي بيقف عند الاسم، و [[0123]] في الموبايل بيطلّع رسالة فيها كلام الـ title، و [[01012345678]] بيعدّي، و [[form.checkValidity()]] بيرجّع [[true]] بس لما كله سليم.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>حجز حصة</title>
+<style>
+  form { display: grid; gap: 10px; max-width: 340px; font-family: system-ui; }
+  label { font-weight: 600; }
+  input, select { padding: 10px; font: inherit; width: 100%; box-sizing: border-box; }
+  .check { display: flex; gap: 8px; align-items: center; }
+  .check input { width: auto; }
+</style>
+</head>
+<body>
+<main>
+<h1>احجز حصة تجريبية</h1>
+<form>
+  <label for="name">الاسم</label>
+  <input id="name" name="name" autocomplete="name" required>
+
+  <label for="phone">الموبايل</label>
+  <input id="phone" name="phone" type="tel" dir="ltr" autocomplete="tel"
+         pattern="01[0125][0-9]{8}" title="١١ رقم بيبدأ بـ 010 أو 011 أو 012 أو 015" required>
+
+  <label for="email">الإيميل</label>
+  <input id="email" name="email" type="email" dir="ltr" autocomplete="email" required>
+
+  <label for="branch">الفرع</label>
+  <select id="branch" name="branch" required>
+    <option value="">اختار الفرع</option>
+    <option value="north">الفرع الشمالي</option>
+    <option value="south">الفرع الجنوبي</option>
+  </select>
+
+  <div class="check">
+    <input id="ok" name="ok" type="checkbox" required>
+    <label for="ok">موافق على الشروط</label>
+  </div>
+
+  <button>احجز</button>
+</form>
+</main>
+</body>
+</html>
+~~~
+
+**اللي بيعمل الشغل:**
+
+- [[for]] و [[id]] متساويين: الضغط على الكلمة بيركّز في الحقل، وقارئ الشاشة بيقول اسم الحقل.
+- [[pattern]] لازم القيمة **كلها** تطابقه. [[01]] ثابتين، و [[[0125]]] حرف واحد من الأربعة، و [[[0-9]{8}]] ٨ أرقام.
+- [[title]]: بيظهر تحت رسالة المتصفح لما الـ pattern يفشل، فاكتب فيه الشكل المطلوب بالظبط.
+- [[required]] على الـ select مع [[option value=""]]: الاختيار الأول قيمته فاضية، فالمتصفح بيعتبره مش مختار.
+- [[autocomplete]]: اللي بيخلي الموبايل يملا الحقل من بيانات المستخدم.
+
+**الغلطة الشائعة:** تكتب [[type="number"]] للموبايل. الصفر اللي في الأول هيضيع، والـ pattern مش بيشتغل على number أصلًا.
+
+~~~text الناتج
+إرسال فاضي: الفحص وقف عند name  (checkValidity = false)
+الموبايل 0123: valid = false  patternMismatch = true
+رسالة المتصفح: Please match the requested format.
+والـ title اللي بيظهر تحتها: ١١ رقم بيبدأ بـ 010 أو 011 أو 012 أو 015
+الموبايل 01012345678: valid = true
+كله مظبوط: checkValidity = true
+autocomplete: name , tel , email
+overflow على 360: 0px   axe: 0 violations
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** فورم فيه [[<label for="mail">الإيميل</label><input id="email" type="email" placeholder="الإيميل">]] وحقل كلمة سر من غير [[name]]. الإيميل بيوصل للسيرفر وكلمة السر لأ، والضغط على الكلمة مش بيعمل حاجة.`, done: R`[[document.querySelector('#email').labels.length]] بقى 1 بعد ما خليت for = id، و [[new FormData(form)]] بقى فيه [[password]]، وشلت الـ placeholder اللي كان بيكرر الـ label (لأنه بيختفي أول ما تكتب).`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>دخول</title>
+</head>
+<body>
+<main>
+<h1>تسجيل الدخول</h1>
+<form id="f">
+  <label for="email">الإيميل</label>
+  <input id="email" name="email" type="email" autocomplete="email">
+
+  <label for="pass">كلمة السر</label>
+  <input id="pass" name="password" type="password" autocomplete="current-password">
+
+  <button>ادخل</button>
+</form>
+</main>
+</body>
+</html>
+~~~
+
+**التلات مشاكل وحلولها:**
+
+- [[for="mail"]] كان بيشاور على [[id]] مش موجود، والموجود [[email]]. الربط بيطابق حرف بحرف، فحرف واحد كفاية يكسره في صمت. والضغط على الكلمة مكانش بيعمل حاجة.
+- حقل من غير [[name]] مش بيتبعت خالص. الـ [[name]] هو المفتاح اللي السيرفر بيقرا بيه القيمة. و [[id]] للصفحة، و [[name]] للسيرفر.
+- الـ [[placeholder]] كان نفس كلام الـ label. بيختفي أول ما تكتب، ولونه باهت، ومش بديل للـ label. استخدمه لمثال على الشكل بس.
+
+**الغلطة الشائعة:** تعتقد إن [[id]] بيتبعت. حقل [[id="password"]] من غير [[name]] عمره ما هيوصل للسيرفر.
+
+~~~text الناتج
+قبل:
+labels.length للإيميل = 0
+مفاتيح FormData = email
+
+بعد:
+labels.length للإيميل = 1
+مفاتيح FormData = email , password
+الضغط على «الإيميل» ركّز في: email
+axe: 0 violations
+~~~` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** فورم GET فيه: [[name="q"]] قيمته قهوة، و input من غير name، و [[name="code"]] عليه [[disabled]]، و checkbox [[news]] مش متعلّم، و checkbox [[terms]] متعلّم. إيه اللي هيظهر في الـ URL؟`, done: R`ظهر [[q=قهوة&terms=on]] بس (في Chrome): الحقل اللي من غير name مش بيتبعت، والـ disabled مش بيتبعت، والـ checkbox اللي مش متعلّم مش بيتبعت خالص (مش [[news=off]])، والمتعلّم من غير value بيتبعت [[on]].`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بحث</title>
+</head>
+<body>
+<form method="get" action="result.html">
+  <input name="q" value="قهوة" aria-label="بحث">
+  <input value="مش هيتبعت" aria-label="من غير name">
+  <input name="code" value="X1" disabled aria-label="كود">
+  <label><input type="checkbox" name="news"> الأخبار</label>
+  <label><input type="checkbox" name="terms" checked> الشروط</label>
+  <button>ابعت</button>
+</form>
+</body>
+</html>
+~~~
+
+**الإجابة:** حقلين بس من الخمسة هيتبعتوا:
+
+| الحقل | اتبعت؟ | ليه |
+|---|---|---|
+| [[name="q"]] | أيوه | ليه name وقيمة |
+| من غير name | لأ | مفيش مفتاح يتبعت تحته |
+| [[disabled]] | لأ | الـ disabled مش بيتبعت خالص |
+| [[news]] مش متعلّم | لأ | الـ checkbox المش متعلّم بيختفي، مش بيبقى off |
+| [[terms]] متعلّم | أيوه | من غير [[value]] قيمته [[on]] |
+
+ولو عايز حقل المستخدم ميعدّلوش بس يتبعت، استخدم [[readonly]] مش [[disabled]].
+
+**الغلطة الشائعة:** تكتب كود سيرفر يقرا [[news == 'off']]. القيمة دي عمرها ما هتيجي. اللي بييجي إن المفتاح مش موجود أصلًا.
+
+والعربي في الـ URL بيتبعت متشفّر، و Chrome بيعرضه مقروء في شريط العنوان.
+
+~~~text الناتج
+location.search الخام:
+?q=%D9%82%D9%87%D9%88%D8%A9&terms=on
+
+بعد decodeURIComponent:
+?q=قهوة&terms=on
+~~~` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** حقلين فيهم نفس الرقم [[01001234567]]: واحد [[type="number"]] وواحد [[type="tel"]]. اضغط في كل واحد ودوس سهم لفوق.`, done: R`الـ number بقى [[1001234568]]: الصفر اللي في الأول راح والرقم زاد واحد، والـ tel فضل زي ما هو. فالموبايل ورقم البطاقة والكود البريدي [[tel]] أو [[text]] مع [[inputmode="numeric"]]، والـ number للكميات بس.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>قارن</title>
+</head>
+<body>
+<label for="n">number</label>
+<input id="n" type="number" value="01001234567">
+<label for="t">tel</label>
+<input id="t" type="tel" value="01001234567">
+</body>
+</html>
+~~~
+
+اضغط في كل حقل ودوس سهم لفوق.
+
+**ليه:** [[type="number"]] معناه «ده مقدار» زي كمية أو سعر. والمقدار مفيهوش صفر في الأول، و 1 و 01 نفس الرقم. والسهم معناه زوّد واحد. فالـ [[number]] بيتعامل مع الموبايل كرقم مليار.
+
+أما [[tel]] فنص عادي مكتوب فيه أرقام، والموبايل بيفتح فيه لوحة الأرقام.
+
+| البيانات | الـ type |
+|---|---|
+| كمية، سعر، عمر | [[number]] |
+| موبايل | [[tel]] |
+| رقم بطاقة، كود بريدي، كود تفعيل | [[text]] مع [[inputmode="numeric"]] |
+
+**القاعدة السهلة:** لو هتعمل عليه جمع أو طرح، يبقى number. ولو لأ، يبقى نص.
+
+**الغلطة الشائعة:** تسيب [[number]] عشان الموبايل يفتح لوحة أرقام. [[inputmode="numeric"]] بيعمل نفس الحاجة من غير ما يكسر القيمة.
+
+~~~text الناتج
+           قبل السهم        بعد السهم
+number     01001234567      1001234568
+tel        01001234567      01001234567
+~~~` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** من صفحة [[autocomplete]] على MDN طلّع القيم اللي تخلي المتصفح يملا فورم عنوان شحن كامل: الاسم، والشارع، والمدينة، والكود البريدي، والبلد، والتليفون.`, done: R`فورمك فيه [[name]] و [[street-address]] (أو [[address-line1]]) و [[address-level2]] و [[postal-code]] و [[country]] و [[tel]]، و Chrome عرض يملاهم كلهم مرة واحدة من عنوان محفوظ.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الشحن</title>
+<style>
+  form { display: grid; gap: 8px; max-width: 340px; font-family: system-ui; }
+  input { padding: 10px; font: inherit; }
+</style>
+</head>
+<body>
+<main>
+<h1>عنوان الشحن</h1>
+<form>
+  <label for="n">الاسم</label>
+  <input id="n" name="name" autocomplete="shipping name">
+
+  <label for="s">الشارع</label>
+  <input id="s" name="street" autocomplete="shipping address-line1">
+
+  <label for="c">المدينة</label>
+  <input id="c" name="city" autocomplete="shipping address-level2">
+
+  <label for="z">الكود البريدي</label>
+  <input id="z" name="zip" dir="ltr" autocomplete="shipping postal-code">
+
+  <label for="co">البلد</label>
+  <input id="co" name="country" autocomplete="shipping country-name">
+
+  <label for="p">التليفون</label>
+  <input id="p" name="phone" type="tel" dir="ltr" autocomplete="shipping tel">
+
+  <button>أكمل</button>
+</form>
+</main>
+</body>
+</html>
+~~~
+
+| القيمة | معناها |
+|---|---|
+| [[name]] | الاسم بالكامل |
+| [[address-line1]] | سطر العنوان في [[input]] عادي، وبعده [[address-line2]] لو عايز سطر تاني |
+| [[street-address]] | العنوان كله في [[textarea]] بس |
+| [[address-level2]] | المدينة |
+| [[address-level1]] | المحافظة أو الولاية |
+| [[postal-code]] | الكود البريدي |
+| [[country]] أو [[country-name]] | البلد: الأولى كود زي EG، والتانية الاسم مكتوب |
+| [[tel]] | التليفون |
+
+وكلمة [[shipping]] قبل القيمة بتقول «ده عنوان الشحن»، فالمتصفح ميخلطوش بعنوان الفاتورة ([[billing]]) لو الاتنين في نفس الصفحة.
+
+ملء Chrome من عنوان محفوظ مش ممكن يتجرب في متصفح آلي من غير بيانات حقيقية، فجزء «اتملى كله» من الوثائق. جرّبه انت على عنوان محفوظ عندك.
+
+**الفخ اللي ظهر في التجربة:** [[street-address]] على [[input]] عادي الـ validator بيرفضها، لأن القيمة دي معناها عنوان من كذا سطر، فمكانها [[textarea]]. لو الحقل [[input]] استخدم [[address-line1]].
+
+**الغلطة الشائعة:** تكتب [[autocomplete="off"]] على فورم الشحن عشان «الشكل ينضف». المستخدم على الموبايل هيكتب كل ده بإيده من غير داعي.
+
+~~~text الناتج
+autocomplete لكل حقل (زي ما المتصفح قراها):
+name      shipping name
+street    shipping address-line1
+city      shipping address-level2
+zip       shipping postal-code
+country   shipping country-name
+phone     shipping tel
+
+validator: عدد الـ errors = 0
+validator لو حطيت street-address على input: 1 error
+axe: 0 violations
+~~~` },
+            { lvl: 'تحدي', t: R`**أشكال:** label عايم من غير JavaScript: الـ label فوق الحقل كأنه placeholder، ولما تركّز أو تكتب يطلع لفوق ويصغر. الحيلة: [[placeholder=" "]] على الحقل، والـ label بعده، و [[input:focus + label, input:not(:placeholder-shown) + label]] بتحرّكه بـ transform.`, done: R`الـ label بيطلع لفوق لما تدوس على الحقل، وبيفضل فوق لو فيه كلام، وبيرجع مكانه لو مسحت الكلام وطلعت، والربط [[for]] و [[id]] لسه موجود (تاب Accessibility بيقول اسم الحقل)، وفي RTL الـ label بيبدأ من اليمين.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>label عايم</title>
+<style>
+  .field { position: relative; max-width: 300px; margin: 24px 16px; font-family: system-ui; }
+  .field input {
+    width: 100%; box-sizing: border-box;
+    padding: 20px 12px 6px;
+    font: inherit;
+    border: 1px solid #71717a; border-radius: 8px;
+  }
+  .field label {
+    position: absolute;
+    inset-inline-start: 12px;
+    top: 14px;
+    color: #52525b;
+    pointer-events: none;
+    transform-origin: top right;
+    transition: transform .15s;
+  }
+  .field input:focus + label,
+  .field input:not(:placeholder-shown) + label {
+    transform: translateY(-10px) scale(.75);
+  }
+</style>
+</head>
+<body>
+<main>
+<h1>العنوان</h1>
+<div class="field">
+  <input id="city" type="text" placeholder=" ">
+  <label for="city">المدينة</label>
+</div>
+</main>
+</body>
+</html>
+~~~
+
+**الحيلة خطوة بخطوة:**
+
+- [[placeholder=" "]] مسافة واحدة، فمش بتظهر حاجة، بس الحقل بقى عنده placeholder.
+- [[:placeholder-shown]] بيبقى صحيح طول ما الـ placeholder ظاهر، يعني الحقل فاضي. فـ [[:not(:placeholder-shown)]] معناها «فيه كلام».
+- الـ [[+]] بيختار العنصر اللي بعده مباشرة، فالـ label لازم يبقى **بعد** الـ input في الـ HTML. ده السبب الوحيد لكده.
+- [[pointer-events: none]]: الضغط يعدّي من الـ label للحقل اللي تحته.
+- [[inset-inline-start]] و [[transform-origin: top right]]: عشان يبدأ من اليمين في RTL ويصغر ناحية اليمين. في موقع بلغتين خلي الـ origin في متغير.
+
+**الغلطة الشائعة:** تستخدم [[input:valid + label]] بدل الحيلة دي. ده بيحتاج [[required]]، وبيرجّع الـ label مكانه مع أي قيمة غلط.
+
+~~~text الناتج
+                     transform                     color
+ساكن فاضي            none
+بعد الضغط            matrix(0.75, 0, 0, 0.75, 0, -10)
+فيه كلام وطلعت       matrix(0.75, 0, 0, 0.75, 0, -10)
+مسحت وطلعت           none
+
+اسم الحقل في تاب Accessibility: textbox "المدينة":
+الـ label بيبدأ من يمين الحقل: يمين الحقل 1256 ويمين الـ label 1244
+axe: 0 violations
+~~~` },
           ],
           title: "فورم بيتملي صح من الموبايل ومن قارئ الشاشة",
           desc: R`كل حقل لازم يبقى ليه [[<label>]] مربوط بيه ([[for]] = [[id]] الحقل). ده بيخلي الضغط على الكلمة يركّز في الحقل، وقارئ الشاشة يقول اسم الحقل.
@@ -1025,11 +2406,226 @@ application/x-www-form-urlencoded
         {
           cmd: "img",
           practice: [
-            { lvl: 'سريع', t: R`**مسألة:** صورة الهيرو اللي في المثال ([[400w]] و [[800w]] و [[1600w]] و [[sizes="(min-width: 768px) 50vw, 100vw"]]). احسب بإيدك أنهي ملف المتصفح هيختار على: موبايل عرضه 400 و DPR 2، وموبايل 360 و DPR 3، وكمبيوتر 1280 و DPR 1. وبعدين اتأكد من [[img.currentSrc]] في وضع الموبايل.`, done: R`الحساب: 400×2 = 800 → [[800w]]، و 360×3 = 1080 → [[1600w]] (أول ملف أكبر من المطلوب)، و 1280×0.5 = 640 → [[800w]]. و Chrome اختار نفس التلاتة.` },
-            { lvl: 'تطبيق', t: R`**قارن وقيس:** صفحة فيها ٢٠ صورة طول كل واحدة 300px. افتحها على عرض 360 وارتفاع 640 مرة من غير [[loading="lazy"]] ومرة بيه، وعدّ الصور اللي اتحمّلت من Network (فلتر Img) من غير ما تنزل.`, done: R`من غير lazy اتحمّلوا الـ ٢٠ كلهم، وبيه ٧ بس في Chrome على localhost: اللي في الشاشة وشوية تحتها (المتصفح بيحمّل قبل ما توصل بمسافة). الصور اللي فوق خالص متحطش عليها lazy.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة منتج فيها [[alt="صورة"]] على صورة المنتج، و [[alt="IMG_2034.jpg"]] على صورة تانية، وأيقونة سلة جنب كلمة «السلة» عليها [[alt="سلة"]]، وصورة الهيرو عليها [[loading="lazy"]].`, done: R`كل alt بقى بيوصف اللي في الصورة ([[alt="سماعة لاسلكي سودا من الجنب"]])، والأيقونة اللي جنب الكلمة بقت [[alt=""]] عشان قارئ الشاشة ميقولش «السلة» مرتين، والهيرو من غير lazy وعليه [[fetchpriority="high"]]، و Lighthouse مبقاش بيقول إن صورة الـ LCP اتحمّلت lazy.` },
-            { lvl: 'تطبيق', t: R`**أشكال:** ألبوم صور رحلة متخيلة بشكل «بولارويد»: كل صورة جوه [[<figure>]] بإطار أبيض ([[padding]] أكبر من تحت)، ومايلة شوية ([[rotate: -3deg]] للفردي و [[rotate: 2deg]] للزوجي بـ [[:nth-child]])، وظل خفيف، و figcaption تحتها.`, done: R`٦ صور، كل واحدة مايلة عكس اللي جنبها، والكلام تحت كل صورة جوه figcaption، وكل صورة ليها width و height فمفيش حاجة بتتنط وهي بتحمّل (Performance مبيطلّعش layout shift).` },
-            { lvl: 'سريع', t: R`**اشرحها:** زميلك كتب [[width="100%"]] على الـ img عشان تبقى responsive، وشال الـ height. اشرحله في ٣ سطور ليه [[width]] و [[height]] في الـ HTML أرقام المقاس الحقيقي، والـ responsive بيتعمل في الـ CSS.`, done: R`الشرح فيه: الرقمين بيدّوا المتصفح النسبة قبل ما الصورة تتحمّل فيحجز مكانها، و [[width: 100%; height: auto]] في الـ CSS هي اللي بتخليها تتمط، ومن غير الـ height الكلام اللي تحتها بيتنط لما تتحمّل.` },
+            { lvl: 'سريع', t: R`**مسألة:** صورة الهيرو اللي في المثال ([[400w]] و [[800w]] و [[1600w]] و [[sizes="(min-width: 768px) 50vw, 100vw"]]). احسب بإيدك أنهي ملف المتصفح هيختار على: موبايل عرضه 400 و DPR 2، وموبايل 360 و DPR 3، وكمبيوتر 1280 و DPR 1. وبعدين اتأكد من [[img.currentSrc]] في وضع الموبايل.`, done: R`الحساب: 400×2 = 800 → [[800w]]، و 360×3 = 1080 → [[1600w]] (أول ملف أكبر من المطلوب)، و 1280×0.5 = 640 → [[800w]]. و Chrome اختار نفس التلاتة.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الهيرو</title>
+</head>
+<body>
+<img src="hero-800.jpg"
+     srcset="hero-400.jpg 400w, hero-800.jpg 800w, hero-1600.jpg 1600w"
+     sizes="(min-width: 768px) 50vw, 100vw"
+     width="1600" height="900" alt="سلة خضار طازة على ترابيزة خشب">
+</body>
+</html>
+~~~
+
+**الحساب خطوة بخطوة:** المتصفح بيعمل ٣ حاجات:
+
+1. يقرا [[sizes]]: الصورة هتتعرض بعرض قد إيه على الشاشة دي؟
+2. يضرب الرقم في DPR (كام بكسل حقيقي في كل px).
+3. يختار أصغر ملف عرضه أكبر من الناتج أو يساويه.
+
+| الجهاز | عرض العرض | × DPR | المطلوب | الملف |
+|---|---|---|---|---|
+| موبايل 400 و DPR 2 | 100vw = 400 | ×2 | 800 | [[800w]] |
+| موبايل 360 و DPR 3 | 100vw = 360 | ×3 | 1080 | [[1600w]] |
+| كمبيوتر 1280 و DPR 1 | 50vw = 640 | ×1 | 640 | [[800w]] |
+
+ليه الحالة التانية ياخد [[1600w]]؟ عشان [[800w]] أقل من 1080 فهتطلع مطموسة، وأقرب ملف أكبر منها هو 1600.
+
+**الغلطة الشائعة:** تنسى [[sizes]]. من غيرها المتصفح بيفترض إن الصورة 100vw، فعلى الكمبيوتر بياخد ملف كبير من غير داعي. والحساب بيبقى على عرض **العرض** مش عرض الشاشة.
+
+~~~text الناتج
+currentSrc من Chrome:
+400 × DPR 2    →  hero-800.jpg
+360 × DPR 3    →  hero-1600.jpg
+1280 × DPR 1   →  hero-800.jpg
+~~~` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** صفحة فيها ٢٠ صورة طول كل واحدة 300px. افتحها على عرض 360 وارتفاع 640 مرة من غير [[loading="lazy"]] ومرة بيه، وعدّ الصور اللي اتحمّلت من Network (فلتر Img) من غير ما تنزل.`, done: R`من غير lazy اتحمّلوا الـ ٢٠ كلهم، وبيه ٧ بس في Chrome على localhost: اللي في الشاشة وشوية تحتها (المتصفح بيحمّل قبل ما توصل بمسافة). الصور اللي فوق خالص متحطش عليها lazy.`, sol: R`نفس الصفحة مرتين، والفرق خاصية واحدة. حط أي صورة جنبها باسم [[photo.jpg]]، وافتح الصفحة من سيرفر محلي ([[npx serve .]]):
+
+~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>lazy</title>
+<style>img { display: block; width: 100%; height: 300px; object-fit: cover; }</style>
+</head>
+<body>
+<main id="list"></main>
+<script>
+  const lazy = location.search.includes('lazy');
+  for (let i = 1; i <= 20; i++) {
+    const img = new Image(360, 300);
+    img.alt = 'صورة ' + i;
+    if (lazy) img.loading = 'lazy';
+    img.src = 'photo.jpg?n=' + i;
+    document.querySelector('#list').append(img);
+  }
+$__lt/script>
+</body>
+</html>
+~~~
+
+افتح الصفحة مرة عادي ومرة بـ [[?lazy]]، وفلتر Network على Img.
+
+**ليه لسه فيه صور اتحمّلت تحت الشاشة:** المتصفح بيبدأ تحميل الصورة قبل ما توصلها بمسافة، عشان تلاقيها جاهزة وانت بتنزل. المسافة دي بتتغيّر حسب سرعة النت، فالرقم على نت بطيء ممكن يختلف عن الرقم هنا.
+
+وبالـ [[?n=1]] كل صورة ليها URL مختلف، فالمتصفح بيعدّها طلب لوحدها، زي صفحة حقيقية.
+
+**الغلطة الشائعة:** تحط [[loading="lazy"]] على كل صور الصفحة. الصورة اللي في أول الشاشة هتتأخر من غير سبب، لأن المتصفح بيستنى الـ layout عشان يعرف إنها ظاهرة. وده بيبوّظ LCP.
+
+~~~text الناتج
+شاشة 360×640، من غير ما تنزل:
+من غير lazy: اتحمّلت 20 صورة
+بـ loading="lazy": اتحمّلت 20 صورة
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة منتج فيها [[alt="صورة"]] على صورة المنتج، و [[alt="IMG_2034.jpg"]] على صورة تانية، وأيقونة سلة جنب كلمة «السلة» عليها [[alt="سلة"]]، وصورة الهيرو عليها [[loading="lazy"]].`, done: R`كل alt بقى بيوصف اللي في الصورة ([[alt="سماعة لاسلكي سودا من الجنب"]])، والأيقونة اللي جنب الكلمة بقت [[alt=""]] عشان قارئ الشاشة ميقولش «السلة» مرتين، والهيرو من غير lazy وعليه [[fetchpriority="high"]]، و Lighthouse مبقاش بيقول إن صورة الـ LCP اتحمّلت lazy.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>سماعة لاسلكي</title>
+<style>
+  img { max-width: 100%; height: auto; }
+  .cart { display: inline-flex; align-items: center; gap: 6px; }
+</style>
+</head>
+<body>
+<main>
+  <img src="hero.svg" width="1200" height="600" fetchpriority="high"
+       alt="سماعة لاسلكي سودا على خلفية رمادي">
+  <h1>سماعة لاسلكي</h1>
+  <img src="side.svg" width="600" height="600" loading="lazy"
+       alt="سماعة لاسلكي سودا من الجنب، وظاهر زرار التشغيل">
+  <a class="cart" href="cart.html">
+    <img src="cart.svg" width="20" height="20" alt="">
+    السلة
+  </a>
+</main>
+</body>
+</html>
+~~~
+
+**لكل صورة قرار:**
+
+- [[alt="صورة"]] مبيقولش حاجة، و [[IMG_2034.jpg]] أوحش. اسأل نفسك: لو الصورة اختفت، إيه الجملة اللي تحل محلها؟
+- الأيقونة جنب كلمة «السلة»: [[alt=""]] فاضية عمدًا، يعني زينة. ولو كتبت «سلة» قارئ الشاشة هيقول «سلة السلة». والـ alt الفاضي غير الـ alt الناقص: الناقص قارئ الشاشة ممكن يقرا اسم الملف.
+- الهيرو: أول حاجة بتتشاف، فالـ [[loading="lazy"]] بيأخرها. و [[fetchpriority="high"]] بيقول للمتصفح «دي أهم صورة، حمّلها الأول».
+- الصورة التانية تحت الشاشة، فالـ lazy عليها صح.
+
+**الغلطة الشائعة:** تكتب [[alt="صورة سماعة"]]. كلمة «صورة» زيادة، قارئ الشاشة بيقول إنها صورة لوحده.
+
+~~~text الناتج
+عنصر LCP = hero.svg
+loading بتاعه = auto   fetchPriority = high
+الـ alt لكل صورة:
+hero.svg    «سماعة لاسلكي سودا على خلفية رمادي»
+side.svg    «سماعة لاسلكي سودا من الجنب، وظاهر زرار التشغيل»
+cart.svg    «»
+axe: 0 violations
+
+Lighthouse نفسه ما اتشغّلش هنا: القياس من PerformanceObserver في Chrome،
+وهو نفس الرقم اللي Lighthouse بيبني عليه تحذير الـ LCP lazy.
+~~~` },
+            { lvl: 'تطبيق', t: R`**أشكال:** ألبوم صور رحلة متخيلة بشكل «بولارويد»: كل صورة جوه [[<figure>]] بإطار أبيض ([[padding]] أكبر من تحت)، ومايلة شوية ([[rotate: -3deg]] للفردي و [[rotate: 2deg]] للزوجي بـ [[:nth-child]])، وظل خفيف، و figcaption تحتها.`, done: R`٦ صور، كل واحدة مايلة عكس اللي جنبها، والكلام تحت كل صورة جوه figcaption، وكل صورة ليها width و height فمفيش حاجة بتتنط وهي بتحمّل (Performance مبيطلّعش layout shift).`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>رحلة الصيف</title>
+<style>
+  body { background: #e7e5e4; margin: 16px; font-family: system-ui; }
+  .album { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 24px; max-width: 800px; margin-inline: auto; }
+  figure {
+    margin: 0;
+    background: #fff;
+    padding: 10px 10px 32px;
+    box-shadow: 0 4px 12px rgb(0 0 0 / .2);
+  }
+  figure:nth-child(odd) { rotate: -3deg; }
+  figure:nth-child(even) { rotate: 2deg; }
+  img { display: block; width: 100%; height: auto; background: #a8a29e; }
+  figcaption { margin-top: 8px; text-align: center; }
+</style>
+</head>
+<body>
+<main>
+<h1>رحلة الصيف</h1>
+<section class="album" aria-label="صور الرحلة">
+  <figure><img src="1.jpg" width="300" height="300" alt="مركب صيد على شاطئ"><figcaption>أول يوم</figcaption></figure>
+  <figure><img src="2.jpg" width="300" height="300" alt="جبل وقت الغروب"><figcaption>الغروب</figcaption></figure>
+  <figure><img src="3.jpg" width="300" height="300" alt="سوق قديم فيه توابل"><figcaption>السوق</figcaption></figure>
+  <figure><img src="4.jpg" width="300" height="300" alt="شاي على سطح بيت"><figcaption>القعدة</figcaption></figure>
+  <figure><img src="5.jpg" width="300" height="300" alt="شارع ضيق بألوان"><figcaption>المشي</figcaption></figure>
+  <figure><img src="6.jpg" width="300" height="300" alt="موج على صخور"><figcaption>آخر يوم</figcaption></figure>
+</section>
+</main>
+</body>
+</html>
+~~~
+
+**اللي بيعمل الشكل:**
+
+- [[padding: 10px 10px 32px]]: فوق ويمين وشمال 10، وتحت 32، ومن هنا شكل البولارويد.
+- [[:nth-child(odd)]] الفردي و [[:nth-child(even)]] الزوجي، فكل كارت عكس اللي جنبه.
+- [[rotate]] خاصية مستقلة، أحسن من [[transform: rotate()]] لأنها مبتتصادمش مع transform تانية على hover.
+- [[display: block]] على الصورة عشان مسافة خط الكلام تحتها تختفي.
+- [[width]] و [[height]] في الـ HTML بيدّوا النسبة، و [[height: auto]] في الـ CSS بيخليها تتمط. الاتنين مع بعض بيحجزوا مكان الصورة قبل ما تتحمّل.
+
+**الغلطة الشائعة:** تحط الدوران على [[img]] بدل [[figure]]. الصورة هتلف لوحدها وتطلع برّه الإطار.
+
+~~~text الناتج
+عدد الصور 6، وكل figure جواه figcaption: true
+الدوران: -3deg , 2deg , -3deg , 2deg , -3deg , 2deg
+عرض الكارت على 1280: 182px   على 360: 328px
+Layout shift وصور بتتحمّل بتأخير 500ms: 0
+overflow على 360: 0px   axe: 0 violations
+~~~` },
+            { lvl: 'سريع', t: R`**اشرحها:** زميلك كتب [[width="100%"]] على الـ img عشان تبقى responsive، وشال الـ height. اشرحله في ٣ سطور ليه [[width]] و [[height]] في الـ HTML أرقام المقاس الحقيقي، والـ responsive بيتعمل في الـ CSS.`, done: R`الشرح فيه: الرقمين بيدّوا المتصفح النسبة قبل ما الصورة تتحمّل فيحجز مكانها، و [[width: 100%; height: auto]] في الـ CSS هي اللي بتخليها تتمط، ومن غير الـ height الكلام اللي تحتها بيتنط لما تتحمّل.`, sol: R`**الرد النموذجي لزميلك في ٣ سطور:**
+
+~~~text الشرح
+width و height في الـ HTML هما مقاس الملف الحقيقي، والمتصفح بيحسب منهم النسبة قبل ما الصورة تتحمّل، فيحجز مكانها.
+الـ responsive شغل CSS: width: 100%; height: auto بيخلي الصورة تتمط مع الصفحة وبنفس النسبة.
+لو شلت الـ height المتصفح ميعرفش الطول، فبيبدأ بصفر، والكلام اللي تحت الصورة بيتنط لما تتحمّل.
+~~~
+
+والكود الصح:
+
+~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>صورة</title>
+<style>img { width: 100%; height: auto; }</style>
+</head>
+<body>
+<img src="slow.svg" width="800" height="600" alt="ترابيزة أكل في مطعم">
+<p id="after">الكلام اللي تحت الصورة</p>
+</body>
+</html>
+~~~
+
+**الفرق بالأرقام:** جرّبنا الكود ده على عرض 400، والصورة بتاخد ثانية عشان تتحمّل. قيسنا مكان الفقرة قبل التحميل وبعده.
+
+**الغلطة الشائعة:** [[width="100%"]] مش قيمة سليمة في الـ HTML حاليًا: الـ validator بيرفضها، لأن الـ attribute ده بياخد عدد بكسل بس. والنسب مكانها الـ CSS.
+
+~~~text الناتج
+                             الفقرة قبل التحميل   بعد التحميل    النطّة
+width و height في الـ HTML    316          316       0px
+width="100%" من غير height    42          316       274px
+
+validator على width="100%": 1 error
+~~~` },
           ],
           title: "صورة بتتحمّل بسرعة ومتزقّش الصفحة",
           desc: R`[[alt]] وصف الصورة لقارئ الشاشة ولو الصورة محمّلتش، ولو الصورة زينة بس خليه فاضي [[alt=""]]. و [[width]] و [[height]] بيحجزوا مكانها قبل ما تتحمّل، فالكلام اللي تحتها ميتنطش. و [[loading="lazy"]] بيأجّل الصور اللي تحت لحد ما المستخدم يقرّب منها.

@@ -1,2782 +1,2426 @@
 // تكملة تاب css: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/css/01.js (شرح حقول الدرس في أوله)
 MORE("css", [
     {
-      t: "مشروع كامل: landing page وفورم تسجيل",
+      t: "أسئلة انترفيو",
       l: 3,
-      time: R`حوالي ١٠ ساعات على كذا يوم: ساعة للصورة الكبيرة والمعمل، وساعة لكل قسم من الأقسام، وساعتين للفورم، وساعتين للفحوصات والنشر`,
-      goal: [
-        R`تبني صفحة هبوط كاملة لمحمصة بن مخترعة اسمها «حبّة» من فولدر فاضي، بـ HTML و CSS حديث وشوية JavaScript، من غير framework ولا build step: header لازق وزجاجي، و hero، ومميزات bento، وآراء، وأسعار بتبديل شهري وسنوي، وأسئلة، و CTA، و footer.`,
-        R`تعمل ألوان بـ tokens فيها وضع فاتح وغامق في سطر واحد لكل لون ([[light-dark()]])، بتمشي ورا إعداد الجهاز لوحدها، ومن غير وميض لما اليوزر يختار، وكل زوج ألوان متقاس تباينه.`,
-        R`تبني فورم تسجيل accessible: label لكل خانة، ورسايل غلط بالعربي مربوطة بـ [[aria-describedby]]، وملخص أخطاء بـ [[role="alert"]]، وموبايل بيقبل الأرقام العربي، وقواعد كلمة سر، وزرار إرسال مبيبعتش مرتين.`,
-        R`تقيس بدل ما تخمّن: مصفوفة ٦ مقاسات من غير scroll أفقي، و CLS صفر حتى والصور بطيئة، و axe صفر violations في الوضعين وعلى الموبايل، ومشي بالكيبورد بس على ٣١ وقفة، وفحص HTML بيشتغل في CI من غير متصفح.`,
-        R`تنشرها على GitHub Pages من غير ما المسارات تقع، وتحكي الغلطات الحقيقية اللي حصلت وانت بتبنيها (١٤ غلطة) وإزاي كل واحدة اتمسكت برقم.`,
-      ],
-      use: {
-        prog: R`ده أول مشروع في التاب بيجمع كل الوحدات اللي فاتت في صفحة واحدة شغالة: semantic HTML، والـ cascade، والمتغيرات، و grid، و sticky، والصور، والثيم والعربي، والـ accessibility، والحركة، والأداء، و CSS الحديث ([[:has()]] و [[light-dark()]] و [[details name]]).`,
-        work: R`صفحة الهبوط هي أكتر شغلانة front-end بتتطلب من فريلانسر أو شركة ناشئة: «عايزين صفحة تعرّف المنتج وفيها فورم تسجيل». اللي بيفرّقك مش الشكل، هو إنك تسلّمها ومعاها أرقام: «صفر scroll أفقي من ٣٢٠ لـ ١٤٤٠، و axe صفر، و CLS صفر، وبتشتغل من غير JS».`,
-        cs: R`progressive enhancement (الصفحة شغالة من غير JS والـ JS بيزوّد بس)، و single source of truth للألوان (tokens)، والتحقق على الحدود (المتصفح بيساعد والسيرفر بيقرر)، والقياس الأوتوماتيك كاختبار (لو الرقم وقع، الـ CI يقع).`,
-      },
-      lab: R`mkdir habba-landing && cd habba-landing
-npm init -y
-npm i -D playwright-core@1.64.1 @axe-core/playwright@4.14.0
-mkdir css js img tools
-node tools/serve.mjs 5173`,
+      n: "الأسئلة اللي بتتسأل في أي انترفيو frontend، بإجابة تقولها بصوتك في دقيقة",
       projects: [
-        { lvl: 'صغير', t: R`صفحة «قصتنا» لنفس المحمصة`, what: R`صفحة تانية [[story.html]] بنفس [[tokens.css]] و [[site.css]] من غير ولا لون جديد: خطوات «من المزرعة للفنجان» كـ [[<ol>]] عمودي، كل خطوة ليها رقم في دايرة بـ [[::before]] و [[counter()]]، وخط واصل بينهم بـ [[border-inline-start]] عشان يتقلب لوحده لو الصفحة بقت LTR، وصورة واحدة بـ [[width]] و [[height]] و [[loading="lazy"]]. لينك ليها من الـ footer. من دروس «الألوان والثيم والعربي» و «الأسئلة والـ CTA والـ footer».`, done: R`[[node tools/lint.mjs story.html]] بيقول [[0 problems]]، و [[matrix.mjs]] عليها [[OK]] في الـ ٦ مقاسات، و axe صفر في الوضعين، و [[grep -c "#[0-9a-f]\{6\}" css/story.css]] (لو عملت ملف) بيطلّع صفر: كل الألوان من الـ tokens.` },
-        { lvl: 'صغير', t: R`اختيار تالت في الأسعار: كل ٣ شهور`, what: R`زوّد radio تالت «كل ٣ شهور» في [[fieldset.billing]] وسعر تالت في كل باقة ([[<span class="q">]])، والإظهار بـ [[:has()]] زي الاتنين التانيين من غير JS. التوفير مكتوب جنب الاختيار ومتحسوب صح (٣ شهور بسعر ٢٫٧ شهر مثلًا). من درس «المميزات والآراء والأسعار».`, done: R`بالكيبورد بس: Tab للمجموعة والسهمين بيلفّوا على التلاتة (في RTL السهم الشمال بيروح للي بعده)، وكل مرة السعر الظاهر في الـ ٣ باقات هو الصح، والـ JS مقفول (Network request blocking على [[*.js]]) والتبديل لسه شغال.` },
-        { lvl: 'متوسط', t: R`نسخة إنجليزي LTR من نفس الصفحة`, what: R`[[en/index.html]] بنفس الـ CSS بالظبط و [[lang="en" dir="ltr"]]، ولينك بين النسختين بـ [[hreflang]] في الـ head وزرار لغة في الـ header. القاعدة: ولا سطر [[[dir=rtl]]] ولا [[left]] ولا [[right]] في الـ CSS؛ كل اللي محتاج يتقلب يتقلب لوحده من الـ logical properties. الحاجات اللي مش logical (اتجاه سهم، [[translate]] في القايمة) تتعالج بـ [[:dir(rtl)]] لو لزم. من دروس «الـ header والـ hero» ووحدة «الثيم والعربي».`, done: R`[[grep -nE "\b(left|right)\b" css/*.css]] بيطلّع صفر سطور، والـ matrix و axe و lint نضاف على النسختين، والأرقام في الأسعار في النسخة الإنجليزي لاتيني من [[toLocaleString("en")]]، ولقطة شاشة للنسختين جنب بعض بتوضح إن كل حاجة اتقلبت.` },
-        { lvl: 'متوسط', t: R`فورم حجز موعد لعيادة أسنان متخيلة`, what: R`نفس طريقة فورم التسجيل على فورم حجز: الاسم، والموبايل (نفس [[normalizeDigits]])، و [[<input type="date">]] أقل قيمة فيه النهارده بتوقيت الجهاز (مش [[toISOString()]] اللي بيرجع UTC)، و [[<select>]] للمواعيد المتاحة، وملاحظات [[<textarea maxlength="300">]] بعدّاد حروف بـ [[aria-live="polite"]] بيتكلم كل ٥٠ حرف بس. رسايل عربي لكل حالة. من درس «فورم تسجيل accessible».`, done: R`[[form-test.mjs]] نسخة ليك فيها ٨ حالات PASS على الأقل، منها: تاريخ امبارح بيترفض برسالة عربي، والنهارده بيتقبل حتى الساعة ١١:٣٠ بالليل (جرّب بـ [[context.clock]] أو [[timezoneId: "Africa/Cairo"]] في Playwright)، و axe صفر والفورم مليان أخطاء.` },
-        { lvl: 'كبير', t: R`الصفحة بـ backend حقيقي و CI أخضر`, what: R`استبدل الـ API التجريبي في [[serve.mjs]] بسيرفر حقيقي (Express من تاب «Backend بـ Node» أو FastAPI): [[POST /api/signup]] بيتحقق تاني بنفس القواعد (مش بيصدّق المتصفح)، وبيحفظ في SQLite بـ unique على الإيميل (ده اللي بيرجّع 409)، وباسورد متشفّر بـ argon2 أو bcrypt، و rate limit بسيط (٥ طلبات في الدقيقة لكل IP)، ولوج من غير الباسورد. و GitHub Actions بيشغّل [[npm run lint]] و [[npm test]] (السيرفر في الخلفية) على كل push، والـ static على Pages والـ API على أي استضافة Node.`, done: R`[[curl -X POST]] بقيم غلط بيرجّع 400 ومعاه [[{ field, message }]] زي ما الفورم مستني، والإيميل المكرر 409، والطلب السادس في الدقيقة 429، والـ workflow أخضر وبيقع لو حد رجّع [[minmax(320px, 1fr)]] أو شال [[width]] من صورة الـ hero، والرابطين شغالين.`, ext: R`زوّد تأكيد الإيميل: لينك فيه token صالح ساعة، والحساب [[pending]] لحد ما يتضغط، وصفحة [[confirm.html]] بتقول النتيجة. ولوحة صغيرة للمحمصة بعدد المشتركين لكل باقة.` },
-        { lvl: 'كبير', t: R`نفس الصفحة بـ Tailwind v4 و Vite، وقارن بالأرقام`, what: R`ابني نفس الصفحة بالظبط بـ Vite و Tailwind v4: الـ tokens في [[@theme]] بنفس [[light-dark()]]، والأزرار بـ [[@utility]] أو classes، ونفس الـ HTML تقريبًا. وبعدين شغّل نفس أدوات القياس الست على النسختين وطلّع جدول: حجم الـ CSS (raw و gzip)، و FCP و LCP بنفس الـ throttling، وعدد سطور الكود اللي كتبته، والوقت اللي أخدته. من وحدة «Tailwind» ودرس «مصفوفة المقاسات والأداء».`, done: R`جدول بأرقام حقيقية من [[perf.mjs]] (٣ مرات لكل نسخة)، و axe و matrix نضاف على الاتنين، وفقرة بتقول إمتى هتختار كل واحدة لمشروع جديد ومبنية على الأرقام مش على الرأي.`, ext: R`زوّد نسخة تالتة بـ Astro (صفحة static بتطلع HTML من غير JS) وقارن نفس الأرقام.` },
-        { lvl: 'فكرة', t: R`صفحة هبوط لحاجة بتعرفها`, what: R`اختار مشروع حقيقي حواليك (ورشة، أو درس خصوصي، أو جيم، أو متجر صغير على الانستجرام)، واكتب انت الأقسام اللي محتاجها (مش لازم نفس السبعة) والفورم اللي يخدمه (حجز، أو طلب، أو اشتراك). نفس القواعد: tokens، ومن غير وميض، و RTL سليم، وكل رقم متقاس.`, done: R`صاحب المشروع فتحها من موبايله وقدر يبعت الفورم، والـ ٦ أدوات نضاف، وفي الـ README جدول «قبل وبعد» لأي غلطة قابلتها.`, ext: R`حطها في الـ portfolio بصفحة دراسة حالة: المشكلة، والأقسام وليه، والقياسات، والغلطات اللي اتصلّحت، ورابط الكود.` },
+        { lvl: 'صغير', t: R`حاسبة specificity`, what: R`صفحة فيها input تكتب فيه selector وتطلع (a,b,c) بتاعته وشرح كل جزء اتحسب ليه، وبتقارن selectorين وتقول مين يكسب. بتتعامل مع ids و classes و attributes و pseudo-classes و pseudo-elements و [[:where()]] (صفر) و [[:is()]] و [[:not()]] (أتقل حاجة جواهم). من سؤال (id, class, type).`, done: R`[[#a .b]] = (1,1,0)، و [[ul li:not(.x)]] = (0,1,2)، و [[:is(#a, .b) p]] = (1,0,1)، و [[:where(nav) .link]] = (0,1,0)، و [[a::before]] = (0,0,2)، وفيه ١٠ اختبارات بتعدّي، و selector غلط بيطلّع رسالة مش crash.` },
+        { lvl: 'صغير', t: R`بطاقات مراجعة للانترفيو`, what: R`صفحة فيها الـ ١١ سؤال كـ [[<details>]]، كل واحد فيه إجابتك في دقيقة بكلامك ومثال كود صغير، وزرار «عرفتها» و«لسه» بيتحفظ في localStorage (جوه try/catch)، ووضع «سؤال عشوائي» بعدّاد ٦٠ ثانية.`, done: R`الإجابات بكلامك انت مش منسوخة، والتقدّم فاضل بعد refresh، والعدّاد بيتقري لقارئ الشاشة كل ١٥ ثانية مش كل ثانية، والصفحة بالكيبورد كلها.` },
+        { lvl: 'متوسط', t: R`أداة تشرح الـ box model`, what: R`sliders للـ width والـ padding والـ border والـ margin، وزرار بيبدّل [[box-sizing]]، وصندوق حي بيتغير، ورسمة زي اللي في DevTools بالأرقام، والعرض الكلي محسوب. ومعاه مثال margin collapse: عنصرين block فوق بعض والأب بيتبدّل بين block و flex. بيجمع أسئلة box model و position.`, done: R`الأرقام اللي في الرسمة نفس اللي في DevTools › Computed لكل تركيبة جرّبتها، والـ margin بين العنصرين بيبقى أكبر قيمة في block ومجموعهم في flex، وكل slider ليه label وقيمته بتتقري.` },
+        { lvl: 'متوسط', t: R`مستكشف الـ stacking context`, what: R`صفحة فيها عناصر جوه بعض بألوان، وجنب كل واحد checkboxes بتحط عليه [[opacity: .99]] أو [[transform]] أو [[isolation: isolate]] أو [[z-index]]، وسكربت بيطلّع لستة بالعناصر اللي عاملة stacking context وليه. ومعاها مثال الهيدر والمودال اللي في الإجابة. بيجمع أسئلة stacking context و reflow و repaint.`, done: R`لما تعلّم [[transform]] على الأب المودال بينزل تحت الهيدر قدامك، واللستة بتقول «main: transform»، ولما تشيله يرجع. وكل خاصية من الخمسة اللي في الإجابة متجرّبة ومكتوب جنبها اللي حصل.` },
+        { lvl: 'كبير', t: R`موقع «إجاباتي» للانترفيو`, what: R`موقع فيه صفحة لكل سؤال من الوحدة دي: الإجابة في دقيقة، و demo حي بيثبتها (حاسبة الـ specificity، وأداة الـ box model، والمستكشف، وصفحة CLS بتتنط وزرار بيصلّحها، وأنيميشن left مقابل transform بقياس الـ frames)، ولقطة من DevTools. بالعربي والإنجليزي (الإجابة الإنجليزي اللي هتقولها)، وثيمين، وكيبورد كامل، و reduced motion. بيجمع الوحدة دي مع كل الوحدات اللي قبلها.`, done: R`كل demo بيشتغل لوحده وبيثبت الرقم اللي في الإجابة، و Lighthouse ‏90 أو أكتر في الأربعة (Performance و Accessibility و Best Practices و SEO)، و axe صفر، وكل صفحة ليها title و description و OG، ومنشور برابط تقدر تبعته في CV.`, ext: R`زوّد وضع «انترفيو تجريبي»: سؤال عشوائي، وعدّاد، وتسجيل صوتك بـ MediaRecorder تسمعه بعدها، ولستة بالكلمات المهمة اللي المفروض تقولها تعلّم عليها.` },
+        { lvl: 'فكرة', t: R`سؤال بتاعك`, what: R`اختار سؤال frontend اتسألته (أو قريته) ومش موجود هنا: BEM مقابل CSS Modules، أو [[:focus]] مقابل [[:focus-visible]]، أو ليه [[100vh]] بايظ على الموبايل. اكتب إجابة في دقيقة و demo بيثبتها بنفس شكل الوحدة.`, done: R`زميل قرا إجابتك بصوت عالي في أقل من دقيقة وفهم، والـ demo بيثبت كل جملة فيها برقم أو لقطة.`, ext: R`اعمله درس كامل بنفس شكل دروس الموقع (desc و example و lines و practice)، وابعته كاقتراح.` },
       ],
-      n: R`build-along: صفحة هبوط لمحمصة بن مخترعة («حبّة») بتتبني من فولدر فاضي في ٨ خطوات. ١٩٩ سطر HTML، و ٢٠٦ سطر CSS في ٣ ملفات، و ١٧٥ سطر JS في ٤ ملفات، و ٦ أدوات قياس بـ Node و Chrome. الأرقام النهائية: صفر scroll أفقي من ٣٢٠ لـ ١٤٤٠، و CLS صفر، و axe صفر، و ٨ اختبارات فورم PASS، والصفحة كلها حوالي ٤٤ كيلو على الموبايل.`,
       items: [
         {
-          cmd: "landing page: الصورة الكبيرة",
-          title: "صفحة هبوط لمحمصة بن من فولدر فاضي: بتعمل إيه، وأقسامها، وملفاتها، وليه HTML و CSS من غير framework",
-          learn: R`تشوف المشروع كله قبل ما تكتب سطر: الصفحة بتخدم مين، وأقسامها بالترتيب، وكل ملف شغلته، وليه كل أداة اتختارت.`,
-          out: R`فولدر فيه سيرفر صغير، وهيكل [[index.html]] بالأقسام السبعة اللي الـ lint بيقول عليه [[0 problems]]، وأدوات القياس متسطّبة.`,
-          desc: R`أول خطوة في أي صفحة هبوط مش الألوان، هي **الهيكل**: الزائر جاي يعرف إيه، وهيقتنع بإيه، وهيضغط فين. هنا بنرسم الصفحة كلها، ونختار الأدوات وليه، ونبني المعمل (سيرفر Node صغير، وصور الـ hero، وأدوات القياس)، ونكتب هيكل HTML فيه الأقسام السبعة من غير أي CSS.
-
-المشروع: صفحة لمحمصة بن مخترعة اسمها «حبّة» بتبيع اشتراك شهري في بن طازة. الهدف الوحيد للصفحة إن الزائر يفتح حساب من فورم التسجيل في آخرها، وكل قسم قبله بيرد على سؤال في دماغه: «ده إيه؟» (hero)، و «ليه انتوا؟» (المميزات)، و «حد جرّب؟» (الآراء)، و «بكام؟» (الأسعار)، و «طب لو...؟» (الأسئلة)، و «طب يلا» (CTA والفورم).
-
-الخطوات الجاية كل واحدة بتبني جزء وتقيسه: الألوان والثيم والعربي، وبعدين الـ header والـ hero، والمميزات والآراء والأسعار، والأسئلة والـ CTA والـ footer والحركة، والفورم، وفي الآخر مصفوفة المقاسات والأداء، وفحص الـ accessibility والنشر. وكل غلطة حصلت في البناء الحقيقي مكتوبة في الخطوة بتاعتها، بالرقم قبل وبعد.`,
-          example: R`<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>محمصة حبّة</title></head>
-<body>
-<a class="skip" href="#main">اتخطّى للمحتوى</a>
-<header class="top"><a class="logo" href="#hero">حبّة</a> <nav aria-label="الرئيسية"><a href="#features">ليه حبّة</a> <a href="#pricing">الأسعار</a> <a href="#faq">أسئلة</a></nav></header>
-<main id="main">
-  <section id="hero"><h1>بن طازة يوصلك قبل ما يبرد حماسك</h1></section>
-  <section id="features"><h2>بن بتعرف هو جه منين</h2></section>
-  <section id="reviews"><h2>اللي جرّبوا بيقولوا إيه</h2></section>
-  <section id="pricing"><h2>اختار الكمية اللي تكفيك</h2></section>
-  <section id="faq"><h2>أسئلة بتتسأل كتير</h2></section>
-  <section class="cta"><h2>أول كيس بنص التمن</h2></section>
-  <section id="signup"><h2>افتح حسابك في دقيقة</h2></section>
-</main>
-<footer class="foot"><p>محمصة صغيرة بتحمّص كل خميس.</p></footer>
-</body>
-</html>`,
-          lines: [
-            R`بيقول للمتصفح إن ده HTML حديث (standards mode). من غيره الصفحة بتشتغل في quirks mode والـ box model بيتغيّر (درس [[<!doctype html>]]).`,
-            R`[[lang="ar"]] عشان قارئ الشاشة ينطق عربي والمتصفح يختار خط وقواعد كسر سطور عربي، و [[dir="rtl"]] عشان الصفحة كلها (وكل grid و flex جواها) تمشي من اليمين.`,
-            R`الـ head في سطر واحد: [[charset]] قبل أي نص عربي، و [[viewport]] عشان الموبايل ميعرضش الصفحة كأنها ٩٨٠ بكسل، و [[title]] اللي بيظهر في التاب وفي نتايج جوجل.`,
-            R`بداية جسم الصفحة: كل اللي بيتشاف جوه الـ body، والـ head فوق ده معلومات بس.`,
-            R`skip link: أول حاجة الكيبورد بيقابلها، بتنقله للمحتوى على طول من غير ما يعدّي على روابط الـ header كل مرة. هيستخبى بـ CSS لحد ما ياخد focus.`,
-            R`[[<header>]] بيبقى landmark اسمه banner، وجواه لوجو بيرجّع لأول الصفحة و [[<nav>]] ليه [[aria-label]] عشان الصفحة فيها nav تاني في الـ footer.`,
-            R`[[<main>]] واحد بس في الصفحة، وليه [[id="main"]] عشان الـ skip link يوصله.`,
-            R`كل قسم [[<section>]] بـ [[id]] (هدف لينكات الـ nav) وجواه عنوان. الـ hero بس فيه [[h1]]، لأن الصفحة ليها عنوان رئيسي واحد.`,
-            R`المميزات: قسم بيرد على «ليه انتوا؟»، وعنوانه [[h2]] تحت الـ h1 على طول من غير ما ننط مستوى.`,
-            R`الآراء: قسم «حد جرّب قبلي؟»، وهيبقى جواه [[figure]] و [[blockquote]] في خطوته.`,
-            R`الأسعار: الهدف اللي لينك «الأسعار» في الـ nav بيوديله، وهيبقى فيه التبديل الشهري والسنوي.`,
-            R`الأسئلة: قسم «طب لو...؟»، وهيتبني بـ [[details]] و [[summary]] من غير JS.`,
-            R`الـ CTA ملوش [[id]] لأن مفيش لينك بيوديله، هو مجرد شريط بيزق الزائر للفورم.`,
-            R`آخر قسم: فورم التسجيل، وهو الهدف اللي كل زراير «اشترك» في الصفحة بتوديله.`,
-            R`هنا المحتوى الأساسي خلص، وكل اللي بعد كده مش جزء من الـ main.`,
-            R`[[<footer>]] بره الـ main بيبقى landmark اسمه contentinfo، وفيه تعريف قصير بالمحمصة.`,
-            R`قفلة الـ body: مفيش أي محتوى بيتكتب بعدها.`,
-            R`قفلة الـ html: نهاية الملف كله.`,
-          ],
-          try: R`ابني المعمل زي الشرح: الفولدر، و [[npm i -D]] للأداتين، و [[serve.mjs]]، و [[make-img.mjs]] للصور. حط الهيكل ده في [[index.html]] وشغّل [[node tools/serve.mjs 5173]] وافتح [[http://127.0.0.1:5173/]]. وبعدين شغّل [[node tools/lint.mjs index.html]] (الكود في درس «فحص accessibility والنشر») وشوف الشجرة في تاب Accessibility في DevTools: كام landmark، وكام عنوان من كل مستوى؟`,
-          sol: R`[[lint.mjs]] على الهيكل ده بيطبع [[OK: 30 tags, 7 ids, 0 problems]]. وشجرة الـ accessibility (اتطبعت بـ [[ariaSnapshot()]] من Playwright) فيها [[banner]] وجواه [[navigation "الرئيسية"]]، و [[main]] فيه h1 واحد و ٦ h2، و [[contentinfo]]. لو لقيت h2 قبل الـ h1 أو [[main]] مش موجود، راجع إنك حطيت الأقسام جوه [[<main>]] والـ h1 في أول section.`,
-          solCode: R`// tools/outline.mjs: شجرة العناوين والـ landmarks زي ما قارئ الشاشة شايفها
-import { chromium } from "playwright-core";
-const browser = await chromium.launch({ channel: "chrome" });
-const page = await browser.newPage();
-await page.goto(process.argv[2]);
-const snap = await page.locator("body").ariaSnapshot();
-console.log(snap.split("\n").filter((l) => /banner|navigation|main|contentinfo|heading|region/.test(l)).join("\n"));
-await browser.close();`,
-          flag: "script",
-          deep: {
-            why: R`أغلب صفحات الهبوط اللي بتقع بتقع من الهيكل مش من الألوان: قسم أسعار قبل ما الزائر يفهم المنتج، أو فورم في النص قبل ما يقتنع، أو ٣ زراير بتقول حاجات مختلفة. لما ترسم الأقسام كأسئلة في دماغ الزائر بالترتيب، كل قسم ليه وظيفة وتقدر تقيسه (حد بيضغط «الأسعار» من الـ nav؟). وكمان الهيكل الصح من الأول هو اللي بيخلّي قارئ الشاشة والكيبورد وجوجل يفهموا الصفحة من غير ولا سطر ARIA زيادة.`,
-            how: R`المتصفح بيبني من الـ HTML شجرة DOM، ومنها شجرة accessibility: [[<header>]] اللي مش جوه section أو article بيبقى [[banner]]، و [[<main>]] بيبقى [[main]]، و [[<footer>]] بره الـ main بيبقى [[contentinfo]]، و [[<nav>]] بيبقى [[navigation]] باسمه من [[aria-label]]. قارئ الشاشة بيتنقل بالـ landmarks والعناوين (في NVDA حرف D للـ landmarks و H للعناوين)، فالترتيب h1 ثم h2 هو فهرس الصفحة عنده. والـ [[id]] على كل section هو اللي بيخلّي [[href="#pricing"]] يقفز للقسم، وفي خطوة الـ header هنزوّد [[scroll-margin-top]] عشان العنوان ميستخباش تحت الـ header اللازق. والـ [[section]] بيبقى [[region]] في الشجرة بس لما يبقى ليه اسم ([[aria-labelledby]] على الـ h2 بتاعه)، وده اللي هنعمله في الصفحة النهائية.`,
-            when: R`أي صفحة هبوط أو صفحة منتج أو صفحة حملة، وأي صفحة طويلة الزائر بيقراها من فوق لتحت ويتنقل فيها بالـ nav. ولو المشروع فيه صفحات كتير وداتا بتتغيّر (لوحة تحكم، متجر فيه آلاف المنتجات)، يبقى framework زي Next أو Astro أنسب، والجدول تحت بيقول إمتى بالظبط.`,
-            mistakes: R`تبدأ بالـ CSS قبل ما الأقسام تبقى واضحة، فتلاقي نفسك بتنقل أقسام وتعيد تصميمها. أو تحط [[div]] لكل حاجة فالشجرة متبقاش فيها landmarks. أو h1 في الـ header (اللوجو) و h1 تاني في الـ hero. أو [[id]] بمسافة أو بحروف عربي في لينكات الـ nav (بيشتغل بس بيتكتب في الـ URL مشفّر ومش مقروء). أو تنسى [[dir="rtl"]] فالـ grid والـ flex يتعكسوا وتقعد تصلّحهم بـ [[left]] و [[right]].`
-          },
-          teach: R`## الصورة الكبيرة
-
-**بنبني إيه:** صفحة واحدة طويلة لمحمصة مخترعة اسمها «حبّة» بتبيع اشتراك شهري في بن محموص طازة. صفحة هبوط (landing page) يعني صفحة هدفها حاجة واحدة: الزائر يعمل حاجة (هنا: يفتح حساب). مش موقع فيه ١٠ صفحات.
-
-**لمين:** زائر جاي من إعلان أو من لينك على الموبايل في الغالب، عايز يعرف في ثواني: ده إيه، وبكام، وينفع أجرّب.
-
-**الأقسام بالترتيب، وكل قسم بيرد على سؤال:**
-
-~~~text الصفحة من فوق لتحت
-┌──────────────────────────────────────────────┐
-│ header لازق: لوجو  ·  روابط  ·  ثيم  ·  اشترك │  «أنا فين؟»
-├──────────────────────────────────────────────┤
-│ hero: عنوان + سطر + زرارين  │  صورة فنجان    │  «ده إيه؟»
-├──────────────────────────────────────────────┤
-│ المميزات: bento (كارت كبير + ٣ صغيرين)        │  «ليه انتوا؟»
-├──────────────────────────────────────────────┤
-│ الآراء: ٣ كروت figure/blockquote              │  «حد جرّب؟»
-├──────────────────────────────────────────────┤
-│ الأسعار: [شهري | سنوي] + ٣ باقات، الوسطى مميزة │  «بكام؟»
-├──────────────────────────────────────────────┤
-│ الأسئلة: ٤ details واحد بس مفتوح              │  «طب لو...؟»
-├──────────────────────────────────────────────┤
-│ CTA: «أول كيس بنص التمن»                      │  «يلا»
-├──────────────────────────────────────────────┤
-│ الفورم: اسم، إيميل، موبايل، كلمة سر، باقة     │  الهدف
-├──────────────────────────────────────────────┤
-│ footer: روابط + تواصل + الاسم كبير وباهت      │
-└──────────────────────────────────────────────┘
-~~~
-
-**البيانات بتمشي إزاي:** كل زرار «اشترك» و «اختار الباقة» لينك لـ [[#signup]]. زرار الباقة كمان بيملا خانة الباقة في الفورم. الفورم بيتحقق في المتصفح، وبعدين بيبعت [[POST api/signup]] للسيرفر، والسيرفر بيرد بـ 201 (تمام) أو 409 (الإيميل عليه حساب) والفورم بيعرض الرد في مكانه.
-
-~~~text المتصفح والسيرفر
- المتصفح                                   tools/serve.mjs (Node 24)
- ┌─────────────────────────┐   GET  /      ┌────────────────────────────┐
- │ index.html + css + js   │ ────────────▶ │ ملفات static من الفولدر     │
- │                         │               │                            │
- │ فورم ── تحقق في المتصفح │   POST        │ api/signup: بعد ٨٠٠ms       │
- │        └───────────────▶│ ────────────▶ │  201 { ok } أو 409 { field }│
- └─────────────────────────┘               └────────────────────────────┘
-        ▲ playwright-core + Chrome المتسطّب: matrix و perf و a11y و form-test
-~~~
-
----
-
-## ليه الأدوات دي تحديدًا؟
-
-| الحاجة | اخترنا | البدايل | ليه ده هنا | إمتى تختار البديل |
-|---|---|---|---|---|
-| الصفحة | HTML و CSS عادي وشوية JS | React أو Vue، أو Next أو Astro | صفحة واحدة ومحتوى ثابت تقريبًا: مفيش state معقد ولا داتا من API. framework كان هيزوّد JS لازم يتحمّل ويشتغل عشان صفحة كلها نص | لو فيه صفحات كتير بتتشارك components، أو محتوى من CMS، يبقى Astro (بيطلع HTML من غير JS) أو Next |
-| التنسيق | CSS حديث بإيدنا (tokens و [[:has()]] و [[light-dark()]]) | Tailwind | عايزين نشوف كل سطر بيعمل إيه، والصفحة كلها ٢٠٦ سطر CSS | لو فريق كبير أو المشروع هيكبر لعشرات الصفحات، Tailwind بيمنع CSS يكبر من غير حساب (فيه مشروع «كبير» بيقارن الاتنين بالأرقام) |
-| البناء | من غير build step | Vite | الملفات بتتخدم زي ما هي، فمفيش حاجة بين اللي كتبته واللي المتصفح شايفه، والنشر نسخ ملفات بس | لو عايز تقسيم ملفات JS كتير، أو TypeScript، أو تصغير الملفات لوحده: Vite |
-| الخط | خطوط الجهاز ([[system-ui]] و Segoe UI و Tahoma و Geeza Pro) | خط ويب عربي (Google Fonts أو ملف woff2) | صفر كيلو تحميل، وصفر layout shift من تبديل الخط، والعربي بيتقري كويس على ويندوز وأندرويد والماك | لو الهوية محتاجة خط معيّن: woff2 subset لوحده مع [[font-display: swap]] و preload، وقيس الـ CLS بعدها |
-| الوضع الغامق | [[light-dark()]] في كل token | [[[data-theme=dark]]] بيعيد كل الألوان، أو [[@media (prefers-color-scheme)]] | لون واحد = سطر واحد فيه القيمتين، وإعداد الجهاز بيشتغل من CSS لوحده من غير JS | لو لازم تدعم متصفحات أقدم من ٢٠٢٤ بالوضعين (احنا بندّيهم الفاتح بس بـ [[@supports]]) |
-| التبديل الشهري/السنوي | radio و [[:has()]] من غير JS | JS بيغيّر النص | بيشتغل لو الـ JS وقع، والكيبورد والأسهم شغالين مجانًا من الـ radio | لو الأسعار جاية من API ولازم تتحسب |
-| الأسئلة | [[<details name="faq">]] | accordion بـ JS و [[aria-expanded]] | الكيبورد وقارئ الشاشة شغالين من غير كود، و [[name]] بيقفل اللي مفتوح لوحده | لو محتاج حركة فتح معقدة أو تحكم من بره |
-| التحقق في الفورم | Constraint Validation API ورسايل بإيدنا | مكتبة زي zod أو yup | المتصفح بيقول نوع الغلط ([[validity.typeMismatch]]...) ببلاش، واحنا بنكتب الرسالة بالعربي | لو نفس قواعد التحقق لازم تتشارك بين المتصفح والسيرفر بـ TypeScript |
-| السيرفر في المعمل | [[node:http]] في ٤٢ سطر | [[npx serve]] أو Vite dev server | محتاجين نأخّر الصور قصد ([[SLOW_IMG]])، ونقلّد GitHub Pages تحت مسار فرعي، و API تجريبي للفورم | لو مش محتاج الحاجات دي، [[npx serve]] كفاية |
-| القياس | [[playwright-core]] مع Chrome المتسطّب ([[channel: "chrome"]]) | Lighthouse، أو Puppeteer، أو [[playwright]] الكامل | مبينزّلش متصفح (الـ node_modules كلها ١٧ ميجا في المعمل)، وفيه CDP للـ throttling، وبيشغّل axe | Lighthouse لو عايز تقرير كامل بدرجات تديه لعميل |
-| الـ accessibility | [[@axe-core/playwright]] ومشي بالكيبورد بسكربت | axe DevTools في المتصفح بإيدك | نفس الفحص كل مرة وفي CI، على الوضعين وعلى الموبايل | الإضافة بإيدك وانت بتصمم، والسكربت قبل النشر |
-| النشر | GitHub Pages | Netlify أو Vercel أو Cloudflare Pages | مجاني، ومن نفس الريبو، والصفحة static | لو محتاج API جنب الصفحة (Functions) أو preview لكل PR: Netlify أو Vercel |
-
----
-
-## الهيكل
-
-~~~text habba-landing/
-habba-landing/
-├── index.html            الصفحة كلها (١٩٩ سطر)
-├── css/
-│   ├── tokens.css        الألوان والمسافات والخطوط (المصدر الوحيد للقيم)
-│   ├── site.css          الأقسام بالترتيب، والمقاسات في آخره
-│   └── form.css          الفورم بس
-├── js/
-│   ├── theme.js          ٩ سطور في الـ head: الثيم المحفوظ قبل أول رسمة
-│   ├── site.js           زرار الثيم، وقايمة الموبايل، والظهور مع السكرول
-│   ├── digits.js         دوال صافية: الأرقام العربي وقواعد كلمة السر
-│   └── form.js           التحقق والرسايل والإرسال
-├── img/
-│   ├── hero-600.webp, hero-1200.webp, hero-600.jpg, hero-1200.jpg
-│   └── icon.svg          أيقونة التاب
-├── tools/                مش بيتنشر للزائر، بس بيترفع في الريبو
-│   ├── serve.mjs         سيرفر المعمل + API تجريبي
-│   ├── make-img.mjs      بيرسم صورة الـ hero في Chrome
-│   ├── lint.mjs          فحص HTML من غير متصفح (CI)
-│   ├── contrast.mjs      نسب التباين لكل الـ tokens
-│   ├── matrix.mjs        ٦ مقاسات ومفيش scroll أفقي
-│   ├── perf.mjs          FCP و LCP و CLS ووميض الثيم
-│   ├── a11y.mjs          axe + الكيبورد + القفز للأقسام
-│   └── form-test.mjs     بيسوق الفورم زي يوزر
-├── package.json          devDependencies وأوامر npm
-└── .gitignore            node_modules
-~~~
-
----
-
-## الخطوة ٠: المعمل
-
-~~~bash
-mkdir habba-landing && cd habba-landing
-npm init -y
-npm i -D playwright-core@1.64.1 @axe-core/playwright@4.14.0
-mkdir css js img tools
-~~~
-
-~~~text الناتج (Node 24 على ويندوز)
-added 3 packages, and audited 4 packages in 3s
-
-found 0 vulnerabilities
-~~~
-
-- [[playwright-core]] هو Playwright من غير المتصفحات المتحمّلة معاه، فبنقوله [[channel: "chrome"]] يستخدم Chrome المتسطّب عندك. لو مفيش Chrome: [[npx playwright install chromium]] واشيل [[channel]].
-- النسخ مكتوبة بالظبط ([[@1.64.1]]) عشان اللي بيقرا بعد سنة يجيب نفس السلوك.
-- في [[package.json]] زوّد [[type: "module"]] عشان [[import]] تشتغل في ملفات [[tools/]]، وأوامر:
-
-~~~json package.json
-{
-  "name": "habba-landing",
-  "version": "1.0.0",
-  "scripts": {
-    "serve": "node tools/serve.mjs 5173",
-    "lint": "node tools/lint.mjs index.html && node tools/contrast.mjs",
-    "test": "node tools/form-test.mjs && node tools/matrix.mjs && node tools/a11y.mjs"
-  },
-  "type": "module",
-  "devDependencies": {
-    "@axe-core/playwright": "^4.14.0",
-    "playwright-core": "^1.64.1"
-  },
-  "private": true
-}
-~~~
-
-[[npm test]] محتاج السيرفر شغال في ترمنال تاني ([[npm run serve]]).
-
-### السيرفر
-
-~~~javascript tools/serve.mjs
-// سيرفر static صغير للمعمل: node tools/serve.mjs [port] [base]
-// base بيقلّد GitHub Pages لمشروع: الموقع بيتخدم تحت /اسم-الريبو/ مش تحت /
-// SLOW_IMG=1500 بيأخّر الصور ١٫٥ ثانية (زي CDN بطيء) عشان الـ layout shift يبان
-import http from "node:http";
-import fs from "node:fs";
-import path from "node:path";
-const port = Number(process.argv[2] || 5173);
-const base = process.argv[3] || "/";
-const slowImg = Number(process.env.SLOW_IMG || 0);
-const root = path.resolve(".");
-const types = { ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".webp": "image/webp", ".jpg": "image/jpeg", ".svg": "image/svg+xml", ".json": "application/json" };
-http.createServer((req, res) => {
-  const url = new URL(req.url, "http://x");
-  let p = decodeURIComponent(url.pathname);
-  if (req.method === "POST" && p === base + "api/signup") {        // API تجريبي للفورم
-    let body = "";
-    req.on("data", (c) => { body += c; });
-    req.on("end", () => {
-      const f = new URLSearchParams(body);
-      console.log("POST signup", f.get("email"), f.get("plan"));      // من غير الباسورد في اللوج
-      const taken = (f.get("email") || "").startsWith("taken@");
-      setTimeout(() => {
-        res.writeHead(taken ? 409 : 201, { "content-type": "application/json; charset=utf-8" });
-        res.end(JSON.stringify(taken ? { field: "email", message: "الإيميل ده عليه حساب، جرّب تدخل بيه" } : { ok: true }));
-      }, 800);
-    });
-    return;
-  }
-  if (!p.startsWith(base)) { console.log("404", req.url); res.writeHead(404); return res.end("not found"); }
-  p = "/" + p.slice(base.length);
-  if (p.endsWith("/")) p += "index.html";
-  const file = path.join(root, p);
-  if (!file.startsWith(root) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) {
-    console.log("404", req.url);
-    res.writeHead(404, { "content-type": "text/plain" }); return res.end("not found");
-  }
-  const send = () => {
-    res.writeHead(200, { "content-type": types[path.extname(file)] || "application/octet-stream", "cache-control": "no-cache" });
-    fs.createReadStream(file).pipe(res);
-  };
-  if (slowImg && p.startsWith("/img/")) setTimeout(send, slowImg); else send();
-}).listen(port, "127.0.0.1", () => console.log("http://127.0.0.1:" + port + base));
-~~~
-
-- [[process.argv[2]]] أول كلمة بعد اسم الملف (البورت)، و [[process.argv[3]]] التانية (المسار الأساسي). [[process.env.SLOW_IMG]] متغير بيئة: [[SLOW_IMG=1500 node tools/serve.mjs 5174]] في bash، و [[$env:SLOW_IMG=1500; node tools/serve.mjs 5174]] في PowerShell.
-- [[new URL(req.url, "http://x")]] بيفك الرابط عشان ناخد [[pathname]] من غير [[?query]]، و [[decodeURIComponent]] بيرجّع أي حروف مشفّرة.
-- الـ API: لو الطلب [[POST]] على [[api/signup]] بنجمع الـ body حتة حتة ([[data]]) ونفكه بـ [[URLSearchParams]] (نفس شكل الفورم). الإيميل اللي بيبدأ بـ [[taken@]] بيرجع 409 عشان نجرّب حالة «الإيميل عليه حساب». واللوج مفيهوش الباسورد أبدًا.
-- [[!file.startsWith(root)]] بيمنع حد يطلب [[/../../]] ويقرا ملفات بره الفولدر.
-- [[cache-control: no-cache]] عشان كل تعديل يبان من غير ما تمسح الكاش.
-- [[setTimeout(send, slowImg)]] بيأخّر الصور بس، فالـ HTML والـ CSS بيوصلوا عادي والصورة متأخرة: ده بالظبط الموقف اللي الـ layout shift بيبان فيه.
-
-~~~text node tools/serve.mjs 5173
-http://127.0.0.1:5173/
-~~~
-
-### صورة الـ hero من غير برنامج صور
-
-بدل ما ننزّل صورة من النت (حقوق، وحجم مش معروف)، بنرسمها على [[canvas]] جوه Chrome ونحفظها بـ [[toDataURL]] بصيغتين ومقاسين:
-
-~~~javascript tools/make-img.mjs
-// بيرسم صورة الـ hero على canvas في Chrome ويحفظها webp و jpg بمقاسين، من غير أي مكتبة صور
-import { chromium } from "playwright-core";
-import fs from "node:fs";
-const browser = await chromium.launch({ channel: "chrome" });
-const page = await browser.newPage();
-await page.setContent("<canvas id=c></canvas>");
-for (const w of [1200, 600]) {
-  const out = await page.evaluate((w) => {
-    const h = Math.round(w * 0.75), c = document.getElementById("c");
-    c.width = w; c.height = h;
-    const x = c.getContext("2d"), s = w / 1200;
-    const g = x.createLinearGradient(0, 0, w, h);
-    g.addColorStop(0, "#f6e3cf"); g.addColorStop(1, "#d9a77c");
-    x.fillStyle = g; x.fillRect(0, 0, w, h);
-    for (let i = 0; i < 70; i++) {               // حبات بن عشوائية بس ثابتة (نفس الـ seed)
-      const px = (i * 173) % w, py = (i * 97) % h, r = (14 + (i % 5) * 4) * s;
-      x.save(); x.translate(px, py); x.rotate(i);
-      x.fillStyle = i % 3 ? "#5b3216" : "#7a4520";
-      x.beginPath(); x.ellipse(0, 0, r, r * 0.68, 0, 0, Math.PI * 2); x.fill();
-      x.strokeStyle = "#2e180a"; x.lineWidth = 3 * s;
-      x.beginPath(); x.moveTo(-r * 0.8, 0); x.quadraticCurveTo(0, r * 0.3, r * 0.8, 0); x.stroke();
-      x.restore();
-    }
-    const cx = 600 * s;                          // الفنجان: طبق، وجسم، وودن، وسطح القهوة، وبخار
-    x.fillStyle = "#fffaf4"; x.beginPath(); x.ellipse(cx, 690 * s, 300 * s, 55 * s, 0, 0, Math.PI * 2); x.fill();
-    x.beginPath(); x.moveTo(cx - 200 * s, 380 * s); x.lineTo(cx + 200 * s, 380 * s);
-    x.quadraticCurveTo(cx + 190 * s, 660 * s, cx, 670 * s); x.quadraticCurveTo(cx - 190 * s, 660 * s, cx - 200 * s, 380 * s); x.fill();
-    x.lineWidth = 34 * s; x.strokeStyle = "#fffaf4";
-    x.beginPath(); x.arc(cx + 215 * s, 480 * s, 70 * s, -Math.PI / 2, Math.PI / 2); x.stroke();
-    x.fillStyle = "#3a2111"; x.beginPath(); x.ellipse(cx, 385 * s, 195 * s, 38 * s, 0, 0, Math.PI * 2); x.fill();
-    x.strokeStyle = "rgba(255,250,244,.85)"; x.lineWidth = 10 * s; x.lineCap = "round";
-    for (const dx of [-70, 0, 70]) { x.beginPath(); x.moveTo(cx + dx * s, 320 * s); x.bezierCurveTo(cx + (dx - 40) * s, 270 * s, cx + (dx + 40) * s, 230 * s, cx + dx * s, 180 * s); x.stroke(); }
-    return { webp: c.toDataURL("image/webp", 0.78), jpg: c.toDataURL("image/jpeg", 0.8) };
-  }, w);
-  for (const [ext, url] of Object.entries(out)) {
-    const buf = Buffer.from(url.split(",")[1], "base64");
-    fs.writeFileSync("img/hero-" + w + "." + ext, buf);
-    console.log("img/hero-" + w + "." + ext, Math.round(buf.length / 1024) + "KB");
-  }
-}
-await browser.close();
-~~~
-
-~~~text node tools/make-img.mjs
-img/hero-1200.webp 22KB
-img/hero-1200.jpg 47KB
-img/hero-600.webp 10KB
-img/hero-600.jpg 19KB
-~~~
-
-- [[page.evaluate(fn, w)]] بيشغّل الـ function جوه الصفحة (مش في Node)، و [[w]] بيتبعت كـ argument لأن الكود جوه مش شايف متغيرات Node.
-- [[toDataURL("image/webp", 0.78)]] بيرجّع الصورة نص [[data:image/webp;base64,...]]، والـ [[0.78]] الجودة. [[split(",")[1]]] بياخد اللي بعد الفاصلة، و [[Buffer.from(..., "base64")]] بيرجّعه bytes نكتبهم في ملف.
-- لاحظ الأرقام: webp أصغر من jpg بأكتر من النص (٢٢ مقابل ٤٧ كيلو) لنفس الصورة، فده اللي هيتبعت لأي متصفح حديث، والـ jpg للقديم بس عن طريق [[<picture>]].
-- [[(i * 173) % w]] بدل [[Math.random()]]: نفس الحبات في نفس المكان كل مرة، فالصورة متتغيّرش لو شغّلت السكربت تاني ومتعملش diff في git.
-
----
-
-## الخطة: كل خطوة بتبني إيه وبتتقاس بإيه
-
-| الخطوة (الدرس) | بتبني | الرقم اللي بيقول إنها خلصت |
-|---|---|---|
-| الصورة الكبيرة | المعمل والهيكل | lint بيقول [[0 problems]]، والشجرة فيها h1 واحد و ٦ h2 |
-| الألوان والثيم والعربي | [[tokens.css]] و [[theme.js]] والأساس | ٢٦ زوج ألوان كلهم فوق ٤٫٥، والثيم بيتحط قبل أول رسمة |
-| الـ header والـ hero | header لازق زجاجي، وقايمة موبايل، و hero | القايمة مقفولة على ٣٦٠ وبتفتح بـ [[aria-expanded]]، و CLS صفر والصورة متأخرة ١٫٥ ثانية |
-| المميزات والآراء والأسعار | bento، وكروت آراء، وأسعار بـ [[:has()]] | الأسهم بتبدّل السعر من غير JS، ومفيش overflow على ٣٢٠ |
-| الأسئلة والـ CTA والـ footer والحركة | [[details name]]، والـ footer، والظهور مع السكرول | واحد بس مفتوح، و ٠ عناصر مستخبية لو الـ JS وقع |
-| فورم تسجيل accessible | الفورم كله | [[form-test.mjs]]: ٨ PASS |
-| مصفوفة المقاسات والأداء | [[matrix.mjs]] و [[perf.mjs]] | ٦ مقاسات OK، و CLS صفر، والثيم قبل أول رسمة |
-| فحص accessibility والنشر | [[a11y.mjs]] و [[lint.mjs]] والنشر | axe صفر في ٣ حالات، و ٣١ وقفة كيبورد كلها ظاهرة، وصفر طلبات فاشلة تحت مسار فرعي |
-
----
-
-## خلاصة
-
-- ارسم الأقسام كأسئلة في دماغ الزائر بالترتيب، وخلّي كل الزراير توصل لهدف واحد ([[#signup]]).
-- الهيكل الصح ([[header]] و [[nav]] و [[main]] و [[section]] بعنوان و [[footer]]) بيدّيك landmarks وفهرس عناوين من غير ARIA زيادة.
-- كل أداة في الجدول ليها سبب وليها «إمتى تختار البديل»، فلو مشروعك مختلف (صفحات كتير، API، فريق كبير) القرار ممكن يتغيّر.
-- المعمل نفسه جزء من المشروع: سيرفر بيقدر يأخّر الصور ويقلّد GitHub Pages، وأدوات قياس بتطلّع نفس الرقم كل مرة.`,
+          cmd: "4 طبقات و box-sizing",
+          title: "اشرح الـ box model (Explain the CSS box model)",
           practice: [
-            { lvl: 'سريع', t: R`**اشرحها:** اكتب لزميل في ٣ سطور ليه الـ CTA section ملوش [[id]] وكل الأقسام التانية ليها، وليه الـ h1 في الـ hero مش في اللوجو.`, done: R`الشرح بيقول إن الـ [[id]] هدف لينك ومفيش لينك بيودّي للـ CTA، وإن الصفحة ليها عنوان رئيسي واحد بيوصف محتواها (اللوجو اسم مش عنوان)، وزميلك قدر يقول من غير ما يبص الـ h1 بتاع صفحة «عن المحمصة» هيبقى إيه.` },
-            { lvl: 'تطبيق', t: R`**ابني:** نفس الهيكل لموضوع تاني (جيم أو مكتبة أو مدرسة لغات متخيلة): ٧ أقسام بأسئلة مختلفة تناسبه. اكتب السؤال اللي كل قسم بيرد عليه كتعليق HTML فوقه.`, done: R`[[lint.mjs]] عليه [[0 problems]]، وشجرة الـ accessibility فيها banner و main و contentinfo و h1 واحد، وكل قسم فوقه تعليق [[<!-- «...؟» -->]] بسؤال مختلف.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الهيكل ده «شغال»: [[<div class="header"><h1>حبّة</h1></div><div class="main"><h1>بن طازة</h1><a href="#Pricing">الأسعار</a><div id="pricing">...</div></div>]]. لقيلو ٤ مشاكل قبل ما تفتح DevTools، وبعدين أثبت كل واحدة.`, done: R`لقيت: مفيش landmarks (div بدل header و main)، و h1 اتنين، واللينك [[#Pricing]] مش هيلاقي [[id="pricing"]] لأن الـ id حساس لحالة الحروف، ومفيش [[lang]] و [[dir]]. وبعد التصليح الـ lint صفر واللينك بيقفز.` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** شغّلت [[node tools/serve.mjs 5173 /habba-landing/]] وفتحت [[http://127.0.0.1:5173/]]. هيرجع إيه؟ وفتحت [[http://127.0.0.1:5173/habba-landing/css/site.css]]؟ جرّب في PowerShell، وبعدين نفس الأمر في Git Bash.`, done: R`الأول 404 (بره الـ base)، والتاني 200. وفي Git Bash لاحظت إن السيرفر طبع [[http://127.0.0.1:5173C:/Program Files/Git/habba-landing/]] وكل حاجة بقت 404، لأن Git Bash حوّل [[/habba-landing/]] لمسار ويندوز، والحل [[MSYS_NO_PATHCONV=1]] قبل الأمر.` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** عدّل [[make-img.mjs]] يطلّع كمان AVIF ([[toDataURL("image/avif")]]) وقارن الأحجام بالـ ٣ صيغ والمقاسين. لو Chrome مرجّعش AVIF، اعرف ليه من الناتج نفسه.`, done: R`عندك جدول بالأحجام، ولاحظت إن [[toDataURL]] بيرجّع [[data:image/png]] لو الصيغة مش مدعومة في الـ canvas (اكتب الـ prefix اللي رجع فعلًا)، فعرفت إن الـ AVIF محتاج أداة زي sharp أو squoosh مش الـ canvas.` },
-            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من وثائق Playwright عن [[ariaSnapshot]] اعرف إزاي تخلي [[outline.mjs]] يطلع الشجرة كـ YAML كاملة، واكتب اختبار بـ [[expect(locator).toMatchAriaSnapshot()]] بيتأكد إن الـ main فيه h1 واحد و ٦ h2 بالظبط.`, done: R`عندك اختبار بيعدّي على الهيكل، وبيقع لو غيّرت أي h2 لـ h3 أو مسحت قسم، ومكتوب الرسالة اللي ظهرت لما وقع.` },
-          ],
-          ci: [
-            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`node`, run: R`const html = '<header><nav><a href="#features">ليه</a><a href="#reviews">آراء</a><a href="#pricing">الأسعار</a><a href="#faq">أسئلة</a></nav></header>' +
-  '<main id="main"><section id="hero"><h1>بن طازة</h1></section><section id="features"><h2>ليه</h2></section><section id="reviews"><h2>آراء</h2></section>' +
-  '<section id="pricing"><h2>الأسعار</h2></section><section id="faq"><h2>أسئلة</h2></section><section class="cta"><h2>جرّب</h2></section><section id="signup"><h2>اشترك</h2></section></main>';
-const ids = new Set([...html.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]));
-const sections = [...html.matchAll(/<section\b([^>]*)>\s*<(h[12])/g)];
-const links = [...html.matchAll(/href="#([^"]+)"/g)].map((m) => m[1]);
-console.log("sections: " + sections.length + ", with id: " + sections.filter((s) => /\sid=/.test(s[1])).length);
-console.log("h1: " + (html.match(/<h1\b/g) || []).length);
-console.log("nav links: " + links.length + ", broken: " + links.filter((l) => !ids.has(l)).length);`, expect: [R`sections: 7, with id: 6`, R`h1: 1`, R`nav links: 4, broken: 0`] },
-          ],
-        },
-        {
-          cmd: "landing page: الألوان والثيم والعربي",
-          title: "tokens بـ light-dark()، ووضع غامق بيمشي ورا الجهاز ومن غير وميض، وطباعة عربي سليمة: وكل لون متقاس تباينه",
-          learn: R`تعمل كل ألوان الصفحة ومسافاتها في ملف واحد، والوضع الغامق في نفس السطر، وتمنع وميض الثيم، وتقيس التباين بسكربت بدل العين.`,
-          out: R`[[tokens.css]] و [[theme.js]] وأول جزء من [[site.css]]، و [[contrast.mjs]] بيقول إن ٢٦ زوج ألوان كلهم من ٤٫٥٤ لـ ١٦٫٥٥.`,
-          desc: R`قبل أي قسم، بنكتب **الـ tokens**: كل لون ومسافة وخط وظل في الصفحة متغير CSS في [[tokens.css]]، وكل حتة في الصفحة بتقرا منه بس. كل لون مكتوب مرة واحدة بقيمتين: [[--bg: light-dark(#fbf7f2, #16110d)]]، الأولى للفاتح والتانية للغامق، والمتصفح بيختار حسب [[color-scheme]]. فالوضع الغامق بيشتغل من إعداد الجهاز لوحده من غير JS، ولو اليوزر داس على زرار الثيم بنحط [[data-theme]] على الـ html بيغيّر [[color-scheme]] بس.
-
-ومشكلتين بنحلهم بالقياس:
-• **الوميض:** النسخة الأولى كانت بتقرا الثيم المحفوظ في [[site.js]] اللي عليه [[defer]]. على سيرفر سريع الثيم اتحط قبل أول رسمة (٤٤٦ مقابل ١١١٦ms) فمكانش باين، بس لما الصور اتأخرت أول رسمة جت أبدر والثيم اتحط **بعدها** (٤٨٤ مقابل ٤٦٤ms): الصفحة بتظهر فاتح وبعدين تقلب غامق. الحل ٩ سطور في [[theme.js]] في الـ head من غير [[defer]]: الثيم بقى بيتحط عند ٣٥٨–٣٦٧ms وأول رسمة ٥١٢–٥٤٤ms.
-• **التباين:** الرمادي الأول للنص الثانوي ([[#8f7f72]]) كان ٣٫٨٥ على الأبيض، و axe مسك ١٠ عناصر. ولون الزرار الأول ([[#c0622f]]) تحت الأبيض كان ٤٫١٨. [[contrast.mjs]] بيحسب كل زوج مستخدم في الوضعين ويقع لو أي واحد تحت ٤٫٥.
-
-وكمان الطباعة العربي: خطوط الجهاز (صفر تحميل)، و [[line-height: 1.8]] للفقرات، و [[letter-spacing: 0]] للعربي (اتقاس: نفس [[-.02em]] قصّر سطر إنجليزي ١١٫٥ بكسل وسطر عربي ١٫٩ بكسل بس، يعني التأثير مش متساوي)، والأرقام العربي في الأسعار والإنجليزي في الموبايل والإيميل.`,
-          example: R`:root {
-  color-scheme: light dark;
-  --bg: light-dark(#fbf7f2, #16110d);
-  --ink: light-dark(#1f1712, #f2e9e0);
-  --brand: light-dark(#a3501f, #ee8c58);
-}
-:root[data-theme="dark"] { color-scheme: dark; }
-body { background: var(--bg); color: var(--ink); }`,
-          lines: [
-            R`[[:root]] هو عنصر [[<html>]] بس بـ specificity أعلى من [[html]] (زي class)، والمتغيرات اللي بتتعرف هنا بتتورث لكل الصفحة.`,
-            R`[[color-scheme: light dark]] بيقول للمتصفح الصفحة بتدعم الاتنين، فيختار حسب إعداد الجهاز، ومعاه scrollbar و inputs و [[light-dark()]] كلهم.`,
-            R`لون الخلفية: [[light-dark(فاتح, غامق)]] بترجع القيمة الأولى لو الـ color-scheme المستخدم فاتح والتانية لو غامق. سطر واحد بدل بلوكين.`,
-            R`لون النص الأساسي بنفس الطريقة: شبه أسود على الفاتح، وكريمي على الغامق، والتباين ١٦٫٥٥ و ١٥٫٦٣.`,
-            R`لون البراند: البرتقالي الغامق في الفاتح، وأفتح في الغامق عشان يتقري على الخلفية الغامقة (٧٫٦١ بدل ما يبقى نفس اللون ويبوظ).`,
-            R`قفلة بلوك الـ tokens: كل اللي فوق متغيرات مش ستايلات، فمش بيغيّروا شكل حاجة لوحدهم.`,
-            R`لو اليوزر اختار الغامق بالزرار، [[data-theme="dark"]] بيجبر [[color-scheme]] على dark، فكل [[light-dark()]] في الصفحة ترجع القيمة التانية حتى لو الجهاز فاتح.`,
-            R`الاستخدام: أي عنصر بيقرا [[var(--bg)]] و [[var(--ink)]] بس، ومفيش ولا hex في أي ملف غير [[tokens.css]].`,
-          ],
-          try: R`اعمل [[tokens.css]] و [[theme.js]] من الشرح، وصفحة فيها فقرة وزرار. من DevTools افتح Rendering (من قايمة ⋮ › More tools) وغيّر «Emulate CSS media feature prefers-color-scheme» بين light و dark من غير ما تعمل refresh. بعدين في الـ Console اكتب [[localStorage.setItem("theme","light")]] وريفريش والجهاز على dark. وفي الآخر شغّل [[node tools/contrast.mjs]] وغيّر [[muted]] الفاتح لـ [[#8f7f72]] وشوف إيه اللي هيقع.`,
-          sol: R`الألوان بتتقلب لحظيًا مع Rendering (من غير refresh) لأن [[light-dark()]] بيتحسب من [[color-scheme]] كل مرة. ولما [[theme]] محفوظ [[light]] الصفحة بتفضل فاتح رغم إن الجهاز dark، لأن [[theme.js]] حط [[data-theme="light"]] قبل الرسم. و [[contrast.mjs]] بـ [[#8f7f72]] بيطبع [[light  muted on surface 3.86 FAIL]] و [[muted on bg 3.61]] و [[muted on alt]] أقل، ويخرج بـ 1.`,
-          flag: "script",
-          deep: {
-            why: R`لما اللون مكتوب في ٢٠ مكان، أي تعديل (البراند غمّق، أو التباين وقع) معناه تدوّر وتصلّح ٢٠ مرة وتنسى واحدة. الـ tokens بتخلّي القرار في مكان واحد. والوضع الغامق بقى متوقع من اليوزر، وأوحش حاجة فيه هي الوميض: الصفحة تظهر بيضا نص ثانية في أوضة ضلمة وبعدين تقلب. وكمان التباين مش ذوق: WCAG بيطلب ٤٫٥ للنص العادي، وتحت كده ناس كتير (نظر ضعيف، شمس على الموبايل) مش هتقرا.`,
-            how: R`المتغير في CSS بيخزّن الكلام زي ما هو، و [[light-dark()]] جواه بتتحل في مكان الاستخدام حسب [[color-scheme]] المستخدم على العنصر ده (وهو بيتورث من الـ html)، فلما [[data-theme]] يغيّر [[color-scheme]] على الـ root كل الألوان بتتقلب مرة واحدة. والوميض بيحصل لأن [[defer]] و [[type="module"]] بيشتغلوا بعد ما الـ HTML يتقري، والمتصفح ممكن يرسم أول مرة قبلها لو الـ CSS وصل بدري. السكربت العادي في الـ head (من غير defer) بيوقّف قراية الـ HTML لحد ما يخلص، فبيشتغل قبل أي رسمة أكيد، وعشان كده لازم يبقى صغير جدًا (٩ سطور). والتباين بيتحسب من الـ relative luminance لكل لون: كل قناة تتحول من sRGB لخطّية، وبعدين [[0.2126R + 0.7152G + 0.0722B]]، والنسبة [[(الأفتح + 0.05) / (الأغمق + 0.05)]].`,
-            when: R`أي مشروع فيه أكتر من صفحة أو أكتر من لون، حتى لو مش ناوي تعمل غامق دلوقتي (لما تحب تعمله هيبقى سطر في كل token). و [[light-dark()]] بقى Baseline من ٢٠٢٤ (Chrome 123 و Firefox 120 و Safari 17.5 حسب الوثائق)، ولو جمهورك على أجهزة أقدم بكتير استخدم [[[data-theme]]] بيعيد الألوان، وده موجود في وحدة «الثيم والعربي».`,
-            mistakes: R`ألوان hex جوه الكومبوننتات (زي header زجاجي بـ [[rgb(251 247 242 / .72)]] ثابت: في الغامق بقى أبيض شفاف والنص عليه تباينه ١٫٦٦، اتقاس في الخطوة الجاية). أو سكربت الثيم بـ [[defer]] أو في آخر الـ body. أو [[localStorage]] من غير try/catch (بيرمي في بعض أوضاع الخصوصية والـ iframes). أو تقلب الألوان حرفيًا للغامق (البرتقالي الغامق على أسود تباينه ضعيف، فبتفتّحه). أو [[letter-spacing]] سالب على عناوين عربي.`
-          },
-          teach: R`## الفكرة: كل قيمة في مكان واحد
-
-الـ token متغير CSS ليه اسم بيقول **وظيفته** مش شكله: [[--muted]] (نص ثانوي) مش [[--gray-500]]. لو بكرة البراند اتغيّر، بتغيّر سطر واحد، وكل زرار وعنوان ولينك بيتغيّر معاه.
-
----
-
-## tokens.css كامل
-
-~~~css css/tokens.css
-/* الألوان: كل token ليه قيمة للفاتح وقيمة للغامق في سطر واحد بـ light-dark() */
-:root {
-  color-scheme: light dark;
-  --bg:         light-dark(#fbf7f2, #16110d);
-  --surface:    light-dark(#ffffff, #211912);
-  --alt:        light-dark(#f3ebe1, #1b1510);
-  --ink:        light-dark(#1f1712, #f2e9e0);
-  --muted:      light-dark(#6b5c50, #b5a698);
-  --line:       light-dark(#e7dccf, #3a2e25);
-  --brand:      light-dark(#a3501f, #ee8c58);
-  --brand-ink:  light-dark(#ffffff, #1a0f08);
-  --brand-soft: light-dark(#f7e3d6, #3a2316);
-  --cta-bg:     light-dark(#2b1a10, #f2e1cf);
-  --cta-ink:    light-dark(#fbf1e7, #23160d);
-  --err:        light-dark(#b42318, #ff8f80);
-  --ok:         light-dark(#1d6b3a, #74d39d);
-  --shadow-c:   light-dark(rgb(31 23 18 / .16), rgb(0 0 0 / .55));
-  --ring:       0 0 0 3px var(--bg), 0 0 0 6px var(--brand);
-
-  --r-sm: 8px;
-  --r: 16px;
-  --r-lg: 28px;
-  --shadow: 0 1px 2px var(--shadow-c), 0 10px 30px -12px var(--shadow-c);
-  --gutter: clamp(16px, 4vw, 40px);
-  --space: clamp(56px, 9vw, 112px);
-  --nav-h: 64px;
-  --ease: cubic-bezier(.22, .7, .2, 1);
-  --font: system-ui, "Segoe UI", Tahoma, "Geeza Pro", "Noto Sans Arabic", sans-serif;
-  --z-header: 100;
-  --z-skip: 200;
-}
-/* اختيار اليوزر بيغلب إعداد الجهاز */
-:root[data-theme="light"] { color-scheme: light; }
-:root[data-theme="dark"]  { color-scheme: dark; }
-
-/* متصفح قديم مبيفهمش light-dark(): ياخد الفاتح بس بدل ما الألوان كلها تبوظ */
-@supports not (color: light-dark(#000, #fff)) {
-  :root {
-    --bg: #fbf7f2; --surface: #ffffff; --alt: #f3ebe1; --ink: #1f1712; --muted: #6b5c50; --line: #e7dccf;
-    --brand: #a3501f; --brand-ink: #ffffff; --brand-soft: #f7e3d6; --cta-bg: #2b1a10; --cta-ink: #fbf1e7; --err: #b42318; --ok: #1d6b3a;
-    --shadow-c: rgb(31 23 18 / .16);
-  }
-}
-~~~
-
-### الألوان: كل اسم بيقول بيتستخدم فين
-
-| token | بيتستخدم في | ملاحظة |
-|---|---|---|
-| [[--bg]] و [[--surface]] و [[--alt]] | خلفية الصفحة، والكروت، والأقسام اللي بالتبادل | تلات درجات قريبة عشان الأقسام تتفصل من غير خطوط |
-| [[--ink]] و [[--muted]] | النص الأساسي والنص الثانوي | [[--muted]] اتغمّق من [[#8f7f72]] لـ [[#6b5c50]] بعد ما التباين وقع (تحت) |
-| [[--brand]] و [[--brand-ink]] | الزرار الأساسي والنص اللي عليه | [[--brand-ink]] أبيض في الفاتح وشبه أسود في الغامق، لأن البراند في الغامق فاتح |
-| [[--brand-soft]] | خلفية الكارت الكبير والأفاتار والبادج | درجة فاتحة جدًا من البراند، والنص عليها [[--ink]] (١٤٫٢٢) |
-| [[--cta-bg]] و [[--cta-ink]] | شريط الـ CTA المقلوب | في الغامق بيبقى فاتح، فبيفضل «مقلوب» عن باقي الصفحة في الوضعين |
-| [[--err]] و [[--ok]] | رسايل الفورم | ألوان وظيفية متتغيرش مع البراند، وكل واحدة فوق ٦٫٥ على الكارت |
-| [[--shadow-c]] | لون الظل | [[light-dark()]] بتشتغل جوه أي قيمة لون، حتى لو هتتحط جوه [[box-shadow]] |
-| [[--ring]] | حلقة الـ focus في الفورم | حلقتين: واحدة بلون الخلفية وبعدها البراند، فبتبان على أي خلفية |
-
-### الباقي: مقاسات ومسافات وحركة
-
-- [[--r-sm]] و [[--r]] و [[--r-lg]]: ٣ درجات انحناء بس. الكروت [[--r]]، والكروت الكبيرة والصور [[--r-lg]]، والخانات [[--r-sm]].
-- [[--shadow]]: ظلين فوق بعض، واحد صغير حاد ([[0 1px 2px]]) بيرسم الحافة وواحد كبير ناعم ([[0 10px 30px -12px]]) بيدي العمق. الـ [[-12px]] (spread سالب) بيخلّي الظل الكبير أصغر من الكارت فميطلعش على الجناب.
-- [[--gutter: clamp(16px, 4vw, 40px)]]: المسافة على الجناب. [[clamp(أقل, مفضّل, أكتر)]]: ٤٪ من عرض الشاشة، بس مش أقل من ١٦ ولا أكتر من ٤٠. على ٣٦٠ بتبقى ١٦، وعلى ١٤٤٠ بتبقى ٤٠.
-- [[--space]]: المسافة فوق وتحت كل قسم بنفس الفكرة، من ٥٦ لـ ١١٢. إيقاع واحد للصفحة كلها.
-- [[--nav-h]]: ارتفاع الـ header، وهنستخدمه في [[scroll-margin-top]] عشان القفز للأقسام.
-- [[--ease]]: منحنى حركة واحد لكل الصفحة، بيبدأ سريع ويهدى في الآخر.
-- [[--z-header]] و [[--z-skip]]: طبقات بأسامي بدل [[z-index: 9999]]. الـ skip link فوق الـ header.
-
-### ليه light-dark() مش بلوك غامق كامل
-
-النسخة الأولى كانت كده:
-
-~~~css الطريقة القديمة (النسخة الأولى)
-:root { --bg: #fbf7f2; --ink: #1f1712; /* ... ١٣ لون */ }
-:root[data-theme="dark"] { --bg: #16110d; --ink: #f2e9e0; /* ... نفس الـ ١٣ تاني */ }
-~~~
-
-اتنين مشاكل اتقاسوا:
-1. **إعداد الجهاز متجاهَل:** Chrome بـ [[colorScheme: "dark"]] (زي موبايل على الوضع الليلي) والنسخة الأولى خلفيتها [[rgb(251, 247, 242)]] (فاتح) وزرار الثيم [[aria-pressed="false"]]. النسخة النهائية خلفيتها [[rgb(22, 17, 13)]] والزرار [[true]]، من غير JS.
-2. **كل لون في مكانين:** لو زوّدت لون ونسيته في البلوك التاني، الغامق يبقى فيه لون فاتح لوحده.
-
-والـ [[@supports not (color: light-dark(#000, #fff))]] في آخر الملف: متصفح قديم مبيفهمش [[light-dark()]] هيعتبر كل token قيمته غلط، والصفحة تبقى من غير ألوان خالص. البلوك ده بيدّيله الفاتح بس، وده مقبول.
-
----
-
-## theme.js: الثيم قبل أول رسمة
-
-~~~javascript js/theme.js
-// بيتحمّل في الـ head من غير defer: بيشتغل قبل أول رسمة، فمفيش وميض
-(function () {
-  var root = document.documentElement;
-  root.classList.add("js");
-  try {
-    var t = localStorage.getItem("theme");
-    if (t === "light" || t === "dark") root.dataset.theme = t;
-  } catch (e) {}
-})();
-~~~
-
-~~~html index.html (الـ head كامل)
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** عنصرين block فوق بعض، الأول [[margin-bottom: 30px]] والتاني [[margin-top: 20px]]. المسافة بينهم كام؟ وكام لو الأب بقى [[display: flex; flex-direction: column]]؟ اكتب، وبعدين قيس بـ [[getBoundingClientRect()]].`, done: R`30px في الـ block (الـ margins بتتلم وبياخد الأكبر)، و 50px في الـ flex (مفيش collapse)، والقياس طابق.`,
+              sol: R`~~~html margin.html
 <!doctype html>
 <html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>محمصة حبّة: بن طازة يوصلك كل شهر</title>
-<meta name="description" content="اشتراك شهري في بن محموص طازة من محمصة حبّة: اختار التحميصة والطحنة، ويوصلك لحد الباب.">
-<meta name="color-scheme" content="light dark">
-<link rel="icon" href="img/icon.svg" type="image/svg+xml">
-<script src="js/theme.js"></script>
-<link rel="stylesheet" href="css/tokens.css">
-<link rel="stylesheet" href="css/site.css">
-<link rel="stylesheet" href="css/form.css">
-<script type="module" src="js/site.js"></script>
-<script type="module" src="js/form.js"></script>
-</head>
+<head><meta charset="utf-8"><title>margin collapse</title>
+<style>
+  .a { margin-bottom: 30px; block-size: 40px; background: #bfdbfe; }
+  .b { margin-top: 20px; block-size: 40px; background: #fecaca; }
+  .flex { display: flex; flex-direction: column; }
+</style></head>
+<body>
+  <main><h1>المسافة</h1>
+    <div id="p"><div class="a" id="x"></div><div class="b" id="y"></div></div>
+  </main>
+  <script>
+    const gap = () => y.getBoundingClientRect().top - x.getBoundingClientRect().bottom;
+    console.log(gap());
+    p.className = "flex";
+    console.log(gap());
+  $__lt/script>
+</body></html>
 ~~~
 
-~~~html img/icon.svg
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="#a3501f"/><ellipse cx="32" cy="32" rx="14" ry="20" fill="#fff4ea" transform="rotate(30 32 32)"/><path d="M24 18c8 8 8 20 16 28" stroke="#a3501f" stroke-width="4" fill="none" stroke-linecap="round"/></svg>
+الـ margins الرأسية بين عناصر block متجاورة بتتلم (margin collapse): بدل ما تتجمع، المسافة بتبقى **الأكبر** فيهم. فـ 30 و 20 بيدّوا 30 مش 50.
+
+الـ collapse ده قاعدة خاصة بالـ block layout بس. جوه flex أو grid الأولاد في سياق تاني، فمفيش collapse، والـ margins بتتجمع: 50.
+
+[[getBoundingClientRect()]] بيدّي مكان كل عنصر الحقيقي، والفرق بين [[top]] التاني و [[bottom]] الأول هو المسافة الفعلية.
+
+الغلطة الشائعة: تتوقع 50 في الـ block، أو تحسب الـ margin السالب بنفس الطريقة (الموجب + السالب بيتجمعوا عادي). وعشان تتجنب كل ده استخدم [[gap]] في flex و grid: رقم واحد مفيهوش مفاجآت.
+
+~~~text الناتج (Chrome 156)
+block:              30px
+flex column:        50px
+~~~` },
+            { lvl: 'تطبيق', t: R`**مسألة:** أب عرضه 600px، وجواه عنصر [[width: 50%; padding: 10%; border: 5px solid]]. العرض الكلي كام في content-box وكام في border-box؟ وكام الـ padding الرأسي؟`, done: R`الـ padding ‏60px من كل ناحية (النسبة من عرض الأب حتى فوق وتحت). content-box: ‏300 + 120 + 10 = 430px. border-box: ‏300px والمحتوى 170px. واتأكدت من Computed في DevTools.`,
+              sol: R`~~~html box.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>box model</title>
+<style>
+  .p { inline-size: 600px; }
+  .c { width: 50%; padding: 10%; border: 5px solid #1f2937; }
+  .bb { box-sizing: border-box; }
+</style></head>
+<body>
+  <main><h1>الحساب</h1>
+    <div class="p"><div class="c" id="a">content-box</div></div>
+    <div class="p"><div class="c bb" id="b">border-box</div></div>
+  </main>
+</body></html>
 ~~~
 
-- [[<title>]] و [[description]]: اللي بيظهر في التاب وفي نتايج البحث وفي معاينة اللينك لما يتبعت في شات.
-- [[<meta name="color-scheme" content="light dark">]]: نفس معنى [[color-scheme]] في الـ CSS بس المتصفح بيعرفه **قبل** ما ملف الـ CSS يوصل، فلو الجهاز غامق خلفية الصفحة الفاضية بتبقى غامقة من أول لحظة بدل أبيض (حسب مواصفة HTML).
-- [[<link rel="icon">]] بـ SVG: أيقونة التاب ملف واحد صغير بيتكبّر على أي شاشة. من غيرها المتصفح بيطلب [[/favicon.ico]] لوحده (النسخة الأولى كانت بتطلّع ٤٠٤ في الـ Console كل مرة).
-- الترتيب: [[theme.js]] (يوقّف القراية ثواني) ثم الـ ٣ ملفات CSS (بيتحمّلوا مع بعض) ثم الـ modules (بيستنوا آخر الـ HTML ومش بيوقّفوا حاجة).
+الحساب خطوة خطوة:
 
-- [[(function () { ... })()]]: function بتشتغل على طول (IIFE)، عشان [[root]] و [[t]] ميبقوش متغيرات عامة على [[window]]. ده سكربت عادي مش module، فأي [[var]] بره function كان هيتحط على [[window]].
-- [[root.classList.add("js")]]: علامة إن الـ JS شغال. الـ CSS بيخفي العناصر اللي بتظهر مع السكرول بس لو [[.js]] موجودة، فلو الـ JS وقع مفيش حاجة مستخبية (درس «الأسئلة والـ CTA والـ footer والحركة»).
-- [[try { ... } catch (e) {}]]: [[localStorage]] ممكن يرمي (Safari في الـ private mode القديم، أو iframe بـ cookies مقفولة)، ومن غير try سكربت في الـ head بيرمي = كل اللي بعده في نفس الملف ميشتغلش.
-- [[t === "light" || t === "dark"]]: منكتبش أي قيمة جاية من التخزين في الـ DOM من غير ما نتأكد إنها واحدة من المتوقع.
-- [[root.dataset.theme = t]] بيحط [[data-theme="dark"]] على [[<html>]]، والسطر [[:root[data-theme="dark"]]] في الـ CSS بيغيّر [[color-scheme]].
-- مكانه قبل الـ CSS ومن غير [[defer]]: السكربت ده بيوقّف قراية الـ HTML لحد ما يتحمّل ويشتغل. ده بيأخّر كل حاجة شوية، فلازم يفضل ٩ سطور. وكل الـ JS التاني [[type="module"]] (بيستنى لحد آخر الـ HTML).
+- [[padding: 10%]] نسبة من **عرض الأب** في الاتجاهات الأربعة، حتى فوق وتحت: ‏10% × 600 = 60px.
+- [[width: 50%]] = ‏300px.
+- content-box (الافتراضي): الـ [[width]] للمحتوى بس، فالكلي = ‏300 + 60 + 60 + 5 + 5 = **430px**.
+- border-box: الـ [[width]] للكل، فالكلي = **300px**، والمحتوى = ‏300 − 120 − 10 = **170px**.
 
-### زرار الثيم (أول جزء في site.js)
+عشان كده أغلب المشاريع بتبدأ بـ [[*, *::before, *::after { box-sizing: border-box; }]]: اللي تكتبه هو اللي تشوفه.
 
-~~~javascript js/site.js (١)
-// ١. زرار الثيم: اختيار اليوزر بيتحفظ، ولو مفيش اختيار بنمشي ورا إعداد الجهاز
-const root = document.documentElement;
-const themeBtn = document.querySelector(".theme-btn");
-const osDark = matchMedia("(prefers-color-scheme: dark)");
-const current = () => root.dataset.theme || (osDark.matches ? "dark" : "light");
-const paintBtn = () => themeBtn.setAttribute("aria-pressed", String(current() === "dark"));
-themeBtn.addEventListener("click", () => {
-  const next = current() === "dark" ? "light" : "dark";
-  root.dataset.theme = next;
-  try { localStorage.setItem("theme", next); } catch {}
-  paintBtn();
-});
-osDark.addEventListener("change", paintBtn);
-paintBtn();
+الغلطة الشائعة: تفتكر padding الفوق والتحت نسبة من الارتفاع. ده اللي بيخلي [[padding-top: 56.25%]] الحيلة القديمة لعمل نسبة 16:9، وبديلها الحديث [[aspect-ratio]].
+
+~~~text الناتج (Chrome 156، من getComputedStyle و getBoundingClientRect)
+content-box: width الكلي 430px، والمحتوى 300px، و padding-top 60px
+border-box:  width الكلي 300px، والمحتوى 170px، و padding-top 60px
+~~~` },
+            { lvl: 'سريع', t: R`**اشرحها:** سجّل نفسك بتجاوب «Explain the CSS box model» بالإنجليزي في أقل من دقيقة، وبعدين اسمعها.`, done: R`التسجيل أقل من ٦٠ ثانية، وفيه الأربع طبقات بالترتيب، و content-box مقابل border-box بمثال رقم، و margin collapse، وجملة «I'd show it in DevTools Computed». ولو نسيت حاجة سجّل تاني.`,
+              sol: R`~~~text إجابة نموذجية بالإنجليزي (حوالي 45 ثانية)
+Every element is a box with four layers, from the inside out:
+content, padding, border, and margin.
+
+Padding is inside the border and shows the background;
+margin is outside and separates elements.
+
+By default, box-sizing is content-box, so width applies to the content only:
+width 300 with padding 20 and a 5 pixel border renders 350 wide.
+With border-box, width includes padding and border, so it renders 300.
+That's why most projects set border-box globally.
+
+Vertical margins between block siblings collapse:
+30 and 20 give 30, not 50. This doesn't happen in flex or grid.
+
+If something looks off, I'd show it in DevTools Computed:
+the box diagram shows every layer's real size.
 ~~~
 
-- [[matchMedia("(prefers-color-scheme: dark)")]] بيرجّع object فيه [[.matches]] (true لو الجهاز غامق) وبيبعت [[change]] لما اليوزر يغيّر إعداد الجهاز والصفحة مفتوحة.
-- [[current()]]: الثيم الفعلي = اختيار اليوزر لو موجود، وإلا إعداد الجهاز. من غيرها الزرار أول ضغطة كان هيعمل «غامق» على صفحة غامقة أصلًا.
-- الزرار [[aria-pressed]] (toggle button): قارئ الشاشة بيقول «الوضع الغامق، زرار، مضغوط» أو «مش مضغوط». الكلمة على الزرار ثابتة («الوضع الغامق») والحالة في [[aria-pressed]]، بدل ما النص يتغيّر لـ «الوضع الفاتح» واليوزر يتلخبط هو بيقول الحالة ولا الأمر.
+جواب الانترفيو مش تعريف من كتاب: بيبين إنك بتستخدم الحاجة. عشان كده الإجابة مبنية بالترتيب ده:
 
-### قياس الوميض
+1. الأربع طبقات من جوه لبرا، والفرق بين padding و margin في جملة.
+2. رقم بدل كلام: 300 + 40 + 10 = 350 مقابل 300. الأرقام بتثبت إنك فاهم.
+3. [[margin collapse]] بمثال، وإنه مش بيحصل في flex و grid. ده اللي بيفرّق إجابة جيدة عن عادية.
+4. جملة DevTools، لأنها بتقول إنك بتشخّص مش بتخمّن.
 
-[[perf.mjs]] (الكود كامل في درس «مصفوفة المقاسات والأداء») بيحفظ [[theme=dark]] في الـ localStorage، وبيعمل reload على شبكة بطيئة (150ms و 1.6Mbps و CPU أبطأ ٤ مرات)، وبيسجّل وقتين: إمتى [[data-theme]] اتحط (بـ [[MutationObserver]] بيبدأ قبل أي سكربت في الصفحة)، وإمتى أول رسمة ([[first-contentful-paint]]). لو الثيم بعد أول رسمة يبقى فيه وميض.
+الغلطة الشائعة: تحفظ الفقرة وتقراها زي النشرة. اقراها مرتين، وبعدين سجّل من الذاكرة بكلامك. الغلط الصغير عادي، السكوت الطويل هو اللي بيقلق.
 
-| النسخة | السيرفر | الثيم اتحط عند | أول رسمة | النتيجة |
-|---|---|---|---|---|
-| الأولى ([[defer]] في site.js) | عادي | ٤٤٣–٤٦٤ms | ١٠٨٠–١١٢٠ms | قبل أول رسمة بالصدفة |
-| الأولى | الصور متأخرة ١٫٥ ثانية | ٤٧٩–٤٩٧ms | ٤٥٦–٤٦٨ms | **بعد أول رسمة: وميض** |
-| النهائية ([[theme.js]] في الـ head) | عادي | ٣٥٤–٣٧٦ms | ١٠٥٢–١١٤٤ms | قبل أول رسمة |
-| النهائية | الصور متأخرة ١٫٥ ثانية | ٣٥٨–٣٦٧ms | ٥١٢–٥٤٤ms | قبل أول رسمة |
-
-> الدرس هنا: «جرّبته ومفيش وميض» مش دليل. نفس الكود بيومض أو لأ حسب مين يوصل الأول، الـ CSS ولا الـ script. القياس في الظروف الوحشة (هنا: صور بطيئة خلّت أول رسمة تيجي أبدر) هو اللي كشفه. ولاحظ إن أول رسمة في النهائية بقت أبطأ ٥٠–٨٠ms في الظرف ده: ده تمن السكربت اللي بيوقّف القراية، وعشان كده صغير.
-
----
-
-## التباين: سكربت بدل العين
-
-~~~javascript tools/contrast.mjs
-// نسبة التباين بين أزواج الـ tokens في الوضعين (WCAG 2): node tools/contrast.mjs
-// كل لون "#rrggbb"؛ النص العادي محتاج 4.5 والنص الكبير والأيقونات 3
-const lum = (hex) => {
-  const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
-    .map((c) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-};
-const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
-const themes = {
-  light: { bg: "#fbf7f2", surface: "#ffffff", alt: "#f3ebe1", ink: "#1f1712", muted: "#6b5c50", brand: "#a3501f", "brand-ink": "#ffffff", "brand-soft": "#f7e3d6", "cta-bg": "#2b1a10", "cta-ink": "#fbf1e7", err: "#b42318", ok: "#1d6b3a" },
-  dark: { bg: "#16110d", surface: "#211912", alt: "#1b1510", ink: "#f2e9e0", muted: "#b5a698", brand: "#ee8c58", "brand-ink": "#1a0f08", "brand-soft": "#3a2316", "cta-bg": "#f2e1cf", "cta-ink": "#23160d", err: "#ff8f80", ok: "#74d39d" },
-};
-const pairs = [["ink", "bg"], ["muted", "bg"], ["muted", "surface"], ["muted", "alt"], ["brand", "bg"], ["brand", "surface"], ["brand-ink", "brand"], ["brand", "brand-soft"], ["ink", "brand-soft"], ["cta-ink", "cta-bg"], ["bg", "ink"], ["err", "surface"], ["ok", "surface"]];
-let fail = 0;
-for (const [name, t] of Object.entries(themes)) for (const [fg, bg] of pairs) {
-  const r = ratio(t[fg], t[bg]);
-  if (r < 4.5) fail++;
-  console.log(name.padEnd(6), (fg + " on " + bg).padEnd(26), r.toFixed(2), r >= 4.5 ? "OK" : "FAIL");
-}
-process.exit(fail ? 1 : 0);
-~~~
-
-- [[hex.slice(i, i + 2)]] بياخد كل قناة ([[fb]] و [[f7]] و [[f2]])، و [[parseInt(..., 16)]] بيحوّلها من hex لرقم من ٠ لـ ٢٥٥، والقسمة على ٢٥٥ بتخليها من ٠ لـ ١.
-- [[c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4]]: تحويل sRGB لقيمة خطّية (الشاشة مش بتعرض الأرقام بالتساوي). [[**]] أُس.
-- [[0.2126 * r + 0.7152 * g + 0.0722 * b]]: العين بتحس بالأخضر أكتر بكتير من الأزرق، فده وزن كل قناة في «الإضاءة».
-- [[sort((p, q) => q - p)]] عشان الأفتح يبقى فوق القسمة دايمًا، فالنسبة من ١ لـ ٢١.
-- [[pairs]] الأزواج **المستخدمة فعلًا** في الصفحة بس. التباين بيتقاس للون على الخلفية اللي هيتحط عليها، مش كل لون مع كل لون.
-- [[process.exit(fail ? 1 : 0)]]: كود خروج 1 لو فيه زوج واقع، فـ [[npm run lint]] يقع وكمان الـ CI.
-
-~~~text node tools/contrast.mjs (النهائي)
-light  ink on bg                  16.55 OK
-light  muted on bg                6.02 OK
-light  muted on surface           6.42 OK
-light  muted on alt               5.43 OK
-light  brand on bg                5.29 OK
-light  brand on surface           5.64 OK
-light  brand-ink on brand         5.64 OK
-light  brand on brand-soft        4.54 OK
-light  ink on brand-soft          14.22 OK
-light  cta-ink on cta-bg          14.97 OK
-light  bg on ink                  16.55 OK
-light  err on surface             6.57 OK
-light  ok on surface              6.53 OK
-dark   ink on bg                  15.63 OK
-dark   muted on bg                7.92 OK
-dark   muted on surface           7.32 OK
-dark   muted on alt               7.64 OK
-dark   brand on bg                7.61 OK
-dark   brand on surface           7.03 OK
-dark   brand-ink on brand         7.64 OK
-dark   brand on brand-soft        5.96 OK
-dark   ink on brand-soft          12.23 OK
-dark   cta-ink on cta-bg          13.80 OK
-dark   bg on ink                  15.63 OK
-dark   err on surface             7.83 OK
-dark   ok on surface              9.52 OK
-~~~
-
-**النسخة الأولى:** [[--muted: #8f7f72]] كان ٣٫٨٦ على الأبيض و ٣٫٦١ على [[--bg]]، و [[--brand: #c0622f]] تحت نص أبيض ٤٫١٨. axe لقى ١٠ عناصر بتقول [[Element has insufficient color contrast of 3.85 (foreground color: #8f7f72, background color: #ffffff...)]]. الحل غمّقنا الاتنين ([[#6b5c50]] و [[#a3501f]]) لحد ما بقوا فوق ٤٫٥ في كل مكان بيتحطوا فيه، والشكل لسه نفس العيلة.
-
-وفيه زوج **مش في اللستة قصد**: [[brand on ink]] (البراند على الأسود) ٣٫١٣ في الفاتح و ٢٫٠٥ في الغامق. فلما كلمة «شهرين ببلاش» البرتقالي بتبقى جوه زرار متختار خلفيته [[--ink]]، بنخليها تاخد لون النص ([[color: inherit]]) بدل البراند (درس «المميزات والآراء والأسعار»).
-
----
-
-## الطباعة العربي
-
-### الخط: خطوط الجهاز
-
-[[--font: system-ui, "Segoe UI", Tahoma, "Geeza Pro", "Noto Sans Arabic", sans-serif]]: المتصفح بياخد أول خط موجود عنده فيه الحرف. [[system-ui]] خط النظام (Segoe UI على ويندوز، وعلى أندرويد Roboto ومعاه Noto Sans Arabic للعربي)، و Tahoma احتياطي قديم فيه عربي على كل ويندوز، و Geeza Pro خط العربي على الماك و iOS. النتيجة: [[perf.mjs]] مبيعدّش ولا byte تحت «font»، ومفيش layout shift من تبديل خط.
-
-### line-height و letter-spacing
-
-~~~css من site.css
-body { font-size: 1.0625rem; line-height: 1.8; }
-h1, h2, h3 { line-height: 1.35; text-wrap: balance; }
-p { text-wrap: pretty; }
-:lang(ar) { letter-spacing: 0; }
-~~~
-
-- [[line-height: 1.8]] للفقرات: الحروف العربي ليها أجزاء فوق وتحت السطر (النقط والحركات والياء والميم)، ومحتاجة مسافة أكتر من اللاتيني (١٫٥ كفاية للإنجليزي عادة). العناوين أقل (١٫٣٥) عشان العنوان على سطرين ميبقاش مفكك.
-- [[text-wrap: balance]]: المتصفح بيوزّع كلام العنوان على السطور بالتساوي، بدل سطر طويل وكلمة لوحدها تحت. و [[pretty]] للفقرات بيمنع كلمة لوحدها في آخر سطر.
-- [[:lang(ar) { letter-spacing: 0; }]]: اتقاس في Chrome 156 بخط 48px:
-
-| النص | [[letter-spacing: 0]] | [[-.02em]] | الفرق |
-|---|---|---|---|
-| «بن طازة يوصلك» | ٣١١٫٠px | ٣٠٩٫١px | ١٫٩px بس |
-| «Fresh coffee» | ٢٧٣٫٥px | ٢٦٢٫٠px | ١١٫٥px |
-
-Chrome 156 مبيكسرش وصل الحروف العربي (لقطة بـ [[.1em]] الحروف فضلت متصلة)، بيزوّد المسافة بس بين الحروف اللي مش بتتوصل أصلًا (زي «ز» و «ة»)، فالكلمة بتبان مفككة في حتت وفي حتت لأ. ومن الوثائق: مواصفة CSS Text بتقول المتصفح ميكسرش الوصل في الخطوط المتصلة، ومش كل المتصفحات والإصدارات ملتزمة بده. فبنصفّره للعربي ونستخدم التتبّع السالب للإنجليزي بس لو احتجناه.
-
-### الأرقام والكلام الإنجليزي جوه العربي
-
-- الأسعار بأرقام عربي («٢٤٠ جنيه») لأنها جزء من جملة عربي.
-- الموبايل والإيميل [[dir="ltr"]] على الـ input (اليوزر بيكتب من الشمال)، وفي النص بيتحطوا جوه [[<bdi dir="ltr">01012345678</bdi>]]: [[bdi]] بيعزل الجزء ده عن اتجاه الجملة، فالأرقام والعلامات اللي جنبها متتلخبطش.
-- [[font-variant-numeric: tabular-nums]] في الأسعار: كل الأرقام بنفس العرض، فلما السعر يتبدّل من شهري لسنوي العمود ميتنططش.
-
----
-
-## site.css (١): الأساس
-
-~~~css css/site.css (١)
-/* ١. الأساس */
-*, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
-body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 1.0625rem; line-height: 1.8; }
-img { max-width: 100%; height: auto; display: block; }
-h1, h2, h3 { line-height: 1.35; margin: 0 0 .5em; text-wrap: balance; }
-p { margin: 0 0 1em; text-wrap: pretty; }
-a { color: inherit; }
-:lang(ar) { letter-spacing: 0; }
-.wrap { width: 100%; max-width: 72rem; margin-inline: auto; padding-inline: var(--gutter); }
-.narrow { max-width: 44rem; }
-:focus-visible { outline: 3px solid var(--brand); outline-offset: 3px; }
-[id] { scroll-margin-top: calc(var(--nav-h) + 16px); }
-.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-
-.skip { position: absolute; inset-inline-start: 8px; top: 8px; z-index: var(--z-skip); background: var(--ink); color: var(--bg); padding: 8px 14px; border-radius: var(--r-sm); translate: 0 -200%; }
-.skip:focus { translate: 0 0; }
-~~~
-
-- [[box-sizing: border-box]] على كل حاجة (وعلى [[::before]] و [[::after]]): الـ width بيشمل الـ padding والـ border، فـ [[width: 100%]] مع padding مبيطلعش بره.
-- [[scroll-behavior: smooth]]: القفز للأقسام بيتحرك بنعومة. وبيتلغي تحت [[prefers-reduced-motion: reduce]] (درس الحركة). و [[-webkit-text-size-adjust: 100%]] بيمنع iOS يكبّر الخط لوحده لما الموبايل يتلف.
-- [[font-size: 1.0625rem]] = ١٧ بكسل لو إعداد المتصفح ١٦: العربي على الموبايل بيتقري أحسن شوية فوق ١٦. وبالـ rem عشان لو اليوزر كبّر الخط في إعدادات المتصفح الصفحة تكبر معاه.
-- [[img { max-width: 100%; height: auto; display: block; }]]: الصورة متعديش عرض اللي حواليها، والطول بيتحسب من النسبة، و [[block]] بيشيل المسافة الصغيرة تحت الصورة اللي بتيجي من إنها inline على الـ baseline.
-- [[.wrap]]: عرض أقصى ٧٢rem (١١٥٢px) في النص، و [[margin-inline: auto]] و [[padding-inline]] logical: بيشتغلوا يمين وشمال في RTL و LTR من غير تعديل.
-- [[:focus-visible]]: حلقة الـ focus تظهر للكيبورد بس (مش لما تضغط بالماوس)، بلون البراند و ٣ بكسل وبعيدة ٣ بكسل عن العنصر، لكل عنصر في الصفحة مرة واحدة.
-- [[[id] { scroll-margin-top: ... }]]: أي عنصر ليه id، لما تقفز له، بيقف تحت الـ header مش وراه (التفاصيل في الخطوة الجاية).
-- [[.sr-only]]: بيخفي الكلام من الشاشة بس قارئ الشاشة بيقراه (هنستخدمه للـ legend بتاع الأسعار). [[clip-path: inset(50%)]] بيقص العنصر لحد ما ميفضلش منه حاجة، وده الأحدث من [[clip: rect(0 0 0 0)]].
-- [[.skip]]: الـ skip link فوق في الركن ([[inset-inline-start]] = يمين في RTL)، ومتزحلق لفوق بره الشاشة بـ [[translate: 0 -200%]]، ولما ياخد focus بيرجع. [[translate]] لوحدها (من غير [[transform:]]) خاصية جديدة بتتحرك من غير ما تمسح أي [[transform]] تاني.
-
----
-
-## الغلطات اللي حصلت في الخطوة دي
-
-| الغلطة | اتمسكت إزاي | الرقم قبل | التصليح | الرقم بعد |
-|---|---|---|---|---|
-| الثيم في [[site.js]] بـ [[defer]] | [[perf.mjs]] والصور متأخرة | الثيم عند ٤٨٤ms وأول رسمة ٤٦٤ms (وميض) | [[theme.js]] في الـ head من غير defer | الثيم عند ٣٥٨–٣٦٧ms قبل أول رسمة |
-| الوضع الغامق متجاهل إعداد الجهاز | Chrome بـ [[colorScheme: "dark"]] | الخلفية [[rgb(251, 247, 242)]] | [[light-dark()]] و [[color-scheme]] | [[rgb(22, 17, 13)]] من غير JS |
-| [[--muted]] فاتح زيادة | axe و [[contrast.mjs]] | ٣٫٨٥، و ١٠ عناصر | [[#6b5c50]] | ٦٫٤٢، وصفر عناصر |
-| البراند تحت نص أبيض | [[contrast.mjs]] | ٤٫١٨ | [[#a3501f]] | ٥٫٦٤ |
-
----
-
-## خلاصة
-
-- كل قيمة في [[tokens.css]] باسم وظيفتها، وكل لون فيه الوضعين في سطر واحد بـ [[light-dark()]]، والـ [[@supports]] بيحمي المتصفحات القديمة.
-- الثيم المحفوظ يتقري في سكربت صغير في الـ head من غير defer، والباقي module.
-- التباين بيتقاس لكل زوج مستخدم فعلًا، بسكربت بيقع في الـ CI.
-- العربي: خطوط الجهاز، و [[line-height]] أكبر، ومفيش [[letter-spacing]]، والأرقام والإيميل جوه [[bdi]] أو [[dir="ltr"]].`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صفحة فيها [[:root { color-scheme: light dark; --bg: light-dark(white, black); }]] و [[.card { color-scheme: dark; background: var(--bg); }]]. الجهاز على الفاتح: خلفية الكارت هتبقى إيه؟ وخلفية الصفحة؟ جرّب.`, done: R`كتبت توقعك، وجرّبت: الكارت أسود والصفحة بيضا، لأن [[light-dark()]] بتتحل حسب [[color-scheme]] على العنصر اللي بيستخدمها مش على المكان اللي اتعرّف فيه المتغير. وعرفت إن ده بيخليك تعمل قسم غامق جوه صفحة فاتحة بسطر واحد.` },
-            { lvl: 'تطبيق', t: R`**ابني:** ثيم تالت «ورقي» (بيج ونص بني) بـ [[data-theme="paper"]]. فكّر: [[light-dark()]] فيها قيمتين بس، فهتعمل التالت إزاي من غير ما تكرر كل الـ tokens؟`, done: R`الثيم التالت بيعيد تعريف الـ tokens اللي بتتغيّر بس في [[:root[data-theme="paper"]]] (مع [[color-scheme: light]])، والزرار بيلف على التلاتة، و [[contrast.mjs]] فيه [[paper]] كتالت ثيم وكل الأزواج OK.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** ده سكربت الثيم في الـ head: [[<script defer src="theme.js"></script>]] وجواه [[const t = localStorage.getItem("theme"); document.documentElement.dataset.theme = t;]]. لقيله ٣ مشاكل، وصلّحهم، وأثبت بـ [[perf.mjs]].`, done: R`المشاكل: [[defer]] (وميض، ثبّته بالقياس والصور متأخرة)، ومفيش try/catch، وبيكتب أي قيمة حتى [[null]] (فـ [[data-theme="null"]] لو مفيش حاجة محفوظة). وبعد التصليح [[perf.mjs]] بيقول [[before first paint]] في الظرفين.` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** خد ٥ ألوان من أي موقع بتحبه (DevTools › Elements › Computed › color و background-color للنص الثانوي والزراير)، وحطهم في [[contrast.mjs]] كثيم تالت. كام زوج واقع؟`, done: R`عندك جدول بالأزواج الخمسة ونسبهم، ولكل واحد تحت ٤٫٥ اقترحت لون أغمق أو أفتح بأقل تغيير يعدّي (جرّب بـ [[ratio()]] لحد ما يعدّي) وكتبت النسبة الجديدة.` },
-            { lvl: 'تحدي', t: R`**مسألة:** اكتب [[fixContrast(fg, bg, target = 4.5)]]: بتغمّق أو تفتّح [[fg]] بخطوات صغيرة (مثلًا امزجه مع أسود أو أبيض ٢٪ كل مرة) لحد ما النسبة توصل للهدف، وترجع اللون الجديد. جرّبها على [[#8f7f72]] على [[#ffffff]].`, done: R`[[fixContrast("#8f7f72", "#ffffff")]] بترجع لون نسبته بين ٤٫٥ و ٤٫٦ (مش أغمق من اللازم)، وبتشتغل للاتجاهين (نص فاتح على خلفية غامقة بتفتّحه)، وكتبت ٣ اختبارات ليها.` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** من MDN عن [[light-dark()]] اعرف: بتقبل غير الألوان (زي صورتين أو طولين)؟ ولو [[color-scheme: normal]] على الـ root، هترجع أنهي قيمة؟`, done: R`كتبت الإجابتين ومعاهم رابط الصفحة ونسخة المتصفح اللي جرّبت عليها، وجرّبت إجابة التانية بإيدك: [[color-scheme: normal]] على الـ root والجهاز غامق، وشوفت أنهي قيمة رجعت في Computed.` },
+~~~text الناتج
+التسجيل: حوالي 45 ثانية، فيه الطبقات الأربعة، و 350 مقابل 300، و collapse، و DevTools.
+~~~` },
           ],
-          ci: [
-            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`node`, run: R`const lum = (hex) => {
-  const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
-    .map((c) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-};
-const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
-const rows = [["v1 muted on surface", "#8f7f72", "#ffffff"], ["v1 brand-ink on brand", "#ffffff", "#c0622f"], ["final muted on surface", "#6b5c50", "#ffffff"], ["final brand-ink on brand", "#ffffff", "#a3501f"], ["dark muted on surface", "#b5a698", "#211912"], ["brand on ink", "#a3501f", "#1f1712"]];
-for (const [label, fg, bg] of rows) { const r = ratio(fg, bg); console.log(label + " " + r.toFixed(2) + " " + (r >= 4.5 ? "OK" : "FAIL")); }`, expect: [R`v1 muted on surface 3.86 FAIL`, R`v1 brand-ink on brand 4.18 FAIL`, R`final muted on surface 6.42 OK`, R`final brand-ink on brand 5.64 OK`, R`dark muted on surface 7.32 OK`, R`brand on ink 3.13 FAIL`] },
-          ],
-        },
-        {
-          cmd: "landing page: الـ header والـ hero",
-          title: "header لازق وزجاجي ليه fallback، وقايمة موبايل بـ aria-expanded و Esc، و hero بصورة مبتعملش layout shift",
-          learn: R`تبني أول شاشة يشوفها الزائر: header فوق دايمًا وشفاف وبيتقري في الوضعين، وقايمة موبايل بتتفتح وتتقفل صح بالكيبورد، و hero عنوانه بيكبر مع الشاشة وصورته محجوز مكانها.`,
-          out: R`الـ header والـ hero في [[index.html]]، والأجزاء ٢ و ٣ و ٤ و ١٠ من [[site.css]]، والجزء ٢ من [[site.js]]. والقياس: القايمة مقفولة على ٣٦٠ لحد ما تتضغط، و CLS صفر والصور متأخرة ١٫٥ ثانية.`,
-          desc: R`أول شاشة هي اللي بتقرر الزائر هيكمل ولا لأ. هنا بنبني الـ **header**: لازق فوق بـ [[position: sticky]]، وخلفيته زجاجية بـ [[backdrop-filter]] ولونها من الـ tokens (فبتشتغل في الغامق)، وليه fallback بـ [[@supports]]، وعلى الموبايل الروابط بتستخبى ورا زرار «القايمة» عليه [[aria-expanded]] و [[aria-controls]] و Esc بيقفلها ويرجّع الـ focus. وبعده الـ **hero**: عنوان بـ [[clamp()]]، وزرارين، وصورة بـ [[<picture>]] و [[srcset]] و [[sizes]] و [[width]] و [[height]] و [[fetchpriority="high"]].
-
-النسخة الأولى كان فيها ٥ غلطات حقيقية، وكل واحدة اتمسكت برقم:
-• القايمة كانت مكتوب عليها [[hidden]] والـ CSS بيقول [[display: flex]]، فعلى ٣٦٠ كانت **مفتوحة على طول** (٢٢٦ بكسل فوق الصفحة) لأن [[display]] في الـ CSS بيغلب [[hidden]].
-• خلفية الـ header كانت [[rgb(251 247 242 / .72)]] ثابتة، ففي الغامق النص الفاتح بقى على زجاج فاتح: axe قال تباين **١٫٦٦**.
-• صورة الـ hero من غير [[width]] و [[height]]: لما الصورة اتأخرت ١٫٥ ثانية الـ CLS كان **٠٫٠٩٥٧** على ٣٦٠ و **٠٫٠٥٥٥** على ١٤٤٠. بعد المقاس: **صفر**.
-• [[const top = ...]] في سكربت عادي وقّع الملف كله بـ [[Identifier 'top' has already been declared]]، لأن [[window.top]] موجود أصلًا.
-• زرار «اشترك» كان المفروض يستخبى على الموبايل، بس قاعدة [[.btn]] جت **بعد** الـ media query في الملف وغلبتها، فعلى ٣٢٠ الصفحة بقت أعرض من الشاشة بـ ٣١ بكسل.`,
-          example: R`.top { position: sticky; top: 0; z-index: var(--z-header); }
-.top { background: color-mix(in srgb, var(--bg) 78%, transparent); backdrop-filter: blur(14px); }
-@supports not (backdrop-filter: blur(1px)) { .top { background: var(--bg); } }
-.js .top.open .nav-links { display: flex; }
-h1 { font-size: clamp(2rem, 1.2rem + 4vw, 3.6rem); }
-<img src="img/hero-1200.jpg" width="1200" height="900" fetchpriority="high" alt="فنجان قهوة سادة على طبق">`,
-          lines: [
-            R`الـ header بيمشي مع الصفحة لحد ما يوصل لأول الشاشة ([[top: 0]]) ويلزق هناك، وطبقته من token ([[100]]) عشان ميتغطاش بكروت فيها [[transform]].`,
-            R`خلفية من لون الصفحة بشفافية ٧٨٪ بـ [[color-mix()]] (فبتتقلب مع الثيم لوحدها)، و [[backdrop-filter: blur(14px)]] بيغبّش اللي وراه فالنص يتقري.`,
-            R`لو المتصفح مبيدعمش [[backdrop-filter]]، الخلفية تبقى معتمة بلون الصفحة، لأن الشفاف من غير blur بيخلّي الكلام فوق كلام.`,
-            R`على الموبايل الروابط مستخبية، وبتظهر بس لما الـ header عليه class [[open]] (الزرار بيحطها)، وبس لو الـ JS شغال ([[.js]]).`,
-            R`العنوان بيكبر مع عرض الشاشة: [[2rem]] على الأقل (٣٢px)، و [[3.6rem]] أقصى حاجة، وفي النص [[1.2rem + 4vw]] بيتغيّر بنعومة.`,
-            R`الصورة ليها [[width]] و [[height]] (النسبة ٤:٣) فالمتصفح بيحجز مكانها قبل ما تيجي، و [[fetchpriority="high"]] بيقدّمها على الصور التانية، و [[alt]] بيوصف اللي فيها.`,
-          ],
-          try: R`ابني الـ header والـ hero من الشرح. افتح الصفحة على Device Toolbar بعرض ٣٦٠: القايمة لازم تبقى مقفولة. دوس Tab لحد زرار «القايمة» و Enter، وبعدين Tab جوه الروابط، و Esc. فين الـ focus؟ وبعدين اقفل الـ JS (DevTools › Settings › Debugger › Disable JavaScript) واعمل refresh: الروابط بتبان؟ وفي الآخر شغّل السيرفر بـ [[SLOW_IMG=1500]] وامسح [[width]] و [[height]] من الصورة وشوف الـ CLS في Performance.`,
-          sol: R`القايمة مقفولة ([[aria-expanded="false"]] وصفر روابط ظاهرة)، و Enter بيفتحها ([[true]] و ٤ روابط)، و Esc بيقفلها والـ focus بيرجع على زرار «القايمة» (اتقاس: [[{"expanded":"false","shown":0,"focus":"menu-btn"}]]). ومن غير JS الروابط الأربعة ظاهرة جنب بعض (لأن كل قواعد الإخفاء متعلّقة بـ [[.js]]) والزرار مستخبي. ومن غير [[width]] و [[height]] والصور بطيئة، Performance بيورّي Layout shift لما الصورة توصل، و [[perf.mjs]] بيقول [[CLS 0.0957]] على ٣٦٠.`,
+          desc: R`كل عنصر صندوق من 4 طبقات من جوه لبرا: content و padding و border و margin. الـ width الافتراضي (content-box) بيحدد المحتوى بس، فالـ padding والـ border بيتزودوا عليه. مع [[border-box]] الـ width بيبقى العرض الكامل شامل الـ padding والـ border، ودا اللي بنحطه على كل حاجة في أي مشروع (و Tailwind بيعمله في الـ Preflight). الـ margin برا الحساب في الحالتين، والـ margin الرأسي بين عنصرين block بيعمل collapse: الأكبر بس اللي بيفضل.`,
+          example: R`.box { width: 200px; padding: 20px; border: 5px solid; }
+.box { box-sizing: content-box; }
+.box { box-sizing: border-box; }`,
+          try: R`افتح DevTools › Computed على أي عنصر، واشرح الأرقام اللي في رسمة الصندوق بصوت عالي كأنك في انترفيو.`,
           flag: "script",
           deep: {
-            why: R`الـ header اللازق بيخلّي الـ CTA («اشترك») والـ nav موجودين في أي مكان في الصفحة الطويلة. بس هو كمان أكتر حتة بتتكسر: بيغطي العناوين لما تقفز، وبيبقى مش مقروء في الغامق، والقايمة على الموبايل بتتقفل بالماوس بس. والـ hero هو أكبر حاجة في أول شاشة، فصورته غالبًا هي الـ LCP، ولو مكانها مش محجوز كل اللي تحتها بيتنطط لما توصل، والزائر بيضغط على حاجة غلط.`,
-            how: R`[[position: sticky]] بيخلّي العنصر عادي لحد ما يوصل لـ [[top: 0]] في الـ scroll container بتاعه، وبعدين يلزق. أي أب فيه [[overflow: hidden]] أو [[auto]] بيبقى هو الـ scroll container فالـ sticky يبطّل (عشان كده الـ footer بـ [[overflow: clip]] مش hidden). [[backdrop-filter]] بيطبّق الـ blur على اللي **ورا** العنصر، فلازم الخلفية تبقى شفافة. [[hidden]] attribute ستايله في المتصفح [[display: none]] بأقل أولوية، فأي [[display]] تكتبه انت بيغلبه، وده اللي كسّر القايمة. والصورة: لما [[width]] و [[height]] مكتوبين، المتصفح بيحسب [[aspect-ratio]] منهم قبل ما يحمّل، ومع [[height: auto]] في الـ CSS الصورة بتاخد عرض العمود وطول متحسوب. و [[srcset]] بيقول الملفات المتاحة بعرضها ([[600w]])، و [[sizes]] بيقول الصورة هتتعرض بكام ([[50vw]] على الديسكتوب و [[100vw]] على الموبايل)، فالمتصفح بيختار أصغر ملف كفاية: على ٣٦٠ اتحمّل [[hero-600.webp]] (١٠ كيلو) وعلى ١٤٤٠ [[hero-1200.webp]] (٢٢ كيلو).`,
-            when: R`أي صفحة طويلة فيها nav. والقايمة بالشكل ده (زرار بيظهر/يخفي لستة روابط) مناسبة لحد ٦ أو ٧ روابط؛ لو أكتر أو فيها قوايم فرعية، استخدم [[<dialog>]] أو popover (وحدة «widgets و scroll»). والـ glass مناسب لو تحته محتوى بيتحرك؛ لو الصفحة كلها لون واحد، خلفية معتمة أبسط وأخف.`,
-            mistakes: R`[[hidden]] مع [[display]] في الـ CSS. أو تعمل القايمة [[position: fixed]] وتنسى [[inert]] أو الكيبورد بيروح وراها. أو تخفي الروابط بـ [[opacity: 0]] (بتفضل بتاخد Tab). أو [[z-index: 9999]]. أو صورة الـ hero [[loading="lazy"]] (بتتأخر لأنها أهم صورة). أو [[sizes]] غلط فالموبايل ينزّل ١٢٠٠. أو [[overflow-x: hidden]] على [[body]] عشان تخفي overflow، فالـ sticky يبطّل. أو تحط الـ media queries في نص الملف فقاعدة بعدها تغلبها.`
+            why: "سؤال أساسي بيختبر إنك فاهم ليه الحاجات بتطلع أعرض من المتوقع، وإنك مش بتحل كل حاجة بالتجربة.",
+            how: "لو عايز تتميز: margin collapse مش بيحصل جوه flex و grid ولا في الاتجاه الأفقي، والـ padding بالنسبة المئوية بيتحسب من عرض الأب حتى الرأسي، والعناصر الـ inline بتتجاهل width و height والـ margin الرأسي.\n\nومثال تحسبه قدامهم: كارت عليه width 300px و padding 20px و border 2px بياخد 344px في content-box (300 + 40 + 4)، و 300px بالظبط في border-box والمحتوى جواه 256px. ولو قالك «اثبتلي»، افتح DevTools › Computed: الرسمة الملونة فيها الأربع طبقات بأرقامهم.",
+            when: R`أسئلة المتابعة: «إيه الـ margin collapse وإمتى مبيحصلش؟» و «inline و block و inline-block الفرق؟» و «[[width: 100%]] مع padding ليه بيعمل scroll أفقي؟».`,
+            mistakes: "«الـ margin جزء من العرض». أو «border-box بيشيل الـ padding». أو نسيان إن الافتراضي content-box مش border-box."
           },
-          teach: R`## الـ header
+          teach: R`## السؤال: العنصر ده عرضه كام على الشاشة؟
 
-~~~html index.html (الـ header)
-<header class="top">
-  <div class="wrap top-row">
-    <a class="logo" href="#hero" aria-label="محمصة حبّة، الرئيسية">حبّة</a>
-    <nav class="nav" aria-label="الرئيسية">
-      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav-links">القايمة</button>
-      <ul id="nav-links" class="nav-links">
-        <li><a href="#features">ليه حبّة</a></li>
-        <li><a href="#reviews">آراء</a></li>
-        <li><a href="#pricing">الأسعار</a></li>
-        <li><a href="#faq">أسئلة</a></li>
-      </ul>
-    </nav>
-    <button class="theme-btn" type="button" aria-pressed="false">الوضع الغامق</button>
-    <a class="btn btn-primary top-cta" href="#signup">اشترك</a>
-  </div>
-</header>
-~~~
-
-- اللوجو لينك لأول الصفحة و [[aria-label]] بيدّيله اسم كامل («محمصة حبّة، الرئيسية») بدل كلمة «حبّة» لوحدها.
-- زرار القايمة **جوه** الـ nav وقبل اللستة: لما اليوزر يفتحها، أول Tab بعد الزرار بيدخل في الروابط على طول. [[aria-controls="nav-links"]] بيقول الزرار ده بيتحكم في العنصر اللي الـ id بتاعه [[nav-links]]، و [[aria-expanded]] بيقول هي مفتوحة ولا لأ.
-- مفيش [[hidden]] على اللستة في الـ HTML: لو الـ JS وقع، الروابط ظاهرة. الإخفاء في الـ CSS بس وبشرط [[.js]].
-- كل [[<button>]] عليه [[type="button"]]: الزرار من غير type جوه form بيبقى submit، ومش جوه form مش فارقة بس الـ lint بيطلبها عشان العادة.
-
-~~~css css/site.css (٢ و ٣)
-/* ٢. الـ header: لازق فوق وزجاجي */
-.top { position: sticky; top: 0; z-index: var(--z-header); background: color-mix(in srgb, var(--bg) 78%, transparent); -webkit-backdrop-filter: saturate(1.4) blur(14px); backdrop-filter: saturate(1.4) blur(14px); border-bottom: 1px solid var(--line); }
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .top { background: var(--bg); } }
-.top-row { display: flex; align-items: center; gap: 16px; min-height: var(--nav-h); }
-.logo { font-weight: 800; font-size: 1.5rem; text-decoration: none; color: var(--brand); margin: 0; }
-.nav { margin-inline-start: auto; }
-.nav-links { display: flex; flex-wrap: wrap; gap: 4px 24px; list-style: none; margin: 0; padding: 0; }
-.nav-links a { display: block; padding-block: 10px; text-decoration: none; }
-.nav-links a:hover { color: var(--brand); }
-.menu-btn, .theme-btn { font: inherit; background: none; border: 1px solid var(--line); color: var(--ink); border-radius: 999px; min-height: 44px; padding: 6px 16px; cursor: pointer; }
-.menu-btn { display: none; }
-
-/* ٣. الأزرار: الـ variant بيغيّر متغيرين بس */
-.btn { --b-bg: var(--surface); --b-fg: var(--ink); display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 10px 22px; border-radius: 999px; border: 1px solid transparent; background: var(--b-bg); color: var(--b-fg); font: inherit; font-weight: 700; text-decoration: none; cursor: pointer; transition: translate .2s var(--ease), box-shadow .2s var(--ease); }
-.btn:hover { translate: 0 -2px; }
-.btn-primary { --b-bg: var(--brand); --b-fg: var(--brand-ink); box-shadow: 0 10px 24px -12px var(--brand); }
-.btn-ghost { --b-bg: transparent; border-color: var(--line); }
-.btn-light { --b-bg: var(--cta-ink); --b-fg: var(--cta-bg); }
-~~~
-
-### الـ header سطر سطر
-
-- [[color-mix(in srgb, var(--bg) 78%, transparent)]]: بيخلط لون الخلفية مع شفاف، فالنتيجة نفس اللون بـ ٧٨٪ opacity. ولأن [[--bg]] نفسه [[light-dark()]]، الزجاج فاتح في الفاتح وغامق في الغامق. ده التصليح لغلطة الـ ١٫٦٦.
-- [[saturate(1.4) blur(14px)]]: الـ blur بيغبّش اللي ورا، و [[saturate]] بيزوّد الألوان اللي بتبان من ورا الزجاج عشان ميبقاش رمادي باهت. و [[-webkit-backdrop-filter]] لنسخ Safari قبل ١٨.
-- [[@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)))]]: الشرط بيتحقق لو المتصفح **مبيفهمش ولا واحدة** منهم. ساعتها الخلفية معتمة.
-- [[.nav { margin-inline-start: auto; }]]: في flex، الـ margin الـ auto بياخد كل المسافة الفاضية، فالـ nav والزراير اللي بعده بيروحوا للناحية التانية من اللوجو. [[inline-start]] = يمين في RTL، فالمسافة يمين الـ nav يعني بينه وبين اللوجو.
-- [[flex-wrap: wrap]] و [[gap: 4px 24px]]: لو الروابط كتير على تابلت ضيق بتنزل سطر تاني بدل ما تطلع بره، والـ gap الأول بين السطور والتاني بين الروابط.
-- [[.nav-links a { display: block; padding-block: 10px; }]]: اللينك نفسه أطول (٤٤ بكسل تقريبًا مع الخط)، فالمساحة اللي تتضغط أكبر من الكلمة.
-- [[min-height: 44px]] للزراير: أقل مساحة لمس مريحة (WCAG 2.2 بيطلب ٢٤ على الأقل، و ٤٤ هو الرقم الشائع من إرشادات iOS).
-
-### الأزرار: variant = متغيرين
-
-[[.btn]] بيقرا [[--b-bg]] و [[--b-fg]]، وكل variant بيغيّرهم بس: [[.btn-primary]] بيحطهم براند، و [[.btn-ghost]] شفاف بحدود. فمفيش variant بيكرر [[padding]] و [[border-radius]] و [[font]]. و [[translate: 0 -2px]] في الـ hover بيرفع الزرار ٢ بكسل من غير ما يلمس [[transform]]. و [[font: inherit]] لأن الـ button والـ input مبيورثوش الخط لوحدهم.
+المثال صندوق واحد بـ 3 أرقام، وسطرين بيغيّروا طريقة حسابه. السطر التاني والتالت **بدايل لبعض**، مش بيتكتبوا مع بعض. جرّبنا كل واحد على صندوق لوحده في Chrome 154 (headless عن طريق playwright)، وزوّدنا [[margin: 30px]] عشان نشوف هو بيتحسب ولا لأ.
 
 ---
 
-## قايمة الموبايل
+## ١. الطبقات الأربعة من جوه لبرا
 
-~~~css css/site.css (١٠: آخر الملف)
-/* ١٠. المقاسات: في آخر الملف عشان تغلب اللي فوق */
-@media (min-width: 960px) {
-  .hero-grid { grid-template-columns: 1.05fr .95fr; }
-  .bento { grid-template-columns: repeat(3, 1fr); }
-  .big { grid-row: span 2; }
-  .wide { grid-column: span 2; }
-}
-@media (max-width: 760px) {
-  .js .menu-btn { display: inline-block; }
-  .js .nav-links { display: none; position: absolute; inset-inline: 0; top: 100%; flex-direction: column; gap: 0; padding: 8px var(--gutter) 16px; background: var(--bg); border-bottom: 1px solid var(--line); box-shadow: var(--shadow); }
-  .js .top.open .nav-links { display: flex; }
-  .top-cta { display: none; }
-}
+~~~text الصندوق
+margin    مسافة برا العنصر، بينه وبين اللي جنبه (شفافة)
+border    الإطار
+padding   مسافة جوه الإطار، حوالين الكلام
+content   الكلام نفسه
 ~~~
 
-~~~javascript js/site.js (٢)
-// ٢. قايمة الموبايل: aria-expanded، و Esc بيقفل ويرجّع الـ focus للزرار
-const header = document.querySelector(".top");
-const menuBtn = document.querySelector(".menu-btn");
-const setMenu = (open) => {
-  header.classList.toggle("open", open);
-  menuBtn.setAttribute("aria-expanded", String(open));
-};
-menuBtn.addEventListener("click", () => setMenu(menuBtn.getAttribute("aria-expanded") !== "true"));
-document.getElementById("nav-links").addEventListener("click", (e) => { if (e.target.closest("a")) setMenu(false); });
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && menuBtn.getAttribute("aria-expanded") === "true") { setMenu(false); menuBtn.focus(); }
-});
-matchMedia("(min-width: 761px)").addEventListener("change", (e) => { if (e.matches) setMenu(false); });
+## ٢. [[.box { width: 200px; padding: 20px; border: 5px solid; }]]
+
+- [[width: 200px]]: العرض. بس عرض **إيه** بالظبط؟ ده اللي السطرين الجايين بيحددوه.
+- [[padding: 20px]]: رقم واحد = نفس المسافة من الأربع جهات، يعني 20 يمين و 20 شمال.
+- [[border: 5px solid]]: إطار سمكه 5 ومصمت ([[solid]]). من غير لون بياخد لون الكلام.
+
+## ٣. [[box-sizing: content-box]]: الافتراضي
+
+[[box-sizing]] بتقول الـ [[width]] بيقيس لحد فين. [[content-box]] = الكلام بس، فالـ padding والـ border بيتزودوا عليه:
+
+~~~text الحساب
+200 (content) + 20 + 20 (padding) + 5 + 5 (border) = 250
 ~~~
 
-- [[.js .nav-links { display: none; position: absolute; ... top: 100%; }]]: تحت ٧٦٠ الروابط مستخبية، ولما تظهر بتبقى لوحة تحت الـ header بالظبط ([[top: 100%]] من الـ header لأنه أقرب أب positioned، و sticky بيتحسب positioned). [[inset-inline: 0]] = من الحافة للحافة.
-- [[.js .top.open .nav-links { display: flex; }]]: specificity أعلى من اللي قبلها (٣ classes)، فبتغلبها لما [[open]] تتحط.
-- [[header.classList.toggle("open", open)]]: التاني [[true]] أو [[false]] بيقول حط أو شيل، مش «اقلب».
-- [[String(open)]]: [[aria-expanded]] قيمته نص [["true"]] أو [["false"]]، و [[setAttribute]] بيحوّل أي حاجة نص، بس بنكتبها صريحة.
-- الضغط على أي لينك بيقفل القايمة: [[e.target.closest("a")]] بيلاقي اللينك حتى لو الضغطة على حاجة جواه. وده event واحد على اللستة بدل واحد لكل لينك (event delegation).
-- Esc: بيقفل **ويرجّع الـ focus للزرار**، عشان اليوزر ميتوهش (الـ focus كان على لينك اختفى).
-- [[matchMedia("(min-width: 761px)")]]: لو الشاشة كبرت والقايمة مفتوحة (تابلت اتلف)، بنقفلها عشان [[aria-expanded]] ميفضلش [[true]] والقايمة مش ظاهرة.
-
-### القياس على ٣٦٠
-
-~~~text قبل الضغط، وبعده، و Tab + Esc، وبعد لينك
-start       {"expanded":"false","shown":0,"focus":"BODY"}
-after click {"expanded":"true","shown":4,"focus":"menu-btn"}
-Tab+Esc     {"expanded":"false","shown":0,"focus":"menu-btn"}
-link click  {"expanded":"false","shown":0,"focus":"BODY"}
+~~~text اللي Chrome قاسه
+box-sizing:     content-box
+width في CSS:   200px
+offsetWidth:    250   (لحد الـ border)
+clientWidth:    240   (من غير الـ border)
 ~~~
 
-ولو الـ JS وقع (اتقاس بإن طلبات [[*.js]] اتمنعت): الـ ٤ روابط ظاهرة.
+و [[box-sizing]] بتاع [[<body>]] من غير أي CSS طلع [[content-box]]: ده الافتراضي فعلًا.
 
-### الغلطة: [[hidden]] والـ CSS
+## ٤. [[box-sizing: border-box]]: اللي كل المشاريع بتحطه
 
-النسخة الأولى كانت [[<ul id="nav-links" class="nav-links" hidden>]] والـ JS بيعمل [[links.hidden = !open]]. والنتيجة على ٣٦٠:
+[[border-box]] = الـ [[width]] بيقيس لحد الـ border، فالمحتوى هو اللي بيصغر:
 
-~~~text النسخة الأولى على ٣٦٠
-{ hidden: true, display: 'flex', h: 226, coversH1: 'menu on top of page' }
+~~~text الحساب
+200 - 40 (padding) - 10 (border) = 150 للمحتوى
 ~~~
 
-[[hidden]] بيقول [[true]] بس [[display]] المحسوب [[flex]]، والقايمة ٢٢٦ بكسل فوق أول الصفحة. السبب: المتصفح بيترجم [[hidden]] لـ [[display: none]] في ستايلات المتصفح نفسه، و [[.nav-links { display: flex; }]] بتاعتك أقوى منها. والغريب إن على الديسكتوب «اشتغلت» (الروابط ظاهرة زي ما احنا عايزين) بالصدفة لنفس السبب. الحلين: [[[hidden] { display: none !important; }]] في أول الـ CSS، أو (اللي عملناه) منستخدمش [[hidden]] هنا خالص ونخلّي الـ CSS هو اللي يقرر حسب class.
-
-### الغلطة: [[const top]]
-
-أول نسخة من [[site.js]] كانت سكربت عادي بـ [[defer]] وفيها [[const top = document.querySelector(".top");]]. الـ Console:
-
-~~~text
-Identifier 'top' has already been declared
+~~~text اللي Chrome قاسه
+offsetWidth:    200
+clientWidth:    190
+المحتوى:        150
 ~~~
 
-وولا سطر في الملف اشتغل (لا زرار الثيم ولا القايمة). في السكربت العادي، المتغيرات اللي بره أي function بتبقى في الـ scope العام، و [[window.top]] (الـ window اللي فوق لو الصفحة جوه iframe) موجود ومينفعش يتعرّف تاني. نفس الكلام مع [[name]] و [[status]] و [[parent]]. الحل اللي عملناه: كل الـ JS بقى [[<script type="module">]] (كل ملف ليه scope لوحده، وبيستنى زي [[defer]])، وسمّينا المتغير [[header]]. والـ module كمان صلّح غلطة تانية: [[form.js]] كان فيه [[export]] ووقع بـ [[Unexpected token 'export']].
+والـ margin ([[30px]]) فضل برا الحساب في الحالتين: مش داخل في [[offsetWidth]] ولا في الـ 200.
 
-بس الـ module ليه تمن: الصفحة مبقتش تشتغل لو فتحت [[index.html]] بدبل كليك (من [[file://]]):
+| | [[content-box]] | [[border-box]] |
+|---|---|---|
+| الـ 200 بتقيس | المحتوى بس | لحد الـ border |
+| العرض على الشاشة | 250 | 200 |
+| المحتوى | 200 | 150 |
+| الـ margin | برا | برا |
 
-~~~text Console على file://
-Access to script at 'file:///C:/Users/you/habba-landing/js/site.js' from origin 'null' has been blocked by CORS policy: Cross origin requests are only supported for protocol schemes: chrome, chrome-experimental-site-token-provider, chrome-extension, chrome-untrusted, data, http, https, isolated-app.
-~~~
+ليه كل المشاريع (و Tailwind في الـ Preflight) بتحط [[border-box]] على كل حاجة؟ عشان [[width: 50%]] مع padding يفضل 50% فعلًا، مش أعرض.
 
-فلازم سيرفر ([[npm run serve]])، وده كده كده اللي هيحصل على GitHub Pages.
+## ٥. نقطة تزوّد بيها الإجابة: margin collapse
+
+عنصرين block تحت بعض، الأول [[margin-bottom: 30px]] والتاني [[margin-top: 20px]]:
+
+| الأب | المسافة بينهم |
+|---|---|
+| عادي (block) | 30 (الأكبر بس) |
+| [[display: flex]] عمودي | 50 (المجموع) |
+
+ده الـ margin collapse: الـ margin الرأسي بين عنصرين block بيتدمج ويفضل الأكبر، وده مش بيحصل جوه flex ولا grid.
 
 ---
 
-## الـ hero
+## الخلاصة
 
-~~~html index.html (الـ hero)
-<section id="hero" class="hero" aria-labelledby="hero-title">
-  <div class="wrap hero-grid">
-    <div class="hero-text">
-      <p class="eyebrow">تحميص كل خميس</p>
-      <h1 id="hero-title">بن طازة <span class="accent">يوصلك</span> قبل ما يبرد حماسك</h1>
-      <p class="lead">بنحمّص على دفعات صغيرة، ونبعتلك الكيس في خلال ٤٨ ساعة من التحميص. اختار التحميصة والطحنة، وغيّرهم أو وقّف في أي وقت.</p>
-      <div class="hero-cta">
-        <a class="btn btn-primary" href="#signup">ابدأ اشتراكك</a>
-        <a class="btn btn-ghost" href="#pricing">شوف الأسعار</a>
-      </div>
-    </div>
-    <picture class="hero-pic">
-      <source type="image/webp" srcset="img/hero-600.webp 600w, img/hero-1200.webp 1200w" sizes="(min-width: 960px) 50vw, 100vw">
-      <img src="img/hero-1200.jpg" srcset="img/hero-600.jpg 600w, img/hero-1200.jpg 1200w" sizes="(min-width: 960px) 50vw, 100vw" width="1200" height="900" fetchpriority="high" alt="فنجان قهوة سادة على طبق، وحواليه حبات بن محموصة">
-    </picture>
-  </div>
-</section>
-~~~
-
-~~~css css/site.css (٤)
-/* ٤. الـ hero */
-.hero { padding-block: clamp(40px, 7vw, 96px); background: radial-gradient(60% 50% at 85% 10%, var(--brand-soft), transparent 70%), radial-gradient(50% 60% at 10% 90%, var(--alt), transparent 70%); }
-.hero-grid { display: grid; gap: 40px; align-items: center; }
-.eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 2px 12px; border: 1px solid var(--line); border-radius: 999px; font-size: .875rem; color: var(--muted); background: var(--surface); }
-.eyebrow::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--brand); }
-h1 { font-size: clamp(2rem, 1.2rem + 4vw, 3.6rem); }
-.accent { color: var(--brand); }
-.lead { font-size: 1.15rem; color: var(--muted); max-width: 36rem; }
-.hero-cta { display: flex; flex-wrap: wrap; gap: 12px; }
-.hero-pic img { border-radius: var(--r-lg); box-shadow: var(--shadow); }
-~~~
-
-### سطر سطر
-
-- [[aria-labelledby="hero-title"]] على الـ section: بيدّيه اسم من الـ h1، فيبقى [[region]] في شجرة الـ accessibility (من غير اسم الـ section مبيبقاش landmark).
-- الـ eyebrow: سطر صغير فوق العنوان بنقطة بلون البراند ([[::before]] بـ [[content: ""]] و [[border-radius: 50%]]). [[inline-flex]] عشان ياخد عرض كلامه بس.
-- [[<span class="accent">]] حوالين كلمة «يوصلك» بلون البراند. منستخدمش gradient text على العربي ([[background-clip: text]]): على خط متصل بيبان متقطع في بعض الخطوط.
-- [[radial-gradient(60% 50% at 85% 10%, var(--brand-soft), transparent 70%)]]: بقعة لون بيضاوي (٦٠٪ عرض و ٥٠٪ طول) مركزها فوق على الشمال ([[85%]] من الشمال)، بتبهت لحد ما تبقى شفافة عند ٧٠٪. واتنين فوق بعض بفاصلة = خلفية ناعمة من غير صورة. لاحظ إن [[at 85% 10%]] مش logical: في LTR هتبقى في نفس المكان من الشمال. لو مهم، اعكسها بـ [[:dir(ltr)]].
-- [[.hero-grid]] عمود واحد على الموبايل، و ٢ من ٩٦٠ وطالع ([[1.05fr .95fr]]: النص أعرض سنة). في RTL العمود الأول يمين، فالنص يمين والصورة شمال من غير أي تعديل.
-- [[<picture>]] و [[<source type="image/webp">]]: المتصفح اللي بيفهم webp بياخد الـ source، والقديم بياخد [[<img>]] (jpg). و [[sizes]] نفسه في الاتنين.
-- [[width="1200" height="900"]]: النسبة بس اللي مهمة (٤:٣)، والـ CSS ([[max-width: 100%; height: auto]]) بيصغّرها.
-- [[fetchpriority="high"]]: الصورة دي أهم صورة في أول شاشة. ومفيش [[loading="lazy"]] عليها أبدًا.
-
-### القياس: CLS والصورة متأخرة
-
-[[perf.mjs]] على السيرفر بـ [[SLOW_IMG=1500]] (الصور بتتأخر ١٫٥ ثانية، والـ HTML والـ CSS عادي):
-
-| النسخة | العرض | CLS | العناصر اللي اتحركت |
-|---|---|---|---|
-| من غير [[width]] و [[height]] | ٣٦٠ | ٠٫٠٩٥٧ | [[SECTION.block]] و [[P.eyebrow]] |
-| من غير [[width]] و [[height]] | ١٤٤٠ | ٠٫٠٥٥٥ | [[SECTION.block]] و [[PICTURE.hero-pic]] |
-| بـ [[width]] و [[height]] | ٣٦٠ و ١٤٤٠ | ٠٫٠٠٠٠ | ولا حاجة |
-
-نفس القياس على السيرفر العادي كان صفر للنسختين، لأن الصورة (١٠ كيلو) وصلت قبل أول رسمة. يعني «جرّبتها ومفيش حاجة بتتنطط» على جهازك وشبكتك مش دليل؛ أبطأ شبكة هي اللي بتقول.
-
-### جرّبنا preload ومفرقش
-
-فكرة شائعة: [[<link rel="preload" as="image" imagesrcset="..." fetchpriority="high">]] في الـ head يخلّي الصورة تيجي أبدر. اتقاس ٣ مرات على ٣٦٠: من غيره LCP ١٠٧٦–١١١٢ms، ومعاه ١١١٢–١١٣٦ms. مفرقش (أو أسوأ سنة) لأن الصورة مكتوبة في الـ HTML نفسه والمتصفح بيلاقيها بدري (الـ preload scanner)، والـ preload بيفيد لما الصورة مخبية: background في CSS، أو بتتحط بـ JS. فشلناه.
-
-### الغلطة: ترتيب الـ media queries
-
-أول نسخة من الـ CSS كان فيها الـ media query بتاع الـ header **جنب** الـ header، قبل قسم الأزرار:
-
-~~~css النسخة الأولى (بالترتيب ده في الملف)
-@media (max-width: 760px) { .top-cta { display: none; } }
-/* ... */
-.btn { display: inline-flex; /* ... */ }
-~~~
-
-[[.top-cta]] و [[.btn]] نفس الـ specificity (class واحدة)، فاللي **بعد** في الملف يكسب، والـ media query مش بتدّي أولوية. فزرار «اشترك» فضل ظاهر على الموبايل، وعلى ٣٢٠ الـ header بقى أعرض من الشاشة. [[matrix.mjs]] (درس «مصفوفة المقاسات والأداء») طبع:
-
-~~~text
-320   BROKEN +31px  a.btn.btn-primary.top-cta 90px | article.plan 320px | ...
-~~~
-
-التصليح: كل الـ media queries في آخر الملف (القسم ١٠)، فبتيجي بعد كل القواعد العادية. وده كمان بيخلّيك تشوف كل «المقاسات» في مكان واحد.
-
----
-
-## الغلطات اللي حصلت في الخطوة دي
-
-| الغلطة | اتمسكت إزاي | قبل | بعد |
-|---|---|---|---|
-| [[hidden]] مع [[display: flex]] | سكربت على ٣٦٠ | القايمة مفتوحة، ٢٢٦px فوق الصفحة | مقفولة لحد الضغط |
-| خلفية الـ header ثابتة فاتحة | axe في الغامق | تباين ١٫٦٦ على لينكات الـ nav | صفر violations |
-| [[const top]] في سكربت عادي | Console | [[Identifier 'top' has already been declared]] | module، ومتغير اسمه [[header]] |
-| صورة من غير مقاس | [[perf.mjs]] والصور بطيئة | CLS ٠٫٠٩٥٧ | صفر |
-| media query قبل [[.btn]] | [[matrix.mjs]] على ٣٢٠ | +٣١px | صفر |
-
----
-
-## خلاصة
-
-- sticky + خلفية من الـ tokens بـ [[color-mix()]] + [[@supports]] للـ blur = header بيتقري في الوضعين وفي المتصفحات القديمة.
-- القايمة: زرار بـ [[aria-expanded]] و [[aria-controls]]، والإخفاء بـ class في الـ CSS بشرط [[.js]]، و Esc بيقفل ويرجّع الـ focus.
-- [[hidden]] بيخسر قدام أي [[display]] بتكتبه.
-- صورة الـ hero: [[width]] و [[height]] و [[srcset]] و [[sizes]] و [[fetchpriority="high"]]، ومن غير lazy، والقياس بصور متأخرة.
-- الـ media queries في آخر الملف.`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[<p hidden class="note">مرحبا</p>]] و [[.note { display: block; }]]. الفقرة هتبان؟ و [[document.querySelector(".note").hidden]] هيرجّع إيه؟ جرّب، وبعدين زوّد [[[hidden] { display: none !important; }]].`, done: R`توقعت صح إنها هتبان و [[hidden]] لسه [[true]]، وبعد القاعدة اختفت. وكتبت ليه: ستايل المتصفح لـ [[hidden]] أضعف من أي قاعدة بتكتبها.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** header بـ [[position: sticky; top: 0]] ومش لازق خالص. الأب [[<div class="page" style="overflow: hidden">]]. لقيت ليه من Computed، وصلّحه من غير ما تشيل الـ overflow الأفقي اللي الـ page محتاجه.`, done: R`لقيت إن [[overflow: hidden]] على الأب عمله scroll container فالـ sticky لازق جوه الـ div مش في الصفحة، وبدّلته بـ [[overflow-x: clip]] (بيقص من غير ما يعمل scroll container) والـ header لزق، وأثبت بـ [[getBoundingClientRect().top]] = ٠ بعد سكرول ١٠٠٠.` },
-            { lvl: 'تطبيق', t: R`**ابني:** خلّي الـ header يتغيّر بعد أول ٨٠ بكسل سكرول: ظل أوضح وارتفاع أقل (٥٦ بدل ٦٤). من غير scroll listener: استخدم [[IntersectionObserver]] على عنصر [[<div class="sentinel">]] فوق الصفحة.`, done: R`الـ header بياخد class [[scrolled]] لما الـ sentinel يخرج من الشاشة ويشيلها لما يرجع، ومفيش [[addEventListener("scroll")]] في الكود، و [[--nav-h]] اتغيّر بالـ class فالـ [[scroll-margin-top]] لسه مظبوط (القفز للأقسام الـ h2 تحت الـ header).` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** شغّل السيرفر بـ [[SLOW_IMG=1500]] وقيس الـ CLS بـ ٣ نسخ من الصورة: من غير مقاس، وبـ [[width]] و [[height]]، ومن غير مقاس بس [[aspect-ratio: 4 / 3]] في الـ CSS على [[.hero-pic img]]. على ٣٦٠ و ١٤٤٠.`, done: R`جدول ٦ أرقام من [[perf.mjs]]، والنسختين التانية والتالتة صفر، وكتبت ليه الـ HTML أحسن (المتصفح بيعرفه قبل ما الـ CSS يوصل، والـ CSS ممكن يتأخر).` },
-            { lvl: 'تطبيق', t: R`**اكتب اختبار:** سكربت Playwright بيفتح الصفحة على ٣٦٠ ويتأكد من ٥ حاجات: القايمة مقفولة، و Enter على الزرار بيفتحها و [[aria-expanded]] بقى [[true]]، و Esc بيقفلها والـ focus على الزرار، والضغط على لينك بيقفلها، ولما العرض يبقى ١٠٢٤ والقايمة مفتوحة بتتقفل.`, done: R`السكربت بيطبع ٥ PASS على الصفحة النهائية، ولما ترجّع [[hidden]] مع [[display: flex]] أول اختبار بيقع، ولما تشيل [[menuBtn.focus()]] اختبار Esc بيقع.` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** من MDN اعرف إيه الفرق بين [[aria-expanded]] على زرار بيفتح قايمة و [[aria-haspopup="menu"]]، وليه القايمة دي **مش** [[role="menu"]] رغم إن اسمها «القايمة».`, done: R`كتبت إن [[role="menu"]] لقوايم أوامر زي برامج الكمبيوتر وبيغيّر الكيبورد (أسهم بدل Tab)، وإن لستة روابط تنقل جوه nav مش menu، فـ [[aria-expanded]] على زرار عادي كفاية، ومعاك رابط المصدر.` },
+- الترتيب من جوه لبرا: content ثم padding ثم border ثم margin.
+- [[content-box]] (الافتراضي): العرض الظاهر = width + padding + border.
+- [[border-box]]: العرض الظاهر = width، والمحتوى بيصغر.
+- الـ margin عمره ما بيدخل في العرض.`,
+          lines: [
+            "صندوق بعرض 200 و padding 20 و border 5.",
+            "content-box: العرض الظاهر 200 + 40 + 10 = 250.",
+            "border-box: العرض الظاهر 200، والمحتوى 150."
           ],
-          ci: [
-            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`node`, run: R`const imgs = {
-  v1: '<img src="/img/hero-1200.jpg" srcset="/img/hero-600.jpg 600w, /img/hero-1200.jpg 1200w" alt="فنجان قهوة">',
-  final: '<img src="img/hero-1200.jpg" srcset="img/hero-600.jpg 600w, img/hero-1200.jpg 1200w" width="1200" height="900" fetchpriority="high" alt="فنجان قهوة">',
-};
-for (const [name, tag] of Object.entries(imgs)) {
-  const has = (a) => tag.includes(' ' + a + '="');
-  const missing = ["alt", "width", "height"].filter((a) => !has(a));
-  const lazy = /loading="lazy"/.test(tag);
-  const rooted = [...tag.matchAll(/(?:src|srcset)="([^"]+)"/g)].flatMap((m) => m[1].split(",")).filter((u) => u.trim().startsWith("/")).length;
-  console.log(name + ": missing=" + (missing.join(",") || "none") + " lazy=" + lazy + " rooted-paths=" + rooted + " high-priority=" + /fetchpriority="high"/.test(tag));
-}`, expect: [R`v1: missing=width,height lazy=false rooted-paths=3 high-priority=false`, R`final: missing=none lazy=false rooted-paths=0 high-priority=true`] },
-          ],
+          sol: R`إجابة نموذجية على [[.box]] في المثال: «الرسمة فيها 4 طبقات من جوه لبرا: content، وبعدين padding، وبعدين border، وبعدين margin. مع [[content-box]] (الافتراضي) الـ 200 دي عرض المحتوى بس، فالعنصر على الشاشة 200 + 20×2 + 5×2 = 250px. مع [[border-box]] الـ 200 هي العرض الكلي لحد الـ border، فالمحتوى بيصغر لـ 200 − 40 − 10 = 150px. الـ margin برا الحساب في الحالتين، وهو مسافة بيني وبين اللي جنبي مش جزء من العنصر.»
+
+نقط تزوّد بيها الإجابة: إن كل المشاريع الحديثة (و Tailwind في الـ preflight) بتعمل [[*, ::before, ::after { box-sizing: border-box }]] لأن الحساب بيبقى أسهل مع [[width: 50%]] و padding. وإن الـ margin الرأسي بين عنصرين block بيعمل collapse (بياخد الأكبر مش المجموع)، وده مش بيحصل جوه flex ولا grid. وإن [[offsetWidth]] بيرجع العرض لحد الـ border، و [[clientWidth]] من غير الـ border.
+
+الغلط اللي يوقعك: تقول إن الـ margin داخل في الـ width مع border-box، أو تنسى الـ border في الحساب وتقول 240.`
         },
         {
-          cmd: "landing page: المميزات والآراء والأسعار",
-          title: "bento بـ grid، وآراء بـ figure و blockquote، وأسعار بتبديل شهري وسنوي بـ :has() من غير JS، والباقة المميزة مقلوبة الألوان",
-          learn: R`تبني نص الصفحة اللي بيقنع: شبكة مميزات بأحجام مختلفة من غير ما تكسر الموبايل، وآراء بـ HTML صح، وجدول أسعار بيتبدّل بالكيبورد والماوس من غير ولا سطر JS.`,
-          out: R`أقسام المميزات والآراء والأسعار في [[index.html]]، والجزء ٥ و ٦ من [[site.css]]، والجزء ٣ من [[site.js]]. والقياس: السهم في RTL بيبدّل لـ «سنوي» والـ ٣ أسعار اتغيّروا، ومفيش overflow على ٣٢٠.`,
-          desc: R`التلات أقسام دول بيردّوا على «ليه انتوا؟» و «حد جرّب؟» و «بكام؟».
+          cmd: "(id, class, type)",
+          title: "إزاي المتصفح بيقرر أنهي قاعدة تكسب؟ (How does CSS specificity work?)",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** احسب specificity دول: [[#a .b]]، و [[.a.b.c.d]]، و [[ul li:not(.x)]]، و [[:is(#a, .b) p]]، و [[a::before]]. ورتّبهم من الأقوى.`, done: R`(1,1,0) و (0,4,0) و (0,1,2) و (1,0,1) و (0,0,2). الترتيب: [[#a .b]] ثم [[:is(#a, .b) p]] ثم [[.a.b.c.d]] ثم [[ul li:not(.x)]] ثم [[a::before]]. واتأكدت بالـ hover على الـ selector في DevTools › Styles (بيطلّع الـ specificity).`,
+              sol: R`~~~text الإجابة
+#a .b            (1,1,0)
+:is(#a, .b) p    (1,0,1)
+.a.b.c.d         (0,4,0)
+ul li:not(.x)    (0,1,2)
+a::before        (0,0,2)
 
-• **المميزات (bento):** ٤ كروت في [[grid]]. على الموبايل عمود واحد، ومن ٩٦٠ وطالع ٣ أعمدة: كارت كبير ملون واخد صفين ([[grid-row: span 2]])، وكارتين صغيرين، وكارت عريض واخد عمودين ([[grid-column: span 2]]). اتقاس على ١٢٨٠: الكبير يمين ٣٤٧×٢٨١، والعريض ٧٠٩ بكسل تحت الصغيرين. وفي RTL الكبير بيروح يمين لوحده لأن الـ grid بيمشي مع [[dir]].
-• **الآراء:** كل رأي [[<figure>]] فيه [[<blockquote>]] (الكلام) و [[<figcaption>]] (مين قاله) وأفاتار بأول حرف من الاسم [[aria-hidden="true"]] عشان قارئ الشاشة ميقولش «م» قبل «منى».
-• **الأسعار:** مجموعة radio («شهري» و «سنوي») في [[<fieldset>]]، والأسعار التلاتة مكتوبين في الـ HTML بالنسختين، والـ CSS بيعرض واحدة بس بـ [[.block:has([value="yearly"]:checked) .price .m { display: none; }]]. الكيبورد شغال ببلاش من الـ radio: Tab للمجموعة، والسهم يبدّل (في RTL السهم الشمال بيروح للي بعده)، واتقاس إن الأسعار بقت [[٢٤٠٠ جنيه / سنة]] و [[٤٤٠٠]] و [[٨٢٠٠]]. والباقة الوسطى مقلوبة الألوان ([[background: var(--ink)]]) وزرارها مقلوب كمان.
+الترتيب من الأقوى: #a .b ثم :is(#a, .b) p ثم .a.b.c.d ثم ul li:not(.x) ثم a::before
+~~~
 
-غلطة اتمسكت هنا: الأسعار كانت [[minmax(320px, 1fr)]]، وعلى موبايل ٣٢٠ (المساحة ٢٨٨ بعد الـ gutter) كل كارت بقى ٣٢٠ والصفحة أعرض من الشاشة. التصليح [[minmax(min(100%, 280px), 1fr)]].`,
-          example: R`.bento { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); }
-.big { grid-row: span 2; }
-.price .y { display: none; }
-.block:has([value="yearly"]:checked) .price .m { display: none; }
-.block:has([value="yearly"]:checked) .price .y { display: inline; }
-.billing label:has(:focus-visible) { outline: 3px solid var(--brand); outline-offset: 2px; }
-.featured { background: var(--ink); color: var(--bg); }`,
-          lines: [
-            R`شبكة أعمدتها بتتحسب لوحدها: كل عمود ٢٤٠ على الأقل ويتمط ([[1fr]])، و [[min(100%, 240px)]] بيمنع العمود يبقى أعرض من الشاشة لو هي أصغر من ٢٤٠.`,
-            R`الكارت الكبير بياخد صفين في الطول (على الديسكتوب بس، القاعدة جوه media query في آخر الملف).`,
-            R`السعر السنوي مستخبي في الأول، والشهري ظاهر.`,
-            R`لو جوه القسم ده فيه radio قيمته [[yearly]] ومتختار، اخفي كل الأسعار الشهري. [[:has()]] بيخلّي الأب يتستايل حسب ابن جواه.`,
-            R`ونفس الشرط بيظهر الأسعار السنوي، فمفيش ولا سطر JS بيبدّل الأسعار.`,
-            R`الـ radio نفسه شفاف ومش باين، فلما ياخد focus من الكيبورد الحلقة بتترسم على الـ label اللي حواليه بدله.`,
-            R`الباقة المميزة: خلفيتها لون النص ونصها لون الخلفية، فبتبان مقلوبة في الوضعين (في الغامق بتبقى فاتحة).`,
+الـ specificity ٣ خانات بتتقارن من الشمال: ids، وبعدين classes و attributes و pseudo-classes، وبعدين elements و pseudo-elements. خانة واحدة أكبر بتكسب مهما كانت الخانات اللي بعدها.
+
+| الـ selector | الحساب | النتيجة |
+|---|---|---|
+| [[#a .b]] | id + class | (1,1,0) |
+| [[:is(#a, .b) p]] | [[:is()]] بياخد أقوى عنصر فيه (الـ id) + [[p]] | (1,0,1) |
+| [[.a.b.c.d]] | ٤ classes | (0,4,0) |
+| [[ul li:not(.x)]] | [[:not()]] نفسه صفر، بس اللي جواه بيتحسب (class) + عنصرين | (0,1,2) |
+| [[a::before]] | عنصر + pseudo-element | (0,0,2) |
+
+الغلطة الشائعة: تحسب [[:not()]] و [[:is()]] كـ pseudo-class بوزن 1. الاتنين وزنهم وزن أقوى حاجة جواهم، و [[:where()]] بس اللي صفر. والـ hover على الـ selector في DevTools › Styles بيطلّعلك الرقم.
+
+~~~text الناتج (Chrome 156: كل زوج اتحط على نفس العنصر، والأول مكتوب قبل التاني، فلو كسب يبقى أقوى)
+#a .b  ضد  :is(#a, .b) p  ←  الأول كسب
+:is(#a, .b) p  ضد  .a.b.c.d  ←  الأول كسب
+.a.b.c.d  ضد  ul li p:not(.x)  ←  الأول كسب
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** ملف CSS فيه ٣ قواعد بتتخانق بـ [[!important]] على لون الزرار (reset، ومكوّن، و utility)، وكل واحد زوّد important عشان يكسب اللي قبله. رتّبهم بـ [[@layer reset, components, utilities;]] وشيل كل [[!important]].`, done: R`[[grep -c "!important"]] = 0، والزرار شكله زي ما كان في كل حالاته (لقطة قبل وبعد)، وأي utility بتكسب المكوّن من غير ما تزوّد specificity.`,
+              sol: R`~~~css قبل: كل سطر بيرفع الرهان
+button { background: gray !important; }           /* reset */
+.btn { background: blue !important; }             /* مكوّن */
+.bg-red { background: red !important; }           /* utility */
+~~~
+
+~~~html بعد: buttons.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>layers</title>
+<style>
+  @layer reset, components, utilities;
+
+  @layer reset      { button { background: gray; } }
+  @layer components { .btn { background: blue; color: white; } }
+  @layer utilities  { .bg-red { background: red; } }
+</style></head>
+<body>
+  <main><h1>أزرار</h1>
+    <button id="a">عادي</button>
+    <button id="b" class="btn">مكوّن</button>
+    <button id="c" class="btn bg-red">utility</button>
+  </main>
+</body></html>
+~~~
+
+[[!important]] كان سباق: كل واحد بيزوّده عشان يغلب اللي قبله، والنتيجة ترتيب الملف هو اللي بيقرر، وأي تعديل جاي محتاج [[!important]] تاني.
+
+[[@layer reset, components, utilities;]] في أول سطر بيحدد الترتيب من الأضعف للأقوى، مهما كان الملف بيتحمّل إزاي. أي قاعدة في layer بعده بتكسب أي قاعدة في layer قبله، **حتى لو الـ specificity بتاعها أقل**. فـ [[.bg-red]] بيغلب [[.btn]]، و [[.btn]] بيغلب [[button]]، من غير ما تحسب حاجة.
+
+إثبات إن الـ specificity مبقتش تفرق: حتى لو المكوّن بقى [[main .btn]] لسه الـ utility بتكسب.
+
+الغلطة الشائعة: تسيب [[!important]] جوه layer. جوه الـ layers ترتيب [[!important]] بينعكس: الأضعف بيكسب، فهتتلخبط أكتر.
+
+~~~text الناتج (Chrome 156، خلفية كل زرار قبل وبعد)
+                    قبل (important)      بعد (layers)
+button عادي         rgb(128, 128, 128)     rgb(128, 128, 128)
+.btn                rgb(0, 0, 255)     rgb(0, 0, 255)
+.btn.bg-red         rgb(255, 0, 0)     rgb(255, 0, 0)
+main .btn.bg-red (selector أتقل للمكوّن): rgb(255, 0, 0)
+grep -c "!important" بعد: 0
+~~~` },
+            { lvl: 'سريع', t: R`**اشرحها:** اكتب لزميل ٥ سطور: ترتيب الـ cascade بالظبط من الأقوى للأضعف، وجملة على كل خطوة.`, done: R`الـ ٥ سطور بالترتيب: important (والـ layers بتتقلب معاه)، وبعدين الـ inline style، وبعدين الـ layers (اللي برا أي layer أقوى)، وبعدين الـ specificity خانة خانة، وبعدين الترتيب في الكود. وزميلك قدر يجاوب بيها على مثال جديد.`,
+              sol: R`~~~text رسالة لزميل: ترتيب الـ cascade من الأقوى للأضعف
+1. !important: بيغلب كل حاجة عادية. وجوه الـ layers الترتيب بينعكس: أول layer هي الأقوى.
+2. inline style: style="..." على العنصر بيغلب أي selector في ملف.
+3. الـ layers: آخر layer اتعرّف أقوى، واللي برا أي layer أقوى من كل الـ layers.
+4. الـ specificity: تتقارن خانة خانة (id ثم class ثم عنصر)، والخانة الأكبر بتكسب.
+5. ترتيب الكود: لو كل اللي فات متساوي، اللي مكتوب أخير بيكسب.
+~~~
+
+الترتيب هنا هو المهم: المتصفح بيمشي سطر سطر، وأول خطوة فيها فرق بتقرر، وباقي الخطوات مبتتحسبش أصلًا. فـ [[.bg-red]] في layer أقوى بيغلب [[#main .btn]] في layer أضعف: خطوة ٣ قررت قبل ما نوصل للـ specificity.
+
+مثال جديد عشان زميلك يجرّب: [[<p style="color: red" class="x">]] و [[.x { color: blue !important }]]. مين يكسب؟ أزرق: خطوة ١ قبل خطوة ٢.
+
+الغلطة الشائعة: تفتكر الـ inline style أقوى حاجة في الدنيا، أو إن كتابة CSS برا أي layer أضعف. برا الـ layers هو الأقوى، وده سبب شائع لـ «الـ utility مش شغالة».
+
+~~~text الناتج (تأكيد المثال في Chrome 156)
+لون الفقرة: rgb(0, 0, 255) (أزرق: !important غلب الـ inline)
+عادي بره أي layer ضد layer: rgb(0, 128, 0) (اللي بره كسب)
+~~~` },
           ],
-          try: R`ابني الأقسام التلاتة. على عرض ١٢٨٠ شوف الـ bento في DevTools (Elements › الشبكة، وفعّل grid overlay من البادج اللي جنب [[.bento]]): الكبير فين؟ وبعدين Tab لحد «شهري» ودوس السهم الشمال مرة، والسهم اليمين مرة. الأسعار اتغيّرت؟ واقفل الـ JS وكرر. وفي الآخر غيّر [[minmax(min(100%, 280px), 1fr)]] لـ [[minmax(320px, 1fr)]] وشوف ٣٢٠ في Device Toolbar.`,
-          sol: R`الـ overlay بيورّي ٣ أعمدة وصفين، والكبير في العمود الأول (يمين) واخد الصفين، والعريض تحت الصغيرين واخد عمودين. السهم الشمال في RTL بيروح لـ «سنوي» والأسعار بقت [[٢٤٠٠ جنيه / سنة]] و [[٤٤٠٠ جنيه / سنة]] و [[٨٢٠٠ جنيه / سنة]]، واليمين بيرجّع شهري، ومن غير JS نفس الكلام بالظبط. وبـ [[minmax(320px, 1fr)]] على ٣٢٠ فيه scroll أفقي، و [[matrix.mjs]] بيقول [[article.plan 320px]] في العناصر الخارجة.`,
+          desc: R`لما قاعدتين بيغيّروا نفس الخاصية على نفس العنصر، المتصفح بيبص الأول على [[!important]]، وبعدين الـ inline style، وبعدين الـ cascade layers، وبعدين الـ specificity، وآخر حاجة الترتيب في الكود. الـ specificity تلات خانات: عدد الـ ids، وبعدين الـ classes والـ attributes والـ pseudo-classes، وبعدين أنواع العناصر والـ pseudo-elements. بتتقارن خانة خانة، فـ id واحد يغلب أي عدد classes. و [[:where()]] وزنها صفر، والوراثة ملهاش وزن خالص.`,
+          example: R`nav a { color: gray; }
+.link { color: blue; }
+nav .link:hover { color: navy; }
+:where(nav) .link { color: teal; }`,
+          try: R`اكتب 5 selectors على ورقة واحسب الـ specificity بتاعتهم، وبعدين اتأكد بإنك تقف عليهم في DevTools › Styles.`,
           flag: "script",
           deep: {
-            why: R`الأقسام دي هي اللي فيها «المعلومة»، والزائر بيقارن فيها. الـ bento بيدّي أهمية مختلفة لكل ميزة (الكبير = الأهم) من غير ما تكتب «الأهم». والآراء من غير HTML صح بتبقى كلام في div محدش يعرف مين قاله. والأسعار لو التبديل فيها معتمد على JS وحصل خطأ في أي سكربت، الزائر يشوف أسعار غلط أو مفيش أسعار خالص في أهم قسم في الصفحة.`,
-            how: R`[[repeat(auto-fit, minmax(X, 1fr))]]: المتصفح بيحط أكبر عدد أعمدة كل واحد فيهم X على الأقل، وبيمطّهم لحد ما يملوا. [[auto-fit]] بيلم الأعمدة الفاضية، فلو عندك ٣ كروت بس على شاشة تساع ٤، التلاتة بيتمطوا. و [[min(100%, X)]] جوه [[minmax]] بيحل مشكلة الشاشة الأضيق من X. [[:has()]] selector بيختار العنصر لو جواه حاجة بتطابق، فـ [[.block:has([value="yearly"]:checked)]] = «القسم اللي جواه radio سنوي متختار»، ومنه بننزل لـ [[.price .m]]. والـ radio بيدّي سلوك كيبورد جاهز: Tab بيدخل المجموعة على المتختار، والأسهم بتتحرك بين الاختيارات وبتختار وهي ماشية، و [[name]] واحد بيخلّي اختيار واحد بس. وفي RTL المتصفح بيعكس معنى الأسهم الأفقية.`,
-            when: R`bento لما المميزات مش متساوية في الأهمية أو عندك صورة/رسمة لميزة واحدة. والتبديل بـ [[:has()]] لما كل القيم معروفة وقت كتابة الصفحة (٣ باقات ثابتة)؛ لو الأسعار بتتحسب (عملة، أو كوبون، أو عدد مستخدمين) يبقى JS. و [[:has()]] Baseline من ديسمبر ٢٠٢٣ (حسب الوثائق)، فلو المتصفح القديم مبيفهمهوش هيعرض الشهري بس، وده سلوك مقبول.`,
-            mistakes: R`[[minmax(320px, 1fr)]] من غير [[min(100%, ...)]] (اتقاس: +٣١px على ٣٢٠ مع غلطة تانية). أو [[body:has(...)]] على الصفحة كلها (أي radio قيمته yearly في أي حتة هيأثر). أو [[display: none]] على الـ radio نفسه (بيخرج من الكيبورد وقارئ الشاشة). أو نص بلون البراند على الكارت المقلوب (٣٫١٣). أو أفاتار بالحرف من غير [[aria-hidden]]. أو [[<div class="quote">]] بدل [[blockquote]]. أو [[grid-template-areas]] بأسامي ثابتة لعدد كروت ممكن يتغيّر.`
+            why: "بيتسأل عشان يعرف هل بتفهم ليه CSS بيتصرف كده، ولا بتحط !important لحد ما يشتغل.",
+            how: R`لو عايز تتميز: اذكر إن Tailwind v4 بيستخدم cascade layers، وإن أي CSS برا layer بيغلب الـ utilities مهما كانت الـ specificity. واذكر إن [[:is()]] و [[:not()]] و [[:has()]] وزنهم = أتقل حاجة جواهم.
+
+ومثال يبيّن إن الخانات مبتتراكمش: [[#nav a]] وزنه (1,0,1) وبيغلب [[.nav .menu .link:hover]] اللي وزنه (0,4,0)، لأن أول خانة بتتقارن الأول، وأي عدد classes ميعدّيش id واحد. وفيه حتة قليلين بيعرفوها: [[!important]] بيقلب ترتيب الـ layers، فـ important جوه layer بيغلب important برا أي layer.`,
+            when: R`أسئلة المتابعة: «!important بيتعامل إزاي؟» و «إيه الـ cascade layers؟» و «[[:is()]] وزنها كام؟» و «إزاي تتجنب حروب الـ specificity في مشروع كبير؟» (BEM، أو utility-first، أو layers).`,
+            mistakes: "«اللي مكتوب آخر بيكسب» على طول (ده آخر معيار بس). «11 class تغلب id» (لأ، الخانات مش بتتحوّل). «الـ inline style مينفعش يتغلب» (!important بيغلبه)."
           },
-          teach: R`## المميزات: bento
+          teach: R`## ٤ قواعد على نفس اللينك، مين يكسب؟
 
-~~~html index.html (المميزات)
-<section id="features" class="block" aria-labelledby="features-title">
-  <div class="wrap">
-    <header class="sec-head"><p class="eyebrow">ليه حبّة</p><h2 id="features-title">بن بتعرف هو جه منين</h2><p>كل كيس عليه تاريخ التحميص والمزرعة ودرجة التحميص، ومفيش حاجة مستنية على رف.</p></header>
-    <div class="bento">
-      <article data-reveal class="card big"><h3>طازة بجد</h3><p>بنحمّص يوم الخميس ونشحن السبت. الكيس بيوصلك وعمر البن أقل من ٣ أيام.</p></article>
-      <article data-reveal class="card"><h3>طحنة على مقاس جهازك</h3><p>إسبريسو أو فرنساوي أو V60 أو حبوب كاملة.</p></article>
-      <article data-reveal class="card"><h3>وقّف وقت ما تحب</h3><p>من غير عقد ومن غير مكالمات، زرار واحد في حسابك.</p></article>
-      <article data-reveal class="card wide"><h3>توصيل لحد الباب</h3><p>القاهرة والجيزة في يومين، وباقي المحافظات في ٤ أيام.</p></article>
-    </div>
-  </div>
-</section>
+الـ 4 سطور كلهم بيغيّروا [[color]] لنفس العنصر: لينك [[<a class="link">]] جوه [[<nav>]]. حطيناهم في صفحة في Chrome 154 (headless عن طريق playwright)، وطلّعنا الـ specificity بتاعة كل selector من الـ DevTools Protocol (نفس الرقم اللي بيظهر لما تقف على الـ selector في DevTools › Styles).
+
+---
+
+## ١. الـ specificity: ٣ خانات
+
+~~~text (A, B, C)
+A  عدد الـ ids                          #main
+B  الـ classes والـ attributes والـ pseudo-classes   .link  [href]  :hover
+C  أنواع العناصر والـ pseudo-elements    nav  a  ::after
 ~~~
 
-- [[<header class="sec-head">]] جوه الـ section: رأس القسم (eyebrow وعنوان وسطر). [[header]] جوه [[section]] مش بيبقى banner، فمفيش مشكلة إن فيه أكتر من واحد.
-- كل ميزة [[<article>]] و [[h3]]: العناوين بالترتيب h1 ثم h2 ثم h3، وقارئ الشاشة بيقدر يقفز من ميزة للتانية.
-- [[data-reveal]]: علامة للظهور مع السكرول (درس «الأسئلة والـ CTA والـ footer والحركة»).
+بتتقارن خانة خانة من الشمال: اللي A بتاعه أكبر يكسب على طول، ولو اتعادلوا نبص على B، وبعدين C. والخانات مبتفيضش على بعض: 11 class مش بيعملوا id.
 
-~~~css css/site.css (٥)
-/* ٥. الأقسام */
-.block { padding-block: var(--space); }
-.alt { background: var(--alt); }
-.sec-head { max-width: 40rem; margin: 0 auto 40px; text-align: center; }
-.sec-head h2 { font-size: clamp(1.6rem, 1.1rem + 2vw, 2.4rem); }
-.sec-head p:last-child { color: var(--muted); }
+## ٢. نحسب الأربعة
 
-.bento { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); }
-.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 24px; box-shadow: var(--shadow); }
-.card p { color: var(--muted); margin: 0; }
-.big { background: var(--brand-soft); }
-.big p { color: var(--ink); }
+| السطر | الـ selector | الحساب | اللي Chrome قاله |
+|---|---|---|---|
+| ١ | [[nav a]] | نوعين (nav و a) | (0,0,2) |
+| ٢ | [[.link]] | class واحد | (0,1,0) |
+| ٣ | [[nav .link:hover]] | نوع + class + pseudo-class | (0,2,1) |
+| ٤ | [[:where(nav) .link]] | [[:where()]] صفر + class | (0,1,0) |
 
-.reviews { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); }
-.review { margin: 0; background: var(--surface); border-radius: var(--r); padding: 24px; border: 1px solid var(--line); }
-.review blockquote { margin: 0 0 16px; font-size: 1.1rem; }
-.review blockquote p::before { content: "”"; color: var(--brand); font-size: 2rem; line-height: 0; vertical-align: -.4em; margin-inline-end: 4px; }
-.review figcaption { display: flex; align-items: center; gap: 10px; color: var(--muted); }
-.avatar { flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand); font-weight: 800; }
+- المسافة بين حتتين في الـ selector (زي [[nav a]]) معناها «جوه»: أي a جوه nav. وهي نفسها ملهاش وزن.
+- [[:hover]] pseudo-class (حالة: الماوس فوقه)، فبيتعد في خانة B زي الـ class، مش C.
+- [[:where(...)]] بيطابق اللي جواه بس **وزنه صفر دايمًا**. عشان كده Chrome عرض مكوّنات السطر الرابع [[.link]] بس.
+
+## ٣. اللي حصل فعلًا
+
+~~~text getComputedStyle(.link).color
+من غير hover:          rgb(0, 128, 128)   teal
+والماوس فوقه:          rgb(0, 0, 128)     navy
+لو مسحنا السطر الرابع:  rgb(0, 0, 255)     blue
 ~~~
 
-- [[.block]] و [[.alt]]: كل قسم نفس المسافة ([[--space]])، والأقسام اللي بالتبادل خلفيتها [[--alt]]، فالعين بتفصل الأقسام من غير خطوط.
-- [[.sec-head]]: [[max-width: 40rem]] عشان السطر ميبقاش طويل يتعب العين، و [[margin: 0 auto 40px]] بيوسّطه ويسيب ٤٠ تحته. [[p:last-child]] = الفقرة اللي في الآخر (الوصف) رمادي، والـ eyebrow ليه ستايله.
-- الـ bento: [[auto-fit]] و [[minmax(min(100%, 240px), 1fr)]] على الموبايل والتابلت، والـ ٣ أعمدة و [[span]] في media query آخر الملف (القسم ١٠ في الدرس اللي فات):
+نمشي ورا المتصفح:
 
-~~~css من القسم ١٠
-@media (min-width: 960px) {
-  .bento { grid-template-columns: repeat(3, 1fr); }
-  .big { grid-row: span 2; }
-  .wide { grid-column: span 2; }
+1. **من غير hover**: السطر ٣ مش منطبق أصلًا. الباقيين: (0,0,2) و (0,1,0) و (0,1,0). الـ (0,0,2) خسر (B عنده 0). السطرين ٢ و ٤ متعادلين، فاللي **جاي آخر في الملف** يكسب: السطر ٤، teal.
+2. **مع hover**: السطر ٣ (0,2,1) أكبر من الكل في خانة B، navy.
+3. **من غير السطر ٤**: [[.link]] لوحده (0,1,0) غلب [[nav a]] (0,0,2)، blue.
+
+## ٤. أمثلة زيادة طلّعناها من نفس الصفحة
+
+| الـ selector | Chrome | ليه |
+|---|---|---|
+| [[#main .link::after]] | (1,1,1) | id + class + pseudo-element (خانة C) |
+| [[:is(#main, nav) .link]] | (1,1,0) | [[:is()]] بياخد وزن **أتقل** حاجة جواه (#main) |
+
+ده الفرق بين [[:is()]] و [[:where()]]: نفس الشغل، بس [[:where()]] صفر و [[:is()]] أتقل اللي جواه. والمكتبات بتستخدم [[:where()]] عشان تسهّل عليك تغطّي على الستايل بتاعها بكلاس واحد.
+
+## ٥. الـ specificity مش أول حاجة
+
+قبلها المتصفح بيبص على حاجات أهم بالترتيب ده:
+
+1. [[!important]].
+2. الـ inline style ([[style="..."]] على العنصر).
+3. الـ cascade layers ([[@layer]]): أي قاعدة برا layer بتغلب أي قاعدة جوه layer، مهما كانت الـ specificity. ودا بيفرق مع Tailwind v4 لأن الـ utilities بتاعته جوه [[@layer utilities]].
+4. الـ specificity.
+5. الترتيب في الملف.
+
+والوراثة (اللون اللي جاي من الأب) أضعف من أي قاعدة على العنصر نفسه، حتى [[*]].
+
+---
+
+## الخلاصة
+
+- ٣ خانات (id، class/attribute/pseudo-class، type/pseudo-element) بتتقارن من الشمال.
+- [[:hover]] و [[[type]]] في خانة الـ class، و [[::after]] في خانة الـ type.
+- [[:where()]] صفر، و [[:is()]] و [[:not()]] و [[:has()]] أتقل حاجة جواهم.
+- التعادل؟ اللي جاي آخر يكسب.`,
+          lines: [
+            R`(0,0,2): نوعين عناصر بس، فأي class لوحده بيغلبها.`,
+            "(0,1,0): بتغلب اللي فوق.",
+            "(0,2,1): class و pseudo-class ونوع.",
+            R`(0,1,0): الـ where صفر، فزي [[.link]] بالظبط، والترتيب هو اللي يحسم.`
+          ],
+          sol: R`مثال محلول لـ 5 selectors (والأرقام دي بالظبط اللي DevTools بيظهرها لما تقف عليهم): [[nav a]] ‏(0,0,2)، و [[.link]] ‏(0,1,0)، و [[nav .link:hover]] ‏(0,2,1) لأن [[:hover]] pseudo-class بيتحسب زي الكلاس، و [[:where(nav) .link]] ‏(0,1,0) لأن [[:where]] بيصفّر اللي جواه، و [[#main .link::after]] ‏(1,1,1) لأن الـ pseudo-element بيتحسب زي الـ type.
+
+الإجابة اللي تقولها: «المتصفح بيقارن 3 خانات بالترتيب (id، class/attribute/pseudo-class، type/pseudo-element)، زي رقم من 3 خانات من غير ما واحدة تفيض على التانية؛ 11 كلاس عمرهم ما يغلبوا id واحد. لو اتعادلوا، اللي جاي آخر في الملف يكسب. والـ inline style أقوى منهم كلهم، و [[!important]] بيقلب اللعبة. وقبل الـ specificity أصلًا بيبص على الـ origin والـ [[@layer]]: القاعدة اللي برا layer بتكسب أي قاعدة جوه layer.» وزوّد: [[:is()]] و [[:not()]] بياخدوا specificity أقوى حاجة جواهم، و [[:where()]] صفر، وده بيستخدم في المكتبات عشان تسهّل عليك تغطي عليها.
+
+الغلط الشائع في الحساب: تعد [[:hover]] أو [[[type="email"]]] كـ type (هما خانة الكلاس)، أو تعد [[*]] و [[>]] (قيمتهم صفر).`
+        },
+        {
+          cmd: "بُعد واحد وبُعدين",
+          title: "إمتى تستخدم flex وإمتى grid؟ (Flexbox vs Grid)",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** حاوية 700px و ٥ كروت من غير gap. مرة [[display: flex; flex-wrap: wrap]] والكروت [[flex: 1 1 200px]]، ومرة [[grid-template-columns: repeat(auto-fill, minmax(200px, 1fr))]]. عرض كروت الصف التاني كام في كل واحدة؟`, done: R`flex: الصف الأول ٣ كروت 233.3px والتاني كارتين 350px (بيتمدّوا يملوا الصف). grid: الصفين أعمدتهم 233.3px والكارتين اللي تحت نفس عرض اللي فوق. وقست بـ DevTools.`,
+              sol: R`~~~html wrap-vs-fill.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>flex ضد grid</title>
+<style>
+  .box { inline-size: 700px; margin-block-end: 1rem; }
+  .f { display: flex; flex-wrap: wrap; }
+  .f > * { flex: 1 1 200px; background: #bfdbfe; }
+  .g { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+  .g > * { background: #fecaca; }
+</style></head>
+<body>
+  <main><h1>٥ كروت</h1>
+    <div class="box f" id="f"><div>١</div><div>٢</div><div>٣</div><div>٤</div><div>٥</div></div>
+    <div class="box g" id="g"><div>١</div><div>٢</div><div>٣</div><div>٤</div><div>٥</div></div>
+  </main>
+</body></html>
+~~~
+
+الحساب: ‏700 ÷ 200 = 3.5، فالصف بياخد ٣ كروت.
+
+- flex: كل صف لوحده. الصف الأول ٣ كروت بيتوزعوا الـ 700: ‏233.3. الصف التاني كارتين بس، و [[flex-grow: 1]] بيخليهم يقسموا الصف: ‏350 لكل واحد. الصف مبيعرفش حاجة عن الصف اللي فوقه.
+- grid: فيه أعمدة ثابتة للحاوية كلها: ٣ أعمدة 233.3. الكارتين اللي تحت بياخدوا نفس عرض اللي فوق، والخانة التالتة فاضية.
+
+دي القصة كلها: flex بيفكّر في صف واحد (بُعد واحد)، والـ grid بيفكّر في صفوف وأعمدة مع بعض.
+
+الغلطة الشائعة: تستخدم flex-wrap لشبكة كروت، وتستغرب إن آخر صف عريض. ده مش باج: لو عايز الكروت بنفس العرض، grid.
+
+~~~text الناتج (Chrome 156، عرض كل كارت)
+flex: 233.3  233.3  233.3  350.0  350.0
+grid: 233.3  233.3  233.3  233.3  233.3
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** ٣ كروت أسعار عناوينهم ومميزاتهم أطوال مختلفة. مرة بـ flex ومرة بـ grid و [[subgrid]] (الكارت [[grid-row: span 3]] و [[grid-template-rows: subgrid]]).`, done: R`في نسخة subgrid العناوين على خط واحد والأزرار على خط واحد في الـ ٣ كروت، وفي flex لأ. ولقطة الاتنين جنب بعض مع overlay الـ grid من DevTools.`,
+              sol: R`~~~html pricing-subgrid.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>subgrid</title>
+<style>
+  body { font-family: system-ui, sans-serif; }
+  .plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  .plan { display: grid; grid-row: span 3; grid-template-rows: subgrid;
+          gap: .5rem; padding: 1rem; border: 1px solid #9ca3af; border-radius: 10px; }
+  .plan h2, .plan ul { margin: 0; }
+  .plan button { align-self: end; }
+
+  /* نسخة flex للمقارنة */
+  .flex { display: flex; gap: 1rem; margin-block-start: 2rem; }
+  .flex .plan { display: flex; flex-direction: column; flex: 1; }
+</style></head>
+<body>
+  <main><h1>الباقات</h1>
+    <div class="plans" id="sub"></div>
+    <div class="flex" id="fx"></div>
+  </main>
+  <script>
+    const html = $__bt
+      <article class="plan"><h2>تجربة</h2><ul><li>مستخدم واحد</li></ul><button>اختار</button></article>
+      <article class="plan"><h2>احترافية للشركات الصغيرة والفرق المتوسطة</h2><ul><li>٥ مستخدمين</li><li>دعم</li><li>تقارير</li></ul><button>اختار</button></article>
+      <article class="plan"><h2>مؤسسات</h2><ul><li>غير محدود</li><li>مدير حساب</li></ul><button>اختار</button></article>$__bt;
+    sub.innerHTML = fx.innerHTML = html;
+  $__lt/script>
+</body></html>
+~~~
+
+في نسخة flex كل كارت عالم لوحده: عنوان طويل بيزق المميزات لتحت في كارته بس، فمفيش خط واحد. [[margin-top: auto]] بيحل الأزرار، بس مبيحلش العناوين والمميزات.
+
+[[subgrid]] بيخلّي صفوف الكارت **نفس صفوف** الأب:
+
+- [[grid-row: span 3]]: الكارت بياخد ٣ صفوف من الأب (عنوان، مميزات، زرار).
+- [[grid-template-rows: subgrid]]: بدل ما يعمل صفوف خاصة بيه، بيستخدم صفوف الأب. فأطول عنوان بيحدد ارتفاع صف العناوين للكل.
+- [[align-self: end]] بينزّل الزرار لآخر الصف بتاعه.
+
+ولقطة الـ overlay: Elements › جنب الـ [[grid]] دوس badge الـ grid، هتشوف خطوط الصفوف ماشية في الكروت التلاتة.
+
+الغلطة الشائعة: تنسى [[grid-row: span 3]]، فالكارت بياخد صف واحد والـ subgrid مفيهوش غير صف، وكل حاجة تتزحم.
+
+~~~text الناتج (Chrome 156، top لكل عنصر في الـ ٣ كروت)
+subgrid: مكان ul = 175 / 175 / 175
+         مكان button = 246 / 246 / 246
+flex:    مكان ul = 373 / 405 / 373
+         مكان button = 402 / 476 / 423
+axe: 0
+~~~` },
+            { lvl: 'سريع', t: R`**اشرحها:** جاوب «Flexbox vs Grid» في دقيقة بمثالين من شغلك: حاجة عملتها flex وحاجة grid، وليه.`, done: R`الإجابة فيها «one dimension / two dimensions» و «content-out / layout-in» ومثالين حقيقيين، وإنك بتستخدمهم مع بعض، في أقل من ٦٠ ثانية.`,
+              sol: R`~~~text إجابة نموذجية بالإنجليزي (حوالي 50 ثانية)
+Flexbox is one dimension: a row or a column.
+Grid is two dimensions: rows and columns at the same time.
+
+Flexbox is content-out: the items' sizes decide the layout.
+Grid is layout-in: I define the tracks, then place items into them.
+
+For example, a navbar is flex: a logo and some links of different widths
+in one row, and I let the content size them.
+A pricing section is grid: three equal cards, with titles and buttons
+lined up across cards using subgrid.
+
+I don't pick one for a whole page. I use them together:
+grid for the page shell, flex inside each component.
+~~~
+
+الإجابة دي بتقول حاجتين مش واحدة: عدد الأبعاد، واتجاه القرار (المحتوى بيحدد ولا الشبكة). الجملة التانية هي اللي بتبيّن إنك فاهم، مش حافظ.
+
+استبدل المثالين بحاجة عملتها انت فعلًا: اسم مشروعك والمكان بالظبط. الانترفيو بيدوّر على خبرة، و «navbar بتاع مشروع المتجر» أقوى من أي تعريف.
+
+الغلطة الشائعة: تقول «Grid أحسن». مفيش أحسن، وجملة «I use them together» هي اللي بتنهي الإجابة صح.
+
+~~~text الناتج
+حوالي 50 ثانية، فيها one/two dimensions و content-out/layout-in ومثالين.
+~~~` },
+          ],
+          desc: R`Flexbox للـ layout في بُعد واحد: صف أو عمود، والعناصر نفسها بتحدد حجمها، والمساحة بتتوزع حسب محتواها. Grid للـ layout في بُعدين: بتعرّف الصفوف والأعمدة من الأب، والعناصر بتتحط في الخانات، فالأعمدة بتفضل متصفة في كل الصفوف. عمليًا: flex للمكونات (navbar، وأيقونة جنب كلام، وزراير)، و grid للـ layout (الصفحة، وشبكة كروت، وفورم بعمودين). وغالبًا بستخدمهم مع بعض: grid للهيكل و flex جوه كل خانة.`,
+          example: R`.nav { display: flex; justify-content: space-between; align-items: center; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }`,
+          try: R`اعمل نفس شبكة الكروت مرة بـ [[flex-wrap]] ومرة بـ grid بـ 5 كروت، وشوف الفرق في الكارت الأخير. دي أحسن إجابة عملية تقولها.`,
+          flag: "script",
+          deep: {
+            why: "بيختبر إنك بتختار الأداة حسب المشكلة، مش حسب العادة.",
+            how: R`لو عايز تتميز: flex «content-out» (المحتوى بيحدد المقاسات)، و grid «layout-in» (الأب بيحدد والمحتوى بيتحط). واذكر [[subgrid]] لما عايز كروت جوه grid عناوينها وأزرارها متصفة.
+
+ومثال تحكيه: ٣ كروت جنب بعض، عناوينهم أطوال مختلفة. بـ flex كل كارت لوحده، فالأزرار اللي تحت مش على خط واحد. لو الكارت [[grid-row: span 3]] و [[grid-template-rows: subgrid]]، صفوفه بقت صفوف الأب، فكل العناوين وكل الأزرار بيتصفوا في كل الكروت. و [[gap]] بقى شغال في الاتنين، فمش محتاج margins بين العناصر.`,
+            when: R`أسئلة المتابعة: «ليه آخر سطر في كروت flex-wrap شكله غريب؟» و «إيه الفرق بين auto-fit و auto-fill؟» و «ليه [[flex: 1]] مش بيوزّع بالتساوي ساعات؟» (المحتوى و min-width: auto).`,
+            mistakes: "«grid أحدث فهو أحسن»، أو «flex للموبايل و grid للديسكتوب». الاتنين مش بديل لبعض، والإجابة لازم تبقى عن الأبعاد ومين بيتحكم في المقاسات: المحتوى ولا الأب."
+          },
+          teach: R`## سطرين، وكل سطر مثال على واحد فيهم
+
+السطر الأول navbar بـ flex (صف واحد)، والتاني شبكة كروت بـ grid (صفوف وأعمدة). حطينا الاتنين في صفحة عرضها 1200px في Chrome 154 (headless عن طريق playwright) وقسنا مكان كل عنصر.
+
+---
+
+## ١. [[.nav { display: flex; justify-content: space-between; align-items: center; }]]
+
+| الخاصية | معناها |
+|---|---|
+| [[display: flex]] | الأولاد جنب بعض في صف (بُعد واحد) |
+| [[justify-content: space-between]] | على **طول الصف**: الأول في أول الصف، والأخير في آخره، والفاضي يتوزع بينهم |
+| [[align-items: center]] | على **العرض التاني** (الرأسي هنا): كل واحد في النص |
+
+حطينا جوه nav ارتفاعه 60 لوجو (ارتفاعه 20) ولينكات وزرار (ارتفاعه 40):
+
+~~~text getBoundingClientRect
+لوجو:     left 0      top 20   ارتفاع 20
+لينكات:   left 577    top 21   ارتفاع 18
+دخول:     left 1160   top 10   ارتفاع 40
+~~~
+
+- [[space-between]]: اللوجو على الحافة (0)، والزرار لازق في الآخر (1160 + عرضه 40 = 1200)، واللينكات في النص.
+- [[center]]: كل واحد [[top]] بتاعه = (60 − ارتفاعه) ÷ 2. اللوجو (60 − 20) ÷ 2 = 20، والزرار (60 − 40) ÷ 2 = 10.
+
+كل عنصر أخد المقاس اللي محتواه محتاجه، والـ flex وزّع **الفاضي** بس. ده معنى «المحتوى بيحدد».
+
+## ٢. [[.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }]]
+
+الحتة الطويلة نفكّها من جوه لبرا:
+
+### [[1fr]]
+
+[[fr]] = fraction، جزء من المساحة الفاضية. كل الأعمدة [[1fr]] يعني بيقسموا الفاضي بالتساوي.
+
+### [[minmax(250px, 1fr)]]
+
+العمود عمره ما يصغر عن 250px، ويكبر لحد [[1fr]].
+
+### [[repeat(auto-fit, ...)]]
+
+[[repeat]] بيكرر نفس العمود. و [[auto-fit]] بدل رقم: «حط أكبر عدد أعمدة يساع». على 1200 مع [[gap: 1rem]] (16px):
+
+~~~text الحساب
+كام عمود 250 + 16 بيساعوا في 1200 + 16؟   1216 ÷ 266 = 4.57 → 4
+عرض كل عمود: (1200 − 3 × 16) ÷ 4 = 288
+~~~
+
+~~~text getComputedStyle(.cards).gridTemplateColumns
+288px 288px 288px 288px
+~~~
+
+الأعمدة اتحددت **على الأب** قبل ما الكروت تتحط فيها. ده معنى «الأب بيحدد».
+
+---
+
+## ٣. التجربة اللي بتفرق: ٥ كروت
+
+نفس الـ 5 كروت مرة بالـ grid اللي فوق، ومرة بـ flex: [[flex-wrap: wrap; gap: 1rem]] وكل كارت [[flex: 1 1 250px]] (يكبر، ويصغر، ويبدأ من 250):
+
+| الكارت | grid: العرض @ (x, y) | flex-wrap: العرض @ (x, y) |
+|---|---|---|
+| 1 | 288 @ (0, 0) | 288 @ (0, 0) |
+| 2 | 288 @ (304, 0) | 288 @ (304, 0) |
+| 3 | 288 @ (608, 0) | 288 @ (608, 0) |
+| 4 | 288 @ (912, 0) | 288 @ (912, 0) |
+| 5 | **288** @ (0, 34) | **1200** @ (0, 34) |
+
+أول سطر متطابق. الفرق في الخامس:
+
+- **flex**: كل سطر بيوزّع المساحة على عناصره **لوحده**. السطر التاني فيه كارت واحد، فـ [[flex-grow: 1]] مطّه على السطر كله: 1200.
+- **grid**: الأعمدة متعرّفة على الأب، فالخامس قعد في العمود الأول بنفس العرض (288) والباقي فاضي.
+
+## ٤. سؤال المتابعة: [[auto-fit]] ولا [[auto-fill]]؟
+
+نفس السطر بكارتين بس:
+
+| | الكروت | الأعمدة |
+|---|---|---|
+| [[auto-fit]] | 592 و 592 | الأعمدة الفاضية اتشالت، فالكارتين اتمطوا |
+| [[auto-fill]] | 288 و 288 | [[288px 288px 288px 288px]]: الأعمدة الفاضية فضلت محجوزة |
+
+---
+
+## الخلاصة
+
+| | flex | grid |
+|---|---|---|
+| الأبعاد | واحد (صف أو عمود) | اتنين |
+| مين بيحدد المقاس | المحتوى | الأب |
+| آخر سطر في الكروت | بيتمط | بيفضل في العمود |
+| مثال | navbar، زراير، أيقونة وكلام | شبكة كروت، layout الصفحة، فورم |
+
+- الاتنين مع بعض عادي: grid للهيكل و flex جوه كل كارت.`,
+          lines: [
+            "flex: عناصر في صف، والمسافة بينهم.",
+            "grid: شبكة أعمدة متساوية بتتأقلم مع العرض."
+          ],
+          sol: R`اللي هتشوفه بـ 5 كروت على شاشة تساع 4: مع [[flex-wrap]] و [[flex: 1 1 250px]] أول 4 في سطر، والخامس لوحده في السطر التاني وممطوط بعرض الشاشة كلها (قست ده على 1200px: الأربعة 288px والخامس 1200px). مع grid بـ [[repeat(auto-fit, minmax(250px, 1fr))]] الخامس بنفس عرض الباقيين وتحت الأول بالظبط، والباقي من السطر فاضي.
+
+الإجابة النموذجية: «flex بيفكّر في بُعد واحد: كل سطر بيوزّع المساحة على عناصره لوحده ومش عارف حاجة عن السطر اللي تحته، عشان كده الأخير بيتمط. grid بيفكّر في بُعدين: الأعمدة متعرّفة على الأب، فكل العناصر بترص على نفس الخطوط. بستخدم flex لما المحتوى هو اللي يحدد المقاس (nav، أزرار جنب بعض، سطر صورة واسم وزرار)، و grid لما الـ layout هو اللي يحدد (شبكة كروت، layout الصفحة، فورم بـ label وinput متراصين).»
+
+ونقطة زيادة: الاتنين مش بديل لبعض، وكتير بتلاقي grid للصفحة و flex جوه كل كارت. ولو حد قالك «flex للحاجات الصغيرة و grid للكبيرة» ده مش دقيق؛ المعيار بُعد واحد ولا اتنين.`
+        },
+        {
+          cmd: "containing block",
+          title: "إيه الفرق بين قيم position الخمسة؟",
+          practice: [
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** sidebar عليه [[position: sticky; top: 1rem]] ومبيلزقش. جد ليه في النص عليه [[overflow: hidden]] (اتحط زمان عشان يقص ظل). لاقيه من DevTools وصلّحه من غير ما الظل يبوظ.`, done: R`لقيت الجد في Computed، وغيّرته لـ [[overflow: clip]] (مش بيعمل scroll container فالـ sticky بيشتغل) أو شلته، والـ sidebar بقى بيلزق، والظل لسه مقصوص.`,
+              sol: R`~~~html sticky-fix.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>sticky</title>
+<style>
+  body { margin: 0; }
+  .card { overflow: clip; border-radius: 16px; box-shadow: 0 0 0 8px #e5e7eb; }
+  .layout { display: grid; grid-template-columns: 200px 1fr; }
+  aside { position: sticky; top: 1rem; align-self: start; background: #bfdbfe; padding: 1rem; }
+  article { block-size: 300vh; background: #f3f4f6; }
+</style></head>
+<body>
+  <main><h1>sticky</h1>
+    <div class="card" id="c"><div class="layout">
+      <aside id="s" aria-label="أقسام">أقسام</aside><article>محتوى طويل</article>
+    </div></div>
+  </main>
+  <script>
+    // سطر الكونسول اللي بيلاقي الجد
+    for (let p = s.parentElement; p; p = p.parentElement) {
+      const o = getComputedStyle(p).overflowY;
+      if (o !== "visible") console.log(p.className || p.tagName, o);
+    }
+  $__lt/script>
+</body></html>
+~~~
+
+[[position: sticky]] بيلزق في أقرب **scroll container**، و [[overflow: hidden]] بيخلي العنصر scroll container حتى لو مبيعملش scroll فعلًا. فالـ sidebar كان لازق جوه الجد، والجد نفسه مبيتحركش، فمبيلزقش في الشاشة.
+
+الـ loop بيمشي لفوق من الأب للأب ويطبع أي عنصر overflow بتاعه مش [[visible]]. في DevTools نفس الحكاية: Elements › Computed › دوّر على [[overflow]] على كل أب.
+
+[[overflow: clip]] بيقص نفس القص بالظبط، بس **مش** بيعمل scroll container، فالـ sticky بيعدّيه. والظل لسه مقصوص، لأن الهدف من الأول كان القص مش الـ scroll.
+
+[[align-self: start]] كمان لازم: من غيره الـ aside بيتمد بطول الصف كله، فمفيش مساحة يتحرك فيها.
+
+الغلطة الشائعة: تشيل الـ overflow خالص، فالظل يخرج برا ويبوظ الشكل.
+
+~~~text الناتج (Chrome 156، بعد scrollTo(0, 800)، و top بتاع الـ sidebar)
+overflow: hidden  ← top = -704px (مشي مع الصفحة)
+overflow: clip    ← top = 16px (لازق)
+الظل والقص: overflow = clip
+~~~` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** مودال [[position: fixed; inset: 0]] جوه كارت عليه [[transform: translateY(-4px)]] وقت الـ hover. لما تفتحه والماوس على الكارت، هيغطي الشاشة ولا الكارت بس؟`, done: R`الكارت بس: الـ transform خلّى الكارت containing block للـ fixed. واتأكدت بـ [[getBoundingClientRect()]] على المودال (مقاسه مقاس الكارت)، والحل portal على الـ body أو [[<dialog>]] بـ [[showModal()]] (بيطلع في الـ top layer).`,
+              sol: R`~~~html fixed-in-transform.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>fixed جوه transform</title>
+<style>
+  .card { inline-size: 300px; block-size: 200px; margin: 3rem; background: #dbeafe; }
+  .card:hover { transform: translateY(-4px); }
+  .modal { position: fixed; inset: 0; background: rgb(0 0 0 / .5); }
+</style></head>
+<body>
+  <main><h1>مودال</h1>
+    <div class="card" id="c"><div class="modal" id="m"></div></div>
+    <dialog id="d" aria-label="مودال"><button onclick="d.close()">قفل</button></dialog>
+  </main>
+</body></html>
+~~~
+
+[[position: fixed]] بيتحسب من الشاشة، **إلا** لو أب عليه [[transform]] أو [[filter]] أو [[perspective]] أو [[contain]] وزيه. ساعتها الأب ده بيبقى الـ containing block، فـ [[inset: 0]] بقى معناها حدود الكارت.
+
+والمفاجأة إن الكود شكله شغال: طول ما الماوس برا الكارت مفيش [[transform]]، فالمودال بيغطي الشاشة. أول ما الماوس يبقى على الكارت، وهو غالبًا اللي فتحه، المودال يقع جوه الكارت.
+
+الحل مش إنك تشيل الـ hover:
+
+- [[<dialog>]] بـ [[showModal()]]: بيطلع في الـ top layer، برا كل الـ containing blocks والـ z-index.
+- أو portal: حط المودال نفسه كابن مباشر لـ [[body]] (في React [[createPortal]]).
+
+الغلطة الشائعة: تزوّد [[z-index]]. ده موضوع مكان مش ترتيب، فالرقم ملوش علاقة.
+
+~~~text الناتج (Chrome 156، شاشة 1280×800، كارت 300×200)
+الماوس برا الكارت:  مقاس المودال = 1280×800
+الماوس على الكارت:  مقاس المودال = 300×200
+<dialog> بـ showModal() والماوس على الكارت: طبقة الـ ::backdrop تغطي fixed / inset 0px
+~~~` },
+            { lvl: 'سريع', t: R`**اشرحها:** ارسم (على ورقة أو في صفحة) الخمس قيم: كل واحدة مكانها محجوز في الـ flow ولا لأ، وبتتحسب من مين، وبتتحرك مع الـ scroll ولا لأ.`, done: R`جدول ٥ صفوف × ٣ أعمدة صح، وتقدر تشرحه في دقيقة من غير ما تبص.`,
+              sol: R`~~~text الجدول
+القيمة     مكانه محجوز؟   بيتحسب من مين                      بيتحرك مع الـ scroll؟
+static     أيوه           مكانه الطبيعي (inset ملهاش تأثير)   أيوه
+relative   أيوه           مكانه الطبيعي                       أيوه
+absolute   لأ             أقرب أب positioned                  أيوه، مع الأب
+fixed      لأ             الشاشة (أو أب عليه transform)       لأ، ثابت في الشاشة
+sticky     أيوه           أقرب scroll container               أيوه لحد ما يوصل الحد، وبعدين يلزق
+~~~
+
+اللي يخليك تحفظها من غير حفظ: سؤال واحد لكل عمود.
+
+- **محجوز؟** لو شيلت العنصر، هل اللي بعده بيطلع مكانه؟ absolute و fixed خارج الـ flow، فاللي بعدهم بيتصرف كأنهم مش موجودين. عشان كده sticky ينفع يتحط في عمود من غير ما يبوظ اللي تحته.
+- **من مين؟** [[relative]] من نفسه. [[absolute]] من أقرب أب مش [[static]]، وعشان كده [[position: relative]] على الأب. [[sticky]] من الـ scroll container.
+- **الـ scroll؟** fixed بس اللي ثابت تمامًا.
+
+الغلطة الشائعة: تقول fixed «دايمًا من الشاشة». التمرين اللي فات بيثبت إن [[transform]] على أب بيغيّر ده.
+
+~~~text الناتج (Chrome 156: top قبل وبعد scroll 600px، وكلهم عليهم top: 10px)
+static    50 ← -550
+relative  150 ← -450
+absolute  240 ← -360
+fixed     10 ← 10
+sticky    410 ← 10
+~~~` },
+          ],
+          desc: R`[[static]] الافتراضي: العنصر في الـ flow و top و left ملهمش تأثير. [[relative]] في الـ flow ومكانه محجوز، وبيتزق بصريًا بس، وبيبقى مرجع لأولاده الـ absolute. [[absolute]] بيطلع من الـ flow ومكانه بيتحسب من أقرب جد positioned. [[fixed]] بيطلع من الـ flow ومكانه من الشاشة، فبيفضل ثابت مع الـ scroll. [[sticky]] بيتصرف relative لحد ما يوصل للحد اللي حددته ([[top: 0]]) وبعدين يلزق، جوه حدود أبوه بس.`,
+          example: R`.parent { position: relative; }
+.badge { position: absolute; top: 0; inset-inline-end: 0; }
+.header { position: sticky; top: 0; }`,
+          try: R`اعمل الـ 5 قيم على 5 مربعات في صفحة طويلة واعمل scroll، واشرح اللي بيحصل لكل واحد.`,
+          flag: "script",
+          deep: {
+            why: "أغلب مشاكل «العنصر راح فين؟» و «ليه الهيدر مش ثابت؟» سببها position، فبيتسأل كتير.",
+            how: R`لو عايز تتميز: الـ containing block بتاع absolute هو أقرب جد positioned، بس [[transform]] أو [[filter]] على أي جد بيعمل containing block برضه، حتى للـ fixed. ودا سبب إن مودال fixed جوه عنصر متحرك بيتحبس، والحل portal.
+
+وفخ تاني بيتسأل كتير: [[position: sticky]] مبيلزقش لو أي جد عليه [[overflow: hidden]] أو [[overflow: auto]]، لأن sticky بيلزق جوه أقرب scroll container، والأب ده بقى هو الـ scroller وهو مش بيعمل scroll أصلًا. التشخيص: امشي على الأجداد في DevTools › Computed ودوّر على overflow.`,
+            when: R`أسئلة المتابعة: «ليه الـ sticky مش شغال؟» (overflow على جد، أو مفيش top، أو الأب قد العنصر بالظبط). «ليه fixed جوه عنصر عليه transform بيتصرف غلط؟» و «z-index بيشتغل على مين؟».`,
+            mistakes: "«absolute بيتحسب من الأب» (من أقرب جد positioned، مش الأب المباشر بالضرورة). «fixed دايمًا من الشاشة» (إلا لو جد عليه transform أو filter). ونسيان sticky خالص."
+          },
+          teach: R`## الكلمة اللي الإجابة بتلف حواليها: containing block
+
+الـ containing block هو «المستطيل اللي العنصر بيتحسب مكانه منه»: [[top: 0]] يعني صفر من فوق **إيه** بالظبط؟ المثال ٣ سطور بيستخدموا [[relative]] و [[absolute]] و [[sticky]]، وجرّبنا الخمس قيم في صفحة طويلة في Chrome 154 (headless عن طريق playwright)، وقسنا مكان كل عنصر من فوق الشاشة قبل الـ scroll وبعد scroll بـ 400px.
+
+---
+
+## ١. [[.parent { position: relative; }]]
+
+[[relative]] لوحده من غير [[top]] ولا [[left]] مش بيحرّك الأب خالص. ليه موجود؟ عشان أي عنصر [[position]] بتاعه أي حاجة غير [[static]] اسمه **positioned**، والـ absolute بيدوّر على أقرب جد positioned يتحسب منه. يعني السطر ده معناه: «أنا المرجع لأولادي الـ absolute».
+
+## ٢. [[.badge { position: absolute; top: 0; inset-inline-end: 0; }]]
+
+- [[absolute]]: الشارة خرجت من الـ flow (مبقاش ليها مكان محجوز)، ومكانها بالأرقام من الـ containing block (الأب اللي فوق).
+- [[top: 0]]: لازقة في أول الأب من فوق.
+- [[inset-inline-end: 0]]: لازقة في **آخر** السطر. [[inset]] اسم مجمّع لـ top و right و bottom و left، و [[inline-end]] = آخر اتجاه الكتابة.
+
+أب عرضه 300 وشارة 20 × 20:
+
+| الصفحة | بُعد الشارة من فوق الأب | من شمال الأب | من يمين الأب |
+|---|---|---|---|
+| [[dir="ltr"]] | 0 | 280 | 0 (في الركن اليمين) |
+| [[dir="rtl"]] | 0 | 0 (في الركن الشمال) | 280 |
+
+نفس السطر في الاتنين، والشارة راحت لآخر السطر حسب اللغة. لو كنت كتبت [[right: 0]] كانت هتفضل يمين في العربي كمان.
+
+## ٣. [[.header { position: sticky; top: 0; }]]
+
+[[sticky]] = عادي لحد ما يوصل لـ [[top: 0]] من الشاشة وانت نازل، وبعدين يلزق:
+
+~~~text getBoundingClientRect().top
+قبل الـ scroll:      200   (مكانه العادي في الصفحة)
+بعد scroll 400:      0     (لزق فوق)
+~~~
+
+---
+
+## ٤. الخمس قيم جنب بعض
+
+نفس الصفحة فيها كمان عنصر [[static]] عليه [[top: 50px]]، وعنصر [[relative]] عليه [[top: 10px; left: 10px]]، وعنصر [[fixed]] في الركن:
+
+| القيمة | قبل الـ scroll | بعد 400 | اللي حصل |
+|---|---|---|---|
+| [[static]] + [[top: 50px]] | 240 | -160 | الـ [[top]] اتجاهل خالص، ومشي مع الصفحة |
+| [[relative]] + [[top/left: 10px]] | 268، left 10 | -132 | اتزق 10 لتحت و 10 لليمين، ومشي مع الصفحة |
+| العنصر اللي بعد الـ relative | 288 | -112 | مكانه بعد المكان **الأصلي** للـ relative |
+| [[absolute]] (الشارة) | 0 من الأب | 0 من الأب | ماشي مع أبوه |
+| [[fixed]] | 0 | 0 | ثابت في الشاشة |
+| [[sticky]] | 200 | 0 | لزق |
+
+العنصر اللي بعد الـ relative بيوضح إن المكان الأصلي محجوز: الـ relative ارتفاعه 30 ومكانه الأصلي كان 258، فاللي بعده جه عند 258 + 30 = 288، حتى والـ relative متزحزح لـ 268.
+
+---
+
+## ٥. الفخين اللي بيفرّقوك في الانترفيو
+
+### fixed جوه عنصر عليه [[transform]]
+
+حطينا عنصر [[fixed]] جوه div عليه [[transform: translateX(0)]] (تحريك بصفر، شكله مش بيتغير):
+
+~~~text getBoundingClientRect().top
+fixed عادي:            0  ←  0      (ثابت)
+fixed جوه transform:   618 ← 218    (مشي مع الصفحة)
+~~~
+
+الـ [[transform]] على الجد عمل containing block جديد، فالـ fixed بقى بيتحسب من الجد مش من الشاشة. ونفس الحكاية مع [[filter]]. عشان كده المودالات بتتحط في portal برا أي عنصر متحرك.
+
+### sticky جوه [[overflow: hidden]]
+
+هيدر sticky تاني جوه div عليه [[overflow: hidden]]: قبل الـ scroll 668، وبعده 268. يعني **ملزقش**. الـ overflow خلّى الـ div هو الـ scroll container بتاع الهيدر، والـ div نفسه مش بيعمل scroll، فالـ sticky ملوش حاجة يلزق فيها.
+
+---
+
+## الخلاصة
+
+| القيمة | في الـ flow؟ | بيتحسب من |
+|---|---|---|
+| [[static]] | أيوه | مفيش ([[top]] ملوش تأثير) |
+| [[relative]] | أيوه، ومكانه محجوز | مكانه الأصلي |
+| [[absolute]] | لأ | أقرب جد positioned |
+| [[fixed]] | لأ | الشاشة (إلا لو جد عليه transform أو filter) |
+| [[sticky]] | أيوه | أقرب scroll container، جوه حدود أبوه |`,
+          lines: [
+            "الأب مرجع للـ absolute.",
+            "الشارة في ركن النهاية فوق.",
+            "الهيدر يلزق فوق وانت نازل."
+          ],
+          sol: R`اللي هتشوفه وانت بتعمل scroll: [[static]] بيمشي مع الصفحة، و [[top]] و [[z-index]] ملهمش أي تأثير عليه. [[relative]] بيمشي مع الصفحة برضه، بس متزحزح بالـ [[top]]/[[left]] عن مكانه الأصلي، والمكان الأصلي فاضي محجوز (اللي بعده مش بيطلع مكانه). [[absolute]] خرج من الـ flow خالص (اللي بعده طلع مكانه)، ومتحط بالنسبة لأقرب أب positioned، ولو مفيش بالنسبة لأول شاشة، وبيمشي مع الـ scroll. [[fixed]] ثابت في مكانه على الشاشة مهما عملت scroll. [[sticky]] بيمشي عادي لحد ما يوصل للـ [[top]] بتاعه، وبعدين بيلزق، ولما أبوه يخلص بيمشي معاه ويطلع.
+
+الإجابة النموذجية بتلف حوالين كلمة containing block: «لكل عنصر فيه حد بيتحسب منه. للـ absolute هو أقرب جد مش static، للـ fixed هو الـ viewport، للـ sticky هو أقرب scroll container.» والفخ اللي يفرّقك: الـ fixed بيبطّل يبقى بالنسبة للشاشة لو أي جد عليه [[transform]] أو [[filter]] أو [[contain]]، وساعتها بيتصرف زي absolute جوه الجد ده. والـ sticky بيبطّل لو فيه جد عليه [[overflow: hidden]].`
+        },
+        {
+          cmd: "mobile-first",
+          title: "هتعمل الموقع responsive إزاي؟ (Responsive strategy)",
+          practice: [
+            { lvl: 'تطبيق', t: R`**refactor:** ملف CSS مكتوب desktop-first بـ [[max-width]] media queries (الشكل الكبير برا، وكل شاشة أصغر بتلغي). حوّله mobile-first بـ [[min-width]].`, done: R`عدد القواعد نقص (رقم قبل وبعد)، والصفحة شكلها نفس الشكل على 360 و 768 و 1280 (لقطات قبل وبعد)، ومفيش قيمة بتتكتب وتتلغي في نفس الشاشة.`,
+              sol: R`~~~css قبل: desktop-first (7 قواعد)
+.grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; }
+.nav { display: flex; }
+.title { font-size: 3rem; }
+@media (max-width: 1023px) {
+  .grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+}
+@media (max-width: 767px) {
+  .grid { grid-template-columns: 1fr; }
+  .nav { display: block; }
+  .title { font-size: 1.5rem; }
 }
 ~~~
 
-ليه مش [[auto-fit]] على الديسكتوب كمان؟ لأن [[span 2]] مع عدد أعمدة متغيّر ممكن يسيب خانات فاضية. ٣ أعمدة ثابتة = تحكم كامل في الشكل. والترتيب: الكبير أول عنصر فبياخد العمود الأول (يمين في RTL) والصفين، والصغيرين جنبه، والعريض في الصف التاني في العمودين اللي فاضيين. اتقاس على ١٢٨٠:
-
-~~~text مكان كل كارت (left,top وعرض×طول)
-card big 829,... 347x281
-card 467,... 347x148
-card 104,... 347x148
-card wide 104,... 709x117
+~~~css بعد: mobile-first (6 قواعد)
+.grid { display: grid; gap: 1rem; }
+.title { font-size: 1.5rem; }
+@media (min-width: 768px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+  .nav { display: flex; }
+  .title { font-size: 3rem; }
+}
+@media (min-width: 1024px) {
+  .grid { grid-template-columns: repeat(4, 1fr); gap: 2rem; }
+}
 ~~~
 
-- [[.big p { color: var(--ink); }]]: على خلفية [[--brand-soft]] النص الأسود ١٤٫٢٢، والرمادي هناك كان هيبقى أقل.
+الفكرة: ابدأ بالقواعد اللي بتنطبق على أصغر شاشة، وكل [[min-width]] **بيزوّد** بس. في desktop-first كل شاشة أصغر بتلغي اللي فوقها، فالموبايل بيتحمل قيم وبعدين يلغيها.
+
+في النسخة الجديدة:
+
+- [[.nav]] مش مكتوب أصلًا في الموبايل، لأن [[block]] هو الافتراضي، فاتشالت سطر.
+- [[1fr]] عمود واحد هو الافتراضي في [[grid]] من غير [[grid-template-columns]]، فمش محتاج يتكتب.
+- كل خاصية بتتكتب مرة لكل تغيير فعلي، ومفيش قيمة بتتكتب وتتلغي في نفس الشاشة.
+
+الترتيب في mobile-first مهم: الصغير الأول، والأكبر آخر، لأن على شاشة 1200 الاتنين media queries شغالين والأخير لازم يكسب.
+
+الغلطة الشائعة: [[max-width: 767px]] و [[min-width: 767px]] مع بعض: عند 767 بالظبط الاتنين بيتطبقوا. بص على الأرقام: [[767]] و [[768]].
+
+~~~text الناتج (Chrome 156، نفس الـ HTML بالنسختين، computed styles)
+عدد القواعد: قبل 7، وبعد 6
+360: 344px / 16px / block / 24px
+768: 368px 368px / 16px / flex / 48px
+1280: 292px 292px 292px 292px / 32px / flex / 48px
+فروق بين النسختين: 0
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الموقع عليه [[html, body { overflow-x: hidden }]] عشان «فيه scroll أفقي على الموبايل». شيله، ولاقي العنصر اللي طالع برا الشاشة على 360px بسطر في الكونسول بيدوّر على أي عنصر [[getBoundingClientRect().right]] بتاعه أكبر من [[innerWidth]].`, done: R`لقيت العنصر بالاسم (صورة من غير [[max-width: 100%]] أو عنصر [[width: 100vw]] أو margin سالب)، وصلّحته هو بس، و [[document.documentElement.scrollWidth]] بقى زي [[clientWidth]] من غير overflow على html.`,
+              sol: R`~~~html overflow-hunt.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>scroll أفقي</title>
+<style>
+  body { margin: 0; }
+  .hero { width: 100%; }
+  .banner { inline-size: 600px; block-size: 80px; background: #bfdbfe; max-inline-size: 100%; }
+</style></head>
+<body>
+  <main><h1>المنتج</h1><div class="hero"><div class="banner" role="img" aria-label="بانر"></div></div></main>
+</body></html>
+~~~
+
+~~~js سطر الكونسول
+[...document.querySelectorAll("body *")].filter(el => {
+  const r = el.getBoundingClientRect();
+  return r.right > innerWidth + 0.5 || r.left < -0.5;
+}).forEach(el => console.log(el.tagName, el.className, Math.round(el.getBoundingClientRect().width)));
+~~~
+
+[[overflow-x: hidden]] مش تصليح، ده بيخبي العرض: العنصر لسه أعرض من الشاشة، والمحتوى بتاعه مقصوص ومش هيتشاف، و [[position: sticky]] بيبوظ كمان لأن الـ html بقى scroll container.
+
+السطر بيلف على كل عنصر ويقارن حدوده بالشاشة. مهم تفحص [[left]] كمان: في RTL العنصر العريض بيطلع من **الشمال**، و [[right > innerWidth]] مش هيلاقيه أبدًا. وده بالظبط اللي الصفحة دي بتعمله.
+
+التصليح على العنصر نفسه: [[max-inline-size: 100%]] على [[.banner]]، سطر واحد، وبعدها [[document.documentElement.scrollWidth]] بيساوي [[clientWidth]] من غير أي overflow على html.
+
+الغلطة الشائعة: [[right]] بس في صفحة عربي، فالكود يقول «مفيش حاجة» والـ scroll موجود. والصورة العريضة من غير [[max-width: 100%]] هي السبب الأشهر، وبعدها [[100vw]]، و margin السالب.
+
+~~~text الناتج (Chrome 156، عرض 360)
+قبل التصليح:  scrollWidth 600، و clientWidth 360
+السطر لقى:    DIV.banner 600px
+right بس لقت: 0 عنصر
+بعد التصليح:  scrollWidth 360، و clientWidth 360
+~~~` },
+            { lvl: 'سريع', t: R`**اشرحها:** جاوب «How do you make a site responsive?» في دقيقة بالترتيب: viewport، و mobile-first، و layouts مرنة، والوحدات، والصور، و container queries، وإزاي بتختبر.`, done: R`الإجابة فيها الـ ٧ نقط بالترتيب وجملة عن breakpoints من المحتوى مش من الأجهزة، في أقل من ٦٠ ثانية.`,
+              sol: R`~~~text إجابة نموذجية بالإنجليزي (حوالي 55 ثانية)
+First, the viewport meta tag, or nothing else works on phones.
+Then I write mobile-first: base styles for small screens,
+and min-width media queries that only add.
+
+Layouts are flexible: flex and grid, with auto-fit and minmax,
+so most things adapt without a breakpoint at all.
+
+For units, I use rem for type and spacing, and clamp for fluid sizes,
+so it respects the user's font setting.
+
+Images use max-width: 100%, plus srcset and sizes
+so a phone doesn't download a desktop image.
+
+For components that live in different places, I use container queries,
+because they care about their slot, not the screen.
+
+I pick breakpoints from the content: where it starts to break,
+not from a list of devices.
+
+And I test: real widths in DevTools, a real phone,
+and a script checking there's no horizontal scroll from 320 up.
+~~~
+
+السبع نقط بالترتيب ده مقصود: بتمشي من الأساس (من غيره مفيش حاجة تشتغل) لحد الاختبار. كل نقطة جملة أو اتنين بالكتير، لأن الدقيقة بتخلص بسرعة.
+
+الجملة اللي بتفرّق هي «breakpoints from the content»: بتقول إنك مش بتطارد مقاسات أجهزة، وبتفتح الباب لأسئلة أحسن.
+
+الغلطة الشائعة: تبدأ بـ «I use media queries» وتقف. الـ media queries أداة واحدة، ومعظم الـ responsive دلوقتي بيتعمل من غيرها.
+
+~~~text الناتج
+حوالي 55 ثانية، و ٧ نقط، وجملة الـ breakpoints من المحتوى.
+~~~` },
+          ],
+          desc: R`أبدأ بـ meta viewport، وبعدين أكتب الـ CSS الأساسي لأصغر شاشة، وأضيف بـ [[min-width]] media queries للأكبر، والـ breakpoints حسب المحتوى (لما الشكل يبوظ) مش حسب أجهزة. وبعتمد على layouts مرنة من نفسها: flex-wrap، و grid بـ auto-fit و minmax، ووحدات مرنة: rem و % و clamp للخطوط والمسافات، وصور بـ [[max-width: 100%]] و srcset. وللمكونات اللي بتتحط في أماكن مختلفة container queries. وبختبر على أجهزة حقيقية مش DevTools بس، وبتأكد من أهداف اللمس (حوالي 44px، وأقل حاجة 24 في WCAG 2.2) ومن إن مفيش حاجة مهمة معتمدة على hover.`,
+          example: R`.grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr)); }
+h1 { font-size: clamp(1.75rem, 1rem + 3vw, 3rem); }
+@media (width >= 64rem) { .layout { grid-template-columns: 16rem 1fr; } }`,
+          try: R`خد صفحة من مشروع ليك، وافتحها على 320px و 768px و 1440px، واكتب كل مكان بيبوظ والـ breakpoint اللي هيحله.`,
+          flag: "script",
+          deep: {
+            why: "بيختبر إن عندك منهج، مش «بظبط لحد ما يبان كويس».",
+            how: "لو عايز تتميز: اذكر إن breakpoints بـ rem بتحترم إعداد خط المستخدم، وإن Tailwind v4 بيلف hover في (hover: hover)، وإنك بتعمل intrinsic layouts (auto-fit و clamp و container queries) فالـ media queries بتقل.\n\nوليه min-width بالذات: الـ CSS اللي برا أي media query هو شكل الموبايل، فالموبايل (أضعف جهاز) مبيضطرش يلغي قواعد الديسكتوب بقواعد زيادة، وكل شاشة أكبر بتزوّد بس. والحاجات اللي بتظهر بالـ hover لوحده تتحط في (hover: hover) and (pointer: fine)، لأن اللمس مفيهوش hover.",
+            when: "أسئلة المتابعة: «الفرق بين mobile-first و desktop-first؟» و «إيه الـ breakpoints اللي بتستخدمها وليه؟» و «container queries ولا media queries؟» و «بتتعامل مع الصور إزاي؟».",
+            mistakes: "«بستخدم Bootstrap أو Tailwind فهو responsive لوحده». أو إجابة كلها breakpoints لأجهزة معينة من غير layouts مرنة. أو نسيان الـ viewport meta."
+          },
+          teach: R`## ٣ سطور، وكل واحد طريقة مختلفة للتأقلم
+
+السطرين الأولانيين بيتأقلموا **لوحدهم** من غير أي media query، والتالت breakpoint واحد بس للـ layout الكبير. حطيناهم في صفحة فيها [[<meta name="viewport" content="width=device-width, initial-scale=1">]] (من غيرها الموبايل بيعرض الصفحة كأنها ديسكتوب ومصغّرة)، وفتحناها في Chrome 154 (headless عن طريق playwright) على عروض مختلفة.
 
 ---
 
-## الآراء
+## ١. الشبكة: [[grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr))]]
 
-~~~html index.html (الآراء)
-<section id="reviews" class="block alt" aria-labelledby="reviews-title">
-  <div class="wrap">
-    <header class="sec-head"><p class="eyebrow">آراء</p><h2 id="reviews-title">اللي جرّبوا بيقولوا إيه</h2></header>
-    <div class="reviews">
-      <figure data-reveal class="review"><blockquote><p>أول مرة أعرف إن البن ليه طعم فواكه. بقيت أستنى الكيس كل شهر.</p></blockquote><figcaption><span class="avatar" aria-hidden="true">م</span>منى، مهندسة</figcaption></figure>
-      <figure data-reveal class="review"><blockquote><p>الطحنة مظبوطة على جهاز الإسبريسو بتاعي، ومحتاجتش أعدّل حاجة.</p></blockquote><figcaption><span class="avatar" aria-hidden="true">ك</span>كريم، صاحب كافيه صغير</figcaption></figure>
-      <figure data-reveal class="review"><blockquote><p>وقّفت الاشتراك شهر وأنا مسافرة ورجّعته بضغطة. ده اللي كنت عايزاه.</p></blockquote><figcaption><span class="avatar" aria-hidden="true">س</span>سلمى، مدرّسة</figcaption></figure>
-    </div>
-  </div>
-</section>
-~~~
+نفكّها من جوه لبرا:
 
-- [[figure]] = وحدة لوحدها، و [[blockquote]] = كلام منقول، و [[figcaption]] = مين. ده الشكل اللي الـ HTML spec بيقترحه للاقتباس بمصدره (مش [[<cite>]]، لأن cite لاسم عمل زي كتاب مش لاسم شخص).
-- الأفاتار حرف مش صورة: صفر طلبات زيادة، وبلون البراند على [[--brand-soft]]. [[flex: none]] بيمنعه يتضغط لو الاسم طويل، و [[place-items: center]] بيوسّط الحرف في الدايرة.
-- علامة الاقتباس [[”]] بـ [[::before]] عشان مش جزء من الكلام (قارئ الشاشة ممكن يقراها؛ لو عايز تمنع ده خليها صورة SVG في الخلفية). [[line-height: 0]] و [[vertical-align: -.4em]] عشان العلامة الكبيرة متكبّرش السطر.
-- الآراء هنا مخترعة للمعمل. في صفحة حقيقية متكتبش آراء مش حقيقية: ده تضليل للزائر.
+### [[min(16rem, 100%)]]
+
+[[min()]] بياخد الأصغر من الاتنين: 16rem (256px) أو عرض الحاوية كلها. على شاشة أعرض من 256 بيطلع 256، وعلى حاوية أضيق بيطلع عرضها.
+
+### [[minmax(..., 1fr)]]
+
+العمود مايصغرش عن الرقم اللي فوق، ويكبر لحد [[1fr]] (جزء متساوي من الفاضي).
+
+### [[repeat(auto-fit, ...)]]
+
+حط أكبر عدد أعمدة يساع، والفاضي يتوزع عليهم. و [[gap: 1rem]] = 16px بين الأعمدة.
+
+اللي اتقاس (الشبكة في الصفحة من غير sidebar لحد 1024):
+
+| عرض الشاشة | الأعمدة |
+|---|---|
+| 320 | عمود واحد 320 |
+| 768 | 2 × 376 |
+| 1023 | 3 × 330 |
+| 1440 (والـ sidebar ظاهر) | 4 × 284 |
+
+من غير ولا media query: من عمود لـ 4.
+
+### ليه [[min(16rem, 100%)]] مش [[16rem]] بس؟
+
+جرّبنا الاتنين على شاشة 240px (موبايل صغير أو حاوية ضيقة):
+
+| | العمود | scroll أفقي للصفحة؟ |
+|---|---|---|
+| [[minmax(min(16rem, 100%), 1fr)]] | 240 | لأ |
+| [[minmax(16rem, 1fr)]] | 256 | **أيوه** |
+
+العمود رفض يصغر عن 256 فخرج برا الشاشة. الـ [[min()]] بيحل ده.
+
+## ٢. [[h1 { font-size: clamp(1.75rem, 1rem + 3vw, 3rem); }]]
+
+[[clamp(أقل، المفضّل، أقصى)]]: خد القيمة اللي في النص، بس متنزلش عن الأولى ومتطلعش عن التالتة.
+
+- [[1.75rem]] = 28px أقل حاجة، و [[3rem]] = 48px أقصى حاجة.
+- [[1rem + 3vw]]: [[vw]] = 1% من عرض الشاشة. فالخط بيكبر مع الشاشة، والـ [[1rem]] موجود عشان تكبير الخط من إعدادات المستخدم يأثر عليه (قيمة [[vw]] لوحدها مبتكبرش مع إعداد الخط).
+
+| الشاشة | [[1rem + 3vw]] | الناتج اللي Chrome حسبه |
+|---|---|---|
+| 320 | 16 + 9.6 = 25.6 | 28px (الحد الأدنى) |
+| 768 | 16 + 23.04 = 39.04 | 39.04px |
+| 1440 | 16 + 43.2 = 59.2 | 48px (الحد الأقصى) |
+
+## ٣. [[@media (width >= 64rem) { .layout { grid-template-columns: 16rem 1fr; } }]]
+
+- [[@media (...)]]: القاعدة اللي جوه تتطبق بس لو الشرط صح.
+- [[width >= 64rem]]: الشاشة عرضها 64rem أو أكتر. [[64rem]] = 1024px بالخط الافتراضي (16). ودي صيغة الـ range الجديدة، زي [[min-width: 64rem]] القديمة بالظبط.
+- [[16rem 1fr]]: عمودين، sidebar ثابت 256 والباقي للمحتوى.
+
+ده mobile-first: الـ CSS العادي (برا الـ media query) هو الموبايل (عمود واحد)، والـ media query **بتزوّد** للشاشة الكبيرة.
+
+| الشاشة | أعمدة الـ layout |
+|---|---|
+| 1023 | [[1023px]] (عمود واحد) |
+| 1024 | [[256px 768px]] |
+| 1440 | [[256px 1184px]] |
+
+### ليه الـ breakpoint بالـ rem؟
+
+شغّلنا Chrome بخط افتراضي 20px بدل 16 (زي مستخدم مكبّر الخط من الإعدادات):
+
+| الشاشة | الـ layout |
+|---|---|
+| 1024 | [[1024px]]: الـ sidebar **مظهرش** |
+| 1280 | [[320px 960px]] |
+
+[[64rem]] بقت 64 × 20 = 1280. يعني لما الخط كبر، الصفحة استنت شاشة أعرض قبل ما تقسم لعمودين، والـ sidebar نفسه كبر لـ 320. بالـ px كان الكلام الكبير هيتزنق في عمودين على 1024.
 
 ---
 
-## الأسعار
+## الخلاصة
 
-~~~html index.html (الأسعار)
-<section id="pricing" class="block" aria-labelledby="pricing-title">
-  <div class="wrap">
-    <header class="sec-head"><p class="eyebrow">الأسعار</p><h2 id="pricing-title">اختار الكمية اللي تكفيك</h2></header>
-    <fieldset class="billing">
-      <legend class="sr-only">طريقة الدفع</legend>
-      <label><input type="radio" name="billing" value="monthly" checked> شهري</label>
-      <label><input type="radio" name="billing" value="yearly"> سنوي <span class="save">شهرين ببلاش</span></label>
-    </fieldset>
-    <div class="plans">
-      <article data-reveal class="plan">
-        <h3>تجربة</h3><p class="plan-sub">كيس ٢٥٠ جرام</p>
-        <p class="price"><span class="m">٢٤٠ جنيه <small>/ شهر</small></span><span class="y">٢٤٠٠ جنيه <small>/ سنة</small></span></p>
-        <ul><li>تحميصة واحدة تختارها</li><li>توصيل مجاني</li></ul>
-        <a class="btn btn-ghost" href="#signup" data-plan="trial">اختار تجربة</a>
-      </article>
-      <article data-reveal class="plan featured">
-        <p class="badge">الأكتر طلبًا</p>
-        <h3>البيت</h3><p class="plan-sub">كيسين ٢٥٠ جرام</p>
-        <p class="price"><span class="m">٤٤٠ جنيه <small>/ شهر</small></span><span class="y">٤٤٠٠ جنيه <small>/ سنة</small></span></p>
-        <ul><li>تحميصتين مختلفتين</li><li>توصيل مجاني</li><li>كوباية قياس هدية</li></ul>
-        <a class="btn btn-primary" href="#signup" data-plan="home">اختار البيت</a>
-      </article>
-      <article data-reveal class="plan">
-        <h3>المكتب</h3><p class="plan-sub">كيلو كامل</p>
-        <p class="price"><span class="m">٨٢٠ جنيه <small>/ شهر</small></span><span class="y">٨٢٠٠ جنيه <small>/ سنة</small></span></p>
-        <ul><li>٤ تحميصات</li><li>توصيل مجاني</li><li>فاتورة باسم الشركة</li></ul>
-        <a class="btn btn-ghost" href="#signup" data-plan="office">اختار المكتب</a>
-      </article>
-    </div>
-  </div>
-</section>
+| الأداة | بتعمل إيه | محتاجة media query؟ |
+|---|---|---|
+| [[auto-fit]] + [[minmax]] + [[min()]] | عدد الأعمدة حسب المساحة | لأ |
+| [[clamp()]] بـ rem + vw | خط بيكبر بين حدين | لأ |
+| [[@media (width >= 64rem)]] | تغيير الـ layout نفسه | أيوه، واحدة |
+
+- ابدأ بالموبايل، وزوّد بـ [[min-width]] / [[>=]] لما الشكل يبوظ، مش عند مقاس جهاز.
+- الـ breakpoints بالـ rem عشان تحترم خط المستخدم.`,
+          lines: [
+            "شبكة بتتأقلم مع أي عرض من غير breakpoints.",
+            "عنوان بيكبر مع الشاشة بين حد أدنى وأقصى.",
+            "breakpoint واحد للـ layout الكبير: sidebar ومحتوى."
+          ],
+          sol: R`نموذج لنتيجة التجربة (صفحة منتجات عادية): على 320: الـ nav اللينكات طالعة برا الشاشة ← محتاج منيو burger تحت 48rem. الجدول بيعمل scroll للصفحة كلها ← wrapper بـ [[overflow-x: auto]] (مش breakpoint). الـ h1 كبير ومكسّر كلمات ← [[clamp()]]. على 768: كارتين في السطر وفيه فراغ كبير ← [[auto-fit]] يحلها من غير breakpoint. على 1440: السطور طويلة جدًا في القراية ← [[max-width: 65ch]]. والـ sidebar محتاج يظهر جنب ← breakpoint عند 64rem.
+
+الإجابة النموذجية: «ببدأ بالموبايل لأنه أصعب حالة، والـ CSS الأساسي من غير media query بيبقى للشاشة الصغيرة، وبزوّد بـ [[min-width]] لما الشكل يبوظ مش لما جهاز معين يظهر. أول ما أقدر أحلّها من غير breakpoint بعملها: [[auto-fit]] و [[clamp()]] و [[min()]] و flex-wrap. والـ breakpoints بالـ rem عشان تحترم خط المستخدم. ولو المكون بيتحط في أماكن بعروض مختلفة، container query أحسن من media query. وبختبر على جهاز حقيقي عشان dvh و الـ touch و الـ hover.»
+
+الغلط اللي يبان في الإجابة: تعد breakpoints بأسماء أجهزة (iPhone و iPad)، أو تكتب الـ desktop الأول وتصلّح بـ [[max-width]] فالموبايل ينزّل CSS مش محتاجه ويكتب فوقه.`
+        },
+        {
+          cmd: "rem من الـ root",
+          title: "إيه الفرق بين px و em و rem؟ (px vs em vs rem)",
+          practice: [
+            { lvl: 'سريع', t: R`**مسألة:** html ‏16px، و [[ul { font-size: 0.9em }]]، وفيه ٣ قوايم جوه بعض. الخط في التالتة كام؟ وكام لو [[0.9rem]]؟`, done: R`em: ‏16 × 0.9 × 0.9 × 0.9 = 11.66px (بيصغر كل مستوى). rem: ‏14.4px في الـ ٣. واتأكدت من Computed.`,
+              sol: R`~~~html em-rem.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>em و rem</title>
+<style>
+  .em { font-size: 0.9em; }
+  .rem { font-size: 0.9rem; }
+</style></head>
+<body>
+  <main><h1>القوايم</h1>
+    <ul class="em"><li>١<ul class="em"><li>٢<ul class="em"><li id="a">٣</li></ul></li></ul></li></ul>
+    <ul class="rem"><li>١<ul class="rem"><li>٢<ul class="rem"><li id="b">٣</li></ul></li></ul></li></ul>
+  </main>
+</body></html>
 ~~~
 
-~~~css css/site.css (٦)
-/* ٦. الأسعار: التبديل بـ :has() من غير JS */
-.billing { display: flex; justify-content: center; gap: 4px; border: 1px solid var(--line); border-radius: 999px; padding: 4px; width: fit-content; margin: 0 auto 32px; }
-.billing label { position: relative; padding: 6px 18px; border-radius: 999px; cursor: pointer; }
-.billing input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
-.billing label:has(:checked) { background: var(--ink); color: var(--bg); }
-.billing label:has(:focus-visible) { outline: 3px solid var(--brand); outline-offset: 2px; }
-.save { font-size: .8rem; color: var(--brand); }
-.billing label:has(:checked) .save { color: inherit; }
-.plans { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); align-items: start; }
-.plan { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 28px; display: grid; gap: 8px; }
-.plan h3, .plan-sub { margin: 0; }
-.plan-sub { color: var(--muted); }
-.price { font-size: 2rem; font-weight: 800; margin: 8px 0; font-variant-numeric: tabular-nums; }
-.price small { font-size: 1rem; font-weight: 400; color: var(--muted); }
-.price .y { display: none; }
-.block:has([value="yearly"]:checked) .price .m { display: none; }
-.block:has([value="yearly"]:checked) .price .y { display: inline; }
-.plan ul { padding-inline-start: 20px; margin: 0 0 12px; }
-.featured { background: var(--ink); color: var(--bg); border-color: var(--ink); }
-.featured .plan-sub, .featured small { color: inherit; opacity: .85; }
-.featured .btn-primary { --b-bg: var(--bg); --b-fg: var(--ink); box-shadow: none; }
-.badge { justify-self: start; margin: 0; background: var(--brand-soft); color: var(--ink); border-radius: 999px; padding: 0 12px; font-size: .85rem; }
+[[em]] في [[font-size]] نسبة من خط **الأب**، فبيتراكم: كل مستوى بياخد 0.9 من اللي قبله. ‏16 × 0.9 = 14.4، و × 0.9 = 12.96، و × 0.9 = 11.664.
+
+[[rem]] نسبة من خط **الـ root** بس، فمبيتراكمش: 0.9 × 16 = 14.4 في كل مستوى.
+
+عشان كده rem للخطوط، و em للي لازم يتناسب مع خط المكوّن (زي padding زرار). القائمة المتداخلة دي أشهر مكان بتشوف فيه الخط بيصغر من غير سبب واضح.
+
+الغلطة الشائعة: تحسب em من الـ root. وفي الخواص التانية غير [[font-size]] زي [[padding]]، الـ [[em]] نسبة من خط العنصر نفسه مش الأب.
+
+~~~text الناتج (Chrome 156، Computed)
+em في المستوى التالت:  11.664px
+rem في المستوى التالت: 14.4px
+~~~` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** صفحتين نفس الشكل: واحدة كلها px وواحدة rem. غيّر حجم الخط من إعدادات Chrome (Appearance › Font size › Very large) وبعدين جرّب zoom 200%.`, done: R`مع إعداد الخط صفحة الـ rem كبرت وصفحة الـ px فضلت زي ما هي، ومع الـ zoom الاتنين كبروا. وكتبت ليه ده مهم (ناس كتير بتكبّر الخط من الإعدادات مش بالـ zoom).`,
+              sol: R`~~~html fonts.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>px و rem</title>
+<style>
+  .px  { font-size: 16px; padding: 16px; }
+  .rem { font-size: 1rem; padding: 1rem; }
+</style></head>
+<body>
+  <main><h1>المقارنة</h1>
+    <p class="px" id="a">نسخة px</p>
+    <p class="rem" id="b">نسخة rem</p>
+  </main>
+</body></html>
 ~~~
 
-### التبديل سطر سطر
+في إعداد الخط بتاع المتصفح (Appearance › Font size) القيمة بتغيّر خط الـ root، فكل [[rem]] بيتغير معاه. الـ [[px]] رقم ثابت، فمبيسمعش الإعداد. الـ zoom حاجة تانية خالص: بيكبّر كل حاجة في الصفحة، px وغيره.
 
-- [[<fieldset>]] و [[<legend>]]: بيجمعوا الـ radios تحت اسم («طريقة الدفع»)، وقارئ الشاشة بيقول الاسم لما تدخل المجموعة. الـ legend مخفي بصريًا بـ [[.sr-only]] لأن الشكل نفسه واضح.
-- [[.billing { width: fit-content; margin: 0 auto 32px; }]]: الكبسولة بعرض محتواها بس وفي النص.
-- [[.billing input { position: absolute; inset: 0; opacity: 0; }]]: الـ radio مغطّي الـ label كله وشفاف. ليه مش [[display: none]]؟ لأن العنصر المستخبي بـ display مبياخدش focus، فالكيبورد مكانش هيقدر يوصل للاختيار، وقارئ الشاشة مش هيلاقيه.
-- [[label:has(:checked)]]: الـ label اللي جواه الـ radio المتختار بيبقى خلفيته [[--ink]]، فالاختيار باين.
-- [[label:has(:focus-visible)]]: الحلقة على الـ label لما الـ radio ياخد focus بالكيبورد. من غيرها اللي بيتنقل بالكيبورد مش هيعرف هو فين (الـ radio شفاف).
-- [[.billing label:has(:checked) .save { color: inherit; }]]: «شهرين ببلاش» بلون البراند، بس لما «سنوي» يتختار الخلفية بتبقى [[--ink]] والبراند عليها ٣٫١٣ (درس الألوان). فبتاخد لون الـ label.
-- [[.block:has([value="yearly"]:checked)]]: الشرط على القسم بس. أول نسخة كانت [[body:has(input[value="yearly"]:checked)]]: بتشتغل، بس أي radio في أي حتة قيمته [[yearly]] (مثلًا في الفورم بعدين) هيقلب الأسعار.
-- [[font-variant-numeric: tabular-nums]]: كل رقم نفس العرض، فـ «٢٤٠» و «٢٤٠٠» بيتبدّلوا من غير ما السطر يتنطط. ([[.price]] فيها السعرين، واحد بس [[display]] منهم.)
+ده مهم لأن ناس كتير ضعيفة النظر بتكبّر الخط من الإعدادات مرة واحدة وتنسى، وبتتوقع كل المواقع تحترم ده. موقع بـ px بيتجاهل الاختيار ده تمامًا، ودي مشكلة accessibility حقيقية (WCAG 1.4.4).
 
-### الكيبورد: اتقاس
+الغلطة الشائعة: [[html { font-size: 62.5% }]] عشان «الحساب يبقى أسهل». ده بيخلي كل الحسابات في عقلك مرتبطة برقم، وبيبوظ مع أي مكتبة بتفترض 16px. أو الأسوأ [[html { font-size: 16px }]]، اللي بيلغي الإعداد نفسه.
 
-~~~text Tab لـ «شهري» وبعدين ArrowLeft (RTL)
-monthly: [ '٢٤٠ جنيه / شهر', '٤٤٠ جنيه / شهر', '٨٢٠ جنيه / شهر' ]
-after ArrowLeft: yearly [ '٢٤٠٠ جنيه / سنة', '٤٤٠٠ جنيه / سنة', '٨٢٠٠ جنيه / سنة' ]
+القياس: فتحنا Chrome بـ profile فيه إعداد الخط 24 (نفس Very large في Appearance). والـ zoom 200% اتحاكى بشاشة نصها و [[deviceScaleFactor: 2]]، لأن ده بالظبط اللي الـ zoom بيعمله: نفس الـ CSS pixels على بكسلات جهاز أكتر. جرّب الاتنين بإيدك من الإعدادات و Ctrl و + .
+
+~~~text الناتج (Chrome 156: font-size المحسوب، وارتفاع الفقرة ببكسلات الجهاز)
+الوضع              نسخة px              نسخة rem
+عادي               16px / 50px       16px / 50px
+إعداد الخط 24      16px / 50px       24px / 75px
+zoom 200%          16px / 100px       16px / 100px
+~~~` },
+            { lvl: 'سريع', t: R`**اشرحها:** جاوب «px vs em vs rem» في دقيقة، وفيها إمتى بتستخدم em بالذات (padding زرار بيكبر مع خطه).`, done: R`الإجابة فيها التعريف التلاتة، والتراكم في em بمثال رقم، و rem للخطوط والمسافات، و em لحاجة بتتناسب مع خط المكوّن، في أقل من ٦٠ ثانية.`,
+              sol: R`~~~text إجابة نموذجية بالإنجليزي (حوالي 45 ثانية)
+px is an absolute size. It ignores the user's font setting.
+
+em is relative to the font size of the parent, for font-size,
+or of the element itself for other properties. It compounds:
+a list at 0.9em nested three times ends up at 11.66 pixels.
+
+rem is relative to the root font size, so it doesn't compound.
+16 pixels by default, and it follows the user's browser setting.
+
+So I use rem for type and spacing.
+I use em when something should scale with its component's own text,
+like a button's padding: if the button's font grows, the padding grows with it.
+
+px is fine for things that shouldn't scale, like a 1 pixel border.
 ~~~
 
-السهم الشمال في صفحة RTL بيروح للاختيار **اللي بعده** (سنوي)، لأن المتصفح بيعكس الأسهم الأفقية مع [[dir]]. واتجرّب كمان والـ JS ممنوع (طلبات [[*.js]] اتقفلت): نفس النتيجة.
+التعريفات التلاتة أسهل حتة في السؤال. اللي بيفرّق:
 
-### الأرقام: مكتوبة ولا متحسوبة؟
+- رقم للتراكم (11.66)، بيقول إنك شفته فعلًا.
+- سبب حقيقي لـ rem: بيحترم إعداد المستخدم.
+- مثال إمتى [[em]] بالذات: [[padding: 0.5em 1em]] على زرار. لو غيّرت [[font-size]] للزرار الكبير، الـ padding يكبر معاه من غير ما تكتب قاعدة تانية.
 
-الأسعار مكتوبة بإيدنا في الـ HTML بأرقام عربي (السنة = ١٠ شهور، فـ «شهرين ببلاش»). لو هتتحسب بـ JS (مثلًا من API)، اكتبها كده:
+الغلطة الشائعة: تقول «rem أحسن دايمًا». الـ border الـ 1px أحسن يفضل px، و media queries بـ [[em]] أو [[rem]] مبتتحسبش من خط الـ root اللي انت كتبته.
+
+~~~text الناتج (تأكيد زرار em في Chrome 156)
+زرار خطه 16px: padding = 8px 16px
+زرار خطه 24px: padding = 12px 24px
+~~~` },
+          ],
+          desc: R`[[px]] وحدة ثابتة. [[rem]] مضروبة في font-size بتاع الـ root (html)، والافتراضي 16px، وبتتغير لو المستخدم كبّر الخط من إعدادات المتصفح. [[em]] مضروبة في font-size بتاع العنصر نفسه، وفي خاصية font-size نفسها بتاعة الأب، فبتتراكم لو العناصر جوه بعض. أنا بستخدم rem للخطوط والمسافات عشان تحترم إعدادات المستخدم وتفضل متناسقة، و em للحاجات اللي لازم تتناسب مع خط المكون نفسه زي padding الزرار أو أيقونة جنب كلام، و px للحاجات اللي لازم تفضل رفيعة زي الـ border.`,
+          example: R`html { font-size: 100%; }
+.btn { font-size: 1.125rem; padding: 0.5em 1em; border: 1px solid; }`,
+          try: R`كبّر خط المتصفح من الإعدادات وافتح موقع ليك: اللي مكبرش مكتوب بـ px. دي إجابة عملية قوية في الانترفيو.`,
+          flag: "script",
+          deep: {
+            why: "بيختبر إنك فاهم الوحدات، وبيفتح باب الـ accessibility.",
+            how: R`لو عايز تتميز: Tailwind كله rem ([[--spacing: 0.25rem]])، والـ media queries بـ rem أو em بتتحسب من خط المتصفح الافتراضي مش من خط الـ html، و clamp بـ rem + vw عشان الـ zoom يفضل شغال.
+
+ومثال تحسبه قدامهم: خط الـ html ‏16px، و [[.card { font-size: 1.25em }]] جوه [[.card]] تاني: الداخلي 25px (16 × 1.25 × 1.25)، لكن [[1.25rem]] في الاتنين 20px. ولو المستخدم خلّى خط المتصفح 20px من الإعدادات، كل اللي بالـ rem بيكبر 25% واللي بالـ px فاضل زي ما هو.`,
+            when: R`أسئلة المتابعة: «إيه مشكلة [[html { font-size: 62.5% }]]؟» و «الـ media queries بـ em بتتحسب من إيه؟» و «vw في الخطوط؟».`,
+            mistakes: "«rem من الأب» (ده em). «px أسهل ومفيش فرق» (بيكسر تكبير الخط). «em دايمًا من الأب» (بس في font-size، وفي باقي الخصائص من العنصر نفسه)."
+          },
+          teach: R`## ٣ وحدات في سطرين
+
+المثال سطرين بس، بس فيهم الـ ٣ وحدات: [[%]] و [[rem]] على الخط، و [[em]] على الـ padding، و [[px]] على الـ border. جرّبناهم في Chrome 154 (headless عن طريق playwright) مرة بخط المتصفح الافتراضي (16px)، ومرة وإحنا مغيّرين إعداد الخط في المتصفح لـ 20px (زي مستخدم اختار خط أكبر من الإعدادات).
+
+---
+
+## ١. [[html { font-size: 100%; }]]
+
+[[%]] في [[font-size]] نسبة من خط الأب. والـ [[<html>]] ملوش أب، فالـ 100% من **إعداد المستخدم** في المتصفح:
+
+| إعداد المتصفح | [[font-size]] بتاع الـ html |
+|---|---|
+| 16 (الافتراضي) | 16px |
+| 20 | 20px |
+
+السطر ده هو الافتراضي أصلًا، بس كتابته بتقول «أنا عارف ومش هغيّره لـ px».
+
+## ٢. [[.btn { font-size: 1.125rem; ... }]]
+
+[[rem]] = root em: مضروب في خط الـ [[<html>]] (الـ root). فـ 1.125 × 16 = **18px**.
+
+## ٣. [[padding: 0.5em 1em]]
+
+رقمين في [[padding]]: الأول فوق وتحت، والتاني يمين وشمال. و [[em]] هنا مضروب في خط **الزرار نفسه** (18) مش الـ html:
+
+~~~text الحساب
+فوق وتحت:     0.5 × 18 = 9px
+يمين وشمال:   1   × 18 = 18px
+~~~
+
+ليه em هنا؟ عشان لو عملت زرار أكبر (كلاس [[.btn-lg]] فيه [[font-size: 1.5rem]] = 24px)، الـ padding يكبر لوحده معاه: Chrome حسبه [[12px / 24px]] من غير ما تكتب padding تاني.
+
+## ٤. [[border: 1px solid]]
+
+[[px]] ثابت. الـ border لازم يفضل رفيع مهما الخط كبر.
+
+---
+
+## ٥. اللي Chrome حسبه في الحالتين
+
+| | خط 16 (افتراضي) | خط 20 (المستخدم كبّره) |
+|---|---|---|
+| html | 16px | 20px |
+| خط الزرار ([[1.125rem]]) | 18px | 22.5px |
+| الـ padding ([[0.5em 1em]]) | 9px / 18px | 11.25px / 22.5px |
+| الـ border ([[1px]]) | 1px | 1px |
+
+كل حاجة كبرت 25% (من 16 لـ 20) ما عدا الـ border. لو كنت كاتب [[font-size: 18px]]، الزرار كان هيفضل 18 ومستخدم الخط الكبير ميستفادش حاجة.
+
+## ٦. الـ em بيتراكم
+
+[[font-size: 0.9em]] على div، وجواه div تاني بنفس الكلاس:
+
+~~~text الحساب واللي Chrome حسبه
+16 × 0.9 × 0.9 = 12.96px
+~~~
+
+في [[font-size]] الـ em بيتحسب من خط **الأب**، فكل مستوى بيضرب في اللي قبله. ده سبب إن الخطوط بالـ rem أريح.
+
+## ٧. سؤال المتابعة: [[html { font-size: 62.5% }]]
+
+ناس بتعمل كده عشان الـ rem يبقى 10px والحساب يبقى سهل. جرّبناه:
+
+| الـ html | إعداد المتصفح | الـ html طلع | خط الزرار |
+|---|---|---|---|
+| [[62.5%]] | 16 | 10px | 11.25px |
+| [[62.5%]] | 20 | 12.5px | 14.06px |
+| [[10px]] | 20 | 10px | 11.25px |
+
+- [[62.5%]] لسه بيحترم إعداد المستخدم (كبر لـ 12.5)، بس لازم تكتب كل حاجة بأرقام أكبر (1.8rem بدل 1.125rem).
+- [[10px]] على الـ html **لغى** إعداد المستخدم خالص: 10 في الحالتين.
+
+ونقطة زيادة: الـ media query بـ rem مبتتأثرش بـ [[font-size]] اللي على الـ html. جرّبنا [[@media (width >= 64rem)]] على شاشة 1024 مع [[62.5%]] وخط 16: اتطبقت (64 × 16 = 1024، مش 64 × 10). ومع إعداد خط 20 مااتطبقتش (64 × 20 = 1280). يعني الـ media query بتتحسب من إعداد المتصفح بس.
+
+---
+
+## الخلاصة
+
+| الوحدة | مضروبة في | استخدمها لـ |
+|---|---|---|
+| [[px]] | ثابتة | border وظلال |
+| [[rem]] | خط الـ [[<html>]] (إعداد المستخدم) | الخطوط والمسافات العامة |
+| [[em]] | خط العنصر نفسه (وفي [[font-size]]: خط الأب) | padding زرار، أيقونة جنب كلام |
+
+- الـ zoom (Ctrl و +) بيكبّر كل حاجة حتى الـ px، فهو مش الاختبار. الاختبار إعداد الخط في المتصفح.`,
+          lines: [
+            "الأساس 16، أو اللي المستخدم اختاره.",
+            "الخط 18، والـ padding 9 و 18 من خط الزرار، والـ border بكسل ثابت."
+          ],
+          sol: R`اللي هتلاقيه بعد ما تخلي خط المتصفح Large (20px): الكلام اللي مكتوب بـ rem أو em كبر بنسبة 25%، واللي مكتوب بـ px فضل زي ما هو. غالبًا هتلاقي عناوين وأزرار كبرت وحاجات زي الـ footer أو badge صغيرة فضلت صغيرة، وده معناه إن فيه [[font-size: 12px]] في مكان.
+
+الإجابة النموذجية: «[[px]] ثابت ومش بيحترم إعداد خط المستخدم. [[rem]] نسبة من خط الـ [[<html>]] (16px افتراضيًا، أو اللي المستخدم اختاره)، فالصفحة كلها بتكبر مع الإعداد ده. [[em]] نسبة من خط العنصر نفسه (أو الأب لو في [[font-size]])، فبيتراكم لو متداخل: [[0.9em]] جوه [[0.9em]] = 0.81. بستخدم rem للخط والمسافات العامة، و em للحاجات اللي لازم تتناسب مع خط العنصر زي padding الزرار ([[0.5em 1em]] في المثال بيكبر لوحده مع [[.btn-lg]])، و px للـ borders والظلال اللي مش لازم تكبر.»
+
+والنقطة اللي بتفرّقك: متعملش [[html { font-size: 62.5% }]] عشان الحساب يبقى أسهل، ولو عملتها متكتبش [[font-size: 10px]] بدلها أبدًا، لأن الـ px على الـ html بيلغي إعداد المستخدم خالص. وإن الـ zoom (Ctrl +) بيكبّر px كمان، فهو مش الاختبار.`
+        },
+        {
+          cmd: "توليد on-demand",
+          title: "Tailwind بيشتغل إزاي من جوه؟ وإيه عيوبه؟",
+          practice: [
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** badge لونه جاي من البيانات: [[className={$__bt bg-$__{status.color}-100 text-$__{status.color}-700 $__bt}]]، واللون مبيظهرش. صلّحه.`, done: R`عملت map فيه الكلاسات كاملة ([[{ success: "bg-green-100 text-green-700", ... }]])، والألوان ظهرت، والكلاسات موجودة في ملف الـ CSS بعد الـ build (دوّرت عليها بـ Ctrl+F).`,
+              sol: R`~~~jsx Badge.jsx
+const COLORS = {
+  success: "bg-green-100 text-green-700",
+  warning: "bg-amber-100 text-amber-700",
+  danger: "bg-red-100 text-red-700",
+};
+
+export function Badge({ status, children }) {
+  return <span className={COLORS[status] ?? "bg-gray-100 text-gray-700"}>{children}</span>;
+}
+~~~
+
+Tailwind مش بيشغّل كودك. بيقرا ملفاتك كنص ويدوّر على كلمات شكلها كلاس. في الكود القديم مفيش في الملف كلمة [[bg-green-100]] أصلًا، فيه [[bg-]] و [[$__{status.color}]] و [[-100]] مفصولين، والقيمة بتتكوّن وقت التشغيل، بعد ما الـ build خلص. فالكلاس بيتحط في الـ HTML صح، بس ملوش قاعدة في ملف الـ CSS.
+
+الـ map بيكتب كل اسم كامل في الكود، فالـ scan بيلاقيه. و [[??]] بيدّي شكل افتراضي لو جت حالة مش متوقعة، بدل [[undefined]] في الـ className.
+
+الغلطة الشائعة: تحل المشكلة بـ [[safelist]] لكل الألوان، فملف الـ CSS يكبر، أو تجرب في DevTools وتشوف الكلاس مكتوب فتفتكر إن المشكلة في الـ cascade. افتح ملف الـ CSS الناتج ودوّر بـ Ctrl+F.
+
+~~~text الناتج (Tailwind 4 CLI، دوّرنا في ملف الـ CSS الناتج)
+الكود القديم: bg-green-100 موجود في الـ CSS؟ لأ
+الكود الجديد: bg-green-100 موجود؟ آه، و text-red-700 موجود؟ آه
+~~~` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** اعمل build لمشروع Tailwind v4، وافتح ملف الـ CSS الناتج. طلّع ترتيب الـ [[@layer]] اللي في أوله، وعدد القواعد اللي جوه [[@layer utilities]]، وشوف [[--color-*]] بقوا فين.`, done: R`كتبت ترتيب الـ layers ([[theme, base, components, utilities]])، وعدد القواعد قريب من عدد الكلاسات اللي استخدمتها فعلًا، والألوان متغيرات على [[:root]] (أو [[:host]]).`,
+              sol: R`~~~bash
+npm i -D tailwindcss @tailwindcss/cli
+npx @tailwindcss/cli -i in.css -o out.css
+~~~
+
+~~~js read-css.mjs: يقرا الملف الناتج
+import fs from "node:fs";
+const css = fs.readFileSync("out.css", "utf8");
+console.log(css.match(/@layer [^{;]+;/)?.[0]);
+const start = css.indexOf("@layer utilities {");
+let depth = 0, i = css.indexOf("{", start), end = i;
+for (; end < css.length; end++) {
+  if (css[end] === "{") depth++;
+  if (css[end] === "}" && --depth === 0) break;
+}
+const body = css.slice(i + 1, end);
+console.log("قواعد utilities:", (body.match(/^\s{2}\.[^\n]+\{/gm) ?? []).length);
+const first = css.indexOf("--color-");
+const open = css.lastIndexOf("{", first);
+console.log("فين الألوان:", css.slice(css.lastIndexOf("\n", open) + 1, open).trim());
+console.log("عدد --color-:", (css.match(/--color-[\w-]+:/g) ?? []).length);
+~~~
+
+اللي بتقراه في الملف بيشرح Tailwind كله:
+
+- سطر [[@layer]] في أول الملف بيثبت الترتيب، فالـ utilities بتغلب الـ components مهما كانت الـ specificity.
+- عدد القواعد في [[@layer utilities]] قريب من عدد الكلاسات اللي كتبتها، مش آلاف. دي معنى on-demand.
+- الألوان متغيرات على [[:root, :host]]، وبس اللي استخدمته. فأي CSS تكتبه يقدر يقول [[var(--color-green-700)]].
+
+[[in.css]] فيه [[@import "tailwindcss";]] و [[@source]] للفولدر. الـ loop بتاع الأقواس بيعد [[{]] و [[}]] عشان يلاقي نهاية الـ layer، لأن جواه أقواس تانية، و regex لوحدها متقدرش تعد.
+
+الغلطة الشائعة: تفتح ملف dev فيه تعليقات وتستنتج منه حجم الإنتاج. جرّب [[--minify]] وشوف الحجم الحقيقي.
+
+~~~text الناتج (Tailwind 4 على مكوّن Badge بتاع التمرين اللي فات)
+@layer theme, base, components, utilities;
+قواعد utilities: 8
+فين الألوان: :root, :host
+عدد --color-: 8
+~~~` },
+            { lvl: 'سريع', t: R`**اشرحها:** جاوب «How does Tailwind work, and what are its downsides?» في دقيقة: الـ scan، و on-demand، والـ layers، وعيبين حقيقيين وإزاي بتتعامل معاهم.`, done: R`الإجابة فيها إنه build tool مش runtime، والكلاس لازم يتكتب كامل، و HTML مزحوم وحلّه components و cva، في أقل من ٦٠ ثانية.`,
+              sol: R`~~~text إجابة نموذجية بالإنجليزي (حوالي 50 ثانية)
+Tailwind is a build tool, not a runtime library.
+It scans my source files as plain text, finds class names,
+and generates CSS only for the ones I actually used.
+So the final file stays small, whatever the project size.
+
+That's also why a class has to be written in full:
+bg-$__{color}-500 won't work, because the scanner never runs my code.
+I use a map with complete class names instead.
+
+The output goes into cascade layers, in a fixed order:
+theme, base, components, utilities. So a utility beats a component
+without a specificity fight.
+
+Two real downsides. First, the markup gets crowded,
+so I extract components, and use cva for variants.
+Second, custom CSS outside any layer beats every utility,
+so I put mine in a layer too.
+~~~
+
+الإجابة ماشية ورا النقط المطلوبة بالترتيب: build tool، و scan، و on-demand، وسبب إن الكلاس لازم يتكتب كامل، و layers، وعيبين حقيقيين كل واحد ومعاه علاجه.
+
+الأهم إن كل عيب جنبه حل. «Tailwind HTML بتاعه وحش» جملة ناقصة، و «فبستخرج components وبستخدم cva» جملة بتاعة حد اشتغل بيه. و [[cva]] مكتبة صغيرة بتجمّع variants الزرار في مكان واحد بدل شروط في [[className]].
+
+الغلطة الشائعة: تقول «Tailwind CSS framework زي Bootstrap». Bootstrap بيديك كومبوننتس وملف جاهز، و Tailwind بيولّد utilities من اللي كتبته.
+
+~~~text الناتج
+حوالي 50 ثانية، فيها build tool، والكلاس الكامل، والـ layers، وعيبين بعلاجهم.
+~~~` },
+          ],
+          desc: R`Tailwind أداة build مش مكتبة runtime. بيعمل scan لملفات المشروع ويدوّر على أسماء كلاسات بيعرفها، ويطلّع CSS للي اتكتب بس، فالملف النهائي صغير مهما المشروع كبر. في v4 الإعداد في CSS: [[@import "tailwindcss"]] و [[@theme]] للتوكنز، والقيم متغيرات CSS، والناتج في cascade layers. والـ variants زي [[hover:]] و [[md:]] بتلف الكلاس في selector أو media query. العيوب: الـ HTML بيبقى مزحوم، والكلاسات لازم تتكتب كاملة (مينفعش تبنيها بـ string)، والتعارض بين الكلاسات محتاج tailwind-merge، والفريق محتاج يتفق على التوكنز عشان ميبقاش كله arbitrary values.`,
+          example: R`<button className="rounded-lg bg-brand px-4 py-2 text-white hover:bg-brand/90 md:px-6">حفظ</button>`,
+          try: R`افتح CSS الناتج لمشروع Tailwind ودوّر على كلاس مش مستخدم: مش هتلاقيه. ودي الـ «on-demand» اللي تشرحها.`,
+          flag: "script",
+          deep: {
+            why: "بيتسأل لأنه في كل مشروع حديث، والإجابة بتفرق بين اللي بيستخدمه واللي فاهمه.",
+            how: R`لو عايز تتميز: الـ scan نصي مش بيفهم JavaScript، ودا سبب إن [[bg-$__{color}-500]] مش شغال. والـ utilities جوه [[@layer utilities]]، فأي CSS عادي برا layer بيغلبها. وإعادة الاستخدام بتبقى بمكونات React و cva، مش بـ [[@apply]] في كل حتة.
+
+والحل لما الكلاس لازم ييجي من بيانات: object فيه الأسامي كاملة ([[{ red: "bg-red-500", green: "bg-green-500" }]]) فالـ scanner يلاقيها كنص، أو [[@source inline("bg-red-500")]] في v4. وافتح الـ CSS الناتج بعد الـ build وابحث عن الكلاس: لو مش موجود، يبقى الـ scanner مشافهوش.`,
+            when: R`أسئلة المتابعة: «بتعمل dark mode إزاي؟» و «إيه الفرق بين v3 و v4؟» و «إزاي بتعيد استخدام الستايلات؟» و «ليه مش CSS Modules؟».`,
+            mistakes: "«Tailwind زي الـ inline styles» (لأ: فيه variants و media queries وتوكنز، والـ CSS بيتعمله cache). «بيطلّع كل الكلاسات وبعدين يمسح اللي مش مستخدم» (ده شكل قديم؛ دلوقتي بيولّد اللي محتاجه بس). و @apply في كل حتة فترجع لـ CSS عادي."
+          },
+          teach: R`## من كلاسات في الـ HTML لملف CSS
+
+المثال زرار واحد بـ 7 كلاسات. عشان نشوف Tailwind بيعمل إيه بيهم، عملنا مشروع Vite 8.3.3 و Tailwind 4.3.3 حقيقي: ملف CSS فيه سطرين، وملف JSX فيه الزرار ده بس، وعملنا [[npx vite build]] (من غير minify عشان نقرا الناتج).
+
+~~~text src/style.css
+@import "tailwindcss";
+@theme { --color-brand: oklch(0.55 0.2 260); }
+~~~
+
+- [[@import "tailwindcss"]]: ده كل الإعداد في v4. مفيش [[tailwind.config.js]].
+- [[@theme]]: هنا بتعرّف التوكنز (ألوانك ومسافاتك). [[--color-brand]] بيعمل كلاسات [[bg-brand]] و [[text-brand]] وغيرهم. من غيره [[bg-brand]] مش هيتولّد، لأنه مش من ألوان Tailwind الجاهزة.
+
+---
+
+## ١. الـ scan: Tailwind بيدوّر على إيه؟
+
+وقت الـ build بيقرا ملفات المشروع **كنص** ويدوّر على أي كلمة شكلها كلاس يعرفه. ودي التجربة اللي بتثبت إنه نص مش كود:
+
+~~~text src/App.jsx (تجربة)
+<button className={$__bt rounded-lg bg-$__{color}-500$__bt}>حفظ</button>
+// px-5 مكتوبة في تعليق بس
+export const map = { green: "bg-green-500" };
+~~~
+
+~~~text اتولّد في الـ CSS؟
+bg-red-500     لأ    (حتى لو color = "red" وقت التشغيل)
+bg-green-500   أيوه  (مكتوبة كاملة في object)
+px-5           أيوه  (رغم إنها في تعليق!)
+~~~
+
+الـ scanner مش بيشغّل JavaScript، فـ [[bg-$__{color}-500]] بالنسبة له مش كلاس. ولقى [[px-5]] في تعليق فولّدها. عشان كده الكلاسات لازم تتكتب كاملة.
+
+## ٢. الكلاسات اللي في المثال وناتجها
+
+ده الجزء اللي Tailwind ولّده للزرار، بالظبط:
+
+~~~text CSS الناتج (جزء الـ utilities)
+@layer utilities {
+  .rounded-lg { border-radius: var(--radius-lg); }
+  .bg-brand { background-color: var(--color-brand); }
+  .px-4 { padding-inline: calc(var(--spacing) * 4); }
+  .py-2 { padding-block: calc(var(--spacing) * 2); }
+  .text-white { color: var(--color-white); }
+  @media (hover: hover) {
+    .hover\:bg-brand\/90:hover { background-color: #1c69e3e6; }
+    @supports (color: color-mix(in lab, red, red)) {
+      .hover\:bg-brand\/90:hover { background-color: color-mix(in oklab, var(--color-brand) 90%, transparent); }
+    }
+  }
+  @media (min-width: 48rem) {
+    .md\:px-6 { padding-inline: calc(var(--spacing) * 6); }
+  }
+}
+~~~
+
+نقرا كل كلاس:
+
+| الكلاس | الـ CSS | ملاحظة |
+|---|---|---|
+| [[rounded-lg]] | [[border-radius: var(--radius-lg)]] | [[--radius-lg]] = [[.5rem]] في الـ theme |
+| [[bg-brand]] | [[background-color: var(--color-brand)]] | من [[@theme]] بتاعنا |
+| [[px-4]] | [[padding-inline: calc(var(--spacing) * 4)]] | [[--spacing]] = [[.25rem]]، يعني 1rem |
+| [[py-2]] | [[padding-block: ... * 2]] | 0.5rem فوق وتحت |
+| [[text-white]] | [[color: var(--color-white)]] | [[#fff]] |
+| [[hover:bg-brand/90]] | لون البراند بشفافية 90% | ملفوف في [[@media (hover: hover)]] |
+| [[md:px-6]] | 1.5rem يمين وشمال | ملفوف في media query عند 48rem (768px) |
+
+### الـ variants: [[hover:]] و [[md:]]
+
+الـ variant هو الحتة اللي قبل [[:]]. هو مش بيعمل CSS جديد، بيلف نفس الكلاس:
+
+- [[hover:]] بيضيف [[:hover]] للـ selector، **وكمان** بيلفه في [[@media (hover: hover)]]، يعني الأجهزة اللي فيها ماوس بس. على الموبايل الـ hover مش بيعلق بعد اللمس.
+- [[/90]] شفافية: Tailwind كتب لون جاهز ([[#1c69e3e6]]، و [[e6]] في الآخر = 90%) للمتصفحات القديمة، وجوه [[@supports]] نسخة بـ [[color-mix]] للجديدة.
+- [[md:]] بيلفه في media query. Tailwind نفسه بيكتبها [[@media (width >= 48rem)]] (ودي اللي طلعت لما جرّبنا [[npx @tailwindcss/cli]])، و [[vite build]] حوّلها للصيغة القديمة [[min-width]] عشان المتصفحات اللي بيستهدفها. نفس المعنى.
+
+و [[\:]] و [[\/]] في أسماء الكلاسات: الـ [[\]] بيهرّب الرمز، لأن [[:]] و [[/]] ليهم معنى في الـ selectors.
+
+## ٣. الـ layers
+
+~~~text أول الملف (مختصر)
+@layer theme { :root, :host { --spacing: .25rem; --color-brand: oklch(55% .2 260); ... } }
+@layer base { ... }        ← الـ Preflight (الـ reset)
+@layer components;
+@layer utilities { ... }   ← الكلاسات
+~~~
+
+كل حاجة جوه [[@layer]]. والـ theme فيه **بس** المتغيرات اللي اتستخدمت (مش كل ألوان Tailwind). والنتيجة إن أي CSS بتكتبه انت برا layer بيغلب الـ utilities، مهما كانت الـ specificity.
+
+## ٤. الحجم
+
+الملف كله 309 سطر من [[vite build]] من غير minify، و 200 سطر من الـ CLI، وأغلبه الـ Preflight. ولو المشروع فيه 1000 زرار بنفس الكلاسات، الملف مش هيكبر: كل كلاس بيتولد مرة واحدة.
+
+---
+
+## الخلاصة
+
+| | |
+|---|---|
+| إمتى بيشتغل | وقت الـ build، مش في المتصفح |
+| بيدوّر إزاي | بيقرا الملفات كنص |
+| بيطلّع إيه | الكلاسات اللي لقاها بس، جوه [[@layer utilities]] |
+| الـ variants | بتلف الكلاس في [[:hover]] أو media query |
+| الفخ | [[bg-$__{color}-500]] مش بيتولّد: اكتب الأسامي كاملة |`,
+          lines: [
+            "كل كلاس قاعدة CSS صغيرة، و Tailwind بيطلّع دول بس."
+          ],
+          sol: R`اللي هتلاقيه: الكلاسات اللي في الـ HTML بس، زي [[.px-4]] و [[.md\:px-6]] جوه [[@media (width >= 48rem)]]، و [[.hover\:bg-brand\/90]] ملفوفة في [[@media (hover: hover)]]. لو دوّرت على [[.px-5]] أو [[.bg-red-500]] ومش مستخدمهم مش هتلاقيهم. ولما طلّعت CSS للزرار ده لوحده بـ Tailwind v4.3.3 الملف كله (بالـ reset والـ theme) كان 200 سطر بالـ CLI ([[npx @tailwindcss/cli]]) و 309 سطر بـ [[vite build]] من غير minify، مش آلاف، وأغلبه الـ preflight. (و [[vite build]] بيكتب الـ media query [[@media (min-width: 48rem)]]، نفس المعنى بالصيغة القديمة.)
+
+الإجابة النموذجية: «Tailwind بيعمل scan لملفات المشروع (في v4 أوتوماتيك، مع [[@source]] لو محتاج)، وبيدوّر على أي كلمة شكلها كلاس، ويولّد CSS للكلاسات دي بس. عشان كده الـ CSS النهائي صغير ومبيكبرش مع حجم المشروع قد ما بيكبر مع عدد الكلاسات المختلفة. العيوب: الـ HTML بيبقى مليان كلاسات وبيتقري بصعوبة، ومحتاج [[cn]]/tailwind-merge عشان التعارضات، والكلاسات المتركبة بالـ string زي [[$__btbg-$__{color}-500$__bt]] مبتتولدش لأن الـ scanner مش بيشغّل الكود، ومحتاج build step، وفيه منحنى تعلم للأسماء.»
+
+والحل لمشكلة الكلاسات الديناميكية اللي تقوله: اكتب الأسماء كاملة في object ([[{ red: "bg-red-500", green: "bg-green-500" }]])، أو [[@source inline(...)]] لو لازم.`
+        },
+        {
+          cmd: "semantic HTML أولًا",
+          title: "إيه أهم حاجات الـ accessibility في الفرونت إند؟",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** إيه الـ role والاسم في الـ accessibility tree لـ: [[<div onclick="save()">حفظ</div>]]، و [[<button>حفظ</button>]]، و [[<a href="/p">التفاصيل</a>]]، و [[<button><svg aria-hidden="true">…</svg></button>]]؟`, done: R`generic من غير اسم مفيد ومش focusable، و button «حفظ»، و link «التفاصيل»، و button من غير اسم (axe بيطلّع [[button-name]]). واتأكدت من DevTools › Accessibility.`,
+              sol: R`~~~html roles.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>roles</title></head>
+<body>
+  <main><h1>الأسماء</h1>
+    <div id="a" onclick="save()">حفظ</div>
+    <button id="b">حفظ</button>
+    <a id="c" href="/p">التفاصيل</a>
+    <button id="d"><svg aria-hidden="true" width="16" height="16"><circle cx="8" cy="8" r="8"/></svg></button>
+  </main>
+</body></html>
+~~~
+
+الـ accessibility tree هي النسخة اللي قارئ الشاشة بيشوفها، وكل عنصر فيها ليه role واسم:
+
+| العنصر | الـ role | الاسم | focusable |
+|---|---|---|---|
+| [[div onclick]] | generic | مفيش اسم حقيقي، والنص اتقري كنص عادي | لأ |
+| [[button]] | button | حفظ | آه |
+| [[a href]] | link | التفاصيل | آه |
+| [[button svg aria-hidden]] | button | **فاضي** | آه |
+
+الـ [[div]] هو أوحش واحد لأنه شكله شغال بالماوس، ومحدش بيلاحظه. و axe مبيقولش عليه حاجة، لأنه مش عارف إن فيه [[onclick]] معنى. الزرار الأخير بقى role صح بس اسمه فاضي، وقارئ الشاشة بيقول «زرار» وبس، و axe بيطلّع [[button-name]]. الحل: [[aria-label="حفظ"]] أو نص مخفي بصريًا.
+
+[[aria-hidden]] على الـ svg صح، عشان ميتقراش، بس لازم الاسم ييجي من مكان تاني.
+
+الغلطة الشائعة: تفكّر إن axe صفر يبقى الـ [[div]] تمام. افتح DevTools › Accessibility وبص بنفسك.
+
+~~~text الناتج (Chrome 156: CDP Accessibility، و axe)
+#a: role=generic، اسم=""، focusable=false
+#b: role=button، اسم="حفظ"، focusable=true
+#c: role=link، اسم="التفاصيل"، focusable=true
+#d: role=button، اسم=""، focusable=true
+axe: button-name:1
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة فيها المشاكل اللي بتتكرر: [[outline: none]] من غير بديل، و [[onclick]] على div، ومودال مبيحبسش الـ focus، و emoji أيقونات من غير اسم، وحالة باللون بس، و [[text-align: right !important]] على كل [[[dir=rtl]]]، ومفيش skip link، ومفيش [[prefers-reduced-motion]]. صلّح التمانية.`, done: R`axe صفر، والصفحة كلها بالكيبورد بـ focus باين، والمودال بيرجّع الـ focus، والعناصر اللي لازم تتوسّط اتوسّطت تاني، ومع reduce مفيش حركة.`,
+              sol: R`~~~html fixed-page.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>الطلبات</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 0; color: #1f2937; }
+  /* ١: focus باين بدل outline: none */
+  :focus-visible { outline: 3px solid #1d4ed8; outline-offset: 2px; }
+  /* ٧: الـ skip link بيظهر مع الـ focus بس */
+  .skip { position: absolute; inset-inline-start: 1rem; inset-block-start: -4rem; background: #fff; padding: .5rem; }
+  .skip:focus { inset-block-start: 1rem; }
+  header, main { padding: 1rem; }
+  /* ٦: محاذاة منطقية بدل text-align: right !important */
+  .center { text-align: center; }
+  /* ٥: الحالة كلمة + علامة، مش لون بس */
+  .ok { color: #166534; }
+  .ok::before { content: "✓ "; }
+  /* ٨: حركة مع احترام reduce */
+  dialog[open] { animation: pop .2s; }
+  @keyframes pop { from { scale: .95; } }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+</style></head>
+<body>
+  <a class="skip" href="#content">انتقل للمحتوى</a>
+  <header><p class="center">متجر حبّة</p></header>
+  <main id="content" tabindex="-1">
+    <h1>طلباتك</h1>
+    <p class="ok">تم الشحن</p>
+    <!-- ٢: button بدل div onclick -->
+    <button id="edit" type="button">تعديل الطلب</button>
+    <!-- ٤: الأيقونة ليها اسم، والـ emoji نفسه aria-hidden -->
+    <button type="button" aria-label="احذف الطلب"><span aria-hidden="true">🗑️</span></button>
+  </main>
+  <!-- ٣: dialog بيحبس الـ focus ويرجّعه لوحده -->
+  <dialog id="dlg" aria-labelledby="dt">
+    <h2 id="dt">تعديل الطلب</h2>
+    <button id="done" type="button">قفل</button>
+  </dialog>
+  <script>
+    const dlg = document.getElementById("dlg");
+    document.getElementById("edit").onclick = () => dlg.showModal();
+    document.getElementById("done").onclick = () => dlg.close();
+  $__lt/script>
+</body></html>
+~~~
+
+الثمانية بالترتيب، وكل واحدة ليها سبب:
+
+1. [[outline: none]]: اللي بيستخدم الكيبورد مش شايف هو فين. [[:focus-visible]] بيظهر الحلقة مع الكيبورد بس.
+2. [[div onclick]] → [[button]]: focus و Enter و Space ببلاش.
+3. المودال: [[<dialog>]] بـ [[showModal()]] بيحبس الـ focus ويقفل بـ Esc ويرجّع الـ focus لوحده. مش محتاج سطر JavaScript زيادة.
+4. emoji من غير اسم: [[aria-label]] على الزرار و [[aria-hidden]] على الـ emoji، وإلا هيتقري «سلة مهملات».
+5. حالة باللون بس: زوّدنا «✓» والكلمة نفسها.
+6. [[text-align: right !important]] على كل [[[dir=rtl]]] كان بيكسر أي عنصر متوسّط: شيلناها، لأن [[dir="rtl"]] بيعمل المحاذاة لوحده.
+7. skip link: أول حاجة في الـ Tab، بتوديك على [[#content]]، و [[tabindex="-1"]] على main عشان الـ focus ينتقل له فعلًا.
+8. [[prefers-reduced-motion]]: الـ [[!important]] هنا استثناء مقبول، لأنه بيقفل كل الحركة.
+
+الغلطة الشائعة: تكتب focus trap بإيدك. [[showModal()]] بيعمل الباقي inert لوحده، وكود الحبس بيبوظ مع كل عنصر جديد. وفخ حصل فعلًا وإحنا بنجرّب الحل: زرار [[id="open"]] مع [[open.onclick = ...]] مبيشتغلش ومن غير أي error، لأن [[open]] في الـ global scope هي [[window.open]] مش الزرار. عشان كده الكود بيستخدم [[getElementById]] وأسامي مش بتتصادم.
+
+~~~text الناتج (Chrome 156)
+axe: 0
+أول Tab: انتقل للمحتوى، و outline: solid 3px
+Enter على الـ skip link: الـ focus على MAIN#content
+Enter على «تعديل الطلب»: الـ dialog مفتوح true، والـ focus على قفل
+Esc: الـ dialog مفتوح false، والـ focus رجع على تعديل الطلب
+محاذاة .center: center
+مع reduce: animationName بتاع الـ dialog = none
+~~~` },
+            { lvl: 'سريع', t: R`**اشرحها:** جاوب «What are the most important accessibility practices?» في دقيقة بالترتيب: semantic HTML، والكيبورد، والتباين، و aria بس لما HTML ميكفيش، و reduced motion، والاختبار.`, done: R`الإجابة بالترتيب ده، وفيها مثال div مقابل button، وأداة اختبار أوتوماتيك وفحص يدوي، في أقل من ٦٠ ثانية.`,
+              sol: R`~~~text إجابة نموذجية بالإنجليزي (حوالي 55 ثانية)
+I start with semantic HTML, because it gives me most of it for free.
+A div with onclick looks like a button, but it has no focus, no keyboard,
+and no role. A real button has all of that.
+
+Second, the keyboard: everything works without a mouse,
+with a visible focus ring and a logical order.
+
+Third, contrast: at least 4.5 to 1 for text, and never colour alone.
+
+ARIA comes only when HTML isn't enough, like tabs or a combobox.
+No ARIA is better than bad ARIA.
+
+Fourth, I respect prefers-reduced-motion.
+
+And I test: axe in CI catches some of it, but only some.
+So I also tab through the page by hand,
+and I try a real screen reader on the main flows.
+~~~
+
+الترتيب هنا هو نص الإجابة: الأسهل والأكبر أثرًا الأول. و «div مقابل button» بيثبت إنك فاهم ليه، مش بس حافظ لستة.
+
+جملة [[No ARIA is better than bad ARIA]] دي القاعدة الأولى في دليل ARIA الرسمي بمعناها، وبتبيّن إنك مش بتحط [[role]] على كل حاجة.
+
+آخر جملة أهم حاجة: الأدوات الأوتوماتيك بتلقط جزء بس، ولازم فحص يدوي. واللي بيقول «axe صفر يبقى خلاص» بيخسر النقطة دي.
+
+الغلطة الشائعة: تبدأ بـ ARIA. ده عكس الترتيب الصح تمامًا.
+
+~~~text الناتج
+حوالي 55 ثانية، بالترتيب: semantic، و keyboard، و contrast، و ARIA، و reduced motion، و testing.
+~~~` },
+          ],
+          desc: R`أبدأ بـ HTML صح: عناصر semantic، و button للأفعال و a للتنقل، و label لكل حقل، و alt للصور، وعناوين بالترتيب. ده بيدّي نص الـ accessibility ببلاش. بعدين الكيبورد: كل حاجة بتتوصل بـ Tab، والـ focus باين بـ focus-visible، والمودالات بتحبس الـ focus وبترجّعه. بعدين التباين: 4.5:1 للكلام العادي. و aria بس للحاجات اللي HTML مش بيوصفها: aria-expanded و aria-live و aria-label لأزرار الأيقونات. واحترام prefers-reduced-motion. وبختبر بالكيبورد وبـ Lighthouse أو axe، وأحيانًا بقارئ شاشة حقيقي.`,
+          example: R`<button aria-label="إغلاق" onClick={close}><X aria-hidden="true" /></button>`,
+          try: R`اعمل audit لصفحة من مشروعك بـ Lighthouse › Accessibility، وصلّح أول 3 مشاكل، واحكي عنهم في الانترفيو كمثال حقيقي.`,
+          flag: "script",
+          deep: {
+            why: "شركات كتير عندها التزامات قانونية بالـ accessibility، والسؤال بيفرق بين اللي بيبني UI للماوس بس واللي بيبني لكل الناس.",
+            how: "لو عايز تتميز: اذكر الـ accessibility tree والـ role/name/state، وإن primitives زي Radix بتحل focus trap و Escape والـ aria، وإن WCAG 2.2 AA هو المعيار المعتاد.\n\nومثال يثبت كلامك: div عليه onclick شكله زرار، بس الـ accessibility tree بيقول عليه generic: مفيش role، ومش بيتوصل بـ Tab، و Enter مبيشغّلوش. و button بيدّي التلاتة ببلاش. افتح DevTools › Elements › Accessibility على الاتنين وورّيهم الفرق في الـ role والـ focusable.",
+            when: "أسئلة المتابعة: «الفرق بين aria-label و aria-labelledby؟» و «إزاي تعمل مودال accessible؟» و «إيه WCAG AA؟» و «بتختبر إزاي؟».",
+            mistakes: R`«بحط aria على كل حاجة» (no ARIA is better than bad ARIA). «[[role="button"]] على div كفاية». «الـ accessibility للمكفوفين بس» (كيبورد، ونظر ضعيف، وعمى ألوان، وحساسية للحركة، وموبايل في الشمس).`
+          },
+          teach: R`## زرار من غير كلام: قارئ الشاشة هيقول إيه؟
+
+المثال زرار «إغلاق» في React، جواه أيقونة X بس ومفيهوش ولا كلمة. قارئ الشاشة مش بيشوف الأيقونة، بيقرا **اسم** الزرار من الـ accessibility tree (الشجرة اللي المتصفح بيبنيها من الصفحة لقارئ الشاشة، وكل عنصر فيها ليه role و name و state). حوّلنا السطر لـ HTML عادي (الأيقونة [[<svg>]]، زي ما مكتبات الأيقونات بتطلّعها)، وسألنا Chrome 154 (headless عن طريق playwright) عن الـ accessibility tree بتاع كل نسخة.
+
+---
+
+## ١. نفكّ السطر
+
+~~~text JSX
+<button aria-label="إغلاق" onClick={close}><X aria-hidden="true" /></button>
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[<button>]] | زرار حقيقي: بياخد focus بالـ Tab، و Enter و Space بيدوسوه، ودوره [[button]] |
+| [[aria-label="إغلاق"]] | اسم الزرار لقارئ الشاشة، لأن مفيش كلام جواه |
+| [[onClick={close}]] | لما يتداس شغّل الدالة [[close]]. الـ [[{}]] في JSX معناها «ده كود JavaScript مش نص» |
+| [[<X />]] | مكوّن أيقونة (من مكتبة زي lucide-react) بيطلّع [[<svg>]]. والـ [[/>]] قفلة لعنصر ملوش أولاد |
+| [[aria-hidden="true"]] | خبّي الأيقونة من قارئ الشاشة: هي زينة، والاسم موجود على الزرار |
+
+## ٢. اللي Chrome قاله لكل نسخة
+
+عملنا 5 نسخ. وحطينا جوه الـ svg [[<title>x icon</title>]] زي ما ملفات أيقونات كتير بتيجي، عشان نشوف هيأثر إزاي:
+
+| النسخة | الـ role | الاسم اللي قارئ الشاشة هيقوله | الأيقونة |
+|---|---|---|---|
+| ١. المثال: [[aria-label]] + أيقونة [[aria-hidden]] | button | «إغلاق» | متجاهلة |
+| ٢. من غير [[aria-label]] | button | **«»** (فاضي) | متجاهلة |
+| ٣. من غير الاتنين | button | «x icon» | image |
+| ٤. [[aria-label]] بس | button | «إغلاق» | image (ظاهرة لوحدها) |
+| ٥. [[<div role="button">]] بدل button | button | «إغلاق» | متجاهلة |
+
+نقرا الجدول:
+
+- **٢**: زرار من غير اسم. قارئ الشاشة هيقول «button» وخلاص، وده أشهر مشكلة بيطلّعها Lighthouse: «Buttons do not have an accessible name».
+- **٣**: الاسم جه من [[<title>]] جوه الـ svg بالإنجليزي وبكلام ملوش معنى للمستخدم. أسوأ من إنك تختار الاسم بنفسك.
+- **٤**: الاسم صح، بس الأيقونة لسه في الشجرة كعنصر [[image]] لوحده. [[aria-hidden]] بيشيلها.
+- **٥**: الاسم والدور صح، بس لما دوسنا Tab خمس مرات، الـ focus عدّى على الأربع أزرار الحقيقية وخرج من الصفحة من غير ما يقف على الـ div. وكمان Enter و Space مش هيشغّلوه من غير كود. عشان كده [[<button>]] الحقيقي أحسن من [[role="button"]].
+
+---
+
+## ٣. ده جزء من إجابة أكبر
+
+المثال بيوضح الترتيب اللي في الإجابة:
+
+1. **HTML صح الأول**: [[<button>]] جاب الـ role والـ focus والكيبورد ببلاش (النسخة ٥ وضّحت الفرق).
+2. **اسم لكل حاجة تفاعلية**: كلام جوه الزرار، أو [[aria-label]] لو مفيش كلام، أو [[<label>]] للحقول.
+3. **ARIA للحاجات اللي HTML مش بيوصفها بس**: هنا [[aria-label]] و [[aria-hidden]]. ولو فيه كلام ظاهر جوه الزرار متحطش [[aria-label]]: الاسم بيطلع من الكلام لوحده.
+
+وبعدهم: focus ظاهر، وتباين 4.5:1، و [[prefers-reduced-motion]]، واختبار بالكيبورد وأداة زي Lighthouse أو axe.
+
+---
+
+## الخلاصة
+
+| | |
+|---|---|
+| زرار أيقونة | [[aria-label]] على الزرار + [[aria-hidden="true"]] على الأيقونة |
+| [[<button>]] مش [[<div>]] | focus وكيبورد ببلاش |
+| اتأكد بنفسك | DevTools › Elements › Accessibility: شوف الـ Name |`,
+          lines: [
+            R`زرار أيقونة: اسمه من [[aria-label]]، والأيقونة زينة مخفية عن قارئ الشاشة.`
+          ],
+          sol: R`مثال لنتيجة حقيقية بعد audit (دي أشهر 3 مشاكل بتطلع): «Buttons do not have an accessible name» على زرار أيقونة ← ضفت [[aria-label]] وحطيت [[aria-hidden="true"]] على الأيقونة زي المثال. «Background and foreground colors do not have a sufficient contrast ratio» على كلام رمادي ← غيّرت [[gray-400]] لـ [[gray-600]]. «Form elements do not have associated labels» على حقل بحث ← ضفت [[<label>]] مخفي بـ [[sr-only]]. والسكور طلع من 78 لـ 96 مثلًا.
+
+الإجابة النموذجية للسؤال: «أول حاجة HTML صح: button للزرار و a للينك و label لكل input و landmarks وعناوين بالترتيب، ودي بتحل أغلب المشاكل ببلاش. بعدها الكيبورد: كل حاجة توصلها بـ Tab، و focus ظاهر، ومودال بيحبس الـ focus ويرجّعه. بعدها الـ contrast، وبعدها alt للصور. و ARIA آخر حاجة، للحالات اللي HTML ملوش فيها زي [[aria-expanded]] و [[aria-live]]، لأن ARIA غلط أسوأ من مفيش ARIA.»
+
+وقول إن Lighthouse بيلقط حوالي ثلث المشاكل بس، فبتكمّل بتجربة بالكيبورد وقارئ الشاشة. القصة الحقيقية بأرقام قبل وبعد هي اللي بتفرّق مش الكلام العام.`
+        },
+        {
+          cmd: "احجز المكان",
+          title: "إيه هو CLS وإزاي تقلله؟",
+          practice: [
+            { lvl: 'سريع', t: R`**مسألة:** بانر ارتفاعه ربع الشاشة اتحط فوق الصفحة فزق كل المحتوى (اللي كان مالي الشاشة) ربع الشاشة لتحت. قيمة الـ shift تقريبًا كام؟`, done: R`المساحة المتأثرة 1 (المحتوى مالي الشاشة قبل وبعد)، والمسافة 0.25، فالـ shift ≈ 0.25، يعني بانر واحد مرتين ونص حد «Good» (0.1).`,
+              sol: R`~~~text الحساب
+impact fraction   = 1     (المحتوى كان مالي الشاشة، وبعد الزق لسه مالي الشاشة)
+distance fraction = 0.25  (اتحرك ربع ارتفاع الشاشة)
+layout shift      = 1 × 0.25 = 0.25
+~~~
+
+~~~html banner.html: نفس السيناريو بقياس حقيقي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>CLS</title>
+<style>
+  body { margin: 0; }
+  #page { block-size: 300vh; background: #f3f4f6; }
+  #ban { block-size: 25vh; background: #fde68a; }
+</style></head>
+<body>
+  <main><div id="page"><h1>المحتوى</h1></div></main>
+  <script>
+    let cls = 0;
+    new PerformanceObserver(l => { for (const e of l.getEntries()) cls += e.value; })
+      .observe({ type: "layout-shift", buffered: true });
+    setTimeout(() => {
+      const b = document.createElement("div");
+      b.id = "ban";
+      document.body.prepend(b);
+    }, 300);
+    setTimeout(() => console.log(cls), 1000);
+  $__lt/script>
+</body></html>
+~~~
+
+الـ layout shift score = impact fraction × distance fraction:
+
+- الـ impact fraction: نسبة الشاشة اللي العناصر المتحركة أثرت فيها قبل وبعد. هنا الشاشة كلها، 1.
+- الـ distance fraction: أكبر مسافة اتحركها عنصر، مقسومة على أكبر بُعد في الشاشة. لو الشاشة أطول من عرضها فالمقام الارتفاع.
+
+حد «Good» لـ CLS هو 0.1، فبانر واحد = مرتين ونص الحد.
+
+الحل: احجز مكان البانر من الأول ([[min-height]])، أو حطه [[position: fixed]] فوق المحتوى، فمحدش يتزق.
+
+الغلطة الشائعة: تحسب المقام من الارتفاع دايمًا. على شاشة عريضة (1280×800) أكبر بُعد هو العرض، فالمسافة 200 ÷ 1280 = 0.156، مش 0.25. نفس البانر رقمه بيختلف حسب شكل الشاشة، والموبايل هو الأوحش.
+
+~~~text الناتج (Chrome 156)
+شاشة موبايل 400×800 (الارتفاع أكبر بُعد): CLS = 0.2500
+شاشة كمبيوتر 1280×800 (العرض أكبر بُعد): CLS = 0.1563
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** عنوان الصفحة بخط عربي من الموقع، ولما الخط يوصل الفقرات بتتنط سطر لأن الخط الاحتياطي أصغر. صلّحه بخط احتياطي بـ [[size-adjust]] و [[ascent-override]] (أو next/font).`, done: R`الـ shift لحظة وصول الخط بقى شبه صفر (قِسه بـ PerformanceObserver أو Performance › Layout Shifts، على Slow 4G و Disable cache)، و CLS أقل من 0.05.`,
+              sol: R`~~~css fonts.css
+@font-face {
+  font-family: "Bold Arabic";
+  src: url("/fonts/bold.ttf");
+  font-display: swap;
+}
+
+/* الخط الاحتياطي: خط جهاز بمقاسات معدّلة تقرّبه من خط الموقع */
+@font-face {
+  font-family: "Bold Arabic Fallback";
+  src: local("Arial");
+  size-adjust: 135%;
+  ascent-override: 100.6%;
+  descent-override: 20.7%;
+  line-gap-override: 0%;
+}
+
+h1, p {
+  font-family: "Bold Arabic", "Bold Arabic Fallback", sans-serif;
+  line-height: 1.6;
+}
+~~~
+
+لما الخط بيوصل متأخر، النص بيترسم بالاحتياطي الأول وبعدين يتبدّل. لو الحروف عرضها مختلف، كلمة بتنزل سطر، والفقرات اللي تحتها بتتنط. ده shift من الخط، ومش بيبان غير على النت البطيء.
+
+الحل مش تخبي النص، الحل تخلي الاحتياطي **نفس مقاس** الخط الجاي:
+
+- [[size-adjust]] بيكبّر أو يصغّر الخط الاحتياطي كله. نقطة البداية نسبة عرض نفس الجملة في الخطين، وهنا طلعت 129%. بعدها جرّب أرقام حواليها وقيس، لأن النتيجة بتقفز مع كل كلمة بتغيّر سطرها: 129% طلّعت 0.0428، و 135% طلّعت 0.0055.
+- [[ascent-override]] و [[descent-override]] من مقاسات خط الموقع نفسه، و [[line-gap-override: 0%]] بيلغي المسافة الزيادة.
+- [[line-height]] رقم ثابت، عشان ارتفاع السطر ميعتمدش على الخط.
+
+في Next.js [[next/font]] بيعمل الحسابات دي لوحده. ولو بتكتبها بإيدك، قيس الخطين وحدّث الأرقام لخطك؛ الرقم اللي فوق مش عام.
+
+الغلطة الشائعة: [[font-display: block]] عشان تخبي المشكلة: النص يختفي 3 ثواني، وده أوحش من shift.
+
+Lighthouse متشغلش هنا: القياس بـ [[PerformanceObserver]] وتأخير الخط 800ms، وده اللي Lighthouse بيقراه، و Slow 4G و Disable cache جرّبهم بإيدك في DevTools.
+
+~~~text الناتج (Chrome 156، عرض 360، خط الموقع Tahoma اتأخر 800ms من سيرفر محلي، والاحتياطي Arial)
+من غير fallback معدّل:  CLS = 0.0565
+size-adjust 129%:       CLS = 0.0428
+size-adjust 135%:       CLS = 0.0055
+~~~` },
+            { lvl: 'سريع', t: R`**اشرحها:** جاوب «What is CLS and how do you reduce it?» في دقيقة بـ ٣ أسباب و ٣ حلول، وإزاي بتقيسه في الـ lab والـ field.`, done: R`الإجابة فيها «reserve space» و صور بمقاسات و skeleton و خطوط بـ size-adjust، و Lighthouse مقابل web-vitals و Search Console، في أقل من ٦٠ ثانية.`,
+              sol: R`~~~text إجابة نموذجية بالإنجليزي (حوالي 50 ثانية)
+CLS, Cumulative Layout Shift, measures how much visible content
+jumps while the page loads. Under 0.1 is good.
+
+Three common causes and their fixes.
+Images without dimensions: I set width and height,
+so the browser reserves the space before the file arrives.
+Content that arrives late, like an ad or a banner:
+I reserve space with min-height, or show a skeleton of the same size.
+Web fonts swapping in: I use a fallback font with size-adjust,
+or next/font, so the swap doesn't move the text.
+
+The idea behind all three is: reserve space.
+
+In the lab, I measure with Lighthouse or the Performance panel.
+In the field, with the web-vitals library or Search Console,
+because real users' numbers are what actually count.
+~~~
+
+٣ أسباب و ٣ حلول، وكل سبب لازق في حله، عشان المستمع يربطهم. جملة [[reserve space]] هي الفكرة الواحدة ورا الكل، فبتخلي الإجابة تبان نظام مش لستة.
+
+الفرق بين lab و field هو اللي بيفرّق الإجابة الكويسة: Lighthouse بيقيس تحميل واحد في ظروف ثابتة، و CLS الحقيقي بيتجمع طول عمر الصفحة عند مستخدمين حقيقيين، فممكن يبقى صفر في Lighthouse ووحش في Search Console.
+
+الغلطة الشائعة: تقول «CLS يعني الصفحة بطيئة». ده عن الثبات مش السرعة.
+
+~~~text الناتج
+حوالي 50 ثانية، فيها reserve space، والصور، و skeleton، والخطوط، و Lighthouse مقابل web-vitals و Search Console.
+~~~` },
+          ],
+          desc: R`CLS مقياس من Core Web Vitals لحركة المحتوى المفاجئة وانت بتتفرج على الصفحة، والمطلوب 0.1 أو أقل. أشهر أسبابه صور و iframes من غير مقاسات، وخطوط بتتبدّل بمقاسات مختلفة، ومحتوى بيتحط فوق محتوى موجود زي البانرات والإعلانات. الحل في كلمة: احجز المكان قبل ما المحتوى يوصل: width و height أو aspect-ratio للصور والفيديو، و min-height أو skeleton للمحتوى الديناميكي، و size-adjust أو next/font للخطوط، والإشعارات fixed بدل ما تزق الصفحة. والحركة بـ transform مش بتتحسب، والتغيير اللي بيحصل بعد ضغطة المستخدم على طول مش بيتحسب.`,
+          example: R`<img src="/hero.webp" width="1200" height="600" alt="...">`,
+          try: R`شغّل Lighthouse على صفحة ليك واكتب الـ CLS، وصلّح سبب واحد، وقيس تاني. رقم قبل وبعد في الانترفيو بيفرق جدًا.`,
+          flag: "script",
+          deep: {
+            why: "Core Web Vitals بتأثر على ترتيب جوجل وعلى تجربة المستخدم، فبتتسأل في أي انترفيو frontend.",
+            how: "لو عايز تتميز: CLS = أكبر مجموعة shifts متقاربة (session window)، وكل shift = المساحة المتأثرة × المسافة. واذكر الفرق بين lab data (Lighthouse) و field data (Search Console و web-vitals).\n\nومثال للحساب: عنصر ارتفاعه نص الشاشة اتزق لتحت ربع الشاشة. المساحة المتأثرة (مكانه قبل وبعد مع بعض) 0.75 من الشاشة، والمسافة 0.25، فالـ shift = 0.75 × 0.25 = 0.1875، لوحده عدّى حد الـ 0.1. والـ shifts اللي بتحصل في أقل من 500ms بعد ضغطة أو كتابة مش بتتحسب لأن المستخدم متوقعها.",
+            when: "أسئلة المتابعة: «إيه باقي Core Web Vitals؟» (LCP أقل من 2.5 ثانية، و INP أقل من 200ms). «بتقيس في الحقيقة إزاي مش في المعمل؟» و «ليه CLS عالي عند المستخدمين وواطي عندك؟».",
+            mistakes: "«CLS يعني الصفحة بطيئة» (ده LCP). «lazy loading بيقلل CLS» (لوحده لأ، وممكن يزوّده لو مفيش مقاسات). وتخلط INP مع FID القديم (FID اتشال سنة 2024 و INP بقى مكانه)."
+          },
+          teach: R`## الصورة جت متأخر وزقّت الكلام
+
+لو المتصفح ميعرفش مقاس الصورة قبل ما توصل، بيرسم الصفحة كأن الصورة ارتفاعها صفر، ولما توصل الكلام اللي تحتها بيتزق لتحت فجأة. ده layout shift، و CLS (Cumulative Layout Shift) مجموعهم. عملنا صفحة فيها عنوان، وبعده صورة webp حقيقية 1200 × 600 السيرفر بتاعنا بيأخرها 800ms، وتحتها كلام، وقسنا في Chrome 154 (headless عن طريق playwright) بـ [[PerformanceObserver]] (الـ API اللي بيبلّغ عن كل layout shift، ونفس اللي مكتبة web-vitals بتستخدمه).
+
+---
+
+## ١. نفكّ السطر
+
+~~~text index.html
+<img src="/hero.webp" width="1200" height="600" alt="...">
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[src="/hero.webp"]] | مكان الصورة. [[webp]] صيغة صور أصغر من jpg و png |
+| [[width="1200"]] و [[height="600"]] | المقاس الطبيعي للصورة، أرقام من غير [[px]] |
+| [[alt="..."]] | وصف الصورة لقارئ الشاشة، وبيظهر لو الصورة مااتحمّلتش |
+
+## ٢. المتصفح بيعمل إيه بالرقمين؟
+
+سألنا Chrome عن [[aspect-ratio]] المحسوب على الصورة:
+
+~~~text getComputedStyle(img).aspectRatio
+مع width و height:   auto 1200 / 600
+من غيرهم:            auto
+~~~
+
+المتصفح حوّل الرقمين لنسبة (2:1) لوحده، وبيحجز المكان بيها قبل ما أي byte من الصورة يوصل. و [[auto]] معناها «لما الصورة الحقيقية توصل استخدم نسبتها هي».
+
+## ٣. التجربة: قبل ما الصورة توصل وبعدها
+
+قسنا مكان الكلام اللي تحت الصورة (من فوق الصفحة) أول ما الـ HTML اتقرا، وبعد ما الصورة وصلت:
+
+| | ارتفاع الصورة قبل | الكلام قبل | الكلام بعد | CLS |
+|---|---|---|---|---|
+| مع [[width]] و [[height]] | 600 | 700 | 700 | **0** |
+| من غيرهم | 0 | 114 | 700 | **0.18** |
+
+من غير الأبعاد الكلام نط 586px لتحت. والحد: [[0.1]] أو أقل كويس، وفوق [[0.25]] وحش.
+
+وعلى شاشة موبايل (375px) نفس الصفحة من غير أبعاد طلعت **0.63**: الرقم أكبر بكتير لأن نفس الكلام على شاشة ضيقة بيبقى سطور أكتر، فبيملا جزء أكبر من الشاشة، وكله اتزق. CLS بيتحسب تقريبًا كده:
+
+~~~text
+layout shift = نسبة الشاشة اللي اتأثرت × نسبة المسافة اللي اتحركتها من الشاشة
+~~~
+
+## ٤. الموبايل: الرقمين لوحدهم مش كفاية
+
+على شاشة 375 الصورة بالـ attributes بس طلعت عرضها **1200** (أعرض من الشاشة). عشان كده أي مشروع بيحط:
+
+~~~text styles.css
+img { max-width: 100%; height: auto; }
+~~~
+
+- [[max-width: 100%]]: متعدّيش عرض الأب.
+- [[height: auto]]: الارتفاع من النسبة، مش الـ 600 الثابتة.
+
+ومع السطر ده على 375: الصورة بقت 375 × 187.5 (نفس النسبة 2:1) **قبل** ما توصل، والـ CLS فضل 0. يعني الـ CSS بيصغّر، و [[width]] و [[height]] بيدّوا النسبة. الاتنين محتاجين بعض. (و Tailwind بيحط السطر ده في الـ Preflight.)
+
+---
+
+## ٥. نفس الفكرة لباقي الأسباب
+
+| السبب | تحجز المكان إزاي |
+|---|---|
+| صورة أو فيديو | [[width]] و [[height]]، أو [[aspect-ratio]] في CSS |
+| iframe (يوتيوب، خريطة) | [[aspect-ratio: 16 / 9]] |
+| إعلان أو بانر أو حاجة من API | [[min-height]] أو skeleton بنفس المقاس |
+| خط بيتبدّل | [[size-adjust]] أو next/font |
+| إشعار بيظهر فجأة | [[position: fixed]] بدل ما يزق الصفحة |
+
+والحركة بـ [[transform]] مش بتتحسب، والتغيير اللي بيحصل خلال 500ms من ضغطة المستخدم مش بيتحسب (الـ API بيعلّم عليه [[hadRecentInput]]، وده اللي الكود بتاعنا كان بيتجاهله).
+
+---
+
+## الخلاصة
+
+- CLS = المحتوى اتحرك من غير ما المستخدم يعمل حاجة. الكويس [[0.1]] أو أقل.
+- الحل في كلمة: **احجز المكان** قبل ما المحتوى يوصل.
+- [[width]] + [[height]] على الصورة، و [[max-width: 100%; height: auto]] في CSS.
+- Lighthouse بيقيس التحميل بس (lab). الأرقام الحقيقية (field) من Search Console أو web-vitals.`,
+          lines: [
+            "width و height بيحجزوا المكان بنسبة 2:1 قبل ما الصورة توصل."
+          ],
+          sol: R`نموذج لنتيجة: CLS قبل حوالي 0.4 (أحمر، الحد 0.1 للكويس و 0.25 للوحش) وسببه صورة الهيرو من غير أبعاد. بعد ما ضفت [[width]] و [[height]] بقى 0 تقريبًا. (قسناه في Chrome على صفحة تجربة فيها عنوان وهيرو 1200×600 بيتأخر 800ms وتحته كلام: من غير أبعاد 0.18 على شاشة 1280 و 0.63 على شاشة 375، ومع [[width]] و [[height]] صفر في الاتنين.) الأسباب التانية المعتادة: الخط لما يتبدّل، وبانر أو إعلان بيتحط فوق المحتوى بعد التحميل، و iframe من غير [[aspect-ratio]]، و skeleton مقاسه مختلف عن المحتوى الحقيقي.
+
+الإجابة النموذجية: «CLS بيقيس قد إيه المحتوى الظاهر اتحرك من غير ما المستخدم يعمل حاجة، ورقمه (مساحة اللي اتحرك × المسافة) من غير وحدة. بقلله بإني أحجز المكان قبل ما الحاجة توصل: width و height أو aspect-ratio للصور والفيديو، و min-height للإعلانات والحاجات اللي جاية من API، وخط بـ [[size-adjust]] أو next/font، وأي حاجة بتظهر فجأة تبقى fixed أو تحت المحتوى، والحركات بـ transform مش top.»
+
+وقول الفرق بين lab (Lighthouse بيقيس التحميل بس) و field (CrUX من مستخدمين حقيقيين وبيعد الـ shifts طول عمر الصفحة)، وإن الـ shift اللي بيحصل خلال 500ms من ضغطة المستخدم مش بيتحسب.`
+        },
+        {
+          cmd: "مراحل الرسم",
+          title: "إيه الفرق بين reflow و repaint؟",
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صنّف تغيير كل خاصية: [[width]]، و [[color]]، و [[transform]]، و [[opacity]]، و [[box-shadow]]، و [[top]] على عنصر relative، و [[visibility]]. أنهي layout، وأنهي paint بس، وأنهي composite بس؟`, done: R`layout: width و top. paint بس: color و box-shadow و visibility. composite غالبًا: transform و opacity. واتأكدت بـ Paint flashing (الـ paint بينوّر) و Performance.`,
+              sol: R`~~~text الإجابة
+layout (حساب أماكن):    width، و top على عنصر relative
+paint بس (رسم من غير ما حاجة تتحرك):    color، و box-shadow، و visibility
+composite غالبًا (من غير رسم):    transform، و opacity
+~~~
+
+~~~html stages.html: كل خاصية بتتغير 30 مرة، وبنعد المراحل
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>مراحل الرسم</title>
+<style>
+  #b { position: relative; inline-size: 100px; block-size: 100px; background: #bfdbfe; will-change: auto; }
+</style></head>
+<body><main><h1>الخواص</h1><div id="b">مربع</div></main></body></html>
+~~~
+
+المتصفح بيمشي ٤ مراحل: style، ثم layout (مين فين)، ثم paint (ارسم البكسلات)، ثم composite (ركّب الطبقات). تغيير أي خاصية بيبدأ من المرحلة اللي بتتأثر، وبيجر اللي بعدها:
+
+- [[width]] و [[top]] بيغيّروا مكان العناصر، فلازم layout من الأول.
+- [[color]] و [[box-shadow]] و [[visibility]] شكل بس، مفيش حد بيتحرك، فمن paint.
+- [[transform]] و [[opacity]] ممكن يتطبقوا على طبقة جاهزة من غير رسم، بس لو العنصر على طبقة لوحده. وعشان كده «غالبًا».
+
+الغلطة الشائعة: تفتكر [[top]] زي [[transform]] لأن الاتنين بيحركوا العنصر. [[top]] بيعمل layout كل frame.
+
+~~~text الناتج (Chrome 156، trace، 30 تغيير، عدد Layout / وقت Paint)
+width       Layout: 29   Paint: 1.5ms
+top         Layout: 29   Paint: 1.4ms
+color       Layout: 0   Paint: 1.4ms
+boxShadow   Layout: 0   Paint: 1.7ms
+visibility  Layout: 0   Paint: 1.0ms
+transform   Layout: 0   Paint: 0.0ms
+opacity     Layout: 0   Paint: 0.0ms
+~~~` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** مربع بيتحرك يمين وشمال على طول، مرة بـ [[left]] ومرة بـ [[transform: translateX()]]. سجّل Performance ٥ ثواني بـ CPU 6x slowdown.`, done: R`نسخة left فيها Layout و Paint في كل frame وفريمات أطول، ونسخة transform مفيهاش، وكتبت متوسط مدة الـ frame في الاتنين من الـ Frames track.`,
+              sol: R`~~~html box-left.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>left</title>
+<style>
+  .s { position: relative; inline-size: 80px; block-size: 80px; background: #1d4ed8; animation: go 1s ease-in-out infinite alternate; }
+  @keyframes go { from { left: 0; } to { left: 400px; } }
+</style></head>
+<body><main><h1>حركة</h1><div class="s"></div></main></body></html>
+~~~
+
+~~~css نسخة transform (نفس الـ HTML)
+.s { position: relative; inline-size: 80px; block-size: 80px; background: #1d4ed8; animation: go 1s ease-in-out infinite alternate; }
+@keyframes go { from { transform: translateX(0); } to { transform: translateX(400px); } }
+~~~
+
+[[left]] بيخلّي المتصفح يحسب الـ layout ويرسم كل frame على الـ main thread، و [[transform]] بيحرّك طبقة جاهزة على الـ compositor، فالـ main thread فاضي. و CPU 6x بيقرّب الجهاز من موبايل ضعيف، وعشان كده القياس لازم يبقى بيه.
+
+عشان تقراها بإيدك: Performance › الترس › CPU: 6x slowdown › Record، وبص في الملخص على Layout و Paint.
+
+مهم تقرا الرقم صح: الصفحة دي بسيطة جدًا، و headless مش مربوط بـ 60Hz، فمتوسط الفريم تحت قريب في الاتنين ومش ده الدليل (في Chrome عادي هتشوف حوالي 16.7ms). الدليل هو الشغل نفسه: Layout و Paint كل frame ضد صفر، وده اللي بيتحول لـ jank لما الصفحة تكبر.
+
+الغلطة الشائعة: تعمل [[will-change: transform]] على كل حاجة «عشان تسرّع». كل طبقة بتاكل ذاكرة، وعلى قوايم طويلة بتأخر الصفحة.
+
+~~~text الناتج (Chrome 156، CPU 6x، trace لمدة 5 ثواني)
+النسخة      أحداث Layout   وقت Layout   وقت Paint    متوسط الفريم
+left        1489             346.9ms      207.4ms     3.4ms
+transform   0             0.0ms      0.0ms     3.3ms
+~~~` },
+            { lvl: 'سريع', t: R`**اشرحها:** جاوب «What's the difference between reflow and repaint?» في دقيقة بالمراحل الأربعة ومثال hover كارت، و layout thrashing في جملة.`, done: R`الإجابة فيها style ثم layout ثم paint ثم composite، وإن transform و opacity أرخص، والقراية بعد الكتابة في loop، في أقل من ٦٠ ثانية.`,
+              sol: R`~~~text إجابة نموذجية بالإنجليزي (حوالي 50 ثانية)
+The browser renders in four stages: style, layout, paint, composite.
+
+Reflow means layout has to run again: positions and sizes get recalculated.
+Repaint means only the pixels change, nothing moves.
+Reflow is more expensive, because it triggers paint and composite too.
+
+Take a hover on a card.
+If I change its width, that's a reflow, and the cards next to it can move.
+If I change box-shadow, that's a repaint only.
+If I use transform and opacity, it can skip both and just composite,
+so the hover stays smooth, even on a weak phone.
+
+Layout thrashing is reading a layout value after writing, inside a loop,
+which forces a reflow on every iteration.
+The fix is to read everything first, then write.
+~~~
+
+الإجابة بتمشي من الأغلى للأرخص على مثال واحد (hover كارت)، فالمستمع يشوف الفرق في نفس الجملة، بدل ٣ تعريفات منفصلة.
+
+الجملة عن layout thrashing مهمة لأنها بتربط الكلام بكود: [[el.style.width = ...]] وبعدها [[el.offsetHeight]] جوه loop. القراية بتجبر المتصفح يحسب layout فورًا، فالـ loop بيعمل مئة layout بدل واحد.
+
+الغلطة الشائعة: تقول «transform أسرع» من غير ما تقول ليه. السبب إنه بيعدّي layout و paint.
+
+~~~text الناتج
+حوالي 50 ثانية، فيها المراحل الأربعة، و hover كارت، و transform و opacity، و layout thrashing.
+~~~` },
+          ],
+          desc: R`المتصفح بيرسم على مراحل: يحسب الـ styles، وبعدين layout (أو reflow): أماكن ومقاسات كل العناصر، وبعدين paint (أو repaint): يلوّن البكسلات، وبعدين composite: يركّب الطبقات. تغيير width أو margin أو إضافة عنصر بيعمل reflow، وممكن يأثر على الصفحة كلها، وبعده repaint. تغيير color أو background بيعمل repaint بس. و transform و opacity غالبًا composite بس، ودا ليه الحركات بتتعمل بيهم. والأخطر layout thrashing: قراية مقاس زي offsetHeight بعد كتابة style، فالمتصفح يعمل reflow فوري، ولو في loop بيتكرر مية مرة. الحل: اقرا الكل الأول وبعدين اكتب، أو requestAnimationFrame.`,
+          example: R`el.style.width = "200px";
+const h = el.offsetHeight;
+el.style.transform = "translateX(10px)";`,
+          try: R`سجّل في DevTools › Performance وانت بتحرّك عنصر بـ [[left]] مرة وبـ [[transform]] مرة، وقارن الـ Layout والـ Paint في كل حالة.`,
+          flag: "script",
+          deep: {
+            why: "بيختبر إنك فاهم ليه الموقع بيقطّع، مش بس إنه بيقطّع.",
+            how: R`لو عايز تتميز: الخصائص اللي بتعمل forced reflow (offsetWidth و getBoundingClientRect و scrollTop و getComputedStyle)، و [[will-change]] بيرقّي العنصر لطبقة لوحده بس بياكل ذاكرة، و ResizeObserver و IntersectionObserver بدل القراية في loop.
+
+ومثال تقوله: hover بيغيّر [[width]] بتاع كارت في grid = layout لكل الكروت اللي جنبه وبعدها paint، لكن [[transform: scale(1.05)]] = composite بس والكروت التانية متعرفش حاجة. وتثبتها بـ DevTools: Rendering › Paint flashing بينوّر اللي اترسم تاني، و Performance بيبيّن Layout بالبنفسجي و Paint بالأخضر.`,
+            when: R`أسئلة المتابعة: «إزاي تكتشف ده في DevTools؟» (Performance وتحذير Forced reflow). «إيه [[will-change]] وإمتى تستخدمه؟» و «ليه animation لـ top أبطأ من translate؟».`,
+            mistakes: "«repaint أغلى من reflow» (العكس، والـ reflow غالبًا بيجيب repaint معاه). «transform ببلاش» (على عناصر كتير أو كبيرة بياكل ذاكرة GPU). و will-change على كل حاجة."
+          },
+          teach: R`## المتصفح بيرسم على ٤ مراحل
+
+~~~text مراحل الرسم
+Style       يحسب أنهي CSS بيتطبق على كل عنصر
+Layout      يحسب مكان ومقاس كل عنصر         (ده الـ reflow)
+Paint       يلوّن البكسلات                   (ده الـ repaint)
+Composite   يركّب الطبقات فوق بعض ويعرضها
+~~~
+
+أي تغيير بيبدأ من مرحلة ويكمّل اللي بعدها. تغيير المقاس بيبدأ من Layout (أغلى حاجة)، وتغيير اللون من Paint، و [[transform]] و [[opacity]] غالبًا Composite بس. المثال ٣ سطور JavaScript على عنصر [[el]]. عدّينا مرات الـ Style والـ Layout في Chrome 154 (headless عن طريق playwright) بعدّادات [[RecalcStyleCount]] و [[LayoutCount]] من الـ DevTools Protocol، قبل وبعد كل حاجة.
+
+---
+
+## ١. [[el.style.width = "200px";]]
+
+[[el.style]] الـ inline style بتاع العنصر، والسطر ده بيغيّر العرض. المتصفح **مش** بيعمل layout دلوقتي: بيعلّم إن الـ layout بقى قديم ويستنى الـ frame الجاية (الشاشة بتترسم حوالي 60 مرة في الثانية)، عشان لو غيّرت ١٠ حاجات يحسبهم مرة واحدة.
+
+~~~text العدّادات بعد السطر ده لوحده
+Layout +0   Style +0
+~~~
+
+## ٢. [[const h = el.offsetHeight;]]
+
+[[offsetHeight]] ارتفاع العنصر لحد الـ border. عشان يرجّع رقم صح بعد ما غيّرت العرض (العرض ممكن يغيّر الارتفاع لو الكلام اتكسر)، المتصفح **مضطر** يحسب الـ layout حالًا، في نص الكود بتاعك:
+
+~~~text العدّادات: كتابة width وبعدها قراية offsetHeight
+Layout +1   Style +1
+~~~
+
+ده اسمه forced synchronous layout (أو forced reflow). ولما قرينا [[offsetHeight]] من غير ما نكتب حاجة قبله: [[+0]]، لأن الـ layout كان محسوب أصلًا.
+
+الحاجات اللي بتعمل كده لما تقراها: [[offsetWidth]] و [[offsetHeight]] و [[clientWidth]] و [[scrollTop]] و [[getBoundingClientRect()]] و [[getComputedStyle()]].
+
+## ٣. [[el.style.transform = "translateX(10px)";]]
+
+[[transform]] بيحرّك العنصر **بعد** الـ layout: مكانه في الصفحة ومقاسه مبيتغيروش، والمتصفح بيزقّه وهو بيركّب الطبقات. عشان كده اللي بعده مبيتأثرش، ومش محتاج layout ولا paint في كل frame.
+
+> لاحظ: Chrome عدّ Layout +1 برضه لما كتبنا [[transform]] أو [[color]] وقرينا [[offsetHeight]] بعدها. أي كتابة قبل قراية بتجبر المتصفح يتأكد إن كل حاجة محسوبة، حتى لو الحساب نفسه طلع خفيف. فالقاعدة: متقراش بعد ما تكتب، مهما كانت الخاصية.
+
+---
+
+## ٤. ليه ده مهم: layout thrashing
+
+١٠٠ عنصر، وعايزين نكبّر كل واحد 1px عن عرضه الحالي. بطريقتين:
 
 ~~~javascript
-const fmt = (n) => n.toLocaleString("ar-EG", { useGrouping: false });
-console.log(fmt(240 * 10));                  // ٢٤٠٠
-console.log((2400).toLocaleString("ar-EG"));  // ٢٬٤٠٠ (فيه فاصل آلاف عربي)
+// الطريقة الغلط: اقرا واكتب جوه نفس اللفة
+for (const it of items) { it.style.width = (it.offsetWidth + 1) + 'px'; }
+
+// الطريقة الصح: اقرا الكل الأول، وبعدين اكتب الكل
+const ws = items.map(it => it.offsetWidth);
+items.forEach((it, i) => it.style.width = (ws[i] + 1) + 'px');
 ~~~
 
-[[useGrouping: false]] بيشيل فاصل الآلاف («٢٬٤٠٠») لو مش عايزه في الأرقام الصغيرة. ومتستخدمش [[toLocaleString()]] من غير لغة: هيطلع بلغة جهاز الزائر (إنجليزي على جهاز إنجليزي).
-
-### الباقة المميزة
-
-- [[.featured]]: الخلفية [[--ink]] والنص [[--bg]]، فمقلوبة في الوضعين (١٦٫٥٥ في الفاتح و ١٥٫٦٣ في الغامق).
-- [[.featured .btn-primary { --b-bg: var(--bg); --b-fg: var(--ink); }]]: الزرار جواها كمان مقلوب. ده فايدة الـ variant بالمتغيرات: سطر واحد بيغيّر لون الزرار في سياق معيّن.
-- [[.badge]] «الأكتر طلبًا» على [[--brand-soft]] بنص [[--ink]]: ١٤٫٢٢ وبيبان على الخلفية الغامقة. [[justify-self: start]] عشان البادج ياخد عرض كلمته بس جوه الـ grid.
-- [[.plans { align-items: start; }]]: كل كارت بطول محتواه، فالمميزة بتبان أطول (فيها ٣ مميزات) بدل ما الكل يتمط لنفس الطول.
-
-### زرار «اختار الباقة» بيملا الفورم
-
-~~~javascript js/site.js (٣)
-// ٣. زرار «اختار الباقة» بيملا الباقة في الفورم
-document.querySelectorAll("[data-plan]").forEach((a) => a.addEventListener("click", () => {
-  document.getElementById("plan").value = a.dataset.plan;
-}));
+~~~text العدّادات
+اقرا واكتب في نفس اللفة:   Layout +100
+اقرا الكل وبعدين اكتب:     Layout +1
 ~~~
 
-اللينك نفسه [[href="#signup"]] بيقفز للفورم (من غير JS كمان)، والـ JS بيزوّد إنه يختار الباقة في الـ [[<select>]]. [[a.dataset.plan]] = قيمة [[data-plan]]. اتقاس بعد الضغط على «اختار البيت»: [[{ plan: 'home', hash: '#signup', signupTop: 80 }]]: الباقة اتختارت، والقسم وقف عند ٨٠ بكسل (٦٤ ارتفاع الـ header + ١٦) بسبب [[scroll-margin-top]].
+في الأولى كل لفة بتكتب، واللفة اللي بعدها بتقرا، فالمتصفح بيعمل layout كامل ١٠٠ مرة. ده اسمه layout thrashing. والحل: اقرا الكل الأول وبعدين اكتب، أو أجّل الكتابة لـ [[requestAnimationFrame]].
 
----
+## ٥. الحركة: [[left]] ولا [[transform]]؟
 
-## الغلطة: [[minmax(320px, 1fr)]]
+حرّكنا نفس العنصر 300px لمدة ثانية بـ CSS animation، مرة بـ [[left]] ومرة بـ [[transform: translateX()]]:
 
-النسخة الأولى: [[.plans { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }]]. على ٣٦٠ الـ gutter ١٦ من كل ناحية = ٣٢٨ بكسل متاحة، فـ ٣٢٠ عدّت وكله «OK». على ٣٢٠ المتاح ٢٨٨، والكارت مصمم إنه ٣٢٠ على الأقل:
-
-~~~text matrix.mjs على النسخة الأولى
-320   BROKEN +31px  a.btn.btn-primary.top-cta 90px | article.plan 320px | article.plan.featured 320px | article.plan 320px
-360   OK
-~~~
-
-(الـ +٣١ هي أعرض حاجة، وهي الـ header من غلطة الدرس اللي فات.) التصليح [[minmax(min(100%, 280px), 1fr)]]: العمود أقل حاجة ٢٨٠، **أو** عرض الشاشة لو أصغر. بعدها ٣٢٠ بقت [[OK]].
-
----
-
-## خلاصة
-
-- bento: [[auto-fit]] و [[minmax(min(100%, X), 1fr)]] للموبايل، وأعمدة ثابتة و [[span]] للديسكتوب.
-- الآراء: [[figure]] و [[blockquote]] و [[figcaption]]، والزخرفة [[aria-hidden]].
-- التبديل: radio شفاف فوق الـ label (مش display none) + [[:has(:checked)]] للأسعار + [[:has(:focus-visible)]] للحلقة، والشرط على القسم مش الـ body.
-- الكارت المقلوب: متغيرين، وزرار مقلوب بسطر، ومفيش براند على [[--ink]].`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** ٣ كروت في [[repeat(auto-fit, minmax(200px, 1fr))]] على عرض ١٠٠٠ (من غير gap). كام عمود، وعرض كل كارت؟ وبـ [[auto-fill]] بدل [[auto-fit]]؟ جرّب وقيس بـ [[getBoundingClientRect().width]].`, done: R`كتبت توقعك وجرّبت: [[auto-fit]] = ٣ كروت كل واحد حوالي ٣٣٣، و [[auto-fill]] = ٥ أعمدة (٢ فاضيين) والكروت ٢٠٠ بس، وفهمت إن الفرق بيبان لما الكروت أقل من الأعمدة اللي تساعها الشاشة.` },
-            { lvl: 'تطبيق', t: R`**ابني:** شريط «كام شخص بيوفّر» تحت التبديل بيقول «السنوي بيوفّرلك ٤٨٠ جنيه في باقة تجربة» ويتغيّر مع الاختيار، بـ CSS بس: الجملتين في الـ HTML و [[:has()]] بيعرض واحدة.`, done: R`الجملة بتتغيّر مع الكيبورد والماوس ومن غير JS، والأرقام صح (التوفير = شهرين = ٤٨٠ و ٨٨٠ و ١٦٤٠ في الـ ٣ باقات)، و axe صفر.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الكود ده بيخفي الـ radios: [[.billing input { display: none; }]] و [[.billing label:has(:checked) { background: var(--ink); }]]. بالماوس شغال. جرّبه بالكيبورد وبقارئ الشاشة (NVDA أو VoiceOver أو تاب Accessibility)، واكتب إيه اللي اتكسر وصلّحه.`, done: R`كتبت إن Tab بيعدّي المجموعة كلها وإن شجرة الـ accessibility مفيهاش radio، وصلّحت بالـ radio الشفاف المتغطي على الـ label، والحلقة ظاهرة بـ [[:has(:focus-visible)]].` },
-            { lvl: 'تحدي', t: R`**refactor:** الأسعار مكتوبة مرتين في الـ HTML (شهري وسنوي). اعملها مرة واحدة: كل باقة فيها [[data-monthly="240"]] بس، والسعر بيتحسب ويتكتب بـ JS بـ [[toLocaleString("ar-EG", { useGrouping: false })]]، ومع ذلك لو الـ JS وقع الشهري يفضل ظاهر.`, done: R`الـ HTML فيه السعر الشهري بس كنص (عشان من غير JS)، والـ JS بيحسب السنوي، والتبديل شغال بالكيبورد، والـ JS ممنوع = شهري ظاهر والتبديل مستخبي (مفيش زرار بيعمل حاجة غلط)، وكتبت ليه ده أحسن أو أوحش من الطريقة اللي في الدرس.` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** من MDN اعرف إمتى [[:has()]] بيبقى «forgiving» ومين لأ: لو كتبت [[.block:has(:checked, :unknown-thing)]] القاعدة كلها هتتلغي ولا الجزء الغلط بس؟`, done: R`كتبت الإجابة ومعاها المصدر، وجرّبتها في Chrome بإنك لقيت القاعدة في Styles (اتطبّقت ولا اتشطبت).` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** حوّل جدول أسعار ٣ باقات لـ JSON ([[name]] و [[monthly]] و [[features]] و [[featured]])، واكتب function بتولّد نفس HTML الأسعار من الـ JSON، وقارن الناتج بالـ HTML اللي في الدرس.`, done: R`الـ function بترجّع HTML لما تحطه مكان القسم الصفحة شكلها نفس الشكل، والأرقام العربي طالعة من [[toLocaleString]] مش مكتوبة، و [[featured: true]] بيحط الـ class والبادج.` },
-          ],
-          ci: [
-            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`node`, run: R`const plans = [["تجربة", 240], ["البيت", 440], ["المكتب", 820]];
-const fmt = (n) => n.toLocaleString("ar-EG", { useGrouping: false });
-for (const [name, m] of plans) console.log(name + ": " + fmt(m) + " / شهر، " + fmt(m * 10) + " / سنة، والتوفير " + fmt(m * 2));
-console.log("grouped: " + (2400).toLocaleString("ar-EG"));
-const css = ".plans { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }";
-const need = Number(css.match(/minmax\((\d+)px/)[1]), room = 320 - 2 * 16;
-console.log("minmax " + need + "px on a 320 phone with " + room + "px: " + (need > room ? "overflow " + (need - room) + "px" : "fits"));`, expect: [R`تجربة: ٢٤٠ / شهر، ٢٤٠٠ / سنة، والتوفير ٤٨٠`, R`البيت: ٤٤٠ / شهر، ٤٤٠٠ / سنة، والتوفير ٨٨٠`, R`المكتب: ٨٢٠ / شهر، ٨٢٠٠ / سنة، والتوفير ١٦٤٠`, R`grouped: ٢٬٤٠٠`, R`minmax 320px on a 320 phone with 288px: overflow 32px`] },
-          ],
-        },
-        {
-          cmd: "landing page: الأسئلة والـ CTA والـ footer والحركة",
-          title: "أسئلة بـ details name واحد بس مفتوح من غير JS، و CTA، و footer باسم المحمصة عملاق، وظهور مع السكرول ميخبيش المحتوى لو الـ JS وقع",
-          learn: R`تكمّل الصفحة لآخرها: أسئلة بتتفتح بالكيبورد من غير كود، وشريط CTA، و footer، وحركة ظهور بتحترم «حركة أقل» وبتفضل الصفحة مقروءة لو أي سكربت فشل.`,
-          out: R`أقسام الأسئلة والـ CTA والـ footer في [[index.html]]، والأجزاء ٧ و ٨ و ٩ من [[site.css]]، والجزء ٤ من [[site.js]]. والقياس: صفر عناصر مستخبية لو الـ JS وقع (كانوا ١٠)، والـ footer لينكاته بتتضغط.`,
-          desc: R`آخر أقسام الصفحة:
-
-• **الأسئلة:** كل سؤال [[<details name="faq">]] و [[<summary>]]. الـ [[name]] نفسه على الأربعة بيخليهم مجموعة: لما تفتح واحد، اللي كان مفتوح بيتقفل لوحده (اتقاس: فتحنا التاني، والأول اتقفل). الكيبورد (Tab و Enter و Space) وقارئ الشاشة («مطوي/مفرود») شغالين من غير ولا سطر JS. والعلامة [[+]] بتلف ٤٥ درجة فتبقى [[×]].
-• **الـ CTA:** صندوق ألوانه مقلوبة ([[--cta-bg]] و [[--cta-ink]]) فيه جملة وزرار للفورم.
-• **الـ footer:** ٣ أعمدة بتنزل تحت بعض، واسم المحمصة عملاق وباهت تحتهم. **غلطة اتمسكت:** الاسم الكبير ده (خطه ٢٦٠ بكسل) كان راكب فوق لينكات الـ footer: [[elementFromPoint]] على لينك «أسئلة» رجّع [[P.wordmark]] مش اللينك، يعني الضغطة بتروح للزخرفة. التصليح [[pointer-events: none]].
-• **الظهور مع السكرول:** الكروت بتظهر بـ fade لما توصلها. القاعدة: الـ CSS بيخفيها بس لو [[.js]] موجودة على الـ html **و** اليوزر مش طالب حركة أقل. النسخة الأولى كانت بتخفيها على طول، فلما منعنا ملفات الـ JS: **١٠ عناصر** فضلت مخفية للأبد. النهائي: **صفر**. ومع [[prefers-reduced-motion: reduce]]: صفر مخفي من الأول، والـ smooth scroll بيتقفل.`,
-          example: R`<details name="faq" open><summary>البن بيفضل طازة لحد إمتى؟</summary><p>أحسن طعم من اليوم الرابع لحد الأسبوع الرابع.</p></details>
-<details name="faq"><summary>أقدر أغيّر التحميصة كل شهر؟</summary><p>أيوه، من حسابك قبل يوم الأربع.</p></details>
-details[open] summary::after { rotate: 45deg; }
-.wordmark { font-size: clamp(80px, 22vw, 260px); opacity: .08; pointer-events: none; }
-@media (prefers-reduced-motion: no-preference) { .js [data-reveal] { opacity: 0; translate: 0 16px; } }
-.js [data-reveal].in { opacity: 1; translate: 0 0; }`,
-          lines: [
-            R`أول سؤال: [[open]] عشان يبقى مفتوح في الأول (الزائر يعرف إن دي أسئلة بتتفتح)، و [[name="faq"]] بيدخّله في المجموعة.`,
-            R`تاني سؤال في نفس المجموعة ([[name]] نفسه)، فلما يتفتح الأول بيتقفل لوحده من غير JS.`,
-            R`لما الـ details يبقى مفتوح، علامة الـ [[+]] اللي في [[::after]] بتلف ٤٥ درجة فتبقى [[×]]. [[rotate]] خاصية لوحدها من غير [[transform]].`,
-            R`اسم المحمصة العملاق في الـ footer: بيكبر مع الشاشة لحد ٢٦٠، باهت ٨٪، و [[pointer-events: none]] عشان ميغطيش اللينكات اللي فوقه.`,
-            R`الإخفاء قبل الظهور: بشرطين، اليوزر مش طالب حركة أقل، و [[.js]] على الـ html (يعني [[theme.js]] اشتغل). لو أي شرط ناقص، الكروت ظاهرة عادي.`,
-            R`لما الـ JS يحط class [[in]] (العنصر دخل الشاشة)، الكارت بيرجع لمكانه وبيظهر بـ transition.`,
-          ],
-          try: R`ابني الأقسام التلاتة والحركة. افتح الأسئلة بالكيبورد بس (Tab و Enter): لما تفتح التاني، الأول بيحصله إيه؟ وفي DevTools › Rendering فعّل «prefers-reduced-motion: reduce» واعمل refresh: الكروت بتظهر بحركة؟ وبعدين في Network › Request blocking زوّد [[*.js]] واعمل refresh واعمل سكرول للآخر: فيه قسم فاضي؟ وآخر حاجة: في Console على لينك «أسئلة» في الـ footer اكتب [[document.elementFromPoint(x, y)]] بإحداثيات وسطه.`,
-          sol: R`فتح التاني قفل الأول (اتقاس: [[open at start: [ 'البن بيفضل طازة لحد إمتى؟' ]]] وبعد الضغط [[after 2nd: [ 'أقدر أغيّر التحميصة كل شهر؟' ]]]). مع reduce الكروت ظاهرة من الأول ([[hiddenAtLoad: 0]] بدل ١٠) و [[scroll-behavior]] بقى [[auto]]. ومع منع الـ JS مفيش قسم فاضي (صفر مخفي). و [[elementFromPoint]] بيرجّع اللينك نفسه ([[A]])؛ لو شلت [[pointer-events: none]] هيرجّع [[P.wordmark]].`,
-          flag: "script",
-          deep: {
-            why: R`الأسئلة بتشيل الاعتراضات الأخيرة قبل الفورم، ولو مخفية ورا JS بايظ الزائر مش هيشوفها. الحركة بتدّي إحساس إن الصفحة حية، بس كل حركة ليها تمن: ناس بيدوخوا من الحركة (vestibular disorders) وبيطلبوا من النظام حركة أقل، وأي إخفاء معتمد على JS بيحوّل خطأ صغير في سكربت لصفحة فاضية. والـ footer هو آخر مكان الزائر بيدوّر فيه على «تواصل»، فلينكاته لازم تتضغط فعلًا.`,
-            how: R`[[details]] عنصر HTML ليه حالة ([[open]]) والمتصفح بيقلبها لما [[summary]] يتضغط أو ياخد Enter أو Space، وبيقول لقارئ الشاشة الحالة. و [[name]] (ميزة جديدة، Baseline ٢٠٢٤ حسب الوثائق) بيخلي details بنفس الاسم مجموعة exclusive زي radio. والظهور: [[IntersectionObserver]] بيبلّغ لما العنصر يدخل الشاشة (أو يقرب منها حسب [[rootMargin]])، فبنحط [[in]] ونبطّل نراقبه ([[unobserve]]). الـ observer بيتحسب في كل frame، فلو العنصر عدّى الشاشة كلها بين frame والتاني (سكرول سريع جدًا) مش هيتحسب، وهيفضل مخفي لحد ما ترجعله. و [[pointer-events: none]] بيخلّي الضغط يعدّي من العنصر للي تحته، لأن الـ hit testing بيختار أعلى عنصر في المكان ده حتى لو شفاف.`,
-            when: R`[[details]] لأي محتوى «اختياري تفتحه» (أسئلة، تفاصيل، شروط). لو عايز حركة فتح ناعمة لازم CSS أحدث ([[::details-content]] و [[interpolate-size]]) أو JS. والظهور مع السكرول لصفحات تسويق بس، مش لنص مقال أو جدول بيانات حد بيدوّر فيه. واختبر دايمًا بـ ٣ حالات: عادي، و reduce، و JS ممنوع.`,
-            mistakes: R`[[[data-reveal] { opacity: 0 }]] من غير [[.js]] (اتقاس: ١٠ عناصر مخفية للأبد لو السكربت وقع). أو حركة من غير [[prefers-reduced-motion]]. أو accordion بـ [[div]] و [[onclick]] (مفيش كيبورد ولا حالة لقارئ الشاشة). أو [[list-style: none]] على summary من غير ما تشيل [[::-webkit-details-marker]] (Safari بيفضل يرسم المثلث). أو زخرفة كبيرة فوق محتوى من غير [[pointer-events: none]]. أو [[will-change: transform]] على كل كارت «للأداء» (بيعمل layer لكل واحد وياكل ذاكرة).`
-          },
-          teach: R`## الأسئلة
-
-~~~html index.html (الأسئلة)
-<section id="faq" class="block alt" aria-labelledby="faq-title">
-  <div class="wrap narrow">
-    <header class="sec-head"><p class="eyebrow">أسئلة</p><h2 id="faq-title">أسئلة بتتسأل كتير</h2></header>
-    <details name="faq" open><summary>البن بيفضل طازة لحد إمتى؟</summary><p>أحسن طعم من اليوم الرابع لحد الأسبوع الرابع بعد التحميص. الكيس فيه صمام بيطلّع الغاز ومبيدخلش هوا.</p></details>
-    <details name="faq"><summary>أقدر أغيّر التحميصة كل شهر؟</summary><p>أيوه، من حسابك قبل يوم الأربع، والتغيير بيتطبق على الشحنة الجاية.</p></details>
-    <details name="faq"><summary>لو مش عاجبني الطعم؟</summary><p>ابعتلنا في خلال أسبوع من الاستلام ونبدّل الكيس بتحميصة تانية مجانًا.</p></details>
-    <details name="faq"><summary>بتوصلوا فين؟</summary><p>كل المحافظات. القاهرة والجيزة في يومين، والباقي في ٤ أيام.</p></details>
-  </div>
-</section>
-~~~
-
-~~~css css/site.css (٧)
-/* ٧. الأسئلة */
-details { border-bottom: 1px solid var(--line); padding-block: 8px; }
-summary { cursor: pointer; font-weight: 700; padding-block: 8px; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
-summary::-webkit-details-marker { display: none; }
-summary::after { content: "+"; flex: none; font-size: 1.4rem; line-height: 1; color: var(--brand); transition: rotate .2s var(--ease); }
-details[open] summary::after { rotate: 45deg; }
-details p { color: var(--muted); }
-~~~
-
-- [[.narrow]] (٤٤rem): الأسئلة نص طويل، فالعمود أضيق من باقي الصفحة عشان السطر يتقري.
-- [[summary { list-style: none; display: flex; justify-content: space-between; }]]: بنشيل المثلث الافتراضي ونحط علامتنا في الطرف التاني. في RTL [[space-between]] بيحط السؤال يمين والعلامة شمال لوحده.
-- [[summary::-webkit-details-marker { display: none; }]]: Safari بيرسم المثلث بطريقة قديمة مبتتشالش بـ [[list-style]] لوحده.
-- [[summary::after { content: "+"; flex: none; }]]: [[flex: none]] عشان لو السؤال طويل ونزل سطرين، العلامة متتضغطش.
-- [[details[open] summary::after { rotate: 45deg; }]] و [[transition: rotate .2s]]: الـ [[+]] بتلف ربع لفة إلا شوية فتبقى [[×]]. الحركة على العلامة بس؛ فتح المحتوى نفسه فوري (حركته محتاجة [[::details-content]] اللي لسه مش في كل المتصفحات).
-
-### القياس
-
-~~~text فتحنا التاني بالضغط على الـ summary
-open at start: [ 'البن بيفضل طازة لحد إمتى؟' ]
-after 2nd: [ 'أقدر أغيّر التحميصة كل شهر؟' ]
-~~~
-
-متصفح مبيدعمش [[name]] على details (قبل ٢٠٢٤) هيسيب أكتر من واحد مفتوح، وده سلوك مقبول (مفيش حاجة بتبوظ).
-
----
-
-## الـ CTA
-
-~~~html index.html (الـ CTA)
-<section class="cta" aria-labelledby="cta-title">
-  <div class="wrap">
-    <div class="cta-box">
-      <h2 id="cta-title">أول كيس بنص التمن</h2>
-      <p>للمشتركين الجداد لحد آخر الشهر.</p>
-      <a class="btn btn-light" href="#signup">عايز أجرّب</a>
-    </div>
-  </div>
-</section>
-~~~
-
-- [[.wrap]] بره و [[.cta-box]] جوه: الـ wrap بيدّي العرض والـ gutter، والصندوق جواه بالخلفية والزوايا. أول نسخة كانت [[class="wrap cta-box"]] على نفس العنصر، والخلفية بتملا الـ padding كمان، فعلى الموبايل الصندوق الغامق كان لازق في حافتين الشاشة من غير أي مسافة. فصلناهم: الـ wrap بيسيب الـ gutter، والصندوق جواه ليه [[padding]] بتاعه.
-- [[.btn-light]]: الزرار بـ [[--cta-ink]] خلفية و [[--cta-bg]] نص، يعني مقلوب جوه الصندوق المقلوب.
-
----
-
-## الـ footer
-
-~~~html index.html (الـ footer)
-<footer class="foot">
-  <div class="wrap foot-grid">
-    <div><p class="logo">حبّة</p><p>محمصة صغيرة بتحمّص كل خميس.</p></div>
-    <nav aria-label="روابط الموقع"><ul><li><a href="#features">ليه حبّة</a></li><li><a href="#pricing">الأسعار</a></li><li><a href="#faq">أسئلة</a></li></ul></nav>
-    <div><p>تواصل</p><p><a href="mailto:hello@habba.example" dir="ltr">hello@habba.example</a></p></div>
-  </div>
-  <p class="wordmark" aria-hidden="true">حبّة</p>
-</footer>
-~~~
-
-~~~css css/site.css (٨)
-/* ٨. الـ CTA والـ footer */
-.cta { padding-block: 24px; }
-.cta-box { background: var(--cta-bg); color: var(--cta-ink); border-radius: var(--r-lg); padding: 56px var(--gutter); text-align: center; }
-.foot { border-top: 1px solid var(--line); padding-top: 48px; overflow: clip; }
-.foot-grid { display: grid; gap: 24px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); }
-.foot ul { list-style: none; padding: 0; margin: 0; }
-.foot a { display: inline-block; padding-block: 6px; text-decoration: none; }
-.wordmark { font-size: clamp(80px, 22vw, 260px); font-weight: 900; line-height: .8; text-align: center; color: var(--brand); opacity: .08; margin: 24px 0 -0.2em; pointer-events: none; user-select: none; }
-~~~
-
-- [[<nav aria-label="روابط الموقع">]]: تاني nav في الصفحة، فلازم اسم مختلف عن «الرئيسية» عشان قارئ الشاشة يفرّق بينهم.
-- الإيميل [[dir="ltr"]] و [[.example]]: الدومين [[example]] محجوز للأمثلة ومش هيروح لحد حقيقي.
-- [[overflow: clip]] على الـ footer: الاسم العملاق بيطلع تحت بـ [[margin-bottom: -0.2em]] والـ clip بيقصه. ليه مش [[hidden]]؟ [[hidden]] بيخلّي العنصر scroll container (ممكن يتسكرل بالكود أو بالكيبورد في حالات)، و [[clip]] بيقص وبس.
-- [[.wordmark]]: [[clamp(80px, 22vw, 260px)]] بيخليه يملا العرض تقريبًا على أي شاشة، و [[line-height: .8]] بيقرّب السطور، و [[opacity: .08]] بيخليه زخرفة باهتة، و [[aria-hidden="true"]] عشان قارئ الشاشة ميقولش «حبّة» تالت مرة.
-
-### الغلطة: الاسم العملاق فوق اللينكات
-
-[[a11y.mjs]] (درس «فحص accessibility والنشر») بيعدّي بالكيبورد على كل عنصر وبيسأل [[document.elementFromPoint]] عن وسطه: العنصر اللي تحت النقطة دي هو هو؟ على لينك «أسئلة» في الـ footer:
-
-~~~text قبل
-{ r: [ 772, 625, 38, 43 ], vh: 900, hit: 'P.wordmark' }
-~~~
-
-الـ [[p]] صندوقه الحقيقي تحت اللينكات، بس الحروف بخط ٢٦٠ و [[line-height: .8]] أطول من السطر، والـ hit testing بيحسب مساحة الحروف كمان، فالجزء اللي فوق راكب على عمود اللينكات. الماوس كان بيضغط على زخرفة. بعد [[pointer-events: none]]:
-
-~~~text بعد
-{ r: [ 772, 625, 38, 43 ], vh: 900, hit: 'A.' }
-~~~
-
-و [[user-select: none]] عشان تحديد النص بالماوس ميمسكش الكلمة الكبيرة.
-
----
-
-## الحركة: ظهور مع السكرول
-
-~~~css css/site.css (٩)
-/* ٩. الظهور مع السكرول: بس لو الـ JS شغال واليوزر مش طالب حركة أقل */
-@media (prefers-reduced-motion: no-preference) {
-  .js [data-reveal] { opacity: 0; translate: 0 16px; transition: opacity .6s var(--ease), translate .6s var(--ease); }
-  .js [data-reveal].in { opacity: 1; translate: 0 0; }
-}
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
-}
-~~~
-
-~~~javascript js/site.js (٤)
-// ٤. الظهور مع السكرول (الـ CSS بيخفي بس لو .js موجودة والحركة مسموحة)
-const io = new IntersectionObserver((entries) => {
-  for (const e of entries) if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
-}, { rootMargin: "0px 0px -10% 0px" });
-document.querySelectorAll("[data-reveal]").forEach((el) => io.observe(el));
-~~~
-
-### سطر سطر
-
-- [[@media (prefers-reduced-motion: no-preference)]]: القواعد جواه بتتطبّق بس لو اليوزر **مش** طالب حركة أقل. الإعداد ده من النظام (ويندوز: Settings › Accessibility › Visual effects › Animation effects؛ والماك و iOS: Reduce motion؛ وأندرويد: Remove animations).
-- [[.js [data-reveal]]]: الشرط التاني. [[.js]] بيتحط من [[theme.js]] في الـ head، فلو الـ JS مقفول أو الملفات وقعت، الـ selector ده مبيطابقش حاجة والكروت ظاهرة.
-- [[translate: 0 16px]] ثم [[0 0]]: الكارت بيطلع ١٦ بكسل من تحت. [[opacity]] و [[translate]] بس، لأن الاتنين بيتحرّكوا من غير ما المتصفح يعيد حساب الـ layout (درس «مراحل الرسم»).
-- [[transition-duration: .01ms !important]] تحت reduce: أي transition أو animation في الصفحة بتخلص فورًا. [[.01ms]] مش [[0]] عشان أي كود مستني [[transitionend]] يفضل يتنده. والـ [[!important]] هنا مقبول لأنه تفضيل يوزر لازم يغلب أي حاجة.
-- [[rootMargin: "0px 0px -10% 0px"]]: بنصغّر «الشاشة» من تحت ١٠٪، فالكارت بيظهر لما يدخل شوية مش أول ما بكسل منه يلمس الحافة.
-- [[io.unobserve(e.target)]]: كل كارت بيظهر مرة واحدة، ومش بيستخبى تاني لو طلعت فوقه.
-
-### القياس: ٣ حالات
-
-| الحالة | النسخة الأولى | النهائية |
+| الحركة | Layout في الثانية | Style في الثانية |
 |---|---|---|
-| عادي، بعد سكرول للآخر | ٠ مخفي | ٠ مخفي |
-| ملفات [[*.js]] ممنوعة (route abort في Playwright) | **١٠ مخفيين للأبد** | ٠ |
-| [[reducedMotion: "reduce"]] أول ما الصفحة تفتح | مكانتش بتحترمه | ٠ مخفي، و [[scroll-behavior: auto]] |
+| [[left]] | 302 | 302 |
+| [[transform]] | 2 | 17 |
 
-النسخة الأولى كانت [[[data-reveal] { opacity: 0; }]] من غير أي شرط. الـ JS ممكن «يقع» من غير ما تقصد: ملف اتمسح في النشر، أو مسار غلط (درس النشر)، أو خطأ في أول سطر ([[Identifier 'top' has already been declared]] اللي حصل فعلًا)، أو إضافة في المتصفح بتمنع سكربتات.
-
-### الغلطة التانية: السكرول السريع
-
-وانا بقيس، لفيت على الصفحة بسكرول بخطوات ٤٠٠ بكسل وبينهم وقت قصير، وعدّيت كام عنصر فضل مستخبي:
-
-~~~text الوقت بين كل خطوة ← عدد العناصر اللي متظهرتش
-30ms/step: 7 of 10 never revealed
-50ms/step: 0 of 10 never revealed
-150ms/step: 0 of 10 never revealed
-~~~
-
-الـ observer بيتحسب مرة في كل frame، فلو عنصر دخل وطلع بين frame والتاني مبيتشافش. لليوزر ده معناه: لو نط من فوق لتحت بسرعة (أو بلينك [[#signup]])، الكروت اللي عدّى عليها لسه مخفية لما يرجع لها، وبتظهر ساعتها. مش كارثة، بس عشان كده **مننفعش نخفي محتوى مهم** بالطريقة دي، وعشان كده كمان أدوات الاختبار لازم تستنى كفاية (هنرجع للنقطة دي في فحص الـ accessibility: axe بيتجاهل العناصر المخفية).
+[[left]] بيغيّر المكان في الـ layout، فكل frame فيها layout و paint. [[transform]] اتعمل في الـ composite بس. ده اللي هتشوفه في DevTools › Performance: مع [[left]] كل frame فيها Layout (بنفسجي) و Paint (أخضر)، ومع [[transform]] لأ.
 
 ---
 
-## خلاصة
+## الخلاصة
 
-- [[details name]] = accordion بواحد مفتوح من غير JS وبكيبورد وقارئ شاشة جاهزين.
-- زخرفة كبيرة = [[aria-hidden]] و [[pointer-events: none]]، واتأكد بـ [[elementFromPoint]].
-- [[overflow: clip]] بدل [[hidden]] لما عايز تقص بس.
-- الحركة: الإخفاء بشرط [[.js]] **و** [[no-preference]]، و [[opacity]] و [[translate]] بس، واختبر ٣ حالات.`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** ٣ details، أول اتنين [[name="a"]] والتالت [[name="b"]]، والأول والتالت [[open]]. افتح التاني: كام واحد هيفضل مفتوح، وأنهي؟ جرّب.`, done: R`اتنين مفتوحين: التاني والتالت، لأن الأول بس في نفس المجموعة مع التاني فاتقفل، والتالت مجموعة لوحده. وكتبت إن المجموعة بالـ name مش بالترتيب ولا بالمكان.` },
-            { lvl: 'تطبيق', t: R`**ابني:** زوّد على قسم الأسئلة JSON-LD من نوع [[FAQPage]] في [[<script type="application/ld+json">]] بيتولّد من الـ details نفسها بسكربت Node صغير وقت الكتابة (مش في المتصفح)، عشان النص ميتكتبش مرتين بإيدك.`, done: R`السكربت بيطبع JSON صالح ([[JSON.parse]] بيعدّي) فيه ٤ [[Question]] بنفس النصوص بالظبط، والـ Rich Results Test أو الـ Schema validator بيقرا الـ ٤ من غير أخطاء.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** شريط شعارات بيتحرك ([[@keyframes slide { to { transform: translateX(-50%); } }]]) في صفحة RTL، وحد كتب [[animation-direction: reverse]] عشان «يمشي في الاتجاه التاني». الشريط بيسيب فراغ وبيطلع بره. صلّحه، وزوّد إيقاف عند الـ hover والـ focus، واحترم reduce.`, done: R`عرفت إن [[reverse]] بيعكس الزمن مش المكان، وعملت keyframes لـ RTL بـ [[translateX(50%)]] (أو [[:dir(rtl)]])، والشريط ماشي من غير فراغ، و [[animation-play-state: paused]] عند [[:hover]] و [[:focus-within]]، ومع reduce واقف، والنسخة المكررة عليها [[aria-hidden]].` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** اعمل نسخة من الظهور بـ [[animation-timeline: view()]] من غير JS خالص، وقارنها بالـ IntersectionObserver في ٣ حالات: سكرول سريع (خطوات ٣٠ms)، و JS ممنوع، و reduce. سجّل عدد العناصر المخفية في كل حالة للنسختين.`, done: R`جدول ٦ أرقام، ولاحظت إن نسخة [[view()]] مبتعلقش مخفية في السكرول السريع لأنها مربوطة بمكان السكرول مش بحدث، وكتبت إن الدعم لسه مش في كل المتصفحات وحطيتها جوه [[@supports (animation-timeline: view())]].` },
-            { lvl: 'تطبيق', t: R`**اكتب اختبار:** سكربت Playwright بيعمل ٣ صفحات: عادية، وبـ [[reducedMotion: "reduce"]]، وبـ [[page.route("**/*.js", r => r.abort())]]، ولكل واحدة بيعد العناصر اللي [[opacity]] بتاعتها [[0]] أول ما الصفحة تفتح وبعد سكرول للآخر. لازم يقع على النسخة الأولى ويعدّي على النهائية.`, done: R`على النهائية بيطبع [[10/0]] و [[0/0]] و [[0/0]] (قبل/بعد السكرول) ويخرج 0، وعلى نسخة من غير [[.js]] في الـ selector بيطبع [[10/10]] في حالة الـ JS الممنوع ويخرج 1.` },
-            { lvl: 'سريع', t: R`**اشرحها:** زميلك كتب [[.wordmark { position: absolute; z-index: -1; }]] بدل [[pointer-events: none]] عشان «ينزّل» الاسم تحت اللينكات. ده هيصلّح المشكلة؟ وإيه اللي ممكن يبوظ؟ اكتب ٣ سطور.`, done: R`كتبت إن [[z-index: -1]] ممكن يحطه ورا خلفية الـ footer نفسها فيختفي (لو الـ footer مش عامل stacking context)، وإن [[position: absolute]] بيطلّعه من الـ flow فالـ footer يقصر، وإن [[pointer-events]] بيحل المشكلة الحقيقية (الضغط) من غير ما يغيّر الشكل.` },
+| التغيير | بيبدأ من | أمثلة |
+|---|---|---|
+| مقاس أو مكان | Layout (reflow) + Paint | [[width]] و [[margin]] و [[left]] و [[font-size]] وإضافة عنصر |
+| شكل بس | Paint (repaint) | [[color]] و [[background]] و [[box-shadow]] |
+| تحريك وشفافية | Composite غالبًا | [[transform]] و [[opacity]] |
+
+- reflow أغلى من repaint، وغالبًا بيجيبه معاه.
+- قراية مقاس بعد كتابة style = layout فوري. في loop = thrashing.
+- الحركة بـ [[transform]] و [[opacity]] مش [[top]] و [[left]].`,
+          lines: [
+            "كتابة: بتخلي الـ layout قديم.",
+            "قراية مقاس: reflow فوري (forced).",
+            "transform: غالبًا composite بس."
           ],
-          ci: [
-            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`node`, run: R`const faq = '<details name="faq" open><summary>البن بيفضل طازة لحد إمتى؟</summary><p>...</p></details>' +
-  '<details name="faq"><summary>أقدر أغيّر التحميصة؟</summary><p>...</p></details>' +
-  '<details name="faq"><summary>لو مش عاجبني الطعم؟</summary><p>...</p></details>' +
-  '<details><summary>بتوصلوا فين؟</summary><p>...</p></details>';
-const all = [...faq.matchAll(/<details\b([^>]*)>\s*<summary>([^<]*)<\/summary>/g)];
-const names = new Set(all.map((d) => (d[1].match(/name="([^"]*)"/) || [])[1] || "(none)"));
-console.log("details: " + all.length + ", open: " + all.filter((d) => /\sopen\b/.test(d[1])).length);
-console.log("names: " + [...names].join(" "));
-for (const d of all) if (!/name="faq"/.test(d[1])) console.log("not in the group: " + d[2]);
-const css = "[data-reveal] { opacity: 0; }\n@media (prefers-reduced-motion: no-preference) { .js [data-reveal] { opacity: 0; } }";
-const unsafe = css.split("\n").filter((l) => /opacity:\s*0\b/.test(l) && !/\.js\b/.test(l));
-console.log("hidden without .js guard: " + unsafe.length);`, expect: [R`details: 4, open: 1`, R`names: faq (none)`, R`not in the group: بتوصلوا فين؟`, R`hidden without .js guard: 1`] },
-          ],
+          sol: R`اللي هتشوفه في Performance: مع [[left]] كل frame فيه Recalculate Style، وبعدين Layout (بنفسجي)، وبعدين Paint (أخضر)، وبعدين Composite. مع [[transform]] هتلاقي Recalculate Style و Composite Layers بس، ومفيش Layout ولا Paint لكل frame (لو العنصر اتعمله layer، ودا بيحصل تلقائي وقت الـ animation أو بـ [[will-change: transform]]). ولو فعّلت Rendering › Paint flashing، العنصر اللي بيتحرك بـ left هيبقى متلوّن أخضر طول الوقت، واللي بـ transform لأ.
+
+الإجابة النموذجية: «المتصفح بيعمل Style، بعدين Layout (reflow: يحسب مكان ومقاس كل حاجة)، بعدين Paint (repaint: يرسم البكسلات)، بعدين Composite (يركّب الطبقات على الـ GPU). reflow بيحصل لما تغيّر حاجة ليها علاقة بالمقاس أو المكان (width و left و font-size وإضافة عنصر)، وبيجر وراه paint. repaint لوحده لما تغيّر شكل من غير مقاس (color و background). و transform و opacity بيتعملوا في الـ composite بس، وعشان كده هما اللي تحرّك بيهم.»
+
+وفي المثال: السطر التاني ([[offsetHeight]]) بيجبر المتصفح يعمل layout حالًا عشان يرجّعلك رقم صح بعد ما غيّرت الـ width، ودا forced synchronous layout. لو اتكرر في loop يبقى layout thrashing.`
         },
         {
-          cmd: "landing page: فورم تسجيل accessible",
-          title: "فورم تسجيل accessible: label لكل خانة، ورسايل غلط بالعربي مربوطة بـ aria-describedby، وملخص بـ role=alert، وموبايل بيقبل الأرقام العربي، وزرار مبيبعتش مرتين",
-          learn: R`تبني فورم الشخص اللي بيستخدم الكيبورد أو قارئ الشاشة أو موبايل بكيبورد عربي يقدر يملاه ويفهم غلطه ويصلّحه، والمتصفح بيقول نوع الغلط وانت بتكتب الرسالة.`,
-          out: R`الفورم في [[index.html]]، و [[form.css]]، و [[digits.js]] (دوال صافية بتتختبر في Node)، و [[form.js]]، و [[form-test.mjs]] بيطبع ٨ PASS، و axe صفر والفورم فيه ٦ أخطاء ظاهرة في الوضعين.`,
-          desc: R`الفورم هو هدف الصفحة كلها. «accessible» هنا معناها حاجات محددة بتتقاس:
-• كل خانة ليها [[<label for>]] (الضغط على الكلمة بيركّز في الخانة، وقارئ الشاشة بيقول الاسم).
-• الإرشاد والغلط مربوطين بالخانة بـ [[aria-describedby="phone-hint phone-err"]]، فقارئ الشاشة بيقول «الموبايل، زي 01012345678… اكتب رقم الموبايل» لما تقف عليها، والخانة الغلط عليها [[aria-invalid="true"]].
-• لما تبعت وفيه أخطاء: ملخص بـ [[role="alert"]] بيتقري لوحده («فيه ٦ خانات محتاجة تتصلّح») وكل غلط لينك للخانة بتاعته، والـ focus بيروح لأول خانة غلط.
-• رسالة النجاح في [[role="status"]] (بتتقري من غير ما تقطع الكلام).
-
-والحاجات اللي اتمسكت بالقياس:
-• [[pattern="(\+20|0)1[0125][0-9-]{8,9}"]] (اتجرّب على regex101 واشتغل) **مبيشتغلش في Chrome**: المتصفح بيترجم الـ pattern بالـ flag [[v]] اللي بيمنع [[-]] من غير escape جوه [[[ ]]]، فبيتجاهله ويكتب في الـ Console [[Pattern attribute value ... is not a valid regular expression]]، والنتيجة إن [[123]] بقى رقم صح.
-• رسايل المتصفح بلغة **المتصفح** مش الصفحة: حتى بـ [[locale: "ar-EG"]] الرسالة [[Please fill out this field.]]. فبناخد نوع الغلط من [[validity]] ونكتب الرسالة بالعربي في مكانها.
-• الكيبورد العربي بيكتب [[٠١٠١٢٣٤٥٦٧٨]]، والـ pattern [[[0-9]]] بيرفضه. [[normalizeDigits]] بتحوّل الأرقام العربي والفارسي لإنجليزي وبتشيل المسافات والشُرط قبل التحقق.
-• [[minlength]] مبيتحسبش لو القيمة اتحطت بالكود ([[tooShort: false]]) وبيتحسب لو اتكتبت ([[true]])، فبنقيس الطول بإيدنا كمان.
-• [[disabled]] على زرار الإرسال بيطلّعه من الـ Tab (اتقاس: Tab من الخانة اللي قبله نط للي بعده)، فاستخدمنا [[aria-disabled="true"]] و flag بيمنع الإرسال التاني: ضغطتين = طلب [[POST]] واحد.`,
-          example: R`<label for="phone">الموبايل</label>
-<p id="phone-hint" class="hint">زي <bdi dir="ltr">01012345678</bdi>، والأرقام العربي تنفع.</p>
-<input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" dir="ltr" required pattern="(\+20|0)1[0125][0-9]{8}" aria-describedby="phone-hint phone-err">
-<p id="phone-err" class="err"></p>
-<div id="form-errors" class="summary" role="alert" hidden></div>
-<p id="form-status" class="form-status" role="status"></p>`,
-          lines: [
-            R`[[for="phone"]] بيربط الكلمة بالخانة اللي [[id]] بتاعها [[phone]]: الضغط عليها بيركّز في الخانة، وقارئ الشاشة بيقول «الموبايل» قبل أي حاجة.`,
-            R`إرشاد ظاهر قبل الخانة (مش placeholder بيختفي أول ما تكتب)، والرقم جوه [[<bdi dir="ltr">]] عشان يتعرض صح وسط جملة عربي.`,
-            R`[[type="tel"]] و [[inputmode="tel"]] = كيبورد أرقام على الموبايل، و [[autocomplete="tel"]] = المتصفح يقترح رقمك، و [[dir="ltr"]] = الأرقام تتكتب من الشمال، و [[pattern]] صالح مع الـ flag [[v]]، و [[aria-describedby]] بيربط الإرشاد والغلط بالترتيب.`,
-            R`مكان رسالة الغلط: فاضي في الأول (ومستخبي بـ [[:empty]] في الـ CSS)، والـ JS بيكتب فيه الرسالة العربي.`,
-            R`ملخص الأخطاء: [[role="alert"]] = قارئ الشاشة بيقراه أول ما يظهر من غير ما الـ focus يروحله، و [[hidden]] في الأول.`,
-            R`رسالة النتيجة: [[role="status"]] = بتتقري لما تتغيّر بس بعد ما قارئ الشاشة يخلّص اللي بيقوله (polite).`,
-          ],
-          try: R`ابني الفورم كله من الشرح وشغّل [[npm run serve]]. ابعته فاضي: الـ focus راح فين، والملخص بيقول إيه؟ اكتب الموبايل بالأرقام العربي ([[٠١٠١٢٣٤٥٦٧٨]]) واطلع من الخانة. جرّب كلمة سر [[abcdefgh]]. املاه صح وادوس الزرار مرتين بسرعة وشوف Network. ابعت بإيميل بيبدأ بـ [[taken@]]. وفي الآخر غيّر الـ pattern لـ [[[0-9-]]] وشوف الـ Console.`,
-          sol: R`فاضي: الـ focus على «الاسم»، والملخص [[فيه ٦ خانات محتاجة تتصلّح:]] وتحته ٦ لينكات، و ٦ خانات عليها [[aria-invalid="true"]]. الأرقام العربي بقت [[01012345678]] بعد الخروج من الخانة والخانة صح. [[abcdefgh]]: [[كلمة السر محتاجة حرف ورقم]] والقايمة فيها ✓ على «٨ حروف» و «حرف» بس. ضغطتين = طلب POST واحد، والزرار كتب [[بنفتح الحساب…]]، وبعد ٨٠٠ms [[تمام! بعتنالك رسالة تأكيد على ...]]. [[taken@]]: [[الإيميل ده عليه حساب، جرّب تدخل بيه]] تحت الإيميل والـ focus عليه. و [[[0-9-]]]: الـ Console فيه [[Invalid character class]] و [[123]] بيعدّي.`,
-          solCode: R`node tools/form-test.mjs
-PASS empty: 6 invalid, focus on name
-   summary: فيه ٦ خانات محتاجة تتصلّح: / اكتب اسمك / اكتب إيميلك / اكتب رقم الموبايل / اختار كلمة سر / اختار باقة / لازم توافق على الشروط عشان نكمل
-PASS arabic digits normalized and valid
-PASS short phone message
-PASS password needs a digit
-PASS rules list shows len,letter
-PASS busy state while sending
-PASS one POST only
-   status: تمام! بعتنالك رسالة تأكيد على mona@example.com
-PASS 409 → error on email and focus
-   email-err: الإيميل ده عليه حساب، جرّب تدخل بيه`,
-          flag: "script",
-          deep: {
-            why: R`الفورم هو المكان اللي الزائر بيتحول فيه لعميل، وأكتر حتة بيحصل فيها «أنا مش عارف الغلط فين» فيقفل الصفحة. رسالة إنجليزي في صفحة عربي، أو لون أحمر بس من غير كلام، أو غلط بيظهر من غير ما قارئ الشاشة يعرف، أو كيبورد عربي بيكتب أرقام مترفضة، كلها بتخسّر ناس. وكمان التحقق في المتصفح مش أمان: أي حد يقدر يبعت الطلب من غير الصفحة، فالسيرفر لازم يتحقق تاني بنفس القواعد (والـ API التجريبي هنا بيرجّع 409 للإيميل المكرر عشان نتعامل مع رد السيرفر).`,
-            how: R`كل input ليه [[validity]] (ValidityState) فيه flags: [[valueMissing]] (required وفاضي)، و [[typeMismatch]] (إيميل مش إيميل)، و [[patternMismatch]]، و [[tooShort]]، و [[customError]] (لو [[setCustomValidity("...")]] اتنده بنص مش فاضي). [[novalidate]] على الفورم بيمنع الفقاعات الإنجليزي بتاعة المتصفح، بس الـ validity لسه بيتحسب، فبنقراه ونختار الرسالة. الـ [[pattern]] المتصفح بيحطه جوه [[^(?:...)$]] ويترجمه بالـ flag [[v]] (حسب مواصفة HTML الحديثة)، والـ [[v]] أصرم من [[u]]: الحروف [[( ) [ ] { } / - \ |]] جوه [[[ ]]] لازم يتعمل لها escape. و [[aria-describedby]] بيخلّي قارئ الشاشة يقرا نص العناصر دي بعد الاسم والنوع، بالترتيب اللي مكتوبة بيه. و [[role="alert"]] live region «assertive» بيتقري أول ما يتغيّر محتواه، و [[role="status"]] «polite».`,
-            when: R`أي فورم: تسجيل، ودخول، وحجز، ودفع، وتواصل. نفس الطريقة بالظبط (validity + رسالة بإيدك + describedby + ملخص) بتشتغل في React و Vue، بس بتربط الحالة بالـ state. ولو الفورم كبير ومتعدد الخطوات، أو القواعد لازم تبقى نفسها في السيرفر والمتصفح، يبقى مكتبة schema (zod مثلًا) بتولّد القواعد للاتنين.`,
-            mistakes: R`placeholder بدل label (بيختفي وانت بتكتب، وتباينه ضعيف). أو الغلط بالأحمر بس. أو رسالة الغلط بتظهر وانت لسه بتكتب أول حرف (بنظهرها بعد [[blur]]، وبعد كده بتتحدث مع كل حرف لحد ما تتصلّح). أو [[pattern]] بـ [[-]] من غير escape. أو [[type="number"]] للموبايل (بيشيل الصفر اللي في الأول وبيقبل [[e]]). أو [[disabled]] على الزرار وقت الإرسال. أو [[innerHTML]] برسالة جاية من السيرفر (XSS لو السيرفر رجّع كلام يوزر). أو [[autocomplete="off"]] على كلمة السر (بيمنع مدير كلمات السر). أو تسجيل الباسورد في اللوج.`
-          },
-          teach: R`## الفورم كامل
-
-~~~html index.html (الفورم)
-<section id="signup" class="block" aria-labelledby="signup-title">
-  <div class="wrap narrow">
-    <header class="sec-head"><p class="eyebrow">اشترك</p><h2 id="signup-title">افتح حسابك في دقيقة</h2></header>
-    <form id="signup-form" class="form" action="api/signup" method="post" novalidate>
-      <p class="hint">كل الخانات مطلوبة.</p>
-      <div id="form-errors" class="summary" role="alert" hidden></div>
-
-      <div class="field">
-        <label for="name">الاسم</label>
-        <input id="name" name="name" type="text" autocomplete="name" required minlength="2" aria-describedby="name-err">
-        <p id="name-err" class="err"></p>
-      </div>
-      <div class="field">
-        <label for="email">الإيميل</label>
-        <p id="email-hint" class="hint">هنبعتلك عليه رسالة التأكيد.</p>
-        <input id="email" name="email" type="email" autocomplete="email" dir="ltr" required aria-describedby="email-hint email-err">
-        <p id="email-err" class="err"></p>
-      </div>
-      <div class="field">
-        <label for="phone">الموبايل</label>
-        <p id="phone-hint" class="hint">زي <bdi dir="ltr">01012345678</bdi>، والأرقام العربي تنفع.</p>
-        <input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" dir="ltr" required pattern="(\+20|0)1[0125][0-9]{8}" aria-describedby="phone-hint phone-err">
-        <p id="phone-err" class="err"></p>
-      </div>
-      <div class="field">
-        <label for="password">كلمة السر</label>
-        <div class="pw">
-          <input id="password" name="password" type="password" autocomplete="new-password" required minlength="8" aria-describedby="pw-rules password-err">
-          <button class="pw-toggle" type="button" aria-controls="password" aria-pressed="false">اظهرها</button>
-        </div>
-        <ul id="pw-rules" class="rules">
-          <li data-rule="len">٨ حروف على الأقل</li>
-          <li data-rule="letter">حرف واحد على الأقل</li>
-          <li data-rule="digit">رقم واحد على الأقل</li>
-        </ul>
-        <p id="password-err" class="err"></p>
-      </div>
-      <div class="field">
-        <label for="plan">الباقة</label>
-        <select id="plan" name="plan" required aria-describedby="plan-err">
-          <option value="">اختار باقة</option>
-          <option value="trial">تجربة (٢٤٠ جنيه في الشهر)</option>
-          <option value="home">البيت (٤٤٠ جنيه في الشهر)</option>
-          <option value="office">المكتب (٨٢٠ جنيه في الشهر)</option>
-        </select>
-        <p id="plan-err" class="err"></p>
-      </div>
-      <div class="field check">
-        <input id="terms" name="terms" type="checkbox" required aria-describedby="terms-err">
-        <label for="terms">موافق على شروط الاشتراك</label>
-        <p id="terms-err" class="err"></p>
-      </div>
-      <button class="btn btn-primary submit" type="submit">افتح الحساب</button>
-      <p id="form-status" class="form-status" role="status"></p>
-    </form>
-  </div>
-</section>
-~~~
-
-### الـ HTML حتة حتة
-
-- [[action="api/signup" method="post"]]: من غير JS الفورم بيتبعت عادي للسيرفر (progressive enhancement)، و [[action]] مسار نسبي (مش [[/api/signup]]) عشان يشتغل تحت مسار فرعي.
-- [[novalidate]]: بيقفل فقاعات المتصفح (الإنجليزي) وقت الإرسال، بس المتصفح لسه بيحسب [[validity]] لكل خانة. لو الـ JS وقع، الفورم هيتبعت من غير تحقق في المتصفح، والسيرفر لازم يتحقق (وده لازم كده كده).
-- [[autocomplete]] بقيم المواصفة ([[name]] و [[email]] و [[tel]] و [[new-password]]): المتصفح ومدير كلمات السر بيملوا ويولّدوا كلمة سر قوية. [[new-password]] بالذات بيقول «ده تسجيل مش دخول».
-- الإيميل والموبايل [[dir="ltr"]]: الكلام اللاتيني بيتكتب وبيتعرض من الشمال، والـ label والإرشاد عربي عادي.
-- [[minlength="2"]] و [[minlength="8"]]: المتصفح بيعرف الحد، واحنا بنقيسه بإيدنا كمان (تحت).
-- كلمة السر جوه [[.pw]] مع زرار «اظهرها»: [[aria-controls="password"]] و [[aria-pressed]]. و [[aria-describedby="pw-rules password-err"]] بيقرا القواعد التلاتة والغلط.
-- [[<select required>]] أول [[<option value="">]]: الاختيار الفاضي بيخلّي [[valueMissing]] لحد ما اليوزر يختار. والأسعار مكتوبة في كل اختيار عشان اليوزر ميرجعش للأسعار.
-- الـ checkbox قبل الـ label (عادي في RTL و LTR)، و [[.check]] بيحطهم جنب بعض.
-- [[type="submit"]] صريح، و [[role="status"]] للنتيجة بعده.
-
-~~~css css/form.css
-.form { display: grid; gap: 20px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: clamp(20px, 4vw, 36px); }
-.field { display: grid; gap: 6px; }
-.field label { font-weight: 700; }
-.hint { margin: 0; font-size: .9rem; color: var(--muted); }
-.field input, .field select { font: inherit; min-height: 48px; padding: 10px 14px; border: 1px solid var(--muted); border-radius: var(--r-sm); background: var(--bg); color: var(--ink); width: 100%; }
-.field input:focus-visible, .field select:focus-visible { outline: none; box-shadow: var(--ring); }
-.field [aria-invalid="true"] { border-color: var(--err); border-width: 2px; }
-.err { margin: 0; color: var(--err); font-weight: 700; font-size: .95rem; }
-.err:empty { display: none; }
-.err::before { content: "⚠ "; }
-
-.pw { display: flex; gap: 8px; }
-.pw input { flex: 1; min-width: 0; }
-.pw-toggle { flex: none; font: inherit; min-height: 48px; padding-inline: 14px; border: 1px solid var(--muted); border-radius: var(--r-sm); background: none; color: var(--ink); cursor: pointer; }
-.rules { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; font-size: .9rem; color: var(--muted); }
-.rules li::before { content: "○ "; }
-.rules li.ok { color: var(--ok); }
-.rules li.ok::before { content: "✓ "; }
-
-.check { grid-template-columns: auto 1fr; align-items: center; column-gap: 10px; }
-.check input { width: 22px; height: 22px; min-height: 0; accent-color: var(--brand); }
-.check .err { grid-column: 1 / -1; }
-
-.summary { border: 2px solid var(--err); border-radius: var(--r-sm); padding: 12px 16px; }
-.summary p { margin: 0 0 6px; font-weight: 700; }
-.summary ul { margin: 0; padding-inline-start: 20px; }
-.summary a { color: var(--err); font-weight: 700; }
-
-.submit[aria-disabled="true"] { opacity: .7; cursor: progress; }
-.form-status { margin: 0; font-weight: 700; }
-.form-status.bad { color: var(--err); }
-.form-status.good { color: var(--ok); }
-~~~
-
-- حدود الخانات [[--muted]] مش [[--line]]: WCAG بيطلب حدود الخانة تبان بتباين ٣ على الأقل (عشان تعرف فين تكتب)، و [[--line]] كان فاتح زيادة.
-- [[:focus-visible { outline: none; box-shadow: var(--ring); }]]: الحلقة حلقتين (لون الخلفية ثم البراند) بتبان على أي خلفية. النسخة الأولى كانت [[:focus { outline: none; border-color: var(--brand); }]]: [[a11y.mjs]] لقى **٥ خانات من غير حلقة focus** (تغيير لون الحد بس صعب يتشاف).
-- [[[aria-invalid="true"]]]: الخانة الغلط حدودها أحمر و ٢ بكسل. اللون مش لوحده: فيه كلام تحتها وعلامة [[⚠]].
-- [[.err:empty { display: none; }]]: مكان الرسالة موجود دايمًا في الـ HTML (عشان [[aria-describedby]] يلاقيه) بس مبياخدش مساحة وهو فاضي.
-- [[.pw input { flex: 1; min-width: 0; }]]: من غير [[min-width: 0]] الـ input ليه عرض أدنى من المتصفح وممكن يزق الزرار بره على ٣٢٠.
-- [[accent-color: var(--brand)]]: لون الـ checkbox المتعلّم من البراند من غير ما نرسم checkbox بإيدنا.
-- [[.check .err { grid-column: 1 / -1; }]]: رسالة الغلط تحت الـ checkbox والكلام بعرض الاتنين.
-
----
-
-## digits.js: دوال صافية
-
-~~~javascript js/digits.js
-// دوال صافية (من غير DOM): بتتختبر في Node لوحدها
-// الأرقام العربي (٠-٩) والفارسي (۰-۹) لأرقام إنجليزي، ومن غير مسافات وشُرط
-export const normalizeDigits = (s) => s
-  .replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 0x0660))
-  .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 0x06F0))
-  .replace(/[\s-]/g, "");
-
-// قواعد كلمة السر: كل قاعدة function بترجّع true لو اتحققت
-export const rules = {
-  len: (v) => v.length >= 8,
-  letter: (v) => /\p{L}/u.test(v),
-  digit: (v) => /[0-9]/.test(normalizeDigits(v)),
-};
-~~~
-
-- [[٠-٩]]: كود الحروف من «٠» لـ «٩» (Arabic-Indic digits)، و [[۰-۹]] من «۰» لـ «۹» (الفارسي، بيطلع من بعض الكيبوردات). [[d.charCodeAt(0) - 0x0660]] بيطلّع رقم من ٠ لـ ٩، و [[String()]] بيرجّعه حرف.
-- [[.replace(/[\s-]/g, "")]]: بيشيل المسافات والشُرط، فـ [[010 1234 5678]] و [[010-1234-5678]] بيبقوا [[01012345678]].
-- [[/\p{L}/u]]: أي حرف في أي لغة (عربي أو إنجليزي)، مش [[[a-z]]] بس. محتاج الـ flag [[u]].
-- القاعدة [[digit]] بتشيّك بعد [[normalizeDigits]]، فـ «قهوة٢٠٢٦xx» فيها رقم.
-- ملف لوحده من غير [[document]] = تقدر تختبره في Node (الـ [[ci]] بتاع الدرس ده بيعمل كده).
-
-### الـ pattern اللي اشتغل على regex101 ووقع في Chrome
-
-~~~text Console في Chrome 156 (النسخة الأولى)
-Pattern attribute value (\+20|0)1[0125][0-9-]{8,9} is not a valid regular expression: Uncaught SyntaxError: Failed to read the 'patternMismatch' property from 'ValidityState': Invalid regular expression: /(\+20|0)1[0125][0-9-]{8,9}/v: Invalid character class
-~~~
-
-~~~text نفس الـ pattern في Node بالـ flag u وبالـ flag v
-u (\+20|0)1[0125][0-9-]{8,9} ok 01012345678=true +201012345678=true 123=false 0101234567=false
-v (\+20|0)1[0125][0-9-]{8,9} ERROR Invalid regular expression: /^(?:(\+20|0)1[0125][0-9-]{8,9})$/v: Invalid character class
-u (\+20|0)1[0125][0-9]{8} ok 01012345678=true +201012345678=true 123=false 0101234567=false
-v (\+20|0)1[0125][0-9]{8} ok 01012345678=true +201012345678=true 123=false 0101234567=false
-~~~
-
-بـ [[u]] (اللي regex101 ومعظم المواقع بتستخدمه) الـ [[-]] في آخر [[[0-9-]]] حرف عادي. بـ [[v]] (اللي Chrome بيستخدمه للـ pattern) لازم [[\-]]. ولما الـ pattern غلط، المتصفح **مبيقولش للزائر** حاجة: بيعتبر الخانة صح، و [[123]] عدّى. الحل: منحطش شُرط ومسافات في الـ pattern خالص، وننضّفهم بـ [[normalizeDigits]] قبل التحقق. والـ [[lint.mjs]] (درس النشر) بيجرّب كل [[pattern]] في الصفحة بـ [[new RegExp(..., "v")]] عشان الغلطة دي متعديش تاني.
-
-وبعد التصليح، من غير normalize، القيم دي اتقاست مباشرة على الخانة:
-
-~~~text phone.validity.patternMismatch بالـ pattern الصح
-'٠١٠١٢٣٤٥٦٧٨': 'patternMismatch'
-'01012345678': 'ok'
-'010 1234 5678': 'patternMismatch'
-'123': 'patternMismatch'
-~~~
-
-يعني رقم صح بكيبورد عربي كان هيترفض. بعد [[blur]] الخانة بقت [[01012345678]].
-
----
-
-## form.js
-
-~~~javascript js/form.js
-// فورم التسجيل: الـ Constraint API بيقول إيه الغلط، واحنا بنكتب الرسالة بالعربي في مكانها
-import { normalizeDigits, rules } from "./digits.js";
-
-const form = document.getElementById("signup-form");
-const summary = document.getElementById("form-errors");
-const status = document.getElementById("form-status");
-const submit = form.querySelector(".submit");
-const pw = document.getElementById("password");
-const phone = document.getElementById("phone");
-
-const messages = {
-  name: { valueMissing: "اكتب اسمك", tooShort: "الاسم لازم يبقى حرفين على الأقل" },
-  email: { valueMissing: "اكتب إيميلك", typeMismatch: "الإيميل ناقصه حاجة، زي name@example.com" },
-  phone: { valueMissing: "اكتب رقم الموبايل", patternMismatch: "الرقم لازم يبدأ بـ 010 أو 011 أو 012 أو 015 ويبقى ١١ رقم" },
-  password: { valueMissing: "اختار كلمة سر", tooShort: "كلمة السر لازم تبقى ٨ حروف على الأقل", customError: "كلمة السر محتاجة حرف ورقم" },
-  plan: { valueMissing: "اختار باقة" },
-  terms: { valueMissing: "لازم توافق على الشروط عشان نكمل" },
-};
-const order = ["valueMissing", "typeMismatch", "patternMismatch", "tooShort", "customError"];
-
-function messageFor(el) {
-  const m = messages[el.name] || {};
-  // minlength مبيتحسبش لو القيمة اتحطت من JS (مش من الكيبورد)، فبنقيسها بإيدنا كمان
-  const key = order.find((k) => el.validity[k]) || (el.value && el.value.length < el.minLength ? "tooShort" : "");
-  return key ? (m[key] || el.validationMessage) : "";
-}
-
-function check(el) {
-  if (el === pw) pw.setCustomValidity(pw.value && !(rules.letter(pw.value) && rules.digit(pw.value)) ? "x" : "");
-  const msg = messageFor(el);
-  document.getElementById(el.id + "-err").textContent = msg;
-  if (msg) el.setAttribute("aria-invalid", "true"); else el.removeAttribute("aria-invalid");
-  return !msg;
-}
-
-const fields = [...form.elements].filter((el) => el.name && el.willValidate);
-phone.addEventListener("blur", () => { phone.value = normalizeDigits(phone.value); });
-for (const el of fields) {
-  el.addEventListener("blur", () => { if (el.value || el.hasAttribute("aria-invalid")) check(el); });
-  el.addEventListener("input", () => { if (el.hasAttribute("aria-invalid")) check(el); });
-}
-pw.addEventListener("input", () => {
-  for (const li of form.querySelectorAll("[data-rule]")) li.classList.toggle("ok", rules[li.dataset.rule](pw.value));
-});
-const toggle = form.querySelector(".pw-toggle");
-toggle.addEventListener("click", () => {
-  const show = pw.type === "password";
-  pw.type = show ? "text" : "password";
-  toggle.setAttribute("aria-pressed", String(show));
-  toggle.textContent = show ? "اخفيها" : "اظهرها";
-});
-
-function showSummary(bad) {
-  const title = document.createElement("p");
-  title.textContent = bad.length === 1 ? "فيه خانة واحدة محتاجة تتصلّح:" : "فيه " + bad.length.toLocaleString("ar-EG") + " خانات محتاجة تتصلّح:";
-  const list = document.createElement("ul");
-  for (const el of bad) {
-    const a = document.createElement("a");
-    a.href = "#" + el.id;
-    a.textContent = document.getElementById(el.id + "-err").textContent;
-    const li = document.createElement("li");
-    li.append(a);
-    list.append(li);
-  }
-  summary.replaceChildren(title, list);
-  summary.hidden = false;
-}
-summary.addEventListener("click", (e) => {
-  const a = e.target.closest("a");
-  if (a) { e.preventDefault(); document.querySelector(a.getAttribute("href")).focus(); }
-});
-
-function setBusy(on) {
-  form.toggleAttribute("aria-busy", on);
-  if (on) submit.setAttribute("aria-disabled", "true"); else submit.removeAttribute("aria-disabled");
-  submit.textContent = on ? "بنفتح الحساب…" : "افتح الحساب";
-}
-
-let busy = false;
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  if (busy) return;
-  phone.value = normalizeDigits(phone.value);
-  const bad = fields.filter((el) => !check(el));
-  if (bad.length) { showSummary(bad); bad[0].focus(); return; }
-  summary.hidden = true;
-  busy = true;
-  setBusy(true);
-  status.className = "form-status";
-  status.textContent = "";
-  try {
-    const res = await fetch(form.action, { method: "POST", body: new URLSearchParams(new FormData(form)) });
-    const data = await res.json().catch(() => ({}));
-    if (res.ok) {
-      status.className = "form-status good";
-      status.textContent = "تمام! بعتنالك رسالة تأكيد على " + form.elements.email.value;
-      form.reset();
-      form.querySelectorAll(".ok").forEach((li) => li.classList.remove("ok"));
-    } else if (data.field && form.elements[data.field]) {
-      const el = form.elements[data.field];
-      document.getElementById(el.id + "-err").textContent = data.message;
-      el.setAttribute("aria-invalid", "true");
-      el.focus();
-    } else {
-      throw new Error("HTTP " + res.status);
-    }
-  } catch {
-    status.className = "form-status bad";
-    status.textContent = "مقدرناش نوصل للسيرفر، اتأكد من النت وجرّب تاني.";
-  } finally {
-    busy = false;
-    setBusy(false);
-  }
-});
-~~~
-
-### الرسايل: من نوع الغلط للكلام
-
-- [[messages]]: لكل خانة (بالـ [[name]]) رسالة لكل نوع غلط ممكن يحصل لها. رسايل بتقول **تعمل إيه**، مش «القيمة غير صالحة».
-- [[order]]: لو فيه أكتر من غلط (خانة فاضية كمان بتبقى [[tooShort]]؟ لأ، بس ممكن [[valueMissing]] و [[customError]] مع بعض)، بنعرض أهمهم الأول.
-- [[order.find((k) => el.validity[k])]]: أول flag قيمته [[true]]. وبعده [[|| (el.value && el.value.length < el.minLength ? "tooShort" : "")]]: الحالة اللي المتصفح مبيمسكهاش (تحت).
-- [[m[key] || el.validationMessage]]: لو نسينا رسالة لنوع، نرجع لرسالة المتصفح بدل ما الغلط يعدّي ساكت.
-
-~~~text el.validationMessage في Chrome بـ locale: "ar-EG"
-nameMsg: "Please fill out this field."
-emailMsg: "Please enter a part following '@'. 'mona@' is incomplete."
-~~~
-
-رسايل المتصفح بلغة واجهة المتصفح نفسه مش بلغة الصفحة ولا [[navigator.language]] (اللي كان [[ar-EG]] في نفس الاختبار). عشان كده كاتبينها بإيدنا.
-
-### [[minlength]] والقيمة اللي بتتحط بالكود
-
-~~~text نفس الخانة، حرف واحد
-value= from JS : {"tooShort":false,"valid":true}
-typed (fill)   : {"tooShort":true,"valid":false}
-~~~
-
-المواصفة بتقول [[tooShort]] بيتحسب بس لو القيمة اتغيّرت من اليوزر. فلو مدير كلمات سر أو إضافة أو كود حطّ قيمة قصيرة، الخانة «صح». السطر اللي في [[messageFor]] بيقيس الطول بإيدنا للحالة دي. ودي كمان فخ في الاختبارات: [[el.value = "م"]] في اختبار مش هيطلّع الغلط، و [[page.fill()]] بيطلّعه.
-
-### إمتى الغلط يظهر
-
-- [[blur]] (خرجت من الخانة) و فيها قيمة: بنتحقق. مش وانت بتكتب أول حرف، لأن «الإيميل ناقصه حاجة» وانت لسه بتكتب [[m]] مزعجة.
-- [[input]] (بتكتب) **و** الخانة عليها غلط: بنتحقق مع كل حرف، فالرسالة بتختفي أول ما تتصلّح.
-- الإرسال: كل الخانات مرة واحدة.
-
-### الملخص والـ focus
-
-- [[showSummary]] بتبني الملخص بـ [[createElement]] و [[textContent]] مش [[innerHTML]]: الرسايل دي من عندنا، بس رسالة السيرفر ([[data.message]]) بتتكتب بنفس الطريقة، ولو جه فيها [[<img onerror>]] من يوزر هتتعرض كلام مش كود.
-- [[summary.hidden = false]] جوه [[role="alert"]]: قارئ الشاشة بيقرا «فيه ٦ خانات محتاجة تتصلّح» أول ما يظهر.
-- [[bad[0].focus()]]: الـ focus على أول خانة غلط، فقارئ الشاشة بيقرا اسمها والإرشاد والغلط ([[aria-describedby]])، واللي بيكتب بالكيبورد بيصلّح على طول.
-- لينكات الملخص: [[e.preventDefault()]] و [[.focus()]] على الخانة، لأن القفز لـ [[#id]] لوحده بيعمل scroll بس من غير focus.
-- [[bad.length.toLocaleString("ar-EG")]] = «٦» مش «6» في جملة عربي، وخانة واحدة ليها جملة مفرد.
-
-### الإرسال: مرة واحدة بس
-
-- [[busy]]: flag بيرجّع من الـ handler لو فيه طلب شغال، فضغطتين = طلب واحد (اتقاس بعدد الـ POST في Playwright).
-- [[aria-disabled="true"]] مش [[disabled]]:
-
-~~~text Tab من الخانة اللي قبل الزرار
-disabled       Tab from input lands on: z
-aria-disabled  Tab from input lands on: d
-~~~
-
-[[disabled]] بيطلّع الزرار من ترتيب الـ Tab، فاللي بيستخدم الكيبورد أو قارئ الشاشة مش هيلاقيه وهو بيتبعت، ومش هيسمع «بنفتح الحساب…». [[aria-disabled]] بيسيبه في مكانه ويقول «unavailable»، والـ [[busy]] هو اللي بيمنع.
-- [[form.toggleAttribute("aria-busy", on)]]: الفورم «مشغول» لحد ما الرد يوصل.
-- [[new URLSearchParams(new FormData(form))]]: [[FormData]] بيجمع كل الخانات اللي ليها [[name]]، و [[URLSearchParams]] بيحوّلها لنفس شكل الفورم العادي ([[name=...&email=...]]) اللي السيرفر بيفكه.
-- [[res.json().catch(() => ({}))]]: لو الرد مش JSON (مثلًا صفحة 404 HTML) منقعش، نعتبره فاضي.
-- [[data.field]]: السيرفر بيقول الغلط في أنهي خانة ([[{ field: "email", message: "..." }]])، فبنحطه تحتها ونركّز عليها. ده شكل متفق عليه بين الفورم والسيرفر.
-- [[catch]]: أي حاجة تانية (مفيش نت، أو 500، أو 405 من استضافة static) = رسالة واحدة واضحة في [[role="status"]] اتجرّب بإن Playwright رجّع للطلب [[405]] وصفحة HTML بدل JSON ([[page.route]] و [[fulfill]]): الحالة بقت [[form-status bad]] والرسالة دي ظهرت والزرار رجع «افتح الحساب». وده اللي هيحصل على GitHub Pages لحد ما توصل الفورم بـ backend حقيقي، لأنها ملفات static بس ومفيش كود بتاعك بيستقبل POST.
-- [[finally]]: الزرار بيرجع لحالته في كل الحالات، حتى لو حصل خطأ.
-
----
-
-## form-test.mjs: بيسوق الفورم زي يوزر
-
-~~~javascript tools/form-test.mjs
-// بيسوق الفورم زي يوزر حقيقي: node tools/form-test.mjs http://127.0.0.1:5173/
-import { chromium } from "playwright-core";
-const url = process.argv[2] || "http://127.0.0.1:5173/";
-const browser = await chromium.launch({ channel: "chrome" });
-const page = await browser.newPage({ locale: "ar-EG" });
-const posts = [];
-page.on("request", (r) => { if (r.method() === "POST") posts.push(r.url()); });
-await page.goto(url);
-const state = () => page.evaluate(() => ({
-  focused: document.activeElement.id || document.activeElement.tagName,
-  invalid: [...document.querySelectorAll('[aria-invalid="true"]')].map((e) => e.id).join(","),
-  summary: document.getElementById("form-errors").hidden ? "" : document.getElementById("form-errors").innerText.replace(/\n+/g, " / "),
-}));
-let fail = 0;
-const expect = (label, ok, got) => { console.log(ok ? "PASS" : "FAIL", label, ok ? "" : "→ " + JSON.stringify(got)); if (!ok) fail++; };
-
-// ١. إرسال فاضي
-await page.click(".submit");
-let s = await state();
-expect("empty: 6 invalid, focus on name", s.invalid.split(",").length === 6 && s.focused === "name", s);
-console.log("   summary:", s.summary);
-// ٢. رقم بالأرقام العربي
-await page.fill("#phone", "٠١٠١٢٣٤٥٦٧٨");
-await page.locator("#phone").blur();
-const phone = await page.evaluate(() => { const el = document.getElementById("phone"); return { v: el.value, ok: el.validity.valid }; });
-expect("arabic digits normalized and valid", phone.v === "01012345678" && phone.ok, phone);
-// ٣. رقم قصير
-await page.fill("#phone", "0101234");
-await page.locator("#phone").blur();
-expect("short phone message", (await page.textContent("#phone-err")).includes("١١ رقم"), await page.textContent("#phone-err"));
-// ٤. باسورد من غير رقم
-await page.fill("#password", "abcdefgh");
-await page.locator("#password").blur();
-const pwErr = await page.textContent("#password-err");
-expect("password needs a digit", pwErr === "كلمة السر محتاجة حرف ورقم", pwErr);
-const ruleOk = await page.$$eval("[data-rule].ok", (l) => l.map((x) => x.dataset.rule).join(","));
-expect("rules list shows len,letter", ruleOk === "len,letter", ruleOk);
-// ٥. كله صح، والضغط مرتين
-await page.fill("#name", "منى");
-await page.fill("#email", "mona@example.com");
-await page.fill("#phone", "01012345678");
-await page.fill("#password", "bunn2026");
-await page.selectOption("#plan", "home");
-await page.check("#terms");
-await page.click(".submit");
-await page.click(".submit", { force: true });
-const during = await page.evaluate(() => ({ text: document.querySelector(".submit").textContent, aria: document.querySelector(".submit").getAttribute("aria-disabled"), focused: document.activeElement.className }));
-expect("busy state while sending", during.text === "بنفتح الحساب…" && during.aria === "true" && during.focused.includes("submit"), during);
-await page.waitForFunction(() => document.getElementById("form-status").textContent);
-expect("one POST only", posts.length === 1, posts);
-console.log("   status:", await page.textContent("#form-status"));
-// ٦. إيميل عليه حساب (السيرفر بيرجّع 409)
-await page.fill("#name", "منى"); await page.fill("#email", "taken@example.com"); await page.fill("#phone", "01012345678");
-await page.fill("#password", "bunn2026"); await page.selectOption("#plan", "home"); await page.check("#terms");
-await page.click(".submit");
-await page.waitForFunction(() => document.getElementById("email-err").textContent);
-s = await state();
-expect("409 → error on email and focus", s.focused === "email" && s.invalid === "email", s);
-console.log("   email-err:", await page.textContent("#email-err"));
-await browser.close();
-process.exit(fail ? 1 : 0);
-~~~
-
-- [[page.on("request", ...)]] بيعد كل طلب [[POST]]، فاختبار «طلب واحد بس» رقم مش إحساس.
-- [[page.click(".submit", { force: true })]]: التانية بـ [[force]] عشان Playwright ميستناش الزرار «يبقى enabled» (لو كان [[disabled]] كان هيستنى ويقع بـ timeout).
-- [[page.waitForFunction(() => ...textContent)]]: بيستنى لحد ما الرد يوصل ويتكتب، بدل [[waitForTimeout(1000)]] اللي ممكن يبقى قليل أو كتير.
-- اختبار الأرقام العربي بـ [[page.fill]] و [[blur()]]: نفس اللي اليوزر بيعمله، فالـ [[blur]] handler بيتنده.
-
-ومعاه axe على الفورم وفيه الـ ٦ أخطاء ظاهرة (الألوان الحمرا لازم تعدّي التباين هي كمان):
-
-~~~text axe على #signup-form بعد إرسال فاضي
-light form with 6 errors → violations: 0 | phone description: زي 01012345678، والأرقام العربي تنفع. | اكتب رقم الموبايل
-dark form with 6 errors → violations: 0 | phone description: زي 01012345678، والأرقام العربي تنفع. | اكتب رقم الموبايل
-~~~
-
-الـ «description» هو اللي قارئ الشاشة بيقراه بعد «الموبايل، خانة تعديل»: الإرشاد ثم الغلط، بنفس ترتيب [[aria-describedby]].
-
----
-
-## الأمان: المتصفح بيساعد، والسيرفر بيقرر
-
-- كل اللي فوق ممكن يتعدّى: DevTools، أو [[curl -X POST]] من غير الصفحة. فالسيرفر لازم يتحقق من نفس القواعد ويرجّع [[{ field, message }]] بنفس الشكل (مشروع «كبير» في الوحدة).
-- الـ API التجريبي بيكتب في اللوج الإيميل والباقة **من غير الباسورد**: [[POST signup mona@example.com home]].
-- كلمة السر بتتبعت على HTTPS بس (GitHub Pages HTTPS افتراضي)، وبتتخزن hash (argon2 أو bcrypt) على السيرفر، أبدًا نص.
-
----
-
-## الغلطات اللي حصلت في الخطوة دي
-
-| الغلطة | اتمسكت إزاي | قبل | بعد |
-|---|---|---|---|
-| [[[0-9-]]] في الـ pattern | Console و [[lint.mjs]] | [[123]] صح | [[patternMismatch]]، والـ lint بيجرّب كل pattern بـ [[v]] |
-| رسايل المتصفح | [[validationMessage]] بـ [[ar-EG]] | [[Please fill out this field.]] | «اكتب اسمك» |
-| أرقام عربي | [[validity]] بالـ pattern الصح | [[patternMismatch]] لرقم صح | [[normalizeDigits]] = صح |
-| [[minlength]] بالكود | [[tooShort]] قبل وبعد fill | [[false]] | بنقيس الطول بإيدنا |
-| [[:focus]] بلون الحد بس | [[a11y.mjs]] | ٥ خانات من غير حلقة | صفر |
-| [[export]] في سكربت عادي | Console | [[Unexpected token 'export']] | [[type="module"]] |
-| [[browser.newPage()]] مع axe | الاختبار نفسه وقع | [[Error: Please use browser.newContext()]] | [[newContext()]] ثم [[newPage()]] |
-
----
-
-## خلاصة
-
-- label لكل خانة، وإرشاد ظاهر، ومكان غلط موجود دايمًا، والتلاتة مربوطين بـ [[for]] و [[aria-describedby]].
-- [[novalidate]] + [[validity]] + رسالة عربي لكل نوع + [[aria-invalid]].
-- ملخص [[role="alert"]] ولينكات بتركّز، و focus على أول غلط، ونتيجة في [[role="status"]].
-- pattern من غير [[-]] و normalize للأرقام العربي، واختبر الـ pattern بالـ flag [[v]].
-- إرسال واحد بـ flag و [[aria-disabled]]، ورد السيرفر بيرجع للخانة بتاعته، والسيرفر بيتحقق تاني.`,
+          cmd: "stacking context",
+          title: "ليه z-index: 9999 مش بيطلّع العنصر فوق؟",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[<input type="email" required>]] فيه [[mona@site]] (من غير [[.com]]). [[validity.typeMismatch]] هيرجّع إيه؟ وفي [[<input type="url">]] [[example.com]] من غير [[https://]]؟ جرّب في الـ Console.`, done: R`كتبت توقعك، وجرّبت: [[mona@site]] إيميل صح عند المتصفح (المواصفة مبتطلبش نقطة في الدومين)، و [[example.com]] في url غلط. وكتبت إن ده سبب إن السيرفر لازم يتحقق بقواعده.` },
-            { lvl: 'تطبيق', t: R`**ابني:** خانة «تأكيد كلمة السر» بتتحقق إنها زي الأولى بـ [[setCustomValidity]] ورسالة عربي، ومتظهرش غلط قبل ما اليوزر يخرج منها، وتتحدث لو غيّر الأولى بعدها.`, done: R`[[form-test.mjs]] فيه ٣ حالات جديدة PASS: مختلفة = «كلمتين السر مش زي بعض»، ومتطابقة = صح، وتغيير الأولى بعد ما التانية صح بيرجّع الغلط على التانية، و axe صفر.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[<input placeholder="الإيميل" style="border-color: red">]] و [[<span class="error">مطلوب</span>]] تحتها من غير أي ربط، والزرار [[<div onclick="send()">إرسال</div>]]. صلّح كل حاجة وأثبت بـ axe وبـ Tab.`, done: R`فيه label بـ for، و [[aria-describedby]] بيربط الغلط، و [[aria-invalid]] بدل اللون بس، والزرار [[<button type="submit">]] بيوصله Tab ويشتغل بـ Enter و Space، و axe صفر، وكتبت ٤ أسباب للتغيير.` },
-            { lvl: 'تحدي', t: R`**مسألة:** اكتب [[normalizePhone(s)]] أشمل: بتقبل [[+20 10 1234 5678]] و [[0020...]] و [[(010) 1234-5678]] و الأرقام العربي، وترجع دايمًا [[01xxxxxxxxx]] أو [[null]] لو مش رقم موبايل مصري. واكتب ١٠ اختبارات في Node بـ [[node:test]] و [[assert]].`, done: R`[[node --test]] بيطبع ١٠ pass، منها: [[0020]] بيتحول، و [[+2010]] بيتحول، و [[٠١٣...]] بيرجّع null (مفيش 013)، و [[010123]] قصير بيرجّع null.` },
-            { lvl: 'تطبيق', t: R`**قارن وقيس:** شغّل [[form-test.mjs]] مرتين: مرة عادي، ومرة بعد ما تغيّر [[aria-disabled]] لـ [[submit.disabled = on]] في [[setBusy]]. إيه اللي اتغيّر في الناتج؟ ولو اختبار وقع، ليه بالظبط؟`, done: R`كتبت إن اختبار «busy state» اتغيّر لأن الـ focus مبقاش على الزرار أو إن [[click]] التانية بـ [[force]] معملتش حاجة، ورجعت للكود الأصلي وكل حاجة PASS، ومعاك الناتجين.` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** من مواصفة HTML (أو MDN) عن [[autocomplete]]: إيه الفرق بين [[current-password]] و [[new-password]] و [[one-time-code]]؟ وفين كل واحدة تتحط؟`, done: R`كتبت التلاتة: الدخول [[current-password]]، والتسجيل وتغيير كلمة السر [[new-password]] (المتصفح بيقترح كلمة قوية)، وكود الـ SMS [[one-time-code]] (iOS وأندرويد بيقترحوه من الرسالة)، ومعاك الرابط.` },
-          ],
-          ci: [
-            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`node`, run: R`const normalizeDigits = (s) => s
-  .replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 0x0660))
-  .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 0x06F0))
-  .replace(/[\s-]/g, "");
-const rules = { len: (v) => v.length >= 8, letter: (v) => /\p{L}/u.test(v), digit: (v) => /[0-9]/.test(normalizeDigits(v)) };
-for (const p of ["([+]20|0)1[0125][0-9-]{8,9}", "([+]20|0)1[0125][0-9]{8}"]) {
-  try { new RegExp("^(?:" + p + ")$", "v"); console.log("v flag ok: " + p); }
-  catch (e) { console.log("v flag error: Invalid character class? " + /Invalid character class/.test(e.message)); }
-}
-const phone = new RegExp("^(?:([+]20|0)1[0125][0-9]{8})$", "v");
-for (const raw of ["٠١٠١٢٣٤٥٦٧٨", "010 1234 5678", "۰۱۱۲۳۴۵۶۷۸۹", "+201512345678", "0131234567", "123"]) {
-  const v = normalizeDigits(raw);
-  console.log(raw + " -> " + v + " " + (phone.test(v) ? "valid" : "invalid"));
-}
-for (const pw of ["abcdefgh", "bunn2026", "قهوة٢٠٢٦xx", "1234567"]) console.log(pw + ": " + Object.entries(rules).filter(([, f]) => f(pw)).map(([k]) => k).join(","));`, expect: [R`v flag error: Invalid character class? true`, R`v flag ok: ([+]20|0)1[0125][0-9]{8}`, R`٠١٠١٢٣٤٥٦٧٨ -> 01012345678 valid`, R`010 1234 5678 -> 01012345678 valid`, R`۰۱۱۲۳۴۵۶۷۸۹ -> 01123456789 valid`, R`+201512345678 -> +201512345678 valid`, R`0131234567 -> 0131234567 invalid`, R`123 -> 123 invalid`, R`abcdefgh: len,letter`, R`bunn2026: len,letter,digit`, R`قهوة٢٠٢٦xx: len,letter,digit`, R`1234567: digit`] },
-          ],
-        },
-        {
-          cmd: "landing page: مصفوفة المقاسات والأداء",
-          title: "مصفوفة ٦ مقاسات من ٣٢٠ لـ ١٤٤٠ من غير scroll أفقي، و FCP و LCP و CLS ووميض الثيم بـ Chrome على شبكة بطيئة، وتجارب «تحسين» مفرقتش",
-          learn: R`تحوّل «شغالة على الموبايل؟» و «سريعة؟» لسكربتين بيطبعوا أرقام ويخرجوا بـ 1 لو فيه مشكلة، وتعرف تقرا الأرقام دي وتفرّق بين تحسين حقيقي وصدفة.`,
-          out: R`[[matrix.mjs]] (٦ مقاسات، والعناصر الخارجة باسمها) و [[perf.mjs]] (شبكة ١٥٠ms و 1.6Mbps و CPU أبطأ ٤ مرات). النهائي: ٦ [[OK]]، و LCP حوالي ١٫١ ثانية، و CLS صفر حتى والصور بطيئة، والثيم قبل أول رسمة، والصفحة ٤٤ كيلو على ٣٦٠.`,
-          desc: R`البناء خلص. دلوقتي **بنقيس الصفحة كلها** بأداتين:
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** هيدر [[position: sticky; z-index: 10]]، و [[main]] عليه [[transform: translateZ(0)]]، وجوه main مودال [[position: fixed; z-index: 9999]]. مين فوق مين؟ وإيه اللي يحصل لو شلت الـ transform؟`, done: R`الهيدر فوق المودال، لأن main بقى context بـ [[z-index: auto]] قدام الهيدر. ولما الـ transform اتشال المودال طلع فوق (وغطّى الشاشة كلها كمان). واتأكدت بـ [[document.elementFromPoint()]] على نقطة في الهيدر.`,
+              sol: R`~~~html stack.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>stacking</title>
+<style>
+  body { margin: 0; }
+  header { position: sticky; top: 0; z-index: 10; block-size: 60px; background: #1f2937; color: #fff; }
+  main { transform: translateZ(0); }
+  .modal { position: fixed; inset: 0; z-index: 9999; background: rgb(255 0 0 / .4); }
+</style></head>
+<body>
+  <header>هيدر</header>
+  <main><h1>صفحة</h1><div class="modal" id="m"></div></main>
+</body></html>
+~~~
 
-• **[[matrix.mjs]]:** بيفتح الصفحة على ٣٢٠ و ٣٦٠ و ٤١٤ و ٧٦٨ و ١٠٢٤ و ١٤٤٠، ويعمل سكرول للآخر (عشان كل حاجة تظهر)، ويقارن [[scrollWidth]] بعرض الشاشة، ولو فيه زيادة بيطبع أول ٤ عناصر خارجة باسم الـ tag والـ class والعرض. النسخة الأولى: الـ ٥ مقاسات المطلوبة (٣٦٠ لـ ١٤٤٠) كلهم [[OK]]، وده كان هيعدّي. زودنا ٣٢٠ (أصغر موبايل منتشر، وهو كمان العرض اللي WCAG بيطلب الصفحة تشتغل عليه من غير scroll أفقي لما حد يكبّر ٤٠٠٪) فطلع [[BROKEN +31px]] بسببين: زرار «اشترك» اللي كان المفروض يستخبى (ترتيب الـ CSS)، وكروت الأسعار [[minmax(320px)]]. النهائي: الـ ٦ [[OK]].
-• **[[perf.mjs]]:** بيقيس FCP (أول رسمة) و LCP (أكبر عنصر اترسم وإمتى) و CLS (مجموع التنطيط) ووقت الثيم وحجم كل نوع ملفات، على شبكة بطيئة متعرّفة في السكربت. على السيرفر العادي الاتنين (الأولى والنهائية) LCP حوالي ١٫١ ثانية و CLS صفر، يعني الفرق مش باين. على سيرفر الصور فيه متأخرة ١٫٥ ثانية: الأولى CLS **٠٫٠٩٥٧** ووميض في الثيم، والنهائية **صفر** ومن غير وميض.
+الـ [[transform]] خلّى [[main]] stacking context، ومعناها إن كل اللي جواه بيتقارن جواه بس. الـ [[z-index: 9999]] مبيطلعش برا.
 
-وجرّبنا تحسينين مشهورين وطلعوا **مفرقوش**: دمج الـ ٣ ملفات CSS في ملف واحد (FCP ١١١٦–١١٤٤ مقابل ١٠٧٦–١١٠٤ms من غير دمج)، و preload لصورة الـ hero (١١١٢–١١٣٦ مقابل ١٠٧٦–١١١٢ms). فمعملناهمش. القاعدة: كل «تحسين» بيتقاس ٣ مرات قبل ما يدخل.`,
-          example: R`node tools/serve.mjs 5173
-SLOW_IMG=1500 node tools/serve.mjs 5174
-node tools/matrix.mjs http://127.0.0.1:5173/
-node tools/perf.mjs http://127.0.0.1:5173/ 360
-node tools/perf.mjs http://127.0.0.1:5174/ 1440
-node tools/matrix.mjs http://127.0.0.1:5173/ && echo "no horizontal scroll"`,
-          lines: [
-            R`السيرفر العادي على [[5173]] في ترمنال لوحده (بيفضل شغال لحد [[Ctrl+C]]).`,
-            R`سيرفر تاني على [[5174]] الصور فيه بتتأخر ١٥٠٠ms. في PowerShell: [[$env:SLOW_IMG=1500; node tools/serve.mjs 5174]] (وبعدين [[Remove-Item Env:SLOW_IMG]] عشان ميفضلش للأوامر اللي بعده).`,
-            R`المصفوفة: ٦ أسطر، [[OK]] أو [[BROKEN +Npx]] ومعاه العناصر الخارجة، وكود خروج 1 لو أي مقاس مكسور.`,
-            R`الأداء على عرض ٣٦٠ (الرقم بعد الرابط هو العرض)، والناتج FCP و LCP وعنصره و CLS ووقت الثيم والأحجام.`,
-            R`نفس القياس على ١٤٤٠ والصور متأخرة: ده الظرف اللي كشف الـ CLS والوميض في النسخة الأولى.`,
-            R`[[&&]] بيكمّل بس لو المصفوفة خرجت بـ 0، فده شكل الأمر في CI أو قبل ما تعمل push.`,
+فالمقارنة الحقيقية في الـ root: [[header]] بـ [[z-index: 10]] ضد [[main]] بـ [[z-index: auto]] (أي 0 تقريبًا). الهيدر يكسب، والمودال تحته مهما كان رقمه.
+
+ولما تشيل الـ transform: [[main]] مبقاش context، فالمودال بقى يتقارن مباشرة مع الهيدر: 9999 ضد 10. وكمان [[position: fixed]] رجع يتحسب من الشاشة، لأن [[transform]] كان بيخليه يتحسب من [[main]]. يعني الـ transform كان عامل مشكلتين.
+
+الغلطة الشائعة: تزوّد الرقم لـ 99999. الرقم مش هو المشكلة، الـ context هو المشكلة.
+
+~~~text الناتج (Chrome 156، elementFromPoint على نقطة في الهيدر، 100,30)
+بالـ transform: HEADER، وعرض × ارتفاع المودال 1280×37
+من غير transform: DIV#m، وعرض × ارتفاع المودال 1280×800
+~~~` },
+            { lvl: 'تطبيق', t: R`**refactor:** مشروع فيه z-index عشوائية: 1000 و 2001 و 70 و 50 و 99999. حوّلهم لـ scale توكنز ([[--z-dropdown]] و [[--z-sticky]] و [[--z-overlay]] و [[--z-modal]] و [[--z-toast]]) واستخدم [[isolation: isolate]] للكروت اللي فيها طبقات داخلية.`, done: R`مفيش رقم z-index مكتوب برا التوكنز ([[grep]] على [[z-index: [0-9]]] بيرجّع صفر)، والترتيب في الصفحة زي ما كان، والتوست فوق المودال فوق الهيدر في كل الصفحات.`,
+              sol: R`~~~css tokens.css
+:root {
+  --z-dropdown: 10;
+  --z-sticky: 20;
+  --z-overlay: 30;
+  --z-modal: 40;
+  --z-toast: 50;
+  --z-inner: 2;   /* جوه كارت عامل isolate بس */
+}
+.dropdown { z-index: var(--z-dropdown); }  /* كانت 1000 */
+.header   { z-index: var(--z-sticky); }    /* كانت 70 */
+.overlay  { z-index: var(--z-overlay); }   /* كانت 2001 */
+.modal    { z-index: var(--z-modal); }     /* كانت 50 */
+.toast    { z-index: var(--z-toast); }     /* كانت 99999 */
+
+.card { isolation: isolate; }  /* طبقات الكارت تفضل جواه */
+.card .badge { position: absolute; z-index: var(--z-inner); }
+~~~
+
+الأرقام العشوائية بتيجي من إن كل واحد مش عارف باقي الأرقام، فبيكتب رقم أكبر. الـ scale بيحل ده: مكان واحد فيه كل الطبقات، وبالاسم، والترتيب واضح من قراية الملف. لما تضيف طبقة جديدة، بتعدّل هنا بس. وفراغ الـ 10 بين الأرقام عشان تحط طبقة في النص.
+
+[[isolation: isolate]] على الكارت بيعمل stacking context من غير أي أثر تاني، فـ [[--z-inner]] جوه الكارت مبيقدرش ينافس الهيدر. فالأرقام الصغيرة الداخلية تفضل داخلية.
+
+انتبه لترتيب القديم: [[.modal]] كان 50 و [[.dropdown]] كان 1000، يعني كان فيه باج مستخبي. الـ scale بيظهر الترتيب اللي انت عايزه مش اللي كان موجود صدفة، فدي قرارات لازم تتراجع في الصفحات.
+
+الغلطة الشائعة: تكتب [[var(--z-modal)]] وتحط المودال جوه كارت عليه [[isolate]]، فيتحبس. المودال لازم يبقى برا، أو [[<dialog>]].
+
+~~~text الناتج (Chrome 156: ترتيب على نفس النقطة، و grep)
+grep -E "z-index: [0-9]" tokens.css: 0 سطر
+أعلى عنصر عند نقطة فيها الكل: toast
+لو شيلت التوست: modal
+لو شيلت المودال كمان: overlay
+badge جوه الكارت فوق الهيدر؟ لأ، الهيدر فوقه
+~~~` },
+            { lvl: 'سريع', t: R`**اشرحها:** اكتب لستة بكل خاصية بتعمل stacking context تفتكرها، وبعدين قارنها بلستة MDN «Stacking context».`, done: R`لستتك فيها على الأقل: positioned بـ z-index، و opacity أقل من 1، و transform، و filter، و isolation، و will-change، و position fixed أو sticky، وابن flex أو grid عليه z-index. وكتبت اللي نسيته من MDN.`,
+              sol: R`~~~text اللستة (كل سطر اتجرّب في Chrome 156 تحت)
+position: absolute/relative مع z-index مش auto
+position: fixed و sticky (دايمًا، حتى من غير z-index)
+ابن flex أو grid عليه z-index
+opacity أقل من 1
+transform (و rotate و scale و translate)
+filter و backdrop-filter
+isolation: isolate
+will-change لخاصية بتعمل context
+mix-blend-mode غير normal
+clip-path و mask
+perspective
+contain: paint أو layout
+~~~
+
+الفكرة الواحدة: أي خاصية بتخلّي المتصفح يرسم العنصر كمجموعة واحدة، لازم يعمله context، لأنه بيطبق التأثير على المجموعة كلها. [[opacity: .9]] مثلًا مش منطقي يطبقها على ولد وولد، فبيرسمهم مع بعض.
+
+اللي الناس بتنساه من لستة MDN: [[mix-blend-mode]] و [[mask]] و [[clip-path]] و [[contain]] و [[perspective]] و [[backdrop-filter]]. وجرّب بدل ما تحفظ: [[container-type: inline-size]] مثلًا طلعت مبتعملش context في Chrome 156.
+
+التجربة تحت: عنصر عليه الخاصية، وجواه ابن [[z-index: -1]]. لو الأب context، الابن يترسم فوق خلفية الأب، و [[elementFromPoint]] يرجّعه. لو مش context، الابن ينزل تحت خلفية الأب.
+
+الغلطة الشائعة: تحفظ إن [[z-index]] لوحده بيعمل context. لازم عنصر positioned أو ابن flex أو grid، و [[z-index]] على عنصر [[static]] ملوش أي تأثير.
+
+~~~text الناتج (Chrome 156: الخاصية ← عملت context؟)
+position:relative;z-index:1 ← آه
+position:relative ← لأ
+position:fixed;inset:auto ← آه
+position:sticky ← آه
+opacity:.99 ← آه
+transform:translateX(0) ← آه
+rotate:0deg ← آه
+filter:blur(0) ← آه
+backdrop-filter:blur(1px) ← آه
+isolation:isolate ← آه
+will-change:opacity ← آه
+mix-blend-mode:multiply ← آه
+clip-path:inset(0) ← آه
+mask-image:linear-gradient(#000,#000) ← آه
+perspective:100px ← آه
+contain:paint ← آه
+contain:layout ← آه
+container-type:inline-size ← لأ
+z-index:5 ← لأ
+~~~` },
           ],
-          try: R`شغّل السيرفرين والأداتين على نسختك. وبعدين اكسرها قصد بحاجة من دول واحدة واحدة وشوف المصفوفة بتمسكها في أنهي مقاس: [[width: 100vw]] على الـ CTA، و [[minmax(320px, 1fr)]] في الأسعار، و [[white-space: nowrap]] على الإيميل في الـ footer، و [[.top-cta { display: none }]] قبل [[.btn]]. وقيس [[perf.mjs]] ٣ مرات على كل سيرفر واكتب أقل وأكبر رقم.`,
-          sol: R`[[minmax(320px)]] بيقع على ٣٢٠ بس وبيطبع [[article.plan 320px]]. [[100vw]] على ويندوز (scrollbar عرضه ١٥ بكسل تقريبًا في Chrome العادي) بيبقى أعرض من الصفحة على الديسكتوب، وفي الـ headless (من غير scrollbar ظاهر) ممكن ميبانش: لو مبانش، ده نفسه درس إن الأداة ليها حدود. الإيميل بـ [[nowrap]] بيقع لو الإيميل أطول من العمود. وترتيب [[.top-cta]] بيقع على ٣٢٠ بـ [[a.btn.btn-primary.top-cta 90px]]. والأداء: الأرقام بتتحرك ٣٠–٧٠ms بين المرات، فأي فرق أصغر من كده بين نسختين مش فرق.`,
+          desc: R`z-index بيتقارن بس بين عناصر في نفس الـ stacking context. أي عنصر positioned عليه z-index، أو عليه opacity أقل من 1، أو transform، أو filter، أو [[isolation: isolate]]، بيعمل context جديد، وكل اللي جواه بيترتب جواه، وبعدين الـ context كله بيتعامل كوحدة واحدة مع اللي برا. فابن عليه 9999 جوه أب عليه [[z-index: 1]] عمره ما هيطلع فوق أخو الأب اللي عليه 2. الحل إني أرفع العنصر اللي عامل الـ context، أو أطلّع العنصر برا خالص بـ portal، ودا اللي Radix بيعمله للمودالات والـ dropdowns.`,
+          example: R`.header { position: relative; z-index: 1; }
+.header .menu { position: absolute; z-index: 9999; }
+.hero { position: relative; z-index: 2; }`,
+          try: R`اعمل المثال ده وصلّحه بطريقتين: مرة برفع الـ header، ومرة بنقل القايمة برا الـ header. اشرح الفرق.`,
           flag: "script",
           deep: {
-            why: R`«بصيت عليها على موبايلي وشغالة» معناها مقاس واحد وشبكة واحدة وجهاز واحد. الـ scroll الأفقي على الموبايل من أكتر الحاجات اللي بتخلّي الصفحة تبان «بايظة»، وبيجي من عنصر واحد عرضه ثابت. والأداء على شبكة سريعة وجهاز قوي بيدّيك أرقام حلوة مش حقيقية. السكربتين دول بيخلّوا كل push يتقاس بنفس الطريقة، فلو حد زوّد صورة من غير مقاس أو [[min-width: 400px]]، الـ CI يقع قبل ما زبون يشوفها.`,
-            how: R`المصفوفة: [[document.documentElement.scrollWidth]] هو عرض كل المحتوى، و [[clientWidth]] عرض الشاشة من غير scrollbar، والفرق بينهم = الـ scroll الأفقي. وبعدين بنعدّي على كل عنصر ونشوف [[getBoundingClientRect()]]: لو [[right]] أكبر من العرض أو [[left]] أقل من صفر (مهمة في RTL، العنصر بيطلع من الشمال). الأداء: [[PerformanceObserver]] بيسمع لـ [[paint]] (FCP) و [[largest-contentful-paint]] (كل مرة عنصر أكبر يترسم، والأخير هو الـ LCP) و [[layout-shift]] (كل تنطيط بقيمته والعناصر اللي اتحركت، ومن غيرها اللي بعد ضغطة يوزر [[hadRecentInput]]). وبيتسجّلوا من [[addInitScript]] عشان يبدأوا قبل أي كود في الصفحة. والـ throttling من CDP: [[Network.emulateNetworkConditions]] (تأخير كل طلب وسرعة التحميل) و [[Emulation.setCPUThrottlingRate]] (الـ CPU أبطأ ٤ مرات).`,
-            when: R`قبل أي تسليم، وفي CI على كل push، وبعد أي تغيير في الـ layout أو الصور أو الخطوط. وللأرقام اللي هتقولها لعميل، اعمل كمان Lighthouse أو PageSpeed Insights (فيهم بيانات CrUX من يوزرز حقيقيين لو الموقع عليه زيارات)، لأن سكربتك بيقيس معمل مش ميدان.`,
-            mistakes: R`تقيس ٣٦٠ لحد ١٤٤٠ بس فـ ٣٢٠ يعدّي. أو تقيس من غير سكرول فالعناصر اللي بتظهر مع السكرول متتحسبش. أو [[overflow-x: hidden]] على الـ body بدل ما تلاقي العنصر (بيخبّي العرض، وبيكسر الـ sticky). أو تقيس الأداء مرة واحدة وتقول «أسرع ٤٠ms». أو تقيس على شبكة سريعة بس. أو [[scroll-behavior: smooth]] في الصفحة والسكربت بيعمل [[scrollTo]] عادي (بيتحرك بنعومة ومش بيوصل في الوقت). أو تنسى إن الـ headless مفيهوش scrollbar فـ [[100vw]] ممكن ميتمسكش.`
+            why: "مشكلة بتحصل في كل مشروع، والسؤال بيفرق بين اللي بيزوّد أصفار واللي فاهم الطبقات.",
+            how: R`لو عايز تتميز: اذكر إن animation بـ transform (framer-motion مثلًا) بتعمل context جديد فجأة، وإن [[isolation: isolate]] بيعمل context مقصود من غير z-index، وإن مشروع كبير محتاج scale ثابت للـ z-index.
+
+ومثال تحكيه: هيدر [[position: sticky; z-index: 10]]، ومودال [[z-index: 9999]] جوه [[main]] اللي عليه [[transform]]. المودال طلع تحت الهيدر، لأن main بقى stacking context ودخل المقارنة كوحدة واحدة بـ [[z-index: auto]]، والـ 9999 بيتقارن بس جوه main. الحل portal للمودال على الـ body، أو تشيل الـ transform من main. و DevTools › Layers بيبيّن الطبقات دي.`,
+            when: "أسئلة المتابعة: «إيه الحاجات اللي بتعمل stacking context؟» و «إيه isolation: isolate؟» و «إزاي تنظّم z-index في مشروع كبير؟».",
+            mistakes: "«اللي رقمه أكبر فوق دايمًا». «z-index بيشتغل على أي عنصر» (محتاج positioned أو ابن flex أو grid)."
           },
-          teach: R`## matrix.mjs
+          teach: R`## الـ 9999 خسرت قدام 2، ليه؟
 
-~~~javascript tools/matrix.mjs
-// مصفوفة المقاسات: node tools/matrix.mjs http://127.0.0.1:5173/
-import { chromium } from "playwright-core";
-const url = process.argv[2] || "http://127.0.0.1:5173/";
-const widths = [320, 360, 414, 768, 1024, 1440];
-const browser = await chromium.launch({ channel: "chrome" });
-let bad = 0;
-for (const w of widths) {
-  const page = await browser.newPage({ viewport: { width: w, height: 800 } });
-  await page.goto(url, { waitUntil: "load" });
-  await page.evaluate(async () => { for (let y = 0; y < document.body.scrollHeight; y += 400) { scrollTo({ top: y, behavior: "instant" }); await new Promise((r) => setTimeout(r, 150)); } scrollTo({ top: 0, behavior: "instant" }); });
-  const r = await page.evaluate(() => {
-    const vw = document.documentElement.clientWidth;
-    const out = [...document.querySelectorAll("body *")].filter((el) => {
-      const b = el.getBoundingClientRect();
-      return b.width && (b.right > vw + 0.5 || b.left < -0.5);
-    }).map((el) => el.tagName.toLowerCase() + (el.className && typeof el.className === "string" ? "." + el.className.trim().split(/\s+/).join(".") : "") + " " + Math.round(el.getBoundingClientRect().width) + "px");
-    return { overflow: document.documentElement.scrollWidth - vw, out: out.slice(0, 4) };
-  });
-  console.log(String(w).padEnd(5), r.overflow > 0 ? "BROKEN +" + r.overflow + "px  " + r.out.join(" | ") : "OK");
-  if (r.overflow > 0) bad++;
-  await page.close();
-}
-await browser.close();
-process.exit(bad ? 1 : 0);
+المثال ٣ سطور فيهم المشكلة بالظبط، والحل فيه طريقتين. حطينا كله في صفحة [[dir="rtl"]] في Chrome 154 (headless عن طريق playwright): هيدر ارتفاعه 60، وجواه قايمة 200 × 150 نازلة من [[top: 40px]] (يعني نازلة على الهيرو)، وتحته هيرو ارتفاعه 400. وسألنا المتصفح بـ [[document.elementFromPoint(x, y)]]: «مين العنصر اللي فوق خالص عند النقطة دي؟»، على نقطة جوه القايمة والهيرو في نفس الوقت (y = 120).
+
+~~~text الـ HTML
+<header class="header">هيدر<div class="menu">قايمة</div></header>
+<main class="hero">هيرو</main>
 ~~~
 
-### سطر سطر
-
-- [[widths]]: الخمسة اللي في الطلب (٣٦٠ و ٤١٤ و ٧٦٨ و ١٠٢٤ و ١٤٤٠) + ٣٢٠. لو عندك media query عند ٧٦٠، زوّد ٧٦٠ و ٧٦١ (الحد من الناحيتين).
-- [[browser.newPage({ viewport: { width: w, height: 800 } })]]: صفحة جديدة لكل مقاس عشان مفيش حاجة تفضل من المقاس اللي قبله (القايمة مفتوحة مثلًا).
-- السكرول: خطوات ٤٠٠ بكسل، و [[behavior: "instant"]]، و ١٥٠ms بين كل خطوة. **ليه كل ده؟** الصفحة عليها [[scroll-behavior: smooth]]، فـ [[scrollTo(0, y)]] العادي كان بيبدأ حركة ناعمة والخطوة اللي بعدها تقطعها قبل ما توصل، وبخطوات ٣٠ms ٧ عناصر من ١٠ عمرهم ما ظهروا (اتقاس في درس الحركة). [[instant]] بيتجاهل الـ smooth، و ١٥٠ms بيدّي الـ IntersectionObserver frames كفاية.
-- [[document.documentElement.clientWidth]]: عرض الشاشة من غير الـ scrollbar. ([[innerWidth]] بيشمله.)
-- [[b.right > vw + 0.5 || b.left < -0.5]]: نص بكسل سماح للتقريب. و [[left < 0]] مهمة جدًا في RTL: العنصر العريض بيطلع من **الشمال** والصفحة بتتسكرل للشمال.
-- [[el.className && typeof el.className === "string"]]: عناصر SVG [[className]] بتاعها object مش نص، فبنتجاهله عشان [[.trim()]] ميقعش.
-- [[out.slice(0, 4)]]: أول ٤ بس. أول واحد غالبًا هو السبب، واللي جواه أو جنبه بيطلع معاه.
-- [[process.exit(bad ? 1 : 0)]]: كود خروج للـ CI و [[&&]].
-
-### القياس
-
-~~~text النسخة الأولى
-320   BROKEN +31px  a.btn.btn-primary.top-cta 90px | article.plan 320px | article.plan.featured 320px | article.plan 320px
-360   OK
-414   OK
-768   OK
-1024  OK
-1440  OK
-~~~
-
-~~~text النهائية
-320   OK
-360   OK
-414   OK
-768   OK
-1024  OK
-1440  OK
-~~~
-
-السببين اتشرحوا في خطواتهم: ترتيب الـ media query في «الـ header والـ hero»، و [[minmax(320px)]] في «المميزات والآراء والأسعار». الملاحظة المهمة: لو المصفوفة كانت المقاسات الخمسة اللي في الطلب بس، النسخة الأولى كانت هتطلع «كلها OK».
-
-### المصفوفة مش بتمسك إيه
-
-- القايمة مفتوحة (السكربت بيقيس الصفحة زي ما بتفتح). [[a11y.mjs]] بيفتحها على ٣٦٠ ويشغّل axe.
-- [[100vw]] على ويندوز بـ scrollbar ظاهر: الـ headless Chrome مفيهوش scrollbar بياخد مساحة، فـ [[100vw]] و [[100%]] نفس الرقم. اكشفها بـ [[grep 100vw css/*.css]] (الـ [[ci]] بتاع الدرس ده بيعمل كده).
-- الارتفاع: موبايل بالعرض (٨٠٠×٣٦٠) أو شاشة قصيرة. زوّد [[{ width: 800, height: 360 }]] لو الـ hero فيه [[100vh]].
-- تكبير الخط من إعدادات الموبايل (٢٠٠٪): جرّبه بـ [[document.documentElement.style.fontSize = "200%"]] قبل القياس، لأن كل مقاساتنا بالـ rem.
+القايمة **ابن** الهيدر، والهيرو **أخو** الهيدر. دي أهم معلومة في الدرس.
 
 ---
 
-## perf.mjs
+## ١. [[.header { position: relative; z-index: 1; }]]
 
-~~~javascript tools/perf.mjs
-// الأداء: node tools/perf.mjs http://127.0.0.1:5173/ [width]
-// شبكة بطيئة متعرّفة هنا (150ms و 1.6Mbps) و CPU أبطأ ٤ مرات، زي موبايل متوسط
-import { chromium } from "playwright-core";
-const url = process.argv[2] || "http://127.0.0.1:5173/";
-const width = Number(process.argv[3] || 360);
-const browser = await chromium.launch({ channel: "chrome" });
-const ctx = await browser.newContext({ viewport: { width, height: 800 } });
-await ctx.addInitScript(() => {
-  window.__m = { cls: 0, shifts: [], lcp: 0, lcpEl: "", fcp: 0, themeAt: null };
-  new PerformanceObserver((l) => l.getEntries().forEach((e) => { if (!e.hadRecentInput) { window.__m.cls += e.value; window.__m.shifts.push(e.sources.map((s) => s.node?.nodeName + "." + (s.node?.className || "")).join(",")); } })).observe({ type: "layout-shift", buffered: true });
-  new PerformanceObserver((l) => l.getEntries().forEach((e) => { window.__m.lcp = e.startTime; window.__m.lcpEl = e.element ? e.element.nodeName + (e.url ? " " + e.url.split("/").pop() : "") : ""; })).observe({ type: "largest-contentful-paint", buffered: true });
-  new PerformanceObserver((l) => l.getEntries().forEach((e) => { if (e.name === "first-contentful-paint") window.__m.fcp = e.startTime; })).observe({ type: "paint", buffered: true });
-  new MutationObserver(() => { if (document.documentElement?.dataset.theme && window.__m.themeAt === null) window.__m.themeAt = performance.now(); }).observe(document, { attributes: true, subtree: true, attributeFilter: ["data-theme"] });
-});
-const page = await ctx.newPage();
-await page.goto(url);
-await page.evaluate(() => localStorage.setItem("theme", "dark"));
-const cdp = await ctx.newCDPSession(page);
-await cdp.send("Network.enable");
-await cdp.send("Network.emulateNetworkConditions", { offline: false, latency: 150, downloadThroughput: 1.6 * 1024 * 1024 / 8, uploadThroughput: 750 * 1024 / 8 });
-await cdp.send("Emulation.setCPUThrottlingRate", { rate: 4 });
-const bytes = {};
-page.on("response", async (r) => { try { const b = await r.body(); const t = r.request().resourceType(); bytes[t] = (bytes[t] || 0) + b.length; } catch {} });
-await page.reload({ waitUntil: "load" });
-await page.waitForTimeout(1500);
-const m = await page.evaluate(() => window.__m);
-console.log("width", width);
-console.log("FCP", Math.round(m.fcp) + "ms", " LCP", Math.round(m.lcp) + "ms", m.lcpEl);
-console.log("CLS", m.cls.toFixed(4), m.shifts.length ? "shifts: " + m.shifts.join(" | ") : "");
-console.log("theme set at", m.themeAt === null ? "never" : Math.round(m.themeAt) + "ms", m.themeAt !== null && m.themeAt > m.fcp ? "AFTER first paint (flash)" : "before first paint");
-console.log("bytes", Object.entries(bytes).map(([k, v]) => k + " " + Math.round(v / 1024) + "KB").join(", "));
-await browser.close();
+[[z-index]] بيشتغل بس على عنصر positioned (أي [[position]] غير [[static]]) أو ابن flex أو grid. و [[position: relative]] + [[z-index]] رقم = الهيدر عمل **stacking context**: مجموعة مقفولة. كل اللي جوه الهيدر بيترتب جواه، وبعدين المجموعة كلها بتترسم كطبقة واحدة رقمها 1 قدام اللي برا.
+
+## ٢. [[.header .menu { position: absolute; z-index: 9999; }]]
+
+[[.header .menu]] = أي [[.menu]] جوه [[.header]]. الـ 9999 بتتقارن مع إخوات القايمة **جوه الهيدر** بس. بالنسبة لباقي الصفحة، القايمة جزء من طبقة الهيدر (1).
+
+## ٣. [[.hero { position: relative; z-index: 2; }]]
+
+الهيرو والهيدر الاتنين أولاد [[<body>]]، فدول اللي بيتقارنوا: 2 ضد 1. الهيرو فوق الهيدر **وكل اللي جواه**.
+
+~~~text elementFromPoint(1100, 120)
+MAIN.hero
 ~~~
 
-### سطر سطر
-
-- [[ctx.addInitScript(fn)]]: الـ function دي بتشتغل في كل صفحة **قبل** أي سكربت في الصفحة نفسها، حتى قبل [[theme.js]]. فالـ observers بيبدأوا من أول لحظة.
-- [[buffered: true]]: بيجيب كمان الـ entries اللي حصلت قبل ما الـ observer يتعمل.
-- [[layout-shift]]: كل entry فيه [[value]] (التنطيط ده قد إيه) و [[sources]] (العناصر اللي اتحركت). [[hadRecentInput]] = التنطيط حصل بعد ضغطة يوزر في خلال نص ثانية، ودي مش بتتحسب في CLS (اليوزر عارف إنه ضغط).
-- [[largest-contentful-paint]]: بيتبعت كل مرة عنصر أكبر من اللي قبله يترسم، فبنحفظ الأخير. [[e.url]] لو العنصر صورة، فبنطبع اسم الملف.
-- [[MutationObserver]] على [[document]] بـ [[subtree: true]]: وقت ما الـ init script بيشتغل [[documentElement]] ممكن يكون لسه مش موجود، فبنراقب الـ document كله ونسأل بـ [[?.]] (أول نسخة راقبت [[documentElement]] على طول وطبعت [[theme set at never]] رغم إن الثيم اتحط).
-- أول [[goto]] وبعدين [[localStorage.setItem("theme", "dark")]] وبعدين [[reload]]: عشان التحميل اللي بنقيسه فيه ثيم محفوظ، وده الموقف اللي الوميض بيحصل فيه.
-- [[latency: 150]] (ms لكل طلب) و [[1.6 * 1024 * 1024 / 8]] (bytes في الثانية = 1.6 ميجابت): شبكة موبايل متوسطة، **متعرّفة في السكربت** (مش preset بإسم)، فأي حد يشغّله يعرف بالظبط إيه اللي اتقاس.
-- [[setCPUThrottlingRate({ rate: 4 })]]: الـ CPU أبطأ ٤ مرات من جهازك، قريب من موبايل متوسط.
-- [[r.body()]]: حجم الملف بعد فك الضغط. لو السيرفر بيضغط (gzip)، اللي اتنقل على الشبكة أقل.
-
-### الأرقام (٣ مرات لكل حالة)
-
-| السيرفر | النسخة | العرض | FCP | LCP (العنصر) | CLS | الثيم |
-|---|---|---|---|---|---|---|
-| عادي | الأولى | ٣٦٠ | ١٠٨٤–١١١٦ms | نفسه ([[hero-600.webp]]) | ٠ | قبل أول رسمة |
-| عادي | النهائية | ٣٦٠ | ١٠٥٢–١١٢٤ms | نفسه ([[hero-600.webp]]) | ٠ | قبل أول رسمة |
-| عادي | الأولى | ١٤٤٠ | ١٠٨٠–١١٢٠ms | نفسه ([[hero-1200.webp]]) | ٠ | قبل أول رسمة |
-| عادي | النهائية | ١٤٤٠ | ١١٠٤–١١٤٤ms | نفسه ([[hero-1200.webp]]) | ٠ | قبل أول رسمة |
-| صور متأخرة | الأولى | ٣٦٠ | ٤٦٤–٤٦٨ms | ١٧٦٠–١٧٧٦ms | **٠٫٠٩٥٧** | **بعد أول رسمة** |
-| صور متأخرة | النهائية | ٣٦٠ | ٥٢٠–٥٤٤ms | ١٩٤٤–١٩٥٦ms | ٠ | قبل أول رسمة |
-| صور متأخرة | الأولى | ١٤٤٠ | ٤٥٦ms | ١٨٣٢–١٨٤٨ms | **٠٫٠٥٥٥** | **بعد أول رسمة** |
-| صور متأخرة | النهائية | ١٤٤٠ | ٥١٢–٥٢٨ms | ٢٠٠٠–٢٠١٦ms | ٠ | قبل أول رسمة |
-
-### إزاي تقرا الجدول
-
-- **على السيرفر العادي الاتنين زي بعض.** FCP = LCP لأن صورة الـ hero صغيرة (١٠ أو ٢٢ كيلو) وبتوصل قبل ما الـ CSS يخلص، فأول رسمة فيها الصورة. يعني الـ «بطء» هنا هو إن الرسم بيستنى الـ CSS (render-blocking) على شبكة كل طلب فيها ١٥٠ms.
-- **الصور متأخرة:** أول رسمة بقت أبدر بكتير (الـ CSS مش مستني حاجة)، فالـ LCP بقى = وقت الصورة (١٥٠٠ + الشبكة). النسخة الأولى CLS ووميض، والنهائية لأ. **والنهائية LCP أبطأ ١٨٠ms تقريبًا** في الظرف ده: أول رسمة أبطأ ٦٠ms تقريبًا (سكربت الثيم في الـ head بيوقّف القراية) والصورة بتيجي بعدها. ده تمن حقيقي دفعناه عشان مفيش وميض ولا تنطيط، ولو LCP ده مهم جدًا ممكن تجرّب تحط [[theme.js]] inline (بيوفّر طلب، بس محتاج CSP يسمح بيه بـ hash).
-- **الفرق بين المرات ٣٠–٧٠ms**، فأي «تحسين» أصغر من كده مش متقاس.
-
-### الأحجام
-
-~~~text bytes (على ٣٦٠، بعد فك الضغط)
-الأولى:    document 10KB, stylesheet 9KB, script 1KB, image 10KB
-النهائية:  document 13KB, script 8KB, stylesheet 13KB, image 10KB, other 0KB
-~~~
-
-النهائية أكبر ١٤ كيلو (الفورم والرسايل والتحقق) وبرضه صفر خطوط ويب و ٤٤ كيلو للصفحة كلها. على ١٤٤٠ الصورة ٢٢ كيلو بدل ١٠ ([[srcset]] اختار [[hero-1200.webp]]). و [[other 0KB]] هي [[icon.svg]] (أقل من كيلو). النسخة الأولى كانت بتطلب [[/favicon.ico]] لوحدها وبيرجع ٤٠٤ في الـ Console؛ [[<link rel="icon">]] شالها.
-
-### تجارب مفرقتش
-
-| التجربة | من غيرها | معاها | القرار |
-|---|---|---|---|
-| دمج [[tokens.css]] و [[site.css]] و [[form.css]] في ملف | FCP ١٠٧٦–١١٠٤ms | ١١١٦–١١٤٤ms | مش هنعمله: الـ ٣ ملفات بيتحمّلوا مع بعض، والدمج مقلّلش حاجة |
-| [[<link rel="preload" as="image" imagesrcset>]] لصورة الـ hero | LCP ١٠٧٦–١١١٢ms | ١١١٢–١١٣٦ms | مش هنعمله: الصورة في الـ HTML والمتصفح بيلاقيها بدري لوحده |
-
-الاتنين نصايح صح في مواقف تانية (عشرات ملفات CSS على HTTP/1، أو صورة background في CSS). هنا اتقاسوا ومفرقوش، فمدخلوش. الكود اللي ملوش أثر متقاس = حاجة زيادة تتصان.
+القايمة موجودة (مكانها [[1080, 40]] بعرض 200 وارتفاع 150) بس مستخبية ورا الهيرو.
 
 ---
 
-## خلاصة
+## ٤. الحلين (الحل في solCode)
 
-- المصفوفة: ٣٢٠ لازم تبقى فيها، وسكرول للآخر بـ [[instant]] قبل القياس، و [[left < 0]] في RTL، وكود خروج.
-- الأداء: شبكة و CPU متعرّفين في السكربت، و observers من [[addInitScript]]، و ٣ مرات لكل حالة، وظرف وحش (صور متأخرة) جنب الظرف العادي.
-- اقرا الأرقام: FCP = LCP معناها الرسم مستني الـ CSS، وأي فرق أصغر من التذبذب مش فرق، وكل تحسين يتقاس قبل ما يدخل.`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صفحة RTL فيها [[.badge { position: absolute; inset-inline-start: -20px; }]]. هيبقى فيه scroll أفقي؟ ومن أنهي ناحية؟ والفلتر اللي بيشيّك [[b.right > vw]] بس هيلاقيه؟ جرّب بـ [[matrix.mjs]] قبل وبعد ما تشيل [[b.left < -0.5]].`, done: R`كتبت إن [[inline-start]] في RTL = يمين، فالبادج بيطلع من اليمين (ومفيش scroll، لأن اللي بيطلع من الناحية اللي الصفحة بتبدأ منها بيتقص)، وجرّبت [[inset-inline-end]] بدلها فطلع من الشمال والمصفوفة لقته بـ [[left < 0]] بس.` },
-            { lvl: 'تطبيق', t: R`**ابني:** زوّد على [[matrix.mjs]] إنه يقرا كل [[min-width]] و [[max-width]] من ملفات الـ CSS ويضيف الحدين لكل واحد (مثلًا ٧٦٠ و ٧٦١، و ٩٥٩ و ٩٦٠) على المقاسات، مترتبين ومن غير تكرار.`, done: R`السكربت بيطبع [[widths: 320 360 414 760 761 768 959 960 1024 1440]] على المشروع ده، وبيقيسهم كلهم، وكلهم OK.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** زميلك صلّح scroll أفقي على الموبايل بـ [[html, body { overflow-x: hidden; }]] والمصفوفة بقت OK. ليه ده مش تصليح؟ أثبت بحاجتين اتكسروا في الصفحة دي.`, done: R`أثبت إن الـ header مبقاش لازق (بعد سكرول ١٠٠٠ [[getBoundingClientRect().top]] مش صفر)، وإن العنصر العريض لسه موجود ومقصوص (المحتوى بتاعه مش باين)، ورجعت شلت السطر ولقيت العنصر بالمصفوفة وصلّحته هو.` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** خلّي الصفحة تستخدم خط ويب عربي (أي ملف woff2 عندك أو من Google Fonts) مرة بـ [[font-display: swap]] ومرة [[block]] ومرة [[optional]]، وقيس بـ [[perf.mjs]] على ٣٦٠: FCP و LCP و CLS والـ bytes تحت [[font]]، ٣ مرات لكل واحدة. وقارن بخطوط الجهاز.`, done: R`جدول ٤ صفوف بأرقام حقيقية (أقل–أكبر)، ومكتوب فيه أنهي واحدة عملت CLS (غالبًا swap لو مقاسات الخط مختلفة) وأنهي أخّرت FCP، وقرارك لو العميل مصمم على خط معيّن.` },
-            { lvl: 'تطبيق', t: R`**اكتب اختبار:** حوّل [[perf.mjs]] لاختبار بيقع: CLS أكبر من ٠٫٠١ على أي عرض، أو الثيم بعد أول رسمة، أو LCP أكبر من ٢٥٠٠ms، على السيرفرين. شغّله على نسختك، وبعدين امسح [[width]] و [[height]] من الصورة.`, done: R`على النسخة النهائية ٤ PASS (عرضين × سيرفرين)، ومن غير المقاس الصورة بيقع على سيرفر الصور المتأخرة بس ويطبع الـ CLS والعناصر، وده بيثبت ليه الظرف الوحش لازم يبقى في الاختبار.` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** من وثائق Chrome DevTools: الـ preset اللي اسمه «Slow 4G» في Network throttling قيمه كام (latency و download)؟ وقارنها بالقيم اللي في [[perf.mjs]]. ليه أحسن تكتب القيم في السكربت بدل اسم الـ preset؟`, done: R`كتبت القيم من الوثائق بالمصدر، وكتبت إن القيم المكتوبة بتفضل ثابتة لو Chrome غيّر الـ presets (حصل قبل كده إنها اتغيّرت أساميها وقيمها)، فالقياس يتقارن بنفسه على مدار شهور.` },
-          ],
-          ci: [
-            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`node`, run: R`const css = ".plans { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }\n" +
-  ".bento { grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); }\n" +
-  ".band { width: 100vw; }\n.hero { min-height: 100vh; }\n.top-cta { display: none; }\n";
-const narrowest = 320, gutter = 16 * 2;
-for (const m of css.matchAll(/minmax\((\d+)px/g)) console.log("risky minmax(" + m[1] + "px): needs " + m[1] + "px, a 320 phone has " + (narrowest - gutter) + "px");
-for (const m of css.matchAll(/minmax\(min\(100%,\s*(\d+)px\)/g)) console.log("safe minmax(min(100%, " + m[1] + "px))");
-for (const m of css.matchAll(/([.\w-]+)\s*\{[^}]*\b100vw\b/g)) console.log("100vw on " + m[1] + ": wider than the page when there is a scrollbar");
-for (const m of css.matchAll(/([.\w-]+)\s*\{[^}]*\b100vh\b/g)) console.log("100vh on " + m[1] + ": use 100svh or 100dvh on phones");
-const runs = { before: [1076, 1104, 1080], after: [1116, 1144, 1116] };
-const span = (a) => Math.max(...a) - Math.min(...a);
-const gap = Math.min(...runs.after) - Math.max(...runs.before);
-console.log("merge css: noise " + Math.max(span(runs.before), span(runs.after)) + "ms, gap " + gap + "ms -> " + (gap > Math.max(span(runs.before), span(runs.after)) ? "slower" : "no clear difference"));`, expect: [R`risky minmax(320px): needs 320px, a 320 phone has 288px`, R`safe minmax(min(100%, 240px))`, R`100vw on .band: wider than the page when there is a scrollbar`, R`100vh on .hero: use 100svh or 100dvh on phones`, R`merge css: noise 28ms, gap 12ms -> no clear difference`] },
-          ],
-        },
-        {
-          cmd: "landing page: فحص accessibility والنشر والغلطات",
-          title: "axe صفر في ٣ حالات، ومشي بالكيبورد بس على ٣١ وقفة، وفحص HTML من غير متصفح للـ CI، والنشر على GitHub Pages تحت مسار فرعي، وكل الغلطات اللي حصلت",
-          learn: R`تثبت إن الصفحة شغالة لكل الناس بأرقام، وتنشرها من غير ما المسارات تقع، وتراجع كل غلطة حصلت في المشروع كطريقة تفكير تنفع في أي مشروع جاي.`,
-          out: R`[[a11y.mjs]] بيطبع صفر violations في الفاتح والغامق والموبايل والقايمة مفتوحة، و ٣١ وقفة كيبورد كلها بحلقة ومش مستخبية، و [[lint.mjs]] بيطبع [[0 problems]]، والصفحة بتتحمّل كاملة تحت [[/habba-landing/]] بصفر طلبات فاشلة.`,
-          desc: R`آخر خطوة: **نثبت** إن الصفحة accessible و **ننشرها**.
+### الطريقة ١: ارفع الهيدر نفسه
 
-• **[[a11y.mjs]]:** axe (مكتبة بتفحص قواعد WCAG في الصفحة وهي شغالة) على ٣ حالات: فاتح ١٢٨٠، وغامق ١٢٨٠، و ٣٦٠ والقايمة مفتوحة. وبعدين **مشي بالكيبورد بس**: Tab لحد ما يرجع لأول عنصر، ولكل وقفة بيسأل: عليها حلقة focus ظاهرة؟ ومش مستخبية تحت حاجة ([[elementFromPoint]])؟ وفي الآخر بيضغط لينكات الـ nav ويتأكد إن عنوان القسم تحت الـ header مش وراه. النسخة الأولى: تباين واقع في الفاتح (١٠ عناصر) والغامق (٢)، و ٥ خانات من غير حلقة. النهائية: **صفر** في كل حاجة.
-• **[[lint.mjs]]:** فحص للـ HTML من غير متصفح، في ٣٦ سطر Node، بيشتغل في CI في ثانية: h1 واحد، و ids مش متكررة، وكل لينك [[#x]] ليه هدف، وكل [[aria-describedby]] بيشاور على حاجة موجودة، وكل خانة ليها label، وكل [[pattern]] صالح بالـ flag [[v]]، وكل صورة ليها مقاس، ومفيش مسار بيبدأ بـ [[/]]. النسخة الأولى: **١٢ مشكلة**. النهائية: **صفر**.
-• **النشر:** GitHub Pages بيخدم مشروعك تحت [[https://اسمك.github.io/اسم-الريبو/]] مش تحت [[/]]. النسخة الأولى كانت مساراتها [[/css/site.css]]، فلما اتخدمت تحت [[/habba-landing/]] في المعمل: **٦ طلبات ٤٠٤** والصفحة طلعت من غير CSS خالص. بعد المسارات النسبية: **صفر**.
-
-وفي الآخر جدول بكل الغلطات اللي حصلت في المشروع (١٤ غلطة في الصفحة و ٦ في أدوات القياس نفسها)، وإزاي الصفحة تكبر، وبتتكلّف كام، وإزاي تخليها بتاعتك.`,
-          example: R`node tools/lint.mjs index.html
-node tools/a11y.mjs http://127.0.0.1:5173/
-MSYS_NO_PATHCONV=1 node tools/serve.mjs 5180 /habba-landing/
-git init -b main && git add . && git commit -m "habba landing page"
-gh repo create habba-landing --public --source=. --push
-gh api -X POST "repos/{owner}/{repo}/pages" -f "source[branch]=main" -f "source[path]=/"`,
-          lines: [
-            R`فحص الـ HTML من غير متصفح: بيطبع كل مشكلة في سطر [[FAIL]]، وفي الآخر [[OK: 226 tags, 33 ids, 0 problems]]، وكود خروج 1 لو فيه مشكلة.`,
-            R`axe في ٣ حالات ومشي الكيبورد والقفز للأقسام (السيرفر لازم يبقى شغال)، وكود خروج 1 لو أي رقم مش صفر.`,
-            R`السيرفر بيقلّد GitHub Pages: الصفحة تحت [[/habba-landing/]]. [[MSYS_NO_PATHCONV=1]] في Git Bash بس: من غيرها Git Bash بيحوّل [[/habba-landing/]] لـ [[C:/Program Files/Git/habba-landing/]] (حصل فعلًا). في PowerShell اكتب الأمر من غيرها.`,
-            R`ريبو git محلي على [[main]] وأول commit (اتشغّل في المعمل). الـ [[.gitignore]] فيه [[node_modules/]] عشان ١٧ ميجا متترفعش.`,
-            R`من الوثائق (متشغّلش هنا، عشان مفيش ريبو حقيقي يتعمل): بيعمل ريبو عام على GitHub بنفس الاسم ويربطه ويرفع الـ commit. محتاج [[gh auth login]] الأول.`,
-            R`من الوثائق: بيفعّل Pages من فرع [[main]] والفولدر الرئيسي. [[{owner}]] و [[{repo}]] بيتملوا لوحدهم من الريبو اللي انت فيه. ونفس الحاجة من الموقع: Settings › Pages › Deploy from a branch › main و [[/ (root)]].`,
-          ],
-          try: R`شغّل [[lint.mjs]] و [[a11y.mjs]] على نسختك وصلّح لحد ما الاتنين صفر. وبعدين امشي على الصفحة بالكيبورد بس بإيدك من أول الـ skip link لآخر لينك في الـ footer، واكتب أي وقفة مكانتش متوقعة. شغّل السيرفر تحت [[/habba-landing/]] وافتح Network: فيه ٤٠٤؟ وفي الآخر اعمل الريبو والـ Pages (لو عندك حساب) وافتح الرابط من موبايلك.`,
-          sol: R`[[lint.mjs]]: [[OK: 226 tags, 33 ids, 0 problems]]. [[a11y.mjs]]: [[violations: 0]] تلات مرات، و [[keyboard stops: 31  no focus ring: 0  hidden under header: 0]]، و ٤ قفزات [[h2 top 239]] أو [[240]] و [[header bottom 65]] كلهم [[ok]]. تحت المسار الفرعي: صفر ٤٠٤ والخلفية [[rgb(251, 247, 242)]]. ولو حطيت أي مسار بيبدأ بـ [[/]]، الـ lint بيقول [[بيبدأ بـ / وهيقع على GitHub Pages]] قبل ما تنشر. والرابط الحقيقي بيبقى [[https://<اسمك>.github.io/habba-landing/]] بعد دقيقة أو اتنين من تفعيل Pages (حسب الوثائق).`,
-          solCode: R`node tools/a11y.mjs http://127.0.0.1:5173/
-light 1280             violations: 0
-dark 1280              violations: 0
-light 360 menu open    violations: 0
-keyboard stops: 31  no focus ring: 0  hidden under header: 0
-jump #features  h2 top 240 header bottom 65 ok
-jump #reviews   h2 top 239 header bottom 65 ok
-jump #pricing   h2 top 240 header bottom 65 ok
-jump #faq       h2 top 240 header bottom 65 ok`,
-          flag: "script",
-          deep: {
-            why: R`«accessible» من غير رقم كلام. axe بيمسك المشاكل اللي تتقاس أوتوماتيك (تباين، وأسماء ناقصة، و ARIA غلط، و landmarks)، وده جزء بس من المشاكل (الرقم بيختلف حسب الدراسة والأداة)، والباقي محتاج حد يمشي بالكيبورد ويسمع قارئ الشاشة، فالسكربت بيعمل الجزء اللي بيتعمل أوتوماتيك كل مرة، وانت بتعمل الباقي مرة قبل التسليم. والنشر على GitHub Pages بالذات بيكسر أي مسار بيبدأ بـ [[/]]، وده بيبان بس بعد النشر لو مقلدتش المسار الفرعي في المعمل.`,
-            how: R`[[@axe-core/playwright]] بيحقن axe-core في الصفحة ويشغّله على الـ DOM الحالي بالستايلات المحسوبة، وبيرجّع [[violations]] (كل قاعدة وقعت وعلى أنهي عناصر). بيتجاهل العناصر المخفية ([[display: none]] أو [[opacity: 0]] أو بره الـ accessibility tree)، وعشان كده لازم كل حاجة تظهر قبل الفحص. مشي الكيبورد: [[page.keyboard.press("Tab")]] زي اليوزر، و [[document.activeElement]] هو العنصر اللي عليه الـ focus، و [[getComputedStyle]] بيقول فيه [[outline]] أو [[box-shadow]]، و [[elementFromPoint(x, y)]] بيرجّع أعلى عنصر في النقطة دي، فلو مش هو العنصر (أو جواه) يبقى فيه حاجة فوقه. والـ lint: regex بيلقط كل tag وصفاته، وبيبني [[Set]] من الـ ids وبيقارن. والمسار النسبي [[css/site.css]] بيتحسب من مكان الصفحة، فتحت [[/habba-landing/]] بيبقى [[/habba-landing/css/site.css]]، والمطلق [[/css/site.css]] بيروح لجذر الدومين.`,
-            when: R`[[lint.mjs]] على كل push (ثانية واحدة ومن غير متصفح). و [[a11y.mjs]] و [[matrix.mjs]] و [[form-test.mjs]] قبل كل نشر وفي CI (محتاجين Chrome والسيرفر). والمشي بالكيبورد بإيدك وقارئ شاشة (NVDA على ويندوز ببلاش، أو VoiceOver على الماك والموبايل) مرة قبل التسليم وبعد أي تغيير كبير في الشكل. و GitHub Pages لأي صفحة static؛ لو محتاج API أو redirects أو headers (CSP مثلًا)، يبقى Netlify أو Cloudflare Pages أو سيرفر.`,
-            mistakes: R`تفحص بـ axe والكروت لسه مخفية (axe بيتجاهلها فيقول صفر). أو تفحص الفاتح بس. أو تثق في «axe صفر» من غير مشي بالكيبورد (مثلًا الاسم العملاق فوق لينكات الـ footer axe مقالش عليه حاجة). أو تكتب فحص بيطلّع false positive (الـ skip link «تحت الـ header» وهو فوقه) وتصدّقه. أو مسارات بتبدأ بـ [[/]]. أو ترفع [[node_modules]]. أو تقول «اتنشرت» من غير ما تفتح الرابط من جهاز تاني.`
-          },
-          teach: R`## a11y.mjs
-
-~~~javascript tools/a11y.mjs
-// accessibility: node tools/a11y.mjs http://127.0.0.1:5173/
-// axe على الوضعين وعلى الموبايل والقايمة مفتوحة، وبعدين مشي بالكيبورد بس
-import { chromium } from "playwright-core";
-import AxeBuilder from "@axe-core/playwright";
-const url = process.argv[2] || "http://127.0.0.1:5173/";
-const browser = await chromium.launch({ channel: "chrome" });
-let total = 0;
-async function scan(label, setup, viewport = { width: 1280, height: 900 }) {
-  const ctx = await browser.newContext({ viewport });
-  const page = await ctx.newPage();
-  await page.goto(url, { waitUntil: "load" });
-  await setup(page);
-  await page.evaluate(async () => { for (let y = 0; y < document.body.scrollHeight; y += 400) { scrollTo({ top: y, behavior: "instant" }); await new Promise((r) => setTimeout(r, 150)); } scrollTo({ top: 0, behavior: "instant" }); });
-  await page.waitForTimeout(700);
-  const r = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa", "best-practice"]).analyze();
-  console.log(label.padEnd(22), "violations:", r.violations.length);
-  for (const v of r.violations) console.log("   ", v.id, "x" + v.nodes.length, "→", v.nodes[0].target.join(" "), v.nodes[0].any[0]?.message?.slice(0, 110) || "");
-  total += r.violations.length;
-  await ctx.close();
-}
-await scan("light 1280", async () => {});
-await scan("dark 1280", async (p) => { await p.evaluate(() => localStorage.setItem("theme", "dark")); await p.reload(); });
-await scan("light 360 menu open", async (p) => { await p.click(".menu-btn"); }, { width: 360, height: 800 });
-// الكيبورد: Tab لحد ما نرجع لأول عنصر، ونشوف كل عنصر عليه focus ظاهر ومش مستخبي تحت الـ header
-const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
-const page = await ctx.newPage();
-await page.emulateMedia({ reducedMotion: "reduce" });   // من غير smooth scroll، عشان نقيس بعد ما الصفحة تقف
-await page.goto(url, { waitUntil: "load" });
-const seen = [];
-for (let i = 0; i < 60; i++) {
-  await page.keyboard.press("Tab");
-  await page.waitForTimeout(50);
-  const f = await page.evaluate(() => {
-    const el = document.activeElement; if (!el || el === document.body) return null;
-    const cs = getComputedStyle(el), r = el.getBoundingClientRect();
-    const ring = cs.outlineStyle !== "none" && parseFloat(cs.outlineWidth) > 0 || cs.boxShadow !== "none";
-    const hit = document.elementFromPoint(r.left + r.width / 2, r.top + Math.min(r.height / 2, 10));
-    const hidden = !hit || !(el === hit || el.contains(hit) || hit.contains(el));
-    return { name: el.tagName.toLowerCase() + " " + (el.getAttribute("aria-label") || el.textContent || el.name || "").trim().slice(0, 24), ring, hidden };
-  });
-  if (!f || (seen.length && f.name === seen[0].name)) break;
-  seen.push(f);
-}
-const noRing = seen.filter((s) => !s.ring), under = seen.filter((s) => s.hidden);
-console.log("keyboard stops:", seen.length, " no focus ring:", noRing.length, " hidden under header:", under.length);
-for (const s of [...noRing, ...under]) console.log("   ", s.name, s.ring ? "" : "(no ring)", s.hidden ? "(under header)" : "");
-// لينكات الـ nav: بعد القفزة، عنوان القسم لازم يبان تحت الـ header مش وراه
-let covered = 0;
-for (const href of ["#features", "#reviews", "#pricing", "#faq"]) {
-  await page.click('.nav-links a[href="' + href + '"]');
-  await page.waitForTimeout(300);
-  const r = await page.evaluate((h) => ({ head: Math.round(document.querySelector(h + " h2").getBoundingClientRect().top), bar: Math.round(document.querySelector(".top").getBoundingClientRect().bottom) }), href);
-  if (r.head < r.bar) covered++;
-  console.log("jump", href.padEnd(10), "h2 top", r.head, "header bottom", r.bar, r.head < r.bar ? "COVERED" : "ok");
-}
-under.length += covered;
-await browser.close();
-process.exit(total + noRing.length + under.length ? 1 : 0);
+~~~text styles.css
+.header { position: relative; z-index: 3; }
 ~~~
 
-### سطر سطر
-
-- [[scan(label, setup, viewport)]]: كل حالة في [[newContext]] لوحده (localStorage فاضي، ومقاس جديد). [[setup]] function بتجهّز الحالة: الغامق بيحط [[theme=dark]] ويعمل reload، والموبايل بيضغط زرار القايمة.
-- [[new AxeBuilder({ page })]]: الـ page لازم تكون من [[browser.newContext()]]. أول مرة كتبت [[browser.newPage()]] على طول ووقع بـ [[Error: Please use browser.newContext()]].
-- [[withTags([...])]]: القواعد اللي هتتفحص: WCAG 2.0 و 2.1 و 2.2 مستوى A و AA، و [[best-practice]] (حاجات مش في WCAG بس axe بيوصي بيها، زي landmark لكل محتوى).
-- [[v.nodes[0].target]]: الـ selector لأول عنصر واقع، و [[any[0].message]] الرسالة بالنص (زي [[Element has insufficient color contrast of 3.85...]]).
-- مشي الكيبورد: [[emulateMedia({ reducedMotion: "reduce" })]] عشان [[scroll-behavior: smooth]] يتقفل، وإلا Tab بيعمل سكرول ناعم والقياس بيحصل والعنصر لسه بيتحرك ([[elementFromPoint]] بيرجّع null للعناصر اللي بره الشاشة؛ أول تشغيل من غيرها قال ٢١ عنصر «مستخبي»).
-- [[f.name === seen[0].name]]: لما نرجع لأول عنصر (Tab لف الصفحة كلها) نوقف. و ٦٠ حد أقصى عشان لو فيه focus trap السكربت ميلفّش للأبد.
-- [[ring]]: فيه [[outline]] حقيقي (مش [[none]] ولا عرضه صفر) **أو** [[box-shadow]]. تغيير لون الـ border لوحده مش بيتحسب، وده اللي مسك الـ ٥ خانات في النسخة الأولى.
-- [[elementFromPoint(وسط العنصر)]]: أعلى عنصر في النقطة دي. لو مش العنصر نفسه أو حاجة جواه أو حاجة شايلاه، يبقى فيه حاجة فوقه (header، أو زخرفة، أو modal).
-- القفز: الضغط على لينكات الـ nav وقياس [[top]] بتاع الـ h2 مقابل [[bottom]] بتاع الـ header.
-
-### النتايج
-
-~~~text النسخة الأولى
-light 1280             violations: 1
-    color-contrast x10 → .card:nth-child(3) > p Element has insufficient color contrast of 3.85 (foreground color: #8f7f72, background color: #ffffff, font si
-dark 1280              violations: 1
-    color-contrast x2 → a[href$="#reviews"] Element has insufficient color contrast of 1.66 (foreground color: #f2e9e0, background color: #bbb7b2, font si
-light 360 menu open    violations: 0
-keyboard stops: 29  no focus ring: 5  hidden under header: 1
-    input name (no ring)
-    input email (no ring)
-    input phone (no ring)
-    input password (no ring)
-    input terms (no ring)
-    a اتخطّى للمحتوى  (under header)
+~~~text elementFromPoint(1100, 120)
+DIV.menu
 ~~~
 
-~~~text النهائية
-light 1280             violations: 0
-dark 1280              violations: 0
-light 360 menu open    violations: 0
-keyboard stops: 31  no focus ring: 0  hidden under header: 0
-jump #features  h2 top 240 header bottom 65 ok
-jump #reviews   h2 top 239 header bottom 65 ok
-jump #pricing   h2 top 240 header bottom 65 ok
-jump #faq       h2 top 240 header bottom 65 ok
+الطبقة كلها بقت 3، أعلى من 2، فالقايمة طلعت معاها. بس الهيدر **كله** بقى فوق الهيرو، فلو الهيرو فيه حاجة المفروض تطلع فوق الهيدر، مش هتعرف.
+
+### الطريقة ٢: طلّع القايمة برا الهيدر (Portal)
+
+~~~text الـ HTML
+<header class="header">هيدر</header>
+<main class="hero">هيرو</main>
+<div class="menu">قايمة</div>
 ~~~
 
-الوقفات زادت من ٢٩ لـ ٣١ لأن الفورم النهائي فيه زرار «اظهرها» و [[<select>]] الباقة.
+~~~text styles.css
+.header { position: relative; z-index: 1; }
+.menu { position: fixed; top: 4rem; inset-inline-start: 1rem; z-index: 50; }
+.hero { position: relative; z-index: 2; }
+~~~
 
-### الغلطات اللي كانت في أدوات القياس نفسها
+- القايمة بقت أخت الهيرو، فـ 50 بتتقارن مع 2 مباشرة.
+- [[position: fixed]] مكانها من الشاشة. [[top: 4rem]] = 64px من فوق، و [[inset-inline-start: 1rem]] = 16px من **بداية** السطر (اليمين في العربي).
 
-ده الجزء اللي محدش بيحكيه: السكربتات نفسها غلطت كذا مرة، وكل مرة الرقم كان غلط بثقة.
+~~~text الناتج
+مكان القايمة: left 1064، top 64  (يعني 16 من اليمين في شاشة 1280)
+elementFromPoint(1084, 120) → DIV.menu
+~~~
 
-| الغلطة في الأداة | الرقم الغلط | السبب | التصليح |
-|---|---|---|---|
-| [[scrollTo(0, y)]] عادي والصفحة smooth | axe قال تباين ١٫٧ على [[.card h3]] ([[#c6c1bc]] على [[#fcf9f5]]) | الكروت كانت لسه بتظهر (opacity في النص) أو عمرها ما ظهرت، فـ axe حسب لون باهت أو اتجاهلها | [[behavior: "instant"]] |
-| خطوة سكرول ٣٠ms | ٧ من ١٠ عناصر مظهروش، والعدد بتاع axe اتغيّر ٩ ثم ٥ ثم ١٠ بين التشغيلات | الـ observer مبيلحقش | ١٥٠ms بين كل خطوة، والعدد ثبت |
-| «تحت الـ header» = [[top]] أقل من آخر الـ header | الـ skip link «مستخبي» | الـ skip link فوق الـ header ([[z-index: 200]])، والحساب بالأرقام مش بيعرف مين فوق مين | [[elementFromPoint]] |
-| Tab والصفحة smooth | ٢١ عنصر «مستخبي» | العنصر كان لسه بيتسكرل له | [[reducedMotion: "reduce"]] في الاختبار |
-| [[documentElement]] في [[addInitScript]] | [[theme set at never]] | الـ html لسه متعملش وقت ما السكربت بيشتغل | المراقبة على [[document]] بـ [[subtree]] |
-| [[browser.newPage()]] مع axe | [[Error: Please use browser.newContext()]] | المكتبة محتاجة context تعمل فيه صفحة مساعدة | [[newContext()]] |
-
-> القاعدة: لما أداة قياس تطلّع رقم غريب (أو رقم بيتغيّر بين تشغيلتين)، شك في الأداة الأول. وجرّب الأداة على حاجة انت عارف إجابتها (نسخة مكسورة قصد) قبل ما تصدّقها على النسخة السليمة.
+والهيدر فضل 1. ده اللي React بيعمله بـ [[createPortal]] لـ [[document.body]]، وعشان كده Radix و shadcn بيحطوا الـ dropdown والـ dialog في Portal.
 
 ---
 
-## lint.mjs: فحص من غير متصفح
+## ٥. الفخ: القايمة مقصوصة مش مستخبية
 
-~~~javascript tools/lint.mjs
-// فحص الـ HTML من غير متصفح (بيشتغل في CI): node tools/lint.mjs index.html
-import fs from "node:fs";
-const html = fs.readFileSync(process.argv[2] || "index.html", "utf8");
-const tags = [...html.matchAll(/<([a-z][a-z0-9]*)\b([^>]*)>/gi)].map((m) => {
-  const attrs = {};
-  for (const a of m[2].matchAll(/([:\w-]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>]+)))?/g)) attrs[a[1].toLowerCase()] = a[2] ?? a[3] ?? a[4] ?? "";
-  return { tag: m[1].toLowerCase(), attrs };
-});
-const problems = [];
-const bad = (msg) => problems.push(msg);
-const ids = tags.map((t) => t.attrs.id).filter(Boolean);
-const idSet = new Set(ids);
+رفعنا الهيدر لـ 3 (الطريقة ١) وزوّدنا عليه [[overflow: hidden]]:
 
-const root = tags.find((t) => t.tag === "html");
-if (!root?.attrs.lang || !root?.attrs.dir) bad("<html> محتاج lang و dir");
-const h1 = tags.filter((t) => t.tag === "h1").length;
-if (h1 !== 1) bad("لازم h1 واحد بالظبط، لقيت " + h1);
-for (const id of idSet) if (ids.filter((x) => x === id).length > 1) bad("id متكرر: " + id);
-const forIds = new Set(tags.filter((t) => t.tag === "label" && t.attrs.for).map((t) => t.attrs.for));
-for (const t of tags) {
-  const a = t.attrs;
-  if (a.href?.startsWith("#") && a.href.length > 1 && !idSet.has(a.href.slice(1))) bad("لينك لـ " + a.href + " ومفيش id بالاسم ده");
-  for (const k of ["aria-describedby", "aria-controls", "aria-labelledby"]) if (a[k]) for (const id of a[k].split(/\s+/)) if (!idSet.has(id)) bad(k + " بيشاور على " + id + " ومش موجود");
-  if (["input", "select", "textarea"].includes(t.tag) && !["hidden", "submit", "button"].includes(a.type)) {
-    const labelled = (a.id && forIds.has(a.id)) || a["aria-label"] || a["aria-labelledby"] || t.tag === "input" && a.type === "radio";
-    if (!labelled) bad(t.tag + (a.name ? " name=" + a.name : "") + " من غير label");
-  }
-  if (a.pattern !== undefined) { try { new RegExp("^(?:" + a.pattern + ")$", "v"); } catch (e) { bad("pattern مش شغال في المتصفح (v flag): " + a.pattern + " ← " + e.message); } }
-  if (t.tag === "img" && (a.alt === undefined || !a.width || !a.height)) bad("img محتاجة alt و width و height: " + a.src);
-  if (t.tag === "button" && !a.type) bad("button من غير type (جوه form هيبقى submit)");
-  for (const k of ["href", "src", "action"]) if (a[k]?.startsWith("/") && !a[k].startsWith("//")) bad(k + "=\"" + a[k] + "\" بيبدأ بـ / وهيقع على GitHub Pages");
-  if (a.srcset) for (const part of a.srcset.split(",")) if (part.trim().startsWith("/")) bad("srcset فيه مسار بيبدأ بـ /: " + part.trim());
-}
-for (const p of problems) console.log("FAIL", p);
-console.log(problems.length ? problems.length + " problems" : "OK: " + tags.length + " tags, " + idSet.size + " ids, 0 problems");
-process.exit(problems.length ? 1 : 0);
+~~~text elementFromPoint(1100, 120)
+MAIN.hero
 ~~~
 
-- [[/<([a-z][a-z0-9]*)\b([^>]*)>/gi]]: أي opening tag (اسم بيبدأ بحرف) وكل اللي جواه لحد [[>]]. مش parser كامل (مثلًا [[>]] جوه قيمة attribute هيلخبطه)، بس كفاية لصفحة احنا كاتبينها.
-- الـ regex التاني بيلقط كل attribute بأشكاله التلاتة ([["..."]] و [['...']] ومن غير تنصيص) أو من غير قيمة ([[required]])، و [[??]] بياخد أول قيمة مش [[undefined]].
-- [[root?.attrs]]: [[?.]] عشان لو مفيش [[<html>]] خالص منقعش.
-- الـ radio معتبر ليه label لو جوه label (الـ regex مش بيشوف «جوه»، فده تبسيط مكتوب في الكود).
-- [[new RegExp("^(?:" + a.pattern + ")$", "v")]]: نفس اللي المتصفح بيعمله بالظبط، فلو وقع هنا هيقع هناك.
-- [[!a[k].startsWith("//")]]: [[//cdn.example/x.js]] مسار لدومين تاني (protocol-relative)، مش مسار على الدومين بتاعك.
-
-~~~text النسخة الأولى
-FAIL href="/css/tokens.css" بيبدأ بـ / وهيقع على GitHub Pages
-FAIL href="/css/site.css" بيبدأ بـ / وهيقع على GitHub Pages
-FAIL href="/css/form.css" بيبدأ بـ / وهيقع على GitHub Pages
-FAIL src="/js/site.js" بيبدأ بـ / وهيقع على GitHub Pages
-FAIL src="/js/form.js" بيبدأ بـ / وهيقع على GitHub Pages
-FAIL srcset فيه مسار بيبدأ بـ /: /img/hero-600.webp 600w
-FAIL srcset فيه مسار بيبدأ بـ /: /img/hero-1200.webp 1200w
-FAIL img محتاجة alt و width و height: /img/hero-1200.jpg
-FAIL src="/img/hero-1200.jpg" بيبدأ بـ / وهيقع على GitHub Pages
-FAIL srcset فيه مسار بيبدأ بـ /: /img/hero-600.jpg 600w
-FAIL srcset فيه مسار بيبدأ بـ /: /img/hero-1200.jpg 1200w
-FAIL pattern مش شغال في المتصفح (v flag): (\+20|0)1[0125][0-9-]{8,9} ← Invalid regular expression: /^(?:(\+20|0)1[0125][0-9-]{8,9})$/v: Invalid character class
-12 problems
-~~~
-
-~~~text النهائية
-OK: 226 tags, 33 ids, 0 problems
-~~~
+رجعت تستخبى! بس السبب المرة دي مش z-index: [[overflow: hidden]] بيقص أي حاجة طالعة برا حدود الهيدر (ارتفاعه 60 والقايمة نازلة لـ 190). أي رقم z-index مش هيحلها. الحل الوحيد هنا الطريقة ٢.
 
 ---
 
-## النشر على GitHub Pages
+## الخلاصة
 
-### ١. قلّد المسار الفرعي في المعمل
-
-صفحة مشروع على GitHub Pages بتتخدم تحت [[https://<اسمك>.github.io/<اسم-الريبو>/]]. [[serve.mjs]] بياخد الـ base كـ argument تاني:
-
-~~~bash Git Bash
-MSYS_NO_PATHCONV=1 node tools/serve.mjs 5180 /habba-landing/
-~~~
-
-~~~powershell PowerShell
-node tools/serve.mjs 5180 /habba-landing/
-~~~
-
-من غير [[MSYS_NO_PATHCONV=1]] في Git Bash، السيرفر طبع:
-
-~~~text
-http://127.0.0.1:5178C:/Program Files/Git/habba-landing/
-~~~
-
-Git Bash شاف argument بيبدأ بـ [[/]] واعتبره مسار لينكس وحوّله لمسار ويندوز جوه فولدر Git، فكل الطلبات بقت ٤٠٤.
-
-~~~text Playwright: كل طلب فشل والـ background بتاع الـ body
-http://127.0.0.1:5179/habba-landing/ → failed: 6 404 /css/tokens.css, 404 /css/site.css, 404 /css/form.css, 404 /img/hero-1200.webp, 404 /js/site.js, 404 /js/form.js | body bg: rgba(0, 0, 0, 0)
-http://127.0.0.1:5180/habba-landing/ → failed: 0  | body bg: rgb(251, 247, 242)
-~~~
-
-الأولى (مسارات [[/css/...]]) الصفحة طلعت نص أسود على أبيض من غير ولا ستايل ولا JS. النهائية (مسارات [[css/...]]) صفر.
-
-### ٢. git
-
-~~~bash
-git init -b main
-git add .
-git commit -m "habba landing page"
-~~~
-
-~~~text .gitignore
-node_modules/
-*.png
-~~~
-
-على ويندوز أول [[git add]] طلّع لكل ملف: [[warning: in the working copy of 'css/site.css', LF will be replaced by CRLF the next time Git touches it]]. ملف [[.gitattributes]] بيحل ده لكل الناس اللي هتشتغل على الريبو (مش إعداد على جهازك بس)، وبعده التحذير اختفى:
-
-~~~text .gitattributes
-* text=auto eol=lf
-*.webp binary
-*.jpg binary
-~~~
-
-[[eol=lf]]: كل الملفات النصية بـ LF في الريبو وفي الفولدر، و [[binary]] للصور عشان git ميحاولش يغيّر فيها حاجة.
-
-~~~text git log --stat (من المعمل، أول commit)
-e21993c habba landing page
- 25 files changed, 982 insertions(+)
-~~~
-
-### ٣. الريبو والـ Pages (من الوثائق)
-
-الخطوات دي **متشغّلتش في المعمل** عشان مفيش ريبو حقيقي يتعمل للدرس. هي من وثائق GitHub و [[gh]]:
-
-~~~bash
-gh auth login
-gh repo create habba-landing --public --source=. --push
-gh api -X POST "repos/{owner}/{repo}/pages" -f "source[branch]=main" -f "source[path]=/"
-gh api "repos/{owner}/{repo}/pages" --jq .html_url
-~~~
-
-- [[gh repo create ... --source=. --push]]: بيعمل الريبو على GitHub من الفولدر الحالي، ويضيف [[origin]]، ويرفع.
-- [[gh api -X POST .../pages]]: بيفعّل Pages من فرع [[main]] والجذر. ولو عملته من الموقع: Settings › Pages › Build and deployment › Source: Deploy from a branch › [[main]] و [[/ (root)]] › Save.
-- آخر أمر بيطبع الرابط. أول نشر بياخد دقيقة أو اتنين، وكل push بعد كده بينشر لوحده.
-- الفولدر [[tools/]] هيتنشر هو كمان (مفيهوش أسرار، فمفيش ضرر). لو عايز تنشر الصفحة بس: انقل الصفحة لفولدر [[site/]] وانشره بـ GitHub Actions ([[actions/upload-pages-artifact]] و [[actions/deploy-pages]]، من الوثائق).
-
-### ٤. CI (من الوثائق)
-
-~~~yaml .github/workflows/check.yml
-name: check
-on: push
-jobs:
-  check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-      - run: npm ci
-      - run: npm run lint
-      - run: node tools/serve.mjs 5173 &
-      - run: npm test
-~~~
-
-- [[npm ci]]: بيسطّب من [[package-lock.json]] بالظبط (نفس النسخ اللي اتقاست).
-- [[npm run lint]] = [[lint.mjs]] و [[contrast.mjs]]، من غير متصفح.
-- [[node tools/serve.mjs 5173 &]]: السيرفر في الخلفية في نفس الـ job، و [[npm test]] (الفورم والمصفوفة والـ a11y) بيكلمه.
-- [[playwright-core]] بـ [[channel: "chrome"]] محتاج Google Chrome متسطّب، وصور ubuntu في GitHub Actions فيها Chrome جاهز (حسب وثائق runner images). لو مش موجود: [[npx playwright install chrome]].
-
----
-
-## كل الغلطات اللي حصلت في الصفحة
-
-| # | الغلطة | الخطوة | اتمسكت بـ | قبل | بعد |
-|---|---|---|---|---|---|
-| ١ | الثيم في سكربت [[defer]] | الألوان والثيم | [[perf.mjs]] والصور متأخرة | الثيم بعد أول رسمة (وميض) | قبلها بـ ١٥٠ms |
-| ٢ | الغامق متجاهل إعداد الجهاز | الألوان والثيم | Chrome بـ [[colorScheme: dark]] | خلفية فاتحة | غامقة من غير JS |
-| ٣ | [[--muted]] فاتح | الألوان والثيم | axe و [[contrast.mjs]] | ٣٫٨٥ و ١٠ عناصر | ٦٫٤٢ |
-| ٤ | البراند تحت الأبيض | الألوان والثيم | [[contrast.mjs]] | ٤٫١٨ | ٥٫٦٤ |
-| ٥ | [[hidden]] مع [[display: flex]] | الـ header | سكربت على ٣٦٠ | القايمة مفتوحة ٢٢٦px | مقفولة |
-| ٦ | زجاج الـ header لونه ثابت | الـ header | axe في الغامق | ١٫٦٦ | صفر violations |
-| ٧ | [[const top]] في سكربت عادي | الـ header | Console | الملف كله واقف | module |
-| ٨ | صورة الـ hero من غير مقاس | الـ hero | [[perf.mjs]] والصور متأخرة | CLS ٠٫٠٩٥٧ | ٠ |
-| ٩ | media query قبل [[.btn]] | الـ header / المقاسات | [[matrix.mjs]] على ٣٢٠ | +٣١px | ٠ |
-| ١٠ | [[minmax(320px)]] في الأسعار | الأسعار | [[matrix.mjs]] على ٣٢٠ | [[article.plan 320px]] | ٠ |
-| ١١ | الإخفاء مع السكرول من غير [[.js]] | الحركة | JS ممنوع | ١٠ عناصر مخفية للأبد | ٠ |
-| ١٢ | الاسم العملاق فوق لينكات الـ footer | الـ footer | [[elementFromPoint]] | [[P.wordmark]] | [[A]] |
-| ١٣ | [[[0-9-]]] في الـ pattern | الفورم | Console و lint | [[123]] صح | مرفوض |
-| ١٤ | مسارات بتبدأ بـ [[/]] | النشر | سيرفر بـ base | ٦ طلبات ٤٠٤ | ٠ |
-
-وكمان من غير رقم واحد بس اتمسكوا: رسايل المتصفح الإنجليزي (اتقاست بالنص)، والأرقام العربي المرفوضة، و [[minlength]] مع القيمة من الكود، والحلقة اللي كانت لون حد بس (٥ خانات)، و [[favicon.ico]] الـ ٤٠٤ في الـ Console.
-
-**الطريقة اللي بتتكرر في الـ ١٤:** كل غلطة كانت «شغالة» على جهازي وفي الظرف العادي. اللي كشفها ظرف معيّن: مقاس أصغر بـ ٤٠ بكسل، أو صور متأخرة، أو الوضع الغامق، أو JS واقع، أو كيبورد عربي، أو مسار فرعي. فالاختبار الحقيقي = تعدّد الظروف، مش تكرار نفس الظرف.
-
----
-
-## بعد ما يخلص
-
-### بيكبر إزاي
-
-- **صفحات أكتر** (قصتنا، والباقات بالتفصيل، والمدونة): الـ header والـ footer هيتكرروا. لحد ٣ أو ٤ صفحات انسخهم، وبعد كده مولّد static (Astro أو Eleventy) بيعمل HTML من templates من غير ما يضيف JS للزائر.
-- **إنجليزي:** نفس الـ CSS بالظبط لأنه كله logical، وصفحة [[en/]] بـ [[lang="en" dir="ltr"]] و [[hreflang]] (مشروع «متوسط» في الوحدة).
-- **الفورم حقيقي:** API بيتحقق تاني ويحفظ (تاب «Backend بـ Node» أو «Python و FastAPI»)، وساعتها الصفحة على Pages والـ API على سيرفر، و CORS بيسمح للدومين بتاعك بس.
-- **أرقام اليوزرز الحقيقيين:** [[web-vitals]] بيبعت LCP و CLS و INP من الزوار لـ endpoint عندك، فتعرف الأداء في الميدان مش في المعمل بس. ومن غير cookies أو بيانات شخصية لو مش محتاجها.
-
-### بيتكلّف كام (تقريبًا، من صفحات الأسعار وقت الكتابة)
-
-| الحاجة | التكلفة |
+| | |
 |---|---|
-| GitHub Pages | ببلاش لريبو عام، وفيه حدود استخدام مكتوبة في الوثائق (حجم الموقع والترافيك الشهري) كفاية لصفحة زي دي بكتير |
-| دومين خاص ([[habba.example]] مثلًا بدومين حقيقي) | حوالي ١٠ لـ ٢٠ دولار في السنة حسب الامتداد، و Pages بيدعم دومين خاص و HTTPS ببلاش |
-| API للفورم على سيرفر صغير | من حوالي ٥ دولار في الشهر (VPS صغير)، أو ببلاش على خطط مجانية لخدمات serverless بحدود |
-| الإيميلات (تأكيد التسجيل) | خدمات الإيميل فيها خطط مجانية بعدد محدود في اليوم، وبعدها بالاستخدام |
+| مين بيعمل stacking context | positioned + z-index، و [[opacity]] أقل من 1، و [[transform]]، و [[filter]]، و [[isolation: isolate]]، و [[fixed]] و [[sticky]] |
+| الـ z-index بيتقارن مع مين | الإخوات جوه نفس الـ context بس |
+| القايمة مستخبية | ارفع الأب صاحب الـ context، أو portal |
+| القايمة مقصوصة | ده [[overflow]]، والحل portal بس |
 
-### خليه بتاعك
-
-- غيّر المحمصة لحاجة تعرفها (مشروع «فكرة» في الوحدة): الأقسام كأسئلة الزائر بتاعك انت.
-- غيّر الـ tokens بس وشوف الصفحة كلها بتتغيّر: براند جديد = ٢٠ سطر في ملف واحد، و [[contrast.mjs]] بيقولك لو حاجة وقعت.
-- زوّد قسم واحد مش موجود (عدّاد مشتركين بـ [[IntersectionObserver]]، أو مقارنة قبل وبعد بـ [[<input type="range">]] و [[clip-path]]) وطبّق عليه نفس القواعد: يشتغل من غير JS، ويحترم reduce، ويعدّي الـ ٦ أدوات.
-- اكتب README فيه جدول «قبل وبعد» للغلطات اللي قابلتك انت، بالأرقام. ده اللي بيفرّق الـ portfolio.
-
----
-
-## خلاصة
-
-- axe في كل الحالات (فاتح وغامق وموبايل وقايمة مفتوحة) **بعد** ما كل حاجة تظهر، ومعاه مشي بالكيبورد بيسأل عن الحلقة وعن [[elementFromPoint]]، وقفز للأقسام.
-- فحص HTML من غير متصفح بيمسك المسارات والـ pattern والـ labels والصور في ثانية.
-- اختبر أدوات القياس نفسها على نسخة مكسورة قبل ما تصدّق «صفر».
-- GitHub Pages = مسار فرعي، فمسارات نسبية واختبرها بسيرفر بـ base قبل النشر.`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صفحة تحت [[https://user.github.io/shop/]] فيها [[<img src="./img/a.webp">]] و [[<img src="img/b.webp">]] و [[<img src="/img/c.webp">]] و [[<img src="../img/d.webp">]]. كل واحدة هتطلب أنهي رابط بالظبط؟ وأنهي هتقع؟`, done: R`كتبت الأربعة: الأولى والتانية [[/shop/img/...]] (شغالين)، والتالتة [[/img/c.webp]] من جذر الدومين (٤٠٤)، والرابعة [[/img/d.webp]] برضه لأن [[..]] من [[/shop/]] بيطلع للجذر (٤٠٤). واتأكدت بـ [[new URL("../img/d.webp", "https://user.github.io/shop/").href]] في الـ Console.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** شغّل [[a11y.mjs]] على النسخة الأولى من أي صفحة عندك (أو ارجع [[--muted]] لـ [[#8f7f72]] و [[:focus]] لـ [[outline: none]]). صلّح كل violation بأقل تغيير، وسجّل قبل وبعد لكل واحدة في جدول.`, done: R`جدول فيه كل قاعدة ([[color-contrast]] وغيرها) وعدد العناصر قبل وبعد، و [[a11y.mjs]] بيخرج بـ 0 في الآخر، ومفيش تصليح بـ [[aria-hidden]] على حاجة مهمة عشان «axe يسكت».` },
-            { lvl: 'تطبيق', t: R`**اكتب اختبار:** زوّد على [[lint.mjs]] ٣ فحوصات: كل [[<a target="_blank">]] لازم عليه [[rel]] فيه [[noopener]]، وكل [[<img>]] جوه [[<picture>]] الـ [[sizes]] بتاعها زي الـ [[<source>]]، ومفيش [[tabindex]] أكبر من صفر. واعمل HTML فيه الـ ٣ غلطات وأثبت إن كل واحد بيقع لوحده.`, done: R`على [[index.html]] لسه [[0 problems]]، وعلى ملف الغلطات بيطبع ٣ [[FAIL]] مختلفين بالسبب، ولما تصلّح واحدة بتختفي هي بس.` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** امشي على الصفحة بقارئ شاشة حقيقي (NVDA على ويندوز أو VoiceOver على الماك أو TalkBack على أندرويد): افتح القايمة، وبدّل الأسعار للسنوي، وافتح سؤال، وابعت الفورم فاضي وصلّحه. اكتب كل جملة قالها في كل خطوة، وقارنها باللي توقعته من الكود.`, done: R`عندك جدول ٥ خطوات: اللي توقعته واللي اتقال فعلًا، وأي فرق (مثلًا ترتيب قراية [[aria-describedby]] أو إن [[role="alert"]] اتقري مرتين) مكتوب سببه وهل محتاج تصليح.` },
-            { lvl: 'تطبيق', t: R`**ابني:** workflow في GitHub Actions بيشغّل [[npm run lint]] على كل push، و [[npm test]] (والسيرفر في الخلفية)، ويرفع الصفحة على Pages بـ [[actions/deploy-pages]] بس لو الاتنين نجحوا. ريبو تجربة بتاعك.`, done: R`الـ workflow أخضر، والرابط شغال، ولما تعمل commit فيه [[minmax(320px, 1fr)]] الـ job يقع على [[matrix.mjs]] والنشر ميحصلش، والرابط يفضل على النسخة القديمة السليمة.` },
-            { lvl: 'سريع', t: R`**اشرحها:** زميلك قالك «axe قال صفر، يبقى الصفحة accessible». اكتبله ٣ سطور فيهم ٣ حاجات من المشروع ده axe مقالش عليها حاجة واتمسكت بطريقة تانية.`, done: R`الـ ٣ من الحاجات دي: الاسم العملاق فوق لينكات الـ footer ([[elementFromPoint]])، والكروت المخفية لو الـ JS وقع (اختبار JS ممنوع)، وحلقة الـ focus اللي كانت لون حد بس (مشي الكيبورد)، والقايمة اللي كانت مفتوحة على طول (سكربت على ٣٦٠).` },
+- متزوّدش أصفار: دوّر على الأب اللي عامل الـ context.`,
+          lines: [
+            "الهيدر عمل context بـ 1.",
+            "9999 بس جوه الهيدر، يعني بالنسبة للصفحة «1».",
+            "الهيرو 2 فبيغطّي الهيدر والقايمة."
           ],
-          ci: [
-            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`node`, run: R`const html = '<!doctype html><html lang="ar"><head><link rel="stylesheet" href="/css/site.css"><script src="/js/site.js" defer></script></head><body>' +
-  '<a href="#pricing">الأسعار</a><h1>بن طازة</h1><img src="/img/hero-1200.jpg" alt="فنجان قهوة">' +
-  '<form><input id="email" type="email" placeholder="الإيميل"><input id="phone" type="tel" pattern="(\\+20|0)1[0125][0-9-]{8,9}" aria-describedby="phone-err"><button>ابعت</button></form></body></html>';
-const tags = [...html.matchAll(/<([a-z][a-z0-9]*)\b([^>]*)>/gi)].map((m) => {
-  const attrs = {};
-  for (const a of m[2].matchAll(/([:\w-]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>]+)))?/g)) attrs[a[1].toLowerCase()] = a[2] ?? a[3] ?? a[4] ?? "";
-  return { tag: m[1].toLowerCase(), attrs };
-});
-const problems = [];
-const ids = new Set(tags.map((t) => t.attrs.id).filter(Boolean));
-const root = tags.find((t) => t.tag === "html");
-if (!root.attrs.lang || !root.attrs.dir) problems.push("html needs lang and dir");
-const forIds = new Set(tags.filter((t) => t.tag === "label" && t.attrs.for).map((t) => t.attrs.for));
-for (const t of tags) {
-  const a = t.attrs;
-  if (a.href?.startsWith("#") && a.href.length > 1 && !ids.has(a.href.slice(1))) problems.push("link to " + a.href + " has no target");
-  if (a["aria-describedby"]) for (const id of a["aria-describedby"].split(/\s+/)) if (!ids.has(id)) problems.push("aria-describedby points to missing " + id);
-  if (t.tag === "input" && !((a.id && forIds.has(a.id)) || a["aria-label"])) problems.push("input #" + a.id + " has no label");
-  if (a.pattern !== undefined) { try { new RegExp("^(?:" + a.pattern + ")$", "v"); } catch { problems.push("pattern breaks with the v flag: " + a.pattern); } }
-  if (t.tag === "img" && (!a.width || !a.height)) problems.push("img without width/height: " + a.src);
-  if (t.tag === "button" && !a.type) problems.push("button without type");
-  for (const k of ["href", "src"]) if (a[k]?.startsWith("/") && !a[k].startsWith("//")) problems.push(k + "=" + a[k] + " breaks under /repo-name/");
-}
-for (const p of problems) console.log("FAIL " + p);
-console.log(problems.length + " problems");
-console.log("resolved: " + new URL("css/site.css", "https://user.github.io/habba-landing/").pathname + " vs " + new URL("/css/site.css", "https://user.github.io/habba-landing/").pathname);`, expect: [R`FAIL html needs lang and dir`, R`FAIL href=/css/site.css breaks under /repo-name/`, R`FAIL link to #pricing has no target`, R`FAIL img without width/height: /img/hero-1200.jpg`, R`FAIL input #email has no label`, R`FAIL aria-describedby points to missing phone-err`, R`FAIL pattern breaks with the v flag: (\+20|0)1[0125][0-9-]{8,9}`, R`FAIL button without type`, R`11 problems`, R`resolved: /habba-landing/css/site.css vs /css/site.css`] },
-          ],
-        },
+          sol: R`الطريقتين وإيه اللي هتشوفه: الأولى ترفع الهيدر: [[.header { z-index: 3 }]] (أي رقم أكبر من 2). القايمة بتظهر فوق الهيرو، بس خلي بالك إن الهيدر كله بقى فوق الهيرو، فلو الهيرو فيه حاجة المفروض تطلع فوق الهيدر (زي صورة طالعة لفوق) مش هتعرف. الطريقة التانية تطلّع القايمة من الهيدر في الـ DOM (بـ [[createPortal]] لـ [[document.body]] في React، أو تحط العنصر آخر الـ body)، وتحسب مكانها بـ JavaScript أو بـ CSS anchor positioning. ساعتها الـ 9999 بتاعتها بتتقارن مع الهيرو مباشرة وتكسب، والهيدر بيفضل 1.
+
+الشرح النموذجي: «z-index بيتقارن بس بين الإخوات جوه نفس الـ stacking context. الهيدر بـ [[position]] و [[z-index: 1]] عمل context، فكل اللي جواه، حتى لو 9999، بيترسم كوحدة واحدة على مستوى 1، والهيرو على مستوى 2. الرفع بيغيّر ترتيب الوحدة كلها، والنقل بيطلّع القايمة من الوحدة خالص.» وده السبب إن Radix و shadcn بيحطوا الـ dropdown والـ dialog في Portal.
+
+وقول إن فيه حاجات تانية بتعمل context من غير z-index: [[opacity]] أقل من 1، و [[transform]]، و [[filter]]، و [[isolation: isolate]]، و [[position: fixed]] و [[sticky]]. ولو القايمة بتتقص مش بتستخبى، يبقى ده [[overflow: hidden]] على الهيدر مش z-index، وده حلّه النقل بس.`,
+          solCode: R`/* الطريقة 1: ارفع الـ context كله */
+.header { position: relative; z-index: 3; }
+.header .menu { position: absolute; z-index: 9999; }
+.hero { position: relative; z-index: 2; }
+
+/* الطريقة 2: القايمة برا الهيدر في الـ DOM (Portal) */
+/* <body> <header class="header">...</header> <main class="hero">...</main> <div class="menu">...</div> </body> */
+.header { position: relative; z-index: 1; }
+.menu { position: fixed; top: 4rem; inset-inline-start: 1rem; z-index: 50; }
+.hero { position: relative; z-index: 2; }`
+        }
       ]
     }
 ]);

@@ -17,11 +17,259 @@ MORE("css", [
           cmd: "aria",
           title: "لما HTML لوحده ميكفيش: قول لقارئ الشاشة الحالة",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** إيه الـ role والاسم، وهل بيتوصل بـ Tab، لكل واحد: [[<button aria-label="القايمة"><svg aria-hidden="true">…</svg></button>]]، و [[<div role="button">حفظ</div>]]، و [[<a>الأسعار</a>]] من غير href، و [[<img src="logo.png" alt="">]]. اكتب، وبعدين افتح DevTools › Elements › Accessibility لكل واحد.`, done: R`الأول button اسمه «القايمة» وبيتوصل، والتاني button اسمه «حفظ» بس مش بيتوصل بـ Tab ولا Enter بيشغّله، والتالت مش link أصلًا (generic) ومش بيتوصل، والرابع ignored (زخرفة). وفهمت ليه [[<button>]] أحسن من [[role="button"]].` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة عربي فيها زرار تغيير اللغة بـ [[aria-label="Switch language"]] إنجليزي، وزرار منيو موبايل من غير [[aria-expanded]]، وأزرار مشاركة جواها emoji بس، وحالة الطلب بتتعرض بنقطة حمرا أو خضرا من غير كلام. صلّح الأربعة.`, done: R`الـ labels بقت عربي، و [[aria-expanded]] بيتقلب [[true]] و [[false]] مع الفتح والقفل، والـ emoji عليها [[aria-hidden]] والزرار ليه اسم، والحالة جنبها كلمة («اتشحن»)، و axe صفر مشاكل.` },
-            { lvl: 'تطبيق', t: R`**ابني:** نظام toast: حاوية [[<div role="status" aria-live="polite">]] موجودة فاضية في الصفحة من أول ما تفتح، ورسالة «اتحفظ» بتتحط جواها بعد الحفظ وتختفي بعد ٤ ثواني، ورسايل الخطأ في حاوية تانية [[role="alert"]].`, done: R`NVDA أو Narrator بيقول «اتحفظ» من غير ما الـ focus يتحرك ([[document.activeElement]] قبل وبعد نفس العنصر)، والخطأ بيتقري على طول حتى لو فيه كلام شغال. وجرّبت تعمل الحاوية والرسالة مع بعض في نفس اللحظة ولاحظت إن القارئ ممكن ميقولش حاجة، فعرفت ليه الحاوية لازم تبقى موجودة قبل الرسالة.` },
-            { lvl: 'تطبيق', t: R`**اكتب اختبار:** بـ Testing Library اكتب اختبار لزرار المنيو: [[getByRole("button", { name: "القايمة" })]]، واضغط عليه بـ user-event، واتأكد إن [[aria-expanded]] بقى [[true]] وإن [[getByRole("navigation")]] ظاهرة، واضغط تاني واتأكد إنها اتقفلت.`, done: R`الاختبار بيعدّي، ولو مسحت [[aria-label]] أو [[aria-expanded]] من الكود بيقع برسالة واضحة (مش لاقي الزرار أو القيمة غلط).` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** من WAI-ARIA Authoring Practices (APG) قارن نمط «Disclosure» بنمط «Menu Button». أنهي واحد المفروض لزرار منيو الموقع؟ وليه [[role="menu"]] غلط هنا؟`, done: R`كتبت ٣ سطور: Disclosure زرار بـ [[aria-expanded]] و Enter أو Space بيفتح، و Menu Button بيطلب أسهم و Home و End وهو لمنيوهات البرامج (زي File و Edit)، فمنيو لينكات الموقع Disclosure، و [[role="menu"]] بيخلّي القارئ يستنى أسهم مش موجودة.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** إيه الـ role والاسم، وهل بيتوصل بـ Tab، لكل واحد: [[<button aria-label="القايمة"><svg aria-hidden="true">…</svg></button>]]، و [[<div role="button">حفظ</div>]]، و [[<a>الأسعار</a>]] من غير href، و [[<img src="logo.png" alt="">]]. اكتب، وبعدين افتح DevTools › Elements › Accessibility لكل واحد.`, done: R`الأول button اسمه «القايمة» وبيتوصل، والتاني button اسمه «حفظ» بس مش بيتوصل بـ Tab ولا Enter بيشغّله، والتالت مش link أصلًا (generic) ومش بيتوصل، والرابع ignored (زخرفة). وفهمت ليه [[<button>]] أحسن من [[role="button"]].`, sol: R`~~~html test.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>مين اسمه إيه؟</title></head>
+<body>
+<main>
+  <h1>شجرة الـ accessibility</h1>
+  <button id="one" aria-label="القايمة"><svg aria-hidden="true" width="16" height="16"><path d="M0 8h16"/></svg></button>
+  <div id="two" role="button">حفظ</div>
+  <a id="three">الأسعار</a>
+  <img id="four" src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" alt="">
+</main>
+</body>
+</html>
+~~~
+
+**الإجابة:**
+
+| العنصر | الـ role | الاسم | Tab؟ |
+|---|---|---|---|
+| [[<button aria-label>]] | button | القايمة | أيوه |
+| [[<div role="button">]] | button | حفظ | لأ |
+| [[<a>]] من غير href | generic | فاضي | لأ |
+| [[<img alt="">]] | ignored | مفيش | لأ |
+
+**ليه:**
+
+- [[role="button"]] بيغيّر اللي القارئ بيقوله بس. مبيديش Tab ولا Enter ولا Space ولا click بالكيبورد. لازم تضيف [[tabindex="0"]] و [[keydown]] بإيدك.
+- [[<a>]] من غير [[href]] مش لينك، ده مجرد نص.
+- [[alt=""]] معناها «زينة، اتجاهلها». وده مختلف عن مفيش [[alt]] خالص.
+
+**الغلطة الشائعة:** تثق في الـ role وتنسى الكيبورد. [[<button>]] بيجيب كل ده ببلاش، فمفيش سبب لـ [[div]].
+
+~~~text الناتج
+#one    role button    name «القايمة»
+#two    role button    name «حفظ»
+#three  role generic   name فاضي
+#four   ignored
+
+Tab: one ، BODY ، one ، BODY   (الزرار الحقيقي بس)
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة عربي فيها زرار تغيير اللغة بـ [[aria-label="Switch language"]] إنجليزي، وزرار منيو موبايل من غير [[aria-expanded]]، وأزرار مشاركة جواها emoji بس، وحالة الطلب بتتعرض بنقطة حمرا أو خضرا من غير كلام. صلّح الأربعة.`, done: R`الـ labels بقت عربي، و [[aria-expanded]] بيتقلب [[true]] و [[false]] مع الفتح والقفل، والـ emoji عليها [[aria-hidden]] والزرار ليه اسم، والحالة جنبها كلمة («اتشحن»)، و axe صفر مشاكل.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>طلباتي</title>
+<style>
+  .dot { display: inline-block; width: .75rem; height: .75rem; border-radius: 50%; background: #16a34a; }
+</style>
+</head>
+<body>
+<header>
+  <button aria-label="EN: بدّل اللغة للإنجليزية">EN</button>
+  <button id="menu-btn" aria-label="القايمة" aria-expanded="false" aria-controls="menu">☰</button>
+  <nav id="menu" aria-label="الرئيسية" hidden><a href="/">الرئيسية</a></nav>
+</header>
+<main>
+  <h1>طلباتي</h1>
+  <button aria-label="شارك على واتساب"><span aria-hidden="true">📤</span></button>
+  <button aria-label="انسخ الرابط"><span aria-hidden="true">🔗</span></button>
+  <p>طلب 1042 <span class="dot" aria-hidden="true"></span> اتشحن</p>
+</main>
+<script>
+  const btn = document.getElementById("menu-btn");
+  const menu = document.getElementById("menu");
+  btn.addEventListener("click", () => {
+    const open = btn.getAttribute("aria-expanded") === "true";
+    btn.setAttribute("aria-expanded", String(!open));
+    menu.hidden = open;
+  });
+$__lt/script>
+</body>
+</html>
+~~~
+
+| المشكلة | التصليح |
+|---|---|
+| [[aria-label="Switch language"]] | اسم عربي، وفيه [[EN]] المكتوبة على الزرار |
+| منيو من غير حالة | [[aria-expanded]] و [[aria-controls]]، والـ JavaScript بيقلبها |
+| زرار جواه emoji | [[aria-label]] وصفي، و [[aria-hidden="true"]] على الـ emoji |
+| نقطة لون | كلمة «اتشحن» جنبها، والنقطة [[aria-hidden]] |
+
+**ليه كل واحدة مشكلة:** قارئ الشاشة بيقرا الـ label باللغة العربي بصوت عربي، فالإنجليزي بيطلع مكسّر. والـ emoji بيتقري «outbox tray»، وده مش بيقول الزرار بيعمل إيه. واللون لوحده مش بيوصل لمستخدم القارئ ولا لمن عنده عمى ألوان.
+
+**ليه [[EN]] جوه الـ label:** أول تصليح كتبت فيه «بدّل اللغة للإنجليزية» بس، و axe طلّع [[label-content-name-mismatch]]. اللي بيستخدم التحكم بالصوت بيقول اللي شايفه: «EN»، فلازم الاسم يحتوي الكلام الظاهر (بند 2.5.3).
+
+**الغلطة الشائعة:** تثق إن axe شاف كل ده. على الصفحة البايظة طلّع مشكلة واحدة بس، والمشاكل التانية محتاجة عين بني آدم.
+
+~~~text الناتج
+axe على البايظة:  label-content-name-mismatch (1)
+axe بعد التصليح:  صفر (والمنيو مفتوح برضه)
+
+aria-expanded:  false ← true ← false
+
+ariaSnapshot:
+- button "القايمة": ☰
+- heading "طلباتي" [level=1]
+- button "شارك على واتساب"
+- button "انسخ الرابط"
+- paragraph: طلب 1042 اتشحن
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** نظام toast: حاوية [[<div role="status" aria-live="polite">]] موجودة فاضية في الصفحة من أول ما تفتح، ورسالة «اتحفظ» بتتحط جواها بعد الحفظ وتختفي بعد ٤ ثواني، ورسايل الخطأ في حاوية تانية [[role="alert"]].`, done: R`NVDA أو Narrator بيقول «اتحفظ» من غير ما الـ focus يتحرك ([[document.activeElement]] قبل وبعد نفس العنصر)، والخطأ بيتقري على طول حتى لو فيه كلام شغال. وجرّبت تعمل الحاوية والرسالة مع بعض في نفس اللحظة ولاحظت إن القارئ ممكن ميقولش حاجة، فعرفت ليه الحاوية لازم تبقى موجودة قبل الرسالة.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Toast</title>
+<style>
+  body { font-family: system-ui, sans-serif; padding: 1rem; }
+  .toasts { position: fixed; inset-block-end: 1rem; inset-inline-end: 1rem; display: grid; gap: .5rem; }
+  .toasts p { margin: 0; padding: .75rem 1rem; border-radius: .5rem; background: #0f172a; color: #fff; }
+  #errors p { background: #b91c1c; }
+</style>
+</head>
+<body>
+<main>
+  <h1>إعدادات الحساب</h1>
+  <label for="name">الاسم</label>
+  <input id="name" value="سارة">
+  <button id="save" type="button">احفظ</button>
+  <button id="fail" type="button">جرّب خطأ</button>
+</main>
+
+<!-- الحاويتين موجودين فاضيين من أول ما الصفحة تفتح -->
+<div id="status" class="toasts" role="status" aria-live="polite"></div>
+<div id="errors" class="toasts" role="alert"></div>
+
+<script>
+  function toast(box, text, ms = 4000) {
+    const p = document.createElement("p");
+    p.textContent = text;
+    box.append(p);
+    if (ms) setTimeout(() => p.remove(), ms);
+  }
+  document.getElementById("save").onclick = () => toast(document.getElementById("status"), "اتحفظ");
+  document.getElementById("fail").onclick = () => toast(document.getElementById("errors"), "الحفظ فشل، جرّب تاني", 0);
+$__lt/script>
+</body>
+</html>
+~~~
+
+**ليه الحاوية موجودة من الأول:** قارئ الشاشة بيبدأ يراقب الـ live region لما يشوفه في الصفحة. لو الحاوية والرسالة اتحطوا مع بعض في نفس اللحظة، ممكن ميعتبرش ده «تغيير» فميقولش حاجة.
+
+- [[role="status"]] مع [[aria-live="polite"]]: بيستنى لحد ما القارئ يخلص جملته، مناسب لـ «اتحفظ».
+- [[role="alert"]]: بيقطع الكلام، للأخطاء بس.
+- الـ focus متحركش: المستخدم بيكمل شغله.
+- [[ms = 0]] للخطأ: مبيختفيش لوحده، عشان يلحق يقراه.
+
+**اتجرّب بإيه:** DOM والـ focus في Chrome. النطق نفسه محتاج NVDA أو Narrator، فشغّله بنفسك على صفحتك. ده مكنش ممكن في المعمل الأوتوماتيك.
+
+**الغلطة الشائعة:** تستخدم [[role="alert"]] لكل حاجة، فكل رسالة بسيطة تقطع القارئ.
+
+~~~text الناتج
+activeElement قبل وبعد الحفظ: name (نفس الحقل)
+#status بعد الضغطة: «اتحفظ»
+#status بعد 4.2 ثانية: فاضي
+#errors: «الحفظ فشل، جرّب تاني» (بيفضل)
+axe صفر
+~~~` },
+            { lvl: 'تطبيق', t: R`**اكتب اختبار:** بـ Testing Library اكتب اختبار لزرار المنيو: [[getByRole("button", { name: "القايمة" })]]، واضغط عليه بـ user-event، واتأكد إن [[aria-expanded]] بقى [[true]] وإن [[getByRole("navigation")]] ظاهرة، واضغط تاني واتأكد إنها اتقفلت.`, done: R`الاختبار بيعدّي، ولو مسحت [[aria-label]] أو [[aria-expanded]] من الكود بيقع برسالة واضحة (مش لاقي الزرار أو القيمة غلط).`, sol: R`~~~jsx Menu.jsx
+import { useState } from "react";
+
+export function Menu() {
+  const [open, setOpen] = useState(false);
+  return (
+    <header>
+      <button aria-label="القايمة" aria-expanded={open} aria-controls="menu" onClick={() => setOpen(!open)}>☰</button>
+      {open && (
+        <nav id="menu" aria-label="الرئيسية">
+          <a href="/">الرئيسية</a>
+        </nav>
+      )}
+    </header>
+  );
+}
+~~~
+
+~~~jsx Menu.test.jsx
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { expect, test } from "vitest";
+import "@testing-library/jest-dom/vitest";
+import { Menu } from "./Menu";
+
+test("زرار القايمة بيفتح ويقفل", async () => {
+  const user = userEvent.setup();
+  render(<Menu />);
+
+  const button = screen.getByRole("button", { name: "القايمة" });
+  expect(button).toHaveAttribute("aria-expanded", "false");
+  expect(screen.queryByRole("navigation")).not.toBeInTheDocument();
+
+  await user.click(button);
+  expect(button).toHaveAttribute("aria-expanded", "true");
+  expect(screen.getByRole("navigation")).toBeVisible();
+
+  await user.click(button);
+  expect(button).toHaveAttribute("aria-expanded", "false");
+  expect(screen.queryByRole("navigation")).not.toBeInTheDocument();
+});
+~~~
+
+~~~js vitest.config.mjs
+import { defineConfig } from "vitest/config";
+import react from "@vitejs/plugin-react";
+
+export default defineConfig({
+  plugins: [react()],
+  test: { environment: "jsdom" },
+});
+~~~
+
+~~~bash
+npm i -D vitest jsdom @vitejs/plugin-react @testing-library/react @testing-library/dom @testing-library/user-event @testing-library/jest-dom
+npx vitest run
+~~~
+
+**ليه [[getByRole]]:** بيدوّر زي ما قارئ الشاشة بيشوف. لو الزرار فقد اسمه، الاختبار يقع، فالاختبار بيحرس الـ accessibility كمان.
+
+- [[queryByRole]] لما بنتأكد إن حاجة **مش** موجودة: بيرجع [[null]]، أما [[getByRole]] بيرمي error.
+- [[userEvent]] بدل [[fireEvent]]: بيعمل تسلسل حقيقي (hover و focus و click).
+
+**الغلطة الشائعة:** تعمل [[expect(button.getAttribute("aria-expanded")).toBe(true)]]. الـ attribute نص، فالمقارنة بـ [[true]] هتقع.
+
+~~~text الناتج
+Test Files  1 passed (1)
+     Tests  1 passed (1)
+
+لما شلت aria-label:
+TestingLibraryElementError: Unable to find an accessible element
+with the role "button" and name "القايمة"
+
+لما شلت aria-expanded:
+Error: expect(element).toHaveAttribute("aria-expanded", "false")
+Expected the element to have attribute: aria-expanded="false"
+~~~` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** من WAI-ARIA Authoring Practices (APG) قارن نمط «Disclosure» بنمط «Menu Button». أنهي واحد المفروض لزرار منيو الموقع؟ وليه [[role="menu"]] غلط هنا؟`, done: R`كتبت ٣ سطور: Disclosure زرار بـ [[aria-expanded]] و Enter أو Space بيفتح، و Menu Button بيطلب أسهم و Home و End وهو لمنيوهات البرامج (زي File و Edit)، فمنيو لينكات الموقع Disclosure، و [[role="menu"]] بيخلّي القارئ يستنى أسهم مش موجودة.`, sol: R`**إجابة نموذجية من WAI-ARIA Authoring Practices (APG):**
+
+> **Disclosure:** زرار عليه [[aria-expanded]] و [[aria-controls]] بيفتح ويقفل قسم. Enter و Space بيقلبوه، والـ Tab العادي بيمشي على اللينكات جواه.
+> **Menu Button:** زرار بيفتح [[role="menu"]] فيه [[menuitem]]. الأسهم بتتنقل، و Home و End لأول وآخر عنصر، و Escape بيقفل. ده سلوك منيوهات البرامج زي File و Edit.
+> منيو لينكات الموقع Disclosure. [[role="menu"]] هنا غلط لأنه بيوعد القارئ بسلوك برنامج، فالمستخدم يدوّس أسهم ومفيش حاجة تتحرك، ولينكات الـ Tab بتختفي من الترتيب المعتاد.
+
+**شكل الـ Disclosure في الكود:** زرار [[aria-expanded]] و [[aria-controls]] زي الـ navbar في حل تمرين [[variants]]، ولينكات عادية جوه [[<nav>]].
+
+**الغلطة الشائعة:** تشوف كلمة «menu» وتحط [[role="menu"]]. الكلمة في الديزاين مش معناها الـ role. لو الصفحة موقع، خليه [[<nav>]] فيه لينكات.
+
+~~~text الناتج
+القرار: Disclosure.
+(إجابة من الوثائق، مش ناتج تشغيل.)
+~~~` },
           ],
           desc: R`القاعدة الأولى: لو فيه عنصر HTML بيعمل الحاجة، استخدمه ومتحطش aria. [[<button>]] أحسن من [[<div role="button">]].
 
@@ -219,12 +467,273 @@ status live="polite" atomic=true relevant="additions text"
           cmd: "focus-visible",
           title: "الموقع بيشتغل بالكيبورد لوحده؟",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[:focus-visible]] هيطابق ولا لأ في الحالات دي: دوست على [[<button>]] بالماوس، ودوست على [[<input>]] بالماوس، ووصلت للزرار بـ Tab؟ اكتب، وبعدين جرّب بـ [[document.activeElement.matches(":focus-visible")]] في الكونسول.`, done: R`الزرار بالماوس [[false]]، والـ input بالماوس [[true]] (حقول الكتابة بتبيّن الـ focus دايمًا)، والزرار بـ Tab [[true]]. اتقاس كده في Chrome 156.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الموقع فيه [[*:focus { outline: none }]] عشان «شكله وحش»، وفيه [[:focus-visible { border-radius: 4px }]] بيغيّر شكل الزراير المدورة وقت الـ focus. شيل الاتنين واعمل حلقة focus واحدة بتبان على الفاتح والغامق: [[outline: 2px solid var(--ring)]] و [[outline-offset: 2px]].`, done: R`Tab على كل عنصر بيطلّع حلقة 2px أو أكتر، تباينها مع اللي جنبها 3:1 أو أكتر في الثيمين (من مربع اللون في DevTools)، وشكل الزرار المدوّر مبيتغيرش، وبالماوس مفيش حلقة على الزراير.` },
-            { lvl: 'تطبيق', t: R`**ابني:** skip link و [[<main id="main" tabindex="-1">]] في صفحة طويلة بهيدر sticky ارتفاعه 64px. امشي بـ Tab لتحت: لينكات بتستخبى تحت الهيدر. صلّحها بـ [[scroll-padding-top: 72px]] على html (WCAG 2.4.11 Focus Not Obscured).`, done: R`أول Tab بيطلّع لينك التخطي و Enter بينقل الـ focus لـ main، ولما تمشي بـ Tab للآخر [[document.activeElement.getBoundingClientRect().top]] دايمًا أكبر من 64، يعني مفيش عنصر عليه focus تحت الهيدر.` },
-            { lvl: 'تطبيق', t: R`**ابني:** مودال بـ [[<dialog>]] و [[showModal()]]: فيه حقل وزرار «قفل». افتحه بزرار، وامشي جواه بـ Tab، واقفله بـ Escape.`, done: R`أول ما يفتح الـ focus على الحقل، و Tab بيلف بين الحقل والزرار (وممكن يعدّي على شريط المتصفح) ومبيوصلش لأي عنصر ورا المودال، وبعد Escape [[document.activeElement]] هو زرار الفتح. اتقاس في Chrome 156: الترتيب حقل ← قفل ← المتصفح ← حقل، وبعد Escape رجع للزرار.` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صفحة فيها بالترتيب: [[<button>]] ثم [[<input>]] ثم [[<div tabindex="2">]] ثم [[<div tabindex="1">]] ثم [[<a href="#">]]. ترتيب Tab هيبقى إيه؟ وليه الـ tabindex الموجب ممنوع تقريبًا؟`, done: R`الترتيب: [[tabindex="1"]] ثم [[tabindex="2"]] ثم الزرار ثم الـ input ثم اللينك (الموجب بيتنط قبل كل الصفحة)، واتأكدت بالضغط على Tab. وكتبت إن الحل [[0]] أو [[-1]] بس، والترتيب ييجي من ترتيب الـ HTML.` },
-            { lvl: 'تحدي', t: R`**مسألة:** mega menu بيفتح بـ [[:hover]] بس، فبالكيبورد اللينكات اللي جواه مخفية ومبتتوصلش. خليه يفتح بالكيبورد كمان من غير JavaScript بـ [[:focus-within]]، ويفضل مفتوح وانت ماشي جواه بـ Tab، ويتقفل لما تخرج منه.`, done: R`بالماوس بعيد: Tab على عنوان القسم بيفتح المنيو، و Tab جواه بيعدّي على كل لينك وهو باين، و Tab بعد آخر لينك بيقفله. والـ outline باين على كل لينك.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[:focus-visible]] هيطابق ولا لأ في الحالات دي: دوست على [[<button>]] بالماوس، ودوست على [[<input>]] بالماوس، ووصلت للزرار بـ Tab؟ اكتب، وبعدين جرّب بـ [[document.activeElement.matches(":focus-visible")]] في الكونسول.`, done: R`الزرار بالماوس [[false]]، والـ input بالماوس [[true]] (حقول الكتابة بتبيّن الـ focus دايمًا)، والزرار بـ Tab [[true]]. اتقاس كده في Chrome 156.`, sol: R`~~~html test.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>focus-visible</title></head>
+<body>
+<main>
+  <h1>مين بيطابق؟</h1>
+  <button id="b">زرار</button>
+  <input id="i" aria-label="حقل">
+</main>
+</body>
+</html>
+~~~
+
+~~~js console
+document.activeElement.matches(":focus-visible")
+~~~
+
+**الإجابة:** زرار بالماوس [[false]]، و input بالماوس [[true]]، وزرار بـ Tab [[true]].
+
+**المنطق:** المتصفح بيسأل «المستخدم محتاج يعرف الـ focus فين؟». اللي ضغط زرار بالماوس عارف، فمفيش حلقة. أما حقل الكتابة فهيكتب جواه، فلازم يعرف. والكيبورد دايمًا محتاج.
+
+**الغلطة الشائعة:** تفتكر إن [[:focus-visible]] معناها «كيبورد بس». الـ input بالماوس بيطابق كمان، وده صح.
+
+~~~text الناتج
+زرار بالماوس:   false
+input بالماوس:  true
+زرار بـ Tab:    true
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الموقع فيه [[*:focus { outline: none }]] عشان «شكله وحش»، وفيه [[:focus-visible { border-radius: 4px }]] بيغيّر شكل الزراير المدورة وقت الـ focus. شيل الاتنين واعمل حلقة focus واحدة بتبان على الفاتح والغامق: [[outline: 2px solid var(--ring)]] و [[outline-offset: 2px]].`, done: R`Tab على كل عنصر بيطلّع حلقة 2px أو أكتر، تباينها مع اللي جنبها 3:1 أو أكتر في الثيمين (من مربع اللون في DevTools)، وشكل الزرار المدوّر مبيتغيرش، وبالماوس مفيش حلقة على الزراير.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>حلقة focus</title>
+<style>
+  :root { --bg: #ffffff; --fg: #0f172a; --ring: #0f766e; color-scheme: light; }
+  :root[data-theme="dark"] { --bg: #0b1120; --fg: #f1f5f9; --ring: #2dd4bf; color-scheme: dark; }
+  body { margin: 0; padding: 2rem; background: var(--bg); color: var(--fg); font-family: system-ui, sans-serif; }
+  :focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+  .pill { padding: .5rem 1.25rem; border: 1px solid currentColor; border-radius: 999px; background: none; color: inherit; font: inherit; }
+</style>
+</head>
+<body>
+<main>
+  <h1>الحلقة</h1>
+  <button class="pill" id="a">زرار مدوّر</button>
+  <a id="b" href="#x">لينك</a>
+</main>
+</body>
+</html>
+~~~
+
+**ليه شغال:**
+
+- [[:focus-visible]] بيغطي كل عنصر، فمش محتاج تكتبها لكل كومبوننت.
+- [[--ring]] توكن ليه قيمة لكل ثيم.
+- [[outline]] مبيغيّرش الـ layout، و [[outline-offset]] بيبعّده عشان يبان.
+- مسحنا [[border-radius]] من قاعدة الـ focus، فالـ pill فضل مدوّر. و [[outline]] في المتصفحات الحديثة بيتبع الـ radius.
+- مسحنا [[*:focus { outline: none }]] خالص. دي كانت بتشيل الحلقة من كل الناس.
+
+**التباين:** 3:1 مطلوب بين الحلقة واللي حواليها (بند 1.4.11): [[#0f766e]] على الأبيض 5.47، و [[#2dd4bf]] على الغامق 10.12.
+
+**الغلطة الشائعة:** تسيب [[outline: none]] وتضيف [[box-shadow]] بس. الظل بيختفي في وضع Forced Colors بتاع ويندوز، و outline لأ.
+
+~~~text الناتج
+Tab على الزرار:   solid 2px ، offset 2px ، rgb(15, 118, 110) ، radius 999px
+Tab على اللينك:   solid 2px ، offset 2px ، rgb(15, 118, 110)
+ضغطة ماوس:        outline-style none ، radius 999px
+الثيم الغامق:     solid 2px ، rgb(45, 212, 191)
+axe صفر
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** skip link و [[<main id="main" tabindex="-1">]] في صفحة طويلة بهيدر sticky ارتفاعه 64px. امشي بـ Tab لتحت: لينكات بتستخبى تحت الهيدر. صلّحها بـ [[scroll-padding-top: 72px]] على html (WCAG 2.4.11 Focus Not Obscured).`, done: R`أول Tab بيطلّع لينك التخطي و Enter بينقل الـ focus لـ main، ولما تمشي بـ Tab للآخر [[document.activeElement.getBoundingClientRect().top]] دايمًا أكبر من 64، يعني مفيش عنصر عليه focus تحت الهيدر.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>سكرول تحت هيدر ثابت</title>
+<style>
+  html { scroll-padding-top: 72px; }
+  body { margin: 0; font-family: system-ui, sans-serif; }
+  .skip { position: absolute; inset-inline-start: 1rem; inset-block-start: -4rem; z-index: 2; padding: .5rem 1rem; background: #fff; }
+  .skip:focus { inset-block-start: .5rem; }
+  header { position: sticky; top: 0; z-index: 1; height: 64px; display: flex; align-items: center; gap: 1rem; padding-inline: 1rem; background: #0f172a; }
+  header a { color: #fff; }
+  main { padding: 1rem; }
+  main:focus { outline: none; }
+  p { margin-block: 2.5rem; }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">اتخطى للمحتوى</a>
+<header><a href="/">الرئيسية</a><a href="/about">عن الموقع</a></header>
+<main id="main" tabindex="-1">
+  <h1>المقال</h1>
+  <p><a href="#1">لينك 1</a></p><p><a href="#2">لينك 2</a></p><p><a href="#3">لينك 3</a></p><p><a href="#4">لينك 4</a></p>
+  <p><a href="#5">لينك 5</a></p><p><a href="#6">لينك 6</a></p><p><a href="#7">لينك 7</a></p><p><a href="#8">لينك 8</a></p>
+  <p><a href="#9">لينك 9</a></p><p><a href="#10">لينك 10</a></p><p><a href="#11">لينك 11</a></p><p><a href="#12">لينك 12</a></p>
+</main>
+</body>
+</html>
+~~~
+
+**ليه شغال:**
+
+- **لينك التخطي:** مستخبي فوق الشاشة وبيظهر مع [[:focus]]، وأول Tab بيوصله. Enter بينقل الـ focus لـ [[main]]، و [[tabindex="-1"]] بيخلي العنصر ياخد focus بالكود من غير ما يدخل ترتيب Tab.
+- **[[scroll-padding-top: 72px]]:** المتصفح لما يعمل scroll لعنصر عليه focus بيسيب 72px فاضية فوق: ارتفاع الهيدر 64 وهامش 8.
+
+المشكلة بتبان أكتر لما ترجع بـ Shift+Tab: العنصر بيطلع من فوق، تحت الهيدر.
+
+**الغلطة الشائعة:** تجرّب لتحت بس. Tab لقدام غالبًا بيخلي العنصر تحت، و Shift+Tab هو اللي بيكشف المشكلة.
+
+~~~text الناتج
+Tab الأول:  «اتخطى للمحتوى» ظاهر عند top = 8
+Enter:      activeElement = main
+
+Tab لتحت على 12 لينك: أصغر top = 184.4
+
+Shift+Tab بـ scroll-padding-top: 72px:
+423.4 ، 362.4 ، 301.4 ، 240.4 ، 179.4 ، 118.4 ، 72.4
+كله أكبر من 64.
+
+Shift+Tab من غيره:
+239.4 ، 178.4 ، 117.4 ، 56.4 ، 21.5
+آخر رقمين تحت الهيدر.
+axe صفر
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** مودال بـ [[<dialog>]] و [[showModal()]]: فيه حقل وزرار «قفل». افتحه بزرار، وامشي جواه بـ Tab، واقفله بـ Escape.`, done: R`أول ما يفتح الـ focus على الحقل، و Tab بيلف بين الحقل والزرار (وممكن يعدّي على شريط المتصفح) ومبيوصلش لأي عنصر ورا المودال، وبعد Escape [[document.activeElement]] هو زرار الفتح. اتقاس في Chrome 156: الترتيب حقل ← قفل ← المتصفح ← حقل، وبعد Escape رجع للزرار.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>dialog</title>
+<style>
+  body { font-family: system-ui, sans-serif; padding: 1rem; }
+  dialog { padding: 1.5rem; border: 0; border-radius: .75rem; }
+  dialog::backdrop { background: #0008; }
+</style>
+</head>
+<body>
+<main>
+  <h1>الملف الشخصي</h1>
+  <button id="open" type="button">عدّل الاسم</button>
+  <a id="behind" href="#x">لينك ورا المودال</a>
+</main>
+<dialog id="dlg" aria-labelledby="dlg-title">
+  <h2 id="dlg-title">الاسم الجديد</h2>
+  <label for="name">الاسم</label>
+  <input id="name">
+  <button id="close" type="button">قفل</button>
+</dialog>
+<script>
+  const dlg = document.getElementById("dlg");
+  document.getElementById("open").onclick = () => dlg.showModal();
+  document.getElementById("close").onclick = () => dlg.close();
+$__lt/script>
+</body>
+</html>
+~~~
+
+**[[showModal()]] بيعمل إيه:** بيحط المودال في top layer، وبيعمل الصفحة ورا [[inert]]، فمفيش ضغط ولا Tab يوصلها. بينقل الـ focus لأول عنصر، و Escape بيقفل، والـ focus بيرجع لوحده للزرار اللي فتحه. ده كله من غير ولا سطر trap.
+
+**[[aria-labelledby]]:** بيدّي المودال اسم من العنوان.
+
+**[[BODY]] في الترتيب:** ده شريط المتصفح، مش عنصر ورا المودال. المودال الأصلي مبيحبسش المستخدم جوه الصفحة، وده مسموح.
+
+**الغلطة الشائعة:** تستخدم [[dlg.show()]]. ده بيفتحه عادي من غير modal، فلا فيه backdrop ولا inert ولا Escape.
+
+~~~text الناتج
+بعد الفتح:      name
+Tab 1:          close
+Tab 2:          BODY (شريط المتصفح)
+Tab 3:          name
+بعد Escape:     open (زرار الفتح) ، dialog.open = false
+axe صفر
+~~~` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صفحة فيها بالترتيب: [[<button>]] ثم [[<input>]] ثم [[<div tabindex="2">]] ثم [[<div tabindex="1">]] ثم [[<a href="#">]]. ترتيب Tab هيبقى إيه؟ وليه الـ tabindex الموجب ممنوع تقريبًا؟`, done: R`الترتيب: [[tabindex="1"]] ثم [[tabindex="2"]] ثم الزرار ثم الـ input ثم اللينك (الموجب بيتنط قبل كل الصفحة)، واتأكدت بالضغط على Tab. وكتبت إن الحل [[0]] أو [[-1]] بس، والترتيب ييجي من ترتيب الـ HTML.`, sol: R`~~~html test.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>ترتيب Tab</title></head>
+<body>
+<main>
+  <h1>الترتيب</h1>
+  <button id="btn">زرار</button>
+  <input id="inp" aria-label="حقل">
+  <div id="two" tabindex="2">tabindex 2</div>
+  <div id="one" tabindex="1">tabindex 1</div>
+  <a id="lnk" href="#">لينك</a>
+</main>
+</body>
+</html>
+~~~
+
+**الإجابة:** [[tabindex="1"]] ثم [[tabindex="2"]] ثم الزرار ثم الـ input ثم اللينك.
+
+**القاعدة:** المتصفح بياخد كل الأرقام الموجبة الأول بترتيبها، وبعدين كل اللي عليهم 0 أو طبيعي، بترتيب الـ HTML.
+
+**ليه الموجب ممنوع تقريبًا:** عنصر واحد بـ [[tabindex="1"]] بيتنط قبل الصفحة كلها، حتى الهيدر. ولو حد زوّد عنصر جديد، الترتيب كله بيتلخبط، وصيانة أرقام على موقع كامل مستحيلة.
+
+- [[0]]: اعمل العنصر يتوصله بـ Tab، بترتيب الـ HTML.
+- [[-1]]: بالكود بس.
+
+**الغلطة الشائعة:** تصلّح ترتيب غريب بـ tabindex موجب. السبب غالبًا إن ترتيب الـ HTML مش مطابق الشكل، فصلّح الـ HTML.
+
+~~~text الناتج
+Tab: one ← two ← btn ← inp ← lnk
+~~~` },
+            { lvl: 'تحدي', t: R`**مسألة:** mega menu بيفتح بـ [[:hover]] بس، فبالكيبورد اللينكات اللي جواه مخفية ومبتتوصلش. خليه يفتح بالكيبورد كمان من غير JavaScript بـ [[:focus-within]]، ويفضل مفتوح وانت ماشي جواه بـ Tab، ويتقفل لما تخرج منه.`, done: R`بالماوس بعيد: Tab على عنوان القسم بيفتح المنيو، و Tab جواه بيعدّي على كل لينك وهو باين، و Tab بعد آخر لينك بيقفله. والـ outline باين على كل لينك.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>mega menu</title>
+<style>
+  body { margin: 0; font-family: system-ui, sans-serif; }
+  nav > ul { display: flex; gap: 1rem; margin: 0; padding: 1rem; list-style: none; }
+  .has-mega { position: relative; }
+  .mega { position: absolute; inset-block-start: 100%; inset-inline-start: 0; min-inline-size: 14rem; margin: 0; padding: 1rem; list-style: none;
+          background: #fff; box-shadow: 0 .5rem 1rem #0003; visibility: hidden; opacity: 0; }
+  .has-mega:hover .mega,
+  .has-mega:focus-within .mega { visibility: visible; opacity: 1; }
+  a:focus-visible { outline: 2px solid #0f766e; outline-offset: 2px; }
+</style>
+</head>
+<body>
+<nav aria-label="الرئيسية">
+  <ul>
+    <li class="has-mega">
+      <a id="top" href="/products">المنتجات</a>
+      <ul class="mega">
+        <li><a id="m1" href="/products/audio">سماعات</a></li>
+        <li><a id="m2" href="/products/watches">ساعات</a></li>
+        <li><a id="m3" href="/products/bags">شنط</a></li>
+      </ul>
+    </li>
+    <li><a id="next" href="/offers">العروض</a></li>
+  </ul>
+</nav>
+<main><h1>الرئيسية</h1></main>
+</body>
+</html>
+~~~
+
+**ليه شغال:**
+
+- [[:focus-within]] على الأب بيطابق لو أي حد جواه عليه focus، فالـ selector الواحد بيغطي الماوس والكيبورد.
+- [[visibility: hidden]]، مش [[display: none]] لوحده، بتشيل اللينكات من Tab وهي مقفولة. ولما الأب ياخد focus تبقى [[visible]]، فـ Tab اللي بعدها يدخل.
+- لما الـ focus يخرج من الـ [[li]]، الـ selector مبيطابقش، فبتقفل لوحدها.
+
+**ملاحظة من 1.4.13:** المحتوى اللي بيظهر بالـ hover لازم الماوس يقدر يتحرك عليه، وعشان كده [[.mega]] جوه الـ [[li]].
+
+**الغلطة الشائعة:** تخبّي بـ [[opacity: 0]] بس، فالمنيو يبان مقفول بس Tab يمشي جوه لينكات مش شايفها.
+
+~~~text الناتج
+الماوس بعيد:
+Tab 1  top   (المنتجات)   القايمة visible
+Tab 2  m1                 visible
+Tab 3  m2                 visible
+Tab 4  m3                 visible
+Tab 5  next               hidden
+
+scripts: 0 ، axe صفر
+~~~` },
           ],
           desc: R`جرّب موقعك بـ Tab و Shift+Tab و Enter و Space و Escape بس. كل حاجة بتتضغط لازم يتوصلها، والـ focus لازم يبقى باين، والترتيب منطقي.
 
@@ -393,12 +902,192 @@ Tab:    activeElement = BUTTON#save
           cmd: "contrast ratio",
           title: "الكلام الرمادي الفاتح اللي محدش بيعرف يقراه",
           practice: [
-            { lvl: 'سريع', t: R`**مسألة:** احسب بالمعادلة بإيدك (أو في الكونسول) تباين [[#777777]] و [[#767676]] على الأبيض. الفرق بينهم درجة واحدة في كل قناة: الاتنين بيعدّوا AA؟`, done: R`[[#777777]] = 4.48:1 ساقط، و [[#767676]] = 4.54:1 ناجح. عرفت إن الحد بالظبط 4.5 مفيهوش تقريب، وإن «قريب من 4.5» مش كفاية.` },
-            { lvl: 'تطبيق', t: R`**اكتب اختبار:** اكتب [[contrast(a, b)]] بتاخد لونين hex وترجّع النسبة بحرفين بعد العلامة (luminance لكل قناة، و [[(L1 + 0.05) / (L2 + 0.05)]]). واكتب اختبارات: أسود وأبيض = 21، ونفس اللون = 1، والترتيب مبيفرقش، و [[#777777]] على الأبيض = 4.48.`, done: R`الأربع اختبارات بيعدّوا، والدالة بترجّع نفس رقم DevTools لـ ٣ ألوان من موقعك.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** في كارت منتج: الكلام الباهت [[#8a8f98]] على أبيض، و badge «عرض» خلفيته [[#f59e0b]] (كهرماني) والكلام عليه أبيض. قيس الاتنين وصلّحهم من غير ما الكهرماني يتغير.`, done: R`قبل: 3.25:1 للباهت و 2.15:1 للـ badge. بعد: الباهت [[#6b7280]] (‏4.83:1)، والـ badge فضل كهرماني بس الكلام عليه غامق [[#1f2937]] (‏6.83:1)، و axe مبيطلّعش [[color-contrast]].` },
-            { lvl: 'سريع', t: R`**قارن وقيس:** لون الـ placeholder الافتراضي في Chrome كام؟ ([[getComputedStyle(input, "::placeholder").color]]). وتباينه كام على الأبيض؟ وقارنه بـ [[#a9a9a9]] اللي ديزاينر حطه «عشان أنعم».`, done: R`Chrome 156 بيدّي [[rgb(117, 117, 117)]] = [[#757575]] ‏4.61:1 ناجح، و [[#a9a9a9]] ‏2.35:1 ساقط. فالتغيير «الناعم» كسر حاجة كانت سليمة.` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** شغّل axe على صفحة (من الـ extension أو [[@axe-core/playwright]]) وخد الـ JSON. في [[violations]] دوّر على [[color-contrast]]، وطلّع من كل [[nodes[i].any[0].data]] الـ [[fgColor]] و [[bgColor]] و [[contrastRatio]] و [[expectedContrastRatio]] في جدول متترتب من الأسوأ.`, done: R`جدول بكل عنصر ساقط ونسبته والمطلوب، والأسوأ فوق، وكل لون مكرر في أكتر من عنصر بقى صف واحد بعدد مرات ظهوره، فعرفت أنهي توكن واحد لو اتصلّح هيحل أكتر مشاكل.` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** من WCAG 2.2 بند 1.4.11 Non-text Contrast: إيه اللي محتاج 3:1 غير الكلام؟ وإيه المستثنى؟`, done: R`لستة: حدود الحقول، وحلقة الـ focus، والأيقونات اللي ليها معنى، وخطوط الرسوم البيانية، وحالة الـ checkbox. والمستثنى: العناصر الـ disabled، واللوجوهات، والحاجات اللي شكلها من المتصفح ومحدش غيّره.` },
+            { lvl: 'سريع', t: R`**مسألة:** احسب بالمعادلة بإيدك (أو في الكونسول) تباين [[#777777]] و [[#767676]] على الأبيض. الفرق بينهم درجة واحدة في كل قناة: الاتنين بيعدّوا AA؟`, done: R`[[#777777]] = 4.48:1 ساقط، و [[#767676]] = 4.54:1 ناجح. عرفت إن الحد بالظبط 4.5 مفيهوش تقريب، وإن «قريب من 4.5» مش كفاية.`, sol: R`~~~js console
+const ch = (v) => { const s = v / 255; return s <= 0.04045 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4; };
+const L = (v) => { const c = ch(v); return 0.2126 * c + 0.7152 * c + 0.0722 * c; };   // رمادي: القنوات متساوية
+const ratio = (v) => 1.05 / (L(v) + 0.05);
+console.log(ratio(0x77).toFixed(2), ratio(0x76).toFixed(2));
+~~~
+
+**بالإيد:** الأبيض إضاءته 1، فالمعادلة [[(1 + 0.05) / (L + 0.05)]]. و [[0x77]] = 119، فالقناة 119 ÷ 255 = 0.4667، وبعد المنحنى ≈ 0.184. فالنسبة 1.05 ÷ 0.234 ≈ 4.48.
+
+**القراية:** المطلوب في AA للكلام العادي 4.5:1. درجة واحدة في كل قناة نقلتك من ساقط لناجح.
+
+**الغلطة الشائعة:** تقرّب 4.48 لـ 4.5. WCAG مفيهاش تقريب: الحد 4.5 بالظبط، و 4.499 ساقط.
+
+~~~text الناتج
+#777777 على الأبيض: 4.48:1  ساقط
+#767676 على الأبيض: 4.54:1  ناجح
+~~~` },
+            { lvl: 'تطبيق', t: R`**اكتب اختبار:** اكتب [[contrast(a, b)]] بتاخد لونين hex وترجّع النسبة بحرفين بعد العلامة (luminance لكل قناة، و [[(L1 + 0.05) / (L2 + 0.05)]]). واكتب اختبارات: أسود وأبيض = 21، ونفس اللون = 1، والترتيب مبيفرقش، و [[#777777]] على الأبيض = 4.48.`, done: R`الأربع اختبارات بيعدّوا، والدالة بترجّع نفس رقم DevTools لـ ٣ ألوان من موقعك.`, sol: R`~~~js contrast.mjs
+function channel(v) {
+  const s = v / 255;
+  return s <= 0.04045 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+}
+
+function luminance(hex) {
+  const h = hex.replace("#", "");
+  const [r, g, b] = [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16));
+  return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
+}
+
+export function contrast(a, b) {
+  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return Number(((hi + 0.05) / (lo + 0.05)).toFixed(2));
+}
+~~~
+
+~~~js contrast.test.mjs
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { contrast } from "./contrast.mjs";
+
+test("أسود وأبيض = 21", () => assert.equal(contrast("#000000", "#ffffff"), 21));
+test("نفس اللون = 1", () => assert.equal(contrast("#123456", "#123456"), 1));
+test("الترتيب مبيفرقش", () => assert.equal(contrast("#777777", "#ffffff"), contrast("#ffffff", "#777777")));
+test("#777777 على الأبيض = 4.48", () => assert.equal(contrast("#777777", "#ffffff"), 4.48));
+~~~
+
+~~~bash
+node --test contrast.test.mjs
+~~~
+
+**الخطوات:**
+
+1. [[channel]]: يحوّل القناة لقيمة خطية، لأن العين مش بتشوف الدرجات بالتساوي.
+2. [[luminance]]: الأخضر وزنه 0.7152 لأن العين أحسست بيه.
+3. [[contrast]]: الأفتح فوق، و 0.05 بتمنع القسمة على صفر. و [[sort]] بتخلي الترتيب ميفرقش.
+
+**الغلطة الشائعة:** تستخدم [[0.03928]] بدل [[0.04045]]. دي قيمة قديمة في نص WCAG، والفرق مش بيأثر على ألوان 8-bit، بس الثانية هي الصح في sRGB. أو تنسى [[Number]]، فـ [[toFixed]] ترجّع نص.
+
+~~~text الناتج
+ℹ tests 4
+ℹ pass 4
+ℹ fail 0
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** في كارت منتج: الكلام الباهت [[#8a8f98]] على أبيض، و badge «عرض» خلفيته [[#f59e0b]] (كهرماني) والكلام عليه أبيض. قيس الاتنين وصلّحهم من غير ما الكهرماني يتغير.`, done: R`قبل: 3.25:1 للباهت و 2.15:1 للـ badge. بعد: الباهت [[#6b7280]] (‏4.83:1)، والـ badge فضل كهرماني بس الكلام عليه غامق [[#1f2937]] (‏6.83:1)، و axe مبيطلّعش [[color-contrast]].`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>كارت منتج</title>
+<style>
+  body { font-family: system-ui, sans-serif; padding: 1rem; background: #fff; }
+  .muted { color: #6b7280; }
+  .badge { display: inline-block; padding: .125rem .625rem; border-radius: 1rem; background: #f59e0b; color: #1f2937; }
+</style>
+</head>
+<body>
+<main>
+  <h1>سماعة لاسلكية</h1>
+  <p class="muted">بطارية 30 ساعة</p>
+  <span class="badge">عرض</span>
+</main>
+</body>
+</html>
+~~~
+
+**التصليح:**
+
+- الباهت: [[#8a8f98]] فاتح زيادة، فنغمّقه لـ [[#6b7280]].
+- الـ badge: الكهرماني لازم يفضل. الأبيض عليه ساقط، فنغيّر لون الكلام مش الخلفية: الكهرماني فاتح، فالكلام الغامق هو الحل.
+
+**القاعدة:** لما الخلفية ثابتة، حرّك لون الكلام.
+
+**الغلطة الشائعة:** تكبّر الخط أو تعمله bold. الكلام الكبير (24px، أو 18.66px عريض) بس اللي بياخد 3:1، و 2.15 ساقط حتى كده.
+
+~~~text الناتج
+                       قبل       بعد
+الكلام الباهت          3.25:1    4.83:1
+الـ badge              2.15:1    6.83:1
+
+axe قبل: color-contrast (1)
+axe بعد: صفر
+~~~` },
+            { lvl: 'سريع', t: R`**قارن وقيس:** لون الـ placeholder الافتراضي في Chrome كام؟ ([[getComputedStyle(input, "::placeholder").color]]). وتباينه كام على الأبيض؟ وقارنه بـ [[#a9a9a9]] اللي ديزاينر حطه «عشان أنعم».`, done: R`Chrome 156 بيدّي [[rgb(117, 117, 117)]] = [[#757575]] ‏4.61:1 ناجح، و [[#a9a9a9]] ‏2.35:1 ساقط. فالتغيير «الناعم» كسر حاجة كانت سليمة.`, sol: R`~~~js console
+const input = document.querySelector("input");
+getComputedStyle(input, "::placeholder").color;
+~~~
+
+**القراية:** الافتراضي في Chrome 156 [[rgb(117, 117, 117)]] = [[#757575]]، وده معمول عشان يعدّي 4.5:1 على الأبيض. لون الديزاينر [[#a9a9a9]] بيقع.
+
+**الـ placeholder بيتحسب؟** أيوه، كلام وبيتقري، فـ 4.5:1 مطلوبة.
+
+**الغلطة الشائعة:** axe مطلّعش حاجة على [[#a9a9a9]] في التجربة، فالتقرير نضيف والمشكلة موجودة. قس بإيدك. وكمان الـ placeholder مش بديل لـ label.
+
+~~~text الناتج
+Chrome:    rgb(117, 117, 117) = #757575 = 4.61:1  ناجح
+الديزاينر: #a9a9a9 = 2.35:1  ساقط
+~~~` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** شغّل axe على صفحة (من الـ extension أو [[@axe-core/playwright]]) وخد الـ JSON. في [[violations]] دوّر على [[color-contrast]]، وطلّع من كل [[nodes[i].any[0].data]] الـ [[fgColor]] و [[bgColor]] و [[contrastRatio]] و [[expectedContrastRatio]] في جدول متترتب من الأسوأ.`, done: R`جدول بكل عنصر ساقط ونسبته والمطلوب، والأسوأ فوق، وكل لون مكرر في أكتر من عنصر بقى صف واحد بعدد مرات ظهوره، فعرفت أنهي توكن واحد لو اتصلّح هيحل أكتر مشاكل.`, sol: R`~~~js report.mjs
+import { chromium } from "playwright-core";
+import AxeBuilder from "@axe-core/playwright";
+
+const browser = await chromium.launch({ channel: "chrome" });
+const page = await (await browser.newContext()).newPage();
+await page.goto(process.argv[2]);
+
+const { violations } = await new AxeBuilder({ page }).withRules(["color-contrast"]).analyze();
+await browser.close();
+
+const rows = new Map();
+for (const v of violations) {
+  for (const node of v.nodes) {
+    const d = node.any[0].data;
+    const key = $__bt$__{d.fgColor} على $__{d.bgColor}$__bt;
+    const row = rows.get(key) ?? { key, ratio: d.contrastRatio, need: d.expectedContrastRatio, count: 0 };
+    row.count++;
+    rows.set(key, row);
+  }
+}
+
+const sorted = [...rows.values()].sort((a, b) => a.ratio - b.ratio);
+for (const r of sorted) console.log(r.ratio, "المطلوب", r.need, "×" + r.count, r.key);
+~~~
+
+~~~bash
+npm i -D playwright-core @axe-core/playwright
+node report.mjs http://localhost:4000/page
+~~~
+
+**ليه [[Map]]:** المفتاح هو الزوج (لون الكلام على الخلفية). لو ٣ عناصر بنفس الزوج، ده صف واحد بعدد ٣، وده معناه توكن واحد يتصلّح ويحل ٣ مشاكل.
+
+**ليه الترتيب مش كفاية:** الأسوأ رقمًا هو اللي فوق، بس ابدأ بأكبر عدد. هنا 2.14 مرة واحدة، و 2.32 تلات مرات.
+
+**[[node.any[0].data]]:** axe بيحط تفاصيل كل فحص هناك، ومعاه [[fgColor]] و [[bgColor]] و [[contrastRatio]] و [[expectedContrastRatio]].
+
+**الغلطة الشائعة:** تلف على [[violations]] بس وتنسى [[nodes]]. كل violation هو rule واحدة، والعناصر جواها.
+
+~~~text الناتج
+2.14 المطلوب 4.5:1 ×1 #ffffff على #f59e0b
+2.32 المطلوب 4.5:1 ×3 #aaaaaa على #ffffff
+~~~` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** من WCAG 2.2 بند 1.4.11 Non-text Contrast: إيه اللي محتاج 3:1 غير الكلام؟ وإيه المستثنى؟`, done: R`لستة: حدود الحقول، وحلقة الـ focus، والأيقونات اللي ليها معنى، وخطوط الرسوم البيانية، وحالة الـ checkbox. والمستثنى: العناصر الـ disabled، واللوجوهات، والحاجات اللي شكلها من المتصفح ومحدش غيّره.`, sol: R`**إجابة نموذجية من WCAG 2.2، بند 1.4.11 Non-text Contrast:**
+
+3:1 مطلوب لـ:
+
+- حدود الحقول، لو الحد هو اللي بيعرّف إن ده حقل.
+- حلقة الـ focus.
+- الأيقونات اللي ليها معنى.
+- خطوط الرسوم البيانية.
+- حالة الـ checkbox والـ radio.
+
+المستثنى:
+
+- العناصر الـ disabled.
+- اللوجوهات.
+- الحاجات اللي شكلها من المتصفح ومحدش غيّره.
+- لو الشكل لازم يبقى كده عشان يوصّل المعلومة (زي علم أو صورة حقيقية).
+
+**مثال سريع:** حد الـ input [[#d1d5db]] على الأبيض 1.47:1، وده ساقط لأن البند بيطلب 3:1. اتحسب بدالة [[contrast]] اللي فاتت.
+
+**الغلطة الشائعة:** تطبّق 4.5:1 على الأيقونات أو 3:1 على الكلام. دول بندين مختلفين.
+
+~~~text الناتج
+لستة ٥ بنود مطلوبة ، و ٤ مستثناة.
+(إجابة من الوثائق، مش ناتج تشغيل.)
+~~~` },
           ],
           desc: R`التباين نسبة بين إضاءة لون الكلام ولون الخلفية، من 1:1 (نفس اللون) لـ 21:1 (أسود على أبيض). WCAG AA بيطلب [[4.5:1]] للكلام العادي، و [[3:1]] للكلام الكبير (حوالي 24px، أو 18.5px bold) ولحدود الحقول والأيقونات المهمة.
 

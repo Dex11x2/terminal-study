@@ -153,10 +153,87 @@ true
 
 الغلطة المشهورة: تدوّر في Elements وتفتكر إن ده اللي جوجل والـ bots شايفينه. الحكم على الـ SEO بيبقى من View Source (أو [[curl -s URL]]) مش من Elements.`,
           practice: [
-            { lvl: 'سريع', t: R`**مراجعة:** من غير ما تبص في الدرس، اكتب الاختصار اللي بيفتح View Source، واللي بيفتح DevTools على Console على طول، واللي بيمسك سهم الاختيار، والفرق بين Ctrl+U و Elements في جملة.`, done: R`كتبت [[Ctrl+U]] و [[Ctrl+Shift+J]] و [[Ctrl+Shift+C]] صح، والجملة فيها «Source = اللي السيرفر بعته، Elements = الصفحة دلوقتي بعد JavaScript».` },
-            { lvl: 'تطبيق', t: R`**قارن وقيس:** على موقعين (واحد React أو Vue بـ Vite، وواحد موقع أخبار أو Next.js) دوّر على نفس الجملة الظاهرة بـ Ctrl+F في View Source، وبعدين بـ [[curl -s URL | grep -c "الجملة"]] في الترمنال.`, done: R`عندك جدول ٢×٢: الموقع، ولقيت الجملة في Source ولا لأ، ورقم [[grep -c]]. وموقع الـ SPA طلع [[0]] في الاتنين والتاني رقم أكبر من صفر.` },
-            { lvl: 'تطبيق', t: R`**ابني:** صفحة [[spa.html]] فيها [[<div id="root"></div>]] وسكربت بيكتب جواها [[<h1>]]، وصفحة [[ssr.html]] فيها نفس الـ [[<h1>]] مكتوب في الـ HTML. شغّلهم من سيرفر محلي (درس «سيرفر محلي بدل file://»).`, done: R`Ctrl+F في Source بتاع [[spa.html]] مبيلاقيش الجملة وفي [[ssr.html]] بيلاقيها، وفي Console [[document.body.innerText.includes("الجملة")]] بيرجّع [[true]] في الاتنين.` },
-            { lvl: 'تحدي', t: R`**اقرا وتوقّع:** صفحة الـ source بتاعها فيه [[<title>Shop</title>]]، وسكربت فيها بيعمل [[document.title = "Cart (3)"]]. معاينة اللينك في واتساب هتكتب إيه؟ وتاب المتصفح؟ وجوجل؟ اكتب توقعك وبعدين اختبر التاب و [[curl]].`, done: R`التاب بيقول [[Cart (3)]]، و [[curl -s URL | grep -o "<title>[^<]*"]] بيطبع [[<title>Shop]]، وكاتب ليه المعاينة هتاخد [[Shop]] (مش بتشغّل JavaScript) وإن جوجل ممكن ياخد أي واحد فيهم.` },
+            { lvl: 'سريع', t: R`**مراجعة:** من غير ما تبص في الدرس، اكتب الاختصار اللي بيفتح View Source، واللي بيفتح DevTools على Console على طول، واللي بيمسك سهم الاختيار، والفرق بين Ctrl+U و Elements في جملة.`, done: R`كتبت [[Ctrl+U]] و [[Ctrl+Shift+J]] و [[Ctrl+Shift+C]] صح، والجملة فيها «Source = اللي السيرفر بعته، Elements = الصفحة دلوقتي بعد JavaScript».`, sol: R`~~~text الإجابة
+Ctrl+U          View Source   (Mac: Cmd+Option+U)
+Ctrl+Shift+J    DevTools على Console على طول   (Mac: Cmd+Option+J)
+Ctrl+Shift+C    سهم اختيار العنصر   (Mac: Cmd+Shift+C)
+~~~
+
+والجملة: **Source = اللي السيرفر بعته، Elements = الصفحة دلوقتي بعد JavaScript.**
+
+ليه الفرق ده مهم: [[Ctrl+U]] بيوريك نص الرد زي ما وصل من الشبكة، ومبيتغيّرش مهما الصفحة اتغيّرت. أما Elements فبيوريك الـ DOM الحي، يعني اللي JavaScript بناه أو عدّله لحد اللحظة دي. لو حاجة موجودة في Elements ومش في Source، يبقى JavaScript هو اللي عملها، والـ bots اللي مبتشغّلش JavaScript مش هتشوفها.
+
+الغلطة المشهورة: تخلط [[Ctrl+Shift+J]] (Console) بـ [[Ctrl+Shift+C]] (سهم الاختيار)، أو تقول إن Source و Elements نفس الحاجة لأنهم شبه بعض في صفحة ثابتة. الفرق بيبان بس لما JavaScript يشتغل.
+
+الاختصارات دي من وثائق Chrome DevTools، لأن اختصارات الواجهة مش بتتشغّل من سكربت. واللي بعدها في التمارين الجاية اتقاس فعلًا.
+
+~~~text الناتج
+٣ اختصارات صح + جملة الفرق. مفيش ناتج شاشة هنا، ده تمرين افتكار.
+~~~` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** على موقعين (واحد React أو Vue بـ Vite، وواحد موقع أخبار أو Next.js) دوّر على نفس الجملة الظاهرة بـ Ctrl+F في View Source، وبعدين بـ [[curl -s URL | grep -c "الجملة"]] في الترمنال.`, done: R`عندك جدول ٢×٢: الموقع، ولقيت الجملة في Source ولا لأ، ورقم [[grep -c]]. وموقع الـ SPA طلع [[0]] في الاتنين والتاني رقم أكبر من صفر.`, sol: R`~~~bash
+# نفس الجملة، على موقعين
+curl -s http://127.0.0.1:8901/spa.html | grep -c "عرض النهاردة"
+curl -s http://127.0.0.1:8901/ssr.html | grep -c "عرض النهاردة"
+~~~
+
+الخطوات: افتح كل موقع، اختار جملة ظاهرة، اعمل [[Ctrl+U]] وبعدين [[Ctrl+F]] ودوّر عليها، وبعدين شغّل [[curl]] على نفس الرابط وسجّل الرقم.
+
+[[curl -s]] بيجيب نفس اللي View Source بيعرضه، من غير ما يشغّل JavaScript. و [[grep -c]] بيعدّ **السطور** اللي فيها الجملة، مش عدد المرات. فالرقم [[0]] معناه «الجملة مش في الرد خالص»، وده حكم على الـ HTML نفسه.
+
+الغلطة: الجملة تكون مكتوبة نصًا جوه سكربت inline في الصفحة نفسها. وقتها [[grep -c]] هيطلع [[1]] في موقع SPA كمان، لأن النص موجود في الملف حتى لو مش في HTML حقيقي. في المعمل سكربت الـ SPA في ملف [[app.js]] منفصل، زي أي build حقيقي، فالرقم طلع [[0]]. ولو الرقم طلعلك [[1]] في SPA، بص الجملة جوه [[<h1>]] ولا جوه [[<script>]].
+
+~~~text الناتج
+الموقع       Ctrl+F في Source    grep -c
+spa.html     مش موجودة           0
+ssr.html     موجودة              1
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** صفحة [[spa.html]] فيها [[<div id="root"></div>]] وسكربت بيكتب جواها [[<h1>]]، وصفحة [[ssr.html]] فيها نفس الـ [[<h1>]] مكتوب في الـ HTML. شغّلهم من سيرفر محلي (درس «سيرفر محلي بدل file://»).`, done: R`Ctrl+F في Source بتاع [[spa.html]] مبيلاقيش الجملة وفي [[ssr.html]] بيلاقيها، وفي Console [[document.body.innerText.includes("الجملة")]] بيرجّع [[true]] في الاتنين.`, sol: R`~~~html spa.html
+<!doctype html>
+<title>spa</title>
+<div id="root"></div>
+<script src="/app.js">$__lt/script>
+~~~
+~~~js app.js
+document.getElementById("root").innerHTML = "<h1>عرض النهاردة</h1>";
+~~~
+~~~html ssr.html
+<!doctype html>
+<title>ssr</title>
+<div id="root"><h1>عرض النهاردة</h1></div>
+~~~
+~~~bash
+python -m http.server 8000 --bind 127.0.0.1
+~~~
+~~~js Console (في الصفحتين)
+document.body.innerText.includes("عرض النهاردة")
+~~~
+
+[[spa.html]] جسمها فاضي تقريبًا، والمتصفح هو اللي بيبني الـ [[<h1>]] بعد ما [[app.js]] يتحمّل. [[ssr.html]] الـ [[<h1>]] وصل جاهز من السيرفر. و [[document.body.innerText]] بيقرا النص الظاهر **دلوقتي**، فالاتنين [[true]]، ولا يفرق معاه الجملة جت منين.
+
+الغلطة اللي وقعنا فيها في المعمل: لو كتبت السكربت inline جوه [[spa.html]] نفسها، [[Ctrl+F]] في Source هيلاقي الجملة جوه السكربت، والتمرين هيبان إنه فشل. عشان كده السكربت في ملف منفصل.
+
+~~~text الناتج
+                 الجملة في Source    innerText.includes
+spa.html         لأ (false)          true
+ssr.html         آه (true)           true
+~~~` },
+            { lvl: 'تحدي', t: R`**اقرا وتوقّع:** صفحة الـ source بتاعها فيه [[<title>Shop</title>]]، وسكربت فيها بيعمل [[document.title = "Cart (3)"]]. معاينة اللينك في واتساب هتكتب إيه؟ وتاب المتصفح؟ وجوجل؟ اكتب توقعك وبعدين اختبر التاب و [[curl]].`, done: R`التاب بيقول [[Cart (3)]]، و [[curl -s URL | grep -o "<title>[^<]*"]] بيطبع [[<title>Shop]]، وكاتب ليه المعاينة هتاخد [[Shop]] (مش بتشغّل JavaScript) وإن جوجل ممكن ياخد أي واحد فيهم.`, sol: R`~~~bash
+curl -s http://127.0.0.1:8901/title.html | grep -o "<title>[^<]*"
+~~~
+~~~js Console
+document.title
+~~~
+
+**التوقع:** تاب المتصفح [[Cart (3)]]، ومعاينة واتساب [[Shop]]، وجوجل ممكن ياخد أي واحد فيهم.
+
+ليه: التاب بيعرض [[document.title]] الحي، والسكربت غيّره. معاينة واتساب بتيجي من bot بيقرا الـ HTML اللي وصل من السيرفر ومبيشغّلش JavaScript، فبيشوف [[Shop]] بس (وبيفضّل [[og:title]] لو موجود). جوجل بيقرا الـ HTML وبعدين ممكن يعمل rendering في مرحلة تانية، فالناتج مش مضمون.
+
+الغلطة: تثق في عنوان التاب وتفتكر إن ده اللي هيظهر للناس في المشاركة. لو عايز المعاينة صح، العنوان لازم يوصل من السيرفر في الـ HTML. سلوك واتساب وجوجل ده من وثائقهم، مش من تشغيل عندنا. واللي اتشغّل هو التاب و [[curl]].
+
+~~~text الناتج
+document.title في التاب     Cart (3)
+curl | grep -o              <title>Shop
+~~~` },
           ],
         },
         {
@@ -248,12 +325,176 @@ getComputedStyle($0).color
 
 الـ font-size: اختار العنوان وافتح Computed واكتب [[font-size]] في الفلتر. هتلاقي القيمة النهائية بالـ px دايمًا (حتى لو كاتبها [[2rem]] هتشوف مثلًا [[32px]])، ولو فتحت السهم جنبها هتعرف أنهي قاعدة في أنهي ملف كسبت. لو لقيت القاعدة بتاعتك في Styles عليها خط، يبقى فيه selector أقوى منها غطّاها.`,
           practice: [
-            { lvl: 'سريع', t: R`**مراجعة:** افتح أي صفحة، اختار زرار بـ [[Ctrl+Shift+C]]، وغيّر لونه من Styles، وخبّيه بـ [[H]]، وارجع بـ [[Ctrl+Z]]، وبعدين ريفريش.`, done: R`الزرار اتغيّر واتخبّى ورجع، وبعد الريفريش كل حاجة رجعت زي الأول (التعديل كان على جهازك بس).` },
-            { lvl: 'تطبيق', t: R`**فهم:** في Styles لاقي خاصية عليها خط (مشطوبة) في أي موقع، وروح Computed واعرف القيمة اللي كسبت جاية من أنهي ملف وأنهي سطر، وليه (specificity ولا ترتيب ولا [[!important]]).`, done: R`كاتب: اسم الخاصية، والقيمة المشطوبة وملفها، والقيمة اللي كسبت وملفها ورقم السطر، والسبب في جملة واحدة.` },
-            { lvl: 'تطبيق', t: R`**صلّح:** اعمل صفحة فيها زرار [[button:hover { background: red }]] وزرار تاني [[:focus-visible]]. ظبّط شكل الـ hover والـ focus من غير ما الماوس يتحرك، بـ [[:hov]].`, done: R`علّمت [[:hover]] من [[:hov]] والزرار فضل أحمر وانت بتعدّل في Styles، وعلّمت [[:focus-visible]] وشفت الـ outline، ونقلت القيم النهائية للملف بإيدك.` },
-            { lvl: 'تطبيق', t: R`**دوّر بنفسك (z-index):** صفحة فيها header [[position: sticky; z-index: 100]] و modal [[position: fixed; z-index: 9999]] جوه [[<section>]] عليه [[transform: translateY(0)]]. افتح الـ modal: هتلاقيه تحت الـ header ومش مغطّي الشاشة. لاقي السبب من Elements و Computed من غير ما تقرا الحل.`, done: R`لقيت إن الـ section عليه [[transform]] (Computed بيقول [[matrix(1, 0, 0, 1, 0, 0)]])، وإن ده بيعمل stacking context و containing block للـ fixed. في المعمل بتاعنا [[document.elementFromPoint]] على مكان الـ header رجّع الـ header مش الـ modal، ومستطيل الـ modal كان [[16,132,1334,585]] بدل الشاشة كلها [[0,0,1366,768]]. ولما نقلت الـ modal لآخر [[body]] بقى فوق ومغطّي الشاشة.` },
-            { lvl: 'تحدي', t: R`**دوّر بنفسك (sticky):** header عليه [[position: sticky; top: 0]] وبيطلع مع السكرول. في Elements امشي على أهالي الـ header واحد واحد، ودوّر في Computed على [[overflow]] مش [[visible]]. جرّب ٣ حالات: [[body { overflow-x: hidden }]] لوحده، و [[html, body { overflow-x: hidden }]]، و [[html, body { overflow-x: clip }]].`, done: R`بعد سكرول ٨٠٠px، [[$0.getBoundingClientRect().top]] للـ header: [[0]] في الحالة الأولى، و [[-800]] في التانية (الـ sticky باظ لأن [[body]] بقى scroll container)، و [[0]] في التالتة. وكاتب ليه [[clip]] بيقص من غير ما يعمل scroll container.` },
-            { lvl: 'تحدي', t: R`**اشرحها:** ارسم الـ box model لزرار في أي موقع بأرقامه من المربعات الملونة في Computed (margin و border و padding و content)، وقول عرضه الكلي كام، وبعدين غيّر [[box-sizing]] من Styles وشوف الرقم اتغيّر ولا لأ.`, done: R`الرسمة فيها الأربع أرقام، والعرض الكلي اللي حسبته بإيدك = [[$0.getBoundingClientRect().width]] في Console، وكاتب الفرق بين [[content-box]] و [[border-box]] في سطرين.` },
+            { lvl: 'سريع', t: R`**مراجعة:** افتح أي صفحة، اختار زرار بـ [[Ctrl+Shift+C]]، وغيّر لونه من Styles، وخبّيه بـ [[H]]، وارجع بـ [[Ctrl+Z]]، وبعدين ريفريش.`, done: R`الزرار اتغيّر واتخبّى ورجع، وبعد الريفريش كل حاجة رجعت زي الأول (التعديل كان على جهازك بس).`, sol: R`1. افتح أي صفحة واعمل [[Ctrl+Shift+C]] ودوس على زرار.
+2. في Styles دوس على [[element.style]]، واكتب [[background: red]].
+3. والعنصر متعلّم في Elements دوس [[H]]: العنصر بيتخبّى.
+4. دوس [[Ctrl+Z]] وانت واقف في Elements: آخر تعديل بيرجع.
+5. اعمل ريفريش.
+
+[[H]] بتحط على العنصر class داخلي بيخلّيه [[visibility: hidden]]، يعني مكانه بيفضل محجوز ومبيتمسحش. وكل ده تعديل في الـ DOM الموجود في ذاكرة التاب بتاعك، والسيرفر مبيعرفش عنه حاجة. فالريفريش بيجيب الـ HTML من الأول وكله بيرجع.
+
+الغلطة: تعدّل شكل في Styles وتعجبك النتيجة وتعمل ريفريش قبل ما تنقلها لملف الـ CSS، فتضيع. انقل القيم الأول.
+
+خطوات الواجهة ([[H]] و [[Ctrl+Z]]) من وثائق Chrome. اللي اتجرّب بسكربت على صفحة معمل: تعديل اللون والإخفاء، وبعدين reload.
+
+~~~text الناتج
+بعد التعديل     background: rgb(255, 0, 0)       visibility: hidden
+بعد الريفريش    background: rgb(255, 255, 255)   visibility: visible
+~~~` },
+            { lvl: 'تطبيق', t: R`**فهم:** في Styles لاقي خاصية عليها خط (مشطوبة) في أي موقع، وروح Computed واعرف القيمة اللي كسبت جاية من أنهي ملف وأنهي سطر، وليه (specificity ولا ترتيب ولا [[!important]]).`, done: R`كاتب: اسم الخاصية، والقيمة المشطوبة وملفها، والقيمة اللي كسبت وملفها ورقم السطر، والسبب في جملة واحدة.`, sol: R`~~~css base.css
+h1 { color: navy }
+~~~
+~~~css theme.css
+/* theme */
+h1 { color: crimson }
+~~~
+
+الخطوات على معمل فيه الملفين دول بالترتيب:
+
+1. اختار الـ [[<h1>]] في Elements، وفي Styles هتلاقي [[color: navy]] عليها خط.
+2. افتح Computed، ودوّر على [[color]]، ودوس السهم جنبها: هتشوف كل القيم ومصدر كل واحدة.
+3. دوس على اسم الملف جنب القيمة اللي كسبت: هيفتحك على السطر في Sources.
+4. قارن: الـ selector نفسه [[h1]] في الاتنين، فالـ specificity متساوية ومفيش [[!important]].
+
+السبب هنا **الترتيب**: لما الـ specificity تتساوى، آخر قاعدة في الترتيب هي اللي بتكسب، و [[theme.css]] جاي بعد [[base.css]].
+
+ازاي تحدد السبب في أي موقع: بص على الـ selector الأول. لو واحد [[.title]] والتاني [[h1]] يبقى specificity. لو واحد عليه [[!important]] يبقى هو. لو متساويين يبقى الترتيب.
+
+الغلطة: تقول «الملف ده مش شغال» وتحط [[!important]] تعدّي بيها. الخط المشطوب معناه إن القاعدة اتقرت وخسرت، مش إنها مش واصلة.
+
+~~~text الناتج
+الخاصية: color
+المشطوبة: navy من base.css سطر 1
+اللي كسبت: crimson من theme.css سطر 2، rgb(220, 20, 60)
+السبب: نفس specificity، و theme.css جاي الأخير
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح:** اعمل صفحة فيها زرار [[button:hover { background: red }]] وزرار تاني [[:focus-visible]]. ظبّط شكل الـ hover والـ focus من غير ما الماوس يتحرك، بـ [[:hov]].`, done: R`علّمت [[:hover]] من [[:hov]] والزرار فضل أحمر وانت بتعدّل في Styles، وعلّمت [[:focus-visible]] وشفت الـ outline، ونقلت القيم النهائية للملف بإيدك.`, sol: R`~~~html hov.html
+<!doctype html>
+<style>
+button:hover { background: red }
+button:focus-visible { outline: 3px solid blue }
+</style>
+<button id="a">حفظ</button>
+<button id="b">إلغاء</button>
+~~~
+
+1. اختار الزرار في Elements.
+2. في Styles دوس [[:hov]]، وعلّم [[:hover]]. الزرار هيفضل أحمر والماوس بعيد عنه.
+3. عدّل قيم [[button:hover]] في Styles وانت شايف النتيجة ثابتة.
+4. شيل [[:hover]] وعلّم [[:focus-visible]]، وظبّط الـ outline.
+5. انسخ القيم النهائية لملف الـ CSS بإيدك، لأن Styles مش بيحفظ في ملفك.
+
+[[:hov]] بيقول للمتصفح «اعتبر العنصر في الحالة دي» من غير ما حالته الحقيقية تتغيّر، فتقدر تبعد الماوس عن الزرار وتشتغل في Styles براحتك. من غير كده الـ hover بيروح أول ما تتحرك ناحية DevTools.
+
+الغلطة: تدوّر على [[:focus-visible]] بالماوس. الكليك بالماوس على زرار غالبًا مبيشغّلهاش، هي بتظهر بالكيبورد، فلو بتجرّبها بالضغط هتفتكر إنها مش شغالة.
+
+اتجرّب بنفس آلية DevTools (أمر [[CSS.forcePseudoState]] في الـ DevTools Protocol) من غير ماوس:
+
+~~~text الناتج
+من غير حالة       background: rgb(240, 240, 240)
+:hover متعلّمة     background: rgb(255, 0, 0)
+:focus-visible     outline: rgb(0, 0, 255) solid 3px
+~~~` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك (z-index):** صفحة فيها header [[position: sticky; z-index: 100]] و modal [[position: fixed; z-index: 9999]] جوه [[<section>]] عليه [[transform: translateY(0)]]. افتح الـ modal: هتلاقيه تحت الـ header ومش مغطّي الشاشة. لاقي السبب من Elements و Computed من غير ما تقرا الحل.`, done: R`لقيت إن الـ section عليه [[transform]] (Computed بيقول [[matrix(1, 0, 0, 1, 0, 0)]])، وإن ده بيعمل stacking context و containing block للـ fixed. في المعمل بتاعنا [[document.elementFromPoint]] على مكان الـ header رجّع الـ header مش الـ modal، ومستطيل الـ modal كان [[16,132,1334,585]] بدل الشاشة كلها [[0,0,1366,768]]. ولما نقلت الـ modal لآخر [[body]] بقى فوق ومغطّي الشاشة.`, sol: R`~~~html z.html
+<!doctype html>
+<style>
+body { margin: 16px; height: 2000px }
+header { position: sticky; top: 0; z-index: 100; height: 100px; margin-bottom: 16px; background: #ddd }
+section { transform: translateY(0); height: 585px; background: #eee }
+.modal { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,.6) }
+</style>
+<header>header</header>
+<section id="s"><div class="modal" id="m">modal</div></section>
+~~~
+~~~js Console
+getComputedStyle(s).transform
+document.elementFromPoint(100, 50).tagName
+m.getBoundingClientRect()
+document.body.append(m)            // التصليح
+m.getBoundingClientRect()
+document.elementFromPoint(100, 50).id
+~~~
+
+طريقة التفكير: [[z-index: 9999]] الرقم مش هو المشكلة. امشي من الـ modal لفوق على أهله في Elements، وبص في Computed على أي واحد عليه [[transform]] أو [[filter]] أو [[opacity]] أقل من ١. لقيت [[section]] عليه [[matrix(1, 0, 0, 1, 0, 0)]].
+
+الـ [[transform]] حتى لو مبيحركش حاجة بيعمل حاجتين: **stacking context**، فكل [[z-index]] جواه بيتقارن جوه الـ section بس، والـ section نفسه من غير [[z-index]] فـ header بـ 100 فوقه كله. و **containing block** للـ fixed، فـ [[position: fixed; inset: 0]] بقى بيتحسب من الـ section مش من الشاشة، ودي اللي خلّت المستطيل [[16,132,1334,585]].
+
+التصليح نقل الـ modal لآخر [[body]] (ودي فكرة Portal في React)، فمفيش أب بيحبسه.
+
+الغلطة: تزوّد الـ [[z-index]] لـ 99999. الرقم بيتقارن جوه نفس الـ stacking context بس، فعمره ما هيعدّي الـ header.
+
+~~~text الناتج (شاشة 1366×768)
+transform على section     matrix(1, 0, 0, 1, 0, 0)
+elementFromPoint(100,50)  HEADER
+مستطيل الـ modal          16, 132, 1334, 585
+بعد النقل لآخر body:
+مستطيل الـ modal          0, 0, 1366, 768
+elementFromPoint(100,50)  m
+~~~` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك (sticky):** header عليه [[position: sticky; top: 0]] وبيطلع مع السكرول. في Elements امشي على أهالي الـ header واحد واحد، ودوّر في Computed على [[overflow]] مش [[visible]]. جرّب ٣ حالات: [[body { overflow-x: hidden }]] لوحده، و [[html, body { overflow-x: hidden }]]، و [[html, body { overflow-x: clip }]].`, done: R`بعد سكرول ٨٠٠px، [[$0.getBoundingClientRect().top]] للـ header: [[0]] في الحالة الأولى، و [[-800]] في التانية (الـ sticky باظ لأن [[body]] بقى scroll container)، و [[0]] في التالتة. وكاتب ليه [[clip]] بيقص من غير ما يعمل scroll container.`, sol: R`~~~html s1.html (غيّر سطر الحالة في الملفين التانيين)
+<!doctype html>
+<style>
+body { margin: 0 }
+.bar { height: 60px; background: #def; position: sticky; top: 0 }
+.tall { height: 3000px }
+body { overflow-x: hidden }                      /* الحالة ١ */
+/* html, body { overflow-x: hidden }                الحالة ٢ */
+/* html, body { overflow-x: clip }                  الحالة ٣ */
+</style>
+<header class="bar" id="h">header</header>
+<div class="tall">x</div>
+~~~
+~~~js Console
+scrollTo(0, 800)
+h.getBoundingClientRect().top
+scrollY
+~~~
+
+الـ sticky بيلزق جوه أقرب أب عامل **scroll container**، وأي [[overflow]] مش [[visible]] و مش [[clip]] بيعمل scroll container.
+
+**الحالة ١:** [[overflow-x: hidden]] على [[body]] لوحده. لما [[html]] يكون [[visible]]، المتصفح بينقل قيمة الـ overflow من body للـ viewport (اسمها overflow propagation)، فـ body مبيبقاش scroll container حقيقي، والـ sticky شغال، والرقم [[0]].
+
+**الحالة ٢:** الاتنين [[hidden]]. الـ viewport خد قيمة [[html]]، وبقى [[body]] فعلًا scroll container. الصفحة بتتحرك بالـ viewport، بس [[body]] مش بيعمل سكرول جوه نفسه، فالـ header لازق في body اللي مش بيتحرك جواه، وبيطلع مع الصفحة: [[-800]].
+
+**الحالة ٣:** [[clip]] بيقص اللي طالع بس، ومبيعملش scroll container أصلًا. فالـ sticky شغال، [[0]].
+
+الغلطة: تحط [[overflow-x: hidden]] على [[html, body]] عشان سكرول جانبي وتكسر كل sticky في الموقع من غير ما تاخد بالك. الحل [[overflow-x: clip]]، أو تصلّح العنصر العريض نفسه.
+
+~~~text الناتج (scrollY = 800 في الثلاثة)
+الحالة                                 top
+body { overflow-x: hidden }            0
+html, body { overflow-x: hidden }      -800
+html, body { overflow-x: clip }        0
+~~~` },
+            { lvl: 'تحدي', t: R`**اشرحها:** ارسم الـ box model لزرار في أي موقع بأرقامه من المربعات الملونة في Computed (margin و border و padding و content)، وقول عرضه الكلي كام، وبعدين غيّر [[box-sizing]] من Styles وشوف الرقم اتغيّر ولا لأ.`, done: R`الرسمة فيها الأربع أرقام، والعرض الكلي اللي حسبته بإيدك = [[$0.getBoundingClientRect().width]] في Console، وكاتب الفرق بين [[content-box]] و [[border-box]] في سطرين.`, sol: R`~~~css الزرار في المعمل
+button { width: 120px; padding: 8px 12px; border: 2px solid #333; margin: 4px; box-sizing: content-box }
+~~~
+~~~text الرسمة (الأرقام من مربعات Computed)
+margin   4
+  border   2
+    padding  12
+      content  120
+    padding  12
+  border   2
+margin   4
+~~~
+~~~js Console ($0 = الزرار)
+$0.getBoundingClientRect().width
+$0.style.boxSizing = "border-box"
+$0.getBoundingClientRect().width
+getComputedStyle($0).width
+~~~
+
+الحساب بإيدك: العرض الكلي = content + padding يمين وشمال + border يمين وشمال = 120 + 24 + 4 = **148**. والـ margin مش جزء من العرض، هو مسافة بره العنصر.
+
+**الفرق:** في [[content-box]] (الافتراضي) الـ [[width]] هو المحتوى بس، والـ padding و border بيتزادوا عليه. في [[border-box]] الـ [[width]] هو العرض الكلي، والمحتوى بيتقلص عشان يسيب مكان للـ padding و border.
+
+الغلطة: تحسب الـ margin في العرض. [[getBoundingClientRect]] بيرجّع لحد الـ border بس، فلو جمعت الـ margin هتلاقي فرق ٨ وتفتكر إن فيه حاجة غلط.
+
+~~~text الناتج
+قبل: box-sizing: content-box     العرض 148
+بعد: box-sizing: border-box      العرض 120
+~~~` },
           ],
         },
         {
@@ -342,10 +583,108 @@ $$("*").filter(e => e.getBoundingClientRect().right > innerWidth)
 $$("*").filter(e => e.getBoundingClientRect().right > innerWidth)
   .forEach(e => { e.style.outline = "2px solid red"; console.log(e); });`,
           practice: [
-            { lvl: 'سريع', t: R`**مراجعة:** افتح أي موقع بـ [[Ctrl+Shift+M]]، واختار عرض 360، واعمل [[Ctrl+Shift+R]]، واكتب في Console [[innerWidth]] و [[devicePixelRatio]].`, done: R`[[innerWidth]] طلع [[360]]، و [[devicePixelRatio]] طلع الرقم اللي في قايمة الجهاز (مش رقم شاشتك)، وعرفت إنه بيقلّد الـ viewport بس.` },
-            { lvl: 'تطبيق', t: R`**دوّر بنفسك (overflow):** صفحة بتعمل سكرول أفقي على الموبايل. على عرض 360 قارن [[document.documentElement.scrollWidth]] بـ [[clientWidth]]، وبعدين لاقي العنصر المتسبب بسطر في Console بيدوّر على أي عنصر [[getBoundingClientRect()]] بتاعه خارج الشاشة يمين أو شمال.`, done: R`في معمل الدرس (شريط عرض بـ [[width: 106vw]] في صفحة RTL): [[scrollWidth]] طلع [[414]] و [[clientWidth]] [[360]]، والسطر طلّع [[div.promo -54..344]] (طالع من الشمال لأن الصفحة RTL). ولما شيلت الـ [[width]] الرقمين بقوا [[360]].` },
-            { lvl: 'تطبيق', t: R`**قارن:** السطر المشهور [[[...document.querySelectorAll('*')].filter(e => e.scrollWidth > e.clientWidth)]] شغّله على نفس الصفحة اللي فوق. طلّع مين؟ وليه مطلّعش العنصر المتسبب نفسه؟`, done: R`في المعمل طلّع [[html]] و [[body]] و [[main.wrap]]: دول **الأهالي** اللي جواهم حاجة أعرض منهم، مش العنصر العريض. وكاتب إن سطر [[getBoundingClientRect]] هو اللي بيجيب المتسبب.` },
-            { lvl: 'تحدي', t: R`**ابني:** صفحة فيها ٣ كروت بـ [[grid-template-columns: repeat(3, 1fr)]]، واعمل بـ Device Toolbar جدول: من أنهي عرض الكروت بتبقى أضيق من 150px؟ وبعدين حوّلها لـ [[repeat(auto-fit, minmax(200px, 1fr))]] وكرر.`, done: R`الجدول فيه ٤ عروض (1440 و 768 و 412 و 360) وعرض الكارت في كل واحد ([[$0.offsetWidth]])، والنسخة الجديدة مفيهاش كارت أقل من 200px ولا سكرول أفقي.` },
+            { lvl: 'سريع', t: R`**مراجعة:** افتح أي موقع بـ [[Ctrl+Shift+M]]، واختار عرض 360، واعمل [[Ctrl+Shift+R]]، واكتب في Console [[innerWidth]] و [[devicePixelRatio]].`, done: R`[[innerWidth]] طلع [[360]]، و [[devicePixelRatio]] طلع الرقم اللي في قايمة الجهاز (مش رقم شاشتك)، وعرفت إنه بيقلّد الـ viewport بس.`, sol: R`1. افتح الصفحة، و [[F12]]، وبعدين [[Ctrl+Shift+M]].
+2. من فوق اختار Responsive واكتب العرض [[360]]، والـ DPR اختار 3.
+3. اعمل [[Ctrl+Shift+R]] عشان الصفحة تتحمّل وهي عارفة إنها موبايل.
+4. في Console:
+
+~~~js Console
+innerWidth
+devicePixelRatio
+~~~
+
+[[innerWidth]] هو عرض الـ viewport بالـ CSS pixels، و [[devicePixelRatio]] كام بكسل حقيقي في كل CSS pixel. الرقمين دول اللي Device Toolbar بيغيّرهم. بس المعالج والنت والخطوط لسه بتوع جهازك، فده تقليد للمقاس مش للجهاز.
+
+الغلطة: تنسى الريفريش. الصفحة اللي اتحمّلت كديسكتوب ممكن تفضل ماسكة حاجات اتحسبت في أول تحميل. وكمان لو الصفحة فيها عنصر عريض، [[innerWidth]] في وضع الموبايل ممكن يطلع أكبر من 360، زي ما هتشوف في التمرين الجاي.
+
+اتجرّب بـ viewport 360 و deviceScaleFactor 3:
+
+~~~text الناتج
+innerWidth         360
+devicePixelRatio   3
+~~~` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك (overflow):** صفحة بتعمل سكرول أفقي على الموبايل. على عرض 360 قارن [[document.documentElement.scrollWidth]] بـ [[clientWidth]]، وبعدين لاقي العنصر المتسبب بسطر في Console بيدوّر على أي عنصر [[getBoundingClientRect()]] بتاعه خارج الشاشة يمين أو شمال.`, done: R`في معمل الدرس (شريط عرض بـ [[width: 106vw]] في صفحة RTL): [[scrollWidth]] طلع [[414]] و [[clientWidth]] [[360]]، والسطر طلّع [[div.promo -54..344]] (طالع من الشمال لأن الصفحة RTL). ولما شيلت الـ [[width]] الرقمين بقوا [[360]].`, sol: R`~~~html overflow.html
+<!doctype html>
+<html dir="rtl">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+body { margin: 0 }
+.wrap { padding: 16px }
+.promo { width: 106vw; padding: 8px; background: gold }
+</style>
+<main class="wrap"><div class="promo">خصم</div><p>نص</p></main>
+</html>
+~~~
+~~~js Console
+const root = document.documentElement, W = root.clientWidth;
+[root.scrollWidth, W];
+[...document.querySelectorAll("*")]
+  .filter(e => { const r = e.getBoundingClientRect(); return r.right > W || r.left < 0; })
+  .map(e => e.tagName.toLowerCase() + "." + e.className + " " + Math.round(e.getBoundingClientRect().left) + ".." + Math.round(e.getBoundingClientRect().right));
+~~~
+
+[[scrollWidth]] هو عرض كل المحتوى و [[clientWidth]] هو الجزء الظاهر، فلو الأول أكبر يبقى فيه سكرول أفقي. وبعدين الفلتر بيمشي على كل عنصر ويشوف حدوده: طالع يمين؟ ([[right > W]]) طالع شمال؟ ([[left < 0]]).
+
+الشرط التاني هو اللي بيفرق هنا: الصفحة RTL، فالعنصر العريض بيبدأ من اليمين ويطلع من الشمال. لو دوّرت على [[right]] بس زي سطر الدرس، مش هتلاقي حاجة.
+
+ليه [[106vw]] طلع 398 مش 382؟ الـ [[vw]] بيتحسب 381.6، و [[content-box]] زوّد عليها ٨ من كل ناحية: 397.6.
+
+الغلطة: تستخدم [[innerWidth]] بدل [[clientWidth]] في الفلتر. في وضع الموبايل، Chrome بيكبّر الـ layout viewport عشان يستوعب العنصر العريض: جرّبناها و [[innerWidth]] طلع [[415]] مش 360، فأرقام [[getBoundingClientRect]] بتتزق كلها، والعنصر بيبان [[-1..397]]. عشان كده السطر بيقارن بـ [[clientWidth]] اللي فضل [[360]]. الأرقام اللي تحت من وضع Responsive من غير mobile emulation.
+
+~~~text الناتج
+scrollWidth 414    clientWidth 360
+div.promo -54..344
+بعد ما شيلنا width: 106vw من .promo:
+scrollWidth 360    clientWidth 360
+~~~` },
+            { lvl: 'تطبيق', t: R`**قارن:** السطر المشهور [[[...document.querySelectorAll('*')].filter(e => e.scrollWidth > e.clientWidth)]] شغّله على نفس الصفحة اللي فوق. طلّع مين؟ وليه مطلّعش العنصر المتسبب نفسه؟`, done: R`في المعمل طلّع [[html]] و [[body]] و [[main.wrap]]: دول **الأهالي** اللي جواهم حاجة أعرض منهم، مش العنصر العريض. وكاتب إن سطر [[getBoundingClientRect]] هو اللي بيجيب المتسبب.`, sol: R`~~~js Console (نفس صفحة التمرين اللي فات)
+[...document.querySelectorAll("*")]
+  .filter(e => e.scrollWidth > e.clientWidth)
+  .map(e => e.tagName.toLowerCase() + (e.className ? "." + e.className : ""));
+~~~
+
+السطر ده بيسأل كل عنصر: «اللي جواك أعرض منك؟». الـ [[.promo]] نفسها عرضها 398 واللي جواها كلمة واحدة صغيرة، فالإجابة لأ، ومش بتظهر في النتيجة. اللي بيقول آه هم **الأهالي** اللي الـ promo طالعة منهم: [[main.wrap]] و [[body]] و [[html]].
+
+فالسطر المشهور بيجيب اللي **حاويين** المشكلة مش اللي **عاملها**. وده مفيد لو عايز تعرف فين [[overflow]] ممكن يتحط، بس مش عشان تلاقي السبب. السبب بييجي من سطر [[getBoundingClientRect]] اللي بيقارن كل عنصر بحدود الشاشة.
+
+الغلطة: تفضل تعدّل في [[body]] أو تحط عليه [[overflow-x: hidden]] لأنه ظهر في النتيجة، والعنصر العريض لسه موجود ومقصوص.
+
+~~~text الناتج
+["html", "body", "main.wrap"]
+سطر getBoundingClientRect:  div.promo -54..344
+~~~` },
+            { lvl: 'تحدي', t: R`**ابني:** صفحة فيها ٣ كروت بـ [[grid-template-columns: repeat(3, 1fr)]]، واعمل بـ Device Toolbar جدول: من أنهي عرض الكروت بتبقى أضيق من 150px؟ وبعدين حوّلها لـ [[repeat(auto-fit, minmax(200px, 1fr))]] وكرر.`, done: R`الجدول فيه ٤ عروض (1440 و 768 و 412 و 360) وعرض الكارت في كل واحد ([[$0.offsetWidth]])، والنسخة الجديدة مفيهاش كارت أقل من 200px ولا سكرول أفقي.`, sol: R`~~~html cards.html
+<!doctype html>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+body { margin: 0; padding: 16px }
+.g { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px }
+.c { background: #eee; padding: 8px; min-height: 80px }
+</style>
+<div class="g"><div class="c" id="c1">1</div><div class="c">2</div><div class="c">3</div></div>
+~~~
+~~~css النسخة التانية
+.g { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px }
+~~~
+~~~js Console
+c1.offsetWidth
+document.documentElement.scrollWidth
+~~~
+
+[[repeat(3, 1fr)]] بيقسم المساحة على ٣ مهما كانت صغيرة. عشان كده الكارت بيضيق لحد ما يبقى مش مقروء، ومن عرض 513 لتحت بقى أقل من 150px (قسناها بتقليل العرض واحد واحد).
+
+[[repeat(auto-fit, minmax(200px, 1fr))]] بيقول: حط أعمدة قد ما تقدر، بشرط إن كل عمود ما يقلش عن 200px، واللي يفضل وزّعه. فالعدد بيقل من ٣ لـ ١ لوحده، من غير ولا [[@media]]. و [[auto-fit]] بيقفل الأعمدة الفاضية فالكروت بتتمد، و [[auto-fill]] كان هيسيبها.
+
+الغلطة: تحط [[minmax(400px, 1fr)]] وتجرّب على 360 فيحصل سكرول أفقي، لأن الحد الأدنى أكبر من الشاشة. الحل [[minmax(min(400px, 100%), 1fr)]].
+
+~~~text الناتج
+العرض    repeat(3, 1fr)    auto-fit 200px    أعمدة auto-fit   scrollWidth
+1440     459               459               3                1440
+768      235               235               3                768
+412      116               380               1                412
+360      99                328               1                360
+أول عرض الكارت فيه أقل من 150px في repeat(3, 1fr): 513 (الكارت 149.66)
+~~~` },
           ],
         },
         {
@@ -426,9 +765,56 @@ GET /logo.png 200         (Cache-Control: no-cache و Pragma: no-cache)
 
 لو حتى بعد Hard Reload التعديل مش ظاهر، المشكلة مش كاش المتصفح: يا إما الملف مارفعش فعلًا (افتح الـ URL بتاع الـ CSS مباشرة واتأكد إن التعديل فيه)، يا إما فيه CDN أو Nginx كاش قدام السيرفر، يا إما service worker بيرجّع نسخة قديمة (Application ثم Service workers). والحل الدائم للمستخدمين هو إن اسم الملف يتغير مع كل build ([[app.3f9a1c.css]]) زي ما Vite و Next.js بيعملوا.`,
           practice: [
-            { lvl: 'سريع', t: R`**مراجعة:** اكتب الفرق بين التلات طرق (ريفريش عادي، و [[Ctrl+Shift+R]]، و «Empty Cache and Hard Reload») في جدول: كل واحدة بتمسح الكاش ولا لأ، ومحتاجة DevTools مفتوحة ولا لأ.`, done: R`الجدول ٣ صفوف، و «Empty Cache» هي الوحيدة اللي بتمسح الكاش فعلًا ومحتاجة DevTools مفتوحة، وكاتب إن [[Disable cache]] بيشتغل بس والـ DevTools مفتوحة.` },
-            { lvl: 'تطبيق', t: R`**قارن وقيس:** على أي موقع، سجّل في Network عمود Size لأول ٥ ملفات في ٣ حالات: ريفريش عادي، و [[Ctrl+Shift+R]]، و [[Disable cache]] متعلّم.`, done: R`عندك ١٥ خانة، والريفريش العادي فيه [[(memory cache)]] أو [[(disk cache)]] أو [[304]]، والاتنين التانيين كلهم أرقام بالـ kB.` },
-            { lvl: 'تحدي', t: R`**اشرحها:** زميلك بيقول «عملت Ctrl+Shift+R والزوار لسه شايفين القديم». اكتبله ٣ سطور: ليه، وإيه الفرق بين كاشه وكاش الزوار، والحل اللي بيوصل للزوار (درس «?v= كسر الكاش»).`, done: R`السطور فيها: الكاش على جهاز كل زائر، و [[Cache-Control: max-age]] بيخلّي المتصفح ميسألش، والحل رابط جديد ([[?v=]] أو hash في اسم الملف) مع HTML مش متكيّش.` },
+            { lvl: 'سريع', t: R`**مراجعة:** اكتب الفرق بين التلات طرق (ريفريش عادي، و [[Ctrl+Shift+R]]، و «Empty Cache and Hard Reload») في جدول: كل واحدة بتمسح الكاش ولا لأ، ومحتاجة DevTools مفتوحة ولا لأ.`, done: R`الجدول ٣ صفوف، و «Empty Cache» هي الوحيدة اللي بتمسح الكاش فعلًا ومحتاجة DevTools مفتوحة، وكاتب إن [[Disable cache]] بيشتغل بس والـ DevTools مفتوحة.`, sol: R`| الطريقة | بتمسح الكاش؟ | محتاجة DevTools؟ | بتعمل إيه |
+|---|---|---|---|
+| ريفريش عادي [[F5]] | لأ | لأ | بتسأل عن الـ HTML، والملفات اللي لسه صالحة بتيجي من الكاش |
+| [[Ctrl+Shift+R]] | لأ | لأ | بتتجاهل الكاش في الطلبات دي بس وبتجيب من السيرفر، والنسخ القديمة بتتحدّث |
+| Empty Cache and Hard Reload | آه | آه | كليك يمين على زرار الريفريش والـ DevTools مفتوحة، بتمسح كاش الموقع وبعدين تحمّل |
+
+و [[Disable cache]] في Network بيشتغل بس والـ DevTools مفتوحة: بيتجاهل الكاش طول ما هي مفتوحة، وأول ما تقفلها الكاش يرجع يشتغل.
+
+الفرق المهم بين «اتجاهل» و «امسح»: [[Ctrl+Shift+R]] بيتجاهل الكاش، بس الصفحة ممكن تطلب بعد التحميل ملف من JavaScript مبيدخلش في الريفريش ده، فييجي من الكاش. عشان كده لما تشك في الكاش بجد، Empty Cache هي الأضمن.
+
+الغلطة: تفتكر إن [[Ctrl+Shift+R]] عندك بيغيّر حاجة عند الزوار. ده على جهازك بس، والتمرين الجاي والأخير بيقيسوا ده.
+
+زرار Empty Cache من وثائق Chrome، لأنه كليك في الواجهة. واللي اتقاس في التمرين اللي بعده هو الريفريش العادي و [[Ctrl+Shift+R]] و [[Disable cache]].
+
+~~~text الناتج
+جدول ٣ صفوف زي اللي فوق. الوحيدة اللي «بتمسح» ومحتاجة DevTools: Empty Cache and Hard Reload.
+~~~` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** على أي موقع، سجّل في Network عمود Size لأول ٥ ملفات في ٣ حالات: ريفريش عادي، و [[Ctrl+Shift+R]]، و [[Disable cache]] متعلّم.`, done: R`عندك ١٥ خانة، والريفريش العادي فيه [[(memory cache)]] أو [[(disk cache)]] أو [[304]]، والاتنين التانيين كلهم أرقام بالـ kB.`, sol: R`1. افتح صفحة الموقع وتاب Network مفتوح، واعمل تحميل أول.
+2. اعمل ريفريش عادي، وسجّل عمود Size لأول ملفات.
+3. اعمل [[Ctrl+Shift+R]] وسجّل.
+4. علّم [[Disable cache]]، واعمل ريفريش، وسجّل، وشيل العلامة.
+
+المعمل: صفحة فيها ٣ ملفات، بـ [[Cache-Control: public, max-age=3600]] و [[ETag]]، والصفحة نفسها [[no-cache]]. اتقاس بالـ DevTools Protocol: [[Page.reload]] بـ [[ignoreCache]]، و [[Network.setCacheDisabled]].
+
+القراءة: في الريفريش العادي [[a.css]] و [[b.js]] جم من [[(memory cache)]] لأنهم لسه في ذاكرة التاب، و [[c.svg]] من [[(disk cache)]]، وكلهم [[0]] بايت من الشبكة. أما الصفحة نفسها فسألت السيرفر ورجعلها [[304]]، والـ 190 بايت دول headers بس. في الحالتين التانيين كله نزل كامل.
+
+الغلطة: تقرا [[(memory cache)]] كأنها مشكلة. ده معناه إن الموقع سريع للزائر العائد. المشكلة بس لو الملف اتغيّر والرابط ماتغيّرش (الدرس اللي بعده).
+
+~~~text الناتج (المعمل فيه ٤ ملفات، فـ ١٢ خانة)
+الملف         ريفريش عادي       Ctrl+Shift+R   Disable cache
+cache.html    190 B (304)        321 B          321 B
+a.css         (memory cache)     20.2 kB        20.2 kB
+b.js          (memory cache)     20.2 kB        20.2 kB
+c.svg         (disk cache)       285 B          285 B
+~~~` },
+            { lvl: 'تحدي', t: R`**اشرحها:** زميلك بيقول «عملت Ctrl+Shift+R والزوار لسه شايفين القديم». اكتبله ٣ سطور: ليه، وإيه الفرق بين كاشه وكاش الزوار، والحل اللي بيوصل للزوار (درس «?v= كسر الكاش»).`, done: R`السطور فيها: الكاش على جهاز كل زائر، و [[Cache-Control: max-age]] بيخلّي المتصفح ميسألش، والحل رابط جديد ([[?v=]] أو hash في اسم الملف) مع HTML مش متكيّش.`, sol: R`~~~text إجابة نموذجية
+Ctrl+Shift+R بيأثر على متصفحك انت بس، لأن كل زائر عنده كاش منفصل على جهازه ومحدش يقدر يمسحه من بره.
+والـ Cache-Control: max-age على الملف بيخلّي متصفح الزائر يستخدم نسخته من غير ما يسأل السيرفر لحد ما المدة تخلص.
+الحل اللي بيوصل للزوار: رابط جديد للملف (?v=30 أو hash في اسم الملف)، مع HTML مش متكيّش عشان الرابط الجديد يوصلهم.
+~~~
+
+ليه الإجابة كده: السؤال مش «إزاي أمسح الكاش»، لأن مفيش طريقة تمسح بيها كاش جهاز حد تاني. السؤال «إزاي أخلّي متصفحه يطلب ملف جديد». والمتصفح بيخزّن بالرابط الكامل، فأي رابط جديد مالوش نسخة في الكاش وبيتجاب من السيرفر.
+
+الغلطة: تكتفي بـ [[?v=30]] وتنسى الـ HTML نفسه. لو الـ HTML متكيّش ساعة، الزائر هيفضل شايف الرابط القديم ساعة.
+
+المعمل بتاع الدرس اللي بعده بيثبت ده: بعد تعديل الـ CSS من غير تغيير الرابط، اللون فضل قديم والـ CSS مااتطلبش.
+
+~~~text الناتج
+٣ سطور: كاش كل زائر على جهازه + max-age بيمنع السؤال + رابط جديد مع HTML مش متكيّش.
+~~~` },
           ],
         },
         {
@@ -661,12 +1047,154 @@ Get-ChildItem *.html | ForEach-Object { (Get-Content $_.FullName -Raw) -replace 
 
 بعد [[sed -i.bak 's/?v=29/?v=30/g' *.html]]: [[grep -o '?v=30' *.html | wc -l]] بيطبع [[6]] (زي عدد [[?v=29]] قبلها)، و [[grep -l '?v=29' *.html]] مبيطبعش حاجة. ولما تروح لأي صفحة: اللوج فيه [[GET /css/style.css?v=30 200]] واللون الجديد ظهر.`,
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صفحة فيها السطر [[<link href="a.css?v=7"><script src="b.js?v=7"></script>]] وصفحة تانية فيها [[a.css?v=7]] لوحده. [[grep -c '?v=7' *.html]] هيطبع إيه؟ و [[grep -o '?v=7' *.html | wc -l]]؟`, done: R`كتبت [[1]] و [[1]] للأمر الأول و [[3]] للتاني، وشغّلتهم واتطابقوا، وتقدر تقول ليه في جملة.` },
-            { lvl: 'تطبيق', t: R`**صلّح:** [[sed -i 's/?v=1/?v=2/g' *.html]] على موقع فيه ملفات على [[?v=1]] وملفات على [[?v=12]]. اعمل المعمل ده بنفسك (صفحتين)، وشوف [[?v=12]] بقت إيه، واكتب نسخة متلمسش غير [[?v=1]].`, done: R`القديم حوّل [[?v=12]] لـ [[?v=22]]. نسختك ([[s/?v=1"/?v=2"/g]] أو [[\b]] في PowerShell) سابت [[?v=12]] زي ما هي، و [[grep -o '?v=1"' *.html]] بعدها فاضي.` },
-            { lvl: 'تطبيق', t: R`**قارن وقيس:** ابني معمل الدرس ([[server.js]] و ٣ صفحات)، وافتح الموقع في المتصفح وتاب Network مفتوح. سجّل لكل خطوة: الـ CSS جه من [[(memory cache)]] أو [[(disk cache)]] أو [[200]]؟ ٣ خطوات: أول زيارة، وبعد ما غيّرت الـ CSS من غير الرقم، وبعد [[?v=30]].`, done: R`عندك ٣ سطور: [[200]]، وبعدين من الكاش واللون القديم، وبعدين [[200]] واللون الجديد. ولوج السيرفر فيه طلب الـ CSS مرتين بس.` },
-            { lvl: 'تطبيق', t: R`**ابني:** [[bump.sh]]: بيلاقي كل [[?v=رقم]] في [[*.html]] (حتى في فولدرات جوه، [[find . -name '*.html']])، ويحطهم كلهم على [[$(date +%Y%m%d%H%M)]]، ويطبع العدد قبل وبعد، ويقف برسالة لو العددين مختلفين.`, done: R`على المعمل بيطبع [[before: 6  after: 6]]، وتشغيله مرتين ورا بعض بيغيّر الرقم من غير ما يكسر حاجة، ولو حطيت ملف [[sub/x.html]] بيتغيّر هو كمان.` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** بدل الرقم اليدوي، خلّي الرقم لكل ملف هو أول ٨ حروف من [[sha256sum]] بتاع الملف نفسه ([[style.css?v=1a2b3c4d]]). اكتب السكربت، وبعدين غيّر [[style.css]] بس وشغّله: مين اللي رابطه اتغيّر؟`, done: R`بعد تعديل [[style.css]] بس: رابط [[style.css]] اتغيّر في الـ ٣ صفحات، ورابط [[app.js]] فضل زي ما هو، والمتصفح جاب الـ CSS بس (لوج السيرفر).` },
-            { lvl: 'تحدي', t: R`**اشرحها:** لزميل في ٤ سطور: ليه Ctrl+Shift+R صلّح المشكلة عندك ومصلّحهاش عند الزوار، وليه [[?v=]] بيصلّحها، وإيه الشرط اللي لازم يبقى في الـ HTML نفسه.`, done: R`الشرح فيه: الكاش عند كل زائر على جهازه؛ و [[max-age]] بيخلّي المتصفح ميسألش؛ و [[?v=]] رابط جديد مالوش نسخة؛ والـ HTML لازم [[no-cache]] أو مدة قصيرة عشان الرابط الجديد يوصل.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صفحة فيها السطر [[<link href="a.css?v=7"><script src="b.js?v=7"></script>]] وصفحة تانية فيها [[a.css?v=7]] لوحده. [[grep -c '?v=7' *.html]] هيطبع إيه؟ و [[grep -o '?v=7' *.html | wc -l]]؟`, done: R`كتبت [[1]] و [[1]] للأمر الأول و [[3]] للتاني، وشغّلتهم واتطابقوا، وتقدر تقول ليه في جملة.`, sol: R`~~~bash
+printf '<link href="a.css?v=7"><script src="b.js?v=7">$__lt/script>\n' > one.html
+printf '<link href="a.css?v=7">\n' > two.html
+grep -c '?v=7' *.html
+grep -o '?v=7' *.html | wc -l
+~~~
+
+[[grep -c]] بيعدّ **السطور** اللي فيها تطابق، لكل ملف لوحده، فالسطر اللي فيه تطابقين بيتحسب مرة واحدة. عشان كده [[1]] و [[1]].
+
+[[grep -o]] بيطبع **كل تطابق** في سطر لوحده، و [[wc -l]] بيعدّ السطور دي، فالتطابقين اللي في نفس السطر بيتحسبوا اتنين. والناتج [[3]].
+
+الغلطة: تستخدم [[grep -c]] عشان تتأكد إنك غيّرت كل الروابط، وأكتر من رابط ممكن يبقى في نفس السطر، خصوصًا في HTML متصغّر. العدد الصح بييجي من [[grep -o ... | wc -l]].
+
+~~~text الناتج
+one.html:1
+two.html:1
+3
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح:** [[sed -i 's/?v=1/?v=2/g' *.html]] على موقع فيه ملفات على [[?v=1]] وملفات على [[?v=12]]. اعمل المعمل ده بنفسك (صفحتين)، وشوف [[?v=12]] بقت إيه، واكتب نسخة متلمسش غير [[?v=1]].`, done: R`القديم حوّل [[?v=12]] لـ [[?v=22]]. نسختك ([[s/?v=1"/?v=2"/g]] أو [[\b]] في PowerShell) سابت [[?v=12]] زي ما هي، و [[grep -o '?v=1"' *.html]] بعدها فاضي.`, sol: R`~~~bash
+# المعمل
+printf '<link href="a.css?v=1">\n<link href="b.css?v=1">\n' > a.html
+printf '<link href="c.css?v=12">\n' > b.html
+
+# النسخة الغلط
+sed -i 's/?v=1/?v=2/g' *.html
+cat b.html
+
+# النسخة الصح (بعد ما ترجّع الملفات لأصلها)
+sed -i 's/?v=1"/?v=2"/g' *.html
+grep -o '?v=1"' *.html
+~~~
+~~~powershell PowerShell
+Get-ChildItem *.html | ForEach-Object { (Get-Content $_.FullName -Raw) -replace '\?v=1\b', '?v=2' | Set-Content $_.FullName -NoNewline }
+~~~
+
+الأمر الغلط بيدوّر على النص [[?v=1]] في أي مكان، و [[?v=12]] بيبدأ بيه. فبيغيّر أول رقم ويسيب التاني: [[?v=12]] بقى [[?v=22]]، وده رقم مفيش حد قصده.
+
+التصليح: تضيف الحرف اللي بعد الرقم، [[?v=1"]]. الدبل كوت بيقفل الـ attribute، فالتطابق بقى للرقم [[1]] بالظبط. وفي PowerShell [[\b]] معناها «حدود كلمة»، فـ [[1]] متبوعة برقم مش بتتطابق.
+
+الغلطة التانية: نفس الأمر بتشغيله مرتين. وعلى ماك [[sed -i]] محتاج [[-i.bak]] أو [[-i '']].
+
+و [[grep]] لما مبيلاقيش حاجة بيطبع فاضي ويخرج بـ [[1]]، فالفاضي هنا هو النجاح.
+
+~~~text الناتج
+القديم:  <link href="c.css?v=22">
+الجديد:
+<link href="a.css?v=2">
+<link href="b.css?v=2">
+<link href="c.css?v=12">
+grep -o بعدها: فاضي، و exit 1
+~~~` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** ابني معمل الدرس ([[server.js]] و ٣ صفحات)، وافتح الموقع في المتصفح وتاب Network مفتوح. سجّل لكل خطوة: الـ CSS جه من [[(memory cache)]] أو [[(disk cache)]] أو [[200]]؟ ٣ خطوات: أول زيارة، وبعد ما غيّرت الـ CSS من غير الرقم، وبعد [[?v=30]].`, done: R`عندك ٣ سطور: [[200]]، وبعدين من الكاش واللون القديم، وبعدين [[200]] واللون الجديد. ولوج السيرفر فيه طلب الـ CSS مرتين بس.`, sol: R`1. جهّز فولدر [[web]] فيه [[index.html]] و [[cart.html]] و [[checkout.html]] و [[css/style.css]] (لون [[h1]] أحمر) و [[js/app.js]]، وكل صفحة بتربط الملفين بـ [[?v=29]].
+2. شغّل [[server.js]] من الدرس ([[node server.js]]) وافتح [[http://127.0.0.1:18765/index.html]] و Network مفتوح (و Disable cache **مش** متعلّم).
+3. سجّل سطر [[style.css]].
+4. غيّر اللون لأزرق في [[style.css]]، وروح [[cart.html]] بلينك أو بالعنوان، وسجّل.
+5. غيّر [[?v=29]] لـ [[?v=30]] في الـ ٣ صفحات، وافتح [[index.html]]، وسجّل.
+
+الملف بييجي بـ [[max-age=31536000]] (سنة)، فالمتصفح مش محتاج يسأل السيرفر. في الخطوة ٤ الرابط هو هو، فالمتصفح جاب نسخته القديمة من غير ما يسأل، واللون فضل أحمر رغم إن الملف على السيرفر اتغيّر. في الخطوة ٥ الرابط جديد، والكاش بيخزّن بالرابط الكامل، فمفيش نسخة فاتجاب الملف.
+
+الغلطة: تعمل ريفريش عادي بدل ما تروح صفحة تانية، أو تسيب Disable cache متعلّم، فمش هتشوف الكاش خالص وتفتكر إن التجربة باظت.
+
+~~~text الناتج
+الخطوة               style.css جه من     لون h1
+أول زيارة            200 من الشبكة       rgb(255, 0, 0)
+بعد تغيير الـ CSS    (memory cache)      rgb(255, 0, 0)
+بعد ?v=30            200 من الشبكة       rgb(0, 0, 255)
+
+لوج السيرفر:
+GET /index.html 200
+GET /css/style.css?v=29 200
+GET /js/app.js?v=29 200
+GET /cart.html 200
+GET /index.html 200
+GET /css/style.css?v=30 200
+GET /js/app.js?v=30 200
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[bump.sh]]: بيلاقي كل [[?v=رقم]] في [[*.html]] (حتى في فولدرات جوه، [[find . -name '*.html']])، ويحطهم كلهم على [[$(date +%Y%m%d%H%M)]]، ويطبع العدد قبل وبعد، ويقف برسالة لو العددين مختلفين.`, done: R`على المعمل بيطبع [[before: 6  after: 6]]، وتشغيله مرتين ورا بعض بيغيّر الرقم من غير ما يكسر حاجة، ولو حطيت ملف [[sub/x.html]] بيتغيّر هو كمان.`, sol: R`~~~bash bump.sh
+#!/usr/bin/env bash
+set -euo pipefail
+V=$(date +%Y%m%d%H%M)
+count() { find . -name '*.html' -print0 | xargs -0 grep -ohE "$1" | wc -l || true; }
+before=$(count '\?v=[0-9a-f]+')
+find . -name '*.html' -print0 | xargs -0 sed -i -E "s/\?v=[0-9a-f]+/?v=$V/g"
+after=$(count "\?v=$V")
+echo "before: $before  after: $after"
+if [ "$before" -ne "$after" ]; then
+  echo "count mismatch: some links were not updated" >&2
+  exit 1
+fi
+~~~
+
+- [[set -euo pipefail]]: يقف عند أول خطأ أو متغير فاضي.
+- [[V=$(date +%Y%m%d%H%M)]]: الرقم الجديد من الوقت، فمش محتاج تفتكر الرقم القديم.
+- [[count]]: دالة بتعدّ كل التطابقات. [[-o]] كل تطابق في سطر، و [[-h]] من غير اسم الملف، و [[-E]] regex حديث. و [[|| true]] عشان [[pipefail]] ميوقفش السكربت لو مفيش تطابق.
+- [[-print0]] مع [[xargs -0]]: أسامي ملفات فيها مسافات متتكسرش.
+- [[\?]] في [[-E]] لازم تتعمل escape، لأن [[?]] لوحدها معناها «اختياري»، وده خطأ الدرس [[Invalid preceding regular expression]].
+- [[before]] و [[after]]: فحص إن كل اللي اتلقى اتغيّر، والسكربت يقف لو لأ.
+
+الغلطة: تعمل [[sed]] بالنمط [[?v=[0-9]+]] من غير حروف، فتشيل روابط الـ hash من الدرس التالي من الحساب. ولو شغّلته مرتين في نفس الدقيقة الرقم مش هيتغيّر (لأن الدقة دقيقة)، ودي مش مشكلة: الروابط سليمة.
+
+~~~text الناتج
+before: 6  after: 6
+?v=202611041009          ← المعمل، وعندك هيبقى وقتك
+تشغيل تاني:  before: 6  after: 6
+بعد إضافة sub/x.html:  before: 7  after: 7   و ?v=29 جوه الملف بقى 0
+~~~` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** بدل الرقم اليدوي، خلّي الرقم لكل ملف هو أول ٨ حروف من [[sha256sum]] بتاع الملف نفسه ([[style.css?v=1a2b3c4d]]). اكتب السكربت، وبعدين غيّر [[style.css]] بس وشغّله: مين اللي رابطه اتغيّر؟`, done: R`بعد تعديل [[style.css]] بس: رابط [[style.css]] اتغيّر في الـ ٣ صفحات، ورابط [[app.js]] فضل زي ما هو، والمتصفح جاب الـ CSS بس (لوج السيرفر).`, sol: R`~~~bash hash.sh
+#!/usr/bin/env bash
+set -euo pipefail
+for f in css/style.css js/app.js; do
+  h=$(sha256sum "$f" | cut -c1-8)
+  sed -i -E "s#$f\?v=[0-9a-z]+#$f?v=$h#g" *.html
+  echo "$f -> $h"
+done
+~~~
+
+[[sha256sum]] بيطلّع بصمة بتعتمد على محتوى الملف بس، و [[cut -c1-8]] بياخد أول ٨ حروف. فالملف اللي ماتغيّرش بصمته نفس البصمة، ورابطه نفس الرابط، والمتصفح بيستخدم الكاش.
+
+و [[sed]] هنا فاصله [[#]] بدل [[/]] لأن المسار نفسه فيه [[/]]. والنمط فيه اسم الملف، فكل ملف بيتغيّر رابطه هو بس.
+
+ده أحسن من رقم واحد لكل الموقع: لو غيّرت سطر CSS، الزوار مش هينزّلوا الـ JavaScript تاني.
+
+الغلطة: تحسب الـ hash بعد ما تعمل كل التعديل على ملف واحد وتنسى ترتيب الـ build: لو [[style.css]] نفسه بيتغيّر في خطوة بعد الـ hash، الرابط هيبقى مش مطابق. احسب آخر حاجة.
+
+جرّبنا بسكربت بعد التعديل: رابط [[app.js]] ماتغيّرش في أي صفحة، ورابط [[style.css]] اتغيّر في الـ ٣. ومتابعة المتصفح نفس منطق التمرين رقم ٣: الرابط الجديد بس هو اللي بيتطلب.
+
+~~~text الناتج
+css/style.css -> 829fb0a8
+js/app.js -> 3879a5d9
+بعد تغيير style.css بس:
+css/style.css -> e5f7fd62
+js/app.js -> 3879a5d9
+~~~` },
+            { lvl: 'تحدي', t: R`**اشرحها:** لزميل في ٤ سطور: ليه Ctrl+Shift+R صلّح المشكلة عندك ومصلّحهاش عند الزوار، وليه [[?v=]] بيصلّحها، وإيه الشرط اللي لازم يبقى في الـ HTML نفسه.`, done: R`الشرح فيه: الكاش عند كل زائر على جهازه؛ و [[max-age]] بيخلّي المتصفح ميسألش؛ و [[?v=]] رابط جديد مالوش نسخة؛ والـ HTML لازم [[no-cache]] أو مدة قصيرة عشان الرابط الجديد يوصل.`, sol: R`~~~text إجابة نموذجية
+Ctrl+Shift+R صلّحها عندك لأن الكاش على جهازك، وكل زائر عنده كاش لوحده مش بتوصله.
+و Cache-Control: max-age بيخلّي متصفح الزائر يستخدم نسخته القديمة من غير ما يسأل السيرفر أصلًا.
+و ?v= بيصلّحها لأن الكاش بالرابط الكامل، فالرابط الجديد مالوش نسخة والمتصفح لازم يجيبه.
+والشرط: الـ HTML نفسه لازم no-cache أو مدة قصيرة، عشان الرابط الجديد يوصل للزائر.
+~~~
+
+الترتيب هنا مقصود: الأول تحدد الكاش فين، وبعدين ليه المتصفح مش بيسأل، وبعدين الحل، وبعدين شرطه.
+
+الغلطة: تنسى الشرط الأخير. لو الـ HTML نفسه [[max-age=3600]]، الزائر هياخد الرابط القديم لمدة ساعة حتى لو رفعت الرقم. في المعمل الـ HTML كان [[no-cache]]، فالرقم الجديد وصل في أول طلب.
+
+~~~text الناتج (من لوج معمل التمرين رقم ٣)
+بعد تغيير الـ CSS من غير الرقم:  GET /cart.html 200 والـ CSS مااتطلبش
+بعد ?v=30:                       GET /css/style.css?v=30 200
+~~~` },
           ],
           ci: [
             { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`bash`, run: R`printf '<link rel="stylesheet" href="css/style.css?v=29">\n<script src="js/app.js?v=29"></script>\n' > index.html
@@ -682,301 +1210,6 @@ sed 's/?v=2/?v=3/g' p.txt`, expect: [R`checkout.html:1`, R`matches=4`, R`after=4
 Get-ChildItem *.html | ForEach-Object { (Get-Content $_.FullName -Raw) -replace '\?v=29\b', '?v=30' | Set-Content $_.FullName -NoNewline }
 "lines=" + (Select-String -Path *.html -Pattern '?v=30' -SimpleMatch).Count
 "all=" + (Select-String -Path *.html -Pattern '\?v=30' -AllMatches).Matches.Count`, expect: [R`lines=1`, R`all=2`] },
-          ],
-        }
-      ]
-    },
-    {
-      t: "Console",
-      l: 1,
-      n: "أول مكان تبص فيه لما حاجة في الصفحة مش شغالة",
-      projects: [
-        { lvl: 'صغير', t: R`Snippets شنطة العدة`, what: R`٥ Snippets في Sources: [[audit-images]] (من غير alt أو مقاس)، و [[links-table]] (كل اللينكات و [[target]] و [[rel]])، و [[find-overflow]]، و [[listeners]] (بـ [[getEventListeners]])، و [[design-mode]] (يقلب [[designMode]]). من درس «أوامر Console المفيدة».`, done: R`الـ ٥ بيشتغلوا بـ [[Ctrl+Enter]] على أي موقع ومبيرموش error لو الصفحة مفيهاش العناصر دي، وكل واحد بيطبع [[console.table]].` },
-        { lvl: 'صغير', t: R`قاموس أخطاء Console بتاعك`, what: R`ملف Markdown فيه ١٥ رسالة حقيقية قابلتها (بالنص)، ولكل واحدة: معناها، وأول مكان تبص فيه، والتصليح، ولينك الدرس. من درس «قراءة الأخطاء».`, done: R`١٥ رسالة كل واحدة بنصها الكامل، ومنهم على الأقل واحدة CSP وواحدة Mixed Content وواحدة CORS، وزميل استخدمه وحل خطأ من غير ما يسألك.` },
-        { lvl: 'متوسط', t: R`مسجّل أخطاء الصفحة`, what: R`سكربت صغير تحطه في أي موقع بيمسك [[window.onerror]] و [[unhandledrejection]] و [[securitypolicyviolation]]، ويجمّعهم ويبعتهم كل ١٠ ثواني لـ endpoint (Node) بيحفظهم JSONL. من دروس Console و «Content Security Policy».`, done: R`خطأ JavaScript، و Promise مرفوض، ومخالفة CSP، الـ ٣ وصلوا الملف بالرسالة والملف والسطر والـ URL، ونفس الخطأ ١٠٠ مرة اتبعت مرة واحدة ومعاه عدّاد.` },
-        { lvl: 'متوسط', t: R`Snippet «حالة الصفحة» للدعم الفني`, what: R`Snippet بيطلّع JSON واحد فيه: الـ URL، والـ user agent، والعرض، وآخر ١٠ أخطاء (لو المسجّل موجود)، وأحجام localStorage و cookies (الأسامي بس من غير القيم)، و [[performance]] timings، ويعمله [[copy()]].`, done: R`بعد التشغيل الـ clipboard فيه JSON صالح ([[JSON.parse]] عليه بيعدّي)، ومفيهوش أي قيمة كوكي أو توكن (اتأكدت بـ search على كلمة [[token]]).` },
-        { lvl: 'كبير', t: R`لوحة أخطاء الإنتاج`, what: R`سيرفر Node بيستقبل أخطاء من «مسجّل أخطاء الصفحة»، ويجمّع المتشابه (نفس الرسالة والملف والسطر)، ويترجم الأماكن بالـ source maps (درس «Source maps»)، ويعرض صفحة بالأخطاء متترتبة بالعدد وآخر مرة حصلت، وبيمسح الأقدم من ٣٠ يوم.`, done: R`خطأ من [[app.min.js:1:85]] بيظهر في اللوحة [[cart.js:7:23]]، و ٥٠ نسخة من نفس الخطأ صف واحد بعدّاد ٥٠، والسيرفر بيتعامل مع JSON بايظ من غير ما يقع، وبيكمّل بعد restart من نفس الملف.`, ext: R`زوّد إشعار (تيليجرام أو إيميل) لما خطأ جديد يظهر أول مرة، وفلتر بالمتصفح والصفحة، وrelease tag عشان تعرف الخطأ بدأ مع أنهي نشر.` },
-        { lvl: 'فكرة', t: R`مساعد «اقرا الـ Console ده»`, what: R`أداة بتاخد رسايل Console متصدّرة (Save as) وتصنّفها (JS، شبكة، أمان، extension) وتقول لكل نوع الدرس اللي بيشرحه وأول خطوة. انت بتختار القواعد وشكل التقرير.`, done: R`على ملف Console حقيقي فيه ٢٠ رسالة، كل رسالة اتصنّفت، والرسايل اللي هي نتيجة لرسالة قبلها (زي [[Failed to fetch]] بعد Mixed Content) متجمّعة معاها.`, ext: R`خليها extension بتقرا Console من DevTools panel بتاعها، أو CLI بتاخد HAR وتحلّل الطلبات الفاشلة كمان.` },
-      ],
-      items: [
-        {
-          cmd: "قراءة الأخطاء",
-          title: "الأحمر هو أول خيط",
-          desc: "الأحمر errors والأصفر warnings. كل error جنبه اسم الملف ورقم السطر، دوس عليه يوديك للسطر. رسايل مشهورة: [[is not defined]] يعني متغير أو مكتبة ماتحملتش. [[Cannot read properties of undefined]] يعني بتقرا حاجة من object لسه مجاش (غالبًا الداتا ماوصلتش). و [[Failed to load resource: 404]] يعني ملف مش موجود. فلتر Errors فوق بيخفي الباقي.",
-          example: R`console.log("value", data)
-console.table([{ id: 1, name: "a" }, { id: 2, name: "b" }])
-console.error("something broke")`,
-          try: "افتح Console على 3 مواقع مختلفة، وحاول تفهم أول error في كل واحد.",
-          deep: {
-            why: "المتصفح مش بيعمل حاجة، أو الصفحة فاضية. Console هو أول مكان تبص فيه.",
-            how: R`Console بيعرض الرسايل من [[console.log]]، وكل error حصل في JavaScript. الحمرا errors، والصفرا warnings.
-
-كل error فيه ٣ معلومات: الرسالة (إيه)، واسم الملف (فين)، ورقم السطر. دوس على الملف والسطر يروحك بالظبط للسطر في Sources.
-
-رسايل شائعة: [[is not defined]] يعني متغير أو فانكشن مش موجود. [[Cannot read properties of undefined]] يعني بتحاول توصل لـ property على قيمة undefined، غالبًا بيانات من API لسه ما وصلتش. [[Failed to load resource: 404]] ملف أو endpoint مش موجود.
-
-[[console.table]] بيعرض array من objects كجدول، أحسن بكتير من console.log لو عندك list.`,
-            when: "أول حاجة تعملها لو حاجة مش شغالة: افتح Console.",
-            mistakes: "تدوّر في الكود من غير ما تفتح Console. ويمكن ١٠ دقايق بحث تتوفر لو بصيت في الـ error الأحمر."
-          },
-          teach: R`## الأول: Console فيه نوعين رسايل
-
-- رسايل الكود اللي **انت** كتبته بـ [[console.log]] و [[console.table]] و [[console.error]].
-- رسايل **المتصفح** نفسه: أخطاء JavaScript وملفات مش لاقيها.
-
-المثال بيوريك أول نوع، والـ desc بيتكلم عن التاني. هنفكّ الاتنين، وكله اتشغّل في Chrome على صفحة تجربة على [[http://127.0.0.1:8791]].
-
----
-
-## ١. أخطاء المتصفح: شكلها الحقيقي
-
-عملت صفحة فيها صورة مش موجودة، وملف JS فيه:
-
-~~~text errors.js
-let user;
-setTimeout(() => { console.log(user.name); }, 50);
-setTimeout(() => { $("#buy").hide(); }, 100);
-~~~
-
-وده اللي Chrome طلّعه في Console:
-
-~~~text الناتج في Console
-Failed to load resource: the server responded with a status of 404 (Not Found)     missing.png
-Uncaught TypeError: Cannot read properties of undefined (reading 'name')            errors.js:2
-Uncaught ReferenceError: $ is not defined                                           errors.js:3
-~~~
-
-نقرا كل سطر:
-
-| الرسالة | معناها | في المثال ده |
-|---|---|---|
-| [[Failed to load resource: ... 404]] | المتصفح طلب ملف والسيرفر قال مش موجود | [[missing.png]] |
-| [[Uncaught TypeError: Cannot read properties of undefined (reading 'name')]] | بتقرا [[.name]] من حاجة قيمتها [[undefined]] | [[user]] اتعرّف من غير قيمة |
-| [[Uncaught ReferenceError: $ is not defined]] | اسم مش متعرّف خالص | الكود بيستخدم jQuery ([[$]]) ومفيش jQuery متحمّل |
-
-- [[Uncaught]] يعني محدش مسك الـ error بـ [[try/catch]]، فوقف الفانكشن دي.
-- [[TypeError]] نوع الغلطة: عملية على قيمة من نوع غلط. [[ReferenceError]]: اسم مش موجود.
-- [[errors.js:2]] على اليمين: اسم الملف ورقم السطر، ودوسة عليه تفتح السطر في Sources.
-
----
-
-## ٢. سطر سطر في المثال
-
-قبل المثال عرّفت [[const data = { id: 1, name: "a" }]] عشان يبقى فيه متغير.
-
-### [[console.log("value", data)]]
-
-~~~text الناتج
-value {id: 1, name: 'a'}
-~~~
-
-الفاصلة بتبعت قيمتين منفصلتين، فالـ object بيتعرض كـ object تقدر تفتحه بالسهم. قارن لو استخدمت [[+]]:
-
-~~~javascript Console
-console.log("value" + data)
-~~~
-
-~~~text الناتج
-value[object Object]
-~~~
-
-[[+]] بيحوّل الـ object لنص الأول، والنص الافتراضي لأي object هو الكلمتين [[object Object]] بين قوسين مربعين زي ما شايف فوق. عشان كده الفاصلة أحسن.
-
-### [[console.table([...])]]
-
-~~~text الناتج (بيترسم كجدول في DevTools)
-(index)   id   name
-0         1    'a'
-1         2    'b'
-~~~
-
-بيرسم array الـ objects كجدول: كل object صف، وكل مفتاح عمود، و [[(index)]] رقم العنصر في الـ array.
-
-### [[console.error("something broke")]]
-
-بيطلع بالأحمر زي أخطاء المتصفح، ومعاه سهم يفتح الـ stack trace (مين نادى مين لحد السطر ده)، وبيظهر لما تختار فلتر Errors. الفرق إنه مش بيوقف الكود، ده مجرد طباعة.
-
-> كل سطر من دول بيرجّع [[undefined]] في Console، لأن [[console.log]] وإخواته مش بيرجّعوا قيمة. ده مش error.
-
-## الخلاصة
-
-- ابدأ بأول سطر أحمر: الرسالة (إيه) + الملف ورقم السطر (فين).
-- [[is not defined]] اسم مش موجود، و [[reading 'x']] بتقرا من [[undefined]]، و [[404]] ملف مش موجود.
-- في [[console.log]] افصل بالفاصلة مش بـ [[+]].`,
-          lines: [
-            "اطبع نص وبعده قيمة متغير. الفاصلة أحسن من [[+]] لأن الـ objects بتتعرض كاملة.",
-            "اعرض array من objects كجدول بأعمدة.",
-            "اطبع باللون الأحمر مع stack trace، وبيظهر في فلتر Errors."
-          ],
-          sol: R`اللي هتشوفه غالبًا ٣ أنواع، وكل واحد معناه مختلف:
-
-[[Failed to load resource: the server responded with a status of 404 (Not Found)]]: ملف أو طلب مش موجود، دوس عليه وهيوديك Network. [[Uncaught TypeError: Cannot read properties of undefined (reading 'x')]] وجنبه اسم الملف ورقم السطر: bug في JavaScript، دوس على اللينك اللي على اليمين يفتحلك السطر في Sources. و [[Access to fetch at ... has been blocked by CORS policy]]: الـ API رافض الـ origin ده (شوف درس CORS).
-
-ركز على أول error بس، لأن التانيين كتير بيبقوا نتيجة ليه. ومتقلقش من الأصفر (warnings) ولا من errors جاية من extensions أو إعلانات (هتلاقي في اللينك [[chrome-extension://]] أو دومين إعلانات): دي مش مشكلة الموقع.`,
-          practice: [
-            { lvl: 'سريع', t: R`**مراجعة:** اكتب معنى كل رسالة في سطر: [[x is not defined]]، و [[Cannot read properties of undefined (reading 'price')]]، و [[Failed to load resource: the server responded with a status of 404]]، و [[Unexpected token '<']]، و [[Failed to fetch]].`, done: R`٥ سطور، وكل سطر فيه السبب الأشهر وأول مكان تبص فيه (Sources، ولا Network، ولا السيرفر).` },
-            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** الكود ده: [[const items = [{ product: { price: 25 }, qty: 2 }, { qty: 1 }]; items.reduce((s, i) => s + i.product.price * i.qty, 0)]]. توقّع الرسالة بالنص وأنهي عنصر السبب، وبعدين شغّله في Console.`, done: R`الرسالة [[TypeError: Cannot read properties of undefined (reading 'price')]] (اتجرّبت في Chrome 156)، والسبب العنصر التاني اللي مفيهوش [[product]]، وكتبت تصليح بـ [[i.product?.price ?? 0]] أو فلتر قبلها.` },
-            { lvl: 'تطبيق', t: R`**صلّح:** صفحة فيها [[<script src="/js/app.js">]] والملف اسمه [[App.js]] على السيرفر (لينكس). اكتب الأخطاء اللي هتطلع في Console بالترتيب، وأنهي واحد هو الأصل.`, done: R`الأول [[404]] على [[app.js]] (السيرفر حساس لحالة الحروف)، وبعده [[... is not defined]] لأي حاجة الملف ده كان المفروض يعرّفها. وكاتب إن الأحمر التاني نتيجة للأول، فبتصلّح الأول بس.` },
-            { lvl: 'تطبيق', t: R`**فلتر:** على صفحة فيها أخطاء كتير، استخدم صندوق الفلتر في Console: [[-url:chrome-extension]] (يخبّي رسايل الإضافات)، و Errors بس، و [[url:app.js]].`, done: R`عدد الرسايل قبل وبعد كل فلتر مكتوب، وفاضل بس رسايل الموقع نفسه، وعرفت تفرّق بين رسالة من extension ورسالة من الموقع.` },
-            { lvl: 'تحدي', t: R`**بيانات حقيقية:** خد كل رسايل Console من صفحة فيها مشاكل (كليك يمين ثم Save as...) وصنّفها في جدول: النوع (JS ولا شبكة ولا أمان CSP/Mixed Content)، والمصدر (الموقع ولا extension)، وتتصلّح فين.`, done: R`الجدول فيه كل الرسايل، وكل رسالة أمان (زي [[Mixed Content]] أو [[Content Security Policy]]) مربوطة بالدرس اللي بيشرحها، وفيه رسالة واحدة على الأقل اكتشفت إنها نتيجة لرسالة قبلها.` },
-            { lvl: 'تحدي', t: R`**اشرحها:** الفرق بين [[console.error("x")]] و [[throw new Error("x")]] في Console: شكلهم، والـ stack، وهل الكود اللي بعدهم بيكمّل. جرّبهم في Console وفي ملف.`, done: R`كاتب إن الاتنين أحمر، بس [[throw]] بيوقف باقي الدالة (والكود اللي بعده مبيتنفّذش) وليه [[Uncaught]] قبله، و [[console.error]] رسالة وبس والكود بيكمّل.` },
-          ],
-        },
-        {
-          cmd: "أوامر Console المفيدة",
-          title: "JavaScript على أي صفحة",
-          desc: R`[[$0]] العنصر اللي مختاره في Elements. [[$$('img')]] كل العناصر اللي بتطابق الـ selector كـ array. [[copy()]] بينسخ أي حاجة على الكليب بورد. و [[document.designMode = "on"]] بيخليك تعدّل أي نص في الصفحة بالكتابة عليه، مفيد لو عايز تجرب نص قبل ما تعدّله في الكود.`,
-          example: R`document.title
-$0
-$0.style.outline = "2px solid red"
-$$("img:not([alt])").length
-copy($$("a").map(a => a.href))
-document.designMode = "on"`,
-          try: "اعرف كام صورة في موقعك من غير alt (مهمة للـ SEO والـ accessibility)، وانسخ كل اللينكات اللي في الصفحة.",
-          deep: {
-            why: "Console مش بس لقراية الأخطاء، هو ترمنال JavaScript كامل. تقدر تكتب جوه أي JavaScript وينفّذه على الصفحة دلوقتي.",
-            how: R`[[$0]] هو العنصر المختار في Elements دلوقتي. [[$$('selector')]] بيرجع كل العناصر اللي تطابق الـ selector كـ array (زي querySelectorAll بس بيرجّع array عادي تقدر تعمل عليه map). [[copy(value)]] بينسخ أي قيمة للكليب بورد.
-
-[[document.designMode = "on"]] بيحوّل الصفحة كلها لمحرر نصوص: تكليك على أي نص وتكتب فوقه. مش بيعدّل الكود، بس بيخليك تشوف شكل نص مختلف في مكانه.
-
-Shift+Enter في Console بينزّلك سطر جديد من غير تنفيذ، عشان تكتب كود من أكتر من سطر.`,
-            when: "تجرّب قيمة متغير في الصفحة. تدوّر على عناصر بـ CSS selector. تطبّع بيانات لحد تاني بـ copy. تجرّب شكل نص.",
-            mistakes: "تكتب كود طويل في Console وتفقده لما تريفريش."
-          },
-          teach: R`## الأول: Console فيه أدوات زيادة عن JavaScript
-
-أي JavaScript بتكتبه في Console بيتنفّذ على الصفحة المفتوحة. وفوقه DevTools بيضيف أدوات اسمها **Command Line API** زي [[$0]] و [[$$]] و [[copy]]، ودول موجودين في Console بس، مش في كود الصفحة ولا في Node. كل الأسطر دي اتشغّلت في Chrome على صفحة تجربة فيها عنوان [[Products]]، وصورتين واحدة بس عليها [[alt]]، و ٣ لينكات.
-
----
-
-## ١. [[document.title]]
-
-~~~text الناتج
-"Test Shop"
-~~~
-
-[[document]] هو الصفحة كلها، و [[.title]] النص اللي في [[<title>]] (اللي على التاب). أي سطر JavaScript عادي بيشتغل هنا.
-
-## ٢. [[$0]]
-
-اخترت الـ [[h1]] في Elements وكتبت [[$0]]:
-
-~~~text الناتج
-<h1>Products</h1>
-~~~
-
-[[$0]] = آخر عنصر اخترته في Elements. و [[$1]] اللي قبله، لحد [[$4]].
-
-## ٣. [[$0.style.outline = "2px solid red"]]
-
-~~~text الناتج
-"2px solid red"
-~~~
-
-[[.style]] هو الـ CSS اللي على العنصر نفسه (زي [[style="..."]] في الـ HTML). الإسناد بـ [[=]] بيرجّع القيمة اللي اتحطت، والعنوان بقى حواليه إطار أحمر. ولو سألت [[$0.outerHTML]]:
-
-~~~text الناتج
-"<h1 style="outline: red solid 2px;">Products</h1>"
-~~~
-
-## ٤. [[$$("img:not([alt])").length]]
-
-نفكّها:
-
-| الحتة | معناها |
-|---|---|
-| [[img]] | أي عنصر صورة |
-| [[:not([alt])]] | مش عليه attribute اسمه alt |
-| [[$$(...)]] | كل العناصر اللي تطابق، كـ array |
-| [[.length]] | عدد العناصر اللي في الـ array |
-
-~~~text الناتج
-1
-~~~
-
-ولو عايز تعرف مين هي:
-
-~~~javascript Console
-$$("img:not([alt])").map(i => i.src)
-~~~
-
-~~~text الناتج
-["http://127.0.0.1:8791/banner.png"]
-~~~
-
-ليه [[$$]] أحسن من [[document.querySelectorAll]]؟ الاتنين بيجيبوا نفس العناصر، بس:
-
-~~~javascript Console
-Array.isArray($$("img"))
-Array.isArray(document.querySelectorAll("img"))
-~~~
-
-~~~text الناتج
-true
-false
-~~~
-
-[[$$]] بيرجّع array حقيقي فيه [[map]] و [[filter]]، و [[querySelectorAll]] بيرجّع [[NodeList]] مفيهاش [[map]].
-
-## ٥. [[copy($$("a").map(a => a.href))]]
-
-- [[$$("a")]]: كل اللينكات.
-- [[.map(a => a.href)]]: حوّل كل لينك للعنوان بتاعه. [[a =>]] arrow function: «خد كل عنصر وسمّيه a ورجّع [[a.href]]».
-- [[copy(...)]]: انسخ الناتج للـ clipboard.
-
-السطر نفسه بيرجّع [[undefined]]، واللي اتنسخ (شفته من بروتوكول DevTools) كان:
-
-~~~text اللي في الـ clipboard
-[
-  "http://127.0.0.1:8791/about",
-  "http://127.0.0.1:8791/x",
-  "https://example.com/"
-]
-~~~
-
-لاحظ: في الـ HTML اللينك الأول مكتوب [[/about]] بس، و [[a.href]] بيرجّعه كامل. لو عايز المكتوب حرفيًا استخدم [[a.getAttribute("href")]] ورجّع [[/about]].
-
-## ٦. [[document.designMode = "on"]]
-
-~~~text الناتج
-"on"
-~~~
-
-الصفحة كلها بقت محرر: كليك على أي نص واكتب. [[document.designMode = "off"]] يرجّعها، والريفريش كمان.
-
-| السطر | بيعمل إيه |
-|---|---|
-| [[document.title]] | عنوان الصفحة اللي في التاب |
-| [[$0]] | العنصر المختار في Elements |
-| [[$0.style.outline = ...]] | علّمه بإطار أحمر من غير ما يزق الصفحة |
-| [[$$("img:not([alt])").length]] | عدد الصور اللي من غير alt |
-| [[copy(...)]] | انسخ أي قيمة كـ JSON |
-| [[document.designMode = "on"]] | عدّل نص الصفحة بالكتابة |
-
-## الخلاصة
-
-- [[$0]] و [[$$]] و [[copy]] أدوات DevTools بس. في كود حقيقي استخدم [[document.querySelectorAll]].
-- [[$$]] بيرجّع array حقيقي، فتقدر تعمل عليه [[map]] و [[filter]] على طول.
-- [[a.href]] كامل، و [[getAttribute("href")]] زي ما هو مكتوب.`,
-          lines: [
-            "عنوان الصفحة (أي JavaScript بيتنفذ على الصفحة دي).",
-            "العنصر المختار دلوقتي في تاب Elements.",
-            "حط عليه إطار أحمر عشان تشوفه في الصفحة.",
-            "كل الصور اللي من غير alt، وعددها. [[$$]] زي querySelectorAll بس بيرجع array.",
-            "انسخ كل اللينكات في الصفحة للكليب بورد.",
-            "خلّي الصفحة كلها قابلة للكتابة: تكليك على أي نص وتعدّله."
-          ],
-          sol: R`[[$$("img:not([alt])").length]] بيرجع رقم. جرّبته على صفحة فيها صورتين واحدة بس عليها alt فرجّع [[1]]. لو طلع [[0]] يبقى كل الصور عليها alt (حتى لو فاضي [[alt=""]]، وده صح للصور الديكور). وعشان تشوفهم نفسهم: [[$$("img:not([alt])").map(i => i.src)]].
-
-[[copy($$("a").map(a => a.href))]] مش بيطبع حاجة (بيرجع [[undefined]])، لكن اللينكات بقت في الـ clipboard كـ JSON array، الصقها في أي ملف. لاحظ إن [[a.href]] بيرجع الـ URL الكامل ([[http://localhost:8791/x]]) حتى لو في الـ HTML مكتوب [[/x]].
-
-لو طلعلك [[$$ is not defined]] أو [[copy is not defined]]: انت بتشغّلهم في كود الصفحة أو في Node. دول أدوات Console بتاعة DevTools بس، مش JavaScript عادي.`,
-          practice: [
-            { lvl: 'سريع', t: R`**مراجعة:** على أي صفحة اكتب: [[$$("img").length]]، و [[$$("img:not([alt])").length]]، و [[$$("a").length]]، و [[document.title]].`, done: R`عندك ٤ أرقام ونص، وعارف إن [[$$]] بيرجّع Array عادي (عليه [[.map]] على طول) مش NodeList.` },
-            { lvl: 'تطبيق', t: R`**ابني:** سطر واحد بيطلّع جدول بكل اللينكات اللي بتفتح في تاب جديد ([[target="_blank"]]) ومفيهاش [[rel="noopener"]]: [[console.table]] بالـ href والنص.`, done: R`الجدول بيظهر بعمودين، ولما زوّدت لينك تجريبي من Elements وشغّلت السطر تاني ظهر فيه.` },
-            { lvl: 'تطبيق', t: R`**قيس:** [[console.time("x")]] و [[console.timeEnd("x")]] حوالين loop مليون لفة، و [[console.count("click")]] مرتين.`, done: R`ظهر سطر بالشكل [[x: 1.43... ms]] (الرقم عندك هيختلف)، و [[click: 1]] و [[click: 2]]. وعارف إن [[console.assert(1 === 2, "math broke")]] بيطبع بس لما الشرط يطلع false.` },
-            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** صفحة بتمنع الكليك يمين و F12 بـ JavaScript ([[contextmenu]] و [[keydown]] عليهم [[preventDefault]]). افتح DevTools من قايمة المتصفح (⋮ ثم More tools)، واكتب في Console [[getEventListeners(document)]]، وشيلهم.`, done: R`[[getEventListeners(document)]] رجّع [[contextmenu]] و [[keydown]] بالدوال، وبعد [[removeEventListener]] بالـ listener نفسه الكليك يمين رجع. وعرفت إن [[getEventListeners]] موجودة في Console بس: من سكربت في الصفحة [[typeof getEventListeners]] بيطلع [[undefined]].` },
-            { lvl: 'تحدي', t: R`**مسألة:** اكتب snippet (Sources ثم Snippets) اسمه [[audit]] بيطبع في جدول واحد: عدد الصور من غير alt، والصور اللي أعرض من الشاشة، والزراير اللي مفيهاش نص ولا [[aria-label]]، والـ inputs اللي مالهاش label.`, done: R`الـ snippet بيتشغّل بـ [[Ctrl+Enter]] على أي موقع ويطبع ٤ صفوف بالأرقام، ولما تزوّد صورة من غير alt من Elements الرقم بيزيد ١.` },
           ],
         }
       ]

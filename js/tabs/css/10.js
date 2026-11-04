@@ -32,11 +32,210 @@ cn("text-sm text-gray-600", className);`,
           try: R`في مشروع الـ lab سطّب [[clsx tailwind-merge]] واعمل [[cn]]. اطبع [[cn("p-2", "px-4")]] و [[cn("px-4", "p-2")]] وقارن: الأولى بتسيب الاتنين (px-4 بيغلب الجزء الأفقي بس)، والتانية بتسيب [[p-2]] بس.`,
           flag: "script",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اكتب ناتج كل سطر قبل ما تشغّله: [[cn("p-4", "px-6")]]، و [[cn("px-6", "p-4")]]، و [[cn("mt-2", "my-4")]]، و [[cn("my-4", "mt-2")]]، و [[cn("a", 0 && "b", ["c", { d: true, e: false }])]].`, done: R`بـ clsx 2.1.1 و tailwind-merge 3.7.0: [["p-4 px-6"]]، و [["p-4"]]، و [["my-4"]]، و [["my-4 mt-2"]]، و [["a c d"]]. وفهمت إن الأخير بيكسب لو بيغطي اللي قبله كله، وإن الأدق بعد العام بيتساب (mt-2 بعد my-4 بيعدّل حتة منه بس).` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** في [[@theme]] فيه [[--text-display: 3rem]]، والعنوان [[cn("text-white", "text-display")]] بيطلع أسود. اطبع الناتج وصلّح.`, done: R`[[cn]] رجّع [["text-display"]] بس: tailwind-merge مش عارف [[display]] حجم، فاعتبره لون ومسح [[text-white]]. بعد [[extendTailwindMerge({ extend: { theme: { text: ["display"] } } })]] الناتج [["text-white text-display"]]، و [[cn("text-lg", "text-display")]] بقت [["text-display"]].` },
-            { lvl: 'تطبيق', t: R`**اكتب اختبار:** [[cn.test.mjs]] بـ [[node:test]] فيه ٦ حالات على الأقل: تعارض، وشرط false، و object، و array، و undefined، و variant زي [[hover:]] و [[md:]] مع بعض.`, done: R`[[node --test]] بيعدّي كله، وفيه حالة [[cn("hover:bg-gray-100", "hover:bg-gray-200", "md:bg-white")]] = [["hover:bg-gray-200 md:bg-white"]]، ولو كسرت cn (شيلت twMerge) ٣ اختبارات على الأقل بتفشل.` },
-            { lvl: 'تطبيق', t: R`**ابني:** component [[NavLink]] بياخد [[href]] و [[active]] و [[className]]: كلاسات أساسية، و [[active && "bg-brand text-white"]]، والـ className آخر حاجة. استخدمه في navbar وغيّر لون لينك واحد من برا.`, done: R`اللينك النشط بس عليه الخلفية، و [[aria-current="page"]] عليه، واللينك اللي اديته [[className="text-red-600"]] لونه اتغير والباقي زي ما هو، ومفيش لينك فيه كلاسين لون في الـ DOM.` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** [[clsx("px-6", "px-2")]] من غير twMerge: الـ div بيبقى عليه الكلاسين. اعمل build وقيس [[padding-left]]: أنهي واحد كسب؟ وليه مش «الأخير في الـ class»؟`, done: R`كسب [[px-6]] (24px) رغم إن [[px-2]] آخر حاجة في الـ class، لأن ترتيب الكلاسات في الـ HTML ملوش لازمة: اللي بيكسب الأخير في **ملف الـ CSS**، و Tailwind حاطط [[.px-6]] بعد [[.px-2]]. وده بالظبط اللي twMerge بيحله.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اكتب ناتج كل سطر قبل ما تشغّله: [[cn("p-4", "px-6")]]، و [[cn("px-6", "p-4")]]، و [[cn("mt-2", "my-4")]]، و [[cn("my-4", "mt-2")]]، و [[cn("a", 0 && "b", ["c", { d: true, e: false }])]].`, done: R`بـ clsx 2.1.1 و tailwind-merge 3.7.0: [["p-4 px-6"]]، و [["p-4"]]، و [["my-4"]]، و [["my-4 mt-2"]]، و [["a c d"]]. وفهمت إن الأخير بيكسب لو بيغطي اللي قبله كله، وإن الأدق بعد العام بيتساب (mt-2 بعد my-4 بيعدّل حتة منه بس).`, sol: R`~~~js lib/utils.mjs
+import { clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs) {
+  return twMerge(clsx(inputs));
+}
+~~~
+
+~~~js predict.mjs
+import { cn } from "./lib/utils.mjs";
+
+console.log(cn("p-4", "px-6"));
+console.log(cn("px-6", "p-4"));
+console.log(cn("mt-2", "my-4"));
+console.log(cn("my-4", "mt-2"));
+console.log(cn("a", 0 && "b", ["c", { d: true, e: false }]));
+~~~
+
+~~~bash
+npm i clsx@2.1.1 tailwind-merge@3.7.0
+node predict.mjs
+~~~
+
+**القاعدة:** [[clsx]] بيجمّع القيم ويشيل الفاضي، و [[twMerge]] بيمشي من الآخر للأول ويحذف اللي اتغطى.
+
+- [[cn("p-4", "px-6")]]: [[px-6]] أدق وجاي بعد [[p-4]]، فبيعدّل حتة منه بس. الاتنين يفضلوا.
+- [[cn("px-6", "p-4")]]: [[p-4]] الأخير بيغطي كل الاتجاهات، فـ [[px-6]] مبقالهاش لزمة.
+- [[cn("mt-2", "my-4")]]: نفس الكلام، [[my-4]] بيغطي فوق وتحت.
+- [[cn("my-4", "mt-2")]]: [[mt-2]] بيعدّل فوق بس.
+- الأخير: [[0 && "b"]] قيمته [[0]] فبيتشال، والـ array بيتفرد، والـ object بياخد المفاتيح اللي قيمتها true.
+
+**الغلطة الشائعة:** تفتكر إن «الأخير بيكسب» معناها الأخير بس يفضل. لو الأخير أضيق من اللي قبله، الاتنين بيفضلوا، وده الصح.
+
+~~~text الناتج
+p-4 px-6
+p-4
+my-4
+my-4 mt-2
+a c d
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** في [[@theme]] فيه [[--text-display: 3rem]]، والعنوان [[cn("text-white", "text-display")]] بيطلع أسود. اطبع الناتج وصلّح.`, done: R`[[cn]] رجّع [["text-display"]] بس: tailwind-merge مش عارف [[display]] حجم، فاعتبره لون ومسح [[text-white]]. بعد [[extendTailwindMerge({ extend: { theme: { text: ["display"] } } })]] الناتج [["text-white text-display"]]، و [[cn("text-lg", "text-display")]] بقت [["text-display"]].`, sol: R`~~~js fix.mjs
+import { clsx } from "clsx";
+import { twMerge, extendTailwindMerge } from "tailwind-merge";
+
+// قبل: tailwind-merge العادي مش عارف إن display حجم خط
+const before = (...i) => twMerge(clsx(i));
+console.log(before("text-white", "text-display"));
+
+// بعد: بنعرّفه على التوكن بتاعنا
+const merge = extendTailwindMerge({ extend: { theme: { text: ["display"] } } });
+const cn = (...i) => merge(clsx(i));
+console.log(cn("text-white", "text-display"));
+console.log(cn("text-lg", "text-display"));
+~~~
+
+**ليه [[text-white]] اتمسحت:** [[text-*]] في Tailwind معناه حاجتين: لون أو حجم. tailwind-merge بيعرف الأحجام المشهورة ([[text-lg]] وأخواتها)، بس [[--text-display]] توكن انت اللي عملته. فلما شاف [[text-display]] مش عارفها حجم، اعتبرها لون، فحذف اللون اللي قبلها.
+
+**التصليح:** [[extendTailwindMerge]] بيقوله إن [[display]] حجم خط. دلوقتي [[text-white]] و [[text-display]] مش متعارضين، و [[text-lg]] و [[text-display]] متعارضين صح.
+
+**الغلطة الشائعة:** تلف حوالين المشكلة وتحط [[!text-white]]. كده الباج فاضل لكل مكوّن تاني. وأي توكن custom في [[@theme]] من namespace بيتشارك معناه ([[text-]] و [[shadow-]] و [[rounded-]]) لازم تعرّفه لـ tailwind-merge. احفظ [[cn]] في مكان واحد.
+
+~~~text الناتج
+text-display                 ← قبل: text-white اتمسحت
+text-white text-display      ← بعد
+text-display                 ← text-lg و text-display: واحد بس، وده الصح
+~~~` },
+            { lvl: 'تطبيق', t: R`**اكتب اختبار:** [[cn.test.mjs]] بـ [[node:test]] فيه ٦ حالات على الأقل: تعارض، وشرط false، و object، و array، و undefined، و variant زي [[hover:]] و [[md:]] مع بعض.`, done: R`[[node --test]] بيعدّي كله، وفيه حالة [[cn("hover:bg-gray-100", "hover:bg-gray-200", "md:bg-white")]] = [["hover:bg-gray-200 md:bg-white"]]، ولو كسرت cn (شيلت twMerge) ٣ اختبارات على الأقل بتفشل.`, sol: R`~~~js cn.test.mjs
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { cn } from "./lib/utils.mjs";
+
+test("التعارض: الأخير بيكسب", () => {
+  assert.equal(cn("p-2", "p-4"), "p-4");
+});
+test("شرط false بيتشال", () => {
+  assert.equal(cn("a", false && "b", null, "c"), "a c");
+});
+test("object: المفاتيح اللي قيمتها true بس", () => {
+  assert.equal(cn({ a: true, b: false, c: 1 }), "a c");
+});
+test("array متداخل", () => {
+  assert.equal(cn(["a", ["b"]], "c"), "a b c");
+});
+test("undefined مبيطلعش كلمة undefined", () => {
+  assert.equal(cn("a", undefined), "a");
+});
+test("كل variant ليه حسابه لوحده", () => {
+  assert.equal(cn("hover:bg-gray-100", "hover:bg-gray-200", "md:bg-white"), "hover:bg-gray-200 md:bg-white");
+});
+test("اتنين variants مع بعض", () => {
+  assert.equal(cn("md:hover:p-2", "md:hover:p-4"), "md:hover:p-4");
+});
+~~~
+
+~~~bash
+node --test cn.test.mjs
+~~~
+
+**ليه الحالات دي:** كل واحدة بتحرس سلوك مختلف. التعارض بيحرس [[twMerge]]، والباقي بيحرس [[clsx]]، وآخر حالتين بيتأكدوا إن كل variant ليه حسابه لوحده: [[hover:bg-gray-100]] مبتتعارضش مع [[md:bg-white]].
+
+**جرّب تكسره:** شيل [[twMerge]] من [[cn]] وشغّل تاني. الاختبار اللي بيعدّي في كل الحالات مش اختبار.
+
+**الغلطة الشائعة:** تكتب اختبار بيقارن النتيجة بنفس الدالة، زي [[assert.equal(cn("a"), cn("a"))]]. دايمًا اكتب القيمة المتوقعة بالحرف.
+
+~~~text الناتج
+cn سليم:
+ℹ tests 7
+ℹ pass 7
+ℹ fail 0
+
+بعد ما شيلت twMerge:
+ℹ tests 7
+ℹ pass 4
+ℹ fail 3
+✖ التعارض: الأخير بيكسب
+✖ كل variant ليه حسابه لوحده
+✖ اتنين variants مع بعض
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** component [[NavLink]] بياخد [[href]] و [[active]] و [[className]]: كلاسات أساسية، و [[active && "bg-brand text-white"]]، والـ className آخر حاجة. استخدمه في navbar وغيّر لون لينك واحد من برا.`, done: R`اللينك النشط بس عليه الخلفية، و [[aria-current="page"]] عليه، واللينك اللي اديته [[className="text-red-600"]] لونه اتغير والباقي زي ما هو، ومفيش لينك فيه كلاسين لون في الـ DOM.`, sol: R`~~~tsx NavLink.tsx
+import { cn } from "./cn";
+
+type Props = React.ComponentProps<"a"> & { active?: boolean };
+
+export function NavLink({ active, className, ...props }: Props) {
+  return (
+    <a
+      aria-current={active ? "page" : undefined}
+      className={cn(
+        "rounded-lg px-3 py-2 text-gray-700 hover:bg-gray-100",
+        active && "bg-brand text-white hover:bg-brand",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+~~~
+
+~~~tsx main.tsx
+import { createRoot } from "react-dom/client";
+import { NavLink } from "./NavLink";
+
+createRoot(document.getElementById("root")!).render(
+  <main>
+  <h1 className="p-4 text-2xl font-bold">متجر النور</h1>
+  <nav aria-label="الرئيسية" className="flex gap-2 p-4">
+    <NavLink href="/" active>الرئيسية</NavLink>
+    <NavLink href="/products">المنتجات</NavLink>
+    <NavLink href="/offers" className="text-red-600">العروض</NavLink>
+  </nav>
+  </main>
+);
+~~~
+
+و [[cn.ts]] بتاعك من الدرس، و [[in.css]] فيه [[--color-brand]].
+
+**الترتيب في [[cn()]] هو المعنى:** الأساس الأول، وبعده حالة active، و [[className]] آخر حاجة. كده اللي بيستخدم المكوّن هو صاحب الكلمة الأخيرة. و twMerge بيشيل [[text-gray-700]] لما ييجي لون تاني، فمفيش كلاسين لون على نفس العنصر.
+
+**[[aria-current="page"]]:** قارئ الشاشة بيقول «الصفحة الحالية». اللون لوحده ميقولش ده لحد مش شايف.
+
+**[[undefined]] مش [[false]]:** لو كتبت [[aria-current={active}]] هيطلع [[aria-current="false"]] على كل لينك. [[undefined]] بيشيل الـ attribute.
+
+**الغلطة الشائعة:** تحط [[className]] في الأول، فكلاسات الأساس تكسب ومحدش يقدر يغيّر حاجة من برا.
+
+~~~text الناتج
+الرئيسية   class: rounded-lg px-3 py-2 bg-brand text-white hover:bg-brand
+           aria-current="page" ، اللون rgb(255, 255, 255)
+المنتجات   class: rounded-lg px-3 py-2 text-gray-700 hover:bg-gray-100
+العروض     class: rounded-lg px-3 py-2 hover:bg-gray-100 text-red-600
+           (text-gray-700 اتشالت)
+
+axe صفر
+~~~` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** [[clsx("px-6", "px-2")]] من غير twMerge: الـ div بيبقى عليه الكلاسين. اعمل build وقيس [[padding-left]]: أنهي واحد كسب؟ وليه مش «الأخير في الـ class»؟`, done: R`كسب [[px-6]] (24px) رغم إن [[px-2]] آخر حاجة في الـ class، لأن ترتيب الكلاسات في الـ HTML ملوش لازمة: اللي بيكسب الأخير في **ملف الـ CSS**، و Tailwind حاطط [[.px-6]] بعد [[.px-2]]. وده بالظبط اللي twMerge بيحله.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>مين كسب</title><link rel="stylesheet" href="out.css"></head>
+<body>
+<div id="a" class="px-6 px-2">px-6 الأول</div>
+<div id="b" class="px-2 px-6">px-2 الأول</div>
+</body>
+</html>
+~~~
+
+~~~bash
+npx @tailwindcss/cli -i in.css -o out.css
+~~~
+
+**ليه مش «الأخير في الـ class»:** لما كلاسين ليهم نفس الـ specificity، اللي بيكسب هو اللي جاي أخيرًا في **ملف الـ CSS**. ترتيب الأسماء جوه attribute [[class]] ملوش أي معنى عند المتصفح، ده مجرد set.
+
+والعنصرين هنا ترتيبهم مختلف في الـ HTML، والنتيجة واحدة، لأن [[.px-6]] جاية بعد [[.px-2]] في [[out.css]].
+
+**عشان كده twMerge موجود:** بيشيل الكلاس المغلوب من الأول، فمش بتبقى تحت رحمة ترتيب الملف.
+
+**الغلطة الشائعة:** تعكس الكلاسات في الـ HTML وتستغرب إن مفيش حاجة اتغيرت.
+
+~~~text الناتج
+class="px-6 px-2"   padding-left = 24px
+class="px-2 px-6"   padding-left = 24px
+
+مكان القاعدة في out.css: .px-2 عند 4641 ، .px-6 عند 4701
+يعني px-6 بعدها، فبتكسب في الحالتين.
+~~~` },
           ],
           deep: {
             why: R`لو مكون Button فيه [[px-4]] وانت عايز زرار معين [[px-6]]، والـ className بيتضاف جنبه، هيبقى عندك [[px-4 px-6]]. مين يكسب؟ مش اللي مكتوب آخر في الـ className، اللي مكتوب آخر في ملف الـ CSS الناتج، ودا مش في إيدك. twMerge بيشيل [[px-4]] خالص فمفيش خناقة.`,
@@ -220,12 +419,279 @@ export function Button({ className, variant, size, ...props }: ButtonProps) {
           try: R`اعمل الزرار ده واستخدمه [[<Button variant="outline" size="lg">]]. وبعدين اكتب [[variant="danger"]] وشوف TypeScript بيعترض. ضيف danger للـ variants وشوفه قبله.`,
           flag: "script",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** بـ [[buttonVariants]] بتاع الدرس: إيه ناتج [[({})]] و [[({ variant: "outline", size: "lg" })]] و [[({ size: null })]] و [[({ variant: "danger" })]]؟ شغّلهم بـ Node.`, done: R`الأول فيه primary و md. التاني فيه [[border]] و [[h-12 px-6 text-lg]] وفي الآخر [[border-2]] (الـ compound اشتغل). التالت مفيهوش ولا كلاس حجم ([[null]] بيلغي الافتراضي، و [[undefined]] لأ). الرابع مفيهوش ولا كلاس شكل ومفيش error: الاسم الغلط بيعدّي في سكوت، ودا سبب [[VariantProps]].` },
-            { lvl: 'تطبيق', t: R`**ابني:** [[Badge]] بـ cva: [[tone]] (success و warning و danger و neutral) × [[look]] (soft و solid)، و compound لـ solid + danger يبقى [[font-bold]]، وألوان من توكنز [[@theme]].`, done: R`صفحة فيها الـ ٨ تركيبات، و TypeScript بيرفض [[tone="info"]]، وكل badge الكلام عليه مقري (contrast 4.5:1 أو أكتر في DevTools)، و [[solid danger]] بس اللي عريض.` },
-            { lvl: 'تطبيق', t: R`**ابني:** كارت باقة بـ cva: [[tone]] (plain و featured) و [[period]] (month و year)، و compound: featured + year = [[ring-2 ring-brand]]. والباقات جاية من array فيها [[highlighted]].`, done: R`[[plan({ tone: "featured", period: "year" })]] بيرجّع [["rounded-3xl p-8 bg-gray-950 text-white ring-2 ring-brand"]] (أو كلاساتك بنفس الترتيب)، والتلات باقات بتترسم من الـ array بـ map، وتغيير [[highlighted]] في الداتا بس بيغيّر أنهي واحدة مميزة.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[<button className={buttonVariants({ variant, size, class: className })}>]] و [[size: { md: "px-6 ..." }]]، وحد بعت [[className="px-2"]] ومفيش أي تغيير. ليه؟ صلّح.`, done: R`cva بتلزق [[class]] في الآخر من غير ما تحل التعارض، فالعنصر عليه [[px-6 px-2]] و [[.px-6]] جاية بعد [[.px-2]] في الـ CSS فبتكسب (24px). بعد [[cn(buttonVariants({ variant, size }), className)]] الـ class فيه [[px-2]] بس والـ padding بقى 8px.` },
-            { lvl: 'تطبيق', t: R`**اكتب اختبار:** لف على كل تركيبات [[variant]] × [[size]] في [[buttonVariants]]، ولكل واحدة تأكد إن [[twMerge(out) === out]] (يعني مفيش كلاسين بيتخانقوا جوه الـ variants نفسها).`, done: R`الاختبار بيعدّي على الـ ٩ تركيبات، ولما تزوّد [[px-5]] على variant (وهو أصلًا فيه px من الحجم) الاختبار بيفشل ويطبع التركيبة اللي فيها التعارض.` },
-            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من README بتاع class-variance-authority: إزاي compound variant يطابق أكتر من قيمة (outline أو ghost مع بعض)؟ وإزاي تعمل variant boolean ([[disabled: true]])؟ جرّب الاتنين.`, done: R`لقيت إن القيمة في compound ممكن تبقى array ([[variant: ["outline", "ghost"]]])، وإن الـ boolean بيتكتب [[{ true: "opacity-50", false: "" }]]، و [[cva("x", { variants: { disabled: { true: "opacity-50", false: "" } } })({ disabled: true })]] رجّع [["x opacity-50"]].` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** بـ [[buttonVariants]] بتاع الدرس: إيه ناتج [[({})]] و [[({ variant: "outline", size: "lg" })]] و [[({ size: null })]] و [[({ variant: "danger" })]]؟ شغّلهم بـ Node.`, done: R`الأول فيه primary و md. التاني فيه [[border]] و [[h-12 px-6 text-lg]] وفي الآخر [[border-2]] (الـ compound اشتغل). التالت مفيهوش ولا كلاس حجم ([[null]] بيلغي الافتراضي، و [[undefined]] لأ). الرابع مفيهوش ولا كلاس شكل ومفيش error: الاسم الغلط بيعدّي في سكوت، ودا سبب [[VariantProps]].`, sol: R`~~~js cva-base.mjs
+import { cva } from "class-variance-authority";
+
+export const buttonVariants = cva("inline-flex items-center justify-center gap-2 rounded-lg font-medium disabled:opacity-50", {
+  variants: {
+    variant: { primary: "bg-brand text-white hover:bg-brand/90", outline: "border hover:bg-gray-50", ghost: "hover:bg-gray-100" },
+    size: { sm: "h-9 px-3 text-sm", md: "h-10 px-4", lg: "h-12 px-6 text-lg" },
+  },
+  compoundVariants: [{ variant: "outline", size: "lg", class: "border-2" }],
+  defaultVariants: { variant: "primary", size: "md" },
+});
+~~~
+
+~~~js predict.mjs
+import { buttonVariants as b } from "./cva-base.mjs";
+
+console.log(b({}));
+console.log(b({ variant: "outline", size: "lg" }));
+console.log(b({ size: null }));
+console.log(b({ variant: "danger" }));
+~~~
+
+**اللي بيحصل في كل سطر:**
+
+1. [[({})]]: مفيش قيم، فـ [[defaultVariants]] بتتطبق: primary و md.
+2. outline و lg: كلاسات الاتنين، وبعدها الـ compound اللي شرطه اتحقق ([[border-2]]).
+3. [[({ size: null })]]: [[null]] معناها «مش عايز قيمة هنا»، فبيلغي الافتراضي. أما [[undefined]] فمعناها «مقلتش»، فالافتراضي يفضل.
+4. [[({ variant: "danger" })]]: الاسم مش موجود، فمفيش كلاسات شكل ولا error في JavaScript. وده اللي [[VariantProps]] بيمسكه وقت الكتابة في TypeScript.
+
+**الغلطة الشائعة:** تعتمد على الـ runtime يقولك الاسم غلط. الزرار هيطلع من غير لون في سكوت.
+
+~~~text الناتج
+(الجزء الأساسي «inline-flex ... disabled:opacity-50» متكرر في الأربعة، فاتشال هنا)
+
+1. bg-brand text-white hover:bg-brand/90 h-10 px-4
+2. border hover:bg-gray-50 h-12 px-6 text-lg border-2
+3. bg-brand text-white hover:bg-brand/90
+4. h-10 px-4
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[Badge]] بـ cva: [[tone]] (success و warning و danger و neutral) × [[look]] (soft و solid)، و compound لـ solid + danger يبقى [[font-bold]]، وألوان من توكنز [[@theme]].`, done: R`صفحة فيها الـ ٨ تركيبات، و TypeScript بيرفض [[tone="info"]]، وكل badge الكلام عليه مقري (contrast 4.5:1 أو أكتر في DevTools)، و [[solid danger]] بس اللي عريض.`, sol: R`~~~css in.css
+@import "tailwindcss";
+
+@theme {
+  --color-success: #166534;
+  --color-success-soft: #dcfce7;
+  --color-warning: #92400e;
+  --color-warning-soft: #fef3c7;
+  --color-danger: #b91c1c;
+  --color-danger-soft: #fee2e2;
+  --color-neutral: #374151;
+  --color-neutral-soft: #f3f4f6;
+}
+~~~
+
+~~~tsx Badge.tsx
+import { cva, type VariantProps } from "class-variance-authority";
+
+const badge = cva("inline-flex items-center rounded-full px-3 py-1 text-sm", {
+  variants: {
+    tone: { success: "", warning: "", danger: "", neutral: "" },
+    look: { soft: "", solid: "text-white" },
+  },
+  compoundVariants: [
+    { tone: "success", look: "soft", class: "bg-success-soft text-success" },
+    { tone: "warning", look: "soft", class: "bg-warning-soft text-warning" },
+    { tone: "danger", look: "soft", class: "bg-danger-soft text-danger" },
+    { tone: "neutral", look: "soft", class: "bg-neutral-soft text-neutral" },
+    { tone: "success", look: "solid", class: "bg-success" },
+    { tone: "warning", look: "solid", class: "bg-warning" },
+    { tone: "danger", look: "solid", class: "bg-danger font-bold" },
+    { tone: "neutral", look: "solid", class: "bg-neutral" },
+  ],
+  defaultVariants: { tone: "neutral", look: "soft" },
+});
+
+type BadgeProps = React.ComponentProps<"span"> & VariantProps<typeof badge>;
+
+export function Badge({ tone, look, className, ...props }: BadgeProps) {
+  return <span className={badge({ tone, look, className })} {...props} />;
+}
+~~~
+
+~~~tsx main.tsx
+import { createRoot } from "react-dom/client";
+import { Badge } from "./Badge";
+
+const tones = ["success", "warning", "danger", "neutral"] as const;
+const looks = ["soft", "solid"] as const;
+
+createRoot(document.getElementById("root")!).render(
+  <main className="grid gap-3 p-6">
+    <h1 className="text-2xl font-bold">الحالات</h1>
+    {looks.map((look) => (
+      <p key={look} className="flex flex-wrap gap-2">
+        {tones.map((tone) => (
+          <Badge key={tone} tone={tone} look={look}>{tone}</Badge>
+        ))}
+      </p>
+    ))}
+  </main>
+);
+~~~
+
+**ليه compound لكل تركيبة:** اللون معتمد على الـ tone والـ look مع بعض، فكلاس زي [[bg-success]] مينفعش يتحط في variant واحد. فالـ variants فاضية، وبتعرّف الأسماء والـ types، والـ compound فيها الألوان. والكلاسات مكتوبة كاملة عشان Tailwind يشوفها.
+
+**[[VariantProps]]** بيقرا الأسماء من الـ [[cva]] نفسها، فالـ TypeScript بيرفض أي اسم مش موجود من غير ما تكرر النوع.
+
+**الغلطة الشائعة:** تختار لون التحذير [[#f59e0b]] مع كلام أبيض، فالتباين يقع تحت 3. عشان كده الـ warning هنا درجة غامقة، وقس كل واحدة بدل ما تثق في عينك.
+
+~~~text الناتج
+tone      soft       solid
+success   6.49:1     7.13:1
+warning   6.37:1     7.09:1
+danger    5.30:1     6.47:1 (و font-weight: 700 ، لوحده)
+neutral   9.37:1     10.31:1
+
+tsc على <Badge tone="info">:
+bad.tsx(2,25): error TS2322: Type '"info"' is not assignable to type
+'"success" | "warning" | "danger" | "neutral" | null | undefined'.
+
+axe صفر ، وعلى 360 مفيش scroll أفقي
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** كارت باقة بـ cva: [[tone]] (plain و featured) و [[period]] (month و year)، و compound: featured + year = [[ring-2 ring-brand]]. والباقات جاية من array فيها [[highlighted]].`, done: R`[[plan({ tone: "featured", period: "year" })]] بيرجّع [["rounded-3xl p-8 bg-gray-950 text-white ring-2 ring-brand"]] (أو كلاساتك بنفس الترتيب)، والتلات باقات بتترسم من الـ array بـ map، وتغيير [[highlighted]] في الداتا بس بيغيّر أنهي واحدة مميزة.`, sol: R`~~~js plan.mjs
+import { cva } from "class-variance-authority";
+
+export const plan = cva("rounded-3xl p-8", {
+  variants: {
+    tone: { plain: "bg-white text-gray-950", featured: "bg-gray-950 text-white" },
+    period: { month: "", year: "" },
+  },
+  compoundVariants: [{ tone: "featured", period: "year", class: "ring-2 ring-brand" }],
+  defaultVariants: { tone: "plain", period: "month" },
+});
+
+const plans = [
+  { name: "البداية", price: 99, highlighted: false },
+  { name: "الاحترافية", price: 299, highlighted: true },
+  { name: "الشركات", price: 999, highlighted: false },
+];
+
+for (const p of plans) {
+  const tone = p.highlighted ? "featured" : "plain";
+  console.log(p.name, "=>", plan({ tone, period: "year" }));
+}
+~~~
+
+في React بتبقى:
+
+~~~tsx Plans.tsx
+{plans.map((p) => (
+  <article key={p.name} className={plan({ tone: p.highlighted ? "featured" : "plain", period: "year" })}>
+    <h2>{p.name}</h2>
+    <p>{p.price} جنيه</p>
+  </article>
+))}
+~~~
+
+**الفكرة:** [[period]] variant قيمه فاضية، ووجوده بس عشان الـ compound يقدر يشترط عليه. و [[ring-2 ring-brand]] مبتظهرش غير لو الشرطين اتحققوا مع بعض.
+
+**الداتا هي اللي بتقرر:** مفيش [[if]] جوه الـ JSX لكل باقة. تغيير [[highlighted]] من باقة لباقة سطر في الـ array.
+
+**الغلطة الشائعة:** تكتب [[className={p.highlighted ? "bg-gray-950 ..." : "bg-white ..."}]] في كل مكان. كده الشكل متفرق، و cva بتجمّعه في مكان واحد.
+
+~~~text الناتج
+البداية => rounded-3xl p-8 bg-white text-gray-950
+الاحترافية => rounded-3xl p-8 bg-gray-950 text-white ring-2 ring-brand
+الشركات => rounded-3xl p-8 bg-white text-gray-950
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[<button className={buttonVariants({ variant, size, class: className })}>]] و [[size: { md: "px-6 ..." }]]، وحد بعت [[className="px-2"]] ومفيش أي تغيير. ليه؟ صلّح.`, done: R`cva بتلزق [[class]] في الآخر من غير ما تحل التعارض، فالعنصر عليه [[px-6 px-2]] و [[.px-6]] جاية بعد [[.px-2]] في الـ CSS فبتكسب (24px). بعد [[cn(buttonVariants({ variant, size }), className)]] الـ class فيه [[px-2]] بس والـ padding بقى 8px.`, sol: R`~~~tsx Button.tsx
+import { cn } from "@/lib/utils";
+
+export function Button({ className, variant, size, ...props }: ButtonProps) {
+  return <button className={cn(buttonVariants({ variant, size }), className)} {...props} />;
+}
+~~~
+
+**ليه مكانش بيتغيّر:** cva مش بتفهم Tailwind. لما تديها [[class]]، بتلزقها في آخر النص وخلاص. فالعنصر عليه [[px-6]] و [[px-2]] مع بعض، واللي بيكسب هو الأخير في ملف الـ CSS، وده [[px-6]].
+
+**التصليح:** ناتج cva يعدّي على [[cn()]]، و twMerge يحذف [[px-6]] لأن [[px-2]] جاية بعدها.
+
+**الغلطة الشائعة:** تفتكر إن [[class]] جوه cva بديل لـ [[cn]]. ده بيشتغل بس لو مفيش تعارض، وأول مرة يحصل تعارض مش هتلاقي أي رسالة.
+
+~~~text الناتج
+قبل:  class="rounded-lg px-6 py-2 px-2"   padding-left = 24px
+بعد:  class="rounded-lg py-2 px-2"        padding-left = 8px
+~~~` },
+            { lvl: 'تطبيق', t: R`**اكتب اختبار:** لف على كل تركيبات [[variant]] × [[size]] في [[buttonVariants]]، ولكل واحدة تأكد إن [[twMerge(out) === out]] (يعني مفيش كلاسين بيتخانقوا جوه الـ variants نفسها).`, done: R`الاختبار بيقع من أول تشغيلة على [[outline × lg]] لأن [[border]] و [[border-2]] متعارضين، وبعد ما نقلت الـ border لـ compound بيعدّي على الـ ٩ تركيبات. ولما تزوّد [[px-5]] على variant (وهو أصلًا فيه px من الحجم) الاختبار بيفشل ويطبع التركيبات اللي فيها التعارض.`, sol: R`~~~js variants.test.mjs
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { twMerge } from "tailwind-merge";
+import { buttonVariants } from "./cva-base.mjs";
+
+const variants = ["primary", "outline", "ghost"];
+const sizes = ["sm", "md", "lg"];
+
+for (const variant of variants) {
+  for (const size of sizes) {
+    test($__bt$__{variant} × $__{size} مفيهاش كلاسين بيتخانقوا$__bt, () => {
+      const out = buttonVariants({ variant, size });
+      assert.equal(twMerge(out), out);
+    });
+  }
+}
+~~~
+
+**الاختبار كشف مشكلة حقيقية من أول تشغيلة:** الزرار [[outline]] و [[lg]] فيه [[border]] من الـ variant و [[border-2]] من الـ compound، والاتنين بيتخانقوا على نفس الخاصية. فـ twMerge بيشيل [[border]] والناتج بيختلف.
+
+في الزرار الحقيقي [[cn]] بيداري ده، بس الكلاس الزيادة لسه غلط. التصليح: [[border]] يتنقل لـ compound، عشان كل مقاس ياخد سُمك واحد:
+
+~~~js cva-base-fixed.mjs
+import { cva } from "class-variance-authority";
+
+export const buttonVariants = cva("inline-flex items-center justify-center gap-2 rounded-lg font-medium disabled:opacity-50", {
+  variants: {
+    variant: { primary: "bg-brand text-white hover:bg-brand/90", outline: "hover:bg-gray-50", ghost: "hover:bg-gray-100" },
+    size: { sm: "h-9 px-3 text-sm", md: "h-10 px-4", lg: "h-12 px-6 text-lg" },
+  },
+  compoundVariants: [
+    { variant: "outline", size: ["sm", "md"], class: "border" },
+    { variant: "outline", size: "lg", class: "border-2" },
+  ],
+  defaultVariants: { variant: "primary", size: "md" },
+});
+~~~
+
+**ليه الفكرة شغالة:** [[twMerge(out) === out]] معناها «مفيش حاجة تتحذف»، يعني مفيش كلاسين متعارضين. والاختبار بيلف بـ [[for]] فمحدش بينسى تركيبة، واسم كل test فيه التركيبة.
+
+**الغلطة الشائعة:** تعدّل الاختبار لما يقع عشان يعدّي. هنا الاختبار كان صح، والكود هو اللي محتاج تصليح.
+
+~~~text الناتج
+buttonVariants بتاع الدرس:
+ℹ tests 9 ، pass 8 ، fail 1
+✖ outline × lg مفيهاش كلاسين بيتخانقوا
+  actual:   ... hover:bg-gray-50 h-12 px-6 text-lg border-2
+  expected: ... border hover:bg-gray-50 h-12 px-6 text-lg border-2
+
+بعد نقل border للـ compound:
+ℹ tests 9 ، pass 9 ، fail 0
+
+بعد ما زوّدت px-5 على outline:
+ℹ tests 9 ، pass 6 ، fail 3
+✖ outline × sm ، outline × md ، outline × lg
+~~~` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من README بتاع class-variance-authority: إزاي compound variant يطابق أكتر من قيمة (outline أو ghost مع بعض)؟ وإزاي تعمل variant boolean ([[disabled: true]])؟ جرّب الاتنين.`, done: R`لقيت إن القيمة في compound ممكن تبقى array ([[variant: ["outline", "ghost"]]])، وإن الـ boolean بيتكتب [[{ true: "opacity-50", false: "" }]]، و [[cva("x", { variants: { disabled: { true: "opacity-50", false: "" } } })({ disabled: true })]] رجّع [["x opacity-50"]].`, sol: R`~~~js try.mjs
+import { cva } from "class-variance-authority";
+
+const btn = cva("btn", {
+  variants: {
+    variant: { solid: "s", outline: "o", ghost: "g" },
+    disabled: { true: "opacity-50", false: "" },
+  },
+  compoundVariants: [{ variant: ["outline", "ghost"], class: "bg-transparent" }],
+});
+
+console.log(btn({ variant: "outline" }));
+console.log(btn({ variant: "ghost" }));
+console.log(btn({ variant: "solid" }));
+console.log(cva("x", { variants: { disabled: { true: "opacity-50", false: "" } } })({ disabled: true }));
+~~~
+
+**الإجابة من README بتاع class-variance-authority:**
+
+- القيمة في compound ممكن تبقى array: [[variant: ["outline", "ghost"]]] معناها «أي واحدة منهم».
+- الـ boolean variant بيتكتب بمفاتيح [[true]] و [[false]]. وبعد كده [[{ disabled: true }]] بتشتغل. واكتب [[false: ""]] لو حابب تحط [[defaultVariants]] لها.
+
+**الغلطة الشائعة:** تكرر compound مرتين، مرة لـ outline ومرة لـ ghost. أو تنادي بالـ string [["true"]] بدل الـ boolean في TypeScript.
+
+~~~text الناتج
+btn o bg-transparent
+btn g bg-transparent
+btn s
+x opacity-50
+~~~` },
           ],
           deep: {
             why: "من غير cva، زرار بـ 3 أشكال و 3 أحجام بيبقى ternaries جوه ternaries في الـ className، وكل واحد يضيف شكل يكسر حاجة. cva بتخلي كل الاختيارات جدول واضح، والـ TypeScript بيقفل الأسماء.",
@@ -428,10 +894,128 @@ cat components.json
 git diff components/ui/button.tsx`,
           try: R`في مشروع Next أو Vite نفّذ init و [[add button]]، وافتح [[components/ui/button.tsx]]: هتلاقي cva و cn اللي اتعلمتهم. غيّر التدوير الافتراضي وشوفه اتغير في كل الزراير.`,
           practice: [
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** من [[npx shadcn@latest add --help]]: أنهي flag بيوريك اللي هيتكتب من غير ما يكتب حاجة؟ وأنهي flag بيقارن ملفك بالنسخة الأصلية؟`, done: R`لقيت [[--dry-run]] (معاينة من غير كتابة) و [[--diff [path]]] (يوريك الفرق لملف) و [[--view [path]]] (يعرض المحتوى). جرّبت [[--dry-run]] على مكون جديد ومفيش ملف اتغيّر ([[git status]] نضيف).` },
-            { lvl: 'تطبيق', t: R`**refactor:** في [[components/ui/button.tsx]] زوّد prop اسمه [[loading]]: بيعرض spinner صغير ويعمل [[disabled]] و [[aria-busy="true"]]، من غير ما تبوّظ أي variant موجود.`, done: R`[[git diff components/ui/button.tsx]] فيه إضافات بس، وكل الـ variants القديمة بتترسم زي ما هي، والزرار وهو [[loading]] مبيتضغطش و Tab بيعدّيه، وقارئ الشاشة بيقول إنه busy.` },
-            { lvl: 'تطبيق', t: R`**قارن وقيس:** بعد التعديل اللي فوق، شغّل [[add button --overwrite]] واعمل [[git diff]]، وبعدين رجّع نسختك بـ [[git checkout -- components/ui/button.tsx]].`, done: R`الـ diff بعد الـ overwrite بيوري سطور الـ [[loading]] بتاعتك متشالة، وبعد [[git checkout]] الـ diff فاضي تاني. وكتبت قاعدة لنفسك: commit قبل أي [[--overwrite]].` },
-            { lvl: 'تحدي', t: R`**اشرحها:** زميل بيسأل: «ليه shadcn بينسخ الكود في مشروعي بدل ما يبقى package أعمله update؟». اكتبله ٣ سطور فيهم ميزة وعيب وإمتى تختار مكتبة عادية.`, done: R`السطور فيها: الكود بتاعك تعدّله براحتك (ميزة)، والتحديثات مش بتوصلك لوحدها وانت اللي بتدمجها بـ diff (عيب)، ومكتبة جاهزة أحسن لو مش ناوي تغيّر الشكل وعايز تحديثات تلقائي.` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** من [[npx shadcn@latest add --help]]: أنهي flag بيوريك اللي هيتكتب من غير ما يكتب حاجة؟ وأنهي flag بيقارن ملفك بالنسخة الأصلية؟`, done: R`لقيت [[--dry-run]] (معاينة من غير كتابة) و [[--diff [path]]] (يوريك الفرق لملف) و [[--view [path]]] (يعرض المحتوى). جرّبت [[--dry-run]] على مكون جديد ومفيش ملف اتغيّر ([[git status]] نضيف).`, sol: R`~~~bash
+npx shadcn@latest add --help
+npx shadcn@latest add badge --dry-run
+git status --short
+npx shadcn@latest add button --diff src/components/ui/button.tsx
+~~~
+
+**الإجابة:** [[--dry-run]] بيوريك اللي هيتكتب من غير ما يكتب. و [[--diff [path]]] بيقارن ملفك بالنسخة الأصلية. و [[--view [path]]] بيعرض المحتوى.
+
+**ليه ده مهم:** الكود هنا بتاعك انت، فأي تحديث هيكتب فوق تعديلاتك. الـ flags دي بتخليك تشوف قبل ما تقرر.
+
+**الغلطة الشائعة:** تشغّل [[add]] على طول على مكوّن عدّلته. استخدم [[--diff]] الأول.
+
+~~~text الناتج
+من --help (shadcn 4.23.0):
+-o, --overwrite    overwrite existing files. (default: false)
+--dry-run          preview changes without writing files. (default: false)
+--diff [path]      show diff for a file.
+--view [path]      show file contents.
+
+add badge --dry-run:
+├ Files (1) +1 new
+│ + src\components\ui\badge.tsx  create
+└ Run without --dry-run to apply.
+
+git status --short: فاضي
+add button --diff ...: (skip) No changes.
+~~~` },
+            { lvl: 'تطبيق', t: R`**refactor:** في [[components/ui/button.tsx]] زوّد prop اسمه [[loading]]: بيعرض spinner صغير ويعمل [[disabled]] و [[aria-busy="true"]]، من غير ما تبوّظ أي variant موجود.`, done: R`[[git diff components/ui/button.tsx]] مش بيلمس بلوك [[cva]] خالص (التغيير كله في الـ function)، وكل الـ variants القديمة بتترسم زي ما هي، والزرار وهو [[loading]] مبيتضغطش و Tab بيعدّيه، وقارئ الشاشة بيقول إنه busy.`, sol: R`ملف shadcn النهائي بعد التعديل (السطور المهمة في الـ function تحت [[cva]]، وبلوك [[cva]] نفسه زي ما هو):
+
+~~~tsx components/ui/button.tsx
+function Button({
+  className,
+  variant = "default",
+  size = "default",
+  loading = false,
+  disabled,
+  children,
+  ...props
+}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants> & { loading?: boolean }) {
+  return (
+    <ButtonPrimitive
+      data-slot="button"
+      className={cn(buttonVariants({ variant, size, className }))}
+      disabled={disabled || loading}
+      aria-busy={loading || undefined}
+      {...props}
+    >
+      {loading && (
+        <span aria-hidden="true" className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent motion-reduce:animate-none" />
+      )}
+      {children}
+    </ButtonPrimitive>
+  );
+}
+~~~
+
+**ليه كده:**
+
+- [[disabled={disabled || loading}]]: الزرار الواقف مبيتضغطش ومبيوصلهوش Tab. واللي مبعوت [[disabled]] من برا لسه شغال.
+- [[aria-busy]]: قيمته [[undefined]] لما مفيش تحميل، فالـ attribute بيختفي.
+- الـ spinner [[aria-hidden]]: زينة، والاسم فضل من [[children]].
+- [[motion-reduce:animate-none]]: اللي طالب حركة أقل يشوف دايرة واقفة.
+- [[children]] طلعت من [[props]] عشان تترسم بعد الـ spinner.
+
+**الغلطة الشائعة:** تعدّل بلوك [[cva]]، فأي merge مع نسخة shadcn الجديدة يتعقد. خلي تعديلاتك في الـ function.
+
+ملحوظة: النسخة الأحدث من shadcn بتيجي بـ [[@base-ui/react]]، وفي نسخ تانية بـ Radix. الفكرة واحدة.
+
+~~~text الناتج
+git diff --numstat: 12 إضافة ، 2 مسح (سطر الـ type وسطر قفل العنصر)
+مفيش سطر جوه بلوك cva اتلمس
+
+الزرار وهو loading:
+disabled = true ، aria-busy = "true" ، الـ spinner موجود
+ضغطة عليه: onClick اشتغل 0 مرة
+Tab: عادي ← outline ← اللينك (عدّى الزرار الواقف)
+
+ariaSnapshot:
+- button "عادي"
+- button "outline"
+- button "بيحفظ" [disabled]
+~~~` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** اعمل commit للتعديل اللي فوق، وبعدين شغّل [[add button --overwrite]] واعمل [[git diff]]، وبعدين رجّع نسختك بـ [[git checkout -- components/ui/button.tsx]].`, done: R`الـ diff بعد الـ overwrite بيوري سطور الـ [[loading]] بتاعتك متشالة، وبعد [[git checkout]] الـ diff فاضي تاني. وكتبت قاعدة لنفسك: commit قبل أي [[--overwrite]].`, sol: R`~~~bash
+git add -A && git commit -m "button: loading prop"
+npx shadcn@latest add button --overwrite --yes
+git diff --numstat -- components/ui/button.tsx
+git checkout -- components/ui/button.tsx
+git diff --stat -- components/ui/button.tsx
+~~~
+
+**ليه الـ commit أول خطوة:** [[--overwrite]] بيكتب نسخة shadcn الأصلية فوق ملفك. [[git diff]] بيقارن بآخر commit، و [[git checkout]] بيرجّع آخر commit. لو تعديلك مش متعمله commit، مفيش حاجة ترجع لها.
+
+جرّبت الحالتين: من غير commit، سطور الـ [[loading]] راحت، و [[git diff]] طلع فاضي، فالتعديل ضاع ومفيش حاجة تقولك.
+
+**القاعدة:** commit قبل أي [[--overwrite]]، أو استخدم [[--diff]] وادمج بإيدك.
+
+**الغلطة الشائعة:** تشوف diff فاضي بعد overwrite وتفتكر إن مفيش حاجة حصلت.
+
+~~~text الناتج
+من غير commit قبل الـ overwrite:
+الملف فيه loading؟  لأ
+git diff:           فاضي (التعديل ضاع)
+
+مع commit:
+git diff --numstat:  2  12  components/ui/button.tsx
+                     (2 سطر رجعوا، و 12 سطر بتوعك اتشالوا)
+بعد git checkout:    الـ diff فاضي ، والملف فيه loading تاني
+~~~` },
+            { lvl: 'تحدي', t: R`**اشرحها:** زميل بيسأل: «ليه shadcn بينسخ الكود في مشروعي بدل ما يبقى package أعمله update؟». اكتبله ٣ سطور فيهم ميزة وعيب وإمتى تختار مكتبة عادية.`, done: R`السطور فيها: الكود بتاعك تعدّله براحتك (ميزة)، والتحديثات مش بتوصلك لوحدها وانت اللي بتدمجها بـ diff (عيب)، ومكتبة جاهزة أحسن لو مش ناوي تغيّر الشكل وعايز تحديثات تلقائي.`, sol: R`**الإجابة النموذجية:**
+
+> shadcn بينسخ كود الزرار في مشروعك، فتقدر تغيّر أي سطر من غير ما تحارب مكتبة أو تكتب override.
+> العيب إن التحديثات مش بتوصلك لوحدها: انت اللي بتشغّل [[--diff]] وتدمج، والإصلاحات الأمنية وباجات الـ accessibility مسؤوليتك.
+> لو مش ناوي تغيّر الشكل وعايز تحديثات بـ [[npm update]] بس، مكتبة عادية زي MUI أحسن.
+
+**ليه الإجابة دي كاملة:** فيها ميزة (ملكية الكود)، وعيب حقيقي (مين بيتابع التحديث)، ومعيار قرار. الإجابة اللي فيها «أحسن لأنه مرن» بس مش بتساعد زميلك يقرر.
+
+**الغلطة الشائعة:** تقول إن shadcn مكتبة. هو أداة بتنسخ كود، والـ primitives اللي تحته (Radix أو Base UI) هي اللي packages وبتتحدّث عادي.
+
+~~~text الناتج
+٣ سطور: ميزة ، وعيب ، وإمتى تختار مكتبة عادية.
+~~~` },
           ],
           deep: {
             why: R`مكتبات المكونات التقليدية بتديك مكون جاهز، ولما تيجي تغيّر حاجة مش متوقعة بتحارب المكتبة: props مش موجودة، و CSS بيتغلب بالعافية، وترقية تكسر شكلك. shadcn بيقلب الفكرة: «ده مش component library، ده الطريقة اللي تبني بيها الـ library بتاعتك». بيديك نقطة بداية كويسة والكود كله قدامك.`,
@@ -640,11 +1224,299 @@ className={cn(buttonVariants({ variant, size, className }))}
           try: R`افتح المودال واضغط Tab كذا مرة: الـ focus مش هيخرج برا. دوس Escape: هيقفل والـ focus يرجع لزرار «امسح». وقارن ده بمودال معمول بـ [[useState]] و div.`,
           flag: "script",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** المودال بتاع الدرس مفتوح وفيه زرارين. هتدوس Tab ٥ مرات: الـ focus هيروح فين؟ وبعد Escape هيبقى فين؟ جرّب بالكيبورد وراقب [[document.activeElement]].`, done: R`الـ focus لف بين الزرارين جوه المودال بس (في المعمل: yes و no و yes و no و yes) ومطلعش للصفحة، وبعد Escape المودال اتشال والـ focus رجع لزرار «امسح» اللي فتحه.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** Dialog من غير [[Dialog.Title]]. Radix 1.8.1 مش بيطبع أي تحذير في الـ Console، بس فيه حاجة ناقصة. لاقيها في Elements وفي Accessibility tree وصلّح من غير ما العنوان يبان على الشاشة.`, done: R`الـ [[role="dialog"]] مفيهوش [[aria-labelledby]] والـ dialog ملوش اسم في Accessibility tree. بعد [[<VisuallyHidden.Root asChild><Dialog.Title>...</Dialog.Title></VisuallyHidden.Root>]] (أو Title عادي) الـ attribute رجع والاسم ظهر، والشكل متغيرش.` },
-            { lvl: 'تطبيق', t: R`**قارن وقيس:** مودال معمول بـ [[useState]] و div، ومودال Radix، و [[<dialog>]] أصلي بـ [[showModal()]]. لكل واحد: Tab ٣ مرات، و Escape، والـ focus بعد القفل.`, done: R`عندك جدول ٣ × ٣: الـ div الـ Tab طلع لعناصر الصفحة ورا و Escape ملوش أثر، و Radix محبوس و Escape بيقفل والـ focus راجع للزرار، و [[<dialog>]] الـ Tab مش بيوصل لعناصر الصفحة و Escape بيقفل والـ focus راجع للزرار اللي فتحه.` },
-            { lvl: 'تطبيق', t: R`**ابني:** Sheet (درج جانبي) بـ Dialog: [[Dialog.Content]] [[fixed inset-y-0 inset-e-0 w-80]]، وداخل بحركة من ناحية النهاية بـ [[data-[state=open]:]] و [[rtl:]]، وفيه لينكات القايمة.`, done: R`في rtl الدرج بيطلع من الشمال وفي ltr من اليمين، و [[data-state]] على الـ Content بتبقى [[open]] وهو مفتوح، والصفحة اللي ورا مبتعملش scroll ([[overflow: hidden]] على الـ body)، والـ focus جوه الدرج.` },
-            { lvl: 'تحدي', t: R`**اكتب اختبار:** بـ Playwright: افتح المودال بـ Enter، وتأكد إن [[aria-expanded="true"]] على الـ trigger، و Tab ٥ مرات والـ focus جوه [[[role="dialog"]]]، و Escape يرجّع الـ focus للـ trigger.`, done: R`الاختبار بيعدّي، ولما تشيل [[Dialog.Portal]] أو تبدّل Radix بـ div الاختبار بيفشل في خطوة الـ Tab بالظبط (يعني بيمسك المشكلة اللي اتعمل عشانها).` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** المودال بتاع الدرس مفتوح وفيه زرارين. هتدوس Tab ٥ مرات: الـ focus هيروح فين؟ وبعد Escape هيبقى فين؟ جرّب بالكيبورد وراقب [[document.activeElement]].`, done: R`الـ focus لف بين الزرارين جوه المودال بس (في المعمل: yes و no و yes و no و yes) ومطلعش للصفحة، وبعد Escape المودال اتشال والـ focus رجع لزرار «امسح» اللي فتحه.`, sol: R`~~~tsx ConfirmDialog.tsx
+import { Dialog } from "radix-ui";
+
+export function ConfirmDialog() {
+  return (
+    <Dialog.Root>
+      <Dialog.Trigger id="open" className="rounded-lg bg-red-700 px-4 py-2 text-white">امسح</Dialog.Trigger>
+      <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 bg-black/50" />
+        <Dialog.Content className="fixed top-1/2 left-1/2 w-[min(90vw,28rem)] -translate-x-1/2 -translate-y-1/2 rounded-xl bg-white p-6">
+          <Dialog.Title className="text-lg font-bold">متأكد؟</Dialog.Title>
+          <Dialog.Description>الحذف مش هيترجع.</Dialog.Description>
+          <div className="mt-4 flex gap-2">
+            <Dialog.Close id="yes" className="rounded-lg bg-red-700 px-4 py-2 text-white">أيوه امسح</Dialog.Close>
+            <Dialog.Close id="no" className="rounded-lg border px-4 py-2">لأ</Dialog.Close>
+          </div>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+}
+~~~
+
+~~~tsx main.tsx
+import { createRoot } from "react-dom/client";
+import { ConfirmDialog } from "./ConfirmDialog";
+
+createRoot(document.getElementById("root")!).render(
+  <main className="p-6">
+    <h1 className="mb-4 text-2xl font-bold">الملفات</h1>
+    <a href="#before" className="me-4">لينك قبل</a>
+    <ConfirmDialog />
+    <a href="#after" className="ms-4">لينك بعد</a>
+  </main>
+);
+~~~
+
+**بيحصل إيه:**
+
+- أول ما المودال يفتح، Radix بينقل الـ focus لأول عنصر جواه.
+- Tab عند آخر عنصر بيرجع لأول عنصر، ولينك «قبل» و «بعد» مبيتوصلوش. ده الـ focus trap.
+- Escape بيقفل، و Radix فاكر مين فتحه، فبيرجّع الـ focus لزرار «امسح».
+
+لو الـ focus مرجعش، مستخدم الكيبورد هيلاقي نفسه في أول الصفحة ويبدأ من الأول.
+
+**الغلطة الشائعة:** تعدّ ٥ ضغطات وتفتكر إنها هتوصل لعنصر برا لأن المودال فيه زرارين بس. اللف جوه هو المطلوب.
+
+~~~text الناتج
+بعد الفتح: yes
+Tab 1: no
+Tab 2: yes
+Tab 3: no
+Tab 4: yes
+Tab 5: no
+aria-expanded على الزرار: true
+
+بعد Escape: عدد [role=dialog] = 0 ، document.activeElement = زرار «امسح»
+~~~
+
+(ابتدينا من yes، فآخر وقفة هنا no. لو ابتدى من no الترتيب بيتقلب.)` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** Dialog من غير [[Dialog.Title]]. Radix 1.8.1 مش بيطبع أي تحذير في الـ Console، بس فيه حاجة ناقصة. لاقيها في Elements وفي Accessibility tree وصلّح من غير ما العنوان يبان على الشاشة.`, done: R`الـ [[role="dialog"]] مفيهوش [[aria-labelledby]] والـ dialog ملوش اسم في Accessibility tree. بعد [[<VisuallyHidden.Root asChild><Dialog.Title>...</Dialog.Title></VisuallyHidden.Root>]] (أو Title عادي) الـ attribute رجع والاسم ظهر، والشكل متغيرش.`, sol: R`~~~tsx main.tsx
+import { createRoot } from "react-dom/client";
+import { Dialog, VisuallyHidden } from "radix-ui";
+
+function Modal({ id, children }: { id: string; children?: React.ReactNode }) {
+  return (
+    <Dialog.Root>
+      <Dialog.Trigger id={id}>افتح {id}</Dialog.Trigger>
+      <Dialog.Portal>
+        <Dialog.Content aria-describedby={undefined} className="fixed inset-10 bg-white p-6">
+          {children}
+          <p>هتحذف الملف؟</p>
+          <Dialog.Close>قفل</Dialog.Close>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+}
+
+createRoot(document.getElementById("root")!).render(
+  <main>
+    <Modal id="bad" />
+    <Modal id="good">
+      <VisuallyHidden.Root asChild>
+        <Dialog.Title>تأكيد الحذف</Dialog.Title>
+      </VisuallyHidden.Root>
+    </Modal>
+  </main>
+);
+~~~
+
+**اللي ناقص:** من غير [[Dialog.Title]]، الـ [[role="dialog"]] مفيهوش [[aria-labelledby]]، فقارئ الشاشة بيقول «dialog» بس، والمستخدم مش عارف ده مودال إيه.
+
+**التصليح:** [[VisuallyHidden.Root asChild]] بيخفي العنوان من الشاشة بس، ويفضل في شجرة الـ accessibility. Radix بيربطه بـ [[aria-labelledby]] لوحده.
+
+**ليه مش [[display: none]]:** ده بيشيله من شجرة الـ accessibility كمان، فالاسم يرجع يختفي.
+
+**الغلطة الشائعة:** تعتمد على الكونسول. في Radix 1.8.1 مفيش ولا تحذير، في dev ولا production. لازم تبص بنفسك على الشجرة.
+
+~~~text الناتج
+من غير Title:
+aria-labelledby = null
+Console: مفيش تحذير (dev و production)
+ariaSnapshot:
+- dialog:
+  - paragraph: هتحذف الملف؟
+  - button "قفل"
+
+مع VisuallyHidden:
+aria-labelledby = radix-_r_4_
+ariaSnapshot:
+- dialog "تأكيد الحذف":
+  - heading "تأكيد الحذف" [level=2]
+  - paragraph: هتحذف الملف؟
+  - button "قفل"
+~~~` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** مودال معمول بـ [[useState]] و div، ومودال Radix، و [[<dialog>]] أصلي بـ [[showModal()]]. لكل واحد: Tab ٣ مرات، و Escape، والـ focus بعد القفل.`, done: R`عندك جدول ٣ × ٣: الـ div الـ Tab طلع لعناصر الصفحة ورا و Escape ملوش أثر، و Radix محبوس و Escape بيقفل والـ focus راجع للزرار، و [[<dialog>]] الـ Tab مش بيوصل لعناصر الصفحة و Escape بيقفل والـ focus راجع للزرار اللي فتحه.`, sol: R`~~~tsx main.tsx
+import { useRef, useState } from "react";
+import { createRoot } from "react-dom/client";
+import { ConfirmDialog } from "./ConfirmDialog";
+
+function DivModal() {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <button id="open-div" onClick={() => setOpen(true)}>div</button>
+      {open && (
+        <div id="m-div" className="fixed inset-10 bg-white p-6">
+          <button id="div-1">أيوه</button>
+          <button id="div-2" onClick={() => setOpen(false)}>لأ</button>
+        </div>
+      )}
+    </>
+  );
+}
+
+function NativeModal() {
+  const ref = useRef<HTMLDialogElement>(null);
+  return (
+    <>
+      <button id="open-native" onClick={() => ref.current?.showModal()}>dialog</button>
+      <dialog id="m-native" ref={ref} className="m-auto p-6">
+        <button id="nat-1">أيوه</button>
+        <button id="nat-2" onClick={() => ref.current?.close()}>لأ</button>
+      </dialog>
+    </>
+  );
+}
+
+createRoot(document.getElementById("root")!).render(
+  <main className="flex gap-3 p-6">
+    <DivModal />
+    <ConfirmDialog />
+    <NativeModal />
+    <a id="after" href="#after">عنصر في الصفحة ورا</a>
+  </main>
+);
+~~~
+
+و [[ConfirmDialog]] هو بتاع التمرين الأول.
+
+**القراية:**
+
+- **div بـ useState:** ده مجرد عنصر في الصفحة. Tab بيعدّيه ويكمّل على اللي وراه، و Escape ملوش معنى، والـ focus مبيتحركش لوحده.
+- **Radix:** كل حاجة جاهزة.
+- **[[<dialog>]] مع [[showModal()]]:** المتصفح بيعمل [[inert]] للصفحة ورا المودال، و Escape بيقفل، والـ focus بيرجع لوحده. الفرق عن Radix إن Tab ممكن يروح لشريط المتصفح قبل ما يرجع (BODY في القياس)، وده طبيعي.
+
+**ازاي تختار:** [[<dialog>]] لو عايز من غير مكتبة، و Radix لو عندك حركات ومشروع React كبير ومحتاج [[asChild]]. والـ div لأ.
+
+**الغلطة الشائعة:** تزوّد [[role="dialog"]] على div وتفتكر إنه بقى مودال. الـ role بيغيّر الاسم بس، مش السلوك.
+
+~~~text الناتج
+                 Tab 3 مرات                 بعد Escape             الـ focus بعد القفل
+div              زرارين ثم عنصر في الصفحة    لسه مفتوح              اتحرك لعنصر تاني
+Radix            yes no yes no              اتقفل                  زرار الفتح
+<dialog>         nat-1 nat-2 BODY nat-1     اتقفل                  زرار الفتح
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** Sheet (درج جانبي) بـ Dialog: [[Dialog.Content]] [[fixed inset-y-0 inset-e-0 w-80]]، وداخل بحركة من ناحية النهاية بـ [[data-[state=open]:]] و [[rtl:]]، وفيه لينكات القايمة.`, done: R`في rtl الدرج بيطلع من الشمال وفي ltr من اليمين، و [[data-state]] على الـ Content بتبقى [[open]] وهو مفتوح، والصفحة اللي ورا مبتعملش scroll ([[overflow: hidden]] على الـ body)، والـ focus جوه الدرج.`, sol: R`~~~css in.css
+@import "tailwindcss";
+
+@theme {
+  --animate-in-end: in-end 0.3s ease-out;
+  --animate-in-end-rtl: in-end-rtl 0.3s ease-out;
+  @keyframes in-end { from { translate: 100% 0; } }
+  @keyframes in-end-rtl { from { translate: -100% 0; } }
+}
+~~~
+
+~~~tsx main.tsx
+import { createRoot } from "react-dom/client";
+import { Dialog } from "radix-ui";
+
+function Sheet() {
+  return (
+    <Dialog.Root>
+      <Dialog.Trigger id="open" className="rounded-lg border px-4 py-2">القايمة</Dialog.Trigger>
+      <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 bg-black/50" />
+        <Dialog.Content
+          aria-describedby={undefined}
+          className="fixed inset-y-0 inset-e-0 w-80 max-w-full bg-white p-6 transition-transform duration-300
+                     data-[state=open]:animate-in-end rtl:data-[state=open]:animate-in-end-rtl"
+        >
+          <Dialog.Title className="text-lg font-bold">القايمة</Dialog.Title>
+          <nav className="mt-4 grid gap-2">
+            <a href="/products">المنتجات</a>
+            <a href="/offers">العروض</a>
+            <a href="/contact">كلّمنا</a>
+          </nav>
+          <Dialog.Close className="mt-6 rounded-lg border px-4 py-2">قفل</Dialog.Close>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+}
+
+createRoot(document.getElementById("root")!).render(
+  <main className="p-6">
+    <h1 className="mb-4 text-2xl font-bold">الرئيسية</h1>
+    <Sheet />
+    <div className="h-[200vh]"></div>
+  </main>
+);
+~~~
+
+**ليه شغال:**
+
+- [[inset-y-0 inset-e-0]]: logical، يعني ناحية النهاية. في rtl شمال، وفي ltr يمين، من غير ولا سطر زيادة.
+- الحركة بـ [[translate]]، وده مش logical، فمحتاج keyframes لكل اتجاه: [[100%]] في ltr و [[-100%]] في rtl.
+- [[data-[state=open]:animate-in-end]]: Radix بيحط [[data-state]]، فالحركة بتشتغل وقت الفتح بس.
+- [[rtl:data-[state=open]:animate-in-end-rtl]] بتكسب في العربي لأنها أخص.
+- قفل الـ scroll و حبس الـ focus بييجوا من Dialog ببلاش.
+
+**الغلطة الشائعة:** تكتب [[translate: 100% 0]] ثابتة، فالدرج في العربي يدخل من الناحية الغلط أو يطلع برا الشاشة. جرّب [[dir]] الاتنين.
+
+~~~text الناتج
+                 left    right    الحركة          data-state
+rtl              0       320      in-end-rtl      open
+ltr              960     1280     in-end          open
+
+وهو مفتوح في الاتجاهين:
+body: overflow hidden ، data-scroll-locked موجود
+wheel على الصفحة: scrollY = 0
+الـ focus جوه الدرج: true
+~~~` },
+            { lvl: 'تحدي', t: R`**اكتب اختبار:** بـ Playwright: افتح المودال بـ Enter، وتأكد إن [[aria-expanded="true"]] على الـ trigger، و Tab ٥ مرات والـ focus جوه [[[role="dialog"]]]، و Escape يرجّع الـ focus للـ trigger.`, done: R`الاختبار بيعدّي، ولما تبدّل Radix بـ div الاختبار بيفشل في خطوة الـ Tab بالظبط (يعني بيمسك المشكلة اللي اتعمل عشانها). ولو شلت [[Dialog.Portal]] لوحده لسه بيعدّي، لأن حبس الـ focus مش معتمد عليه.`, sol: R`~~~js dialog.spec.mjs
+import { test, expect } from "@playwright/test";
+
+test("المودال بيحبس الـ focus ويرجّعه", async ({ page }) => {
+  await page.goto(process.env.URL);
+  // includeHidden: Radix بيحط aria-hidden على الصفحة ورا المودال، فالزرار بيختفي من شجرة الـ accessibility
+  const trigger = page.getByRole("button", { name: "امسح", exact: true, includeHidden: true });
+
+  await trigger.focus();
+  await page.keyboard.press("Enter");
+  await expect(trigger).toHaveAttribute("aria-expanded", "true");
+
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+
+  for (let i = 0; i < 5; i++) {
+    await page.keyboard.press("Tab");
+    await expect(page.locator('[role="dialog"] :focus')).toHaveCount(1);
+  }
+
+  await page.keyboard.press("Escape");
+  await expect(dialog).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+});
+~~~
+
+~~~bash
+npm i -D @playwright/test@1.64.1
+URL=http://localhost:4000/ npx playwright test
+~~~
+
+**ليه [[exact]] و [[includeHidden]]:**
+
+- [[exact: true]]: من غيرها الاسم «امسح» بيطابق «أيوه امسح» كمان، فـ Playwright بيقع بـ strict mode violation.
+- [[includeHidden: true]]: وقت ما المودال مفتوح، Radix بيحط [[aria-hidden]] على الصفحة ورا. الزرار خرج من شجرة الـ accessibility، فـ [[getByRole]] العادية مش بتلاقيه. يعني الفشل ده دليل إن المودال شغال صح.
+
+**[[page.locator('[role="dialog"] :focus')]]** بيتأكد إن العنصر اللي عليه focus جوه المودال بعد كل Tab.
+
+**الاختبار بيمسك إيه فعلًا:** لما بدّلت Radix بـ div، وقع في خطوة الـ Tab. ولما شيلت [[Dialog.Portal]] لسه عدّى، لأن حبس الـ focus مش معتمد على الـ Portal. الـ Portal شغلته مكان الرسم و [[z-index]]، فلو عايز تحرسه محتاج اختبار تاني.
+
+**الغلطة الشائعة:** تستخدم [[waitForTimeout]] بعد كل ضغطة. [[expect]] بيستنى لوحده.
+
+~~~text الناتج
+Radix بتاع الدرس:     1 passed (1.3s)
+من غير Dialog.Portal:  1 passed (1.2s)
+div بدل Radix:         1 failed
+  > await expect(page.locator('[role="dialog"] :focus')).toHaveCount(1);
+~~~` },
           ],
           deep: {
             why: R`مودال «بسيط» بـ div و useState بيبان شغال بالماوس، بس: الـ Tab بيخرج للصفحة اللي ورا، و Escape مش شغال، والـ focus بيضيع بعد ما يقفل، وقارئ الشاشة مش عارف إن فيه dialog، والصفحة ورا بتعمل scroll. تظبيط ده كله صح عشرات السطور وحالات كتير، والـ primitives مكتوبة ومتجرّبة.`,

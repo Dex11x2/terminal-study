@@ -35,11 +35,209 @@ export default { plugins: { "@tailwindcss/postcss": {} } };`,
           try: R`نفّذ الإعداد في مشروع الـ lab وحط الزرار في App.tsx. افتح DevTools › Sources وافتح ملف الـ CSS: هتلاقي [[.px-4]] موجودة و [[.px-5]] مش موجودة لأنك مكتبتهاش. اكتب [[px-5]] واحفظ وشوفها اتضافت.`,
           flag: "script",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في component: [[const c = "red"; el.className = $__btbg-$__{c}-500$__bt]]. الخلفية هتبقى حمرا؟ ابني وشوف [[out.css]].`, done: R`مفيش [[.bg-red-500]] في الـ CSS (grep مبيلاقيهاش)، فمفيش خلفية: Tailwind بيدوّر على **نص الكلاس كامل** في الملفات ومبيشغّلش الكود. والحل map فيه الأسماء كاملة: [[{ red: "bg-red-500", green: "bg-green-500" }]].` },
-            { lvl: 'تطبيق', t: R`**ابني:** من غير Vite: فولدر فيه [[index.html]] و [[in.css]] (سطر [[@import "tailwindcss";]] بس)، وشغّل [[npx @tailwindcss/cli -i in.css -o out.css --watch]]، واعمل كارت سعر كامل بالكلاسات بس.`, done: R`كل ما تحفظ الـ HTML الـ CLI بيطبع [[Done in ...ms]] و [[out.css]] بيتحدث، والكارت شكله كامل، و grep على [[out.css]] بيلاقي الكلاسات اللي استخدمتها بس (مثلًا [[.p-6]] موجودة و [[.p-7]] لأ لو مكتبتهاش).` },
-            { lvl: 'تطبيق', t: R`**قارن وقيس:** نفس المشروع بـ build عادي وبـ [[--minify]]. قيس الحجم في الحالتين، وبعدين زوّد ٢٠ كلاس جديد وقيس تاني.`, done: R`عندك ٤ أرقام بالـ byte (في معمل صغير طلع 17,900 من غير minify و 14,729 بيه)، والحجم بيزيد على قد الكلاسات الجديدة بس مش بالآلاف، وكتبت ليه (Tailwind بيطلّع اللي استخدمته بس).` },
-            { lvl: 'تطبيق', t: R`**ابني:** صفحة 404 لموقع متخيل بـ Tailwind بس: رقم كبير ورسالة وزرارين في نص الشاشة ([[grid place-items-center min-h-dvh]])، وألوان للوضع الغامق بـ [[dark:]].`, done: R`الصفحة متوسّطة على 360 و 1280، ومن DevTools › Rendering مع [[prefers-color-scheme: dark]] الألوان بتتقلب، ومفيش ولا سطر CSS بتاعك غير الـ [[@import]].` },
-            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من وثائق Tailwind (صفحة «Detecting classes in source files»): إزاي تخلي Tailwind يقرا فولدر برا المشروع، وإزاي تمنعه من فولدر جواه؟ جرّب الاتنين.`, done: R`لقيت [[@source "../shared";]] و [[@source not "../legacy";]] (المسار من مكان ملف الـ CSS)، وأثبت بـ grep: كلاس موجود في shared بس ظهر في [[out.css]]، وكلاس موجود في legacy بس مظهرش.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في component: [[const c = "red"; el.className = $__btbg-$__{c}-500$__bt]]. الخلفية هتبقى حمرا؟ ابني وشوف [[out.css]].`, done: R`مفيش [[.bg-red-500]] في الـ CSS (grep مبيلاقيهاش)، فمفيش خلفية: Tailwind بيدوّر على **نص الكلاس كامل** في الملفات ومبيشغّلش الكود. والحل map فيه الأسماء كاملة: [[{ red: "bg-red-500", green: "bg-green-500" }]].`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>كلاس ديناميكي</title><link rel="stylesheet" href="out.css"></head>
+<body>
+<div id="el" class="p-4">كارت</div>
+<script>
+  const c = "red";
+  document.getElementById("el").className = $__btbg-$__{c}-500$__bt;
+$__lt/script>
+</body>
+</html>
+~~~
+
+~~~bash
+npx @tailwindcss/cli -i in.css -o out.css
+grep -c "bg-red-500" out.css
+~~~
+
+الخلفية مش هتبقى حمرا. والتصليح map فيه أسماء الكلاسات كاملة:
+
+~~~html fixed.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>كلاس كامل</title><link rel="stylesheet" href="out.css"></head>
+<body>
+<div id="el" class="p-4">كارت</div>
+<script>
+  const colors = { red: "bg-red-500", green: "bg-green-500" };
+  const c = "red";
+  document.getElementById("el").className = colors[c];
+$__lt/script>
+</body>
+</html>
+~~~
+
+**ليه:** Tailwind مبيشغّلش الكود بتاعك. هو بيقرا ملفاتك كنص عادي، ويدوّر على أي كلمة شكلها كلاس، ويولّد CSS للي لقاه بس. النص [[bg-$__{c}-500]] مفيهوش الكلمة [[bg-red-500]]، فمحدش ولّدها. في المتصفح الـ class بيتحط صح، بس مفيش قاعدة CSS بالاسم ده.
+
+والـ map بينجح لأن الكلمتين [["bg-red-500"]] و [["bg-green-500"]] مكتوبين بالحرف في الملف.
+
+**الغلطة الشائعة:** تفحص Elements وتشوف [[class="bg-red-500"]] فتفتكر إن المشكلة في الـ CSS order. افحص [[out.css]] الأول: لو الكلاس مش فيه، يبقى Tailwind ماشافوش.
+
+~~~text الناتج
+قبل:  grep على out.css مبيلاقيش .bg-red-500
+      backgroundColor = rgba(0, 0, 0, 0) (شفاف)
+بعد:  .bg-red-500 و .bg-green-500 الاتنين موجودين
+      backgroundColor = oklch(0.637 0.237 25.331) (أحمر)
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** من غير Vite: فولدر فيه [[index.html]] و [[in.css]] (سطر [[@import "tailwindcss";]] بس)، وشغّل [[npx @tailwindcss/cli -i in.css -o out.css --watch]]، واعمل كارت سعر كامل بالكلاسات بس.`, done: R`كل ما تحفظ الـ HTML الـ CLI بيطبع [[Done in ...ms]] و [[out.css]] بيتحدث، والكارت شكله كامل، و grep على [[out.css]] بيلاقي الكلاسات اللي استخدمتها بس (مثلًا [[.p-6]] موجودة و [[.p-7]] لأ لو مكتبتهاش).`, sol: R`~~~css in.css
+@import "tailwindcss";
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>باقة شهرية</title>
+<link rel="stylesheet" href="out.css">
+</head>
+<body class="grid min-h-dvh place-items-center bg-gray-100 p-4 text-gray-900">
+<main class="w-full max-w-sm rounded-2xl bg-white p-6 shadow-lg">
+  <h1 class="text-lg font-bold">الباقة الاحترافية</h1>
+  <p class="mt-2 text-sm text-gray-600">لفريق صغير بيبني منتج حقيقي.</p>
+  <p class="mt-4 text-4xl font-extrabold">499 <span class="text-base font-medium text-gray-600">جنيه في الشهر</span></p>
+  <ul class="mt-4 space-y-2 text-sm">
+    <li>١٠ مشاريع</li>
+    <li>٥٠ جيجا مساحة</li>
+    <li>دعم في نفس اليوم</li>
+  </ul>
+  <a href="#signup" class="mt-6 block rounded-lg bg-teal-700 px-4 py-3 text-center font-semibold text-white hover:bg-teal-800">ابدأ دلوقتي</a>
+</main>
+</body>
+</html>
+~~~
+
+~~~bash
+npx @tailwindcss/cli -i in.css -o out.css --watch
+~~~
+
+**بيحصل إيه:** [[-i]] الملف اللي بتكتبه، و [[-o]] الملف اللي المتصفح بيقراه، و [[--watch]] يفضل صاحي ويعيد الـ build مع كل حفظ. الصفحة بتربط [[out.css]] مش [[in.css]]، لأن [[in.css]] لسه فيه [[@import "tailwindcss"]] اللي المتصفح مبيفهموش.
+
+الكارت كله كلاسات: [[grid min-h-dvh place-items-center]] بتوسّطه، و [[max-w-sm]] بيحد عرضه، و [[w-full]] بيخليه ياخد المتاح على الموبايل، و [[space-y-2]] مسافة بين عناصر اللستة.
+
+**الغلطة الشائعة:** تعدّل الـ HTML والـ CLI مش شغال، فالكلاس الجديد ميطلعش وتفتكر إنه غلط. لازم [[--watch]] شغال في ترمنال، أو تعيد الـ build.
+
+~~~text الناتج
+≈ tailwindcss v4.3.4
+
+Done in 75ms
+Done in 6ms      (بعد ما حفظت الـ HTML)
+
+grep على out.css: .p-6 موجودة ، .p-7 مش موجودة
+ولما زوّدت عنصر class="p-7" وحفظت: .p-7 ظهرت من غير ما أعمل حاجة
+حجم out.css: 10,300 byte
+
+على 360: الكارت 328 × 325 ، scrollWidth = clientWidth ، axe صفر
+~~~` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** نفس المشروع بـ build عادي وبـ [[--minify]]. قيس الحجم في الحالتين، وبعدين زوّد ٢٠ كلاس جديد وقيس تاني.`, done: R`عندك ٤ أرقام بالـ byte (في معمل صغير طلع 17,900 من غير minify و 14,729 بيه)، والحجم بيزيد على قد الكلاسات الجديدة بس مش بالآلاف، وكتبت ليه (Tailwind بيطلّع اللي استخدمته بس).`, sol: R`~~~bash
+npx @tailwindcss/cli -i in.css -o out.css
+wc -c out.css
+npx @tailwindcss/cli -i in.css -o out.css --minify
+wc -c out.css
+# زوّد 20 كلاس جديد في الـ HTML (p-1 و m-2 و underline و flex و border-2 ...) وكرر
+~~~
+
+**ليه الزيادة صغيرة:** كل كلاس جديد بيضيف قاعدته بس، حوالي 50 إلى 70 byte، مش مكتبة جديدة. والحجم الأساسي (الـ reset والمتغيرات والـ theme المستخدم) ثابت.
+
+**[[--minify]]** بيشيل المسافات والأسطر الجديدة. الفرق هنا حوالي 15٪ قبل الضغط. ولما السيرفر يعمل gzip أو brotli الفرق بيقل، بس لسه مفيد.
+
+**الغلطة الشائعة:** تفتكر إن الزيادة بالآلاف زي Bootstrap لما تضيف component. هنا الكلاس المكرر ١٠٠ مرة في الـ HTML قاعدته في الـ CSS مرة واحدة.
+
+~~~text الناتج
+                  من غير minify    بـ --minify
+كارت السعر        10,300           8,742
+بعد 20 كلاس       11,659           9,771
+الزيادة           1,359            1,029
+
+يعني حوالي 68 byte للكلاس من غير minify، و 51 byte بيه.
+~~~
+
+(الأرقام بتتغيّر مع نسخة Tailwind وعدد كلاساتك.)` },
+            { lvl: 'تطبيق', t: R`**ابني:** صفحة 404 لموقع متخيل بـ Tailwind بس: رقم كبير ورسالة وزرارين في نص الشاشة ([[grid place-items-center min-h-dvh]])، وألوان للوضع الغامق بـ [[dark:]].`, done: R`الصفحة متوسّطة على 360 و 1280، ومن DevTools › Rendering مع [[prefers-color-scheme: dark]] الألوان بتتقلب، ومفيش ولا سطر CSS بتاعك غير الـ [[@import]].`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الصفحة مش موجودة</title>
+<link rel="stylesheet" href="out.css">
+</head>
+<body class="bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100">
+<main class="grid min-h-dvh place-items-center p-6 text-center">
+  <div>
+    <p class="text-8xl font-black text-teal-700 dark:text-teal-300">404</p>
+    <h1 class="mt-4 text-2xl font-bold">الصفحة دي مش موجودة</h1>
+    <p class="mt-2 text-gray-600 dark:text-gray-400">يمكن الرابط اتغيّر أو اتكتب غلط.</p>
+    <div class="mt-6 flex flex-wrap justify-center gap-3">
+      <a href="/" class="rounded-lg bg-teal-700 px-5 py-3 font-semibold text-white hover:bg-teal-800 dark:bg-teal-300 dark:text-gray-950 dark:hover:bg-teal-200">الرئيسية</a>
+      <a href="/contact" class="rounded-lg border border-gray-300 px-5 py-3 font-semibold hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800">كلّمنا</a>
+    </div>
+  </div>
+</main>
+</body>
+</html>
+~~~
+
+و [[in.css]] سطر واحد: [[@import "tailwindcss";]].
+
+**ليه شغال:**
+
+- [[grid min-h-dvh place-items-center]]: grid بخلية واحدة، ارتفاعها الشاشة كلها، والمحتوى في نصها. [[dvh]] بدل [[vh]] عشان شريط المتصفح على الموبايل.
+- [[dark:]] افتراضيًا بيتحول لـ [[@media (prefers-color-scheme: dark)]]، فالصفحة بتسمع لإعداد الجهاز من غير JavaScript.
+- لون الرقم والزرار اتغيّر في الغامق كمان ([[teal-700]] لـ [[teal-300]])، لأن اللون الغامق على خلفية غامقة بيضيع.
+- [[flex-wrap]] على الزرارين عشان ينزلوا تحت بعض لو الشاشة صغيرة بدل ما يطلعوا برا.
+
+**الغلطة الشائعة:** تقلب الخلفية بس وتنسى لون النص الباهت والزرار، فالصفحة تبقى غامقة بس مقروءة بالعافية. جرّب الوضعين ومعاهم axe.
+
+~~~text الناتج
+                   360 light         360 dark          1280
+مركز المحتوى      (180, 400)        (180, 400)        (640, 400)
+خلفية body         rgb(255,255,255)  oklch(0.13 ...)   نفس الاتنين
+لون الرقم 404      oklch(0.511 ...)  oklch(0.855 ...)
+scrollWidth        360               360               1280
+axe                صفر               صفر               صفر
+
+في CSS مكتوب سطر واحد بتاعك: @import.
+~~~` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من وثائق Tailwind (صفحة «Detecting classes in source files»): إزاي تخلي Tailwind يقرا فولدر برا المشروع، وإزاي تمنعه من فولدر جواه؟ جرّب الاتنين.`, done: R`لقيت [[@source "../shared";]] و [[@source not "../legacy";]] (المسار من مكان ملف الـ CSS)، وأثبت بـ grep: كلاس موجود في shared بس ظهر في [[out.css]]، وكلاس موجود في legacy بس مظهرش.`, sol: R`~~~text شكل الفولدرات
+v4-4/
+  shared/card.html       فيه p-72
+  app/
+    src/in.css
+    src/index.html       فيه p-1
+    legacy/old.html      فيه p-71
+~~~
+
+~~~css app/src/in.css
+@import "tailwindcss";
+@source "../../shared";
+@source not "../legacy";
+~~~
+
+~~~bash
+cd app/src
+npx @tailwindcss/cli -i in.css -o out.css
+grep -c "p-72" out.css
+grep -c "p-71" out.css
+~~~
+
+**الإجابة من صفحة «Detecting classes in source files»:** [[@source]] بيضيف مسار يتفحص، و [[@source not]] بيستبعد مسار. والمسار دايمًا محسوب من مكان ملف الـ CSS، مش من مكان تشغيل الأمر. عشان كده [[../../shared]] من [[app/src]] بيوصل لـ [[shared]].
+
+**إمتى تحتاجهم:** الأول لو عندك monorepo والمكونات في package برا المشروع. والتاني لو فيه كود قديم أو ملفات كبيرة فيها كلمات شبه الكلاسات بتكبّر الـ CSS على الفاضي.
+
+**الغلطة الشائعة:** تكتب المسار من جذر المشروع زي [[@source "shared"]]، فمحدش بيقولك إن المسار غلط، والكلاسات بس مبتطلعش. تأكد بـ grep دايمًا.
+
+~~~text الناتج
+Done in 42ms
+.p-72 (في shared فقط)   موجودة في out.css
+.p-71 (في legacy فقط)   مش موجودة
+.p-1  (في src)          موجودة
+~~~` },
           ],
           deep: {
             why: R`في CSS العادي بتقعد تخترع أسماء ([[.card-header-title-wrapper]])، وتتنقّل بين ملفين، والملف بيكبر للأبد لأن محدش بيجرؤ يمسح قاعدة مش عارف مين بيستخدمها. Tailwind بيحط التنسيق جنب العنصر، والـ CSS النهائي فيه اللي مستخدم بس، فبيفضل صغير مهما المشروع كبر.`,
@@ -191,11 +389,212 @@ export default { plugins: { "@tailwindcss/postcss": {} } };
           try: R`ضيف [[--color-brand]] واستخدم [[bg-brand text-white]] على زرار. وبعدين افتح الـ CSS الناتج ودوّر على [[--color-brand]]: هتلاقيه على [[:root]] كمتغير عادي، يعني تقدر تستخدمه في CSS عادي بـ [[var(--color-brand)]] كمان.`,
           flag: "script",
           practice: [
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[@theme { --fonts-display: "Cairo", sans-serif; }]] و [[<h1 class="font-display">]]، والخط مش بيتغيّر. لاقي الغلطة.`, done: R`الاسم [[--fonts-]] مش namespace بيعرفه Tailwind، فمفيش [[.font-display]] ولا المتغير نفسه في [[out.css]] (grep فاضي). بعد [[--font-display]] الكلاس اتولّد والخط اتغيّر.` },
-            { lvl: 'تطبيق', t: R`**ابني:** توكنز لمحل شاي متخيل في [[@theme]]: [[--color-brand]] و [[--color-brand-soft]] و [[--radius-card]] و [[--font-display]] و [[--shadow-card]]، وصفحة منتجات بتستخدمهم ([[bg-brand/20]] و [[rounded-card]] و [[shadow-card]]).`, done: R`grep على [[out.css]] بيلاقي [[--color-brand]] في [[:root]] و [[.bg-brand\/20]] جواها [[color-mix]]، ولما تغيّر لون واحد في الـ [[@theme]] كل الصفحة بتتغيّر، ومفيش ولا [[#hex]] في الـ HTML.` },
-            { lvl: 'تطبيق', t: R`**قارن وقيس:** [[@theme { --color-bg: var(--bg); }]] ضد [[@theme inline { --color-bg: var(--bg); }]]، وجوه الصفحة section عليه [[data-theme="dark"]] بيغيّر [[--bg]] لأسود. خلفية [[bg-bg]] جوه الـ section هتبقى إيه في الحالتين؟`, done: R`من غير inline: [[.bg-bg]] بتقرا [[var(--color-bg)]]، والمتغير ده اتحسب مرة واحدة على [[:root]] (أبيض) واتورث كده، فالخلفية فضلت [[rgb(255, 255, 255)]] جوه الـ section. مع inline: الكلاس فيه [[var(--bg)]] نفسه، فبقت سودا.` },
-            { lvl: 'تطبيق', t: R`**ابني:** animation في [[@theme]]: [[--animate-float]] ومعاه [[@keyframes float]] جوه نفس البلوك، واستخدمه بـ [[motion-safe:animate-float]] على أيقونة.`, done: R`[[out.css]] فيه [[@keyframes float]] و [[.motion-safe\:animate-float]] جوه [[@media (prefers-reduced-motion: no-preference)]]، ولو عرّفت keyframes تانية ومستخدمتهاش مش بتطلع في الملف. ومع reduce في Rendering الأيقونة واقفة.` },
-            { lvl: 'تحدي', t: R`**refactor:** صفحة فيها [[bg-[#6d28d9]]] و [[text-[#6d28d9]]] و [[border-[#6d28d9]]] متكررين ١٢ مرة. حوّلها لتوكن واحد من غير ما الشكل يتغيّر.`, done: R`grep على الـ HTML بـ [[\[#]] مبيلاقيش حاجة، والتوكن [[--color-brand]] متعرّف مرة في [[@theme]]، ولقطتين قبل وبعد (screenshot) شبه بعض، وتغيير اللون بقى سطر واحد.` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[@theme { --fonts-display: "Cairo", sans-serif; }]] و [[<h1 class="font-display">]]، والخط مش بيتغيّر. لاقي الغلطة.`, done: R`الاسم [[--fonts-]] مش namespace بيعرفه Tailwind، فمفيش [[.font-display]] ولا المتغير نفسه في [[out.css]] (grep فاضي). بعد [[--font-display]] الكلاس اتولّد والخط اتغيّر.`, sol: R`~~~css in.css
+@import "tailwindcss";
+@theme { --font-display: "Cairo", sans-serif; }
+~~~
+
+الغلطة حرف [[s]] زيادة: [[--fonts-display]] لازم تبقى [[--font-display]].
+
+**ليه:** [[@theme]] مش متغيرات CSS عادية، ده تعريف لـ design tokens. أول جزء من الاسم (الـ namespace) هو اللي بيقول لـ Tailwind يعمل كلاس إيه: [[--font-*]] بيعمل [[font-*]]، و [[--color-*]] بيعمل [[bg-*]] و [[text-*]]، و [[--radius-*]] بيعمل [[rounded-*]]. [[--fonts-]] مش namespace معروف، فمفيش كلاس. والمتغير نفسه بيتمسح من الناتج كمان لأن محدش بيستخدمه.
+
+**الغلطة الشائعة:** تدوّر في الخطوط ومسارها و [[@font-face]]، والمشكلة في اسم التوكن. أول خطوة: grep على [[out.css]]. وتخيل برضه إن مفيش أي error من الـ CLI، الـ build بيطبع Done عادي.
+
+~~~text الناتج
+بـ --fonts-display:  .font-display مش موجودة ، --fonts-display مش موجود
+بـ --font-display:   .font-display موجودة ، --font-display موجود
+font-family بتاع h1: Cairo, sans-serif
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** توكنز لمحل شاي متخيل في [[@theme]]: [[--color-brand]] و [[--color-brand-soft]] و [[--radius-card]] و [[--font-display]] و [[--shadow-card]]، وصفحة منتجات بتستخدمهم ([[bg-brand/20]] و [[rounded-card]] و [[shadow-card]]).`, done: R`grep على [[out.css]] بيلاقي [[--color-brand]] في [[:root]] و [[.bg-brand\/20]] جواها [[color-mix]]، ولما تغيّر لون واحد في الـ [[@theme]] كل الصفحة بتتغيّر، ومفيش ولا [[#hex]] في الـ HTML.`, sol: R`~~~css in.css
+@import "tailwindcss";
+
+@theme {
+  --color-brand: #0f766e;
+  --color-brand-soft: #ccfbf1;
+  --radius-card: 1.25rem;
+  --font-display: "Cairo", system-ui, sans-serif;
+  --shadow-card: 0 8px 24px rgb(0 0 0 / 0.08);
+}
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>محل شاي النيل</title>
+<link rel="stylesheet" href="out.css">
+</head>
+<body class="bg-brand-soft p-6 text-gray-900">
+<main class="mx-auto max-w-3xl">
+  <h1 class="font-display text-3xl font-bold text-brand">محل شاي النيل</h1>
+  <ul class="mt-6 grid gap-4 sm:grid-cols-2">
+    <li class="rounded-card bg-white p-6 shadow-card">
+      <h2 class="font-display text-xl font-bold">شاي أسواني</h2>
+      <p class="mt-2 inline-block rounded-full bg-brand/20 px-3 py-1 text-sm">80 جنيه</p>
+    </li>
+    <li class="rounded-card bg-white p-6 shadow-card">
+      <h2 class="font-display text-xl font-bold">نعناع مجفف</h2>
+      <p class="mt-2 inline-block rounded-full bg-brand/20 px-3 py-1 text-sm">45 جنيه</p>
+    </li>
+  </ul>
+  <a href="#order" class="mt-6 inline-block rounded-card bg-brand px-6 py-3 font-bold text-white">اطلب دلوقتي</a>
+</main>
+</body>
+</html>
+~~~
+
+**ليه شغال:** كل سطر في [[@theme]] بيعمل حاجتين: متغير CSS في [[:root]]، وكلاسات. [[--color-brand]] بيدّيك [[bg-brand]] و [[text-brand]]، و [[--radius-card]] بيدّيك [[rounded-card]]، و [[--shadow-card]] بيدّيك [[shadow-card]].
+
+و [[bg-brand/20]] معناها اللون ده بشفافية 20٪. Tailwind بيعملها بـ [[color-mix()]] عشان تشتغل مع أي لون، حتى لو متغير.
+
+الألوان كلها جاية من مكان واحد، فتغيير البراند بقى سطر واحد.
+
+**الغلطة الشائعة:** تكتب [[--brand: #0f766e]] من غير [[--color-]]. ده متغير عادي، ومفيش [[bg-brand]] هيتولّد.
+
+~~~text الناتج
+out.css:
+:root فيه --color-brand: #0f766e
+
+.bg-brand\/20 {
+  background-color: color-mix(in srgb, #0f766e 20%, transparent);
+  @supports (color: color-mix(in lab, red, red)) {
+    background-color: color-mix(in oklab, var(--color-brand) ...
+
+مفيش ولا hex في index.html
+على 360: scrollWidth = clientWidth ، axe صفر
+~~~` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** [[@theme { --color-bg: var(--bg); }]] ضد [[@theme inline { --color-bg: var(--bg); }]]، وجوه الصفحة section عليه [[data-theme="dark"]] بيغيّر [[--bg]] لأسود. خلفية [[bg-bg]] جوه الـ section هتبقى إيه في الحالتين؟`, done: R`من غير inline: [[.bg-bg]] بتقرا [[var(--color-bg)]]، والمتغير ده اتحسب مرة واحدة على [[:root]] (أبيض) واتورث كده، فالخلفية فضلت [[rgb(255, 255, 255)]] جوه الـ section. مع inline: الكلاس فيه [[var(--bg)]] نفسه، فبقت سودا.`, sol: R`~~~css in.css (النسخة من غير inline)
+@import "tailwindcss";
+:root { --bg: #fff; }
+[data-theme="dark"] { --bg: #000; }
+@theme { --color-bg: var(--bg); }
+~~~
+
+~~~css in.css (النسخة بـ inline)
+@import "tailwindcss";
+:root { --bg: #fff; }
+[data-theme="dark"] { --bg: #000; }
+@theme inline { --color-bg: var(--bg); }
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>inline</title><link rel="stylesheet" href="out.css"></head>
+<body>
+<section data-theme="dark"><div id="box" class="bg-bg p-8">كلام</div></section>
+</body>
+</html>
+~~~
+
+**الفرق في سطر واحد من [[out.css]]:**
+
+- من غير [[inline]]: [[.bg-bg { background-color: var(--color-bg); }]]، و [[--color-bg]] متعرّف على [[:root]] بقيمة [[var(--bg)]].
+- مع [[inline]]: [[.bg-bg { background-color: var(--bg); }]]، يعني الكلاس بيقرا المتغير الأصلي مباشرة.
+
+**ليه ده بيغيّر النتيجة:** متغيرات CSS بتتحسب عند العنصر اللي اتعرّفت عليه، وبعدين القيمة المحسوبة هي اللي بتتورث. [[--color-bg]] اتحسب على [[:root]] بأبيض، والـ section ورث الأبيض ده. تغيير [[--bg]] تحت مش بيرجع يعيد حساب حاجة فوق. أما مع inline الكلاس نفسه بيقرا [[--bg]] عند العنصر، فبيلاقي الأسود.
+
+**القاعدة:** لو توكن Tailwind بيشاور على متغير بيتغيّر حسب الثيم، استخدم [[@theme inline]].
+
+**الغلطة الشائعة:** تجرّب الثيم على [[<html>]] فيشتغل، وتفتكر إنه سليم. المشكلة بتظهر بس لما الثيم يتغيّر على عنصر جوه الصفحة.
+
+~~~text الناتج
+من غير inline:  backgroundColor = rgb(255, 255, 255)
+مع inline:      backgroundColor = rgb(0, 0, 0)
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** animation في [[@theme]]: [[--animate-float]] ومعاه [[@keyframes float]] جوه نفس البلوك، واستخدمه بـ [[motion-safe:animate-float]] على أيقونة.`, done: R`[[out.css]] فيه [[@keyframes float]] و [[.motion-safe\:animate-float]] جوه [[@media (prefers-reduced-motion: no-preference)]]، ولو عرّفت keyframes تانية ومستخدمتهاش مش بتطلع في الملف. ومع reduce في Rendering الأيقونة واقفة.`, sol: R`~~~css in.css
+@import "tailwindcss";
+
+@theme {
+  --animate-float: float 3s ease-in-out infinite;
+  @keyframes float {
+    0%, 100% { translate: 0 0; }
+    50%      { translate: 0 -8px; }
+  }
+
+  --animate-wobble: wobble 1s linear infinite;
+  @keyframes wobble {
+    50% { rotate: 6deg; }
+  }
+}
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>float</title><link rel="stylesheet" href="out.css"></head>
+<body class="p-8">
+<main><h1 class="text-xl font-bold">شحن مجاني</h1>
+<svg id="icon" class="mt-4 size-12 text-teal-700 motion-safe:animate-float" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M5 21h14"/></svg></main>
+</body>
+</html>
+~~~
+
+**ليه شغال:** [[--animate-float]] بيعمل كلاس [[animate-float]]. و [[@keyframes]] جوه [[@theme]] بيتربط بالتوكن: لو الكلاس اتستخدم الـ keyframes تطلع، ولو لأ متطلعش. عشان كده [[wobble]] اختفت من الملف خالص.
+
+[[motion-safe:]] بيلف القاعدة في [[@media (prefers-reduced-motion: no-preference)]]، فمن طلب حركة أقل مبيشوفش الحركة خالص.
+
+**الغلطة الشائعة:** تكتب [[@keyframes]] برا [[@theme]] في آخر الملف. هيشتغل، بس هتفضل في [[out.css]] حتى لو محدش بيستخدمها، وكمان تكتب [[animate-float]] من غير [[motion-safe:]] فتنسى اللي عنده دوخة من الحركة.
+
+~~~text الناتج
+out.css:
+@keyframes float موجودة ، wobble مش موجودة (مش مستخدمة)
+
+@media (prefers-reduced-motion: no-preference) {
+  .motion-safe\:animate-float {
+    animation: var(--animate-float);
+  }
+}
+
+document.getAnimations().length: عادي 1 ، مع reduce 0
+animationName = float
+~~~` },
+            { lvl: 'تحدي', t: R`**refactor:** صفحة فيها [[bg-[#6d28d9]]] و [[text-[#6d28d9]]] و [[border-[#6d28d9]]] متكررين ١٢ مرة. حوّلها لتوكن واحد من غير ما الشكل يتغيّر.`, done: R`grep على الـ HTML بـ [[\[#]] مبيلاقيش حاجة، والتوكن [[--color-brand]] متعرّف مرة في [[@theme]]، ولقطتين قبل وبعد (screenshot) شبه بعض، وتغيير اللون بقى سطر واحد.`, sol: R`قبل:
+
+~~~html before.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>قبل</title><link rel="stylesheet" href="out.css"></head>
+<body class="p-6">
+<main>
+  <h1 class="text-[#6d28d9] text-2xl font-bold">العرض</h1>
+  <a href="#a" class="mt-4 inline-block bg-[#6d28d9] px-4 py-2 text-white">اشتري</a>
+  <p class="mt-4 border-2 border-[#6d28d9] p-4">تفاصيل</p>
+</main>
+</body>
+</html>
+~~~
+
+التوكن:
+
+~~~css in.css
+@import "tailwindcss";
+@theme { --color-brand: #6d28d9; }
+~~~
+
+والتحويل كله أمر واحد على الفولدر، وبعدين اتأكد:
+
+~~~bash
+sed -E -i 's/(text|bg|border)-\[#6d28d9\]/\1-brand/g' index.html
+grep -c '\[#' index.html     # المفروض 0
+~~~
+
+**ليه التوكن أحسن:** اللون اتكتب ١٢ مرة، فتغييره يعني ١٢ تعديل ومكان تنساه. دلوقتي [[--color-brand]] سطر واحد، و [[bg-brand]] و [[text-brand]] و [[border-brand]] كلهم بيقروا منه. والاسم كمان بيقول المعنى: ده لون البراند، مش مجرد بنفسجي.
+
+**ازاي تتأكد إن الشكل متغيرش:** متعتمدش على عينك. خد screenshot قبل وبعد وقارن الملفين.
+
+**الغلطة الشائعة:** تحط التوكن وتنسى تعمل build تاني قبل المقارنة، أو تسمي التوكن [[--color-purple]]. لو البراند بقى أخضر بكره الاسم هيكدب.
+
+~~~text الناتج
+color بتاع h1 قبل وبعد: rgb(109, 40, 217)
+screenshot قبل وبعد: متطابقين byte بـ byte
+grep '\[#' بعد التحويل: مفيش حاجة
+
+تغيير سطر واحد لـ --color-brand: #be123c
+خلفية الزرار بقت: rgb(190, 18, 60)
+~~~` },
           ],
           deep: {
             why: R`بدل ما تكتب [[bg-[#4f46e5]]] في مية مكان، بتدّي اللون اسم في مكان واحد. والتصميم كله بيبقى من مجموعة قيم محددة (ألوان، وخطوط، ومسافات، وتدوير)، ولو اللون اتغير بيتغير في سطر.`,
@@ -326,12 +725,296 @@ export default { plugins: { "@tailwindcss/postcss": {} } };
           try: R`اعمل اللينك ده واتنقل له بـ Tab: الـ outline هيظهر. دوس عليه بالماوس: مش هيظهر. وبعدين صغّر الشاشة وشوف الـ nav بقى عمود والزرار اختفى.`,
           flag: "script",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** ٣ عناصر: [[sm:hidden]] و [[hidden sm:block]] و [[max-sm:hidden]]. مين ظاهر على 360 ومين على 768؟`, done: R`على 360: الأول ظاهر، والتاني مستخبي، والتالت مستخبي. على 768: الأول مستخبي، والتاني ظاهر، والتالت ظاهر. وعرفت إن الكلاس من غير prefix هو الموبايل، و [[sm:]] = من 640 وطالع.` },
-            { lvl: 'تطبيق', t: R`**ابني:** navbar بـ Tailwind بس: الروابط [[hidden md:flex]]، وزرار ☰ [[md:hidden]] عليه [[aria-expanded]] والأيقونة [[aria-expanded:rotate-90]]، والقايمة على الموبايل [[max-md:]] بتظهر لما الزرار يتضغط (سطرين JavaScript بيقلبوا [[aria-expanded]] و [[hidden]]).`, done: R`على 360 و 768 و 1280 الشكل صح ومفيش scroll أفقي، والأيقونة بتلف لما القايمة تفتح من غير ولا class في JavaScript غير [[aria-expanded]]، و Tab بيوصل للزرار.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** زراير عليها [[focus:outline-none]] عشان «الـ outline وحش لما بدوس بالماوس». مستخدم الكيبورد مش عارف هو فين. صلّحها من غير ما الماوس يشوف outline.`, done: R`بعد [[focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand]]: الضغط بالماوس مبيطلّعش outline، و Tab بيطلّعه واضح على كل زرار.` },
-            { lvl: 'تطبيق', t: R`**ابني:** toggle شهري/سنوي لصفحة أسعار من غير JavaScript: radio اتنين جوه wrapper عليه [[group]]، والأسعار [[group-has-[#yearly:checked]:hidden]] و [[hidden group-has-[#yearly:checked]:block]].`, done: R`اختيار «سنوي» بيبدّل كل الأسعار في نفس اللحظة، والأسهم بين الـ radios بتبدّل من الكيبورد، و grep على الـ JS مفيهوش أي حاجة للأسعار.` },
-            { lvl: 'تطبيق', t: R`**ابني:** أسئلة شائعة بزراير [[aria-expanded]]، والسهم [[aria-expanded:rotate-180]]، والإجابة [[data-[state=open]:block hidden]]، وفاصل بين الأسئلة بـ [[not-last:border-b]] على الأب بـ [[*:]].`, done: R`فتح سؤال بيلف سهمه بس، وآخر سؤال مفيش تحته خط، و grep على [[out.css]] بيلاقي [[[aria-expanded="true"]]] و [[:not(:last-child)]].` },
-            { lvl: 'تحدي', t: R`**اكتب اختبار:** [[check-variants.mjs]]: بيعمل build لملف HTML فيه [[md:flex]] و [[hover:bg-brand]] و [[dark:bg-black]]، ويتأكد من [[out.css]] إن [[md:flex]] جوه [[@media (width >= 48rem)]]، و [[hover:]] جوه [[@media (hover: hover)]]. ويخرج بـ 1 لو حاجة ناقصة.`, done: R`السكربت بيخرج 0 على الإعداد العادي، ولما تزوّد [[@custom-variant dark (&:where(.dark, .dark *));]] الاختبار بتاع dark بيفشل لو لسه بيدوّر على [[prefers-color-scheme]] (يعني بيمسك التغيير).` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** ٣ عناصر: [[sm:hidden]] و [[hidden sm:block]] و [[max-sm:hidden]]. مين ظاهر على 360 ومين على 768؟`, done: R`على 360: الأول ظاهر، والتاني مستخبي، والتالت مستخبي. على 768: الأول مستخبي، والتاني ظاهر، والتالت ظاهر. وعرفت إن الكلاس من غير prefix هو الموبايل، و [[sm:]] = من 640 وطالع.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>variants</title><link rel="stylesheet" href="out.css"></head>
+<body>
+<div id="a" class="sm:hidden">الأول</div>
+<div id="b" class="hidden sm:block">التاني</div>
+<div id="c" class="max-sm:hidden">التالت</div>
+</body>
+</html>
+~~~
+
+**القاعدة:** Tailwind mobile-first. الكلاس من غير prefix بيشتغل على كل المقاسات. [[sm:]] معناها «من 640px وطالع». و [[max-sm:]] معناها «أقل من 640px».
+
+- [[sm:hidden]]: مفيش حاجة تحت 640، فظاهر. ومن 640 وطالع مخفي.
+- [[hidden sm:block]]: مخفي عادي، ومن 640 وطالع block.
+- [[max-sm:hidden]]: مخفي تحت 640، وفوقها ظاهر.
+
+**الغلطة الشائعة:** تقرا [[sm:]] على إنها «الشاشات الصغيرة». هي عكس كده: الحد الأدنى، مش الأقصى. عشان تستهدف الموبايل بس، اكتب الكلاس من غير prefix وارجعه بـ [[sm:]]، أو استخدم [[max-sm:]].
+
+~~~text الناتج
+          sm:hidden    hidden sm:block    max-sm:hidden
+360       ظاهر         مخفي               مخفي
+768       مخفي         ظاهر               ظاهر
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** navbar بـ Tailwind بس: الروابط [[hidden md:flex]]، وزرار ☰ [[md:hidden]] عليه [[aria-expanded]] والأيقونة [[aria-expanded:rotate-90]]، والقايمة على الموبايل [[max-md:]] بتظهر لما الزرار يتضغط (سطرين JavaScript بيقلبوا [[aria-expanded]] و [[hidden]]).`, done: R`على 360 و 768 و 1280 الشكل صح ومفيش scroll أفقي، والأيقونة بتلف لما القايمة تفتح من غير ولا class في JavaScript غير [[aria-expanded]]، و Tab بيوصل للزرار.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>navbar</title>
+<link rel="stylesheet" href="out.css">
+</head>
+<body>
+<header class="border-b border-gray-200">
+  <nav aria-label="الرئيسية" class="mx-auto flex max-w-5xl items-center justify-between p-4">
+    <a href="/" class="font-bold">متجر النور</a>
+    <button id="menu-btn" type="button" aria-label="القايمة" aria-expanded="false" aria-controls="menu"
+            class="grid size-11 place-items-center text-2xl transition-transform aria-expanded:rotate-90 md:hidden">☰</button>
+    <ul id="menu" class="hidden gap-6 md:flex max-md:absolute max-md:inset-x-0 max-md:top-[4.8rem] max-md:bg-white max-md:p-4 max-md:shadow-lg">
+      <li><a href="/products" class="block py-2">المنتجات</a></li>
+      <li><a href="/offers" class="block py-2">العروض</a></li>
+      <li><a href="/contact" class="block py-2">كلّمنا</a></li>
+    </ul>
+  </nav>
+</header>
+<main class="p-4"><h1 class="text-2xl font-bold">أهلًا بيك</h1></main>
+<script>
+  const btn = document.getElementById("menu-btn");
+  const menu = document.getElementById("menu");
+  btn.addEventListener("click", () => {
+    const open = btn.getAttribute("aria-expanded") === "true";
+    btn.setAttribute("aria-expanded", String(!open));
+    menu.classList.toggle("hidden", open);
+  });
+$__lt/script>
+</body>
+</html>
+~~~
+
+**ليه شغال:**
+
+- [[hidden md:flex]] على القايمة: مخفية على الموبايل، و flex من 768.
+- [[md:hidden]] على الزرار: موجود تحت 768 بس.
+- [[max-md:absolute]] وأخواتها: شكل القايمة لما تفتح على الموبايل، ومبيأثروش على الديسكتوب.
+- [[aria-expanded:rotate-90]] بيتحول لـ [[&[aria-expanded="true"]]]. يعني الشكل نفسه راكب على حالة الـ accessibility، فلو نسيت تحدّث الـ attribute الشكل هيفضحك.
+
+الـ JavaScript بيقلب حاجتين بس: [[aria-expanded]] و [[hidden]].
+
+**الغلطة الشائعة:** تعمل كلاس [[rotated]] في JavaScript. كده عندك مصدرين للحالة، ولما يختلفوا قارئ الشاشة يقول مقفول والسهم مفتوح. خلي الـ attribute هو المصدر الوحيد.
+
+~~~text الناتج
+360 مقفول:   الزرار grid ، القايمة none ، rotate none ، aria-expanded false
+Tab Tab:     focus على menu-btn
+Enter:       القايمة block ، rotate 90deg ، aria-expanded true
+768:         الزرار none ، القايمة flex
+1280:        الزرار none ، القايمة flex
+
+scrollWidth = clientWidth في التلاتة ، axe صفر
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** زراير عليها [[focus:outline-none]] عشان «الـ outline وحش لما بدوس بالماوس». مستخدم الكيبورد مش عارف هو فين. صلّحها من غير ما الماوس يشوف outline.`, done: R`بعد [[focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand]]: الضغط بالماوس مبيطلّعش outline، و Tab بيطلّعه واضح على كل زرار.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>focus</title><link rel="stylesheet" href="out.css"></head>
+<body class="p-8">
+<main class="flex gap-3">
+  <button id="one" class="rounded-lg bg-gray-100 px-4 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand">حفظ</button>
+  <button id="two" class="rounded-lg bg-gray-100 px-4 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand">إلغاء</button>
+</main>
+</body>
+</html>
+~~~
+
+**الفرق:** [[focus]] بيطابق أي focus، بالماوس أو الكيبورد. [[focus-visible]] بيطابق بس لما المتصفح يشوف إن المستخدم محتاج يعرف هو فين، يعني جاي بالكيبورد.
+
+ومفيش داعي نكتب [[focus:outline-none]] أصلًا: Chrome مبيرسمش outline للزرار بعد ضغطة ماوس. فاللي كان بيضايق الديزاينر مش موجود، والسطر ده كان بيشيل الإطار من الكيبورد بس.
+
+- [[focus-visible:outline-2]] سُمك 2px.
+- [[focus-visible:outline-offset-2]] مسافة عن الزرار عشان يبان على أي خلفية.
+- [[focus-visible:outline-brand]] من توكن البراند.
+
+**الغلطة الشائعة:** تستبدل [[focus:outline-none]] بـ [[focus:ring-2]]. ده بيظهر مع الماوس كمان، وهي دي الشكوى الأصلية.
+
+~~~text الناتج
+ضغطة ماوس على «حفظ»:
+outline-style = none
+
+Tab لـ «إلغاء»:
+outline-style = solid ، width 2px ، offset 2px ، color rgb(15, 118, 110)
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** toggle شهري/سنوي لصفحة أسعار من غير JavaScript: radio اتنين جوه wrapper عليه [[group]]، والأسعار [[group-has-[#yearly:checked]:hidden]] و [[hidden group-has-[#yearly:checked]:block]].`, done: R`اختيار «سنوي» بيبدّل كل الأسعار في نفس اللحظة، والأسهم بين الـ radios بتبدّل من الكيبورد، و grep على الـ JS مفيهوش أي حاجة للأسعار.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الأسعار</title>
+<link rel="stylesheet" href="out.css">
+</head>
+<body class="p-6">
+<main class="group mx-auto max-w-2xl">
+  <h1 class="text-2xl font-bold">الأسعار</h1>
+  <fieldset class="mt-4 flex gap-4">
+    <legend class="sr-only">مدة الاشتراك</legend>
+    <label class="flex items-center gap-2"><input type="radio" name="period" id="monthly" checked> شهري</label>
+    <label class="flex items-center gap-2"><input type="radio" name="period" id="yearly"> سنوي (وفّر شهرين)</label>
+  </fieldset>
+  <ul class="mt-6 grid gap-4 sm:grid-cols-2">
+    <li class="rounded-xl border border-gray-300 p-6">
+      <h2 class="font-bold">الأساسية</h2>
+      <p class="mt-2 text-3xl group-has-[#yearly:checked]:hidden">99 جنيه / شهر</p>
+      <p class="mt-2 hidden text-3xl group-has-[#yearly:checked]:block">990 جنيه / سنة</p>
+    </li>
+    <li class="rounded-xl border border-gray-300 p-6">
+      <h2 class="font-bold">الاحترافية</h2>
+      <p class="mt-2 text-3xl group-has-[#yearly:checked]:hidden">299 جنيه / شهر</p>
+      <p class="mt-2 hidden text-3xl group-has-[#yearly:checked]:block">2990 جنيه / سنة</p>
+    </li>
+  </ul>
+</main>
+</body>
+</html>
+~~~
+
+**ليه شغال:** [[group]] على [[<main>]]، و [[group-has-[#yearly:checked]:hidden]] بتتحول لقاعدة معناها «لو الجد اللي اسمه group جواه [[#yearly]] متعلّم، اخفي العنصر ده». يعني [[:has()]] بيقرا حالة الـ radio، والـ CSS كله بيتغيّر من غير ولا سطر JavaScript.
+
+كل سعر مكتوب مرتين، عنصر شهري وعنصر سنوي، وواحد بس ظاهر.
+
+**الكيبورد ببلاش:** دول radio حقيقيين بنفس الـ [[name]]، فالأسهم بتتنقل بينهم وقارئ الشاشة بيقول «١ من ٢». و [[fieldset]] و [[legend]] بيدّوا المجموعة اسم.
+
+**الغلطة الشائعة:** تعمل الزرارين [[<button>]] بشكل tabs. كده هتحتاج JavaScript و ARIA عشان توصل لنفس السلوك اللي الـ radio بيديهولك.
+
+~~~text الناتج
+شهري:         «99 جنيه / شهر» و «299 جنيه / شهر»
+سنوي:         «990 جنيه / سنة» و «2990 جنيه / سنة»  (في نفس اللحظة)
+السهم يمين:   رجع شهري ، input:checked = monthly
+
+scripts في الصفحة: 0
+على 360: scrollWidth = clientWidth ، axe صفر
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** أسئلة شائعة بزراير [[aria-expanded]]، والسهم جوه الزرار [[group-aria-expanded:rotate-180]] (والزرار عليه [[group]])، والإجابة [[data-[state=open]:block hidden]]، وفاصل بين الأسئلة بـ [[not-last:border-b]] على الأب بـ [[*:]].`, done: R`فتح سؤال بيلف سهمه بس، وآخر سؤال مفيش تحته خط، و grep على [[out.css]] بيلاقي [[[aria-expanded="true"]]] و [[:not(:last-child)]].`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>أسئلة شائعة</title>
+<link rel="stylesheet" href="out.css">
+</head>
+<body class="p-6">
+<main class="mx-auto max-w-xl">
+  <h1 class="text-2xl font-bold">أسئلة شائعة</h1>
+  <div id="faq" class="mt-4 *:not-last:border-b *:not-last:border-gray-300">
+    <div>
+      <h2><button type="button" aria-expanded="false" aria-controls="a1" class="group flex w-full items-center justify-between py-3 font-semibold">
+        التوصيل بياخد قد إيه؟ <span aria-hidden="true" class="transition-transform group-aria-expanded:rotate-180">▼</span>
+      </button></h2>
+      <p id="a1" data-state="closed" class="hidden pb-3 data-[state=open]:block">يومين شغل جوه القاهرة.</p>
+    </div>
+    <div>
+      <h2><button type="button" aria-expanded="false" aria-controls="a2" class="group flex w-full items-center justify-between py-3 font-semibold">
+        أرجّع المنتج إزاي؟ <span aria-hidden="true" class="transition-transform group-aria-expanded:rotate-180">▼</span>
+      </button></h2>
+      <p id="a2" data-state="closed" class="hidden pb-3 data-[state=open]:block">خلال ١٤ يوم من الاستلام.</p>
+    </div>
+    <div>
+      <h2><button type="button" aria-expanded="false" aria-controls="a3" class="group flex w-full items-center justify-between py-3 font-semibold">
+        بتقبلوا الدفع عند الاستلام؟ <span aria-hidden="true" class="transition-transform group-aria-expanded:rotate-180">▼</span>
+      </button></h2>
+      <p id="a3" data-state="closed" class="hidden pb-3 data-[state=open]:block">أيوه، في كل المحافظات.</p>
+    </div>
+  </div>
+</main>
+<script>
+  document.querySelectorAll("#faq button").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const open = btn.getAttribute("aria-expanded") === "true";
+      btn.setAttribute("aria-expanded", String(!open));
+      document.getElementById(btn.getAttribute("aria-controls")).dataset.state = open ? "closed" : "open";
+    });
+  });
+$__lt/script>
+</body>
+</html>
+~~~
+
+**ليه شغال:**
+
+- [[group-aria-expanded:rotate-180]] على السهم: الـ [[aria-expanded]] موجود على الزرار، والسهم جواه. [[aria-expanded:]] لوحدها بتبص على العنصر نفسه، فمش هتشتغل على السهم. فبنحط [[group]] على الزرار، والسهم يبص على الأب.
+- [[data-[state=open]:block]] مع [[hidden]]: قاعدة الـ variant بتيجي بعد في الـ CSS فبتكسب، فالإجابة بتظهر لما [[data-state]] يبقى [[open]].
+- [[*:not-last:border-b]] على الأب: [[*:]] بتطبّق على الأولاد المباشرين، و [[not-last:]] بتستثني آخر واحد. كده الفاصل كله في مكان واحد.
+
+**الغلطة الشائعة:** تحط [[aria-expanded:rotate-180]] على السهم. الـ build بيعدّي والكلاس موجود، بس عمره ما بيتفعّل لأن السهم نفسه مفيهوش الـ attribute.
+
+~~~text الناتج
+قبل أي ضغطة:
+border-bottom: 1px ، 1px ، 0px   (آخر سؤال مفيش تحته خط)
+
+بعد فتح السؤال الأول:
+rotate: 180deg ، none ، none
+الإجابة ظاهرة للأول بس
+
+grep على out.css: [aria-expanded="true"] موجود ، :not(:last-child) موجود
+على 360: scrollWidth = clientWidth ، axe صفر
+~~~` },
+            { lvl: 'تحدي', t: R`**اكتب اختبار:** [[check-variants.mjs]]: بيعمل build لملف HTML فيه [[md:flex]] و [[hover:bg-brand]] و [[dark:bg-black]]، ويتأكد من [[out.css]] إن [[md:flex]] جوه [[@media (width >= 48rem)]]، و [[hover:]] جوه [[@media (hover: hover)]]. ويخرج بـ 1 لو حاجة ناقصة.`, done: R`السكربت بيخرج 0 على الإعداد العادي، ولما تزوّد [[@custom-variant dark (&:where(.dark, .dark *));]] الاختبار بتاع dark بيفشل لو لسه بيدوّر على [[prefers-color-scheme]] (يعني بيمسك التغيير).`, sol: R`~~~js check-variants.mjs
+import { execSync } from "node:child_process";
+import { readFileSync, writeFileSync } from "node:fs";
+
+writeFileSync("page.html", '<div class="md:flex hover:bg-brand dark:bg-black"></div>');
+execSync("npx @tailwindcss/cli -i in.css -o out.css", { stdio: "pipe" });
+const css = readFileSync("out.css", "utf8");
+
+// Tailwind بيحط الـ at-rule قبل الكلاس، فبندوّر لورا ونتأكد إن البلوك لسه مفتوح
+function inside(atRule, cls) {
+  const end = css.indexOf(cls);
+  const start = css.lastIndexOf(atRule, end);
+  if (end === -1 || start === -1) return false;
+  const between = css.slice(start, end);
+  const opened = (between.match(/{/g) ?? []).length;
+  const closed = (between.match(/}/g) ?? []).length;
+  return opened > closed;
+}
+
+const checks = [
+  ["md:flex جوه @media (width >= 48rem)", inside("@media (width >= 48rem)", ".md\\:flex")],
+  ["hover: جوه @media (hover: hover)", inside("@media (hover: hover)", ".hover\\:bg-brand")],
+  ["dark: جوه prefers-color-scheme", inside("prefers-color-scheme: dark", ".dark\\:bg-black")],
+];
+
+let failed = 0;
+for (const [name, ok] of checks) {
+  console.log((ok ? "ok   " : "FAIL ") + name);
+  if (!ok) failed++;
+}
+process.exit(failed ? 1 : 0);
+~~~
+
+~~~css in.css
+@import "tailwindcss";
+@theme { --color-brand: #0f766e; }
+~~~
+
+~~~bash
+node check-variants.mjs
+echo "exit: $?"
+~~~
+
+**ليه الدالة بتدوّر لورا:** Tailwind بيكتب [[@media (width >= 48rem) { .md\:flex { ... } }]]، يعني الـ at-rule قبل الكلاس. فبناخد مكان الكلاس، ونرجع لآخر مرة ظهر فيها الـ at-rule، ونعدّ الأقواس بينهم. لو الأقواس المفتوحة أكتر من المقفولة، البلوك لسه مفتوح والكلاس جواه فعلًا.
+
+مجرد [[css.includes(...)]] مش كفاية: الـ at-rule ممكن يكون موجود في مكان تاني والكلاس برا منه.
+
+**ليه الاختبار مفيد:** لما حد يزوّد [[@custom-variant dark]]، معنى [[dark:]] بيتغيّر من إعداد الجهاز لكلاس على html. الاختبار بيقع ويقولك إن فيه قرار اتغيّر، وتحدّثه عن قصد.
+
+**الغلطة الشائعة:** تدوّر على الكلاس بعد الـ at-rule بمسافة ثابتة. عند أي تغيير في شكل الناتج الاختبار هيكدب.
+
+~~~text الناتج
+الإعداد العادي:
+ok   md:flex جوه @media (width >= 48rem)
+ok   hover: جوه @media (hover: hover)
+ok   dark: جوه prefers-color-scheme
+exit: 0
+
+بعد @custom-variant dark (&:where(.dark, .dark *));
+ok   md:flex جوه @media (width >= 48rem)
+ok   hover: جوه @media (hover: hover)
+FAIL dark: جوه prefers-color-scheme
+exit: 1
+~~~` },
           ],
           deep: {
             why: "في CSS العادي، الـ hover والـ media query والـ dark mode كل واحد قاعدة لوحدها في مكان تاني. الـ variants بتخلي كل حالات العنصر مكتوبة عليه، فتشوف سلوكه كله في سطر.",
@@ -719,11 +1402,255 @@ Tailwind (بـ Lightning CSS) زوّد نسخة [[-webkit-]] للشرط وللخ
 
 لو كل الصفحات بقت 500 بعد تعديل [[globals.css]]: [[tail -50 dev.log]] غالبًا فيه [[$__bt@utility$__bt cannot be nested.]]، يعني [[@utility]] جوه [[@supports]] أو [[@media]] أو [[@layer]]. اقلبها: [[@utility glass { ... @supports (...) { ... } }]]، والصفحة ترجع [[200]].`,
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** إيه اللي هيحصل لكل واحد؟ (١) [[@media (min-width: 40rem) { @utility card { padding: 2rem; } }]] (٢) [[@utility card { padding: 1rem; @media (min-width: 40rem) { padding: 2rem; } }]] (٣) [[@utility .card { padding: 1rem; }]]. اكتب التلاتة وبعدين جرّب بـ [[npx @tailwindcss/cli -i in.css -o out.css]].`, done: R`(١) [[cannot be nested]]، و (٢) نجح وفي [[out.css]] قاعدة [[.card]] وجواها [[@media]]، و (٣) [[defines an invalid utility name]]. وكل واحد طابق توقعك أو كاتب ليه لأ.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صلّح الملف ده من غير ما تغيّر الشكل النهائي: [[@supports (backdrop-filter: blur(4px)) { @utility glass { backdrop-filter: blur(12px); } }]]، واستخدم [[glass]] و [[md:glass]] في صفحة. أثبت بـ [[curl]] إن الصفحة [[200]]، وبـ [[grep]] على ملف الـ CSS إن [[backdrop-filter]] موجود جوه [[@supports]] للاتنين.`, done: R`[[curl -w "%{http_code}"]] بيطبع [[200]]، و [[grep -c "backdrop-filter: blur(12px)"]] على الـ CSS أكبر من أو يساوي ٢ (للكلاسين)، وفيه [[.md\:glass]].` },
-            { lvl: 'تطبيق', t: R`**ابني:** بطاقة «زجاج» فوق صورة خلفية بـ [[@utility glass]] (اللي في الدرس)، وافتحها في Chrome، وبعدين من DevTools › Rendering اقفل الـ [[backdrop-filter]] أو جرّب متصفح مش بيدعمه. الكلام لازم يفضل مقري في الحالتين.`, done: R`صورتين: واحدة فيها blur، وواحدة من غيره والخلفية شبه مصمتة ([[0.9]])، والكلام واضح في الاتنين.` },
-            { lvl: 'تحدي', t: R`**اكتب اختبار:** [[check-utility.mjs]]: بيقرا ملف CSS ويعدّ عمق الأقواس [[{ }]] سطر سطر، ولو لقى [[@utility]] والعمق مش صفر يطبع رقم السطر والـ at-rule اللي حواليه ويخرج بـ 1. جرّبه على الملف البايظ والسليم.`, done: R`على البايظ بيطبع حاجة زي [[line 2: @utility inside @supports]] ويخرج 1، وعلى السليم ميطبعش حاجة ويخرج 0 (زي فحص الـ ci في الدرس).` },
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[<div class="grid grid-cols-[240px 1fr]">]] والـ div طالع عمود واحد بعرض الصفحة كلها. ابني واعمل grep على [[out.css]] بـ [[grid-cols-]].`, done: R`مفيش أي قاعدة لـ [[grid-cols-[240px]]: المسافة قسمت الكلاس لاتنين ([[grid-cols-[240px]] و [[1fr]]])، والاتنين مش كلاسات صح. بعد [[grid-cols-[240px_1fr]]] القاعدة اتولّدت و [[gridTemplateColumns]] بقت [[240px 1040px]] على 1280.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** إيه اللي هيحصل لكل واحد؟ (١) [[@media (min-width: 40rem) { @utility card { padding: 2rem; } }]] (٢) [[@utility card { padding: 1rem; @media (min-width: 40rem) { padding: 2rem; } }]] (٣) [[@utility .card { padding: 1rem; }]]. اكتب التلاتة وبعدين جرّب بـ [[npx @tailwindcss/cli -i in.css -o out.css]].`, done: R`(١) [[cannot be nested]]، و (٢) نجح وفي [[out.css]] قاعدة [[.card]] وجواها [[@media]]، و (٣) [[defines an invalid utility name]]. وكل واحد طابق توقعك أو كاتب ليه لأ.`, sol: R`~~~css one.css
+@import "tailwindcss";
+@media (min-width: 40rem) { @utility card { padding: 2rem; } }
+~~~
+
+~~~css two.css
+@import "tailwindcss";
+@utility card { padding: 1rem; @media (min-width: 40rem) { padding: 2rem; } }
+~~~
+
+~~~css three.css
+@import "tailwindcss";
+@utility .card { padding: 1rem; }
+~~~
+
+~~~bash
+npx @tailwindcss/cli -i one.css -o out.css
+npx @tailwindcss/cli -i two.css -o out.css
+npx @tailwindcss/cli -i three.css -o out.css
+~~~
+
+**(١) بيفشل:** [[@utility]] لازم يبقى في أعلى مستوى في الملف. Tailwind محتاج يقراه كتعريف كلاس، عشان يقدر يركّب عليه [[md:]] و [[hover:]]، فميقدرش يبقى جوه شرط.
+
+**(٢) بينجح:** نفس الفكرة بالعكس: الـ [[@media]] جوه الـ utility. الكلاس واحد، والشرط جزء من محتواه.
+
+**(٣) بيفشل:** الاسم بيتكتب من غير نقطة، زي ما بتكتبه في الـ HTML. [[@utility card]] مش [[@utility .card]].
+
+**الغلطة الشائعة:** تنقل عادتك من CSS العادي، فتحط القاعدة جوه [[@media]] أو تكتب النقطة. الرسالتين واضحين، فاقراهم بدل ما تجرّب حاجات.
+
+~~~text الناتج
+(١) Error: $__bt@utility$__bt cannot be nested.
+(٢) Done in 51ms
+    .card {
+      padding: 1rem;
+      @media (min-width: 40rem) {
+        padding: 2rem;
+      }
+    }
+(٣) Error: $__bt@utility .card$__bt defines an invalid utility name.
+    Utilities should be alphanumeric and start with a lowercase letter.
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صلّح الملف ده من غير ما تغيّر الشكل النهائي: [[@supports (backdrop-filter: blur(4px)) { @utility glass { backdrop-filter: blur(12px); } }]]، واستخدم [[glass]] و [[md:glass]] في صفحة. أثبت بـ [[curl]] إن الصفحة [[200]]، وبـ [[grep]] على ملف الـ CSS إن [[backdrop-filter]] موجود جوه [[@supports]] للاتنين.`, done: R`[[curl -w "%{http_code}"]] بيطبع [[200]]، و [[grep -c "backdrop-filter: blur(12px)"]] على الـ CSS أكبر من أو يساوي ٢ (للكلاسين)، وفيه [[.md\:glass]].`, sol: R`البايظ:
+
+~~~css bad.css
+@import "tailwindcss";
+@supports (backdrop-filter: blur(4px)) { @utility glass { backdrop-filter: blur(12px); } }
+~~~
+
+المصلّح:
+
+~~~css in.css
+@import "tailwindcss";
+
+@utility glass {
+  @supports (backdrop-filter: blur(4px)) {
+    backdrop-filter: blur(12px);
+  }
+}
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>glass</title><link rel="stylesheet" href="out.css"></head>
+<body>
+<main>
+  <h1 class="glass p-4">زجاج دايمًا</h1>
+  <p class="md:glass p-4">زجاج من 768 وطالع</p>
+</main>
+</body>
+</html>
+~~~
+
+~~~bash
+npx @tailwindcss/cli -i in.css -o out.css
+npx serve . -l 4000
+curl -s -o /dev/null -w "%{http_code}\n" http://localhost:4000/
+grep -c "backdrop-filter: blur(12px)" out.css
+grep -F ".md\:glass" out.css
+~~~
+
+**التصليح:** قلب الترتيب. [[@utility]] برا، و [[@supports]] جواه. الشكل النهائي واحد، بس Tailwind دلوقتي يقدر يولّد الكلاس ويركّب عليه [[md:]].
+
+**ليه الـ CSS فيها الاتنين جوه [[@supports]]:** كل كلاس بتاخد نسخة خاصة بيها، و [[.md\:glass]] جوه [[@media]] وجواها [[@supports]].
+
+**الغلطة الشائعة:** في مشروع Next ده بيطلّع صفحة 500 على كل الموقع، مش على الصفحة اللي فيها الكلاس، لأن ملف الـ CSS كله فشل. لو كل الصفحات وقعت مرة واحدة، أول مكان تبص فيه هو لوج السيرفر.
+
+~~~text الناتج
+الملف البايظ:  Error: $__bt@utility$__bt cannot be nested.
+
+بعد التصليح:
+Done in 48ms
+curl:  200
+grep -c "backdrop-filter: blur(12px)":  2
+@supports (backdrop-filter: blur(4px)) ظهرت مرتين
+.md\:glass موجودة جوه @media (width >= 48rem)
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** بطاقة «زجاج» فوق صورة خلفية بـ [[@utility glass]] (اللي في الدرس)، وافتحها في Chrome، وبعدين جرّب حالة متصفح مش بيدعمه: في نسخة من الـ CSS غيّر الشرط لقيمة غلط زي [[@supports (backdrop-filter: nope(1px))]] وابني تاني. الكلام لازم يفضل مقري في الحالتين.`, done: R`صورتين: واحدة فيها blur، وواحدة من غيره والخلفية شبه مصمتة ([[0.9]])، والكلام واضح في الاتنين.`, sol: R`~~~css in.css
+@import "tailwindcss";
+
+@utility glass {
+  background-color: rgb(255 255 255 / 0.9);
+  @supports (backdrop-filter: blur(4px)) {
+    backdrop-filter: blur(12px);
+    background-color: rgb(255 255 255 / 0.6);
+  }
+}
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بطاقة زجاج</title>
+<link rel="stylesheet" href="out.css">
+</head>
+<body class="grid min-h-dvh place-items-center bg-[linear-gradient(135deg,#0f172a,#0f766e_50%,#f59e0b)] p-6">
+<main id="card" class="glass max-w-sm rounded-2xl p-6 text-gray-950">
+  <h1 class="text-2xl font-bold">عرض الصيف</h1>
+  <p class="mt-2">خصم 30% على كل السماعات لحد آخر الشهر.</p>
+</main>
+</body>
+</html>
+~~~
+
+ولحالة «متصفح مش بيدعمه»، غيّر شرط [[@supports]] لقيمة غلط وابني تاني:
+
+~~~css nosupport.css
+@import "tailwindcss";
+
+@utility glass {
+  background-color: rgb(255 255 255 / 0.9);
+  @supports (backdrop-filter: nope(1px)) {
+    backdrop-filter: blur(12px);
+    background-color: rgb(255 255 255 / 0.6);
+  }
+}
+~~~
+
+**ليه شغال:** القيمة برا [[@supports]] هي الأساس: أبيض 0.9 تقريبًا مصمت، بيتقري على أي خلفية. لو المتصفح بيدعم الـ blur، بننزّل الشفافية لـ 0.6 لأن الـ blur هو اللي بيحمي الكلام.
+
+الترتيب ده هو الـ progressive enhancement: الأساس سليم للكل، والتحسين لمين يقدر.
+
+حسبت التباين على أغمق وأفتح لون في الخلفية، لأن الزجاج فوق تدرّج مش لون واحد.
+
+**الغلطة الشائعة:** تكتب [[rgb(255 255 255 / 0.2)]] برا [[@supports]] عشان الشكل حلو عندك. أي متصفح من غير blur هيطلع كلام فوق صورة مكشوفة.
+
+~~~text الناتج
+                    Chrome الحالي       الشرط غلط
+background-color    rgba(255,255,255,0.6)   rgba(255,255,255,0.9)
+backdrop-filter     blur(12px)          none
+
+تباين الكلام (#030712) بعد خلط الأبيض مع لون الخلفية:
+                    0.6       0.9
+على الأغمق          7.88      16.42
+على التيل           11.07     17.50
+على الكهرماني       14.78     18.63
+
+على 360: scrollWidth = clientWidth
+~~~` },
+            { lvl: 'تحدي', t: R`**اكتب اختبار:** [[check-utility.mjs]]: بيقرا ملف CSS ويعدّ عمق الأقواس [[{ }]] سطر سطر، ولو لقى [[@utility]] والعمق مش صفر يطبع رقم السطر والـ at-rule اللي حواليه ويخرج بـ 1. جرّبه على الملف البايظ والسليم.`, done: R`على البايظ بيطبع حاجة زي [[line 2: @utility inside @supports]] ويخرج 1، وعلى السليم ميطبعش حاجة ويخرج 0 (زي فحص الـ ci في الدرس).`, sol: R`~~~js check-utility.mjs
+import { readFileSync } from "node:fs";
+
+const file = process.argv[2];
+const lines = readFileSync(file, "utf8").split("\n");
+const stack = [];   // الـ at-rules اللي احنا جواها دلوقتي
+let bad = 0;
+
+lines.forEach((line, i) => {
+  const text = line.replace(/\/\*.*?\*\//g, "");
+  const util = text.match(/@utility\b/);
+  if (util && stack.length) {
+    const around = stack.findLast((s) => s.startsWith("@")) ?? stack.at(-1);
+    console.log($__btline $__{i + 1}: @utility inside $__{around}$__bt);
+    bad++;
+  }
+  for (const m of text.matchAll(/[^{}]*[{}]/g)) {
+    if (m[0].endsWith("{")) stack.push(m[0].slice(0, -1).trim().split(/[\s(]/)[0] || "{");
+    else stack.pop();
+  }
+});
+
+process.exit(bad ? 1 : 0);
+~~~
+
+~~~css bad.css
+@import "tailwindcss";
+@supports (backdrop-filter: blur(4px)) {
+  @utility glass { backdrop-filter: blur(12px); }
+}
+~~~
+
+~~~css good.css
+@import "tailwindcss";
+@utility glass {
+  @supports (backdrop-filter: blur(4px)) { backdrop-filter: blur(12px); }
+}
+~~~
+
+~~~bash
+node check-utility.mjs bad.css;  echo "exit: $?"
+node check-utility.mjs good.css; echo "exit: $?"
+~~~
+
+**ليه stack مش عدّاد:** العمق لوحده بيقولك إنك جوه حاجة، و stack بيقولك جوه إيه، فالرسالة تبقى [[@utility inside @supports]].
+
+لكل سطر: بنشوف الأول فيه [[@utility]] والـ stack مش فاضي ولا لأ، وبعدين نمشي على الأقواس. [[text.matchAll]] بياخد كل حتة بتنتهي بـ [[{]] أو [[}]]، فسطر فيه قوسين بيتحسب صح زي [[a { b { c } }]].
+
+[[.replace]] اللي في الأول بيشيل التعليقات، عشان قوس جوه تعليق ميلخبطش العد.
+
+**الغلطة الشائعة:** تعدّ الأقواس بعد فحص [[@utility]]. في [[@utility glass {]] نفس السطر فيه القوس، فلو عدّيته الأول هتشوف العمق 1 وتطلّع خطأ على ملف سليم.
+
+~~~text الناتج
+$ node check-utility.mjs bad.css
+line 3: @utility inside @supports
+exit: 1
+
+$ node check-utility.mjs good.css
+exit: 0
+~~~` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[<div class="grid grid-cols-[240px 1fr]">]] والـ div طالع عمود واحد بعرض الصفحة كلها. ابني واعمل grep على [[out.css]] بـ [[grid-cols-]].`, done: R`مفيش أي قاعدة لـ [[grid-cols-[240px]]: المسافة قسمت الكلاس لاتنين ([[grid-cols-[240px]] و [[1fr]]])، والاتنين مش كلاسات صح. بعد [[grid-cols-[240px_1fr]]] القاعدة اتولّدت و [[gridTemplateColumns]] بقت [[240px 1040px]] على 1280.`, sol: R`الكود المصلّح:
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>اعمدة</title><link rel="stylesheet" href="out.css"></head>
+<body class="m-0">
+<div id="g" class="grid grid-cols-[240px_1fr]"><aside>جنب</aside><main>النص</main></div>
+</body>
+</html>
+~~~
+
+~~~bash
+npx @tailwindcss/cli -i in.css -o out.css
+grep -o "grid-cols-[^ {]*" out.css
+~~~
+
+**ليه:** الـ HTML بيقسم [[class]] عند المسافات، و Tailwind كمان. فـ [[grid-cols-[240px 1fr]]] مش كلاس واحد، ده كلمتين: [[grid-cols-[240px]] و [[1fr]]]، والاتنين مش كلاسات معروفة. وعشان كده في قيم arbitrary بتكتب [[_]] مكان المسافة، و Tailwind بيرجّعها مسافة في الـ CSS.
+
+**الغلطة الشائعة:** تستنى error من الـ build. مفيش، الكلمات اللي مش فاهمها بيتجاهلها في سكوت. grep على الناتج هو اللي بيكشف.
+
+~~~text الناتج
+قبل:  grep مبيطلّعش أي grid-cols
+      gridTemplateColumns = 1280px (عمود واحد)
+بعد:  grid-cols-\[240px_1fr\]
+      gridTemplateColumns = 240px 1040px على 1280
+~~~` },
           ],
           ci: [
             { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`node`, run: R`import fs from "node:fs";
@@ -760,11 +1687,207 @@ check("good.css");`, expect: [R`bad.css: line 3: @utility inside @supports`, R`g
           try: R`اعمل الكارت ده وقف عليه بالماوس. وبعدين اكتب إيميل غلط واخرج من الحقل: الرسالة هتظهر. جرّب [[peer-invalid:]] بدل [[peer-user-invalid:]] وشوف الفرق: الرسالة هتظهر من أول ما الصفحة تفتح.`,
           flag: "script",
           practice: [
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** شبكة ٦ كروت «مشاكل وحلول»، كل كارت جواه دايرة زينة [[group-hover:scale-150]]، ومفيش حاجة بتتحرك أبدًا. الـ CSS اتولّد (grep بيلاقي [[group-hover\:scale-150]]). لاقي الناقص.`, done: R`الكارت ناقصه كلاس [[group]]، والقاعدة اللي اتولّدت [[:where(.group):hover .group-hover\:scale-150]] مستنية جد اسمه group. بعد ما زوّدته على الـ article الدايرة بتكبر.` },
-            { lvl: 'تطبيق', t: R`**ابني:** حقل بـ floating label: [[<input placeholder=" " class="peer">]] وبعده [[<label>]] بيتحرك فوق بـ [[peer-focus:]] و [[peer-not-placeholder-shown:]].`, done: R`الـ label جوه الحقل وهو فاضي، وبيطلع فوق لما تدوس أو تكتب، وبيفضل فوق لو فيه كلام وخرجت، و Tab بيعمل نفس الحركة، ومفيش JavaScript.` },
-            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[<span class="peer-invalid:visible invisible">خطأ</span><input class="peer" required>]] (الرسالة **قبل** الحقل). هتظهر؟ ليه؟`, done: R`مش هتظهر أبدًا: [[peer-*]] بيتحول لـ [[~]] في CSS، والـ [[~]] بيختار الإخوات اللي **بعد** العنصر بس. بعد ما نقلت الرسالة بعد الـ input اشتغلت.` },
-            { lvl: 'تطبيق', t: R`**ابني:** section عليه [[group/section]] وجواه كروت عليها [[group/card]]: لما تقف على الـ section الكروت كلها تفتح شوية، ولما تقف على كارت عنوانه هو بس يتلوّن، بـ [[group-hover/section:]] و [[group-hover/card:]].`, done: R`الحالتين شغالين مع بعض من غير تداخل، و grep على [[out.css]] بيلاقي [[.group\/card]] و [[.group\/section]] في الـ selectors.` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** اختيار باقة بـ radio cards: مرة بـ [[peer-checked:]] (الـ input قبل الكارت) ومرة بـ [[has-checked:]] على الـ label نفسه (الـ input جواه). أنهي واحدة بتشتغل لو الـ input في آخر الكارت؟`, done: R`[[has-checked:]] شغالة في أي مكان جوه الـ label لأنها [[:has(:checked)]]، و [[peer-checked:]] شغالة بس على اللي بعد الـ input. وكتبت إن [[:has()]] مدعومة في المتصفحات الحديثة كلها (Baseline 2023، من MDN).` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** شبكة ٦ كروت «مشاكل وحلول»، كل كارت جواه دايرة زينة [[group-hover:scale-150]]، ومفيش حاجة بتتحرك أبدًا. الـ CSS اتولّد (grep بيلاقي [[group-hover\:scale-150]]). لاقي الناقص.`, done: R`الكارت ناقصه كلاس [[group]]، والقاعدة اللي اتولّدت [[:where(.group):hover .group-hover\:scale-150]] مستنية جد اسمه group. بعد ما زوّدته على الـ article الدايرة بتكبر.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>group</title><link rel="stylesheet" href="out.css"></head>
+<body class="p-6">
+<main class="grid gap-4 sm:grid-cols-3">
+  <article id="card" class="group relative overflow-hidden rounded-xl border border-gray-300 p-6">
+    <span id="dot" aria-hidden="true" class="absolute -end-4 -top-4 size-16 rounded-full bg-teal-200 transition-transform group-hover:scale-150"></span>
+    <h2 class="relative font-bold">المشكلة</h2>
+    <p class="relative mt-2 text-gray-600">العملا مش لاقيين المنتج.</p>
+  </article>
+</main>
+</body>
+</html>
+~~~
+
+الناقص كلمة واحدة: [[group]] على الـ [[<article>]].
+
+**ليه:** [[group-hover:scale-150]] مش معناها «لما تقف على العنصر ده»، معناها «لما تقف على أب اسمه group». القاعدة اللي اتولّدت بتقول [[:where(.group):hover .group-hover\:scale-150]]، يعني الـ selector محتاج جد عليه كلاس [[group]].
+
+عشان كده grep لاقى الكلاس، والـ CSS سليم، ومفيش error، والحركة مبتحصلش.
+
+**الغلطة الشائعة:** تدوّر في ملف الـ CSS أو تعيد الـ build. الـ CSS مولود سليم، الناقص في الـ HTML.
+
+~~~text الناتج
+عرض الدايرة وقوف عادي:            64px
+hover على الكارت (فيه group):      96px
+hover من غير كلاس group:           64px (متغيرتش)
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** حقل بـ floating label: [[<input placeholder=" " class="peer">]] وبعده [[<label>]] بيتحرك فوق بـ [[peer-focus:]] و [[peer-not-placeholder-shown:]].`, done: R`الـ label جوه الحقل وهو فاضي، وبيطلع فوق لما تدوس أو تكتب، وبيفضل فوق لو فيه كلام وخرجت، و Tab بيعمل نفس الحركة، ومفيش JavaScript.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>floating label</title>
+<link rel="stylesheet" href="out.css">
+</head>
+<body class="p-8">
+<main class="max-w-sm">
+  <h1 class="mb-6 text-2xl font-bold">تسجيل</h1>
+  <div class="relative">
+    <input id="email" type="email" placeholder=" "
+           class="peer w-full rounded-lg border border-gray-400 px-3 pt-6 pb-2 focus:border-teal-700 focus:outline-2 focus:outline-teal-700">
+    <label for="email"
+           class="pointer-events-none absolute start-3 top-4 text-gray-600 transition-all peer-focus:top-1.5 peer-focus:text-xs peer-focus:text-teal-700 peer-not-placeholder-shown:top-1.5 peer-not-placeholder-shown:text-xs">الإيميل</label>
+  </div>
+  <a href="#next" class="mt-4 inline-block py-2">الخطوة الجاية</a>
+</main>
+</body>
+</html>
+~~~
+
+**ليه شغال:**
+
+- [[placeholder=" "]] مسافة واحدة، مش فاضي. ده بيدّينا [[:placeholder-shown]] كحالة «الحقل فاضي». من غيره الـ selector مش هيشتغل خالص.
+- [[peer]] على الـ input، والـ label بعده في الـ HTML، فالـ label يقدر يقرا حالته.
+- [[peer-focus:]] لما الحقل عليه focus، و [[peer-not-placeholder-shown:]] لما فيه كلام. الاتنين بيرفعوا الـ label، فبيفضل فوق لو كتبت وخرجت.
+- [[pointer-events-none]]: الضغط على الـ label يعدّي للحقل.
+
+الـ [[<label for="email">]] حقيقي، فالاسم وصل لقارئ الشاشة، مش placeholder.
+
+**الغلطة الشائعة:** تحط الـ label قبل الـ input عشان ده ترتيب القراية. [[peer-*]] مبتشوفش غير اللي بعدها.
+
+~~~text الناتج
+                       top     font-size
+فاضي من غير focus      16px    16px
+Tab (focus)            6px     12px
+كتبت وعملت Tab برا     6px     12px
+مسحت الكلام وخرجت      16px    16px
+
+عدد الـ scripts: 0
+على 360: scrollWidth = clientWidth ، axe صفر
+~~~` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[<span class="peer-invalid:visible invisible">خطأ</span><input class="peer" required>]] (الرسالة **قبل** الحقل). هتظهر؟ ليه؟`, done: R`مش هتظهر أبدًا: [[peer-*]] بيتحول لـ [[~]] في CSS، والـ [[~]] بيختار الإخوات اللي **بعد** العنصر بس. بعد ما نقلت الرسالة بعد الـ input اشتغلت.`, sol: R`~~~html test.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>peer</title><link rel="stylesheet" href="out.css"></head>
+<body class="p-8">
+<main>
+  <span id="before" class="peer-invalid:visible invisible">خطأ</span>
+  <input class="peer border" required aria-label="قبل">
+</main>
+<main>
+  <input class="peer border" required aria-label="بعد">
+  <span id="after" class="peer-invalid:visible invisible">خطأ</span>
+</main>
+</body>
+</html>
+~~~
+
+**الإجابة:** مش هتظهر أبدًا لو الرسالة قبل الحقل.
+
+**ليه:** [[peer-invalid:visible]] بيتحول لـ selector فيه [[~]]، يعني «عنصر [[.peer]] غير صالح وبعده الأخ ده». و [[~]] في CSS بيمشي لقدام بس، مفيش طريقة يرجع بيها لأخ قبله.
+
+الصفحة فيها الحالتين، والحقلين فاضيين و [[required]]، يعني الاتنين [[:invalid]] من الأول.
+
+**وملحوظة:** الرسالة هنا بتبان من أول ما الصفحة تفتح لأن الحقل الفاضي invalid. في الشغل الحقيقي استخدم [[user-invalid:]] عشان تظهر بعد ما المستخدم يتعامل مع الحقل.
+
+**الغلطة الشائعة:** تزوّد [[peer]] تاني أو تغيّر اسمه. المشكلة في الترتيب مش في الاسم. ولو لازم الرسالة تبان فوق الحقل، خليها بعده في الـ HTML وارفعها بـ [[order]] أو grid، أو استخدم [[:has()]] على الأب.
+
+~~~text الناتج
+الرسالة قبل الحقل:  visibility = hidden
+الرسالة بعد الحقل:  visibility = visible
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** section عليه [[group/section]] وجواه كروت عليها [[group/card]]: لما تقف على الـ section الكروت كلها تفتح شوية، ولما تقف على كارت عنوانه هو بس يتلوّن، بـ [[group-hover/section:]] و [[group-hover/card:]].`, done: R`الحالتين شغالين مع بعض من غير تداخل، و grep على [[out.css]] بيلاقي [[.group\/card]] و [[.group\/section]] في الـ selectors.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مجموعات متداخلة</title>
+<link rel="stylesheet" href="out.css">
+</head>
+<body class="p-6">
+<main>
+  <h1 class="text-2xl font-bold">خدماتنا</h1>
+  <section id="sec" class="group/section mt-4 grid gap-4 rounded-2xl bg-gray-100 p-4 sm:grid-cols-2">
+    <article id="c1" class="group/card rounded-xl bg-white p-4 transition-transform group-hover/section:-translate-y-1">
+      <h2 class="font-bold transition-colors group-hover/card:text-teal-700">التصميم</h2>
+      <p>من الفكرة للشكل.</p>
+    </article>
+    <article id="c2" class="group/card rounded-xl bg-white p-4 transition-transform group-hover/section:-translate-y-1">
+      <h2 class="font-bold transition-colors group-hover/card:text-teal-700">البرمجة</h2>
+      <p>من الشكل للتشغيل.</p>
+    </article>
+  </section>
+</main>
+</body>
+</html>
+~~~
+
+**ليه الأسماء:** لو الاتنين [[group]] من غير اسم، [[group-hover:]] هيتفعّل لما تقف على أي جد عليه group. فالكارت كله هيتلوّن مع الـ section. [[group/card]] و [[group/section]] بيدّوا كل مستوى اسم، و [[group-hover/card:]] بيبص على المستوى ده بس.
+
+- [[group-hover/section:-translate-y-1]] على الكارت: لما الماوس يدخل الـ section، الكروت كلها تطلع 4px.
+- [[group-hover/card:text-teal-700]] على العنوان: عنوان الكارت اللي تحت الماوس بس يتلوّن.
+
+**الغلطة الشائعة:** تستخدم [[group]] واحد وتتوقع إن الأقرب هو اللي يتحسب. CSS مبيعرفش «الأقرب»، أي جد مطابق كفاية.
+
+~~~text الناتج
+الماوس برا:          translate none ، none       عناوين rgb(0, 0, 0)
+على الـ section:     translate 0px -4px للاتنين   عناوين rgb(0, 0, 0)
+على الكارت الأول:    translate 0px -4px للاتنين
+                     عنوان الأول oklch(0.511 ...) ، التاني rgb(0, 0, 0)
+
+grep: .group\/card و .group\/section موجودين
+axe صفر ، مفيش scroll أفقي
+~~~` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** اختيار باقة بـ radio cards: مرة بـ [[peer-checked:]] (الـ input قبل الكارت) ومرة بـ [[has-checked:]] على الـ label نفسه (الـ input جواه). أنهي واحدة بتشتغل لو الـ input في آخر الكارت؟`, done: R`[[has-checked:]] شغالة في أي مكان جوه الـ label لأنها [[:has(:checked)]]، و [[peer-checked:]] شغالة بس على اللي بعد الـ input. وكتبت إن [[:has()]] مدعومة في المتصفحات الحديثة كلها (Baseline 2023، من MDN).`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>اختيار باقة</title>
+<link rel="stylesheet" href="out.css">
+</head>
+<body class="p-6">
+<main class="mx-auto grid max-w-md gap-6">
+  <h1 class="text-2xl font-bold">اختار باقتك</h1>
+
+  <!-- ١) peer-checked: الـ input قبل الكارت، والكارت أخوه -->
+  <div>
+    <input id="p1" class="peer sr-only" type="radio" name="a">
+    <label for="p1" class="block rounded-xl border-2 border-gray-300 p-4 peer-checked:border-teal-700">peer: الـ input الأول</label>
+  </div>
+
+  <!-- ٢) peer-checked: الـ input في آخر الكارت، والكلام قبله -->
+  <label class="block rounded-xl border-2 border-gray-300 p-4">
+    <span id="p2t" class="peer-checked:text-teal-700">peer: الـ input الأخير</span>
+    <input id="p2" class="peer" type="radio" name="a">
+  </label>
+
+  <!-- ٣) has-checked: الـ input في أي مكان جوه الـ label -->
+  <label id="h1l" class="block rounded-xl border-2 border-gray-300 p-4 has-checked:border-teal-700">
+    has: الـ input الأخير
+    <input id="h1" type="radio" name="a">
+  </label>
+</main>
+</body>
+</html>
+~~~
+
+**الإجابة:** [[has-checked:]] بتشتغل والـ input في أي مكان، و [[peer-checked:]] لأ.
+
+- [[peer-checked:]] بتتحول لـ [[~]]، فمحتاجة الـ input **قبل** العنصر، وكإخوات.
+- [[has-checked:]] بتتحول لـ [[:has(:checked)]] على الـ label نفسه، فبتسأل «جوايا input متعلّم؟» من غير ما يهم مكانه.
+
+وعشان كده [[has-checked:]] بتبسّط الـ HTML: مفيش [[sr-only]] ولا [[id]] ولا [[for]]، الـ input جوه الـ label خلاص.
+
+و [[:has()]] من MDN: Baseline 2023، يعني في كل المتصفحات الحديثة. (دي معلومة من الوثائق، والتجربة هنا في Chrome بس.)
+
+**الغلطة الشائعة:** تحط [[peer]] و [[peer-checked:]] والـ input في آخر الكارت، فالكود يبان سليم والشكل مبيتغيرش.
+
+~~~text الناتج
+                         لون الحد أو الكلام بعد الاختيار
+peer والـ input الأول    اتغيّر للتيل oklch(0.511 ...)
+peer والـ input الأخير   فضل rgb(0, 0, 0)  (مبيشتغلش)
+has والـ input الأخير    اتغيّر للتيل oklch(0.511 ...)
+axe صفر
+~~~` },
           ],
           deep: {
             why: R`حالات زي «لما تقف على الكارت السهم يتحرك» كانت محتاجة CSS منفصل بـ selector زي [[.card:hover .arrow]]، أو state في React. group و peer بيعملوها بكلاسات على العناصر نفسها.`,

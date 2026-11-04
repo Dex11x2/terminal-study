@@ -1,519 +1,545 @@
 // تكملة تاب web: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/web/01.js (شرح حقول الدرس في أوله)
 MORE("web", [
     {
-      t: "Network: كل طلب الصفحة بتعمله",
-      l: 2,
-      n: "هنا بتشوف الكلام اللي بين المتصفح والسيرفر",
+      t: "Console",
+      l: 1,
+      n: "أول مكان تبص فيه لما حاجة في الصفحة مش شغالة",
       projects: [
-        { lvl: 'صغير', t: R`ملخّص HAR`, what: R`سكربت [[har-summary.mjs]] بياخد ملف HAR ويطبع: عدد الطلبات، والحجم الكلي، وأبطأ ١٠، وأكبر ١٠، والفاشلين، وتوزيع البروتوكولات ([[http/1.1]] و [[h2]] و [[h3]]). من دروس Network.`, done: R`على HAR حقيقي بيطبع الـ ٦ أقسام، والأرقام مطابقة للشريط اللي تحت في Network، وعلى ملف مش JSON بيطبع رسالة مفهومة ويخرج بـ [[1]].` },
-        { lvl: 'صغير', t: R`صفحة «اختبر النت البطيء»`, what: R`فورم صغير بيبعت POST ويستنى ٢ ثانية، بـ loading state وزرار [[disabled]] ورسالة خطأ لو Offline. اختبرها على Slow 4G و Offline و Block request. من درس «Throttling و Blocking».`, done: R`على Slow 4G داسة واحدة = طلب واحد، و Offline بيطلّع رسالة «مفيش نت» مش صفحة بيضا، و Block request بيرجّع الزرار لحالته.` },
-        { lvl: 'متوسط', t: R`مراقب WebSocket للشات`, what: R`شات صغير بـ [[ws]] (Node) فيه ping كل ٢٥ ثانية و reconnect بـ backoff، وسكربت Playwright بيقرا الـ frames من DevTools Protocol ويطبع عدد الرسايل وأكواد القفل. من درس «WebSocket و SSE في Network».`, done: R`لما وقفت السيرفر ٥ ثواني، الصفحة رجعت اتصلت لوحدها، و Messages فيه القفلة بـ [[1006]] والاتصال الجديد، والسكربت طبع ٢ connections.` },
-        { lvl: 'متوسط', t: R`حالة الأوردر بـ SSE`, what: R`صفحة بتعرض حالة أوردر لحظي بـ [[EventSource]]، والسيرفر بيكمّل من [[Last-Event-ID]] بعد أي انقطاع، ومبيبعتش نفس الحدث مرتين. من درس «WebSocket و SSE في Network».`, done: R`قفلت السيرفر في النص وشغّلته: الصفحة كمّلت من الحدث اللي بعد آخر واحد وصل، و EventStream مفيهوش تكرار، وعلى HTTP/2 ١٠ تابات شغالين مع بعض.` },
-        { lvl: 'كبير', t: R`مسجّل أداء الصفحة من الترمنال`, what: R`CLI بـ Playwright و CDP بياخد URL ويطبع waterfall نصي: كل طلب ومراحله (DNS و connect و TTFB و download)، والـ initiator، والبروتوكول، والحجم قبل وبعد الضغط، ويعلّم على اللي اتأخر بسبب queueing (حد الـ ٦ في HTTP/1.1). وفيه [[--throttle slow4g]] و [[--json]].`, done: R`على صفحة فيها ٦٠ صورة على HTTP/1.1 بيعلّم على الطلبات اللي استنت (عندنا أكتر من ثانية)، وعلى HTTP/2 مبيعلّمش، و [[--json]] بيطلّع JSON صالح، و URL مبيردش بيقول timeout بعد ٣٠ ثانية.`, ext: R`قارن تشغيلين وطلّع الفرق، أو صدّر HAR بنفس الشكل اللي DevTools بيقراه.` },
-        { lvl: 'فكرة', t: R`محاكي «يوم وحش» للموقع`, what: R`أداة بتشغّل موقعك تحت ظروف وحشة متدرّجة: نت بطيء، وAPI بيرد ٥٠٠، و CDN واقع (Block)، وخط مش بيتحمّل، وتقول لكل حالة الصفحة عملت إيه. انت بتختار السيناريوهات.`, done: R`٥ سيناريوهات على الأقل، ولكل واحد screenshot وحكم (اتعامل كويس/لأ)، وواحد على الأقل كشف باج حقيقي وصلّحته.`, ext: R`خليها تشتغل في CI قبل كل نشر، وزوّد سيناريو «النت بيقطع وبيرجع» لتطبيقات الـ offline.` },
+        { lvl: 'صغير', t: R`Snippets شنطة العدة`, what: R`٥ Snippets في Sources: [[audit-images]] (من غير alt أو مقاس)، و [[links-table]] (كل اللينكات و [[target]] و [[rel]])، و [[find-overflow]]، و [[listeners]] (بـ [[getEventListeners]])، و [[design-mode]] (يقلب [[designMode]]). من درس «أوامر Console المفيدة».`, done: R`الـ ٥ بيشتغلوا بـ [[Ctrl+Enter]] على أي موقع ومبيرموش error لو الصفحة مفيهاش العناصر دي، وكل واحد بيطبع [[console.table]].` },
+        { lvl: 'صغير', t: R`قاموس أخطاء Console بتاعك`, what: R`ملف Markdown فيه ١٥ رسالة حقيقية قابلتها (بالنص)، ولكل واحدة: معناها، وأول مكان تبص فيه، والتصليح، ولينك الدرس. من درس «قراءة الأخطاء».`, done: R`١٥ رسالة كل واحدة بنصها الكامل، ومنهم على الأقل واحدة CSP وواحدة Mixed Content وواحدة CORS، وزميل استخدمه وحل خطأ من غير ما يسألك.` },
+        { lvl: 'متوسط', t: R`مسجّل أخطاء الصفحة`, what: R`سكربت صغير تحطه في أي موقع بيمسك [[window.onerror]] و [[unhandledrejection]] و [[securitypolicyviolation]]، ويجمّعهم ويبعتهم كل ١٠ ثواني لـ endpoint (Node) بيحفظهم JSONL. من دروس Console و «Content Security Policy».`, done: R`خطأ JavaScript، و Promise مرفوض، ومخالفة CSP، الـ ٣ وصلوا الملف بالرسالة والملف والسطر والـ URL، ونفس الخطأ ١٠٠ مرة اتبعت مرة واحدة ومعاه عدّاد.` },
+        { lvl: 'متوسط', t: R`Snippet «حالة الصفحة» للدعم الفني`, what: R`Snippet بيطلّع JSON واحد فيه: الـ URL، والـ user agent، والعرض، وآخر ١٠ أخطاء (لو المسجّل موجود)، وأحجام localStorage و cookies (الأسامي بس من غير القيم)، و [[performance]] timings، ويعمله [[copy()]].`, done: R`بعد التشغيل الـ clipboard فيه JSON صالح ([[JSON.parse]] عليه بيعدّي)، ومفيهوش أي قيمة كوكي أو توكن (اتأكدت بـ search على كلمة [[token]]).` },
+        { lvl: 'كبير', t: R`لوحة أخطاء الإنتاج`, what: R`سيرفر Node بيستقبل أخطاء من «مسجّل أخطاء الصفحة»، ويجمّع المتشابه (نفس الرسالة والملف والسطر)، ويترجم الأماكن بالـ source maps (درس «Source maps»)، ويعرض صفحة بالأخطاء متترتبة بالعدد وآخر مرة حصلت، وبيمسح الأقدم من ٣٠ يوم.`, done: R`خطأ من [[app.min.js:1:85]] بيظهر في اللوحة [[cart.js:7:23]]، و ٥٠ نسخة من نفس الخطأ صف واحد بعدّاد ٥٠، والسيرفر بيتعامل مع JSON بايظ من غير ما يقع، وبيكمّل بعد restart من نفس الملف.`, ext: R`زوّد إشعار (تيليجرام أو إيميل) لما خطأ جديد يظهر أول مرة، وفلتر بالمتصفح والصفحة، وrelease tag عشان تعرف الخطأ بدأ مع أنهي نشر.` },
+        { lvl: 'فكرة', t: R`مساعد «اقرا الـ Console ده»`, what: R`أداة بتاخد رسايل Console متصدّرة (Save as) وتصنّفها (JS، شبكة، أمان، extension) وتقول لكل نوع الدرس اللي بيشرحه وأول خطوة. انت بتختار القواعد وشكل التقرير.`, done: R`على ملف Console حقيقي فيه ٢٠ رسالة، كل رسالة اتصنّفت، والرسايل اللي هي نتيجة لرسالة قبلها (زي [[Failed to fetch]] بعد Mixed Content) متجمّعة معاها.`, ext: R`خليها extension بتقرا Console من DevTools panel بتاعها، أو CLI بتاخد HAR وتحلّل الطلبات الفاشلة كمان.` },
       ],
       items: [
         {
-          cmd: "Network",
-          title: "الأساس",
-          desc: "افتح التاب وبعدين اعمل ريفريش، لأنه بيسجّل من لحظة ما تفتحه. كل سطر طلب: الاسم، والـ Status، والنوع، والحجم، والوقت. الأحمر طلبات فشلت. فلتر [[Fetch/XHR]] بيوريك طلبات الـ API بس، وده اللي هتستخدمه أكتر حاجة. علّم على Preserve log لو الصفحة بتعمل redirect أو بتعمل submit وبتنقلك، وإلا هيتمسح. وتحت خالص: عدد الطلبات والحجم الكلي ووقت التحميل.",
-          example: R`Ctrl+R (DevTools open)   Record page load
-Filter: Fetch/XHR        API calls only
-Filter box: status-code:500   Only failed server calls
-Preserve log             Keep requests across navigation
-Disable cache            Always load fresh`,
-          try: "افتح موقعك، واعرف كام طلب بيعمل، وإيه أكبر ملف، وإيه أبطأ طلب.",
-          flag: "keys",
+          cmd: "قراءة الأخطاء",
+          title: "الأحمر هو أول خيط",
+          desc: "الأحمر errors والأصفر warnings. كل error جنبه اسم الملف ورقم السطر، دوس عليه يوديك للسطر. رسايل مشهورة: [[is not defined]] يعني متغير أو مكتبة ماتحملتش. [[Cannot read properties of undefined]] يعني بتقرا حاجة من object لسه مجاش (غالبًا الداتا ماوصلتش). و [[Failed to load resource: 404]] يعني ملف مش موجود. فلتر Errors فوق بيخفي الباقي.",
+          example: R`console.log("value", data)
+console.table([{ id: 1, name: "a" }, { id: 2, name: "b" }])
+console.error("something broke")`,
+          try: "افتح Console على 3 مواقع مختلفة، وحاول تفهم أول error في كل واحد.",
           deep: {
-            why: "الصفحة بطيئة، أو API بيرجع حاجة غلط. Network هو «السجل الكامل» للكلام بين المتصفح والسيرفر.",
-            how: R`Network بيسجّل من لحظة ما تفتحه. لو فتحته بعد تحميل الصفحة، هتلاقيه فاضي، لازم Ctrl+R عشان تصوّر التحميل.
+            why: "المتصفح مش بيعمل حاجة، أو الصفحة فاضية. Console هو أول مكان تبص فيه.",
+            how: R`Console بيعرض الرسايل من [[console.log]]، وكل error حصل في JavaScript. الحمرا errors، والصفرا warnings.
 
-كل سطر طلب واحد، الأحمر فشل. الفلاتر فوق: All الكل، وFetch/XHR طلبات API، وDoc الصفحات. غالبًا هتكون في Fetch/XHR.
+كل error فيه ٣ معلومات: الرسالة (إيه)، واسم الملف (فين)، ورقم السطر. دوس على الملف والسطر يروحك بالظبط للسطر في Sources.
 
-«Preserve log»: لو الصفحة بتعمل redirect أو form submit، السجل بيتمسح بدونه.
+رسايل شائعة: [[is not defined]] يعني متغير أو فانكشن مش موجود. [[Cannot read properties of undefined]] يعني بتحاول توصل لـ property على قيمة undefined، غالبًا بيانات من API لسه ما وصلتش. [[Failed to load resource: 404]] ملف أو endpoint مش موجود.
 
-تحت: إجمالي عدد الطلبات، والحجم الكلي، والوقت. وفوق خالص: timeline بيوريك متى بدأ كل طلب.`,
-            when: "API بيرجع error. الصفحة بطيئة وعايز تعرف أي طلب السبب. تتأكد إن طلب معين اتبعت أصلًا.",
-            mistakes: "تفتح Network بعد تحميل الصفحة وتلاقيه فاضي. وتنسى Preserve log لما الصفحة بتعمل redirect."
+[[console.table]] بيعرض array من objects كجدول، أحسن بكتير من console.log لو عندك list.`,
+            when: "أول حاجة تعملها لو حاجة مش شغالة: افتح Console.",
+            mistakes: "تدوّر في الكود من غير ما تفتح Console. ويمكن ١٠ دقايق بحث تتوفر لو بصيت في الـ error الأحمر."
           },
-          teach: R`## الأول: Network بيسجّل، مش بيفتكر
+          teach: R`## الأول: Console فيه نوعين رسايل
 
-تاب Network بيكتب سطر لكل طلب المتصفح بيعمله، **من لحظة ما تفتحه**. لو فتحته والصفحة محمّلة خلاص، هتلاقيه فاضي، فلازم [[Ctrl+R]] وهو مفتوح. أسامي الأزرار والفلاتر من Chrome DevTools docs (صفحة Network reference)، والأرقام اللي تحت من تجربة حقيقية.
+- رسايل الكود اللي **انت** كتبته بـ [[console.log]] و [[console.table]] و [[console.error]].
+- رسايل **المتصفح** نفسه: أخطاء JavaScript وملفات مش لاقيها.
 
----
-
-## ١. سطور المثال
-
-| السطر | بيعمل إيه |
-|---|---|
-| [[Ctrl+R (DevTools open)]] | ريفريش وانت بتسجّل، فتشوف كل طلبات التحميل |
-| [[Filter: Fetch/XHR]] | يخفي الصور والـ CSS والـ JS ويسيب طلبات الـ API ([[fetch]] و [[XMLHttpRequest]]، الاسم القديم) |
-| [[Filter box: status-code:500]] | في خانة الفلتر تكتب [[property:value]]، وده بيسيب الطلبات اللي رجعت 500 بس |
-| [[Preserve log]] | ميمسحش السجل لما الصفحة تنتقل (redirect أو submit فورم) |
-| [[Disable cache]] | كل طلب يروح للسيرفر، زي زائر جديد |
+المثال بيوريك أول نوع، والـ desc بيتكلم عن التاني. هنفكّ الاتنين، وكله اتشغّل في Chrome على صفحة تجربة على [[http://127.0.0.1:8791]].
 
 ---
 
-## ٢. نفس المعلومات من Console
+## ١. أخطاء المتصفح: شكلها الحقيقي
 
-المعلومات اللي في جدول Network موجودة كمان في الـ Performance API جوه الصفحة. فتحت صفحة تجربة فيها CSS وصورتين وكتبت:
+عملت صفحة فيها صورة مش موجودة، وملف JS فيه:
 
-~~~javascript Console
-performance.getEntriesByType("resource").length
-performance.getEntriesByType("resource").map(r => r.name.replace(location.origin, "") + "  " + r.transferSize + " B  " + Math.round(r.duration) + " ms")
+~~~text errors.js
+let user;
+setTimeout(() => { console.log(user.name); }, 50);
+setTimeout(() => { $("#buy").hide(); }, 100);
 ~~~
 
-~~~text الناتج
-4
-["/assets/app.css  489 B  11 ms", "/logo.png  370 B  13 ms", "/banner.png  370 B  14 ms", "/favicon.ico  450 B  3 ms"]
-~~~
-
-- [[performance.getEntriesByType("resource")]]: كل ملف الصفحة طلبته بعد الـ HTML نفسه (عشان كده ٤ مش ٥).
-- [[r.name]]: الـ URL، و [[.replace(location.origin, "")]] بيشيل [[http://127.0.0.1:8791]] من أوله عشان يقصر.
-- [[r.transferSize]]: اللي نزل على الشبكة فعلًا بالـ byte، **بالـ headers**. عشان كده صورة حجمها ٧٠ byte طلعت ٣٧٠: الباقي headers الرد. ده نفس عمود Size في Network.
-- [[r.duration]]: من أول الطلب لآخر byte بالـ ms، زي عمود Time.
-
----
-
-## ٣. الشريط اللي تحت
-
-تحت جدول Network فيه سطر بالشكل ده (الأرقام مثال):
-
-~~~text شكل الشريط
-42 requests | 1.8 MB transferred | 3.2 MB resources | Finish: 2.1 s | DOMContentLoaded: 0.9 s | Load: 1.6 s
-~~~
-
-| الخانة | معناها |
-|---|---|
-| requests | عدد الطلبات |
-| transferred | اللي نزل على الشبكة (مضغوط، وبالـ headers) |
-| resources | حجم الملفات بعد فك الضغط |
-| Finish | آخر طلب خلص إمتى (ممكن يزيد مع طلبات API بعد التحميل) |
-| DOMContentLoaded و Load | الـ HTML اتقرا، وبعدين كل الصور والملفات خلصت |
-
-## الخلاصة
-
-- افتح Network الأول وبعدين [[Ctrl+R]].
-- [[Fetch/XHR]] للـ API، و [[status-code:500]] للطلبات اللي فشلت على السيرفر.
-- Size = اللي نزل بالـ headers، و Time = المدة كلها. رتّب بيهم تلاقي الأكبر والأبطأ.`,
-          sol: R`اعمل Ctrl+R وDevTools مفتوحة على Network. تحت خالص في الـ status bar هتلاقي حاجة زي [[42 requests | 1.8 MB transferred | 3.2 MB resources | Finish: 2.1 s]]: ده عدد الطلبات، و transferred هو اللي نزل فعلًا على الشبكة (مضغوط)، و resources حجمه بعد فك الضغط.
-
-أكبر ملف: دوس على عمود Size يترتب. أبطأ طلب: دوس على عمود Time. الأكبر غالبًا صورة مش مضغوطة أو JS bundle، والأبطأ غالبًا API call أو خط من بره.
-
-لو لقيت الأرقام صغيرة بشكل غريب والـ Size مكتوب فيه [[(memory cache)]]، علّم Disable cache وكرّر، عشان تقيس اللي زائر جديد بيشوفه.`,
-          practice: [
-            { lvl: 'سريع', t: R`**مراجعة:** افتح Network بعد ما الصفحة حمّلت. فاضي ليه؟ اعمل اللي يملاه، وبعدين اكتب الأرقام اللي في الشريط اللي تحت (requests و transferred و resources و Finish و DOMContentLoaded و Load).`, done: R`كاتب إن Network بيسجّل من لحظة ما يتفتح، و ٦ أرقام من الشريط، والفرق بين transferred و resources (المضغوط والكاش مقابل الحجم الحقيقي).` },
-            { lvl: 'تطبيق', t: R`**فلتر:** على موقع فيه API، طلّع بالفلاتر: طلبات الـ API بس، وبعدين اللي رجعت 4xx أو 5xx، وبعدين أكبر ٣ ملفات. جرّب في صندوق الفلتر [[status-code:404]] و [[larger-than:100k]] و [[-domain:*.google-analytics.com]] و [[method:POST]].`, done: R`لكل فلتر مكتوب عدد الطلبات اللي فضلت، وعارف إن [[-]] قبل أي فلتر بيعكسه.` },
-            { lvl: 'تطبيق', t: R`**Preserve log:** فورم login بيعمل redirect. سجّل الطلب اللي بيبعت الباسورد مرة من غير Preserve log ومرة بيه.`, done: R`من غيره الطلب بيختفي بعد الـ redirect، وبيه بتلاقي الـ POST والـ 302 (أو 303) وبعده الـ GET للصفحة الجديدة بالترتيب.` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية (HAR):** كليك يمين في Network ثم Save all as HAR. افتح الملف في محرر: ده JSON. بـ [[node -e]] طلّع أبطأ ٥ طلبات ([[entries[].time]]) وحجم كل واحد.`, done: R`السكربت بيطبع ٥ سطور متترتبين بالوقت. وكاتب تحذير: الـ HAR ممكن يبقى فيه الكوكيز والتوكن، فافتحه ودوّر على [[cookie]] و [[authorization]] قبل ما تبعته لحد (حسب Chrome docs، النسخ الجديدة بتشيل الحساس افتراضيًا إلا لو اخترت التصدير «with sensitive data»).` },
-            { lvl: 'تحدي', t: R`**اقرا الـ Waterfall:** على أي صفحة، لاقي في عمود Waterfall طلب بدأ متأخر عن الباقي. مرّر الماوس عليه: الوقت راح في Queueing ولا Stalled ولا Waiting؟ ودوّر في Initiator مين اللي طلبه.`, done: R`كاتب اسم الطلب، والمرحلة الكبيرة ورقمها، والـ initiator (سكربت ولا CSS ولا الـ HTML)، وتفسيرك ليه اتأخر (اتكشف متأخر، ولا مستني connection، ولا السيرفر بطيء).` },
-            { lvl: 'تحدي', t: R`**اشرحها:** الفرق بين DOMContentLoaded و Load: ابني صفحة فيها صورة تقيلة بتتأخر من السيرفر (سيرفر Node بـ [[setTimeout]] ٢ ثانية)، وقيس الرقمين.`, done: R`DOMContentLoaded طلع قبل Load بحوالي ٢ ثانية، وكاتب إن DOMContentLoaded = الـ HTML اتقرا والسكربتات العادية اشتغلت، و Load = كل الصور والـ CSS خلصت.` },
-          ],
-        },
-        {
-          cmd: "تفاصيل الطلب",
-          title: "دوس على أي طلب",
-          desc: "[[Headers]]: الـ URL والـ method والـ status، وheaders الطلب والرد. [[Payload]]: البيانات اللي اتبعتت (body أو query). [[Preview]]: الرد منسّق، ولو JSON هيبقى شجرة تفتحها. [[Response]]: الرد خام زي ما جه. [[Timing]]: الوقت راح فين. لو «Waiting for server response» (TTFB) كبير يبقى السيرفر أو الـ API بطيء، ولو «Content Download» كبير يبقى الملف تقيل.",
-          example: R`Headers    URL, method, status, request + response headers
-Payload    What you sent (JSON body, form data, query params)
-Preview    Parsed response (JSON tree, image)
-Response   Raw response text
-Timing     Where the time went (TTFB = server thinking)
-Initiator  Which code line fired this request`,
-          try: "اعمل login على موقع بتاعك وافتح طلب الـ login: شوف الـ Payload، والـ status، والـ Set-Cookie في الرد.",
-          flag: "keys",
-          deep: {
-            why: "شوفت في Network طلب أحمر أو بطيء. محتاج تعرف التفاصيل: إيه اللي اتبعت، وإيه اللي رجع، والوقت راح فين.",
-            how: R`دوس على أي طلب يفتح panel جانبي.
-
-Headers: الـ URL والـ method والـ status. وResponse Headers كل header رجع (Content-Type، وSet-Cookie...). وRequest Headers كل header اتبعت (Authorization، وCookie...).
-
-Payload: اللي انت بعتته. لو GET: query parameters. لو POST: الـ body.
-
-Preview: الرد منسّق. لو JSON هيوريكه كشجرة. أسرع من Response في القراية.
-
-Timing: أهم تاب للأداء. «Waiting (TTFB)» وقت انتظار أول byte: لو كبير، المشكلة في السيرفر أو قاعدة البيانات. «Content Download» وقت تحميل الرد: لو كبير، الرد تقيل.`,
-            when: "بعد أي API request يطلع error: Headers للـ status، وPayload للتأكد من البيانات، وPreview لرسالة الـ error. وTiming لو الـ API بطيء.",
-            mistakes: "إنك تتجاهل Timing وتفضل تدوّر في الكود، والمشكلة query بطيء في قاعدة البيانات."
-          },
-          teach: R`## الأول: كل طلب ليه ٦ تابات
-
-لما تدوس على طلب في Network بيفتح لوحة جنبه. أسماء التابات ومحتواها من Chrome DevTools docs، والأرقام والقيم اللي تحت من تجربة حقيقية على سيرفر محلي.
-
-| التاب | فيه إيه |
-|---|---|
-| Headers | الـ URL والـ method والـ status، وheaders الطلب والرد |
-| Payload | اللي انت بعته: query params أو body |
-| Preview | الرد متفسّر: JSON كشجرة، صورة كصورة |
-| Response | الرد نص خام |
-| Timing | الوقت راح فين |
-| Initiator | مين اللي عمل الطلب (أنهي ملف وسطر) |
-
----
-
-## ١. Headers و Payload و Preview بمثال
-
-عملت من Console طلب [[POST]] لـ [[/api/users]] على السيرفر المحلي بالبودي [[{"name":"test","email":"test@example.com"}]]. القيم دي حقيقية، ومتلخّصة بنفس ترتيب تاب Headers:
-
-~~~text تاب Headers (ملخص)
-Request URL:     http://127.0.0.1:8791/api/users
-Request Method:  POST
-Status Code:     201 Created
-Response Headers:  Content-Type: application/json; charset=utf-8
-Request Headers:   Content-Type: application/json
-~~~
-
-- **Payload** هيعرض البودي اللي بعته (ولو GET هيعرض الـ query params اللي بعد [[?]] في جدول).
-- **Preview** هيعرض الرد [[{id: 7, name: "test", email: "test@example.com"}]] كشجرة، و **Response** نفس الكلام نص خام.
-
----
-
-## ٢. Timing: الوقت راح فين
-
-أهم خانتين:
-
-- **Waiting for server response** (اسمها TTFB = Time To First Byte): من ما الطلب خلص إرسال لحد أول byte في الرد. ده وقت تفكير السيرفر.
-- **Content Download**: من أول byte لآخر byte. ده حجم الرد على سرعة النت.
-
-عملت endpoint [[/slow]] بيستنى ٨٠٠ms قبل ما يرد، وقست الخانتين من Console بالـ Performance API (نفس الأرقام اللي Timing بيعرضها):
-
-~~~javascript Console
-await fetch("/slow").then(r => r.json())
-(() => { const t = performance.getEntriesByName(location.origin + "/slow")[0]; return { waiting_TTFB: Math.round(t.responseStart - t.requestStart), download: Math.round(t.responseEnd - t.responseStart) } })()
-~~~
-
-~~~text الناتج
-{ok: true}
-{waiting_TTFB: 805, download: 0}
-~~~
-
-- [[requestStart]]: الطلب اتبعت إمتى. [[responseStart]]: أول byte وصل إمتى. الفرق = TTFB.
-- [[responseEnd]]: آخر byte. الفرق بينه وبين [[responseStart]] = Content Download.
-
-الناتج: ٨٠٥ms انتظار و ٠ تحميل. يعني الرد صغير، والبطء كله في السيرفر (الـ ٨٠٠ اللي حطيتهم + ٥ms). في الحقيقة ده شكل query بطيء في قاعدة البيانات، والحل في الـ backend مش في الـ frontend.
-
----
-
-## ٣. Initiator
-
-بيوريك سلسلة النداء: أنهي ملف وسطر عمل الطلب. لو الطلب جه من Console هتلاقي حاجة زي [[VM123:1]] ([[VM]] = كود اتنفّذ من غير ملف). مفيد جدًا لما تلاقي طلب غريب ومش عارف مين بيبعته.
-
-## الخلاصة
-
-- Headers للـ status والـ headers، Payload للي بعته، Preview للرد.
-- Timing: TTFB كبير = السيرفر بطيء. Content Download كبير = الرد تقيل.
-- Initiator يقولك مين بعت الطلب.`,
-          sol: R`طلب الـ login غالبًا [[POST /api/login]] (فلتر Fetch/XHR عشان تلاقيه). في Payload هتلاقي اللي بعته، غالبًا [[{"email":"...","password":"..."}]]، أيوه الباسورد باين هنا وده طبيعي لأنه جهازك والطلب ماشي على HTTPS. الـ status لو نجح [[200]] أو [[204]]، ولو غلط [[401]] مع body فيه رسالة.
-
-في Headers تحت Response Headers هتلاقي حاجة زي [[set-cookie: session=abc...; Path=/; HttpOnly; Secure; SameSite=Lax]]. لو ملقتش Set-Cookie خالص، يبقى موقعك غالبًا بيرجّع token في الـ body (شوفه في Preview) وبيحفظه في localStorage. ولو Chrome حاطط علامة تحذير صفرا جنب الكوكي، حط الماوس عليها: غالبًا الكوكي اترفضت عشان [[Secure]] على http أو [[SameSite=None]] من غير Secure.`,
-          practice: [
-            { lvl: 'سريع', t: R`**مراجعة:** دوس على طلب API واكتب من كل تاب حاجة واحدة: الـ method والـ status من Headers، والبودي من Payload، وأول مفتاح في Preview، وأول ٢٠ حرف في Response، وأكبر رقم في Timing، والسطر في Initiator.`, done: R`٦ سطور، كل واحد من تاب، ومفيش خانة فاضية.` },
-            { lvl: 'تطبيق', t: R`**قارن:** نفس الطلب اتبعت مرة بـ JSON ومرة بـ [[FormData]] من Console. قارن Payload و [[Content-Type]] في Request Headers.`, done: R`JSON بيظهر كشجرة و [[application/json]]، و FormData بيظهر Form Data و [[multipart/form-data; boundary=...]]، وكاتب إن المتصفح هو اللي بيحط الـ boundary.` },
-            { lvl: 'تطبيق', t: R`**Timing:** اعمل سيرفر Node بـ endpoint بيستنى ١٥٠٠ms قبل ما يرد، و endpoint بيرجّع ملف ٢٠ ميجا. قارن تاب Timing للاتنين.`, done: R`الأول «Waiting for server response» حوالي 1.5s والـ Content Download صغير، والتاني العكس مع Throttling. وكاتب مين المسؤول في كل حالة (السيرفر ولا حجم الملف).` },
-            { lvl: 'تطبيق', t: R`**Initiator:** صفحة فيها ٣ ملفات JS واحد منهم بيبعت طلب لـ [[/api/track]] مش عارف مين. لاقيه من تاب Initiator من غير ما تدوّر في الكود.`, done: R`عندك الـ call stack من Initiator واسم الملف ورقم السطر، ودوست عليه وفتحك في Sources على السطر.` },
-            { lvl: 'تحدي', t: R`**صلّح:** طلب رجع [[200]] بس الصفحة بتقول «مفيش بيانات». من Preview و Response اكتشف إن الرد [[{"data":{"items":[]}}]] والكود بيقرا [[res.items]]. اكتب خطوات التشخيص بالترتيب.`, done: R`الخطوات: Status [[200]] (يبقى مش السيرفر وقع)، و Preview بيوري شكل الرد، والكود بيقرا مسار غلط، والتصليح [[res.data.items]]. وكاتب ليه [[200]] لوحده مش معناه إن الرد صح.` },
-          ],
-        },
-        {
-          cmd: "Throttling و Blocking",
-          title: "جرّب الظروف الوحشة",
-          desc: "القائمة اللي مكتوب فيها «No throttling» بتخليك تجرب الموقع على نت بطيء (Slow 4G) أو من غير نت (Offline)، وهتلاقي مشاكل مش باينة على نت سريع: زراير بتتداس مرتين، loading مش ظاهر. وكليك يمين على أي طلب ثم Block request بيمنعه (أو Throttle request يبطّأه لوحده)، عشان تعرف الموقع هيعمل إيه لو مكتبة أو API وقعت.",
-          example: R`Throttling dropdown > Slow 4G / Offline
-Right-click request > Block request / Throttle request
-Ctrl+Shift+P > "Show Request conditions"`,
-          try: "افتح موقعك على Slow 4G واعمل submit لفورم، وشوف المستخدم بيشوف إيه وهو مستني.",
-          flag: "keys",
-          deep: {
-            why: "موقعك شغال تمام على نت سريع والمستخدم يشتكي. أو عايز تتأكد إن الموقع بيتعامل صح لو خدمة خارجية وقعت.",
-            how: R`Throttling: القائمة «No throttling» بتقلّد جودة النت. «Slow 4G» بيبطّئ. «Offline» بيقطع خالص.
-
-لما تشغّله وتجرب الموقع، هتلاقي مشاكل مخبّية: لستة بتلود ببطء ومفيش loading indicator، أو زرار اتضغط مرتين لأن المستخدم فكر مش حصل.
-
-Request conditions: كليك يمين ثم Block request أو Throttle request (Chrome 145+). مفيد تشوف الموقع بيعمل إيه لو Google Fonts أو analytics وقعت.`,
-            when: "قبل الرفع: جرّب على Slow 4G. لما بتشتغل على error handling.",
-            mistakes: "تنسى إن Throttling شغال وتتساءل ليه التحميل بطيء. بيفضل حتى لو فتحت تاب جديد."
-          },
-          teach: R`## الأول: بتقلّد ظروف وحشة على جهازك انت
-
-القايمة اللي مكتوب فيها [[No throttling]] بتبطّأ النت **للتاب ده بس**، و Block request بيمنع طلب بعينه. أسماء القوايم من Chrome DevTools docs (Network features reference). التأثير اللي تحت جربته في Chrome ببروتوكول DevTools، وده نفس اللي الأزرار بتعمله.
-
----
-
-## ١. سطور المثال
-
-| السطر | بيعمل إيه |
-|---|---|
-| [[Throttling dropdown > Slow 4G / Offline]] | Slow 4G بيزوّد تأخير على كل طلب ويقلّل السرعة. Offline يقطع النت |
-| [[Right-click request > Block request / Throttle request]] | يمنع (أو يبطّأ) الطلب ده بس، والباقي عادي |
-| [[Ctrl+Shift+P > "Show Request conditions"]] | لوحة فيها كل الطلبات الممنوعة والمبطّأة، وتضيف patterns بـ [[*]] |
-
----
-
-## ٢. التبطيء: الأرقام الحقيقية
-
-نفس طلب [[/api/me]] (رده صغير جدًا) مرة بتأخير ٥٦٠ms وسرعة ١.٤ ميجابت (قريب من فكرة Slow 4G)، ومرة من غير:
-
-~~~javascript Console
-await (async () => { const t = performance.now(); await fetch("/api/me?x=" + Math.random()); return Math.round(performance.now() - t) + " ms" })()
-~~~
-
-~~~text الناتج
-"584 ms"    مع التبطيء
-"2 ms"      من غير
-~~~
-
-- [[performance.now()]] ساعة دقيقة بالـ ms. الفرق قبل وبعد = مدة الطلب.
-- [[?x=" + Math.random()]] بيخلي الـ URL مختلف كل مرة عشان الكاش ميلعبش في القياس.
-- [[(async () => {...})()]] فانكشن async بتتنفّذ على طول، و [[await]] قبلها بيستنى نتيجتها.
-
-نفس الطلب بقى أبطأ ٣٠٠ مرة. أي زرار مفيهوش loading هيبان «مش شغال» نص ثانية، والمستخدم هيدوس تاني.
-
----
-
-## ٣. Offline
-
-~~~javascript Console
-await fetch("/api/me").then(r => r.json())
-~~~
+وده اللي Chrome طلّعه في Console:
 
 ~~~text الناتج في Console
-Failed to load resource: net::ERR_INTERNET_DISCONNECTED
-Uncaught TypeError: Failed to fetch
+Failed to load resource: the server responded with a status of 404 (Not Found)     missing.png
+Uncaught TypeError: Cannot read properties of undefined (reading 'name')            errors.js:2
+Uncaught ReferenceError: $ is not defined                                           errors.js:3
 ~~~
 
-[[fetch]] بيرمي [[TypeError: Failed to fetch]] لما مفيش رد خالص. الكود بتاعك لازم يمسكه بـ [[catch]] ويقول «مفيش نت».
+نقرا كل سطر:
+
+| الرسالة | معناها | في المثال ده |
+|---|---|---|
+| [[Failed to load resource: ... 404]] | المتصفح طلب ملف والسيرفر قال مش موجود | [[missing.png]] |
+| [[Uncaught TypeError: Cannot read properties of undefined (reading 'name')]] | بتقرا [[.name]] من حاجة قيمتها [[undefined]] | [[user]] اتعرّف من غير قيمة |
+| [[Uncaught ReferenceError: $ is not defined]] | اسم مش متعرّف خالص | الكود بيستخدم jQuery ([[$]]) ومفيش jQuery متحمّل |
+
+- [[Uncaught]] يعني محدش مسك الـ error بـ [[try/catch]]، فوقف الفانكشن دي.
+- [[TypeError]] نوع الغلطة: عملية على قيمة من نوع غلط. [[ReferenceError]]: اسم مش موجود.
+- [[errors.js:2]] على اليمين: اسم الملف ورقم السطر، ودوسة عليه تفتح السطر في Sources.
 
 ---
 
-## ٤. Block request
+## ٢. سطر سطر في المثال
 
-منعت [[*/api/products]] وجربت:
+قبل المثال عرّفت [[const data = { id: 1, name: "a" }]] عشان يبقى فيه متغير.
+
+### [[console.log("value", data)]]
 
 ~~~text الناتج
-Uncaught TypeError: Failed to fetch
+value {id: 1, name: 'a'}
 ~~~
 
-نفس الـ error، والطلب في Network بيبان إنه اتمنع من DevTools (في البروتوكول سبب الفشل [[inspector]]). وده بيوريك الموقع هيعمل إيه لو API أو مكتبة من بره وقعت.
+الفاصلة بتبعت قيمتين منفصلتين، فالـ object بيتعرض كـ object تقدر تفتحه بالسهم. قارن لو استخدمت [[+]]:
+
+~~~javascript Console
+console.log("value" + data)
+~~~
+
+~~~text الناتج
+value[object Object]
+~~~
+
+[[+]] بيحوّل الـ object لنص الأول، والنص الافتراضي لأي object هو الكلمتين [[object Object]] بين قوسين مربعين زي ما شايف فوق. عشان كده الفاصلة أحسن.
+
+### [[console.table([...])]]
+
+~~~text الناتج (بيترسم كجدول في DevTools)
+(index)   id   name
+0         1    'a'
+1         2    'b'
+~~~
+
+بيرسم array الـ objects كجدول: كل object صف، وكل مفتاح عمود، و [[(index)]] رقم العنصر في الـ array.
+
+### [[console.error("something broke")]]
+
+بيطلع بالأحمر زي أخطاء المتصفح، ومعاه سهم يفتح الـ stack trace (مين نادى مين لحد السطر ده)، وبيظهر لما تختار فلتر Errors. الفرق إنه مش بيوقف الكود، ده مجرد طباعة.
+
+> كل سطر من دول بيرجّع [[undefined]] في Console، لأن [[console.log]] وإخواته مش بيرجّعوا قيمة. ده مش error.
 
 ## الخلاصة
 
-- Slow 4G يكشف الزراير اللي مفيهاش loading والضغط المتكرر.
-- Offline و Block الاتنين بيطلّعوا [[TypeError: Failed to fetch]]: امسكه في الكود.
-- متنساش ترجّع [[No throttling]]، لأنه بيفضل شغال على التاب.`,
-          sol: R`على Slow 4G أي submit هياخد ثانية أو اتنين أو أكتر. اللي المفروض يشوفه المستخدم: الزرار اتقفل ([[disabled]]) ومكتوب عليه «جاري الحفظ...» أو spinner، وبعدين رسالة نجاح أو غلط.
+- ابدأ بأول سطر أحمر: الرسالة (إيه) + الملف ورقم السطر (فين).
+- [[is not defined]] اسم مش موجود، و [[reading 'x']] بتقرا من [[undefined]]، و [[404]] ملف مش موجود.
+- في [[console.log]] افصل بالفاصلة مش بـ [[+]].`,
+          lines: [
+            "اطبع نص وبعده قيمة متغير. الفاصلة أحسن من [[+]] لأن الـ objects بتتعرض كاملة.",
+            "اعرض array من objects كجدول بأعمدة.",
+            "اطبع باللون الأحمر مع stack trace، وبيظهر في فلتر Errors."
+          ],
+          sol: R`اللي هتشوفه غالبًا ٣ أنواع، وكل واحد معناه مختلف:
 
-النتايج الوحشة اللي بتكشفها التجربة دي: مفيش أي feedback فالمستخدم يدوس تاني، وفي Network هتلاقي نفس الـ POST اتبعت مرتين (ودي بتعمل طلبين أو حسابين مكررين). أو الفورم بيتمسح قبل ما الرد يرجع. ولو جربت Offline هتشوف [[TypeError: Failed to fetch]] في Console: الواجهة لازم تمسك الـ error ده وتقول للمستخدم «مفيش نت» بدل ما تفضل تلف.`,
+[[Failed to load resource: the server responded with a status of 404 (Not Found)]]: ملف أو طلب مش موجود، دوس عليه وهيوديك Network. [[Uncaught TypeError: Cannot read properties of undefined (reading 'x')]] وجنبه اسم الملف ورقم السطر: bug في JavaScript، دوس على اللينك اللي على اليمين يفتحلك السطر في Sources. و [[Access to fetch at ... has been blocked by CORS policy]]: الـ API رافض الـ origin ده (شوف درس CORS).
+
+ركز على أول error بس، لأن التانيين كتير بيبقوا نتيجة ليه. ومتقلقش من الأصفر (warnings) ولا من errors جاية من extensions أو إعلانات (هتلاقي في اللينك [[chrome-extension://]] أو دومين إعلانات): دي مش مشكلة الموقع.`,
           practice: [
-            { lvl: 'سريع', t: R`**مراجعة:** شغّل Slow 4G واعمل ريفريش، واكتب Load قبل وبعد، وارجع No throttling. وجرّب Offline على صفحة بتعمل fetch.`, done: R`الرقمين مكتوبين والتاني أكبر بكتير، و Offline طلّع في Console [[Failed to load resource: net::ERR_INTERNET_DISCONNECTED]] و [[Uncaught TypeError: Failed to fetch]].` },
-            { lvl: 'تطبيق', t: R`**محاكاة (optimistic UI):** صفحة فيها زرار «علّم كمدفوع» بيغيّر الحالة في الشاشة على طول وبعدين يبعت [[PATCH]]. اعمل Block request URL على الـ endpoint، ودوس الزرار.`, done: R`كاتب: الشاشة اتغيّرت وبعدين رجعت (لو الكود فيه rollback) أو فضلت غلط (باج)، والطلب في Network أحمر ومكتوب إنه اتمنع من DevTools، و Console فيه [[TypeError: Failed to fetch]]. ولو مفيش rollback: كتبت التصليح (ترجّع الحالة القديمة في [[catch]] وتعرض رسالة).` },
-            { lvl: 'تطبيق', t: R`**ابني:** في Network conditions اعمل throttling profile اسمه [[Egypt 3G]] (download 750 kb/s، و upload 250، و latency 300ms)، وقيس بيه صفحتك الرئيسية.`, done: R`الـ profile ظاهر في القايمة، ورقم Load بيه مكتوب جنب Slow 4G و No throttling.` },
-            { lvl: 'تحدي', t: R`**دوّر بنفسك:** Slow 4G على صفحة فيها فورم: دوس زرار الإرسال ٣ مرات بسرعة. كام طلب اتبعت؟ صلّحها بحيث يطلع طلب واحد والزرار يبان «بيبعت...».`, done: R`قبل التصليح ٣ طلبات [[POST]] في Network، وبعده طلب واحد والزرار [[disabled]] لحد ما الرد يرجع، واتجرّب تاني على Slow 4G.` },
-            { lvl: 'تحدي', t: R`**Block الخط:** اعمل Block request على ملف الخط ([[.woff2]] أو [[.ttf]]) في موقع عربي. شكل الصفحة اتغيّر إزاي؟ وإيه اللي الـ CSS لازم يكون فيه عشان الشكل ميبوظش؟`, done: R`كاتب الخط اللي ظهر بداله، وإن [[font-family]] لازم فيه fallback زي [[Tahoma, sans-serif]] بعد الخط، وإن [[font-display: swap]] بيخلّي النص يبان من الأول (درس «مشروع تشخيص موقع بطيء ومكسور» فيه القياس).` },
+            { lvl: 'سريع', t: R`**مراجعة:** اكتب معنى كل رسالة في سطر: [[x is not defined]]، و [[Cannot read properties of undefined (reading 'price')]]، و [[Failed to load resource: the server responded with a status of 404]]، و [[Unexpected token '<']]، و [[Failed to fetch]].`, done: R`٥ سطور، وكل سطر فيه السبب الأشهر وأول مكان تبص فيه (Sources، ولا Network، ولا السيرفر).`, sol: R`| الرسالة | معناها وسببها الأشهر | تبص فين الأول |
+|---|---|---|
+| [[x is not defined]] | المتغير مش موجود خالص: غلطة إملائية، أو ملف اللي بيعرّفه ماتحمّلش | Sources على السطر، و Network لو ملف ناقص |
+| [[Cannot read properties of undefined (reading 'price')]] | بتقرا [[.price]] من حاجة قيمتها [[undefined]]: البيانات مش بالشكل اللي انت متوقعه | Sources، واطبع اللي قبل [[.price]] |
+| [[Failed to load resource: ... 404]] | ملف أو API مطلوب والسيرفر مش لاقيه: مسار غلط أو ملف ماترفعش | Network، وبعدين السيرفر |
+| [[Unexpected token '<']] | بتعمل JSON.parse على HTML: السيرفر رجّع صفحة بدل JSON | Network، تاب Response و Content-Type |
+| [[Failed to fetch]] | الطلب مكملش: السيرفر مقفول، أو CORS، أو النت، أو Mixed Content | Console للرسالة اللي جنبها، و Network |
+
+الفرق بين أول رسالتين: [[is not defined]] الاسم نفسه مش موجود. و [[Cannot read properties of undefined]] الاسم موجود بس قيمته فاضية.
+
+الغلطة: تعامل [[Failed to fetch]] كأن السيرفر رجّع خطأ. دي معناها إن [[fetch]] مجاش له رد يقراه أصلًا. لو السيرفر رجّع [[500]]، [[fetch]] مبيرميش خطأ. فمحتاج تشوف الرسالة اللي قبلها في Console.
+
+~~~text الناتج
+٥ سطور زي الجدول، كل سطر فيه السبب وأول مكان تبص فيه.
+~~~` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** الكود ده: [[const items = [{ product: { price: 25 }, qty: 2 }, { qty: 1 }]; items.reduce((s, i) => s + i.product.price * i.qty, 0)]]. توقّع الرسالة بالنص وأنهي عنصر السبب، وبعدين شغّله في Console.`, done: R`الرسالة [[TypeError: Cannot read properties of undefined (reading 'price')]] (اتجرّبت في Chrome 156)، والسبب العنصر التاني اللي مفيهوش [[product]]، وكتبت تصليح بـ [[i.product?.price ?? 0]] أو فلتر قبلها.`, sol: R`~~~js Console
+const items = [{ product: { price: 25 }, qty: 2 }, { qty: 1 }];
+items.reduce((s, i) => s + i.product.price * i.qty, 0);
+~~~
+~~~js التصليح: عنصر من غير منتج يتحسب صفر
+items.reduce((s, i) => s + (i.product?.price ?? 0) * i.qty, 0);
+~~~
+~~~js التصليح: تشيله قبلها
+items.filter(i => i.product).reduce((s, i) => s + i.product.price * i.qty, 0);
+~~~
+
+[[reduce]] بيمشي على العناصر بالترتيب. الأول سليم فـ [[s]] بقت [[50]]. التاني مفيهوش [[product]]، فـ [[i.product]] قيمتها [[undefined]]، و [[.price]] على [[undefined]] بترمي خطأ.
+
+وكلمة [[reading 'price']] في الرسالة بتقولك الخاصية اللي اتقرت، مش اللي قيمتها فاضية. الفاضي هو اللي **قبلها** ([[product]]). دي أكتر حاجة بتلخبط في الرسالة دي.
+
+و [[?.]] بترجّع [[undefined]] بدل ما ترمي، و [[??]] بتحط [[0]] لو القيمة [[undefined]] أو [[null]]. ليه [[??]] مش [[||]]؟ لأن [[||]] هتعامل سعر [[0]] الحقيقي كأنه فاضي، وهنا النتيجة واحدة بس في أسعار تانية بتفرق.
+
+الغلطة: تدوّر على [[price]] في الكود وتصلّح فيها، والمشكلة في بيانات العنصر نفسه.
+
+~~~text الناتج
+TypeError: Cannot read properties of undefined (reading 'price')
+بعد التصليح: 50
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح:** صفحة فيها [[<script src="/js/app.js">]] والملف اسمه [[App.js]] على السيرفر (لينكس). اكتب الأخطاء اللي هتطلع في Console بالترتيب، وأنهي واحد هو الأصل.`, done: R`الأول [[404]] على [[app.js]] (السيرفر حساس لحالة الحروف)، وبعده [[... is not defined]] لأي حاجة الملف ده كان المفروض يعرّفها. وكاتب إن الأحمر التاني نتيجة للأول، فبتصلّح الأول بس.`, sol: R`~~~html err.html
+<!doctype html>
+<script src="/js/app.js">$__lt/script>
+<script>initApp()$__lt/script>
+~~~
+
+على السيرفر الملف اسمه [[App.js]]. على لينكس اسم الملف حساس لحالة الحروف، فـ [[app.js]] و [[App.js]] ملفين مختلفين، والطلب بيرجع [[404]]. وعلى ويندوز وماك غالبًا الاتنين واحد، وعشان كده الموقع بيبقى شغال عندك وبيقع بعد الرفع.
+
+الترتيب: الأول رسالة [[404]] على [[app.js]]. بعدها السكربت التاني بيتنفّذ عادي ويلاقي [[initApp]] مش موجودة، لأن الملف اللي كان هيعرّفها ماتحمّلش.
+
+**الأصل هو الأول.** الأحمر التاني نتيجة، فمتصلّحش فيه. لو عرّفت [[initApp]] فاضية عشان تسكت الخطأ، هتخبّي المشكلة.
+
+التصليح: غيّر [[src]] لـ [[/js/App.js]]، أو غيّر اسم الملف. والأحسن تخلي كل أسامي الملفات small letters عشان المشكلة دي متحصلش تاني.
+
+الغلطة: تبدأ من آخر رسالة في Console عشان هي الأقرب للعين. ابدأ من **أول** رسالة حمرا.
+
+المعمل سيرفر Node بياخد المسار بدقة، ودي نفس نتيجة لينكس. لأن ويندوز نفسه كان هيلاقي الملف.
+
+~~~text الناتج
+Failed to load resource: the server responded with a status of 404 (Not Found)   /js/app.js
+Uncaught ReferenceError: initApp is not defined   err.html:1
+~~~` },
+            { lvl: 'تطبيق', t: R`**فلتر:** على صفحة فيها أخطاء كتير، استخدم صندوق الفلتر في Console: [[-url:chrome-extension]] (يخبّي رسايل الإضافات)، و Errors بس، و [[url:app.js]].`, done: R`عدد الرسايل قبل وبعد كل فلتر مكتوب، وفاضل بس رسايل الموقع نفسه، وعرفت تفرّق بين رسالة من extension ورسالة من الموقع.`, sol: R`1. افتح الصفحة و Console، وعدّ الرسايل.
+2. في صندوق Filter اكتب [[-url:chrome-extension]]: أي رسالة مصدرها extension بتختفي.
+3. من قايمة Default levels علّم Errors بس.
+4. امسح الفلتر واكتب [[url:app.js]] (عندنا [[url:checkout.js]]): فاضل رسايل الملف ده بس.
+
+[[-]] قدام أي فلتر بيعكسه، و [[url:]] بيطابق الملف اللي طلعت منه الرسالة. وعشان تفرّق بين الموقع والـ extension: بص على اسم الملف يمين الرسالة. لو بدأ بـ [[chrome-extension://]] يبقى مش من موقعك، وأي نسخة نضيفة (Incognito) هتأكد ده.
+
+الغلطة: تكتب [[url:app.js]] وفي دماغك إنها بتجيب كل حاجة عن الملف. دي بتجيب اللي **طلع منه** بس، ورسالة [[404]] على الملف نفسه الـ url بتاعها الملف. فجرّب وشوف.
+
+الصندوق نفسه واجهة، فالطريقة من وثائق Chrome DevTools. والأرقام اللي تحت عدّيناها من نفس رسايل صفحة المعمل بالـ Protocol (الـ url والـ level لكل رسالة). والمتصفح في المعمل من غير extensions، فـ [[-url:chrome-extension]] مغيّرش الرقم، وعلى متصفحك العادي هيقلل.
+
+~~~text الناتج
+كل الرسايل                 7
+-url:chrome-extension      7   (مفيش extensions في المعمل)
+Errors بس                  6   (الباقي warning واحد)
+url:checkout.js            1
+~~~` },
+            { lvl: 'تحدي', t: R`**بيانات حقيقية:** خد كل رسايل Console من صفحة فيها مشاكل (كليك يمين ثم Save as...) وصنّفها في جدول: النوع (JS ولا شبكة ولا أمان CSP/Mixed Content)، والمصدر (الموقع ولا extension)، وتتصلّح فين.`, done: R`الجدول فيه كل الرسايل، وكل رسالة أمان (زي [[Mixed Content]] أو [[Content Security Policy]]) مربوطة بالدرس اللي بيشرحها، وفيه رسالة واحدة على الأقل اكتشفت إنها نتيجة لرسالة قبلها.`, sol: R`~~~html console.html (https، على shop.test)
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' https://cdn.shop.test; connect-src 'self' http://api.shop.test:8903 https://api.shop.test; img-src *">
+<img src="/logo.png">
+<script src="https://tracker.shop.test:8904/t.js">$__lt/script>
+<script src="/js/checkout.js">$__lt/script>
+<script>fetch("http://api.shop.test:8903/x").catch(() => {});$__lt/script>
+<img src="http://shop.test:8903/ban.png">
+~~~
+
+في متصفحك: كليك يمين في Console ثم Save as... بيحفظ ملف نصي. الأمر نفسه من وثائق Chrome. والرسايل اللي تحت جت من المعمل بالـ Protocol.
+
+| # | الرسالة باختصار | النوع | المصدر | تتصلّح فين |
+|---|---|---|---|---|
+| 1 | [[Loading the script ... violates ... Content Security Policy]] | أمان CSP | الموقع | السياسة أو شيل السكربت (درس «Content Security Policy») |
+| 2 | [[404]] على [[logo.png]] | شبكة | الموقع | ارفع الملف أو صلّح المسار |
+| 3 | [[ReferenceError: initCart is not defined]] | JS | الموقع | [[checkout.js]] أو ترتيب الملفات |
+| 4 | [[Mixed Content ... has been blocked]] على [[fetch]] | أمان Mixed Content | الموقع | خلّي الرابط https (درس «Mixed content و HTTPS») |
+| 5 | [[Mixed Content ... automatically upgraded]] على صورة | أمان Mixed Content | الموقع | نفس الدرس |
+| 6 | [[net::ERR_SSL_PROTOCOL_ERROR]] على [[ban.png]] | شبكة | **نتيجة لـ ٥** | السيرفر مفيهوش https، فالترقية فشلت |
+| 7 | [[404]] على [[favicon.ico]] | شبكة | المتصفح طلبها لوحده | حط أيقونة |
+
+الرسالة ٦ هي «النتيجة»: المتصفح رقّى الصورة لـ https عشان رسالة ٥، والبورت http بس، فالاتصال وقع. لو قريت ٦ لوحدها هتدوّر في الشهادة، والأصل إن الرابط http في الـ HTML.
+
+الغلطة: تعتبر كل الأحمر من نفس النوع. رسايل الأمان مش باج في الكود، دي سياسة متصلّحهاش بـ [[try/catch]].
+
+~~~text الناتج
+7 رسايل: 2 JS/شبكة من الموقع، 3 أمان، رسالة نتيجة (6 بسبب 5)، و favicon.
+مفيش extension في المعمل. على متصفحك أي رسالة chrome-extension:// تتحسب في عمود «المصدر».
+~~~` },
+            { lvl: 'تحدي', t: R`**اشرحها:** الفرق بين [[console.error("x")]] و [[throw new Error("x")]] في Console: شكلهم، والـ stack، وهل الكود اللي بعدهم بيكمّل. جرّبهم في Console وفي ملف.`, done: R`كاتب إن الاتنين أحمر، بس [[throw]] بيوقف باقي الدالة (والكود اللي بعده مبيتنفّذش) وليه [[Uncaught]] قبله، و [[console.error]] رسالة وبس والكود بيكمّل.`, sol: R`~~~html f.html
+<!doctype html>
+<script>
+function a() { console.error("x"); console.log("after error"); }
+a();
+function b() { throw new Error("x"); console.log("after throw"); }
+b();
+console.log("next statement same script");
+$__lt/script>
+<script>console.log("next script")$__lt/script>
+~~~
+
+الاتنين بيطلعوا أحمر، بس معناهم مختلف خالص:
+
+- [[console.error("x")]] **رسالة وبس**: بتتكتب بالأحمر ومعاها stack، والكود بيكمّل، فـ [[after error]] اتطبعت.
+- [[throw new Error("x")]] **بيوقف** تنفيذ الدالة والسكربت لحد ما حد يمسكه بـ [[try/catch]]. ولأن محدش مسكه، Console بيكتب [[Uncaught]] يعني «اترمى ومحدش مسكه». فـ [[after throw]] وكمان [[next statement same script]] مااتنفذوش.
+
+بس خد بالك: الوسم [[<script>]] التاني **اشتغل** عادي، لأن كل سكربت بيتنفّذ لوحده. فالخطأ بيوقف السكربت ده، مش الصفحة كلها.
+
+في Console لما تكتب نفس السطرين: [[console.error]] بيرجّع [[undefined]]، و [[throw]] بيطبع [[Uncaught Error: x]] مع مكانه [[<anonymous>:1:7]].
+
+الغلطة: تحط [[console.error]] في [[catch]] وتكمّل كأن كله تمام، فتاني سطر يقع برسالة مالهاش علاقة بالأصل.
+
+~~~text الناتج
+x                       (أحمر، console.error)
+after error
+Uncaught Error: x
+    at b (f.html:1:107)
+    at f.html:1:149
+next script
+(after throw و next statement same script مااتطبعوش)
+~~~` },
           ],
         },
         {
-          cmd: "WebSocket و SSE في Network",
-          title: "الاتصال اللي مبيخلصش: تقرا رسايل WebSocket و SSE من DevTools، وليه السابع مبيفتحش",
-          desc: R`أي حاجة لحظية (شات، إشعارات، حالة الأوردر) بتبان في Network **سطر واحد بس** مبيخلصش، مش طلب لكل رسالة. WebSocket سطره [[101 Switching Protocols]] ونوعه [[websocket]]، ودوس عليه تلاقي تاب **Messages**: كل رسالة بسهم (طالعة منك ولا جاية من السيرفر)، والنص أو [[Binary Message]]. و SSE (اللي بـ [[EventSource]]) سطره [[200]] ونوعه [[eventsource]] و [[Content-Type: text/event-stream]]، وتابه اسمه **EventStream**: كل حدث بالـ id والنوع والداتا.
-
-وأهم حاجتين بيتكشفوا من هنا: (١) لما السيرفر يقفل SSE، المتصفح بيفتح تاني لوحده بعد [[retry]] وبيبعت [[Last-Event-ID]] بآخر رقم وصله. (٢) على HTTP/1.1 المتصفح بيفتح **٦ اتصالات بس** لنفس السيرفر، فلو فتحت ٨ تابات SSE، السابع والتامن بيفضلوا pending ومحدش بيقولك ليه. على HTTP/2 الـ ٨ بيفتحوا (درس «HTTP/2 و HTTP/3»).`,
-          example: R`const ws = new WebSocket("ws://127.0.0.1:8095/chat")
-ws.onmessage = e => console.log("got", e.data)
-ws.send(JSON.stringify({ type: "hello", from: "baker" }))
-ws.close(1000, "done")
-const es = new EventSource("/events")
-es.addEventListener("order", e => console.log(e.lastEventId, e.data))
-es.close()`,
-          lines: [
-            R`[[new WebSocket(url)]] بيفتح اتصال واحد بيفضل مفتوح. الرابط بيبدأ بـ [[ws://]] (أو [[wss://]] على HTTPS، والصفحة HTTPS لازم [[wss]] وإلا Mixed Content). في Network هيظهر سطر نوعه [[websocket]] والـ Status [[101]].`,
-            R`[[onmessage]] بيتنادى مع كل رسالة جاية من السيرفر، و [[e.data]] النص (أو [[Blob]] لو binary). كل رسالة هتظهر في تاب Messages بسهم لتحت.`,
-            R`[[send]] بيبعت رسالة. WebSocket بيبعت نص أو bytes بس، فالـ object لازم [[JSON.stringify]]. الرسالة هتظهر في Messages بسهم لفوق.`,
-            R`[[close(1000, "done")]] بيقفل بكود [[1000]] (قفلة طبيعية) وسبب. الكود والسبب بيظهروا في آخر Messages، وكود زي [[1006]] معناه الاتصال اتقطع من غير قفلة (السيرفر وقع أو proxy قفله).`,
-            R`[[new EventSource(url)]] بيفتح طلب GET عادي بيفضل مفتوح، والسيرفر بيكتب فيه أحداث. اتجاه واحد بس (من السيرفر ليك)، ومن غير مكتبة على السيرفر. في Network نوعه [[eventsource]].`,
-            R`[[addEventListener("order", ...)]] بيسمع على الأحداث اللي السيرفر سمّاها [[event: order]]. الأحداث من غير [[event:]] بتروح لـ [[onmessage]]. و [[e.lastEventId]] هو الـ [[id:]] اللي السيرفر بعته.`,
-            R`[[es.close()]] بيقفل ومبيرجعش يفتح. من غيره، لو السيرفر قفل الاتصال المتصفح هيفتحه تاني لوحده بعد [[retry]].`,
-          ],
-          try: R`شغّل سيرفر المعمل اللي في الشرح، وافتح [[http://127.0.0.1:8095/]] وتاب Network مفتوح. دوس على سطر [[chat]] وافتح Messages، وعلى سطر [[events]] وافتح EventStream. استنى لحد ما السيرفر يقفل الـ SSE بعد ٣ أحداث، وشوف السطر التاني اللي اتفتح لوحده وفي Request Headers بتاعه [[Last-Event-ID]]. وبعدين افتح ٨ [[EventSource]] من Console وعدّ كام واحد فتح.`,
+          cmd: "أوامر Console المفيدة",
+          title: "JavaScript على أي صفحة",
+          desc: R`[[$0]] العنصر اللي مختاره في Elements. [[$$('img')]] كل العناصر اللي بتطابق الـ selector كـ array. [[copy()]] بينسخ أي حاجة على الكليب بورد. و [[document.designMode = "on"]] بيخليك تعدّل أي نص في الصفحة بالكتابة عليه، مفيد لو عايز تجرب نص قبل ما تعدّله في الكود.`,
+          example: R`document.title
+$0
+$0.style.outline = "2px solid red"
+$$("img:not([alt])").length
+copy($$("a").map(a => a.href))
+document.designMode = "on"`,
+          try: "اعرف كام صورة في موقعك من غير alt (مهمة للـ SEO والـ accessibility)، وانسخ كل اللينكات اللي في الصفحة.",
           deep: {
-            why: R`الطلبات العادية بتتقري من Headers و Response، بس الاتصال اللي بيفضل مفتوح مالوش «رد» واحد: الكلام كله جوه Messages أو EventStream. ولما الشات «مش بيوصل» أو الإشعارات «بتتأخر»، السؤال الأول: الاتصال فاتح أصلًا؟ والرسالة اتبعتت؟ والسيرفر رد؟ وده كله بيتجاوب من سطر واحد في Network من غير console.log.`,
-            how: R`WebSocket بيبدأ كطلب HTTP عادي فيه [[Upgrade: websocket]] و [[Sec-WebSocket-Key]]، والسيرفر بيرد [[101 Switching Protocols]] و [[Sec-WebSocket-Accept]]، ومن اللحظة دي نفس الـ TCP connection بقى قناة رسايل في الاتجاهين (frames). كل frame ليه opcode: [[1]] نص، و [[2]] binary، و [[8]] قفلة، و [[9]]/[[10]] ping و pong. DevTools بيعرض النص زي ما هو والـ binary كـ «Binary Message» (في البروتوكول بيوصل base64: [[AQID]] للبايتات 1 و 2 و 3).
+            why: "Console مش بس لقراية الأخطاء، هو ترمنال JavaScript كامل. تقدر تكتب جوه أي JavaScript وينفّذه على الصفحة دلوقتي.",
+            how: R`[[$0]] هو العنصر المختار في Elements دلوقتي. [[$$('selector')]] بيرجع كل العناصر اللي تطابق الـ selector كـ array (زي querySelectorAll بس بيرجّع array عادي تقدر تعمل عليه map). [[copy(value)]] بينسخ أي قيمة للكليب بورد.
 
-SSE طلب GET عادي، والسيرفر بيرد [[text/event-stream]] ومبيقفلش، وبيكتب بلوكات نص كل واحد بيخلص بسطر فاضي: [[id:]] و [[event:]] و [[data:]] و [[retry:]]. لو الاتصال اتقفل، المتصفح بيستنى [[retry]] ms ويطلب تاني بـ header [[Last-Event-ID]]، فالسيرفر يكمّل من بعده. والحد بتاع ٦ اتصالات لكل host في HTTP/1.1 بيشمل الاتصالات المفتوحة دي، فكل SSE ماسك واحد طول الوقت.`,
-            when: R`شات أو تعديل مشترك أو لعبة (الاتجاهين): WebSocket. إشعارات، أو تقدّم شغلانة، أو حالة أوردر، أو ردود AI بتتكتب حرف حرف (اتجاه واحد): SSE أبسط، وبيعدّي من proxies أسهل، وبيرجع لوحده. والاختيار بالتفصيل في درس «WebSocket و SSE» في تاب JavaScript، وإعداد nginx في درس «WebSockets» في تاب Nginx.`,
-            mistakes: R`تدوّر على الرسايل في Fetch/XHR (مش هناك، دوّر بـ All أو فلتر WS). تفتح Network بعد ما الاتصال اتفتح (الرسايل اللي قبلها مش متسجّلة: ريفريش والتاب مفتوح). تبعت object من غير [[JSON.stringify]] فيوصل [[[object Object]]]. سيرفر SSE مبيبعتش أي حاجة لحد أول حدث فالـ headers متتبعتش و [[onopen]] مبيحصلش (اتقابل في المعمل: الحل [[res.flushHeaders()]] أو تعليق [[: hi]] في الأول). وتفتح SSE في كل تاب على HTTP/1.1 فالتاب السابع يعلّق.`
+[[document.designMode = "on"]] بيحوّل الصفحة كلها لمحرر نصوص: تكليك على أي نص وتكتب فوقه. مش بيعدّل الكود، بس بيخليك تشوف شكل نص مختلف في مكانه.
+
+Shift+Enter في Console بينزّلك سطر جديد من غير تنفيذ، عشان تكتب كود من أكتر من سطر.`,
+            when: "تجرّب قيمة متغير في الصفحة. تدوّر على عناصر بـ CSS selector. تطبّع بيانات لحد تاني بـ copy. تجرّب شكل نص.",
+            mistakes: "تكتب كود طويل في Console وتفقده لما تريفريش."
           },
-          teach: R`## الأول: الاتصال المفتوح سطر واحد
+          teach: R`## الأول: Console فيه أدوات زيادة عن JavaScript
 
-الطلب العادي: المتصفح بيسأل، السيرفر بيرد، الطلب خلص. أما WebSocket و SSE فالاتصال بيفضل مفتوح والكلام بيعدّي فيه، فـ Network بيعرضه **سطر واحد** والـ Time بتاعه بيفضل يزيد. الرسايل نفسها مش في Response، في تاب جديد جوه السطر:
-
-| | WebSocket | SSE |
-|---|---|---|
-| السطر في Network | Status [[101]]، و Type [[websocket]] | Status [[200]]، و Type [[eventsource]] |
-| تاب الرسايل | Messages | EventStream |
-| الاتجاه | الاتنين | من السيرفر ليك بس |
-| بيرجع لوحده لو اتقطع؟ | لأ، انت تكتب الـ reconnect | آه، بعد [[retry]] وبـ [[Last-Event-ID]] |
-
-كل اللي تحت اتجرّب في Chrome 156 (headless) على سيرفر Node 24 فيه الاتنين، والأحداث اتقرت من DevTools Protocol (نفس البيانات اللي Messages و EventStream بيعرضوها).
+أي JavaScript بتكتبه في Console بيتنفّذ على الصفحة المفتوحة. وفوقه DevTools بيضيف أدوات اسمها **Command Line API** زي [[$0]] و [[$$]] و [[copy]]، ودول موجودين في Console بس، مش في كود الصفحة ولا في Node. كل الأسطر دي اتشغّلت في Chrome على صفحة تجربة فيها عنوان [[Products]]، وصورتين واحدة بس عليها [[alt]]، و ٣ لينكات.
 
 ---
 
-## المعمل
+## ١. [[document.title]]
 
-~~~javascript rt-server.mjs (npm i ws)
-import http from "node:http";
-import { WebSocketServer } from "ws";
-
-const server = http.createServer((req, res) => {
-  if (req.url === "/events") {
-    console.log("SSE connect, last-event-id =", req.headers["last-event-id"] || "-");
-    res.writeHead(200, { "content-type": "text/event-stream", "cache-control": "no-cache" });
-    let n = Number(req.headers["last-event-id"] || 0);
-    res.write("retry: 1000\n\n");
-    const t = setInterval(() => {
-      n++;
-      res.write("id: " + n + "\nevent: order\ndata: " + JSON.stringify({ order: n, status: "baking" }) + "\n\n");
-      if (n % 3 === 0) { clearInterval(t); res.end(); }
-    }, 200);
-    return;
-  }
-  res.writeHead(200, { "content-type": "text/html" });
-  res.end('<script src="/client.js"></script>');
-});
-const wss = new WebSocketServer({ server, path: "/chat" });
-wss.on("connection", s => s.on("message", (m, bin) => s.send(bin ? m : "echo:" + m)));
-server.listen(8095, "127.0.0.1");
+~~~text الناتج
+"Test Shop"
 ~~~
 
-- [[/events]] بيبعت ٣ أحداث كل ٢٠٠ms وبعدين **بيقفل** الاتصال قصد، عشان نشوف المتصفح هيعمل إيه.
-- [[retry: 1000]] بيقول للمتصفح «لو الاتصال اتقطع، استنى ثانية وارجع».
-- كل حدث [[id:]] و [[event:]] و [[data:]] وبعدهم سطر فاضي ([[\n\n]]): السطر الفاضي هو اللي بيقول «الحدث خلص».
-- [[/chat]] بيرد على أي رسالة نص بـ [[echo:]] قبلها، والـ binary زي ما هو.
+[[document]] هو الصفحة كلها، و [[.title]] النص اللي في [[<title>]] (اللي على التاب). أي سطر JavaScript عادي بيشتغل هنا.
 
-والصفحة بتعمل سطور المثال: WebSocket بيبعت JSON ورسالة binary ([[new Uint8Array([1, 2, 3])]])، و EventSource بيسمع على [[order]].
+## ٢. [[$0]]
 
----
+اخترت الـ [[h1]] في Elements وكتبت [[$0]]:
 
-## ١. سطر الـ WebSocket
-
-~~~text اللي DevTools سجّله (Network.webSocket* events)
-webSocketCreated ws://127.0.0.1:8095/chat
-handshake 101 Switching Protocols upgrade=websocket
-frame SENT opcode=1 {"type":"hello","from":"baker"}
-frame SENT opcode=2 AQID
-frame RECV opcode=1 echo:{"type":"hello","from":"baker"}
-frame RECV opcode=2 AQID
+~~~text الناتج
+<h1>Products</h1>
 ~~~
 
-- [[101 Switching Protocols]]: ده الـ Status اللي هتلاقيه في السطر. لو لقيت [[400]] أو [[426]] أو [[502]]، الـ upgrade فشل، وغالبًا الـ proxy (nginx) مش بيعدّي [[Upgrade]] و [[Connection]] (القضية دي بالتفصيل في درس «WebSocket بيفصل» في تاب التشخيص).
-- [[opcode=1]] رسالة نص، وفي Messages بتظهر زي ما هي. [[opcode=2]] binary، وبتظهر «Binary Message» وطولها، و [[AQID]] هي base64 للبايتات [[1 2 3]].
-- [[SENT]] = سهم لفوق (منك)، و [[RECV]] = سهم لتحت (من السيرفر).
+[[$0]] = آخر عنصر اخترته في Elements. و [[$1]] اللي قبله، لحد [[$4]].
 
-وفي تاب Messages فيه صندوق فلتر: اكتب [[hello]] يسيب الرسايل اللي فيها الكلمة بس، وقايمة جنبه تختار منها Send أو Receive بس.
+## ٣. [[$0.style.outline = "2px solid red"]]
 
----
-
-## ٢. سطر الـ SSE
-
-~~~text DevTools (Network.eventSourceMessageReceived) والـ Console
-response EventSource 200 text/event-stream
-eventSource order id=1 {"order":1,"status":"baking"}
-eventSource order id=2 {"order":2,"status":"baking"}
-eventSource order id=3 {"order":3,"status":"baking"}
-response EventSource 200 text/event-stream
-eventSource order id=4 {"order":4,"status":"baking"}
-eventSource order id=5 {"order":5,"status":"baking"}
-eventSource order id=6 {"order":6,"status":"baking"}
+~~~text الناتج
+"2px solid red"
 ~~~
 
-~~~text لوج السيرفر
-SSE connect, last-event-id = -
-SSE connect, last-event-id = 3
+[[.style]] هو الـ CSS اللي على العنصر نفسه (زي [[style="..."]] في الـ HTML). الإسناد بـ [[=]] بيرجّع القيمة اللي اتحطت، والعنوان بقى حواليه إطار أحمر. ولو سألت [[$0.outerHTML]]:
+
+~~~text الناتج
+"<h1 style="outline: red solid 2px;">Products</h1>"
 ~~~
 
-شوف اللي حصل بعد الحدث [[3]]: السيرفر قفل، والمتصفح **فتح لوحده** طلب تاني (سطر [[response EventSource 200]] التاني، وفي Network هتلاقي سطرين [[events]])، وبعت [[Last-Event-ID: 3]]، فالسيرفر كمّل من [[4]] بدل ما يعيد من الأول. ده كله من غير ولا سطر كود في الصفحة.
+## ٤. [[$$("img:not([alt])").length]]
 
-وفي EventStream كل حدث صف فيه: Id و Type و Data و Time.
+نفكّها:
 
-> لو عايز SSE يوقف خالص: [[es.close()]] من الصفحة، أو السيرفر يرد بـ [[204]] على طلب الرجوع.
+| الحتة | معناها |
+|---|---|
+| [[img]] | أي عنصر صورة |
+| [[:not([alt])]] | مش عليه attribute اسمه alt |
+| [[$$(...)]] | كل العناصر اللي تطابق، كـ array |
+| [[.length]] | عدد العناصر اللي في الـ array |
 
----
+~~~text الناتج
+1
+~~~
 
-## ٣. الفخ: السابع مبيفتحش
-
-فتحت ٨ اتصالات SSE من Console على نفس السيرفر:
+ولو عايز تعرف مين هي:
 
 ~~~javascript Console
-const open = [];
-for (let i = 1; i <= 8; i++) { const e = new EventSource("/events?k=" + i); e.onopen = () => open.push(i); }
-setTimeout(() => console.log(open), 2000);
+$$("img:not([alt])").map(i => i.src)
 ~~~
 
 ~~~text الناتج
-HTTP/1.1:  [1, 2, 3, 4, 5, 6]
-HTTP/2:    8 من 8
+["http://127.0.0.1:8791/banner.png"]
 ~~~
 
-على HTTP/1.1 المتصفح بيفتح **٦ اتصالات بالكتير لنفس السيرفر**، وكل SSE ماسك واحد طول الوقت، فالسابع والتامن (وأي صورة أو fetch بعدهم) بيستنوا في Network على Stalled ومحدش بيرمي error. ده اللي بيحصل لما اليوزر يفتح الموقع في ٧ تابات. على HTTP/2 كل الطلبات على اتصال واحد (multiplexing)، فالـ ٨ فتحوا (القياس في درس «HTTP/2 و HTTP/3»). WebSocket مش داخل في الحد ده بنفس الشكل (ليه حد تاني أكبر بكتير)، بس كل واحد اتصال TCP لوحده.
+ليه [[$$]] أحسن من [[document.querySelectorAll]]؟ الاتنين بيجيبوا نفس العناصر، بس:
 
-وفخ تاني اتقابل وأنا ببني المعمل: سيرفر SSE عمل [[writeHead]] ومكتبش ولا حرف، فـ Node مابعتش الـ headers أصلًا و [[onopen]] مااشتغلش (الأول طلع [[[]]] فاضي). الحل [[res.flushHeaders()]] أو تبعت تعليق [[: hi]] في الأول.
+~~~javascript Console
+Array.isArray($$("img"))
+Array.isArray(document.querySelectorAll("img"))
+~~~
 
----
+~~~text الناتج
+true
+false
+~~~
 
-## ٤. الأكواد اللي هتشوفها في آخر Messages
+[[$$]] بيرجّع array حقيقي فيه [[map]] و [[filter]]، و [[querySelectorAll]] بيرجّع [[NodeList]] مفيهاش [[map]].
 
-| الكود | معناه |
+## ٥. [[copy($$("a").map(a => a.href))]]
+
+- [[$$("a")]]: كل اللينكات.
+- [[.map(a => a.href)]]: حوّل كل لينك للعنوان بتاعه. [[a =>]] arrow function: «خد كل عنصر وسمّيه a ورجّع [[a.href]]».
+- [[copy(...)]]: انسخ الناتج للـ clipboard.
+
+السطر نفسه بيرجّع [[undefined]]، واللي اتنسخ (شفته من بروتوكول DevTools) كان:
+
+~~~text اللي في الـ clipboard
+[
+  "http://127.0.0.1:8791/about",
+  "http://127.0.0.1:8791/x",
+  "https://example.com/"
+]
+~~~
+
+لاحظ: في الـ HTML اللينك الأول مكتوب [[/about]] بس، و [[a.href]] بيرجّعه كامل. لو عايز المكتوب حرفيًا استخدم [[a.getAttribute("href")]] ورجّع [[/about]].
+
+## ٦. [[document.designMode = "on"]]
+
+~~~text الناتج
+"on"
+~~~
+
+الصفحة كلها بقت محرر: كليك على أي نص واكتب. [[document.designMode = "off"]] يرجّعها، والريفريش كمان.
+
+| السطر | بيعمل إيه |
 |---|---|
-| [[1000]] | قفلة طبيعية (حد فيهم عمل [[close()]]) |
-| [[1001]] | الطرف التاني «ماشي»: التاب اتقفل أو السيرفر بيعمل restart |
-| [[1006]] | الاتصال اتقطع من غير قفلة: السيرفر وقع، أو proxy قفله لما سكت (الـ timeout الافتراضي في nginx ٦٠ ثانية) |
-| [[1008]] و [[1011]] | السيرفر رفض (policy) أو ضرب error |
-
-الأرقام من RFC 6455 و MDN ([[CloseEvent.code]]).
+| [[document.title]] | عنوان الصفحة اللي في التاب |
+| [[$0]] | العنصر المختار في Elements |
+| [[$0.style.outline = ...]] | علّمه بإطار أحمر من غير ما يزق الصفحة |
+| [[$$("img:not([alt])").length]] | عدد الصور اللي من غير alt |
+| [[copy(...)]] | انسخ أي قيمة كـ JSON |
+| [[document.designMode = "on"]] | عدّل نص الصفحة بالكتابة |
 
 ## الخلاصة
 
-- الاتصال المفتوح سطر واحد في Network، والكلام في Messages (WebSocket) أو EventStream (SSE).
-- [[101]] يعني WebSocket فتح. أي رقم تاني = الـ upgrade فشل، بص على الـ proxy.
-- SSE بيرجع لوحده بـ [[Last-Event-ID]]، فالسيرفر لازم يكمّل من الرقم ده.
-- HTTP/1.1 = ٦ اتصالات لكل سيرفر، فـ SSE في تابات كتير بيعلّق. HTTP/2 بيحلها.`,
-          sol: R`سطر [[chat]] Status بتاعه [[101]] و Type [[websocket]]، وفي Messages ٤ صفوف: [[{"type":"hello","from":"baker"}]] طالعة، و Binary Message طالعة، و [[echo:{"type":"hello","from":"baker"}]] جاية، و Binary Message جاية.
-
-سطر [[events]] الأول فيه ٣ أحداث في EventStream (Id 1 و 2 و 3، Type [[order]])، وبعد ما السيرفر قفله ظهر سطر [[events]] تاني لوحده بعد حوالي ثانية (الـ [[retry]])، وفي Request Headers بتاعه [[Last-Event-ID: 3]]، وأحداثه 4 و 5 و 6. ولوج السيرفر فيه [[last-event-id = -]] وبعدها [[last-event-id = 3]].
-
-والـ ٨ [[EventSource]] على HTTP/1.1: [[open]] طلع [[[1, 2, 3, 4, 5, 6]]]، والاتنين الباقيين في Network على pending. لو السيرفر بتاعك على HTTP/2 (زي أي موقع ورا nginx أو CDN بـ HTTPS) هتلاقي الـ ٨ فتحوا.`,
-          practice: [
-            { lvl: 'سريع', t: R`**مراجعة:** من غير ما تبص: Status و Type و اسم تاب الرسايل لكل واحد من WebSocket و SSE، ومعنى الكود [[1006]].`, done: R`كتبت [[101]]/[[websocket]]/Messages و [[200]]/[[eventsource]]/EventStream، و [[1006]] = اتقطع من غير قفلة، وصحّحتهم من الجدول.` },
-            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** على أي موقع فيه شات أو إشعارات لحظية (أو Next.js dev بالـ HMR، أو Vite dev)، لاقي سطر الاتصال المفتوح في Network، وقول نوعه، واقرا أول ٣ رسايل.`, done: R`كاتب الـ URL والنوع وأول ٣ رسايل. في Vite dev مثلًا هتلاقي WebSocket أول رسالة فيه حاجة زي [[{"type":"connected"}]]، وبعد ما تحفظ ملف هتلاقي رسالة جديدة فيها [[update]] أو [[full-reload]].` },
-            { lvl: 'تطبيق', t: R`**ابني:** صفحة «حالة الأوردر» بـ SSE: السيرفر بيبعت [[received]] ثم [[baking]] ثم [[ready]] كل ثانيتين بـ [[id:]]، والصفحة بتعرض الحالة. اقفل السيرفر وشغّله تاني في النص.`, done: R`الصفحة بتكمّل من الحالة اللي بعد آخر واحدة وصلت (السيرفر قرا [[Last-Event-ID]])، و EventStream فيه الأحداث بالأرقام من غير تكرار.` },
-            { lvl: 'تحدي', t: R`**صلّح:** WebSocket بيتقفل كل دقيقة بالظبط بكود [[1006]] ورا nginx لما مفيش رسايل. اعرف السبب من Messages (آخر رسالة إمتى وأول قفلة إمتى) وصلّحه من الطرفين.`, done: R`كاتب إن الفرق بين آخر رسالة والقفلة ٦٠ ثانية = [[proxy_read_timeout]] الافتراضي، والتصليح: ping كل ٢٥–٣٠ ثانية من السيرفر (أو الصفحة)، و/أو [[proxy_read_timeout]] أكبر، و reconnect بـ backoff في الصفحة.` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** نفس صفحة SSE افتحها في ٨ تابات على سيرفر HTTP/1.1، وبعدين نفس الحاجة ورا HTTP/2 (سيرفر [[node:http2]] بـ [[allowHTTP1: true]] وشهادة محلية). كام تاب الأحداث وصلتله؟`, done: R`على HTTP/1.1 ٦ تابات بس شغالة والباقي مستني (Stalled في Network)، وعلى HTTP/2 الـ ٨، والـ Protocol column (كليك يمين على رأس الجدول ثم Protocol) بيقول [[http/1.1]] مرة و [[h2]] مرة.` },
+- [[$0]] و [[$$]] و [[copy]] أدوات DevTools بس. في كود حقيقي استخدم [[document.querySelectorAll]].
+- [[$$]] بيرجّع array حقيقي، فتقدر تعمل عليه [[map]] و [[filter]] على طول.
+- [[a.href]] كامل، و [[getAttribute("href")]] زي ما هو مكتوب.`,
+          lines: [
+            "عنوان الصفحة (أي JavaScript بيتنفذ على الصفحة دي).",
+            "العنصر المختار دلوقتي في تاب Elements.",
+            "حط عليه إطار أحمر عشان تشوفه في الصفحة.",
+            "كل الصور اللي من غير alt، وعددها. [[$$]] زي querySelectorAll بس بيرجع array.",
+            "انسخ كل اللينكات في الصفحة للكليب بورد.",
+            "خلّي الصفحة كلها قابلة للكتابة: تكليك على أي نص وتعدّله."
           ],
-          ci: [
-            { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`node`, run: R`import http from "node:http";
-const seen = [];
-const srv = http.createServer((req, res) => {
-  seen.push(req.headers["last-event-id"] || "-");
-  res.writeHead(200, { "content-type": "text/event-stream" });
-  let n = Number(req.headers["last-event-id"] || 0);
-  res.write("retry: 100\n\n");
-  for (let i = 0; i < 2; i++) { n++; res.write("id: " + n + "\nevent: order\ndata: {\"order\":" + n + "}\n\n"); }
-  res.end();
-}).listen(0, "127.0.0.1", async () => {
-  const url = "http://127.0.0.1:" + srv.address().port + "/events";
-  let last = "";
-  for (let round = 0; round < 2; round++) {
-    const r = await fetch(url, { headers: last ? { "last-event-id": last } : {} });
-    console.log("type", r.headers.get("content-type"));
-    const text = await r.text();
-    for (const block of text.split("\n\n")) {
-      const id = (block.match(/^id: (.*)$/m) || [])[1];
-      const data = (block.match(/^data: (.*)$/m) || [])[1];
-      if (id) { last = id; console.log("event id=" + id + " data=" + data); }
-    }
-  }
-  console.log("server saw last-event-id:", seen.join(","));
-  srv.close();
-});`, expect: [R`type text/event-stream`, R`event id=1 data={"order":1}`, R`event id=4 data={"order":4}`, R`server saw last-event-id: -,2`] },
+          sol: R`[[$$("img:not([alt])").length]] بيرجع رقم. جرّبته على صفحة فيها صورتين واحدة بس عليها alt فرجّع [[1]]. لو طلع [[0]] يبقى كل الصور عليها alt (حتى لو فاضي [[alt=""]]، وده صح للصور الديكور). وعشان تشوفهم نفسهم: [[$$("img:not([alt])").map(i => i.src)]].
+
+[[copy($$("a").map(a => a.href))]] مش بيطبع حاجة (بيرجع [[undefined]])، لكن اللينكات بقت في الـ clipboard كـ JSON array، الصقها في أي ملف. لاحظ إن [[a.href]] بيرجع الـ URL الكامل ([[http://localhost:8791/x]]) حتى لو في الـ HTML مكتوب [[/x]].
+
+لو طلعلك [[$$ is not defined]] أو [[copy is not defined]]: انت بتشغّلهم في كود الصفحة أو في Node. دول أدوات Console بتاعة DevTools بس، مش JavaScript عادي.`,
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** على أي صفحة اكتب: [[$$("img").length]]، و [[$$("img:not([alt])").length]]، و [[$$("a").length]]، و [[document.title]].`, done: R`عندك ٤ أرقام ونص، وعارف إن [[$$]] بيرجّع Array عادي (عليه [[.map]] على طول) مش NodeList.`, sol: R`~~~js Console
+$$("img").length
+$$("img:not([alt])").length
+$$("a").length
+document.title
+Array.isArray($$("a"))
+~~~
+
+[[$$]] اختصار في Console بس لـ [[document.querySelectorAll]]، بس بيرجّع **Array** حقيقي، فـ [[.map]] و [[.filter]] عليه على طول، وده الفرق عن [[NodeList]]. و [[img:not([alt])]] CSS selector معناه كل صورة من غير attribute اسمه [[alt]] خالص.
+
+الغلطة: تحط [[$$]] في ملف الموقع. دي مش جزء من JavaScript، دي من أدوات Console (Console Utilities API). جوه كود الصفحة هتقع بـ [[$$ is not defined]]، إلا لو الموقع عرّفها.
+
+وكمان [[alt=""]] مش هتتعدّ في الرقم التاني، وده صح: دي صورة زينة مقصودة.
+
+~~~text الناتج (صفحة معمل فيها صورتين و ٣ لينكات)
+2
+1
+3
+"t"
+true
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** سطر واحد بيطلّع جدول بكل اللينكات اللي بتفتح في تاب جديد ([[target="_blank"]]) ومفيهاش [[rel="noopener"]]: [[console.table]] بالـ href والنص.`, done: R`الجدول بيظهر بعمودين، ولما زوّدت لينك تجريبي من Elements وشغّلت السطر تاني ظهر فيه.`, sol: R`~~~js Console
+console.table($$('a[target="_blank"]:not([rel~="noopener"])').map(a => ({ href: a.href, text: a.textContent.trim() })));
+~~~
+
+- [[a[target="_blank"]]]: كل لينك بيفتح في تاب جديد.
+- [[:not([rel~="noopener"])]]: اللي مفيش في الـ [[rel]] كلمة [[noopener]]. و [[~=]] بيطابق كلمة كاملة وسط كلام، فـ [[rel="noopener noreferrer"]] بيتحسب سليم، وده اللي [[=]] العادية مش هتعمله.
+- [[.map]]: بيحوّل كل عنصر لـ object بمفتاحين، فـ [[console.table]] بيعمل عمودين.
+
+ليه التمرين ده: [[target="_blank"]] من غير [[noopener]] كان بيدّي الصفحة الجديدة وصول لـ [[window.opener]]. المتصفحات الحديثة بتعتبره [[noopener]] افتراضيًا، بس لو حد كتب [[rel="opener"]] صراحة أو على متصفح قديم، لسه محتاج تراجع.
+
+الغلطة: تطبع Array من العناصر نفسها بـ [[console.table]]، فالجدول هيطلع مليان خصائص. لازم تحدد الأعمدة بـ [[.map]].
+
+~~~text الناتج
+(index)  href               text
+0        https://a.test/    أ
+بعد ما زوّدنا لينك جديد:
+0        https://a.test/    أ
+1        https://c.test/    جديد
+~~~` },
+            { lvl: 'تطبيق', t: R`**قيس:** [[console.time("x")]] و [[console.timeEnd("x")]] حوالين loop مليون لفة، و [[console.count("click")]] مرتين.`, done: R`ظهر سطر بالشكل [[x: 1.43... ms]] (الرقم عندك هيختلف)، و [[click: 1]] و [[click: 2]]. وعارف إن [[console.assert(1 === 2, "math broke")]] بيطبع بس لما الشرط يطلع false.`, sol: R`~~~js Console
+console.time("x");
+for (let i = 0, s = 0; i < 1e6; i++) s += i;
+console.timeEnd("x");
+console.count("click");
+console.count("click");
+console.assert(1 === 2, "math broke");
+console.assert(1 === 1, "nope");
+~~~
+
+[[console.time]] و [[console.timeEnd]] لازم نفس الاسم، وبيطبعوا الوقت بينهم. و [[console.count]] عدّاد لكل اسم، بينفع في «الدالة دي بتتنادى كام مرة؟». و [[console.assert]] بيطبع رسالته كخطأ بس لو الشرط [[false]]، والكود بيكمّل عادي.
+
+الغلطة: تقارن رقم [[console.time]] بين جهازين أو من تشغيلة واحدة. الرقم بيتغيّر كل مرة، ومن التشغيلة التانية ممكن يقل لأن المحرك بيحسّن الكود بعد ما يشوفه. قيس كذا مرة.
+
+و [[console.assert]] مش بيوقف الكود زي [[assert]] في Node. سطر [[nope]] مطبعش لأن الشرط صح.
+
+~~~text الناتج (الرقم الأول عندك هيختلف)
+x: 2.39599609375 ms
+click: 1
+click: 2
+Assertion failed: math broke
+~~~` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** صفحة بتمنع الكليك يمين و F12 بـ JavaScript ([[contextmenu]] و [[keydown]] عليهم [[preventDefault]]). افتح DevTools من قايمة المتصفح (⋮ ثم More tools)، واكتب في Console [[getEventListeners(document)]]، وشيلهم.`, done: R`[[getEventListeners(document)]] رجّع [[contextmenu]] و [[keydown]] بالدوال، وبعد [[removeEventListener]] بالـ listener نفسه الكليك يمين رجع. وعرفت إن [[getEventListeners]] موجودة في Console بس: من سكربت في الصفحة [[typeof getEventListeners]] بيطلع [[undefined]].`, sol: R`~~~html lst.html
+<script>
+document.addEventListener("contextmenu", function noMenu(e) { e.preventDefault(); });
+document.addEventListener("keydown", function noF12(e) { if (e.key === "F12") e.preventDefault(); });
+$__lt/script>
+~~~
+~~~js Console
+getEventListeners(document);
+const l = getEventListeners(document);
+l.contextmenu.forEach(x => document.removeEventListener("contextmenu", x.listener));
+l.keydown.forEach(x => document.removeEventListener("keydown", x.listener));
+Object.keys(getEventListeners(document)).length;
+~~~
+
+الموقع منع [[F12]] بكود، بس قايمة المتصفح (⋮ ثم More tools ثم Developer tools) مش جوه الصفحة، فالكود مش بيوصلها.
+
+[[getEventListeners(document)]] بيرجّع object، مفتاحه نوع الحدث، وقيمته Array فيها كل listener. و [[x.listener]] هو الدالة نفسها، و [[removeEventListener]] لازم ياخد **نفس الدالة**، عشان كده بنجيبها منه بدل ما نكتب واحدة شبهها.
+
+و [[getEventListeners]] من أدوات Console بس. من سكربت في الصفحة [[typeof getEventListeners]] بيطلع [[undefined]]. ودي معناها إن أي كود بتكتبه للموقع مينفعش يعتمد عليها.
+
+الغلطة: تكتب [[document.oncontextmenu = null]]. دي بتشيل الخاصية بس، ومبتشيلش اللي اتسجّل بـ [[addEventListener]].
+
+والدرس الأمني: أي حماية بالـ JavaScript على جهاز المستخدم تتشال كده، فمتعتمدش عليها لحماية حاجة.
+
+~~~text الناتج
+{contextmenu: Array(1), keydown: Array(1)}     (noMenu و noF12)
+typeof getEventListeners من الصفحة: undefined
+بعد الشيل: 0 listeners
+contextmenu تجريبي: defaultPrevented = false، يعني القايمة رجعت
+~~~` },
+            { lvl: 'تحدي', t: R`**مسألة:** اكتب snippet (Sources ثم Snippets) اسمه [[audit]] بيطبع في جدول واحد: عدد الصور من غير alt، والصور اللي أعرض من الشاشة، والزراير اللي مفيهاش نص ولا [[aria-label]]، والـ inputs اللي مالهاش label.`, done: R`الـ snippet بيتشغّل بـ [[Ctrl+Enter]] على أي موقع ويطبع ٤ صفوف بالأرقام، ولما تزوّد صورة من غير alt من Elements الرقم بيزيد ١.`, sol: R`~~~js Snippet: audit
+(() => {
+  const imgs = $$("img");
+  const named = b => (b.innerText || "").trim() || b.getAttribute("aria-label") || b.getAttribute("aria-labelledby") || b.title;
+  const hasLabel = i => i.labels.length || i.getAttribute("aria-label") || i.getAttribute("aria-labelledby");
+  console.table({
+    "img no alt": imgs.filter(i => !i.hasAttribute("alt")).length,
+    "img wider than screen": imgs.filter(i => i.getBoundingClientRect().width > innerWidth).length,
+    "button no name": $$("button").filter(b => !named(b)).length,
+    "input no label": $$("input:not([type=hidden]):not([type=submit]):not([type=button])").filter(i => !hasLabel(i)).length,
+  });
+})();
+~~~
+
+1. افتح Sources ثم Snippets ثم New snippet، وسمّيه [[audit]]، والصق الكود.
+2. دوس [[Ctrl+Enter]] وانت في الـ snippet، أو [[Ctrl+P]] واكتب [[!audit]] من أي موقع.
+
+ليه الكود كده: كله جوه دالة بتتنفذ فورًا عشان أسامي زي [[imgs]] متقعش في الصفحة، ولا تضرب [[already been declared]] لو شغّلته مرتين.
+
+[[named]] بتشوف إن الزرار ليه اسم يقراه قارئ الشاشة: نص، أو [[aria-label]]، أو [[title]]. و [[hasLabel]] بتستخدم [[i.labels]]، وده بيغطي الـ label اللي بـ [[for]] واللي حاوي الـ input. والـ selector بيستبعد [[hidden]] و [[submit]] و [[button]]، لأن دول مالهمش label.
+
+الغلطة: تدوّر بـ [[input:not([id])]]، أو تفتكر إن [[placeholder]] label. الـ placeholder بيختفي مع الكتابة ومش بديل.
+
+~~~text الناتج (المعمل فيه كل مشكلة مرة، وشاشة 1280)
+img no alt              1
+img wider than screen   1
+button no name          1
+input no label          1
+بعد إضافة صورة من غير alt: img no alt = 2
+~~~` },
           ],
         }
       ]

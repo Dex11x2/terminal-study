@@ -17,12 +17,315 @@ MORE("css", [
           cmd: "dark mode",
           title: "وضع غامق بزرار ومن غير وميض",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** الجهاز على dark، و [[localStorage.theme]] فيه [[light]]، والـ CSS فيه [[@custom-variant dark (&:where(.dark, .dark *));]]. خلفية [[<body className="bg-white dark:bg-gray-950">]] هتبقى إيه؟ وهتبقى إيه لو مسحت سطر [[@custom-variant]]؟ اكتب الإجابتين، وبعدين جرّب من DevTools › Rendering › Emulate CSS media feature [[prefers-color-scheme]].`, done: R`كتبت أبيض في الأولى (الكلاس [[light]] اللي على html هو اللي بيحكم مش الجهاز)، وغامق في التانية (من غير السطر [[dark:]] بيرجع يسمع للجهاز ويتجاهل الزرار)، والتجربة طابقت الاتنين.` },
-            { lvl: 'تطبيق', t: R`**ابني:** صفحة HTML عادية من غير Tailwind ولا React: كل الألوان توكنز في [[:root]] ([[--bg]] و [[--surface]] و [[--fg]] و [[--muted]] و [[--brand]] و [[--line]])، و [[:root[data-theme="dark"]]] بيعيد تعريفهم هما بس، ومعاهم [[color-scheme]] في الاتنين. زرار [[role="switch"]] بـ [[aria-checked]] بيبدّل ويحفظ في localStorage جوه [[try/catch]].`, done: R`مفيش ولا لون (hex أو [[rgb(]] أو [[oklch(]]) برا بلوكات التوكنز، والزرار بيقلب الصفحة كلها ومعاها الـ scrollbar وحقل input، وقارئ الشاشة (أو Accessibility pane في DevTools) بيقول switch و on/off. ولو فتحتها في نافذة Incognito والكوكيز متقفلة (localStorage بيرمي error) الصفحة لسه بتشتغل والزرار بيقلب، بس مش بيفتكر.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الثيم بيتحط في [[useEffect]] بعد ما الصفحة تترسم: [[document.documentElement.classList.toggle("dark", localStorage.theme === "dark")]]. اختار dark واعمل refresh: الصفحة بتفتح بيضا لحظة وبعدين تغمق. صلّحه من غير next-themes: سكربت inline صغير في أول الـ [[<head>]] بيعمل نفس السطر قبل الرسم، وبيرجع لـ [[matchMedia("(prefers-color-scheme: dark)")]] لو مفيش اختيار.`, done: R`في DevTools › Performance مع CPU 4x slowdown و Screenshots شغالة، أول frame فيه محتوى غامق ومفيش ولا frame أبيض. وفي View Source السكربت قبل أي [[<link rel="stylesheet">]].` },
-            { lvl: 'تطبيق', t: R`**مسألة:** لون البراند [[#0d9488]] كلام على الأبيض تباينه 3.74:1، والكلام الأبيض على زرار بنفس اللون برضه 3.74:1، والاتنين ساقطين. اعمل توكنين [[--brand]] و [[--on-brand]] (لون الكلام اللي فوق البراند) بقيمة للفاتح وقيمة للغامق [[#0b1120]]، من نفس عيلة اللون، بحيث الأربع حالات (براند على الخلفية، وكلام على الزرار، في الوضعين) كلها 4.5:1 أو أكتر.`, done: R`الأربع أرقام من مربع اللون في DevTools فوق 4.5. حل واحد اتقاس: [[#0f766e]] للفاتح (5.47 على الأبيض، و 5.47 للأبيض عليه)، و [[#2dd4bf]] للغامق بكلام [[#0b1120]] على الزرار (10.12 في الاتجاهين). والغامق مش «نفس اللون مقلوب»: البراند فيه أفتح.` },
-            { lvl: 'تطبيق', t: R`**refactor:** كارت فيه [[bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 border-gray-200 dark:border-gray-800]] ومتكرر في ١٢ مكوّن. حوّله لطبقتين: متغيرات خام في [[:root]] و [[.dark]]، وبعدين [[@theme inline]] فيه [[--color-bg: var(--bg)]] وأخواتها، فالكلاس يبقى [[bg-bg text-fg border-line]] من غير ولا [[dark:]].`, done: R`[[grep -rc "dark:" src/components]] بيطلع صفر (أو بس للحاجات اللي فعلًا مختلفة، زي صورة ليها نسخة غامقة)، ولقطة الشاشة قبل وبعد في الوضعين متطابقة، وإضافة لون جديد بقت سطرين في ملف واحد.` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** حط [[* { transition: background-color .4s, color .4s }]] ودوس زرار الثيم: كل عنصر بيتلوّن لوحده والصفحة «بتسيح». اعمل نسخة تانية فيها كلاس [[theme-switching]] على html بيقفل الـ transitions ([[.theme-switching * { transition: none !important }]])، يتحط قبل التبديل ويتشال بعد [[requestAnimationFrame]] مرتين. وقيس الفرق بـ [[document.getAnimations().length]] في الكونسول على طول بعد الضغطة.`, done: R`النسخة الأولى بتطلّع رقم أكبر من صفر (في صفحة فيها body و ٤ عناصر اتقاس 5 transitions شغالين مع بعض)، والتانية صفر والتبديل بيبان في frame واحد. وفهمت إن ده نفس اللي [[disableTransitionOnChange]] بيعمله في next-themes.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** الجهاز على dark، و [[localStorage.theme]] فيه [[light]]، والـ CSS فيه [[@custom-variant dark (&:where(.dark, .dark *));]]. خلفية [[<body className="bg-white dark:bg-gray-950">]] هتبقى إيه؟ وهتبقى إيه لو مسحت سطر [[@custom-variant]]؟ اكتب الإجابتين، وبعدين جرّب من DevTools › Rendering › Emulate CSS media feature [[prefers-color-scheme]].`, done: R`كتبت أبيض في الأولى (الكلاس [[light]] اللي على html هو اللي بيحكم مش الجهاز)، وغامق في التانية (من غير السطر [[dark:]] بيرجع يسمع للجهاز ويتجاهل الزرار)، والتجربة طابقت الاتنين.`, sol: R`~~~css in.css
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl" class="light">
+<head><meta charset="utf-8"><title>مين بيحكم؟</title><link rel="stylesheet" href="out.css"></head>
+<body class="bg-white dark:bg-gray-950">الخلفية</body>
+</html>
+~~~
+
+**الحالة الأولى (السطر موجود):** [[@custom-variant dark]] بيغيّر معنى [[dark:]] من «إعداد الجهاز» لـ «فيه كلاس [[.dark]] على العنصر أو على أب ليه». الـ html عليه [[light]] مش [[dark]]، فالقاعدة مبتتطبقش، والخلفية بيضا رغم إن الجهاز غامق.
+
+**الحالة التانية (السطر ممسوح):** [[dark:]] بترجع للافتراضي: [[@media (prefers-color-scheme: dark)]]. الجهاز غامق، فالخلفية غامقة، والكلاس [[light]] ملوش أي تأثير. يعني زرار الثيم بقى ملوش لازمة.
+
+**الغلطة الشائعة:** تعمل زرار ثيم، وتجرّب على جهاز فاتح فيبان شغال، لأنك بتقلب ناحية واحدة بس. جرّب والجهاز غامق والاختيار فاتح.
+
+~~~text الناتج
+الجهاز dark ، و html عليه class="light"
+
+بـ @custom-variant:   rgb(255, 255, 255)           أبيض
+من غيره:              oklch(0.13 0.028 261.692)    غامق
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** صفحة HTML عادية من غير Tailwind ولا React: كل الألوان توكنز في [[:root]] ([[--bg]] و [[--surface]] و [[--fg]] و [[--muted]] و [[--brand]] و [[--line]])، و [[:root[data-theme="dark"]]] بيعيد تعريفهم هما بس، ومعاهم [[color-scheme]] في الاتنين. زرار [[role="switch"]] بـ [[aria-checked]] بيبدّل ويحفظ في localStorage جوه [[try/catch]].`, done: R`مفيش ولا لون (hex أو [[rgb(]] أو [[oklch(]]) برا بلوكات التوكنز، والزرار بيقلب الصفحة كلها ومعاها الـ scrollbar وحقل input، وقارئ الشاشة (أو Accessibility pane في DevTools) بيقول switch و on/off. ولو فتحتها في نافذة Incognito والكوكيز متقفلة (localStorage بيرمي error) الصفحة لسه بتشتغل والزرار بيقلب، بس مش بيفتكر.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>توكنز الثيم</title>
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --fg: #0f172a;
+    --muted: #475569;
+    --brand: #0f766e;
+    --line: #cbd5e1;
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #0b1120;
+    --surface: #1e293b;
+    --fg: #f1f5f9;
+    --muted: #94a3b8;
+    --brand: #2dd4bf;
+    --line: #475569;
+  }
+  body { margin: 0; padding: 1.5rem; font-family: system-ui, sans-serif; background: var(--bg); color: var(--fg); }
+  .card { max-width: 28rem; margin-block-start: 1rem; padding: 1.5rem; border: 1px solid var(--line); border-radius: .75rem; background: var(--surface); }
+  .card p { color: var(--muted); }
+  .card a { color: var(--brand); }
+  input { display: block; width: 100%; box-sizing: border-box; padding: .5rem; }
+  #theme { min-block-size: 2.75rem; padding-inline: 1rem; border: 1px solid var(--line); border-radius: .5rem; background: var(--surface); color: var(--fg); font: inherit; }
+</style>
+</head>
+<body>
+<main>
+  <h1>الإعدادات</h1>
+  <button id="theme" type="button" role="switch" aria-checked="false">الوضع الغامق</button>
+  <section class="card">
+    <h2>حسابك</h2>
+    <p>غيّر بياناتك من هنا.</p>
+    <label for="name">الاسم</label>
+    <input id="name" value="سارة">
+    <p><a href="#help">محتاج مساعدة؟</a></p>
+  </section>
+  <div style="height: 150vh"></div>
+</main>
+<script>
+  const root = document.documentElement;
+  const btn = document.getElementById("theme");
+
+  function read() {
+    try { return localStorage.getItem("theme"); } catch { return null; }
+  }
+  function save(value) {
+    try { localStorage.setItem("theme", value); } catch { /* مفيش تخزين: الزرار يشتغل برضه */ }
+  }
+  function apply(dark) {
+    root.dataset.theme = dark ? "dark" : "light";
+    btn.setAttribute("aria-checked", String(dark));
+  }
+
+  apply(read() === "dark");
+  btn.addEventListener("click", () => {
+    const dark = btn.getAttribute("aria-checked") !== "true";
+    apply(dark);
+    save(dark ? "dark" : "light");
+  });
+$__lt/script>
+</body>
+</html>
+~~~
+
+**ليه شغال:**
+
+- كل لون متعرّف مرتين بس: في [[:root]] و [[:root[data-theme="dark"]]]. باقي الـ CSS بيقول [[var(--bg)]] ومبيعرفش فيه كام ثيم.
+- [[color-scheme]] بيقول للمتصفح يرسم حاجاته هو بالثيم ده: الـ scrollbar وحقول الـ input والـ checkbox. من غيره تبقى صفحة غامقة وفيها input أبيض.
+- [[role="switch"]] مع [[aria-checked]]: القارئ بيقول «switch، on». والزرار الحقيقي بيجيب Tab و Enter و Space ببلاش.
+- [[try/catch]] حوالين كل وصول لـ localStorage: في بعض إعدادات الخصوصية مجرد قراية [[localStorage]] بترمي [[SecurityError]]، ومن غيره السكربت كله يقف والزرار يموت.
+
+**الغلطة الشائعة:** تقرا [[localStorage]] من غير [[try]]، لأنه مبيقعش عندك أبدًا. جرّبها بإنك تعرّف [[localStorage]] يرمي error قبل سكربت الصفحة.
+
+~~~text الناتج
+فاتح:  data-theme=light ، background rgb(248, 250, 252) ، color-scheme light
+       input rgb(255, 255, 255) ، aria-checked false
+
+بعد الضغط:
+غامق:  data-theme=dark ، background rgb(11, 17, 32) ، color-scheme dark
+       input rgb(59, 59, 59) (اتغيّر من color-scheme لوحده)
+
+بعد reload: لسه dark
+ariaSnapshot:  - switch "الوضع الغامق" [checked]
+grep على ألوان برا بلوكات التوكنز: صفر
+axe: صفر في الوضعين ، وعلى 360 مفيش scroll أفقي
+
+localStorage بيرمي SecurityError:
+الزرار قلب لـ dark ، وبعد reload رجع light (بيشتغل بس مش بيفتكر)
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الثيم بيتحط في [[useEffect]] بعد ما الصفحة تترسم: [[document.documentElement.classList.toggle("dark", localStorage.theme === "dark")]]. اختار dark واعمل refresh: الصفحة بتفتح بيضا لحظة وبعدين تغمق. صلّحه من غير next-themes: سكربت inline صغير في أول الـ [[<head>]] بيعمل نفس السطر قبل الرسم، وبيرجع لـ [[matchMedia("(prefers-color-scheme: dark)")]] لو مفيش اختيار.`, done: R`في DevTools › Performance مع CPU 4x slowdown و Screenshots شغالة، أول frame فيه محتوى غامق ومفيش ولا frame أبيض. وفي View Source السكربت قبل أي [[<link rel="stylesheet">]].`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<script>
+  (function () {
+    let stored = null;
+    try { stored = localStorage.getItem("theme"); } catch {}
+    const dark = stored ? stored === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    document.documentElement.classList.toggle("dark", dark);
+  })();
+$__lt/script>
+<title>بعد</title>
+<style>
+  body { margin: 0; min-height: 100vh; background: #fff; color: #111; font: 2rem system-ui; }
+  .dark body { background: #0b1120; color: #f1f5f9; }
+</style>
+</head>
+<body>
+<main><h1>الصفحة</h1></main>
+</body>
+</html>
+~~~
+
+**ليه الوميض بيحصل:** [[useEffect]] بيشتغل بعد أول رسم. المتصفح بيرسم الصفحة بيضا، وبعدين الكود يحط [[.dark]]. وأي صفحة جاية من السيرفر هتعمل كده، لأن السيرفر مش عارف اختيار المستخدم.
+
+**التصليح:** سكربت inline في أول [[<head>]]. السكربتات اللي من غير [[defer]] بتوقّف قراية الـ HTML، فالمتصفح مبيرسمش حاجة لحد ما يخلص. السكربت لازم يبقى inline: لو ملف خارجي، هتستنى الشبكة قبل أول رسم.
+
+**المنطق:** لو فيه اختيار محفوظ خده، ولو مفيش اسأل [[matchMedia]].
+
+**في React:** ضيف [[suppressHydrationWarning]] على [[<html>]]، لأن الكلاس اتغيّر قبل hydration.
+
+**الغلطة الشائعة:** تحط السكربت في آخر [[<body>]] أو تعمله [[defer]]، فيرجع الوميض. وتنسى [[try/catch]]، فخطأ في localStorage يوقّف الصفحة.
+
+~~~text الناتج
+ألوان الـ frames بعد الفتح (localStorage.theme = dark ، CPU 4x):
+
+قبل:  أحمر (الصفحة القديمة) ← 255,255,255 (أبيض) ← 11,17,32 (غامق)
+بعد:  أحمر (الصفحة القديمة) ← 11,17,32 (غامق)
+
+من غير اختيار محفوظ والجهاز dark: html عليه class="dark"
+~~~` },
+            { lvl: 'تطبيق', t: R`**مسألة:** لون البراند [[#0d9488]] كلام على الأبيض تباينه 3.74:1، والكلام الأبيض على زرار بنفس اللون برضه 3.74:1، والاتنين ساقطين. اعمل توكنين [[--brand]] و [[--on-brand]] (لون الكلام اللي فوق البراند) بقيمة للفاتح وقيمة للغامق [[#0b1120]]، من نفس عيلة اللون، بحيث الأربع حالات (براند على الخلفية، وكلام على الزرار، في الوضعين) كلها 4.5:1 أو أكتر.`, done: R`الأربع أرقام من مربع اللون في DevTools فوق 4.5. حل واحد اتقاس: [[#0f766e]] للفاتح (5.47 على الأبيض، و 5.47 للأبيض عليه)، و [[#2dd4bf]] للغامق بكلام [[#0b1120]] على الزرار (10.12 في الاتجاهين). والغامق مش «نفس اللون مقلوب»: البراند فيه أفتح.`, sol: R`~~~css tokens.css
+:root {
+  --bg: #ffffff;
+  --brand: #0f766e;
+  --on-brand: #ffffff;
+}
+:root.dark {
+  --bg: #0b1120;
+  --brand: #2dd4bf;
+  --on-brand: #0b1120;
+}
+.link { color: var(--brand); }
+.btn  { background: var(--brand); color: var(--on-brand); }
+~~~
+
+**طريقة الحل:** الحساب بيقول إن اللون الواحد مش هينفع. [[#0d9488]] في المنطقة الوسط، فبيقع مع الأبيض من الناحيتين. فبنعمل حاجتين:
+
+- الفاتح: نغمّق البراند درجة ([[#0f766e]]). الكلام عليه أبيض.
+- الغامق: البراند لازم يبقى **أفتح** عشان يتشاف على خلفية غامقة ([[#2dd4bf]]). وبما إنه بقى فاتح، الكلام عليه لازم يبقى غامق. وعشان كده [[--on-brand]] توكن لوحده، مش أبيض ثابت.
+
+ونفس العيلة (teal)، فالهوية مش بتتغيّر.
+
+**الغلطة الشائعة:** تثبّت [[color: white]] على الزرار في الوضعين، فالزرار في الغامق يبقى أبيض على فاتح. أو تقلب اللون رياضيًا بدل ما تقيسه.
+
+~~~text الناتج
+الأصلي #0d9488 مع الأبيض:   3.74:1 ساقط
+
+                         التباين
+فاتح: براند على أبيض     5.47:1
+فاتح: أبيض على البراند   5.47:1
+غامق: براند على #0b1120  10.12:1
+غامق: #0b1120 على البراند 10.12:1
+~~~` },
+            { lvl: 'تطبيق', t: R`**refactor:** كارت فيه [[bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 border-gray-200 dark:border-gray-800]] ومتكرر في ١٢ مكوّن. حوّله لطبقتين: متغيرات خام في [[:root]] و [[.dark]]، وبعدين [[@theme inline]] فيه [[--color-bg: var(--bg)]] وأخواتها، فالكلاس يبقى [[bg-bg text-fg border-line]] من غير ولا [[dark:]].`, done: R`[[grep -rc "dark:" src/components]] بيطلع صفر (أو بس للحاجات اللي فعلًا مختلفة، زي صورة ليها نسخة غامقة)، ولقطة الشاشة قبل وبعد في الوضعين متطابقة، وإضافة لون جديد بقت سطرين في ملف واحد.`, sol: R`~~~css in.css
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --bg: var(--color-white);
+  --fg: var(--color-gray-900);
+  --line: var(--color-gray-200);
+}
+.dark {
+  --bg: var(--color-gray-950);
+  --fg: var(--color-gray-100);
+  --line: var(--color-gray-800);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-fg: var(--fg);
+  --color-line: var(--line);
+}
+~~~
+
+~~~html بعد
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>كارت</title><link rel="stylesheet" href="out.css"></head>
+<body class="p-6">
+<main>
+  <article class="rounded-xl border bg-bg p-6 text-fg border-line">
+    <h1 class="text-xl font-bold">كارت</h1>
+  </article>
+</main>
+</body>
+</html>
+~~~
+
+**الطبقتين:**
+
+1. **المتغيرات الخام** في [[:root]] و [[.dark]]: هي اللي بتتغيّر مع الثيم.
+2. **[[@theme inline]]**: بتعرّف Tailwind عليها. [[inline]] مهمة: من غيرها القيمة بتتحسب مرة على [[:root]] والكلاس [[.dark]] تحت مش بيأثر، زي ما شفنا في درس [[@theme]].
+
+الكلاس [[bg-bg text-fg border-line]] بقى بيقول معنى، والـ [[dark:]] اختفت. إضافة لون: سطر في [[:root]] وسطر في [[.dark]] وسطر في [[@theme inline]].
+
+**امتى تسيب [[dark:]]:** لما الحاجة مختلفة فعلًا، زي صورة ليها نسخة غامقة.
+
+**الغلطة الشائعة:** تعمل [[@theme]] من غير [[inline]]، فالوضع الفاتح يبان سليم والغامق مبيتغيرش.
+
+~~~text الناتج
+لقطة قبل وبعد في الوضع الفاتح: متطابقة byte بـ byte
+لقطة قبل وبعد في الوضع الغامق: متطابقة byte بـ byte
+grep -c "dark:" في الـ HTML بعد التحويل: 0
+~~~` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** حط [[* { transition: background-color .4s, color .4s }]] ودوس زرار الثيم: كل عنصر بيتلوّن لوحده والصفحة «بتسيح». اعمل نسخة تانية فيها كلاس [[theme-switching]] على html بيقفل الـ transitions ([[.theme-switching * { transition: none !important }]])، يتحط قبل التبديل ويتشال بعد [[requestAnimationFrame]] مرتين. وقيس الفرق بـ [[document.getAnimations().length]] في الكونسول على طول بعد الضغطة.`, done: R`النسخة الأولى بتطلّع رقم أكبر من صفر (في صفحة فيها body و ٤ عناصر اتقاس 5 transitions شغالين مع بعض)، والتانية صفر والتبديل بيبان في frame واحد. وفهمت إن ده نفس اللي [[disableTransitionOnChange]] بيعمله في next-themes.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>تبديل نضيف</title>
+<style>
+  :root { --bg: #fff; --fg: #111; }
+  :root.dark { --bg: #0b1120; --fg: #f1f5f9; }
+  * { transition: background-color .4s, color .4s; }
+  .theme-switching * { transition: none !important; }
+  body { background: var(--bg); color: var(--fg); font-family: system-ui, sans-serif; }
+  .card { padding: 1rem; background: var(--bg); }
+</style>
+</head>
+<body>
+<main>
+  <h1>الثيم</h1>
+  <div class="card">واحد</div>
+  <div class="card">اتنين</div>
+  <button id="plain" type="button">تبديل عادي</button>
+  <button id="clean" type="button">تبديل نضيف</button>
+</main>
+<script>
+  const root = document.documentElement;
+  document.getElementById("plain").onclick = () => root.classList.toggle("dark");
+  document.getElementById("clean").onclick = () => {
+    root.classList.add("theme-switching");
+    root.classList.toggle("dark");
+    requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove("theme-switching")));
+  };
+$__lt/script>
+</body>
+</html>
+~~~
+
+في الكونسول:
+
+~~~js console
+document.getElementById("plain").click(); document.getAnimations().length;
+document.getElementById("clean").click(); document.getAnimations().length;
+~~~
+
+**ليه «بتسيح»:** [[* { transition }]] معناها كل عنصر بيبدأ حركته لوحده. والعناصر اللي بتورث لونها بتتحرك كمان، فالنص ممكن يوصل بعد الخلفية بلحظة.
+
+**التصليح:** كلاس [[theme-switching]] بيقفل الـ transitions لحظة التبديل بس. بنشيله بعد [[requestAnimationFrame]] مرتين: الأولى قبل الرسم، والتانية بعد ما الرسم الجديد خلص. لو شيلته على طول، المتصفح هيدمج التغييرين ويبدأ الـ transition عادي.
+
+ده نفس اللي [[disableTransitionOnChange]] بيعمله في next-themes.
+
+**الغلطة الشائعة:** تستخدم [[setTimeout(…, 0)]] بدل الـ frames، أو تنسى تشيل الكلاس، فكل hover في الموقع يتجمد.
+
+~~~text الناتج
+تبديل عادي:  document.getAnimations().length = 8
+تبديل نضيف:  document.getAnimations().length = 0
+بعد الضغطة الكلاس اتشال: html class=""
+
+(صفحتك رقمها حسب عدد عناصرها.)
+~~~` },
           ],
           desc: R`في Tailwind v4 الـ [[dark:]] افتراضيًا بيتبع نظام التشغيل. عشان تخليه بزرار، غيّر الـ variant يبقى على كلاس: [[@custom-variant dark (&:where(.dark, .dark *));]]، وبعدين [[<html class="dark">]] يقلب كل حاجة.
 
@@ -208,12 +511,261 @@ A tree hydrated but some attributes of the server rendered HTML didn't match the
           cmd: "logical properties",
           title: "مكون واحد يشتغل عربي وإنجليزي من غير rtl: في كل حتة",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في صفحة [[dir="rtl"]]: [[.a { margin-inline-start: 2rem }]] و [[.b { translate: 20px 0 }]] و [[.c { background: linear-gradient(to right, red, blue) }]] و [[.d { border-start-start-radius: 1rem }]]. كل واحدة هتأثر على أنهي ناحية؟ اكتب، وبعدين اتأكد من Computed في DevTools.`, done: R`[[.a]] يمين، و [[.b]] يمين برضه (translate مش logical)، و [[.c]] الأحمر لسه شمال (الـ gradient مش بيتقلب)، و [[.d]] الركن اللي فوق على اليمين: Computed بيقول [[border-top-right-radius: 16px]] و [[border-top-left-radius: 0px]].` },
-            { lvl: 'تطبيق', t: R`**refactor:** كارت تعليق مكتوب بـ [[padding-left]] و [[border-left]] و [[text-align: left]] و [[float: right]] لزرار الرد، و badge بـ [[position: absolute; right: 8px]]. حوّل كل خاصية لـ logical (أو Tailwind: [[ps-*]] و [[border-s]] و [[text-start]] و [[inset-e-*]]) واقلب [[dir]] على html.`, done: R`مفيش ولا [[left]] ولا [[right]] في الـ CSS، ولقطة الشاشة في RTL مراية للقطة LTR بالظبط (البادج في الركن التاني، والخط على الناحية التانية)، من غير ولا سطر [[[dir=rtl]]].` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** موقع فيه [[[dir=rtl] .space-x-4 > :not(:last-child) { margin-right: 0; margin-left: 1rem }]] و [[html[dir=rtl] .text-left { text-align: right !important }]] عشان يعكس Tailwind بإيده. امسح الـ overrides دي كلها واستخدم اللي بيتقلب لوحده.`, done: R`[[grep -c "dir=rtl"]] على ملف الـ CSS بيطلع صفر، وعدد [[!important]] نقص، و [[space-x-4]] بقت [[gap-4]] و [[text-left]] بقت [[text-start]]، والصفحة في اللغتين زي ما كانت.` },
-            { lvl: 'تطبيق', t: R`**مسألة:** في صفحة عربي اكتب الجملتين دول: «المستخدم Sara_99! كسب» و «كلمني على +20 100 000 0000». شوف الـ ! بتظهر فين والرقم بيتقري إزاي، وصلّحهم بـ [[<bdi>]] للاسم و [[dir="ltr"]] للرقم.`, done: R`قبل التصليح الـ ! ظهرت شمال الاسم «!Sara_99» والرقم اتلخبط («100» بقت شمال «+20»)، وبعده الاسم بقى «Sara_99!» والرقم بالترتيب. اتأكدنا بمكان كل حرف من [[Range.getBoundingClientRect()]] في Chrome 156: الـ ! كانت شمال الـ S وبقت يمين الـ 9.` },
-            { lvl: 'تحدي', t: R`**ابني:** drawer بيطلع من ناحية النهاية: [[inset-inline-end: 0]]، ومقفول بـ [[translate]] برا الشاشة. الـ translate مش logical، فاستخدم متغير [[--dir]] (‏1 في LTR و -1 في RTL بـ [[:dir(rtl)]]) و [[translate: calc(100% * var(--dir)) 0]].`, done: R`في الإنجليزي بيطلع من اليمين وفي العربي من الشمال، والصفحة وهو مقفول مفيهاش scroll أفقي ([[document.documentElement.scrollWidth === document.documentElement.clientWidth]] بيرجّع [[true]] في الاتجاهين)، و Escape بيقفله.` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** من MDN صفحة «CSS logical properties and values» هات الاسم الـ logical لـ [[width]] و [[height]] و [[border-top-left-radius]] و [[top]] و [[float: left]] و [[text-align: right]]، وشوف في وثائق Tailwind v4 فيه كلاس لكل واحد ولا لأ.`, done: R`جدول ٦ صفوف: [[inline-size]] و [[block-size]] و [[border-start-start-radius]] و [[inset-block-start]] و [[float: inline-start]] و [[text-align: end]]، وجنب كل واحد كلاس Tailwind أو «مفيش، استخدم arbitrary value».` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في صفحة [[dir="rtl"]]: [[.a { margin-inline-start: 2rem }]] و [[.b { translate: 20px 0 }]] و [[.c { background: linear-gradient(to right, red, blue) }]] و [[.d { border-start-start-radius: 1rem }]]. كل واحدة هتأثر على أنهي ناحية؟ اكتب، وبعدين اتأكد من Computed في DevTools.`, done: R`[[.a]] يمين، و [[.b]] يمين برضه (translate مش logical)، و [[.c]] الأحمر لسه شمال (الـ gradient مش بيتقلب)، و [[.d]] الركن اللي فوق على اليمين: Computed بيقول [[border-top-right-radius: 16px]] و [[border-top-left-radius: 0px]].`, sol: R`~~~html test.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>logical</title>
+<style>
+  body { margin: 0; width: 400px; }
+  .a { margin-inline-start: 2rem; }
+  .b { translate: 20px 0; }
+  .c { background: linear-gradient(to right, red, blue); height: 2rem; }
+  .d { border-start-start-radius: 1rem; }
+</style>
+</head>
+<body>
+<div class="a">a</div>
+<div class="b">b</div>
+<div class="c">c</div>
+<div class="d">d</div>
+</body>
+</html>
+~~~
+
+**القاعدة:** الـ logical بتتقلب مع [[dir]]، والفيزيائية لأ.
+
+- [[.a]]: [[margin-inline-start]] هو بداية السطر. في rtl البداية يمين.
+- [[.b]]: [[translate]] إحداثيات شاشة، فالموجب يمين في أي لغة. يعني في rtl مش بيتقلب.
+- [[.c]]: [[to right]] اتجاه فيزيائي، فالأحمر شمال في أي لغة.
+- [[.d]]: [[border-start-start-radius]] يعني بداية البلوك مع بداية السطر، وده الركن اللي فوق على اليمين في rtl.
+
+**الغلطة الشائعة:** تفتكر إن rtl بيقلب كل حاجة. هو بيقلب ترتيب المحتوى والخصائص الـ logical. الـ transform والـ gradient والأيقونات لأ.
+
+~~~text الناتج
+.a   margin-right: 32px ، margin-left: 0px
+.b   اتحرك يمين 20px (زي ltr بالظبط)
+.c   linear-gradient(to right, rgb(255, 0, 0), rgb(0, 0, 255))
+.d   border-top-right-radius: 16px ، border-top-left-radius: 0px
+~~~` },
+            { lvl: 'تطبيق', t: R`**refactor:** كارت تعليق مكتوب بـ [[padding-left]] و [[border-left]] و [[text-align: left]] و [[float: right]] لزرار الرد، و badge بـ [[position: absolute; right: 8px]]. حوّل كل خاصية لـ logical (أو Tailwind: [[ps-*]] و [[border-s]] و [[text-start]] و [[inset-e-*]]) واقلب [[dir]] على html.`, done: R`مفيش ولا [[left]] ولا [[right]] في الـ CSS، ولقطة الشاشة في RTL مراية للقطة LTR بالظبط (البادج في الركن التاني، والخط على الناحية التانية)، من غير ولا سطر [[[dir=rtl]]].`, sol: R`~~~html comment.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تعليق</title>
+<style>
+  body { margin: 0; padding: 1rem; font-family: system-ui, sans-serif; }
+  .comment { position: relative; max-width: 24rem; padding-inline-start: 1rem; border-inline-start: 4px solid #0f766e; text-align: start; }
+  .comment h2 { margin: 0; font-size: 1rem; }
+  .reply { float: inline-end; }
+  .badge { position: absolute; inset-block-start: 0; inset-inline-end: 8px; padding-inline: .5rem; background: #0f766e; color: #fff; border-radius: 1rem; font-size: .75rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>التعليقات</h1>
+  <article class="comment">
+    <span class="badge">جديد</span>
+    <h2>سارة</h2>
+    <p>الدرس ده حلو جدًا.</p>
+    <button class="reply" type="button">رد</button>
+  </article>
+</main>
+</body>
+</html>
+~~~
+
+| قبل | بعد |
+|---|---|
+| [[padding-left]] | [[padding-inline-start]] |
+| [[border-left]] | [[border-inline-start]] |
+| [[text-align: left]] | [[text-align: start]] |
+| [[float: right]] | [[float: inline-end]] |
+| [[right: 8px]] | [[inset-inline-end: 8px]] |
+| [[top: 0]] | [[inset-block-start: 0]] |
+
+وفي Tailwind: [[ps-4]] و [[border-s-4]] و [[text-start]] و [[float-end]] و [[inset-e-2]].
+
+**ليه:** كل خاصية بقت بتوصف علاقتها بالنص مش بالشاشة، فمفيش حاجة تتكتب مرتين.
+
+**الغلطة الشائعة:** تحوّل [[left]] لـ [[inset-inline-end]] بالغلط. [[left]] في ltr بداية، فبيبقى [[start]]. فكّر في الاتجاه الأصلي للكود.
+
+~~~text الناتج
+عدد كلمة left أو right في الصفحة: 0
+
+         الحد               البادج عن الكارت      زرار الرد
+rtl      يمين 4px           8px من الشمال         على الشمال
+ltr      شمال 4px           8px من اليمين         على اليمين
+
+المسافات متطابقة مراية: 280.95 و 8 ، و 300.98 و 0.
+axe صفر في الاتجاهين.
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** موقع فيه [[[dir=rtl] .space-x-4 > :not(:last-child) { margin-right: 0; margin-left: 1rem }]] و [[html[dir=rtl] .text-left { text-align: right !important }]] عشان يعكس Tailwind بإيده. امسح الـ overrides دي كلها واستخدم اللي بيتقلب لوحده.`, done: R`[[grep -c "dir=rtl"]] على ملف الـ CSS بيطلع صفر، وعدد [[!important]] نقص، و [[space-x-4]] بقت [[gap-4]] و [[text-left]] بقت [[text-start]]، والصفحة في اللغتين زي ما كانت.`, sol: R`امسح الـ overrides كلها، وخلي الـ CSS كده:
+
+~~~css style.css
+.row { display: flex; gap: 1rem; }
+.title { text-align: start; }
+~~~
+
+~~~html قبل وبعد
+<!-- قبل -->
+<div class="flex space-x-4">…</div>
+<h1 class="text-left">…</h1>
+
+<!-- بعد -->
+<div class="flex gap-4">…</div>
+<h1 class="text-start">…</h1>
+~~~
+
+~~~bash
+grep -c "dir=rtl" style.css
+grep -c "!important" style.css
+~~~
+
+**ليه:** [[gap]] مسافة بين العناصر، مش margin على ناحية، فملوش اتجاه أصلًا. و [[text-start]] بيتبع [[dir]].
+
+كل override من دول كان بيصلّح نتيجة، والـ logical بيشيل السبب. و [[!important]] كان لازم بس عشان يكسب الكلاس الأصلي.
+
+**الغلطة الشائعة:** تسيب [[space-x-4]] وتضيف [[rtl:space-x-reverse]]. دي كانت حلول قديمة، و [[gap]] أبسط في flex و grid.
+
+~~~text الناتج
+grep -c "dir=rtl" style.css     0
+grep -c "!important" style.css  0
+
+(CSS الملف ده سطرين، والشكل في اللغتين بيطلع نفس اللي اتقاس في التمرين اللي قبله.)
+~~~` },
+            { lvl: 'تطبيق', t: R`**مسألة:** في صفحة عربي اكتب الجملتين دول: «المستخدم Sara_99! كسب» و «كلمني على +20 100 000 0000». شوف الـ ! بتظهر فين والرقم بيتقري إزاي، وصلّحهم بـ [[<bdi>]] للاسم و [[dir="ltr"]] للرقم.`, done: R`قبل التصليح الـ ! ظهرت شمال الاسم «!Sara_99» والرقم اتلخبط («100» بقت شمال «+20»)، وبعده الاسم بقى «Sara_99!» والرقم بالترتيب. اتأكدنا بمكان كل حرف من [[Range.getBoundingClientRect()]] في Chrome 156: الـ ! كانت شمال الـ S وبقت يمين الـ 9.`, sol: R`~~~html bidi.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>اتجاه مختلط</title>
+<style>body { font: 1.25rem system-ui; }</style>
+</head>
+<body>
+<main>
+  <h1>اتجاه مختلط</h1>
+  <p id="a">المستخدم Sara_99! كسب</p>
+  <p id="b">المستخدم <bdi>Sara_99!</bdi> كسب</p>
+  <p id="c">كلمني على +20 100 000 0000</p>
+  <p id="d">كلمني على <span dir="ltr">+20 100 000 0000</span></p>
+</main>
+</body>
+</html>
+~~~
+
+**بيحصل إيه:** خوارزمية الـ bidi بتقسم السطر لحتت حسب اتجاه كل حرف. الحروف اللاتيني اتجاهها قوي (LTR)، والعربي قوي (RTL)، بس الـ [[!]] والمسافة والـ [[+]] محايدين، فبياخدوا اتجاه اللي حواليهم.
+
+- [[Sara_99!]]: الـ [[!]] جت بين لاتيني وعربي، فاتحسبت على العربي واتنقلت لشمال الاسم.
+- [[<bdi>]] بيعزل الاسم، فالـ [[!]] تفضل جزء منه. استخدمه مع أي كلام جاي من المستخدم، لأنك مش عارف لغته.
+- التليفون: الأرقام «ضعيفة»، والمسافات بينها محايدة، فالمجموعات اتعكس ترتيبها. [[dir="ltr"]] بيثبّت الاتجاه.
+
+**الغلطة الشائعة:** تصلّحها بـ [[text-align]]. ده بيحرّك السطر، مش ترتيب الحروف جواه.
+
+~~~text الناتج
+مكان الحروف (left بالـ px من Range.getBoundingClientRect):
+
+                  !          S          آخر 9
+قبل               1112.9     1118.6     1175.6    (الـ ! شمال الـ S)
+بعد bdi           1180.7     1112.9     1169.9    (الـ ! يمين الـ 9)
+
+                  +          أول 1      آخر 0
+قبل               1160.5     1101.1     1047      (+20 يمين و 100 شماله)
+بعد dir="ltr"     1014.7     1055.4     1163.4    (بالترتيب من الشمال)
+~~~` },
+            { lvl: 'تحدي', t: R`**ابني:** drawer بيطلع من ناحية النهاية: [[inset-inline-end: 0]]، ومقفول بـ [[translate]] برا الشاشة. الـ translate مش logical، فاستخدم متغير [[--dir]] (‏1 في LTR و -1 في RTL بـ [[:dir(rtl)]]) و [[translate: calc(100% * var(--dir)) 0]].`, done: R`في الإنجليزي بيطلع من اليمين وفي العربي من الشمال، والصفحة وهو مقفول مفيهاش scroll أفقي ([[document.documentElement.scrollWidth === document.documentElement.clientWidth]] بيرجّع [[true]] في الاتجاهين)، و Escape بيقفله.`, sol: R`~~~html drawer.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>درج</title>
+<style>
+  :root { --dir: 1; }
+  :root:dir(rtl) { --dir: -1; }
+  body { margin: 0; font-family: system-ui, sans-serif; }
+  .drawer { position: fixed; inset-block: 0; inset-inline-end: 0; inline-size: min(20rem, 85vw); padding: 1rem; box-sizing: border-box;
+            background: #fff; box-shadow: 0 0 1rem #0005; transition: translate .25s, visibility 0s .25s;
+            translate: calc(100% * var(--dir)) 0; visibility: hidden; }
+  .drawer.open { translate: 0 0; visibility: visible; transition: translate .25s, visibility 0s; }
+  @media (prefers-reduced-motion: reduce) { .drawer { transition: none; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>الرئيسية</h1>
+  <button id="open" type="button" aria-expanded="false" aria-controls="drawer">القايمة</button>
+</main>
+<aside id="drawer" class="drawer" aria-label="القايمة">
+  <button id="close" type="button">قفل</button>
+  <p><a href="#a">المنتجات</a></p>
+</aside>
+<script>
+  const drawer = document.getElementById("drawer");
+  const open = document.getElementById("open");
+  const close = document.getElementById("close");
+  function set(isOpen) {
+    drawer.classList.toggle("open", isOpen);
+    open.setAttribute("aria-expanded", String(isOpen));
+    (isOpen ? close : open).focus();
+  }
+  open.addEventListener("click", () => set(true));
+  close.addEventListener("click", () => set(false));
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && drawer.classList.contains("open")) set(false);
+  });
+$__lt/script>
+</body>
+</html>
+~~~
+
+**ليه [[--dir]]:** [[inset-inline-end]] بيحط الدرج صح في اللغتين، بس [[translate]] إحداثيات شاشة. فمحتاجين نضرب في إشارة: 1 في ltr، و -1 في rtl. [[:root:dir(rtl)]] بيقرا الاتجاه الفعلي، حتى لو اتغيّر بـ [[dir]] من JavaScript.
+
+**[[visibility: hidden]]:** مقفول بس لسه في الصفحة، فمن غيرها Tab هيدخل جواه. والـ transition بتاعها مختلف في الاتجاهين:
+
+- الفتح [[visibility 0s]]: يبان فورًا، عشان [[close.focus()]] يشتغل. أول تجربة كتبت [[visibility .25s]] في الاتجاهين، والـ focus مرحش للزرار.
+- القفل [[visibility 0s .25s]]: يستخبى بعد ما الحركة تخلص.
+
+**ليه مفيش scroll أفقي:** الدرج [[position: fixed]]، والعناصر الـ fixed برا الشاشة مبتزوّدش [[scrollWidth]] هنا.
+
+**الغلطة الشائعة:** تستخدم [[transform: translateX(100%)]] ثابتة، فالدرج في العربي يطلع يمين الشاشة فوق المحتوى.
+
+~~~text الناتج
+          مفتوح (left - right)   مقفول left     الـ focus مفتوح/مقفول
+rtl       0 - 306                -306           close / open
+ltr       54 - 360               360            close / open
+
+scrollWidth === clientWidth: true في الاتجاهين ، مفتوح ومقفول
+Escape بيقفل ، axe صفر
+~~~` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** من MDN صفحة «CSS logical properties and values» هات الاسم الـ logical لـ [[width]] و [[height]] و [[border-top-left-radius]] و [[top]] و [[float: left]] و [[text-align: right]]، وشوف في وثائق Tailwind v4 فيه كلاس لكل واحد ولا لأ.`, done: R`جدول ٦ صفوف: [[inline-size]] و [[block-size]] و [[border-start-start-radius]] و [[inset-block-start]] و [[float: inline-start]] و [[text-align: end]]، وجنب كل واحد كلاس Tailwind أو «مفيش، استخدم arbitrary value».`, sol: R`**الإجابة من MDN، والكلاسات اتبنت بـ Tailwind 4.3.4 واتأكدت من [[out.css]]:**
+
+| الفيزيائي | الـ logical | Tailwind |
+|---|---|---|
+| [[width]] | [[inline-size]] | [[inline-1]] |
+| [[height]] | [[block-size]] | [[block-1]] |
+| [[border-top-left-radius]] | [[border-start-start-radius]] | [[rounded-ss-lg]] |
+| [[top]] | [[inset-block-start]] | [[inset-bs-0]] |
+| [[float: left]] | [[float: inline-start]] | [[float-start]] |
+| [[text-align: right]] | [[text-align: end]] | [[text-end]] |
+
+الأتنين الأخيرين بنفترض صفحة ltr: [[left]] بداية و [[right]] نهاية.
+
+**ليه ده مهم مش بس للعربي:** [[inline-size]] هو «عرض» في الكتابة الأفقية، و«ارتفاع» في الكتابة الرأسية. الاسم بيوصف اتجاه النص.
+
+**الغلطة الشائعة:** تفتكر إن [[start-0]] و [[inset-s-0]] واحد في كل حاجة. الاتنين [[inset-inline-start]]، بس القيمة الأولى من [[--spacing]] والتانية [[0px]] مباشرة. والشكل واحد لما تبقى صفر.
+
+~~~text الناتج
+.inline-1      inline-size: var(--spacing)
+.block-1       block-size: var(--spacing)
+.rounded-ss-lg border-start-start-radius: var(--radius-lg)
+.inset-bs-0    inset-block-start: 0px
+.float-start   float: inline-start
+.text-end      text-align: end
+~~~` },
           ],
           desc: R`بدل [[left]] و [[right]] استخدم start و end: [[ms-4]] (margin-inline-start) بدل [[ml-4]]، و [[pe-2]] بدل [[pr-2]]، و [[text-start]] بدل [[text-left]]، و [[inset-s-0]] بدل [[left-0]]، و [[rounded-s-lg]] و [[border-e]]. دول بيتقلبوا لوحدهم مع [[dir]].
 
@@ -386,11 +938,193 @@ dir="ltr":     +20 100 000 0000
           cmd: "next/font",
           title: "خط عربي بيتحمّل بسرعة ومن غير ما الصفحة تتنط",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** خط بيوصل بعد ٤ ثواني على نت بطيء. المستخدم هيشوف إيه في أول ٣ ثواني مع كل قيمة من [[font-display]]: [[block]] و [[swap]] و [[fallback]] و [[optional]]؟ وأنهي واحدة الخط ممكن ميظهرش خالص في أول زيارة؟ اكتب جدول، وبعدين جرّب بـ DevTools › Network › Slow 3G و Disable cache.`, done: R`الجدول: [[block]] كلام مخفي لحد ٣ ثواني تقريبًا وبعدين الاحتياطي، و [[swap]] الاحتياطي على طول، و [[fallback]] لحظة صغيرة مخفي وبعدين الاحتياطي ومبيبدّلش لو الخط اتأخر كتير، و [[optional]] الاحتياطي وغالبًا مبيبدّلش في أول زيارة. وفي التجربة شفت [[optional]] بيظهر الخط بس بعد refresh (من الـ cache).` },
-            { lvl: 'تطبيق', t: R`**قارن وقيس:** نفس صفحة مقال عربي ٣ مرات: (أ) [[@import url(...)]] لخط من Google جوه ملف الـ CSS، و (ب) [[<link>]] في الـ head ومعاه [[preconnect]]، و (ج) ملف woff2 من موقعك و [[<link rel="preload" as="font" type="font/woff2" crossorigin>]] و [[font-display: swap]]. قيس بـ Lighthouse (Mobile) و Network.`, done: R`جدول ٣ صفوف فيه FCP و LCP وعدد الطلبات لدومين تاني. في (أ) الـ waterfall فيه سلسلة ٣ خطوات (CSS بتاعك ← CSS جوجل ← الخط)، وفي (ج) صفر طلبات برا الموقع والخط بيبدأ يتحمّل مع الـ HTML.` },
-            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** عرّفنا خطين بنفس الاسم: ملف عربي بـ [[unicode-range: U+0600-06FF]] وملف لاتيني بـ [[unicode-range: U+0000-00FF]]. صفحة فيها كلام عربي بس: المتصفح هينزّل كام ملف؟ اكتب، وبعدين افتح Network › Font.`, done: R`نزّل الاتنين، مش العربي بس! السبب المسافة: [[U+0020]] جوه الـ range اللاتيني، وأي صفحة فيها مسافة. ولما غيّرنا اللاتيني لـ [[U+0041-005A, U+0061-007A]] (حروف بس) نزل العربي لوحده. اتقاس في Chrome 156 بعدّ طلبات الخطوط.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الموقع فيه [[html[dir=rtl] * { font-family: "Cairo" !important }]]، فبلوكات الكود في صفحة الشرح طلعت بخط Cairo مش mono. وفيه label بـ [[text-transform: uppercase; letter-spacing: .18em]] متطبّق على العربي والإنجليزي. صلّح الاتنين: الخط متغير على [[body]] بيتورّث، والـ label بقاعدة [[:lang(ar)]] بتصفّر الـ letter-spacing.`, done: R`Computed font-family بتاع [[<code>]] بيبدأ بخط mono، و [[!important]] اتمسحت، والـ label العربي letter-spacing بتاعه [[normal]]. ملاحظة اتقاست: Chrome 156 أصلًا مش بيطبّق letter-spacing على العربي (عرض «مبرمجين» فضل 114.3px بيه ومن غيره، و «Coders» زاد من 96.9 لـ 135.3)، بس متصفحات تانية أو نسخ قديمة ممكن تقطّع الحروف، فالتصفير لسه صح.` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** من غير Next، اعمل خط احتياطي مظبوط بإيدك: [[@font-face { font-family: "Cairo Fallback"; src: local("Arial"); size-adjust: ...; ascent-override: ... }]] وحطه تاني واحد في الـ stack. جرّب قيم لحد ما الفقرة بالخطين ليها نفس الارتفاع تقريبًا.`, done: R`ارتفاع الفقرة بالاحتياطي وبالخط الحقيقي ([[offsetHeight]]) الفرق بينهم أقل من 2%، وفي Performance › Layout Shifts مفيش shift وقت ما الخط يوصل، ومن غير الاحتياطي المظبوط فيه shift. وعرفت إن ده بالظبط اللي next/font بيعمله لوحده.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** خط بيوصل بعد ٤ ثواني على نت بطيء. المستخدم هيشوف إيه في أول ٣ ثواني مع كل قيمة من [[font-display]]: [[block]] و [[swap]] و [[fallback]] و [[optional]]؟ وأنهي واحدة الخط ممكن ميظهرش خالص في أول زيارة؟ اكتب جدول، وبعدين جرّب بـ DevTools › Network › Slow 3G و Disable cache.`, done: R`الجدول: [[block]] كلام مخفي لحد ٣ ثواني تقريبًا وبعدين الاحتياطي، و [[swap]] الاحتياطي على طول، و [[fallback]] لحظة صغيرة مخفي وبعدين الاحتياطي ومبيبدّلش لو الخط اتأخر كتير، و [[optional]] الاحتياطي وغالبًا مبيبدّلش في أول زيارة. وفي التجربة شفت [[optional]] بيظهر الخط بس بعد refresh (من الـ cache).`, sol: R`~~~css fonts.css
+/* غيّر font-display بين block و swap و fallback و optional */
+@font-face {
+  font-family: Cairo;
+  src: url(/cairo-ar.woff2) format("woff2");
+  font-display: swap;
+}
+body { font-family: Cairo, Arial, sans-serif; }
+~~~
+
+**الجدول:**
+
+| القيمة | أول ٣ ثواني | لو الخط جه بعد ٤ ثواني |
+|---|---|---|
+| [[block]] | كلام مخفي | بيبدّل للخط |
+| [[swap]] | الاحتياطي على طول | بيبدّل للخط |
+| [[fallback]] | لحظة صغيرة مخفي، وبعدين الاحتياطي | مبيبدّلش |
+| [[optional]] | لحظة صغيرة مخفي، وبعدين الاحتياطي | مبيبدّلش، والخط بيتخزن للزيارة الجاية |
+
+**الفكرة:** كل قيمة عبارة عن فترتين: فترة block (مخفي)، وفترة swap (مسموح يبدّل). [[optional]] مفيهاش swap تقريبًا، فلو الخط مجاش في أول لحظة خلاص. الخط الأساسي في موقع عربي بياخد [[swap]]، و [[optional]] لو الثبات أهم من شكل الخط.
+
+**الغلطة الشائعة:** تستخدم [[block]] لخط النص، فالموبايل البطيء يشوف صفحة فاضية ٣ ثواني. وفي تجربة [[optional]] لازم تعمل reload من غير ما تقفل الكاش.
+
+~~~text الناتج
+الخط اتأخر 4 ثواني (Chrome 156). نص = عدد بكسلات غامقة في اللقطة:
+
+           500ms     2000ms    3700ms     5500ms     7500ms
+block      مخفي      مخفي      692        1041       1041
+swap       692       692       692        1041       1041
+fallback   692       692       692        692        692
+optional   692       692       692        692        692
+
+692 = الاحتياطي ، 1041 = الخط الحقيقي.
+في الزيارة التانية بكاش مع optional: عرض الجملة 201.2 ← 241.8 (الخط ظهر)
+~~~` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** نفس صفحة مقال عربي ٣ مرات: (أ) [[@import url(...)]] لخط من Google جوه ملف الـ CSS، و (ب) [[<link>]] في الـ head ومعاه [[preconnect]]، و (ج) ملف woff2 من موقعك و [[<link rel="preload" as="font" type="font/woff2" crossorigin>]] و [[font-display: swap]]. قيس بـ Lighthouse (Mobile) و Network.`, done: R`جدول ٣ صفوف فيه FCP و LCP وعدد الطلبات لدومين تاني. في (أ) الـ waterfall فيه سلسلة ٣ خطوات (CSS بتاعك ← CSS جوجل ← الخط)، وفي (ج) صفر طلبات برا الموقع والخط بيبدأ يتحمّل مع الـ HTML.`, sol: R`~~~css a.css
+@import url("https://fonts.googleapis.com/css2?family=Cairo&display=swap");
+body { font-family: Cairo, sans-serif; }
+~~~
+
+~~~html (ب) في الـ head
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo&display=swap">
+~~~
+
+~~~html (ج) في الـ head
+<link rel="preload" href="/cairo-ar.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+  @font-face {
+    font-family: Cairo;
+    src: url(/cairo-ar.woff2) format("woff2");
+    font-display: swap;
+    unicode-range: U+0600-06FF;
+  }
+  body { font-family: Cairo, sans-serif; }
+</style>
+~~~
+
+~~~bash
+npx lighthouse http://localhost:4000/c --quiet --only-categories=performance --throttling-method=devtools --output=json --output-path=c.json
+~~~
+
+**ليه (ج) الأسرع:**
+
+- (أ): المتصفح لازم يحمّل [[a.css]]، يلاقي [[@import]]، يطلب CSS جوجل، يلاقي الخط، يطلبه. ٣ خطوات متسلسلة ودومينين جداد.
+- (ب): بنشيل خطوة، و [[preconnect]] بيفتح الاتصال بدري، بس لسه فيه دومينين.
+- (ج): كله من نفس الدومين والاتصال مفتوح، و [[preload]] بيبدأ الخط مع الـ HTML.
+
+و [[crossorigin]] لازم على preload الخط حتى لو من نفس الموقع: الخطوط بتتطلب بوضع CORS، ومن غيره المتصفح بيحمّله مرتين.
+
+**الغلطة الشائعة:** تحط [[@import]] في أول CSS عشان أسهل. وده اللي next/font بيحله: بيحمّل الخط وقت الـ build ويقدّمه من موقعك.
+
+~~~text الناتج
+Lighthouse 13.6 ، مرتين لكل طريقة:
+
+                    FCP و LCP          طلبات برا الموقع
+(أ) @import         2.2 s ، 3.1 s      3 (googleapis و gstatic)
+(ب) link            2.5 s ، 2.3 s      3 (googleapis و gstatic)
+(ج) من موقعك        1.2 s ، 1.0 s      0
+
+الصفحة خفيفة، فالـ LCP = الـ FCP في كل تشغيلة. والفرق بين (أ) و (ب) هنا
+جوه تذبذب الشبكة، أما (ج) فأسرع بوضوح.
+~~~` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** عرّفنا خطين بنفس الاسم: ملف عربي بـ [[unicode-range: U+0600-06FF]] وملف لاتيني بـ [[unicode-range: U+0000-00FF]]. صفحة فيها كلام عربي بس: المتصفح هينزّل كام ملف؟ اكتب، وبعدين افتح Network › Font.`, done: R`نزّل الاتنين، مش العربي بس! السبب المسافة: [[U+0020]] جوه الـ range اللاتيني، وأي صفحة فيها مسافة. ولما غيّرنا اللاتيني لـ [[U+0041-005A, U+0061-007A]] (حروف بس) نزل العربي لوحده. اتقاس في Chrome 156 بعدّ طلبات الخطوط.`, sol: R`~~~html test.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>unicode-range</title>
+<style>
+  @font-face { font-family: C; src: url(/ar.woff2) format("woff2"); unicode-range: U+0600-06FF; }
+  @font-face { font-family: C; src: url(/lat.woff2) format("woff2"); unicode-range: U+0000-00FF; }
+  body { font-family: C, sans-serif; }
+</style>
+</head>
+<body><p>كلام عربي بس</p></body>
+</html>
+~~~
+
+**الإجابة:** ملفين، مش واحد.
+
+**ليه:** المتصفح بينزّل الملف لو الصفحة فيها حرف جوه الـ range بتاعه. [[U+0000-00FF]] فيها [[U+0020]]، وده المسافة. وأي صفحة عربي فيها مسافات.
+
+**التصليح:** ضيّق الـ range للحروف بس: [[U+0041-005A, U+0061-007A]]. وهتحتاج تفكر في الأرقام و [[@]] لو عايزهم من الخط اللاتيني.
+
+**الغلطة الشائعة:** تفتكر إن [[unicode-range]] زي [[lang]]، فالصفحة العربي تجيب العربي. هو بيقارن بالحروف الموجودة فعليًا.
+
+~~~text الناتج
+U+0000-00FF:                 /ar.woff2 و /lat.woff2
+U+0041-005A, U+0061-007A:    /ar.woff2 بس
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الموقع فيه [[html[dir=rtl] * { font-family: "Cairo" !important }]]، فبلوكات الكود في صفحة الشرح طلعت بخط Cairo مش mono. وفيه label بـ [[text-transform: uppercase; letter-spacing: .18em]] متطبّق على العربي والإنجليزي. صلّح الاتنين: الخط متغير على [[body]] بيتورّث، والـ label بقاعدة [[:lang(ar)]] بتصفّر الـ letter-spacing.`, done: R`Computed font-family بتاع [[<code>]] بيبدأ بخط mono، و [[!important]] اتمسحت، والـ label العربي letter-spacing بتاعه [[normal]]. ملاحظة اتقاست: Chrome 156 أصلًا مش بيطبّق letter-spacing على العربي (عرض «مبرمجين» فضل 114.3px بيه ومن غيره، و «Coders» زاد من 96.9 لـ 135.3)، بس متصفحات تانية أو نسخ قديمة ممكن تقطّع الحروف، فالتصفير لسه صح.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>خطوط</title>
+<style>
+  :root { --font-sans: "Cairo", system-ui, sans-serif; --font-mono: ui-monospace, Consolas, monospace; }
+  body { font-family: var(--font-sans); }
+  code, pre { font-family: var(--font-mono); }
+  .label { text-transform: uppercase; letter-spacing: .18em; }
+  .label:lang(ar) { letter-spacing: normal; }
+</style>
+</head>
+<body>
+<main>
+  <h1>الشرح</h1>
+  <p>استخدم <code>npm install</code> وبعدين شغّل.</p>
+  <span id="ar" class="label">مبرمجين</span>
+  <span id="en" class="label" lang="en">Coders</span>
+</main>
+</body>
+</html>
+~~~
+
+**التصليح الأول:** [[html[dir=rtl] * { font-family: "Cairo" !important }]] بيضرب كل عنصر مباشرة، فبيغلب الوراثة وأي قاعدة تانية. لما المتغير يتحط على [[body]]، العناصر بتورثه، و [[code]] يقدر يكتب خطه عادي.
+
+**التصليح التاني:** [[.label:lang(ar)]] بيطابق أي عنصر لغته عربي، حتى لو اللغة جاية من [[<html lang="ar">]]. و [[lang="en"]] على الـ span بيخرجه منها. فالإنجليزي بياخد 0.18em، والعربي [[normal]].
+
+**ليه:** الحروف العربي موصولة، والمسافات بينها بتقطّع الوصلة في المتصفحات اللي بتطبّقها. وزي ما اتقاس في Chrome 156 المتصفح نفسه بيتجاهلها، بس مش كل المتصفحات كده.
+
+**الغلطة الشائعة:** تكتب [[:lang(ar) .label]]. ده معناه «label جوه أي عنصر عربي»، و [[<html>]] عربي، فالإنجليزي كمان يتصفّر. جرّبتها في الأول وطلعت كده: [[letter-spacing]] بتاع الإنجليزي بقى [[normal]].
+
+~~~text الناتج
+font-family بتاع code: ui-monospace, Consolas, monospace
+letter-spacing للعربي: normal
+letter-spacing للإنجليزي: 2.88px (0.18em من 16px)
+axe صفر
+~~~` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** من غير Next، اعمل خط احتياطي مظبوط بإيدك: [[@font-face { font-family: "Cairo Fallback"; src: local("Arial"); size-adjust: ...; ascent-override: ... }]] وحطه تاني واحد في الـ stack. جرّب قيم لحد ما الفقرة بالخطين ليها نفس الارتفاع تقريبًا.`, done: R`ارتفاع الفقرة بالاحتياطي وبالخط الحقيقي ([[offsetHeight]]) الفرق بينهم أقل من 2%، وفي Performance › Layout Shifts مفيش shift وقت ما الخط يوصل، ومن غير الاحتياطي المظبوط فيه shift. وعرفت إن ده بالظبط اللي next/font بيعمله لوحده.`, sol: R`~~~css fallback.css
+@font-face {
+  font-family: Cairo;
+  src: url(/cairo-ar.woff2) format("woff2");
+  font-display: swap;
+}
+@font-face {
+  font-family: "Cairo Fallback";
+  src: local("Arial");
+  size-adjust: 118%;
+  ascent-override: 110.4%;
+  descent-override: 48.4%;
+  line-gap-override: 0%;
+}
+body { font-family: Cairo, "Cairo Fallback", sans-serif; }
+~~~
+
+**الحساب:** ارتفاع سطر Cairo كبير: ascent 1.303 و descent 0.571 من حجم الخط. Arial أقل بكتير، فالفقرة بتطول لما الخط يوصل.
+
+1. [[ascent-override]] و [[descent-override]] بيدّوا Arial نفس ارتفاع السطر.
+2. [[size-adjust]] بيغيّر عرض الحروف، فالسطر يتكسر في نفس المكان تقريبًا. وبما إنه بيضرب كل المقاييس، قسمنا: 130.3 ÷ 1.18 = 110.4.
+3. جرّبت من 84٪ لـ 136٪. من 112 لـ 124 عدد السطور مطابق، فاخترت النص.
+
+**الغلطة الشائعة:** تظبط على فقرة واحدة وعرض واحد وتفتكر إنها متطابقة دايمًا. عدد السطور بيتغيّر مع النص والعرض، بس الفرق بيبقى صغير. وده بالظبط اللي next/font بيحسبه لوحده.
+
+~~~text الناتج
+ارتفاع الفقرة (عرض 600 ، خط 18px):
+Cairo                297
+Arial عادي           168
+Cairo Fallback       297    الفرق 0٪
+
+الخط اتأخر 800ms:
+                  الارتفاع قبل ← بعد     CLS
+Arial عادي        168 ← 297              0.0739
+Cairo Fallback    297 ← 297              0
+~~~` },
           ],
           desc: R`[[next/font/google]] بينزّل الخط وقت الـ build ويخدمه من موقعك (مفيش request لجوجل)، وبيعمل خط احتياطي مقاساته مظبوطة فالكلام ميتنطش لما الخط الحقيقي يوصل. و [[variable]] بيطلّعه كمتغير CSS تربطه بـ Tailwind.
 
@@ -885,10 +1619,181 @@ import { BrandIcon } from "./BrandIcon";
 
 ولو الصفحة بقت 500 بعد ترقية lucide واللوج فيه [[Export Github doesn't exist in target module]]: v1 شال أيقونات البراندات. [[grep lucide package.json]] هتلاقي [[^1.x]]. ارجع بـ [[npm i --save-exact lucide-react@0.577.0]]، أو خليك على 1.x وحط الشعار من [[simple-icons]] بـ [[fill="currentColor"]].`,
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[package.json]] فيه [[lucide-react: "^0.577.0"]] و [[react: "^19.2.0"]]. لو آخر نسخ متاحة 0.577.3 و 1.67.0 لـ lucide، و 19.3.1 و 20.0.0 لـ react، [[npm update]] هيسطّب إيه لكل واحدة؟ اكتب، وبعدين اعرف من [[npm outdated]] على مشروع حقيقي إن عمود [[Wanted]] بيقول نفس الكلام.`, done: R`كتبت 0.577.3 لـ lucide (الـ caret على 0.x بيقفل الرقم التاني) و 19.3.1 لـ react (مش 20)، وتقدر تشاور على عمود [[Wanted]] في [[npm outdated]] وتشرحه.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صلّح المكوّن البايظ ده بعد الترقية لـ lucide 1.x من غير ما ترجع النسخة: [[import { Github, Linkedin, Mail } from "lucide-react"]]. استخدم [[simple-icons]] للبراندين و [[BrandIcon]] زي الدرس، وأثبت بـ [[npx tsc --noEmit]] و [[curl -w "%{http_code}"]].`, done: R`[[tsc]] خرج 0، والصفحة [[200]]، و [[curl | grep -c "<svg"]] بيعدّ ٣ أيقونات، واللينكات عليها [[aria-label]].` },
-            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** من غير ما تسطّب، بـ [[npm pack]] و [[tar]] طلّع [[dist/lucide-react.d.ts]] من 0.577.0 ومن آخر نسخة، وطلّع قايمة الأسامي اللي في القديمة ومش في الجديدة ([[comm -23]] على لستتين مترتبين، أو سكربت Node).`, done: R`عندك لستة فيها [[Github]] و [[Facebook]] و [[Youtube]] على الأقل، وعارف تشرح [[npm pack]] بيعمل إيه في سطر.` },
-            { lvl: 'تحدي', t: R`**ابني:** اكتب [[majors.mjs]]: بيقرا [[package.json]] وملف JSON فيه آخر نسخة لكل باكدج (اعمله بإيدك أو من [[npm view <pkg> version]])، ويطبع كل باكدج الـ range بتاعه مش هيوصل لآخر نسخة لأن الفرق major، ويخرج بـ 1 لو فيه. (شكل فحص الـ ci في الدرس.)`, done: R`على [[{"lucide-react":"^0.577.0","react":"^19.2.0"}]] وآخر نسخ [[1.67.0]] و [[19.3.1]] بيطبع [[lucide-react: ^0.577.0 -> 1.67.0 (major)]] بس ويخرج 1.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[package.json]] فيه [[lucide-react: "^0.577.0"]] و [[react: "^19.2.0"]]. لو آخر نسخ متاحة 0.577.3 و 1.67.0 لـ lucide، و 19.3.1 و 20.0.0 لـ react، [[npm update]] هيسطّب إيه لكل واحدة؟ اكتب، وبعدين اعرف من [[npm outdated]] على مشروع حقيقي إن عمود [[Wanted]] بيقول نفس الكلام.`, done: R`كتبت 0.577.3 لـ lucide (الـ caret على 0.x بيقفل الرقم التاني) و 19.3.1 لـ react (مش 20)، وتقدر تشاور على عمود [[Wanted]] في [[npm outdated]] وتشرحه.`, sol: R`~~~bash
+npx semver -r "^0.577.0" 0.577.0 0.577.3 1.67.0
+npx semver -r "^19.2.0" 19.2.0 19.3.1 20.0.0
+npm outdated
+~~~
+
+**الإجابة:** lucide هتبقى 0.577.3، و react هتبقى 19.3.1.
+
+**ليه:** الـ caret [[^]] بيسمح بأي تحديث مش كاسر، والتعريف معتمد على أول رقم مش صفر:
+
+- [[^19.2.0]]: أول رقم مش صفر هو 19، فبيسمح بأي 19.x.x، ومش 20.
+- [[^0.577.0]]: الرقم الأول صفر، فأول رقم مش صفر هو 577، فبيسمح بـ 0.577.x بس.
+
+و semver بتعتبر كل [[0.x]] غير ثابتة، فأي زيادة في الرقم التاني ممكن تكسر. عشان كده 1.67.0 مش هتوصل.
+
+في [[npm outdated]]: [[Wanted]] أعلى نسخة بتطابق الـ range، و [[Latest]] أحدث نسخة منشورة. لو الاتنين مختلفين، [[npm update]] مش هيوصلك لـ Latest.
+
+**الغلطة الشائعة:** تفتكر إن [[npm update]] بيجيب آخر نسخة. لازم [[npm install pkg@latest]].
+
+~~~text الناتج
+^0.577.0 بيطابق: 0.577.0 ، 0.577.3
+^19.2.0 بيطابق: 19.2.0 ، 19.3.1
+
+npm outdated (lab بنسخة 0.577.0 ، و latest وقت التجربة 1.68.0):
+Package       Current  Wanted   Latest
+lucide-react  0.577.0  0.577.0  1.68.0
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صلّح المكوّن البايظ ده بعد الترقية لـ lucide 1.x من غير ما ترجع النسخة: [[import { Github, Youtube, Mail } from "lucide-react"]]. استخدم [[simple-icons]] للبراندين و [[BrandIcon]] زي الدرس، وأثبت بـ [[npx tsc --noEmit]] و [[curl -w "%{http_code}"]].`, done: R`[[tsc]] خرج 0، والصفحة [[200]]، و [[curl | grep -o "<svg" | wc -l]] بيعدّ ٣ أيقونات، واللينكات عليها [[aria-label]].`, sol: R`~~~tsx BrandIcon.tsx
+import type { SimpleIcon } from "simple-icons";
+
+export function BrandIcon({ icon, className }: { icon: SimpleIcon; className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
+      <path d={icon.path} />
+    </svg>
+  );
+}
+~~~
+
+~~~tsx Footer.tsx
+import { Mail } from "lucide-react";
+import { siGithub, siYoutube } from "simple-icons";
+import { BrandIcon } from "./BrandIcon";
+
+export function Footer() {
+  return (
+    <footer className="flex gap-4 p-4">
+      <a href="https://github.com/acme" aria-label="GitHub"><BrandIcon icon={siGithub} className="size-5" /></a>
+      <a href="https://www.youtube.com/@acme" aria-label="YouTube"><BrandIcon icon={siYoutube} className="size-5" /></a>
+      <a href="mailto:hello@example.com" aria-label="الإيميل"><Mail className="size-5" aria-hidden="true" /></a>
+    </footer>
+  );
+}
+~~~
+
+~~~bash
+npx tsc --noEmit
+curl -s -o /dev/null -w "%{http_code}\n" http://localhost:3000/
+curl -s http://localhost:3000/ | grep -o "<svg" | wc -l
+~~~
+
+**ليه:** lucide 1.x شالت أيقونات البراندات، و [[Mail]] لسه موجودة لأنها أيقونة عامة. فبنسيب [[Mail]] من lucide، ونجيب البراند من [[simple-icons]].
+
+[[BrandIcon]] بيرسم [[icon.path]] بـ [[fill="currentColor"]]، فاللون جاي من اللينك. و simple-icons أشكال ملية، عكس lucide اللي خطوط. عشان كده [[fill]] مش [[stroke]].
+
+و [[aria-label]] على اللينك هو الاسم، والأيقونة [[aria-hidden]].
+
+**انتبه لحاجتين:** [[siLinkedin]] مش موجودة في simple-icons 16.36.0 ([[tsc]] بيقول [[has no exported member]])، فـ LinkedIn محتاج SVG من ملفات الشركة الرسمية. و [[grep -c]] بيعدّ سطور مش تطابقات، و React بيطلّع الصفحة في سطر واحد، فلازم [[grep -o]] مع [[wc -l]].
+
+**الغلطة الشائعة:** ترجّع lucide لـ 0.x عشان ترتاح. كده انت قفلت على نسخة قديمة.
+
+~~~text الناتج
+npx tsc --noEmit        exit 0
+curl                    200
+grep -o "<svg" | wc -l  3
+aria-label:             GitHub ، YouTube ، الإيميل
+
+(اتقاس بـ renderToString من React 19.3.1 وسيرفر Node صغير.)
+~~~` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** من غير ما تسطّب، بـ [[npm pack]] و [[tar]] طلّع [[dist/lucide-react.d.ts]] من 0.577.0 ومن آخر نسخة، وطلّع قايمة الأسامي اللي في القديمة ومش في الجديدة ([[comm -23]] على لستتين مترتبين، أو سكربت Node).`, done: R`عندك لستة فيها [[Github]] و [[Facebook]] و [[Youtube]] على الأقل، وعارف تشرح [[npm pack]] بيعمل إيه في سطر.`, sol: R`~~~bash
+npm pack lucide-react@0.577.0 --silent
+npm pack lucide-react@latest --silent
+mkdir old new
+tar -xzf lucide-react-0.577.0.tgz -C old package/dist/lucide-react.d.ts
+tar -xzf lucide-react-1.68.0.tgz -C new package/dist/lucide-react.d.ts
+node gone.mjs old/package/dist/lucide-react.d.ts new/package/dist/lucide-react.d.ts
+~~~
+
+~~~js gone.mjs
+import { readFileSync } from "node:fs";
+
+function exportsOf(file) {
+  const text = readFileSync(file, "utf8");
+  const start = text.lastIndexOf("export {");
+  const body = text.slice(start + "export {".length, text.indexOf("}", start));
+  return new Set(body.split(",").map((s) => s.trim().split(" as ").pop()).filter(Boolean));
+}
+
+const [oldFile, newFile] = process.argv.slice(2);
+const before = exportsOf(oldFile);
+const after = exportsOf(newFile);
+const gone = [...before].filter((name) => !after.has(name)).sort();
+console.log(before.size, after.size, gone.length);
+console.log(gone.join(" "));
+~~~
+
+**[[npm pack]] بيعمل إيه:** بينزّل الملف المضغوط اللي npm هيسطّبه، ويحطه في الفولدر، من غير ما يلمس [[node_modules]] أو [[package.json]].
+
+**ليه السكربت بيقرا [[export { ... }]]:** شكل الملف اتغيّر بين النسختين: القديمة [[declare const Github: react.Forward…]]، والجديدة [[declare const Mail: LucideIcon]]. وأول محاولة بـ [[comm -23]] على أسماء [[declare]] طلّعت 61 اسم، منهم أسماء لسه موجودة زي [[Trash2]] كـ alias. سطر [[export]] هو الحقيقة، لأنه اللي بتعمل منه import.
+
+**الغلطة الشائعة:** تعمل [[comm]] من غير [[sort]] بنفس الـ locale. [[comm]] لازم ملفين مترتبين، فاكتب [[LC_ALL=C]] قبل الاتنين.
+
+~~~text الناتج
+5844 6932 57
+
+(5844 اسم قديم ، 6932 جديد ، 57 راحوا: كل أيقونة باسم و Icon و Lucide)
+
+الأيقونات الـ 19:
+Chrome Chromium Codepen Codesandbox Dribbble Facebook Figma Framer Github
+Gitlab Instagram Linkedin Pocket RailSymbol Slack Trello Twitch Twitter Youtube
+~~~` },
+            { lvl: 'تحدي', t: R`**ابني:** اكتب [[majors.mjs]]: بيقرا [[package.json]] وملف JSON فيه آخر نسخة لكل باكدج (اعمله بإيدك أو من [[npm view <pkg> version]])، ويطبع كل باكدج الـ range بتاعه مش هيوصل لآخر نسخة لأن الفرق major، ويخرج بـ 1 لو فيه. (شكل فحص الـ ci في الدرس.)`, done: R`على [[{"lucide-react":"^0.577.0","react":"^19.2.0"}]] وآخر نسخ [[1.67.0]] و [[19.3.1]] بيطبع [[lucide-react: ^0.577.0 -> 1.67.0 (major)]] بس ويخرج 1.`, sol: R`~~~js majors.mjs
+import { readFileSync } from "node:fs";
+
+const [pkgFile = "package.json", latestFile = "latest.json"] = process.argv.slice(2);
+const { dependencies = {}, devDependencies = {} } = JSON.parse(readFileSync(pkgFile, "utf8"));
+const latest = JSON.parse(readFileSync(latestFile, "utf8"));
+const all = { ...dependencies, ...devDependencies };
+
+// نفس منطق الـ caret: أول رقم مش صفر هو الـ major الفعلي
+function lockedPart(version) {
+  const [major, minor, patch] = version.replace(/^[\^~]/, "").split(".").map(Number);
+  if (major > 0) return $__bt$__{major}$__bt;
+  if (minor > 0) return $__bt0.$__{minor}$__bt;
+  return $__bt0.0.$__{patch}$__bt;
+}
+
+let found = 0;
+for (const [name, range] of Object.entries(all)) {
+  const newest = latest[name];
+  if (!newest) continue;
+  if (!range.startsWith("^")) continue;
+  if (lockedPart(range) !== lockedPart(newest)) {
+    console.log($__bt$__{name}: $__{range} -> $__{newest} (major)$__bt);
+    found++;
+  }
+}
+process.exit(found ? 1 : 0);
+~~~
+
+~~~json package.json
+{"dependencies":{"lucide-react":"^0.577.0","react":"^19.2.0"}}
+~~~
+
+~~~json latest.json
+{"lucide-react":"1.67.0","react":"19.3.1"}
+~~~
+
+~~~bash
+node majors.mjs package.json latest.json
+echo "exit: $?"
+~~~
+
+**ليه [[lockedPart]]:** مقارنة الرقم الأول لوحدها غلط مع [[0.x]]. الدالة بترجع الجزء اللي الـ caret قافل عليه: [[19]] لـ [[^19.2.0]]، و [[0.577]] لـ [[^0.577.0]]. لو الجزء ده اختلف عن آخر نسخة، الـ range مش هيوصلها.
+
+وآخر نسخة فيها [[lockedPart]] بتتحسب بنفس الطريقة: [[1.67.0]] بتدّي [[1]]، و [[19.3.1]] بتدّي [[19]].
+
+**السكربت بيتجاهل** أي range مش بيبدأ بـ [[^]]، و [[process.exit(found ? 1 : 0)]] بيخليه يشتغل في CI.
+
+**الغلطة الشائعة:** تعمل [[parseInt]] على الـ range بالكامل. أو تعتبر 0.577 و 0.578 نفس الـ major.
+
+~~~text الناتج
+lucide-react: ^0.577.0 -> 1.67.0 (major)
+exit: 1
+~~~` },
           ],
           ci: [
             { os: [R`ubuntu`, R`macos`, R`windows`], sh: R`node`, run: R`const deps = { "lucide-react": "^0.577.0", "react": "^19.2.0", "simple-icons": "16.36.0" };

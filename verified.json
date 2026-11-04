@@ -4170,579 +4170,579 @@
   "on": "docker gcc:14 (g++ 14.4.0)"
  },
  "css|(id, class, type)": {
-  "hash": "1edabd277cbe",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "fa0786f41cbb",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|4 طبقات و box-sizing": {
-  "hash": "2eaf8eea14ff",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "114b8e2df134",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|:has()": {
-  "hash": "29638ea3ced7",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "2f4f0f3524d3",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|<!doctype html>": {
-  "hash": "6c5d3e67c153",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "b033ddde8800",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|@media print": {
-  "hash": "31a4fdab228e",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "20ad0b642cac",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|@property": {
-  "hash": "7acfb3cb31cf",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "f6806fdabc13",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|@theme": {
-  "hash": "d781da50e40e",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "8ad06ab8ded1",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|BEM و CSS Modules": {
-  "hash": "4dc00860c053",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "6b4a8ac04b05",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|Baseline و @supports": {
-  "hash": "f6ecc3ca38da",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "f1d5036907f8",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|CLS": {
-  "hash": "3e0203d01132",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "24be99b86fcb",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|CSS nesting": {
-  "hash": "83e7c3499f4a",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "862286154216",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|CSS variables": {
-  "hash": "809e1c6ed806",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "cb340baba6e7",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|Constraint Validation API": {
-  "hash": "307a1f608235",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "ea52dc2dcd1b",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|Dialog": {
-  "hash": "21d43fbaa1b7",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "6eb105ba155d",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|SVG": {
-  "hash": "9047072620e5",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "a9c294050f44",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|Tailwind v4": {
-  "hash": "4918840f7b90",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "4b79ddf7c7f9",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|View Transitions": {
-  "hash": "bd9bb24333dd",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "73c01e4dfcce",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|WCAG 2.2": {
-  "hash": "9f083f3e98fb",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "9082bd46f07b",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|a و button": {
-  "hash": "9be3928842e2",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "de86b7ae8193",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|accessibility: لحد axe صفر": {
-  "hash": "a00b6fe72016",
-  "date": "2026-11-03",
-  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+  "hash": "874b77830b49",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|animation-timeline": {
-  "hash": "39fe35515168",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "2595222ffa8c",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|arbitrary values": {
-  "hash": "e8201ef903b5",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "5a1b44594b97",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|aria": {
-  "hash": "de0aea2d8187",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "6ecbdb5176b4",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|auto-fit و minmax": {
-  "hash": "e4be1d10108e",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "47237732e0ca",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|axe و Lighthouse": {
-  "hash": "3e4b3878c932",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "27af7254f8a1",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|box model": {
-  "hash": "81fabc0ae128",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "bac9082ad286",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|cascade": {
-  "hash": "51fa78c14c5e",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "9fbb54ebfcf2",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|clamp()": {
-  "hash": "3e78beaf4500",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "ce21c69e84dd",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|cn()": {
-  "hash": "c85ff6b9eb49",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "7bf0499379d7",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|container queries": {
-  "hash": "4bc27a4aa2e9",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "bae13ad246af",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|containing block": {
-  "hash": "1087fda932e6",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "e7d0deaa3246",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|contrast ratio": {
-  "hash": "a7af6f6d97de",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "df17374a911c",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|critical CSS": {
-  "hash": "6246b155493a",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "e162b95d2ea3",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|cva": {
-  "hash": "2e22a132d477",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "3214dae43264",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|dark mode": {
-  "hash": "8a5abd79f01f",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "f2c159da3a3a",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|details و summary": {
-  "hash": "8b096e7ad04e",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "952e9bacfef3",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|display": {
-  "hash": "b6a12f9e5be5",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "be1994ac49ac",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|dvh": {
-  "hash": "42f1744c605a",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "2ea1d5fe4584",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|fieldset و radio": {
-  "hash": "fdcc23eb60d7",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "641478a9d90c",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|flex: 1": {
-  "hash": "6ceab6bd2c49",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "c5f9d48ab051",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|flexbox": {
-  "hash": "26e35b5037cf",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "8be3fd9c18a4",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|focus-visible": {
-  "hash": "f8899b17f143",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "1518caa0977a",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|form و label": {
-  "hash": "c6e93d69e1b5",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "310791f6e397",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|grid": {
-  "hash": "de1a9aef30f2",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "33370ca8319e",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|grid-template-areas": {
-  "hash": "b5e2f8912610",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "61feb835ded8",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|group و peer": {
-  "hash": "78e3efd5d7ac",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "55ffd157218e",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|img": {
-  "hash": "23d77dea705d",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "83d6a36f69ed",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|jsx-a11y و getByRole": {
-  "hash": "bc516fedee00",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "1bc2f52edaee",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|landing page: الأسئلة والـ CTA والـ footer والحركة": {
-  "hash": "a230d1e20349",
-  "date": "2026-11-03",
-  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+  "hash": "a8a2fd777d09",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|landing page: الألوان والثيم والعربي": {
-  "hash": "50cebe4928fc",
-  "date": "2026-11-03",
-  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+  "hash": "9ea4637c2db2",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|landing page: الصورة الكبيرة": {
-  "hash": "29a079f52e37",
-  "date": "2026-11-03",
-  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+  "hash": "7fac43451c3f",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|landing page: الـ header والـ hero": {
-  "hash": "5c6b17471376",
-  "date": "2026-11-03",
-  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+  "hash": "88da5619bfe4",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|landing page: المميزات والآراء والأسعار": {
-  "hash": "dd49de6e892e",
-  "date": "2026-11-03",
-  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+  "hash": "b9dbf4f31222",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|landing page: فحص accessibility والنشر والغلطات": {
-  "hash": "d0a98ea2eceb",
-  "date": "2026-11-03",
-  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+  "hash": "2f63d685a53c",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|landing page: فورم تسجيل accessible": {
-  "hash": "f6c336c21f75",
-  "date": "2026-11-03",
-  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+  "hash": "2073b8087bb2",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|landing page: مصفوفة المقاسات والأداء": {
-  "hash": "c3c387d250fb",
-  "date": "2026-11-03",
-  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+  "hash": "426c97edf18f",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|lang و dir": {
-  "hash": "3bc137656804",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "cc905b6d5a46",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|layout thrashing": {
-  "hash": "20eaf5fbfbcc",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "8fca44d70fab",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|layouts بالـ flex والـ grid": {
-  "hash": "f1c44f428016",
-  "date": "2026-11-03",
-  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+  "hash": "4fd9f618afb4",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|logical properties": {
-  "hash": "77d439ee9383",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "47d6b36e25ec",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|lucide-react": {
-  "hash": "ad0bb4ba20f5",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "825ea5f483a1",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|media queries": {
-  "hash": "50ac0e1c263d",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "dfaee1b3ced1",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|meta و Open Graph": {
-  "hash": "97891c6b3302",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "4f1f71f47af3",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|mobile-first": {
-  "hash": "6b7336e04c7f",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "b6257a84dc75",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|motion": {
-  "hash": "0369b8fbca7e",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "f648c72094d0",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|next/font": {
-  "hash": "470341a0cd82",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "c791940a6b4d",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|object-fit": {
-  "hash": "fe5ba490cde1",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "6fd2926be086",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|picture": {
-  "hash": "d4c67bc06759",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "8fcd2ac8b80b",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|position: absolute": {
-  "hash": "58970365f227",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "1dd25fdd9f69",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|rem من الـ root": {
-  "hash": "8970a0548cbf",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "1c8a09e03660",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|rem و em": {
-  "hash": "5a4ac5d773a6",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "c2231593f88d",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|roving tabindex": {
-  "hash": "a1f3b0d28117",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "e8ecd5160fd5",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|scroll-snap و scroll-margin": {
-  "hash": "c94aed20a48b",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "cd57b28e075e",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|selectors": {
-  "hash": "a695abce44ff",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "d11cbb5e5c5e",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|semantic HTML": {
-  "hash": "c57f8351572c",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "18a878f754bc",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|semantic HTML أولًا": {
-  "hash": "852b194e2239",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "6eb3d7834955",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|shadcn/ui": {
-  "hash": "ba2e22429f20",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "22e5026a79b2",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|specificity": {
-  "hash": "2b026af38220",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "e3ebaad1bcb0",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|stacking context": {
-  "hash": "65c3680c4c15",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "394efae77ca9",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|sticky و fixed": {
-  "hash": "810564f67236",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "e8a57dea2a62",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|subgrid": {
-  "hash": "cf93f559f1ad",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "f690ae46f99c",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|table": {
-  "hash": "b5a2953109d8",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "4c69476bf197",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|text-wrap": {
-  "hash": "dbf040df8e22",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "b19a4c2fad87",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|textarea و date و number": {
-  "hash": "f7633321b224",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "e6d24814bf77",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|transition و @keyframes": {
-  "hash": "d65fecc278f4",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "651e5a2621c4",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|variants": {
-  "hash": "6c7f794ed65d",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "d71868f8e8aa",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|video و iframe": {
-  "hash": "16b734ec3848",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "d3b18b047d42",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|z-index": {
-  "hash": "0f3b93ed78c3",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "5ee9722b8887",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|أشكال بالـ CSS": {
-  "hash": "2c18dc125df7",
-  "date": "2026-11-03",
-  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+  "hash": "45cc14c57bd0",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|إعلان تغيير الصفحة": {
-  "hash": "9aede9f1c9d5",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "507bbdbe1b4d",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|احجز المكان": {
-  "hash": "037b8000a8af",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "fe2ee6ffdd49",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|المراجعة النهائية: مقاسات و a11y وأداء ونشر": {
-  "hash": "1492a14529b8",
-  "date": "2026-11-03",
-  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+  "hash": "d536abc92f0d",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|بورتفوليو ١: الهيكل واللغتين و dir": {
-  "hash": "8578356c0760",
-  "date": "2026-11-03",
-  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+  "hash": "d9102b5329c3",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|بورتفوليو ٢: الكروت والفلتر والظهور بالسكرول": {
-  "hash": "02e020cd25b1",
-  "date": "2026-11-03",
-  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+  "hash": "412181377951",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|بورتفوليو ٣: دراسة الحالة والطباعة و OG": {
-  "hash": "5dafba68b803",
-  "date": "2026-11-03",
-  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+  "hash": "b3dabc07d977",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|بُعد واحد وبُعدين": {
-  "hash": "1c80bbff69e2",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "2ca0631c142b",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|ترتيب وصفحات في الـ URL": {
-  "hash": "c5055cee7fef",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "e20debd597af",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|توقّع الـ cascade": {
-  "hash": "e9ec5b511369",
-  "date": "2026-11-03",
-  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+  "hash": "50d920e12cb5",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|توليد on-demand": {
-  "hash": "29a41f2cda6f",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "08fb73c323cb",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|جدول responsive": {
-  "hash": "27c671df828a",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "40732a8bffd6",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|داشبورد ١: الـ shell والـ sidebar والأرقام": {
-  "hash": "fd06ddf333eb",
-  "date": "2026-11-03",
-  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+  "hash": "270476fa7a52",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|داشبورد ٢: جدول الأعضاء والحالة في الرابط": {
-  "hash": "5c8693e6399d",
-  "date": "2026-11-03",
-  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+  "hash": "61ace359bf0e",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|داشبورد ٣: جدول الحصص و dialog والتنبيهات": {
-  "hash": "bc6813f11863",
-  "date": "2026-11-03",
-  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+  "hash": "2cf66092dd48",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|صفحات بتفيض على 360": {
-  "hash": "7effb5742d38",
-  "date": "2026-11-03",
-  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+  "hash": "c74190349b94",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|صفحات من وصف": {
-  "hash": "1c66735f7f2f",
-  "date": "2026-11-03",
-  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+  "hash": "26dcf3c40e94",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|صلّح الكود البايظ": {
-  "hash": "a4fb700f6fff",
-  "date": "2026-11-03",
-  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+  "hash": "f43d2e89386b",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|كلمة بتتبدّل في عنوان": {
-  "hash": "67d440afdc5b",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "43bf29e9b7e3",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|كيبورد وقارئ شاشة": {
-  "hash": "7fce462ff493",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "84813c6a8428",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|مراحل الرسم": {
-  "hash": "8dd8caea64cc",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "6ac90ba685a0",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|مسائل بالـ JS على الصفحة": {
-  "hash": "f27841595b98",
-  "date": "2026-11-03",
-  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+  "hash": "320d2f74f21c",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|مشروع portfolio و dashboard: الخريطة": {
-  "hash": "947d2f358de8",
-  "date": "2026-11-03",
-  "on": "build-alongs and practice bank built and measured in headless Chrome 156 (playwright-core 1.64.1, axe-core 4.14.0), Node 24.22; GitHub Pages publish steps from docs"
+  "hash": "570e5dcb1b44",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|مصفوفة مقاسات": {
-  "hash": "0def42d687ae",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "42cb4aed70d5",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|مقدمة CSS وتنسيق العناصر": {
-  "hash": "73f5c0a70aab",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "f65b4ae94d56",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|مقدمة HTML والـ Tags": {
-  "hash": "8cea4c203326",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "ef952f4770bb",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "css|ملخص الأخطاء": {
-  "hash": "30bef648ffa0",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "59f197809592",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "data|$queryRaw": {
   "hash": "16ad9e141bae",
@@ -19155,224 +19155,224 @@
   "on": "Vue 3.5.44 و vue-router 5.4 و pinia 4.1 و vee-validate 4.15.1 و vue-i18n 11.4 في مشروع تجربة (renderToString و jsdom): اتجرّب الكود اللي اتغيّر — Content-Type في POST على express.json() (من غيره {})، و validateOnModelUpdate في VeeValidate. docs: باقي الدرس إعادة كتابة شرح السطور وخانات الجداول؛ Nuxt و Vitest و Svelte من الوثائق ونواتج الدروس"
  },
  "web|?v= كسر الكاش": {
-  "hash": "f7db80dbbccc",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "9d922709ff55",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|CORS": {
-  "hash": "bde19c70000c",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "2eabb10e903d",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|CSRF و SameSite": {
-  "hash": "dca53b5fd25a",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "b9dd192d08d8",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|Clear site data": {
-  "hash": "42a24677bc19",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "2ce8f28aec04",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|Command Menu": {
-  "hash": "cacc36f887d7",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "1e36d021814f",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|Content Security Policy": {
-  "hash": "9b6728eed127",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "47eabd875c5f",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|Cookies": {
-  "hash": "553e6c74e9c5",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "54e53190ba86",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|Copy as cURL": {
-  "hash": "42861f67144a",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "ebf65fe8fdf9",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|Core Web Vitals (LCP/INP)": {
-  "hash": "14e4f06fff1f",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "e8cdbc5401f2",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|Device Toolbar": {
-  "hash": "24adced62d76",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "5991e5981ae4",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|Elements": {
-  "hash": "0cca942be129",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "bcba55b837cc",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|HTTP/2 و HTTP/3": {
-  "hash": "294b8f2b3d3a",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "9fe6025fdddf",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|Hard Reload": {
-  "hash": "a19de6a49ba8",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "a0afa6786b87",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|Headers": {
-  "hash": "529e633e6a8e",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "7aafdcbe3e02",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|Lighthouse": {
-  "hash": "c7767d9dc373",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "097376cd8a89",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|Memory و heap snapshot": {
-  "hash": "5c452bf7e2f9",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "d4e422e331c7",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|Mixed content و HTTPS": {
-  "hash": "cee324ab6292",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "2924d083a890",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|Network": {
-  "hash": "33843f68f3ac",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "1f53ebf68fe1",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|Overrides": {
-  "hash": "eb2ca288782d",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "fde6f9396182",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|Performance و Coverage": {
-  "hash": "3f9fd2807cb3",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "ec3a3a601df0",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|Recorder": {
-  "hash": "97651bcd85b9",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "a035272fab3f",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|SEO من الترمنال": {
-  "hash": "0c533bdad4b9",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "a2d2a935b387",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|Security headers و SSL": {
-  "hash": "430bee5977a3",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "bf9045e8c808",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|Source maps": {
-  "hash": "30b6f0e18cc3",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "b2d032ece97a",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|Sources و breakpoints": {
-  "hash": "1b07e122e0bf",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "a8dadb87e603",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|Status codes": {
-  "hash": "67de5ac74982",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "0fa83b79da83",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|Throttling و Blocking": {
-  "hash": "a5a7dbd915de",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "f41a06263021",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|Unexpected token '<'": {
-  "hash": "95ef9966645c",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "d4d1391bef2f",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|View Page Source و Inspect": {
-  "hash": "f9c01b7bb483",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "c89329995942",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|WebSocket و SSE في Network": {
-  "hash": "ace9ac28efcc",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "98e6dc11d7ba",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|chrome://inspect": {
-  "hash": "2edfe63c312f",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "3825b244299d",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|curl -i / -v": {
-  "hash": "2698036b191a",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "febd9ec32e59",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|fetch من Console": {
-  "hash": "729bc9af1795",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "397e2d0e6a61",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|localStorage و JWT": {
-  "hash": "5c4b169b4324",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "bd72de5cc307",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|playwright screenshot": {
-  "hash": "2064014ea54f",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "12593bc99b67",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|أدوات جوجل": {
-  "hash": "83e6435b269e",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "37f1f91d4f01",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|أوامر Console المفيدة": {
-  "hash": "3afd9bd2ed70",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "db0bff593e09",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|التعديل وصل؟ curl و grep": {
-  "hash": "f247ac261b50",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "7c6146f921ae",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|اللقطة ناقصة: 591px وفيديو مؤقت": {
-  "hash": "bcad0d0041b9",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "1bda45edd9ad",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|تفاصيل الطلب": {
-  "hash": "3fc4959e1273",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "048dd42ddbf4",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|سيرفر محلي بدل file://": {
-  "hash": "f7f28ef92458",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "06e045397e2a",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|صيغ الصور WebP و AVIF": {
-  "hash": "16ff6167c85c",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "387c28a778ee",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|قراءة الأخطاء": {
-  "hash": "a9ec0e6b9944",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "aa84d4066a3c",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "web|مشروع تشخيص موقع بطيء ومكسور": {
-  "hash": "c6d248a9fe29",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 (playwright-core 1.64.1, CDP, axe 4.14) + Node 24.22, Tailwind 4.3.4, Vite 8.3.5; browser support tables from MDN/caniuse"
+  "hash": "9134cf75a69e",
+  "date": "2026-11-04",
+  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
  "wsl|.wslconfig المتقدم": {
   "hash": "9eccf56ca845",

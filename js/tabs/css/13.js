@@ -17,10 +17,193 @@ MORE("css", [
           cmd: "WCAG 2.2",
           title: "WCAG 2.2 AA يعني إيه بالظبط؟",
           practice: [
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** من صفحة «What's New in WCAG 2.2» على موقع W3C هات البنود الجديدة اللي مستواها A أو AA، وإيه البند اللي اتشال من 2.1.`, done: R`جدول ٦ صفوف (2.4.11 Focus Not Obscured، و 2.5.7 Dragging Movements، و 2.5.8 Target Size 24×24، و 3.2.6 Consistent Help، و 3.3.7 Redundant Entry، و 3.3.8 Accessible Authentication) وجنب كل واحد مثال من موقعك، وكتبت إن 4.1.1 Parsing اتشال.` },
-            { lvl: 'تطبيق', t: R`**مسألة:** اكتب سطر في الكونسول بيطلّع كل [[a]] و [[button]] و [[input]] و [[[role=button]]] مقاسه أصغر من 24×24 (بـ [[getBoundingClientRect()]])، وشغّله على صفحة من موقعك. وصلّح اللي طالع بـ padding أو [[min-block-size]].`, done: R`اللستة قبل التصليح فيها الأيقونات الصغيرة، وبعده فاضية ما عدا اللينكات اللي جوه جملة (مستثناة في 2.5.8)، وكاتب جنب كل استثناء سببه.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** planner أسبوعي بيرتّب الأيام بـ drag and drop بس. ده بيكسر 2.5.7 Dragging Movements. زوّد زرارين لكل كارت «لفوق» و «لتحت» بأسامي فيها اسم اليوم ([[aria-label="انقل الاتنين لفوق"]]).`, done: R`تقدر ترتّب كل الأيام بالكيبورد وبالضغط من غير سحب، وبعد الضغط الـ focus فاضل على نفس الزرار في المكان الجديد، ورسالة «الاتنين بقى رقم ٢» بتتقري في [[role="status"]].` },
-            { lvl: 'سريع', t: R`**اشرحها:** carousel بيقلب لوحده كل ٣ ثواني ومفيهوش زرار وقوف، و marquee لوجوهات شغال على طول. اكتب لزميلك ٣ سطور: البند اللي بيكسروه، وليه بيضايق مين، والتصليح.`, done: R`الـ ٣ سطور فيهم 2.2.2 Pause, Stop, Hide (أي حركة بتطول أكتر من ٥ ثواني محتاجة وقوف)، وإنها بتضايق اللي بيقرا ببطء أو عنده تشتت أو قارئ شاشة، والتصليح زرار وقوف ظاهر ووقوف مع hover و focus و [[prefers-reduced-motion]].` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** من صفحة «What's New in WCAG 2.2» على موقع W3C هات البنود الجديدة اللي مستواها A أو AA، وإيه البند اللي اتشال من 2.1.`, done: R`جدول ٦ صفوف (2.4.11 Focus Not Obscured، و 2.5.7 Dragging Movements، و 2.5.8 Target Size 24×24، و 3.2.6 Consistent Help، و 3.3.7 Redundant Entry، و 3.3.8 Accessible Authentication) وجنب كل واحد مثال من موقعك، وكتبت إن 4.1.1 Parsing اتشال.`, sol: R`**إجابة نموذجية من «What's New in WCAG 2.2» على موقع W3C:**
+
+| البند | المستوى | المعنى | مثال من موقعك |
+|---|---|---|---|
+| 2.4.11 Focus Not Obscured (Minimum) | AA | العنصر اللي عليه focus ميستخباش كله | هيدر sticky أو بانر كوكيز |
+| 2.5.7 Dragging Movements | AA | أي سحب ليه بديل بالضغط | ترتيب بالسحب |
+| 2.5.8 Target Size (Minimum) | AA | الهدف 24×24 على الأقل | أيقونة مسح في جدول |
+| 3.2.6 Consistent Help | A | المساعدة في نفس المكان | لينك «كلّمنا» |
+| 3.3.7 Redundant Entry | A | متطلبش نفس البيانات مرتين | عنوان الشحن والفاتورة |
+| 3.3.8 Accessible Authentication (Minimum) | AA | تسجيل دخول من غير اختبار ذاكرة | السماح بـ paste في الباسورد |
+
+**اللي اتشال:** 4.1.1 Parsing، لأن المتصفحات الحديثة بقت بتصلّح الـ HTML بنفس الطريقة.
+
+و WCAG 2.2 فيها بنود AAA جديدة كمان (زي 2.4.12 و 2.4.13)، بس السؤال عن A و AA.
+
+**الغلطة الشائعة:** تفتكر إن 2.5.8 بتطلب 44×44. دي بند 2.5.5 في AAA. الـ AA 24×24.
+
+~~~text الناتج
+٦ بنود A و AA ، والمشال 4.1.1 Parsing.
+(إجابة من الوثائق، مش ناتج تشغيل.)
+~~~` },
+            { lvl: 'تطبيق', t: R`**مسألة:** اكتب سطر في الكونسول بيطلّع كل [[a]] و [[button]] و [[input]] و [[[role=button]]] مقاسه أصغر من 24×24 (بـ [[getBoundingClientRect()]])، وشغّله على صفحة من موقعك. وصلّح اللي طالع بـ padding أو [[min-block-size]].`, done: R`اللستة قبل التصليح فيها الأيقونات الصغيرة، وبعده فاضية ما عدا اللينكات اللي جوه جملة (مستثناة في 2.5.8)، وكاتب جنب كل استثناء سببه.`, sol: R`~~~js console
+[...document.querySelectorAll("a, button, input, [role=button]")]
+  .map((el) => ({ el, box: el.getBoundingClientRect() }))
+  .filter(({ box }) => box.width > 0 && (box.width < 24 || box.height < 24))
+  .map(({ el, box }) => $__bt$__{el.tagName} «$__{el.textContent.trim() || el.getAttribute("aria-label")}» $__{Math.round(box.width)}×$__{Math.round(box.height)}$__bt);
+~~~
+
+~~~html test.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>أهداف صغيرة</title>
+<style>
+  body { font-family: system-ui, sans-serif; padding: 1rem; }
+  .icon { padding: 0; border: 0; background: none; font-size: 14px; line-height: 1; }
+  /* التصليح: شيل التعليق عن السطر اللي تحته */
+  /* .icon { min-inline-size: 24px; min-block-size: 24px; } */
+</style>
+</head>
+<body>
+<main>
+  <h1>المفضلة</h1>
+  <button class="icon" aria-label="امسح">✕</button>
+  <button class="icon" aria-label="عدّل">✎</button>
+  <p>اقرا <a href="/terms">الشروط</a> قبل ما تكمّل.</p>
+</main>
+</body>
+</html>
+~~~
+
+**السطر بيعمل إيه:** بيجيب كل العناصر، ويقيس كل واحد، ويفلتر الأصغر من 24 في أي اتجاه. و [[box.width > 0]] بيشيل العناصر المخفية. و [[.map]] الأخيرة بتطبع سطر مقري.
+
+**التصليح:** [[min-inline-size]] و [[min-block-size]] بيكبّروا مساحة الضغط من غير ما يغيّروا شكل الأيقونة.
+
+**الاستثناءات في 2.5.8:** اللينك جوه جملة مستثنى، وعشان كده [[الشروط]] فضل في اللستة. كمان فيه استثناء لو حوالين الهدف فراغ كفاية، ولو الحجم من المتصفح.
+
+**الغلطة الشائعة:** تكبّر الأيقونة نفسها. المطلوب مساحة الضغط، و padding أو min-size بيحلوها.
+
+~~~text الناتج
+قبل:
+BUTTON «✕» 11×14
+BUTTON «✎» 14×14
+A «الشروط» 48×21
+
+بعد min-inline-size و min-block-size:
+A «الشروط» 48×21     ← لينك جوه جملة، مستثنى في 2.5.8
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** planner أسبوعي بيرتّب الأيام بـ drag and drop بس. ده بيكسر 2.5.7 Dragging Movements. زوّد زرارين لكل كارت «لفوق» و «لتحت» بأسامي فيها اسم اليوم ([[aria-label="انقل الاتنين لفوق"]]).`, done: R`تقدر ترتّب كل الأيام بالكيبورد وبالضغط من غير سحب، وبعد الضغط الـ focus فاضل على نفس الزرار في المكان الجديد، ورسالة «الاتنين بقى رقم ٢» بتتقري في [[role="status"]].`, sol: R`~~~html planner.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>planner أسبوعي</title>
+<style>
+  body { font-family: system-ui, sans-serif; padding: 1rem; }
+  ol { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; max-width: 24rem; }
+  li { display: flex; align-items: center; gap: .5rem; padding: .5rem; border: 1px solid #94a3b8; border-radius: .5rem; background: #fff; cursor: grab; }
+  li span { flex: 1; }
+  button { min-inline-size: 2.75rem; min-block-size: 2.75rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>ترتيب الأسبوع</h1>
+  <ol id="days"></ol>
+  <p id="status" role="status" class="note"></p>
+</main>
+<script>
+  const days = ["السبت", "الأحد", "الاتنين", "التلات", "الأربع"];
+  const list = document.getElementById("days");
+  const status = document.getElementById("status");
+  let dragged = null;
+
+  function render() {
+    list.replaceChildren(...days.map((day, i) => {
+      const li = document.createElement("li");
+      li.draggable = true;
+      li.dataset.day = day;
+      li.innerHTML = $__bt<span>$__{i + 1}. $__{day}</span>
+        <button type="button" data-dir="-1" aria-label="انقل $__{day} لفوق" $__{i === 0 ? "disabled" : ""}>▲</button>
+        <button type="button" data-dir="1" aria-label="انقل $__{day} لتحت" $__{i === days.length - 1 ? "disabled" : ""}>▼</button>$__bt;
+      return li;
+    }));
+  }
+
+  function move(day, to) {
+    const from = days.indexOf(day);
+    days.splice(from, 1);
+    days.splice(to, 0, day);
+    render();
+    status.textContent = $__bt$__{day} بقى رقم $__{to + 1}$__bt;
+  }
+
+  list.addEventListener("click", (e) => {
+    const btn = e.target.closest("button");
+    if (!btn) return;
+    const dir = Number(btn.dataset.dir);
+    const day = btn.closest("li").dataset.day;
+    const to = days.indexOf(day) + dir;
+    move(day, to);
+    // الزرار اترسم من جديد: رجّع الـ focus لنفس الزرار، ولو بقى disabled للزرار التاني
+    const row = list.querySelector($__bt[data-day="$__{day}"]$__bt);
+    const same = row.querySelector($__bt[data-dir="$__{dir}"]$__bt);
+    (same.disabled ? row.querySelector($__bt[data-dir="$__{-dir}"]$__bt) : same).focus();
+  });
+
+  // السحب لسه موجود للي عايزه
+  list.addEventListener("dragstart", (e) => { dragged = e.target.dataset.day; });
+  list.addEventListener("dragover", (e) => e.preventDefault());
+  list.addEventListener("drop", (e) => {
+    const target = e.target.closest("li");
+    if (target) move(dragged, days.indexOf(target.dataset.day));
+  });
+
+  render();
+$__lt/script>
+</body>
+</html>
+~~~
+
+**ليه شغال:**
+
+- كل كارت ليه زرارين، والاسم فيه اليوم، فقارئ الشاشة ميقولش «لفوق» ١٠ مرات من غير ما تعرف لفوق إيه.
+- [[render()]] بيعيد رسم كل الكروت، فالزرار القديم بيتمسح، والـ focus كان هيروح لـ body. عشان كده بعد النقل بندوّر على نفس الزرار في مكانه الجديد ونعمله [[focus()]].
+- أول يوم زرار «فوق» بيبقى [[disabled]]، فلو الزرار اتعطل بننقل لزرار الاتجاه التاني. كده المستخدم مبيقعش في الفراغ.
+- [[role="status"]] بيعلن النتيجة. السحب لسه موجود: البند بيطلب بديل، مش إلغاء.
+
+**الغلطة الشائعة:** تعيد الرسم وتنسى الـ focus. الترتيب بيشتغل، بس مستخدم الكيبورد لازم يبدأ من أول الصفحة بعد كل نقلة.
+
+~~~text الناتج
+البداية:  1. السبت  2. الأحد  3. الاتنين  4. التلات  5. الأربع
+Enter على «انقل الاتنين لفوق»:
+          1. السبت  2. الاتنين  3. الأحد  4. التلات  5. الأربع
+
+الـ focus: فضل على «انقل الاتنين لفوق»
+role=status: «الاتنين بقى رقم 2»
+
+لما وصل رقم 1: زرار فوق disabled ، والـ focus راح لـ «انقل الاتنين لتحت»
+axe صفر ، وعلى 360 مفيش scroll أفقي
+~~~` },
+            { lvl: 'سريع', t: R`**اشرحها:** carousel بيقلب لوحده كل ٣ ثواني ومفيهوش زرار وقوف، و marquee لوجوهات شغال على طول. اكتب لزميلك ٣ سطور: البند اللي بيكسروه، وليه بيضايق مين، والتصليح.`, done: R`الـ ٣ سطور فيهم 2.2.2 Pause, Stop, Hide (أي حركة بتطول أكتر من ٥ ثواني محتاجة وقوف)، وإنها بتضايق اللي بيقرا ببطء أو عنده تشتت أو قارئ شاشة، والتصليح زرار وقوف ظاهر ووقوف مع hover و focus و [[prefers-reduced-motion]].`, sol: R`**إجابة نموذجية:**
+
+> الاتنين بيكسروا 2.2.2 Pause, Stop, Hide: أي حاجة بتتحرك لوحدها أكتر من ٥ ثواني لازم يبقى ليها وقوف.
+> بيضايقوا اللي بيقرا ببطء (الشريحة بتتبدّل قبل ما يخلص)، واللي عنده تشتت، ومستخدم قارئ الشاشة.
+> التصليح: زرار وقوف ظاهر، والحركة تقف مع hover و focus، ومع [[prefers-reduced-motion]] متبدأش أصلًا.
+
+**شكل التصليح:**
+
+~~~css marquee.css
+.marquee:hover .track,
+.marquee:focus-within .track { animation-play-state: paused; }
+
+@media (prefers-reduced-motion: reduce) {
+  .track { animation: none; }
+}
+~~~
+
+**الغلطة الشائعة:** تعتمد على الوقوف بالـ hover بس. على الموبايل مفيش hover، فالزرار الظاهر هو اللي بيوفي البند.
+
+~~~text الناتج
+٣ سطور: البند ، ومين بيتضايق ، والتصليح.
+(إجابة من الوثائق. نسخة الـ marquee الكاملة في تمرين marquee في درس الحركة.)
+~~~` },
           ],
           desc: R`WCAG قواعد من W3C بتقول الموقع يبقى accessible إزاي. متقسمة على 4 مبادئ اسمها POUR: Perceivable (تقدر تدرك المحتوى: alt، وترجمة، وتباين)، و Operable (تقدر تستخدمه: كيبورد، ووقت كفاية، ومفيش حاجة بتومض)، و Understandable (مفهوم: لغة الصفحة، وأخطاء واضحة، وسلوك متوقع)، و Robust (شغال مع قارئات الشاشة: HTML سليم و role و name).
 
@@ -177,11 +360,267 @@ POUR مش checklist، هي طريقة تفكير: لكل مكون اسأل: حد
           cmd: "axe و Lighthouse",
           title: "الفحص الأوتوماتيك: بيمسك إيه وبيفوّت إيه؟",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صفحة من غير [[lang]]، فيها [[<img>]] من غير alt، و [[<input type="email">]] من غير label، وزرار جواه svg بس، وكلام لونه [[#aaa]] على أبيض، و [[<a href="/x"></a>]] فاضي، ومفيش [[h1]]. axe هيطلّع أنهي rules؟ اكتب لستة، وبعدين شغّله.`, done: R`axe-core 4.14 على Chrome 156 طلّع ٧: [[button-name]] و [[color-contrast]] و [[html-has-lang]] و [[image-alt]] و [[label]] و [[link-name]] و [[page-has-heading-one]]. ولما شغّلته بـ [[withTags(["wcag2a","wcag2aa"])]] الأخيرة اختفت لأنها best-practice مش بند WCAG.` },
-            { lvl: 'تطبيق', t: R`**قارن وقيس:** على صفحة واحدة شغّل axe و Lighthouse › Accessibility، وبعدين اعمل فيها ٣ حاجات غلط مفيش أداة بتشوفها: [[alt="IMG_2041.jpg"]]، وترتيب Tab بالعكس بـ [[order]] في flex، و [[outline: none]] على زرار من غير بديل.`, done: R`جدول: عدد مشاكل كل أداة قبل وبعد التغييرات التلاتة. الأرقام ماتغيرتش أو اتغيرت قليل، فكتبت إن الفحص الأوتوماتيك بيمسك «الحاجة موجودة ولا لأ» مش «هي صح ولا لأ».` },
-            { lvl: 'تطبيق', t: R`**ابني:** اختبار Playwright واحد بيلف على ٣ صفحات بـ [[for]]، ويشغّل axe بـ [[.exclude("#chat-widget")]] لويدجت من برا، ويحط الـ JSON كـ attachment بـ [[testInfo.attach]].`, done: R`لو صفحة واحدة فيها مشكلة الاختبار بيقع ويقول اسمها، والتقرير فيه ملف JSON لكل صفحة، والويدجت مش داخل في النتيجة.` },
-            { lvl: 'تطبيق', t: R`**refactor:** اختبار مكتوب [[expect(results.violations.length).toBe(0)]]، ولما بيقع بيقول بس «Expected: 0، Received: 3». غيّره بحيث الفشل يطبع اسم كل rule وأول selectors.`, done: R`الفشل بقى بيطبع حاجة زي [[image-alt: img.hero]] لكل مشكلة، من [[violations.map(v => v.id + ": " + v.nodes.map(n => n.target).join(", "))]] أو [[toEqual([])]].` },
-            { lvl: 'تحدي', t: R`**بيانات حقيقية:** شغّل Lighthouse من الترمنال بـ [[--only-categories=accessibility --output=json]] على صفحتك، واكتب سكربت بيقرا الملف ويطبع الدرجة (‏[[categories.accessibility.score]] × 100) وكل audit درجته صفر بعنوانه وعدد عناصره.`, done: R`السكربت بيطبع نفس الدرجة اللي في DevTools، ولستة المشاكل بنفس عددها، ولو الملف مش موجود أو مش JSON بيطبع رسالة واضحة.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صفحة من غير [[lang]]، فيها [[<img>]] من غير alt، و [[<input type="email">]] من غير label، وزرار جواه svg بس، وكلام لونه [[#aaa]] على أبيض، و [[<a href="/x"></a>]] فاضي، ومفيش [[h1]]. axe هيطلّع أنهي rules؟ اكتب لستة، وبعدين شغّله.`, done: R`axe-core 4.14 على Chrome 156 طلّع ٧: [[button-name]] و [[color-contrast]] و [[html-has-lang]] و [[image-alt]] و [[label]] و [[link-name]] و [[page-has-heading-one]]. ولما شغّلته بـ [[withTags(["wcag2a","wcag2aa"])]] الأخيرة اختفت لأنها best-practice مش بند WCAG.`, sol: R`~~~html page.html
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>صفحة فيها مشاكل</title>
+<style>p { color: #aaa; }</style></head>
+<body>
+<main>
+  <img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" width="50" height="50">
+  <input type="email">
+  <button><svg width="16" height="16"><path d="M0 8h16"/></svg></button>
+  <p>نص باهت</p>
+  <a href="/x"></a>
+</main>
+</body>
+</html>
+~~~
+
+**التوقع:** كل مشكلة ليها rule:
+
+| المشكلة | الـ rule | النوع |
+|---|---|---|
+| من غير [[lang]] | [[html-has-lang]] | WCAG |
+| [[<img>]] من غير alt | [[image-alt]] | WCAG |
+| [[input]] من غير label | [[label]] | WCAG |
+| زرار جواه svg بس | [[button-name]] | WCAG |
+| [[#aaa]] على أبيض | [[color-contrast]] | WCAG |
+| لينك فاضي | [[link-name]] | WCAG |
+| مفيش h1 | [[page-has-heading-one]] | best-practice |
+
+**فخ مهم في العربي:** التجربة الأولى كان الكلام «كلام باهت»، و axe مطلّعش [[color-contrast]] خالص، ولا حتى في [[incomplete]]. بنفس اللون: «نص باهت» اتمسك، و «كلام باهت» و «لا باهت» و «كلمة باهتة» و «سلام عليكم» مانمسكوش. الأقرب إن فحص axe للـ ligature بيتلخبط من الحروف العربي الموصولة. فمتعتمدش على axe لوحده للتباين في العربي: قس الألوان نفسها.
+
+**الغلطة الشائعة:** تستنتج من التقرير النضيف إن الألوان سليمة.
+
+~~~text الناتج
+axe-core 4.14 على Chrome 156:
+button-name ، color-contrast ، html-has-lang ، image-alt ،
+label ، link-name ، page-has-heading-one
+
+بـ wcag2a و wcag2aa بس: نفس اللستة من غير page-has-heading-one
+~~~` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** على صفحة واحدة شغّل axe و Lighthouse › Accessibility، وبعدين اعمل فيها ٣ حاجات غلط مفيش أداة بتشوفها: [[alt="IMG_2041.jpg"]]، وترتيب Tab بالعكس بـ [[order]] في flex، و [[outline: none]] على زرار من غير بديل.`, done: R`جدول: عدد مشاكل كل أداة قبل وبعد التغييرات التلاتة. الأرقام ماتغيرتش أو اتغيرت قليل، فكتبت إن الفحص الأوتوماتيك بيمسك «الحاجة موجودة ولا لأ» مش «هي صح ولا لأ».`, sol: R`نضيفة:
+
+~~~html clean.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>صفحة شكلها سليم</title>
+<meta name="description" content="تجربة">
+<style>
+  body { font-family: system-ui, sans-serif; padding: 1rem; }
+  nav { display: flex; }
+  nav a { padding: .75rem; }
+</style>
+</head>
+<body>
+<header><nav aria-label="الرئيسية"><a href="/1">واحد</a><a href="/2">اتنين</a><a href="/3">تلاتة</a></nav></header>
+<main>
+  <h1>منتجاتنا</h1>
+  <img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" width="50" height="50" alt="سماعة سودا">
+  <button id="plain" type="button">اشتري</button>
+</main>
+</body>
+</html>
+~~~
+
+بعد الـ ٣ حاجات الغلط:
+
+~~~html broken.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>صفحة شكلها سليم</title>
+<meta name="description" content="تجربة">
+<style>
+  body { font-family: system-ui, sans-serif; padding: 1rem; }
+  nav { display: flex; }
+  nav a:first-child { order: 3; }
+  nav a:nth-child(2) { order: 2; }
+  nav a:last-child { order: 1; }
+  nav a { padding: .75rem; }
+  #plain { outline: none; }
+</style>
+</head>
+<body>
+<header><nav aria-label="الرئيسية"><a href="/1">واحد</a><a href="/2">اتنين</a><a href="/3">تلاتة</a></nav></header>
+<main>
+  <h1>منتجاتنا</h1>
+  <img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" width="50" height="50" alt="IMG_2041.jpg">
+  <button id="plain" type="button">اشتري</button>
+</main>
+</body>
+</html>
+~~~
+
+**الفكرة:** الأدوات بتسأل «الحاجة موجودة؟»، مش «هي صح؟».
+
+- [[alt="IMG_2041.jpg"]]: فيه alt، فالأداة راضية. بس القارئ هيقول اسم ملف.
+- [[order]]: ترتيب الشكل بقى عكس ترتيب الـ HTML، فـ Tab بيمشي عكس اللي شايفه.
+- [[outline: none]]: مفيش إطار، والأدوات مبتجرّبش Tab فعلًا.
+
+**القاعدة المعروفة:** الفحص الأوتوماتيك بيلاقي جزء من المشاكل بس. الباقي محتاج جولة كيبورد وقارئ شاشة، وده في الدرس اللي جاي.
+
+**الغلطة الشائعة:** تعتبر 100 في Lighthouse شهادة accessibility.
+
+~~~text الناتج
+                        axe     Lighthouse
+الصفحة النضيفة          0       100
+بعد الـ ٣ حاجات الغلط   0       100
+
+الأرقام متغيرتش خالص، رغم إن الصفحة بقت أوحش بوضوح.
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** اختبار Playwright واحد بيلف على ٣ صفحات بـ [[for]]، ويشغّل axe بـ [[.exclude("#chat-widget")]] لويدجت من برا، ويحط الـ JSON كـ attachment بـ [[testInfo.attach]].`, done: R`لو صفحة واحدة فيها مشكلة الاختبار بيقع ويقول اسمها، والتقرير فيه ملف JSON لكل صفحة، والويدجت مش داخل في النتيجة.`, sol: R`~~~js a11y.spec.mjs
+import { test, expect } from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
+
+const pages = ["/home.html", "/products.html", "/contact.html"];
+
+for (const path of pages) {
+  test($__btمفيش مشاكل accessibility في $__{path}$__bt, async ({ page }, testInfo) => {
+    await page.goto(process.env.BASE + path);
+
+    const results = await new AxeBuilder({ page }).exclude("#chat-widget").analyze();
+
+    await testInfo.attach($__btaxe$__{path.replace("/", "-")}.json$__bt, {
+      body: JSON.stringify(results.violations, null, 2),
+      contentType: "application/json",
+    });
+
+    const problems = results.violations.map((v) => $__bt$__{v.id}: $__{v.nodes.map((n) => n.target).join(", ")}$__bt);
+    expect(problems).toEqual([]);
+  });
+}
+~~~
+
+~~~js playwright.config.mjs
+export default {
+  testDir: ".",
+  testMatch: "a11y.spec.mjs",
+  outputDir: "results",
+  reporter: [["line"], ["json", { outputFile: "report.json" }]],
+  use: { channel: "chrome", headless: true },
+};
+~~~
+
+~~~bash
+npm i -D @playwright/test @axe-core/playwright
+BASE=http://localhost:4000 npx playwright test
+~~~
+
+**ليه شغال:**
+
+- [[for]] بيعمل test لكل صفحة، فالفشل بيقول اسم الصفحة.
+- [[.exclude("#chat-widget")]]: الويدجت مش بتاعك، فمش هتقدر تصلّحه. استبعده بالاسم، وخليك واعي إنك استبعدته.
+- [[testInfo.attach]] بيحط الـ JSON في التقرير، قبل الـ [[expect]]، عشان يتحفظ حتى لو الاختبار وقع.
+
+في المعمل [[home.html]] فيها زرار من غير اسم جوه [[#chat-widget]]، و [[contact.html]] فيها صورة من غير alt.
+
+**الغلطة الشائعة:** تحط الـ attach بعد الـ [[expect]]. لما الاختبار يقع، السطر ده مبيشتغلش، وتخسر التقرير في الوقت اللي محتاجه.
+
+~~~text الناتج
+1 failed
+2 passed (3.0s)
+
+/contact.html:
++ Array [
++   "image-alt: img",
++ ]
+
+attachments:
+home      نجح   axe-home.html.json       (زرار الويدجت مش في النتيجة)
+products  نجح   axe-products.html.json
+contact   فشل   axe-contact.html.json
+~~~` },
+            { lvl: 'تطبيق', t: R`**refactor:** اختبار مكتوب [[expect(results.violations.length).toBe(0)]]، ولما بيقع بيقول بس «Expected: 0، Received: 3». غيّره بحيث الفشل يطبع اسم كل rule وأول selectors.`, done: R`الفشل بقى بيطبع حاجة زي [[image-alt: img.hero]] لكل مشكلة، من [[violations.map(v => v.id + ": " + v.nodes.map(n => n.target).join(", "))]] أو [[toEqual([])]].`, sol: R`قبل:
+
+~~~js before.spec.mjs
+expect(results.violations.length).toBe(0);
+~~~
+
+بعد:
+
+~~~js after.spec.mjs
+const problems = results.violations.map((v) => $__bt$__{v.id}: $__{v.nodes.map((n) => n.target).join(", ")}$__bt);
+expect(problems).toEqual([]);
+~~~
+
+**ليه:** [[toBe(0)]] بيقارن رقم، فالفشل بيقول «3» بس، وتضطر تشغّل الاختبار تاني وتطبع. [[toEqual([])]] بيقارن لستة نصوص، فـ Playwright بيطبع الـ diff كله: اسم الـ rule وأول selector، من غير تغيير في معنى الاختبار.
+
+**الغلطة الشائعة:** تطبع [[violations]] كلها بـ [[console.log]]. ده آلاف الأسطر من HTML. سطر لكل مشكلة كفاية، والـ JSON في الـ attachment.
+
+~~~text الناتج
+قبل:
+Expected: 0
+Received: 1
+
+بعد:
++ Array [
++   "image-alt: img",
++ ]
+~~~` },
+            { lvl: 'تحدي', t: R`**بيانات حقيقية:** شغّل Lighthouse من الترمنال بـ [[--only-categories=accessibility --output=json]] على صفحتك، واكتب سكربت بيقرا الملف ويطبع الدرجة (‏[[categories.accessibility.score]] × 100) وكل audit درجته صفر بعنوانه وعدد عناصره.`, done: R`السكربت بيطبع نفس الدرجة اللي في DevTools، ولستة المشاكل بنفس عددها، ولو الملف مش موجود أو مش JSON بيطبع رسالة واضحة.`, sol: R`~~~bash
+npx lighthouse http://localhost:4000/page --quiet --only-categories=accessibility --output=json --output-path=lh.json
+node lh-report.mjs lh.json
+~~~
+
+~~~js lh-report.mjs
+import { readFileSync } from "node:fs";
+
+const file = process.argv[2] ?? "lh.json";
+let report;
+try {
+  report = JSON.parse(readFileSync(file, "utf8"));
+} catch (err) {
+  console.error($__btمش قادر أقرا $__{file}: $__{err.message}$__bt);
+  process.exit(1);
+}
+
+const category = report.categories.accessibility;
+console.log($__btالدرجة: $__{Math.round(category.score * 100)}$__bt);
+
+for (const ref of category.auditRefs) {
+  const audit = report.audits[ref.id];
+  if (audit.score !== 0) continue;
+  const count = audit.details?.items?.length ?? 0;
+  console.log($__bt- $__{audit.title} ($__{count})$__bt);
+}
+~~~
+
+**ليه:**
+
+- [[categories.accessibility.score]] من 0 لـ 1، فبنضرب في 100.
+- [[auditRefs]] لستة الـ audits بتاعة الفئة دي، والنتيجة نفسها في [[report.audits[id]]].
+- [[score !== 0]] بيتخطى اللي عدّى، واللي [[null]] (مش منطبق).
+- [[details?.items?.length ?? 0]]: مش كل audit ليه عناصر.
+- [[try/catch]] بيغطي الملف المش موجود والـ JSON البايظ، و [[process.exit(1)]] عشان الـ CI يعرف.
+
+**الغلطة الشائعة:** تعمل [[score < 1]]. بعض الـ audits بتاخد درجات جزئية أو [[null]]، فالعدد يختلف عن اللي الأداة بتعرضه.
+
+~~~text الناتج
+$ node lh-report.mjs lh.json
+الدرجة: 44
+- Buttons do not have an accessible name (1)
+- $__bt<html>$__bt element does not have a $__bt[lang]$__bt attribute (1)
+- Image elements do not have $__bt[alt]$__bt attributes (1)
+- Form elements do not have associated labels (1)
+- Links do not have a discernible name (1)
+
+$ node lh-report.mjs nope.json
+مش قادر أقرا nope.json: ENOENT: no such file or directory ...
+(exit 1)
+
+ملف مش JSON:
+مش قادر أقرا targets.js: Unexpected token '.' ... is not valid JSON
+(exit 1)
+~~~
+
+(التقرير ده اتولّد من الـ Node API بتاع Lighthouse 13.6، بنفس شكل الـ JSON.)` },
           ],
           desc: R`axe DevTools (extension من Deque) و Lighthouse › Accessibility (جوه Chrome DevTools، وبيستخدم axe-core من جوه) بيفحصوا الصفحة في ثواني: صور من غير alt، وحقول من غير label، وتباين ضعيف، وأزرار ملهاش اسم، و ids متكررة، و aria غلط، وصفحة من غير [[lang]].
 
@@ -359,10 +798,225 @@ Lighthouse 13.5 طلّع نفس النتيجة: score ‏75 للصفحة الع�
           cmd: "jsx-a11y و getByRole",
           title: "امسك غلط الـ accessibility وانت بتكتب وفي الاختبارات",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** أنهي سطر من دول jsx-a11y recommended هيعترض عليه، وبأنهي rule: [[<img src="a.png" />]]، و [[<div onClick={f}>x</div>]]، و [[<a href="#" onClick={f}>y</a>]]، و [[<button onClick={f}>z</button>]]، و [[<input autoFocus />]]؟`, done: R`eslint 9.39 و jsx-a11y 6.10 طلّعوا ٥ errors: [[alt-text]] للصورة، و [[click-events-have-key-events]] و [[no-static-element-interactions]] للـ div، و [[anchor-is-valid]] للينك («Anchor used as a button»)، و [[no-autofocus]]. والزرار مفيهوش حاجة.` },
-            { lvl: 'تطبيق', t: R`**مسألة:** [[getByRole("textbox", { name: "الإيميل" })]] بيقع بـ «Unable to find an accessible element with the role "textbox" and name "الإيميل"». الـ label مكتوب [[<label for="e">الإيميل *</label>]]. ليه؟ وصلّحه مرتين: مرة في الاختبار ومرة في الـ HTML.`, done: R`عرفت إن الاسم بقى «الإيميل *» بالنجمة فمش مطابق بالظبط. في الاختبار [[name: /الإيميل/]] لقاه، وفي الـ HTML النجمة بقت [[<span aria-hidden="true">*</span>]] والحقل عليه [[required]]. ونفس الرسالة طلعت لـ label مش مربوط بـ for (اتجرّب على Testing Library 10.4).` },
-            { lvl: 'تطبيق', t: R`**refactor:** اختبار مليان [[container.querySelector(".btn-primary")]] و [[getByTestId("email-input")]]. غيّره كله لـ [[getByRole]] بالاسم و [[getByLabelText]].`, done: R`مفيش ولا querySelector ولا getByTestId، والاختبارات لسه خضرا، ولو شلت اسم الزرار أو ربط الـ label بيقع اختبار. فالاختبار بقى بيختبر الـ accessibility ببلاش.` },
-            { lvl: 'تحدي', t: R`**اكتب اختبار:** لمكوّن Dialog: الزرار بيفتحه، والـ focus بيروح لأول حقل جواه، و Escape بيقفله، والـ focus بيرجع لزرار الفتح، و axe مفيهوش violations وهو مفتوح.`, done: R`الاختبار بيستخدم [[toHaveFocus()]] مرتين و [[queryByRole("dialog")]] بيبقى [[null]] بعد Escape، ولو شلت رجوع الـ focus من المكوّن بيقع على السطر ده بالظبط.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** أنهي سطر من دول jsx-a11y recommended هيعترض عليه، وبأنهي rule: [[<img src="a.png" />]]، و [[<div onClick={f}>x</div>]]، و [[<a href="#" onClick={f}>y</a>]]، و [[<button onClick={f}>z</button>]]، و [[<input autoFocus />]]؟`, done: R`eslint 9.39 و jsx-a11y 6.10 طلّعوا ٥ errors: [[alt-text]] للصورة، و [[click-events-have-key-events]] و [[no-static-element-interactions]] للـ div، و [[anchor-is-valid]] للينك («Anchor used as a button»)، و [[no-autofocus]]. والزرار مفيهوش حاجة.`, sol: R`~~~jsx Sample.jsx
+export function Sample({ f }) {
+  return (
+    <>
+      <img src="a.png" />
+      <div onClick={f}>x</div>
+      <a href="#" onClick={f}>y</a>
+      <button onClick={f}>z</button>
+      <input autoFocus />
+    </>
+  );
+}
+~~~
+
+~~~js eslint.config.mjs
+import jsxA11y from "eslint-plugin-jsx-a11y";
+
+export default [
+  {
+    files: ["**/*.jsx"],
+    languageOptions: { parserOptions: { ecmaFeatures: { jsx: true } } },
+    ...jsxA11y.flatConfigs.recommended,
+  },
+];
+~~~
+
+~~~bash
+npm i -D eslint@9 eslint-plugin-jsx-a11y
+npx eslint Sample.jsx
+~~~
+
+**كل سطر:**
+
+- الصورة: مفيش [[alt]].
+- الـ div: عليه [[onClick]] من غير كيبورد، و div أصلًا مش عنصر تفاعلي. فبيطلع errorين، والتصليح الواحد هو [[<button>]].
+- [[<a href="#">]]: لينك بيتصرف كزرار. لو مش بيودّي مكان، يبقى [[<button>]].
+- الزرار سليم.
+- [[autoFocus]]: بينقل القارئ فجأة من غير سياق.
+
+**الغلطة الشائعة:** تصلّح الـ div بإضافة [[onKeyDown]] و [[role]] و [[tabIndex]]. كل ده بديل أوحش عن [[<button>]].
+
+~~~text الناتج
+سطر 4   jsx-a11y/alt-text
+سطر 5   jsx-a11y/click-events-have-key-events
+سطر 5   jsx-a11y/no-static-element-interactions
+سطر 6   jsx-a11y/anchor-is-valid    Anchor used as a button.
+سطر 8   jsx-a11y/no-autofocus
+
+٥ errors من eslint 9.39 و jsx-a11y 6.10. سطر الزرار مفيهوش حاجة.
+~~~` },
+            { lvl: 'تطبيق', t: R`**مسألة:** [[getByRole("textbox", { name: "الإيميل" })]] بيقع بـ «Unable to find an accessible element with the role "textbox" and name "الإيميل"». الـ label مكتوب [[<label for="e">الإيميل *</label>]]. ليه؟ وصلّحه مرتين: مرة في الاختبار ومرة في الـ HTML.`, done: R`عرفت إن الاسم بقى «الإيميل *» بالنجمة فمش مطابق بالظبط. في الاختبار [[name: /الإيميل/]] لقاه، وفي الـ HTML النجمة بقت [[<span aria-hidden="true">*</span>]] والحقل عليه [[required]]. ونفس الرسالة طلعت لـ label مش مربوط بـ for (اتجرّب على Testing Library 10.4).`, sol: R`~~~jsx name.test.jsx
+import { cleanup, render, screen } from "@testing-library/react";
+import { afterEach, expect, test } from "vitest";
+
+afterEach(cleanup);   // من غير globals: true الـ cleanup مش بيشتغل لوحده
+
+test("الاسم فيه النجمة: الاسم الكامل مش مطابق", () => {
+  render(<><label htmlFor="e">الإيميل *</label><input id="e" /></>);
+  expect(() => screen.getByRole("textbox", { name: "الإيميل" })).toThrow(/Unable to find an accessible element/);
+});
+
+test("تصليح الاختبار: regex", () => {
+  render(<><label htmlFor="e">الإيميل *</label><input id="e" /></>);
+  expect(screen.getByRole("textbox", { name: /الإيميل/ })).toBeTruthy();
+});
+
+test("تصليح الـ HTML: النجمة aria-hidden", () => {
+  render(<><label htmlFor="e">الإيميل <span aria-hidden="true">*</span></label><input id="e" required /></>);
+  expect(screen.getByRole("textbox", { name: "الإيميل" })).toBeTruthy();
+});
+
+test("label مش مربوط بـ for: نفس الرسالة", () => {
+  render(<><label>الإيميل</label><input /></>);
+  expect(() => screen.getByRole("textbox", { name: "الإيميل" })).toThrow(/Unable to find an accessible element/);
+});
+~~~
+
+**ليه وقع:** [[name]] نص بيتقارن بالمطابقة الكاملة. الاسم المحسوب من الـ label هو «الإيميل *» بالنجمة، فمش مساوي لـ «الإيميل».
+
+**التصليحين:**
+
+- في الاختبار: regex [[/الإيميل/]] بتطابق جزء من الاسم.
+- في الـ HTML: النجمة [[aria-hidden="true"]]، فالاسم يبقى «الإيميل»، و [[required]] هو اللي بيقول للقارئ إن الحقل إلزامي. ده الأحسن، لأن القارئ كان بيقول «الإيميل نجمة».
+
+**[[afterEach(cleanup)]]:** من غير [[globals: true]] في vitest، الـ cleanup مبيشتغلش، فالـ render بتاع كل test بيفضل، و [[getByRole]] يلاقي حقلين. قابلتني في التشغيل الأول.
+
+**الغلطة الشائعة:** رسالة «Unable to find» هي نفسها لما الـ label مش مربوط أصلًا. افتح DOM المطبوع وشوف الاسم.
+
+~~~text الناتج
+Test Files  1 passed
+     Tests  4 passed
+
+الاسم «الإيميل *» مع name: "الإيميل":
+Unable to find an accessible element with the role "textbox" and name "الإيميل"
+ونفس الرسالة لـ label مش مربوط بـ for.
+~~~` },
+            { lvl: 'تطبيق', t: R`**refactor:** اختبار مليان [[container.querySelector(".btn-primary")]] و [[getByTestId("email-input")]]. غيّره كله لـ [[getByRole]] بالاسم و [[getByLabelText]].`, done: R`مفيش ولا querySelector ولا getByTestId، والاختبارات لسه خضرا، ولو شلت اسم الزرار أو ربط الـ label بيقع اختبار. فالاختبار بقى بيختبر الـ accessibility ببلاش.`, sol: R`قبل:
+
+~~~jsx before.test.jsx
+const { container } = render(<Signup onSubmit={onSubmit} />);
+await user.type(screen.getByTestId("email-input"), "sara@example.com");
+await user.click(container.querySelector(".btn-primary"));
+~~~
+
+بعد:
+
+~~~jsx signup.test.jsx
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { expect, test, vi } from "vitest";
+import { Signup } from "./Signup";
+
+test("التسجيل بيبعت الفورم", async () => {
+  const user = userEvent.setup();
+  const onSubmit = vi.fn((e) => e.preventDefault());
+  render(<Signup onSubmit={onSubmit} />);
+
+  await user.type(screen.getByLabelText("الإيميل"), "sara@example.com");
+  await user.click(screen.getByRole("button", { name: "سجّل" }));
+
+  expect(onSubmit).toHaveBeenCalledOnce();
+});
+~~~
+
+~~~jsx Signup.jsx
+export function Signup({ onSubmit }) {
+  return (
+    <form onSubmit={onSubmit}>
+      <label htmlFor="email">الإيميل</label>
+      <input id="email" type="email" className="field" />
+      <button type="submit" className="btn-primary">سجّل</button>
+    </form>
+  );
+}
+~~~
+
+**الفرق:** [[.btn-primary]] تفصيلة شكل، و [[data-testid]] مش موجود عند المستخدم. [[getByRole("button", { name })]] و [[getByLabelText]] بيدوّروا زي المستخدم الحقيقي. لو غيّرت كلاس الزرار الاختبار يفضل أخضر، ولو شلت اسمه يقع. ده بالظبط المطلوب.
+
+**الغلطة الشائعة:** تستخدم [[getByText]] للزرار. ده هيلاقي أي نص، حتى لو مش زرار.
+
+~~~text الناتج
+✓ التسجيل بيبعت الفورم
+Test Files  passed ، Tests passed
+مفيش querySelector ولا getByTestId في الملف
+~~~` },
+            { lvl: 'تحدي', t: R`**اكتب اختبار:** لمكوّن Dialog: الزرار بيفتحه، والـ focus بيروح لأول حقل جواه، و Escape بيقفله، والـ focus بيرجع لزرار الفتح، و axe مفيهوش violations وهو مفتوح.`, done: R`الاختبار بيستخدم [[toHaveFocus()]] مرتين و [[queryByRole("dialog")]] بيبقى [[null]] بعد Escape، ولو شلت رجوع الـ focus من المكوّن بيقع على السطر ده بالظبط.`, sol: R`~~~jsx EditName.jsx
+import { Dialog } from "radix-ui";
+
+export function EditName({ brokenReturn = false }) {
+  return (
+    <Dialog.Root>
+      <Dialog.Trigger>عدّل الاسم</Dialog.Trigger>
+      <Dialog.Portal>
+        <Dialog.Content
+          aria-describedby={undefined}
+          onCloseAutoFocus={brokenReturn ? (e) => e.preventDefault() : undefined}
+        >
+          <Dialog.Title>الاسم الجديد</Dialog.Title>
+          <label htmlFor="name">الاسم</label>
+          <input id="name" />
+          <Dialog.Close>قفل</Dialog.Close>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+}
+~~~
+
+~~~jsx dialog.test.jsx
+import { cleanup, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { afterEach, expect, test } from "vitest";
+import "@testing-library/jest-dom/vitest";
+import axe from "axe-core";
+import { EditName } from "./EditName";
+
+afterEach(cleanup);
+
+test("الفتح والقفل والـ focus و axe", async () => {
+  const user = userEvent.setup();
+  render(<EditName />);
+
+  const opener = screen.getByRole("button", { name: "عدّل الاسم" });
+  await user.click(opener);
+
+  const dialog = screen.getByRole("dialog", { name: "الاسم الجديد" });
+  expect(screen.getByLabelText("الاسم")).toHaveFocus();
+
+  // jsdom مبيرسمش، فقواعد الألوان بتتقفل
+  const { violations } = await axe.run(dialog, { rules: { "color-contrast": { enabled: false }, region: { enabled: false } } });
+  expect(violations.map((v) => v.id)).toEqual([]);
+
+  await user.keyboard("{Escape}");
+  expect(screen.queryByRole("dialog")).toBeNull();
+  expect(opener).toHaveFocus();
+});
+~~~
+
+**ليه:**
+
+- [[getByRole("dialog", { name })]] بيأكد إن فيه role واسم في نفس السطر.
+- [[toHaveFocus()]] مرتين: أول حقل بعد الفتح، وزرار الفتح بعد القفل.
+- [[queryByRole]] بيرجع [[null]] بعد Escape.
+- axe في jsdom: مفيش رسم، فقفلنا [[color-contrast]]. و [[region]] قفلناها لأننا بنفحص الـ dialog لوحده.
+
+**ازاي تثبت إن الاختبار بيمسك:** [[onCloseAutoFocus]] بـ [[preventDefault]] بيعطّل رجوع الـ focus. عملت prop تجريبي، والاختبار وقع على سطر [[toHaveFocus]].
+
+**الغلطة الشائعة:** تستنى في اختبار jsdom تكشف مشكلة ألوان أو layout. جوه jsdom مفيش رسم، فده شغل Playwright.
+
+~~~text الناتج
+المكوّن السليم:
+✓ الفتح والقفل والـ focus و axe
+
+من غير رجوع الـ focus:
+FAIL  من غير رجوع الـ focus
+Error: expect(element).toHaveFocus()
+Expected element with focus: زرار «عدّل الاسم»
+> expect(opener).toHaveFocus();
+~~~` },
           ],
           desc: R`[[eslint-plugin-jsx-a11y]] بيقرا الـ JSX وانت بتكتب ويطلّع error على [[<img>]] من غير alt، و [[<div onClick>]] من غير كيبورد، و [[<a href="#" onClick>]] المفروض يبقى زرار. (إعداد ESLint نفسه في «تاب فحص الكود».)
 
@@ -581,10 +1235,173 @@ Here are the accessible roles:
           cmd: "كيبورد وقارئ شاشة",
           title: "الـ checklist اليدوي: كيبورد بس، و NVDA و VoiceOver",
           practice: [
-            { lvl: 'تطبيق', t: R`**محاكاة:** اعمل جولة الكيبورد على صفحة تسجيل من موقعك: الماوس بعيد، و snippet في الكونسول بيطبع كل عنصر بياخد focus ([[document.addEventListener("focusin", e => console.log(e.target))]]). خلّص التسجيل كله بالكيبورد.`, done: R`لستة بكل وقفة بالترتيب، وجنبها أي مشكلة (عنصر مخفي واخد focus، أو focus مختفي، أو ترتيب غريب، أو مكان مبتعرفش تخرج منه)، وعدد المشاكل قبل وبعد التصليح.` },
-            { lvl: 'سريع', t: R`**مسألة:** قارئ الشاشة بيتنقّل بالعناوين (H في NVDA). اكتب سطر في الكونسول بيطبع كل عناوين الصفحة بمستواها، وشوف فيه مستوى بيتنط (h2 بعده h4) ولا أكتر من h1.`, done: R`السطر [[[...document.querySelectorAll("h1,h2,h3,h4,h5,h6")].map(h => h.tagName + " " + h.textContent.trim())]] طبع اللستة، وبعد التصليح فيه h1 واحد ومفيش مستوى بيتنط، واللستة لوحدها بتشرح الصفحة.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** dropdown مخصص لاختيار الدولة فيه [[keydown]] بيعمل [[e.preventDefault()]] على أي زرار عشان الأسهم تشتغل، فـ Tab جواه مبيخرجش (keyboard trap، بند 2.1.2). صلّحه.`, done: R`الأسهم بتتنقل بين الدول، و Enter بيختار، و Escape بيقفل ويرجّع الـ focus للزرار، و Tab بيخرج للعنصر اللي بعده. والـ [[preventDefault]] بقى على الأسهم بس.` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** من وثائق Microsoft لـ Narrator هات: إزاي تشغّله وتقفله، وإزاي تدخل scan mode، وإزاي تتنقّل بالعناوين واللينكات جوّه.`, done: R`٣ اختصارات مكتوبة ومجرّبة: [[Ctrl+Win+Enter]] تشغيل وقفل، و [[Caps Lock+Space]] للـ scan mode، و H للعنوان اللي بعده جوه الـ scan mode، وجرّبتهم على صفحة من موقعك.` },
+            { lvl: 'تطبيق', t: R`**محاكاة:** اعمل جولة الكيبورد على صفحة تسجيل من موقعك: الماوس بعيد، و snippet في الكونسول بيطبع كل عنصر بياخد focus ([[document.addEventListener("focusin", e => console.log(e.target))]]). خلّص التسجيل كله بالكيبورد.`, done: R`لستة بكل وقفة بالترتيب، وجنبها أي مشكلة (عنصر مخفي واخد focus، أو focus مختفي، أو ترتيب غريب، أو مكان مبتعرفش تخرج منه)، وعدد المشاكل قبل وبعد التصليح.`, sol: R`الصفحة التجريبية فيها مشكلتين متعمدين:
+
+~~~html signup.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>تسجيل</title>
+<style>.promo { position: absolute; inset-inline-start: -9999px; }</style></head>
+<body>
+<main>
+  <h1>تسجيل</h1>
+  <a class="promo" href="/promo">عرض مخفي</a>
+  <h3>بياناتك</h3>
+  <label for="n">الاسم</label><input id="n">
+  <label for="m">الإيميل</label><input id="m" type="email">
+  <button id="s">سجّل</button>
+</main>
+</body>
+</html>
+~~~
+
+~~~js console
+document.addEventListener("focusin", (e) => console.log(e.target));
+~~~
+
+**الطريقة:** الماوس بعيد، والصق السطر، ودوس Tab لآخر الصفحة، واكتب جنب كل وقفة: شايف الـ focus؟ الترتيب منطقي؟ أقدر أرجع؟
+
+**اللي ظهر:**
+
+| الوقفة | المشكلة | التصليح |
+|---|---|---|
+| «عرض مخفي» | لينك برا الشاشة واخد focus، فالإطار مش ظاهر | [[hidden]] لو مش مستخدم، أو يظهر مع [[:focus]] |
+| الاسم | مفيش | |
+| الإيميل | مفيش | |
+| سجّل | مفيش | |
+
+**الغلطة الشائعة:** تخفي عنصر بـ [[position]] برا الشاشة. الشكل راح، بس لسه في ترتيب Tab.
+
+~~~text الناتج
+الوقفات بالترتيب:
+عرض مخفي    ← مشكلة: عنصر مش باين واخد focus
+n
+m
+s
+
+قبل التصليح: مشكلة واحدة. بعد hidden على اللينك: الوقفات n و m و s بس.
+~~~` },
+            { lvl: 'سريع', t: R`**مسألة:** قارئ الشاشة بيتنقّل بالعناوين (H في NVDA). اكتب سطر في الكونسول بيطبع كل عناوين الصفحة بمستواها، وشوف فيه مستوى بيتنط (h2 بعده h4) ولا أكتر من h1.`, done: R`السطر [[[...document.querySelectorAll("h1,h2,h3,h4,h5,h6")].map(h => h.tagName + " " + h.textContent.trim())]] طبع اللستة، وبعد التصليح فيه h1 واحد ومفيش مستوى بيتنط، واللستة لوحدها بتشرح الصفحة.`, sol: R`~~~js console
+[...document.querySelectorAll("h1,h2,h3,h4,h5,h6")].map((h) => h.tagName + " " + h.textContent.trim())
+~~~
+
+**السطر:** [[querySelectorAll]] بيرجع العناوين بترتيب الصفحة، و [[...]] بيحوّلها لـ array، و [[.map]] بيعمل سطر لكل عنوان. ده نفس اللي قارئ الشاشة بيقراه لما تدوس H.
+
+**اللستة دي لوحدها** لازم تشرح الصفحة. لو مش فاهم منها الصفحة بتتكلم عن إيه، فالعناوين ضعيفة.
+
+**التصليح:** مستوى العنوان بيقول مكانه في الهيكل، مش حجمه. عايز حجم صغير؟ استخدم CSS وسيب [[h2]].
+
+**الغلطة الشائعة:** تختار [[h3]] عشان حجمه أنسب، فالقارئ يحس إن فيه قسم ناقص.
+
+~~~text الناتج
+قبل:
+H1 تسجيل
+H3 بياناتك     ← نط من h1 لـ h3
+
+بعد h2:
+H1 تسجيل
+H2 بياناتك
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** dropdown مخصص لاختيار الدولة فيه [[keydown]] بيعمل [[e.preventDefault()]] على أي زرار عشان الأسهم تشتغل، فـ Tab جواه مبيخرجش (keyboard trap، بند 2.1.2). صلّحه.`, done: R`الأسهم بتتنقل بين الدول، و Enter بيختار، و Escape بيقفل ويرجّع الـ focus للزرار، و Tab بيخرج للعنصر اللي بعده. والـ [[preventDefault]] بقى على الأسهم بس.`, sol: R`~~~html dropdown.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>اختيار الدولة</title>
+<style>
+  body { font-family: system-ui, sans-serif; padding: 1rem; }
+  ul { margin: 0; padding: 0; list-style: none; border: 1px solid #94a3b8; max-inline-size: 14rem; }
+  li { padding: .5rem; }
+  li[aria-selected="true"] { font-weight: 700; }
+  li:focus { outline: 2px solid #0f766e; outline-offset: -2px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>العنوان</h1>
+  <button id="btn" type="button" aria-haspopup="listbox" aria-expanded="false" aria-controls="list">اختار الدولة</button>
+  <ul id="list" role="listbox" aria-label="الدولة" tabindex="-1" hidden>
+    <li role="option" id="o1" tabindex="-1">مصر</li>
+    <li role="option" id="o2" tabindex="-1">السعودية</li>
+    <li role="option" id="o3" tabindex="-1">الإمارات</li>
+  </ul>
+  <a id="next" href="#next">الخطوة الجاية</a>
+</main>
+<script>
+  const btn = document.getElementById("btn");
+  const list = document.getElementById("list");
+  const options = [...list.querySelectorAll("li")];
+
+  function open() {
+    list.hidden = false;
+    btn.setAttribute("aria-expanded", "true");
+    options[0].focus();
+  }
+  function close(backToButton) {
+    list.hidden = true;
+    btn.setAttribute("aria-expanded", "false");
+    if (backToButton) btn.focus();
+  }
+
+  btn.addEventListener("click", open);
+  list.addEventListener("keydown", (e) => {
+    const i = options.indexOf(document.activeElement);
+    if (e.key === "ArrowDown") { e.preventDefault(); options[(i + 1) % options.length].focus(); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); options[(i - 1 + options.length) % options.length].focus(); }
+    else if (e.key === "Enter") {
+      e.preventDefault();
+      options.forEach((o) => o.setAttribute("aria-selected", String(o === options[i])));
+      btn.textContent = options[i].textContent;
+      close(true);
+    }
+    else if (e.key === "Escape") close(true);
+    else if (e.key === "Tab") close(false);   // من غير preventDefault: Tab يكمل لوحده
+  });
+$__lt/script>
+</body>
+</html>
+~~~
+
+**الباج:** [[e.preventDefault()]] في أول الـ handler بيلغي سلوك كل الأزرار، ومنها Tab، فالمستخدم محبوس جوه.
+
+**التصليح:** [[preventDefault]] على الأسهم و Enter بس. و Tab بيقفل القايمة ويسيب المتصفح يكمل لوحده للعنصر اللي بعده. ودا بند 2.1.2 No Keyboard Trap.
+
+- [[(i + 1) % options.length]] بيلف من الآخر للأول.
+- [[close(true)]] بيرجّع الـ focus للزرار، و [[close(false)]] لأ، لأن Tab بينقله.
+
+**الغلطة الشائعة:** تعمل [[if (e.key !== "Tab") e.preventDefault()]] في أول الـ handler. كده أي اختصار زي F5 أو Ctrl+L اتلغى كمان.
+
+~~~text الناتج
+فتح:         o1
+سهم تحت:     o2 ← o3 ← o1 (لف)
+سهم فوق:     o3
+Enter:       رجع للزرار ، ونص الزرار بقى «الإمارات»
+Escape:      الزرار ، aria-expanded = false
+Tab:         next ، والقايمة hidden = true
+axe صفر
+~~~` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** من وثائق Microsoft لـ Narrator هات: إزاي تشغّله وتقفله، وإزاي تدخل scan mode، وإزاي تتنقّل بالعناوين واللينكات جوّه.`, done: R`٣ اختصارات مكتوبة ومجرّبة: [[Ctrl+Win+Enter]] تشغيل وقفل، و [[Caps Lock+Space]] للـ scan mode، و H للعنوان اللي بعده جوه الـ scan mode، وجرّبتهم على صفحة من موقعك.`, sol: R`**إجابة نموذجية من وثائق Microsoft لـ Narrator:**
+
+| الأمر | الاختصار |
+|---|---|
+| تشغيل وقفل | [[Ctrl+Win+Enter]] |
+| Scan mode | [[Caps Lock+Space]] |
+| العنوان اللي بعده جوه Scan mode | H |
+| اللي قبله | [[Shift+H]] |
+| اللينك اللي بعده | K |
+
+[[Caps Lock]] هنا مفتاح Narrator، و [[Insert]] كمان بينفع افتراضيًا.
+
+**جرّبها كده:** افتح صفحة، شغّل Narrator، و [[Caps Lock+Space]]، ودوس H كذا مرة، واسمع هل العناوين بتشرح الصفحة.
+
+**الغلطة الشائعة:** تجرّب الموقع بـ Tab بس مع القارئ. مستخدمين القارئ بيتنقلوا بالعناوين واللاندماركس أكتر من Tab.
+
+~~~text الناتج
+Ctrl+Win+Enter ، Caps Lock+Space ، H
+
+(إجابة من الوثائق. المعمل ده من غير صوت، فشغّلها بنفسك على ويندوز.)
+~~~` },
           ],
           desc: R`الفحص اليدوي هو اللي بيمسك الباقي. أولًا الكيبورد (5 دقايق لكل صفحة): شيل الماوس، ودوس Tab من أول الصفحة لآخرها. كل حاجة بتتضغط بتتوصل؟ الـ focus باين دايمًا؟ الترتيب زي ترتيب القراية؟ Enter و Space بيشغّلوا الأزرار؟ Escape بيقفل المودال والـ focus بيرجع للزرار؟ مفيش مكان بتدخله ومتعرفش تخرج؟
 
@@ -723,10 +1540,132 @@ Shift+Tab:    رجع للـ checkbox
           cmd: "إعلان تغيير الصفحة",
           title: "SPA بتغيّر الصفحة وقارئ الشاشة ساكت",
           practice: [
-            { lvl: 'سريع', t: R`**قارن وقيس:** في SPA من غير [[RouteFocus]] دوس على لينك «المنتجات» بالكيبورد، واطبع [[document.activeElement]] و [[document.title]]. وبعدين حط المكوّن واعمل نفس الحاجة.`, done: R`من غيره الـ focus فاضل على اللينك والـ title القديم، ومعاه الـ focus على [[h1]] «المنتجات» والـ title اتغير، و Tab اللي بعدها بيروح لأول عنصر في الصفحة الجديدة مش اللي بعد اللينك.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** بعد ما حطيت [[RouteFocus]] الديزاينر اشتكى من إطار حوالين العنوان، فحد كتب [[h1:focus { outline: none }]]. ده بيخفيه للكيبورد كمان. خلّي الإطار يختفي لو التنقّل بالماوس بس.`, done: R`استخدمت [[h1:focus:not(:focus-visible) { outline: none }]] (أو مبتكتبش حاجة)، واتقاس في Chrome 156: بعد ضغطة ماوس [[h1.matches(":focus-visible")]] = [[false]] والإطار مش باين، وبعد Enter من الكيبورد = [[true]] والإطار باين.` },
-            { lvl: 'تطبيق', t: R`**ابني:** الطريقة التانية: مكوّن announcer فيه [[<div aria-live="assertive" class="sr-only">]] بيتكتب فيه [[document.title]] بعد كل تنقّل (زي اللي Next.js بيعمله). قارنه بطريقة الـ focus.`, done: R`الطريقتين قارئ الشاشة بيقول اسم الصفحة. بس مع الـ announcer بس، الـ focus فاضل على اللينك القديم، فكتبت جدول: كل طريقة بتعلن إيه، وبتحرّك الـ focus ولا لأ، وإمتى تختار أنهي.` },
-            { lvl: 'تطبيق', t: R`**اكتب اختبار:** بـ Playwright: افتح الرئيسية، ودوس اللينك بالكيبورد ([[focus]] و [[press("Enter")]])، واتأكد بـ [[toHaveTitle]] من العنوان الجديد و [[toBeFocused]] على [[main h1]].`, done: R`الاختبار بيعدّي، ولو شلت [[<RouteFocus />]] من الـ layout بيقع على [[toBeFocused]]، ولو شلت الـ [[<title>]] من الصفحة بيقع على [[toHaveTitle]].` },
+            { lvl: 'سريع', t: R`**قارن وقيس:** في SPA من غير [[RouteFocus]] دوس على لينك «المنتجات» بالكيبورد، واطبع [[document.activeElement]] و [[document.title]]. وبعدين حط المكوّن واعمل نفس الحاجة.`, done: R`من غيره الـ focus فاضل على اللينك (والـ title بيتغيّر من [[<title>]] اللي في الصفحة، مش من المكوّن)، ومعاه الـ focus على [[h1]] «المنتجات»، و Tab اللي بعدها بيروح لأول عنصر في الصفحة الجديدة مش اللي بعد اللينك.`, sol: R`~~~jsx RouteFocus.jsx
+import { useEffect, useRef } from "react";
+import { useLocation } from "react-router";
+
+export function RouteFocus() {
+  const { pathname } = useLocation();
+  const prev = useRef(pathname);
+  useEffect(() => {
+    if (prev.current === pathname) return;
+    prev.current = pathname;
+    const h1 = document.querySelector("main h1");
+    if (!h1) return;
+    h1.tabIndex = -1;
+    h1.focus();
+  }, [pathname]);
+  return null;
+}
+~~~
+
+~~~js console
+[document.activeElement, document.title]
+~~~
+
+**الفرق:** في SPA الصفحة مبتعملش reload، فالمتصفح مبيعملش reset للـ focus. اللينك بيفضل عليه focus، وقارئ الشاشة مبيقولش حاجة، والمستخدم مش عارف إن حاجة اتغيرت.
+
+[[RouteFocus]] بينقل الـ focus للعنوان، فالقارئ بيقراه، و Tab اللي بعدها بيبدأ من الصفحة الجديدة.
+
+**ملحوظة:** الـ [[document.title]] بيتغيّر من [[<title>]] اللي في الصفحة، مش من [[RouteFocus]]. فالمكوّن شغلته الـ focus بس.
+
+**الغلطة الشائعة:** تعمل [[prev]] بـ [[useState]]. ده بيعمل render زيادة، و [[useRef]] كفاية.
+
+~~~text الناتج
+                 activeElement     title                   Tab اللي بعدها
+من غير المكوّن   لينك المنتجات     المنتجات | متجر النور   لينك بعده (نفس الـ nav)
+معاه             h1 «المنتجات»     المنتجات | متجر النور   أول منتج
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** بعد ما حطيت [[RouteFocus]] الديزاينر اشتكى من إطار حوالين العنوان، فحد كتب [[h1:focus { outline: none }]]. ده بيخفيه للكيبورد كمان. خلّي الإطار يختفي لو التنقّل بالماوس بس.`, done: R`استخدمت [[h1:focus:not(:focus-visible) { outline: none }]] (أو مبتكتبش حاجة)، واتقاس في Chrome 156: بعد ضغطة ماوس [[h1.matches(":focus-visible")]] = [[false]] والإطار مش باين، وبعد Enter من الكيبورد = [[true]] والإطار باين.`, sol: R`~~~css style.css
+/* الصح: متكتبش حاجة. أو لو حد لازم يكتب، اكتبها كده */
+h1:focus:not(:focus-visible) { outline: none; }
+~~~
+
+**ليه:** المتصفح أصلًا بيقرر: بعد ضغطة ماوس [[:focus-visible]] بيبقى [[false]] والإطار مش بيظهر، وبعد الكيبورد بيبقى [[true]] والإطار بيظهر. فالشكوى كانت على حاجة غير موجودة، أو على متصفح قديم.
+
+- [[h1:focus { outline: none }]] بيشيله عن الكل، ومنهم الكيبورد.
+- [[:focus:not(:focus-visible)]] بيشيله في الحالة اللي المتصفح أصلًا مش محتاجها.
+
+**الغلطة الشائعة:** تعتبر الإطار باج في الديزاين. الكيبورد محتاجه عشان يعرف هو فين.
+
+~~~text الناتج
+                        ماوس                 كيبورد
+من غير CSS              fv false ، none      fv true ، auto
+h1:focus:not(...)       fv false ، none      fv true ، auto
+h1:focus {outline:none} -                    fv true ، none   ← كسر الكيبورد
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** الطريقة التانية: مكوّن announcer فيه [[<div aria-live="assertive" class="sr-only">]] بيتكتب فيه [[document.title]] بعد كل تنقّل (زي اللي Next.js بيعمله). قارنه بطريقة الـ focus.`, done: R`الطريقتين قارئ الشاشة بيقول اسم الصفحة. بس مع الـ announcer بس، الـ focus فاضل على اللينك القديم، فكتبت جدول: كل طريقة بتعلن إيه، وبتحرّك الـ focus ولا لأ، وإمتى تختار أنهي.`, sol: R`~~~jsx RouteAnnouncer.jsx
+import { useEffect, useRef } from "react";
+import { useLocation } from "react-router";
+
+export function RouteAnnouncer() {
+  const { pathname } = useLocation();
+  const box = useRef(null);
+  const first = useRef(true);
+  useEffect(() => {
+    if (first.current) { first.current = false; return; }
+    const id = setTimeout(() => { box.current.textContent = document.title; }, 50);
+    return () => clearTimeout(id);
+  }, [pathname]);
+  return <div ref={box} aria-live="assertive" className="sr-only" />;
+}
+~~~
+
+**ليه [[setTimeout]]:** [[<title>]] بتتحدث مع الـ render، فبنستنى لحظة عشان نقرا العنوان الجديد.
+
+| | الـ focus | القارئ بيقول | Tab اللي بعدها |
+|---|---|---|---|
+| RouteFocus | بيتنقل لـ h1 | العنوان | أول حاجة في الصفحة |
+| Announcer | فاضل على اللينك | [[document.title]] | عنصر تاني في الـ nav |
+
+**تختار إيه:** لو الصفحة الجديدة صفحة كاملة، الـ focus أحسن لأن المستخدم بيبدأ من أولها. ولو الـ nav ثابت وعايز المستخدم يكمل تنقل، زي تابات، الـ announcer. ونطق القارئ نفسه محتاج تجربة بـ NVDA أو Narrator، والمعمل ده قاس الـ DOM بس.
+
+**الغلطة الشائعة:** تستخدم الاتنين مع بعض، فالقارئ يقول الاسم مرتين.
+
+~~~text الناتج
+Announcer بعد Enter على «المنتجات»:
+#announcer = «المنتجات | متجر النور»
+activeElement = لينك المنتجات
+Tab: لينك بعده
+~~~` },
+            { lvl: 'تطبيق', t: R`**اكتب اختبار:** بـ Playwright: افتح الرئيسية، ودوس اللينك بالكيبورد ([[focus]] و [[press("Enter")]])، واتأكد بـ [[toHaveTitle]] من العنوان الجديد و [[toBeFocused]] على [[main h1]].`, done: R`الاختبار بيعدّي، ولو شلت [[<RouteFocus />]] من الـ layout بيقع على [[toBeFocused]]، ولو شلت الـ [[<title>]] من الصفحة بيقع على [[toHaveTitle]].`, sol: R`~~~js route.spec.mjs
+import { test, expect } from "@playwright/test";
+
+test("التنقل بينقل الـ focus ويغيّر العنوان", async ({ page }) => {
+  await page.goto(process.env.BASE);
+  const link = page.getByRole("link", { name: "المنتجات" });
+  await link.focus();
+  await page.keyboard.press("Enter");
+
+  await expect(page).toHaveTitle("المنتجات | متجر النور");
+  await expect(page.locator("main h1")).toBeFocused();
+});
+~~~
+
+~~~js playwright.config.mjs
+export default {
+  testDir: ".",
+  testMatch: "route.spec.mjs",
+  reporter: "line",
+  timeout: 15000,
+  use: { channel: "chrome", headless: true },
+  expect: { timeout: 2000 },
+};
+~~~
+
+**ليه [[focus()]] و [[press("Enter")]] مش [[click()]]:** ضغطة الماوس تحرك الـ focus بنفسها، فالاختبار يبقى مش بيجرّب مسار الكيبورد.
+
+و [[toHaveTitle]] و [[toBeFocused]] بيستنوا لوحدهم، فمش محتاج [[waitForTimeout]].
+
+**جرّب تكسره:** لو شلت [[<RouteFocus />]] الاختبار يقع على [[toBeFocused]]، ولو شلت [[<title>]] يقع على [[toHaveTitle]]. دي الطريقة اللي بتثبت إن الاختبار بيحرس حاجة.
+
+**الغلطة الشائعة:** تعمل الاختبار بعد [[page.goto("/products")]] مباشرة. ده reload كامل، مش تنقل SPA.
+
+~~~text الناتج
+الأصلي:             1 passed (1.2s)
+من غير RouteFocus:  1 failed  > await expect(page.locator("main h1")).toBeFocused();
+من غير <title>:     1 failed  > await expect(page).toHaveTitle("المنتجات | متجر النور");
+~~~` },
           ],
           desc: R`في موقع عادي، كل لينك بيحمّل صفحة جديدة وقارئ الشاشة بيقول عنوانها. في SPA (React Router مثلًا)، اللينك بيغيّر المحتوى بـ JavaScript: مفيش page load، فقارئ الشاشة ساكت، والـ focus فاضل على اللينك اللي اتداس (أو راح لأول الصفحة). المستخدم مش عارف إن حاجة اتغيرت.
 

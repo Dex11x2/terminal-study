@@ -836,3 +836,7 @@ body:not([data-shell="ps"]):not([data-shell="cmd"]):not([data-shell="zsh"]):not(
 .loadbar{position:fixed;top:10px;inset-inline:0;margin-inline:auto;width:fit-content;max-width:calc(100vw - 32px);z-index:20;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:6px 16px;font-size:14px;box-shadow:var(--shadow)}
 .loadbar[hidden]{display:none}
 @media print{.loadbar{display:none!important}}
+
+/* the copy button keeps its one line, and a solution gets the width back on a phone */
+.copy{flex:none;white-space:nowrap}
+@media (max-width:520px){.psol-b{padding:8px 6px}.practice .projlist{padding-inline-start:0}.projlist>li{padding-inline:0}}

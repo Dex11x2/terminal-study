@@ -16,12 +16,327 @@ MORE("css", [
         {
           cmd: "fieldset و radio",
           practice: [
-            { lvl: 'تطبيق', t: R`**أشكال:** اختيار باقة في جيم متخيل بـ ٣ كروت: كل كارت [[<label class="plan">]] جواه radio ونص، والـ radio مخفي بالشكل بس (حجم 1px و [[clip-path: inset(50%)]])، والكارت المختار حدوده بلون مختلف بـ [[.plan:has(input:checked)]].`, done: R`الضغط على أي حتة في الكارت بيختاره، والأسهم بتنقّل بين الكروت، و [[getComputedStyle(card).borderColor]] على المختار بيرجّع اللون اللي حطيته في الـ :has، ومفيش ولا سطر JavaScript.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** نفس كروت الباقات بس الـ radio عليه [[display: none]] عشان «ميبانش». جرّب توصل للكروت بالكيبورد بس، وبعدين صلّحها.`, done: R`مع [[display: none]] الـ Tab بيعدّي من غير ما يقف على أي كارت (الـ radio اتشال من الكيبورد وشجرة الـ accessibility)، وبعد ما خبّيته بالشكل بس بقى الـ Tab بيقف على المجموعة والأسهم بتختار.` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** مجموعة radios اسمها [[pay]] ومفيش ولا واحد متعلّم. [[form.elements.pay.value]] هيرجّع إيه؟ وبعد ما تعلّم «كاش» ([[value="cod"]])؟ وهل [[pay]] هيبقى موجود في [[FormData]] قبل الاختيار؟`, done: R`قبل الاختيار رجّع نص فاضي [[""]] (مش null)، وبعده [[cod]]، و [[new FormData(form).has('pay')]] كان [[false]] قبل الاختيار: المجموعة اللي مفيهاش اختيار مبتتبعتش خالص.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** فورم دفع فيه [[<input type="radio" name="pay1" value="card">]] و [[<input type="radio" name="pay2" value="cod">]]، و [[<legend>]] مكتوب برّه الـ fieldset. المستخدم قدر يعلّم الاتنين!`, done: R`بعد ما بقوا نفس الـ [[name]] تعليم واحد بيشيل التاني، و [[FormData]] فيه قيمة واحدة لـ [[pay]]، والـ legend جوه الـ fieldset كأول عنصر فتاب Accessibility بقى بيقول اسم المجموعة «طريقة الدفع».` },
-            { lvl: 'تحدي', t: R`**ابني:** اختبار صغير «أنسب قهوة ليك» من ٣ أسئلة، كل سؤال fieldset و legend و ٣ radios ليهم [[value]] بنقط (1 و 2 و 3)، وزرار يحسب المجموع ويعرض النتيجة في [[<output aria-live="polite">]].`, done: R`لو سؤال مش متجاوب الإرسال بيقف عنده (حط [[required]] على أول radio في كل مجموعة)، والمجموع 3 بيقول «إسبريسو» و 9 بيقول «لاتيه» مثلًا، والنتيجة بتتغيّر من غير reload.` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** من MDN اعرف الفرق بين [[<select>]] و [[<input list="...">]] مع [[<datalist>]]، واعمل حقل «المدينة» بـ datalist فيه ٥ مدن.`, done: R`تقدر تختار من الاقتراحات أو تكتب مدينة مش في اللستة وتتبعت عادي (ده الفرق: datalist اقتراح مش إجبار)، والـ select مبيقبلش غير اللي فيه.` },
+            { lvl: 'تطبيق', t: R`**أشكال:** اختيار باقة في جيم متخيل بـ ٣ كروت: كل كارت [[<label class="plan">]] جواه radio ونص، والـ radio مخفي بالشكل بس (حجم 1px و [[clip-path: inset(50%)]])، والكارت المختار حدوده بلون مختلف بـ [[.plan:has(input:checked)]].`, done: R`الضغط على أي حتة في الكارت بيختاره، والأسهم بتنقّل بين الكروت، و [[getComputedStyle(card).borderColor]] على المختار بيرجّع اللون اللي حطيته في الـ :has، ومفيش ولا سطر JavaScript.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الباقات</title>
+<style>
+  body { font-family: system-ui; margin: 16px; }
+  fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 12px; max-width: 420px; }
+  .plan { display: block; padding: 14px; border: 2px solid #d4d4d8; border-radius: 12px; cursor: pointer; }
+  .plan input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    clip-path: inset(50%);
+  }
+  .plan:has(input:checked) { border-color: rgb(15, 118, 110); background: #f0fdfa; }
+  .plan:has(input:focus-visible) { outline: 3px solid #1d4ed8; outline-offset: 2px; }
+</style>
+</head>
+<body>
+<main>
+<h1>اختار باقتك</h1>
+<form>
+  <fieldset>
+    <legend>الباقة</legend>
+    <label class="plan"><input type="radio" name="plan" value="month" checked> شهر، ٥٠٠ جنيه</label>
+    <label class="plan"><input type="radio" name="plan" value="quarter"> ٣ شهور، ١٣٠٠ جنيه</label>
+    <label class="plan"><input type="radio" name="plan" value="year"> سنة، ٤٥٠٠ جنيه</label>
+  </fieldset>
+</form>
+</main>
+</body>
+</html>
+~~~
+
+**اللي بيخلي الكارت كله يتداس:** الـ [[input]] جوه الـ [[label]]، فأي ضغطة على الـ label بتعلّم الـ radio من غير [[for]] ولا JavaScript.
+
+**ليه الإخفاء بالشكل مش** [[display: none]]**:** الـ [[input]] لازم يفضل موجود عشان يتوصله بالكيبورد وقارئ الشاشة يقراه. [[width: 1px]] و [[height: 1px]] و [[clip-path: inset(50%)]] بيخلوه مش مرئي بس لسه في الصفحة. و [[position: absolute]] عشان ميزقّش النص.
+
+**الجزء الجديد:** [[.plan:has(input:checked)]] معناها «الكارت اللي جواه radio متعلّم». ده اللي بيخلي الأب يتغيّر حسب ابنه.
+
+**الغلطة الشائعة:** تخفي الـ radio وتنسى السطر بتاع [[:focus-visible]]. اللي بيستخدم الكيبورد مش هيشوف هو واقف فين، لأن الدايرة اللي كان عليها الإطار اختفت.
+
+~~~text الناتج
+الضغط على نص الكارت التاني: quarter
+لون حدود المختار: rgb(15, 118, 110)   ولون حدود غير المختار: rgb(212, 212, 216)
+Tab ثم سهم لتحت: quarter   وسهم تاني: year
+عرض الـ radio في الصفحة: 1px، ومفيش ولا سطر JavaScript
+overflow على 360: 0px   axe: 0 violations
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** نفس كروت الباقات بس الـ radio عليه [[display: none]] عشان «ميبانش». جرّب توصل للكروت بالكيبورد بس، وبعدين صلّحها.`, done: R`مع [[display: none]] الـ Tab بيعدّي من غير ما يقف على أي كارت (الـ radio اتشال من الكيبورد وشجرة الـ accessibility)، وبعد ما خبّيته بالشكل بس بقى الـ Tab بيقف على المجموعة والأسهم بتختار.`, sol: R`قبل:
+
+~~~css
+.plan input { display: none; }
+~~~
+
+بعد:
+
+~~~css
+.plan input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  clip-path: inset(50%);
+}
+.plan:has(input:focus-visible) { outline: 3px solid #1d4ed8; }
+~~~
+
+والـ HTML كامل عشان تجرب:
+
+~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الباقات</title>
+<style>
+  .plan { display: block; padding: 12px; border: 2px solid #999; margin-block-end: 8px; }
+  .plan input { position: absolute; width: 1px; height: 1px; clip-path: inset(50%); }
+  .plan:has(input:checked) { border-color: rgb(15, 118, 110); }
+  .plan:has(input:focus-visible) { outline: 3px solid #1d4ed8; }
+</style>
+</head>
+<body>
+<main>
+<h1>الباقات</h1>
+<form>
+  <fieldset>
+    <legend>الباقة</legend>
+    <label class="plan"><input type="radio" name="plan" value="a"> شهر</label>
+    <label class="plan"><input type="radio" name="plan" value="b"> سنة</label>
+  </fieldset>
+  <button>اشترك</button>
+</form>
+</main>
+</body>
+</html>
+~~~
+
+**اللي بيحصل:** [[display: none]] مش بس بيخفي العنصر، ده بيشيله من الصفحة كلها: مبيتوصلش بـ Tab، وقارئ الشاشة مبيشوفوش، حتى لو الـ label ظاهر. الماوس بس هو اللي شغال، لأن الضغط بيروح للـ label.
+
+**الغلطة الشائعة:** تجرب بالماوس بس، فتلاقيه شغال وتقفل التذكرة. جرّب كل كروت الاختيار بالكيبورد قبل ما تعتبرها خلصت. ونفس المشكلة بتحصل مع [[visibility: hidden]].
+
+~~~text الناتج
+                       أول Tab وقف عند     الأسهم اختارت    راديوز في شجرة الـ a11y
+display: none          BUTTON               ولا حاجة             0
+مخفي بالشكل بس         INPUT a               b             2
+~~~` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** مجموعة radios اسمها [[pay]] ومفيش ولا واحد متعلّم. [[form.elements.pay.value]] هيرجّع إيه؟ وبعد ما تعلّم «كاش» ([[value="cod"]])؟ وهل [[pay]] هيبقى موجود في [[FormData]] قبل الاختيار؟`, done: R`قبل الاختيار رجّع نص فاضي [[""]] (مش null)، وبعده [[cod]]، و [[new FormData(form).has('pay')]] كان [[false]] قبل الاختيار: المجموعة اللي مفيهاش اختيار مبتتبعتش خالص.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الدفع</title>
+</head>
+<body>
+<form id="f">
+  <label><input type="radio" name="pay" value="card"> كارت</label>
+  <label><input type="radio" name="pay" value="cod"> كاش</label>
+</form>
+</body>
+</html>
+~~~
+
+~~~js
+const form = document.querySelector('#f');
+form.elements.pay.value;
+new FormData(form).has('pay');
+form.elements.pay[1].checked = true;   // علّم كاش
+form.elements.pay.value;
+~~~
+
+**الإجابة:** [[form.elements.pay]] مش عنصر واحد، ده مجموعة اسمها [[RadioNodeList]]، و [[.value]] بتاعتها قيمة المتعلّم. ولو مفيش متعلّم بترجّع نص فاضي [[""]]، مش [[null]].
+
+أما [[FormData]] فبيجمع اللي هيتبعت فعلًا، والمجموعة اللي مفيهاش اختيار مش بتتبعت خالص. عشان كده [[has]] رجّعت [[false]].
+
+**الغلطة الشائعة:** تكتب [[if (form.elements.pay.value === null)]]. الشرط ده عمره ما هيتحقق. اكتب [[if (!form.elements.pay.value)]]، أو حط [[required]] على المجموعة.
+
+~~~text الناتج
+قبل الاختيار: value = ""   FormData.has = false
+بعد «كاش»:   value = "cod"   FormData.has = true
+نوع form.elements.pay = RadioNodeList
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** فورم دفع فيه [[<input type="radio" name="pay1" value="card">]] و [[<input type="radio" name="pay2" value="cod">]]، و [[<legend>]] مكتوب برّه الـ fieldset. المستخدم قدر يعلّم الاتنين!`, done: R`بعد ما بقوا نفس الـ [[name]] تعليم واحد بيشيل التاني، و [[FormData]] فيه قيمة واحدة لـ [[pay]]، والـ legend جوه الـ fieldset كأول عنصر فتاب Accessibility بقى بيقول اسم المجموعة «طريقة الدفع».`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الدفع</title>
+</head>
+<body>
+<main>
+<h1>الدفع</h1>
+<form id="f">
+  <fieldset>
+    <legend>طريقة الدفع</legend>
+    <label><input type="radio" name="pay" value="card"> كارت</label>
+    <label><input type="radio" name="pay" value="cod"> كاش عند الاستلام</label>
+  </fieldset>
+</form>
+</main>
+</body>
+</html>
+~~~
+
+**الغلطتين:**
+
+- الـ radios بتبقى مجموعة واحدة بس لو ليهم نفس [[name]]. [[pay1]] و [[pay2]] يعني مجموعتين، كل واحدة فيها اختيار واحد، فالمستخدم قدر يعلّم الاتنين.
+- [[legend]] لازم يبقى أول ابن جوه [[fieldset]]. برّه الـ fieldset ده مجرد كلام، مش اسم المجموعة.
+
+و [[fieldset]] مهم لقارئ الشاشة: لما يدخل المجموعة بيقول «طريقة الدفع» قبل ما يقرا «كارت»، فالمستخدم يعرف بيختار إيه.
+
+**الغلطة الشائعة:** تكتب JavaScript يلغي تعليم الراديو التاني، بدل ما تصلّح الـ [[name]]. سطر الـ HTML بيعمل ده ببلاش، والأسهم كمان بتتظبط لوحدها.
+
+~~~text الناتج
+قبل: اتعلّم 2 راديو في نفس الوقت
+بعد: اتعلّم 1 راديو، و FormData.getAll('pay') = ["cod"]
+
+تاب Accessibility:
+- group "طريقة الدفع":
+  - text: طريقة الدفع
+  - radio "كارت"
+  - text: كارت
+  - radio "كاش عند الاستلام" [checked]
+  - text: كاش عند الاستلام
+axe: 0 violations
+~~~` },
+            { lvl: 'تحدي', t: R`**ابني:** اختبار صغير «أنسب قهوة ليك» من ٣ أسئلة، كل سؤال fieldset و legend و ٣ radios ليهم [[value]] بنقط (1 و 2 و 3)، وزرار يحسب المجموع ويعرض النتيجة في [[<output aria-live="polite">]].`, done: R`لو سؤال مش متجاوب الإرسال بيقف عنده (حط [[required]] على أول radio في كل مجموعة)، والمجموع 3 بيقول «إسبريسو» و 9 بيقول «لاتيه» مثلًا، والنتيجة بتتغيّر من غير reload.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>أنسب قهوة ليك</title>
+<style>
+  body { font-family: system-ui; margin: 16px; }
+  fieldset { border: 1px solid #d4d4d8; border-radius: 12px; margin-block-end: 12px; }
+  label { display: block; padding: 4px 0; }
+  output { display: block; margin-block-start: 12px; font-size: 1.25rem; font-weight: 700; }
+</style>
+</head>
+<body>
+<main>
+<h1>أنسب قهوة ليك</h1>
+<form id="quiz">
+  <fieldset>
+    <legend>بتحبها قد إيه؟</legend>
+    <label><input type="radio" name="q1" value="1" required> تقيلة جدًا</label>
+    <label><input type="radio" name="q1" value="2"> وسط</label>
+    <label><input type="radio" name="q1" value="3"> خفيفة</label>
+  </fieldset>
+  <fieldset>
+    <legend>اللبن؟</legend>
+    <label><input type="radio" name="q2" value="1" required> من غير</label>
+    <label><input type="radio" name="q2" value="2"> شوية</label>
+    <label><input type="radio" name="q2" value="3"> كتير</label>
+  </fieldset>
+  <fieldset>
+    <legend>السكر؟</legend>
+    <label><input type="radio" name="q3" value="1" required> من غير</label>
+    <label><input type="radio" name="q3" value="2"> معلقة</label>
+    <label><input type="radio" name="q3" value="3"> معلقتين</label>
+  </fieldset>
+  <button>شوف النتيجة</button>
+  <output id="result" aria-live="polite"></output>
+</form>
+</main>
+<script>
+  const form = document.querySelector('#quiz');
+  const result = document.querySelector('#result');
+
+  function coffeeFor(score) {
+    if (score <= 4) return 'إسبريسو';
+    if (score <= 7) return 'كابتشينو';
+    return 'لاتيه';
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const data = new FormData(form);
+    const score = ['q1', 'q2', 'q3'].reduce((sum, q) => sum + Number(data.get(q)), 0);
+    result.textContent = coffeeFor(score) + ' (مجموعك ' + score + ')';
+  });
+$__lt/script>
+</body>
+</html>
+~~~
+
+**كل جزء بيعمل إيه:**
+
+- [[required]] على راديو واحد كفاية: القاعدة بتتطبق على المجموعة كلها اللي ليها نفس الـ [[name]].
+- [[e.preventDefault()]]: بيوقف إعادة تحميل الصفحة. والفحص بتاع [[required]] بيحصل قبل event الـ submit أصلًا، فالكود بتاعك مش هيشتغل لو فيه سؤال ناقص.
+- [[data.get(q)]] بترجّع نص، فـ [[Number]] لازمة، وإلا [[0 + "1"]] تبقى [[01]].
+- [[reduce]] بتجمع القيم، و [[0]] في آخرها هي بداية العداد.
+- [[aria-live="polite"]]: قارئ الشاشة بيقرا النتيجة لما تتغيّر من غير ما الـ focus يتحرك.
+
+**الغلطة الشائعة:** تستخدم [[click]] على الزرار بدل [[submit]] على الفورم. كده الفحص ممكن يتعدّى، و Enter من الكيبورد مش هيتعامل زي الضغط.
+
+~~~text الناتج
+إرسال من غير إجابة: النتيجة = «»   والـ focus عند q1 value=1
+كل الإجابات 1: إسبريسو (مجموعك 3)
+كل الإجابات 2: كابتشينو (مجموعك 6)
+كل الإجابات 3: لاتيه (مجموعك 9)
+الصفحة اتعمل لها reload: false
+overflow على 360: 0px   axe: 0 violations
+~~~` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** من MDN اعرف الفرق بين [[<select>]] و [[<input list="...">]] مع [[<datalist>]]، واعمل حقل «المدينة» بـ datalist فيه ٥ مدن.`, done: R`تقدر تختار من الاقتراحات أو تكتب مدينة مش في اللستة وتتبعت عادي (ده الفرق: datalist اقتراح مش إجبار)، والـ select مبيقبلش غير اللي فيه.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>المدينة</title>
+</head>
+<body>
+<main>
+<h1>العنوان</h1>
+<form id="f">
+  <label for="city">المدينة</label>
+  <input id="city" name="city" list="cities">
+  <datalist id="cities">
+    <option value="القاهرة"></option>
+    <option value="الإسكندرية"></option>
+    <option value="المنصورة"></option>
+    <option value="أسوان"></option>
+    <option value="طنطا"></option>
+  </datalist>
+
+  <label for="gov">المحافظة</label>
+  <select id="gov" name="gov">
+    <option>القاهرة</option>
+    <option>الجيزة</option>
+  </select>
+</form>
+</main>
+</body>
+</html>
+~~~
+
+| | [[select]] | [[input]] مع [[datalist]] |
+|---|---|---|
+| القيم | لازم من اللستة | أي نص، واللستة اقتراح |
+| الكتابة | مفيش | عادي، والاقتراحات بتتفلتر |
+| الشكل | ثابت | بيختلف من متصفح للتاني |
+| إمتى | اللستة مقفولة: البلد، المقاس | أغلب الناس هيختاروا، والباقي يكتب |
+
+**الربط:** [[list="cities"]] على الـ input لازم يساوي [[id="cities"]] بتاع الـ datalist.
+
+**الغلطة الشائعة:** تستخدم datalist وانت عايز إجبار، فتستقبل في السيرفر مدينة مكتوبة غلط. لو القيمة لازم تبقى من اللستة استخدم select، وافحصها في السيرفر في كل الأحوال.
+
+~~~text الناتج
+كتابة «دمياط» في datalist (مش في اللستة): اتقبلت = true، و FormData = دمياط
+محاولة تعيين select بقيمة مش فيه: القيمة بقت ""
+عدد الاقتراحات = 5
+axe: 0 violations
+~~~` },
           ],
           title: "اختيار واحد ولا أكتر؟ radio و checkbox و select",
           desc: R`[[radio]] لاختيار واحد بس من مجموعة، وكل الـ radios اللي في المجموعة ليهم نفس الـ [[name]]. و [[checkbox]] لصفر أو أكتر. و [[<select>]] لاختيار واحد من قايمة طويلة.
@@ -219,12 +534,238 @@ get('notify')     →  null
         {
           cmd: "textarea و date و number",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** على جهاز توقيته نيويورك (في DevTools: Sensors › Location، أو [[timezoneId]] في Playwright) إيه ناتج [[new Date('2026-06-26').getDate()]] و [[new Date('2026-06-26T00:00').getDate()]]؟`, done: R`الأول طلع 25 والتاني 26: النص اللي فيه تاريخ بس بيتقري منتصف الليل UTC (ودي الساعة 8 بالليل يوم 25 في نيويورك)، واللي فيه وقت من غير Z بيتقري بالتوقيت المحلي. وده نفس اللي بيرجع من [[date.valueAsDate]] (اتطبع [[2026-06-26T00:00:00.000Z]]).` },
-            { lvl: 'تحدي', t: R`**مسألة:** كوبون فيه حقل «ينتهي في» ([[type="date"]]). اكتب [[isExpired(dateStr, now)]] بترجّع true بس بعد آخر اليوم ده بالتوقيت المحلي، مش من أوله.`, done: R`مع [[isExpired('2026-06-26', new Date('2026-06-26T23:00'))]] بترجّع false، ومع [[new Date('2026-06-27T00:01')]] بترجّع true، ومع [[new Date('2026-06-26T00:30')]] false. والحل بيبني [[new Date(dateStr + 'T23:59:59.999')]] مش [[new Date(dateStr)]].` },
-            { lvl: 'تطبيق', t: R`**ابني:** حاسبة BMI: وزن ([[step="0.1"]] و min و max) وطول بالسنتي، والنتيجة في [[<output>]] بـ [[aria-live="polite"]] بتتحدّث مع كل حرف، وبتستخدم [[valueAsNumber]] مش [[Number(value)]].`, done: R`70 و 175 بيطلّعوا 22.9، والحقل الفاضي بيخلي [[valueAsNumber]] بـ [[NaN]] والنتيجة بتقول «اكتب الوزن» مش NaN، وكتابة 70.55 في الوزن بتطلّع رسالة المتصفح عن أقرب قيمتين.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** فورم شكوى فيه [[<textarea name="msg" required value="اكتب هنا">]] وبعده [[</textarea>]] في سطر تاني بعد مسافات. المستخدم بيبعت الشكوى فاضية والـ required ساكت!`, done: R`عرفت إن [[value]] مش attribute على الـ textarea (الكلام بيتكتب بين التاجين)، وإن المسافات اللي بين التاجين بقت قيمة الحقل ([[ta.value]] رجّع [["   "]] فـ [[valueMissing]] بـ false). بعد ما خليت [[<textarea ...></textarea>]] لازقين و [[placeholder]] للتلميح، الإرسال الفاضي بيقف.` },
-            { lvl: 'سريع', t: R`**قارن وقيس:** حقل [[type="number" step="1"]]: اكتب فيه 2.5 بالكيبورد واقرا [[validity.stepMismatch]] و [[validationMessage]]. وبعدين غيّر لـ [[step="any"]].`, done: R`مع step 1 رجّع [[true]] والرسالة في Chrome «Please enter a valid value. The two nearest valid values are 2 and 3.»، ومع [[step="any"]] بقى سليم. والفلوس والوزن محتاجين [[step="0.01"]] أو any.` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** من MDN اعرف شكل الـ value لـ [[type="time"]] و [[month]] و [[week]] و [[datetime-local]]، وبعدين اتأكد بنفسك في الـ Console.`, done: R`طلعوا [[14:30]] و [[2026-10]] و [[2026-W41]] و [[2026-10-05T14:30]] مهما كان الشكل اللي المستخدم شايفه بالعربي، وعرفت إن السيرفر بيستقبل الصيغ دي بالظبط.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** على جهاز توقيته نيويورك (في DevTools: Sensors › Location، أو [[timezoneId]] في Playwright) إيه ناتج [[new Date('2026-06-26').getDate()]] و [[new Date('2026-06-26T00:00').getDate()]]؟`, done: R`الأول طلع 25 والتاني 26: النص اللي فيه تاريخ بس بيتقري منتصف الليل UTC (ودي الساعة 8 بالليل يوم 25 في نيويورك)، واللي فيه وقت من غير Z بيتقري بالتوقيت المحلي. وده نفس اللي بيرجع من [[date.valueAsDate]] (اتطبع [[2026-06-26T00:00:00.000Z]]).`, sol: R`~~~js
+// في Console على جهاز توقيته نيويورك
+new Date('2026-06-26').getDate();
+new Date('2026-06-26T00:00').getDate();
+
+const i = document.createElement('input');
+i.type = 'date';
+i.value = '2026-06-26';
+i.valueAsDate.toISOString();
+~~~
+
+عشان تغيّر التوقيت من غير ما تلمس الجهاز: DevTools، ثم More tools، ثم Sensors، ثم Location واختار نيويورك.
+
+**ليه مختلفين:** المعيار قايل حاجتين مختلفتين:
+
+- تاريخ بس [[2026-06-26]]: يتقري منتصف الليل **UTC**. ونيويورك في يونيو ورا UTC بـ ٤ ساعات، فده الساعة 8 بالليل يوم 25.
+- تاريخ ووقت من غير Z: يتقري بالتوقيت **المحلي**، فهو 26 فعلًا.
+
+و [[getDate()]] بترجّع اليوم بالتوقيت المحلي، فالأول طلع 25.
+
+**الغلطة الشائعة:** تعمل [[new Date(input.value)]] من حقل [[type="date"]] وتعرض اليوم. في مصر مش هتشوف المشكلة لأنها قدام UTC، وأول عميل في أمريكا هيشوف ميعاده قبلها بيوم. لو عايز اليوم نفسه، قارن النص زي ما هو، أو ضيف [[T00:00]].
+
+~~~text الناتج
+التوقيت: America/New_York
+new Date('2026-06-26').getDate()        = 25
+new Date('2026-06-26T00:00').getDate()  = 26
+input.valueAsDate                       = 2026-06-26T00:00:00.000Z
+~~~` },
+            { lvl: 'تحدي', t: R`**مسألة:** كوبون فيه حقل «ينتهي في» ([[type="date"]]). اكتب [[isExpired(dateStr, now)]] بترجّع true بس بعد آخر اليوم ده بالتوقيت المحلي، مش من أوله.`, done: R`مع [[isExpired('2026-06-26', new Date('2026-06-26T23:00'))]] بترجّع false، ومع [[new Date('2026-06-27T00:01')]] بترجّع true، ومع [[new Date('2026-06-26T00:30')]] false. والحل بيبني [[new Date(dateStr + 'T23:59:59.999')]] مش [[new Date(dateStr)]].`, sol: R`~~~js
+function isExpired(dateStr, now = new Date()) {
+  const lastMoment = new Date(dateStr + 'T23:59:59.999');
+  return now > lastMoment;
+}
+~~~
+
+**السطر المهم:** [[dateStr + 'T23:59:59.999']] بيبني آخر لحظة في اليوم **بالتوقيت المحلي**، لأن النص فيه وقت ومن غير [[Z]]. والكوبون مكتوب عليه «ينتهي في 26» يعني طول يوم 26 شغال.
+
+**ليه** [[now]] **parameter:** عشان تقدر تختبر الدالة بوقت ثابت. لو جوه الدالة [[new Date()]] مباشرة، النتيجة هتتغيّر كل مرة تشغّلها. و [[= new Date()]] قيمة افتراضية للاستخدام العادي.
+
+و [[>]] بين تاريخين شغالة لأن JavaScript بيحوّلهم لأرقام (milliseconds).
+
+**الغلطة الشائعة:** تكتب [[new Date(dateStr) < now]]. ده بيقرا التاريخ منتصف الليل UTC، يعني الكوبون بينتهي **أول** اليوم، مش آخره. في القاهرة صيفًا بعد الساعة 3 الفجر هيقولك الكوبون انتهى.
+
+~~~text الناتج
+isExpired('2026-06-26', new Date('2026-06-26T23:00'))  → false
+isExpired('2026-06-26', new Date('2026-06-27T00:01'))  → true
+isExpired('2026-06-26', new Date('2026-06-26T00:30'))  → false
+
+الحل الغلط new Date(dateStr) < now في القاهرة 3:01 الفجر يوم 26 → true
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** حاسبة BMI: وزن ([[step="0.1"]] و min و max) وطول بالسنتي، والنتيجة في [[<output>]] بـ [[aria-live="polite"]] بتتحدّث مع كل حرف، وبتستخدم [[valueAsNumber]] مش [[Number(value)]].`, done: R`70 و 175 بيطلّعوا 22.9، والحقل الفاضي بيخلي [[valueAsNumber]] بـ [[NaN]] والنتيجة بتقول «اكتب الوزن» مش NaN، وكتابة 70.55 في الوزن بتطلّع رسالة المتصفح عن أقرب قيمتين.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>حاسبة BMI</title>
+<style>
+  body { font-family: system-ui; margin: 16px; }
+  form { display: grid; gap: 8px; max-width: 280px; }
+  input { padding: 8px; font: inherit; }
+  output { font-size: 1.5rem; font-weight: 700; }
+</style>
+</head>
+<body>
+<main>
+<h1>حاسبة BMI</h1>
+<form id="bmi">
+  <label for="w">الوزن (كجم)</label>
+  <input id="w" type="number" step="0.1" min="20" max="300" value="70">
+  <label for="h">الطول (سنتي)</label>
+  <input id="h" type="number" min="100" max="250" value="175">
+  <output id="res" for="w h" aria-live="polite"></output>
+</form>
+</main>
+<script>
+  const w = document.querySelector('#w');
+  const h = document.querySelector('#h');
+  const res = document.querySelector('#res');
+
+  function update() {
+    const weight = w.valueAsNumber;
+    const height = h.valueAsNumber;
+    if (Number.isNaN(weight)) { res.textContent = 'اكتب الوزن'; return; }
+    if (Number.isNaN(height)) { res.textContent = 'اكتب الطول'; return; }
+    const meters = height / 100;
+    res.textContent = (weight / (meters * meters)).toFixed(1);
+  }
+
+  document.querySelector('#bmi').addEventListener('input', update);
+  update();
+$__lt/script>
+</body>
+</html>
+~~~
+
+**السطور المهمة:**
+
+- [[valueAsNumber]] بيرجّع رقم جاهز، أو [[NaN]] لو الحقل فاضي. أما [[Number("")]] فبترجّع [[0]]، يعني الحقل الفاضي هيتحسب وزن صفر.
+- [[Number.isNaN]] هي اللي بتمسك الحالة دي قبل الحساب.
+- الـ [[input]] event على الـ form نفسه، لأن الأحداث بتطلع لأعلى (bubbling)، فمستمع واحد بيغطي الحقلين.
+- [[toFixed(1)]] رقم واحد بعد العلامة.
+- [[step="0.1"]] هو اللي بيخلي 70.5 مقبولة، والافتراضي [[step="1"]] كان هيرفضها.
+
+**الغلطة الشائعة:** تعرض الناتج من غير فحص الفاضي، فالمستخدم يشوف [[NaN]] أو [[Infinity]] وهو بيمسح الطول عشان يكتبه من الأول.
+
+~~~text الناتج
+70 و 175            → 22.9
+الوزن فاضي           → اكتب الوزن   (valueAsNumber = NaN)
+الطول فاضي           → اكتب الطول
+الوزن 70.55          → stepMismatch = true
+رسالة المتصفح: Please enter a valid value. The two nearest valid values are 70.5 and 70.6.
+overflow على 360: 0px   axe: 0 violations
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** فورم شكوى فيه [[<textarea name="msg" required value="اكتب هنا">]] وبعده [[</textarea>]] في سطر تاني بعد مسافات. المستخدم بيبعت الشكوى فاضية والـ required ساكت!`, done: R`عرفت إن [[value]] مش attribute على الـ textarea (الكلام بيتكتب بين التاجين)، وإن المسافات اللي بين التاجين بقت قيمة الحقل ([[ta.value]] رجّع [["   "]] فـ [[valueMissing]] بـ false). بعد ما خليت [[<textarea ...></textarea>]] لازقين و [[placeholder]] للتلميح، الإرسال الفاضي بيقف.`, sol: R`قبل (كل المشكلة في السطرين دول):
+
+~~~html
+<textarea name="msg" required value="اكتب هنا">
+   </textarea>
+~~~
+
+بعد:
+
+~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>شكوى</title>
+</head>
+<body>
+<main>
+<h1>شكوى</h1>
+<form id="f">
+  <label for="msg">الشكوى</label>
+  <textarea id="msg" name="msg" required placeholder="اكتب هنا"></textarea>
+  <button>ابعت</button>
+</form>
+</main>
+</body>
+</html>
+~~~
+
+**المشكلتين:**
+
+- [[textarea]] ملوش [[value]] attribute. الـ [[input]] بيقراه، لكن الـ textarea قيمته هي الكلام اللي **بين** التاجين. فـ [[value="اكتب هنا"]] متجاهلة.
+- اللي بين التاجين كان سطر جديد ومسافات. والمتصفح بيشيل أول سطر جديد بعد الفتحة، والمسافات اللي بعده بتفضل قيمة حقيقية. فالحقل مش فاضي، و [[required]] راضي.
+
+**الغلطة الشائعة:** تشوف الحقل فاضي بالعين وتدوّر على باج في الـ JavaScript. لما حقل [[required]] يعدّي وهو باين فاضي، اطبع [[JSON.stringify(ta.value)]]. وعشان كده [[<textarea></textarea>]] لازم يبقوا لازقين، حتى لو الـ formatter عايز يفصلهم.
+
+~~~text الناتج
+قبل: ta.value = "   "   valueMissing = false   الفورم بيتبعت = true
+بعد: ta.value = ""   valueMissing = true   الفورم بيتبعت = false
+axe: 0 violations
+~~~` },
+            { lvl: 'سريع', t: R`**قارن وقيس:** حقل [[type="number" step="1"]]: اكتب فيه 2.5 بالكيبورد واقرا [[validity.stepMismatch]] و [[validationMessage]]. وبعدين غيّر لـ [[step="any"]].`, done: R`مع step 1 رجّع [[true]] والرسالة في Chrome «Please enter a valid value. The two nearest valid values are 2 and 3.»، ومع [[step="any"]] بقى سليم. والفلوس والوزن محتاجين [[step="0.01"]] أو any.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>step</title>
+</head>
+<body>
+<label for="n">السعر</label>
+<input id="n" type="number" step="1">
+</body>
+</html>
+~~~
+
+~~~js
+const n = document.querySelector('#n');
+n.value = '2.5';
+n.validity.stepMismatch;
+n.validationMessage;
+n.step = 'any';
+n.validity.stepMismatch;
+~~~
+
+**معنى** [[step]]**:** القيم المسموحة تبدأ من [[min]] (أو صفر) وتزيد بمقدار الـ step. فـ [[step="1"]] وهو الافتراضي يعني أرقام صحيحة بس، ورقم زي 2.5 مش مسموح.
+
+وعشان كده المتصفح بيقولك أقرب قيمتين مسموحتين.
+
+| القيمة | تستخدمها في |
+|---|---|
+| [[step="1"]] (افتراضي) | عدد قطع، عمر |
+| [[step="0.01"]] | فلوس بقرشين |
+| [[step="any"]] | وزن أو قياس من غير حد للكسور |
+
+**الغلطة الشائعة:** تنسى الـ step في حقل السعر. تجربتك انت بـ 100 هتعدّي، وأول عميل يكتب 99.5 الفورم هيرفض.
+
+~~~text الناتج
+step="1"   القيمة 2.5:
+  stepMismatch = true
+  الرسالة: Please enter a valid value. The two nearest valid values are 2 and 3.
+step="any" القيمة 2.5:
+  stepMismatch = false   valid = true
+~~~` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** من MDN اعرف شكل الـ value لـ [[type="time"]] و [[month]] و [[week]] و [[datetime-local]]، وبعدين اتأكد بنفسك في الـ Console.`, done: R`طلعوا [[14:30]] و [[2026-10]] و [[2026-W41]] و [[2026-10-05T14:30]] مهما كان الشكل اللي المستخدم شايفه بالعربي، وعرفت إن السيرفر بيستقبل الصيغ دي بالظبط.`, sol: R`~~~js
+for (const [type, value] of [
+  ['time', '14:30'],
+  ['month', '2026-10'],
+  ['week', '2026-W41'],
+  ['datetime-local', '2026-10-05T14:30'],
+]) {
+  const i = document.createElement('input');
+  i.type = type;
+  i.value = value;
+  console.log(type, JSON.stringify(i.value));
+}
+~~~
+
+| الـ type | شكل الـ value | ملحوظة |
+|---|---|---|
+| [[time]] | [[HH:mm]] | ٢٤ ساعة دايمًا، حتى لو ظاهر 2:30 PM |
+| [[month]] | [[YYYY-MM]] | |
+| [[week]] | [[YYYY-Www]] | حرف W ورقم الأسبوع |
+| [[datetime-local]] | [[YYYY-MM-DDTHH:mm]] | من غير توقيت، يعني مفيش Z |
+
+**ليه ده مهم:** الشكل اللي المستخدم شايفه بيتغيّر حسب لغة جهازه، لكن اللي بيوصل للسيرفر ثابت. فالسيرفر مش محتاج يعرف لغة المستخدم.
+
+**الغلطة الشائعة:** تحوّل [[datetime-local]] لـ UTC من غير ما تفكر. القيمة دي مفيهاش توقيت، فلازم السيرفر يعرف توقيت المستخدم، أو تبعته في حقل تاني. وكمان، لو القيمة شكلها غلط المتصفح بيفضّي الحقل في صمت، زي ما هتشوف في آخر سطر.
+
+~~~text الناتج
+time "14:30"
+month "2026-10"
+week "2026-W41"
+datetime-local "2026-10-05T14:30"
+
+time بقيمة "2:30 PM" → ""
+~~~` },
           ],
           title: "كل حقل بنوعه، وإمتى متستخدمش type=\"number\"",
           desc: R`[[<textarea>]] للكلام اللي أكتر من سطر. و [[type="date"]] بيدّي calendar أصلي، وقيمته دايمًا [[2026-10-05]] مهما كان الشكل اللي المستخدم شايفه. و [[type="number"]] للكميات الحقيقية (كمية، سن) ومعاه [[min]] و [[max]] و [[step]]. و [[email]] و [[tel]] و [[url]] بيغيّروا الكيبورد وبعضهم بيعمل validation.
@@ -407,12 +948,303 @@ qty.valueAsNumber + 1
         {
           cmd: "Constraint Validation API",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** حقل [[type="email"]]. أنهي قيمة هتعدّي: [[a@b]] و [[a@b.]] و [[a..b@c.com]] و [[a b@c.com]] و [[أحمد@example.com]] و [[ a@b.com ]] (بمسافات)؟ قول الأول وبعدين اسأل [[validity.valid]].`, done: R`في Chrome عدّوا [[a@b]] (مش لازم .com) و [[a..b@c.com]] واللي بمسافات (المتصفح بيشيل المسافات من الأول والآخر)، ووقعوا [[a@b.]] واللي فيه مسافة في النص والعربي. يعني validation المتصفح شكل بس، والسيرفر لازم يتأكد تاني.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** حقل اسم مستخدم عليه [[pattern="[a-z0-9-]+"]]، والمستخدم كتب [[ABC]] والفورم اتبعت عادي! افتح الـ Console قبل ما تصلّح.`, done: R`الـ Console فيه «Pattern attribute value [a-z0-9-]+ is not a valid regular expression» لأن Chrome بيقرا الـ pattern بفلاج [[v]] وفيه الشَرطة في الآخر لازم تتهرّب، فالـ pattern اتجاهل خالص. بعد [[pattern="[a-z0-9\-]+"]] الـ ABC بقى [[patternMismatch]] و [[ab-1]] بيعدّي.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الكود ده بيعرض رسالة عربي: [[email.addEventListener('invalid', () => email.setCustomValidity('اكتب إيميل صح'))]]. المستخدم غلط مرة، وبعدين كتب إيميل سليم، ولسه مش قادر يبعت.`, done: R`عرفت إن [[customError]] فضل [[true]] بعد الإيميل السليم ([[checkValidity()]] رجّع false)، لأن محدش رجّعها فاضية. بعد ما زوّدت [[email.addEventListener('input', () => email.setCustomValidity(''))]] بقى بيبعت.` },
-            { lvl: 'تحدي', t: R`**ابني:** مقياس قوة كلمة السر: [[<meter min="0" max="4" low="2" high="3" optimum="4">]] بيتحدّث مع كل حرف (نقطة للطول 8+، وللحروف الكبيرة، وللأرقام، وللرموز)، و [[setCustomValidity]] بيرفض أقل من 3 برسالة بتقول ناقص إيه.`, done: R`[[abc]] بيدّي المقياس أحمر ورسالة فيها الناقص، و [[Abcdef12!]] بيدّيه أخضر والفورم بيتبعت، والمقياس ليه label مربوط ([[<label for="strength">]]) فتاب Accessibility بيقول اسمه.` },
-            { lvl: 'تطبيق', t: R`**اكتب اختبار:** سكربت للـ Console بيلف على [[form.elements]] ويطبع لكل حقل اسمه وأسماء الـ validity اللي بـ true بس (زي [[email: valueMissing]]).`, done: R`على فورم فاضي فيه required بيطبع [[valueMissing]] للحقول الإجبارية بس، وبعد ما تكتب [[abc]] في الإيميل بيطبع [[typeMismatch]]، ولما كله سليم مبيطبعش غير الحقول اللي [[valid]] بس أو مبيطبعش حاجة.` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** صفحة [[ValidityState]] على MDN فيها ١١ property. اعمل حقل يطلّع [[badInput]] وحقل يطلّع [[rangeOverflow]].`, done: R`[[badInput]] طلع لما كتبت حرف [[e]] لوحده في [[type="number"]] (والـ value بقى [[""]] والرسالة «Please enter a number.»)، و [[rangeOverflow]] لما كتبت 15 في حقل [[max="10"]] (الرسالة «Value must be less than or equal to 10.»).` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** حقل [[type="email"]]. أنهي قيمة هتعدّي: [[a@b]] و [[a@b.]] و [[a..b@c.com]] و [[a b@c.com]] و [[أحمد@example.com]] و [[ a@b.com ]] (بمسافات)؟ قول الأول وبعدين اسأل [[validity.valid]].`, done: R`في Chrome عدّوا [[a@b]] (مش لازم .com) و [[a..b@c.com]] واللي بمسافات (المتصفح بيشيل المسافات من الأول والآخر)، ووقعوا [[a@b.]] واللي فيه مسافة في النص والعربي. يعني validation المتصفح شكل بس، والسيرفر لازم يتأكد تاني.`, sol: R`~~~js
+const i = document.createElement('input');
+i.type = 'email';
+for (const v of ['a@b', 'a@b.', 'a..b@c.com', 'a b@c.com', 'أحمد@example.com', ' a@b.com ']) {
+  i.value = v;
+  console.log(JSON.stringify(v), '→', JSON.stringify(i.value), i.validity.valid);
+}
+~~~
+
+**ليه النتيجة كده:** المتصفح بيطبّق regex من المعيار، وهو بسيط عن قصد.
+
+- [[a@b]] يعدّي: الإيميل من غير نقطة صح نظريًا، زي [[admin@localhost]].
+- [[a@b.]] يقع: نقطة في الآخر من غير حاجة بعدها.
+- [[a..b@c.com]] يعدّي: الـ regex مبيفحصش النقطتين ورا بعض.
+- [[a b@c.com]] يقع: مسافة في النص.
+- [[أحمد@example.com]] يقع: الجزء قبل الـ @ حروف لاتيني بس.
+- القيمة بالمسافات تعدّي، لأن المتصفح بيشيل المسافات من الأول والآخر، وده بان في القيمة نفسها.
+
+**الاستنتاج:** الفحص ده شكل بس. ميعرفش الإيميل موجود ولا لأ. السيرفر لازم يفحص تاني، والفحص الوحيد المضمون هو إنك تبعت رسالة تأكيد.
+
+**الغلطة الشائعة:** تكتب regex طويل تبقى فاكر إنه «أدق». هيرفض إيميلات سليمة، وهيعدّي إيميلات مش موجودة.
+
+~~~text الناتج
+القيمة               بعد التنضيف       valid
+"a@b"   "a@b"   true
+"a@b."   "a@b."   false
+"a..b@c.com"   "a..b@c.com"   true
+"a b@c.com"   "a b@c.com"   false
+"أحمد@example.com"   "أحمد@example.com"   false
+" a@b.com "   "a@b.com"   true
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** حقل اسم مستخدم عليه [[pattern="[a-z0-9-]+"]]، والمستخدم كتب [[ABC]] والفورم اتبعت عادي! افتح الـ Console قبل ما تصلّح.`, done: R`الـ Console فيه «Pattern attribute value [a-z0-9-]+ is not a valid regular expression» لأن Chrome بيقرا الـ pattern بفلاج [[v]] وفيه الشَرطة في الآخر لازم تتهرّب، فالـ pattern اتجاهل خالص. بعد [[pattern="[a-z0-9\-]+"]] الـ ABC بقى [[patternMismatch]] و [[ab-1]] بيعدّي.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>اسم المستخدم</title>
+</head>
+<body>
+<main>
+<h1>حساب جديد</h1>
+<form id="f">
+  <label for="u">اسم المستخدم</label>
+  <input id="u" name="u" pattern="[a-z0-9\-]+" required>
+  <button>تسجيل</button>
+</form>
+</main>
+</body>
+</html>
+~~~
+
+**اللي حصل:** Chrome بيقرا الـ [[pattern]] بالفلاج [[v]]، وده أكتر تشددًا من الفلاج [[u]] القديم. وفي الوضع ده [[-]] في آخر [[[...]]] لازم تتهرّب بـ [[\-]]. ولو الـ regex غلط، المتصفح **بيتجاهل الـ pattern خالص** ويكتب تحذير في الـ Console، والفورم بيتبعت عادي.
+
+**ليه الـ Console أول حاجة:** من غيره هتقعد تعدّل في الحروف وتدوّر على باج في مكان تاني. الفورم مش بيقول حاجة، ده الـ Console بس.
+
+**الغلطة الشائعة:** تنقل regex من ملف JavaScript للـ [[pattern]] من غير تجربة. والـ [[pattern]] مش محتاج [[^]] و [[$]]، المتصفح بيطابق القيمة كلها لوحده.
+
+~~~text الناتج
+قبل، رسالة الـ Console:
+Pattern attribute value [a-z0-9-]+ is not a valid regular expression: Uncaught SyntaxError: Invalid regular expression: /[a-z0-9-]+/v: Invalid character class
+
+قبل: ABC → patternMismatch = false  valid = true
+
+بعد:
+ABC  → patternMismatch = true  valid = false
+ab-1 → patternMismatch = false  valid = true
+axe: 0 violations
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الكود ده بيعرض رسالة عربي: [[email.addEventListener('invalid', () => email.setCustomValidity('اكتب إيميل صح'))]]. المستخدم غلط مرة، وبعدين كتب إيميل سليم، ولسه مش قادر يبعت.`, done: R`عرفت إن [[customError]] فضل [[true]] بعد الإيميل السليم ([[checkValidity()]] رجّع false)، لأن محدش رجّعها فاضية. بعد ما زوّدت [[email.addEventListener('input', () => email.setCustomValidity(''))]] بقى بيبعت.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>اشتراك</title>
+</head>
+<body>
+<main>
+<h1>اشتراك</h1>
+<form id="f">
+  <label for="email">الإيميل</label>
+  <input id="email" type="email" required>
+  <button>اشترك</button>
+</form>
+</main>
+<script>
+  const email = document.querySelector('#email');
+
+  email.addEventListener('invalid', () => {
+    email.setCustomValidity('اكتب إيميل صح');
+  });
+
+  email.addEventListener('input', () => {
+    email.setCustomValidity('');
+  });
+$__lt/script>
+</body>
+</html>
+~~~
+
+**السبب:** [[setCustomValidity('أي كلام')]] مش بس بتغيّر الرسالة، دي بتعلن إن الحقل **غلط**. والحالة دي بتفضل ثابتة لحد ما تنادي نفس الدالة بنص فاضي. المتصفح مبيعيدش الفحص ويشيلها لوحده.
+
+فالترتيب اللي كان بيحصل: الإيميل غلط، فـ [[invalid]] بيتنادي ويحط الرسالة. المستخدم صلّح، بس الحقل لسه عليه [[customError]]. يدوس إرسال، يترفض، و [[invalid]] يتنادي تاني. دايرة مقفولة.
+
+**الحل:** مع كل كتابة فضّي الرسالة، والفحص العادي يشتغل من الأول.
+
+**الغلطة الشائعة:** تحط [[setCustomValidity('')]] جوه [[invalid]] نفسه. الحدث ده بيتنادي بس لو الحقل غلط، فالسطر مش هيتنفّذ في الوقت الصح.
+
+~~~text الناتج
+قبل التصليح، بعد ما كتب a@b.com: customError = true  checkValidity = false
+بعد التصليح، نفس الخطوات:        customError = false  checkValidity = true
+axe: 0 violations
+~~~` },
+            { lvl: 'تحدي', t: R`**ابني:** مقياس قوة كلمة السر: [[<meter min="0" max="4" low="2" high="3" optimum="4">]] بيتحدّث مع كل حرف (نقطة للطول 8+، وللحروف الكبيرة، وللأرقام، وللرموز)، و [[setCustomValidity]] بيرفض أقل من 3 برسالة بتقول ناقص إيه.`, done: R`[[abc]] بيسيب المقياس فاضي (صفر نقطة) و [[abc1]] بيدّيه أحمر، والاتنين ليهم رسالة فيها الناقص، و [[Abcdef12!]] بيدّيه أخضر والفورم بيتبعت، والمقياس ليه label مربوط ([[<label for="strength">]]) فتاب Accessibility بيقول اسمه.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>كلمة السر</title>
+<style>
+  body { font-family: system-ui; margin: 16px; }
+  form { display: grid; gap: 8px; max-width: 320px; }
+  input { padding: 8px; font: inherit; }
+  meter { width: 100%; height: 16px; }
+</style>
+</head>
+<body>
+<main>
+<h1>حساب جديد</h1>
+<form id="f">
+  <label for="pass">كلمة السر</label>
+  <input id="pass" type="password" autocomplete="new-password">
+  <label for="strength">القوة</label>
+  <meter id="strength" min="0" max="4" low="2" high="3" optimum="4" value="0"></meter>
+  <button>تسجيل</button>
+  <p id="ok" hidden>اتسجلت</p>
+</form>
+</main>
+<script>
+  const pass = document.querySelector('#pass');
+  const meter = document.querySelector('#strength');
+
+  const RULES = [
+    { ok: (s) => s.length >= 8, need: '٨ حروف على الأقل' },
+    { ok: (s) => /[A-Z]/.test(s), need: 'حرف كبير' },
+    { ok: (s) => /[0-9]/.test(s), need: 'رقم' },
+    { ok: (s) => /[^A-Za-z0-9]/.test(s), need: 'رمز' },
+  ];
+
+  function check() {
+    const missing = RULES.filter((r) => !r.ok(pass.value));
+    const score = RULES.length - missing.length;
+    meter.value = score;
+    pass.setCustomValidity(score < 3 ? 'ناقص: ' + missing.map((r) => r.need).join('، ') : '');
+  }
+
+  pass.addEventListener('input', check);
+  check();
+
+  document.querySelector('#f').addEventListener('submit', (e) => {
+    e.preventDefault();
+    document.querySelector('#ok').hidden = false;
+  });
+$__lt/script>
+</body>
+</html>
+~~~
+
+**الفكرة:** القواعد في array، كل قاعدة دالة بترجّع true أو false ومعاها الكلام اللي هيظهر لو ناقصة. كده زيادة قاعدة سطر واحد.
+
+- [[RULES.filter]] بيجيب القواعد الفاشلة، والنقط هي الفرق.
+- [[low]] و [[high]] و [[optimum]] هما اللي بيخلوا المتصفح يختار اللون: تحت [[low]] بعيد عن الأمثل فأحمر، وعند [[optimum]] أخضر.
+- [[setCustomValidity]] بنص يرفض، وبنص فاضي يقبل، فالفورم بيقف لوحده.
+- [[check()]] أول ما الصفحة تفتح، عشان الحقل الفاضي يترفض من غير ما حد يكتب.
+- لو القيمة صفر الشريط بيبقى فاضي خالص، مفيهوش لون أصلًا. الأحمر بيبدأ من نقطة واحدة.
+
+**الغلطة الشائعة:** تعمل [[if (score < 3) alert(...)]] في الـ submit. كده الفحص بعيد عن المتصفح، وقارئ الشاشة مش هيربطه بالحقل.
+
+~~~text الناتج
+القيمة       المقياس   اللون          الرسالة
+abc          0/4     فاضي           ناقص: ٨ حروف على الأقل، حرف كبير، رقم، رمز
+abc1         1/4     أحمر           ناقص: ٨ حروف على الأقل، حرف كبير، رمز
+abcD12       2/4     أصفر           ناقص: ٨ حروف على الأقل، رمز
+abcD1234     3/4     أخضر           (مفيش رسالة) و valid = true
+Abcdef12!    4/4     أخضر           (مفيش رسالة) والفورم اتبعت: true
+
+اسم المقياس في تاب Accessibility: - meter "القوة"
+axe: 0 violations
+~~~` },
+            { lvl: 'تطبيق', t: R`**اكتب اختبار:** سكربت للـ Console بيلف على [[form.elements]] ويطبع لكل حقل اسمه وأسماء الـ validity اللي بـ true بس (زي [[email: valueMissing]]).`, done: R`على فورم فاضي فيه required بيطبع [[valueMissing]] للحقول الإجبارية بس، وبعد ما تكتب [[abc]] في الإيميل بيطبع [[typeMismatch]]، ولما كله سليم مبيطبعش غير الحقول اللي [[valid]] بس أو مبيطبعش حاجة.`, sol: R`~~~js
+function report(form) {
+  for (const el of form.elements) {
+    if (!el.name) continue;
+    const bad = [];
+    for (const key in el.validity) {
+      if (key !== 'valid' && el.validity[key]) bad.push(key);
+    }
+    if (bad.length) console.log(el.name + ': ' + bad.join(', '));
+  }
+}
+report(document.forms[0]);
+~~~
+
+وفورم تجرب عليه:
+
+~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الفورم</title>
+</head>
+<body>
+<form>
+  <input name="email" type="email" required aria-label="الإيميل">
+  <input name="age" type="number" min="18" required aria-label="السن">
+  <input name="note" aria-label="ملاحظة">
+  <button>ابعت</button>
+</form>
+</body>
+</html>
+~~~
+
+**إزاي بيشتغل:**
+
+- [[form.elements]] فيها كل الحقول، والزرار كمان. و [[if (!el.name) continue]] بتعدّي اللي مالوش اسم زي الزرار.
+- [[el.validity]] object فيه ١١ property. و [[for...in]] بتلف عليها بما فيها اللي جاية من الـ prototype.
+- بنعدّي [[valid]] لأنها مش نوع غلط، هي النتيجة النهائية.
+
+**الغلطة الشائعة:** تعمل [[Object.keys(el.validity)]]. بترجّع لستة فاضية، لأن القيم دي مش properties مباشرة على الـ object، دي getters في الـ prototype. عشان كده [[for...in]] هنا.
+
+~~~text الناتج
+فورم فاضي:
+email: valueMissing
+age: valueMissing
+
+بعد abc في الإيميل:
+email: typeMismatch
+age: valueMissing
+
+بعد ما كله سليم:
+(مطبعش حاجة)
+
+Object.keys(el.validity).length = 0
+~~~` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** صفحة [[ValidityState]] على MDN فيها ١١ property. اعمل حقل يطلّع [[badInput]] وحقل يطلّع [[rangeOverflow]].`, done: R`[[badInput]] طلع لما كتبت حرف [[e]] لوحده في [[type="number"]] (والـ value بقى [[""]] والرسالة «Please enter a number.»)، و [[rangeOverflow]] لما كتبت 15 في حقل [[max="10"]] (الرسالة «Value must be less than or equal to 10.»).`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>validity</title>
+</head>
+<body>
+<label for="n">الكمية</label>
+<input id="n" type="number">
+<label for="m">التقييم</label>
+<input id="m" type="number" max="10">
+</body>
+</html>
+~~~
+
+اكتب بالكيبورد، مش بالكود: حرف [[e]] لوحده في الأول، و [[15]] في التاني.
+
+**الفرق بين الاتنين:**
+
+- [[badInput]]: اللي مكتوب مش رقم أصلًا. الحرف [[e]] مسموح بيه في الكتابة لأن [[1e5]] رقم، بس لوحده مش رقم. والـ [[value]] بيبقى فاضي، لأن المتصفح مش قادر يحوّله. ده معناه إن JavaScript ميعرفش إن فيه حاجة مكتوبة، غير من [[badInput]].
+- [[rangeOverflow]]: الرقم سليم، بس أكبر من [[max]].
+
+| الـ property | بتبقى true لما |
+|---|---|
+| [[valueMissing]] | حقل [[required]] فاضي |
+| [[typeMismatch]] | شكل email أو url غلط |
+| [[patternMismatch]] | مش مطابق لـ [[pattern]] |
+| [[tooLong]] و [[tooShort]] | أطول من [[maxlength]] أو أقصر من [[minlength]] |
+| [[rangeUnderflow]] و [[rangeOverflow]] | برّه [[min]] و [[max]] |
+| [[stepMismatch]] | مش على الـ [[step]] |
+| [[badInput]] | المتصفح مش قادر يفهم اللي اتكتب |
+| [[customError]] | عليه [[setCustomValidity]] |
+| [[valid]] | كله سليم |
+
+**الغلطة الشائعة:** تفحص [[input.value === '']] عشان تعرف الحقل فاضي. في حالة [[badInput]] الجملة دي true والمستخدم كاتب حاجة فعلًا.
+
+~~~text الناتج
+حرف e لوحده:
+  badInput = true   value = ""
+  الرسالة: Please enter a number.
+
+15 مع max="10":
+  rangeOverflow = true
+  الرسالة: Value must be less than or equal to 10.
+
+عدد الـ properties في ValidityState: 11
+~~~` },
           ],
           title: "validation المتصفح من JavaScript: validity و setCustomValidity",
           desc: R`كل حقل فيه [[validity]]: object فيه سبب الغلط ([[valueMissing]] و [[typeMismatch]] و [[tooShort]] و [[rangeUnderflow]] و [[patternMismatch]] و [[customError]]) و [[valid]] لو كله تمام. و [[validationMessage]] الرسالة اللي المتصفح هيعرضها.
@@ -648,12 +1480,365 @@ form.addEventListener('submit', (e) => {
         {
           cmd: "ملخص الأخطاء",
           practice: [
-            { lvl: 'تطبيق', t: R`**ابني:** فورم طلب لمتجر قهوة متخيل في شبكة: [[.row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px }]]، والعنوان حقل طويل [[grid-column: 1 / -1]]، وعلى الموبايل عمود واحد، وفوقه صندوق الملخص.`, done: R`على 800px الاسم والموبايل جنب بعض والعنوان واخد السطر كله، وعلى 360px كله تحت بعض، والملخص بيظهر فوق الشبكة مش جواها، والأخطاء تحت كل حقل مش بتكسر الشبكة.` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في الملخص لينك [[<a href="#email">الإيميل</a>]]. لما تدوس عليه، الـ focus هيروح فين: اللينك، ولا الحقل نفسه، ولا مفيش؟`, done: R`في Chrome [[document.activeElement]] بقى الحقل نفسه ([[#email]])، فالمستخدم يكتب على طول. ده بيحصل بس لو الهدف عنصر بيتركّز عليه (input)؛ لو اللينك رايح لـ div الـ focus مش بيروح له.` },
-            { lvl: 'تطبيق', t: R`**قارن وقيس:** زرارين «بيبعت…»: واحد [[disabled]] وواحد [[aria-disabled="true"]]. من الحقل اللي قبلهم دوس Tab، وبعدين دوس Enter على اللي وصلت له.`, done: R`الـ Tab عدّى الـ disabled ووقف على الـ aria-disabled، والضغط عليه شغّل الـ onclick عادي (اتعدّ مرتين في التجربة). يعني aria-disabled بيسيب الزرار في الكيبورد ويقول إنه مقفول، بس الكود لازم يتأكد بنفسه بـ flag زي [[sending]] في الدرس.` },
-            { lvl: 'تطبيق', t: R`**محاكاة:** خلي السيرفر بطيء: بدل الـ fetch حط [[await new Promise((r) => setTimeout(r, 2000))]]، وغيّر كلمة الزرار لـ «بيبعت…» وقت الانتظار. اضغط ٥ مرات ورا بعض بسرعة.`, done: R`عداد في الكود بيقول إن الإرسال اتنفّذ مرة واحدة بس، والزرار رجع «سجّل» بعد ثانيتين، ولو رميت error جوه الـ Promise الزرار برضه رجع (بسبب [[finally]]).` },
-            { lvl: 'تحدي', t: R`**ابني:** فورم حجز لعيادة متخيلة بيفتح واتساب برسالة جاهزة: الاسم والميعاد والملاحظات في سطور، و [[window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank', 'noopener')]].`, done: R`الرسالة بتوصل كاملة بالسطور (الـ [[\n]] اتحوّلت [[%0A]])، واسم زي «سلمى & أحمد» بيوصل كامل. ومن غير [[encodeURIComponent]] الـ [[&]] بتقطع الرسالة: [[new URL('https://wa.me/?text=سلمى & أحمد').searchParams.get('text')]] رجّع [[سلمى ]] بس.` },
-            { lvl: 'سريع', t: R`**اشرحها:** زميلك عايز يشيل الملخص ويكتفي بالرسالة الحمرا تحت كل حقل. اكتبله في ٣ سطور إمتى الملخص بيفرق.`, done: R`الشرح فيه: الفورم الطويل اللي الغلط فيه تحت الشاشة، ومستخدم قارئ الشاشة اللي بيسمع العدد واللينكات مرة واحدة، والموبايل اللي الرسالة الحمرا فيه ممكن تبقى برّه الشاشة.` },
+            { lvl: 'تطبيق', t: R`**ابني:** فورم طلب لمتجر قهوة متخيل في شبكة: [[.row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px }]]، والعنوان حقل طويل [[grid-column: 1 / -1]]، وعلى الموبايل عمود واحد، وفوقه صندوق الملخص.`, done: R`على 800px الاسم والموبايل جنب بعض والعنوان واخد السطر كله، وعلى 360px كله تحت بعض، والملخص بيظهر فوق الشبكة مش جواها، والأخطاء تحت كل حقل مش بتكسر الشبكة.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>طلب قهوة</title>
+<style>
+  body { font-family: system-ui; margin: 16px; }
+  form { max-width: 720px; margin-inline: auto; }
+  .summary { border: 2px solid #b91c1c; border-radius: 8px; padding: 12px; margin-block-end: 16px; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .wide { grid-column: 1 / -1; }
+  .field { display: grid; gap: 4px; align-content: start; min-width: 0; }
+  input { padding: 10px; font: inherit; width: 100%; box-sizing: border-box; }
+  .err { color: #b91c1c; font-size: .875rem; margin: 0; }
+  button { margin-block-start: 12px; padding: 10px 20px; font: inherit; }
+  @media (max-width: 520px) {
+    .row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<main>
+<h1>اطلب قهوتك</h1>
+<form novalidate>
+  <div class="summary" role="alert">
+    <h2>فيه غلطتين</h2>
+    <ul>
+      <li><a href="#name">الاسم مطلوب</a></li>
+      <li><a href="#phone">الموبايل ناقص</a></li>
+    </ul>
+  </div>
+  <div class="row">
+    <div class="field">
+      <label for="name">الاسم</label>
+      <input id="name" name="name" autocomplete="name" aria-describedby="name-e" aria-invalid="true">
+      <p class="err" id="name-e">اكتب اسمك</p>
+    </div>
+    <div class="field">
+      <label for="phone">الموبايل</label>
+      <input id="phone" name="phone" type="tel" dir="ltr" autocomplete="tel" aria-describedby="phone-e" aria-invalid="true">
+      <p class="err" id="phone-e">١١ رقم</p>
+    </div>
+    <div class="field wide">
+      <label for="addr">العنوان</label>
+      <input id="addr" name="addr" autocomplete="street-address">
+    </div>
+  </div>
+  <button>اطلب</button>
+</form>
+</main>
+</body>
+</html>
+~~~
+
+**اللي بيعمل الشبكة:**
+
+- [[grid-template-columns: 1fr 1fr]]: عمودين متساويين.
+- [[grid-column: 1 / -1]] معناها من أول خط لآخر خط، يعني السطر كله. و [[-1]] هو آخر خط مهما كان عدد الأعمدة.
+- [[align-content: start]] على الـ field: لو حقل تحته غلطة وحقل تاني لأ، اللي مفيهوش مبيتمطّش.
+- [[min-width: 0]]: من غيرها، الحقول ممكن تعمل overflow لأن الـ grid item مبيصغرش عن محتواه.
+- الملخص برّه [[.row]]، فمبيبقاش خلية في الشبكة.
+
+**الغلطة الشائعة:** تحط الملخص جوه [[.row]]، فياخد عمود واحد ويزق الحقول. وأي عنصر زيادة في الشبكة بيتحسب خلية.
+
+~~~text الناتج
+على 800:
+الاسم x=406 عرض=354، الموبايل x=40 عرض=354، نفس السطر: true
+العنوان عرضه 720  (السطر كله)
+
+على 360:
+أعمدة الشبكة: 328px
+الترتيب تحت بعض: y = 260 , 365 , 470
+overflow: 0px
+axe: 0 violations
+~~~` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في الملخص لينك [[<a href="#email">الإيميل</a>]]. لما تدوس عليه، الـ focus هيروح فين: اللينك، ولا الحقل نفسه، ولا مفيش؟`, done: R`في Chrome [[document.activeElement]] بقى الحقل نفسه ([[#email]])، فالمستخدم يكتب على طول. ده بيحصل بس لو الهدف عنصر بيتركّز عليه (input)؛ لو اللينك رايح لـ div الـ focus مش بيروح له.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الملخص</title>
+<style>form { padding-block-start: 900px; }</style>
+</head>
+<body>
+<main>
+<h1>الفورم</h1>
+<a id="l1" href="#email">الإيميل</a>
+<a id="l2" href="#box">الصندوق</a>
+<form>
+  <label for="email">الإيميل</label>
+  <input id="email" type="email">
+  <div id="box">صندوق عادي</div>
+</form>
+</main>
+</body>
+</html>
+~~~
+
+**الإجابة:** الـ focus بيروح للحقل نفسه. لما اللينك يودّي لعنصر بيقبل الـ focus زي [[input]]، المتصفح بينزل له ويركّز فيه، فالمستخدم يكتب على طول. وده اللي بيخلي ملخص الأخطاء مفيد فعلًا.
+
+لو الهدف [[div]] عادي، الصفحة بتنزل له، بس [[document.activeElement]] مش بيبقى الـ div. المتصفح بيحرّك نقطة بداية الـ Tab بس.
+
+**لو محتاج الـ focus يروح لعنصر عادي** (زي عنوان الصفحة): حط عليه [[tabindex="-1"]]. الرقم ده معناه «يقبل الـ focus من الكود واللينكات، بس مش من Tab».
+
+**الغلطة الشائعة:** تكتب JavaScript يعمل [[scrollIntoView]] ثم [[focus()]] لكل لينك. اللينك بيعمل ده لوحده.
+
+~~~text الناتج
+الضغط على لينك #email:
+document.activeElement = input#email   الـ URL = #email   الحقل نزل لجوه الشاشة: true
+
+الضغط على لينك #box:
+document.activeElement = body
+
+بعد tabindex="-1" على الصندوق:
+document.activeElement = div#box
+~~~` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** زرارين «بيبعت…»: واحد [[disabled]] وواحد [[aria-disabled="true"]]. من الحقل اللي قبلهم دوس Tab، وبعدين دوس Enter على اللي وصلت له.`, done: R`الـ Tab عدّى الـ disabled ووقف على الـ aria-disabled، والضغط عليه شغّل الـ onclick عادي (اتعدّ مرتين في التجربة). يعني aria-disabled بيسيب الزرار في الكيبورد ويقول إنه مقفول، بس الكود لازم يتأكد بنفسه بـ flag زي [[sending]] في الدرس.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الإرسال</title>
+</head>
+<body>
+<main>
+<h1>تسجيل</h1>
+<label for="n">الاسم</label>
+<input id="n">
+<button id="a" disabled onclick="count()">بيبعت…</button>
+<button id="b" aria-disabled="true" onclick="count()">بيبعت…</button>
+<p id="c">0</p>
+</main>
+<script>
+  let clicks = 0;
+  function count() { clicks++; document.querySelector('#c').textContent = clicks; }
+$__lt/script>
+</body>
+</html>
+~~~
+
+**اللي طلع:**
+
+| | [[disabled]] | [[aria-disabled="true"]] |
+|---|---|---|
+| Tab بيقف عليه | لأ | أيوه |
+| قارئ الشاشة يعرف إنه مقفول | أيوه، لو وصله | أيوه |
+| الضغط بيشغّل onclick | لأ | **أيوه** |
+
+الـ ARIA مش بتغيّر سلوك العنصر. دي بتقول لقارئ الشاشة معلومة بس. فالزرار لسه زرار عادي، والكود بتاعك لازم يمنع الضغط بنفسه:
+
+~~~js
+let sending = false;
+async function send() {
+  if (sending) return;
+  sending = true;
+  // ...
+}
+~~~
+
+**إمتى كل واحد:** أثناء إرسال بتاخد ثواني، [[aria-disabled]] أحسن، لأن [[disabled]] بيرمي الـ focus من الزرار، واللي بيستخدم الكيبورد بيضيع مكانه. أما زرار مش متاح أصلًا، فـ [[disabled]] أوضح.
+
+**الغلطة الشائعة:** تكتب [[aria-disabled]] وتفتكر إن الضغط اتمنع.
+
+~~~text الناتج
+Tab من الحقل: وقف عند #b
+Enter عليه + Space عليه: العداد = 2
+- button "بيبعت…" [disabled]
+- button "بيبعت…" [disabled]
+axe: 0 violations
+~~~` },
+            { lvl: 'تطبيق', t: R`**محاكاة:** خلي السيرفر بطيء: بدل الـ fetch حط [[await new Promise((r) => setTimeout(r, 2000))]]، وغيّر كلمة الزرار لـ «بيبعت…» وقت الانتظار. اضغط ٥ مرات ورا بعض بسرعة.`, done: R`عداد في الكود بيقول إن الإرسال اتنفّذ مرة واحدة بس، والزرار رجع «سجّل» بعد ثانيتين، ولو رميت error جوه الـ Promise الزرار برضه رجع (بسبب [[finally]]).`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تسجيل</title>
+</head>
+<body>
+<main>
+<h1>تسجيل</h1>
+<form id="f">
+  <label for="n">الاسم</label>
+  <input id="n" value="منى">
+  <button id="send">سجّل</button>
+</form>
+<p>مرات الإرسال: <output id="count">0</output></p>
+</main>
+<script>
+  const button = document.querySelector('#send');
+  let sending = false;
+  let count = 0;
+  window.shouldFail = false;
+
+  async function fakeServer() {
+    await new Promise((r) => setTimeout(r, 2000));
+    if (window.shouldFail) throw new Error('السيرفر وقع');
+  }
+
+  document.querySelector('#f').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (sending) return;
+    sending = true;
+    button.textContent = 'بيبعت…';
+    button.setAttribute('aria-disabled', 'true');
+    try {
+      count++;
+      document.querySelector('#count').textContent = count;
+      await fakeServer();
+    } catch (err) {
+      console.error(err.message);
+    } finally {
+      sending = false;
+      button.textContent = 'سجّل';
+      button.removeAttribute('aria-disabled');
+    }
+  });
+$__lt/script>
+</body>
+</html>
+~~~
+
+**السطور اللي بتمنع الإرسال المكرر:**
+
+- [[if (sending) return;]] أول سطر بعد [[preventDefault]]. الـ flag بيتغيّر قبل أي [[await]]، فالضغطة التانية بتلاقيه true.
+- [[finally]]: بيتنفّذ سواء الطلب نجح أو فشل. من غيره، أول خطأ بيسيب الزرار مقفول للأبد.
+- بنعالج الـ [[submit]] مش الـ [[click]]، عشان Enter في الحقل يتعامل نفس المعاملة.
+
+**ليه مش كفاية نعمل** [[button.disabled = true]]**:** ده بيرمي الـ focus من الزرار، والـ Enter في الحقل ممكن يوصل قبل ما السطر يتنفّذ. الـ flag أضمن.
+
+**الغلطة الشائعة:** تحط [[sending = false]] في آخر الـ try. لو الطلب وقع، السطر ده مش هيتنفّذ.
+
+~~~text الناتج
+٥ ضغطات ورا بعض:
+مرات الإرسال = 1
+كلمة الزرار أثناء الانتظار = بيبعت…
+بعد ثانيتين = سجّل
+
+مع رمي error جوه الـ Promise:
+كلمة الزرار بعد الخطأ = سجّل
+الضغط تاني اشتغل: مرات الإرسال = 3
+axe: 0 violations
+~~~` },
+            { lvl: 'تحدي', t: R`**ابني:** فورم حجز لعيادة متخيلة بيفتح واتساب برسالة جاهزة: الاسم والميعاد والملاحظات في سطور، و [[window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank', 'noopener')]].`, done: R`الرسالة بتوصل كاملة بالسطور (الـ [[\n]] اتحوّلت [[%0A]])، واسم زي «سلمى & أحمد» بيوصل كامل. ومن غير [[encodeURIComponent]] الـ [[&]] بتقطع الرسالة: [[new URL('https://wa.me/?text=سلمى & أحمد').searchParams.get('text')]] رجّع [[سلمى ]] بس.`, sol: R`~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>احجز</title>
+<style>
+  body { font-family: system-ui; margin: 16px; }
+  form { display: grid; gap: 8px; max-width: 340px; }
+  input, textarea { padding: 10px; font: inherit; }
+</style>
+</head>
+<body>
+<main>
+<h1>احجز عند عيادة الشفاء</h1>
+<form id="f">
+  <label for="n">الاسم</label>
+  <input id="n" name="name" required autocomplete="name">
+  <label for="d">الميعاد</label>
+  <input id="d" name="when" type="datetime-local" required>
+  <label for="m">ملاحظات</label>
+  <textarea id="m" name="notes"></textarea>
+  <button>افتح واتساب</button>
+</form>
+</main>
+<script>
+  document.querySelector('#f').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const data = new FormData(e.target);
+    const msg = [
+      'حجز جديد',
+      'الاسم: ' + data.get('name'),
+      'الميعاد: ' + data.get('when'),
+      'ملاحظات: ' + (data.get('notes') || 'مفيش'),
+    ].join('\n');
+    window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank', 'noopener');
+  });
+$__lt/script>
+</body>
+</html>
+~~~
+
+**السطور المهمة:**
+
+- [[.join('\n')]]: بيحط سطر جديد بين كل جزء.
+- [[encodeURIComponent]]: بيحوّل أي حرف ليه معنى في الـ URL لشكل آمن. السطر الجديد بقى [[%0A]]، و [[&]] بقت [[%26]].
+- [[data.get('notes') || 'مفيش']]: لو الحقل فاضي، اكتب «مفيش».
+- [[noopener]]: الصفحة الجديدة متقدرش توصل لصفحتك.
+
+**ليه** [[encodeURIComponent]] **لازم:** الـ [[&]] في الـ URL معناها «اللي بعدي parameter جديد». فمن غيرها، اسم زي «سلمى & أحمد» بيقطع الرسالة عند الـ &، وباقيها بيتفهم كـ parameter تاني.
+
+**الغلطة الشائعة:** تستخدم [[encodeURI]] بدل [[encodeURIComponent]]. الأولى بتسيب [[&]] زي ما هي، لأنها معمولة لـ URL كامل مش لقيمة جواه.
+
+~~~text الناتج
+الـ URL اللي اتفتح (أوله):
+https://wa.me/?text=%D8%AD%D8%AC%D8%B2%20%D8%AC%D8%AF%D9%8A%D8…
+
+فيه %0A بدل السطر الجديد: true
+الرسالة اللي واتساب هيقراها:
+حجز جديد
+الاسم: سلمى & أحمد
+الميعاد: 2026-07-01T10:30
+ملاحظات: أول زيارة
+
+من غير encodeURIComponent:
+new URL('https://wa.me/?text=سلمى & أحمد').searchParams.get('text') = "سلمى "
+overflow على 360: 0px   axe: 0 violations
+~~~` },
+            { lvl: 'سريع', t: R`**اشرحها:** زميلك عايز يشيل الملخص ويكتفي بالرسالة الحمرا تحت كل حقل. اكتبله في ٣ سطور إمتى الملخص بيفرق.`, done: R`الشرح فيه: الفورم الطويل اللي الغلط فيه تحت الشاشة، ومستخدم قارئ الشاشة اللي بيسمع العدد واللينكات مرة واحدة، والموبايل اللي الرسالة الحمرا فيه ممكن تبقى برّه الشاشة.`, sol: R`**الرد النموذجي لزميلك:**
+
+~~~text الشرح
+الرسالة تحت الحقل كفاية لو الفورم قصير والغلط قدامك. الملخص بيفرق في ٣ حالات:
+١. فورم طويل والغلطة في حقل تحت الشاشة: من غير ملخص المستخدم بيدوس إرسال ومش شايف أي حاجة حصلت.
+٢. قارئ الشاشة: بيسمع «فيه ٣ غلطات» والأسامي مرة واحدة، ويدخل على اللينك مباشرة بدل ما يدوّر حقل حقل.
+٣. الموبايل: الشاشة صغيرة والكيبورد واكلة نصها، فالرسالة الحمرا غالبًا برّه الشاشة.
+~~~
+
+**الحل الصح الاتنين مع بعض:** الملخص بيقول إيه الغلط، والرسالة تحت كل حقل بتقول إزاي تصلّحه. والصفحة دي بتوضّح الحالة الأولى: الحقل فوق والزرار تحت:
+
+~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>فورم طويل</title>
+<style>.gap { height: 1400px; }</style>
+</head>
+<body>
+<main>
+<h1>فورم طويل</h1>
+<form novalidate>
+  <label for="e">الإيميل</label>
+  <input id="e" required>
+  <p class="err" hidden>اكتب إيميلك</p>
+  <div class="gap"></div>
+  <button type="button" onclick="document.querySelector('.err').hidden = false">ابعت</button>
+</form>
+</main>
+</body>
+</html>
+~~~
+
+**الغلطة الشائعة:** تحط الملخص من غير ما تنقل الـ focus له. قارئ الشاشة مش هيعرف إنه ظهر، إلا لو عليه [[role="alert"]] أو الـ focus راحله.
+
+~~~text الناتج
+شاشة 360×640، نزلت لآخر الفورم ودست ابعت:
+الرسالة الحمرا موقعها y = -823، يعني فوق الشاشة ومش باينة
+هل ظهرت في الشاشة؟ لأ
+وكل اللي المستخدم شايفه: زرار مفيش بعده أي تغيير
+~~~` },
           ],
           title: "الفورم رفض: المستخدم يعرف الغلط فين، وميبعتش مرتين",
           desc: R`لما الإرسال يفشل، اعمل 3 حاجات: رسالة جنب كل حقل غلط ومربوطة بيه بـ [[aria-describedby]] ومعاها [[aria-invalid="true"]]، وملخص فوق الفورم فيه لينك لكل حقل غلط (مهم في الفورمات الطويلة)، وحط الـ focus على أول حقل غلط عشان قارئ الشاشة يقول اسمه والغلط بتاعه على طول.

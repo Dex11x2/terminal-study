@@ -35,11 +35,244 @@ MORE("css", [
           try: R`حط صورة طولية (بورتريه) في صندوق [[aspect-ratio: 4 / 3]]، وفي DevTools غيّر [[object-fit]] بين [[fill]] و [[cover]] و [[contain]] و [[none]]. وبعدين مع cover غيّر [[object-position]] لـ [[top]] و [[bottom]] وشوف أنهي جزء بيختفي.`,
           flag: "script",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صورة بانوراما 1200 × 400 في صندوق 300 × 300. مع [[contain]]: الصورة هتترسم بمقاس كام، والفاضي فين وقد إيه؟ ومع [[cover]]: أنهي جزء هيتقص؟`, done: R`contain: الصورة 300 × 100 (صغرت لـ ربع)، وفاضي 100 فوق و 100 تحت. cover: الصورة اتكبّرت لـ 900 × 300 واتقص 300 من كل جنب، فالنص بس باين. وأكّدت بلقطة شاشة أو بلون أول وآخر سطر.` },
-            { lvl: 'تطبيق', t: R`**ابني:** صفحة فريق لمكتبة متخيلة: ٨ كروت بصور مختلفة النسب (طولي وعرضي ومربع)، كل صورة [[aspect-ratio: 4 / 5]] و [[object-fit: cover]] و [[object-position: 50% 20%]]، والشبكة auto-fit.`, done: R`على 360 و 768 و 1280 كل الكروت في الصف نفس الارتفاع بالظبط (قيس [[height]] بتاع كل صورة)، ومفيش صورة متمطّطة، والوشوش باينة في الصور الطولية، ومفيش scroll أفقي.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[<img src="/a.jpg" width="800" height="600" style="width: 100%; aspect-ratio: 1">]] جوه كارت عرضه 400، والمفروض يبقى مربع. قيس الارتفاع وصلّح.`, done: R`قبل: الارتفاع 600 (الـ [[height]] اللي في الـ HTML كسب على الـ aspect-ratio). بعد [[height: auto]]: 400 × 400، ومن غير ما تمسح [[width]] و [[height]] من الـ HTML (لسه محتاجهم لحجز المكان).` },
-            { lvl: 'تطبيق', t: R`**أشكال:** ألبوم صور رحلة متخيلة على شكل polaroid: [[<figure>]] بإطار أبيض وظل، والصورة مربعة [[cover]]، و [[figcaption]] تحت، وكل صورة متلفّة زاوية مختلفة بـ [[:nth-child]] و [[rotate]].`, done: R`كل الصور نفس المقاس رغم إن الملفات مختلفة، والكروت متلفّة بـ ٣ زوايا على الأقل، والـ caption مقري، ولما تقف على كارت بيتعدل ([[rotate: 0deg]]) ويكبر شوية من غير ما يزق اللي جنبه.` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** نفس الصورة مرة [[<img>]] بـ [[object-fit: cover]] ومرة [[div]] بـ [[background-image]] و [[background-size: cover]]. قارن في DevTools: اسم العنصر في Accessibility tree، وهل [[loading="lazy"]] ينفع، وهل [[srcset]] ينفع.`, done: R`عندك جدول ٣ صفوف: الـ img ليه اسم (الـ alt) والـ div ملوش، والـ img بيدعم lazy و srcset والـ div لأ (محتاج [[image-set()]] و JavaScript)، والشكل على الشاشة واحد. وكتبت إمتى الـ background مقبول (زينة بس).` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صورة بانوراما 1200 × 400 في صندوق 300 × 300. مع [[contain]]: الصورة هتترسم بمقاس كام، والفاضي فين وقد إيه؟ ومع [[cover]]: أنهي جزء هيتقص؟`, done: R`contain: الصورة 300 × 100 (صغرت لـ ربع)، وفاضي 100 فوق و 100 تحت. cover: الصورة اتكبّرت لـ 900 × 300 واتقص 300 من كل جنب، فالنص بس باين. وأكّدت بلقطة شاشة أو بلون أول وآخر سطر.`, sol: R`الحساب أولًا، وبعدين صفحة صغيرة تأكّده بلون أول وآخر الصورة.
+
+~~~html predict.html
+<!doctype html>
+<meta charset="utf-8">
+<title>contain و cover</title>
+<style>
+  img { display: block; width: 300px; height: 300px; margin-block-end: 1rem; background: #eee; }
+</style>
+<!-- بانوراما 1200×400: أخضر أول 300، وأزرق في النص، وأحمر آخر 300 -->
+<img style="object-fit: contain" alt="contain" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='400'%3E%3Crect width='300' height='400' fill='green'/%3E%3Crect x='300' width='600' height='400' fill='blue'/%3E%3Crect x='900' width='300' height='400' fill='red'/%3E%3C/svg%3E">
+<img style="object-fit: cover" alt="cover" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='400'%3E%3Crect width='300' height='400' fill='green'/%3E%3Crect x='300' width='600' height='400' fill='blue'/%3E%3Crect x='900' width='300' height='400' fill='red'/%3E%3C/svg%3E">
+~~~
+
+**contain:** المتصفح بيدوّر على أصغر تكبير يخلي الصورة كلها جوه الصندوق. العرض محتاج 300 ÷ 1200 = 0.25، والارتفاع محتاج 300 ÷ 400 = 0.75، فبياخد الأصغر (0.25). الصورة تبقى 300 × 100، والباقي من الارتفاع 200 يتقسم نصين: 100 فوق و 100 تحت.
+
+**cover:** بياخد الأكبر (0.75) عشان الصندوق كله يتغطى. الصورة تبقى 900 × 300، والزيادة في العرض 600 تتقص نصين: 300 من كل جنب، لأن [[object-position]] الافتراضي [[50% 50%]].
+
+**الغلطة الشائعة:** تفتكر إن cover «بيقص من تحت» زي ما بتشوف في الصور الطولية. القص دايمًا في الاتجاه الزايد: البانوراما زيادتها في العرض، فالأطراف هي اللي بتروح.
+
+~~~text الناتج
+                        contain                     cover
+الصورة بعد التحجيم      300 × 100                   900 × 300
+الفاضي أو المقصوص       100 فوق و 100 تحت          300 من كل جنب
+لون (150, 50)           أبيض (خلفية)                أزرق
+لون (150, 150)          أزرق                        أزرق
+لون (2, 150)            أخضر (أول الصورة)           أزرق (الأخضر اتقص كله)
+لون (297, 150)          أحمر (آخر الصورة)           أزرق (الأحمر اتقص كله)
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** صفحة فريق لمكتبة متخيلة: ٨ كروت بصور مختلفة النسب (طولي وعرضي ومربع)، كل صورة [[aspect-ratio: 4 / 5]] و [[object-fit: cover]] و [[object-position: 50% 20%]]، والشبكة auto-fit.`, done: R`على 360 و 768 و 1280 كل الكروت في الصف نفس الارتفاع بالظبط (قيس [[height]] بتاع كل صورة)، ومفيش صورة متمطّطة، والوشوش باينة في الصور الطولية، ومفيش scroll أفقي.`, sol: R`~~~html team.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>فريق مكتبة النور</title>
+<style>
+  body { margin: 0; padding: 1rem; font-family: system-ui, sans-serif; background: #f4f1ea; color: #222; }
+  .team { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem;
+          grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr)); }
+  .card { background: #fff; border-radius: .75rem; overflow: hidden; }
+  .card img { display: block; width: 100%; height: auto;
+              aspect-ratio: 4 / 5; object-fit: cover; object-position: 50% 20%; }
+  .card h2 { margin: .5rem .75rem 0; font-size: 1rem; }
+  .card p  { margin: 0 .75rem .75rem; color: #555; font-size: .875rem; }
+</style>
+</head>
+<body>
+<main>
+<h1>فريق مكتبة النور</h1>
+<ul class="team">
+  <li class="card"><img data-size="600x900" width="600" height="900" alt="منى مبتسمة قدام رف كتب"><h2>منى</h2><p>مديرة المكتبة</p></li>
+  <li class="card"><img data-size="900x600" width="900" height="600" alt="كريم ماسك كتاب"><h2>كريم</h2><p>الاستعارة</p></li>
+  <li class="card"><img data-size="700x700" width="700" height="700" alt="سارة قدام الكمبيوتر"><h2>سارة</h2><p>الفهرسة</p></li>
+  <li class="card"><img data-size="500x1000" width="500" height="1000" alt="عمر واقف على سلم الرفوف"><h2>عمر</h2><p>الرفوف</p></li>
+  <li class="card"><img data-size="1200x500" width="1200" height="500" alt="هبة بتقرا للأطفال"><h2>هبة</h2><p>ركن الأطفال</p></li>
+  <li class="card"><img data-size="800x800" width="800" height="800" alt="ياسر جنب ماكينة التصوير"><h2>ياسر</h2><p>النسخ</p></li>
+  <li class="card"><img data-size="640x960" width="640" height="960" alt="نورا ماسكة صندوق كتب"><h2>نورا</h2><p>المشتريات</p></li>
+  <li class="card"><img data-size="1000x700" width="1000" height="700" alt="طارق عند باب المكتبة"><h2>طارق</h2><p>الأمن</p></li>
+</ul>
+</main>
+<script>
+  // صور تجريبية عشان الصفحة تشتغل من غير ملفات: بدّلها بصورك الحقيقية
+  document.querySelectorAll("img[data-size]").forEach((img, i) => {
+    const [w, h] = img.dataset.size.split("x");
+    const svg = $__bt<svg xmlns="http://www.w3.org/2000/svg" width="$__{w}" height="$__{h}"><rect width="100%" height="100%" fill="hsl($__{i * 45} 45% 70%)"/><circle cx="$__{w / 2}" cy="$__{h * 0.2}" r="$__{w * 0.14}" fill="#0005"/></svg>$__bt;
+    img.src = "data:image/svg+xml," + encodeURIComponent(svg);
+  });
+$__lt/script>
+</body>
+</html>
+~~~
+
+**ليه شغال:** الصور ملفاتها مختلفة (طولي وعرضي ومربع)، بس المقاس اللي بتاخده على الشاشة جاي من الـ CSS مش من الملف:
+
+- [[grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr))]] بيحط أعمدة قد ما يقدر، كل عمود 10rem على الأقل. و [[min(100%, 10rem)]] بتحمي الموبايل الصغير أوي من الـ overflow.
+- [[width: 100%]] الصورة بعرض الكارت، و [[aspect-ratio: 4 / 5]] بيحسب الارتفاع من العرض، فكل الصور في العمود نفس الارتفاع مهما كان شكل الملف.
+- [[height: auto]] لازمة: من غيرها الـ [[height="900"]] اللي في الـ HTML بيكسب ويلغي الـ aspect-ratio.
+- [[object-fit: cover]] بيملا المكان ويقص، و [[object-position: 50% 20%]] بيخلي الجزء الباين هو اللي عند 20% من فوق، وده مكان الوش في الصور الطولية.
+- [[width]] و [[height]] في الـ HTML لسه موجودين عشان المتصفح يحجز مكان قبل ما الصورة تتحمّل.
+
+**الغلطة الشائعة:** تسيب [[object-position]] على الافتراضي (النص)، فالصور الطولية تتقص من فوق ومن تحت بالتساوي والوش يروح نصه. جرّب تغيّرها لـ [[50% 50%]] وبص على الدايرة اللي في الصورة التجريبية.
+
+~~~text الناتج
+العرض    الأعمدة   عرض الصورة × ارتفاعها     scrollWidth  clientWidth
+360      1         328 × 410                 360          360
+768      4         172 × 215                 768          768
+1280     7         164.56 × 205.7            1280         1280
+
+كل الصور في الصف نفس الـ top. على 1280 بعض الأعمدة 164.58 × 205.72 بفرق 0.02px
+من تقسيم العرض على 7، وده كسر بكسل مش بيتشاف.
+axe: صفر مشاكل.
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[<img src="/a.jpg" width="800" height="600" style="width: 100%; aspect-ratio: 1">]] جوه كارت عرضه 400، والمفروض يبقى مربع. قيس الارتفاع وصلّح.`, done: R`قبل: الارتفاع 600 (الـ [[height]] اللي في الـ HTML كسب على الـ aspect-ratio). بعد [[height: auto]]: 400 × 400، ومن غير ما تمسح [[width]] و [[height]] من الـ HTML (لسه محتاجهم لحجز المكان).`, sol: R`~~~html fix.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>كارت مربع</title></head>
+<body>
+<div style="width: 400px">
+  <img id="pic" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='600'%3E%3Crect width='100%25' height='100%25' fill='teal'/%3E%3C/svg%3E"
+       width="800" height="600" alt="صورة منتج"
+       style="width: 100%; height: auto; aspect-ratio: 1; object-fit: cover">
+</div>
+</body>
+</html>
+~~~
+
+التصليح كلمة واحدة: [[height: auto]] في الـ style. و [[object-fit: cover]] زيادة عشان الصورة 800 × 600 ماتتمطّش لما تتحط في صندوق مربع.
+
+**ليه كان بايظ:** الـ [[height="600"]] في الـ HTML بيتحوّل لقاعدة CSS ضعيفة، بس لسه قيمة. و [[aspect-ratio]] بيشتغل بس لو واحد من البعدين [[auto]]. والعرض اتحدد والارتفاع اتحدد، فمفيش حاجة يحسبها، فالـ [[aspect-ratio: 1]] بيتجاهل في سكوت.
+
+**الغلطة الشائعة:** تمسح [[width]] و [[height]] من الـ HTML عشان «بيبوظوا الدنيا». كده الشكل يتصلّح فعلًا، بس المتصفح مبقاش عارف نسبة الصورة قبل التحميل، فترجع قفزة الـ layout. سيبهم وزوّد [[height: auto]].
+
+~~~text الناتج
+                     العرض    الارتفاع
+قبل (height من HTML)  400      600
+بعد height: auto      400      400
+~~~` },
+            { lvl: 'تطبيق', t: R`**أشكال:** ألبوم صور رحلة متخيلة على شكل polaroid: [[<figure>]] بإطار أبيض وظل، والصورة مربعة [[cover]]، و [[figcaption]] تحت، وكل صورة متلفّة زاوية مختلفة بـ [[:nth-child]] و [[rotate]].`, done: R`كل الصور نفس المقاس رغم إن الملفات مختلفة، والكروت متلفّة بـ ٣ زوايا على الأقل، والـ caption مقري، ولما تقف على كارت بيتعدل ([[rotate: 0deg]]) ويكبر شوية من غير ما يزق اللي جنبه.`, sol: R`~~~html album.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ألبوم رحلة الأقصر</title>
+<style>
+  body { margin: 0; padding: 2rem 1rem; background: #4a3f35; color: #fff; font-family: system-ui, sans-serif; }
+  h1 { text-align: center; }
+  .album { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; }
+  .polaroid { margin: 0; width: 13rem; padding: .75rem .75rem 1.25rem; background: #fff;
+              box-shadow: 0 .5rem 1rem #0006; transition: rotate .2s, scale .2s; }
+  .polaroid:nth-child(3n + 1) { rotate: -4deg; }
+  .polaroid:nth-child(3n + 2) { rotate: 2deg; }
+  .polaroid:nth-child(3n)     { rotate: -1.5deg; }
+  .polaroid:hover { rotate: 0deg; scale: 1.06; position: relative; z-index: 1; }
+  .polaroid img { display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; }
+  .polaroid figcaption { margin-top: .75rem; text-align: center; color: #333; }
+  @media (prefers-reduced-motion: reduce) { .polaroid { transition: none; } }
+</style>
+</head>
+<body>
+<main>
+<h1>رحلة الأقصر</h1>
+<div class="album">
+  <figure class="polaroid"><img data-size="1200x800" width="1200" height="800" alt="معبد الكرنك وقت الغروب"><figcaption>الكرنك</figcaption></figure>
+  <figure class="polaroid"><img data-size="800x1200" width="800" height="1200" alt="عمود ضخم من تحت"><figcaption>عمود الكرنك</figcaption></figure>
+  <figure class="polaroid"><img data-size="900x900" width="900" height="900" alt="مركب شراعي في النيل"><figcaption>فلوكة</figcaption></figure>
+  <figure class="polaroid"><img data-size="1000x500" width="1000" height="500" alt="منطاد فوق البر الغربي"><figcaption>المنطاد</figcaption></figure>
+  <figure class="polaroid"><img data-size="600x1000" width="600" height="1000" alt="مدخل مقبرة ملكية"><figcaption>وادي الملوك</figcaption></figure>
+  <figure class="polaroid"><img data-size="1100x700" width="1100" height="700" alt="سوق الأقصر بالليل"><figcaption>السوق</figcaption></figure>
+</div>
+</main>
+<script>
+  // صور تجريبية عشان الصفحة تشتغل من غير ملفات: بدّلها بصورك الحقيقية
+  document.querySelectorAll("img[data-size]").forEach((img, i) => {
+    const [w, h] = img.dataset.size.split("x");
+    const svg = $__bt<svg xmlns="http://www.w3.org/2000/svg" width="$__{w}" height="$__{h}"><rect width="100%" height="100%" fill="hsl($__{i * 45} 45% 70%)"/><circle cx="$__{w / 2}" cy="$__{h * 0.2}" r="$__{w * 0.14}" fill="#0005"/></svg>$__bt;
+    img.src = "data:image/svg+xml," + encodeURIComponent(svg);
+  });
+$__lt/script>
+</body>
+</html>
+~~~
+
+**ليه شغال:**
+
+- [[.polaroid]] عرضه ثابت 13rem، والـ padding من تحت أكبر عشان شكل الـ polaroid. و [[aspect-ratio: 1]] مع [[object-fit: cover]] بيخلي الملفات الستة (عرضي وطولي) كلها مربع 208 × 208.
+- [[:nth-child(3n + 1)]] و [[3n + 2]] و [[3n]] بيوزّعوا ٣ زوايا بالتناوب، ومن غير ما تكتب class لكل كارت.
+- [[rotate]] و [[scale]] هنا خصائص لوحدها (مش جوه [[transform]])، فـ transition بيحرّك كل واحدة لوحدها.
+- الـ hover بيغيّر [[rotate]] و [[scale]] بس. الاتنين مبيأثروش على الـ layout، فالكارت اللي جنبه مش بيتحرك. و [[z-index: 1]] مع [[position: relative]] عشان الكارت المكبّر ييجي فوق جاره مش تحته.
+
+**الغلطة الشائعة:** تكبّر الكارت بـ [[width]] في الـ hover. ده بيغيّر الـ layout فكل الكروت اللي بعده تتزق وتترعش. [[scale]] بيرسم بس ومبيحسبش مكان.
+
+~~~text الناتج
+عند 360 و 1280:
+rotate للكروت الستة: -4deg, 2deg, -1.5deg, -4deg, 2deg, -1.5deg
+كل صورة: 208 × 208
+scrollWidth = clientWidth (مفيش scroll أفقي)
+
+hover على الكارت الأول بعد 350ms:
+rotate = 0deg ، scale = 1.06
+offsetLeft للكارت اللي جنبه: 652 قبل و 652 بعد (متحركش)
+axe: صفر مشاكل.
+~~~` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** نفس الصورة مرة [[<img>]] بـ [[object-fit: cover]] ومرة [[div]] بـ [[background-image]] و [[background-size: cover]]. قارن في DevTools: اسم العنصر في Accessibility tree، وهل [[loading="lazy"]] ينفع، وهل [[srcset]] ينفع.`, done: R`عندك جدول ٣ صفوف: الـ img ليه اسم (الـ alt) والـ div ملوش، والـ img بيدعم lazy و srcset والـ div لأ (محتاج [[image-set()]] و JavaScript)، والشكل على الشاشة واحد. وكتبت إمتى الـ background مقبول (زينة بس).`, sol: R`~~~html compare.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>img ضد background</title>
+<style>
+  body { margin: 0; padding: 1rem; font-family: system-ui, sans-serif; }
+  .box { width: 300px; height: 200px; margin-block-end: 1rem; }
+  img.box { display: block; object-fit: cover; }
+  div.box { background-size: cover; background-position: center; }
+  .spacer { height: 3000px; }
+</style>
+</head>
+<body>
+<img class="box" src="photo.jpg" alt="شارع المعز بالليل">
+<div class="box" style="background-image: url(photo.jpg)"></div>
+
+<div class="spacer"></div>
+
+<!-- تحت الشاشة بكتير: مين هيتحمّل قبل ما توصله؟ -->
+<img class="box" src="far-img.jpg" alt="قلعة صلاح الدين" loading="lazy">
+<div class="box" style="background-image: url(far-bg.jpg)"></div>
+</body>
+</html>
+~~~
+
+حط جنبها ٣ صور باسم [[photo.jpg]] و [[far-img.jpg]] و [[far-bg.jpg]]، وشغّل الصفحة من سيرفر محلي ([[npx serve .]]) عشان Network يبان.
+
+| المقارنة | [[<img>]] بـ object-fit | [[div]] بـ background |
+|---|---|---|
+| الاسم في Accessibility tree | image «شارع المعز بالليل» | مش موجود أصلًا (generic من غير اسم، فالـ tree بيتجاهله) |
+| [[loading="lazy"]] | شغال: [[far-img.jpg]] مطلبش لحد الـ scroll | مفيش attribute زيه: [[far-bg.jpg]] اتحمّل مع الصفحة |
+| [[srcset]] و [[sizes]] | شغالين، والمتصفح بيختار الملف | مفيش. أقرب حاجة [[image-set()]] بتاخد الكثافة بس، ومن غير [[sizes]] |
+
+**إمتى الـ background مقبول:** لما الصورة زينة بحتة ومحدش هيخسر حاجة لو ماشافهاش: نقشة، أو تدرّج، أو خلفية قسم. لو الصورة محتوى (منتج أو شخص أو مكان)، [[<img>]] حتى لو الشكل واحد، لأن قارئ الشاشة ومحرك البحث والـ Print بيتعاملوا معاها، وصورة الـ LCP بتتعرف بدري.
+
+**الغلطة الشائعة:** تحكم بالعين. الاتنين على الشاشة شبه بعض بالظبط، والفرق كله في اللي مش باين: الاسم والتحميل والملف المختار.
+
+~~~text الناتج
+Network قبل أي scroll:
+/photo.jpg      (مرة واحدة: الاتنين نفس الملف)
+/far-bg.jpg     اتحمّل رغم إنه تحت الشاشة بـ 3000px
+far-img.jpg     لسه مطلبش
+
+بعد scroll لآخر الصفحة:
+/far-img.jpg    اتطلب دلوقتي
+
+ariaSnapshot للصفحة:
+- img "شارع المعز بالليل"
+- img "قلعة صلاح الدين"
+(الـ div ملوش أي سطر)
+~~~` },
           ],
           deep: {
             why: R`كروت المنتجات والفريق والمقالات بتيجي صورها بمقاسات مختلفة من ناس مختلفة. من غير object-fit يا الصور تتمط (منظر مش احترافي خالص)، يا كل كارت بارتفاع مختلف والـ grid يبوظ.`,
@@ -164,11 +397,183 @@ MORE("css", [
           try: R`حوّل صورة لـ AVIF و WebP (من squoosh.app أو [[npx sharp-cli]])، واعمل الـ picture. افتح DevTools › Network وفلتر على Img: شوف أنهي ملف اتحمّل على عرض كبير، وبعدين وضع الموبايل واعمل refresh. وقارن أحجام الملفات التلاتة.`,
           flag: "script",
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** نفس الـ picture بتاع المثال بس الـ sources العامة (من غير [[media]]) جت **قبل** بتاعة الموبايل. على موبايل 390 أنهي ملف هيتحمّل؟ وبعدين شوف Network.`, done: R`اتحمّل [[hero-1600.avif]] أو [[hero-800.avif]] (صورة الديسكتوب العريضة) مش [[hero-mobile.avif]]، لأن المتصفح بياخد أول source ينفع، والعام بينفع دايمًا. ورجّعت الترتيب الصح.` },
-            { lvl: 'تطبيق', t: R`**مسألة:** [[<img srcset="/c-400.jpg 400w, /c-800.jpg 800w, /c-1600.jpg 1600w" sizes="(min-width: 64rem) 33vw, 100vw">]]. أنهي ملف هيتحمّل على: 1280 بكثافة 1، و 1280 بكثافة 2، و 390 بكثافة 3، و 390 بكثافة 1؟ احسب وبعدين جرّب (DevTools › Device Toolbar بيغيّر الـ DPR).`, done: R`1280×1: الصورة 33vw ≈ 422 → [[c-800]]. 1280×2: 845 → [[c-1600]]. 390×3: 1170 → [[c-1600]]. 390×1: 390 → [[c-400]]. وده اللي اتحمّل فعلًا في Chrome (اقفل الكاش بين كل تجربة عشان المتصفح ممكن يستخدم ملف أكبر متكاش).` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[<picture><source type="image/avif" src="/hero.avif"><img src="/hero.jpg" alt="..."></picture>]]. الـ AVIF مبيتحمّلش أبدًا حتى في Chrome. ليه؟`, done: R`الـ [[<source>]] جوه picture بيقرا [[srcset]] بس، و [[src]] عليه بيتجاهل، فالمتصفح بيروح للـ img. بعد [[srcset="/hero.avif"]] الـ Network بيوري [[hero.avif]] بس.` },
-            { lvl: 'تطبيق', t: R`**ابني:** خد صورة واحدة وحوّلها بـ [[npx sharp-cli]] لـ AVIF و WebP و JPEG بمقاسين (800 و 1600)، ونسخة مقصوصة 4:5 للموبايل، واعمل picture فيه art direction والصيغ التلاتة.`, done: R`عندك جدول بأحجام الملفات الستة (AVIF الأصغر غالبًا)، وعلى 1280 اتحمّل ملف عريض واحد، وعلى 390 اتحمّل الملف الطولي، و [[getBoundingClientRect]] للصورة على 390 نسبته 4:5 من أول ما الصفحة فتحت (مفيش قفزة).` },
-            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من web.dev أو MDN: إيه اللي بيحصل لصورة الهيرو لو عليها [[loading="lazy"]]؟ وإمتى [[fetchpriority="high"]] يفرق؟ وبعدين جرّب الاتنين و Lighthouse على Slow 4G.`, done: R`كتبت إن lazy على صورة فوق الشاشة بيأخّر تحميلها لحد ما الـ layout يخلص فالـ LCP بيتأخر، و [[fetchpriority="high"]] بيقدّمها في الطابور. وعندك رقم LCP للحالتين من Lighthouse.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** نفس الـ picture بتاع المثال بس الـ sources العامة (من غير [[media]]) جت **قبل** بتاعة الموبايل. على موبايل 390 أنهي ملف هيتحمّل؟ وبعدين شوف Network.`, done: R`اتحمّل [[hero-1600.avif]] أو [[hero-800.avif]] (صورة الديسكتوب العريضة) مش [[hero-mobile.avif]]، لأن المتصفح بياخد أول source ينفع، والعام بينفع دايمًا. ورجّعت الترتيب الصح.`, sol: R`~~~html wrong.html
+<picture>
+  <!-- العام الأول: غلط -->
+  <source type="image/avif" srcset="/hero-800.avif 800w, /hero-1600.avif 1600w" sizes="100vw">
+  <source type="image/webp" srcset="/hero-800.webp 800w, /hero-1600.webp 1600w" sizes="100vw">
+  <source media="(max-width: 767px)" type="image/avif" srcset="/hero-mobile.avif" width="800" height="1000">
+  <source media="(max-width: 767px)" type="image/webp" srcset="/hero-mobile.webp" width="800" height="1000">
+  <img src="/hero-1600.jpg" width="1600" height="700" alt="عرض الصيف" fetchpriority="high">
+</picture>
+~~~
+
+والتصليح: انقل سطرين [[media]] فوق، عشان الأكتر تحديدًا ييجي الأول.
+
+**ليه:** المتصفح بيمشي على الـ [[<source>]] من فوق لتحت وبياخد **أول واحد ينفع**، ومبيكمّلش يدوّر على الأحسن. الـ source العام مفيهوش [[media]]، فبينفع على أي شاشة، فبيوقف عنده ومبيوصلش أبدًا لبتاع الموبايل. ده زي [[if]] و [[else if]]: الحالة العامة تتحط في الآخر.
+
+على 390 بكثافة 1 الـ [[sizes="100vw"]] بيطلّب 390px، فبياخد [[hero-800.avif]]. على موبايل بكثافة 3 الطلب 1170px، فهتلاقيه [[hero-1600.avif]]. وفي الحالتين الصورة العريضة هي اللي نزلت مش الطولية.
+
+**الغلطة الشائعة:** تستنى إن المتصفح يقرا كل الـ sources ويختار الأنسب. هو بيقف عند أول تطابق.
+
+~~~text الناتج
+الترتيب الغلط على 390:  /hero-800.avif     الصورة 390 × 243.75 (عريضة)
+الترتيب الصح على 390:   /hero-mobile.avif  الصورة 390 × 487.5 (طولية 4:5)
+الترتيب الصح على 1280:  /hero-1600.avif    الصورة 1280 × 800
+~~~` },
+            { lvl: 'تطبيق', t: R`**مسألة:** [[<img srcset="/c-400.jpg 400w, /c-800.jpg 800w, /c-1600.jpg 1600w" sizes="(min-width: 64rem) 33vw, 100vw">]]. أنهي ملف هيتحمّل على: 1280 بكثافة 1، و 1280 بكثافة 2، و 390 بكثافة 3، و 390 بكثافة 1؟ احسب وبعدين جرّب (DevTools › Device Toolbar بيغيّر الـ DPR).`, done: R`1280×1: الصورة 33vw ≈ 422 → [[c-800]]. 1280×2: 845 → [[c-1600]]. 390×3: 1170 → [[c-1600]]. 390×1: 390 → [[c-400]]. وده اللي اتحمّل فعلًا في Chrome (اقفل الكاش بين كل تجربة عشان المتصفح ممكن يستخدم ملف أكبر متكاش).`, sol: R`~~~html srcset.html
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>srcset</title>
+<style>body { margin: 0 } img { display: block; max-width: 100%; height: auto }</style>
+<img id="i" src="/c-800.jpg" alt=""
+     srcset="/c-400.jpg 400w, /c-800.jpg 800w, /c-1600.jpg 1600w"
+     sizes="(min-width: 64rem) 33vw, 100vw">
+<!-- في الكونسول: i.currentSrc -->
+~~~
+
+**خطوات الحساب:**
+
+1. [[sizes]]: هل العرض 1024px أو أكتر ([[64rem]])؟ لو أيوه الصورة [[33vw]]، ولو لأ [[100vw]].
+2. اضرب المقاس في كثافة الشاشة (DPR): ده عدد البكسلات اللي الشاشة محتاجاها فعلًا.
+3. المتصفح بياخد أنسب ملف من الـ [[srcset]] (الـ [[w]] معناها عرض الملف الحقيقي، مش عرض العرض على الشاشة).
+
+| الشاشة | حجم الصورة | × الكثافة | الملف |
+|---|---|---|---|
+| 1280 × 1 | 33vw = 422.4 | 422 | [[c-800]] (الـ 400 أصغر من المطلوب) |
+| 1280 × 2 | 422.4 | 845 | [[c-1600]] |
+| 390 × 3 | 100vw = 390 | 1170 | [[c-1600]] |
+| 390 × 1 | 390 | 390 | [[c-400]] |
+
+**الغلطة الشائعة:** تنسى الكثافة، فتفتكر إن موبايل 390 هياخد الملف الصغير دايمًا. الموبايل الجديد بكثافة 3 بياخد أكبر ملف عندك. وغلطة تانية: تجرّب من غير ما تقفل الكاش، فالمتصفح يلاقي ملف أكبر متكاش ويستخدمه.
+
+~~~text الناتج
+1280 × 1 → /c-800.jpg    الصورة على الشاشة 422.39 × 264
+1280 × 2 → /c-1600.jpg   الصورة على الشاشة 422.39 × 264
+390  × 3 → /c-1600.jpg   الصورة على الشاشة 390 × 243.75
+390  × 1 → /c-400.jpg    الصورة على الشاشة 390 × 243.75
+~~~` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[<picture><source type="image/avif" src="/hero.avif"><img src="/hero.jpg" alt="..."></picture>]]. الـ AVIF مبيتحمّلش أبدًا حتى في Chrome. ليه؟`, done: R`الـ [[<source>]] جوه picture بيقرا [[srcset]] بس، و [[src]] عليه بيتجاهل، فالمتصفح بيروح للـ img. بعد [[srcset="/hero.avif"]] الـ Network بيوري [[hero.avif]] بس.`, sol: R`~~~html fixed.html
+<picture>
+  <source type="image/avif" srcset="/hero.avif">
+  <img src="/hero.jpg" alt="عرض الصيف">
+</picture>
+~~~
+
+**السبب:** [[<source>]] عنده [[src]] فعلًا، بس ده بيتقري جوه [[<video>]] و [[<audio>]] بس. جوه [[<picture>]] المتصفح بيقرا [[srcset]] لا غير، فالـ source اللي مفيهوش [[srcset]] بيتجاهل كأنه مش موجود، ويروح للـ [[<img>]].
+
+و [[<img>]] عكسه: [[src]] هو الـ fallback الإلزامي، فمتبدلوش بـ srcset هناك.
+
+**الغلطة الشائعة:** تدوّر على error. مفيش ولا رسالة في الكونسول، والصورة ظاهرة عادي بالـ JPEG، فالمشكلة بتعيش سنين. الطريقة الوحيدة تعرف: Network أو [[document.querySelector("img").currentSrc]].
+
+~~~text الناتج
+بـ src:    اتحمّل /hero.jpg بس     currentSrc = .../hero.jpg
+بـ srcset: اتحمّل /hero.avif بس    currentSrc = .../hero.avif
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** خد صورة واحدة وحوّلها بـ [[npx sharp-cli]] لـ AVIF و WebP و JPEG بمقاسين (800 و 1600)، ونسخة مقصوصة 4:5 للموبايل، واعمل picture فيه art direction والصيغ التلاتة.`, done: R`عندك جدول بأحجام الملفات الستة (AVIF الأصغر غالبًا)، وعلى 1280 اتحمّل ملف عريض واحد، وعلى 390 اتحمّل الملف الطولي، و [[getBoundingClientRect]] للصورة على 390 نسبته 4:5 من أول ما الصفحة فتحت (مفيش قفزة).`, sol: R`~~~bash
+# من صورة أصلية photo.png (2000 × 1250)
+npx sharp-cli -i photo.png -o hero-800.avif  --format avif resize 800
+npx sharp-cli -i photo.png -o hero-1600.avif --format avif resize 1600
+npx sharp-cli -i photo.png -o hero-800.webp  --format webp resize 800
+npx sharp-cli -i photo.png -o hero-1600.webp --format webp resize 1600
+npx sharp-cli -i photo.png -o hero-800.jpg   --format jpeg resize 800
+npx sharp-cli -i photo.png -o hero-1600.jpg  --format jpeg resize 1600
+# النسخة الطولية 4:5 للموبايل (800 × 1000 مقصوصة من النص)
+npx sharp-cli -i photo.png -o hero-mobile.avif --format avif resize 800 1000 --fit cover
+npx sharp-cli -i photo.png -o hero-mobile.webp --format webp resize 800 1000 --fit cover
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>هيرو المحمصة</title>
+<style>
+  body { margin: 0; font-family: system-ui, sans-serif; }
+  img { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<main>
+  <picture>
+    <source media="(max-width: 767px)" type="image/avif" srcset="/hero-mobile.avif" width="800" height="1000">
+    <source media="(max-width: 767px)" type="image/webp" srcset="/hero-mobile.webp" width="800" height="1000">
+    <source type="image/avif" srcset="/hero-800.avif 800w, /hero-1600.avif 1600w" sizes="100vw">
+    <source type="image/webp" srcset="/hero-800.webp 800w, /hero-1600.webp 1600w" sizes="100vw">
+    <img src="/hero-1600.jpg" width="1600" height="1000" alt="رفوف قهوة في محمصة" fetchpriority="high">
+  </picture>
+  <h1>محمصة النيل</h1>
+</main>
+</body>
+</html>
+~~~
+
+**ليه الترتيب ده:** الموبايل الأول لأن [[media]] شرط أضيق، وجوه كل مجموعة AVIF قبل WebP (الأصغر قبل الأوسع دعمًا)، والـ [[<img>]] آخر حاجة كـ fallback ومكان الـ [[alt]] و [[fetchpriority]].
+
+**ليه مفيش قفزة:** [[width="800" height="1000"]] على الـ source بيقول للمتصفح نسبة الصورة الطولية قبل ما تتحمّل، فبيحجز 4:5 على الموبايل، و 16:10 من الـ [[<img>]] على الديسكتوب.
+
+**الغلطة الشائعة:** تنسى [[width]] و [[height]] على source الموبايل. كده المتصفح بيحجز نسبة الـ img العريضة، وأول ما الصورة الطولية توصل كل اللي تحتها يتزق لتحت.
+
+~~~text الناتج
+الملف             الحجم بالـ byte (صورة اختبار، صورتك أرقامها مختلفة)
+hero-800.avif     12,979
+hero-800.webp     13,824
+hero-800.jpg      23,187
+hero-1600.avif    28,695
+hero-1600.webp    43,052
+hero-1600.jpg     70,113
+
+على 1280: اتحمّل /hero-1600.avif بس. الصندوق 1280 × 800.
+على 390:  اتحمّل /hero-mobile.avif بس. الصندوق 390 × 487.5 = نسبة 0.8 (4:5)
+          من أول ما الصفحة فتحت.
+~~~` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من web.dev أو MDN: إيه اللي بيحصل لصورة الهيرو لو عليها [[loading="lazy"]]؟ وإمتى [[fetchpriority="high"]] يفرق؟ وبعدين جرّب الاتنين و Lighthouse على Slow 4G.`, done: R`كتبت إن lazy على صورة فوق الشاشة بيأخّر تحميلها لحد ما الـ layout يخلص فالـ LCP بيتأخر، و [[fetchpriority="high"]] بيقدّمها في الطابور. وعندك رقم LCP للحالتين من Lighthouse.`, sol: R`**إجابة نموذجية من web.dev و MDN:**
+
+- [[loading="lazy"]] بيقول للمتصفح «استنى لحد ما تعرف الصورة دي قريبة من الشاشة». والمعلومة دي مش معروفة غير بعد ما الـ CSS ييجي والـ layout يتحسب، فالصورة بتفقد تحميلها البدري اللي الـ preload scanner كان بيعمله. لو الصورة دي عنصر الـ LCP، الـ LCP نفسه بيتأخر.
+- [[fetchpriority="high"]] مبيغيّرش **هل** الصورة هتتحمّل، بيغيّر ترتيبها في الطابور. الصور اللي فوق الشاشة Chrome بيرفع أولويتها لوحده، بس بعد ما يعرف مكانها. الـ attribute بيقوله كده من الأول. بيفرق لما الصفحة فيها طلبات كتير بتتنافس على نت بطيء، ومفيش فرق تقريبًا في صفحة فيها صورة واحدة.
+
+~~~html test.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>هيرو</title>
+<meta name="description" content="تجربة LCP">
+<style>body { margin: 0 } img { display: block; width: 100%; height: auto }</style>
+</head>
+<body>
+<main>
+  <!-- غيّر السطر ده بين loading="lazy" و fetchpriority="high" ومن غير أي حاجة.
+       وزوّد CSS وكام سكربت defer في الـ head عشان الطلبات تتنافس زي صفحة حقيقية -->
+  <img src="/hero.jpg" width="1600" height="1000" alt="رفوف قهوة" loading="lazy">
+  <h1>محمصة</h1>
+</main>
+</body>
+</html>
+~~~
+
+~~~bash
+npx serve . -l 4000
+npx lighthouse http://localhost:4000/test.html --quiet --only-categories=performance --throttling-method=devtools --output=json --output-path=lh.json
+~~~
+
+**الغلطة الشائعة:** تحط [[loading="lazy"]] على كل الصور بـ loop «عشان الأداء»، ومنها صورة الهيرو. القاعدة: اللي فوق الشاشة مش lazy، واللي تحتها lazy.
+
+~~~text الناتج
+الحالة                     LCP       Performance
+loading="lazy"             7.7 s     68
+من غير attribute           7.3 s     68 و 69
+fetchpriority="high"       7.3 s     69
+
+(Lighthouse 13.6 من الـ Node API بـ throttlingMethod: devtools، مرتين لكل حالة. الصفحة فيها
+صورة 890KB و CSS وست سكربتات defer. الأرقام متكررة في المرتين.)
+في صفحة صورة واحدة خفيفة مع المحاكاة الافتراضية مطلعش فرق مفيد، وده اللي
+بيفسّر ليه التجربة لازم تبقى على صفحة فيها طلبات بتتنافس.
+~~~` },
           ],
           deep: {
             why: R`صورة الهيرو غالبًا أكبر حاجة في الصفحة وهي اللي بتحدد LCP. نفس الصورة بـ AVIF ممكن تبقى نص حجم الـ WebP وأصغر بكتير من JPEG. وصورة عريضة 16:9 على موبايل طولي بتبقى شريط صغير الكلام اللي فيها مش باين، فمحتاج صورة مقصوصة تانية.`,
@@ -286,11 +691,221 @@ AVIF بقت مدعومة في كل المتصفحات الحديثة، بس ال
           try: R`حط iframe يوتيوب عادي في صفحة، وافتح Network واعمل refresh: عدّ الـ requests والحجم. وبعدين بدّله بزرار الـ facade واكتب السكربت اللي لما تدوس عليه يحط الـ iframe مكانه ويشغّله، وقارن الـ Network تاني قبل الضغط.`,
           flag: "script",
           practice: [
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** فيديو هيرو [[<video autoplay loop src="/hero.mp4">]] مبيشتغلش، ومفيش ولا error. صلّحه، واكتب الـ attributes الناقصة ليه.`, done: R`قبل: [[video.paused]] = [[true]] بعد التحميل. بعد [[muted]] و [[playsinline]] (و [[poster]] و [[aria-hidden="true"]] لأنه زينة): [[paused]] = [[false]]، وكتبت إن Chrome بيمنع autoplay بصوت في سكوت.` },
-            { lvl: 'تطبيق', t: R`**ابني:** فيديو خلفية للهيرو بزرار «إيقاف/تشغيل» عليه [[aria-pressed]]، ولو المستخدم مفعّل [[prefers-reduced-motion: reduce]] الفيديو ميشتغلش لوحده ويبان الـ poster.`, done: R`من DevTools › Rendering مع [[reduce]]: [[video.paused]] = [[true]] والـ poster ظاهر. من غيره بيشتغل، والزرار بيوقّفه ويغيّر [[aria-pressed]]، والزرار بيتوصل بالـ Tab وليه اسم.` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** اكتب ملف [[intro.ar.vtt]] لـ ٣ جمل (من 0 لـ 2، ومن 2 لـ 5، ومن 5 لـ 8 ثواني)، وبعدين امسح أول سطر [[WEBVTT]] وشوف بيحصل إيه.`, done: R`بالملف السليم [[video.textTracks[0].cues.length]] = 3 والترجمة بتبان. من غير [[WEBVTT]]: [[cues.length]] = 0 و [[track.readyState]] = 3 (ERROR)، يعني الملف كله اترفض في سكوت.` },
-            { lvl: 'تطبيق', t: R`**ابني:** iframe يوتيوب (أو خريطة) responsive بـ [[width: 100%; height: auto; aspect-ratio: 16 / 9]] بدل حيلة [[padding-top: 56.25%]] القديمة.`, done: R`على 360 ارتفاع الـ iframe 202.5 (= 360 × 9 ÷ 16)، وعلى 768 قد 432، ومفيش wrapper ولا [[position: absolute]] في الـ CSS، والـ iframe عليه [[title]].` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** فيديو عندك (أو اعمله بـ ffmpeg) ٦٠ ثانية. حطه ٣ مرات بـ [[preload="none"]] و [[metadata]] و [[auto]]، وعدّ الـ bytes في Network قبل ما تدوس play.`, done: R`عندك ٣ أرقام: none قريب من صفر، و metadata أقل بكتير من auto، وكتبت ليه [[metadata]] الاختيار الافتراضي للفيديو اللي في نص الصفحة و [[none]] لفيديوهات كتير في صفحة واحدة.` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** فيديو هيرو [[<video autoplay loop src="/hero.mp4">]] مبيشتغلش، ومفيش ولا error. صلّحه، واكتب الـ attributes الناقصة ليه.`, done: R`قبل: [[video.paused]] = [[true]] بعد التحميل. بعد [[muted]] و [[playsinline]] (و [[poster]] و [[aria-hidden="true"]] لأنه زينة): [[paused]] = [[false]]، وكتبت إن Chrome بيمنع autoplay بصوت في سكوت.`, sol: R`~~~html fixed.html
+<video autoplay muted loop playsinline poster="/poster.jpg" aria-hidden="true" src="/hero.mp4"></video>
+~~~
+
+**كل attribute ليه شغله:**
+
+- [[muted]]: الأهم. Chrome و Safari بيمنعوا تشغيل فيديو بصوت من غير ضغطة من المستخدم، بس بيسمحوا بالصامت.
+- [[playsinline]]: على iPhone من غيره الفيديو بيفتح fullscreen أو مبيشتغلش في مكانه.
+- [[poster]]: الصورة اللي بتبان قبل أول frame، ولو الـ autoplay اتمنع.
+- [[aria-hidden="true"]]: فيديو زينة ملوش معنى لقارئ الشاشة.
+
+**ليه مفيش error:** الـ attribute [[autoplay]] مجرد طلب، والمتصفح بيرفضه في سكوت. الـ error مش بيبان غير لو انت ناديت [[video.play()]] بإيدك، وقتها الـ Promise بيرفض بـ [[NotAllowedError]].
+
+**الغلطة الشائعة:** الفيديو بيشتغل عندك وانت بتجرّب لأنك ضغطت في الصفحة قبلها أو بتعمل reload (Chrome بيحسب تفاعلك مع الموقع)، فتفتكر إنه سليم، وعند زائر جديد واقف. جرّب في Incognito.
+
+~~~text الناتج
+قبل (autoplay loop بس):
+video.paused = true ، currentTime = 0
+
+بعد muted و playsinline:
+video.paused = false ، currentTime = 0.88 بعد 900ms
+
+ولو ناديت play() من غير muted ومن غير ضغطة:
+NotAllowedError: play() failed because the user didn't interact with the document first.
+~~~
+
+(اتقاس في Chrome بـ [[--autoplay-policy=document-user-activation-required]]، وده اللي زائر جديد بيقابله.)` },
+            { lvl: 'تطبيق', t: R`**ابني:** فيديو خلفية للهيرو بزرار «إيقاف/تشغيل» عليه [[aria-pressed]]، ولو المستخدم مفعّل [[prefers-reduced-motion: reduce]] الفيديو ميشتغلش لوحده ويبان الـ poster.`, done: R`من DevTools › Rendering مع [[reduce]]: [[video.paused]] = [[true]] والـ poster ظاهر. من غيره بيشتغل، والزرار بيوقّفه ويغيّر [[aria-pressed]]، والزرار بيتوصل بالـ Tab وليه اسم.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>هيرو بفيديو خلفية</title>
+<style>
+  body { margin: 0; font-family: system-ui, sans-serif; }
+  .hero { position: relative; isolation: isolate; display: grid; place-items: center;
+          min-height: 60vh; color: #fff; background: #0b1120; overflow: hidden; }
+  .hero video { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; object-fit: cover; }
+  .hero h1 { margin: 0; padding: 1rem; text-align: center; text-shadow: 0 1px 4px #000; }
+  #toggle { position: absolute; inset-block-end: 1rem; inset-inline-end: 1rem; min-block-size: 2.75rem;
+            padding-inline: 1rem; border: 0; border-radius: .5rem; background: #fff; color: #0b1120; font: inherit; }
+</style>
+</head>
+<body>
+<section class="hero">
+  <video id="bg" muted loop playsinline preload="metadata" poster="poster.jpg" aria-hidden="true" tabindex="-1">
+    <source src="hero.mp4" type="video/mp4">
+  </video>
+  <h1>قهوة مختصة بتتحمّص كل أسبوع</h1>
+  <button id="toggle" type="button" aria-pressed="false">إيقاف الفيديو</button>
+</section>
+<script>
+  const video = document.getElementById("bg");
+  const btn = document.getElementById("toggle");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function show(isPaused) {
+    btn.setAttribute("aria-pressed", String(isPaused));
+    btn.textContent = isPaused ? "تشغيل الفيديو" : "إيقاف الفيديو";
+  }
+  show(reduce);
+  if (!reduce) video.play().catch(() => show(true));
+
+  btn.addEventListener("click", () => {
+    if (video.paused) video.play(); else video.pause();
+    show(video.paused);
+  });
+$__lt/script>
+</body>
+</html>
+~~~
+
+ملفات تجريبية لو معندكش فيديو:
+
+~~~bash
+ffmpeg -f lavfi -i testsrc2=size=640x360:rate=24 -t 10 -c:v libx264 -pix_fmt yuv420p hero.mp4
+ffmpeg -i hero.mp4 -frames:v 1 poster.jpg
+~~~
+
+**الفكرة:** مفيش [[autoplay]] في الـ HTML خالص. الـ JavaScript هو اللي بيقرر: بيقرا [[matchMedia("(prefers-reduced-motion: reduce)")]]، ولو مش طالب حركة أقل بينادي [[video.play()]]. كده مع reduce الفيديو عمره ما بيبدأ والـ [[poster]] يفضل ظاهر.
+
+- [[aria-pressed]] بيقول للقارئ «الزرار ده مضغوط ولا لأ». هنا [[true]] = الفيديو واقف، وكلمة الزرار بتتغيّر مع القيمة. دالة [[show()]] هي المكان الوحيد اللي بيغيّر الاتنين، عشان ميتلخبطوش.
+- [[.catch(() => show(true))]]: لو المتصفح منع التشغيل (وضع توفير الطاقة مثلًا)، الزرار يقول «تشغيل» مش «إيقاف».
+- [[tabindex="-1"]] و [[aria-hidden="true"]] على الفيديو: زينة، والزرار هو أول وقفة في Tab.
+
+**الغلطة الشائعة:** تحط [[autoplay]] في الـ HTML وبعدين توقّف الفيديو بـ JavaScript لو reduce. كده الفيديو بيتحرك لحظة قبل الـ script، واللي طلب حركة أقل شاف حركة.
+
+~~~text الناتج
+من غير reduce:
+video.paused = false ، aria-pressed = "false" ، الزرار «إيقاف الفيديو»
+Tab → الزرار (id=toggle) ، Enter → paused = true ، aria-pressed = "true" ، «تشغيل الفيديو»
+
+مع reduce (Rendering › prefers-reduced-motion):
+video.paused = true والـ poster ظاهر ، aria-pressed = "true"
+Enter → paused = false (المستخدم طلب بنفسه، فمسموح)
+~~~` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** اكتب ملف [[intro.ar.vtt]] لـ ٣ جمل (من 0 لـ 2، ومن 2 لـ 5، ومن 5 لـ 8 ثواني)، وبعدين امسح أول سطر [[WEBVTT]] وشوف بيحصل إيه.`, done: R`بالملف السليم [[video.textTracks[0].cues.length]] = 3 والترجمة بتبان. من غير [[WEBVTT]]: [[cues.length]] = 0 و [[track.readyState]] = 3 (ERROR)، يعني الملف كله اترفض في سكوت.`, sol: R`~~~text intro.ar.vtt
+WEBVTT
+
+00:00:00.000 --> 00:00:02.000
+أهلًا بيك في جولة المتجر.
+
+00:00:02.000 --> 00:00:05.000
+هنا بنحمّص القهوة كل صباح.
+
+00:00:05.000 --> 00:00:08.000
+وهنا بنغلّفها ونبعتها لك.
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>ترجمة</title></head>
+<body>
+<video id="v" src="hero.mp4" controls>
+  <track id="t" default kind="subtitles" srclang="ar" label="عربي" src="intro.ar.vtt">
+</video>
+<script>
+  setTimeout(() => {
+    console.log(v.textTracks[0].cues?.length, t.readyState);
+  }, 800);
+$__lt/script>
+</body>
+</html>
+~~~
+
+شغّلها من سيرفر ([[npx serve .]])، لأن المتصفح بيرفض يقرا ملف VTT من [[file://]].
+
+**شكل الملف:** أول سطر لازم [[WEBVTT]] بالظبط، وبعده سطر فاضي، وكل جملة (cue) سطر توقيت [[بداية --> نهاية]] وبعده الكلام، وسطر فاضي بين كل cue والتاني.
+
+**الأرقام بتعني إيه:** [[track.readyState]] فيه ٤ قيم: 0 لسه ماتحمّلش، و 1 بيتحمّل، و 2 جاهز، و 3 خطأ. لما تمسح [[WEBVTT]] المتصفح بيعتبر الملف كله مش VTT ويرفضه.
+
+**الغلطة الشائعة:** تستنى رسالة في الكونسول. مفيش، الترجمة بس مبتظهرش. ولو الملف جاي من دومين تاني، الـ [[<video>]] محتاج [[crossorigin]] والسيرفر محتاج CORS.
+
+~~~text الناتج
+الملف السليم:         cues.length = 3 ، readyState = 2 (LOADED)
+من غير سطر WEBVTT:    cues.length = 0 ، readyState = 3 (ERROR)
+                      مفيش ولا رسالة error في الكونسول بخصوص الترجمة
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** iframe يوتيوب (أو خريطة) responsive بـ [[width: 100%; height: auto; aspect-ratio: 16 / 9]] بدل حيلة [[padding-top: 56.25%]] القديمة.`, done: R`على 360 ارتفاع الـ iframe 202.5 (= 360 × 9 ÷ 16)، وعلى 768 قد 432، ومفيش wrapper ولا [[position: absolute]] في الـ CSS، والـ iframe عليه [[title]].`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>فيديو responsive</title>
+<style>
+  body { margin: 0; font-family: system-ui, sans-serif; }
+  .embed { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; border: 0; }
+</style>
+</head>
+<body>
+<main>
+<h1>جولة المحمصة</h1>
+<iframe class="embed" src="https://www.youtube-nocookie.com/embed/VIDEO_ID"
+        title="جولة داخل المحمصة" loading="lazy" allowfullscreen></iframe>
+</main>
+</body>
+</html>
+~~~
+
+بدّل [[VIDEO_ID]] برقم فيديو حقيقي عشان يشتغل.
+
+**ليه الطريقة دي أحسن:** الحيلة القديمة كانت wrapper بـ [[padding-top: 56.25%]] و iframe جواه [[position: absolute]]، لأن الـ iframe مكانش بيعرف يحسب ارتفاعه من عرضه. دلوقتي [[aspect-ratio: 16 / 9]] بيعمل ده مباشرة، و [[height: auto]] بيسيبه يحسب.
+
+- [[display: block]] بيشيل الفراغ الصغير اللي تحت العناصر الـ inline.
+- [[border: 0]] بديل الـ [[frameborder]] القديم.
+- [[title]] لازم: ده اسم الـ iframe لقارئ الشاشة، و axe بيطلّع [[frame-title]] لو ناقص.
+- [[loading="lazy"]]: يوتيوب تقيل، فميتحمّلش غير لما يقرب.
+
+**الغلطة الشائعة:** تكتب [[aspect-ratio]] وتسيب [[height="315"]] في الـ HTML اللي جاي من كود التضمين. نفس مشكلة الصور: الارتفاع المتحدد بيلغي النسبة.
+
+~~~text الناتج
+عرض الشاشة   iframe width   iframe height
+360          360            202.5    (360 × 9 ÷ 16)
+768          768            432
+~~~` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** فيديو عندك (أو اعمله بـ ffmpeg) ٦٠ ثانية. حطه ٣ مرات بـ [[preload="none"]] و [[metadata]] و [[auto]]، وعدّ الـ bytes في Network قبل ما تدوس play.`, done: R`عندك ٣ أرقام: none قريب من صفر، و metadata أقل بكتير من auto، وكتبت ليه [[metadata]] الاختيار الافتراضي للفيديو اللي في نص الصفحة و [[none]] لفيديوهات كتير في صفحة واحدة.`, sol: R`~~~bash
+# فيديو تجربة 60 ثانية بصوت، حوالي 4.3MB
+ffmpeg -f lavfi -i testsrc2=size=640x360:rate=24 -f lavfi -i sine=frequency=330 -t 60 -c:v libx264 -pix_fmt yuv420p -b:v 500k -c:a aac -b:a 64k -movflags +faststart v.mp4
+~~~
+
+~~~html index.html
+<!doctype html>
+<meta charset="utf-8">
+<title>preload</title>
+<!-- جرّب واحد في المرة، وخد نسخة باسم مختلف من الملف لكل تجربة عشان الكاش -->
+<video preload="none" src="v.mp4" controls></video>
+<!-- <video preload="metadata" src="v.mp4" controls></video> -->
+<!-- <video preload="auto" src="v.mp4" controls></video> -->
+~~~
+
+افتح DevTools › Network، و Disable cache، وشغّلها من سيرفر محلي، ومتدوسش play.
+
+**بيحصل إيه:**
+
+- [[none]]: ولا byte. مفيش حتى مدة الفيديو، فالـ controls بتبان فاضية لحد ما حد يدوس.
+- [[metadata]]: المفروض «المدة والمقاس وأول frame بس»، بس المتصفح بياخد قدر من الـ buffer معاها. في التجربة دي 1.2MB.
+- [[auto]]: المتصفح بيبدأ يحمّل كمية كبيرة وكأن المستخدم هيتفرج.
+
+**ليه [[metadata]] الافتراضي للفيديو في نص الصفحة:** الزائر بيشوف المدة وأول frame، والصفحة مش بتدفع تمن الفيديو كله. و [[none]] لصفحة فيها فيديوهات كتير، لأن حتى metadata مضروبة في ٢٠ فيديو رقم كبير، وحط [[poster]] عشان متبقاش مربع أسود.
+
+**الغلطة الشائعة:** تفتكر إن الأرقام ثابتة. Chrome بيغيّر كمية الـ buffer حسب النت، و [[-movflags +faststart]] بيفرق كمان (من غيره الـ metadata في آخر الملف فبيطلب طلبات زيادة).
+
+~~~text الناتج
+الملف كله: 4,279,184 byte
+
+preload     الـ bytes قبل play     readyState     اللي اتخزّن (ثانية)
+none        0                     0              0
+metadata    1,245,184             4              17.5
+auto        3,145,728             4              44.1
+
+(سيرفر محلي من غير throttling، بعد 3 ثواني من الفتح)
+~~~` },
           ],
           deep: {
             why: R`iframe يوتيوب واحد بيحمّل مئات الـ KB من JavaScript قبل ما حد يدوس play، وبيبطّأ الصفحة حتى لو محدش هيتفرج. والفيديو من غير poster بيبان مربع أسود. والفيديو من غير ترجمة مش مفهوم للصم، ولا لأي حد فاتح الموبايل في مواصلات من غير سماعة.`,
@@ -472,11 +1087,224 @@ WEBVTT
           try: R`صدّر أيقونة من Figma (أو خد أي SVG) وشغّل [[npx svgo icon.svg -o icon.min.svg]] وقارن الملفين. وبعدين حط نفس الأيقونة مرة كـ [[<img>]] ومرة inline جوه زرار عليه [[color: red]]: أنهي واحدة اتلوّنت؟`,
           flag: "script",
           practice: [
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[<svg width="48" height="48"><circle cx="12" cy="12" r="10"/></svg>]] اترسمت صغيرة في ركن الـ 48 بدل ما تملاها. صلّحها بخاصية واحدة.`, done: R`قبل: عرض الدايرة 20px. بعد [[viewBox="0 0 24 24"]]: عرضها 40px، لأن الرسمة بقت متحسوبة على لوحة 24 بتتمطّ على الـ 48.` },
-            { lvl: 'تطبيق', t: R`**ابني:** sprite فيه ٦ أيقونات متخيلة بـ [[<symbol id="i-cart" viewBox="0 0 24 24">]] جوه [[<svg hidden>]] في أول الـ body، وكل زرار بيستخدم [[<svg><use href="#i-cart"/></svg>]] و [[stroke="currentColor"]].`, done: R`الستة أزرار بتتلوّن مع [[color]] بتاع الزرار (hover بيغيّرهم كلهم)، وكل زرار ليه [[aria-label]] والـ svg جواه [[aria-hidden="true"]]، وتعريف كل أيقونة موجود مرة واحدة بس في الـ HTML.` },
-            { lvl: 'تطبيق', t: R`**أشكال:** حلقة تقدّم SVG: دايرة [[r="40"]] و [[stroke-dasharray]] = محيطها و [[stroke-dashoffset]] محسوب من [[--p]] بـ [[calc()]]، وملفوفة [[rotate(-90deg)]] عشان تبدأ من فوق، والرقم في النص.`, done: R`مع [[--p: 75]] الحلقة مكمّلة ٣ أرباع من فوق مع عقارب الساعة، و [[getComputedStyle]] بيقول dasharray ≈ 251.33 و dashoffset ≈ 62.83. ولما تغيّر [[--p]] من DevTools الحلقة بتتغيّر من غير JavaScript.` },
-            { lvl: 'تطبيق', t: R`**أشكال:** خط تحت كلمة في عنوان كأنه مرسوم بالقلم: [[<path pathLength="1">]] و [[stroke-dasharray: 1]] و [[stroke-dashoffset]] من 1 لـ 0 بـ animation، ومعاه [[prefers-reduced-motion]].`, done: R`الخط بيترسم من البداية للنهاية مرة واحدة لما الصفحة تفتح، ومع [[reduce]] في Rendering بيبان مرسوم على طول من غير حركة، وفي rtl بيترسم من اليمين (اعكس الـ path أو استخدم [[scale: -1 1]]).` },
-            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من [[npx svgo --help]] لاقي الـ flag اللي بيشغّل التنضيف كذا لفة لحد ما الملف ميصغرش تاني، والـ flag اللي بيشتغل على فولدر كامل. وجرّبهم على ٥ أيقونات.`, done: R`لقيت [[--multipass]] و [[-f]] (أو [[--folder]])، وعندك جدول بحجم كل أيقونة قبل وبعد، ولسه كل أيقونة فيها [[viewBox]].` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[<svg width="48" height="48"><circle cx="12" cy="12" r="10"/></svg>]] اترسمت صغيرة في ركن الـ 48 بدل ما تملاها. صلّحها بخاصية واحدة.`, done: R`قبل: عرض الدايرة 20px. بعد [[viewBox="0 0 24 24"]]: عرضها 40px، لأن الرسمة بقت متحسوبة على لوحة 24 بتتمطّ على الـ 48.`, sol: R`~~~html fixed.html
+<svg width="48" height="48" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
+~~~
+
+**الفرق:** [[width]] و [[height]] مقاس الـ SVG على الشاشة. و [[viewBox="0 0 24 24"]] مقاس اللوحة اللي الرسمة اترسمت عليها. لما الاتنين يختلفوا، الرسمة بتتكبّر عشان اللوحة تملا الشاشة: 48 ÷ 24 = ضعف.
+
+من غير [[viewBox]]، كل وحدة في الرسمة = 1px، فدايرة نص قطرها 10 قطرها 20px، في ركن صندوق 48.
+
+**الغلطة الشائعة:** تصلّحها بتغيير [[r]] و [[cx]] و [[cy]] لأرقام أكبر. ده بيخلي كل مقاس محتاج رسمة تانية، و [[viewBox]] بيخلي نفس الرسمة تشتغل بأي مقاس.
+
+~~~text الناتج
+قبل: عرض الدايرة 20px (في ركن الـ 48)
+بعد: عرض الدايرة 40px (ماليّة الـ 48 مع هامش 4 من كل ناحية)
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** sprite فيه ٦ أيقونات متخيلة بـ [[<symbol id="i-cart" viewBox="0 0 24 24">]] جوه [[<svg style="display: none">]] في أول الـ body، وكل زرار بيستخدم [[<svg><use href="#i-cart"/></svg>]] و [[stroke="currentColor"]].`, done: R`الستة أزرار بتتلوّن مع [[color]] بتاع الزرار (hover بيغيّرهم كلهم)، وكل زرار ليه [[aria-label]] والـ svg جواه [[aria-hidden="true"]]، وتعريف كل أيقونة موجود مرة واحدة بس في الـ HTML.`, sol: R`~~~html icons.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sprite أيقونات</title>
+<style>
+  body { margin: 0; padding: 1rem; font-family: system-ui, sans-serif; }
+  .bar { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .icon-btn { display: grid; place-items: center; inline-size: 3rem; block-size: 3rem; padding: 0;
+              border: 1px solid currentColor; border-radius: .5rem; background: none; color: #334155; cursor: pointer; }
+  .icon-btn:hover { color: #0f766e; }
+  .icon-btn:focus-visible { outline: 2px solid #0f766e; outline-offset: 2px; }
+  .icon-btn svg { inline-size: 1.5rem; block-size: 1.5rem; fill: none; stroke: currentColor;
+                  stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+</style>
+</head>
+<body>
+<svg style="display: none">
+  <symbol id="i-cart" viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l3 13h11l2-9H6"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20S3 14 3 8a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 6-9 12-9 12Z"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-5-5"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-5 5-7 8-7s7 2 8 7"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 17V10a6 6 0 0 1 12 0v7l2 2H4Z"/><path d="M10 21h4"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5 5 19"/></symbol>
+</svg>
+
+<main>
+<h1>أيقونات المتجر</h1>
+<div class="bar">
+  <button class="icon-btn" type="button" aria-label="السلة"><svg aria-hidden="true"><use href="#i-cart"/></svg></button>
+  <button class="icon-btn" type="button" aria-label="المفضلة"><svg aria-hidden="true"><use href="#i-heart"/></svg></button>
+  <button class="icon-btn" type="button" aria-label="بحث"><svg aria-hidden="true"><use href="#i-search"/></svg></button>
+  <button class="icon-btn" type="button" aria-label="حسابي"><svg aria-hidden="true"><use href="#i-user"/></svg></button>
+  <button class="icon-btn" type="button" aria-label="التنبيهات"><svg aria-hidden="true"><use href="#i-bell"/></svg></button>
+  <button class="icon-btn" type="button" aria-label="قفل"><svg aria-hidden="true"><use href="#i-close"/></svg></button>
+</div>
+</main>
+</body>
+</html>
+~~~
+
+**ليه شغال:**
+
+- [[<symbol>]] تعريف مبيترسمش لوحده، ومعاه [[viewBox]] بتاعه. و [[<use href="#i-cart">]] بيرسم نسخة منه في أي مكان، فكل أيقونة متعرّفة مرة واحدة ومستخدمة قد ما تحب.
+- [[stroke: currentColor]] معناها «خد لون النص بتاع العنصر». الزرار [[color]] بتاعه يتغيّر في الـ hover، فالأيقونة تتغيّر معاه من غير سطر CSS زيادة.
+- [[aria-label]] على الزرار هو الاسم، و [[aria-hidden="true"]] على الـ svg عشان القارئ ميحاولش يقراها.
+
+**ملاحظة مهمة:** [[hidden]] مبيخبيش [[<svg>]]. الـ attribute ده بتاع عناصر HTML، والـ svg عنصر من namespace تاني، فـ Chrome سايبه [[display: inline]] وبياخد مكان 300 × 150 فاضي فوق الصفحة. عشان كده هنا [[style="display: none"]]، و [[<use>]] لسه بيشتغل عادي.
+
+**الغلطة الشائعة:** تحط [[stroke="#333"]] أو [[fill="#333"]] جوه الـ [[<path>]]. اللون المكتوب على العنصر نفسه بيخلي الأيقونة متسمعش لـ currentColor، فتفضل بنفس اللون في الـ hover.
+
+~~~text الناتج
+stroke قبل الـ hover: rgb(51, 65, 85) ، وبعده: rgb(15, 118, 110)
+symbol: 6 ، use: 6 ، paths برا الـ symbols: 0
+الـ sprite حسابه display: none ومش واخد مكان (بـ hidden كان فيه حوالي 150px فاضيين فوق)
+Tab الأول: focus على الزرار «السلة»
+
+ariaSnapshot:
+- button "السلة"
+- button "المفضلة"
+- button "بحث"
+- button "حسابي"
+- button "التنبيهات"
+- button "قفل"
+axe: صفر مشاكل.
+~~~` },
+            { lvl: 'تطبيق', t: R`**أشكال:** حلقة تقدّم SVG: دايرة [[r="40"]] و [[stroke-dasharray]] = محيطها و [[stroke-dashoffset]] محسوب من [[--p]] بـ [[calc()]]، وملفوفة [[rotate(-90deg)]] عشان تبدأ من فوق، والرقم في النص.`, done: R`مع [[--p: 75]] الحلقة مكمّلة ٣ أرباع من فوق مع عقارب الساعة، و [[getComputedStyle]] بيقول dasharray ≈ 251.33 و dashoffset ≈ 62.83. ولما تغيّر [[--p]] من DevTools الحلقة بتتغيّر من غير JavaScript.`, sol: R`~~~html ring.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>حلقة تقدّم</title>
+<style>
+  body { margin: 2rem; font-family: system-ui, sans-serif; }
+  .ring { --p: 75; --c: calc(2 * pi * 40); position: relative; inline-size: 10rem; block-size: 10rem; }
+  .ring svg { display: block; inline-size: 100%; block-size: 100%; rotate: -90deg; }
+  .ring circle { fill: none; stroke-width: 10; }
+  .track { stroke: #e2e8f0; }
+  .bar { stroke: #0f766e; stroke-linecap: round;
+         stroke-dasharray: var(--c);
+         stroke-dashoffset: calc(var(--c) * (100 - var(--p)) / 100);
+         transition: stroke-dashoffset .3s; }
+  .num { position: absolute; inset: 0; display: grid; place-items: center; font-size: 1.75rem; font-weight: 700; }
+</style>
+</head>
+<body>
+<main>
+<h1>تقدّم الدورة</h1>
+<div class="ring" role="img" aria-label="التقدم 75 في المية">
+  <svg viewBox="0 0 100 100" aria-hidden="true">
+    <circle class="track" cx="50" cy="50" r="40"/>
+    <circle class="bar" cx="50" cy="50" r="40"/>
+  </svg>
+  <span class="num" aria-hidden="true">75%</span>
+</div>
+</main>
+</body>
+</html>
+~~~
+
+غيّر [[--p]] من DevTools على [[.ring]] وشوف الحلقة بتتحرك.
+
+**الحساب:** محيط الدايرة [[2 × π × 40]] ≈ 251.33.
+
+- [[stroke-dasharray: var(--c)]] بيقول «الخط قطعة طولها المحيط كله، وبعدها فراغ قد المحيط».
+- [[stroke-dashoffset]] بيزحلق القطعة. لو الـ offset = المحيط، القطعة كلها برا والحلقة فاضية. لو صفر، الحلقة مليانة.
+- فالـ offset المطلوب هو الجزء الفاضي: [[c × (100 - p) / 100]]. مع 75: ربع المحيط، 62.83.
+- [[rotate: -90deg]]: الدايرة في SVG بتبدأ من الساعة ٣، فبنلفّها عشان تبدأ من فوق.
+- [[calc(2 * pi * 40)]]: الثابت [[pi]] جوه [[calc()]] بيغنيك عن كتابة الرقم.
+
+الرقم في النص [[aria-hidden]]، والمعنى كله في [[role="img"]] و [[aria-label]] على الأب، عشان القارئ يقول جملة واحدة.
+
+**الغلطة الشائعة:** تعكس الحساب وتكتب [[c × p / 100]]، فمع 75 يطلع ربع الحلقة بس مليان. الـ offset هو اللي **مش** مرسوم.
+
+~~~text الناتج
+--p: 75
+stroke-dasharray  = calc(251.327px)
+stroke-dashoffset = calc(62.8319px)
+الحلقة ٣ أرباع مبتدية من فوق مع عقارب الساعة
+
+--p: 30 من DevTools
+stroke-dashoffset = calc(175.929px)   (من غير JavaScript)
+axe: صفر مشاكل.
+~~~` },
+            { lvl: 'تطبيق', t: R`**أشكال:** خط تحت كلمة في عنوان كأنه مرسوم بالقلم: [[<path pathLength="1">]] و [[stroke-dasharray: 1]] و [[stroke-dashoffset]] من 1 لـ 0 بـ animation، ومعاه [[prefers-reduced-motion]].`, done: R`الخط بيترسم من البداية للنهاية مرة واحدة لما الصفحة تفتح، ومع [[reduce]] في Rendering بيبان مرسوم على طول من غير حركة، وفي rtl بيترسم من اليمين (اعكس الـ path أو استخدم [[scale: -1 1]]).`, sol: R`~~~html underline.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>خط بالقلم</title>
+<style>
+  body { margin: 2rem; font-family: system-ui, sans-serif; }
+  h1 { font-size: 2.5rem; }
+  .mark { position: relative; display: inline-block; }
+  .mark svg { position: absolute; inset-inline: 0; inset-block-end: -.5em; inline-size: 100%; block-size: .5em;
+              fill: none; stroke: #e11d48; stroke-width: 4; stroke-linecap: round; overflow: visible; }
+  /* الـ path بيبدأ من شمال، فنقلبه في rtl عشان الرسم يبدأ من اليمين */
+  :dir(rtl) .mark svg { scale: -1 1; }
+  .mark path { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw .9s ease-out .2s forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  @media (prefers-reduced-motion: reduce) {
+    .mark path { animation: none; stroke-dashoffset: 0; }
+  }
+</style>
+</head>
+<body>
+<h1>أحسن <span class="mark">قهوة<svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M2 7 C 25 2, 60 2, 98 6"/></svg></span> في البلد</h1>
+</body>
+</html>
+~~~
+
+**ليه شغال:**
+
+- [[pathLength="1"]] بيقول للمتصفح «اعتبر طول المسار 1»، مهما كان طوله الحقيقي. كده مش محتاج تحسب الطول.
+- [[stroke-dasharray: 1]]: قطعة طولها المسار كله.
+- [[stroke-dashoffset: 1]]: القطعة مزحلقة برا، فمفيش حاجة باينة. والـ animation بينزّلها لـ 0، فالخط بيترسم من أوله لآخره.
+- [[forwards]] بيخلي الخط يفضل مرسوم بعد ما الحركة تخلص.
+- [[preserveAspectRatio="none"]] عشان الرسمة تتمط على عرض الكلمة، أي كلمة.
+
+**الـ rtl:** المسار مرسوم من الشمال لليمين، فالقلم في العربي هيمشي عكس اتجاه القراية. [[:dir(rtl) .mark svg { scale: -1 1; }]] بيعمل مراية للـ svg كله، فالرسم يبدأ من اليمين.
+
+**reduce:** مش كفاية نلغي الحركة. لو لغيتها بس، الـ [[stroke-dashoffset: 1]] يفضل والخط مبيبانش خالص. لازم نرجّعها 0.
+
+**الغلطة الشائعة:** تنسى [[pathLength]] وتكتب [[stroke-dasharray: 1]]، فيطلع خط منقّط بنقط طولها بكسل، مش خط بيترسم.
+
+~~~text الناتج
+stroke-dashoffset عند الفتح: 1px (الخط مش باين)
+stroke-dashoffset بعد 1.4 ثانية: 0px (مرسوم تحت كلمة «قهوة»)
+scale على الـ svg في rtl: -1 1
+عرض الـ svg = عرض الكلمة بالظبط: 80.16px
+
+مع reduce:
+stroke-dashoffset = 0px ، document.getAnimations().length = 0 (مرسوم من غير حركة)
+~~~` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من [[npx svgo --help]] لاقي الـ flag اللي بيشغّل التنضيف كذا لفة لحد ما الملف ميصغرش تاني، والـ flag اللي بيشتغل على فولدر كامل. وجرّبهم على ٥ أيقونات.`, done: R`لقيت [[--multipass]] و [[-f]] (أو [[--folder]])، وعندك جدول بحجم كل أيقونة قبل وبعد، ولسه كل أيقونة فيها [[viewBox]].`, sol: R`~~~bash
+npx svgo --help
+# الفولدر كله، والنتيجة في فولدر تاني، بكذا لفة
+npx svgo -f icons-in -o icons-out --multipass
+~~~
+
+**الإجابة:** [[--multipass]] («Pass over SVGs multiple times to ensure all optimizations are applied») و [[-f]] أو [[--folder]] («Input folder, optimize and rewrite all *.svg files»). ومن غير [[-o]] بيكتب فوق الملفات الأصلية، فاديله فولدر تاني أو اعمل commit الأول.
+
+**ليه كذا لفة:** تنضيف بيفتح الباب لتنضيف تاني. مثلًا مسح [[<g>]] فاضي بيخلّي attribute يتنقل للعنصر، فتطلع فرصة تقصير ماكانتش موجودة.
+
+**الغلطة الشائعة:** تستخدم إعداد قديم بيمسح [[viewBox]]، فالأيقونة تبطل تتكبّر. في svgo 4 [[removeViewBox]] مش في الـ preset الافتراضي، وبرضه اتأكد بـ grep بعد التنضيف.
+
+~~~bash
+grep -L viewBox icons-out/*.svg    # المفروض ميطبعش حاجة
+~~~
+
+~~~text الناتج
+الملف        قبل    لفة واحدة    --multipass    viewBox
+bell.svg     891    260          258            موجود
+cart.svg     957    396          396            موجود
+heart.svg    860    276          276            موجود
+search.svg   811    309          309            موجود
+user.svg     871    321          321            موجود
+
+(بالـ byte، svgo 4.1.0، أيقونات فيها metadata من برنامج رسم.)
+الفرق بين لفة ولفات صغير هنا، بس في bell.svg طلعت 2 byte زيادة.
+~~~` },
           ],
           deep: {
             why: R`الأيقونات في كل حتة: أزرار، ومنيو، وحالات. لو كل لون محتاج ملف SVG منفصل، هيبقى عندك 4 نسخ من كل أيقونة (عادي، و hover، و dark، و disabled). مع currentColor أيقونة واحدة بتاخد لون أي مكان تتحط فيه.`,
