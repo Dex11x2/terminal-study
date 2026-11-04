@@ -306,6 +306,7 @@ function unitFoot(cat, id){
     projs.map(p => '<li>'+(p.lvl?'<em class="lv lv'+(LV[p.lvl]||2)+'">'+esc(p.lvl)+'</em>':'')+'<b>'+fmt(p.t)+'</b>'+(p.what?'<span>'+fmt(p.what)+'</span>':'')+
       (p.done?'<span class="pdone"><b>تعرف إنك خلصت لما:</b> '+fmt(p.done)+'</span>':'')+
       (p.ext?'<span class="pdone"><b>خليه بتاعك:</b> '+fmt(p.ext)+'</span>':'')+
+      (p.sol?'<details class="psol"><summary>الحل والشرح (ابنيه الأول)</summary><div class="psol-b">'+mdHTML(p.sol)+'</div></details>':'')+
       (p.lvl==='كبير'||p.lvl==='فكرة'?'<span class="pfolio">ينفع يتحط في الـ portfolio: ارفعه repo على GitHub فيه README بيقول بيعمل إيه وإزاي يتشغّل، وصورة أو ناتج حقيقي.</span>':'')+
       '</li>').join('')+'</ol></div>' : '';
   return '<div class="unit-two uf" id="'+id+'-foot">'+lab+pr+'</div>';
