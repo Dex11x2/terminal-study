@@ -14629,6 +14629,11 @@
   "date": "2026-11-03",
   "on": "drills/ladders/new lessons: Python 3.14.3 Windows + python:3.12-slim, pinned packages; Telegram real side from Bot API docs"
  },
+ "quality|&& قبل git push": {
+  "hash": "5395a5463122",
+  "date": "2026-11-05",
+  "on": "docker ubuntu:24.04 and node:22-slim, pwsh 7.6 and PowerShell 5.1"
+ },
  "quality|--coverage": {
   "hash": "d0acdc43d003",
   "date": "2026-10-06",
@@ -14653,6 +14658,11 @@
   "hash": "f771424f9208",
   "date": "2026-10-27",
   "on": "Windows 11 biome 2.6.3 + eslint 9/typescript-eslint"
+ },
+ "quality|HOME مؤقت للاختبار": {
+  "hash": "a0ce0d9552ee",
+  "date": "2026-11-05",
+  "on": "docker ubuntu:24.04 and node:22-slim, pwsh 7.6 and PowerShell 5.1"
  },
  "quality|HUSKY=0 و --no-verify": {
   "hash": "3a905984990c",
@@ -14804,6 +14814,11 @@
   "date": "2026-10-06",
   "on": "win11 Git Bash (Node 24, npm 11) Vitest 5.0.3 + node:22-slim TTY"
  },
+ "quality|اختبار flaky بملف مشترك": {
+  "hash": "fde0c5f0827e",
+  "date": "2026-11-05",
+  "on": "docker ubuntu:24.04 and node:22-slim, pwsh 7.6 and PowerShell 5.1"
+ },
  "quality|اختبار كويس": {
   "hash": "d8960ba59b26",
   "date": "2026-10-06",
@@ -14828,6 +14843,11 @@
   "hash": "fc1730bd0b85",
   "date": "2026-10-06",
   "on": "win11 Git Bash + pwsh 7 / ps 5.1"
+ },
+ "quality|ميزانية الزمن": {
+  "hash": "c9e7ccfbdf55",
+  "date": "2026-11-05",
+  "on": "docker ubuntu:24.04 and node:22-slim, pwsh 7.6 and PowerShell 5.1"
  },
  "react|ErrorBoundary": {
   "hash": "c8dcf2527962",
