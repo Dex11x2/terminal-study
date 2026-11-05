@@ -1034,6 +1034,29 @@ psql -c "SELECT tablename, rowsecurity FROM pg_tables WHERE schemaname = 'public
           try: "PostgreSQL المستوى ٣: [[Row Level Security]]"
         },
         {
+          cmd: "PocketBase",
+          title: "backend كامل في برنامج واحد",
+          desc: "برنامج واحد مكتوب بـ Go فيه قاعدة SQLite و API وحسابات وملفات و realtime ولوحة إدارة. بتشغّله على سيرفرك، وبياناتك كلها في فولدر pb_data.",
+          teach: R`## الفكرة
+
+بدل ما تركّب قاعدة بيانات وتكتب API وحسابات، بتشغّل برنامج واحد وتعرّف جداولك. الصلاحيات اسمها API rules، والمنطق المخصوص في ملفات JavaScript جوه [[pb_hooks]].
+
+---
+
+## الفرق عن Supabase
+
+| الموضوع | PocketBase | Supabase |
+|---|---|---|
+| القاعدة | SQLite مدمج | Postgres |
+| الشكل | عملية واحدة | مجموعة خدمات |
+| الصلاحيات | API rules في التطبيق | RLS في القاعدة |
+| التوسع | سيرفر واحد | خدمات منفصلة |
+
+> الخلاصة: PocketBase بساطة وتكلفة ثابتة على سيرفر واحد، و Supabase قوة Postgres وخدمات أكتر.`,
+          example: R`docker exec pblab /pb/pocketbase --version`,
+          try: "SQL و Prisma المستوى ٣: [[PocketBase ولا Supabase]]"
+        },
+        {
           cmd: "dump / restore",
           title: "نسخة من القاعدة ورجوعها",
           desc: "الـ dump ملف فيه القاعدة (الهيكل والبيانات) في لحظة معينة: [[pg_dump]] لـ Postgres و [[mongodump]] لـ Mongo. الـ restore بيرجّعه في قاعدة فاضية أو على سيرفر تاني. باك أب عمرك ما جرّبت ترجّعه متعتمدش عليه.",

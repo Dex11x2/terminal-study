@@ -3456,6 +3456,41 @@
         "باك أب"
       ],
       "lvl": "إنتاج"
+    },
+    {
+      "topic": "PocketBase: التشغيل",
+      "find": [
+        "pocketbase"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "PocketBase: migrations",
+      "find": [
+        "pocketbase: الجداول"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "PocketBase: API rules",
+      "find": [
+        "pocketbase: api rules"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "PocketBase: pb_hooks",
+      "find": [
+        "pb_hooks"
+      ],
+      "lvl": "متقدم"
+    },
+    {
+      "topic": "PocketBase ولا Supabase",
+      "find": [
+        "pocketbase ولا supabase"
+      ],
+      "lvl": "متقدم"
     }
   ],
   "php": [

@@ -4859,6 +4859,46 @@
   "date": "2026-10-07",
   "on": "docker postgres:18 (psql)"
  },
+ "data|PocketBase": {
+  "hash": "a960561c8812",
+  "date": "2026-11-05",
+  "on": "PocketBase 0.40.4 in Docker (alpine:3.20) on Windows host, Node 24, SDK 0.26.2; realtime SDK subscribe: docs"
+ },
+ "data|PocketBase في الإنتاج": {
+  "hash": "6ceafabf9c76",
+  "date": "2026-11-05",
+  "on": "PocketBase 0.40.4 in Docker (alpine:3.20) on Windows host, Node 24, SDK 0.26.2; realtime SDK subscribe: docs"
+ },
+ "data|PocketBase ولا Supabase": {
+  "hash": "02a8cc1055b1",
+  "date": "2026-11-05",
+  "on": "PocketBase 0.40.4 + postgres:16-alpine in Docker; Supabase side docs: not run on a real project"
+ },
+ "data|PocketBase: API rules": {
+  "hash": "3413e68362d9",
+  "date": "2026-11-05",
+  "on": "PocketBase 0.40.4 in Docker (alpine:3.20) on Windows host, Node 24, SDK 0.26.2; realtime SDK subscribe: docs"
+ },
+ "data|PocketBase: realtime": {
+  "hash": "8a41a32d7415",
+  "date": "2026-11-05",
+  "on": "PocketBase 0.40.4 in Docker (alpine:3.20) on Windows host, Node 24, SDK 0.26.2; realtime SDK subscribe: docs"
+ },
+ "data|PocketBase: الجداول و migrations": {
+  "hash": "2ac69a99bac7",
+  "date": "2026-11-05",
+  "on": "PocketBase 0.40.4 in Docker (alpine:3.20) on Windows host, Node 24, SDK 0.26.2; realtime SDK subscribe: docs"
+ },
+ "data|PocketBase: الحسابات والـ SDK": {
+  "hash": "5ada615be7f0",
+  "date": "2026-11-05",
+  "on": "PocketBase 0.40.4 in Docker (alpine:3.20) on Windows host, Node 24, SDK 0.26.2; realtime SDK subscribe: docs"
+ },
+ "data|PocketBase: الملفات": {
+  "hash": "be1493f17733",
+  "date": "2026-11-05",
+  "on": "PocketBase 0.40.4 in Docker (alpine:3.20) on Windows host, Node 24, SDK 0.26.2; realtime SDK subscribe: docs"
+ },
  "data|SELECT": {
   "hash": "e184f2117018",
   "date": "2026-10-07",
@@ -5004,6 +5044,11 @@
   "date": "2026-10-07",
   "on": "docker postgres:18 (psql)"
  },
+ "data|pb_hooks": {
+  "hash": "60d6ba43ec5e",
+  "date": "2026-11-05",
+  "on": "PocketBase 0.40.4 in Docker (alpine:3.20) on Windows host, Node 24, SDK 0.26.2; realtime SDK subscribe: docs"
+ },
  "data|policies و auth.uid()": {
   "hash": "2cf8f80c1acb",
   "date": "2026-10-07",
@@ -5079,6 +5124,16 @@
   "date": "2026-10-07",
   "on": "Docker postgres:18 (psql)"
  },
+ "data|حالة: health ناجح والمسار 404": {
+  "hash": "f022279dc4a1",
+  "date": "2026-11-05",
+  "on": "PocketBase 0.40.4 in Docker (alpine:3.20) on Windows host, Node 24, SDK 0.26.2; realtime SDK subscribe: docs"
+ },
+ "data|حالة: السيرفر بيقع مع أول تشغيل": {
+  "hash": "468e0b044be9",
+  "date": "2026-11-05",
+  "on": "PocketBase 0.40.4 in Docker (alpine:3.20) on Windows host, Node 24, SDK 0.26.2; realtime SDK subscribe: docs"
+ },
  "data|دوال التاريخ": {
   "hash": "e31d5bd75d38",
   "date": "2026-10-07",
@@ -5094,10 +5149,20 @@
   "date": "2026-10-07",
   "on": "Windows + Node 24, Prisma 7.10.0 (adapter-pg) on postgres:18 in Docker"
  },
+ "data|مشروع: بيع كتاب بإيصال": {
+  "hash": "9b3a4ff2644d",
+  "date": "2026-11-05",
+  "on": "PocketBase 0.40.4 in Docker (alpine:3.20) on Windows host, Node 24, SDK 0.26.2; realtime SDK subscribe: docs"
+ },
  "data|مقدمة قواعد البيانات و SQL": {
   "hash": "9e7070bf28b6",
   "date": "2026-10-07",
   "on": "docker postgres:18 (psql)"
+ },
+ "data|نقل المنطق بين PocketBase و Supabase": {
+  "hash": "6b5e882ab5aa",
+  "date": "2026-11-05",
+  "on": "PocketBase 0.40.4 + postgres:16-alpine in Docker; Supabase side docs: not run on a real project"
  },
  "diag|/health بيقول 200 والدخول بايظ": {
   "hash": "76dcafffbad3",
@@ -8083,6 +8148,11 @@
   "hash": "7956001a46da",
   "date": "2026-10-07",
   "on": "docker node:22-alpine (docker stop timings)"
+ },
+ "glossary|PocketBase": {
+  "hash": "02687bc8b699",
+  "date": "2026-11-05",
+  "on": "PocketBase 0.40.4 in Docker"
  },
  "glossary|RLS": {
   "hash": "dec9b55b0fe8",
