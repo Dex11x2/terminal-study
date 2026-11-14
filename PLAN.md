@@ -950,6 +950,19 @@
   - **اقرا docs الـ API كـ JSON** (تاب api): صفحة Postman Documenter بتتجاب كاملة من `documenter.gw.postman.com/api/collections/<owner>/<publishedId>?versionTag=latest`، والـ owner والـ id في `/view/metadata/<id>`. بعدين تطلّع الـ endpoints والـ body والردود بسكربت Python. مفيدة لما صفحات الدعم تكون محتاجة login.
   - **وقّف بروسيس معيّن بسطر الأمر بتاعه** (تاب ps): `Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -match '...' } | ForEach-Object { Stop-Process -Id $_.ProcessId }`، بدل ما توقف كل `python.exe`.
   - **فخ git:** `git add <ملف>` بيضيف الملف كله، ومن ضمنه تعديلات حد تاني لسه مش متكومتة (شات تاني كان كاتب في نفس الملف). قبل `git add` لازم `git diff <ملف>` تشوف إيه اللي هيتضاف، أو `git add -p` تختار أجزاء.
+  - **رسالة الخطأ الحقيقية مش زي مثال الـ docs:** الـ docs كان مثالها `{"errorMsg": "..."}`، والـ API الحقيقي رجّع `{"otoErrorCode":"OTO1083","error":{"code":400,"message":"..."},"otoErrorMessage":"..."}`، فالكود القديم كان هيعرض `[object Object]` لأن `error` طلع object. الطريقة: ابعت طلب غلط عمدًا للـ API الحقيقي (`curl` بتوكن وهمي، مفيش ضرر) **قبل** ما تعتمد على شكل الخطأ، وخلّي الـ fake API يرجّع الشكل الحقيقي ده، واكتب دالة استخراج الرسالة تجرّب كذا شكل.
+  - **حالة اللي «اتعمل هناك والرد ضاع»:** الاتصال انقطع بعد ما الطرف التاني عمل الطلب، فإعادة الإرسال بترجّع «already exists» والزرار يفضل متعلّق. الحل: زرار «ربط بالموجود» بيسأل عن الحالة بنفس رقم الطلب (`orderId`)، ويعتبر الطلب «اتبعت» لو رجعت **أي** حالة، مش لما يرجع `otoId` بس.
+  - **فخ PocketBase:** على ويندوز `pb_hooks` متعملهاش reload لوحدها بعد التعديل، والكود القديم فضل شغال. لازم restart قبل ما تحكم إن الإصلاح فشل.
+- [ ] **رفع موقع على سيرفر مش git checkout، خطوة خطوة (١٤ نوفمبر، تاب vps أو deploy، بموقع معمل مخترع في `docker run`).** بالترتيب:
+  1. **اتأكد إن محدش عدّل على السيرفر:** نزّل الملفات (`ssh host 'tar cf - files...' | tar xf - -C local`) وقارن كل ملف بنسخته في كذا commit قديم (`git show <sha>:<path> | diff -q --strip-trailing-cr - file`). لو كل الملفات «same@<sha>»، الاستبدال آمن. فخ في `tar`: `--exclude` لازم ييجي **قبل** أسامي الملفات، وإلا تطلع «The following options were used after non-option arguments».
+  2. **باندل من الـ commit مش من الفولدر:** `git archive HEAD <paths> | tar x -C bundle`، فالملفات اللي مش متكومتة متدخلش. وبعدين `tar czf` و `sha256sum`، و `scp -P <port>` لـ `/tmp`، والهاش على السيرفر لازم يطابق.
+  3. **نسخة احتياطية قبل أي حاجة:** `cp -a` للملفات، و `tar czf pb_data.tgz --exclude=pb_data/backups pb_data` للداتابيز.
+  4. **الاستبدال في مكانه:** `cp -a new/public/. public/` (الفولدر نفسه bind mount)، والملف الواحد اللي عليه bind mount يتكتب بـ `cat new > file` (`stat -c %i` قبل وبعد عشان تتأكد إن الـ inode متغيرش).
+  5. **السر يتعمل على السيرفر:** `(umask 077; printf "SECRET=%s\n" "$(openssl rand -base64 48 | tr -d '\n')" > .env)`، فميعدّيش على الشات ولا على جهازك، والملف `-rw-------`.
+  6. **إعادة البناء وانتظار الصحة:** `docker compose build svc && docker compose up -d svc`، وبعدين loop على `docker inspect -f '{{.State.Health.Status}}'` لحد `healthy`، و `nginx -t` قبل `nginx -s reload`.
+  7. **smoke test من غير ما تكتب بيانات حقيقية:** health و رقم الإصدار في الصفحة، وحماية المسار من غير login (401)، و webhook بتوقيع مزوّر (401)، وطلب ناقص بيانات **و** منتج مش موجود عشان يقع في الفاليديشن قبل ما يتسجل (400)، و `docker exec svc wget ...` عشان تتأكد إن الكونتينر بقى يطلع للإنترنت.
+  8. **فخ SQLite WAL:** `grep -a -c <اسم الـ migration> data.db` طلّع 0، مع إن الـ migration اتنفذت، لأن الكتابة الجديدة لسه في `data.db-wal`. افحص الملفين.
+  9. **فخ أمان أداة الحذف:** `rm -rf "$S/srv"` اترفض لأن لو `$S` فاضي يبقى `rm -rf /srv`. الحذف يتكتب بمسارات كاملة، أو `${S:?}` في bash.
 
 ### ٥. أسئلة مفتوحة
 
