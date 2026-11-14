@@ -940,6 +940,17 @@
   - قبل ما ترفع ملف على السيرفر: `ssh -p <port> host "cat <path>" > /tmp/srv && diff /tmp/srv <local>`، عشان تتأكد إن الفرق هو تعديلك بس ومحدش عدّل على السيرفر. بعدها `scp -P <port>` (حرف P كبير، مش `-p` زي ssh)، والتأكيد بـ `curl -s "https://shop.example/file.js?v=$RANDOM" | grep -c NewText`.
   - smoke test لدالة بتسحب من طابور: اتأكد إن الطابور فاضي من حاجات حقيقية الأول (`select status, count(*) ... group by 1`)، بعدها نادِيها وتوقّع `{"claimed":0,"sent":0}`.
 
+- [ ] **ربط متجر بشركة شحن عن طريق API (١٤ نوفمبر، أسامي مخترعة: `shop.example`، شركة شحن وهمية `ship-api`).** يتقسم دروس:
+  - **استقبال webhook موقّع** (تاب api أو sec): المرسل بيوقّع `orderId:status:timestamp` بـ HMAC-SHA256 ويبعته Base64. المستقبل يعيد الحساب ويقارن بـ constant-time (`hmac.compare_digest` في Python، و `crypto.timingSafeEqual` في Node، و `$security.equal` في PocketBase JSVM)، ويرد 401 على الغلط. فخ: المكتبة بترجّع hex والمرسل بيبعت Base64، فلازم تحوّل الأول. واتجرّب إن توقيع حالة لما يتحط مع حالة تانية بيترفض.
+  - **التحديثات اللي بتوصل بترتيب غلط:** خزّن `timestamp` آخر تحديث واتجاهل أي تحديث أقدم (مثلًا «خرجت للتوصيل» توصل بعد «اتسلمت»)، والحالة تتقدم بس ومتلمسش «ملغي». ورُد بـ 200 على طلب مش معروف عشان المرسل ميفضلش يعيد.
+  - **refresh token و access token** (تاب api): الـ refresh ثابت ومكانه السيرفر بس، والـ access بيعيش ساعة. خزّنه مع وقت انتهاؤه وجدّده قبله بـ ٥ دقايق، ولو رجع 401 امسحه وحاول تاني مرة واحدة. والتأكيد من سجل الطلبات إن refresh اتنادى مرة واحدة لكذا طلب.
+  - **كونتينر على شبكة `internal: true` مش هيوصل للإنترنت** (تاب docker): الطلب لأي API بره بيفشل. الحل: شبكة عادية تانية (`egress`) للكونتينر ده بس، من غير `ports:`. يتجرّب بـ `wget` من جوه الكونتينر قبل وبعد.
+  - **أسرار في compose من `.env`** (تاب docker): `${VAR:-}` في `environment:`، وملف `.env` جنب الـ compose بيتقري لوحده، و `.env.example` بيترفع. فخ في `.gitignore`: `.env.*` بيستبعد `.env.example`، والحل `!.env.example`، والتأكد بـ `git check-ignore -v`.
+  - **جرّب الربط على API وهمي قبل الحساب الحقيقي** (تاب api أو projects): سيرفر Python صغير بنفس شكل الطلبات والردود اللي في الـ docs، بيسجّل كل طلب في `calls.jsonl`. شغّل الباك إند عليه بمتغير `API_URL`، واكتب سكربت end-to-end (الحالات الصح والغلط والتكرار والتوقيع)، وبعدين راجع اللي اتبعت فعلًا: صيغة التاريخ زي مثال الـ docs (`31/12/2022 15:45`)، والموبايل الدولي (`9665…`)، وأسامي المدن بالإنجليزي.
+  - **اقرا docs الـ API كـ JSON** (تاب api): صفحة Postman Documenter بتتجاب كاملة من `documenter.gw.postman.com/api/collections/<owner>/<publishedId>?versionTag=latest`، والـ owner والـ id في `/view/metadata/<id>`. بعدين تطلّع الـ endpoints والـ body والردود بسكربت Python. مفيدة لما صفحات الدعم تكون محتاجة login.
+  - **وقّف بروسيس معيّن بسطر الأمر بتاعه** (تاب ps): `Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -match '...' } | ForEach-Object { Stop-Process -Id $_.ProcessId }`، بدل ما توقف كل `python.exe`.
+  - **فخ git:** `git add <ملف>` بيضيف الملف كله، ومن ضمنه تعديلات حد تاني لسه مش متكومتة (شات تاني كان كاتب في نفس الملف). قبل `git add` لازم `git diff <ملف>` تشوف إيه اللي هيتضاف، أو `git add -p` تختار أجزاء.
+
 ### ٥. أسئلة مفتوحة
 
 - [ ] `df -h ~` فشل عند صاحب المشروع. ده اتجرّب في Git Bash و PowerShell و CMD على نفس الجهاز واشتغل. محتاجين نعرف اتشغّل فين بالظبط.
