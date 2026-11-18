@@ -4244,6 +4244,11 @@
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
+ "css|GET و POST و enctype": {
+  "hash": "99f6c2c63a4e",
+  "date": "2026-11-18",
+  "on": "Chrome 157 headless on Windows 11 + local Node echo server; docs: mobile keyboards, other browsers, screen readers"
+ },
  "css|SVG": {
   "hash": "a9c294050f44",
   "date": "2026-11-04",
@@ -4374,6 +4379,11 @@
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
+ "css|datalist و output": {
+  "hash": "76f84ee2d1f3",
+  "date": "2026-11-18",
+  "on": "Chrome 157 headless on Windows 11 + local Node echo server; docs: mobile keyboards, other browsers, screen readers"
+ },
  "css|details و summary": {
   "hash": "952e9bacfef3",
   "date": "2026-11-04",
@@ -4408,6 +4418,11 @@
   "hash": "0905a72738b7",
   "date": "2026-11-18",
   "on": "Chrome 157 headless on Windows 11; Nu Html Checker; docs: screen reader speech (W3C WAI, MDN)"
+ },
+ "css|file و accept و multiple": {
+  "hash": "d30c3ae795c1",
+  "date": "2026-11-18",
+  "on": "Chrome 157 headless on Windows 11 + local Node echo server; docs: mobile keyboards, other browsers, screen readers"
  },
  "css|flex: 1": {
   "hash": "c5f9d48ab051",
@@ -4574,6 +4589,16 @@
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
+ "css|progress و meter": {
+  "hash": "9eb3b838f57d",
+  "date": "2026-11-18",
+  "on": "Chrome 157 headless on Windows 11 + local Node echo server; docs: mobile keyboards, other browsers, screen readers"
+ },
+ "css|readonly و disabled و checked": {
+  "hash": "c59a30f9e478",
+  "date": "2026-11-18",
+  "on": "Chrome 157 headless on Windows 11 + local Node echo server; docs: mobile keyboards, other browsers, screen readers"
+ },
  "css|rem من الـ root": {
   "hash": "1c8a09e03660",
   "date": "2026-11-04",
@@ -4699,10 +4724,20 @@
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
+ "css|أزرار الفورم: formaction وإخواته": {
+  "hash": "edcf4b11dae4",
+  "date": "2026-11-18",
+  "on": "Chrome 157 headless on Windows 11 + local Node echo server; docs: mobile keyboards, other browsers, screen readers"
+ },
  "css|أشكال بالـ CSS": {
   "hash": "45cc14c57bd0",
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
+ },
+ "css|أنواع input كلها": {
+  "hash": "d38f72851b35",
+  "date": "2026-11-18",
+  "on": "Chrome 157 headless on Windows 11 + local Node echo server; docs: mobile keyboards, other browsers, screen readers"
  },
  "css|إعلان تغيير الصفحة": {
   "hash": "507bbdbe1b4d",

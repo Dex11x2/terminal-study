@@ -1,26 +1,25 @@
-# منهج HTML و CSS (css): 510 من 1180 بند متغطي (43٪)
+# منهج HTML و CSS (css): 562 من 1180 بند متغطي (47٪)
 
-اتبنى 2026-11-18 من: [WHATWG HTML Living Standard (Index)](https://html.spec.whatwg.org/multipage/indices.html)، [MDN HTML reference](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference)، [mdn/data (CSS)](https://github.com/mdn/data/tree/main/css)، [web-features (Baseline)](https://github.com/web-platform-dx/web-features)، [MDN Curriculum](https://developer.mozilla.org/en-US/curriculum/). الكورس فيه 136 درس. الملف ده بيتولّد بـ `node tools/syllabus.js css --write`، متعدّلوش بإيدك.
+اتبنى 2026-11-18 من: [WHATWG HTML Living Standard (Index)](https://html.spec.whatwg.org/multipage/indices.html)، [MDN HTML reference](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference)، [mdn/data (CSS)](https://github.com/mdn/data/tree/main/css)، [web-features (Baseline)](https://github.com/web-platform-dx/web-features)، [MDN Curriculum](https://developer.mozilla.org/en-US/curriculum/). الكورس فيه 143 درس. الملف ده بيتولّد بـ `node tools/syllabus.js css --write`، متعدّلوش بإيدك.
 
 | النوع | في المنهج | متغطي | مذكور من غير شرح | ناقص خالص | مستبعد بسبب |
 |---|---|---|---|---|---|
-| عناصر HTML | 113 | 94 | 12 | 7 | 20 |
-| attributes | 145 | 55 | 21 | 69 | 1 |
-| أنواع input | 22 | 12 | 7 | 3 | 0 |
+| عناصر HTML | 113 | 99 | 9 | 5 | 20 |
+| attributes | 145 | 83 | 12 | 50 | 1 |
+| أنواع input | 22 | 22 | 0 | 0 | 0 |
 | قيم rel | 27 | 20 | 1 | 6 | 3 |
 | خصائص CSS | 422 | 148 | 73 | 201 | 251 |
-| selectors | 88 | 29 | 23 | 36 | 56 |
+| selectors | 88 | 36 | 22 | 30 | 56 |
 | at-rules | 16 | 9 | 2 | 5 | 3 |
-| دوال CSS | 93 | 13 | 33 | 47 | 14 |
+| دوال CSS | 93 | 13 | 34 | 46 | 14 |
 | وحدات | 62 | 13 | 10 | 39 | 0 |
 | أنواع القيم | 37 | 13 | 2 | 22 | 2 |
-| مهارات (MDN Curriculum) | 155 | 104 | 0 | 51 | 0 |
+| مهارات (MDN Curriculum) | 155 | 106 | 0 | 49 | 0 |
 
-## عناصر HTML: ناقص 19
+## عناصر HTML: ناقص 14
 
 - **image-maps** ناقص: `area` `map`
 - **iframe-embed-object** ناقص: `embed` `object`
-- **form-elements** ناقص: `progress` `selectedcontent`. مذكور من غير شرح: `datalist` (2) `meter` (1) `output` (4)
 - **scripting** ناقص: `slot`. مذكور من غير شرح: `noscript` (1) `template` (2)
 - **sections** مذكور من غير شرح: `aside` (14)
 - **media** مذكور من غير شرح: `audio` (1) `track` (1)
@@ -28,18 +27,15 @@
 - **tables** مذكور من غير شرح: `col` (1) `colgroup` (1)
 - **embedded-content** مذكور من غير شرح: `source` (5)
 
-## attributes: ناقص 90
+## attributes: ناقص 62
 
 - **th** ناقص: `abbr`. مذكور من غير شرح: `scope` (8)
-- **input** ناقص: `accept` `alpha` `checked` `colorspace` `dirname` `multiple` `readonly` `switch`. مذكور من غير شرح: `max` (3) `maxlength` (1) `min` (3) `pattern` (6)
-- **form** ناقص: `accept-charset` `enctype` `novalidate`
 - **global** ناقص: `accesskey` `autocapitalize` `autocorrect` `autofocus` `contenteditable` `draggable` `enterkeyhint` `headingoffset` `headingreset` `inert` `is` `itemid` `itemprop` `itemref` `itemscope` `itemtype` `nonce` `slot` `spellcheck` `writingsuggestions`. مذكور من غير شرح: `popover` (1)
 - **iframe** ناقص: `allowfullscreen` `sandbox` `srcdoc`. مذكور من غير شرح: `allow` (1)
 - **script** ناقص: `async` `nomodule`
 - **link** ناقص: `blocking` `integrity`. مذكور من غير شرح: `imagesizes` (1)
 - **dialog** ناقص: `closedby`
-- **textarea** ناقص: `cols` `wrap`. مذكور من غير شرح: `rows` (1)
-- **button** ناقص: `command` `commandfor` `form` `formaction` `formenctype` `formmethod` `formnovalidate` `formtarget` `popovertarget` `popovertargetaction`
+- **button** ناقص: `command` `commandfor` `popovertarget` `popovertargetaction`
 - **area** ناقص: `coords` `shape`
 - **object** ناقص: `data`
 - **img** ناقص: `decoding` `ismap` `usemap`
@@ -49,13 +45,7 @@
 - **video** ناقص: `playsinline`. مذكور من غير شرح: `poster` (1)
 - **template** ناقص: `shadowrootclonable` `shadowrootcustomelementregistry` `shadowrootdelegatesfocus` `shadowrootmode` `shadowrootserializable` `shadowrootslotassignment`
 - **td** مذكور من غير شرح: `colspan` (3) `headers` (1) `rowspan` (1)
-- **meter** مذكور من غير شرح: `high` (1) `low` (1) `optimum` (1)
-- **option** مذكور من غير شرح: `selected` (1)
 - **col** مذكور من غير شرح: `span` (1)
-
-## أنواع input: ناقص 10
-
-- **input** ناقص: `file` `month` `week`. مذكور من غير شرح: `color` (1) `datetime-local` (1) `hidden` (1) `image` (6) `range` (2) `reset` (2) `time` (1)
 
 ## قيم rel: ناقص 7
 
@@ -72,7 +62,7 @@
 - **Compositing and Blending** ناقص: `background-blend-mode` `mix-blend-mode`
 - **CSS Logical Properties and Values** ناقص: `border-block` `border-block-color` `border-block-end-color` `border-block-end-style` `border-block-end-width` `border-block-start-color` `border-block-start-style` `border-block-start-width` `border-block-style` `border-block-width` `border-end-end-radius` `border-end-start-radius` `border-inline-color` `border-inline-end-color` `border-inline-start-color` `border-inline-start-style` `border-inline-start-width` `border-inline-style` `border-inline-width` `border-start-end-radius` `max-block-size`. مذكور من غير شرح: `block-size` (25) `border-block-start` (4) `border-inline` (2) `border-inline-end` (2) `border-inline-end-style` (1) `border-inline-end-width` (1) `border-inline-start` (2) `border-start-start-radius` (1) `inline-size` (24) `inset-block` (3) `inset-block-end` (7) `inset-block-start` (8) `inset-inline` (8) `inset-inline-start` (22) `margin-block` (9) `margin-block-end` (21) `margin-block-start` (16) `max-inline-size` (7)
 - **CSS Table** ناقص: `caption-side` `empty-cells` `table-layout`
-- **CSS Basic User Interface** ناقص: `caret-animation` `caret-color`. مذكور من غير شرح: `appearance` (2) `caret` (1) `outline-offset` (18)
+- **CSS Basic User Interface** ناقص: `caret-animation` `caret-color`. مذكور من غير شرح: `appearance` (3) `caret` (1) `outline-offset` (18)
 - **CSS Masking** ناقص: `clip-rule` `mask-border-mode` `mask-clip` `mask-composite` `mask-origin` `mask-position` `mask-repeat` `mask-type`
 - **Scalable Vector Graphics** ناقص: `color-interpolation` `cx` `cy` `fill-opacity` `fill-rule` `marker` `marker-end` `marker-mid` `marker-start` `paint-order` `path-length` `rx` `ry` `shape-rendering` `stop-color` `stop-opacity` `stroke-miterlimit` `stroke-opacity` `text-anchor` `text-rendering`. مذكور من غير شرح: `r` (2) `stroke` (2) `stroke-dasharray` (2) `stroke-dashoffset` (2) `stroke-linecap` (2) `stroke-linejoin` (2) `vector-effect` (1) `x` (5) `y` (4)
 - **Filter Effects** ناقص: `color-interpolation-filters` `flood-color` `flood-opacity` `lighting-color`. مذكور من غير شرح: `filter` (2)
@@ -94,7 +84,7 @@
 - **CSS Scrollbars Styling** ناقص: `scrollbar-color` `scrollbar-width`
 - **CSS Shapes** ناقص: `shape-image-threshold` `shape-margin` `shape-outside`
 - **CSS Writing Modes** ناقص: `text-combine-upright` `text-orientation`. مذكور من غير شرح: `unicode-bidi` (1) `writing-mode` (1)
-- **CSS Text Decoration** ناقص: `text-decoration-color` `text-decoration-inset` `text-decoration-line` `text-decoration-skip-ink` `text-decoration-style` `text-decoration-thickness` `text-emphasis` `text-emphasis-color` `text-emphasis-position` `text-emphasis-style` `text-underline-position`. مذكور من غير شرح: `text-decoration` (16) `text-shadow` (1) `text-underline-offset` (1)
+- **CSS Text Decoration** ناقص: `text-decoration-color` `text-decoration-inset` `text-decoration-line` `text-decoration-skip-ink` `text-decoration-style` `text-decoration-thickness` `text-emphasis` `text-emphasis-color` `text-emphasis-position` `text-emphasis-style` `text-underline-position`. مذكور من غير شرح: `text-decoration` (17) `text-shadow` (1) `text-underline-offset` (1)
 - **Pointer Events** ناقص: `touch-action`
 - **CSS Transitions** ناقص: `transition-property` `transition-timing-function`
 - **CSS View Transitions** ناقص: `view-transition-class`
@@ -108,10 +98,10 @@
 - **CSS Will Change** مذكور من غير شرح: `will-change` (3)
 - **CSS Viewport** مذكور من غير شرح: `zoom` (2)
 
-## selectors: ناقص 59
+## selectors: ناقص 52
 
 - **basic & combinators** ناقص: `Subsequent-sibling combinator` `Column combinator` `Namespace separator`
-- **pseudo-classes** ناقص: `:active-view-transition` `:active-view-transition-type()` `:any-link` `:default` `:defined` `:enabled` `:in-range` `:indeterminate` `:last-of-type` `:link` `:modal` `:nth-last-of-type()` `:nth-of-type()` `:only-of-type` `:open` `:optional` `:out-of-range` `:popover-open` `:read-only` `:read-write` `:scope` `:state()`. مذكور من غير شرح: `:active` (1) `:disabled` (5) `:empty` (2) `:first` (1) `:first-child` (3) `:first-of-type` (1) `:focus-within` (8) `:host` (2) `:host()` (2) `:invalid` (5) `:lang()` (8) `:last-child` (7) `:nth-last-child()` (1) `:only-child` (1) `:placeholder-shown` (2) `:required` (1) `:target` (1) `:user-valid` (1) `:valid` (1) `:visited` (1)
+- **pseudo-classes** ناقص: `:active-view-transition` `:active-view-transition-type()` `:any-link` `:defined` `:in-range` `:last-of-type` `:link` `:modal` `:nth-last-of-type()` `:nth-of-type()` `:only-of-type` `:open` `:out-of-range` `:popover-open` `:scope` `:state()`. مذكور من غير شرح: `:active` (1) `:default` (1) `:empty` (2) `:first` (1) `:first-child` (5) `:first-of-type` (3) `:focus-within` (8) `:host` (2) `:host()` (2) `:indeterminate` (1) `:lang()` (8) `:last-child` (9) `:nth-last-child()` (1) `:only-child` (1) `:placeholder-shown` (2) `:target` (1) `:user-valid` (1) `:valid` (1) `:visited` (1)
 - **pseudo-elements** ناقص: `::cue` `::cue()` `::file-selector-button` `::first-letter` `::first-line` `::highlight()` `::part()` `::slotted()` `::target-text` `::view-transition` `::view-transition-image-pair()`. مذكور من غير شرح: `::backdrop` (4) `::details-content` (2) `::placeholder` (2)
 
 ## at-rules: ناقص 7
@@ -125,8 +115,8 @@
 
 ## دوال CSS: ناقص 80
 
-- **CSS Values and Units** ناقص: `acos()` `asin()` `atan()` `exp()` `hypot()` `mod()` `param()` `pow()` `rem()` `sign()` `sqrt()` `tan()`. مذكور من غير شرح: `abs()` (7) `atan2()` (1) `cos()` (1) `log()` (62) `round()` (24) `sin()` (1)
-- **CSS Color** ناقص: `alpha()` `color()` `hwb()` `lch()`. مذكور من غير شرح: `hsl()` (2) `lab()` (1) `oklab()` (1) `oklch()` (18)
+- **CSS Values and Units** ناقص: `acos()` `asin()` `atan()` `exp()` `hypot()` `mod()` `param()` `pow()` `rem()` `sign()` `sqrt()` `tan()`. مذكور من غير شرح: `abs()` (7) `atan2()` (1) `cos()` (1) `log()` (63) `round()` (24) `sin()` (1)
+- **CSS Color** ناقص: `alpha()` `hwb()` `lch()`. مذكور من غير شرح: `color()` (1) `hsl()` (2) `lab()` (1) `oklab()` (1) `oklch()` (18)
 - **Filter Effects** ناقص: `brightness()` `drop-shadow()` `grayscale()` `hue-rotate()` `invert()` `opacity()` `sepia()`. مذكور من غير شرح: `blur()` (9) `contrast()` (1) `saturate()` (1)
 - **CSS Shapes** ناقص: `circle()` `path()` `xywh()`. مذكور من غير شرح: `ellipse()` (1) `polygon()` (2) `rect()` (1)
 - **CSS Lists and Counters** ناقص: `counters()`. مذكور من غير شرح: `counter()` (2)
@@ -156,7 +146,7 @@
 - **CSS Transforms** ناقص: `<transform-function>`
 - **CSS Color** مذكور من غير شرح: `<color>` (3)
 
-## مهارات (MDN Curriculum): ناقص 51
+## مهارات (MDN Curriculum): ناقص 49
 
 **1. Transform & animate CSS › 0 الموديول كله**
 
@@ -177,11 +167,6 @@
 
 - `out:semantic-html/2.6.1` The term "replaced element" — what does it mean? ← replaced elements never defined
 - `out:semantic-html/2.6.3` Media assets and licensing: (3 نقطة فرعية) ← media licensing not covered
-
-**2. Semantic HTML › 2.7 Other interactive elements**
-
-- `out:semantic-html/2.7.2` <button>: (2 نقطة فرعية) ← button/submit taught but type=reset and why it's bad absent
-- `out:semantic-html/2.7.7` Form states and why they are important — :focus, :readonly, :disabled, etc. ← only :focus/:user-invalid; :disabled/:read-only form states not taught
 
 **2. Semantic HTML › 2.8 HTML tables**
 
