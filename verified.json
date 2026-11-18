@@ -4264,6 +4264,11 @@
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
+ "css|abbr و dfn و time": {
+  "hash": "f76b27c7ac92",
+  "date": "2026-11-18",
+  "on": "Chrome 157 headless on Windows 11; docs: screen reader speech, validator, Firefox/Safari"
+ },
  "css|accessibility: لحد axe صفر": {
   "hash": "874b77830b49",
   "date": "2026-11-04",
@@ -4313,6 +4318,11 @@
   "hash": "7bf0499379d7",
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
+ },
+ "css|code و pre و kbd": {
+  "hash": "0a8ff79d957b",
+  "date": "2026-11-18",
+  "on": "Chrome 157 headless on Windows 11; docs: screen reader speech, validator, Firefox/Safari"
  },
  "css|container queries": {
   "hash": "bae13ad246af",
@@ -4474,6 +4484,11 @@
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
+ "css|mark و small و del و ins": {
+  "hash": "6e1a7a31059c",
+  "date": "2026-11-18",
+  "on": "Chrome 157 headless on Windows 11; docs: screen reader speech, validator, Firefox/Safari"
+ },
  "css|media queries": {
   "hash": "dfaee1b3ced1",
   "date": "2026-11-04",
@@ -4568,6 +4583,16 @@
   "hash": "e8a57dea2a62",
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
+ },
+ "css|strong و em": {
+  "hash": "ff5cb76962a4",
+  "date": "2026-11-18",
+  "on": "Chrome 157 headless on Windows 11; docs: screen reader speech, validator, Firefox/Safari"
+ },
+ "css|sub و sup و br": {
+  "hash": "51b68b239bbc",
+  "date": "2026-11-18",
+  "on": "Chrome 157 headless on Windows 11; docs: screen reader speech, validator, Firefox/Safari"
  },
  "css|subgrid": {
   "hash": "f690ae46f99c",

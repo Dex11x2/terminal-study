@@ -27,7 +27,7 @@ for (const f of files) {
   try { vm.runInContext(code, ctx, { filename: f }); }
   catch (e) { console.error('✗ ' + f + ': الملف فيه غلطة JavaScript ومش هيتقري:\n  ' + e.message); process.exit(1); }
 }
-const { DATA, DEEP, BREAK, SOL, CMP, MISSIONS, CHECK, TEACH, PRACTICE, CI, PRE } = vm.runInContext('({DATA, DEEP, BREAK, SOL, CMP, MISSIONS, CHECK, TEACH, PRACTICE, CI, PRE})', ctx);
+const { DATA, DEEP, BREAK, SOL, CMP, MISSIONS, CHECK, TEACH, PRACTICE, CI, PRE, REF } = vm.runInContext('({DATA, DEEP, BREAK, SOL, CMP, MISSIONS, CHECK, TEACH, PRACTICE, CI, PRE, REF})', ctx);
 
 const errors = [], warnings = [];
 const err = (where, msg) => errors.push(where + ': ' + msg);
@@ -116,6 +116,8 @@ for (const tab in DATA) {
       if (!cmd) { err(`${tab} › ${cat.t}`, 'درس من غير cmd'); return; }
       if (seen.has(cmd)) err(w, 'الاسم ده متكرر في نفس التاب (التقدم هيتلخبط)');
       checkPre(w, PRE[tab + '|' + cmd]);
+      const rf = REF[tab + '|' + cmd];
+      if (rf !== undefined && (!Array.isArray(rf) || rf.some(x => !x || !x.t || !String(x.url || '').startsWith('https://')))) err(w, 'ref لازم يبقى array من {t, url} والـ url يبدأ بـ https://');
       seen.add(cmd);
       if (!title) warn(w, 'مفيش title (هيظهر فاضي في «اختبرني»)');
       if (!tr) warn(w, 'مفيش try');

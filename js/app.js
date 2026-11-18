@@ -110,7 +110,13 @@ function mdHTML(t){
       let box = termHTML(code.join('\n'), k, true, m[2] || name || 'الناتج').replace('class="term"', 'class="term os tcode"');
       // diagrams and outputs: every piece between 2+ spaces keeps its column (an Arabic run would otherwise flip the order of the pieces),
       // and Arabic gets the page font, since the code font has no Arabic letters
-      if (!FENCE[m[1]]) box = box.replace(/<pre>[\s\S]*<\/pre>/, () => '<pre>'+code.map(l => l.split(/(\s{2,})/).map((s, j) => j % 2 || !s ? s : '<bdi'+(/[؀-ۿ]/.test(s) ? ' class="ar"' : '')+'>'+esc(s)+'</bdi>').join('')).join('\n')+'</pre>');
+      // HTML with Arabic text: each Arabic run is isolated, so the tags stay in the order they were typed (left to right) and the Arabic reads right inside its own run
+      if (m[1] === 'html') box = box.replace(/<pre>[\s\S]*<\/pre>/, () => '<pre>'+code.map(l => {
+        let o = '', at = 0;
+        for (const r of l.matchAll(/[؀-ۿ](?:[؀-ۿ\s\d.,:;!?()«»%+–-]*[؀-ۿ.!»])?/g)){ o += esc(l.slice(at, r.index))+'<bdi class="ar" dir="rtl">'+esc(r[0])+'</bdi>'; at = r.index + r[0].length; }
+        return o + esc(l.slice(at));
+      }).join('\n')+'</pre>');
+      else if (!FENCE[m[1]]) box = box.replace(/<pre>[\s\S]*<\/pre>/, () => '<pre>'+code.map(l => l.split(/(\s{2,})/).map((s, j) => j % 2 || !s ? s : '<bdi'+(/[؀-ۿ]/.test(s) ? ' class="ar"' : '')+'>'+esc(s)+'</bdi>').join('')).join('\n')+'</pre>');
       out.push(box);
     } else if ((m = l.match(/^(#{2,3}) (.+)/))) out.push(m[1].length === 2 ? '<h4>'+inl(m[2])+'</h4>' : '<h5>'+inl(m[2])+'</h5>');
     else if (/^---+\s*$/.test(l)) out.push('<hr>');
@@ -143,12 +149,13 @@ function mdHTML(t){
    (ROADMAP rule 3.4: an HTML/CSS solution shows what it looks like). ~~~view: the rendered page only, when the files were shown above one by one.
    A fragment gets a minimal Arabic RTL document around it. The page runs in a sandboxed iframe: its own origin, no access to this site. */
 function liveHTML(code, title, only){
-  const m = title.match(/^(\d{2,4})\s*(.*)$/), h = m ? +m[1] : 240, name = (m ? m[2] : title) || 'النتيجة في المتصفح';
+  // "~~~live 90 120 title": 90px tall at full width, 120px on a phone (and when the «موبايل» width is chosen); one number serves both
+  const m = title.match(/^(\d{2,4})(?:\s+(\d{2,4}))?\s*(.*)$/), h = m ? +m[1] : 240, hm = m && m[2] ? +m[2] : h, name = (m ? m[3] : title) || 'النتيجة في المتصفح';
   const doc = /<html[\s>]|<!doctype/i.test(code) ? code : '<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body>\n'+code+'\n</body></html>';
   return (only ? '' : mdHTML('~~~html\n'+code+'\n~~~'))+
     '<div class="live"><div class="live-bar"><span>'+esc(name)+'</span><span class="live-w">'+
     [['360', 'موبايل'], ['768', 'تابلت'], ['', 'كامل']].map(([w, l]) => '<button type="button" data-lw="'+w+'"'+(w ? '' : ' class="on"')+'>'+l+'</button>').join('')+'</span></div>'+
-    '<div class="live-f"><iframe sandbox="allow-scripts allow-forms" loading="lazy" title="'+esc(name)+'" style="height:'+h+'px" srcdoc="'+esc(doc)+'"></iframe></div></div>';
+    '<div class="live-f"><iframe sandbox="allow-scripts allow-forms" loading="lazy" title="'+esc(name)+'" style="--h:'+h+'px;--hm:'+hm+'px" srcdoc="'+esc(doc)+'"></iframe></div></div>';
 }
 /* «قبل ما تبدأ»: the lessons (or whole courses) to review first, each a direct link (ROADMAP rule 2) */
 function preHTML(list){
@@ -158,6 +165,12 @@ function preHTML(list){
     const course = SHELLS[tab] ? tabName(tab) : tab; // the name on the tab's card (the start tab's own label is «bash»)
     return '<a href="#'+encodeURIComponent(tab)+(cmd ? '/'+encodeURIComponent(cmd) : '')+'">'+(cmd ? 'درس «'+esc(cmd)+'»'+(tab !== shell ? ' في كورس '+esc(course) : '') : 'كورس '+esc(course))+'</a>'+(p.why ? ' ('+fmt(p.why)+')' : '');
   }).join('، ')+'.</p>';
+}
+/* the official references the lesson was written from (lesson field ref) */
+function refHTML(c){
+  const r = typeof REF !== 'undefined' && REF[shell+'|'+c];
+  if (!r || !r.length) return '';
+  return '<p class="refs"><b>المرجع:</b> '+r.map(x => '<a href="'+esc(x.url)+'" target="_blank" rel="noopener">'+esc(x.t)+'</a>').join('، ')+'</p>';
 }
 function deepHTML(c){
   const d = DEEP[shell+'|'+c];
@@ -281,7 +294,7 @@ function articleHTML(it){
     (ex ? termBlock(ex, c, flag) : '')+breakHTML(c, ex)+
     '<button type="button" class="reveal">اكشف الإجابة</button>'+
     '<div class="try"><span class="lbl">'+(shell==='glossary'?'الشرح الكامل في':'جرّب')+'</span><p>'+fmt(tr)+labHint(tr)+'</p><label class="done"><input type="checkbox" data-k="'+esc(key)+'"'+(done?' checked':'')+'> جربتها</label></div>'+
-    practiceHTML(c)+chkHTML(c)+solHTML(c)+noteHTML(c)+reportHTML(c, t)+
+    practiceHTML(c)+chkHTML(c)+solHTML(c)+noteHTML(c)+refHTML(c)+reportHTML(c, t)+
   '</article>';
 }
 /* «something missing here?»: opens a prefilled GitHub issue for this lesson */
@@ -292,6 +305,8 @@ function reportHTML(c, t){
     '\n\nإيه اللي ناقص أو مش واضح أو غلط؟\n\n\nلو أمر طلّع ناتج مختلف: النظام إيه، والأمر، والناتج اللي طلعلك:\n';
   return '<p class="report"><a href="'+REPO+'/issues/new?title='+encodeURIComponent(title)+'&body='+encodeURIComponent(body)+'" target="_blank" rel="noopener">في حاجة ناقصة أو مش واضحة أو غلط هنا؟ قولّنا</a></p>';
 }
+/* a drill's task: one line as before, or (when it carries code to read or fix) the same mini-markdown as teach */
+const ptHTML = t => t.includes('\n') ? '<div class="pt">'+mdHTML(t)+'</div>' : '<span class="pt">'+fmt(t)+'</span>';
 /* the lesson's practice drills, easiest first; each one has its own tick (data-d, not the lesson's data-k) */
 const DRILL_LV = {'سريع': 1, 'تطبيق': 2, 'تحدي': 3};
 function practiceHTML(c){
@@ -299,7 +314,7 @@ function practiceHTML(c){
   if (!list || !list.length) return '';
   const rows = list.map((p, i) => [p, i]).sort((a, b) => (DRILL_LV[a[0].lvl] || 2) - (DRILL_LV[b[0].lvl] || 2)).map(([p, i]) => {
     const k = 'drill:'+shell+':'+c+':'+i, on = store.get(k) === '1';
-    return '<li'+(on?' class="on"':'')+'>'+(p.lvl?'<em class="lv lv'+(DRILL_LV[p.lvl]||2)+'">'+esc(p.lvl)+'</em>':'')+'<span class="pt">'+fmt(p.t)+'</span>'+
+    return '<li'+(on?' class="on"':'')+'>'+(p.lvl?'<em class="lv lv'+(DRILL_LV[p.lvl]||2)+'">'+esc(p.lvl)+'</em>':'')+ptHTML(p.t)+
       (p.done?'<span class="pdone"><b>تعرف إنك خلصت لما:</b> '+fmt(p.done)+'</span>':'')+
       // the solution stays closed until asked for: try first, then compare
       (p.sol?'<details class="psol"><summary>الحل والشرح (جرّب الأول)</summary><div class="psol-b">'+mdHTML(p.sol)+'</div></details>':'')+
@@ -998,6 +1013,7 @@ document.addEventListener('click', e => {
   if (lw){ // a live preview at phone, tablet or full width
     const box = lw.closest('.live');
     box.querySelector('iframe').style.width = lw.dataset.lw ? lw.dataset.lw+'px' : '';
+    box.classList.toggle('narrow', lw.dataset.lw === '360');
     box.querySelectorAll('[data-lw]').forEach(b => b.classList.toggle('on', b === lw)); return;
   }
   const sr = e.target.closest('.sol-reveal');

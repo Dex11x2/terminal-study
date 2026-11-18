@@ -7,6 +7,8 @@ const USE = {}, CARD = {};
 const PRACTICE = {};
 /* PRE: «قبل ما تبدأ»: what to review first, ["tab/cmd" | "tab" | {to, why}] on a lesson (and cat.pre on a unit) */
 const PRE = {};
+/* REF: the official references the lesson was written from, [{t, url}], shown under it (ROADMAP rule 1) */
+const REF = {};
 /* CI: runnable checks for tools/ci-run.js, [{os: ['ubuntu','macos','windows'], sh: 'bash'|'zsh'|'pwsh'|'powershell'|'cmd'|'node'|'python', run, expect: [...], code}] */
 const CI = {};
 const LEVEL_INFO = {
@@ -52,6 +54,7 @@ function cats(key, list){
       if (it.use) USE[id] = it.use;
       if (it.practice) PRACTICE[id] = it.practice;
       if (it.pre) PRE[id] = it.pre;
+      if (it.ref) REF[id] = it.ref;
       if (it.ci) CI[id] = it.ci;
       if (it.learn || it.out) CARD[id] = {learn: it.learn, out: it.out};
       const row = [it.cmd, it.title, it.desc, it.example, it.try];

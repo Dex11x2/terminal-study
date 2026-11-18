@@ -222,6 +222,8 @@ body.quiz article.cmd:not(.shown) .cmd-h .title{font-size:19px}
 .term.os[data-k="zsh"]{--t-bg:#fbfbfd;--t-fg:#1d1d1f;--t-pr:#0f766e;--t-cm:#8e8e93;--t-bar:#e6e6eb;border:1px solid #e6e6eb}
 .copy{all:unset;cursor:pointer;font-family:var(--sans);font-size:12.5px;padding:2px 10px;border-radius:4px;border:1px solid color-mix(in srgb,var(--t-fg) 30%,transparent)}
 .copy:hover,.copy:focus-visible{background:color-mix(in srgb,var(--t-fg) 15%,transparent)}
+/* no ligatures: a beginner has to see </ and => as the two characters they type */
+.term pre,code{font-variant-ligatures:none}
 .term pre{margin:0;padding:12px 16px 14px;font-family:var(--mono);font-size:14px;line-height:1.7;overflow-x:auto;white-space:pre}
 .term .pr{color:var(--t-pr);user-select:none;-webkit-user-select:none}
 .term .cm{color:var(--t-cm);word-break:break-word;white-space:pre-wrap}
@@ -642,12 +644,16 @@ body.todo .map tr.is-done{display:none}
 .projlist .lv3{color:var(--a-bash)}
 .projlist .lv4{color:var(--accent)}
 .projlist span.pfolio{font-size:13px;margin-top:4px}
+.refs{margin:12px 0 0;font-size:14px;color:var(--muted)}
+.refs a{color:var(--accent)}
 .report{margin:10px 0 0;font-size:13px}
 .report a{color:var(--muted)}
 /* a lesson's practice drills, under «جرّب» */
 .practice{margin:10px 0;padding:10px 14px;border:1px dashed var(--line);border-radius:8px;background:var(--surface)}
 .practice .lbl{display:block;font-weight:600;margin-bottom:6px}
 .practice .pt{display:inline;color:var(--ink);font-size:15px}
+.practice div.pt{display:block;min-width:0}
+.practice div.pt > p:first-child{display:inline}
 .practice .ptick{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;margin-top:4px}
 .practice li.on .pt{text-decoration:line-through;color:var(--muted)}
 
@@ -750,7 +756,9 @@ body.reading .bar .meter,body.reading .bar .lvls,body.reading .bar .chips,body.r
 .live-w button{font:inherit;color:inherit;background:none;border:1px solid var(--line);border-radius:6px;padding:0 8px;cursor:pointer}
 .live-w button.on{color:var(--accent);border-color:var(--accent)}
 .live-f{overflow:auto;background:var(--bg)}
-.live iframe{display:block;width:100%;border:0;margin-inline:auto;background:#fff;color-scheme:light;resize:vertical}
+.live iframe{display:block;width:100%;height:var(--h);border:0;margin-inline:auto;background:#fff;color-scheme:light;resize:vertical}
+.live.narrow iframe{height:var(--hm)}
+@media (max-width:520px){.live iframe{height:var(--hm)}}
 .pre{margin:0 0 10px;padding:6px 12px;border-inline-start:3px solid var(--accent);background:var(--surface);border-radius:6px;font-size:15px}
 .pre a{color:var(--accent)}
 .psol{margin-top:6px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
