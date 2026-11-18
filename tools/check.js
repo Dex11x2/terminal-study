@@ -110,6 +110,13 @@ for (const tab in DATA) {
         if (p.lvl && !['سريع', 'تطبيق', 'تحدي'].includes(p.lvl)) err(`${tab} › ${it[0]}`, `تمرين ${i + 1}: lvl لازم يبقى سريع أو تطبيق أو تحدي`);
         ['t', 'done'].forEach(k => brackets(`${tab} › ${it[0]} › تمرين ${i + 1} (${k})`, p[k]));
         if (p.sol !== undefined) brackets(`${tab} › ${it[0]} › تمرين ${i + 1} (sol)`, noFence(p.sol));
+        // work («حلّها هنا»): every condition says what it checks and has something to check
+        if (p.work !== undefined) {
+          const ww = `${tab} › ${it[0]} › تمرين ${i + 1} (work)`;
+          if (!p.work || !Array.isArray(p.work.checks) || !p.work.checks.length) err(ww, 'work محتاج checks فيها شرط واحد على الأقل');
+          else p.work.checks.forEach(c => { if (!c.say) err(ww, 'شرط من غير say'); else brackets(ww, c.say); if (c.q === undefined && c.src === undefined && c.nosrc === undefined) err(ww, 'شرط من غير q ولا src ولا nosrc: «' + c.say + '»'); });
+          if (p.work.start !== undefined && typeof p.work.start !== 'string') err(ww, 'start لازم يبقى نص');
+        }
       });
     });
     cat.items.forEach(it => {

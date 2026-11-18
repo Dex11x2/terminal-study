@@ -115,7 +115,7 @@ function mdHTML(t){
         let o = '', at = 0;
         for (const r of l.matchAll(/[؀-ۿ](?:[؀-ۿ\s\d.,:;!?()«»%+–-]*[؀-ۿ.!»])?/g)){ o += esc(l.slice(at, r.index))+'<bdi class="ar" dir="rtl">'+esc(r[0])+'</bdi>'; at = r.index + r[0].length; }
         return o + esc(l.slice(at));
-      }).join('\n')+'</pre>');
+      }).join('\n')+'</pre>').replace('<pre>', '<pre class="wrap">');
       else if (!FENCE[m[1]]) box = box.replace(/<pre>[\s\S]*<\/pre>/, () => '<pre>'+code.map(l => l.split(/(\s{2,})/).map((s, j) => j % 2 || !s ? s : '<bdi'+(/[؀-ۿ]/.test(s) ? ' class="ar"' : '')+'>'+esc(s)+'</bdi>').join('')).join('\n')+'</pre>');
       out.push(box);
     } else if ((m = l.match(/^(#{2,3}) (.+)/))) out.push(m[1].length === 2 ? '<h4>'+inl(m[2])+'</h4>' : '<h5>'+inl(m[2])+'</h5>');
@@ -343,6 +343,48 @@ function reportHTML(c, t){
 const ptHTML = t => t.includes('\n') ? '<div class="pt">'+mdHTML(t)+'</div>' : '<span class="pt">'+fmt(t)+'</span>';
 /* the lesson's practice drills, easiest first; each one has its own tick (data-d, not the lesson's data-k) */
 const DRILL_LV = {'سريع': 1, 'تطبيق': 2, 'تحدي': 3};
+/* «حلّها هنا» (drill field work): an HTML drill solved inside the page. The reader types in the box, the page under it is drawn from what they typed,
+   and each condition turns ✓ or ✗ as they type. work = { start: the code the box opens with, h: preview height, checks: [{ say, q, n | min, has, attr: [name, value], src, nosrc }] }
+   q is a CSS selector run on the parsed page (DOMParser: nothing the reader types is executed here); n = exactly that many matches, otherwise at least min (1);
+   has = the match's text holds this; attr = the match has this attribute (and value); src / nosrc = the typed code holds / doesn't hold this text. */
+const workNorm = s => String(s).replace(/\s+/g, ' ').trim();
+function workEval(code, checks){
+  const doc = new DOMParser().parseFromString(liveDoc(code), 'text/html');
+  return checks.map(c => {
+    if (c.src !== undefined && !code.includes(c.src)) return false;
+    if (c.nosrc !== undefined && code.includes(c.nosrc)) return false;
+    if (c.q === undefined) return true;
+    let els;
+    try { els = [...doc.querySelectorAll(c.q)]; } catch (e) { return false; }
+    if (c.has !== undefined) els = els.filter(e => workNorm(e.textContent).includes(workNorm(c.has)));
+    if (c.attr) els = els.filter(e => e.hasAttribute(c.attr[0]) && (c.attr[1] === undefined || e.getAttribute(c.attr[0]) === c.attr[1]));
+    return c.n !== undefined ? els.length === c.n : els.length >= (c.min || 1);
+  });
+}
+const workMsg = ok => { const n = ok.filter(Boolean).length; return n === ok.length ? 'كل الشروط اتحققت. افتح «الحل والشرح» وقارن طريقتك بيه.' : 'اتحقق '+n+' من '+ok.length+'. كمّل على اللي عليه ✗.'; };
+function workHTML(w, key){
+  if (!w || !Array.isArray(w.checks) || !w.checks.length) return '';
+  const start = w.start || '', saved = store.get('work:'+key), code = saved !== null && saved !== undefined ? saved : start;
+  const ok = workEval(code, w.checks), h = w.h || 200;
+  return '<div class="work'+(ok.every(Boolean) ? ' done' : '')+'" data-wk="'+esc(key)+'" data-checks="'+esc(JSON.stringify(w.checks))+'">'+
+    '<div class="work-h"><b>حلّها هنا</b> <span>اكتب في المربع: صفحتك والشروط اللي تحتها بيتغيّروا مع كل حرف، وشغلك بيتحفظ على جهازك.</span></div>'+
+    '<textarea class="work-code" dir="ltr" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="كود التمرين: اكتب حلّك هنا" rows="'+Math.max(5, Math.min(16, code.split('\n').length + 2))+'">'+esc(code)+'</textarea>'+
+    '<textarea class="work-orig" hidden>'+esc(start)+'</textarea>'+
+    '<div class="live"><div class="live-bar"><span>صفحتك دلوقتي</span><span class="live-w">'+
+    [['360', 'موبايل'], ['', 'كامل']].map(([x, l]) => '<button type="button" data-lw="'+x+'"'+(x ? '' : ' class="on"')+'>'+l+'</button>').join('')+'</span></div>'+
+    '<div class="live-f"><iframe sandbox="allow-scripts allow-forms" loading="lazy" title="صفحتك دلوقتي" style="--h:'+h+'px;--hm:'+h+'px" srcdoc="'+esc(liveDoc(code))+'"></iframe></div></div>'+
+    '<ul class="work-checks">'+w.checks.map((c, i) => '<li class="'+(ok[i] ? 'ok' : 'no')+'">'+fmt(c.say)+'</li>').join('')+'</ul>'+
+    '<p class="work-res" role="status">'+workMsg(ok)+'</p>'+
+    '<button type="button" class="work-reset" data-wreset="1">ابدأ التمرين من الأول</button></div>';
+}
+function workUpdate(box){
+  const code = box.querySelector('.work-code').value, ok = workEval(code, JSON.parse(box.dataset.checks));
+  box.querySelector('iframe').srcdoc = liveDoc(code);
+  box.querySelectorAll('.work-checks li').forEach((li, i) => { li.className = ok[i] ? 'ok' : 'no'; });
+  box.querySelector('.work-res').textContent = workMsg(ok);
+  box.classList.toggle('done', ok.every(Boolean));
+  store.set('work:'+box.dataset.wk, code);
+}
 function practiceHTML(c){
   const list = typeof PRACTICE !== 'undefined' && PRACTICE[shell+'|'+c];
   if (!list || !list.length) return '';
@@ -350,6 +392,7 @@ function practiceHTML(c){
     const k = 'drill:'+shell+':'+c+':'+i, on = store.get(k) === '1';
     return '<li'+(on?' class="on"':'')+'>'+(p.lvl?'<em class="lv lv'+(DRILL_LV[p.lvl]||2)+'">'+esc(p.lvl)+'</em>':'')+ptHTML(p.t)+
       (p.done?'<span class="pdone"><b>تعرف إنك خلصت لما:</b> '+fmt(p.done)+'</span>':'')+
+      workHTML(p.work, shell+':'+c+':'+i)+
       // the solution stays closed until asked for: try first, then compare
       (p.sol?'<details class="psol"><summary>الحل والشرح (جرّب الأول)</summary><div class="psol-b">'+mdHTML(p.sol)+'</div></details>':'')+
       '<label class="ptick"><input type="checkbox" data-d="'+esc(k)+'"'+(on?' checked':'')+'> عملته</label></li>';
@@ -1051,6 +1094,8 @@ document.addEventListener('click', e => {
     if (!ed.hidden) ed.querySelector('textarea').focus();
     return;
   }
+  const wr = e.target.closest('[data-wreset]');
+  if (wr){ const box = wr.closest('.work'); box.querySelector('.work-code').value = box.querySelector('.work-orig').value; workUpdate(box); store.del ? store.del('work:'+box.dataset.wk) : store.set('work:'+box.dataset.wk, box.querySelector('.work-orig').value); return; }
   const lr = e.target.closest('[data-lr]');
   if (lr){ const ta = lr.closest('.live-ed').querySelector('textarea'); ta.value = ta.defaultValue; lr.closest('.live').querySelector('iframe').srcdoc = liveDoc(ta.value); return; }
   const lw = e.target.closest('[data-lw]');
@@ -1141,6 +1186,8 @@ document.addEventListener('focusin', e => {
 });
 $('#importFile').addEventListener('change', e => { const fl = e.target.files[0]; if (fl) importProgress(fl); e.target.value = ''; });
 document.addEventListener('input', e => {
+  const wc = e.target.closest('.work-code');
+  if (wc){ workUpdate(wc.closest('.work')); return; } // a drill being solved in the page
   const led = e.target.closest('.live-ed textarea');
   if (led){ led.closest('.live').querySelector('iframe').srcdoc = liveDoc(led.value); return; } // the edited code, rendered as you type
   const code = e.target.closest('.chk-code');
