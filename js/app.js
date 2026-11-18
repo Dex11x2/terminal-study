@@ -148,13 +148,40 @@ function mdHTML(t){
 /* ~~~live [height] [title]: an HTML page shown as code and, under it, as the real rendered page
    (ROADMAP rule 3.4: an HTML/CSS solution shows what it looks like). ~~~view: the rendered page only, when the files were shown above one by one.
    A fragment gets a minimal Arabic RTL document around it. The page runs in a sandboxed iframe: its own origin, no access to this site. */
+const liveDoc = code => /<html[\s>]|<!doctype/i.test(code) ? code : '<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body>\n'+code+'\n</body></html>';
+/* «ابدأ إزاي»: the same six steps for every HTML project that names its folder (project field dir): make the folder and files in the terminal,
+   open it in VS Code, write, see it in Chrome, inspect it, then compare with the solution. The file names come from the solution's fence titles. */
+function projStartHTML(p){
+  if (!p.dir) return '';
+  const files = [...new Set([...String(p.sol || '').matchAll(/^~~~\w+[ \d]*?([\w.-]+\.(?:html|css|js))\s*$/gm)].map(m => m[1]))];
+  if (!files.includes('index.html')) files.unshift('index.html');
+  const d = p.dir, more = files.length > 1;
+  return '<details class="psol pstart"><summary>ابدأ إزاي: الفولدر، و VS Code، والمتصفح (٦ خطوات)</summary><div class="psol-b">'+mdHTML(
+    '**١. اعمل فولدر المشروع و'+(more ? 'ملفاته' : 'ملفه')+' من الترمنال.** افتح الترمنال في المكان اللي بتحط فيه شغلك، واكتب:\n\n'+
+    '~~~powershell\nmkdir '+d+'\ncd '+d+'\nni '+files.join(', ')+'\n~~~\n\n~~~bash\nmkdir '+d+' && cd '+d+'\ntouch '+files.join(' ')+'\n~~~\n\n'+
+    '[[mkdir]] بيعمل الفولدر، و [[cd]] بيدخّلك جواه، و [[ni]] (في PowerShell) أو [[touch]] (في bash والماك) بيعمل '+(more ? 'الملفات فاضية' : 'الملف فاضي')+'. اسم الفولدر والملفات بحروف إنجليزي صغيرة ومن غير مسافات، عشان الاسم ده هيبقى جزء من رابط الصفحة.\n\n'+
+    '**٢. افتح الفولدر في VS Code.** وانت لسه جوه الفولدر:\n\n~~~powershell\ncode .\n~~~\n\n'+
+    'النقطة معناها «الفولدر اللي أنا فيه». لو طلعلك إن [[code]] مش متعرّف: افتح VS Code بإيدك، ومن القايمة File اختار Open Folder واختار [['+d+']].\n\n'+
+    '**٣. اكتب الصفحة.** افتح [[index.html]] من العمود اللي على الشمال، واكتب علامة [[!]] ودوس Tab: VS Code هيكتبلك هيكل الصفحة. غيّر [[lang="en"]] لـ [[lang="ar" dir="rtl"]]، واكتب المطلوب جوه [[<body>]]، واحفظ بـ [[Ctrl+S]] (على الماك [[Cmd+S]]).\n\n'+
+    '**٤. شوفها في Chrome.** من الترمنال اللي جوه VS Code (من القايمة Terminal اختار New Terminal):\n\n'+
+    '~~~powershell\nstart index.html\n~~~\n\n~~~bash\nopen index.html       # الماك\nxdg-open index.html   # لينكس\n~~~\n\n'+
+    'الصفحة هتفتح في المتصفح الأساسي عندك. لو مش Chrome: اسحب [[index.html]] من VS Code وارميه على نافذة Chrome. **وبعد كل تعديل:** احفظ في VS Code، وارجع للمتصفح ودوس [[Ctrl+R]] عشان يقرا الملف من جديد.\n\n'+
+    '**٥. افحصها زي المحترف.** في Chrome دوس [[F12]]: تاب Elements بيوريك الشجرة اللي المتصفح فهمها من كودك، و [[Ctrl+Shift+M]] بيوريك الصفحة على عرض موبايل (اختار 360). قارن اللي شايفه ببند «تعرف إنك خلصت» اللي تحت.\n\n'+
+    '**٦. قارن بالحل.** بعد ما تخلّص نسختك، افتح «الحل والشرح»: هتلاقي الكود كامل والصفحة مرسومة، وزرار «عدّل وجرّب» بيخليك تغيّر في الحل وتشوف الفرق.\n\n'+
+    '> محتاج تراجع؟ [[code .]] و Emmet في كورس VS Code، و Elements و Device Toolbar في كورس «المتصفح و DevTools».'
+  )+'</div></details>';
+}
 function liveHTML(code, title, only){
   // "~~~live 90 120 title": 90px tall at full width, 120px on a phone (and when the «موبايل» width is chosen); one number serves both
   const m = title.match(/^(\d{2,4})(?:\s+(\d{2,4}))?\s*(.*)$/), h = m ? +m[1] : 240, hm = m && m[2] ? +m[2] : h, name = (m ? m[3] : title) || 'النتيجة في المتصفح';
-  const doc = /<html[\s>]|<!doctype/i.test(code) ? code : '<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body>\n'+code+'\n</body></html>';
+  const doc = liveDoc(code);
   return (only ? '' : mdHTML('~~~html\n'+code+'\n~~~'))+
     '<div class="live"><div class="live-bar"><span>'+esc(name)+'</span><span class="live-w">'+
-    [['360', 'موبايل'], ['768', 'تابلت'], ['', 'كامل']].map(([w, l]) => '<button type="button" data-lw="'+w+'"'+(w ? '' : ' class="on"')+'>'+l+'</button>').join('')+'</span></div>'+
+    [['360', 'موبايل'], ['768', 'تابلت'], ['', 'كامل']].map(([w, l]) => '<button type="button" data-lw="'+w+'"'+(w ? '' : ' class="on"')+'>'+l+'</button>').join('')+
+    // «عدّل وجرّب»: the code in a box the reader can change, and the page under it follows every key
+    '<button type="button" class="live-edit" data-le="1">عدّل وجرّب</button></span></div>'+
+    '<div class="live-ed" hidden><textarea dir="ltr" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="كود الصفحة، عدّله وشوف النتيجة تحته" rows="'+Math.min(18, code.split('\n').length + 1)+'">'+esc(code)+'</textarea>'+
+    '<p>غيّر أي حاجة والنتيجة تحت بتتغيّر على طول. التعديل هنا للتجربة بس ومبيتحفظش. <button type="button" data-lr="1">رجّع الكود الأصلي</button></p></div>'+
     '<div class="live-f"><iframe sandbox="allow-scripts allow-forms" loading="lazy" title="'+esc(name)+'" style="--h:'+h+'px;--hm:'+hm+'px" srcdoc="'+esc(doc)+'"></iframe></div></div>';
 }
 /* «قبل ما تبدأ»: the lessons (or whole courses) to review first, each a direct link (ROADMAP rule 2) */
@@ -339,7 +366,8 @@ function unitFoot(cat, id){
   const LV = {'صغير': 1, 'متوسط': 2, 'كبير': 3, 'فكرة': 4};
   const projs = cat.projects ? cat.projects.slice().sort((a, b) => (LV[a.lvl] || 2) - (LV[b.lvl] || 2)) : [];
   const pr = cat.projects ? '<div class="projbox"><h4 class="uf-h">مشاريع القسم</h4><p class="uf-p">بعد ما تخلص الدروس، دي حاجات تبنيها بإيدك من اللي اتعلمته، من الصغير للكبير. و«فكرة» مشروع مفتوح: انت اللي بتقرر تفاصيله.</p><ol class="projlist">'+
-    projs.map(p => '<li>'+(p.lvl?'<em class="lv lv'+(LV[p.lvl]||2)+'">'+esc(p.lvl)+'</em>':'')+'<b>'+fmt(p.t)+'</b>'+(p.what?'<span>'+fmt(p.what)+'</span>':'')+
+    projs.map(p => '<li>'+(p.lvl?'<em class="lv lv'+(LV[p.lvl]||2)+'">'+esc(p.lvl)+'</em>':'')+'<b>'+fmt(p.t)+'</b>'+(p.what?'<span>'+(p.dir?'<b class="plbl">المطلوب:</b> ':'')+fmt(p.what)+'</span>':'')+
+      projStartHTML(p)+
       (p.done?'<span class="pdone"><b>تعرف إنك خلصت لما:</b> '+fmt(p.done)+'</span>':'')+
       (p.ext?'<span class="pdone"><b>خليه بتاعك:</b> '+fmt(p.ext)+'</span>':'')+
       (p.sol?'<details class="psol"><summary>الحل والشرح (ابنيه الأول)</summary><div class="psol-b">'+mdHTML(p.sol)+'</div></details>':'')+
@@ -1009,6 +1037,15 @@ document.addEventListener('click', e => {
   if (ex){ examOpen(+ex.dataset.exam); return; }
   const run = e.target.closest('.chk-run');
   if (run){ chkRun(run.closest('.chk')); return; }
+  const le = e.target.closest('[data-le]');
+  if (le){ // open or close the editable copy of a live preview's code
+    const ed = le.closest('.live').querySelector('.live-ed');
+    ed.hidden = !ed.hidden; le.classList.toggle('on', !ed.hidden);
+    if (!ed.hidden) ed.querySelector('textarea').focus();
+    return;
+  }
+  const lr = e.target.closest('[data-lr]');
+  if (lr){ const ta = lr.closest('.live-ed').querySelector('textarea'); ta.value = ta.defaultValue; lr.closest('.live').querySelector('iframe').srcdoc = liveDoc(ta.value); return; }
   const lw = e.target.closest('[data-lw]');
   if (lw){ // a live preview at phone, tablet or full width
     const box = lw.closest('.live');
@@ -1097,6 +1134,8 @@ document.addEventListener('focusin', e => {
 });
 $('#importFile').addEventListener('change', e => { const fl = e.target.files[0]; if (fl) importProgress(fl); e.target.value = ''; });
 document.addEventListener('input', e => {
+  const led = e.target.closest('.live-ed textarea');
+  if (led){ led.closest('.live').querySelector('iframe').srcdoc = liveDoc(led.value); return; } // the edited code, rendered as you type
   const code = e.target.closest('.chk-code');
   if (code){ const box = code.closest('.chk'); store.set('code:'+box.dataset.t+':'+box.dataset.c, code.value); return; }
   const ta = e.target.closest('textarea[data-n]');

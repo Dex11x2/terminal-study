@@ -84,6 +84,8 @@ for (const tab in DATA) {
     checkPre(`${tab} › ${cat.t}`, cat.pre);
     (cat.projects || []).forEach(p => {
       if (!p.t) err(`${tab} › ${cat.t}`, 'مشروع من غير t');
+      // dir: the project's folder name, typed in a terminal and later part of a URL
+      if (p.dir !== undefined && !/^[a-z0-9]+(-[a-z0-9]+)*$/.test(p.dir)) err(`${tab} › ${cat.t} › ${p.t}`, 'dir لازم يبقى حروف إنجليزي صغيرة وأرقام وشرطة بس (my-page)');
       if (p.lvl && !['صغير', 'متوسط', 'كبير', 'فكرة'].includes(p.lvl)) err(`${tab} › ${cat.t} › ${p.t}`, 'lvl لازم يبقى صغير أو متوسط أو كبير أو فكرة');
       ['t', 'what', 'done', 'ext'].forEach(k => brackets(`${tab} › ${cat.t} › مشروع «${p.t}» (${k})`, p[k]));
       if (p.sol !== undefined) brackets(`${tab} › ${cat.t} › مشروع «${p.t}» (sol)`, noFence(p.sol));

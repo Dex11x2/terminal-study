@@ -625,6 +625,8 @@ body.todo .map tr.is-done{display:none}
 .unit-two{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;margin:12px 0 18px}
 .unit-two>*{min-width:0}
 @media (min-width:860px){ .unit-two{grid-template-columns:minmax(0,1fr) minmax(0,1fr)} }
+/* a unit with projects but no lab box: the projects take the whole width (their solutions hold code and live pages) */
+.unit-two>.projbox:only-child{grid-column:1/-1}
 .goal{border-inline-start:3px solid var(--accent);background:color-mix(in srgb,var(--accent) 6%,transparent);padding:12px 16px;border-radius:0 8px 8px 0}
 .goal h4{margin:0 0 6px;font-size:15px;color:var(--accent)}
 .goal ul{margin:0;padding-inline-start:20px;font-size:15px;line-height:1.7}
@@ -756,6 +758,13 @@ body.reading .bar .meter,body.reading .bar .lvls,body.reading .bar .chips,body.r
 .live-w button{font:inherit;color:inherit;background:none;border:1px solid var(--line);border-radius:6px;padding:0 8px;cursor:pointer}
 .live-w button.on{color:var(--accent);border-color:var(--accent)}
 .live-f{overflow:auto;background:var(--bg)}
+.live-w .live-edit{margin-inline-start:8px;border-style:dashed}
+.live-ed{border-bottom:1px solid var(--line);padding:8px 10px;background:var(--surface)}
+.live-ed textarea{display:block;width:100%;box-sizing:border-box;font:13.5px/1.6 var(--mono);font-variant-ligatures:none;color:var(--t-fg);background:var(--t-bg);border:0;border-radius:6px;padding:10px 12px;resize:vertical;white-space:pre;overflow:auto;tab-size:2}
+.live-ed p{margin:6px 0 0;font-size:13px;color:var(--muted)}
+.live-ed p button{font:inherit;color:var(--accent);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline}
+.pstart{margin:6px 0}
+.projlist .plbl{color:var(--ink)}
 .live iframe{display:block;width:100%;height:var(--h);border:0;margin-inline:auto;background:#fff;color-scheme:light;resize:vertical}
 .live.narrow iframe{height:var(--hm)}
 @media (max-width:520px){.live iframe{height:var(--hm)}}
