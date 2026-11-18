@@ -4249,6 +4249,11 @@
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
+ "css|View Source و validator": {
+  "hash": "f113c15ff236",
+  "date": "2026-11-18",
+  "on": "PowerShell 7.6 + 5.1 + Git Bash on Windows 11, Chrome 157 headless, Nu Html Checker, VS Code 1.147 (code . once); docs: VS Code UI steps, Emmet expansions, Live Server, Mac open, Linux xdg-open"
+ },
  "css|View Transitions": {
   "hash": "73c01e4dfcce",
   "date": "2026-11-04",
@@ -4323,6 +4328,11 @@
   "hash": "7bf0499379d7",
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
+ },
+ "css|code . و Emmet !": {
+  "hash": "901dd6d91649",
+  "date": "2026-11-18",
+  "on": "PowerShell 7.6 + 5.1 + Git Bash on Windows 11, Chrome 157 headless, Nu Html Checker, VS Code 1.147 (code . once); docs: VS Code UI steps, Emmet expansions, Live Server, Mac open, Linux xdg-open"
  },
  "css|code و pre و kbd": {
   "hash": "0a8ff79d957b",
@@ -4514,6 +4524,11 @@
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
+ "css|mkdir و ni و touch": {
+  "hash": "998a5ca1819b",
+  "date": "2026-11-18",
+  "on": "PowerShell 7.6 + 5.1 + Git Bash on Windows 11, Chrome 157 headless, Nu Html Checker, VS Code 1.147 (code . once); docs: VS Code UI steps, Emmet expansions, Live Server, Mac open, Linux xdg-open"
+ },
  "css|mobile-first": {
   "hash": "b6257a84dc75",
   "date": "2026-11-04",
@@ -4593,6 +4608,11 @@
   "hash": "394efae77ca9",
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
+ },
+ "css|start index.html و Ctrl+R": {
+  "hash": "a9a5576fa9ea",
+  "date": "2026-11-18",
+  "on": "PowerShell 7.6 + 5.1 + Git Bash on Windows 11, Chrome 157 headless, Nu Html Checker, VS Code 1.147 (code . once); docs: VS Code UI steps, Emmet expansions, Live Server, Mac open, Linux xdg-open"
  },
  "css|sticky و fixed": {
   "hash": "e8a57dea2a62",
@@ -4743,6 +4763,11 @@
   "hash": "f43d2e89386b",
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
+ },
+ "css|فولدر لكل مشروع": {
+  "hash": "4760d03429c1",
+  "date": "2026-11-18",
+  "on": "PowerShell 7.6 + 5.1 + Git Bash on Windows 11, Chrome 157 headless, Nu Html Checker, VS Code 1.147 (code . once); docs: VS Code UI steps, Emmet expansions, Live Server, Mac open, Linux xdg-open"
  },
  "css|قوايم جوه قوايم": {
   "hash": "dc3e5e631616",

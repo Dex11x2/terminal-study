@@ -1,6 +1,6 @@
-# منهج HTML و CSS (css): 478 من 1180 بند متغطي (40٪)
+# منهج HTML و CSS (css): 482 من 1180 بند متغطي (40٪)
 
-اتبنى 2026-11-18 من: [WHATWG HTML Living Standard (Index)](https://html.spec.whatwg.org/multipage/indices.html)، [MDN HTML reference](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference)، [mdn/data (CSS)](https://github.com/mdn/data/tree/main/css)، [web-features (Baseline)](https://github.com/web-platform-dx/web-features)، [MDN Curriculum](https://developer.mozilla.org/en-US/curriculum/). الكورس فيه 125 درس. الملف ده بيتولّد بـ `node tools/syllabus.js css --write`، متعدّلوش بإيدك.
+اتبنى 2026-11-18 من: [WHATWG HTML Living Standard (Index)](https://html.spec.whatwg.org/multipage/indices.html)، [MDN HTML reference](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference)، [mdn/data (CSS)](https://github.com/mdn/data/tree/main/css)، [web-features (Baseline)](https://github.com/web-platform-dx/web-features)، [MDN Curriculum](https://developer.mozilla.org/en-US/curriculum/). الكورس فيه 130 درس. الملف ده بيتولّد بـ `node tools/syllabus.js css --write`، متعدّلوش بإيدك.
 
 | النوع | في المنهج | متغطي | مذكور من غير شرح | ناقص خالص | مستبعد بسبب |
 |---|---|---|---|---|---|
@@ -14,7 +14,7 @@
 | دوال CSS | 93 | 13 | 33 | 47 | 14 |
 | وحدات | 62 | 13 | 10 | 39 | 0 |
 | أنواع القيم | 37 | 13 | 2 | 22 | 2 |
-| مهارات (MDN Curriculum) | 155 | 96 | 0 | 59 | 0 |
+| مهارات (MDN Curriculum) | 155 | 100 | 0 | 55 | 0 |
 
 ## عناصر HTML: ناقص 25
 
@@ -159,7 +159,7 @@
 - **CSS Transforms** ناقص: `<transform-function>`
 - **CSS Color** مذكور من غير شرح: `<color>` (3)
 
-## مهارات (MDN Curriculum): ناقص 59
+## مهارات (MDN Curriculum): ناقص 55
 
 **1. Transform & animate CSS › 0 الموديول كله**
 
@@ -170,7 +170,6 @@
 
 - `out:semantic-html/2.2.2` Using semantic HTML rather than presentational HTML: (3 نقطة فرعية) ← only div-vs-structural-elements covered; deprecated big/font and repurposed b/i absent
 - `out:semantic-html/2.2.4` SEO benefits: for example, keywords are boosted in headings. ← SEO benefit of headings only passing mentions in landing lessons
-- `out:semantic-html/2.2.7` Validating your markup using the HTML validator or another similar tool (for example, view source in Firefox highlights validation errors with a dotted red underline). ← HTML validator never taught as a method (only quoted in drill results)
 
 **2. Semantic HTML › 2.5 Links**
 
@@ -197,9 +196,7 @@
 
 **2. Semantic HTML › 2.9 Debugging HTML**
 
-- `out:semantic-html/2.9.1` Use the HTML validator to see if you have any markup errors. This is always a good place to start if you are experiencing unexpected behavior. ← no lesson on using the HTML validator
-- `out:semantic-html/2.9.2` View source is a useful tool for getting a quick look at the source markup of a page. ← view-source never taught
-- `out:semantic-html/2.9.3` Using the DOM inspector in your browser DevTools to dive deeper into your markup: (2 نقطة فرعية) ← Elements panel shown for reading the DOM, but live add/remove of elements/attributes/classes not taught
+- `out:semantic-html/2.9.3` Using the DOM inspector in your browser DevTools to dive deeper into your markup: (2 نقطة فرعية) ← elements and attributes are inspected and edited in «View Source و validator › ٣. Elements»; adding/removing classes waits for the CSS units
 
 **3. CSS fundamentals › 3.1 Basic CSS syntax**
 
@@ -233,7 +230,6 @@
 
 **3. CSS fundamentals › 3.10 Debugging CSS**
 
-- `out:css-fundamentals/3.10.1` Use the HTML validator to see if you have any invalid markup on your page — this could be causing your CSS to not apply as desired. ← no lesson on HTML validator for debugging CSS
 - `out:css-fundamentals/3.10.2` Use the CSS validator to check for badly-formed CSS code. A missing semi-colon can cause a whole section of CSS declarations to not apply. ← CSS validator never taught
 - `out:css-fundamentals/3.10.3` Use browser developer tools to inspect the CSS that is applied to HTML elements on a page. ← partly taught in «صلّح الكود البايظ»: needs a real section
 - `out:css-fundamentals/3.10.4` Modify the applied CSS to figure out what changes are needed to get what you want. This includes enabling and disabling declarations, modifying values, and adding new declarations. ← enabling/disabling/editing declarations in DevTools not taught step by step

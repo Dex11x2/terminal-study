@@ -156,20 +156,25 @@ function projStartHTML(p){
   const files = [...new Set([...String(p.sol || '').matchAll(/^~~~\w+[ \d]*?([\w.-]+\.(?:html|css|js))\s*$/gm)].map(m => m[1]))];
   if (!files.includes('index.html')) files.unshift('index.html');
   const d = p.dir, more = files.length > 1;
-  return '<details class="psol pstart"><summary>ابدأ إزاي: الفولدر، و VS Code، والمتصفح (٦ خطوات)</summary><div class="psol-b">'+mdHTML(
-    '**١. اعمل فولدر المشروع و'+(more ? 'ملفاته' : 'ملفه')+' من الترمنال.** افتح الترمنال في المكان اللي بتحط فيه شغلك، واكتب:\n\n'+
-    '~~~powershell\nmkdir '+d+'\ncd '+d+'\nni '+files.join(', ')+'\n~~~\n\n~~~bash\nmkdir '+d+' && cd '+d+'\ntouch '+files.join(' ')+'\n~~~\n\n'+
-    '[[mkdir]] بيعمل الفولدر، و [[cd]] بيدخّلك جواه، و [[ni]] (في PowerShell) أو [[touch]] (في bash والماك) بيعمل '+(more ? 'الملفات فاضية' : 'الملف فاضي')+'. اسم الفولدر والملفات بحروف إنجليزي صغيرة ومن غير مسافات، عشان الاسم ده هيبقى جزء من رابط الصفحة.\n\n'+
+  // cont: the project goes on inside a folder an earlier project (or the unit's lessons) already made
+  const first = p.cont
+    ? '**١. ادخل فولدر المشروع اللي عملته قبل كده.** المشروع ده بيكمّل على نفس الفولدر، فمتعملش فولدر جديد. افتح الترمنال في المكان اللي فيه [['+d+']] واكتب:\n\n'+
+      '~~~powershell\ncd '+d+'\nls\n~~~\n\n'+
+      '[[ls]] بيوريك الملفات اللي عندك من المرة اللي فاتت، وهي شغالة في PowerShell و bash. الملفات الجديدة اللي المطلوب بيسمّيها اعملها بـ [[ni اسم-الملف.html]] (في PowerShell) أو [[touch اسم-الملف.html]] (في bash والماك)، والملفات الموجودة سيبها زي ما هي.\n\n'
+    : '**١. اعمل فولدر المشروع و'+(more ? 'ملفاته' : 'ملفه')+' من الترمنال.** افتح الترمنال في المكان اللي بتحط فيه شغلك، واكتب:\n\n'+
+      '~~~powershell\nmkdir '+d+'\ncd '+d+'\nni '+files.join(', ')+'\n~~~\n\n~~~bash\nmkdir '+d+' && cd '+d+'\ntouch '+files.join(' ')+'\n~~~\n\n'+
+      '[[mkdir]] بيعمل الفولدر، و [[cd]] بيدخّلك جواه، و [[ni]] (في PowerShell) أو [[touch]] (في bash والماك) بيعمل '+(more ? 'الملفات فاضية' : 'الملف فاضي')+'. اسم الفولدر والملفات بحروف إنجليزي صغيرة ومن غير مسافات، عشان الاسم ده هيبقى جزء من رابط الصفحة.\n\n';
+  return '<details class="psol pstart"><summary>ابدأ إزاي: الفولدر، و VS Code، والمتصفح (٦ خطوات)</summary><div class="psol-b">'+mdHTML(first+
     '**٢. افتح الفولدر في VS Code.** وانت لسه جوه الفولدر:\n\n~~~powershell\ncode .\n~~~\n\n'+
     'النقطة معناها «الفولدر اللي أنا فيه». لو طلعلك إن [[code]] مش متعرّف: افتح VS Code بإيدك، ومن القايمة File اختار Open Folder واختار [['+d+']].\n\n'+
-    '**٣. اكتب الصفحة.** افتح [[index.html]] من العمود اللي على الشمال، واكتب علامة [[!]] ودوس Tab: VS Code هيكتبلك هيكل الصفحة. غيّر [[lang="en"]] لـ [[lang="ar" dir="rtl"]]، واكتب المطلوب جوه [[<body>]]، واحفظ بـ [[Ctrl+S]] (على الماك [[Cmd+S]]).\n\n'+
+    '**٣. اكتب الصفحة.** افتح [[index.html]] من العمود اللي على الشمال (أو الملف الجديد)، وفي الملف الفاضي اكتب علامة [[!]] ودوس Tab: VS Code هيكتبلك هيكل الصفحة. غيّر [[lang="en"]] لـ [[lang="ar" dir="rtl"]]، واكتب المطلوب جوه [[<body>]]، واحفظ بـ [[Ctrl+S]] (على الماك [[Cmd+S]]).\n\n'+
     '**٤. شوفها في Chrome.** من الترمنال اللي جوه VS Code (من القايمة Terminal اختار New Terminal):\n\n'+
     '~~~powershell\nstart index.html\n~~~\n\n~~~bash\nopen index.html       # الماك\nxdg-open index.html   # لينكس\n~~~\n\n'+
     'الصفحة هتفتح في المتصفح الأساسي عندك. لو مش Chrome: اسحب [[index.html]] من VS Code وارميه على نافذة Chrome. **وبعد كل تعديل:** احفظ في VS Code، وارجع للمتصفح ودوس [[Ctrl+R]] عشان يقرا الملف من جديد.\n\n'+
     '**٥. افحصها زي المحترف.** في Chrome دوس [[F12]]: تاب Elements بيوريك الشجرة اللي المتصفح فهمها من كودك، و [[Ctrl+Shift+M]] بيوريك الصفحة على عرض موبايل (اختار 360). قارن اللي شايفه ببند «تعرف إنك خلصت» اللي تحت.\n\n'+
     '**٦. قارن بالحل.** بعد ما تخلّص نسختك، افتح «الحل والشرح»: هتلاقي الكود كامل والصفحة مرسومة، وزرار «عدّل وجرّب» بيخليك تغيّر في الحل وتشوف الفرق.\n\n'+
     '> محتاج تراجع؟ [[code .]] و Emmet في كورس VS Code، و Elements و Device Toolbar في كورس «المتصفح و DevTools».'
-  )+'</div></details>';
+  )+(shell === 'css' ? '<p class="pre"><b>الشرح الكامل للخطوات دي:</b> وحدة «HTML: من الملف للمتصفح»، وأولها <a href="#css/'+encodeURIComponent('mkdir و ni و touch')+'">درس «mkdir و ni و touch»</a>.</p>' : '')+'</div></details>';
 }
 function liveHTML(code, title, only){
   // "~~~live 90 120 title": 90px tall at full width, 120px on a phone (and when the «موبايل» width is chosen); one number serves both
