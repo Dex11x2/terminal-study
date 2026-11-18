@@ -87,6 +87,13 @@
 - [ ] `dir` لباقي مشاريع الكورس القديمة (١٣٠) مع حلولها في البند ١١.
 - [ ] درس «أول مشروع HTML من الصفر للمتصفح» في أول وحدة: فولدر، و VS Code، و Emmet، وفتح الملف في Chrome، و Live Server (مفيش درس عنه في الموقع)، و reload، و DevTools. بيتكتب مع وحدة اللينكات والعناوين.
 
+**الدفعة ٢ اتكتبت (١٨ نوفمبر): ٤٧٨ ← ٥١٠ من ١١٨٠ (٤٣٪). البند ١ من الترتيب خلص.** «HTML: من الملف للمتصفح» (`js/tabs/css/24.js`، تاني وحدة في الكورس: ٥ دروس على مشروع واحد مستمر، ٢٥ تمرين، ٦ مشاريع) و «HTML: اللينكات والعناوين» (`js/tabs/css/25.js`: ٦ دروس، ٣١ تمرين، ٦ مشاريع، ٥٤ عرض حي). ومعاهم: `cont: true` للمشروع اللي بيكمّل في فولدر موجود، وخطوات «ابدأ إزاي» بتعمل الفولدرات الفرعية (`blog/index.html`)، و `tools/syllabus-at.js` لتسجيل قرارات `at` و `note` و `skip`.
+- [ ] صفحتي `hgroup` (فيها `<p>`) و `<search>` يتفحصوا على validator.w3.org/nu الحالي: validator.nu (نسخة أقدم) رفضهم غلط، و W3C رد على curl بـ bot challenge، فالدرسين مش ناقلين نتيجة فحص ليهم.
+- [ ] `rel="privacy-policy"` و `rel="terms-of-service"`: جدول Link types في WHATWG بيقول مش مسموحين على `a` و `area` و MDN بيسمح. الدرس «target و rel» ماشي مع MDN: يتراجع من نص المواصفة.
+- [ ] درس «a و button»: تمرين بيقترح `npx serve .` ومفيش ما يثبت إنه اتشغّل. و `npx serve` بيحوّل `/thanks.html?name=x` لـ `/thanks` ويشيل الـ query (اتقاس في وحدة 24).
+- [ ] مهارات ٢.٥.١ (ليه اللينكات أساس الويب) و ٢.٥.٥ (`:visited` و `:active`، وحدة CSS) و ٢.٢.٢ و ٢.٢.٤ و ٢.٩.٣ لسه من غير `at`: تتراجع وتتربط أو تتكتب.
+- [ ] Docker Desktop اتشغّل لتجربة nginx واتساب شغال؛ و `nginx:alpine` كانت موجودة أصلًا.
+
 **ترتيب الكتابة (كل دفعة وحدة أو اتنين، بكل حاجة: شرح وتمارين بحلول حية وسلّمة مشاريع بحلول، وبعدها `node tools/syllabus.js css --write`):**
 
 1. **HTML: الكلام والقوايم واللينكات** (أكبر فجوة): ul و ol و dl، و strong و em و b و i و u و s و mark و small، و blockquote و q و cite، و abbr و dfn و address و time و data، و code و pre و kbd و samp و var، و sub و sup و del و ins، و ruby و bdo و wbr و br و hr، و entities، والمسارات (مطلق ونسبي) و download وقيم rel كلها، و figure و figcaption، و h1–h6 و hgroup و search و menu.

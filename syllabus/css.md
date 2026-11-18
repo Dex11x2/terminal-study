@@ -1,36 +1,34 @@
-# منهج HTML و CSS (css): 482 من 1180 بند متغطي (40٪)
+# منهج HTML و CSS (css): 510 من 1180 بند متغطي (43٪)
 
-اتبنى 2026-11-18 من: [WHATWG HTML Living Standard (Index)](https://html.spec.whatwg.org/multipage/indices.html)، [MDN HTML reference](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference)، [mdn/data (CSS)](https://github.com/mdn/data/tree/main/css)، [web-features (Baseline)](https://github.com/web-platform-dx/web-features)، [MDN Curriculum](https://developer.mozilla.org/en-US/curriculum/). الكورس فيه 130 درس. الملف ده بيتولّد بـ `node tools/syllabus.js css --write`، متعدّلوش بإيدك.
+اتبنى 2026-11-18 من: [WHATWG HTML Living Standard (Index)](https://html.spec.whatwg.org/multipage/indices.html)، [MDN HTML reference](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference)، [mdn/data (CSS)](https://github.com/mdn/data/tree/main/css)، [web-features (Baseline)](https://github.com/web-platform-dx/web-features)، [MDN Curriculum](https://developer.mozilla.org/en-US/curriculum/). الكورس فيه 136 درس. الملف ده بيتولّد بـ `node tools/syllabus.js css --write`، متعدّلوش بإيدك.
 
 | النوع | في المنهج | متغطي | مذكور من غير شرح | ناقص خالص | مستبعد بسبب |
 |---|---|---|---|---|---|
-| عناصر HTML | 113 | 88 | 14 | 11 | 20 |
-| attributes | 145 | 52 | 21 | 72 | 1 |
-| أنواع input | 22 | 10 | 9 | 3 | 0 |
-| قيم rel | 27 | 7 | 2 | 18 | 3 |
+| عناصر HTML | 113 | 94 | 12 | 7 | 20 |
+| attributes | 145 | 55 | 21 | 69 | 1 |
+| أنواع input | 22 | 12 | 7 | 3 | 0 |
+| قيم rel | 27 | 20 | 1 | 6 | 3 |
 | خصائص CSS | 422 | 148 | 73 | 201 | 251 |
-| selectors | 88 | 29 | 20 | 39 | 56 |
+| selectors | 88 | 29 | 23 | 36 | 56 |
 | at-rules | 16 | 9 | 2 | 5 | 3 |
 | دوال CSS | 93 | 13 | 33 | 47 | 14 |
 | وحدات | 62 | 13 | 10 | 39 | 0 |
 | أنواع القيم | 37 | 13 | 2 | 22 | 2 |
-| مهارات (MDN Curriculum) | 155 | 100 | 0 | 55 | 0 |
+| مهارات (MDN Curriculum) | 155 | 104 | 0 | 51 | 0 |
 
-## عناصر HTML: ناقص 25
+## عناصر HTML: ناقص 19
 
 - **image-maps** ناقص: `area` `map`
-- **semantics** ناقص: `base`
 - **iframe-embed-object** ناقص: `embed` `object`
-- **sections** ناقص: `h5` `hgroup`. مذكور من غير شرح: `aside` (14) `h4` (2) `h6` (1)
 - **form-elements** ناقص: `progress` `selectedcontent`. مذكور من غير شرح: `datalist` (2) `meter` (1) `output` (4)
-- **grouping-content** ناقص: `search`
 - **scripting** ناقص: `slot`. مذكور من غير شرح: `noscript` (1) `template` (2)
+- **sections** مذكور من غير شرح: `aside` (14)
 - **media** مذكور من غير شرح: `audio` (1) `track` (1)
 - **canvas** مذكور من غير شرح: `canvas` (2)
 - **tables** مذكور من غير شرح: `col` (1) `colgroup` (1)
 - **embedded-content** مذكور من غير شرح: `source` (5)
 
-## attributes: ناقص 93
+## attributes: ناقص 90
 
 - **th** ناقص: `abbr`. مذكور من غير شرح: `scope` (8)
 - **input** ناقص: `accept` `alpha` `checked` `colorspace` `dirname` `multiple` `readonly` `switch`. مذكور من غير شرح: `max` (3) `maxlength` (1) `min` (3) `pattern` (6)
@@ -46,7 +44,6 @@
 - **object** ناقص: `data`
 - **img** ناقص: `decoding` `ismap` `usemap`
 - **track** ناقص: `default`. مذكور من غير شرح: `kind` (1) `srclang` (1)
-- **a** ناقص: `download` `ping` `referrerpolicy`
 - **meta** ناقص: `http-equiv`
 - **audio** ناقص: `loop` `muted`. مذكور من غير شرح: `controls` (1)
 - **video** ناقص: `playsinline`. مذكور من غير شرح: `poster` (1)
@@ -56,13 +53,13 @@
 - **option** مذكور من غير شرح: `selected` (1)
 - **col** مذكور من غير شرح: `span` (1)
 
-## أنواع input: ناقص 12
+## أنواع input: ناقص 10
 
-- **input** ناقص: `file` `month` `week`. مذكور من غير شرح: `color` (1) `datetime-local` (1) `hidden` (1) `image` (6) `range` (2) `reset` (2) `search` (6) `tel` (5) `time` (1)
+- **input** ناقص: `file` `month` `week`. مذكور من غير شرح: `color` (1) `datetime-local` (1) `hidden` (1) `image` (6) `range` (2) `reset` (2) `time` (1)
 
-## قيم rel: ناقص 20
+## قيم rel: ناقص 7
 
-- **rel** ناقص: `author` `bookmark` `dns-prefetch` `expect` `external` `help` `license` `manifest` `modulepreload` `next` `nofollow` `pingback` `prefetch` `prev` `privacy-policy` `search` `tag` `terms-of-service`. مذكور من غير شرح: `icon` (5) `opener` (1)
+- **rel** ناقص: `dns-prefetch` `expect` `manifest` `modulepreload` `pingback` `prefetch`. مذكور من غير شرح: `icon` (5)
 
 ## خصائص CSS: ناقص 274
 
@@ -114,7 +111,7 @@
 ## selectors: ناقص 59
 
 - **basic & combinators** ناقص: `Subsequent-sibling combinator` `Column combinator` `Namespace separator`
-- **pseudo-classes** ناقص: `:active` `:active-view-transition` `:active-view-transition-type()` `:any-link` `:default` `:defined` `:enabled` `:in-range` `:indeterminate` `:last-of-type` `:link` `:modal` `:nth-last-of-type()` `:nth-of-type()` `:only-of-type` `:open` `:optional` `:out-of-range` `:popover-open` `:read-only` `:read-write` `:scope` `:state()` `:target` `:visited`. مذكور من غير شرح: `:disabled` (5) `:empty` (2) `:first` (1) `:first-child` (3) `:first-of-type` (1) `:focus-within` (8) `:host` (2) `:host()` (2) `:invalid` (5) `:lang()` (8) `:last-child` (7) `:nth-last-child()` (1) `:only-child` (1) `:placeholder-shown` (2) `:required` (1) `:user-valid` (1) `:valid` (1)
+- **pseudo-classes** ناقص: `:active-view-transition` `:active-view-transition-type()` `:any-link` `:default` `:defined` `:enabled` `:in-range` `:indeterminate` `:last-of-type` `:link` `:modal` `:nth-last-of-type()` `:nth-of-type()` `:only-of-type` `:open` `:optional` `:out-of-range` `:popover-open` `:read-only` `:read-write` `:scope` `:state()`. مذكور من غير شرح: `:active` (1) `:disabled` (5) `:empty` (2) `:first` (1) `:first-child` (3) `:first-of-type` (1) `:focus-within` (8) `:host` (2) `:host()` (2) `:invalid` (5) `:lang()` (8) `:last-child` (7) `:nth-last-child()` (1) `:only-child` (1) `:placeholder-shown` (2) `:required` (1) `:target` (1) `:user-valid` (1) `:valid` (1) `:visited` (1)
 - **pseudo-elements** ناقص: `::cue` `::cue()` `::file-selector-button` `::first-letter` `::first-line` `::highlight()` `::part()` `::slotted()` `::target-text` `::view-transition` `::view-transition-image-pair()`. مذكور من غير شرح: `::backdrop` (4) `::details-content` (2) `::placeholder` (2)
 
 ## at-rules: ناقص 7
@@ -128,7 +125,7 @@
 
 ## دوال CSS: ناقص 80
 
-- **CSS Values and Units** ناقص: `acos()` `asin()` `atan()` `exp()` `hypot()` `mod()` `param()` `pow()` `rem()` `sign()` `sqrt()` `tan()`. مذكور من غير شرح: `abs()` (7) `atan2()` (1) `cos()` (1) `log()` (60) `round()` (24) `sin()` (1)
+- **CSS Values and Units** ناقص: `acos()` `asin()` `atan()` `exp()` `hypot()` `mod()` `param()` `pow()` `rem()` `sign()` `sqrt()` `tan()`. مذكور من غير شرح: `abs()` (7) `atan2()` (1) `cos()` (1) `log()` (62) `round()` (24) `sin()` (1)
 - **CSS Color** ناقص: `alpha()` `color()` `hwb()` `lch()`. مذكور من غير شرح: `hsl()` (2) `lab()` (1) `oklab()` (1) `oklch()` (18)
 - **Filter Effects** ناقص: `brightness()` `drop-shadow()` `grayscale()` `hue-rotate()` `invert()` `opacity()` `sepia()`. مذكور من غير شرح: `blur()` (9) `contrast()` (1) `saturate()` (1)
 - **CSS Shapes** ناقص: `circle()` `path()` `xywh()`. مذكور من غير شرح: `ellipse()` (1) `polygon()` (2) `rect()` (1)
@@ -159,7 +156,7 @@
 - **CSS Transforms** ناقص: `<transform-function>`
 - **CSS Color** مذكور من غير شرح: `<color>` (3)
 
-## مهارات (MDN Curriculum): ناقص 55
+## مهارات (MDN Curriculum): ناقص 51
 
 **1. Transform & animate CSS › 0 الموديول كله**
 
@@ -169,16 +166,12 @@
 **2. Semantic HTML › 2.2 Good document structure**
 
 - `out:semantic-html/2.2.2` Using semantic HTML rather than presentational HTML: (3 نقطة فرعية) ← only div-vs-structural-elements covered; deprecated big/font and repurposed b/i absent
-- `out:semantic-html/2.2.4` SEO benefits: for example, keywords are boosted in headings. ← SEO benefit of headings only passing mentions in landing lessons
+- `out:semantic-html/2.2.4` SEO benefits: for example, keywords are boosted in headings. ← headings as an outline are taught in «h1 لحد h6» (SEO part from docs, §٦); confirm the SEO claim wording before mapping
 
 **2. Semantic HTML › 2.5 Links**
 
 - `out:semantic-html/2.5.1` Understand why links are _the_ fundamental feature of the web. There is no web without links. ← no explanation of why links are fundamental
-- `out:semantic-html/2.5.3` Absolute and relative paths, and when to use them. ← absolute vs relative paths never taught
-- `out:semantic-html/2.5.4` Path syntax in detail — slashes, single dot, and double dot. ← path syntax (/, ./, ../) never taught
 - `out:semantic-html/2.5.5` Link states and why they are important — :hover, :focus, :visited, and :active. ← hover/focus-visible taught, but :visited and :active absent
-- `out:semantic-html/2.5.6` Inline and block-level links. ← inline vs block-level links not taught
-- `out:semantic-html/2.5.7` Understanding the benefits of writing good link text, such as better accessibility for screenreader users, and potential positive SEO effects. ← good link text not taught
 
 **2. Semantic HTML › 2.6 Media**
 

@@ -153,8 +153,10 @@ const liveDoc = code => /<html[\s>]|<!doctype/i.test(code) ? code : '<!doctype h
    open it in VS Code, write, see it in Chrome, inspect it, then compare with the solution. The file names come from the solution's fence titles. */
 function projStartHTML(p){
   if (!p.dir) return '';
-  const files = [...new Set([...String(p.sol || '').matchAll(/^~~~\w+[ \d]*?([\w.-]+\.(?:html|css|js))\s*$/gm)].map(m => m[1]))];
+  const files = [...new Set([...String(p.sol || '').matchAll(/^~~~\w+[ \d]*?([\w.-]+(?:\/[\w.-]+)*\.(?:html|css|js))\s*$/gm)].map(m => m[1]))];
   if (!files.includes('index.html')) files.unshift('index.html');
+  // files inside subfolders (blog/index.html): the subfolders are made first
+  const subs = [...new Set(files.filter(f => f.includes('/')).map(f => f.slice(0, f.lastIndexOf('/'))))];
   const d = p.dir, more = files.length > 1;
   // cont: the project goes on inside a folder an earlier project (or the unit's lessons) already made
   const first = p.cont
@@ -162,8 +164,8 @@ function projStartHTML(p){
       '~~~powershell\ncd '+d+'\nls\n~~~\n\n'+
       '[[ls]] بيوريك الملفات اللي عندك من المرة اللي فاتت، وهي شغالة في PowerShell و bash. الملفات الجديدة اللي المطلوب بيسمّيها اعملها بـ [[ni اسم-الملف.html]] (في PowerShell) أو [[touch اسم-الملف.html]] (في bash والماك)، والملفات الموجودة سيبها زي ما هي.\n\n'
     : '**١. اعمل فولدر المشروع و'+(more ? 'ملفاته' : 'ملفه')+' من الترمنال.** افتح الترمنال في المكان اللي بتحط فيه شغلك، واكتب:\n\n'+
-      '~~~powershell\nmkdir '+d+'\ncd '+d+'\nni '+files.join(', ')+'\n~~~\n\n~~~bash\nmkdir '+d+' && cd '+d+'\ntouch '+files.join(' ')+'\n~~~\n\n'+
-      '[[mkdir]] بيعمل الفولدر، و [[cd]] بيدخّلك جواه، و [[ni]] (في PowerShell) أو [[touch]] (في bash والماك) بيعمل '+(more ? 'الملفات فاضية' : 'الملف فاضي')+'. اسم الفولدر والملفات بحروف إنجليزي صغيرة ومن غير مسافات، عشان الاسم ده هيبقى جزء من رابط الصفحة.\n\n';
+      '~~~powershell\nmkdir '+d+'\ncd '+d+'\n'+(subs.length ? 'mkdir '+subs.join(', ')+'\n' : '')+'ni '+files.join(', ')+'\n~~~\n\n~~~bash\nmkdir '+d+' && cd '+d+'\n'+(subs.length ? 'mkdir -p '+subs.join(' ')+'\n' : '')+'touch '+files.join(' ')+'\n~~~\n\n'+
+      '[[mkdir]] بيعمل الفولدر، و [[cd]] بيدخّلك جواه، و [[ni]] (في PowerShell) أو [[touch]] (في bash والماك) بيعمل '+(more ? 'الملفات فاضية' : 'الملف فاضي')+'.'+(subs.length ? ' و [[mkdir]] التانية بتعمل الفولدرات الفرعية اللي جوه المشروع قبل ما الملفات اللي جواها تتعمل.' : '')+' اسم الفولدر والملفات بحروف إنجليزي صغيرة ومن غير مسافات، عشان الاسم ده هيبقى جزء من رابط الصفحة.\n\n';
   return '<details class="psol pstart"><summary>ابدأ إزاي: الفولدر، و VS Code، والمتصفح (٦ خطوات)</summary><div class="psol-b">'+mdHTML(first+
     '**٢. افتح الفولدر في VS Code.** وانت لسه جوه الفولدر:\n\n~~~powershell\ncode .\n~~~\n\n'+
     'النقطة معناها «الفولدر اللي أنا فيه». لو طلعلك إن [[code]] مش متعرّف: افتح VS Code بإيدك، ومن القايمة File اختار Open Folder واختار [['+d+']].\n\n'+
