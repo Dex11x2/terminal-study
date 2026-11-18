@@ -4299,6 +4299,11 @@
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
+ "css|blockquote و q و cite": {
+  "hash": "5de6c4b632fd",
+  "date": "2026-11-18",
+  "on": "Chrome 157 headless on Windows 11; Nu Html Checker; docs: screen reader speech (W3C WAI, MDN)"
+ },
  "css|box model": {
   "hash": "bac9082ad286",
   "date": "2026-11-04",
@@ -4364,6 +4369,11 @@
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
+ "css|dl و dt و dd": {
+  "hash": "cf51522e43ac",
+  "date": "2026-11-18",
+  "on": "Chrome 157 headless on Windows 11; Nu Html Checker; docs: screen reader speech (W3C WAI, MDN)"
+ },
  "css|dvh": {
   "hash": "2ea1d5fe4584",
   "date": "2026-11-04",
@@ -4373,6 +4383,11 @@
   "hash": "641478a9d90c",
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
+ },
+ "css|figure و figcaption": {
+  "hash": "0905a72738b7",
+  "date": "2026-11-18",
+  "on": "Chrome 157 headless on Windows 11; Nu Html Checker; docs: screen reader speech (W3C WAI, MDN)"
  },
  "css|flex: 1": {
   "hash": "c5f9d48ab051",
@@ -4619,6 +4634,11 @@
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
  },
+ "css|ul و ol": {
+  "hash": "1526de52d052",
+  "date": "2026-11-18",
+  "on": "Chrome 157 headless on Windows 11; Nu Html Checker; docs: screen reader speech (W3C WAI, MDN)"
+ },
  "css|variants": {
   "hash": "d71868f8e8aa",
   "date": "2026-11-04",
@@ -4723,6 +4743,11 @@
   "hash": "f43d2e89386b",
   "date": "2026-11-04",
   "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
+ },
+ "css|قوايم جوه قوايم": {
+  "hash": "dc3e5e631616",
+  "date": "2026-11-18",
+  "on": "Chrome 157 headless on Windows 11; Nu Html Checker; docs: screen reader speech (W3C WAI, MDN)"
  },
  "css|كلمة بتتبدّل في عنوان": {
   "hash": "43bf29e9b7e3",

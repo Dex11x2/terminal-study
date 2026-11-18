@@ -1,37 +1,36 @@
-# منهج HTML و CSS (css): 457 من 1180 بند متغطي (38٪)
+# منهج HTML و CSS (css): 478 من 1180 بند متغطي (40٪)
 
-اتبنى 2026-11-18 من: [WHATWG HTML Living Standard (Index)](https://html.spec.whatwg.org/multipage/indices.html)، [MDN HTML reference](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference)، [mdn/data (CSS)](https://github.com/mdn/data/tree/main/css)، [web-features (Baseline)](https://github.com/web-platform-dx/web-features)، [MDN Curriculum](https://developer.mozilla.org/en-US/curriculum/). الكورس فيه 120 درس. الملف ده بيتولّد بـ `node tools/syllabus.js css --write`، متعدّلوش بإيدك.
+اتبنى 2026-11-18 من: [WHATWG HTML Living Standard (Index)](https://html.spec.whatwg.org/multipage/indices.html)، [MDN HTML reference](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference)، [mdn/data (CSS)](https://github.com/mdn/data/tree/main/css)، [web-features (Baseline)](https://github.com/web-platform-dx/web-features)، [MDN Curriculum](https://developer.mozilla.org/en-US/curriculum/). الكورس فيه 125 درس. الملف ده بيتولّد بـ `node tools/syllabus.js css --write`، متعدّلوش بإيدك.
 
 | النوع | في المنهج | متغطي | مذكور من غير شرح | ناقص خالص | مستبعد بسبب |
 |---|---|---|---|---|---|
-| عناصر HTML | 113 | 75 | 26 | 12 | 20 |
-| attributes | 145 | 50 | 21 | 74 | 1 |
+| عناصر HTML | 113 | 88 | 14 | 11 | 20 |
+| attributes | 145 | 52 | 21 | 72 | 1 |
 | أنواع input | 22 | 10 | 9 | 3 | 0 |
 | قيم rel | 27 | 7 | 2 | 18 | 3 |
-| خصائص CSS | 422 | 147 | 71 | 204 | 251 |
+| خصائص CSS | 422 | 148 | 73 | 201 | 251 |
 | selectors | 88 | 29 | 20 | 39 | 56 |
 | at-rules | 16 | 9 | 2 | 5 | 3 |
 | دوال CSS | 93 | 13 | 33 | 47 | 14 |
 | وحدات | 62 | 13 | 10 | 39 | 0 |
 | أنواع القيم | 37 | 13 | 2 | 22 | 2 |
-| مهارات (MDN Curriculum) | 155 | 91 | 0 | 64 | 0 |
+| مهارات (MDN Curriculum) | 155 | 96 | 0 | 59 | 0 |
 
-## عناصر HTML: ناقص 38
+## عناصر HTML: ناقص 25
 
 - **image-maps** ناقص: `area` `map`
 - **semantics** ناقص: `base`
 - **iframe-embed-object** ناقص: `embed` `object`
-- **sections** ناقص: `h5` `hgroup`. مذكور من غير شرح: `aside` (13) `h3` (17) `h4` (2) `h6` (1)
-- **grouping-content** ناقص: `menu` `search`. مذكور من غير شرح: `blockquote` (2) `dd` (4) `dl` (3) `dt` (3) `figcaption` (4) `figure` (5) `li` (34) `ol` (6) `ul` (34)
+- **sections** ناقص: `h5` `hgroup`. مذكور من غير شرح: `aside` (14) `h4` (2) `h6` (1)
 - **form-elements** ناقص: `progress` `selectedcontent`. مذكور من غير شرح: `datalist` (2) `meter` (1) `output` (4)
+- **grouping-content** ناقص: `search`
 - **scripting** ناقص: `slot`. مذكور من غير شرح: `noscript` (1) `template` (2)
 - **media** مذكور من غير شرح: `audio` (1) `track` (1)
 - **canvas** مذكور من غير شرح: `canvas` (2)
-- **text-level-semantics** مذكور من غير شرح: `cite` (1) `q` (1)
 - **tables** مذكور من غير شرح: `col` (1) `colgroup` (1)
 - **embedded-content** مذكور من غير شرح: `source` (5)
 
-## attributes: ناقص 95
+## attributes: ناقص 93
 
 - **th** ناقص: `abbr`. مذكور من غير شرح: `scope` (8)
 - **input** ناقص: `accept` `alpha` `checked` `colorspace` `dirname` `multiple` `readonly` `switch`. مذكور من غير شرح: `max` (3) `maxlength` (1) `min` (3) `pattern` (6)
@@ -51,7 +50,6 @@
 - **meta** ناقص: `http-equiv`
 - **audio** ناقص: `loop` `muted`. مذكور من غير شرح: `controls` (1)
 - **video** ناقص: `playsinline`. مذكور من غير شرح: `poster` (1)
-- **ol** ناقص: `reversed` `start`
 - **template** ناقص: `shadowrootclonable` `shadowrootcustomelementregistry` `shadowrootdelegatesfocus` `shadowrootmode` `shadowrootserializable` `shadowrootslotassignment`
 - **td** مذكور من غير شرح: `colspan` (3) `headers` (1) `rowspan` (1)
 - **meter** مذكور من غير شرح: `high` (1) `low` (1) `optimum` (1)
@@ -66,14 +64,14 @@
 
 - **rel** ناقص: `author` `bookmark` `dns-prefetch` `expect` `external` `help` `license` `manifest` `modulepreload` `next` `nofollow` `pingback` `prefetch` `prev` `privacy-policy` `search` `tag` `terms-of-service`. مذكور من غير شرح: `icon` (5) `opener` (1)
 
-## خصائص CSS: ناقص 275
+## خصائص CSS: ناقص 274
 
 - **CSS Custom Properties for Cascading Variables** ناقص: `--*`
 - **WebKit Extensions** ناقص: `-webkit-text-fill-color` `-webkit-text-stroke` `-webkit-text-stroke-color` `-webkit-text-stroke-width`
 - **CSS Inline** ناقص: `alignment-baseline` `baseline-shift` `dominant-baseline` `text-box` `text-box-edge` `text-box-trim`. مذكور من غير شرح: `vertical-align` (7)
 - **CSS Animations** ناقص: `animation-composition`
 - **CSS Transforms** ناقص: `backface-visibility` `perspective` `perspective-origin` `transform-box` `transform-style`. مذكور من غير شرح: `rotate` (9) `transform-origin` (5)
-- **CSS Backgrounds and Borders** ناقص: `background-attachment` `background-origin` `background-position-x` `background-position-y` `background-repeat` `border-bottom-color` `border-bottom-left-radius` `border-bottom-right-radius` `border-bottom-style` `border-bottom-width` `border-image` `border-image-outset` `border-image-repeat` `border-image-slice` `border-image-source` `border-image-width` `border-left-color` `border-left-style` `border-left-width` `border-right` `border-right-color` `border-right-style` `border-right-width` `border-top-width`. مذكور من غير شرح: `border-bottom` (6) `border-left` (1) `border-top` (4) `border-top-color` (4) `border-top-style` (1)
+- **CSS Backgrounds and Borders** ناقص: `background-attachment` `background-origin` `background-position-x` `background-position-y` `background-repeat` `border-bottom-color` `border-bottom-left-radius` `border-bottom-right-radius` `border-bottom-style` `border-image` `border-image-outset` `border-image-repeat` `border-image-slice` `border-image-source` `border-image-width` `border-left-color` `border-left-style` `border-left-width` `border-right` `border-right-color` `border-right-style` `border-right-width` `border-top-width`. مذكور من غير شرح: `border-bottom` (7) `border-bottom-width` (1) `border-left` (1) `border-top` (4) `border-top-color` (4) `border-top-style` (1)
 - **Compositing and Blending** ناقص: `background-blend-mode` `mix-blend-mode`
 - **CSS Logical Properties and Values** ناقص: `border-block` `border-block-color` `border-block-end-color` `border-block-end-style` `border-block-end-width` `border-block-start-color` `border-block-start-style` `border-block-start-width` `border-block-style` `border-block-width` `border-end-end-radius` `border-end-start-radius` `border-inline-color` `border-inline-end-color` `border-inline-start-color` `border-inline-start-style` `border-inline-start-width` `border-inline-style` `border-inline-width` `border-start-end-radius` `max-block-size`. مذكور من غير شرح: `block-size` (25) `border-block-start` (4) `border-inline` (2) `border-inline-end` (2) `border-inline-end-style` (1) `border-inline-end-width` (1) `border-inline-start` (2) `border-start-start-radius` (1) `inline-size` (24) `inset-block` (3) `inset-block-end` (7) `inset-block-start` (8) `inset-inline` (8) `inset-inline-start` (22) `margin-block` (9) `margin-block-end` (21) `margin-block-start` (16) `max-inline-size` (7)
 - **CSS Table** ناقص: `caption-side` `empty-cells` `table-layout`
@@ -83,7 +81,7 @@
 - **Filter Effects** ناقص: `color-interpolation-filters` `flood-color` `flood-opacity` `lighting-color`. مذكور من غير شرح: `filter` (2)
 - **CSS Multi-column Layout** ناقص: `column-count` `column-fill` `column-rule` `column-rule-color` `column-rule-style` `column-rule-width` `column-span`. مذكور من غير شرح: `columns` (1)
 - **CSS Box Sizing** ناقص: `column-width` `contain-intrinsic-block-size` `contain-intrinsic-height` `contain-intrinsic-inline-size` `contain-intrinsic-size` `contain-intrinsic-width`. مذكور من غير شرح: `max-width` (48)
-- **CSS Lists and Counters** ناقص: `counter-increment` `counter-reset` `counter-set` `list-style-image` `list-style-position` `list-style-type`
+- **CSS Lists and Counters** ناقص: `counter-increment` `counter-reset` `counter-set` `list-style-image` `list-style-position`
 - **CSS Flexible Box Layout** ناقص: `flex-flow` `flex-line-count`
 - **CSS Fonts** ناقص: `font-feature-settings` `font-kerning` `font-optical-sizing` `font-palette` `font-size-adjust` `font-synthesis` `font-synthesis-small-caps` `font-synthesis-style` `font-synthesis-weight` `font-variant` `font-variant-alternates` `font-variant-caps` `font-variant-east-asian` `font-variant-ligatures` `font-variant-position` `font-variation-settings`
 - **CSS Grid Layout** ناقص: `grid-column-end` `grid-row-end` `grid-template`
@@ -94,7 +92,6 @@
 - **CSS Scroll Anchoring** ناقص: `overflow-anchor`
 - **CSS Overflow** ناقص: `overflow-block` `overflow-inline`. مذكور من غير شرح: `scrollbar-gutter` (1)
 - **CSS Box Alignment** ناقص: `place-self`. مذكور من غير شرح: `align-content` (3) `align-self` (9) `justify-items` (1) `justify-self` (3) `place-content` (1) `place-items` (12)
-- **CSS Generated Content** ناقص: `quotes`
 - **CSS Ruby** ناقص: `ruby-align` `ruby-position`
 - **CSS Scroll Snap** ناقص: `scroll-margin-block` `scroll-margin-block-end` `scroll-margin-block-start` `scroll-margin-bottom` `scroll-margin-inline` `scroll-margin-inline-end` `scroll-margin-inline-start` `scroll-margin-left` `scroll-margin-right` `scroll-padding-block` `scroll-padding-block-end` `scroll-padding-block-start` `scroll-padding-bottom` `scroll-padding-inline-end` `scroll-padding-left` `scroll-padding-right` `scroll-snap-stop`. مذكور من غير شرح: `scroll-padding` (1)
 - **CSS Scrollbars Styling** ناقص: `scrollbar-color` `scrollbar-width`
@@ -110,6 +107,7 @@
 - **CSS Color** مذكور من غير شرح: `color-scheme` (5)
 - **CSS Containment** مذكور من غير شرح: `content-visibility` (1)
 - **CSS Display** مذكور من غير شرح: `order` (6)
+- **CSS Generated Content** مذكور من غير شرح: `quotes` (1)
 - **CSS Will Change** مذكور من غير شرح: `will-change` (3)
 - **CSS Viewport** مذكور من غير شرح: `zoom` (2)
 
@@ -161,7 +159,7 @@
 - **CSS Transforms** ناقص: `<transform-function>`
 - **CSS Color** مذكور من غير شرح: `<color>` (3)
 
-## مهارات (MDN Curriculum): ناقص 64
+## مهارات (MDN Curriculum): ناقص 59
 
 **1. Transform & animate CSS › 0 الموديول كله**
 
@@ -173,17 +171,6 @@
 - `out:semantic-html/2.2.2` Using semantic HTML rather than presentational HTML: (3 نقطة فرعية) ← only div-vs-structural-elements covered; deprecated big/font and repurposed b/i absent
 - `out:semantic-html/2.2.4` SEO benefits: for example, keywords are boosted in headings. ← SEO benefit of headings only passing mentions in landing lessons
 - `out:semantic-html/2.2.7` Validating your markup using the HTML validator or another similar tool (for example, view source in Firefox highlights validation errors with a dotted red underline). ← HTML validator never taught as a method (only quoted in drill results)
-
-**2. Semantic HTML › 2.3 Lists**
-
-- `out:semantic-html/2.3.1` The HTML structure for the three types of lists — unordered, ordered, and description. ← no lesson on lists ul/ol/dl
-- `out:semantic-html/2.3.2` Understand that description lists are less commonly used than the other two types, with use cases mainly in areas such as academia and documentation. ← no lesson on dl/dt/dd
-- `out:semantic-html/2.3.3` The correct usage for each list type. ← no lesson on lists ul/ol/dl
-- `out:semantic-html/2.3.4` The broader use cases of lists, such as navigation menus. ← lists as navigation menus only used in flexbox example, no lesson on list semantics
-
-**2. Semantic HTML › 2.4 Advanced text techniques**
-
-- `out:semantic-html/2.4.2` Understand HTML elements that represent other less common semantic requirements, for example: (7 نقطة فرعية) ← quotations, abbr, address, time, sup/sub, entities, u/s/ruby never taught
 
 **2. Semantic HTML › 2.5 Links**
 
