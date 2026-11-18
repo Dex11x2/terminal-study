@@ -1,6 +1,6 @@
-# Project: الترمنال والبرمجة بإيدك (Egyptian-Arabic study site)
+# Project: Road maps (Egyptian-Arabic study site, formerly «الترمنال والبرمجة بإيدك»)
 
-Read `PLAN.md` first: current state, ordered remaining work, agreed rules. Update and commit it after every batch.
+Read `ROADMAP.md` first (the governing structure: reference-built syllabus per course, paths, one frozen definition of done, one course per chat), then `PLAN.md`: current state, ordered remaining work, agreed rules. Update and commit it after every batch.
 
 ## Map
 
