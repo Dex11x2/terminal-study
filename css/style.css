@@ -743,6 +743,16 @@ body.reading .bar .meter,body.reading .bar .lvls,body.reading .bar .chips,body.r
 @media print{.homebtn,.lbar,#outline{display:none!important}}
 
 /* a drill's solution, closed until asked for */
+/* a live preview (~~~live / ~~~view): the real page in a sandboxed iframe, always on white like a new browser tab */
+.live{margin:8px 0;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface)}
+.live-bar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px;padding:4px 10px;font-size:13px;color:var(--muted);border-bottom:1px solid var(--line)}
+.live-w{display:flex;gap:4px}
+.live-w button{font:inherit;color:inherit;background:none;border:1px solid var(--line);border-radius:6px;padding:0 8px;cursor:pointer}
+.live-w button.on{color:var(--accent);border-color:var(--accent)}
+.live-f{overflow:auto;background:var(--bg)}
+.live iframe{display:block;width:100%;border:0;margin-inline:auto;background:#fff;color-scheme:light;resize:vertical}
+.pre{margin:0 0 10px;padding:6px 12px;border-inline-start:3px solid var(--accent);background:var(--surface);border-radius:6px;font-size:15px}
+.pre a{color:var(--accent)}
 .psol{margin-top:6px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
 .psol summary{cursor:pointer;padding:6px 10px;font-size:14px;font-weight:600;color:var(--accent)}
 .psol[open] summary{border-bottom:1px solid var(--line)}

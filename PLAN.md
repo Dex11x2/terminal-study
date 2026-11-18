@@ -71,6 +71,26 @@
 
 ## الشغل الجاي (بالترتيب)
 
+### كورس HTML و CSS: كتابة الناقص (من ROADMAP، الشات الجاي يبدأ من هنا)
+
+**اتعمل ١٨ نوفمبر:** `syllabus/css.json` اتبنى بـ `tools/syllabus-gen/css.js` من فهرس WHATWG (عناصر و attributes وجدول Link types)، و mdn/data (خصائص و selectors و at-rules ودوال)، وصفحة `<length>` في MDN (الوحدات)، و web-features (Baseline)، و MDN Curriculum (١٥٥ مهارة). و `tools/syllabus.js` بيقيس: البند متغطي لو ليه درس أو قسم أو صف جدول باسمه، أو `at` يدوي. المهارات والأنواع اتربطت بالدروس بـ agent واحد Sonnet، والربط الضعيف اتساب «ناقص» بسببه (`note`). **النتيجة: ٤٢٤ من ١١٨٠ (٣٥٪)، مع إن `coverage.js` القديم كان بيقول ٥٥/٥٥.** والموقع بقى فيه حقل `pre` («قبل ما تبدأ»، على الدرس والوحدة، و `check.js` بيتأكد إن الهدف موجود) و fence `live` و `view` (الصفحة مرسومة في iframe معزول وزراير ٣٦٠/٧٦٨/كامل)، واتجربوا في Chrome على سيرفر محلي.
+
+**ملحوظات على القياس:** «مذكور من غير شرح» معناه إن البند مستخدم في كود بس مفيش قسم باسمه؛ ساعات الشرح موجود تحت عنوان عربي، وساعتها يتكتب `at` في المنهج بعد ما تتأكد بعينك، مش درس جديد. والخصائص الطويلة (longhands) بتتحسب مع المختصرة لو المختصرة مشروحة والطويلة مذكورة. والمستبعد أوتوماتيك (مش قياسي، أو اتشال، أو مش Baseline) ممكن يرجع بقرار يدوي (`manual: true`). ومطابقة المهارات بالدروس عملها agent ومتراجعتش بند بند: راجع `at` بتاع أي مهارة وانت بتكتب وحدتها.
+
+**ترتيب الكتابة (كل دفعة وحدة أو اتنين، بكل حاجة: شرح وتمارين بحلول حية وسلّمة مشاريع بحلول، وبعدها `node tools/syllabus.js css --write`):**
+
+1. **HTML: الكلام والقوايم واللينكات** (أكبر فجوة): ul و ol و dl، و strong و em و b و i و u و s و mark و small، و blockquote و q و cite، و abbr و dfn و address و time و data، و code و pre و kbd و samp و var، و sub و sup و del و ins، و ruby و bdo و wbr و br و hr، و entities، والمسارات (مطلق ونسبي) و download وقيم rel كلها، و figure و figcaption، و h1–h6 و hgroup و search و menu.
+2. **HTML: الفورم الكامل والعناصر التفاعلية:** باقي أنواع input (file و color و range و month و week و hidden و image و reset) و attributes الناقصة (accept و multiple و readonly و form* و enctype و novalidate و dirname)، و datalist و output و progress و meter، و global attributes (contenteditable و inert و popover و draggable و spellcheck و enterkeyhint...)، و dialog و popover و command/commandfor.
+3. **HTML: الميديا والـ embed والـ head:** audio و track و source، و attributes الفيديو، و iframe (sandbox و allow و srcdoc)، و object و embed و map و area، و canvas و noscript و template و slot و declarative shadow DOM، و script (async و defer و module و integrity و nonce)، و base، و meta http-equiv، و resource hints، و microdata، و validators و view-source.
+4. **CSS: الخطوط والنص:** font-* كله و @font-face بعمق، و text-align و text-transform و text-decoration-* و text-shadow و text-indent و letter-spacing و word-spacing و white-space و hyphens، و list-style-* و counters و @counter-style، وتنسيق اللينكات وحالاتها، و ::first-letter و ::first-line.
+5. **CSS: الخلفيات والحدود والألوان والتأثيرات:** background-* كله و gradients كلها، و border-* و border-image، ودوال الألوان (hsl و hwb و lab و lch و oklab و oklch و color())، و filter ودوالها، و blend modes، و mask-* و clip-path و shapes.
+6. **CSS: الـ selectors كلها والقيم:** كل الـ combinators، و attribute selectors، وكل الـ pseudo-classes والـ pseudo-elements الناقصة، وأنواع القيم، وكل الوحدات (خط و viewport و container ومطلقة)، ودوال الرياضة، و inherit و initial و unset و revert، و @import و @charset و @namespace، و default styles و resets.
+7. **CSS: الـ layout الناقص:** normal flow و float و clear، و multi-column، و table-layout وخصائص الجداول، و min/max و intrinsic sizing، و overflow كله، وباقي grid و flex longhands، و contain-intrinsic-*، وتنسيق الفورم (appearance و caret-color و ::file-selector-button).
+8. **CSS: transforms والحركة:** transform ودوالها، و 3D و perspective، و easing، وباقي animation-* و transition-*، و motion path (offset-*).
+9. **Accessibility: الأساس:** ليه، وأنواع الـ assistive technology، و plain language، وحالات الفورم، وباقي مهارات موديول Accessibility في MDN Curriculum.
+10. **SVG في CSS** (fill و stroke-* و marker...) وباقي المتفرقات، وقرارات الاستبعاد اليدوي لأي بند نادر (بسبب مكتوب).
+11. **حلول الـ ١٣٠ مشروع** بـ live و view، وتحويل حلول التمارين الموجودة (١٣٣ fence من نوع html) لـ live لما الحل صفحة، و `pre` لكل وحدة ودرس. وبعدها القفل: `syllabus.js` ١٠٠٪ و `npm run check` و CI.
+
 **طريقة الشغل من ٣٠ أكتوبر (بطلبك: «منحرقش كل الكوته ونكمل بعدين واحدة واحدة ع مهلنا»):** دفعة واحدة صغيرة في المرة (تاب واحد أو جزء منه)، وبعد ما تترفع بنقف ونستنى إشارتك قبل الدفعة اللي بعدها. مفيش agents كتير شغالين مع بعض من غير ما تطلب.
 
 ### الخطوة الجاية (اتظبطت ٢٩ أكتوبر، بطلبك: «بعد ما تخلص قولي هنكمل اي»)
@@ -643,6 +663,10 @@
 - [x] مشروع ٧ (AI): الحد اليومي count-then-insert مش atomic نظريًا (١٠ طلبات متوازية معدّتوش في ٣ جولات). ممكن يتحول لـ advisory lock زي الـ order. (اتصلح: `pg_advisory_xact_lock` في transaction؛ ٢٠ طلب متوازي من ٢٥: القديم وصل ٤٥، و INSERT…SELECT الشرطي ٣٥–٣٩، والقفل ٣٠ بالظبط في ٥ جولات)
 
 ### ٤د. أوامر من الشات (لسه متضافتش)
+
+- [ ] **طريقة: ابني القايمة من المصدر مش من الذاكرة (١٨ نوفمبر، تاب tools أو web، بريبو مخترع).** (١) نزّل المرجع وشوف الكود والحجم في نفس السطر: `curl -sL -m 120 -o index.html <url> -w "%{http_code} %{size_download}\n"`. (٢) قايمة ملفات فولدر في ريبو من غير clone: `curl -sL https://api.github.com/repos/<owner>/<repo>/contents/<path>` (JSON فيه name و type، لحد ١٠٠٠ عنصر، وليه حد طلبات من غير توكن)، والريبو كله: `.../git/trees/main?recursive=1`. والملف الخام من raw.githubusercontent.com. (٣) طلّع الأسامي بـ `node -e` وقارنها بالموجود عندك. الدرس: قايمة مكتوبة من الذاكرة قالت ٥٥/٥٥ والمرجع قال ٣٥٪.
+- [ ] **فخ: `node -e '...'` جوه bash بياكل الـ backslash من الـ regex (١٨ نوفمبر، تاب bash أو node).** regex فيها `\s` جوه template literal وصلت من غير الـ backslash وطلع `SyntaxError: Invalid regular expression flags`. الحل: السكربت في ملف (heredoc مقفول بعلامات تنصيص حوالين EOF، أو ملف عادي) وبعدين `node file.js`. وفخ تاني: heredoc جواه علامة `'` مفردة طلّع `unexpected EOF while looking for matching` في الـ wrapper، فالملف اتكتب مباشرة.
+- [ ] **حالة: سيرفر static محلي بيرجّع 403 لكل حاجة على ويندوز (١٨ نوفمبر، تاب node).** العرَض في المتصفح: `ERR_HTTP_RESPONSE_CODE_FAILURE`. السبب: فحص الأمان `f.startsWith(root)` و root جاي بـ `/` و `path.join` بيرجّع `\`. الحل `path.resolve(root)` قبل المقارنة. وبعدها البورت فضل محجوز من النسخة القديمة: `netstat -ano | grep :8765` وبعدين `taskkill //PID <pid> //F` (الـ `//` عشان Git Bash بيحوّل `/PID` لمسار).
 
 بطلبك (٣١ أكتوبر): أي أمر Claude بيستخدمه في أي شات (تحديث ريبو، سحب تعديلات، تشخيص) لازم يتعلّم هنا. القاعدة في `C:\Users\7ossa\.claude\CLAUDE.md`. كل موقف يتعاد في معمل بأسامي مخترعة ويتجرّب على ويندوز و Ubuntu.
 

@@ -105,6 +105,7 @@ function mdHTML(t){
     if ((m = l.match(/^~~~(\w*)\s*(.*)$/))){
       const code = [];
       for (i++; i < src.length && !/^~~~\s*$/.test(src[i]); i++) code.push(src[i]);
+      if (m[1] === 'live' || m[1] === 'view'){ out.push(liveHTML(code.join('\n'), m[2], m[1] === 'view')); continue; }
       const [k, name] = FENCE[m[1]] || [shell, m[1] === 'text' || !m[1] ? '' : m[1]];
       let box = termHTML(code.join('\n'), k, true, m[2] || name || 'الناتج').replace('class="term"', 'class="term os tcode"');
       // diagrams and outputs: every piece between 2+ spaces keeps its column (an Arabic run would otherwise flip the order of the pieces),
@@ -137,6 +138,26 @@ function mdHTML(t){
     }
   }
   return out.join('');
+}
+/* ~~~live [height] [title]: an HTML page shown as code and, under it, as the real rendered page
+   (ROADMAP rule 3.4: an HTML/CSS solution shows what it looks like). ~~~view: the rendered page only, when the files were shown above one by one.
+   A fragment gets a minimal Arabic RTL document around it. The page runs in a sandboxed iframe: its own origin, no access to this site. */
+function liveHTML(code, title, only){
+  const m = title.match(/^(\d{2,4})\s*(.*)$/), h = m ? +m[1] : 240, name = (m ? m[2] : title) || 'النتيجة في المتصفح';
+  const doc = /<html[\s>]|<!doctype/i.test(code) ? code : '<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body>\n'+code+'\n</body></html>';
+  return (only ? '' : mdHTML('~~~html\n'+code+'\n~~~'))+
+    '<div class="live"><div class="live-bar"><span>'+esc(name)+'</span><span class="live-w">'+
+    [['360', 'موبايل'], ['768', 'تابلت'], ['', 'كامل']].map(([w, l]) => '<button type="button" data-lw="'+w+'"'+(w ? '' : ' class="on"')+'>'+l+'</button>').join('')+'</span></div>'+
+    '<div class="live-f"><iframe sandbox="allow-scripts allow-forms" loading="lazy" title="'+esc(name)+'" style="height:'+h+'px" srcdoc="'+esc(doc)+'"></iframe></div></div>';
+}
+/* «قبل ما تبدأ»: the lessons (or whole courses) to review first, each a direct link (ROADMAP rule 2) */
+function preHTML(list){
+  if (!list || !list.length) return '';
+  return '<p class="pre"><b>قبل ما تبدأ:</b> راجع '+list.map(p => {
+    const to = typeof p === 'string' ? p : p.to, i = to.indexOf('/'), tab = i < 0 ? to : to.slice(0, i), cmd = i < 0 ? '' : to.slice(i+1);
+    const course = SHELLS[tab] ? tabName(tab) : tab; // the name on the tab's card (the start tab's own label is «bash»)
+    return '<a href="#'+encodeURIComponent(tab)+(cmd ? '/'+encodeURIComponent(cmd) : '')+'">'+(cmd ? 'درس «'+esc(cmd)+'»'+(tab !== shell ? ' في كورس '+esc(course) : '') : 'كورس '+esc(course))+'</a>'+(p.why ? ' ('+fmt(p.why)+')' : '');
+  }).join('، ')+'.</p>';
 }
 function deepHTML(c){
   const d = DEEP[shell+'|'+c];
@@ -256,7 +277,7 @@ function articleHTML(it){
   const done = store.get(key) === '1';
   return '<article class="cmd'+(done?' is-done':'')+'" data-c="'+esc(c)+'">'+
     '<div class="cmd-h"><span class="name">'+esc(c)+'</span>'+(t?'<span class="title">'+esc(t)+'</span>':'')+(/\bdanger\b/.test(flag||'')?'<span class="tag-danger">خطر: اقرا الشرح قبل ما تنفّذ</span>':'')+osBadge(c)+'</div>'+
-    nameHTML(c)+(d?descHTML(d):'')+teachHTML(c)+deepHTML(c)+useHTML(c)+osNote(c)+
+    preHTML(typeof PRE !== 'undefined' && PRE[shell+'|'+c])+nameHTML(c)+(d?descHTML(d):'')+teachHTML(c)+deepHTML(c)+useHTML(c)+osNote(c)+
     (ex ? termBlock(ex, c, flag) : '')+breakHTML(c, ex)+
     '<button type="button" class="reveal">اكشف الإجابة</button>'+
     '<div class="try"><span class="lbl">'+(shell==='glossary'?'الشرح الكامل في':'جرّب')+'</span><p>'+fmt(tr)+labHint(tr)+'</p><label class="done"><input type="checkbox" data-k="'+esc(key)+'"'+(done?' checked':'')+'> جربتها</label></div>'+
@@ -344,7 +365,7 @@ function renderMap(q, rawQ){
     const id = shell+'-c'+cat.i;
     chips += '<button class="chip" type="button" data-t="'+id+'">'+esc(cat.t)+'</button>';
     html += '<section class="cat" id="'+id+'"><h3>'+esc(cat.t)+'<small>'+countLabel(cat.items.length)+(cat.time?' · '+esc(cat.time):'')+'</small></h3>'+
-      (cat.n?'<p class="cat-note">'+esc(cat.n)+'</p>':'')+unitHead(cat)+
+      (cat.n?'<p class="cat-note">'+esc(cat.n)+'</p>':'')+preHTML(cat.pre)+unitHead(cat)+
       mapTable(cat, items)+(q?'':unitFoot(cat, id))+'</section>';
   });
   if (!shown){
@@ -973,6 +994,12 @@ document.addEventListener('click', e => {
   if (ex){ examOpen(+ex.dataset.exam); return; }
   const run = e.target.closest('.chk-run');
   if (run){ chkRun(run.closest('.chk')); return; }
+  const lw = e.target.closest('[data-lw]');
+  if (lw){ // a live preview at phone, tablet or full width
+    const box = lw.closest('.live');
+    box.querySelector('iframe').style.width = lw.dataset.lw ? lw.dataset.lw+'px' : '';
+    box.querySelectorAll('[data-lw]').forEach(b => b.classList.toggle('on', b === lw)); return;
+  }
   const sr = e.target.closest('.sol-reveal');
   if (sr){
     const art = sr.closest('article'), box = art && art.querySelector('.chk');

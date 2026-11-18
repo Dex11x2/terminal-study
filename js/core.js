@@ -5,6 +5,8 @@ const SHELLS = {}, LAB = {}, LABTXT = {}, LEVEL_TAB = {}, DATA = {}, DEEP = {}, 
 const USE = {}, CARD = {};
 /* PRACTICE: the lesson's practice drills [{lvl: سريع/تطبيق/تحدي, t, done}], shown under «جرّب» */
 const PRACTICE = {};
+/* PRE: «قبل ما تبدأ»: what to review first, ["tab/cmd" | "tab" | {to, why}] on a lesson (and cat.pre on a unit) */
+const PRE = {};
 /* CI: runnable checks for tools/ci-run.js, [{os: ['ubuntu','macos','windows'], sh: 'bash'|'zsh'|'pwsh'|'powershell'|'cmd'|'node'|'python', run, expect: [...], code}] */
 const CI = {};
 const LEVEL_INFO = {
@@ -38,7 +40,7 @@ function cats(key, list){
     const cat = {t:c.t, l:c.l};
     // optional, for a category written as a course unit: n note, goal outcomes, use fields it serves,
     // time how long it takes, lab the setup box, projects the end-of-unit builds
-    ['n','goal','use','time','lab','projects'].forEach(k => { if (c[k] !== undefined) cat[k] = c[k]; });
+    ['n','goal','use','time','lab','projects','pre'].forEach(k => { if (c[k] !== undefined) cat[k] = c[k]; });
     cat.items = c.items.map(it => {
       const id = key+'|'+it.cmd;
       if (it.deep) DEEP[id] = it.deep;
@@ -49,6 +51,7 @@ function cats(key, list){
       if (it.check) CHECK[id] = it.check;
       if (it.use) USE[id] = it.use;
       if (it.practice) PRACTICE[id] = it.practice;
+      if (it.pre) PRE[id] = it.pre;
       if (it.ci) CI[id] = it.ci;
       if (it.learn || it.out) CARD[id] = {learn: it.learn, out: it.out};
       const row = [it.cmd, it.title, it.desc, it.example, it.try];

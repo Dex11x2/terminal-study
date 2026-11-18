@@ -27,7 +27,7 @@ for (const f of files) {
   try { vm.runInContext(code, ctx, { filename: f }); }
   catch (e) { console.error('✗ ' + f + ': الملف فيه غلطة JavaScript ومش هيتقري:\n  ' + e.message); process.exit(1); }
 }
-const { DATA, DEEP, BREAK, SOL, CMP, MISSIONS, CHECK, TEACH, PRACTICE, CI } = vm.runInContext('({DATA, DEEP, BREAK, SOL, CMP, MISSIONS, CHECK, TEACH, PRACTICE, CI})', ctx);
+const { DATA, DEEP, BREAK, SOL, CMP, MISSIONS, CHECK, TEACH, PRACTICE, CI, PRE } = vm.runInContext('({DATA, DEEP, BREAK, SOL, CMP, MISSIONS, CHECK, TEACH, PRACTICE, CI, PRE})', ctx);
 
 const errors = [], warnings = [];
 const err = (where, msg) => errors.push(where + ': ' + msg);
@@ -63,11 +63,25 @@ const brackets = (where, s, shown = true) => {
   if (s.includes("$__bt")) err(where, "$__bt فضلت زي ما هي");
 };
 
+// pre («قبل ما تبدأ»): every target is "tab" or "tab/cmd" (or {to, why}) and has to exist, or the link opens nothing
+const checkPre = (where, list) => {
+  if (list === undefined) return;
+  if (!Array.isArray(list)) return err(where, 'pre لازم يبقى array');
+  list.forEach(p => {
+    const to = typeof p === 'string' ? p : p && p.to;
+    if (typeof to !== 'string') return err(where, 'pre: كل عنصر "tab/cmd" أو {to, why}');
+    const i = to.indexOf('/'), t = i < 0 ? to : to.slice(0, i), c = i < 0 ? '' : to.slice(i + 1);
+    if (!DATA[t]) err(where, `pre: مفيش تاب اسمه «${t}»`);
+    else if (c && !DATA[t].some(x => x.items.some(it => it[0] === c))) err(where, `pre: مفيش درس «${c}» في ${t}`);
+    if (p && p.why) brackets(where + ' (pre)', p.why);
+  });
+};
 let total = 0;
 for (const tab in DATA) {
   const seen = new Set();
   DATA[tab].forEach(cat => {
     if (![1, 2, 3].includes(cat.l)) err(`${tab} › ${cat.t}`, 'المستوى (l) لازم يبقى 1 أو 2 أو 3');
+    checkPre(`${tab} › ${cat.t}`, cat.pre);
     (cat.projects || []).forEach(p => {
       if (!p.t) err(`${tab} › ${cat.t}`, 'مشروع من غير t');
       if (p.lvl && !['صغير', 'متوسط', 'كبير', 'فكرة'].includes(p.lvl)) err(`${tab} › ${cat.t} › ${p.t}`, 'lvl لازم يبقى صغير أو متوسط أو كبير أو فكرة');
@@ -101,6 +115,7 @@ for (const tab in DATA) {
       const [cmd, title, desc, ex, tr, flag] = it, w = `${tab} › ${cmd}`;
       if (!cmd) { err(`${tab} › ${cat.t}`, 'درس من غير cmd'); return; }
       if (seen.has(cmd)) err(w, 'الاسم ده متكرر في نفس التاب (التقدم هيتلخبط)');
+      checkPre(w, PRE[tab + '|' + cmd]);
       seen.add(cmd);
       if (!title) warn(w, 'مفيش title (هيظهر فاضي في «اختبرني»)');
       if (!tr) warn(w, 'مفيش try');
