@@ -773,6 +773,9 @@ body.reading .bar .meter,body.reading .bar .lvls,body.reading .bar .chips,body.r
 .work-h{font-size:14px;margin-bottom:6px;color:var(--muted)}
 .work-h b{color:var(--ink);font-size:15px}
 .work-code{display:block;width:100%;box-sizing:border-box;font:13.5px/1.6 var(--mono);font-variant-ligatures:none;color:var(--t-fg);background:var(--t-bg);border:0;border-radius:6px;padding:10px 12px;resize:vertical;white-space:pre-wrap;overflow-wrap:anywhere;overflow:auto;tab-size:2}
+/* the hidden rendered copy the CSS conditions are read from: off screen, but with a real size so lengths compute */
+.work{position:relative;overflow:hidden}
+.work-probe{position:absolute;inset-inline-start:-9999px;top:0;width:800px;height:600px;border:0;visibility:hidden;pointer-events:none}
 .work-checks{list-style:none;margin:8px 0 4px;padding:0;font-size:14.5px}
 .work-checks li{margin:0 0 3px;padding-inline-start:26px;position:relative;color:var(--ink)}
 .work-checks li::before{position:absolute;inset-inline-start:0;top:0;width:20px;text-align:center;font-weight:700}

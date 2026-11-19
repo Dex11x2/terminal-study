@@ -352,12 +352,21 @@ const DRILL_LV = {'سريع': 1, 'تطبيق': 2, 'تحدي': 3};
    q is a CSS selector run on the parsed page (DOMParser: nothing the reader types is executed here); n = exactly that many matches, otherwise at least min (1);
    has = the match's text holds this; attr = the match has this attribute (and value); src / nosrc = the typed code holds / doesn't hold this text. */
 const workNorm = s => String(s).replace(/\s+/g, ' ').trim();
-function workEval(code, checks){
+/* a CSS condition: style: [property, computed value] (and optional pseudo: "::before") is read with getComputedStyle from `live`,
+   the same code rendered in a hidden frame that runs no scripts; every element q matches has to have that value */
+function workEval(code, checks, live){
   const doc = new DOMParser().parseFromString(liveDoc(code), 'text/html');
   return checks.map(c => {
     if (c.src !== undefined && !code.includes(c.src)) return false;
     if (c.nosrc !== undefined && code.includes(c.nosrc)) return false;
     if (c.q === undefined) return true;
+    if (c.style){
+      if (!live || !live.defaultView) return false;
+      let le;
+      try { le = [...live.querySelectorAll(c.q)]; } catch (e) { return false; }
+      if (c.has !== undefined) le = le.filter(e => workNorm(e.textContent).includes(workNorm(c.has)));
+      return le.length > 0 && le.every(e => workNorm(live.defaultView.getComputedStyle(e, c.pseudo || null).getPropertyValue(c.style[0])) === workNorm(c.style[1]));
+    }
     let els;
     try { els = [...doc.querySelectorAll(c.q)]; } catch (e) { return false; }
     if (c.has !== undefined) els = els.filter(e => workNorm(e.textContent).includes(workNorm(c.has)));
@@ -377,16 +386,27 @@ function workHTML(w, key){
     '<div class="live"><div class="live-bar"><span>صفحتك دلوقتي</span><span class="live-w">'+
     [['360', 'موبايل'], ['', 'كامل']].map(([x, l]) => '<button type="button" data-lw="'+x+'"'+(x ? '' : ' class="on"')+'>'+l+'</button>').join('')+'</span></div>'+
     '<div class="live-f"><iframe sandbox="allow-scripts allow-forms" loading="lazy" title="صفحتك دلوقتي" style="--h:'+h+'px;--hm:'+h+'px" srcdoc="'+esc(liveFrame(code))+'"></iframe></div></div>'+
+    // CSS conditions need the page really rendered: a hidden copy that runs no scripts, read from here when it has loaded
+    (w.checks.some(c => c.style) ? '<iframe class="work-probe" sandbox="allow-same-origin" aria-hidden="true" tabindex="-1" onload="workProbe(this)" srcdoc="'+esc(liveDoc(code))+'"></iframe>' : '')+
     '<ul class="work-checks">'+w.checks.map((c, i) => '<li class="'+(ok[i] ? 'ok' : 'no')+'">'+fmt(c.say)+'</li>').join('')+'</ul>'+
     '<p class="work-res" role="status">'+workMsg(ok)+'</p>'+
     '<button type="button" class="work-reset" data-wreset="1">ابدأ التمرين من الأول</button></div>';
 }
-function workUpdate(box){
-  const code = box.querySelector('.work-code').value, ok = workEval(code, JSON.parse(box.dataset.checks));
-  box.querySelector('iframe').srcdoc = liveFrame(code);
+function workShow(box, ok){
   box.querySelectorAll('.work-checks li').forEach((li, i) => { li.className = ok[i] ? 'ok' : 'no'; });
   box.querySelector('.work-res').textContent = workMsg(ok);
   box.classList.toggle('done', ok.every(Boolean));
+}
+/* the hidden copy finished loading: now the CSS conditions can be read too */
+function workProbe(frame){
+  const box = frame.closest('.work');
+  if (box) workShow(box, workEval(box.querySelector('.work-code').value, JSON.parse(box.dataset.checks), frame.contentDocument));
+}
+function workUpdate(box){
+  const code = box.querySelector('.work-code').value, probe = box.querySelector('.work-probe'), ok = workEval(code, JSON.parse(box.dataset.checks), probe && probe.contentDocument);
+  if (probe) probe.srcdoc = liveDoc(code); // its load calls workProbe with the new styles
+  box.querySelector('.live iframe').srcdoc = liveFrame(code);
+  if (!probe) workShow(box, ok);
   store.set('work:'+box.dataset.wk, code);
 }
 function practiceHTML(c){

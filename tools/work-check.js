@@ -27,14 +27,18 @@ if (!chrome) { console.log(`${tab}: ${cases.length} تمرين فيه work، و 
 // the page uses the site's own functions, cut out of js/app.js, so the check can't drift from what the reader gets
 const app = fs.readFileSync(path.join(L.ROOT, 'js/app.js'), 'utf8');
 const cut = (from, to) => { const a = app.indexOf(from), b = app.indexOf(to, a); if (a < 0 || b < 0) throw new Error('مش لاقي في app.js: ' + from); return app.slice(a, b); };
-const fns = cut('const liveDoc = ', '\n') + '\n' + cut('const workNorm = ', 'const workMsg = ');
+const fns = cut('const liveDoc = ', '\n') + '\n' + cut('const workNorm = ', '/* a CSS condition') + cut('function workEval', 'const workMsg = ');
 const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'workcheck-'));
 const page = path.join(dir, 'p.html');
-fs.writeFileSync(page, '<!doctype html><meta charset="utf-8"><pre id="out"></pre><script>' + fns +
+// every start and solution is rendered in its own frame (CSS conditions read computed styles from it); the frames are made while the page
+// is still parsing, so the page's load event waits for them, and the results are written on load
+fs.writeFileSync(page, '<!doctype html><meta charset="utf-8"><pre id="out"></pre><div id="frames" style="position:absolute;left:-9999px"></div><script>' + fns +
   '\nconst CASES = ' + JSON.stringify(cases).replace(/</g, '\\u003c') + ';\n' +
-  'document.getElementById("out").textContent = encodeURIComponent(JSON.stringify(CASES.map(c => ({ start: workEval(c.start, c.checks), sol: workEval(c.sol, c.checks) }))));</script>');
+  'const mk = code => { const f = document.createElement("iframe"); f.style.cssText = "width:800px;height:600px"; f.srcdoc = liveDoc(code); document.getElementById("frames").append(f); return f; };\n' +
+  'const FR = CASES.map(c => ({ start: mk(c.start), sol: mk(c.sol) }));\n' +
+  'addEventListener("load", () => { document.getElementById("out").textContent = encodeURIComponent(JSON.stringify(CASES.map((c, i) => ({ start: workEval(c.start, c.checks, FR[i].start.contentDocument), sol: workEval(c.sol, c.checks, FR[i].sol.contentDocument) })))); });</script>');
 let dom;
-try { dom = execFileSync(chrome, ['--headless=new', '--disable-gpu', '--dump-dom', 'file:///' + page.replace(/\\/g, '/')], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], timeout: 60000 }); }
+try { dom = execFileSync(chrome, ['--headless=new', '--disable-gpu', '--virtual-time-budget=8000', '--dump-dom', 'file:///' + page.replace(/\\/g, '/')], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], timeout: 180000 }); }
 finally { fs.rmSync(dir, { recursive: true, force: true }); }
 const m = dom.match(/<pre id="out">([^<]*)<\/pre>/);
 if (!m || !m[1]) { console.error('Chrome مرجّعش نتيجة'); process.exit(1); }
