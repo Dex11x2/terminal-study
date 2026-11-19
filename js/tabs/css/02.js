@@ -3,12 +3,2040 @@ MORE("css", [
     {
       t: "الفورم: كل أنواع الحقول والأخطاء",
       projects: [
-        { lvl: 'صغير', t: R`حاسبة BMI`, what: R`فورم فيه الوزن ([[type="number"]] و [[min="20"]] و [[max="300"]] و [[step="0.1"]]) والطول بالسنتي، والنتيجة في [[<output>]] عليه [[aria-live="polite"]] بتتحدّث مع كل [[input]]، وجنبها التصنيف (نحيف، طبيعي، زيادة). من دروس «textarea و date و number» و «Constraint Validation API».`, done: R`70 كيلو و 175 سم بيطلّعوا 22.9 «طبيعي»، والحقل الفاضي أو 500 كيلو بيطلّع رسالة المتصفح ([[rangeOverflow]]) ومفيش رقم غلط في النتيجة، وكتابة حرف [[e]] لوحده في الوزن مش بتكسر الحساب ([[validity.badInput]]).` },
-        { lvl: 'صغير', t: R`اختيار باقة جيم بالكروت`, what: R`٣ باقات لـ «جيم الأبطال» (شهري، ٣ شهور، سنوي) كل واحدة [[<label>]] شكلها كارت وجواها radio، والكارت المختار بيتلوّن بـ [[.plan:has(input:checked)]] من غير JavaScript، والـ radio نفسه مخفي بالشكل بس (مش [[display: none]]). من درس «fieldset و radio».`, done: R`الأسهم بتنقّل الاختيار بين الكروت، والكارت اللي عليه الـ focus عليه outline واضح ([[:has(:focus-visible)]])، و [[getComputedStyle]] على الكارت المختار بيرجّع لون الحدود الجديد، و [[new FormData(form).get('plan')]] بيرجّع الباقة.` },
-        { lvl: 'متوسط', t: R`حجز ميعاد في عيادة متخيلة`, what: R`فورم حجز لـ «عيادة الشفاء»: الاسم، والموبايل بـ pattern، والتخصص (select بـ optgroup)، والتاريخ ([[min]] = النهارده بالتوقيت المحلي)، والوقت ([[type="time"]] و [[step="900"]] كل ربع ساعة)، وملاحظات (textarea بـ maxlength وعداد حروف)، وملخص أخطاء فوق. من دروس الوحدة كلها.`, done: R`تاريخ امبارح مقفول في الـ calendar، والإرسال الفاضي بيطلّع ملخص فيه لينك لكل حقل غلط والضغط على اللينك بيحط الـ focus في الحقل، والعداد بيقف عند الـ maxlength، والدبل كليك على «احجز» بيبعت request واحد بس في Network.` },
-        { lvl: 'متوسط', t: R`اختبار «أنسب قهوة ليك» خطوة خطوة`, what: R`٤ أسئلة، كل سؤال fieldset بـ legend و radios، وسؤال واحد بس ظاهر في المرة ([[hidden]] على الباقي)، وزرار «التالي» مبيعدّيش لو السؤال مش متجاوب ([[reportValidity()]] على الـ radio)، وزرار «رجوع»، وفي الآخر كارت نتيجة عليه [[aria-live="polite"]]. فكرة «quiz بيخلص بتوصية» اللي بتتعمل في صفحات الهبوط.`, done: R`بالكيبورد بس تقدر تجاوب الأربعة (الأسهم للاختيار و Enter للتالي)، و «التالي» من غير اختيار بيطلّع رسالة المتصفح على المجموعة، و «رجوع» بيرجّع اختيارك زي ما هو، والنتيجة بتتغيّر لو غيّرت إجابة.` },
-        { lvl: 'كبير', t: R`Checkout لمتجر قهوة متخيل (من غير دفع حقيقي)`, what: R`صفحة طلب لـ «بُن الصباح»: بياناتك (autocomplete كامل)، وعنوان الشحن في شبكة عمودين بتبقى عمود واحد على الموبايل والحقل الطويل [[grid-column: 1 / -1]]، وطريقة الدفع radio cards (كارت أو كاش)، وكوبون بتاريخ انتهاء بيتحسب لآخر اليوم مش أوله، وملخص أخطاء، ومنع الإرسال مرتين، ومسودة بتتحفظ في localStorage كل ثانية **من غير** أي حقل حساس (رقم الكارت مثلًا)، وصفحة «اتطلب» بعد النجاح. فكرة «الفورم الطويل اللي بيرجع مكان ما وقفت».`, done: R`على 360px عمود واحد وعلى 800px عمودين، والإرسال الفاضي بيحط الـ focus على أول غلط والملخص فيه عدد الأخطاء، وقفل التاب وفتحه بيرجّع كل الحقول ما عدا الحساسة (اتأكد من Application › Local Storage إن رقم الكارت مش متخزن)، وكوبون بينتهي النهارده لسه شغال الساعة 11 بالليل، و axe صفر violations، والدبل كليك بيبعت طلب واحد، ولو الطلب فشل (Network › Offline) الزرار بيرجع والبيانات متمسحتش.`, ext: R`زوّد رسالة تأكيد بتفتح واتساب برسالة جاهزة ([[wa.me/?text=]] و [[encodeURIComponent]])، ونسخة إنجليزي بـ [[dir="ltr"]] من غير ما تغيّر الـ CSS.` },
-        { lvl: 'فكرة', t: R`فورم لنشاط حقيقي حواليك`, what: R`اختار نشاط تعرفه (درس خصوصي، ورشة تصليح، ماتش كورة في الحي) واعمل الفورم اللي هيستقبل الطلبات بتاعته: انت اللي تقرر الحقول وأنواعها والقواعد والرسايل.`, done: R`كل حقل ليه سبب مكتوب في تعليق (ليه النوع ده وليه required أو لأ)، و ٣ أصحاب ملوه من موبايلاتهم من غير ما يسألوك حاجة، و axe صفر violations.`, ext: R`اربطه بـ Google Sheets أو بـ backend بسيط من تاب Node، وابعت إيميل تأكيد.` },
+        { lvl: 'صغير', dir: "bmi-calc", t: R`حاسبة BMI`, what: R`فورم فيه الوزن ([[type="number"]] و [[min="20"]] و [[max="300"]] و [[step="0.1"]]) والطول بالسنتي، والنتيجة في [[<output>]] عليه [[aria-live="polite"]] بتتحدّث مع كل [[input]]، وجنبها التصنيف (نحيف، طبيعي، زيادة). من دروس «textarea و date و number» و «Constraint Validation API».`, done: R`70 كيلو و 175 سم بيطلّعوا 22.9 «طبيعي»، والحقل الفاضي أو 500 كيلو بيطلّع رسالة المتصفح ([[rangeOverflow]]) ومفيش رقم غلط في النتيجة، وكتابة حرف [[e]] لوحده في الوزن مش بتكسر الحساب ([[validity.badInput]]).`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>حاسبة BMI</title>
+<style>
+  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #f5f5f4; color: #1c1917; }
+  form { max-width: 360px; margin-inline: auto; padding: 20px; background: white; border-radius: 12px; display: grid; gap: 12px; }
+  h1 { margin: 0; font-size: 22px; }
+  label { display: grid; gap: 4px; font-weight: 600; }
+  input { font: inherit; padding: 8px 10px; border: 1px solid #a8a29e; border-radius: 8px; }
+  .result { padding: 14px; border-radius: 10px; background: #f0fdfa; font-size: 18px; }
+  output { font-size: 28px; font-weight: 800; color: #0f766e; }
+  .msg { margin: 4px 0 0; color: #b91c1c; font-size: 14px; }
+</style>
+</head>
+<body>
+<main>
+<form id="bmi">
+  <h1>احسب الـ BMI</h1>
+  <label>الوزن بالكيلو
+    <input name="weight" type="number" min="20" max="300" step="0.1" inputmode="decimal" required value="70">
+  </label>
+  <label>الطول بالسنتي
+    <input name="height" type="number" min="100" max="250" step="1" inputmode="numeric" required value="175">
+  </label>
+  <div class="result">
+    <output name="bmi" for="weight height" aria-live="polite"></output>
+    <span id="kind"></span>
+    <p class="msg" id="msg"></p>
+  </div>
+</form>
+</main>
+<script>
+  const form = document.getElementById('bmi');
+  const { weight, height, bmi } = form.elements;
+  const kind = document.getElementById('kind');
+  const msg = document.getElementById('msg');
+
+  function update() {
+    // a field that is empty, out of range, or not a number: show the browser's own message, never a wrong number
+    const bad = [weight, height].find(f => !f.checkValidity());
+    if (bad) {
+      bmi.value = '—';
+      kind.textContent = '';
+      msg.textContent = bad.validationMessage;
+      return;
+    }
+    const m = height.valueAsNumber / 100;
+    const n = weight.valueAsNumber / (m * m);
+    bmi.value = n.toFixed(1);
+    kind.textContent = n < 18.5 ? 'نحيف' : n < 25 ? 'طبيعي' : 'زيادة';
+    msg.textContent = '';
+  }
+  form.addEventListener('input', update);
+  form.addEventListener('submit', e => e.preventDefault());
+  update();
+</script>
+</body>
+</html>
+~~~
+
+~~~view 330 360 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>حاسبة BMI</title>
+<style>
+  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #f5f5f4; color: #1c1917; }
+  form { max-width: 360px; margin-inline: auto; padding: 20px; background: white; border-radius: 12px; display: grid; gap: 12px; }
+  h1 { margin: 0; font-size: 22px; }
+  label { display: grid; gap: 4px; font-weight: 600; }
+  input { font: inherit; padding: 8px 10px; border: 1px solid #a8a29e; border-radius: 8px; }
+  .result { padding: 14px; border-radius: 10px; background: #f0fdfa; font-size: 18px; }
+  output { font-size: 28px; font-weight: 800; color: #0f766e; }
+  .msg { margin: 4px 0 0; color: #b91c1c; font-size: 14px; }
+</style>
+</head>
+<body>
+<main>
+<form id="bmi">
+  <h1>احسب الـ BMI</h1>
+  <label>الوزن بالكيلو
+    <input name="weight" type="number" min="20" max="300" step="0.1" inputmode="decimal" required value="70">
+  </label>
+  <label>الطول بالسنتي
+    <input name="height" type="number" min="100" max="250" step="1" inputmode="numeric" required value="175">
+  </label>
+  <div class="result">
+    <output name="bmi" for="weight height" aria-live="polite"></output>
+    <span id="kind"></span>
+    <p class="msg" id="msg"></p>
+  </div>
+</form>
+</main>
+<script>
+  const form = document.getElementById('bmi');
+  const { weight, height, bmi } = form.elements;
+  const kind = document.getElementById('kind');
+  const msg = document.getElementById('msg');
+
+  function update() {
+    // a field that is empty, out of range, or not a number: show the browser's own message, never a wrong number
+    const bad = [weight, height].find(f => !f.checkValidity());
+    if (bad) {
+      bmi.value = '—';
+      kind.textContent = '';
+      msg.textContent = bad.validationMessage;
+      return;
+    }
+    const m = height.valueAsNumber / 100;
+    const n = weight.valueAsNumber / (m * m);
+    bmi.value = n.toFixed(1);
+    kind.textContent = n < 18.5 ? 'نحيف' : n < 25 ? 'طبيعي' : 'زيادة';
+    msg.textContent = '';
+  }
+  form.addEventListener('input', update);
+  form.addEventListener('submit', e => e.preventDefault());
+  update();
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** كارت أبيض فيه حقلين (70 و 175 مكتوبين من الأول)، وتحتهم مربع أخضر فاتح فيه **22.9** كبير وجنبه «طبيعي». غيّر الوزن والرقم بيتغيّر وانت بتكتب. امسح الوزن: الرقم بيبقى «—» وتحته بالأحمر رسالة المتصفح.
+
+**ليه كده:**
+- [[type="number"]] مع [[min]] و [[max]] و [[step]]: المتصفح نفسه بيعرف إن 500 غلط، فمش محتاج تكتب الشروط دي في JavaScript. و [[inputmode="decimal"]] بيفتح كيبورد فيه علامة عشرية على الموبايل.
+- [[valueAsNumber]] بيرجّع رقم على طول بدل [[Number(value)]].
+- قبل أي حساب: [[checkValidity()]] على الحقلين. لو حقل مش سليم بنعرض [[validationMessage]] (رسالة المتصفح نفسها، بلغة المتصفح) ومبنحسبش. ده اللي بيمنع «BMI = 163» لما حد يكتب 500.
+- [[<output for="weight height">]] بيقول لقارئ الشاشة النتيجة دي جاية من الحقلين دول، و [[aria-live="polite"]] بيخليه يقرا الرقم الجديد لما يتغيّر من غير ما يقطع الكلام.
+
+**فخ قسته:** لما تكتب حرف [[e]] لوحده في حقل رقم، [[value]] بيرجّع نص فاضي [[""]] زي الحقل الفاضي بالظبط. الفرق في [[validity.badInput]]: [[true]] مع الحرف. عشان كده بنسأل [[checkValidity()]] مش [[value === ""]].
+
+**وفخ تاني:** [[step="0.1"]] معناه 70.25 غلط، والمتصفح بيقولك أقرب رقمين صح.
+
+~~~text الناتج (Chrome، 70 كيلو و 175 سم في الأول)
+70 و 175                      22.9 طبيعي
+55                            18.0 نحيف
+90                            29.4 زيادة
+الوزن فاضي                     —  Please fill out this field.
+500                           —  Value must be less than or equal to 300.   (rangeOverflow = true)
+70.25                         —  Please enter a valid value. The two nearest valid values are 70.2 and 70.3.
+كتبت e بالكيبورد                —  Please enter a number.   (value = "" و badInput = true)
+axe: 0 violations   الـ validator: مفيش رسايل   overflow على 360: 0
+~~~` },
+        { lvl: 'صغير', dir: "gym-plans", t: R`اختيار باقة جيم بالكروت`, what: R`٣ باقات لـ «جيم الأبطال» (شهري، ٣ شهور، سنوي) كل واحدة [[<label>]] شكلها كارت وجواها radio، والكارت المختار بيتلوّن بـ [[.plan:has(input:checked)]] من غير JavaScript، والـ radio نفسه مخفي بالشكل بس (مش [[display: none]]). من درس «fieldset و radio».`, done: R`الأسهم بتنقّل الاختيار بين الكروت، والكارت اللي عليه الـ focus عليه outline واضح ([[:has(:focus-visible)]])، و [[getComputedStyle]] على الكارت المختار بيرجّع لون الحدود الجديد، و [[new FormData(form).get('plan')]] بيرجّع الباقة.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>باقات جيم الأبطال</title>
+<style>
+  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #fafaf9; color: #1c1917; }
+  main { max-width: 760px; margin-inline: auto; }
+  fieldset { border: 0; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 12px; }
+  h1 { margin: 0 0 12px; font-size: 26px; }
+  legend { font-size: 18px; font-weight: 800; margin-block-end: 12px; }
+  .plan { position: relative; display: grid; gap: 6px; padding: 18px; background: white; border: 2px solid #d6d3d1; border-radius: 14px; cursor: pointer; }
+  .plan b { font-size: 18px; }
+  .plan .price { font-size: 26px; font-weight: 800; }
+  .plan small { color: #78716c; }
+  /* hidden to the eye only: still reachable with Tab and the arrow keys, still read by a screen reader */
+  .plan input { position: absolute; width: 1px; height: 1px; clip-path: inset(50%); }
+  .plan:has(input:checked) { border-color: rgb(15, 118, 110); background: #f0fdfa; }
+  .plan:has(input:checked) b::after { content: " ✓"; color: rgb(15, 118, 110); }
+  .plan:has(input:focus-visible) { outline: 3px solid #1d4ed8; outline-offset: 3px; }
+  button { margin-block-start: 16px; font: inherit; font-weight: 700; padding: 10px 24px; border: 0; border-radius: 10px; background: #0f766e; color: white; }
+  #chosen { min-height: 1.5em; }
+</style>
+</head>
+<body>
+<main>
+<h1>باقات جيم الأبطال</h1>
+<form id="plans">
+  <fieldset>
+    <legend>اختار باقتك</legend>
+    <label class="plan"><input type="radio" name="plan" value="month" checked><b>شهر</b><span class="price">٥٠٠ ج</span><small>تجرّب من غير التزام</small></label>
+    <label class="plan"><input type="radio" name="plan" value="quarter"><b>٣ شهور</b><span class="price">١٣٠٠ ج</span><small>بتوفّر ٢٠٠ جنيه</small></label>
+    <label class="plan"><input type="radio" name="plan" value="year"><b>سنة</b><span class="price">٤٥٠٠ ج</span><small>بتوفّر ١٥٠٠ جنيه</small></label>
+  </fieldset>
+  <button>اشترك</button>
+  <p id="chosen" aria-live="polite"></p>
+</form>
+</main>
+<script>
+  const form = document.getElementById('plans');
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    document.getElementById('chosen').textContent = 'الباقة اللي هتتبعت: ' + new FormData(form).get('plan');
+  });
+</script>
+</body>
+</html>
+~~~
+
+~~~view 360 620 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>باقات جيم الأبطال</title>
+<style>
+  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #fafaf9; color: #1c1917; }
+  main { max-width: 760px; margin-inline: auto; }
+  fieldset { border: 0; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 12px; }
+  h1 { margin: 0 0 12px; font-size: 26px; }
+  legend { font-size: 18px; font-weight: 800; margin-block-end: 12px; }
+  .plan { position: relative; display: grid; gap: 6px; padding: 18px; background: white; border: 2px solid #d6d3d1; border-radius: 14px; cursor: pointer; }
+  .plan b { font-size: 18px; }
+  .plan .price { font-size: 26px; font-weight: 800; }
+  .plan small { color: #78716c; }
+  /* hidden to the eye only: still reachable with Tab and the arrow keys, still read by a screen reader */
+  .plan input { position: absolute; width: 1px; height: 1px; clip-path: inset(50%); }
+  .plan:has(input:checked) { border-color: rgb(15, 118, 110); background: #f0fdfa; }
+  .plan:has(input:checked) b::after { content: " ✓"; color: rgb(15, 118, 110); }
+  .plan:has(input:focus-visible) { outline: 3px solid #1d4ed8; outline-offset: 3px; }
+  button { margin-block-start: 16px; font: inherit; font-weight: 700; padding: 10px 24px; border: 0; border-radius: 10px; background: #0f766e; color: white; }
+  #chosen { min-height: 1.5em; }
+</style>
+</head>
+<body>
+<main>
+<h1>باقات جيم الأبطال</h1>
+<form id="plans">
+  <fieldset>
+    <legend>اختار باقتك</legend>
+    <label class="plan"><input type="radio" name="plan" value="month" checked><b>شهر</b><span class="price">٥٠٠ ج</span><small>تجرّب من غير التزام</small></label>
+    <label class="plan"><input type="radio" name="plan" value="quarter"><b>٣ شهور</b><span class="price">١٣٠٠ ج</span><small>بتوفّر ٢٠٠ جنيه</small></label>
+    <label class="plan"><input type="radio" name="plan" value="year"><b>سنة</b><span class="price">٤٥٠٠ ج</span><small>بتوفّر ١٥٠٠ جنيه</small></label>
+  </fieldset>
+  <button>اشترك</button>
+  <p id="chosen" aria-live="polite"></p>
+</form>
+</main>
+<script>
+  const form = document.getElementById('plans');
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    document.getElementById('chosen').textContent = 'الباقة اللي هتتبعت: ' + new FormData(form).get('plan');
+  });
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** عنوان «باقات جيم الأبطال» وتحته ٣ كروت بيضا جنب بعض (وعلى الموبايل تحت بعض)، في كل كارت المدة والسعر كبير وسطر صغير رمادي. الكارت المختار حدوده خضرا وخلفيته خضرا فاتحة وجنب اسمه علامة ✓. دوس «اشترك» والسطر اللي تحت بيقول الباقة اللي هتتبعت.
+
+**ليه كده:**
+- الكارت كله [[<label>]] والـ radio جواه: الضغط على أي حتة في الكارت بيختار.
+- الـ radio **مش** [[display: none]]: مخفي بالشكل بس ([[width: 1px]] و [[clip-path: inset(50%)]])، فالأسهم و Tab شغالين وقارئ الشاشة بيقول «radio button، 2 of 3».
+- [[.plan:has(input:checked)]]: الكارت بيتلوّن حسب اللي جواه، من غير JavaScript.
+- [[.plan:has(input:focus-visible)]]: الدايرة اللي كان عليها الـ focus اختفت، فلازم الكارت كله ياخد الـ outline، وإلا اللي بيستخدم الكيبورد مش هيعرف هو فين.
+- الكروت [[grid]] بـ [[repeat(auto-fit, minmax(min(200px, 100%), 1fr))]]: تلاتة جنب بعض على الكمبيوتر، وواحد في السطر على الموبايل.
+
+**الغلطة اللي axe مسكها في نسختي الأولى:** مكانش فيه [[<h1>]] (الـ legend كان هو العنوان الوحيد)، و axe قال [[page-has-heading-one]]. الـ legend اسم للمجموعة مش عنوان للصفحة.
+
+**ملحوظة عن الرقم:** الـ outline مكتوب [[3px]] و Chrome عندي رجّع [[2.4px]]. ده لأن الشاشة عليها تكبير 125% ([[devicePixelRatio = 1.25]]): 3 × 1.25 = 3.75 بكسل حقيقي، و Chrome بيقرّب سُمك الحدود لتحت لبكسل كامل (3)، و 3 ÷ 1.25 = 2.4. على شاشة 100% هتشوف 3px.
+
+~~~text الناتج (Chrome، Tab ثم سهم لتحت ثم «اشترك»)
+الـ focus                    radio "quarter" (عرضه في الصفحة 1px)
+حدود الكارت المختار           rgb(15, 118, 110)    وحدود الباقي: rgb(214, 211, 209)
+outline الكارت                solid 2.4px rgb(29, 78, 216)   (devicePixelRatio = 1.25)
+new FormData(form).get('plan')   "quarter"
+السطر تحت الزرار              الباقة اللي هتتبعت: quarter
+axe: 0 violations (كانت page-has-heading-one قبل الـ h1)   الـ validator: مفيش رسايل
+~~~` },
+        { lvl: 'متوسط', dir: "shifa-booking", t: R`حجز ميعاد في عيادة متخيلة`, what: R`فورم حجز لـ «عيادة الشفاء»: الاسم، والموبايل بـ pattern، والتخصص (select بـ optgroup)، والتاريخ ([[min]] = النهارده بالتوقيت المحلي)، والوقت ([[type="time"]] و [[step="900"]] كل ربع ساعة)، وملاحظات (textarea بـ maxlength وعداد حروف)، وملخص أخطاء فوق. من دروس الوحدة كلها.`, done: R`تاريخ امبارح مقفول في الـ calendar، والإرسال الفاضي بيطلّع ملخص فيه لينك لكل حقل غلط والضغط على اللينك بيحط الـ focus في الحقل، والعداد بيقف عند الـ maxlength. وفي Network › Slow 3G: الدبل كليك على «احجز» بيوصّل request واحد بس للسيرفر (من غير الحماية بيوصل اتنين).`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>احجز ميعاد: عيادة الشفاء</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #f8fafc; color: #0f172a; }
+  form { max-width: 480px; margin-inline: auto; padding: 20px; background: white; border-radius: 14px; display: grid; gap: 14px; }
+  h1 { margin: 0; font-size: 24px; }
+  .field { display: grid; gap: 4px; }
+  label { font-weight: 600; }
+  .hint { color: #64748b; font-size: 14px; }
+  input, select, textarea { font: inherit; padding: 8px 10px; border: 1px solid #94a3b8; border-radius: 8px; width: 100%; }
+  [aria-invalid="true"] { border-color: #b91c1c; background: #fef2f2; }
+  .summary { padding: 12px 16px; border: 2px solid #b91c1c; border-radius: 10px; background: #fef2f2; }
+  .summary h2 { margin: 0 0 6px; font-size: 18px; color: #991b1b; }
+  .summary ul { margin: 0; padding-inline-start: 20px; }
+  .summary a { color: #991b1b; }
+  button { font: inherit; font-weight: 700; padding: 12px; border: 0; border-radius: 10px; background: #0369a1; color: white; }
+  button:disabled { background: #94a3b8; }
+</style>
+</head>
+<body>
+<main>
+<form id="book" action="thanks.html" method="get" novalidate>
+  <h1>احجز ميعاد في عيادة الشفاء</h1>
+
+  <div class="summary" id="summary" tabindex="-1" hidden>
+    <h2>فيه <span id="count"></span> لازم تتصلّح:</h2>
+    <ul id="errors"></ul>
+  </div>
+
+  <div class="field">
+    <label for="name">الاسم</label>
+    <input id="name" name="name" autocomplete="name" required>
+  </div>
+
+  <div class="field">
+    <label for="phone">الموبايل</label>
+    <input id="phone" name="phone" type="tel" autocomplete="tel" dir="ltr" required
+           pattern="01[0125][0-9]{8}" aria-describedby="phone-hint">
+    <span class="hint" id="phone-hint">١١ رقم بيبدأ بـ 010 أو 011 أو 012 أو 015</span>
+  </div>
+
+  <div class="field">
+    <label for="dept">التخصص</label>
+    <select id="dept" name="dept" required>
+      <option value="">اختار…</option>
+      <optgroup label="باطنة">
+        <option value="heart">قلب</option>
+        <option value="stomach">جهاز هضمي</option>
+      </optgroup>
+      <optgroup label="جراحة">
+        <option value="bones">عظام</option>
+        <option value="general">جراحة عامة</option>
+      </optgroup>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="day">اليوم</label>
+    <input id="day" name="day" type="date" required>
+  </div>
+
+  <div class="field">
+    <label for="time">الساعة</label>
+    <input id="time" name="time" type="time" min="10:00" max="21:00" step="900" required aria-describedby="time-hint">
+    <span class="hint" id="time-hint">من ١٠ الصبح لـ ٩ بالليل، كل ربع ساعة</span>
+  </div>
+
+  <div class="field">
+    <label for="notes">ملاحظات (اختياري)</label>
+    <textarea id="notes" name="notes" rows="3" maxlength="200" aria-describedby="left"></textarea>
+    <span class="hint" id="left">فاضل 200 حرف</span>
+  </div>
+
+  <button id="send">احجز</button>
+</form>
+</main>
+<script>
+  const form = document.getElementById('book');
+  const summary = document.getElementById('summary');
+  const list = document.getElementById('errors');
+  const send = document.getElementById('send');
+
+  // the earliest day is today in the reader's own time zone (toISOString() would give the UTC date: yesterday after midnight in Cairo)
+  const now = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  document.getElementById('day').min = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());
+
+  const notes = document.getElementById('notes');
+  notes.addEventListener('input', () => {
+    document.getElementById('left').textContent = 'فاضل ' + (notes.maxLength - notes.value.length) + ' حرف';
+  });
+
+  // a summary link moves the focus into its field, not just the scroll
+  list.addEventListener('click', e => {
+    const a = e.target.closest('a');
+    if (!a) return;
+    e.preventDefault();
+    document.querySelector(a.hash).focus();
+  });
+
+  let sent = false;
+  form.addEventListener('submit', e => {
+    const bad = [...form.elements].filter(f => f.willValidate && !f.checkValidity());
+    for (const f of form.elements) if (f.willValidate) f.setAttribute('aria-invalid', String(bad.includes(f)));
+    if (bad.length) {
+      e.preventDefault();
+      list.innerHTML = '';
+      for (const f of bad) {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = '#' + f.id;
+        a.textContent = form.querySelector('label[for="' + f.id + '"]').textContent + ': ' + f.validationMessage;
+        li.append(a);
+        list.append(li);
+      }
+      document.getElementById('count').textContent = bad.length === 1 ? 'حاجة واحدة' : bad.length + ' حاجات';
+      summary.hidden = false;
+      summary.focus();
+      return;
+    }
+    // the second click of a double click: the first one already sent the form
+    if (sent) { e.preventDefault(); return; }
+    sent = true;
+    send.disabled = true;
+    send.textContent = 'بنحجز…';
+  });
+</script>
+</body>
+</html>
+~~~
+
+~~~html thanks.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>اتحجز: عيادة الشفاء</title>
+</head>
+<body>
+<main>
+  <h1>الميعاد اتحجز</h1>
+  <p>هنكلمك على الموبايل قبل الميعاد بيوم. <a href="index.html">احجز ميعاد تاني</a></p>
+</main>
+</body>
+</html>
+~~~
+
+~~~view 760 820 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>احجز ميعاد: عيادة الشفاء</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #f8fafc; color: #0f172a; }
+  form { max-width: 480px; margin-inline: auto; padding: 20px; background: white; border-radius: 14px; display: grid; gap: 14px; }
+  h1 { margin: 0; font-size: 24px; }
+  .field { display: grid; gap: 4px; }
+  label { font-weight: 600; }
+  .hint { color: #64748b; font-size: 14px; }
+  input, select, textarea { font: inherit; padding: 8px 10px; border: 1px solid #94a3b8; border-radius: 8px; width: 100%; }
+  [aria-invalid="true"] { border-color: #b91c1c; background: #fef2f2; }
+  .summary { padding: 12px 16px; border: 2px solid #b91c1c; border-radius: 10px; background: #fef2f2; }
+  .summary h2 { margin: 0 0 6px; font-size: 18px; color: #991b1b; }
+  .summary ul { margin: 0; padding-inline-start: 20px; }
+  .summary a { color: #991b1b; }
+  button { font: inherit; font-weight: 700; padding: 12px; border: 0; border-radius: 10px; background: #0369a1; color: white; }
+  button:disabled { background: #94a3b8; }
+</style>
+</head>
+<body>
+<main>
+<form id="book" method="get" novalidate>
+  <h1>احجز ميعاد في عيادة الشفاء</h1>
+
+  <div class="summary" id="summary" tabindex="-1" hidden>
+    <h2>فيه <span id="count"></span> لازم تتصلّح:</h2>
+    <ul id="errors"></ul>
+  </div>
+
+  <div class="field">
+    <label for="name">الاسم</label>
+    <input id="name" name="name" autocomplete="name" required>
+  </div>
+
+  <div class="field">
+    <label for="phone">الموبايل</label>
+    <input id="phone" name="phone" type="tel" autocomplete="tel" dir="ltr" required
+           pattern="01[0125][0-9]{8}" aria-describedby="phone-hint">
+    <span class="hint" id="phone-hint">١١ رقم بيبدأ بـ 010 أو 011 أو 012 أو 015</span>
+  </div>
+
+  <div class="field">
+    <label for="dept">التخصص</label>
+    <select id="dept" name="dept" required>
+      <option value="">اختار…</option>
+      <optgroup label="باطنة">
+        <option value="heart">قلب</option>
+        <option value="stomach">جهاز هضمي</option>
+      </optgroup>
+      <optgroup label="جراحة">
+        <option value="bones">عظام</option>
+        <option value="general">جراحة عامة</option>
+      </optgroup>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="day">اليوم</label>
+    <input id="day" name="day" type="date" required>
+  </div>
+
+  <div class="field">
+    <label for="time">الساعة</label>
+    <input id="time" name="time" type="time" min="10:00" max="21:00" step="900" required aria-describedby="time-hint">
+    <span class="hint" id="time-hint">من ١٠ الصبح لـ ٩ بالليل، كل ربع ساعة</span>
+  </div>
+
+  <div class="field">
+    <label for="notes">ملاحظات (اختياري)</label>
+    <textarea id="notes" name="notes" rows="3" maxlength="200" aria-describedby="left"></textarea>
+    <span class="hint" id="left">فاضل 200 حرف</span>
+  </div>
+
+  <button id="send">احجز</button>
+</form>
+</main>
+<script>
+  const form = document.getElementById('book');
+  const summary = document.getElementById('summary');
+  const list = document.getElementById('errors');
+  const send = document.getElementById('send');
+
+  // the earliest day is today in the reader's own time zone (toISOString() would give the UTC date: yesterday after midnight in Cairo)
+  const now = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  document.getElementById('day').min = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());
+
+  const notes = document.getElementById('notes');
+  notes.addEventListener('input', () => {
+    document.getElementById('left').textContent = 'فاضل ' + (notes.maxLength - notes.value.length) + ' حرف';
+  });
+
+  // a summary link moves the focus into its field, not just the scroll
+  list.addEventListener('click', e => {
+    const a = e.target.closest('a');
+    if (!a) return;
+    e.preventDefault();
+    document.querySelector(a.hash).focus();
+  });
+
+  let sent = false;
+  form.addEventListener('submit', e => {
+    const bad = [...form.elements].filter(f => f.willValidate && !f.checkValidity());
+    for (const f of form.elements) if (f.willValidate) f.setAttribute('aria-invalid', String(bad.includes(f)));
+    if (bad.length) {
+      e.preventDefault();
+      list.innerHTML = '';
+      for (const f of bad) {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = '#' + f.id;
+        a.textContent = form.querySelector('label[for="' + f.id + '"]').textContent + ': ' + f.validationMessage;
+        li.append(a);
+        list.append(li);
+      }
+      document.getElementById('count').textContent = bad.length === 1 ? 'حاجة واحدة' : bad.length + ' حاجات';
+      summary.hidden = false;
+      summary.focus();
+      return;
+    }
+    // the second click of a double click: the first one already sent the form
+    if (sent) { e.preventDefault(); return; }
+    sent = true;
+    send.disabled = true;
+    send.textContent = 'بنحجز…';
+  });
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** كارت أبيض فيه عنوان وتحته الحقول ورا بعض، وتحت الموبايل والساعة سطر رمادي بيشرح المطلوب. دوس «احجز» والفورم فاضي: فوق بيظهر مربع أحمر «فيه 5 حاجات لازم تتصلّح» وتحته لينك لكل حقل، والحقول الغلط بتبقى حمرا.
+
+**ليه كده:**
+- [[novalidate]] على الفورم: بنقفل فقاعة المتصفح عشان نعرض كل الأخطاء مرة واحدة في الملخص. بس الشروط نفسها ([[required]] و [[pattern]] و [[min]]) لسه شغالة، وبنسألها بـ [[checkValidity()]].
+- **أقل تاريخ = النهارده بتوقيتك:** [[toISOString()]] بيرجّع التاريخ بتوقيت جرينتش، فبعد نص الليل في القاهرة لحد الساعة 2 بيقول امبارح. عشان كده بنبني التاريخ من [[getFullYear()]] و [[getMonth()]] و [[getDate()]].
+- [[step="900"]] في الوقت = 900 ثانية = ربع ساعة. و [[min]] و [[max]] بيحددوا مواعيد العيادة.
+- [[optgroup]] بيجمّع التخصصات تحت عنوان، والاختيار الأول [[value=""]] عشان [[required]] يرفضه.
+- الملخص [[tabindex="-1"]] وبناخد عليه الـ focus: قارئ الشاشة بيقرا عدد الأخطاء على طول. واللينك بيعمل [[focus()]] على الحقل بإيدنا، لأن [[href="#phone"]] لوحده بينزّل الصفحة بس.
+- [[aria-invalid="true"]] على الحقول الغلط: لونها بيتغيّر، وقارئ الشاشة بيقول «invalid entry».
+- [[aria-describedby]]: السطر الرمادي بيتقري مع اسم الحقل.
+
+**الدبل كليك (اتقاس، والنتيجة مش زي ما كنت متوقع):** على سيرفر محلي سريع، حتى **من غير** الحماية، السيرفر استلم طلب واحد: Chrome بيلغي التنقّل الأولاني لما التاني يبدأ قبل ما يتبعت. بس على Slow 3G، من غير الحماية، السيرفر استلم **طلبين** (حجزين لنفس الشخص). ومع المتغير [[sent]] وزرار [[disabled]]: طلب واحد. يعني المشكلة بتظهر عند الناس اللي النت عندهم بطيء بس، ومش هتشوفها على جهازك غير لو جربت Slow 3G.
+
+~~~text الناتج (Chrome، ١٩ نوفمبر)
+day.min                     2026-11-19
+اختيار 2020-01-01           Value must be 11/19/2026 or later.
+الساعة 10:10                Please enter a valid value. The two nearest valid values are 10:00 AM and 10:15 AM.
+الساعة 22:00                Value must be 9:00 PM or earlier.
+
+«احجز» والفورم فاضي          الـ focus على الملخص، و 5 حقول aria-invalid="true":
+  الاسم: Please fill out this field.
+  الموبايل: Please fill out this field.
+  التخصص: Please select an item in the list.
+  اليوم: Please fill out this field.
+  الساعة: Please fill out this field.
+الضغط على لينك «الموبايل»     الـ focus راح لـ #phone
+200 حرف في الملاحظات          فاضل 0 حرف
+
+دبل كليك، Slow 3G، من غير الحماية    السيرفر استلم 2 طلب
+دبل كليك، Slow 3G، بالحماية           السيرفر استلم 1 طلب
+axe: 0 violations   الـ validator: مفيش رسايل
+~~~` },
+        { lvl: 'متوسط', dir: "coffee-quiz", t: R`اختبار «أنسب قهوة ليك» خطوة خطوة`, what: R`٤ أسئلة، كل سؤال fieldset بـ legend و radios، وسؤال واحد بس ظاهر في المرة ([[hidden]] على الباقي)، وزرار «التالي» مبيعدّيش لو السؤال مش متجاوب ([[reportValidity()]] على الـ radio)، وزرار «رجوع»، وفي الآخر كارت نتيجة عليه [[aria-live="polite"]]. فكرة «quiz بيخلص بتوصية» اللي بتتعمل في صفحات الهبوط.`, done: R`بالكيبورد بس تقدر تجاوب الأربعة (الأسهم للاختيار و Enter للتالي)، و «التالي» من غير اختيار بيطلّع رسالة المتصفح على المجموعة، و «رجوع» بيرجّع اختيارك زي ما هو، والنتيجة بتتغيّر لو غيّرت إجابة.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>أنسب قهوة ليك</title>
+<style>
+  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #fdf8f3; color: #292524; }
+  form { max-width: 440px; margin-inline: auto; padding: 20px; background: white; border-radius: 14px; }
+  h1 { margin: 0 0 4px; font-size: 22px; }
+  .step { margin: 0 0 12px; color: #78716c; font-size: 14px; }
+  fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 8px; }
+  legend { font-size: 18px; font-weight: 700; margin-block-end: 10px; }
+  fieldset label { display: flex; gap: 8px; align-items: center; padding: 10px 12px; border: 1px solid #d6d3d1; border-radius: 10px; cursor: pointer; }
+  fieldset label:has(input:checked) { border-color: #92400e; background: #fef3c7; }
+  .nav { display: flex; gap: 8px; margin-block-start: 16px; }
+  button { font: inherit; font-weight: 700; padding: 10px 18px; border-radius: 10px; border: 1px solid #92400e; background: white; color: #92400e; }
+  button[type="submit"] { background: #92400e; color: white; }
+  .result { margin-block-start: 16px; padding: 16px; border-radius: 12px; background: #292524; color: #fef3c7; }
+  .result b { display: block; font-size: 24px; }
+</style>
+</head>
+<body>
+<main>
+<form id="quiz" novalidate>
+  <h1>أنسب قهوة ليك</h1>
+  <p class="step" id="step">سؤال 1 من 4</p>
+
+  <fieldset>
+    <legend>بتحب طعم القهوة إزاي؟</legend>
+    <label><input type="radio" name="q1" value="strong" required> تقيلة ومُرّة</label>
+    <label><input type="radio" name="q1" value="milk"> بلبن كتير</label>
+    <label><input type="radio" name="q1" value="sweet"> مسكّرة</label>
+  </fieldset>
+
+  <fieldset hidden>
+    <legend>بتشربها إمتى؟</legend>
+    <label><input type="radio" name="q2" value="strong" required> أول ما أصحى</label>
+    <label><input type="radio" name="q2" value="milk"> مع الفطار</label>
+    <label><input type="radio" name="q2" value="sweet"> بالليل مع الحلو</label>
+  </fieldset>
+
+  <fieldset hidden>
+    <legend>سخنة ولا ساقعة؟</legend>
+    <label><input type="radio" name="q3" value="strong" required> سخنة دايمًا</label>
+    <label><input type="radio" name="q3" value="milk"> على حسب الجو</label>
+    <label><input type="radio" name="q3" value="sweet"> ساقعة بتلج</label>
+  </fieldset>
+
+  <fieldset hidden>
+    <legend>كوباية كبيرة ولا صغيرة؟</legend>
+    <label><input type="radio" name="q4" value="strong" required> فنجان صغير</label>
+    <label><input type="radio" name="q4" value="milk"> مج كبير</label>
+    <label><input type="radio" name="q4" value="sweet"> كوباية بشفاطة</label>
+  </fieldset>
+
+  <div class="nav">
+    <button type="button" id="back" hidden>رجوع</button>
+    <button type="submit" id="next">التالي</button>
+  </div>
+
+  <div class="result" id="result" aria-live="polite" hidden></div>
+</form>
+</main>
+<script>
+  const form = document.getElementById('quiz');
+  const steps = [...form.querySelectorAll('fieldset')];
+  const back = document.getElementById('back');
+  const next = document.getElementById('next');
+  const result = document.getElementById('result');
+  const coffees = {
+    strong: ['إسبريسو', 'فنجان صغير مركّز، من غير سكر ولا لبن.'],
+    milk: ['لاتيه', 'إسبريسو على لبن سخن كتير ورغوة خفيفة.'],
+    sweet: ['آيس موكا', 'قهوة بشوكولاتة وتلج، حلوة وساقعة.'],
+  };
+  let at = 0;
+
+  function show(i) {
+    steps.forEach((s, n) => s.hidden = n !== i);
+    at = i;
+    back.hidden = i === 0;
+    next.textContent = i === steps.length - 1 ? 'شوف النتيجة' : 'التالي';
+    document.getElementById('step').textContent = 'سؤال ' + (i + 1) + ' من ' + steps.length;
+  }
+
+  // Enter on a radio submits the form, so «التالي» works from the keyboard without extra code
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const first = steps[at].querySelector('input');
+    // the group is valid once any radio with this name is checked; reportValidity shows the browser's message on the group
+    if (!first.reportValidity()) return;
+    if (at < steps.length - 1) { show(at + 1); focusStep(); return; }
+    const votes = {};
+    for (const [, v] of new FormData(form)) votes[v] = (votes[v] || 0) + 1;
+    const best = Object.keys(votes).sort((a, b) => votes[b] - votes[a])[0];
+    result.innerHTML = 'أنسب قهوة ليك: <b>' + coffees[best][0] + '</b>' + coffees[best][1];
+    result.hidden = false;
+  });
+
+  // the focus goes to the chosen answer if there is one (coming back), else to the first
+  function focusStep() {
+    (steps[at].querySelector('input:checked') || steps[at].querySelector('input')).focus();
+  }
+
+  back.addEventListener('click', () => { result.hidden = true; show(at - 1); focusStep(); });
+  show(0);
+</script>
+</body>
+</html>
+~~~
+
+~~~view 470 520 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>أنسب قهوة ليك</title>
+<style>
+  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #fdf8f3; color: #292524; }
+  form { max-width: 440px; margin-inline: auto; padding: 20px; background: white; border-radius: 14px; }
+  h1 { margin: 0 0 4px; font-size: 22px; }
+  .step { margin: 0 0 12px; color: #78716c; font-size: 14px; }
+  fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 8px; }
+  legend { font-size: 18px; font-weight: 700; margin-block-end: 10px; }
+  fieldset label { display: flex; gap: 8px; align-items: center; padding: 10px 12px; border: 1px solid #d6d3d1; border-radius: 10px; cursor: pointer; }
+  fieldset label:has(input:checked) { border-color: #92400e; background: #fef3c7; }
+  .nav { display: flex; gap: 8px; margin-block-start: 16px; }
+  button { font: inherit; font-weight: 700; padding: 10px 18px; border-radius: 10px; border: 1px solid #92400e; background: white; color: #92400e; }
+  button[type="submit"] { background: #92400e; color: white; }
+  .result { margin-block-start: 16px; padding: 16px; border-radius: 12px; background: #292524; color: #fef3c7; }
+  .result b { display: block; font-size: 24px; }
+</style>
+</head>
+<body>
+<main>
+<form id="quiz" novalidate>
+  <h1>أنسب قهوة ليك</h1>
+  <p class="step" id="step">سؤال 1 من 4</p>
+
+  <fieldset>
+    <legend>بتحب طعم القهوة إزاي؟</legend>
+    <label><input type="radio" name="q1" value="strong" required> تقيلة ومُرّة</label>
+    <label><input type="radio" name="q1" value="milk"> بلبن كتير</label>
+    <label><input type="radio" name="q1" value="sweet"> مسكّرة</label>
+  </fieldset>
+
+  <fieldset hidden>
+    <legend>بتشربها إمتى؟</legend>
+    <label><input type="radio" name="q2" value="strong" required> أول ما أصحى</label>
+    <label><input type="radio" name="q2" value="milk"> مع الفطار</label>
+    <label><input type="radio" name="q2" value="sweet"> بالليل مع الحلو</label>
+  </fieldset>
+
+  <fieldset hidden>
+    <legend>سخنة ولا ساقعة؟</legend>
+    <label><input type="radio" name="q3" value="strong" required> سخنة دايمًا</label>
+    <label><input type="radio" name="q3" value="milk"> على حسب الجو</label>
+    <label><input type="radio" name="q3" value="sweet"> ساقعة بتلج</label>
+  </fieldset>
+
+  <fieldset hidden>
+    <legend>كوباية كبيرة ولا صغيرة؟</legend>
+    <label><input type="radio" name="q4" value="strong" required> فنجان صغير</label>
+    <label><input type="radio" name="q4" value="milk"> مج كبير</label>
+    <label><input type="radio" name="q4" value="sweet"> كوباية بشفاطة</label>
+  </fieldset>
+
+  <div class="nav">
+    <button type="button" id="back" hidden>رجوع</button>
+    <button type="submit" id="next">التالي</button>
+  </div>
+
+  <div class="result" id="result" aria-live="polite" hidden></div>
+</form>
+</main>
+<script>
+  const form = document.getElementById('quiz');
+  const steps = [...form.querySelectorAll('fieldset')];
+  const back = document.getElementById('back');
+  const next = document.getElementById('next');
+  const result = document.getElementById('result');
+  const coffees = {
+    strong: ['إسبريسو', 'فنجان صغير مركّز، من غير سكر ولا لبن.'],
+    milk: ['لاتيه', 'إسبريسو على لبن سخن كتير ورغوة خفيفة.'],
+    sweet: ['آيس موكا', 'قهوة بشوكولاتة وتلج، حلوة وساقعة.'],
+  };
+  let at = 0;
+
+  function show(i) {
+    steps.forEach((s, n) => s.hidden = n !== i);
+    at = i;
+    back.hidden = i === 0;
+    next.textContent = i === steps.length - 1 ? 'شوف النتيجة' : 'التالي';
+    document.getElementById('step').textContent = 'سؤال ' + (i + 1) + ' من ' + steps.length;
+  }
+
+  // Enter on a radio submits the form, so «التالي» works from the keyboard without extra code
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const first = steps[at].querySelector('input');
+    // the group is valid once any radio with this name is checked; reportValidity shows the browser's message on the group
+    if (!first.reportValidity()) return;
+    if (at < steps.length - 1) { show(at + 1); focusStep(); return; }
+    const votes = {};
+    for (const [, v] of new FormData(form)) votes[v] = (votes[v] || 0) + 1;
+    const best = Object.keys(votes).sort((a, b) => votes[b] - votes[a])[0];
+    result.innerHTML = 'أنسب قهوة ليك: <b>' + coffees[best][0] + '</b>' + coffees[best][1];
+    result.hidden = false;
+  });
+
+  // the focus goes to the chosen answer if there is one (coming back), else to the first
+  function focusStep() {
+    (steps[at].querySelector('input:checked') || steps[at].querySelector('input')).focus();
+  }
+
+  back.addEventListener('click', () => { result.hidden = true; show(at - 1); focusStep(); });
+  show(0);
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** كارت فيه «سؤال 1 من 4» وتحته السؤال و ٣ إجابات كل واحدة في مستطيل. اختار إجابة والمستطيل بيتلوّن أصفر. «التالي» بيوديك للسؤال اللي بعده، وفي الآخر الزرار بيبقى «شوف النتيجة» وبيظهر تحته كارت غامق فيه اسم القهوة.
+
+**ليه كده:**
+- كل سؤال [[<fieldset>]] و [[<legend>]]: قارئ الشاشة بيقرا السؤال قبل كل إجابة.
+- [[hidden]] على كل الأسئلة ماعدا اللي انت فيه.
+- «التالي» زرار [[submit]]: لما تدوس Enter وانت على radio المتصفح بيبعت الفورم، فـ «التالي» بيشتغل من الكيبورد ببلاش.
+- [[novalidate]]: من غيره المتصفح كان هيحاول يتأكد من **كل** الأسئلة مع أول «التالي»، ويقف عند سؤال مخفي ميقدرش يوريهولك. فبنسأل بإيدنا عن سؤال واحد بس: [[reportValidity()]] على أول radio في السؤال الحالي (والمجموعة كلها بتبقى سليمة لو أي واحد فيها متعلّم).
+- «رجوع» بيخفي ويظهر بس، فالإجابة اللي اخترتها بتفضل زي ما هي. والـ focus بيروح على الإجابة المختارة مش أول واحدة.
+- النتيجة: كل إجابة ليها نوع قهوة، والنوع اللي اتختار أكتر بيكسب. ولو حصل تعادل، النوع اللي جه الأول في إجاباتك هو اللي بيكسب.
+
+**الغلطة الشائعة:** «التالي» زرار [[type="button"]] بـ click listener: الماوس شغال بس Enter مبيعملش حاجة.
+
+~~~text الناتج (Chrome، بالكيبورد بس)
+Tab ثم Enter من غير اختيار      فضل في «سؤال 1 من 4»: Please select one of these options.
+سهم لتحت ثم Enter               سؤال 2 من 4
+Space ثم Enter                  سؤال 3 من 4
+سهم لتحت ثم Enter (مرتين)        الإجابات: q1=milk q2=strong q3=milk q4=milk
+                                أنسب قهوة ليك: لاتيه
+«رجوع»                          سؤال 3 من 4، والـ focus على q3=milk (الإجابة زي ما هي)
+غيّرت q3 و q4 لـ sweet          أنسب قهوة ليك: آيس موكا
+axe: 0 violations   الـ validator: مفيش رسايل
+~~~` },
+        { lvl: 'متوسط', dir: "free-chapter", t: R`فورم «اقرا الفصل الأول ببلاش» لرواية متخيلة`, what: R`صفحة غامقة لدار نشر متخيلة اسمها «حبر»: فورم صغير (الاسم، ورقم الواتساب، والإيميل، و checkbox موافقة) بيفتح الفصل الأول في [[thanks.html]]. المطلوب: (١) رسالة الخطأ تحت كل حقل تظهر بس بعد ما الشخص يسيب الحقل أو يدوس الزرار ([[:user-invalid]] و [[:has()]])، مش أول ما الصفحة تفتح. (٢) رقم الموبايل يتقبل بالأرقام العربي ([[٠١٠...]]) ويتحوّل لأرقام إنجليزي وانت بتكتب. (٣) الرقم يتبعت بشكل واحد دايمًا: [[+201012345678]]، سواء اتكتب بـ 0 أو بـ +20. ده نمط صفحات «سيب بياناتك وخد حاجة ببلاش» اللي بيستخدمها أي حد بيبيع منتج رقمي. من دروس «Constraint Validation API» و «textarea و date و number».`, done: R`أول ما الصفحة تفتح مفيش ولا رسالة حمرا رغم إن الحقول فاضية، وكتابة [[٠١٠١٢٣٤٥٦٧٨]] بالكيبورد بتبقى [[01012345678]] والحقل سليم، وكتابة [[0123]] وبعدين Tab بتظهّر «الرقم ده مش رقم موبايل مصري»، والإرسال بيفتح [[thanks.html]] وفي الرابط [[wa=+201012345678]].`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>اقرا الفصل الأول ببلاش: حبر</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #1e1b2e; color: #f5f3ff; }
+  .box { max-width: 420px; margin-inline: auto; padding: 24px; border-radius: 18px; background: #2a2640; }
+  h1 { margin: 0 0 4px; font-size: 24px; }
+  .lead { margin: 0 0 18px; color: #c4b5fd; }
+  form { display: grid; gap: 14px; }
+  .field { display: grid; gap: 4px; }
+  label { font-weight: 600; }
+  input[type="text"], input[type="tel"], input[type="email"] { font: inherit; padding: 10px 12px; border: 1px solid #6d5fa8; border-radius: 10px; background: #1e1b2e; color: inherit; }
+  .hint { color: #a5a1c7; font-size: 14px; }
+  .err { display: none; color: #fca5a5; font-size: 14px; }
+  /* the message shows after the person left the field or pressed «ابعتلي»: :user-invalid, not :invalid */
+  input:user-invalid { border-color: #f87171; }
+  .field:has(input:user-invalid) .err { display: block; }
+  .agree { display: flex; gap: 8px; align-items: start; font-weight: 400; }
+  button { font: inherit; font-weight: 800; padding: 12px; border: 0; border-radius: 12px; background: #a78bfa; color: #1e1b2e; }
+</style>
+</head>
+<body>
+<main class="box">
+  <h1>اقرا الفصل الأول ببلاش</h1>
+  <p class="lead">من رواية «ليالي البحر». سيب بياناتك والفصل يفتح على طول.</p>
+
+  <form id="signup" action="thanks.html" method="get">
+    <div class="field">
+      <label for="name">اسمك</label>
+      <input id="name" name="name" type="text" autocomplete="name" required>
+      <span class="err">اكتب اسمك.</span>
+    </div>
+
+    <div class="field">
+      <label for="wa">رقم الواتساب</label>
+      <input id="wa" name="wa" type="tel" autocomplete="tel" dir="ltr" required aria-describedby="wa-hint"
+             pattern="(\+20|0)?1[0125][0-9]{8}">
+      <span class="hint" id="wa-hint">زي 01012345678، وينفع بالأرقام العربي</span>
+      <span class="err">الرقم ده مش رقم موبايل مصري.</span>
+    </div>
+
+    <div class="field">
+      <label for="email">الإيميل</label>
+      <input id="email" name="email" type="email" autocomplete="email" dir="ltr" required>
+      <span class="err">الإيميل ناقص أو فيه غلط.</span>
+    </div>
+
+    <label class="agree"><input type="checkbox" name="agree" value="yes" required> موافق أستلم رسايل عن الرواية (تقدر تلغي في أي وقت).</label>
+
+    <button>ابعتلي الفصل</button>
+  </form>
+</main>
+<script>
+  const wa = document.getElementById('wa');
+  // ٠١٠ written with Arabic-Indic digits (or Persian ones from some keyboards) becomes 010 before the pattern checks it
+  function latinDigits(s) {
+    return s.replace(/[٠-٩]/g, d => d.charCodeAt(0) - 0x0660)
+            .replace(/[۰-۹]/g, d => d.charCodeAt(0) - 0x06F0)
+            .replace(/[\s-]/g, '');
+  }
+  wa.addEventListener('input', () => {
+    const fixed = latinDigits(wa.value);
+    if (fixed !== wa.value) wa.value = fixed;
+  });
+  // what gets sent is one shape: +201012345678
+  document.getElementById('signup').addEventListener('submit', () => {
+    wa.value = '+20' + wa.value.replace(/^(\+20|0)/, '');
+  });
+</script>
+</body>
+</html>
+~~~
+
+~~~html thanks.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الفصل الأول: ليالي البحر</title>
+</head>
+<body>
+<main>
+  <h1>الفصل الأول: الرجوع</h1>
+  <p>رجع سالم القرية بعد عشرين سنة، ولقى البحر زي ما هو…</p>
+</main>
+</body>
+</html>
+~~~
+
+~~~view 520 580 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>اقرا الفصل الأول ببلاش: حبر</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #1e1b2e; color: #f5f3ff; }
+  .box { max-width: 420px; margin-inline: auto; padding: 24px; border-radius: 18px; background: #2a2640; }
+  h1 { margin: 0 0 4px; font-size: 24px; }
+  .lead { margin: 0 0 18px; color: #c4b5fd; }
+  form { display: grid; gap: 14px; }
+  .field { display: grid; gap: 4px; }
+  label { font-weight: 600; }
+  input[type="text"], input[type="tel"], input[type="email"] { font: inherit; padding: 10px 12px; border: 1px solid #6d5fa8; border-radius: 10px; background: #1e1b2e; color: inherit; }
+  .hint { color: #a5a1c7; font-size: 14px; }
+  .err { display: none; color: #fca5a5; font-size: 14px; }
+  /* the message shows after the person left the field or pressed «ابعتلي»: :user-invalid, not :invalid */
+  input:user-invalid { border-color: #f87171; }
+  .field:has(input:user-invalid) .err { display: block; }
+  .agree { display: flex; gap: 8px; align-items: start; font-weight: 400; }
+  button { font: inherit; font-weight: 800; padding: 12px; border: 0; border-radius: 12px; background: #a78bfa; color: #1e1b2e; }
+</style>
+</head>
+<body>
+<main class="box">
+  <h1>اقرا الفصل الأول ببلاش</h1>
+  <p class="lead">من رواية «ليالي البحر». سيب بياناتك والفصل يفتح على طول.</p>
+
+  <form id="signup" method="get">
+    <div class="field">
+      <label for="name">اسمك</label>
+      <input id="name" name="name" type="text" autocomplete="name" required>
+      <span class="err">اكتب اسمك.</span>
+    </div>
+
+    <div class="field">
+      <label for="wa">رقم الواتساب</label>
+      <input id="wa" name="wa" type="tel" autocomplete="tel" dir="ltr" required aria-describedby="wa-hint"
+             pattern="(\+20|0)?1[0125][0-9]{8}">
+      <span class="hint" id="wa-hint">زي 01012345678، وينفع بالأرقام العربي</span>
+      <span class="err">الرقم ده مش رقم موبايل مصري.</span>
+    </div>
+
+    <div class="field">
+      <label for="email">الإيميل</label>
+      <input id="email" name="email" type="email" autocomplete="email" dir="ltr" required>
+      <span class="err">الإيميل ناقص أو فيه غلط.</span>
+    </div>
+
+    <label class="agree"><input type="checkbox" name="agree" value="yes" required> موافق أستلم رسايل عن الرواية (تقدر تلغي في أي وقت).</label>
+
+    <button>ابعتلي الفصل</button>
+  </form>
+</main>
+<script>
+  const wa = document.getElementById('wa');
+  // ٠١٠ written with Arabic-Indic digits (or Persian ones from some keyboards) becomes 010 before the pattern checks it
+  function latinDigits(s) {
+    return s.replace(/[٠-٩]/g, d => d.charCodeAt(0) - 0x0660)
+            .replace(/[۰-۹]/g, d => d.charCodeAt(0) - 0x06F0)
+            .replace(/[\s-]/g, '');
+  }
+  wa.addEventListener('input', () => {
+    const fixed = latinDigits(wa.value);
+    if (fixed !== wa.value) wa.value = fixed;
+  });
+  // what gets sent is one shape: +201012345678
+  document.getElementById('signup').addEventListener('submit', () => {
+    wa.value = '+20' + wa.value.replace(/^(\+20|0)/, '');
+  });
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** خلفية بنفسجي غامق جدًا وكارت أفتح شوية فيه عنوان أبيض وسطر بنفسجي فاتح، والحقول غامقة بحدود بنفسجي. مفيش أي أحمر في الأول. اكتب رقم ناقص وسيب الحقل: الحدود بتبقى حمرا وتحتها «الرقم ده مش رقم موبايل مصري.»
+
+**ليه كده:**
+- **[[:user-invalid]] مع [[:has()]]:** [[.field:has(input:user-invalid) .err]] معناها «رسالة الخطأ اللي في نفس الـ field مع حقل الشخص لمسه وطلع غلط». من غير JavaScript.
+- **الأرقام العربي:** الحرف [[٠]] رقمه في Unicode [[0x0660]]، و [[١]] بعده وهكذا. فـ [[charCodeAt(0) - 0x0660]] بيطلّع الرقم. والأرقام الفارسي ([[۰]] من [[0x06F0]]) بتيجي من بعض الكيبوردات، فبنحوّلها هي كمان. وبنشيل المسافات والشَرط.
+- **[[pattern="(\+20|0)?1[0125][0-9]{8}"]]:** بيقبل [[010...]] و [[+2010...]] و [[10...]]. ووقت الإرسال بنشيل البداية ونحط [[+20]]، فالسيرفر يستلم شكل واحد بس ويقدر يدوّر عليه.
+- **[[autocomplete]]** على الاسم والموبايل والإيميل: الموبايل بيملاهم بضغطة.
+- **checkbox الموافقة [[required]]:** إذن صريح قبل أي رسايل، ومكتوب جنبه إنه يقدر يلغي.
+
+**الغلطة الشائعة:** [[input:invalid { border-color: red }]]: الصفحة بتفتح والحقول كلها حمرا قبل ما الشخص يكتب حرف، وده بيخوّف الناس.
+
+~~~text الناتج (Chrome)
+أول ما الصفحة تفتح                 رسالة الخطأ: display = none (والحقل :invalid فعلًا)
+كتبت ٠١٠١٢٣٤٥٦٧٨ بالكيبورد          value = "01012345678"   checkValidity() = true
+كتبت 0123 وبعدين Tab                :user-invalid = true، والرسالة display = block
+                                   حقل الاسم اللي متلمسش: :invalid = true بس رسالته لسه none
+الإرسال                            /free-chapter/thanks.html?name=سارة&wa=+201012345678&email=sara@example.com&agree=yes
+axe: 0 violations   الـ validator: مفيش رسايل
+~~~` },
+        { lvl: 'متوسط', dir: "pay-tabs", t: R`صفحة دفع بتابات من غير JavaScript`, what: R`صفحة «ادفع تمن الرواية» فيها ٣ تابات (محفظة موبايل، تحويل بنكي، كارت)، والتابات radios حقيقية مخفية بالشكل وكل radio جوه [[<label>]] شكله تاب، والمحتوى بيظهر بـ [[form:has(#t-bank:checked) .bank]] من غير سطر JavaScript. في كل تاب صفوف «الاسم والقيمة وزرار انسخ»، والقيمة ممكن تبقى طويلة جدًا (رقم حساب IBAN من ٢٩ حرف): على 360px لازم القيمة تلف لسطرين والزرار يفضل جنبها، مش يقع تحتها ([[grid-template-columns: minmax(0, 1fr) auto]] و [[overflow-wrap: anywhere]]). وتحت التابات [[<input type="file" accept="image/*">]] لصورة الإيصال. نمط صفحات الدفع اليدوي في المتاجر الصغيرة. من دروس «fieldset و radio» و «ملخص الأخطاء».`, done: R`Tab بيوقف على التابات والأسهم بتنقّل بينها والمحتوى بيتغيّر، والصفحة بتشتغل لو قفلت JavaScript من DevTools (ماعدا زرار انسخ)، وعلى 360px في تاب «تحويل بنكي» رقم الحساب في سطرين وزرار «انسخ» جنبه ومفيش scroll أفقي، و axe صفر violations.`, sol: R`~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ادفع: رواية ليالي البحر</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #f5f3ff; color: #1e1b4b; }
+  main { max-width: 520px; margin-inline: auto; }
+  h1 { font-size: 22px; margin: 0 0 12px; }
+  fieldset { border: 0; padding: 0; margin: 0; }
+  legend { font-weight: 700; margin-block-end: 8px; }
+
+  /* the tabs: real radios (keyboard + screen reader), the label is what you see */
+  .tabs { display: flex; gap: 6px; }
+  .tabs input { position: absolute; width: 1px; height: 1px; clip-path: inset(50%); }
+  .tabs label { flex: 1; text-align: center; padding: 10px 6px; border-radius: 10px 10px 0 0; background: #ddd6fe; cursor: pointer; font-weight: 600; }
+  .tabs label:has(input:checked) { background: white; color: #5b21b6; }
+  .tabs label:has(input:focus-visible) { outline: 3px solid #1d4ed8; outline-offset: -3px; }
+
+  .panel { display: none; padding: 16px; background: white; border-radius: 0 0 12px 12px; }
+  /* one rule per tab: the panel whose radio is checked shows */
+  form:has(#t-wallet:checked) .wallet,
+  form:has(#t-bank:checked) .bank,
+  form:has(#t-card:checked) .card { display: block; }
+
+  /* the value can be long (an account number): it wraps, and the copy button stays beside it */
+  .row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 8px 0; border-block-end: 1px solid #ede9fe; }
+  .row span { display: block; color: #6d28d9; font-size: 13px; }
+  .row code { font-size: 16px; overflow-wrap: anywhere; }
+  .copy { font: inherit; padding: 6px 12px; border: 1px solid #7c3aed; border-radius: 8px; background: white; color: #7c3aed; }
+
+  .receipt { display: grid; gap: 6px; margin-block-start: 16px; }
+  .receipt label { font-weight: 600; }
+  .send { width: 100%; margin-block-start: 16px; font: inherit; font-weight: 800; padding: 12px; border: 0; border-radius: 12px; background: #6d28d9; color: white; }
+</style>
+</head>
+<body>
+<main>
+<h1>ادفع تمن الرواية: ٢٥٠ جنيه</h1>
+<form method="get">
+  <fieldset>
+    <legend>هتدفع إزاي؟</legend>
+    <div class="tabs">
+      <label><input type="radio" name="method" id="t-wallet" value="wallet" checked> محفظة موبايل</label>
+      <label><input type="radio" name="method" id="t-bank" value="bank"> تحويل بنكي</label>
+      <label><input type="radio" name="method" id="t-card" value="card"> كارت</label>
+    </div>
+  </fieldset>
+
+  <div class="panel wallet">
+    <p>حوّل على رقم المحفظة ده، وبعدين ارفع صورة الإيصال تحت.</p>
+    <div class="row"><div><span>رقم المحفظة</span><code>01000000000</code></div><button type="button" class="copy">انسخ</button></div>
+    <div class="row"><div><span>المبلغ</span><code>250</code></div><button type="button" class="copy">انسخ</button></div>
+  </div>
+
+  <div class="panel bank">
+    <p>حوّل من تطبيق البنك على الحساب ده.</p>
+    <div class="row"><div><span>اسم الحساب</span><code>دار حبر للنشر</code></div><button type="button" class="copy">انسخ</button></div>
+    <div class="row"><div><span>رقم الحساب (IBAN)</span><code>EG000000000000000000000000000</code></div><button type="button" class="copy">انسخ</button></div>
+  </div>
+
+  <div class="panel card">
+    <p>الدفع بالكارت بيفتح صفحة الدفع الآمنة بتاعة البنك (مش في المشروع ده).</p>
+  </div>
+
+  <div class="receipt">
+    <label for="receipt">صورة الإيصال (لو حوّلت)</label>
+    <input id="receipt" name="receipt" type="file" accept="image/*">
+  </div>
+  <button class="send">بعت</button>
+</form>
+</main>
+<script>
+  // the only JavaScript on the page: the copy buttons (the tabs work without it)
+  document.addEventListener('click', async e => {
+    const b = e.target.closest('.copy');
+    if (!b) return;
+    const text = b.previousElementSibling.querySelector('code').textContent;
+    try { await navigator.clipboard.writeText(text); b.textContent = 'اتنسخ ✓'; }
+    catch { b.textContent = 'انسخ بإيدك'; }
+    setTimeout(() => b.textContent = 'انسخ', 1500);
+  });
+</script>
+</body>
+</html>
+~~~
+
+~~~view 520 600 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ادفع: رواية ليالي البحر</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #f5f3ff; color: #1e1b4b; }
+  main { max-width: 520px; margin-inline: auto; }
+  h1 { font-size: 22px; margin: 0 0 12px; }
+  fieldset { border: 0; padding: 0; margin: 0; }
+  legend { font-weight: 700; margin-block-end: 8px; }
+
+  /* the tabs: real radios (keyboard + screen reader), the label is what you see */
+  .tabs { display: flex; gap: 6px; }
+  .tabs input { position: absolute; width: 1px; height: 1px; clip-path: inset(50%); }
+  .tabs label { flex: 1; text-align: center; padding: 10px 6px; border-radius: 10px 10px 0 0; background: #ddd6fe; cursor: pointer; font-weight: 600; }
+  .tabs label:has(input:checked) { background: white; color: #5b21b6; }
+  .tabs label:has(input:focus-visible) { outline: 3px solid #1d4ed8; outline-offset: -3px; }
+
+  .panel { display: none; padding: 16px; background: white; border-radius: 0 0 12px 12px; }
+  /* one rule per tab: the panel whose radio is checked shows */
+  form:has(#t-wallet:checked) .wallet,
+  form:has(#t-bank:checked) .bank,
+  form:has(#t-card:checked) .card { display: block; }
+
+  /* the value can be long (an account number): it wraps, and the copy button stays beside it */
+  .row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 8px 0; border-block-end: 1px solid #ede9fe; }
+  .row span { display: block; color: #6d28d9; font-size: 13px; }
+  .row code { font-size: 16px; overflow-wrap: anywhere; }
+  .copy { font: inherit; padding: 6px 12px; border: 1px solid #7c3aed; border-radius: 8px; background: white; color: #7c3aed; }
+
+  .receipt { display: grid; gap: 6px; margin-block-start: 16px; }
+  .receipt label { font-weight: 600; }
+  .send { width: 100%; margin-block-start: 16px; font: inherit; font-weight: 800; padding: 12px; border: 0; border-radius: 12px; background: #6d28d9; color: white; }
+</style>
+</head>
+<body>
+<main>
+<h1>ادفع تمن الرواية: ٢٥٠ جنيه</h1>
+<form method="get">
+  <fieldset>
+    <legend>هتدفع إزاي؟</legend>
+    <div class="tabs">
+      <label><input type="radio" name="method" id="t-wallet" value="wallet" checked> محفظة موبايل</label>
+      <label><input type="radio" name="method" id="t-bank" value="bank"> تحويل بنكي</label>
+      <label><input type="radio" name="method" id="t-card" value="card"> كارت</label>
+    </div>
+  </fieldset>
+
+  <div class="panel wallet">
+    <p>حوّل على رقم المحفظة ده، وبعدين ارفع صورة الإيصال تحت.</p>
+    <div class="row"><div><span>رقم المحفظة</span><code>01000000000</code></div><button type="button" class="copy">انسخ</button></div>
+    <div class="row"><div><span>المبلغ</span><code>250</code></div><button type="button" class="copy">انسخ</button></div>
+  </div>
+
+  <div class="panel bank">
+    <p>حوّل من تطبيق البنك على الحساب ده.</p>
+    <div class="row"><div><span>اسم الحساب</span><code>دار حبر للنشر</code></div><button type="button" class="copy">انسخ</button></div>
+    <div class="row"><div><span>رقم الحساب (IBAN)</span><code>EG000000000000000000000000000</code></div><button type="button" class="copy">انسخ</button></div>
+  </div>
+
+  <div class="panel card">
+    <p>الدفع بالكارت بيفتح صفحة الدفع الآمنة بتاعة البنك (مش في المشروع ده).</p>
+  </div>
+
+  <div class="receipt">
+    <label for="receipt">صورة الإيصال (لو حوّلت)</label>
+    <input id="receipt" name="receipt" type="file" accept="image/*">
+  </div>
+  <button class="send">بعت</button>
+</form>
+</main>
+<script>
+  // the only JavaScript on the page: the copy buttons (the tabs work without it)
+  document.addEventListener('click', async e => {
+    const b = e.target.closest('.copy');
+    if (!b) return;
+    const text = b.previousElementSibling.querySelector('code').textContent;
+    try { await navigator.clipboard.writeText(text); b.textContent = 'اتنسخ ✓'; }
+    catch { b.textContent = 'انسخ بإيدك'; }
+    setTimeout(() => b.textContent = 'انسخ', 1500);
+  });
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** عنوان «ادفع تمن الرواية: ٢٥٠ جنيه» وتحته ٣ تابات بنفسجي فاتح، والتاب المختار أبيض ولازق في المربع الأبيض اللي تحته. في «محفظة موبايل» رقم المحفظة والمبلغ وجنب كل واحد زرار «انسخ». دوس «تحويل بنكي» والمحتوى بيتغيّر. على «موبايل» رقم الحساب الطويل بيلف لسطرين والزرار جنبه.
+
+**ليه كده:**
+- **التابات radios:** [[name="method"]] واحد، فواحد بس مختار، والأسهم بتنقّل بينهم، وقيمته بتتبعت مع الفورم. وكل radio ليه [[id]] عشان الـ CSS يسأل عنه: [[form:has(#t-bank:checked) .bank { display: block; }]].
+- **مفيش JavaScript للتابات:** الزرار الوحيد اللي محتاج سكربت هو «انسخ» ([[navigator.clipboard.writeText]])، ولو النسخ اترفض بيقول «انسخ بإيدك».
+- **القيمة الطويلة:** [[grid-template-columns: minmax(0, 1fr) auto]]: العمود التاني على قد الزرار، والأول ياخد الباقي. و [[minmax(0, …)]] بيسمح للعمود يصغر عن طول الكلمة، و [[overflow-wrap: anywhere]] بيكسر الرقم الطويل.
+- **[[type="file"]] و [[accept="image/*"]]:** المتصفح بيفتح الصور بس. ومع [[method="get"]] اسم الملف بس اللي بيتبعت، مش الصورة. رفع الملف الحقيقي محتاج [[method="post"]] و [[enctype="multipart/form-data"]] وسيرفر (درس «إرسال الفورم» في الوحدة اللي بعدها).
+
+**فخ قسته:** الصفحة [[dir="rtl"]]، فالسهم **الشمال** هو اللي بيروح للتاب اللي بعده، واليمين بيرجع (ومن أول تاب بيلف لآخر واحد). ده صح: الاتجاه بيمشي مع اتجاه الصفحة.
+
+**المشكلة اللي الصفحة دي بتحلها:** الطريقة اللي بتيجي على البال [[.row { display: flex; flex-wrap: wrap; justify-content: space-between; }]]. على 360px رقم الحساب مبيتكسرش، فالزرار بيقع لسطر لوحده تحت القيمة. قستها جنب الحل:
+
+~~~text الناتج (Chrome، 360px، تاب «تحويل بنكي»، رقم الحساب)
+                 overflow أفقي   أعلى القيمة   أعلى الزرار    الزرار فين
+flex + wrap      0               306           333            تحت القيمة
+grid (الحل)      0               306           298            جنبها (والقيمة سطرين، طولها 41px)
+
+Tab ثم سهم يمين    من «محفظة» لـ «كارت» (لفّ لآخر تاب)
+سهم شمال           رجع لـ «محفظة»
+axe: 0 violations   الـ validator: مفيش رسايل
+~~~` },
+        { lvl: 'كبير', dir: "sabah-checkout", t: R`Checkout لمتجر قهوة متخيل (من غير دفع حقيقي)`, what: R`صفحة طلب لـ «بُن الصباح»: بياناتك (autocomplete كامل)، وعنوان الشحن في شبكة عمودين بتبقى عمود واحد على الموبايل والحقل الطويل [[grid-column: 1 / -1]]، وطريقة الدفع radio cards (كارت أو كاش)، وكوبون بتاريخ انتهاء بيتحسب لآخر اليوم مش أوله، وملخص أخطاء، ومنع الإرسال مرتين، ومسودة بتتحفظ في localStorage كل ثانية **من غير** أي حقل حساس (رقم الكارت مثلًا)، وصفحة «اتطلب» بعد النجاح. فكرة «الفورم الطويل اللي بيرجع مكان ما وقفت».`, done: R`على 360px عمود واحد وعلى 800px عمودين، والإرسال الفاضي بيحط الـ focus على أول غلط والملخص فيه عدد الأخطاء، وقفل التاب وفتحه بيرجّع كل الحقول ما عدا الحساسة (اتأكد من Application › Local Storage إن رقم الكارت مش متخزن)، وكوبون بينتهي النهارده لسه شغال الساعة 11 بالليل، و axe صفر violations، والدبل كليك بيبعت طلب واحد، ولو الطلب فشل (Network › Offline) الزرار بيرجع والبيانات متمسحتش.`, ext: R`زوّد رسالة تأكيد بتفتح واتساب برسالة جاهزة ([[wa.me/?text=]] و [[encodeURIComponent]])، ونسخة إنجليزي بـ [[dir="ltr"]] من غير ما تغيّر الـ CSS.`, sol: R`**شجرة الملفات:**
+
+~~~text
+sabah-checkout/
+├── index.html    الفورم والسلة
+├── style.css     الشكل والعمودين
+├── app.js        الدفع والكوبون والمسودة والإرسال
+└── thanks.html   صفحة «اتطلب»
+~~~
+
+**ترتيب البناء:** الـ HTML الأول بكل الحقول وأنواعها و [[autocomplete]]، وبعدين الـ CSS (عمود واحد، وبعدين العمودين)، وبعدين JavaScript حتة حتة بالترتيب ده: الكارت أو الكاش، والكوبون، والمسودة، والملخص، والإرسال. وجرّب كل حتة قبل اللي بعدها.
+
+**مهم:** شغّله من سيرفر محلي (Live Server في VS Code، أو [[python -m http.server]] في الفولدر) مش بفتح الملف على طول، لأن [[fetch]] مبيشتغلش على [[file://]].
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>إتمام الطلب: بُن الصباح</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+<h1>إتمام الطلب</h1>
+
+<div class="layout">
+<form id="checkout" novalidate>
+  <div class="summary" id="summary" tabindex="-1" hidden>
+    <h2>فيه <span id="count"></span> لازم تتصلّح:</h2>
+    <ul id="errors"></ul>
+  </div>
+
+  <fieldset>
+    <legend>بياناتك</legend>
+    <div class="grid">
+      <div class="field wide">
+        <label for="name">الاسم بالكامل</label>
+        <input id="name" name="name" autocomplete="name" required>
+      </div>
+      <div class="field">
+        <label for="email">الإيميل</label>
+        <input id="email" name="email" type="email" autocomplete="email" dir="ltr" required>
+      </div>
+      <div class="field">
+        <label for="phone">الموبايل</label>
+        <input id="phone" name="phone" type="tel" autocomplete="tel" dir="ltr" required pattern="01[0125][0-9]{8}">
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>عنوان الشحن</legend>
+    <div class="grid">
+      <div class="field wide">
+        <label for="street">الشارع ورقم العمارة والشقة</label>
+        <input id="street" name="street" autocomplete="address-line1" required>
+      </div>
+      <div class="field">
+        <label for="city">المدينة</label>
+        <input id="city" name="city" autocomplete="address-level2" required>
+      </div>
+      <div class="field">
+        <label for="area">المحافظة</label>
+        <input id="area" name="area" autocomplete="address-level1" required>
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>طريقة الدفع</legend>
+    <div class="pay">
+      <label class="card"><input type="radio" name="pay" value="cash" checked> كاش عند الاستلام</label>
+      <label class="card"><input type="radio" name="pay" value="card"> كارت</label>
+    </div>
+    <!-- disabled while «كاش» is chosen: a disabled field is neither validated nor sent -->
+    <fieldset class="cardbox" id="cardbox" disabled hidden>
+      <legend>بيانات الكارت</legend>
+      <div class="grid">
+        <div class="field wide">
+          <label for="ccnum">رقم الكارت</label>
+          <input id="ccnum" name="ccnum" autocomplete="cc-number" inputmode="numeric" dir="ltr" required pattern="[0-9 ]{12,23}">
+        </div>
+        <div class="field">
+          <label for="ccexp">تاريخ الانتهاء</label>
+          <input id="ccexp" name="ccexp" autocomplete="cc-exp" dir="ltr" placeholder="MM/YY" required pattern="(0[1-9]|1[0-2])/[0-9]{2}">
+        </div>
+        <div class="field">
+          <label for="cccsc">CVV</label>
+          <input id="cccsc" name="cccsc" autocomplete="cc-csc" inputmode="numeric" dir="ltr" required pattern="[0-9]{3,4}">
+        </div>
+      </div>
+    </fieldset>
+  </fieldset>
+
+  <fieldset>
+    <legend>كوبون خصم</legend>
+    <div class="coupon">
+      <label for="coupon" class="visually-hidden">كود الكوبون</label>
+      <input id="coupon" name="coupon" dir="ltr" autocomplete="off" aria-describedby="coupon-msg">
+      <button type="button" id="apply">طبّق</button>
+    </div>
+    <p id="coupon-msg" class="hint" aria-live="polite"></p>
+  </fieldset>
+
+  <p id="fail" class="fail" role="alert" hidden>الطلب متبعتش (النت فاصل؟). بياناتك زي ما هي، جرّب تاني.</p>
+  <button id="send" class="send">اطلب</button>
+</form>
+
+<aside class="cart" aria-labelledby="cart-title">
+  <h2 id="cart-title">طلبك</h2>
+  <ul>
+    <li><span>بن محوّج، ربع كيلو</span><span>١٨٠ ج</span></li>
+    <li><span>بن فاتح، ربع كيلو</span><span>١٦٠ ج</span></li>
+    <li><span>الشحن</span><span>٤٠ ج</span></li>
+    <li id="discount-row" hidden><span>الخصم</span><span id="discount"></span></li>
+  </ul>
+  <p class="total"><span>الإجمالي</span><output id="total">٣٨٠ ج</output></p>
+</aside>
+</div>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
+~~~
+
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding: 16px; background: #faf6f1; color: #292524; font: 16px/1.6 system-ui, "Segoe UI", Tahoma, sans-serif; }
+main { max-width: 980px; margin-inline: auto; }
+h1 { margin: 0 0 16px; }
+
+.layout { display: grid; gap: 16px; grid-template-columns: 1fr; }
+@media (min-width: 800px) { .layout { grid-template-columns: 1fr 300px; align-items: start; } }
+
+form { display: grid; gap: 16px; }
+fieldset { margin: 0; padding: 16px; border: 0; border-radius: 14px; background: white; }
+legend { float: inline-start; width: 100%; margin-block-end: 10px; font-weight: 800; font-size: 18px; }
+
+/* two columns from 600px up, the long fields take the whole row */
+.grid { clear: both; display: grid; gap: 12px; grid-template-columns: 1fr; }
+@media (min-width: 600px) { .grid { grid-template-columns: 1fr 1fr; } .wide { grid-column: 1 / -1; } }
+
+.field { display: grid; gap: 4px; min-width: 0; }
+label { font-weight: 600; }
+input { font: inherit; width: 100%; padding: 8px 10px; border: 1px solid #a8a29e; border-radius: 8px; }
+[aria-invalid="true"] { border-color: #b91c1c; background: #fef2f2; }
+
+.pay { clear: both; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.card { display: flex; gap: 8px; align-items: center; padding: 12px; border: 2px solid #d6d3d1; border-radius: 12px; cursor: pointer; }
+.card:has(input:checked) { border-color: #92400e; background: #fef3c7; }
+.card:has(input:focus-visible) { outline: 3px solid #1d4ed8; outline-offset: 2px; }
+.cardbox { margin-block-start: 12px; padding: 12px; background: #fafaf9; }
+
+.coupon { clear: both; display: flex; gap: 8px; }
+.coupon button { font: inherit; padding: 8px 16px; border: 1px solid #92400e; border-radius: 8px; background: white; color: #92400e; }
+.hint { margin: 6px 0 0; font-size: 14px; color: #57534e; }
+
+.summary { padding: 12px 16px; border: 2px solid #b91c1c; border-radius: 12px; background: #fef2f2; }
+.summary h2 { margin: 0 0 6px; font-size: 18px; color: #991b1b; }
+.summary a { color: #991b1b; }
+.fail { margin: 0; padding: 10px 14px; border-radius: 10px; background: #fef2f2; color: #991b1b; }
+
+.send { font: inherit; font-weight: 800; padding: 14px; border: 0; border-radius: 12px; background: #92400e; color: white; }
+.send:disabled { background: #a8a29e; }
+
+.cart { padding: 16px; border-radius: 14px; background: #292524; color: #fef3c7; }
+.cart h2 { margin: 0 0 8px; }
+.cart ul { margin: 0; padding: 0; list-style: none; }
+.cart li, .total { display: flex; justify-content: space-between; gap: 8px; padding-block: 6px; border-block-end: 1px solid #44403c; }
+.total { margin: 8px 0 0; border: 0; font-size: 20px; font-weight: 800; }
+
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+~~~
+
+~~~js app.js
+const form = document.getElementById('checkout');
+const send = document.getElementById('send');
+const fail = document.getElementById('fail');
+const cardbox = document.getElementById('cardbox');
+const DRAFT = 'sabah-checkout-draft';
+const SUBTOTAL = 380; // 180 + 160 + 40 shipping
+
+// ---------- card or cash ----------
+function payChanged() {
+  const card = form.elements.pay.value === 'card';
+  cardbox.hidden = !card;
+  cardbox.disabled = !card; // disabled: not validated, not sent
+}
+form.addEventListener('change', e => { if (e.target.name === 'pay') payChanged(); });
+
+// ---------- coupon: valid until the END of its last day, in the reader's time zone ----------
+const COUPONS = {
+  SABAH10: { pct: 10, until: '2026-12-31' },
+  WINTER5: { pct: 5, until: '2026-01-31' },
+};
+function couponState(code, now = new Date()) {
+  const c = COUPONS[code.trim().toUpperCase()];
+  if (!c) return { ok: false, msg: 'الكود ده مش موجود.' };
+  // new Date('2026-12-31') is midnight UTC: 2 AM in Cairo, and the code would die at the START of the day
+  const [y, m, d] = c.until.split('-').map(Number);
+  const end = new Date(y, m - 1, d, 23, 59, 59, 999);
+  if (now > end) return { ok: false, msg: 'الكود ده خلص يوم ' + c.until + '.' };
+  return { ok: true, pct: c.pct, msg: 'اتطبّق خصم ' + c.pct + '٪.' };
+}
+const money = n => n.toLocaleString('ar-EG') + ' ج';
+function applyCoupon() {
+  const input = form.elements.coupon;
+  const s = input.value ? couponState(input.value) : { ok: false, msg: '' };
+  document.getElementById('coupon-msg').textContent = s.msg;
+  const off = s.ok ? Math.round(SUBTOTAL * s.pct / 100) : 0;
+  document.getElementById('discount-row').hidden = !off;
+  document.getElementById('discount').textContent = '- ' + money(off);
+  document.getElementById('total').textContent = money(SUBTOTAL - off);
+}
+document.getElementById('apply').addEventListener('click', applyCoupon);
+
+// ---------- draft: saved every second, never the card fields ----------
+const isPrivate = f => (f.autocomplete || '').startsWith('cc-');
+function saveDraft() {
+  const data = {};
+  for (const f of form.elements) {
+    if (!f.name || isPrivate(f) || f.type === 'button' || f.type === 'submit') continue;
+    if (f.type === 'radio') { if (f.checked) data[f.name] = f.value; }
+    else data[f.name] = f.value;
+  }
+  try { localStorage.setItem(DRAFT, JSON.stringify(data)); } catch {}
+}
+function loadDraft() {
+  let data = null;
+  try { data = JSON.parse(localStorage.getItem(DRAFT)); } catch {}
+  if (!data) return;
+  for (const [k, v] of Object.entries(data)) {
+    // form.elements.pay is a RadioNodeList: setting its value checks the radio with that value
+    if (form.elements[k]) form.elements[k].value = v;
+  }
+}
+loadDraft();
+payChanged();
+applyCoupon();
+const autosave = setInterval(saveDraft, 1000);
+
+// ---------- errors summary ----------
+const summary = document.getElementById('summary');
+const list = document.getElementById('errors');
+list.addEventListener('click', e => {
+  const a = e.target.closest('a');
+  if (!a) return;
+  e.preventDefault();
+  document.querySelector(a.hash).focus();
+});
+function showErrors(bad) {
+  list.innerHTML = '';
+  for (const f of bad) {
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = '#' + f.id;
+    a.textContent = form.querySelector('label[for="' + f.id + '"]').textContent + ': ' + f.validationMessage;
+    li.append(a);
+    list.append(li);
+  }
+  document.getElementById('count').textContent = bad.length === 1 ? 'حاجة واحدة' : bad.length + ' حاجات';
+  summary.hidden = false;
+  summary.focus();
+}
+
+// ---------- send once ----------
+let sending = false;
+form.addEventListener('submit', async e => {
+  e.preventDefault();
+  if (sending) return;
+  const bad = [...form.elements].filter(f => f.willValidate && !f.checkValidity());
+  for (const f of form.elements) if (f.willValidate) f.setAttribute('aria-invalid', String(bad.includes(f)));
+  if (bad.length) { showErrors(bad); return; }
+  summary.hidden = true;
+  fail.hidden = true;
+  sending = true;
+  send.disabled = true;
+  send.textContent = 'بنبعت الطلب…';
+  try {
+    // no server in this project: thanks.html stands in for the API (a real shop sends a POST to its own /api/orders)
+    const res = await fetch('thanks.html', { method: 'HEAD', cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    // stop the autosave FIRST: the next page can take seconds to load, and a save in between writes the draft back
+    clearInterval(autosave);
+    localStorage.removeItem(DRAFT);
+    location.href = 'thanks.html';
+  } catch {
+    fail.hidden = false;
+    sending = false;
+    send.disabled = false;
+    send.textContent = 'اطلب';
+  }
+});
+~~~
+
+~~~html thanks.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>اتطلب: بُن الصباح</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <h1>اتطلب ☕</h1>
+  <p>الطلب هيوصلك خلال يومين، وهنكلمك على الموبايل قبلها.</p>
+  <p><a href="index.html">ارجع للمتجر</a></p>
+</main>
+</body>
+</html>
+~~~
+
+~~~view 900 1500 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>إتمام الطلب: بُن الصباح</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding: 16px; background: #faf6f1; color: #292524; font: 16px/1.6 system-ui, "Segoe UI", Tahoma, sans-serif; }
+main { max-width: 980px; margin-inline: auto; }
+h1 { margin: 0 0 16px; }
+
+.layout { display: grid; gap: 16px; grid-template-columns: 1fr; }
+@media (min-width: 800px) { .layout { grid-template-columns: 1fr 300px; align-items: start; } }
+
+form { display: grid; gap: 16px; }
+fieldset { margin: 0; padding: 16px; border: 0; border-radius: 14px; background: white; }
+legend { float: inline-start; width: 100%; margin-block-end: 10px; font-weight: 800; font-size: 18px; }
+
+/* two columns from 600px up, the long fields take the whole row */
+.grid { clear: both; display: grid; gap: 12px; grid-template-columns: 1fr; }
+@media (min-width: 600px) { .grid { grid-template-columns: 1fr 1fr; } .wide { grid-column: 1 / -1; } }
+
+.field { display: grid; gap: 4px; min-width: 0; }
+label { font-weight: 600; }
+input { font: inherit; width: 100%; padding: 8px 10px; border: 1px solid #a8a29e; border-radius: 8px; }
+[aria-invalid="true"] { border-color: #b91c1c; background: #fef2f2; }
+
+.pay { clear: both; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.card { display: flex; gap: 8px; align-items: center; padding: 12px; border: 2px solid #d6d3d1; border-radius: 12px; cursor: pointer; }
+.card:has(input:checked) { border-color: #92400e; background: #fef3c7; }
+.card:has(input:focus-visible) { outline: 3px solid #1d4ed8; outline-offset: 2px; }
+.cardbox { margin-block-start: 12px; padding: 12px; background: #fafaf9; }
+
+.coupon { clear: both; display: flex; gap: 8px; }
+.coupon button { font: inherit; padding: 8px 16px; border: 1px solid #92400e; border-radius: 8px; background: white; color: #92400e; }
+.hint { margin: 6px 0 0; font-size: 14px; color: #57534e; }
+
+.summary { padding: 12px 16px; border: 2px solid #b91c1c; border-radius: 12px; background: #fef2f2; }
+.summary h2 { margin: 0 0 6px; font-size: 18px; color: #991b1b; }
+.summary a { color: #991b1b; }
+.fail { margin: 0; padding: 10px 14px; border-radius: 10px; background: #fef2f2; color: #991b1b; }
+
+.send { font: inherit; font-weight: 800; padding: 14px; border: 0; border-radius: 12px; background: #92400e; color: white; }
+.send:disabled { background: #a8a29e; }
+
+.cart { padding: 16px; border-radius: 14px; background: #292524; color: #fef3c7; }
+.cart h2 { margin: 0 0 8px; }
+.cart ul { margin: 0; padding: 0; list-style: none; }
+.cart li, .total { display: flex; justify-content: space-between; gap: 8px; padding-block: 6px; border-block-end: 1px solid #44403c; }
+.total { margin: 8px 0 0; border: 0; font-size: 20px; font-weight: 800; }
+
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+</style>
+</head>
+<body>
+<main>
+<h1>إتمام الطلب</h1>
+
+<div class="layout">
+<form id="checkout" novalidate>
+  <div class="summary" id="summary" tabindex="-1" hidden>
+    <h2>فيه <span id="count"></span> لازم تتصلّح:</h2>
+    <ul id="errors"></ul>
+  </div>
+
+  <fieldset>
+    <legend>بياناتك</legend>
+    <div class="grid">
+      <div class="field wide">
+        <label for="name">الاسم بالكامل</label>
+        <input id="name" name="name" autocomplete="name" required>
+      </div>
+      <div class="field">
+        <label for="email">الإيميل</label>
+        <input id="email" name="email" type="email" autocomplete="email" dir="ltr" required>
+      </div>
+      <div class="field">
+        <label for="phone">الموبايل</label>
+        <input id="phone" name="phone" type="tel" autocomplete="tel" dir="ltr" required pattern="01[0125][0-9]{8}">
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>عنوان الشحن</legend>
+    <div class="grid">
+      <div class="field wide">
+        <label for="street">الشارع ورقم العمارة والشقة</label>
+        <input id="street" name="street" autocomplete="address-line1" required>
+      </div>
+      <div class="field">
+        <label for="city">المدينة</label>
+        <input id="city" name="city" autocomplete="address-level2" required>
+      </div>
+      <div class="field">
+        <label for="area">المحافظة</label>
+        <input id="area" name="area" autocomplete="address-level1" required>
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>طريقة الدفع</legend>
+    <div class="pay">
+      <label class="card"><input type="radio" name="pay" value="cash" checked> كاش عند الاستلام</label>
+      <label class="card"><input type="radio" name="pay" value="card"> كارت</label>
+    </div>
+    <!-- disabled while «كاش» is chosen: a disabled field is neither validated nor sent -->
+    <fieldset class="cardbox" id="cardbox" disabled hidden>
+      <legend>بيانات الكارت</legend>
+      <div class="grid">
+        <div class="field wide">
+          <label for="ccnum">رقم الكارت</label>
+          <input id="ccnum" name="ccnum" autocomplete="cc-number" inputmode="numeric" dir="ltr" required pattern="[0-9 ]{12,23}">
+        </div>
+        <div class="field">
+          <label for="ccexp">تاريخ الانتهاء</label>
+          <input id="ccexp" name="ccexp" autocomplete="cc-exp" dir="ltr" placeholder="MM/YY" required pattern="(0[1-9]|1[0-2])/[0-9]{2}">
+        </div>
+        <div class="field">
+          <label for="cccsc">CVV</label>
+          <input id="cccsc" name="cccsc" autocomplete="cc-csc" inputmode="numeric" dir="ltr" required pattern="[0-9]{3,4}">
+        </div>
+      </div>
+    </fieldset>
+  </fieldset>
+
+  <fieldset>
+    <legend>كوبون خصم</legend>
+    <div class="coupon">
+      <label for="coupon" class="visually-hidden">كود الكوبون</label>
+      <input id="coupon" name="coupon" dir="ltr" autocomplete="off" aria-describedby="coupon-msg">
+      <button type="button" id="apply">طبّق</button>
+    </div>
+    <p id="coupon-msg" class="hint" aria-live="polite"></p>
+  </fieldset>
+
+  <p id="fail" class="fail" role="alert" hidden>الطلب متبعتش (النت فاصل؟). بياناتك زي ما هي، جرّب تاني.</p>
+  <button id="send" class="send">اطلب</button>
+</form>
+
+<aside class="cart" aria-labelledby="cart-title">
+  <h2 id="cart-title">طلبك</h2>
+  <ul>
+    <li><span>بن محوّج، ربع كيلو</span><span>١٨٠ ج</span></li>
+    <li><span>بن فاتح، ربع كيلو</span><span>١٦٠ ج</span></li>
+    <li><span>الشحن</span><span>٤٠ ج</span></li>
+    <li id="discount-row" hidden><span>الخصم</span><span id="discount"></span></li>
+  </ul>
+  <p class="total"><span>الإجمالي</span><output id="total">٣٨٠ ج</output></p>
+</aside>
+</div>
+</main>
+<script>
+const form = document.getElementById('checkout');
+const send = document.getElementById('send');
+const fail = document.getElementById('fail');
+const cardbox = document.getElementById('cardbox');
+const DRAFT = 'sabah-checkout-draft';
+const SUBTOTAL = 380; // 180 + 160 + 40 shipping
+
+// ---------- card or cash ----------
+function payChanged() {
+  const card = form.elements.pay.value === 'card';
+  cardbox.hidden = !card;
+  cardbox.disabled = !card; // disabled: not validated, not sent
+}
+form.addEventListener('change', e => { if (e.target.name === 'pay') payChanged(); });
+
+// ---------- coupon: valid until the END of its last day, in the reader's time zone ----------
+const COUPONS = {
+  SABAH10: { pct: 10, until: '2026-12-31' },
+  WINTER5: { pct: 5, until: '2026-01-31' },
+};
+function couponState(code, now = new Date()) {
+  const c = COUPONS[code.trim().toUpperCase()];
+  if (!c) return { ok: false, msg: 'الكود ده مش موجود.' };
+  // new Date('2026-12-31') is midnight UTC: 2 AM in Cairo, and the code would die at the START of the day
+  const [y, m, d] = c.until.split('-').map(Number);
+  const end = new Date(y, m - 1, d, 23, 59, 59, 999);
+  if (now > end) return { ok: false, msg: 'الكود ده خلص يوم ' + c.until + '.' };
+  return { ok: true, pct: c.pct, msg: 'اتطبّق خصم ' + c.pct + '٪.' };
+}
+const money = n => n.toLocaleString('ar-EG') + ' ج';
+function applyCoupon() {
+  const input = form.elements.coupon;
+  const s = input.value ? couponState(input.value) : { ok: false, msg: '' };
+  document.getElementById('coupon-msg').textContent = s.msg;
+  const off = s.ok ? Math.round(SUBTOTAL * s.pct / 100) : 0;
+  document.getElementById('discount-row').hidden = !off;
+  document.getElementById('discount').textContent = '- ' + money(off);
+  document.getElementById('total').textContent = money(SUBTOTAL - off);
+}
+document.getElementById('apply').addEventListener('click', applyCoupon);
+
+// ---------- draft: saved every second, never the card fields ----------
+const isPrivate = f => (f.autocomplete || '').startsWith('cc-');
+function saveDraft() {
+  const data = {};
+  for (const f of form.elements) {
+    if (!f.name || isPrivate(f) || f.type === 'button' || f.type === 'submit') continue;
+    if (f.type === 'radio') { if (f.checked) data[f.name] = f.value; }
+    else data[f.name] = f.value;
+  }
+  try { localStorage.setItem(DRAFT, JSON.stringify(data)); } catch {}
+}
+function loadDraft() {
+  let data = null;
+  try { data = JSON.parse(localStorage.getItem(DRAFT)); } catch {}
+  if (!data) return;
+  for (const [k, v] of Object.entries(data)) {
+    // form.elements.pay is a RadioNodeList: setting its value checks the radio with that value
+    if (form.elements[k]) form.elements[k].value = v;
+  }
+}
+loadDraft();
+payChanged();
+applyCoupon();
+const autosave = setInterval(saveDraft, 1000);
+
+// ---------- errors summary ----------
+const summary = document.getElementById('summary');
+const list = document.getElementById('errors');
+list.addEventListener('click', e => {
+  const a = e.target.closest('a');
+  if (!a) return;
+  e.preventDefault();
+  document.querySelector(a.hash).focus();
+});
+function showErrors(bad) {
+  list.innerHTML = '';
+  for (const f of bad) {
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = '#' + f.id;
+    a.textContent = form.querySelector('label[for="' + f.id + '"]').textContent + ': ' + f.validationMessage;
+    li.append(a);
+    list.append(li);
+  }
+  document.getElementById('count').textContent = bad.length === 1 ? 'حاجة واحدة' : bad.length + ' حاجات';
+  summary.hidden = false;
+  summary.focus();
+}
+
+// ---------- send once ----------
+let sending = false;
+form.addEventListener('submit', async e => {
+  e.preventDefault();
+  if (sending) return;
+  const bad = [...form.elements].filter(f => f.willValidate && !f.checkValidity());
+  for (const f of form.elements) if (f.willValidate) f.setAttribute('aria-invalid', String(bad.includes(f)));
+  if (bad.length) { showErrors(bad); return; }
+  summary.hidden = true;
+  fail.hidden = true;
+  sending = true;
+  send.disabled = true;
+  send.textContent = 'بنبعت الطلب…';
+  try {
+    // no server in this project: thanks.html stands in for the API (a real shop sends a POST to its own /api/orders)
+    const res = await fetch('thanks.html', { method: 'HEAD', cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    // stop the autosave FIRST: the next page can take seconds to load, and a save in between writes the draft back
+    clearInterval(autosave);
+    localStorage.removeItem(DRAFT);
+    location.href = 'thanks.html';
+  } catch {
+    fail.hidden = false;
+    sending = false;
+    send.disabled = false;
+    send.textContent = 'اطلب';
+  }
+});
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** على الكمبيوتر عمودين: الفورم على اليمين في كروت بيضا (بياناتك، والعنوان، وطريقة الدفع، والكوبون) وعلى الشمال كارت بني غامق فيه طلبك والإجمالي ٣٨٠ ج. على الموبايل كله عمود واحد والسلة تحت. اختار «كارت» وبيظهر مربع فيه رقم الكارت والتاريخ والـ CVV. اكتب [[sabah10]] ودوس «طبّق»: سطر خصم بيظهر والإجمالي يبقى ٣٤٢ ج. (المعاينة هنا جوه صندوق مقفول، فـ «اطلب» فيها هيطلّع رسالة «الطلب متبعتش». جرّبه عندك من سيرفر محلي.)
+
+**الأجزاء المهمة:**
+- **الكارت والكاش:** مربع الكارت [[<fieldset disabled>]] لما تختار كاش. الحقل الـ disabled المتصفح مبيتأكدش منه ومبيبعتوش، فمش محتاج تشيل [[required]] وترجّعه.
+- **[[autocomplete]]:** [[cc-number]] و [[cc-exp]] و [[cc-csc]] للكارت، و [[address-line1]] و [[address-level2]] (المدينة) و [[address-level1]] (المحافظة) للعنوان. كنت كاتب [[street-address]] على [[<input>]] والـ validator قال: [[The autofill field name "street-address" is not allowed in this context.]] لأن [[street-address]] للعنوان كله في سطور كتير، يعني [[<textarea>]] بس.
+- **الكوبون لآخر اليوم:** [[new Date('2026-12-31')]] معناه نص الليل بتوقيت جرينتش = الساعة ٢ الصبح في القاهرة، فالكوبون كان هيخلص في **أول** يومه الأخير. الحل: [[new Date(y, m - 1, d, 23, 59, 59, 999)]] بتوقيت الجهاز.
+- **المسودة:** [[setInterval]] كل ثانية بيحفظ كل الحقول في [[localStorage]] **ماعدا** أي حقل [[autocomplete]] بتاعه بيبدأ بـ [[cc-]]. رقم الكارت مكانه السيرفر بس، ولو اتحفظ في المتصفح أي سكربت على الصفحة يقدر يقراه.
+- **الإرسال مرة واحدة:** المتغير [[sending]] والزرار [[disabled]]. ولو الطلب فشل ([[catch]])، الزرار بيرجع والبيانات بتفضل.
+- **[[fetch('thanks.html', { method: 'HEAD' })]]** بدل السيرفر الحقيقي: المشروع مفيهوش backend، فبنسأل عن صفحة موجودة كأنها الـ API. في متجر حقيقي ده بيبقى [[POST]] لـ [[/api/orders]] (تاب Node).
+
+**باج حقيقي لقيته وانا بجرّب الحل:** بعد طلب ناجح المسودة كانت لسه في [[localStorage]]. اللي حصل: [[removeItem]] اشتغل، وبعدين صفحة «اتطلب» خدت ثانيتين تحمّل على Slow 3G، وفي الوقت ده [[setInterval]] اشتغل تاني وحفظ المسودة من جديد. الحل: [[clearInterval(autosave)]] **قبل** [[removeItem]]. والدرس: أي حاجة شغالة بالتوقيت لازم توقفها قبل ما تمسح اللي بتكتبه.
+
+**وفخ في التجربة نفسها:** بعد ما صلّحت [[app.js]] وعملت Refresh، Chrome شغّل النسخة القديمة من الذاكرة ومطلبش الملف أصلًا من السيرفر. علّم **Disable cache** في Network وانت شغال.
+
+~~~text الناتج (Chrome)
+360px      الفورم عمود واحد، والسلة تحته، و overflow = 0
+800px      الصفحة: فورم + سلة 300px، وجوه الفورم عمودين، و overflow = 0
+
+«اطلب» والفورم فاضي       الـ focus على الملخص: «فيه 6 حاجات»  #name #email #phone #street #city #area
+نفس الكلام والدفع «كارت»   9 حاجات: الـ 6 و #ccnum #ccexp #cccsc
+
+couponState('SABAH10', 31 ديسمبر 11 بالليل)   ok: true، خصم 10٪
+couponState('sabah10', 1 يناير 12:00:01)     الكود ده خلص يوم 2026-12-31.
+couponState('WINTER5')                       الكود ده خلص يوم 2026-01-31.
+new Date('2026-12-31') في القاهرة             Thu Dec 31 2026 02:00:00
+بعد «طبّق» sabah10                            الإجمالي ٣٤٢ ج، الخصم - ٣٨ ج
+
+المسودة بعد ثانية    {"name":"منى سامي","email":"mona@example.com",...,"pay":"card","coupon":"sabah10"}   (مفيش ccnum ولا cccsc)
+Refresh             الاسم والمدينة والكارت مختار رجعوا، ورقم الكارت فاضي ""
+
+3 ضغطات على «اطلب» (Slow 3G)   السيرفر استلم HEAD واحد، وبعدها thanks.html
+المسودة بعد النجاح               قبل التصليح: لسه موجودة   بعد clearInterval: null
+Offline                          «الطلب متبعتش (النت فاصل؟)...»، الزرار رجع «اطلب»، والاسم زي ما هو
+axe: 0 violations   الـ validator: مفيش رسايل
+~~~` },
+        { lvl: 'فكرة', dir: "tutor-form", t: R`فورم لنشاط حقيقي حواليك`, what: R`اختار نشاط تعرفه (درس خصوصي، ورشة تصليح، ماتش كورة في الحي) واعمل الفورم اللي هيستقبل الطلبات بتاعته: انت اللي تقرر الحقول وأنواعها والقواعد والرسايل.`, done: R`كل حقل ليه سبب مكتوب في تعليق (ليه النوع ده وليه required أو لأ)، و ٣ أصحاب ملوه من موبايلاتهم من غير ما يسألوك حاجة، و axe صفر violations.`, ext: R`اربطه بـ Google Sheets أو بـ backend بسيط من تاب Node، وابعت إيميل تأكيد.`, sol: R`نسخة نموذجية: فورم حجز حصص خصوصي لمدرس رياضيات متخيل. التعليقات في الكود هي الجزء المهم: كل حقل جنبه ليه هو موجود وليه النوع ده.
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>احجز حصة رياضيات</title>
+<style>
+  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #eef2ff; color: #1e1b4b; }
+  form { max-width: 460px; margin-inline: auto; padding: 20px; background: white; border-radius: 14px; display: grid; gap: 14px; }
+  h1 { margin: 0; font-size: 22px; }
+  .field { display: grid; gap: 4px; }
+  label, legend { font-weight: 600; }
+  input, select, textarea { font: inherit; padding: 8px 10px; border: 1px solid #a5b4fc; border-radius: 8px; }
+  fieldset { border: 1px solid #c7d2fe; border-radius: 10px; padding: 10px 14px; display: flex; flex-wrap: wrap; gap: 6px 16px; }
+  .hint { color: #6366f1; font-size: 14px; }
+  /* red only after the person touched the field, not the moment the page opens */
+  input:user-invalid, select:user-invalid { border-color: #b91c1c; background: #fef2f2; }
+  button { font: inherit; font-weight: 700; padding: 12px; border: 0; border-radius: 10px; background: #4338ca; color: white; }
+</style>
+</head>
+<body>
+<main>
+<form method="get">
+  <h1>احجز حصة رياضيات مع أستاذ حمدي</h1>
+
+  <!-- الاسم: لازم، عشان المدرس يعرف بيكلم مين -->
+  <div class="field">
+    <label for="student">اسم الطالب</label>
+    <input id="student" name="student" autocomplete="off" required>
+  </div>
+
+  <!-- رقم ولي الأمر مش الطالب: هو اللي بيدفع وبيأكّد الميعاد. tel عشان كيبورد الأرقام -->
+  <div class="field">
+    <label for="parent">موبايل ولي الأمر</label>
+    <input id="parent" name="parent" type="tel" autocomplete="tel" dir="ltr" required pattern="01[0125][0-9]{8}">
+  </div>
+
+  <!-- select مش radio: ٦ اختيارات كتير على أزرار جنب بعض في الموبايل -->
+  <div class="field">
+    <label for="grade">السنة الدراسية</label>
+    <select id="grade" name="grade" required>
+      <option value="">اختار…</option>
+      <option>أولى إعدادي</option><option>تانية إعدادي</option><option>تالتة إعدادي</option>
+      <option>أولى ثانوي</option><option>تانية ثانوي</option><option>تالتة ثانوي</option>
+    </select>
+  </div>
+
+  <!-- radio: اختيار واحد من ٢ بس، فكله ظاهر من غير ضغط -->
+  <fieldset>
+    <legend>نوع الحصة</legend>
+    <label><input type="radio" name="kind" value="home" required> في البيت</label>
+    <label><input type="radio" name="kind" value="online"> أونلاين</label>
+  </fieldset>
+
+  <!-- checkboxes: الطالب ممكن يختار أكتر من يوم -->
+  <fieldset>
+    <legend>الأيام المناسبة</legend>
+    <label><input type="checkbox" name="days" value="sat"> السبت</label>
+    <label><input type="checkbox" name="days" value="mon"> الاتنين</label>
+    <label><input type="checkbox" name="days" value="wed"> الأربع</label>
+  </fieldset>
+
+  <!-- مش required: مش كل طالب عنده حاجة معيّنة يقولها -->
+  <div class="field">
+    <label for="topic">في درس معيّن صعب عليك؟ (اختياري)</label>
+    <textarea id="topic" name="topic" rows="3" maxlength="300"></textarea>
+    <span class="hint">مثلًا: المعادلات، الهندسة</span>
+  </div>
+
+  <button>ابعت الطلب</button>
+</form>
+</main>
+</body>
+</html>
+~~~
+
+~~~view 640 700 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>احجز حصة رياضيات</title>
+<style>
+  body { font-family: system-ui, "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 16px; background: #eef2ff; color: #1e1b4b; }
+  form { max-width: 460px; margin-inline: auto; padding: 20px; background: white; border-radius: 14px; display: grid; gap: 14px; }
+  h1 { margin: 0; font-size: 22px; }
+  .field { display: grid; gap: 4px; }
+  label, legend { font-weight: 600; }
+  input, select, textarea { font: inherit; padding: 8px 10px; border: 1px solid #a5b4fc; border-radius: 8px; }
+  fieldset { border: 1px solid #c7d2fe; border-radius: 10px; padding: 10px 14px; display: flex; flex-wrap: wrap; gap: 6px 16px; }
+  .hint { color: #6366f1; font-size: 14px; }
+  /* red only after the person touched the field, not the moment the page opens */
+  input:user-invalid, select:user-invalid { border-color: #b91c1c; background: #fef2f2; }
+  button { font: inherit; font-weight: 700; padding: 12px; border: 0; border-radius: 10px; background: #4338ca; color: white; }
+</style>
+</head>
+<body>
+<main>
+<form method="get">
+  <h1>احجز حصة رياضيات مع أستاذ حمدي</h1>
+
+  <!-- الاسم: لازم، عشان المدرس يعرف بيكلم مين -->
+  <div class="field">
+    <label for="student">اسم الطالب</label>
+    <input id="student" name="student" autocomplete="off" required>
+  </div>
+
+  <!-- رقم ولي الأمر مش الطالب: هو اللي بيدفع وبيأكّد الميعاد. tel عشان كيبورد الأرقام -->
+  <div class="field">
+    <label for="parent">موبايل ولي الأمر</label>
+    <input id="parent" name="parent" type="tel" autocomplete="tel" dir="ltr" required pattern="01[0125][0-9]{8}">
+  </div>
+
+  <!-- select مش radio: ٦ اختيارات كتير على أزرار جنب بعض في الموبايل -->
+  <div class="field">
+    <label for="grade">السنة الدراسية</label>
+    <select id="grade" name="grade" required>
+      <option value="">اختار…</option>
+      <option>أولى إعدادي</option><option>تانية إعدادي</option><option>تالتة إعدادي</option>
+      <option>أولى ثانوي</option><option>تانية ثانوي</option><option>تالتة ثانوي</option>
+    </select>
+  </div>
+
+  <!-- radio: اختيار واحد من ٢ بس، فكله ظاهر من غير ضغط -->
+  <fieldset>
+    <legend>نوع الحصة</legend>
+    <label><input type="radio" name="kind" value="home" required> في البيت</label>
+    <label><input type="radio" name="kind" value="online"> أونلاين</label>
+  </fieldset>
+
+  <!-- checkboxes: الطالب ممكن يختار أكتر من يوم -->
+  <fieldset>
+    <legend>الأيام المناسبة</legend>
+    <label><input type="checkbox" name="days" value="sat"> السبت</label>
+    <label><input type="checkbox" name="days" value="mon"> الاتنين</label>
+    <label><input type="checkbox" name="days" value="wed"> الأربع</label>
+  </fieldset>
+
+  <!-- مش required: مش كل طالب عنده حاجة معيّنة يقولها -->
+  <div class="field">
+    <label for="topic">في درس معيّن صعب عليك؟ (اختياري)</label>
+    <textarea id="topic" name="topic" rows="3" maxlength="300"></textarea>
+    <span class="hint">مثلًا: المعادلات، الهندسة</span>
+  </div>
+
+  <button>ابعت الطلب</button>
+</form>
+</main>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** خلفية بنفسجي فاتح وكارت أبيض فيه العنوان والحقول. نوع الحصة والأيام كل واحد في مربع بحدود فاتحة والاختيارات جنب بعض. وأول ما تفتح الصفحة **مفيش ولا حقل أحمر**. دوس «ابعت» والفورم فاضي: الحقول الناقصة بتبقى حمرا والـ focus بيروح لأول واحد.
+
+**ليه اخترت كده:**
+- **مين بيملا الفورم؟** ولي الأمر غالبًا، فالموبايل اللي بنطلبه بتاعه هو.
+- **كل نوع بسبب:** ٦ سنين دراسية = [[select]]؛ اختيارين بس = [[radio]] ظاهرين؛ أكتر من يوم = [[checkbox]]؛ كلام حر = [[textarea]] بـ [[maxlength]].
+- **الأيام مش required:** لو مفيش يوم مناسب المدرس يتصل ويتفقوا. الحقل الإجباري اللي ملوش لازمة بيخلي ناس تقفل الصفحة.
+- **[[:user-invalid]] مش [[:invalid]]:** [[:invalid]] بيلوّن الحقول الإجبارية بالأحمر أول ما الصفحة تفتح، قبل ما حد يكتب أي حاجة. [[:user-invalid]] بيستنى لحد ما الشخص يلمس الحقل أو يدوس «ابعت».
+
+~~~text الناتج (Chrome)
+أول ما الصفحة تفتح     7 عناصر :invalid، و 0 منهم :user-invalid (مفيش أحمر)
+«ابعت» والفورم فاضي     5 حقول بقت حمرا (الاسم، والموبايل، والسنة، والاختيارين)، والـ focus على #student
+axe: 0 violations   الـ validator: مفيش رسايل   overflow على 360: 0
+~~~` },
       ],
       l: 1,
       n: "اختيارات بـ fieldset، والنوع الصح لكل حقل، و validation المتصفح من JavaScript، وأخطاء واضحة للكل",
